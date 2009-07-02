@@ -1,0 +1,39 @@
+CHANGEFILE
+----------
+
+This is the Changefile for the development 0.3 branch of EFSL.
+Recording began with EFSL-0.3.3
+
+0.3.5
+-----
+* Added warning in documentation that it is outdated
+* Changed structure definitions
+* Implemnted full-feature cp
+* Renamed some efsl-functions (all starting with EFSL_)
+* Added another example for AVR.
+* Updated docs on getting started on AVR.
+
+0.3.4
+-----
+* Fixed avr support
+* Created new avr example + makefile
+* Some more work on new fsutils
+
+0.3.3
+-----
+
+* Renamed src/core to src/base
+* Implemented new hwInterface structure
+  Support for multiple hwEndpoints in one project
+* Modified SD_SPI to work as a general protocol
+* Modified Linuxfile to the new hwInterface model
+* Created a new efs_configger, now supports every
+  combination of partitions/disc
+* Implemented full support for little and big endian
+  machines, as well as for little and big endian 
+  filesystems
+* Created new build system, for multiple platforms,
+  configurable from one file
+* Changes cpo to use the new library functions
+* Broke both dsp & atmega support
+
