@@ -1,0 +1,130 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (RT-Thread/LPC2148), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(Startup),1,0,0
+GRPOPT 2,(Kernel),0,0,0
+GRPOPT 3,(LPC214x),0,0,0
+GRPOPT 4,(finsh),0,0,0
+GRPOPT 5,(Filesystem),0,0,0
+GRPOPT 6,(LwIP),0,0,0
+
+OPTFFF 1,1,1,150994944,0,0,0,0,<.\application.c><application.c> 
+OPTFFF 1,2,1,0,0,0,0,0,<.\board.c><board.c> 
+OPTFFF 1,3,1,0,0,0,0,0,<.\startup.c><startup.c> 
+OPTFFF 1,4,1,0,0,0,0,0,<.\dm9000.c><dm9000.c> 
+OPTFFF 1,5,1,0,0,0,0,0,<.\sd.c><sd.c> 
+OPTFFF 1,6,5,0,0,0,0,0,<.\rtconfig.h><rtconfig.h> 
+OPTFFF 2,7,1,0,0,0,0,0,<..\..\src\clock.c><clock.c> 
+OPTFFF 2,8,1,150994944,0,0,0,0,<..\..\src\device.c><device.c> 
+OPTFFF 2,9,1,0,0,0,0,0,<..\..\src\ipc.c><ipc.c> 
+OPTFFF 2,10,1,0,0,0,0,0,<..\..\src\mempool.c><mempool.c> 
+OPTFFF 2,11,1,0,0,0,0,0,<..\..\src\object.c><object.c> 
+OPTFFF 2,12,1,0,0,0,0,0,<..\..\src\timer.c><timer.c> 
+OPTFFF 2,13,1,0,0,0,0,0,<..\..\src\idle.c><idle.c> 
+OPTFFF 2,14,1,0,0,0,0,0,<..\..\src\irq.c><irq.c> 
+OPTFFF 2,15,1,0,0,0,0,0,<..\..\src\mem.c><mem.c> 
+OPTFFF 2,16,1,0,0,0,0,0,<..\..\src\scheduler.c><scheduler.c> 
+OPTFFF 2,17,1,0,0,0,0,0,<..\..\src\slab.c><slab.c> 
+OPTFFF 2,18,1,0,0,0,0,0,<..\..\src\thread.c><thread.c> 
+OPTFFF 2,19,1,0,0,0,0,0,<..\..\src\kservice.c><kservice.c> 
+OPTFFF 3,20,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\serial.c><serial.c> 
+OPTFFF 3,21,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\interrupt.c><interrupt.c> 
+OPTFFF 3,22,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\cpu.c><cpu.c> 
+OPTFFF 3,23,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\trap.c><trap.c> 
+OPTFFF 3,24,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\stack.c><stack.c> 
+OPTFFF 3,25,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\start_rvds.s><start_rvds.s> 
+OPTFFF 3,26,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\context_rvds.s><context_rvds.s> 
+OPTFFF 4,27,1,0,0,0,0,0,<..\..\finsh\finsh_compiler.c><finsh_compiler.c> 
+OPTFFF 4,28,1,0,0,0,0,0,<..\..\finsh\finsh_error.c><finsh_error.c> 
+OPTFFF 4,29,1,0,0,0,0,0,<..\..\finsh\finsh_heap.c><finsh_heap.c> 
+OPTFFF 4,30,1,0,0,0,0,0,<..\..\finsh\finsh_init.c><finsh_init.c> 
+OPTFFF 4,31,1,0,0,0,0,0,<..\..\finsh\finsh_node.c><finsh_node.c> 
+OPTFFF 4,32,1,0,0,0,0,0,<..\..\finsh\finsh_ops.c><finsh_ops.c> 
+OPTFFF 4,33,1,0,0,0,0,0,<..\..\finsh\finsh_token.c><finsh_token.c> 
+OPTFFF 4,34,1,0,0,0,0,0,<..\..\finsh\finsh_var.c><finsh_var.c> 
+OPTFFF 4,35,1,0,0,0,0,0,<..\..\finsh\finsh_vm.c><finsh_vm.c> 
+OPTFFF 4,36,1,0,0,0,0,0,<..\..\finsh\shell.c><shell.c> 
+OPTFFF 4,37,1,0,0,0,0,0,<..\..\finsh\symbol.c><symbol.c> 
+OPTFFF 4,38,1,0,0,0,0,0,<..\..\finsh\cmd.c><cmd.c> 
+OPTFFF 4,39,1,0,0,0,0,0,<..\..\finsh\finsh_parser.c><finsh_parser.c> 
+OPTFFF 5,40,1,0,0,0,0,0,<..\..\filesystem\dfs\src\dfs_util.c><dfs_util.c> 
+OPTFFF 5,41,1,0,0,0,0,0,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c> 
+OPTFFF 5,42,1,0,0,0,0,0,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c> 
+OPTFFF 5,43,1,0,0,0,0,0,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c> 
+OPTFFF 5,44,1,301989888,0,0,0,0,<..\..\filesystem\dfs\src\dfs_posix.c><dfs_posix.c> 
+OPTFFF 5,45,1,0,0,0,0,0,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c> 
+OPTFFF 5,46,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c> 
+OPTFFF 5,47,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c> 
+OPTFFF 5,48,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c> 
+OPTFFF 5,49,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c> 
+OPTFFF 5,50,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c><dir.c> 
+OPTFFF 5,51,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c><fat.c> 
+OPTFFF 5,52,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c><file.c> 
+OPTFFF 5,53,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c><fs.c> 
+OPTFFF 5,54,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c><ls.c> 
+OPTFFF 5,55,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c><ui.c> 
+OPTFFF 5,56,1,0,0,0,0,0,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c><time.c> 
+OPTFFF 6,57,1,0,0,0,0,0,<..\..\net\lwip\src\netif\etharp.c><etharp.c> 
+OPTFFF 6,58,1,150994944,0,0,0,0,<..\..\net\lwip\src\netif\ethernetif.c><ethernetif.c> 
+OPTFFF 6,59,1,0,0,0,0,0,<..\..\net\lwip\src\core\udp.c><udp.c> 
+OPTFFF 6,60,1,0,0,0,0,0,<..\..\net\lwip\src\core\dhcp.c><dhcp.c> 
+OPTFFF 6,61,1,0,0,0,0,0,<..\..\net\lwip\src\core\dns.c><dns.c> 
+OPTFFF 6,62,1,0,0,0,0,0,<..\..\net\lwip\src\core\init.c><init.c> 
+OPTFFF 6,63,1,0,0,0,0,0,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c> 
+OPTFFF 6,64,1,0,0,0,0,0,<..\..\net\lwip\src\core\netif.c><netif.c> 
+OPTFFF 6,65,1,0,0,0,0,0,<..\..\net\lwip\src\core\pbuf.c><pbuf.c> 
+OPTFFF 6,66,1,0,0,0,0,0,<..\..\net\lwip\src\core\raw.c><raw.c> 
+OPTFFF 6,67,1,0,0,0,0,0,<..\..\net\lwip\src\core\stats.c><stats.c> 
+OPTFFF 6,68,1,0,0,0,0,0,<..\..\net\lwip\src\core\sys.c><sys.c> 
+OPTFFF 6,69,1,0,0,0,0,0,<..\..\net\lwip\src\core\tcp.c><tcp.c> 
+OPTFFF 6,70,1,0,0,0,0,0,<..\..\net\lwip\src\core\tcp_in.c><tcp_in.c> 
+OPTFFF 6,71,1,0,0,0,0,0,<..\..\net\lwip\src\core\tcp_out.c><tcp_out.c> 
+OPTFFF 6,72,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\ip_frag.c><ip_frag.c> 
+OPTFFF 6,73,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\autoip.c><autoip.c> 
+OPTFFF 6,74,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\icmp.c><icmp.c> 
+OPTFFF 6,75,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\igmp.c><igmp.c> 
+OPTFFF 6,76,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\inet.c><inet.c> 
+OPTFFF 6,77,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\inet_chksum.c><inet_chksum.c> 
+OPTFFF 6,78,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\ip.c><ip.c> 
+OPTFFF 6,79,1,0,0,0,0,0,<..\..\net\lwip\src\core\ipv4\ip_addr.c><ip_addr.c> 
+OPTFFF 6,80,1,0,0,0,0,0,<..\..\net\lwip\src\api\tcpip.c><tcpip.c> 
+OPTFFF 6,81,1,0,0,0,0,0,<..\..\net\lwip\src\api\api_lib.c><api_lib.c> 
+OPTFFF 6,82,1,0,0,0,0,0,<..\..\net\lwip\src\api\api_msg.c><api_msg.c> 
+OPTFFF 6,83,1,0,0,0,0,0,<..\..\net\lwip\src\api\err.c><err.c> 
+OPTFFF 6,84,1,0,0,0,0,0,<..\..\net\lwip\src\api\netbuf.c><netbuf.c> 
+OPTFFF 6,85,1,0,0,0,0,0,<..\..\net\lwip\src\api\netdb.c><netdb.c> 
+OPTFFF 6,86,1,0,0,0,0,0,<..\..\net\lwip\src\api\netifapi.c><netifapi.c> 
+OPTFFF 6,87,1,0,0,0,0,0,<..\..\net\lwip\src\api\sockets.c><sockets.c> 
+OPTFFF 6,88,1,0,0,0,0,0,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c> 
+OPTFFF 6,89,1,0,0,0,0,0,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c> 
+
+
+TARGOPT 1, (RT-Thread/LPC2148)
+ ADSCLK=12000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\objs\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTAX 0
+  OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)
+  OPTDBG 48125,6,()()()()()()()()()() (Segger\JLTAgdi.dll)()()()
+  OPTKEY 0,(DLGDARM)((134=-1,-1,-1,-1,0)(135=-1,-1,-1,-1,0)(153=-1,-1,-1,-1,0)(154=-1,-1,-1,-1,0)(108=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(104=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(113=556,103,931,655,0)(112=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(146=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(114=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(142=-1,-1,-1,-1,0)(143=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)(-T5F)
+  OPTDF 0xB0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+

@@ -1,0 +1,139 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (RT-Thread/AT91SAM7S), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Startup)
+Group (Kernel)
+Group (AT91SAM7S)
+Group (finsh)
+
+File 1,1,<.\application.c><application.c>
+File 1,1,<.\board.c><board.c>
+File 1,1,<.\startup.c><startup.c>
+File 1,5,<.\rtconfig.h><rtconfig.h>
+File 2,1,<..\..\src\clock.c><clock.c>
+File 2,1,<..\..\src\idle.c><idle.c>
+File 2,1,<..\..\src\ipc.c><ipc.c>
+File 2,1,<..\..\src\irq.c><irq.c>
+File 2,1,<..\..\src\kservice.c><kservice.c>
+File 2,1,<..\..\src\mem.c><mem.c>
+File 2,1,<..\..\src\mempool.c><mempool.c>
+File 2,1,<..\..\src\object.c><object.c>
+File 2,1,<..\..\src\timer.c><timer.c>
+File 2,1,<..\..\src\scheduler.c><scheduler.c>
+File 2,1,<..\..\src\slab.c><slab.c>
+File 2,1,<..\..\src\thread.c><thread.c>
+File 2,1,<..\..\src\device.c><device.c>
+File 3,1,<..\..\libcpu\arm\AT91SAM7S\cpu.c><cpu.c>
+File 3,1,<..\..\libcpu\arm\AT91SAM7S\interrupt.c><interrupt.c>
+File 3,1,<..\..\libcpu\arm\AT91SAM7S\serial.c><serial.c>
+File 3,1,<..\..\libcpu\arm\AT91SAM7S\stack.c><stack.c>
+File 3,1,<..\..\libcpu\arm\AT91SAM7S\trap.c><trap.c>
+File 3,2,<..\..\libcpu\arm\AT91SAM7S\context_rvds.S><context_rvds.S>
+File 3,2,<..\..\libcpu\arm\AT91SAM7S\start_rvds.S><start_rvds.S>
+File 4,1,<..\..\finsh\cmd.c><cmd.c>
+File 4,1,<..\..\finsh\finsh_compiler.c><finsh_compiler.c>
+File 4,1,<..\..\finsh\finsh_error.c><finsh_error.c>
+File 4,1,<..\..\finsh\finsh_heap.c><finsh_heap.c>
+File 4,1,<..\..\finsh\finsh_init.c><finsh_init.c>
+File 4,1,<..\..\finsh\finsh_node.c><finsh_node.c>
+File 4,1,<..\..\finsh\finsh_ops.c><finsh_ops.c>
+File 4,1,<..\..\finsh\finsh_parser.c><finsh_parser.c>
+File 4,1,<..\..\finsh\finsh_token.c><finsh_token.c>
+File 4,1,<..\..\finsh\finsh_var.c><finsh_var.c>
+File 4,1,<..\..\finsh\finsh_vm.c><finsh_vm.c>
+File 4,1,<..\..\finsh\shell.c><shell.c>
+File 4,1,<..\..\finsh\symbol.c><symbol.c>
+
+
+Options 1,0,0  // Target 'RT-Thread/AT91SAM7S'
+ Device (AT91SAM7S64)
+ Vendor (Atmel)
+ Cpu (IRAM(0x200000-0x203FFF) IROM(0x100000-0x10FFFF) CLOCK(20000000) CPUTYPE(ARM7TDMI))
+ FlashUt ()
+ StupF ("STARTUP\Atmel\SAM7.s" ("Atmel AT91SAM7 Startup Code"))
+ FlashDR (UL2ARM(-U44045500 -O15 -S0 -C0 -D00(3F0F0F0F) -L00(4) -FO6 -FD200000 -FC800 -FN1 -FF0AT91SAM7_64 -FS0100000 -FL010000))
+ DevID (3815)
+ Rgf (AT91SAM7S64.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ÿAtmel\SAM7S\)
+ OrgReg (ÿAtmel\SAM7S\)
+ TgStat=16
+ OutDir (.\objs\)
+ OutName (rtthread-sam7s)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\objs\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 242,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP (ARM7TDMI)
+ RVDEV ()
+ ADSTFLGA { 0,12,0,18,99,0,1,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,32,0,0,64,0,0 }
+ OCMADSIROM { 1,0,0,16,0,0,0,1,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,16,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,64,0,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (.;..\..\include;..\..\libcpu\arm\AT91SAM7S;..\..\finsh)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00100000)
+ ADSLDDA (0x00200000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC (--keep __fsym_* --keep __vsym_*)
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARM.DLL)(-cAT91SAM7S)(DARMATS.DLL)(-p91SAM7S64)(SARM.DLL)()(TARMATS.DLL)(-p91SAM7S64)
+  OPTDBG 8189,6,()()()()()()()()()() (Segger\JLTAgdi.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,4,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JLTAgdi.dll)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+
