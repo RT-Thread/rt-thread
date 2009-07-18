@@ -5,7 +5,7 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -22,7 +22,8 @@
  * 2006-06-05     Bernard      fix the mutex release bug
  * 2006-06-07     Bernard      fix the message queue send bug
  * 2006-08-04     Bernard      add hook support
- * 2009-05-21     Yi.qiu          fix the sem release bug
+ * 2009-05-21     Yi.qiu       fix the sem release bug
+ * 2009-07-18     Bernard      fix the event clear bug
  */
 
 #include <rtthread.h>
@@ -320,7 +321,7 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 	temp = rt_hw_interrupt_disable();
 
 #ifdef IPC_DEBUG
-	rt_kprintf("thread %s take sem:%s, which value is: %d\n", rt_thread_self()->name, 
+	rt_kprintf("thread %s take sem:%s, which value is: %d\n", rt_thread_self()->name,
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 	if (sem->value > 0)
@@ -422,7 +423,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 	temp = rt_hw_interrupt_disable();
 
 #ifdef IPC_DEBUG
-	rt_kprintf("thread %s releases sem:%s, which value is: %d\n", rt_thread_self()->name, 
+	rt_kprintf("thread %s releases sem:%s, which value is: %d\n", rt_thread_self()->name,
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 	/* increase value */
@@ -1261,11 +1262,13 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 	struct rt_thread *thread;
 	register rt_ubase_t level;
 	register rt_base_t status;
+	rt_bool_t need_schedule;
 
 	/* parameter check */
 	RT_ASSERT(event != RT_NULL);
 	if (set == 0) return -RT_ERROR;
 
+	need_schedule = RT_FALSE;
 #ifdef RT_USING_HOOK
 	if (rt_object_put_hook != RT_NULL) rt_object_put_hook(&(event->parent.parent));
 #endif
@@ -1290,6 +1293,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 			{
 				if ((thread->event_set & event->set) == thread->event_set)
 				{
+					/* received a AND event */
 					status = RT_EOK;
 				}
 			}
@@ -1297,11 +1301,12 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 			{
 				if (thread->event_set & event->set)
 				{
+					/* received a OR event */
 					status = RT_EOK;
 				}
 			}
 
-			/* move node to the nexe */
+			/* move node to the next */
 			n = n->next;
 
 			/* condition is satisfied, resume thread */
@@ -1310,11 +1315,11 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 				/* resume thread, and thread list breaks out */
 				rt_thread_resume(thread);
 
+				/* need do a scheduling */
+				need_schedule = RT_TRUE;
+
 				/* decrease suspended thread count */
 				event->parent.suspend_thread_count--;
-
-				if (thread->event_info & RT_EVENT_FLAG_CLEAR)
-					event->set &= ~thread->event_set;
 			}
 		}
 	}
@@ -1323,6 +1328,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 	rt_hw_interrupt_enable(level);
 
 	/* do a schedule */
+	if (need_schedule == RT_TRUE)
 	rt_schedule();
 
 	return RT_EOK;
@@ -1352,6 +1358,10 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 
 	/* init status */
 	status = -RT_ERROR;
+	/* get current thread */
+	thread = rt_thread_self();
+	/* reset thread error */
+	thread->error = RT_EOK;
 
 #ifdef RT_USING_HOOK
 	if (rt_object_trytake_hook != RT_NULL) rt_object_trytake_hook(&(event->parent.parent));
@@ -1369,11 +1379,6 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 	{
 		if (event->set & set) status = RT_EOK;
 	}
-
-	/* get current thread */
-	thread = rt_thread_self();
-	/* reset thread error */
-	thread->error = RT_EOK;
 
 	if (status == RT_EOK)
 	{
@@ -1418,11 +1423,15 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 			return thread->error;
 		}
 
-		/* disable interrupt */
+		/* received a event, disable interrupt to protect */
 		level = rt_hw_interrupt_disable();
 
 		/* get received event */
 		*recved = event->set;
+
+		/* clear event */
+		if (option & RT_EVENT_FLAG_CLEAR)
+			event->set &= ~set;
 	}
 
 	/* enable interrupt */
