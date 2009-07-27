@@ -10,7 +10,6 @@ Group (STM32)
 Group (finsh)
 Group (Filesystem)
 Group (LwIP)
-Group (GoAhead)
 
 File 1,1,<.\application.c><application.c>
 File 1,1,<.\board.c><board.c>
@@ -134,33 +133,6 @@ File 7,1,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c>
 File 7,1,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c>
 File 7,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
 File 7,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
-File 8,1,<..\..\net\webserver\websuemf.c><websuemf.c>
-File 8,1,<..\..\net\webserver\asp.c><asp.c>
-File 8,1,<..\..\net\webserver\balloc.c><balloc.c>
-File 8,1,<..\..\net\webserver\base64.c><base64.c>
-File 8,1,<..\..\net\webserver\default.c><default.c>
-File 8,1,<..\..\net\webserver\ejlex.c><ejlex.c>
-File 8,1,<..\..\net\webserver\ejparse.c><ejparse.c>
-File 8,1,<..\..\net\webserver\emfdb.c><emfdb.c>
-File 8,1,<..\..\net\webserver\form.c><form.c>
-File 8,1,<..\..\net\webserver\h.c><h.c>
-File 8,1,<..\..\net\webserver\handler.c><handler.c>
-File 8,1,<..\..\net\webserver\mime.c><mime.c>
-File 8,1,<..\..\net\webserver\misc.c><misc.c>
-File 8,1,<..\..\net\webserver\page.c><page.c>
-File 8,1,<..\..\net\webserver\ringq.c><ringq.c>
-File 8,1,<..\..\net\webserver\rom.c><rom.c>
-File 8,1,<..\..\net\webserver\security.c><security.c>
-File 8,1,<..\..\net\webserver\sock.c><sock.c>
-File 8,1,<..\..\net\webserver\sockGen.c><sockGen.c>
-File 8,1,<..\..\net\webserver\sym.c><sym.c>
-File 8,1,<..\..\net\webserver\uemf.c><uemf.c>
-File 8,1,<..\..\net\webserver\um.c><um.c>
-File 8,1,<..\..\net\webserver\umui.c><umui.c>
-File 8,1,<..\..\net\webserver\url.c><url.c>
-File 8,1,<..\..\net\webserver\value.c><value.c>
-File 8,1,<..\..\net\webserver\webs.c><webs.c>
-File 8,1,<..\..\net\webserver\RTT\main.c><main.c>
 
 
 Options 1,0,0  // Target 'RT-Thread/STM32'
@@ -251,27 +223,5 @@ Options 1,0,0  // Target 'RT-Thread/STM32'
  FLASH2 (Segger\JL2CM3.dll)
  FLASH3 ("" ())
  FLASH4 ()
-EndOpt
-
-Options 1,8,0  // Group 'GoAhead'
- PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- IncBld=2
- AlwaysBuild=2
- GenAsm=2
- AsmAsm=2
- PublicsOnly=2
- StopCode=11
- CustArgs ()
- LibMods ()
- ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- ADSCMISC ()
- ADSCDEFN (WEBS, UEMF, RTT, __NO_FCNTL=1,USER_MANAGEMENT_SUPPORT)
- ADSCUDEF ()
- ADSCINCD (..\..\net\webserver)
- ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- ADSAMISC ()
- ADSADEFN ()
- ADSAUDEF ()
- ADSAINCD ()
 EndOpt
 
