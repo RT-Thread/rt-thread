@@ -9,7 +9,7 @@
 #define RT_ALIGN_SIZE	4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX	256
 
 /* Tick per Second*/
 #define RT_TICK_PER_SECOND	100
@@ -55,7 +55,9 @@
 
 /* SECTION: Device System */
 /* Using Device System*/
-/* #define RT_USING_DEVICE */
+#define RT_USING_DEVICE
+#define RT_USING_UART1
+#define RT_UART_RX_BUFFER_SIZE	64
 
 /* SECTION: Console options */
 /* the buffer size of console*/
@@ -67,10 +69,6 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-
-/* SECTION: emulator options */
-/* Using QEMU or SkyEye*/
-/* #define RT_USING_EMULATOR */
 
 /* SECTION: a mini libc */
 /* Using mini libc library*/

@@ -58,44 +58,6 @@ void rt_hw_board_init()
 	T0TCR = 0x01; //enable timer0 counter
 }
 
-#ifdef RT_USING_FINSH
-extern void finsh_notify(void);
-void rt_serial_isr(int vector)
-{
-	rt_uint32_t iir;
-
-	if (U0LSR & 0x01)
-	{
-		rt_uint8_t ch;
-		
-		while (U0LSR & 0x01)
-		{
-			ch = U0RBR;
-			rt_serial_savechar(ch);
-		}
-
-		/* notify finsh shell thread */
-		finsh_notify();
-	}
-
-	/* clear interrupt source */
-	iir = U0IIR;
-
-	/* acknowledge Interrupt */
-	VICVectAddr = 0;
-}
-
-void rt_hw_finsh_init()
-{
-	/* init UART rx interrupt */
-	U0IER = 0x01;
-
-	/* install UART isr */
-	rt_hw_interrupt_install(UART0_INT, rt_serial_isr, RT_NULL);
-	rt_hw_interrupt_umask(UART0_INT);
-}
-#endif
-
 /******************************************************************************
 ** Function name:		TargetInit
 **

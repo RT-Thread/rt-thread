@@ -99,6 +99,9 @@ void rt_hw_finsh_init(void);
 #define VECT_ADDR_INDEX	0x100
 #define VECT_CNTL_INDEX 0x200
 
+#define CCLK	60000000	/* Fosc = 12MHz, M = 5 */
+#define PCLK	15000000	/* CCLK/4, use default */
+
 /******************************************************************************
 ** Function name:		TargetInit
 **
