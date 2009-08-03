@@ -342,6 +342,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	rt_size_t size;
 	rt_size_t ptr, ptr2;
 	struct heap_mem *mem, *mem2;
+	void* nmem;
 
 	/* alignment size */
 	newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
@@ -394,12 +395,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	rt_sem_release(&heap_sem);
 
 	/* expand memory */
-	mem2 = rt_malloc(newsize);
-	rt_memcpy(mem2, mem, size);
+	nmem = rt_malloc(newsize);
+	rt_memcpy(nmem, rmem, size);
 
-	rt_free(mem);
+	rt_free(rmem);
 
-	return mem2;
+	return nmem;
 }
 
 /**
