@@ -23,6 +23,8 @@ void lwip_sys_init()
 	struct ip_addr ipaddr, netmask, gw;
 
 #if LWIP_DHCP
+	rt_uint32_t mscnt = 0;
+
 	IP4_ADDR(&gw, 0,0,0,0);
 	IP4_ADDR(&ipaddr, 0,0,0,0);
 	IP4_ADDR(&netmask, 0,0,0,0);
@@ -42,7 +44,7 @@ void lwip_sys_init()
 	dhcp_start(netif_default);
 
     while (1) {
-        sleep(DHCP_FINE_TIMER_MSECS);
+        rt_thread_delay(DHCP_FINE_TIMER_MSECS);
 
         dhcp_fine_tmr();
         mscnt += DHCP_FINE_TIMER_MSECS;
