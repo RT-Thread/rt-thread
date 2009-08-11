@@ -35,12 +35,14 @@ extern void finsh_set_device(char* device);
 
 extern int  rt_application_init(void);
 
+#ifndef RT_USING_BOARD_SRAM
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
 #pragma section="HEAP"
 #else
 extern int __bss_end;
+#endif
 #endif
 
 #ifdef  DEBUG
@@ -84,6 +86,9 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
+#ifdef RT_USING_BOARD_SRAM
+	rt_system_heap_init((void*)BOARD_SRAM_BEGIN, (void*)BOARD_SRAM_END);
+#else
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20010000);
 #elif __ICCARM__
@@ -91,6 +96,7 @@ void rtthread_startup(void)
 #else
 	/* init memory system */
 	rt_system_heap_init((void*)&__bss_end, (void*)0x20010000);
+#endif
 #endif
 #endif
 

@@ -1,7 +1,7 @@
 ### uVision2 Project, (C) Keil Software
 ### Do not modify !
 
-Target (RT-Thread/STM32Sky), 0x0004 // Tools: 'ARM-ADS'
+Target (RT-Thread/STMSky), 0x0004 // Tools: 'ARM-ADS'
 
 Group (Startup)
 Group (Library)
@@ -78,7 +78,7 @@ File 5,1,<..\..\finsh\symbol.c><symbol.c>
 File 5,1,<..\..\finsh\cmd.c><cmd.c>
 
 
-Options 1,0,0  // Target 'RT-Thread/STM32Sky'
+Options 1,0,0  // Target 'RT-Thread/STMSky'
  Device (STM32F103ZE)
  Vendor (STMicroelectronics)
  Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0x8000000-0x807FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))

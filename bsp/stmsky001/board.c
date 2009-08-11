@@ -134,6 +134,32 @@ void rt_hw_timer_handler(void)
 	rt_hw_interrupt_thread_switch();
 }
 
+static void FSMC_SRAM_Init(void)
+{
+#define REG32(x)	(*(volatile unsigned long*)(x))
+
+	/* enable FSMC clock */
+	REG32(0x40021014) = 0x114;
+	
+	/* enable GPIOD, GPIOE, GPIOF and GPIOG clocks */
+	REG32(0x40021018) = 0x1e0;
+	
+	/* SRAM Data lines, NOE and NWE configuration */
+	REG32(0x40011400) = 0x44BB44BB;
+	REG32(0x40011404) = 0xBBBBBBBB;
+	REG32(0x40011800) = 0xB44444BB;
+	REG32(0x40011804) = 0xBBBBBBBB;
+	REG32(0x40011C00) = 0x44BBBBBB;
+	REG32(0x40011C04) = 0xBBBB4444;
+	REG32(0x40012000) = 0x44BBBBBB;
+	REG32(0x40012004) = 0x44444B44;
+	
+	/* FSMC Configuration (enable FSMC Bank1_SRAM Bank) */
+	REG32(0xA0000010) = 0x00001011;
+	REG32(0xA0000014) = 0x00000200;
+}
+
+
 /**
  * This function will initial STM32 board.
  */
@@ -147,6 +173,9 @@ void rt_hw_board_init()
 	
 	/* Configure the SysTick */
 	SysTick_Configuration();
+	
+	/* Configure SRAM on the board */
+	FSMC_SRAM_Init();
 	
 	rt_hw_console_init();
 }
