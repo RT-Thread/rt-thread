@@ -183,6 +183,7 @@ rt_hw_interrupt_thread_switch	PROC
 
 _no_switch
 	BX		lr
+	NOP
 
 	ENDP
 
