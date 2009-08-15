@@ -22,10 +22,12 @@
 rt_hw_hard_fault	PROC
 	EXPORT rt_hw_hard_fault
 
-	; get current context 
+	; get current context
 	MRS     r0, psp                 ; get fault thread stack pointer
 	BL		rt_hw_hard_fault_exception
 
 	ORR     lr, lr, #0x04
 	BX		lr
-	
+    ENDP
+
+    END
