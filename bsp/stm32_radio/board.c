@@ -25,8 +25,6 @@ static void rt_hw_console_init(void);
 
 /*@{*/
 
-ErrorStatus HSEStartUpStatus;
-
 /*******************************************************************************
  * Function Name  : RCC_Configuration
  * Description    : Configures the different system clocks.
@@ -36,6 +34,8 @@ ErrorStatus HSEStartUpStatus;
  *******************************************************************************/
 void RCC_Configuration(void)
 {
+	ErrorStatus HSEStartUpStatus;
+
 	/* RCC system reset(for debug purpose) */
 	RCC_DeInit();
 
@@ -134,6 +134,114 @@ void rt_hw_timer_handler(void)
 	rt_hw_interrupt_thread_switch();
 }
 
+
+/*******************************************************************************
+* Function Name  : LCD_CtrlLinesConfig
+* Description    : Configures LCD Control lines (FSMC Pins) in alternate function
+                   Push-Pull mode.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void LCD_CtrlLinesConfig(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	/* Enable FSMC, GPIOD, GPIOE, GPIOF, GPIOG and AFIO clocks */
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE |
+		RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG |
+		RCC_APB2Periph_AFIO, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	// GPIO_Init(GPIOA, &GPIO_InitStructure);
+	// GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOC, GPIO_Pin_6);
+
+	/* Set PD.00(D2), PD.01(D3), PD.04(NOE), PD.05(NWE), PD.08(D13), PD.09(D14),
+	 PD.10(D15), PD.14(D0), PD.15(D1) as alternate 
+	 function push pull */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 |
+	                            GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_14 | 
+	                            GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+	/* Set PE.07(D4), PE.08(D5), PE.09(D6), PE.10(D7), PE.11(D8), PE.12(D9), PE.13(D10),
+	 PE.14(D11), PE.15(D12) as alternate function push pull */
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | 
+	                            GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | 
+	                            GPIO_Pin_15;
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
+
+	// GPIO_WriteBit(GPIOE, GPIO_Pin_6, Bit_SET);
+	/* Set PF.00(A0 (RS)) as alternate function push pull */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_Init(GPIOF, &GPIO_InitStructure);
+	
+	/* Set PG.12(NE4 (LCD/CS)) as alternate function push pull - CE3(LCD /CS) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_Init(GPIOG, &GPIO_InitStructure);
+}
+
+/*******************************************************************************
+* Function Name  : LCD_FSMCConfig
+* Description    : Configures the Parallel interface (FSMC) for LCD(Parallel mode)
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void LCD_FSMCConfig(void)
+{
+	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
+	FSMC_NORSRAMTimingInitTypeDef  p;
+	
+	/*-- FSMC Configuration ------------------------------------------------------*/
+	/*----------------------- SRAM Bank 4 ----------------------------------------*/
+	/* FSMC_Bank1_NORSRAM4 configuration */
+	p.FSMC_AddressSetupTime = 0;
+	p.FSMC_AddressHoldTime = 0;
+	p.FSMC_DataSetupTime = 2;
+	p.FSMC_BusTurnAroundDuration = 0;
+	p.FSMC_CLKDivision = 0;
+	p.FSMC_DataLatency = 0;
+	p.FSMC_AccessMode = FSMC_AccessMode_A;
+	
+	/* Color LCD configuration ------------------------------------
+	 LCD configured as follow:
+	    - Data/Address MUX = Disable
+	    - Memory Type = SRAM
+	    - Data Width = 16bit
+	    - Write Operation = Enable
+	    - Extended Mode = Enable
+	    - Asynchronous Wait = Disable */
+	FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM4;
+	FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
+	FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
+	FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
+	FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
+	FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
+	// FSMC_NORSRAMInitStructure.FSMC_AsyncWait = FSMC_AsyncWait_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
+	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
+	
+	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);  
+	
+	/* BANK 4 (of NOR/SRAM Bank 1~4) is enabled */
+	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM4, ENABLE);
+}
+
 /*******************************************************************************
 * Function Name  : FSMC_SRAM_Init
 * Description    : Configures the FSMC and GPIOs to interface with the SRAM memory.
@@ -145,164 +253,30 @@ void rt_hw_timer_handler(void)
 *******************************************************************************/
 void FSMC_SRAM_Init(void)
 {
-  FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
-  FSMC_NORSRAMTimingInitTypeDef  p;
-  GPIO_InitTypeDef GPIO_InitStructure; 
-  
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOG | RCC_APB2Periph_GPIOE |
-                         RCC_APB2Periph_GPIOF, ENABLE);
-  
-/*-- GPIO Configuration ------------------------------------------------------*/
-  /* SRAM Data lines configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | GPIO_Pin_9 |
-                                GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOD, &GPIO_InitStructure); 
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
-                                GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | 
-                                GPIO_Pin_15;
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
-  
-  /* SRAM Address lines configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | 
-                                GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 | 
-                                GPIO_Pin_14 | GPIO_Pin_15;
-  GPIO_Init(GPIOF, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | 
-                                GPIO_Pin_4 | GPIO_Pin_5;
-  GPIO_Init(GPIOG, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13; 
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-   
-  /* NOE and NWE configuration */  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 |GPIO_Pin_5;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-  
-  /* NE3 configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10; 
-  GPIO_Init(GPIOG, &GPIO_InitStructure);
-  
-  /* NBL0, NBL1 configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1; 
-  GPIO_Init(GPIOE, &GPIO_InitStructure); 
-  
-/*-- FSMC Configuration ------------------------------------------------------*/
-  p.FSMC_AddressSetupTime = 0;
-  p.FSMC_AddressHoldTime = 0;
-  p.FSMC_DataSetupTime = 2;
-  p.FSMC_BusTurnAroundDuration = 0;
-  p.FSMC_CLKDivision = 0;
-  p.FSMC_DataLatency = 0;
-  p.FSMC_AccessMode = FSMC_AccessMode_A;
+#define REG32(x)	(*(volatile unsigned long*)(x))
 
-  FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM3;
-  FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
-  FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
-  FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
-  FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
-  FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
-  FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
-
-  FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure); 
-
-  /* Enable FSMC Bank1_SRAM Bank */
-  FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM3, ENABLE);  
-}
-
-/*******************************************************************************
-* Function Name  : FSMC_NOR_Init
-* Description    : Configures the FSMC and GPIOs to interface with the NOR memory.
-*                  This function must be called before any write/read operation
-*                  on the NOR.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void FSMC_NOR_Init(void)
-{
-  FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
-  FSMC_NORSRAMTimingInitTypeDef  p;
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE | 
-                         RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG, ENABLE);
-
-  /*-- GPIO Configuration ------------------------------------------------------*/
-  /* NOR Data lines configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | GPIO_Pin_9 |
-                                GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
-                                GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 |
-                                GPIO_Pin_14 | GPIO_Pin_15;
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-  /* NOR Address lines configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
-                                GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 |
-                                GPIO_Pin_14 | GPIO_Pin_15;
-  GPIO_Init(GPIOF, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 |
-                                GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;                            
-  GPIO_Init(GPIOG, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6;
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-  /* NOE and NWE configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  /* NE2 configuration */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-  GPIO_Init(GPIOG, &GPIO_InitStructure);
-
-  /*-- FSMC Configuration ----------------------------------------------------*/
-  p.FSMC_AddressSetupTime = 0x03;
-  p.FSMC_AddressHoldTime = 0x00;
-  p.FSMC_DataSetupTime = 0x04;
-  p.FSMC_BusTurnAroundDuration = 0x00;
-  p.FSMC_CLKDivision = 0x00;
-  p.FSMC_DataLatency = 0x00;
-  p.FSMC_AccessMode = FSMC_AccessMode_B;
-
-  FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM2;
-  FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_NOR;
-  FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
-  FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
-  FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
-  FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
-  FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
-  FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
-
-  FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
-
-  /* Enable FSMC Bank1_NOR Bank */
-  FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM2, ENABLE);
+	/* enable FSMC clock */
+	REG32(0x40021014) = 0x114;
+	
+	/* enable GPIOD, GPIOE, GPIOF and GPIOG clocks */
+	REG32(0x40021018) = 0x1e0;
+	
+	/* SRAM Data lines, NOE and NWE configuration */
+	REG32(0x40011400) = 0x44BB44BB;
+	REG32(0x40011404) = 0xBBBBBBBB;
+	REG32(0x40011800) = 0xB44444BB;
+	REG32(0x40011804) = 0xBBBBBBBB;
+	REG32(0x40011C00) = 0x44BBBBBB;
+	REG32(0x40011C04) = 0xBBBB4444;
+	REG32(0x40012000) = 0x44BBBBBB;
+	REG32(0x40012004) = 0x44444B44;
+	
+	/* FSMC Configuration (enable FSMC Bank1_SRAM Bank) */
+	REG32(0xA0000010) = 0x00001011;
+	REG32(0xA0000014) = 0x00000200;	
+	
+	LCD_CtrlLinesConfig();
+	LCD_FSMCConfig();
 }
 
 /**
@@ -318,7 +292,7 @@ void rt_hw_board_init()
 	
 	/* SRAM init */
 	FSMC_SRAM_Init();
-	
+
 	/* Configure the SysTick */
 	SysTick_Configuration();
 	

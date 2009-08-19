@@ -43,6 +43,8 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
+extern rt_err_t wm8753_hw_init(void);
+
 #ifdef  DEBUG
 /*******************************************************************************
 * Function Name  : assert_failed
@@ -84,6 +86,9 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
+#ifdef RT_USING_SRAM
+	rt_system_heap_init((void*)0x68000000, (void*)0x68080000);
+#else
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20010000);
 #elif __ICCARM__
@@ -91,6 +96,7 @@ void rtthread_startup(void)
 #else
 	/* init memory system */
 	rt_system_heap_init((void*)&__bss_end, (void*)0x20010000);
+#endif
 #endif
 #endif
 
@@ -105,6 +111,7 @@ void rtthread_startup(void)
 #endif
 
 	rt_hw_rtc_init();
+	wm8753_hw_init();
 
 	/* init hardware serial device */
 	rt_hw_usart_init();

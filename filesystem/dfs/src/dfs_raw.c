@@ -38,7 +38,11 @@ int fd_new(void)
 	rt_sem_take(fd_table_lock, RT_WAITING_FOREVER);
 
 	/* find an empty fd entry */
+#ifdef RT_USING_STDIO
 	for (idx = 3; idx < DFS_FD_MAX && fd_table[idx].ref_count > 0; idx++);
+#else
+	for (idx = 0; idx < DFS_FD_MAX && fd_table[idx].ref_count > 0; idx++);
+#endif
 
 	/* can't find an empty fd entry */
 	if (idx == DFS_FD_MAX)
@@ -69,7 +73,11 @@ struct dfs_fd* fd_get(int fd)
 {
 	struct dfs_fd* d;
 
+#ifdef RT_USING_STDIO
 	if ( fd < 3 || fd > DFS_FD_MAX ) return RT_NULL;
+#else
+	if ( fd < 0 || fd > DFS_FD_MAX ) return RT_NULL;
+#endif
 
 	d = &fd_table[fd];
 

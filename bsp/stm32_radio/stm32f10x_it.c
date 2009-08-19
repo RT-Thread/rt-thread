@@ -361,6 +361,25 @@ void DMA1_Channel4_IRQHandler(void)
 *******************************************************************************/
 void DMA1_Channel5_IRQHandler(void)
 {
+	extern void wm8753_dma_isr(void);
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+	if (DMA_GetITStatus(DMA1_IT_TC5))
+	{
+		/* clear DMA flag */
+		DMA_ClearFlag(DMA1_FLAG_TC5 | DMA1_FLAG_TE5);
+
+		// rt_kprintf("DMA\n");
+		/* transmission complete, invoke serial dma tx isr */
+		wm8753_dma_isr();
+	}
+	
+	/* leave interrupt */
+	rt_interrupt_leave();
+	rt_hw_interrupt_thread_switch();
+
 }
 
 /*******************************************************************************
@@ -610,6 +629,16 @@ void SPI1_IRQHandler(void)
 *******************************************************************************/
 void SPI2_IRQHandler(void)
 {
+	extern void wm8753_isr(void);
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+	wm8753_isr();
+
+	/* leave interrupt */
+	rt_interrupt_leave();
+	rt_hw_interrupt_thread_switch();
 }
 
 /*******************************************************************************

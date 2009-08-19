@@ -189,6 +189,13 @@ void finsh_thread_entry(void* parameter)
 						line[pos] = ';';
 						break;
 					}
+					else if (line[pos] == 0x7f) /* backspace */
+					{
+						line[pos] = 0;
+						pos --;
+						if (pos < 0) pos = 0;
+						continue;
+					}
 					pos ++;
 				}
 			}

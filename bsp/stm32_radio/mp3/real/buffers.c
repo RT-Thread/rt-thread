@@ -50,7 +50,7 @@
 
 #include "coder.h"
 
-#define static_buffers // KJ - Changes to Static buffers, Can run with dynamic buffers.
+#define static_buffers
 #ifdef static_buffers
 MP3DecInfo  mp3DecInfo;     //  0x7f0 =  2032 
 SubbandInfo sbi;            // 0x2204 =  8708
@@ -61,7 +61,9 @@ ScaleFactorInfo sfi;        //  0x124 =   292
 SideInfo si;                //  0x148 =   328
 FrameHeader fh;             //   0x38 =    56
 #else
-#include "stdlib.h" // J.Sz. 21/04/2006
+#include <rtthread.h>
+#define malloc rt_malloc
+#define free rt_free
 #endif
 
 /**************************************************************************************
@@ -179,7 +181,6 @@ MP3DecInfo *AllocateBuffers(void)
 
 #endif
 	return mp3DecInfo_pointer;
-
 }
 
 

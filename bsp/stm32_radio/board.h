@@ -15,6 +15,8 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#define RT_USING_SRAM
+
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
 void rt_hw_board_init(void);

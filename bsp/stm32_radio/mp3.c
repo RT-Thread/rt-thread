@@ -1,68 +1,153 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 #include <mp3/pub/mp3dec.h>
-#include "dac.h"
 
-static HMP3Decoder hMP3Decoder;
-static MP3FrameInfo mp3FrameInfo;
-static unsigned char *read_ptr;
-static int bytes_left=0, bytes_leftBeforeDecoding=0, err, offset;
-static int nFrames = 0;
-static unsigned char *mp3buf;
-static unsigned int mp3buf_size;
-static unsigned char allocated = 0;
+#define MP3_AUDIO_BUF_SZ    4096
+#define MP3_DECODE_MP_CNT   2
+#define MP3_DECODE_MP_SZ    2560
 
-static void mp3_reset()
+#define STATIC_MEMORY_POOL
+#ifdef STATIC_MEMORY_POOL
+static rt_uint8_t mempool[(MP3_DECODE_MP_SZ * 2 + 4)* 2]; // 5k x 2
+static struct rt_mempool _mp;
+#endif
+
+struct mp3_decoder
 {
-	read_ptr = RT_NULL;
-	bytes_leftBeforeDecoding = bytes_left = 0;
-	nFrames = 0;
+    /* mp3 information */
+    HMP3Decoder decoder;
+    MP3FrameInfo frame_info;
+    rt_uint32_t frames;
+
+    /* mp3 file descriptor */
+    int fd;
+
+    /* mp3 read session */
+    rt_uint8_t *read_buffer;
+    rt_uint8_t* read_ptr;
+    rt_int32_t read_offset;
+    rt_uint32_t bytes_left, bytes_left_before_decoding;
+
+    /* mp3 decode memory pool */
+    rt_mp_t mp;
+
+	/* audio device */
+	rt_device_t snd_device;
+};
+
+static rt_err_t mp3_decoder_tx_done(rt_device_t dev, void *buffer)
+{
+	/* release memory block to memory pool */
+	rt_mp_free(buffer);
+
+	return RT_EOK;
 }
 
-void mp3_init(rt_uint8_t *buffer, rt_uint32_t buffer_size)
+rt_uint8_t mp3_fd_buffer[MP3_AUDIO_BUF_SZ];
+void mp3_decoder_init(struct mp3_decoder* decoder)
 {
-	mp3buf = buffer;
-	mp3buf_size = buffer_size;
-	mp3_reset();
+    RT_ASSERT(decoder != RT_NULL);
+
+	/* init read session */
+	decoder->read_ptr = RT_NULL;
+	decoder->bytes_left_before_decoding = decoder->bytes_left = 0;
+	decoder->frames = 0;
+
+    // decoder->read_buffer = rt_malloc(MP3_AUDIO_BUF_SZ);
+    decoder->read_buffer = &mp3_fd_buffer[0];
+	if (decoder->read_buffer == RT_NULL) return;
+
+	/* create memory pool for decoding */
+#ifdef STATIC_MEMORY_POOL
+	rt_mp_init(&_mp, "mp3", &mempool[0], sizeof(mempool), MP3_DECODE_MP_SZ * 2);
+	decoder->mp = &_mp;
+#else
+	decoder->mp = rt_mp_create("mp3dec", MP3_DECODE_MP_CNT, MP3_DECODE_MP_SZ * 2);
+#endif
+
+    decoder->decoder = MP3InitDecoder();
+
+	/* open audio device */
+	decoder->snd_device = rt_device_find("snd");
+	if (decoder->snd_device != RT_NULL)
+	{
+		/* set tx complete call back function */
+		rt_device_set_tx_complete(decoder->snd_device, mp3_decoder_tx_done);
+		rt_device_open(decoder->snd_device, RT_DEVICE_OFLAG_WRONLY);
+	}
 }
 
-void mp3_alloc()
+void mp3_decoder_detach(struct mp3_decoder* decoder)
 {
-	if (!allocated) hMP3Decoder = MP3InitDecoder();
-	allocated = 1;
-}
+    RT_ASSERT(decoder != RT_NULL);
 
-void mp3_free()
-{
-	if (allocated) MP3FreeDecoder(hMP3Decoder);
-	allocated = 0;
-}
-
-int mp3_refill_inbuffer(int fd)
-{
-  rt_uint16_t bytes_read;
-  int bytes_to_read;
-  
-  // rt_kprintf("left: %d. refilling inbuffer...\n", bytes_left);
-  if (bytes_left > 0)
-  {
-    	// after fseeking backwards the FAT has to be read from the beginning -> S L O W
-		// assert(f_lseek(mp3file, mp3file->fptr - bytes_leftBeforeDecoding) == FR_OK);
-		// better: move unused rest of buffer to the start
-		// no overlap as long as (1024 <= mp3buf_size/2), so no need to use memove
-		rt_memcpy(mp3buf, read_ptr, bytes_left);
-  }
-  
-  bytes_to_read = mp3buf_size - bytes_left;
-  
-	bytes_read = read(fd, (char *)mp3buf + bytes_left, bytes_to_read);
+	/* close audio device */
+	if (decoder->snd_device != RT_NULL)
+		rt_device_close(decoder->snd_device);
 	
+	/* release mp3 decoder */
+    MP3FreeDecoder(decoder->decoder);
+
+#ifdef STATIC_MEMORY_POOL
+	rt_mp_detach(decoder->mp);
+#else
+	/* delete memory pool for decoding */
+	rt_mp_delete(decoder->mp);
+#endif
+}
+
+struct mp3_decoder* mp3_decoder_create()
+{
+    struct mp3_decoder* decoder;
+
+	/* allocate object */
+    decoder = (struct mp3_decoder*) rt_malloc (sizeof(struct mp3_decoder));
+    if (decoder != RT_NULL)
+    {
+        mp3_decoder_init(decoder);
+    }
+
+    return decoder;
+}
+
+void mp3_decoder_delete(struct mp3_decoder* decoder)
+{
+    RT_ASSERT(decoder != RT_NULL);
+
+	/* de-init mp3 decoder object */
+	mp3_decoder_detach(decoder);
+	/* release this object */
+    rt_free(decoder);
+}
+
+rt_uint16_t is_first = 1;
+rt_uint32_t current_offset = 0;
+static rt_int32_t mp3_decoder_fill_buffer(struct mp3_decoder* decoder)
+{
+	rt_size_t bytes_read;
+	rt_size_t bytes_to_read;
+
+	// rt_kprintf("left: %d. refilling inbuffer...\n", decoder->bytes_left);
+	if (decoder->bytes_left > 0)
+	{
+		// better: move unused rest of buffer to the start
+		rt_memmove(decoder->read_buffer, decoder->read_ptr, decoder->bytes_left);
+	}
+
+	bytes_to_read = (MP3_AUDIO_BUF_SZ - decoder->bytes_left) & ~(512 - 1);
+	// rt_kprintf("read bytes: %d\n", bytes_to_read);
+	
+	if (is_first) is_first = 0;
+	else current_offset += MP3_AUDIO_BUF_SZ - decoder->bytes_left;
+
+	bytes_read = read(decoder->fd, (char *)(decoder->read_buffer + decoder->bytes_left),
+        bytes_to_read);
+
 	if (bytes_read == bytes_to_read)
 	{
-		read_ptr = mp3buf;
-		offset = 0;
-		bytes_left = mp3buf_size;
-		// rt_kprintf("ok. read: %d. left: %d\n", bytes_read, bytes_left);
+		decoder->read_ptr = decoder->read_buffer;
+		decoder->read_offset = 0;
+		decoder->bytes_left = decoder->bytes_left + bytes_to_read;
 		return 0;
 	}
 	else
@@ -72,115 +157,147 @@ int mp3_refill_inbuffer(int fd)
 	}
 }
 
-int mp3_process(int fd)
+int mp3_decoder_run(struct mp3_decoder* decoder)
 {
-	int writeable_buffer;
-	
-	if (read_ptr == RT_NULL)
+	int err;
+	rt_uint16_t* buffer;
+
+    RT_ASSERT(decoder != RT_NULL);
+
+	if ((decoder->read_ptr == RT_NULL) || decoder->bytes_left < 2*MAINBUF_SIZE)
 	{
-		if(mp3_refill_inbuffer(fd) != 0)
-		  return -1;
+		if(mp3_decoder_fill_buffer(decoder) != 0)
+			return -1;
 	}
 
-	offset = MP3FindSyncWord(read_ptr, bytes_left);
-	if (offset < 0)
+	// rt_kprintf("read offset: 0x%08x\n", decoder->read_ptr - decoder->read_buffer);
+	decoder->read_offset = MP3FindSyncWord(decoder->read_ptr, decoder->bytes_left);
+	if (decoder->read_offset < 0)
 	{
 		rt_kprintf("Error: MP3FindSyncWord returned <0");
-		
-		if(mp3_refill_inbuffer(fd) != 0)
-		  return -1;
+
+		if(mp3_decoder_fill_buffer(decoder) != 0)
+			return -1;
 	}
+	// rt_kprintf("sync position: %x\n", decoder->read_offset);
 
-	read_ptr += offset;
-	bytes_left -= offset;
-	bytes_leftBeforeDecoding = bytes_left;
+	decoder->read_ptr += decoder->read_offset;
+	decoder->bytes_left -= decoder->read_offset;
+	decoder->bytes_left_before_decoding = decoder->bytes_left;
 
+#if 0
 	// check if this is really a valid frame
 	// (the decoder does not seem to calculate CRC, so make some plausibility checks)
-	if (MP3GetNextFrameInfo(hMP3Decoder, &mp3FrameInfo, read_ptr) == 0 &&
-		mp3FrameInfo.nChans == 2 &&
-		mp3FrameInfo.version == 0)
+	if (!(MP3GetNextFrameInfo(decoder->decoder, &decoder->frame_info, decoder->read_ptr) == 0 &&
+			decoder->frame_info.nChans == 2 &&
+			decoder->frame_info.version == 0))
 	{
-		// rt_kprintf("Found a frame at offset %x\n", offset + read_ptr - mp3buf + mp3file->fptr);
-	}
-	else
-	{
-		rt_kprintf("this is no valid frame\n");
+		rt_kprintf("this is an invalid frame\n");
 		// advance data pointer
 		// TODO: handle bytes_left == 0
-		RT_ASSERT(bytes_left > 0);
-		bytes_left -= 1;
-		read_ptr += 1;
+		RT_ASSERT(decoder->bytes_left > 0);
+
+		decoder->bytes_left --;
+		decoder->read_ptr ++;
 		return 0;
 	}
 
-	if (bytes_left < 1024) {
-		if(mp3_refill_inbuffer(fd) != 0)
-		  return -1;
-	}
-
-	// rt_kprintf("bytes_leftBeforeDecoding: %i\n", bytes_leftBeforeDecoding);
-
-	writeable_buffer = dac_get_writeable_buffer();
-	if (writeable_buffer == -1) {
-		return 0;
-	}
-
-	// rt_kprintf("wb %i\n", writeable_buffer);
-
-	err = MP3Decode(hMP3Decoder, &read_ptr, &bytes_left, dac_buffer[writeable_buffer], 0);
-
-	nFrames++;
-	
-	if (err)
+	if (decoder->bytes_left < 1024)
 	{
- 		switch (err)
+		if(mp3_decoder_fill_buffer(decoder) != 0)
+			return -1;
+	}
+#endif
+
+    /* get a decoder buffer */
+    buffer = (rt_uint16_t*)rt_mp_alloc(decoder->mp, RT_WAITING_FOREVER);
+
+	// rt_kprintf("bytes left before decode: %d\n", decoder->bytes_left);
+
+	err = MP3Decode(decoder->decoder, &decoder->read_ptr,
+        (int*)&decoder->bytes_left, (short*)buffer, 0);
+
+	// rt_kprintf("bytes left after decode: %d\n", decoder->bytes_left);
+	
+	decoder->frames++;
+
+	if (err != ERR_MP3_NONE)
+	{
+		switch (err)
 		{
 		case ERR_MP3_INDATA_UNDERFLOW:
-			rt_kprintf("ERR_MP3_INDATA_UNDERFLOW");
-      		bytes_left = 0;
-			if(mp3_refill_inbuffer(fd) != 0)
-  		  return -1;
+			rt_kprintf("ERR_MP3_INDATA_UNDERFLOW\n");
+			decoder->bytes_left = 0;
+			if(mp3_decoder_fill_buffer(decoder) != 0)
+				return -1;
 			break;
 
- 		case ERR_MP3_MAINDATA_UNDERFLOW:
- 			/* do nothing - next call to decode will provide more mainData */
- 			rt_kprintf("ERR_MP3_MAINDATA_UNDERFLOW");
- 			break;
+		case ERR_MP3_MAINDATA_UNDERFLOW:
+			/* do nothing - next call to decode will provide more mainData */
+			rt_kprintf("ERR_MP3_MAINDATA_UNDERFLOW\n");
+			break;
 
- 		default:
- 			rt_kprintf("unknown error: %i\n", err);
- 			// skip this frame
- 			if (bytes_left > 0)
+		case ERR_MP3_INVALID_FRAMEHEADER:
+			rt_kprintf("ERR_MP3_INVALID_FRAMEHEADER\n");
+			rt_kprintf("current offset: 0x%08x, frames: %d\n", current_offset, decoder->frames);
+			/* dump sector */
 			{
- 				bytes_left --;
- 				read_ptr ++;
- 			}
+				rt_uint8_t *ptr;
+				rt_size_t   size = 0, col = 0;
+
+				ptr = decoder->read_buffer;
+				rt_kprintf("   00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f\n");
+				rt_kprintf("00 ");
+				while (size ++ < 512)
+				{
+					rt_kprintf("%02x ", *ptr ++);
+					if (size % 16 == 0) rt_kprintf("\n%02x ", ++col);
+				}
+			}
+			RT_ASSERT(0);
+			// break;
+
+		case ERR_MP3_INVALID_HUFFCODES:
+			rt_kprintf("ERR_MP3_INVALID_HUFFCODES\n");
+			break;
+
+		default:
+			rt_kprintf("unknown error: %i\n", err);
+			// skip this frame
+			if (decoder->bytes_left > 0)
+			{
+				decoder->bytes_left --;
+				decoder->read_ptr ++;
+			}
 			else
 			{
- 				// TODO
- 				RT_ASSERT(0);
- 			}
- 			break;
- 		}
+				// TODO
+				RT_ASSERT(0);
+			}
+			break;
+		}
 
-		dac_buffer_size[writeable_buffer] = 0;
+		/* release this memory block */
+		rt_mp_free(buffer);
 	}
 	else
 	{
 		/* no error */
-		MP3GetLastFrameInfo(hMP3Decoder, &mp3FrameInfo);
-		// rt_kprintf("Bitrate: %i\r\n", mp3FrameInfo.bitrate);
-		// rt_kprintf("%i samples\n", mp3FrameInfo.outputSamps);
+		MP3GetLastFrameInfo(decoder->decoder, &decoder->frame_info);
 
-		dac_buffer_size[writeable_buffer] = mp3FrameInfo.outputSamps;
+// #ifdef MP3_DECODER_TRACE
+		rt_kprintf("Bitrate: %i\n", decoder->frame_info.bitrate);
+		rt_kprintf("%i samples\n", decoder->frame_info.outputSamps);
 
-		// rt_kprintf("%lu Hz, %i kbps\n", mp3FrameInfo.samprate, mp3FrameInfo.bitrate/1000);
+		rt_kprintf("%lu Hz, %i kbps\n", decoder->frame_info.samprate,
+            decoder->frame_info.bitrate/1000);
+// #endif
 
-		if (dac_set_srate(mp3FrameInfo.samprate) != 0) {
-			rt_kprintf("unsupported sample rate: %lu\n", mp3FrameInfo.samprate);
-			return -1;
-		}
+        /* set sample rate */
+
+		/* write to sound device */
+		rt_device_write(decoder->snd_device, 0, buffer, decoder->frame_info.outputSamps * 2);
+		// rt_mp_free(buffer);
 	}
 
 	return 0;
@@ -190,24 +307,21 @@ int mp3_process(int fd)
 void mp3(char* filename)
 {
 	int fd;
-	rt_uint8_t *mp3_buffer;
-	
-	list_date();
-	
-	dac_init();
-	
-	mp3_buffer = rt_malloc(2048);
-	mp3_init(mp3_buffer, 2048);
-	mp3_alloc();
+	struct mp3_decoder* decoder;
 	
 	fd = open(filename, O_RDONLY, 0);
 	if (fd >= 0)
 	{
-		while (mp3_process(fd) == 0);
-		
-		close(fd);
+		decoder = mp3_decoder_create();
+		if (decoder != RT_NULL)
+		{
+			decoder->fd = fd;
+			while (mp3_decoder_run(decoder) != -1);
+			close(fd);
+			
+			/* delete decoder object */
+			mp3_decoder_delete(decoder);
+		}
 	}
-	
-	list_date();
 }
 FINSH_FUNCTION_EXPORT(mp3, mp3 decode test)
