@@ -27,10 +27,10 @@ static void rt_serial_enable_dma(DMA_Channel_TypeDef* dma_channel,
  *
  * @return the read char
  */
-char rt_serial_getc(struct stm32_serial_device* uart)
+int rt_serial_getc(struct stm32_serial_device* uart)
 {
 	rt_base_t level;
-	char ch = 0;
+	int ch = -1;
 	
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
