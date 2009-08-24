@@ -174,7 +174,7 @@ static void I2S_Configuration(void)
 	I2S_InitTypeDef I2S_InitStructure;
 
 	/* I2S peripheral configuration */
-	I2S_InitStructure.I2S_Standard = I2S_Standard_LSB;
+	I2S_InitStructure.I2S_Standard = I2S_Standard_Phillips;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Disable;
 	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq_44k;
@@ -346,7 +346,7 @@ static rt_size_t wm8753_write (rt_device_t dev, rt_off_t pos, const void* buffer
 	node->data_ptr = (rt_uint16_t*)buffer;
 	node->data_size = size >> 1; /* size is byte unit, convert to half word unit */
 
-// #if 0
+#if 0
 	{
 		/* sound patch */
 		rt_uint32_t index;
@@ -355,7 +355,7 @@ static rt_size_t wm8753_write (rt_device_t dev, rt_off_t pos, const void* buffer
 			((rt_int16_t*)(node->data_ptr))[index] = (rt_int16_t)(node->data_ptr[index] + 0x8000);
 		}
 	}
-// #endif
+#endif
 
 	next_index = device->read_index + 1;
 	if (next_index >= DATA_NODE_MAX) next_index = 0;
