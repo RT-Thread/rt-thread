@@ -29,7 +29,6 @@
 #include "wmafixed.h"
 #include "wmabitstream.h"
 
-
 #define VLCBITS 7       /*7 is the lowest without glitching*/
 #define VLCMAX ((22+VLCBITS-1)/VLCBITS)
 
@@ -39,15 +38,13 @@
 #define HGAINVLCBITS 9
 #define HGAINMAX ((13+HGAINVLCBITS-1)/HGAINVLCBITS)
 
-
 typedef struct CoefVLCTable
 {
     int n; /* total number of codes */
     const uint32_t *huffcodes; /* VLC bit values */
     const uint8_t *huffbits;   /* VLC bit size */
     const uint16_t *levels; /* table to build run/level tables */
-}
-CoefVLCTable;
+} CoefVLCTable;
 
 static void wma_lsp_to_curve_init(WMADecodeContext *s, int frame_len);
 
@@ -74,11 +71,7 @@ VLC_TYPE vlcbuf2[VLCBUF2SIZE][2];
 VLC_TYPE vlcbuf3[VLCBUF3SIZE][2];
 VLC_TYPE vlcbuf4[VLCBUF4SIZE][2];
 
-
-
-#include "wmadata.h" // PJJ
-
-
+#include "wmadata.h"
 
 /*
  * Helper functions for wma_window.
@@ -273,8 +266,6 @@ static inline void vector_fmul_reverse(fixed32 *dst, const fixed32 *src0, const 
  }
 
 
-
-
 /* XXX: use same run/length optimization as mpeg decoders */
 static void init_coef_vlc(VLC *vlc,
                           uint16_t **prun_table, uint16_t **plevel_table,
@@ -287,7 +278,6 @@ static void init_coef_vlc(VLC *vlc,
     uint16_t *run_table, *level_table;
     const uint16_t *p;
     int i, l, j, level;
-
 
     init_vlc(vlc, VLCBITS, n, table_bits, 1, 1, table_codes, 4, 4, 0);
 
@@ -647,7 +637,6 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
 
         }
         s->windows[i] = window;
-
     }
 
     s->reset_block_lengths = 1;
@@ -668,19 +657,6 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
                 noisetable_exp[i] = noisetable_exp[i]<< 1;
             s->noise_table = noisetable_exp;
         }
-#if 0
-        {
-            unsigned int seed;
-            fixed32 norm;
-            seed = 1;
-            norm = 0;   // PJJ: near as makes any diff to 0!
-            for (i=0;i<NOISE_TAB_SIZE;++i)
-            {
-                seed = seed * 314159 + 1;
-                s->noise_table[i] = itofix32((int)seed) * norm;
-            }
-        }
-#endif
 
          s->hgain_vlc.table = vlcbuf4;
          s->hgain_vlc.table_allocated = VLCBUF4SIZE;
@@ -1454,7 +1430,6 @@ static int wma_decode_frame(WMADecodeContext *s, int32_t *samples)
         ret = wma_decode_block(s, samples);
         if (ret < 0)
         {
-
             DEBUGF("wma_decode_block failed with code %d\n", ret);
             return -1;
         }
@@ -1524,7 +1499,6 @@ int wma_decode_superframe_init(WMADecodeContext* s,
 /* Decode a single frame in the current superframe - return -1 if
    there was a decoding error, or the number of samples decoded.
 */
-
 int wma_decode_superframe_frame(WMADecodeContext* s,
                                 int32_t* samples, /*output*/
                                 const uint8_t *buf,  /*input*/
@@ -1616,4 +1590,3 @@ fail:
     s->last_superframe_len = 0;
     return -1;
 }
-

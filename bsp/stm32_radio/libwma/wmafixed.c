@@ -65,18 +65,13 @@ fixed64 Fixed32To64(fixed32 x)
 
 /*
     Not performance senstitive code here
-
 */
-
-
 fixed64 fixmul64byfixed(fixed64 x, fixed32 y)
 {
-
     //return x * y;
      return (x * y);
  // return (fixed64) fixmul32(Fixed32From64(x),y);
 }
-
 
 fixed32 fixdiv32(fixed32 x, fixed32 y)
 {
@@ -104,9 +99,8 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
     return (fixed64)(temp / y);
 }
 
- fixed32 fixsqrt32(fixed32 x)
+fixed32 fixsqrt32(fixed32 x)
 {
-
     unsigned long r = 0, s, v = (unsigned long)x;
 
 #define STEP(k) s = r + (1 << k * 2); r >>= 1; \
@@ -131,8 +125,6 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
 
     return (fixed32)(r << (PRECISION / 2));
 }
-
-
 
 /* Inverse gain of circular cordic rotation in s0.31 format. */
 static const long cordic_circular_gain = 0xb2458939; /* 0.607252929 */
@@ -175,10 +167,8 @@ static const unsigned long atan_table[] = {
 
 
 /*
-
     Below here functions do not use standard fixed precision!
 */
-
 
 /**
  * Implements sin and cos using CORDIC rotation.
@@ -239,5 +229,3 @@ long fsincos(unsigned long phase, fixed32 *cos)
 
     return y;
 }
-
-
