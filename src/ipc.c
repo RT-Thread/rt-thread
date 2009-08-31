@@ -24,6 +24,7 @@
  * 2006-08-04     Bernard      add hook support
  * 2009-05-21     Yi.qiu       fix the sem release bug
  * 2009-07-18     Bernard      fix the event clear bug
+ * 2009-08-31     Bernard      fix the fast event receive bug
  */
 
 #include <rtthread.h>
@@ -979,6 +980,7 @@ rt_err_t rt_fast_event_send(rt_fast_event_t event, rt_uint8_t bit)
 	register rt_ubase_t level;
 	struct rt_thread *thread;
 	struct rt_list_node *n;
+	rt_bool_t need_schedule;
 
 	/* parameter check */
 	RT_ASSERT(event != RT_NULL);
@@ -995,6 +997,9 @@ rt_err_t rt_fast_event_send(rt_fast_event_t event, rt_uint8_t bit)
 
 	event->set |= offset;
 
+	/* does not schedule */
+	need_schedule = RT_FALSE;
+
 	/* if thread list at offset is not empty */
 	n = event->thread_list[bit].next;
 	while (n != &(event->thread_list[bit]))
@@ -1005,19 +1010,19 @@ rt_err_t rt_fast_event_send(rt_fast_event_t event, rt_uint8_t bit)
 		/* move to next node */
 		n = n->next;
 
-		/* clear bit or not */
-		if (thread->event_info & RT_EVENT_FLAG_CLEAR)
-			event->set &= ~offset;
-
 		/* resume thread */
 		rt_thread_resume(thread);
+
+		/* need do a scheduling */
+		need_schedule = RT_TRUE;
 	}
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
 	/* do a schedule */
-	rt_schedule();
+	if (need_schedule == RT_TRUE)
+		rt_schedule();
 
 	return RT_EOK;
 }
@@ -1117,6 +1122,25 @@ rt_err_t rt_fast_event_recv(rt_fast_event_t event, rt_uint8_t bit, rt_uint8_t op
 			rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &timeout);
 			rt_timer_start(&(thread->thread_timer));
 		}
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+
+		/* do a schedule */
+		rt_schedule();
+
+		/* receive a fast event */
+		if (thread->error != RT_EOK)
+		{
+			return thread->error;
+		}
+
+		/* received a event, disable interrupt to protect */
+		level = rt_hw_interrupt_disable();
+
+		/* clear event */
+		if (option & RT_EVENT_FLAG_CLEAR)
+			event->set &= ~offset;
 	}
 
 	/* enable interrupt */
