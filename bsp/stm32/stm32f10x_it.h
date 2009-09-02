@@ -53,10 +53,10 @@ void DMA1_Channel5_IRQHandler(void);
 void DMA1_Channel6_IRQHandler(void);
 void DMA1_Channel7_IRQHandler(void);
 void ADC1_2_IRQHandler(void);
-void USB_HP_CAN_TX_IRQHandler(void);
-void USB_LP_CAN_RX0_IRQHandler(void);
-void CAN_RX1_IRQHandler(void);
-void CAN_SCE_IRQHandler(void);
+void USB_HP_CAN1_TX_IRQHandler(void);
+void USB_LP_CAN1_RX0_IRQHandler(void);
+void CAN1_RX1_IRQHandler(void);
+void CAN1_SCE_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);
 void TIM1_BRK_IRQHandler(void);
 void TIM1_UP_IRQHandler(void);
@@ -94,7 +94,7 @@ void DMA2_Channel1_IRQHandler(void);
 void DMA2_Channel2_IRQHandler(void);
 void DMA2_Channel3_IRQHandler(void);
 void DMA2_Channel4_5_IRQHandler(void);
-					 
+
 #endif /* __STM32F10x_IT_H */
 
 /******************* (C) COPYRIGHT 2008 STMicroelectronics *****END OF FILE****/

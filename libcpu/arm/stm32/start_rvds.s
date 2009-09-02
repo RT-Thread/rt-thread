@@ -85,10 +85,10 @@ __heap_limit
     IMPORT  DMA1_Channel6_IRQHandler
     IMPORT  DMA1_Channel7_IRQHandler
     IMPORT  ADC1_2_IRQHandler
-    IMPORT  USB_HP_CAN_TX_IRQHandler
-    IMPORT  USB_LP_CAN_RX0_IRQHandler
-    IMPORT  CAN_RX1_IRQHandler
-    IMPORT  CAN_SCE_IRQHandler
+    IMPORT  USB_HP_CAN1_TX_IRQHandler
+    IMPORT  USB_LP_CAN1_RX0_IRQHandler
+    IMPORT  CAN1_RX1_IRQHandler
+    IMPORT  CAN1_SCE_IRQHandler
     IMPORT  EXTI9_5_IRQHandler
     IMPORT  TIM1_BRK_IRQHandler
     IMPORT  TIM1_UP_IRQHandler
@@ -168,10 +168,10 @@ __Vectors        DCD  __initial_sp              ; Top of Stack
     DCD  DMA1_Channel6_IRQHandler
     DCD  DMA1_Channel7_IRQHandler
     DCD  ADC1_2_IRQHandler
-    DCD  USB_HP_CAN_TX_IRQHandler
-    DCD  USB_LP_CAN_RX0_IRQHandler
-    DCD  CAN_RX1_IRQHandler
-    DCD  CAN_SCE_IRQHandler
+    DCD  USB_HP_CAN1_TX_IRQHandler
+    DCD  USB_LP_CAN1_RX0_IRQHandler
+    DCD  CAN1_RX1_IRQHandler
+    DCD  CAN1_SCE_IRQHandler
     DCD  EXTI9_5_IRQHandler
     DCD  TIM1_BRK_IRQHandler
     DCD  TIM1_UP_IRQHandler
