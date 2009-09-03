@@ -109,6 +109,7 @@ __heap_limit
     IMPORT  EXTI15_10_IRQHandler
     IMPORT  RTCAlarm_IRQHandler
     IMPORT  USBWakeUp_IRQHandler
+	; HD
     IMPORT  TIM8_BRK_IRQHandler
     IMPORT  TIM8_UP_IRQHandler
     IMPORT  TIM8_TRG_COM_IRQHandler
@@ -126,6 +127,15 @@ __heap_limit
     IMPORT  DMA2_Channel2_IRQHandler
     IMPORT  DMA2_Channel3_IRQHandler
     IMPORT  DMA2_Channel4_5_IRQHandler
+	; CL (DMA2_Channel4 DMA2_Channel5 is alone)
+	IMPORT  DMA2_Channel5_IRQHandler   ; DMA2 Channel5
+	IMPORT  ETH_IRQHandler             ; Ethernet
+    IMPORT  ETH_WKUP_IRQHandler        ; Ethernet Wakeup through EXTI line
+    IMPORT  CAN2_TX_IRQHandler         ; CAN2 TX
+    IMPORT  CAN2_RX0_IRQHandler        ; CAN2 RX0
+    IMPORT  CAN2_RX1_IRQHandler        ; CAN2 RX1
+    IMPORT  CAN2_SCE_IRQHandler        ; CAN2 SCE
+    IMPORT  OTG_FS_IRQHandler          ; USB OTG FS
 
 ;*******************************************************************************
 ; Fill-up the Vector Table entries with the exceptions ISR address
@@ -192,6 +202,7 @@ __Vectors        DCD  __initial_sp              ; Top of Stack
     DCD  EXTI15_10_IRQHandler
     DCD  RTCAlarm_IRQHandler
     DCD  USBWakeUp_IRQHandler
+	; HD
     DCD  TIM8_BRK_IRQHandler
     DCD  TIM8_UP_IRQHandler
     DCD  TIM8_TRG_COM_IRQHandler
@@ -209,6 +220,16 @@ __Vectors        DCD  __initial_sp              ; Top of Stack
     DCD  DMA2_Channel2_IRQHandler
     DCD  DMA2_Channel3_IRQHandler
     DCD  DMA2_Channel4_5_IRQHandler
+	; CL (DMA2_Channel4 DMA2_Channel5 is alone)
+	DCD     DMA2_Channel5_IRQHandler   ; DMA2 Channel5
+	DCD     ETH_IRQHandler             ; Ethernet
+    DCD     ETH_WKUP_IRQHandler        ; Ethernet Wakeup through EXTI line
+    DCD     CAN2_TX_IRQHandler         ; CAN2 TX
+    DCD     CAN2_RX0_IRQHandler        ; CAN2 RX0
+    DCD     CAN2_RX1_IRQHandler        ; CAN2 RX1
+    DCD     CAN2_SCE_IRQHandler        ; CAN2 SCE
+    DCD     OTG_FS_IRQHandler          ; USB OTG FS
+
 
     AREA    |.text|, CODE, READONLY
 
