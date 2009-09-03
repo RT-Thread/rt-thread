@@ -49,11 +49,11 @@ void NMIException(void)
 *******************************************************************************/
 void HardFaultException(void)
 {
-  /* Go to infinite loop when Hard Fault exception occurs */
-  rt_kprintf("hard fault exception\n");
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Hard Fault exception occurs */
+    rt_kprintf("hard fault exception\n");
+    while (1)
+    {
+    }
 }
 
 /*******************************************************************************
@@ -65,11 +65,11 @@ void HardFaultException(void)
 *******************************************************************************/
 void MemManageException(void)
 {
-  /* Go to infinite loop when Memory Manage exception occurs */
-  rt_kprintf("memory manage exception\n");
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Memory Manage exception occurs */
+    rt_kprintf("memory manage exception\n");
+    while (1)
+    {
+    }
 }
 
 /*******************************************************************************
@@ -81,11 +81,11 @@ void MemManageException(void)
 *******************************************************************************/
 void BusFaultException(void)
 {
-  /* Go to infinite loop when Bus Fault exception occurs */
-  rt_kprintf("bus fault exception\n");
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Bus Fault exception occurs */
+    rt_kprintf("bus fault exception\n");
+    while (1)
+    {
+    }
 }
 
 /*******************************************************************************
@@ -97,11 +97,11 @@ void BusFaultException(void)
 *******************************************************************************/
 void UsageFaultException(void)
 {
-  /* Go to infinite loop when Usage Fault exception occurs */
-  rt_kprintf("usage fault exception\n");
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Usage Fault exception occurs */
+    rt_kprintf("usage fault exception\n");
+    while (1)
+    {
+    }
 }
 
 /*******************************************************************************
@@ -135,8 +135,8 @@ void SVCHandler(void)
 *******************************************************************************/
 void SysTickHandler(void)
 {
-  /* handle os tick */
-  rt_hw_timer_handler();
+    /* handle os tick */
+    rt_hw_timer_handler();
 }
 
 /*******************************************************************************
@@ -163,7 +163,7 @@ void PVD_IRQHandler(void)
 
 /*******************************************************************************
 * Function Name  : TAMPER_IRQHandler
-* Description    : This function handles Tamper interrupt request. 
+* Description    : This function handles Tamper interrupt request.
 * Input          : None
 * Output         : None
 * Return         : None
@@ -181,22 +181,22 @@ void TAMPER_IRQHandler(void)
 *******************************************************************************/
 void RTC_IRQHandler(void)
 {
-  if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
-  {
-    /* Clear the RTC Second interrupt */
-    RTC_ClearITPendingBit(RTC_IT_SEC);
-
-    /* Wait until last write operation on RTC registers has finished */
-    RTC_WaitForLastTask();
-
-    /* Reset RTC Counter when Time is 23:59:59 */
-    if (RTC_GetCounter() == 0x00015180)
+    if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
     {
-      RTC_SetCounter(0x0);
-      /* Wait until last write operation on RTC registers has finished */
-      RTC_WaitForLastTask();
+        /* Clear the RTC Second interrupt */
+        RTC_ClearITPendingBit(RTC_IT_SEC);
+
+        /* Wait until last write operation on RTC registers has finished */
+        RTC_WaitForLastTask();
+
+        /* Reset RTC Counter when Time is 23:59:59 */
+        if (RTC_GetCounter() == 0x00015180)
+        {
+            RTC_SetCounter(0x0);
+            /* Wait until last write operation on RTC registers has finished */
+            RTC_WaitForLastTask();
+        }
     }
-  }
 }
 
 /*******************************************************************************
@@ -212,7 +212,7 @@ void FLASH_IRQHandler(void)
 
 /*******************************************************************************
 * Function Name  : RCC_IRQHandler
-* Description    : This function handles RCC interrupt request. 
+* Description    : This function handles RCC interrupt request.
 * Input          : None
 * Output         : None
 * Return         : None
@@ -297,23 +297,23 @@ void DMA1_Channel1_IRQHandler(void)
 void DMA1_Channel2_IRQHandler(void)
 {
 #ifdef RT_USING_UART3
-	extern struct rt_device uart3_device;
+    extern struct rt_device uart3_device;
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	if (DMA_GetITStatus(DMA1_IT_TC2))
-	{
-		/* transmission complete, invoke serial dma tx isr */
-		rt_hw_serial_dma_tx_isr(&uart3_device);
-	}
-	
-	/* clear DMA flag */
-	DMA_ClearFlag(DMA1_FLAG_TC2 | DMA1_FLAG_TE2);
-	
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    if (DMA_GetITStatus(DMA1_IT_TC2))
+    {
+        /* transmission complete, invoke serial dma tx isr */
+        rt_hw_serial_dma_tx_isr(&uart3_device);
+    }
+
+    /* clear DMA flag */
+    DMA_ClearFlag(DMA1_FLAG_TC2 | DMA1_FLAG_TE2);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 #endif
 }
 
@@ -360,18 +360,18 @@ void DMA1_Channel5_IRQHandler(void)
 void DMA1_Channel6_IRQHandler(void)
 {
 #ifdef RT_USING_UART2
-	extern struct rt_device uart2_device;
+    extern struct rt_device uart2_device;
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	/* clear DMA flag */
-	DMA_ClearFlag(DMA1_FLAG_TC6 | DMA1_FLAG_TE6);
-	rt_hw_serial_dma_rx_isr(&uart2_device);
+    /* clear DMA flag */
+    DMA_ClearFlag(DMA1_FLAG_TC6 | DMA1_FLAG_TE6);
+    rt_hw_serial_dma_rx_isr(&uart2_device);
 
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 #endif
 }
 
@@ -398,48 +398,48 @@ void ADC1_2_IRQHandler(void)
 }
 
 /*******************************************************************************
-* Function Name  : USB_HP_CAN_TX_IRQHandler
-* Description    : This function handles USB High Priority or CAN TX interrupts 
+* Function Name  : USB_HP_CAN1_TX_IRQHandler
+* Description    : This function handles USB High Priority or CAN TX interrupts
 *                  requests.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void USB_HP_CAN_TX_IRQHandler(void)
+void USB_HP_CAN1_TX_IRQHandler(void)
 {
 }
 
 /*******************************************************************************
-* Function Name  : USB_LP_CAN_RX0_IRQHandler
-* Description    : This function handles USB Low Priority or CAN RX0 interrupts 
+* Function Name  : USB_LP_CAN1_RX0_IRQHandler
+* Description    : This function handles USB Low Priority or CAN RX0 interrupts
 *                  requests.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void USB_LP_CAN_RX0_IRQHandler(void)
+void USB_LP_CAN1_RX0_IRQHandler(void)
 {
 }
 
 /*******************************************************************************
-* Function Name  : CAN_RX1_IRQHandler
+* Function Name  : CAN1_RX1_IRQHandler
 * Description    : This function handles CAN RX1 interrupt request.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void CAN_RX1_IRQHandler(void)
+void CAN1_RX1_IRQHandler(void)
 {
 }
 
 /*******************************************************************************
-* Function Name  : CAN_SCE_IRQHandler
+* Function Name  : CAN1_SCE_IRQHandler
 * Description    : This function handles CAN SCE interrupt request.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void CAN_SCE_IRQHandler(void)
+void CAN1_SCE_IRQHandler(void)
 {
 }
 
@@ -452,19 +452,19 @@ void CAN_SCE_IRQHandler(void)
 *******************************************************************************/
 void EXTI9_5_IRQHandler(void)
 {
-	extern void enc28j60_isr(void);
+    extern void enc28j60_isr(void);
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	enc28j60_isr();
-	
-	/* Clear the Key Button EXTI line pending bit */
-	EXTI_ClearITPendingBit(EXTI_Line8);
+    enc28j60_isr();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    /* Clear the Key Button EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line8);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 }
 
 /*******************************************************************************
@@ -480,7 +480,7 @@ void TIM1_BRK_IRQHandler(void)
 
 /*******************************************************************************
 * Function Name  : TIM1_UP_IRQHandler
-* Description    : This function handles TIM1 overflow and update interrupt 
+* Description    : This function handles TIM1 overflow and update interrupt
 *                  request.
 * Input          : None
 * Output         : None
@@ -492,7 +492,7 @@ void TIM1_UP_IRQHandler(void)
 
 /*******************************************************************************
 * Function Name  : TIM1_TRG_COM_IRQHandler
-* Description    : This function handles TIM1 Trigger and commutation interrupts 
+* Description    : This function handles TIM1 Trigger and commutation interrupts
 *                  requests.
 * Input          : None
 * Output         : None
@@ -622,15 +622,15 @@ void SPI2_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
 #ifdef RT_USING_UART1
-	extern struct rt_device uart1_device;
-	/* enter interrupt */
-	rt_interrupt_enter();
+    extern struct rt_device uart1_device;
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_hw_serial_isr(&uart1_device);
+    rt_hw_serial_isr(&uart1_device);
 
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 #endif
 }
 
@@ -644,16 +644,16 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
 #ifdef RT_USING_UART2
-	extern struct rt_device uart2_device;
+    extern struct rt_device uart2_device;
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_hw_serial_isr(&uart2_device);
+    rt_hw_serial_isr(&uart2_device);
 
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 #endif
 }
 
@@ -667,16 +667,16 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
 #ifdef RT_USING_UART3
-	extern struct rt_device uart3_device;
+    extern struct rt_device uart3_device;
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_hw_serial_isr(&uart3_device);
+    rt_hw_serial_isr(&uart3_device);
 
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
+    /* leave interrupt */
+    rt_interrupt_leave();
+    rt_hw_interrupt_thread_switch();
 #endif
 }
 
@@ -900,6 +900,38 @@ void DMA2_Channel3_IRQHandler(void)
 * Return         : None
 *******************************************************************************/
 void DMA2_Channel4_5_IRQHandler(void)
+{
+}
+
+void DMA2_Channel5_IRQHandler(void)
+{
+}
+
+void ETH_IRQHandler(void)
+{
+}
+
+void ETH_WKUP_IRQHandler(void)
+{
+}
+
+void CAN2_TX_IRQHandler(void)
+{
+}
+
+void CAN2_RX0_IRQHandler(void)
+{
+}
+
+void CAN2_RX1_IRQHandler(void)
+{
+}
+
+void CAN2_SCE_IRQHandler(void)
+{
+}
+
+void OTG_FS_IRQHandler(void)
 {
 }
 
