@@ -16,6 +16,7 @@
 *******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f10x_it.h"
 #include <rtthread.h>
 #include <serial.h>
 
@@ -913,6 +914,39 @@ void DMA2_Channel3_IRQHandler(void)
 * Return         : None
 *******************************************************************************/
 void DMA2_Channel4_5_IRQHandler(void)
+{
+}
+
+
+void DMA2_Channel5_IRQHandler(void)
+{
+}
+
+void ETH_IRQHandler(void)
+{
+}
+
+void ETH_WKUP_IRQHandler(void)
+{
+}
+
+void CAN2_TX_IRQHandler(void)
+{
+}
+
+void CAN2_RX0_IRQHandler(void)
+{
+}
+
+void CAN2_RX1_IRQHandler(void)
+{
+}
+
+void CAN2_SCE_IRQHandler(void)
+{
+}
+
+void OTG_FS_IRQHandler(void)
 {
 }
 
