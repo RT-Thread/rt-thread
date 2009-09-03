@@ -575,12 +575,12 @@ extern void rt_hw_timer_handler(void);
 
 void SysTickHandler(void)
 {
-  /* handle os tick */
-  rt_hw_timer_handler();
+    /* handle os tick */
+    rt_hw_timer_handler();
 }
 
 /*******************************************************************************
-* Function Name  :  
+* Function Name  :
 * Description    : This function handles Usage Fault exception.
 * Input          : None
 * Output         : None
@@ -912,7 +912,37 @@ void SDIO_IRQHandler(void)
 {
 }
 
+void DMA2_Channel5_IRQHandler(void)
+{
+}
 
+void ETH_IRQHandler(void)
+{
+}
+
+void ETH_WKUP_IRQHandler(void)
+{
+}
+
+void CAN2_TX_IRQHandler(void)
+{
+}
+
+void CAN2_RX0_IRQHandler(void)
+{
+}
+
+void CAN2_RX1_IRQHandler(void)
+{
+}
+
+void CAN2_SCE_IRQHandler(void)
+{
+}
+
+void OTG_FS_IRQHandler(void)
+{
+}
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */

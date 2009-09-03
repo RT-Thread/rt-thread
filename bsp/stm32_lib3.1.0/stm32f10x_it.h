@@ -97,6 +97,7 @@ extern "C"
     void EXTI15_10_IRQHandler(void);
     void RTCAlarm_IRQHandler(void);
     void USBWakeUp_IRQHandler(void);
+    /****** HD ******/
     void TIM8_BRK_IRQHandler(void);
     void TIM8_UP_IRQHandler(void);
     void TIM8_TRG_COM_IRQHandler(void);
@@ -114,6 +115,15 @@ extern "C"
     void DMA2_Channel2_IRQHandler(void);
     void DMA2_Channel3_IRQHandler(void);
     void DMA2_Channel4_5_IRQHandler(void);
+    /*********  CL **********/
+    void DMA2_Channel5_IRQHandler(void);
+    void ETH_IRQHandler(void);
+    void ETH_WKUP_IRQHandler(void);
+    void CAN2_TX_IRQHandler(void);
+    void CAN2_RX0_IRQHandler(void);
+    void CAN2_RX1_IRQHandler(void);
+    void CAN2_SCE_IRQHandler(void);
+    void OTG_FS_IRQHandler(void);
 
 #ifdef __cplusplus
 }

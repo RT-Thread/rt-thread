@@ -23,14 +23,14 @@ void rt_init_thread_entry001(void *parameter)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(LEDG_PORT,&GPIO_InitStructure);
 
-    while(1)
+    while (1)
     {
-    rt_kprintf("thread001:%d\r\n",count++);
-    GPIO_ResetBits(LEDG_PORT,LEDG_PIN);
-    rt_thread_delay(64);
-    rt_kprintf("thread001:%d\r\n",count++);
-    GPIO_SetBits(LEDG_PORT,LEDG_PIN);
-    rt_thread_delay(64);
+        rt_kprintf("thread001:%d\r\n",count++);
+        GPIO_ResetBits(LEDG_PORT,LEDG_PIN);
+        rt_thread_delay(RT_TICK_PER_SECOND);
+        rt_kprintf("thread001:%d\r\n",count++);
+        GPIO_SetBits(LEDG_PORT,LEDG_PIN);
+        rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }
 
@@ -48,23 +48,23 @@ void rt_init_thread_entry002(void *parameter)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(LEDR_PORT,&GPIO_InitStructure);
 
-    while(1)
+    while (1)
     {
-    rt_kprintf("thread001:%d\r\n",count++);
-    GPIO_ResetBits(LEDR_PORT,LEDR_PIN);
-    rt_thread_delay(32);
-    rt_kprintf("thread001:%d\r\n",count++);
-    GPIO_SetBits(LEDR_PORT,LEDR_PIN);
-    rt_thread_delay(32);
+        rt_kprintf("thread001:%d\r\n",count++);
+        GPIO_ResetBits(LEDR_PORT,LEDR_PIN);
+        rt_thread_delay(RT_TICK_PER_SECOND*2);
+        rt_kprintf("thread001:%d\r\n",count++);
+        GPIO_SetBits(LEDR_PORT,LEDR_PIN);
+        rt_thread_delay(RT_TICK_PER_SECOND*2);
     }
 }
 
 int rt_application_init()
 {
-	rt_thread_init(&thread001,"led",rt_init_thread_entry001,RT_NULL,&thread001_stack[0], sizeof(thread001_stack),20,10);
-	rt_thread_init(&thread002,"led2",rt_init_thread_entry002,RT_NULL,&thread002_stack[0], sizeof(thread002_stack),20,10);
-	rt_thread_startup(&thread001);
-	rt_thread_startup(&thread002);
+    rt_thread_init(&thread001,"led",rt_init_thread_entry001,RT_NULL,&thread001_stack[0], sizeof(thread001_stack),20,10);
+    rt_thread_init(&thread002,"led2",rt_init_thread_entry002,RT_NULL,&thread002_stack[0], sizeof(thread002_stack),20,10);
+    rt_thread_startup(&thread001);
+    rt_thread_startup(&thread002);
 
     return 0;
 }
