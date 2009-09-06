@@ -966,7 +966,17 @@ lwip_select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
         msectimeout = 1;
     }
     
-    i = sys_sem_wait_timeout(select_cb.sem, msectimeout);
+
+	if (msectimeout > 0 && sys_arch_timeouts() == NULL){
+	  /* it's not a lwip thread, use os semaphore with timeout to handle it */
+	  i = sys_arch_sem_wait(select_cb.sem, msectimeout);
+	  if (i == SYS_ARCH_TIMEOUT) i = 0;
+	  else i = 1;
+	}
+    else {
+	  /* it's a lwip thread, use os semaphore with timeout to handle it */
+      i = sys_sem_wait_timeout(select_cb.sem, msectimeout);
+    }
     
     /* Take us off the list */
     sys_sem_wait(selectsem);
