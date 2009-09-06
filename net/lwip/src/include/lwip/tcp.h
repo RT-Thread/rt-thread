@@ -96,7 +96,8 @@ err_t            tcp_connect (struct tcp_pcb *pcb, struct ip_addr *ipaddr,
 struct tcp_pcb * tcp_listen_with_backlog(struct tcp_pcb *pcb, u8_t backlog);
 #define          tcp_listen(pcb) tcp_listen_with_backlog(pcb, TCP_DEFAULT_LISTEN_BACKLOG)
 
-void             tcp_abort   (struct tcp_pcb *pcb);
+void             tcp_abandon (struct tcp_pcb *pcb, int reset);
+#define          tcp_abort(pcb) tcp_abandon((pcb), 1)
 err_t            tcp_close   (struct tcp_pcb *pcb);
 
 /* Flags for "apiflags" parameter in tcp_write and tcp_enqueue */
@@ -124,25 +125,23 @@ void             tcp_input   (struct pbuf *p, struct netif *inp);
 err_t            tcp_output  (struct tcp_pcb *pcb);
 void             tcp_rexmit  (struct tcp_pcb *pcb);
 void             tcp_rexmit_rto  (struct tcp_pcb *pcb);
+u32_t            tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb);
 
 /**
- * This is the Nagle algorithm: inhibit the sending of new TCP
- * segments when new outgoing data arrives from the user if any
- * previously transmitted data on the connection remains
- * unacknowledged.
+ * This is the Nagle algorithm: try to combine user data to send as few TCP
+ * segments as possible. Only send if
+ * - no previously transmitted data on the connection remains unacknowledged or
+ * - the TF_NODELAY flag is set (nagle algorithm turned off for this pcb) or
+ * - the only unsent segment is at least pcb->mss bytes long (or there is more
+ *   than one unsent segment - with lwIP, this can happen although unsent->len < mss)
  */
 #define tcp_do_output_nagle(tpcb) ((((tpcb)->unacked == NULL) || \
                             ((tpcb)->flags & TF_NODELAY) || \
-                            (((tpcb)->unsent != NULL) && ((tpcb)->unsent->next != NULL))) ? \
-                                1 : 0)
+                            (((tpcb)->unsent != NULL) && (((tpcb)->unsent->next != NULL) || \
+                              ((tpcb)->unsent->len >= (tpcb)->mss))) \
+                            ) ? 1 : 0)
 #define tcp_output_nagle(tpcb) (tcp_do_output_nagle(tpcb) ? tcp_output(tpcb) : ERR_OK)
 
-
-/** This returns a TCP header option for MSS in an u32_t */
-#define TCP_BUILD_MSS_OPTION()  htonl(((u32_t)2 << 24) | \
-                                ((u32_t)4 << 16) | \
-                                (((u32_t)TCP_MSS / 256) << 8) | \
-                                (TCP_MSS & 255))
 
 #define TCP_SEQ_LT(a,b)     ((s32_t)((a)-(b)) < 0)
 #define TCP_SEQ_LEQ(a,b)    ((s32_t)((a)-(b)) <= 0)
@@ -185,7 +184,7 @@ void             tcp_rexmit_rto  (struct tcp_pcb *pcb);
 #define TCP_OOSEQ_TIMEOUT        6U /* x RTO */
 
 #ifndef TCP_MSL
-#define TCP_MSL 60000U /* The maximum segment lifetime in milliseconds */
+#define TCP_MSL 60000UL /* The maximum segment lifetime in milliseconds */
 #endif
 
 /* Keepalive values, compliant with RFC 1122. Don't change this unless you know what you're doing */
@@ -258,6 +257,20 @@ enum tcp_state {
 #define TF_CLOSED    (u8_t)0x10U   /* Connection was sucessfully closed. */
 #define TF_GOT_FIN   (u8_t)0x20U   /* Connection was closed by the remote end. */
 
+
+#if LWIP_CALLBACK_API
+  /* Function to call when a listener has been connected.
+   * @param arg user-supplied argument (tcp_pcb.callback_arg)
+   * @param pcb a new tcp_pcb that now is connected
+   * @param err an error argument (TODO: that is current always ERR_OK?)
+   * @return ERR_OK: accept the new connection,
+   *                 any other err_t abortsthe new connection
+   */
+#define DEF_ACCEPT_CALLBACK  err_t (* accept)(void *arg, struct tcp_pcb *newpcb, err_t err)
+#else /* LWIP_CALLBACK_API */
+#define DEF_ACCEPT_CALLBACK
+#endif /* LWIP_CALLBACK_API */
+
 /**
  * members common to struct tcp_pcb and struct tcp_listen_pcb
  */
@@ -267,7 +280,10 @@ enum tcp_state {
   u8_t prio; \
   void *callback_arg; \
   /* ports are in host byte order */ \
-  u16_t local_port
+  u16_t local_port; \
+  /* the accept callback for listen- and normal pcbs, if LWIP_CALLBACK_API */ \
+  DEF_ACCEPT_CALLBACK
+
 
 /* the TCP protocol control block */
 struct tcp_pcb {
@@ -280,19 +296,21 @@ struct tcp_pcb {
   u16_t remote_port;
   
   u8_t flags;
-#define TF_ACK_DELAY   (u8_t)0x01U   /* Delayed ACK. */
-#define TF_ACK_NOW     (u8_t)0x02U   /* Immediate ACK. */
-#define TF_INFR        (u8_t)0x04U   /* In fast recovery. */
-#define TF_FIN         (u8_t)0x20U   /* Connection was closed locally (FIN segment enqueued). */
-#define TF_NODELAY     (u8_t)0x40U   /* Disable Nagle algorithm */
-#define TF_NAGLEMEMERR (u8_t)0x80U /* nagle enabled, memerr, try to output to prevent delayed ACK to happen */
+#define TF_ACK_DELAY   ((u8_t)0x01U)   /* Delayed ACK. */
+#define TF_ACK_NOW     ((u8_t)0x02U)   /* Immediate ACK. */
+#define TF_INFR        ((u8_t)0x04U)   /* In fast recovery. */
+#define TF_TIMESTAMP   ((u8_t)0x08U)   /* Timestamp option enabled */
+#define TF_FIN         ((u8_t)0x20U)   /* Connection was closed locally (FIN segment enqueued). */
+#define TF_NODELAY     ((u8_t)0x40U)   /* Disable Nagle algorithm */
+#define TF_NAGLEMEMERR ((u8_t)0x80U)   /* nagle enabled, memerr, try to output to prevent delayed ACK to happen */
 
   /* the rest of the fields are in host byte order
      as we have to do some math with them */
   /* receiver variables */
   u32_t rcv_nxt;   /* next seqno expected */
-  u16_t rcv_wnd;   /* receiver window */
-  u16_t rcv_ann_wnd; /* announced receive window */
+  u16_t rcv_wnd;   /* receiver window available */
+  u16_t rcv_ann_wnd; /* receiver window to announce */
+  u32_t rcv_ann_right_edge; /* announced right edge of window */
 
   /* Timers */
   u32_t tmr;
@@ -320,12 +338,11 @@ struct tcp_pcb {
   u16_t ssthresh;
 
   /* sender variables */
-  u32_t snd_nxt,   /* next seqno to be sent */
-    snd_max;       /* Highest seqno sent. */
+  u32_t snd_nxt;   /* next new seqno to be sent */
   u16_t snd_wnd;   /* sender window */
-  u32_t snd_wl1, snd_wl2, /* Sequence and acknowledgement numbers of last
+  u32_t snd_wl1, snd_wl2; /* Sequence and acknowledgement numbers of last
                              window update. */
-    snd_lbb;       /* Sequence number of next byte to be buffered. */
+  u32_t snd_lbb;       /* Sequence number of next byte to be buffered. */
 
   u16_t acked;
   
@@ -369,15 +386,6 @@ struct tcp_pcb {
    */
   err_t (* connected)(void *arg, struct tcp_pcb *pcb, err_t err);
 
-  /* Function to call when a listener has been connected.
-   * @param arg user-supplied argument (tcp_pcb.callback_arg)
-   * @param pcb a new tcp_pcb that now is connected
-   * @param err an error argument (TODO: that is current always ERR_OK?)
-   * @return ERR_OK: accept the new connection,
-   *                 any other err_t abortsthe new connection
-   */
-  err_t (* accept)(void *arg, struct tcp_pcb *newpcb, err_t err);
-
   /* Function which is called periodically.
    * The period can be adjusted in multiples of the TCP slow timer interval
    * by changing tcp_pcb.polltmr.
@@ -397,6 +405,11 @@ struct tcp_pcb {
    */
   void (* errf)(void *arg, err_t err);
 #endif /* LWIP_CALLBACK_API */
+
+#if LWIP_TCP_TIMESTAMPS
+  u32_t ts_lastacksent;
+  u32_t ts_recent;
+#endif /* LWIP_TCP_TIMESTAMPS */
 
   /* idle time before KEEPALIVE is sent */
   u32_t keep_idle;
@@ -420,16 +433,6 @@ struct tcp_pcb_listen {
 /* Protocol specific PCB members */
   TCP_PCB_COMMON(struct tcp_pcb_listen);
 
-#if LWIP_CALLBACK_API
-  /* Function to call when a listener has been connected.
-   * @param arg user-supplied argument (tcp_pcb.callback_arg)
-   * @param pcb a new tcp_pcb that now is connected
-   * @param err an error argument (TODO: that is current always ERR_OK?)
-   * @return ERR_OK: accept the new connection,
-   *                 any other err_t abortsthe new connection
-   */
-  err_t (* accept)(void *arg, struct tcp_pcb *newpcb, err_t err);
-#endif /* LWIP_CALLBACK_API */
 #if TCP_LISTEN_BACKLOG
   u8_t backlog;
   u8_t accepts_pending;
@@ -466,26 +469,52 @@ err_t lwip_tcp_event(void *arg, struct tcp_pcb *pcb,
 #define TCP_EVENT_ERR(errf,arg,err)  lwip_tcp_event((arg), NULL, \
                 LWIP_EVENT_ERR, NULL, 0, (err))
 #else /* LWIP_EVENT_API */
-#define TCP_EVENT_ACCEPT(pcb,err,ret)     \
-                        if((pcb)->accept != NULL) \
-                        (ret = (pcb)->accept((pcb)->callback_arg,(pcb),(err)))
-#define TCP_EVENT_SENT(pcb,space,ret) \
-                        if((pcb)->sent != NULL) \
-                        (ret = (pcb)->sent((pcb)->callback_arg,(pcb),(space)))
-#define TCP_EVENT_RECV(pcb,p,err,ret) \
-                        if((pcb)->recv != NULL) \
-                        { ret = (pcb)->recv((pcb)->callback_arg,(pcb),(p),(err)); } else { \
-                          ret = ERR_OK; \
-                          if (p) pbuf_free(p); }
-#define TCP_EVENT_CONNECTED(pcb,err,ret) \
-                        if((pcb)->connected != NULL) \
-                        (ret = (pcb)->connected((pcb)->callback_arg,(pcb),(err)))
-#define TCP_EVENT_POLL(pcb,ret) \
-                        if((pcb)->poll != NULL) \
-                        (ret = (pcb)->poll((pcb)->callback_arg,(pcb)))
-#define TCP_EVENT_ERR(errf,arg,err) \
-                        if((errf) != NULL) \
-                        (errf)((arg),(err))
+
+#define TCP_EVENT_ACCEPT(pcb,err,ret)                          \
+  do {                                                         \
+    if((pcb)->accept != NULL)                                  \
+      (ret) = (pcb)->accept((pcb)->callback_arg,(pcb),(err));  \
+    else (ret) = ERR_OK;                                       \
+  } while (0)
+
+#define TCP_EVENT_SENT(pcb,space,ret)                          \
+  do {                                                         \
+    if((pcb)->sent != NULL)                                    \
+      (ret) = (pcb)->sent((pcb)->callback_arg,(pcb),(space));  \
+    else (ret) = ERR_OK;                                       \
+  } while (0)
+
+#define TCP_EVENT_RECV(pcb,p,err,ret)                           \
+  do {                                                          \
+    if((pcb)->recv != NULL) {                                   \
+      (ret) = (pcb)->recv((pcb)->callback_arg,(pcb),(p),(err)); \
+    } else {                                                    \
+      (ret) = ERR_OK;                                           \
+      if (p != NULL)                                            \
+        pbuf_free(p);                                           \
+    }                                                           \
+  } while (0)
+
+#define TCP_EVENT_CONNECTED(pcb,err,ret)                         \
+  do {                                                           \
+    if((pcb)->connected != NULL)                                 \
+      (ret) = (pcb)->connected((pcb)->callback_arg,(pcb),(err)); \
+    else (ret) = ERR_OK;                                         \
+  } while (0)
+
+#define TCP_EVENT_POLL(pcb,ret)                                \
+  do {                                                         \
+    if((pcb)->poll != NULL)                                    \
+      (ret) = (pcb)->poll((pcb)->callback_arg,(pcb));          \
+    else (ret) = ERR_OK;                                       \
+  } while (0)
+
+#define TCP_EVENT_ERR(errf,arg,err)                            \
+  do {                                                         \
+    if((errf) != NULL)                                         \
+      (errf)((arg),(err));                                     \
+  } while (0)
+
 #endif /* LWIP_EVENT_API */
 
 /* This structure represents a TCP segment on the unsent and unacked queues */
@@ -494,8 +523,21 @@ struct tcp_seg {
   struct pbuf *p;          /* buffer containing data + TCP header */
   void *dataptr;           /* pointer to the TCP data in the pbuf */
   u16_t len;               /* the TCP length of this segment */
+  u8_t  flags;
+#define TF_SEG_OPTS_MSS   (u8_t)0x01U   /* Include MSS option. */
+#define TF_SEG_OPTS_TS    (u8_t)0x02U   /* Include timestamp option. */
   struct tcp_hdr *tcphdr;  /* the TCP header */
 };
+
+#define LWIP_TCP_OPT_LENGTH(flags)              \
+  (flags & TF_SEG_OPTS_MSS ? 4  : 0) +          \
+  (flags & TF_SEG_OPTS_TS  ? 12 : 0)
+
+/** This returns a TCP header option for MSS in an u32_t */
+#define TCP_BUILD_MSS_OPTION(x) (x) = htonl(((u32_t)2 << 24) |          \
+                                            ((u32_t)4 << 16) |          \
+                                            (((u32_t)TCP_MSS / 256) << 8) | \
+                                            (TCP_MSS & 255))
 
 /* Internal functions and global variables: */
 struct tcp_pcb *tcp_pcb_copy(struct tcp_pcb *pcb);
@@ -506,21 +548,27 @@ u8_t tcp_segs_free(struct tcp_seg *seg);
 u8_t tcp_seg_free(struct tcp_seg *seg);
 struct tcp_seg *tcp_seg_copy(struct tcp_seg *seg);
 
-#define tcp_ack(pcb)     if((pcb)->flags & TF_ACK_DELAY) { \
-                            (pcb)->flags &= ~TF_ACK_DELAY; \
-                            (pcb)->flags |= TF_ACK_NOW; \
-                            tcp_output(pcb); \
-                         } else { \
-                            (pcb)->flags |= TF_ACK_DELAY; \
-                         }
+#define tcp_ack(pcb)                               \
+  do {                                             \
+    if((pcb)->flags & TF_ACK_DELAY) {              \
+      (pcb)->flags &= ~TF_ACK_DELAY;               \
+      (pcb)->flags |= TF_ACK_NOW;                  \
+      tcp_output(pcb);                             \
+    }                                              \
+    else {                                         \
+      (pcb)->flags |= TF_ACK_DELAY;                \
+    }                                              \
+  } while (0)
 
-#define tcp_ack_now(pcb) (pcb)->flags |= TF_ACK_NOW; \
-                         tcp_output(pcb)
+#define tcp_ack_now(pcb)                           \
+  do {                                             \
+    (pcb)->flags |= TF_ACK_NOW;                    \
+    tcp_output(pcb);                               \
+  } while (0)
 
 err_t tcp_send_ctrl(struct tcp_pcb *pcb, u8_t flags);
 err_t tcp_enqueue(struct tcp_pcb *pcb, void *dataptr, u16_t len,
-    u8_t flags, u8_t apiflags,
-                u8_t *optdata, u8_t optlen);
+                  u8_t flags, u8_t apiflags, u8_t optflags);
 
 void tcp_rexmit_seg(struct tcp_pcb *pcb, struct tcp_seg *seg);
 
@@ -614,22 +662,32 @@ extern struct tcp_pcb *tcp_tmp_pcb;      /* Only used for temporary storage. */
                             } while(0)
 
 #else /* LWIP_DEBUG */
-#define TCP_REG(pcbs, npcb) do { \
-                            npcb->next = *pcbs; \
-                            *(pcbs) = npcb; \
-              tcp_timer_needed(); \
-                            } while(0)
-#define TCP_RMV(pcbs, npcb) do { \
-                            if(*(pcbs) == npcb) { \
-                               (*(pcbs)) = (*pcbs)->next; \
-                            } else for(tcp_tmp_pcb = *pcbs; tcp_tmp_pcb != NULL; tcp_tmp_pcb = tcp_tmp_pcb->next) { \
-                               if(tcp_tmp_pcb->next != NULL && tcp_tmp_pcb->next == npcb) { \
-                                  tcp_tmp_pcb->next = npcb->next; \
-                                  break; \
-                               } \
-                            } \
-                            npcb->next = NULL; \
-                            } while(0)
+
+#define TCP_REG(pcbs, npcb)                        \
+  do {                                             \
+    npcb->next = *pcbs;                            \
+    *(pcbs) = npcb;                                \
+    tcp_timer_needed();                            \
+  } while (0)
+
+#define TCP_RMV(pcbs, npcb)                        \
+  do {                                             \
+    if(*(pcbs) == npcb) {                          \
+      (*(pcbs)) = (*pcbs)->next;                   \
+    }                                              \
+    else {                                         \
+      for(tcp_tmp_pcb = *pcbs;                                         \
+          tcp_tmp_pcb != NULL;                                         \
+          tcp_tmp_pcb = tcp_tmp_pcb->next) {                           \
+        if(tcp_tmp_pcb->next != NULL && tcp_tmp_pcb->next == npcb) {   \
+          tcp_tmp_pcb->next = npcb->next;          \
+          break;                                   \
+        }                                          \
+      }                                            \
+    }                                              \
+    npcb->next = NULL;                             \
+  } while(0)
+
 #endif /* LWIP_DEBUG */
 
 #ifdef __cplusplus

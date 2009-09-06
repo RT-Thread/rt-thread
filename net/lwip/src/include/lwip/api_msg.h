@@ -36,6 +36,8 @@
 
 #if LWIP_NETCONN /* don't build if not configured for use in lwipopts.h */
 
+#include <stddef.h> /* for size_t */
+
 #include "lwip/ip_addr.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
@@ -78,7 +80,7 @@ struct api_msg_msg {
     /** used for do_write */
     struct {
       const void *dataptr;
-      int len;
+      size_t len;
       u8_t apiflags;
     } w;
     /** used ofr do_recv */

@@ -2205,10 +2205,10 @@ system_get_value(struct obj_def *od, u16_t len, void *value)
   switch (id)
   {
     case 1: /* sysDescr */
-      ocstrncpy(value,sysdescr_ptr,len);
+      ocstrncpy(value,sysdescr_ptr, len);
       break;
     case 2: /* sysObjectID */
-      objectidncpy((s32_t*)value,(s32_t*)sysobjid.id,len / sizeof(s32_t));
+      objectidncpy((s32_t*)value, (s32_t*)sysobjid.id, (u8_t)(len / sizeof(s32_t)));
       break;
     case 3: /* sysUpTime */
       {
@@ -2606,7 +2606,7 @@ ifentry_get_value(struct obj_def *od, u16_t len, void *value)
       }
       break;
     case 22: /* ifSpecific */
-      objectidncpy((s32_t*)value,(s32_t*)ifspecific.id,len / sizeof(s32_t));
+      objectidncpy((s32_t*)value, (s32_t*)ifspecific.id, (u8_t)(len / sizeof(s32_t)));
       break;
   };
 }
@@ -3342,7 +3342,7 @@ ip_rteentry_get_value(struct obj_def *od, u16_t len, void *value)
         }
         break;
       case 13: /* ipRouteInfo */
-        objectidncpy((s32_t*)value,(s32_t*)iprouteinfo.id,len / sizeof(s32_t));
+        objectidncpy((s32_t*)value, (s32_t*)iprouteinfo.id, (u8_t)(len / sizeof(s32_t)));
         break;
     }
   }

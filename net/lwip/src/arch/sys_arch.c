@@ -83,7 +83,10 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 {
 	rt_err_t ret;
 	s32_t t;
+	u32_t tick;
 
+	/* get the begin tick */
+	tick = rt_tick_get();
 #ifdef LWIP_DEBUG
 	{
 		struct rt_thread *thread;
@@ -108,7 +111,14 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 	if (ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
 	else if (ret == RT_EOK) ret = 1;
 
-	return ret;
+	/* get elapse msecond */
+	tick = rt_tick_get() - tick;
+
+	/* convert tick to msecond */
+	tick = tick * (1000/RT_TICK_PER_SECOND);
+	if (tick == 0) tick = 1;
+
+	return tick;
 }
 
 sys_mbox_t sys_mbox_new(int size)
@@ -187,6 +197,10 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 {
 	rt_err_t ret;
 	s32_t t;
+	u32_t tick;
+
+	/* get the begin tick */
+	tick = rt_tick_get();
 
 	if(timeout == 0)
 		t = RT_WAITING_FOREVER;
@@ -212,7 +226,14 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 	}
 #endif
 
-	return ret;
+	/* get elapse msecond */
+	tick = rt_tick_get() - tick;
+
+	/* convert tick to msecond */
+	tick = tick * (1000/RT_TICK_PER_SECOND);
+	if (tick == 0) tick = 1;
+
+	return tick;
 }
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg)
@@ -289,4 +310,10 @@ void sys_arch_unprotect(sys_prot_t pval)
 	rt_hw_interrupt_enable(pval);
 
 	return;
+}
+
+void sys_arch_assert(const char* file, int line)
+{
+	rt_kprintf("Assertion: %d in %s\n", line, file);
+	RT_ASSERT(0);
 }

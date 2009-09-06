@@ -120,19 +120,6 @@ netconn_delete(struct netconn *conn)
 }
 
 /**
- * Get the type of a netconn (as enum netconn_type).
- *
- * @param conn the netconn of which to get the type
- * @return the netconn_type of conn
- */
-enum netconn_type
-netconn_type(struct netconn *conn)
-{
-  LWIP_ERROR("netconn_type: invalid conn", (conn != NULL), return NETCONN_INVALID;);
-  return conn->type;
-}
-
-/**
  * Get the local or remote IP address and port of a netconn.
  * For RAW netconns, this returns the protocol instead of a port!
  *
@@ -439,7 +426,7 @@ netconn_send(struct netconn *conn, struct netbuf *buf)
 
   LWIP_ERROR("netconn_send: invalid conn",  (conn != NULL), return ERR_ARG;);
 
-  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_send: sending %d bytes\n", buf->p->tot_len));
+  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_send: sending %"U16_F" bytes\n", buf->p->tot_len));
   msg.function = do_send;
   msg.msg.conn = conn;
   msg.msg.msg.b = buf;
@@ -459,7 +446,7 @@ netconn_send(struct netconn *conn, struct netbuf *buf)
  * @return ERR_OK if data was sent, any other err_t on error
  */
 err_t
-netconn_write(struct netconn *conn, const void *dataptr, int size, u8_t apiflags)
+netconn_write(struct netconn *conn, const void *dataptr, size_t size, u8_t apiflags)
 {
   struct api_msg msg;
 

@@ -93,24 +93,29 @@ raw_input(struct pbuf *p, struct netif *inp)
   /* this allows multiple pcbs to match against the packet by design */
   while ((eaten == 0) && (pcb != NULL)) {
     if (pcb->protocol == proto) {
-      /* receive callback function available? */
-      if (pcb->recv != NULL) {
-        /* the receive callback function did not eat the packet? */
-        if (pcb->recv(pcb->recv_arg, pcb, p, &(iphdr->src)) != 0)
-        {
-          /* receive function ate the packet */
-          p = NULL;
-          eaten = 1;
-          if (prev != NULL) {
-          /* move the pcb to the front of raw_pcbs so that is
-             found faster next time */
-            prev->next = pcb->next;
-            pcb->next = raw_pcbs;
-            raw_pcbs = pcb;
+#if IP_SOF_BROADCAST_RECV
+      /* broadcast filter? */
+      if ((pcb->so_options & SOF_BROADCAST) || !ip_addr_isbroadcast(&(iphdr->dest), inp))
+#endif /* IP_SOF_BROADCAST_RECV */
+      {
+        /* receive callback function available? */
+        if (pcb->recv != NULL) {
+          /* the receive callback function did not eat the packet? */
+          if (pcb->recv(pcb->recv_arg, pcb, p, &(iphdr->src)) != 0) {
+            /* receive function ate the packet */
+            p = NULL;
+            eaten = 1;
+            if (prev != NULL) {
+            /* move the pcb to the front of raw_pcbs so that is
+               found faster next time */
+              prev->next = pcb->next;
+              pcb->next = raw_pcbs;
+              raw_pcbs = pcb;
+            }
           }
         }
+        /* no receive callback function was set for this raw PCB */
       }
-      /* no receive callback function was set for this raw PCB */
       /* drop the packet */
     }
     prev = pcb;
@@ -228,7 +233,7 @@ raw_sendto(struct raw_pcb *pcb, struct pbuf *p, struct ip_addr *ipaddr)
       return ERR_MEM;
     }
   }
-  
+
   if ((netif = ip_route(ipaddr)) == NULL) {
     LWIP_DEBUGF(RAW_DEBUG | 1, ("raw_sendto: No route to 0x%"X32_F"\n", ipaddr->addr));
     /* free any temporary header pbuf allocated by pbuf_header() */
@@ -237,6 +242,18 @@ raw_sendto(struct raw_pcb *pcb, struct pbuf *p, struct ip_addr *ipaddr)
     }
     return ERR_RTE;
   }
+
+#if IP_SOF_BROADCAST
+  /* broadcast filter? */
+  if ( ((pcb->so_options & SOF_BROADCAST) == 0) && ip_addr_isbroadcast(ipaddr, netif) ) {
+    LWIP_DEBUGF(RAW_DEBUG | 1, ("raw_sendto: SOF_BROADCAST not enabled on pcb %p\n", (void *)pcb));
+    /* free any temporary header pbuf allocated by pbuf_header() */
+    if (q != p) {
+      pbuf_free(q);
+    }
+    return ERR_VAL;
+  }
+#endif /* IP_SOF_BROADCAST */
 
   if (ip_addr_isany(&pcb->local_ip)) {
     /* use outgoing network interface IP address as source address */

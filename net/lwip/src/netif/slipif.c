@@ -44,6 +44,9 @@
 
 #include "netif/slipif.h"
 #include "lwip/opt.h"
+
+#if LWIP_HAVE_SLIPIF
+
 #include "lwip/def.h"
 #include "lwip/pbuf.h"
 #include "lwip/sys.h"
@@ -273,3 +276,4 @@ slipif_init(struct netif *netif)
   sys_thread_new(SLIPIF_THREAD_NAME, slipif_loop, netif, SLIPIF_THREAD_STACKSIZE, SLIPIF_THREAD_PRIO);
   return ERR_OK;
 }
+#endif /* LWIP_HAVE_SLIPIF */

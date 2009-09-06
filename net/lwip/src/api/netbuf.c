@@ -158,14 +158,14 @@ netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
  * Chain one netbuf to another (@see pbuf_chain)
  *
  * @param head the first netbuf
- * @param tail netbuf to chain after head
+ * @param tail netbuf to chain after head, freed by this function, may not be reference after returning
  */
 void
 netbuf_chain(struct netbuf *head, struct netbuf *tail)
 {
   LWIP_ERROR("netbuf_ref: invalid head", (head != NULL), return;);
   LWIP_ERROR("netbuf_chain: invalid tail", (tail != NULL), return;);
-  pbuf_chain(head->p, tail->p);
+  pbuf_cat(head->p, tail->p);
   head->ptr = head->p;
   memp_free(MEMP_NETBUF, tail);
 }

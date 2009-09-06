@@ -73,8 +73,28 @@ typedef enum {
    We use this helper type and these defines so we can avoid using const memp_t values */
 #define MEMP_POOL_FIRST ((memp_t) MEMP_POOL_HELPER_FIRST)
 #define MEMP_POOL_LAST   ((memp_t) MEMP_POOL_HELPER_LAST)
+#endif /* MEM_USE_POOLS */
 
+#if MEMP_MEM_MALLOC || MEM_USE_POOLS
 extern const u16_t memp_sizes[MEMP_MAX];
+#endif /* MEMP_MEM_MALLOC || MEM_USE_POOLS */
+
+#if MEMP_MEM_MALLOC
+
+#include "mem.h"
+
+#define memp_init()
+#define memp_malloc(type)     mem_malloc(memp_sizes[type])
+#define memp_free(type, mem)  mem_free(mem)
+
+#else /* MEMP_MEM_MALLOC */
+
+#if MEM_USE_POOLS
+/** This structure is used to save the pool one element came from. */
+struct memp_malloc_helper
+{
+   memp_t poolnr;
+};
 #endif /* MEM_USE_POOLS */
 
 void  memp_init(void);
@@ -86,6 +106,8 @@ void *memp_malloc_fn(memp_t type, const char* file, const int line);
 void *memp_malloc(memp_t type);
 #endif
 void  memp_free(memp_t type, void *mem);
+
+#endif /* MEMP_MEM_MALLOC */
 
 #ifdef __cplusplus
 }

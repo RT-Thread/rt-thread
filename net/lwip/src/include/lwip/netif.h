@@ -34,6 +34,8 @@
 
 #include "lwip/opt.h"
 
+#define ENABLE_LOOPBACK (LWIP_NETIF_LOOPBACK || LWIP_HAVE_LOOPIF)
+
 #include "lwip/err.h"
 
 #include "lwip/ip_addr.h"
@@ -165,6 +167,14 @@ struct netif {
 #if LWIP_NETIF_HWADDRHINT
   u8_t *addr_hint;
 #endif /* LWIP_NETIF_HWADDRHINT */
+#if ENABLE_LOOPBACK
+  /* List of packets to be queued for ourselves. */
+  struct pbuf *loop_first;
+  struct pbuf *loop_last;
+#if LWIP_LOOPBACK_MAX_PBUFS
+  u16_t loop_cnt_current;
+#endif /* LWIP_LOOPBACK_MAX_PBUFS */
+#endif /* ENABLE_LOOPBACK */
 };
 
 #if LWIP_SNMP
@@ -241,5 +251,13 @@ void netif_set_link_callback(struct netif *netif, void (* link_callback)(struct 
 #ifdef __cplusplus
 }
 #endif
+
+#if ENABLE_LOOPBACK
+err_t netif_loop_output(struct netif *netif, struct pbuf *p, struct ip_addr *dest_ip);
+void netif_poll(struct netif *netif);
+#if !LWIP_NETIF_LOOPBACK_MULTITHREADING
+void netif_poll_all(void);
+#endif /* !LWIP_NETIF_LOOPBACK_MULTITHREADING */
+#endif /* ENABLE_LOOPBACK */
 
 #endif /* __LWIP_NETIF_H__ */

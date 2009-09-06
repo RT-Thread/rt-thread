@@ -44,7 +44,6 @@ extern "C" {
    definitions of the sys_ functions. */
 typedef u8_t sys_sem_t;
 typedef u8_t sys_mbox_t;
-typedef u8_t sys_prot_t;
 struct sys_timeo {u8_t dummy;};
 
 #define sys_init()
@@ -139,12 +138,10 @@ void sys_mbox_fetch(sys_mbox_t mbox, void **msg);
 /* Thread functions. */
 sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg), void *arg, int stacksize, int prio);
 
-/* The following functions are used only in Unix code, and
-   can be omitted when porting the stack. */
-/* Returns the current time in microseconds. */
-unsigned long sys_now(void);
-
 #endif /* NO_SYS */
+
+/** Returns the current time in milliseconds. */
+u32_t sys_now(void);
 
 /* Critical Region Protection */
 /* These functions must be implemented in the sys_arch.c file.

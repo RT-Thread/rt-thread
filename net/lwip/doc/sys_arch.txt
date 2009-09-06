@@ -195,6 +195,8 @@ cc.h       - Architecture environment, some compiler specific, some
   Platform specific diagnostic output -
     LWIP_PLATFORM_DIAG(x)    - non-fatal, print a message.
     LWIP_PLATFORM_ASSERT(x)  - fatal, print message and abandon execution.
+    Portability defines for printf formatters:
+    U16_F, S16_F, X16_F, U32_F, S32_F, X32_F, SZT_F
 
   "lightweight" synchronization mechanisms -
     SYS_ARCH_DECL_PROTECT(x) - declare a protection state variable.

@@ -40,6 +40,8 @@
 #include "lwip/pbuf.h"
 #include "lwip/snmp.h"
 
+#if LWIP_SNMP
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -93,5 +95,7 @@ err_t snmp_asn1_enc_raw(struct pbuf *p, u16_t ofs, u8_t raw_len, u8_t *raw);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LWIP_SNMP */
 
 #endif /* __LWIP_SNMP_ASN1_H__ */

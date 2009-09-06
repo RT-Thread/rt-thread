@@ -78,39 +78,30 @@ void icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t);
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/bpstruct.h"
 #endif
+/** This is the standard ICMP header only that the u32_t data
+ *  is splitted to two u16_t like ICMP echo needs it.
+ *  This header is also used for other ICMP types that do not
+ *  use the data part.
+ */
 PACK_STRUCT_BEGIN
 struct icmp_echo_hdr {
-  PACK_STRUCT_FIELD(u16_t _type_code);
+  PACK_STRUCT_FIELD(u8_t type);
+  PACK_STRUCT_FIELD(u8_t code);
   PACK_STRUCT_FIELD(u16_t chksum);
   PACK_STRUCT_FIELD(u16_t id);
   PACK_STRUCT_FIELD(u16_t seqno);
-} PACK_STRUCT_STRUCT;
-PACK_STRUCT_END
-
-PACK_STRUCT_BEGIN
-struct icmp_dur_hdr {
-  PACK_STRUCT_FIELD(u16_t _type_code);
-  PACK_STRUCT_FIELD(u16_t chksum);
-  PACK_STRUCT_FIELD(u32_t unused);
-} PACK_STRUCT_STRUCT;
-PACK_STRUCT_END
-
-PACK_STRUCT_BEGIN
-struct icmp_te_hdr {
-  PACK_STRUCT_FIELD(u16_t _type_code);
-  PACK_STRUCT_FIELD(u16_t chksum);
-  PACK_STRUCT_FIELD(u32_t unused);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/epstruct.h"
 #endif
 
-#define ICMPH_TYPE(hdr) (ntohs((hdr)->_type_code) >> 8)
-#define ICMPH_CODE(hdr) (ntohs((hdr)->_type_code) & 0xff)
+#define ICMPH_TYPE(hdr) ((hdr)->type)
+#define ICMPH_CODE(hdr) ((hdr)->code)
 
-#define ICMPH_TYPE_SET(hdr, type) ((hdr)->_type_code = htons(ICMPH_CODE(hdr) | ((type) << 8)))
-#define ICMPH_CODE_SET(hdr, code) ((hdr)->_type_code = htons((code) | (ICMPH_TYPE(hdr) << 8)))
+/** Combines type and code to an u16_t */
+#define ICMPH_TYPE_SET(hdr, t) ((hdr)->type = (t))
+#define ICMPH_CODE_SET(hdr, c) ((hdr)->code = (c))
 
 #ifdef __cplusplus
 }

@@ -56,6 +56,47 @@
 #include "lwip/stats.h"
 #include "arch/perf.h"
 
+#include <string.h>
+
+/**
+ * The interface that provided the packet for the current callback
+ * invocation.
+ */
+static struct netif *current_netif;
+
+/**
+ * Header of the input packet currently being processed.
+ */
+static const struct ip_hdr *current_header;
+
+/**
+ * Get the interface that received the current packet.
+ *
+ * This function must only be called from a receive callback (udp_recv,
+ * raw_recv, tcp_accept). It will return NULL otherwise.
+ *
+ * @param pcb Pointer to the pcb receiving a packet.
+ */
+struct netif *
+ip_current_netif(void)
+{
+  return current_netif;
+}
+
+/**
+ * Get the IP header of the current packet.
+ *
+ * This function must only be called from a receive callback (udp_recv,
+ * raw_recv, tcp_accept). It will return NULL otherwise.
+ *
+ * @param pcb Pointer to the pcb receiving a packet.
+ */
+const struct ip_hdr *
+ip_current_header(void)
+{
+  return current_header;
+}
+
 /**
  * Finds the appropriate network interface for a given IP address. It
  * searches the list of network interfaces linearly. A match is found
@@ -388,6 +429,9 @@ ip_input(struct pbuf *p, struct netif *inp)
   ip_debug_print(p);
   LWIP_DEBUGF(IP_DEBUG, ("ip_input: p->len %"U16_F" p->tot_len %"U16_F"\n", p->len, p->tot_len));
 
+  current_netif = inp;
+  current_header = iphdr;
+
 #if LWIP_RAW
   /* raw input did not eat the packet? */
   if (raw_input(p, inp) == 0)
@@ -440,6 +484,9 @@ ip_input(struct pbuf *p, struct netif *inp)
     }
   }
 
+  current_netif = NULL;
+  current_header = NULL;
+
   return ERR_OK;
 }
 
@@ -473,6 +520,21 @@ ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
              u8_t ttl, u8_t tos,
              u8_t proto, struct netif *netif)
 {
+#if IP_OPTIONS_SEND
+  return ip_output_if_opt(p, src, dest, ttl, tos, proto, netif, NULL, 0);
+}
+
+/**
+ * Same as ip_output_if() but with the possibility to include IP options:
+ *
+ * @ param ip_options pointer to the IP options, copied into the IP header
+ * @ param optlen length of ip_options
+ */
+err_t ip_output_if_opt(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
+       u8_t ttl, u8_t tos, u8_t proto, struct netif *netif, void *ip_options,
+       u16_t optlen)
+{
+#endif /* IP_OPTIONS_SEND */
   struct ip_hdr *iphdr;
   static u16_t ip_id = 0;
 
@@ -480,6 +542,27 @@ ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
 
   /* Should the IP header be generated or is it already included in p? */
   if (dest != IP_HDRINCL) {
+    u16_t ip_hlen = IP_HLEN;
+#if IP_OPTIONS_SEND
+    u16_t optlen_aligned = 0;
+    if (optlen != 0) {
+      /* round up to a multiple of 4 */
+      optlen_aligned = ((optlen + 3) & ~3);
+      ip_hlen += optlen_aligned;
+      /* First write in the IP options */
+      if (pbuf_header(p, optlen_aligned)) {
+        LWIP_DEBUGF(IP_DEBUG | 2, ("ip_output_if_opt: not enough room for IP options in pbuf\n"));
+        IP_STATS_INC(ip.err);
+        snmp_inc_ipoutdiscards();
+        return ERR_BUF;
+      }
+      MEMCPY(p->payload, ip_options, optlen);
+      if (optlen < optlen_aligned) {
+        /* zero the remaining bytes */
+        memset(((char*)p->payload) + optlen, 0, optlen_aligned - optlen);
+      }
+    }
+#endif /* IP_OPTIONS_SEND */
     /* generate IP header */
     if (pbuf_header(p, IP_HLEN)) {
       LWIP_DEBUGF(IP_DEBUG | 2, ("ip_output: not enough room for IP header in pbuf\n"));
@@ -498,7 +581,7 @@ ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
 
     ip_addr_set(&(iphdr->dest), dest);
 
-    IPH_VHLTOS_SET(iphdr, 4, IP_HLEN / 4, tos);
+    IPH_VHLTOS_SET(iphdr, 4, ip_hlen / 4, tos);
     IPH_LEN_SET(iphdr, htons(p->tot_len));
     IPH_OFFSET_SET(iphdr, 0);
     IPH_ID_SET(iphdr, htons(ip_id));
@@ -512,7 +595,7 @@ ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
 
     IPH_CHKSUM_SET(iphdr, 0);
 #if CHECKSUM_GEN_IP
-    IPH_CHKSUM_SET(iphdr, inet_chksum(iphdr, IP_HLEN));
+    IPH_CHKSUM_SET(iphdr, inet_chksum(iphdr, ip_hlen));
 #endif
   } else {
     /* IP header already included in p */
@@ -531,9 +614,19 @@ ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
   LWIP_DEBUGF(IP_DEBUG, ("ip_output_if: %c%c%"U16_F"\n", netif->name[0], netif->name[1], netif->num));
   ip_debug_print(p);
 
-  LWIP_DEBUGF(IP_DEBUG, ("netif->output()"));
+#if (LWIP_NETIF_LOOPBACK || LWIP_HAVE_LOOPIF)
+  if (ip_addr_cmp(dest, &netif->ip_addr)) {
+    /* Packet to self, enqueue it for loopback */
+    LWIP_DEBUGF(IP_DEBUG, ("netif_loop_output()"));
 
-  return netif->output(netif, p, dest);
+    return netif_loop_output(netif, p, dest);
+  } else
+#endif /* (LWIP_NETIF_LOOPBACK || LWIP_HAVE_LOOPIF) */
+  {
+    LWIP_DEBUGF(IP_DEBUG, ("netif->output()"));
+
+    return netif->output(netif, p, dest);
+  }
 }
 
 /**
@@ -560,11 +653,53 @@ ip_output(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
   struct netif *netif;
 
   if ((netif = ip_route(dest)) == NULL) {
+    LWIP_DEBUGF(IP_DEBUG, ("ip_output: No route to 0x%"X32_F"\n", dest->addr));
+    IP_STATS_INC(ip.rterr);
     return ERR_RTE;
   }
 
   return ip_output_if(p, src, dest, ttl, tos, proto, netif);
 }
+
+#if LWIP_NETIF_HWADDRHINT
+/** Like ip_output, but takes and addr_hint pointer that is passed on to netif->addr_hint
+ *  before calling ip_output_if.
+ *
+ * @param p the packet to send (p->payload points to the data, e.g. next
+            protocol header; if dest == IP_HDRINCL, p already includes an IP
+            header and p->payload points to that IP header)
+ * @param src the source IP address to send from (if src == IP_ADDR_ANY, the
+ *         IP  address of the netif used to send is used as source address)
+ * @param dest the destination IP address to send the packet to
+ * @param ttl the TTL value to be set in the IP header
+ * @param tos the TOS value to be set in the IP header
+ * @param proto the PROTOCOL to be set in the IP header
+ * @param addr_hint address hint pointer set to netif->addr_hint before
+ *        calling ip_output_if()
+ *
+ * @return ERR_RTE if no route is found
+ *         see ip_output_if() for more return values
+ */
+err_t
+ip_output_hinted(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
+          u8_t ttl, u8_t tos, u8_t proto, u8_t *addr_hint)
+{
+  struct netif *netif;
+  err_t err;
+
+  if ((netif = ip_route(dest)) == NULL) {
+    LWIP_DEBUGF(IP_DEBUG, ("ip_output: No route to 0x%"X32_F"\n", dest->addr));
+    IP_STATS_INC(ip.rterr);
+    return ERR_RTE;
+  }
+
+  netif->addr_hint = addr_hint;
+  err = ip_output_if(p, src, dest, ttl, tos, proto, netif);
+  netif->addr_hint = NULL;
+
+  return err;
+}
+#endif /* LWIP_NETIF_HWADDRHINT*/
 
 #if IP_DEBUG
 /* Print an IP header by using LWIP_DEBUGF

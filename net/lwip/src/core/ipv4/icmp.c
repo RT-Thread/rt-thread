@@ -53,8 +53,17 @@
 
 #include <string.h>
 
+/** Small optimization: set to 0 if incoming PBUF_POOL pbuf always can be
+ * used to modify and send a response packet (and to 1 if this is not the case,
+ * e.g. when link header is stripped of when receiving) */
+#ifndef LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN
+#define LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN 1
+#endif /* LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN */
+
 /* The amount of data from the original packet to return in a dest-unreachable */
 #define ICMP_DEST_UNREACH_DATASIZE 8
+
+static void icmp_send_response(struct pbuf *p, u8_t type, u8_t code);
 
 /**
  * Processes ICMP input packets, called from ip_input().
@@ -94,13 +103,30 @@ icmp_input(struct pbuf *p, struct netif *inp)
 #endif /* LWIP_DEBUG */
   switch (type) {
   case ICMP_ECHO:
-    /* broadcast or multicast destination address? */
-    if (ip_addr_isbroadcast(&iphdr->dest, inp) || ip_addr_ismulticast(&iphdr->dest)) {
-      LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: Not echoing to multicast or broadcast pings\n"));
-      ICMP_STATS_INC(icmp.err);
-      pbuf_free(p);
-      return;
+#if !LWIP_MULTICAST_PING || !LWIP_BROADCAST_PING
+    {
+      int accepted = 1;
+#if !LWIP_MULTICAST_PING
+      /* multicast destination address? */
+      if (ip_addr_ismulticast(&iphdr->dest)) {
+        accepted = 0;
+      }
+#endif /* LWIP_MULTICAST_PING */
+#if !LWIP_BROADCAST_PING
+      /* broadcast destination address? */
+      if (ip_addr_isbroadcast(&iphdr->dest, inp)) {
+        accepted = 0;
+      }
+#endif /* LWIP_BROADCAST_PING */
+      /* broadcast or multicast destination address not acceptd? */
+      if (!accepted) {
+        LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: Not echoing to multicast or broadcast pings\n"));
+        ICMP_STATS_INC(icmp.err);
+        pbuf_free(p);
+        return;
+      }
     }
+#endif /* !LWIP_MULTICAST_PING || !LWIP_BROADCAST_PING */
     LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: ping\n"));
     if (p->tot_len < sizeof(struct icmp_echo_hdr)) {
       LWIP_DEBUGF(ICMP_DEBUG, ("icmp_input: bad ICMP echo received\n"));
@@ -113,6 +139,7 @@ icmp_input(struct pbuf *p, struct netif *inp)
       snmp_inc_icmpinerrors();
       return;
     }
+#if LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN
     if (pbuf_header(p, (PBUF_IP_HLEN + PBUF_LINK_HLEN))) {
       /* p is not big enough to contain link headers
        * allocate a new one and copy p into it
@@ -153,6 +180,7 @@ icmp_input(struct pbuf *p, struct netif *inp)
         goto memerr;
       }
     }
+#endif /* LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN */
     /* At this point, all checks are OK. */
     /* We generate an answer by switching the dest and src ip addresses,
      * setting the icmp type to ECHO_RESPONSE and updating the checksum. */
@@ -205,11 +233,13 @@ lenerr:
   ICMP_STATS_INC(icmp.lenerr);
   snmp_inc_icmpinerrors();
   return;
+#if LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN
 memerr:
   pbuf_free(p);
   ICMP_STATS_INC(icmp.err);
   snmp_inc_icmpinerrors();
   return;
+#endif /* LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN */
 }
 
 /**
@@ -224,40 +254,7 @@ memerr:
 void
 icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
 {
-  struct pbuf *q;
-  struct ip_hdr *iphdr;
-  struct icmp_dur_hdr *idur;
-
-  /* ICMP header + IP header + 8 bytes of data */
-  q = pbuf_alloc(PBUF_IP, sizeof(struct icmp_dur_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE,
-                 PBUF_RAM);
-  if (q == NULL) {
-    LWIP_DEBUGF(ICMP_DEBUG, ("icmp_dest_unreach: failed to allocate pbuf for ICMP packet.\n"));
-    return;
-  }
-  LWIP_ASSERT("check that first pbuf can hold icmp message",
-             (q->len >= (sizeof(struct icmp_dur_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE)));
-
-  iphdr = p->payload;
-
-  idur = q->payload;
-  ICMPH_TYPE_SET(idur, ICMP_DUR);
-  ICMPH_CODE_SET(idur, t);
-
-  SMEMCPY((u8_t *)q->payload + sizeof(struct icmp_dur_hdr), p->payload,
-          IP_HLEN + ICMP_DEST_UNREACH_DATASIZE);
-
-  /* calculate checksum */
-  idur->chksum = 0;
-  idur->chksum = inet_chksum(idur, q->len);
-  ICMP_STATS_INC(icmp.xmit);
-  /* increase number of messages attempted to send */
-  snmp_inc_icmpoutmsgs();
-  /* increase number of destination unreachable messages attempted to send */
-  snmp_inc_icmpoutdestunreachs();
-
-  ip_output(q, NULL, &(iphdr->src), ICMP_TTL, 0, IP_PROTO_ICMP);
-  pbuf_free(q);
+  icmp_send_response(p, ICMP_DUR, t);
 }
 
 #if IP_FORWARD || IP_REASSEMBLY
@@ -271,19 +268,36 @@ icmp_dest_unreach(struct pbuf *p, enum icmp_dur_type t)
 void
 icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
 {
+  icmp_send_response(p, ICMP_TE, t);
+}
+
+#endif /* IP_FORWARD || IP_REASSEMBLY */
+
+/**
+ * Send an icmp packet in response to an incoming packet.
+ *
+ * @param p the input packet for which the 'unreachable' should be sent,
+ *          p->payload pointing to the IP header
+ * @param type Type of the ICMP header
+ * @param code Code of the ICMP header
+ */
+static void
+icmp_send_response(struct pbuf *p, u8_t type, u8_t code)
+{
   struct pbuf *q;
   struct ip_hdr *iphdr;
-  struct icmp_te_hdr *tehdr;
+  /* we can use the echo header here */
+  struct icmp_echo_hdr *icmphdr;
 
   /* ICMP header + IP header + 8 bytes of data */
-  q = pbuf_alloc(PBUF_IP, sizeof(struct icmp_dur_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE,
+  q = pbuf_alloc(PBUF_IP, sizeof(struct icmp_echo_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE,
                  PBUF_RAM);
   if (q == NULL) {
     LWIP_DEBUGF(ICMP_DEBUG, ("icmp_time_exceeded: failed to allocate pbuf for ICMP packet.\n"));
     return;
   }
   LWIP_ASSERT("check that first pbuf can hold icmp message",
-             (q->len >= (sizeof(struct icmp_dur_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE)));
+             (q->len >= (sizeof(struct icmp_echo_hdr) + IP_HLEN + ICMP_DEST_UNREACH_DATASIZE)));
 
   iphdr = p->payload;
   LWIP_DEBUGF(ICMP_DEBUG, ("icmp_time_exceeded from "));
@@ -292,17 +306,19 @@ icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
   ip_addr_debug_print(ICMP_DEBUG, &(iphdr->dest));
   LWIP_DEBUGF(ICMP_DEBUG, ("\n"));
 
-  tehdr = q->payload;
-  ICMPH_TYPE_SET(tehdr, ICMP_TE);
-  ICMPH_CODE_SET(tehdr, t);
+  icmphdr = q->payload;
+  icmphdr->type = type;
+  icmphdr->code = code;
+  icmphdr->id = 0;
+  icmphdr->seqno = 0;
 
   /* copy fields from original packet */
-  SMEMCPY((u8_t *)q->payload + sizeof(struct icmp_dur_hdr), (u8_t *)p->payload,
+  SMEMCPY((u8_t *)q->payload + sizeof(struct icmp_echo_hdr), (u8_t *)p->payload,
           IP_HLEN + ICMP_DEST_UNREACH_DATASIZE);
 
   /* calculate checksum */
-  tehdr->chksum = 0;
-  tehdr->chksum = inet_chksum(tehdr, q->len);
+  icmphdr->chksum = 0;
+  icmphdr->chksum = inet_chksum(icmphdr, q->len);
   ICMP_STATS_INC(icmp.xmit);
   /* increase number of messages attempted to send */
   snmp_inc_icmpoutmsgs();
@@ -311,7 +327,5 @@ icmp_time_exceeded(struct pbuf *p, enum icmp_te_type t)
   ip_output(q, NULL, &(iphdr->src), ICMP_TTL, 0, IP_PROTO_ICMP);
   pbuf_free(q);
 }
-
-#endif /* IP_FORWARD */
 
 #endif /* LWIP_ICMP */

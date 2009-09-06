@@ -8,8 +8,7 @@
  *
  * This implementation complies with RFC 826 (Ethernet ARP). It supports
  * Gratuitious ARP from RFC3220 (IP Mobility Support for IPv4) section 4.6
- * if an interface calls etharp_query(our_netif, its_ip_addr, NULL) upon
- * address change.
+ * if an interface calls etharp_gratuitous(our_netif) upon address change.
  */
 
 /*
@@ -353,7 +352,7 @@ find_entry(struct ip_addr *ipaddr, u8_t flags)
    * 1) empty entry
    * 2) oldest stable entry
    * 3) oldest pending entry without queued packets
-   * 4) oldest pending entry without queued packets
+   * 4) oldest pending entry with queued packets
    * 
    * { ETHARP_TRY_HARD is set at this point }
    */ 
@@ -705,7 +704,7 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
       hdr->opcode = htons(ARP_REPLY);
 
       hdr->dipaddr = hdr->sipaddr;
-      hdr->sipaddr = *(struct ip_addr2 *)&netif->ip_addr;
+      SMEMCPY(&hdr->sipaddr, &netif->ip_addr, sizeof(hdr->sipaddr));
 
       LWIP_ASSERT("netif->hwaddr_len must be the same as ETHARP_HWADDR_LEN for etharp!",
                   (netif->hwaddr_len == ETHARP_HWADDR_LEN));
@@ -1041,7 +1040,7 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
 #endif /* LWIP_AUTOIP */
 
   /* allocate a pbuf for the outgoing ARP request packet */
-  p = pbuf_alloc(PBUF_LINK, sizeof(struct etharp_hdr), PBUF_RAM);
+  p = pbuf_alloc(PBUF_RAW, sizeof(struct etharp_hdr), PBUF_RAM);
   /* could allocate a pbuf for an ARP request? */
   if (p == NULL) {
     LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 2, ("etharp_raw: could not allocate pbuf for ARP request.\n"));
@@ -1130,7 +1129,14 @@ ethernet_input(struct pbuf *p, struct netif *netif)
 
   /* points to packet payload, which starts with an Ethernet header */
   ethhdr = p->payload;
-  
+  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE,
+    ("ethernet_input: dest:%02x:%02x:%02x:%02x:%02x:%02x, src:%02x:%02x:%02x:%02x:%02x:%02x, type:%2hx\n",
+     (unsigned)ethhdr->dest.addr[0], (unsigned)ethhdr->dest.addr[1], (unsigned)ethhdr->dest.addr[2],
+     (unsigned)ethhdr->dest.addr[3], (unsigned)ethhdr->dest.addr[4], (unsigned)ethhdr->dest.addr[5],
+     (unsigned)ethhdr->src.addr[0], (unsigned)ethhdr->src.addr[1], (unsigned)ethhdr->src.addr[2],
+     (unsigned)ethhdr->src.addr[3], (unsigned)ethhdr->src.addr[4], (unsigned)ethhdr->src.addr[5],
+     (unsigned)htons(ethhdr->type)));
+
   switch (htons(ethhdr->type)) {
     /* IP packet? */
     case ETHTYPE_IP:
@@ -1165,6 +1171,8 @@ ethernet_input(struct pbuf *p, struct netif *netif)
 #endif /* PPPOE_SUPPORT */
 
     default:
+      ETHARP_STATS_INC(etharp.proterr);
+      ETHARP_STATS_INC(etharp.drop);
       pbuf_free(p);
       p = NULL;
       break;

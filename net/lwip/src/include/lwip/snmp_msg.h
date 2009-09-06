@@ -39,6 +39,8 @@
 #include "lwip/snmp.h"
 #include "lwip/snmp_structs.h"
 
+#if LWIP_SNMP
+
 #if SNMP_PRIVATE_MIB
 #include "private_mib.h"
 #endif
@@ -303,5 +305,7 @@ void snmp_authfail_trap(void);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LWIP_SNMP */
 
 #endif /* __LWIP_SNMP_MSG_H__ */

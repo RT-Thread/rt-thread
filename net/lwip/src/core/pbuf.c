@@ -70,6 +70,9 @@
 #include "lwip/pbuf.h"
 #include "lwip/sys.h"
 #include "arch/perf.h"
+#if TCP_QUEUE_OOSEQ
+#include "lwip/tcp.h"
+#endif
 
 #include <string.h>
 
@@ -77,6 +80,42 @@
 /* Since the pool is created in memp, PBUF_POOL_BUFSIZE will be automatically
    aligned there. Therefore, PBUF_POOL_BUFSIZE_ALIGNED can be used here. */
 #define PBUF_POOL_BUFSIZE_ALIGNED LWIP_MEM_ALIGN_SIZE(PBUF_POOL_BUFSIZE)
+
+#if TCP_QUEUE_OOSEQ
+#define ALLOC_POOL_PBUF(p) do { (p) = alloc_pool_pbuf(); } while (0)
+#else
+#define ALLOC_POOL_PBUF(p) do { (p) = memp_malloc(MEMP_PBUF_POOL); } while (0)
+#endif
+
+
+#if TCP_QUEUE_OOSEQ
+/**
+ * Attempt to reclaim some memory from queued out-of-sequence TCP segments
+ * if we run out of pool pbufs. It's better to give priority to new packets
+ * if we're running out.
+ *
+ * @return the allocated pbuf.
+ */
+static struct pbuf *
+alloc_pool_pbuf(void)
+{
+  struct tcp_pcb *pcb;
+  struct pbuf *p;
+
+retry:
+  p = memp_malloc(MEMP_PBUF_POOL);
+  if (NULL == p) {
+    for (pcb=tcp_active_pcbs; NULL != pcb; pcb = pcb->next) {
+      if (NULL != pcb->ooseq) {
+        tcp_segs_free(pcb->ooseq);
+        pcb->ooseq = NULL;
+        goto retry;
+      }
+    }
+  }
+  return p;
+}
+#endif /* TCP_QUEUE_OOSEQ */
 
 /**
  * Allocates a pbuf of the given type (possibly a chain for PBUF_POOL type).
@@ -142,7 +181,7 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
   switch (type) {
   case PBUF_POOL:
     /* allocate head of pbuf chain into p */
-      p = memp_malloc(MEMP_PBUF_POOL);
+    ALLOC_POOL_PBUF(p);
     LWIP_DEBUGF(PBUF_DEBUG | LWIP_DBG_TRACE | 3, ("pbuf_alloc: allocated pbuf %p\n", (void *)p));
     if (p == NULL) {
       return NULL;
@@ -161,6 +200,8 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
     LWIP_ASSERT("check p->payload + p->len does not overflow pbuf",
                 ((u8_t*)p->payload + p->len <=
                  (u8_t*)p + SIZEOF_STRUCT_PBUF + PBUF_POOL_BUFSIZE_ALIGNED));
+    LWIP_ASSERT("PBUF_POOL_BUFSIZE must be bigger than MEM_ALIGNMENT",
+      (PBUF_POOL_BUFSIZE_ALIGNED - LWIP_MEM_ALIGN_SIZE(offset)) > 0 );
     /* set reference count (needed here in case we fail) */
     p->ref = 1;
 
@@ -172,7 +213,7 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
     rem_len = length - p->len;
     /* any remaining pbufs to be allocated? */
     while (rem_len > 0) {
-      q = memp_malloc(MEMP_PBUF_POOL);
+      ALLOC_POOL_PBUF(q);
       if (q == NULL) {
         /* free chain so far allocated */
         pbuf_free(p);
@@ -272,6 +313,7 @@ pbuf_realloc(struct pbuf *p, u16_t new_len)
   u16_t rem_len; /* remaining length */
   s32_t grow;
 
+  LWIP_ASSERT("pbuf_realloc: p != NULL", p != NULL);
   LWIP_ASSERT("pbuf_realloc: sane p->type", p->type == PBUF_POOL ||
               p->type == PBUF_ROM ||
               p->type == PBUF_RAM ||
@@ -299,6 +341,7 @@ pbuf_realloc(struct pbuf *p, u16_t new_len)
     q->tot_len += (u16_t)grow;
     /* proceed to next pbuf in chain */
     q = q->next;
+    LWIP_ASSERT("pbuf_realloc: q != NULL", q != NULL);
   }
   /* we have now reached the new last pbuf (in q) */
   /* rem_len == desired length for pbuf q */
@@ -667,8 +710,8 @@ pbuf_dechain(struct pbuf *p)
  *
  * @note Only one packet is copied, no packet queue!
  *
- * @param p_to pbuf source of the copy
- * @param p_from pbuf destination of the copy
+ * @param p_to pbuf destination of the copy
+ * @param p_from pbuf source of the copy
  *
  * @return ERR_OK if pbuf was copied
  *         ERR_ARG if one of the pbufs is NULL or p_to is not big
@@ -735,8 +778,10 @@ pbuf_copy(struct pbuf *p_to, struct pbuf *p_from)
  *
  * @param buf the pbuf from which to copy data
  * @param dataptr the application supplied buffer
- * @param len length of data to copy (dataptr must be big enough)
+ * @param len length of data to copy (dataptr must be big enough). No more 
+ * than buf->tot_len will be copied, irrespective of len
  * @param offset offset into the packet buffer from where to begin copying len bytes
+ * @return the number of bytes copied, or 0 on failure
  */
 u16_t
 pbuf_copy_partial(struct pbuf *buf, void *dataptr, u16_t len, u16_t offset)
@@ -746,8 +791,8 @@ pbuf_copy_partial(struct pbuf *buf, void *dataptr, u16_t len, u16_t offset)
   u16_t buf_copy_len;
   u16_t copied_total = 0;
 
-  LWIP_ERROR("netbuf_copy_partial: invalid buf", (buf != NULL), return 0;);
-  LWIP_ERROR("netbuf_copy_partial: invalid dataptr", (dataptr != NULL), return 0;);
+  LWIP_ERROR("pbuf_copy_partial: invalid buf", (buf != NULL), return 0;);
+  LWIP_ERROR("pbuf_copy_partial: invalid dataptr", (dataptr != NULL), return 0;);
 
   left = 0;
 
@@ -774,4 +819,77 @@ pbuf_copy_partial(struct pbuf *buf, void *dataptr, u16_t len, u16_t offset)
     }
   }
   return copied_total;
+}
+
+/**
+ * Copy application supplied data into a pbuf.
+ * This function can only be used to copy the equivalent of buf->tot_len data.
+ *
+ * @param buf pbuf to fill with data
+ * @param dataptr application supplied data buffer
+ * @param len length of the application supplied data buffer
+ *
+ * @return ERR_OK if successful, ERR_MEM if the pbuf is not big enough
+ */
+err_t
+pbuf_take(struct pbuf *buf, const void *dataptr, u16_t len)
+{
+  struct pbuf *p;
+  u16_t buf_copy_len;
+  u16_t total_copy_len = len;
+  u16_t copied_total = 0;
+
+  LWIP_ERROR("pbuf_take: invalid buf", (buf != NULL), return 0;);
+  LWIP_ERROR("pbuf_take: invalid dataptr", (dataptr != NULL), return 0;);
+
+  if ((buf == NULL) || (dataptr == NULL) || (buf->tot_len < len)) {
+    return ERR_ARG;
+  }
+
+  /* Note some systems use byte copy if dataptr or one of the pbuf payload pointers are unaligned. */
+  for(p = buf; total_copy_len != 0; p = p->next) {
+    LWIP_ASSERT("pbuf_take: invalid pbuf", p != NULL);
+    buf_copy_len = total_copy_len;
+    if (buf_copy_len > p->len) {
+      /* this pbuf cannot hold all remaining data */
+      buf_copy_len = p->len;
+    }
+    /* copy the necessary parts of the buffer */
+    MEMCPY(p->payload, &((char*)dataptr)[copied_total], buf_copy_len);
+    total_copy_len -= buf_copy_len;
+    copied_total += buf_copy_len;
+  }
+  LWIP_ASSERT("did not copy all data", total_copy_len == 0 && copied_total == len);
+  return ERR_OK;
+}
+
+/**
+ * Creates a single pbuf out of a queue of pbufs.
+ *
+ * @remark: The source pbuf 'p' is not freed by this function because that can
+ *          be illegal in some places!
+ *
+ * @param p the source pbuf
+ * @param layer pbuf_layer of the new pbuf
+ *
+ * @return a new, single pbuf (p->next is NULL)
+ *         or the old pbuf if allocation fails
+ */
+struct pbuf*
+pbuf_coalesce(struct pbuf *p, pbuf_layer layer)
+{
+  struct pbuf *q;
+  err_t err;
+  if (p->next == NULL) {
+    return p;
+  }
+  q = pbuf_alloc(layer, p->tot_len, PBUF_RAM);
+  if (q == NULL) {
+    /* @todo: what do we do now? */
+    return p;
+  }
+  err = pbuf_copy(q, p);
+  LWIP_ASSERT("pbuf_copy failed", err == ERR_OK);
+  pbuf_free(p);
+  return q;
 }

@@ -297,11 +297,12 @@ tcpip_thread(void *arg)
 
     case TCPIP_MSG_TIMEOUT:
       LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: TIMEOUT %p\n", (void *)msg));
-
-      if(msg->msg.tmo.msecs != 0xffffffff)
-        sys_timeout (msg->msg.tmo.msecs, msg->msg.tmo.h, msg->msg.tmo.arg);
-      else
-        sys_untimeout (msg->msg.tmo.h, msg->msg.tmo.arg);
+      sys_timeout(msg->msg.tmo.msecs, msg->msg.tmo.h, msg->msg.tmo.arg);
+      memp_free(MEMP_TCPIP_MSG_API, msg);
+      break;
+    case TCPIP_MSG_UNTIMEOUT:
+      LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: UNTIMEOUT %p\n", (void *)msg));
+      sys_untimeout(msg->msg.tmo.h, msg->msg.tmo.arg);
       memp_free(MEMP_TCPIP_MSG_API, msg);
       break;
 
@@ -379,6 +380,14 @@ tcpip_callback_with_block(void (*f)(void *ctx), void *ctx, u8_t block)
   return ERR_VAL;
 }
 
+/**
+ * call sys_timeout in tcpip_thread
+ *
+ * @param msec time in miliseconds for timeout
+ * @param h function to be called on timeout
+ * @param arg argument to pass to timeout function h
+ * @return ERR_MEM on memory error, ERR_OK otherwise
+ */
 err_t
 tcpip_timeout(u32_t msecs, sys_timeout_handler h, void *arg)
 {
@@ -392,6 +401,34 @@ tcpip_timeout(u32_t msecs, sys_timeout_handler h, void *arg)
 
     msg->type = TCPIP_MSG_TIMEOUT;
     msg->msg.tmo.msecs = msecs;
+    msg->msg.tmo.h = h;
+    msg->msg.tmo.arg = arg;
+    sys_mbox_post(mbox, msg);
+    return ERR_OK;
+  }
+  return ERR_VAL;
+}
+
+/**
+ * call sys_untimeout in tcpip_thread
+ *
+ * @param msec time in miliseconds for timeout
+ * @param h function to be called on timeout
+ * @param arg argument to pass to timeout function h
+ * @return ERR_MEM on memory error, ERR_OK otherwise
+ */
+err_t
+tcpip_untimeout(sys_timeout_handler h, void *arg)
+{
+  struct tcpip_msg *msg;
+
+  if (mbox != SYS_MBOX_NULL) {
+    msg = memp_malloc(MEMP_TCPIP_MSG_API);
+    if (msg == NULL) {
+      return ERR_MEM;
+    }
+
+    msg->type = TCPIP_MSG_UNTIMEOUT;
     msg->msg.tmo.h = h;
     msg->msg.tmo.arg = arg;
     sys_mbox_post(mbox, msg);
@@ -516,6 +553,44 @@ tcpip_init(void (* initfunc)(void *), void *arg)
 #endif /* LWIP_TCPIP_CORE_LOCKING */
 
   sys_thread_new(TCPIP_THREAD_NAME, tcpip_thread, NULL, TCPIP_THREAD_STACKSIZE, TCPIP_THREAD_PRIO);
+}
+
+/**
+ * Simple callback function used with tcpip_callback to free a pbuf
+ * (pbuf_free has a wrong signature for tcpip_callback)
+ *
+ * @param p The pbuf (chain) to be dereferenced.
+ */
+static void
+pbuf_free_int(void *p)
+{
+  struct pbuf *q = p;
+  pbuf_free(q);
+}
+
+/**
+ * A simple wrapper function that allows you to free a pbuf from interrupt context.
+ *
+ * @param p The pbuf (chain) to be dereferenced.
+ * @return ERR_OK if callback could be enqueued, an err_t if not
+ */
+err_t
+pbuf_free_callback(struct pbuf *p)
+{
+  return tcpip_callback_with_block(pbuf_free_int, p, 0);
+}
+
+/**
+ * A simple wrapper function that allows you to free heap memory from
+ * interrupt context.
+ *
+ * @param m the heap memory to free
+ * @return ERR_OK if callback could be enqueued, an err_t if not
+ */
+err_t
+mem_free_callback(void *m)
+{
+  return tcpip_callback_with_block(mem_free, m, 0);
 }
 
 #endif /* !NO_SYS */

@@ -42,6 +42,11 @@
 
 #include "arch/cc.h"
 
+/** Temporary: define format string for size_t if not defined in cc.h */
+#ifndef SZT_F
+#define SZT_F U32_F
+#endif /* SZT_F */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -194,13 +199,7 @@ extern "C" {
 #define  ENOMEDIUM  123  /* No medium found */
 #define  EMEDIUMTYPE  124  /* Wrong medium type */
 
-#ifndef errno
-extern int errno;
-#endif
 
-#endif /* LWIP_PROVIDE_ERRNO */
-
-/*yi.qiu@2008.09.08, Newlib does not provide following errno*/
 #define ENSROK    0 /* DNS server returned answer with no data */
 #define ENSRNODATA  160 /* DNS server returned answer with no data */
 #define ENSRFORMERR 161 /* DNS server claims query was misformatted */
@@ -220,6 +219,12 @@ extern int errno;
 #define ENSRDESTRUCTION 175 /* Application terminated lookup */
 #define ENSRQUERYDOMAINTOOLONG  176 /* Domain name is too long */
 #define ENSRCNAMELOOP 177 /* Domain name is too long */
+
+#ifndef errno
+extern int errno;
+#endif
+
+#endif /* LWIP_PROVIDE_ERRNO */
 
 #ifdef __cplusplus
 }

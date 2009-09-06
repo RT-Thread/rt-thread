@@ -65,6 +65,7 @@ void              netbuf_first    (struct netbuf *buf);
 #define netbuf_copy_partial(buf, dataptr, len, offset) \
   pbuf_copy_partial((buf)->p, (dataptr), (len), (offset))
 #define netbuf_copy(buf,dataptr,len) netbuf_copy_partial(buf, dataptr, len, 0)
+#define netbuf_take(buf, dataptr, len) pbuf_take((buf)->p, dataptr, len)
 #define netbuf_len(buf)              ((buf)->p->tot_len)
 #define netbuf_fromaddr(buf)         ((buf)->addr)
 #define netbuf_fromport(buf)         ((buf)->port)

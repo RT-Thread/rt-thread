@@ -54,7 +54,6 @@ stats_display_proto(struct stats_proto *proto, char *name)
 {
   LWIP_PLATFORM_DIAG(("\n%s\n\t", name));
   LWIP_PLATFORM_DIAG(("xmit: %"STAT_COUNTER_F"\n\t", proto->xmit)); 
-  LWIP_PLATFORM_DIAG(("rexmit: %"STAT_COUNTER_F"\n\t", proto->rexmit)); 
   LWIP_PLATFORM_DIAG(("recv: %"STAT_COUNTER_F"\n\t", proto->recv)); 
   LWIP_PLATFORM_DIAG(("fw: %"STAT_COUNTER_F"\n\t", proto->fw)); 
   LWIP_PLATFORM_DIAG(("drop: %"STAT_COUNTER_F"\n\t", proto->drop)); 
@@ -68,6 +67,7 @@ stats_display_proto(struct stats_proto *proto, char *name)
   LWIP_PLATFORM_DIAG(("cachehit: %"STAT_COUNTER_F"\n", proto->cachehit)); 
 }
 
+#if IGMP_STATS
 void
 stats_display_igmp(struct stats_igmp *igmp)
 {
@@ -82,7 +82,9 @@ stats_display_igmp(struct stats_igmp *igmp)
   LWIP_PLATFORM_DIAG(("report_rxed: %"STAT_COUNTER_F"\n\t", igmp->report_rxed)); 
   LWIP_PLATFORM_DIAG(("group_query_rxed: %"STAT_COUNTER_F"\n", igmp->group_query_rxed));
 }
+#endif /* IGMP_STATS */
 
+#if MEM_STATS || MEMP_STATS
 void
 stats_display_mem(struct stats_mem *mem, char *name)
 {
@@ -93,48 +95,53 @@ stats_display_mem(struct stats_mem *mem, char *name)
   LWIP_PLATFORM_DIAG(("err: %"U32_F"\n", (u32_t)mem->err));
 }
 
-void
-stats_display(void)
-{
 #if MEMP_STATS
-  s16_t i;
+void
+stats_display_memp(struct stats_mem *mem, int index)
+{
   char * memp_names[] = {
 #define LWIP_MEMPOOL(name,num,size,desc) desc,
 #include "lwip/memp_std.h"
   };
-#endif
-#if LINK_STATS
-  stats_display_proto(&lwip_stats.link, "LINK");
-#endif
-#if ETHARP_STATS
-  stats_display_proto(&lwip_stats.etharp, "ETHARP");
-#endif
-#if IPFRAG_STATS
-  stats_display_proto(&lwip_stats.ip_frag, "IP_FRAG");
-#endif
-#if IP_STATS
-  stats_display_proto(&lwip_stats.ip, "IP");
-#endif
-#if ICMP_STATS
-  stats_display_proto(&lwip_stats.icmp, "ICMP");
-#endif
-#if IGMP_STATS
-  stats_display_igmp(&lwip_stats.igmp);
-#endif
-#if UDP_STATS
-  stats_display_proto(&lwip_stats.udp, "UDP");
-#endif
-#if TCP_STATS
-  stats_display_proto(&lwip_stats.tcp, "TCP");
-#endif
-#if MEM_STATS
-  stats_display_mem(&lwip_stats.mem, "HEAP");
-#endif
-#if MEMP_STATS
-  for (i = 0; i < MEMP_MAX; i++) {
-    stats_display_mem(&lwip_stats.memp[i], memp_names[i]);
+  if(index < MEMP_MAX) {
+    stats_display_mem(mem, memp_names[index]);
   }
-#endif
+}
+#endif /* MEMP_STATS */
+#endif /* MEM_STATS || MEMP_STATS */
+
+#if SYS_STATS
+void
+stats_display_sys(struct stats_sys *sys)
+{
+  LWIP_PLATFORM_DIAG(("\nSYS\n\t"));
+  LWIP_PLATFORM_DIAG(("sem.used: %"U32_F"\n\t", (u32_t)sys->sem.used)); 
+  LWIP_PLATFORM_DIAG(("sem.max:  %"U32_F"\n\t", (u32_t)sys->sem.max)); 
+  LWIP_PLATFORM_DIAG(("sem.err:  %"U32_F"\n\t", (u32_t)sys->sem.err)); 
+  LWIP_PLATFORM_DIAG(("mbox.used: %"U32_F"\n\t", (u32_t)sys->mbox.used)); 
+  LWIP_PLATFORM_DIAG(("mbox.max:  %"U32_F"\n\t", (u32_t)sys->mbox.max)); 
+  LWIP_PLATFORM_DIAG(("mbox.err:  %"U32_F"\n\t", (u32_t)sys->mbox.err)); 
+}
+#endif /* SYS_STATS */
+
+void
+stats_display(void)
+{
+  s16_t i;
+
+  LINK_STATS_DISPLAY();
+  ETHARP_STATS_DISPLAY();
+  IPFRAG_STATS_DISPLAY();
+  IP_STATS_DISPLAY();
+  IGMP_STATS_DISPLAY();
+  ICMP_STATS_DISPLAY();
+  UDP_STATS_DISPLAY();
+  TCP_STATS_DISPLAY();
+  MEM_STATS_DISPLAY();
+  for (i = 0; i < MEMP_MAX; i++) {
+    MEMP_STATS_DISPLAY(i);
+  }
+  SYS_STATS_DISPLAY();
 }
 #endif /* LWIP_STATS_DISPLAY */
 

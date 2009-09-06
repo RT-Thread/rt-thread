@@ -50,6 +50,7 @@
 #include "lwip/raw.h"
 #include "lwip/udp.h"
 #include "lwip/tcp.h"
+#include "lwip/snmp_msg.h"
 #include "lwip/autoip.h"
 #include "lwip/igmp.h"
 #include "lwip/dns.h"
@@ -60,6 +61,9 @@
  */
 #ifndef BYTE_ORDER
   #error "BYTE_ORDER is not defined, you have to define it in your cc.h"
+#endif
+#if (!IP_SOF_BROADCAST && IP_SOF_BROADCAST_RECV)
+  #error "If you want to use broadcast filter per pcb on recv operations, you have to define IP_SOF_BROADCAST=1 in your lwipopts.h"
 #endif
 #if (!LWIP_ARP && ARP_QUEUEING)
   #error "If you want to use ARP Queueing, you have to define LWIP_ARP=1 in your lwipopts.h"
@@ -155,6 +159,15 @@
 #if (MEM_USE_POOLS && !MEMP_USE_CUSTOM_POOLS)
   #error "MEM_USE_POOLS requires custom pools (MEMP_USE_CUSTOM_POOLS) to be enabled in your lwipopts.h"
 #endif
+#if (PBUF_POOL_BUFSIZE <= MEM_ALIGNMENT)
+  #error "PBUF_POOL_BUFSIZE must be greater than MEM_ALIGNMENT or the offset may take the full first pbuf"
+#endif
+#if (TCP_QUEUE_OOSEQ && !LWIP_TCP)
+  #error "TCP_QUEUE_OOSEQ requires LWIP_TCP"
+#endif
+#if (DNS_LOCAL_HOSTLIST && !DNS_LOCAL_HOSTLIST_IS_DYNAMIC && !(defined(DNS_LOCAL_HOSTLIST_INIT)))
+  #error "you have to define define DNS_LOCAL_HOSTLIST_INIT {{'host1', 0x123}, {'host2', 0x234}} to initialize DNS_LOCAL_HOSTLIST"
+#endif
 
 
 /* Compile-time checks for deprecated options.
@@ -241,6 +254,9 @@ lwip_init(void)
 #if LWIP_TCP
   tcp_init();
 #endif /* LWIP_TCP */
+#if LWIP_SNMP
+  snmp_init();
+#endif /* LWIP_SNMP */
 #if LWIP_AUTOIP
   autoip_init();
 #endif /* LWIP_AUTOIP */

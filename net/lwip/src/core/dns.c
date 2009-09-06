@@ -127,18 +127,19 @@
 PACK_STRUCT_BEGIN
 /** DNS message header */
 struct dns_hdr {
-  u16_t id;
-  u8_t flags1;
-  u8_t flags2;
-  u16_t numquestions;
-  u16_t numanswers;
-  u16_t numauthrr;
-  u16_t numextrarr;
+  PACK_STRUCT_FIELD(u16_t id);
+  PACK_STRUCT_FIELD(u8_t flags1);
+  PACK_STRUCT_FIELD(u8_t flags2);
+  PACK_STRUCT_FIELD(u16_t numquestions);
+  PACK_STRUCT_FIELD(u16_t numanswers);
+  PACK_STRUCT_FIELD(u16_t numauthrr);
+  PACK_STRUCT_FIELD(u16_t numextrarr);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/epstruct.h"
 #endif
+#define SIZEOF_DNS_HDR 12
 
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/bpstruct.h"
@@ -148,13 +149,14 @@ PACK_STRUCT_BEGIN
 struct dns_query {
   /* DNS query record starts with either a domain name or a pointer
      to a name already present somewhere in the packet. */
-  u16_t type;
-  u16_t class;
+  PACK_STRUCT_FIELD(u16_t type);
+  PACK_STRUCT_FIELD(u16_t class);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/epstruct.h"
 #endif
+#define SIZEOF_DNS_QUERY 4
 
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/bpstruct.h"
@@ -164,15 +166,16 @@ PACK_STRUCT_BEGIN
 struct dns_answer {
   /* DNS answer record starts with either a domain name or a pointer
      to a name already present somewhere in the packet. */
-  u16_t type;
-  u16_t class;
-  u32_t ttl;
-  u16_t len;
+  PACK_STRUCT_FIELD(u16_t type);
+  PACK_STRUCT_FIELD(u16_t class);
+  PACK_STRUCT_FIELD(u32_t ttl);
+  PACK_STRUCT_FIELD(u16_t len);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/epstruct.h"
 #endif
+#define SIZEOF_DNS_ANSWER 10
 
 /** DNS table entry */
 struct dns_table_entry {
@@ -189,6 +192,40 @@ struct dns_table_entry {
   dns_found_callback found;
   void *arg;
 };
+
+#if DNS_LOCAL_HOSTLIST
+/** struct used for local host-list */
+struct local_hostlist_entry {
+  /** static hostname */
+  const char *name;
+  /** static host address in network byteorder */
+  u32_t addr;
+  struct local_hostlist_entry *next;
+};
+
+#if DNS_LOCAL_HOSTLIST_IS_DYNAMIC
+/** Local host-list. For hostnames in this list, no
+ *  external name resolution is performed */
+static struct local_hostlist_entry *local_hostlist_dynamic;
+#else /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC */
+
+/** Defining this allows the local_hostlist_static to be placed in a different
+ * linker section (e.g. FLASH) */
+#ifndef DNS_LOCAL_HOSTLIST_STORAGE_PRE
+#define DNS_LOCAL_HOSTLIST_STORAGE_PRE static
+#endif /* DNS_LOCAL_HOSTLIST_STORAGE_PRE */
+/** Defining this allows the local_hostlist_static to be placed in a different
+ * linker section (e.g. FLASH) */
+#ifndef DNS_LOCAL_HOSTLIST_STORAGE_POST
+#define DNS_LOCAL_HOSTLIST_STORAGE_POST
+#endif /* DNS_LOCAL_HOSTLIST_STORAGE_POST */
+DNS_LOCAL_HOSTLIST_STORAGE_PRE struct local_hostlist_entry local_hostlist_static[]
+  DNS_LOCAL_HOSTLIST_STORAGE_POST = DNS_LOCAL_HOSTLIST_INIT;
+
+#endif /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC */
+
+static void dns_init_local();
+#endif /* DNS_LOCAL_HOSTLIST */
 
 
 /* forward declarations */
@@ -241,6 +278,9 @@ dns_init()
       dns_setserver(0, &dnsserver);
     }
   }
+#if DNS_LOCAL_HOSTLIST
+  dns_init_local();
+#endif
 }
 
 /**
@@ -288,6 +328,119 @@ dns_tmr(void)
   }
 }
 
+#if DNS_LOCAL_HOSTLIST
+static void
+dns_init_local()
+{
+#if DNS_LOCAL_HOSTLIST_IS_DYNAMIC && defined(DNS_LOCAL_HOSTLIST_INIT)
+  int i;
+  struct local_hostlist_entry *entry;
+  /* Dynamic: copy entries from DNS_LOCAL_HOSTLIST_INIT to list */
+  struct local_hostlist_entry local_hostlist_init[] = DNS_LOCAL_HOSTLIST_INIT;
+  for (i = 0; i < sizeof(local_hostlist_init) / sizeof(struct local_hostlist_entry); i++) {
+    entry = mem_malloc(sizeof(struct local_hostlist_entry));
+    LWIP_ASSERT("mem-error in dns_init_local", entry != NULL);
+    if (entry != NULL) {
+      struct local_hostlist_entry *init_entry = &local_hostlist_init[i];
+      entry->name = init_entry->name;
+      entry->addr = init_entry->addr;
+      entry->next = local_hostlist_dynamic;
+      local_hostlist_dynamic = entry;
+    }
+  }
+#endif /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC && defined(DNS_LOCAL_HOSTLIST_INIT) */
+}
+
+/**
+ * Scans the local host-list for a hostname.
+ *
+ * @param hostname Hostname to look for in the local host-list
+ * @return The first IP address for the hostname in the local host-list or
+ *         INADDR_NONE if not found.
+ */
+static u32_t
+dns_lookup_local(const char *hostname)
+{
+#if DNS_LOCAL_HOSTLIST_IS_DYNAMIC
+  struct local_hostlist_entry *entry = local_hostlist_dynamic;
+  while(entry != NULL) {
+    if(strcmp(entry->name, hostname) == 0) {
+      return entry->addr;
+    }
+    entry = entry->next;
+  }
+#else /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC */
+  int i;
+  for (i = 0; i < sizeof(local_hostlist_static) / sizeof(struct local_hostlist_entry); i++) {
+    if(strcmp(local_hostlist_static[i].name, hostname) == 0) {
+      return local_hostlist_static[i].addr;
+    }
+  }
+#endif /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC */
+  return INADDR_NONE;
+}
+
+#if DNS_LOCAL_HOSTLIST_IS_DYNAMIC
+/** Remove all entries from the local host-list for a specific hostname
+ * and/or IP addess
+ *
+ * @param hostname hostname for which entries shall be removed from the local
+ *                 host-list
+ * @param addr address for which entries shall be removed from the local host-list
+ * @return the number of removed entries
+ */
+int
+dns_local_removehost(const char *hostname, const struct ip_addr *addr)
+{
+  int removed = 0;
+  struct local_hostlist_entry *entry = local_hostlist_dynamic;
+  struct local_hostlist_entry *last_entry = NULL;
+  while (entry != NULL) {
+    if (((hostname == NULL) || !strcmp(entry->name, hostname)) &&
+        ((addr == NULL) || (entry->addr == addr->addr))) {
+      struct local_hostlist_entry *free_entry;
+      if (last_entry != NULL) {
+        last_entry->next = entry->next;
+      } else {
+        local_hostlist_dynamic = entry->next;
+      }
+      free_entry = entry;
+      entry = entry->next;
+      mem_free(free_entry);
+      removed++;
+    } else {
+      last_entry = entry;
+      entry = entry->next;
+    }
+  }
+  return removed;
+}
+
+/**
+ * Add a hostname/IP address pair to the local host-list.
+ * Duplicates are not checked.
+ *
+ * @param hostname hostname of the new entry
+ * @param addr IP address of the new entry
+ * @return ERR_OK if succeeded or ERR_MEM on memory error
+ */
+err_t
+dns_local_addhost(const char *hostname, const struct ip_addr *addr)
+{
+  struct local_hostlist_entry *entry;
+  entry = mem_malloc(sizeof(struct local_hostlist_entry));
+  if (entry == NULL) {
+    return ERR_MEM;
+  }
+  entry->name = hostname;
+  entry->addr = addr->addr;
+  entry->next = local_hostlist_dynamic;
+  local_hostlist_dynamic = entry;
+  return ERR_OK;
+}
+#endif /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC*/
+#endif /* DNS_LOCAL_HOSTLIST */
+
 /**
  * Look up a hostname in the array of known hostnames.
  *
@@ -298,13 +451,26 @@ dns_tmr(void)
  *
  * @param name the hostname to look up
  * @return the hostname's IP address, as u32_t (instead of struct ip_addr to
- *         better check for failure: != 0) or 0 if the hostname was not found
- *         in the cached dns_table.
+ *         better check for failure: != INADDR_NONE) or INADDR_NONE if the hostname
+ *         was not found in the cached dns_table.
  */
 static u32_t
 dns_lookup(const char *name)
 {
   u8_t i;
+#if DNS_LOCAL_HOSTLIST || defined(DNS_LOOKUP_LOCAL_EXTERN)
+  u32_t addr;
+#endif /* DNS_LOCAL_HOSTLIST || defined(DNS_LOOKUP_LOCAL_EXTERN) */
+#if DNS_LOCAL_HOSTLIST
+  if ((addr = dns_lookup_local(name)) != INADDR_NONE) {
+    return addr;
+  }
+#endif /* DNS_LOCAL_HOSTLIST */
+#ifdef DNS_LOOKUP_LOCAL_EXTERN
+  if((addr = DNS_LOOKUP_LOCAL_EXTERN(name)) != INADDR_NONE) {
+    return addr;
+  }
+#endif /* DNS_LOOKUP_LOCAL_EXTERN */
 
   /* Walk through name list, return entry if found. If not, return NULL. */
   for (i = 0; i < DNS_TABLE_SIZE; ++i) {
@@ -317,7 +483,7 @@ dns_lookup(const char *name)
     }
   }
 
-  return 0;
+  return INADDR_NONE;
 }
 
 #if DNS_DOES_NAME_CHECK
@@ -415,17 +581,17 @@ dns_send(u8_t numdns, const char* name, u8_t id)
   LWIP_ASSERT("dns server has no IP address set", dns_servers[numdns].addr != 0);
 
   /* if here, we have either a new query or a retry on a previous query to process */
-  p = pbuf_alloc(PBUF_TRANSPORT, sizeof(struct dns_hdr) + DNS_MAX_NAME_LENGTH +
-                 sizeof(struct dns_query), PBUF_RAM);
+  p = pbuf_alloc(PBUF_TRANSPORT, SIZEOF_DNS_HDR + DNS_MAX_NAME_LENGTH +
+                 SIZEOF_DNS_QUERY, PBUF_RAM);
   if (p != NULL) {
     LWIP_ASSERT("pbuf must be in one piece", p->next == NULL);
     /* fill dns header */
     hdr = (struct dns_hdr*)p->payload;
-    memset(hdr, 0, sizeof(struct dns_hdr));
+    memset(hdr, 0, SIZEOF_DNS_HDR);
     hdr->id = htons(id);
     hdr->flags1 = DNS_FLAG1_RD;
     hdr->numquestions = htons(1);
-    query = (char*)hdr + sizeof(struct dns_hdr);
+    query = (char*)hdr + SIZEOF_DNS_HDR;
     pHostname = name;
     --pHostname;
 
@@ -446,10 +612,10 @@ dns_send(u8_t numdns, const char* name, u8_t id)
     /* fill dns query */
     qry.type  = htons(DNS_RRTYPE_A);
     qry.class = htons(DNS_RRCLASS_IN);
-    MEMCPY( query, &qry, sizeof(struct dns_query));
+    MEMCPY( query, &qry, SIZEOF_DNS_QUERY);
 
     /* resize pbuf to the exact dns query */
-    pbuf_realloc(p, (query + sizeof(struct dns_query)) - ((char*)(p->payload)));
+    pbuf_realloc(p, (query + SIZEOF_DNS_QUERY) - ((char*)(p->payload)));
 
     /* connect to the server for faster receiving */
     udp_connect(dns_pcb, &dns_servers[numdns], DNS_SERVER_PORT);
@@ -591,7 +757,7 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *addr, u
   }
 
   /* is the dns message big enough ? */
-  if (p->tot_len < (sizeof(struct dns_hdr) + sizeof(struct dns_query) + sizeof(struct dns_answer))) {
+  if (p->tot_len < (SIZEOF_DNS_HDR + SIZEOF_DNS_QUERY + SIZEOF_DNS_ANSWER)) {
     LWIP_DEBUGF(DNS_DEBUG, ("dns_recv: pbuf too small\n"));
     /* free pbuf and return */
     goto memerr1;
@@ -632,7 +798,7 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *addr, u
 
 #if DNS_DOES_NAME_CHECK
         /* Check if the name in the "question" part match with the name in the entry. */
-        if (dns_compare_name((unsigned char *)(pEntry->name), (unsigned char *)dns_payload + sizeof(struct dns_hdr)) != 0) {
+        if (dns_compare_name((unsigned char *)(pEntry->name), (unsigned char *)dns_payload + SIZEOF_DNS_HDR) != 0) {
           LWIP_DEBUGF(DNS_DEBUG, ("dns_recv: \"%s\": response not match to query\n", pEntry->name));
           /* call callback to indicate error, clean up memory and return */
           goto responseerr;
@@ -640,14 +806,14 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *addr, u
 #endif /* DNS_DOES_NAME_CHECK */
 
         /* Skip the name in the "question" part */
-        pHostname = (char *) dns_parse_name((unsigned char *)dns_payload + sizeof(struct dns_hdr)) + sizeof(struct dns_query);
+        pHostname = (char *) dns_parse_name((unsigned char *)dns_payload + SIZEOF_DNS_HDR) + SIZEOF_DNS_QUERY;
 
         while(nanswers > 0) {
           /* skip answer resource record's host name */
           pHostname = (char *) dns_parse_name((unsigned char *)pHostname);
 
           /* Check for IP address type and Internet class. Others are discarded. */
-          MEMCPY(&ans, pHostname, sizeof(struct dns_answer));
+          MEMCPY(&ans, pHostname, SIZEOF_DNS_ANSWER);
           if((ntohs(ans.type) == DNS_RRTYPE_A) && (ntohs(ans.class) == DNS_RRCLASS_IN) && (ntohs(ans.len) == sizeof(struct ip_addr)) ) {
             /* read the answer resource record's TTL, and maximize it if needed */
             pEntry->ttl = ntohl(ans.ttl);
@@ -655,7 +821,7 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *addr, u
               pEntry->ttl = DNS_MAX_TTL;
             }
             /* read the IP address after answer resource record's header */
-            MEMCPY( &(pEntry->ipaddr), (pHostname+sizeof(struct dns_answer)), sizeof(struct ip_addr));
+            MEMCPY( &(pEntry->ipaddr), (pHostname+SIZEOF_DNS_ANSWER), sizeof(struct ip_addr));
             LWIP_DEBUGF(DNS_DEBUG, ("dns_recv: \"%s\": response = ", pEntry->name));
             ip_addr_debug_print(DNS_DEBUG, (&(pEntry->ipaddr)));
             LWIP_DEBUGF(DNS_DEBUG, ("\n"));
@@ -666,7 +832,7 @@ dns_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *addr, u
             /* deallocate memory and return */
             goto memerr2;
           } else {
-            pHostname = pHostname + sizeof(struct dns_answer) + htons(ans.len);
+            pHostname = pHostname + SIZEOF_DNS_ANSWER + htons(ans.len);
           }
           --nanswers;
         }
@@ -803,7 +969,7 @@ dns_gethostbyname(const char *hostname, struct ip_addr *addr, dns_found_callback
   /* host name already in octet notation? set ip addr and return ERR_OK
    * already have this address cached? */
   if (((addr->addr = inet_addr(hostname)) != INADDR_NONE) ||
-      ((addr->addr = dns_lookup(hostname)) != 0)) {
+      ((addr->addr = dns_lookup(hostname)) != INADDR_NONE)) {
     return ERR_OK;
   }
 

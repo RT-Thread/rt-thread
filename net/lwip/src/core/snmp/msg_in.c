@@ -589,9 +589,10 @@ snmp_msg_set_event(u8_t request_id, struct snmp_msg_pstat *msg_ps)
   {
     struct mib_external_node *en;
 
-    /** set_value_a() @todo: use reply value?? */
+    /** set_value_a() */
     en = msg_ps->ext_mib_node;
-    en->set_value_a(request_id, &msg_ps->ext_object_def, 0, NULL);
+    en->set_value_a(request_id, &msg_ps->ext_object_def,
+      msg_ps->vb_ptr->value_len, msg_ps->vb_ptr->value);
 
     /** @todo use set_value_pc() if toobig */
     msg_ps->state = SNMP_MSG_INTERNAL_SET_VALUE;
@@ -1145,7 +1146,7 @@ snmp_pdu_dec_varbindlist(struct pbuf *p, u16_t ofs, u16_t *ofs_ret, struct snmp_
     derr = snmp_asn1_dec_length(p, ofs+1, &len_octets, &len);
     if ((derr != ERR_OK) ||
         (type != (SNMP_ASN1_UNIV | SNMP_ASN1_CONSTR | SNMP_ASN1_SEQ)) ||
-        (len <= 0) || (len > vb_len))
+        (len == 0) || (len > vb_len))
     {
       snmp_inc_snmpinasnparseerrs();
       /* free varbinds (if available) */

@@ -34,6 +34,8 @@
 
 #include "lwip/opt.h"
 
+#include "lwip/inet.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,11 +68,6 @@ PACK_STRUCT_END
 #  include "arch/epstruct.h"
 #endif
 
-/* For compatibility with BSD code */
-struct in_addr {
-  u32_t s_addr;
-};
-
 struct netif;
 
 extern const struct ip_addr ip_addr_any;
@@ -81,9 +78,6 @@ extern const struct ip_addr ip_addr_broadcast;
  */
 #define IP_ADDR_ANY         ((struct ip_addr *)&ip_addr_any)
 #define IP_ADDR_BROADCAST   ((struct ip_addr *)&ip_addr_broadcast)
-
-#define INADDR_NONE         ((u32_t)0xffffffffUL)  /* 255.255.255.255 */
-#define INADDR_LOOPBACK     ((u32_t)0x7f000001UL)  /* 127.0.0.1 */
 
 /* Definitions of the bits in an Internet address integer.
 
@@ -150,11 +144,15 @@ u8_t ip_addr_isbroadcast(struct ip_addr *, struct netif *);
 #define ip_addr_islinklocal(addr1) (((addr1)->addr & ntohl(0xffff0000UL)) == ntohl(0xa9fe0000UL))
 
 #define ip_addr_debug_print(debug, ipaddr) \
-        LWIP_DEBUGF(debug, ("%"U16_F".%"U16_F".%"U16_F".%"U16_F, \
-                ipaddr ? (u16_t)(ntohl((ipaddr)->addr) >> 24) & 0xff : 0, \
-                ipaddr ? (u16_t)(ntohl((ipaddr)->addr) >> 16) & 0xff : 0, \
-                ipaddr ? (u16_t)(ntohl((ipaddr)->addr) >> 8) & 0xff : 0, \
-                ipaddr ? (u16_t)ntohl((ipaddr)->addr) & 0xff : 0))
+  LWIP_DEBUGF(debug, ("%"U16_F".%"U16_F".%"U16_F".%"U16_F,              \
+                      ipaddr != NULL ?                                  \
+                      (u16_t)(ntohl((ipaddr)->addr) >> 24) & 0xff : 0,  \
+                      ipaddr != NULL ?                                  \
+                      (u16_t)(ntohl((ipaddr)->addr) >> 16) & 0xff : 0,  \
+                      ipaddr != NULL ?                                  \
+                      (u16_t)(ntohl((ipaddr)->addr) >> 8) & 0xff : 0,   \
+                      ipaddr != NULL ?                                  \
+                      (u16_t)ntohl((ipaddr)->addr) & 0xff : 0))
 
 /* These are cast to u16_t, with the intent that they are often arguments
  * to printf using the U16_F format from cc.h. */

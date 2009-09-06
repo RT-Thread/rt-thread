@@ -34,11 +34,19 @@
 
 #include "lwip/opt.h"
 
-#include "lwip/ip_addr.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* For compatibility with BSD code */
+struct in_addr {
+  u32_t s_addr;
+};
+
+#define INADDR_NONE         ((u32_t)0xffffffffUL)  /* 255.255.255.255 */
+#define INADDR_LOOPBACK     ((u32_t)0x7f000001UL)  /* 127.0.0.1 */
+#define INADDR_ANY          ((u32_t)0x00000000UL)  /* 0.0.0.0 */
+#define INADDR_BROADCAST    ((u32_t)0xffffffffUL)  /* 255.255.255.255 */
 
 u32_t inet_addr(const char *cp);
 int inet_aton(const char *cp, struct in_addr *addr);

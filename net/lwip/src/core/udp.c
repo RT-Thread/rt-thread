@@ -90,6 +90,7 @@ udp_input(struct pbuf *p, struct netif *inp)
   struct ip_hdr *iphdr;
   u16_t src, dest;
   u8_t local_match;
+  u8_t broadcast;
 
   PERF_START;
 
@@ -111,6 +112,9 @@ udp_input(struct pbuf *p, struct netif *inp)
   }
 
   udphdr = (struct udp_hdr *)p->payload;
+
+  /* is broadcast packet ? */
+  broadcast = ip_addr_isbroadcast(&(iphdr->dest), inp);
 
   LWIP_DEBUGF(UDP_DEBUG, ("udp_input: received datagram of length %"U16_F"\n", p->tot_len));
 
@@ -169,16 +173,20 @@ udp_input(struct pbuf *p, struct netif *inp)
 
       /* compare PCB local addr+port to UDP destination addr+port */
       if ((pcb->local_port == dest) &&
-          (ip_addr_isany(&pcb->local_ip) ||
-           ip_addr_cmp(&(pcb->local_ip), &(iphdr->dest)) || 
+          ((!broadcast && ip_addr_isany(&pcb->local_ip)) ||
+           ip_addr_cmp(&(pcb->local_ip), &(iphdr->dest)) ||
 #if LWIP_IGMP
            ip_addr_ismulticast(&(iphdr->dest)) ||
 #endif /* LWIP_IGMP */
-           ip_addr_isbroadcast(&(iphdr->dest), inp))) {
+#if IP_SOF_BROADCAST_RECV
+           (broadcast && (pcb->so_options & SOF_BROADCAST)))) {
+#else  /* IP_SOF_BROADCAST_RECV */
+           (broadcast))) {
+#endif /* IP_SOF_BROADCAST_RECV */
         local_match = 1;
         if ((uncon_pcb == NULL) && 
             ((pcb->flags & UDP_FLAGS_CONNECTED) == 0)) {
-          /* the first unconnected matching PCB */     
+          /* the first unconnected matching PCB */
           uncon_pcb = pcb;
         }
       }
@@ -286,7 +294,7 @@ udp_input(struct pbuf *p, struct netif *inp)
 #if LWIP_ICMP
       /* No match was found, send ICMP destination port unreachable unless
          destination address was broadcast/multicast. */
-      if (!ip_addr_isbroadcast(&iphdr->dest, inp) &&
+      if (!broadcast &&
           !ip_addr_ismulticast(&iphdr->dest)) {
         /* move payload pointer back to ip header */
         pbuf_header(p, (IPH_HL(iphdr) * 4) + UDP_HLEN);
@@ -400,6 +408,14 @@ udp_sendto_if(struct udp_pcb *pcb, struct pbuf *p,
   err_t err;
   struct pbuf *q; /* q will be sent down the stack */
 
+#if IP_SOF_BROADCAST
+  /* broadcast filter? */
+  if ( ((pcb->so_options & SOF_BROADCAST) == 0) && ip_addr_isbroadcast(dst_ip, netif) ) {
+    LWIP_DEBUGF(UDP_DEBUG | 1, ("udp_sendto_if: SOF_BROADCAST not enabled on pcb %p\n", (void *)pcb));
+    return ERR_VAL;
+  }
+#endif /* IP_SOF_BROADCAST */
+
   /* if the PCB is not yet bound to a port, bind it here */
   if (pcb->local_port == 0) {
     LWIP_DEBUGF(UDP_DEBUG | LWIP_DBG_TRACE | 2, ("udp_send: not yet bound to a port, binding now\n"));
@@ -496,7 +512,7 @@ udp_sendto_if(struct udp_pcb *pcb, struct pbuf *p,
 #if LWIP_NETIF_HWADDRHINT
     netif->addr_hint = &(pcb->addr_hint);
 #endif /* LWIP_NETIF_HWADDRHINT*/
-    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDPLITE, netif);    
+    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDPLITE, netif);
 #if LWIP_NETIF_HWADDRHINT
     netif->addr_hint = NULL;
 #endif /* LWIP_NETIF_HWADDRHINT*/
@@ -519,7 +535,7 @@ udp_sendto_if(struct udp_pcb *pcb, struct pbuf *p,
 #if LWIP_NETIF_HWADDRHINT
     netif->addr_hint = &(pcb->addr_hint);
 #endif /* LWIP_NETIF_HWADDRHINT*/
-    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDP, netif);    
+    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDP, netif);
 #if LWIP_NETIF_HWADDRHINT
     netif->addr_hint = NULL;
 #endif /* LWIP_NETIF_HWADDRHINT*/
@@ -635,9 +651,9 @@ udp_bind(struct udp_pcb *pcb, struct ip_addr *ipaddr, u16_t port)
   }
   LWIP_DEBUGF(UDP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
               ("udp_bind: bound to %"U16_F".%"U16_F".%"U16_F".%"U16_F", port %"U16_F"\n",
-               (u16_t)(ntohl(pcb->local_ip.addr) >> 24 & 0xff),
-               (u16_t)(ntohl(pcb->local_ip.addr) >> 16 & 0xff),
-               (u16_t)(ntohl(pcb->local_ip.addr) >> 8 & 0xff),
+               (u16_t)((ntohl(pcb->local_ip.addr) >> 24) & 0xff),
+               (u16_t)((ntohl(pcb->local_ip.addr) >> 16) & 0xff),
+               (u16_t)((ntohl(pcb->local_ip.addr) >> 8) & 0xff),
                (u16_t)(ntohl(pcb->local_ip.addr) & 0xff), pcb->local_port));
   return ERR_OK;
 }
@@ -693,9 +709,9 @@ udp_connect(struct udp_pcb *pcb, struct ip_addr *ipaddr, u16_t port)
 #endif
   LWIP_DEBUGF(UDP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
               ("udp_connect: connected to %"U16_F".%"U16_F".%"U16_F".%"U16_F",port %"U16_F"\n",
-               (u16_t)(ntohl(pcb->remote_ip.addr) >> 24 & 0xff),
-               (u16_t)(ntohl(pcb->remote_ip.addr) >> 16 & 0xff),
-               (u16_t)(ntohl(pcb->remote_ip.addr) >> 8 & 0xff),
+               (u16_t)((ntohl(pcb->remote_ip.addr) >> 24) & 0xff),
+               (u16_t)((ntohl(pcb->remote_ip.addr) >> 16) & 0xff),
+               (u16_t)((ntohl(pcb->remote_ip.addr) >> 8) & 0xff),
                (u16_t)(ntohl(pcb->remote_ip.addr) & 0xff), pcb->remote_port));
 
   /* Insert UDP PCB into the list of active UDP PCBs. */

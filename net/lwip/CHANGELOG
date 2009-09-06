@@ -19,8 +19,375 @@ HISTORY
 
   ++ New features:
 
+  ++ Bugfixes:
+
+
+(STABLE-1.3.1)
+
+  ++ New features:
+
+  2009-05-10 Simon Goldschmidt
+  * opt.h, sockets.c, pbuf.c, netbuf.h, pbuf.h: task #7013: Added option
+    LWIP_NETIF_TX_SINGLE_PBUF to try to create transmit packets from only
+    one pbuf to help MACs that don't support scatter-gather DMA.
+
+  2009-05-09 Simon Goldschmidt
+  * icmp.h, icmp.c: Shrinked ICMP code, added option to NOT check icoming
+    ECHO pbuf for size (just use it): LWIP_ICMP_ECHO_CHECK_INPUT_PBUF_LEN
+
+  2009-05-05 Simon Goldschmidt, Jakob Stoklund Olesen
+  * ip.h, ip.c: Added ip_current_netif() & ip_current_header() to receive
+    extended info about the currently received packet.
+
+  2009-04-27 Simon Goldschmidt
+  * sys.h: Made SYS_LIGHTWEIGHT_PROT and sys_now() work with NO_SYS=1
+
+  2009-04-25 Simon Goldschmidt
+  * mem.c, opt.h: Added option MEM_USE_POOLS_TRY_BIGGER_POOL to try the next
+    bigger malloc pool if one is empty (only usable with MEM_USE_POOLS).
+
+  2009-04-21 Simon Goldschmidt
+  * dns.c, init.c, dns.h, opt.h: task #7507, patch #6786: DNS supports static
+    hosts table. New configuration options DNS_LOCAL_HOSTLIST and
+    DNS_LOCAL_HOSTLIST_IS_DYNAMIC. Also, DNS_LOOKUP_LOCAL_EXTERN() can be defined
+    as an external function for lookup.
+
+  2009-04-15 Simon Goldschmidt
+  * dhcp.c: patch #6763: Global DHCP XID can be redefined to something more unique
+
+  2009-03-31 Kieran Mansley
+  * tcp.c, tcp_out.c, tcp_in.c, sys.h, tcp.h, opts.h: add support for
+    TCP timestamp options, off by default.  Rework tcp_enqueue() to
+    take option flags rather than specified option data
+
+  2009-02-18 Simon Goldschmidt
+  * cc.h: Added printf formatter for size_t: SZT_F
+
+  2009-02-16 Simon Goldschmidt (patch by Rishi Khan)
+  * icmp.c, opt.h: patch #6539: (configurable) response to broadcast- and multicast
+    pings
+
+  2009-02-12 Simon Goldschmidt
+  * init.h: Added LWIP_VERSION to get the current version of the stack
+
+  2009-02-11 Simon Goldschmidt (suggested by Gottfried Spitaler)
+  * opt.h, memp.h/.c: added MEMP_MEM_MALLOC to use mem_malloc/mem_free instead
+    of the pool allocator (can save code size with MEM_LIBC_MALLOC if libc-malloc
+    is otherwise used)
+
+  2009-01-28 Jonathan Larmour (suggested by Bill Bauerbach)
+  * ipv4/inet_chksum.c, ipv4/lwip/inet_chksum.h: inet_chksum_pseudo_partial()
+  is only used by UDPLITE at present, so conditionalise it.
+
+  2008-12-03 Simon Goldschmidt (base on patch from Luca Ceresoli)
+  * autoip.c: checked in (slightly modified) patch #6683: Customizable AUTOIP
+    "seed" address. This should reduce AUTOIP conflicts if
+    LWIP_AUTOIP_CREATE_SEED_ADDR is overridden.
+
+  2008-10-02 Jonathan Larmour and Rishi Khan
+  * sockets.c (lwip_accept): Return EWOULDBLOCK if would block on non-blocking
+    socket.
+
+  2008-06-30 Simon Goldschmidt
+  * mem.c, opt.h, stats.h: fixed bug #21433: Calling mem_free/pbuf_free from
+    interrupt context isn't safe: LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT allows
+    mem_free to run between mem_malloc iterations. Added illegal counter for
+    mem stats.
+
+  2008-06-27 Simon Goldschmidt
+  * stats.h/.c, some other files: patch #6483: stats module improvement:
+    Added defines to display each module's statistic individually, added stats
+    defines for MEM, MEMP and SYS modules, removed (unused) rexmit counter.
+
+  2008-06-17 Simon Goldschmidt
+  * err.h: patch #6459: Made err_t overridable to use a more efficient type
+    (define LWIP_ERR_T in cc.h)
+
+  2008-06-17 Simon Goldschmidt
+  * slipif.c: patch #6480: Added a configuration option for slipif for symmetry
+    to loopif
+
+  2008-06-17 Simon Goldschmidt (patch by Luca Ceresoli)
+  * netif.c, loopif.c, ip.c, netif.h, loopif.h, opt.h: Checked in slightly
+    modified version of patch # 6370: Moved loopif code to netif.c so that
+    loopback traffic is supported on all netifs (all local IPs).
+    Added option to limit loopback packets for each netifs.
+
 
   ++ Bugfixes:
+  2009-08-12 Kieran Mansley
+  * tcp_in.c, tcp.c: Fix bug #27209: handle trimming of segments when
+    out of window or out of order properly
+
+  2009-08-12 Kieran Mansley
+  * tcp_in.c: Fix bug #27199: use snd_wl2 instead of snd_wl1
+
+  2009-07-28 Simon Goldschmidt
+  * mem.h: Fixed bug #27105: "realloc() cannot replace mem_realloc()"s
+
+  2009-07-27 Kieran Mansley
+  * api.h api_msg.h netdb.h sockets.h: add missing #include directives
+
+  2009-07-09 Kieran Mansley
+  * api_msg.c, sockets.c, api.h: BUG23240 use signed counters for
+    recv_avail and don't increment counters until message successfully
+    sent to mbox
+
+  2009-06-25 Kieran Mansley
+  * api_msg.c api.h: BUG26722: initialise netconn write variables 
+    in netconn_alloc
+
+  2009-06-25 Kieran Mansley
+  * tcp.h: BUG26879: set ret value in TCP_EVENT macros when function is not set
+
+  2009-06-25 Kieran Mansley
+  * tcp.c, tcp_in.c, tcp_out.c, tcp.h: BUG26301 and BUG26267: correct
+    simultaneous close behaviour, and make snd_nxt have the same meaning 
+    as in the RFCs.
+
+  2009-05-12 Simon Goldschmidt
+  * etharp.h, etharp.c, netif.c: fixed bug #26507: "Gratuitous ARP depends on
+    arp_table / uses etharp_query" by adding etharp_gratuitous()
+
+  2009-05-12 Simon Goldschmidt
+  * ip.h, ip.c, igmp.c: bug #26487: Added ip_output_if_opt that can add IP options
+    to the IP header (used by igmp_ip_output_if)
+
+  2009-05-06 Simon Goldschmidt
+  * inet_chksum.c: On little endian architectures, use LWIP_PLATFORM_HTONS (if
+    defined) for SWAP_BYTES_IN_WORD to speed up checksumming.
+
+  2009-05-05 Simon Goldschmidt
+  * sockets.c: bug #26405: Prematurely released semaphore causes lwip_select()
+    to crash
+
+  2009-05-04 Simon Goldschmidt
+  * init.c: snmp was not initialized in lwip_init()
+
+  2009-05-04 Frédéric Bernon
+  * dhcp.c, netbios.c: Changes if IP_SOF_BROADCAST is enabled.
+
+  2009-05-03 Simon Goldschmidt
+  * tcp.h: bug #26349: Nagle algorithm doesn't send although segment is full
+    (and unsent->next == NULL)
+
+  2009-05-02 Simon Goldschmidt
+  * tcpip.h, tcpip.c: fixed tcpip_untimeout (does not need the time, broken after
+    1.3.0 in CVS only) - fixes compilation of ppp_oe.c
+
+  2009-05-02 Simon Goldschmidt
+  * msg_in.c: fixed bug #25636: SNMPSET value is ignored for integer fields
+
+  2009-05-01 Simon Goldschmidt
+  * pap.c: bug #21680: PPP upap_rauthnak() drops legal NAK packets
+
+  2009-05-01 Simon Goldschmidt
+  * ppp.c: bug #24228: Memory corruption with PPP and DHCP
+
+  2009-04-29 Frédéric Bernon
+  * raw.c, udp.c, init.c, opt.h, ip.h, sockets.h: bug #26309: Implement the
+    SO(F)_BROADCAST filter for all API layers. Avoid the unindented reception
+    of broadcast packets even when this option wasn't set. Port maintainers
+    which want to enable this filter have to set IP_SOF_BROADCAST=1 in opt.h.
+    If you want this option also filter broadcast on recv operations, you also
+    have to set IP_SOF_BROADCAST_RECV=1 in opt.h.
+
+  2009-04-28 Simon Goldschmidt, Jakob Stoklund Olesen
+  * dhcp.c: patch #6721, bugs #25575, #25576: Some small fixes to DHCP and
+    DHCP/AUTOIP cooperation
+
+  2009-04-25 Simon Goldschmidt, Oleg Tyshev
+  * tcp_out.c: bug #24212: Deadlocked tcp_retransmit due to exceeded pcb->cwnd
+    Fixed by sorting the unsent and unacked queues (segments are inserted at the
+    right place in tcp_output and tcp_rexmit).
+
+  2009-04-25 Simon Goldschmidt
+  * memp.c, mem.c, memp.h, mem_std.h: bug #26213 "Problem with memory allocation
+    when debugging": memp_sizes contained the wrong sizes (including sanity
+    regions); memp pools for MEM_USE_POOLS were too small
+
+  2009-04-24 Simon Goldschmidt, Frédéric Bernon
+  * inet.c: patch #6765: Fix a small problem with the last changes (incorrect
+    behavior, with with ip address string not ended by a '\0', a space or a
+    end of line)
+
+  2009-04-19 Simon Goldschmidt
+  * rawapi.txt: Fixed bug #26069: Corrected documentation: if tcp_connect fails,
+    pcb->err is called, not pcb->connected (with an error code).
+
+  2009-04-19 Simon Goldschmidt
+  * tcp_out.c: Fixed bug #26236: "TCP options (timestamp) don't work with
+    no-copy-tcpwrite": deallocate option data, only concat segments with same flags
+
+  2009-04-19 Simon Goldschmidt
+  * tcp_out.c: Fixed bug #25094: "Zero-length pbuf" (options are now allocated
+    in the header pbuf, not the data pbuf)
+
+  2009-04-18 Simon Goldschmidt
+  * api_msg.c: fixed bug #25695: Segmentation fault in do_writemore()
+
+  2009-04-15 Simon Goldschmidt
+  * sockets.c: tried to fix bug #23559: lwip_recvfrom problem with tcp
+
+  2009-04-15 Simon Goldschmidt
+  * dhcp.c: task #9192: mem_free of dhcp->options_in and dhcp->msg_in
+
+  2009-04-15 Simon Goldschmidt
+  * ip.c, ip6.c, tcp_out.c, ip.h: patch #6808: Add a utility function
+    ip_hinted_output() (for smaller code mainly)
+
+  2009-04-15 Simon Goldschmidt
+  * inet.c: patch #6765: Supporting new line characters in inet_aton()
+
+  2009-04-15 Simon Goldschmidt
+  * dhcp.c: patch #6764: DHCP rebind and renew did not send hostnam option;
+    Converted constant OPTION_MAX_MSG_SIZE to netif->mtu, check if netif->mtu
+    is big enough in dhcp_start
+
+  2009-04-15 Simon Goldschmidt
+  * netbuf.c: bug #26027: netbuf_chain resulted in pbuf memory leak
+
+  2009-04-15 Simon Goldschmidt
+  * sockets.c, ppp.c: bug #25763: corrected 4 occurrences of SMEMCPY to MEMCPY
+
+  2009-04-15 Simon Goldschmidt
+  * sockets.c: bug #26121: set_errno can be overridden
+
+  2009-04-09 Kieran Mansley (patch from Luca Ceresoli <lucaceresoli>)
+  * init.c, opt.h: Patch#6774 TCP_QUEUE_OOSEQ breaks compilation when
+    LWIP_TCP==0
+
+  2009-04-09 Kieran Mansley (patch from Roy Lee <roylee17>)
+  * tcp.h: Patch#6802 Add do-while-clauses to those function like
+    macros in tcp.h
+
+  2009-03-31 Kieran Mansley
+  * tcp.c, tcp_in.c, tcp_out.c, tcp.h, opt.h: Rework the way window
+    updates are calculated and sent (BUG20515)
+
+  * tcp_in.c: cope with SYN packets received during established states,
+    and retransmission of initial SYN.
+
+  * tcp_out.c: set push bit correctly when tcp segments are merged
+
+  2009-03-27 Kieran Mansley
+  * tcp_out.c set window correctly on probes (correcting change made
+    yesterday)
+
+  2009-03-26 Kieran Mansley
+  * tcp.c, tcp_in.c, tcp.h: add tcp_abandon() to cope with dropping
+    connections where no reset required (bug #25622)
+
+  * tcp_out.c: set TCP_ACK flag on keepalive and zero window probes 
+    (bug #20779)
+
+  2009-02-18 Simon Goldschmidt (Jonathan Larmour and Bill Auerbach)
+  * ip_frag.c: patch #6528: the buffer used for IP_FRAG_USES_STATIC_BUF could be
+    too small depending on MEM_ALIGNMENT
+
+  2009-02-16 Simon Goldschmidt
+  * sockets.h/.c, api_*.h/.c: fixed arguments of socket functions to match the standard;
+    converted size argument of netconn_write to 'size_t'
+
+  2009-02-16 Simon Goldschmidt
+  * tcp.h, tcp.c: fixed bug #24440: TCP connection close problem on 64-bit host
+    by moving accept callback function pointer to TCP_PCB_COMMON
+
+  2009-02-12 Simon Goldschmidt
+  * dhcp.c: fixed bug #25345 (DHCPDECLINE is sent with "Maximum message size"
+    option)
+
+  2009-02-11 Simon Goldschmidt
+  * dhcp.c: fixed bug #24480 (releasing old udp_pdb and pbuf in dhcp_start)
+
+  2009-02-11 Simon Goldschmidt
+  * opt.h, api_msg.c: added configurable default valud for netconn->recv_bufsize:
+    RECV_BUFSIZE_DEFAULT (fixes bug #23726: pbuf pool exhaustion on slow recv())
+
+  2009-02-10 Simon Goldschmidt
+  * tcp.c: fixed bug #25467: Listen backlog is not reset on timeout in SYN_RCVD:
+    Accepts_pending is decrease on a corresponding listen pcb when a connection
+    in state SYN_RCVD is close.
+
+  2009-01-28 Jonathan Larmour
+  * pbuf.c: reclaim pbufs from TCP out-of-sequence segments if we run
+    out of pool pbufs.
+
+  2008-12-19 Simon Goldschmidt
+  * many files: patch #6699: fixed some warnings on platform where sizeof(int) == 2 
+
+  2008-12-10 Tamas Somogyi, Frédéric Bernon
+  * sockets.c: fixed bug #25051: lwip_recvfrom problem with udp: fromaddr and
+    port uses deleted netbuf.
+
+  2008-10-18 Simon Goldschmidt
+  * tcp_in.c: fixed bug ##24596: Vulnerability on faulty TCP options length
+    in tcp_parseopt
+
+  2008-10-15 Simon Goldschmidt
+  * ip_frag.c: fixed bug #24517: IP reassembly crashes on unaligned IP headers
+    by packing the struct ip_reass_helper.
+
+  2008-10-03 David Woodhouse, Jonathan Larmour
+  * etharp.c (etharp_arp_input): Fix type aliasing problem copying ip address.
+
+  2008-10-02 Jonathan Larmour
+  * dns.c: Hard-code structure sizes, to avoid issues on some compilers where
+    padding is included.
+
+  2008-09-30 Jonathan Larmour
+  * sockets.c (lwip_accept): check addr isn't NULL. If it's valid, do an
+    assertion check that addrlen isn't NULL.
+
+  2008-09-30 Jonathan Larmour
+  * tcp.c: Fix bug #24227, wrong error message in tcp_bind.
+
+  2008-08-26 Simon Goldschmidt
+  * inet.h, ip_addr.h: fixed bug #24132: Cross-dependency between ip_addr.h and
+    inet.h -> moved declaration of struct in_addr from ip_addr.h to inet.h
+
+  2008-08-14 Simon Goldschmidt
+  * api_msg.c: fixed bug #23847: do_close_internal references freed memory (when
+    tcp_close returns != ERR_OK)
+
+  2008-07-08 Frédéric Bernon
+  * stats.h: Fix some build bugs introduced with patch #6483 (missing some parameters
+    in macros, mainly if MEM_STATS=0 and MEMP_STATS=0).
+
+  2008-06-24 Jonathan Larmour
+  * tcp_in.c: Fix for bug #23693 as suggested by Art R. Ensure cseg is unused
+    if tcp_seg_copy fails.
+
+  2008-06-17 Simon Goldschmidt
+  * inet_chksum.c: Checked in some ideas of patch #6460 (loop optimizations)
+    and created defines for swapping bytes and folding u32 to u16.
+
+  2008-05-30 Kieran Mansley
+  * tcp_in.c Remove redundant "if" statement, and use real rcv_wnd
+    rather than rcv_ann_wnd when deciding if packets are in-window.
+    Contributed by <arasmussen@consultant.datasys.swri.edu>
+
+  2008-05-30 Kieran Mansley
+  * mem.h: Fix BUG#23254.  Change macro definition of mem_* to allow
+    passing as function pointers when MEM_LIBC_MALLOC is defined.
+
+  2008-05-09 Jonathan Larmour
+  * err.h, err.c, sockets.c: Fix bug #23119: Reorder timeout error code to
+    stop it being treated as a fatal error.
+
+  2008-04-15 Simon Goldschmidt
+  * dhcp.c: fixed bug #22804: dhcp_stop doesn't clear NETIF_FLAG_DHCP
+    (flag now cleared)
+
+  2008-03-27 Simon Goldschmidt
+  * mem.c, tcpip.c, tcpip.h, opt.h: fixed bug #21433 (Calling mem_free/pbuf_free
+    from interrupt context isn't safe): set LWIP_USE_HEAP_FROM_INTERRUPT to 1
+    in lwipopts.h or use pbuf_free_callback(p)/mem_free_callback(m) to free pbufs
+    or heap memory from interrupt context
+
+  2008-03-26 Simon Goldschmidt
+  * tcp_in.c, tcp.c: fixed bug #22249: division by zero could occur if a remote
+    host sent a zero mss as TCP option.
 
 
 (STABLE-1.3.0)

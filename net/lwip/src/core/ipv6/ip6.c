@@ -327,6 +327,28 @@ ip_output(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
   return ip_output_if (p, src, dest, ttl, proto, netif);
 }
 
+#if LWIP_NETIF_HWADDRHINT
+err_t
+ip_output_hinted(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
+          u8_t ttl, u8_t tos, u8_t proto, u8_t *addr_hint)
+{
+  struct netif *netif;
+  err_t err;
+
+  if ((netif = ip_route(dest)) == NULL) {
+    LWIP_DEBUGF(IP_DEBUG, ("ip_output: No route to 0x%"X32_F"\n", dest->addr));
+    IP_STATS_INC(ip.rterr);
+    return ERR_RTE;
+  }
+
+  netif->addr_hint = addr_hint;
+  err = ip_output_if(p, src, dest, ttl, tos, proto, netif);
+  netif->addr_hint = NULL;
+
+  return err;
+}
+#endif /* LWIP_NETIF_HWADDRHINT*/
+
 #if IP_DEBUG
 void
 ip_debug_print(struct pbuf *p)

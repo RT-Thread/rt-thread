@@ -32,15 +32,23 @@
  * It needs to be implemented by those platforms which need SLIP or PPP
  */
 
+#ifndef __SIO_H__
+#define __SIO_H__
+
 #include "lwip/arch.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/* If you want to define sio_fd_t elsewhere or differently,
+   define this in your cc.h file. */
 #ifndef __sio_fd_t_defined
 typedef void * sio_fd_t;
 #endif
+
+/* The following functions can be defined to something else in your cc.h file
+   or be implemented in your custom sio.c file. */
 
 #ifndef sio_open
 sio_fd_t sio_open(u8_t);
@@ -69,3 +77,5 @@ void sio_read_abort(sio_fd_t);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* __SIO_H__ */

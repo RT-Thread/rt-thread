@@ -42,6 +42,9 @@
 #include "lwip/ip_addr.h"
 #include "lwip/api.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 /** helper struct for gethostbyname_r to access the char* buffer */
 struct gethostbyname_r_helper {
   struct ip_addr *addrs;
@@ -107,23 +110,23 @@ lwip_gethostbyname(const char *name)
 
 #if DNS_DEBUG
   /* dump hostent */
-  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_name           == %s\n",      s_hostent.h_name));
-  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_aliases        == 0x%08lX\n",(u32_t)(s_hostent.h_aliases)));
+  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_name           == %s\n", s_hostent.h_name));
+  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_aliases        == %p\n", s_hostent.h_aliases));
   if (s_hostent.h_aliases != NULL) {
     u8_t idx;
     for ( idx=0; s_hostent.h_aliases[idx]; idx++) {
-      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_aliases[%i]->   == 0x%08lX\n", idx, s_hostent.h_aliases[idx]));
+      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_aliases[%i]->   == %p\n", idx, s_hostent.h_aliases[idx]));
       LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_aliases[%i]->   == %s\n",      idx, s_hostent.h_aliases[idx]));
     }
   }
-  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addrtype       == %lu\n",    (u32_t)(s_hostent.h_addrtype)));
-  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_length         == %lu\n",    (u32_t)(s_hostent.h_length)));
-  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list      == 0x%08lX\n", s_hostent.h_addr_list));
+  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addrtype       == %d\n", s_hostent.h_addrtype));
+  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_length         == %d\n", s_hostent.h_length));
+  LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list      == %p\n", s_hostent.h_addr_list));
   if (s_hostent.h_addr_list != NULL) {
     u8_t idx;
     for ( idx=0; s_hostent.h_addr_list[idx]; idx++) {
-      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list[%i]   == 0x%08lX\n", idx, s_hostent.h_addr_list[idx]));
-      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list[%i]-> == %s\n",      idx, inet_ntoa(*((struct in_addr*)(s_hostent.h_addr_list[idx])))));
+      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list[%i]   == %p\n", idx, s_hostent.h_addr_list[idx]));
+      LWIP_DEBUGF(DNS_DEBUG, ("hostent.h_addr_list[%i]-> == %s\n", idx, inet_ntoa(*((struct in_addr*)(s_hostent.h_addr_list[idx])))));
     }
   }
 #endif /* DNS_DEBUG */
@@ -326,7 +329,8 @@ lwip_getaddrinfo(const char *nodename, const char *servname,
   if (nodename != NULL) {
     /* copy nodename to canonname if specified */
     size_t namelen = strlen(nodename);
-    ai->ai_canonname = mem_malloc(namelen + 1);
+    LWIP_ASSERT("namelen is too long", (namelen + 1) <= (mem_size_t)-1);
+    ai->ai_canonname = mem_malloc((mem_size_t)(namelen + 1));
     if (ai->ai_canonname == NULL) {
       goto memerr;
     }

@@ -83,7 +83,8 @@ int
 inet_aton(const char *cp, struct in_addr *addr)
 {
   u32_t val;
-  int base, n, c;
+  u8_t base;
+  char c;
   u32_t parts[4];
   u32_t *pp = parts;
 
@@ -133,14 +134,13 @@ inet_aton(const char *cp, struct in_addr *addr)
   /*
    * Check for trailing characters.
    */
-  if (c != '\0' && (!isprint(c) || !isspace(c)))
+  if (c != '\0' && !isspace(c))
     return (0);
   /*
    * Concoct the address according to
    * the number of parts specified.
    */
-  n = pp - parts + 1;
-  switch (n) {
+  switch (pp - parts + 1) {
 
   case 0:
     return (0);       /* initial nondigit */

@@ -518,16 +518,18 @@ upap_rauthnak(upap_state *u, u_char *inp, int id, int len)
    */
   if (len < sizeof (u_char)) {
     UPAPDEBUG((LOG_INFO, "pap_rauthnak: rcvd short packet.\n"));
-    return;
+  } else {
+    GETCHAR(msglen, inp);
+    if(msglen > 0) {
+      len -= sizeof (u_char);
+      if (len < msglen) {
+        UPAPDEBUG((LOG_INFO, "pap_rauthnak: rcvd short packet.\n"));
+        return;
+      }
+      msg = (char *) inp;
+      PRINTMSG(msg, msglen);
+    }
   }
-  GETCHAR(msglen, inp);
-  len -= sizeof (u_char);
-  if (len < msglen) {
-    UPAPDEBUG((LOG_INFO, "pap_rauthnak: rcvd short packet.\n"));
-    return;
-  }
-  msg = (char *) inp;
-  PRINTMSG(msg, msglen);
 
   u->us_clientstate = UPAPCS_BADAUTH;
 

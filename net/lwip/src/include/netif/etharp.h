@@ -151,6 +151,11 @@ void etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr,
 err_t etharp_output(struct netif *netif, struct pbuf *q, struct ip_addr *ipaddr);
 err_t etharp_query(struct netif *netif, struct ip_addr *ipaddr, struct pbuf *q);
 err_t etharp_request(struct netif *netif, struct ip_addr *ipaddr);
+/** For Ethernet network interfaces, we might want to send "gratuitous ARP";
+ *  this is an ARP packet sent by a node in order to spontaneously cause other
+ *  nodes to update an entry in their ARP cache.
+ *  From RFC 3220 "IP Mobility Support for IPv4" section 4.6. */
+#define etharp_gratuitous(netif) etharp_request((netif), &(netif)->ip_addr)
 
 err_t ethernet_input(struct pbuf *p, struct netif *netif);
 

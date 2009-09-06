@@ -38,6 +38,8 @@
 
 #if LWIP_SOCKET /* don't build if not configured for use in lwipopts.h */
 
+#include <stddef.h> /* for size_t */
+
 #include "lwip/ip_addr.h"
 #include "lwip/inet.h"
 
@@ -70,13 +72,6 @@ struct sockaddr {
 #define SOCK_RAW        3
 
 /*
- * Maximum queue length specifiable by listen(2).
- */
-#ifndef SOMAXCONN
-#define	SOMAXCONN	128
-#endif
-
-/*
  * Option flags per-socket. These must match the SOF_ flags in ip.h!
  */
 #define  SO_DEBUG       0x0001 /* Unimplemented: turn on debugging info recording */
@@ -84,7 +79,7 @@ struct sockaddr {
 #define  SO_REUSEADDR   0x0004 /* Unimplemented: allow local address reuse */
 #define  SO_KEEPALIVE   0x0008 /* keep connections alive */
 #define  SO_DONTROUTE   0x0010 /* Unimplemented: just use interface addresses */
-#define  SO_BROADCAST   0x0020 /* Unimplemented: permit sending of broadcast msgs */
+#define  SO_BROADCAST   0x0020 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
 #define  SO_USELOOPBACK 0x0040 /* Unimplemented: bypass hardware when possible */
 #define  SO_LINGER      0x0080 /* linger on close if data present */
 #define  SO_OOBINLINE   0x0100 /* Unimplemented: leave received OOB data in line */
@@ -130,9 +125,6 @@ struct linger {
 #define IPPROTO_TCP     6
 #define IPPROTO_UDP     17
 #define IPPROTO_UDPLITE 136
-
-#define INADDR_ANY       0
-#define INADDR_BROADCAST 0xffffffff
 
 /* Flags we can use with send and recv. */
 #define MSG_PEEK       0x01    /* Peeks at an incoming message */
@@ -184,7 +176,22 @@ typedef struct ip_mreq {
 } ip_mreq;
 #endif /* LWIP_IGMP */
 
-/* Unimplemented for now... */
+/*
+ * The Type of Service provides an indication of the abstract
+ * parameters of the quality of service desired.  These parameters are
+ * to be used to guide the selection of the actual service parameters
+ * when transmitting a datagram through a particular network.  Several
+ * networks offer service precedence, which somehow treats high
+ * precedence traffic as more important than other traffic (generally
+ * by accepting only traffic above a certain precedence at time of high
+ * load).  The major choice is a three way tradeoff between low-delay,
+ * high-reliability, and high-throughput.
+ * The use of the Delay, Throughput, and Reliability indications may
+ * increase the cost (in some sense) of the service.  In many networks
+ * better performance for one of these parameters is coupled with worse
+ * performance on another.  Except for very unusual cases at most two
+ * of these three indications should be set.
+ */
 #define IPTOS_TOS_MASK          0x1E
 #define IPTOS_TOS(tos)          ((tos) & IPTOS_TOS_MASK)
 #define IPTOS_LOWDELAY          0x10
@@ -194,7 +201,13 @@ typedef struct ip_mreq {
 #define IPTOS_MINCOST           IPTOS_LOWCOST
 
 /*
- * Definitions for IP precedence (also in ip_tos) (Unimplemented)
+ * The Network Control precedence designation is intended to be used
+ * within a network only.  The actual use and control of that
+ * designation is up to each network. The Internetwork Control
+ * designation is intended for use by gateway control originators only.
+ * If the actual use of these precedence designations is of concern to
+ * a particular network, it is the responsibility of that network to
+ * control the access to, and use of, those precedence designations.
  */
 #define IPTOS_PREC_MASK                 0xe0
 #define IPTOS_PREC(tos)                ((tos) & IPTOS_PREC_MASK)
@@ -286,7 +299,7 @@ struct timeval {
 void lwip_socket_init(void);
 
 int lwip_accept(int s, struct sockaddr *addr, socklen_t *addrlen);
-int lwip_bind(int s, struct sockaddr *name, socklen_t namelen);
+int lwip_bind(int s, const struct sockaddr *name, socklen_t namelen);
 int lwip_shutdown(int s, int how);
 int lwip_getpeername (int s, struct sockaddr *name, socklen_t *namelen);
 int lwip_getsockname (int s, struct sockaddr *name, socklen_t *namelen);
@@ -295,15 +308,15 @@ int lwip_setsockopt (int s, int level, int optname, const void *optval, socklen_
 int lwip_close(int s);
 int lwip_connect(int s, const struct sockaddr *name, socklen_t namelen);
 int lwip_listen(int s, int backlog);
-int lwip_recv(int s, void *mem, int len, unsigned int flags);
-int lwip_read(int s, void *mem, int len);
-int lwip_recvfrom(int s, void *mem, int len, unsigned int flags,
+int lwip_recv(int s, void *mem, size_t len, int flags);
+int lwip_read(int s, void *mem, size_t len);
+int lwip_recvfrom(int s, void *mem, size_t len, int flags,
       struct sockaddr *from, socklen_t *fromlen);
-int lwip_send(int s, const void *dataptr, int size, unsigned int flags);
-int lwip_sendto(int s, const void *dataptr, int size, unsigned int flags,
-    struct sockaddr *to, socklen_t tolen);
+int lwip_send(int s, const void *dataptr, size_t size, int flags);
+int lwip_sendto(int s, const void *dataptr, size_t size, int flags,
+    const struct sockaddr *to, socklen_t tolen);
 int lwip_socket(int domain, int type, int protocol);
-int lwip_write(int s, const void *dataptr, int size);
+int lwip_write(int s, const void *dataptr, size_t size);
 int lwip_select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
                 struct timeval *timeout);
 int lwip_ioctl(int s, long cmd, void *argp);

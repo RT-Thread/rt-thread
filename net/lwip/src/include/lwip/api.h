@@ -36,6 +36,8 @@
 
 #if LWIP_NETCONN /* don't build if not configured for use in lwipopts.h */
 
+#include <stddef.h> /* for size_t */
+
 #include "lwip/netbuf.h"
 #include "lwip/sys.h"
 #include "lwip/ip_addr.h"
@@ -137,19 +139,21 @@ struct netconn {
   /** maximum amount of bytes queued in recvmbox */
   int recv_bufsize;
 #endif /* LWIP_SO_RCVBUF */
-  u16_t recv_avail;
+  s16_t recv_avail;
+#if LWIP_TCP
   /** TCP: when data passed to netconn_write doesn't fit into the send buffer,
       this temporarily stores the message. */
   struct api_msg_msg *write_msg;
   /** TCP: when data passed to netconn_write doesn't fit into the send buffer,
       this temporarily stores how much is already sent. */
-  int write_offset;
+  size_t write_offset;
 #if LWIP_TCPIP_CORE_LOCKING
   /** TCP: when data passed to netconn_write doesn't fit into the send buffer,
       this temporarily stores whether to wake up the original application task
       if data couldn't be sent in the first try. */
   u8_t write_delayed;
 #endif /* LWIP_TCPIP_CORE_LOCKING */
+#endif /* LWIP_TCP */
   /** A callback function that is informed about events for this netconn */
   netconn_callback callback;
 };
@@ -166,7 +170,8 @@ struct
 netconn *netconn_new_with_proto_and_callback(enum netconn_type t, u8_t proto,
                                    netconn_callback callback);
 err_t             netconn_delete  (struct netconn *conn);
-enum netconn_type netconn_type    (struct netconn *conn);
+/** Get the type of a netconn (as enum netconn_type). */
+#define netconn_type(conn) (conn->type)
 
 err_t             netconn_getaddr (struct netconn *conn,
                                    struct ip_addr *addr,
@@ -191,7 +196,7 @@ err_t             netconn_sendto  (struct netconn *conn,
 err_t             netconn_send    (struct netconn *conn,
                                    struct netbuf *buf);
 err_t             netconn_write   (struct netconn *conn,
-                                   const void *dataptr, int size,
+                                   const void *dataptr, size_t size,
                                    u8_t apiflags);
 err_t             netconn_close   (struct netconn *conn);
 

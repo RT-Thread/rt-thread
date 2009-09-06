@@ -2,10 +2,11 @@ Raw TCP/IP interface for lwIP
 
 Authors: Adam Dunkels, Leon Woestenberg, Christiaan Simons
 
-lwIP provides two Application Program's Interfaces (APIs) for programs
+lwIP provides three Application Program's Interfaces (APIs) for programs
 to use for communication with the TCP/IP code:
 * low-level "core" / "callback" or "raw" API.
 * higher-level "sequential" API.
+* BSD-style socket API.
 
 The sequential API provides a way for ordinary, sequential, programs
 to use the lwIP stack. It is quite similar to the BSD socket API. The
@@ -13,6 +14,45 @@ model of execution is based on the blocking open-read-write-close
 paradigm. Since the TCP/IP stack is event based by nature, the TCP/IP
 code and the application program must reside in different execution
 contexts (threads).
+
+The socket API is a compatibility API for existing applications,
+currently it is built on top of the sequential API. It is meant to
+provide all functions needed to run socket API applications running
+on other platforms (e.g. unix / windows etc.). However, due to limitations
+in the specification of this API, there might be incompatibilities
+that require small modifications of existing programs.
+
+** Threading
+
+lwIP started targeting single-threaded environments. When adding multi-
+threading support, instead of making the core thread-safe, another
+approach was chosen: there is one main thread running the lwIP core
+(also known as the "tcpip_thread"). The raw API may only be used from
+this thread! Application threads using the sequential- or socket API
+communicate with this main thread through message passing.
+
+      As such, the list of functions that may be called from
+      other threads or an ISR is very limited! Only functions
+      from these API header files are thread-safe:
+      - api.h
+      - netbuf.h
+      - netdb.h
+      - netifapi.h
+      - sockets.h
+      - sys.h
+
+      Additionaly, memory (de-)allocation functions may be
+      called from multiple threads (not ISR!) with NO_SYS=0
+      since they are protected by SYS_LIGHTWEIGHT_PROT and/or
+      semaphores.
+
+      Only since 1.3.0, if SYS_LIGHTWEIGHT_PROT is set to 1
+      and LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT is set to 1,
+      pbuf_free() may also be called from another thread or
+      an ISR (since only then, mem_free - for PBUF_RAM - may
+      be called from an ISR: otherwise, the HEAP is only
+      protected by semaphores).
+      
 
 ** The remainder of this document discusses the "raw" API. **
 
@@ -128,8 +168,9 @@ incoming connections or be explicitly connected to another host.
   function specified as the fourth argument (the "connected" argument)
   when the connection is established. If the connection could not be
   properly established, either because the other host refused the
-  connection or because the other host didn't answer, the "connected"
-  function will be called with an the "err" argument set accordingly.
+  connection or because the other host didn't answer, the "err"
+  callback function of this pcb (registered with tcp_err, see below)
+  will be called.
 
   The tcp_connect() function can return ERR_MEM if no memory is
   available for enqueueing the SYN segment. If the SYN indeed was

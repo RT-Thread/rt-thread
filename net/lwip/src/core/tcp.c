@@ -49,6 +49,7 @@
 #include "lwip/memp.h"
 #include "lwip/snmp.h"
 #include "lwip/tcp.h"
+#include "lwip/debug.h"
 
 #include <string.h>
 
@@ -186,14 +187,15 @@ tcp_close(struct tcp_pcb *pcb)
 }
 
 /**
- * Aborts a connection by sending a RST to the remote host and deletes
- * the local protocol control block. This is done when a connection is
- * killed because of shortage of memory.
+ * Abandons a connection and optionally sends a RST to the remote
+ * host.  Deletes the local protocol control block. This is done when
+ * a connection is killed because of shortage of memory.
  *
  * @param pcb the tcp_pcb to abort
+ * @param reset boolean to indicate whether a reset should be sent
  */
 void
-tcp_abort(struct tcp_pcb *pcb)
+tcp_abandon(struct tcp_pcb *pcb, int reset)
 {
   u32_t seqno, ackno;
   u16_t remote_port, local_port;
@@ -235,8 +237,10 @@ tcp_abort(struct tcp_pcb *pcb)
 #endif /* TCP_QUEUE_OOSEQ */
     memp_free(MEMP_TCP_PCB, pcb);
     TCP_EVENT_ERR(errf, errf_arg, ERR_ABRT);
-    LWIP_DEBUGF(TCP_RST_DEBUG, ("tcp_abort: sending RST\n"));
-    tcp_rst(seqno, ackno, &local_ip, &remote_ip, local_port, remote_port);
+    if (reset) {
+      LWIP_DEBUGF(TCP_RST_DEBUG, ("tcp_abandon: sending RST\n"));
+      tcp_rst(seqno, ackno, &local_ip, &remote_ip, local_port, remote_port);
+    }
   }
 }
 
@@ -258,7 +262,7 @@ tcp_bind(struct tcp_pcb *pcb, struct ip_addr *ipaddr, u16_t port)
 {
   struct tcp_pcb *cpcb;
 
-  LWIP_ERROR("tcp_connect: can only bind in state CLOSED", pcb->state == CLOSED, return ERR_ISCONN);
+  LWIP_ERROR("tcp_bind: can only bind in state CLOSED", pcb->state == CLOSED, return ERR_ISCONN);
 
   if (port == 0) {
     port = tcp_new_port();
@@ -380,6 +384,33 @@ tcp_listen_with_backlog(struct tcp_pcb *pcb, u8_t backlog)
   return (struct tcp_pcb *)lpcb;
 }
 
+/** 
+ * Update the state that tracks the available window space to advertise.
+ *
+ * Returns how much extra window would be advertised if we sent an
+ * update now.
+ */
+u32_t tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb)
+{
+  u32_t new_right_edge = pcb->rcv_nxt + pcb->rcv_wnd;
+
+  if (TCP_SEQ_GEQ(new_right_edge, pcb->rcv_ann_right_edge + pcb->mss)) {
+    /* we can advertise more window */
+    pcb->rcv_ann_wnd = pcb->rcv_wnd;
+    return new_right_edge - pcb->rcv_ann_right_edge;
+  } else {
+    if (TCP_SEQ_GT(pcb->rcv_nxt, pcb->rcv_ann_right_edge)) {
+      /* Can happen due to other end sending out of advertised window,
+       * but within actual available (but not yet advertised) window */
+      pcb->rcv_ann_wnd = 0;
+    } else {
+      /* keep the right edge of window constant */
+      pcb->rcv_ann_wnd = pcb->rcv_ann_right_edge - pcb->rcv_nxt;
+    }
+    return 0;
+  }
+}
+
 /**
  * This function should be called by the application when it has
  * processed the data. The purpose is to advertise a larger window
@@ -391,40 +422,23 @@ tcp_listen_with_backlog(struct tcp_pcb *pcb, u8_t backlog)
 void
 tcp_recved(struct tcp_pcb *pcb, u16_t len)
 {
-  if ((u32_t)pcb->rcv_wnd + len > TCP_WND) {
-    pcb->rcv_wnd = TCP_WND;
-    pcb->rcv_ann_wnd = TCP_WND;
-  } else {
-    pcb->rcv_wnd += len;
-    if (pcb->rcv_wnd >= pcb->mss) {
-      pcb->rcv_ann_wnd = pcb->rcv_wnd;
-    }
-  }
+  int wnd_inflation;
 
-  if (!(pcb->flags & TF_ACK_DELAY) &&
-     !(pcb->flags & TF_ACK_NOW)) {
-    /*
-     * We send an ACK here (if one is not already pending, hence
-     * the above tests) as tcp_recved() implies that the application
-     * has processed some data, and so we can open the receiver's
-     * window to allow more to be transmitted.  This could result in
-     * two ACKs being sent for each received packet in some limited cases
-     * (where the application is only receiving data, and is slow to
-     * process it) but it is necessary to guarantee that the sender can
-     * continue to transmit.
-     */
-    tcp_ack(pcb);
-  } 
-  else if (pcb->flags & TF_ACK_DELAY && pcb->rcv_wnd >= TCP_WND/2) {
-    /* If we can send a window update such that there is a full
-     * segment available in the window, do so now.  This is sort of
-     * nagle-like in its goals, and tries to hit a compromise between
-     * sending acks each time the window is updated, and only sending
-     * window updates when a timer expires.  The "threshold" used
-     * above (currently TCP_WND/2) can be tuned to be more or less
-     * aggressive  */
+  LWIP_ASSERT("tcp_recved: len would wrap rcv_wnd\n",
+              len <= 0xffff - pcb->rcv_wnd );
+
+  pcb->rcv_wnd += len;
+  if (pcb->rcv_wnd > TCP_WND)
+    pcb->rcv_wnd = TCP_WND;
+
+  wnd_inflation = tcp_update_rcv_ann_wnd(pcb);
+
+  /* If the change in the right edge of window is significant (default
+   * watermark is TCP_WND/2), then send an explicit update now.
+   * Otherwise wait for a packet to be sent in the normal course of
+   * events (or more window to be available later) */
+  if (wnd_inflation >= TCP_WND_UPDATE_THRESHOLD) 
     tcp_ack_now(pcb);
-  }
 
   LWIP_DEBUGF(TCP_DEBUG, ("tcp_recved: recveived %"U16_F" bytes, wnd %"U16_F" (%"U16_F").\n",
          len, pcb->rcv_wnd, TCP_WND - pcb->rcv_wnd));
@@ -485,7 +499,6 @@ err_t
 tcp_connect(struct tcp_pcb *pcb, struct ip_addr *ipaddr, u16_t port,
       err_t (* connected)(void *arg, struct tcp_pcb *tpcb, err_t err))
 {
-  u32_t optdata;
   err_t ret;
   u32_t iss;
 
@@ -508,8 +521,10 @@ tcp_connect(struct tcp_pcb *pcb, struct ip_addr *ipaddr, u16_t port,
   pcb->snd_lbb = iss - 1;
   pcb->rcv_wnd = TCP_WND;
   pcb->rcv_ann_wnd = TCP_WND;
+  pcb->rcv_ann_right_edge = pcb->rcv_nxt;
   pcb->snd_wnd = TCP_WND;
-  /* The send MSS is updated when an MSS option is received. */
+  /* As initial send MSS, we use TCP_MSS but limit it to 536.
+     The send MSS is updated when an MSS option is received. */
   pcb->mss = (TCP_MSS > 536) ? 536 : TCP_MSS;
 #if TCP_CALCULATE_EFF_SEND_MSS
   pcb->mss = tcp_eff_send_mss(pcb->mss, ipaddr);
@@ -525,10 +540,11 @@ tcp_connect(struct tcp_pcb *pcb, struct ip_addr *ipaddr, u16_t port,
 
   snmp_inc_tcpactiveopens();
   
-  /* Build an MSS option */
-  optdata = TCP_BUILD_MSS_OPTION();
-
-  ret = tcp_enqueue(pcb, NULL, 0, TCP_SYN, 0, (u8_t *)&optdata, 4);
+  ret = tcp_enqueue(pcb, NULL, 0, TCP_SYN, 0, TF_SEG_OPTS_MSS
+#if LWIP_TCP_TIMESTAMPS
+                    | TF_SEG_OPTS_TS
+#endif
+                    );
   if (ret == ERR_OK) { 
     tcp_output(pcb);
   }
@@ -991,7 +1007,8 @@ tcp_alloc(u8_t prio)
     pcb->rcv_ann_wnd = TCP_WND;
     pcb->tos = 0;
     pcb->ttl = TCP_TTL;
-    /* The send MSS is updated when an MSS option is received. */
+    /* As initial send MSS, we use TCP_MSS but limit it to 536.
+       The send MSS is updated when an MSS option is received. */
     pcb->mss = (TCP_MSS > 536) ? 536 : TCP_MSS;
     pcb->rto = 3000 / TCP_SLOW_INTERVAL;
     pcb->sa = 0;
@@ -1001,7 +1018,6 @@ tcp_alloc(u8_t prio)
     iss = tcp_next_iss();
     pcb->snd_wl2 = iss;
     pcb->snd_nxt = iss;
-    pcb->snd_max = iss;
     pcb->lastack = iss;
     pcb->snd_lbb = iss;   
     pcb->tmr = tcp_ticks;
@@ -1112,7 +1128,7 @@ void
 tcp_accept(struct tcp_pcb *pcb,
      err_t (* accept)(void *arg, struct tcp_pcb *newpcb, err_t err))
 {
-  ((struct tcp_pcb_listen *)pcb)->accept = accept;
+  pcb->accept = accept;
 }
 #endif /* LWIP_CALLBACK_API */
 
@@ -1147,6 +1163,27 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
      pcb->state != LISTEN) {
 
     LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge\n"));
+
+#if TCP_LISTEN_BACKLOG
+    if (pcb->state == SYN_RCVD) {
+      /* Need to find the corresponding listen_pcb and decrease its accepts_pending */
+      struct tcp_pcb_listen *lpcb;
+      LWIP_ASSERT("tcp_pcb_purge: pcb->state == SYN_RCVD but tcp_listen_pcbs is NULL",
+        tcp_listen_pcbs.listen_pcbs != NULL);
+      for (lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
+        if ((lpcb->local_port == pcb->local_port) &&
+            (ip_addr_isany(&lpcb->local_ip) ||
+             ip_addr_cmp(&pcb->local_ip, &lpcb->local_ip))) {
+            /* port and address of the listen pcb match the timed-out pcb */
+            LWIP_ASSERT("tcp_pcb_purge: listen pcb does not have accepts pending",
+              lpcb->accepts_pending > 0);
+            lpcb->accepts_pending--;
+            break;
+          }
+      }
+    }
+#endif /* TCP_LISTEN_BACKLOG */
+
 
     if (pcb->refused_data != NULL) {
       LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge: data left on ->refused_data\n"));
@@ -1242,7 +1279,9 @@ tcp_eff_send_mss(u16_t sendmss, struct ip_addr *addr)
     mss_s = outif->mtu - IP_HLEN - TCP_HLEN;
     /* RFC 1122, chap 4.2.2.6:
      * Eff.snd.MSS = min(SendMSS+20, MMS_S) - TCPhdrsize - IPoptionsize
-     * but we only send options with SYN and that is never filled with data! */
+     * We correct for TCP options in tcp_enqueue(), and don't support
+     * IP options
+     */
     sendmss = LWIP_MIN(sendmss, mss_s);
   }
   return sendmss;
@@ -1364,6 +1403,7 @@ tcp_debug_print_flags(u8_t flags)
   if (flags & TCP_CWR) {
     LWIP_DEBUGF(TCP_DEBUG, ("CWR "));
   }
+  LWIP_DEBUGF(TCP_DEBUG, ("\n"));
 }
 
 /**

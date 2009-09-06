@@ -99,6 +99,15 @@
 #endif
 
 /**
+* MEMP_MEM_MALLOC==1: Use mem_malloc/mem_free instead of the lwip pool allocator.
+* Especially useful with MEM_LIBC_MALLOC but handle with care regarding execution
+* speed and usage from interrupts!
+*/
+#ifndef MEMP_MEM_MALLOC
+#define MEMP_MEM_MALLOC                 0
+#endif
+
+/**
  * MEM_ALIGNMENT: should be set to the alignment of the CPU
  *    4 byte alignment -> #define MEM_ALIGNMENT 4
  *    2 byte alignment -> #define MEM_ALIGNMENT 2
@@ -139,10 +148,19 @@
 /**
  * MEM_USE_POOLS==1: Use an alternative to malloc() by allocating from a set
  * of memory pools of various sizes. When mem_malloc is called, an element of
- * the smallest pool that can provide the lenght needed is returned.
+ * the smallest pool that can provide the length needed is returned.
+ * To use this, MEMP_USE_CUSTOM_POOLS also has to be enabled.
  */
 #ifndef MEM_USE_POOLS
 #define MEM_USE_POOLS                   0
+#endif
+
+/**
+ * MEM_USE_POOLS_TRY_BIGGER_POOL==1: if one malloc-pool is empty, try the next
+ * bigger pool - WARNING: THIS MIGHT WASTE MEMORY but it can make a system more
+ * reliable. */
+#ifndef MEM_USE_POOLS_TRY_BIGGER_POOL
+#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
 #endif
 
 /**
@@ -155,6 +173,27 @@
 #define MEMP_USE_CUSTOM_POOLS           0
 #endif
 
+/**
+ * Set this to 1 if you want to free PBUF_RAM pbufs (or call mem_free()) from
+ * interrupt context (or another context that doesn't allow waiting for a
+ * semaphore).
+ * If set to 1, mem_malloc will be protected by a semaphore and SYS_ARCH_PROTECT,
+ * while mem_free will only use SYS_ARCH_PROTECT. mem_malloc SYS_ARCH_UNPROTECTs
+ * with each loop so that mem_free can run.
+ *
+ * ATTENTION: As you can see from the above description, this leads to dis-/
+ * enabling interrupts often, which can be slow! Also, on low memory, mem_malloc
+ * can need longer.
+ *
+ * If you don't want that, at least for NO_SYS=0, you can still use the following
+ * functions to enqueue a deallocation call which then runs in the tcpip_thread
+ * context:
+ * - pbuf_free_callback(p);
+ * - mem_free_callback(m);
+ */
+#ifndef LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT
+#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 0
+#endif
 
 /*
    ------------------------------------------------
@@ -411,6 +450,23 @@
 #define IP_DEFAULT_TTL                  255
 #endif
 
+/**
+ * IP_SOF_BROADCAST=1: Use the SOF_BROADCAST field to enable broadcast
+ * filter per pcb on udp and raw send operations. To enable broadcast filter
+ * on recv operations, you also have to set IP_SOF_BROADCAST_RECV=1.
+ */
+#ifndef IP_SOF_BROADCAST
+#define IP_SOF_BROADCAST                0
+#endif
+
+/**
+ * IP_SOF_BROADCAST_RECV (requires IP_SOF_BROADCAST=1) enable the broadcast
+ * filter on recv operations.
+ */
+#ifndef IP_SOF_BROADCAST_RECV
+#define IP_SOF_BROADCAST_RECV           0
+#endif
+
 /*
    ----------------------------------
    ---------- ICMP options ----------
@@ -429,6 +485,20 @@
  */
 #ifndef ICMP_TTL
 #define ICMP_TTL                       (IP_DEFAULT_TTL)
+#endif
+
+/**
+ * LWIP_BROADCAST_PING==1: respond to broadcast pings (default is unicast only)
+ */
+#ifndef LWIP_BROADCAST_PING
+#define LWIP_BROADCAST_PING             0
+#endif
+
+/**
+ * LWIP_MULTICAST_PING==1: respond to multicast pings (default is unicast only)
+ */
+#ifndef LWIP_MULTICAST_PING
+#define LWIP_MULTICAST_PING             0
 #endif
 
 /*
@@ -487,6 +557,17 @@
  */
 #ifndef LWIP_DHCP_AUTOIP_COOP
 #define LWIP_DHCP_AUTOIP_COOP           0
+#endif
+
+/**
+ * LWIP_DHCP_AUTOIP_COOP_TRIES: Set to the number of DHCP DISCOVER probes
+ * that should be sent before falling back on AUTOIP. This can be set
+ * as low as 1 to get an AutoIP address very quickly, but you should
+ * be prepared to handle a changing IP address when DHCP overrides
+ * AutoIP.
+ */
+#ifndef LWIP_DHCP_AUTOIP_COOP_TRIES
+#define LWIP_DHCP_AUTOIP_COOP_TRIES     9
 #endif
 
 /*
@@ -591,6 +672,26 @@
 #define DNS_MSG_SIZE                    512
 #endif
 
+/** DNS_LOCAL_HOSTLIST: Implements a local host-to-address list. If enabled,
+ *  you have to define
+ *    #define DNS_LOCAL_HOSTLIST_INIT {{"host1", 0x123}, {"host2", 0x234}}
+ *  (an array of structs name/address, where address is an u32_t in network
+ *  byte order).
+ *
+ *  Instead, you can also use an external function:
+ *  #define DNS_LOOKUP_LOCAL_EXTERN(x) extern u32_t my_lookup_function(const char *name)
+ *  that returns the IP address or INADDR_NONE if not found.
+ */
+#ifndef DNS_LOCAL_HOSTLIST
+#define DNS_LOCAL_HOSTLIST              0
+#endif /* DNS_LOCAL_HOSTLIST */
+
+/** If this is turned on, the local host-list can be dynamically changed
+ *  at runtime. */
+#ifndef DNS_LOCAL_HOSTLIST_IS_DYNAMIC
+#define DNS_LOCAL_HOSTLIST_IS_DYNAMIC   0
+#endif /* DNS_LOCAL_HOSTLIST_IS_DYNAMIC */
+
 /*
    ---------------------------------
    ---------- UDP options ----------
@@ -637,7 +738,8 @@
 #endif
 
 /**
- * TCP_WND: The size of a TCP window.
+ * TCP_WND: The size of a TCP window.  This must be at least 
+ * (2 * TCP_MSS) for things to work well
  */
 #ifndef TCP_WND
 #define TCP_WND                         2048
@@ -662,7 +764,7 @@
  * Define to 0 if your device is low on memory.
  */
 #ifndef TCP_QUEUE_OOSEQ
-#define TCP_QUEUE_OOSEQ                 1
+#define TCP_QUEUE_OOSEQ                 (LWIP_TCP)
 #endif
 
 /**
@@ -727,6 +829,21 @@
  */
 #ifndef TCP_DEFAULT_LISTEN_BACKLOG
 #define TCP_DEFAULT_LISTEN_BACKLOG      0xff
+#endif
+
+/**
+ * LWIP_TCP_TIMESTAMPS==1: support the TCP timestamp option.
+ */
+#ifndef LWIP_TCP_TIMESTAMPS
+#define LWIP_TCP_TIMESTAMPS             0
+#endif
+
+/**
+ * TCP_WND_UPDATE_THRESHOLD: difference in window to trigger an
+ * explicit window update
+ */
+#ifndef TCP_WND_UPDATE_THRESHOLD
+#define TCP_WND_UPDATE_THRESHOLD   (TCP_WND / 4)
 #endif
 
 /**
@@ -815,6 +932,52 @@
 #define LWIP_NETIF_HWADDRHINT           0
 #endif
 
+/**
+ * LWIP_NETIF_LOOPBACK==1: Support sending packets with a destination IP
+ * address equal to the netif IP address, looping them back up the stack.
+ */
+#ifndef LWIP_NETIF_LOOPBACK
+#define LWIP_NETIF_LOOPBACK             0
+#endif
+
+/**
+ * LWIP_LOOPBACK_MAX_PBUFS: Maximum number of pbufs on queue for loopback
+ * sending for each netif (0 = disabled)
+ */
+#ifndef LWIP_LOOPBACK_MAX_PBUFS
+#define LWIP_LOOPBACK_MAX_PBUFS         0
+#endif
+
+/**
+ * LWIP_NETIF_LOOPBACK_MULTITHREADING: Indicates whether threading is enabled in
+ * the system, as netifs must change how they behave depending on this setting
+ * for the LWIP_NETIF_LOOPBACK option to work.
+ * Setting this is needed to avoid reentering non-reentrant functions like
+ * tcp_input().
+ *    LWIP_NETIF_LOOPBACK_MULTITHREADING==1: Indicates that the user is using a
+ *       multithreaded environment like tcpip.c. In this case, netif->input()
+ *       is called directly.
+ *    LWIP_NETIF_LOOPBACK_MULTITHREADING==0: Indicates a polling (or NO_SYS) setup.
+ *       The packets are put on a list and netif_poll() must be called in
+ *       the main application loop.
+ */
+#ifndef LWIP_NETIF_LOOPBACK_MULTITHREADING
+#define LWIP_NETIF_LOOPBACK_MULTITHREADING    (!NO_SYS)
+#endif
+
+/**
+ * LWIP_NETIF_TX_SINGLE_PBUF: if this is set to 1, lwIP tries to put all data
+ * to be sent into one single pbuf. This is for compatibility with DMA-enabled
+ * MACs that do not support scatter-gather.
+ * Beware that this might involve CPU-memcpy before transmitting that would not
+ * be needed without this flag! Use this only if you need to!
+ *
+ * @todo: TCP and IP-frag do not work with this, yet:
+ */
+#ifndef LWIP_NETIF_TX_SINGLE_PBUF
+#define LWIP_NETIF_TX_SINGLE_PBUF             0
+#endif /* LWIP_NETIF_TX_SINGLE_PBUF */
+
 /*
    ------------------------------------
    ---------- LOOPIF options ----------
@@ -827,20 +990,16 @@
 #define LWIP_HAVE_LOOPIF                0
 #endif
 
+/*
+   ------------------------------------
+   ---------- SLIPIF options ----------
+   ------------------------------------
+*/
 /**
- * LWIP_LOOPIF_MULTITHREADING: Indicates whether threading is enabled in
- * the system, as LOOPIF must change how it behaves depending on this setting.
- * Setting this is needed to avoid reentering non-reentrant functions like
- * tcp_input().
- *    LWIP_LOOPIF_MULTITHREADING==1: Indicates that the user is using a
- *       multithreaded environment like tcpip.c. In this case, netif->input()
- *       is called directly.
- *    LWIP_LOOPIF_MULTITHREADING==0: Indicates a polling (or NO_SYS) setup.
- *       The packets are put on a list and loopif_poll() must be called in
- *       the main application loop.
+ * LWIP_HAVE_SLIPIF==1: Support slip interface and slipif.c
  */
-#ifndef LWIP_LOOPIF_MULTITHREADING
-#define LWIP_LOOPIF_MULTITHREADING      1
+#ifndef LWIP_HAVE_SLIPIF
+#define LWIP_HAVE_SLIPIF                0
 #endif
 
 /*
@@ -1039,7 +1198,7 @@
  * names (read, write & close). (only used if you use sockets.c)
  */
 #ifndef LWIP_POSIX_SOCKETS_IO_NAMES
-#define LWIP_POSIX_SOCKETS_IO_NAMES     0
+#define LWIP_POSIX_SOCKETS_IO_NAMES     1
 #endif
 
 /**
@@ -1063,6 +1222,13 @@
  */
 #ifndef LWIP_SO_RCVBUF
 #define LWIP_SO_RCVBUF                  0
+#endif
+
+/**
+ * If LWIP_SO_RCVBUF is used, this is the default value for recv_bufsize.
+ */
+#ifndef RECV_BUFSIZE_DEFAULT
+#define RECV_BUFSIZE_DEFAULT            INT_MAX
 #endif
 
 /**
