@@ -262,8 +262,6 @@ char *strrchr(const char *t, int c)
 		if ((*t == ch)) l=t;
 		if ((!*t)) return (char*)l; ++t;
 	}
-
-	return (char*)l;
 }
 #endif
 

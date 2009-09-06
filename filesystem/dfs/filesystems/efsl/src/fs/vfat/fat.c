@@ -51,26 +51,21 @@ euint32 fat_getSectorAddressFatEntry(FileSystem *fs,euint32 cluster_addr)
 			res=(cluster_addr*3/1024);
 			if(res>=fs->FatSectorCount){
 				return(0);
-			}else{
-				return(base+res);
-			}
-			break;
+			}			
+			return(base+res);
+
 		case FAT16:
 			res=cluster_addr/256;
 			if(res>=fs->FatSectorCount){
 				return(0);
-			}else{
-				return(base+res);
 			}
-			break;
+			return(base+res);
 		case FAT32:
 			res=cluster_addr/128;
 			if(res>=fs->FatSectorCount){
 				return(0);
-			}else{
-				return(base+res);
 			}
-			break; 
+			return(base+res);
 	}
 	return(0);
 }
@@ -241,13 +236,10 @@ euint32 fat_giveEocMarker(FileSystem *fs)
 	{
 		case FAT12:
 			return(0xFFF);
-			break;
 		case FAT16:
 			return(0xFFFF);
-			break;
 		case FAT32:
 			return(0x0FFFFFFF);
-			break;
 	}
 	return(0);
 }

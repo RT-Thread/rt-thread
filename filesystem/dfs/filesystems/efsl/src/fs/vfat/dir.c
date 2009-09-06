@@ -217,13 +217,8 @@ euint32  dir_findinBuf(euint8 *buf, eint8 *fatname, FileLocation *loc, euint8 mo
 	switch(mode){
 		case DIRFIND_FILE:
 			return(dir_findFileinBuf(buf,fatname,loc));
-			break;
 		case DIRFIND_FREE:
 			return(dir_findFreeEntryinBuf(buf,loc));
-			break;
-		default:
-			return(0);
-			break;
 	}
 	return(0);
 }
@@ -275,9 +270,8 @@ euint32 dir_findinDir(FileSystem *fs, eint8* fatname,euint32 firstcluster, FileL
 	}
 	
 	while(!fat_LogicToDiscCluster(fs,&Cache,c++)){
-		if((cluster=dir_findinCluster(fs,Cache.DiscCluster,fatname,loc,mode))){
-			return(cluster);
-		}
+		cluster=dir_findinCluster(fs,Cache.DiscCluster,fatname,loc,mode);
+		if(cluster) return(cluster);
 	}
 	return(0);
 }
@@ -297,7 +291,8 @@ euint32 dir_findinRootArea(FileSystem *fs,eint8* fatname, FileLocation *loc, eui
 	
 	for(c=fs->FirstSectorRootDir;c<(fs->FirstSectorRootDir+fs->volumeId.RootEntryCount/32);c++){
 		buf = part_getSect(fs->part,c,IOM_MODE_READONLY);
-		if((fclus=dir_findinBuf(buf,fatname,loc,mode))){
+		fclus=dir_findinBuf(buf,fatname,loc,mode);
+		if(fclus){
 			if(loc)loc->Sector=c;
 			part_relSect(fs->part,buf);
 			return(fclus);
@@ -323,9 +318,12 @@ esint8 dir_getFatFileName(eint8* filename, eint8* fatfilename)
 	
 	if(*filename=='/')next++;
 	
-	while((next=file_normalToFatName(next,ffnamec))){
+	next=file_normalToFatName(next,ffnamec);
+	while(next){
 		memCpy(ffnamec,fatfilename,11);	
 		nn++;
+		
+		next=file_normalToFatName(next,ffnamec);
 	}
 	if(nn)return(1);
 	return(0);

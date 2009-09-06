@@ -513,7 +513,7 @@ int chdir(const char *path)
 {
 	char* fullpath, full_path[DFS_PATH_MAX + 1];
 	
-	if(path == RT_NULL || strlen(path) > DFS_PATH_MAX)
+	if(path == RT_NULL || rt_strlen(path) > DFS_PATH_MAX)
 		return -1;
 
 	fullpath = (char*)path;

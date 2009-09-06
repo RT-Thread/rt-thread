@@ -30,6 +30,7 @@
 #endif
 
 /* Device error codes */
+#define DFS_STATUS_OK			0		/* no error */
 #define DFS_STATUS_ENOENT		2		/* No such file or directory */
 #define DFS_STATUS_EIO		 	5		/* I/O error */
 #define DFS_STATUS_ENXIO		6		/* No such device or address */

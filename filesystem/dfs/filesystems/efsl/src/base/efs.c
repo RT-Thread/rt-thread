@@ -12,11 +12,14 @@
  * 2008-08-16     Yi.Qiu		The first version.
  */
  
+ #include <string.h>
+
 #include "efs.h"
+#include "dfs_cache.h"
+
 #include "ls.h"
 #include "ui.h"
 #include "fat.h"
-#include <string.h>
 
 #define EFS_MAX		2
 
