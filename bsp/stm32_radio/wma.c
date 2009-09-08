@@ -316,10 +316,6 @@ void wma_codec_main(void)
     }
 
     resume_offset = 0;
-    ci->configure(DSP_SWITCH_FREQUENCY, wfx.rate);
-    ci->configure(DSP_SET_STEREO_MODE, wfx.channels == 1 ?
-                  STEREO_MONO : STEREO_INTERLEAVED);
-    codec_set_replaygain(ci->id3);
 
     /* The main decoding loop */
 

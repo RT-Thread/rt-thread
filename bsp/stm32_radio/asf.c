@@ -9,6 +9,22 @@
 #define read_uint32le(fd,buf) read((fd), (buf), 4)
 #define read_uint64le(fd,buf) read((fd), (buf), 8)
 
+struct id3_tag
+{
+    rt_uint32_t bitrate;		/* bit rate */
+    rt_uint32_t frequency;		/* sample frequency */
+
+	rt_size_t first_frame_offset; /* Byte offset to first real MP3 frame.
+                                     Used for skipping leading garbage to
+                                     avoid gaps between tracks. */
+
+	rt_size_t filesize; 		/* file size; in bytes */
+	rt_uint32_t frame_count; 	/* number of frames in the file (if VBR) */
+	rt_size_t offset;  			/* bytes played */
+
+	rt_uint32_t user_data;		/* user data */
+};
+
 /* TODO: Just read the GUIDs into a 16-byte array, and use memcmp to compare */
 struct guid_s {
     rt_uint32_t v1;
@@ -78,6 +94,17 @@ static const guid_t asf_guid_extended_content_encryption =
 
 static const guid_t asf_guid_stream_type_audio =
 {0xF8699E40, 0x5B4D, 0x11CF, {0xA8, 0xFD, 0x00, 0x80, 0x5F, 0x5C, 0x44, 0x2B}};
+
+struct stream_buffer
+{
+	rt_uint32_t length;
+	rt_uint32_t position; /* current position */
+
+	rt_uint8_t *buffer;
+
+	/* file descriptor of this stream buffer */
+	int fd;
+};
 
 static int asf_guid_match(const guid_t *guid1, const guid_t *guid2)
 {
@@ -203,7 +230,7 @@ static void asf_utf16LEdecode(int fd,
     return;
 }
 
-static int asf_parse_header(int fd, struct mp3entry* id3,
+static int asf_parse_header(int fd, struct id3_tag* id3,
                                     asf_waveformatex_t* wfx)
 {
     asf_object_t current;
@@ -327,7 +354,6 @@ static int asf_parse_header(int fd, struct mp3entry* id3,
                             DEBUGF("Unsupported WMA codec (Pro, Lossless, Voice, etc)\n");
                             lseek(fd,current.size - 24 - 72,SEEK_CUR);
                         }
-
                     }
             } else if (asf_guid_match(&current.guid, &asf_guid_content_description)) {
                     /* Object contains five 16-bit string lengths, followed by the five strings:
@@ -465,7 +491,7 @@ static int asf_parse_header(int fd, struct mp3entry* id3,
     return 0;
 }
 
-static off_t filesize(int fd)
+static rt_off_t filesize(int fd)
 {
     struct dfs_stat buf;
 
@@ -473,23 +499,26 @@ static off_t filesize(int fd)
     return buf.st_size;
 }
 
-rt_bool_t get_asf_metadata(int fd, struct mp3entry* id3)
+rt_bool_t get_asf_metadata(int fd, struct id3_tag* id3)
 {
     int res;
     asf_object_t obj;
-    asf_waveformatex_t wfx;
+    asf_waveformatex_t* wfx;
 
-    wfx.audiostream = -1;
+	wfx = (asf_waveformatex_t*) rt_malloc(sizeof(asf_waveformatex_t));
+	if (wfx == RT_NULL) return RT_FALSE;
 
-    res = asf_parse_header(fd, id3, &wfx);
+    wfx->audiostream = -1;
 
+    res = asf_parse_header(fd, id3, wfx);
     if (res < 0) {
         DEBUGF("ASF: parsing error - %d\n",res);
         return RT_FALSE;
     }
 
-    if (wfx.audiostream == -1) {
+    if (wfx->audiostream == -1) {
         DEBUGF("ASF: No WMA streams found\n");
+		rt_free(wfx);
         return RT_FALSE;
     }
 
@@ -497,6 +526,7 @@ rt_bool_t get_asf_metadata(int fd, struct mp3entry* id3)
 
     if (!asf_guid_match(&obj.guid, &asf_guid_data)) {
         DEBUGF("ASF: No data object found\n");
+		rt_free(wfx);
         return RT_FALSE;
     }
 
@@ -506,9 +536,9 @@ rt_bool_t get_asf_metadata(int fd, struct mp3entry* id3)
      */
     id3->first_frame_offset = lseek(fd, 0, SEEK_CUR) + 26;
     id3->filesize = filesize(fd);
-    /* We copy the wfx struct to the MP3 TOC field in the id3 struct so
-       the codec doesn't need to parse the header object again */
-    rt_memcpy(id3->toc, &wfx, sizeof(wfx));
+	/* set wfx to user data */
+	id3->user_data = (rt_uint32_t)wfx;
 
     return RT_TRUE;
 }
+
