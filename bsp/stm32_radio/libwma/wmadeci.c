@@ -1389,8 +1389,6 @@ static int wma_decode_block(WMADecodeContext *s, int32_t *scratch_buffer)
             index = (s->frame_len / 2) + s->block_pos - n4;
             wma_window(s, scratch_buffer, &((*s->frame_out)[ch][index]));
 
-
-
             /* specific fast case for ms-stereo : add to second
                channel if it is not coded */
             if (s->ms_stereo && !s->channel_coded[1])
