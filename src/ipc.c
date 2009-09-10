@@ -764,6 +764,9 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 				&(mutex->owner->init_priority));
 		}
 
+		/* increase value */
+		mutex->value ++;
+
 		/* wakeup suspended thread */
 		if (mutex->value <= 0 && mutex->parent.suspend_thread_count > 0)
 		{
@@ -783,8 +786,9 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 		}
 		else
 		{
-			/* increase value */
-			mutex->value ++;
+			/* clear owner */
+			mutex->owner = RT_NULL;
+			mutex->original_priority = 0;
 		}
 
 		/* enable interrupt */
