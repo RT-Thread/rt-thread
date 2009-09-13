@@ -204,20 +204,6 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void* arg);
 #endif
 
-#ifdef RT_USING_FASTEVENT
-/*
- * fast_event interface
- */
-rt_err_t rt_fast_event_init(rt_fast_event_t event, const char* name, rt_uint8_t flag);
-rt_err_t rt_fast_event_detach(rt_fast_event_t event);
-rt_fast_event_t rt_fast_event_create (const char* name, rt_uint8_t flag);
-rt_err_t rt_fast_event_delete (rt_fast_event_t event);
-
-rt_err_t rt_fast_event_send(rt_fast_event_t event, rt_uint8_t bit);
-rt_err_t rt_fast_event_recv(rt_fast_event_t event, rt_uint8_t bit, rt_uint8_t opt, rt_int32_t timeout);
-rt_err_t rt_fast_event_control (rt_fast_event_t event, rt_uint8_t cmd, void* arg);
-#endif
-
 #ifdef RT_USING_EVENT
 /*
  * event interface

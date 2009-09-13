@@ -38,7 +38,7 @@ void (*rt_object_put_hook)(struct rt_object* object);
 /**
  * This function will set a hook function, which will be invoked when object
  * attaches to kernel object system.
- * 
+ *
  * @param hook the hook function
  */
 void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
@@ -49,7 +49,7 @@ void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
 /**
  * This function will set a hook function, which will be invoked when object
  * detaches from kernel object system.
- * 
+ *
  * @param hook the hook function
  */
 void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
@@ -60,14 +60,14 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
 /**
  * This function will set a hook function, which will be invoked when object
  * is taken from kernel object system.
- * 
- * The object is taken means that 
+ *
+ * The object is taken means that
  * semaphore - semaphore is taken by thread
  * mutex - mutex is taken by thread
- * event/fast event - event/fast event is received by thread
+ * event - event is received by thread
  * mailbox - mail is received by thread
  * message queue - message is received by thread
- * 
+ *
  * @param hook the hook function
  */
 void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
@@ -78,15 +78,15 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
 /**
  * This function will set a hook function, which will be invoked when object
  * have been taken from kernel object system.
- * 
- * The object have been taken means that 
+ *
+ * The object have been taken means that
  * semaphore - semaphore have been taken by thread
  * mutex - mutex have been taken by thread
- * event/fast event - event/fast event have been received by thread
+ * event - event have been received by thread
  * mailbox - mail have been received by thread
  * message queue - message have been received by thread
  * timer - timer is started
- * 
+ *
  * @param hook the hook function
  */
 void rt_object_take_sethook(void (*hook)(struct rt_object* object))
@@ -97,7 +97,7 @@ void rt_object_take_sethook(void (*hook)(struct rt_object* object))
 /**
  * This function will set a hook function, which will be invoked when object
  * is put to kernel object system.
- * 
+ *
  * @param hook the hook function
  */
 void rt_object_put_sethook(void (*hook)(struct rt_object* object))
@@ -140,13 +140,6 @@ void rt_system_object_init(void)
 	rt_list_init(&(rt_object_container[RT_Object_Class_Mutex].object_list));
 	rt_object_container[RT_Object_Class_Mutex].object_size = sizeof(struct rt_mutex);
 	rt_object_container[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
-#endif
-
-#ifdef RT_USING_FASTEVENT
-	/* init object container - fast event */
-	rt_list_init(&(rt_object_container[RT_Object_Class_FastEvent].object_list));
-	rt_object_container[RT_Object_Class_FastEvent].object_size = sizeof(struct rt_fast_event);
-	rt_object_container[RT_Object_Class_FastEvent].type = RT_Object_Class_FastEvent;
 #endif
 
 #ifdef RT_USING_EVENT
