@@ -81,6 +81,11 @@ rt_hw_context_switch    PROC
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 rt_hw_pend_sv	PROC
 	EXPORT rt_hw_pend_sv
+
+	; disable interrupt to protect context switch
+	MRS		r2, PRIMASK
+	CPSID   I
+
 	; clear rt_thread_switch_interrput_flag to 0
 	LDR		r0, =rt_thread_switch_interrput_flag
 	MOV		r1, #0x00
@@ -102,6 +107,9 @@ swtich_to_thread
 
 	LDMFD	r1!, {r4 - r11}			; pop r4 - r11 register
 	MSR		psp, r1					; update stack pointer
+
+	; restore interrupt
+	MSR		PRIMASK, r2
 
 	ORR     lr, lr, #0x04
 	BX		lr
@@ -183,7 +191,6 @@ rt_hw_interrupt_thread_switch	PROC
 
 _no_switch
 	BX		lr
-	NOP
 
 	ENDP
 
