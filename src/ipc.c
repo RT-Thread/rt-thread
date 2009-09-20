@@ -1340,6 +1340,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
+	tick_delta = 0;
 #ifdef RT_USING_HOOK
 	if (rt_object_trytake_hook != RT_NULL) rt_object_trytake_hook(&(mb->parent.parent));
 #endif
@@ -1788,6 +1789,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 	if (rt_object_trytake_hook != RT_NULL) rt_object_trytake_hook(&(mq->parent.parent));
 #endif
 
+	tick_delta = 0;
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
 

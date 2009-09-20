@@ -14,10 +14,6 @@
 
 #include <rtthread.h>
 
-#define MAX_HANDLERS	32
-
-extern rt_uint32_t rt_interrupt_nest;
-
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrput_flag;
