@@ -5,7 +5,6 @@
 
 #include "lwip/debug.h"
 #include "lwip/mem.h"
-#include "lwip/memp.h"
 #include "lwip/sys.h"
 #include "lwip/stats.h"
 #include "lwip/tcpip.h"
