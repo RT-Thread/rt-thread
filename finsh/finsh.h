@@ -50,6 +50,8 @@
 typedef unsigned char  u_char;
 typedef unsigned short u_short;
 typedef unsigned long  u_long;
+
+#if !defined(__CC_ARM) && !defined(__ICCARM__)
 typedef unsigned int size_t;
 
 #ifndef NULL
@@ -60,6 +62,9 @@ typedef unsigned int size_t;
 #define strlen	rt_strlen
 #define strncpy	rt_strncpy
 #define strncmp	rt_strncmp
+#else
+#include <string.h>
+#endif
 
 int strcmp (const char *s1, const char *s2);
 char *strdup(const char *s);
