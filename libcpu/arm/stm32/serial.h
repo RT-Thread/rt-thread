@@ -5,7 +5,7 @@
 #include <rtthread.h>
 
 /* STM32F10x library definitions */
-#include <stm32f10x_lib.h>
+#include <stm32f10x.h>
 
 #define UART_DMA_RX_DESCRIPTOR 	2
 #define UART_DMA_RX_BUFFER_SIZE	16

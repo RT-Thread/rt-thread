@@ -10,6 +10,7 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version
+; * 2009-09-27     Bernard      add protect when contex switch occurs
 ; */
 
 ;/**
@@ -53,18 +54,28 @@ rt_hw_interrupt_enable:
 ; * r0 --> from
 ; * r1 --> to
 ; */
+    EXPORT rt_hw_context_switch_interrupt
 	EXPORT rt_hw_context_switch
+rt_hw_context_switch_interrupt:
 rt_hw_context_switch:
-	LDR		r2, =rt_interrupt_from_thread
-	STR		r0, [r2]
-	
-	LDR		r2, =rt_interrupt_to_thread
-	STR		r1, [r2]
+	; set rt_thread_switch_interrput_flag to 1
+	LDR 	r2, =rt_thread_switch_interrput_flag
+	LDR 	r3, [r2]
+	CMP 	r3, #1
+	BEQ 	_reswitch
+	MOV 	r3, #1
+	STR 	r3, [r2]
 
-    LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
+	LDR 	r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
+	STR 	r0, [r2]
+
+_reswitch
+	LDR 	r2, =rt_interrupt_to_thread		; set rt_interrupt_to_thread
+	STR 	r1, [r2]
+
+    LDR     r0, =NVIC_INT_CTRL      		; trigger the PendSV exception (causes context switch)
     LDR     r1, =NVIC_PENDSVSET
 	STR     r1, [r0]
-	CPSIE   I                       ; enable interrupts at processor level
 	BX      LR
 
 ; r0 --> swith from thread stack
@@ -72,6 +83,16 @@ rt_hw_context_switch:
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 	EXPORT rt_hw_pend_sv
 rt_hw_pend_sv:
+
+	; disable interrupt to protect context switch
+	MRS		r2, PRIMASK
+	CPSID   I
+
+	; clear rt_thread_switch_interrput_flag to 0
+	LDR		r0, =rt_thread_switch_interrput_flag
+	MOV		r1, #0x00
+	STR		r1, [r0]
+
 	LDR		r0, =rt_interrupt_from_thread
 	LDR		r1, [r0]
 	CBZ		r1, swtich_to_thread    ; skip register save at the first time
@@ -88,6 +109,9 @@ swtich_to_thread
 
 	LDMFD	r1!, {r4 - r11}			; pop r4 - r11 register
 	MSR		psp, r1					; update stack pointer
+
+	; restore interrupt
+	MSR		PRIMASK, r2
 
 	ORR     lr, lr, #0x04
 	BX		lr
@@ -119,52 +143,9 @@ rt_hw_context_switch_to:
 	
 	; never reach here!
 
-;/*
-; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to)
-; * {
-; *		if (rt_thread_switch_interrput_flag == 1)
-; * 	{
-; *			rt_interrupt_to_thread = to;
-; * 	}
-; * 	else
-; * 	{
-; *			rt_thread_switch_interrput_flag = 1;
-; * 		rt_interrupt_from_thread = from;
-; * 		rt_interrupt_to_thread = to;
-; * 	}
-; * }
-; */
-	EXPORT rt_hw_context_switch_interrupt
-rt_hw_context_switch_interrupt:
-	LDR 	r2, =rt_thread_switch_interrput_flag
-	LDR 	r3, [r2]
-	CMP 	r3, #1
-	BEQ 	_reswitch
-	MOV 	r3, #1							; set rt_thread_switch_interrput_flag to 1
-	STR 	r3, [r2]
-	LDR 	r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
-	STR 	r0, [r2]
-_reswitch:
-	LDR 	r2, =rt_interrupt_to_thread		; set rt_interrupt_to_thread
-	STR 	r1, [r2]
-	BX		lr
-
+; compatible with old version
 	EXPORT rt_hw_interrupt_thread_switch
 rt_hw_interrupt_thread_switch:
-	LDR		r0, =rt_thread_switch_interrput_flag
-	LDR		r1, [r0]
-	CBZ		r1, _no_switch
-
-	; clear rt_thread_switch_interrput_flag to 0
-	MOV		r1, #0x00
-	STR		r1, [r0]
-
-	; trigger context switch
-    LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
-    LDR     r1, =NVIC_PENDSVSET
-    STR     r1, [r0]
-
-_no_switch:
 	BX		lr
 
-	END
+    END
