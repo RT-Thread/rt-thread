@@ -371,9 +371,9 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	if (newsize + SIZEOF_STRUCT_MEM + MIN_SIZE < size)
 	{
-#if MEM_STATS
+#ifdef RT_MEM_STATS
   		used_mem -= (size - newsize);
-#endif /* MEM_STATS */
+#endif
 
 		ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
 		mem2 = (struct heap_mem *)&heap_ptr[ptr2];
