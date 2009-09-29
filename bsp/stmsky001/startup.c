@@ -56,7 +56,7 @@ extern int __bss_end;
 * Return         : None
 *******************************************************************************/
 void assert_failed(u8* file, u32 line)
-{ 
+{
 	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
 	rt_kprintf("       file  %s\r\n", file);
 	rt_kprintf("       line  %d\r\n", line);
@@ -145,11 +145,11 @@ void rtthread_startup(void)
 int main(void)
 {
 	rt_uint32_t UNUSED level;
-	
+
 	/* disable interrupt first */
 	level = rt_hw_interrupt_disable();
 	rtthread_startup();
-	
+
 	return 0;
 }
 
