@@ -20,6 +20,8 @@
 
 #include "finsh.h"
 
+#define FINSH_USING_HISTORY
+
 #if defined(__CC_ARM)					/* ARMCC compiler */
   #ifdef FINSH_USING_SYMTAB
     extern int FSymTab$$Base;
@@ -40,6 +42,22 @@ char finsh_thread_stack[2048];
 struct rt_semaphore uart_sem;
 #ifdef RT_USING_DEVICE
 rt_device_t finsh_device;
+#endif
+#ifdef FINSH_USING_HISTORY
+enum input_stat
+{
+	WAIT_NORMAL,
+	WAIT_SPEC_KEY,
+	WAIT_FUNC_KEY,
+};
+#ifndef FINSH_HISTORY_LINES
+#define FINSH_HISTORY_LINES 5
+#endif
+#ifndef FINSH_CMD_SIZE
+#define FINSH_CMD_SIZE		80
+#endif
+char finsh_cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
+rt_uint16_t finsh_history_count = 0;
 #endif
 
 #if !defined (RT_USING_NEWLIB) && !defined (RT_USING_MINILIBC)
@@ -148,11 +166,28 @@ void finsh_notify()
 }
 #endif
 
+void finsh_auto_complete(char* prefix)
+{
+	extern void list_prefix(char* prefix);
+
+	rt_kprintf("\n");
+	list_prefix(prefix);
+	rt_kprintf("finsh>>%s", prefix);
+}
+
 void finsh_thread_entry(void* parameter)
 {
 	struct finsh_parser parser;
     char line[256];
 	int  pos ;
+#ifdef FINSH_USING_HISTORY
+	enum input_stat stat;
+	unsigned short  current_history, use_history;
+#endif
+
+	stat = WAIT_NORMAL;
+	current_history = 0;
+	use_history = 0;
 
     finsh_init(&parser);
 
@@ -178,6 +213,96 @@ void finsh_thread_entry(void* parameter)
 				if (ch != 0 && rx_result == 1)
 #endif
 				{
+#ifdef FINSH_USING_HISTORY
+					/*
+					 * handle up and down key 
+					 * up key  : 0x1b 0x5b 0x41
+					 * down key: 0x1b 0x5b 0x42
+					 */
+					if (ch == 0x1b)
+					{
+						stat = WAIT_SPEC_KEY;
+						continue;
+					}
+
+					if ((stat == WAIT_SPEC_KEY) && (ch == 0x5b))
+					{
+						if (ch == 0x5b)
+						{
+							stat = WAIT_FUNC_KEY;
+							continue;
+						}
+						stat = WAIT_NORMAL;
+					}
+
+					if (stat == WAIT_FUNC_KEY)
+					{
+						stat = WAIT_NORMAL;
+
+						if (ch == 0x41) /* up key */
+						{
+							/* prev history */
+							if (current_history > 0)current_history --;
+							else
+							{
+								current_history = 0;
+								continue;
+							}
+
+							/* copy the history command */
+							memcpy(line, &finsh_cmd_history[current_history][0], 
+								FINSH_CMD_SIZE);
+							pos = strlen(line);
+							use_history = 1;
+						}
+						else if (ch == 0x42) /* down key */
+						{
+							/* next history */
+							if (current_history < finsh_history_count - 1)
+								current_history ++;
+							else
+							{
+								current_history = finsh_history_count - 1;
+								continue;
+							}
+
+							memcpy(line, &finsh_cmd_history[current_history][0], 
+								FINSH_CMD_SIZE);
+							pos = strlen(line);
+							use_history = 1;
+						}
+						
+						if (use_history)
+						{
+							rt_kprintf("\033[2K\r");
+							rt_kprintf("finsh>>%s", line);
+							continue;
+						}
+					}
+#endif
+					/*
+					 * handle tab key
+					 */
+					if (ch == '\t')
+					{
+						/* auto complete */
+						finsh_auto_complete(&line[0]);
+						/* re-calculate position */
+						pos = strlen(line);
+						continue;
+					}
+
+					/*
+					 * handle backspace key
+					 */
+					if (ch == 0x7f)
+					{
+						if (pos != 0) rt_kprintf("%c", ch);
+						line[pos--] = 0;
+						if (pos < 0) pos = 0;
+						continue;
+					}
+
 					line[pos] = ch;
 
 					rt_kprintf("%c", line[pos]);
@@ -189,17 +314,48 @@ void finsh_thread_entry(void* parameter)
 						line[pos] = ';';
 						break;
 					}
-					else if (line[pos] == 0x7f) /* backspace */
-					{
-						line[pos] = 0;
-						pos --;
-						if (pos < 0) pos = 0;
-						continue;
-					}
+					else use_history = 0; /* not "\n", it's a new command */
 					pos ++;
 				}
 			}
 		}
+
+		if (pos == 0)
+		{
+			rt_kprintf("\n");
+			continue;
+		}
+
+#ifdef FINSH_USING_HISTORY
+		if (use_history == 0)
+		{
+			/* push history */
+			if (finsh_history_count >= FINSH_HISTORY_LINES)
+			{
+				/* move history */
+				int index;
+				for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+				{
+					memcpy(&finsh_cmd_history[index][0], 
+						&finsh_cmd_history[index + 1][0], FINSH_CMD_SIZE);
+				}
+				memset(&finsh_cmd_history[index][0], 0, FINSH_CMD_SIZE);
+				memcpy(&finsh_cmd_history[index][0], line, pos);
+
+				/* it's the maximum history */
+				finsh_history_count = FINSH_HISTORY_LINES;
+			}
+			else
+			{
+				memset(&finsh_cmd_history[finsh_history_count][0], 0, FINSH_CMD_SIZE);
+				memcpy(&finsh_cmd_history[finsh_history_count][0], line, pos);
+
+				/* increase count and set current history position */
+				finsh_history_count ++;
+			}
+		}
+		current_history = finsh_history_count;
+#endif
 
 		rt_kprintf("\n");
 		finsh_parser_run(&parser, (unsigned char*)&line[0]);
