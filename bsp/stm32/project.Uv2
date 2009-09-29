@@ -1,7 +1,7 @@
 ### uVision2 Project, (C) Keil Software
 ### Do not modify !
 
-Target (RT-Thread/STM32), 0x0004 // Tools: 'ARM-ADS'
+Target (RT-Thread STM32), 0x0004 // Tools: 'ARM-ADS'
 
 Group (Startup)
 Group (Library)
@@ -135,7 +135,7 @@ File 7,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
 File 7,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
 
 
-Options 1,0,0  // Target 'RT-Thread/STM32'
+Options 1,0,0  // Target 'RT-Thread STM32'
  Device (STM32F103ZE)
  Vendor (STMicroelectronics)
  Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0x8000000-0x807FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
