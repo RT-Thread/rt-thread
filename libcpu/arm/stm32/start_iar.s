@@ -3,7 +3,7 @@
 ;* Author             : MCD Application Team
 ;* Version            : V3.0.0
 ;* Date               : 04/06/2009
-;* Description        : STM32F10x High Density Devices vector table for EWARM5.x 
+;* Description        : STM32F10x High Density Devices vector table for EWARM5.x
 ;*                      toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -36,10 +36,10 @@
 ; table register (VTOR) is initialized to this address if != 0.
 ;
 ; Cortex-M version
-;     
-  
+;
+
     MODULE  ?cstartup
-        
+
   ;; ICODE is the same segment as cstartup. By placing __low_level_init
   ;; in the same segment, we make sure it can be reached with BL. */
 
@@ -56,16 +56,16 @@
        SECTION .text:CODE:REORDER(2)
         THUMB
 SystemInit_ExtMemCtl
-        BX LR 
-   
+        BX LR
+
 __low_level_init:
 
   ;;  Initialize hardware.
                 LDR  R0, = SystemInit_ExtMemCtl ; initialize external memory controller
                 MOV  R11, LR
-                BLX  R0 
+                BLX  R0
                 LDR  R1, =sfe(CSTACK)        ; restore original stack pointer
-                MSR  MSP, R1   
+                MSR  MSP, R1
                 MOV  R0,#1
    ;; Return with BX to be independent of mode of caller
                 BX    R11
@@ -77,9 +77,8 @@ __low_level_init:
         PUBLIC  __vector_table
 
         DATA
-__intial_sp      EQU     0x20000400        
 __vector_table
-        DCD     __intial_sp
+        DCD     sfe(CSTACK)
         DCD     __iar_program_start
 
         DCD     NMI_Handler               ; NMI Handler
@@ -140,7 +139,7 @@ __vector_table
         DCD     USART3_IRQHandler         ; USART3
         DCD     EXTI15_10_IRQHandler      ; EXTI Line 15..10
         DCD     RTCAlarm_IRQHandler       ; RTC Alarm through EXTI Line
-        DCD     USBWakeUp_IRQHandler      ; USB Wakeup from suspend
+        DCD     OTG_FS_WKUP_IRQHandler    ; USB OTG FS Wakeup from suspend
         DCD     TIM8_BRK_IRQHandler       ; TIM8 Break
         DCD     TIM8_UP_IRQHandler        ; TIM8 Update
         DCD     TIM8_TRG_COM_IRQHandler   ; TIM8 Trigger and Commutation
@@ -158,12 +157,22 @@ __vector_table
         DCD     DMA2_Channel2_IRQHandler  ; DMA2 Channel2
         DCD     DMA2_Channel3_IRQHandler  ; DMA2 Channel3
         DCD     DMA2_Channel4_5_IRQHandler ; DMA2 Channel4 & Channel5
+        ; for STM32F10x Connectivity line devices
+        DCD     DMA2_Channel5_IRQHandler   ; DMA2 Channel5
+        DCD     ETH_IRQHandler             ; Ethernet
+        DCD     ETH_WKUP_IRQHandler        ; Ethernet Wakeup through EXTI line
+        DCD     CAN2_TX_IRQHandler         ; CAN2 TX
+        DCD     CAN2_RX0_IRQHandler        ; CAN2 RX0
+        DCD     CAN2_RX1_IRQHandler        ; CAN2 RX1
+        DCD     CAN2_SCE_IRQHandler        ; CAN2 SCE
+        DCD     OTG_FS_IRQHandler          ; USB OTG FS
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Default interrupt handlers.
 ;;
         THUMB
-       
+
         PUBWEAK NMI_Handler
         SECTION .text:CODE:REORDER(1)
 NMI_Handler
@@ -356,10 +365,10 @@ EXTI15_10_IRQHandler
         SECTION .text:CODE:REORDER(1)
 RTCAlarm_IRQHandler
         B RTCAlarm_IRQHandler
-        PUBWEAK USBWakeUp_IRQHandler
+        PUBWEAK OTG_FS_WKUP_IRQHandler
         SECTION .text:CODE:REORDER(1)
-USBWakeUp_IRQHandler
-        B USBWakeUp_IRQHandler
+OTG_FS_WKUP_IRQHandler
+        B OTG_FS_WKUP_IRQHandler
         PUBWEAK TIM8_BRK_IRQHandler
         SECTION .text:CODE:REORDER(1)
 TIM8_BRK_IRQHandler
@@ -428,8 +437,49 @@ DMA2_Channel3_IRQHandler
         SECTION .text:CODE:REORDER(1)
 DMA2_Channel4_5_IRQHandler
         B DMA2_Channel4_5_IRQHandler
-        
-        
+
+; for STM32F10x Connectivity line devices
+        PUBWEAK DMA2_Channel5_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+DMA2_Channel5_IRQHandler
+        B DMA2_Channel5_IRQHandler
+
+        PUBWEAK ETH_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+ETH_IRQHandler
+        B ETH_IRQHandler
+
+        PUBWEAK ETH_WKUP_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+ETH_WKUP_IRQHandler
+        B ETH_WKUP_IRQHandler
+
+        PUBWEAK CAN2_TX_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+CAN2_TX_IRQHandler
+        B CAN2_TX_IRQHandler
+
+        PUBWEAK CAN2_RX0_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+CAN2_RX0_IRQHandler
+        B CAN2_RX0_IRQHandler
+
+        PUBWEAK CAN2_RX1_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+CAN2_RX1_IRQHandler
+        B CAN2_RX1_IRQHandler
+
+        PUBWEAK CAN2_SCE_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+CAN2_SCE_IRQHandler
+        B CAN2_SCE_IRQHandler
+
+        PUBWEAK OTG_FS_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+OTG_FS_IRQHandler
+        B OTG_FS_IRQHandler
+
+
         END
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
