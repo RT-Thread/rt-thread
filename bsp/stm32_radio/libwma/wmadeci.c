@@ -315,10 +315,6 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
 
     fixed32 *temp[5];
 
-    #ifdef CPU_COLDFIRE
-    coldfire_set_macsr(EMAC_FRACTIONAL | EMAC_SATURATE);
-    #endif
-
     /*clear stereo setting to avoid glitches when switching stereo->mono*/
     s->channel_coded[0]=0;
     s->channel_coded[1]=0;
@@ -367,7 +363,7 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
         s->frame_len_bits = 11;
     }
     s->frame_len = 1 << s->frame_len_bits;
-    if (s-> use_variable_block_len)
+    if (s->use_variable_block_len)
     {
         int nb_max, nb;
         nb = ((flags2 >> 3) & 3) + 1;
