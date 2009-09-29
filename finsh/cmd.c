@@ -369,7 +369,7 @@ int list()
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
 
-int str_is_prefix(const char* prefix, const char* str)
+static int str_is_prefix(const char* prefix, const char* str)
 {
 	while ((*prefix) && (*prefix == *str))
 	{
