@@ -28,7 +28,7 @@ int str_is_prefix(const char* prefix, const char* str);
 #if !defined(RT_USING_MINILIBC) && !defined(RT_USING_NEWLIB)
 char *strrchr(const char *t, int c);
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION / 10000 < 35)
-int strncasecmp(const char* s1, const char* s2, rt_size_t len);
+int strncasecmp(const char* s1, const char* s2, size_t len);
 #endif /* end of __ARMCC_VERSION */
 #endif
 
