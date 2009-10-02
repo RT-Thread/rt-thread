@@ -8,6 +8,9 @@
  * DM9000 interrupt line is connected to PF7
  */
 //--------------------------------------------------------
+
+#define DM9000_PHY              0x40    /* PHY address 0x01 */
+
 #define MAX_ADDR_LEN 6
 enum DM9000_PHY_mode
 {
@@ -23,13 +26,6 @@ enum DM9000_TYPE
     TYPE_DM9000B
 };
 
-struct dm9000_rxhdr
-{
-    rt_uint8_t      RxPktReady;
-    rt_uint8_t      RxStatus;
-    rt_uint16_t     RxLen;
-} __attribute__((__packed__));
-
 struct rt_dm9000_eth
 {
 	/* inherit from ethernet device */
@@ -43,22 +39,25 @@ struct rt_dm9000_eth
 };
 static struct rt_dm9000_eth dm9000_device;
 
-void delay_ms(rt_uint32_t dt)
+static void delay_ms(rt_uint32_t ms)
 {
+	rt_uint32_t len;
+	for (;ms > 0; ms --)
+		for (len = 0; len < 100; len++ );
 }
 
 /* Read a byte from I/O port */
 rt_inline rt_uint8_t dm9000_io_read(rt_uint16_t reg)
 {
-    ETH_ADDR = reg;
-    return (rt_uint8_t) ETH_DATA;
+    DM9000_IO = reg;
+    return (rt_uint8_t) DM9000_DATA;
 }
 
 /* Write a byte to I/O port */
 rt_inline void dm9000_io_write(rt_uint16_t reg, rt_uint16_t value)
 {
-    ETH_ADDR = reg;
-    ETH_DATA = data;
+    DM9000_IO = reg;
+    DM9000_DATA = value;
 }
 
 /* Read a word from phyxcer */
@@ -69,7 +68,9 @@ rt_inline rt_uint16_t phy_read(rt_uint16_t reg)
 	/* Fill the phyxcer register into REG_0C */
 	dm9000_io_write(DM9000_EPAR, DM9000_PHY | reg);
 	dm9000_io_write(DM9000_EPCR, 0xc);	/* Issue phyxcer read command */
+
 	delay_ms(100);		/* Wait read complete */
+
 	dm9000_io_write(DM9000_EPCR, 0x0);	/* Clear phyxcer read command */
 	val = (dm9000_io_read(DM9000_EPDRH) << 8) | dm9000_io_read(DM9000_EPDRL);
 
@@ -86,7 +87,9 @@ rt_inline void phy_write(rt_uint16_t reg, rt_uint16_t value)
 	dm9000_io_write(DM9000_EPDRL, (value & 0xff));
 	dm9000_io_write(DM9000_EPDRH, ((value >> 8) & 0xff));
 	dm9000_io_write(DM9000_EPCR, 0xa);	/* Issue phyxcer write command */
+
 	delay_ms(500);		/* Wait write complete */
+
 	dm9000_io_write(DM9000_EPCR, 0x0);	/* Clear phyxcer write command */
 }
 
@@ -132,7 +135,7 @@ void rt_dm9000_isr(int irqno)
     dm9000_io_write(DM9000_IMR, IMR_PAR);
 
     /* Got DM9000 interrupt status */
-    int_status = ior(DM9000_ISR);               /* Got ISR */
+    int_status = dm9000_io_read(DM9000_ISR);               /* Got ISR */
     dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
 
     /* Received the coming packet */
@@ -158,7 +161,7 @@ void rt_dm9000_isr(int irqno)
     }
 
     /* Re-enable interrupt mask */
-    dm9000_io_write(DM9000_IMR, db->imr_all);
+    dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
 }
 
 /* RT-Thread Device Interface */
@@ -203,10 +206,11 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 	dm9000_io_write(DM9000_SMCR, 0);	/* Special Mode */
 	dm9000_io_write(DM9000_NSR, NSR_WAKEST | NSR_TX2END | NSR_TX1END);	/* clear TX status */
 	dm9000_io_write(DM9000_ISR, 0x0f);	/* Clear interrupt status */
+	dm9000_io_write(0x2D, 0x80);      	/* Switch LED to mode 1 */
 
 	/* set mac address */
 	for (i = 0, oft = 0x10; i < 6; i++, oft++)
-		dm9000_io_write(oft, dm9000_device->dev_addr[i]);
+		dm9000_io_write(oft, dm9000_device.dev_addr[i]);
 	for (i = 0, oft = 0x16; i < 8; i++, oft++)
 		dm9000_io_write(oft, 0xff);
 
@@ -307,7 +311,7 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
 	rt_uint16_t* ptr;
 
     /* Move data to DM9000 TX RAM */
-    dm9000_io_write(DM9000_MWCMD, DM9000_IO);
+	DM9000_IO = DM9000_MWCMD;
 
 	for (q = p; q != NULL; q = q->next)
 	{
@@ -317,7 +321,7 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
         /* use 16bit mode to write data to DM9000 RAM */
         while (len)
         {
-            dm9000_io_write(*ptr, DM9000_DATA);
+			DM9000_DATA = *ptr;
             ptr ++; len -= 2;
         }
 	}
@@ -344,7 +348,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
 	/* Check packet ready or not */
 	dm9000_io_read(DM9000_MRCMDX);	    /* Dummy read */
-	len = dm9000_io_read(DM9000_DATA);	/* Got most updated data */
+	len = DM9000_DATA;					/* Got most updated data */
 	if (len)
     {
         rt_uint16_t rx_status, rx_len;
@@ -354,10 +358,10 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 		dm9000_io_write(DM9000_ISR, 0x80);	/* Stop INT request */
 
         /* A packet ready now  & Get status/length */
-        DM9000_outb(DM9000_MRCMD, DM9000_IO);
+        DM9000_IO = DM9000_MRCMD;
 
-        rx_status = dm9000_io_write(DM9000_DATA);
-        rx_len = dm9000_io_write(DM9000_DATA);
+        rx_status = DM9000_DATA;
+        rx_len = DM9000_DATA;
 
         /* allocate buffer */
         p = pbuf_alloc(PBUF_LINK, rx_len, PBUF_RAM);
@@ -372,7 +376,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
                 while (len)
                 {
-                    *data = dm9000_io_write(DM9000_DATA);
+                    *data = DM9000_DATA;
                     data ++; len -= 2;
                 }
             }
@@ -385,7 +389,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
             data = &dummy;
             while (rx_len)
             {
-                *data = dm9000_io_write(DM9000_DATA);
+                *data = DM9000_DATA;
                 rx_len -= 2;
             }
         }
@@ -395,19 +399,22 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         {
             if (rx_status & 0x100)
             {
-                rt_printf("rx fifo error\n");
+                rt_kprintf("rx fifo error\n");
             }
             if (rx_status & 0x200) {
-                rt_printf("rx crc error\n");
+                rt_kprintf("rx crc error\n");
             }
             if (rx_status & 0x8000)
             {
-                rt_printf("rx length error\n");
+                rt_kprintf("rx length error\n");
             }
             if (rx_len > DM9000_PKT_MAX)
             {
-                rt_printf("rx length too big\n");
-                dm9000_reset();
+                rt_kprintf("rx length too big\n");
+
+				/* RESET device */
+				dm9000_io_write(DM9000_NCR, NCR_RST);
+				delay_ms(1000);		/* delay 1ms */
             }
 
             /* it issues an error, release pbuf */
@@ -423,64 +430,18 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
     return p;
 }
-{
-	u8 rxbyte, *rdptr = (u8 *) NetRxPackets[0];
-	u16 RxStatus, RxLen = 0;
-	u32 tmplen, i;
-
-
-	/* Status check: this byte must be 0 or 1 */
-	if (rxbyte > 1) {
-		DM9000_iow(DM9000_RCR, 0x00);	/* Stop Device */
-		DM9000_iow(DM9000_ISR, 0x80);	/* Stop INT request */
-		DM9000_DBG("rx status check: %d\n", rxbyte);
-	}
-
-	/* A packet ready now  & Get status/length */
-	DM9000_outb(DM9000_MRCMD, DM9000_IO);
-
-	RxStatus = DM9000_inw(DM9000_DATA);
-	RxLen = DM9000_inw(DM9000_DATA);
-
-	/* Read received packet from RX SRAM */
-	tmplen = (RxLen + 1) / 2;
-	for (i = 0; i < tmplen; i++)
-		((u16 *) rdptr)[i] = DM9000_inw(DM9000_DATA);
-
-	if ((RxStatus & 0xbf00) || (RxLen < 0x40)
-	    || (RxLen > DM9000_PKT_MAX))
-    {
-		if (RxStatus & 0x100)
-        {
-			rt_printf("rx fifo error\n");
-		}
-		if (RxStatus & 0x200) {
-			rt_printf("rx crc error\n");
-		}
-		if (RxStatus & 0x8000)
-		{
-			rt_printf("rx length error\n");
-		}
-		if (RxLen > DM9000_PKT_MAX)
-        {
-			rt_printf("rx length too big\n");
-			dm9000_reset();
-		}
-	}
-    else
-    {
-		/* Pass to upper layer */
-		DM9000_DBG("passing packet to upper layer\n");
-		NetReceive(NetRxPackets[0], RxLen);
-
-		return RxLen;
-	}
-}
 
 void rt_hw_dm9000_init()
 {
     dm9000_device.type    = TYPE_DM9000A;
     dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
+	
+	dm9000_device.dev_addr[0] = 0x01;
+	dm9000_device.dev_addr[1] = 0x60;
+	dm9000_device.dev_addr[2] = 0x6E;
+	dm9000_device.dev_addr[3] = 0x11;
+	dm9000_device.dev_addr[4] = 0x02;
+	dm9000_device.dev_addr[5] = 0x0F;
 
 	dm9000_device.parent.parent.init       = rt_dm9000_init;
 	dm9000_device.parent.parent.open       = rt_dm9000_open;
@@ -502,15 +463,14 @@ void rt_hw_dm9000_init()
 void dm9000(void)
 {
 	rt_kprintf("\n");
-	rt_kprintf("NCR   (0x00): %02x\n", dm9000_io_read(0));
-	rt_kprintf("NSR   (0x01): %02x\n", dm9000_io_read(1));
-	rt_kprintf("TCR   (0x02): %02x\n", dm9000_io_read(2));
-	rt_kprintf("TSRI  (0x03): %02x\n", dm9000_io_read(3));
-	rt_kprintf("TSRII (0x04): %02x\n", dm9000_io_read(4));
-	rt_kprintf("RCR   (0x05): %02x\n", dm9000_io_read(5));
-	rt_kprintf("RSR   (0x06): %02x\n", dm9000_io_read(6));
-	rt_kprintf("ISR   (0xFE): %02x\n", dm9000_io_read(ISR));
+	rt_kprintf("NCR   (0x00): %02x\n", dm9000_io_read(DM9000_NCR));
+	rt_kprintf("NSR   (0x01): %02x\n", dm9000_io_read(DM9000_NSR));
+	rt_kprintf("TCR   (0x02): %02x\n", dm9000_io_read(DM9000_TCR));
+	rt_kprintf("TSRI  (0x03): %02x\n", dm9000_io_read(DM9000_TSR1));
+	rt_kprintf("TSRII (0x04): %02x\n", dm9000_io_read(DM9000_TSR2));
+	rt_kprintf("RCR   (0x05): %02x\n", dm9000_io_read(DM9000_RCR));
+	rt_kprintf("RSR   (0x06): %02x\n", dm9000_io_read(DM9000_RSR));
+	rt_kprintf("ISR   (0xFE): %02x\n", dm9000_io_read(DM9000_ISR));
 	rt_kprintf("\n");
 }
-
 #endif

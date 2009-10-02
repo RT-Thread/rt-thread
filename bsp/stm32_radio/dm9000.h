@@ -1,8 +1,9 @@
 #ifndef __DM9000_H__
 #define __DM9000_H__
 
-#define    ETH_ADDR (*((volatile unsigned short *) 0x6C000000)) // CMD = 0
-#define    ETH_DATA (*((volatile unsigned short *) 0x6C000008)) // CMD = 1
+#define    DM9000_IO 	(*((volatile rt_uint16_t *) 0x6C000000)) // CMD = 0
+#define    DM9000_DATA 	(*((volatile rt_uint16_t *) 0x6C000008)) // CMD = 1
+
 #define    RST_1()   GPIO_SetBits(GPIOF,GPIO_Pin_6)
 #define    RST_0()   GPIO_ResetBits(GPIOF,GPIO_Pin_6)
 
