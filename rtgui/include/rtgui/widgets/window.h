@@ -1,0 +1,91 @@
+/*
+ * File      : window.h
+ * This file is part of RTGUI in RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-10-04     Bernard      first version
+ */
+#ifndef __RTGUI_WINDOW_H__
+#define __RTGUI_WINDOW_H__
+
+#include <rtgui/rtgui.h>
+#include <rtgui/list.h>
+#include <rtgui/widgets/widget.h>
+#include <rtgui/widgets/toplevel.h>
+#include <rtgui/widgets/box.h>
+
+/** Gets the type of a win */
+#define RTGUI_WIN_TYPE       (rtgui_win_type_get())
+/** Casts the object to an rtgui_win */
+#define RTGUI_WIN(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WIN_TYPE, rtgui_win_t))
+/** Checks if the object is an rtgui_win */
+#define RTGUI_IS_WIN(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_WIN_TYPE))
+
+#define RTGUI_WIN_STYLE_MODAL		0x00
+#define RTGUI_WIN_STYLE_MODAL_LESS	0x01
+#define RTGUI_WIN_STYLE_NO_TITLE	0x02
+#define RTGUI_WIN_STYLE_NO_BORDER	0x04
+#define RTGUI_WIN_STYLE_SHOW		0x08
+#define RTGUI_WIN_STYLE_CLOSEBOX	0x10
+#define RTGUI_WIN_STYLE_MINIBOX		0x20
+#define RTGUI_WIN_STYLE_ACTIVATE	0x40
+#define RTGUI_WIN_STYLE_NO_FOCUS	0x80
+
+#define RTGUI_WIN_STYLE_DEFAULT		(RTGUI_WIN_STYLE_CLOSEBOX | RTGUI_WIN_STYLE_MINIBOX)
+
+struct rtgui_win_title;
+struct rtgui_win_area;
+
+struct rtgui_win
+{
+	/* inherit from toplevel */
+	struct rtgui_toplevel parent;
+
+	/* top window style */
+	rt_uint32_t style;
+
+	/* window title */
+	char* title;
+
+	/* call back */
+	rt_bool_t (*on_activate)	(struct rtgui_widget* widget, struct rtgui_event* event);
+	rt_bool_t (*on_deactivate)	(struct rtgui_widget* widget, struct rtgui_event* event);
+	rt_bool_t (*on_close)		(struct rtgui_widget* widget, struct rtgui_event* event);
+
+	/* reserved user data */
+	rt_uint32_t user_data;
+};
+
+rtgui_type_t *rtgui_win_type_get(void);
+
+rtgui_win_t* rtgui_win_create(const char* title, rtgui_rect_t *rect, rt_uint32_t flag);
+void rtgui_win_destroy(rtgui_win_t* win);
+
+void rtgui_win_show(rtgui_win_t* win);
+void rtgui_win_hiden(rtgui_win_t* win);
+rt_bool_t rtgui_win_is_activated(struct rtgui_win* win);
+
+void rtgui_win_move(struct rtgui_win* win, int x, int y);
+
+/* reset extent of window */
+void rtgui_win_set_rect(rtgui_win_t* win, rtgui_rect_t* rect);
+void rtgui_win_set_box(rtgui_win_t* win, rtgui_box_t* box);
+
+void rtgui_win_set_onactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
+void rtgui_win_set_ondeactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
+void rtgui_win_set_onclose(rtgui_win_t* win, rtgui_event_handler_ptr handler);
+
+rt_bool_t rtgui_win_event_handler(rtgui_widget_t* win, struct rtgui_event* event);
+
+void rtgui_win_event_loop(rtgui_win_t* wnd);
+
+void rtgui_win_set_title(rtgui_win_t* win, const char *title);
+char* rtgui_win_get_title(rtgui_win_t* win);
+
+#endif
