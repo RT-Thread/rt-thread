@@ -5,8 +5,7 @@
 #define GPIO_LED					GPIOF
 #define GPIO_Pin_LED				GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9
 
-static const rt_uint16_t led_map[] = {GPIO_Pin_6, GPIO_Pin_7, GPIO_Pin_8, GPIO_Pin_9
-};
+static const rt_uint16_t led_map[] = {GPIO_Pin_6, GPIO_Pin_7, GPIO_Pin_8, GPIO_Pin_9};
 static rt_uint8_t led_inited = 0;
 
 static void GPIO_Configuration(void)
