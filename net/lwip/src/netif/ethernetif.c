@@ -90,14 +90,14 @@ err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 	struct eth_tx_msg msg;
 	struct eth_device* enetif;
-	
+
 	enetif = (struct eth_device*)netif->state;
 
 	/* send a message to eth tx thread */
 	msg.netif = netif;
 	msg.buf   = p;
 	rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg);
-	
+
 	/* waiting for ack */
 	rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
 
@@ -167,10 +167,10 @@ void eth_tx_thread_entry(void* parameter)
 		if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
  		{
 			struct eth_device* enetif;
-			
+
 			RT_ASSERT(msg->netif != RT_NULL);
 			RT_ASSERT(msg->buf   != RT_NULL);
-			
+
 			enetif = (struct eth_device*)msg->netif->state;
 			if (enetif != RT_NULL)
 			{
@@ -255,3 +255,25 @@ rt_err_t eth_system_device_init()
 
 	return result;
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+void list_if()
+{
+	struct _ip_addr
+	{
+		rt_uint8_t addr0, addr1, addr2, addr3;
+	} *addr;
+
+	rt_kprintf("Default network interface: %c%c\n", netif_default->name[0], netif_default->name[1]);
+	addr = (struct _ip_addr*)&netif_default->ip_addr.addr;
+	rt_kprintf("ip address: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+
+	addr = (struct _ip_addr*)&netif_default->gw.addr;
+	rt_kprintf("gw address: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+
+	addr = (struct _ip_addr*)&netif_default->netmask.addr;
+	rt_kprintf("net mask  : %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+}
+FINSH_FUNCTION_EXPORT(list_if, list network interface information);
+#endif
