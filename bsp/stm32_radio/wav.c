@@ -45,14 +45,10 @@ void wav(char* filename)
 		rt_device_set_tx_complete(device, wav_tx_done);
 		rt_device_open(device, RT_DEVICE_OFLAG_WRONLY);
 
-		// buf = rt_mp_alloc(mp, RT_WAITING_FOREVER);
-		// len = read(fd, (char*)buf, WAV_MP_BUFSZ);
-
-		do {
+		do
+		{
 			buf = rt_mp_alloc(mp, RT_WAITING_FOREVER);
-			rt_kprintf("read file");
 			len = read(fd, (char*)buf, WAV_MP_BUFSZ);
-			rt_kprintf("...done!\n");
 			if (len > 0) rt_device_write(device, 0, buf, len);
 		} while (len != 0);
 

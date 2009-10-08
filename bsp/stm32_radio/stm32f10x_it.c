@@ -230,19 +230,6 @@ void RCC_IRQHandler(void)
 *******************************************************************************/
 void EXTI0_IRQHandler(void)
 {
-    extern void enc28j60_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    enc28j60_isr();
-
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line0);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-    rt_hw_interrupt_thread_switch();
 }
 
 /*******************************************************************************
@@ -484,6 +471,21 @@ void CAN1_SCE_IRQHandler(void)
 *******************************************************************************/
 void EXTI9_5_IRQHandler(void)
 {
+#ifdef RT_USING_LWIP
+	extern void rt_dm9000_isr(void);
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+	rt_dm9000_isr();
+
+	/* Clear the Key Button EXTI line pending bit */
+	EXTI_ClearITPendingBit(EXTI_Line7);
+
+	/* leave interrupt */
+	rt_interrupt_leave();
+	rt_hw_interrupt_thread_switch();
+#endif
 }
 
 /*******************************************************************************

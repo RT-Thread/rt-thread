@@ -285,13 +285,13 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 		/* no error */
 		MP3GetLastFrameInfo(decoder->decoder, &decoder->frame_info);
 
-// #ifdef MP3_DECODER_TRACE
+#ifdef MP3_DECODER_TRACE
 		rt_kprintf("Bitrate: %i\n", decoder->frame_info.bitrate);
 		rt_kprintf("%i samples\n", decoder->frame_info.outputSamps);
 
 		rt_kprintf("%lu Hz, %i kbps\n", decoder->frame_info.samprate,
             decoder->frame_info.bitrate/1000);
-// #endif
+#endif
 
         /* set sample rate */
 

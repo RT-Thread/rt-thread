@@ -21,11 +21,14 @@ File 1,5,<.\stm32f10x_conf.h><stm32f10x_conf.h>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,1,<.\usart.c><usart.c>
 File 1,1,<.\sdcard.c><sdcard.c>
-File 1,1,<.\enc28j60.c><enc28j60.c>
 File 1,1,<.\rtc.c><rtc.c>
 File 1,1,<.\mp3.c><mp3.c>
 File 1,1,<.\wm8753.c><wm8753.c>
 File 1,1,<.\wav.c><wav.c>
+File 1,1,<.\dm9000.c><dm9000.c>
+File 1,1,<.\fsmc_nand.c><fsmc_nand.c>
+File 1,1,<.\fsmc_sram.c><fsmc_sram.c>
+File 1,1,<.\fmt0371\fmt0371.c><fmt0371.c>
 File 2,1,<.\library\src\stm32f10x_adc.c><stm32f10x_adc.c>
 File 2,1,<.\library\src\stm32f10x_bkp.c><stm32f10x_bkp.c>
 File 2,1,<.\library\src\stm32f10x_can.c><stm32f10x_can.c>
@@ -238,10 +241,10 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103ZE)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103ZE)
-  OPTDBG 48117,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+  OPTDBG 48118,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
- FLASH3 ()
+ FLASH3 ("" ())
  FLASH4 ()
 EndOpt
 

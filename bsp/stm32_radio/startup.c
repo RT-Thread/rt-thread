@@ -18,9 +18,11 @@
 #include "board.h"
 #include "rtc.h"
 
+#include <stm32f10x.h>
+
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
-#include "enc28j60.h"
+#include "dm9000.h"
 #endif
 
 /**
@@ -28,13 +30,6 @@
  */
 
 /*@{*/
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(char* device);
-#endif
-
-extern int  rt_application_init(void);
-
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
@@ -43,6 +38,11 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
+#ifdef RT_USING_FINSH
+extern void finsh_system_init(void);
+extern void finsh_set_device(const char* device);
+#endif
+extern int rt_application_init(void);
 extern rt_err_t wm8753_hw_init(void);
 
 #ifdef  DEBUG
@@ -86,17 +86,17 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-#ifdef RT_USING_SRAM
-	rt_system_heap_init((void*)0x68000000, (void*)0x68080000);
+#if STM32_EXT_SRAM
+	rt_system_heap_init((void*)STM32_EXT_SRAM_BEGIN, (void*)STM32_EXT_SRAM_END);
 #else
-#ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20010000);
-#elif __ICCARM__
-    rt_system_heap_init(__segment_end("HEAP"), (void*)0x20010000);
-#else
+	#ifdef __CC_ARM
+		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)STM32_SRAM_END);
+	#elif __ICCARM__
+	    rt_system_heap_init(__segment_end("HEAP"), (void*)STM32_SRAM_END);
+	#else
 	/* init memory system */
-	rt_system_heap_init((void*)&__bss_end, (void*)0x20010000);
-#endif
+		rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
+	#endif
 #endif
 #endif
 
@@ -107,15 +107,15 @@ void rtthread_startup(void)
 	eth_system_device_init();
 
 	/* register ethernetif device */
-	rt_hw_enc28j60_init();
+	rt_hw_dm9000_init();
 #endif
 
-	rt_hw_rtc_init();
 	wm8753_hw_init();
 
 	/* init hardware serial device */
 	rt_hw_usart_init();
 #ifdef RT_USING_DFS
+    GPIO_ResetBits(GPIOC,GPIO_Pin_6);
 	rt_hw_sdcard_init();
 #endif
 
@@ -128,9 +128,7 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
 	/* init finsh */
 	finsh_system_init();
-#ifdef RT_USING_DEVICE
 	finsh_set_device("uart1");
-#endif
 #endif
 
 	/* init idle thread */

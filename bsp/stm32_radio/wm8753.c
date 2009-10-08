@@ -69,16 +69,16 @@
 #define WM8753_ADCTL2	0x3f
 
 /*
-SCLK  PA3  SPI1_SCK
+SCLK  PA5  SPI1_SCK
 SDIN  PA7  SPI1_MOSI
-CSB   PA2  SPI1_NSS
+CSB   PA4  SPI1_NSS
 */
-#define wm_sclk_0  GPIO_ResetBits(GPIOA,GPIO_Pin_3)
-#define wm_sclk_1  GPIO_SetBits(GPIOA,GPIO_Pin_3)
+#define wm_sclk_0  GPIO_ResetBits(GPIOA,GPIO_Pin_5)
+#define wm_sclk_1  GPIO_SetBits(GPIOA,GPIO_Pin_5)
 #define wm_sdin_0  GPIO_ResetBits(GPIOA,GPIO_Pin_7)
 #define wm_sdin_1  GPIO_SetBits(GPIOA,GPIO_Pin_7)
-#define wm_csb_0   GPIO_ResetBits(GPIOA,GPIO_Pin_2)
-#define wm_csb_1   GPIO_SetBits(GPIOA,GPIO_Pin_2)
+#define wm_csb_0   GPIO_ResetBits(GPIOA,GPIO_Pin_4)
+#define wm_csb_1   GPIO_SetBits(GPIOA,GPIO_Pin_4)
 
 #define DATA_NODE_MAX 5
 /* data node for Tx Mode */
@@ -128,9 +128,10 @@ static void GPIO_Configuration(void)
 
 	/* Disable the JTAG interface and enable the SWJ interface */
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
 	/* Configure GPIOA 2, 3, 7 */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_Init(GPIOA,&GPIO_InitStructure);
@@ -140,6 +141,14 @@ static void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+    /*    MCO    configure */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA,&GPIO_InitStructure);
+
+    RCC_MCOConfig(RCC_MCO_HSE);
 }
 
 #define SPI2_DR_Address  0x4000380C
@@ -182,7 +191,7 @@ static void I2S_Configuration(void)
 
 	/* I2S2 Master Transmitter to I2S3 Slave Receiver communication -----------*/
 	/* I2S2 configuration */
-	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;//I2S_Mode_MasterTx
+	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;//I2S_Mode_MasterTx  I2S_Mode_SlaveTx
 	I2S_Init(SPI2, &I2S_InitStructure);
 }
 
@@ -201,33 +210,8 @@ void wm8753_send(rt_uint16_t s_data)
         {
             wm_sdin_0;
         }
-        //wde();
         wm_sclk_1;
-        //wde();
         s_data <<= 1;
-        wm_sclk_0;
-        //wde();
-    }
-
-    wm_csb_0;
-    //wde();
-    wm_csb_1;
-}
-
-void wm8753_hw_write(rt_uint16_t reg, rt_uint16_t value)
-{
-	rt_uint32_t index;
-
-	value = (reg << 9) | value;
-
-    wm_sclk_0;
-    for(index = 0; index < 16; index++)
-    {
-        if(value & 0x8000) wm_sdin_1;
-        else wm_sdin_0;
-
-        wm_sclk_1;
-        value <<= 1;
         wm_sclk_0;
     }
 
@@ -246,8 +230,8 @@ static rt_err_t wm8753_init (rt_device_t dev)
 	
 	/*  设置时钟及PLL　 */
 	#define MCLK1DIV2 0
-	#define pll1_N    11 // 12
-	#define pll1_K    0x1288CE // 0x126E97 //0x126E97
+	#define pll1_N    11
+	#define pll1_K    0x1288CE
 	
 	#if pll1_K > 0x3FFFFF
 	#warning MAX bit(21:0)
@@ -258,12 +242,14 @@ static rt_err_t wm8753_init (rt_device_t dev)
 	wm8753_send(55<<9 | ( (pll1_K>>9)&0x1FF ) );
 	wm8753_send(56<<9 | ( (pll1_K)&0x1FF ) );
 	
-	wm8753_send(52<<9 | 1<<1 | 1 ); // 打开CLK输出 测试用 可以不设置
+	wm8753_send(52<<9 | 1<<4 | 0<<1 | 0 ); // 打开CLK输出 测试用 可以不设置
 	/*  设置时钟及PLL　 */
 	
 	/* 设置IIS及DAC */
 	// wm8753_send(6<<9 | 0<<1 | 0 ); // 48K
-	wm8753_send(6<<9 | 1<<5 | 0 ); // 44.1K
+	wm8753_send(7<<9 | 3<<3 ); // BCLK = MCLK / 8	   0:0 1:2 2:4 3:8 4:16
+	wm8753_send(6<<9 | 16<<1 | 0 ); // 44.1K
+	wm8753_send(5<<9 | 0x01<<4 | 0x01<<5 | 0x02<<2 | 0x02<<2 | 0x01<<1 | 1); //
 	wm8753_send(4<<9 | 0<<6 | 2 ); // 6.master IIS
 	wm8753_send(1<<9 | 0 ); // 关闭DAC静音
 	/* 设置IIS及DAC */
@@ -272,11 +258,13 @@ static rt_err_t wm8753_init (rt_device_t dev)
 	wm8753_send(34<<9 | 1<<8 | 1<<7 | 4<<4 );  // DAC LINE
 	wm8753_send(36<<9 | 1<<8 | 1<<7 | 4<<4 );  // DAC LINE
 	
-	wm8753_send(40<<9 | 1<<8 | 1<<7 | 110);    // 耳机音量
-	wm8753_send(41<<9 | 1<<8 | 1<<7 | 110);    // 耳机音量
+	wm8753_send(40<<9 | 0<<8 | 1<<7 | 100);    // 耳机音量
+	wm8753_send(41<<9 | 1<<8 | 1<<7 | 100);    // 耳机音量
 	
 	wm8753_send(45<<9 | 1<<2); // 设置ROUT反向
-	wm8753_send(43<<9 | 1<<8 | 1<<7 | 70 ); //喇叭音量
+	wm8753_send(42<<9 | 1<<8 | 1<<7 | 105 ); //喇叭音量
+	wm8753_send(43<<9 | 1<<8 | 1<<7 | 105 ); //喇叭音量
+	/* 设置IIS及DAC */
 
 	return RT_EOK;
 }
@@ -284,8 +272,11 @@ static rt_err_t wm8753_init (rt_device_t dev)
 #include <finsh.h>
 void vol(int v)
 {
-	wm8753_send(40<<9 | 1<<8 | 1<<7 | v);    // 耳机音量
+	wm8753_send(40<<9 | 0<<8 | 1<<7 | v);    // 耳机音量
 	wm8753_send(41<<9 | 1<<8 | 1<<7 | v);    // 耳机音量
+
+	wm8753_send(42<<9 | 0<<8 | 1<<7 | v);    // 耳机音量
+	wm8753_send(43<<9 | 1<<8 | 1<<7 | v);    // 耳机音量
 }
 FINSH_FUNCTION_EXPORT(vol, set volume)
 
@@ -345,17 +336,6 @@ static rt_size_t wm8753_write (rt_device_t dev, rt_off_t pos, const void* buffer
 	/* set node attribute */
 	node->data_ptr = (rt_uint16_t*)buffer;
 	node->data_size = size >> 1; /* size is byte unit, convert to half word unit */
-
-#if 0
-	{
-		/* sound patch */
-		rt_uint32_t index;
-		for (index = 0; index < node->data_size; index ++)
-		{
-			((rt_int16_t*)(node->data_ptr))[index] = (rt_int16_t)(node->data_ptr[index] + 0x8000);
-		}
-	}
-#endif
 
 	next_index = device->read_index + 1;
 	if (next_index >= DATA_NODE_MAX) next_index = 0;

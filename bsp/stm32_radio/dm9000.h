@@ -1,8 +1,16 @@
 #ifndef __DM9000_H__
 #define __DM9000_H__
 
+#define DM9000_IO_BASE		0x6C000000
+#define DM9000_DATA_BASE	0x6C000008
+
 #define    DM9000_IO 	(*((volatile rt_uint16_t *) 0x6C000000)) // CMD = 0
 #define    DM9000_DATA 	(*((volatile rt_uint16_t *) 0x6C000008)) // CMD = 1
+
+#define DM9000_inb(r) 		(*(volatile rt_uint8_t *)r)
+#define DM9000_outb(r, d) 	(*(volatile rt_uint8_t *)r = d)
+#define DM9000_inw(r) 		(*(volatile rt_uint16_t *)r)
+#define DM9000_outw(r, d) 	(*(volatile rt_uint16_t *)r = d)
 
 #define    RST_1()   GPIO_SetBits(GPIOF,GPIO_Pin_6)
 #define    RST_0()   GPIO_ResetBits(GPIOF,GPIO_Pin_6)
@@ -44,10 +52,13 @@
 #define DM9000_PIDH         0x2B
 
 #define DM9000_CHIPR        0x2C
+#define DM9000_TCR2			0x2D
+#define DM9000_OTCR			0x2E
 #define DM9000_SMCR         0x2F
 
-#define CHIPR_DM9000A       0x19
-#define CHIPR_DM9000B       0x1B
+#define DM9000_ETCR			0x30	/* early transmit control/status register */
+#define DM9000_CSCR			0x31	/* check sum control register */
+#define DM9000_RCSSR		0x32	/* receive check sum status register */
 
 #define DM9000_MRCMDX       0xF0
 #define DM9000_MRCMD        0xF2
@@ -61,6 +72,9 @@
 #define DM9000_TXPLH        0xFD
 #define DM9000_ISR          0xFE
 #define DM9000_IMR          0xFF
+
+#define CHIPR_DM9000A       0x19
+#define CHIPR_DM9000B       0x1B
 
 #define NCR_EXT_PHY         (1<<7)
 #define NCR_WAKEEN          (1<<6)

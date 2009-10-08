@@ -95,7 +95,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 /* #define RT_USING_WEBSERVER */
 
 /* Trace LwIP protocol */
@@ -123,7 +123,7 @@
 /* #define RT_LWIP_SNMP */
 
 /* Using DHCP */
-#define RT_LWIP_DHCP
+/* #define RT_LWIP_DHCP */
 
 /* Using DNS */
 #define RT_LWIP_DNS
@@ -156,6 +156,5 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
-#define LWIP_NOASSERT
 
 #endif
