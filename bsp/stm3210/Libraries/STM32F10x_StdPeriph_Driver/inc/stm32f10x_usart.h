@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_usart.h
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file contains all the functions prototypes for the USART 
   *          firmware library.
   ******************************************************************************
@@ -51,7 +51,7 @@ typedef struct
   uint32_t USART_BaudRate;            /*!< This member configures the USART communication baud rate.
                                            The baud rate is computed using the following formula:
                                             - IntegerDivider = ((PCLKx) / (16 * (USART_InitStruct->USART_BaudRate)))
-                                            - FractionalDivider = ((IntegerDivider - ((u32) IntegerDivider)) * 16) + 0.5 */
+                                            - FractionalDivider = ((IntegerDivider - ((uint32_t) IntegerDivider)) * 16) + 0.5 */
 
   uint16_t USART_WordLength;          /*!< Specifies the number of data bits transmitted or received in a frame.
                                            This parameter can be a value of @ref USART_Word_Length */

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_gpio.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file provides all the GPIO firmware functions.
   ******************************************************************************
   * @copy
@@ -57,7 +57,7 @@
 /* ---  MAPR Register ---*/ 
 /* Alias word address of MII_RMII_SEL bit */ 
 #define MAPR_OFFSET                 (AFIO_OFFSET + 0x04) 
-#define MII_RMII_SEL_BitNumber      ((u8)0x17) 
+#define MII_RMII_SEL_BitNumber      ((uint8_t)0x17) 
 #define MAPR_MII_RMII_SEL_BB        (PERIPH_BB_BASE + (MAPR_OFFSET * 32) + (MII_RMII_SEL_BitNumber * 4))
 
 

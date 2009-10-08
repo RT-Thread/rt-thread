@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_spi.h
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file contains all the functions prototypes for the SPI firmware 
   *          library.
   ******************************************************************************
@@ -98,7 +98,7 @@ typedef struct
   uint16_t I2S_MCLKOutput;   /*!< Specifies whether the I2S MCLK output is enabled or not.
                                   This parameter can be any combination of @ref I2S_MCLK_Output */
 
-  uint16_t I2S_AudioFreq;    /*!< Specifies the frequency selected for the I2S communication.
+  uint32_t I2S_AudioFreq;    /*!< Specifies the frequency selected for the I2S communication.
                                   This parameter can be any combination of @ref I2S_Audio_Frequency */
 
   uint16_t I2S_CPOL;         /*!< Specifies the idle state of the I2S clock.
@@ -298,15 +298,15 @@ typedef struct
   * @{
   */
 
-#define I2S_AudioFreq_96k                ((uint16_t)96000)
-#define I2S_AudioFreq_48k                ((uint16_t)48000)
-#define I2S_AudioFreq_44k                ((uint16_t)44100)
-#define I2S_AudioFreq_32k                ((uint16_t)32000)
-#define I2S_AudioFreq_22k                ((uint16_t)22050)
-#define I2S_AudioFreq_16k                ((uint16_t)16000)
-#define I2S_AudioFreq_11k                 ((uint16_t)11025)
-#define I2S_AudioFreq_8k                 ((uint16_t)8000)
-#define I2S_AudioFreq_Default            ((uint16_t)2)
+#define I2S_AudioFreq_96k                ((uint32_t)96000)
+#define I2S_AudioFreq_48k                ((uint32_t)48000)
+#define I2S_AudioFreq_44k                ((uint32_t)44100)
+#define I2S_AudioFreq_32k                ((uint32_t)32000)
+#define I2S_AudioFreq_22k                ((uint32_t)22050)
+#define I2S_AudioFreq_16k                ((uint32_t)16000)
+#define I2S_AudioFreq_11k                ((uint32_t)11025)
+#define I2S_AudioFreq_8k                 ((uint32_t)8000)
+#define I2S_AudioFreq_Default            ((uint32_t)2)
 #define IS_I2S_AUDIO_FREQ(FREQ) (((FREQ) == I2S_AudioFreq_96k) || \
                                  ((FREQ) == I2S_AudioFreq_48k) || \
                                  ((FREQ) == I2S_AudioFreq_44k) || \

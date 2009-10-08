@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_flash.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file provides all the FLASH firmware functions.
   ******************************************************************************
   * @copy
@@ -264,6 +264,10 @@ FLASH_Status FLASH_EraseAllPages(void)
 
 /**
   * @brief  Erases the FLASH option bytes.
+  * @note   This functions erases all option bytes and then deactivates the Read
+  *         protection. If the user needs to keep the Read protection activated,
+  *         he has to enable it after this function call (using
+  *         FLASH_ReadOutProtection function)
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
@@ -293,7 +297,7 @@ FLASH_Status FLASH_EraseOptionBytes(void)
        
       /* Enable the Option Bytes Programming operation */
       FLASH->CR |= CR_OPTPG_Set;
-      /* Enable the readout access */
+      /* Disable the Read protection */
       OB->RDP= RDP_Key; 
       /* Wait for last operation to be completed */
       status = FLASH_WaitForLastOperation(ProgramTimeout);

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_tim.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file provides all the TIM firmware functions.
   ******************************************************************************
   * @copy
@@ -297,8 +297,8 @@ void TIM_OC1Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   /* Get the TIMx CCMR1 register value */
   tmpccmrx = TIMx->CCMR1;
     
-  /* Reset the Output Compare Mode Bits */
-  tmpccmrx &= CCMR_OC13M_Mask;
+  /* Reset the Output Compare mode and Capture/Compare selection Bits */
+  tmpccmrx &= CCMR_OC13M_Mask & CCMR_CC13S_Mask;
   
   /* Select the Output Compare Mode */
   tmpccmrx |= TIM_OCInitStruct->TIM_OCMode;
@@ -310,10 +310,7 @@ void TIM_OC1Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Set the Output State */
   tmpccer |= TIM_OCInitStruct->TIM_OutputState;
-  
-  /* Set the Capture Compare Register value */
-  TIMx->CCR1 = TIM_OCInitStruct->TIM_Pulse;
-  
+ 
   if(((uint32_t) TIMx == TIM1_BASE) || ((uint32_t) TIMx == TIM8_BASE))
   {
     assert_param(IS_TIM_OUTPUTN_STATE(TIM_OCInitStruct->TIM_OutputNState));
@@ -343,6 +340,9 @@ void TIM_OC1Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Write to TIMx CCMR1 */
   TIMx->CCMR1 = tmpccmrx;
+
+  /* Set the Capture Compare Register value */
+  TIMx->CCR1 = TIM_OCInitStruct->TIM_Pulse;
   
   /* Write to TIMx CCER */
   TIMx->CCER = tmpccer;
@@ -375,9 +375,9 @@ void TIM_OC2Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Get the TIMx CCMR1 register value */
   tmpccmrx = TIMx->CCMR1;
-    
-  /* Reset the Output Compare Mode Bits */
-  tmpccmrx &= CCMR_OC24M_Mask;
+
+  /* Reset the Output Compare mode and Capture/Compare selection Bits */
+  tmpccmrx &= CCMR_OC24M_Mask & CCMR_CC24S_Mask;  
   
   /* Select the Output Compare Mode */
   tmpccmrx |= (uint16_t)(TIM_OCInitStruct->TIM_OCMode << 8);
@@ -389,10 +389,7 @@ void TIM_OC2Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Set the Output State */
   tmpccer |= (uint16_t)(TIM_OCInitStruct->TIM_OutputState << 4);
-  
-  /* Set the Capture Compare Register value */
-  TIMx->CCR2 = TIM_OCInitStruct->TIM_Pulse;
-  
+    
   if(((uint32_t) TIMx == TIM1_BASE) || ((uint32_t) TIMx == TIM8_BASE))
   {
     assert_param(IS_TIM_OUTPUTN_STATE(TIM_OCInitStruct->TIM_OutputNState));
@@ -422,6 +419,9 @@ void TIM_OC2Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Write to TIMx CCMR1 */
   TIMx->CCMR1 = tmpccmrx;
+
+  /* Set the Capture Compare Register value */
+  TIMx->CCR2 = TIM_OCInitStruct->TIM_Pulse;
   
   /* Write to TIMx CCER */
   TIMx->CCER = tmpccer;
@@ -455,8 +455,8 @@ void TIM_OC3Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   /* Get the TIMx CCMR2 register value */
   tmpccmrx = TIMx->CCMR2;
     
-  /* Reset the Output Compare Mode Bits */
-  tmpccmrx &= CCMR_OC13M_Mask;
+  /* Reset the Output Compare mode and Capture/Compare selection Bits */
+  tmpccmrx &= CCMR_OC13M_Mask & CCMR_CC13S_Mask;  
   
   /* Select the Output Compare Mode */
   tmpccmrx |= TIM_OCInitStruct->TIM_OCMode;
@@ -468,10 +468,7 @@ void TIM_OC3Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Set the Output State */
   tmpccer |= (uint16_t)(TIM_OCInitStruct->TIM_OutputState << 8);
-  
-  /* Set the Capture Compare Register value */
-  TIMx->CCR3 = TIM_OCInitStruct->TIM_Pulse;
-  
+   
   if(((uint32_t) TIMx == TIM1_BASE) || ((uint32_t) TIMx == TIM8_BASE))
   {
     assert_param(IS_TIM_OUTPUTN_STATE(TIM_OCInitStruct->TIM_OutputNState));
@@ -501,6 +498,9 @@ void TIM_OC3Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Write to TIMx CCMR2 */
   TIMx->CCMR2 = tmpccmrx;
+
+  /* Set the Capture Compare Register value */
+  TIMx->CCR3 = TIM_OCInitStruct->TIM_Pulse;
   
   /* Write to TIMx CCER */
   TIMx->CCER = tmpccer;
@@ -534,9 +534,9 @@ void TIM_OC4Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   /* Get the TIMx CCMR2 register value */
   tmpccmrx = TIMx->CCMR2;
     
-  /* Reset the Output Compare Mode Bits */
-  tmpccmrx &= CCMR_OC24M_Mask;
-  
+  /* Reset the Output Compare mode and Capture/Compare selection Bits */
+  tmpccmrx &= CCMR_OC24M_Mask & CCMR_CC24S_Mask; 
+   
   /* Select the Output Compare Mode */
   tmpccmrx |= (uint16_t)(TIM_OCInitStruct->TIM_OCMode << 8);
   
@@ -547,10 +547,7 @@ void TIM_OC4Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Set the Output State */
   tmpccer |= (uint16_t)(TIM_OCInitStruct->TIM_OutputState << 12);
-  
-  /* Set the Capture Compare Register value */
-  TIMx->CCR4 = TIM_OCInitStruct->TIM_Pulse;
-  
+    
   if(((uint32_t) TIMx == TIM1_BASE) || ((uint32_t) TIMx == TIM8_BASE))
   {
     assert_param(IS_TIM_OCIDLE_STATE(TIM_OCInitStruct->TIM_OCIdleState));
@@ -564,6 +561,9 @@ void TIM_OC4Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   
   /* Write to TIMx CCMR2 */  
   TIMx->CCMR2 = tmpccmrx;
+
+  /* Set the Capture Compare Register value */
+  TIMx->CCR4 = TIM_OCInitStruct->TIM_Pulse;
   
   /* Write to TIMx CCER */
   TIMx->CCER = tmpccer;

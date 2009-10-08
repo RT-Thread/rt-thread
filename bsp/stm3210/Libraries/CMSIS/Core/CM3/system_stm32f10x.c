@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    system_stm32f10x.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   CMSIS Cortex-M3 Device Peripheral Access Layer System Source File.
   ******************************************************************************  
   *
@@ -641,7 +641,7 @@ static void SetSysClockTo48(void)
     /* PCLK2 = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1;
     
-    /* PCLK1 = HCLK */
+    /* PCLK1 = HCLK/2 */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
     
 #ifdef STM32F10X_CL
@@ -737,9 +737,9 @@ static void SetSysClockTo56(void)
     /* Enable Prefetch Buffer */
     FLASH->ACR |= FLASH_ACR_PRFTBE;
 
-    /* Flash 1 wait state */
+    /* Flash 2 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
  
     /* HCLK = SYSCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
@@ -747,7 +747,7 @@ static void SetSysClockTo56(void)
     /* PCLK2 = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1;
     
-    /* PCLK1 = HCLK */
+    /* PCLK1 = HCLK/2 */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
 
 #ifdef STM32F10X_CL
@@ -855,7 +855,7 @@ static void SetSysClockTo72(void)
     /* PCLK2 = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1;
     
-    /* PCLK1 = HCLK */
+    /* PCLK1 = HCLK/2 */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
 
 #ifdef STM32F10X_CL

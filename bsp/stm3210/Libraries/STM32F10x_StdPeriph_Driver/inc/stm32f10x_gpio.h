@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_gpio.h
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file contains all the functions prototypes for the GPIO 
   *          firmware library.
   ******************************************************************************
@@ -295,8 +295,8 @@ typedef enum
 /** @defgroup Ethernet_Media_Interface 
   * @{
   */ 
-#define GPIO_ETH_MediaInterface_MII    ((u32)0x00000000) 
-#define GPIO_ETH_MediaInterface_RMII   ((u32)0x00000001)                                       
+#define GPIO_ETH_MediaInterface_MII    ((uint32_t)0x00000000) 
+#define GPIO_ETH_MediaInterface_RMII   ((uint32_t)0x00000001)                                       
 
 #define IS_GPIO_ETH_MEDIA_INTERFACE(INTERFACE) (((INTERFACE) == GPIO_ETH_MediaInterface_MII) || \
                                                 ((INTERFACE) == GPIO_ETH_MediaInterface_RMII))

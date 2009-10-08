@@ -1,8 +1,8 @@
 ;/******************** (C) COPYRIGHT 2009 STMicroelectronics ********************
 ;* File Name          : startup_stm32f10x_md.s
 ;* Author             : MCD Application Team
-;* Version            : V3.1.0
-;* Date               : 06/19/2009
+;* Version            : V3.1.2
+;* Date               : 09/28/2009
 ;* Description        : STM32F10x Medium Density Devices vector table for 
 ;*                      EWARM5.x toolchain.
 ;*                      This module performs:

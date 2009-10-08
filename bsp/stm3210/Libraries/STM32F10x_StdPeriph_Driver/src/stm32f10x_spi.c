@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_spi.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file provides all the SPI firmware functions.
   ******************************************************************************
   * @copy
@@ -72,10 +72,10 @@
 #define I2S_Mode_Select      ((uint16_t)0x0800) 
 
 /* I2S clock source selection masks */
-#define I2S2_CLOCK_SRC       ((u32)(0x00020000))
-#define I2S3_CLOCK_SRC       ((u32)(0x00040000))
-#define I2S_MUL_MASK         ((u32)(0x0000F000))
-#define I2S_DIV_MASK         ((u32)(0x000000F0))
+#define I2S2_CLOCK_SRC       ((uint32_t)(0x00020000))
+#define I2S3_CLOCK_SRC       ((uint32_t)(0x00040000))
+#define I2S_MUL_MASK         ((uint32_t)(0x0000F000))
+#define I2S_DIV_MASK         ((uint32_t)(0x000000F0))
 
 /**
   * @}
@@ -332,7 +332,7 @@ void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct)
     tmp = tmp / 10;  
       
     /* Check the parity of the divider */
-    i2sodd = (uint16_t)(tmp & (u16)0x0001);
+    i2sodd = (uint16_t)(tmp & (uint16_t)0x0001);
    
     /* Compute the i2sdiv prescaler */
     i2sdiv = (uint16_t)((tmp - i2sodd) / 2);

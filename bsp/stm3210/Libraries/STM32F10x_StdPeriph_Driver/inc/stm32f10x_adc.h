@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_adc.h
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file contains all the functions prototypes for the ADC firmware 
   *          library.
   ******************************************************************************
