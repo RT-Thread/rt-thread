@@ -35,47 +35,47 @@ static void rt_hw_console_init(void);
  *******************************************************************************/
 void RCC_Configuration(void)
 {
-	ErrorStatus HSEStartUpStatus;
+    ErrorStatus HSEStartUpStatus;
 
-	/* RCC system reset(for debug purpose) */
-	RCC_DeInit();
+    /* RCC system reset(for debug purpose) */
+    RCC_DeInit();
 
-	/* Enable HSE */
-	RCC_HSEConfig(RCC_HSE_ON);
+    /* Enable HSE */
+    RCC_HSEConfig(RCC_HSE_ON);
 
-	/* Wait till HSE is ready */
-	HSEStartUpStatus = RCC_WaitForHSEStartUp();
+    /* Wait till HSE is ready */
+    HSEStartUpStatus = RCC_WaitForHSEStartUp();
 
     if (HSEStartUpStatus == SUCCESS)
-	{
-		/* HCLK = SYSCLK */
-		RCC_HCLKConfig(RCC_SYSCLK_Div1);
+    {
+        /* HCLK = SYSCLK */
+        RCC_HCLKConfig(RCC_SYSCLK_Div1);
 
-		/* PCLK2 = HCLK */
-		RCC_PCLK2Config(RCC_HCLK_Div1);
-		/* PCLK1 = HCLK/2 */
-		RCC_PCLK1Config(RCC_HCLK_Div2);
+        /* PCLK2 = HCLK */
+        RCC_PCLK2Config(RCC_HCLK_Div1);
+        /* PCLK1 = HCLK/2 */
+        RCC_PCLK1Config(RCC_HCLK_Div2);
 
-		/* Flash 2 wait state */
-		FLASH_SetLatency(FLASH_Latency_2);
-		/* Enable Prefetch Buffer */
-		FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
+        /* Flash 2 wait state */
+        FLASH_SetLatency(FLASH_Latency_2);
+        /* Enable Prefetch Buffer */
+        FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
 
-		/* PLLCLK = 8MHz * 9 = 72 MHz */
-		RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
+        /* PLLCLK = 8MHz * 9 = 72 MHz */
+        RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
 
-		/* Enable PLL */
-		RCC_PLLCmd(ENABLE);
+        /* Enable PLL */
+        RCC_PLLCmd(ENABLE);
 
-		/* Wait till PLL is ready */
+        /* Wait till PLL is ready */
         while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) ;
 
-		/* Select PLL as system clock source */
-		RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+        /* Select PLL as system clock source */
+        RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
 
-		/* Wait till PLL is used as system clock source */
+        /* Wait till PLL is used as system clock source */
         while (RCC_GetSYSCLKSource() != 0x08) ;
-	}
+    }
 }
 
 /*******************************************************************************
@@ -88,11 +88,11 @@ void RCC_Configuration(void)
 void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
-	/* Set the Vector Table base location at 0x20000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+    /* Set the Vector Table base location at 0x20000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
 #else  /* VECT_TAB_FLASH  */
-	/* Set the Vector Table base location at 0x08000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+    /* Set the Vector Table base location at 0x08000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 }
 
@@ -123,13 +123,13 @@ extern void rt_hw_interrupt_thread_switch(void);
  */
 void rt_hw_timer_handler(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /* NAND Flash */
@@ -138,21 +138,22 @@ void rt_hw_timer_handler(void)
 /**
  * This function will initial STM32 Radio board.
  */
+ extern void FSMC_SRAM_Init(void);
 void rt_hw_board_init()
 {
-	NAND_IDTypeDef NAND_ID;
+    NAND_IDTypeDef NAND_ID;
 
-	/* Configure the system clocks */
-	RCC_Configuration();
+    /* Configure the system clocks */
+    RCC_Configuration();
 
-	/* NVIC Configuration */
-	NVIC_Configuration();
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
-	/* Configure the SysTick */
-	SysTick_Configuration();
+    /* Configure the SysTick */
+    SysTick_Configuration();
 
-	/* Console Initialization*/
-	rt_hw_console_init();
+    /* Console Initialization*/
+    rt_hw_console_init();
 
     /* FSMC Initialization */
     FSMC_NAND_Init();
@@ -163,10 +164,10 @@ void rt_hw_board_init()
 
     /* SRAM init */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
-	FSMC_SRAM_Init();
+    FSMC_SRAM_Init();
 
-	{
-		/* PC6 for SDCard Rst */
+    {
+        /* PC6 for SDCard Rst */
         GPIO_InitTypeDef GPIO_InitStructure;
 
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -174,19 +175,19 @@ void rt_hw_board_init()
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOC,&GPIO_InitStructure);
         GPIO_SetBits(GPIOC,GPIO_Pin_6);
-	}
+    }
 }
 
 /* init console to support rt_kprintf */
 static void rt_hw_console_init()
 {
-	/* Enable USART1 and GPIOA clocks */
+    /* Enable USART1 and GPIOA clocks */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1
                            | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC
                            | RCC_APB2Periph_GPIOF, ENABLE);
 
-	/* GPIO configuration */
-	{
+    /* GPIO configuration */
+    {
         GPIO_InitTypeDef GPIO_InitStructure;
 
         /* Configure USART1 Tx (PA.09) as alternate function push-pull */
@@ -199,10 +200,10 @@ static void rt_hw_console_init()
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
-	}
+    }
 
-	/* USART configuration */
-	{
+    /* USART configuration */
+    {
         USART_InitTypeDef USART_InitStructure;
 
         /* USART1 configured as follow:
@@ -227,20 +228,20 @@ static void rt_hw_console_init()
         USART_Init(USART1, &USART_InitStructure);
         /* Enable USART1 */
         USART_Cmd(USART1, ENABLE);
-	}
+    }
 }
 
 /* write one character to serial, must not trigger interrupt */
 static void rt_hw_console_putc(const char c)
 {
-	/*
-		to be polite with serial console add a line feed
-		to the carriage return character
-	*/
-	if (c=='\n')rt_hw_console_putc('\r');
+    /*
+    	to be polite with serial console add a line feed
+    	to the carriage return character
+    */
+    if (c=='\n')rt_hw_console_putc('\r');
 
-	while (!(USART1->SR & USART_FLAG_TXE));
-	USART1->DR = (c & 0x1FF);
+    while (!(USART1->SR & USART_FLAG_TXE));
+    USART1->DR = (c & 0x1FF);
 }
 
 /**
@@ -250,10 +251,10 @@ static void rt_hw_console_putc(const char c)
  */
 void rt_hw_console_output(const char* str)
 {
-	while (*str)
-	{
-		rt_hw_console_putc (*str++);
-	}
+    while (*str)
+    {
+        rt_hw_console_putc (*str++);
+    }
 }
 
 /*@}*/
