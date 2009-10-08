@@ -112,10 +112,8 @@ void  SysTick_Configuration(void)
 
     cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
 
-    SysTick_SetReload(cnts);
+    SysTick_Config(cnts);
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
-    SysTick_CounterCmd(SysTick_Counter_Enable);
-    SysTick_ITConfig(ENABLE);
 }
 
 extern void rt_hw_interrupt_thread_switch(void);
@@ -166,7 +164,7 @@ void rt_hw_board_init()
     /* SRAM init */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 	FSMC_SRAM_Init();
-	
+
 	{
 		/* PC6 for SDCard Rst */
         GPIO_InitTypeDef GPIO_InitStructure;

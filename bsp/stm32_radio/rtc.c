@@ -1,5 +1,5 @@
 #include <rtthread.h>
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 
 static struct rt_device rtc;
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)

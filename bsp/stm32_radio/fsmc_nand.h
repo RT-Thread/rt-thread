@@ -17,7 +17,7 @@
 #define __FSMC_NAND_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct

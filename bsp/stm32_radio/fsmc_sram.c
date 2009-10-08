@@ -13,7 +13,7 @@
 * CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
 * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *******************************************************************************/
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define Bank1_SRAM3_ADDR    ((u32)0x68000000)

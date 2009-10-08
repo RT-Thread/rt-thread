@@ -1,6 +1,6 @@
 #include <rthw.h>
 #include <rtthread.h>
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 
 /*
  * WM8753 Driver
@@ -108,14 +108,14 @@ static void NVIC_Configuration(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 	
 	/* SPI2 IRQ Channel configuration */
-	NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQChannel;
+	NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* DMA1 IRQ Channel configuration */
-	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQChannel;
+	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;

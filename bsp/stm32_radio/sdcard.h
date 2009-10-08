@@ -19,7 +19,7 @@
 #define __SDCARD_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef enum

@@ -1,8 +1,7 @@
 #include "usart.h"
 #include <serial.h>
 
-#include <stm32f10x_lib.h>
-#include <stm32f10x_map.h>
+#include "stm32f10x.h"
 
 /*
  * Use UART1 as console output and finsh input
@@ -170,7 +169,7 @@ static void NVIC_Configuration(void)
 
 #ifdef RT_USING_UART1
 	/* Enable the USART1 Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQChannel;
+	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);

@@ -1,6 +1,6 @@
 #include <finsh.h>
 #include <dfs_posix.h>
-#include "stm32f10x_lib.h"
+#include "stm32f10x.h"
 
 rt_uint32_t wav_length;
 rt_uint8_t* wav_buffer;
