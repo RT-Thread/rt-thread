@@ -397,7 +397,7 @@ struct rt_semaphore
 {
 	struct rt_ipc_object parent;
 
-	rt_base_t value;				/* value of semaphore. */
+	rt_ubase_t value;				/* value of semaphore. */
 };
 typedef struct rt_semaphore* rt_sem_t;
 #endif
@@ -410,12 +410,12 @@ struct rt_mutex
 {
 	struct rt_ipc_object parent;
 
-	rt_base_t value;				/* value of mutex. */
+	rt_ubase_t value;				/* value of mutex. */
 
 	struct rt_thread* owner;		/* current owner of mutex. */
 	rt_uint8_t original_priority;	/* priority of last thread hold the mutex. */
 
-	rt_base_t hold;					/* numbers of thread hold the mutex. Only 0 or 1 is legal. */
+	rt_ubase_t hold;			 	/* numbers of thread hold the mutex. */
 };
 typedef struct rt_mutex* rt_mutex_t;
 #endif

@@ -25,6 +25,7 @@
  * 2009-05-21     Yi.qiu       fix the sem release bug
  * 2009-07-18     Bernard      fix the event clear bug
  * 2009-09-09     Bernard      remove fast event and fix ipc release bug
+ * 2009-10-10     Bernard      change semaphore and mutex value to unsigned value
  */
 
 #include <rtthread.h>
@@ -344,8 +345,6 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 		else
 		{
 			/* semaphore is unavailable, push to suspend list */
-			sem->value --;
-
 			/* get current thread */
 			thread = rt_thread_self();
 
@@ -415,10 +414,13 @@ rt_err_t rt_sem_trytake(rt_sem_t sem)
 rt_err_t rt_sem_release(rt_sem_t sem)
 {
 	register rt_base_t temp;
+	register rt_bool_t need_schedule;
 
 #ifdef RT_USING_HOOK
 	if (rt_object_put_hook != RT_NULL) rt_object_put_hook(&(sem->parent.parent));
 #endif
+
+	need_schedule = RT_FALSE;
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -428,24 +430,19 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 
-	/* increase value */
-	sem->value ++;
-
-	if (sem->value <= 0 && sem->parent.suspend_thread_count > 0)
+	if (sem->parent.suspend_thread_count > 0)
 	{
 		/* resume the suspended thread */
 		rt_ipc_object_resume(&(sem->parent));
-
-		/* enable interrupt */
-		rt_hw_interrupt_enable(temp);
-
-		/* resume a thread, re-schedule */
-		rt_schedule();
-		return RT_EOK;
+		need_schedule = RT_TRUE;
 	}
+	else sem->value ++; /* increase value */
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
+
+	/* resume a thread, re-schedule */
+	if (need_schedule == RT_TRUE) rt_schedule();
 
 	return RT_EOK;
 }
@@ -647,8 +644,6 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 			else
 			{
 				/* mutex is unavailable, push to suspend list */
-				mutex->value --;
-
 #ifdef RT_IPC_DEBUG
 				rt_kprintf("mutex_take: suspend thread: %s\n", thread->name);
 #endif
@@ -691,12 +686,8 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 				else
 				{
 					/* the mutex is taken successfully. */
-
 					/* disable interrupt */
 					temp = rt_hw_interrupt_disable();
-
-					/* set thread error */
-					thread->error = RT_EOK;
 				}
 			}
 		}
@@ -724,12 +715,15 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
 	register rt_base_t temp;
 	struct rt_thread* thread;
+	rt_bool_t need_schedule;
 
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
+	need_schedule = RT_FALSE;
 
 	/* get current thread */
 	thread = rt_thread_self();
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 
 #ifdef RT_IPC_DEBUG
 	rt_kprintf("mutex_release:current thread %s, mutex value: %d, hold: %d\n", 
@@ -753,7 +747,6 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
 	/* decrease hold */
 	mutex->hold --;
-
 	/* if no hold */
 	if (mutex->hold == 0)
 	{
@@ -764,11 +757,8 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 				&(mutex->owner->init_priority));
 		}
 
-		/* increase value */
-		mutex->value ++;
-
 		/* wakeup suspended thread */
-		if (mutex->value <= 0 && mutex->parent.suspend_thread_count > 0)
+		if (mutex->parent.suspend_thread_count > 0)
 		{
 			/* get thread entry */
 			thread = rt_list_entry(mutex->parent.suspend_thread.next, struct rt_thread, tlist);
@@ -783,24 +773,26 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
 			/* resume thread */
 			rt_ipc_object_resume(&(mutex->parent));
+
+			need_schedule = RT_TRUE;
 		}
 		else
 		{
+			/* increase value */
+			mutex->value ++;
+
 			/* clear owner */
 			mutex->owner = RT_NULL;
 			mutex->original_priority = 0;
 		}
-
-		/* enable interrupt */
-		rt_hw_interrupt_enable(temp);
-
-		rt_schedule();
-		return RT_EOK;
 	}
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
+	/* perform a schedule */
+	if (need_schedule == RT_TRUE) rt_schedule();
+	
 	return RT_EOK;
 }
 
