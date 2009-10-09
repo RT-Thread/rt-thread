@@ -119,99 +119,63 @@ int http_read_line( int socket, char * buffer, int size )
 //
 const char *http_resolve_address( struct sockaddr_in *server, const char * url, char *host_addr)
 {
-	unsigned char w,x,y,z;
-	const char *char_ptr;
-	char addr[128];
+	char *ptr;
 	char port[6] = "80"; /* default port of 80(HTTP) */
 	int i = 0, rv;
-	int is_domain = 0;
 
 	/* strip http: */
-	char_ptr = strchr(url, ':');
-	if (char_ptr != NULL)
+	ptr = strchr(url, ':');
+	if (ptr != NULL)
 	{
-		url = char_ptr + 1;
+		url = ptr + 1;
 	}
 
-	// URL must start with double forward slashes.
+	/* URL must start with double forward slashes. */
 	if((url[0] != '/') || (url[1] != '/' )) return(NULL);
 
 	url += 2;
-	for(i = 0; ((url[i] != '\0') && (url[i] != '/')) && (i < 127); i++)
+	for(i = 0; ((url[i] != '\0') && (url[i] != '/')) && (i < 30); i++)
 	{
-		if((((addr[i] = url[i]) < '0') || (url[i] > '9')) && (url[i] != '.'))
+		if((((host_addr[i] = url[i]) < '0') || (url[i] > '9')) && (url[i] != '.'))
 		{
+			/* get host addr ok. */
+			host_addr[i] = '\0';
+			
 			if(url[i] == ':')
-			{// allow specification of port in URL like http://www.server.net:8080/
+			{
+				unsigned char w;
+				/* allow specification of port in URL like http://www.server.net:8080/ */
 				for(w = 0; ((w + i + 1) < 127) && (w < 5) && (url[w + i + 1] != '/') && (url[w + i + 1] != '\0'); w++)
 					port[w] = url[w + i + 1];
 				port[w] = '\0';
 
+				inet_aton(host_addr, (struct in_addr*)&(server->sin_addr));
+				/* set the port */
+				server->sin_port = htons((int) strtol(port, NULL, 10));
+
 				rt_kprintf("HTTP: using port %s for connection\n", port);
 				break;
 			}
-			else // it's a domain name if a non-numeric char is contained in the "server" part of the URL.
-				is_domain = 1;
-		}
-	}
-	addr[i] = '\0'; // overwrite last char copied(should be '/', '\0' or ':') with a '\0'
-	strcpy(host_addr, addr);
-
-	if(is_domain)
-	{
-		// resolve the host name.
-		rv = dns_gethostbyname(addr, &server->sin_addr, RT_NULL, RT_NULL);
-		if(rv != 0)
-		{
-			rt_kprintf("HTTP: failed to resolve domain '%s'\n", addr);
-			return RT_NULL;
-		}
-	}
-	else
-	{
-		// turn '.' characters in ip string into null characters
-		for(i = 0, w = 0; i < 16; i++)
-		{
-			if(addr[i] == '.')
+			else
 			{
-				addr[i] = '\0';
-				w++;
+				/* set the port */
+				server->sin_port = htons((int) strtol(port, NULL, 10));
+
+				/* resolve the host name. */
+				rv = dns_gethostbyname(host_addr, &server->sin_addr, RT_NULL, RT_NULL);
+				if(rv != 0)
+				{
+					rt_kprintf("HTTP: failed to resolve domain '%s'\n", host_addr);
+					return RT_NULL;
+				}
 			}
 		}
-
-		if(w < 4)
-		{ // w is used as a simple error check here
-			rt_kprintf("HTTP: invalid IP address '%s'\n", addr);
-			return RT_NULL;
-		}
-
-		i = 0;
-
-		// Extract individual ip number octets from string
-		w = (int)strtol(&addr[i],NULL, 10);
-		i += (strlen(&addr[i]) + 1);
-
-		x = (int)strtol(&addr[i],NULL, 10);
-		i += (strlen(&addr[i]) + 1);
-
-		y = (int)strtol(&addr[i],NULL, 10);
-		i += (strlen(&addr[i]) + 1);
-
-		z = (int)strtol(&addr[i],NULL, 10);
-		i += (strlen(&addr[i]) + 1);
-
-		IP4_ADDR( (struct ip_addr *)&(server->sin_addr) ,w,x,y,z );
 	}
-
-	i = (int) strtol(port, NULL, 10); // set the port
-	server->sin_port = htons(i);
 
 	server->sin_family = AF_INET;
 
-	char_ptr = url;
-	while(*char_ptr != '/') char_ptr++;
-
-	return char_ptr;
+	while (*url != '/') url ++;
+	return url;
 }
 
 //
@@ -259,8 +223,7 @@ static int http_connect(struct http_session* session,
 
 		// read a line from the header information.
 		rc = http_read_line( peer_handle, mimeBuffer, 100 );
-
-		rt_kprintf(">> %s", mimeBuffer);
+		rt_kprintf(">> %s\n", mimeBuffer);
 
 		if ( rc < 0 ) return rc;
 
@@ -299,7 +262,7 @@ struct http_session* http_session_open(char* url)
 	int peer_handle = 0;
 	struct sockaddr_in server;
 	const char *get_name;
-	char host_addr[100];
+	char host_addr[32];
 	struct http_session* session;
 
     session = (struct http_session*) rt_malloc(sizeof(struct http_session*));
@@ -309,7 +272,8 @@ struct http_session* http_session_open(char* url)
 	session->position = 0;
 
 	/* Check valid IP address and URL */
-	if((get_name = http_resolve_address(&server, url, host_addr)) == NULL)
+	get_name = http_resolve_address(&server, url, &host_addr[0]);
+	if(get_name == NULL)
 	{
 		rt_free(session);
 		return RT_NULL;
@@ -383,7 +347,7 @@ int http_session_close(struct http_session* session)
 void http_test(char* url)
 {
 	struct http_session* session;
-	rt_uint8_t buffer[80];
+	char buffer[80];
 	rt_size_t length;
 
 	session = http_session_open(url);
@@ -398,7 +362,7 @@ void http_test(char* url)
 		rt_memset(buffer, 0, sizeof(buffer));
 		length = http_session_read(session, buffer, sizeof(buffer));
 
-		rt_kprintf(buffer);
+		rt_kprintf(buffer);rt_kprintf("\n");
 	} while (length > 0);
 
 	http_session_close(session);
