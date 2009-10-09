@@ -258,8 +258,50 @@ rt_err_t eth_system_device_init()
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+void set_if(char* ip_addr, char* gw_addr, char* nm_addr)
+{
+	struct ip_addr *ip;
+	struct in_addr addr;
+
+	ip = (struct ip_addr *)&addr;
+
+	/* set ip address */
+	if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
+	{
+		netif_set_ipaddr(netif_default, ip);
+	}
+
+	/* set gateway address */
+	if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
+	{
+		netif_set_gw(netif_default, ip);
+	}
+
+	/* set netmask address */
+	if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
+	{
+		netif_set_netmask(netif_default, ip);
+	}
+}
+FINSH_FUNCTION_EXPORT(set_if, set network interface address);
+
+#if LWIP_DNS
+#include <lwip/dns.h>
+void set_dns(char* dns_server)
+{
+	struct in_addr addr;
+	
+	if ((dns_server != RT_NULL) && inet_aton(dns_server, &addr))
+	{
+		dns_setserver(0, (struct ip_addr *)&addr);
+	}
+}
+FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
+#endif
+
 void list_if()
 {
+	struct ip_addr ip_addr;
 	struct _ip_addr
 	{
 		rt_uint8_t addr0, addr1, addr2, addr3;
@@ -274,6 +316,12 @@ void list_if()
 
 	addr = (struct _ip_addr*)&netif_default->netmask.addr;
 	rt_kprintf("net mask  : %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+
+#if LWIP_DNS
+	ip_addr = dns_getserver(0);
+	addr = (struct _ip_addr*)&ip_addr;
+	rt_kprintf("dns server: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+#endif
 }
 FINSH_FUNCTION_EXPORT(list_if, list network interface information);
 #endif
