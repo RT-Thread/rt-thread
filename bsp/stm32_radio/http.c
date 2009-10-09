@@ -121,7 +121,7 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 {
 	char *ptr;
 	char port[6] = "80"; /* default port of 80(HTTP) */
-	int i = 0, rv;
+	int i = 0, rv, is_domain;
 
 	/* strip http: */
 	ptr = strchr(url, ':');
@@ -133,14 +133,11 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 	/* URL must start with double forward slashes. */
 	if((url[0] != '/') || (url[1] != '/' )) return(NULL);
 
-	url += 2;
+	url += 2; is_domain = 0;
 	for(i = 0; ((url[i] != '\0') && (url[i] != '/')) && (i < 30); i++)
 	{
 		if((((host_addr[i] = url[i]) < '0') || (url[i] > '9')) && (url[i] != '.'))
 		{
-			/* get host addr ok. */
-			host_addr[i] = '\0';
-			
 			if(url[i] == ':')
 			{
 				unsigned char w;
@@ -149,29 +146,31 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 					port[w] = url[w + i + 1];
 				port[w] = '\0';
 
-				inet_aton(host_addr, (struct in_addr*)&(server->sin_addr));
-				/* set the port */
-				server->sin_port = htons((int) strtol(port, NULL, 10));
-
 				rt_kprintf("HTTP: using port %s for connection\n", port);
 				break;
 			}
-			else
-			{
-				/* set the port */
-				server->sin_port = htons((int) strtol(port, NULL, 10));
-
-				/* resolve the host name. */
-				rv = dns_gethostbyname(host_addr, &server->sin_addr, RT_NULL, RT_NULL);
-				if(rv != 0)
-				{
-					rt_kprintf("HTTP: failed to resolve domain '%s'\n", host_addr);
-					return RT_NULL;
-				}
-			}
+			else is_domain = 1;
 		}
 	}
+	/* get host addr ok. */
+	host_addr[i] = '\0';
+	inet_aton(host_addr, (struct in_addr*)&(server->sin_addr));
 
+	if (!is_domain)
+	{
+		/* set the port */
+		server->sin_port = htons((int) strtol(port, NULL, 10));
+	}
+	else
+	{
+		/* resolve the host name. */
+		rv = dns_gethostbyname(host_addr, &server->sin_addr, RT_NULL, RT_NULL);
+		if(rv != 0)
+		{
+			rt_kprintf("HTTP: failed to resolve domain '%s'\n", host_addr);
+			return RT_NULL;
+		}
+	}
 	server->sin_family = AF_INET;
 
 	while (*url != '/') url ++;
@@ -265,7 +264,7 @@ struct http_session* http_session_open(char* url)
 	char host_addr[32];
 	struct http_session* session;
 
-    session = (struct http_session*) rt_malloc(sizeof(struct http_session*));
+    session = (struct http_session*) rt_malloc(sizeof(struct http_session));
 	if(session == RT_NULL) return RT_NULL;
 
 	session->size = 0;
