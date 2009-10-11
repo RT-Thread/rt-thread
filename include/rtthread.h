@@ -163,6 +163,7 @@ void rt_system_heap_init(void* begin_addr, void* end_addr);
 void* rt_malloc(rt_size_t nbytes);
 void rt_free (void *ptr);
 void* rt_realloc(void *ptr, rt_size_t nbytes);
+void *rt_calloc(rt_size_t count, rt_size_t size);
 
 #ifdef RT_USING_HOOK
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
