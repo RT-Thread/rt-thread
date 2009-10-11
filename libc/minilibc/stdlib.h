@@ -19,4 +19,9 @@
 int atoi(const char *nptr);
 #endif
 
+#define malloc  rt_malloc
+#define free    rt_free
+#define realloc rt_realloc
+#define calloc  rt_calloc
+
 #endif
