@@ -1,0 +1,15 @@
+Import('env')
+Import('rtconfig')
+
+comm = rtconfig.ARCH + '/common'
+path = rtconfig.ARCH + '/' + rtconfig.CPU
+
+# The set of source files associated with this SConscript file.
+if rtconfig.CC == 'armcc':
+	src_local = Glob(path + '/*.c') + Glob(path + '/*_rvds.s') + Glob(comm + '/*.c')
+
+if rtconfig.CC == 'gcc':
+	src_local = Glob(path + '/*.c') + Glob(path + '/*_gcc.s') + Glob(comm + '/*.c')
+
+obj = env.Object(src_local)
+Return('obj')
