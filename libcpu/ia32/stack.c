@@ -30,8 +30,8 @@
  *
  * @return stack address
  */
-rt_uint8 *rt_hw_stack_init(void *tentry, void *parameter,
-	rt_uint8 *stack_addr, void *texit)
+rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
+	rt_uint8_t *stack_addr, void *texit)
 {
 	unsigned long *stk;
 
@@ -54,6 +54,6 @@ rt_uint8 *rt_hw_stack_init(void *tentry, void *parameter,
 	*(--stk) = 0;							/*edi*/
 
 	/* return task's current stack address */
-	return (rt_uint8 *)stk;
+	return (rt_uint8_t *)stk;
 }
 /*@}*/
