@@ -21,6 +21,7 @@
 #include <finsh.h>
 
 #include <stm32f10x.h>
+#include "board.h"
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -139,6 +140,11 @@ void rt_init_thread_entry(void *parameter)
         lwip_sys_init();
         rt_kprintf("TCP/IP initialized!\n");
     }
+#endif
+
+#if STM32_EXT_SRAM
+	/* init netbuf worker */
+	net_buf_init(320 * 1024);
 #endif
 }
 

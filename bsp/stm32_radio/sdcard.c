@@ -55,6 +55,7 @@
 #define SD_HIGH_CAPACITY                ((u32)0x40000000)
 #define SD_STD_CAPACITY                 ((u32)0x00000000)
 #define SD_CHECK_PATTERN                ((u32)0x000001AA)
+#define SD_VOLTAGE_WINDOW_MMC           ((u32)0x80FF8000)
 
 #define SD_MAX_VOLT_TRIAL               ((u32)0x0000FFFF)
 #define SD_ALLZERO                      ((u32)0x00000000)
@@ -310,8 +311,40 @@ SD_Error SD_PowerON(void)
     }
 
   }/* else MMC Card */
+  else
+  {
+  	CardType = SDIO_MULTIMEDIA_CARD;
 
-  return(errorstatus);
+    /* Send CMD1 SEND_OP_COND with Argument 0x80FF8000 */
+    while ((!validvoltage) && (count < SD_MAX_VOLT_TRIAL))
+    {
+
+      /* SEND CMD55 APP_CMD with RCA as 0 */
+      SDIO_CmdInitStructure.SDIO_Argument = SD_VOLTAGE_WINDOW_MMC;
+      SDIO_CmdInitStructure.SDIO_CmdIndex = SDIO_SEND_OP_COND;
+      SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+      SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+      SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+      SDIO_SendCommand(&SDIO_CmdInitStructure);
+
+      errorstatus = CmdResp3Error();
+      if (errorstatus != SD_OK)
+      {
+        return(errorstatus);
+      }
+
+      response = SDIO_GetResponse(SDIO_RESP1);
+      validvoltage = (bool) (((response >> 31) == 1) ? 1 : 0);
+      count++;
+    }
+    if (count >= SD_MAX_VOLT_TRIAL)
+    {
+      errorstatus = SD_INVALID_VOLTRANGE;
+      return(errorstatus);
+    }
+  }
+
+  return(SD_OK);
 }
 
 /*******************************************************************************
@@ -343,6 +376,7 @@ SD_Error SD_InitializeCards(void)
 {
   SD_Error errorstatus = SD_OK;
   u16 rca = 0x01;
+  // u32 count = 0;
 
   if (SDIO_GetPowerState() == SDIO_PowerState_OFF)
   {
@@ -391,6 +425,24 @@ SD_Error SD_InitializeCards(void)
       return(errorstatus);
     }
   }
+  if (SDIO_MULTIMEDIA_CARD == CardType)
+  {
+    /* Send CMD3 SET_REL_ADDR with argument 0 */
+    /* SD Card publishes its RCA. */
+    SDIO_CmdInitStructure.SDIO_Argument = (u32)(rca << 16);
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SDIO_SET_REL_ADDR;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand(&SDIO_CmdInitStructure);
+
+    errorstatus = CmdResp2Error();
+
+    if (SD_OK != errorstatus)
+    {
+      return(errorstatus);
+    }
+  }    
 
   if (SDIO_SECURE_DIGITAL_IO_CARD != CardType)
   {

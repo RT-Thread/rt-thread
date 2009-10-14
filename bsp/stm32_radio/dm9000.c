@@ -530,6 +530,8 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         if ((rx_status & 0xbf00) || (rx_len < 0x40)
                 || (rx_len > DM9000_PKT_MAX))
         {
+			rt_kprintf("rx error: status %04x\n", rx_status);
+
             if (rx_status & 0x100)
             {
                 rt_kprintf("rx fifo error\n");

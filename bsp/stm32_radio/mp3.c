@@ -2,15 +2,12 @@
 #include <dfs_posix.h>
 #include <mp3/pub/mp3dec.h>
 
-#define MP3_AUDIO_BUF_SZ    4096
-#define MP3_DECODE_MP_CNT   2
-#define MP3_DECODE_MP_SZ    2560
+#include "board.h"
+#include "netbuffer.h"
 
-#define STATIC_MEMORY_POOL
-#ifdef STATIC_MEMORY_POOL
-static rt_uint8_t mempool[(MP3_DECODE_MP_SZ * 2 + 4)* 2]; // 5k x 2
-static struct rt_mempool _mp;
-#endif
+#define MP3_AUDIO_BUF_SZ    4096
+
+rt_uint8_t mp3_fd_buffer[MP3_AUDIO_BUF_SZ];
 
 struct mp3_decoder
 {
@@ -20,7 +17,8 @@ struct mp3_decoder
     rt_uint32_t frames;
 
     /* mp3 file descriptor */
-    int fd;
+	rt_size_t (*fetch_data)(void* parameter, rt_uint8_t *buffer, rt_size_t length);
+	void* fetch_parameter;
 
     /* mp3 read session */
     rt_uint8_t *read_buffer;
@@ -28,22 +26,18 @@ struct mp3_decoder
     rt_int32_t read_offset;
     rt_uint32_t bytes_left, bytes_left_before_decoding;
 
-    /* mp3 decode memory pool */
-    rt_mp_t mp;
-
 	/* audio device */
 	rt_device_t snd_device;
 };
 
 static rt_err_t mp3_decoder_tx_done(rt_device_t dev, void *buffer)
 {
-	/* release memory block to memory pool */
-	rt_mp_free(buffer);
+	/* release memory block */
+	sbuf_release(buffer);
 
 	return RT_EOK;
 }
 
-rt_uint8_t mp3_fd_buffer[MP3_AUDIO_BUF_SZ];
 void mp3_decoder_init(struct mp3_decoder* decoder)
 {
     RT_ASSERT(decoder != RT_NULL);
@@ -56,14 +50,6 @@ void mp3_decoder_init(struct mp3_decoder* decoder)
     // decoder->read_buffer = rt_malloc(MP3_AUDIO_BUF_SZ);
     decoder->read_buffer = &mp3_fd_buffer[0];
 	if (decoder->read_buffer == RT_NULL) return;
-
-	/* create memory pool for decoding */
-#ifdef STATIC_MEMORY_POOL
-	rt_mp_init(&_mp, "mp3", &mempool[0], sizeof(mempool), MP3_DECODE_MP_SZ * 2);
-	decoder->mp = &_mp;
-#else
-	decoder->mp = rt_mp_create("mp3dec", MP3_DECODE_MP_CNT, MP3_DECODE_MP_SZ * 2);
-#endif
 
     decoder->decoder = MP3InitDecoder();
 
@@ -84,16 +70,9 @@ void mp3_decoder_detach(struct mp3_decoder* decoder)
 	/* close audio device */
 	if (decoder->snd_device != RT_NULL)
 		rt_device_close(decoder->snd_device);
-	
+
 	/* release mp3 decoder */
     MP3FreeDecoder(decoder->decoder);
-
-#ifdef STATIC_MEMORY_POOL
-	rt_mp_detach(decoder->mp);
-#else
-	/* delete memory pool for decoding */
-	rt_mp_delete(decoder->mp);
-#endif
 }
 
 struct mp3_decoder* mp3_decoder_create()
@@ -136,11 +115,12 @@ static rt_int32_t mp3_decoder_fill_buffer(struct mp3_decoder* decoder)
 
 	bytes_to_read = (MP3_AUDIO_BUF_SZ - decoder->bytes_left) & ~(512 - 1);
 	// rt_kprintf("read bytes: %d\n", bytes_to_read);
-	
+
 	if (is_first) is_first = 0;
 	else current_offset += MP3_AUDIO_BUF_SZ - decoder->bytes_left;
 
-	bytes_read = read(decoder->fd, (char *)(decoder->read_buffer + decoder->bytes_left),
+	bytes_read = decoder->fetch_data(decoder->fetch_parameter,
+		(rt_uint8_t *)(decoder->read_buffer + decoder->bytes_left),
         bytes_to_read);
 
 	if (bytes_read == bytes_to_read)
@@ -210,7 +190,7 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 #endif
 
     /* get a decoder buffer */
-    buffer = (rt_uint16_t*)rt_mp_alloc(decoder->mp, RT_WAITING_FOREVER);
+    buffer = (rt_uint16_t*)sbuf_alloc();
 
 	// rt_kprintf("bytes left before decode: %d\n", decoder->bytes_left);
 
@@ -218,7 +198,7 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
         (int*)&decoder->bytes_left, (short*)buffer, 0);
 
 	// rt_kprintf("bytes left after decode: %d\n", decoder->bytes_left);
-	
+
 	decoder->frames++;
 
 	if (err != ERR_MP3_NONE)
@@ -278,7 +258,7 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 		}
 
 		/* release this memory block */
-		rt_mp_free(buffer);
+		sbuf_release(buffer);
 	}
 	else
 	{
@@ -304,24 +284,82 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 }
 
 #include <finsh.h>
+rt_size_t fd_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
+{
+	int fd = (int)parameter;
+	return read(fd, (char*)buffer, length);
+}
 void mp3(char* filename)
 {
 	int fd;
 	struct mp3_decoder* decoder;
-	
+
 	fd = open(filename, O_RDONLY, 0);
 	if (fd >= 0)
 	{
 		decoder = mp3_decoder_create();
 		if (decoder != RT_NULL)
 		{
-			decoder->fd = fd;
+			decoder->fetch_data = fd_fetch;
+			decoder->fetch_parameter = (void*)fd;
+
 			while (mp3_decoder_run(decoder) != -1);
 			close(fd);
-			
+
 			/* delete decoder object */
 			mp3_decoder_delete(decoder);
 		}
 	}
 }
-FINSH_FUNCTION_EXPORT(mp3, mp3 decode test)
+FINSH_FUNCTION_EXPORT(mp3, mp3 decode test);
+
+#if STM32_EXT_SRAM
+/* http mp3 */
+#include "http.h"
+static rt_size_t http_fetch(rt_uint8_t* ptr, rt_size_t len, void* parameter)
+{
+	struct http_session* session = (struct http_session*)parameter;
+	RT_ASSERT(session != RT_NULL);
+
+	return http_session_read(session, ptr, len);
+}
+
+static void http_close(void* parameter)
+{
+	struct http_session* session = (struct http_session*)parameter;
+	RT_ASSERT(session != RT_NULL);
+
+	http_session_close(session);
+}
+
+rt_size_t http_data_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
+{
+	return net_buf_read(buffer, length);
+}
+void http_mp3(char* url)
+{
+    struct http_session* session;
+	struct mp3_decoder* decoder;
+
+	session = http_session_open(url);
+	if (session != RT_NULL)
+	{
+		/* add a job to netbuf worker */
+		net_buf_add_job(http_fetch, http_close, (void*)session);
+
+		decoder = mp3_decoder_create();
+		if (decoder != RT_NULL)
+		{
+			decoder->fetch_data = http_data_fetch;
+			decoder->fetch_parameter = RT_NULL;
+
+			while (mp3_decoder_run(decoder) != -1);
+
+			/* delete decoder object */
+			mp3_decoder_delete(decoder);
+		}
+		session = RT_NULL;
+	}
+}
+FINSH_FUNCTION_EXPORT(http_mp3, http mp3 decode test);
+#endif

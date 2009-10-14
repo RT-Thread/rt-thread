@@ -1,7 +1,8 @@
 /*
  * http client for RT-Thread
  */
-#include <rtthread.h>
+#include "http.h"
+
 #include <dfs_posix.h>
 
 #include <lwip/sockets.h>
@@ -12,19 +13,6 @@ const char _http_host[] = "Host: ";
 const char _http_getend[] = " HTTP/1.0\r\n";
 const char _http_user_agent[] = "User-Agent: RT-Thread HTTP Agent\r\n";
 const char _http_endheader[] = "\r\n";
-
-struct http_session
-{
-    char* host;
-    int   port;
-
-    char* user_agent;
-	int   socket;
-
-    /* size of http file */
-    rt_size_t size;
-    rt_off_t  position;
-};
 
 extern long int strtol(const char *nptr, char **endptr, int base);
 
@@ -204,16 +192,50 @@ static int http_connect(struct http_session* session,
 	}
 
 	// Needs more error checking here.....
+#if 0
 	rc = send( peer_handle, _http_get,  sizeof( _http_get ) - 1, 0 );
 	rc = send( peer_handle, (void*) url, strlen( url ), 0 );
 	rc = send( peer_handle, _http_getend, sizeof( _http_getend ) - 1, 0 );
 
 	rc = send( peer_handle, _http_host,  sizeof( _http_host ) - 1, 0 );
-	rc = send( peer_handle, host_addr, strlen( url ), 0 );
+	rc = send( peer_handle, host_addr, strlen( host_addr ), 0 );
 	rc = send( peer_handle, _http_endheader, sizeof( _http_endheader ) - 1, 0 ); // "\r\n"
 
 	rc = send( peer_handle, _http_user_agent, sizeof( _http_user_agent ) - 1, 0 );
 	rc = send( peer_handle, _http_endheader, sizeof( _http_endheader ) - 1, 0 );
+#else
+	{
+		rt_uint8_t *ptr, *buf;
+
+		buf = rt_malloc (512);
+		ptr = buf;
+		rt_memcpy(ptr, _http_get, sizeof(_http_get) - 1);
+		ptr += sizeof(_http_get) - 1;
+
+		rt_memcpy(ptr, url, strlen(url));
+		ptr += strlen(url);
+
+		rt_memcpy(ptr, _http_getend, sizeof(_http_getend) - 1);
+		ptr += sizeof(_http_getend) - 1;
+
+		rt_memcpy(ptr, _http_host, sizeof(_http_host) - 1);
+		ptr += sizeof(_http_host) - 1;
+
+		rt_memcpy(ptr, host_addr, strlen(host_addr));
+		ptr += strlen(host_addr);
+
+		rt_memcpy(ptr, _http_endheader, sizeof(_http_endheader) - 1);
+		ptr += sizeof(_http_endheader) - 1;
+
+		rt_memcpy(ptr, _http_user_agent, sizeof(_http_user_agent) - 1);
+		ptr += sizeof(_http_user_agent) - 1;
+
+		rt_memcpy(ptr, _http_endheader, sizeof(_http_endheader) - 1);
+		ptr += sizeof(_http_endheader) - 1;
+		rc = send(peer_handle, buf,
+			(rt_uint32_t)ptr - (rt_uint32_t)buf, 0);
+	}
+#endif
 
 	// We now need to read the header information
 	while ( 1 )
@@ -356,7 +378,7 @@ void http_test(char* url)
 		return;
 	}
 
-	do 
+	do
 	{
 		rt_memset(buffer, 0, sizeof(buffer));
 		length = http_session_read(session, buffer, sizeof(buffer));
