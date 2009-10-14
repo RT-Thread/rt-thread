@@ -20,6 +20,19 @@
 
 #include "finsh.h"
 
+/*
+ * Add by caoxl 2009-10-14
+ * 
+ */
+#ifdef QEMU_CAOXL
+#define  memcpy(a,b,c)	rt_memcpy(a,b,c)
+extern char rt_serial_getc(void);
+#endif
+
+
+
+
+
 #define FINSH_USING_HISTORY
 
 #if defined(__CC_ARM)					/* ARMCC compiler */
