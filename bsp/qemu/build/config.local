@@ -1,0 +1,38 @@
+# RT-Thread build config file
+# Platform
+PLATFORM=qemu
+
+# Platform Prefix
+PREFIX=
+
+# C flags
+CFLAGS=-Wall
+
+# Linker flags
+LDFLAGS=-nostdlib
+
+# ASM Flags
+ASFLAGS=
+
+# Build Type
+BUILDTYPE=RAM
+
+# Release Type
+RELEASETYPE=Release
+
+# Text Base
+TEXTBASE=0x108000
+
+# SECTION: RT-Thread Component
+# finsh, shell of RT-Thread
+RT_USING_FINSH=1
+
+# a mini libc
+#RT_USING_MINILIBC=1
+
+# Using C++ support
+# RT_USING_CPLUSPLUS=1
+
+# LwIP, light weight TCP/IP stack for RT-Thread
+# RT_USING_LWIP=1
+

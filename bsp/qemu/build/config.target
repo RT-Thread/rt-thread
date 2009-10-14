@@ -1,0 +1,59 @@
+ifeq ($(PLATFORM), lumit4510)
+ARCH	= arm
+CPU 	= s3c4510
+BOARD	= lumit4510
+endif
+
+ifeq ($(PLATFORM), wh44b0)
+ARCH	= arm
+CPU 	= s3c44b0
+BOARD	= wh44b0
+endif
+
+ifeq ($(PLATFORM), s3ceb2410)
+ARCH	= arm
+CPU 	= s3c2410
+BOARD	= s3ceb2410
+endif
+
+ifeq ($(PLATFORM), sam7s)
+ARCH	= arm
+CPU 	= AT91SAM7S
+BOARD	= sam7s
+endif
+
+ifeq ($(PLATFORM), sam7x)
+ARCH	= arm
+CPU 	= AT91SAM7X
+BOARD	= sam7x
+endif
+
+ifeq ($(PLATFORM), zaurusc1k)
+ARCH	= arm
+CPU 	= pxa270
+BOARD	= zaurusc1k
+endif
+
+ifeq ($(PLATFORM), qemu_akita)
+ARCH	= arm
+CPU 	= pxa270
+BOARD	= qemu_akita
+endif
+
+ifeq ($(PLATFORM), nds)
+ARCH	= arm
+CPU 	= nds
+BOARD	= nds
+endif
+
+ifeq ($(PLATFORM), qemu)
+ARCH	= ia32
+CPU 	= ia32
+BOARD	= qemu
+endif
+
+ifeq ($(PLATFORM), at9200)
+ARCH	= arm
+CPU 	= AT9200
+BOARD	= AT9200
+endif

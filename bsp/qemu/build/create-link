@@ -1,0 +1,24 @@
+#!/bin/bash
+mkdir lib
+ln -s ../../../include include
+
+for m_file in `ls ../../../src`
+do 
+	ln -s ../../../../src/$m_file src/$m_file
+done
+
+for m_file in `ls ../`
+do 
+	ln -s ../../../$m_file bsp/qemu/$m_file
+done
+rm bsp/qemu/build -f
+
+for m_file in `ls ../../../libcpu/ia32`
+do 
+	ln -s ../../../../../libcpu/ia32/$m_file libcpu/ia32/$m_file
+done
+
+for m_file in `ls ../../../finsh`
+do 
+	ln -s ../../../../finsh/$m_file finsh/$m_file
+done

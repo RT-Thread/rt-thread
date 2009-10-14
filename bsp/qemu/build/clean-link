@@ -1,0 +1,18 @@
+#!/bin/bash
+rm lib -rf
+rm include -f
+rm src/*.c -f
+rm src/*.h -f
+rm src/*.o -f
+rm bsp/qemu/*.c -f
+rm bsp/qemu/*.h -f
+rm bsp/qemu/*.S -f
+rm bsp/qemu/*.o -f
+rm bsp/qemu/*.lds -f
+rm libcpu/ia32/*.c -f
+rm libcpu/ia32/*.S -f
+rm libcpu/ia32/*.o -f
+rm libcpu/ia32/include -f
+rm finsh/*.c -f
+rm finsh/*.h -f
+rm finsh/*.o -f
