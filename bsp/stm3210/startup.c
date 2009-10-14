@@ -104,11 +104,14 @@ void rtthread_startup(void)
 
 	/* init hardware serial device */
 	rt_hw_usart_init();
+
+#ifdef RT_USINS_DFS
 	/* init sdcard driver */
 #if STM32_USE_SDIO
 	rt_hw_sdcard_init();
 #else
 	rt_hw_msd_init();
+#endif
 #endif
 
 #ifdef RT_USING_LWIP

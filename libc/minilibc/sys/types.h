@@ -15,6 +15,8 @@ typedef rt_uint8_t 	u_int8_t;
 typedef rt_uint16_t u_int16_t;
 typedef rt_uint32_t u_int32_t;
 
+typedef rt_time_t time_t;
+
 #ifndef NULL
 #define NULL RT_NULL
 #endif

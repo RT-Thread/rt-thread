@@ -47,6 +47,13 @@ extern char rt_serial_getc(void);
     #pragma section="FSymTab"
     #pragma section="VSymTab"
   #endif
+#elif defined(__GCC__)
+  #ifdef FINSH_USING_SYMTAB
+  extern int __fsymtab_start;
+  extern int __fsymtab_end;
+  extern int __vsymtab_start;
+  extern int __vsymtab_end;
+  #endif
 #endif
 
 /* finsh thread */
