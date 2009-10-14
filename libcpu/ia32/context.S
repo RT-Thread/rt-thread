@@ -24,15 +24,39 @@
 .globl rt_hw_context_switch
 rt_hw_context_switch:
 	pushfl					/*pushed eflags*/
-	push %cs				/*push cs register*/
-	pushl 0x8(%esp)			/*pushed eip register*/
+/*
+ *	add by ssslady@gmail.com 2009-10-14
+ *      When we return again the esp should no be change.
+ * 	The old code change the esp to esp-4 :-(.
+ *	A protection fault maybe occure for img created by some compiler,eg.gcc in the fedor-11
+ *      -------------------------------------------------------------------------
+ *	entry			old code			new code
+ *	EIP	->return esp	EIP				FLAGS ->return esp
+ *	...			FLAGS    ->retern esp		CS
+ *				CS				EIP
+ *				EIP
+ */
+	popl %eax	/*get flags*/
+	popl %ebx	/*get eip*/
+	pushl %eax	/*push flags*/
+	push %cs	/*push cs*/
+	pushl %ebx	/*push eip*/
+	
+/*-------------------------------------------------------------------
+ */
+
+	/*push %cs*/				/*push cs register*/
+	/*pushl 0x8(%esp)*/			/*pushed eip register*/
+
 	pushl $0				/*fill irqno*/
 	push %ds				/*push ds register*/
 	push %es				/*push es register*/
 	pushal					/*push eax,ecx,edx,ebx,esp,ebp,esp,edi registers*/
 	
-	movl 0x40(%esp), %eax	/*to thread TCB*/
-	movl 0x3c(%esp), %ebx	/*from thread TCB*/
+	/*movl 0x40(%esp), %eax*/	/*to thread TCB*/
+	/*movl 0x3c(%esp), %ebx*/	/*from thread TCB*/
+	movl 0x3c(%esp), %eax	/*to thread TCB*/
+	movl 0x38(%esp), %ebx	/*from thread TCB*/
 
 	movl %esp, (%ebx)		/*store esp in preempted tasks TCB*/
 	movl (%eax), %esp		/*get new task stack pointer*/
