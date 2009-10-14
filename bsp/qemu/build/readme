@@ -1,0 +1,9 @@
+./create-link
+make
+cp bsp/qemu/rtthread-qemu.elf $dest
+
+
+
+test OK ON:
+	Fedora 10
+	Fedora 11
