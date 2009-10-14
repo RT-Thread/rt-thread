@@ -17,6 +17,7 @@
 #include <rthw.h>
 
 #include <bsp.h>
+extern char rt_keyboard_getc(void);
 
 /**
  * @addtogroup QEMU

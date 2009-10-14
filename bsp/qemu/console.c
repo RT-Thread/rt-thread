@@ -17,9 +17,12 @@
 
 #include <bsp.h>
 
+
+#include "serial.h"
+
 static unsigned addr_6845;
 static rt_uint16_t *crt_buf;
-static rt_int16  crt_pos;
+static rt_int16_t  crt_pos;
 
 extern void rt_serial_init(void);
 extern char rt_keyboard_getc(void);
@@ -41,12 +44,12 @@ void rt_cga_init(void)
 	rt_uint16_t was;
 	rt_uint32_t pos;
 
-	cp = (short *) (CGA_BUF);
+	cp = (rt_uint16_t *) (CGA_BUF);
 	was = *cp;
 	*cp = (rt_uint16_t) 0xA55A;
 	if (*cp != 0xA55A)
 	{
-		cp = (rt_int16 *) (MONO_BUF);
+		cp = (rt_uint16_t *) (MONO_BUF);
 		addr_6845 = MONO_BASE;
 	}
 	else
@@ -104,7 +107,7 @@ static void rt_cga_putc(int c)
 
 	if (crt_pos >= CRT_SIZE)
 	{
-		rt_int32 i;
+		rt_int32_t i;
 		rt_memcpy(crt_buf, crt_buf + CRT_COLS, (CRT_SIZE - CRT_COLS) << 1);
 		for (i = CRT_SIZE - CRT_COLS; i < CRT_SIZE; i++)
 			crt_buf[i] = 0x0700 | ' ';
@@ -143,8 +146,15 @@ void rt_console_init(void)
  * invoked by rt_kprintf
  *
  * @param str the displayed string
+ *
+ * Modified:
+ *	caoxl 2009-10-14
+ *	the name is change to rt_hw_console_output in the v0.3.0
+ *
  */
-void rt_console_puts(const char* str)
+
+//void rt_console_puts(const char* str)
+void rt_hw_console_output(const char* str)
 {
 	while (*str)
 	{
