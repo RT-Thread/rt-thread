@@ -109,7 +109,8 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 {
 	char *ptr;
 	char port[6] = "80"; /* default port of 80(HTTP) */
-	int i = 0, rv, is_domain;
+	int i = 0, is_domain;
+	struct hostent *hptr;
 
 	/* strip http: */
 	ptr = strchr(url, ':');
@@ -142,23 +143,24 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 	}
 	/* get host addr ok. */
 	host_addr[i] = '\0';
-	inet_aton(host_addr, (struct in_addr*)&(server->sin_addr));
 
-	if (!is_domain)
-	{
-		/* set the port */
-		server->sin_port = htons((int) strtol(port, NULL, 10));
-	}
-	else
+	if (is_domain)
 	{
 		/* resolve the host name. */
-		rv = dns_gethostbyname(host_addr, &server->sin_addr, RT_NULL, RT_NULL);
-		if(rv != 0)
+		hptr = gethostbyname(host_addr);
+		if(hptr == 0)
 		{
 			rt_kprintf("HTTP: failed to resolve domain '%s'\n", host_addr);
 			return RT_NULL;
 		}
+		memcpy(&server->sin_addr, *hptr->h_addr_list, sizeof(server->sin_addr));
 	}
+	else
+	{
+		inet_aton(host_addr, (struct in_addr*)&(server->sin_addr));
+	}
+	/* set the port */
+	server->sin_port = htons((int) strtol(port, NULL, 10));
 	server->sin_family = AF_INET;
 
 	while (*url != '/') url ++;
