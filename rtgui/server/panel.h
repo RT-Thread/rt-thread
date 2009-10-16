@@ -49,10 +49,6 @@ struct rtgui_panel
 	rt_thread_t wm_thread;
 };
 
-/* register or deregister panel in server */
-void rtgui_panel_register(char* name, rtgui_rect_t* extent);
-void rtgui_panel_deregister(char* name);
-
 /* find panel by name */
 struct rtgui_panel* rtgui_panel_find(char* name);
 

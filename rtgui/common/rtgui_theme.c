@@ -19,13 +19,14 @@
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/textbox.h>
 #include <rtgui/widgets/iconbox.h>
+#include <rtgui/widgets/title.h>
 #include <rtgui/rtgui_theme.h>
 #include <rtgui/rtgui_server.h>
 
 #define WINTITLE_CB_WIDTH		14
 #define WINTITLE_CB_HEIGHT		14
 
-static const char * close_unpressed_xpm[] = {
+static const rt_uint8_t *close_unpressed_xpm[] = {
 	"14 14 55 1",
 	" 	c None",
 	".	c #DCDFEA",
@@ -97,7 +98,7 @@ static const char * close_unpressed_xpm[] = {
 	"#mnnnnnnnnnnm#",
 	"op@@@@@@@@@@po"};
 
-static const char * close_pressed_xpm[] = {
+static const rt_uint8_t *close_pressed_xpm[] = {
 	"14 14 66 1",
 	" 	c None",
 	".	c #CED4EE",
@@ -191,9 +192,11 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 
 	/* init close box image */
 	if (close_pressed == RT_NULL)
-		close_pressed = rtgui_image_create_from_mem("xpm", close_pressed_xpm, sizeof(close_pressed_xpm));
+		close_pressed = rtgui_image_create_from_mem("xpm", 
+			(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm));
 	if (close_unpressed == RT_NULL)
-		close_unpressed = rtgui_image_create_from_mem("xpm", close_unpressed_xpm, sizeof(close_unpressed_xpm));
+		close_unpressed = rtgui_image_create_from_mem("xpm", 
+			(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm));
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(win->title));
@@ -437,3 +440,4 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 	/* end drawing */
 	rtgui_dc_end_drawing(dc);
 }
+

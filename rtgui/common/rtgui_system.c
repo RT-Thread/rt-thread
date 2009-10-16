@@ -40,18 +40,6 @@ void rtgui_system_server_init()
 	rtgui_server_init();
 }
 
-void rtgui_system_app_init()
-{
-	/* init launcher thread */
-	rtgui_launcher_init();
-
-	/* init pyim */
-	// rtgui_pyim_init();
-
-	/* init term win */
-	// rtgui_term_init();
-}
-
 /************************************************************************/
 /* RTGUI Thread Wrapper                                                 */
 /************************************************************************/

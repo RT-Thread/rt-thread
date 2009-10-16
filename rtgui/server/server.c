@@ -21,12 +21,6 @@
 #include "panel.h"
 #include "topwin.h"
 
-#define RTGUI_SVR_THREAD_PRIORITY		96
-#define RTGUI_SVR_THREAD_TIMESLICE		20
-
-#define RTGUI_APP_THREAD_PRIORITY		220
-#define RTGUI_APP_THREAD_TIMESLICE		20
-
 static char rtgui_server_stack[2048];
 static struct rt_thread rtgui_server_thread;
 

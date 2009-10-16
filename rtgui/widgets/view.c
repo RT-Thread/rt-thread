@@ -1,0 +1,149 @@
+/*
+ * File      : view.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-10-16     Bernard      first version
+ */
+#include <rtgui/dc.h>
+#include <rtgui/rtgui_system.h>
+#include <rtgui/widgets/view.h>
+#include <rtgui/widgets/workbench.h>
+
+static void _rtgui_view_constructor(rtgui_view_t *view)
+{
+	/* init view */
+	rtgui_widget_set_event_handler(RTGUI_WIDGET(view),
+		rtgui_view_event_handler);
+
+	view->title = RT_NULL;
+}
+
+rtgui_type_t *rtgui_view_type_get(void)
+{
+	static rtgui_type_t *view_type = RT_NULL;
+
+	if (!view_type)
+	{
+		view_type = rtgui_type_create("view", RTGUI_CONTAINER_TYPE,
+			sizeof(rtgui_view_t), RTGUI_CONSTRUCTOR(_rtgui_view_constructor), RT_NULL);
+	}
+
+	return view_type;
+}
+
+rt_bool_t rtgui_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+{
+	struct rtgui_view* view = (struct rtgui_view*) widget;
+	RT_ASSERT(widget != RT_NULL);
+
+	switch (event->type)
+	{
+	case RTGUI_EVENT_PAINT:
+		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+		else
+		{
+			struct rtgui_dc* dc;
+			struct rtgui_rect rect;
+
+			dc = rtgui_dc_begin_drawing(widget);
+			if (dc == RT_NULL) return RT_FALSE;
+			rtgui_widget_get_rect(widget, &rect);
+
+			/* fill view with background */
+			rtgui_dc_fill_rect(dc, &rect);
+
+			/* paint on each child */
+			rtgui_container_dispatch_event(RTGUI_CONTAINER(view), event);
+
+			rtgui_dc_end_drawing(dc);
+		}
+		break;
+
+	default:
+		return rtgui_container_event_handler(widget, event);
+	}
+
+	return RT_FALSE;
+}
+
+rtgui_view_t* rtgui_view_create(const char* title)
+{
+	struct rtgui_view* view;
+
+	/* allocate view */
+	view = (struct rtgui_view*) rtgui_widget_create (RTGUI_VIEW_TYPE);
+	if (view != RT_NULL)
+	{
+		if (title != RT_NULL)
+			view->title = rt_strdup(title);
+	}
+
+	return view;
+}
+
+void rtgui_view_destroy(rtgui_view_t* view)
+{
+	rtgui_widget_destroy(RTGUI_WIDGET(view));
+}
+
+void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box)
+{
+	if (view == RT_NULL ||
+		box  == RT_NULL) return;
+
+	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(box));
+	rtgui_widget_set_rect(RTGUI_WIDGET(box), &(RTGUI_WIDGET(view)->extent));
+}
+
+void rtgui_view_show(rtgui_view_t* view)
+{
+	if (view == RT_NULL) return;
+
+	if (RTGUI_WIDGET(view)->parent == RT_NULL)
+	{
+		RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(view));
+		return;
+	}
+
+	rtgui_workbench_show_view((rtgui_workbench_t*)(RTGUI_WIDGET(view)->parent), view);
+}
+
+void rtgui_view_hide(rtgui_view_t* view)
+{
+	if (view == RT_NULL) return;
+
+	if (RTGUI_WIDGET(view)->parent == RT_NULL)
+	{
+		RTGUI_WIDGET_HIDE(RTGUI_WIDGET(view));
+		return;
+	}
+
+	rtgui_workbench_hide_view((rtgui_workbench_t*)(RTGUI_WIDGET(view)->parent), view);
+}
+
+char* rtgui_view_get_title(rtgui_view_t* view)
+{
+	RT_ASSERT(view != RT_NULL);
+
+	return view->title;
+}
+
+void rtgui_view_set_title(rtgui_view_t* view, const char *title)
+{
+	RT_ASSERT(view != RT_NULL);
+
+	if (view->title != RT_NULL)
+	{
+		rtgui_free(view->title);
+
+		if (title != RT_NULL) view->title = rt_strdup(title);
+		else view->title = RT_NULL;
+	}
+}

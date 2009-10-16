@@ -15,6 +15,7 @@
 #define __RTGUI_THEME_H__
 
 #include <rtgui/rtgui.h>
+#include <rtgui/rtgui_server.h>
 
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>

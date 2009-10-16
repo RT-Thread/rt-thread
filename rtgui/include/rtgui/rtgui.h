@@ -16,10 +16,7 @@
 
 #include <rtthread.h>
 
-/* RTGUI options */
-#define RTGUI_IMAGE_JPEG
-
-#define RTGUI_NAME_MAX		32
+#include <rtgui/rtgui_config.h>
 
 #define RT_INT16_MAX		32767
 #define RT_INT16_MIN		(-RT_INT16_MAX-1)
