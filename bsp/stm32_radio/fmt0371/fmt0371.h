@@ -13,8 +13,8 @@
 #define LCD_ADDR              (*((volatile unsigned char *) 0x64000000)) // RS = 0
 #define LCD_DATA              (*((volatile unsigned char *) 0x64000004)) // RS = 1
 
-
 #define LCD_DATA16(a)         LCD_DATA = (unsigned char)(a>>8);LCD_DATA = (unsigned char)a // RS = 1 & WIDHT = 16
+#define LCD_DATA16_READ(a)	  do { a = (LCD_DATA << 8) | (LCD_DATA); } while (0)
 #define LCD_WR_CMD(a,b,c)     LCD_ADDR = b;LCD_DATA16(c)
 #define LCD_WR_REG(a)         LCD_ADDR = a
 #define LCD_WR_DATA8(a)       LCD_DATA = a

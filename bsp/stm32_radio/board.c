@@ -178,6 +178,31 @@ void rt_hw_board_init()
     }
 }
 
+#if STM32_CONSOLE_USART == 1
+#define CONSOLE_RX_PIN	GPIO_Pin_9
+#define CONSOLE_TX_PIN	GPIO_Pin_10
+#define CONSOLE_GPIO	GPIOA
+#define CONSOLE_USART	USART1
+#elif STM32_CONSOLE_USART == 2
+
+#if defined(STM32_LD) || defined(STM32_MD)
+	#define CONSOLE_RX_PIN	GPIO_Pin_6
+	#define CONSOLE_TX_PIN	GPIO_Pin_5
+	#define CONSOLE_GPIO	GPIOD
+#elif defined(STM32_HD)
+	#define CONSOLE_RX_PIN	GPIO_Pin_3
+	#define CONSOLE_TX_PIN	GPIO_Pin_2
+	#define CONSOLE_GPIO	GPIOA
+#endif
+
+#define CONSOLE_USART	USART2
+#elif STM32_CONSOLE_USART == 2
+#define CONSOLE_RX_PIN	GPIO_Pin_11
+#define CONSOLE_TX_PIN	GPIO_Pin_10
+#define CONSOLE_GPIO	GPIOB
+#define CONSOLE_USART	USART3
+#endif
+
 /* init console to support rt_kprintf */
 static void rt_hw_console_init()
 {
@@ -186,27 +211,29 @@ static void rt_hw_console_init()
                            | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC
                            | RCC_APB2Periph_GPIOF, ENABLE);
 
+#if STM32_CONSOLE_USART == 0
+#else
     /* GPIO configuration */
     {
         GPIO_InitTypeDef GPIO_InitStructure;
 
         /* Configure USART1 Tx (PA.09) as alternate function push-pull */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+        GPIO_InitStructure.GPIO_Pin = CONSOLE_RX_PIN;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
+        GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
 
         /* Configure USART1 Rx (PA.10) as input floating */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_InitStructure.GPIO_Pin = CONSOLE_TX_PIN;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
+        GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
     }
 
     /* USART configuration */
     {
         USART_InitTypeDef USART_InitStructure;
 
-        /* USART1 configured as follow:
+        /* USART configured as follow:
             - BaudRate = 115200 baud
             - Word Length = 8 Bits
             - One Stop Bit
@@ -225,10 +252,11 @@ static void rt_hw_console_init()
         USART_InitStructure.USART_Parity = USART_Parity_No;
         USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
         USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-        USART_Init(USART1, &USART_InitStructure);
+        USART_Init(CONSOLE_USART, &USART_InitStructure);
         /* Enable USART1 */
-        USART_Cmd(USART1, ENABLE);
+        USART_Cmd(CONSOLE_USART, ENABLE);
     }
+#endif
 }
 
 /* write one character to serial, must not trigger interrupt */
@@ -240,8 +268,8 @@ static void rt_hw_console_putc(const char c)
     */
     if (c=='\n')rt_hw_console_putc('\r');
 
-    while (!(USART1->SR & USART_FLAG_TXE));
-    USART1->DR = (c & 0x1FF);
+    while (!(CONSOLE_USART->SR & USART_FLAG_TXE));
+    CONSOLE_USART->DR = (c & 0x1FF);
 }
 
 /**
@@ -251,10 +279,14 @@ static void rt_hw_console_putc(const char c)
  */
 void rt_hw_console_output(const char* str)
 {
+#if STM32_CONSOLE_USART == 0
+	/* no console */
+#else
     while (*str)
     {
         rt_hw_console_putc (*str++);
     }
+#endif
 }
 
 /*@}*/

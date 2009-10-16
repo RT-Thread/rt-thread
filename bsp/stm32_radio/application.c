@@ -22,6 +22,8 @@
 
 #include <stm32f10x.h>
 #include "board.h"
+#include "netbuffer.h"
+#include "lcd.h"
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -37,6 +39,11 @@
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <lwip/api.h>
+#endif
+
+#ifdef RT_USING_RTGUI
+#include <rtgui/rtgui.h>
+#include <rtgui/rtgui_system.h>
 #endif
 
 /*
@@ -77,41 +84,6 @@ void rt_key_entry(void *parameter)
     }
 }
 
-extern rt_err_t lcd_hw_init(void);
-void rt_lcd_entry(void *parameter)
-{
-    rt_device_t device;
-    unsigned int i,k;
-    unsigned short color[]={0xf800,0x07e0,0x001f,0xffe0,0x0000,0xffff,0x07ff,0xf81f};
-
-    lcd_hw_init();
-
-    device = rt_device_find("lcd");
-
-    rt_kprintf("Now test the LCD......\r\n");
-    while (1)
-    {
-        for (k=0;k<8;k++)
-        {
-            for (i=0;i<320*240;i++)
-            {
-                device->write(device,i*2,&color[k],2);
-            }
-            rt_thread_delay(RT_TICK_PER_SECOND);
-        }
-    }
-}
-
-void lcd_test()
-{
-    rt_thread_t lcd_tid;
-    lcd_tid = rt_thread_create("lcd",
-                               rt_lcd_entry, RT_NULL,
-                               1024, 30, 5);
-    if (lcd_tid != RT_NULL) rt_thread_startup(lcd_tid);
-}
-FINSH_FUNCTION_EXPORT(lcd_test, test lcd)
-
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -146,11 +118,39 @@ void rt_init_thread_entry(void *parameter)
 	/* init netbuf worker */
 	net_buf_init(320 * 1024);
 #endif
+
+	/* RTGUI Initialization */
+#ifdef RT_USING_RTGUI
+	{
+		rtgui_rect_t rect;
+
+		rtgui_system_server_init();
+
+		/* register dock panel */
+		rect.x1 = 0;
+		rect.y1 = 0;
+		rect.x2 = 240;
+		rect.y2 = 25;
+
+		rtgui_panel_register("info", &rect);
+
+		/* register main panel */
+		rect.x1 = 0;
+		rect.y1 = 25;
+		rect.x2 = 240;
+		rect.y2 = 320;
+		rtgui_panel_register("main", &rect);
+
+		rt_hw_lcd_init();
+	}
+#endif
 }
 
 int rt_application_init()
 {
     rt_thread_t init_thread;
+
+	rt_hw_lcd_init();
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
     init_thread = rt_thread_create("init",

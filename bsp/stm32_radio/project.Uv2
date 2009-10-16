@@ -12,6 +12,7 @@ Group (finsh)
 Group (Filesystem)
 Group (LwIP)
 Group (mp3)
+Group (RTGUI)
 
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
@@ -35,6 +36,7 @@ File 1,1,<..\..\net\apps\udpecho.c><udpecho.c>
 File 1,1,<.\mp3.c><mp3.c>
 File 1,1,<.\wav.c><wav.c>
 File 1,1,<.\netbuffer.c><netbuffer.c>
+File 1,1,<.\gui.c><gui.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\ipc.c><ipc.c>
@@ -162,6 +164,37 @@ File 9,1,<.\mp3\real\subband.c><subband.c>
 File 9,1,<.\mp3\real\trigtabs.c><trigtabs.c>
 File 9,2,<.\mp3\real\arm\asmpoly_thumb2.s><asmpoly_thumb2.s>
 File 9,2,<.\mp3\real\arm\asmmisc.s><asmmisc.s>
+File 10,1,<..\..\rtgui\common\rtgui_object.c><rtgui_object.c>
+File 10,1,<..\..\rtgui\common\rtgui_system.c><rtgui_system.c>
+File 10,1,<..\..\rtgui\common\rtgui_theme.c><rtgui_theme.c>
+File 10,1,<..\..\rtgui\common\asc12font.c><asc12font.c>
+File 10,1,<..\..\rtgui\common\color.c><color.c>
+File 10,1,<..\..\rtgui\common\dc.c><dc.c>
+File 10,1,<..\..\rtgui\common\dc_buffer.c><dc_buffer.c>
+File 10,1,<..\..\rtgui\common\dc_hw.c><dc_hw.c>
+File 10,1,<..\..\rtgui\common\filerw.c><filerw.c>
+File 10,1,<..\..\rtgui\common\font.c><font.c>
+File 10,1,<..\..\rtgui\common\image.c><image.c>
+File 10,1,<..\..\rtgui\common\image_xpm.c><image_xpm.c>
+File 10,1,<..\..\rtgui\common\region.c><region.c>
+File 10,1,<..\..\rtgui\server\server.c><server.c>
+File 10,1,<..\..\rtgui\server\driver.c><driver.c>
+File 10,1,<..\..\rtgui\server\panel.c><panel.c>
+File 10,1,<..\..\rtgui\widgets\widget.c><widget.c>
+File 10,1,<..\..\rtgui\widgets\window.c><window.c>
+File 10,1,<..\..\rtgui\widgets\workbench.c><workbench.c>
+File 10,1,<..\..\rtgui\widgets\view.c><view.c>
+File 10,1,<..\..\rtgui\widgets\box.c><box.c>
+File 10,1,<..\..\rtgui\widgets\button.c><button.c>
+File 10,1,<..\..\rtgui\widgets\container.c><container.c>
+File 10,1,<..\..\rtgui\widgets\iconbox.c><iconbox.c>
+File 10,1,<..\..\rtgui\widgets\label.c><label.c>
+File 10,1,<..\..\rtgui\widgets\textbox.c><textbox.c>
+File 10,1,<..\..\rtgui\widgets\title.c><title.c>
+File 10,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
+File 10,1,<..\..\rtgui\server\mouse.c><mouse.c>
+File 10,1,<..\..\rtgui\server\topwin.c><topwin.c>
+File 10,1,<..\..\rtgui\common\caret.c><caret.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32 Radio'
@@ -222,7 +255,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  ADSCMISC ()
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()
- ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include)
+ ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
@@ -274,5 +307,44 @@ Options 1,9,0  // Group 'mp3'
  ADSADEFN ()
  ADSAUDEF ()
  ADSAINCD ()
+EndOpt
+
+Options 1,10,0  // Group 'RTGUI'
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (--gnu)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+ ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+EndOpt
+
+Options 1,1,23  // File 'gui.c'
+ PropFld { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (--gnu)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
 EndOpt
 
