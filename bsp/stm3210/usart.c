@@ -1,5 +1,6 @@
 #include "usart.h"
 #include <serial.h>
+#include <stm32f10x_dma.h>
 
 /*
  * Use UART1 as console output and finsh input
@@ -19,7 +20,7 @@
 
 #ifdef RT_USING_UART1
 struct stm32_serial_int_rx uart1_int_rx;
-struct stm32_serial_device uart1 = 
+struct stm32_serial_device uart1 =
 {
 	USART1,
 	&uart1_int_rx,
@@ -33,7 +34,7 @@ struct rt_device uart1_device;
 #ifdef RT_USING_UART2
 struct stm32_serial_int_rx uart2_int_rx;
 struct stm32_serial_dma_rx uart2_dma_rx;
-struct stm32_serial_device uart2 = 
+struct stm32_serial_device uart2 =
 {
 	USART2,
 	&uart2_int_rx,
@@ -47,7 +48,7 @@ struct rt_device uart2_device;
 #ifdef RT_USING_UART3
 struct stm32_serial_int_rx uart3_int_rx;
 struct stm32_serial_dma_tx uart3_dma_tx;
-struct stm32_serial_device uart3 = 
+struct stm32_serial_device uart3 =
 {
 	USART3,
 	&uart3_int_rx,
@@ -161,8 +162,8 @@ static void GPIO_Configuration(void)
 static void NVIC_Configuration(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	/* Configure the NVIC Preemption Priority Bits */  
+
+	/* Configure the NVIC Preemption Priority Bits */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 
 #ifdef RT_USING_UART1
@@ -252,13 +253,13 @@ void rt_hw_usart_init()
 	USART_ClockInitTypeDef USART_ClockInitStructure;
 
 	RCC_Configuration();
-	
+
 	GPIO_Configuration();
-	
+
 	NVIC_Configuration();
-	
+
 	DMA_Configuration();
-	
+
 	/* uart init */
 #ifdef RT_USING_UART1
 	USART_InitStructure.USART_BaudRate = 115200;
@@ -275,10 +276,10 @@ void rt_hw_usart_init()
 	USART_ClockInit(USART1, &USART_ClockInitStructure);
 
 	/* register uart1 */
-	rt_hw_serial_register(&uart1_device, "uart1", 
+	rt_hw_serial_register(&uart1_device, "uart1",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart1);
-	
+
 	/* enable interrupt */
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 #endif
@@ -298,9 +299,9 @@ void rt_hw_usart_init()
 	USART_ClockInit(USART2, &USART_ClockInitStructure);
 
 	uart2_dma_rx.dma_channel= UART2_RX_DMA;
-	
+
 	/* register uart2 */
-	rt_hw_serial_register(&uart2_device, "uart2", 
+	rt_hw_serial_register(&uart2_device, "uart2",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX,
 		&uart2);
 
@@ -325,7 +326,7 @@ void rt_hw_usart_init()
 	uart3_dma_tx.dma_channel= UART3_TX_DMA;
 
 	/* register uart3 */
-	rt_hw_serial_register(&uart3_device, "uart3", 
+	rt_hw_serial_register(&uart3_device, "uart3",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_TX,
 		&uart3);
 
