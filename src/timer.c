@@ -270,6 +270,9 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
 
+	/* change stat */
+	timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+
 	/* remove it from timer list */
 	rt_list_remove(&(timer->list));
 
@@ -361,13 +364,17 @@ void rt_timer_check()
 			rt_kprintf("current tick: %d\n", current_tick);
 #endif
 
-			/* change timer state */
-			t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-
-			if (t->parent.flag & RT_TIMER_FLAG_PERIODIC)
+			if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) && 
+				(t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
 			{
 				/* start it */
+				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 				rt_timer_start(t);
+			}
+			else
+			{
+				/* stop timer */
+				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 			}
 		}
 		else break;
