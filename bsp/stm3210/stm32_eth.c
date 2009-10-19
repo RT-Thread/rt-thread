@@ -3059,11 +3059,13 @@ uint32_t ETH_HandlePTPRxPkt(uint8_t *ppkt, uint32_t *PTPRxTab)
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
 
-#define DP83848_PHY        /* Ethernet pins mapped on STM3210C-EVAL Board */
-#define PHY_ADDRESS       0x01 /* Relative to STM3210C-EVAL Board */
+#define STM32_ETH_DEBUG		1
 
-#define ETH_RXBUFNB        8
-#define ETH_TXBUFNB        2
+#define DP83848_PHY        	/* Ethernet pins mapped on STM3210C-EVAL Board */
+#define PHY_ADDRESS       	0x01 /* Relative to STM3210C-EVAL Board */
+
+#define ETH_RXBUFNB        	8
+#define ETH_TXBUFNB        	2
 ETH_InitTypeDef ETH_InitStructure;
 ETH_DMADESCTypeDef  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
 rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
@@ -3080,21 +3082,38 @@ struct rt_stm32_eth
 static struct rt_stm32_eth stm32_eth_device;
 
 /* interrupt service routine */
-void rt_stm32_eth_isr(int irqno)
+void rt_hw_stm32_eth_isr(int irqno)
 {
 	rt_uint32_t status;
 
-	if (status) /* packet receiption */
+	status = ETH->DMASR;
+	
+	rt_kprintf("eth dma status: 0x%08x\n", ETH->DMASR);
+
+	//Clear received IT
+	if ((status & ETH_DMA_IT_NIS) != (u32)RESET)
+		ETH->DMASR = (u32)ETH_DMA_IT_NIS;
+	if ((status & ETH_DMA_IT_AIS) != (u32)RESET)
+		ETH->DMASR = (u32)ETH_DMA_IT_AIS;
+	if ((status & ETH_DMA_IT_RO) != (u32)RESET)
+		ETH->DMASR = (u32)ETH_DMA_IT_RO;
+	if ((status & ETH_DMA_IT_RBU) != (u32)RESET)
+		ETH->DMASR = (u32)ETH_DMA_IT_RBU;
+
+	if (ETH_GetDMAITStatus(ETH_DMA_IT_R) == SET) /* packet receiption */
 	{
 		rt_err_t result;
 
 		/* a frame has been received */
 		result = eth_device_ready(&(stm32_eth_device.parent));
 		RT_ASSERT(result == RT_EOK);
+
+		ETH_DMAClearITPendingBit(ETH_DMA_IT_R);
 	}
 
-	if (status) /* packet transmission */
+	if (ETH_GetDMAITStatus(ETH_DMA_IT_T) == SET) /* packet transmission */
 	{
+		ETH_DMAClearITPendingBit(ETH_DMA_IT_T);
 	}
 }
 
@@ -3134,12 +3153,16 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 	/* Configure ETHERNET */
 	Value = ETH_Init(&ETH_InitStructure, PHY_ADDRESS);
 
-	ETH_MACITConfig(ETH_MAC_IT_PMT, ENABLE);
+	/* Enable DMA Receive interrupt (need to enable in this case Normal interrupt) */
+	ETH_DMAITConfig(ETH_DMA_IT_NIS | ETH_DMA_IT_R, ENABLE);
 	
 	/* Initialize Tx Descriptors list: Chain Mode */
 	ETH_DMATxDescChainInit(DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
 	/* Initialize Rx Descriptors list: Chain Mode  */
 	ETH_DMARxDescChainInit(DMARxDscrTab, &Rx_Buff[0][0], ETH_RXBUFNB);
+
+	/* MAC address configuration */
+	ETH_MACAddressConfig(ETH_MAC_Address0, (u8*)&stm32_eth_device.dev_addr[0]);
 
 	/* Enable MAC and DMA transmission and reception */
 	ETH_Start();
@@ -3190,26 +3213,51 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, rt_uint8_t cmd, void *args
 /* transmit packet. */
 rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
 {
+#if STM32_ETH_DEBUG	
+	int cnt = 0;
+#endif
 	struct pbuf* q;
+	rt_uint32_t offset;
 
 	/* Check if the descriptor is owned by the ETHERNET DMA (when set) or CPU (when reset) */
 	if((DMATxDescToSet->Status & ETH_DMATxDesc_OWN) != (uint32_t)RESET)
 	{
+#if STM32_ETH_DEBUG	
+		rt_kprintf("error: own bit set\n");
+#endif
+
 		/* Return ERROR: OWN bit set */
 		return -RT_ERROR;
 	}
 
+#if STM32_ETH_DEBUG
+	rt_kprintf("tx dump:\n");
+#endif
+	offset = 0;
 	for (q = p; q != NULL; q = q->next)
 	{
-		rt_uint32_t offset;
 		rt_uint8_t* ptr;
+		rt_uint32_t len;
+
+		len = q->len;
+		ptr = q->payload;
 
 		/* Copy the frame to be sent into memory pointed by the current ETHERNET DMA Tx descriptor */
-		for(offset = 0, ptr = q->payload; offset < q->len; offset++)
+		while (len)
 		{
-			(*(__IO uint8_t *)((DMATxDescToSet->Buffer1Addr) + offset)) = (*(ptr + offset));
+			(*(__IO uint8_t *)((DMATxDescToSet->Buffer1Addr) + offset)) = *ptr;
+
+#if STM32_ETH_DEBUG
+			rt_kprintf("%02x ", *ptr);
+			if (++cnt % 16 == 0) rt_kprintf("\n");
+#endif
+			offset ++; ptr ++; len --;
 		}
 	}
+
+#if STM32_ETH_DEBUG
+	rt_kprintf("\n");
+#endif
 
 	/* Setting the Frame Length: bits[12:0] */
 	DMATxDescToSet->ControlBufferSize = (p->tot_len & ETH_DMATxDesc_TBS1);
@@ -3222,7 +3270,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
 	{
 		/* Clear TBUS ETHERNET DMA flag */
 		ETH->DMASR = ETH_DMASR_TBUS;
-		/* Resume DMA transmission*/
+		/* Transmit Poll Demand to resume DMA transmission*/
 		ETH->DMATPDR = 0;
 	}
 
@@ -3261,11 +3309,19 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
 	p = RT_NULL;
 
 	/* Check if the descriptor is owned by the ETHERNET DMA (when set) or CPU (when reset) */
-	if(((DMARxDescToGet->Status & ETH_DMARxDesc_OWN) != (uint32_t)RESET) &&
-			((DMARxDescToGet->Status & ETH_DMARxDesc_ES) == (uint32_t)RESET) &&
-			((DMARxDescToGet->Status & ETH_DMARxDesc_LS) != (uint32_t)RESET) &&
-			((DMARxDescToGet->Status & ETH_DMARxDesc_FS) != (uint32_t)RESET))
+	if(((DMARxDescToGet->Status & ETH_DMARxDesc_OWN) != (uint32_t)RESET))
+		return p;
+
+	if (((DMARxDescToGet->Status & ETH_DMARxDesc_ES) == (uint32_t)RESET) &&
+		((DMARxDescToGet->Status & ETH_DMARxDesc_LS) != (uint32_t)RESET) &&
+		((DMARxDescToGet->Status & ETH_DMARxDesc_FS) != (uint32_t)RESET))
 	{
+#if STM32_ETH_DEBUG
+		int cnt = 0;
+		
+		rt_kprintf("rx dump:\n");
+#endif
+		
 		/* Get the Frame Length of the received packet: substruct 4 bytes of the CRC */
 		framelength = ((DMARxDescToGet->Status & ETH_DMARxDesc_FL) >> ETH_DMARxDesc_FrameLengthShift) - 4;
 
@@ -3286,11 +3342,18 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
 				while (len)
 				{
 					*ptr = (*(__IO uint8_t *)((DMARxDescToGet->Buffer1Addr) + offset));
-					ptr ++;
-					len --;
-					offset ++;
+#if STM32_ETH_DEBUG
+					rt_kprintf("%02x ", *ptr);
+					if (++cnt % 16 == 0) rt_kprintf("\n");
+#endif
+
+					offset ++; ptr ++; len --;
 				}
 			}
+			
+#if STM32_ETH_DEBUG
+			rt_kprintf("\n");
+#endif
 		}
 	}
 
@@ -3330,10 +3393,32 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
 	return p;
 }
 
+static void RCC_Configuration(void)
+{
+	/* Enable ETHERNET clock  */
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_ETH_MAC | RCC_AHBPeriph_ETH_MAC_Tx |
+						  RCC_AHBPeriph_ETH_MAC_Rx, ENABLE);
+}
+
+static void NVIC_Configuration(void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    /* Configure one bit for preemption priority */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+    /* Enable the EXTI0 Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = ETH_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+
 /*
  * GPIO Configuration for ETH
  */
-void GPIO_Configuration(void)
+static void GPIO_Configuration(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -3442,6 +3527,17 @@ void GPIO_Configuration(void)
 
 void rt_hw_stm32_eth_init()
 {
+	GPIO_Configuration();
+	RCC_Configuration();
+	NVIC_Configuration();
+
+    stm32_eth_device.dev_addr[0] = 0x01;
+    stm32_eth_device.dev_addr[1] = 0x60;
+    stm32_eth_device.dev_addr[2] = 0x6E;
+    stm32_eth_device.dev_addr[3] = 0x11;
+    stm32_eth_device.dev_addr[4] = 0x02;
+    stm32_eth_device.dev_addr[5] = 0x0F;
+
 	stm32_eth_device.parent.parent.init       = rt_stm32_eth_init;
 	stm32_eth_device.parent.parent.open       = rt_stm32_eth_open;
 	stm32_eth_device.parent.parent.close      = rt_stm32_eth_close;
@@ -3455,3 +3551,4 @@ void rt_hw_stm32_eth_init()
 
 	eth_device_init(&(stm32_eth_device.parent), "e0");
 }
+

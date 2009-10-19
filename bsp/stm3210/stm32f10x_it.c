@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Project/Template/stm32f10x_it.c 
+  * @file    Project/Template/stm32f10x_it.c
   * @author  MCD Application Team
   * @version V3.1.0
   * @date    06/19/2009
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @copy
@@ -18,7 +18,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
@@ -192,7 +192,7 @@ void USART1_IRQHandler(void)
 #ifdef RT_USING_UART1
     extern struct rt_device uart1_device;
 	extern void rt_hw_serial_isr(struct rt_device *device);
-	
+
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -299,7 +299,7 @@ void EXTI0_IRQHandler(void)
 
 /**
   * @}
-  */ 
+  */
 
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
