@@ -110,7 +110,7 @@ rtgui_type_t *rtgui_win_type_get(void)
 	return win_type;
 }
 
-rtgui_win_t* rtgui_win_create(const char* title, rtgui_rect_t *rect, rt_uint32_t style)
+rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, rtgui_rect_t *rect, rt_uint32_t style)
 {
 	struct rtgui_win* win;
 
@@ -118,6 +118,9 @@ rtgui_win_t* rtgui_win_create(const char* title, rtgui_rect_t *rect, rt_uint32_t
 	win = (struct rtgui_win*) rtgui_widget_create (RTGUI_WIN_TYPE);
 	if (win != RT_NULL)
 	{
+		/* set parent toplevel */
+		win->parent_toplevel = parent_toplevel;
+
 		/* set title, rect and style */
 		if (title != RT_NULL) win->title = rt_strdup(title);
 		else win->title = RT_NULL;
@@ -137,6 +140,14 @@ rtgui_win_t* rtgui_win_create(const char* title, rtgui_rect_t *rect, rt_uint32_t
 
 void rtgui_win_destroy(struct rtgui_win* win)
 {
+	if (win->parent_toplevel == RT_NULL)
+	{
+		rtgui_thread_t *rtgui_tid;
+
+		rtgui_tid = (rtgui_thread_t*) rt_thread_self()->user_data;
+		rtgui_tid->is_quit = RT_TRUE;
+	}
+
 	rtgui_widget_destroy(RTGUI_WIDGET(win));
 }
 
@@ -368,22 +379,19 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 /* windows event loop */
 void rtgui_win_event_loop(rtgui_win_t* wnd)
 {
-	int quit = 0;
-
+	rtgui_thread_t *rtgui_tid;
 	/* the buffer uses to receive event */
 	char event_buf[256];
 
 	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
+	rtgui_tid = (rtgui_thread_t*) rt_thread_self()->user_data;
 
-	while (!quit)
+	while (rtgui_tid->is_quit == RT_FALSE)
 	{
 		if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
 		{
-			if (RTGUI_WIDGET(wnd)->event_handler != RT_NULL)
-			{
-				if (RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event) == RT_TRUE)
-					quit = 1;
-			}
+			if (RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event) == RT_TRUE)
+				rtgui_tid->is_quit = RT_TRUE;
 		}
 	}
 }

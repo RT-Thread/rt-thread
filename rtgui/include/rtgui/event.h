@@ -283,8 +283,7 @@ struct rtgui_event_timer
 {
 	struct rtgui_event parent;
 
-	void (*callback)(struct rtgui_timer* timer, void* parameter);
-	void *parameter;
+	struct rtgui_timer *timer;
 };
 
 struct rtgui_event_clip_info

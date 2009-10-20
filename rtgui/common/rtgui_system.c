@@ -19,6 +19,8 @@
 #include <rtgui/rtgui_server.h>
 #include <rtgui/widgets/window.h>
 
+#define RTGUI_EVENT_DEBUG
+
 #ifdef __WIN32__
 #define RTGUI_EVENT_DEBUG
 #define RTGUI_MEM_TRACE
@@ -255,6 +257,7 @@ rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 		thread->tid			= tid;
 		thread->mq			= mq;
 		thread->widget		= RT_NULL;
+		thread->is_quit		= RT_FALSE;
 
 		/* take semaphore */
 		rt_sem_take(&_rtgui_thread_hash_semaphore, RT_WAITING_FOREVER);
@@ -443,8 +446,7 @@ static void rtgui_time_out(void* parameter)
 	event.parent.type = RTGUI_EVENT_TIMER;
 	event.parent.sender = RT_NULL;
 
-	event.callback = timer->timeout;
-	event.parameter = timer->user_data;
+	event.timer = timer;
 
 	rtgui_thread_send(timer->tid, &(event.parent), sizeof(struct rtgui_event_timer));
 }

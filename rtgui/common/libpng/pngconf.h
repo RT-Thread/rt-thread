@@ -23,6 +23,8 @@
 #define PNG_NO_WRITE_SUPPORTED
 #define PNG_NO_STDIO
 #define PNG_MAX_MALLOC_64K
+#define malloc	rtgui_malloc
+#define free	rtgui_free
 #endif
 
 #define PNG_1_2_X

@@ -752,10 +752,15 @@ static void rtgui_topwin_redraw(struct rtgui_rect* rect)
 
 		if (rtgui_rect_is_intersect(rect, &(panel->extent)) == RT_EOK)
 		{
-			/* draw panel */
-			epaint.wid = RT_NULL;
-			rtgui_thread_send(rtgui_panel_get_active_thread(panel),
-				&(epaint.parent), sizeof(epaint));
+			rt_thread_t tid;
+
+			tid = rtgui_panel_get_active_thread(panel);
+			if (tid != RT_NULL)
+			{
+				/* draw panel */
+				epaint.wid = RT_NULL;
+				rtgui_thread_send(tid, &(epaint.parent), sizeof(epaint));
+			}
 		}
 	}
 }

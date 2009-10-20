@@ -15,7 +15,87 @@
 #include <rtgui/filerw.h>
 #include <rtgui/rtgui_system.h>
 
-#ifdef RT_USING_STDIO_FILERW
+#ifdef RT_USING_DFS_FILERW
+#include <dfs_posix.h>
+
+/* standard file read/write */
+struct rtgui_filerw_stdio
+{
+	/* inherit from rtgui_filerw */
+	struct rtgui_filerw parent;
+
+	int fd;
+	rt_bool_t eof;
+};
+
+static int stdio_seek(struct rtgui_filerw *context, rt_off_t offset, int whence)
+{
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+	int stdio_whence[3] = {SEEK_SET, SEEK_CUR, SEEK_END};
+
+	if (whence < RTGUI_FILE_SEEK_SET || whence > RTGUI_FILE_SEEK_END)
+	{
+		return -1;
+	}
+
+	return lseek(stdio_filerw->fd, offset, stdio_whence[whence]);
+}
+
+static int stdio_read(struct rtgui_filerw *context, void *ptr, rt_size_t size, rt_size_t maxnum)
+{
+	int result;
+	
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+
+	/* end of file */
+	if (stdio_filerw->eof == RT_TRUE) return -1;
+
+	result = read(stdio_filerw->fd, ptr, size * maxnum);
+	if (result == 0) stdio_filerw->eof = RT_TRUE;
+
+	return result;
+}
+
+static int stdio_write(struct rtgui_filerw *context, const void *ptr, rt_size_t size, rt_size_t num)
+{
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+
+	return write(stdio_filerw->fd, (char*)ptr, size * num);
+}
+
+static int stdio_tell(struct rtgui_filerw* context)
+{
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+
+	return lseek(stdio_filerw->fd, 0, SEEK_CUR);
+}
+
+static int stdio_eof(struct rtgui_filerw* context)
+{
+	int result;
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+
+	if (stdio_filerw->eof == RT_TRUE) result = 1;
+	else result = -1;
+
+	return result;
+}
+
+static int stdio_close(struct rtgui_filerw *context)
+{
+	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
+
+	if (stdio_filerw)
+	{
+		close(stdio_filerw->fd);
+		rtgui_free(stdio_filerw);
+
+		return 0;
+	}
+
+	return -1;
+}
+#elif RT_USING_STDIO_FILERW
 #include <stdio.h>
 
 /* standard file read/write */
@@ -74,14 +154,14 @@ static int stdio_write(struct rtgui_filerw *context, const void *ptr, rt_size_t 
 	return nwrote;
 }
 
-int stdio_tell(struct rtgui_filerw* context)
+static int stdio_tell(struct rtgui_filerw* context)
 {
 	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
 
 	return ftell(stdio_filerw->fp);
 }
 
-int stdio_eof(struct rtgui_filerw* context)
+static int stdio_eof(struct rtgui_filerw* context)
 {
 	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
 
@@ -222,7 +302,37 @@ rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context)
 }
 
 /* file read/write public interface */
-#ifdef RT_USING_STDIO_FILERW
+#ifdef RT_USING_DFS_FILERW
+struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode)
+{
+	int fd;
+	struct rtgui_filerw_stdio *rw;
+
+	RT_ASSERT(filename != RT_NULL);
+
+	rw = RT_NULL;
+	fd = open(filename, mode, 0);
+
+	if ( fd >= 0 )
+	{
+		rw = (struct rtgui_filerw_stdio*) rtgui_malloc(sizeof(struct rtgui_filerw_stdio));
+		if (rw != RT_NULL)
+		{
+			rw->parent.seek  = stdio_seek;
+			rw->parent.read  = stdio_read;
+			rw->parent.write = stdio_write;
+			rw->parent.tell  = stdio_tell;
+			rw->parent.close = stdio_close;
+			rw->parent.eof	 = stdio_eof;
+
+			rw->fd  = fd;
+			rw->eof = RT_FALSE;
+		}
+	}
+
+	return &(rw->parent);
+}
+#elif RT_USING_STDIO_FILERW
 struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode)
 {
 	FILE *fp;

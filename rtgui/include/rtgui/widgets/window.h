@@ -47,6 +47,9 @@ struct rtgui_win
 	/* inherit from toplevel */
 	struct rtgui_toplevel parent;
 
+	/* parent toplevel */
+	rtgui_toplevel_t* parent_toplevel;
+
 	/* top window style */
 	rt_uint32_t style;
 
@@ -64,7 +67,8 @@ struct rtgui_win
 
 rtgui_type_t *rtgui_win_type_get(void);
 
-rtgui_win_t* rtgui_win_create(const char* title, rtgui_rect_t *rect, rt_uint32_t flag);
+rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, 
+	rtgui_rect_t *rect, rt_uint32_t flag);
 void rtgui_win_destroy(rtgui_win_t* win);
 
 void rtgui_win_show(rtgui_win_t* win);

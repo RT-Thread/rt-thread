@@ -84,12 +84,14 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 
 	case RTGUI_EVENT_TIMER:
 		{
+			struct rtgui_timer* timer;
 			struct rtgui_event_timer* etimer = (struct rtgui_event_timer*) event;
 
-			if (etimer->callback != RT_NULL)
+			timer = etimer->timer;
+			if (timer->timeout != RT_NULL)
 			{
 				/* call timeout function */
-				etimer->callback(RT_NULL, etimer->parameter);
+				timer->timeout(timer, timer->user_data);
 			}
 		}
 		break;
