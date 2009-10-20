@@ -11,5 +11,8 @@ if rtconfig.CC == 'armcc':
 if rtconfig.CC == 'gcc':
 	src_local = Glob(path + '/*.c') + Glob(path + '/*_gcc.s') + Glob(comm + '/*.c')
 
+if rtconfig.CC == 'iar':
+	src_local = Glob(path + '/*.c') + Glob(path + '/*_iar.s') + Glob(comm + '/*.c')
+
 obj = env.Object(src_local)
 Return('obj')
