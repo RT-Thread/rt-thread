@@ -1,5 +1,6 @@
 Import('env')
 Import('rtconfig')
+Import('RTT_ROOT')
 
 comm = rtconfig.ARCH + '/common'
 path = rtconfig.ARCH + '/' + rtconfig.CPU
@@ -14,5 +15,7 @@ if rtconfig.CC == 'gcc':
 if rtconfig.CC == 'iar':
 	src_local = Glob(path + '/*.c') + Glob(path + '/*_iar.s') + Glob(comm + '/*.c')
 
+env.Append(CPPPATH = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU])
 obj = env.Object(src_local)
+
 Return('obj')

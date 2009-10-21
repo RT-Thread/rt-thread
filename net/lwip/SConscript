@@ -62,7 +62,6 @@ src/netif/ppp/vj.c
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/net/lwip/src', RTT_ROOT + '/net/lwip/src/include', RTT_ROOT + '/net/lwip/src/include/ipv4', RTT_ROOT + '/net/lwip/src/arch/include', RTT_ROOT + '/net/lwip/src/include/netif', RTT_ROOT + '/net/lwip/src/netif/ppp']
 
-env.Clone()
 env.Append(CPPPATH = path)
 
 obj = env.Object(src_local)
