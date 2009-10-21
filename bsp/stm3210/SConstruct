@@ -23,7 +23,7 @@ elif rtconfig.CC == 'gcc':
 	aflags = device + ' -c -gdwarf-2 -mthumb -x assembler-with-cpp'
 	cc_path = ''
 	cc_cpath = ''
-	cc_exec_path = 'D:/SourceryGCC/bin'
+	cc_exec_path = 'd:/codesourcery/bin'
 	cc_cflags = device + ' -mthumb -gdwarf-2 -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -D__thumb__ -Wall -nostdinc -fno-builtin'
 	cc_lflags = cc_cflags + ' -MMD -MP -MF -static -nostdlib -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T stm32_rom.ld --output rtthread-stm32.elf'
 	cc_target = 'rtthread-stm32.elf'
@@ -43,10 +43,7 @@ aflags = aflags
 cflags = cc_cflags
 
 # search path for C compiler 
-kernel_path = [RTT_ROOT + '/include', RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU]
-bsp_path = [RTT_ROOT + '/bsp/stm3210', RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/Core/CM3']
-
-cpath  = kernel_path + bsp_path
+cpath  = [RTT_ROOT + '/bsp/stm3210']
 
 # link flag
 lflags = device + cc_lflags
