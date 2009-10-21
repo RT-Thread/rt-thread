@@ -44,26 +44,9 @@ cflags = cc_cflags
 
 # search path for C compiler 
 kernel_path = [RTT_ROOT + '/include', RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU]
-finsh_path = [RTT_ROOT + '/finsh']
-dfs_path = [RTT_ROOT + '/filesystem/dfs/include', RTT_ROOT + '/filesystem/dfs']
-lwip_path = [RTT_ROOT + '/net/lwip/src', RTT_ROOT + '/net/lwip/src/include', RTT_ROOT + '/net/lwip/src/include/ipv4', RTT_ROOT + '/net/lwip/src/arch/include']
 bsp_path = [RTT_ROOT + '/bsp/stm3210', RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/Core/CM3']
-minilibc_path = [RTT_ROOT + '/libc/minilibc']
 
-cpath  = kernel_path
-if rtconfig.RT_USING_FINSH:
-	cpath = cpath + finsh_path
-
-if rtconfig.RT_USING_DFS:
-	cpath = cpath + dfs_path
-
-if rtconfig.RT_USING_LWIP:
-	cpath = cpath + lwip_path
-
-if rtconfig.RT_USING_MINILIBC:
-	cpath = cpath + minilibc_path
-
-cpath = cpath + [cc_cpath] + bsp_path
+cpath  = kernel_path + bsp_path
 
 # link flag
 lflags = device + cc_lflags
