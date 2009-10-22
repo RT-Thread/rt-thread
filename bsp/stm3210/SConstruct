@@ -2,67 +2,20 @@ import os
 import rtconfig
 
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
-
-if rtconfig.CC == 'armcc':
-	device = '--device DARMSTM'
-	device_type = 'STM32F10X_HD'
-
-	# assemble flag for ARCC(Keil)
-	aflags = '--dwarf2 ' + device
-	cc_path = 'C:/Keil'
-	cc_exec_path = cc_path + '/arm/bin40/'
-	cc_cpath = cc_path + '/ARM/RV31/INC'
-	# compiler flag for ARMCC(Keil)
-	cc_cflags = '-g -O0 --apcs=interwork ' + device + ' -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD'
-	cc_lflags = ' --keep __fsym_* --keep __vsym_* --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct --libpath ' + cc_path + '/ARM/RV31/LIB'
-	cc_target = 'rtthread-stm32.axf'
-elif rtconfig.CC == 'gcc':
-	device = '-mcpu=cortex-m3'
-	device_type = 'STM32F10X_HD'
-
-	aflags = device + ' -c -gdwarf-2 -mthumb -x assembler-with-cpp'
-	cc_path = ''
-	cc_cpath = ''
-	cc_exec_path = 'd:/codesourcery/bin'
-	cc_cflags = device + ' -mthumb -gdwarf-2 -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -D__thumb__ -Wall -nostdinc -fno-builtin'
-	cc_lflags = cc_cflags + ' -MMD -MP -MF -static -nostdlib -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T stm32_rom.ld --output rtthread-stm32.elf'
-	cc_target = 'rtthread-stm32.elf'
-elif rtconfig.CC == 'iar':
-	device = ''
-	device_type = 'STM32F10X_HD'
-
-	aflags = ''
-	cc_path = ''
-	cc_cpath = ''
-	cc_exec_path = ''
-	cc_cflags = device + ''
-	cc_lflags = ''
-	cc_target = 'rtthread-stm32.elf'
-
-aflags = aflags
-cflags = cc_cflags
+device_type = 'STM32F10X_HD'
+target = 'rtthread-stm32'
 
 # search path for C compiler 
-cpath  = [RTT_ROOT + '/bsp/stm3210']
+bsp_path  = RTT_ROOT + '/bsp/stm3210'
 
-# link flag
-lflags = device + cc_lflags
-
-if rtconfig.CC == 'armcc':
-	env = Environment(tools = ['mingw'], 
-	    AS='armasm', ASFLAGS = aflags,
-	    CC='armcc', CCFLAGS = cflags, CPPPATH = cpath,
-	    AR='armar', ARFLAGS = '-rc',
-	    LINK='armlink', LINKFLAGS=lflags)
-	env.PrependENVPath('PATH', cc_exec_path)
-
-if rtconfig.CC == 'gcc':
-	env = Environment(tools = ['mingw'], 
-	    AS='arm-none-eabi-gcc', ASFLAGS = aflags,
-	    CC='arm-none-eabi-gcc', CCFLAGS = cflags, CPPPATH = cpath,
-	    AR='arm-none-eabi-ar', ARFLAGS = '-rc',
-	    LINK='arm-none-eabi-gcc', LINKFLAGS=lflags)
-	env.PrependENVPath('PATH', cc_exec_path)
+env = Environment(tools = ['mingw'],
+	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env.AppendUnique(CPPPATH = bsp_path)
+env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD')
 
 Export('env')
 Export('RTT_ROOT')
@@ -84,21 +37,23 @@ if rtconfig.RT_USING_DFS:
 if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
 
-source_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
-source_drv = ['rtc.c', 'usart.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
+src_drv = ['rtc.c', 'usart.c']
 
 if rtconfig.RT_USING_DFS:
 	if device_type == 'STM32F10X_HD':
-		source_drv = source_drv + ['sdcard.c']
+		src_drv += ['sdcard.c']
 	else:
-		source_drv = source_drv + ['msd.c']
+		src_drv += ['msd.c']
 
 if rtconfig.RT_USING_LWIP:
 	if device_type == 'STM32F10X_CL':
-		source_drv = source_drv + ['stm32_eth.c']
+		src_drv += ['stm32_eth.c']
 	else:
-		source_drv = source_drv + ['enc28j60.c']
+		src_drv += ['enc28j60.c']
 
-objs = objs + env.Object(source_bsp + source_drv)
+objs = objs + env.Object(src_bsp + src_drv)
 
-env.Program(cc_target, objs)
+TARGET = target + '.' + rtconfig.TARGET_EXT
+env.Program(TARGET, objs)
+env.AddPostAction(TARGET, rtconfig.POST_ACTION)
