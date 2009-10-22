@@ -19,6 +19,7 @@
 .text
 
 .global rt_hw_hard_fault
+.type rt_hw_hard_fault, %function
 rt_hw_hard_fault:
     /* get current context */
     MRS     r0, psp                 /* get fault thread stack pointer */

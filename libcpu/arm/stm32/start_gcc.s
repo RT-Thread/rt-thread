@@ -34,7 +34,6 @@
   .thumb
 
 .global  g_pfnVectors
-.global  SystemInit_ExtMemCtl_Dummy
 .global  Default_Handler
 
 /* start address for the initialization values of the .data section. 
@@ -48,7 +47,6 @@ defined in linker script */
 .word  _sbss
 /* end address for the .bss section. defined in linker script */
 .word  _ebss
-/* stack used for SystemInit_ExtMemCtl; always internal RAM used */
 
 .equ  Initial_spTop,  0x20000400 
 .equ  BootRAM,        0xF1E0F85F
@@ -65,10 +63,6 @@ defined in linker script */
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
-
-/* FSMC Bank1 NOR/SRAM3 is used for the STM3210E-EVAL, if another Bank is 
-  required, then adjust the Register Addresses */
-  bl  SystemInit_ExtMemCtl
 /* restore original stack pointer */  
   LDR r0, =_estack
   MSR msp, r0
@@ -103,16 +97,6 @@ LoopFillZerobss:
   bl  main
   bx  lr    
 .size  Reset_Handler, .-Reset_Handler
-
-/**
- * @brief  Dummy SystemInit_ExtMemCtl function 
- * @param  None     
- * @retval : None       
-*/
-  .section  .text.SystemInit_ExtMemCtl_Dummy,"ax",%progbits
-SystemInit_ExtMemCtl_Dummy:
-  bx  lr
-  .size  SystemInit_ExtMemCtl_Dummy, .-SystemInit_ExtMemCtl_Dummy
 
 /**
  * @brief  This is the code that gets called when the processor receives an 
@@ -468,7 +452,3 @@ g_pfnVectors:
 
   .weak  DMA2_Channel4_5_IRQHandler
   .thumb_set DMA2_Channel4_5_IRQHandler,Default_Handler
-
-  .weak  SystemInit_ExtMemCtl
-  .thumb_set SystemInit_ExtMemCtl,SystemInit_ExtMemCtl_Dummy
-

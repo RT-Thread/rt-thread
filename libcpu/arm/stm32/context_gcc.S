@@ -32,6 +32,7 @@
  * rt_base_t rt_hw_interrupt_disable();
  */
 .global rt_hw_interrupt_disable
+.type rt_hw_interrupt_disable, %function
 rt_hw_interrupt_disable:
 	MRS		r0, PRIMASK
 	CPSID		I
@@ -41,6 +42,7 @@ rt_hw_interrupt_disable:
  * void rt_hw_interrupt_enable(rt_base_t level);
  */
 .global rt_hw_interrupt_enable
+.type rt_hw_interrupt_enable, %function
 rt_hw_interrupt_enable:
 	MSR		PRIMASK, r0
 	BX		LR
@@ -51,7 +53,9 @@ rt_hw_interrupt_enable:
  * r1 --> to
  */
 .global rt_hw_context_switch_interrupt
+.type rt_hw_context_switch_interrupt, %function
 .global rt_hw_context_switch
+.type rt_hw_context_switch, %function
 
 rt_hw_context_switch_interrupt:
 rt_hw_context_switch:
@@ -80,6 +84,7 @@ _reswitch:
  * psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
  */
 .global rt_hw_pend_sv
+.type rt_hw_pend_sv, %function
 rt_hw_pend_sv:
 	/* disable interrupt to protect context switch */
 	MRS		r2, PRIMASK
@@ -118,6 +123,7 @@ swtich_to_thread:
  * r0 --> to
  */
 .global rt_hw_context_switch_to
+.type rt_hw_context_switch_to, %function
 rt_hw_context_switch_to:
 	LDR		r1, =rt_interrupt_to_thread
 	STR		r0, [r1]
@@ -142,6 +148,7 @@ rt_hw_context_switch_to:
 
 /* compatible with old version */
 .global rt_hw_interrupt_thread_switch
+.type rt_hw_interrupt_thread_switch, %function
 rt_hw_interrupt_thread_switch:
 	BX		lr
 	NOP
