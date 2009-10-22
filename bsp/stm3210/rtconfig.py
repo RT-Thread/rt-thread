@@ -62,7 +62,8 @@ elif PLATFORM == 'armcc':
     EXEC_PATH += '/arm/bin40/'
 
     if BUILD == 'debug':
-        CFLAGS += ' --dwarf2'
+        CFLAGS += ' -g -O0'
+        AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
 
