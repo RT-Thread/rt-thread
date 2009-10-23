@@ -57,8 +57,16 @@ void rt_hw_led_off(rt_uint32_t n)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+static rt_uint8_t led_inited = 0;
 void led(rt_uint32_t led, rt_uint32_t value)
 {
+    /* init led configuration if it's not inited. */
+    if (!led_inited)
+    {
+        rt_hw_led_init();
+        led_inited = 1;
+    }
+
     if ( led == 0 )
     {
         /* set led status */
