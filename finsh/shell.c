@@ -29,10 +29,6 @@
 extern char rt_serial_getc(void);
 #endif
 
-
-
-
-
 #define FINSH_USING_HISTORY
 
 #if defined(__CC_ARM)					/* ARMCC compiler */
@@ -47,7 +43,7 @@ extern char rt_serial_getc(void);
     #pragma section="FSymTab"
     #pragma section="VSymTab"
   #endif
-#elif defined(__GCC__)
+#elif defined(__GNUC__)
   #ifdef FINSH_USING_SYMTAB
   extern int __fsymtab_start;
   extern int __fsymtab_end;
@@ -441,6 +437,8 @@ void finsh_system_init()
     finsh_system_var_init(__section_begin("VSymTab"),
                           __section_end("VSymTab"));
 #elif defined (__GNUC__)        /* GNU GCC Compiler */
+	finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
+	finsh_system_var_init(&__vsymtab_start, &__vsymtab_start);
 #endif
 #endif
 
