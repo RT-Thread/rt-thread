@@ -27,7 +27,11 @@
   *
   * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
   */  
-    
+.section .bss.init
+.equ 	Stack_Size, 0x00000200
+.space 	Stack_Size
+Initial_spTop:
+
     .syntax unified
   .cpu cortex-m3
   .fpu softvfp
@@ -48,7 +52,7 @@ defined in linker script */
 /* end address for the .bss section. defined in linker script */
 .word  _ebss
 
-.equ  Initial_spTop,  0x20000400 
+// .equ  Initial_spTop,  0x20000200
 .equ  BootRAM,        0xF1E0F85F
 /**
  * @brief  This is the code that gets called when the processor first
@@ -64,7 +68,7 @@ defined in linker script */
   .type  Reset_Handler, %function
 Reset_Handler:  
 /* restore original stack pointer */  
-  LDR r0, =_estack
+  LDR r0, =Initial_spTop
   MSR msp, r0
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
