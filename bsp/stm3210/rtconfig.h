@@ -74,6 +74,9 @@
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
 
+/* use minilibc for gcc */
+// #define RT_USING_MINILIBC
+
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #define RT_USING_LWIP
 

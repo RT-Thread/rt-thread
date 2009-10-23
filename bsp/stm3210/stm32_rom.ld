@@ -25,30 +25,23 @@ SECTIONS
 	*(.glue_7)
 	*(.glue_7t)
 
+	/* section information for finsh shell */
+	. = ALIGN(4);
+	__fsymtab_start = .;
+	KEEP(*(FSymTab))
+	__fsymtab_end = .;
+	. = ALIGN(4);
+	__vsymtab_start = .;
+	KEEP(*(VSymTab))
+	__vsymtab_end = .;
+	. = ALIGN(4);
+
 	. = ALIGN(4);
 	_etext = .;
 
 	/* This is used by the startup in order to initialize the .data secion */
 	_sidata = _etext;
 	} > CODE = 0
-
-    .FSymTab :
-	{
-	. = ALIGN(4);
-	__fsymtab_start = .;
-	*(.FSymTab)
-	__fsymtab_end = .;
-	. = ALIGN(4);
-	} > CODE
-
-    .VSymTab :
-	{
-	. = ALIGN(4);
-	__vsymtab_start = .;
-	*(.VSymTab)
-	__vsymtab_end = .;
-	. = ALIGN(4);
-	} > CODE
 
 	/* .data section which is used for initialized data */
 
@@ -80,6 +73,8 @@ SECTIONS
 	/* This is used by the startup in order to initialize the .bss secion */
 	_ebss = . ;
 	_estack = .;
+	
+	*(.bss.init)
 	} > DATA
 	__bss_end = .;
 
