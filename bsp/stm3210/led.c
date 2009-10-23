@@ -1,70 +1,96 @@
 #include <rtthread.h>
 #include <stm32f10x.h>
 
-#define RCC_APB2Periph_GPIO_LED		RCC_APB2Periph_GPIOF
-#define GPIO_LED					GPIOF
-#define GPIO_Pin_LED				GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9
+#define led1_rcc                    RCC_APB2Periph_GPIOF
+#define led1_gpio                   GPIOF
+#define led1_pin                    (GPIO_Pin_6 | GPIO_Pin_7)
 
-static const rt_uint16_t led_map[] = {GPIO_Pin_6, GPIO_Pin_7, GPIO_Pin_8, GPIO_Pin_9};
-static rt_uint8_t led_inited = 0;
+#define led2_rcc                    RCC_APB2Periph_GPIOF
+#define led2_gpio                   GPIOF
+#define led2_pin                    (GPIO_Pin_8)
 
-static void GPIO_Configuration(void)
+void rt_hw_led_init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_LED;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIO_LED, &GPIO_InitStructure);
+    RCC_APB2PeriphClockCmd(led1_rcc|led2_rcc,ENABLE);
+
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_InitStructure.GPIO_Pin   = led1_pin;
+    GPIO_Init(led1_gpio, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin   = led2_pin;
+    GPIO_Init(led2_gpio, &GPIO_InitStructure);
 }
 
-void LED_Configuration(void)
+void rt_hw_led_on(rt_uint32_t n)
 {
-	/* enable led clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIO_LED, ENABLE);
-
-	GPIO_Configuration();
+    switch (n)
+    {
+    case 0:
+        GPIO_SetBits(led1_gpio, led1_pin);
+        break;
+    case 1:
+        GPIO_SetBits(led2_gpio, led2_pin);
+        break;
+    default:
+        break;
+    }
 }
 
-void rt_hw_led_init()
+void rt_hw_led_off(rt_uint32_t n)
 {
-	/* init led configuration if it's not inited. */
-	if (!led_inited) 
-	{
-		LED_Configuration();
-		led_inited = 1;
-	}
-}
-
-void rt_hw_led_on(rt_uint32_t led)
-{
-	if (led < sizeof(led_map)/sizeof(rt_uint16_t))
-		GPIO_SetBits(GPIO_LED, led_map[led]);
-}
-
-void rt_hw_led_off(rt_uint32_t led)
-{
-	if (led < sizeof(led_map)/sizeof(rt_uint16_t))
-		GPIO_ResetBits(GPIO_LED, led_map[led]);
+    switch (n)
+    {
+    case 0:
+        GPIO_ResetBits(led1_gpio, led1_pin);
+        break;
+    case 1:
+        GPIO_ResetBits(led2_gpio, led2_pin);
+        break;
+    default:
+        break;
+    }
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void led(rt_uint32_t led, rt_uint32_t value)
 {
-	/* init led configuration if it's not inited. */
-	if (!led_inited) 
-	{
-		LED_Configuration();
-		led_inited = 1;
-	}
+    if ( led == 0 )
+    {
+        /* set led status */
+        switch (value)
+        {
+        case 0:
+            rt_hw_led_off(0);
+            break;
+        case 1:
+            rt_hw_led_on(0);
+            break;
+        default:
+            break;
+        }
+    }
 
-	/* set led status */
-	if (value)
-		rt_hw_led_on(led);
-	else
-		rt_hw_led_off(led);
+    if ( led == 1 )
+    {
+        /* set led status */
+        switch (value)
+        {
+        case 0:
+            rt_hw_led_off(1);
+            break;
+        case 1:
+            rt_hw_led_on(1);
+            break;
+        default:
+            break;
+        }
+    }
 }
-FINSH_FUNCTION_EXPORT(led, set led[0 - 3] on[1] or off[0].)
+FINSH_FUNCTION_EXPORT(led, set led[0 - 1] on[1] or off[0].)
 #endif
 
