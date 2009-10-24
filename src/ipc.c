@@ -26,6 +26,8 @@
  * 2009-07-18     Bernard      fix the event clear bug
  * 2009-09-09     Bernard      remove fast event and fix ipc release bug
  * 2009-10-10     Bernard      change semaphore and mutex value to unsigned value
+ * 2009-10-25     Bernard      change the mb/mq receive timeout to 0 if the 
+ *                             re-calculated delta tick is a negative number.
  */
 
 #include <rtthread.h>
@@ -1398,6 +1400,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		{
 			tick_delta = rt_tick_get() - tick_delta;
 			timeout -= tick_delta;
+			if (timeout < 0) timeout = 0;
 		}
 	}
 
@@ -1843,6 +1846,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		{
 			tick_delta = rt_tick_get() - tick_delta;
 			timeout -= tick_delta;
+			if (timeout < 0) timeout = 0;
 		}
 	}
 
