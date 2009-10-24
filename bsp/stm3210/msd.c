@@ -35,9 +35,11 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Select MSD Card: ChipSelect pin low  */
-#define MSD_CS_LOW()     GPIO_ResetBits(GPIOD, GPIO_Pin_9)
+#define MSD_CS_LOW()    GPIO_ResetBits(GPIOD, GPIO_Pin_9)
 /* Deselect MSD Card: ChipSelect pin high */
-#define MSD_CS_HIGH()    GPIO_SetBits(GPIOD, GPIO_Pin_9)
+#define MSD_CS_HIGH()   GPIO_SetBits(GPIOD, GPIO_Pin_9)
+#define MSD_SPI         SPI1
+#define MSD_RCC_SPI     RCC_APB2Periph_SPI1
 
 /* Private function prototypes -----------------------------------------------*/
 static void SPI_Config(void);
@@ -55,7 +57,7 @@ u8 MSD_Init(void)
 {
   u32 i = 0;
 
-  /* Initialize SPI1 */
+  /* Initialize SPI */
   SPI_Config();
   /* MSD chip select high */
   MSD_CS_HIGH();
@@ -705,9 +707,9 @@ u8 MSD_GoIdleState(void)
 void MSD_WriteByte(u8 Data)
 {
   /* Wait until the transmit buffer is empty */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+  while (SPI_I2S_GetFlagStatus(MSD_SPI, SPI_I2S_FLAG_TXE) == RESET);
   /* Send the byte */
-  SPI_I2S_SendData(SPI1, Data);
+  SPI_I2S_SendData(MSD_SPI, Data);
 }
 
 /*******************************************************************************
@@ -722,14 +724,14 @@ u8 MSD_ReadByte(void)
   u8 Data = 0;
 
   /* Wait until the transmit buffer is empty */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+  while (SPI_I2S_GetFlagStatus(MSD_SPI, SPI_I2S_FLAG_TXE) == RESET);
   /* Send the byte */
-  SPI_I2S_SendData(SPI1, DUMMY);
+  SPI_I2S_SendData(MSD_SPI, DUMMY);
 
   /* Wait until a data is received */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+  while (SPI_I2S_GetFlagStatus(MSD_SPI, SPI_I2S_FLAG_RXNE) == RESET);
   /* Get the received data */
-  Data = SPI_I2S_ReceiveData(SPI1);
+  Data = SPI_I2S_ReceiveData(MSD_SPI);
 
   /* Return the shifted data */
   return Data;
@@ -737,23 +739,23 @@ u8 MSD_ReadByte(void)
 
 /*******************************************************************************
 * Function Name  : SPI_Config
-* Description    : Initializes the SPI1 and CS pins.
+* Description    : Initializes the SPI and CS pins.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
 void SPI_Config(void)
 {
-  u16 i, j;
+  u32 delay;
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
 
   /* GPIOA and GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOD, ENABLE);
-  /* SPI1 Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+  /* SPI Periph clock enable */
+  RCC_APB2PeriphClockCmd(MSD_RCC_SPI, ENABLE);
 
-  /* Configure SPI1 pins: SCK, MISO and MOSI */
+  /* Configure SPI pins: SCK, MISO and MOSI */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -765,7 +767,7 @@ void SPI_Config(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-  /* SPI1 Config */
+  /* SPI Config */
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
@@ -775,18 +777,14 @@ void SPI_Config(void)
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
-  SPI_Init(SPI1, &SPI_InitStructure);
+  SPI_Init(MSD_SPI, &SPI_InitStructure);
 
-  /* SPI1 enable */
-  SPI_Cmd(SPI1, ENABLE);
+  /* SPI enable */
+  SPI_Cmd(MSD_SPI, ENABLE);
 
   /* active SD card */
   GPIO_ResetBits(GPIOD, GPIO_Pin_10);
-  for(i=0;i<65530;i++)
-  {
-    for(j=0;j<5000;j++)
-      ;
-  }
+  for (delay = 0; delay < 0xfffff; delay ++);
 }
 
 /******************* (C) COPYRIGHT 2008 STMicroelectronics *****END OF FILE****/
@@ -828,7 +826,7 @@ static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_siz
 	rt_uint32_t i;
 
 	status = MSD_RESPONSE_NO_ERROR;
-	rt_kprintf("read: 0x%x, size %d\n", pos, size);
+	// rt_kprintf("read: 0x%x, size %d\n", pos, size);
 
 	/* read all sectors */
 	for (i = 0; i < size / SECTOR_SIZE; i ++)
@@ -855,7 +853,7 @@ static rt_size_t rt_msd_write (rt_device_t dev, rt_off_t pos, const void* buffer
 	rt_uint32_t i;
 
 	status = MSD_RESPONSE_NO_ERROR;
-	rt_kprintf("write: 0x%x, size %d\n", pos, size);
+	// rt_kprintf("write: 0x%x, size %d\n", pos, size);
 
 	/* read all sectors */
 	for (i = 0; i < size / SECTOR_SIZE; i ++)
