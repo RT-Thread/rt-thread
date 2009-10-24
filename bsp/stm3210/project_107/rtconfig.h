@@ -54,18 +54,26 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 #define RT_USING_UART1
-#define RT_USING_UART2
 
 /* SECTION: Console options */
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
-/* SECTION: finsh shell */
+/* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define FINSH_DEVICE_NAME	"uart2"
+#define FINSH_DEVICE_NAME	"uart1"
+
+/* SECTION: device filesystem */
+#define RT_USING_DFS
+/* the max number of mounted filesystem */
+#define DFS_FILESYSTEMS_MAX			2
+/* the max number of opened files 		*/
+#define DFS_FD_MAX					4
+/* the max number of cached sector 		*/
+#define DFS_CACHE_MAX_NUM   		4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #define RT_USING_LWIP

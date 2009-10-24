@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Project/Template/stm32f10x_it.c 
+  * @file    Project/Template/stm32f10x_it.c
   * @author  MCD Application Team
   * @version V3.1.0
   * @date    06/19/2009
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @copy
@@ -18,13 +18,12 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-#include "stm32f10x_dma.h"
-
 #include <rtthread.h>
+#include "board.h"
 
 /** @addtogroup Template_Project
   * @{
@@ -194,7 +193,7 @@ void USART1_IRQHandler(void)
 #ifdef RT_USING_UART1
     extern struct rt_device uart1_device;
 	extern void rt_hw_serial_isr(struct rt_device *device);
-	
+
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -252,6 +251,54 @@ void USART3_IRQHandler(void)
 }
 
 /*******************************************************************************
+* Function Name  : SDIO_IRQHandler
+* Description    : This function handles SDIO global interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SDIO_IRQHandler(void)
+{
+#if defined(RT_USING_DFS) && STM32_USE_SDIO
+    extern int SD_ProcessIRQSrc(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* Process All SDIO Interrupt Sources */
+    SD_ProcessIRQSrc();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+#endif
+}
+
+/*******************************************************************************
+* Function Name  : EXTI0_IRQHandler
+* Description    : This function handles External interrupt Line 0 request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void EXTI0_IRQHandler(void)
+{
+#if defined(RT_USING_LWIP) && !defined(STM32F10X_CL)
+    extern void enc28j60_isr(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    enc28j60_isr();
+
+    /* Clear the Key Button EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line0);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+#endif
+}
+
+/*******************************************************************************
 * Function Name  : ETH_IRQHandler
 * Description    : This function handles ETH interrupt request.
 * Input          : None
@@ -260,7 +307,7 @@ void USART3_IRQHandler(void)
 *******************************************************************************/
 void ETH_IRQHandler(void)
 {
-#ifdef RT_USING_LWIP
+#if defined(RT_USING_LWIP) && defined(STM32F10X_CL)
 	extern void rt_hw_stm32_eth_isr(void);
 	
     /* enter interrupt */
@@ -275,7 +322,7 @@ void ETH_IRQHandler(void)
 
 /**
   * @}
-  */ 
+  */
 
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
