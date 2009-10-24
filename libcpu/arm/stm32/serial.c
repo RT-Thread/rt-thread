@@ -10,6 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-02-05     Bernard      first version
+ * 2009-10-25     Bernard      fix rt_serial_read bug when there is no data
+ *                             in the buffer.
  */
 
 #include "serial.h"
@@ -198,6 +200,7 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 			{
 				/* set error code */
 				err_code = -RT_EEMPTY;
+				break;
 			}
 			else
 			{
