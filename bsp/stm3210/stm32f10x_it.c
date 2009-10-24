@@ -23,6 +23,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 #include <rtthread.h>
+#include "board.h"
 
 /** @addtogroup Template_Project
   * @{
@@ -258,7 +259,7 @@ void USART3_IRQHandler(void)
 *******************************************************************************/
 void SDIO_IRQHandler(void)
 {
-#ifdef RT_USING_DFS
+#if defined(RT_USING_DFS) && STM32_USE_SDIO
     extern int SD_ProcessIRQSrc(void);
 
     /* enter interrupt */
@@ -281,7 +282,7 @@ void SDIO_IRQHandler(void)
 *******************************************************************************/
 void EXTI0_IRQHandler(void)
 {
-#ifdef RT_USING_LWIP
+#if defined(RT_USING_LWIP) && !defined(STM32F10X_CL)
     extern void enc28j60_isr(void);
 
     /* enter interrupt */
@@ -291,6 +292,28 @@ void EXTI0_IRQHandler(void)
 
     /* Clear the Key Button EXTI line pending bit */
     EXTI_ClearITPendingBit(EXTI_Line0);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+#endif
+}
+
+/*******************************************************************************
+* Function Name  : ETH_IRQHandler
+* Description    : This function handles ETH interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void ETH_IRQHandler(void)
+{
+#if defined(RT_USING_LWIP) && defined(STM32F10X_CL)
+	extern void rt_hw_stm32_eth_isr(void);
+	
+    /* enter interrupt */
+    rt_interrupt_enter();
+	
+	rt_hw_stm32_eth_isr();
 
     /* leave interrupt */
     rt_interrupt_leave();

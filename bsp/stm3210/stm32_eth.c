@@ -3059,16 +3059,18 @@ uint32_t ETH_HandlePTPRxPkt(uint8_t *ppkt, uint32_t *PTPRxTab)
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
 
-#define STM32_ETH_DEBUG		1
+#define STM32_ETH_DEBUG		0
+
+#define MII_MODE          /* MII mode for STM3210C-EVAL Board (MB784) (check jumpers setting) */
 
 #define DP83848_PHY        	/* Ethernet pins mapped on STM3210C-EVAL Board */
 #define PHY_ADDRESS       	0x01 /* Relative to STM3210C-EVAL Board */
 
-#define ETH_RXBUFNB        	8
+#define ETH_RXBUFNB        	4
 #define ETH_TXBUFNB        	2
-ETH_InitTypeDef ETH_InitStructure;
-ETH_DMADESCTypeDef  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
-rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
+static ETH_InitTypeDef ETH_InitStructure;
+static ETH_DMADESCTypeDef  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
+static rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
 
 #define MAX_ADDR_LEN 6
 struct rt_stm32_eth
@@ -3080,6 +3082,8 @@ struct rt_stm32_eth
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
 };
 static struct rt_stm32_eth stm32_eth_device;
+static struct rt_semaphore tx_wait;
+static rt_bool_t tx_is_waiting = RT_FALSE;
 
 /* interrupt service routine */
 void rt_hw_stm32_eth_isr(int irqno)
@@ -3087,9 +3091,11 @@ void rt_hw_stm32_eth_isr(int irqno)
 	rt_uint32_t status;
 
 	status = ETH->DMASR;
-	
-	rt_kprintf("eth dma status: 0x%08x\n", ETH->DMASR);
 
+#if STM32_ETH_DEBUG
+	rt_kprintf("eth dma status: 0x%08x\n", ETH->DMASR);
+#endif
+	
 	//Clear received IT
 	if ((status & ETH_DMA_IT_NIS) != (u32)RESET)
 		ETH->DMASR = (u32)ETH_DMA_IT_NIS;
@@ -3113,6 +3119,12 @@ void rt_hw_stm32_eth_isr(int irqno)
 
 	if (ETH_GetDMAITStatus(ETH_DMA_IT_T) == SET) /* packet transmission */
 	{
+		if (tx_is_waiting == RT_TRUE)
+		{
+			tx_is_waiting = RT_FALSE;
+			rt_sem_release(&tx_wait);
+		}
+
 		ETH_DMAClearITPendingBit(ETH_DMA_IT_T);
 	}
 }
@@ -3220,14 +3232,22 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
 	rt_uint32_t offset;
 
 	/* Check if the descriptor is owned by the ETHERNET DMA (when set) or CPU (when reset) */
-	if((DMATxDescToSet->Status & ETH_DMATxDesc_OWN) != (uint32_t)RESET)
+	while ((DMATxDescToSet->Status & ETH_DMATxDesc_OWN) != (uint32_t)RESET)
 	{
+		rt_err_t result;
+		rt_uint32_t level;
+
 #if STM32_ETH_DEBUG	
 		rt_kprintf("error: own bit set\n");
 #endif
+		level = rt_hw_interrupt_disable();
+		tx_is_waiting = RT_TRUE;
+		rt_hw_interrupt_enable(level);
 
-		/* Return ERROR: OWN bit set */
-		return -RT_ERROR;
+		/* it's own bit set, wait it */
+		result = rt_sem_take(&tx_wait, RT_WAITING_FOREVER);
+		if (result == RT_EOK) break;
+		if (result == -RT_ERROR) return -RT_ERROR;
 	}
 
 #if STM32_ETH_DEBUG
@@ -3272,6 +3292,9 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
 		ETH->DMASR = ETH_DMASR_TBUS;
 		/* Transmit Poll Demand to resume DMA transmission*/
 		ETH->DMATPDR = 0;
+#if STM32_ETH_DEBUG
+		rt_kprintf("transmit poll demand\n");
+#endif
 	}
 
 	/* Update the ETHERNET DMA global Tx descriptor with next Tx decriptor */
@@ -3397,7 +3420,11 @@ static void RCC_Configuration(void)
 {
 	/* Enable ETHERNET clock  */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_ETH_MAC | RCC_AHBPeriph_ETH_MAC_Tx |
-						  RCC_AHBPeriph_ETH_MAC_Rx, ENABLE);
+		RCC_AHBPeriph_ETH_MAC_Rx, ENABLE);
+
+	/* Enable GPIOs clocks */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |	RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC |
+		RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE| RCC_APB2Periph_AFIO, ENABLE);
 }
 
 static void NVIC_Configuration(void)
@@ -3527,8 +3554,8 @@ static void GPIO_Configuration(void)
 
 void rt_hw_stm32_eth_init()
 {
-	GPIO_Configuration();
 	RCC_Configuration();
+	GPIO_Configuration();
 	NVIC_Configuration();
 
     stm32_eth_device.dev_addr[0] = 0x01;
@@ -3549,6 +3576,9 @@ void rt_hw_stm32_eth_init()
 	stm32_eth_device.parent.eth_rx     = rt_stm32_eth_rx;
 	stm32_eth_device.parent.eth_tx     = rt_stm32_eth_tx;
 
+	/* init tx semaphore */
+	rt_sem_init(&tx_wait, "tx_wait", 0, RT_IPC_FLAG_FIFO);
+
+	/* register eth device */
 	eth_device_init(&(stm32_eth_device.parent), "e0");
 }
-
