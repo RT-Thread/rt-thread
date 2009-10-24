@@ -153,13 +153,13 @@ static void rt_hw_console_init()
 	{
 		GPIO_InitTypeDef GPIO_InitStructure;
 
-		/* Configure USART1 Tx (PA.09) as alternate function push-pull */
+		/* Configure USART Tx as alternate function push-pull */
 		GPIO_InitStructure.GPIO_Pin = CONSOLE_RX_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
 
-		/* Configure USART1 Rx (PA.10) as input floating */
+		/* Configure USART Rx as input floating */
 		GPIO_InitStructure.GPIO_Pin = CONSOLE_TX_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 		GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
@@ -189,7 +189,7 @@ static void rt_hw_console_init()
 		USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 		USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 		USART_Init(CONSOLE_USART, &USART_InitStructure);
-		/* Enable USART1 */
+		/* Enable USART */
 		USART_Cmd(CONSOLE_USART, ENABLE);
 	}
 #endif
