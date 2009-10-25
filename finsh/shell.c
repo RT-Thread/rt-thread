@@ -311,9 +311,9 @@ void finsh_thread_entry(void* parameter)
 					/*
 					 * handle backspace key
 					 */
-					if (ch == 0x7f)
+					if (ch == 0x7f || ch == 0x08)
 					{
-						if (pos != 0) rt_kprintf("%c", ch);
+						if (pos != 0)rt_kprintf("%c", ch);
 						line[pos--] = 0;
 						if (pos < 0) pos = 0;
 						continue;
