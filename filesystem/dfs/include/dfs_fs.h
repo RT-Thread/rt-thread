@@ -78,10 +78,9 @@ int dfs_unmount(const char *specialfile);
 extern struct dfs_filesystem_operation* filesystem_operation_table[];
 extern struct dfs_filesystem filesystem_table[];
 
-extern rt_sem_t filesystem_table_lock;
-extern rt_sem_t filesystem_operation_table_lock;
-
 extern char working_directory[];
-extern rt_sem_t working_directory_lock;
+
+void dfs_lock(void);
+void dfs_unlock(void);
 
 #endif

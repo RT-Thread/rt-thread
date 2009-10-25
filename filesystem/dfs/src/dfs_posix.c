@@ -12,6 +12,8 @@
 | 2009-05-27     Yi.qiu       The first version.                     
 +------------------------------------------------------------------------------
 */
+#include <string.h>
+#include <dfs_util.h>
 #include <dfs_posix.h>
 
 /*
@@ -521,20 +523,20 @@ int chdir(const char *path)
 	{
 		/* build full path */
 		fullpath = full_path;
-#ifdef RT_USING_WORKDIR	
-		rt_sem_take(working_directory_lock, RT_WAITING_FOREVER);
+#ifdef DFS_USING_WORKDIR
+		dfs_lock();
 		build_fullpath(working_directory, path, fullpath);
 		strcpy(working_directory, fullpath);
-		rt_sem_release(working_directory_lock);
+		dfs_unlock();
 #endif		
 	}
 	else
 	{
-#ifdef RT_USING_WORKDIR	
-		rt_sem_take(working_directory_lock, RT_WAITING_FOREVER);
+#ifdef DFS_USING_WORKDIR
+		dfs_lock();
 		rt_strncpy(working_directory, path, strlen(path) + 1);
 		working_directory[strlen(path)] = '\0';
-		rt_sem_release(working_directory_lock);
+		dfs_unlock();
 #endif		
 	}
 	
@@ -554,10 +556,12 @@ int chdir(const char *path)
 */
 char* getcwd(char *buf, rt_size_t size)
 {
-#ifdef RT_USING_WORKDIR	
-	rt_sem_take(working_directory_lock, RT_WAITING_FOREVER);
+#ifdef DFS_USING_WORKDIR
+	dfs_lock();
 	rt_strncpy(buf, working_directory, size);
-	rt_sem_release(working_directory_lock);
+	dfs_unlock();
+#else
+	rt_kprintf("WARNING: not support working directory\n");
 #endif
 	return buf;
 }

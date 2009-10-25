@@ -32,16 +32,22 @@
 */
 int dfs_register(struct dfs_filesystem_operation* ops)
 {
-    int index;
+    int index, result;
 
-    rt_sem_take(filesystem_operation_table_lock, RT_WAITING_FOREVER);
+	result = 0;
+
+	/* lock filesystem */
+	dfs_lock();
 
     /* check if this filesystem was already registered */
     for (index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index++)
     {
         if (filesystem_operation_table[index] != RT_NULL &&
                 strcmp(filesystem_operation_table[index]->name, ops->name) == 0)
+        {
+        	result = -1;
             goto err;
+        }
     }
 
     /* find out an empty filesystem type entry */
@@ -49,17 +55,18 @@ int dfs_register(struct dfs_filesystem_operation* ops)
             index++) ;
 
     /* filesystem type table full */
-    if (index == DFS_FILESYSTEM_TYPES_MAX) goto err;
+    if (index == DFS_FILESYSTEM_TYPES_MAX)
+	{
+		result = -1;
+		goto err;
+    }
 
     /* save the filesystem's operations */
     filesystem_operation_table[index] = ops;
 
-    rt_sem_release(filesystem_operation_table_lock);
-    return 0;
-
 err:
-    rt_sem_release(filesystem_operation_table_lock);
-    return -1;
+	dfs_unlock();
+    return result;
 }
 
 /*
@@ -80,8 +87,8 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
     fs = RT_NULL;
     prefixlen = 0;
 
-    /* lock filesystem table */
-    rt_sem_take(filesystem_table_lock, RT_WAITING_FOREVER);
+    /* lock filesystem */
+	dfs_lock();
 
     /* lookup it in the filesystem table */
     for (index = 0; index < DFS_FILESYSTEMS_MAX + 1; index++)
@@ -97,7 +104,8 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
         }
     }
 
-    rt_sem_release(filesystem_table_lock);
+	dfs_unlock();
+
     return fs;
 }
 
@@ -191,7 +199,7 @@ int dfs_mount(const char* device_name, const char* path,
     struct dfs_filesystem_operation* ops;
     struct dfs_filesystem* fs;
     char *fullpath=RT_NULL;
-#ifdef RT_USING_WORKDIR
+#ifdef DFS_USING_WORKDIR
     char full_path[DFS_PATH_MAX + 1];
 #endif
     rt_device_t dev_id;
@@ -207,7 +215,7 @@ int dfs_mount(const char* device_name, const char* path,
     }
 
     /* find out specific filesystem */
-    rt_sem_take(filesystem_operation_table_lock, RT_WAITING_FOREVER);
+	dfs_lock();
     for ( index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index++ )
     {
         if (strcmp(filesystem_operation_table[index]->name, filesystemtype) == 0)break;
@@ -217,22 +225,22 @@ int dfs_mount(const char* device_name, const char* path,
     if ( index == DFS_FILESYSTEM_TYPES_MAX )
     {
         rt_set_errno(-DFS_STATUS_ENODEV);
-        rt_sem_release(filesystem_operation_table_lock);
+        dfs_unlock();
         return -1;
     }
     ops = filesystem_operation_table[index];
-    rt_sem_release(filesystem_operation_table_lock);
+    dfs_unlock();
 
     /* make full path for special file */
     fullpath = (char*)path;
     if ( fullpath[0] != '/') /* not an abstract path */
     {
-#ifdef RT_USING_WORKDIR
+#ifdef DFS_USING_WORKDIR
         /* build full path */
         fullpath = full_path;
-        rt_sem_take(working_directory_lock, RT_WAITING_FOREVER);
+        dfs_lock();
         build_fullpath(working_directory, path, fullpath);
-        rt_sem_release(working_directory_lock);
+        dfs_unlock();
 #else
         rt_set_errno(-DFS_STATUS_ENOTDIR);
         return -1;
@@ -253,7 +261,7 @@ int dfs_mount(const char* device_name, const char* path,
     }
 
     /* check whether the file system mounted or not */
-    rt_sem_take(filesystem_table_lock, RT_WAITING_FOREVER);
+	dfs_lock();
     for (index =0; index < DFS_FILESYSTEMS_MAX; index++)
     {
         if ( filesystem_table[index].ops != RT_NULL &&
@@ -279,19 +287,17 @@ int dfs_mount(const char* device_name, const char* path,
     fs->ops = ops;
     fs->dev_id = dev_id;
     /* release filesystem_table lock */
-    rt_sem_release(filesystem_table_lock);
+	dfs_unlock();
 
     /* open device, but do not check the status of device */
     rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR);
 
     if ( ops->mount == RT_NULL ) /* there is no mount implementation */
     {
-        rt_sem_take(filesystem_table_lock, RT_WAITING_FOREVER);
-
+    	dfs_lock();
         /* clear filesystem table entry */
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
-
-        rt_sem_release(filesystem_table_lock);
+		dfs_unlock();
 
         rt_set_errno(-DFS_STATUS_ENOSYS);
         return -1;
@@ -300,7 +306,7 @@ int dfs_mount(const char* device_name, const char* path,
     else if ( ops->mount(fs) < 0 )
     {
         /* mount failed */
-        rt_sem_take(filesystem_table_lock, RT_WAITING_FOREVER);
+		dfs_lock();
 
         /* close device */
         rt_device_close(fs->dev_id);
@@ -308,14 +314,14 @@ int dfs_mount(const char* device_name, const char* path,
         /* clear filesystem table entry */
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
-        rt_sem_release(filesystem_table_lock);
+		dfs_unlock();
         return -1;
     }
 
     return 0;
 
 err1:
-    rt_sem_release(filesystem_table_lock);
+    dfs_unlock();
     return -1;
 }
 
@@ -334,7 +340,7 @@ err1:
 int dfs_unmount(const char *specialfile)
 {
     char *fullpath;
-#ifdef RT_USING_WORKDIR
+#ifdef DFS_USING_WORKDIR
     char full_path[DFS_PATH_MAX + 1];
 #endif
     struct dfs_filesystem* fs = RT_NULL;
@@ -342,20 +348,20 @@ int dfs_unmount(const char *specialfile)
     fullpath = (char*)specialfile;
     if ( fullpath[0] != '/')
     {
-#ifdef RT_USING_WORKDIR
+#ifdef DFS_USING_WORKDIR
         /* build full path */
         fullpath = full_path;
-        rt_sem_take(working_directory_lock, RT_WAITING_FOREVER);
+		dfs_lock();
         build_fullpath(working_directory, specialfile, fullpath);
-        rt_sem_release(working_directory_lock);
+        dfs_unlock();
 #else
         rt_set_errno(-DFS_STATUS_ENOTDIR);
         return -1;
 #endif
     }
 
-    /* lock filesystem table */
-    rt_sem_take(filesystem_table_lock, RT_WAITING_FOREVER);
+    /* lock filesystem */
+    dfs_lock();
 
     fs = dfs_filesystem_lookup(fullpath);
     if (fs != RT_NULL && fs->ops->unmount != RT_NULL && fs->ops->unmount(fs) < 0)
@@ -369,11 +375,12 @@ int dfs_unmount(const char *specialfile)
     /* clear this filesystem table entry */
     rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
-    rt_sem_release(filesystem_table_lock);
+	dfs_unlock();
 
     return 0;
 
 err1:
-    rt_sem_release(filesystem_table_lock);
+	dfs_unlock();
+
     return -1;
 }
