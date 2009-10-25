@@ -303,6 +303,26 @@ rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context)
 
 /* file read/write public interface */
 #ifdef RT_USING_DFS_FILERW
+static int parse_mode(const char *mode)
+{
+  int f=0;
+ 
+  for (;;)
+  {
+    switch (*mode)
+	{
+    case 0: return f;
+    case 'b': break;
+    case 'r': f=O_RDONLY; break;
+    case 'w': f=O_WRONLY|O_CREAT|O_TRUNC; break;
+    case 'a': f=O_WRONLY|O_CREAT|O_APPEND; break;
+    case '+': f=(f&(~O_WRONLY))|O_RDWR; break;
+    }
+
+    ++mode;
+  }
+}
+
 struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode)
 {
 	int fd;
@@ -311,7 +331,7 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 	RT_ASSERT(filename != RT_NULL);
 
 	rw = RT_NULL;
-	fd = open(filename, mode, 0);
+	fd = open(filename, parse_mode(mode), 0);
 
 	if ( fd >= 0 )
 	{

@@ -191,6 +191,8 @@ static rt_bool_t rtgui_image_png_load(struct rtgui_image* image, struct rtgui_fi
 		png->line_pixels = rtgui_malloc(image->w * sizeof(rtgui_color_t));
 		png->pixels = RT_NULL;
 	}
+	
+	return RT_TRUE;
 }
 
 static void rtgui_image_png_unload(struct rtgui_image* image)

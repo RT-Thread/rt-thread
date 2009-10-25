@@ -14,6 +14,9 @@
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
 
+#include <string.h>	/* for strlen */
+#include <stdlib.h>	/* fir qsort  */
+
 void rtgui_dc_destory(struct rtgui_dc* dc)
 {
 	if (dc == RT_NULL) return;
@@ -408,7 +411,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const rt_uint8_t* text, struct rtg
 
 	rtgui_font_derefer(gb2312_font);
 #else
-	len = strlen(text);
+	len = strlen((const char*)text);
 	rtgui_font_draw(font, dc, text, len, &text_rect);
 #endif
 }
