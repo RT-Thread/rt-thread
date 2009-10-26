@@ -146,22 +146,34 @@ void tftp_put(const char* host, const char* filename)
 
 	do
 	{
+		rt_uint16_t *ptr;
+		ptr = (rt_uint16_t*)&tftp_buffer[0];
+
 		length = read(fd, &tftp_buffer[4], 512);
 		if (length > 0)
 		{
 			/* make opcode and block number */
-			tftp_buffer[0] = 0; tftp_buffer[1] = TFTP_DATA;
-			tftp_buffer[2] = block_number ; tftp_buffer[3] = block_number;
+			*ptr = TFTP_DATA; *(ptr + 1) = block_number;
 
 			lwip_sendto(sock_fd, tftp_buffer, length + 4, 0, 
-				(struct sockaddr *)&from_addr, fromlen);
+				(struct sockaddr *)&tftp_addr, fromlen);
 		}
+		else break; /* no data yet */
 
 		/* receive ack */
 		length = lwip_recvfrom(sock_fd, tftp_buffer, sizeof(tftp_buffer), 0, 
 			(struct sockaddr *)&from_addr, &fromlen);
 		if (length > 0)
 		{
+			if (*ptr == TFTP_ACK && *(ptr + 1) == block_number)
+			{
+				block_number ++;
+			}
+			else 
+			{
+				rt_kprintf("server respondes with an error\n");
+				break;
+			}
 		}
 	} while (length != 516);
 	
