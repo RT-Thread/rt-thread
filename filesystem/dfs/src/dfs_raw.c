@@ -208,7 +208,11 @@ int dfile_raw_open(struct dfs_fd* fd, const char *path, int flags)
 	}
 
 	fd->flags |= DFS_F_OPEN;
-	if ( flags & DFS_O_DIRECTORY ) fd->flags |= DFS_F_DIRECTORY;
+	if ( flags & DFS_O_DIRECTORY )
+	{
+		fd->type = FT_DIRECTORY;
+		fd->flags |= DFS_F_DIRECTORY;
+	}
 
 	dfs_log(DFS_DEBUG_INFO, ("open successful"));
 	return 0;

@@ -37,6 +37,13 @@ filesystems/efsl/src/fs/vfat/time.c
 filesystems/efsl/src/fs/vfat/ui.c
 """)
 
+# DFS-ELMFAT options
+elmfat = Split("""
+filesystems/elmfat/dfs_elm.c
+filesystems/elmfat/ff.c
+filesystems/elmfat/option/cc936.c
+""")
+
 # DFS-YAFFS2 options
 yaffs2_main = Split("""
 filesystems/yaffs2/direct/yaffscfg.c
@@ -68,6 +75,10 @@ if rtconfig.RT_USING_DFS_YAFFS2:
 if rtconfig.RT_USING_DFS_EFSL:
     src_local = src_local + efsl
     path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/include', RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/base/include', RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/fs/vfat/include']
+
+if rtconfig.RT_USING_DFS_ELMFAT:
+    src_local = src_local + elmfat
+    path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/elmfat']
 
 env.Append(CPPPATH = path)
 

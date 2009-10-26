@@ -133,9 +133,10 @@ struct dfs_stat
 #define stat dfs_stat
 
 /* File types */
-#define FT_REGULAR		0
-#define FT_SOCKET		1
-#define FT_DIRECTORY	2
+#define FT_REGULAR		0	/* regular file */
+#define FT_SOCKET		1	/* socket file  */
+#define FT_DIRECTORY	2	/* directory    */
+#define FT_USER			3	/* user defined */
 
 /* file descriptor */
 struct dfs_fd
