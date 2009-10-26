@@ -327,7 +327,7 @@ int dfile_raw_getdents(struct dfs_fd* fd, struct dfs_dirent* dirp, rt_size_t nby
 	struct dfs_filesystem* fs;
 
 	/* parameter check */
-	if (fd == RT_NULL || fd->type != FT_REGULAR) return -DFS_STATUS_EINVAL;
+	if (fd == RT_NULL || fd->type != FT_DIRECTORY) return -DFS_STATUS_EINVAL;
 
 	fs = (struct dfs_filesystem*) fd->fs;
 	if (fs->ops->getdents != RT_NULL) return fs->ops->getdents(fd, dirp, nbytes);

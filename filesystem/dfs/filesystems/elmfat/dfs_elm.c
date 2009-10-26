@@ -265,14 +265,18 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 	rt_uint32_t index;
 	struct dfs_dirent* d;
 
-	if (file->type != FT_DIRECTORY) return -DFS_STATUS_EBADF;
-
 	dir = (DIR*)(file->data);
 	RT_ASSERT(dir != RT_NULL);
 
 	/* make integer count */
 	count = (count / sizeof(struct dfs_dirent)) * sizeof(struct dfs_dirent);
 	if ( count == 0 ) return -DFS_STATUS_EINVAL;
+
+#if _USE_LFN
+	/* allocate long file name */
+	fno.lfname = rt_malloc(256);
+	fno.lfsize = 256;
+#endif
 
 	index = 0;
 	while (1)
@@ -294,14 +298,18 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 		if (fno.fattrib & AM_DIR) d->d_type &= DFS_DT_DIR;
 		else d->d_type &= DFS_DT_REG;
 
-		d->d_namlen = strlen(fn) - 1;
+		d->d_namlen = rt_strlen(fn) - 1;
 		d->d_reclen = (rt_uint16_t)sizeof(struct dfs_dirent);
-		strcpy(d->d_name, fn);
+		rt_strncpy(d->d_name, fn, rt_strlen(fn));
 
 		index ++;
 		if ( index * sizeof(struct dfs_dirent) >= count )
 			break;
 	}
+
+#if _USE_LFN
+	rt_free(fno.lfname);
+#endif
 
 	if (index == 0)
 		return elm_result_to_dfs(result);
@@ -330,6 +338,12 @@ int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *s
 	FILINFO file_info;
 	FRESULT result;
 
+#if _USE_LFN
+	/* allocate long file name */
+	file_info.lfname = rt_malloc(256);
+	file_info.lfsize = 256;
+#endif
+
 	result = f_stat(path, &file_info);
 	if (result == FR_OK)
 	{
@@ -342,13 +356,17 @@ int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *s
 		st->st_blksize = 512;
 	}
 
+#if _USE_LFN
+	rt_free(file_info.lfname);
+#endif
+
 	return elm_result_to_dfs(result);
 }
 
 static struct dfs_filesystem_operation dfs_elm;
 int elm_init(void)
 {
-	rt_strncpy(dfs_elm.name, "elmfat", DFS_FS_NAME_MAX);
+	rt_strncpy(dfs_elm.name, "elm", DFS_FS_NAME_MAX);
 
 	dfs_elm.mount 	= dfs_elm_mount;
 	dfs_elm.unmount = dfs_elm_unmount;
