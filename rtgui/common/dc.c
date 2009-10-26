@@ -17,6 +17,12 @@
 #include <string.h>	/* for strlen */
 #include <stdlib.h>	/* fir qsort  */
 
+/* for sin/cos etc */
+#include <math.h>
+#ifndef M_PI
+#define M_PI    3.14159265358979323846
+#endif
+
 void rtgui_dc_destory(struct rtgui_dc* dc)
 {
 	if (dc == RT_NULL) return;
@@ -34,24 +40,6 @@ void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
 
 	dc->draw_point(dc, x, y);
 }
-
-#if 0
-void rtgui_dc_draw_point_alpha(struct rtgui_dc* dc, int x, int y, rt_uint8_t alpha)
-{
-	if (dc == RT_NULL || alpha == 0xff) return;
-
-	if (dc->draw_point_alpha != RT_NULL)
-		dc->draw_point_alpha(dc, x, y, alpha);
-	else
-	{
-		rtgui_color_t color;
-
-		/* soft alpha bending */
-		color = dc->get_color(dc, int x, int y);
-		dc->draw_point(dc, x, y);
-	}
-}
-#endif
 
 /*
  * draw a vertical line on dc
@@ -140,199 +128,6 @@ void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 		}
 	}
 }
-
-#if 0
-/* AA Line */
-#define AAlevels 	256
-#define AAbits 		8
-
-int rtgui_dc_draw_line_aa(struct rtgui_dc* dc, rt_int16_t x1, rt_int16_t y1, rt_int16_t x2, rt_int16_t y2)
-{
-	Sint32 xx0, yy0, xx1, yy1;
-	int result;
-	rt_uint32_t intshift, erracc, erradj;
-	rt_uint32_t erracctmp, wgt, wgtcompmask;
-	int dx, dy, tmp, xdir, y0p1, x0pxdir;
-
-	/*
-	 * Keep on working with 32bit numbers
-	 */
-	xx0 = x1;
-	yy0 = y1;
-	xx1 = x2;
-	yy1 = y2;
-
-	/*
-	 * Reorder points if required
-	 */
-	if (yy0 > yy1)
-	{
-		tmp = yy0;
-		yy0 = yy1;
-		yy1 = tmp;
-		tmp = xx0;
-		xx0 = xx1;
-		xx1 = tmp;
-	}
-
-	/*
-	 * Calculate distance
-	 */
-	dx = xx1 - xx0;
-	dy = yy1 - yy0;
-
-	/*
-	 * Adjust for negative dx and set xdir
-	 */
-	if (dx >= 0)
-	{
-		xdir = 1;
-	}
-	else
-	{
-		xdir = -1;
-		dx = (-dx);
-	}
-
-	/*
-	 * Check for special cases
-	 */
-	if (dx == 0)
-	{
-		/*
-		 * Vertical line
-		 */
-		rtgui_dc_draw_vline(dc, x1, y1, y2);
-		return ;
-	}
-	else if (dy == 0)
-	{
-		/*
-		 * Horizontal line
-		 */
-		rtgui_dc_draw_hline(dc, x1, x2, y1);
-		return ;
-	}
-	else if (dx == dy)
-	{
-		/*
-		 * Diagonal line
-		 */
-		rtgui_dc_draw_line(dc, x1, y1, x2, y2);
-		return ;
-	}
-
-	/*
-	 * Zero accumulator
-	 */
-	erracc = 0;
-
-	/*
-	 * # of bits by which to shift erracc to get intensity level
-	 */
-	intshift = 32 - AAbits;
-	/*
-	 * Mask used to flip all bits in an intensity weighting
-	 */
-	wgtcompmask = AAlevels - 1;
-
-	/*
-	 * Draw the initial pixel in the foreground color
-	 */
-	rtgui_dc_draw_point(dc, x1, y1);
-
-	/*
-	 * x-major or y-major?
-	 */
-	if (dy > dx)
-	{
-		/*
-		 * y-major.  Calculate 16-bit fixed point fractional part of a pixel that
-		 * X advances every time Y advances 1 pixel, truncating the result so that
-		 * we won't overrun the endpoint along the X axis
-		 */
-		/*
-		 * Not-so-portable version: erradj = ((Uint64)dx << 32) / (Uint64)dy;
-		 */
-		erradj = ((dx << 16) / dy) << 16;
-
-		/*
-		 * draw all pixels other than the first and last
-		 */
-		x0pxdir = xx0 + xdir;
-		while (--dy)
-		{
-			erracctmp = erracc;
-			erracc += erradj;
-			if (erracc <= erracctmp)
-			{
-				/*
-				 * rollover in error accumulator, x coord advances
-				 */
-				xx0 = x0pxdir;
-				x0pxdir += xdir;
-			}
-			yy0++;		/* y-major so always advance Y */
-
-			/*
-			 * the AAbits most significant bits of erracc give us the intensity
-			 * weighting for this pixel, and the complement of the weighting for
-			 * the paired pixel.
-			 */
-			wgt = (erracc >> intshift) & 255;
-			rtgui_dc_draw_point_alpha (dc, xx0, yy0, 255 - wgt);
-			rtgui_dc_draw_point_alpha (dc, x0pxdir, yy0, wgt);
-		}
-	}
-	else
-	{
-
-		/*
-		 * x-major line.  Calculate 16-bit fixed-point fractional part of a pixel
-		 * that Y advances each time X advances 1 pixel, truncating the result so
-		 * that we won't overrun the endpoint along the X axis.
-		 */
-		/*
-		 * Not-so-portable version: erradj = ((Uint64)dy << 32) / (Uint64)dx;
-		 */
-		erradj = ((dy << 16) / dx) << 16;
-
-		/*
-		 * draw all pixels other than the first and last
-		 */
-		y0p1 = yy0 + 1;
-		while (--dx)
-		{
-
-			erracctmp = erracc;
-			erracc += erradj;
-			if (erracc <= erracctmp)
-			{
-				/*
-				 * Accumulator turned over, advance y
-				 */
-				yy0 = y0p1;
-				y0p1++;
-			}
-			xx0 += xdir;	/* x-major so always advance X */
-			/*
-			 * the AAbits most significant bits of erracc give us the intensity
-			 * weighting for this pixel, and the complement of the weighting for
-			 * the paired pixel.
-			 */
-			wgt = (erracc >> intshift) & 255;
-			rtgui_dc_draw_point_alpha (dc, xx0, yy0, 255 - wgt);
-			rtgui_dc_draw_point_alpha (dc, xx0, y0p1, wgt);
-		}
-	}
-
-	/*
-	 * Draw final pixel, always exactly intersected by the line and doesn't
-	 * need to be weighted.
-	 */
-	rtgui_dc_draw_point(dc, x2, y2);
-}
-#endif
 
 void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
@@ -942,6 +737,225 @@ void rtgui_dc_fill_circle(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_in
 	}
 	cx++;
     } while (cx <= cy);
+}
+
+void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
+{
+	rt_int16_t cx = 0;
+	rt_int16_t cy = r;
+	rt_int16_t ocx = (rt_int16_t) 0xffff;
+	rt_int16_t ocy = (rt_int16_t) 0xffff;
+	rt_int16_t df = 1 - r;
+	rt_int16_t d_e = 3;
+	rt_int16_t d_se = -2 * r + 5;
+	rt_int16_t xpcx, xmcx, xpcy, xmcy;
+	rt_int16_t ypcy, ymcy, ypcx, ymcx;
+	rt_uint8_t drawoct;
+	int startoct, endoct, oct, stopval_start, stopval_end;
+	double temp;
+
+	/* Sanity check radius */
+	if (r < 0) return ;
+	/* Special case for r=0 - draw a point */
+	if (r == 0) 
+	{
+		 rtgui_dc_draw_point(dc, x, y);
+		 return;
+	}
+
+	/* Fixup angles */
+	start = start % 360;
+	end = end % 360;
+
+	/*
+	* Draw arc 
+	*/
+
+	// Octant labelling
+	//      
+	//  \ 5 | 6 /
+	//   \  |  /
+	//  4 \ | / 7
+	//     \|/
+	//------+------ +x
+	//     /|\
+	//  3 / | \ 0
+	//   /  |  \
+	//  / 2 | 1 \
+	//      +y
+
+	drawoct = 0; // 0x00000000
+	// whether or not to keep drawing a given octant.
+	// For example: 0x00111100 means we're drawing in octants 2-5
+
+	// 0 <= start & end < 360; note that sometimes start > end - if so, arc goes back through 0.
+	while (start < 0) start += 360;
+	while (end < 0) end += 360;
+	start %= 360;
+	end %= 360;
+
+	// now, we find which octants we're drawing in.
+	startoct = start / 45;
+	endoct = end / 45;
+	oct = startoct - 1; // we increment as first step in loop
+
+	//stopval_start, stopval_end; // what values of cx to stop at.
+	do {
+		oct = (oct + 1) % 8;
+
+		if (oct == startoct)
+		{
+			// need to compute stopval_start for this octant.  Look at picture above if this is unclear
+			switch (oct) 
+			{
+			case 0:
+			case 3:
+				temp = sin(start * M_PI / 180);
+				break;
+			case 1:
+			case 6:
+				temp = cos(start * M_PI / 180);
+				break;
+			case 2:
+			case 5:
+				temp = -cos(start * M_PI / 180);
+				break;
+			case 4:
+			case 7:
+				temp = -sin(start * M_PI / 180);
+				break;
+			}
+			temp *= r;
+			stopval_start = (int)temp; // always round down.
+			// This isn't arbitrary, but requires graph paper to explain well.
+			// The basic idea is that we're always changing drawoct after we draw, so we
+			// stop immediately after we render the last sensible pixel at x = ((int)temp).
+
+			// and whether to draw in this octant initially
+			if (oct % 2) drawoct |= (1 << oct); // this is basically like saying drawoct[oct] = true, if drawoct were a bool array
+			else		 drawoct &= 255 - (1 << oct); // this is basically like saying drawoct[oct] = false
+		}
+
+		if (oct == endoct)
+		{
+			// need to compute stopval_end for this octant
+			switch (oct)
+			{
+			case 0:
+			case 3:
+				temp = sin(end * M_PI / 180);
+				break;
+			case 1:
+			case 6:
+				temp = cos(end * M_PI / 180);
+				break;
+			case 2:
+			case 5:
+				temp = -cos(end * M_PI / 180);
+				break;
+			case 4:
+			case 7:
+				temp = -sin(end * M_PI / 180);
+				break;
+			}
+			temp *= r;
+			stopval_end = (int)temp;
+
+			// and whether to draw in this octant initially
+			if (startoct == endoct)
+			{
+				// note:      we start drawing, stop, then start again in this case
+				// otherwise: we only draw in this octant, so initialize it to false, it will get set back to true
+				if (start > end)
+				{
+					// unfortunately, if we're in the same octant and need to draw over the whole circle, 
+					// we need to set the rest to true, because the while loop will end at the bottom.
+					drawoct = 255;
+				} 
+				else
+				{
+					drawoct &= 255 - (1 << oct);
+				}
+			} 
+			else if (oct % 2) drawoct &= 255 - (1 << oct);
+			else			  drawoct |= (1 << oct);
+		} else if (oct != startoct) { // already verified that it's != endoct
+			drawoct |= (1 << oct); // draw this entire segment
+		}
+	} while (oct != endoct);
+
+	// so now we have what octants to draw and when to draw them.  all that's left is the actual raster code.
+	do
+	{
+		ypcy = y + cy;
+		ymcy = y - cy;
+		if (cx > 0)
+		{
+			xpcx = x + cx;
+			xmcx = x - cx;
+			// always check if we're drawing a certain octant before adding a pixel to that octant.
+			if (drawoct & 4)  rtgui_dc_draw_point(dc, xmcx, ypcy); // drawoct & 4 = 22; drawoct[2]
+			if (drawoct & 2)  rtgui_dc_draw_point(dc, xpcx, ypcy);
+			if (drawoct & 32) rtgui_dc_draw_point(dc, xmcx, ymcy);
+			if (drawoct & 64) rtgui_dc_draw_point(dc, xpcx, ymcy);
+		}
+		else
+		{
+			if (drawoct & 6)  rtgui_dc_draw_point(dc, x, ypcy); // 4 + 2; drawoct[2] || drawoct[1]
+			if (drawoct & 96) rtgui_dc_draw_point(dc, x, ymcy); // 32 + 64
+		}
+
+		xpcy = x + cy;
+		xmcy = x - cy;
+		if (cx > 0 && cx != cy)
+		{
+			ypcx = y + cx;
+			ymcx = y - cx;
+			if (drawoct & 8)   rtgui_dc_draw_point(dc, xmcy, ypcx);
+			if (drawoct & 1)   rtgui_dc_draw_point(dc, xpcy, ypcx);
+			if (drawoct & 16)  rtgui_dc_draw_point(dc, xmcy, ymcx);
+			if (drawoct & 128) rtgui_dc_draw_point(dc, xpcy, ymcx);
+		}
+		else if (cx == 0)
+		{
+			if (drawoct & 24)  rtgui_dc_draw_point(dc, xmcy, y); // 8 + 16
+			if (drawoct & 129) rtgui_dc_draw_point(dc, xpcy, y); // 1 + 128
+		}
+
+		/*
+		* Update whether we're drawing an octant
+		*/
+		if (stopval_start == cx)
+		{
+			// works like an on-off switch because start & end may be in the same octant.
+			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);		
+			else drawoct |= (1 << startoct);
+		}
+		if (stopval_end == cx)
+		{
+			if (drawoct & (1 << endoct)) drawoct &= 255 - (1 << endoct);
+			else drawoct |= (1 << endoct);
+		}
+
+		/*
+		* Update pixels
+		*/
+		if (df < 0)
+		{
+			df += d_e;
+			d_e += 2;
+			d_se += 2;
+		}
+		else
+		{
+			df += d_se;
+			d_e += 2;
+			d_se += 4;
+			cy--;
+		}
+
+		cx++;
+	} while (cx <= cy);
 }
 
 void rtgui_dc_draw_ellipse(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry)
