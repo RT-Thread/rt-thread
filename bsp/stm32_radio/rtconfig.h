@@ -34,9 +34,6 @@
 /* Using Event*/
 #define RT_USING_EVENT
 
-/* Using Faset Event*/
-/* #define RT_USING_FASTEVENT */
-
 /* Using MailBox*/
 #define RT_USING_MAILBOX
 
@@ -73,10 +70,7 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
+#define FINSH_DEVICE_NAME   "uart1"
 
 /* SECTION: C++ support */
 /* Using C++ support*/
@@ -85,6 +79,8 @@
 /* #define RT_USING_RTGUI */
 
 #define RT_USING_DFS
+#define RT_USING_DFS_EFSL
+// #define RT_USING_DFS_ELMFAT
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			1
@@ -156,6 +152,7 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
+/* SECTION: RT-Thread/GUI */
 #define RT_USING_RTGUI
 
 #endif

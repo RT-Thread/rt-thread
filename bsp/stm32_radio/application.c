@@ -92,6 +92,7 @@ void rt_init_thread_entry(void *parameter)
     {
         /* init the device filesystem */
         dfs_init();
+#ifdef RT_USING_DFS_EFSL
         /* init the efsl filesystam*/
         efsl_init();
 
@@ -100,6 +101,16 @@ void rt_init_thread_entry(void *parameter)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
+#elif defined(RT_USING_DFS_ELMFAT)
+        /* init the elm FAT filesystam*/
+        elm_init();
+
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+#endif
     }
 #endif
 
