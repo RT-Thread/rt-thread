@@ -220,6 +220,8 @@ int dfs_elm_read(struct dfs_fd* file, void* buf, rt_size_t len)
 	RT_ASSERT(fd != RT_NULL);
 
 	result = f_read(fd, buf, len, &byte_read);
+	/* update position */
+	file->pos  = fd->fptr;
 	if (result == FR_OK) return byte_read;
 
 	return elm_result_to_dfs(result);
@@ -240,6 +242,8 @@ int dfs_elm_write(struct dfs_fd* file, const void* buf, rt_size_t len)
 	RT_ASSERT(fd != RT_NULL);
 
 	result = f_write(fd, buf, len, &byte_write);
+	/* update position */
+	file->pos  = fd->fptr;
 	if (result == FR_OK) return byte_write;
 
 	return elm_result_to_dfs(result);
@@ -286,7 +290,7 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 		d = dirp + index;
 
 		result = f_readdir(dir, &fno);
-		if (result != FR_OK) break;
+		if (result != FR_OK || fno.fname[0] == 0) break;
 
 #if _USE_LFN
 		fn = *fno.lfname? fno.lfname : fno.fname;
@@ -349,8 +353,17 @@ int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *s
 	{
 		/* convert to dfs stat structure */
 		st->st_dev   = 0;
-		if (file_info.fattrib & AM_DIR) st->st_mode  = FT_DIRECTORY;
-		else st->st_mode  = FT_REGULAR;
+
+		st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH | 
+		DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+		if (file_info.fattrib & AM_DIR) 
+		{
+			st->st_mode &= ~DFS_S_IFREG;
+			st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+		}
+		if (file_info.fattrib & AM_RDO)
+			st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
+
 		st->st_size  = file_info.fsize;
 		st->st_mtime = file_info.ftime;
 		st->st_blksize = 512;
