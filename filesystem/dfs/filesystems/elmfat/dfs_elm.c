@@ -302,9 +302,9 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 		if (fno.fattrib & AM_DIR) d->d_type &= DFS_DT_DIR;
 		else d->d_type &= DFS_DT_REG;
 
-		d->d_namlen = rt_strlen(fn) - 1;
+		d->d_namlen = rt_strlen(fn);
 		d->d_reclen = (rt_uint16_t)sizeof(struct dfs_dirent);
-		rt_strncpy(d->d_name, fn, rt_strlen(fn));
+		rt_strncpy(d->d_name, fn, rt_strlen(fn) + 1);
 
 		index ++;
 		if ( index * sizeof(struct dfs_dirent) >= count )

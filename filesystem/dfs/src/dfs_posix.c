@@ -9,7 +9,7 @@
 |------------------------------------------------------------------------------
 | Chang Logs:
 | Date           Author       Notes
-| 2009-05-27     Yi.qiu       The first version.                     
+| 2009-05-27     Yi.qiu       The first version.
 +------------------------------------------------------------------------------
 */
 #include <string.h>
@@ -20,10 +20,10 @@
 +------------------------------------------------------------------------------
 | Function    : open
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -56,10 +56,10 @@ int open(const char *file, int flags, int mode)
 +------------------------------------------------------------------------------
 | Function    : close
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -73,7 +73,7 @@ int close(int d)
 	result = dfile_raw_close(fd);
 	fd_put(fd);
 	fd_put(fd);
-	
+
 	if (result < 0)
 	{
 		rt_set_errno(result);
@@ -86,10 +86,10 @@ int close(int d)
 +------------------------------------------------------------------------------
 | Function    : read
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -97,7 +97,7 @@ int read(int fd, char *buf, int   len)
 {
 	int result;
 	struct dfs_fd* d;
-	
+
 	/* get the fd */
 	d  = fd_get(fd);
 
@@ -106,7 +106,7 @@ int read(int fd, char *buf, int   len)
 	{
 		rt_set_errno(result);
 		fd_put(d);
-		
+
 		return -1;
 	}
 
@@ -119,10 +119,10 @@ int read(int fd, char *buf, int   len)
 +------------------------------------------------------------------------------
 | Function    : write
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -139,7 +139,7 @@ int write(int fd, char *buf, int   len)
 	{
 		rt_set_errno(result);
 		fd_put(d);
-		
+
 		return -1;
 	}
 
@@ -152,10 +152,10 @@ int write(int fd, char *buf, int   len)
 +------------------------------------------------------------------------------
 | Function    : lseek
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -197,10 +197,10 @@ int lseek(int fd, int   offset, int   dir)
 +------------------------------------------------------------------------------
 | Function    : rename
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -221,10 +221,10 @@ int rename(const char* old, const char* new )
 +------------------------------------------------------------------------------
 | Function    : unlink
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -245,10 +245,10 @@ int unlink(const char *pathname)
 +------------------------------------------------------------------------------
 | Function    : stat
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -269,10 +269,10 @@ int stat(const char *file, struct dfs_stat *buf)
 +------------------------------------------------------------------------------
 | Function    : mkdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -284,7 +284,7 @@ int mkdir (const char *path, rt_uint16_t mode)
 
 	fd = fd_new();
 	d = fd_get(fd);
-	
+
 	result = dfile_raw_open(d, path, DFS_O_DIRECTORY | DFS_O_CREAT);
 	fd_put(d);
 	fd_put(d);
@@ -302,10 +302,10 @@ int mkdir (const char *path, rt_uint16_t mode)
 +------------------------------------------------------------------------------
 | Function    : rmdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -327,10 +327,10 @@ int rmdir(const char *pathname)
 +------------------------------------------------------------------------------
 | Function    : opendir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -356,7 +356,11 @@ DIR* opendir(const char* name)
 			dfile_raw_close(d);
 			fd_put(d);
 		}
-		else t->fd = fd;
+		else
+		{
+		    rt_memset(t, 0, sizeof(DIR));
+		    t->fd = fd;
+		}
 		fd_put(d);
 		return t;
 	}
@@ -373,10 +377,10 @@ DIR* opendir(const char* name)
 +------------------------------------------------------------------------------
 | Function    : readdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -384,7 +388,7 @@ struct dfs_dirent* readdir(DIR *d)
 {
 	int result;
 	struct dfs_fd* fd;
-	
+
 	fd = fd_get(d->fd);
 
 	if (!d->num || (d->cur += ((struct dfs_dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
@@ -410,10 +414,10 @@ struct dfs_dirent* readdir(DIR *d)
 +------------------------------------------------------------------------------
 | Function    : telldir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -433,17 +437,17 @@ rt_off_t telldir(DIR *d)
 +------------------------------------------------------------------------------
 | Function    : seekdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
 void seekdir(DIR *d, rt_off_t offset)
 {
 	struct dfs_fd* fd;
-	
+
 	fd = fd_get(d->fd);
 	if (dfile_raw_lseek(fd, offset) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
@@ -453,17 +457,17 @@ void seekdir(DIR *d, rt_off_t offset)
 +------------------------------------------------------------------------------
 | Function    : rewinddir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
 void rewinddir(DIR *d)
 {
 	struct dfs_fd* fd;
-	
+
 	fd = fd_get(d->fd);
 	if (dfile_raw_lseek(fd, 0) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
@@ -473,10 +477,10 @@ void rewinddir(DIR *d)
 +------------------------------------------------------------------------------
 | Function    : closedir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
@@ -504,17 +508,17 @@ int closedir(DIR* d)
 +------------------------------------------------------------------------------
 | Function    : chdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
 int chdir(const char *path)
 {
 	char* fullpath, full_path[DFS_PATH_MAX + 1];
-	
+
 	if(path == RT_NULL || rt_strlen(path) > DFS_PATH_MAX)
 		return -1;
 
@@ -528,7 +532,7 @@ int chdir(const char *path)
 		build_fullpath(working_directory, path, fullpath);
 		strcpy(working_directory, fullpath);
 		dfs_unlock();
-#endif		
+#endif
 	}
 	else
 	{
@@ -537,9 +541,9 @@ int chdir(const char *path)
 		rt_strncpy(working_directory, path, strlen(path) + 1);
 		working_directory[strlen(path)] = '\0';
 		dfs_unlock();
-#endif		
+#endif
 	}
-	
+
 	return 0;
 }
 
@@ -547,10 +551,10 @@ int chdir(const char *path)
 +------------------------------------------------------------------------------
 | Function    : chdir
 +------------------------------------------------------------------------------
-| Description : 
+| Description :
 |
-| Parameters  : 
-| Returns     : 
+| Parameters  :
+| Returns     :
 |
 +------------------------------------------------------------------------------
 */
