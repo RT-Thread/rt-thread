@@ -34,7 +34,7 @@ sys_sem_t sys_sem_new(u8_t count)
 #if SYS_DEBUG
 	{
 		struct rt_thread *thread;
-	
+
 		thread = rt_thread_self();
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create sem: %s \n",thread->name, tname));
 	}
@@ -51,7 +51,7 @@ void sys_sem_free(sys_sem_t sem)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete sem: %s \n",thread->name,
 			sem->parent.parent.name));
 	}
@@ -68,7 +68,7 @@ void sys_sem_signal(sys_sem_t sem)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Release signal: %s , %d\n",thread->name,
 			sem->parent.parent.name, sem->value));
 	}
@@ -91,7 +91,7 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Wait sem: %s , %d\n",thread->name,
 			sem->parent.parent.name, sem->value));
 	}
@@ -132,7 +132,7 @@ sys_mbox_t sys_mbox_new(int size)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create mbox: %s \n",thread->name, tname));
 	}
 #endif
@@ -148,7 +148,7 @@ void sys_mbox_free(sys_mbox_t mbox)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete mbox: %s\n",thread->name,
 			mbox->parent.parent.name));
 	}
@@ -165,7 +165,7 @@ void sys_mbox_post(sys_mbox_t mbox, void *msg)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n",thread->name,
 			mbox->parent.parent.name, (rt_uint32_t)msg));
 	}
@@ -182,7 +182,7 @@ err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n",thread->name,
 			mbox->parent.parent.name, (rt_uint32_t)msg));
 	}
@@ -220,7 +220,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n",thread->name,
 			mbox->parent.parent.name, *(rt_uint32_t **)msg));
 	}
@@ -249,7 +249,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-	
+
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n",thread->name,
 			mbox->parent.parent.name, *(rt_uint32_t **)msg));
 	}
@@ -314,6 +314,7 @@ void sys_arch_unprotect(sys_prot_t pval)
 
 void sys_arch_assert(const char* file, int line)
 {
-	rt_kprintf("Assertion: %d in %s\n", line, file);
+	rt_kprintf("\nAssertion: %d in %s, thread %s\n", line, file,
+        rt_thread_self()->name);
 	RT_ASSERT(0);
 }

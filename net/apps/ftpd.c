@@ -1,8 +1,7 @@
-#include <rtthread.h>
-
 #include <string.h>
 #include <stdlib.h>
 
+#include <rtthread.h>
 #include <dfs_posix.h>
 #include <lwip/sockets.h>
 
@@ -107,7 +106,7 @@ int build_full_path(struct ftp_session* session, char* path, char* new_path, siz
 		strcpy(new_path, path);
 	else
 	{
-		rt_sprintf(new_path, "%s\\%s", session->currentdir, path);
+		rt_sprintf(new_path, "%s/%s", session->currentdir, path);
 	}
 
 	return 0;
@@ -115,8 +114,8 @@ int build_full_path(struct ftp_session* session, char* path, char* new_path, siz
 
 void ftpd_thread_entry(void* parameter)
 {
-	int sockfd;
 	int numbytes;
+	int sockfd, maxfdp1;
 	struct sockaddr_in local;
 	fd_set readfds, tmpfds;
 	struct ftp_session* session;
@@ -143,8 +142,21 @@ void ftpd_thread_entry(void* parameter)
 	FD_SET(sockfd, &readfds);
 	for(;;)
 	{
+	    /* get maximum fd */
+	    maxfdp1 = sockfd + 1;
+        session = session_list;
+	    while (session != RT_NULL)
+	    {
+	        if (maxfdp1 < session->sockfd + 1)
+                maxfdp1 = session->sockfd + 1;
+
+            FD_SET(session->sockfd, &readfds);
+            session = session->next;
+	    }
+
 		tmpfds=readfds;
-		select(0, &tmpfds, 0, 0, 0);
+		if (select(maxfdp1, &tmpfds, 0, 0, 0) == 0) continue;
+
 		if(FD_ISSET(sockfd, &tmpfds))
 		{
 			int com_socket;
@@ -199,7 +211,7 @@ void ftpd_thread_entry(void* parameter)
 							closesocket(session->sockfd);
 							ftp_close_session(session);
 						}
-					}					
+					}
 				}
 
 				session = next;
@@ -222,7 +234,7 @@ int do_list(char* directory, int sockfd)
 #endif
 
 	dirp = opendir(directory);
-	if (dirp == NULL) 
+	if (dirp == NULL)
 	{
 		line_length = rt_sprintf(line_buffer, "500 Internal Error\r\n");
 		send(sockfd, line_buffer, line_length, 0);
@@ -258,24 +270,24 @@ int do_simple_list(char* directory, int sockfd)
 	DIR* dirp;
 	struct dirent* entry;
 	char line_buffer[256], line_length;
-	
+
 	dirp = opendir(directory);
-	if (dirp == NULL) 
+	if (dirp == NULL)
 	{
 		line_length = rt_sprintf(line_buffer, "500 Internal Error\r\n");
 		send(sockfd, line_buffer, line_length, 0);
 		return -1;
 	}
-	
+
 	while (1)
 	{
 		entry = readdir(dirp);
 		if (entry == NULL) break;
-		
+
 		line_length = rt_sprintf(line_buffer, "%s\r\n", entry->d_name);
 		send(sockfd, line_buffer, line_length, 0);
 	}
-	
+
 	return 0;
 }
 
@@ -354,7 +366,7 @@ int ftp_process_request(struct ftp_session* session, char *buf)
 	else if(str_begin_with(buf, "PASS")==0)
 	{
 		rt_kprintf("%s sent password \"%s\"\n", inet_ntoa(session->remote.sin_addr), parameter_ptr);
-		if (strcmp(parameter_ptr, FTP_PASSWORD)==0 || 
+		if (strcmp(parameter_ptr, FTP_PASSWORD)==0 ||
 			session->is_anonymous == RT_TRUE)
 		{
 			// password correct
@@ -566,7 +578,7 @@ err1:
 		int file_size;
 
 		build_full_path(session, parameter_ptr, filename, 256);
-		
+
 		file_size = ftp_get_filesize(filename);
 		if( file_size == -1)
 		{
@@ -600,7 +612,7 @@ err1:
 	}
 	else if(str_begin_with(buf, "CDUP")==0)
 	{
-		rt_sprintf(filename, "%s\\%s", session->currentdir, "..");
+		rt_sprintf(filename, "%s/%s", session->currentdir, "..");
 
 		rt_sprintf(sbuf, "250 Changed to directory \"%s\"\r\n", filename);
 		send(session->sockfd, sbuf, strlen(sbuf), 0);
@@ -738,13 +750,13 @@ void ftpd_start()
 {
 	rt_thread_t tid;
 
-	tid = rt_thread_create("ftp", 
+	tid = rt_thread_create("ftpd",
 		ftpd_thread_entry, RT_NULL,
-		1024, 30, 5);
+		4096, 30, 5);
 	if (tid != RT_NULL) rt_thread_startup(tid);
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(ftpd_start, start ftp server);
+FINSH_FUNCTION_EXPORT(ftpd_start, start ftp server)
 #endif
