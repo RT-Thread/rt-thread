@@ -305,4 +305,7 @@
 
 #endif /* PPP_SUPPORT */
 
+/* no read/write/close for socket */
+#define LWIP_POSIX_SOCKETS_IO_NAMES	0
+
 #endif /* __LWIPOPTS_H__ */
