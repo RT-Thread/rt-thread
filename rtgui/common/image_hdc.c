@@ -1,100 +1,42 @@
 #include "libpng/png.h"
 #include <rtthread.h>
-#include <rtgui/image_png.h>
+#include <rtgui/image_hdc.h>
 #include <rtgui/rtgui_system.h>
 
-#define PNG_MAGIC_LEN       8
+#define HDC_MAGIC_LEN       4
 
-struct rtgui_image_png
+struct rtgui_image_hdc
 {
 	rt_bool_t is_loaded;
 
 	struct rtgui_filerw* filerw;
 
-	/* png image information */
-	png_structp png_ptr;
-	png_infop info_ptr;
+	/* hdc image information */
+    rt_uint32_t width, height;
+    rt_uint32_t pitch;
 
 	rt_uint8_t *pixels;
 };
 
-static rt_bool_t rtgui_image_png_check(struct rtgui_filerw* file);
-static rt_bool_t rtgui_image_png_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load);
-static void rtgui_image_png_unload(struct rtgui_image* image);
-static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect);
+static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file);
+static rt_bool_t rtgui_image_hdc_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load);
+static void rtgui_image_hdc_unload(struct rtgui_image* image);
+static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect);
 
-struct rtgui_image_engine rtgui_image_png_engine =
+struct rtgui_image_engine rtgui_image_hdc_engine =
 {
-	"png",
+	"hdc",
 	{ RT_NULL },
-	rtgui_image_png_check,
-	rtgui_image_png_load,
-	rtgui_image_png_unload,
-	rtgui_image_png_blit
+	rtgui_image_hdc_check,
+	rtgui_image_hdc_load,
+	rtgui_image_hdc_unload,
+	rtgui_image_hdc_blit
 };
 
-static void rtgui_image_png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
-{
-	struct rtgui_filerw* filerw = (struct rtgui_filerw*)png_ptr->io_ptr;
-
-	rtgui_filerw_read(filerw, data, length, 1);
-}
-
-static rt_bool_t rtgui_image_png_process(png_structp png_ptr, png_infop info_ptr, struct rtgui_image_png* png)
-{
-    int x, y;
-    png_bytep row;
-    png_bytep data;
-    rtgui_color_t *ptr;
-
-	row = (png_bytep) rtgui_malloc (png_get_rowbytes(png_ptr, info_ptr));
-	if (row == RT_NULL) return RT_FALSE;
-
-    ptr = (rtgui_color_t *)png->pixels;
-
-    switch (info_ptr->color_type)
-    {
-        case PNG_COLOR_TYPE_RGBA:
-            for (y = 0; y < info_ptr->height; y++)
-            {
-				png_read_row(png_ptr, row, png_bytep_NULL);
-                for (x = 0; x < info_ptr->width; x++)
-                {
-                    data = &(row[x * 4]);
-
-                    ptr[x+y*info_ptr->width] = RTGUI_ARGB((255 - data[3]), data[0], data[1], data[2]);
-                }
-            }
-
-            break;
-
-        case PNG_COLOR_TYPE_PALETTE:
-            for (y = 0; y < info_ptr->height; y++)
-            {
-				png_read_row(png_ptr, row, png_bytep_NULL);
-                for (x = 0; x < info_ptr->width; x++)
-                {
-                    data = &(row[x]);
-
-					ptr[x] = RTGUI_ARGB(0, info_ptr->palette[data[0]].red,
-						info_ptr->palette[data[0]].green,
-						info_ptr->palette[data[0]].blue);
-                }
-            }
-
-        default:
-            break;
-    };
-
-    rtgui_free(row);
-
-    return RT_TRUE;
-}
-
-static rt_bool_t rtgui_image_png_check(struct rtgui_filerw* file)
+static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file)
 {
 	int start;
-	rt_bool_t is_PNG;
+	rt_bool_t is_HDC;
 	rt_uint8_t magic[4];
 
 	if ( !file ) return 0;
@@ -104,57 +46,35 @@ static rt_bool_t rtgui_image_png_check(struct rtgui_filerw* file)
 	/* move to the begining of file */
 	rtgui_filerw_seek(file, 0, SEEK_SET);
 
-	is_PNG = RT_FALSE;
+	is_HDC = RT_FALSE;
 	if ( rtgui_filerw_read(file, magic, 1, sizeof(magic)) == sizeof(magic) )
 	{
-		if ( magic[0] == 0x89 &&
-				magic[1] == 'P' &&
-				magic[2] == 'N' &&
-				magic[3] == 'G' )
+		if ( magic[0] == 'H' &&
+				magic[1] == 'D' &&
+				magic[2] == 'C' &&
+				magic[3] == '\0' )
 		{
-			is_PNG = RT_TRUE;
+			is_HDC = RT_TRUE;
 		}
 	}
 	rtgui_filerw_seek(file, start, SEEK_SET);
 
-	return(is_PNG);
+	return(is_HDC);
 }
 
-static rt_bool_t rtgui_image_png_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load)
+static rt_bool_t rtgui_image_hdc_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load)
 {
-	png_uint_32 width;
-	png_uint_32 height;
-	int bit_depth;
-	int color_type;
-	double gamma;
-	struct rtgui_image_png* png;
+    rt_uint32_t header[5];
+    struct rtgui_image_hdc* hdc;
 
-	png = (struct rtgui_image_png*) rtgui_malloc(sizeof(struct rtgui_image_png));
-	png->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (png->png_ptr == RT_NULL)
-	{
-		rtgui_free(png);
-		return RT_FALSE;
-	}
+    hdc = (struct rtgui_image_hdc*) rtgui_malloc(sizeof(struct rtgui_image_hdc));
+    if (hdc == RT_NULL) return RT_FALSE;
 
-	png->info_ptr = png_create_info_struct(png->png_ptr);
-	if (png->info_ptr == RT_NULL)
-	{
-		png_destroy_read_struct(&png->png_ptr, NULL, NULL);
-		rtgui_free(png);
-		return RT_FALSE;
-	}
-
-	png->filerw = file;
-	png_set_read_fn (png->png_ptr, png->filerw, rtgui_image_png_read_data);
-
-	png_read_info(png->png_ptr, png->info_ptr);
-	png_get_IHDR(png->png_ptr, png->info_ptr, &width, &height, &bit_depth,
-		&color_type, NULL, NULL, NULL);
+    rtgui_filerw_read(file, (char*)&header, 1, sizeof(header));
 
 	/* set image information */
-	image->w = width; image->h = height;
-	image->engine = &rtgui_image_png_engine;
+	image->w = header[1]; image->h = header[2];
+	image->engine = &rtgui_image_hdc_engine;
 	image->data = png;
 
 	if (bit_depth == 16)
@@ -194,7 +114,7 @@ static rt_bool_t rtgui_image_png_load(struct rtgui_image* image, struct rtgui_fi
             return RT_FALSE;
 		}
 
-		rtgui_image_png_process(png->png_ptr, png->info_ptr, png);
+		rtgui_image_hdc_process(png->png_ptr, png->info_ptr, png);
 	}
 	else
 	{
@@ -204,13 +124,13 @@ static rt_bool_t rtgui_image_png_load(struct rtgui_image* image, struct rtgui_fi
 	return RT_TRUE;
 }
 
-static void rtgui_image_png_unload(struct rtgui_image* image)
+static void rtgui_image_hdc_unload(struct rtgui_image* image)
 {
-	struct rtgui_image_png* png;
+	struct rtgui_image_hdc* png;
 
 	if (image != RT_NULL)
 	{
-		png = (struct rtgui_image_png*) image->data;
+		png = (struct rtgui_image_hdc*) image->data;
 
 		png_read_end(png->png_ptr, RT_NULL);
 
@@ -225,17 +145,17 @@ static void rtgui_image_png_unload(struct rtgui_image* image)
 	}
 }
 
-static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect)
+static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
 	rt_uint16_t x, y, w, h;
 	rtgui_color_t* ptr;
 	rtgui_color_t foreground;
-	struct rtgui_image_png* png;
+	struct rtgui_image_hdc* png;
 
 	RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
 	RT_ASSERT(image->data != RT_NULL);
 
-	png = (struct rtgui_image_png*) image->data;
+	png = (struct rtgui_image_hdc*) image->data;
 
     if (image->w < rtgui_rect_width(*rect)) w = image->w;
     else w = rtgui_rect_width(*rect);
@@ -318,8 +238,8 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	rtgui_dc_set_color(dc, foreground);
 }
 
-void rtgui_image_png_init()
+void rtgui_image_hdc_init()
 {
 	/* register png on image system */
-	rtgui_image_register_engine(&rtgui_image_png_engine);
+	rtgui_image_register_engine(&rtgui_image_hdc_engine);
 }

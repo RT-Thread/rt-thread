@@ -743,8 +743,6 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 {
 	rt_int16_t cx = 0;
 	rt_int16_t cy = r;
-	rt_int16_t ocx = (rt_int16_t) 0xffff;
-	rt_int16_t ocy = (rt_int16_t) 0xffff;
 	rt_int16_t df = 1 - r;
 	rt_int16_t d_e = 3;
 	rt_int16_t d_se = -2 * r + 5;
