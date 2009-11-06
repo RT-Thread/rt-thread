@@ -40,6 +40,15 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 void rt_object_delete(rt_object_t object);
 rt_object_t rt_object_find(enum rt_object_class_type type, const char* name);
 rt_err_t rt_object_is_systemobject(rt_object_t object);
+
+#ifdef RT_USING_HOOK
+void rt_object_attach_sethook(void (*hook)(struct rt_object* object));
+void rt_object_detach_sethook(void (*hook)(struct rt_object* object));
+void rt_object_trytake_sethook(void (*hook)(struct rt_object* object));
+void rt_object_take_sethook(void (*hook)(struct rt_object* object));
+void rt_object_put_sethook(void (*hook)(struct rt_object* object));
+#endif
+
 /*@}*/
 
 /**
@@ -67,6 +76,10 @@ rt_err_t rt_timer_delete(rt_timer_t timer);
 rt_err_t rt_timer_start(rt_timer_t timer);
 rt_err_t rt_timer_stop(rt_timer_t timer);
 rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg);
+
+#ifdef RT_USING_HOOK
+void rt_timer_timeout_sethook(void (*hook)(struct rt_timer* timer));
+#endif
 /*@}*/
 
 /**
@@ -97,11 +110,6 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void* parameter);
-
-#ifdef RT_USING_HOOK
-void rt_thread_suspend_hook(void (*hook)(rt_thread_t thread));
-void rt_thread_resume_hook (void (*hook)(rt_thread_t thread));
-#endif
 
 /*
  * idle thread interface
