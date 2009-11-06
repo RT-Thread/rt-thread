@@ -68,6 +68,7 @@
 
 /* SECTION: device filesystem */
 #define RT_USING_DFS
+#define RT_USING_DFS_EFSL
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
