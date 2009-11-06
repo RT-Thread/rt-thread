@@ -13,6 +13,8 @@ Group (Filesystem)
 Group (LwIP)
 Group (mp3)
 Group (RTGUI)
+Group (libpng)
+Group (libz)
 
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
@@ -31,12 +33,13 @@ File 1,1,<.\fsmc_sram.c><fsmc_sram.c>
 File 1,1,<.\fmt0371\fmt0371.c><fmt0371.c>
 File 1,1,<.\http.c><http.c>
 File 1,1,<.\lcd.c><lcd.c>
-File 1,1,<..\..\net\apps\tcpecho.c><tcpecho.c>
-File 1,1,<..\..\net\apps\udpecho.c><udpecho.c>
 File 1,1,<.\mp3.c><mp3.c>
 File 1,1,<.\wav.c><wav.c>
 File 1,1,<.\netbuffer.c><netbuffer.c>
 File 1,1,<.\gui.c><gui.c>
+File 1,1,<.\key.c><key.c>
+File 1,1,<.\info.c><info.c>
+File 1,1,<.\today.c><today.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\ipc.c><ipc.c>
@@ -99,12 +102,7 @@ File 7,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
 File 7,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
 File 7,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
 File 7,1,<..\..\filesystem\dfs\src\dfs_util.c><dfs_util.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
 File 7,1,<..\..\filesystem\dfs\src\dfs_posix.c><dfs_posix.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c><dir.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c><fat.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c><file.c>
@@ -112,6 +110,11 @@ File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c><fs.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c><ls.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c><time.c>
 File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c><ui.c>
+File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c>
+File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c>
+File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c>
+File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c>
+File 7,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
 File 8,1,<..\..\net\lwip\src\core\dhcp.c><dhcp.c>
 File 8,1,<..\..\net\lwip\src\core\dns.c><dns.c>
 File 8,1,<..\..\net\lwip\src\core\init.c><init.c>
@@ -195,6 +198,32 @@ File 10,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
 File 10,1,<..\..\rtgui\server\mouse.c><mouse.c>
 File 10,1,<..\..\rtgui\server\topwin.c><topwin.c>
 File 10,1,<..\..\rtgui\common\caret.c><caret.c>
+File 10,1,<..\..\rtgui\common\image_png.c><image_png.c>
+File 11,1,<..\..\rtgui\common\libpng\pngwutil.c><pngwutil.c>
+File 11,1,<..\..\rtgui\common\libpng\png.c><png.c>
+File 11,1,<..\..\rtgui\common\libpng\pngerror.c><pngerror.c>
+File 11,1,<..\..\rtgui\common\libpng\pnggccrd.c><pnggccrd.c>
+File 11,1,<..\..\rtgui\common\libpng\pngget.c><pngget.c>
+File 11,1,<..\..\rtgui\common\libpng\pngmem.c><pngmem.c>
+File 11,1,<..\..\rtgui\common\libpng\pngpread.c><pngpread.c>
+File 11,1,<..\..\rtgui\common\libpng\pngread.c><pngread.c>
+File 11,1,<..\..\rtgui\common\libpng\pngrio.c><pngrio.c>
+File 11,1,<..\..\rtgui\common\libpng\pngrtran.c><pngrtran.c>
+File 11,1,<..\..\rtgui\common\libpng\pngrutil.c><pngrutil.c>
+File 11,1,<..\..\rtgui\common\libpng\pngset.c><pngset.c>
+File 11,1,<..\..\rtgui\common\libpng\pngtrans.c><pngtrans.c>
+File 11,1,<..\..\rtgui\common\libpng\pngvcrd.c><pngvcrd.c>
+File 11,1,<..\..\rtgui\common\libpng\pngwio.c><pngwio.c>
+File 11,1,<..\..\rtgui\common\libpng\pngwrite.c><pngwrite.c>
+File 11,1,<..\..\rtgui\common\libpng\pngwtran.c><pngwtran.c>
+File 12,1,<..\..\rtgui\common\libz\zutil.c><zutil.c>
+File 12,1,<..\..\rtgui\common\libz\adler32.c><adler32.c>
+File 12,1,<..\..\rtgui\common\libz\crc32.c><crc32.c>
+File 12,1,<..\..\rtgui\common\libz\infback.c><infback.c>
+File 12,1,<..\..\rtgui\common\libz\inffast.c><inffast.c>
+File 12,1,<..\..\rtgui\common\libz\inflate.c><inflate.c>
+File 12,1,<..\..\rtgui\common\libz\inftrees.c><inftrees.c>
+File 12,1,<..\..\rtgui\common\libz\uncompr.c><uncompr.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32 Radio'
@@ -255,7 +284,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  ADSCMISC ()
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()
- ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include)
+ ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include;..\..\rtgui\common\libz)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
@@ -331,7 +360,58 @@ Options 1,10,0  // Group 'RTGUI'
  ADSAINCD ()
 EndOpt
 
-Options 1,1,23  // File 'gui.c'
+Options 1,1,21  // File 'gui.c'
+ PropFld { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (--gnu)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+EndOpt
+
+Options 1,1,22  // File 'key.c'
+ PropFld { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (--gnu)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+EndOpt
+
+Options 1,1,23  // File 'info.c'
+ PropFld { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (--gnu)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+EndOpt
+
+Options 1,1,24  // File 'today.c'
  PropFld { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  IncBld=2
  AlwaysBuild=2
