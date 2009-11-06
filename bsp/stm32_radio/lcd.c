@@ -40,14 +40,14 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
     unsigned short p;
 
 	/* get color pixel */
-	p = rtgui_color_to_565(*c);
+	p = rtgui_color_to_565p(*c);
 
 	/* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
-	
+
 	/* set Y point */
-    LCD_ADDR = 0x03; 
+    LCD_ADDR = 0x03;
     LCD_DATA16(y);
 
 	/* write pixel */
@@ -57,17 +57,21 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 
 void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
+    unsigned short p;
+
 	/* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
 
 	/* set Y point */
-    LCD_ADDR = 0x03; 
+    LCD_ADDR = 0x03;
     LCD_DATA16( y );
 
 	/* read pixel */
 	LCD_ADDR = 0x0F;
-	LCD_DATA16_READ(*c);
+	LCD_DATA16_READ(p);
+
+	*c = rtgui_color_from_565p(p);
 }
 
 void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
@@ -82,13 +86,13 @@ void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_
     LCD_DATA = x1;
 
 	/* set Y point */
-    LCD_ADDR = 0x03; 
+    LCD_ADDR = 0x03;
     LCD_DATA16( y );
 
 	/* write pixel */
     LCD_ADDR = 0x0E;
-	while (x1 < x2) 
-	{ 
+	while (x1 < x2)
+	{
 		LCD_DATA16(p);
 		x1 ++;
 	}
@@ -108,7 +112,7 @@ void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t
 	while(y1 < y2)
 	{
 		/* set Y point */
-		LCD_ADDR = 0x03; 
+		LCD_ADDR = 0x03;
 		LCD_DATA16( y1 );
 
 		/* write pixel */

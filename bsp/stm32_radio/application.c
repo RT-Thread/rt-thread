@@ -46,44 +46,6 @@
 #include <rtgui/rtgui_system.h>
 #endif
 
-/*
-key_enter   PA0
-key_down    PA1
-key_up      PA2
-key_right   PC2
-key_left    PC3
-*/
-#define key_enter_GETVALUE()  GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)
-#define key_down_GETVALUE()   GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_1)
-#define key_up_GETVALUE()     GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_2)
-#define key_right_GETVALUE()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_2)
-#define key_left_GETVALUE()   GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_3)
-
-void rt_key_entry(void *parameter)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC,ENABLE);
-
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2;
-    GPIO_Init(GPIOA,&GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2 | GPIO_Pin_3;
-    GPIO_Init(GPIOC,&GPIO_InitStructure);
-
-    while (1)
-    {
-        if ( key_enter_GETVALUE() == 0 )rt_kprintf("key_enter\r\n");
-        if ( key_down_GETVALUE()  == 0 )rt_kprintf("key_down\r\n");
-        if ( key_up_GETVALUE()    == 0 )rt_kprintf("key_up\r\n");
-        if ( key_right_GETVALUE() == 0 )rt_kprintf("key_right\r\n");
-        if ( key_left_GETVALUE()  == 0 )rt_kprintf("key_left\r\n");
-        rt_thread_delay(20);
-    }
-}
-
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -153,6 +115,9 @@ void rt_init_thread_entry(void *parameter)
 		rtgui_panel_register("main", &rect);
 
 		rt_hw_lcd_init();
+
+		info_init();
+		today_init();
 	}
 #endif
 }
@@ -174,14 +139,8 @@ int rt_application_init()
 #endif
     if (init_thread != RT_NULL) rt_thread_startup(init_thread);
 
-    /* create keypad thread */
-    {
-        rt_thread_t key_tid;
-        key_tid = rt_thread_create("key",
-                                   rt_key_entry, RT_NULL,
-                                   512, 30, 5);
-        if (key_tid != RT_NULL) rt_thread_startup(key_tid);
-    }
+	rt_hw_key_init();
+
     return 0;
 }
 

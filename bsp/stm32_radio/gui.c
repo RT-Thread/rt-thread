@@ -182,8 +182,8 @@ static void rtgui_demo_workbench_entry(void* parameter)
 		struct rtgui_box *box = rtgui_box_create(RTGUI_VERTICAL, &rtgui_empty_rect);
 		struct rtgui_box *hbox = rtgui_box_create(RTGUI_HORIZONTAL, &rtgui_empty_rect);
 		struct rtgui_button* button = rtgui_button_create("OK");
-		struct rtgui_textbox *textbox = rtgui_textbox_create("±à¼­¿ò");
-		struct rtgui_iconbox *iconbox = rtgui_iconbox_create(image, "Í¼±ê",
+		struct rtgui_textbox *textbox = rtgui_textbox_create("text edit box");
+		struct rtgui_iconbox *iconbox = rtgui_iconbox_create(image, "icon",
 			RTGUI_ICONBOX_TEXT_RIGHT);
 
 		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = RTGUI_RGB(255, 255, 224);

@@ -138,7 +138,7 @@ void rt_hw_timer_handler(void)
 /**
  * This function will initial STM32 Radio board.
  */
- extern void FSMC_SRAM_Init(void);
+extern void FSMC_SRAM_Init(void);
 void rt_hw_board_init()
 {
     NAND_IDTypeDef NAND_ID;
