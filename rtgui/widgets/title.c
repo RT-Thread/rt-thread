@@ -21,6 +21,12 @@ static void _rtgui_wintitle_constructor(rtgui_wintitle_t* wintitle)
 	RTGUI_WIDGET(wintitle)->flag = RTGUI_WIDGET_FLAG_DEFAULT;
 }
 
+static void _rtgui_wintitle_deconstructor(rtgui_wintitle_t* wintitle)
+{
+	rt_free(wintitle->title);
+	wintitle->title = RT_NULL;
+}
+
 rtgui_type_t* rtgui_wintitle_type_get()
 {
 	static rtgui_type_t *wintitle_type = RT_NULL;
@@ -28,7 +34,9 @@ rtgui_type_t* rtgui_wintitle_type_get()
 	if (!wintitle_type)
 	{
 		wintitle_type = rtgui_type_create("wintitle", RTGUI_TOPLEVEL_TYPE,
-			sizeof(rtgui_wintitle_t), RTGUI_CONSTRUCTOR(_rtgui_wintitle_constructor), RT_NULL);
+			sizeof(rtgui_wintitle_t), 
+			RTGUI_CONSTRUCTOR(_rtgui_wintitle_constructor), 
+			RTGUI_DESTRUCTOR(_rtgui_wintitle_deconstructor));
 	}
 
 	return wintitle_type;

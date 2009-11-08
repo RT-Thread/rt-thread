@@ -35,6 +35,21 @@ static void _rtgui_button_constructor(rtgui_button_t *button)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(button)) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
+static void _rtgui_button_destructor(rtgui_button_t *button)
+{
+	if (button->pressed_image != RT_NULL)
+	{
+		rtgui_image_destroy(button->pressed_image);
+		button->pressed_image = RT_NULL;
+	}
+
+	if (button->unpressed_image != RT_NULL)
+	{
+		rtgui_image_destroy(button->unpressed_image);
+		button->unpressed_image = RT_NULL;
+	}
+}
+
 rtgui_type_t *rtgui_button_type_get(void)
 {
 	static rtgui_type_t *button_type = RT_NULL;
@@ -42,7 +57,9 @@ rtgui_type_t *rtgui_button_type_get(void)
 	if (!button_type)
 	{
 		button_type = rtgui_type_create("button", RTGUI_LABEL_TYPE,
-			sizeof(rtgui_button_t), RTGUI_CONSTRUCTOR(_rtgui_button_constructor), RT_NULL);
+			sizeof(rtgui_button_t), 
+			RTGUI_CONSTRUCTOR(_rtgui_button_constructor), 
+			RTGUI_DESTRUCTOR(_rtgui_button_destructor));
 	}
 
 	return button_type;

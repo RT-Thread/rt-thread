@@ -129,15 +129,18 @@ static void rtgui_image_hdc_unload(struct rtgui_image* image)
 	}
 }
 
-static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect)
+static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect)
 {
 	rt_uint16_t y, w, h;
 	rtgui_color_t foreground;
 	struct rtgui_image_hdc* hdc;
 	rt_uint16_t rect_pitch, hw_pitch;
-	rtgui_rect_t dc_rect;
+	rtgui_rect_t dc_rect, _rect, *rect;
 
-	RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
+	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
+
+	_rect = *dst_rect;
+	rect = &_rect;
 
 	/* this dc is not visible */
 	if (dc->get_visible(dc) != RT_TRUE) return;
@@ -148,8 +151,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	/* transfer logic coordinate to physical coordinate */
 	if (dc->type == RTGUI_DC_HW)
 	{
-		struct rtgui_dc_hw *hw_dc = (struct rtgui_dc_hw*)dc;
-		dc_rect = hw_dc->owner->extent;
+		dc_rect = ((struct rtgui_dc_hw*)dc)->owner->extent;
 	}
 	else rtgui_dc_get_rect(dc, &dc_rect);
 	rtgui_rect_moveto(rect, dc_rect.x1, dc_rect.y1);
@@ -197,15 +199,15 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 			for (y = 0; y < h; y ++)
 			{
-				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x2, rect->y1 + y);
-				rect_ptr += rect_pitch;
+				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x1 + w, rect->y1 + y);
+				rect_ptr += hdc->pitch;
 			}
 		}
     }
     else
     {
 		rt_uint8_t* rect_ptr;
-		rect_ptr = rtgui_malloc(rect_pitch);
+		rect_ptr = rtgui_malloc(hdc->pitch);
 		if (rect_ptr == RT_NULL) return; /* no memory */
 
 		/* seek to the begin of pixel data */
@@ -223,7 +225,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			for (y = 0; y < h; y ++)
 			{
 				/* read pixel data */
-				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, rect_pitch) != rect_pitch)
+				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, hdc->pitch) != hdc->pitch)
 					break; /* read data failed */
 
 				rt_memcpy(hw_ptr, rect_ptr, rect_pitch);
@@ -235,10 +237,10 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			for (y = 0; y < h; y ++)
 			{
 				/* read pixel data */
-				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, rect_pitch) != rect_pitch)
+				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, hdc->pitch) != hdc->pitch)
 					break; /* read data failed */
 
-				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x2, rect->y1 + y);
+				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x1 + w, rect->y1 + y);
 			}
 		}
 

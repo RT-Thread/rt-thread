@@ -25,6 +25,15 @@ static void _rtgui_view_constructor(rtgui_view_t *view)
 	view->title = RT_NULL;
 }
 
+static void _rtgui_view_destructor(rtgui_view_t *view)
+{
+	if (view->title != RT_NULL)
+	{
+		rt_free(view->title);
+		view->title = RT_NULL;
+	}
+}
+
 rtgui_type_t *rtgui_view_type_get(void)
 {
 	static rtgui_type_t *view_type = RT_NULL;
@@ -32,7 +41,9 @@ rtgui_type_t *rtgui_view_type_get(void)
 	if (!view_type)
 	{
 		view_type = rtgui_type_create("view", RTGUI_CONTAINER_TYPE,
-			sizeof(rtgui_view_t), RTGUI_CONSTRUCTOR(_rtgui_view_constructor), RT_NULL);
+			sizeof(rtgui_view_t), 
+			RTGUI_CONSTRUCTOR(_rtgui_view_constructor), 
+			RTGUI_DESTRUCTOR(_rtgui_view_destructor));
 	}
 
 	return view_type;
@@ -113,6 +124,8 @@ void rtgui_view_show(rtgui_view_t* view)
 	}
 
 	rtgui_workbench_show_view((rtgui_workbench_t*)(RTGUI_WIDGET(view)->parent), view);
+	if (RTGUI_WIDGET_IS_FOCUSABLE(RTGUI_WIDGET(view)))
+		rtgui_widget_focus(RTGUI_WIDGET(view));
 }
 
 void rtgui_view_hide(rtgui_view_t* view)

@@ -23,6 +23,7 @@ static void _rtgui_workbench_constructor(rtgui_workbench_t *workbench)
 	/* set attributes */
 	workbench->panel = RT_NULL;
 	workbench->flag = RTGUI_WORKBENCH_FLAG_DEFAULT;
+	workbench->current_view = RT_NULL;
 }
 
 static void _rtgui_workbench_destructor(rtgui_workbench_t *workbench)
@@ -46,10 +47,8 @@ static void _rtgui_workbench_destructor(rtgui_workbench_t *workbench)
 	}
 
 	/* release title */
-	if (workbench->title != RT_NULL)
-	{
-		rtgui_free(workbench->title);
-	}
+	rt_free(workbench->title);
+	workbench->title = RT_NULL;
 }
 
 rtgui_type_t *rtgui_workbench_type_get(void)
@@ -158,28 +157,6 @@ void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag)
 	workbench->flag = flag;
 }
 
-rtgui_view_t *rtgui_workbench_get_current_view(rtgui_workbench_t * workbench)
-{
-	struct rtgui_list_node* node;
-	struct rtgui_widget* view;
-
-	RT_ASSERT(workbench != RT_NULL);
-
-	/* find the first shown view */
-	rtgui_list_foreach(node, &(RTGUI_CONTAINER(workbench)->children))
-	{
-		view = rtgui_list_entry(node, struct rtgui_widget, sibling);
-
-		/* is it a shown view? */
-		if (!RTGUI_WIDGET_IS_HIDE(view))
-		{
-			return (rtgui_view_t*)view;
-		}
-	}
-
-	return RT_NULL;
-}
-
 void rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 {
 	int quit = 0;
@@ -279,7 +256,7 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			else
 			{
 				/* let viewer to handle it */
-				rtgui_view_t* view = rtgui_workbench_get_current_view(workbench);
+				rtgui_view_t* view = workbench->current_view;
 				if (view != RT_NULL &&
 					RTGUI_WIDGET(view)->event_handler != RT_NULL)
 				{
@@ -302,7 +279,7 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			else
 			{
 				/* let viewer to handle it */
-				rtgui_view_t* view = rtgui_workbench_get_current_view(workbench);
+				rtgui_view_t* view = workbench->current_view;
 				if (view != RT_NULL &&
 						RTGUI_WIDGET(view)->event_handler != RT_NULL)
 				{
@@ -344,7 +321,7 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 				rtgui_view_t* view;
 
 				/* paint a view */
-				view = rtgui_workbench_get_current_view(workbench);
+				view = workbench->current_view;
 				if (view != RT_NULL)
 				{
 					/* remake a paint event */
@@ -356,6 +333,16 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 					{
 						RTGUI_WIDGET(view)->event_handler(RTGUI_WIDGET(view), event);
 					}
+				}
+				else
+				{
+					struct rtgui_dc* dc;
+					struct rtgui_rect rect;
+
+					dc = rtgui_dc_begin_drawing(widget);
+					rtgui_widget_get_rect(widget, &rect);
+					rtgui_dc_fill_rect(dc, &rect);
+					rtgui_dc_end_drawing(dc);
 				}
 			}
 		}
@@ -408,9 +395,17 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 	return RT_TRUE;
 }
 
+/*
+ *
+ * view on workbench
+ *
+ */
+
 void rtgui_workbench_add_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 {
 	rtgui_container_add_child(RTGUI_CONTAINER(workbench), RTGUI_WIDGET(view));
+	/* hide view in default */
+	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(view));
 
 	/* reset view extent */
 	rtgui_widget_set_rect(RTGUI_WIDGET(view), &(RTGUI_WIDGET(workbench)->extent));
@@ -418,6 +413,9 @@ void rtgui_workbench_add_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 
 void rtgui_workbench_remove_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 {
+	if (view == workbench->current_view)
+		rtgui_workbench_hide_view(workbench, view);
+
 	rtgui_container_remove_child(RTGUI_CONTAINER(workbench), RTGUI_WIDGET(view));
 }
 
@@ -426,17 +424,18 @@ void rtgui_workbench_show_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 	RT_ASSERT(workbench != RT_NULL);
 	RT_ASSERT(view != RT_NULL);
 
-	if (rtgui_workbench_get_current_view(workbench) == view &&
-		!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(view))) return;
+	/* already shown */
+	if (workbench->current_view == view) return;
 
-	/* remove from child list */
-	rtgui_list_remove(&(RTGUI_CONTAINER(workbench)->children), &(RTGUI_WIDGET(view)->sibling));
-
-	/* insert to the head of child list */
-	rtgui_list_insert(&(RTGUI_CONTAINER(workbench)->children), &(RTGUI_WIDGET(view)->sibling));
+	if (workbench->current_view != RT_NULL)
+	{
+		/* hide old view */
+		RTGUI_WIDGET_HIDE(RTGUI_WIDGET(workbench->current_view));
+	}
 
 	/* show view */
 	RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(view));
+	workbench->current_view = view;
 
 	/* update workbench clip */
 	rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(workbench));
@@ -452,21 +451,27 @@ void rtgui_workbench_hide_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 	RT_ASSERT(workbench != RT_NULL);
 	RT_ASSERT(view != RT_NULL);
 
-	/* remove from child list */
-	rtgui_list_remove(&(RTGUI_CONTAINER(workbench)->children), &(RTGUI_WIDGET(view)->sibling));
-
-	/* append to the end of child list */
-	rtgui_list_append(&(RTGUI_CONTAINER(workbench)->children), &(RTGUI_WIDGET(view)->sibling));
-
 	/* hide view */
 	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(view));
 
-	/* update workbench clip */
-	rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(workbench));
-
-	if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(workbench)))
+	if (view == workbench->current_view)
 	{
-		view = rtgui_workbench_get_current_view(workbench);
-		rtgui_widget_update(RTGUI_WIDGET(view));
+		rtgui_view_t *next_view;
+
+		workbench->current_view = RT_NULL;
+
+		next_view = RTGUI_VIEW(rtgui_widget_get_next_sibling(RTGUI_WIDGET(view)));
+		if (next_view == RT_NULL)
+			next_view = RTGUI_VIEW(rtgui_widget_get_prev_sibling(RTGUI_WIDGET(view)));
+
+		if (next_view != RT_NULL)
+		{
+			rtgui_view_show(next_view);
+		}
+		else
+		{
+			/* update workbench clip */
+			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(workbench));
+		}
 	}
 }

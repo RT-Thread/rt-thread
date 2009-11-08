@@ -53,7 +53,7 @@ static void _rtgui_textbox_deconstructor(rtgui_textbox_t *box)
 {
 	if (box->text != RT_NULL)
 	{
-		rtgui_free(box->text);
+		rt_free(box->text);
 		box->text = RT_NULL;
 	}
 

@@ -36,7 +36,8 @@ void rtgui_system_image_init(void)
 {
 	/* always support XPM image */
 	rtgui_image_xpm_init();
-
+	rtgui_image_hdc_init();
+	
 #ifdef RTGUI_IMAGE_BMP
 	rtgui_image_bmp_init();
 #endif

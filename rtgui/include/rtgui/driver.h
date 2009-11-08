@@ -42,6 +42,9 @@ struct rtgui_graphic_driver
 	void (*draw_hline)(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y);
 	void (*draw_vline)(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_base_t y2);
 
+	/* draw raw hline */
+	void (*draw_raw_hline)(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y);
+
 	/* the driver list */
 	rtgui_list_t list;
 };

@@ -28,7 +28,7 @@ static struct rt_messagequeue rtgui_server_mq;
 static char rtgui_server_msg_pool[2048];
 
 extern struct rtgui_topwin* rtgui_server_focus_topwin;
-static struct rtgui_panel* rtgui_server_focus_panel = RT_NULL;
+struct rtgui_panel* rtgui_server_focus_panel = RT_NULL;
 
 void rtgui_server_create_application(struct rtgui_event_panel_attach* event)
 {

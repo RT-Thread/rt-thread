@@ -77,6 +77,19 @@ void rtgui_panel_deregister(char* name)
 	}
 }
 
+/* set default focused panel, please use it after registered panel */
+void rtgui_panel_set_default_focused(char* name)
+{
+	extern struct rtgui_panel* rtgui_server_focus_panel;
+	struct rtgui_panel* panel;
+	
+	panel = rtgui_panel_find(name);
+	if (panel != RT_NULL)
+	{
+		rtgui_server_focus_panel = panel;
+	}
+}
+
 struct rtgui_panel* rtgui_panel_find(char* name)
 {
 	struct rtgui_list_node* node;

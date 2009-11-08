@@ -28,6 +28,18 @@ static void _rtgui_iconbox_constructor(rtgui_iconbox_t *iconbox)
 	iconbox->text_position = RTGUI_ICONBOX_TEXT_BELOW;
 }
 
+static void _rtgui_iconbox_destructor(rtgui_iconbox_t *iconbox)
+{
+	if (iconbox->image != RT_NULL)
+	{
+		rtgui_image_destroy(iconbox->image);
+		iconbox->image = RT_NULL;
+	}
+
+	rt_free(iconbox->text);
+	iconbox->text = RT_NULL;
+}
+
 rtgui_type_t *rtgui_iconbox_type_get(void)
 {
 	static rtgui_type_t *iconbox_type = RT_NULL;
@@ -35,7 +47,8 @@ rtgui_type_t *rtgui_iconbox_type_get(void)
 	if (!iconbox_type)
 	{
 		iconbox_type = rtgui_type_create("iconbox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_iconbox_t), RTGUI_CONSTRUCTOR(_rtgui_iconbox_constructor), RT_NULL);
+			sizeof(rtgui_iconbox_t), RTGUI_CONSTRUCTOR(_rtgui_iconbox_constructor), 
+			RTGUI_DESTRUCTOR(_rtgui_iconbox_destructor));
 	}
 
 	return iconbox_type;

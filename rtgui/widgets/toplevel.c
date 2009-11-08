@@ -41,6 +41,7 @@ static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)
 	rtgui_free(toplevel->external_clip_rect);
 
 	toplevel->drawing = 0;
+	rtgui_free(toplevel->external_clip_rect);
 	toplevel->external_clip_rect = RT_NULL;
 	toplevel->external_clip_size = 0;
 	toplevel->focus = RT_NULL;
