@@ -64,18 +64,17 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_DEVICE_NAME			"uart1"
 
 /* SECTION: device filesystem */
 #define RT_USING_DFS
+#define RT_USING_DFS_EFSL
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					4
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
-
-/* use minilibc for gcc */
-// #define RT_USING_MINILIBC
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #define RT_USING_LWIP
