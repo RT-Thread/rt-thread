@@ -15,6 +15,7 @@
 #include <rtgui/image.h>
 
 #include <rtgui/image_xpm.h>
+#include <rtgui/image_hdc.h>
 #include <rtgui/rtgui_system.h>
 
 #include <string.h>

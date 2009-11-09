@@ -32,8 +32,8 @@ void rtgui_theme_draw_label(rtgui_label_t* label);
 void rtgui_theme_draw_textbox(rtgui_textbox_t* box);
 void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox);
 
-rtgui_color_t rtgui_theme_default_bc();
-rtgui_color_t rtgui_theme_default_fc();
+rtgui_color_t rtgui_theme_default_bc(void);
+rtgui_color_t rtgui_theme_default_fc(void);
 
 #ifdef __cplusplus
 }

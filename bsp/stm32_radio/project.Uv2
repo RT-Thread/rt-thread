@@ -13,8 +13,6 @@ Group (Filesystem)
 Group (LwIP)
 Group (mp3)
 Group (RTGUI)
-Group (libpng)
-Group (libz)
 
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
@@ -171,6 +169,7 @@ File 10,1,<..\..\rtgui\common\rtgui_object.c><rtgui_object.c>
 File 10,1,<..\..\rtgui\common\rtgui_system.c><rtgui_system.c>
 File 10,1,<..\..\rtgui\common\rtgui_theme.c><rtgui_theme.c>
 File 10,1,<..\..\rtgui\common\asc12font.c><asc12font.c>
+File 10,1,<..\..\rtgui\common\asc16font.c><asc16font.c>
 File 10,1,<..\..\rtgui\common\color.c><color.c>
 File 10,1,<..\..\rtgui\common\dc.c><dc.c>
 File 10,1,<..\..\rtgui\common\dc_buffer.c><dc_buffer.c>
@@ -179,6 +178,7 @@ File 10,1,<..\..\rtgui\common\filerw.c><filerw.c>
 File 10,1,<..\..\rtgui\common\font.c><font.c>
 File 10,1,<..\..\rtgui\common\image.c><image.c>
 File 10,1,<..\..\rtgui\common\image_xpm.c><image_xpm.c>
+File 10,1,<..\..\rtgui\common\image_hdc.c><image_hdc.c>
 File 10,1,<..\..\rtgui\common\region.c><region.c>
 File 10,1,<..\..\rtgui\server\server.c><server.c>
 File 10,1,<..\..\rtgui\server\driver.c><driver.c>
@@ -198,32 +198,6 @@ File 10,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
 File 10,1,<..\..\rtgui\server\mouse.c><mouse.c>
 File 10,1,<..\..\rtgui\server\topwin.c><topwin.c>
 File 10,1,<..\..\rtgui\common\caret.c><caret.c>
-File 10,1,<..\..\rtgui\common\image_png.c><image_png.c>
-File 11,1,<..\..\rtgui\common\libpng\pngwutil.c><pngwutil.c>
-File 11,1,<..\..\rtgui\common\libpng\png.c><png.c>
-File 11,1,<..\..\rtgui\common\libpng\pngerror.c><pngerror.c>
-File 11,1,<..\..\rtgui\common\libpng\pnggccrd.c><pnggccrd.c>
-File 11,1,<..\..\rtgui\common\libpng\pngget.c><pngget.c>
-File 11,1,<..\..\rtgui\common\libpng\pngmem.c><pngmem.c>
-File 11,1,<..\..\rtgui\common\libpng\pngpread.c><pngpread.c>
-File 11,1,<..\..\rtgui\common\libpng\pngread.c><pngread.c>
-File 11,1,<..\..\rtgui\common\libpng\pngrio.c><pngrio.c>
-File 11,1,<..\..\rtgui\common\libpng\pngrtran.c><pngrtran.c>
-File 11,1,<..\..\rtgui\common\libpng\pngrutil.c><pngrutil.c>
-File 11,1,<..\..\rtgui\common\libpng\pngset.c><pngset.c>
-File 11,1,<..\..\rtgui\common\libpng\pngtrans.c><pngtrans.c>
-File 11,1,<..\..\rtgui\common\libpng\pngvcrd.c><pngvcrd.c>
-File 11,1,<..\..\rtgui\common\libpng\pngwio.c><pngwio.c>
-File 11,1,<..\..\rtgui\common\libpng\pngwrite.c><pngwrite.c>
-File 11,1,<..\..\rtgui\common\libpng\pngwtran.c><pngwtran.c>
-File 12,1,<..\..\rtgui\common\libz\zutil.c><zutil.c>
-File 12,1,<..\..\rtgui\common\libz\adler32.c><adler32.c>
-File 12,1,<..\..\rtgui\common\libz\crc32.c><crc32.c>
-File 12,1,<..\..\rtgui\common\libz\infback.c><infback.c>
-File 12,1,<..\..\rtgui\common\libz\inffast.c><inffast.c>
-File 12,1,<..\..\rtgui\common\libz\inflate.c><inflate.c>
-File 12,1,<..\..\rtgui\common\libz\inftrees.c><inftrees.c>
-File 12,1,<..\..\rtgui\common\libz\uncompr.c><uncompr.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32 Radio'

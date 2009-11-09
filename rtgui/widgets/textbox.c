@@ -15,6 +15,8 @@
 #include <rtgui/widgets/textbox.h>
 #include <rtgui/rtgui_theme.h>
 
+#include <ctype.h>
+
 #define RTGUI_TEXTBOX_LINE_MAX		64
 #define RTGUI_TEXTBOX_MARGIN		3
 
