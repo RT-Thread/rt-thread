@@ -441,3 +441,14 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 	rtgui_dc_end_drawing(dc);
 }
 
+/* get default background color */
+rtgui_color_t rtgui_theme_default_bc()
+{
+	return default_background;
+}
+
+/* get default foreground color */
+rtgui_color_t rtgui_theme_default_fc()
+{
+	return default_foreground;
+}

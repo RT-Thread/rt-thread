@@ -68,7 +68,6 @@ void rtgui_workbench_event_loop(rtgui_workbench_t* workbench);
 rt_err_t rtgui_workbench_show (rtgui_workbench_t* workbench);
 rt_err_t rtgui_workbench_hide (rtgui_workbench_t* workbench);
 
-rtgui_view_t *rtgui_workbench_get_current_view(rtgui_workbench_t * workbench);
 void rtgui_workbench_add_view(rtgui_workbench_t* workbench, rtgui_view_t* view);
 void rtgui_workbench_remove_view(rtgui_workbench_t* workbench, rtgui_view_t* view);
 void rtgui_workbench_show_view(rtgui_workbench_t* workbench, rtgui_view_t* view);
