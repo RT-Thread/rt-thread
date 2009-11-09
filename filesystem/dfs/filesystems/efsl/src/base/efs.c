@@ -25,6 +25,10 @@
 
 struct dfs_filesystem_operation efs;
 
+#ifdef DFS_EFLS_USING_STATIC_CACHE
+IOManager _ioman;
+#endif
+
 /**
  * This function will initialize efsl to DFS interface.
  * 
@@ -72,7 +76,11 @@ int efs_mount(struct dfs_filesystem* fs)
 	efsfs = (efsl_fs*) rt_malloc (sizeof(efsl_fs));
 
 	/* init efs filesystem struct */
+#ifdef DFS_EFLS_USING_STATIC_CACHE
+	efsfs->partition.ioman = &_ioman;
+#else
 	efsfs->partition.ioman = rt_malloc(sizeof(IOManager));
+#endif
 	efsfs->partition.ioman->device = fs->dev_id;
 
 	part_initPartition(&efsfs->partition);
@@ -99,7 +107,11 @@ int efs_unmount(struct dfs_filesystem* fs)
 	if ( efsfs == RT_NULL ) return -DFS_STATUS_EINVAL;
 
 	fs_flushFs(&efsfs->filesystem);
+#ifdef DFS_EFLS_USING_STATIC_CACHE
+	efsfs->partition.ioman = RT_NULL;
+#else
 	rt_free(efsfs->partition.ioman);
+#endif
 	rt_free(efsfs);
 
 	fs->data = RT_NULL;

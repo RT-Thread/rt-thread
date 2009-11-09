@@ -72,7 +72,6 @@ typedef struct
 	char buf[512];
 	int num;
 	int cur;
-	rt_sem_t *sem;
 } DIR;
 
 /* file api*/

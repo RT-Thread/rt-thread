@@ -344,6 +344,7 @@ DIR* opendir(const char* name)
 
 	/* allocate a fd */
 	fd = fd_new();
+	if (fd == -1) { rt_kprintf("no fd\n"); return RT_NULL; }
 	d  = fd_get(fd);
 
 	result = dfile_raw_open(d, name, DFS_O_RDONLY | DFS_O_DIRECTORY);
@@ -490,10 +491,10 @@ int closedir(DIR* d)
 	struct dfs_fd* fd;
 
 	fd = fd_get(d->fd);
-
 	result = dfile_raw_close(fd);
 	fd_put(fd);
 
+	fd_put(fd);
 	rt_free(d);
 
 	if (result < 0)
