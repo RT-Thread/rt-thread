@@ -41,6 +41,8 @@ struct rtgui_view
 };
 typedef struct rtgui_view rtgui_view_t;
 
+rtgui_type_t *rtgui_view_type_get(void);
+
 rtgui_view_t* rtgui_view_create(const char* title);
 void rtgui_view_destroy(rtgui_view_t* view);
 

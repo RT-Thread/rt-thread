@@ -566,6 +566,7 @@ color_none:
 	}
 
 	free_colorhash(colors_table);
+	rtgui_filerw_close(file);
 
 	return RT_TRUE;
 }

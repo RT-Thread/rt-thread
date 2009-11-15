@@ -1,5 +1,6 @@
 #include <rtgui/font.h>
 
+#ifdef RTGUI_USING_FONT16
 #ifndef RTGUI_USING_HZ_FILE
 const unsigned char hz16_font[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -16752,20 +16753,21 @@ const struct rtgui_font rtgui_font_hz16 =
 #else
 struct rtgui_hz_file_font hz16 =
 {
-	{RT_NULL}, 			/* cache root */
-	0, 				    /* cache_size */
-	16, 				/* font_size */
-	-1, 				/* fd */
-	"/resource/hz16"	/* font_fn */
+	{RT_NULL}, 				/* cache root 		*/
+	0, 				    	/* cache size 		*/
+	16, 					/* font size 		*/
+	32,						/* font data size 	*/
+	-1, 					/* fd 				*/
+	"/resource/hzk16.fnt"	/* font_fn 			*/
 };
 
-extern struct rtgui_hz_file_font_engine hz_file_font_engine;
-const struct rtgui_font rtgui_font_hz16 =
+struct rtgui_font rtgui_font_hz16 =
 {
-	"hz", 				/* family */
-	16, 				/* height */
-	1, 					/* refer count */
-	&hz_file_font_engine,/* font engine */
-	(void*)&hz16,		/* font private data */
+	"hz", 					/* family */
+	16, 					/* height */
+	1, 						/* refer count */
+	&rtgui_hz_file_font_engine,/* font engine */
+	(void*)&hz16,			/* font private data */
 };
+#endif
 #endif

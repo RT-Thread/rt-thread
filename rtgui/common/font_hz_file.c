@@ -7,30 +7,7 @@
 #include <rtgui/rtgui_system.h>
 #include <dfs_posix.h>
 
-#define HZ_DATA_SIZE    (2 * 16)
 #define HZ_CACHE_MAX    64
-SPLAY_HEAD(cache_tree, hz_cache);
-struct hz_cache
-{
-    SPLAY_ENTRY(hz_cache) hz_node;
-
-    rt_uint16_t hz_id;
-};
-
-struct rtgui_hz_file_font
-{
-    struct cache_tree cache_root;
-    rt_uint16_t cache_size;
-
-    /* font size */
-    rt_uint16_t font_size;
-
-    /* file descriptor */
-    int fd;
-
-    /* font file name */
-    const char* font_fn;
-};
 
 static int _font_cache_compare(struct hz_cache* node1, struct hz_cache* node2);
 
@@ -70,17 +47,17 @@ static rt_uint8_t* _font_cache_get(struct rtgui_hz_file_font* font, rt_uint16_t 
     }
 
     /* can not find it, load to cache */
-    cache = (struct hz_cache*) rtgui_malloc(sizeof(struct hz_cache) + HZ_DATA_SIZE);
+    cache = (struct hz_cache*) rtgui_malloc(sizeof(struct hz_cache) + font->font_data_size);
     if (cache == RT_NULL) return RT_NULL; /* no memory yet */
 
     cache->hz_id = hz_id;
-    seek = 94 * ((hz_id & 0xff - 0xA0) - 1) + ((hz_id >> 8) - 0xA0);
-    seek = seek * HZ_DATA_SIZE;
+    seek = 94 * (((hz_id & 0xff) - 0xA0) - 1) + ((hz_id >> 8) - 0xA0) - 1;
+    seek *= font->font_data_size;
 
     /* read hz font data */
     if ((lseek(font->fd, seek, SEEK_SET) < 0) ||
-        read(font->fd, (char*)(cache + 1), HZ_DATA_SIZE) !=
-        HZ_DATA_SIZE)
+        read(font->fd, (char*)(cache + 1), font->font_data_size) !=
+        font->font_data_size)
     {
         rtgui_free(cache);
         return RT_NULL;
@@ -88,6 +65,7 @@ static rt_uint8_t* _font_cache_get(struct rtgui_hz_file_font* font, rt_uint16_t 
 
     /* insert to cache */
     SPLAY_INSERT(cache_tree, &(font->cache_root), cache);
+	font->cache_size ++;
 
     if (font->cache_size > HZ_CACHE_MAX)
     {
@@ -98,6 +76,7 @@ static rt_uint8_t* _font_cache_get(struct rtgui_hz_file_font* font, rt_uint16_t 
 
         /* remove the left node */
         SPLAY_REMOVE(cache_tree, &(font->cache_root), left);
+		font->cache_size --;
     }
 
     return (rt_uint8_t*)(cache + 1);
@@ -105,7 +84,7 @@ static rt_uint8_t* _font_cache_get(struct rtgui_hz_file_font* font, rt_uint16_t 
 
 static void rtgui_hz_file_font_load(struct rtgui_font* font)
 {
-    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font;
+    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
     RT_ASSERT(hz_file_font != RT_NULL);
 
     hz_file_font->fd = open(hz_file_font->font_fn, O_RDONLY, 0);
@@ -115,7 +94,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 {
 	rt_base_t h;
 	rt_uint8_t* str;
-    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font;
+    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
     RT_ASSERT(hz_file_font != RT_NULL);
 
 	/* drawing height */
@@ -130,7 +109,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 		register rt_base_t i, j, k;
 
 		/* get font pixel data */
-		font_ptr = _font_cache_get(hz_file_font, *(rt_uint16_t*)str);
+		font_ptr = _font_cache_get(hz_file_font, *str | (*(str+1) << 8));
 
 		/* draw word */
 		for (i=0; i < h; i ++)
@@ -155,7 +134,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 
 static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect)
 {
-    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font;
+    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
     RT_ASSERT(hz_file_font != RT_NULL);
 
 	/* set metrics rect */

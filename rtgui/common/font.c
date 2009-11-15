@@ -37,18 +37,33 @@ void rtgui_font_system_init()
 	rtgui_font_system_add_font(&rtgui_font_hz16);
 #endif
 #endif
+
+#ifdef RTGUI_USING_FONT12
 	rtgui_font_system_add_font(&rtgui_font_asc12);
 #ifdef RTGUI_USING_FONTHZ
 	rtgui_font_system_add_font(&rtgui_font_hz12);
 #endif
+#endif
 
+#ifdef RTGUI_USING_FONT12
 	rtgui_font_set_defaut(&rtgui_font_asc12);
+#elif defined(RTGUI_USING_FONT16)
+	rtgui_font_set_defaut(&rtgui_font_asc16);
+#endif
 }
 
 void rtgui_font_system_add_font(struct rtgui_font* font)
 {
 	rtgui_list_init(&(font->list));
 	rtgui_list_append(&_rtgui_font_list, &(font->list));
+
+	/* init font */
+	if (font->engine->font_init != RT_NULL)
+		font->engine->font_init(font);
+
+	/* first refer, load it */
+	if (font->engine->font_load != RT_NULL)
+		font->engine->font_load(font);
 }
 
 void rtgui_font_system_remove_font(struct rtgui_font* font)

@@ -49,6 +49,32 @@ struct rtgui_font_bitmap
 };
 extern struct rtgui_font_engine bmp_font_engine;
 
+#include <rtgui/tree.h>
+SPLAY_HEAD(cache_tree, hz_cache);
+struct hz_cache
+{
+    SPLAY_ENTRY(hz_cache) hz_node;
+
+    rt_uint16_t hz_id;
+};
+
+struct rtgui_hz_file_font
+{
+    struct cache_tree cache_root;
+    rt_uint16_t cache_size;
+
+    /* font size */
+    rt_uint16_t font_size;
+	rt_uint16_t font_data_size;
+
+    /* file descriptor */
+    int fd;
+
+    /* font file name */
+    const char* font_fn;
+};
+extern struct rtgui_font_engine rtgui_hz_file_font_engine;
+
 struct rtgui_font
 {
 	/* font name */

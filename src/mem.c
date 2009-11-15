@@ -488,6 +488,15 @@ void rt_free(void *rmem)
 }
 
 #ifdef RT_MEM_STATS
+void rt_memory_info(rt_uint32_t *total, 
+	rt_uint32_t *used,
+	rt_uint32_t *max_used)
+{
+	if (total != RT_NULL) *total = mem_size_aligned;
+	if (used  != RT_NULL) *used = used_mem;
+	if (max_used != RT_NULL) *max_used = max_mem;
+}
+	
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void list_mem()

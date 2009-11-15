@@ -1,5 +1,6 @@
 #include <rtgui/font.h>
 
+#ifdef RTGUI_USING_FONT12
 #ifndef RTGUI_USING_HZ_FILE
 const unsigned char hz12_font[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -12310,4 +12311,5 @@ struct rtgui_font rtgui_font_hz12 =
 	&hz_file_font_engine,/* font engine */
 	(void*)&hz12,		/* font private data */
 };
+#endif
 #endif

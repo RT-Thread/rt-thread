@@ -63,16 +63,21 @@ int open(const char *file, int flags, int mode)
 |
 +------------------------------------------------------------------------------
 */
-int close(int d)
+int close(int fd)
 {
 	int result;
-	struct dfs_fd* fd;
+	struct dfs_fd* d;
 
-	fd = fd_get(d);
+	d = fd_get(fd);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
 
-	result = dfile_raw_close(fd);
-	fd_put(fd);
-	fd_put(fd);
+	result = dfile_raw_close(d);
+	fd_put(d);
+	fd_put(d);
 
 	if (result < 0)
 	{
@@ -100,6 +105,11 @@ int read(int fd, char *buf, int   len)
 
 	/* get the fd */
 	d  = fd_get(fd);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
 
 	result = dfile_raw_read(d, buf, len);
 	if (result < 0)
@@ -133,6 +143,11 @@ int write(int fd, char *buf, int   len)
 
 	/* get the fd */
 	d  = fd_get(fd);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
 
 	result = dfile_raw_write(d, buf, len);
 	if (result < 0)
@@ -165,6 +180,11 @@ int lseek(int fd, int   offset, int   dir)
 	struct dfs_fd* d;
 
 	d  = fd_get(fd);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
 
 	switch (dir)
 	{
@@ -391,6 +411,11 @@ struct dfs_dirent* readdir(DIR *d)
 	struct dfs_fd* fd;
 
 	fd = fd_get(d->fd);
+	if (fd == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return RT_NULL;
+	}
 
 	if (!d->num || (d->cur += ((struct dfs_dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
 	{
@@ -428,6 +453,12 @@ rt_off_t telldir(DIR *d)
 	rt_off_t result;
 
 	fd = fd_get(d->fd);
+	if (fd == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return 0;
+	}
+
 	result = fd->pos - d->num + d->cur;
 	fd_put(fd);
 
@@ -450,6 +481,12 @@ void seekdir(DIR *d, rt_off_t offset)
 	struct dfs_fd* fd;
 
 	fd = fd_get(d->fd);
+	if (fd == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return ;
+	}
+
 	if (dfile_raw_lseek(fd, offset) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
 }
@@ -470,6 +507,12 @@ void rewinddir(DIR *d)
 	struct dfs_fd* fd;
 
 	fd = fd_get(d->fd);
+	if (fd == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return ;
+	}
+
 	if (dfile_raw_lseek(fd, 0) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
 }
@@ -491,6 +534,12 @@ int closedir(DIR* d)
 	struct dfs_fd* fd;
 
 	fd = fd_get(d->fd);
+	if (fd == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
+
 	result = dfile_raw_close(fd);
 	fd_put(fd);
 

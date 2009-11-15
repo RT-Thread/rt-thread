@@ -173,6 +173,10 @@ void rt_free (void *ptr);
 void* rt_realloc(void *ptr, rt_size_t nbytes);
 void *rt_calloc(rt_size_t count, rt_size_t size);
 
+void rt_memory_info(rt_uint32_t *total, 
+	rt_uint32_t *used,
+	rt_uint32_t *max_used);
+
 #ifdef RT_USING_HOOK
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
