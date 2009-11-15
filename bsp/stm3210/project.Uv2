@@ -216,7 +216,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  ADSLDMC (--keep __fsym_* --keep __vsym_*)
  ADSLDIF ()
  ADSLDDW ()
-  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103ZE)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103ZE)
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F107xCSchedule)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F107xC)
   OPTDBG 49150,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 9,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
