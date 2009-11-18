@@ -489,7 +489,7 @@ void rt_hw_serial_isr(rt_device_t device)
 			uart->int_tx->write_index = 0;
 
 		/* clear interrupt */
-		USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
+		USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
 		
 		/* start next transmission */
 		if (uart->int_tx->write_index <
