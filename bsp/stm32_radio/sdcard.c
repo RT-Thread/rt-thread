@@ -3061,7 +3061,7 @@ void rt_hw_sdcard_init()
 		SD_Error status;
 		rt_uint8_t *sector;
 
-		SD_EnableWideBusOperation(SDIO_BusWide_4b);
+		SD_EnableWideBusOperation(SDIO_BusWide_1b);
 
 		status = SD_GetCardInfo(&SDCardInfo);
 		if (status != SD_OK) goto __return;

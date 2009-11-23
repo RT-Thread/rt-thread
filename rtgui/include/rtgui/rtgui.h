@@ -95,6 +95,13 @@ enum RTGUI_ARRAW
 	RTGUI_ARRAW_RIGHT
 };
 
+enum RTGUI_MODAL_CODE
+{
+	RTGUI_MODAL_OK,
+	RTGUI_MODAL_CANCEL
+};
+typedef enum RTGUI_MODAL_CODE rtgui_modal_code_t;
+
 #include <rtgui/rtgui_object.h>
 
 #endif

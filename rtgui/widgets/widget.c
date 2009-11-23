@@ -226,30 +226,45 @@ void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 }
 
 /**
- * @brief Focuses the widget. The focused widget is the one which receives the keyboard events
+ * @brief Focuses the widget. The focused widget is the widget which can receive the keyboard events
  * @param widget a widget
  * @note The widget has to be attached to a toplevel widget, otherwise it will have no effect
  */
 void rtgui_widget_focus(rtgui_widget_t *widget)
 {
-   rtgui_widget_t *focused;
+	rtgui_widget_t *focused;
+	rtgui_container_t *parent;
 
-	if (!widget || !widget->toplevel || !RTGUI_WIDGET_IS_FOCUSABLE(widget) || !RTGUI_WIDGET_IS_ENABLE(widget))
+	RT_ASSERT(widget != RT_NULL);
+
+	if (!widget->parent || !RTGUI_WIDGET_IS_FOCUSABLE(widget) || !RTGUI_WIDGET_IS_ENABLE(widget))
 		return;
 
-	focused = rtgui_toplevel_get_focus(RTGUI_TOPLEVEL(widget->toplevel));
-
-	if ( focused != RT_NULL && widget == focused)
-		return;
-
-	if (focused != RT_NULL)
-	{
-		rtgui_widget_unfocus(focused);
-	}
-
-	rtgui_toplevel_set_focus(RTGUI_TOPLEVEL(widget->toplevel), widget);
+	/* set widget as focused */
 	widget->flag |= RTGUI_WIDGET_FLAG_FOCUS;
 
+	/* get parent container */
+	parent = RTGUI_CONTAINER(widget->parent);
+
+	/* get old focused widget */
+	focused = parent->focused;
+	if (focused == widget) return ; /* it's the same focused widget */
+
+	if (focused != RT_NULL)
+		rtgui_widget_unfocus(focused);
+
+	/* set widget as focused widget in parent link */
+	parent->focused = widget;
+	while (RTGUI_WIDGET(parent)->parent != RT_NULL)
+	{
+		parent = RTGUI_CONTAINER(RTGUI_WIDGET(parent)->parent);
+		parent->focused = widget;
+
+		/* if the parent is hide, break it */
+		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(parent))) break;
+	}
+
+	/* invoke on focus in call back */
 	if (widget->on_focus_in)
    		widget->on_focus_in(widget, RT_NULL);
 }
@@ -260,15 +275,12 @@ void rtgui_widget_focus(rtgui_widget_t *widget)
  */
 void rtgui_widget_unfocus(rtgui_widget_t *widget)
 {
-	if (!widget || !widget->toplevel || !RTGUI_WIDGET_IS_FOCUS(widget))
-		return;
-
-	if (rtgui_toplevel_get_focus(RTGUI_TOPLEVEL(widget->toplevel)) == widget)
-	{
-		rtgui_toplevel_set_focus(RTGUI_TOPLEVEL(widget->toplevel), RT_NULL);
-	}
+	RT_ASSERT(widget != RT_NULL);
 
 	widget->flag &= ~RTGUI_WIDGET_FLAG_FOCUS;
+
+	if (!widget->toplevel || !RTGUI_WIDGET_IS_FOCUS(widget))
+		return;
 
 	if (widget->on_focus_out)
    		widget->on_focus_out(widget, RT_NULL);

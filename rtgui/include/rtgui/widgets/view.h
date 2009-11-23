@@ -50,8 +50,9 @@ rt_bool_t rtgui_view_event_handler(struct rtgui_widget* widget, struct rtgui_eve
 
 void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box);
 
-void rtgui_view_show(rtgui_view_t* view);
+rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal);
 void rtgui_view_hide(rtgui_view_t* view);
+void rtgui_view_end_modal(rtgui_view_t* view, rtgui_modal_code_t modal_code);
 
 char* rtgui_view_get_title(rtgui_view_t* view);
 void rtgui_view_set_title(rtgui_view_t* view, const char* title);

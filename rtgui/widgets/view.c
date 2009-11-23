@@ -113,19 +113,48 @@ void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box)
 	rtgui_widget_set_rect(RTGUI_WIDGET(box), &(RTGUI_WIDGET(view)->extent));
 }
 
-void rtgui_view_show(rtgui_view_t* view)
+rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal)
 {
-	if (view == RT_NULL) return;
+	rtgui_workbench_t* workbench;
+
+	/* parameter check */
+	if (view == RT_NULL) return RTGUI_MODAL_CANCEL;
 
 	if (RTGUI_WIDGET(view)->parent == RT_NULL)
 	{
 		RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(view));
-		return;
+		return RTGUI_MODAL_CANCEL;
 	}
 
-	rtgui_workbench_show_view((rtgui_workbench_t*)(RTGUI_WIDGET(view)->parent), view);
+	workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
+	rtgui_workbench_show_view(workbench, view);
 	if (RTGUI_WIDGET_IS_FOCUSABLE(RTGUI_WIDGET(view)))
 		rtgui_widget_focus(RTGUI_WIDGET(view));
+
+	if (is_modal == RT_TRUE)
+	{
+		/* set modal mode */
+		workbench->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+
+		/* perform workbench event loop */
+		rtgui_workbench_event_loop(workbench);
+		return workbench->modal_code;
+	}
+
+	/* no modal mode, always return modal_ok */
+	return RTGUI_MODAL_OK;
+}
+
+void rtgui_view_end_modal(rtgui_view_t* view, rtgui_modal_code_t modal_code)
+{
+	rtgui_workbench_t* workbench;
+
+	/* parameter check */
+	if ((view == RT_NULL) || (RTGUI_WIDGET(view)->parent == RT_NULL))return ;
+
+	workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
+	workbench->modal_code = modal_code;
+	workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
 }
 
 void rtgui_view_hide(rtgui_view_t* view)

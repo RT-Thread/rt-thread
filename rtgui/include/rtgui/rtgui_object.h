@@ -88,7 +88,6 @@ struct rtgui_object
 	/* object type */
 	rtgui_type_t* type;
 
-	char *name;
 	rt_bool_t is_static;
 };
 rtgui_type_t *rtgui_object_type_get(void);

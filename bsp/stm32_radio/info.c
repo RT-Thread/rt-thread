@@ -7,6 +7,7 @@
 
 #include "network.xpm"
 
+static rtgui_image_t *rtt_image = RT_NULL;
 static rtgui_image_t *network_image = RT_NULL;
 static rtgui_image_t *usb_image = RT_NULL;
 static rtgui_image_t *power_image = RT_NULL;
@@ -23,7 +24,19 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 		rtgui_widget_get_rect(widget, &rect);
 
 		rtgui_dc_fill_rect(dc, &rect);
+		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y2 - 1);
 
+		/* draw RT-Thread logo */
+		rtt_image = rtgui_image_create_from_file("hdc",
+			"/resource/RTT.hdc", RT_FALSE);
+		if (rtt_image != RT_NULL)
+		{
+			rtgui_image_blit(rtt_image, dc, &rect);
+			rtgui_image_destroy(rtt_image);
+			
+			rtt_image = RT_NULL;
+		}
+		
         if (network_image != RT_NULL)
         {
             rect.x1 = rect.x2 - (network_image->w + 2);
@@ -48,7 +61,7 @@ static void info_entry(void* parameter)
 	rtgui_thread_register(rt_thread_self(), mq);
 
     network_image = rtgui_image_create_from_mem("xpm",
-		network_xpm, sizeof(network_xpm));
+		(rt_uint8_t*)network_xpm, sizeof(network_xpm));
 	workbench = rtgui_workbench_create("info", "workbench");
 	if (workbench == RT_NULL) return;
 
@@ -57,7 +70,7 @@ static void info_entry(void* parameter)
 
 	rtgui_workbench_add_view(workbench, view);
 
-	rtgui_view_show(view);
+	rtgui_view_show(view, RT_FALSE);
 
 	rtgui_workbench_event_loop(workbench);
 

@@ -77,7 +77,7 @@ static rt_bool_t rtgui_image_hdc_load(struct rtgui_image* image, struct rtgui_fi
     rtgui_filerw_read(file, (char*)&header, 1, sizeof(header));
 
 	/* set image information */
-	image->w = header[1]; image->h = header[2];
+	image->w = (rt_uint16_t)header[1]; image->h = (rt_uint16_t)header[2];
 	image->engine = &rtgui_image_hdc_engine;
 	image->data = hdc;
 	hdc->filerw = file;
@@ -129,18 +129,60 @@ static void rtgui_image_hdc_unload(struct rtgui_image* image)
 	}
 }
 
+static void rtgui_image_hdc_raw_hline(struct rtgui_dc_hw* dc, rt_uint8_t* raw_ptr, int x1, int x2, int y)
+{
+	register rt_base_t index;
+	register rt_base_t bpp;
+
+	/* convert logic to device */
+	x1 = x1 + dc->owner->extent.x1;
+	x2 = x2 + dc->owner->extent.x1;
+	y  = y + dc->owner->extent.y1;
+
+	bpp = dc->device->byte_per_pixel;
+	if (dc->owner->clip.data == RT_NULL)
+	{
+		rtgui_rect_t* prect;
+
+		prect = &(dc->owner->clip.extents);
+
+		/* calculate hline intersect */
+		if (prect->y1 > y  || prect->y2 <= y ) return;
+		if (prect->x2 <= x1 || prect->x1 > x2) return;
+
+		if (prect->x1 > x1) x1 = prect->x1;
+		if (prect->x2 < x2) x2 = prect->x2;
+
+		/* draw raw hline */
+		dc->device->draw_raw_hline(raw_ptr, x1, x2, y);
+	}
+	else for (index = 0; index < rtgui_region_num_rects(&(dc->owner->clip)); index ++)
+	{
+		rtgui_rect_t* prect;
+		register rt_base_t draw_x1, draw_x2;
+
+		prect = ((rtgui_rect_t *)(dc->owner->clip.data + index + 1));
+		draw_x1 = x1;
+		draw_x2 = x2;
+
+		/* calculate hline clip */
+		if (prect->y1 > y  || prect->y2 <= y ) continue;
+		if (prect->x2 <= x1 || prect->x1 > x2) continue;
+
+		if (prect->x1 > x1) draw_x1 = prect->x1;
+		if (prect->x2 < x2) draw_x2 = prect->x2;
+
+		/* draw raw hline */
+		dc->device->draw_raw_hline(raw_ptr + (draw_x1 - x1) * bpp, draw_x1, draw_x2, y);
+	}
+}
+
 static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect)
 {
 	rt_uint16_t y, w, h;
-	rtgui_color_t foreground;
 	struct rtgui_image_hdc* hdc;
-	rt_uint16_t rect_pitch, hw_pitch;
-	rtgui_rect_t dc_rect, _rect, *rect;
 
 	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
-
-	_rect = *dst_rect;
-	rect = &_rect;
 
 	/* this dc is not visible */
 	if (dc->get_visible(dc) != RT_TRUE) return;
@@ -148,107 +190,47 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	hdc = (struct rtgui_image_hdc*) image->data;
 	RT_ASSERT(hdc != RT_NULL);
 
-	/* transfer logic coordinate to physical coordinate */
-	if (dc->type == RTGUI_DC_HW)
-	{
-		dc_rect = ((struct rtgui_dc_hw*)dc)->owner->extent;
-	}
-	else rtgui_dc_get_rect(dc, &dc_rect);
-	rtgui_rect_moveto(rect, dc_rect.x1, dc_rect.y1);
+	if (dc->type != RTGUI_DC_HW) return;
 
 	/* the minimum rect */
-    if (image->w < rtgui_rect_width(*rect)) w = image->w;
-    else w = rtgui_rect_width(*rect);
-    if (image->h < rtgui_rect_height(*rect)) h = image->h;
-    else h = rtgui_rect_height(*rect);
-
-	/* get rect pitch */
-	rect_pitch = w * hdc->byte_per_pixel;
-	hw_pitch = hdc->hw_driver->width * hdc->hw_driver->byte_per_pixel;
-
-	/* save foreground color */
-	foreground = rtgui_dc_get_color(dc);
+    if (image->w < rtgui_rect_width(*dst_rect)) w = image->w;
+    else w = rtgui_rect_width(*dst_rect);
+    if (image->h < rtgui_rect_height(*dst_rect)) h = image->h;
+    else h = rtgui_rect_height(*dst_rect);
 
     if (hdc->pixels != RT_NULL)
     {
-		if (hdc->hw_driver->get_framebuffer() != RT_NULL)
+		rt_uint8_t* ptr;
+
+		/* get pixel pointer */
+		ptr = hdc->pixels;
+
+		for (y = 0; y < h; y ++)
 		{
-			rt_uint8_t* rect_ptr;
-			rt_uint8_t* hw_ptr;
-
-			/* get pixel pointer */
-			hw_ptr = hdc->hw_driver->get_framebuffer();
-			rect_ptr = hdc->pixels;
-
-			/* move hardware pixel pointer */
-			hw_ptr += rect->y1 * hdc->pitch + rect->x1 * hdc->byte_per_pixel;
-
-			for (y = 0; y < h; y ++)
-			{
-				rt_memcpy(hw_ptr, rect_ptr, rect_pitch);
-				hw_ptr += hw_pitch;
-				rect_ptr += rect_pitch;
-			}
-		}
-		else
-		{
-			rt_uint8_t* rect_ptr;
-
-			/* get pixel pointer */
-			rect_ptr = hdc->pixels;
-
-			for (y = 0; y < h; y ++)
-			{
-				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x1 + w, rect->y1 + y);
-				rect_ptr += hdc->pitch;
-			}
+			rtgui_image_hdc_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x2, dst_rect->y1 + y);
+			ptr += hdc->pitch;
 		}
     }
     else
     {
-		rt_uint8_t* rect_ptr;
-		rect_ptr = rtgui_malloc(hdc->pitch);
-		if (rect_ptr == RT_NULL) return; /* no memory */
+		rt_uint8_t* ptr;
+		ptr = rtgui_malloc(hdc->pitch);
+		if (ptr == RT_NULL) return; /* no memory */
 
 		/* seek to the begin of pixel data */
 		rtgui_filerw_seek(hdc->filerw, hdc->pixel_offset, RTGUI_FILE_SEEK_SET);
 
-		if (hdc->hw_driver->get_framebuffer() != RT_NULL)
+		for (y = 0; y < h; y ++)
 		{
-			rt_uint8_t* hw_ptr;
+			/* read pixel data */
+			if (rtgui_filerw_read(hdc->filerw, ptr, 1, hdc->pitch) != hdc->pitch)
+				break; /* read data failed */
 
-			/* get pixel pointer */
-			hw_ptr = hdc->hw_driver->get_framebuffer();
-			/* move hardware pixel pointer */
-			hw_ptr += rect->y1 * hdc->pitch + rect->x1 * hdc->byte_per_pixel;
-
-			for (y = 0; y < h; y ++)
-			{
-				/* read pixel data */
-				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, hdc->pitch) != hdc->pitch)
-					break; /* read data failed */
-
-				rt_memcpy(hw_ptr, rect_ptr, rect_pitch);
-				hw_ptr += hw_pitch;
-			}
-		}
-		else
-		{
-			for (y = 0; y < h; y ++)
-			{
-				/* read pixel data */
-				if (rtgui_filerw_read(hdc->filerw, rect_ptr, 1, hdc->pitch) != hdc->pitch)
-					break; /* read data failed */
-
-				hdc->hw_driver->draw_raw_hline(rect_ptr, rect->x1,  rect->x1 + w, rect->y1 + y);
-			}
+			rtgui_image_hdc_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
 		}
 
-		rtgui_free(rect_ptr);
+		rtgui_free(ptr);
     }
-
-	/* restore foreground */
-	rtgui_dc_set_color(dc, foreground);
 }
 
 void rtgui_image_hdc_init()

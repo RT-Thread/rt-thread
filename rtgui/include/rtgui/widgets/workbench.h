@@ -22,12 +22,14 @@
 #include <rtgui/widgets/view.h>
 #include <rtgui/widgets/toplevel.h>
 
-#define RTGUI_WORKBENCH_FLAG_VISIBLE	0x00
-#define RTGUI_WORKBENCH_FLAG_INVISIBLE	0x01
-#define RTGUI_WORKBENCH_FLAG_FULLSCREEN	0x02
+#define RTGUI_WORKBENCH_FLAG_VISIBLE	0x00	/* workbench is visible */
+#define RTGUI_WORKBENCH_FLAG_INVISIBLE	0x01	/* workbench is invisible */
+#define RTGUI_WORKBENCH_FLAG_FULLSCREEN	0x02	/* workbench is full screen */
+#define RTGUI_WORKBENCH_FLAG_MODAL_MODE	0x04	/* workbench is modal mode showing */
 
 #define RTGUI_WORKBENCH_FLAG_CLOSEBLE	0x00
 #define RTGUI_WORKBENCH_FLAG_UNCLOSEBLE	0x10
+#define RTGUI_WORKBENCH_FLAG_CLOSED		0x20
 
 #define RTGUI_WORKBENCH_FLAG_DEFAULT	RTGUI_WORKBENCH_FLAG_VISIBLE | RTGUI_WORKBENCH_FLAG_CLOSEBLE
 
@@ -48,6 +50,7 @@ struct rtgui_workbench
 
 	/* workbench flag */
 	rt_uint8_t flag;
+	rtgui_modal_code_t modal_code;
 
 	/* workbench title */
 	unsigned char* title;
@@ -63,7 +66,7 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 
 void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag);
 
-void rtgui_workbench_event_loop(rtgui_workbench_t* workbench);
+rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench);
 
 rt_err_t rtgui_workbench_show (rtgui_workbench_t* workbench);
 rt_err_t rtgui_workbench_hide (rtgui_workbench_t* workbench);

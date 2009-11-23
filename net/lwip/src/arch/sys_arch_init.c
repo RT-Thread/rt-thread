@@ -42,7 +42,8 @@ void lwip_sys_init()
 	/* use DHCP client */
 	dhcp_start(netif_default);
 
-    while (1) {
+    while (netif_default->ip_addr.addr == 0)
+	{
         rt_thread_delay(DHCP_FINE_TIMER_MSECS);
 
         dhcp_fine_tmr();
@@ -53,6 +54,12 @@ void lwip_sys_init()
             mscnt = 0;
         }
     }
+	
+	rt_kprintf("Acquired IP address from DHCP server:");
+	rt_kprintf("%d.%d.%d.%d\n", netif_default->ip_addr.addr & 0xff,
+		(netif_default->ip_addr.addr>>8) & 0xff,
+		(netif_default->ip_addr.addr>>16) & 0xff, 
+		(netif_default->ip_addr.addr>>24) & 0xff);
 #endif
 
 #if defined(RT_USING_FINSH) && (LWIP_STATS_DISPLAY)

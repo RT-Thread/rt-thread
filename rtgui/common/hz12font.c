@@ -12295,20 +12295,20 @@ struct rtgui_font rtgui_font_hz12 =
 #else
 const struct rtgui_hz_file_font hz12 =
 {
-	{RT_NULL}, 			/* cache root */
-	0, 				    /* cache_size */
-	12, 				/* font_size */
-	-1, 				/* fd */
-	"/resource/hz12"	/* font_fn */
+	{RT_NULL}, 				/* cache root 		*/
+	0, 				    	/* cache size 		*/
+	12, 					/* font size 		*/
+	32,						/* font data size 	*/
+	-1, 					/* fd 				*/
+	"/resource/hzk12.fnt"	/* font_fn 			*/
 };
 
-extern struct rtgui_hz_file_font_engine hz_file_font_engine;
 struct rtgui_font rtgui_font_hz12 =
 {
 	"hz", 				/* family */
 	12, 				/* height */
 	1, 					/* refer count */
-	&hz_file_font_engine,/* font engine */
+	&rtgui_hz_file_font_engine,/* font engine */
 	(void*)&hz12,		/* font private data */
 };
 #endif

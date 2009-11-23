@@ -37,9 +37,6 @@ struct rtgui_toplevel
 
 	/* server thread id */
 	rt_thread_t server;
-
-	/* current focus widget */
-	rtgui_widget_t* focus;
 };
 typedef struct rtgui_toplevel rtgui_toplevel_t;
 
@@ -50,8 +47,5 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
 								struct rtgui_event_clip_info* info);
 void rtgui_toplevel_update_clip(rtgui_toplevel_t* top);
-
-void rtgui_toplevel_set_focus(struct rtgui_toplevel* top, rtgui_widget_t* focus);
-rtgui_widget_t* rtgui_toplevel_get_focus(struct rtgui_toplevel* top);
 
 #endif

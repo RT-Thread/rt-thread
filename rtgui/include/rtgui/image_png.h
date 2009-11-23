@@ -16,4 +16,6 @@
 
 #include <rtgui/image.h>
 
+void rtgui_image_png_init(void);
+
 #endif

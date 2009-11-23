@@ -25,6 +25,7 @@
 
 #define WINTITLE_CB_WIDTH		14
 #define WINTITLE_CB_HEIGHT		14
+#define SELECTED_HEIGHT			25
 
 static const rt_uint8_t *close_unpressed_xpm[] = {
 	"14 14 55 1",
@@ -184,6 +185,15 @@ static const rt_uint8_t *close_pressed_xpm[] = {
 static rtgui_image_t* close_pressed = RT_NULL;
 static rtgui_image_t* close_unpressed = RT_NULL;
 
+/* init theme */
+void rtgui_system_theme_init()
+{
+	close_pressed = rtgui_image_create_from_mem("xpm", 
+		(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm));
+	close_unpressed = rtgui_image_create_from_mem("xpm", 
+		(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm));
+}
+
 /* window drawing */
 void rtgui_theme_draw_win(struct rtgui_topwin* win)
 {
@@ -288,7 +298,10 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 
 		if (btn->pressed_image != RT_NULL)
 		{
-			rtgui_rect_t image_rect = {0, 0, btn->unpressed_image->w, btn->unpressed_image->h};
+			rtgui_rect_t image_rect;
+			image_rect.x1 = 0; image_rect.y1 = 0;
+			image_rect.x2 = btn->unpressed_image->w;
+			image_rect.y2 = btn->unpressed_image->h;
 			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
 			rtgui_image_blit(btn->pressed_image, dc, &image_rect);
@@ -298,7 +311,10 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	{
 		if (btn->pressed_image != RT_NULL)
 		{
-			rtgui_rect_t image_rect = {0, 0, btn->unpressed_image->w, btn->unpressed_image->h};
+			rtgui_rect_t image_rect;
+			image_rect.x1 = 0; image_rect.y1 = 0;
+			image_rect.x2 = btn->unpressed_image->w;
+			image_rect.y2 = btn->unpressed_image->h;
 			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
 			rtgui_image_blit(btn->pressed_image, dc, &image_rect);
@@ -318,7 +334,10 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	{
 		if (btn->unpressed_image != RT_NULL)
 		{
-			rtgui_rect_t image_rect = {0, 0, btn->unpressed_image->w, btn->unpressed_image->h};
+			rtgui_rect_t image_rect;
+			image_rect.x1 = 0; image_rect.y1 = 0;
+			image_rect.x2 = btn->unpressed_image->w;
+			image_rect.y2 = btn->unpressed_image->h;
 			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
 			rtgui_image_blit(btn->unpressed_image, dc, &image_rect);
@@ -441,6 +460,28 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 	rtgui_dc_end_drawing(dc);
 }
 
+rt_uint16_t rtgui_theme_get_selected_height()
+{
+	return SELECTED_HEIGHT;
+}
+
+void rtgui_theme_draw_selected(struct rtgui_dc* dc, rtgui_rect_t *rect)
+{
+	rtgui_color_t saved;
+	rtgui_rect_t  focus_rect;
+	
+	focus_rect = *rect;
+	saved = rtgui_dc_get_color(dc);
+	rtgui_dc_set_color(dc, blue);
+
+	rtgui_rect_inflate(&focus_rect, -1);
+	rtgui_dc_draw_focus_rect(dc, &focus_rect);
+	rtgui_rect_inflate(&focus_rect, -1);
+	rtgui_dc_draw_focus_rect(dc, &focus_rect);
+
+	rtgui_dc_set_color(dc, saved);
+}
+
 /* get default background color */
 rtgui_color_t rtgui_theme_default_bc()
 {
@@ -452,3 +493,4 @@ rtgui_color_t rtgui_theme_default_fc()
 {
 	return default_foreground;
 }
+

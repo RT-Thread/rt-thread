@@ -23,6 +23,7 @@ static void _rtgui_workbench_constructor(rtgui_workbench_t *workbench)
 	/* set attributes */
 	workbench->panel = RT_NULL;
 	workbench->flag = RTGUI_WORKBENCH_FLAG_DEFAULT;
+	workbench->modal_code = RTGUI_MODAL_OK;
 	workbench->current_view = RT_NULL;
 }
 
@@ -157,10 +158,8 @@ void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag)
 	workbench->flag = flag;
 }
 
-void rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
+rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 {
-	int quit = 0;
-
 	/* the buffer uses to receive event */
 	char event_buf[256];
 	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
@@ -168,13 +167,29 @@ void rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 	/* show workbench firstly */
 	rtgui_workbench_show(workbench);
 
-	while (!quit)
+	if (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 	{
-		if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+		/* event loop for modal mode shown view */
+		while (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 		{
-			RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			{
+				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+			}
 		}
 	}
+	else
+	{
+		while (!(workbench->flag & RTGUI_WORKBENCH_FLAG_CLOSED))
+		{
+			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			{
+				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+			}
+		}
+	}
+
+	return RT_TRUE;
 }
 
 rt_err_t rtgui_workbench_show(rtgui_workbench_t* workbench)
@@ -301,6 +316,13 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			}
 			else
 			{
+				if (RTGUI_CONTAINER(widget)->focused == widget)
+				{
+					/* set focused widget to the current view */
+					if (workbench->current_view != RT_NULL)
+						rtgui_widget_focus(RTGUI_WIDGET(RTGUI_CONTAINER(workbench->current_view)->focused));
+				}
+
 				return rtgui_toplevel_event_handler(widget, event);
 			}
 		}
@@ -466,7 +488,7 @@ void rtgui_workbench_hide_view(rtgui_workbench_t* workbench, rtgui_view_t* view)
 
 		if (next_view != RT_NULL)
 		{
-			rtgui_view_show(next_view);
+			rtgui_view_show(next_view, RT_FALSE);
 		}
 		else
 		{

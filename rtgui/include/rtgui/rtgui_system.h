@@ -31,9 +31,6 @@ struct rtgui_thread
 
 	/* the owner of thread */
 	struct rtgui_widget* widget;
-
-	/* quit of thread */
-	rt_bool_t is_quit;
 };
 typedef struct rtgui_thread rtgui_thread_t;
 struct rtgui_timer;

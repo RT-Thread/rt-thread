@@ -16740,7 +16740,7 @@ const struct rtgui_font_bitmap hz16 =
 };
 
 extern struct rtgui_font_engine hz_bmp_font_engine;
-const struct rtgui_font rtgui_font_hz16 =
+struct rtgui_font rtgui_font_hz16 =
 {
 	"hz", 				/* family */
 	16, 				/* height */

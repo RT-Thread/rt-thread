@@ -15,6 +15,7 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/driver.h>
 #include <rtgui/image.h>
+#include <rtgui/rtgui_theme.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/widgets/window.h>
@@ -30,6 +31,9 @@ void rtgui_system_server_init()
 {
 	/* init rtgui_thread */
 	rtgui_thread_system_init();
+
+	/* init theme */
+	rtgui_system_theme_init();
 
 	/* init image */
 	rtgui_system_image_init();
@@ -257,7 +261,6 @@ rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 		thread->tid			= tid;
 		thread->mq			= mq;
 		thread->widget		= RT_NULL;
-		thread->is_quit		= RT_FALSE;
 
 		/* take semaphore */
 		rt_sem_take(&_rtgui_thread_hash_semaphore, RT_WAITING_FOREVER);

@@ -36,6 +36,7 @@ void wav(char* filename)
 			buf = sbuf_alloc();
 			len = read(fd, (char*)buf, block_size);
 			if (len > 0) rt_device_write(device, 0, buf, len);
+			else sbuf_release(buf);
 		} while (len != 0);
 
 		/* close device and file */

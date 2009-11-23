@@ -19,6 +19,11 @@ static void _rtgui_container_constructor(rtgui_container_t *container)
 	/* set event handler and init field */
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(container), rtgui_container_event_handler);
 	rtgui_list_init(&(container->children));
+	
+	/* set focused widget to itself */
+	container->focused = RTGUI_WIDGET(container);
+	/* set container as focusable widget */
+	RTGUI_WIDGET(container)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 }
 
 static void _rtgui_container_destructor(rtgui_container_t *container)
@@ -138,18 +143,18 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 		break;
 
 	case RTGUI_EVENT_MOUSE_MOTION:
-#if 0
 		if (rtgui_container_dispatch_mouse_event(container,
 			(struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
+#if 0
 			/* handle event in current widget */
 			if (widget->on_mousemotion != RT_NULL)
 			{
 				return widget->on_mousemotion(widget, event);
 			}
+#endif
 		}
 		else return RT_TRUE;
-#endif
 		break;
 
 	case RTGUI_EVENT_COMMAND:
@@ -215,6 +220,14 @@ void rtgui_container_remove_child(rtgui_container_t *container, rtgui_widget_t* 
 	RT_ASSERT(container != RT_NULL);
 	RT_ASSERT(child != RT_NULL);
 
+	if (child == container->focused)
+	{
+		/* set focused to itself */
+		container->focused = RTGUI_WIDGET(container);
+
+		rtgui_widget_focus(RTGUI_WIDGET(container));
+	}
+
 	/* remove widget from parent's children list */
 	rtgui_list_remove(&(container->children), &(child->sibling));
 
@@ -237,9 +250,18 @@ void rtgui_container_destroy_children(rtgui_container_t *container)
 
 		if (RTGUI_IS_CONTAINER(child))
 		{
+			/* break parent firstly */
+			child->parent = RT_NULL;
+
 			/* destroy children of child */
 			rtgui_container_destroy_children(RTGUI_CONTAINER(child));
 		}
+
+		/* remove widget from parent's children list */
+		rtgui_list_remove(&(container->children), &(child->sibling));
+
+		/* set parent and toplevel widget */
+		child->parent = RT_NULL;
 
 		/* destroy object and remove from parent */
 		rtgui_object_destroy(RTGUI_OBJECT(child));
@@ -248,22 +270,12 @@ void rtgui_container_destroy_children(rtgui_container_t *container)
 	}
 
 	container->children.next = RT_NULL;
+	container->focused = RTGUI_WIDGET(container);
+	if (RTGUI_WIDGET(container)->parent != RT_NULL)
+		rtgui_widget_focus(RTGUI_WIDGET(container));
 
 	/* update widget clip */
-#if 0
-	rtgui_widget_update_clip(RTGUI_WIDGET(container));
-#else
-	/* update toplevel widget clip */
-#if 0
-	{
-		rtgui_toplevel_t* top;
-
-		top = RTGUI_TOPLEVEL(RTGUI_WIDGET(container)->toplevel);
-		if (RTGUI_IS_VIEW(top))
-	}
-#endif
 	rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(RTGUI_WIDGET(container)->toplevel));
-#endif
 }
 
 rtgui_widget_t* rtgui_container_get_first_child(rtgui_container_t* container)

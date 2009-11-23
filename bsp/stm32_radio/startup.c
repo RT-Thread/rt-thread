@@ -103,13 +103,6 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register ethernetif device */
-	rt_hw_dm9000_init();
-#endif
-
 	wm8753_hw_init();
 
 	/* init hardware serial device */

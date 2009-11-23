@@ -26,7 +26,6 @@ static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 	toplevel->drawing = 0;
 	toplevel->external_clip_rect = RT_NULL;
 	toplevel->external_clip_size = 0;
-	toplevel->focus = RT_NULL;
 
 	/* hide toplevel default */
 	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(toplevel));
@@ -44,7 +43,6 @@ static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)
 	rtgui_free(toplevel->external_clip_rect);
 	toplevel->external_clip_rect = RT_NULL;
 	toplevel->external_clip_size = 0;
-	toplevel->focus = RT_NULL;
 }
 
 rtgui_type_t *rtgui_toplevel_type_get(void)
@@ -69,9 +67,9 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 	switch (event->type)
 	{
 	case RTGUI_EVENT_KBD:
-		if (toplevel->focus != RT_NULL)
+		if (RTGUI_CONTAINER(toplevel)->focused != RT_NULL)
 		{
-			toplevel->focus->event_handler(toplevel->focus, event);
+			RTGUI_CONTAINER(toplevel)->focused->event_handler(RTGUI_CONTAINER(toplevel)->focused, event);
 		}
 		break;
 
@@ -105,6 +103,7 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 				widget->on_command(widget, event);
 			}
 		}
+		else return RT_TRUE;
 		break;
 
 	default :
@@ -136,7 +135,7 @@ void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
 	top->external_clip_size = info->num_rect;
 
 	/* copy rect array */
-	rt_memcpy(top->external_clip_rect, info->rects, sizeof(rtgui_rect_t) * info->num_rect);
+	rt_memcpy(top->external_clip_rect, (void*)(info + 1), sizeof(rtgui_rect_t) * info->num_rect);
 }
 
 #include <rtgui/driver.h> /* to get screen rect */
@@ -177,18 +176,3 @@ void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
 		rtgui_widget_update_clip(child);
 	}
 }
-
-void rtgui_toplevel_set_focus(struct rtgui_toplevel* top, rtgui_widget_t* focus)
-{
-	RT_ASSERT(top != RT_NULL);
-
-	top->focus = focus;
-}
-
-rtgui_widget_t* rtgui_toplevel_get_focus(struct rtgui_toplevel* top)
-{
-	RT_ASSERT(top != RT_NULL);
-
-	return top->focus;
-}
-

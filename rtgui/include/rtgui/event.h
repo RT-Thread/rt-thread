@@ -296,9 +296,9 @@ struct rtgui_event_clip_info
 	/* the number of rects */
 	rt_uint32_t num_rect;
 
-	struct rtgui_rect rects[0];
+	/* rtgui_rect_t *rects */
 };
-#define RTGUI_EVENT_GET_RECT(e, i)		(&(e->rects[0]) + i)
+#define RTGUI_EVENT_GET_RECT(e, i)			&(((rtgui_rect_t*)(e + 1))[i])
 
 #define RTGUI_EVENT_UPDATE_BEGIN_INIT(e)	RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_UPDATE_BEGIN)
 #define RTGUI_EVENT_UPDATE_END_INIT(e)		RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_UPDATE_END)

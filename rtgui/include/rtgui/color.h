@@ -51,7 +51,7 @@ rt_inline rt_uint16_t rtgui_color_to_565(rtgui_color_t c)
 {
 	rt_uint16_t pixel;
 
-	pixel = ((RTGUI_RGB_B(c)>> 3) << 11) | ((RTGUI_RGB_G(c) >> 2) << 5) | (RTGUI_RGB_R(c) >> 3);
+	pixel = (rt_uint16_t)(((RTGUI_RGB_B(c)>> 3) << 11) | ((RTGUI_RGB_G(c) >> 2) << 5) | (RTGUI_RGB_R(c) >> 3));
 
 	return pixel;
 }
@@ -75,7 +75,7 @@ rt_inline rt_uint16_t rtgui_color_to_565p(rtgui_color_t c)
 {
 	rt_uint16_t pixel;
 
-	pixel = ((RTGUI_RGB_R(c) >> 3) << 11) | ((RTGUI_RGB_G(c) >> 2) << 5) | (RTGUI_RGB_B(c)>> 3);
+	pixel = (rt_uint16_t)(((RTGUI_RGB_R(c) >> 3) << 11) | ((RTGUI_RGB_G(c) >> 2) << 5) | (RTGUI_RGB_B(c)>> 3));
 	return pixel;
 }
 

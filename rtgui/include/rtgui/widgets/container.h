@@ -28,6 +28,7 @@ struct rtgui_container
 	/* inherit from widget */
 	struct rtgui_widget parent;
 
+	struct rtgui_widget* focused;
 	rtgui_list_t children;
 };
 typedef struct rtgui_container rtgui_container_t;

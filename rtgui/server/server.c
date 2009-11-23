@@ -21,11 +21,8 @@
 #include "panel.h"
 #include "topwin.h"
 
-static char rtgui_server_stack[2048];
-static struct rt_thread rtgui_server_thread;
-
-static struct rt_messagequeue rtgui_server_mq;
-static char rtgui_server_msg_pool[2048];
+static struct rt_thread *rtgui_server_tid;
+static struct rt_messagequeue *rtgui_server_mq;
 
 extern struct rtgui_topwin* rtgui_server_focus_topwin;
 struct rtgui_panel* rtgui_server_focus_panel = RT_NULL;
@@ -476,16 +473,11 @@ static void rtgui_server_entry(void* parameter)
 	SetThreadPriority(hCurrentThread, THREAD_PRIORITY_HIGHEST);
 #endif
 
-	/* init rtgui server msgq */
-	rt_mq_init(&rtgui_server_mq,
-		"rtgui",
-		&rtgui_server_msg_pool[0],
-		256,
-		sizeof(rtgui_server_msg_pool),
-		RT_IPC_FLAG_FIFO);
-
+	/* create rtgui server msgq */
+	rtgui_server_mq = rt_mq_create("rtgui",
+		256, 8, RT_IPC_FLAG_FIFO);
 	/* register rtgui server thread */
-	rtgui_thread_register(&rtgui_server_thread, &rtgui_server_mq);
+	rtgui_thread_register(rtgui_server_tid, rtgui_server_mq);
 
 	/* init mouse and show */
 	rtgui_mouse_init();
@@ -610,18 +602,18 @@ static void rtgui_server_entry(void* parameter)
 
 void rtgui_server_post_event(struct rtgui_event* event, rt_size_t size)
 {
-	rt_mq_send(&rtgui_server_mq, event, size);
+	rt_mq_send(rtgui_server_mq, event, size);
 }
 
 void rtgui_server_init()
 {
-	rt_thread_init(&rtgui_server_thread,
-		"rtgui",
+	rtgui_server_tid = rt_thread_create("rtgui",
 		rtgui_server_entry, RT_NULL,
-		&rtgui_server_stack[0], sizeof(rtgui_server_stack),
+		RTGUI_SVR_THREAD_STACK_SIZE,
 		RTGUI_SVR_THREAD_PRIORITY,
 		RTGUI_SVR_THREAD_TIMESLICE);
 
 	/* start rtgui server thread */
-	rt_thread_startup(&rtgui_server_thread);
+	if (rtgui_server_tid != RT_NULL)
+		rt_thread_startup(rtgui_server_tid);
 }

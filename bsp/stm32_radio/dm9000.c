@@ -276,7 +276,7 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 	    while (!(phy_read(1) & 0x20))
 	    {
 	        /* autonegation complete bit */
-	        delay_ms(10);
+	        rt_thread_delay(10);
 	        i++;
 	        if (i == 10000)
 	        {

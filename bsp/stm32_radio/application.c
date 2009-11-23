@@ -42,9 +42,30 @@
 #endif
 
 #ifdef RT_USING_RTGUI
-#include <rtgui/rtgui.h>
-#include <rtgui/rtgui_system.h>
+extern void radio_rtgui_init(void);
 #endif
+
+void sram_test_entry(void* parameter)
+{
+	rt_uint32_t *ptr;
+	rt_uint32_t index;
+	
+	ptr = (rt_uint32_t*)STM32_EXT_SRAM_BEGIN;
+	index = 0;
+	while (1)
+	{
+		*ptr = index;
+		ptr ++; index ++;
+		
+		if (ptr == (rt_uint32_t*)STM32_EXT_SRAM_END)
+		{
+			ptr = (rt_uint32_t*)STM32_EXT_SRAM_BEGIN;
+			rt_kprintf("test passed\n");
+			
+			rt_thread_delay(50);
+		}
+	}
+}
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
@@ -76,10 +97,26 @@ void rt_init_thread_entry(void *parameter)
     }
 #endif
 
+	/* RTGUI Initialization */
+#ifdef RT_USING_RTGUI
+	{
+		radio_rtgui_init();
+		rt_hw_key_init();
+	}
+#endif
+
     /* LwIP Initialization */
 #ifdef RT_USING_LWIP
     {
         extern void lwip_sys_init(void);
+#ifdef RT_USING_LWIP
+	eth_system_device_init();
+
+	/* register ethernetif device */
+	rt_hw_dm9000_init();
+	/* init all device */
+	rt_device_init_all();
+#endif
 
         /* init lwip system */
         lwip_sys_init();
@@ -92,32 +129,14 @@ void rt_init_thread_entry(void *parameter)
 	net_buf_init(320 * 1024);
 #endif
 
-	/* RTGUI Initialization */
-#ifdef RT_USING_RTGUI
+#if 0
 	{
-		rtgui_rect_t rect;
-
-		rtgui_system_server_init();
-
-		/* register dock panel */
-		rect.x1 = 0;
-		rect.y1 = 0;
-		rect.x2 = 240;
-		rect.y2 = 25;
-
-		rtgui_panel_register("info", &rect);
-
-		/* register main panel */
-		rect.x1 = 0;
-		rect.y1 = 25;
-		rect.x2 = 240;
-		rect.y2 = 320;
-		rtgui_panel_register("main", &rect);
-
-		rt_hw_lcd_init();
-
-		info_init();
-		today_init();
+		rt_thread_t tid;
+		
+		tid = rt_thread_create("sram",
+			sram_test_entry, RT_NULL,
+			512, 30, 5);
+		if (tid != RT_NULL) rt_thread_startup(tid);
 	}
 #endif
 }
@@ -138,8 +157,6 @@ int rt_application_init()
                                    2048, 80, 20);
 #endif
     if (init_thread != RT_NULL) rt_thread_startup(init_thread);
-
-	rt_hw_key_init();
 
     return 0;
 }

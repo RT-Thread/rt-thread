@@ -27,15 +27,15 @@
 /** Checks if the object is an rtgui_win */
 #define RTGUI_IS_WIN(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_WIN_TYPE))
 
-#define RTGUI_WIN_STYLE_MODAL		0x00
-#define RTGUI_WIN_STYLE_MODAL_LESS	0x01
-#define RTGUI_WIN_STYLE_NO_TITLE	0x02
-#define RTGUI_WIN_STYLE_NO_BORDER	0x04
-#define RTGUI_WIN_STYLE_SHOW		0x08
-#define RTGUI_WIN_STYLE_CLOSEBOX	0x10
-#define RTGUI_WIN_STYLE_MINIBOX		0x20
-#define RTGUI_WIN_STYLE_ACTIVATE	0x40
-#define RTGUI_WIN_STYLE_NO_FOCUS	0x80
+#define RTGUI_WIN_STYLE_MODAL		0x01	/* modal mode window			*/
+#define RTGUI_WIN_STYLE_CLOSED		0x02	/* window is closed				*/
+#define RTGUI_WIN_STYLE_ACTIVATE	0x04	/* window is activated			*/
+#define RTGUI_WIN_STYLE_NO_FOCUS	0x08	/* non-focused window			*/
+
+#define RTGUI_WIN_STYLE_NO_TITLE	0x10	/* no title window				*/
+#define RTGUI_WIN_STYLE_NO_BORDER	0x20	/* no border window				*/
+#define RTGUI_WIN_STYLE_CLOSEBOX	0x40	/* window has the close button	*/
+#define RTGUI_WIN_STYLE_MINIBOX		0x80	/* window has the mini button	*/
 
 #define RTGUI_WIN_STYLE_DEFAULT		(RTGUI_WIN_STYLE_CLOSEBOX | RTGUI_WIN_STYLE_MINIBOX)
 
@@ -51,7 +51,8 @@ struct rtgui_win
 	rtgui_toplevel_t* parent_toplevel;
 
 	/* top window style */
-	rt_uint32_t style;
+	rt_uint8_t style;
+	rtgui_modal_code_t modal_code;
 
 	/* window title */
 	char* title;
@@ -71,8 +72,10 @@ rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* tit
 	rtgui_rect_t *rect, rt_uint32_t flag);
 void rtgui_win_destroy(rtgui_win_t* win);
 
-void rtgui_win_show(rtgui_win_t* win);
+rtgui_modal_code_t rtgui_win_show(rtgui_win_t* win, rt_bool_t is_modal);
 void rtgui_win_hiden(rtgui_win_t* win);
+void rtgui_win_end_modal(rtgui_win_t* win, rtgui_modal_code_t modal_code);
+
 rt_bool_t rtgui_win_is_activated(struct rtgui_win* win);
 
 void rtgui_win_move(struct rtgui_win* win, int x, int y);

@@ -15,7 +15,7 @@
 #include <rtgui/filerw.h>
 #include <rtgui/rtgui_system.h>
 
-#ifdef RT_USING_DFS_FILERW
+#ifdef RTGUI_USING_DFS_FILERW
 #include <dfs_posix.h>
 
 /* standard file read/write */
@@ -95,7 +95,7 @@ static int stdio_close(struct rtgui_filerw *context)
 
 	return -1;
 }
-#elif RT_USING_STDIO_FILERW
+#elif defined(RTGUI_USING_STDIO_FILERW)
 #include <stdio.h>
 
 /* standard file read/write */
@@ -302,7 +302,7 @@ rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context)
 }
 
 /* file read/write public interface */
-#ifdef RT_USING_DFS_FILERW
+#ifdef RTGUI_USING_DFS_FILERW
 static int parse_mode(const char *mode)
 {
   int f=0;
@@ -352,7 +352,7 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 
 	return &(rw->parent);
 }
-#elif RT_USING_STDIO_FILERW
+#elif defined(RTGUI_USING_STDIO_FILERW)
 struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode)
 {
 	FILE *fp;

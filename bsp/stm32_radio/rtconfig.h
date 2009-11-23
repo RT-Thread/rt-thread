@@ -81,11 +81,12 @@
 #define RT_USING_DFS
 #define RT_USING_DFS_EFSL
 // #define RT_USING_DFS_ELMFAT
+#define DFS_EFLS_USING_STATIC_CACHE
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			1
 /* the max number of opened files 		*/
-#define DFS_FD_MAX					2
+#define DFS_FD_MAX					8
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
 
@@ -118,7 +119,7 @@
 /* #define RT_LWIP_SNMP */
 
 /* Using DHCP */
-/* #define RT_LWIP_DHCP */
+#define RT_LWIP_DHCP
 
 /* Using DNS */
 #define RT_LWIP_DNS

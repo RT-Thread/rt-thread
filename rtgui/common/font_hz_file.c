@@ -5,6 +5,7 @@
 #include <rtgui/font.h>
 #include <rtgui/tree.h>
 #include <rtgui/rtgui_system.h>
+#ifdef RTGUI_USING_HZ_FILE
 #include <dfs_posix.h>
 
 #define HZ_CACHE_MAX    64
@@ -142,3 +143,4 @@ static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const rt_uin
 	rect->x2 = (rt_int16_t)(hz_file_font->font_size/2 * rt_strlen((const char*)text));
 	rect->y2 = hz_file_font->font_size;
 }
+#endif
