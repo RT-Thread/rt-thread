@@ -38,6 +38,7 @@ struct rtgui_view
 
 	/* private field */
 	char* title;
+	rt_bool_t modal_show;
 };
 typedef struct rtgui_view rtgui_view_t;
 

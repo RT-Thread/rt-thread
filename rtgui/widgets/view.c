@@ -22,11 +22,24 @@ static void _rtgui_view_constructor(rtgui_view_t *view)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(view),
 		rtgui_view_event_handler);
 
+	view->modal_show = RT_FALSE;
 	view->title = RT_NULL;
 }
 
 static void _rtgui_view_destructor(rtgui_view_t *view)
 {
+	/* remove view from workbench */
+	if (RTGUI_WIDGET(view)->parent != RT_NULL)
+	{
+		rtgui_workbench_t *workbench;
+
+		if (view->modal_show == RT_TRUE)
+			rtgui_view_end_modal(view, RTGUI_MODAL_CANCEL);
+
+		workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
+		rtgui_workbench_remove_view(workbench, view);
+	}
+
 	if (view->title != RT_NULL)
 	{
 		rt_free(view->title);

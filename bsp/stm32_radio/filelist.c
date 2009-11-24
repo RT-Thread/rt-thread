@@ -454,19 +454,19 @@ rt_bool_t filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_
 								strncpy(new_path, view->current_directory, ptr - view->current_directory + 1);
 								new_path[ptr - view->current_directory] = '\0';
 							}
-							rt_kprintf("new path: %s\n", new_path);
 						}
 						else if (view->current_item == 0 && 
 							(view->current_directory[0] == '/') && (view->current_directory[1] == '\0'))
 						{
-							/* exit, close this view */
-				            rtgui_workbench_t* workbench;
+							if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
+							{
+								rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_CANCEL);
+							}
+							else
+							{
+								filelist_view_destroy(view);
+							}
 
-				            workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
-				            rtgui_workbench_remove_view(workbench, RTGUI_VIEW(view));
-				            filelist_view_destroy(view);
-							
-							filelist_view = RT_NULL;
 							return RT_FALSE;
 						}
 						else
@@ -482,20 +482,9 @@ rt_bool_t filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_
 					}
 					else
 					{
-						if (strstr(view->items[view->current_item].name, ".HDC") != RT_NULL || 
-							strstr(view->items[view->current_item].name, ".hdc") != RT_NULL)
+						if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
 						{
-							char new_path[64];					
-				            rtgui_workbench_t* workbench;
-
-				            workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
-
-							if (view->current_directory[strlen(view->current_directory) - 1] != PATH_SEPARATOR)
-								sprintf(new_path, "%s%c%s",view->current_directory, PATH_SEPARATOR,
-									view->items[view->current_item].name);
-							else
-								sprintf(new_path, "%s%s",view->current_directory, 
-								view->items[view->current_item].name);
+							rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
 						}
 					}
 					return RT_FALSE;
