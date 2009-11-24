@@ -540,6 +540,8 @@ void filelist_view_destroy(filelist_view_t* view)
 	rtgui_image_destroy(file_image);
 	rtgui_image_destroy(folder_image);
 
+	filelist_view = RT_NULL;
+
     /* destroy view */
 	rtgui_widget_destroy(RTGUI_WIDGET(view));
 }

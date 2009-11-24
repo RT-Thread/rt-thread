@@ -283,6 +283,22 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	return 0;
 }
 
+/* audio information structure */
+struct audio_info
+{
+	char* title;
+	char* artist;
+
+	rt_uint32_t duration;
+	rt_uint32_t bit_rate;
+	rt_uint32_t sampling;
+};
+
+/* get mp3 information */
+void mp3_get_info(char* filename, struct audio_info* info)
+{
+}
+
 #include <finsh.h>
 rt_size_t fd_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
 {

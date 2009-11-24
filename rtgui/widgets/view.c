@@ -144,6 +144,7 @@ rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal)
 	if (RTGUI_WIDGET_IS_FOCUSABLE(RTGUI_WIDGET(view)))
 		rtgui_widget_focus(RTGUI_WIDGET(view));
 
+	view->modal_show = is_modal;
 	if (is_modal == RT_TRUE)
 	{
 		/* set modal mode */

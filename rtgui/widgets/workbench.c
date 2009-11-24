@@ -164,9 +164,6 @@ rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 	char event_buf[256];
 	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
 
-	/* show workbench firstly */
-	rtgui_workbench_show(workbench);
-
 	if (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 	{
 		/* event loop for modal mode shown view */
@@ -180,6 +177,9 @@ rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 	}
 	else
 	{
+		/* show workbench firstly */
+		rtgui_workbench_show(workbench);
+		
 		while (!(workbench->flag & RTGUI_WORKBENCH_FLAG_CLOSED))
 		{
 			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
