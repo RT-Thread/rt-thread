@@ -122,7 +122,7 @@ struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8
 	struct rtgui_image* image = RT_NULL;
 
 	/* create filerw context */
-	filerw = rtgui_filerw_create_mem((rt_uint8_t*)data, length);
+	filerw = rtgui_filerw_create_mem(data, length);
 	if (filerw == RT_NULL) return RT_NULL;
 
 	/* get image engine */

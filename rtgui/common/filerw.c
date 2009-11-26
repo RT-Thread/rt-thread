@@ -190,12 +190,12 @@ struct rtgui_filerw_mem
 	/* inherit from rtgui_filerw */
 	struct rtgui_filerw parent;
 
-	rt_uint8_t *mem_base, *mem_position, *mem_end;
+	const rt_uint8_t *mem_base, *mem_position, *mem_end;
 };
 
 static int mem_seek(struct rtgui_filerw *context, rt_off_t offset, int whence)
 {
-	rt_uint8_t* newpos;
+	const rt_uint8_t* newpos;
 	struct rtgui_filerw_mem* mem = (struct rtgui_filerw_mem*)context;
 
 	RT_ASSERT(mem != RT_NULL);
@@ -251,6 +251,7 @@ static int mem_read(struct rtgui_filerw *context, void *ptr, rt_size_t size, rt_
 
 static int mem_write(struct rtgui_filerw *context, const void *ptr, rt_size_t size, rt_size_t num)
 {
+#if 0
 	struct rtgui_filerw_mem* mem = (struct rtgui_filerw_mem*)context;
 
 	if ((mem->mem_position + (num * size)) > mem->mem_end)
@@ -262,6 +263,9 @@ static int mem_write(struct rtgui_filerw *context, const void *ptr, rt_size_t si
 	mem->mem_position += num*size;
 
 	return num;
+#else
+	return 0; /* not support memory write */
+#endif
 }
 
 static int mem_tell(struct rtgui_filerw* context)
@@ -291,7 +295,7 @@ static int mem_close(struct rtgui_filerw *context)
 	return -1;
 }
 
-rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context)
+const rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context)
 {
 	struct rtgui_filerw_mem* mem = (struct rtgui_filerw_mem*)context;
 
@@ -383,7 +387,7 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 }
 #endif
 
-struct rtgui_filerw* rtgui_filerw_create_mem(rt_uint8_t* mem, rt_size_t size)
+struct rtgui_filerw* rtgui_filerw_create_mem(const rt_uint8_t* mem, rt_size_t size)
 {
 	struct rtgui_filerw_mem* rw;
 	RT_ASSERT(mem != RT_NULL);

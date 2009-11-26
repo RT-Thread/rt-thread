@@ -275,7 +275,7 @@ const unsigned char asc16_font[] = {
 
 struct rtgui_font_bitmap asc16 =
 {
-	asc16_font, 		/* bmp */
+	(const rt_uint8_t*)asc16_font, 		/* bmp */
 	8, 					/* width */
 	16, 				/* height */
 	0, 					/* first char */

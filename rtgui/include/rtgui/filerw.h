@@ -32,7 +32,7 @@ struct rtgui_filerw
 typedef struct rtgui_filerw rtgui_filerw_t;
 
 struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode);
-struct rtgui_filerw* rtgui_filerw_create_mem(rt_uint8_t* mem, rt_size_t size);
+struct rtgui_filerw* rtgui_filerw_create_mem(const rt_uint8_t* mem, rt_size_t size);
 
 int rtgui_filerw_seek (struct rtgui_filerw* context, rt_off_t offset, int whence);
 int rtgui_filerw_read (struct rtgui_filerw* context, void* buffer, rt_size_t size, rt_size_t count);
@@ -42,6 +42,6 @@ int rtgui_filerw_eof  (struct rtgui_filerw* context);
 int rtgui_filerw_close(struct rtgui_filerw* context);
 
 /* get memory data from filerw memory object */
-rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context);
+const rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context);
 
 #endif

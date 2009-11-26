@@ -430,6 +430,13 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 #endif
 		break;
 
+    case RTGUI_EVENT_KBD:
+		if (RTGUI_CONTAINER(win)->focused != widget)
+		{
+			RTGUI_CONTAINER(win)->focused->event_handler(RTGUI_CONTAINER(win)->focused, event);
+		}
+        break;
+
 	default:
 		/* call parent event handler */
 		return rtgui_toplevel_event_handler(widget, event);

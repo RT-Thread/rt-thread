@@ -2966,6 +2966,7 @@ static void DMA_RxConfiguration(uint32_t *BufferDST, uint32_t BufferSize)
 static struct rt_device sdcard_device;
 static SD_CardInfo SDCardInfo;
 static struct dfs_partition part;
+static struct rt_semaphore sd_lock;
 
 /* RT-Thread Device Driver Interface */
 static rt_err_t rt_sdcard_init(rt_device_t dev)
@@ -2977,6 +2978,11 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+
+	if (rt_sem_init(&sd_lock, "sdlock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+	{
+		rt_kprintf("init sd lock semaphore failed\n");
+	}
 
 	return RT_EOK;
 }
@@ -3001,6 +3007,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 
 	// rt_kprintf("read: 0x%x, size %d\n", pos, size);
 
+	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
 	retry = 3;
 	/* read all sectors */
 	for (i = 0; i < size / SECTOR_SIZE; i ++)
@@ -3012,14 +3019,15 @@ __retry:
 		if (status != SD_OK)
 		{
 			if (--retry != 0) goto __retry;
-			rt_kprintf("sd card read failed, status 0x%08x\n", status);
-			return 0;
+			break;
 		}
 	}
 
+	rt_sem_release(&sd_lock);
+
 	if (status == SD_OK) return size;
 
-	rt_kprintf("read failed: %d\n", status);
+	rt_kprintf("read failed: %d, buffer 0x%08x\n", status, buffer);
 	return 0;
 }
 
@@ -3030,7 +3038,9 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 	// rt_kprintf("write: 0x%x, size %d\n", pos, size);
 
-	/* read all sectors */
+	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
+
+	/* write all sectors */
 	for (i = 0; i < size / SECTOR_SIZE; i ++)
 	{
 		status = SD_WriteBlock((part.offset + i)* SECTOR_SIZE + pos,
@@ -3039,13 +3049,14 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 		if (status != SD_OK)
 		{
 			rt_kprintf("sd card write failed\n");
-			return 0;
+			break;
 		}
 	}
 
+	rt_sem_release(&sd_lock);
 	if (status == SD_OK) return size;
 
-	rt_kprintf("write failed: %d\n", status);
+	rt_kprintf("write failed: %d, buffer 0x%08x\n", status, buffer);
 	return 0;
 }
 
@@ -3119,3 +3130,4 @@ void rt_hw_sdcard_init()
 __return:
 	rt_kprintf("sdcard init failed\n");
 }
+
