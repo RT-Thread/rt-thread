@@ -55,7 +55,7 @@ void rt_hw_timer_handler(void)
 void rt_hw_board_init()
 {
 	/* set clock */
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN |
+	SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_6MHZ);
 
 	/* init systick */
@@ -63,6 +63,9 @@ void rt_hw_board_init()
 	SysTickPeriodSet(SysCtlClockGet()/RT_TICK_PER_SECOND);
 	SysTickIntEnable();
 	SysTickEnable();
+
+	/* enable ssio */
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
 	
 	/* init console */
 	rt_hw_console_init();
@@ -74,17 +77,17 @@ void rt_hw_board_init()
 /* init console to support rt_kprintf */
 static void rt_hw_console_init()
 {
-    /* Enable the UART0 peripherals */
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+	/* Enable the UART0 peripherals */
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
-    /* Set GPIO A0 and A1 as UART pins. */
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+	/* Set GPIO A0 and A1 as UART pins. */
+	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-    /* Configure the UART for 115,200, 8-N-1 operation. */
-    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
-                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-                         UART_CONFIG_PAR_NONE));
+	/* Configure the UART for 115,200, 8-N-1 operation. */
+	UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
+	                    (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+	                     UART_CONFIG_PAR_NONE));
 }
 
 /* write one character to serial, must not trigger interrupt */

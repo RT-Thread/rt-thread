@@ -16,7 +16,7 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
-#define RT_DEBUG
+/* #define RT_DEBUG*/
 /* #define RT_THREAD_DEBUG */
 
 /* Using Hook*/
@@ -81,6 +81,7 @@
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */
 
+#define RT_USING_DFS
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			1
@@ -91,7 +92,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
@@ -108,11 +109,18 @@
 /* Enable TCP protocol*/
 #define RT_LWIP_TCP
 
+/* the number of simulatenously active TCP connections*/
+#define RT_LWIP_TCP_PCB_NUM	5
+
+/* TCP sender buffer space*/
+#define RT_LWIP_TCP_SND_BUF	1500
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
 
 /* Using DHCP*/
 /* #define RT_LWIP_DHCP */
+
+#define RT_LWIP_DNS
 
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
@@ -132,4 +140,13 @@
 #define RT_LWIP_MSKADDR2	255
 #define RT_LWIP_MSKADDR3	0
 
+/* tcp thread options */
+#define RT_LWIP_TCPTHREAD_PRIORITY		22
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
+#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
+
+/* ethernet if thread options */
+#define RT_LWIP_ETHTHREAD_PRIORITY		23
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
+#define RT_LWIP_ETHTHREAD_STACKSIZE		512
 #endif

@@ -81,19 +81,25 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-	/* STM32F103VB has 20k SRAM, the end address of SRAM is 0x20005000 */
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20005000);
+	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20010000);
 #elif __ICCARM__
-    rt_system_heap_init(__segment_end("HEAP"), (void*)0x20005000);
+    rt_system_heap_init(__segment_end("HEAP"), (void*)0x20010000);
 #else
 	/* init memory system */
-	rt_system_heap_init((void*)&__bss_end, (void*)0x20005000);
+	rt_system_heap_init((void*)&__bss_end, (void*)0x20010000);
 #endif
 #endif
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
+
+#ifdef RT_USING_LWIP
+	eth_system_device_init();
+
+	/* register ethernetif device */
+	rt_hw_luminaryif_init();
+#endif
 
 	/* init hardware serial device */
 	rt_hw_serial_init();
