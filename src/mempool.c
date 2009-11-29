@@ -108,7 +108,7 @@ rt_err_t rt_mp_init(struct rt_mempool* mp, const char* name, void *start, rt_siz
 			= (rt_uint8_t*)(block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t*)));
 	}
 
-	*(rt_uint8_t**)(block_ptr + offset * (block_size + sizeof(rt_uint8_t*))) = RT_NULL;
+	*(rt_uint8_t**)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t*))) = RT_NULL;
 
 	mp->block_list = block_ptr;
 
@@ -203,7 +203,7 @@ rt_mp_t rt_mp_create(const char* name, rt_size_t block_count, rt_size_t block_si
 			= block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t*));
 	}
 
-	*(rt_uint8_t**)(block_ptr + offset * (block_size + sizeof(rt_uint8_t*))) = RT_NULL;
+	*(rt_uint8_t**)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t*))) = RT_NULL;
 
 	mp->block_list = block_ptr;
 
@@ -294,7 +294,12 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 	else
 	{
 		/* memory block is unavailable. */
-		if (time == 0) return RT_NULL;
+		if (time == 0)
+		{
+			/* enable interrupt */
+			rt_hw_interrupt_enable(level);
+			return RT_NULL;
+		}
 		else
 		{
 			/* get current thread */
@@ -334,7 +339,6 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 			*(rt_uint8_t**)block_ptr = (rt_uint8_t*)mp;	
 		}
 	}
-
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
