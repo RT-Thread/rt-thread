@@ -63,7 +63,7 @@ err_t eth_input(struct pbuf *p, struct netif *inp)
 		{
 		case ETHTYPE_IP:
 			etharp_ip_input(inp, p);
-			pbuf_header(p, -14);
+			pbuf_header(p, -((rt_int16_t)sizeof(struct eth_hdr)));
 			tcpip_input(p, inp);
 			break;
 

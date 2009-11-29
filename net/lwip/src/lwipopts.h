@@ -63,8 +63,8 @@
 #define AUTOIP_DEBUG                LWIP_DBG_OFF
 #define DHCP_DEBUG                  LWIP_DBG_OFF
 #define IP_DEBUG                    LWIP_DBG_OFF
-#define IP_REASS_DEBUG              LWIP_DBG_ON
-#define ICMP_DEBUG                  LWIP_DBG_ON
+#define IP_REASS_DEBUG              LWIP_DBG_OFF
+#define ICMP_DEBUG                  LWIP_DBG_OFF
 #define IGMP_DEBUG                  LWIP_DBG_OFF
 #define UDP_DEBUG                   LWIP_DBG_OFF
 #define TCP_DEBUG                   LWIP_DBG_OFF
@@ -141,6 +141,8 @@
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
    link level header. */
 #define PBUF_LINK_HLEN              16
+
+#define ETH_PAD_SIZE                    2       // default is 0
 
 /** SYS_LIGHTWEIGHT_PROT
  * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
