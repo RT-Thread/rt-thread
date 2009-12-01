@@ -174,7 +174,7 @@ int write(int fd, char *buf, int   len)
 |
 +------------------------------------------------------------------------------
 */
-int lseek(int fd, int   offset, int   dir)
+int lseek(int fd, int offset, int dir)
 {
 	int result;
 	struct dfs_fd* d;
@@ -196,7 +196,7 @@ int lseek(int fd, int   offset, int   dir)
 		break;
 
 	case DFS_SEEK_END:
-		offset = d->pos - offset;
+		offset += d->size;
 		break;
 	}
 
@@ -210,7 +210,7 @@ int lseek(int fd, int   offset, int   dir)
 
 	/* release the ref-count of fd */
 	fd_put(d);
-	return result;
+	return offset;
 }
 
 /*
