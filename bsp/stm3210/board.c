@@ -94,8 +94,8 @@ void rt_hw_board_init()
 }
 
 #if STM32_CONSOLE_USART == 1
-#define CONSOLE_RX_PIN	    GPIO_Pin_9
-#define CONSOLE_TX_PIN	    GPIO_Pin_10
+#define CONSOLE_TX_PIN	    GPIO_Pin_9
+#define CONSOLE_RX_PIN	    GPIO_Pin_10
 #define CONSOLE_GPIO	    GPIOA
 #define CONSOLE_USART	    USART1
 #define CONSOLE_RCC         RCC_APB2Periph_USART1
@@ -103,14 +103,14 @@ void rt_hw_board_init()
 #elif STM32_CONSOLE_USART == 2
 
 #if defined(STM32F10X_LD) || defined(STM32F10X_MD) || defined(STM32F10X_CL)
-#define CONSOLE_RX_PIN	    GPIO_Pin_6
 #define CONSOLE_TX_PIN	    GPIO_Pin_5
+#define CONSOLE_RX_PIN	    GPIO_Pin_6
 #define CONSOLE_GPIO	    GPIOD
 #define CONSOLE_RCC         RCC_APB1Periph_USART2
 #define CONSOLE_RCC_GPIO    RCC_APB2Periph_GPIOD
 #elif defined(STM32F10X_HD)
-#define CONSOLE_RX_PIN	    GPIO_Pin_3
 #define CONSOLE_TX_PIN	    GPIO_Pin_2
+#define CONSOLE_RX_PIN	    GPIO_Pin_3
 #define CONSOLE_GPIO	    GPIOA
 #define CONSOLE_RCC         RCC_APB1Periph_USART2
 #define CONSOLE_RCC_GPIO    RCC_APB2Periph_GPIOA
@@ -154,13 +154,13 @@ static void rt_hw_console_init()
 		GPIO_InitTypeDef GPIO_InitStructure;
 
 		/* Configure USART Tx as alternate function push-pull */
-		GPIO_InitStructure.GPIO_Pin = CONSOLE_RX_PIN;
+		GPIO_InitStructure.GPIO_Pin = CONSOLE_TX_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
 
 		/* Configure USART Rx as input floating */
-		GPIO_InitStructure.GPIO_Pin = CONSOLE_TX_PIN;
+		GPIO_InitStructure.GPIO_Pin = CONSOLE_RX_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 		GPIO_Init(CONSOLE_GPIO, &GPIO_InitStructure);
 	}

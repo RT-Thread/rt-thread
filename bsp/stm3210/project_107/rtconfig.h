@@ -53,7 +53,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
-#define RT_USING_UART1
+#define RT_USING_UART2
 
 /* SECTION: Console options */
 /* the buffer size of console*/
@@ -64,7 +64,7 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define FINSH_DEVICE_NAME	"uart1"
+#define FINSH_DEVICE_NAME	"uart2"
 
 /* SECTION: device filesystem */
 #define RT_USING_DFS
