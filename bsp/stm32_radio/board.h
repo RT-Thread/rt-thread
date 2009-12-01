@@ -42,6 +42,10 @@
 // 	<i>Default: 1
 #define STM32_CONSOLE_USART			1
 
+// <o> Codec Version <1=>Version 1 <2=>Version 2
+// 	<i>Default: 1
+#define CODEC_VERSION	1
+
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
 void rt_hw_board_init(void);

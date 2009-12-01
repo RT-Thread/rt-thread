@@ -36,7 +36,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 			
 			rtt_image = RT_NULL;
 		}
-		
+
         if (network_image != RT_NULL)
         {
             rect.x1 = rect.x2 - (network_image->w + 2);
@@ -61,7 +61,7 @@ static void info_entry(void* parameter)
 	rtgui_thread_register(rt_thread_self(), mq);
 
     network_image = rtgui_image_create_from_mem("xpm",
-		(rt_uint8_t*)network_xpm, sizeof(network_xpm));
+		(rt_uint8_t*)network_xpm, sizeof(network_xpm), RT_TRUE);
 	workbench = rtgui_workbench_create("info", "workbench");
 	if (workbench == RT_NULL) return;
 

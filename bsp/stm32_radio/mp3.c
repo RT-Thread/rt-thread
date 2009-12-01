@@ -1,11 +1,17 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 #include <mp3/pub/mp3dec.h>
+#include <string.h>
 
 #include "board.h"
 #include "netbuffer.h"
+#include "player_ui.h"
+#include "player_bg.h"
 
 #define MP3_AUDIO_BUF_SZ    4096
+#ifndef MIN
+#define MIN(x, y)			((x) < (y)? (x) : (y))
+#endif
 
 rt_uint8_t mp3_fd_buffer[MP3_AUDIO_BUF_SZ];
 
@@ -21,9 +27,8 @@ struct mp3_decoder
 	void* fetch_parameter;
 
     /* mp3 read session */
-    rt_uint8_t *read_buffer;
-    rt_uint8_t* read_ptr;
-    rt_int32_t read_offset;
+    rt_uint8_t *read_buffer, *read_ptr;
+    rt_int32_t  read_offset;
     rt_uint32_t bytes_left, bytes_left_before_decoding;
 
 	/* audio device */
@@ -99,7 +104,6 @@ void mp3_decoder_delete(struct mp3_decoder* decoder)
     rt_free(decoder);
 }
 
-rt_uint16_t is_first = 1;
 rt_uint32_t current_offset = 0;
 static rt_int32_t mp3_decoder_fill_buffer(struct mp3_decoder* decoder)
 {
@@ -115,9 +119,6 @@ static rt_int32_t mp3_decoder_fill_buffer(struct mp3_decoder* decoder)
 
 	bytes_to_read = (MP3_AUDIO_BUF_SZ - decoder->bytes_left) & ~(512 - 1);
 	// rt_kprintf("read bytes: %d\n", bytes_to_read);
-
-	if (is_first) is_first = 0;
-	else current_offset += MP3_AUDIO_BUF_SZ - decoder->bytes_left;
 
 	bytes_read = decoder->fetch_data(decoder->fetch_parameter,
 		(rt_uint8_t *)(decoder->read_buffer + decoder->bytes_left),
@@ -141,8 +142,11 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 {
 	int err;
 	rt_uint16_t* buffer;
+	rt_uint32_t  delta;
 
     RT_ASSERT(decoder != RT_NULL);
+
+	if (player_is_playing() != RT_TRUE) return -1;
 
 	if ((decoder->read_ptr == RT_NULL) || decoder->bytes_left < 2*MAINBUF_SIZE)
 	{
@@ -162,6 +166,7 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	// rt_kprintf("sync position: %x\n", decoder->read_offset);
 
 	decoder->read_ptr += decoder->read_offset;
+	delta = decoder->read_offset;
 	decoder->bytes_left -= decoder->read_offset;
 	decoder->bytes_left_before_decoding = decoder->bytes_left;
 
@@ -196,6 +201,10 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 
 	err = MP3Decode(decoder->decoder, &decoder->read_ptr,
         (int*)&decoder->bytes_left, (short*)buffer, 0);
+	delta += (decoder->bytes_left_before_decoding - decoder->bytes_left);
+
+	current_offset += delta;
+	player_set_position(current_offset);
 
 	// rt_kprintf("bytes left after decode: %d\n", decoder->bytes_left);
 
@@ -277,26 +286,114 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 
 		/* write to sound device */
 		rt_device_write(decoder->snd_device, 0, buffer, decoder->frame_info.outputSamps * 2);
-		// rt_mp_free(buffer);
 	}
 
 	return 0;
 }
 
-/* audio information structure */
-struct audio_info
-{
-	char* title;
-	char* artist;
-
-	rt_uint32_t duration;
-	rt_uint32_t bit_rate;
-	rt_uint32_t sampling;
-};
-
 /* get mp3 information */
-void mp3_get_info(char* filename, struct audio_info* info)
+void mp3_get_info(const char* filename, struct tag_info* info)
 {
+	int fd;
+	char* id3buffer;
+	rt_size_t   bytes_read;
+	int sync_word;
+    HMP3Decoder decoder;
+    MP3FrameInfo frame_info;
+
+	id3buffer = (char*)&mp3_fd_buffer[0];
+	if (filename == RT_NULL || info == RT_NULL) return;
+
+	fd = open(filename, O_RDONLY, 0);
+	if (fd < 0) return; /* can't read file */
+
+	/* init decoder */
+	decoder = MP3InitDecoder();
+
+	/* read data */
+	bytes_read = read(fd, id3buffer, sizeof(mp3_fd_buffer));
+
+	/* get frame information */
+	sync_word = MP3FindSyncWord(id3buffer, bytes_read);
+	if (sync_word < 0)
+	{
+		/* can't get sync word */
+		close(fd);
+		mp3_decoder_detach(decoder);
+	}
+	/* get frame information */
+	MP3GetNextFrameInfo(decoder, &frame_info, &id3buffer[sync_word]);
+	info->bit_rate = frame_info.bitrate;
+	info->sampling = frame_info.samprate;
+	info->duration = lseek(fd, 0, SEEK_END)/ (info->bit_rate / 8); /* second */
+
+	if (strncmp("ID3", id3buffer, 4) == 0)
+	{
+		rt_uint32_t tag_size, frame_size, i;
+		rt_uint8_t version_major;
+		int frame_header_size;
+
+		tag_size = ((rt_uint32_t)id3buffer[6] << 21)|((rt_uint32_t)id3buffer[7] << 14)|((rt_uint16_t)id3buffer[8] << 7)|id3buffer[9];
+		info->data_start = tag_size;
+		version_major = id3buffer[3];
+		if (version_major >= 3)
+		{
+			frame_header_size = 10;
+		}
+		else
+		{
+			frame_header_size = 6;
+		}
+		i = 10;
+
+		// iterate through frames
+		while (i < MIN(tag_size, sizeof(id3buffer)))
+		{
+			if (version_major >= 3)
+			{
+				frame_size = ((rt_uint32_t)id3buffer[i + 4] << 24)|((rt_uint32_t)id3buffer[i + 5] << 16)|((rt_uint16_t)id3buffer[i + 6] << 8)|id3buffer[i + 7];
+			}
+			else
+			{
+				frame_size = ((rt_uint32_t)id3buffer[i + 3] << 14)|((rt_uint16_t)id3buffer[i + 4] << 7)|id3buffer[i + 5];
+			}
+
+			if (strncmp("TT2", id3buffer + i, 3) == 0 || strncmp("TIT2", id3buffer + i, 4) == 0)
+			{
+				strncpy(info->title, id3buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->title) - 1));
+			}
+			else if (strncmp("TP1", id3buffer + i, 3) == 0 || strncmp("TPE1", id3buffer + i, 4) == 0)
+			{
+				strncpy(info->artist, id3buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->artist) - 1));
+			}
+
+			i += frame_size + frame_header_size;
+		}
+	}
+	else
+	{
+		lseek(fd, -128, SEEK_END);
+		bytes_read = read(fd, id3buffer, 128);
+
+		/* ID3v1 */
+		if (strncmp("TAG", id3buffer, 3) == 0)
+		{
+			strncpy(info->title, id3buffer + 3, MIN(30, sizeof(info->title) - 1));
+			strncpy(info->artist, id3buffer + 3 + 30, MIN(30, sizeof(info->artist) - 1));
+		}
+
+		/* set data start position */
+		info->data_start = 0;
+	}
+
+    /* set current position */
+    info->position = 0;
+
+	/* release mp3 decoder */
+    MP3FreeDecoder(decoder);
+
+	/* close file */
+	close(fd);
 }
 
 #include <finsh.h>
@@ -309,7 +406,9 @@ void mp3(char* filename)
 {
 	int fd;
 	struct mp3_decoder* decoder;
-
+	extern rt_bool_t is_playing;
+	
+	is_playing = RT_TRUE;
 	fd = open(filename, O_RDONLY, 0);
 	if (fd >= 0)
 	{
@@ -319,6 +418,7 @@ void mp3(char* filename)
 			decoder->fetch_data = fd_fetch;
 			decoder->fetch_parameter = (void*)fd;
 
+			current_offset = 0;
 			while (mp3_decoder_run(decoder) != -1);
 			close(fd);
 
@@ -326,6 +426,7 @@ void mp3(char* filename)
 			mp3_decoder_delete(decoder);
 		}
 	}
+	is_playing = RT_FALSE;
 }
 FINSH_FUNCTION_EXPORT(mp3, mp3 decode test);
 
@@ -369,6 +470,7 @@ void http_mp3(char* url)
 			decoder->fetch_data = http_data_fetch;
 			decoder->fetch_parameter = RT_NULL;
 
+			current_offset = 0;
 			while (mp3_decoder_run(decoder) != -1);
 
 			/* delete decoder object */

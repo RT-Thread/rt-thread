@@ -224,9 +224,9 @@ static void _filelist_view_constructor(struct filelist_view *view)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(view)) = RTGUI_ALIGN_CENTER_VERTICAL;
 
 	file_image = rtgui_image_create_from_mem("xpm",
-		(rt_uint8_t*)file_xpm, sizeof(file_xpm));
+		(rt_uint8_t*)file_xpm, sizeof(file_xpm), RT_TRUE);
 	folder_image = rtgui_image_create_from_mem("xpm",
-		(rt_uint8_t*)folder_xpm, sizeof(folder_xpm));
+		(rt_uint8_t*)folder_xpm, sizeof(folder_xpm), RT_TRUE);
 }
 
 rtgui_type_t *filelist_view_type_get(void)

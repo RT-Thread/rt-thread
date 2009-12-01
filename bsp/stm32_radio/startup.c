@@ -44,7 +44,7 @@ extern void finsh_set_device(const char* device);
 #endif
 extern int rt_application_init(void);
 extern rt_err_t wm8753_hw_init(void);
-
+extern rt_err_t wm8978_hw_init(void);
 #ifdef  DEBUG
 /*******************************************************************************
 * Function Name  : assert_failed
@@ -103,7 +103,11 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
+#if CODEC_VERSION == 1
 	wm8753_hw_init();
+#elif CODEC_VERSION == 2
+	wm8978_hw_init();
+#endif
 
 	/* init hardware serial device */
 	rt_hw_usart_init();

@@ -23,6 +23,8 @@
 #include <stm32f10x_dma.h>
 #include <stm32f10x_sdio.h>
 
+#include <rtthread.h>
+
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
   */
@@ -956,11 +958,29 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   }
   else if (DeviceMode == SD_DMA_MODE)
   {
+    int cnt = 0; 
     SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
     SDIO_DMACmd(ENABLE);
     DMA_RxConfiguration(readbuff, BlockSize);
     while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-    {}
+    {
+		cnt ++; 
+		if (cnt > 10 * 50000) 
+		{
+			rt_kprintf("DMA flag 0x%08x\n", DMA_GetFlagStatus(DMA2_FLAG_TC4));
+			/* Clear all DPSM configuration */
+			SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT;
+			SDIO_DataInitStructure.SDIO_DataLength = 0;
+			SDIO_DataInitStructure.SDIO_DataBlockSize = SDIO_DataBlockSize_1b;
+			SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+			SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+			SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Disable;
+			SDIO_DataConfig(&SDIO_DataInitStructure);
+			SDIO_DMACmd(DISABLE);
+			errorstatus = SD_ERROR; 
+			break;
+		} 
+	}
   }
   return(errorstatus);
 }
@@ -3018,8 +3038,9 @@ __retry:
 			SECTOR_SIZE);
 		if (status != SD_OK)
 		{
-			if (--retry != 0) goto __retry;
-			break;
+			-- retry;
+			if (retry != 0) goto __retry;
+			else break;
 		}
 	}
 
@@ -3130,4 +3151,3 @@ void rt_hw_sdcard_init()
 __return:
 	rt_kprintf("sdcard init failed\n");
 }
-
