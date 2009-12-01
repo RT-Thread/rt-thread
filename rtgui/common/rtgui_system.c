@@ -20,7 +20,7 @@
 #include <rtgui/rtgui_server.h>
 #include <rtgui/widgets/window.h>
 
-#define RTGUI_EVENT_DEBUG
+// #define RTGUI_EVENT_DEBUG
 
 #ifdef __WIN32__
 #define RTGUI_EVENT_DEBUG

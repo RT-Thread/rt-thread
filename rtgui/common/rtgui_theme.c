@@ -189,9 +189,9 @@ static rtgui_image_t* close_unpressed = RT_NULL;
 void rtgui_system_theme_init()
 {
 	close_pressed = rtgui_image_create_from_mem("xpm", 
-		(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm));
+		(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm), RT_TRUE);
 	close_unpressed = rtgui_image_create_from_mem("xpm", 
-		(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm));
+		(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm), RT_TRUE);
 }
 
 /* window drawing */
@@ -203,10 +203,10 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 	/* init close box image */
 	if (close_pressed == RT_NULL)
 		close_pressed = rtgui_image_create_from_mem("xpm", 
-			(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm));
+			(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm), RT_TRUE);
 	if (close_unpressed == RT_NULL)
 		close_unpressed = rtgui_image_create_from_mem("xpm", 
-			(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm));
+			(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm), RT_TRUE);
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(win->title));

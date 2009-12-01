@@ -207,7 +207,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 		for (y = 0; y < h; y ++)
 		{
-			rtgui_image_hdc_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x2, dst_rect->y1 + y);
+			rtgui_image_hdc_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
 			ptr += hdc->pitch;
 		}
     }

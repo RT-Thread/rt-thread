@@ -115,7 +115,7 @@ struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* f
 	return image;
 }
 
-struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length)
+struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length, rt_bool_t load)
 {
 	struct rtgui_filerw* filerw;
 	struct rtgui_image_engine* engine;
@@ -144,7 +144,7 @@ struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8
 			return RT_NULL;
 		}
 
-		if (engine->image_load(image, filerw, RT_TRUE) != RT_TRUE)
+		if (engine->image_load(image, filerw, load) != RT_TRUE)
 		{
 			/* close filerw context */
 			rtgui_filerw_close(filerw);

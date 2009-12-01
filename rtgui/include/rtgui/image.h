@@ -50,7 +50,7 @@ typedef struct rtgui_image rtgui_image_t;
 void rtgui_system_image_init(void);
 
 struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* filename, rt_bool_t load);
-struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length);
+struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length, rt_bool_t load);
 void rtgui_image_destroy(struct rtgui_image* image);
 
 /* register an image engine */
