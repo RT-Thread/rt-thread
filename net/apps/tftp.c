@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include <dfs_posix.h>
 #include <lwip/sockets.h>
 
@@ -13,17 +14,16 @@
 
 rt_uint8_t tftp_buffer[512 + 4];
 /* tftp client */
-void tftp_get(const char* host, const char* filename)
+void tftp_get(const char* host, const char* dir, const char* filename)
 {
-	int fd, sock_fd;
+	int fd, sock_fd, sock_opt;
 	struct sockaddr_in tftp_addr, from_addr;
 	rt_uint32_t length;
 	socklen_t fromlen;
 
 	/* make local file name */
-	getcwd((char*)tftp_buffer, sizeof(tftp_buffer));
-	strcat((char*)tftp_buffer, "/");
-	strcat((char*)tftp_buffer, filename);
+	rt_snprintf((char*)tftp_buffer, sizeof(tftp_buffer),
+		"%s/%s", dir, filename);
 
 	/* open local file for write */
 	fd = open((char*)tftp_buffer, O_RDWR, 0);
@@ -46,6 +46,10 @@ void tftp_get(const char* host, const char* filename)
 	    return ;
 	}
 	
+	/* set socket option */
+	sock_opt = 5000; /* 5 seconds */
+	lwip_setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &sock_opt, sizeof(sock_opt));
+
 	/* make tftp request */
 	tftp_buffer[0] = 0;			/* opcode */
 	tftp_buffer[1] = TFTP_RRQ; 	/* RRQ */
@@ -67,7 +71,7 @@ void tftp_get(const char* host, const char* filename)
 		
 		if (length > 0)
 		{
-			write(fd, &tftp_buffer[4], length - 4);
+			write(fd, (char*)&tftp_buffer[4], length - 4);
 			rt_kprintf("#");
 
 			/* make ACK */			
@@ -76,24 +80,26 @@ void tftp_get(const char* host, const char* filename)
 			lwip_sendto(sock_fd, tftp_buffer, 4, 0, 
 				(struct sockaddr *)&from_addr, fromlen);
 		}
-	} while (length != 516);
-	
+	} while (length == 516);
+
+	if (length == 0) rt_kprintf("timeout\n");
+	else rt_kprintf("done\n");
+
 	close(fd);
 	lwip_close(sock_fd);
 }
 FINSH_FUNCTION_EXPORT(tftp_get, get file from tftp server);
 
-void tftp_put(const char* host, const char* filename)
+void tftp_put(const char* host, const char* dir, const char* filename)
 {
-	int fd, sock_fd;
+	int fd, sock_fd, sock_opt;
 	struct sockaddr_in tftp_addr, from_addr;
 	rt_uint32_t length, block_number = 0;
 	socklen_t fromlen;
 
 	/* make local file name */
-	getcwd((char*)tftp_buffer, sizeof(tftp_buffer));
-	strcat((char*)tftp_buffer, "/");
-	strcat((char*)tftp_buffer, filename);
+	rt_snprintf((char*)tftp_buffer, sizeof(tftp_buffer),
+		"%s/%s", dir, filename);
 
 	/* open local file for write */
 	fd = open((char*)tftp_buffer, O_RDONLY, 0);
@@ -107,8 +113,7 @@ void tftp_put(const char* host, const char* filename)
     inet_aton(host, (struct in_addr*)&(tftp_addr.sin_addr));
     tftp_addr.sin_family = AF_INET;
     tftp_addr.sin_port = htons(TFTP_PORT);
-    tftp_addr.sin_addr.s_addr = htonl(tftp_addr.sin_addr.s_addr);
-    
+
     sock_fd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
     if (sock_fd < 0)
 	{
@@ -116,7 +121,11 @@ void tftp_put(const char* host, const char* filename)
 	    rt_kprintf("can't create a socket\n");
 	    return ;
 	}
-	
+
+	/* set socket option */
+	sock_opt = 5000; /* 5 seconds */
+	lwip_setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &sock_opt, sizeof(sock_opt));
+
 	/* make tftp request */
 	tftp_buffer[0] = 0;			/* opcode */
 	tftp_buffer[1] = TFTP_WRQ; 	/* WRQ */
@@ -144,16 +153,17 @@ void tftp_put(const char* host, const char* filename)
 		return;
 	}
 
-	do
+	block_number = 1;
+	
+	while (1)
 	{
-		rt_uint16_t *ptr;
-		ptr = (rt_uint16_t*)&tftp_buffer[0];
-
-		length = read(fd, &tftp_buffer[4], 512);
+		length = read(fd, (char*)&tftp_buffer[4], 512);
 		if (length > 0)
 		{
 			/* make opcode and block number */
-			*ptr = TFTP_DATA; *(ptr + 1) = block_number;
+			tftp_buffer[0] = 0; tftp_buffer[1] = TFTP_DATA;
+			tftp_buffer[2] = (block_number >> 8) & 0xff;
+			tftp_buffer[3] = block_number & 0xff;
 
 			lwip_sendto(sock_fd, tftp_buffer, length + 4, 0, 
 				(struct sockaddr *)&tftp_addr, fromlen);
@@ -165,7 +175,10 @@ void tftp_put(const char* host, const char* filename)
 			(struct sockaddr *)&from_addr, &fromlen);
 		if (length > 0)
 		{
-			if (*ptr == TFTP_ACK && *(ptr + 1) == block_number)
+			if ((tftp_buffer[0] == 0 &&
+				tftp_buffer[1] == TFTP_ACK &&
+				tftp_buffer[3] == (block_number >> 8) & 0xff) &&
+				tftp_buffer[2] == (block_number & 0xff))
 			{
 				block_number ++;
 			}
@@ -175,8 +188,8 @@ void tftp_put(const char* host, const char* filename)
 				break;
 			}
 		}
-	} while (length != 516);
-	
+	}
+
 	close(fd);
 	lwip_close(sock_fd);
 }
