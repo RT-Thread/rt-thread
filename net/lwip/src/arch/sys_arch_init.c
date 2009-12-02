@@ -44,7 +44,7 @@ void lwip_sys_init()
 
     while (netif_default->ip_addr.addr == 0)
 	{
-        rt_thread_delay(DHCP_FINE_TIMER_MSECS);
+        rt_thread_delay(DHCP_FINE_TIMER_MSECS * RT_TICK_PER_SECOND / 1000);
 
         dhcp_fine_tmr();
         mscnt += DHCP_FINE_TIMER_MSECS;
