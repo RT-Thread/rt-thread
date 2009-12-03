@@ -166,9 +166,13 @@ void tftp_put(const char* host, const char* dir, const char* filename)
 			tftp_buffer[3] = block_number & 0xff;
 
 			lwip_sendto(sock_fd, tftp_buffer, length + 4, 0, 
-				(struct sockaddr *)&tftp_addr, fromlen);
+				(struct sockaddr *)&from_addr, fromlen);
 		}
-		else break; /* no data yet */
+		else
+		{
+			rt_kprintf("done\n");
+			break; /* no data yet */
+		}
 
 		/* receive ack */
 		length = lwip_recvfrom(sock_fd, tftp_buffer, sizeof(tftp_buffer), 0, 
@@ -177,16 +181,22 @@ void tftp_put(const char* host, const char* dir, const char* filename)
 		{
 			if ((tftp_buffer[0] == 0 &&
 				tftp_buffer[1] == TFTP_ACK &&
-				tftp_buffer[3] == (block_number >> 8) & 0xff) &&
-				tftp_buffer[2] == (block_number & 0xff))
+				tftp_buffer[2] == (block_number >> 8) & 0xff) &&
+				tftp_buffer[3] == (block_number & 0xff))
 			{
 				block_number ++;
+				rt_kprintf("#");
 			}
 			else 
 			{
 				rt_kprintf("server respondes with an error\n");
 				break;
 			}
+		}
+		else if (length == 0)
+		{
+			rt_kprintf("server timeout\n");
+			break;
 		}
 	}
 
