@@ -24,8 +24,8 @@
 #ifdef RT_USING_MEMPOOL
 
 #ifdef RT_USING_HOOK
-static void (*rt_mp_alloc_hook)(void *block);
-static void (*rt_mp_free_hook)(void *block);
+static void (*rt_mp_alloc_hook)(struct rt_mempool* mp, void *block);
+static void (*rt_mp_free_hook)(struct rt_mempool* mp, void *block);
 
 /**
  * @addtogroup Hook
@@ -38,7 +38,7 @@ static void (*rt_mp_free_hook)(void *block);
  * 
  * @param hook the hook function
  */
-void rt_mp_alloc_sethook(void (*hook)(void *block))
+void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool* mp, void *block))
 {
 	rt_mp_alloc_hook = hook;
 }
@@ -49,7 +49,7 @@ void rt_mp_alloc_sethook(void (*hook)(void *block))
  * 
  * @param hook the hook function
  */
-void rt_mp_free_sethook(void (*hook)(void *block))
+void rt_mp_free_sethook(void (*hook)(struct rt_mempool* mp, void *block))
 {
 	rt_mp_free_hook = hook;
 }
@@ -344,7 +344,7 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 	rt_hw_interrupt_enable(level);
 
 #ifdef RT_USING_HOOK
-	if (rt_mp_alloc_hook != RT_NULL) rt_mp_alloc_hook((rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*)));
+	if (rt_mp_alloc_hook != RT_NULL) rt_mp_alloc_hook(mp, (rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*)));
 #endif
 
 	return (rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*));
@@ -368,7 +368,7 @@ void rt_mp_free  (void *block)
 	mp = (struct rt_mempool*) *block_ptr;
 
 #ifdef RT_USING_HOOK
-	if (rt_mp_free_hook != RT_NULL) rt_mp_free_hook(block);
+	if (rt_mp_free_hook != RT_NULL) rt_mp_free_hook(mp, block);
 #endif
 
 	/* disable interrupt */

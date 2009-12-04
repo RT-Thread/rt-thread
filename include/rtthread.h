@@ -133,7 +133,7 @@ void rt_enter_critical(void);
 void rt_exit_critical(void);
 
 #ifdef RT_USING_HOOK
-void rt_schedule_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
+void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 /*@}*/
 
@@ -157,8 +157,8 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time);
 void rt_mp_free  (void *block);
 
 #ifdef RT_USING_HOOK
-void rt_mp_alloc_sethook(void (*hook)(void *block));
-void rt_mp_free_sethook(void (*hook)(void *block));
+void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool* mp, void *block));
+void rt_mp_free_sethook(void (*hook)(struct rt_mempool* mp, void *block));
 #endif
 #endif
 
