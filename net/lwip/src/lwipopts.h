@@ -46,6 +46,9 @@
 #define LWIP_DEBUG
 #endif
 
+/* Enable SO_RCVTIMEO processing.   */
+#define LWIP_SO_RCVTIMEO 			1
+
 /* ---------- Debug options ---------- */
 #ifdef LWIP_DEBUG
 #define SYS_DEBUG                   LWIP_DBG_OFF
@@ -142,7 +145,9 @@
    link level header. */
 #define PBUF_LINK_HLEN              16
 
-#define ETH_PAD_SIZE                    2       // default is 0
+#ifdef RT_LWIP_ETH_PAD_SIZE
+#define ETH_PAD_SIZE				RT_LWIP_ETH_PAD_SIZE
+#endif
 
 /** SYS_LIGHTWEIGHT_PROT
  * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection

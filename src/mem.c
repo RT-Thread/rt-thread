@@ -318,7 +318,7 @@ void *rt_malloc(rt_size_t size)
 
 #ifdef RT_USING_HOOK
 			if (rt_malloc_hook != RT_NULL)
-				rt_malloc_hook((rt_uint8_t*)mem, size);
+				rt_malloc_hook((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM, size);
 #endif
 			/* return the memory data except mem struct */
 			return (rt_uint8_t *)mem + SIZEOF_STRUCT_MEM;

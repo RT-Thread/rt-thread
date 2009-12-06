@@ -84,6 +84,10 @@ rt_err_t rt_device_init_all()
 				rt_kprintf("init device:%s error:\n", device->parent.name);
 				rt_kprintf("error code:%d\n", result);
 			}
+			else
+			{
+				device->flag |= RT_DEVICE_FLAG_ACTIVATED;
+			}
 		}
 	}
 
