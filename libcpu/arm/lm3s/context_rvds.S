@@ -19,7 +19,7 @@
 
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
-NVIC_PENDSV_PRI EQU     0x00000000               ; PendSV priority value (lowest)
+NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
 
 	AREA |.text|, CODE, READONLY, ALIGN=2
@@ -55,18 +55,29 @@ rt_hw_interrupt_enable    PROC
 ; * r0 --> from
 ; * r1 --> to
 ; */
+rt_hw_context_switch_interrupt
+	EXPORT rt_hw_context_switch_interrupt
 rt_hw_context_switch    PROC
 	EXPORT rt_hw_context_switch
-	LDR		r2, =rt_interrupt_from_thread
+
+	; set rt_thread_switch_interrput_flag to 1
+	LDR 	r2, =rt_thread_switch_interrput_flag
+	LDR 	r3, [r2]
+	CMP 	r3, #1
+	BEQ 	_reswitch
+	MOV 	r3, #1
+	STR 	r3, [r2]
+
+	LDR 	r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
 	STR		r0, [r2]
 	
-	LDR		r2, =rt_interrupt_to_thread
+_reswitch
+	LDR 	r2, =rt_interrupt_to_thread		; set rt_interrupt_to_thread
 	STR		r1, [r2]
 
-    LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
-    LDR     r1, =NVIC_PENDSVSET
+	LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
+	LDR     r1, =NVIC_PENDSVSET
 	STR     r1, [r0]
-	CPSIE   I                       ; enable interrupts at processor level
 	BX      LR
 	ENDP
 
@@ -75,6 +86,20 @@ rt_hw_context_switch    PROC
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 rt_hw_pend_sv	PROC
 	EXPORT rt_hw_pend_sv
+
+	; disable interrupt to protect context switch
+	MRS		r2, PRIMASK
+	CPSID   I
+
+	; get rt_thread_switch_interrupt_flag
+	LDR		r0, =rt_thread_switch_interrput_flag
+	LDR		r1, [r0]
+	CBZ		r1, pendsv_exit			; pendsv already handled
+
+	; clear rt_thread_switch_interrput_flag to 0
+	MOV		r1, #0x00
+	STR		r1, [r0]
+
 	LDR		r0, =rt_interrupt_from_thread
 	LDR		r1, [r0]
 	CBZ		r1, swtich_to_thread    ; skip register save at the first time
@@ -82,6 +107,7 @@ rt_hw_pend_sv	PROC
 	MRS     r1, psp                 ; get from thread stack pointer
 	STMFD	r1!, {r4 - r11}			; push r4 - r11 register
 	LDR		r0, [r0]
+
 	STR		r1, [r0]				; update from thread stack pointer
 
 swtich_to_thread
@@ -92,16 +118,22 @@ swtich_to_thread
 	LDMFD	r1!, {r4 - r11}			; pop r4 - r11 register
 	MSR		psp, r1					; update stack pointer
 
-	ORR     lr, lr, #0x04
+pendsv_exit
+	; restore interrupt
+	MSR		PRIMASK, r2
+
+	ORR		lr, lr, #0x04
 	BX		lr
 	ENDP
 
 ;/*
 ; * void rt_hw_context_switch_to(rt_uint32 to);
 ; * r0 --> to
+; * this fucntion is used to perform the first thread switch
 ; */
 rt_hw_context_switch_to    PROC
 	EXPORT rt_hw_context_switch_to
+	; set to thread
 	LDR		r1, =rt_interrupt_to_thread
 	STR		r0, [r1]
 
@@ -110,69 +142,32 @@ rt_hw_context_switch_to    PROC
 	MOV		r0, #0x0
 	STR		r0, [r1]
 
+	; set interrupt flag to 1
+	LDR		r1, =rt_thread_switch_interrput_flag
+	MOV		r0, #1
+	STR		r0, [r1]
+
 	; set the PendSV exception priority
-    LDR     r0, =NVIC_SYSPRI2
-    LDR     r1, =NVIC_PENDSV_PRI
-    STR     r1, [r0]
+	LDR		r0, =NVIC_SYSPRI2
+	LDR		r1, =NVIC_PENDSV_PRI
+	STR		r1, [r0]
 
-    LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
-    LDR     r1, =NVIC_PENDSVSET
-    STR     r1, [r0]
+	; trigger the PendSV exception (causes context switch)
+	LDR		r0, =NVIC_INT_CTRL
+	LDR		r1, =NVIC_PENDSVSET
+	STR		r1, [r0]
 
-    CPSIE   I                       ; enable interrupts at processor level
+	; enable interrupts at processor level
+	CPSIE		I
 	
 	; never reach here!
 	ENDP
 
-;/*
-; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to)
-; * {
-; *		if (rt_thread_switch_interrput_flag == 1)
-; * 	{
-; *			rt_interrupt_to_thread = to;
-; * 	}
-; * 	else
-; * 	{
-; *			rt_thread_switch_interrput_flag = 1;
-; * 		rt_interrupt_from_thread = from;
-; * 		rt_interrupt_to_thread = to;
-; * 	}
-; * }
-; */
-rt_hw_context_switch_interrupt    PROC
-	EXPORT rt_hw_context_switch_interrupt
-	LDR 	r2, =rt_thread_switch_interrput_flag
-	LDR 	r3, [r2]
-	CMP 	r3, #1
-	BEQ 	_reswitch
-	MOV 	r3, #1							; set rt_thread_switch_interrput_flag to 1
-	STR 	r3, [r2]
-	LDR 	r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
-	STR 	r0, [r2]
-_reswitch
-	LDR 	r2, =rt_interrupt_to_thread		; set rt_interrupt_to_thread
-	STR 	r1, [r2]
-	BX		lr
-	ENDP
-
+; compatible with old version
 rt_hw_interrupt_thread_switch	PROC
 	EXPORT rt_hw_interrupt_thread_switch
-	LDR		r0, =rt_thread_switch_interrput_flag
-	LDR		r1, [r0]
-	CBZ		r1, _no_switch
-
-	; clear rt_thread_switch_interrput_flag to 0
-	MOV		r1, #0x00
-	STR		r1, [r0]
-
-	; trigger context switch
-    LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
-    LDR     r1, =NVIC_PENDSVSET
-    STR     r1, [r0]
-
-_no_switch
 	BX		lr
-
+	NOP
 	ENDP
 
 	END
