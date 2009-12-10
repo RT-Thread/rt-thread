@@ -175,12 +175,11 @@ void rt_dm9000_isr()
     /* Received the coming packet */
     if (int_status & ISR_PRS)
     {
-        rt_err_t result;
+	    /* disable receive interrupt */
+	    dm9000_device.imr_all = IMR_PAR | IMR_PTM;
 
         /* a frame has been received */
-        result = eth_device_ready(&(dm9000_device.parent));
-        if (result != RT_EOK) rt_kprintf("eth notification failed\n");
-        RT_ASSERT(result == RT_EOK);
+        eth_device_ready(&(dm9000_device.parent));
     }
 
     /* Transmit Interrupt check */
@@ -459,7 +458,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
     /* Check packet ready or not */
-    dm9000_io_read(DM9000_MRCMDX);	    /* Dummy read */
+    dm9000_io_read(DM9000_MRCMDX);	    		/* Dummy read */
     rxbyte = DM9000_inb(DM9000_DATA_BASE);		/* Got most updated data */
     if (rxbyte)
     {
@@ -560,8 +559,9 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     }
     else
     {
-        /* restore interrupt */
-        // dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+        /* restore receive interrupt */
+	    dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
+        dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
     }
 
     /* unlock DM9000 device */
