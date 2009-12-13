@@ -84,9 +84,9 @@
 #define RT_USING_DFS
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			1
+#define DFS_FILESYSTEMS_MAX		1
 /* the max number of opened files 		*/
-#define DFS_FD_MAX					2
+#define DFS_FD_MAX					4
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
 
@@ -111,6 +111,9 @@
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
+
+/* Ethernet padding size */
+#define RT_LWIP_ETH_PAD_SIZE 2
 
 /* TCP sender buffer space*/
 #define RT_LWIP_TCP_SND_BUF	1500

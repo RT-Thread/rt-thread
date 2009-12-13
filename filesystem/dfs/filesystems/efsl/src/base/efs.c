@@ -165,7 +165,8 @@ int efs_open(struct dfs_fd* file)
 		efsdir = (DirList*)rt_malloc(sizeof(DirList));
 		if(efsdir == RT_NULL) 
 		{
-			dfs_log(DFS_DEBUG_INFO, ("memory alloc failed"));
+			dfs_log(DFS_DEBUG_ERROR, ("memory alloc failed"));
+			rt_free(efsdir);
 			return -DFS_STATUS_ENOMEM;		
 		}
 		
@@ -186,7 +187,7 @@ int efs_open(struct dfs_fd* file)
 		efsfile = (File *)rt_malloc(sizeof(File));
 		if (efsfile == RT_NULL) 
 		{
-			dfs_log(DFS_DEBUG_INFO, ("memory alloc failed"));			
+			dfs_log(DFS_DEBUG_ERROR, ("memory alloc failed"));			
 			return -DFS_STATUS_ENOMEM;		
 		}
 

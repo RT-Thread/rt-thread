@@ -262,6 +262,7 @@ int do_list(char* directory, int sockfd)
 		}
 	}
 
+	closedir(dirp);
 	return 0;
 }
 
@@ -288,6 +289,7 @@ int do_simple_list(char* directory, int sockfd)
 		send(sockfd, line_buffer, line_length, 0);
 	}
 
+	closedir(dirp);
 	return 0;
 }
 
@@ -351,6 +353,7 @@ int ftp_process_request(struct ftp_session* session, char *buf)
 		}
 		else if (strcmp(parameter_ptr, FTP_USER) == 0)
 		{
+			session->is_anonymous = RT_FALSE;		
 			rt_sprintf(sbuf, "331 Password required for %s\r\n", parameter_ptr);
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
 		}
@@ -552,10 +555,12 @@ err1:
 		FD_ZERO(&readfds);
 		FD_SET(session->pasv_sockfd, &readfds);
 		rt_kprintf("Waiting %d seconds for data...\n", tv.tv_sec);
-		while(select(0, &readfds, 0, 0, &tv)>0 )
+		while(select(session->pasv_sockfd+1, &readfds, 0, 0, &tv)>0 )
 		{
 			if((numbytes=recv(session->pasv_sockfd, sbuf, FTP_BUFFER_SIZE, 0))>0)
+			{
 				write(fd, sbuf, numbytes);
+			}
 			else if(numbytes==0)
 			{
 				close(fd);
