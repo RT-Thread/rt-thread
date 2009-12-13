@@ -81,8 +81,8 @@ rt_err_t rt_device_init_all()
 			result = init(device);
 			if (result != RT_EOK)
 			{
-				rt_kprintf("init device:%s error:\n", device->parent.name);
-				rt_kprintf("error code:%d\n", result);
+				rt_kprintf("To initialize device:%s failed. The error code is %d\n", 
+					device->parent.name, result);
 			}
 			else
 			{
