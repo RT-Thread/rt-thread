@@ -1,9 +1,10 @@
 #include <rtthread.h>
-#include "dm9000.h"
+#include "dm9000a.h"
 
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
 #include "stm32f10x.h"
+#include "stm32f10x_fsmc.h"
 
 // #define DM9000_DEBUG		1
 #if DM9000_DEBUG
@@ -13,11 +14,13 @@
 #endif
 
 /*
- * DM9000 interrupt line is connected to PA1
- * 16bit mode
+ * DM9000 interrupt line is connected to PF7
  */
+//--------------------------------------------------------
 
 #define DM9000_PHY          0x40    /* PHY address 0x01 */
+#define RST_1()             GPIO_SetBits(GPIOF,GPIO_Pin_6)
+#define RST_0()             GPIO_ResetBits(GPIOF,GPIO_Pin_6)
 
 #define MAX_ADDR_LEN 6
 enum DM9000_PHY_mode
@@ -158,7 +161,7 @@ void rt_dm9000_isr()
     dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
 
 	DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
-	
+
     /* receive overflow */
     if (int_status & ISR_ROS)
     {
@@ -173,12 +176,11 @@ void rt_dm9000_isr()
     /* Received the coming packet */
     if (int_status & ISR_PRS)
     {
-        rt_err_t result;
+	    /* disable receive interrupt */
+	    dm9000_device.imr_all = IMR_PAR | IMR_PTM;
 
         /* a frame has been received */
-        result = eth_device_ready(&(dm9000_device.parent));
-        if (result != RT_EOK) rt_kprintf("eth notification failed\n");
-        RT_ASSERT(result == RT_EOK);
+        eth_device_ready(&(dm9000_device.parent));
     }
 
     /* Transmit Interrupt check */
@@ -193,7 +195,7 @@ void rt_dm9000_isr()
             if (dm9000_device.packet_cnt > 0)
             {
             	DM9000_TRACE("dm9000 isr: tx second packet\n");
-				
+
                 /* transmit packet II */
                 /* Set TX length to DM9000 */
                 dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
@@ -274,7 +276,7 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 	    while (!(phy_read(1) & 0x20))
 	    {
 	        /* autonegation complete bit */
-	        delay_ms(10);
+	        rt_thread_delay(10);
 	        i++;
 	        if (i == 10000)
 	        {
@@ -361,15 +363,6 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 /* transmit packet. */
 rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
 {
-    struct pbuf* q;
-    rt_int32_t len;
-    rt_uint16_t* ptr;
-
-#if DM9000_DEBUG
-	rt_uint8_t* dump_ptr;
-	rt_uint32_t cnt = 0;
-#endif
-
 	DM9000_TRACE("dm9000 tx: %d\n", p->tot_len);
 
     /* lock DM9000 device */
@@ -381,34 +374,45 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
     /* Move data to DM9000 TX RAM */
     DM9000_outb(DM9000_IO_BASE, DM9000_MWCMD);
 
-    for (q = p; q != NULL; q = q->next)
     {
-        len = q->len;
-        ptr = q->payload;
+		/* q traverses through linked list of pbuf's
+		 * This list MUST consist of a single packet ONLY */
+		struct pbuf *q;
+		rt_uint16_t pbuf_index = 0;
+		rt_uint8_t word[2], word_index = 0;
 
-#if DM9000_DEBUG
-		dump_ptr = q->payload;
-#endif
-
-        /* use 16bit mode to write data to DM9000 RAM */
-        while (len > 0)
-        {
-            DM9000_outw(DM9000_DATA_BASE, *ptr);
-            ptr ++;
-            len -= 2;
-
-#ifdef DM9000_DEBUG
-			DM9000_TRACE("%02x ", *dump_ptr++);
-			if (++cnt % 16 == 0) DM9000_TRACE("\n");
-#endif
-        }
+		q = p;
+		/* Write data into dm9000a, two bytes at a time
+		 * Handling pbuf's with odd number of bytes correctly
+		 * No attempt to optimize for speed has been made */
+		while (q)
+		{
+			if (pbuf_index < q->len)
+			{
+				word[word_index++] = ((u8_t*)q->payload)[pbuf_index++];
+				if (word_index == 2)
+				{
+				    DM9000_outw(DM9000_DATA_BASE, (word[1] << 8) | word[0]);
+					word_index = 0;
+				}
+			}
+			else
+			{
+				q = q->next;
+				pbuf_index = 0;
+			}
+		}
+		/* One byte could still be unsent */
+		if (word_index == 1)
+		{
+		    DM9000_outw(DM9000_DATA_BASE, word[0]);
+		}
     }
-	DM9000_TRACE("\n");
 
     if (dm9000_device.packet_cnt == 0)
     {
     	DM9000_TRACE("dm9000 tx: first packet\n");
-		
+
         dm9000_device.packet_cnt ++;
         /* Set TX length to DM9000 */
         dm9000_io_write(DM9000_TXPLL, p->tot_len & 0xff);
@@ -445,11 +449,6 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     struct pbuf* p;
     rt_uint32_t rxbyte;
 
-#if DM9000_DEBUG
-	rt_uint8_t* dump_ptr;
-	rt_uint32_t cnt = 0;
-#endif
-
     /* init p pointer */
     p = RT_NULL;
 
@@ -457,7 +456,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
     /* Check packet ready or not */
-    dm9000_io_read(DM9000_MRCMDX);	    /* Dummy read */
+    dm9000_io_read(DM9000_MRCMDX);	    		/* Dummy read */
     rxbyte = DM9000_inb(DM9000_DATA_BASE);		/* Got most updated data */
     if (rxbyte)
     {
@@ -467,7 +466,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         if (rxbyte > 1)
         {
 			DM9000_TRACE("dm9000 rx: rx error, stop device\n");
-			
+
             dm9000_io_write(DM9000_RCR, 0x00);	/* Stop Device */
             dm9000_io_write(DM9000_ISR, 0x80);	/* Stop INT request */
         }
@@ -492,20 +491,11 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
                 data = (rt_uint16_t*)q->payload;
                 len = q->len;
 
-#if DM9000_DEBUG
-				dump_ptr = q->payload;
-#endif
-
                 while (len > 0)
                 {
                     *data = DM9000_inw(DM9000_DATA_BASE);
                     data ++;
                     len -= 2;
-
-#if DM9000_DEBUG
-					DM9000_TRACE("%02x ", *dump_ptr++);
-					if (++cnt % 16 == 0) DM9000_TRACE("\n");
-#endif
                 }
             }
 			DM9000_TRACE("\n");
@@ -556,6 +546,12 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
             p = RT_NULL;
         }
     }
+    else
+    {
+        /* restore receive interrupt */
+	    dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
+        dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+    }
 
     /* unlock DM9000 device */
     rt_sem_release(&sem_lock);
@@ -563,11 +559,12 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     return p;
 }
 
-
 static void RCC_Configuration(void)
 {
     /* enable gpiob port clock */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF | RCC_APB2Periph_AFIO, ENABLE);
+	/* enable FSMC clock */
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 }
 
 static void NVIC_Configuration(void)
@@ -578,7 +575,7 @@ static void NVIC_Configuration(void)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
     /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -590,24 +587,109 @@ static void GPIO_Configuration()
     GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
 
-    /* configure PA1 as external interrupt */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    /* configure PF6 as eth RST */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
+    GPIO_ResetBits(GPIOF,GPIO_Pin_6);
+    RST_1();
+
+    /* configure PF7 as external interrupt */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_Init(GPIOF, &GPIO_InitStructure);
 
-    /* Connect DM9000 EXTI Line to GPIOA Pin 1 */
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource1);
+    /* Connect DM9000 EXTI Line to GPIOF Pin 7 */
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOF, GPIO_PinSource7);
 
     /* Configure DM9000 EXTI Line to generate an interrupt on falling edge */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line1;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line7;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
 
     /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line1);
+    EXTI_ClearITPendingBit(EXTI_Line7);
+}
+
+static void FSMC_Configuration()
+{
+	FSMC_NORSRAMInitTypeDef FSMC_NORSRAMInitStructure;
+	FSMC_NORSRAMTimingInitTypeDef p;
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOG | RCC_APB2Periph_GPIOE |
+	                     RCC_APB2Periph_GPIOF, ENABLE);
+	
+	/*-- GPIO Configuration ------------------------------------------------------*/
+	/* SRAM Data lines configuration */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | GPIO_Pin_9 |
+	                            GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
+	                            GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
+	                            GPIO_Pin_15;
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	
+	/* SRAM Address lines configuration */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
+	                            GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 |
+	                            GPIO_Pin_14 | GPIO_Pin_15;
+	GPIO_Init(GPIOF, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
+	                            GPIO_Pin_4 | GPIO_Pin_5;
+	GPIO_Init(GPIOG, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	
+	/* NOE and NWE configuration */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 |GPIO_Pin_5;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	
+	/* NE3 NE4 configuration */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_12;
+	GPIO_Init(GPIOG, &GPIO_InitStructure);
+	
+	/* NBL0, NBL1 configuration */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	
+	/*-- FSMC Configuration ------------------------------------------------------*/
+	p.FSMC_AddressSetupTime = 0;
+	p.FSMC_AddressHoldTime = 0;
+	p.FSMC_DataSetupTime = 2;
+	p.FSMC_BusTurnAroundDuration = 0;
+	p.FSMC_CLKDivision = 0;
+	p.FSMC_DataLatency = 0;
+	p.FSMC_AccessMode = FSMC_AccessMode_A;
+	
+	FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM4;
+	FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
+	FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
+	FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
+	FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
+	FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
+	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
+	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
+	
+	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
+	
+	/* Enable FSMC Bank1_SRAM Bank4 */
+	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM4, ENABLE);
 }
 
 void rt_hw_dm9000_init()
@@ -615,6 +697,7 @@ void rt_hw_dm9000_init()
     RCC_Configuration();
     NVIC_Configuration();
     GPIO_Configuration();
+	FSMC_Configuration();
 
     rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
@@ -651,8 +734,6 @@ void rt_hw_dm9000_init()
     eth_device_init(&(dm9000_device.parent), "e0");
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 void dm9000(void)
 {
     rt_kprintf("\n");
@@ -671,36 +752,8 @@ void dm9000(void)
     rt_kprintf("IMR   (0xFF): %02x\n", dm9000_io_read(DM9000_IMR));
     rt_kprintf("\n");
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT(dm9000, dm9000 register dump);
-
-void rx(void)
-{
-    rt_err_t result;
-
-    dm9000_io_write(DM9000_ISR, ISR_PRS);		/* Clear rx status */
-
-    /* a frame has been received */
-    result = eth_device_ready(&(dm9000_device.parent));
-    if (result != RT_EOK) rt_kprintf("eth notification failed\n");
-    RT_ASSERT(result == RT_EOK);
-}
-FINSH_FUNCTION_EXPORT(rx, notify packet rx);
-
 #endif
-
-void EXTI1_IRQHandler(void)
-{
-	extern void rt_dm9000_isr(void);
-
-	/* enter interrupt */
-	rt_interrupt_enter();
-
-	rt_dm9000_isr();
-
-	/* Clear the Key Button EXTI line pending bit */
-	EXTI_ClearITPendingBit(EXTI_Line1);
-
-	/* leave interrupt */
-	rt_interrupt_leave();
-	rt_hw_interrupt_thread_switch();
-}

@@ -1,16 +1,19 @@
 #ifndef __DM9000_H__
 #define __DM9000_H__
 
-#define DM9000_IO_BASE		0x6C100000
-#define DM9000_DATA_BASE	0x6C100008
+#define DM9000_IO_BASE		0x6C000000
+#define DM9000_DATA_BASE	0x6C000008
 
-#define DM9000_IO 			(*((volatile rt_uint16_t *) DM9000_IO_BASE))	// CMD = 0
-#define DM9000_DATA 		(*((volatile rt_uint16_t *) DM9000_DATA_BASE))	// CMD = 1
+#define    DM9000_IO 	(*((volatile rt_uint16_t *) 0x6C000000)) // CMD = 0
+#define    DM9000_DATA 	(*((volatile rt_uint16_t *) 0x6C000008)) // CMD = 1
 
 #define DM9000_inb(r) 		(*(volatile rt_uint8_t *)r)
 #define DM9000_outb(r, d) 	(*(volatile rt_uint8_t *)r = d)
 #define DM9000_inw(r) 		(*(volatile rt_uint16_t *)r)
 #define DM9000_outw(r, d) 	(*(volatile rt_uint16_t *)r = d)
+
+#define    RST_1()   GPIO_SetBits(GPIOF,GPIO_Pin_6)
+#define    RST_0()   GPIO_ResetBits(GPIOF,GPIO_Pin_6)
 
 #define DM9000_ID		    0x90000A46  /* DM9000 ID */
 #define DM9000_PKT_MAX		1536	    /* Received packet max size */

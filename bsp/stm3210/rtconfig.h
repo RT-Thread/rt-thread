@@ -64,7 +64,6 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define FINSH_DEVICE_NAME			"uart1"
 
 /* SECTION: device filesystem */
 #define RT_USING_DFS

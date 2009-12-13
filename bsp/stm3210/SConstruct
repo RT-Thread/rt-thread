@@ -5,7 +5,7 @@ RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 device_type = 'STM32F10X_HD'
 target = 'rtthread-stm32'
 
-# search path for C compiler 
+# search path for C compiler
 bsp_path  = RTT_ROOT + '/bsp/stm3210'
 
 env = Environment(tools = ['mingw'],
@@ -15,7 +15,7 @@ env = Environment(tools = ['mingw'],
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env.AppendUnique(CPPPATH = bsp_path)
-env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD')
+env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -D' + device_type)
 
 Export('env')
 Export('RTT_ROOT')

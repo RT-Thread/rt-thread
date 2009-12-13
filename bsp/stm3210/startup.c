@@ -25,22 +25,12 @@
 
 /*@{*/
 
-#ifdef RT_USING_LWIP
-#ifdef STM32F10X_CL
-	extern void rt_hw_stm32_eth_init(void);
-#else
-	#include "enc28j60.h"
-#endif
-#include <netif/ethernetif.h>
-#endif
-
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-/* bss end definitions for heap init */
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
@@ -109,25 +99,11 @@ void rtthread_startup(void)
 
 	/* init hardware serial device */
 	rt_hw_usart_init();
-
-#ifdef RT_USING_DFS
 	/* init sdcard driver */
 #if STM32_USE_SDIO
 	rt_hw_sdcard_init();
 #else
 	rt_hw_msd_init();
-#endif
-#endif
-
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register ethernetif device */
-#ifdef STM32F10X_CL
-	rt_hw_stm32_eth_init();
-#else
-	rt_hw_enc28j60_init();
-#endif
 #endif
 
     rt_hw_rtc_init();
@@ -141,7 +117,7 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
 	/* init finsh */
 	finsh_system_init();
-	finsh_set_device(FINSH_DEVICE_NAME);
+	finsh_set_device("uart1");
 #endif
 
 	/* init idle thread */

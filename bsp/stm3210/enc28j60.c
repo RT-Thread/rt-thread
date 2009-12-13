@@ -6,8 +6,6 @@
 
 #define MAX_ADDR_LEN    6
 
-// #define CSACTIVE    GPIO_ResetBits(GPIOB,  GPIO_Pin_12);
-// #define CSPASSIVE   GPIO_SetBits(GPIOB,  GPIO_Pin_12);
 #define CSACTIVE 	GPIOB->BRR = GPIO_Pin_12;
 #define CSPASSIVE	GPIOB->BSRR = GPIO_Pin_12;
 
@@ -24,7 +22,7 @@ static struct net_device  enc28j60_dev_entry;
 static struct net_device *enc28j60_dev =&enc28j60_dev_entry;
 static rt_uint8_t  Enc28j60Bank;
 static rt_uint16_t NextPacketPtr;
-static struct rt_semaphore tx_sem;
+static struct rt_semaphore lock_sem;
 
 void _delay_us(rt_uint32_t us)
 {
@@ -69,16 +67,16 @@ rt_uint8_t spi_read_op(rt_uint8_t op, rt_uint8_t address)
 void spi_write_op(rt_uint8_t op, rt_uint8_t address, rt_uint8_t data)
 {
 	rt_uint32_t level;
-	
+
 	level = rt_hw_interrupt_disable();
-	
+
 	CSACTIVE;
 	SPI_I2S_SendData(SPI2, op | (address & ADDR_MASK));
 	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
 	SPI_I2S_SendData(SPI2,data);
 	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
 	CSPASSIVE;
-	
+
 	rt_hw_interrupt_enable(level);
 }
 
@@ -172,6 +170,28 @@ void enc28j60_clkout(rt_uint8_t clk)
 	spi_write(ECOCON, clk & 0x7);
 }
 
+rt_inline rt_uint32_t enc28j60_interrupt_disable()
+{
+	rt_uint32_t level;
+
+    /* switch to bank 0 */
+    enc28j60_set_bank(EIE);
+
+    /* get last interrupt level */
+	level = spi_read(EIE);
+    /* disable interrutps */
+    spi_write_op(ENC28J60_BIT_FIELD_CLR, EIE, level);
+
+    return level;
+}
+
+rt_inline void enc28j60_interrupt_enable(rt_uint32_t level)
+{
+    /* switch to bank 0 */
+    enc28j60_set_bank(EIE);
+    spi_write_op(ENC28J60_BIT_FIELD_SET, EIE, level);
+}
+
 /*
  * Access the PHY to determine link status
  */
@@ -195,8 +215,6 @@ static rt_bool_t enc28j60_check_link_status()
 	}
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 /*
  * Debug routine to dump useful register contents
  */
@@ -223,6 +241,8 @@ static void enc28j60(void)
 		(spi_read(ETXNDH) << 8) | spi_read(ETXNDL),
 		spi_read(MACLCON1), spi_read(MACLCON2), spi_read(MAPHSUP));
 }
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT(enc28j60, dump enc28j60 registers);
 #endif
 
@@ -238,9 +258,9 @@ void enc28j60_isr()
 	/* Variable definitions can be made now. */
 	volatile rt_uint32_t eir, pk_counter;
 	volatile rt_bool_t rx_activiated;
-	
+
 	rx_activiated = RT_FALSE;
-	
+
 	/* get EIR */
 	eir = spi_read(EIR);
 	// rt_kprintf("eir: 0x%08x\n", eir);
@@ -251,52 +271,48 @@ void enc28j60_isr()
 	    pk_counter = spi_read(EPKTCNT);
 	    if (pk_counter)
 	    {
-	        rt_err_t result;
 	        /* a frame has been received */
-	        result = eth_device_ready((struct eth_device*)&(enc28j60_dev->parent));
-	        RT_ASSERT(result == RT_EOK);
-			
+	        eth_device_ready((struct eth_device*)&(enc28j60_dev->parent));
+
 			// switch to bank 0
 			enc28j60_set_bank(EIE);
 			// disable rx interrutps
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIE, EIE_PKTIE);
 	    }
-	
+
 		/* clear PKTIF */
 		if (eir & EIR_PKTIF)
 		{
 			enc28j60_set_bank(EIR);
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_PKTIF);
-			
+
 			rx_activiated = RT_TRUE;
 		}
-	
+
 		/* clear DMAIF */
 	    if (eir & EIR_DMAIF)
 		{
 			enc28j60_set_bank(EIR);
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_DMAIF);
 		}
-	
+
 	    /* LINK changed handler */
 	    if ( eir & EIR_LINKIF)
 	    {
 	        enc28j60_check_link_status();
-	
+
 	        /* read PHIR to clear the flag */
 	        enc28j60_phy_read(PHIR);
-	
+
 			enc28j60_set_bank(EIR);
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_LINKIF);
 	    }
-	
+
 		if (eir & EIR_TXIF)
 		{
+			/* A frame has been transmitted. */
 			enc28j60_set_bank(EIR);
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_TXIF);
-
-			/* A frame has been transmitted. */
-			rt_sem_release(&tx_sem);
 		}
 
 		/* TX Error handler */
@@ -304,7 +320,7 @@ void enc28j60_isr()
 		{
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_TXERIF);
 		}
-		
+
 		eir = spi_read(EIR);
 		// rt_kprintf("inner eir: 0x%08x\n", eir);
 	} while ((rx_activiated != RT_TRUE && eir != 0));
@@ -412,8 +428,6 @@ rt_err_t enc28j60_init(rt_device_t dev)
 	enc28j60_phy_write(PHLCON, 0xD76);	//0x476
 	delay_ms(20);
 
-    // rt_kprintf("enc28j60 init ok!\n");
-
     return RT_EOK;
 }
 
@@ -470,11 +484,14 @@ rt_err_t enc28j60_tx( rt_device_t dev, struct pbuf* p)
 	struct pbuf* q;
 	rt_uint32_t len;
 	rt_uint8_t* ptr;
+    rt_uint32_t level;
 
 	// rt_kprintf("tx pbuf: 0x%08x, total len %d\n", p, p->tot_len);
 
-	/* lock tx operation */
-	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
+    /* lock enc28j60 */
+    rt_sem_take(&lock_sem, RT_WAITING_FOREVER);
+    /* disable enc28j60 interrupt */
+    level = enc28j60_interrupt_disable();
 
 	// Set the write pointer to start of transmit buffer area
 	spi_write(EWRPTL, TXSTART_INIT&0xFF);
@@ -515,7 +532,9 @@ rt_err_t enc28j60_tx( rt_device_t dev, struct pbuf* p)
 		spi_write_op(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_TXRTS);
 	}
 
-	//rt_kprintf("tx ok\n");
+    /* enable enc28j60 interrupt */
+    enc28j60_interrupt_enable(level);
+    rt_sem_release(&lock_sem);
 
     return RT_EOK;
 }
@@ -526,8 +545,14 @@ struct pbuf *enc28j60_rx(rt_device_t dev)
 	rt_uint32_t len;
 	rt_uint16_t rxstat;
 	rt_uint32_t pk_counter;
+	rt_uint32_t level;
 
     p = RT_NULL;
+
+    /* lock enc28j60 */
+    rt_sem_take(&lock_sem, RT_WAITING_FOREVER);
+    /* disable enc28j60 interrupt */
+    level = enc28j60_interrupt_disable();
 
     pk_counter = spi_read(EPKTCNT);
     if (pk_counter)
@@ -604,22 +629,17 @@ struct pbuf *enc28j60_rx(rt_device_t dev)
     }
 	else
 	{
-		rt_uint32_t level;
-		/* lock enc28j60 */
-		level = rt_hw_interrupt_disable();
-		
-		// switch to bank 0
-		enc28j60_set_bank(EIE);
-		// enable interrutps
-		spi_write_op(ENC28J60_BIT_FIELD_SET, EIE, EIE_PKTIE);
 		// switch to bank 0
 		enc28j60_set_bank(ECON1);
 		// enable packet reception
 		spi_write_op(ENC28J60_BIT_FIELD_SET, ECON1, ECON1_RXEN);
-		
-		/* enable interrupt */
-		rt_hw_interrupt_enable(level);
+
+	    level |= EIE_PKTIE;
 	}
+
+    /* enable enc28j60 interrupt */
+    enc28j60_interrupt_enable(level);
+    rt_sem_release(&lock_sem);
 
     return p;
 }
@@ -656,7 +676,7 @@ static void GPIO_Configuration()
 	/* configure PB0 as external interrupt */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     /* Configure SPI2 pins:  SCK, MISO and MOSI ----------------------------*/
@@ -699,25 +719,8 @@ static void SetupSPI (void)
     SPI_Cmd(SPI2, ENABLE);
 }
 
-static rt_timer_t enc28j60_timer;
-void rt_hw_enc28j60_timeout(void* parameter)
+void rt_hw_enc28j60_init()
 {
-	// switch to bank 0
-	enc28j60_set_bank(EIE);
-	// enable interrutps
-	spi_write_op(ENC28J60_BIT_FIELD_SET, EIE, EIE_PKTIE);
-	// switch to bank 0
-	enc28j60_set_bank(ECON1);
-	// enable packet reception
-	spi_write_op(ENC28J60_BIT_FIELD_SET, ECON1, ECON1_RXEN);
-
-	enc28j60_isr();
-}
-
-int rt_hw_enc28j60_init()
-{
-	rt_err_t result;
-
 	/* configuration PB5 as INT */
 	RCC_Configuration();
 	NVIC_Configuration();
@@ -742,16 +745,7 @@ int rt_hw_enc28j60_init()
 	enc28j60_dev_entry.dev_addr[4] = 0x45;
 	enc28j60_dev_entry.dev_addr[5] = 0x5e;
 
-	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&lock_sem, "lock", 1, RT_IPC_FLAG_FIFO);
 
-	result = eth_device_init(&(enc28j60_dev->parent), "E0");
-
-	/* workaround for enc28j60 interrupt */
-	enc28j60_timer = rt_timer_create("etimer", 
-		rt_hw_enc28j60_timeout, RT_NULL, 
-		50, RT_TIMER_FLAG_PERIODIC);
-	if (enc28j60_timer != RT_NULL)
-		rt_timer_start(enc28j60_timer);
-
-	return RT_EOK;
+	eth_device_init(&(enc28j60_dev->parent), "e0");
 }

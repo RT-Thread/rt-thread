@@ -2,16 +2,19 @@
 RT_USING_FINSH = True
 RT_USING_DFS = True
 RT_USING_DFS_YAFFS2 = False
-RT_USING_DFS_EFSL = True
+RT_USING_DFS_EFSL = False
+RT_USING_DFS_ELMFAT = True
 RT_USING_LWIP = True
 
 # toolchains options
 ARCH='arm'
 CPU='stm32'
-PLATFORM = 'gcc'
-EXEC_PATH = 'd:/SourceryGCC/bin'
-#PLATFORM = 'armcc'
-#EXEC_PATH = 'C:/Keil'
+#PLATFORM = 'gcc'
+#EXEC_PATH = 'd:/codesourcery/bin'
+PLATFORM = 'armcc'
+EXEC_PATH = 'e:/Keil'
+#PLATFORM = 'iar'
+#EXEC_PATH = 'E:/Program Files/IAR Systems/Embedded Workbench 5.4/'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -21,7 +24,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
+    TARGET_EXT = 'axf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -29,7 +32,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -74,11 +77,18 @@ elif PLATFORM == 'armcc':
 
 elif PLATFORM == 'iar':
     # toolchains
-    CC = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
+    CC = 'iccarm'
+    AS = 'iasmarm'
+    AR = 'iarchive'
+    LINK = 'ilinkarm'
+    TARGET_EXT = 'out'
+
+    DEVICE = ' --cpu DARMSTM --thumb'
 
     CFLAGS = ''
     AFLAGS = ''
-    LFLAGS = ''
+    LFLAGS = ' --config stm32f10x_flash.icf'
+
+    EXEC_PATH += '/arm/bin/'
+    RT_USING_MINILIBC = False
+    POST_ACTION = ''

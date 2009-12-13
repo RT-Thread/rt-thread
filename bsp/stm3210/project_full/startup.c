@@ -25,11 +25,6 @@
 
 /*@{*/
 
-#ifdef RT_USING_LWIP
-#include "enc28j60.h"
-#include <netif/ethernetif.h>
-#endif
-
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -109,13 +104,6 @@ void rtthread_startup(void)
 	rt_hw_sdcard_init();
 #else
 	rt_hw_msd_init();
-#endif
-
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register ethernetif device */
-	rt_hw_enc28j60_init();
 #endif
 
     rt_hw_rtc_init();

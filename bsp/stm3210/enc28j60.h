@@ -296,6 +296,6 @@
 // max frame length which the conroller will accept:
 #define MAX_FRAMELEN	1518
 
-int rt_hw_enc28j60_init(void);
+void rt_hw_enc28j60_init(void);
 
 #endif

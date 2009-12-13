@@ -18,12 +18,14 @@ File 1,1,<.\application.c><application.c>
 File 1,1,<.\startup.c><startup.c>
 File 1,1,<.\led.c><led.c>
 File 1,1,<.\usart.c><usart.c>
-File 1,1,<.\enc28j60.c><enc28j60.c>
 File 1,1,<.\sdcard.c><sdcard.c>
 File 1,1,<.\msd.c><msd.c>
+File 1,1,<.\enc28j60.c><enc28j60.c>
+File 1,1,<.\dm9000a.c><dm9000a.c>
 File 1,1,<.\rtc.c><rtc.c>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
+File 1,1,<..\..\net\apps\tcpecho.c><tcpecho.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c><misc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c><stm32f10x_adc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c><stm32f10x_bkp.c>

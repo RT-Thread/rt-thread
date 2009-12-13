@@ -38,7 +38,7 @@ struct stm32_serial_device uart2 =
 {
 	USART2,
 	&uart2_int_rx,
-	&uart2_dma_rx,
+	RT_NULL,
 	RT_NULL,
 	RT_NULL
 };
@@ -180,12 +180,6 @@ static void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
-	/* Enable the DMA1 Channel6 Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel6_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
 #endif
 
 #ifdef RT_USING_UART3
@@ -205,7 +199,7 @@ static void NVIC_Configuration(void)
 
 static void DMA_Configuration(void)
 {
-#if defined(RT_USING_UART2) || defined (RT_USING_UART3)
+#if defined (RT_USING_UART3)
 	DMA_InitTypeDef DMA_InitStructure;
 
 	/* fill init structure */
@@ -216,21 +210,7 @@ static void DMA_Configuration(void)
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
 	DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
 	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-#endif
 
-#ifdef RT_USING_UART2
-	/* DMA1 Channel4 (triggered by USART2 Rx event) Config */
-	DMA_DeInit(UART2_RX_DMA);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = USART2_DR_Base;
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)0;
-	DMA_InitStructure.DMA_BufferSize = 0;
-	DMA_Init(UART2_RX_DMA, &DMA_InitStructure);
-	DMA_ITConfig(UART2_RX_DMA, DMA_IT_TC | DMA_IT_TE, ENABLE);
-	DMA_ClearFlag(DMA1_FLAG_TC4);
-#endif
-
-#ifdef RT_USING_UART3
 	/* DMA1 Channel5 (triggered by USART3 Tx event) Config */
 	DMA_DeInit(UART3_TX_DMA);
 	DMA_InitStructure.DMA_PeripheralBaseAddr = USART3_DR_Base;
@@ -298,15 +278,13 @@ void rt_hw_usart_init()
 	USART_Init(USART2, &USART_InitStructure);
 	USART_ClockInit(USART2, &USART_ClockInitStructure);
 
-	uart2_dma_rx.dma_channel= UART2_RX_DMA;
-
 	/* register uart2 */
 	rt_hw_serial_register(&uart2_device, "uart2",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX,
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart2);
 
 	/* Enable USART2 DMA Rx request */
-	USART_DMACmd(USART2, USART_DMAReq_Rx , ENABLE);
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 #endif
 
 #ifdef RT_USING_UART3

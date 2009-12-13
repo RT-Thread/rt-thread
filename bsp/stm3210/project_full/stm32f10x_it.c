@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include <board.h>
 #include <rtthread.h>
 
 /** @addtogroup Template_Project
@@ -272,6 +273,8 @@ void SDIO_IRQHandler(void)
 #endif
 }
 
+#ifdef RT_USING_LWIP
+#if (STM32_ETH_IF == 0)
 /*******************************************************************************
 * Function Name  : EXTI0_IRQHandler
 * Description    : This function handles External interrupt Line 0 request.
@@ -281,7 +284,6 @@ void SDIO_IRQHandler(void)
 *******************************************************************************/
 void EXTI0_IRQHandler(void)
 {
-#ifdef RT_USING_LWIP
     extern void enc28j60_isr(void);
 
     /* enter interrupt */
@@ -294,8 +296,34 @@ void EXTI0_IRQHandler(void)
 
     /* leave interrupt */
     rt_interrupt_leave();
-#endif
 }
+#endif
+
+#if (STM32_ETH_IF == 1)
+/*******************************************************************************
+* Function Name  : EXTI9_5_IRQHandler
+* Description    : This function handles External lines 9 to 5 interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void EXTI9_5_IRQHandler(void)
+{
+	extern void rt_dm9000_isr(void);
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+	rt_dm9000_isr();
+
+	/* Clear the Key Button EXTI line pending bit */
+	EXTI_ClearITPendingBit(EXTI_Line7);
+
+	/* leave interrupt */
+	rt_interrupt_leave();
+}
+#endif
+#endif /* end of RT_USING_LWIP */
 
 /**
   * @}

@@ -1870,6 +1870,9 @@
       <name>$PROJ_DIR$\board.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\dm9000a.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\enc28j60.c</name>
     </file>
     <file>
