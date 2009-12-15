@@ -1,11 +1,25 @@
 #include "stm32f10x.h"
 #include "rtthread.h"
-#include "fmt0371/FMT0371.h"
 #include <rtgui/rtgui.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 
+#define lcd_hw_version       1
+/*
+1 FMT0371
+2 ILI9325
+*/
+
+#if (lcd_hw_version == 1)
+#include "fmt0371/FMT0371.h"
+#endif
+
+#if (lcd_hw_version == 2)
+#include "ili9325/ili9320.h"
+#endif
+
+rt_err_t rt_hw_lcd_init(void);
 void rt_hw_lcd_update(rtgui_rect_t *rect);
 rt_uint8_t * rt_hw_lcd_get_framebuffer(void);
 void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y);
@@ -16,45 +30,75 @@ void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt
 
 struct rtgui_graphic_driver _rtgui_lcd_driver =
 {
-	"lcd",
-	2,
-	240,
-	320,
-	rt_hw_lcd_update,
-	rt_hw_lcd_get_framebuffer,
-	rt_hw_lcd_set_pixel,
-	rt_hw_lcd_get_pixel,
-	rt_hw_lcd_draw_hline,
-	rt_hw_lcd_draw_vline,
-	rt_hw_lcd_draw_raw_hline
+    "lcd",
+    2,
+    240,
+    320,
+    rt_hw_lcd_update,
+    rt_hw_lcd_get_framebuffer,
+    rt_hw_lcd_set_pixel,
+    rt_hw_lcd_get_pixel,
+    rt_hw_lcd_draw_hline,
+    rt_hw_lcd_draw_vline,
+    rt_hw_lcd_draw_raw_hline
 };
 
+extern  void   info_init(void);
+extern  void   player_init(void);
+void radio_rtgui_init(void)
+{
+    rtgui_rect_t rect;
+
+    rtgui_system_server_init();
+
+    /* register dock panel */
+    rect.x1 = 0;
+    rect.y1 = 0;
+    rect.x2 = 240;
+    rect.y2 = 25;
+    rtgui_panel_register("info", &rect);
+
+    /* register main panel */
+    rect.x1 = 0;
+    rect.y1 = 25;
+    rect.x2 = 320;
+    rect.y2 = 320;
+    rtgui_panel_register("main", &rect);
+    rtgui_panel_set_default_focused("main");
+
+    rt_hw_lcd_init();
+
+    info_init();
+    player_init();
+}
+
+#if (lcd_hw_version == 1)
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
-	/* nothing for none-DMA mode driver */
+    /* nothing for none-DMA mode driver */
 }
 
 rt_uint8_t * rt_hw_lcd_get_framebuffer(void)
 {
-	return RT_NULL; /* no framebuffer driver */
+    return RT_NULL; /* no framebuffer driver */
 }
 
 void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
     unsigned short p;
 
-	/* get color pixel */
-	p = rtgui_color_to_565p(*c);
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
 
-	/* set X point */
+    /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
 
-	/* set Y point */
+    /* set Y point */
     LCD_ADDR = 0x03;
     LCD_DATA16(y);
 
-	/* write pixel */
+    /* write pixel */
     LCD_ADDR = 0x0E;
     LCD_DATA16(p);
 }
@@ -63,92 +107,93 @@ void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
     unsigned short p;
 
-	/* set X point */
+    /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
 
-	/* set Y point */
+    /* set Y point */
     LCD_ADDR = 0x03;
     LCD_DATA16( y );
 
-	/* read pixel */
-	LCD_ADDR = 0x0F;
-	LCD_DATA16_READ(p);
+    /* read pixel */
+    LCD_ADDR = 0x0F;
+    LCD_DATA16_READ(p);
 
-	*c = rtgui_color_from_565p(p);
+    *c = rtgui_color_from_565p(p);
 }
 
 void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
     unsigned short p;
 
-	/* get color pixel */
-	p = rtgui_color_to_565p(*c);
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
 
-	/* set X point */
+    /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x1;
 
-	/* set Y point */
+    /* set Y point */
     LCD_ADDR = 0x03;
     LCD_DATA16( y );
 
-	/* write pixel */
+    /* write pixel */
     LCD_ADDR = 0x0E;
-	while (x1 < x2)
-	{
-		LCD_DATA16(p);
-		x1 ++;
-	}
+    while (x1 < x2)
+    {
+        LCD_DATA16(p);
+        x1 ++;
+    }
 }
 
 void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t y2)
 {
     unsigned short p;
 
-	/* get color pixel */
-	p = rtgui_color_to_565p(*c);
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
 
-	/* set X point */
+    /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
 
-	while(y1 < y2)
-	{
-		/* set Y point */
-		LCD_ADDR = 0x03;
-		LCD_DATA16( y1 );
+    while (y1 < y2)
+    {
+        /* set Y point */
+        LCD_ADDR = 0x03;
+        LCD_DATA16( y1 );
 
-		/* write pixel */
-		LCD_ADDR = 0x0E;
-		LCD_DATA16(p);
+        /* write pixel */
+        LCD_ADDR = 0x0E;
+        LCD_DATA16(p);
 
-		y1 ++;
-	}
+        y1 ++;
+    }
 }
 
 void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
     rt_uint16_t *ptr;
 
-	/* get pixel */
-	ptr = (rt_uint16_t*) pixels;
+    /* get pixel */
+    ptr = (rt_uint16_t*) pixels;
 
-	/* set X point */
+    /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x1;
 
-	/* set Y point */
+    /* set Y point */
     LCD_ADDR = 0x03;
     LCD_DATA16( y );
 
-	/* write pixel */
+    /* write pixel */
     LCD_ADDR = 0x0E;
-	while (x1 < x2)
-	{
-		LCD_DATA16(*ptr);
-		x1 ++; ptr ++;
-	}
+    while (x1 < x2)
+    {
+        LCD_DATA16(*ptr);
+        x1 ++;
+        ptr ++;
+    }
 }
 
 rt_err_t rt_hw_lcd_init(void)
@@ -166,60 +211,186 @@ rt_err_t rt_hw_lcd_init(void)
     ftm0371_init();
 
 #ifndef DRIVER_TEST
-	/* add lcd driver into graphic driver */
-	rtgui_graphic_driver_add(&_rtgui_lcd_driver);
+    /* add lcd driver into graphic driver */
+    rtgui_graphic_driver_add(&_rtgui_lcd_driver);
 #endif
 
-	return RT_EOK;
-}
-
-void radio_rtgui_init()
-{
-	rtgui_rect_t rect;
-
-	rtgui_system_server_init();
-
-	/* register dock panel */
-	rect.x1 = 0;
-	rect.y1 = 0;
-	rect.x2 = 240;
-	rect.y2 = 25;
-	rtgui_panel_register("info", &rect);
-
-	/* register main panel */
-	rect.x1 = 0;
-	rect.y1 = 25;
-	rect.x2 = 320;
-	rect.y2 = 320;
-	rtgui_panel_register("main", &rect);
-	rtgui_panel_set_default_focused("main");
-
-	rt_hw_lcd_init();
-
-	info_init();
-	player_init();
+    return RT_EOK;
 }
 
 #include <finsh.h>
 
 void hline(rt_base_t x1, rt_base_t x2, rt_base_t y, rt_uint32_t pixel)
 {
-	rt_hw_lcd_draw_hline(&pixel, x1, x2, y);
+    rt_hw_lcd_draw_hline(&pixel, x1, x2, y);
 }
 FINSH_FUNCTION_EXPORT(hline, draw a hline);
 
 void vline(int x, int y1, int y2, rt_uint32_t pixel)
 {
-	rt_hw_lcd_draw_vline(&pixel, x, y1, y2);
+    rt_hw_lcd_draw_vline(&pixel, x, y1, y2);
 }
 FINSH_FUNCTION_EXPORT(vline, draw a vline);
 
 void cls()
 {
-	rt_size_t index;
-	rtgui_color_t white 	= RTGUI_RGB(0xff, 0xff, 0xff);
+    rt_size_t index;
+    rtgui_color_t white 	= RTGUI_RGB(0xff, 0xff, 0xff);
 
-	for(index = 0; index < 320; index ++)
-		rt_hw_lcd_draw_hline(&white, 0, 240, index);
+    for (index = 0; index < 320; index ++)
+        rt_hw_lcd_draw_hline(&white, 0, 240, index);
 }
 FINSH_FUNCTION_EXPORT(cls, clear screen);
+#endif
+
+#if (lcd_hw_version == 2)
+void rt_hw_lcd_update(rtgui_rect_t *rect)
+{
+    /* nothing for none-DMA mode driver */
+}
+
+rt_uint8_t * rt_hw_lcd_get_framebuffer(void)
+{
+    return RT_NULL; /* no framebuffer driver */
+}
+
+/*  设置像素点 颜色,X,Y */
+void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+{
+    unsigned short p;
+
+    if ( (x>320)||(y>240) ) return;
+
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
+    ili9320_SetCursor(x,y);
+
+    LCD_WriteRAM_Prepare();
+    LCD_WriteRAM(p);
+}
+
+/* 获取像素点颜色 */
+void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+{
+    unsigned short p;
+
+    ili9320_SetCursor(x,y);
+    //if (DeviceCode==0x7783)
+    //{
+    //    p = (LCD_ReadRAM());
+    //}
+    //else
+    //{
+    p = (ili9320_BGR2RGB(LCD_ReadRAM()));
+    //}
+    *c = rtgui_color_from_565p(p);
+}
+
+/* 画水平线 */
+void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
+{
+    unsigned short p;
+
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
+
+    /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
+    LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (0<<3) );
+
+    ili9320_SetCursor(x1, y);
+    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    while (x1 < x2)
+    {
+        //LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+        LCD_WriteRAM(p);
+        x1++;
+        //ili9320_SetCursor(x1, y);
+    }
+}
+
+/* 垂直线 */
+void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t y2)
+{
+    unsigned short p;
+
+    /* get color pixel */
+    p = rtgui_color_to_565p(*c);
+
+    /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
+    LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
+
+    ili9320_SetCursor(x, y1);
+    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    while (y1 < y2)
+    {
+        //LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+        LCD_WriteRAM(p);
+        y1++;
+        //ili9320_SetCursor(x, y1);
+    }
+}
+
+/* ?? */
+void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
+{
+    rt_uint16_t *ptr;
+
+    /* get pixel */
+    ptr = (rt_uint16_t*) pixels;
+
+    /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
+    //LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (0<<3) );
+
+    ili9320_SetCursor(x1, y);
+    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    while (x1 < x2)
+    {
+        LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+        LCD_WriteRAM( *ptr );
+        x1 ++;
+        ptr ++;
+        ili9320_SetCursor(x1, y);
+    }
+}
+
+rt_err_t rt_hw_lcd_init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF,ENABLE);
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOF,GPIO_Pin_9);
+
+    ili9320_Initializtion();
+
+#ifndef DRIVER_TEST
+    /* add lcd driver into graphic driver */
+    rtgui_graphic_driver_add(&_rtgui_lcd_driver);
+#endif
+
+    return RT_EOK;
+}
+
+#include <finsh.h>
+
+void hline(rt_base_t x1, rt_base_t x2, rt_base_t y, rt_uint32_t pixel)
+{
+    rt_hw_lcd_draw_hline(&pixel, x1, x2, y);
+}
+FINSH_FUNCTION_EXPORT(hline, draw a hline);
+
+void vline(int x, int y1, int y2, rt_uint32_t pixel)
+{
+    rt_hw_lcd_draw_vline(&pixel, x, y1, y2);
+}
+FINSH_FUNCTION_EXPORT(vline, draw a vline);
+
+void cls()
+{
+    ili9320_Clear(0xF800);
+}
+FINSH_FUNCTION_EXPORT(cls, clear screen);
+#endif
