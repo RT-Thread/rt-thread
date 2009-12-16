@@ -127,27 +127,6 @@ int list_sem()
 FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system)
 #endif
 
-#ifdef RT_USING_FASTEVENT
-int list_fevent()
-{
-	struct rt_fast_event *e;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_FastEvent].object_list;
-
-	rt_kprintf("fevent   set       \n");
-	rt_kprintf("-------- ----------\n");
-	for (node = list->next; node != list; node = node->next)
-	{
-		e = (struct rt_fast_event*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s  0x%08x\n", e->parent.name, e->set);
-	}
-
-	return 0;
-}
-FINSH_FUNCTION_EXPORT(list_fevent, list fast event in system)
-#endif
-
 #ifdef RT_USING_EVENT
 int list_event()
 {
@@ -293,7 +272,7 @@ int list_device()
 {
 	struct rt_device *device;
 	struct rt_list_node *list, *node;
-	const char *device_type_str[] = 
+	const char *device_type_str[] =
 	{
 		"Character Device",
 		"Block Device",
@@ -441,7 +420,7 @@ void list_prefix(char* prefix)
 				var_cnt ++;
 				/* set name ptr */
 				name_ptr = index->name;
-				
+
 #ifdef FINSH_USING_DESCRIPTION
 				rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
@@ -467,7 +446,7 @@ void list_prefix(char* prefix)
 		}
 		sysvar_item = sysvar_item->next;
 	}
-	
+
 	/* only one matched */
 	if ((func_cnt + var_cnt) == 1)
 	{
