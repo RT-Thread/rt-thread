@@ -28,6 +28,8 @@
  * 2009-10-10     Bernard      change semaphore and mutex value to unsigned value
  * 2009-10-25     Bernard      change the mb/mq receive timeout to 0 if the 
  *                             re-calculated delta tick is a negative number.
+ * 2009-12-16     Bernard      fix the rt_ipc_object_suspend issue when IPC flag 
+ *                             is RT_IPC_FLAG_PRIO
  */
 
 #include <rtthread.h>
@@ -98,10 +100,13 @@ rt_inline rt_err_t rt_ipc_object_suspend(struct rt_ipc_object *ipc, struct rt_th
 				sthread = rt_list_entry(n, struct rt_thread, tlist);
 
 				/* find out */
-				if (thread->current_priority < sthread->current_priority) break;
+				if (thread->current_priority < sthread->current_priority)
+				{
+					/* insert this thread before the sthread */
+					rt_list_insert_before(&(sthread->tlist), &(thread->tlist));
+					break;
+				}
 			}
-
-			rt_list_insert_before(&(ipc->suspend_thread), &(thread->tlist));
 		}
 		break;
 	}
