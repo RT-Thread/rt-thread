@@ -25,7 +25,6 @@ File 1,1,<.\dm9000a.c><dm9000a.c>
 File 1,1,<.\rtc.c><rtc.c>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
-File 1,1,<..\..\net\apps\tcpecho.c><tcpecho.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c><misc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c><stm32f10x_adc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c><stm32f10x_bkp.c>

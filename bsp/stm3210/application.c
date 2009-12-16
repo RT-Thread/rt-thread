@@ -73,10 +73,10 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_LWIP
 	{
 		extern void lwip_sys_init(void);
-#ifdef RT_USING_LWIP
-		eth_system_device_init();
 
 		/* register ethernetif device */
+		eth_system_device_init();
+
 #if STM32_ETH_IF == 0
 		rt_hw_enc28j60_init();
 #elif STM32_ETH_IF == 1
@@ -84,7 +84,6 @@ void rt_init_thread_entry(void* parameter)
 #endif
 		/* re-init device driver */
 		rt_device_init_all();
-#endif
 
 		/* init lwip system */
 		lwip_sys_init();

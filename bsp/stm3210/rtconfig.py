@@ -1,10 +1,18 @@
 # component options
+# finsh shell option
 RT_USING_FINSH = True
+
+# device file system options
 RT_USING_DFS = True
+RT_USING_DFS_EFSL = True
+RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
-RT_USING_DFS_EFSL = False
-RT_USING_DFS_ELMFAT = True
+
+# lwip options
 RT_USING_LWIP = True
+
+# rtgui options
+RT_USING_RTGUI = False
 
 # toolchains options
 ARCH='arm'
@@ -12,7 +20,7 @@ CPU='stm32'
 #PLATFORM = 'gcc'
 #EXEC_PATH = 'd:/codesourcery/bin'
 PLATFORM = 'armcc'
-EXEC_PATH = 'e:/Keil'
+EXEC_PATH = 'c:/Keil'
 #PLATFORM = 'iar'
 #EXEC_PATH = 'E:/Program Files/IAR Systems/Embedded Workbench 5.4/'
 BUILD = 'debug'
