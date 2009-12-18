@@ -5,11 +5,12 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
  * 2008-04-25     Yi.qiu       first version
+ * 2009-12-18     Bernard      port to armcc
  */
 
 #include <rtthread.h>
@@ -18,19 +19,19 @@
 // #define _MMUTT_STARTADDRESS	 0x30080000
 #define _MMUTT_STARTADDRESS	 0x30200000
 
-#define DESC_SEC	(0x2|(1<<4))
-#define CB		(3<<2)  //cache_on, write_back
-#define CNB		(2<<2)  //cache_on, write_through
-#define NCB             (1<<2)  //cache_off,WR_BUF on
-#define NCNB		(0<<2)  //cache_off,WR_BUF off
-#define AP_RW		(3<<10) //supervisor=RW, user=RW
-#define AP_RO		(2<<10) //supervisor=RW, user=RO
+#define DESC_SEC		(0x2|(1<<4))
+#define CB				(3<<2)  //cache_on, write_back
+#define CNB				(2<<2)  //cache_on, write_through
+#define NCB				(1<<2)  //cache_off,WR_BUF on
+#define NCNB			(0<<2)  //cache_off,WR_BUF off
+#define AP_RW			(3<<10) //supervisor=RW, user=RW
+#define AP_RO			(2<<10) //supervisor=RW, user=RO
 
 #define DOMAIN_FAULT	(0x0)
-#define DOMAIN_CHK	(0x1)
+#define DOMAIN_CHK		(0x1)
 #define DOMAIN_NOTCHK	(0x3)
-#define DOMAIN0		(0x0<<5)
-#define DOMAIN1		(0x1<<5)
+#define DOMAIN0			(0x0<<5)
+#define DOMAIN1			(0x1<<5)
 
 #define DOMAIN0_ATTR	(DOMAIN_CHK<<0)
 #define DOMAIN1_ATTR	(DOMAIN_FAULT<<2)
@@ -46,12 +47,12 @@ void mmu_setttbase(register rt_uint32_t i)
 	asm ("mcr p15, 0, %0, c2, c2, 0": :"r" (i));
 }
 
-void mmu_setdomain(register rt_uint32_t i)
+void mmu_set_domain(register rt_uint32_t i)
 {
 	asm ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
 }
 
-void mmu_enablemmu()
+void mmu_enable()
 {
 	register rt_uint32_t i;
 
@@ -64,7 +65,7 @@ void mmu_enablemmu()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_disablemmu()
+void mmu_disable()
 {
 	register rt_uint32_t i;
 
@@ -77,7 +78,7 @@ void mmu_disablemmu()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_enableicache()
+void mmu_enable_icache()
 {
 	register rt_uint32_t i;
 
@@ -90,7 +91,7 @@ void mmu_enableicache()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_enabledcache()
+void mmu_enable_dcache()
 {
 	register rt_uint32_t i;
 
@@ -103,7 +104,7 @@ void mmu_enabledcache()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_disableicache()
+void mmu_disable_icache()
 {
 	register rt_uint32_t i;
 
@@ -116,7 +117,7 @@ void mmu_disableicache()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_disabledcache()
+void mmu_disable_dcache()
 {
 	register rt_uint32_t i;
 
@@ -129,7 +130,7 @@ void mmu_disabledcache()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_enablealignfault()
+void mmu_enable_alignfault()
 {
 	register rt_uint32_t i;
 
@@ -142,7 +143,7 @@ void mmu_enablealignfault()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_disablealignfault()
+void mmu_disable_alignfault()
 {
 	register rt_uint32_t i;
 
@@ -155,17 +156,17 @@ void mmu_disablealignfault()
 	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
-void mmu_cleaninvalidatedcacheindex(int index)
+void mmu_clean_invalidated_cache_index(int index)
 {
 	asm ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
 }
 
-void mmu_invalidatetlb()
+void mmu_invalidate_tlb()
 {
 	asm ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
 }
 
-void mmu_invalidateicache()
+void mmu_invalidate_icache()
 {
 	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
 }
@@ -177,79 +178,79 @@ __asm void mmu_setttbase(rt_uint32_t i)
 	mcr p15, 0, r0, c2, c2, 0
 }
 
-__asm void mmu_setdomain(rt_uint32_t i)
+__asm void mmu_set_domain(rt_uint32_t i)
 {
 	mcr p15,0, r0, c3, c0,  0
 }
 
-__asm void mmu_enablemmu()
+__asm void mmu_enable()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	orr r0, r0, #0x01
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_disablemmu()
+__asm void mmu_disable()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	bic r0, r0, #0x01
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_enableicache()
+__asm void mmu_enable_icache()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	orr r0, r0, #0x100
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_enabledcache()
+__asm void mmu_enable_dcache()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	orr r0, r0, #0x02
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_disableicache()
+__asm void mmu_disable_icache()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	bic r0, r0, #0x100
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_disabledcache()
+__asm void mmu_disable_dcache()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	bic r0, r0, #0x100
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_enablealignfault()
+__asm void mmu_enable_alignfault()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	bic r0, r0, #0x01
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_disablealignfault()
+__asm void mmu_disable_alignfault()
 {
 	mrc p15, 0, r0, c1, c0, 0
 	bic r0, r0, #0x02
 	mcr p15, 0, r0, c1, c0, 0
 }
 
-__asm void mmu_cleaninvalidatedcacheindex(int index)
+__asm void mmu_clean_invalidated_cache_index(int index)
 {
 	mcr p15, 0, r0, c7, c14, 2
 }
 
-__asm void mmu_invalidatetlb()
+__asm void mmu_invalidate_tlb()
 {
 	mov r0, #0x0
 	mcr p15, 0, r0, c8, c7, 0
 }
 
-__asm void mmu_invalidateicache()
+__asm void mmu_invalidate_icache()
 {
 	mov r0, #0
 	mcr p15, 0, r0, c7, c5, 0
@@ -278,21 +279,21 @@ void rt_hw_mmu_init(void)
 	//initialization code is needed.
 	//===================================================================
 
-	mmu_disabledcache();
-	mmu_disableicache();
+	mmu_disable_dcache();
+	mmu_disable_icache();
 
 	//If write-back is used,the DCache should be cleared.
 	for(i=0;i<64;i++)
 		for(j=0;j<8;j++)
-			mmu_cleaninvalidatedcacheindex((i<<26)|(j<<5));
+			mmu_clean_invalidated_cache_index((i<<26)|(j<<5));
 
-	mmu_invalidateicache();
+	mmu_invalidate_icache();
 
 	//To complete mmu_Init() fast, Icache may be turned on here.
-	mmu_enableicache();
+	mmu_enable_icache();
 
-	mmu_disablemmu();
-	mmu_invalidatetlb();
+	mmu_disable();
+	mmu_invalidate_tlb();
 
 	//mmu_setmtt(int vaddrStart,int vaddrEnd,int paddrStart,int attr);
 	mmu_setmtt(0x00000000,0x07f00000,0x00000000,RW_CNB);  //bank0
@@ -320,14 +321,14 @@ void rt_hw_mmu_init(void)
 	mmu_setttbase(_MMUTT_STARTADDRESS);
 
 	/* DOMAIN1: no_access, DOMAIN0,2~15=client(AP is checked) */
-	mmu_setdomain(0x55555550|DOMAIN1_ATTR|DOMAIN0_ATTR);
+	mmu_set_domain(0x55555550|DOMAIN1_ATTR|DOMAIN0_ATTR);
 
 	//mmu_SetProcessId(0x0);
-	mmu_enablealignfault();
+	mmu_enable_alignfault();
 
-	mmu_enablemmu();
-	mmu_enableicache();
+	mmu_enable();
+	mmu_enable_icache();
 
 	/* DCache should be turned on after mmu is turned on. */
-	mmu_enabledcache();
+	mmu_enable_dcache();
 }

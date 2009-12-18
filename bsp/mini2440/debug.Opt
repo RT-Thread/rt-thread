@@ -26,10 +26,10 @@ TARGOPT 1, (RT-Thread Debug)
   OPTAX 255
   OPTBL 0,(User's Manual)<DATASHTS\SAMSUNG\S3C2410_UM.PDF>
   OPTDL (SARM.DLL)()(DARMSS9.DLL)(-pS3C2410A)(SARM.DLL)()(TARMSS9.DLL)(-pS3C2410A)
-  OPTDBG 48125,-1,()()()()()()()()()() ()()()()
+  OPTDBG 47614,6,()()()()()()()()()(.\Ext_RAM.ini) (Segger\JLTAgdi.dll)()()()
   OPTKEY 0,(DLGDARM)((113=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(102=-1,-1,-1,-1,0)(103=-1,-1,-1,-1,0)(104=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(107=-1,-1,-1,-1,0)(108=-1,-1,-1,-1,0)(109=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0))
   OPTKEY 0,(ARMDBGFLAGS)(-T5F)
-  OPTDF 0x40000086
+  OPTDF 0x86
   OPTLE <>
   OPTLC <>
 EndOpt
