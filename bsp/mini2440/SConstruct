@@ -2,7 +2,7 @@ import os
 import rtconfig
 
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
-target = 'rtthread-s3c2440'
+target = 'rtthread-mini2440'
 
 # search path for C compiler
 bsp_path  = RTT_ROOT + '/bsp/mini2440'
