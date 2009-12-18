@@ -4,7 +4,7 @@ import rtconfig
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 target = 'rtthread-s3c2440'
 
-# search path for C compiler 
+# search path for C compiler
 bsp_path  = RTT_ROOT + '/bsp/mini2440'
 
 env = Environment(tools = ['mingw'],
@@ -36,7 +36,7 @@ if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
-src_drv = ['rtc.c', 'console.c']
+src_drv = ['console.c']
 
 if rtconfig.RT_USING_DFS:
 	src_drv += ['sdcard.c']

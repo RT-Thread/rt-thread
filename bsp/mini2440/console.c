@@ -25,7 +25,7 @@ struct rt_console
 	/* bpp and pixel of width */
 	rt_uint8_t bpp;
 	rt_uint32_t pitch;
-	
+
 	/* current cursor */
 	rt_uint8_t current_col;
 	rt_uint8_t current_row;
@@ -33,9 +33,9 @@ struct rt_console
 struct rt_console console;
 
 void rt_hw_console_init(rt_uint8_t* video_ptr, rt_uint8_t* font_ptr, rt_uint8_t bpp);
-void rt_hw_console_newline();
+void rt_hw_console_newline(void);
 void rt_hw_console_putc(char c);
-void rt_hw_console_clear();
+void rt_hw_console_clear(void);
 
 void rt_hw_console_init(rt_uint8_t* video_ptr, rt_uint8_t* font_ptr, rt_uint8_t bpp)
 {
@@ -45,7 +45,7 @@ void rt_hw_console_init(rt_uint8_t* video_ptr, rt_uint8_t* font_ptr, rt_uint8_t 
 	console.font_ptr = font_ptr;
 	console.bpp = bpp;
 	console.pitch = console.bpp * RT_CONSOLE_WIDTH;
-	
+
 	rt_hw_console_clear();
 }
 
@@ -68,19 +68,23 @@ void rt_hw_console_putc(char c)
 
         default:
 			{
+				rt_uint8_t* font_ptr;
+				register rt_uint32_t cursor;
+				register rt_uint32_t i, j;
+
 				if (console.current_col == RT_CONSOLE_COL)
 				{
 					rt_hw_console_newline();
 					console.current_col = 0;
-					
+
 					rt_hw_console_putc(c);
 					return;
 				}
 
-				rt_uint8_t* font_ptr = console.font_ptr + c * RT_CONSOLE_FONT_HEIGHT;
-				register rt_uint32_t cursor = (console.current_row * RT_CONSOLE_FONT_HEIGHT) * console.pitch
+				font_ptr = console.font_ptr + c * RT_CONSOLE_FONT_HEIGHT;
+				cursor = (console.current_row * RT_CONSOLE_FONT_HEIGHT) * console.pitch
 					+ console.current_col * RT_CONSOLE_FONT_WIDTH * console.bpp;
-				register rt_uint32_t i, j;
+
 				for (i = 0; i < RT_CONSOLE_FONT_HEIGHT; i ++ )
 				{
 					for (j = 0; j < RT_CONSOLE_FONT_WIDTH; j ++)
@@ -109,7 +113,7 @@ void rt_hw_console_putc(char c)
 						}
 					}
 				}
-				
+
 				console.current_col ++;
 			}
 			break;
@@ -135,7 +139,7 @@ void rt_hw_console_newline()
 		rt_memset(console.video_ptr + (RT_CONSOLE_ROW - 1) * RT_CONSOLE_FONT_HEIGHT * console.pitch,
 			0,
 			RT_CONSOLE_FONT_HEIGHT * console.pitch);
-		
+
 		console.current_row = RT_CONSOLE_ROW - 1;
 	}
 }
@@ -144,7 +148,7 @@ void rt_hw_console_clear()
 {
 	console.current_col = 0;
 	console.current_row = 0;
-	
+
 	rt_memset(console.video_ptr, 0, RT_CONSOLE_HEIGHT * console.pitch);
 }
 
@@ -167,11 +171,10 @@ void rt_hw_serial_putc(const char c)
  * @param str the displayed string
  */
 void rt_hw_console_output(const char* str)
-{		
+{
 	while (*str)
 	{
-		rt_hw_serial_putc(*str++);		
-		//rt_hw_console_putc(*str++);		
+		rt_hw_serial_putc(*str++);
 	}
 }
 

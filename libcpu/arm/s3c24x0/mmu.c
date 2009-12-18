@@ -40,8 +40,7 @@
 #define RW_NCNB		(AP_RW|DOMAIN0|NCNB|DESC_SEC)
 #define RW_FAULT	(AP_RW|DOMAIN1|NCNB|DESC_SEC)
 
-void rt_hw_mmu_init(void);
-
+#ifdef __GNU_C__
 void mmu_setttbase(register rt_uint32_t i)
 {
 	asm ("mcr p15, 0, %0, c2, c2, 0": :"r" (i));
@@ -170,6 +169,92 @@ void mmu_invalidateicache()
 {
 	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
 }
+#endif
+
+#ifdef __CC_ARM
+__asm void mmu_setttbase(rt_uint32_t i)
+{
+	mcr p15, 0, r0, c2, c2, 0
+}
+
+__asm void mmu_setdomain(rt_uint32_t i)
+{
+	mcr p15,0, r0, c3, c0,  0
+}
+
+__asm void mmu_enablemmu()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	orr r0, r0, #0x01
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_disablemmu()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	bic r0, r0, #0x01
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_enableicache()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	orr r0, r0, #0x100
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_enabledcache()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	orr r0, r0, #0x02
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_disableicache()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	bic r0, r0, #0x100
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_disabledcache()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	bic r0, r0, #0x100
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_enablealignfault()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	bic r0, r0, #0x01
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_disablealignfault()
+{
+	mrc p15, 0, r0, c1, c0, 0
+	bic r0, r0, #0x02
+	mcr p15, 0, r0, c1, c0, 0
+}
+
+__asm void mmu_cleaninvalidatedcacheindex(int index)
+{
+	mcr p15, 0, r0, c7, c14, 2
+}
+
+__asm void mmu_invalidatetlb()
+{
+	mov r0, #0x0
+	mcr p15, 0, r0, c8, c7, 0
+}
+
+__asm void mmu_invalidateicache()
+{
+	mov r0, #0
+	mcr p15, 0, r0, c7, c5, 0
+}
+#endif
 
 void mmu_setmtt(int vaddrStart,int vaddrEnd,int paddrStart,int attr)
 {

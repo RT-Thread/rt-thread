@@ -17,26 +17,26 @@
 /**
  * This function access to rtc
  */
-static inline void rt_hw_rtc_access(int a)
+rt_inline void rt_hw_rtc_access(int a)
 {
 	switch (a)
 	{
 	case RTC_ENABLE:
-		RTCCON |= 0x01; 
+		RTCCON |= 0x01;
 		break;
 
 	case RTC_DISABLE:
-		RTCCON &= ~0x01; 
+		RTCCON &= ~0x01;
 		break;
 	}
 }
 
-static inline rt_uint32_t BCD2BIN(rt_uint8_t n)
+rt_inline rt_uint32_t BCD2BIN(rt_uint8_t n)
 {
         return ((((n >> 4) & 0x0F) * 10) + (n & 0x0F));
 }
 
-static inline rt_uint8_t BIN2BCD(rt_uint32_t n)
+rt_inline rt_uint8_t BIN2BCD(rt_uint32_t n)
 {
         return (((n / 10) << 4) | (n % 10));
 }
@@ -53,7 +53,7 @@ void rt_hw_rtc_get (struct rtc_time *tmp)
 	rt_hw_rtc_access(RTC_ENABLE);
 
 	/* read RTC registers */
-	do 
+	do
 	{
 		sec = BCDSEC;
 		min = BCDMIN;

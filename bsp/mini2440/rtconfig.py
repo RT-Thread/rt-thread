@@ -1,17 +1,29 @@
 # component options
+
+# finsh shell option
 RT_USING_FINSH = True
+
+# device file system options
 RT_USING_DFS = True
-RT_USING_DFS_YAFFS2 = False
 RT_USING_DFS_EFSL = True
+RT_USING_DFS_ELMFAT = False
+RT_USING_DFS_YAFFS2 = False
+
+# lwip options
 RT_USING_LWIP = True
+
+# rtgui options
+RT_USING_RTGUI = False
 
 # toolchains options
 ARCH='arm'
 CPU='s3c24x0'
-PLATFORM = 'gcc'
-EXEC_PATH = 'd:/SourceryGCC/bin'
-#PLATFORM = 'armcc'
-#EXEC_PATH = 'C:/Keil'
+TextBase='0x30000000'
+
+#PLATFORM = 'gcc'
+#EXEC_PATH = 'd:/SourceryGCC/bin'
+PLATFORM = 'armcc'
+EXEC_PATH = 'C:/Keil'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -51,10 +63,10 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
+    DEVICE = ' --device DARMSS9'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter mini2440_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'

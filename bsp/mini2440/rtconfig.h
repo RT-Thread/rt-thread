@@ -31,9 +31,6 @@
 /* Using Event*/
 #define RT_USING_EVENT
 
-/* Using Faset Event*/
-#define RT_USING_FASTEVENT
-
 /* Using MailBox*/
 #define RT_USING_MAILBOX
 
@@ -64,10 +61,13 @@
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
 #define RT_USING_FINSH
+/* Using symbol table */
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library*/
-#define RT_USING_NEWLIB
+/* #define RT_USING_NEWLIB */
 
 /* SECTION: a mini libc */
 /* Using mini libc library*/
@@ -79,11 +79,13 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support*/
-#define RT_USING_RTGUI
+/* #define RT_USING_RTGUI */
 
 /* SECTION: Device filesystem support */
 /* using DFS support*/
 #define RT_USING_DFS
+#define RT_USING_DFS_EFSL
+#define RT_USING_DFS_YAFFS2
 
 #define RT_USING_WORKDIR
 

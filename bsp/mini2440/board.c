@@ -21,7 +21,7 @@
 #include "board.h"
 
 /**
- * @addtogroup s3ceb2410
+ * @addtogroup mini2440
  */
 /*@{*/
 
@@ -42,9 +42,9 @@ extern void rt_hw_set_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv);
 
 static rt_uint32_t timer_load_val = 0;
 
-#define UART0	((struct uartport *)U0BASE)	
+#define UART0	((struct uartport *)U0BASE)
 struct serial_int_rx uart0_int_rx;
-struct serial_device uart0 = 
+struct serial_device uart0 =
 {
 	UART0,
 	&uart0_int_rx,
@@ -84,17 +84,17 @@ void rt_serial_handler(int vector)
 void rt_hw_uart_init(void)
 {
 	int i;
-	
+
 	GPHCON |= 0xa0;
 	/*PULLUP is enable */
-	GPHUP  |= 0x0c;  
-	
+	GPHUP  |= 0x0c;
+
 	/* FIFO enable, Tx/Rx FIFO clear */
 	uart0.uart_device->ufcon = 0x1;
 	/* disable the flow control */
-	uart0.uart_device->umcon = 0x0;	
+	uart0.uart_device->umcon = 0x0;
 	/* Normal,No parity,1 stop,8 bit */
-	uart0.uart_device->ulcon = 0x3;	
+	uart0.uart_device->ulcon = 0x3;
 	/*
 	 * tx=level,rx=edge,disable timeout int.,enable rx error int.,
 	 * normal,interrupt or polling
@@ -104,13 +104,13 @@ void rt_hw_uart_init(void)
 	/* output PCLK to UART0/1, PWMTIMER */
 	CLKCON |= 0x0D00;
 
-	for (i = 0; i < 100; i++);	
+	for (i = 0; i < 100; i++);
 
 	/* install uart isr */
 	INTSUBMSK &= ~(BIT_SUB_RXD0);
 
 	rt_hw_interrupt_install(INTUART0, rt_serial_handler, RT_NULL);
-	rt_hw_interrupt_umask(INTUART0);		
+	rt_hw_interrupt_umask(INTUART0);
 }
 
 /**
@@ -159,9 +159,6 @@ void rt_hw_board_init()
 
 	/* initialize mmu */
 	rt_hw_mmu_init();
-
-	/* initialize keypad */
-	rt_kbd_init();
 
 	/* initialize console */
 	//rt_console_init(&_rt_hw_framebuffer[0], &asc16_font[0], 2);

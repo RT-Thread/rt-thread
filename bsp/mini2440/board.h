@@ -15,11 +15,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <s3c2410.h>
+#include <s3c24x0.h>
 #include <serial.h>
 
 void rt_hw_board_init(void);
-
 void rt_hw_sdcard_init(void);
 
 #endif

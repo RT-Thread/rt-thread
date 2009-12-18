@@ -1,6 +1,6 @@
 #include <rthw.h>
 #include <rtthread.h>
-#include <s3c2410.h>
+#include <s3c24x0.h>
 
 /* ADCCON Register Bits */
 #define S3C2410_ADCCON_ECFLG		(1<<15)

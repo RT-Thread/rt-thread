@@ -1,7 +1,7 @@
 #ifndef __SDCARD_H
 #define __SDCARD_H
 
-#include  <s3c2410.h>
+#include  <s3c24x0.h>
 
 #define INICLK	300000
 #define SDCLK	24000000

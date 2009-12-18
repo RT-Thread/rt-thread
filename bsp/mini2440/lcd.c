@@ -14,7 +14,7 @@
 
 #include <rtthread.h>
 
-#include <s3c2410.h>
+#include <s3c24x0.h>
 
 #define MVAL		(13)
 #define MVAL_USED 	(0)		//0=each frame   1=rate by MVAL

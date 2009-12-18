@@ -18,13 +18,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include <s3c2410.h>
-
-rt_uint8_t _irq_stack_start[1024];
-rt_uint8_t _fiq_stack_start[1024];
-rt_uint8_t _undefined_stack_start[512];
-rt_uint8_t _abort_stack_start[512];
-rt_uint8_t _svc_stack_start[1024] SECTION(".nobss");
+#include <s3c24x0.h>
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_board_init(void);
@@ -37,53 +31,22 @@ extern void rt_show_version(void);
 extern void rt_system_heap_init(void*, void*);
 extern void rt_hw_finsh_init(void);
 extern void rt_application_init(void);
-extern int rtl8019_device_register(char*);
 
 extern struct serial_device uart0;
 extern struct rt_device uart0_device;
 
 /**
- * @addtogroup s3ceb2410
+ * @addtogroup mini2440
  */
 
 /*@{*/
-
-#ifdef __CC_ARM
-	extern rt_uint8_t* __bss_start;
-	extern rt_uint8_t* __bss_end;
-#else
-	extern rt_uint8_t __bss_start;
-	extern rt_uint8_t __bss_end;
+#if defined(__CC_ARM)
+	extern int Image$$ER_ZI$$ZI$$Base;
+	extern int Image$$ER_ZI$$ZI$$Length;
+	extern int Image$$ER_ZI$$ZI$$Limit;
+#elif defined(__GNU_C__)
+	extern int __bss_end;
 #endif
-
-/*
- * 4 LEDs on S3CEB2410 : GPF4~GPF7
- */
-void led_set(rt_uint32_t led)
-{
-	GPFDAT = led;
-}
-
-/* led loop */
-void led_flash(void)
-{
-	rt_uint32_t i;
-
-	/* change the pin mux to enable the LED output */
-	GPFCON = 0x5500;
-
-	led_set(1 << 4);
-	for ( i = 0; i < 2000000; i++);
-
-	led_set(1 << 5);
-	for ( i = 0; i < 2000000; i++);
-
-	led_set(1 << 6);
-	for ( i = 0; i < 2000000; i++);
-
-	led_set(1 << 17);
-	for ( i = 0; i < 2000000; i++);
-}
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -118,7 +81,7 @@ void rtthread_startup(void)
 
 	/* init heap memory system */
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)__bss_end, (void*)0x34000000);
+	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x07400000);
 #else
 	rt_system_heap_init(&__bss_end, (void*)0x34000000);
 #endif
@@ -126,22 +89,12 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-	/* set idle thread hook */
-	rt_thread_idle_sethook(led_flash);
-
 #ifdef RT_USING_DEVICE
 	/* register uart1 */
-	rt_hw_serial_register(&uart0_device, "uart0", 
+	rt_hw_serial_register(&uart0_device, "uart0",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-		&uart0);		
+		&uart0);
 	rt_hw_sdcard_init();
-#ifdef RT_USING_LWIP
-	/* init ethernet task */
-	eth_system_device_init();
-
-	/* init rtl8019 device */
-	rt_rtl8019_device_register("e0");
-#endif
 
 	/*init all registed devices */
 	rt_device_init_all();
@@ -155,7 +108,7 @@ void rtthread_startup(void)
 	finsh_system_init();
 #ifdef RT_USING_DEVICE
 	finsh_set_device("uart0");
-#endif	
+#endif
 #endif
 
 	/* init idle thread */
@@ -166,6 +119,19 @@ void rtthread_startup(void)
 
 	/* never reach here */
 	return ;
+}
+
+int main(void)
+{
+	rt_uint32_t UNUSED level;
+
+	/* disable interrupt first */
+	level = rt_hw_interrupt_disable();
+
+	/* startup RT-Thread RTOS */
+	rtthread_startup();
+
+	return 0;
 }
 
 /*@}*/
