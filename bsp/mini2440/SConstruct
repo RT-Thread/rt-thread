@@ -42,7 +42,7 @@ if rtconfig.RT_USING_DFS:
 	src_drv += ['sdcard.c']
 
 if rtconfig.RT_USING_LWIP:
-	src_drv += ['dm9000a.c']
+	src_drv += ['dm9000.c']
 
 objs = objs + env.Object(src_bsp + src_drv)
 

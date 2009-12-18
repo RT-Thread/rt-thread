@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include <netif/ethernetif.h>
 
-#include "dm9000a.h"
+#include "dm9000.h"
 
 // #define DM9000_DEBUG		1
 #if DM9000_DEBUG

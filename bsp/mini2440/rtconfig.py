@@ -68,8 +68,8 @@ elif PLATFORM == 'armcc':
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
+    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
 
     EXEC_PATH += '/arm/bin40/'
 
