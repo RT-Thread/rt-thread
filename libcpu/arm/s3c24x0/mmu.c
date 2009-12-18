@@ -41,7 +41,7 @@
 #define RW_NCNB		(AP_RW|DOMAIN0|NCNB|DESC_SEC)
 #define RW_FAULT	(AP_RW|DOMAIN1|NCNB|DESC_SEC)
 
-#ifdef __GNU_C__
+#ifdef __GNUC__
 void mmu_setttbase(register rt_uint32_t i)
 {
 	asm ("mcr p15, 0, %0, c2, c2, 0": :"r" (i));
@@ -200,35 +200,35 @@ __asm void mmu_disable()
 __asm void mmu_enable_icache()
 {
 	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x100
+	orr r0, r0, #0x1000
 	mcr p15, 0, r0, c1, c0, 0
 }
 
 __asm void mmu_enable_dcache()
 {
 	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x02
+	orr r0, r0, #0x04
 	mcr p15, 0, r0, c1, c0, 0
 }
 
 __asm void mmu_disable_icache()
 {
 	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x100
+	bic r0, r0, #0x1000
 	mcr p15, 0, r0, c1, c0, 0
 }
 
 __asm void mmu_disable_dcache()
 {
 	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x100
+	bic r0, r0, #0x04
 	mcr p15, 0, r0, c1, c0, 0
 }
 
 __asm void mmu_enable_alignfault()
 {
 	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x01
+	orr r0, r0, #0x02
 	mcr p15, 0, r0, c1, c0, 0
 }
 

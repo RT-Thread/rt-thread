@@ -23,7 +23,7 @@
 #define ICACHE_MASK	(rt_uint32_t)(1 << 12)
 #define DCACHE_MASK	(rt_uint32_t)(1 << 2)
 
-#ifdef __GNU_C__
+#ifdef __GNUC__
 rt_inline rt_uint32_t cp15_rd(void)
 {
 	rt_uint32_t i;
