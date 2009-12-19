@@ -173,87 +173,147 @@ void mmu_invalidate_icache()
 #endif
 
 #ifdef __CC_ARM
-__asm void mmu_setttbase(rt_uint32_t i)
+void mmu_setttbase(rt_uint32_t i)
 {
-	mcr p15, 0, r0, c2, c2, 0
+    __asm
+    {
+        mcr p15, 0, i, c2, c2, 0
+    }
 }
 
-__asm void mmu_set_domain(rt_uint32_t i)
+void mmu_set_domain(rt_uint32_t i)
 {
-	mcr p15,0, r0, c3, c0,  0
+    __asm
+    {
+        mcr p15,0, i, c3, c0,  0
+    }
 }
 
-__asm void mmu_enable()
+void mmu_enable()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x01
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        orr value, value, #0x01
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_disable()
+void mmu_disable()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x01
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        bic value, value, #0x01
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_enable_icache()
+void mmu_enable_icache()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x1000
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        orr value, value, #0x1000
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_enable_dcache()
+void mmu_enable_dcache()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x04
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        orr value, value, #0x04
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_disable_icache()
+void mmu_disable_icache()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x1000
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        bic value, value, #0x1000
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_disable_dcache()
+void mmu_disable_dcache()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x04
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        bic value, value, #0x04
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_enable_alignfault()
+void mmu_enable_alignfault()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	orr r0, r0, #0x02
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        orr value, value, #0x02
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_disable_alignfault()
+void mmu_disable_alignfault()
 {
-	mrc p15, 0, r0, c1, c0, 0
-	bic r0, r0, #0x02
-	mcr p15, 0, r0, c1, c0, 0
+    register rt_uint32_t value;
+
+    __asm
+    {
+        mrc p15, 0, value, c1, c0, 0
+        bic value, value, #0x02
+        mcr p15, 0, value, c1, c0, 0
+    }
 }
 
-__asm void mmu_clean_invalidated_cache_index(int index)
+void mmu_clean_invalidated_cache_index(int index)
 {
-	mcr p15, 0, r0, c7, c14, 2
+    __asm
+    {
+        mcr p15, 0, index, c7, c14, 2
+    }
 }
 
-__asm void mmu_invalidate_tlb()
+void mmu_invalidate_tlb()
 {
-	mov r0, #0x0
-	mcr p15, 0, r0, c8, c7, 0
+    register rt_uint32_t value;
+
+    value = 0;
+    __asm
+    {
+        mcr p15, 0, value, c8, c7, 0
+    }
 }
 
-__asm void mmu_invalidate_icache()
+void mmu_invalidate_icache()
 {
-	mov r0, #0
-	mcr p15, 0, r0, c7, c5, 0
+    register rt_uint32_t value;
+
+    value = 0;
+
+    __asm
+    {
+        mcr p15, 0, value, c7, c5, 0
+    }
 }
 #endif
 
@@ -323,12 +383,12 @@ void rt_hw_mmu_init(void)
 	/* DOMAIN1: no_access, DOMAIN0,2~15=client(AP is checked) */
 	mmu_set_domain(0x55555550|DOMAIN1_ATTR|DOMAIN0_ATTR);
 
-	//mmu_SetProcessId(0x0);
 	mmu_enable_alignfault();
 
 	mmu_enable();
-	mmu_enable_icache();
 
+	/* ICache enable */
+	mmu_enable_icache();
 	/* DCache should be turned on after mmu is turned on. */
 	mmu_enable_dcache();
 }
