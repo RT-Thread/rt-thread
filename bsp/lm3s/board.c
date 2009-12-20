@@ -55,7 +55,7 @@ void rt_hw_timer_handler(void)
 void rt_hw_board_init()
 {
 	/* set clock */
-	SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN |
+	SysCtlClockSet(SYSCTL_SYSDIV_2 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_6MHZ);
 
 	/* init systick */

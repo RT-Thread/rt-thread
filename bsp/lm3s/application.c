@@ -36,35 +36,6 @@
 #include <lwip/api.h>
 #endif
 
-char thread1_stack[0x120];
-struct rt_thread thread1;
-
-void thread1_entry(void* parameter)
-{
-	rt_uint32_t i = 0;
-
-	while (1)
-	{
-		rt_kprintf("thread1 --> %d\n", ++i);
-		rt_thread_delay(100);
-	}
-}
-
-void thread_test()
-{
-	rt_thread_init(&thread1,
-		"thread1",
-		thread1_entry, RT_NULL,
-		&thread1_stack[0], sizeof(thread1_stack),
-		20, 15);
-
-	rt_thread_startup(&thread1);
-}
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT(thread_test, test a basic thread)
-#endif
-
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -102,7 +73,7 @@ int rt_application_init()
 
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
-								2048, 21, 20);
+								1024, 21, 20);
 	rt_thread_startup(init_thread);
 
 	return 0;

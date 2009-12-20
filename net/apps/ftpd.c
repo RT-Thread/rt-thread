@@ -362,6 +362,7 @@ int ftp_process_request(struct ftp_session* session, char *buf)
 			// incorrect login
 			rt_sprintf(sbuf, "530 Login incorrect. Bye.\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);
 			return -1;
 		}
 		return 0;
@@ -375,12 +376,14 @@ int ftp_process_request(struct ftp_session* session, char *buf)
 			// password correct
 			rt_sprintf(sbuf, "230 User logged in\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);			
 			return 0;
 		}
 
 		// incorrect password
 		rt_sprintf(sbuf, "530 Login or Password incorrect. Bye!\r\n");
 		send(session->sockfd, sbuf, strlen(sbuf), 0);
+		rt_free(sbuf);		
 		return -1;
 	}
 	else if(str_begin_with(buf, "LIST")==0  )
@@ -488,6 +491,7 @@ int ftp_process_request(struct ftp_session* session, char *buf)
 err1:
 			closesocket(session->pasv_sockfd);
 			session->pasv_active = 0;
+			rt_free(sbuf);
 			return 0;
 		}
 	}
@@ -504,12 +508,14 @@ err1:
 			rt_sprintf(sbuf, "550 \"%s\" : not a regular file\r\n", filename);
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
 			session->offset=0;
+			rt_free(sbuf);			
 			return 0;
 		}
 
 		fd = open(filename, O_RDONLY, 0);
 		if (fd < 0)
 		{
+			rt_free(sbuf);
 			return 0;
 		}
 
@@ -538,6 +544,7 @@ err1:
 		{
 			rt_sprintf(sbuf, "550 Permission denied.\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);
 			return 0;
 		}
 
@@ -548,6 +555,7 @@ err1:
 		{
 			rt_sprintf(sbuf, "550 Cannot open \"%s\" for writing.\r\n", filename);
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);
 			return 0;
 		}
 		rt_sprintf(sbuf, "150 Opening binary mode data connection for \"%s\".\r\n", filename);
@@ -573,6 +581,7 @@ err1:
 			{
 				close(fd);
 				closesocket(session->pasv_sockfd);
+				rt_free(sbuf);
 				return -1;
 			}
 		}
@@ -643,6 +652,7 @@ err1:
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
 			closesocket(session->pasv_sockfd);
 			session->pasv_active = 0;
+			rt_free(sbuf);	
 			return 0;
 		}
 		pasvremote.sin_addr.s_addr=inet_addr(tmpip);
@@ -657,6 +667,7 @@ err1:
 				rt_sprintf(sbuf, "425 Can't open data connection.\r\n");
 				send(session->sockfd, sbuf, strlen(sbuf), 0);
 				closesocket(session->pasv_sockfd);
+				rt_free(sbuf);				
 				return 0;
 			}
 		}
@@ -681,6 +692,7 @@ err1:
 		{
 			rt_sprintf(sbuf, "550 Permission denied.\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);			
 			return 0;
 		}
 
@@ -703,6 +715,7 @@ err1:
 		{
 			rt_sprintf(sbuf, "550 Permission denied.\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);
 			return 0;
 		}
 
@@ -722,6 +735,7 @@ err1:
 		{
 			rt_sprintf(sbuf, "550 Permission denied.\r\n");
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
+			rt_free(sbuf);			
 			return 0;
 		}
 		build_full_path(session, parameter_ptr, filename, 256);
@@ -737,10 +751,12 @@ err1:
 			send(session->sockfd, sbuf, strlen(sbuf), 0);
 		}
 	}
+	
 	else if(str_begin_with(buf, "QUIT")==0)
 	{
 		rt_sprintf(sbuf, "221 Bye!\r\n");
 		send(session->sockfd, sbuf, strlen(sbuf), 0);
+		rt_free(sbuf);		
 		return -1;
 	}
 	else
@@ -748,6 +764,7 @@ err1:
 		rt_sprintf(sbuf, "502 Not Implemented.\r\n");
 		send(session->sockfd, sbuf, strlen(sbuf), 0);
 	}
+	rt_free(sbuf);	
 	return 0;
 }
 
