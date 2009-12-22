@@ -24,6 +24,12 @@
 /* Using Hook */
 #define RT_USING_HOOK
 
+/* Using Software Timer */
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO		4
+#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_TICK_PER_SECOND	10
+
 /* SECTION: IPC */
 /* Using Semaphore*/
 #define RT_USING_SEMAPHORE
@@ -68,6 +74,8 @@
 /* SECTION: device filesystem */
 #define RT_USING_DFS
 #define RT_USING_DFS_EFSL
+/* #define RT_USING_DFS_ELMFAT */
+
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/

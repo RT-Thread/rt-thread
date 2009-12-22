@@ -746,7 +746,7 @@ u8 MSD_ReadByte(void)
 *******************************************************************************/
 void SPI_Config(void)
 {
-  u32 delay;
+  uint32_t delay;
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
 

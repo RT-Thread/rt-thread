@@ -20,10 +20,11 @@ CPU='stm32'
 #PLATFORM = 'gcc'
 #EXEC_PATH = 'd:/codesourcery/bin'
 PLATFORM = 'armcc'
-EXEC_PATH = 'c:/Keil'
+EXEC_PATH = 'C:/Keil'
 #PLATFORM = 'iar'
 #EXEC_PATH = 'E:/Program Files/IAR Systems/Embedded Workbench 5.4/'
 BUILD = 'debug'
+STM32_TYPE = 'STM32F10X_HD'
 
 if PLATFORM == 'gcc':
     # toolchains

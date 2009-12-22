@@ -2,7 +2,6 @@ import os
 import rtconfig
 
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
-device_type = 'STM32F10X_HD'
 target = 'rtthread-stm32'
 
 # search path for C compiler
@@ -15,7 +14,7 @@ env = Environment(tools = ['mingw'],
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env.AppendUnique(CPPPATH = bsp_path)
-env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -D' + device_type)
+env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -D' + rtconfig.STM32_TYPE)
 
 Export('env')
 Export('RTT_ROOT')
@@ -41,13 +40,13 @@ src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
 src_drv = ['rtc.c', 'usart.c']
 
 if rtconfig.RT_USING_DFS:
-	if device_type == 'STM32F10X_HD':
+	if rtconfig.STM32_TYPE == 'STM32F10X_HD':
 		src_drv += ['sdcard.c']
 	else:
 		src_drv += ['msd.c']
 
 if rtconfig.RT_USING_LWIP:
-	if device_type == 'STM32F10X_CL':
+	if rtconfig.STM32_TYPE == 'STM32F10X_CL':
 		src_drv += ['stm32_eth.c']
 	else:
 		src_drv += ['enc28j60.c']

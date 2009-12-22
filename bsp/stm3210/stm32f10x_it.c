@@ -250,6 +250,7 @@ void USART3_IRQHandler(void)
 #endif
 }
 
+#if defined(RT_USING_DFS) && STM32_USE_SDIO
 /*******************************************************************************
 * Function Name  : SDIO_IRQHandler
 * Description    : This function handles SDIO global interrupt request.
@@ -259,7 +260,6 @@ void USART3_IRQHandler(void)
 *******************************************************************************/
 void SDIO_IRQHandler(void)
 {
-#ifdef RT_USING_DFS
     extern int SD_ProcessIRQSrc(void);
 
     /* enter interrupt */
@@ -270,10 +270,31 @@ void SDIO_IRQHandler(void)
 
     /* leave interrupt */
     rt_interrupt_leave();
-#endif
 }
+#endif
 
 #ifdef RT_USING_LWIP
+#ifdef STM32F10X_CL
+/*******************************************************************************
+* Function Name  : ETH_IRQHandler
+* Description    : This function handles ETH interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void ETH_IRQHandler(void)
+{
+	extern void rt_hw_stm32_eth_isr(void);
+	
+    /* enter interrupt */
+    rt_interrupt_enter();
+	
+	rt_hw_stm32_eth_isr();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#else
 #if (STM32_ETH_IF == 0)
 /*******************************************************************************
 * Function Name  : EXTI0_IRQHandler
@@ -322,6 +343,7 @@ void EXTI9_5_IRQHandler(void)
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
+#endif
 #endif
 #endif /* end of RT_USING_LWIP */
 

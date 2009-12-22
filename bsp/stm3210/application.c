@@ -77,11 +77,17 @@ void rt_init_thread_entry(void* parameter)
 		/* register ethernetif device */
 		eth_system_device_init();
 
-#if STM32_ETH_IF == 0
-		rt_hw_enc28j60_init();
-#elif STM32_ETH_IF == 1
-		rt_hw_dm9000_init();
+#ifdef STM32F10X_CL
+		rt_hw_stm32_eth_init();
+#else
+	/* STM32F103 */
+	#if STM32_ETH_IF == 0
+			rt_hw_enc28j60_init();
+	#elif STM32_ETH_IF == 1
+			rt_hw_dm9000_init();
+	#endif
 #endif
+
 		/* re-init device driver */
 		rt_device_init_all();
 
