@@ -14,6 +14,13 @@
 /* Tick per Second*/
 #define RT_TICK_PER_SECOND	100
 
+#define RT_TIMER_THREAD_STACK_SIZE	   512
+
+#define RT_TIMER_THREAD_PRIO       1
+ /*     Rate at which timer management task runs (Hz)            */
+#define RT_TIMER_EX_TICKS_PER_SEC   10   
+
+
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
 /* #define RT_THREAD_DEBUG */

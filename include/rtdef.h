@@ -234,6 +234,9 @@ struct rt_object_information
 #define RT_TIMER_FLAG_ONE_SHOT		0x0	/* one shot timer. */
 #define RT_TIMER_FLAG_PERIODIC		0x2	/* periodic timer. */
 
+#define RT_TIMER_FLAG_HARD_TIMER	0x0	/* hard timer,the timer's callback function will be called in tick isr. */
+#define RT_TIMER_FLAG_SOFT_TIMER	0x4	/* soft timer,the timer's callback function will be called in timer thread. */
+
 #define RT_TIMER_CTRL_SET_TIME		0x0	/* set timer. */
 #define RT_TIMER_CTRL_GET_TIME		0x1	/* get timer. */
 #define RT_TIMER_CTRL_SET_ONESHOT	0x2	/* change timer to one shot. */

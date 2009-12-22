@@ -14,6 +14,7 @@
  * 2006-06-04     Bernard      implement rt_timer_control
  * 2006-08-10     Bernard      fix the periodic timer bug
  * 2006-09-03     Bernard      implement rt_timer_detach
+ * 2009-11-11     LiJin        add soft timer
  */
 
 #include <rtthread.h>
@@ -22,7 +23,12 @@
 #include "kservice.h"
 
 /* #define TIMER_DEBUG */
+
+/* hard timer list */
 static rt_list_t rt_timer_list;
+
+/* soft timer list */
+static rt_list_t rt_soft_timer_list;
 
 #ifdef RT_USING_HOOK
 extern void (*rt_object_take_hook)(struct rt_object* object);
@@ -57,6 +63,7 @@ void rt_timer_timeout_sethook(void (*hook)(struct rt_timer* timer))
 void rt_system_timer_init()
 {
 	rt_list_init(&rt_timer_list);
+	rt_list_init(&rt_soft_timer_list);
 }
 
 static void _rt_timer_init(rt_timer_t timer, 
@@ -221,7 +228,25 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
-
+	if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
+	{/* insert timer to soft timer list */	
+		for (n = rt_soft_timer_list.next; n != &rt_soft_timer_list; n = n->next)
+		{
+			t = rt_list_entry(n, struct rt_timer, list);
+			if (t->timeout_tick > timer->timeout_tick)
+			{
+				rt_list_insert_before(n, &(timer->list));
+				break;
+			}
+		}
+		/* no found suitable position in timer list */
+		if (n == &rt_soft_timer_list)
+		{
+			rt_list_insert_before(n, &(timer->list));
+		}
+	}
+	else
+	{/* insert timer to system timer list */	
 	/* insert timer to system timer list */	
 	for (n = rt_timer_list.next; n != &rt_timer_list; n = n->next)
 	{
@@ -238,6 +263,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	{
 		rt_list_insert_before(n, &(timer->list));
 	}
+	}	
 
 	timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
@@ -324,6 +350,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
  * corresponding timeout function will be invoked.
  *
  */
+void  rt_soft_timer_tick_hook (void);
 void rt_timer_check()
 {
 	rt_tick_t current_tick;
@@ -383,9 +410,132 @@ void rt_timer_check()
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
+	/**/
+	rt_soft_timer_tick_hook ( );
+
 #ifdef TIMER_DEBUG
 	rt_kprintf("timer check leave\n");
 #endif
 }
 
+
+static struct rt_thread soft_timer_thread;
+static rt_uint8_t rt_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
+static struct rt_semaphore timer_sem;
+
+static  rt_uint16_t  timer_ex_cnt;
+
+
+rt_err_t timer_signal (void)
+{
+	return	rt_sem_release(&timer_sem);
+}
+
+void  rt_soft_timer_tick_hook (void)
+{
+	timer_ex_cnt++;
+	if (timer_ex_cnt >= (RT_TICK_PER_SECOND / RT_TIMER_EX_TICKS_PER_SEC)) 
+	{
+		timer_ex_cnt = 0;
+		timer_signal();
+	}
+}
+
+/**
+ * This function will check timer list, if a timeout event happens, the 
+ * corresponding timeout function will be invoked.
+ *
+ */
+void rt_soft_timer_check()
+{
+	rt_tick_t current_tick;
+	rt_list_t *n;
+	struct rt_timer *t;
+ 
+#ifdef TIMER_DEBUG
+	rt_kprintf("timer check enter\n");
+#endif
+
+	current_tick = rt_tick_get(); 
+	 
+	for (n = rt_soft_timer_list.next; n != &(rt_soft_timer_list); )
+	{
+		t = rt_list_entry(n, struct rt_timer, list);
+		if (current_tick >= t->timeout_tick)
+		{
+#ifdef RT_USING_HOOK
+			if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
+#endif
+			/* move node to the next */
+			n = n->next;
+
+			/* remove timer from timer list firstly */
+			rt_list_remove(&(t->list));
+
+			/* call timeout function */
+			t->timeout_func(t->parameter);
+
+			/* reget tick */
+			current_tick = rt_tick_get();
+
+#ifdef TIMER_DEBUG
+			rt_kprintf("current tick: %d\n", current_tick);
+#endif
+
+			if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) && 
+				(t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+			{
+				/* start it */
+				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+				rt_timer_start(t);
+			}
+			else
+			{
+				/* stop timer */
+				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+			}
+		}
+		else break;
+	}	 
+#ifdef TIMER_DEBUG
+	rt_kprintf("timer check leave\n");
+#endif
+}
+
+static void rt_thread_timer_entry(void* parameter)
+{
+   (void)parameter;       
+	while (1)
+	{
+		rt_sem_take(&timer_sem,RT_WAITING_FOREVER);
+
+		rt_enter_critical();
+		
+		rt_soft_timer_check( );
+		
+		rt_exit_critical();
+	} 
+}
+
+
+/**
+ * @ingroup SystemInit
+ *
+ * This function will init system timer thread
+ *
+ */
+void rt_timer_thread_init(void)
+{
+	rt_sem_init(&timer_sem, "timer", 1, RT_IPC_FLAG_FIFO);
+	timer_ex_cnt = 0;
+	/*init timer_ex thread*/
+ 	rt_thread_init(&soft_timer_thread,
+		"timer",
+		rt_thread_timer_entry, RT_NULL,
+		&rt_thread_stack[0], sizeof(rt_thread_stack),
+		RT_TIMER_THREAD_PRIO, 10);
+
+	/* startup */
+	rt_thread_startup(&soft_timer_thread);
+}
 /*@}*/
