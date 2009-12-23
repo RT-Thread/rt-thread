@@ -107,7 +107,6 @@ rt_hw_pend_sv	PROC
 	MRS     r1, psp                 ; get from thread stack pointer
 	STMFD	r1!, {r4 - r11}			; push r4 - r11 register
 	LDR		r0, [r0]
-
 	STR		r1, [r0]				; update from thread stack pointer
 
 swtich_to_thread

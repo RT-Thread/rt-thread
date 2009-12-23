@@ -88,8 +88,12 @@ rt_hw_pend_sv:
 	MRS		r2, PRIMASK
 	CPSID   I
 
-	; clear rt_thread_switch_interrput_flag to 0
+	; get rt_thread_switch_interrupt_flag
 	LDR		r0, =rt_thread_switch_interrput_flag
+	LDR		r1, [r0]
+	CBZ		r1, pendsv_exit			; pendsv already handled
+
+	; clear rt_thread_switch_interrput_flag to 0
 	MOV		r1, #0x00
 	STR		r1, [r0]
 
@@ -110,6 +114,7 @@ swtich_to_thread
 	LDMFD	r1!, {r4 - r11}			; pop r4 - r11 register
 	MSR		psp, r1					; update stack pointer
 
+pendsv_exit
 	; restore interrupt
 	MSR		PRIMASK, r2
 
@@ -129,6 +134,11 @@ rt_hw_context_switch_to:
 	LDR		r1, =rt_interrupt_from_thread
 	MOV		r0, #0x0
 	STR		r0, [r1]
+
+	; set interrupt flag to 1
+	LDR 	r1, =rt_thread_switch_interrput_flag
+	MOV 	r0, #1
+	STR 	r0, [r1]
 
 	; set the PendSV exception priority
     LDR     r0, =NVIC_SYSPRI2
