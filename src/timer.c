@@ -343,6 +343,9 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
  * corresponding timeout function will be invoked.
  *
  */
+#ifdef RT_USING_TIMER_SOFT
+void  rt_soft_timer_tick_hook (void);
+#endif
 void rt_timer_check()
 {
 	rt_tick_t current_tick;
@@ -402,7 +405,12 @@ void rt_timer_check()
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
-#ifdef RT_TIMER_DEBUG
+	/**/
+#ifdef RT_USING_TIMER_SOFT
+	rt_soft_timer_tick_hook ( );
+#endif
+
+#ifdef TIMER_DEBUG
 	rt_kprintf("timer check leave\n");
 #endif
 }
@@ -412,9 +420,30 @@ static struct rt_thread timer_thread;
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 static struct rt_semaphore timer_sem;
 
-/* check software timer list. if a timeout event happens, the corresponding
- timeout function will be invoked. */
-static void rt_soft_timer_check()
+static  rt_uint16_t  timer_ex_cnt;
+
+
+rt_err_t timer_signal (void)
+{
+	return	rt_sem_release(&timer_sem);
+}
+
+void  rt_soft_timer_tick_hook (void)
+{
+	timer_ex_cnt++;
+	if (timer_ex_cnt >= (RT_TICK_PER_SECOND / RT_TIMER_EX_TICKS_PER_SEC)) 
+	{
+		timer_ex_cnt = 0;
+		timer_signal();
+	}
+}
+
+/**
+ * This function will check timer list, if a timeout event happens, the
+ * corresponding timeout function will be invoked.
+ *
+ */
+void rt_soft_timer_check()
 {
 	rt_tick_t current_tick;
 	rt_list_t *n;
@@ -476,11 +505,10 @@ static void rt_thread_timer_entry(void* parameter)
 {
 	while (1)
 	{
-	    /* take the semaphore as software timer tick */
-		rt_sem_take(&timer_sem, RT_TICK_PER_SECOND / RT_TIMER_TICK_PER_SECOND);
+	
+		rt_sem_take(&timer_sem,RT_WAITING_FOREVER);
 
-		/* reach here because thread takes semaphore timeout */
-
+	
         /* lock scheduler */
 		rt_enter_critical();
 
@@ -506,18 +534,7 @@ void rt_system_timer_init()
 #ifdef RT_USING_TIMER_SOFT
 	rt_list_init(&rt_soft_timer_list);
     rt_sem_init(&timer_sem, "timer", 0, RT_IPC_FLAG_FIFO);
-#endif
-}
 
-/**
- * @ingroup SystemInit
- *
- * This function will init system timer thread
- *
- */
-void rt_system_timer_thread_init()
-{
-#ifdef RT_USING_TIMER_SOFT
     /* start software timer thread */
 	rt_thread_init(&timer_thread,
 				   "timer",
