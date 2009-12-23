@@ -8,8 +8,8 @@
 #endif
 
 #define NO_SYS                      0
-#define LWIP_SOCKET                 (NO_SYS==0)
-#define LWIP_NETCONN                (NO_SYS==0)
+#define LWIP_SOCKET                 1
+#define LWIP_NETCONN                1
 
 #ifdef RT_LWIP_IGMP
 #define LWIP_IGMP                   1
@@ -40,14 +40,14 @@
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
+/* Enable SO_RCVTIMEO processing.   */
+#define LWIP_SO_RCVTIMEO 			1
+
 /* #define RT_LWIP_DEBUG */
 
 #ifdef RT_LWIP_DEBUG
 #define LWIP_DEBUG
 #endif
-
-/* Enable SO_RCVTIMEO processing.   */
-#define LWIP_SO_RCVTIMEO 			1
 
 /* ---------- Debug options ---------- */
 #ifdef LWIP_DEBUG

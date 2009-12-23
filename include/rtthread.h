@@ -64,6 +64,8 @@ void rt_tick_increase(void);
 rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms);
 
 void rt_system_timer_init(void);
+void rt_system_timer_thread_init(void);
+
 void rt_timer_init(rt_timer_t timer,
 	const char* name,
 	void (*timeout)(void* parameter), void* parameter,
