@@ -123,6 +123,9 @@ void rtthread_startup(void)
 	finsh_set_device("uart1");
 #endif
 
+    /* init timer thread */
+    rt_system_timer_thread_init();
+
 	/* init idle thread */
 	rt_thread_idle_init();
 

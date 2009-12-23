@@ -73,18 +73,23 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_LWIP
 	{
 		extern void lwip_sys_init(void);
-#ifdef RT_USING_LWIP
-		eth_system_device_init();
 
 		/* register ethernetif device */
-#if STM32_ETH_IF == 0
-		rt_hw_enc28j60_init();
-#elif STM32_ETH_IF == 1
-		rt_hw_dm9000_init();
+		eth_system_device_init();
+
+#ifdef STM32F10X_CL
+		rt_hw_stm32_eth_init();
+#else
+	/* STM32F103 */
+	#if STM32_ETH_IF == 0
+			rt_hw_enc28j60_init();
+	#elif STM32_ETH_IF == 1
+			rt_hw_dm9000_init();
+	#endif
 #endif
+
 		/* re-init device driver */
 		rt_device_init_all();
-#endif
 
 		/* init lwip system */
 		lwip_sys_init();

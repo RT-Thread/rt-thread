@@ -99,11 +99,14 @@ void rtthread_startup(void)
 
 	/* init hardware serial device */
 	rt_hw_usart_init();
+
+#ifdef RT_USING_DFS
 	/* init sdcard driver */
 #if STM32_USE_SDIO
 	rt_hw_sdcard_init();
 #else
 	rt_hw_msd_init();
+#endif
 #endif
 
     rt_hw_rtc_init();
@@ -119,6 +122,9 @@ void rtthread_startup(void)
 	finsh_system_init();
 	finsh_set_device("uart1");
 #endif
+
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
 	/* init idle thread */
 	rt_thread_idle_init();

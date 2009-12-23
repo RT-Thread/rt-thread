@@ -17,13 +17,12 @@
  */
 /*@{*/
 
+#include <board.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
 /* dfs init */
 #include <dfs_init.h>
-/* dfs filesystem:FAT filesystem init */
-#include <dfs_fat.h>
 /* dfs filesystem:EFS filesystem init */
 #include <dfs_efs.h>
 /* dfs Filesystem APIs */
@@ -33,6 +32,7 @@
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <lwip/api.h>
+#include <netif/ethernetif.h>
 #endif
 
 void rt_init_thread_entry(void* parameter)
@@ -73,7 +73,24 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_LWIP
 	{
 		extern void lwip_sys_init(void);
-		
+
+		/* register ethernetif device */
+		eth_system_device_init();
+
+#ifdef STM32F10X_CL
+		rt_hw_stm32_eth_init();
+#else
+	/* STM32F103 */
+	#if STM32_ETH_IF == 0
+			rt_hw_enc28j60_init();
+	#elif STM32_ETH_IF == 1
+			rt_hw_dm9000_init();
+	#endif
+#endif
+
+		/* re-init device driver */
+		rt_device_init_all();
+
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
