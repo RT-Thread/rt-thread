@@ -215,6 +215,7 @@ static rt_bool_t enc28j60_check_link_status()
 	}
 }
 
+#ifdef RT_USING_FINSH
 /*
  * Debug routine to dump useful register contents
  */
@@ -241,7 +242,6 @@ static void enc28j60(void)
 		(spi_read(ETXNDH) << 8) | spi_read(ETXNDL),
 		spi_read(MACLCON1), spi_read(MACLCON2), spi_read(MAPHSUP));
 }
-#ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(enc28j60, dump enc28j60 registers);
 #endif

@@ -40,7 +40,7 @@
 #define MSD_CS_HIGH()    GPIO_SetBits(GPIOC, GPIO_Pin_7)
 /* MSD Card SPI */
 #define MSD_SPI			SPI3
-#define MSD_RCC_SPI     RCC_APB2Periph_SPI3
+#define MSD_RCC_SPI     RCC_APB1Periph_SPI3
 
 /* Private function prototypes -----------------------------------------------*/
 static void SPI_Config(void);
