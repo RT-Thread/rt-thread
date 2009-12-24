@@ -107,6 +107,10 @@ rt_inline rt_err_t rt_ipc_object_suspend(struct rt_ipc_object *ipc, struct rt_th
 					break;
 				}
 			}
+
+			/* not found a suitable position, append to the end of suspend_thread list */
+			if (n == &(ipc->suspend_thread))
+				rt_list_insert_before(&(ipc->suspend_thread), &(thread->tlist));
 		}
 		break;
 	}
