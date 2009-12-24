@@ -24,11 +24,6 @@
 
 /*@{*/
 
-#ifdef RT_USING_LWIP
-#include "enc28j60.h"
-#include <netif/ethernetif.h>
-#endif
-
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -104,13 +99,6 @@ void rtthread_startup(void)
 	/* init hardware serial device */
 	rt_hw_usart_init();
 
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register ethernetif device */
-	rt_hw_enc28j60_init();
-#endif
-
 	/* init all device */
 	rt_device_init_all();
 
@@ -122,6 +110,9 @@ void rtthread_startup(void)
 	finsh_system_init();
 	finsh_set_device("uart1");
 #endif
+
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
 	/* init idle thread */
 	rt_thread_idle_init();

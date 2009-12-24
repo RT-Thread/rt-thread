@@ -25,22 +25,12 @@
 
 /*@{*/
 
-#ifdef RT_USING_LWIP
-#ifdef STM32F10X_CL
-	extern void rt_hw_stm32_eth_init(void);
-#else
-	#include "enc28j60.h"
-#endif
-#include <netif/ethernetif.h>
-#endif
-
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-/* bss end definitions for heap init */
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
@@ -119,17 +109,6 @@ void rtthread_startup(void)
 #endif
 #endif
 
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register ethernetif device */
-#ifdef STM32F10X_CL
-	rt_hw_stm32_eth_init();
-#else
-	rt_hw_enc28j60_init();
-#endif
-#endif
-
     rt_hw_rtc_init();
 
 	/* init all device */
@@ -143,6 +122,9 @@ void rtthread_startup(void)
 	finsh_system_init();
 	finsh_set_device(FINSH_DEVICE_NAME);
 #endif
+
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
 	/* init idle thread */
 	rt_thread_idle_init();

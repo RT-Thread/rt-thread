@@ -24,6 +24,12 @@
 /* Using Hook */
 #define RT_USING_HOOK
 
+/* Using Software Timer */
+/* #define RT_USING_TIMER_SOFT */
+#define RT_TIMER_THREAD_PRIO		4
+#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_TICK_PER_SECOND	10
+
 /* SECTION: IPC */
 /* Using Semaphore*/
 #define RT_USING_SEMAPHORE
@@ -59,7 +65,7 @@
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
-/* SECTION: finsh shell */
+/* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
