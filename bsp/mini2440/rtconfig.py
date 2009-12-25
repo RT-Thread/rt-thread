@@ -4,13 +4,13 @@
 RT_USING_FINSH = True
 
 # device file system options
-RT_USING_DFS = True
+RT_USING_DFS = False
 RT_USING_DFS_EFSL = True
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
 
 # lwip options
-RT_USING_LWIP = True
+RT_USING_LWIP = False
 
 # rtgui options
 RT_USING_RTGUI = False
@@ -23,7 +23,7 @@ TextBase='0x30000000'
 #PLATFORM = 'gcc'
 #EXEC_PATH = 'd:/SourceryGCC/bin'
 PLATFORM = 'armcc'
-EXEC_PATH = 'C:/Keil'
+EXEC_PATH = 'E:/Keil'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':

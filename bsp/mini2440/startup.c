@@ -5,7 +5,7 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -94,7 +94,10 @@ void rtthread_startup(void)
 	rt_hw_serial_register(&uart0_device, "uart0",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart0);
+
+#ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
+#endif
 
 	/*init all registed devices */
 	rt_device_init_all();
