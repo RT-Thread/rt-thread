@@ -1,7 +1,7 @@
 /*
  * File      : context_gcc.S
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -151,9 +151,9 @@ rt_hw_context_switch_to:
 	LDR		r0, =NVIC_INT_CTRL      /* trigger the PendSV exception (causes context switch) */
 	LDR		r1, =NVIC_PENDSVSET
 	STR		r1, [r0]
-	
+
 	CPSIE	I                       /* enable interrupts at processor level */
-	
+
 	/* never reach here! */
 
 /* compatible with old version */

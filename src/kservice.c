@@ -1,11 +1,11 @@
 /*
  * File      : kservice.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,16 +31,16 @@ int errno;
 
 /*
  * This function will get errno
- * 
+ *
  * @return errno
  */
 rt_err_t rt_get_errno(void)
 {
 	rt_thread_t tid;
-	
+
 	tid = rt_thread_self();
 	if (tid == RT_NULL) return errno;
-	
+
 	return tid->error;
 }
 
@@ -52,10 +52,10 @@ rt_err_t rt_get_errno(void)
 void rt_set_errno(rt_err_t error)
 {
 	rt_thread_t tid;
-	
+
 	tid = rt_thread_self();
 	if (tid == RT_NULL) { errno = error; return; }
-	
+
 	tid->error = error;
 }
 
@@ -605,12 +605,12 @@ static rt_int32_t vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list 
 	end = buf + size - 1;
 
 	/* Make sure end is always >= buf */
-	if (end < buf) 
+	if (end < buf)
 	{
 		end = ((char *)-1);
 		size = end - buf;
 	}
-	
+
 	for (; *fmt ; ++fmt)
 	{
 		if (*fmt != '%')
@@ -859,7 +859,7 @@ rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
  * This function will fill a formatted string to buffer
  *
  * @param buf the buffer to save formatted string
- * @param arg_ptr the arg_ptr 
+ * @param arg_ptr the arg_ptr
  * @param format the format
  */
 rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
@@ -877,11 +877,11 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 {
 	rt_int32_t n;
 	va_list arg_ptr;
-	
+
 	va_start(arg_ptr, format);
 	n = rt_vsprintf(buf ,format,arg_ptr);
 	va_end (arg_ptr);
-	
+
 	return n;
 }
 

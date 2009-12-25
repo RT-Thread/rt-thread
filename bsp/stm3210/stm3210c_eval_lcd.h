@@ -1,3 +1,17 @@
+/*
+ * File      : stm3210c_eval_lcd.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-11-01     Bernard      the first version
+ */
+
 #ifndef __STM3210C_EVAL_LCD_H__
 #define __STM3210C_EVAL_LCD_H__
 

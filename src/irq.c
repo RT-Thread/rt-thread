@@ -1,11 +1,11 @@
 /*
  * File      : irq.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,7 +36,7 @@ volatile rt_uint32_t rt_interrupt_nest;
 void rt_interrupt_enter()
 {
 	rt_base_t level;
-	
+
 #ifdef IRQ_DEBUG
 	rt_kprintf("irq comming..., irq nest:%d\n", rt_interrupt_nest);
 #endif

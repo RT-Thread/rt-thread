@@ -1,7 +1,7 @@
 /*
- * File      : kservice.c
+ * File      : mem.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -61,9 +61,9 @@ static void (*rt_free_hook)(void *ptr);
 /*@{*/
 
 /**
- * This function will set a hook function, which will be invoked when a memory 
+ * This function will set a hook function, which will be invoked when a memory
  * block is allocated from heap memory.
- * 
+ *
  * @param hook the hook function
  */
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
@@ -72,9 +72,9 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 }
 
 /**
- * This function will set a hook function, which will be invoked when a memory 
+ * This function will set a hook function, which will be invoked when a memory
  * block is released to heap memory.
- * 
+ *
  * @param hook the hook function
  */
 void rt_free_sethook(void (*hook)(void *ptr))
@@ -238,7 +238,7 @@ void *rt_malloc(rt_size_t size)
 	/* take memory semaphore */
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
-	for (ptr = (rt_uint8_t *)lfree - heap_ptr; ptr < mem_size_aligned - size; 
+	for (ptr = (rt_uint8_t *)lfree - heap_ptr; ptr < mem_size_aligned - size;
 		ptr = ((struct heap_mem *)&heap_ptr[ptr])->next)
 	{
 		mem = (struct heap_mem *)&heap_ptr[ptr];
@@ -334,7 +334,7 @@ void *rt_malloc(rt_size_t size)
  *
  * @param rmem pointer to memory allocated by rt_malloc
  * @param newsize the required new size
- * 
+ *
  * @return the changed memory block address
  */
 void *rt_realloc(void *rmem, rt_size_t newsize)
@@ -356,7 +356,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
-	if ((rt_uint8_t *)rmem < (rt_uint8_t *)heap_ptr || 
+	if ((rt_uint8_t *)rmem < (rt_uint8_t *)heap_ptr ||
 		(rt_uint8_t *)rmem >= (rt_uint8_t *)heap_end)
 	{
 		/* illegal memory */
@@ -404,8 +404,8 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 }
 
 /**
- * This function will contiguously allocate enough space for count objects 
- * that are size bytes of memory each and returns a pointer to the allocated 
+ * This function will contiguously allocate enough space for count objects
+ * that are size bytes of memory each and returns a pointer to the allocated
  * memory.
  *
  * The allocated memory is filled with bytes of value zero.
@@ -429,7 +429,7 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 }
 
 /**
- * This function will release the previously allocated memory block by rt_malloc. 
+ * This function will release the previously allocated memory block by rt_malloc.
  * The released memory block is taken back to system heap.
  *
  * @param rmem the address of memory which will be released
@@ -488,7 +488,7 @@ void rt_free(void *rmem)
 }
 
 #ifdef RT_MEM_STATS
-void rt_memory_info(rt_uint32_t *total, 
+void rt_memory_info(rt_uint32_t *total,
 	rt_uint32_t *used,
 	rt_uint32_t *max_used)
 {
@@ -496,7 +496,7 @@ void rt_memory_info(rt_uint32_t *total,
 	if (used  != RT_NULL) *used = used_mem;
 	if (max_used != RT_NULL) *max_used = max_mem;
 }
-	
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void list_mem()

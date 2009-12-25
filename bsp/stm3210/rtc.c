@@ -1,3 +1,17 @@
+/*
+ * File      : rtc.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-01-05     Bernard      the first version
+ */
+
 #include <rtthread.h>
 #include <stm32f10x.h>
 
@@ -8,7 +22,7 @@ static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 	{
 		/* Open Interrupt */
 	}
-	
+
 	return RT_EOK;
 }
 
@@ -29,14 +43,14 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 		/* read device */
 		*time = RTC_GetCounter();
 		break;
-	
+
 	case RT_DEVICE_CTRL_RTC_SET_TIME:
 		{
 			time = (rt_time_t *)args;
-			
+
 			/* Enable PWR and BKP clocks */
 			RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
-			
+
 			/* Allow access to BKP Domain */
 			PWR_BackupAccessCmd(ENABLE);
 
@@ -45,11 +59,11 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
 			/* Change the current time */
 			RTC_SetCounter(*time);
-			
+
 			/* Wait until last write operation on RTC registers has finished */
 			RTC_WaitForLastTask();
 
-			BKP_WriteBackupRegister(BKP_DR1, 0xA5A5); 
+			BKP_WriteBackupRegister(BKP_DR1, 0xA5A5);
 		}
 		break;
 	}
@@ -124,10 +138,10 @@ void rt_hw_rtc_init(void)
 	rtc.read 	= rt_rtc_read;
 	rtc.write	= RT_NULL;
 	rtc.control = rt_rtc_control;
-	
+
 	/* no private */
 	rtc.private = RT_NULL;
-	
+
 	rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 
 	return;
@@ -138,14 +152,14 @@ time_t time(time_t* t)
 {
 	rt_device_t device;
 	time_t time;
-	
+
 	device = rt_device_find("rtc");
 	if (device != RT_NULL)
 	{
 		rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
 		if (t != RT_NULL) *t = time;
 	}
-	
+
 	return time;
 }
 
@@ -156,11 +170,11 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 	time_t now;
 	struct tm* ti;
 	rt_device_t device;
-	
+
 	ti = RT_NULL;
 	/* get current time */
 	time(&now);
-	
+
 	ti = localtime(&now);
 	if (ti != RT_NULL)
 	{
@@ -168,9 +182,9 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 		ti->tm_mon 	= month;
 		ti->tm_mday = day;
 	}
-	
+
 	now = mktime(ti);
-	
+
 	device = rt_device_find("rtc");
 	if (device != RT_NULL)
 	{
@@ -188,7 +202,7 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 	ti = RT_NULL;
 	/* get current time */
 	time(&now);
-	
+
 	ti = localtime(&now);
 	if (ti != RT_NULL)
 	{
@@ -196,7 +210,7 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 		ti->tm_min 	= minute;
 		ti->tm_sec 	= second;
 	}
-	
+
 	now = mktime(ti);
 	device = rt_device_find("rtc");
 	if (device != RT_NULL)
@@ -209,7 +223,7 @@ FINSH_FUNCTION_EXPORT(set_time, set second)
 void list_date()
 {
 	time_t now;
-	
+
 	time(&now);
 	rt_kprintf("%s\n", ctime(&now));
 }

@@ -1,7 +1,7 @@
 /*
  * File      : ipc.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -26,9 +26,9 @@
  * 2009-07-18     Bernard      fix the event clear bug
  * 2009-09-09     Bernard      remove fast event and fix ipc release bug
  * 2009-10-10     Bernard      change semaphore and mutex value to unsigned value
- * 2009-10-25     Bernard      change the mb/mq receive timeout to 0 if the 
+ * 2009-10-25     Bernard      change the mb/mq receive timeout to 0 if the
  *                             re-calculated delta tick is a negative number.
- * 2009-12-16     Bernard      fix the rt_ipc_object_suspend issue when IPC flag 
+ * 2009-12-16     Bernard      fix the rt_ipc_object_suspend issue when IPC flag
  *                             is RT_IPC_FLAG_PRIO
  */
 
@@ -334,7 +334,7 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 	temp = rt_hw_interrupt_disable();
 
 #ifdef RT_IPC_DEBUG
-	rt_kprintf("thread %s take sem:%s, which value is: %d\n", rt_thread_self()->name, 
+	rt_kprintf("thread %s take sem:%s, which value is: %d\n", rt_thread_self()->name,
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 	if (sem->value > 0)
@@ -437,7 +437,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 	temp = rt_hw_interrupt_disable();
 
 #ifdef RT_IPC_DEBUG
-	rt_kprintf("thread %s releases sem:%s, which value is: %d\n", rt_thread_self()->name, 
+	rt_kprintf("thread %s releases sem:%s, which value is: %d\n", rt_thread_self()->name,
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 
@@ -612,7 +612,7 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 #endif
 
 #ifdef RT_IPC_DEBUG
-	rt_kprintf("mutex_take: current thread %s, mutex value: %d, hold: %d\n", 
+	rt_kprintf("mutex_take: current thread %s, mutex value: %d, hold: %d\n",
 		thread->name, mutex->value, mutex->hold);
 #endif
 
@@ -626,7 +626,7 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 	}
 	else
 	{
-		/* in initialization status, the value is 1. Therefore, if the 
+		/* in initialization status, the value is 1. Therefore, if the
 		 * value is great than 1, which indicates the mutex is avaible.
 		 */
 		if (mutex->value > 0)
@@ -737,7 +737,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 	temp = rt_hw_interrupt_disable();
 
 #ifdef RT_IPC_DEBUG
-	rt_kprintf("mutex_release:current thread %s, mutex value: %d, hold: %d\n", 
+	rt_kprintf("mutex_release:current thread %s, mutex value: %d, hold: %d\n",
 		thread->name, mutex->value, mutex->hold);
 #endif
 
@@ -803,7 +803,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
 	/* perform a schedule */
 	if (need_schedule == RT_TRUE) rt_schedule();
-	
+
 	return RT_EOK;
 }
 
@@ -1799,7 +1799,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 
 	/* get current thread */
 	thread = rt_thread_self();
-	
+
 	/* message queue is empty */
 	while (mq->entry == 0)
 	{
@@ -1824,7 +1824,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		{
 			/* get the start tick of timer */
 			tick_delta = rt_tick_get();
-			
+
 #ifdef RT_IPC_DEBUG
 			rt_kprintf("set thread:%s to timer list\n", thread->name);
 #endif

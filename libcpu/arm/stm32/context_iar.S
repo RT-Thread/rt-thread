@@ -1,7 +1,7 @@
 ;/*
-; * File      : context.S
+; * File      : context_iar.S
 ; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * COPYRIGHT (C) 2009, RT-Thread Development Team
 ; *
 ; * The license and distribution terms for this file may be
 ; * found in the file LICENSE in this distribution or at
@@ -109,7 +109,7 @@ rt_hw_pend_sv:
 swtich_to_thread
 	LDR		r1, =rt_interrupt_to_thread
 	LDR		r1, [r1]
-	LDR		r1, [r1]				; load thread stack pointer 
+	LDR		r1, [r1]				; load thread stack pointer
 
 	LDMFD	r1!, {r4 - r11}			; pop r4 - r11 register
 	MSR		psp, r1					; update stack pointer
@@ -148,9 +148,9 @@ rt_hw_context_switch_to:
     LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
-	
+
     CPSIE   I                       ; enable interrupts at processor level
-	
+
 	; never reach here!
 
 ; compatible with old version

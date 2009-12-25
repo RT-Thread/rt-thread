@@ -1,3 +1,17 @@
+/*
+ * File      : stm3210e_eval_lcd.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-11-01     Bernard      the first version
+ */
+
 #include <rtthread.h>
 
 #include "stm32f10x.h"
@@ -9,8 +23,8 @@
 #include <rtgui/driver.h>
 #include <rtgui/color.h>
 
-/* 
- * LCD Driver 
+/*
+ * LCD Driver
  * RGB mode (5-6-5)
  * 240 x 320 pixel LCD
  */
@@ -119,14 +133,14 @@ void LCD_DisplayOn(void)
 void LCD_DisplayOff(void)
 {
 	/* Display Off */
-	LCD_WriteReg(0x26, 0x0); 
+	LCD_WriteReg(0x26, 0x0);
 }
 
 /*******************************************************************************
 * Function Name  : LCD_SetCursor
 * Description    : Sets the cursor position.
 * Input          : - Xpos: specifies the X position.
-*                  - Ypos: specifies the Y position. 
+*                  - Ypos: specifies the Y position.
 * Output         : None
 * Return         : None
 *******************************************************************************/
@@ -134,10 +148,10 @@ void LCD_SetCursor(rt_uint32_t x, rt_uint32_t y)
 {
 	LCD_WriteReg(0x06, (x & 0xff00) >> 8);
 	LCD_WriteReg(0x07, (x & 0x00ff));
-	
+
 	LCD_WriteReg(0x02, (y & 0xff00) >> 8);
 	LCD_WriteReg(0x03, (y & 0x00ff));
-}			 
+}
 
 /*******************************************************************************
 * Function Name  : LCD_CtrlLinesConfig
@@ -150,10 +164,10 @@ void LCD_SetCursor(rt_uint32_t x, rt_uint32_t y)
 void LCD_CtrlLinesConfig(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
+
 	/* Enable FSMC, GPIOD, GPIOE, GPIOF, GPIOG and AFIO clocks */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
-	
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE |
 		RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG |
 		RCC_APB2Periph_AFIO, ENABLE);
@@ -169,10 +183,10 @@ void LCD_CtrlLinesConfig(void)
 	GPIO_SetBits(GPIOC, GPIO_Pin_6);
 
 	/* Set PD.00(D2), PD.01(D3), PD.04(NOE), PD.05(NWE), PD.08(D13), PD.09(D14),
-	 PD.10(D15), PD.14(D0), PD.15(D1) as alternate 
+	 PD.10(D15), PD.14(D0), PD.15(D1) as alternate
 	 function push pull */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 |
-	                            GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_14 | 
+	                            GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_14 |
 	                            GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -180,8 +194,8 @@ void LCD_CtrlLinesConfig(void)
 
 	/* Set PE.07(D4), PE.08(D5), PE.09(D6), PE.10(D7), PE.11(D8), PE.12(D9), PE.13(D10),
 	 PE.14(D11), PE.15(D12) as alternate function push pull */
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | 
-	                            GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | 
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
+	                            GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
 	                            GPIO_Pin_15;
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
 
@@ -189,7 +203,7 @@ void LCD_CtrlLinesConfig(void)
 	/* Set PF.00(A0 (RS)) as alternate function push pull */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 	GPIO_Init(GPIOF, &GPIO_InitStructure);
-	
+
 	/* Set PG.12(NE4 (LCD/CS)) as alternate function push pull - CE3(LCD /CS) */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
 	GPIO_Init(GPIOG, &GPIO_InitStructure);
@@ -206,7 +220,7 @@ void LCD_FSMCConfig(void)
 {
 	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
 	FSMC_NORSRAMTimingInitTypeDef  p;
-	
+
 	/*-- FSMC Configuration ------------------------------------------------------*/
 	/*----------------------- SRAM Bank 4 ----------------------------------------*/
 	/* FSMC_Bank1_NORSRAM4 configuration */
@@ -217,7 +231,7 @@ void LCD_FSMCConfig(void)
 	p.FSMC_CLKDivision = 0;
 	p.FSMC_DataLatency = 0;
 	p.FSMC_AccessMode = FSMC_AccessMode_A;
-	
+
 	/* Color LCD configuration ------------------------------------
 	 LCD configured as follow:
 	    - Data/Address MUX = Disable
@@ -241,9 +255,9 @@ void LCD_FSMCConfig(void)
 	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
 	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
 	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
-	
-	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);  
-	
+
+	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
+
 	/* BANK 4 (of NOR/SRAM Bank 1~4) is enabled */
 	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM4, ENABLE);
 }
@@ -266,7 +280,7 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 	p = rtgui_color_to_565p(*c);
 
 	LCD_SetCursor(y, x);
-	
+
 	/* Prepare to write GRAM */
 	LCD_WriteRAM_Prepare();
 	LCD_WriteRAM(p);
@@ -275,7 +289,7 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
 	rt_uint16_t hc;
-	
+
 	LCD_SetCursor(y, x);
 	hc = LCD_ReadRAM();
 	*c = rtgui_color_from_565p(hc);
@@ -284,7 +298,7 @@ void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
 	rt_uint16_t hc;
-	
+
 	hc = rtgui_color_to_565p(*c);
 
 	LCD_SetCursor(y, x1);
@@ -356,10 +370,10 @@ void rt_hw_lcd_init()
 {
 	/* Configure the LCD Control pins --------------------------------------------*/
 	LCD_CtrlLinesConfig();
-	
+
 	/* Configure the FSMC Parallel interface -------------------------------------*/
 	LCD_FSMCConfig();
-	
+
 	Delay(5); /* delay 50 ms */
 	// Gamma for CMO 3.2¡±
 	LCD_WriteReg(0x46,0x94);
@@ -374,7 +388,7 @@ void rt_hw_lcd_init()
 	LCD_WriteReg(0x4f,0xcc);
 	LCD_WriteReg(0x50,0x46);
 	LCD_WriteReg(0x51,0x82);
-	
+
 	//240x320 window setting
 	LCD_WriteReg(0x02,0x00);
 	LCD_WriteReg(0x03,0x00);
@@ -382,49 +396,49 @@ void rt_hw_lcd_init()
 	LCD_WriteReg(0x05,0x3f);
 	LCD_WriteReg(0x06,0x00);
 	LCD_WriteReg(0x07,0x00);
-	LCD_WriteReg(0x08,0x00); 
-	LCD_WriteReg(0x09,0xef); 
-	
+	LCD_WriteReg(0x08,0x00);
+	LCD_WriteReg(0x09,0xef);
+
 	// Display Setting
 	LCD_WriteReg(0x01,0x06);
 	LCD_WriteReg(0x16,0x68);
 	LCD_WriteReg(0x23,0x95);
 	LCD_WriteReg(0x24,0x95);
 	LCD_WriteReg(0x25,0xff);
-	
+
 	LCD_WriteReg(0x27,0x02);
 	LCD_WriteReg(0x28,0x02);
 	LCD_WriteReg(0x29,0x02);
 	LCD_WriteReg(0x2a,0x02);
 	LCD_WriteReg(0x2c,0x02);
-	LCD_WriteReg(0x2d,0x02);						
-	
+	LCD_WriteReg(0x2d,0x02);
+
 	LCD_WriteReg(0x3a,0x01);///*******************
 	LCD_WriteReg(0x3b,0x01);
 	LCD_WriteReg(0x3c,0xf0);
 	LCD_WriteReg(0x3d,0x00);
-	
+
 	Delay(2);
-	
+
 	LCD_WriteReg(0x35,0x38);
 	LCD_WriteReg(0x36,0x78);
-	
+
 	LCD_WriteReg(0x3e,0x38);
-	
+
 	LCD_WriteReg(0x40,0x0f);
 	LCD_WriteReg(0x41,0xf0);
-	
+
 	// Power Supply Setting
 	LCD_WriteReg(0x19,0x49);//********
 	LCD_WriteReg(0x93,0x0f);//*******
-	
+
 	Delay(1);
-	
+
 	LCD_WriteReg(0x20,0x30);
 	LCD_WriteReg(0x1d,0x07);
 	LCD_WriteReg(0x1e,0x00);
 	LCD_WriteReg(0x1f,0x07);
-	
+
 	// VCOM Setting for CMO 3.2¡± Panel
 	LCD_WriteReg(0x44,0x4d);//4d***************4f
 	LCD_WriteReg(0x45,0x13);//0x0a);
@@ -435,9 +449,9 @@ void rt_hw_lcd_init()
 	Delay(5);
 	LCD_WriteReg(0x1b,0x08);
 	Delay(4);
-	LCD_WriteReg(0x1b,0x10);		  
+	LCD_WriteReg(0x1b,0x10);
 	Delay(4);
-	
+
 	// Display ON Setting
 	LCD_WriteReg(0x90,0x7f);
 	LCD_WriteReg(0x26,0x04);
@@ -446,12 +460,12 @@ void rt_hw_lcd_init()
 	LCD_WriteReg(0x26,0x2c);
 	Delay(4);
 	LCD_WriteReg(0x26,0x3c);
-	
+
 	// Set internal VDDD voltage
 	LCD_WriteReg(0x57,0x02);
 	LCD_WriteReg(0x55,0x00);
 	LCD_WriteReg(0x57,0x00);
-	
+
 	/* add lcd driver into graphic driver */
 	rtgui_list_init(&_rtgui_lcd_driver.list);
 	rtgui_graphic_driver_add(&_rtgui_lcd_driver);

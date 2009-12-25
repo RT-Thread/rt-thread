@@ -1,7 +1,7 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009 RT-Thread Develop Team
+ * COPYRIGHT (C) 2009 RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-08-23     Bernard      first implementation
+ * 2009-01-05     Bernard      first implementation
  */
 
 #include <rthw.h>

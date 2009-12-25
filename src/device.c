@@ -1,11 +1,11 @@
 /*
  * File      : device.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -81,7 +81,7 @@ rt_err_t rt_device_init_all()
 			result = init(device);
 			if (result != RT_EOK)
 			{
-				rt_kprintf("To initialize device:%s failed. The error code is %d\n", 
+				rt_kprintf("To initialize device:%s failed. The error code is %d\n",
 					device->parent.name, result);
 			}
 			else

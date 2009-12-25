@@ -1,11 +1,11 @@
 /*
  * File      : thread.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -81,7 +81,7 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 
 	/* init user data */
 	thread->user_data = 0;
-	
+
 	/* init thread timer */
 	rt_timer_init(&(thread->thread_timer),
 		thread->name,

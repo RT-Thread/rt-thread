@@ -1,16 +1,16 @@
 /*
- * File      : partition.c
+ * File      : mempool.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
  * 2006-05-27     Bernard      implement memory pool
- * 2006-06-03     Bernard      fix the thread timer init bug 
+ * 2006-06-03     Bernard      fix the thread timer init bug
  * 2006-06-30     Bernard      fix the allocate/free block bug
  * 2006-08-04     Bernard      add hook support
  * 2006-08-10     Bernard      fix interrupt bug in rt_mp_alloc
@@ -35,7 +35,7 @@ static void (*rt_mp_free_hook)(struct rt_mempool* mp, void *block);
 /**
  * This function will set a hook function, which will be invoked when a memory
  * block is allocated from memory pool.
- * 
+ *
  * @param hook the hook function
  */
 void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool* mp, void *block))
@@ -46,7 +46,7 @@ void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool* mp, void *block))
 /**
  * This function will set a hook function, which will be invoked when a memory
  * block is released to memory pool.
- * 
+ *
  * @param hook the hook function
  */
 void rt_mp_free_sethook(void (*hook)(struct rt_mempool* mp, void *block))
@@ -135,7 +135,7 @@ rt_err_t rt_mp_detach(struct rt_mempool* mp)
 		thread->error = -RT_ERROR;
 
 		/*
-		 * resume thread 
+		 * resume thread
 		 * In rt_thread_resume function, it will remove current thread from suspend
 		 * list
 		 */
@@ -238,7 +238,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 		thread->error = -RT_ERROR;
 
 		/*
-		 * resume thread 
+		 * resume thread
 		 * In rt_thread_resume function, it will remove current thread from suspend
 		 * list
 		 */
@@ -253,7 +253,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
 	/* release allocated room */
 	rt_free(mp->start_address);
-	
+
 	/* detach object */
 	rt_object_delete(&(mp->parent));
 
@@ -275,7 +275,7 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 	rt_uint8_t* block_ptr;
 	register rt_base_t level;
 	struct rt_thread* thread;
-	
+
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
 
@@ -314,7 +314,7 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 			{
 				/* init thread timer and start it */
 				rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &time);
-				rt_timer_start(&(thread->thread_timer));			
+				rt_timer_start(&(thread->thread_timer));
 			}
 
 			/* enable interrupt */
@@ -336,7 +336,7 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 			mp->block_list = *(rt_uint8_t**)block_ptr;
 
 			/* point to memory pool */
-			*(rt_uint8_t**)block_ptr = (rt_uint8_t*)mp;	
+			*(rt_uint8_t**)block_ptr = (rt_uint8_t*)mp;
 		}
 	}
 

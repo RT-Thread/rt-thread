@@ -17,7 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-#define RT_THREAD_DEBUG
+/* #define RT_THREAD_DEBUG */
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -31,7 +31,7 @@
 #define RT_TIMER_TICK_PER_SECOND	10
 
 /* SECTION: IPC */
-/* Using Semaphore*/
+/* Using Semaphore */
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
@@ -62,16 +62,17 @@
 #define RT_USING_UART1
 
 /* SECTION: Console options */
-/* the buffer size of console*/
+/* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
 
 /* SECTION: finsh, a C-Express shell */
+/* Using FinSH as Shell*/
 #define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-/* SECTION: device filesystem */
+/* SECTION: device filesystem support */
 #define RT_USING_DFS
 #define RT_USING_DFS_EFSL
 /* #define RT_USING_DFS_ELMFAT */

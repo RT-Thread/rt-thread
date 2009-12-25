@@ -1,7 +1,7 @@
 /*
  * File      : timer.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -420,12 +420,12 @@ static struct rt_thread timer_thread;
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 static struct rt_semaphore timer_sem;
 
-static  rt_uint16_t  timer_ex_cnt;
+static rt_uint16_t timer_ex_cnt;
 
 void  rt_soft_timer_tick_increase (void)
 {
 	timer_ex_cnt++;
-	if (timer_ex_cnt >= (RT_TICK_PER_SECOND / RT_TIMER_EX_TICKS_PER_SEC)) 
+	if (timer_ex_cnt >= (RT_TICK_PER_SECOND / RT_TIMER_TICK_PER_SECOND))
 	{
 		timer_ex_cnt = 0;
 		rt_sem_release(&timer_sem);

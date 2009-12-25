@@ -1,11 +1,11 @@
 /*
  * File      : kservice.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -49,7 +49,7 @@ rt_inline void rt_list_insert_after(rt_list_t *l, rt_list_t *n)
 }
 
 /**
- * @brief insert a node before a list 
+ * @brief insert a node before a list
  *
  * @param n new node to be inserted
  * @param l list to insert it
