@@ -29,6 +29,7 @@ extern rt_uint32_t PCLK, FCLK, HCLK, UCLK;
 extern rt_uint8_t asc16_font[];
 extern rt_uint16_t _rt_hw_framebuffer[];
 
+extern void rt_hw_clock_init(void);
 extern void rt_hw_lcd_init(void);
 extern void rt_hw_mmu_init(void);
 extern void rt_hw_touch_init(void);
@@ -84,10 +85,10 @@ void rt_serial_handler(int vector)
 void rt_hw_uart_init(void)
 {
 	int i;
-
-	GPHCON |= 0xa0;
-	/*PULLUP is enable */
-	GPHUP  |= 0x0c;
+	/* UART0 port configure */
+	GPHCON |= 0xAA;
+	/* PULLUP is disable */
+	GPHUP |= 0xF;
 
 	/* FIFO enable, Tx/Rx FIFO clear */
 	uart0.uart_device->ufcon = 0x1;
@@ -100,7 +101,8 @@ void rt_hw_uart_init(void)
 	 * normal,interrupt or polling
 	 */
 	uart0.uart_device->ucon = 0x245;
-
+	/* Set uart0 bps */
+	uart0.uart_device->ubrd = (rt_int32_t)(PCLK / (BPS * 16)) - 1;
 	/* output PCLK to UART0/1, PWMTIMER */
 	CLKCON |= 0x0D00;
 
@@ -118,41 +120,11 @@ void rt_hw_uart_init(void)
  */
 void rt_hw_board_init()
 {
-	/* FCLK = 304.8M */
-	#define MDIV		68
-	#define PDIV		1
-	#define SDIV		1
+	/* initialize the system clock */
+	rt_hw_clock_init();
 
-	//rt_hw_set_clock(SDIV, PDIV, MDIV);
-	/* HCLK = PCLK = FCLK */
-	//rt_hw_set_dividor(0, 0);
-
-	/* use PWM Timer 4 because it has no output */
-	/* prescaler for Timer 4 is 16 */
-	TCFG0 = 0x0f00;
-
-	/* all divider = 1/2 */
-	TCFG1 = 0x0;
-
+	/* Get the clock */
 	rt_hw_get_clock();
-
-	if (timer_load_val == 0)
-	{
-		/*
-		 * for 10 ms clock period @ PCLK with 4 bit divider = 1/2
-		 * (default) and prescaler = 16. Should be 10390
-		 * @33.25MHz and 15625 @ 50 MHz
-		 */
-		timer_load_val = PCLK/(2 * 16 * 100);
-	}
-	/* load value for 10 ms timeout */
-	TCNTB4 = timer_load_val;
-	/* auto load, manual update of Timer 4 */
-	TCON = (TCON & ~0x0700000) | 0x600000;
-	/* auto load, start Timer 4 */
-	TCON = (TCON & ~0x0700000) | 0x500000 | 0x3;
-	/*Enable NAND, USBD, PWM TImer, UART0,1 and GPIO clock,*/
-	CLKCON = 0xfffff0;
 
 	/* initialize uart */
 	rt_hw_uart_init();
