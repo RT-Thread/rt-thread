@@ -21,8 +21,6 @@ CPU='lm3s'
 #EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 PLATFORM = 'armcc'
 EXEC_PATH = 'E:/Keil'
-#PLATFORM = 'iar'
-#EXEC_PATH = 'E:/Program Files/IAR Systems/Embedded Workbench 5.4/'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -40,7 +38,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE + ' -Dsourcerygxx' + ' -DRT_USING_MINILIBC' 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lm3s.map,-cref,-u,ResetISR -T lm3s_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lm3s.map,-cref,-u,Reset_Handler -T lm3s_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -65,7 +63,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lm3s.map --scatter lm3s_rom.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -82,21 +80,3 @@ elif PLATFORM == 'armcc':
     if RT_USING_FINSH:
         LFLAGS += ' --keep __fsym_* --keep __vsym_*'
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = ' --cpu DARMSTM --thumb'
-
-    CFLAGS = ''
-    AFLAGS = ''
-    LFLAGS = ' --config stm32f10x_flash.icf'
-
-    EXEC_PATH += '/arm/bin/'
-    RT_USING_MINILIBC = False
-    POST_ACTION = ''
