@@ -82,12 +82,12 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x20010000);
+	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)LM3S_SRAM_END);
 #elif __ICCARM__
-    rt_system_heap_init(__segment_end("HEAP"), (void*)0x20010000);
+	rt_system_heap_init(__segment_end("HEAP"), (void*)LM3S_SRAM_END);
 #else
 	/* init memory system */
-	rt_system_heap_init((void*)&__bss_end, (void*)0x20010000);
+	rt_system_heap_init((void*)&__bss_end, (void*)LM3S_SRAM_END);
 #endif
 #endif
 
