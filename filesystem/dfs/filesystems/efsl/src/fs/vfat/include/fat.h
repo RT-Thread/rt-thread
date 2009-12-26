@@ -39,7 +39,6 @@
 #include "config.h"
 #include "error.h"
 #include "file.h"
-#include "debug.h"
 #include "types.h"
 /*****************************************************************************/
 

@@ -42,7 +42,6 @@
 #include "fs.h"
 #include "dir.h"
 #include "plibc.h"
-#include "debug.h"
 #include "types.h"
 #include "fat.h"
 /*****************************************************************************/

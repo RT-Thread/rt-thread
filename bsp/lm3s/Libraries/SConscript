@@ -1,0 +1,37 @@
+Import('env')
+Import('RTT_ROOT')
+
+# The set of source files associated with this SConscript file.
+src_local = Split("""
+	driverlib/adc.c
+	driverlib/can.c
+	driverlib/comp.c
+	driverlib/cpu.c
+	driverlib/epi.c
+	driverlib/ethernet.c
+	driverlib/flash.c
+	driverlib/gpio.c
+	driverlib/hibernate.c
+	driverlib/i2c.c
+	driverlib/i2s.c
+	driverlib/interrupt.c
+	driverlib/mpu.c
+	driverlib/pwm.c
+	driverlib/qei.c
+	driverlib/ssi.c
+	driverlib/sysctl.c
+	driverlib/systick.c
+	driverlib/timer.c
+	driverlib/uart.c
+	driverlib/udma.c
+	driverlib/usb.c
+	driverlib/watchdog.c
+""")
+
+path = [RTT_ROOT + '/bsp/lm3s/Libraries/inc', RTT_ROOT + '/bsp/lm3s/Libraries', RTT_ROOT + '/bsp/lm3s/Libraries/driverlib']
+
+env.Append(CPPPATH = path)
+
+obj = env.Object(src_local)
+
+Return('obj')

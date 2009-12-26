@@ -52,7 +52,7 @@ File 4,2,<..\..\libcpu\arm\lm3s\start_rvds.S><start_rvds.S>
 File 4,1,<..\..\libcpu\arm\lm3s\serial.c><serial.c>
 File 4,1,<..\..\libcpu\arm\lm3s\fault.c><fault.c>
 File 4,2,<..\..\libcpu\arm\lm3s\fault_rvds.S><fault_rvds.S>
-File 5,4,<.\driverlib\rvmdk\driverlib.lib><driverlib.lib>
+File 5,4,<E:\SVN-Google-Source\bsp\lm3s\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
 File 6,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
@@ -172,7 +172,7 @@ Options 1,0,0  // Target 'RT-Thread/LM3S'
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
- ADSCINCD (.;.\inc;..\..\include;..\..\libcpu\arm\lm3s;..\..\finsh;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include)
+ ADSCINCD (.;.\Libraries;..\..\include;..\..\libcpu\arm\lm3s;..\..\finsh;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

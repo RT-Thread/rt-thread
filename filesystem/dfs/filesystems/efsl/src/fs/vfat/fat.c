@@ -142,8 +142,7 @@ void fat_setNextClusterAddress(FileSystem *fs,euint32 cluster_addr,euint32 next_
 	euint32 sector;
 	
 	sector=fat_getSectorAddressFatEntry(fs,cluster_addr);
-	if(fs->FatSectorCount<sector){
-		DBG((TXT("HARDERROR:::fat_getNextClusterAddress READ PAST FAT BOUNDARY\n")));
+	if(fs->FatSectorCount<sector){	
 		return;
 	}
 	
