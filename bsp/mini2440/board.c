@@ -19,6 +19,7 @@
 #include <rthw.h>
 
 #include "board.h"
+#include "led.h"
 
 /**
  * @addtogroup mini2440
@@ -41,7 +42,6 @@ extern void rt_hw_get_clock(void);
 extern void rt_hw_set_dividor(rt_uint8_t hdivn, rt_uint8_t pdivn);
 extern void rt_hw_set_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv);
 
-static rt_uint32_t timer_load_val = 0;
 
 #define UART0	((struct uartport *)U0BASE)
 struct serial_int_rx uart0_int_rx;
@@ -58,9 +58,6 @@ struct rt_device uart0_device;
  */
 void rt_timer_handler(int vector)
 {
-	/* reset TDATA0 */
-	TCNTB4 = timer_load_val;
-
 	rt_tick_increase();
 }
 
@@ -116,6 +113,29 @@ void rt_hw_uart_init(void)
 }
 
 /**
+ * This function will init timer4 for system ticks
+ */
+ void rt_hw_timer_init()
+ {
+	/* timer4, pre = 15+1 */
+	TCFG0 &= 0xffff00ff;
+	TCFG0 |= 15 << 8;
+	/* all are interrupt mode,set Timer 4 MUX 1/4 */
+	TCFG1  &= 0xfff0ffff;
+	TCFG1  |= 0x00010000;
+
+	TCNTB4 = (rt_int32_t)(PCLK / (4 *16* RT_TICK_PER_SECOND)) - 1;
+	/* manual update */
+	TCON = TCON & (~(0x0f<<20)) | (0x02<<20);
+	/* install interrupt handler */
+	rt_hw_interrupt_install(INTTIMER4, rt_timer_handler, RT_NULL);
+	rt_hw_interrupt_umask(INTTIMER4);
+
+    /* start timer4, reload */
+	TCON = TCON & (~(0x0f<<20)) | (0x05<<20);
+ }
+
+/**
  * This function will init s3ceb2410 board
  */
 void rt_hw_board_init()
@@ -125,6 +145,9 @@ void rt_hw_board_init()
 
 	/* Get the clock */
 	rt_hw_get_clock();
+
+	/* initialize led port */
+	rt_hw_led_init();
 
 	/* initialize uart */
 	rt_hw_uart_init();
@@ -139,12 +162,8 @@ void rt_hw_board_init()
 	rt_hw_touch_init();
 #endif
 
-	/* install interrupt handler */
-	rt_hw_interrupt_install(INTTIMER4, rt_timer_handler, RT_NULL);
-	rt_hw_interrupt_umask(INTTIMER4);
-
-	/* stop timer 	*/
-	/* TCON = 0x0;	*/
+	/* initialize timer4 */
+	rt_hw_timer_init();
 }
 
 /*@}*/

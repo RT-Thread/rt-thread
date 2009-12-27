@@ -20,6 +20,7 @@
 
 #include <board.h>
 #include <rtthread.h>
+#include "led.h"
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -87,22 +88,49 @@ void rt_init_thread_entry(void* parameter)
 #endif
 }
 
+void rt_led_thread_entry(void* parameter)
+{
+	while(1)
+	{
+		/* led on 1s */
+		rt_hw_led_on(LED2|LED3);
+		rt_thread_delay(100);
+
+		/* led off 1s */
+		rt_hw_led_off(LED2|LED3);
+		rt_thread_delay(100);
+
+	}
+}
+
 int rt_application_init()
 {
 	rt_thread_t init_thread;
+	rt_thread_t led_thread;
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
 								2048, 8, 20);
+
+	led_thread = rt_thread_create("led",
+								rt_led_thread_entry, RT_NULL,
+								512, 20, 20);
 #else
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
 								2048, 80, 20);
+
+	led_thread = rt_thread_create("led",
+								rt_led_thread_entry, RT_NULL,
+								512, 200, 20);
 #endif
 
 	if (init_thread != RT_NULL)
 		rt_thread_startup(init_thread);
+
+	if(led_thread != RT_NULL)
+		rt_thread_startup(led_thread);
 
 	return 0;
 }

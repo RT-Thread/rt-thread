@@ -35,7 +35,7 @@ if rtconfig.RT_USING_DFS:
 if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
 
-src_bsp = ['application.c', 'startup.c', 'board.c']
+src_bsp = ['application.c', 'startup.c', 'board.c','led.c']
 src_drv = ['console.c']
 
 if rtconfig.RT_USING_DFS:
