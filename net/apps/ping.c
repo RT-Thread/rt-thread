@@ -20,20 +20,10 @@
 #define PING_DEBUG     LWIP_DBG_ON
 #endif
 
-/** ping target - should be a "struct ip_addr" */
-#ifndef PING_TARGET
-#define PING_TARGET   (netif_default?netif_default->gw:ip_addr_any)
-#endif
-
 /** ping receive timeout - in milliseconds */
-#ifndef PING_RCV_TIMEO
 #define PING_RCV_TIMEO 1000
-#endif
-
 /** ping delay - in milliseconds */
-#ifndef PING_DELAY
 #define PING_DELAY     100
-#endif
 
 /** ping identifier - must fit on a u16_t */
 #ifndef PING_ID
@@ -43,11 +33,6 @@
 /** ping additional data size to include in the packet */
 #ifndef PING_DATA_SIZE
 #define PING_DATA_SIZE 32
-#endif
-
-/** ping result action - no default action */
-#ifndef PING_RESULT
-#define PING_RESULT(ping_ok)
 #endif
 
 /* ping variables */
@@ -125,8 +110,6 @@ static void ping_recv(int s)
 			iecho = (struct icmp_echo_hdr *)(buf+(IPH_HL(iphdr) * 4));
 			if ((iecho->id == PING_ID) && (iecho->seqno == htons(ping_seq_num)))
 			{
-				/* do some ping result processing */
-				PING_RESULT((ICMPH_TYPE(iecho) == ICMP_ER));
 				return;
 			}
 			else
@@ -136,13 +119,10 @@ static void ping_recv(int s)
 		}
 	}
 
-	if (len == 0)
+	if (len <= 0)
 	{
-		LWIP_DEBUGF( PING_DEBUG, ("ping: recv - %lu ms - timeout\n", (sys_now()-ping_time)));
+		rt_kprintf("ping: timeout\n");
 	}
-
-	/* do some ping result processing */
-	PING_RESULT(0);
 }
 
 rt_err_t ping(char* target, rt_uint32_t time, rt_size_t size)
@@ -182,7 +162,7 @@ rt_err_t ping(char* target, rt_uint32_t time, rt_size_t size)
 		}
 
 		send_time ++;
-		if (send_time > time) break; /* send ping times reached, stop */
+		if (send_time >= time) break; /* send ping times reached, stop */
 
 		rt_thread_delay(PING_DELAY); /* take a delay */
 	}
