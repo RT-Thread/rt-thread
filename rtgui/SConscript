@@ -1,0 +1,61 @@
+Import('env')
+Import('rtconfig')
+Import('RTT_ROOT')
+
+common_src = Split("""
+common/rtgui_object.c
+common/rtgui_system.c
+common/rtgui_theme.c
+common/asc12font.c
+common/asc16font.c
+common/color.c
+common/caret.c
+common/dc.c
+common/dc_buffer.c
+common/dc_hw.c
+common/font.c
+common/font_hz_file.c
+common/filerw.c
+common/image.c
+common/image_xpm.c
+common/image_hdc.c
+common/region.c
+common/hz12font.c
+common/hz16font.c
+""")
+
+server_src = Split("""
+server/driver.c
+server/mouse.c
+server/panel.c
+server/server.c
+server/topwin.c
+""")
+
+widgets_src = Split("""
+widgets/box.c
+widgets/button.c
+widgets/container.c
+widgets/iconbox.c
+widgets/label.c
+widgets/textbox.c
+widgets/title.c
+widgets/toplevel.c
+widgets/view.c
+widgets/widget.c
+widgets/window.c
+widgets/workbench.c
+""")
+
+
+# The set of source files associated with this SConscript file.
+src_local = common_src + server_src + widgets_src
+
+path = [RTT_ROOT + '/rtgui/include']
+path = path + [RTT_ROOT + '/rgtui/common', RTT_ROOT + '/rtgui/server', RTT_ROOT + '/rtgui/widgets']
+path = path + [RTT_ROOT + '/filesystem/dfs', RTT_ROOT + '/filesystem/dfs/include']
+env.Append(CPPPATH = path)
+
+obj = env.Object(src_local)
+
+Return('obj')
