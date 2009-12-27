@@ -160,7 +160,7 @@ void rt_dm9000_isr()
     dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
 
 	DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
-	
+
     /* receive overflow */
     if (int_status & ISR_ROS)
     {
@@ -194,7 +194,7 @@ void rt_dm9000_isr()
             if (dm9000_device.packet_cnt > 0)
             {
             	DM9000_TRACE("dm9000 isr: tx second packet\n");
-				
+
                 /* transmit packet II */
                 /* Set TX length to DM9000 */
                 dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
@@ -362,15 +362,6 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 /* transmit packet. */
 rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
 {
-    struct pbuf* q;
-    rt_int32_t len;
-    rt_uint16_t* ptr;
-
-#if DM9000_DEBUG
-	rt_uint8_t* dump_ptr;
-	rt_uint32_t cnt = 0;
-#endif
-
 	DM9000_TRACE("dm9000 tx: %d\n", p->tot_len);
 
     /* lock DM9000 device */
@@ -382,34 +373,45 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
     /* Move data to DM9000 TX RAM */
     DM9000_outb(DM9000_IO_BASE, DM9000_MWCMD);
 
-    for (q = p; q != NULL; q = q->next)
     {
-        len = q->len;
-        ptr = q->payload;
+		/* q traverses through linked list of pbuf's
+		 * This list MUST consist of a single packet ONLY */
+		struct pbuf *q;
+		rt_uint16_t pbuf_index = 0;
+		rt_uint8_t word[2], word_index = 0;
 
-#if DM9000_DEBUG
-		dump_ptr = q->payload;
-#endif
-
-        /* use 16bit mode to write data to DM9000 RAM */
-        while (len > 0)
-        {
-            DM9000_outw(DM9000_DATA_BASE, *ptr);
-            ptr ++;
-            len -= 2;
-
-#ifdef DM9000_DEBUG
-			DM9000_TRACE("%02x ", *dump_ptr++);
-			if (++cnt % 16 == 0) DM9000_TRACE("\n");
-#endif
-        }
+		q = p;
+		/* Write data into dm9000a, two bytes at a time
+		 * Handling pbuf's with odd number of bytes correctly
+		 * No attempt to optimize for speed has been made */
+		while (q)
+		{
+			if (pbuf_index < q->len)
+			{
+				word[word_index++] = ((u8_t*)q->payload)[pbuf_index++];
+				if (word_index == 2)
+				{
+				    DM9000_outw(DM9000_DATA_BASE, (word[1] << 8) | word[0]);
+					word_index = 0;
+				}
+			}
+			else
+			{
+				q = q->next;
+				pbuf_index = 0;
+			}
+		}
+		/* One byte could still be unsent */
+		if (word_index == 1)
+		{
+		    DM9000_outw(DM9000_DATA_BASE, word[0]);
+		}
     }
-	DM9000_TRACE("\n");
 
     if (dm9000_device.packet_cnt == 0)
     {
     	DM9000_TRACE("dm9000 tx: first packet\n");
-		
+
         dm9000_device.packet_cnt ++;
         /* Set TX length to DM9000 */
         dm9000_io_write(DM9000_TXPLL, p->tot_len & 0xff);
@@ -446,11 +448,6 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     struct pbuf* p;
     rt_uint32_t rxbyte;
 
-#if DM9000_DEBUG
-	rt_uint8_t* dump_ptr;
-	rt_uint32_t cnt = 0;
-#endif
-
     /* init p pointer */
     p = RT_NULL;
 
@@ -468,7 +465,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         if (rxbyte > 1)
         {
 			DM9000_TRACE("dm9000 rx: rx error, stop device\n");
-			
+
             dm9000_io_write(DM9000_RCR, 0x00);	/* Stop Device */
             dm9000_io_write(DM9000_ISR, 0x80);	/* Stop INT request */
         }
@@ -493,20 +490,11 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
                 data = (rt_uint16_t*)q->payload;
                 len = q->len;
 
-#if DM9000_DEBUG
-				dump_ptr = q->payload;
-#endif
-
                 while (len > 0)
                 {
                     *data = DM9000_inw(DM9000_DATA_BASE);
                     data ++;
                     len -= 2;
-
-#if DM9000_DEBUG
-					DM9000_TRACE("%02x ", *dump_ptr++);
-					if (++cnt % 16 == 0) DM9000_TRACE("\n");
-#endif
                 }
             }
 			DM9000_TRACE("\n");
@@ -569,7 +557,6 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
     return p;
 }
-
 
 static void RCC_Configuration(void)
 {
@@ -666,8 +653,6 @@ void rt_hw_dm9000_init()
     eth_device_init(&(dm9000_device.parent), "e0");
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 void dm9000(void)
 {
     rt_kprintf("\n");
@@ -686,20 +671,8 @@ void dm9000(void)
     rt_kprintf("IMR   (0xFF): %02x\n", dm9000_io_read(DM9000_IMR));
     rt_kprintf("\n");
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT(dm9000, dm9000 register dump);
-
-void rx(void)
-{
-    rt_err_t result;
-
-    dm9000_io_write(DM9000_ISR, ISR_PRS);		/* Clear rx status */
-
-    /* a frame has been received */
-    result = eth_device_ready(&(dm9000_device.parent));
-    if (result != RT_EOK) rt_kprintf("eth notification failed\n");
-    RT_ASSERT(result == RT_EOK);
-}
-FINSH_FUNCTION_EXPORT(rx, notify packet rx);
-
 #endif
-
