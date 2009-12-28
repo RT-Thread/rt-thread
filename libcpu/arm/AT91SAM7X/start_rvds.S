@@ -26,6 +26,8 @@
 
 ; Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs
 
+; 2009-12-28	MingBai		Bug fix (USR mode stack removed).
+
 Mode_USR        EQU     0x10
 Mode_FIQ        EQU     0x11
 Mode_IRQ        EQU     0x12
@@ -57,7 +59,7 @@ SVC_Stack_Size  EQU     0x00000100
 ABT_Stack_Size  EQU     0x00000000
 FIQ_Stack_Size  EQU     0x00000000
 IRQ_Stack_Size  EQU     0x00000100
-USR_Stack_Size  EQU     0x00000100
+USR_Stack_Size  EQU     0x00000000
 
 ISR_Stack_Size  EQU     (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                          FIQ_Stack_Size + IRQ_Stack_Size)
@@ -383,7 +385,7 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 ;  Enter Supervisor Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
-                SUB     R0, R0, #SVC_Stack_Size
+                ; SUB     R0, R0, #SVC_Stack_Size
 
 ;  Enter User Mode and set its Stack Pointer
                 ; MSR     CPSR_c, #Mode_USR
@@ -393,8 +395,9 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 
                 ELSE
 
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
+				; No usr mode stack here.
+                ;MOV     SP, R0
+                ;SUB     SL, SP, #USR_Stack_Size
 
                 ENDIF
 
@@ -489,7 +492,7 @@ rt_hw_context_switch_interrupt_do	PROC
 __user_initial_stackheap
 
                 LDR     R0, =  Heap_Mem
-                LDR     R1, =(Stack_Mem + USR_Stack_Size)
+                LDR     R1, =(Stack_Mem + SVC_Stack_Size)
                 LDR     R2, = (Heap_Mem +      Heap_Size)
                 LDR     R3, = Stack_Mem
                 BX      LR
