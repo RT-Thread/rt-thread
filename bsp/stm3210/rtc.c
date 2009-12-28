@@ -179,7 +179,7 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 	if (ti != RT_NULL)
 	{
 		ti->tm_year = year - 1900;
-		ti->tm_mon 	= month - 1; /* 2009.12.27 modify by coldfish.zhu@gmail.com */
+		ti->tm_mon 	= month - 1; /* ti->tm_mon 	= month; */
 		ti->tm_mday = day;
 	}
 
@@ -218,7 +218,7 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
 	}
 }
-FINSH_FUNCTION_EXPORT(set_time, set second)
+FINSH_FUNCTION_EXPORT(set_time, set time)
 
 void list_date()
 {
@@ -227,5 +227,5 @@ void list_date()
 	time(&now);
 	rt_kprintf("%s\n", ctime(&now));
 }
-FINSH_FUNCTION_EXPORT(list_date, set date)
+FINSH_FUNCTION_EXPORT(list_date, list date)
 #endif
