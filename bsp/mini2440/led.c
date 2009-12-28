@@ -12,6 +12,11 @@
  * 2009-12-27     rdghx        mini2440
  */
 
+/**
+ * @addtogroup mini2440
+ */
+/*@{*/
+
 #include <s3c24x0.h>
 #include "led.h"
 
@@ -32,4 +37,5 @@ void rt_hw_led_off(unsigned char value)
 	GPBDAT |= (value & 0x0f) << 5;
 }
 
+/*@}*/
 
