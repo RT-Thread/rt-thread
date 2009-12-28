@@ -179,7 +179,7 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 	if (ti != RT_NULL)
 	{
 		ti->tm_year = year - 1900;
-		ti->tm_mon 	= month;
+		ti->tm_mon 	= month - 1; /* 2009.12.27 modify by coldfish.zhu@gmail.com */
 		ti->tm_mday = day;
 	}
 
