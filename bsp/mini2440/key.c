@@ -1,25 +1,5 @@
-/*
- * File      : key.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
- *
- * Change Logs:
- * Date           Author		Notes
- * 2007-11-20     Yi.Qiu		add rtgui application
- * 2008-6-28      Bernard		no rtgui init
- */
-
-/**
- * @addtogroup mini2440
- */
-/*@{*/
-
 #include <rtthread.h>
-#include <s3c24x0.h>
+#include <S3C24x0.h>
 
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
@@ -39,14 +19,13 @@ key_power   GPG11
 #define key_left_GETVALUE()   (GPGDAT & (1 << 7))
 #define key_power_GETVALUE()  (GPGDAT & (1 << 11))
 
-
 static void key_thread_entry(void *parameter)
 {
     rt_time_t next_delay;
     struct rtgui_event_kbd kbd_event;
 
     /* init gpio configuration */
-	GPGCON = GPGCON & (~((3<<22)|(3<<6)|(3<<0)|(3<<10)|(3<<12)|(3<<14))) |
+	  GPGCON = GPGCON & (~((3<<22)|(3<<6)|(3<<0)|(3<<10)|(3<<12)|(3<<14))) |
 						((2<<22)|(2<<6)|(2<<0)|(2<<10)|(2<<12)|(2<<14));
 
     /* init keyboard event */
@@ -127,5 +106,3 @@ void rt_hw_key_init()
                                512, 30, 5);
     if (key_tid != RT_NULL) rt_thread_startup(key_tid);
 }
-
-/*@}*/
