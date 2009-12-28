@@ -92,12 +92,14 @@ void rt_led_thread_entry(void* parameter)
 {
 	while(1)
 	{
-		/* led on 1s */
+		/* light on leds for one second */
 		rt_hw_led_on(LED2|LED3);
+		rt_hw_led_off(LED1|LED4);
 		rt_thread_delay(100);
 
-		/* led off 1s */
+		/* light off leds for one second */
 		rt_hw_led_off(LED2|LED3);
+		rt_hw_led_on(LED1|LED4);
 		rt_thread_delay(100);
 
 	}
