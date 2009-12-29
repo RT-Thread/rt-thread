@@ -37,10 +37,12 @@ void rt_hw_trap_fiq()
     rt_kprintf("fast interrupt request\n");
 }
 
-extern void rt_thread_exit(void);
+extern struct rt_thread* rt_current_thread;
 void rt_hw_trap_abort()
 {
-	rt_thread_exit();
-	rt_kprintf("Abort occured, thread terminated.\n");
+	rt_kprintf("Abort occured!!! Thread [%s] suspended.\n",rt_current_thread->name);
+	rt_thread_suspend(rt_current_thread);
+	rt_schedule();
+
 }
 /*@}*/

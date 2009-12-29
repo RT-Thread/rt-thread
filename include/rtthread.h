@@ -112,7 +112,6 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void* parameter);
-void rt_thread_exit(void);
 
 /*
  * idle thread interface
@@ -176,7 +175,7 @@ void rt_free (void *ptr);
 void* rt_realloc(void *ptr, rt_size_t nbytes);
 void *rt_calloc(rt_size_t count, rt_size_t size);
 
-void rt_memory_info(rt_uint32_t *total,
+void rt_memory_info(rt_uint32_t *total, 
 	rt_uint32_t *used,
 	rt_uint32_t *max_used);
 
