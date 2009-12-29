@@ -415,11 +415,16 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 				IMPORT rt_interrupt_from_thread
 				IMPORT rt_interrupt_to_thread
 				IMPORT rt_hw_trap_irq
-				IMPORT	rt_hw_trap_abort
+				IMPORT rt_hw_trap_abort
+				IMPORT rt_interrupt_nest
 
 Abort_Handler	PROC
 				EXPORT	Abort_Handler
 				stmfd	sp!, {r0-r12,lr}
+	 			LDR	r0, =rt_interrupt_nest
+				LDR	r1, [r0]
+				CMP	r1, #0
+DeadLoop		BHI	DeadLoop    ; Abort happened in irq mode, halt system.
 				bl	rt_interrupt_enter
 				bl	rt_hw_trap_abort
 				bl	rt_interrupt_leave
