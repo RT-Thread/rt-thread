@@ -13,7 +13,7 @@
  */
 
 #include <rtthread.h>
-#include "AT91SAM7X.h"
+
 
 /**
  * @addtogroup AT91SAM7X

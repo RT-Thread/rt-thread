@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include <AT91SAM7X.h>
+#include <AT91SAM7X256.h>
 #include "board.h"
 
 static void rt_hw_board_led_init(void);
@@ -34,18 +34,18 @@ static void rt_hw_board_led_init(void);
  */
 void rt_hw_timer_handler(int vector)
 {
-	if (AT91C_PITC_PISR & 0x01)
+	if (AT91C_BASE_PITC->PITC_PISR & 0x01)
 	{
 		/* increase a tick */
 		rt_tick_increase();
 
 		/* ack interrupt */
-		AT91C_AIC_EOICR = AT91C_PITC_PIVR;
+		AT91C_BASE_AIC->AIC_EOICR = AT91C_BASE_PITC->PITC_PIVR;
 	}
 	else
 	{
 		/* end of interrupt */
-		AT91C_AIC_EOICR = 0;
+		AT91C_BASE_AIC->AIC_EOICR = 0;
 	}
 }
 						/* PIO   Flash    PA    PB   PIN */
@@ -63,11 +63,11 @@ int leds[] = {LED1, LED2, LED3, LED4};
 static void rt_hw_board_led_init()
 {
 	/* enable the clock of the PIO A, PIO B */
-	AT91C_PMC_PCER = 1 << AT91C_ID_PIOA | 1 << AT91C_ID_PIOB;
+	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA | 1 << AT91C_ID_PIOB;
 
 	/* configure PIO as output for led */
-	AT91C_PIOB_PER = LED_MASK;
-	AT91C_PIOB_OER = LED_MASK;
+	AT91C_BASE_PIOB->PIO_PER = LED_MASK;
+	AT91C_BASE_PIOB->PIO_OER = LED_MASK;
 }
 
 /**
@@ -79,7 +79,7 @@ void rt_hw_board_led_on(int n)
 {
 	if (n >= 0 && n < 4)
 	{
-		AT91C_PIOB_CODR = leds[n];
+		AT91C_BASE_PIOB->PIO_CODR = leds[n];
 	}
 }
 
@@ -92,7 +92,7 @@ void rt_hw_board_led_off(int n)
 {
 	if (n >= 0 && n < 4)
 	{
-		AT91C_PIOB_SODR = leds[n];
+		AT91C_BASE_PIOB->PIO_SODR = leds[n];
 	}
 }
 
@@ -111,14 +111,14 @@ void rt_hw_console_output(const char* str)
 	{
 		if (*str == '\n')
 		{
-			while (!(AT91C_US0_CSR & AT91C_US_TXRDY));
-			AT91C_US0_THR = '\r';
+			while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
+			AT91C_BASE_US0->US_THR = '\r';
 		}
 		
 		/* Wait for Empty Tx Buffer */
-		while (!(AT91C_US0_CSR & AT91C_US_TXRDY));
+		while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
 		/* Transmit Character */
-		AT91C_US0_THR = *str;
+		AT91C_BASE_US0->US_THR = *str;
 		
 		str ++;
 	}
@@ -127,25 +127,25 @@ void rt_hw_console_output(const char* str)
 static void rt_hw_console_init()
 {
 	/* Enable Clock for USART0 */
-	AT91C_PMC_PCER = 1 << AT91C_ID_US0;
+	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;
 	/* Enable RxD0 and TxDO Pin */
-	AT91C_PIO_PDR = (1 << 5) | (1 << 6);
+	AT91C_BASE_PIOA->PIO_PDR = (1 << 5) | (1 << 6);
 
-	AT91C_US0_CR = AT91C_US_RSTRX	|		/* Reset Receiver      */
+	AT91C_BASE_US0->US_CR = AT91C_US_RSTRX	|		/* Reset Receiver      */
 				AT91C_US_RSTTX		|		/* Reset Transmitter   */
 				AT91C_US_RXDIS		|		/* Receiver Disable    */
 				AT91C_US_TXDIS;				/* Transmitter Disable */
 
-	AT91C_US0_MR = AT91C_US_USMODE_NORMAL |		/* Normal Mode */
+	AT91C_BASE_US0->US_MR = AT91C_US_USMODE_NORMAL |		/* Normal Mode */
 				AT91C_US_CLKS_CLOCK		|		/* Clock = MCK */
 				AT91C_US_CHRL_8_BITS	|		/* 8-bit Data  */
 				AT91C_US_PAR_NONE		|		/* No Parity   */
 				AT91C_US_NBSTOP_1_BIT;			/* 1 Stop Bit  */
 
 	/* set baud rate divisor */
-	AT91C_US0_BRGR = BRD;
+	AT91C_BASE_US0->US_BRGR = BRD;
 
-	AT91C_US0_CR = AT91C_US_RXEN |	/* Receiver Enable     */
+	AT91C_BASE_US0->US_CR = AT91C_US_RXEN |	/* Receiver Enable     */
 				AT91C_US_TXEN;	/* Transmitter Enable  */
 }
 
@@ -163,11 +163,11 @@ void rt_hw_board_init()
 	rt_hw_board_led_init();
 
 	/* init PITC */
-	AT91C_PITC_PIMR = (1 << 25) | (1 << 24) | PIV;
+	AT91C_BASE_PITC->PITC_PIMR = (1 << 25) | (1 << 24) | PIV;
 
 	/* install timer handler */
 	rt_hw_interrupt_install(AT91C_ID_SYS, rt_hw_timer_handler, RT_NULL);
-	AT91C_AIC_SMR(AT91C_ID_SYS) = 0;
+	AT91C_BASE_AIC->AIC_SMR[AT91C_ID_SYS] = 0;
 	rt_hw_interrupt_umask(AT91C_ID_SYS);	
 }
 /*@}*/

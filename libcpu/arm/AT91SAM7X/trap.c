@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "AT91SAM7X.h"
+#include "AT91SAM7X256.h"
 
 /**
  * @addtogroup AT91SAM7
@@ -24,12 +24,12 @@
 
 void rt_hw_trap_irq()
 {
-	rt_isr_handler_t hander = (rt_isr_handler_t)AT91C_AIC_IVR;
+	rt_isr_handler_t hander = (rt_isr_handler_t)AT91C_BASE_AIC->AIC_IVR;
 
-	hander(AT91C_AIC_ISR);
+	hander(AT91C_BASE_AIC->AIC_ISR);
 
 	/* end of interrupt */
-	AT91C_AIC_EOICR = 0;
+	AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
 void rt_hw_trap_fiq()
@@ -37,4 +37,10 @@ void rt_hw_trap_fiq()
     rt_kprintf("fast interrupt request\n");
 }
 
+extern void rt_thread_exit(void);
+void rt_hw_trap_abort()
+{
+	rt_thread_exit();
+	rt_kprintf("Abort occured, thread terminated.\n");
+}
 /*@}*/

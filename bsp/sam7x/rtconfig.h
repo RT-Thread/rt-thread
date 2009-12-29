@@ -81,7 +81,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-#define RT_USING_LWIP
+//#define RT_USING_LWIP
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
@@ -139,7 +139,7 @@
 #define RT_LWIP_MSKADDR3	0
 
 /* SECTION: DFS options */
-#define RT_USING_DFS
+//#define RT_USING_DFS
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			1
 /* the max number of opened files 		*/

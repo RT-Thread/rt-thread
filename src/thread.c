@@ -34,7 +34,6 @@ extern rt_uint8_t rt_current_priority;
 extern rt_list_t rt_thread_defunct;
 #endif
 
-static void rt_thread_exit(void);
 void rt_thread_timeout(void* parameter);
 
 static rt_err_t _rt_thread_init(struct rt_thread* thread,
@@ -223,7 +222,7 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 	return RT_EOK;
 }
 
-static void rt_thread_exit()
+void rt_thread_exit()
 {
 	struct rt_thread* thread;
     register rt_base_t temp;

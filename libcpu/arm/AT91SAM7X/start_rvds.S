@@ -27,6 +27,7 @@
 ; Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs
 
 ; 2009-12-28	MingBai		Bug fix (USR mode stack removed).
+; 2009-12-29	MingBai		Merge svc and irq stack, add abort handler.
 
 Mode_USR        EQU     0x10
 Mode_FIQ        EQU     0x11
@@ -55,7 +56,7 @@ RAM_BASE        EQU     0x00200000
 ;// </h>
 
 UND_Stack_Size  EQU     0x00000000
-SVC_Stack_Size  EQU     0x00000100
+SVC_Stack_Size  EQU     0x00000000
 ABT_Stack_Size  EQU     0x00000000
 FIQ_Stack_Size  EQU     0x00000000
 IRQ_Stack_Size  EQU     0x00000100
@@ -238,8 +239,8 @@ FIQ_Addr        DCD     FIQ_Handler
 
 Undef_Handler   B       Undef_Handler
 SWI_Handler     B       SWI_Handler
-PAbt_Handler    B       PAbt_Handler
-DAbt_Handler    B       DAbt_Handler
+PAbt_Handler    B       Abort_Handler
+DAbt_Handler    B       Abort_Handler
 FIQ_Handler     B       FIQ_Handler
 
 
@@ -365,22 +366,22 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 ;  Enter Undefined Instruction Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_UND:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
-                SUB     R0, R0, #UND_Stack_Size
+                ;SUB     R0, R0, #UND_Stack_Size
 
 ;  Enter Abort Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_ABT:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
-                SUB     R0, R0, #ABT_Stack_Size
+                ;SUB     R0, R0, #ABT_Stack_Size
 
 ;  Enter FIQ Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_FIQ:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
-                SUB     R0, R0, #FIQ_Stack_Size
+                ;SUB     R0, R0, #FIQ_Stack_Size
 
 ;  Enter IRQ Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_IRQ:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
-                SUB     R0, R0, #IRQ_Stack_Size
+                ;SUB     R0, R0, #IRQ_Stack_Size
 
 ;  Enter Supervisor Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
@@ -414,6 +415,16 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 				IMPORT rt_interrupt_from_thread
 				IMPORT rt_interrupt_to_thread
 				IMPORT rt_hw_trap_irq
+				IMPORT	rt_hw_trap_abort
+
+Abort_Handler	PROC
+				EXPORT	Abort_Handler
+				stmfd	sp!, {r0-r12,lr}
+				bl	rt_interrupt_enter
+				bl	rt_hw_trap_abort
+				bl	rt_interrupt_leave
+				b	SWITCH
+				ENDP
 				
 IRQ_Handler		PROC
 				EXPORT IRQ_Handler
@@ -424,7 +435,7 @@ IRQ_Handler		PROC
 
 				; if rt_thread_switch_interrput_flag set, jump to
 				; rt_hw_context_switch_interrupt_do and don't return
-				LDR	r0, =rt_thread_switch_interrput_flag
+SWITCH			LDR	r0, =rt_thread_switch_interrput_flag
 				LDR	r1, [r0]
 				CMP	r1, #1
 				BEQ	rt_hw_context_switch_interrupt_do
@@ -492,7 +503,7 @@ rt_hw_context_switch_interrupt_do	PROC
 __user_initial_stackheap
 
                 LDR     R0, =  Heap_Mem
-                LDR     R1, =(Stack_Mem + SVC_Stack_Size)
+                LDR     R1, = (Stack_Mem + IRQ_Stack_Size)
                 LDR     R2, = (Heap_Mem +      Heap_Size)
                 LDR     R3, = Stack_Mem
                 BX      LR

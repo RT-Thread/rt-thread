@@ -12,7 +12,8 @@
  * 2006-08-23     Bernard      the first version
  */
 #include <rtthread.h>
-#include "AT91SAM7X.h"
+
+#define SVCMODE				0x13
 
 /**
  * @addtogroup AT91SAM7

@@ -15,7 +15,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <AT91SAM7X.h>
 #include "board.h"
 
 #ifdef RT_USING_DFS
