@@ -1,0 +1,56 @@
+import os
+import rtconfig
+
+RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+target = 'rtthread-lpc2478'
+
+# search path for C compiler
+bsp_path  = RTT_ROOT + '/bsp/lpc2478'
+
+env = Environment(tools = ['mingw'],
+	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env.AppendUnique(CPPPATH = bsp_path)
+env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD')
+
+Export('env')
+Export('RTT_ROOT')
+Export('rtconfig')
+
+objs = SConscript(RTT_ROOT + '/src/SConscript', variant_dir='build/src', duplicate=0)
+objs = objs + SConscript(RTT_ROOT + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0)
+
+if rtconfig.RT_USING_MINILIBC:
+	objs = objs + SConscript(RTT_ROOT + '/libc/minilibc/SConscript', variant_dir='build/minilibc', duplicate=0)
+
+if rtconfig.RT_USING_FINSH:
+	objs = objs + SConscript(RTT_ROOT + '/finsh/SConscript', variant_dir='build/finsh', duplicate=0)
+
+if rtconfig.RT_USING_DFS:
+	objs = objs + SConscript(RTT_ROOT + '/filesystem/dfs/SConscript', variant_dir='build/filesystem', duplicate=0)
+
+if rtconfig.RT_USING_LWIP:
+	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
+
+if rtconfig.RT_USING_RTGUI:
+	objs = objs + SConscript(RTT_ROOT + '/rtgui/SConscript', variant_dir='build/rtgui', duplicate=0)
+
+src_bsp = ['application.c', 'startup.c', 'board.c' ] 
+
+if rtconfig.RT_USING_DFS:
+	src_drv += ['sdcard.c']
+
+if rtconfig.RT_USING_LWIP:
+	src_drv += ['dm9000.c']
+
+if rtconfig.RT_USING_RTGUI:
+    src_drv += ['touch.c']
+
+objs = objs + env.Object(src_bsp )
+
+TARGET = target + '.' + rtconfig.TARGET_EXT
+env.Program(TARGET, objs)
+env.AddPostAction(TARGET, rtconfig.POST_ACTION)
