@@ -4,7 +4,7 @@
 RT_USING_FINSH = True
 
 # device file system options
-RT_USING_DFS = False
+RT_USING_DFS = True
 RT_USING_DFS_EFSL = True
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
@@ -13,7 +13,16 @@ RT_USING_DFS_YAFFS2 = False
 RT_USING_LWIP = False
 
 # rtgui options
-RT_USING_RTGUI = False
+RT_USING_RTGUI = True
+
+# panel options
+# 'PNL_AT070TN84','PNL_NEC320240'
+RT_USING_LCD_TYPE = 'PNL_AT070TN84'
+
+# rtgui demo options
+RT_USING_DEMO_GUI   = True
+RT_USING_DEMO_TODAY = False
+RT_USING_DEMO_WORKBENCH = False
 
 # toolchains options
 ARCH='arm'

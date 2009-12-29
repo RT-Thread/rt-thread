@@ -20,6 +20,7 @@
 
 #include <board.h>
 #include <rtthread.h>
+#include <rtgui/rtgui.h>
 #include "led.h"
 
 #ifdef RT_USING_DFS
@@ -33,6 +34,11 @@
 
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
+#endif
+
+#ifdef RT_USING_RTGUI
+extern void rt_hw_lcd_init(void);
+extern void rt_hw_key_init(void);
 #endif
 
 void rt_init_thread_entry(void* parameter)
@@ -66,6 +72,12 @@ void rt_init_thread_entry(void* parameter)
 		else
 			rt_kprintf("File System initialzation failed!\n");
 #endif
+	}
+#endif
+
+#ifdef RT_USING_RTGUI
+	{
+		rt_hw_key_init();
 	}
 #endif
 
@@ -105,10 +117,15 @@ void rt_led_thread_entry(void* parameter)
 	}
 }
 
+
 int rt_application_init()
 {
 	rt_thread_t init_thread;
 	rt_thread_t led_thread;
+
+#ifdef RT_USING_RTGUI
+	rt_hw_lcd_init();
+#endif
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	init_thread = rt_thread_create("init",

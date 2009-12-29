@@ -350,10 +350,10 @@ void rt_hw_lcd_init(void)
 	lcd_envid_on_off(1);
 
 	/* clear framebuffer */
-	/* memset((void *)_rt_hw_framebuffer, 0, LCD_XSIZE_TFT_800480*LCD_YSIZE_TFT_800480*2); */
+	/* rt_memset((void *)_rt_hw_framebuffer, 0, LCD_XSIZE_TFT_800480*LCD_YSIZE_TFT_800480*2); */
 	for(y = 0; y < 480; y ++)
 		for(x = 0; x < 800; x++)
-			_rt_hw_framebuffer[y][x]=0x00FF00;
+			_rt_hw_framebuffer[y][x] = 0x0000;
 
 	/* add lcd driver into graphic driver */
 	rtgui_graphic_driver_add(&_rtgui_lcd_driver);

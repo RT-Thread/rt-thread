@@ -88,13 +88,13 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-/* #define RT_USING_RTGUI */
+#define RT_USING_RTGUI
 
 /* SECTION: Device filesystem support */
 /* using DFS support */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define RT_USING_DFS_EFSL
-#define RT_USING_DFS_YAFFS2
+/* #define RT_USING_DFS_YAFFS2 */
 
 #define RT_USING_WORKDIR
 

@@ -14,7 +14,6 @@ env = Environment(tools = ['mingw'],
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env.AppendUnique(CPPPATH = bsp_path)
-env.AppendUnique(CCFLAGS = ' -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD')
 
 Export('env')
 Export('RTT_ROOT')
@@ -38,8 +37,8 @@ if rtconfig.RT_USING_LWIP:
 if rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript(RTT_ROOT + '/rtgui/SConscript', variant_dir='build/rtgui', duplicate=0)
 
-src_bsp = ['application.c', 'startup.c', 'board.c','led.c']
-src_drv = ['console.c']
+src_bsp = ['application.c', 'startup.c', 'board.c']
+src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:
 	src_drv += ['sdcard.c']
@@ -48,7 +47,16 @@ if rtconfig.RT_USING_LWIP:
 	src_drv += ['dm9000.c']
 
 if rtconfig.RT_USING_RTGUI:
-    src_drv += ['touch.c']
+    src_drv += ['touch.c', 'key.c']
+
+if rtconfig.RT_USING_RTGUI:
+	if rtconfig.RT_USING_LCD_TYPE == 'PNL_AT070TN84':
+		src_drv += ['lcd_at070.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_NEC320240':
+		src_drv += ['lcd.c']
+
+if rtconfig.RT_USING_DEMO_GUI:
+	src_drv += ['demo_gui.c']
 
 objs = objs + env.Object(src_bsp + src_drv)
 

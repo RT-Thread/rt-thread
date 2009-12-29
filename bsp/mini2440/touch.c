@@ -1,6 +1,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <s3c24x0.h>
+#include <rtgui/event.h>
+#include <rtgui/rtgui_server.h>
 
 /* ADCCON Register Bits */
 #define S3C2410_ADCCON_ECFLG		(1<<15)
@@ -101,7 +103,7 @@ void report_touch_input(int updown)
 
 	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
 
-	rtgui_server_post_event(&emouse, sizeof(struct rtgui_event_mouse));
+	rtgui_server_post_event((&emouse.parent), sizeof(emouse));
 }
 #endif
 
@@ -226,7 +228,7 @@ void rt_touch_handler(int irqno)
 	}
 
 	/* clear interrupt */
-	INTPND |= (1 << INTADC);
+	INTPND |= (rt_uint32_t)(1 << INTADC);
 }
 
 void rt_hw_touch_init()

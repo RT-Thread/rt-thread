@@ -17,9 +17,9 @@
 #include <rtthread.h>
 
 void rt_hw_lcd_init();
-void rt_hw_lcd_draw_pixel(int x, int y, rt_uint32_t p);
-void rt_hw_lcd_draw_hline(int x1, int x2, int y, rt_uint32_t p);
-void rt_hw_lcd_draw_vline(int x, int y1, int y2, rt_uint32_t p);
-void rt_hw_lcd_update();
+void rt_hw_lcd_set_pixel(rtgui_color_t *c, int x, int y);
+void rt_hw_lcd_draw_hline(rtgui_color_t *c, int x1, int x2, int y);
+void rt_hw_lcd_draw_vline(rtgui_color_t *c, int x, int y1, int y2);
+void rt_hw_lcd_update(rtgui_rect_t* rect);
 
 #endif
