@@ -15,13 +15,12 @@ struct eth_device
 	struct eth_addr *ethaddr;
 	struct netif *netif;
 	struct rt_semaphore tx_ack;
-	
+
 	/* eth device interface */
 	struct pbuf* (*eth_rx)(rt_device_t dev);
 	rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
 };
 
-rt_err_t eth_system_device_init(void);
 rt_err_t eth_device_ready(struct eth_device* dev);
 
 rt_err_t eth_device_init(struct eth_device* dev, const char* name);
