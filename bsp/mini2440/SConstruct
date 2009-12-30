@@ -56,7 +56,7 @@ if rtconfig.RT_USING_RTGUI:
 		src_drv += ['lcd.c']
 
 if rtconfig.RT_USING_DEMO_GUI:
-	src_drv += ['demo_gui.c']
+	src_drv += ['gui_init.c','demo_gui.c','info.c']
 
 objs = objs + env.Object(src_bsp + src_drv)
 
