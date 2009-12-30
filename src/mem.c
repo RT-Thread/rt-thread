@@ -48,7 +48,7 @@
 #include <rtthread.h>
 
 /* #define RT_MEM_DEBUG */
-#define RT_MEM_STATS
+/* #define RT_MEM_STATS */
 
 #if defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM)
 #ifdef RT_USING_HOOK
