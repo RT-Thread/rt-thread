@@ -21,6 +21,7 @@
 #include "usb_conf.h"
 #include "usb_bot.h"
 #include "memory.h"
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -81,26 +82,21 @@ void Mass_Storage_In (void)
 void Mass_Storage_Out (void)
 {
     uint8_t CMD;
-    CMD = CBW.CB[0];//得到上一次的?
-    //得到端点2接收到的数据长度
+    CMD = CBW.CB[0];
     Data_Len = GetEPRxCount(ENDP2);
 
-    //print(" MS_Out:");//print_dec(Data_Len);
 
-    //读出数据到 Bulk_Data_Buff
+    /* read data to Bulk_Data_Buff */
     PMAToUserBufferCopy(Bulk_Data_Buff, ENDP2_RXADDR, Data_Len);
 
     switch (Bot_State)
     {
-    case BOT_IDLE://空闲状态  进入CBW解码
-        //print("BOT_IDLE");
+    case BOT_IDLE:
         CBW_Decode();
         break;
-    case BOT_DATA_OUT://数据输出状态
-        //print("BOT_DATA_OUT");
+    case BOT_DATA_OUT:
         if (CMD == SCSI_WRITE10)
         {
-            //print(" CMD == SCSI_WRITE10");
             SCSI_Write10_Cmd(CBW.bLUN , SCSI_LBA , SCSI_BlkLen);
             break;
         }
@@ -128,18 +124,17 @@ void CBW_Decode(void)
 {
     uint32_t Counter;
 
-    //从Bulk_Data_Buff复制数据到CBW
+    /* read data from Bulk_Data_Buff to CBW */
     for (Counter = 0; Counter < Data_Len; Counter++)
     {
         *((uint8_t *)&CBW + Counter) = Bulk_Data_Buff[Counter];
     }
-    //复制TAG用于返回
+    /* copy return TAG */
     CSW.dTag = CBW.dTag;
     CSW.dDataResidue = CBW.dDataLength;
-    //如果数据长度不等于CBW的长度
+
     if (Data_Len != BOT_CBW_PACKET_LENGTH)
     {
-        //print(" Data_Len != BOT_CBW_PACKET_LENGTH");
         Bot_Abort(BOTH_DIR);
         /* reset the CBW.dSignature to desible the clear feature until receiving a Mass storage reset*/
         CBW.dSignature = 0;
@@ -148,22 +143,18 @@ void CBW_Decode(void)
         return;
     }
 
-    //读写数据
     if ((CBW.CB[0] == SCSI_READ10 ) || (CBW.CB[0] == SCSI_WRITE10 ))
     {
         /* Calculate Logical Block Address */
-        //计算逻辑块地址 每个扇区512字节
         SCSI_LBA = (CBW.CB[2] << 24) | (CBW.CB[3] << 16) | (CBW.CB[4] <<  8) | CBW.CB[5];
         /* Calculate the Number of Blocks to transfer */
-        //计算传送的块大小 以扇区为单位?
         SCSI_BlkLen = (CBW.CB[7] <<  8) | CBW.CB[8];
     }
 
-    //USBC
+    /* USBC */
     if (CBW.dSignature == BOT_CBW_SIGNATURE)
     {
         /* Valid CBW */
-        //有效但参数错误
         if ((CBW.bLUN > Max_Lun) || (CBW.bCBLength < 1) || (CBW.bCBLength > 16))
         {
             Bot_Abort(BOTH_DIR);
@@ -202,11 +193,9 @@ void CBW_Decode(void)
                 SCSI_TestUnitReady_Cmd(CBW.bLUN);
                 break;
             case SCSI_READ10:
-            //读数据
                 SCSI_Read10_Cmd(CBW.bLUN, SCSI_LBA , SCSI_BlkLen);
                 break;
             case SCSI_WRITE10:
-                //写数据
                 SCSI_Write10_Cmd(CBW.bLUN, SCSI_LBA , SCSI_BlkLen);
                 break;
             case SCSI_VERIFY10:
@@ -266,7 +255,6 @@ void CBW_Decode(void)
     }
     else
     {
-        //无效的CBW
         /* Invalid CBW */
         Bot_Abort(BOTH_DIR);
         Set_Scsi_Sense_Data(CBW.bLUN, ILLEGAL_REQUEST, INVALID_COMMAND);

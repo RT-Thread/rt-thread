@@ -15,13 +15,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "platform_config.h"
-#include "sdcard.h"
 #include "mass_mal.h"
 #include "rtthread.h"
 
-uint32_t Mass_Memory_Size[2];
-uint32_t Mass_Block_Size[2];
-uint32_t Mass_Block_Count[2];
+uint32_t Mass_Memory_Size[3];
+uint32_t Mass_Block_Size[3];
+uint32_t Mass_Block_Count[3];
+uint32_t Max_Lun = 0;
 
 rt_device_t dev_sdio = RT_NULL;
 

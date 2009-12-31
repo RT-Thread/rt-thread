@@ -23,15 +23,7 @@
 #include "mass_mal.h"
 #include "usb_prop.h"
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-#ifdef USE_STM3210B_EVAL
-uint32_t Max_Lun = 0;
-#else  //USE_STM3210E_EVAL
-uint32_t Max_Lun = 1;
-#endif
+extern uint32_t Max_Lun;
 
 DEVICE Device_Table =
 {
@@ -258,13 +250,11 @@ RESULT MASS_Data_Setup(uint8_t RequestNo)
 {
     uint8_t    *(*CopyRoutine)(uint16_t);
 
-    //print("MASS_Data_Setup");
     CopyRoutine = NULL;
     if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
             && (RequestNo == GET_MAX_LUN) && (pInformation->USBwValue == 0)
             && (pInformation->USBwIndex == 0) && (pInformation->USBwLength == 0x01))
     {
-        //print(" Get_Max_Lun\r\n");
         CopyRoutine = Get_Max_Lun;
     }
     else

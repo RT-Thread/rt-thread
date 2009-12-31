@@ -17,66 +17,65 @@
 #include "usb_scsi.h"
 #include "memory.h"
 uint8_t Page00_Inquiry_Data[] =
-  {
+{
     0x00, /* PERIPHERAL QUALIFIER & PERIPHERAL DEVICE TYPE*/
     0x00,
     0x00,
     0x00,
     0x00 /* Supported Pages 00*/
-  };
+};
 uint8_t Standard_Inquiry_Data[] =
-  {
+{
     0x00,          /* Direct Access Device */
     0x80,          /* RMB = 1: Removable Medium */
     0x02,          /* Version: No conformance claim to standard */
     0x02,
 
-    36 - 4,          /* Additional Length */
+    36 - 4,        /* Additional Length */
     0x00,          /* SCCS = 1: Storage Controller Component */
     0x00,
     0x00,
     /* Vendor Identification */
-    'S', 'T', 'M', ' ', 'C', 'M', '-', '3',
+    'S', 'T', 'M', '3', '2', ' ', ' ', ' ',
     /* Product Identification */
-    'S', 'D', ' ', 'F', 'l', 'a', 's', 'h', ' ',
-    'D', 'i', 's', 'k', ' ', ' ', ' ',
+    'n', 'e', 't', 'r', 'a', 'd', 'i', 'o', ' ',
+    'D', 'I', 'S', 'K', '1', ' ', ' ',
     /* Product Revision Level */
     '1', '.', '0', ' '
-  };
+};
 uint8_t Standard_Inquiry_Data2[] =
-  {
-    0x00,          /* Direct Access Device *///磁盘设备
-    //其中最高位D7为RMB。RMB=0，表示不可移除设备。如果RMB=1，则为可移除设备。
+{
+    0x00,          /* Direct Access Device */
     0x80,          /* RMB = 1: Removable Medium */
 
     0x02,          /* Version: No conformance claim to standard */
-    0x02,          //数据响应格式
+    0x02,          /* 数据响应格式 */
 
-    36 - 4,          //附加数据长度，为31字节
+    36 - 4,        /* 附加数据长度，为31字节 */
     0x00,          /* SCCS = 1: Storage Controller Component */
     0x00,
     0x00,
     /* Vendor Identification */
-    'S', 'T', 'M', ' ', ' ', ' ', ' ', ' ',
+    'S', 'T', 'M', '3', '2', ' ', ' ', ' ',
     /* Product Identification */
-    'N', 'A', 'N', 'D', ' ', 'F', 'l', 'a', 's', 'h', ' ',
-    'D', 'i', 's', 'k', ' ',
+    'n', 'e', 't', 'r', 'a', 'd', 'i', 'o', ' ',
+    'D', 'I', 'S', 'K', '2', ' ', ' ',
     /* Product Revision Level */
     '1', '.', '0', ' '
-  };
+};
 /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 uint8_t Mode_Sense6_data[] =
-  {
+{
     0x03,
     0x00,
     0x00,
     0x00,
-  };
+};
 
 /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
 uint8_t Mode_Sense10_data[] =
-  {
+{
     0x00,
     0x06,
     0x00,
@@ -85,9 +84,9 @@ uint8_t Mode_Sense10_data[] =
     0x00,
     0x00,
     0x00
-  };
+};
 uint8_t Scsi_Sense_Data[] =
-  {
+{
     0x70, /*RespCode*/
     0x00, /*SegmentNumber*/
     NO_SENSE, /* Sens_Key*/
@@ -106,9 +105,9 @@ uint8_t Scsi_Sense_Data[] =
     0x00, /*TBD*/
     0x00,
     0x00 /*SenseKeySpecific*/
-  };
+};
 uint8_t ReadCapacity10_Data[] =
-  {
+{
     /* Last Logical Block */
     0,
     0,
@@ -120,10 +119,10 @@ uint8_t ReadCapacity10_Data[] =
     0,
     0,
     0
-  };
+};
 
 uint8_t ReadFormatCapacity_Data [] =
-  {
+{
     0x00,
     0x00,
     0x00,
@@ -140,6 +139,6 @@ uint8_t ReadFormatCapacity_Data [] =
     0,
     0,
     0
-  };
+};
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
