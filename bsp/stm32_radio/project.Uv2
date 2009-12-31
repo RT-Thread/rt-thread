@@ -7,12 +7,14 @@ Group (Startup)
 Group (Kernel)
 Group (STM32)
 Group (StdPeriph_Driver)
+Group (USB-FS-Device_Driver)
 Group (CMSIS)
 Group (finsh)
 Group (Filesystem)
 Group (LwIP)
 Group (mp3)
 Group (RTGUI)
+Group (Mass_Storage)
 
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
@@ -87,126 +89,148 @@ File 4,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c><stm32f10x_
 File 4,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c><stm32f10x_tim.c>
 File 4,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c><stm32f10x_usart.c>
 File 4,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c><stm32f10x_wwdg.c>
-File 5,1,<.\Libraries\CMSIS\Core\CM3\core_cm3.c><core_cm3.c>
-File 5,1,<.\Libraries\CMSIS\Core\CM3\system_stm32f10x.c><system_stm32f10x.c>
-File 6,1,<..\..\finsh\finsh_compiler.c><finsh_compiler.c>
-File 6,1,<..\..\finsh\finsh_error.c><finsh_error.c>
-File 6,1,<..\..\finsh\finsh_heap.c><finsh_heap.c>
-File 6,1,<..\..\finsh\finsh_init.c><finsh_init.c>
-File 6,1,<..\..\finsh\finsh_node.c><finsh_node.c>
-File 6,1,<..\..\finsh\finsh_ops.c><finsh_ops.c>
-File 6,1,<..\..\finsh\finsh_parser.c><finsh_parser.c>
-File 6,1,<..\..\finsh\finsh_token.c><finsh_token.c>
-File 6,1,<..\..\finsh\finsh_var.c><finsh_var.c>
-File 6,1,<..\..\finsh\finsh_vm.c><finsh_vm.c>
-File 6,1,<..\..\finsh\shell.c><shell.c>
-File 6,1,<..\..\finsh\symbol.c><symbol.c>
-File 6,1,<..\..\finsh\cmd.c><cmd.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_util.c><dfs_util.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_posix.c><dfs_posix.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c><dir.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c><fat.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c><file.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c><fs.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c><ls.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c><time.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c><ui.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c>
-File 7,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c>
-File 7,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
-File 8,1,<..\..\net\lwip\src\core\dhcp.c><dhcp.c>
-File 8,1,<..\..\net\lwip\src\core\dns.c><dns.c>
-File 8,1,<..\..\net\lwip\src\core\init.c><init.c>
-File 8,1,<..\..\net\lwip\src\core\netif.c><netif.c>
-File 8,1,<..\..\net\lwip\src\core\pbuf.c><pbuf.c>
-File 8,1,<..\..\net\lwip\src\core\raw.c><raw.c>
-File 8,1,<..\..\net\lwip\src\core\stats.c><stats.c>
-File 8,1,<..\..\net\lwip\src\core\sys.c><sys.c>
-File 8,1,<..\..\net\lwip\src\core\tcp.c><tcp.c>
-File 8,1,<..\..\net\lwip\src\core\tcp_in.c><tcp_in.c>
-File 8,1,<..\..\net\lwip\src\core\tcp_out.c><tcp_out.c>
-File 8,1,<..\..\net\lwip\src\core\udp.c><udp.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\autoip.c><autoip.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\icmp.c><icmp.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\igmp.c><igmp.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\inet.c><inet.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\inet_chksum.c><inet_chksum.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\ip.c><ip.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\ip_addr.c><ip_addr.c>
-File 8,1,<..\..\net\lwip\src\core\ipv4\ip_frag.c><ip_frag.c>
-File 8,1,<..\..\net\lwip\src\core\snmp\msg_in.c><msg_in.c>
-File 8,1,<..\..\net\lwip\src\core\snmp\msg_out.c><msg_out.c>
-File 8,1,<..\..\net\lwip\src\api\api_lib.c><api_lib.c>
-File 8,1,<..\..\net\lwip\src\api\api_msg.c><api_msg.c>
-File 8,1,<..\..\net\lwip\src\api\err.c><err.c>
-File 8,1,<..\..\net\lwip\src\api\netbuf.c><netbuf.c>
-File 8,1,<..\..\net\lwip\src\api\netdb.c><netdb.c>
-File 8,1,<..\..\net\lwip\src\api\netifapi.c><netifapi.c>
-File 8,1,<..\..\net\lwip\src\api\tcpip.c><tcpip.c>
-File 8,1,<..\..\net\lwip\src\netif\etharp.c><etharp.c>
-File 8,1,<..\..\net\lwip\src\netif\ethernetif.c><ethernetif.c>
-File 8,1,<..\..\net\lwip\src\netif\loopif.c><loopif.c>
-File 8,1,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c>
-File 8,1,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c>
-File 8,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
-File 8,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
-File 9,1,<.\mp3\mp3dec.c><mp3dec.c>
-File 9,1,<.\mp3\mp3tabs.c><mp3tabs.c>
-File 9,1,<.\mp3\real\bitstream.c><bitstream.c>
-File 9,1,<.\mp3\real\buffers.c><buffers.c>
-File 9,1,<.\mp3\real\dct32.c><dct32.c>
-File 9,1,<.\mp3\real\dequant.c><dequant.c>
-File 9,1,<.\mp3\real\dqchan.c><dqchan.c>
-File 9,1,<.\mp3\real\huffman.c><huffman.c>
-File 9,1,<.\mp3\real\hufftabs.c><hufftabs.c>
-File 9,1,<.\mp3\real\imdct.c><imdct.c>
-File 9,1,<.\mp3\real\scalfact.c><scalfact.c>
-File 9,1,<.\mp3\real\stproc.c><stproc.c>
-File 9,1,<.\mp3\real\subband.c><subband.c>
-File 9,1,<.\mp3\real\trigtabs.c><trigtabs.c>
-File 9,2,<.\mp3\real\arm\asmpoly_thumb2.s><asmpoly_thumb2.s>
-File 9,2,<.\mp3\real\arm\asmmisc.s><asmmisc.s>
-File 10,1,<..\..\rtgui\common\rtgui_object.c><rtgui_object.c>
-File 10,1,<..\..\rtgui\common\rtgui_system.c><rtgui_system.c>
-File 10,1,<..\..\rtgui\common\rtgui_theme.c><rtgui_theme.c>
-File 10,1,<..\..\rtgui\common\asc12font.c><asc12font.c>
-File 10,1,<..\..\rtgui\common\asc16font.c><asc16font.c>
-File 10,1,<..\..\rtgui\common\color.c><color.c>
-File 10,1,<..\..\rtgui\common\dc.c><dc.c>
-File 10,1,<..\..\rtgui\common\dc_buffer.c><dc_buffer.c>
-File 10,1,<..\..\rtgui\common\dc_hw.c><dc_hw.c>
-File 10,1,<..\..\rtgui\common\filerw.c><filerw.c>
-File 10,1,<..\..\rtgui\common\font.c><font.c>
-File 10,1,<..\..\rtgui\common\image.c><image.c>
-File 10,1,<..\..\rtgui\common\image_xpm.c><image_xpm.c>
-File 10,1,<..\..\rtgui\common\image_hdc.c><image_hdc.c>
-File 10,1,<..\..\rtgui\common\region.c><region.c>
-File 10,1,<..\..\rtgui\server\server.c><server.c>
-File 10,1,<..\..\rtgui\server\driver.c><driver.c>
-File 10,1,<..\..\rtgui\server\panel.c><panel.c>
-File 10,1,<..\..\rtgui\widgets\widget.c><widget.c>
-File 10,1,<..\..\rtgui\widgets\window.c><window.c>
-File 10,1,<..\..\rtgui\widgets\workbench.c><workbench.c>
-File 10,1,<..\..\rtgui\widgets\view.c><view.c>
-File 10,1,<..\..\rtgui\widgets\box.c><box.c>
-File 10,1,<..\..\rtgui\widgets\button.c><button.c>
-File 10,1,<..\..\rtgui\widgets\container.c><container.c>
-File 10,1,<..\..\rtgui\widgets\iconbox.c><iconbox.c>
-File 10,1,<..\..\rtgui\widgets\label.c><label.c>
-File 10,1,<..\..\rtgui\widgets\textbox.c><textbox.c>
-File 10,1,<..\..\rtgui\widgets\title.c><title.c>
-File 10,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
-File 10,1,<..\..\rtgui\server\mouse.c><mouse.c>
-File 10,1,<..\..\rtgui\server\topwin.c><topwin.c>
-File 10,1,<..\..\rtgui\common\caret.c><caret.c>
-File 10,1,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c>
-File 10,1,<..\..\rtgui\common\hz16font.c><hz16font.c>
-File 10,1,<..\..\rtgui\common\hz12font.c><hz12font.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_cal.c><otgd_fs_cal.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_dev.c><otgd_fs_dev.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_int.c><otgd_fs_int.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_pcd.c><otgd_fs_pcd.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_core.c><usb_core.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_init.c><usb_init.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_int.c><usb_int.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_mem.c><usb_mem.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_regs.c><usb_regs.c>
+File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_sil.c><usb_sil.c>
+File 6,1,<.\Libraries\CMSIS\Core\CM3\core_cm3.c><core_cm3.c>
+File 6,1,<.\Libraries\CMSIS\Core\CM3\system_stm32f10x.c><system_stm32f10x.c>
+File 7,1,<..\..\finsh\finsh_compiler.c><finsh_compiler.c>
+File 7,1,<..\..\finsh\finsh_error.c><finsh_error.c>
+File 7,1,<..\..\finsh\finsh_heap.c><finsh_heap.c>
+File 7,1,<..\..\finsh\finsh_init.c><finsh_init.c>
+File 7,1,<..\..\finsh\finsh_node.c><finsh_node.c>
+File 7,1,<..\..\finsh\finsh_ops.c><finsh_ops.c>
+File 7,1,<..\..\finsh\finsh_parser.c><finsh_parser.c>
+File 7,1,<..\..\finsh\finsh_token.c><finsh_token.c>
+File 7,1,<..\..\finsh\finsh_var.c><finsh_var.c>
+File 7,1,<..\..\finsh\finsh_vm.c><finsh_vm.c>
+File 7,1,<..\..\finsh\shell.c><shell.c>
+File 7,1,<..\..\finsh\symbol.c><symbol.c>
+File 7,1,<..\..\finsh\cmd.c><cmd.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_util.c><dfs_util.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_posix.c><dfs_posix.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c><dir.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c><fat.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c><file.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c><fs.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c><ls.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c><time.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c><ui.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c>
+File 8,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c>
+File 8,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
+File 9,1,<..\..\net\lwip\src\core\dhcp.c><dhcp.c>
+File 9,1,<..\..\net\lwip\src\core\dns.c><dns.c>
+File 9,1,<..\..\net\lwip\src\core\init.c><init.c>
+File 9,1,<..\..\net\lwip\src\core\netif.c><netif.c>
+File 9,1,<..\..\net\lwip\src\core\pbuf.c><pbuf.c>
+File 9,1,<..\..\net\lwip\src\core\raw.c><raw.c>
+File 9,1,<..\..\net\lwip\src\core\stats.c><stats.c>
+File 9,1,<..\..\net\lwip\src\core\sys.c><sys.c>
+File 9,1,<..\..\net\lwip\src\core\tcp.c><tcp.c>
+File 9,1,<..\..\net\lwip\src\core\tcp_in.c><tcp_in.c>
+File 9,1,<..\..\net\lwip\src\core\tcp_out.c><tcp_out.c>
+File 9,1,<..\..\net\lwip\src\core\udp.c><udp.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\autoip.c><autoip.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\icmp.c><icmp.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\igmp.c><igmp.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\inet.c><inet.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\inet_chksum.c><inet_chksum.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\ip.c><ip.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\ip_addr.c><ip_addr.c>
+File 9,1,<..\..\net\lwip\src\core\ipv4\ip_frag.c><ip_frag.c>
+File 9,1,<..\..\net\lwip\src\core\snmp\msg_in.c><msg_in.c>
+File 9,1,<..\..\net\lwip\src\core\snmp\msg_out.c><msg_out.c>
+File 9,1,<..\..\net\lwip\src\api\api_lib.c><api_lib.c>
+File 9,1,<..\..\net\lwip\src\api\api_msg.c><api_msg.c>
+File 9,1,<..\..\net\lwip\src\api\err.c><err.c>
+File 9,1,<..\..\net\lwip\src\api\netbuf.c><netbuf.c>
+File 9,1,<..\..\net\lwip\src\api\netdb.c><netdb.c>
+File 9,1,<..\..\net\lwip\src\api\netifapi.c><netifapi.c>
+File 9,1,<..\..\net\lwip\src\api\tcpip.c><tcpip.c>
+File 9,1,<..\..\net\lwip\src\netif\etharp.c><etharp.c>
+File 9,1,<..\..\net\lwip\src\netif\ethernetif.c><ethernetif.c>
+File 9,1,<..\..\net\lwip\src\netif\loopif.c><loopif.c>
+File 9,1,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c>
+File 9,1,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c>
+File 9,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
+File 9,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
+File 10,1,<.\mp3\mp3dec.c><mp3dec.c>
+File 10,1,<.\mp3\mp3tabs.c><mp3tabs.c>
+File 10,1,<.\mp3\real\bitstream.c><bitstream.c>
+File 10,1,<.\mp3\real\buffers.c><buffers.c>
+File 10,1,<.\mp3\real\dct32.c><dct32.c>
+File 10,1,<.\mp3\real\dequant.c><dequant.c>
+File 10,1,<.\mp3\real\dqchan.c><dqchan.c>
+File 10,1,<.\mp3\real\huffman.c><huffman.c>
+File 10,1,<.\mp3\real\hufftabs.c><hufftabs.c>
+File 10,1,<.\mp3\real\imdct.c><imdct.c>
+File 10,1,<.\mp3\real\scalfact.c><scalfact.c>
+File 10,1,<.\mp3\real\stproc.c><stproc.c>
+File 10,1,<.\mp3\real\subband.c><subband.c>
+File 10,1,<.\mp3\real\trigtabs.c><trigtabs.c>
+File 10,2,<.\mp3\real\arm\asmpoly_thumb2.s><asmpoly_thumb2.s>
+File 10,2,<.\mp3\real\arm\asmmisc.s><asmmisc.s>
+File 11,1,<..\..\rtgui\common\rtgui_object.c><rtgui_object.c>
+File 11,1,<..\..\rtgui\common\rtgui_system.c><rtgui_system.c>
+File 11,1,<..\..\rtgui\common\rtgui_theme.c><rtgui_theme.c>
+File 11,1,<..\..\rtgui\common\asc12font.c><asc12font.c>
+File 11,1,<..\..\rtgui\common\asc16font.c><asc16font.c>
+File 11,1,<..\..\rtgui\common\color.c><color.c>
+File 11,1,<..\..\rtgui\common\dc.c><dc.c>
+File 11,1,<..\..\rtgui\common\dc_buffer.c><dc_buffer.c>
+File 11,1,<..\..\rtgui\common\dc_hw.c><dc_hw.c>
+File 11,1,<..\..\rtgui\common\filerw.c><filerw.c>
+File 11,1,<..\..\rtgui\common\font.c><font.c>
+File 11,1,<..\..\rtgui\common\image.c><image.c>
+File 11,1,<..\..\rtgui\common\image_xpm.c><image_xpm.c>
+File 11,1,<..\..\rtgui\common\image_hdc.c><image_hdc.c>
+File 11,1,<..\..\rtgui\common\region.c><region.c>
+File 11,1,<..\..\rtgui\server\server.c><server.c>
+File 11,1,<..\..\rtgui\server\driver.c><driver.c>
+File 11,1,<..\..\rtgui\server\panel.c><panel.c>
+File 11,1,<..\..\rtgui\widgets\widget.c><widget.c>
+File 11,1,<..\..\rtgui\widgets\window.c><window.c>
+File 11,1,<..\..\rtgui\widgets\workbench.c><workbench.c>
+File 11,1,<..\..\rtgui\widgets\view.c><view.c>
+File 11,1,<..\..\rtgui\widgets\box.c><box.c>
+File 11,1,<..\..\rtgui\widgets\button.c><button.c>
+File 11,1,<..\..\rtgui\widgets\container.c><container.c>
+File 11,1,<..\..\rtgui\widgets\iconbox.c><iconbox.c>
+File 11,1,<..\..\rtgui\widgets\label.c><label.c>
+File 11,1,<..\..\rtgui\widgets\textbox.c><textbox.c>
+File 11,1,<..\..\rtgui\widgets\title.c><title.c>
+File 11,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
+File 11,1,<..\..\rtgui\server\mouse.c><mouse.c>
+File 11,1,<..\..\rtgui\server\topwin.c><topwin.c>
+File 11,1,<..\..\rtgui\common\caret.c><caret.c>
+File 11,1,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c>
+File 11,1,<..\..\rtgui\common\hz16font.c><hz16font.c>
+File 11,1,<..\..\rtgui\common\hz12font.c><hz12font.c>
+File 12,1,<.\Libraries\Mass_Storage\src\hw_config.c><hw_config.c>
+File 12,1,<.\Libraries\Mass_Storage\src\mass_mal.c><mass_mal.c>
+File 12,1,<.\Libraries\Mass_Storage\src\memory.c><memory.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_bot.c><usb_bot.c>
+File 12,1,<.\Libraries\Mass_Storage\src\scsi_data.c><scsi_data.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_desc.c><usb_desc.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_endp.c><usb_endp.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_istr.c><usb_istr.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_prop.c><usb_prop.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_pwr.c><usb_pwr.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_scsi.c><usb_scsi.c>
+File 12,1,<.\Libraries\Mass_Storage\src\usb_main.c><usb_main.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32 Radio'
@@ -299,7 +323,29 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  FLASH4 ()
 EndOpt
 
-Options 1,9,0  // Group 'mp3'
+Options 1,5,0  // Group 'USB-FS-Device_Driver'
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (.\Libraries\STM32_USB-FS-Device_Driver\inc;.\Libraries\Mass_Storage\inc)
+ ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+EndOpt
+
+Options 1,10,0  // Group 'mp3'
  PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  IncBld=2
  AlwaysBuild=2
@@ -314,6 +360,28 @@ Options 1,9,0  // Group 'mp3'
  ADSCDEFN ()
  ADSCUDEF ()
  ADSCINCD (.\mp3\pub)
+ ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+EndOpt
+
+Options 1,12,0  // Group 'Mass_Storage'
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=2
+ AlwaysBuild=2
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (.\Libraries\Mass_Storage\inc;.\Libraries\STM32_USB-FS-Device_Driver\inc)
  ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

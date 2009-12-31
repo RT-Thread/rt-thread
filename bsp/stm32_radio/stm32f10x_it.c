@@ -684,3 +684,16 @@ void DMA2_Channel2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+
+/* add on 2009-12-31 usb */
+extern void CTR_HP(void);
+extern void USB_Istr(void);
+void USB_HP_CAN1_TX_IRQHandler(void)
+{
+    CTR_HP();
+}
+
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+    USB_Istr();
+}

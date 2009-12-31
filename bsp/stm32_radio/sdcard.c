@@ -958,14 +958,14 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   }
   else if (DeviceMode == SD_DMA_MODE)
   {
-    int cnt = 0; 
+    int cnt = 0;
     SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
     SDIO_DMACmd(ENABLE);
     DMA_RxConfiguration(readbuff, BlockSize);
     while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
     {
-		cnt ++; 
-		if (cnt > 10 * 50000) 
+		cnt ++;
+		if (cnt > 10 * 50000)
 		{
 			rt_kprintf("DMA flag 0x%08x\n", DMA_GetFlagStatus(DMA2_FLAG_TC4));
 			/* Clear all DPSM configuration */
@@ -977,9 +977,9 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
 			SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Disable;
 			SDIO_DataConfig(&SDIO_DataInitStructure);
 			SDIO_DMACmd(DISABLE);
-			errorstatus = SD_ERROR; 
+			errorstatus = SD_ERROR;
 			break;
-		} 
+		}
 	}
   }
   return(errorstatus);
@@ -3140,7 +3140,7 @@ void rt_hw_sdcard_init()
 		sdcard_device.control = rt_sdcard_control;
 
 		/* no private */
-		sdcard_device.private = RT_NULL;
+		sdcard_device.private = &SDCardInfo;
 
 		rt_device_register(&sdcard_device, "sd0",
 			RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
