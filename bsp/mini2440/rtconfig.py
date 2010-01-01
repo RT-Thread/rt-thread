@@ -16,8 +16,8 @@ RT_USING_LWIP = False
 RT_USING_RTGUI = True
 
 # panel options
-# 'PNL_AT070TN84','PNL_NEC320240'
-RT_USING_LCD_TYPE = 'PNL_AT070TN84'
+# 'PNL_A70','PNL_N35', 'PNL_T35'
+RT_USING_LCD_TYPE = 'PNL_T35'
 
 # rtgui demo options
 RT_USING_DEMO_GUI   = True

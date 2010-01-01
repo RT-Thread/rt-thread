@@ -5,11 +5,12 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date           Author      Notes
  * 2007-12-02     Yi.Qiu      the first version
+ * 2010-01-01     Bernard     Modify for mini2440
  */
 
 #include "sdcard.h"
@@ -73,8 +74,9 @@ static int sd_cmd_end(int cmd, int be_resp)
 		{
 		    	if( (finish0&0x1f00) != 0xa00 )
 		    	{
-				rt_kprintf("CMD%d:SDICSTA=0x%x, SDIRSP0=0x%x\n",
-					cmd, SDICSTA, SDIRSP0);
+                    rt_kprintf("CMD%d:SDICSTA=0x%x, SDIRSP0=0x%x\n",
+                        cmd, SDICSTA, SDIRSP0);
+
 		    		SDICSTA=finish0;
 		    		if(((finish0&0x400)==0x400))
 		        		return RT_ERROR;
@@ -120,6 +122,7 @@ static void sd_cmd0(void)
 	SDICCON=(1<<8)|0x40;
 
 	sd_cmd_end(0, 0);
+	SDICSTA=0x800;	    /* Clear cmd_end(no rsp) */
 }
 
 /**
@@ -178,14 +181,15 @@ RECMDD7:
  */
 static void sd_setbus(void)
 {
-SET_BUS:
-	sd_cmd55();
+    do
+    {
+        sd_cmd55();
 
-	SDICARG=1<<1;
-	SDICCON=(0x1<<9)|(0x1<<8)|0x46;
+        SDICARG = 1<<1; /* 4bit bus */
+        SDICCON=(0x1<<9)|(0x1<<8)|0x46; /* sht_resp, wait_resp, start, CMD55 */
+    }while (sd_cmd_end(6, 1) == RT_ERROR);
 
-	if(sd_cmd_end(6, 1) == RT_ERROR)
-		goto SET_BUS;
+    SDICSTA=0xa00;	    /* Clear cmd_end(with rsp) */
 }
 
 /**
@@ -262,11 +266,11 @@ rt_uint8_t sd_init(void)
 	int i;
 	/* Important notice for MMC test condition */
 	/* Cmd & Data lines must be enabled by pull up resister */
-	SDIPRE=PCLK/(INICLK)-1;
-	SDICON=1;
-	SDIFSTA=SDIFSTA|(1<<16);
-	SDIBSIZE = 0x200;
-	SDIDTIMER=0x7fffff;
+	SDIPRE  = PCLK/(INICLK)-1;
+	SDICON  = (1<<4) | 1;	// Type B, clk enable
+	SDIFSTA = SDIFSTA | (1<<16);
+	SDIBSIZE = 0x200;       /* 512byte per one block */
+	SDIDTIMER=0x7fffff;     /* timeout count */
 
 	/* Wait 74SDCLK for MMC card */
 	for(i=0; i<0x1000; i++);
@@ -279,6 +283,7 @@ rt_uint8_t sd_init(void)
 		goto RECMD2;
 	}
 	rt_kprintf("MMC check end!!\n");
+
 	/* Check SD card OCR */
 	if(sd_ocr() == RT_EOK)
 	{
@@ -291,19 +296,22 @@ rt_uint8_t sd_init(void)
 	}
 
 RECMD2:
-	SDICARG=0x0;
-	SDICCON=(0x1<<10)|(0x1<<9)|(0x1<<8)|0x42;
+	SDICARG = 0x0;
+	SDICCON = (0x1<<10)|(0x1<<9)|(0x1<<8)|0x42; /* lng_resp, wait_resp, start, CMD2 */
 	if(sd_cmd_end(2, 1) == RT_ERROR)
 		goto RECMD2;
 
+    SDICSTA = 0xa00;	/* Clear cmd_end(with rsp) */
+
 RECMD3:
-	SDICARG=0<<16;
-	SDICCON=(0x1<<9)|(0x1<<8)|0x43;
+	SDICARG = 0<<16;    /* CMD3(MMC:Set RCA, SD:Ask RCA-->SBZ) */
+	SDICCON = (0x1<<9)|(0x1<<8)|0x43; /* sht_resp, wait_resp, start, CMD3 */
 	if(sd_cmd_end(3, 1) == RT_ERROR)
 		goto RECMD3;
+    SDICSTA=0xa00;	/* Clear cmd_end(with rsp) */
 
-	RCA=(SDIRSP0 & 0xffff0000 )>>16;
-	SDIPRE=(PCLK/(SDCLK*2))-1;
+	RCA = (SDIRSP0 & 0xffff0000 )>>16;
+	SDIPRE=(PCLK/(SDCLK*2))-1; /* Normal clock=25MHz */
 	if( SDIRSP0 & (0x1e00!=0x600) )
 		goto RECMD3;
 
@@ -542,6 +550,9 @@ void rt_hw_sdcard_init()
 	rt_uint8_t *sector;
 	char dname[4];
 	char sname[8];
+
+    GPEUP  = 0xf83f;        // SDCMD, SDDAT[3:0] => PU En.
+    GPECON = 0xaaaaaaaa;	// SDCMD, SDDAT[3:0]
 
 	if (sd_init() == RT_EOK)
 	{

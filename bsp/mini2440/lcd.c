@@ -176,10 +176,9 @@ void LcdBkLtSet(rt_uint32_t HiRatio)
 	}
 	GPBCON = GPBCON & (~(3<<2)) | (2<<2) ;
 
-	if( HiRatio > 100 )
-		HiRatio = 100 ;
+	if( HiRatio > 100 ) HiRatio = 100 ;
 
-	TCON = TCON & (~(0xf<<8)) ;			// clear manual update bit, stop Timer1
+	TCON = TCON & (~(0xf<<8)) ;			    // clear manual update bit, stop Timer1
 
 	TCFG0 &= 0xffffff00;					// set Timer 0&1 prescaler 0
 	TCFG0 |= 15;							//prescaler = 15+1
@@ -187,37 +186,11 @@ void LcdBkLtSet(rt_uint32_t HiRatio)
 	TCFG1 &= 0xffffff0f;					// set Timer 1 MUX 1/16
 	TCFG1 |= 0x00000030;					// set Timer 1 MUX 1/16
 
-	TCNTB1	 = ( 100000000>>8 )/FREQ_PWM1;		//if set inverter off, when TCNT2<=TCMP2, TOUT is high, TCNT2>TCMP2, TOUT is low
+	TCNTB1	 = ( 100000000>>8 )/FREQ_PWM1;  //if set inverter off, when TCNT2<=TCMP2, TOUT is high, TCNT2>TCMP2, TOUT is low
 	TCMPB1  = ( TCNTB1*(100-HiRatio))/100 ;	//if set inverter on,  when TCNT2<=TCMP2, TOUT is low,  TCNT2>TCMP2, TOUT is high
 
 	TCON = TCON & (~(0xf<<8)) | (0x0e<<8) ;
 	TCON = TCON & (~(0xf<<8)) | (0x0d<<8) ;
-}
-
-rt_uint16_t color2index565(rt_uint32_t color)
-{
-	int r,g,b;
-
-	r = (color>> (0+3)) & 0x1f;
-	g = (color>> (8+2)) & 0x3f;
-	b = (color>>(16+3)) & 0x1f;
-
-	return (rt_uint16_t)(b+(g<<5)+(r<<11));
-}
-
-rt_uint32_t index2color565(int index)
-{
-	unsigned int r,g,b;
-
-	r = index & 0x1f;
-	g = (index>>5) & 0x3f;
-	b = ((unsigned)index >> 11) & 0x1f;
-
-	r = r * 255 / 31;
-	g = g * 255 / 63;
-	b = b * 255 / 31;
-
-	return r + (g<<8) + (((rt_uint32_t)b)<<16);
 }
 
 #ifdef RT_USING_RTGUI
@@ -225,7 +198,7 @@ rt_uint32_t index2color565(int index)
 #include <rtgui/driver.h>
 #include <rtgui/color.h>
 
-void rt_hw_lcd_update()
+void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
 	/* nothing */
 }
@@ -235,25 +208,31 @@ rt_uint8_t * rt_hw_lcd_get_framebuffer(void)
 	return (rt_uint8_t *)_rt_hw_framebuffer;
 }
 
-void rt_hw_lcd_set_pixel(rtgui_color_t *c, int x, int y)
+void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
     if (x < SCR_XSIZE_TFT_240320 && y < SCR_YSIZE_TFT_240320)
 	{
-		_rt_hw_framebuffer[(y)][(x)] = color2index565(*c);
+		_rt_hw_framebuffer[(y)][(x)] = rtgui_color_to_565p(*c);
 	}
 }
 
-void rt_hw_lcd_get_pixel(rtgui_color_t *c, int x, int y)
+void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
+    if (x < SCR_XSIZE_TFT_240320 && y < SCR_YSIZE_TFT_240320)
+	{
+		*c = rtgui_color_from_565p(_rt_hw_framebuffer[(y)][(x)]);
+	}
+
     return ;
 }
 
-void rt_hw_lcd_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
+void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
 	rt_uint32_t idx;
 	rt_uint16_t color;
 
-	color = color2index565(*c);
+	/* get color pixel */
+	color = rtgui_color_to_565p(*c);
 
 	for (idx = x1; idx < x2; idx ++)
 	{
@@ -261,17 +240,23 @@ void rt_hw_lcd_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 	}
 }
 
-void rt_hw_lcd_draw_vline(rtgui_color_t *c, int x, int y1, int y2)
+void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t y2)
 {
     rt_uint32_t idy;
 	rt_uint16_t color;
 
-	color = color2index565(*c);
+	/* get color pixel */
+	color = rtgui_color_to_565p(*c);
 
 	for (idy = y1; idy < y2; idy ++)
 	{
 		_rt_hw_framebuffer[idy][x] = color;
 	}
+}
+
+void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
+{
+    rt_memcpy((void*)&_rt_hw_framebuffer[y][x1], pixels, (x2 - x1) * 2);
 }
 
 struct rtgui_graphic_driver _rtgui_lcd_driver =
@@ -285,7 +270,8 @@ struct rtgui_graphic_driver _rtgui_lcd_driver =
 	rt_hw_lcd_set_pixel,
 	rt_hw_lcd_get_pixel,
 	rt_hw_lcd_draw_hline,
-	rt_hw_lcd_draw_vline
+	rt_hw_lcd_draw_vline,
+	rt_hw_lcd_draw_raw_hline
 };
 
 #include "finsh.h"
@@ -294,26 +280,25 @@ void hline(rt_uint32_t c, int x1, int x2, int y)
     rtgui_color_t color = (rtgui_color_t)c;
     rt_hw_lcd_draw_hline(&color, x1, x2, y);
 }
+FINSH_FUNCTION_EXPORT(hline, draw a hline);
 
 void vline(rt_uint32_t c, int x, int y1, int y2)
 {
     rtgui_color_t color = (rtgui_color_t)c;
     rt_hw_lcd_draw_vline(&color, x, y1, y2);
 }
+FINSH_FUNCTION_EXPORT(vline, draw a vline);
 
-void dump_vline(int x, int y1, int y2)
+void clear()
 {
-    rt_uint32_t idy;
+    int y;
 
-	for (idy = y1; idy < y2; idy ++)
-	{
-		rt_kprintf("0x%04x ", _rt_hw_framebuffer[idy][x]);
-
-		if ((idy + 1) % 8 == 0)
-			rt_kprintf("\n");
-	}
-	rt_kprintf("\n");
+    for (y = 0; y < 320; y ++)
+    {
+        rt_hw_lcd_draw_hline((rtgui_color_t*)&white, 0, 239, y);
+    }
 }
+FINSH_FUNCTION_EXPORT(clear, clear screen);
 
 void rt_hw_lcd_init()
 {
@@ -335,6 +320,7 @@ void rt_hw_lcd_init()
 	LCDSADDR1=(((rt_uint32_t)_rt_hw_framebuffer>>22)<<21)|M5D((rt_uint32_t)_rt_hw_framebuffer>>1);
 	LCDSADDR2=M5D( ((rt_uint32_t)_rt_hw_framebuffer+(SCR_XSIZE_TFT_240320*LCD_YSIZE_TFT_240320*2))>>1 );
 	LCDSADDR3=(((SCR_XSIZE_TFT_240320-LCD_XSIZE_TFT_240320)/1)<<11)|(LCD_XSIZE_TFT_240320/1);
+
 	LCDINTMSK|=(3);
 	LPCSEL &= (~7) ;
 	TPAL=0;
@@ -345,14 +331,6 @@ void rt_hw_lcd_init()
 
 	/* add lcd driver into graphic driver */
 	rtgui_graphic_driver_add(&_rtgui_lcd_driver);
-
-	/* finsh debug */
-    finsh_syscall_append("vline", (syscall_func)vline);
-    finsh_syscall_append("hline", (syscall_func)hline);
-    finsh_syscall_append("dump_vline", (syscall_func)dump_vline);
-
-    extern void rtgui_topwin_dump();
-    finsh_syscall_append("wins", (syscall_func)rtgui_topwin_dump);
 }
 
 #endif

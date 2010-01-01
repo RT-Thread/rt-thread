@@ -15,10 +15,13 @@
  * 2008-07-14     Bernard      modify the heap memory init parameter
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
 
 #include <s3c24x0.h>
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#endif
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_board_init(void);

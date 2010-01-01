@@ -3,6 +3,10 @@
 
 #include "dm9000.h"
 
+/*
+ * Davicom DM9000EP driver
+ */
+
 // #define DM9000_DEBUG		1
 #if DM9000_DEBUG
 #define DM9000_TRACE	rt_kprintf
@@ -591,6 +595,10 @@ void rt_hw_dm9000_init()
     dm9000_device.parent.eth_tx     = rt_dm9000_tx;
 
     eth_device_init(&(dm9000_device.parent), "e0");
+
+    /* instal interrupt */
+	rt_hw_interrupt_install(INTADC, rt_touch_handler, RT_NULL);
+	rt_hw_interrupt_umask(INTADC);
 }
 
 void dm9000a(void)
