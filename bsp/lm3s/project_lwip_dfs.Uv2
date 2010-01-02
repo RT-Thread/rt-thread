@@ -18,6 +18,7 @@ File 1,1,<.\startup.c><startup.c>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,1,<.\sdcard.c><sdcard.c>
 File 1,1,<.\luminaryif.c><luminaryif.c>
+File 1,5,<.\board.h><board.h>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\device.c><device.c>
 File 2,1,<..\..\src\idle.c><idle.c>
@@ -112,6 +113,11 @@ File 8,1,<..\..\net\apps\sntp.c><sntp.c>
 File 8,1,<..\..\net\apps\tcpecho.c><tcpecho.c>
 File 8,1,<..\..\net\apps\tftp.c><tftp.c>
 File 8,1,<..\..\net\apps\udpecho.c><udpecho.c>
+File 8,1,<..\..\net\apps\tcpclient.c><tcpclient.c>
+File 8,1,<..\..\net\apps\tcpserver.c><tcpserver.c>
+File 8,1,<..\..\net\apps\udpclient.c><udpclient.c>
+File 8,1,<..\..\net\apps\udpserver.c><udpserver.c>
+File 8,1,<..\..\net\apps\netio.c><netio.c>
 
 
 Options 1,0,0  // Target 'RT-Thread/LM3S'

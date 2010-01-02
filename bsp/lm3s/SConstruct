@@ -37,8 +37,9 @@ if rtconfig.RT_USING_LWIP:
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
 
+src_drv = []
 if rtconfig.RT_USING_DFS:
-	src_drv = ['sdcard.c']
+	src_drv += ['sdcard.c']
 
 if rtconfig.RT_USING_LWIP:
 	src_drv += ['luminaryif.c']

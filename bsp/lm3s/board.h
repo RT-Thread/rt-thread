@@ -10,8 +10,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-10-08     Bernard      add board.h to this bsp
+ * 2009-12-25     yi.qiu          add LM3S configration
  */
 
+// <<< Use Configuration Wizard in Context Menu >>>
 #ifndef __BOARD_H__
 #define __BOARD_H__
 

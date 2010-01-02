@@ -21,7 +21,7 @@ CPU='lm3s'
 #EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 PLATFORM = 'armcc'
 EXEC_PATH = 'E:/Keil'
-BUILD = 'debug'
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains

@@ -65,7 +65,7 @@ __heap_limit
 		IMPORT rt_hw_pend_sv
 		IMPORT rt_hw_timer_handler
 		IMPORT rt_hw_uart_isr_1
-		IMPORT luminaryif_isr
+		IMPORT rt_hw_eth_handler
 		IMPORT rt_hw_hard_fault
 
 ;******************************************************************************
@@ -148,7 +148,7 @@ __Vectors
         DCD     IntDefaultHandler           ; CAN0
         DCD     IntDefaultHandler           ; CAN1
         DCD     IntDefaultHandler           ; CAN2
-        DCD     luminaryif_isr   	        ; Ethernet
+        DCD     rt_hw_eth_handler   	        ; Ethernet
         DCD     IntDefaultHandler          	; Hibernate
         DCD     IntDefaultHandler           ; USB0
         DCD     IntDefaultHandler           ; PWM Generator 3

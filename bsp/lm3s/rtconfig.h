@@ -116,7 +116,7 @@
 #define RT_LWIP_ETH_PAD_SIZE 2
 
 /* TCP sender buffer space*/
-#define RT_LWIP_TCP_SND_BUF	2048
+#define RT_LWIP_TCP_SND_BUF	1024*8
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
 

@@ -50,12 +50,27 @@ void rt_hw_timer_handler(void)
 }
 
 /**
- * This function will initial STM32 board.
+ * This is the ethernet interrupt service routine.
+ * 
+ */
+void rt_hw_eth_handler(void)
+{
+#ifdef RT_USING_LWIP
+		/* luminary ethernet interface */
+		extern void luminaryif_isr(void);
+		luminaryif_isr();
+#endif	
+}
+
+/**
+ * This function will initial LM3S board.
  */
 void rt_hw_board_init()
 {
+	/* set ldo */
+	SysCtlLDOSet(SYSCTL_LDO_2_50V);
 	/* set clock */
-	SysCtlClockSet(SYSCTL_SYSDIV_2 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+	SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                    SYSCTL_XTAL_6MHZ);
 
 	/* init systick */
