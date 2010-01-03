@@ -260,6 +260,11 @@ int do_list(char* directory, int sockfd)
 
 			send(sockfd, line_buffer, line_length, 0);
 		}
+		else
+		{
+			rt_kprintf("Get directory entry error\n");
+			break;
+		}
 	}
 
 	closedir(dirp);
