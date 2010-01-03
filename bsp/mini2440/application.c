@@ -20,7 +20,6 @@
 
 #include <board.h>
 #include <rtthread.h>
-#include <rtgui/rtgui.h>
 #include "led.h"
 
 #ifdef RT_USING_DFS
@@ -78,7 +77,6 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-		radio_rtgui_init();
 		rt_hw_key_init();
 	}
 #endif

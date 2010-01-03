@@ -57,9 +57,6 @@ if rtconfig.RT_USING_RTGUI:
 	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_T35':
 		src_drv += ['lcd_t35.c']
 
-if rtconfig.RT_USING_DEMO_GUI:
-	src_drv += ['gui_init.c','demo_gui.c','info.c']
-
 objs = objs + env.Object(src_bsp + src_drv)
 
 TARGET = target + '.' + rtconfig.TARGET_EXT
