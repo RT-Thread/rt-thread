@@ -38,7 +38,6 @@
 #ifdef RT_USING_RTGUI
 extern void rt_hw_lcd_init(void);
 extern void rt_hw_key_init(void);
-extern void radio_rtgui_init(void);
 #endif
 
 void rt_init_thread_entry(void* parameter)
