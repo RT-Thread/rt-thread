@@ -15,7 +15,6 @@
 #define __RTGUI_TEXTBOX_H__
 
 #include <rtgui/rtgui.h>
-#include <rtgui/caret.h>
 #include <rtgui/widgets/widget.h>
 
 /** Gets the type of a textbox */

@@ -12,8 +12,9 @@
  * 2009-10-16     Bernard      first version
  */
 #include <rtgui/dc.h>
-#include <rtgui/widgets/textbox.h>
 #include <rtgui/rtgui_theme.h>
+#include <rtgui/rtgui_system.h>
+#include <rtgui/widgets/textbox.h>
 
 #ifndef _WIN32
 #include <ctype.h>
@@ -26,7 +27,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui_event* event);
 static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtgui_event* event);
 
-static void _rtgui_textbox_caret_timeout(void *parameter)
+static void _rtgui_textbox_caret_timeout(struct rtgui_timer* timer, void* parameter)
 {
 	rtgui_textbox_t* box;
 
