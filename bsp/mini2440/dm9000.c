@@ -2,9 +2,13 @@
 #include <netif/ethernetif.h>
 
 #include "dm9000.h"
+#include <s3c24x0.h>
 
 /*
  * Davicom DM9000EP driver
+ *
+ * IRQ_LAN connects to EINT7(GPF7)
+ * nLAN_CS connects to nGCS4
  */
 
 // #define DM9000_DEBUG		1
@@ -57,7 +61,7 @@ struct rt_dm9000_eth
 static struct rt_dm9000_eth dm9000_device;
 static struct rt_semaphore sem_ack, sem_lock;
 
-void rt_dm9000_isr(void);
+void rt_dm9000_isr(int irqno);
 
 static void delay_ms(rt_uint32_t ms)
 {
@@ -147,7 +151,7 @@ rt_inline void phy_mode_set(rt_uint32_t media_mode)
 }
 
 /* interrupt service routine */
-void rt_dm9000_isr()
+void rt_dm9000_isr(int irqno)
 {
     rt_uint16_t int_status;
     rt_uint16_t last_io;
@@ -239,6 +243,7 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
     }
     else
     {
+        rt_kprintf("dm9000 id: 0x%x\n", value);
         return -RT_ERROR;
     }
 
@@ -560,8 +565,21 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     return p;
 }
 
+#define B4_Tacs                 0x0
+#define B4_Tcos                 0x0
+#define B4_Tacc                 0x7
+#define B4_Tcoh                 0x0
+#define B4_Tah                  0x0
+#define B4_Tacp                 0x0
+#define B4_PMC                  0x0
+
 void rt_hw_dm9000_init()
 {
+    // GPFCON = 0x000055AA;
+    // GPFUP = 0x000000FF;
+
+    // BANKCON4 = ((B4_Tacs<<13)+(B4_Tcos<<11)+(B4_Tacc<<8)+(B4_Tcoh<<6)+(B4_Tah<<4)+(B4_Tacp<<2)+(B4_PMC));
+
     rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
@@ -597,8 +615,8 @@ void rt_hw_dm9000_init()
     eth_device_init(&(dm9000_device.parent), "e0");
 
     /* instal interrupt */
-	rt_hw_interrupt_install(INTADC, rt_touch_handler, RT_NULL);
-	rt_hw_interrupt_umask(INTADC);
+	// rt_hw_interrupt_install(INT_EXIT7, rt_dm9000_isr, RT_NULL);
+	// rt_hw_interrupt_umask(INT_EXIT7);
 }
 
 void dm9000a(void)

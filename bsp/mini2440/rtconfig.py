@@ -4,21 +4,20 @@
 RT_USING_FINSH = True
 
 # device file system options
-RT_USING_DFS = False
+RT_USING_DFS = True
 RT_USING_DFS_EFSL = True
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
 
 # lwip options
-RT_USING_LWIP = False
+RT_USING_LWIP = True
 
 # rtgui options
-RT_USING_RTGUI = False
+RT_USING_RTGUI = True
 
 # panel options
 # 'PNL_A70','PNL_N35', 'PNL_T35'
 RT_USING_LCD_TYPE = 'PNL_T35'
-
 
 # toolchains options
 ARCH='arm'

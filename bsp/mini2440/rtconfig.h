@@ -79,8 +79,6 @@
 /* #define RT_USING_NEWLIB */
 
 /* SECTION: a mini libc */
-/* Using mini libc library */
-/* #define RT_USING_MINILIBC */
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -88,7 +86,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-/* #define RT_USING_RTGUI */
+#define RT_USING_RTGUI
 
 /* SECTION: Device filesystem support */
 /* using DFS support */
@@ -107,14 +105,8 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 #define RT_LWIP_DNS
-
-/* Using webserver goahead support */
-#define RT_USING_WEBSERVER
-
-/* Using ftpserver support */
-#define RT_USING_FTPSERVER
 
 /* Trace LwIP protocol */
 /* #define RT_LWIP_DEBUG */
