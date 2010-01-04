@@ -234,9 +234,20 @@ int list_mempool()
 	for (node = list->next; node != list; node = node->next)
 	{
 		mp = (struct rt_mempool*)rt_list_entry(node, struct rt_object, list);
-		rt_kprintf("%-8s %04d  %04d  %04d %d\n", mp->parent.name,
-			mp->block_size, mp->block_total_count, mp->block_free_count,
-			mp->suspend_thread_count);
+		if (mp->suspend_thread_count > 0)
+		{
+			rt_kprintf("%-8s %04d  %04d  %04d %d:", mp->parent.name,
+				mp->block_size, mp->block_total_count, mp->block_free_count,
+				mp->suspend_thread_count);
+			show_wait_queue(&(mp->suspend_thread));
+			rt_kprintf("\n");			
+		}
+		else
+		{
+			rt_kprintf("%-8s %04d  %04d  %04d %d\n", mp->parent.name,
+				mp->block_size, mp->block_total_count, mp->block_free_count,
+				mp->suspend_thread_count);
+		}
 	}
 
 	return 0;
