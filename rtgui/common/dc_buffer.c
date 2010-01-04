@@ -16,6 +16,7 @@
 #include <rtgui/color.h>
 #include <rtgui/rtgui_system.h>
 
+#ifndef RTGUI_USING_SMALL_SIZE
 struct rtgui_dc_buffer
 {
 	struct rtgui_dc parent;
@@ -390,3 +391,5 @@ static void rtgui_dc_buffer_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	rect->x2 = dc->width;
 	rect->y2 = dc->height;
 }
+#endif
+

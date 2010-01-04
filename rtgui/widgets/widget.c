@@ -37,6 +37,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->toplevel		= RT_NULL;
 
 	/* some common event handler */
+#ifndef RTGUI_USING_SMALL_SIZE
 	widget->on_draw 		= RT_NULL;
 	widget->on_focus_in		= RT_NULL;
 	widget->on_focus_out	= RT_NULL;
@@ -44,13 +45,16 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->on_key 			= RT_NULL;
 	widget->on_size 		= RT_NULL;
 	widget->on_command 		= RT_NULL;
+#endif
 
 	/* set default event handler */
 	widget->event_handler = rtgui_widget_event_handler;
 
 	/* does not set widget extent and only set clip_sync to zero */
 	rtgui_region_init(&(widget->clip));
+#ifndef RTGUI_USING_SMALL_SIZE
 	widget->clip_sync = 0;
+#endif
 }
 
 /* Destroys the widget */
@@ -68,7 +72,9 @@ static void _rtgui_widget_destructor(rtgui_widget_t *widget)
 
 	/* fini clip region */
 	rtgui_region_fini(&(widget->clip));
+#ifndef RTGUI_USING_SMALL_SIZE
 	widget->clip_sync = 0;
+#endif
 }
 
 rtgui_type_t *rtgui_widget_type_get(void)
@@ -105,9 +111,11 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
 
 	widget->extent = *rect;
 
+#ifndef RTGUI_USING_SMALL_SIZE
 	/* reset mini width and height */
 	widget->mini_width  = rtgui_rect_width(widget->extent);
 	widget->mini_height = rtgui_rect_height(widget->extent);
+#endif
 
 	/* it's not empty, fini it */
 	if (rtgui_region_not_empty(&(widget->clip)))
@@ -119,6 +127,7 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
 	rtgui_region_init_with_extents(&(widget->clip), rect);
 }
 
+#ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width)
 {
 	RT_ASSERT(widget != RT_NULL);
@@ -132,6 +141,7 @@ void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height)
 
 	widget->mini_height = height;
 }
+#endif
 
 /*
  * This function moves widget and its children to a logic point
@@ -176,13 +186,6 @@ void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect)
 	}
 }
 
-void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
-{
-	RT_ASSERT(widget != RT_NULL);
-
-	widget->on_draw = handler;
-}
-
 void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
 	RT_ASSERT(widget != RT_NULL);
@@ -195,6 +198,14 @@ void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 	RT_ASSERT(widget != RT_NULL);
 
 	widget->on_focus_out = handler;
+}
+
+#ifndef RTGUI_USING_SMALL_SIZE
+void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
+{
+	RT_ASSERT(widget != RT_NULL);
+
+	widget->on_draw = handler;
 }
 
 void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
@@ -224,6 +235,7 @@ void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 
 	widget->on_command = handler;
 }
+#endif
 
 /**
  * @brief Focuses the widget. The focused widget is the widget which can receive the keyboard events
@@ -264,9 +276,11 @@ void rtgui_widget_focus(rtgui_widget_t *widget)
 		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(parent))) break;
 	}
 
+#ifndef RTGUI_USING_SMALL_SIZE
 	/* invoke on focus in call back */
-	if (widget->on_focus_in)
+	if (widget->on_focus_in != RT_NULL)
    		widget->on_focus_in(widget, RT_NULL);
+#endif
 }
 
 /**
@@ -282,8 +296,10 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget)
 	if (!widget->toplevel || !RTGUI_WIDGET_IS_FOCUS(widget))
 		return;
 
-	if (widget->on_focus_out)
+#ifndef RTGUI_USING_SMALL_SIZE
+	if (widget->on_focus_out != RT_NULL)
    		widget->on_focus_out(widget, RT_NULL);
+#endif
 }
 
 void rtgui_widget_point_to_device(rtgui_widget_t* widget, rtgui_point_t* point)
@@ -356,6 +372,7 @@ rtgui_widget_t* rtgui_widget_get_toplevel(rtgui_widget_t* widget)
 
 rt_bool_t rtgui_widget_event_handler(rtgui_widget_t* widget, rtgui_event_t* event)
 {
+#ifndef RTGUI_USING_SMALL_SIZE
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
@@ -378,6 +395,7 @@ rt_bool_t rtgui_widget_event_handler(rtgui_widget_t* widget, rtgui_event_t* even
 		if (widget->on_size != RT_NULL) return widget->on_size(widget, event);
 		break;
 	}
+#endif
 
 	return RT_FALSE;
 }
@@ -397,8 +415,10 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget)
 	/* if there is no parent, do not update clip (please use toplevel widget API) */
 	if (parent == RT_NULL) return;
 
+#ifndef RTGUI_USING_SMALL_SIZE
 	/* increase clip sync */
 	widget->clip_sync ++;
+#endif
 
 	/* reset clip to extent */
 	rtgui_region_reset(&(widget->clip), &(widget->extent));

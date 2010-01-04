@@ -9,7 +9,6 @@ common/rtgui_theme.c
 common/asc12font.c
 common/asc16font.c
 common/color.c
-common/caret.c
 common/dc.c
 common/dc_buffer.c
 common/dc_hw.c
@@ -46,7 +45,6 @@ widgets/widget.c
 widgets/window.c
 widgets/workbench.c
 """)
-
 
 # The set of source files associated with this SConscript file.
 src_local = common_src + server_src + widgets_src

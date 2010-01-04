@@ -96,24 +96,30 @@ struct rtgui_widget
 
 	/* the widget extent */
 	rtgui_rect_t extent;
+#ifndef RTGUI_USING_SMALL_SIZE
 	rt_int16_t mini_width, mini_height;
 	rt_int16_t margin, margin_style;
+#endif
 
 	/* the rect clip */
 	rtgui_region_t clip;
+#ifndef RTGUI_USING_SMALL_SIZE
 	rt_uint32_t clip_sync;
+#endif
 
 	/* the event handler */
 	rt_bool_t (*event_handler)	(struct rtgui_widget* widget, struct rtgui_event* event);
 
 	/* call back */
-	rt_bool_t (*on_draw)		(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_focus_in)	(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_focus_out)	(struct rtgui_widget* widget, struct rtgui_event* event);
+#ifndef RTGUI_USING_SMALL_SIZE
+	rt_bool_t (*on_draw)		(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_mouseclick)	(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_key)			(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_size)		(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_command)		(struct rtgui_widget* widget, struct rtgui_event* event);
+#endif
 };
 typedef struct rtgui_widget rtgui_widget_t;
 
@@ -147,20 +153,24 @@ void rtgui_widget_focus(rtgui_widget_t * widget);
 void rtgui_widget_unfocus(rtgui_widget_t *widget);
 
 /* event handler for each command */
-void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
+#ifndef RTGUI_USING_SMALL_SIZE
+void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onkey(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onsize(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
+#endif
 
 /* get and set rect of widget */
 void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect);
 void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect);
 
+#ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width);
 void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height);
+#endif
 
 /* get the physical position of a logic point on widget */
 void rtgui_widget_point_to_device(rtgui_widget_t * widget, rtgui_point_t * point);

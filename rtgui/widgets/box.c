@@ -14,6 +14,7 @@
 #include <rtgui/dc.h>
 #include <rtgui/widgets/box.h>
 
+#ifndef RTGUI_USING_SMALL_SIZE
 static void _rtgui_box_constructor(rtgui_box_t *box)
 {
 	/* init widget and set event handler */
@@ -338,3 +339,5 @@ rt_uint32_t rtgui_box_get_height(rtgui_box_t* box)
 
 	return height;
 }
+#endif
+

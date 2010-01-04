@@ -61,8 +61,10 @@ rt_bool_t rtgui_iconbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
 		else
+#endif
 		{
 			rtgui_theme_draw_iconbox(iconbox);
 		}
@@ -162,6 +164,8 @@ void rtgui_iconbox_set_text_position(struct rtgui_iconbox* iconbox, int position
 		}
 	}
 
+#ifndef RTGUI_USING_SMALL_SIZE
 	rtgui_widget_set_miniwidth(RTGUI_WIDGET(iconbox), rect.x2);
 	rtgui_widget_set_miniheight(RTGUI_WIDGET(iconbox), rect.y2);
+#endif
 }

@@ -26,6 +26,15 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui_event* event);
 static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtgui_event* event);
 
+static void _rtgui_textbox_caret_timeout(void *parameter)
+{
+	rtgui_textbox_t* box;
+
+	box = (rtgui_textbox_t*)parameter;
+	
+	return ;
+}
+
 static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 {
 	rtgui_rect_t rect = {0, 0, RTGUI_TEXTBOX_DEFAULT_WIDTH, RTGUI_TEXTBOX_DEFAULT_HEIGHT};
@@ -40,8 +49,8 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_CENTER_VERTICAL;
 
 	/* set proper of control */
-	box->caret_x = box->caret_y = 0;
-	box->caret = rtgui_caret_create(RTGUI_WIDGET(box));
+	box->caret_timer = rtgui_timer_create(RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC, 
+		_rtgui_textbox_caret_timeout, box);
 
 	box->line = box->line_begin = box->position = 0;
 	box->type = RTGUI_TEXTBOX_SINGLE;
@@ -61,11 +70,8 @@ static void _rtgui_textbox_deconstructor(rtgui_textbox_t *box)
 		box->text = RT_NULL;
 	}
 
-	if (box->caret != RT_NULL)
-	{
-		rtgui_caret_destroy(box->caret);
-		box->caret = RT_NULL;
-	}
+	rtgui_timer_destory(box->caret_timer);
+	box->caret_timer = RT_NULL;
 }
 
 rtgui_type_t *rtgui_textbox_type_get(void)
@@ -111,9 +117,6 @@ static void rtgui_textbox_onmouse(struct rtgui_textbox* box, struct rtgui_event_
 		{
 			box->position = x / box->font_width;
 		}
-
-		rtgui_caret_set_point(box->caret, RTGUI_TEXTBOX_MARGIN + box->position * box->font_width, 2);
-		rtgui_caret_set_box(box->caret, 2, rtgui_rect_height(RTGUI_WIDGET(box)->extent) - 4);
 
 		/* set widget focus */
 		rtgui_widget_focus(RTGUI_WIDGET(box));
@@ -215,17 +218,14 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 
 	/* re-draw text box */
 	rtgui_theme_draw_textbox(box);
-	rtgui_caret_set_point(box->caret,
-		RTGUI_TEXTBOX_MARGIN + box->position * box->font_width , 2);
-	rtgui_caret_set_box(box->caret, 2, rtgui_rect_height(RTGUI_WIDGET(box)->extent) - 4);
 }
 
 static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui_event* event)
 {
 	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
 
-	/* show caret */
-	rtgui_caret_show(box->caret, box->caret_x, box->caret_y);
+	/* start caret timer */
+	rtgui_timer_start(box->caret_timer);
 
 	return RT_TRUE;
 }
@@ -234,8 +234,9 @@ static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtg
 {
 	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
 
+	/* stop caret timer */
+	rtgui_timer_stop(box->caret_timer);
 	/* hide caret */
-	rtgui_caret_hide(box->caret);
 
 	return RT_TRUE;
 }
@@ -247,18 +248,27 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else rtgui_theme_draw_textbox(box);
+		else 
+#endif
+			rtgui_theme_draw_textbox(box);
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_mouseclick != RT_NULL) widget->on_mouseclick(widget, event);
-		else rtgui_textbox_onmouse(box, (struct rtgui_event_mouse*)event);
+		else 
+#endif
+			rtgui_textbox_onmouse(box, (struct rtgui_event_mouse*)event);
 		return RT_TRUE;
 
 	case RTGUI_EVENT_KBD:
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
-		else rtgui_textbox_onkey(box, (struct rtgui_event_kbd*)event);
+		else 
+#endif
+			rtgui_textbox_onkey(box, (struct rtgui_event_kbd*)event);
 		return RT_TRUE;
 	}
 
@@ -348,3 +358,4 @@ void rtgui_widget_set_line_length(struct rtgui_textbox* box, rt_size_t length)
 	/* set line length */
 	box->line_length = length;
 }
+

@@ -98,10 +98,12 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 	case RTGUI_EVENT_COMMAND:
 		if (rtgui_container_dispatch_event(RTGUI_CONTAINER(widget), event) != RT_TRUE)
 		{
+#ifndef RTGUI_USING_SMALL_SIZE
 			if (widget->on_command != RT_NULL)
 			{
 				widget->on_command(widget, event);
 			}
+#endif
 		}
 		else return RT_TRUE;
 		break;
@@ -151,7 +153,9 @@ void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
 
 	/* reset toplevel widget clip to extent */
 	rtgui_region_reset(&(RTGUI_WIDGET(top)->clip), &(RTGUI_WIDGET(top)->extent));
+#ifndef RTGUI_USING_SMALL_SIZE
 	RTGUI_WIDGET(top)->clip_sync ++;
+#endif
 
 	/* subtract the screen rect */
 	screen_rect.x1 = screen_rect.y1 = 0;

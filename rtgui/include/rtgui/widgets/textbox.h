@@ -52,8 +52,7 @@ struct rtgui_textbox
 	rt_uint8_t* text;
 	rt_size_t font_width;
 
-	int caret_x, caret_y;
-	struct rtgui_caret* caret;
+	struct rtgui_timer* caret_timer;
 
 	/* widget private data */
 	rt_bool_t (*on_enter) 	(struct rtgui_widget* widget, struct rtgui_event* event);

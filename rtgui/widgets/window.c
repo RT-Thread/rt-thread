@@ -380,8 +380,11 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		}
 
 		win->style |= RTGUI_WIN_STYLE_ACTIVATE;
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else rtgui_win_ondraw(win);
+		else 
+#endif
+		rtgui_win_ondraw(win);
 
 		if (win->on_activate != RT_NULL)
 		{
@@ -391,8 +394,11 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 
 	case RTGUI_EVENT_WIN_DEACTIVATE:
 		win->style &= ~RTGUI_WIN_STYLE_ACTIVATE;
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else rtgui_win_ondraw(win);
+		else 
+#endif
+			rtgui_win_ondraw(win);
 
 		if (win->on_deactivate != RT_NULL)
 		{
@@ -401,17 +407,22 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_PAINT:
+#ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else rtgui_win_ondraw(win);
+		else
+#endif
+			rtgui_win_ondraw(win);
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
 		if (rtgui_container_dispatch_mouse_event(RTGUI_CONTAINER(win), (struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
+#ifndef RTGUI_USING_SMALL_SIZE
 			if (widget->on_mouseclick != RT_NULL)
 			{
 				return widget->on_mouseclick(widget, event);
 			}
+#endif
 		}
 		break;
 
@@ -420,11 +431,13 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		if (rtgui_widget_dispatch_mouse_event(widget,
 			(struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
+#ifndef RTGUI_USING_SMALL_SIZE
 			/* handle event in current widget */
 			if (widget->on_mousemotion != RT_NULL)
 			{
 				return widget->on_mousemotion(widget, event);
 			}
+#endif
 		}
 		else return RT_TRUE;
 #endif
