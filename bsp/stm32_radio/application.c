@@ -100,6 +100,8 @@ void rt_init_thread_entry(void *parameter)
 	/* RTGUI Initialization */
 #ifdef RT_USING_RTGUI
 	{
+		extern void rt_hw_key_init(void);
+
 		radio_rtgui_init();
 		rt_hw_key_init();
 	}
@@ -109,14 +111,15 @@ void rt_init_thread_entry(void *parameter)
 #ifdef RT_USING_LWIP
     {
         extern void lwip_sys_init(void);
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
+		extern void rt_hw_dm9000_init(void);
+		extern 
 
-	/* register ethernetif device */
-	rt_hw_dm9000_init();
-	/* init all device */
-	rt_device_init_all();
-#endif
+		eth_system_device_init();
+	
+		/* register ethernetif device */
+		rt_hw_dm9000_init();
+		/* init all device */
+		rt_device_init_all();
 
         /* init lwip system */
         lwip_sys_init();

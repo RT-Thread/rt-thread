@@ -215,7 +215,6 @@ File 11,1,<..\..\rtgui\widgets\title.c><title.c>
 File 11,1,<..\..\rtgui\widgets\toplevel.c><toplevel.c>
 File 11,1,<..\..\rtgui\server\mouse.c><mouse.c>
 File 11,1,<..\..\rtgui\server\topwin.c><topwin.c>
-File 11,1,<..\..\rtgui\common\caret.c><caret.c>
 File 11,1,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c>
 File 11,1,<..\..\rtgui\common\hz16font.c><hz16font.c>
 File 11,1,<..\..\rtgui\common\hz12font.c><hz12font.c>
