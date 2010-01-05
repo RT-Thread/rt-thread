@@ -42,99 +42,100 @@
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-/* Filesystem Initialization */
+    /* Filesystem Initialization */
 #ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
-		/* init the efsl filesystam*/
-		efsl_init();
+    {
+        /* init the device filesystem */
+        dfs_init();
+        /* init the efsl filesystam*/
+        efsl_init();
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
-			rt_kprintf("File System initialized!\n");
-		else
-			rt_kprintf("File System init failed!\n");
-	}
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+    }
 #endif
 
-/* LwIP Initialization */
+    /* LwIP Initialization */
 #ifdef RT_USING_LWIP
-	{
-		extern void lwip_sys_init(void);
-	
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
-	}
+    {
+        extern void lwip_sys_init(void);
+
+        /* init lwip system */
+        lwip_sys_init();
+        rt_kprintf("TCP/IP initialized!\n");
+    }
 #endif
 }
 
 /************** LED BLINK *******************/
 #include "lpc214x.h"
-#define LED1 ( 1<<16) //P1
-#define LED2 ( 1<<17) //P1
-#define LED3 ( 1<<18) //P1
-#define LED4 ( 1<<19) //P1
-char thread3_stack[512];
-struct rt_thread thread3;
-void thread3_entry(void* parameter)
+#define LED1     (1<<16) //P1
+#define LED2     (1<<17) //P1
+#define LED3     (1<<18) //P1
+#define LED4     (1<<19) //P1
+char thread_led1_stack[512];
+struct rt_thread thread_led1;
+void thread_led1_entry(void* parameter)
 {
- volatile unsigned int i;
- IO1DIR |= LED1;
- while(1)
- {
- IO1CLR = LED1;
- rt_thread_delay(20);
- IO1SET = LED1;
- rt_thread_delay(20);
- }
+    volatile unsigned int i;
+    IO1DIR |= LED1;
+    while(1)
+    {
+        IO1CLR = LED1;
+        rt_thread_delay( RT_TICK_PER_SECOND/3 ); /* delay 0.3s */
+        IO1SET = LED1;
+        rt_thread_delay( RT_TICK_PER_SECOND/3 );
+    }
 }
 
-char thread4_stack[512];
-struct rt_thread thread4;
-void thread4_entry(void* parameter)
+char thread_led2_stack[512];
+struct rt_thread thread_led2;
+void thread_led2_entry(void* parameter)
 {
- volatile unsigned int i;
- IO1DIR |= LED2;
- while(1)
- {
- IO1CLR = LED2;
- rt_thread_delay(30);
- IO1SET = LED2;
- rt_thread_delay(30);
- }
+    volatile unsigned int i;
+    IO1DIR |= LED2;
+    while(1)
+    {
+        IO1CLR = LED2;
+        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* delay 0.5s */
+        IO1SET = LED2;
+        rt_thread_delay( RT_TICK_PER_SECOND/2 );
+    }
 }
 /************** LED BLINK *******************/
 
 int rt_application_init()
 {
-	rt_thread_init(&thread3,
-		"led1",
-		thread3_entry, RT_NULL,
-		&thread3_stack[0], sizeof(thread3_stack),
-		20, 10);
+    rt_thread_init(&thread_led1,
+                   "led1",
+                   thread_led1_entry, RT_NULL,
+                   &thread_led1_stack[0], sizeof(thread_led1_stack),
+                   20, 10);
 
-	rt_thread_init(&thread4,
-		"led2",
-		thread4_entry, RT_NULL,
-		&thread4_stack[0], sizeof(thread4_stack),
-		25, 8);
-	rt_thread_startup(&thread3);
-	rt_thread_startup(&thread4);
+    rt_thread_init(&thread_led2,
+                   "led2",
+                   thread_led2_entry, RT_NULL,
+                   &thread_led2_stack[0], sizeof(thread_led2_stack),
+                   25, 8);
+    rt_thread_startup(&thread_led1);
+    rt_thread_startup(&thread_led2);
 
-	{
-		rt_thread_t init_thread;
-	
-		init_thread = rt_thread_create("init",
-									rt_init_thread_entry, RT_NULL,
-									1024, 8, 5);
-		rt_thread_startup(init_thread);
-	}
-	
-	rt_kprintf("enter list() to get function list!\n");
+    /* inint SD-crad and dm9000 */
+    {
+        rt_thread_t init_thread;
 
-	return 0;
+        init_thread = rt_thread_create("init",
+                                       rt_init_thread_entry, RT_NULL,
+                                       1024, 8, 5);
+        rt_thread_startup(init_thread);
+    }
+
+    rt_kprintf("\r\nenter list() to get function list!\r\n");
+
+    return 0;
 }
 
 /*@}*/

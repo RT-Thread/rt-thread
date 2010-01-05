@@ -57,84 +57,84 @@ extern int __bss_end;
  */
 void rtthread_startup(void)
 {
-	/* init hardware interrupt */
-	rt_hw_interrupt_init();
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* init board */
-	rt_hw_board_init();
+    /* init board */
+    rt_hw_board_init();
 
-	/* init tick */
-	rt_system_tick_init();
+    /* init tick */
+    rt_system_tick_init();
 
-	/* init kernel object */
-	rt_system_object_init();
+    /* init kernel object */
+    rt_system_object_init();
 
-	rt_show_version();
+    rt_show_version();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init timer system */
+    rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x40008000);
+    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x40008000);
 #else
-	/* init memory system */
-	rt_system_heap_init((void*)&__bss_end, (void*)0x40008000);
+    /* init memory system */
+    rt_system_heap_init((void*)&__bss_end, (void*)0x40008000);
 #endif
 #endif
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
 #ifdef RT_USING_HOOK /* if the hook is used */
-	/* set idle thread hook */
-	rt_thread_idle_sethook(0);
+    /* set idle thread hook */
+    rt_thread_idle_sethook(0);
 #endif
 
 #ifdef RT_USING_DEVICE
 #ifdef RT_USING_DFS
-	/* init sd card */
-	rt_hw_sdcard_init();
+    /* init sd card */
+    rt_hw_sdcard_init();
 #endif
 
 #ifdef RT_USING_LWIP
-	eth_system_device_init();
-	/* init ethernetif device */
-	rt_hw_dm9000_init();
+    eth_system_device_init();
+    /* init ethernetif device */
+    rt_hw_dm9000_init();
 #endif
 
-	/* init hardware serial device */
-	rt_hw_serial_init();
+    /* init hardware serial device */
+    rt_hw_serial_init();
 
-	/*init all registed devices*/
-	rt_device_init_all();
+    /*init all registed devices*/
+    rt_device_init_all();
 #endif
 
-	/* init application */
-	rt_application_init();
+    /* init application */
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("uart1");
+    /* init finsh */
+    finsh_system_init();
+    finsh_set_device("uart1");
 #endif
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 }
 
 int main (void)
 {
-	/* invoke rtthread_startup */
-	rtthread_startup();
+    /* invoke rtthread_startup */
+    rtthread_startup();
 
-	return 0;
+    return 0;
 }
 
 /*@}*/

@@ -84,7 +84,7 @@
 /* #define RT_USING_CPLUSPLUS */
 
 /* SECTION: DFS options */
-#define RT_USING_DFS
+/* #define RT_USING_DFS */
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
@@ -94,7 +94,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-#define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
