@@ -59,7 +59,7 @@ void rt_hw_uart_isr(struct rt_lm3s_serial* serial)
     rt_uint32_t status;
 
     device = (struct rt_device*)serial;
-    UARTIntStatus(serial->hw_base, true);
+    status = UARTIntStatus(serial->hw_base, true);
 
     /* clear interrupt status */
     UARTIntClear(serial->hw_base, status);
