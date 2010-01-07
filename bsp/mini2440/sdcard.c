@@ -100,7 +100,9 @@ static int sd_data_end(void)
 	finish=SDIDSTA;
 
 	while( !( ((finish&0x10)==0x10) | ((finish&0x20)==0x20) ))
+	{   rt_kprintf("data end\n");
 		finish=SDIDSTA;
+	}
 
 	if( (finish&0xfc) != 0x10 )
 	{
@@ -139,6 +141,7 @@ static int sd_cmd55(void)
 	if(sd_cmd_end(55, 1) == RT_ERROR)
 		return RT_ERROR;
 
+	SDICSTA=0xa00;
 	return RT_EOK;
 }
 
@@ -155,12 +158,13 @@ static void sd_sel_desel(char sel_desel)
 RECMDS7:
 		SDICARG =RCA << 16;
 		SDICCON = (0x1 << 9) | (0x1 << 8) | 0x47;
-
 		if(sd_cmd_end(7, 1) == RT_ERROR)
-	    		goto RECMDS7;
+			goto RECMDS7;
 
-		if( SDIRSP0 & (0x1e00 != 0x800))
-	    		goto RECMDS7;
+		SDICSTA = 0xa00;
+
+		if(SDIRSP0 & 0x1e00 != 0x800)
+			goto RECMDS7;
 	}
 	else
 	{
@@ -170,6 +174,7 @@ RECMDD7:
 
 		if(sd_cmd_end(7, 0) == RT_ERROR)
 	    		goto RECMDD7;
+		SDICSTA = 0x800;
 	}
 }
 
@@ -240,11 +245,10 @@ int sd_ocr(void)
 
 		/* if using real board, should replace code here. need to modify qemu in near future*/
 		/* Check end of ACMD41 */
-		//if( rt_hw_sd_cmd_end(41, 1) && SDIRSP0==0x80ff8000 )
-		if( sd_cmd_end(41, 1) == RT_EOK)
+		if( (sd_cmd_end(41, 1)==RT_EOK) & SDIRSP0==0x80ff8000 )
 		{
 			SDICSTA=0xa00;
-	    		return RT_EOK;
+			return RT_EOK;
 		}
 
 		sd_delay(200);
@@ -311,8 +315,8 @@ RECMD3:
     SDICSTA=0xa00;	/* Clear cmd_end(with rsp) */
 
 	RCA = (SDIRSP0 & 0xffff0000 )>>16;
-	SDIPRE=(PCLK/(SDCLK*2))-1; /* Normal clock=25MHz */
-	if( SDIRSP0 & (0x1e00!=0x600) )
+	SDIPRE=PCLK/(SDCLK)-1; /* Normal clock=25MHz */
+	if( SDIRSP0 & 0x1e00 != 0x600 )
 		goto RECMD3;
 
 	sd_sel_desel(1);
@@ -333,14 +337,18 @@ rt_uint8_t sd_readblock(rt_uint32_t address, rt_uint8_t* buf)
 	int status;
 
 	rd_cnt=0;
-	// SDICON |= (1<<1);
+	SDIFSTA = SDIFSTA | (1<<16);
+
 	SDIDCON = (2 << 22) | (1 << 19) | (1 << 17) | (1 << 16) | (1 << 14) | (2 << 12) | (1 << 0);
 	SDICARG = address;
 
 RERDCMD:
 	SDICCON = (0x1 << 9 ) | (0x1 << 8) | 0x51;
 	if(sd_cmd_end(17, 1) == RT_ERROR)
+	{
+		rt_kprintf("Read CMD Error\n");
 		goto RERDCMD;
+	}
 
 	SDICSTA = 0xa00;
 
@@ -348,7 +356,7 @@ RERDCMD:
 	{
 		if((SDIDSTA & 0x20) == 0x20)
 		{
-			SDIDSTA = 0x1 << 0x5;
+			SDIDSTA = (0x1 << 0x5);
 			break;
 		}
 		status = SDIFSTA;
@@ -369,13 +377,13 @@ RERDCMD:
 			rd_cnt++;
 			buf += 4;
 		}
-    	}
+	}
 	if(sd_data_end() == RT_ERROR)
 	{
 		rt_kprintf("Dat error\n");
 		return RT_ERROR;
 	}
-	SDIDSTA = 0x10;
+
 	SDIDCON = SDIDCON &~ (7<<12);
 	SDIFSTA = SDIFSTA & 0x200;
 	SDIDSTA = 0x10;
@@ -413,7 +421,7 @@ REWTCMD:
     		{
         		SDIDAT=*(rt_uint32_t*)buf;
         		wt_cnt++;
-	       	buf += 4;
+				buf += 4;
     		}
     	}
 	if(sd_data_end() == RT_ERROR)
@@ -551,8 +559,14 @@ void rt_hw_sdcard_init()
 	char dname[4];
 	char sname[8];
 
-    GPEUP  = 0xf83f;        // SDCMD, SDDAT[3:0] => PU En.
-    GPECON = 0xaaaaaaaa;	// SDCMD, SDDAT[3:0]
+	/* Enable PCLK into SDI Block */
+	CLKCON |= 1 << 9;
+
+	/* Setup GPIO as SD and SDCMD, SDDAT[3:0] Pull up En */
+    GPEUP  = GPEUP  & (~(0x3f << 5))   | (0x01 << 5);
+    GPECON = GPECON & (~(0xfff << 10)) | (0xaaa << 10);
+
+	RCA = 0;
 
 	if (sd_init() == RT_EOK)
 	{
