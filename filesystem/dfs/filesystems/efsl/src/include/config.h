@@ -46,7 +46,7 @@
  * but it will work for sure.
 */
 
-#define BYTE_ALIGNMENT
+/* #define BYTE_ALIGNMENT */
 
 /* Cache configuration
    -------------------

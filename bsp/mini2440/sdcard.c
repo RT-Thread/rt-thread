@@ -362,7 +362,7 @@ RERDCMD:
 		status = SDIFSTA;
 		if((status & 0x1000) == 0x1000)
 		{
-#if 0
+#if 1
 			register rt_uint32_t value;
 
 			value = SDIDAT;
@@ -372,8 +372,9 @@ RERDCMD:
 			buf[1] = (value >> 16) & 0xff;
 			buf[2] = (value >> 8) & 0xff;
 			buf[3] = value & 0xff;
-#endif
+#else
 			*(rt_uint32_t *)buf = SDIDAT;
+#endif
 			rd_cnt++;
 			buf += 4;
 		}
