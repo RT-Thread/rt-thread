@@ -363,7 +363,7 @@ void rt_hw_mmu_init(void)
 	mmu_setmtt(0x10000000,0x17f00000,0x10000000,RW_NCNB); //bank2
 	mmu_setmtt(0x18000000,0x1ff00000,0x18000000,RW_NCNB); //bank3
 	//mmu_setmtt(0x20000000,0x27f00000,0x20000000,RW_CB); //bank4
-	mmu_setmtt(0x20000000,0x27f00000,0x20000000,RW_CNB); //bank4 for STRATA Flash
+	mmu_setmtt(0x20000000,0x27f00000,0x20000000,RW_NCNB); //bank4 for  DM9000
 	mmu_setmtt(0x28000000,0x2ff00000,0x28000000,RW_NCNB); //bank5
 	//30f00000->30100000, 31000000->30200000
 	mmu_setmtt(0x30000000,0x30100000,0x30000000,RW_CB);	  //bank6-1
