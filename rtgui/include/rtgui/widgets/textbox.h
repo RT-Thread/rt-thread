@@ -27,8 +27,10 @@
 #define RTGUI_TEXTBOX_DEFAULT_WIDTH		80
 #define RTGUI_TEXTBOX_DEFAULT_HEIGHT	20
 
-#define RTGUI_TEXTBOX_SINGLE		0x00
-#define RTGUI_TEXTBOX_MULTI		0x00
+#define RTGUI_TEXTBOX_SINGLE			0x00
+#define RTGUI_TEXTBOX_MULTI				0x01
+#define RTGUI_TEXTBOX_CARET_SHOW		0x10
+#define RTGUI_TEXTBOX_CARET_HIDE		0x00
 
 struct rtgui_textbox_line
 {
@@ -42,11 +44,11 @@ struct rtgui_textbox
 	/* inherit from widget */
 	struct rtgui_widget parent;
 
-	/* text box type */
-	rt_ubase_t type;
+	/* text box flag */
+	rt_uint8_t flag;
 
 	/* current line and position */
-	rt_size_t line, line_begin, position, line_length;
+	rt_uint16_t line, line_begin, position, line_length;
 
 	rt_uint8_t* text;
 	rt_size_t font_width;

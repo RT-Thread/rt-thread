@@ -390,7 +390,6 @@ void rtgui_theme_draw_label(rtgui_label_t* label)
 	rtgui_dc_fill_rect(dc, &rect);
 
 	/* default left and center draw */
-	rect.y1 = rect.y1 + (rtgui_rect_height(rect) - 8)/2;
 	rtgui_dc_draw_text(dc, rtgui_label_get_text(label), &rect);
 
 	/* end drawing */
@@ -423,6 +422,17 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 		rect.x1 += RTGUI_TEXTBOX_MARGIN;
 
 		rtgui_dc_draw_text(dc, box->text, &rect);
+
+		/* draw caret */
+		if (box->flag & RTGUI_TEXTBOX_CARET_SHOW)
+		{
+			rect.x1 += box->position * box->font_width;
+			rect.x2 = rect.x1 + box->font_width;
+
+			rect.y1 = rect.y2 - 3;
+
+			rtgui_dc_fill_rect(dc, &rect);
+		}
 	}
 
 	/* end drawing */
@@ -457,6 +467,243 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 	}
 
 	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+}
+
+void rtgui_theme_draw_checkbox(rtgui_checkbox_t* checkbox)
+{
+	struct rtgui_dc* dc;
+	struct rtgui_rect rect, box_rect;
+
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(checkbox));
+	if (dc == RT_NULL) return;
+
+	/* get rect */
+	rtgui_widget_get_rect(RTGUI_WIDGET(checkbox), &rect);
+
+    /* fill rect */
+	rtgui_dc_fill_rect(dc, &rect);
+
+	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(checkbox)) == RT_TRUE)
+	{
+		/* draw focused border */
+		rtgui_rect_inflate(&rect, -1);
+		rtgui_dc_draw_focus_rect(dc, &rect);
+
+		rtgui_rect_inflate(&rect, 1);
+	}
+
+	/* draw check box */
+	box_rect = rect;
+	box_rect.x1 += 2;
+	box_rect.y1 += 2;
+	box_rect.x2 = rtgui_rect_height(rect) - 4;
+	box_rect.y2 = rtgui_rect_height(rect) - 4;
+
+	rtgui_dc_draw_rect(dc, &box_rect);
+	if (checkbox->status_down == RTGUI_CHECKBOX_STATUS_CHECKED)
+	{
+		rtgui_color_t save;
+
+		save = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox));
+
+		/* swap fore/back color */
+		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox)) = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox));
+
+		rtgui_rect_inflate(&box_rect, -2);
+		rtgui_dc_fill_rect(dc, &box_rect);
+
+		/* restore saved color */
+		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox)) = save;
+	}
+
+	/* draw text */
+	rect.x1 += rtgui_rect_height(rect) - 4 + 5;
+	rtgui_dc_draw_text(dc, rtgui_label_get_text(RTGUI_LABEL(checkbox)), &rect);
+
+	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+
+	return;
+}
+
+void rtgui_theme_draw_slider(struct rtgui_slider* slider)
+{
+	/* draw button */
+	struct rtgui_dc* dc;
+	int i, xsize, x0;
+	rtgui_rect_t r, focus_rect, slider_rect, slot_rect;
+
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(slider));
+	if (dc == RT_NULL) return;
+
+	/* get widget rect */
+	rtgui_widget_get_rect(RTGUI_WIDGET(slider), &focus_rect);
+	/* fill widget rect with background color */
+	rtgui_dc_fill_rect(dc, &focus_rect);
+	r = focus_rect;
+
+	if (slider->orient == RTGUI_VERTICAL)
+	{
+		rtgui_rect_inflate(&r, -1);
+		xsize = r.y2 - r.y1  + 1 - slider->thumb_width;
+		x0 = r.y1 + slider->thumb_width / 2;
+
+		/* calculate thumb position */
+		slider_rect = r;
+		slider_rect.x1 = 5;
+		slider_rect.y1 = x0 + xsize * (slider->value - slider->min) / (slider->max - slider->min) - slider->thumb_width/2;
+		slider_rect.y2  = slider_rect.y1 + slider->thumb_width;
+
+		/* calculate slot position */
+		slot_rect.y1 = x0;
+		slot_rect.y2 = x0 + xsize;
+		slot_rect.x1 = (slider_rect.x1 + slider_rect.x2) /2 -1;
+		slot_rect.x2 = slot_rect.x1 +3;
+		/* draw slot */
+		rtgui_dc_draw_border(dc, &slot_rect, RTGUI_BORDER_RAISE);
+
+		/* draw the ticks */
+		for (i = 0; i <= slider->ticks; i++)
+		{
+			int x = x0 + xsize * i / slider->ticks;
+			rtgui_dc_draw_hline(dc, 1, 3, x);
+		}
+
+		/* draw the thumb */
+		rtgui_dc_fill_rect(dc, &slider_rect);
+		rtgui_dc_draw_border(dc, &slider_rect, RTGUI_BORDER_RAISE);
+	}
+	else
+	{
+		rtgui_rect_inflate(&r, -1);
+		xsize = r.x2 - r.x1  + 1 - slider->thumb_width;
+		x0 = r.x1 + slider->thumb_width / 2;
+
+		/* calculate thumb position */
+		slider_rect = r;
+		slider_rect.y1 = 5;
+		slider_rect.x1 = x0 + xsize * (slider->value - slider->min) / (slider->max - slider->min) - slider->thumb_width/2;
+		slider_rect.x2  = slider_rect.x1 + slider->thumb_width;
+
+		/* calculate slot position */
+		slot_rect.x1 = x0;
+		slot_rect.x2 = x0 + xsize;
+		slot_rect.y1 = (slider_rect.y1 + slider_rect.y2) /2 -1;
+		slot_rect.y2 = slot_rect.y1 +3;
+		/* draw slot */
+		rtgui_dc_draw_border(dc, &slot_rect, RTGUI_BORDER_RAISE);
+
+		/* draw the ticks */
+		for (i = 0; i <= slider->ticks; i++)
+		{
+			int x = x0 + xsize * i / slider->ticks;
+			rtgui_dc_draw_vline(dc, x, 1, 3);
+		}
+
+		/* draw the thumb */
+		rtgui_dc_fill_rect(dc, &slider_rect);
+		rtgui_dc_draw_border(dc, &slider_rect, RTGUI_BORDER_RAISE);
+	}
+
+	/* draw focus */
+	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(slider)))
+	{
+		rtgui_dc_draw_focus_rect(dc, &focus_rect);
+	}
+
+	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+	return;
+}
+
+
+void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
+{
+	/* draw progress bar */
+	struct rtgui_dc* dc;
+	struct rtgui_rect rect;
+    int max = bar->range;
+    int pos = bar->position;
+    int left;
+
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(&(bar->parent));
+	if (dc == RT_NULL) return;
+
+	rtgui_widget_get_rect(&(bar->parent), &rect);
+
+	/* fill button rect with background color */
+	bar->parent.gc.background = RTGUI_RGB(212, 208, 200);
+	rtgui_dc_fill_rect(dc, &rect);
+
+    /* draw border */
+    bar->parent.gc.foreground = RTGUI_RGB(128, 128, 128);
+    rtgui_dc_draw_hline(dc, rect.x1, rect.x2 - 1, rect.y1);
+    rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2 - 1);
+    bar->parent.gc.foreground = RTGUI_RGB(64, 64, 64);
+    rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1 + 1);
+    rtgui_dc_draw_vline(dc, rect.x1 + 1, rect.y1, rect.y2);
+
+	bar->parent.gc.foreground = RTGUI_RGB(212, 208, 200);
+	rtgui_dc_draw_hline(dc, rect.x1, rect.x2 + 1, rect.y2);
+	rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2);
+
+	bar->parent.gc.foreground = RTGUI_RGB(255, 255, 255);
+	rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2, rect.y2 - 1);
+	rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1 + 1, rect.y2 - 1);
+
+    /* Nothing to draw */
+    if (max == 0)
+    {
+        rtgui_dc_end_drawing(dc);
+        return;
+    }
+
+    left = max - pos;
+	rtgui_rect_inflate(&rect, -2);
+    bar->parent.gc.background = RTGUI_RGB(0, 0, 255);
+
+    if (bar->orientation == RTGUI_VERTICAL)
+    {
+        /* Vertical bar grows from bottom to top */
+        int dy = (rtgui_rect_height(rect) * left) / max;
+        rect.y1 += dy;
+        rtgui_dc_fill_rect(dc, &rect);
+    }
+    else
+    {
+        /* Horizontal bar grows from left to right */
+        rect.x2 -= (rtgui_rect_width(rect) * left) / max;
+        rtgui_dc_fill_rect(dc, &rect);
+    }
+
+	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+	return;
+}
+
+void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline)
+{
+	struct rtgui_dc* dc;
+	struct rtgui_rect rect;
+	
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(staticline));
+	if (dc == RT_NULL) return ;
+	rtgui_widget_get_rect(RTGUI_WIDGET(staticline), &rect);
+	
+	if (staticline->orientation == RTGUI_HORIZONTAL)
+	{
+		rtgui_dc_draw_horizontal_line(dc, rect.x1, rect.x2, rect.y1);
+	}
+	else
+	{
+		rtgui_dc_draw_vertical_line(dc, rect.x1, rect.y1, rect.y2);
+	}
+	
 	rtgui_dc_end_drawing(dc);
 }
 

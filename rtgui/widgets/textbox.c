@@ -30,9 +30,17 @@ static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtg
 static void _rtgui_textbox_caret_timeout(struct rtgui_timer* timer, void* parameter)
 {
 	rtgui_textbox_t* box;
-
-	box = (rtgui_textbox_t*)parameter;
 	
+	box = (rtgui_textbox_t*)parameter;
+	/* set caret flag */
+	if (box->flag & RTGUI_TEXTBOX_CARET_SHOW)
+		box->flag &= ~RTGUI_TEXTBOX_CARET_SHOW;
+	else
+		box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
+
+	/* re-darw textbox */
+	rtgui_theme_draw_textbox(box);
+
 	return ;
 }
 
@@ -54,7 +62,7 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 		_rtgui_textbox_caret_timeout, box);
 
 	box->line = box->line_begin = box->position = 0;
-	box->type = RTGUI_TEXTBOX_SINGLE;
+	box->flag = RTGUI_TEXTBOX_SINGLE;
 
 	/* allocate default line buffer */
 	box->text = RT_NULL;
@@ -131,7 +139,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 	RT_ASSERT(box != RT_NULL);
 	RT_ASSERT(event != RT_NULL);
 
-	if (event->type != RTGUI_KEYDOWN)
+	if (event->type != RTGUI_KEYUP)
 		return ;
 
 	length = rt_strlen((const char*)box->text);
@@ -217,6 +225,9 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 		}
 	}
 
+	/* set caret to show */
+	box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
+
 	/* re-draw text box */
 	rtgui_theme_draw_textbox(box);
 }
@@ -289,7 +300,6 @@ struct rtgui_textbox* rtgui_textbox_create(const char* text)
 		rtgui_textbox_set_value(box, text);
 
 		rtgui_font_get_metrics(RTGUI_WIDGET(box)->gc.font, "h", &rect);
-		box->font_width = rtgui_rect_width(rect);
 	}
 
 	return box;

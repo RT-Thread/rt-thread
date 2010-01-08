@@ -42,7 +42,7 @@ extern "C" {
 
 #define RTGUI_WIDGET_UNFOCUS(w)			(w)->flag &= ~RTGUI_WIDGET_FLAG_FOCUS
 #define RTGUI_WIDGET_FOCUS(w)			(w)->flag |= RTGUI_WIDGET_FLAG_FOCUS
-#define RTGUI_WIDGET_IS_FOCUS(w)		((w)->flag & RTGUI_WIDGET_FLAG_FOCUS)
+#define RTGUI_WIDGET_IS_FOCUSED(w)		((w)->flag & RTGUI_WIDGET_FLAG_FOCUS)
 
 #define RTGUI_WIDGET_IS_FOCUSABLE(w) 	((w)->flag & RTGUI_WIDGET_FLAG_FOCUSABLE)
 
@@ -194,6 +194,10 @@ rtgui_widget_t* rtgui_widget_get_toplevel(rtgui_widget_t* widget);
 void rtgui_widget_show(rtgui_widget_t* widget);
 void rtgui_widget_hide(rtgui_widget_t* widget);
 void rtgui_widget_update(rtgui_widget_t* widget);
+
+/* get parent color */
+rtgui_color_t rtgui_widget_get_parent_foreground(rtgui_widget_t* widget);
+rtgui_color_t rtgui_widget_get_parent_background(rtgui_widget_t* widget);
 
 /* get the next sibling of widget */
 rtgui_widget_t* rtgui_widget_get_next_sibling(rtgui_widget_t* widget);

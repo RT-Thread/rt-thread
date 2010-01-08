@@ -21,6 +21,10 @@
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/textbox.h>
 #include <rtgui/widgets/iconbox.h>
+#include <rtgui/widgets/checkbox.h>
+#include <rtgui/widgets/slider.h>
+#include <rtgui/widgets/progressbar.h>
+#include <rtgui/widgets/staticline.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +37,10 @@ void rtgui_theme_draw_button(rtgui_button_t* btn);
 void rtgui_theme_draw_label(rtgui_label_t* label);
 void rtgui_theme_draw_textbox(rtgui_textbox_t* box);
 void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox);
+void rtgui_theme_draw_checkbox(rtgui_checkbox_t* checkbox);
+void rtgui_theme_draw_slider(struct rtgui_slider* slider);
+void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar);
+void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline);
 
 rt_uint16_t rtgui_theme_get_selected_height(void);
 void rtgui_theme_draw_selected(struct rtgui_dc* dc, rtgui_rect_t *rect);

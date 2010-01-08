@@ -34,9 +34,13 @@ server/topwin.c
 widgets_src = Split("""
 widgets/box.c
 widgets/button.c
+widgets/checkbox.c
 widgets/container.c
 widgets/iconbox.c
 widgets/label.c
+widgets/progressbar.c
+widgets/slider.c
+widgets/staticline.c
 widgets/textbox.c
 widgets/title.c
 widgets/toplevel.c
