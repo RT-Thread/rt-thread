@@ -24,8 +24,6 @@
 //--------------------------------------------------------
 
 #define DM9000_PHY          0x40    /* PHY address 0x01 */
-#define RST_1()             GPIO_SetBits(GPIOF,GPIO_Pin_6)
-#define RST_0()             GPIO_ResetBits(GPIOF,GPIO_Pin_6)
 
 #define MAX_ADDR_LEN 6
 enum DM9000_PHY_mode
@@ -155,70 +153,80 @@ void rt_dm9000_isr(int irqno)
 {
     rt_uint16_t int_status;
     rt_uint16_t last_io;
+    rt_uint32_t eint_pend;
 
-    last_io = DM9000_IO;
-
-    /* Disable all interrupts */
-    dm9000_io_write(DM9000_IMR, IMR_PAR);
-
-    /* Got DM9000 interrupt status */
-    int_status = dm9000_io_read(DM9000_ISR);               /* Got ISR */
-    dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
-
-	DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
-
-    /* receive overflow */
-    if (int_status & ISR_ROS)
+    eint_pend = EINTPEND;
+    /* EINT7 for DM9000 */
+    if((eint_pend & 0x80) == 0x80)
     {
-        rt_kprintf("overflow\n");
+
+		last_io = DM9000_IO;
+
+		/* Disable all interrupts */
+		dm9000_io_write(DM9000_IMR, IMR_PAR);
+
+		/* Got DM9000 interrupt status */
+		int_status = dm9000_io_read(DM9000_ISR);               /* Got ISR */
+		dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
+
+		DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
+
+		/* receive overflow */
+		if (int_status & ISR_ROS)
+		{
+			rt_kprintf("overflow\n");
+		}
+
+		if (int_status & ISR_ROOS)
+		{
+			rt_kprintf("overflow counter overflow\n");
+		}
+
+		/* Received the coming packet */
+		if (int_status & ISR_PRS)
+		{
+			/* disable receive interrupt */
+			dm9000_device.imr_all = IMR_PAR | IMR_PTM;
+
+			/* a frame has been received */
+			eth_device_ready(&(dm9000_device.parent));
+		}
+
+		/* Transmit Interrupt check */
+		if (int_status & ISR_PTS)
+		{
+			/* transmit done */
+			int tx_status = dm9000_io_read(DM9000_NSR);    /* Got TX status */
+
+			if (tx_status & (NSR_TX2END | NSR_TX1END))
+			{
+				dm9000_device.packet_cnt --;
+				if (dm9000_device.packet_cnt > 0)
+				{
+					DM9000_TRACE("dm9000 isr: tx second packet\n");
+
+					/* transmit packet II */
+					/* Set TX length to DM9000 */
+					dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
+					dm9000_io_write(DM9000_TXPLH, (dm9000_device.queue_packet_len >> 8) & 0xff);
+
+					/* Issue TX polling command */
+					dm9000_io_write(DM9000_TCR, TCR_TXREQ);	/* Cleared after TX complete */
+				}
+
+				/* One packet sent complete */
+				rt_sem_release(&sem_ack);
+			}
+		}
+
+		/* Re-enable interrupt mask */
+		dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+
+		DM9000_IO = last_io;
     }
 
-    if (int_status & ISR_ROOS)
-    {
-        rt_kprintf("overflow counter overflow\n");
-    }
-
-    /* Received the coming packet */
-    if (int_status & ISR_PRS)
-    {
-	    /* disable receive interrupt */
-	    dm9000_device.imr_all = IMR_PAR | IMR_PTM;
-
-        /* a frame has been received */
-        eth_device_ready(&(dm9000_device.parent));
-    }
-
-    /* Transmit Interrupt check */
-    if (int_status & ISR_PTS)
-    {
-        /* transmit done */
-        int tx_status = dm9000_io_read(DM9000_NSR);    /* Got TX status */
-
-        if (tx_status & (NSR_TX2END | NSR_TX1END))
-        {
-            dm9000_device.packet_cnt --;
-            if (dm9000_device.packet_cnt > 0)
-            {
-            	DM9000_TRACE("dm9000 isr: tx second packet\n");
-
-                /* transmit packet II */
-                /* Set TX length to DM9000 */
-                dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
-                dm9000_io_write(DM9000_TXPLH, (dm9000_device.queue_packet_len >> 8) & 0xff);
-
-                /* Issue TX polling command */
-                dm9000_io_write(DM9000_TCR, TCR_TXREQ);	/* Cleared after TX complete */
-            }
-
-            /* One packet sent complete */
-            rt_sem_release(&sem_ack);
-        }
-    }
-
-    /* Re-enable interrupt mask */
-    dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
-
-    DM9000_IO = last_io;
+    /* clear EINT pending bit */
+    EINTPEND = eint_pend;
 }
 
 /* RT-Thread Device Interface */
@@ -575,10 +583,18 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
 void rt_hw_dm9000_init()
 {
-    // GPFCON = 0x000055AA;
-    // GPFUP = 0x000000FF;
-
-    // BANKCON4 = ((B4_Tacs<<13)+(B4_Tcos<<11)+(B4_Tacc<<8)+(B4_Tcoh<<6)+(B4_Tah<<4)+(B4_Tacp<<2)+(B4_PMC));
+	/* Set GPF7 as EINT7 */
+    GPFCON = GPFCON & (~(3 << 14)) | (2 << 14);
+    GPFUP = GPFUP | (1 << 7);
+    /* EINT7 High level interrupt */
+	EXTINT0 = (EXTINT0 & (~(0x7 << 28))) | (0x1 << 28);
+	/* Enable EINT7 */
+	EINTMASK = EINTMASK & (~(1<<7));
+	/* Set GPA15 as nGCS4 */
+	//GPACON |= 1 << 15;
+	/* DM9000 width 16, wait enable */
+	//BWSCON = BWSCON & (~(0x7<<16)) | (0x5<<16);
+	//BANKCON4 = (1<<13) | (1<<11) | (0x6<<8) | (1<<6) | (1<<4) | (0<<2) | (0);
 
     rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
@@ -615,8 +631,8 @@ void rt_hw_dm9000_init()
     eth_device_init(&(dm9000_device.parent), "e0");
 
     /* instal interrupt */
-	// rt_hw_interrupt_install(INT_EXIT7, rt_dm9000_isr, RT_NULL);
-	// rt_hw_interrupt_umask(INT_EXIT7);
+	rt_hw_interrupt_install(INTEINT4_7, rt_dm9000_isr, RT_NULL);
+	rt_hw_interrupt_umask(INTEINT4_7);
 }
 
 void dm9000a(void)
