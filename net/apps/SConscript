@@ -1,0 +1,10 @@
+Import('env')
+Import('rtconfig')
+Import('RTT_ROOT')
+
+# The set of source files associated with this SConscript file.
+src_local = Glob('*.c')
+
+obj = env.Object(src_local)
+
+Return('obj')

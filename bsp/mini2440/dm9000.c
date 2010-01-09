@@ -591,10 +591,10 @@ void rt_hw_dm9000_init()
 	/* Enable EINT7 */
 	EINTMASK = EINTMASK & (~(1<<7));
 	/* Set GPA15 as nGCS4 */
-	//GPACON |= 1 << 15;
+	GPACON |= 1 << 15;
 	/* DM9000 width 16, wait enable */
-	//BWSCON = BWSCON & (~(0x7<<16)) | (0x5<<16);
-	//BANKCON4 = (1<<13) | (1<<11) | (0x6<<8) | (1<<6) | (1<<4) | (0<<2) | (0);
+	BWSCON = BWSCON & (~(0x7<<16)) | (0x5<<16);
+	BANKCON4 = (1<<13) | (1<<11) | (0x6<<8) | (1<<6) | (1<<4) | (0<<2) | (0);
 
     rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
