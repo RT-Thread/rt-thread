@@ -62,15 +62,15 @@ typedef unsigned int size_t;
 #define strlen	rt_strlen
 #define strncpy	rt_strncpy
 #define strncmp	rt_strncmp
-#else
-#include <string.h>
-#endif
 
 int strcmp (const char *s1, const char *s2);
 char *strdup(const char *s);
 
 int isalpha( int ch );
 int atoi(const char* s);
+#else
+#include <string.h>
+#endif
 #endif
 
 #define FINSH_VERSION_MAJOR			0

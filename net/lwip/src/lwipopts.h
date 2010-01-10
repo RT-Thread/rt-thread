@@ -189,7 +189,11 @@
 #define TCP_SNDLOWAT                (TCP_SND_BUF/2)
 
 /* TCP receive window. */
-#define TCP_WND                     1500
+#ifdef RT_LWIP_TCP_WND
+#define TCP_WND                 RT_LWIP_TCP_WND
+#else
+#define TCP_WND                 1500
+#endif
 
 /* Maximum number of retransmissions of data segments. */
 #define TCP_MAXRTX                  12

@@ -90,14 +90,14 @@
 
 /* SECTION: Device filesystem support */
 /* using DFS support */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define RT_USING_DFS_EFSL
 #define RT_USING_DFS_YAFFS2
 
 #define RT_USING_WORKDIR
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
+#define DFS_FILESYSTEMS_MAX		2
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					16
 /* the max number of cached sector 		*/
@@ -127,7 +127,10 @@
 #define RT_LWIP_TCP_PCB_NUM	5
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	10240
+#define RT_LWIP_TCP_SND_BUF	1024*10
+
+/* TCP receive window. */
+#define RT_LWIP_TCP_WND	1024
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */

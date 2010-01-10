@@ -25,6 +25,7 @@
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_board_init(void);
+extern void rt_hw_rtc_init(void);
 extern void rt_serial_init(void);
 extern void rt_system_timer_init(void);
 extern void rt_system_scheduler_init(void);
@@ -101,6 +102,9 @@ void rtthread_startup(void)
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif
+
+	/* rtc init */
+	rt_hw_rtc_init();
 
 	/*init all registed devices */
 	rt_device_init_all();

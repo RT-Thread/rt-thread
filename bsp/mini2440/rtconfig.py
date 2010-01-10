@@ -11,6 +11,7 @@ RT_USING_DFS_YAFFS2 = False
 
 # lwip options
 RT_USING_LWIP = True
+RT_USING_WEBSERVER = False
 
 # rtgui options
 RT_USING_RTGUI = True
@@ -76,6 +77,9 @@ elif PLATFORM == 'armcc':
     LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
 
     EXEC_PATH += '/arm/bin40/'
+
+    if RT_USING_WEBSERVER:
+        CFLAGS +=  ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'

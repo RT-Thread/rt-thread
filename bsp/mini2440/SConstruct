@@ -35,6 +35,9 @@ if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
 	objs = objs + SConscript(RTT_ROOT + '/net/apps/SConscript', variant_dir='build/net/apps', duplicate=0)
 
+if rtconfig.RT_USING_WEBSERVER:
+	objs = objs + SConscript(RTT_ROOT + '/net/webserver/SConscript', variant_dir='build/net/webserver', duplicate=0)
+
 if rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript(RTT_ROOT + '/rtgui/SConscript', variant_dir='build/rtgui', duplicate=0)
 
