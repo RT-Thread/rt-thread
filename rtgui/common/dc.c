@@ -138,6 +138,21 @@ void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 	rtgui_dc_draw_vline(dc, rect->x2 - 1, rect->y1, rect->y2);
 }
 
+void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect)
+{
+	int r = 3;
+
+	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y1 + r, r, 180, 270);
+	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y1 + r, r, 270, 360);
+	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y2 - r, r, 90, 180);
+	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y2 - r, r, 0, 90);
+
+	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y1);
+	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y2);
+	rtgui_dc_draw_vline(dc, rect->x1, rect->y1 + r, rect->y2 - r);
+	rtgui_dc_draw_vline(dc, rect->x2, rect->y1 + r, rect->y2 - r);
+}
+
 void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
 	if (dc == RT_NULL) return;

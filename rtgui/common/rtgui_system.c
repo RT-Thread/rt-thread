@@ -658,3 +658,168 @@ void rtgui_free(void* ptr)
 
 	rt_free(ptr);
 }
+
+#if 0
+/*
+ * read/write lock implementation
+ */
+struct rtgui_rwlock* rtgui_rwlock_create()
+{
+    struct rtgui_rwlock* rwlock;
+
+    rwlock = rtgui_malloc(sizeof(struct rtgui_rwlock));
+    if (rwlock != RT_NULL)
+    {
+        rwlock->stat = RTGUI_RWLOCK_UNLOCK;
+        rwlock->reader_count = 0;
+
+        rt_sem_init(&(rwlock->rd_lock), "rwr", 0, RT_IPC_FLAG_FIFO);
+        rt_sem_init(&(rwlock->wr_lock), "rww", 0, RT_IPC_FLAG_FIFO);
+    }
+
+    return rwlock;
+}
+
+rt_err_t rtgui_rwlock_delete(struct rtgui_rwlock* rwlock)
+{
+    RT_ASSERT(rwlock != RT_NULL);
+
+    rt_sem_detach(&(rwlock->rd_lock));
+    rt_sem_detach(&(rwlock->wr_lock));
+
+    rtgui_free(rwlock);
+
+	return RT_EOK;
+}
+
+rt_err_t rtgui_rwlock_read_take(struct rtgui_rwlock* rwlock, rt_int32_t timeout)
+{
+    rt_err_t result;
+    rt_ubase_t level;
+
+    RT_ASSERT(rwlock != RT_NULL);
+    level = rt_hw_interrupt_disable();
+    switch (rwlock->stat)
+    {
+        case RTGUI_RWLOCK_UNLOCK:
+            break;
+
+        case RTGUI_RWLOCK_READING:
+            if (rwlock->wr_lock.parent.suspend_thread_count > 0)
+            {
+                /* suspend read thread */
+                result = rt_sem_take(&rwlock->rd_lock, timeout);
+                if (result != RT_EOK)
+                {
+                    rt_hw_interrupt_enable(level);
+                    return result;
+                }
+            }
+            break;
+
+        case RTGUI_RWLOCK_WRITTING:
+            /* suspend read thread */
+            result = rt_sem_take(&(rwlock->rd_lock), timeout);
+            if (result != RT_EOK)
+            {
+                rt_hw_interrupt_enable(level);
+                return result;
+            }
+            break;
+    }
+
+    /* get rwlock */
+    rwlock->reader_count ++;
+    rwlock->stat = RTGUI_RWLOCK_READING;
+
+    rt_hw_interrupt_enable(level);
+}
+
+rt_err_t rtgui_rwlock_write_take(struct rtgui_rwlock* rwlock, rt_int32_t timeout)
+{
+    rt_err_t result;
+    rt_ubase_t level;
+
+    RT_ASSERT(rwlock != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
+	rwlock->stat = RTGUI_RWLOCK_WRITTING;
+	result = rt_sem_take(&(rwlock->wr_lock), timeout);
+
+	if (result != RT_EOK)
+	{
+		if (rwlock->wr_lock.parent.suspend_thread_count == 0)
+		{
+			if (rwlock->reader_count > 0)
+				rwlock->stat = RTGUI_RWLOCK_READING;
+		}
+	}
+    rt_hw_interrupt_enable(level);
+
+	return result;
+}
+
+rt_err_t rtgui_rwlock_read_release(struct rtgui_rwlock* rwlock)
+{
+    rt_ubase_t level;
+
+    RT_ASSERT(rwlock != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
+    switch (rwlock->stat)
+    {
+    case RTGUI_RWLOCK_UNLOCK:
+        ASSERT(0);
+        break;
+
+    case RTGUI_RWLOCK_READING:
+        rwlock->reader_count --;
+        if (rwlock->reader_count == 0)
+            rwlock->stat = RTGUI_RWLOCK_UNLOCK;
+        break;
+
+    case RTGUI_RWLOCK_WRITTING:
+        rwlock->reader_count --;
+
+        if (rwlock->reader_count == 0)
+        {
+            /* resume write */
+            rt_sem_release(&(rwlock->wr_lock));
+        }
+        break;
+    }
+    rt_hw_interrupt_enable(level);
+}
+
+rt_err_t rtgui_rwlock_write_release(struct rtgui_rwlock* rwlock)
+{
+    rt_err_t result;
+    rt_ubase_t level;
+
+    RT_ASSERT(rwlock != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
+	result = rt_sem_release(&(rwlock->wr_lock));
+
+	if ((result == RT_EOK) && (rwlock->wr_lock.parent.suspend_thread_count == 0))
+	{
+		rt_uint32_t index, reader_thread_count;
+
+		reader_thread_count = rwlock->rd_lock.parent.suspend_thread_count;
+		if (reader_thread_count > 0)
+		{
+			rwlock->stat = RTGUI_RWLOCK_READING;
+
+			/* resume all reader thread */
+			for (index = 0; index < reader_thread_count; index ++)
+			{
+				rt_sem_release(&(rwlock->rd_lock));
+			}
+		}
+		else rwlock->stat = RTGUI_RWLOCK_UNLOCK;
+	}
+	rt_hw_interrupt_enable(level);
+
+	return result;
+}
+#endif

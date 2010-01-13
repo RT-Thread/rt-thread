@@ -42,6 +42,24 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 	if (event->button & RTGUI_MOUSE_BUTTON_DOWN &&
 		event->button & RTGUI_MOUSE_BUTTON_LEFT)
 	{
+		int bord_size;
+		struct rtgui_rect rect;
+
+		/* get widget rect */
+		rtgui_widget_get_rect(RTGUI_WIDGET(radiobox), &rect);
+
+		/* get board size */
+		if (radiobox->orient == RTGUI_VERTICAL)
+			bord_size = radiobox->item_size;
+		else
+		{
+			struct rtgui_rect bord_rect;
+			
+			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &bord_rect);
+			bord_size = rtgui_rect_height(bord_rect);
+		}
+		rtgui_rect_inflate(&rect, - bord_size);
+
 		if (radiobox->orient == RTGUI_VERTICAL)
 		{
 		}
@@ -51,68 +69,6 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 
 		rtgui_widget_focus(RTGUI_WIDGET(radiobox));
 	}
-}
-
-void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
-{
-	struct rtgui_dc* dc;
-	struct rtgui_rect rect, item_rect, radio_rect;
-	rt_size_t item_height;
-
-	/* begin drawing */
-	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(label));
-	if (dc == RT_NULL) return;
-
-	rtgui_widget_get_rect(RTGUI_WIDGET(label), &rect);
-    rtgui_dc_fill_rect(dc, &rect);
-
-    rtgui_dc_get_text_metrix(dc, "H", &item_rect);
-    item_height = rtgui_rect_height(item_rect);
-    radio_rect.x1 = 0; radio_rect.y1 = 0;
-    radio_rect.x2 = radio_rect.x1 + item_height;
-    radio_rect.y2 = radio_rect.y1 + item_height;
-
-    /* draw box */
-    rtgui_rect_inflat(&rect, -3);
-    rtgui_dc_draw_round_rect(dc, &rect);
-    if (radiobox->text != RT_NULL)
-    {
-        /* draw group text */
-        rtgui_dc_get_text_metrix(dc, radiobox->text, &item_rect);
-        rtgui_rect_moveto(&item_rect, rect.x1 + 5, rect.y1);
-        rtgui_dc_fill_rect(dc, &item_rect);
-
-        rtgui_dc_draw_text(dc, radiobox->text, &item_rect);
-    }
-
-    /* set the first text rect */
-    item_rect = rect;
-    item_rect.x1 += 5;
-    item_rect.y1 += item_height;
-    item_rect.y2 = item_rect.y1 + item_height;
-
-    /* draw each radio button */
-    for (index = 0; index < radiobox->item_count; index ++)
-    {
-        if (text_rect.y2 > rect.y2 - item_height) break;
-
-        /* draw radio */
-        rtgui_dc_draw_circyle(dc, );
-        if (radiobox->item_selection == index)
-        {
-            rtgui_dc_draw_focus_rect(dc, );
-            rtgui_dc_fill_circyle(dc, );
-        }
-
-        /* draw text */
-        rtgui_dc_draw_text(dc, radiobox->items[index], text_rect);
-
-        text_rect.y1 += item_height;
-        text_rect.y2 += item_height;
-    }
-
-    /* end drawing */
-	rtgui_dc_end_drawing(dc);
 }
 
 rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
@@ -184,6 +140,30 @@ struct rtgui_radiobox* rtgui_radiobox_create(int orient, char** radio_items, int
 
 		/* set proper of control */
 		rtgui_radiobox_set_orientation(radiobox, orient);
+		if (orient == RTGUI_VERTICAL)
+		{
+			struct rtgui_rect rect;
+			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &rect);
+
+			radiobox->item_size = rtgui_rect_height(rect);
+		}
+		else
+		{
+			int index;
+			struct rtgui_font* font;
+			struct rtgui_rect rect;
+
+			/* set init item size */
+			radiobox->item_size = 0;
+			
+			font = RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox));
+			for (index = 0; index < number; index ++)
+			{
+				rtgui_font_get_metrics(font, radio_items[index], &rect);
+				if (rtgui_rect_width(rect) > radiobox->item_size)
+					radiobox->item_size = rtgui_rect_width(rect);
+			}
+		}
 	}
 
 	return radiobox;

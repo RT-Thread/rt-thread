@@ -22,6 +22,7 @@
 #include <rtgui/widgets/textbox.h>
 #include <rtgui/widgets/iconbox.h>
 #include <rtgui/widgets/checkbox.h>
+#include <rtgui/widgets/radiobox.h>
 #include <rtgui/widgets/slider.h>
 #include <rtgui/widgets/progressbar.h>
 #include <rtgui/widgets/staticline.h>
@@ -38,6 +39,7 @@ void rtgui_theme_draw_label(rtgui_label_t* label);
 void rtgui_theme_draw_textbox(rtgui_textbox_t* box);
 void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox);
 void rtgui_theme_draw_checkbox(rtgui_checkbox_t* checkbox);
+void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox);
 void rtgui_theme_draw_slider(struct rtgui_slider* slider);
 void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar);
 void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline);
