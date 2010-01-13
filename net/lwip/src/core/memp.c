@@ -290,6 +290,10 @@ memp_init(void)
   memp_overflow_check_all();
 #endif /* MEMP_OVERFLOW_CHECK */
 }
+#else
+/* fix time-wait tcp pcb issue */
+static rt_uint16_t tcp_pcbs = 0;
+#endif /* MEMP_MEM_MALLOC */
 
 /**
  * Get an element from a specific pool.
@@ -309,6 +313,7 @@ memp_malloc(memp_t type)
 memp_malloc_fn(memp_t type, const char* file, const int line)
 #endif
 {
+#if !MEMP_MEM_MALLOC
   struct memp *memp;
   SYS_ARCH_DECL_PROTECT(old_level);
  
@@ -333,13 +338,41 @@ memp_malloc_fn(memp_t type, const char* file, const int line)
                 ((mem_ptr_t)memp % MEM_ALIGNMENT) == 0);
     memp = (struct memp*)((u8_t*)memp + MEMP_SIZE);
   } else {
-    LWIP_DEBUGF(MEMP_DEBUG | 2, ("memp_malloc: out of memory in pool %s\n", memp_desc[type]));
+    LWIP_DEBUGF(MEMP_DEBUG | LWIP_DBG_LEVEL_SERIOUS, ("memp_malloc: out of memory in pool %s\n", memp_desc[type]));
     MEMP_STATS_INC(err, type);
   }
-
   SYS_ARCH_UNPROTECT(old_level);
 
   return memp;
+#else
+  void* ptr;
+  rt_uint32_t size;
+  SYS_ARCH_DECL_PROTECT(old_level);
+
+  size = memp_sizes[type];
+  LWIP_DEBUGF(MEMP_DEBUG, ("memp malloc %s, size %d, ", memp_desc[type], memp_sizes[type]));
+
+  SYS_ARCH_PROTECT(old_level);
+  if (type == MEMP_TCP_PCB)
+  {
+    if (tcp_pcbs >= MEMP_NUM_TCP_PCB)
+    {
+      SYS_ARCH_UNPROTECT(old_level);
+      return NULL;
+    }
+    else
+    {
+      /* increased tcp pcb allocated number */
+      tcp_pcbs ++;
+    }
+  }
+  SYS_ARCH_UNPROTECT(old_level);
+
+  ptr = mem_malloc(size);
+  LWIP_DEBUGF(MEMP_DEBUG, ("mem 0x%x\n", ptr));
+
+  return ptr;
+#endif /* MEMP_MEM_MALLOC */
 }
 
 /**
@@ -351,6 +384,7 @@ memp_malloc_fn(memp_t type, const char* file, const int line)
 void
 memp_free(memp_t type, void *mem)
 {
+#if !MEMP_MEM_MALLOC
   struct memp *memp;
   SYS_ARCH_DECL_PROTECT(old_level);
 
@@ -381,6 +415,19 @@ memp_free(memp_t type, void *mem)
 #endif /* MEMP_SANITY_CHECK */
 
   SYS_ARCH_UNPROTECT(old_level);
+#else
+  SYS_ARCH_DECL_PROTECT(old_level);
+
+  SYS_ARCH_PROTECT(old_level);
+  if (type == MEMP_TCP_PCB && mem)
+  {
+    tcp_pcbs --;
+  }
+  SYS_ARCH_UNPROTECT(old_level);
+
+  LWIP_DEBUGF(MEMP_DEBUG, ("memp free %s, mem 0x%x\n", memp_desc[type], mem));
+  /* release this memory */
+  mem_free(mem);
+#endif /* MEMP_MEM_MALLOC */
 }
 
-#endif /* MEMP_MEM_MALLOC */

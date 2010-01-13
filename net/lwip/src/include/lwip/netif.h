@@ -131,12 +131,12 @@ struct netif {
   /* the hostname for this netif, NULL is a valid value */
   char*  hostname;
 #endif /* LWIP_NETIF_HOSTNAME */
+  /** maximum transfer unit (in bytes) */
+  u16_t mtu;
   /** number of bytes used in hwaddr */
   u8_t hwaddr_len;
   /** link level hardware address of this interface */
   u8_t hwaddr[NETIF_MAX_HWADDR_LEN];
-  /** maximum transfer unit (in bytes) */
-  u16_t mtu;
   /** flags (see NETIF_FLAG_ above) */
   u8_t flags;
   /** descriptive abbreviation */

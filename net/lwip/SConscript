@@ -16,7 +16,7 @@ src/arch/sys_arch_init.c
 src/core/dhcp.c
 src/core/dns.c
 src/core/init.c
-src/core/memp_tiny.c
+src/core/memp.c
 src/core/netif.c
 src/core/pbuf.c
 src/core/raw.c

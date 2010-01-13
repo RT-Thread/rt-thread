@@ -64,6 +64,8 @@
 
 #include "fsm.h"
 
+#include <string.h>
+
 
 /*************************/
 /*** LOCAL DEFINITIONS ***/
@@ -551,7 +553,7 @@ fsm_timeout(void *arg)
       break;
 
     default:
-      FSMDEBUG((LOG_INFO, "%s: Timeout event in state %d (%s)!\n",
+      FSMDEBUG((LOG_INFO, "%s: UNHANDLED timeout event in state %d (%s)!\n",
           PROTO_NAME(f), f->state, ppperr_strerr[f->state]));
   }
 }

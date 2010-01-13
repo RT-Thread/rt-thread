@@ -82,6 +82,7 @@
 #include "chap.h"
 #include "chpms.h"
 
+#include <string.h>
 
 /*************************/
 /*** LOCAL DEFINITIONS ***/

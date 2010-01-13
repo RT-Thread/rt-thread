@@ -301,26 +301,18 @@ FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
 
 void list_if()
 {
-	struct ip_addr ip_addr;
-	struct _ip_addr
-	{
-		rt_uint8_t addr0, addr1, addr2, addr3;
-	} *addr;
-
 	rt_kprintf("Default network interface: %c%c\n", netif_default->name[0], netif_default->name[1]);
-	addr = (struct _ip_addr*)&netif_default->ip_addr.addr;
-	rt_kprintf("ip address: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
-
-	addr = (struct _ip_addr*)&netif_default->gw.addr;
-	rt_kprintf("gw address: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
-
-	addr = (struct _ip_addr*)&netif_default->netmask.addr;
-	rt_kprintf("net mask  : %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+	rt_kprintf("ip address: %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
+	rt_kprintf("gw address: %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
+	rt_kprintf("net mask  : %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
 
 #if LWIP_DNS
-	ip_addr = dns_getserver(0);
-	addr = (struct _ip_addr*)&ip_addr;
-	rt_kprintf("dns server: %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
+	{
+		struct ip_addr ip_addr;
+
+		ip_addr = dns_getserver(0);
+		rt_kprintf("dns server: %d.%d.%d.%d\n", ip_ntoa(&ip_addr));
+	}
 #endif
 }
 FINSH_FUNCTION_EXPORT(list_if, list network interface information);

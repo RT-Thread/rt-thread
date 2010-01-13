@@ -468,7 +468,7 @@ update_arp_entry(struct netif *netif, struct ip_addr *ipaddr, struct eth_addr *e
 {
   s8_t i;
   u8_t k;
-  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 3, ("update_arp_entry()\n"));
+  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("update_arp_entry()\n"));
   LWIP_ASSERT("netif->hwaddr_len == ETHARP_HWADDR_LEN", netif->hwaddr_len == ETHARP_HWADDR_LEN);
   LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("update_arp_entry: %"U16_F".%"U16_F".%"U16_F".%"U16_F" - %02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F"\n",
                                         ip4_addr1(ipaddr), ip4_addr2(ipaddr), ip4_addr3(ipaddr), ip4_addr4(ipaddr), 
@@ -579,13 +579,21 @@ etharp_find_addr(struct netif *netif, struct ip_addr *ipaddr,
 void
 etharp_ip_input(struct netif *netif, struct pbuf *p)
 {
-  struct ethip_hdr *hdr;
+  struct eth_hdr *ethhdr;
+  struct ip_hdr *iphdr;
   LWIP_ERROR("netif != NULL", (netif != NULL), return;);
   /* Only insert an entry if the source IP address of the
      incoming IP packet comes from a host on the local network. */
-  hdr = p->payload;
+  ethhdr = p->payload;
+  iphdr = (struct ip_hdr *)((u8_t*)ethhdr + SIZEOF_ETH_HDR);
+#if ETHARP_SUPPORT_VLAN
+  if (ethhdr->type == ETHTYPE_VLAN) {
+    iphdr = (struct ip_hdr *)((u8_t*)ethhdr + SIZEOF_ETH_HDR + SIZEOF_VLAN_HDR);
+  }
+#endif /* ETHARP_SUPPORT_VLAN */
+
   /* source is not on the local network? */
-  if (!ip_addr_netcmp(&(hdr->ip.src), &(netif->ip_addr), &(netif->netmask))) {
+  if (!ip_addr_netcmp(&(iphdr->src), &(netif->ip_addr), &(netif->netmask))) {
     /* do nothing */
     return;
   }
@@ -594,7 +602,7 @@ etharp_ip_input(struct netif *netif, struct pbuf *p)
   /* update ARP table */
   /* @todo We could use ETHARP_TRY_HARD if we think we are going to talk
    * back soon (for example, if the destination IP address is ours. */
-  update_arp_entry(netif, &(hdr->ip.src), &(hdr->eth.src), 0);
+  update_arp_entry(netif, &(iphdr->src), &(ethhdr->src), 0);
 }
 
 
@@ -617,6 +625,7 @@ void
 etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
 {
   struct etharp_hdr *hdr;
+  struct eth_hdr *ethhdr;
   /* these are aligned properly, whereas the ARP header fields might not be */
   struct ip_addr sipaddr, dipaddr;
   u8_t i;
@@ -629,24 +638,32 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
   
   /* drop short ARP packets: we have to check for p->len instead of p->tot_len here
      since a struct etharp_hdr is pointed to p->payload, so it musn't be chained! */
-  if (p->len < sizeof(struct etharp_hdr)) {
-    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 1, ("etharp_arp_input: packet dropped, too short (%"S16_F"/%"S16_F")\n", p->tot_len, (s16_t)sizeof(struct etharp_hdr)));
+  if (p->len < SIZEOF_ETHARP_PACKET) {
+    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING,
+      ("etharp_arp_input: packet dropped, too short (%"S16_F"/%"S16_F")\n", p->tot_len,
+      (s16_t)SIZEOF_ETHARP_PACKET));
     ETHARP_STATS_INC(etharp.lenerr);
     ETHARP_STATS_INC(etharp.drop);
     pbuf_free(p);
     return;
   }
 
-  hdr = p->payload;
+  ethhdr = p->payload;
+  hdr = (struct etharp_hdr *)((u8_t*)ethhdr + SIZEOF_ETH_HDR);
+#if ETHARP_SUPPORT_VLAN
+  if (ethhdr->type == ETHTYPE_VLAN) {
+    hdr = (struct etharp_hdr *)(((u8_t*)ethhdr) + SIZEOF_ETH_HDR + SIZEOF_VLAN_HDR);
+  }
+#endif /* ETHARP_SUPPORT_VLAN */
 
   /* RFC 826 "Packet Reception": */
   if ((hdr->hwtype != htons(HWTYPE_ETHERNET)) ||
       (hdr->_hwlen_protolen != htons((ETHARP_HWADDR_LEN << 8) | sizeof(struct ip_addr))) ||
       (hdr->proto != htons(ETHTYPE_IP)) ||
-      (hdr->ethhdr.type != htons(ETHTYPE_ARP)))  {
-    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 1,
+      (ethhdr->type != htons(ETHTYPE_ARP)))  {
+    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING,
       ("etharp_arp_input: packet dropped, wrong hw type, hwlen, proto, protolen or ethernet type (%"U16_F"/%"U16_F"/%"U16_F"/%"U16_F"/%"U16_F")\n",
-      hdr->hwtype, ARPH_HWLEN(hdr), hdr->proto, ARPH_PROTOLEN(hdr), hdr->ethhdr.type));
+      hdr->hwtype, ARPH_HWLEN(hdr), hdr->proto, ARPH_PROTOLEN(hdr), ethhdr->type));
     ETHARP_STATS_INC(etharp.proterr);
     ETHARP_STATS_INC(etharp.drop);
     pbuf_free(p);
@@ -719,12 +736,12 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
         i--;
         hdr->dhwaddr.addr[i] = hdr->shwaddr.addr[i];
 #if LWIP_AUTOIP
-        hdr->ethhdr.dest.addr[i] = ethdst_hwaddr[i];
+        ethhdr->dest.addr[i] = ethdst_hwaddr[i];
 #else  /* LWIP_AUTOIP */
-        hdr->ethhdr.dest.addr[i] = hdr->shwaddr.addr[i];
+        ethhdr->dest.addr[i] = hdr->shwaddr.addr[i];
 #endif /* LWIP_AUTOIP */
         hdr->shwaddr.addr[i] = ethaddr->addr[i];
-        hdr->ethhdr.src.addr[i] = ethaddr->addr[i];
+        ethhdr->src.addr[i] = ethaddr->addr[i];
       }
 
       /* hwtype, hwaddr_len, proto, protolen and the type in the ethernet header
@@ -788,7 +805,8 @@ etharp_output(struct netif *netif, struct pbuf *q, struct ip_addr *ipaddr)
   /* make room for Ethernet header - should not fail */
   if (pbuf_header(q, sizeof(struct eth_hdr)) != 0) {
     /* bail out */
-    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 2, ("etharp_output: could not allocate room for header.\n"));
+    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_SERIOUS,
+      ("etharp_output: could not allocate room for header.\n"));
     LINK_STATS_INC(link.lenerr);
     return ERR_BUF;
   }
@@ -1034,23 +1052,26 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
   struct pbuf *p;
   err_t result = ERR_OK;
   u8_t k; /* ARP entry index */
+  struct eth_hdr *ethhdr;
   struct etharp_hdr *hdr;
 #if LWIP_AUTOIP
   const u8_t * ethdst_hwaddr;
 #endif /* LWIP_AUTOIP */
 
   /* allocate a pbuf for the outgoing ARP request packet */
-  p = pbuf_alloc(PBUF_RAW, sizeof(struct etharp_hdr), PBUF_RAM);
+  p = pbuf_alloc(PBUF_RAW, SIZEOF_ETHARP_PACKET, PBUF_RAM);
   /* could allocate a pbuf for an ARP request? */
   if (p == NULL) {
-    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | 2, ("etharp_raw: could not allocate pbuf for ARP request.\n"));
+    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_SERIOUS,
+      ("etharp_raw: could not allocate pbuf for ARP request.\n"));
     ETHARP_STATS_INC(etharp.memerr);
     return ERR_MEM;
   }
   LWIP_ASSERT("check that first pbuf can hold struct etharp_hdr",
-              (p->len >= sizeof(struct etharp_hdr)));
+              (p->len >= SIZEOF_ETHARP_PACKET));
 
-  hdr = p->payload;
+  ethhdr = p->payload;
+  hdr = (struct etharp_hdr *)((u8_t*)ethhdr + SIZEOF_ETH_HDR);
   LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("etharp_raw: sending raw ARP packet.\n"));
   hdr->opcode = htons(opcode);
 
@@ -1070,11 +1091,11 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
     hdr->dhwaddr.addr[k] = hwdst_addr->addr[k];
     /* Write the Ethernet MAC-Addresses */
 #if LWIP_AUTOIP
-    hdr->ethhdr.dest.addr[k] = ethdst_hwaddr[k];
+    ethhdr->dest.addr[k] = ethdst_hwaddr[k];
 #else  /* LWIP_AUTOIP */
-    hdr->ethhdr.dest.addr[k] = ethdst_addr->addr[k];
+    ethhdr->dest.addr[k] = ethdst_addr->addr[k];
 #endif /* LWIP_AUTOIP */
-    hdr->ethhdr.src.addr[k]  = ethsrc_addr->addr[k];
+    ethhdr->src.addr[k]  = ethsrc_addr->addr[k];
   }
   hdr->sipaddr = *(struct ip_addr2 *)ipsrc_addr;
   hdr->dipaddr = *(struct ip_addr2 *)ipdst_addr;
@@ -1084,7 +1105,7 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
   /* set hwlen and protolen together */
   hdr->_hwlen_protolen = htons((ETHARP_HWADDR_LEN << 8) | sizeof(struct ip_addr));
 
-  hdr->ethhdr.type = htons(ETHTYPE_ARP);
+  ethhdr->type = htons(ETHTYPE_ARP);
   /* send ARP query */
   result = netif->linkoutput(netif, p);
   ETHARP_STATS_INC(etharp.xmit);
@@ -1126,6 +1147,7 @@ err_t
 ethernet_input(struct pbuf *p, struct netif *netif)
 {
   struct eth_hdr* ethhdr;
+  u16_t type;
 
   /* points to packet payload, which starts with an Ethernet header */
   ethhdr = p->payload;
@@ -1137,7 +1159,22 @@ ethernet_input(struct pbuf *p, struct netif *netif)
      (unsigned)ethhdr->src.addr[3], (unsigned)ethhdr->src.addr[4], (unsigned)ethhdr->src.addr[5],
      (unsigned)htons(ethhdr->type)));
 
-  switch (htons(ethhdr->type)) {
+  type = htons(ethhdr->type);
+#if ETHARP_SUPPORT_VLAN
+  if (type == ETHTYPE_VLAN) {
+    struct eth_vlan_hdr *vlan = (struct eth_vlan_hdr*)(((char*)ethhdr) + SIZEOF_ETH_HDR);
+#ifdef ETHARP_VLAN_CHECK /* if not, allow all VLANs */
+    if (VLAN_ID(vlan) != ETHARP_VLAN_CHECK) {
+      /* silently ignore this packet: not for our VLAN */
+      pbuf_free(p);
+      return ERR_OK;
+    }
+#endif /* ETHARP_VLAN_CHECK */
+    type = htons(vlan->tpid);
+  }
+#endif /* ETHARP_SUPPORT_VLAN */
+
+  switch (type) {
     /* IP packet? */
     case ETHTYPE_IP:
 #if ETHARP_TRUST_IP_MAC
@@ -1145,7 +1182,7 @@ ethernet_input(struct pbuf *p, struct netif *netif)
       etharp_ip_input(netif, p);
 #endif /* ETHARP_TRUST_IP_MAC */
       /* skip Ethernet header */
-      if(pbuf_header(p, -(s16_t)sizeof(struct eth_hdr))) {
+      if(pbuf_header(p, -(s16_t)SIZEOF_ETH_HDR)) {
         LWIP_ASSERT("Can't move over header in packet", 0);
         pbuf_free(p);
         p = NULL;

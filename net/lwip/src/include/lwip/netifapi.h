@@ -78,6 +78,11 @@ err_t netifapi_netif_add       ( struct netif *netif,
                                  err_t (* init)(struct netif *netif),
                                  err_t (* input)(struct pbuf *p, struct netif *netif) );
 
+err_t netifapi_netif_set_addr  ( struct netif *netif,
+                                 struct ip_addr *ipaddr,
+                                 struct ip_addr *netmask,
+                                 struct ip_addr *gw );
+
 err_t netifapi_netif_common    ( struct netif *netif,
                                  void  (* voidfunc)(struct netif *netif),
                                  err_t (* errtfunc)(struct netif *netif) );

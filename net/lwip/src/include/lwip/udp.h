@@ -94,6 +94,9 @@ struct udp_pcb {
    * The callback is responsible for freeing the pbuf
    * if it's not used any more.
    *
+   * ATTENTION: Be aware that 'addr' points into the pbuf 'p' so freeing this pbuf
+   *            makes 'addr' invalid, too.
+   *
    * @param arg user supplied argument (udp_pcb.recv_arg)
    * @param pcb the udp_pcb which received data
    * @param p the packet buffer that was received

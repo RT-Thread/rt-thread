@@ -52,6 +52,13 @@
 #endif /* LWIP_NETIF_LOOPBACK_MULTITHREADING */
 #endif /* ENABLE_LOOPBACK */
 
+#if LWIP_AUTOIP
+#include "lwip/autoip.h"
+#endif /* LWIP_AUTOIP */
+#if LWIP_DHCP
+#include "lwip/dhcp.h"
+#endif /* LWIP_DHCP */
+
 #if LWIP_NETIF_STATUS_CALLBACK
 #define NETIF_STATUS_CALLBACK(n) { if (n->status_callback) (n->status_callback)(n); }
 #else
@@ -271,14 +278,14 @@ netif_set_ipaddr(struct netif *netif, struct ip_addr *ipaddr)
   if ((ip_addr_cmp(ipaddr, &(netif->ip_addr))) == 0)
   {
     /* extern struct tcp_pcb *tcp_active_pcbs; defined by tcp.h */
-    LWIP_DEBUGF(NETIF_DEBUG | 1, ("netif_set_ipaddr: netif address being changed\n"));
+    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_set_ipaddr: netif address being changed\n"));
     pcb = tcp_active_pcbs;
     while (pcb != NULL) {
       /* PCB bound to current local interface address? */
       if (ip_addr_cmp(&(pcb->local_ip), &(netif->ip_addr))) {
         /* this connection must be aborted */
         struct tcp_pcb *next = pcb->next;
-        LWIP_DEBUGF(NETIF_DEBUG | 1, ("netif_set_ipaddr: aborting TCP pcb %p\n", (void *)pcb));
+        LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_set_ipaddr: aborting TCP pcb %p\n", (void *)pcb));
         tcp_abort(pcb);
         pcb = next;
       } else {
@@ -303,7 +310,7 @@ netif_set_ipaddr(struct netif *netif, struct ip_addr *ipaddr)
   snmp_insert_ipaddridx_tree(netif);
   snmp_insert_iprteidx_tree(0,netif);
 
-  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE | 3, ("netif: IP address of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
+  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: IP address of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
     netif->name[0], netif->name[1],
     ip4_addr1(&netif->ip_addr),
     ip4_addr2(&netif->ip_addr),
@@ -323,7 +330,7 @@ void
 netif_set_gw(struct netif *netif, struct ip_addr *gw)
 {
   ip_addr_set(&(netif->gw), gw);
-  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE | 3, ("netif: GW address of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
+  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: GW address of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
     netif->name[0], netif->name[1],
     ip4_addr1(&netif->gw),
     ip4_addr2(&netif->gw),
@@ -347,7 +354,7 @@ netif_set_netmask(struct netif *netif, struct ip_addr *netmask)
   /* set new netmask to netif */
   ip_addr_set(&(netif->netmask), netmask);
   snmp_insert_iprteidx_tree(0, netif);
-  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE | 3, ("netif: netmask of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
+  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: netmask of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
     netif->name[0], netif->name[1],
     ip4_addr1(&netif->netmask),
     ip4_addr2(&netif->netmask),
@@ -406,7 +413,13 @@ void netif_set_up(struct netif *netif)
       etharp_gratuitous(netif);
     }
 #endif /* LWIP_ARP */
-    
+
+#if LWIP_IGMP
+    /* resend IGMP memberships */
+    if (netif->flags & NETIF_FLAG_IGMP) {
+      igmp_report_groups( netif);
+    }
+#endif /* LWIP_IGMP */
   }
 }
 
@@ -459,6 +472,19 @@ void netif_set_link_up(struct netif *netif )
 {
   netif->flags |= NETIF_FLAG_LINK_UP;
 
+#if LWIP_DHCP
+  if (netif->dhcp) {
+    dhcp_network_changed(netif);
+  }
+#endif /* LWIP_DHCP */
+
+#if LWIP_AUTOIP
+  if (netif->autoip) {
+    autoip_network_changed(netif);
+  }
+#endif /* LWIP_AUTOIP */
+
+  if (netif->flags & NETIF_FLAG_UP) {
 #if LWIP_ARP
   /* For Ethernet network interfaces, we would like to send a "gratuitous ARP" */ 
   if (netif->flags & NETIF_FLAG_ETHARP) {
@@ -467,12 +493,12 @@ void netif_set_link_up(struct netif *netif )
 #endif /* LWIP_ARP */
 
 #if LWIP_IGMP
-  /* resend IGMP memberships */
-  if (netif->flags & NETIF_FLAG_IGMP) {
-    igmp_report_groups( netif);
-  }
+    /* resend IGMP memberships */
+    if (netif->flags & NETIF_FLAG_IGMP) {
+      igmp_report_groups( netif);
+    }
 #endif /* LWIP_IGMP */
-
+  }
   NETIF_LINK_CALLBACK(netif);
 }
 

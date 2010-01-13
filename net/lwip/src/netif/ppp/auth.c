@@ -82,6 +82,8 @@
 #include "cbcp.h"
 #endif /* CBCP_SUPPORT */
 
+#include <string.h>
+
 /*************************/
 /*** LOCAL DEFINITIONS ***/
 /*************************/

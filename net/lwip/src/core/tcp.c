@@ -50,8 +50,23 @@
 #include "lwip/snmp.h"
 #include "lwip/tcp.h"
 #include "lwip/debug.h"
+#include "lwip/stats.h"
 
 #include <string.h>
+
+const char *tcp_state_str[] = {
+  "CLOSED",      
+  "LISTEN",      
+  "SYN_SENT",    
+  "SYN_RCVD",    
+  "ESTABLISHED", 
+  "FIN_WAIT_1",  
+  "FIN_WAIT_2",  
+  "CLOSE_WAIT",  
+  "CLOSING",     
+  "LAST_ACK",    
+  "TIME_WAIT"   
+};
 
 /* Incremented every coarse grained timer shot (typically every 500 ms). */
 u32_t tcp_ticks;
@@ -394,7 +409,7 @@ u32_t tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb)
 {
   u32_t new_right_edge = pcb->rcv_nxt + pcb->rcv_wnd;
 
-  if (TCP_SEQ_GEQ(new_right_edge, pcb->rcv_ann_right_edge + pcb->mss)) {
+  if (TCP_SEQ_GEQ(new_right_edge, pcb->rcv_ann_right_edge + LWIP_MIN((TCP_WND / 2), pcb->mss))) {
     /* we can advertise more window */
     pcb->rcv_ann_wnd = pcb->rcv_wnd;
     return new_right_edge - pcb->rcv_ann_right_edge;
@@ -564,6 +579,7 @@ tcp_slowtmr(void)
   struct tcp_pcb *pcb, *pcb2, *prev;
   u16_t eff_wnd;
   u8_t pcb_remove;      /* flag if a PCB should be removed */
+  u8_t pcb_reset;       /* flag if a RST should be sent when removing */
   err_t err;
 
   err = ERR_OK;
@@ -583,6 +599,7 @@ tcp_slowtmr(void)
     LWIP_ASSERT("tcp_slowtmr: active pcb->state != TIME-WAIT\n", pcb->state != TIME_WAIT);
 
     pcb_remove = 0;
+    pcb_reset = 0;
 
     if (pcb->state == SYN_SENT && pcb->nrtx == TCP_SYNMAXRTX) {
       ++pcb_remove;
@@ -666,7 +683,8 @@ tcp_slowtmr(void)
                                 ip4_addr1(&pcb->remote_ip), ip4_addr2(&pcb->remote_ip),
                                 ip4_addr3(&pcb->remote_ip), ip4_addr4(&pcb->remote_ip)));
         
-        tcp_abort(pcb);
+        ++pcb_remove;
+        ++pcb_reset;
       }
 #if LWIP_TCP_KEEPALIVE
       else if((u32_t)(tcp_ticks - pcb->tmr) > 
@@ -726,6 +744,10 @@ tcp_slowtmr(void)
       }
 
       TCP_EVENT_ERR(pcb->errf, pcb->callback_arg, ERR_ABRT);
+      if (pcb_reset) {
+        tcp_rst(pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
+          pcb->local_port, pcb->remote_port);
+      }
 
       pcb2 = pcb->next;
       memp_free(MEMP_TCP_PCB, pcb);
@@ -899,11 +921,12 @@ tcp_seg_copy(struct tcp_seg *seg)
  * Default receive callback that is called if the user didn't register
  * a recv callback for the pcb.
  */
-static err_t
+err_t
 tcp_recv_null(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
 {
-  arg = arg;
+  LWIP_UNUSED_ARG(arg);
   if (p != NULL) {
+    tcp_recved(pcb, p->tot_len);
     pbuf_free(p);
   } else if (err == ERR_OK) {
     return tcp_close(pcb);
@@ -993,9 +1016,18 @@ tcp_alloc(u8_t prio)
     pcb = memp_malloc(MEMP_TCP_PCB);
     if (pcb == NULL) {
       /* Try killing active connections with lower priority than the new one. */
+      LWIP_DEBUGF(TCP_DEBUG, ("tcp_alloc: killing connection with prio lower than %d\n", prio));
       tcp_kill_prio(prio);
       /* Try to allocate a tcp_pcb again. */
       pcb = memp_malloc(MEMP_TCP_PCB);
+      if (pcb != NULL) {
+        /* adjust err stats: memp_malloc failed twice before */
+        MEMP_STATS_DEC(err, MEMP_TCP_PCB);
+      }
+    }
+    if (pcb != NULL) {
+      /* adjust err stats: timewait PCB was freed above */
+      MEMP_STATS_DEC(err, MEMP_TCP_PCB);
     }
   }
   if (pcb != NULL) {
@@ -1218,7 +1250,7 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
  * Purges the PCB and removes it from a PCB list. Any delayed ACKs are sent first.
  *
  * @param pcblist PCB list to purge.
- * @param pcb tcp_pcb to purge. The pcb itself is also deallocated!
+ * @param pcb tcp_pcb to purge. The pcb itself is NOT deallocated!
  */
 void
 tcp_pcb_remove(struct tcp_pcb **pcblist, struct tcp_pcb *pcb)
@@ -1288,6 +1320,12 @@ tcp_eff_send_mss(u16_t sendmss, struct ip_addr *addr)
 }
 #endif /* TCP_CALCULATE_EFF_SEND_MSS */
 
+const char*
+tcp_debug_state_str(enum tcp_state s)
+{
+  return tcp_state_str[s];
+}
+
 #if TCP_DEBUG || TCP_INPUT_DEBUG || TCP_OUTPUT_DEBUG
 /**
  * Print a tcp header for debugging purposes.
@@ -1333,42 +1371,7 @@ tcp_debug_print(struct tcp_hdr *tcphdr)
 void
 tcp_debug_print_state(enum tcp_state s)
 {
-  LWIP_DEBUGF(TCP_DEBUG, ("State: "));
-  switch (s) {
-  case CLOSED:
-    LWIP_DEBUGF(TCP_DEBUG, ("CLOSED\n"));
-    break;
- case LISTEN:
-   LWIP_DEBUGF(TCP_DEBUG, ("LISTEN\n"));
-   break;
-  case SYN_SENT:
-    LWIP_DEBUGF(TCP_DEBUG, ("SYN_SENT\n"));
-    break;
-  case SYN_RCVD:
-    LWIP_DEBUGF(TCP_DEBUG, ("SYN_RCVD\n"));
-    break;
-  case ESTABLISHED:
-    LWIP_DEBUGF(TCP_DEBUG, ("ESTABLISHED\n"));
-    break;
-  case FIN_WAIT_1:
-    LWIP_DEBUGF(TCP_DEBUG, ("FIN_WAIT_1\n"));
-    break;
-  case FIN_WAIT_2:
-    LWIP_DEBUGF(TCP_DEBUG, ("FIN_WAIT_2\n"));
-    break;
-  case CLOSE_WAIT:
-    LWIP_DEBUGF(TCP_DEBUG, ("CLOSE_WAIT\n"));
-    break;
-  case CLOSING:
-    LWIP_DEBUGF(TCP_DEBUG, ("CLOSING\n"));
-    break;
-  case LAST_ACK:
-    LWIP_DEBUGF(TCP_DEBUG, ("LAST_ACK\n"));
-    break;
-  case TIME_WAIT:
-    LWIP_DEBUGF(TCP_DEBUG, ("TIME_WAIT\n"));
-   break;
-  }
+  LWIP_DEBUGF(TCP_DEBUG, ("State: %s\n", tcp_state_str[s]));
 }
 
 /**

@@ -168,6 +168,9 @@
 #if (DNS_LOCAL_HOSTLIST && !DNS_LOCAL_HOSTLIST_IS_DYNAMIC && !(defined(DNS_LOCAL_HOSTLIST_INIT)))
   #error "you have to define define DNS_LOCAL_HOSTLIST_INIT {{'host1', 0x123}, {'host2', 0x234}} to initialize DNS_LOCAL_HOSTLIST"
 #endif
+#if PPP_SUPPORT && !PPPOS_SUPPORT & !PPPOE_SUPPORT
+  #error "PPP_SUPPORT needs either PPPOS_SUPPORT or PPPOE_SUPPORT turned on"
+#endif
 
 
 /* Compile-time checks for deprecated options.
@@ -208,6 +211,8 @@ lwip_sanity_check(void)
 #if LWIP_TCP
   if (MEMP_NUM_TCP_SEG < TCP_SND_QUEUELEN)
     LWIP_PLATFORM_DIAG(("lwip_sanity_check: WARNING: MEMP_NUM_TCP_SEG should be at least as big as TCP_SND_QUEUELEN\n"));
+  if (TCP_SND_BUF < 2 * TCP_MSS)
+    LWIP_PLATFORM_DIAG(("lwip_sanity_check: WARNING: TCP_SND_BUF must be at least as much as (2 * TCP_MSS) for things to work smoothly\n"));
   if (TCP_SND_QUEUELEN < (2 * (TCP_SND_BUF/TCP_MSS)))
     LWIP_PLATFORM_DIAG(("lwip_sanity_check: WARNING: TCP_SND_QUEUELEN must be at least as much as (2 * TCP_SND_BUF/TCP_MSS) for things to work\n"));
   if (TCP_SNDLOWAT > TCP_SND_BUF)

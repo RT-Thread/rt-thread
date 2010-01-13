@@ -136,7 +136,7 @@ vj_compress_init(struct vjcompress *comp)
 }
 
 /*
- * vj_compress_tcp - Attempt to do Van Jacobsen header compression on a
+ * vj_compress_tcp - Attempt to do Van Jacobson header compression on a
  * packet.  This assumes that nb and comp are not null and that the first
  * buffer of the chain contains a valid IP header.
  * Return the VJ type code indicating whether or not the packet was

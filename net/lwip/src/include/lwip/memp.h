@@ -84,8 +84,6 @@ extern const u16_t memp_sizes[MEMP_MAX];
 #include "mem.h"
 
 #define memp_init()
-#define memp_malloc(type)     mem_malloc(memp_sizes[type])
-#define memp_free(type, mem)  mem_free(mem)
 
 #else /* MEMP_MEM_MALLOC */
 
@@ -98,6 +96,7 @@ struct memp_malloc_helper
 #endif /* MEM_USE_POOLS */
 
 void  memp_init(void);
+#endif /* MEMP_MEM_MALLOC */
 
 #if MEMP_OVERFLOW_CHECK
 void *memp_malloc_fn(memp_t type, const char* file, const int line);
@@ -106,8 +105,6 @@ void *memp_malloc_fn(memp_t type, const char* file, const int line);
 void *memp_malloc(memp_t type);
 #endif
 void  memp_free(memp_t type, void *mem);
-
-#endif /* MEMP_MEM_MALLOC */
 
 #ifdef __cplusplus
 }

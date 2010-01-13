@@ -83,7 +83,7 @@ struct api_msg_msg {
       size_t len;
       u8_t apiflags;
     } w;
-    /** used ofr do_recv */
+    /** used for do_recv */
     struct {
       u16_t len;
     } r;

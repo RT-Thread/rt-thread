@@ -161,6 +161,11 @@ u8_t ip_addr_isbroadcast(struct ip_addr *, struct netif *);
 #define ip4_addr3(ipaddr) ((u16_t)(ntohl((ipaddr)->addr) >> 8) & 0xff)
 #define ip4_addr4(ipaddr) ((u16_t)(ntohl((ipaddr)->addr)) & 0xff)
 
+/**
+ * Same as inet_ntoa() but takes a struct ip_addr*
+ */
+#define ip_ntoa(addr)  ((addr != NULL) ? inet_ntoa(*((struct in_addr*)(addr))) : "NULL")
+
 #ifdef __cplusplus
 }
 #endif

@@ -961,7 +961,7 @@ dns_gethostbyname(const char *hostname, struct ip_addr *addr, dns_found_callback
 
 #if LWIP_HAVE_LOOPIF
   if (strcmp(hostname,"localhost")==0) {
-    addr->addr = INADDR_LOOPBACK;
+    addr->addr = htonl(INADDR_LOOPBACK);
     return ERR_OK;
   }
 #endif /* LWIP_HAVE_LOOPIF */

@@ -78,6 +78,9 @@ void             tcp_err     (struct tcp_pcb *pcb,
 
 #define          tcp_mss(pcb)      ((pcb)->mss)
 #define          tcp_sndbuf(pcb)   ((pcb)->snd_buf)
+#define          tcp_nagle_disable(pcb)  ((pcb)->flags |= TF_NODELAY)
+#define          tcp_nagle_enable(pcb) ((pcb)->flags &= ~TF_NODELAY)
+#define          tcp_nagle_disabled(pcb) (((pcb)->flags & TF_NODELAY) != 0)
 
 #if TCP_LISTEN_BACKLOG
 #define          tcp_accepted(pcb) (((struct tcp_pcb_listen *)(pcb))->accepts_pending--)
@@ -122,9 +125,11 @@ void             tcp_fasttmr (void);
 /* Only used by IP to pass a TCP segment to TCP: */
 void             tcp_input   (struct pbuf *p, struct netif *inp);
 /* Used within the TCP code only: */
+err_t            tcp_send_empty_ack(struct tcp_pcb *pcb);
 err_t            tcp_output  (struct tcp_pcb *pcb);
 void             tcp_rexmit  (struct tcp_pcb *pcb);
 void             tcp_rexmit_rto  (struct tcp_pcb *pcb);
+void             tcp_rexmit_fast (struct tcp_pcb *pcb);
 u32_t            tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb);
 
 /**
@@ -134,9 +139,10 @@ u32_t            tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb);
  * - the TF_NODELAY flag is set (nagle algorithm turned off for this pcb) or
  * - the only unsent segment is at least pcb->mss bytes long (or there is more
  *   than one unsent segment - with lwIP, this can happen although unsent->len < mss)
+ * - or if we are in fast-retransmit (TF_INFR)
  */
 #define tcp_do_output_nagle(tpcb) ((((tpcb)->unacked == NULL) || \
-                            ((tpcb)->flags & TF_NODELAY) || \
+                            ((tpcb)->flags & (TF_NODELAY | TF_INFR)) || \
                             (((tpcb)->unsent != NULL) && (((tpcb)->unsent->next != NULL) || \
                               ((tpcb)->unsent->len >= (tpcb)->mss))) \
                             ) ? 1 : 0)
@@ -230,12 +236,11 @@ PACK_STRUCT_END
 
 #define TCPH_OFFSET_SET(phdr, offset) (phdr)->_hdrlen_rsvd_flags = htons(((offset) << 8) | TCPH_FLAGS(phdr))
 #define TCPH_HDRLEN_SET(phdr, len) (phdr)->_hdrlen_rsvd_flags = htons(((len) << 12) | TCPH_FLAGS(phdr))
-#define TCPH_FLAGS_SET(phdr, flags) (phdr)->_hdrlen_rsvd_flags = htons((ntohs((phdr)->_hdrlen_rsvd_flags) & ~TCP_FLAGS) | (flags))
-#define TCPH_SET_FLAG(phdr, flags ) (phdr)->_hdrlen_rsvd_flags = htons(ntohs((phdr)->_hdrlen_rsvd_flags) | (flags))
+#define TCPH_FLAGS_SET(phdr, flags) (phdr)->_hdrlen_rsvd_flags = (((phdr)->_hdrlen_rsvd_flags & htons((u16_t)(~(u16_t)(TCP_FLAGS)))) | htons(flags))
+#define TCPH_SET_FLAG(phdr, flags ) (phdr)->_hdrlen_rsvd_flags = ((phdr)->_hdrlen_rsvd_flags | htons(flags))
 #define TCPH_UNSET_FLAG(phdr, flags) (phdr)->_hdrlen_rsvd_flags = htons(ntohs((phdr)->_hdrlen_rsvd_flags) | (TCPH_FLAGS(phdr) & ~(flags)) )
 
-#define TCP_TCPLEN(seg) ((seg)->len + ((TCPH_FLAGS((seg)->tcphdr) & TCP_FIN || \
-          TCPH_FLAGS((seg)->tcphdr) & TCP_SYN)? 1: 0))
+#define TCP_TCPLEN(seg) ((seg)->len + ((TCPH_FLAGS((seg)->tcphdr) & (TCP_FIN | TCP_SYN)) != 0))
 
 enum tcp_state {
   CLOSED      = 0,
@@ -489,9 +494,7 @@ err_t lwip_tcp_event(void *arg, struct tcp_pcb *pcb,
     if((pcb)->recv != NULL) {                                   \
       (ret) = (pcb)->recv((pcb)->callback_arg,(pcb),(p),(err)); \
     } else {                                                    \
-      (ret) = ERR_OK;                                           \
-      if (p != NULL)                                            \
-        pbuf_free(p);                                           \
+      (ret) = tcp_recv_null(NULL, (pcb), (p), (err));           \
     }                                                           \
   } while (0)
 
@@ -585,9 +588,14 @@ void tcp_zero_window_probe(struct tcp_pcb *pcb);
 u16_t tcp_eff_send_mss(u16_t sendmss, struct ip_addr *addr);
 #endif /* TCP_CALCULATE_EFF_SEND_MSS */
 
+#if LWIP_CALLBACK_API
+err_t tcp_recv_null(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err);
+#endif /* LWIP_CALLBACK_API */
+
 extern struct tcp_pcb *tcp_input_pcb;
 extern u32_t tcp_ticks;
 
+const char* tcp_debug_state_str(enum tcp_state s);
 #if TCP_DEBUG || TCP_INPUT_DEBUG || TCP_OUTPUT_DEBUG
 void tcp_debug_print(struct tcp_hdr *tcphdr);
 void tcp_debug_print_flags(u8_t flags);
@@ -651,7 +659,7 @@ extern struct tcp_pcb *tcp_tmp_pcb;      /* Only used for temporary storage. */
                             if(*pcbs == npcb) { \
                                *pcbs = (*pcbs)->next; \
                             } else for(tcp_tmp_pcb = *pcbs; tcp_tmp_pcb != NULL; tcp_tmp_pcb = tcp_tmp_pcb->next) { \
-                               if(tcp_tmp_pcb->next != NULL && tcp_tmp_pcb->next == npcb) { \
+                               if(tcp_tmp_pcb->next == npcb) { \
                                   tcp_tmp_pcb->next = npcb->next; \
                                   break; \
                                } \
@@ -679,7 +687,7 @@ extern struct tcp_pcb *tcp_tmp_pcb;      /* Only used for temporary storage. */
       for(tcp_tmp_pcb = *pcbs;                                         \
           tcp_tmp_pcb != NULL;                                         \
           tcp_tmp_pcb = tcp_tmp_pcb->next) {                           \
-        if(tcp_tmp_pcb->next != NULL && tcp_tmp_pcb->next == npcb) {   \
+        if(tcp_tmp_pcb->next == npcb) {   \
           tcp_tmp_pcb->next = npcb->next;          \
           break;                                   \
         }                                          \

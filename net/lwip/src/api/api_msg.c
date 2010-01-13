@@ -168,6 +168,15 @@ recv_udp(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     buf->ptr = p;
     buf->addr = addr;
     buf->port = port;
+#if LWIP_NETBUF_RECVINFO
+    {
+      const struct ip_hdr* iphdr = ip_current_header();
+      /* get the UDP header - always in the first pbuf, ensured by udp_input */
+      const struct udp_hdr* udphdr = (void*)(((char*)iphdr) + IPH_LEN(iphdr));
+      buf->toaddr = (struct ip_addr*)&iphdr->dest;
+      buf->toport = udphdr->dest;
+    }
+#endif /* LWIP_NETBUF_RECVINFO */
   }
 
   if (sys_mbox_trypost(conn->recvmbox, buf) != ERR_OK) {
@@ -807,6 +816,8 @@ do_connect(struct api_msg_msg *msg)
     break;
 #endif /* LWIP_TCP */
   default:
+    LWIP_ERROR("Invalid netconn type", 0, do{ msg->conn->err = ERR_VAL;
+      sys_sem_signal(msg->conn->op_completed); }while(0));
     break;
   }
 }
@@ -1149,7 +1160,7 @@ do_close(struct api_msg_msg *msg)
 #endif /* LWIP_TCP */
   {
     msg->conn->err = ERR_VAL;
-    TCPIP_APIMSG_ACK(msg);
+    sys_sem_signal(msg->conn->op_completed);
   }
 }
 

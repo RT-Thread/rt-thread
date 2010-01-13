@@ -19,7 +19,178 @@ HISTORY
 
   ++ New features:
 
+
   ++ Bugfixes:
+
+
+(STABLE-1.3.2)
+
+  ++ New features:
+
+  2009-10-27 Simon Goldschmidt/Stephan Lesage
+  * netifapi.c/.h: Added netifapi_netif_set_addr()
+
+  2009-10-07 Simon Goldschmidt/Fabian Koch
+  * api_msg.c, netbuf.c/.h, opt.h: patch #6888: Patch for UDP Netbufs to
+    support dest-addr and dest-port (optional: LWIP_NETBUF_RECVINFO)
+
+  2009-08-26 Simon Goldschmidt/Simon Kallweit
+  * slipif.c/.h: bug #26397: SLIP polling support
+
+  2009-08-25 Simon Goldschmidt
+  * opt.h, etharp.h/.c: task #9033: Support IEEE 802.1q tagged frame (VLAN),
+    New configuration options ETHARP_SUPPORT_VLAN and ETHARP_VLAN_CHECK.
+
+  2009-08-25 Simon Goldschmidt
+  * ip_addr.h, netdb.c: patch #6900: added define ip_ntoa(struct ip_addr*)
+
+  2009-08-24 Jakob Stoklund Olesen
+  * autoip.c, dhcp.c, netif.c: patch #6725: Teach AutoIP and DHCP to respond
+    to netif_set_link_up().
+
+  2009-08-23 Simon Goldschmidt
+  * tcp.h/.c: Added function tcp_debug_state_str() to convert a tcp state
+    to a human-readable string.
+
+  ++ Bugfixes:
+
+  2009-12-24: Kieran Mansley
+  * tcp_in.c Apply patches from Oleg Tyshev to improve OOS processing
+    (BUG#28241)
+
+  2009-12-06: Simon Goldschmidt
+  * ppp.h/.c: Fixed bug #27079 (Yet another leak in PPP): outpacket_buf can
+    be statically allocated (like in ucip)
+
+  2009-12-04: Simon Goldschmidt (patch by Ioardan Neshev)
+  * pap.c: patch #6969: PPP: missing PAP authentication UNTIMEOUT
+
+  2009-12-03: Simon Goldschmidt
+  * tcp.h, tcp_in.c, tcp_out.c: Fixed bug #28106: dup ack for fast retransmit
+    could have non-zero length
+
+  2009-12-02: Simon Goldschmidt
+  * tcp_in.c: Fixed bug #27904: TCP sends too many ACKs: delay resetting
+    tcp_input_pcb until after calling the pcb's callbacks
+
+  2009-11-29: Simon Goldschmidt
+  * tcp_in.c: Fixed bug #28054: Two segments with FIN flag on the out-of-
+    sequence queue, also fixed PBUF_POOL leak in the out-of-sequence code
+
+  2009-11-29: Simon Goldschmidt
+  * pbuf.c: Fixed bug #28064: pbuf_alloc(PBUF_POOL) is not thread-safe by
+    queueing a call into tcpip_thread to free ooseq-bufs if the pool is empty
+
+  2009-11-26: Simon Goldschmidt
+  * tcp.h: Fixed bug #28098: Nagle can prevent fast retransmit from sending
+    segment
+
+  2009-11-26: Simon Goldschmidt
+  * tcp.h, sockets.c: Fixed bug #28099: API required to disable Nagle
+    algorithm at PCB level
+
+  2009-11-22: Simon Goldschmidt
+  * tcp_out.c: Fixed bug #27905: FIN isn't combined with data on unsent
+
+  2009-11-22: Simon Goldschmidt (suggested by Bill Auerbach)
+  * tcp.c: tcp_alloc: prevent increasing stats.err for MEMP_TCP_PCB when
+    reusing time-wait pcb
+
+  2009-11-20: Simon Goldschmidt (patch by Albert Bartel)
+  * sockets.c: Fixed bug #28062: Data received directly after accepting
+    does not wake up select
+
+  2009-11-11: Simon Goldschmidt
+  * netdb.h: Fixed bug #27994: incorrect define for freeaddrinfo(addrinfo)
+
+  2009-10-30: Simon Goldschmidt
+  * opt.h: Increased default value for TCP_MSS to 536, updated default
+    value for TCP_WND to 4*TCP_MSS to keep delayed ACK working.
+
+  2009-10-28: Kieran Mansley
+  * tcp_in.c, tcp_out.c, tcp.h: re-work the fast retransmission code
+    to follow algorithm from TCP/IP Illustrated
+
+  2009-10-27: Kieran Mansley
+  * tcp_in.c: fix BUG#27445: grow cwnd with every duplicate ACK
+
+  2009-10-25: Simon Goldschmidt
+  * tcp.h: bug-fix in the TCP_EVENT_RECV macro (has to call tcp_recved if
+    pcb->recv is NULL to keep rcv_wnd correct)
+
+  2009-10-25: Simon Goldschmidt
+  * tcp_in.c: Fixed bug #26251: RST process in TIME_WAIT TCP state
+
+  2009-10-23: Simon Goldschmidt (David Empson)
+  * tcp.c: Fixed bug #27783: Silly window avoidance for small window sizes
+
+  2009-10-21: Simon Goldschmidt
+  * tcp_in.c: Fixed bug #27215: TCP sent() callback gives leading and
+    trailing 1 byte len (SYN/FIN)
+
+  2009-10-21: Simon Goldschmidt
+  * tcp_out.c: Fixed bug #27315: zero window probe and FIN
+
+  2009-10-19: Simon Goldschmidt
+  * dhcp.c/.h: Minor code simplification (don't store received pbuf, change
+    conditional code to assert where applicable), check pbuf length before
+    testing for valid reply
+
+  2009-10-19: Simon Goldschmidt
+  * dhcp.c: Removed most calls to udp_connect since they aren't necessary
+    when using udp_sendto_if() - always stay connected to IP_ADDR_ANY.
+
+  2009-10-16: Simon Goldschmidt
+  * ip.c: Fixed bug #27390: Source IP check in ip_input() causes it to drop
+    valid DHCP packets -> allow 0.0.0.0 as source address when LWIP_DHCP is
+    enabled
+
+  2009-10-15: Simon Goldschmidt (Oleg Tyshev)
+  * tcp_in.c: Fixed bug #27329: dupacks by unidirectional data transmit
+
+  2009-10-15: Simon Goldschmidt
+  * api_lib.c: Fixed bug #27709: conn->err race condition on netconn_recv()
+    timeout
+
+  2009-10-15: Simon Goldschmidt
+  * autoip.c: Fixed bug #27704: autoip starts with wrong address
+    LWIP_AUTOIP_CREATE_SEED_ADDR() returned address in host byte order instead
+    of network byte order
+
+  2009-10-11 Simon Goldschmidt (Jörg Kesten)
+  * tcp_out.c: Fixed bug #27504: tcp_enqueue wrongly concatenates segments
+    which are not consecutive when retransmitting unacked segments
+
+  2009-10-09 Simon Goldschmidt
+  * opt.h: Fixed default values of some stats to only be enabled if used
+    Fixes bug #27338: sys_stats is defined when NO_SYS = 1
+
+  2009-08-30 Simon Goldschmidt
+  * ip.c: Fixed bug bug #27345: "ip_frag() does not use the LWIP_NETIF_LOOPBACK
+    function" by checking for loopback before calling ip_frag
+
+  2009-08-25 Simon Goldschmidt
+  * dhcp.c: fixed invalid dependency to etharp_query if DHCP_DOES_ARP_CHECK==0
+
+  2009-08-23 Simon Goldschmidt
+  * ppp.c: bug #27078: Possible memory leak in pppInit()
+
+  2009-08-23 Simon Goldschmidt
+  * netdb.c, dns.c: bug #26657: DNS, if host name is "localhost", result
+    is error.
+
+  2009-08-23 Simon Goldschmidt
+  * opt.h, init.c: bug #26649: TCP fails when TCP_MSS > TCP_SND_BUF
+    Fixed wrong parenthesis, added check in init.c
+
+  2009-08-23 Simon Goldschmidt
+  * ppp.c: bug #27266: wait-state debug message in pppMain occurs every ms
+
+  2009-08-23 Simon Goldschmidt
+  * many ppp files: bug #27267: Added include to string.h where needed
+
+  2009-08-23 Simon Goldschmidt
+  * tcp.h: patch #6843: tcp.h macro optimization patch (for little endian)
 
 
 (STABLE-1.3.1)

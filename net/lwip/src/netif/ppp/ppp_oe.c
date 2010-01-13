@@ -398,7 +398,7 @@ pppoe_dispatch_disc_pkt(struct netif *netif, struct pbuf *pb)
 #endif
   struct pppoehdr *ph;
   struct pppoetag pt;
-  int off = 0, err, errortag;
+  int off, err, errortag;
   struct eth_hdr *ethhdr;
 
   pb = pppSingleBuf(pb);
@@ -410,7 +410,7 @@ pppoe_dispatch_disc_pkt(struct netif *netif, struct pbuf *pb)
     goto done;
   }
   ethhdr = (struct eth_hdr *)pb->payload;
-  off += sizeof(*ethhdr);
+  off = sizeof(*ethhdr);
 
   ac_cookie = NULL;
   ac_cookie_len = 0;
@@ -419,7 +419,7 @@ pppoe_dispatch_disc_pkt(struct netif *netif, struct pbuf *pb)
   hunique_len = 0;
 #endif
   session = 0;
-  if (pb->len - off <= PPPOE_HEADERLEN) {
+  if (pb->len - off < PPPOE_HEADERLEN) {
     printf("pppoe: packet too short: %d\n", pb->len);
     goto done;
   }

@@ -34,6 +34,7 @@
 
 #include "lwip/opt.h"
 #include "lwip/pbuf.h"
+#include "lwip/ip_addr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,6 +44,10 @@ struct netbuf {
   struct pbuf *p, *ptr;
   struct ip_addr *addr;
   u16_t port;
+#if LWIP_NETBUF_RECVINFO
+  struct ip_addr *toaddr;
+  u16_t toport;
+#endif /* LWIP_NETBUF_RECVINFO */
 };
 
 /* Network buffer functions: */
@@ -69,6 +74,10 @@ void              netbuf_first    (struct netbuf *buf);
 #define netbuf_len(buf)              ((buf)->p->tot_len)
 #define netbuf_fromaddr(buf)         ((buf)->addr)
 #define netbuf_fromport(buf)         ((buf)->port)
+#if LWIP_NETBUF_RECVINFO
+#define netbuf_destaddr(buf)         ((buf)->toaddr)
+#define netbuf_destport(buf)         ((buf)->toport)
+#endif /* LWIP_NETBUF_RECVINFO */
 
 #ifdef __cplusplus
 }

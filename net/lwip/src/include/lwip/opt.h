@@ -366,6 +366,16 @@
 #define ETHARP_TRUST_IP_MAC             1
 #endif
 
+/**
+ * ETHARP_SUPPORT_VLAN==1: support receiving ethernet packets with VLAN header.
+ * Additionally, you can define ETHARP_VLAN_CHECK to an u16_t VLAN ID to check.
+ * If ETHARP_VLAN_CHECK is defined, only VLAN-traffic for this VLAN is accepted.
+ * If ETHARP_VLAN_CHECK is not defined, all traffic is accepted.
+ */
+#ifndef ETHARP_SUPPORT_VLAN
+#define ETHARP_SUPPORT_VLAN             0
+#endif
+
 /*
    --------------------------------
    ---------- IP options ----------
@@ -718,6 +728,13 @@
 #define UDP_TTL                         (IP_DEFAULT_TTL)
 #endif
 
+/**
+ * LWIP_NETBUF_RECVINFO==1: append destination addr and port to every netbuf.
+ */
+#ifndef LWIP_NETBUF_RECVINFO
+#define LWIP_NETBUF_RECVINFO            0
+#endif
+
 /*
    ---------------------------------
    ---------- TCP options ----------
@@ -742,7 +759,7 @@
  * (2 * TCP_MSS) for things to work well
  */
 #ifndef TCP_WND
-#define TCP_WND                         2048
+#define TCP_WND                         (4 * TCP_MSS)
 #endif 
 
 /**
@@ -768,14 +785,14 @@
 #endif
 
 /**
- * TCP_MSS: TCP Maximum segment size. (default is 128, a *very*
- * conservative default.)
+ * TCP_MSS: TCP Maximum segment size. (default is 536, a conservative default,
+ * you might want to increase this.)
  * For the receive side, this MSS is advertised to the remote side
  * when opening a connection. For the transmit size, this MSS sets
  * an upper limit on the MSS advertised by the remote host.
  */
 #ifndef TCP_MSS
-#define TCP_MSS                         128
+#define TCP_MSS                         536
 #endif
 
 /**
@@ -803,7 +820,7 @@
  * as much as (2 * TCP_SND_BUF/TCP_MSS) for things to work.
  */
 #ifndef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                (4 * (TCP_SND_BUF/TCP_MSS))
+#define TCP_SND_QUEUELEN                (4 * (TCP_SND_BUF)/(TCP_MSS))
 #endif
 
 /**
@@ -812,7 +829,7 @@
  * TCP snd_buf for select to return writable.
  */
 #ifndef TCP_SNDLOWAT
-#define TCP_SNDLOWAT                    (TCP_SND_BUF/2)
+#define TCP_SNDLOWAT                    ((TCP_SND_BUF)/2)
 #endif
 
 /**
@@ -1322,21 +1339,21 @@
  * MEM_STATS==1: Enable mem.c stats.
  */
 #ifndef MEM_STATS
-#define MEM_STATS                       1
+#define MEM_STATS                       ((MEM_LIBC_MALLOC == 0) && (MEM_USE_POOLS == 0))
 #endif
 
 /**
  * MEMP_STATS==1: Enable memp.c pool stats.
  */
 #ifndef MEMP_STATS
-#define MEMP_STATS                      1
+#define MEMP_STATS                      (MEMP_MEM_MALLOC == 0)
 #endif
 
 /**
  * SYS_STATS==1: Enable system stats (sem and mbox counts, etc).
  */
 #ifndef SYS_STATS
-#define SYS_STATS                       1
+#define SYS_STATS                       (NO_SYS == 0)
 #endif
 
 #else
@@ -1510,9 +1527,12 @@
 #endif
 #define PPP_MINMRU                      128             /* No MRUs below this */
 
-
+#ifndef MAXNAMELEN
 #define MAXNAMELEN                      256     /* max length of hostname or name for auth */
+#endif
+#ifndef MAXSECRETLEN
 #define MAXSECRETLEN                    256     /* max length of password or secret */
+#endif
 
 #endif /* PPP_SUPPORT */
 
@@ -1574,7 +1594,7 @@
  * messages are written.
  */
 #ifndef LWIP_DBG_MIN_LEVEL
-#define LWIP_DBG_MIN_LEVEL              LWIP_DBG_LEVEL_OFF
+#define LWIP_DBG_MIN_LEVEL              LWIP_DBG_LEVEL_ALL
 #endif
 
 /**

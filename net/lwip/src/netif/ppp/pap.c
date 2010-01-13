@@ -61,6 +61,8 @@
 #include "auth.h"
 #include "pap.h"
 
+#include <string.h>
+
 /***********************************/
 /*** LOCAL FUNCTION DECLARATIONS ***/
 /***********************************/
@@ -490,6 +492,7 @@ upap_rauthack(upap_state *u, u_char *inp, int id, int len)
   msg = (char *) inp;
   PRINTMSG(msg, msglen);
 
+  UNTIMEOUT(upap_timeout, u);    /* Cancel timeout */
   u->us_clientstate = UPAPCS_OPEN;
 
   auth_withpeer_success(u->us_unit, PPP_PAP);

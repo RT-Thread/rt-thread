@@ -23,3 +23,7 @@ slipif.c
           protocol. It requires a sio (serial I/O) module to work.
 
 ppp/      Point-to-Point Protocol stack
+          The PPP stack has been ported from ucip (http://ucip.sourceforge.net).
+          It matches quite well to pppd 2.3.1 (http://ppp.samba.org), although
+          compared to that, it has some modifications for embedded systems and
+          the source code has been reordered a bit.

@@ -118,7 +118,7 @@ snmp_netiftoifindex(struct netif *netif, s32_t *ifidx)
   u16_t i;
 
   i = 0;
-  while (nif != netif)
+  while ((nif != NULL) && (nif != netif))
   {
     nif = nif->next;
     i++;

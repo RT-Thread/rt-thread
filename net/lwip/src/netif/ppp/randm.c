@@ -41,6 +41,7 @@
 #include "ppp.h"
 #include "pppdebug.h"
 
+#include <string.h>
 
 #if MD5_SUPPORT /* this module depends on MD5 */
 #define RANDPOOLSZ 16   /* Bytes stored in the pool of randomness. */

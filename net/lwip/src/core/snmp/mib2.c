@@ -2077,25 +2077,25 @@ void snmp_get_snmpenableauthentraps(u8_t *value)
 void
 noleafs_get_object_def(u8_t ident_len, s32_t *ident, struct obj_def *od)
 {
-  if (ident_len){}
-  if (ident){}
+  LWIP_UNUSED_ARG(ident_len);
+  LWIP_UNUSED_ARG(ident);
   od->instance = MIB_OBJECT_NONE;
 }
 
 void
 noleafs_get_value(struct obj_def *od, u16_t len, void *value)
 {
-  if (od){}
-  if (len){}
-  if (value){}
+  LWIP_UNUSED_ARG(od);
+  LWIP_UNUSED_ARG(len);
+  LWIP_UNUSED_ARG(value);
 }
 
 u8_t
 noleafs_set_test(struct obj_def *od, u16_t len, void *value)
 {
-  if (od){}
-  if (len){}
-  if (value){}
+  LWIP_UNUSED_ARG(od);
+  LWIP_UNUSED_ARG(len);
+  LWIP_UNUSED_ARG(value);
   /* can't set */
   return 0;
 }
@@ -2103,9 +2103,9 @@ noleafs_set_test(struct obj_def *od, u16_t len, void *value)
 void
 noleafs_set_value(struct obj_def *od, u16_t len, void *value)
 {
-  if (od){}
-  if (len){}
-  if (value){}
+  LWIP_UNUSED_ARG(od);
+  LWIP_UNUSED_ARG(len);
+  LWIP_UNUSED_ARG(value);
 }
 
 
@@ -2238,7 +2238,7 @@ system_set_test(struct obj_def *od, u16_t len, void *value)
 {
   u8_t id, set_ok;
 
-  if (value) {}
+  LWIP_UNUSED_ARG(value);
   set_ok = 0;
   id = od->id_inst_ptr[0];
   switch (id)
@@ -2332,7 +2332,7 @@ interfaces_get_object_def(u8_t ident_len, s32_t *ident, struct obj_def *od)
 static void
 interfaces_get_value(struct obj_def *od, u16_t len, void *value)
 {
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   if (od->id_inst_ptr[0] == 1)
   {
     s32_t *sint_ptr = value;
@@ -2724,7 +2724,8 @@ atentry_get_value(struct obj_def *od, u16_t len, void *value)
   struct ip_addr ip;
   struct netif *netif;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
+  LWIP_UNUSED_ARG(value);/* if !LWIP_ARP */
 
   snmp_ifindextonetif(od->id_inst_ptr[1], &netif);
   snmp_oidtoip(&od->id_inst_ptr[2], &ip);
@@ -2831,7 +2832,7 @@ ip_get_value(struct obj_def *od, u16_t len, void *value)
 {
   u8_t id;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   switch (id)
   {
@@ -2985,7 +2986,7 @@ ip_set_test(struct obj_def *od, u16_t len, void *value)
   u8_t id, set_ok;
   s32_t *sint_ptr = value;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
   set_ok = 0;
   id = od->id_inst_ptr[0];
   switch (id)
@@ -3065,7 +3066,7 @@ ip_addrentry_get_value(struct obj_def *od, u16_t len, void *value)
   struct ip_addr ip;
   struct netif *netif = netif_list;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
   snmp_oidtoip(&od->id_inst_ptr[1], &ip);
   ip.addr = htonl(ip.addr);
   ifidx = 0;
@@ -3408,7 +3409,8 @@ ip_ntomentry_get_value(struct obj_def *od, u16_t len, void *value)
   struct ip_addr ip;
   struct netif *netif;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
+  LWIP_UNUSED_ARG(value);/* if !LWIP_ARP */
 
   snmp_ifindextonetif(od->id_inst_ptr[1], &netif);
   snmp_oidtoip(&od->id_inst_ptr[2], &ip);
@@ -3482,7 +3484,7 @@ icmp_get_value(struct obj_def *od, u16_t len, void *value)
   u32_t *uint_ptr = value;
   u8_t id;
 
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   switch (id)
   {
@@ -3636,7 +3638,7 @@ tcp_get_value(struct obj_def *od, u16_t len, void *value)
   s32_t *sint_ptr = value;
   u8_t id;
 
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   switch (id)
   {
@@ -3804,7 +3806,7 @@ udp_get_value(struct obj_def *od, u16_t len, void *value)
   u32_t *uint_ptr = value;
   u8_t id;
 
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   switch (id)
   {
@@ -3870,7 +3872,7 @@ udpentry_get_value(struct obj_def *od, u16_t len, void *value)
   struct ip_addr ip;
   u16_t port;
 
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   snmp_oidtoip(&od->id_inst_ptr[1], &ip);
   ip.addr = htonl(ip.addr);
   port = od->id_inst_ptr[5];
@@ -3977,7 +3979,7 @@ snmp_get_value(struct obj_def *od, u16_t len, void *value)
   u32_t *uint_ptr = value;
   u8_t id;
 
-  if (len){}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   switch (id)
   {
@@ -4080,7 +4082,7 @@ snmp_set_test(struct obj_def *od, u16_t len, void *value)
 {
   u8_t id, set_ok;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
   set_ok = 0;
   id = od->id_inst_ptr[0];
   if (id == 30)
@@ -4113,7 +4115,7 @@ snmp_set_value(struct obj_def *od, u16_t len, void *value)
 {
   u8_t id;
 
-  if (len) {}
+  LWIP_UNUSED_ARG(len);
   id = od->id_inst_ptr[0];
   if (id == 30)
   {

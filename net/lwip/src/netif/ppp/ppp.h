@@ -333,7 +333,7 @@ struct ppp_addrs {
 *****************************/
 
 /* Buffers for outgoing packets. */
-extern u_char *outpacket_buf[NUM_PPP];
+extern u_char outpacket_buf[NUM_PPP][PPP_MRU+PPP_HDRLEN];
 
 extern struct ppp_settings ppp_settings;
 
@@ -345,7 +345,7 @@ extern struct protent *ppp_protocols[]; /* Table of pointers to supported protoc
 ***********************/
 
 /* Initialize the PPP subsystem. */
-err_t pppInit(void);
+void pppInit(void);
 
 /* Warning: Using PPPAUTHTYPE_ANY might have security consequences.
  * RFC 1994 says:

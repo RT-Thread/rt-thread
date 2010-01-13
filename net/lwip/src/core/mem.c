@@ -300,7 +300,7 @@ mem_free(void *rmem)
   LWIP_MEM_FREE_DECL_PROTECT();
 
   if (rmem == NULL) {
-    LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_TRACE | 2, ("mem_free(p == NULL) was called.\n"));
+    LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_SERIOUS, ("mem_free(p == NULL) was called.\n"));
     return;
   }
   LWIP_ASSERT("mem_free: sanity check alignment", (((mem_ptr_t)rmem) & (MEM_ALIGNMENT-1)) == 0);
@@ -310,7 +310,7 @@ mem_free(void *rmem)
 
   if ((u8_t *)rmem < (u8_t *)ram || (u8_t *)rmem >= (u8_t *)ram_end) {
     SYS_ARCH_DECL_PROTECT(lev);
-    LWIP_DEBUGF(MEM_DEBUG | 3, ("mem_free: illegal memory\n"));
+    LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_LEVEL_SEVERE, ("mem_free: illegal memory\n"));
     /* protect mem stats from concurrent access */
     SYS_ARCH_PROTECT(lev);
     MEM_STATS_INC(illegal);
@@ -380,7 +380,7 @@ mem_realloc(void *rmem, mem_size_t newsize)
 
   if ((u8_t *)rmem < (u8_t *)ram || (u8_t *)rmem >= (u8_t *)ram_end) {
     SYS_ARCH_DECL_PROTECT(lev);
-    LWIP_DEBUGF(MEM_DEBUG | 3, ("mem_realloc: illegal memory\n"));
+    LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_LEVEL_SEVERE, ("mem_realloc: illegal memory\n"));
     /* protect mem stats from concurrent access */
     SYS_ARCH_PROTECT(lev);
     MEM_STATS_INC(illegal);
@@ -599,7 +599,7 @@ mem_malloc(mem_size_t size)
     /* if we got interrupted by a mem_free, try again */
   } while(local_mem_free_count != 0);
 #endif /* LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT */
-  LWIP_DEBUGF(MEM_DEBUG | 2, ("mem_malloc: could not allocate %"S16_F" bytes\n", (s16_t)size));
+  LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_LEVEL_SERIOUS, ("mem_malloc: could not allocate %"S16_F" bytes\n", (s16_t)size));
   MEM_STATS_INC(err);
   LWIP_MEM_ALLOC_UNPROTECT();
   sys_sem_signal(mem_sem);

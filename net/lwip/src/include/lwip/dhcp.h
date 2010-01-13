@@ -24,22 +24,20 @@ extern "C" {
 
 struct dhcp
 {
-  /** current DHCP state machine state */
-  u8_t state;
-  /** retries of current request */
-  u8_t tries;
   /** transaction identifier of last sent request */ 
   u32_t xid;
   /** our connection to the DHCP server */ 
   struct udp_pcb *pcb;
-  /** (first) pbuf of incoming msg */
-  struct pbuf *p;
   /** incoming msg */
   struct dhcp_msg *msg_in;
   /** incoming msg options */
-  struct dhcp_msg *options_in; 
+  void *options_in; 
   /** ingoing msg options length */
   u16_t options_in_len;
+  /** current DHCP state machine state */
+  u8_t state;
+  /** retries of current request */
+  u8_t tries;
 
   struct pbuf *p_out; /* pbuf of outcoming msg */
   struct dhcp_msg *msg_out; /* outgoing msg */
@@ -124,6 +122,8 @@ err_t dhcp_release(struct netif *netif);
 void dhcp_stop(struct netif *netif);
 /** inform server of our manual IP address */
 void dhcp_inform(struct netif *netif);
+/** Handle a possible change in the network configuration */
+void dhcp_network_changed(struct netif *netif);
 
 /** if enabled, check whether the offered IP address is not in use, using ARP */
 #if DHCP_DOES_ARP_CHECK

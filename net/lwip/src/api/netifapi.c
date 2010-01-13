@@ -59,6 +59,20 @@ do_netifapi_netif_add( struct netifapi_msg_msg *msg)
 }
 
 /**
+ * Call netif_set_addr() inside the tcpip_thread context.
+ */
+void
+do_netifapi_netif_set_addr( struct netifapi_msg_msg *msg)
+{
+  netif_set_addr( msg->netif,
+                  msg->msg.add.ipaddr,
+                  msg->msg.add.netmask,
+                  msg->msg.add.gw);
+  msg->err = ERR_OK;
+  TCPIP_NETIFAPI_ACK(msg);
+}
+
+/**
  * Call the "errtfunc" (or the "voidfunc" if "errtfunc" is NULL) inside the
  * tcpip_thread context.
  */
@@ -99,6 +113,28 @@ netifapi_netif_add(struct netif *netif,
   msg.msg.msg.add.state   = state;
   msg.msg.msg.add.init    = init;
   msg.msg.msg.add.input   = input;
+  TCPIP_NETIFAPI(&msg);
+  return msg.msg.err;
+}
+
+/**
+ * Call netif_set_addr() in a thread-safe way by running that function inside the
+ * tcpip_thread context.
+ *
+ * @note for params @see netif_set_addr()
+ */
+err_t
+netifapi_netif_set_addr(struct netif *netif,
+                        struct ip_addr *ipaddr,
+                        struct ip_addr *netmask,
+                        struct ip_addr *gw)
+{
+  struct netifapi_msg msg;
+  msg.function = do_netifapi_netif_set_addr;
+  msg.msg.netif = netif;
+  msg.msg.msg.add.ipaddr  = ipaddr;
+  msg.msg.msg.add.netmask = netmask;
+  msg.msg.msg.add.gw      = gw;
   TCPIP_NETIFAPI(&msg);
   return msg.msg.err;
 }

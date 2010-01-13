@@ -183,20 +183,7 @@ static fsm_callbacks ipcp_callbacks = { /* IPCP callback routines */
 /*** LOCAL FUNCTION DEFINITIONS ***/
 /**********************************/
 
-/*
- * Non-standard inet_ntoa left here for compat with original ppp
- * sources. Assumes u32_t instead of struct in_addr.
- */ 
-
-char *
-_inet_ntoa(u32_t n)
-{
-  struct in_addr ia;
-  ia.s_addr = n;
-  return inet_ntoa(ia);
-}
-
-#define inet_ntoa _inet_ntoa
+#define inet_ntoa(addr) ip_ntoa(((struct ip_addr*)&(addr)))
 
 /*
  * ipcp_init - Initialize IPCP.

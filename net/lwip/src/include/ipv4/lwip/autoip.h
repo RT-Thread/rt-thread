@@ -52,6 +52,10 @@
 #include "lwip/udp.h"
 #include "netif/etharp.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* AutoIP Timing */
 #define AUTOIP_TMR_INTERVAL      100
 #define AUTOIP_TICKS_PER_SECOND (1000 / AUTOIP_TMR_INTERVAL)
@@ -99,6 +103,13 @@ void autoip_arp_reply(struct netif *netif, struct etharp_hdr *hdr);
 
 /** Has to be called in loop every AUTOIP_TMR_INTERVAL milliseconds */
 void autoip_tmr(void);
+
+/** Handle a possible change in the network configuration */
+void autoip_network_changed(struct netif *netif);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWIP_AUTOIP */
 
