@@ -153,11 +153,13 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			(struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
 #ifndef RTGUI_USING_SMALL_SIZE
+#if 0
 			/* handle event in current widget */
 			if (widget->on_mousemotion != RT_NULL)
 			{
 				return widget->on_mousemotion(widget, event);
 			}
+#endif
 #endif
 		}
 		else return RT_TRUE;

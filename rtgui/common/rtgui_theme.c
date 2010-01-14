@@ -594,7 +594,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 
 			/* draw text */
 			item_rect.x1 += item_size + 3;
-			rtgui_dc_draw_text(dc, radiobox->items[index], item_rect);
+			rtgui_dc_draw_text(dc, radiobox->items[index], &item_rect);
 			item_rect.x1 -= item_size + 3;
 
 			item_rect.y1 += item_size;
@@ -624,7 +624,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 
 			/* draw text */
 			item_rect.x1 += item_size + 3;
-			rtgui_dc_draw_text(dc, radiobox->items[index], item_rect);
+			rtgui_dc_draw_text(dc, radiobox->items[index], &item_rect);
 			item_rect.x1 -= item_size + 3;
 
 			item_rect.x1 += item_size;

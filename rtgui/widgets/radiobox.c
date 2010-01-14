@@ -98,17 +98,17 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui
 
             /* set focused */
             rtgui_widget_focus(RTGUI_WIDGET(radiobox));
-            if (!(RTGUI_KBD_IS_UP(e))) return;
+            if (!(RTGUI_KBD_IS_UP(e))) return RT_FALSE;
 
             if (e->key == RTGUIK_UP)
             {
                 if (radiobox->item_selection > 0)
-                    rtgui_radiobox_set_selection(radiobox->item_selection - 1);
+                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection - 1);
             }
             else if (e->key == RTGUIK_DOWN)
             {
                 if (radiobox->item_selection < radiobox->item_count - 1)
-                    rtgui_radiobox_set_selection(radiobox->item_selection + 1);
+                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection + 1);
             }
         }
 		break;
@@ -186,7 +186,7 @@ void rtgui_radiobox_set_orientation(struct rtgui_radiobox* radiobox, int orienta
 	{
 		/* VERTICAL */
 		rtgui_widget_set_miniwidth(RTGUI_WIDGET(radiobox), RTGUI_RADIOBOX_DEFAULT_HEIGHT);
-		rtgui_widget_set_miniheight(RTGUI_WIDGET(slider), RTGUI_RADIOBOX_DEFAULT_WIDTH);
+		rtgui_widget_set_miniheight(RTGUI_WIDGET(radiobox), RTGUI_RADIOBOX_DEFAULT_WIDTH);
 	}
 #endif
 }

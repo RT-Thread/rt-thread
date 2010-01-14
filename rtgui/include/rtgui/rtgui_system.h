@@ -73,7 +73,6 @@ rt_err_t rtgui_thread_ack(struct rtgui_event* event, rt_int32_t status);
 
 /* rtgui system initialization function */
 void rtgui_system_server_init(void);
-void rtgui_system_app_init(void);
 
 void* rtgui_malloc(rt_size_t size);
 void rtgui_free(void* ptr);

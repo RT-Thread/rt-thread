@@ -303,9 +303,12 @@ void rtgui_server_handle_mouse_btn(struct rtgui_event_mouse* event)
 		event->wid = RT_NULL;
 
 		/* send mouse event to thread */
-		rtgui_thread_send(rtgui_panel_get_active_thread(panel),
-			(struct rtgui_event*)event,
-			sizeof(struct rtgui_event_mouse));
+		if (rtgui_panel_get_active_thread(panel) != RT_NULL)
+		{
+			rtgui_thread_send(rtgui_panel_get_active_thread(panel),
+				(struct rtgui_event*)event,
+				sizeof(struct rtgui_event_mouse));
+		}
 	}
 }
 
@@ -381,10 +384,13 @@ void rtgui_server_handle_mouse_motion(struct rtgui_event_mouse* event)
 	if (last_monitor_panel != RT_NULL)
 	{
 		rt_thread_t tid = rtgui_panel_get_active_thread(last_monitor_panel);
-		event->wid = RT_NULL;
 
 		/* send mouse motion event */
-		rtgui_thread_send(tid, &(event->parent), sizeof(struct rtgui_event_mouse));
+		if (tid != RT_NULL)
+		{
+			event->wid = RT_NULL;
+			rtgui_thread_send(tid, &(event->parent), sizeof(struct rtgui_event_mouse));
+		}
 	}
 	else if (last_monitor_topwin != RT_NULL)
 	{
@@ -403,7 +409,8 @@ void rtgui_server_handle_mouse_motion(struct rtgui_event_mouse* event)
 			event->wid = RT_NULL;
 
 			/* send mouse motion event */
-			rtgui_thread_send(tid, &(event->parent), sizeof(struct rtgui_event_mouse));
+			if (tid != RT_NULL)
+				rtgui_thread_send(tid, &(event->parent), sizeof(struct rtgui_event_mouse));
 		}
 	}
 
