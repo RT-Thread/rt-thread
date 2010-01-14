@@ -71,7 +71,7 @@ File 5,1,<..\..\libcpu\arm\stm32\serial.c><serial.c>
 File 6,1,<..\..\net\lwip\src\core\dhcp.c><dhcp.c>
 File 6,1,<..\..\net\lwip\src\core\dns.c><dns.c>
 File 6,1,<..\..\net\lwip\src\core\init.c><init.c>
-File 6,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
+File 6,1,<..\..\net\lwip\src\core\memp.c><memp.c>
 File 6,1,<..\..\net\lwip\src\core\netif.c><netif.c>
 File 6,1,<..\..\net\lwip\src\core\pbuf.c><pbuf.c>
 File 6,1,<..\..\net\lwip\src\core\raw.c><raw.c>
