@@ -56,7 +56,7 @@ static void workbench_entry(void* parameter)
 	rtgui_workbench_add_view(workbench, view);
 
 	/* 显示这个视图 */
-	rtgui_view_show(view);
+	rtgui_view_show(view, RT_FALSE);
 
 	/* 执行工作台事件循环 */
 	rtgui_workbench_event_loop(workbench);
