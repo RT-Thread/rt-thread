@@ -105,7 +105,6 @@ struct wm8753_device wm8753;
 static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 
     /* SPI2 IRQ Channel configuration */
     NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
@@ -116,7 +115,7 @@ static void NVIC_Configuration(void)
 
     /* DMA1 IRQ Channel configuration */
     NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
@@ -166,7 +165,7 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
     DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
     DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-    DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
     DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(DMA1_Channel5, &DMA_InitStructure);
@@ -468,7 +467,7 @@ void wm8753_dma_isr()
     if (wm8753.parent.tx_complete != RT_NULL)
     {
         wm8753.parent.tx_complete (&wm8753.parent, data_ptr);
-        // rt_kprintf("-\n");
+		// rt_kprintf("<-0x%08x\n", data_ptr);
     }
 }
 

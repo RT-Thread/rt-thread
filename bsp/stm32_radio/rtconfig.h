@@ -76,10 +76,10 @@
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */
 
-/* #define RT_USING_RTGUI */
-
 #define RT_USING_DFS
 #define RT_USING_DFS_EFSL
+/* byte alignment for EFSL */
+#define BYTE_ALIGNMENT
 // #define RT_USING_DFS_ELMFAT
 #define DFS_EFLS_USING_STATIC_CACHE
 /* SECTION: DFS options */
@@ -97,6 +97,9 @@
 /* Trace LwIP protocol */
 /* #define RT_LWIP_DEBUG */
 
+/* LwIP uses RT-Thread Memory Management */
+#define RT_LWIP_USING_RT_MEM
+
 /* Enable ICMP protocol */
 #define RT_LWIP_ICMP
 
@@ -113,7 +116,7 @@
 #define RT_LWIP_TCP_PCB_NUM	3
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	1500
+#define RT_LWIP_TCP_SND_BUF	2048
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */

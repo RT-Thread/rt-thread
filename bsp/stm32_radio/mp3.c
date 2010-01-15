@@ -158,46 +158,26 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	decoder->read_offset = MP3FindSyncWord(decoder->read_ptr, decoder->bytes_left);
 	if (decoder->read_offset < 0)
 	{
-		rt_kprintf("Error: MP3FindSyncWord returned <0");
+		/* discard this data */
+		rt_kprintf("outof sync\n");
 
-		if(mp3_decoder_fill_buffer(decoder) != 0)
-			return -1;
+		decoder->bytes_left = 0;
+		return 0;
 	}
-	// rt_kprintf("sync position: %x\n", decoder->read_offset);
 
 	decoder->read_ptr += decoder->read_offset;
 	delta = decoder->read_offset;
 	decoder->bytes_left -= decoder->read_offset;
-	decoder->bytes_left_before_decoding = decoder->bytes_left;
-
-#if 0
-	// check if this is really a valid frame
-	// (the decoder does not seem to calculate CRC, so make some plausibility checks)
-	if (!(MP3GetNextFrameInfo(decoder->decoder, &decoder->frame_info, decoder->read_ptr) == 0 &&
-			decoder->frame_info.nChans == 2 &&
-			decoder->frame_info.version == 0))
-	{
-		rt_kprintf("this is an invalid frame\n");
-		// advance data pointer
-		// TODO: handle bytes_left == 0
-		RT_ASSERT(decoder->bytes_left > 0);
-
-		decoder->bytes_left --;
-		decoder->read_ptr ++;
-		return 0;
-	}
-
 	if (decoder->bytes_left < 1024)
 	{
+		/* fill more data */
 		if(mp3_decoder_fill_buffer(decoder) != 0)
 			return -1;
 	}
-#endif
 
     /* get a decoder buffer */
     buffer = (rt_uint16_t*)sbuf_alloc();
-
-	// rt_kprintf("bytes left before decode: %d\n", decoder->bytes_left);
+	decoder->bytes_left_before_decoding = decoder->bytes_left;
 
 	err = MP3Decode(decoder->decoder, &decoder->read_ptr,
         (int*)&decoder->bytes_left, (short*)buffer, 0);
@@ -218,7 +198,11 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 			rt_kprintf("ERR_MP3_INDATA_UNDERFLOW\n");
 			decoder->bytes_left = 0;
 			if(mp3_decoder_fill_buffer(decoder) != 0)
+			{
+				/* release this memory block */
+				sbuf_release(buffer);
 				return -1;
+			}
 			break;
 
 		case ERR_MP3_MAINDATA_UNDERFLOW:
@@ -226,32 +210,9 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 			rt_kprintf("ERR_MP3_MAINDATA_UNDERFLOW\n");
 			break;
 
-		case ERR_MP3_INVALID_FRAMEHEADER:
-			rt_kprintf("ERR_MP3_INVALID_FRAMEHEADER\n");
-			rt_kprintf("current offset: 0x%08x, frames: %d\n", current_offset, decoder->frames);
-			/* dump sector */
-			{
-				rt_uint8_t *ptr;
-				rt_size_t   size = 0, col = 0;
-
-				ptr = decoder->read_buffer;
-				rt_kprintf("   00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f\n");
-				rt_kprintf("00 ");
-				while (size ++ < 512)
-				{
-					rt_kprintf("%02x ", *ptr ++);
-					if (size % 16 == 0) rt_kprintf("\n%02x ", ++col);
-				}
-			}
-			RT_ASSERT(0);
-			// break;
-
-		case ERR_MP3_INVALID_HUFFCODES:
-			rt_kprintf("ERR_MP3_INVALID_HUFFCODES\n");
-			break;
-
 		default:
-			rt_kprintf("unknown error: %i\n", err);
+			rt_kprintf("unknown error: %d, left: %d\n", err, decoder->bytes_left);
+
 			// skip this frame
 			if (decoder->bytes_left > 0)
 			{
@@ -274,18 +235,18 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 		/* no error */
 		MP3GetLastFrameInfo(decoder->decoder, &decoder->frame_info);
 
-#ifdef MP3_DECODER_TRACE
-		rt_kprintf("Bitrate: %i\n", decoder->frame_info.bitrate);
-		rt_kprintf("%i samples\n", decoder->frame_info.outputSamps);
-
-		rt_kprintf("%lu Hz, %i kbps\n", decoder->frame_info.samprate,
-            decoder->frame_info.bitrate/1000);
-#endif
-
         /* set sample rate */
 
 		/* write to sound device */
-		rt_device_write(decoder->snd_device, 0, buffer, decoder->frame_info.outputSamps * 2);
+		if (decoder->frame_info.outputSamps > 0)
+		{
+			rt_device_write(decoder->snd_device, 0, buffer, decoder->frame_info.outputSamps * 2);
+		}
+		else
+		{
+			/* no output */
+			sbuf_release(buffer);
+		}
 	}
 
 	return 0;
@@ -457,6 +418,9 @@ void http_mp3(char* url)
 {
     struct http_session* session;
 	struct mp3_decoder* decoder;
+	extern rt_bool_t is_playing;
+	
+	is_playing = RT_TRUE;
 
 	session = http_session_open(url);
 	if (session != RT_NULL)
@@ -480,4 +444,70 @@ void http_mp3(char* url)
 	}
 }
 FINSH_FUNCTION_EXPORT(http_mp3, http mp3 decode test);
+
+/* http mp3 */
+#include "http.h"
+static rt_size_t ice_fetch(rt_uint8_t* ptr, rt_size_t len, void* parameter)
+{
+	struct shoutcast_session* session = (struct shoutcast_session*)parameter;
+	RT_ASSERT(session != RT_NULL);
+
+	return shoutcast_session_read(session, ptr, len);
+}
+
+static void ice_close(void* parameter)
+{
+	struct shoutcast_session* session = (struct shoutcast_session*)parameter;
+	RT_ASSERT(session != RT_NULL);
+
+	shoutcast_session_close(session);
+}
+
+rt_size_t ice_data_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
+{
+	return net_buf_read(buffer, length);
+}
+
+void ice_mp3(char* url)
+{
+    struct shoutcast_session* session;
+	struct mp3_decoder* decoder;
+	extern rt_bool_t is_playing;
+
+	is_playing = RT_TRUE;
+
+	session = shoutcast_session_open(url);
+	if (session != RT_NULL)
+	{
+		/* add a job to netbuf worker */
+		net_buf_add_job(ice_fetch, ice_close, (void*)session);
+
+		decoder = mp3_decoder_create();
+		if (decoder != RT_NULL)
+		{
+			decoder->fetch_data = ice_data_fetch;
+			decoder->fetch_parameter = RT_NULL;
+
+			current_offset = 0;
+			while (mp3_decoder_run(decoder) != -1);
+
+			/* delete decoder object */
+			mp3_decoder_delete(decoder);
+		}
+		session = RT_NULL;
+	}
+}
+FINSH_FUNCTION_EXPORT(ice_mp3, shoutcast mp3 decode test);
+
+char ice_url[] = "http://192.168.1.5:8000/stream";
+void ice()
+{
+	rt_thread_t tid;
+	
+	tid = rt_thread_create("ice", ice_mp3, (void*)ice_url,
+		4096, 0x08, 5);
+	if (tid != RT_NULL) rt_thread_startup(tid);
+}
+FINSH_FUNCTION_EXPORT(ice, shoutcast thread test);
+
 #endif

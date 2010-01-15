@@ -568,12 +568,9 @@ static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Configure one bit for preemption priority */
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
     /* Enable the EXTI0 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);

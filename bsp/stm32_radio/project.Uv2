@@ -134,6 +134,7 @@ File 8,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
 File 9,1,<..\..\net\lwip\src\core\dhcp.c><dhcp.c>
 File 9,1,<..\..\net\lwip\src\core\dns.c><dns.c>
 File 9,1,<..\..\net\lwip\src\core\init.c><init.c>
+File 9,1,<..\..\net\lwip\src\core\memp.c><memp.c>
 File 9,1,<..\..\net\lwip\src\core\netif.c><netif.c>
 File 9,1,<..\..\net\lwip\src\core\pbuf.c><pbuf.c>
 File 9,1,<..\..\net\lwip\src\core\raw.c><raw.c>
@@ -166,7 +167,6 @@ File 9,1,<..\..\net\lwip\src\netif\loopif.c><loopif.c>
 File 9,1,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c>
 File 9,1,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c>
 File 9,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
-File 9,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
 File 10,1,<.\mp3\mp3dec.c><mp3dec.c>
 File 10,1,<.\mp3\mp3tabs.c><mp3tabs.c>
 File 10,1,<.\mp3\real\bitstream.c><bitstream.c>
@@ -286,7 +286,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
  OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,1,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
- ADSCCFLG { 5,32,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCCFLG { 17,34,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()

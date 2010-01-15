@@ -265,7 +265,7 @@ static void net_buf_do_job(struct net_buffer_job* job)
 			rt_hw_interrupt_enable(level);
 		}
 
-		rt_kprintf("buffering ... %d %c\n", (data_length * 100) / _netbuf.size, '%');
+		// rt_kprintf("buffering ... %d %c\n", (data_length * 100) / _netbuf.size, '%');
 
 		if ((_netbuf.stat == NETBUF_STAT_BUFFERING) && (data_length >= _netbuf.ready_wm))
 		{

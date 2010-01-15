@@ -39,33 +39,12 @@
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <lwip/api.h>
+#include <netif/ethernetif.h>
 #endif
 
 #ifdef RT_USING_RTGUI
 extern void radio_rtgui_init(void);
 #endif
-
-void sram_test_entry(void* parameter)
-{
-	rt_uint32_t *ptr;
-	rt_uint32_t index;
-	
-	ptr = (rt_uint32_t*)STM32_EXT_SRAM_BEGIN;
-	index = 0;
-	while (1)
-	{
-		*ptr = index;
-		ptr ++; index ++;
-		
-		if (ptr == (rt_uint32_t*)STM32_EXT_SRAM_END)
-		{
-			ptr = (rt_uint32_t*)STM32_EXT_SRAM_BEGIN;
-			rt_kprintf("test passed\n");
-			
-			rt_thread_delay(50);
-		}
-	}
-}
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
@@ -112,10 +91,9 @@ void rt_init_thread_entry(void *parameter)
     {
         extern void lwip_sys_init(void);
 		extern void rt_hw_dm9000_init(void);
-		extern 
 
 		eth_system_device_init();
-	
+
 		/* register ethernetif device */
 		rt_hw_dm9000_init();
 		/* init all device */
@@ -130,17 +108,6 @@ void rt_init_thread_entry(void *parameter)
 #if STM32_EXT_SRAM
 	/* init netbuf worker */
 	net_buf_init(320 * 1024);
-#endif
-
-#if 0
-	{
-		rt_thread_t tid;
-		
-		tid = rt_thread_create("sram",
-			sram_test_entry, RT_NULL,
-			512, 30, 5);
-		if (tid != RT_NULL) rt_thread_startup(tid);
-	}
 #endif
 }
 
