@@ -302,16 +302,16 @@ FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
 void list_if()
 {
 	rt_kprintf("Default network interface: %c%c\n", netif_default->name[0], netif_default->name[1]);
-	rt_kprintf("ip address: %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
-	rt_kprintf("gw address: %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
-	rt_kprintf("net mask  : %s\n", ip_ntoa(&(netif_default->ip_addr.addr)));
+	rt_kprintf("ip address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->ip_addr))));
+	rt_kprintf("gw address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->gw))));
+	rt_kprintf("net mask  : %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->netmask))));
 
 #if LWIP_DNS
 	{
 		struct ip_addr ip_addr;
 
 		ip_addr = dns_getserver(0);
-		rt_kprintf("dns server: %d.%d.%d.%d\n", ip_ntoa(&ip_addr));
+		rt_kprintf("dns server: %s\n", inet_ntoa(*((struct in_addr*)&(ip_addr))));
 	}
 #endif
 }
