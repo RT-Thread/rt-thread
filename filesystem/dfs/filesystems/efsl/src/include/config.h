@@ -1,6 +1,9 @@
 #ifndef __EFSL_CONFIG_H__
 #define __EFSL_CONFIG_H__
 
+/* include RT-Thread to import configuration */
+#include <rtthread.h>
+
 /* Hardware target
    ---------------
 
