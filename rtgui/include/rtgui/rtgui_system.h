@@ -78,3 +78,4 @@ void* rtgui_malloc(rt_size_t size);
 void rtgui_free(void* ptr);
 
 #endif
+

@@ -116,7 +116,7 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 }
 
 void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
-									   struct rtgui_event_clip_info* info)
+	struct rtgui_event_clip_info* info)
 {
 	RT_ASSERT(top != RT_NULL);
 	RT_ASSERT(info != RT_NULL);
@@ -136,8 +136,13 @@ void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
 		info->num_rect);
 	top->external_clip_size = info->num_rect;
 
+#ifdef RTGUI_USING_SMALL_SIZE
+	/* get rect list from topwin list */
+	rtgui_topwin_get_clipinfo(top->external_clip_rect, top->external_clip_size);
+#else
 	/* copy rect array */
 	rt_memcpy(top->external_clip_rect, (void*)(info + 1), sizeof(rtgui_rect_t) * info->num_rect);
+#endif
 }
 
 #include <rtgui/driver.h> /* to get screen rect */

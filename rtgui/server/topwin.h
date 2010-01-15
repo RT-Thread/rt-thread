@@ -53,4 +53,7 @@ void rtgui_topwin_title_onmouse(struct rtgui_topwin* win, struct rtgui_event_mou
 void rtgui_topwin_append_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect);
 void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect);
 
+void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count);
+
 #endif
+

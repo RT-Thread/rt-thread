@@ -25,6 +25,7 @@ struct rtgui_topwin* rtgui_server_focus_topwin = RT_NULL;
 
 static struct rtgui_list_node _rtgui_topwin_show_list;
 static struct rtgui_list_node _rtgui_topwin_hide_list;
+static struct rt_semaphore _rtgui_topwin_lock;
 
 static void rtgui_topwin_update_clip(void);
 static void rtgui_topwin_redraw(struct rtgui_rect* rect);
@@ -37,6 +38,9 @@ void rtgui_topwin_init()
 	/* init window list */
 	rtgui_list_init(&_rtgui_topwin_show_list);
 	rtgui_list_init(&_rtgui_topwin_hide_list);
+
+	rt_sem_init(&_rtgui_topwin_lock, 
+		"topwin", 1, RT_IPC_FLAG_FIFO);
 }
 
 static struct rtgui_topwin*
@@ -263,6 +267,60 @@ void rtgui_topwin_deactivate_win(struct rtgui_topwin* win)
 }
 
 /* raise window to front */
+#ifdef RTGUI_USING_SMALL_SIZE
+void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
+{
+	struct rtgui_topwin* topwin;
+
+	/* find the topwin node */
+	topwin = rtgui_topwin_search_in_list(wid, &_rtgui_topwin_show_list);
+	if (topwin)
+	{
+		rt_int32_t count;
+		struct rtgui_list_node* node;
+		struct rtgui_event_clip_info eclip;
+
+		/* the window is already placed in front */
+		if (&(topwin->list) == _rtgui_topwin_show_list.next)
+		{
+			rtgui_server_focus_topwin = RT_NULL;
+			rtgui_topwin_activate_win(topwin);
+		    return ;
+		}
+
+		/* remove node from list */
+		rtgui_list_remove(&_rtgui_topwin_show_list, &(topwin->list));
+		/* add to front */
+		rtgui_list_insert(&_rtgui_topwin_show_list, &(topwin->list));
+
+		/* send clip info event */
+		count = 0;
+		for (node = _rtgui_topwin_show_list.next;
+			node != &(topwin->list);
+			node  = node->next)
+		{
+			struct rtgui_topwin* wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
+
+			eclip.num_rect = count;
+			eclip.wid = wnd->wid;
+
+			count ++;
+
+			/* send to destination window */
+			rtgui_thread_send(wnd->tid, &(eclip.parent), sizeof(struct rtgui_event_clip_info));
+
+			/* reset clip info in title */
+			rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), &eclip);
+			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
+			rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
+				&(RTGUI_WIDGET(wnd->title)->clip),
+				&(wnd->extent));
+		}
+
+		rtgui_topwin_activate_win(topwin);
+	}
+}
+#else
 void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 {
 	struct rtgui_topwin* topwin;
@@ -350,6 +408,7 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 		rtgui_topwin_activate_win(topwin);
 	}
 }
+#endif
 
 /* show a window */
 void rtgui_topwin_show(struct rtgui_event_win* event)
@@ -407,6 +466,32 @@ void rtgui_topwin_show(struct rtgui_event_win* event)
 }
 
 /* send clip info to panel */
+#ifdef RTGUI_USING_SMALL_SIZE
+void rtgui_topwin_update_clip_to_panel(struct rtgui_panel* panel)
+{
+	rt_uint32_t count;
+	rt_thread_t tid;
+	struct rtgui_list_node* node;
+	struct rtgui_event_clip_info eclip;
+
+	/* get topwin count  */
+	count = 0;
+	node = _rtgui_topwin_show_list.next;
+	while (node != RT_NULL)
+	{
+		count ++;
+		node = node->next;
+	}
+
+	/* send clip info event to panel */
+	RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
+	eclip.num_rect = count; eclip.wid = RT_NULL;
+
+	/* send to the activated thread of panel */
+	tid = rtgui_panel_get_active_thread(panel);
+	rtgui_thread_send(tid, &eclip.parent, sizeof(struct rtgui_event_clip_info));
+}
+#else
 void rtgui_topwin_update_clip_to_panel(struct rtgui_panel* panel)
 {
 	rt_uint32_t count;
@@ -455,6 +540,7 @@ void rtgui_topwin_update_clip_to_panel(struct rtgui_panel* panel)
 	/* release clip info event */
 	rtgui_free(eclip);
 }
+#endif
 
 /* hide a window */
 void rtgui_topwin_hide(struct rtgui_event_win* event)
@@ -648,6 +734,60 @@ struct rtgui_topwin* rtgui_topwin_get_wnd(int x, int y)
 }
 
 extern struct rtgui_list_node _rtgui_panel_list;
+#ifdef RTGUI_USING_SMALL_SIZE
+static void rtgui_topwin_update_clip()
+{
+	rt_int32_t count = 0;
+	struct rtgui_event_clip_info eclip;
+	struct rtgui_list_node* node = _rtgui_topwin_show_list.next;
+
+	rtgui_list_foreach(node, &_rtgui_topwin_show_list)
+	{
+		struct rtgui_topwin* wnd;
+		wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
+
+		eclip.num_rect = count;
+		eclip.wid = wnd->wid;
+
+		count ++;
+
+		/* send to destination window */
+		rtgui_thread_send(wnd->tid, &(eclip.parent), sizeof(struct rtgui_event_clip_info));
+
+		/* update clip in win title */
+		if (wnd->title != RT_NULL)
+		{
+			/* reset clip info */
+			rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), &eclip);
+			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
+			rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
+				&(RTGUI_WIDGET(wnd->title)->clip),
+				&(wnd->extent));
+		}
+	}
+
+	/* send clip info to each panel */
+	eclip.wid = RT_NULL;
+	eclip.num_rect = count;
+
+	rtgui_list_foreach(node, &(_rtgui_panel_list))
+	{
+		struct rtgui_panel* panel;
+		struct rtgui_list_node* panel_node;
+
+		panel = rtgui_list_entry(node, struct rtgui_panel, sibling);
+
+		rtgui_list_foreach(panel_node, &(panel->thread_list))
+		{
+			struct rtgui_panel_thread* thread;
+			thread = rtgui_list_entry(panel_node, struct rtgui_panel_thread, list);
+
+			/* send clip info to panel */
+			rtgui_thread_send(thread->tid, &(eclip.parent),	sizeof(struct rtgui_event_clip_info));
+		}
+	}
+}
+#else
 static void rtgui_topwin_update_clip()
 {
 	rt_int32_t count = 0;
@@ -719,6 +859,7 @@ static void rtgui_topwin_update_clip()
 	/* release clip info event */
 	rtgui_free(eclip);
 }
+#endif
 
 static void rtgui_topwin_redraw(struct rtgui_rect* rect)
 {
@@ -834,6 +975,7 @@ void rtgui_topwin_append_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 	rtgui_mouse_monitor_append(&(win->monitor_list), rect);
 }
 
+#ifdef RTGUI_USING_SMALL_SIZE
 void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 {
 	struct rtgui_topwin* win;
@@ -851,7 +993,41 @@ void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 	/* remove rect from top window monitor rect list */
 	rtgui_mouse_monitor_remove(&(win->monitor_list), rect);
 }
+#endif
 
+/**
+ * get clip information for topwin
+ * wid, the self window id. If wid = NULL, get whole topwin clip information.
+ *
+ * @return the clip rect information
+ */
+void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count)
+{
+	struct rtgui_rect* rect;
+	struct rtgui_topwin* topwin;
+	struct rtgui_list_node* node;
+
+	if ((rect_list == RT_NULL) || (count == 0)) return ;
+
+	/* set to the header of list */
+	rect = rect_list;
+
+	rt_sem_take(&_rtgui_topwin_lock, RT_WAITING_FOREVER);
+	/* get all of topwin rect list */
+	rtgui_list_foreach(node, &_rtgui_topwin_show_list)
+	{
+		topwin = rtgui_list_entry(node, struct rtgui_topwin, list);
+
+		*rect = topwin->extent;
+		rect  ++;
+		count --;
+		if (count < 0) break;
+	}
+	rt_sem_release(&_rtgui_topwin_lock);
+}
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 void rtgui_topwin_dump()
 {
 	struct rtgui_list_node* node;
@@ -871,3 +1047,6 @@ void rtgui_topwin_dump()
 		}
 	}
 }
+FINSH_FUNCTION_EXPORT(rtgui_topwin_dump, dump topwindow list);
+#endif
+
