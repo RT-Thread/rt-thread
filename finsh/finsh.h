@@ -69,6 +69,9 @@ char *strdup(const char *s);
 int isalpha( int ch );
 int atoi(const char* s);
 #else
+/* use libc of armcc */
+#include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 #endif
 #endif

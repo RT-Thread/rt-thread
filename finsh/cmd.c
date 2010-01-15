@@ -380,6 +380,8 @@ void list_prefix(char* prefix)
 
 	func_cnt = 0;
 	var_cnt  = 0;
+	name_ptr = RT_NULL;
+
 	{
 		struct finsh_syscall* index;
 		for (index = _syscall_table_begin; index < _syscall_table_end; index ++)

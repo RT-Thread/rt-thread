@@ -114,6 +114,7 @@ char *strdup(const char *s)
 }
 #endif
 
+#if !defined(__CC_ARM) && !defined(__ICCARM__)
 int isalpha( int ch )
 {
 	return (unsigned int)((ch | 0x20) - 'a') < 26u;
@@ -143,6 +144,7 @@ int isprint(unsigned char ch)
 {
     return (unsigned int)(ch - ' ') < 127u - ' ';
 }
+#endif
 #endif
 
 #ifdef RT_USING_DEVICE
