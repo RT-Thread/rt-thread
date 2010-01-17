@@ -344,7 +344,7 @@ struct rtgui_event_kbd
 #define RTGUI_KBD_IS_SET_ALT(e)		((e)->mod & (RTGUI_KMOD_LALT  | RTGUI_KMOD_RALT))
 #define RTGUI_KBD_IS_SET_SHIFT(e)	((e)->mod & (RTGUI_KMOD_LSHIFT| RTGUI_KMOD_RSHIFT))
 #define RTGUI_KBD_IS_UP(e)			((e)->type == RTGUI_KEYUP)
-#define RTGUI_KBD_IS_DOWN(e)		((e)->flag == RTGUI_KEYDOWN)
+#define RTGUI_KBD_IS_DOWN(e)		((e)->type == RTGUI_KEYDOWN)
 
 #define RTGUI_EVENT_MOUSE_MOTION_INIT(e)	RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_MOUSE_MOTION)
 #define RTGUI_EVENT_MOUSE_BUTTON_INIT(e)	RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_MOUSE_BUTTON)

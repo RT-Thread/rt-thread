@@ -31,7 +31,7 @@ typedef struct rtgui_radiobox rtgui_radiobox_t;
 
 rtgui_type_t *rtgui_radiobox_type_get(void);
 
-struct rtgui_radiobox* rtgui_radiobox_create(int orient, char** radio_items, int number);
+struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char** radio_items, int number);
 void rtgui_radiobox_destroy(struct rtgui_radiobox* radiobox);
 
 void rtgui_radiobox_set_selection(struct rtgui_radiobox* radiobox, int selection);

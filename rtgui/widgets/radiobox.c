@@ -45,6 +45,9 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 		int bord_size;
 		struct rtgui_rect rect;
 
+		/* focus widgets */
+		rtgui_widget_focus(RTGUI_WIDGET(radiobox));
+
 		/* get widget rect */
 		rtgui_widget_get_rect(RTGUI_WIDGET(radiobox), &rect);
 
@@ -59,15 +62,18 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 			bord_size = rtgui_rect_height(bord_rect);
 		}
 		rtgui_rect_inflate(&rect, - bord_size);
+		if (rtgui_rect_contains_point(&rect, event->x, event->y) != RT_EOK) return;
 
 		if (radiobox->orient == RTGUI_VERTICAL)
 		{
+			int delta_y = event->y - rect.y1;
+			rtgui_radiobox_set_selection(radiobox, delta_y / radiobox->item_size);
 		}
 		else
 		{
+			int delta_x = event->x - rect.x1;
+			rtgui_radiobox_set_selection(radiobox, delta_x / radiobox->item_size);
 		}
-
-		rtgui_widget_focus(RTGUI_WIDGET(radiobox));
 	}
 }
 
@@ -100,16 +106,32 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui
             rtgui_widget_focus(RTGUI_WIDGET(radiobox));
             if (!(RTGUI_KBD_IS_UP(e))) return RT_FALSE;
 
-            if (e->key == RTGUIK_UP)
-            {
-                if (radiobox->item_selection > 0)
-                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection - 1);
-            }
-            else if (e->key == RTGUIK_DOWN)
-            {
-                if (radiobox->item_selection < radiobox->item_count - 1)
-                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection + 1);
-            }
+			if (radiobox->orient == RTGUI_VERTICAL)
+			{
+	            if (e->key == RTGUIK_UP)
+	            {
+	                if (radiobox->item_selection > 0)
+	                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection - 1);
+	            }
+	            else if (e->key == RTGUIK_DOWN)
+	            {
+	                if (radiobox->item_selection < radiobox->item_count - 1)
+	                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection + 1);
+	            }
+			}
+			else
+			{
+	            if (e->key == RTGUIK_LEFT)
+	            {
+	                if (radiobox->item_selection > 0)
+	                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection - 1);
+	            }
+	            else if (e->key == RTGUIK_RIGHT)
+	            {
+	                if (radiobox->item_selection < radiobox->item_count - 1)
+	                    rtgui_radiobox_set_selection(radiobox, radiobox->item_selection + 1);
+	            }
+			}
         }
 		break;
 
@@ -127,25 +149,29 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui
 	return RT_FALSE;
 }
 
-struct rtgui_radiobox* rtgui_radiobox_create(int orient, char** radio_items, int number)
+struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char** radio_items, int number)
 {
     struct rtgui_radiobox* radiobox;
 
     radiobox = (struct rtgui_radiobox*) rtgui_widget_create (RTGUI_RADIOBOX_TYPE);
     if (radiobox != RT_NULL)
     {
+    	rt_uint8_t board_size;
+		struct rtgui_rect rect;
+		
         radiobox->items = radio_items;
         radiobox->item_count = number;
         radiobox->item_selection = -1;
+		radiobox->text = rt_strdup(label);
 
 		/* set proper of control */
 		rtgui_radiobox_set_orientation(radiobox, orient);
+		rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &rect);
+		board_size = rtgui_rect_height(rect);
+
 		if (orient == RTGUI_VERTICAL)
 		{
-			struct rtgui_rect rect;
-			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &rect);
-
-			radiobox->item_size = rtgui_rect_height(rect);
+			radiobox->item_size = board_size;
 		}
 		else
 		{
@@ -161,7 +187,7 @@ struct rtgui_radiobox* rtgui_radiobox_create(int orient, char** radio_items, int
 			{
 				rtgui_font_get_metrics(font, radio_items[index], &rect);
 				if (rtgui_rect_width(rect) > radiobox->item_size)
-					radiobox->item_size = rtgui_rect_width(rect);
+					radiobox->item_size = board_size + 3 + rtgui_rect_width(rect);
 			}
 		}
 	}

@@ -767,6 +767,10 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 	int startoct, endoct, oct, stopval_start, stopval_end;
 	double temp;
 
+	stopval_start = 0;
+	stopval_end = 0;
+	temp = 0;
+
 	/* Sanity check radius */
 	if (r < 0) return ;
 	/* Special case for r=0 - draw a point */

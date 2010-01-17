@@ -82,6 +82,33 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 			rtgui_theme_draw_button(btn);
 		break;
 
+	case RTGUI_EVENT_KBD:
+		{
+			struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*) event;
+
+			if ((ekbd->key == RTGUIK_RETURN) || (ekbd->key == RTGUIK_SPACE))
+			{
+				if (RTGUI_KBD_IS_DOWN(ekbd))
+				{
+					btn->flag |= RTGUI_BUTTON_FLAG_PRESS;
+				}
+				else
+				{
+					btn->flag &= ~RTGUI_BUTTON_FLAG_PRESS;
+				}
+
+				/* draw button */
+				rtgui_theme_draw_button(btn);
+
+				if ((btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
+				{
+					/* call on button handler */
+					btn->on_button(widget, event);
+				}
+			}
+		}
+		break;
+
 	case RTGUI_EVENT_MOUSE_BUTTON:
 		{
 			struct rtgui_event_mouse* emouse = (struct rtgui_event_mouse*)event;
@@ -102,6 +129,12 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 					else 
 #endif
 						rtgui_theme_draw_button(btn);
+
+					if (btn->on_button != RT_NULL)
+					{
+						/* call on button handler */
+						btn->on_button(widget, event);
+					}
 
 #ifndef RTGUI_USING_SMALL_SIZE
 					/* invokes call back */
@@ -131,6 +164,12 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 					else
 #endif
 						rtgui_theme_draw_button(btn);
+
+					if (!(btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
+					{
+						/* call on button handler */
+						btn->on_button(widget, event);
+					}
 
 #ifndef RTGUI_USING_SMALL_SIZE
 					/* invokes call back */
@@ -196,5 +235,12 @@ void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 	RT_ASSERT(btn != RT_NULL);
 
 	btn->unpressed_image = image;
+}
+
+void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func)
+{
+	RT_ASSERT(btn != RT_NULL);
+
+	btn->on_button = func;
 }
 

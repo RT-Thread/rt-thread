@@ -270,15 +270,19 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	/* draw button */
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect;
+	rtgui_color_t fc;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(btn));
 	if (dc == RT_NULL) return;
 
+	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 
+	/* get forecolor */
+	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn));
+
 	/* fill button rect with background color */
-	// RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(212, 208, 200);
 	rtgui_dc_fill_rect(dc, &rect);
 
 	if (btn->flag & RTGUI_BUTTON_TYPE_PUSH && btn->flag & RTGUI_BUTTON_FLAG_PRESS)
@@ -359,10 +363,12 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		}
 	}
 
+	/* set forecolor */
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = fc;
+
 	if (btn->pressed_image == RT_NULL)
 	{
 		/* re-set foreground and get default rect */
-		RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(0, 0, 0);
 		rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 
 		/* remove border */
@@ -511,7 +517,7 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
 		/* swap fore/back color */
 		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox)) = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox));
 
-		rtgui_rect_inflate(&box_rect, -2);
+		rtgui_rect_inflate(&box_rect, -4);
 		rtgui_dc_fill_rect(dc, &box_rect);
 
 		/* restore saved color */
@@ -562,7 +568,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 
 		/* draw group text */
 		rtgui_font_get_metrics(rtgui_dc_get_font(dc), radiobox->text, &text_rect);
-		rtgui_rect_moveto(&text_rect, rect.x1 + 5, rect.y1);
+		rtgui_rect_moveto(&text_rect, rect.x1 + bord_size + 5, rect.y1);
 		rtgui_dc_fill_rect(dc, &text_rect);
 		rtgui_dc_draw_text(dc, radiobox->text, &text_rect);
 	}
@@ -584,8 +590,10 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			/* draw radio */
 			if (radiobox->item_selection == index)
 			{
-				rtgui_dc_draw_focus_rect(dc, &item_rect);
-				rtgui_dc_fill_circle(dc, item_rect.x1 + item_size/2 + 2, item_rect.y1 + item_size/2 + 2, item_size/2 - 2);
+				if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+					rtgui_dc_draw_focus_rect(dc, &item_rect);
+				rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2 + 2, item_rect.y1 + item_size/2 + 2, item_size/2 - 2);
+				rtgui_dc_fill_circle(dc, item_rect.x1 + item_size/2 + 2, item_rect.y1 + item_size/2 + 2, item_size/2 - 4);
 			}
 			else
 			{
@@ -615,17 +623,18 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			if (radiobox->item_selection == index)
 			{
 				rtgui_dc_draw_focus_rect(dc, &item_rect);
-				rtgui_dc_fill_circle(dc, item_rect.x1 + item_size/2 + 2, item_rect.y1 + item_size/2 + 2, item_size/2 - 2);
+				rtgui_dc_draw_circle(dc, item_rect.x1 + bord_size/2 + 2, item_rect.y1 + bord_size/2 + 2, bord_size/2 - 2);
+				rtgui_dc_fill_circle(dc, item_rect.x1 + bord_size/2 + 2, item_rect.y1 + bord_size/2 + 2, bord_size/2 - 4);
 			}
 			else
 			{
-				rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2 + 2, item_rect.y1 + item_size/2 + 2, item_size/2 - 2);
+				rtgui_dc_draw_circle(dc, item_rect.x1 + bord_size/2 + 2, item_rect.y1 + bord_size/2 + 2, bord_size/2 - 2);
 			}
 
 			/* draw text */
-			item_rect.x1 += item_size + 3;
+			item_rect.x1 += bord_size + 3;
 			rtgui_dc_draw_text(dc, radiobox->items[index], &item_rect);
-			item_rect.x1 -= item_size + 3;
+			item_rect.x1 -= bord_size + 3;
 
 			item_rect.x1 += item_size;
 			item_rect.x2 += item_size;

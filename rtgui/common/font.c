@@ -47,7 +47,8 @@ void rtgui_font_system_init()
 
 #ifdef RTGUI_USING_FONT12
 	rtgui_font_set_defaut(&rtgui_font_asc12);
-#elif defined(RTGUI_USING_FONT16)
+#endif
+#ifdef RTGUI_USING_FONT16
 	rtgui_font_set_defaut(&rtgui_font_asc16);
 #endif
 }

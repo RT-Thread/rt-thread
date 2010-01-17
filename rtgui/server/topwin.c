@@ -975,7 +975,6 @@ void rtgui_topwin_append_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 	rtgui_mouse_monitor_append(&(win->monitor_list), rect);
 }
 
-#ifdef RTGUI_USING_SMALL_SIZE
 void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 {
 	struct rtgui_topwin* win;
@@ -993,8 +992,8 @@ void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
 	/* remove rect from top window monitor rect list */
 	rtgui_mouse_monitor_remove(&(win->monitor_list), rect);
 }
-#endif
 
+#ifdef RTGUI_USING_SMALL_SIZE
 /**
  * get clip information for topwin
  * wid, the self window id. If wid = NULL, get whole topwin clip information.
@@ -1025,6 +1024,7 @@ void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count)
 	}
 	rt_sem_release(&_rtgui_topwin_lock);
 }
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

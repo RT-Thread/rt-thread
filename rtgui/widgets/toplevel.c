@@ -137,8 +137,12 @@ void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
 	top->external_clip_size = info->num_rect;
 
 #ifdef RTGUI_USING_SMALL_SIZE
-	/* get rect list from topwin list */
-	rtgui_topwin_get_clipinfo(top->external_clip_rect, top->external_clip_size);
+	{
+		extern void rtgui_topwin_get_clipinfo(struct rtgui_rect* list, rt_int32_t count);
+
+		/* get rect list from topwin list */
+		rtgui_topwin_get_clipinfo(top->external_clip_rect, top->external_clip_size);
+	}
 #else
 	/* copy rect array */
 	rt_memcpy(top->external_clip_rect, (void*)(info + 1), sizeof(rtgui_rect_t) * info->num_rect);

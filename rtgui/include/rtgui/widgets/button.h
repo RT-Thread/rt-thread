@@ -58,6 +58,7 @@ struct rtgui_button
 	void (*on_button)(struct rtgui_widget* widget, rtgui_event_t *event);
 };
 typedef struct rtgui_button rtgui_button_t;
+typedef void (*rtgui_onbutton_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);
 
 rtgui_type_t *rtgui_button_type_get(void);
 
@@ -68,7 +69,7 @@ void rtgui_button_destroy(rtgui_button_t* btn);
 void rtgui_button_set_pressed_image(rtgui_button_t* btn, rtgui_image_t* image);
 void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image);
 
-void rtgui_button_ondraw(rtgui_button_t* btn);
+void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func);
 
 rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 

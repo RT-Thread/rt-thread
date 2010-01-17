@@ -22,7 +22,7 @@
 
 /* #define RTGUI_USING_MOUSE_CURSOR */
 
-/* #define RTGUI_USING_FONT12 */
+#define RTGUI_USING_FONT12
 
 #define RTGUI_USING_FONT16
 #define RTGUI_USING_FONTHZ
