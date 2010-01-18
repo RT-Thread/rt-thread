@@ -4,13 +4,13 @@
 
 void udpecho_entry(void *parameter)
 {
-	static struct netconn *conn;
-	static struct netbuf *buf;
-	static struct ip_addr *addr;
-	static unsigned short port;
+	struct netconn *conn;
+	struct netbuf *buf;
+	struct ip_addr *addr;
+	unsigned short port;
 
 	conn = netconn_new(NETCONN_UDP);
-	netconn_bind(conn, NULL, 7);
+	netconn_bind(conn, IP_ADDR_ANY, 7);
 
 	while(1)
 	{
@@ -22,6 +22,9 @@ void udpecho_entry(void *parameter)
 
         /* send the data to buffer */
 		netconn_connect(conn, addr, port);
+
+		/* reset address, and send to client */
+		buf->addr = RT_NULL;
 		netconn_send(conn, buf);
 
         /* release buffer */
