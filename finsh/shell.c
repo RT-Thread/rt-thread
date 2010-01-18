@@ -13,6 +13,7 @@
  * 2006-05-08     Bernard      change finsh thread stack to 2048
  * 2006-06-03     Bernard      add support for skyeye
  * 2006-09-24     Bernard      remove the code related with hardware
+ * 2010-01-18     Bernard      fix down then up key bug.
  */
 
 #include <rtthread.h>
@@ -22,7 +23,7 @@
 
 /*
  * Add by caoxl 2009-10-14
- * 
+ *
  */
 #ifdef QEMU_CAOXL
 #define  memcpy(a,b,c)	rt_memcpy(a,b,c)
@@ -233,7 +234,7 @@ void finsh_thread_entry(void* parameter)
 				{
 #ifdef FINSH_USING_HISTORY
 					/*
-					 * handle up and down key 
+					 * handle up and down key
 					 * up key  : 0x1b 0x5b 0x41
 					 * down key: 0x1b 0x5b 0x42
 					 */
@@ -268,7 +269,7 @@ void finsh_thread_entry(void* parameter)
 							}
 
 							/* copy the history command */
-							memcpy(line, &finsh_cmd_history[current_history][0], 
+							memcpy(line, &finsh_cmd_history[current_history][0],
 								FINSH_CMD_SIZE);
 							pos = strlen(line);
 							use_history = 1;
@@ -280,16 +281,20 @@ void finsh_thread_entry(void* parameter)
 								current_history ++;
 							else
 							{
-								current_history = finsh_history_count - 1;
-								continue;
+								/* set to the end of history */
+								if (finsh_history_count != 0)
+								{
+									current_history = finsh_history_count - 1;
+								}
+								else continue;
 							}
 
-							memcpy(line, &finsh_cmd_history[current_history][0], 
+							memcpy(line, &finsh_cmd_history[current_history][0],
 								FINSH_CMD_SIZE);
 							pos = strlen(line);
 							use_history = 1;
 						}
-						
+
 						if (use_history)
 						{
 							rt_kprintf("\033[2K\r");
@@ -354,7 +359,7 @@ void finsh_thread_entry(void* parameter)
 				int index;
 				for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
 				{
-					memcpy(&finsh_cmd_history[index][0], 
+					memcpy(&finsh_cmd_history[index][0],
 						&finsh_cmd_history[index + 1][0], FINSH_CMD_SIZE);
 				}
 				memset(&finsh_cmd_history[index][0], 0, FINSH_CMD_SIZE);
