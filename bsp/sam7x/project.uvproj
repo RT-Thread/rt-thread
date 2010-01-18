@@ -116,7 +116,7 @@
           <Simulator>
             <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -796,9 +796,9 @@
               <FilePath>..\..\net\lwip\src\api\sockets.c</FilePath>
             </File>
             <File>
-              <FileName>memp_tiny.c</FileName>
+              <FileName>memp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\memp_tiny.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\memp.c</FilePath>
             </File>
           </Files>
         </Group>
