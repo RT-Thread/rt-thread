@@ -126,14 +126,6 @@ const u16_t memp_sizes[MEMP_MAX] = {
 #include "lwip/memp_std.h"
 };
 
-#if !MEMP_MEM_MALLOC /* don't build if not configured for use in lwipopts.h */
-
-/** This array holds the number of elements in each pool. */
-static const u16_t memp_num[MEMP_MAX] = {
-#define LWIP_MEMPOOL(name,num,size,desc)  (num),
-#include "lwip/memp_std.h"
-};
-
 /** This array holds a textual description of each pool. */
 #ifdef LWIP_DEBUG
 static const char *memp_desc[MEMP_MAX] = {
@@ -141,6 +133,14 @@ static const char *memp_desc[MEMP_MAX] = {
 #include "lwip/memp_std.h"
 };
 #endif /* LWIP_DEBUG */
+
+#if !MEMP_MEM_MALLOC /* don't build if not configured for use in lwipopts.h */
+
+/** This array holds the number of elements in each pool. */
+static const u16_t memp_num[MEMP_MAX] = {
+#define LWIP_MEMPOOL(name,num,size,desc)  (num),
+#include "lwip/memp_std.h"
+};
 
 /** This is the actual memory used by the pools. */
 static u8_t memp_memory[MEM_ALIGNMENT - 1 
