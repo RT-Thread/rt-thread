@@ -79,14 +79,13 @@
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
 #define RT_USING_FINSH
+/* use symbol table */
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library*/
 /* #define RT_USING_NEWLIB */
-
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-#define RT_USING_MINILIBC
 
 /* SECTION: C++ support */
 /* Using C++ support*/
