@@ -275,6 +275,21 @@ void EXTI3_IRQHandler(void)
 *******************************************************************************/
 void EXTI4_IRQHandler(void)
 {
+#ifdef RT_USING_LWIP
+	extern void rt_dm9000_isr(void);
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+	rt_dm9000_isr();
+
+	/* Clear the Key Button EXTI line pending bit */
+	EXTI_ClearITPendingBit(EXTI_Line4);
+
+	/* leave interrupt */
+	rt_interrupt_leave();
+	rt_hw_interrupt_thread_switch();
+#endif
 }
 
 /*******************************************************************************

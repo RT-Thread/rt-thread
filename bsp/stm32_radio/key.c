@@ -11,11 +11,11 @@ key_up      PA2
 key_right   PC2
 key_left    PC3
 */
-#define key_enter_GETVALUE()  GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)
-#define key_down_GETVALUE()   GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_1)
-#define key_up_GETVALUE()     GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_2)
-#define key_right_GETVALUE()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_2)
-#define key_left_GETVALUE()   GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_3)
+#define key_enter_GETVALUE()  GPIO_ReadInputDataBit(GPIOF,GPIO_Pin_11)
+#define key_down_GETVALUE()   GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_15)
+#define key_up_GETVALUE()     GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_11)
+#define key_right_GETVALUE()  GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_14)
+#define key_left_GETVALUE()   GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_13)
 
 static void key_thread_entry(void *parameter)
 {
@@ -24,15 +24,21 @@ static void key_thread_entry(void *parameter)
     GPIO_InitTypeDef GPIO_InitStructure;
 
     /* init gpio configuration */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC,ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOG | RCC_APB2Periph_GPIOE,ENABLE);
 
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2;
-    GPIO_Init(GPIOA,&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_11 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+    GPIO_Init(GPIOG,&GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2 | GPIO_Pin_3;
-    GPIO_Init(GPIOC,&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_11;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
+
+    /* PE2 LED */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOE,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOE,GPIO_Pin_2);
 
     /* init keyboard event */
     RTGUI_EVENT_KBD_INIT(&kbd_event);

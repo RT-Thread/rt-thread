@@ -18,8 +18,8 @@
 //--------------------------------------------------------
 
 #define DM9000_PHY          0x40    /* PHY address 0x01 */
-#define RST_1()             GPIO_SetBits(GPIOF,GPIO_Pin_6)
-#define RST_0()             GPIO_ResetBits(GPIOF,GPIO_Pin_6)
+#define RST_1()             GPIO_SetBits(GPIOE,GPIO_Pin_5)
+#define RST_0()             GPIO_ResetBits(GPIOE,GPIO_Pin_5)
 
 #define MAX_ADDR_LEN 6
 enum DM9000_PHY_mode
@@ -561,7 +561,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 static void RCC_Configuration(void)
 {
     /* enable gpiob port clock */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOE | RCC_APB2Periph_AFIO, ENABLE);
 }
 
 static void NVIC_Configuration(void)
@@ -569,7 +569,7 @@ static void NVIC_Configuration(void)
     NVIC_InitTypeDef NVIC_InitStructure;
 
     /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -581,32 +581,32 @@ static void GPIO_Configuration()
     GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
 
-    /* configure PF6 as eth RST */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    /* configure PE5 as eth RST */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOF,&GPIO_InitStructure);
-    GPIO_ResetBits(GPIOF,GPIO_Pin_6);
-    RST_1();
+    GPIO_Init(GPIOE,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOE,GPIO_Pin_5);
+    //RST_1();
 
-    /* configure PF7 as external interrupt */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    /* configure PE4 as external interrupt */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOF, &GPIO_InitStructure);
+    GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-    /* Connect DM9000 EXTI Line to GPIOF Pin 7 */
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOF, GPIO_PinSource7);
+    /* Connect DM9000 EXTI Line to GPIOE Pin 4 */
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource4);
 
     /* Configure DM9000 EXTI Line to generate an interrupt on falling edge */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line7;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line4;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
 
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line7);
+    /* Clear DM9000A EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
 void rt_hw_dm9000_init()

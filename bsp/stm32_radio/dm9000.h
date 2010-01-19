@@ -12,8 +12,8 @@
 #define DM9000_inw(r) 		(*(volatile rt_uint16_t *)r)
 #define DM9000_outw(r, d) 	(*(volatile rt_uint16_t *)r = d)
 
-#define    RST_1()   GPIO_SetBits(GPIOF,GPIO_Pin_6)
-#define    RST_0()   GPIO_ResetBits(GPIOF,GPIO_Pin_6)
+#define    RST_1()   GPIO_SetBits(GPIOE,GPIO_Pin_5)
+#define    RST_0()   GPIO_ResetBits(GPIOE,GPIO_Pin_5)
 
 #define DM9000_ID		    0x90000A46  /* DM9000 ID */
 #define DM9000_PKT_MAX		1536	    /* Received packet max size */
