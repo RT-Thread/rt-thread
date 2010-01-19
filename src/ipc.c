@@ -30,6 +30,7 @@
  *                             re-calculated delta tick is a negative number.
  * 2009-12-16     Bernard      fix the rt_ipc_object_suspend issue when IPC flag
  *                             is RT_IPC_FLAG_PRIO
+ * 2010-01-20     mbbill       remove rt_ipc_object_decrease function.
  */
 
 #include <rtthread.h>
@@ -179,17 +180,6 @@ rt_inline rt_err_t rt_ipc_object_resume_all(struct rt_ipc_object* ipc)
 	return RT_EOK;
 }
 
-/* decrease ipc suspended thread number when thread can not take resource successfully */
-rt_inline void rt_ipc_object_decrease(struct rt_ipc_object* ipc)
-{
-	register rt_ubase_t level;
-
-	/* disable interrupt */
-	level = rt_hw_interrupt_disable();
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(level);
-}
 #ifdef RT_USING_SEMAPHORE
 
 /**
@@ -377,8 +367,6 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 
 			if (thread->error != RT_EOK)
 			{
-				/* decrease suspended thread count */
-				rt_ipc_object_decrease(&(sem->parent));
 				return thread->error;
 			}
 		}
@@ -677,9 +665,6 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 
 				if (thread->error != RT_EOK)
 				{
-					/* decrease suspended thread count */
-					rt_ipc_object_decrease(&(mutex->parent));
-
 					/* return error */
 					return thread->error;
 				}
@@ -1091,8 +1076,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 
 		if (thread->error != RT_EOK)
 		{
-			/* decrease suspended thread count */
-			rt_ipc_object_decrease(&(event->parent));
+		    /* return error */
 			return thread->error;
 		}
 
@@ -1383,8 +1367,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		/* resume from suspend state */
 		if (thread->error != RT_EOK)
 		{
-			/* can't recv message, decrease suspended thread count */
-			rt_ipc_object_decrease(&(mb->parent));
+		    /* return error */
 			return thread->error;
 		}
 
@@ -1829,8 +1812,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		/* recv message */
 		if (thread->error != RT_EOK)
 		{
-			/* decrease suspended thread count */
-			rt_ipc_object_decrease(&(mq->parent));
+		    /* return error */
 			return thread->error;
 		}
 
