@@ -29,6 +29,25 @@
 #include <rtthread.h>
 #include "finsh.h"
 
+// Copy from kservice.h because we can not use it out of the kernel.
+// Ugly. Should let kservice.h avaliable for applications?
+rt_inline int rt_list_isempty(const rt_list_t *l)
+{
+	return l->next == l;
+}
+
+rt_inline unsigned int rt_list_len(const rt_list_t *l)
+{
+	unsigned int len = 0;
+	const rt_list_t *p = l;
+	while( p->next != l )
+	{
+		p = p->next;
+		len++;
+	}
+	return len;
+}
+
 long hello()
 {
 	rt_kprintf("Hello RT-Thread!\n");
@@ -110,15 +129,15 @@ int list_sem()
 	for (node = list->next; node != list; node = node->next)
 	{
 		sem = (struct rt_semaphore*)(rt_list_entry(node, struct rt_object, list));
-		if (sem->parent.suspend_thread_count != 0)
+		if( !rt_list_isempty(&sem->parent.suspend_thread) )
 		{
-			rt_kprintf("%-8s  %03d %d:", sem->parent.parent.name, sem->value, sem->parent.suspend_thread_count);
+			rt_kprintf("%-8s  %03d %d:", sem->parent.parent.name, sem->value, rt_list_len(&sem->parent.suspend_thread) );
 			show_wait_queue(&(sem->parent.suspend_thread));
 			rt_kprintf("\n");
 		}
 		else
 		{
-			rt_kprintf("%-8s  %03d %d\n", sem->parent.parent.name, sem->value, sem->parent.suspend_thread_count);
+			rt_kprintf("%-8s  %03d %d\n", sem->parent.parent.name, sem->value, rt_list_len(&sem->parent.suspend_thread));
 		}
 	}
 
@@ -140,7 +159,7 @@ int list_event()
 	for (node = list->next; node != list; node = node->next)
 	{
 		e = (struct rt_event*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s  0x%08x %03d\n", e->parent.parent.name, e->set, e->parent.suspend_thread_count);
+		rt_kprintf("%-8s  0x%08x %03d\n", e->parent.parent.name, e->set, rt_list_len(&e->parent.suspend_thread));
 	}
 
 	return 0;
@@ -161,7 +180,7 @@ int list_mutex()
 	for (node = list->next; node != list; node = node->next)
 	{
 		m = (struct rt_mutex*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s %-8s %04d %d\n", m->parent.parent.name, m->owner->name, m->hold, m->parent.suspend_thread_count);
+		rt_kprintf("%-8s %-8s %04d %d\n", m->parent.parent.name, m->owner->name, m->hold, rt_list_len(&m->parent.suspend_thread));
 	}
 
 	return 0;
@@ -182,15 +201,15 @@ int list_mailbox()
 	for (node = list->next; node != list; node = node->next)
 	{
 		m = (struct rt_mailbox*)(rt_list_entry(node, struct rt_object, list));
-		if (m->parent.suspend_thread_count != 0)
+		if( !rt_list_isempty(&m->parent.suspend_thread) )
 		{
-			rt_kprintf("%-8s %04d  %04d %d:", m->parent.parent.name, m->entry, m->size, m->parent.suspend_thread_count);
+			rt_kprintf("%-8s %04d  %04d %d:", m->parent.parent.name, m->entry, m->size, rt_list_len(&m->parent.suspend_thread));
 			show_wait_queue(&(m->parent.suspend_thread));
 			rt_kprintf("\n");
 		}
 		else
 		{
-			rt_kprintf("%-8s %04d  %04d %d\n", m->parent.parent.name, m->entry, m->size, m->parent.suspend_thread_count);
+			rt_kprintf("%-8s %04d  %04d %d\n", m->parent.parent.name, m->entry, m->size, rt_list_len(&m->parent.suspend_thread));
 		}
 	}
 
@@ -212,7 +231,7 @@ int list_msgqueue()
 	for (node = list->next; node != list; node = node->next)
 	{
 		m = (struct rt_messagequeue*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s %04d  %d\n", m->parent.parent.name, m->entry, m->parent.suspend_thread_count);
+		rt_kprintf("%-8s %04d  %d\n", m->parent.parent.name, m->entry, rt_list_len(&m->parent.suspend_thread));
 	}
 
 	return 0;

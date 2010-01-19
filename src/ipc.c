@@ -62,7 +62,6 @@ rt_inline rt_err_t rt_ipc_object_init(struct rt_ipc_object *ipc)
 {
 	/* init ipc object */
 	rt_list_init(&(ipc->suspend_thread));
-	ipc->suspend_thread_count = 0;
 
 	return RT_EOK;
 }
@@ -80,7 +79,6 @@ rt_inline rt_err_t rt_ipc_object_suspend(struct rt_ipc_object *ipc, struct rt_th
 {
 	/* suspend thread */
 	rt_thread_suspend(thread);
-	ipc->suspend_thread_count ++;
 
 	switch (ipc->parent.flag)
 	{
@@ -141,9 +139,6 @@ rt_inline rt_err_t rt_ipc_object_resume(struct rt_ipc_object* ipc)
 	/* resume it */
 	rt_thread_resume(thread);
 
-	/* decrease suspended thread count */
-	ipc->suspend_thread_count --;
-
 	return RT_EOK;
 }
 
@@ -177,9 +172,6 @@ rt_inline rt_err_t rt_ipc_object_resume_all(struct rt_ipc_object* ipc)
 		 */
 		rt_thread_resume(thread);
 
-		/* decrease suspended thread count */
-		ipc->suspend_thread_count --;
-
 		/* enable interrupt */
 		rt_hw_interrupt_enable(temp);
 	}
@@ -194,9 +186,6 @@ rt_inline void rt_ipc_object_decrease(struct rt_ipc_object* ipc)
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
-
-	/* decrease suspended thread count */
-	ipc->suspend_thread_count --;
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
@@ -441,7 +430,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 		((struct rt_object*)sem)->name, sem->value);
 #endif
 
-	if (sem->parent.suspend_thread_count > 0)
+	if ( !rt_list_isempty(&sem->parent.suspend_thread) )
 	{
 		/* resume the suspended thread */
 		rt_ipc_object_resume(&(sem->parent));
@@ -769,7 +758,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 		}
 
 		/* wakeup suspended thread */
-		if (mutex->parent.suspend_thread_count > 0)
+		if( !rt_list_isempty(&mutex->parent.suspend_thread) )
 		{
 			/* get thread entry */
 			thread = rt_list_entry(mutex->parent.suspend_thread.next, struct rt_thread, tlist);
@@ -958,7 +947,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 	/* set event */
 	event->set |= set;
 
-	if (event->parent.suspend_thread_count > 0)
+	if( !rt_list_isempty(&event->parent.suspend_thread) )
 	{
 		/* search thread list to resume thread */
 		n = event->parent.suspend_thread.next;
@@ -1004,8 +993,6 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 				/* need do a scheduling */
 				need_schedule = RT_TRUE;
 
-				/* decrease suspended thread count */
-				event->parent.suspend_thread_count--;
 			}
 		}
 	}
@@ -1307,7 +1294,7 @@ rt_err_t rt_mb_send (rt_mailbox_t mb, rt_uint32_t value)
 	mb->entry ++;
 
 	/* resume suspended thread */
-	if (mb->parent.suspend_thread_count > 0)
+	if( !rt_list_isempty(&mb->parent.suspend_thread) )
 	{
 		rt_ipc_object_resume(&(mb->parent));
 
@@ -1681,7 +1668,7 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 	mq->entry ++;
 
 	/* resume suspended thread */
-	if (mq->parent.suspend_thread_count > 0)
+	if( !rt_list_isempty(&mq->parent.suspend_thread) )
 	{
 		rt_ipc_object_resume(&(mq->parent));
 
@@ -1753,7 +1740,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 	mq->entry ++;
 
 	/* resume suspended thread */
-	if (mq->parent.suspend_thread_count > 0)
+	if( !rt_list_isempty(&mq->parent.suspend_thread) )
 	{
 		rt_ipc_object_resume(&(mq->parent));
 

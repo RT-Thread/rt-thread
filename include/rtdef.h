@@ -387,7 +387,6 @@ struct rt_ipc_object
 	struct rt_object parent;
 
 	rt_list_t suspend_thread;		/* threads pended on this resource. */
-	rt_uint32_t suspend_thread_count;	/* numbers of thread pended on this resource. */
 };
 
 #ifdef RT_USING_SEMAPHORE
