@@ -21,7 +21,9 @@
 uint32_t Mass_Memory_Size[3];
 uint32_t Mass_Block_Size[3];
 uint32_t Mass_Block_Count[3];
-uint32_t Max_Lun = 0;
+
+/* logic unit count; the first is 0 */
+uint32_t Max_Lun = 2;
 
 rt_device_t dev_sdio = RT_NULL;
 
@@ -33,6 +35,12 @@ uint16_t MAL_Init(uint8_t lun)
     {
     case 0:
         status = MAL_OK;
+        break;
+    case 1:
+        status = MAL_FAIL;
+        break;
+    case 2:
+        status = MAL_FAIL;
         break;
     default:
         return MAL_FAIL;
@@ -74,11 +82,24 @@ uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint1
 
 uint16_t MAL_GetStatus (uint8_t lun)
 {
+    switch(lun)
+    {
+    case 0:
+        return MAL_OK;
+    case 1:
+        return MAL_FAIL;
+    case 2:
+        return MAL_FAIL;
+    default:
+        return MAL_FAIL;
+    }
+#if 0
     if(lun == 0)
     {
         return MAL_OK;
     }
     return MAL_FAIL;
+#endif
 }
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

@@ -24,7 +24,7 @@ uint8_t Page00_Inquiry_Data[] =
     0x00,
     0x00 /* Supported Pages 00*/
 };
-uint8_t Standard_Inquiry_Data[] =
+uint8_t Standard_Inquiry_Data1[] =
 {
     0x00,          /* Direct Access Device */
     0x80,          /* RMB = 1: Removable Medium */
@@ -60,6 +60,26 @@ uint8_t Standard_Inquiry_Data2[] =
     /* Product Identification */
     'n', 'e', 't', 'r', 'a', 'd', 'i', 'o', ' ',
     'D', 'I', 'S', 'K', '2', ' ', ' ',
+    /* Product Revision Level */
+    '1', '.', '0', ' '
+};
+uint8_t Standard_Inquiry_Data3[] =
+{
+    0x00,          /* Direct Access Device */
+    0x80,          /* RMB = 1: Removable Medium */
+
+    0x02,          /* Version: No conformance claim to standard */
+    0x02,          /* 数据响应格式 */
+
+    36 - 4,        /* 附加数据长度，为31字节 */
+    0x00,          /* SCCS = 1: Storage Controller Component */
+    0x00,
+    0x00,
+    /* Vendor Identification */
+    'S', 'T', 'M', '3', '2', ' ', ' ', ' ',
+    /* Product Identification */
+    'n', 'e', 't', 'r', 'a', 'd', 'i', 'o', ' ',
+    'D', 'I', 'S', 'K', '3', ' ', ' ',
     /* Product Revision Level */
     '1', '.', '0', ' '
 };
