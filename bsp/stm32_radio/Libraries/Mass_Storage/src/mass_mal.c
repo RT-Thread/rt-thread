@@ -93,13 +93,6 @@ uint16_t MAL_GetStatus (uint8_t lun)
     default:
         return MAL_FAIL;
     }
-#if 0
-    if(lun == 0)
-    {
-        return MAL_OK;
-    }
-    return MAL_FAIL;
-#endif
 }
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

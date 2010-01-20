@@ -133,7 +133,9 @@ void Led_Config(void)
 *******************************************************************************/
 void Led_RW_ON(void)
 {
-    //GPIO_SetBits(USB_LED_PORT, GPIO_Pin_8);
+#if (USB_USE_LED == 1)
+    GPIO_SetBits(USB_LED_PORT, USB_LED_PIN);
+#endif
 }
 
 /*******************************************************************************
@@ -145,7 +147,9 @@ void Led_RW_ON(void)
 *******************************************************************************/
 void Led_RW_OFF(void)
 {
-    //GPIO_ResetBits(USB_LED_PORT, GPIO_Pin_8);
+#if (USB_USE_LED == 1)
+    GPIO_ResetBits(USB_LED_PORT, USB_LED_PIN);
+#endif
 }
 /*******************************************************************************
 * Function Name  : USB_Configured_LED
