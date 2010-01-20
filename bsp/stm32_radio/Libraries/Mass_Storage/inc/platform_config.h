@@ -20,9 +20,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
-#define USB_DISCONNECT                    GPIOA
-#define USB_DISCONNECT_PIN                GPIO_Pin_3
-#define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOA
+#define USB_DISCONNECT                    GPIOG
+#define USB_DISCONNECT_PIN                GPIO_Pin_7
+#define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOG
 
 #endif /* __PLATFORM_CONFIG_H */
 
