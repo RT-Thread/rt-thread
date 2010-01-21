@@ -25,7 +25,12 @@
 #ifndef _FATFS
 #define _FATFS	0x007C
 
+#ifdef RT_DFS_ELM_WORD_ACCESS
+#define _WORD_ACCESS	1
+#else
 #define _WORD_ACCESS	0
+#endif
+
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data in the FAT structure.
 /
@@ -104,7 +109,7 @@
 */
 
 
-#define	_USE_LFN	1
+#define	_USE_LFN	0
 #define	_MAX_LFN	255		/* Maximum LFN length to handle (max:255) */
 /* The _USE_LFN option switches the LFN support.
 /

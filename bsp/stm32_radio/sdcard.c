@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    SDIO/sdcard.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.1.2
+  * @date    09/28/2009
   * @brief   This file provides all the SD Card driver firmware functions.
   ******************************************************************************
   * @copy
@@ -20,9 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "sdcard.h"
-#include <stm32f10x_dma.h>
-#include <stm32f10x_sdio.h>
-
 #include <rtthread.h>
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
@@ -321,42 +318,40 @@ SD_Error SD_PowerON(void)
     {
       CardType = SDIO_HIGH_CAPACITY_SD_CARD;
     }
-
   }/* else MMC Card */
-    else
+  else
+  {
+    CardType = SDIO_MULTIMEDIA_CARD;
+
+    /* Send CMD1 SEND_OP_COND with Argument 0x80FF8000 */
+    while ((!validvoltage) && (count < SD_MAX_VOLT_TRIAL))
     {
-        CardType = SDIO_MULTIMEDIA_CARD;
+      /* SEND CMD55 APP_CMD with RCA as 0 */
+      SDIO_CmdInitStructure.SDIO_Argument = SD_VOLTAGE_WINDOW_MMC;
+      SDIO_CmdInitStructure.SDIO_CmdIndex = SDIO_SEND_OP_COND;
+      SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+      SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+      SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+      SDIO_SendCommand(&SDIO_CmdInitStructure);
 
-        /* Send CMD1 SEND_OP_COND with Argument 0x80FF8000 */
-        while ((!validvoltage) && (count < SD_MAX_VOLT_TRIAL))
-        {
+      errorstatus = CmdResp3Error();
+      if (errorstatus != SD_OK)
+      {
+        return(errorstatus);
+      }
 
-            /* SEND CMD55 APP_CMD with RCA as 0 */
-            SDIO_CmdInitStructure.SDIO_Argument = SD_VOLTAGE_WINDOW_MMC;
-            SDIO_CmdInitStructure.SDIO_CmdIndex = SDIO_SEND_OP_COND;
-            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
-            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
-            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
-            SDIO_SendCommand(&SDIO_CmdInitStructure);
-
-            errorstatus = CmdResp3Error();
-            if (errorstatus != SD_OK)
-            {
-                return(errorstatus);
-            }
-
-            response = SDIO_GetResponse(SDIO_RESP1);
-            validvoltage = (bool) (((response >> 31) == 1) ? 1 : 0);
-            count++;
-        }
-        if (count >= SD_MAX_VOLT_TRIAL)
-        {
-            errorstatus = SD_INVALID_VOLTRANGE;
-            return(errorstatus);
-        }
+      response = SDIO_GetResponse(SDIO_RESP1);
+      validvoltage = (bool) (((response >> 31) == 1) ? 1 : 0);
+      count++;
     }
+    if (count >= SD_MAX_VOLT_TRIAL)
+    {
+      errorstatus = SD_INVALID_VOLTRANGE;
+      return(errorstatus);
+    }
+  }
 
-    return(SD_OK);
+  return(SD_OK);
 }
 
 /**
@@ -958,29 +953,11 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   }
   else if (DeviceMode == SD_DMA_MODE)
   {
-    int cnt = 0;
     SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
     SDIO_DMACmd(ENABLE);
     DMA_RxConfiguration(readbuff, BlockSize);
     while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-    {
-		cnt ++;
-		if (cnt > 10 * 50000)
-		{
-			rt_kprintf("DMA flag 0x%08x\n", DMA_GetFlagStatus(DMA2_FLAG_TC4));
-			/* Clear all DPSM configuration */
-			SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT;
-			SDIO_DataInitStructure.SDIO_DataLength = 0;
-			SDIO_DataInitStructure.SDIO_DataBlockSize = SDIO_DataBlockSize_1b;
-			SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
-			SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
-			SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Disable;
-			SDIO_DataConfig(&SDIO_DataInitStructure);
-			SDIO_DMACmd(DISABLE);
-			errorstatus = SD_ERROR;
-			break;
-		}
-	}
+    {}
   }
   return(errorstatus);
 }
@@ -2958,7 +2935,7 @@ static void DMA_RxConfiguration(uint32_t *BufferDST, uint32_t BufferSize)
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
   DMA_Init(DMA2_Channel4, &DMA_InitStructure);
 
@@ -2983,10 +2960,14 @@ static void DMA_RxConfiguration(uint32_t *BufferDST, uint32_t BufferSize)
 #include <rtthread.h>
 #include <dfs_fs.h>
 
+/* set sector size to 512 */
+#define SECTOR_SIZE		512
+
 static struct rt_device sdcard_device;
 static SD_CardInfo SDCardInfo;
 static struct dfs_partition part;
 static struct rt_semaphore sd_lock;
+static rt_uint8_t _sdcard_buffer[SECTOR_SIZE];
 
 /* RT-Thread Device Driver Interface */
 static rt_err_t rt_sdcard_init(rt_device_t dev)
@@ -3009,7 +2990,6 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
 {
-
 	return RT_EOK;
 }
 
@@ -3018,30 +2998,43 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-/* set sector size to 512 */
-#define SECTOR_SIZE		512
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	SD_Error status;
-	rt_uint32_t i, retry;
-
-	// rt_kprintf("read: 0x%x, size %d\n", pos, size);
+	rt_uint32_t nr = size / SECTOR_SIZE;
 
 	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
-	retry = 3;
+
 	/* read all sectors */
-	for (i = 0; i < size / SECTOR_SIZE; i ++)
+	if (((rt_uint32_t)buffer % 4 != 0) ||
+        ((rt_uint32_t)buffer > 0x20080000))
 	{
-__retry:
-		status = SD_ReadBlock((part.offset + i)* SECTOR_SIZE + pos,
-			(uint32_t*)((rt_uint8_t*)buffer + i * SECTOR_SIZE),
-			SECTOR_SIZE);
-		if (status != SD_OK)
-		{
-			-- retry;
-			if (retry != 0) goto __retry;
-			else break;
-		}
+	    rt_uint32_t index;
+
+        /* which is not alignment with 4 or chip SRAM */
+        for (index = 0; index < nr; index ++)
+        {
+            status = SD_ReadBlock((part.offset + index) * SECTOR_SIZE + pos,
+                (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
+
+            if (status != SD_OK) break;
+
+            /* copy to the buffer */
+            rt_memcpy(((rt_uint8_t*)buffer + index * SECTOR_SIZE), _sdcard_buffer, SECTOR_SIZE);
+        }
+	}
+	else
+	{
+        if (nr == 1)
+        {
+            status = SD_ReadBlock(part.offset * SECTOR_SIZE + pos,
+                (uint32_t*)buffer, SECTOR_SIZE);
+        }
+        else
+        {
+            status = SD_ReadMultiBlocks(part.offset * SECTOR_SIZE + pos,
+                (uint32_t*)buffer, SECTOR_SIZE, nr);
+        }
 	}
 
 	rt_sem_release(&sd_lock);
@@ -3055,26 +3048,44 @@ __retry:
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	SD_Error status;
-	rt_uint32_t i;
-
-	// rt_kprintf("write: 0x%x, size %d\n", pos, size);
+	rt_uint32_t nr = size / SECTOR_SIZE;
 
 	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
 
-	/* write all sectors */
-	for (i = 0; i < size / SECTOR_SIZE; i ++)
+	/* read all sectors */
+	if (((rt_uint32_t)buffer % 4 != 0) ||
+        ((rt_uint32_t)buffer > 0x20080000))
 	{
-		status = SD_WriteBlock((part.offset + i)* SECTOR_SIZE + pos,
-			(uint32_t*)((rt_uint8_t*)buffer + i * SECTOR_SIZE),
-			SECTOR_SIZE);
-		if (status != SD_OK)
-		{
-			rt_kprintf("sd card write failed\n");
-			break;
-		}
+	    rt_uint32_t index;
+
+        /* which is not alignment with 4 or chip SRAM */
+        for (index = 0; index < nr; index ++)
+        {
+            /* copy to the buffer */
+            rt_memcpy(_sdcard_buffer, ((rt_uint8_t*)buffer + index * SECTOR_SIZE), SECTOR_SIZE);
+
+            status = SD_WriteBlock((part.offset + index) * SECTOR_SIZE + pos,
+                (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
+
+            if (status != SD_OK) break;
+        }
+	}
+	else
+	{
+        if (nr == 1)
+        {
+            status = SD_WriteBlock(part.offset * SECTOR_SIZE + pos,
+                (uint32_t*)buffer, SECTOR_SIZE);
+        }
+        else
+        {
+            status = SD_WriteMultiBlocks(part.offset * SECTOR_SIZE + pos,
+                (uint32_t*)buffer, SECTOR_SIZE, nr);
+        }
 	}
 
 	rt_sem_release(&sd_lock);
+
 	if (status == SD_OK) return size;
 
 	rt_kprintf("write failed: %d, buffer 0x%08x\n", status, buffer);
@@ -3088,12 +3099,10 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
 void rt_hw_sdcard_init()
 {
-    if ( SD_Init() == SD_OK )
+    if (SD_Init() == SD_OK)
 	{
 		SD_Error status;
 		rt_uint8_t *sector;
-
-		SD_EnableWideBusOperation(SDIO_BusWide_1b);
 
 		status = SD_GetCardInfo(&SDCardInfo);
 		if (status != SD_OK) goto __return;
@@ -3101,6 +3110,7 @@ void rt_hw_sdcard_init()
 		status = SD_SelectDeselect((u32) (SDCardInfo.RCA << 16));
 		if (status != SD_OK) goto __return;
 
+		SD_EnableWideBusOperation(SDIO_BusWide_4b);
 		SD_SetDeviceMode(SD_DMA_MODE);
 
 		/* get the first sector to read partition table */

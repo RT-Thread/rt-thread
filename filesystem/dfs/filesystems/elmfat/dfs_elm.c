@@ -95,7 +95,7 @@ int dfs_elm_unmount(struct dfs_filesystem* fs)
 	RT_ASSERT(fat != RT_NULL);
 
 	/* elm not support unmount */
-	RT_ASSERT(0);
+	rt_kprintf("elm fatfs not support unmount\n");
 
 	return 0;
 }

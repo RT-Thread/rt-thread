@@ -3,8 +3,10 @@
 
 #include <string.h>
 
-static rt_mq_t player_thread_mq;
 rt_bool_t is_playing = RT_FALSE;
+static rt_mq_t player_thread_mq;
+static struct rt_thread	player_thread_tid;
+static rt_uint8_t player_thread_stack[0x400];
 
 rt_bool_t player_is_playing()
 {
@@ -20,6 +22,15 @@ void player_play_file(const char* fn)
     /* send to message queue */
     rt_mq_send(player_thread_mq, (void*)&request, sizeof(struct player_request));
 }
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+static const char _fn[] = "/005.mp3";
+void play()
+{
+    player_play_file(_fn);
+}
+FINSH_FUNCTION_EXPORT(play, play mp3 file test);
+#endif
 
 void player_stop()
 {
@@ -49,7 +60,7 @@ void player_thread(void* parameter)
 
 				    /* get music tag information */
 					mp3(request.fn);
-					
+
 					player_notify_stop();
 					is_playing = RT_FALSE;
 				}
@@ -68,16 +79,21 @@ void player_thread(void* parameter)
 
 void player_init()
 {
-    rt_thread_t tid;
+    rt_err_t result;
 
 	/* create player thread */
 	player_thread_mq = rt_mq_create("player", sizeof(struct player_request),
 		8, RT_IPC_FLAG_FIFO);
 	RT_ASSERT(player_thread_mq != RT_NULL);
 
-	tid = rt_thread_create("ply_bg", player_thread, RT_NULL,
-		2048, 20, 5);
-	if (tid != RT_NULL) rt_thread_startup(tid);
-	
-	player_ui_init();
+	result = rt_thread_init(&player_thread_tid, "ply_bg", player_thread, RT_NULL,
+		player_thread_stack, sizeof(player_thread_stack), 
+		20, 5);
+
+	if (result != RT_EOK) rt_kprintf("player thread init failed\n");
+	else
+	{
+		rt_thread_startup(&player_thread_tid);
+		player_ui_init();
+	}
 }

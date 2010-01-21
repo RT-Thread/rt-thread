@@ -381,11 +381,11 @@ void mp3(char* filename)
 
 			current_offset = 0;
 			while (mp3_decoder_run(decoder) != -1);
-			close(fd);
 
 			/* delete decoder object */
 			mp3_decoder_delete(decoder);
 		}
+		close(fd);
 	}
 	is_playing = RT_FALSE;
 }

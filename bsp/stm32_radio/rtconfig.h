@@ -77,14 +77,16 @@
 /* #define RT_USING_CPLUSPLUS */
 
 #define RT_USING_DFS
-#define RT_USING_DFS_EFSL
+/* #define RT_USING_DFS_EFSL */
 /* byte alignment for EFSL */
 #define BYTE_ALIGNMENT
-// #define RT_USING_DFS_ELMFAT
-#define DFS_EFLS_USING_STATIC_CACHE
+
+#define RT_USING_DFS_ELMFAT
+#define RT_DFS_ELM_WORD_ACCESS
+
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			1
+#define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					8
 /* the max number of cached sector 		*/
