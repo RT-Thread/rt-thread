@@ -2,81 +2,12 @@
 #include <rtthread.h>
 #include "stm32f10x.h"
 
-/*
- * WM8753 Driver
- */
-
-/* WM8753 register definitions */
-#define WM8753_DAC		0x01
-#define WM8753_ADC		0x02
-#define WM8753_PCM		0x03
-#define WM8753_HIFI		0x04
-#define WM8753_IOCTL	0x05
-#define WM8753_SRATE1	0x06
-#define WM8753_SRATE2	0x07
-#define WM8753_LDAC		0x08
-#define WM8753_RDAC		0x09
-#define WM8753_BASS		0x0a
-#define WM8753_TREBLE	0x0b
-#define WM8753_ALC1		0x0c
-#define WM8753_ALC2		0x0d
-#define WM8753_ALC3		0x0e
-#define WM8753_NGATE	0x0f
-#define WM8753_LADC		0x10
-#define WM8753_RADC		0x11
-#define WM8753_ADCTL1	0x12
-#define WM8753_3D		0x13
-#define WM8753_PWR1		0x14
-#define WM8753_PWR2		0x15
-#define WM8753_PWR3		0x16
-#define WM8753_PWR4		0x17
-#define WM8753_ID		0x18
-#define WM8753_INTPOL	0x19
-#define WM8753_INTEN	0x1a
-#define WM8753_GPIO1	0x1b
-#define WM8753_GPIO2	0x1c
-#define WM8753_RESET	0x1f
-#define WM8753_RECMIX1	0x20
-#define WM8753_RECMIX2	0x21
-#define WM8753_LOUTM1	0x22
-#define WM8753_LOUTM2	0x23
-#define WM8753_ROUTM1	0x24
-#define WM8753_ROUTM2	0x25
-#define WM8753_MOUTM1	0x26
-#define WM8753_MOUTM2	0x27
-#define WM8753_LOUT1V	0x28
-#define WM8753_ROUT1V	0x29
-#define WM8753_LOUT2V	0x2a
-#define WM8753_ROUT2V	0x2b
-#define WM8753_MOUTV	0x2c
-#define WM8753_OUTCTL	0x2d
-#define WM8753_ADCIN	0x2e
-#define WM8753_INCTL1	0x2f
-#define WM8753_INCTL2	0x30
-#define WM8753_LINVOL	0x31
-#define WM8753_RINVOL	0x32
-#define WM8753_MICBIAS	0x33
-#define WM8753_CLOCK	0x34
-#define WM8753_PLL1CTL1	0x35
-#define WM8753_PLL1CTL2	0x36
-#define WM8753_PLL1CTL3	0x37
-#define WM8753_PLL1CTL4	0x38
-#define WM8753_PLL2CTL1	0x39
-#define WM8753_PLL2CTL2	0x3a
-#define WM8753_PLL2CTL3	0x3b
-#define WM8753_PLL2CTL4	0x3c
-#define WM8753_BIASCTL	0x3d
-#define WM8753_ADCTL2	0x3f
 
 /*
 SCLK  PA5  SPI1_SCK
-SDIN  PA6
+SDIN  PA7  SPI1_MOSI
 CSB   PC5
 */
-#define wm_sclk_0  GPIO_ResetBits(GPIOA,GPIO_Pin_5)
-#define wm_sclk_1  GPIO_SetBits(GPIOA,GPIO_Pin_5)
-#define wm_sdin_0  GPIO_ResetBits(GPIOA,GPIO_Pin_7)
-#define wm_sdin_1  GPIO_SetBits(GPIOA,GPIO_Pin_7)
 #define wm_csb_0   GPIO_ResetBits(GPIOC,GPIO_Pin_5)
 #define wm_csb_1   GPIO_SetBits(GPIOC,GPIO_Pin_5)
 
@@ -124,55 +55,16 @@ static void NVIC_Configuration(void)
 static void GPIO_Configuration(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-    SPI_InitTypeDef SPI_InitStructure;
-
-#define SPI_MASTER                   SPI1
-#define SPI_MASTER_CLK               RCC_APB2Periph_SPI1
-#define SPI_MASTER_GPIO              GPIOA
-#define SPI_MASTER_GPIO_CLK          RCC_APB2Periph_GPIOA
-#define SPI_MASTER_PIN_SCK           GPIO_Pin_5
-#define SPI_MASTER_PIN_MISO          GPIO_Pin_6
-#define SPI_MASTER_PIN_MOSI          GPIO_Pin_7
-#define SPI_MASTER_IRQn              SPI1_IRQn
 
     /* Disable the JTAG interface and enable the SWJ interface */
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
-                           RCC_APB2Periph_AFIO, ENABLE);
-
-    /* Enable SPI_MASTER Periph clock */
-    RCC_APB2PeriphClockCmd(SPI_MASTER_CLK, ENABLE);
-
-    /* Configure SPI_MASTER pins: SCK, MISO and MOSI */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(SPI_MASTER_GPIO, &GPIO_InitStructure);
-
+    /* PC5 CODEC CS */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC,&GPIO_InitStructure);
-
-    /* SPI_MASTER configuration ------------------------------------------------*/
-    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;//SPI_Direction_1Line_Tx;
-    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;/* 常态为低电平 */
-    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge; /* SPI_CPHA_1Edge 从第一个沿开始送数据: 上升沿
-                                                    SPI_CPHA_2Edge 从第二个沿开始送数据: 下降沿 */
-    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
-    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-    SPI_InitStructure.SPI_CRCPolynomial = 7;
-    SPI_Init(SPI1, &SPI_InitStructure);
-
-    /* Enable SPI_MASTER */
-    SPI_Cmd(SPI1, ENABLE);
-    SPI_CalculateCRC(SPI1, DISABLE);
-
 
     /* Configure SPI2 pins: CK, WS and SD */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
@@ -235,64 +127,35 @@ static void I2S_Configuration(void)
     I2S_Init(SPI2, &I2S_InitStructure);
 }
 
-#if 1
-static void wm_delay(void)
+unsigned char SPI_WriteByte(unsigned char data)
 {
-    volatile unsigned int dl;
-    for(dl=0; dl<5000; dl++);
+    unsigned char Data = 0;
+
+    //Wait until the transmit buffer is empty
+    while(SPI_I2S_GetFlagStatus(SPI1,SPI_I2S_FLAG_TXE)==RESET);
+    // Send the byte
+    SPI_I2S_SendData(SPI1,data);
+
+    //Wait until a data is received
+    while(SPI_I2S_GetFlagStatus(SPI1,SPI_I2S_FLAG_RXNE)==RESET);
+    // Get the received data
+    Data = SPI_I2S_ReceiveData(SPI1);
+
+    // Return the shifted data
+    return Data;
 }
-#endif
 
 void wm8753_send(rt_uint16_t s_data)
 {
-    /* Wait for SPI1 Tx buffer empty */
-    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
-
     wm_csb_0;
-    /* Send SPI1 data */
-    SPI_I2S_SendData(SPI1, (s_data>>8)&0xFF );
-    /* Wait for SPI1 Tx buffer empty */
-    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
-    /* Send SPI1 data */
-    SPI_I2S_SendData(SPI1, s_data&0xFF);
-
-    wm_delay();
+    SPI_WriteByte( (s_data>>8)&0xFF );
+    SPI_WriteByte( s_data&0xFF );
     wm_csb_1;
-
-#if 0
-    u8 i;
-    wm_csb_0;
-    //wm_delay();
-    wm_sclk_0;
-    //wm_delay();
-    for (i=0;i<16;i++)
-    {
-        if (s_data & 0x8000)
-        {
-            wm_sdin_1;
-        }
-        else
-        {
-            wm_sdin_0;
-        }
-        //wm_delay();
-        wm_sclk_1;
-        s_data <<= 1;
-        //wm_delay();
-        wm_sclk_0;
-    }
-    //wm_delay();
-    wm_csb_1;
-#endif
 }
 
 static rt_err_t wm8753_init (rt_device_t dev)
 {
-    wm8753_send(0xF00F); // test
     wm8753_send(0<<9 | 0xFF); // reset
-    //wm_delay();
-    //wm_delay();
-    //wm_delay();
 
     /* POWER manager */
     wm8753_send(1<<9 | (1<<8) | (0<<7) | (0<<6) | (0<<5) | (1<<4) | (1<<3) | (1<<2) | 2    );//电源设置
@@ -310,6 +173,19 @@ static rt_err_t wm8753_init (rt_device_t dev)
     wm8753_send(53<<9 | (1<<8) | (1<<7) | 35 ); // ROUT1 0-57-63
     wm8753_send(54<<9 | (1<<8) | (1<<7) | 35 ); // LOUT2 0-57-63
     wm8753_send(55<<9 | (1<<8) | (1<<7) | 35 ); // ROUT2 0-57-63
+
+#if 1
+    /* LINE IN test */
+    wm8753_send(47<<9 | (1<<8) | (1<<4) ); //L LINE_IN VOL (6:4)输入增益: 0-关 1-12DB 2-9DB 5-0db 7+6DB
+    wm8753_send(48<<9 | (1<<8) | (1<<4) ); //R LINE_IN VOL (6:4)输入增益: 0-关 1-12DB 2-9DB 5-0db 7+6DB
+    wm8753_send(50<<9 | (5<<2) | (1<<1) | (1<<0) );//打开左监听 (4:2)增益 0-关 1-12DB 2-9DB 5-0db 7+6DB
+    wm8753_send(51<<9 | (5<<2) | (1<<1) | (1<<0) );//打开右监听 (4:2)增益 0-关 1-12DB 2-9DB 5-0db 7+6DB
+
+    /* MIC test */
+    wm8753_send(44<<9 | (1<<8) | (1<<5) | (1<<4) | (0<<2) | (1<<1) | (1<<0) );//MIC输入选择
+    wm8753_send(45<<9 | 50);//16-0  63-35
+    wm8753_send(46<<9 | 50);//16-0  63-35
+#endif
 
     return RT_EOK;
 }
@@ -432,20 +308,8 @@ rt_err_t wm8753_hw_init(void)
     wm8753.read_index	= 0;
     wm8753.put_index 	= 0;
 
-	wm_csb_1;
-
-#if 0
-    wm_sclk_0;
-    wm_sclk_1;
-    wm_sclk_0;
-
-    wm_sdin_0;
-    wm_sdin_1;
-    wm_sdin_0;
-
-    wm_csb_0;
+    /* unselect */
     wm_csb_1;
-#endif
 
     /* register the device */
     return rt_device_register(&wm8753.parent, "snd",

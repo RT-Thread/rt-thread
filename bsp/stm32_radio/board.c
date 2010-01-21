@@ -95,12 +95,12 @@ void NVIC_Configuration(void)
     NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 
-	/* 
-	 * set priority group: 
-	 * 2 bits for pre-emption priority
+    /*
+     * set priority group:
+     * 2 bits for pre-emption priority
      * 2 bits for subpriority
      */
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 }
 
 /*******************************************************************************
@@ -180,11 +180,34 @@ void rt_hw_board_init()
 
     /* NAND read ID command */
     FSMC_NAND_ReadID(&NAND_ID);
-    rt_kprintf("Read the NAND ID:%02X%02X%02X%02X\n",NAND_ID.Maker_ID,NAND_ID.Device_ID,NAND_ID.Third_ID,NAND_ID.Fourth_ID);
+    rt_kprintf("\r\n\r\nRead the NAND ID:%02X%02X%02X%02X",NAND_ID.Maker_ID,NAND_ID.Device_ID,NAND_ID.Third_ID,NAND_ID.Fourth_ID);
 
     /* SRAM init */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
     FSMC_SRAM_Init();
+
+    /* memtest */
+    {
+        unsigned char * p_extram = (unsigned char *)0x68000000;
+        unsigned int temp;
+
+        rt_kprintf("\r\nmem testing....");
+        for(temp=0; temp<0x80000; temp++)
+        {
+            *p_extram++ = (unsigned char)temp;
+        }
+
+        p_extram = (unsigned char *)0x68000000;
+        for(temp=0; temp<0x80000; temp++)
+        {
+            if( *p_extram++ != (unsigned char)temp )
+            {
+                rt_kprintf("\rmemtest fail @ %08X\r\nsystem halt!!!!!",(unsigned int)p_extram);
+                while(1);
+            }
+        }
+        rt_kprintf("\rmem test pass!!\r\n");
+    }/* memtest */
 
     {
         /* PC6 for SDCard Rst */
@@ -196,7 +219,41 @@ void rt_hw_board_init()
         GPIO_Init(GPIOC,&GPIO_InitStructure);
         GPIO_SetBits(GPIOC,GPIO_Pin_6);
     }
-}
+
+    /* SPI1 config */
+    {
+        GPIO_InitTypeDef GPIO_InitStructure;
+        SPI_InitTypeDef SPI_InitStructure;
+
+        /* Enable SPI1 Periph clock */
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA
+                               | RCC_APB2Periph_AFIO | RCC_APB2Periph_SPI1,
+                               ENABLE);
+
+        /* Configure SPI1 pins: PA5-SCK, PA6-MISO and PA7-MOSI */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        /*------------------------ SPI1 configuration ------------------------*/
+        SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;//SPI_Direction_1Line_Tx;
+        SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+        SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+        SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+        SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+        SPI_InitStructure.SPI_NSS  = SPI_NSS_Soft;
+        SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+        SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+        SPI_InitStructure.SPI_CRCPolynomial = 7;
+        SPI_Init(SPI1, &SPI_InitStructure);
+
+        /* Enable SPI_MASTER */
+        SPI_Cmd(SPI1, ENABLE);
+        SPI_CalculateCRC(SPI1, DISABLE);
+    }
+
+}/* rt_hw_board_init */
 
 #if STM32_CONSOLE_USART == 1
 #define CONSOLE_RX_PIN	GPIO_Pin_9
@@ -206,13 +263,13 @@ void rt_hw_board_init()
 #elif STM32_CONSOLE_USART == 2
 
 #if defined(STM32_LD) || defined(STM32_MD)
-	#define CONSOLE_RX_PIN	GPIO_Pin_6
-	#define CONSOLE_TX_PIN	GPIO_Pin_5
-	#define CONSOLE_GPIO	GPIOD
+#define CONSOLE_RX_PIN	GPIO_Pin_6
+#define CONSOLE_TX_PIN	GPIO_Pin_5
+#define CONSOLE_GPIO	GPIOD
 #elif defined(STM32_HD)
-	#define CONSOLE_RX_PIN	GPIO_Pin_3
-	#define CONSOLE_TX_PIN	GPIO_Pin_2
-	#define CONSOLE_GPIO	GPIOA
+#define CONSOLE_RX_PIN	GPIO_Pin_3
+#define CONSOLE_TX_PIN	GPIO_Pin_2
+#define CONSOLE_GPIO	GPIOA
 #endif
 
 #define CONSOLE_USART	USART2
@@ -300,7 +357,7 @@ static void rt_hw_console_putc(const char c)
 void rt_hw_console_output(const char* str)
 {
 #if STM32_CONSOLE_USART == 0
-	/* no console */
+    /* no console */
 #else
     while (*str)
     {

@@ -45,6 +45,7 @@ File 1,1,<.\player_bg.c><player_bg.c>
 File 1,1,<.\play_list.c><play_list.c>
 File 1,1,<.\ili9325\ili9320.c><ili9320.c>
 File 1,1,<.\codec.c><codec.c>
+File 1,1,<.\spi_flash.c><spi_flash.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\ipc.c><ipc.c>

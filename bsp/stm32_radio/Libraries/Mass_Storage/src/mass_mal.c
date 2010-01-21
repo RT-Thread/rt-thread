@@ -26,6 +26,7 @@ uint32_t Mass_Block_Count[3];
 uint32_t Max_Lun = 2;
 
 rt_device_t dev_sdio = RT_NULL;
+rt_device_t dev_spi_flash = RT_NULL;
 
 uint16_t MAL_Init(uint8_t lun)
 {
@@ -37,7 +38,7 @@ uint16_t MAL_Init(uint8_t lun)
         status = MAL_OK;
         break;
     case 1:
-        status = MAL_FAIL;
+        status = MAL_OK;
         break;
     case 2:
         status = MAL_FAIL;
@@ -55,6 +56,11 @@ uint16_t MAL_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uin
     {
     case 0:
     {
+        dev_spi_flash->write(dev_spi_flash,Memory_Offset,Writebuff,Transfer_Length);
+    }
+    break;
+    case 1:
+    {
         dev_sdio->write(dev_sdio,Memory_Offset,Writebuff,Transfer_Length);
     }
     break;
@@ -70,6 +76,11 @@ uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint1
     switch (lun)
     {
     case 0:
+    {
+        dev_spi_flash->read(dev_spi_flash,Memory_Offset,Readbuff,Transfer_Length);
+    }
+    break;
+    case 1:
     {
         dev_sdio->read(dev_sdio,Memory_Offset,Readbuff,Transfer_Length);
     }
@@ -87,7 +98,7 @@ uint16_t MAL_GetStatus (uint8_t lun)
     case 0:
         return MAL_OK;
     case 1:
-        return MAL_FAIL;
+        return MAL_OK;
     case 2:
         return MAL_FAIL;
     default:
