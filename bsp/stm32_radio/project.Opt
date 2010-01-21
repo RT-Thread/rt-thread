@@ -18,7 +18,7 @@ GRPOPT 4,(StdPeriph_Driver),0,0,0
 GRPOPT 5,(USB-FS-Device_Driver),0,0,0
 GRPOPT 6,(CMSIS),0,0,0
 GRPOPT 7,(finsh),0,0,0
-GRPOPT 8,(Filesystem),1,0,0
+GRPOPT 8,(Filesystem),0,0,0
 GRPOPT 9,(LwIP),0,0,0
 GRPOPT 10,(mp3),0,0,0
 GRPOPT 11,(RTGUI),0,0,0
@@ -216,18 +216,20 @@ OPTFFF 11,189,1,0,0,0,0,0,<..\..\rtgui\server\topwin.c><topwin.c>
 OPTFFF 11,190,1,0,0,0,0,0,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c> 
 OPTFFF 11,191,1,0,0,0,0,0,<..\..\rtgui\common\hz16font.c><hz16font.c> 
 OPTFFF 11,192,1,0,0,0,0,0,<..\..\rtgui\common\hz12font.c><hz12font.c> 
-OPTFFF 12,193,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\hw_config.c><hw_config.c> 
-OPTFFF 12,194,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\mass_mal.c><mass_mal.c> 
-OPTFFF 12,195,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\memory.c><memory.c> 
-OPTFFF 12,196,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_bot.c><usb_bot.c> 
-OPTFFF 12,197,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\scsi_data.c><scsi_data.c> 
-OPTFFF 12,198,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_desc.c><usb_desc.c> 
-OPTFFF 12,199,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_endp.c><usb_endp.c> 
-OPTFFF 12,200,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_istr.c><usb_istr.c> 
-OPTFFF 12,201,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_prop.c><usb_prop.c> 
-OPTFFF 12,202,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_pwr.c><usb_pwr.c> 
-OPTFFF 12,203,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_scsi.c><usb_scsi.c> 
-OPTFFF 12,204,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_main.c><usb_main.c> 
+OPTFFF 11,193,1,0,0,0,0,0,<..\..\rtgui\common\arial16font.c><arial16font.c> 
+OPTFFF 11,194,1,0,0,0,0,0,<..\..\rtgui\common\arial12font.c><arial12font.c> 
+OPTFFF 12,195,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\hw_config.c><hw_config.c> 
+OPTFFF 12,196,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\mass_mal.c><mass_mal.c> 
+OPTFFF 12,197,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\memory.c><memory.c> 
+OPTFFF 12,198,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_bot.c><usb_bot.c> 
+OPTFFF 12,199,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\scsi_data.c><scsi_data.c> 
+OPTFFF 12,200,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_desc.c><usb_desc.c> 
+OPTFFF 12,201,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_endp.c><usb_endp.c> 
+OPTFFF 12,202,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_istr.c><usb_istr.c> 
+OPTFFF 12,203,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_prop.c><usb_prop.c> 
+OPTFFF 12,204,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_pwr.c><usb_pwr.c> 
+OPTFFF 12,205,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_scsi.c><usb_scsi.c> 
+OPTFFF 12,206,1,0,0,0,0,0,<.\Libraries\Mass_Storage\src\usb_main.c><usb_main.c> 
 
 
 TARGOPT 1, (RT-Thread STM32 Radio)
