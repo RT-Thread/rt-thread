@@ -243,7 +243,7 @@ void rt_hw_board_init()
         SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
         SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
         SPI_InitStructure.SPI_NSS  = SPI_NSS_Soft;
-        SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+        SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;/* 72M/64=1.125M */
         SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
         SPI_InitStructure.SPI_CRCPolynomial = 7;
         SPI_Init(SPI1, &SPI_InitStructure);

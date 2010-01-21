@@ -56,12 +56,12 @@ uint16_t MAL_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uin
     {
     case 0:
     {
-        dev_spi_flash->write(dev_spi_flash,Memory_Offset,Writebuff,Transfer_Length);
+        dev_sdio->write(dev_sdio,Memory_Offset,Writebuff,Transfer_Length);
     }
     break;
     case 1:
     {
-        dev_sdio->write(dev_sdio,Memory_Offset,Writebuff,Transfer_Length);
+        dev_spi_flash->write(dev_spi_flash,Memory_Offset,Writebuff,Transfer_Length);
     }
     break;
     default:
@@ -77,12 +77,12 @@ uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint1
     {
     case 0:
     {
-        dev_spi_flash->read(dev_spi_flash,Memory_Offset,Readbuff,Transfer_Length);
+        dev_sdio->read(dev_sdio,Memory_Offset,Readbuff,Transfer_Length);
     }
     break;
     case 1:
     {
-        dev_sdio->read(dev_sdio,Memory_Offset,Readbuff,Transfer_Length);
+        dev_spi_flash->read(dev_spi_flash,Memory_Offset,Readbuff,Transfer_Length);
     }
     break;
     default:

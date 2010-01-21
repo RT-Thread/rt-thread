@@ -6,9 +6,9 @@
 
 #include "rtthread.h"
 
-extern uint32_t Mass_Memory_Size[2];
-extern uint32_t Mass_Block_Size[2];
-extern uint32_t Mass_Block_Count[2];
+extern uint32_t Mass_Memory_Size[3];
+extern uint32_t Mass_Block_Size[3];
+extern uint32_t Mass_Block_Count[3];
 extern rt_device_t dev_sdio;
 extern rt_device_t dev_spi_flash;
 
@@ -23,17 +23,17 @@ void USB_cable(void)
 
     /* SPI_FLASH */
     dev_spi_flash = rt_device_find("spi0");
-    Mass_Block_Size[0]  = 512;
-    Mass_Block_Count[0] = 4096;
-    Mass_Memory_Size[0] = 4096*512;
+    Mass_Block_Size[1]  = 512;
+    Mass_Block_Count[1] = 4096;
+    Mass_Memory_Size[1] = 4096*512;
 
     if(dev != RT_NULL)
     {
         dev_sdio = dev;
         sdio_info = (SD_CardInfo *)dev->private;
-        Mass_Memory_Size[1] = sdio_info->CardCapacity;
-        Mass_Block_Size[1]  = sdio_info->CardBlockSize;
-        Mass_Block_Count[1] = Mass_Memory_Size[0] / Mass_Block_Size[0];
+        Mass_Memory_Size[0] = sdio_info->CardCapacity;
+        Mass_Block_Size[0]  = sdio_info->CardBlockSize;
+        Mass_Block_Count[0] = Mass_Memory_Size[0] / Mass_Block_Size[0];
     }
     else
     {

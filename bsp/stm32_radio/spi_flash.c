@@ -73,7 +73,7 @@ static unsigned char AT45DB_StatusRegisterRead(void)
 static void wait_busy(void)
 {
     unsigned int    i=0;
-    while (i++<255)
+    while (i++<2000)
     {
         if (AT45DB_StatusRegisterRead()&0x80)
         {
