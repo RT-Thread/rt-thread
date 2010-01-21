@@ -23,9 +23,6 @@ const rtgui_color_t high_light 	= RTGUI_RGB(0xff, 0xff, 0xff);
 const rtgui_color_t dark_grey 	= RTGUI_RGB(0x7f, 0x7f, 0x7f);
 const rtgui_color_t light_grey 	= RTGUI_RGB(0xc0, 0xc0, 0xc0);
 
-const rtgui_color_t default_foreground = RTGUI_RGB(0x00, 0x00, 0x00);
-const rtgui_color_t default_background = RTGUI_RGB(0xff, 0xff, 0xff);
-
 #define RTGUI_RGB_R(c)	((c) & 0xff)
 #define RTGUI_RGB_G(c)	(((c) >> 8)  & 0xff)
 #define RTGUI_RGB_B(c)	(((c) >> 16) & 0xff)

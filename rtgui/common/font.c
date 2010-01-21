@@ -18,7 +18,9 @@ static rtgui_list_t _rtgui_font_list;
 static struct rtgui_font* rtgui_default_font;
 
 extern struct rtgui_font rtgui_font_asc16;
+extern struct rtgui_font rtgui_font_arial16;
 extern struct rtgui_font rtgui_font_asc12;
+extern struct rtgui_font rtgui_font_arial12;
 #ifdef RTGUI_USING_FONTHZ
 extern struct rtgui_font rtgui_font_hz16;
 extern struct rtgui_font rtgui_font_hz12;
@@ -33,6 +35,7 @@ void rtgui_font_system_init()
 
 #ifdef RTGUI_USING_FONT16
 	rtgui_font_system_add_font(&rtgui_font_asc16);
+	rtgui_font_system_add_font(&rtgui_font_arial16);
 #ifdef RTGUI_USING_FONTHZ
 	rtgui_font_system_add_font(&rtgui_font_hz16);
 #endif
@@ -40,16 +43,19 @@ void rtgui_font_system_init()
 
 #ifdef RTGUI_USING_FONT12
 	rtgui_font_system_add_font(&rtgui_font_asc12);
+	rtgui_font_system_add_font(&rtgui_font_arial12);
 #ifdef RTGUI_USING_FONTHZ
 	rtgui_font_system_add_font(&rtgui_font_hz12);
 #endif
 #endif
 
 #ifdef RTGUI_USING_FONT12
-	rtgui_font_set_defaut(&rtgui_font_asc12);
+	if (rtgui_default_font == RT_NULL)
+		rtgui_font_set_defaut(&rtgui_font_asc12);
 #endif
 #ifdef RTGUI_USING_FONT16
-	rtgui_font_set_defaut(&rtgui_font_asc16);
+	if (rtgui_default_font == RT_NULL)
+		rtgui_font_set_defaut(&rtgui_font_asc16);
 #endif
 }
 
@@ -166,7 +172,7 @@ struct rtgui_font_engine bmp_font_engine =
 void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc* dc, const char ch,
 	rtgui_rect_t* rect)
 {
-	const rt_uint8_t* font_ptr = font->bmp + ch * font->height;
+	const rt_uint8_t* font_ptr;
 	rt_uint16_t x, y, w, h;
 	register rt_base_t i, j;
 
@@ -175,6 +181,7 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 
 	/* check first and last char */
 	if (ch < font->first_char || ch > font->last_char) return;
+	font_ptr = font->bmp + (ch - font->first_char) * font->height;
 
 	w = (font->width + x > rect->x2)? rect->x2 - rect->x1 : font->width;
 	h = (font->height + y > rect->y2)? rect->y2 - rect->y1 : font->height;

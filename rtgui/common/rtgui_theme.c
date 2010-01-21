@@ -185,6 +185,14 @@ static const rt_uint8_t *close_pressed_xpm[] = {
 static rtgui_image_t* close_pressed = RT_NULL;
 static rtgui_image_t* close_unpressed = RT_NULL;
 
+const rtgui_color_t default_foreground = RTGUI_RGB(0x00, 0x00, 0x00);
+const rtgui_color_t default_background = RTGUI_RGB(212, 208, 200);
+
+extern struct rtgui_font rtgui_font_asc16;
+extern struct rtgui_font rtgui_font_arial16;
+extern struct rtgui_font rtgui_font_asc12;
+extern struct rtgui_font rtgui_font_arial12;
+
 /* init theme */
 void rtgui_system_theme_init()
 {
@@ -192,6 +200,8 @@ void rtgui_system_theme_init()
 		(const rt_uint8_t*)close_pressed_xpm, sizeof(close_pressed_xpm), RT_TRUE);
 	close_unpressed = rtgui_image_create_from_mem("xpm", 
 		(const rt_uint8_t*)close_unpressed_xpm, sizeof(close_unpressed_xpm), RT_TRUE);
+
+	rtgui_font_set_defaut(&rtgui_font_arial16);
 }
 
 /* window drawing */
@@ -217,8 +227,21 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 	/* draw border */
 	if (win->flag & WINTITLE_BORDER)
 	{
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(219, 210, 243);
-		rtgui_dc_draw_rect(dc, &rect);
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(212, 208, 200);
+		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
+		rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2);
+
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = white;
+		rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2 - 1, rect.y1 + 1);
+		rtgui_dc_draw_vline(dc, rect.x1 + 1, rect.y1 + 1, rect.y2 - 1);
+
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(128, 128, 128);
+		rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2 - 1, rect.y2 - 1);
+		rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1 + 1, rect.y2 - 1);
+
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(64, 64, 64);
+		rtgui_dc_draw_hline(dc, rect.x1, rect.x2 + 1, rect.y2);
+		rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2);
 
 		/* shrink border */
 		rect.x1 += WINTITLE_BORDER_SIZE;
@@ -230,17 +253,36 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 	/* draw title */
 	if (!(win->flag & WINTITLE_NO))
 	{
+		rt_uint32_t index;
+		float r, g, b, delta;
+
 		if (win->flag & WINTITLE_ACTIVATE)
 		{
-			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(229, 236, 249);
-			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB( 51, 102, 204);
+			r = 10; g = 36; b = 106;
+			delta = (float)(rect.x2 - rect.x1) / 160;
 		}
 		else
 		{
-			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(242, 245, 252);
-			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(153, 178, 229);
+			r = 128; g = 128; b = 128;
+			delta = (float)(rect.x2 - rect.x1) / 64;
 		}
-		rtgui_dc_fill_rect(dc, &rect);
+
+		for (index = rect.x1; index < rect.x2; index ++)
+		{
+			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(r, g, b);
+			rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
+			r += delta; g += delta; b += delta;
+		}
+
+		if (win->flag & WINTITLE_ACTIVATE)
+		{
+			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = white;
+		}
+		else
+		{
+			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(212, 208, 200);
+		}
+		// rtgui_dc_fill_rect(dc, &rect);
 
 		rect.x1 += 4;
 		rect.y1 += 2;
@@ -539,6 +581,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect, item_rect;
 	rt_size_t item_size, bord_size, index;
+	rtgui_color_t fc;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(radiobox));
@@ -560,7 +603,18 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 
 	/* draw box */
 	rtgui_rect_inflate(&rect, -bord_size/2);
-	rtgui_dc_draw_round_rect(dc, &rect);
+	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox));
+
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = white;
+	rect.x1 ++; rect.y1 ++; rect.x2 ++; rect.y2 ++;
+	rtgui_dc_draw_rect(dc, &rect);
+
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = RTGUI_RGB(128, 128, 128);
+	rect.x1 --; rect.y1 --; rect.x2 --; rect.y2 --;
+	rtgui_dc_draw_rect(dc, &rect);
+
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = fc;
+
 	rtgui_rect_inflate(&rect, bord_size/2);
 	if (radiobox->text != RT_NULL)
 	{
@@ -569,7 +623,9 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 		/* draw group text */
 		rtgui_font_get_metrics(rtgui_dc_get_font(dc), radiobox->text, &text_rect);
 		rtgui_rect_moveto(&text_rect, rect.x1 + bord_size + 5, rect.y1);
+		rect.x1 -= 5; rect.x2 += 5;
 		rtgui_dc_fill_rect(dc, &text_rect);
+		rect.x1 += 5; rect.x2 -= 5;
 		rtgui_dc_draw_text(dc, radiobox->text, &text_rect);
 	}
 

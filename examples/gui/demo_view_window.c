@@ -7,7 +7,7 @@
 
 static struct rtgui_timer *timer;
 static struct rtgui_label* label;
-static struct rtgui_win* msgbox;
+static struct rtgui_win* msgbox = RT_NULL;
 static rt_uint8_t label_text[80];
 static int cnt = 5;
 
@@ -29,19 +29,7 @@ void diag_close(struct rtgui_timer* timer, void* parameter)
 
 void window_demo()
 {
-	rt_mq_t mq;
-	rt_thread_t tid;
-	rt_uint32_t user_data;
 	struct rtgui_rect rect = {50, 50, 200, 200};
-
-	tid = rt_thread_self();
-	if (tid == RT_NULL) return; /* can't use in none-scheduler environement */
-	user_data = tid->user_data;
-
-	/* create gui message queue */
-	mq = rt_mq_create("msgbox", 256, 4, RT_IPC_FLAG_FIFO);
-	/* register message queue on current thread */
-	rtgui_thread_register(rt_thread_self(), mq);
 
 	msgbox = rtgui_win_create(RT_NULL, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (msgbox != RT_NULL)
@@ -64,15 +52,6 @@ void window_demo()
 
 	timer = rtgui_timer_create(200, RT_TIMER_FLAG_PERIODIC, diag_close, RT_NULL);
 	rtgui_timer_start(timer);
-
-	rtgui_win_event_loop(msgbox);
-
-	rtgui_thread_deregister(rt_thread_self());
-	/* remove RTGUI message queue */
-	rt_mq_delete(mq);
-
-	/* recover user data */
-	tid->user_data = user_data;
 }
 
 #ifdef RT_USING_FINSH
@@ -108,7 +87,6 @@ rtgui_view_t* demo_view_window(rtgui_workbench_t* workbench)
     rtgui_button_t *button;
 
     view = demo_view(workbench);
-    demo_view_get_rect(view, &rect);
 
 	demo_view_get_rect(view, &rect);
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;

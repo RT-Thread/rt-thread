@@ -31,7 +31,7 @@ enum
 };
 
 #define WINTITLE_HEIGHT			20
-#define WINTITLE_BORDER_SIZE	1
+#define WINTITLE_BORDER_SIZE	2
 
 struct rtgui_topwin
 {

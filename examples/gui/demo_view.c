@@ -48,6 +48,23 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench)
     {
     	struct rtgui_rect rect;
         struct rtgui_button *next_btn, *prev_btn;
+		struct rtgui_label *label;
+		struct rtgui_staticline *line;
+
+		/* get view's rect */
+		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+		rect.x1 += 5; rect.y1 += 5;
+		rect.x2 -= 5; rect.y2 -= 5;
+		rect.y2 = rect.y1 + 20;
+
+		/* create view label */
+		label = rtgui_label_create("Demo Label");
+		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+		rect.y1 += 20; rect.y2 += 20;
+		line = rtgui_staticline_create(RTGUI_HORIZONTAL);
+		rtgui_widget_set_rect(RTGUI_WIDGET(line), &rect);
+		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(line));
 
 		/* get view's rect */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
@@ -93,6 +110,7 @@ rtgui_box_t* demo_view_create_box(rtgui_view_t* view, int orient)
 
 	/* get rect of view */
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+	rect.y1 += 45;
 	rect.y2 -= 25;
 
 	box = rtgui_box_create(orient, &rect);
