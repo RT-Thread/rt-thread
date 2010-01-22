@@ -246,6 +246,8 @@ void rt_hw_board_init()
         SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;/* 72M/64=1.125M */
         SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
         SPI_InitStructure.SPI_CRCPolynomial = 7;
+
+        SPI_I2S_DeInit(SPI1);
         SPI_Init(SPI1, &SPI_InitStructure);
 
         /* Enable SPI_MASTER */

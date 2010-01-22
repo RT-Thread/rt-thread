@@ -1,6 +1,5 @@
 #include <stm32f10x.h>
-//#include "spi_flash.h"
-#include   <string.h>
+#include "spi_flash.h"
 
 extern unsigned char SPI_WriteByte(unsigned char data);
 
@@ -39,31 +38,23 @@ static void SPI_HostWriteByte(unsigned char wByte)
     SPI_WriteByte(wByte);
 }
 
-/******************************************************************************/
+/*****************************************************************************/
 /*Status Register Format:                                   */
-/*   ----------------------------------------------------------------------- */
-/* | bit7 | bit6 | bit5 | bit4 | bit3 | bit2 | bit1 | bit0 | */
+/* ------------------------------------------------------------------------- */
+/* | bit7   | bit6   | bit5   | bit4   | bit3   | bit2   | bit1   | bit0   | */
 /* |--------|--------|--------|--------|--------|--------|--------|--------| */
-/* |RDY/BUSY| COMP |   0   |   1   |   1   |   1   |   X   |   X   | */
-/*   ----------------------------------------------------------------------- */
-/* bit7 - 忙标记，0为忙1为不忙。                               */
-/*       当Status Register的位0移出之后，接下来的时钟脉冲序列将使SPI器件继续*/
-/*       将最新的状态字节送出。                               */
-/* bit6 - 标记最近一次Main Memory Page和Buffer的比较结果，0相同，1不同。   */
-/* bit5                                               */
-/* bit4                                               */
-/* bit3                                               */
-/* bit2 - 这4位用来标记器件密度，对于AT45DB041B，这4位应该是0111，一共能标记 */
-/*       16种不同密度的器件。                               */
-/* bit1                                               */
-/* bit0 - 这2位暂时无效                                     */
-/******************************************************************************/
+/* |RDY/BUSY| COMP   |         device density            |   X    |   X    | */
+/* ------------------------------------------------------------------------- */
+/* 0:busy   |        |        AT45DB041:0111             | protect|page size */
+/* 1:ready  |        |        AT45DB161:1011             |                   */
+/* --------------------------------------------------------------------------*/
+/*****************************************************************************/
 static unsigned char AT45DB_StatusRegisterRead(void)
 {
     unsigned char i;
 
     FLASH_CS_0();
-    SPI_HostWriteByte(0xd7);
+    SPI_HostWriteByte(AT45DB_READ_STATE_REGISTER);
     i=SPI_HostReadByte();
     FLASH_CS_1();
 
@@ -89,7 +80,7 @@ static void read_page(unsigned int page,unsigned char * pHeader)
     wait_busy();
 
     FLASH_CS_0();
-    SPI_HostWriteByte(0x53);
+    SPI_HostWriteByte(AT45DB_MM_PAGE_TO_B1_XFER);
     SPI_HostWriteByte((unsigned char)(page >> 6));
     SPI_HostWriteByte((unsigned char)(page << 2));
     SPI_HostWriteByte(0x00);
@@ -98,7 +89,7 @@ static void read_page(unsigned int page,unsigned char * pHeader)
     wait_busy();
 
     FLASH_CS_0();
-    SPI_HostWriteByte(0xD4);
+    SPI_HostWriteByte(AT45DB_BUFFER_1_READ);
     SPI_HostWriteByte(0x00);
     SPI_HostWriteByte(0x00);
     SPI_HostWriteByte(0x00);
@@ -118,7 +109,7 @@ static void write_page(unsigned int page,unsigned char * pHeader)
     wait_busy();
 
     FLASH_CS_0();
-    SPI_HostWriteByte(0x87);
+    SPI_HostWriteByte(AT45DB_BUFFER_2_WRITE);
     SPI_HostWriteByte(0);
     SPI_HostWriteByte(0);
     SPI_HostWriteByte(0);
@@ -131,7 +122,7 @@ static void write_page(unsigned int page,unsigned char * pHeader)
     wait_busy();
 
     FLASH_CS_0();
-    SPI_HostWriteByte(0x86);
+    SPI_HostWriteByte(AT45DB_B2_TO_MM_PAGE_PROG_WITH_ERASE);
     SPI_HostWriteByte((unsigned char)(page>>6));
     SPI_HostWriteByte((unsigned char)(page<<2));
     SPI_HostWriteByte(0x00);
