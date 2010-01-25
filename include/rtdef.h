@@ -532,6 +532,7 @@ enum rt_device_class_type
 	RT_Device_Class_MTD,		/* memory device */
 	RT_Device_Class_CAN,		/* CAN device */
 	RT_Device_Class_RTC,		/* RTC device */
+	RT_Device_Class_Sound,		/* Sound device */
 	RT_Device_Class_Unknown		/* unknown device */
 };
 
