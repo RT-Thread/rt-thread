@@ -11,6 +11,18 @@ static struct rtgui_win* msgbox = RT_NULL;
 static rt_uint8_t label_text[80];
 static int cnt = 5;
 
+void window_demo_close(struct rtgui_widget* widget, rtgui_event_t *even)
+{
+	rtgui_win_t* win;
+
+	/* 获得最顶层控件 */
+	win = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+
+	/* 销毁窗口 */
+	rtgui_win_destroy(win);
+}
+
+/* 关闭对话框时的回调函数 */
 void diag_close(struct rtgui_timer* timer, void* parameter)
 {
 	sprintf(label_text, "closed then %d second!", cnt);
@@ -27,11 +39,12 @@ void diag_close(struct rtgui_timer* timer, void* parameter)
 	cnt --;
 }
 
-void window_demo()
+void window_demo_autoclose(rtgui_toplevel_t* parent)
 {
+#if 0
 	struct rtgui_rect rect = {50, 50, 200, 200};
 
-	msgbox = rtgui_win_create(RT_NULL, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);
+	msgbox = rtgui_win_create(parent, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (msgbox != RT_NULL)
 	{
 		struct rtgui_box* box = rtgui_box_create(RTGUI_VERTICAL, RT_NULL);
@@ -52,32 +65,113 @@ void window_demo()
 
 	timer = rtgui_timer_create(200, RT_TIMER_FLAG_PERIODIC, diag_close, RT_NULL);
 	rtgui_timer_start(timer);
+#endif
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-void win_demo()
+static rt_uint16_t delta_x = 20;
+static rt_uint16_t delta_y = 40;
+
+/* 显示正常窗口 */
+void window_demo_normal(rtgui_toplevel_t* parent)
 {
-	window_demo();
+	rtgui_win_t *win;
+	rtgui_label_t *label;
+	rtgui_rect_t rect = {0, 0, 150, 80};
+
+	rtgui_rect_moveto(&rect, delta_x, delta_y);
+	delta_x += 20; delta_y += 20;
+
+	/* 创建一个窗口 */
+	win = rtgui_win_create(parent,
+		"窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
+
+	rect.x1 += 20; rect.x2 -= 5;
+	rect.y1 += 5; rect.y2 = rect.y1 + 20;
+
+	label = rtgui_label_create("这是一个普通窗口");
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
+
+	/* 非模态显示窗口 */
+	rtgui_win_show(win, RT_FALSE);
 }
-FINSH_FUNCTION_EXPORT(win_demo, a window demo)
-#endif
+
+void window_demo_modal(rtgui_toplevel_t* parent)
+{
+	rtgui_win_t *win;
+	rtgui_label_t *label;
+	rtgui_rect_t rect = {0, 0, 150, 80};
+
+	rtgui_rect_moveto(&rect, delta_x, delta_y);
+	delta_x += 20; delta_y += 20;
+
+	/* 创建一个窗口 */
+	win = rtgui_win_create(parent,
+		"模式窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
+
+	rect.x1 += 20; rect.x2 -= 5;
+	rect.y1 += 5; rect.y2 = rect.y1 + 20;
+
+	label = rtgui_label_create("这是一个模式窗口");
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
+
+	/* 模态显示窗口 */
+	rtgui_win_show(win, RT_TRUE);
+}
+
+void window_demo_notitle(rtgui_toplevel_t* parent)
+{
+	rtgui_win_t *win;
+	rtgui_label_t *label;
+	rtgui_button_t *button;
+	rtgui_rect_t rect = {0, 0, 150, 80};
+
+	rtgui_rect_moveto(&rect, delta_x, delta_y);
+	delta_x += 20; delta_y += 20;
+
+	/* 创建一个窗口 */
+	win = rtgui_win_create(parent,
+		"no title", &rect, RTGUI_WIN_STYLE_NO_TITLE | RTGUI_WIN_STYLE_NO_BORDER);
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(win)) = white;
+
+	/* 创建一个文本标签 */
+	rect.x1 += 20; rect.x2 -= 5;
+	rect.y1 += 5; rect.y2 = rect.y1 + 20;
+	label = rtgui_label_create("无边框窗口");
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
+
+	/* 创建一个关闭按钮 */
+	rect.x1 += 20; rect.x2 = rect.x1 + 40;
+	rect.y1 += 35; rect.y2 = rect.y1 + 20;
+	button = rtgui_button_create("关闭");
+	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
+	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(button));
+	rtgui_button_set_onbutton(button, window_demo_close);
+
+	/* 非模态显示窗口 */
+	rtgui_win_show(win, RT_FALSE);
+}
 
 static void demo_win_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
-    window_demo();
+    window_demo_normal(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
 }
 
 static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
+	// window_demo_autoclose(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
 }
 
 static void demo_modalwin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
+	window_demo_modal(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
 }
 
 static void demo_ntitlewin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
+	window_demo_notitle(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
 }
 
 rtgui_view_t* demo_view_window(rtgui_workbench_t* workbench)
