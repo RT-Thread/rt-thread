@@ -86,7 +86,7 @@ rtgui_view_t* demo_view_window(rtgui_workbench_t* workbench)
     rtgui_view_t* view;
     rtgui_button_t *button;
 
-    view = demo_view(workbench);
+    view = demo_view(workbench, "Window Demo");
 
 	demo_view_get_rect(view, &rect);
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;

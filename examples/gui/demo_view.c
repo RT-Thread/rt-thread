@@ -2,6 +2,7 @@
 #include <rtgui/widgets/view.h>
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/workbench.h>
+#include <rtgui/widgets/staticline.h>
 
 static rtgui_view_t* demo_view_list[32];
 static rt_uint32_t demo_view_current = 0;
@@ -29,7 +30,7 @@ static void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 	}
 }
 
-rtgui_view_t* demo_view(rtgui_workbench_t* workbench)
+rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 {
     char view_name[32];
     struct rtgui_view* view;
@@ -54,13 +55,13 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench)
 		/* get view's rect */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 		rect.x1 += 5; rect.y1 += 5;
-		rect.x2 -= 5; rect.y2 -= 5;
-		rect.y2 = rect.y1 + 20;
+		rect.x2 -= 5; rect.y2 = rect.y1 + 20;
 
 		/* create view label */
-		label = rtgui_label_create("Demo Label");
+		label = rtgui_label_create(title);
 		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+
 		rect.y1 += 20; rect.y2 += 20;
 		line = rtgui_staticline_create(RTGUI_HORIZONTAL);
 		rtgui_widget_set_rect(RTGUI_WIDGET(line), &rect);
@@ -99,6 +100,7 @@ void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect)
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), rect);
 	/* remove the command button rect */
+	rect->y1 += 45;
 	rect->y2 -= 25;
 }
 

@@ -55,14 +55,16 @@ static void workbench_entry(void* parameter)
 	/* 在工作台上添加一个视图 */
 	rtgui_workbench_add_view(workbench, view);
 
+	demo_view_dc(workbench);
 	demo_view_window(workbench);
 	demo_view_label(workbench);
 	demo_view_button(workbench);
 	demo_view_checkbox(workbench);
 	demo_view_progressbar(workbench);
 	demo_view_radiobox(workbench);
-	demo_fn_view(workbench);
+	demo_view_textbox(workbench);
 	demo_view_slider(workbench);
+	demo_fn_view(workbench);
 
 	/* 显示视图 */
 	demo_view_show();

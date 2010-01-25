@@ -11,7 +11,7 @@ rtgui_view_t *demo_view_slider(rtgui_workbench_t* workbench)
 	rtgui_slider_t *slider;
 
 	/* create a demo view */
-	view = demo_view(workbench);
+	view = demo_view(workbench, "Slider View");
 
 	/* get demo view rect */
 	demo_view_get_rect(view, &rect);

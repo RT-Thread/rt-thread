@@ -25,7 +25,7 @@ rtgui_view_t *demo_view_progressbar(rtgui_workbench_t* workbench)
 	rtgui_label_t *label;
 	
 	/* create a demo view */
-	view = demo_view(workbench);
+	view = demo_view(workbench, "ProgressBar View");
 	
 	/* get demo view rect */
 	demo_view_get_rect(view, &rect);

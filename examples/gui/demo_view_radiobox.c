@@ -21,7 +21,7 @@ rtgui_view_t* demo_view_radiobox(rtgui_workbench_t* workbench)
     rtgui_view_t* view;
     rtgui_radiobox_t* radiobox;
 
-    view = demo_view(workbench);
+    view = demo_view(workbench, "RadioBox View");
     demo_view_get_rect(view, &rect);
 
     rect.x1 += 5; rect.x2 -= 5;
@@ -33,9 +33,9 @@ rtgui_view_t* demo_view_radiobox(rtgui_workbench_t* workbench)
     rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(radiobox));
     rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 
-    demo_view_get_rect(view, &rect);
+	demo_view_get_rect(view, &rect);
     rect.x1 += 5; rect.x2 -= 5;
-    rect.y1 = 5 + 5 * 25; rect.y2 = rect.y1 + 60;
+    rect.y1 += 5 + 5 * 25; rect.y2 = rect.y1 + 60;
 
     radiobox = rtgui_radiobox_create("Radio Box", RTGUI_HORIZONTAL, radio_item_h, 3);
 	rtgui_radiobox_set_selection(radiobox, 0);

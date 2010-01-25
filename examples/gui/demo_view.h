@@ -9,7 +9,7 @@
 #include <rtgui/widgets/box.h>
 #endif
 
-rtgui_view_t* demo_view(rtgui_workbench_t* workbench);
+rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title);
 void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect);
 void demo_view_show(void);
 

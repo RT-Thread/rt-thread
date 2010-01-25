@@ -16,10 +16,10 @@ rtgui_view_t* demo_fn_view(rtgui_workbench_t* workbench)
     rtgui_button_t* open_btn;
     rtgui_font_t* font;
 
-    view = demo_view(workbench);
-    rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+	font = rtgui_font_refer("asc", 12);
 
-    font = rtgui_font_refer("asc", 12);
+	view = demo_view(workbench, "FileList View");
+	demo_view_get_rect(view, &rect);
 
     rect.x1 += 5; rect.x2 -= 5;
     rect.y1 += 5; rect.y2 = rect.y1 + 20;
@@ -28,7 +28,7 @@ rtgui_view_t* demo_fn_view(rtgui_workbench_t* workbench)
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(label)) = font;
 
-    rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+	demo_view_get_rect(view, &rect);
     rect.x1 += 5; rect.x2 = rect.x1 + 80;
     rect.y1 += 30; rect.y2 = rect.y1 + 20;
     open_btn = rtgui_button_create("Open File");

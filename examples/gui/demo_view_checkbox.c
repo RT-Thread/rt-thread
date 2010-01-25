@@ -9,7 +9,7 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	rtgui_font_t* font;
 
 	/* create a demo view */
-	view = demo_view(workbench);
+	view = demo_view(workbench, "CheckBox View");
 
 	demo_view_get_rect(view, &rect);
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;
