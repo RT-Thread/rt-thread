@@ -88,7 +88,7 @@ void rt_hw_uart_init(void)
 	GPHUP |= 0xF;
 
 	/* FIFO enable, Tx/Rx FIFO clear */
-	uart0.uart_device->ufcon = 0x1;
+	uart0.uart_device->ufcon = 0x0;
 	/* disable the flow control */
 	uart0.uart_device->umcon = 0x0;
 	/* Normal,No parity,1 stop,8 bit */

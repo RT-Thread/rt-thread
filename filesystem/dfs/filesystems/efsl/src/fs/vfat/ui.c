@@ -65,12 +65,13 @@ esint16 un_link(FileSystem *fs,euint8* filename)
 		firstCluster <<= 16;
 		firstCluster += ex_getb16(buf+loc.Offset*32+26);
 		attr = ex_getb16(buf+loc.Offset*32+11);
+		part_relSect(fs->part,buf);
+
 		if(attr == ATTR_DIRECTORY)
 		{
 			dlist = (DirList *)rt_malloc(sizeof(DirList));
 			if(dlist == RT_NULL)
 			{
-				part_relSect(fs->part,buf);
 				
 				dfs_log(DFS_DEBUG_INFO, ("Memory alloc failed"));				
 				return -DFS_STATUS_ENOMEM;	
@@ -91,9 +92,7 @@ esint16 un_link(FileSystem *fs,euint8* filename)
 					{
 						/* '.' and '..' */
 						if(dlist->currentEntry.FileName[0] == '.') continue;
-						
-						part_relSect(fs->part,buf);
-						
+												
 						dfs_log(DFS_DEBUG_INFO, ("Directory not empty"));
 						return -DFS_STATUS_ENOTEMPTY;
 					}
@@ -101,7 +100,8 @@ esint16 un_link(FileSystem *fs,euint8* filename)
 				}
 			}
 		}
-
+		
+		buf = part_getSect(fs->part,loc.Sector,IOM_MODE_READWRITE);
 		memClr(buf+(loc.Offset*32),32);
 		part_relSect(fs->part,buf);
 		cache.DiscCluster = cache.LastCluster = cache.Linear = cache.LogicCluster = 0;

@@ -76,7 +76,7 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-		rt_hw_key_init();
+		//rt_hw_key_init();
 	}
 #endif
 

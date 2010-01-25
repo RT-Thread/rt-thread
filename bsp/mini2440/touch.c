@@ -103,7 +103,7 @@ void report_touch_input(int updown)
 
 	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
 
-	rtgui_server_post_event((&emouse.parent), sizeof(emouse));
+	//rtgui_server_post_event((&emouse.parent), sizeof(emouse));
 }
 #endif
 

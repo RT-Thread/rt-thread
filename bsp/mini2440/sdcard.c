@@ -74,8 +74,8 @@ static int sd_cmd_end(int cmd, int be_resp)
 		{
 		    	if( (finish0&0x1f00) != 0xa00 )
 		    	{
-                    rt_kprintf("CMD%d:SDICSTA=0x%x, SDIRSP0=0x%x\n",
-                        cmd, SDICSTA, SDIRSP0);
+                    		rt_kprintf("CMD%d:SDICSTA=0x%x, SDIRSP0=0x%x\n",
+                        		cmd, SDICSTA, SDIRSP0);
 
 		    		SDICSTA=finish0;
 		    		if(((finish0&0x400)==0x400))
@@ -100,7 +100,7 @@ static int sd_data_end(void)
 	finish=SDIDSTA;
 
 	while( !( ((finish&0x10)==0x10) | ((finish&0x20)==0x20) ))
-	{   rt_kprintf("data end\n");
+	{
 		finish=SDIDSTA;
 	}
 
@@ -139,7 +139,10 @@ static int sd_cmd55(void)
 	SDICCON = (0x1 << 9) | (0x1 << 8) | 0x77;
 
 	if(sd_cmd_end(55, 1) == RT_ERROR)
+	{
+		rt_kprintf("CMD55 error\n");
 		return RT_ERROR;
+	}	
 
 	SDICSTA=0xa00;
 	return RT_EOK;
@@ -203,34 +206,6 @@ static void sd_setbus(void)
  *
  * @param hook the hook function
  */
-int sd_mmc_ocr(void)
-{
-	int i;
-
-	/* Negotiate operating condition for MMC, it makes card ready state */
-	for(i=0; i<100; i++)
-	{
-		SDICARG = 0xff8000;
-		SDICCON = (0x1<<9)|(0x1<<8)|0x41;
-
-		/* Check end of CMD1 */
-		if((sd_cmd_end(1, 1) == RT_EOK) && (SDIRSP0>>16)==0x80ff)
-		{
-			SDICSTA=0xa00;
-			return RT_EOK;
-		}
-	}
-	SDICSTA=0xa00;
-
-	return RT_ERROR;
-}
-
-/**
- * This function will set a hook function, which will be invoked when a memory
- * block is allocated from heap memory.
- *
- * @param hook the hook function
- */
 int sd_ocr(void)
 {
 	int i;
@@ -271,7 +246,7 @@ rt_uint8_t sd_init(void)
 	/* Important notice for MMC test condition */
 	/* Cmd & Data lines must be enabled by pull up resister */
 	SDIPRE  = PCLK/(INICLK)-1;
-	SDICON  = (1<<4) | 1;	// Type B, clk enable
+	SDICON  = (0<<4) | 1;	// Type A, clk enable
 	SDIFSTA = SDIFSTA | (1<<16);
 	SDIBSIZE = 0x200;       /* 512byte per one block */
 	SDIDTIMER=0x7fffff;     /* timeout count */
@@ -280,13 +255,6 @@ rt_uint8_t sd_init(void)
 	for(i=0; i<0x1000; i++);
 
 	sd_cmd0();
-	/* Check MMC card OCR */
-	if(sd_mmc_ocr() == RT_EOK)
-	{
-		rt_kprintf("In MMC ready\n");
-		goto RECMD2;
-	}
-	rt_kprintf("MMC check end!!\n");
 
 	/* Check SD card OCR */
 	if(sd_ocr() == RT_EOK)
@@ -362,19 +330,7 @@ RERDCMD:
 		status = SDIFSTA;
 		if((status & 0x1000) == 0x1000)
 		{
-#if 1
-			register rt_uint32_t value;
-
-			value = SDIDAT;
-
-			/* swap 4 bytes */
-			buf[0] = (value >> 24) & 0xff;
-			buf[1] = (value >> 16) & 0xff;
-			buf[2] = (value >> 8) & 0xff;
-			buf[3] = value & 0xff;
-#else
 			*(rt_uint32_t *)buf = SDIDAT;
-#endif
 			rd_cnt++;
 			buf += 4;
 		}
@@ -422,7 +378,7 @@ REWTCMD:
     		{
         		SDIDAT=*(rt_uint32_t*)buf;
         		wt_cnt++;
-				buf += 4;
+			buf += 4;
     		}
     	}
 	if(sd_data_end() == RT_ERROR)
@@ -564,8 +520,8 @@ void rt_hw_sdcard_init()
 	CLKCON |= 1 << 9;
 
 	/* Setup GPIO as SD and SDCMD, SDDAT[3:0] Pull up En */
-    GPEUP  = GPEUP  & (~(0x3f << 5))   | (0x01 << 5);
-    GPECON = GPECON & (~(0xfff << 10)) | (0xaaa << 10);
+	GPEUP  = GPEUP  & (~(0x3f << 5))   | (0x01 << 5);
+	GPECON = GPECON & (~(0xfff << 10)) | (0xaaa << 10);
 
 	RCA = 0;
 
