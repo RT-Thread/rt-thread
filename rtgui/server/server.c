@@ -480,9 +480,15 @@ static void rtgui_server_entry(void* parameter)
 	SetThreadPriority(hCurrentThread, THREAD_PRIORITY_HIGHEST);
 #endif
 
+#ifdef RTGUI_USING_SMALL_SIZE
+	/* create rtgui server msgq */
+	rtgui_server_mq = rt_mq_create("rtgui",
+		64, 8, RT_IPC_FLAG_FIFO);
+#else
 	/* create rtgui server msgq */
 	rtgui_server_mq = rt_mq_create("rtgui",
 		256, 8, RT_IPC_FLAG_FIFO);
+#endif
 	/* register rtgui server thread */
 	rtgui_thread_register(rtgui_server_tid, rtgui_server_mq);
 
@@ -495,7 +501,11 @@ static void rtgui_server_entry(void* parameter)
 	while (1)
 	{
 		/* the buffer uses to receive event */
+#ifdef RTGUI_USING_SMALL_SIZE
+		char event_buf[64];
+#else
 		char event_buf[256];
+#endif
 		struct rtgui_event* event = (struct rtgui_event*)&(event_buf[0]);
 
 		if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)

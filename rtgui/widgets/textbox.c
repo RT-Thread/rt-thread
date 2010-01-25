@@ -127,8 +127,13 @@ static void rtgui_textbox_onmouse(struct rtgui_textbox* box, struct rtgui_event_
 			box->position = x / box->font_width;
 		}
 
+		/* set caret to show */
+		box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
+
 		/* set widget focus */
 		rtgui_widget_focus(RTGUI_WIDGET(box));
+		/* re-draw text box */
+		rtgui_theme_draw_textbox(box);
 	}
 }
 
@@ -236,6 +241,8 @@ static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui
 {
 	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
 
+	/* set caret to show */
+	box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
 	/* start caret timer */
 	rtgui_timer_start(box->caret_timer);
 
@@ -248,7 +255,8 @@ static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtg
 
 	/* stop caret timer */
 	rtgui_timer_stop(box->caret_timer);
-	/* hide caret */
+	/* set caret to hide */
+	box->flag &= ~RTGUI_TEXTBOX_CARET_SHOW;
 
 	return RT_TRUE;
 }

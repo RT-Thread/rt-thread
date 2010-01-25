@@ -49,8 +49,9 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 		/* focus widgets */
 		rtgui_widget_focus(RTGUI_WIDGET(radiobox));
 
-		/* get widget rect */
+		/* get widget physical rect */
 		rtgui_widget_get_rect(RTGUI_WIDGET(radiobox), &rect);
+		rtgui_widget_rect_to_device(RTGUI_WIDGET(radiobox), &rect);
 
 		/* get board size */
 		if (radiobox->orient == RTGUI_VERTICAL)
@@ -187,7 +188,7 @@ struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char
 			for (index = 0; index < number; index ++)
 			{
 				rtgui_font_get_metrics(font, radio_items[index], &rect);
-				if (rtgui_rect_width(rect) > radiobox->item_size)
+				if ( (board_size + 3 + rtgui_rect_width(rect)) > radiobox->item_size)
 					radiobox->item_size = board_size + 3 + rtgui_rect_width(rect);
 			}
 		}

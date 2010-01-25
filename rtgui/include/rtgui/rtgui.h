@@ -15,7 +15,6 @@
 #define __RT_GUI_H__
 
 #include <rtthread.h>
-
 #include <rtgui/rtgui_config.h>
 
 #define RT_INT16_MAX		32767

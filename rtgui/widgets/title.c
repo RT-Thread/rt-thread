@@ -19,6 +19,7 @@ static void _rtgui_wintitle_constructor(rtgui_wintitle_t* wintitle)
 {
 	wintitle->title = RT_NULL;
 	RTGUI_WIDGET(wintitle)->flag = RTGUI_WIDGET_FLAG_DEFAULT;
+	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(wintitle)) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 static void _rtgui_wintitle_deconstructor(rtgui_wintitle_t* wintitle)

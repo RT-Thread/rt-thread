@@ -10,9 +10,6 @@ static void _rtgui_staticline_constructor(rtgui_staticline_t *staticline)
 	rtgui_widget_set_rect(RTGUI_WIDGET(staticline), &rect);
 	staticline->orientation= RTGUI_HORIZONTAL;
 
-	/* set background color */
-	RTGUI_WIDGET(staticline)->gc.background = RTGUI_RGB(64, 64, 64);
-
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(staticline), rtgui_staticline_event_handler);
 }
 

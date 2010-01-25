@@ -259,12 +259,12 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 		if (win->flag & WINTITLE_ACTIVATE)
 		{
 			r = 10; g = 36; b = 106;
-			delta = (float)(rect.x2 - rect.x1) / 160;
+			delta = 150 / (float)(rect.x2 - rect.x1);
 		}
 		else
 		{
 			r = 128; g = 128; b = 128;
-			delta = (float)(rect.x2 - rect.x1) / 64;
+			delta = 64 / (float)(rect.x2 - rect.x1);
 		}
 
 		for (index = rect.x1; index < rect.x2; index ++)
@@ -450,6 +450,7 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 	/* draw button */
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect;
+	rtgui_color_t fc;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(box));
@@ -457,19 +458,39 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 
 	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
+	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box));
 
-	/* fill widget rect with background color */
+	/* fill widget rect with white color */
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
 	rtgui_dc_fill_rect(dc, &rect);
 
 	/* draw border */
-	rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_STATIC);
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = RTGUI_RGB(123, 158, 189);
+	rtgui_dc_draw_rect(dc, &rect);
 
 	/* draw text */
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = fc;
 	if (box->text != RT_NULL)
 	{
 		rect.x1 += RTGUI_TEXTBOX_MARGIN;
 
-		rtgui_dc_draw_text(dc, box->text, &rect);
+		if (box->flag & RTGUI_TEXTBOX_MASK)
+		{
+			/* draw '*' */
+			rt_size_t len = rt_strlen(box->text);
+			if (len > 0)
+			{
+				char *text_mask = rtgui_malloc(len);
+				rt_memset(text_mask, '*', len);
+				text_mask[len] = 0;
+				rtgui_dc_draw_text(dc, text_mask, &rect);
+				rt_free(text_mask);
+			}
+		}
+		else
+		{
+			rtgui_dc_draw_text(dc, box->text, &rect);
+		}
 
 		/* draw caret */
 		if (box->flag & RTGUI_TEXTBOX_CARET_SHOW)
@@ -477,8 +498,10 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 			rect.x1 += box->position * box->font_width;
 			rect.x2 = rect.x1 + box->font_width;
 
+			rect.y2 -= 2;
 			rect.y1 = rect.y2 - 3;
 
+			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = black;
 			rtgui_dc_fill_rect(dc, &rect);
 		}
 	}
@@ -669,6 +692,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 	{
 		/* set the first text rect */
 		item_rect.x2 = item_rect.x1 + item_size;
+		item_rect.y2 = item_rect.y1 + bord_size;
 
 		/* draw each radio button */
 		for (index = 0; index < radiobox->item_count; index ++)
@@ -866,7 +890,9 @@ void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline)
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(staticline));
 	if (dc == RT_NULL) return ;
+
 	rtgui_widget_get_rect(RTGUI_WIDGET(staticline), &rect);
+	rtgui_dc_fill_rect(dc, &rect);
 	
 	if (staticline->orientation == RTGUI_HORIZONTAL)
 	{
