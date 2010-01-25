@@ -18,7 +18,7 @@
 /* RTGUI options */
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		32
+#define RTGUI_NAME_MAX		16
 
 /* #define RTGUI_USING_MOUSE_CURSOR */
 

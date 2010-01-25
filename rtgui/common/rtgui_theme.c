@@ -282,10 +282,9 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 		{
 			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(212, 208, 200);
 		}
-		// rtgui_dc_fill_rect(dc, &rect);
 
 		rect.x1 += 4;
-		rect.y1 += 2;
+		rect.y1 += 2; rect.y2 = rect.y1 + WINTITLE_CB_HEIGHT;
 		rtgui_dc_draw_text(dc, rtgui_wintitle_get_title(win->title), &rect);
 
 		if (win->flag & WINTITLE_CLOSEBOX)
@@ -321,7 +320,7 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 
-	/* get forecolor */
+	/* get foreground color */
 	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn));
 
 	/* fill button rect with background color */

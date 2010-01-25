@@ -165,18 +165,18 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 #endif
 						rtgui_theme_draw_button(btn);
 
-					if (!(btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
-					{
-						/* call on button handler */
-						btn->on_button(widget, event);
-					}
-
 #ifndef RTGUI_USING_SMALL_SIZE
 					/* invokes call back */
 					if (widget->on_mouseclick != RT_NULL &&
 						emouse->button & RTGUI_MOUSE_BUTTON_UP)
 						return widget->on_mouseclick(widget, event);
 #endif
+
+					if (!(btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
+					{
+						/* call on button handler */
+						btn->on_button(widget, event);
+					}
 				}
 
 			}
