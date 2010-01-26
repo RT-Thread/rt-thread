@@ -7,6 +7,9 @@ static rtgui_label_t* label;
 void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
     /* create a fn view */
+	rtgui_view_t *view;
+
+	view = rtgui_filelist_view_create(workbench, "/", "*.*");
 }
 
 rtgui_view_t* demo_fn_view(rtgui_workbench_t* workbench)
