@@ -1,0 +1,28 @@
+Import('env')
+
+src_local = Split("""
+demo_fnview.c
+demo_listview.c
+demo_panel_single.c
+demo_view.c
+demo_view_box.c
+demo_view_button.c
+demo_view_checkbox.c
+demo_view_dc.c
+demo_view_image.c
+demo_view_label.c
+demo_view_mywidget.c
+demo_view_progressbar.c
+demo_view_radiobox.c
+demo_view_slider.c
+demo_view_textbox.c
+demo_view_window.c
+demo_workbench.c
+gui_init.c
+mywidget.c
+""")
+
+# The set of source files associated with this SConscript file.
+obj = env.Object(src_local)
+
+Return('obj')

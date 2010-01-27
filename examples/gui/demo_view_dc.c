@@ -12,11 +12,11 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		rt_uint32_t vx[] = {20, 50, 60, 45, 60, 20};
 		rt_uint32_t vy[] = {150, 50, 90, 60, 45, 50};
 
-		/* 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让它先绘图 */
+		/* 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view先绘图 */
 		rtgui_view_event_handler(widget, event);
 
 		/************************************************************************/
-		/* 下面的是DC的处理                                                     */
+		/* 下面的是DC的处理                                             */
 		/************************************************************************/
 
 		/* 获得控件所属的DC */
@@ -34,6 +34,10 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 填充一个圆形 */
 		rtgui_dc_set_color(dc, green);
 		rtgui_dc_fill_circle(dc, rect.x1 + 30, rect.y1 + 10, 10);
+
+		/* 画一个圆弧 */ 
+		rtgui_dc_set_color(dc, RTGUI_RGB(250, 120, 120));
+		rtgui_dc_draw_arc(dc, rect.x1 + 120, rect.y1 + 60, 30, 0, 120);
 
 		/* 多边形 */
 		rtgui_dc_set_color(dc, blue);
@@ -56,7 +60,8 @@ rtgui_view_t *demo_view_dc(rtgui_workbench_t* workbench)
 	rtgui_view_t *view;
 
 	view = demo_view(workbench, "DC Demo");
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), dc_event_handler);
+	if (view != RT_NULL)
+		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), dc_event_handler);
 
 	return view;
 }

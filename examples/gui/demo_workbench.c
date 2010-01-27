@@ -4,33 +4,30 @@
 #include <rtgui/widgets/view.h>
 #include <rtgui/widgets/workbench.h>
 
-static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+static rt_bool_t demo_workbench_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
-	/* 我们目前只对绘制事件感兴趣 */
-	if (event->type == RTGUI_EVENT_PAINT)
+	/* 我们目前只对按键事件感兴趣 */
+	if (event->type == RTGUI_EVENT_KBD)
 	{
-		struct rtgui_dc* dc;
-		struct rtgui_rect rect;
+		struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
 
-		/* 获得一个设备上下文 */
-		dc = rtgui_dc_begin_drawing(widget);
-		if (dc == RT_NULL) return RT_FALSE; /* 如果获取失败代表什么？这个控件是隐藏的或... */
-		rtgui_widget_get_rect(widget, &rect); /* 获得控件的可视区域 */
-
-		/* 先对所在可视区域全部填充为背景色 */
-		rtgui_dc_fill_rect(dc, &rect);
-
-		/* 绘制一个hello! */
-		rtgui_dc_draw_text(dc, "hello world", &rect);
-
-		/* 通知RTGUI，绘制结束 */
-		rtgui_dc_end_drawing(dc);
-
-		return RT_FALSE;
+		if (ekbd->type == RTGUI_KEYDOWN)
+		{
+			if (ekbd->key == RTGUIK_RIGHT)
+			{
+				demo_view_next(RT_NULL, RT_NULL);
+				return RT_TRUE;
+			}
+			else if (ekbd->key == RTGUIK_LEFT)
+			{
+				demo_view_prev(RT_NULL, RT_NULL);
+				return RT_TRUE;
+			}
+		}
 	}
 
 	/* 如果不是绘制事件，使用view原来的事件处理函数处理 */
-	return rtgui_view_event_handler(widget, event);
+	return rtgui_workbench_event_handler(widget, event);
 }
 
 static void workbench_entry(void* parameter)
@@ -48,13 +45,9 @@ static void workbench_entry(void* parameter)
 	workbench = rtgui_workbench_create("main", "workbench");
 	if (workbench == RT_NULL) return;
 
-	/* 创建一个工作台上的一个视图 */
-	view = rtgui_view_create("view");
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), view_event_handler);
+	rtgui_widget_set_event_handler(RTGUI_WIDGET(workbench), demo_workbench_event_handler);
 
-	/* 在工作台上添加一个视图 */
-	rtgui_workbench_add_view(workbench, view);
-
+	/* 初始化各个例子的视图 */
 	demo_view_dc(workbench);
 	demo_view_window(workbench);
 	demo_view_label(workbench);
@@ -64,6 +57,8 @@ static void workbench_entry(void* parameter)
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
 	demo_view_slider(workbench);
+	demo_view_mywidget(workbench);
+	demo_view_image(workbench);
 	demo_listview_view(workbench);
 	demo_fn_view(workbench);
 

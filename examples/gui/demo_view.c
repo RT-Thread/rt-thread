@@ -8,10 +8,8 @@ static rtgui_view_t* demo_view_list[32];
 static rt_uint32_t demo_view_current = 0;
 static rt_uint32_t demo_view_number = 0;
 
-static void demo_view_next(struct rtgui_widget* widget, rtgui_event_t *event)
+void demo_view_next(struct rtgui_widget* widget, rtgui_event_t *event)
 {
-	RT_ASSERT(widget != RT_NULL);
-
 	if (demo_view_current + 1< demo_view_number)
 	{
 		demo_view_current ++;
@@ -19,10 +17,8 @@ static void demo_view_next(struct rtgui_widget* widget, rtgui_event_t *event)
 	}
 }
 
-static void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
+void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 {
-	RT_ASSERT(widget != RT_NULL);
-
 	if (demo_view_current != 0)
 	{
 		demo_view_current --;
