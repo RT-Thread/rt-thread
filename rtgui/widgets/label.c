@@ -110,4 +110,7 @@ void rtgui_label_set_text(rtgui_label_t* label, const unsigned char* text)
 
 	if (text != RT_NULL) label->text = (unsigned char*)rt_strdup((const char*)text);
 	else label->text = RT_NULL;
+
+	/* update widget */
+	rtgui_theme_draw_label(label);
 }

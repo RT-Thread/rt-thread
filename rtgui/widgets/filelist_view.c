@@ -683,3 +683,11 @@ __return:
     /* update view */
     rtgui_widget_update(RTGUI_WIDGET(view));
 }
+
+void rtgui_filelist_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len)
+{
+	RT_ASSERT(view != RT_NULL);
+
+	rt_sprintf(path, "%s/%s", view->current_directory, 
+		view->items[view->current_item].name);
+}

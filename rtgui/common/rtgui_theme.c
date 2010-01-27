@@ -479,8 +479,8 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 			rt_size_t len = rt_strlen(box->text);
 			if (len > 0)
 			{
-				char *text_mask = rtgui_malloc(len);
-				rt_memset(text_mask, '*', len);
+				char *text_mask = rtgui_malloc(len + 1);
+				rt_memset(text_mask, '*', len + 1);
 				text_mask[len] = 0;
 				rtgui_dc_draw_text(dc, text_mask, &rect);
 				rt_free(text_mask);
