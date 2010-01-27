@@ -1,15 +1,32 @@
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
-// #include <rtgui/widgets/fn_view.h>
+#include <rtgui/widgets/filelist_view.h>
 
 static rtgui_label_t* label;
-void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
+static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
-    /* create a fn view */
-	rtgui_view_t *view;
+    /* create a file list view */
+	rtgui_filelist_view_t *view;
+	rtgui_workbench_t *workbench;
+	rtgui_rect_t rect;
 
-	view = rtgui_filelist_view_create(workbench, "/", "*.*");
+	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
+	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
+
+	view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
+	if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
+	{
+		char path[32];
+
+		/* set label */
+		rtgui_filelist_get_fullpath(view, path, sizeof(path));
+
+		rtgui_label_set_text(label, path);
+	}
+
+	/* 删除 文件列表 视图 */
+	rtgui_view_destroy(RTGUI_VIEW(view));
 }
 
 rtgui_view_t* demo_fn_view(rtgui_workbench_t* workbench)

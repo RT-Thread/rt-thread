@@ -64,6 +64,7 @@ static void workbench_entry(void* parameter)
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
 	demo_view_slider(workbench);
+	demo_listview_view(workbench);
 	demo_fn_view(workbench);
 
 	/* 显示视图 */
