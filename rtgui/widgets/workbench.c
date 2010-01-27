@@ -24,6 +24,7 @@ static void _rtgui_workbench_constructor(rtgui_workbench_t *workbench)
 	workbench->panel = RT_NULL;
 	workbench->flag = RTGUI_WORKBENCH_FLAG_DEFAULT;
 	workbench->modal_code = RTGUI_MODAL_OK;
+	workbench->title = RT_NULL;
 	workbench->current_view = RT_NULL;
 }
 

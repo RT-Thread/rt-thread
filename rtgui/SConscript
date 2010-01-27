@@ -41,6 +41,7 @@ widgets/container.c
 widgets/iconbox.c
 widgets/label.c
 widgets/progressbar.c
+widgets/radiobox.c
 widgets/slider.c
 widgets/staticline.c
 widgets/textbox.c

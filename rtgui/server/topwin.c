@@ -75,7 +75,6 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 	topwin->wid 	= event->wid;
 	topwin->extent 	= event->extent;
 	topwin->tid 	= event->parent.sender;
-	topwin->mask	= event->mask;
 
 	topwin->flag 	= 0;
 	if (event->flag & RTGUI_WIN_STYLE_NO_TITLE) topwin->flag |= WINTITLE_NO;
@@ -279,6 +278,7 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 		rt_int32_t count;
 		struct rtgui_list_node* node;
 		struct rtgui_event_clip_info eclip;
+		RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
 
 		/* the window is already placed in front */
 		if (&(topwin->list) == _rtgui_topwin_show_list.next)
@@ -740,6 +740,8 @@ static void rtgui_topwin_update_clip()
 	rt_int32_t count = 0;
 	struct rtgui_event_clip_info eclip;
 	struct rtgui_list_node* node = _rtgui_topwin_show_list.next;
+
+	RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
 
 	rtgui_list_foreach(node, &_rtgui_topwin_show_list)
 	{

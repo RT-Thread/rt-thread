@@ -18,11 +18,9 @@
 /* RTGUI options */
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		16
+#define RTGUI_NAME_MAX		12
 
 /* #define RTGUI_USING_MOUSE_CURSOR */
-
-// #define RTGUI_USING_FONT12
 
 #define RTGUI_USING_FONT16
 #define RTGUI_USING_FONTHZ
@@ -30,7 +28,7 @@
 #ifdef _WIN32
 #define RTGUI_USING_STDIO_FILERW
 #define RTGUI_IMAGE_PNG
-#define RTGUI_IMAGE_JPG
+#define RTGUI_IMAGE_JPEG
 
 #define RTGUI_USING_FONT12
 #else

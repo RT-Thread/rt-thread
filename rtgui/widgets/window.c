@@ -80,7 +80,6 @@ static rt_bool_t _rtgui_win_create_in_server(rtgui_win_t* win)
 		ecreate.wid 	= win;
 		ecreate.extent 	= RTGUI_WIDGET(win)->extent;
 		ecreate.flag 	= win->style;
-		ecreate.mask 	= 0;
 		rt_strncpy((char*)ecreate.title, (char*)win->title, RTGUI_NAME_MAX);
 
 		if (rtgui_thread_send_sync(server, RTGUI_EVENT(&ecreate),

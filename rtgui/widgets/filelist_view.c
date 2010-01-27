@@ -688,6 +688,6 @@ void rtgui_filelist_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_siz
 {
 	RT_ASSERT(view != RT_NULL);
 
-	rt_sprintf(path, "%s/%s", view->current_directory, 
+	rt_sprintf(path, "%s%c%s", view->current_directory, PATH_SEPARATOR,
 		view->items[view->current_item].name);
 }

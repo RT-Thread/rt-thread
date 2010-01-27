@@ -172,9 +172,6 @@ struct rtgui_event_win_create
 {
 	struct rtgui_event parent;
 
-	/* the window event mask */
-	rt_uint32_t mask;
-
 	/* the window flag */
 	rt_uint32_t flag;
 
