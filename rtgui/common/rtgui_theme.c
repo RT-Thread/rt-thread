@@ -22,6 +22,7 @@
 #include <rtgui/widgets/title.h>
 #include <rtgui/rtgui_theme.h>
 #include <rtgui/rtgui_server.h>
+#include <rtgui/rtgui_system.h>
 
 #define WINTITLE_CB_WIDTH		14
 #define WINTITLE_CB_HEIGHT		14

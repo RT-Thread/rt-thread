@@ -8,6 +8,8 @@ common/rtgui_system.c
 common/rtgui_theme.c
 common/asc12font.c
 common/asc16font.c
+common/arial12font.c
+common/arial16font.c
 common/color.c
 common/dc.c
 common/dc_buffer.c
@@ -45,6 +47,9 @@ widgets/textbox.c
 widgets/title.c
 widgets/toplevel.c
 widgets/view.c
+widgets/list_view.c
+widgets/about_view.c
+widgets/filelist_view.c
 widgets/widget.c
 widgets/window.c
 widgets/workbench.c
