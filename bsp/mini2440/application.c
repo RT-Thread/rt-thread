@@ -76,7 +76,7 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-		//rt_hw_key_init();
+		rtgui_startup();
 	}
 #endif
 
@@ -121,10 +121,6 @@ int rt_application_init()
 {
 	rt_thread_t init_thread;
 	rt_thread_t led_thread;
-
-#ifdef RT_USING_RTGUI
-	rt_hw_lcd_init();
-#endif
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	init_thread = rt_thread_create("init",
