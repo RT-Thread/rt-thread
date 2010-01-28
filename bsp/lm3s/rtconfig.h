@@ -97,6 +97,8 @@
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
 
+#define RT_LWIP_USING_RT_MEM
+
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 
@@ -118,7 +120,7 @@
 /* TCP sender buffer space*/
 #define RT_LWIP_TCP_SND_BUF	1024*8
 /* Enable SNMP protocol*/
-/* #define RT_LWIP_SNMP */
+#define RT_LWIP_SNMP
 
 /* Using DHCP*/
 /* #define RT_LWIP_DHCP */
