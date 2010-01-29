@@ -226,6 +226,23 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const rt_uint8_t* text, struct rtg
 #endif
 }
 
+void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, rt_uint8_t* data)
+{
+	int i, k;
+
+	/* draw word */
+	for (i=0; i < h; i ++)
+	{
+		for (k=0; k < 8; k++)
+		{
+			if (((data[i] >> (7-k)) & 0x01) != 0)
+			{
+				rtgui_dc_draw_point(dc, x + k, y + i);
+			}
+		}
+	}
+}
+
 void rtgui_dc_set_color(struct rtgui_dc* dc, rtgui_color_t color)
 {
 	if (dc != RT_NULL)

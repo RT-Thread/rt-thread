@@ -107,6 +107,7 @@ void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
 void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect);
 
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const rt_uint8_t* text, struct rtgui_rect* rect);
+void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, rt_uint8_t* data);
 
 void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag);
 void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y);

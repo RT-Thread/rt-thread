@@ -312,7 +312,7 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	/* draw button */
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect;
-	rtgui_color_t fc;
+	rtgui_color_t bc, fc;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(btn));
@@ -322,13 +322,14 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 
 	/* get foreground color */
+	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn));
 	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn));
-
-	/* fill button rect with background color */
-	rtgui_dc_fill_rect(dc, &rect);
 
 	if (btn->flag & RTGUI_BUTTON_TYPE_PUSH && btn->flag & RTGUI_BUTTON_FLAG_PRESS)
 	{
+		/* fill button rect with background color */
+		rtgui_dc_fill_rect(dc, &rect);
+
 		/* draw border */
 		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(64, 64, 64);
 		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
@@ -367,6 +368,10 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		}
 		else
 		{
+			/* fill button rect with background color */
+			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(0xff, 0xff, 0xff);
+			rtgui_dc_fill_rect(dc, &rect);
+
 			/* draw border */
 			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(0, 0, 0);
 			rtgui_dc_draw_rect(dc, &rect);
@@ -390,6 +395,9 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		}
 		else
 		{
+			/* fill button rect with background color */
+			rtgui_dc_fill_rect(dc, &rect);
+
 			/* draw border */
 			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(255, 255, 255);
 			rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
@@ -406,6 +414,7 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	}
 
 	/* set forecolor */
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = bc;
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = fc;
 
 	if (btn->pressed_image == RT_NULL)
