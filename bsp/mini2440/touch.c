@@ -62,8 +62,8 @@ static struct s3c2410ts ts;
 
 #define X_MIN		74
 #define X_MAX		934
-#define Y_MIN		65
-#define Y_MAX		933
+#define Y_MIN		89
+#define Y_MAX		920
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
@@ -71,10 +71,6 @@ void report_touch_input(int updown)
 {
 	long tmp;
 	struct rtgui_event_mouse emouse;
-
-	tmp = ts.xp;
-	ts.xp = ts.yp;
-	ts.yp = tmp;
 
 	ts.xp >>= ts.shift;
 	ts.yp >>= ts.shift;
@@ -98,63 +94,32 @@ void report_touch_input(int updown)
 		emouse.button = RTGUI_MOUSE_BUTTON_UP;
 	}
 
-	rt_kprintf("touch %s: ts.x: %d, ts.y: %d, count:%d\n", updown? "down" : "up",
-		ts.xp, ts.yp, ts.count);
+	/* rt_kprintf("touch %s: ts.x: %d, ts.y: %d, count:%d\n", updown? "down" : "up",
+		ts.xp, ts.yp, ts.count); */
 
 	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
 
-	//rtgui_server_post_event((&emouse.parent), sizeof(emouse));
+	rtgui_server_post_event((&emouse.parent), sizeof(emouse));
 }
 #endif
 
 static int first_down_report;
-static void touch_timer_fire(void* parameter)
+/* fixed me, use timer to support move action */
+static void touch_timer_fire(void)
 {
-  	rt_uint32_t data0;
-  	rt_uint32_t data1;
-	int updown;
-
-  	data0 = ADCDAT0;
-  	data1 = ADCDAT1;
-
- 	updown = (!(data0 & S3C2410_ADCDAT0_UPDOWN)) && (!(data1 & S3C2410_ADCDAT0_UPDOWN));
-
- 	if (updown)
+	if (ts.count == 3)
 	{
- 		if (ts.count != 0)
-		{
-			// if (first_down_report)
-			{
-#ifdef RT_USING_RTGUI
-				report_touch_input(updown);
-				first_down_report = 0;
-#endif
-			}
- 		}
-
- 		ts.xp = 0;
- 		ts.yp = 0;
- 		ts.count = 0;
-
- 		ADCTSC = S3C2410_ADCTSC_PULL_UP_DISABLE | AUTOPST;
- 		ADCCON |= S3C2410_ADCCON_ENABLE_START;
- 	}
-	else
-	{
-		// if (ts.xp >= 0 && ts.yp >= 0)
+		 if (first_down_report)
 		{
 #ifdef RT_USING_RTGUI
-			report_touch_input(updown);
-			first_down_report = 1;
+			report_touch_input(1);
+			first_down_report = 0;
 #endif
 		}
+	}
 
- 		ts.count = 0;
-
-		rt_kprintf("touch time fire: up\n");
-
- 		ADCTSC = WAIT4INT(0);
- 	}
+	ADCTSC = S3C2410_ADCTSC_PULL_UP_DISABLE | AUTOPST;
+	ADCCON |= S3C2410_ADCCON_ENABLE_START;
 }
 
 void s3c2410_adc_stylus_action()
@@ -162,9 +127,11 @@ void s3c2410_adc_stylus_action()
 	rt_uint32_t data0;
 	rt_uint32_t data1;
 
+	SUBSRCPND |= BIT_SUB_ADC;
+
 	data0 = ADCDAT0;
 	data1 = ADCDAT1;
-
+	
 	ts.xp += data0 & S3C2410_ADCDAT0_XPDATA_MASK;
 	ts.yp += data1 & S3C2410_ADCDAT1_YPDATA_MASK;
 	ts.count++;
@@ -176,11 +143,9 @@ void s3c2410_adc_stylus_action()
 	}
 	else
 	{
-		touch_timer_fire(0);
+		//touch_timer_fire();
 		ADCTSC = WAIT4INT(1);
 	}
-
-	SUBSRCPND |= BIT_SUB_ADC;
 }
 
 void s3c2410_intc_stylus_updown()
@@ -189,28 +154,33 @@ void s3c2410_intc_stylus_updown()
 	rt_uint32_t data1;
 	int updown;
 
+	SUBSRCPND |= BIT_SUB_TC;
+
 	data0 = ADCDAT0;
 	data1 = ADCDAT1;
 
 	updown = (!(data0 & S3C2410_ADCDAT0_UPDOWN)) && (!(data1 & S3C2410_ADCDAT0_UPDOWN));
 
-	rt_kprintf("stylus: %s\n", updown? "down" : "up");
-
-	if (updown) touch_timer_fire(RT_NULL);
+	if (updown) 
+	{
+		touch_timer_fire();
+	}
 	else
 	{
 		if (ts.xp >= 0 && ts.yp >= 0)
 		{
 		#ifdef RT_USING_RTGUI
-			report_touch_input(updown);
+			report_touch_input(0);
 			first_down_report = 1;
 		#endif
 		}
 
+		ts.xp = 0;
+		ts.yp = 0;
+		ts.count = 0;
+	
 		ADCTSC = WAIT4INT(0);
 	}
-
-	SUBSRCPND |= BIT_SUB_TC;
 }
 
 void rt_touch_handler(int irqno)
@@ -236,9 +206,11 @@ void rt_hw_touch_init()
 	/* init touch screen structure */
 	rt_memset(&ts, 0, sizeof(struct s3c2410ts));
 
-	ts.delay = 5000;
-	ts.presc = 49;
+	ts.delay = 50000;
+	ts.presc = 9;
 	ts.shift = 2;
+	ts.count = 0;
+	ts.xp = ts.yp = 0;
 
 	ADCCON = S3C2410_ADCCON_PRSCEN | S3C2410_ADCCON_PRSCVL(ts.presc);
 	ADCDLY = ts.delay;
@@ -247,6 +219,12 @@ void rt_hw_touch_init()
 
 	rt_hw_interrupt_install(INTADC, rt_touch_handler, RT_NULL);
 	rt_hw_interrupt_umask(INTADC);
+
+	/* clear interrupt */
+	INTPND |= (rt_uint32_t)(1 << INTADC);
+	
+	SUBSRCPND |= BIT_SUB_TC;
+	SUBSRCPND |= BIT_SUB_ADC;
 
 	/* install interrupt handler */
 	INTSUBMSK &= ~BIT_SUB_ADC;
