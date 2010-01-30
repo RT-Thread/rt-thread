@@ -1,7 +1,7 @@
 ### uVision2 Project, (C) Keil Software
 ### Do not modify !
 
-Target (RT-Thread/LM3S), 0x0004 // Tools: 'ARM-ADS'
+Target (RT-Thread-LM3S), 0x0004 // Tools: 'ARM-ADS'
 
 Group (Startup)
 Group (Kernel)
@@ -52,7 +52,7 @@ File 4,2,<..\..\libcpu\arm\lm3s\start_rvds.S><start_rvds.S>
 File 4,1,<..\..\libcpu\arm\lm3s\serial.c><serial.c>
 File 4,1,<..\..\libcpu\arm\lm3s\fault.c><fault.c>
 File 4,2,<..\..\libcpu\arm\lm3s\fault_rvds.S><fault_rvds.S>
-File 5,4,<E:\SVN-Google-Source\bsp\lm3s\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
+File 5,4,<..\..\bsp\lm3s\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
 File 6,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
@@ -105,10 +105,14 @@ File 7,1,<..\..\net\lwip\src\netif\loopif.c><loopif.c>
 File 7,1,<..\..\net\lwip\src\arch\sys_arch_init.c><sys_arch_init.c>
 File 7,1,<..\..\net\lwip\src\arch\sys_arch.c><sys_arch.c>
 File 7,1,<..\..\net\lwip\src\api\sockets.c><sockets.c>
-File 7,1,<..\..\net\lwip\src\core\memp_tiny.c><memp_tiny.c>
+File 7,1,<..\..\net\lwip\src\core\memp.c><memp.c>
+File 7,1,<..\..\net\lwip\src\core\snmp\asn1_dec.c><asn1_dec.c>
+File 7,1,<..\..\net\lwip\src\core\snmp\asn1_enc.c><asn1_enc.c>
+File 7,1,<..\..\net\lwip\src\core\snmp\mib2.c><mib2.c>
+File 7,1,<..\..\net\lwip\src\core\snmp\mib_structs.c><mib_structs.c>
 
 
-Options 1,0,0  // Target 'RT-Thread/LM3S'
+Options 1,0,0  // Target 'RT-Thread-LM3S'
  Device (LM3S6918)
  Vendor (Luminary Micro)
  Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0-0x3FFFF) CLOCK(6000000) CPUTYPE("Cortex-M3"))
@@ -162,7 +166,7 @@ Options 1,0,0  // Target 'RT-Thread/LM3S'
  OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
  OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,1,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
- ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCCFLG { 5,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
