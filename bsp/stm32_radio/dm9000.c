@@ -6,7 +6,7 @@
 #include "stm32f10x.h"
 
 // #define DM9000_DEBUG		1
-#if DM9000_DEBUG
+#if ( DM9000_DEBUG == 1 )
 #define DM9000_TRACE	rt_kprintf
 #else
 #define DM9000_TRACE(...)
@@ -42,7 +42,7 @@ struct rt_dm9000_eth
     struct eth_device parent;
 
     enum DM9000_TYPE type;
-	enum DM9000_PHY_mode mode;
+    enum DM9000_PHY_mode mode;
 
     rt_uint8_t imr_all;
 
@@ -60,7 +60,7 @@ void rt_dm9000_isr(void);
 static void delay_ms(rt_uint32_t ms)
 {
     rt_uint32_t len;
-    for (;ms > 0; ms --)
+    for (; ms > 0; ms --)
         for (len = 0; len < 100; len++ );
 }
 
@@ -159,7 +159,7 @@ void rt_dm9000_isr()
     int_status = dm9000_io_read(DM9000_ISR);               /* Got ISR */
     dm9000_io_write(DM9000_ISR, int_status);    /* Clear ISR status */
 
-	DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
+    DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
 
     /* receive overflow */
     if (int_status & ISR_ROS)
@@ -175,8 +175,8 @@ void rt_dm9000_isr()
     /* Received the coming packet */
     if (int_status & ISR_PRS)
     {
-	    /* disable receive interrupt */
-	    dm9000_device.imr_all = IMR_PAR | IMR_PTM;
+        /* disable receive interrupt */
+        dm9000_device.imr_all = IMR_PAR | IMR_PTM;
 
         /* a frame has been received */
         eth_device_ready(&(dm9000_device.parent));
@@ -193,7 +193,7 @@ void rt_dm9000_isr()
             dm9000_device.packet_cnt --;
             if (dm9000_device.packet_cnt > 0)
             {
-            	DM9000_TRACE("dm9000 isr: tx second packet\n");
+                DM9000_TRACE("dm9000 isr: tx second packet\n");
 
                 /* transmit packet II */
                 /* Set TX length to DM9000 */
@@ -270,20 +270,20 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
     dm9000_io_write(DM9000_RCR, RCR_DIS_LONG | RCR_DIS_CRC | RCR_RXEN);	/* RX enable */
     dm9000_io_write(DM9000_IMR, IMR_PAR);
 
-	if (dm9000_device.mode == DM9000_AUTO)
-	{
-	    while (!(phy_read(1) & 0x20))
-	    {
-	        /* autonegation complete bit */
-	        rt_thread_delay(10);
-	        i++;
-	        if (i == 10000)
-	        {
-	            rt_kprintf("could not establish link\n");
-	            return 0;
-	        }
-	    }
-	}
+    if (dm9000_device.mode == DM9000_AUTO)
+    {
+        while (!(phy_read(1) & 0x20))
+        {
+            /* autonegation complete bit */
+            rt_thread_delay(10);
+            i++;
+            if (i == 10000)
+            {
+                rt_kprintf("could not establish link\n");
+                return 0;
+            }
+        }
+    }
 
     /* see what we've got */
     lnk = phy_read(17) >> 12;
@@ -362,7 +362,7 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 /* transmit packet. */
 rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
 {
-	DM9000_TRACE("dm9000 tx: %d\n", p->tot_len);
+    DM9000_TRACE("dm9000 tx: %d\n", p->tot_len);
 
     /* lock DM9000 device */
     rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
@@ -374,43 +374,43 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
     DM9000_outb(DM9000_IO_BASE, DM9000_MWCMD);
 
     {
-		/* q traverses through linked list of pbuf's
-		 * This list MUST consist of a single packet ONLY */
-		struct pbuf *q;
-		rt_uint16_t pbuf_index = 0;
-		rt_uint8_t word[2], word_index = 0;
+        /* q traverses through linked list of pbuf's
+         * This list MUST consist of a single packet ONLY */
+        struct pbuf *q;
+        rt_uint16_t pbuf_index = 0;
+        rt_uint8_t word[2], word_index = 0;
 
-		q = p;
-		/* Write data into dm9000a, two bytes at a time
-		 * Handling pbuf's with odd number of bytes correctly
-		 * No attempt to optimize for speed has been made */
-		while (q)
-		{
-			if (pbuf_index < q->len)
-			{
-				word[word_index++] = ((u8_t*)q->payload)[pbuf_index++];
-				if (word_index == 2)
-				{
-				    DM9000_outw(DM9000_DATA_BASE, (word[1] << 8) | word[0]);
-					word_index = 0;
-				}
-			}
-			else
-			{
-				q = q->next;
-				pbuf_index = 0;
-			}
-		}
-		/* One byte could still be unsent */
-		if (word_index == 1)
-		{
-		    DM9000_outw(DM9000_DATA_BASE, word[0]);
-		}
+        q = p;
+        /* Write data into dm9000a, two bytes at a time
+         * Handling pbuf's with odd number of bytes correctly
+         * No attempt to optimize for speed has been made */
+        while (q)
+        {
+            if (pbuf_index < q->len)
+            {
+                word[word_index++] = ((u8_t*)q->payload)[pbuf_index++];
+                if (word_index == 2)
+                {
+                    DM9000_outw(DM9000_DATA_BASE, (word[1] << 8) | word[0]);
+                    word_index = 0;
+                }
+            }
+            else
+            {
+                q = q->next;
+                pbuf_index = 0;
+            }
+        }
+        /* One byte could still be unsent */
+        if (word_index == 1)
+        {
+            DM9000_outw(DM9000_DATA_BASE, word[0]);
+        }
     }
 
     if (dm9000_device.packet_cnt == 0)
     {
-    	DM9000_TRACE("dm9000 tx: first packet\n");
+        DM9000_TRACE("dm9000 tx: first packet\n");
 
         dm9000_device.packet_cnt ++;
         /* Set TX length to DM9000 */
@@ -422,7 +422,7 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
     }
     else
     {
-    	DM9000_TRACE("dm9000 tx: second packet\n");
+        DM9000_TRACE("dm9000 tx: second packet\n");
 
         dm9000_device.packet_cnt ++;
         dm9000_device.queue_packet_len = p->tot_len;
@@ -437,7 +437,7 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
     /* wait ack */
     rt_sem_take(&sem_ack, RT_WAITING_FOREVER);
 
-	DM9000_TRACE("dm9000 tx done\n");
+    DM9000_TRACE("dm9000 tx done\n");
 
     return RT_EOK;
 }
@@ -464,7 +464,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
         if (rxbyte > 1)
         {
-			DM9000_TRACE("dm9000 rx: rx error, stop device\n");
+            DM9000_TRACE("dm9000 rx: rx error, stop device\n");
 
             dm9000_io_write(DM9000_RCR, 0x00);	/* Stop Device */
             dm9000_io_write(DM9000_ISR, 0x80);	/* Stop INT request */
@@ -476,7 +476,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         rx_status = DM9000_inw(DM9000_DATA_BASE);
         rx_len = DM9000_inw(DM9000_DATA_BASE);
 
-		DM9000_TRACE("dm9000 rx: status %04x len %d\n", rx_status, rx_len);
+        DM9000_TRACE("dm9000 rx: status %04x len %d\n", rx_status, rx_len);
 
         /* allocate buffer */
         p = pbuf_alloc(PBUF_LINK, rx_len, PBUF_RAM);
@@ -497,13 +497,13 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
                     len -= 2;
                 }
             }
-			DM9000_TRACE("\n");
+            DM9000_TRACE("\n");
         }
         else
         {
             rt_uint16_t dummy;
 
-			DM9000_TRACE("dm9000 rx: no pbuf\n");
+            DM9000_TRACE("dm9000 rx: no pbuf\n");
 
             /* no pbuf, discard data from DM9000 */
             data = &dummy;
@@ -517,7 +517,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         if ((rx_status & 0xbf00) || (rx_len < 0x40)
                 || (rx_len > DM9000_PKT_MAX))
         {
-			rt_kprintf("rx error: status %04x\n", rx_status);
+            rt_kprintf("rx error: status %04x\n", rx_status);
 
             if (rx_status & 0x100)
             {
@@ -548,7 +548,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     else
     {
         /* restore receive interrupt */
-	    dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
+        dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
         dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
     }
 
@@ -609,7 +609,7 @@ static void GPIO_Configuration()
     EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
-void rt_hw_dm9000_init()
+void rt_hw_dm9000_init(void)
 {
     RCC_Configuration();
     NVIC_Configuration();
@@ -619,9 +619,9 @@ void rt_hw_dm9000_init()
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
     dm9000_device.type  = TYPE_DM9000A;
-	dm9000_device.mode	= DM9000_AUTO;
-	dm9000_device.packet_cnt = 0;
-	dm9000_device.queue_packet_len = 0;
+    dm9000_device.mode	= DM9000_AUTO;
+    dm9000_device.packet_cnt = 0;
+    dm9000_device.queue_packet_len = 0;
 
     /*
      * SRAM Tx/Rx pointer automatically return to start address,
@@ -629,12 +629,14 @@ void rt_hw_dm9000_init()
      */
     dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
 
-    dm9000_device.dev_addr[0] = 0x01;
+    /* set mac address: (only for test) */
+    /* oui 00-60-6E DAVICOM SEMICONDUCTOR, INC.*/
+    dm9000_device.dev_addr[0] = 0x00;
     dm9000_device.dev_addr[1] = 0x60;
     dm9000_device.dev_addr[2] = 0x6E;
     dm9000_device.dev_addr[3] = 0x11;
-    dm9000_device.dev_addr[4] = 0x02;
-    dm9000_device.dev_addr[5] = 0x0F;
+    dm9000_device.dev_addr[4] = 0x22;
+    dm9000_device.dev_addr[5] = 0x33;
 
     dm9000_device.parent.parent.init       = rt_dm9000_init;
     dm9000_device.parent.parent.open       = rt_dm9000_open;

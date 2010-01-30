@@ -47,16 +47,16 @@ static void key_thread_entry(void *parameter)
 
     while (1)
     {
-        next_delay = 20;
-		kbd_event.key = RTGUIK_UNKNOWN;
+        next_delay = 10;
+        kbd_event.key = RTGUIK_UNKNOWN;
 
         kbd_event.type = RTGUI_KEYDOWN;
         if ( key_enter_GETVALUE() == 0 )
         {
-            rt_thread_delay(next_delay);
+            rt_thread_delay( next_delay*4 );
             if (key_enter_GETVALUE() == 0)
             {
-            	/* HOME key */
+                /* HOME key */
                 rt_kprintf("key_home\n");
                 kbd_event.key  = RTGUIK_HOME;
             }
@@ -90,20 +90,20 @@ static void key_thread_entry(void *parameter)
             rt_kprintf("key_left\n");
             kbd_event.key  = RTGUIK_LEFT;
         }
-		
-		if (kbd_event.key != RTGUIK_UNKNOWN)
-		{
-	        /* post down event */
-	        rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
 
-			next_delay = 10;
-	        /* delay to post up event */
-	        rt_thread_delay(next_delay);
+        if (kbd_event.key != RTGUIK_UNKNOWN)
+        {
+            /* post down event */
+            rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
 
-	        /* post up event */
-	        kbd_event.type = RTGUI_KEYUP;
-	        rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
-		}
+            next_delay = 10;
+            /* delay to post up event */
+            rt_thread_delay(next_delay);
+
+            /* post up event */
+            kbd_event.type = RTGUI_KEYUP;
+            rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
+        }
 
         /* wait next key press */
         rt_thread_delay(next_delay);
