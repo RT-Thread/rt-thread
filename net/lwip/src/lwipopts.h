@@ -182,7 +182,7 @@
 #ifdef RT_LWIP_TCP_SND_BUF
 #define TCP_SND_BUF                 RT_LWIP_TCP_SND_BUF
 #else
-#define TCP_SND_BUF                 1024
+#define TCP_SND_BUF                 2048
 #endif
 
 /* TCP sender buffer space (pbufs). This must be at least = 2 *
