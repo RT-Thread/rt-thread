@@ -108,7 +108,7 @@ struct _FileSystem{
 };
 typedef struct _FileSystem FileSystem;
 
-/**************************************************************************************************\              
+/**************************************************************************************************\
 		FileLocation
                ----------
 * euint32		Sector				Sector where the directoryentry of the file/directory can be found.

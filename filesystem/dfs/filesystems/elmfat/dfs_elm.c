@@ -142,6 +142,7 @@ int dfs_elm_open(struct dfs_fd* file)
 
 		if (file->flags & DFS_O_CREAT) mode |= FA_CREATE_NEW;
 		if (file->flags & DFS_O_WRONLY) mode |= FA_WRITE;
+		if (file->flags & DFS_O_TRUNC) mode |= FA_CREATE_ALWAYS;
 
 		/* allocate a fd */
 		fd = (FIL*)rt_malloc(sizeof(FIL));

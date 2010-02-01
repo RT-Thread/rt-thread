@@ -28,7 +28,7 @@
 #define O_DIRECTORY DFS_O_DIRECTORY
 
 #define S_IFMT 		DFS_S_IFMT
-#define S_IFSOCK		DFS_S_IFSOCK
+#define S_IFSOCK	DFS_S_IFSOCK
 #define S_IFLNK		DFS_S_IFLNK	
 #define S_IFREG		DFS_S_IFREG	
 #define S_IFBLK		DFS_S_IFBLK	
