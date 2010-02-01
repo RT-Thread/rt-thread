@@ -17,6 +17,12 @@ key_left    PC3
 #define key_right_GETVALUE()  GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_14)
 #define key_left_GETVALUE()   GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_13)
 
+/* from remote.c */
+extern void rem_start(void);
+extern void rem_encoder(struct rtgui_event_kbd * p);
+extern unsigned int rem_mode;
+/* from remote.c */
+
 static void key_thread_entry(void *parameter)
 {
     rt_time_t next_delay;
@@ -40,6 +46,8 @@ static void key_thread_entry(void *parameter)
     GPIO_Init(GPIOE,&GPIO_InitStructure);
     GPIO_SetBits(GPIOE,GPIO_Pin_2);
 
+    rem_start();
+
     /* init keyboard event */
     RTGUI_EVENT_KBD_INIT(&kbd_event);
     kbd_event.mod  = RTGUI_KMOD_NONE;
@@ -49,8 +57,13 @@ static void key_thread_entry(void *parameter)
     {
         next_delay = 10;
         kbd_event.key = RTGUIK_UNKNOWN;
-
         kbd_event.type = RTGUI_KEYDOWN;
+
+        if( rem_mode== 2 )
+        {
+            rem_encoder(&kbd_event);
+        }
+
         if ( key_enter_GETVALUE() == 0 )
         {
             rt_thread_delay( next_delay*4 );
@@ -110,7 +123,7 @@ static void key_thread_entry(void *parameter)
     }
 }
 
-void rt_hw_key_init()
+void rt_hw_key_init(void)
 {
     rt_thread_t key_tid;
     key_tid = rt_thread_create("key",

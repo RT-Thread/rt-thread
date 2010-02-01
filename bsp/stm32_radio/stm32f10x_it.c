@@ -700,7 +700,7 @@ void DMA2_Channel2_IRQHandler(void)
 }
 #endif
 
-/* add on 2009-12-31 usb */
+/* add on 2009-12-31 for usb */
 extern void CTR_HP(void);
 extern void USB_Istr(void);
 void USB_HP_CAN1_TX_IRQHandler(void)
@@ -711,4 +711,11 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     USB_Istr();
+}
+
+/* add on 2010-01-02 for remote */
+extern void remote_isr(void);
+void TIM5_IRQHandler(void)
+{
+    remote_isr();
 }
