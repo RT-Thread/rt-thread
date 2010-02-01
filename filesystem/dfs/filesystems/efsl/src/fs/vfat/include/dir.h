@@ -40,7 +40,7 @@
 #include "error.h"
 #include "fat.h"
 #include "plibc.h"
-#include "types.h"
+#include "etypes.h"
 // #include "ioman.h"
 #include "tm.h"
 #include "fs.h"

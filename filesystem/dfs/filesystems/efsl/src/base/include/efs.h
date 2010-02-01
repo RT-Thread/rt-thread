@@ -38,7 +38,7 @@
 /*****************************************************************************/
 #include <dfs_fs.h>
 
-#include "types.h"
+#include "etypes.h"
 #include "config.h"
 #include "extract.h"
 #include "partition.h"

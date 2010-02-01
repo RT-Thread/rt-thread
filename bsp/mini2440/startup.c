@@ -48,9 +48,10 @@ extern struct rt_device uart0_device;
 	extern int Image$$ER_ZI$$ZI$$Base;
 	extern int Image$$ER_ZI$$ZI$$Length;
 	extern int Image$$ER_ZI$$ZI$$Limit;
-#elif defined(__GNU_C__)
+#else
 	extern int __bss_end;
 #endif
+
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);

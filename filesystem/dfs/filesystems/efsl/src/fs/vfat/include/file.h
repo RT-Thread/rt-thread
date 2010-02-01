@@ -42,7 +42,7 @@
 #include "fs.h"
 #include "dir.h"
 #include "plibc.h"
-#include "types.h"
+#include "etypes.h"
 #include "fat.h"
 /*****************************************************************************/
 

@@ -155,13 +155,6 @@ void rt_hw_board_init()
 	/* initialize mmu */
 	rt_hw_mmu_init();
 
-	/* initialize console */
-	//rt_console_init(&_rt_hw_framebuffer[0], &asc16_font[0], 2);
-
-#ifdef RT_USING_RTGUI
-	rt_hw_touch_init();
-#endif
-
 	/* initialize timer4 */
 	rt_hw_timer_init();
 }

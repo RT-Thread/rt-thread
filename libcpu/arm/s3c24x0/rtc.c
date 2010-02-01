@@ -148,8 +148,6 @@ void rt_hw_rtc_init(void)
 	return;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 time_t time(time_t* t)
 {
 	rt_device_t device;
@@ -170,6 +168,8 @@ time_t time(time_t* t)
 	return time;
 }
 
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
 	struct tm ti;

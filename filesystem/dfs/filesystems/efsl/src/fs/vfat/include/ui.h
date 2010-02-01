@@ -37,7 +37,7 @@
 
 /*****************************************************************************/
 #include "fs.h"
-#include "types.h"
+#include "etypes.h"
 #include "fat.h"
 #include "dir.h"
 #include "config.h"

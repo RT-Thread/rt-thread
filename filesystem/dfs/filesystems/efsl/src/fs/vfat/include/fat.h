@@ -39,7 +39,7 @@
 #include "config.h"
 #include "error.h"
 #include "file.h"
-#include "types.h"
+#include "etypes.h"
 /*****************************************************************************/
 
 euint32 fat_getSectorAddressFatEntry(FileSystem *fs,euint32 cluster_addr);

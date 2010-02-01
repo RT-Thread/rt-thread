@@ -38,7 +38,7 @@
 
 /*****************************************************************************/
 #include "config.h"
-#include "types.h"
+#include "etypes.h"
 #include "error.h"
 #include "partition.h"
 #include "tm.h"

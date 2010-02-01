@@ -26,7 +26,7 @@ CPU='s3c24x0'
 TextBase='0x30000000'
 
 #PLATFORM = 'gcc'
-#EXEC_PATH = 'd:/SourceryGCC/bin'
+#EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 PLATFORM = 'armcc'
 EXEC_PATH = 'E:/Keil'
 BUILD = 'debug'
@@ -44,9 +44,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=arm920t'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    CFLAGS = DEVICE + ' -Dsourcerygxx' + ' -nostdinc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T mini2440_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T mini2440_ram.ld'
 
     CPATH = ''
     LPATH = ''
@@ -56,6 +56,9 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
+
+    if RT_USING_WEBSERVER:
+        CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
 
     RT_USING_MINILIBC = True
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
@@ -71,15 +74,12 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSS9'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
+    LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
     CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
     LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
 
     EXEC_PATH += '/arm/bin40/'
-
-    if RT_USING_WEBSERVER:
-        CFLAGS +=  ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
@@ -90,6 +90,8 @@ elif PLATFORM == 'armcc':
     RT_USING_MINILIBC = False
     if RT_USING_FINSH:
         LFLAGS += ' --keep __fsym_* --keep __vsym_*'
+    if RT_USING_WEBSERVER:
+        CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':

@@ -38,7 +38,7 @@
 #include "partition.h"
 #include "plibc.h"
 #include "debug.h"
-#include "types.h"
+#include "etypes.h"
 #include "extract.h"
 #include "config.h"
 /*****************************************************************************/

@@ -74,12 +74,6 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
-#ifdef RT_USING_RTGUI
-	{
-		rtgui_startup();
-	}
-#endif
-
 /* LwIP Initialization */
 #ifdef RT_USING_LWIP
 	{
@@ -95,6 +89,13 @@ void rt_init_thread_entry(void* parameter)
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
+	}
+#endif
+
+#ifdef RT_USING_RTGUI
+	{
+		rt_hw_touch_init();
+		rtgui_startup();
 	}
 #endif
 }
