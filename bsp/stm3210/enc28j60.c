@@ -751,12 +751,12 @@ void rt_hw_enc28j60_init()
 	enc28j60_dev_entry.parent.eth_tx			= enc28j60_tx;
 
 	/* Update MAC address */
-	enc28j60_dev_entry.dev_addr[0] = 0x1e;
+	enc28j60_dev_entry.dev_addr[0] = 0x00;
 	enc28j60_dev_entry.dev_addr[1] = 0x30;
 	enc28j60_dev_entry.dev_addr[2] = 0x6c;
-	enc28j60_dev_entry.dev_addr[3] = 0xa2;
-	enc28j60_dev_entry.dev_addr[4] = 0x45;
-	enc28j60_dev_entry.dev_addr[5] = 0x5e;
+	enc28j60_dev_entry.dev_addr[3] = 0x11;
+	enc28j60_dev_entry.dev_addr[4] = 0x22;
+	enc28j60_dev_entry.dev_addr[5] = 0x33;
 
 	rt_sem_init(&lock_sem, "lock", 1, RT_IPC_FLAG_FIFO);
 

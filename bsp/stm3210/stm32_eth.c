@@ -3558,12 +3558,12 @@ void rt_hw_stm32_eth_init()
 	GPIO_Configuration();
 	NVIC_Configuration();
 
-    stm32_eth_device.dev_addr[0] = 0x01;
+    stm32_eth_device.dev_addr[0] = 0x00;
     stm32_eth_device.dev_addr[1] = 0x60;
     stm32_eth_device.dev_addr[2] = 0x6E;
     stm32_eth_device.dev_addr[3] = 0x11;
-    stm32_eth_device.dev_addr[4] = 0x02;
-    stm32_eth_device.dev_addr[5] = 0x0F;
+    stm32_eth_device.dev_addr[4] = 0x22;
+    stm32_eth_device.dev_addr[5] = 0x33;
 
 	stm32_eth_device.parent.parent.init       = rt_stm32_eth_init;
 	stm32_eth_device.parent.parent.open       = rt_stm32_eth_open;
