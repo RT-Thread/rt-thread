@@ -30,9 +30,6 @@ static struct rt_semaphore _rtgui_topwin_lock;
 static void rtgui_topwin_update_clip(void);
 static void rtgui_topwin_redraw(struct rtgui_rect* rect);
 
-#define WINTITLE_CB_WIDTH		14
-#define WINTITLE_CB_HEIGHT		14
-
 void rtgui_topwin_init()
 {
 	/* init window list */
@@ -90,10 +87,7 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 		/* add border rect */
 		if (topwin->flag & WINTITLE_BORDER)
 		{
-			rect.x1 -= WINTITLE_BORDER_SIZE;
-			rect.y1 -= WINTITLE_BORDER_SIZE;
-			rect.x2 += WINTITLE_BORDER_SIZE;
-			rect.y2 += WINTITLE_BORDER_SIZE;
+			rtgui_rect_inflate(&rect, WINTITLE_BORDER_SIZE);
 		}
 
 		/* add title rect */
@@ -688,10 +682,7 @@ void rtgui_topwin_resize(struct rtgui_win* wid, rtgui_rect_t* r)
 			/* add border rect */
 			if (topwin->flag & WINTITLE_BORDER)
 			{
-				rect.x1 -= WINTITLE_BORDER_SIZE;
-				rect.y1 -= WINTITLE_BORDER_SIZE;
-				rect.x2 += WINTITLE_BORDER_SIZE;
-				rect.y2 += WINTITLE_BORDER_SIZE;
+				rtgui_rect_inflate(&rect, WINTITLE_BORDER_SIZE);
 			}
 
 			/* add title rect */

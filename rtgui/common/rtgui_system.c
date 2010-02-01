@@ -32,9 +32,6 @@ void rtgui_system_server_init()
 	/* init rtgui_thread */
 	rtgui_thread_system_init();
 
-	/* init theme */
-	rtgui_system_theme_init();
-
 	/* init image */
 	rtgui_system_image_init();
 	/* init font */
@@ -44,6 +41,9 @@ void rtgui_system_server_init()
 	rtgui_panel_init();
 	rtgui_topwin_init();
 	rtgui_server_init();
+
+	/* init theme */
+	rtgui_system_theme_init();
 }
 
 /************************************************************************/

@@ -226,11 +226,11 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const rt_uint8_t* text, struct rtg
 #endif
 }
 
-void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, rt_uint8_t* data)
+void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
 	int i, k;
 
-	/* draw word */
+	/* draw byte */
 	for (i=0; i < h; i ++)
 	{
 		for (k=0; k < 8; k++)
@@ -240,6 +240,24 @@ void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, rt_uint8_t* dat
 				rtgui_dc_draw_point(dc, x + k, y + i);
 			}
 		}
+	}
+}
+
+void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
+{
+	int i, j, k;
+
+	/* draw word */
+	for (i=0; i < h; i ++)
+	{
+		for (j=0; j < 2; j++)
+			for (k=0; k < 8; k++)
+			{
+				if (((data[i * 2 + j] >> (7-k)) & 0x01) != 0)
+				{
+					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
+				}
+			}
 	}
 }
 
@@ -791,7 +809,7 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 	/* Sanity check radius */
 	if (r < 0) return ;
 	/* Special case for r=0 - draw a point */
-	if (r == 0) 
+	if (r == 0)
 	{
 		 rtgui_dc_draw_point(dc, x, y);
 		 return;
@@ -802,11 +820,11 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 	end = end % 360;
 
 	/*
-	* Draw arc 
+	* Draw arc
 	*/
 
 	// Octant labelling
-	//      
+	//
 	//  \ 5 | 6 /
 	//   \  |  /
 	//  4 \ | / 7
@@ -840,7 +858,7 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 		if (oct == startoct)
 		{
 			// need to compute stopval_start for this octant.  Look at picture above if this is unclear
-			switch (oct) 
+			switch (oct)
 			{
 			case 0:
 			case 3:
@@ -902,15 +920,15 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 				// otherwise: we only draw in this octant, so initialize it to false, it will get set back to true
 				if (start > end)
 				{
-					// unfortunately, if we're in the same octant and need to draw over the whole circle, 
+					// unfortunately, if we're in the same octant and need to draw over the whole circle,
 					// we need to set the rest to true, because the while loop will end at the bottom.
 					drawoct = 255;
-				} 
+				}
 				else
 				{
 					drawoct &= 255 - (1 << oct);
 				}
-			} 
+			}
 			else if (oct % 2) drawoct &= 255 - (1 << oct);
 			else			  drawoct |= (1 << oct);
 		} else if (oct != startoct) { // already verified that it's != endoct
@@ -962,7 +980,7 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 		if (stopval_start == cx)
 		{
 			// works like an on-off switch because start & end may be in the same octant.
-			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);		
+			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);
 			else drawoct |= (1 << startoct);
 		}
 		if (stopval_end == cx)

@@ -14,7 +14,11 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 
+#ifdef _WIN32
+	view = rtgui_filelist_view_create(workbench, "d:\\", "*.*", &rect);
+#else
 	view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
+#endif
 	if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
 	{
 		char path[32];
