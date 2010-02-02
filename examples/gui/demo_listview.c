@@ -5,7 +5,7 @@
 #include <rtgui/widgets/list_view.h>
 
 static rtgui_workbench_t* workbench = RT_NULL;
-static rtgui_view_t* _view = RT_NULL;
+static rtgui_list_view_t* _view = RT_NULL;
 static rtgui_image_t* return_image = RT_NULL;
 
 static void listitem_action(void* parameter)
@@ -39,12 +39,12 @@ static void return_action(void* parameter)
 {
 	if (_view != RT_NULL)
 	{
-		rtgui_view_destroy(_view);
+		rtgui_view_destroy(RTGUI_VIEW(_view));
 		_view = RT_NULL;
 	}
 }
 
-static const struct rtgui_list_item items[] = 
+static struct rtgui_list_item items[] =
 {
 	{"列表项1", RT_NULL, listitem_action, (void*)1},
 	{"列表项2", RT_NULL, listitem_action, (void*)2},
@@ -72,7 +72,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 rtgui_view_t* demo_listview_view(rtgui_workbench_t* workbench)
 {
 	rtgui_rect_t rect;
-	rtgui_list_view_t *view;
+	rtgui_view_t *view;
 	rtgui_button_t* open_btn;
 
 	view = demo_view(workbench, "列表视图演示");
