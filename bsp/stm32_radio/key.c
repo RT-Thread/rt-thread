@@ -5,11 +5,11 @@
 #include <rtgui/rtgui_server.h>
 
 /*
-key_enter   PA0
-key_down    PA1
-key_up      PA2
-key_right   PC2
-key_left    PC3
+key_enter   PF11
+key_down    PG15
+key_up      PG11
+key_right   PG14
+key_left    PG13
 */
 #define key_enter_GETVALUE()  GPIO_ReadInputDataBit(GPIOF,GPIO_Pin_11)
 #define key_down_GETVALUE()   GPIO_ReadInputDataBit(GPIOG,GPIO_Pin_15)
@@ -23,10 +23,8 @@ extern void rem_encoder(struct rtgui_event_kbd * p);
 extern unsigned int rem_mode;
 /* from remote.c */
 
-static void key_thread_entry(void *parameter)
+static void GPIO_Configuration(void)
 {
-    rt_time_t next_delay;
-    struct rtgui_event_kbd kbd_event;
     GPIO_InitTypeDef GPIO_InitStructure;
 
     /* init gpio configuration */
@@ -45,7 +43,15 @@ static void key_thread_entry(void *parameter)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOE,&GPIO_InitStructure);
     GPIO_SetBits(GPIOE,GPIO_Pin_2);
+}
 
+static void key_thread_entry(void *parameter)
+{
+    rt_time_t next_delay;
+    struct rtgui_event_kbd kbd_event;
+
+    GPIO_Configuration();
+    /* start remote */
     rem_start();
 
     /* init keyboard event */
@@ -123,11 +129,11 @@ static void key_thread_entry(void *parameter)
     }
 }
 
+static rt_thread_t key_tid;
 void rt_hw_key_init(void)
 {
-    rt_thread_t key_tid;
     key_tid = rt_thread_create("key",
                                key_thread_entry, RT_NULL,
-                               512, 30, 5);
+                               768, 30, 5);
     if (key_tid != RT_NULL) rt_thread_startup(key_tid);
 }

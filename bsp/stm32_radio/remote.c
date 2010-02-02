@@ -13,16 +13,22 @@
 #include <dfs_posix.h>
 #include <stm32f10x.h>
 
-unsigned int rem_mode = 0;//红外模式 0:没启动,1:自学习,2:正常解码
+/* 设置允许偏差,单位0.01ms */
+#define remote_deviation         15
+#define remote_code_len_max      100
+
+
+/* 红外模式 0:没启动,1:自学习,2:正常解码 */
+unsigned int rem_mode = 0;
 
 static unsigned int first_tick = 0;
 static unsigned int rx_count = 0;
-static unsigned short rm_code[100];
+static unsigned short rm_code[remote_code_len_max];
 
 struct rem_codes_typedef
 {
     unsigned int len;
-    unsigned short rem_code[100];
+    unsigned short rem_code[remote_code_len_max];
 };
 struct rem_codes_typedef * p_rem_code_src = RT_NULL;
 
@@ -33,7 +39,6 @@ static const char  str4[]="KEY_RIGHT";  /* 右 */
 static const char  str5[]="KEY_ENTER";  /* 确认 */
 static const char  str6[]="KEY_RETURN"; /* 返回 */
 static const char * desc_key[6]= {str1,str2,str3,str4,str5,str6};
-#define wucha         15
 
 
 /* tim5 configure */
@@ -132,12 +137,13 @@ void rem_start(void)
     NVIC_Configuration();
     TIM5_Configuration();
 
-    p_rem_code_src = rt_malloc( 1500 );
+    p_rem_code_src = rt_malloc( sizeof(struct rem_codes_typedef)*6 );
+    rt_memset(p_rem_code_src,0, sizeof(struct rem_codes_typedef)*6 );
 
     /* 解读红外信息 */
     {
         int fd,size;
-        char buf[6];//文件读取临时缓存
+        char buf[7];/* 文件读取临时缓存 #####\r\n */
         unsigned int i;
         unsigned short tmp;
         unsigned int read_index = 0;
@@ -150,29 +156,32 @@ void rem_start(void)
             rt_kprintf("\r/resource/remote.txt打开成功");
             while( EOF_flag )
             {
-                //读取长度
-                size = read(fd,buf,6);
-                if( (size == 6) && (buf[4]=='\r') && buf[5]=='\n' )
+                /* 读取长度 */
+                size = read(fd,buf,7);
+                if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
                 {
-                    //转换得到样本数据长度
-                    tmp =   (buf[0]-'0')*1000
-                            + (buf[1]-'0')*100
-                            + (buf[2]-'0')*10
-                            + (buf[3]-'0');
+                    /* 转换得到样本数据长度 */
+                    tmp =   (buf[0]-'0')*10000
+                            + (buf[1]-'0')*1000
+                            + (buf[2]-'0')*100
+                            + (buf[3]-'0')*10
+                            + (buf[4]-'0');
                     if( tmp<100 )
                     {
                         unsigned int code_len = tmp;
                         p_rem_code_src[read_index].len = code_len;
-                        //如果样本长度符合
+                        /* 如果样本长度符合 就开始从文件读取编码数据 */
                         for(i=0; i<code_len; i++)
                         {
-                            size = read(fd,buf,6);
-                            if( (size == 6) && (buf[4]=='\r') && buf[5]=='\n' )
+                            size = read(fd,buf,7);
+                            if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
                             {
-                                tmp =   (buf[0]-'0')*1000
-                                        + (buf[1]-'0')*100
-                                        + (buf[2]-'0')*10
-                                        + (buf[3]-'0');
+                                /* 转换得到样本数据 */
+                                tmp =   (buf[0]-'0')*10000
+                                        + (buf[1]-'0')*1000
+                                        + (buf[2]-'0')*100
+                                        + (buf[3]-'0')*10
+                                        + (buf[4]-'0');
                                 p_rem_code_src[read_index].rem_code[i] = tmp;
                             }
                         }
@@ -184,9 +193,20 @@ void rem_start(void)
                     EOF_flag = 0;
                 }
             }//while( EOF_flag )
-            //设置工作模式为正常识别模式
-            rem_mode = 2;
-            rt_kprintf("\r红外遥控编码文件解读完成,已打开红外遥控功能\r\n");
+
+            /* 判断是否正确解读编码数据文件 */
+            if ( p_rem_code_src[0].len > 0 && p_rem_code_src[0].len < remote_code_len_max )
+            {
+                /* 设置工作模式为正常识别模式 */
+                rem_mode = 2;
+                rt_kprintf("\r红外遥控编码文件解读完成,已打开红外遥控功能\r\n");
+            }
+            else
+            {
+                /* 设置工作模式为正常识别模式 */
+                rem_mode = 0;
+                rt_kprintf("\r\n红外遥控编码文件解读失败,已关闭红外遥控功能\r\n");
+            }
         }
         else
         {
@@ -200,29 +220,21 @@ void rem_start(void)
 void rem_encoder(struct rtgui_event_kbd * p)
 {
     struct rtgui_event_kbd * p_kbd_event = p;
-    /* 红外遥控匹配 */
+
+    /* 检查是否有数据被捕获 */
     if( (rem_mode==2) && (rt_tick_get()>first_tick+10) && (rx_count > 0) )
     {
         /* 手动清零第一个捕获结果 */
         rm_code[0] = 0;
         rx_count = 0;
-#if 0
-        {
-            unsigned int iii;
-            for(iii=0; iii<100; iii++)
-            {
-                rt_kprintf("\r\n%d",rm_code[iii]);
-            }
-        }
-#endif
 
-#if 1
+        /* 匹配捕获的数据 */
         {
             unsigned int tmp;
-            unsigned int fflag = 0;
+            unsigned int err_flag = 0;
             unsigned int rem_cmp_n = 6;
 
-            //循环匹配所有KEY
+            /* 循环匹配所有KEY */
             while( rem_cmp_n )
             {
                 unsigned int tmp2 = p_rem_code_src[ 6-rem_cmp_n ].len;
@@ -232,22 +244,23 @@ void rem_encoder(struct rtgui_event_kbd * p)
 
                     for(tmp=0; tmp<tmp2; tmp++)
                     {
-                        if( !( (rm_code[tmp] < p_rem_code_src[6-rem_cmp_n].rem_code[tmp]+wucha) && (rm_code[tmp] > p_rem_code_src[6-rem_cmp_n].rem_code[tmp]-wucha)) )
+                        /* 判断捕获结果是否在偏差允许范围内 */
+                        if( !( (rm_code[tmp] < p_rem_code_src[6-rem_cmp_n].rem_code[tmp]+remote_deviation)
+                                && (rm_code[tmp] > p_rem_code_src[6-rem_cmp_n].rem_code[tmp]-remote_deviation)) )
                         {
-                            fflag = 1;
-                            //rt_kprintf("\r\nerr %d: rm_code[%d] p_rem_code_src[%d].rem_code[%d]",tmp,rm_code[tmp],6-rem_cmp_n,p_rem_code_src[ 6-rem_cmp_n].rem_code[tmp]);
+                            err_flag = 1;
                         }
                     }
                 }
                 else
                 {
-                    fflag = 1;
+                    err_flag = 1;
                     rt_kprintf("\r\n解码失败");
                 }
 
-                if(fflag==0)
+                if( err_flag==0 )
                 {
-                    //成功
+                    /* 对比全部数据符合 */
                     rt_kprintf("\r\n识别到遥控按键 %s",desc_key[6-rem_cmp_n]);
                     switch( rem_cmp_n )
                     {
@@ -276,14 +289,13 @@ void rem_encoder(struct rtgui_event_kbd * p)
                 }
                 else
                 {
-                    //不成功
-                    fflag = 0;
+                    /* 对比不符合,清零错误标致,以进行下一次对比 */
+                    err_flag = 0;
                     rem_cmp_n --;
                 }
 
             }
         }
-#endif
     }//红外遥控匹配
 }
 
@@ -307,7 +319,7 @@ void remote_isr(void)
                 rx_count = 0;
                 clr_flag = 1;
             }
-            if( rx_count<100 )
+            if( rx_count < remote_code_len_max )
             {
                 rm_code[rx_count++] = TIM_GetCapture3(TIM5);
             }
@@ -318,7 +330,7 @@ void remote_isr(void)
                 rx_count = 0;
                 clr_flag = 1;
             }
-            if(rx_count<100 )
+            if(rx_count < remote_code_len_max )
             {
                 rm_code[rx_count++] = TIM_GetCapture3(TIM5);
             }
@@ -338,13 +350,13 @@ void remote_isr(void)
         case 0://未启动
             break;
         case 1://自学习
-            if( rx_count<100 )
+            if( rx_count < remote_code_len_max )
             {
                 rm_code[rx_count++] = TIM_GetCapture4(TIM5);
             }
             break;
         case 2://正常解码
-            if( rx_count<100 )
+            if( rx_count < remote_code_len_max )
             {
                 rm_code[rx_count++] = TIM_GetCapture4(TIM5);
             }
@@ -374,7 +386,7 @@ int rem_study(void)
     unsigned int i;
 
     int fd,size;
-    unsigned char tmp_buf[606];
+    unsigned char tmp_buf[ (remote_code_len_max+1)*7 ];
 
     rem_mode = 1;
     rx_count = 0;
@@ -390,7 +402,7 @@ int rem_study(void)
         return -1;
     }
 
-    //学习6个键盘
+    /* 学习6个键盘 */
     for( i=0; i<6; i++)
     {
         unsigned int is_ok = 1;
@@ -413,36 +425,43 @@ int rem_study(void)
                 TIM_ITConfig(TIM5, TIM_IT_CC3, DISABLE);
                 TIM_ITConfig(TIM5, TIM_IT_CC4, DISABLE);
 
-                p[0] = rx_count / 1000 +'0';
+                p[0] = rx_count / 10000 +'0';
+                rx_count = rx_count % 10000;
+                p[1] = rx_count / 1000  +'0';
                 rx_count = rx_count % 1000;
-                p[1] = rx_count / 100  +'0';
+                p[2] = rx_count / 100   +'0';
                 rx_count = rx_count % 100;
-                p[2] = rx_count / 10   +'0';
+                p[3] = rx_count / 10    +'0';
                 rx_count = rx_count % 10;
-                p[3] = rx_count        +'0';
+                p[4] = rx_count        +'0';
                 rx_count = 0;
-                p[4] = '\r';
-                p[5] = '\n';
-                p += 6;
+                p[5] = '\r';
+                p[6] = '\n';
+                p += 7;
 
                 rm_code[0] = 0;
 
                 for( a=0; a<b; a++)
                 {
+                    /* 把当前数据直接写进样品数据 */
                     p_rem_code_src[i].rem_code[a] = rm_code[a];
-                    p[0] = rm_code[a] / 1000 +'0';
+
+                    /* 然后转换成文本格式 #####\r\n */
+                    p[0] = rm_code[a] / 10000 +'0';
+                    rm_code[a] = rm_code[a] % 10000;
+                    p[1] = rm_code[a] / 1000  +'0';
                     rm_code[a] = rm_code[a] % 1000;
-                    p[1] = rm_code[a] / 100  +'0';
+                    p[2] = rm_code[a] / 100   +'0';
                     rm_code[a] = rm_code[a] % 100;
-                    p[2] = rm_code[a] / 10   +'0';
+                    p[3] = rm_code[a] / 10   +'0';
                     rm_code[a] = rm_code[a] % 10;
-                    p[3] = rm_code[a]        +'0';
-                    p[4] = '\r';
-                    p[5] = '\n';
-                    p += 6;
+                    p[4] = rm_code[a]        +'0';
+                    p[5] = '\r';
+                    p[6] = '\n';
+                    p += 7;
                 }
-                size = write(fd,(char*)tmp_buf,(b+1)*6 );
-                if( size==((b+1)*6) )
+                size = write(fd,(char*)tmp_buf,(b+1)*7 );
+                if( size==((b+1)*7) )
                 {
                     rt_kprintf("文件写入成功");
                     is_ok++;
