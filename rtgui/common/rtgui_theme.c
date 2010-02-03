@@ -252,6 +252,16 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		}
 	}
 
+	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(btn)))
+	{
+		/* re-set foreground and get default rect */
+		rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
+		rtgui_rect_inflate(&rect, -2);
+
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = black;
+		rtgui_dc_draw_focus_rect(dc, &rect);
+	}
+
 	/* set forecolor */
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = bc;
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = fc;
@@ -412,8 +422,10 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
     /* fill rect */
 	rtgui_dc_fill_rect(dc, &rect);
 
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(checkbox)) == RT_TRUE)
+	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(checkbox)))
 	{
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = black;
+
 		/* draw focused border */
 		rtgui_rect_inflate(&rect, -1);
 		rtgui_dc_draw_focus_rect(dc, &rect);
@@ -427,6 +439,7 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
 	box_rect.x2 = CHECK_BOX_W;
 	box_rect.y2 = CHECK_BOX_H;
 	rtgui_rect_moveto_align(&rect, &box_rect, RTGUI_ALIGN_CENTER_VERTICAL);
+	box_rect.x1 += 2; box_rect.x2 += 2;
 
 	rtgui_dc_draw_border(dc, &box_rect, RTGUI_BORDER_BOX);
 	rtgui_rect_inflate(&box_rect, -1);

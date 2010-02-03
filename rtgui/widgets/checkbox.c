@@ -54,7 +54,7 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui
 					emouse->button & RTGUI_MOUSE_BUTTON_UP)
 				{
 					/* set focus */
-					RTGUI_WIDGET_FOCUS(widget);
+					rtgui_widget_focus(widget);
 
 					if (box->status_down & RTGUI_CHECKBOX_STATUS_UNCHECKED)
 					{
