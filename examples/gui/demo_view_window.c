@@ -41,7 +41,6 @@ void diag_close(struct rtgui_timer* timer, void* parameter)
 
 void window_demo_autoclose(rtgui_toplevel_t* parent)
 {
-#if 0
 	struct rtgui_rect rect = {50, 50, 200, 200};
 
 	msgbox = rtgui_win_create(parent, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);
@@ -63,9 +62,8 @@ void window_demo_autoclose(rtgui_toplevel_t* parent)
 		rtgui_win_show(msgbox, RT_FALSE);
 	}
 
-	timer = rtgui_timer_create(200, RT_TIMER_FLAG_PERIODIC, diag_close, RT_NULL);
+	timer = rtgui_timer_create(100, RT_TIMER_FLAG_PERIODIC, diag_close, RT_NULL);
 	rtgui_timer_start(timer);
-#endif
 }
 
 static rt_uint16_t delta_x = 20;
@@ -125,7 +123,7 @@ void window_demo_notitle(rtgui_toplevel_t* parent)
 	rtgui_win_t *win;
 	rtgui_label_t *label;
 	rtgui_button_t *button;
-	rtgui_rect_t rect = {0, 0, 150, 80};
+	rtgui_rect_t widget_rect, rect = {0, 0, 150, 80};
 
 	rtgui_rect_moveto(&rect, delta_x, delta_y);
 	delta_x += 20; delta_y += 20;
@@ -136,17 +134,21 @@ void window_demo_notitle(rtgui_toplevel_t* parent)
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(win)) = white;
 
 	/* 创建一个文本标签 */
-	rect.x1 += 20; rect.x2 -= 5;
-	rect.y1 += 5; rect.y2 = rect.y1 + 20;
 	label = rtgui_label_create("无边框窗口");
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(label)), "无边框窗口", &widget_rect);
+	rtgui_rect_moveto_align(&rect, &widget_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
+	widget_rect.y1 += 20; widget_rect.y2 += 20;
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &widget_rect);
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
 
 	/* 创建一个关闭按钮 */
-	rect.x1 += 20; rect.x2 = rect.x1 + 40;
-	rect.y1 += 35; rect.y2 = rect.y1 + 20;
+	widget_rect.x1 = 0; widget_rect.y1 = 0;
+	widget_rect.x2 = 40; widget_rect.y2 = 20;
+	rtgui_rect_moveto_align(&rect, &widget_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
+	widget_rect.y1 += 40; widget_rect.y2 += 40;
 	button = rtgui_button_create("关闭");
-	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
+	rtgui_widget_set_rect(RTGUI_WIDGET(button), &widget_rect);
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(button));
 	rtgui_button_set_onbutton(button, window_demo_close);
 
@@ -161,7 +163,7 @@ static void demo_win_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 
 static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
-	// window_demo_autoclose(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
+	window_demo_autoclose(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget)));
 }
 
 static void demo_modalwin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
