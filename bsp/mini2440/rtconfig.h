@@ -89,7 +89,7 @@
 /* using DFS support */
 #define RT_USING_DFS
 #define RT_USING_DFS_EFSL
-#define RT_USING_DFS_YAFFS2
+/* #define RT_USING_DFS_YAFFS2 */
 
 /* #define DFS_USING_WORKDIR */
 
