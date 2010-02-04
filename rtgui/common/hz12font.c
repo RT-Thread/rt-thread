@@ -12293,12 +12293,12 @@ struct rtgui_font rtgui_font_hz12 =
 
 /* size = 196272 bytes */
 #else
-const struct rtgui_hz_file_font hz12 =
+struct rtgui_hz_file_font hz12 =
 {
 	{RT_NULL}, 				/* cache root 		*/
 	0, 				    	/* cache size 		*/
 	12, 					/* font size 		*/
-	32,						/* font data size 	*/
+	24,						/* font data size 	*/
 	-1, 					/* fd 				*/
 	"/resource/hzk12.fnt"	/* font_fn 			*/
 };
