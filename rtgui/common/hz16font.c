@@ -16746,7 +16746,7 @@ struct rtgui_font rtgui_font_hz16 =
 	16, 				/* height */
 	1, 					/* refer count */
 	&hz_bmp_font_engine,/* font engine */
-	&hz16,				/* font private data */
+	(void *)&hz16,				/* font private data */
 };
 
 /* size = 267616 bytes */

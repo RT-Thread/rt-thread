@@ -25,10 +25,10 @@ ARCH='arm'
 CPU='s3c24x0'
 TextBase='0x30000000'
 
-#PLATFORM = 'gcc'
-#EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
-PLATFORM = 'armcc'
-EXEC_PATH = 'E:/Keil'
+PLATFORM = 'gcc'
+EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+#PLATFORM = 'armcc'
+#EXEC_PATH = 'E:/Keil'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -38,15 +38,15 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
+    TARGET_EXT = 'axf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=arm920t'
-    CFLAGS = DEVICE + ' -Dsourcerygxx' + ' -nostdinc'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,Reset_Handler -T mini2440_ram.ld'
+    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC' + ' -nostdinc -nostdlib -fno-builtin'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,_start -T mini2440_ram.ld' + ' -Ttext ' + TextBase
 
     CPATH = ''
     LPATH = ''
@@ -89,6 +89,7 @@ elif PLATFORM == 'armcc':
 
     RT_USING_MINILIBC = False
     if RT_USING_FINSH:
+        CFLAGS += ' -D FINSH_USING_SYMTAB -DFINSH_USING_DESCRIPTION'
         LFLAGS += ' --keep __fsym_* --keep __vsym_*'
     if RT_USING_WEBSERVER:
         CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'

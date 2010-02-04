@@ -23,6 +23,7 @@ common/image_hdc.c
 common/region.c
 common/hz12font.c
 common/hz16font.c
+common/font_hz_bmp.c
 """)
 
 server_src = Split("""

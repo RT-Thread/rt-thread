@@ -48,10 +48,34 @@ extern struct rt_device uart0_device;
 	extern int Image$$ER_ZI$$ZI$$Base;
 	extern int Image$$ER_ZI$$ZI$$Length;
 	extern int Image$$ER_ZI$$ZI$$Limit;
-#else
+#elif (defined (__GNUC__))
+	rt_uint8_t _irq_stack_start[1024];
+	rt_uint8_t _fiq_stack_start[1024];
+	rt_uint8_t _undefined_stack_start[512];
+	rt_uint8_t _abort_stack_start[512];
+	rt_uint8_t _svc_stack_start[1024] SECTION(".nobss");
 	extern int __bss_end;
 #endif
 
+/**
+ * Fix me 
+ */
+ #if (defined (__GNUC__))
+void *_sbrk (int incr)
+{ 
+	extern int   __bss_end; /* Set by linker.  */
+	static char * heap_end; 
+	char *        prev_heap_end; 
+
+	if (heap_end == 0)
+	 heap_end = & __bss_end; 
+
+	prev_heap_end = heap_end; 
+	heap_end += incr; 
+
+	return (void *) prev_heap_end; 
+} 
+#endif
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);

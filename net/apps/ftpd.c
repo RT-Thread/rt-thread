@@ -4,6 +4,7 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 #include <lwip/sockets.h>
+#include <time.h>
 
 #define FTP_PORT			21
 #define FTP_SRV_ROOT		"/"

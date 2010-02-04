@@ -343,8 +343,8 @@ rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t even
 	struct rtgui_thread* thread;
 
 	rtgui_event_dump(tid, event);
-	if (event->type != RTGUI_EVENT_TIMER)
-		rt_kprintf("event size: %d\n", event_size);
+	/* if (event->type != RTGUI_EVENT_TIMER)
+		rt_kprintf("event size: %d\n", event_size); */
 
 	/* find rtgui_thread */
 	thread = (struct rtgui_thread*) (tid->user_data);

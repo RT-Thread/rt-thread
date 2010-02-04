@@ -59,6 +59,11 @@ typedef rt_uint32_t	mem_ptr_t;
 #define LWIP_PROVIDE_ERRNO
 #endif
 
+#ifdef RT_USING_MINILIBC
+#include <time.h>
+#define LWIP_TIMEVAL_PRIVATE 0
+#endif
+
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
 #define PACK_STRUCT_STRUCT __attribute__ ((__packed__))

@@ -1,5 +1,8 @@
+
 #include <rtgui/dc.h>
 #include <rtgui/font.h>
+
+#ifdef RTGUI_USING_HZ_BMP
 
 static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect);
 static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect);
@@ -69,3 +72,5 @@ static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const rt_u
 	rect->x2 = (rt_int16_t)(bmp_font->width * rt_strlen((const char*)text));
 	rect->y2 = bmp_font->height;
 }
+
+#endif

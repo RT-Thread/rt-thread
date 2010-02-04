@@ -457,7 +457,7 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 						if (strcmp(view->items[view->current_item].name, ".") == 0) return RT_FALSE;
 						if (strcmp(view->items[view->current_item].name, "..") == 0)
 						{
-							char *ptr;
+							rt_uint8_t *ptr;
 							ptr = strrchr(view->current_directory, PATH_SEPARATOR);
 
 							if (ptr == RT_NULL) return RT_FALSE;

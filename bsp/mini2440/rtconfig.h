@@ -70,9 +70,6 @@
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
 #define RT_USING_FINSH
-/* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
@@ -94,7 +91,7 @@
 #define RT_USING_DFS_EFSL
 #define RT_USING_DFS_YAFFS2
 
-#define RT_USING_WORKDIR
+/* #define DFS_USING_WORKDIR */
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX		2
