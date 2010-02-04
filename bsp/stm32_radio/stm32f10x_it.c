@@ -365,7 +365,7 @@ void DMA1_Channel4_IRQHandler(void)
 *******************************************************************************/
 void DMA1_Channel5_IRQHandler(void)
 {
-    extern void wm8753_dma_isr(void);
+    extern void codec_dma_isr(void);
 
     /* enter interrupt */
     rt_interrupt_enter();
@@ -377,7 +377,7 @@ void DMA1_Channel5_IRQHandler(void)
 
         // rt_kprintf("DMA\n");
         /* transmission complete, invoke serial dma tx isr */
-        wm8753_dma_isr();
+        codec_dma_isr();
     }
 
     /* leave interrupt */
@@ -446,12 +446,12 @@ void EXTI9_5_IRQHandler(void)
 *******************************************************************************/
 void SPI2_IRQHandler(void)
 {
-    extern void wm8753_isr(void);
+    extern void codec_isr(void);
 
     /* enter interrupt */
     rt_interrupt_enter();
 
-    wm8753_isr();
+    codec_isr();
 
     /* leave interrupt */
     rt_interrupt_leave();
