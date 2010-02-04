@@ -49,6 +49,13 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 获得demo view允许绘图的区域 */
 		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
 
+		rtgui_dc_set_textalign(dc, RTGUI_ALIGN_BOTTOM | RTGUI_ALIGN_CENTER_HORIZONTAL);
+#ifdef RTGUI_USING_SMALL_SIZE
+		rtgui_dc_draw_text(dc, "RT-Thread/GUI小型版本", &rect);
+#else
+		rtgui_dc_draw_text(dc, "RT-Thread/GUI标准版本", &rect);
+#endif
+
 		/* 绘制一个圆形 */
 		rtgui_dc_set_color(dc, red);
 		rtgui_dc_draw_circle(dc, rect.x1 + 10, rect.y1 + 10, 10);

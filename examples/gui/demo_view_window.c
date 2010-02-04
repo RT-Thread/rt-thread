@@ -9,7 +9,16 @@ static struct rtgui_timer *timer;
 static struct rtgui_label* label;
 static struct rtgui_win* msgbox = RT_NULL;
 static rt_uint8_t label_text[80];
-static int cnt = 5;
+static rt_uint8_t cnt = 5;
+
+static char* get_win_title()
+{
+	static rt_uint8_t win_no = 0;
+	static char win_title[16];
+
+	rt_sprintf(win_title, "窗口 %d", ++win_no);
+	return win_title;
+}
 
 void window_demo_close(struct rtgui_widget* widget, rtgui_event_t *even)
 {
@@ -46,18 +55,13 @@ void window_demo_autoclose(rtgui_toplevel_t* parent)
 	msgbox = rtgui_win_create(parent, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (msgbox != RT_NULL)
 	{
-		struct rtgui_box* box = rtgui_box_create(RTGUI_VERTICAL, RT_NULL);
-
 		cnt = 5;
 		sprintf(label_text, "closed then %d second!", cnt);
 		label = rtgui_label_create(label_text);
-
-		rtgui_win_set_box(msgbox, box);
-		RTGUI_WIDGET(label)->align = RTGUI_ALIGN_CENTER_HORIZONTAL |
-			RTGUI_ALIGN_CENTER_VERTICAL;
-		rtgui_widget_set_miniwidth(RTGUI_WIDGET(label),130);
-		rtgui_box_append(box, RTGUI_WIDGET(label));
-		rtgui_box_layout(box);
+		rect.x1 += 5; rect.x2 -= 5;
+		rect.y1 += 5; rect.y2 = rect.y1 + 20;
+		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+		rtgui_container_add_child(RTGUI_CONTAINER(msgbox), RTGUI_WIDGET(label));
 
 		rtgui_win_show(msgbox, RT_FALSE);
 	}
@@ -81,7 +85,7 @@ void window_demo_normal(rtgui_toplevel_t* parent)
 
 	/* 创建一个窗口 */
 	win = rtgui_win_create(parent,
-		"窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
+		get_win_title(), &rect, RTGUI_WIN_STYLE_DEFAULT);
 
 	rect.x1 += 20; rect.x2 -= 5;
 	rect.y1 += 5; rect.y2 = rect.y1 + 20;
@@ -105,7 +109,7 @@ void window_demo_modal(rtgui_toplevel_t* parent)
 
 	/* 创建一个窗口 */
 	win = rtgui_win_create(parent,
-		"模式窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
+		get_win_title(), &rect, RTGUI_WIN_STYLE_DEFAULT);
 
 	rect.x1 += 20; rect.x2 -= 5;
 	rect.y1 += 5; rect.y2 = rect.y1 + 20;
