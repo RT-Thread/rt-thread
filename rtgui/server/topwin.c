@@ -1010,7 +1010,10 @@ void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count)
 	{
 		topwin = rtgui_list_entry(node, struct rtgui_topwin, list);
 
-		*rect = topwin->extent;
+		if (topwin->title != RT_NULL) 
+			rtgui_widget_get_rect(RTGUI_WIDGET(topwin->title), rect);
+		else *rect = topwin->extent;
+
 		rect  ++;
 		count --;
 		if (count < 0) break;
