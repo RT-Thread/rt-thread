@@ -304,11 +304,14 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 			rtgui_thread_send(wnd->tid, &(eclip.parent), sizeof(struct rtgui_event_clip_info));
 
 			/* reset clip info in title */
-			rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), &eclip);
-			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
-			rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
-				&(RTGUI_WIDGET(wnd->title)->clip),
-				&(wnd->extent));
+			if (wnd->title != RT_NULL)
+			{
+				rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), &eclip);
+				rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
+				rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
+					&(RTGUI_WIDGET(wnd->title)->clip),
+					&(wnd->extent));
+			}
 		}
 
 		rtgui_topwin_activate_win(topwin);
@@ -356,11 +359,14 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 		rtgui_thread_send(topwin->tid, &(eclip->parent), sizeof(struct rtgui_event_clip_info));
 
 		/* reset clip info in title */
-		rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(topwin->title), eclip);
-		rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(topwin->title));
-		rtgui_region_subtract_rect(&(RTGUI_WIDGET(topwin->title)->clip),
-			&(RTGUI_WIDGET(topwin->title)->clip),
-			&(topwin->extent));
+		if (topwin->title != RT_NULL)
+		{
+			rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(topwin->title), eclip);
+			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(topwin->title));
+			rtgui_region_subtract_rect(&(RTGUI_WIDGET(topwin->title)->clip),
+				&(RTGUI_WIDGET(topwin->title)->clip),
+				&(topwin->extent));
+		}
 
 		rect = RTGUI_EVENT_GET_RECT(eclip, 0);
 		*rect = (topwin->title != RT_NULL)? RTGUI_WIDGET(topwin->title)->extent : topwin->extent;
@@ -381,11 +387,14 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 				sizeof(struct rtgui_event_clip_info) + count * sizeof(struct rtgui_rect));
 
 			/* reset clip info in title */
-			rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), eclip);
-			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
-			rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
-				&(RTGUI_WIDGET(wnd->title)->clip),
-				&(wnd->extent));
+			if (wnd->title != RT_NULL)
+			{
+				rtgui_toplevel_handle_clip(RTGUI_TOPLEVEL(wnd->title), eclip);
+				rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
+				rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
+					&(RTGUI_WIDGET(wnd->title)->clip),
+					&(wnd->extent));
+			}
 
 			rect = RTGUI_EVENT_GET_RECT(eclip, count++);
 			*rect = (wnd->title != RT_NULL)? RTGUI_WIDGET(wnd->title)->extent : wnd->extent;

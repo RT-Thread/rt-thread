@@ -53,6 +53,7 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(win->title));
+	if (dc == RT_NULL) return;
 
 	/* get rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(win->title), &rect);
