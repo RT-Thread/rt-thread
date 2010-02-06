@@ -37,7 +37,11 @@ static void workbench_entry(void* parameter)
 	struct rtgui_workbench* workbench;
 
 	/* 创建GUI应用需要的消息队列 */
-	mq = rt_mq_create("workbench", 256, 4, RT_IPC_FLAG_FIFO);
+#ifdef RTGUI_USING_SMALL_SIZE
+	mq = rt_mq_create("workbench", 64, 8, RT_IPC_FLAG_FIFO);
+#else
+	mq = rt_mq_create("workbench", 256, 8, RT_IPC_FLAG_FIFO);
+#endif
 	/* 注册当前线程为GUI线程 */
 	rtgui_thread_register(rt_thread_self(), mq);
 
@@ -49,6 +53,7 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 	demo_view_dc(workbench);
+	demo_view_animation(workbench);
 	demo_view_window(workbench);
 	demo_view_label(workbench);
 	demo_view_button(workbench);
