@@ -46,6 +46,7 @@ Mode_SYS        EQU     0x1F
 I_Bit           EQU     0x80            ; when I bit is set, IRQ is disabled
 F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 
+FLASH_BASE_ADDR EQU	0x00
 ;----------------------- Stack and Heap Definitions ----------------------------
 
 ;// <h> Stack Configuration (Stack Sizes in Bytes)
@@ -209,7 +210,7 @@ CAMDIVN_OFS     EQU     0x18            ; Camera Clock Divider Register  Offset
 ;//       <i> Divider is used only if CAMCLK_SEL = 1
 ;//   </h>
 ;// </e> Clock Setup
-CLOCK_SETUP     EQU     0
+CLOCK_SETUP     EQU     1
 LOCKTIME_Val    EQU     0x0FFF0FFF
 MPLLCON_Val     EQU     0x00043011
 UPLLCON_Val     EQU     0x00038021
@@ -235,6 +236,19 @@ REFRESH_OFS     EQU     0x24            ; SDRAM Refresh Control Register Offset
 BANKSIZE_OFS    EQU     0x28            ; Flexible Bank Size Register    Offset
 MRSRB6_OFS      EQU     0x2C            ; Bank 6 Mode Register           Offset
 MRSRB7_OFS      EQU     0x30            ; Bank 7 Mode Register           Offset
+
+
+;------------------------NAND FLASH----------------------------------------------
+NAND_CTL_BASE	EQU		0x4E000000
+;/* offset */
+oNFCONF			EQU		0x00
+oNFCONT			EQU		0x04
+oNFCMD			EQU		0x08
+oNFADDR			EQU		0x0c
+oNFDATA			EQU		0x10
+oNFSTAT			EQU		0x20
+oNFECC			EQU		0x2c
+
 
 ;// <e> Memory Controller Setup
 ;//   <h> Bus Width and Wait Control Register (BWSCON)
@@ -465,21 +479,31 @@ MRSRB7_OFS      EQU     0x30            ; Bank 7 Mode Register           Offset
 ;//       <0=> 1 (Fixed)
 ;//   </h>
 ;// </e> Memory Controller Setup
-MC_SETUP        EQU     0
-BWSCON_Val      EQU     0x22000000
+MC_SETUP        EQU     1
+BWSCON_Val      EQU     0x22151112
 BANKCON0_Val    EQU     0x00000700
 BANKCON1_Val    EQU     0x00000700
 BANKCON2_Val    EQU     0x00000700
 BANKCON3_Val    EQU     0x00000700
-BANKCON4_Val    EQU     0x00000700
+BANKCON4_Val    EQU     0x00002E50
 BANKCON5_Val    EQU     0x00000700
 BANKCON6_Val    EQU     0x00018005
 BANKCON7_Val    EQU     0x00018005
-REFRESH_Val     EQU     0x008404F3
-BANKSIZE_Val    EQU     0x00000032
-MRSRB6_Val      EQU     0x00000020
-MRSRB7_Val      EQU     0x00000020
+REFRESH_Val     EQU     0x008E07A3
+BANKSIZE_Val    EQU     0x000000B2
+MRSRB6_Val      EQU     0x00000030
+MRSRB7_Val      EQU     0x00000030
 
+
+;----------------------- Interrupt Config	 -----------------------------------
+SRCPND   		EQU		0x4a000000    ;Interrupt request status
+INTMOD   		EQU		0x4a000004    ;Interrupt mode control
+INTMSK   		EQU		0x4a000008    ;Interrupt mask control
+PRIORITY 		EQU		0x4a00000c    ;IRQ priority control           <-- May 06, 2002 SOP
+INTPND   		EQU		0x4a000010    ;Interrupt request status
+INTOFFSET		EQU		0x4a000014    ;Interruot request source offset
+SUSSRCPND		EQU		0x4a000018    ;Sub source pending
+INTSUBMSK		EQU		0x4a00001c    ;Interrupt sub mask
 
 ;----------------------- I/O Port Definitions ----------------------------------
 
