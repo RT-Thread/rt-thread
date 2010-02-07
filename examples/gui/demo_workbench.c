@@ -38,7 +38,7 @@ static void workbench_entry(void* parameter)
 
 	/* 创建GUI应用需要的消息队列 */
 #ifdef RTGUI_USING_SMALL_SIZE
-	mq = rt_mq_create("workbench", 64, 8, RT_IPC_FLAG_FIFO);
+	mq = rt_mq_create("workbench", 32, 8, RT_IPC_FLAG_FIFO);
 #else
 	mq = rt_mq_create("workbench", 256, 8, RT_IPC_FLAG_FIFO);
 #endif

@@ -1,8 +1,7 @@
-#include "demo_view.h"
-#include <rtgui/rtgui.h>
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
+#include "demo_view.h"
 
 /*
  * 直接在DC上绘图以实现动画效果
@@ -20,7 +19,7 @@ void timeout(struct rtgui_timer* timer, void* parameter)
 	rtgui_rect_t rect;
 	rtgui_widget_t *widget;
 
-	/**/
+	/* 控件(view)通过parameter参数传递给定时器 */
 	widget = (rtgui_widget_t*)parameter;
 
 	/* 获得控件所属的DC */
@@ -100,7 +99,7 @@ rtgui_view_t *demo_view_animation(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 
-	view = demo_view(workbench, "DC animation");
+	view = demo_view(workbench, "DC 动画");
 	if (view != RT_NULL)
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), animation_event_handler);
 
