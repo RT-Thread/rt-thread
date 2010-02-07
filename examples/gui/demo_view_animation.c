@@ -1,3 +1,4 @@
+#include "demo_view.h"
 #include <rtgui/rtgui.h>
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
@@ -99,7 +100,7 @@ rtgui_view_t *demo_view_animation(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 
-	view = demo_view(workbench, "DC ¶¯»­");
+	view = demo_view(workbench, "DC animation");
 	if (view != RT_NULL)
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), animation_event_handler);
 
