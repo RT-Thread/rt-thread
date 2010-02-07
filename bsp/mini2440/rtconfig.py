@@ -3,19 +3,19 @@ import SCons.cpp
 # component options
 
 # make all component false 
-RT_USING_FINSH = False
-RT_USING_DFS = False
-RT_USING_DFS_EFSL = False
+RT_USING_FINSH 		= False
+RT_USING_DFS 		= False
+RT_USING_DFS_EFSL 	= False
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
-RT_USING_LWIP = False
-RT_USING_WEBSERVER = False
-RT_USING_RTGUI = False
+RT_USING_LWIP 		= False
+RT_USING_WEBSERVER	= False
+RT_USING_RTGUI 		= False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
 f = file('rtconfig.h', 'r')
-contents = f.read(4096)
+contents = f.read()
 f.close()
 PreProcessor.process_contents(contents)
 rtconfig_ns = PreProcessor.cpp_namespace
@@ -50,14 +50,18 @@ if rtconfig_ns.has_key('RT_USING_RTGUI'):
 RT_USING_LCD_TYPE = 'PNL_T35'
 
 # toolchains options
-ARCH='arm'
-CPU='s3c24x0'
-TextBase='0x30000000'
+ARCH	 = 'arm'
+CPU		 = 's3c24x0'
+TextBase = '0x30000000'
 
-PLATFORM = 'gcc'
-EXEC_PATH = 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
-#PLATFORM = 'armcc'
-#EXEC_PATH = 'E:/Keil'
+CROSS_TOOL 	= 'keil'
+
+if  CROSS_TOOL == 'gcc':
+	PLATFORM 	= 'gcc'
+	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+elif CROSS_TOOL == 'keil':	
+	PLATFORM 	= 'armcc'
+	EXEC_PATH 	= 'E:/Keil'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -101,7 +105,7 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --device DARMSS9'
-    CFLAGS = DEVICE + ' --apcs=interwork'
+    CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
