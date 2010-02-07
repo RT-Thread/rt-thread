@@ -70,14 +70,18 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 	if (topwin == RT_NULL) return -RT_ERROR;
 
 	topwin->wid 	= event->wid;
+#ifdef RTGUI_USING_SMALL_SIZE
+	topwin->extent	= RTGUI_WIDGET(event->wid)->extent;
+#else
 	topwin->extent 	= event->extent;
+#endif
 	topwin->tid 	= event->parent.sender;
 
 	topwin->flag 	= 0;
-	if (event->flag & RTGUI_WIN_STYLE_NO_TITLE) topwin->flag |= WINTITLE_NO;
-	if (event->flag & RTGUI_WIN_STYLE_CLOSEBOX) topwin->flag |= WINTITLE_CLOSEBOX;
-	if (!(event->flag & RTGUI_WIN_STYLE_NO_BORDER)) topwin->flag |= WINTITLE_BORDER;
-	if (event->flag & RTGUI_WIN_STYLE_NO_FOCUS) topwin->flag |= WINTITLE_NOFOCUS;
+	if (event->parent.user & RTGUI_WIN_STYLE_NO_TITLE) topwin->flag |= WINTITLE_NO;
+	if (event->parent.user & RTGUI_WIN_STYLE_CLOSEBOX) topwin->flag |= WINTITLE_CLOSEBOX;
+	if (!(event->parent.user & RTGUI_WIN_STYLE_NO_BORDER)) topwin->flag |= WINTITLE_BORDER;
+	if (event->parent.user & RTGUI_WIN_STYLE_NO_FOCUS) topwin->flag |= WINTITLE_NOFOCUS;
 
 	if(!(topwin->flag & WINTITLE_NO) || (topwin->flag & WINTITLE_BORDER))
 	{
@@ -93,7 +97,11 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 		/* add title rect */
 		if (!(topwin->flag & WINTITLE_NO)) rect.y1 -= WINTITLE_HEIGHT;
 
+#ifdef RTGUI_USING_SMALL_SIZE
+		topwin->title = rtgui_wintitle_create(event->wid->title);
+#else
 		topwin->title = rtgui_wintitle_create(event->title);
+#endif
 		rtgui_widget_set_rect(RTGUI_WIDGET(topwin->title), &rect);
 
 		/* update clip info */
@@ -289,9 +297,7 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 
 		/* send clip info event */
 		count = 0;
-		for (node = _rtgui_topwin_show_list.next;
-			node != &(topwin->list);
-			node  = node->next)
+		for (node = _rtgui_topwin_show_list.next; node != RT_NULL; node  = node->next)
 		{
 			struct rtgui_topwin* wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
 
@@ -1020,12 +1026,13 @@ void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count)
 		topwin = rtgui_list_entry(node, struct rtgui_topwin, list);
 
 		if (topwin->title != RT_NULL) 
-			rtgui_widget_get_rect(RTGUI_WIDGET(topwin->title), rect);
-		else *rect = topwin->extent;
+			*rect = RTGUI_WIDGET(topwin->title)->extent;
+		else 
+			*rect = topwin->extent;
 
 		rect  ++;
 		count --;
-		if (count < 0) break;
+		if (count <= 0) break;
 	}
 	rt_sem_release(&_rtgui_topwin_lock);
 }

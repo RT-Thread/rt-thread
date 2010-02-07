@@ -37,12 +37,13 @@ static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)
 {
 	/* release external clip info */
-	rtgui_free(toplevel->external_clip_rect);
-
 	toplevel->drawing = 0;
-	rtgui_free(toplevel->external_clip_rect);
-	toplevel->external_clip_rect = RT_NULL;
-	toplevel->external_clip_size = 0;
+	if (toplevel->external_clip_size > 0)
+	{
+		rtgui_free(toplevel->external_clip_rect);
+		toplevel->external_clip_rect = RT_NULL;
+		toplevel->external_clip_size = 0;
+	}
 }
 
 rtgui_type_t *rtgui_toplevel_type_get(void)
@@ -114,6 +115,10 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 
 	return RT_FALSE;
 }
+
+#include <rtgui/widgets/window.h>
+#include <rtgui/widgets/workbench.h>
+#include <rtgui/widgets/title.h>
 
 void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
 	struct rtgui_event_clip_info* info)

@@ -154,11 +154,19 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 			struct rtgui_event_win_create *create = (struct rtgui_event_win_create*)event;
 
 			rt_kprintf(" win: %s at (x1:%d, y1:%d, x2:%d, y2:%d)",
+#ifdef RTGUI_USING_SMALL_SIZE
+				create->wid->title,
+				RTGUI_WIDGET(create->wid)->extent.x1,
+				RTGUI_WIDGET(create->wid)->extent.y1,
+				RTGUI_WIDGET(create->wid)->extent.x2,
+				RTGUI_WIDGET(create->wid)->extent.y2);
+#else
 				create->title,
 				create->extent.x1,
 				create->extent.y1,
 				create->extent.x2,
 				create->extent.y2);
+#endif
 		}
 		break;
 
@@ -340,6 +348,7 @@ struct rtgui_widget* rtgui_thread_get_widget()
 
 rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
 {
+	rt_err_t result;
 	struct rtgui_thread* thread;
 
 	rtgui_event_dump(tid, event);
@@ -350,11 +359,16 @@ rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t even
 	thread = (struct rtgui_thread*) (tid->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
-	return rt_mq_send(thread->mq, event, event_size);
+	result = rt_mq_send(thread->mq, event, event_size);
+	if (result != RT_EOK)
+		rt_kprintf("send event failed\n");
+
+	return result;
 }
 
 rt_err_t rtgui_thread_send_urgent(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
 {
+	rt_err_t result;
 	struct rtgui_thread* thread;
 
 	rtgui_event_dump(tid, event);
@@ -364,7 +378,11 @@ rt_err_t rtgui_thread_send_urgent(rt_thread_t tid, rtgui_event_t* event, rt_size
 	thread = (struct rtgui_thread*) (tid->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
-	return rt_mq_urgent(thread->mq, event, event_size);
+	result = rt_mq_urgent(thread->mq, event, event_size);
+	if (result != RT_EOK)
+		rt_kprintf("send ergent event failed\n");
+
+	return result;
 }
 
 rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
@@ -387,7 +405,11 @@ rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t
 
 	event->ack = &ack_mb;
 	r = rt_mq_send(thread->mq, event, event_size);
-	if (r != RT_EOK) goto __return;
+	if (r != RT_EOK) 
+	{
+		rt_kprintf("send sync event failed\n");
+		goto __return;
+	}
 
 	r = rt_mb_recv(&ack_mb, (rt_uint32_t*)&ack_status, RT_WAITING_FOREVER);
 	if ( r!= RT_EOK) goto __return;

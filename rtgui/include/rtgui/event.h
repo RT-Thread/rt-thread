@@ -77,7 +77,9 @@ enum {
 struct rtgui_event
 {
 	/* the event type */
-	rt_uint32_t type;
+	rt_uint16_t type;
+	/* user field of event */
+	rt_uint16_t user;
 
 	/* the event sender */
 	rt_thread_t sender;
@@ -91,6 +93,7 @@ typedef struct rtgui_event rtgui_event_t;
 #define RTGUI_EVENT_INIT(e, t)	do		\
 {										\
 	(e)->type = (t);					\
+	(e)->user = 0;						\
 	(e)->sender = rt_thread_self();		\
 	(e)->ack = RT_NULL;					\
 } while (0)
@@ -172,16 +175,15 @@ struct rtgui_event_win_create
 {
 	struct rtgui_event parent;
 
-	/* the window flag */
-	rt_uint32_t flag;
-
+#ifndef RTGUI_USING_SMALL_SIZE
 	/* the window title */
 	rt_uint8_t title[RTGUI_NAME_MAX];
+	/* the window extent */
+	struct rtgui_rect extent;
+#endif
 
 	/* the window id */
 	rtgui_win_t* wid;
-	/* the window extent */
-	struct rtgui_rect extent;
 };
 
 struct rtgui_event_win_move
@@ -332,9 +334,9 @@ struct rtgui_event_kbd
 
 	rtgui_win_t* wid;		/* destination window */
 
-	RTGUI_KBD_TYPE type;	/* key down or up */
-	RTGUI_KBD_KEY key;		/* current key */
-	RTGUI_KBD_MOD mod;		/* current key modifiers */
+	rt_uint16_t type;		/* key down or up */
+	rt_uint16_t key;		/* current key */
+	rt_uint16_t mod;		/* current key modifiers */
 	rt_uint16_t unicode;	/* translated character */
 };
 #define RTGUI_KBD_IS_SET_CTRL(e)	((e)->mod & (RTGUI_KMOD_LCTRL | RTGUI_KMOD_RCTRL)))
@@ -356,9 +358,6 @@ struct rtgui_event_command
 
 	/* command id */
 	rt_int32_t command_id;
-
-	/* command integer */
-	rt_int32_t command_int;
 
 	/* command string */
 	char command_string[RTGUI_NAME_MAX];
