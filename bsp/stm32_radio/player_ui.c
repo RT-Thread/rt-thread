@@ -45,8 +45,7 @@ void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 	saved = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view));
 
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(206, 231, 255);
-	rtgui_dc_draw_hline(dc, 14, 14  + (tinfo.position * 212)/ tinfo.duration,
-		75);
+	rtgui_dc_draw_hline(dc, 14, 14  + (tinfo.position * 212) / tinfo.duration, 75);
 
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
 	rtgui_dc_end_drawing(dc);
@@ -137,7 +136,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 	{
         rect.x1 = rect.x2 - 64;
 		rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-			tinfo.duration / 360, tinfo.duration / 60, tinfo.duration % 60);
+			tinfo.duration / 3600, tinfo.duration / 60, tinfo.duration % 60);
         rtgui_dc_draw_text(dc, line, &rect);
 	}
 
@@ -147,6 +146,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 void play_mp3_file(const char* fn)
 {
 	struct rtgui_dc* dc;
+	rtgui_color_t saved;
 
     /* get music tag information */
     mp3_get_info(fn, &tinfo);
@@ -164,6 +164,12 @@ void play_mp3_file(const char* fn)
 		
 		/* update tag information */
 		player_update_tag_info(dc);
+
+		/* reset progress bar */
+		saved = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view));
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(82, 199, 16);
+		rtgui_dc_draw_hline(dc, 14, 226, 75);
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
 
 		/* update play button */
 		button = rtgui_image_create_from_mem("hdc",
@@ -223,26 +229,23 @@ void function_filelist(void* parameter)
                     rt_uint32_t length;
 
                     length = read_line(fd, line, sizeof(line));
-                    if (strcmp(line, "#EXTM3U") == 0)
-                    {
-						/* clear old play list */
-						play_list_clear();
+					/* clear old play list */
+					play_list_clear();
 
-                        do
+                    do
+                    {
+                        length = read_line(fd, line, sizeof(line));
+                        if (length > 0)
                         {
-                            length = read_line(fd, line, sizeof(line));
-                            if (length > 0)
+                            if (line[0] != '/')
                             {
-                                if (line[0] != '/')
-                                {
-                                    rt_snprintf(fn, sizeof(fn),
-                                        "%s/%s", view->current_directory, line);
-                                    play_list_append(fn);
-                                }
-                                else play_list_append(line);
+                                rt_snprintf(fn, sizeof(fn),
+                                    "%s/%s", view->current_directory, line);
+                                play_list_append(fn);
                             }
-                        } while (length > 0);
-                    }
+                            else play_list_append(line);
+                        }
+                    } while (length > 0);
 
                     close(fd);
 
@@ -376,7 +379,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			{
 	            rect.x1 = rect.x2 - 64;
 				rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-					tinfo.duration / 360, tinfo.duration / 60, tinfo.duration % 60);
+					tinfo.duration / 3600, tinfo.duration / 60, tinfo.duration % 60);
 	            rtgui_dc_draw_text(dc, line, &rect);
 			}
         }
@@ -401,7 +404,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 
 	            rect.x1 = rect.x2 - 64;
 				rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-					item->duration / 360,
+					item->duration / 3600,
 					item->duration / 60,
 					item->duration % 60);
 	            rtgui_dc_draw_text(dc, line, &rect);
@@ -490,6 +493,8 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 	
 				player_update_tag_info(dc);
 
+				saved = RTGUI_WIDGET_FOREGROUND(widget);
+
 				RTGUI_WIDGET_FOREGROUND(widget) = RTGUI_RGB(82, 199, 16);
 				rtgui_dc_draw_hline(dc, 14, 226, 75);
 	
@@ -522,6 +527,8 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 					if (dc == RT_NULL) return RT_FALSE;
 
 					player_update_tag_info(dc);
+
+					saved = RTGUI_WIDGET_FOREGROUND(widget);
 
 					RTGUI_WIDGET_FOREGROUND(widget) = RTGUI_RGB(82, 199, 16);
 					rtgui_dc_draw_hline(dc, 14, 226, 75);
