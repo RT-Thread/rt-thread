@@ -3,6 +3,8 @@
 #include "stm32f10x.h"
 #include "codec.h"
 
+#define CODEC_MASTER_MODE	0
+
 /*
 SCLK  PA5  SPI1_SCK
 SDIN  PA7  SPI1_MOSI
@@ -14,6 +16,7 @@ CSB   PC5
 #define codec_reset_csb()	do { CODEC_CSB_PORT->BRR = CODEC_CSB_PIN; } while (0)
 
 void vol(uint16_t v);
+static void codec_send(rt_uint16_t s_data);
 
 #define DATA_NODE_MAX 5
 /* data node for Tx Mode */
@@ -37,19 +40,8 @@ struct codec_device
 };
 struct codec_device codec;
 
-struct pll_ratio
-{
-	uint8_t n;
-	uint8_t k1;
-	uint16_t k2;
-	uint16_t k3;
-};
-
-static void delay_ms(unsigned int dt)
-{
-	volatile unsigned int u;
-	for (u = 0; u < dt * 30; u++);
-}
+static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8;
+static uint16_t zero = 0;
 
 static void NVIC_Configuration(void)
 {
@@ -83,11 +75,25 @@ static void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(CODEC_CSB_PORT, &GPIO_InitStructure);
 
-	/* Configure SPI2 pins: CK, WS and SD */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+#if CODEC_MASTER_MODE
+	// WS, CK
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	// SD
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
+#else
+	/* Configure SPI2 pins: CK, WS and SD */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+#endif
 
 #ifdef CODEC_USE_MCO
 	/*    MCO    configure */
@@ -114,9 +120,13 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
 	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+#if CODEC_MASTER_MODE
+	while ((SPI2->SR & SPI_SR_CHSIDE) == 1);
+	DMA_ClearFlag(DMA1_FLAG_TC5);
+#endif
 	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
 	/* Enable SPI2 DMA Tx request */
@@ -125,6 +135,35 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
 	DMA_Cmd(DMA1_Channel5, ENABLE);
 }
+
+#if CODEC_MASTER_MODE
+static void DMA_ZeroFill_I2S()
+{
+    DMA_InitTypeDef DMA_InitStructure;
+
+	/* DMA1 Channel2 configuration ----------------------------------------------*/
+	DMA_Cmd(DMA1_Channel5, DISABLE);
+	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, DISABLE);
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(SPI2->DR));
+	DMA_InitStructure.DMA_MemoryBaseAddr = (u32) &zero;
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+	DMA_InitStructure.DMA_BufferSize = 1;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+	/* Enable SPI2 DMA Tx request */
+	SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
+
+	//DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+	DMA_Cmd(DMA1_Channel5, ENABLE);
+}
+#endif
 
 static void I2S_Configuration(void)
 {
@@ -135,11 +174,14 @@ static void I2S_Configuration(void)
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Disable;
 	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq_44k;
-	I2S_InitStructure.I2S_CPOL = I2S_CPOL_High; // I2S_CPOL_Low
+	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
 
-	/* I2S2 Master Transmitter to I2S3 Slave Receiver communication -----------*/
 	/* I2S2 configuration */
-	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx; //I2S_Mode_MasterTx  I2S_Mode_SlaveTx
+#if CODEC_MASTER_MODE
+	I2S_InitStructure.I2S_Mode = I2S_Mode_SlaveTx;
+#else
+	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
+#endif
 	I2S_Init(SPI2, &I2S_InitStructure);
 }
 
@@ -185,8 +227,6 @@ static rt_err_t codec_init(rt_device_t dev)
 	codec_send(REG_OUTPUT | SPKBOOST);
 	// Set VMIDSEL[1:0] to required value in register R1.
 	codec_send(REG_POWER_MANAGEMENT1 | BUFDCOPEN | BUFIOEN | VMIDSEL_75K);
-	// Wait for VMID supply to settle.
-	delay_ms(750);
 	// Set L/RMIXEN=1 and DACENL/R=1 in register R3.
 	codec_send(REG_POWER_MANAGEMENT3 | LMIXEN | RMIXEN | DACENL | DACENR);
 	// Set BIASEN=1 in register R1.
@@ -205,13 +245,13 @@ static rt_err_t codec_init(rt_device_t dev)
 	// F_PLL = 11.2896MHz * 4 * 2 = 90.3168MHz
 	// R = 90.3168MHz / 12.288MHz = 7.35
 	// PLL_N = 7
-	// PLL_K = 5872026
+	// PLL_K = 5872026 (5921370 for STM32's 44.117KHz fs generated from 72MHz clock)
 	codec_send(REG_PLL_N | 7);
 	codec_send(REG_PLL_K1 | 0x16);
-	codec_send(REG_PLL_K2 | 0xCC);
-	codec_send(REG_PLL_K3 | 0x19A);
+	codec_send(REG_PLL_K2 | 0x12D);
+	codec_send(REG_PLL_K3 | 0x5A);
 	codec_send(REG_POWER_MANAGEMENT1 | BUFDCOPEN | BUFIOEN | VMIDSEL_75K | BIASEN | PLLEN);
-	codec_send(REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2);
+	codec_send(r06);
 
 	// Enable DAC 128x oversampling.
 	codec_send(REG_DAC | DACOSR128);
@@ -220,7 +260,7 @@ static rt_err_t codec_init(rt_device_t dev)
 	codec_send(REG_BEEP | INVROUT2);
 
 	// Set output volume to -22dB.
-	vol(35);
+	vol(20);
 
 	return RT_EOK;
 }
@@ -272,7 +312,8 @@ void sample_rate(uint8_t sr)
 	if (sr == 44)
 	{
 		codec_send(REG_ADDITIONAL | SR_48KHZ);
-		codec_send(REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2);
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
+		codec_send(r06);
 	}
 	else
 	{
@@ -280,32 +321,38 @@ void sample_rate(uint8_t sr)
 		{
 		case 8:
 			codec_send(REG_ADDITIONAL | SR_8KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		case 12:
 			codec_send(REG_ADDITIONAL | SR_12KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		case 16:
 			codec_send(REG_ADDITIONAL | SR_16KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		case 24:
 			codec_send(REG_ADDITIONAL | SR_24KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		case 32:
 			codec_send(REG_ADDITIONAL | SR_32KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		case 48:
 			codec_send(REG_ADDITIONAL | SR_48KHZ);
+			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV8 | (r06 & MS);
 			break;
 
 		default:
 			return;
 		}
-		codec_send(REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1);
+		codec_send(r06);
 	}
 }
 
@@ -323,6 +370,13 @@ static rt_err_t codec_open(rt_device_t dev, rt_uint16_t oflag)
 	/* enable I2S */
 	I2S_Cmd(SPI2, ENABLE);
 
+#if CODEC_MASTER_MODE
+	DMA_ZeroFill_I2S();
+
+	r06 |= MS;
+	codec_send(r06);
+#endif
+
 	return RT_EOK;
 }
 
@@ -334,6 +388,16 @@ static rt_err_t codec_close(rt_device_t dev)
 		/* Disable the I2S2 */
 		I2S_Cmd(SPI2, DISABLE);
 	}
+#if CODEC_MASTER_MODE
+	else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
+	{
+		DMA_Cmd(DMA1_Channel5, DISABLE);
+		I2S_Cmd(SPI2, DISABLE);
+
+		r06 &= ~MS;
+		codec_send(r06);
+	}
+#endif
 
 	/* remove all data node */
 
@@ -413,7 +477,7 @@ rt_err_t codec_hw_init(void)
 	I2S_Configuration();
 
 	dev = (rt_device_t) &codec;
-	dev->type = RT_Device_Class_Unknown;
+	dev->type = RT_Device_Class_Sound;
 	dev->rx_indicate = RT_NULL;
 	dev->tx_complete = RT_NULL;
 	dev->init = codec_init;
@@ -495,6 +559,10 @@ void codec_dma_isr()
 	}
 	else
 	{
+#if CODEC_MASTER_MODE
+		DMA_ZeroFill_I2S();
+#endif
+
 		rt_kprintf("*\n");
 	}
 
