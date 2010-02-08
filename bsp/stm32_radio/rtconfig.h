@@ -174,5 +174,7 @@
 #define RTGUI_USING_SMALL_SIZE
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
+/* default font size in RTGUI */
+#define RTGUI_DEFAULT_FONT_SIZE	16
 
 #endif

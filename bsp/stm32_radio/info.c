@@ -66,6 +66,7 @@ static void info_entry(void* parameter)
 	if (workbench == RT_NULL) return;
 
 	view = rtgui_view_create("view");
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), view_event_handler);
 
 	rtgui_workbench_add_view(workbench, view);

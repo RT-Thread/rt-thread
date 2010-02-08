@@ -32,6 +32,8 @@
 #include <dfs_fat.h>
 /* dfs filesystem:EFS filesystem init */
 #include <dfs_efs.h>
+/* dfs filesystem:ELM FatFs filesystem init */
+#include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #endif
