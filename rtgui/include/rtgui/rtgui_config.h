@@ -10,22 +10,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2010-02-08     Bernard      move some RTGUI options to bsp
  */
 
 #ifndef __RTGUI_CONFIG_H__
 #define __RTGUI_CONFIG_H__
 
 /* RTGUI options */
-
-/* name length of RTGUI object */
-#define RTGUI_NAME_MAX		12
-
-/* #define RTGUI_USING_MOUSE_CURSOR */
-
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONTHZ
-
-// #define RTGUI_USING_SMALL_SIZE
 
 #ifdef _WIN32
 #define RTGUI_USING_STDIO_FILERW
@@ -34,11 +25,6 @@
 #define RTGUI_USING_FONT12
 #define RTGUI_USING_HZ_BMP
 #define RTGUI_MEM_TRACE
-#else
-#define RTGUI_USING_DFS_FILERW
-//#define RTGUI_USING_HZ_FILE
-#define RTGUI_USING_HZ_BMP
-#define RTGUI_USING_FONT12
 #endif
 
 #define RTGUI_SVR_THREAD_PRIORITY		15
