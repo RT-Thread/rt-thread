@@ -38,7 +38,13 @@ extern struct rtgui_font rtgui_font_arial12;
 /* init theme */
 void rtgui_system_theme_init()
 {
+#if RTGUI_DEFAULT_FONT_SIZE == 16
+	rtgui_font_set_defaut(&rtgui_font_asc16);
+#elif RTGUI_DEFAULT_FONT_SIZE == 12
 	rtgui_font_set_defaut(&rtgui_font_asc12);
+#else
+	rtgui_font_set_defaut(&rtgui_font_asc12);
+#endif
 }
 
 static const rt_uint8_t close_byte[14] = {0x06, 0x18, 0x03, 0x30, 0x01, 0xE0, 0x00,
