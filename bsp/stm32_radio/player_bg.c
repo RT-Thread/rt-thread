@@ -13,7 +13,7 @@ rt_bool_t player_is_playing()
 	return is_playing;
 }
 
-void player_play_file(const char* fn)
+void player_play_req(const char* fn)
 {
     struct player_request request;
     request.type = PLAYER_REQUEST_PLAY_SINGLE_FILE;
@@ -22,6 +22,7 @@ void player_play_file(const char* fn)
     /* send to message queue */
     rt_mq_send(player_thread_mq, (void*)&request, sizeof(struct player_request));
 }
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 static const char _fn[] = "/005.mp3";
@@ -68,7 +69,18 @@ void player_thread(void* parameter)
 					(strstr(request.fn, ".WAV") != RT_NULL))
 				{
 					is_playing = RT_TRUE;
+					player_notify_play();
 					wav(request.fn);
+					player_notify_stop();
+					is_playing = RT_FALSE;
+				}
+				else if ((strstr(request.fn, "http://") == request.fn ||
+					(strstr(request.fn, "HTTP://") == request.fn )))
+				{
+					is_playing = RT_TRUE;
+					player_notify_play();
+					ice_mp3(request.fn);
+					player_notify_stop();
 					is_playing = RT_FALSE;
 				}
 				break;

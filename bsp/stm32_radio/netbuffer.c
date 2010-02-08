@@ -91,6 +91,8 @@ rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
         /* buffer is not ready. */
         _netbuf.is_wait_ready = RT_TRUE;
 		rt_kprintf("wait ready, data len: %d, stat %d\n", data_length, _netbuf.stat);
+		/* set buffer status to buffering */
+		player_set_buffer_status(RT_TRUE);
         rt_sem_take(_netbuf.wait_ready, RT_WAITING_FOREVER);
     }
 
@@ -192,7 +194,7 @@ static void net_buf_do_stop(struct net_buffer_job* job)
 	rt_kprintf("job done, stat %d\n", _netbuf.stat);
 }
 
-#define NETBUF_BLOCK_SIZE  1024
+#define NETBUF_BLOCK_SIZE  4096
 static void net_buf_do_job(struct net_buffer_job* job)
 {
 	rt_uint32_t level;
@@ -265,7 +267,10 @@ static void net_buf_do_job(struct net_buffer_job* job)
 			rt_hw_interrupt_enable(level);
 		}
 
-		// rt_kprintf("buffering ... %d %c\n", (data_length * 100) / _netbuf.size, '%');
+		rt_kprintf("buffering ... %d %c\n", (data_length * 100) / _netbuf.size, '%');
+
+		/* set buffer position */
+		player_set_position(data_length);
 
 		if ((_netbuf.stat == NETBUF_STAT_BUFFERING) && (data_length >= _netbuf.ready_wm))
 		{
@@ -277,6 +282,8 @@ static void net_buf_do_job(struct net_buffer_job* job)
 			if (_netbuf.is_wait_ready == RT_TRUE)
 			{
 				_netbuf.is_wait_ready = RT_FALSE;
+				/* set buffer status to playing */
+				player_set_buffer_status(RT_FALSE);
 				rt_sem_release(_netbuf.wait_ready);
 			}
 		}

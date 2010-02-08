@@ -281,7 +281,9 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 		/* can't get sync word */
 		close(fd);
 		mp3_decoder_detach(decoder);
+		return;
 	}
+
 	/* get frame information */
 	MP3GetNextFrameInfo(decoder, &frame_info, &id3buffer[sync_word]);
 	info->bit_rate = frame_info.bitrate;

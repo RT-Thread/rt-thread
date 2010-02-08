@@ -31,7 +31,27 @@ static struct tag_info tinfo;
 
 void player_set_position(rt_uint32_t position)
 {
-    tinfo.position = position / (tinfo.bit_rate / 8);
+	if (player_mode != PLAYER_PLAY_RADIO)
+	{
+	    tinfo.position = position / (tinfo.bit_rate / 8);
+	}
+	else
+	{
+		tinfo.position = position;
+	}
+}
+
+void player_set_title(const char* title)
+{
+	strncpy(tinfo.title, title, 40);
+}
+
+void player_set_buffer_status(rt_bool_t buffering)
+{
+	if (buffering == RT_TRUE)
+		strncpy(tinfo.artist, "缓冲中...", 40);
+	else
+		strncpy(tinfo.artist, "播放中...", 40);
 }
 
 void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
@@ -45,13 +65,20 @@ void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 	saved = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view));
 
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(206, 231, 255);
-	rtgui_dc_draw_hline(dc, 14, 14  + (tinfo.position * 212) / tinfo.duration, 75);
+	rtgui_dc_draw_hline(dc, 14, 14	+ (tinfo.position * 212)/ tinfo.duration,
+		75);
 
+	if (player_mode == PLAYER_PLAY_RADIO)
+	{
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(82, 199, 16);
+		rtgui_dc_draw_hline(dc, 14  + (tinfo.position * 212)/ tinfo.duration, 226, 75);
+	}
+	
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
 	rtgui_dc_end_drawing(dc);
 }
 
-rt_uint32_t read_line(int fd, char* line, rt_uint32_t line_size)
+static rt_uint32_t read_line(int fd, char* line, rt_uint32_t line_size)
 {
     char *pos, *next;
     rt_uint32_t length;
@@ -132,7 +159,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 	else
 	    rtgui_dc_draw_text(dc, tinfo.artist, &rect);
 
-	if ((tinfo.duration != 0) && player_mode != PLAYER_STOP)
+	if ((tinfo.duration != 0) && player_mode == PLAYER_PLAY_FILE)
 	{
         rect.x1 = rect.x2 - 64;
 		rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
@@ -143,16 +170,38 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 	rtgui_dc_set_color(dc, saved);
 }
 
-void play_mp3_file(const char* fn)
+void player_play_file(const char* fn)
 {
 	struct rtgui_dc* dc;
 	rtgui_color_t saved;
+	rt_bool_t is_mp3;
 
-    /* get music tag information */
-    mp3_get_info(fn, &tinfo);
-    if (tinfo.title[0] == '\0')
-        rt_snprintf(tinfo.title, sizeof(tinfo.title), "<未知名音乐>");
-	
+	is_mp3 = RT_FALSE;
+
+	if (strstr(fn, ".mp3") != RT_NULL ||
+		strstr(fn, ".MP3") != RT_NULL)
+		is_mp3 = RT_TRUE;
+	else if (strstr(fn, ".wav") != RT_NULL ||
+		strstr(fn, ".wav") != RT_NULL)
+		is_mp3 = RT_FALSE;
+	else return; /* not supported audio format */
+
+	if (is_mp3 == RT_TRUE)
+	{
+		/* get music tag information */
+		mp3_get_info(fn, &tinfo);
+		if (tinfo.title[0] == '\0')
+			rt_snprintf(tinfo.title, sizeof(tinfo.title), "<未知名音乐>");
+	}
+	else
+	{
+		/* wav file */
+		rt_snprintf(tinfo.title, sizeof(tinfo.title), "<未知名音乐>");
+		rt_snprintf(tinfo.artist, sizeof(tinfo.title), "<wav音乐>");
+
+		tinfo.duration = 0;
+	}
+
 	/* set player mode */
 	player_mode = PLAYER_PLAY_FILE;
 
@@ -185,7 +234,51 @@ void play_mp3_file(const char* fn)
     rtgui_view_show(home_view, RT_FALSE);
 
 	rt_kprintf("play file: %s\n", fn);
-    player_play_file(fn);
+    player_play_req(fn);
+}
+
+void player_play_url(const char* url)
+{
+	struct rtgui_dc* dc;
+
+    /* set music tag information */
+	strncpy(tinfo.title, "网络电台", 40);
+	player_set_buffer_status(RT_TRUE);
+	tinfo.duration = 320 * 1024; /* 320 k */
+
+	/* set player mode */
+	player_mode = PLAYER_PLAY_RADIO;
+
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(home_view));
+	if (dc != RT_NULL)
+	{
+		rtgui_rect_t play_rect;
+		rtgui_image_t *button;
+		
+		/* update tag information */
+		player_update_tag_info(dc);
+
+		/* update play button */
+		button = rtgui_image_create_from_mem("hdc",
+            play_hdh, sizeof(play_hdh), RT_FALSE);
+        play_rect.x1 = 32; play_rect.y1 = 92;
+        play_rect.x2 = 61; play_rect.y2 = 114;
+        rtgui_image_blit(button, dc, &play_rect);
+        rtgui_image_destroy(button);
+
+		rtgui_dc_end_drawing(dc);
+	}
+
+    rtgui_view_show(home_view, RT_FALSE);
+
+	rt_kprintf("play radio url: %s\n", url);
+    player_play_req(url);
+}
+
+void function_play_radio(void* parameter)
+{
+	next_step = PLAYER_STEP_STOP;
+	player_play_url("http://syragon.com:8000/ices");
 }
 
 void function_filelist(void* parameter)
@@ -206,7 +299,9 @@ void function_filelist(void* parameter)
                 view->items[view->current_item].name);
 
             if (strstr(view->items[view->current_item].name , ".mp3") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".MP3") != RT_NULL)
+                strstr(view->items[view->current_item].name , ".MP3") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".wav") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".WAV") != RT_NULL)
             {
 				/* clear old play list */
 				play_list_clear();
@@ -214,7 +309,7 @@ void function_filelist(void* parameter)
 
 			    player_mode = PLAYER_PLAY_FILE;
 				next_step = PLAYER_STEP_STOP;
-				play_mp3_file(play_list_start());
+				player_play_file(play_list_start());
             }
             else if (strstr(view->items[view->current_item].name , ".m3u") != RT_NULL ||
                 strstr(view->items[view->current_item].name , ".M3U") != RT_NULL)
@@ -253,13 +348,9 @@ void function_filelist(void* parameter)
 					{
 					    player_mode = PLAYER_PLAY_FILE;
 						next_step = PLAYER_STEP_NEXT;
-		                play_mp3_file(play_list_start());
+		                player_play_file(play_list_start());
 					}
                 }
-            }
-            else if (strstr(view->items[view->current_item].name , ".wav") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".WAV") != RT_NULL)
-            {
             }
 	    }
 
@@ -298,7 +389,7 @@ void function_action(void* parameter)
 
 struct list_item function_list[] =
 {
-	{"选择电台", RT_NULL, function_action, RT_NULL},
+	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
 	{"更新电台", RT_NULL, function_action, RT_NULL},
 	{"播放文件", RT_NULL, function_filelist, RT_NULL},
 	{"设备信息", RT_NULL, function_device, RT_NULL},
@@ -375,7 +466,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			else
 			    rtgui_dc_draw_text(dc, tinfo.artist, &rect);
 
-			if (tinfo.duration != 0)
+			if ((tinfo.duration != 0) && (player_mode == PLAYER_PLAY_FILE))
 			{
 	            rect.x1 = rect.x2 - 64;
 				rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
@@ -451,7 +542,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 					if ((player_mode == PLAYER_STOP) && (play_list_items() > 0))
 					{
 						next_step = PLAYER_STEP_NEXT;
-						play_mp3_file(play_list_current_item());
+						player_play_file(play_list_current_item());
 					}
 				}
 				break;
@@ -546,13 +637,13 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				}
 				else
 				{
-	                play_mp3_file(play_list_next());
+	                player_play_file(play_list_next());
 					next_step = PLAYER_STEP_NEXT;
 				}
 				break;
 
 			case PLAYER_STEP_PREV:
-				play_mp3_file(play_list_prev());
+				player_play_file(play_list_prev());
 				next_step = PLAYER_STEP_NEXT;
 				break;
 			};
