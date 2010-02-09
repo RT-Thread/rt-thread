@@ -252,53 +252,37 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	return 0;
 }
 
-/* get mp3 information */
-void mp3_get_info(const char* filename, struct tag_info* info)
+static int mp3_parse_id3v1(int fd, struct tag_info *info)
 {
-	int fd;
-	char* id3buffer;
-	rt_size_t   bytes_read;
-	int sync_word;
-    HMP3Decoder decoder;
-    MP3FrameInfo frame_info;
+	lseek(fd, -128, SEEK_END);
+	read(fd, (char *) mp3_fd_buffer, 128);
 
-	id3buffer = (char*)&mp3_fd_buffer[0];
-	if (filename == RT_NULL || info == RT_NULL) return;
-
-	fd = open(filename, O_RDONLY, 0);
-	if (fd < 0) return; /* can't read file */
-
-	/* init decoder */
-	decoder = MP3InitDecoder();
-
-	/* read data */
-	bytes_read = read(fd, id3buffer, sizeof(mp3_fd_buffer));
-
-	/* get frame information */
-	sync_word = MP3FindSyncWord(id3buffer, bytes_read);
-	if (sync_word < 0)
+	/* ID3v1 */
+	if (strncmp("TAG", (char *) mp3_fd_buffer, 3) == 0)
 	{
-		/* can't get sync word */
-		close(fd);
-		mp3_decoder_detach(decoder);
-		return;
+		strncpy(info->title, (char *) mp3_fd_buffer + 3, MIN(30, sizeof(info->title) - 1));
+		strncpy(info->artist, (char *) mp3_fd_buffer + 3 + 30, MIN(30, sizeof(info->artist) - 1));
+		return 0;
 	}
+	return -1;
+}
 
-	/* get frame information */
-	MP3GetNextFrameInfo(decoder, &frame_info, &id3buffer[sync_word]);
-	info->bit_rate = frame_info.bitrate;
-	info->sampling = frame_info.samprate;
-	info->duration = lseek(fd, 0, SEEK_END)/ (info->bit_rate / 8); /* second */
+static int mp3_parse_id3v2(int fd, struct tag_info *info)
+{
+	rt_uint32_t p = 0;
 
-	if (strncmp("ID3", id3buffer, 4) == 0)
+	lseek(fd, 0, SEEK_SET);
+	read(fd, (char *) mp3_fd_buffer, sizeof(mp3_fd_buffer));
+
+	if (strncmp("ID3", (char *) mp3_fd_buffer, 3) == 0)
 	{
 		rt_uint32_t tag_size, frame_size, i;
 		rt_uint8_t version_major;
 		int frame_header_size;
 
-		tag_size = ((rt_uint32_t)id3buffer[6] << 21)|((rt_uint32_t)id3buffer[7] << 14)|((rt_uint16_t)id3buffer[8] << 7)|id3buffer[9];
+		tag_size = ((rt_uint32_t) mp3_fd_buffer[6] << 21) | ((rt_uint32_t) mp3_fd_buffer[7] << 14) | ((rt_uint16_t) mp3_fd_buffer[8] << 7) | mp3_fd_buffer[9];
 		info->data_start = tag_size;
-		version_major = id3buffer[3];
+		version_major = mp3_fd_buffer[3];
 		if (version_major >= 3)
 		{
 			frame_header_size = 10;
@@ -307,46 +291,139 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 		{
 			frame_header_size = 6;
 		}
-		i = 10;
+		i = p = 10;
 
 		// iterate through frames
-		while (i < MIN(tag_size, sizeof(id3buffer)))
+		while (p < tag_size)
 		{
 			if (version_major >= 3)
 			{
-				frame_size = ((rt_uint32_t)id3buffer[i + 4] << 24)|((rt_uint32_t)id3buffer[i + 5] << 16)|((rt_uint16_t)id3buffer[i + 6] << 8)|id3buffer[i + 7];
+				frame_size = ((rt_uint32_t) mp3_fd_buffer[i + 4] << 24) | ((rt_uint32_t) mp3_fd_buffer[i + 5] << 16) | ((rt_uint16_t) mp3_fd_buffer[i + 6] << 8) | mp3_fd_buffer[i + 7];
 			}
 			else
 			{
-				frame_size = ((rt_uint32_t)id3buffer[i + 3] << 14)|((rt_uint16_t)id3buffer[i + 4] << 7)|id3buffer[i + 5];
+				frame_size = ((rt_uint32_t) mp3_fd_buffer[i + 3] << 14) | ((rt_uint16_t) mp3_fd_buffer[i + 4] << 7) | mp3_fd_buffer[i + 5];
+			}
+			if (i + frame_size + frame_header_size + frame_header_size >= sizeof(mp3_fd_buffer))
+			{
+				if (frame_size + frame_header_size > sizeof(mp3_fd_buffer))
+				{
+					lseek(fd, p + frame_size + frame_header_size, SEEK_CUR);
+					read(fd, (char *) mp3_fd_buffer, sizeof(mp3_fd_buffer));
+					p += frame_size + frame_header_size;
+					i = 0;
+					continue;
+				}
+				else
+				{
+					int r = sizeof(mp3_fd_buffer) - i;
+					memmove(mp3_fd_buffer, mp3_fd_buffer + i, r);
+					read(fd, (char *) mp3_fd_buffer + r, i);
+					i = 0;
+				}
 			}
 
-			if (strncmp("TT2", id3buffer + i, 3) == 0 || strncmp("TIT2", id3buffer + i, 4) == 0)
+			if (strncmp("TT2", (char *) mp3_fd_buffer + i, 3) == 0 || strncmp("TIT2", (char *) mp3_fd_buffer + i, 4) == 0)
 			{
-				strncpy(info->title, id3buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->title) - 1));
+				strncpy(info->title, (char *) mp3_fd_buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->title) - 1));
 			}
-			else if (strncmp("TP1", id3buffer + i, 3) == 0 || strncmp("TPE1", id3buffer + i, 4) == 0)
+			else if (strncmp("TP1", (char *) mp3_fd_buffer + i, 3) == 0 || strncmp("TPE1", (char *) mp3_fd_buffer + i, 4) == 0)
 			{
-				strncpy(info->artist, id3buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->artist) - 1));
+				strncpy(info->artist, (char *) mp3_fd_buffer + i + frame_header_size + 1, MIN(frame_size - 1, sizeof(info->artist) - 1));
 			}
 
+			p += frame_size + frame_header_size;
 			i += frame_size + frame_header_size;
 		}
+
+		return 0;
 	}
-	else
+
+	return -1;
+}
+
+/* get mp3 information */
+void mp3_get_info(const char* filename, struct tag_info* info)
+{
+	int fd;
+	rt_size_t bytes_read;
+	int sync_word;
+    HMP3Decoder decoder;
+    MP3FrameInfo frame_info;
+
+	if (filename == RT_NULL || info == RT_NULL) return;
+
+	fd = open(filename, O_RDONLY, 0);
+	if (fd < 0) return; /* can't read file */
+
+	/* init decoder */
+	decoder = MP3InitDecoder();
+
+	info->data_start = 0;
+
+	/*
+	 * TODO - Add UTF-8 support and fix this.
+	 *
+	 * ID3 v2 is generally useless here, because it
+	 * uses UTF-8 encoding, which we can't handle right now.
+	 * But parsing v2 first is nesessary in order to
+	 * find the correct MP3 frame header location,
+	 * in case of the ID3 v2 tag should be there.
+	 */
+//	if (mp3_parse_id3v2(fd, info) < 0)
+//	{
+//		// ID3 v2 is not available. Fall back to ID3 v1.
+//		mp3_parse_id3v1(fd, info);
+//	}
+	mp3_parse_id3v2(fd, info);
+	mp3_parse_id3v1(fd, info);
+
+	lseek(fd, info->data_start, SEEK_SET);
+	bytes_read = read(fd, (char *) mp3_fd_buffer, sizeof(mp3_fd_buffer));
+
+	/* get frame information */
+	sync_word = MP3FindSyncWord(mp3_fd_buffer, bytes_read);
+	if (sync_word >= 0)
 	{
-		lseek(fd, -128, SEEK_END);
-		bytes_read = read(fd, id3buffer, 128);
+		rt_uint32_t p;
+		short samples_per_frame;
 
-		/* ID3v1 */
-		if (strncmp("TAG", id3buffer, 3) == 0)
+		/* get frame information */
+		MP3GetNextFrameInfo(decoder, &frame_info, &mp3_fd_buffer[sync_word]);
+
+		// Try to locate the Xing VBR header.
+		if (frame_info.version == MPEG1)
 		{
-			strncpy(info->title, id3buffer + 3, MIN(30, sizeof(info->title) - 1));
-			strncpy(info->artist, id3buffer + 3 + 30, MIN(30, sizeof(info->artist) - 1));
+			p = frame_info.nChans == 2 ? 32 : 17;
+			samples_per_frame = 1152;
 		}
+		else
+		{
+			p = frame_info.nChans == 2 ? 17 : 9;
+			samples_per_frame = 576;
+		}
+		p += sync_word + 4;
 
-		/* set data start position */
-		info->data_start = 0;
+		if (strncmp("Xing", (char *) mp3_fd_buffer + p, 4) || strncmp("Info", (char *) mp3_fd_buffer + p, 4))
+		{
+			// VBR
+			if (mp3_fd_buffer[p + 7] & 1 == 1) /* Checks if the frames field exists */
+			{
+				rt_uint32_t frames = ((rt_uint32_t) mp3_fd_buffer[p + 8] << 24) | ((rt_uint32_t) mp3_fd_buffer[p + 9] << 16) | ((rt_uint32_t) mp3_fd_buffer[p + 10] << 8) | (rt_uint32_t) mp3_fd_buffer[p + 11];
+				info->duration = frames * samples_per_frame / frame_info.samprate;
+			}
+		}
+		/*
+		 * There're two other rarely used VBR header standards: VBRI & MLLT.
+		 * I can't find any sample with these headers. So I just ignored them. :)
+		 */
+		else
+		{
+			// CBR
+			info->duration = lseek(fd, 0, SEEK_END) / (frame_info.bitrate / 8); /* second */
+		}
+		info->bit_rate = frame_info.bitrate;
+		info->sampling = frame_info.samprate;
 	}
 
     /* set current position */
