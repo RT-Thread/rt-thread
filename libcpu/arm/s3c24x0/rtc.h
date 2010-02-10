@@ -8,16 +8,19 @@
 
 #define RTC_DEBUG
 
-#define RTC_ENABLE	0x01
-#define RTC_DISABLE	0x02
+#define RTC_ENABLE			 0x01
+#define RTC_DISABLE			 0x02
+
+#define BCD2BIN(n)			 (((((n) >> 4) & 0x0F) * 10) + ((n) & 0x0F))
+#define BIN2BCD(n)			 ((((n) / 10) << 4) | ((n) % 10))
+
+#define LEAPS_THRU_END_OF(y) ((y)/4 - (y)/100 + (y)/400)
+#define LEAP_YEAR(year) 	 ((!(year % 4) && (year % 100)) || !(year % 400))
 
 static const unsigned char days_in_month[] = 
 {
 	31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
 };
-
-#define LEAPS_THRU_END_OF(y) ((y)/4 - (y)/100 + (y)/400)
-#define LEAP_YEAR(year) ((!(year % 4) && (year % 100)) || !(year % 400))
 
 struct rtc_time 
 {
@@ -35,6 +38,6 @@ struct rtc_time
 void rt_hw_rtc_get (struct rtc_time *tmp);
 void rt_hw_rtc_set (struct rtc_time *tmp);
 void rt_hw_rtc_reset (void);
-void rt_rtc_time_to_tm(rt_uint32_t time, struct rtc_time *tm);
+void rt_rtc_time_to_tm(rt_uint32_t time, struct tm *tm);
 
 #endif

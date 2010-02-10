@@ -15,25 +15,24 @@
 #include <rtthread.h>
 #include <time.h>
 #include <s3c24x0.h>
+#include "rtc.h"
 
-#define BCD2BIN(n)	(((((n) >> 4) & 0x0F) * 10) + ((n) & 0x0F))
-#define BIN2BCD(n)	((((n) / 10) << 4) | ((n) % 10))
 
 /**
  * This function get rtc time
  */
-void rt_hw_rtc_get(struct tm *ti)
+void rt_hw_rtc_get(struct rtc_time *ti)
 {
 	rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
 	/* enable access to RTC registers */
-	RTCCON |= 0x01;
+	RTCCON |= RTC_ENABLE;
 
 	/* read RTC registers */
 	do
 	{
-		sec 		= BCDSEC;
-		min 		= BCDMIN;
+		sec 	= BCDSEC;
+		min 	= BCDMIN;
 		hour 	= BCDHOUR;
 		mday	= BCDDATE;
 		wday 	= BCDDAY;
@@ -58,7 +57,7 @@ void rt_hw_rtc_get(struct tm *ti)
 /**
  * This function set rtc time
  */
-void rt_hw_rtc_set(struct tm *ti)
+void rt_hw_rtc_set(struct rtc_time *ti)
 {
 	rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
@@ -67,8 +66,8 @@ void rt_hw_rtc_set(struct tm *ti)
 	wday 	= BIN2BCD(ti->tm_wday);
 	mday 	= BIN2BCD(ti->tm_mday);
 	hour 	= BIN2BCD(ti->tm_hour);
-	min 		= BIN2BCD(ti->tm_min);
-	sec 		= BIN2BCD(ti->tm_sec);
+	min 	= BIN2BCD(ti->tm_min);
+	sec 	= BIN2BCD(ti->tm_sec);
 
 	/* enable access to RTC registers */
 	RTCCON |= 0x01;
@@ -79,7 +78,7 @@ void rt_hw_rtc_set(struct tm *ti)
 	BCDHOUR 	= hour;
 	BCDDATE 	= mday;
 	BCDDAY 		= wday;
-	BCDMON 	= mon;
+	BCDMON 		= mon;
 	BCDYEAR 	= year;
 
 	/* disable access to RTC registers */
@@ -103,25 +102,25 @@ static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 
 static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	struct tm* ti;
+	struct rtc_time* time;
 	RT_ASSERT(dev != RT_NULL);
 
-	ti = (struct tm*)args;
+	time = (struct rtc_time*)args;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_RTC_GET_TIME:
 		/* read device */
-		rt_hw_rtc_get(ti);
+		rt_hw_rtc_get(time);
 		break;
 
 	case RT_DEVICE_CTRL_RTC_SET_TIME:
 		/* write device */
-		rt_hw_rtc_set(ti);
+		rt_hw_rtc_set(time);
 		break;
 	}
 
@@ -145,7 +144,6 @@ void rt_hw_rtc_init(void)
 	
 	rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 
-	return;
 }
 
 time_t time(time_t* t)
@@ -185,7 +183,7 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &ti);
 	}
 }
-FINSH_FUNCTION_EXPORT(set_date, set date)
+FINSH_FUNCTION_EXPORT(set_date, set date(year, month, day))
 
 void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
@@ -197,20 +195,20 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 	{
 		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
 		ti.tm_hour	= hour;
-		ti.tm_min		= minute;
+		ti.tm_min	= minute;
 		ti.tm_sec 	= second;
 		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &ti);
 	}
 }
-FINSH_FUNCTION_EXPORT(set_time, set second)
+FINSH_FUNCTION_EXPORT(set_time, set time(hour, minute, second))
 
-void list_date()
+void list_date(void)
 {
 	time_t now;
 	
 	time(&now);
 	rt_kprintf("%s\n", ctime(&now));
 }
-FINSH_FUNCTION_EXPORT(list_date, set date)
+FINSH_FUNCTION_EXPORT(list_date, list date)
 #endif
 
