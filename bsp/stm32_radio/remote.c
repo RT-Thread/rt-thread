@@ -6,6 +6,7 @@
 | Chang Logs:
 | Date           Author       Notes
 | 2010-01-02     aozima       The bate version.
+| 2010-02-10     aozima       change printf string 中文 to english.
 +----------------------------------------------------
 */
 
@@ -13,6 +14,8 @@
 #include <dfs_posix.h>
 #include <stm32f10x.h>
 
+/* 重定义printf */
+#define printf                   rt_kprintf
 /* 设置允许偏差,单位0.01ms */
 #define remote_deviation         15
 #define remote_code_len_max      100
@@ -138,82 +141,91 @@ void rem_start(void)
     TIM5_Configuration();
 
     p_rem_code_src = rt_malloc( sizeof(struct rem_codes_typedef)*6 );
-    rt_memset(p_rem_code_src,0, sizeof(struct rem_codes_typedef)*6 );
-
-    /* 解读红外信息 */
+    if( p_rem_code_src != RT_NULL)
     {
-        int fd,size;
-        char buf[7];/* 文件读取临时缓存 #####\r\n */
-        unsigned int i;
-        unsigned short tmp;
-        unsigned int read_index = 0;
-        unsigned int EOF_flag = 1;
+        rt_memset(p_rem_code_src,0, sizeof(struct rem_codes_typedef)*6 );
 
-        rt_kprintf("\r\n解读红外信息");
-        fd = open("/resource/remote.txt",O_RDONLY,0);
-        if( fd>0 )
+        /* 解读红外信息 */
         {
-            rt_kprintf("\r/resource/remote.txt打开成功");
-            while( EOF_flag )
+            int fd,size;
+            char buf[7];/* 文件读取临时缓存 #####\r\n */
+            unsigned int i;
+            unsigned short tmp;
+            unsigned int read_index = 0;
+            unsigned int EOF_flag = 1;
+
+            printf("\r\ndecode remote codes");
+            fd = open("/resource/remote.txt",O_RDONLY,0);
+            if( fd>0 )
             {
-                /* 读取长度 */
-                size = read(fd,buf,7);
-                if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
+                printf("\r/resource/remote.txt open succeed");
+                while( EOF_flag )
                 {
-                    /* 转换得到样本数据长度 */
-                    tmp =   (buf[0]-'0')*10000
-                            + (buf[1]-'0')*1000
-                            + (buf[2]-'0')*100
-                            + (buf[3]-'0')*10
-                            + (buf[4]-'0');
-                    if( tmp<100 )
+                    /* 读取长度 */
+                    size = read(fd,buf,7);
+                    if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
                     {
-                        unsigned int code_len = tmp;
-                        p_rem_code_src[read_index].len = code_len;
-                        /* 如果样本长度符合 就开始从文件读取编码数据 */
-                        for(i=0; i<code_len; i++)
+                        /* 转换得到样本数据长度 */
+                        tmp =   (buf[0]-'0')*10000
+                                + (buf[1]-'0')*1000
+                                + (buf[2]-'0')*100
+                                + (buf[3]-'0')*10
+                                + (buf[4]-'0');
+                        if( tmp<100 )
                         {
-                            size = read(fd,buf,7);
-                            if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
+                            unsigned int code_len = tmp;
+                            p_rem_code_src[read_index].len = code_len;
+                            /* 如果样本长度符合 就开始从文件读取编码数据 */
+                            for(i=0; i<code_len; i++)
                             {
-                                /* 转换得到样本数据 */
-                                tmp =   (buf[0]-'0')*10000
-                                        + (buf[1]-'0')*1000
-                                        + (buf[2]-'0')*100
-                                        + (buf[3]-'0')*10
-                                        + (buf[4]-'0');
-                                p_rem_code_src[read_index].rem_code[i] = tmp;
+                                size = read(fd,buf,7);
+                                if( (size == 7) && (buf[5]=='\r') && buf[6]=='\n' )
+                                {
+                                    /* 转换得到样本数据 */
+                                    tmp =   (buf[0]-'0')*10000
+                                            + (buf[1]-'0')*1000
+                                            + (buf[2]-'0')*100
+                                            + (buf[3]-'0')*10
+                                            + (buf[4]-'0');
+                                    p_rem_code_src[read_index].rem_code[i] = tmp;
+                                }
                             }
+                            read_index++;
                         }
-                        read_index++;
                     }
+                    else
+                    {
+                        EOF_flag = 0;
+                    }
+                }//while( EOF_flag )
+
+                /* 判断是否正确解读编码数据文件 */
+                if ( p_rem_code_src[0].len > 0 && p_rem_code_src[0].len < remote_code_len_max )
+                {
+                    /* 设置工作模式为正常识别模式 */
+                    rem_mode = 2;
+                    printf("\r\ndecode succeed,The remote enable\r\n");
                 }
                 else
                 {
-                    EOF_flag = 0;
+                    /* 设置工作模式为正常识别模式 */
+                    rem_mode = 0;
+                    printf("\r\nrem_codes decode fail,The remote disable\r\n");
                 }
-            }//while( EOF_flag )
-
-            /* 判断是否正确解读编码数据文件 */
-            if ( p_rem_code_src[0].len > 0 && p_rem_code_src[0].len < remote_code_len_max )
-            {
-                /* 设置工作模式为正常识别模式 */
-                rem_mode = 2;
-                rt_kprintf("\r红外遥控编码文件解读完成,已打开红外遥控功能\r\n");
             }
             else
             {
-                /* 设置工作模式为正常识别模式 */
-                rem_mode = 0;
-                rt_kprintf("\r\n红外遥控编码文件解读失败,已关闭红外遥控功能\r\n");
+                printf("\rrem_codes /resource/remote.txt open fail! fd:%d\r\nThe remote disbale.\r\nplease run rem_study()\r\n",fd);
             }
-        }
-        else
-        {
-            rt_kprintf("\r红外遥控编码文件 /resource/remote.txt 打开失败! fd:%d\r\n无法开启红外遥控功能.\r\n请执行rem_study()进行自动学习\r\n",fd);
-        }
-        close(fd);
-    }/* 解读红外信息 */
+            close(fd);
+        }/* 解读红外信息 */
+
+    }
+    else
+    {
+        rem_mode = 0;
+        printf("\r\nmalloc rem_codes[] fail!!!\r\nThe remote disable!");
+    }
 }
 
 #include <rtgui/event.h>
@@ -238,7 +250,7 @@ void rem_encoder(struct rtgui_event_kbd * p)
             while( rem_cmp_n )
             {
                 unsigned int tmp2 = p_rem_code_src[ 6-rem_cmp_n ].len;
-                //rt_kprintf("\r\nrem_cmp_n:%d  tmp2:%d",rem_cmp_n,tmp2);
+                //printf("\r\nrem_cmp_n:%d  tmp2:%d",rem_cmp_n,tmp2);
                 if( tmp2 )
                 {
 
@@ -255,13 +267,13 @@ void rem_encoder(struct rtgui_event_kbd * p)
                 else
                 {
                     err_flag = 1;
-                    rt_kprintf("\r\n解码失败");
+                    printf("\r\nThe rem codes len is 0.");
                 }
 
                 if( err_flag==0 )
                 {
                     /* 对比全部数据符合 */
-                    rt_kprintf("\r\n识别到遥控按键 %s",desc_key[6-rem_cmp_n]);
+                    printf("\r\nmatch key: %s",desc_key[6-rem_cmp_n]);
                     switch( rem_cmp_n )
                     {
                     case 6:
@@ -390,15 +402,15 @@ int rem_study(void)
 
     rem_mode = 1;
     rx_count = 0;
-    rt_kprintf("\r\n红外遥控自学习功能启动");
+    printf("\r\nremote studing.....");
     fd = open("/resource/remote.txt",O_WRONLY | O_TRUNC,0);
     if( !(fd<0) )
     {
-        rt_kprintf("\r\n红外遥控编码文件 /resource/remote.txt 创建成功");
+        printf("\r\n/resource/remote.txt create succeed.");
     }
     else
     {
-        rt_kprintf("\r红外遥控编码文件 /resource/remote.txt 创建失败.\r\n学习程序中止.");
+        printf("\r/resource/remote.txt create fail.\r\nabort.");
         return -1;
     }
 
@@ -406,7 +418,7 @@ int rem_study(void)
     for( i=0; i<6; i++)
     {
         unsigned int is_ok = 1;
-        rt_kprintf("\r\npress key %s",desc_key[i]);
+        printf("\r\npress key %s",desc_key[i]);
         while( is_ok==1 )
         {
             if( (rem_mode==1) && (rt_tick_get()>first_tick+10) && (rx_count > 0) )
@@ -414,7 +426,7 @@ int rem_study(void)
                 unsigned int a,b;
                 unsigned char * p = tmp_buf;
 
-                rt_kprintf("\r\n%s",desc_key[i]);
+                printf("\r\n%s",desc_key[i]);
 
                 b = rx_count;
                 p_rem_code_src[i].len = rx_count;
@@ -463,7 +475,7 @@ int rem_study(void)
                 size = write(fd,(char*)tmp_buf,(b+1)*7 );
                 if( size==((b+1)*7) )
                 {
-                    rt_kprintf("文件写入成功");
+                    printf(" file write succeed!");
                     is_ok++;
                     rt_thread_delay( 2 );
 
@@ -478,7 +490,7 @@ int rem_study(void)
                 }
                 else
                 {
-                    rt_kprintf("文件写入失败\r\n红外学习程序退出");
+                    printf(" file write fail.\r\nabort.");
                     return -1;
                 }
             }
@@ -486,7 +498,7 @@ int rem_study(void)
         }//while( is_ok==1 )
     }//for( i=0; i<6; i++)
     close(fd);
-    rt_kprintf("\r\n学习完成,现在进入正常识别模式\r\n");
+    printf("\r\nremote study complete.The remote enable.\r\n");
     rem_mode = 2;
     return 0;
 }
