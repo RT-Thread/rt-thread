@@ -174,12 +174,14 @@ euint32 file_fwrite(File* file,euint32 offset,euint32 size,euint8* buf)
 	euint16 btr;
 	euint8 *tbuf;
 
-	if(!file_getAttr(file,FILE_STATUS_OPEN) || !file_getAttr(file,FILE_STATUS_WRITE))return(0);
+	if((!file_getAttr(file,FILE_STATUS_OPEN)) || (!file_getAttr(file,FILE_STATUS_WRITE)))return(0);
 	
 	if(offset>file->FileSize){
 		offset=file->FileSize;
 	}
-	
+
+	dfs_log(DFS_DEBUG_INFO, ("offset:%d", offset));
+
 	need_cluster = file_requiredCluster(file,offset,size);
 	
 	if(need_cluster){
@@ -513,8 +515,8 @@ esint8 file_fopen(File* file,FileSystem *fs,eint8* filename,eint32 mode)
 					fs_setFirstClusterInDirEntry(&(file->DirEntry),sec);
 					fat_setNextClusterAddress(fs,sec,fat_giveEocMarker(fs));
 					file_initFile(file,fs,&loc);
-					file_setpos(file,file->FileSize);
 				}
+				file_setpos(file,file->FileSize);
 			}
 			else
 			{
