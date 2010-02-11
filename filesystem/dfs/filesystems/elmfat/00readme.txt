@@ -1,8 +1,9 @@
-FatFs Module Source Files R0.07c                        (C)ChaN, 2009
+FatFs Module Source Files R0.07e                        (C)ChaN, 2009
 
 
 FILES
 
+  ffconf.h   Configuration file for FatFs module.
   ff.h       Common include file for FatFs and application module.
   ff.c       FatFs module.
   diskio.h   Common include file for FatFs and disk I/O module.
@@ -100,5 +101,10 @@ REVISION HISTORY
                        Added relative path feature.
                        Added f_chdir().
                        Added f_chdrive().
-                       Added proper case conversion to extended char.
+                       Added proper case conversion for extended characters.
 
+  Nov 03,'2009 R0.07e  Separated out configuration options from ff.h to ffconf.h.
+                       Added a configuration option, _LFN_UNICODE.
+                       Fixed f_unlink() fails to remove a sub-dir on _FS_RPATH.
+                       Fixed name matching error on the 13 char boundary.
+                       Changed f_readdir() to return the SFN with always upper case on non-LFN cfg.

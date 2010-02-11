@@ -140,9 +140,13 @@ int dfs_elm_open(struct dfs_fd* file)
 	{
 		mode = FA_READ;
 
-		if (file->flags & DFS_O_CREAT) mode |= FA_CREATE_NEW;
 		if (file->flags & DFS_O_WRONLY) mode |= FA_WRITE;
+		/* Opens the file, if it is existing. If not, a new file is created. */
+		if (file->flags & DFS_O_CREAT) mode |= FA_OPEN_ALWAYS;
+		/* Creates a new file. If the file is existing, it is truncated and overwritten. */
 		if (file->flags & DFS_O_TRUNC) mode |= FA_CREATE_ALWAYS;
+		/* Creates a new file. The function fails if the file is already existing. */
+		if (file->flags & DFS_O_EXCL) mode |= FA_CREATE_NEW;
 
 		/* allocate a fd */
 		fd = (FIL*)rt_malloc(sizeof(FIL));
@@ -157,6 +161,11 @@ int dfs_elm_open(struct dfs_fd* file)
 			file->pos  = fd->fptr;
 			file->size = fd->fsize;
 			file->data = fd;
+
+			if (file->flags & DFS_O_APPEND)
+			{
+				file->pos = f_lseek(fd, fd->fsize);
+			}
 		}
 		else
 		{
@@ -355,9 +364,9 @@ int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *s
 		/* convert to dfs stat structure */
 		st->st_dev   = 0;
 
-		st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH | 
+		st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
 		DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
-		if (file_info.fattrib & AM_DIR) 
+		if (file_info.fattrib & AM_DIR)
 		{
 			st->st_mode &= ~DFS_S_IFREG;
 			st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
@@ -458,3 +467,41 @@ rt_time_t get_fattime()
 {
 	return 0;
 }
+
+#if _FS_REENTRANT
+BOOL ff_cre_syncobj(BYTE drv, _SYNC_t* m)
+{
+    char name[8];
+    rt_mutex_t mutex;
+
+    rt_snprintf(name, sizeof(name), "fat%d", drv);
+    mutex = rt_mutex_create(name, RT_IPC_FLAG_FIFO);
+    if (mutex != RT_NULL)
+    {
+        *m = mutex;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL ff_del_syncobj(_SYNC_t m)
+{
+    rt_mutex_delete(m);
+
+    return TRUE;
+}
+
+BOOL ff_req_grant(_SYNC_t m)
+{
+    if (rt_mutex_take(m, _FS_TIMEOUT) == RT_EOK) return TRUE;
+
+    return FALSE;
+}
+
+void ff_rel_grant(_SYNC_t m)
+{
+	rt_mutex_release(m);
+}
+
+#endif

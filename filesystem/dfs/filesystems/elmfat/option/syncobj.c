@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------*/
 /* Sample code of OS dependent synchronization object controls            */
-/* for FatFs R0.07a  (C)ChaN, 2009                                        */
+/* for FatFs R0.07d  (C)ChaN, 2009                                        */
 /*------------------------------------------------------------------------*/
 
 #include <windows.h>	// Win32
@@ -78,11 +78,11 @@ BOOL ff_req_grant (	/* TRUE:Got a grant to access the volume, FALSE:Could not ge
 {
 	BOOL ret;
 
-	ret = (WaitForSingleObject(sobj, _TIMEOUT) == WAIT_OBJECT_0) ? TRUE : FALSE;	// Win32
+	ret = (WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0) ? TRUE : FALSE;	// Win32
 
 //	ret = (wai_sem(sobj) == E_OK) ? TRUE : FALSE;	// uITRON
 
-//	OSMutexPend(sobj, _TIMEOUT, &err));				// uC/OS-II
+//	OSMutexPend(sobj, _FS_TIMEOUT, &err));				// uC/OS-II
 //	ret = (err == OS_NO_ERR) ? TRUE : FALSE;		//
 
 	return ret;
