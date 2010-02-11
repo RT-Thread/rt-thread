@@ -24,67 +24,38 @@
 #include <dfs_init.h>
 /* dfs filesystem:EFS filesystem init */
 #include <dfs_efs.h>
+/* dfs filesystem:ELM FatFs filesystem init */
+#include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #endif
-
-/* filesystem test */
-#include <dfs_posix.h>
-static char fullpath[256 + 1];
-void ls_root()
-{
-	DIR *dir;
-	
-	dir = opendir("/");
-	if (dir != RT_NULL)
-	{
-		struct dfs_dirent* dirent;
-		struct dfs_stat s;
-
-		do 
-		{
-			dirent = readdir(dir);
-			if (dirent == RT_NULL) break;
-			rt_memset(&s, 0, sizeof(struct dfs_stat));
-
-			/* build full path for each file */
-			rt_sprintf(fullpath, "/%s", dirent->d_name);
-
-			stat(fullpath, &s);
-			if ( s.st_mode & DFS_S_IFDIR )
-			{
-				rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
-			}
-			else
-			{
-				rt_kprintf("%s\t\t%lu\n", dirent->d_name, s.st_size);
-			}
-		} while (dirent != RT_NULL);
-
-		closedir(dir);
-	}
-	else rt_kprintf("open root directory failed\n");
-}
 
 void rt_init_thread_entry(void* parameter)
 {
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
 	{
-		/* init the device filesystem */
-		dfs_init();
-		/* init the efsl filesystam*/
-		efsl_init();
+        /* init the device filesystem */
+        dfs_init();
+#ifdef RT_USING_DFS_EFSL
+        /* init the efsl filesystam*/
+        efsl_init();
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
-		{
-			rt_kprintf("File System initialized!\n");
-			ls_root();
-		}
-		else
-			rt_kprintf("File System init failed!\n");
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+#elif defined(RT_USING_DFS_ELMFAT)
+        /* init the elm FAT filesystam*/
+        elm_init();
 
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+#endif
 	}
 #endif
 }

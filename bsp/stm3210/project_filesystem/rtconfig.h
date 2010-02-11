@@ -65,10 +65,18 @@
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
+/* SECTION: FinSH shell options */
+/* Using FinSH as Shell*/
+/* #define RT_USING_FINSH */
+/* Using symbol table */
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
+
 /* SECTION: device filesystem */
 #define RT_USING_DFS
-#define RT_USING_DFS_EFSL
-/* #define RT_USING_DFS_ELMFAT */
+/* #define RT_USING_DFS_EFSL */
+#define RT_USING_DFS_ELMFAT
+#define RT_DFS_ELM_WORD_ACCESS
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2

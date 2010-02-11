@@ -66,22 +66,12 @@ File 5,2,<..\..\libcpu\arm\stm32\fault_rvds.S><fault_rvds.S>
 File 5,2,<..\..\libcpu\arm\stm32\start_rvds.s><start_rvds.s>
 File 5,1,<..\..\libcpu\arm\stm32\serial.c><serial.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_util.c><dfs_util.c>
-File 6,1,<..\..\filesystem\dfs\src\dfs_cache.c><dfs_cache.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_fs.c><dfs_fs.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_init.c><dfs_init.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_posix.c><dfs_posix.c>
 File 6,1,<..\..\filesystem\dfs\src\dfs_raw.c><dfs_raw.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c><plibc.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c><efs.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c><extract.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c><partition.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c><ui.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c><dir.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c><fat.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c><file.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c><fs.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c><ls.c>
-File 6,1,<..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c><time.c>
+File 6,1,<..\..\filesystem\dfs\filesystems\elmfat\dfs_elm.c><dfs_elm.c>
+File 6,1,<..\..\filesystem\dfs\filesystems\elmfat\ff.c><ff.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32'
@@ -142,7 +132,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  ADSCMISC ()
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()
- ADSCINCD (.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;.;..\..\libcpu\arm\stm32;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include)
+ ADSCINCD (.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;.;..\..\libcpu\arm\stm32;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\finsh)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

@@ -287,9 +287,6 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
           <state>$PROJ_DIR$\..\..\filesystem\dfs</state>
           <state>$PROJ_DIR$\..\..\filesystem\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1086,9 +1083,6 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
           <state>$PROJ_DIR$\..\..\filesystem\dfs</state>
           <state>$PROJ_DIR$\..\..\filesystem\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1611,7 +1605,7 @@
   <group>
     <name>Filesystem</name>
     <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_cache.c</name>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\elmfat\dfs_elm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_fs.c</name>
@@ -1629,37 +1623,7 @@
       <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_util.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c</name>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\elmfat\ff.c</name>
     </file>
   </group>
   <group>
