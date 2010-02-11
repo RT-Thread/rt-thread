@@ -35,6 +35,7 @@ extern void rt_show_version(void);
 extern void rt_system_heap_init(void*, void*);
 extern void rt_hw_finsh_init(void);
 extern void rt_application_init(void);
+extern void rt_rtc_show_calendar(void);
 
 extern struct serial_device uart0;
 extern struct rt_device uart0_device;
@@ -98,7 +99,10 @@ void rtthread_startup(void)
 
 	/* show version */
 	rt_show_version();
-
+	
+	/* show calendar */
+	rt_rtc_show_calendar();
+	
 	/* init tick */
 	rt_system_tick_init();
 
@@ -110,7 +114,7 @@ void rtthread_startup(void)
 
 	/* init heap memory system */
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x07400000);
+	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x34000000);
 #else
 	rt_system_heap_init(&__bss_end, (void*)0x34000000);
 #endif
