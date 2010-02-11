@@ -22,7 +22,7 @@ void readspeed(const char* filename, int block_size)
     rt_size_t total_length;
     rt_tick_t tick;
 
-    fd = open(filename, 0, DFS_O_RDONLY);
+    fd = open(filename, 0, O_RDONLY);
     if (fd < 0)
     {
         rt_kprintf("open file:%s failed\n", filename);
@@ -45,7 +45,7 @@ void readspeed(const char* filename, int block_size)
         int length;
         length = read(fd, buff_ptr, block_size);
 
-        if (length == 0) break;
+        if (length <= 0) break;
         total_length += length;
     }
     tick = rt_tick_get() - tick;

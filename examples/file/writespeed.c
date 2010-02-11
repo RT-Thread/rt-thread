@@ -16,11 +16,11 @@
 
 void writespeed(const char* filename, int total_length, int block_size)
 {
-    int fd;
+    int fd, index, length;
     char *buff_ptr;
     rt_tick_t tick;
 
-    fd = open(filename, 0, O_WRONLY);
+    fd = open(filename, O_WRONLY | O_WRONLY | O_TRUNC, 0);
     if (fd < 0)
     {
         rt_kprintf("open file:%s failed\n", filename);
@@ -37,9 +37,25 @@ void writespeed(const char* filename, int total_length, int block_size)
     }
 
 	/* prepare write data */
+	for (index = 0; index < block_size; index++)
+	{
+		buff_ptr[index] = index;
+	}
+	index = 0;
 
+	/* get the beginning tick */
     tick = rt_tick_get();
-
+	while (index < total_length / block_size)
+	{
+		length = write(fd, buff_ptr, block_size);
+		if (length != block_size)
+		{
+			rt_kprintf("write failed\n");
+			break;
+		}
+		
+		index ++;
+	}
     tick = rt_tick_get() - tick;
 
 	/* close file and release memory */

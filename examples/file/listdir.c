@@ -14,6 +14,7 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 
+static char fullpath[256];
 void list_dir(const char* path)
 {
 	DIR *dir;
