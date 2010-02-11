@@ -8,8 +8,8 @@
 
 #define RTC_DEBUG
 
-#define RTC_ENABLE			 0x01
-#define RTC_DISABLE			 0x02
+#define	RTC_ENABLE()		(RTCCON |=  0x01)	//RTC read and write enable
+#define	RTC_DISABLE()		(RTCCON &= ~0x01)	//RTC read and write disable
 
 #define BCD2BIN(n)			 (((((n) >> 4) & 0x0F) * 10) + ((n) & 0x0F))
 #define BIN2BCD(n)			 ((((n) / 10) << 4) | ((n) % 10))

@@ -26,7 +26,7 @@ void rt_hw_rtc_get(struct rtc_time *ti)
 	rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
 	/* enable access to RTC registers */
-	RTCCON |= RTC_ENABLE;
+	RTC_ENABLE();
 
 	/* read RTC registers */
 	do
@@ -38,10 +38,10 @@ void rt_hw_rtc_get(struct rtc_time *ti)
 		wday 	= BCDDAY;
 		mon 	= BCDMON;
 		year 	= BCDYEAR;
-        } while (sec != BCDSEC);
+    } while (sec != BCDSEC);
 
 	/* disable access to RTC registers */
-	RTCCON &= ~0x01;
+	RTC_DISABLE();
 
 	ti->tm_sec  	= BCD2BIN(sec  & 0x7F);
 	ti->tm_min  	= BCD2BIN(min  & 0x7F);
@@ -70,7 +70,7 @@ void rt_hw_rtc_set(struct rtc_time *ti)
 	sec 	= BIN2BCD(ti->tm_sec);
 
 	/* enable access to RTC registers */
-	RTCCON |= 0x01;
+	RTC_ENABLE();
 
 	/* write RTC registers */
 	BCDSEC 		= sec;
@@ -82,7 +82,7 @@ void rt_hw_rtc_set(struct rtc_time *ti)
 	BCDYEAR 	= year;
 
 	/* disable access to RTC registers */
-	RTCCON &= ~0x01;
+	RTC_DISABLE();
 }
 
 /**
@@ -97,6 +97,13 @@ void rt_hw_rtc_reset (void)
 static struct rt_device rtc;
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
+	RTC_ENABLE();
+	return RT_EOK;
+}
+
+static rt_err_t rt_rtc_close(rt_device_t dev)
+{
+	RTC_DISABLE();
 	return RT_EOK;
 }
 
@@ -134,7 +141,7 @@ void rt_hw_rtc_init(void)
 	/* register rtc device */
 	rtc.init 	= RT_NULL;
 	rtc.open 	= rt_rtc_open;
-	rtc.close	= RT_NULL;
+	rtc.close	= rt_rtc_close;
 	rtc.read 	= rt_rtc_read;
 	rtc.write	= RT_NULL;
 	rtc.control = rt_rtc_control;
@@ -170,7 +177,7 @@ time_t time(time_t* t)
 #include <finsh.h>
 void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
-	struct tm ti;
+	struct rtc_time ti;
 	rt_device_t device;
 		
 	device = rt_device_find("rtc");
@@ -187,7 +194,7 @@ FINSH_FUNCTION_EXPORT(set_date, set date(year, month, day))
 
 void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
-	struct tm ti;
+	struct rtc_time ti;
 	rt_device_t device;
 		
 	device = rt_device_find("rtc");
