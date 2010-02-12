@@ -19,6 +19,19 @@
 /* RTGUI options */
 
 #ifdef _WIN32
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX		12
+/* support 16 weight font */
+#define RTGUI_USING_FONT16
+/* support Chinese font */
+#define RTGUI_USING_FONTHZ
+/* use small size in RTGUI */
+#define RTGUI_USING_SMALL_SIZE
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+/* default font size in RTGUI */
+#define RTGUI_DEFAULT_FONT_SIZE	12
+
 #define RTGUI_USING_STDIO_FILERW
 #define RTGUI_IMAGE_PNG
 #define RTGUI_IMAGE_JPEG

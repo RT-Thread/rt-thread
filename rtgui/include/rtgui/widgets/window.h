@@ -52,7 +52,10 @@ struct rtgui_win
 
 	/* top window style */
 	rt_uint8_t style;
+
+	rt_uint8_t flag;
 	rtgui_modal_code_t modal_code;
+	rtgui_widget_t* modal_widget;
 
 	/* window title */
 	char* title;
@@ -69,7 +72,7 @@ struct rtgui_win
 rtgui_type_t *rtgui_win_type_get(void);
 
 rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, 
-	rtgui_rect_t *rect, rt_uint32_t flag);
+	rtgui_rect_t *rect, rt_uint8_t flag);
 void rtgui_win_destroy(rtgui_win_t* win);
 
 rtgui_modal_code_t rtgui_win_show(rtgui_win_t* win, rt_bool_t is_modal);

@@ -17,6 +17,12 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_server.h>
 
+#define CHECK_BOX_W		13
+#define CHECK_BOX_H		13
+
+#define RADIO_BOX_W		12
+#define RADIO_BOX_H		12
+
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/textbox.h>

@@ -192,6 +192,9 @@ struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char
 					radiobox->item_size = board_size + 3 + rtgui_rect_width(rect);
 			}
 		}
+
+		if (radiobox->item_size < RADIO_BOX_H + 2)
+			radiobox->item_size = RADIO_BOX_H + 2;
 	}
 
 	return radiobox;

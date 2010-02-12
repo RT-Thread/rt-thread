@@ -116,7 +116,10 @@ rtgui_view_t* rtgui_view_create(const char* title)
 
 void rtgui_view_destroy(rtgui_view_t* view)
 {
-	rtgui_widget_destroy(RTGUI_WIDGET(view));
+	if (view->modal_show == RT_TRUE)
+		rtgui_view_end_modal(view, RTGUI_MODAL_CANCEL);
+	else
+		rtgui_widget_destroy(RTGUI_WIDGET(view));
 }
 
 void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box)
@@ -151,9 +154,12 @@ rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal)
 	{
 		/* set modal mode */
 		workbench->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+		workbench->modal_widget = RTGUI_WIDGET(view);
 
 		/* perform workbench event loop */
 		rtgui_workbench_event_loop(workbench);
+
+		workbench->modal_widget = RT_NULL;
 		return workbench->modal_code;
 	}
 
@@ -171,6 +177,9 @@ void rtgui_view_end_modal(rtgui_view_t* view, rtgui_modal_code_t modal_code)
 	workbench = RTGUI_WORKBENCH(RTGUI_WIDGET(view)->parent);
 	workbench->modal_code = modal_code;
 	workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+
+	/* remove modal mode */
+	view->modal_show = RT_FALSE;
 }
 
 void rtgui_view_hide(rtgui_view_t* view)

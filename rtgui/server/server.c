@@ -483,7 +483,7 @@ static void rtgui_server_entry(void* parameter)
 #ifdef RTGUI_USING_SMALL_SIZE
 	/* create rtgui server msgq */
 	rtgui_server_mq = rt_mq_create("rtgui",
-		32, 8, RT_IPC_FLAG_FIFO);
+		32, 16, RT_IPC_FLAG_FIFO);
 #else
 	/* create rtgui server msgq */
 	rtgui_server_mq = rt_mq_create("rtgui",

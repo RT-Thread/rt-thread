@@ -182,6 +182,38 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
         }
         break;
 
+	case RTGUI_EVENT_MOUSE_BUTTON:
+		{
+			rtgui_rect_t rect;
+			struct rtgui_event_mouse* emouse;
+
+			emouse = (struct rtgui_event_mouse*)event;
+
+			/* calculate selected item */
+
+			/* get physical extent information */
+			rtgui_widget_get_rect(widget, &rect);
+			rtgui_widget_rect_to_device(widget, &rect);
+
+			if (rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK)
+			{
+				rt_uint16_t index;
+				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
+
+				if ((index < view->items_count) && (index < view->page_items))
+				{
+					rt_uint16_t old_item;
+
+					old_item = view->current_item;
+
+					/* set selected item */
+					view->current_item = view->current_item/view->page_items + index;
+					rtgui_list_view_update_current(view, old_item);
+				}
+			}
+		}
+		break;
+
     case RTGUI_EVENT_KBD:
         {
             struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;

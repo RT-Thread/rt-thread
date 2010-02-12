@@ -113,7 +113,7 @@ rtgui_type_t *rtgui_win_type_get(void)
 	return win_type;
 }
 
-rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, rtgui_rect_t *rect, rt_uint32_t style)
+rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, rtgui_rect_t *rect, rt_uint8_t style)
 {
 	struct rtgui_win* win;
 
@@ -143,28 +143,14 @@ rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* tit
 
 void rtgui_win_destroy(struct rtgui_win* win)
 {
-	if (win->parent_toplevel != RT_NULL)
+	if (win->style & RTGUI_WIN_STYLE_MODAL)
 	{
-		if (win->style & RTGUI_WIN_STYLE_MODAL)
-		{
-			/* exit modal mode */
-			win->style &= ~RTGUI_WIN_STYLE_MODAL;
-			/* set style to closed */
-			win->style |= RTGUI_WIN_STYLE_CLOSED;
-		}
-		else rtgui_widget_destroy(RTGUI_WIDGET(win));
-
-	}
-	else if (win->style & RTGUI_WIN_STYLE_CLOSED)
-	{
-		rtgui_widget_destroy(RTGUI_WIDGET(win));
+		/* end modal */
+		rtgui_win_end_modal(win, RTGUI_MODAL_CANCEL);
 	}
 	else
 	{
-		/* exit modal mode */
-		win->style &= ~RTGUI_WIN_STYLE_MODAL;
-		/* set style to closed */
-		win->style |= RTGUI_WIN_STYLE_CLOSED;
+		rtgui_widget_destroy(RTGUI_WIDGET(win));
 	}
 }
 
@@ -205,15 +191,37 @@ rtgui_modal_code_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 	{
 		if (win->parent_toplevel != RT_NULL)
 		{
-			rtgui_workbench_t* workbench;
+			rtgui_widget_t *parent_widget;
+
+			/* set style */
+			win->style |= RTGUI_WIN_STYLE_MODAL;
 
 			/* get root toplevel */
-			workbench = RTGUI_WORKBENCH(win->parent_toplevel);
-			workbench->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+			parent_widget = RTGUI_WIDGET(win->parent_toplevel);
+			if (RTGUI_IS_WORKBENCH(parent_widget))
+			{
+				rtgui_workbench_t* workbench;
+				workbench = RTGUI_WORKBENCH(win->parent_toplevel);
+				workbench->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				workbench->modal_widget = RTGUI_WIDGET(win);
 
-			rtgui_workbench_event_loop(workbench);
-			result = workbench->modal_code;
-			workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				rtgui_workbench_event_loop(workbench);
+				result = workbench->modal_code;
+				workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				workbench->modal_widget = RT_NULL;
+			}
+			else if (RTGUI_IS_WIN(parent_widget))
+			{
+				rtgui_win_t* parent_win;
+				parent_win = RTGUI_WIN(win->parent_toplevel);
+				parent_win->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				parent_win->modal_widget = RTGUI_WIDGET(win);
+
+				rtgui_win_event_loop(parent_win);
+				result = parent_win->modal_code;
+				parent_win->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				parent_win->modal_widget = RT_NULL;
+			}
 		}
 		else
 		{
@@ -233,19 +241,33 @@ void rtgui_win_end_modal(struct rtgui_win* win, rtgui_modal_code_t modal_code)
 {
 	if (win->parent_toplevel != RT_NULL)
 	{
-		rtgui_workbench_t* workbench;
+		if (RTGUI_IS_WORKBENCH(win->parent_toplevel))
+		{
+			rtgui_workbench_t* workbench;
 
-		/* which is shown under workbench */
-		workbench = RTGUI_WORKBENCH(win->parent_toplevel);
-		workbench->modal_code = modal_code;
-		workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+			/* which is shown under workbench */
+			workbench = RTGUI_WORKBENCH(win->parent_toplevel);
+			workbench->modal_code = modal_code;
+			workbench->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+		}
+		else if (RTGUI_IS_WIN(win->parent_toplevel))
+		{
+			rtgui_win_t* parent_win;
+
+			/* which is shown under win */
+			parent_win = RTGUI_WIN(win->parent_toplevel);
+			parent_win->modal_code = modal_code;
+			parent_win->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;		
+		}
 	}
 	else
 	{
 		/* which is a stand alone window */
 		win->modal_code = modal_code;
-		win->style &= ~RTGUI_WIN_STYLE_MODAL;
 	}
+
+	/* remove modal mode */
+	win->style &= ~RTGUI_WIN_STYLE_MODAL;
 }
 
 void rtgui_win_hiden(struct rtgui_win* win)
@@ -359,8 +381,15 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 			if (win->on_close(widget, event) == RT_FALSE) return RT_TRUE;
 		}
 
-		/* destroy window */
-		rtgui_win_destroy(win);
+		if (win->style & RTGUI_WIN_STYLE_MODAL)
+		{
+			rtgui_win_end_modal(win, RTGUI_MODAL_CANCEL);
+		}
+		else
+		{
+			/* destroy window */
+			rtgui_win_destroy(win);
+		}
 
 		/* exit event loop */
 		return RT_TRUE;
@@ -394,16 +423,29 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_WIN_DEACTIVATE:
-		win->style &= ~RTGUI_WIN_STYLE_ACTIVATE;
-#ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else 
-#endif
-			rtgui_win_ondraw(win);
-
-		if (win->on_deactivate != RT_NULL)
+		if (win->style & RTGUI_WIN_STYLE_MODAL)
 		{
-			win->on_deactivate(widget, event);
+			/* do not deactivate a modal win */
+			struct rtgui_event_win_show eshow;
+			RTGUI_EVENT_WIN_SHOW_INIT(&eshow);
+			eshow.wid = win;
+
+			rtgui_thread_send(RTGUI_TOPLEVEL(win)->server, RTGUI_EVENT(&eshow),
+				sizeof(struct rtgui_event_win_show));
+		}
+		else
+		{
+			win->style &= ~RTGUI_WIN_STYLE_ACTIVATE;
+#ifndef RTGUI_USING_SMALL_SIZE
+			if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+			else 
+#endif
+				rtgui_win_ondraw(win);
+
+			if (win->on_deactivate != RT_NULL)
+			{
+				win->on_deactivate(widget, event);
+			}
 		}
 		break;
 
@@ -416,7 +458,13 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
-		if (rtgui_container_dispatch_mouse_event(RTGUI_CONTAINER(win), (struct rtgui_event_mouse*)event) == RT_FALSE)
+		if (win->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
+		{
+			if (win->modal_widget != RT_NULL)
+				return win->modal_widget->event_handler(win->modal_widget, event);
+		}
+ 		else if (rtgui_container_dispatch_mouse_event(RTGUI_CONTAINER(win), 
+			(struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
 #ifndef RTGUI_USING_SMALL_SIZE
 			if (widget->on_mouseclick != RT_NULL)
@@ -445,7 +493,12 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
     case RTGUI_EVENT_KBD:
-		if (RTGUI_CONTAINER(win)->focused != widget)
+		if (win->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
+		{
+			if (win->modal_widget != RT_NULL)
+				return win->modal_widget->event_handler(win->modal_widget, event);
+		}
+		else if (RTGUI_CONTAINER(win)->focused != widget)
 		{
 			RTGUI_CONTAINER(win)->focused->event_handler(RTGUI_CONTAINER(win)->focused, event);
 		}

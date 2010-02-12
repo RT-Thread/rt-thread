@@ -361,7 +361,10 @@ rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t even
 
 	result = rt_mq_send(thread->mq, event, event_size);
 	if (result != RT_EOK)
-		rt_kprintf("send event failed\n");
+	{
+		if (event->type != RTGUI_EVENT_TIMER)
+			rt_kprintf("send event to %s failed\n", thread->tid->name);
+	}
 
 	return result;
 }

@@ -33,6 +33,8 @@
 
 #define RTGUI_WORKBENCH_FLAG_DEFAULT	RTGUI_WORKBENCH_FLAG_VISIBLE | RTGUI_WORKBENCH_FLAG_CLOSEBLE
 
+#define RTGUI_WORKBENCH_IS_MODAL_MODE(w) ((w)->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
+
 /** Gets the type of a workbench */
 #define RTGUI_WORKBENCH_TYPE       (rtgui_workbench_type_get())
 /** Casts the object to an rtgui_workbench */
@@ -51,6 +53,7 @@ struct rtgui_workbench
 	/* workbench flag */
 	rt_uint8_t flag;
 	rtgui_modal_code_t modal_code;
+	rtgui_widget_t *modal_widget;
 
 	/* workbench title */
 	unsigned char* title;

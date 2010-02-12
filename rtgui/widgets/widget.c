@@ -37,10 +37,11 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->toplevel		= RT_NULL;
 
 	/* some common event handler */
-#ifndef RTGUI_USING_SMALL_SIZE
-	widget->on_draw 		= RT_NULL;
 	widget->on_focus_in		= RT_NULL;
 	widget->on_focus_out	= RT_NULL;
+
+#ifndef RTGUI_USING_SMALL_SIZE
+	widget->on_draw 		= RT_NULL;
 	widget->on_mouseclick 	= RT_NULL;
 	widget->on_key 			= RT_NULL;
 	widget->on_size 		= RT_NULL;
@@ -276,11 +277,9 @@ void rtgui_widget_focus(rtgui_widget_t *widget)
 		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(parent))) break;
 	}
 
-#ifndef RTGUI_USING_SMALL_SIZE
 	/* invoke on focus in call back */
 	if (widget->on_focus_in != RT_NULL)
    		widget->on_focus_in(widget, RT_NULL);
-#endif
 }
 
 /**
@@ -291,15 +290,16 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget)
 {
 	RT_ASSERT(widget != RT_NULL);
 
-	widget->flag &= ~RTGUI_WIDGET_FLAG_FOCUS;
-
 	if (!widget->toplevel || !RTGUI_WIDGET_IS_FOCUSED(widget))
 		return;
 
-#ifndef RTGUI_USING_SMALL_SIZE
+	widget->flag &= ~RTGUI_WIDGET_FLAG_FOCUS;
+
 	if (widget->on_focus_out != RT_NULL)
    		widget->on_focus_out(widget, RT_NULL);
-#endif
+
+	/* refresh widget */
+	rtgui_widget_update(widget);
 }
 
 void rtgui_widget_point_to_device(rtgui_widget_t* widget, rtgui_point_t* point)

@@ -294,12 +294,24 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			}
 			else
 			{
-				/* let viewer to handle it */
-				rtgui_view_t* view = workbench->current_view;
-				if (view != RT_NULL &&
-						RTGUI_WIDGET(view)->event_handler != RT_NULL)
+				if (RTGUI_WORKBENCH_IS_MODAL_MODE(workbench))
 				{
-					RTGUI_WIDGET(view)->event_handler(RTGUI_WIDGET(view), event);
+					/* let modal widget to handle it */
+					if (workbench->modal_widget != RT_NULL &&
+							workbench->modal_widget->event_handler != RT_NULL)
+					{
+						workbench->modal_widget->event_handler(workbench->modal_widget, event);
+					}
+				}
+				else
+				{
+					/* let viewer to handle it */
+					rtgui_view_t* view = workbench->current_view;
+					if (view != RT_NULL &&
+							RTGUI_WIDGET(view)->event_handler != RT_NULL)
+					{
+						RTGUI_WIDGET(view)->event_handler(RTGUI_WIDGET(view), event);
+					}
 				}
 			}
 		}
@@ -317,14 +329,26 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			}
 			else
 			{
-				if (RTGUI_CONTAINER(widget)->focused == widget)
+				if (RTGUI_WORKBENCH_IS_MODAL_MODE(workbench))
 				{
-					/* set focused widget to the current view */
-					if (workbench->current_view != RT_NULL)
-						rtgui_widget_focus(RTGUI_WIDGET(RTGUI_CONTAINER(workbench->current_view)->focused));
+					/* let modal widget to handle it */
+					if (workbench->modal_widget != RT_NULL &&
+							workbench->modal_widget->event_handler != RT_NULL)
+					{
+						workbench->modal_widget->event_handler(workbench->modal_widget, event);
+					}
 				}
+				else
+				{
+					if (RTGUI_CONTAINER(widget)->focused == widget)
+					{
+						/* set focused widget to the current view */
+						if (workbench->current_view != RT_NULL)
+							rtgui_widget_focus(RTGUI_WIDGET(RTGUI_CONTAINER(workbench->current_view)->focused));
+					}
 
-				return rtgui_toplevel_event_handler(widget, event);
+					return rtgui_toplevel_event_handler(widget, event);
+				}
 			}
 		}
 		break;

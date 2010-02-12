@@ -224,7 +224,7 @@ void rtgui_topwin_activate_win(struct rtgui_topwin* win)
 		rtgui_theme_draw_win(win);
 	}
 
-	if (rtgui_server_focus_topwin != RT_NULL)
+	if ((rtgui_server_focus_topwin != RT_NULL) && (rtgui_server_focus_topwin != win))
 	{
 		/* deactivate the old focus win  */
 		RTGUI_EVENT_WIN_DEACTIVATE_INIT(&event);
@@ -463,6 +463,11 @@ void rtgui_topwin_show(struct rtgui_event_win* event)
 				rtgui_thread_ack(RTGUI_EVENT(event), RTGUI_STATUS_OK);
 
 				/* not the front window, raise it */
+				rtgui_topwin_raise(wid, sender);
+			}
+			else
+			{
+				/* just raise it */
 				rtgui_topwin_raise(wid, sender);
 			}
 		}
