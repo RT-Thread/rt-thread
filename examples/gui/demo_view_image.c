@@ -31,9 +31,16 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 		rt_memset(image_type, 0, sizeof(image_type));
 
 		/* 获得图像的类型 */
-		if (rt_strstr(path, ".png") != RT_NULL) strcat(image_type, "png");
-		if (rt_strstr(path, ".jpg") != RT_NULL) strcat(image_type, "jpeg");
-		if (rt_strstr(path, ".hdc") != RT_NULL) strcat(image_type, "hdc");
+		if (rt_strstr(path, ".png") != RT_NULL ||
+			rt_strstr(path, ".PNG") != RT_NULL) 
+			strcat(image_type, "png");
+		if (rt_strstr(path, ".jpg") != RT_NULL ||
+			rt_strstr(path, ".JPG") != RT_NULL) 
+			strcat(image_type, "jpeg");
+		if (rt_strstr(path, ".hdc") != RT_NULL ||
+			rt_strstr(path, ".HDC") != RT_NULL) 
+			strcat(image_type, "hdc");
+
 		if (image_type[0] != '\0')
 			image = rtgui_image_create_from_file(image_type, path, RT_TRUE);
 	}

@@ -6,8 +6,8 @@
 
 static rt_bool_t demo_workbench_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
-	/* 我们目前只对按键事件感兴趣 */
-	if (event->type == RTGUI_EVENT_KBD)
+	/* 我们目前只对按键事件感兴趣。如果当前workbench处于模式显示状态，忽略它  */
+	if ((event->type == RTGUI_EVENT_KBD) && !RTGUI_WORKBENCH_IS_MODAL_MODE(RTGUI_WORKBENCH(widget)))
 	{
 		struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
 

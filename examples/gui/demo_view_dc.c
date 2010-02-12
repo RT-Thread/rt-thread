@@ -3,28 +3,6 @@
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/slider.h>
 
-static const rt_uint8_t boxChecked[7] = {0x02, 0x06, 0x8E, 0xDC, 0xF8, 0x70, 0x20};
-
-static const rt_uint8_t  sysMin[2] = {0x7E, 0x7E};
-static const rt_uint8_t  sysMax[18] = {0x0F, 0xF8, 0x0F, 0xF8, 0x08, 0x08,
-	0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-	0x08, 0x08, 0x08, 0x08, 0x0F, 0xF8
-};
-static const rt_uint8_t  sysNormal[18] = {0x03, 0xF0, 0x03, 0xF0, 0x02, 0x10,
-	0x0F, 0xD0, 0x0F, 0xD0, 0x08, 0x70,
-	0x08, 0x40, 0x08, 0x40, 0x0F, 0xC0
-};
-
-static const rt_uint8_t  sysClose[14] = {0x06, 0x18, 0x03, 0x30, 0x01, 0xE0, 0x00,
-	0xC0, 0x01, 0xE0, 0x03, 0x30, 0x06, 0x18
-};
-
-static const rt_uint8_t  viewSYS[28] = {0xFF, 0x1F, 0x3C, 0x06, 0x1C, 0x04, 0x1C,
-	0x0C, 0x0E, 0x08, 0x0E, 0x18, 0x07, 0x10,
-	0x07, 0x30, 0x03, 0xA0, 0x03, 0xE0, 0x01,
-	0xC0, 0x01, 0xC0, 0x00, 0x80, 0x00, 0x80
-};
-
 rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 {
 	if (event->type == RTGUI_EVENT_PAINT)
@@ -72,57 +50,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		rtgui_dc_set_color(dc, blue);
 		rtgui_dc_draw_polygon(dc, vx, vy, 6);
 
-		{
-			rtgui_rect_t item_rect = {0, 0, 14, 14};
-			rt_uint16_t item_size = 14;
-
-			rtgui_rect_moveto(&item_rect, 100, 100);
-
-			rtgui_dc_set_color(dc, RTGUI_RGB(0x66, 0x66, 0x66));
-			rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2, item_rect.y1 + item_size/2, item_size/2);
-			rtgui_dc_set_color(dc, RTGUI_RGB(0xff, 0xFF, 0xFF));
-			rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2, item_rect.y1 + item_size/2, item_size/2 - 1);
-
-			rtgui_dc_set_color(dc, RTGUI_RGB(0x00, 0x00, 0x00));
-			rtgui_dc_fill_circle(dc, item_rect.x1 + item_size/2, item_rect.y1 + item_size/2, item_size/2 - 3);
-		}
-
-		{
-			rtgui_rect_t item_rect = {0, 0, 14, 14};
-			rt_uint16_t item_size = 14;
-			rtgui_rect_moveto(&item_rect, 120, 120);
-
-			rtgui_dc_set_color(dc, RTGUI_RGB(0x66, 0x66, 0x66));
-			rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2, item_rect.y1 + item_size/2, item_size/2);
-			rtgui_dc_set_color(dc, RTGUI_RGB(0xff, 0xFF, 0xFF));
-			rtgui_dc_draw_circle(dc, item_rect.x1 + item_size/2, item_rect.y1 + item_size/2, item_size/2 - 1);
-			rtgui_dc_set_color(dc, RTGUI_RGB(0x00, 0x00, 0x00));
-		}
-		{
-			int x, y;
-
-			x = 150; y = 150;
-			rtgui_dc_set_color(dc, black);
-
-			rtgui_dc_draw_byte(dc, x, y, 7, boxChecked);
-			y += 7 + 2;
-
-			rtgui_dc_draw_byte(dc, x, y, 2, sysMin);
-			y += 2 + 2;
-
-			rtgui_dc_draw_word(dc, x, y, 9, sysMax);
-			y += 9 + 2;
-
-			rtgui_dc_draw_word(dc, x, y, 9, sysNormal);
-			y += 9 + 2;
-
-			rtgui_dc_draw_word(dc, x, y, 7, sysClose);
-			y += 7 + 2;
-
-			rtgui_dc_draw_word(dc, x, y, 14, viewSYS);
-			y += 14 + 2;
-		}
-
+		/* 绘制不同的边框 */
 		{
 			rtgui_rect_t rect = {0, 0, 16, 16};
 			rtgui_rect_moveto(&rect, 30, 120);

@@ -120,6 +120,8 @@ void window_demo_modal(rtgui_toplevel_t* parent)
 
 	/* 模态显示窗口 */
 	rtgui_win_show(win, RT_TRUE);
+	/* 采用模态显示窗口，关闭时不会自行删除窗口，需要主动删除窗口 */
+	rtgui_win_destroy(win);
 }
 
 void window_demo_notitle(rtgui_toplevel_t* parent)
