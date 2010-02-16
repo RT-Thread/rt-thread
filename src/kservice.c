@@ -336,6 +336,26 @@ char *rt_strncpy(char *dest, const char *src, rt_ubase_t n)
 }
 
 /**
+ * This function will copy string no more than n bytes.
+ *
+ * @param dest the string to copy
+ * @param src the string to be copied
+ * @param n the maximum copied length
+ *
+ * @return the result with '\0' at the end
+ */
+char *rt_strlcpy(char *dest, const char *src, rt_ubase_t n)
+{
+	char *tmp = (char *) dest, *s = (char *) src;
+
+	while(n--)
+		*tmp++ = *s++;
+	*tmp = '\0';
+	
+	return dest;
+}
+
+/**
  * This function will compare two strings with specified maximum length
  *
  * @param cs the string to be compared
