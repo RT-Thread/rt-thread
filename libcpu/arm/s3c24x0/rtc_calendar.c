@@ -31,10 +31,7 @@ rt_int8_t *month_en[12] ={ "January", "February", "March", "April", "May", "June
 rt_int8_t *day_en[7]={"Sunday","Monday","Tuesday","Wednesday","Thursday","Firday","Saturday"};
 rt_int8_t *day_cn[7]={"星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
 //=====================================================================
-//从UART读取年与月份
-//缺失
-
-
+//read from uart
 
 rt_int32_t rt_rtc_isleap(rt_uint32_t year)
 {
@@ -98,7 +95,7 @@ void rt_rtc_print_common_fmt(rt_uint8_t month, rt_uint8_t weekday, rt_uint8_t le
 	rt_kprintf("\n%s	%s	%d\n",
 		     month_cn[month - 1], month_en[month - 1], year_seprt);
 	rt_kprintf("----------------------------------\n");
-	rt_kprintf("SUN  MON  TUE  WED  THU  FRI  SET\n");
+	rt_kprintf("SUN  MON  TUE  WED  THU  FRI  SAT\n");
 	rt_kprintf("----------------------------------\n");
 	for (j = 0; j < weekday; j++)
 		rt_kprintf("     ");
@@ -147,7 +144,6 @@ void rt_rtc_year_month_day_seperate(rt_uint32_t year)
 		rt_kprintf("\nPlease input year and month, if not, system default is loaded!\n");
 		year = DEFAULT_YEAR;
 	}
-	/*判断输入格式 */
 	if (year / 100 < 30 && year / 100 > 18)					
 	{
 		year_seprt = year;
@@ -238,23 +234,6 @@ void rt_rtc_show_calendar(void)
 			rt_rtc_weekdate_calculate();
 			
 		}
-
-		/*
-		rt_kprintf("Going on?[no] ");
-		receive_char = rt_hw_serial_getc();
-
-		//if((receive_char !='y') || (receive_char !='Y') || (receive_char !='n') || (receive_char !='n'))
-		if ((receive_char == 'y') || (receive_char == 'Y')
-		    || (receive_char == 'n') || (receive_char == 'N')) {
-			if ((receive_char == 'n') || (receive_char == 'n'))
-				return;
-			else {
-				UART_PutChar(receive_char);
-				while (UART_GetKey() != KEY_ENTER);
-			}
-		} else
-		*/
-			//return;	
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>
