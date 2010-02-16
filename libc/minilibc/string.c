@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2008-08-14     Bernard      the first version
+ * 2010-02-15     Gary Lee     add strlcpy
  */
 
 #include <rtthread.h>
@@ -21,6 +22,23 @@
 char *strcpy(char *dest, const char *src)
 {
 	return rt_strncpy(dest, src, rt_strlen(src) + 1);
+}
+
+char *strncpy(char *dest, const char *src, rt_ubase_t n)
+{
+	return rt_strncpy(dest, src, n);
+}
+
+char *strlcpy(char *dest, const char *src, rt_ubase_t n)
+{
+	return rt_strlcpy(dest, src, n);
+}
+
+int strcmp (const char *s1, const char *s2)
+{
+	while (*s1 && *s1 == *s2)
+		s1++, s2++;
+	return (*s1 - *s2);
 }
 
 int strcmp (const char *s1, const char *s2)
