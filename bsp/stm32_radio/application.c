@@ -24,6 +24,7 @@
 #include "board.h"
 #include "netbuffer.h"
 #include "lcd.h"
+#include "rtc.h"
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -78,28 +79,28 @@ void rt_init_thread_entry(void *parameter)
     }
 #endif
 
-	/* RTGUI Initialization */
+    /* RTGUI Initialization */
 #ifdef RT_USING_RTGUI
-	{
-		extern void rt_hw_key_init(void);
+    {
+        extern void rt_hw_key_init(void);
 
-		radio_rtgui_init();
-		rt_hw_key_init();
-	}
+        radio_rtgui_init();
+        rt_hw_key_init();
+    }
 #endif
 
     /* LwIP Initialization */
 #ifdef RT_USING_LWIP
     {
         extern void lwip_sys_init(void);
-		extern void rt_hw_dm9000_init(void);
+        extern void rt_hw_dm9000_init(void);
 
-		eth_system_device_init();
+        eth_system_device_init();
 
-		/* register ethernetif device */
-		rt_hw_dm9000_init();
-		/* init all device */
-		rt_device_init_all();
+        /* register ethernetif device */
+        rt_hw_dm9000_init();
+        /* init all device */
+        rt_device_init_all();
 
         /* init lwip system */
         lwip_sys_init();
@@ -108,16 +109,19 @@ void rt_init_thread_entry(void *parameter)
 #endif
 
 #if STM32_EXT_SRAM
-	/* init netbuf worker */
-	net_buf_init(320 * 1024);
+    /* init netbuf worker */
+    net_buf_init(320 * 1024);
 #endif
+
+    /* start RTC */
+    rt_hw_rtc_init();
 }
 
 int rt_application_init()
 {
     rt_thread_t init_thread;
 
-	rt_hw_lcd_init();
+    rt_hw_lcd_init();
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
     init_thread = rt_thread_create("init",

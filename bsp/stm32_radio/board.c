@@ -27,58 +27,6 @@ static void rt_hw_console_init(void);
 /*@{*/
 
 /*******************************************************************************
- * Function Name  : RCC_Configuration
- * Description    : Configures the different system clocks.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void RCC_Configuration(void)
-{
-    ErrorStatus HSEStartUpStatus;
-
-    /* RCC system reset(for debug purpose) */
-    RCC_DeInit();
-
-    /* Enable HSE */
-    RCC_HSEConfig(RCC_HSE_ON);
-
-    /* Wait till HSE is ready */
-    HSEStartUpStatus = RCC_WaitForHSEStartUp();
-
-    if (HSEStartUpStatus == SUCCESS)
-    {
-        /* HCLK = SYSCLK */
-        RCC_HCLKConfig(RCC_SYSCLK_Div1);
-
-        /* PCLK2 = HCLK */
-        RCC_PCLK2Config(RCC_HCLK_Div1);
-        /* PCLK1 = HCLK/2 */
-        RCC_PCLK1Config(RCC_HCLK_Div2);
-
-        /* Flash 2 wait state */
-        FLASH_SetLatency(FLASH_Latency_2);
-        /* Enable Prefetch Buffer */
-        FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
-
-        /* PLLCLK = 8MHz * 9 = 72 MHz */
-        RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
-
-        /* Enable PLL */
-        RCC_PLLCmd(ENABLE);
-
-        /* Wait till PLL is ready */
-        while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) ;
-
-        /* Select PLL as system clock source */
-        RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
-
-        /* Wait till PLL is used as system clock source */
-        while (RCC_GetSYSCLKSource() != 0x08) ;
-    }
-}
-
-/*******************************************************************************
 * Function Name  : NVIC_Configuration
 * Description    : Configures Vector Table base location.
 * Input          : None
@@ -101,26 +49,6 @@ void NVIC_Configuration(void)
      * 2 bits for subpriority
      */
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-}
-
-/*******************************************************************************
- * Function Name  : SysTick_Configuration
- * Description    : Configures the SysTick for OS tick.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void  SysTick_Configuration(void)
-{
-    RCC_ClocksTypeDef  rcc_clocks;
-    rt_uint32_t         cnts;
-
-    RCC_GetClocksFreq(&rcc_clocks);
-
-    cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
-
-    SysTick_Config(cnts);
-    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
 }
 
 extern void rt_hw_interrupt_thread_switch(void);
@@ -151,7 +79,7 @@ void rt_hw_board_init()
     NAND_IDTypeDef NAND_ID;
 
     /* Configure the system clocks */
-    RCC_Configuration();
+    SystemInit();
 
     /* DM9000A */
     {
@@ -170,17 +98,18 @@ void rt_hw_board_init()
     NVIC_Configuration();
 
     /* Configure the SysTick */
-    SysTick_Configuration();
+    SysTick_Config( SystemFrequency_SysClk / RT_TICK_PER_SECOND );
 
     /* Console Initialization*/
     rt_hw_console_init();
+    rt_kprintf("\r\n\r\nSystemInit......\r\n");
 
     /* FSMC Initialization */
     FSMC_NAND_Init();
 
     /* NAND read ID command */
     FSMC_NAND_ReadID(&NAND_ID);
-    rt_kprintf("\r\n\r\nRead the NAND ID:%02X%02X%02X%02X",NAND_ID.Maker_ID,NAND_ID.Device_ID,NAND_ID.Third_ID,NAND_ID.Fourth_ID);
+    rt_kprintf("Read the NAND ID:%02X%02X%02X%02X",NAND_ID.Maker_ID,NAND_ID.Device_ID,NAND_ID.Third_ID,NAND_ID.Fourth_ID);
 
     /* SRAM init */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);

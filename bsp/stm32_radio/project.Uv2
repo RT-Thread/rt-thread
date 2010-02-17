@@ -209,8 +209,6 @@ File 11,1,<..\..\rtgui\server\topwin.c><topwin.c>
 File 11,1,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c>
 File 11,1,<..\..\rtgui\common\hz16font.c><hz16font.c>
 File 11,1,<..\..\rtgui\common\hz12font.c><hz12font.c>
-File 11,1,<..\..\rtgui\common\arial16font.c><arial16font.c>
-File 11,1,<..\..\rtgui\common\arial12font.c><arial12font.c>
 File 12,1,<.\Libraries\Mass_Storage\src\hw_config.c><hw_config.c>
 File 12,1,<.\Libraries\Mass_Storage\src\mass_mal.c><mass_mal.c>
 File 12,1,<.\Libraries\Mass_Storage\src\memory.c><memory.c>
