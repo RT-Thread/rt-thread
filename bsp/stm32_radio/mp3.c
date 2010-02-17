@@ -8,7 +8,7 @@
 #include "player_ui.h"
 #include "player_bg.h"
 
-#define MP3_AUDIO_BUF_SZ    4096
+#define MP3_AUDIO_BUF_SZ    8192
 #ifndef MIN
 #define MIN(x, y)			((x) < (y)? (x) : (y))
 #endif
@@ -118,22 +118,21 @@ static rt_int32_t mp3_decoder_fill_buffer(struct mp3_decoder* decoder)
 	}
 
 	bytes_to_read = (MP3_AUDIO_BUF_SZ - decoder->bytes_left) & ~(512 - 1);
-	// rt_kprintf("read bytes: %d\n", bytes_to_read);
 
 	bytes_read = decoder->fetch_data(decoder->fetch_parameter,
 		(rt_uint8_t *)(decoder->read_buffer + decoder->bytes_left),
         bytes_to_read);
 
-	if (bytes_read == bytes_to_read)
+	if (bytes_read != 0)
 	{
 		decoder->read_ptr = decoder->read_buffer;
 		decoder->read_offset = 0;
-		decoder->bytes_left = decoder->bytes_left + bytes_to_read;
+		decoder->bytes_left = decoder->bytes_left + bytes_read;
 		return 0;
 	}
 	else
 	{
-		rt_kprintf("can't read more data");
+		rt_kprintf("can't read more data\n");
 		return -1;
 	}
 }

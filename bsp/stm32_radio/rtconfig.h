@@ -120,6 +120,9 @@
 /* TCP sender buffer space */
 #define RT_LWIP_TCP_SND_BUF	2048
 
+/* TCP Window Size */
+#define RT_LWIP_TCP_WND	(1024 * 2)
+
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */
 

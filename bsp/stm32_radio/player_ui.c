@@ -279,6 +279,8 @@ void function_play_radio(void* parameter)
 {
 	next_step = PLAYER_STEP_STOP;
 	player_play_url("http://syragon.com:8000/ices");
+	// player_play_url("http://192.168.1.6:8000/stream");
+	// player_play_url("http://radio.aozima.com:8000/stream");
 }
 
 void function_filelist(void* parameter)
@@ -381,6 +383,21 @@ void function_player(void* parameter)
 	return;
 }
 
+#include "picture.h"
+void function_show_picure(void* parameter)
+{
+	rtgui_view_t *view;
+
+	view = picture_view_create(workbench);
+	if (view != RT_NULL)
+	{
+		rtgui_view_show(view, RT_TRUE);
+		rtgui_view_destroy(view);
+	}
+
+	return;
+}
+
 void function_action(void* parameter)
 {
 	rt_kprintf("item action!\n");
@@ -398,6 +415,7 @@ struct list_item function_list[] =
 	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
 	{"更新电台", RT_NULL, function_action, RT_NULL},
 	{"播放文件", RT_NULL, function_filelist, RT_NULL},
+	{"浏览图片", RT_NULL, function_show_picure, RT_NULL},
 	{"设备信息", RT_NULL, function_device, RT_NULL},
 	{"选项设置", RT_NULL, function_action, RT_NULL},
 	{"USB 联机", RT_NULL, function_cable, RT_NULL},
