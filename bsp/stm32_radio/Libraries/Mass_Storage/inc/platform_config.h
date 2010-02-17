@@ -24,6 +24,9 @@
 #define USB_DISCONNECT_PIN                GPIO_Pin_7
 #define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOG
 
+/* use auto remove: 0-NO 1-YES */
+#define USB_USE_AUTO_REMOVE               1
+
 /* use led: 0-NO  1-YES */
 #define USB_USE_LED                       1
 #define USB_LED_PORT                      GPIOE

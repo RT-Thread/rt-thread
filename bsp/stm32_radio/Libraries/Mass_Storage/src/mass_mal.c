@@ -91,8 +91,14 @@ uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint1
     return MAL_OK;
 }
 
+#if (USB_USE_AUTO_REMOVE == 1)
+unsigned long test_unit_ready_last = 0;
+#endif
 uint16_t MAL_GetStatus (uint8_t lun)
 {
+#if (USB_USE_AUTO_REMOVE == 1)
+    test_unit_ready_last = rt_tick_get();
+#endif
     switch(lun)
     {
     case 0:

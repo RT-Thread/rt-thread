@@ -73,7 +73,7 @@ void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(82, 199, 16);
 		rtgui_dc_draw_hline(dc, 14  + (tinfo.position * 212)/ tinfo.duration, 226, 75);
 	}
-	
+
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
 	rtgui_dc_end_drawing(dc);
 }
@@ -210,7 +210,7 @@ void player_play_file(const char* fn)
 	{
 		rtgui_rect_t play_rect;
 		rtgui_image_t *button;
-		
+
 		/* update tag information */
 		player_update_tag_info(dc);
 
@@ -254,7 +254,7 @@ void player_play_url(const char* url)
 	{
 		rtgui_rect_t play_rect;
 		rtgui_image_t *button;
-		
+
 		/* update tag information */
 		player_update_tag_info(dc);
 
@@ -387,6 +387,12 @@ void function_action(void* parameter)
 	return;
 }
 
+extern void USB_cable(void);
+void function_cable(void)
+{
+    USB_cable();
+}
+
 struct list_item function_list[] =
 {
 	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
@@ -394,6 +400,7 @@ struct list_item function_list[] =
 	{"播放文件", RT_NULL, function_filelist, RT_NULL},
 	{"设备信息", RT_NULL, function_device, RT_NULL},
 	{"选项设置", RT_NULL, function_action, RT_NULL},
+	{"USB 联机", RT_NULL, function_cable, RT_NULL},
 	{"返回播放器", RT_NULL, function_player, RT_NULL},
 };
 
@@ -581,14 +588,14 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 
 				dc = rtgui_dc_begin_drawing(widget);
 				if (dc == RT_NULL) return RT_FALSE;
-	
+
 				player_update_tag_info(dc);
 
 				saved = RTGUI_WIDGET_FOREGROUND(widget);
 
 				RTGUI_WIDGET_FOREGROUND(widget) = RTGUI_RGB(82, 199, 16);
 				rtgui_dc_draw_hline(dc, 14, 226, 75);
-	
+
 				/* update play button */
 				button = rtgui_image_create_from_mem("hdc",
 	                stop_hdh, sizeof(stop_hdh), RT_FALSE);
@@ -596,7 +603,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 	            play_rect.x2 = 61; play_rect.y2 = 114;
 	            rtgui_image_blit(button, dc, &play_rect);
 	            rtgui_image_destroy(button);
-	
+
 				RTGUI_WIDGET_FOREGROUND(widget) = saved;
 				rtgui_dc_end_drawing(dc);
 			}
@@ -608,7 +615,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 					rtgui_color_t saved;
 		            rtgui_image_t *button;
 		            rtgui_rect_t  play_rect;
-	
+
 					/* set stat */
 					next_step = PLAYER_STEP_STOP;
 					player_mode = PLAYER_STOP;

@@ -12,6 +12,23 @@ extern uint32_t Mass_Block_Count[3];
 extern rt_device_t dev_sdio;
 extern rt_device_t dev_spi_flash;
 
+#if (USB_USE_AUTO_REMOVE == 1)
+extern unsigned long test_unit_ready_last;
+void msc_thread_entry(void *parameter)
+{
+    test_unit_ready_last = rt_tick_get();
+    while(1)
+    {
+        rt_thread_delay( RT_TICK_PER_SECOND/2 );
+        if( rt_tick_get() - test_unit_ready_last > RT_TICK_PER_SECOND*2 )
+        {
+            rt_kprintf("\r\nCable removed!\r\nSystemReset\r\n\r\n");
+            NVIC_SystemReset();
+        }
+    }
+}
+#endif
+
 #include <finsh.h>
 #include "sdcard.h"
 void USB_cable(void)
@@ -68,5 +85,18 @@ void USB_cable(void)
     Set_USBClock();
     USB_Interrupts_Config();
     USB_Init();
+
+#if (USB_USE_AUTO_REMOVE == 1)
+    /* delete the other thread */
+
+    /* create msc_thread */
+    {
+        rt_thread_t msc_thread;
+        msc_thread = rt_thread_create("msc_thread",
+                                      msc_thread_entry, RT_NULL,
+                                      1024, RT_THREAD_PRIORITY_MAX-1,1);
+        if (msc_thread != RT_NULL) rt_thread_startup(msc_thread);
+    }
+#endif
 }
 FINSH_FUNCTION_EXPORT(USB_cable, cable_the_usb);
