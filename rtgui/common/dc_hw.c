@@ -423,9 +423,11 @@ static rt_int32_t rtgui_dc_hw_get_textalign(struct rtgui_dc* self)
 	return dc->owner->gc.textalign;
 }
 
-static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* dc)
+static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* self)
 {
-	return RT_TRUE;
+	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
+
+	return dc->visible;
 }
 
 static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
