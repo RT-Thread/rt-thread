@@ -523,8 +523,7 @@ void http_mp3(char* url)
 }
 FINSH_FUNCTION_EXPORT(http_mp3, http mp3 decode test);
 
-/* http mp3 */
-#include "http.h"
+/* ice mp3 */
 static rt_size_t ice_fetch(rt_uint8_t* ptr, rt_size_t len, void* parameter)
 {
 	struct shoutcast_session* session = (struct shoutcast_session*)parameter;
@@ -576,16 +575,5 @@ void ice_mp3(char* url)
 	}
 }
 FINSH_FUNCTION_EXPORT(ice_mp3, shoutcast mp3 decode test);
-
-char ice_url[] = "http://192.168.1.5:8000/stream";
-void ice()
-{
-	rt_thread_t tid;
-	
-	tid = rt_thread_create("ice", ice_mp3, (void*)ice_url,
-		4096, 0x08, 5);
-	if (tid != RT_NULL) rt_thread_startup(tid);
-}
-FINSH_FUNCTION_EXPORT(ice, shoutcast thread test);
 
 #endif

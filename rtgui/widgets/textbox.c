@@ -156,7 +156,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 		}
 		else
 		{
-			unsigned char *c;
+			char *c;
 
 			/* remove character */
 			for (c = &box->text[box->position]; c[1] != '\0'; c++)
@@ -176,7 +176,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 			/* remove current character */
 			if (box->position != 0)
 			{
-				unsigned char *c;
+				char *c;
 
 				/* remove character */
 				for (c = &box->text[box->position - 1]; c[1] != '\0'; c++)
@@ -218,7 +218,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 
 			if (box->position < length - 1)
 			{
-				unsigned char* c;
+				char* c;
 
 				for (c = &box->text[length]; c != &box->text[box->position]; c--)
 					*c = *(c-1);

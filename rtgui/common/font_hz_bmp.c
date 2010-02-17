@@ -4,8 +4,8 @@
 
 #ifdef RTGUI_USING_HZ_BMP
 
-static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect);
-static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect);
+static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect);
+static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect);
 struct rtgui_font_engine hz_bmp_font_engine =
 {
 	RT_NULL,
@@ -14,7 +14,7 @@ struct rtgui_font_engine hz_bmp_font_engine =
 	rtgui_hz_bitmap_font_get_metrics
 };
 
-static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	rt_base_t h;
 	rt_uint8_t* str;
@@ -61,7 +61,7 @@ static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui
 	}
 }
 
-static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect)
+static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 

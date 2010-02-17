@@ -37,9 +37,7 @@ File 1,1,<.\wav.c><wav.c>
 File 1,1,<.\netbuffer.c><netbuffer.c>
 File 1,1,<.\key.c><key.c>
 File 1,1,<.\info.c><info.c>
-File 1,1,<.\filelist.c><filelist.c>
 File 1,1,<.\device_info.c><device_info.c>
-File 1,1,<.\listview.c><listview.c>
 File 1,1,<.\player_ui.c><player_ui.c>
 File 1,1,<.\player_bg.c><player_bg.c>
 File 1,1,<.\play_list.c><play_list.c>
@@ -48,6 +46,7 @@ File 1,1,<.\codec.c><codec.c>
 File 1,1,<.\spi_flash.c><spi_flash.c>
 File 1,1,<.\remote.c><remote.c>
 File 1,1,<.\picture.c><picture.c>
+File 1,1,<.\station_list.c><station_list.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\ipc.c><ipc.c>
@@ -210,6 +209,8 @@ File 11,1,<..\..\rtgui\server\topwin.c><topwin.c>
 File 11,1,<..\..\rtgui\common\font_hz_file.c><font_hz_file.c>
 File 11,1,<..\..\rtgui\common\hz16font.c><hz16font.c>
 File 11,1,<..\..\rtgui\common\hz12font.c><hz12font.c>
+File 11,1,<..\..\rtgui\widgets\list_view.c><list_view.c>
+File 11,1,<..\..\rtgui\widgets\filelist_view.c><filelist_view.c>
 File 12,1,<.\Libraries\Mass_Storage\src\hw_config.c><hw_config.c>
 File 12,1,<.\Libraries\Mass_Storage\src\mass_mal.c><mass_mal.c>
 File 12,1,<.\Libraries\Mass_Storage\src\memory.c><memory.c>
@@ -279,7 +280,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,1,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
  ADSCCFLG { 5,32,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- ADSCMISC ()
+ ADSCMISC (--diag_suppress=870)
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()
  ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include;..\..\rtgui\common\libz)

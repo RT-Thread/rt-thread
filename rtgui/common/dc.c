@@ -167,7 +167,7 @@ void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtg
 	dc->blit(dc, dc_point, dest, rect);
 }
 
-void rtgui_dc_draw_text (struct rtgui_dc* dc, const rt_uint8_t* text, struct rtgui_rect* rect)
+void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect)
 {
 	rt_uint32_t len;
 	struct rtgui_font *font;

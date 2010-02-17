@@ -117,7 +117,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 				};
 
 				/* check device index */
-				if (dev_index < 0 || dev_index > 4) dev_index = 3;
+				if (dev_index > 4) dev_index = 3;
 
 				/* draw each information */
 				sprintf(line, "…Ë±∏: %s %s", 

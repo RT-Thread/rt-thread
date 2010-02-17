@@ -120,7 +120,7 @@ void rtgui_font_derefer(struct rtgui_font* font)
 }
 
 /* draw a text */
-void rtgui_font_draw(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect)
+void rtgui_font_draw(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	RT_ASSERT(font != RT_NULL);
 
@@ -131,7 +131,7 @@ void rtgui_font_draw(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint
 	}
 }
 
-int rtgui_font_get_string_width(struct rtgui_font* font, const rt_uint8_t* text)
+int rtgui_font_get_string_width(struct rtgui_font* font, const char* text)
 {
 	rtgui_rect_t rect;
 
@@ -141,7 +141,7 @@ int rtgui_font_get_string_width(struct rtgui_font* font, const rt_uint8_t* text)
 	return rect.x2 - rect.x1;
 }
 
-void rtgui_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect)
+void rtgui_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
 	RT_ASSERT(font != RT_NULL);
 
@@ -157,8 +157,8 @@ void rtgui_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtg
 	}
 }
 
-static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect);
-static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect);
+static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect);
+static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect);
 struct rtgui_font_engine bmp_font_engine =
 {
 	RT_NULL,
@@ -197,7 +197,7 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 	}
 }
 
-static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 
@@ -213,7 +213,7 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 	}
 }
 
-static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect)
+static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 

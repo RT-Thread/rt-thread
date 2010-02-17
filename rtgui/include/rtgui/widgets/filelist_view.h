@@ -7,7 +7,7 @@
 #define RTGUI_FITEM_DIR       0x1
 struct rtgui_file_item
 {
-	rt_uint8_t* name;
+	char* name;
 
 	rt_uint32_t type;
 	rt_uint32_t size;
@@ -27,8 +27,8 @@ struct rtgui_filelist_view
 	/* widget private data */
 
     /* current directory */
-    rt_uint8_t* current_directory;
-    rt_uint8_t* pattern;
+    char* current_directory;
+    char* pattern;
 
     /* the number of item in a page */
     rt_uint16_t page_items;

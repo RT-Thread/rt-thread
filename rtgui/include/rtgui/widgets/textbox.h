@@ -35,7 +35,7 @@
 
 struct rtgui_textbox_line
 {
-	rt_uint8_t* line_text;
+	char* line_text;
 
 	struct rtgui_textbox_line *prev, *next;
 };
@@ -51,7 +51,7 @@ struct rtgui_textbox
 	/* current line and position */
 	rt_uint16_t line, line_begin, position, line_length;
 
-	rt_uint8_t* text;
+	char* text;
 	rt_size_t font_width;
 
 	struct rtgui_timer* caret_timer;

@@ -32,18 +32,18 @@ struct rtgui_label
 	struct rtgui_widget parent;
 
 	/* label */
-	unsigned char* text;
+	char* text;
 };
 typedef struct rtgui_label rtgui_label_t;
 
 rtgui_type_t *rtgui_label_type_get(void);
 
-rtgui_label_t* rtgui_label_create(const unsigned char* text);
+rtgui_label_t* rtgui_label_create(const char* text);
 void rtgui_label_destroy(rtgui_label_t* label);
 
 rt_bool_t rtgui_label_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 
-void rtgui_label_set_text(rtgui_label_t* label, const unsigned char* text);
-unsigned char* rtgui_label_get_text(rtgui_label_t* label);
+void rtgui_label_set_text(rtgui_label_t* label, const char* text);
+char* rtgui_label_get_text(rtgui_label_t* label);
 
 #endif

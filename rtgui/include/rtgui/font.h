@@ -27,9 +27,9 @@ struct rtgui_font_engine
 	void (*font_init)(struct rtgui_font* font);
 	void (*font_load)(struct rtgui_font* font);
 
-	void (*font_draw_text)(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text,
+	void (*font_draw_text)(struct rtgui_font* font, struct rtgui_dc* dc, const char* text,
 		rt_ubase_t len, struct rtgui_rect* rect);
-	void (*font_get_metrics)(struct rtgui_font* font, const rt_uint8_t* text, struct rtgui_rect* rect);
+	void (*font_get_metrics)(struct rtgui_font* font, const char* text, struct rtgui_rect* rect);
 };
 
 /*
@@ -107,8 +107,8 @@ struct rtgui_font* rtgui_font_refer(const rt_uint8_t* family, rt_uint16_t height
 void rtgui_font_derefer(struct rtgui_font* font);
 
 /* draw a text */
-void rtgui_font_draw(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect);
-int  rtgui_font_get_string_width(struct rtgui_font* font, const rt_uint8_t* text);
-void rtgui_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, struct rtgui_rect* rect);
+void rtgui_font_draw(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect);
+int  rtgui_font_get_string_width(struct rtgui_font* font, const char* text);
+void rtgui_font_get_metrics(struct rtgui_font* font, const char* text, struct rtgui_rect* rect);
 
 #endif

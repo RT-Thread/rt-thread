@@ -37,11 +37,16 @@ enum PLAYER_STEP
 	PLAYER_STEP_NEXT,
 };
 
+/* init player ui */
 void player_ui_init(void);
 
+/* notification function, which invoked by player background thread */
 void player_notify_play(void);
 void player_notify_stop(void);
 
+/* set player information */
 void player_set_position(rt_uint32_t position);
+void player_set_title(const char* title);
+void player_set_buffer_status(rt_bool_t buffering);
 
 #endif

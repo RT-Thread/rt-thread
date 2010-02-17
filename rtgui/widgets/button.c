@@ -188,7 +188,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 	return RT_FALSE;
 }
 
-rtgui_button_t* rtgui_button_create(unsigned char* text)
+rtgui_button_t* rtgui_button_create(char* text)
 {
     struct rtgui_button* btn;
 
@@ -208,7 +208,7 @@ rtgui_button_t* rtgui_button_create(unsigned char* text)
     return btn;
 }
 
-rtgui_button_t* rtgui_pushbutton_create(unsigned char* text)
+rtgui_button_t* rtgui_pushbutton_create(char* text)
 {
 	rtgui_button_t* btn;
 

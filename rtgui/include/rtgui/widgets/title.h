@@ -28,18 +28,18 @@ struct rtgui_wintitle
 	struct rtgui_toplevel parent;
 
 	/* title */
-	rt_uint8_t* title;
+	char* title;
 };
 typedef struct rtgui_wintitle rtgui_wintitle_t;
 
 rtgui_type_t* rtgui_wintitle_type_get(void);
 
-rtgui_wintitle_t* rtgui_wintitle_create(const rt_uint8_t* title);
+rtgui_wintitle_t* rtgui_wintitle_create(const char* title);
 void rtgui_wintitle_destroy(rtgui_wintitle_t* wintitle);
 
 rt_bool_t rtgui_wintile_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
 
-void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const rt_uint8_t* title);
-rt_uint8_t *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle);
+void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const char* title);
+char *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle);
 
 #endif

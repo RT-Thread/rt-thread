@@ -76,7 +76,7 @@ rt_bool_t rtgui_iconbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 }
 
 struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image,
-	const unsigned char* text,
+	const char* text,
 	int position)
 {
     struct rtgui_iconbox* iconbox;
@@ -115,7 +115,7 @@ struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image,
 
 		/* set image and text position */
 		iconbox->image = image;
-		iconbox->text = (unsigned char*)rt_strdup((const char*)text);
+		iconbox->text = (char*)rt_strdup((const char*)text);
 		iconbox->text_position = position;
 	}
 

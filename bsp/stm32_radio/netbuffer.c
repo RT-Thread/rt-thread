@@ -2,6 +2,7 @@
 #include <rtthread.h>
 
 #include "netbuffer.h"
+#include "player_ui.h"
 
 #define MP3_DECODE_MP_CNT   2
 #define MP3_DECODE_MP_SZ    2560
@@ -151,7 +152,7 @@ rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
 			rt_hw_interrupt_enable(level);
 		}
     }
-
+	
     return length;
 }
 

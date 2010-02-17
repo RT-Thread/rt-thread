@@ -1,5 +1,6 @@
 #include "player_bg.h"
 #include "player_ui.h"
+#include "mp3.h"
 
 #include <string.h>
 
@@ -23,17 +24,7 @@ void player_play_req(const char* fn)
     rt_mq_send(player_thread_mq, (void*)&request, sizeof(struct player_request));
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-static const char _fn[] = "/005.mp3";
-void play()
-{
-    player_play_file(_fn);
-}
-FINSH_FUNCTION_EXPORT(play, play mp3 file test);
-#endif
-
-void player_stop()
+void player_stop_req()
 {
 	is_playing = RT_FALSE;
 }
@@ -109,3 +100,4 @@ void player_init()
 		player_ui_init();
 	}
 }
+

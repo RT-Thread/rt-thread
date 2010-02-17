@@ -44,7 +44,7 @@ struct rtgui_list_view
 
 	/* widget private data */
 	/* list item */
-    struct rtgui_list_item* items;
+    const struct rtgui_list_item* items;
 
 	/* total number of items */
 	rt_uint16_t items_count;
@@ -57,10 +57,13 @@ typedef struct rtgui_list_view rtgui_list_view_t;
 
 rtgui_type_t *rtgui_list_view_type_get(void);
 
-rtgui_list_view_t* rtgui_list_view_create(struct rtgui_list_item* items, rt_uint16_t count,
+rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, rt_uint16_t count,
     rtgui_rect_t *rect);
+void rtgui_list_view_destroy(rtgui_list_view_t* view);
+
 void rtgui_list_view_clear(rtgui_list_view_t* view);
 
 rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 
 #endif
+

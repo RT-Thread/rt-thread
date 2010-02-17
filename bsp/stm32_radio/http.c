@@ -8,12 +8,7 @@
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
 
-const char _http_get[] = "GET ";
-const char _http_host[] = "Host: ";
-const char _http_getend[] = " HTTP/1.0\r\n";
-const char _http_user_agent[] = "User-Agent: RT-Thread HTTP Agent\r\n";
-const char _http_endheader[] = "\r\n";
-
+const char _http_get[] = "GET %s HTTP/1.0\r\nHost: %s:%d\r\nUser-Agent: RT-Thread HTTP Agent\r\n\r\n";
 const char _shoutcast_get[] = "GET %s HTTP/1.0\r\nHost: %s:%d\r\nUser-Agent: RT-Thread HTTP Agent\r\nIcy-MetaData: 1\r\nConnection: close\r\n\r\n";
 
 extern long int strtol(const char *nptr, char **endptr, int base);
@@ -167,7 +162,6 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 					port[w] = url[w + i + 1];
 				port[w] = '\0';
 
-				rt_kprintf("HTTP: using port %s for connection\n", port);
 				break;
 			}
 			else is_domain = 1;
@@ -225,51 +219,19 @@ static int http_connect(struct http_session* session,
 		return -1;
 	}
 
-	// Needs more error checking here.....
-#if 0
-	rc = send( peer_handle, _http_get,  sizeof( _http_get ) - 1, 0 );
-	rc = send( peer_handle, (void*) url, strlen( url ), 0 );
-	rc = send( peer_handle, _http_getend, sizeof( _http_getend ) - 1, 0 );
-
-	rc = send( peer_handle, _http_host,  sizeof( _http_host ) - 1, 0 );
-	rc = send( peer_handle, host_addr, strlen( host_addr ), 0 );
-	rc = send( peer_handle, _http_endheader, sizeof( _http_endheader ) - 1, 0 ); // "\r\n"
-
-	rc = send( peer_handle, _http_user_agent, sizeof( _http_user_agent ) - 1, 0 );
-	rc = send( peer_handle, _http_endheader, sizeof( _http_endheader ) - 1, 0 );
-#else
 	{
-		rt_uint8_t *ptr, *buf;
+		char *buf;
+		rt_uint32_t length;
 
 		buf = rt_malloc (512);
-		ptr = buf;
-		rt_memcpy(ptr, _http_get, sizeof(_http_get) - 1);
-		ptr += sizeof(_http_get) - 1;
+		length = rt_snprintf(buf, 512, _http_get, url, host_addr, server->sin_port);
 
-		rt_memcpy(ptr, url, strlen(url));
-		ptr += strlen(url);
-
-		rt_memcpy(ptr, _http_getend, sizeof(_http_getend) - 1);
-		ptr += sizeof(_http_getend) - 1;
-
-		rt_memcpy(ptr, _http_host, sizeof(_http_host) - 1);
-		ptr += sizeof(_http_host) - 1;
-
-		rt_memcpy(ptr, host_addr, strlen(host_addr));
-		ptr += strlen(host_addr);
-
-		rt_memcpy(ptr, _http_endheader, sizeof(_http_endheader) - 1);
-		ptr += sizeof(_http_endheader) - 1;
-
-		rt_memcpy(ptr, _http_user_agent, sizeof(_http_user_agent) - 1);
-		ptr += sizeof(_http_user_agent) - 1;
-
-		rt_memcpy(ptr, _http_endheader, sizeof(_http_endheader) - 1);
-		ptr += sizeof(_http_endheader) - 1;
-		rc = send(peer_handle, buf,
-			(rt_uint32_t)ptr - (rt_uint32_t)buf, 0);
+		rc = send(peer_handle, buf, length, 0);
+		rt_kprintf("HTTP request:\n%s", buf);
+		
+		/* release buffer */
+		rt_free(buf);
 	}
-#endif
 
 	// We now need to read the header information
 	while ( 1 )
@@ -425,7 +387,7 @@ static int shoutcast_connect(struct shoutcast_session* session,
 	}
 
 	{
-		rt_uint8_t *buf;
+		char *buf;
 		rt_uint32_t length;
 
 		buf = rt_malloc (512);
@@ -498,7 +460,7 @@ static int shoutcast_connect(struct shoutcast_session* session,
 		if (strstr(mimeBuffer, "content-type:"))
 		{
 			/* check content-type */
-			if (strstr(mimeBuffer, "content-type:audio/mpeg") == RT_NULL)
+			if (strstr(mimeBuffer, "content-type: audio/mpeg") == RT_NULL)
 			{
 				rt_kprintf("ICY content is not audio/mpeg.\n");
 				return -1;
@@ -574,7 +536,12 @@ rt_size_t shoutcast_session_read(struct shoutcast_session* session, rt_uint8_t *
 	do
 	{
 		bytesRead = recv(session->socket, buffer + totalRead, left, 0);
-		if(bytesRead <= 0) break;
+		if(bytesRead <= 0) 
+		{
+			rt_kprintf("no data on recv, len %d,err %d\n", bytesRead, 
+				lwip_get_error(session->socket));
+			break;
+		}
 
 		left -= bytesRead;
 		totalRead += bytesRead;
@@ -645,7 +612,7 @@ void http_test(char* url)
 	do
 	{
 		rt_memset(buffer, 0, sizeof(buffer));
-		length = http_session_read(session, buffer, sizeof(buffer));
+		length = http_session_read(session, (rt_uint8_t*)buffer, sizeof(buffer));
 
 		rt_kprintf(buffer);rt_kprintf("\n");
 	} while (length > 0);
@@ -668,3 +635,4 @@ void shoutcast_test(char* url)
 	shoutcast_session_close(session);
 }
 FINSH_FUNCTION_EXPORT(shoutcast_test, shoutcast client test);
+

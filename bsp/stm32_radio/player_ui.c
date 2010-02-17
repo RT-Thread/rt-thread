@@ -3,25 +3,27 @@
 #include <rtgui/rtgui_system.h>
 
 #include <rtgui/widgets/view.h>
+#include <rtgui/widgets/list_view.h>
 #include <rtgui/widgets/workbench.h>
-#include <string.h>
+#include <rtgui/widgets/filelist_view.h>
 
+#include <string.h>
 #include <dfs_posix.h>
 
+#include "mp3.h"
+#include "picture.h"
 #include "player_ui.h"
 #include "player_bg.h"
 #include "play_list.h"
-
-#include "listview.h"
-#include "filelist.h"
+#include "station_list.h"
 
 #include "play.hdh"
 #include "stop.hdh"
 
-static rtgui_image_t *background = RT_NULL;
+#define RADIO_FN    "/radio.pls"
 
-static struct rtgui_view* function_view;
 static struct rtgui_view* home_view;
+static struct rtgui_list_view* function_view;
 static struct rtgui_workbench* workbench;
 static rtgui_timer_t* info_timer;
 static rt_thread_t player_ui_tid = RT_NULL;
@@ -29,32 +31,10 @@ static enum PLAYER_MODE player_mode = PLAYER_STOP;
 static enum PLAYER_STEP next_step = PLAYER_STEP_STOP;
 static struct tag_info tinfo;
 
-void player_set_position(rt_uint32_t position)
-{
-	if (player_mode != PLAYER_PLAY_RADIO)
-	{
-	    tinfo.position = position / (tinfo.bit_rate / 8);
-	}
-	else
-	{
-		tinfo.position = position;
-	}
-}
+void player_play_file(const char* fn);
+void player_play_url(const char* url);
 
-void player_set_title(const char* title)
-{
-	strncpy(tinfo.title, title, 40);
-}
-
-void player_set_buffer_status(rt_bool_t buffering)
-{
-	if (buffering == RT_TRUE)
-		strncpy(tinfo.artist, "缓冲中...", 40);
-	else
-		strncpy(tinfo.artist, "播放中...", 40);
-}
-
-void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
+static void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 {
 	struct rtgui_dc* dc;
 	rtgui_color_t saved;
@@ -68,7 +48,7 @@ void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 	rtgui_dc_draw_hline(dc, 14, 14	+ (tinfo.position * 212)/ tinfo.duration,
 		75);
 
-	if (player_mode == PLAYER_PLAY_RADIO)
+	if ((player_mode == PLAYER_PLAY_RADIO) && ((tinfo.position * 212 + 14)/tinfo.duration) < 226)
 	{
 		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(82, 199, 16);
 		rtgui_dc_draw_hline(dc, 14  + (tinfo.position * 212)/ tinfo.duration, 226, 75);
@@ -78,43 +58,12 @@ void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 	rtgui_dc_end_drawing(dc);
 }
 
-static rt_uint32_t read_line(int fd, char* line, rt_uint32_t line_size)
-{
-    char *pos, *next;
-    rt_uint32_t length;
-
-    length = read(fd, line, line_size);
-    if (length > 0)
-    {
-        pos = strstr(line, "\r\n");
-		if (pos == RT_NULL)
-		{
-			pos = strstr(line, "\n");
-			next = pos ++;
-		}
-		else next = pos + 2;
-
-        if (pos != RT_NULL)
-        {
-            *pos = '\0';
-
-            /* move back */
-            lseek(fd, -(length - (next - line)), SEEK_CUR);
-
-            length = pos - line;
-        }
-        else length = 0;
-    }
-
-	rt_kprintf("line %s\n", line);
-    return length;
-}
-
 static void player_update_tag_info(struct rtgui_dc* dc)
 {
 	rtgui_rect_t rect;
     char line[32];
 	rtgui_color_t saved;
+	rtgui_image_t *background;
 
 	saved = rtgui_dc_get_color(dc);
 	rtgui_dc_set_color(dc, black);
@@ -168,6 +117,222 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 	}
 
 	rtgui_dc_set_color(dc, saved);
+}
+
+static rt_uint32_t read_line(int fd, char* line, rt_uint32_t line_size)
+{
+    char *pos, *next;
+    rt_uint32_t length;
+
+    length = read(fd, line, line_size);
+    if (length > 0)
+    {
+        pos = strstr(line, "\r\n");
+		if (pos == RT_NULL)
+		{
+			pos = strstr(line, "\n");
+			next = pos ++;
+		}
+		else next = pos + 2;
+
+        if (pos != RT_NULL)
+        {
+            *pos = '\0';
+
+            /* move back */
+            lseek(fd, -(length - (next - line)), SEEK_CUR);
+
+            length = pos - line;
+        }
+        else length = 0;
+    }
+
+    return length;
+}
+
+static void function_play_radio(void* parameter)
+{
+	struct station_list* list;
+	struct station_item* item;
+
+	list = station_list_create(RADIO_FN);
+	if (list != RT_NULL)
+	{
+		item = station_list_select(list, workbench);
+		if (item != RT_NULL)
+		{
+			player_play_url(item->url);
+		}
+
+		station_list_destroy(list);
+	}
+}
+
+static void function_filelist(void* parameter)
+{
+	rtgui_rect_t rect;
+	rtgui_filelist_view_t *view;
+
+	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
+	view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
+	if (view != RT_NULL)
+	{
+	    if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
+	    {
+			char fn[64];
+
+            /* get open file */
+            rt_snprintf(fn, 64, "%s/%s", view->current_directory,
+                view->items[view->current_item].name);
+
+            if (strstr(view->items[view->current_item].name , ".mp3") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".MP3") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".wav") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".WAV") != RT_NULL)
+            {
+				/* clear old play list */
+				play_list_clear();
+				play_list_append(fn);
+
+			    player_mode = PLAYER_PLAY_FILE;
+				next_step = PLAYER_STEP_STOP;
+				player_play_file(play_list_start());
+            }
+            else if (strstr(view->items[view->current_item].name , ".m3u") != RT_NULL ||
+                strstr(view->items[view->current_item].name , ".M3U") != RT_NULL)
+            {
+                /* read all of music filename to a list */
+                int fd;
+                char line[64];
+
+                fd = open(fn, O_RDONLY, 0);
+                if (fd >= 0)
+                {
+                    rt_uint32_t length;
+
+                    length = read_line(fd, line, sizeof(line));
+					/* clear old play list */
+					play_list_clear();
+
+                    do
+                    {
+                        length = read_line(fd, line, sizeof(line));
+                        if (length > 0)
+                        {
+                        	if (strstr(line, "http:") != RT_NULL)
+                        	{
+                        		play_list_append(line);
+                        	}
+							else if (line[0] != '/')
+                            {
+                                rt_snprintf(fn, sizeof(fn),
+                                    "%s/%s", view->current_directory, line);
+                                play_list_append(fn);
+                            }
+                            else play_list_append(line);
+                        }
+                    } while (length > 0);
+
+                    close(fd);
+
+					if (play_list_items() > 0)
+					{
+					    player_mode = PLAYER_PLAY_FILE;
+						next_step = PLAYER_STEP_NEXT;
+		                player_play_file(play_list_start());
+					}
+                }
+            }
+	    }
+
+		/* destroy view */
+		rtgui_filelist_view_destroy(view);
+	}
+
+	return;
+}
+
+static void function_device(void* parameter)
+{
+	rtgui_view_t *view;
+	extern rtgui_view_t* device_view_create(rtgui_workbench_t* workbench);
+
+	view = device_view_create(workbench);
+	if (view != RT_NULL)
+	{
+	    rtgui_view_show(view, RT_FALSE);
+	}
+
+	return;
+}
+
+static void function_player(void* parameter)
+{
+    rtgui_view_show(home_view, RT_FALSE);
+	return;
+}
+
+static void function_show_picure(void* parameter)
+{
+	rtgui_view_t *view;
+
+	view = picture_view_create(workbench);
+	if (view != RT_NULL)
+	{
+		rtgui_view_show(view, RT_TRUE);
+		rtgui_view_destroy(view);
+	}
+
+	return;
+}
+
+void function_action(void* parameter)
+{
+	rt_kprintf("item action!\n");
+	return;
+}
+
+void function_cable(void* parameter)
+{
+	extern void USB_cable(void);
+    USB_cable();
+}
+
+const struct rtgui_list_item function_list[] =
+{
+	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
+	{"更新电台", RT_NULL, function_action, RT_NULL},
+	{"播放文件", RT_NULL, function_filelist, RT_NULL},
+	{"浏览图片", RT_NULL, function_show_picure, RT_NULL},
+	{"设备信息", RT_NULL, function_device, RT_NULL},
+	{"选项设置", RT_NULL, function_action, RT_NULL},
+	{"USB 联机", RT_NULL, function_cable, RT_NULL},
+	{"返回播放器", RT_NULL, function_player, RT_NULL},
+};
+
+void player_set_position(rt_uint32_t position)
+{
+	if (player_mode != PLAYER_PLAY_RADIO)
+	{
+	    tinfo.position = position / (tinfo.bit_rate / 8);
+	}
+	else
+	{
+		tinfo.position = position;
+	}
+}
+
+void player_set_title(const char* title)
+{
+	strncpy(tinfo.title, title, 40);
+}
+
+void player_set_buffer_status(rt_bool_t buffering)
+{
+	if (buffering == RT_TRUE)
+		strncpy(tinfo.artist, "缓冲中...", 40);
+	else
+		strncpy(tinfo.artist, "播放中...", 40);
 }
 
 void player_play_file(const char* fn)
@@ -233,7 +398,6 @@ void player_play_file(const char* fn)
 
     rtgui_view_show(home_view, RT_FALSE);
 
-	rt_kprintf("play file: %s\n", fn);
     player_play_req(fn);
 }
 
@@ -271,156 +435,8 @@ void player_play_url(const char* url)
 
     rtgui_view_show(home_view, RT_FALSE);
 
-	rt_kprintf("play radio url: %s\n", url);
     player_play_req(url);
 }
-
-void function_play_radio(void* parameter)
-{
-	next_step = PLAYER_STEP_STOP;
-	player_play_url("http://syragon.com:8000/ices");
-	// player_play_url("http://192.168.1.6:8000/stream");
-	// player_play_url("http://radio.aozima.com:8000/stream");
-}
-
-void function_filelist(void* parameter)
-{
-	rtgui_rect_t rect;
-	filelist_view_t *view;
-
-	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
-	view = filelist_view_create(workbench, "/", "*.*", &rect);
-	if (view != RT_NULL)
-	{
-	    if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
-	    {
-			char fn[64];
-
-            /* get open file */
-            rt_snprintf(fn, 64, "%s/%s", view->current_directory,
-                view->items[view->current_item].name);
-
-            if (strstr(view->items[view->current_item].name , ".mp3") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".MP3") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".wav") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".WAV") != RT_NULL)
-            {
-				/* clear old play list */
-				play_list_clear();
-				play_list_append(fn);
-
-			    player_mode = PLAYER_PLAY_FILE;
-				next_step = PLAYER_STEP_STOP;
-				player_play_file(play_list_start());
-            }
-            else if (strstr(view->items[view->current_item].name , ".m3u") != RT_NULL ||
-                strstr(view->items[view->current_item].name , ".M3U") != RT_NULL)
-            {
-                /* read all of music filename to a list */
-                int fd;
-                char line[64];
-
-                fd = open(fn, O_RDONLY, 0);
-                if (fd >= 0)
-                {
-                    rt_uint32_t length;
-
-                    length = read_line(fd, line, sizeof(line));
-					/* clear old play list */
-					play_list_clear();
-
-                    do
-                    {
-                        length = read_line(fd, line, sizeof(line));
-                        if (length > 0)
-                        {
-                            if (line[0] != '/')
-                            {
-                                rt_snprintf(fn, sizeof(fn),
-                                    "%s/%s", view->current_directory, line);
-                                play_list_append(fn);
-                            }
-                            else play_list_append(line);
-                        }
-                    } while (length > 0);
-
-                    close(fd);
-
-					if (play_list_items() > 0)
-					{
-					    player_mode = PLAYER_PLAY_FILE;
-						next_step = PLAYER_STEP_NEXT;
-		                player_play_file(play_list_start());
-					}
-                }
-            }
-	    }
-
-		/* destroy view */
-		filelist_view_destroy(view);
-	}
-
-	return;
-}
-
-void function_device(void* parameter)
-{
-	rtgui_view_t *view;
-	extern rtgui_view_t* device_view_create(rtgui_workbench_t* workbench);
-
-	view = device_view_create(workbench);
-	if (view != RT_NULL)
-	{
-	    rtgui_view_show(view, RT_FALSE);
-	}
-
-	return;
-}
-
-void function_player(void* parameter)
-{
-    rtgui_view_show(home_view, RT_FALSE);
-	return;
-}
-
-#include "picture.h"
-void function_show_picure(void* parameter)
-{
-	rtgui_view_t *view;
-
-	view = picture_view_create(workbench);
-	if (view != RT_NULL)
-	{
-		rtgui_view_show(view, RT_TRUE);
-		rtgui_view_destroy(view);
-	}
-
-	return;
-}
-
-void function_action(void* parameter)
-{
-	rt_kprintf("item action!\n");
-	return;
-}
-
-extern void USB_cable(void);
-void function_cable(void)
-{
-    USB_cable();
-}
-
-struct list_item function_list[] =
-{
-	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
-	{"更新电台", RT_NULL, function_action, RT_NULL},
-	{"播放文件", RT_NULL, function_filelist, RT_NULL},
-	{"浏览图片", RT_NULL, function_show_picure, RT_NULL},
-	{"设备信息", RT_NULL, function_device, RT_NULL},
-	{"选项设置", RT_NULL, function_action, RT_NULL},
-	{"USB 联机", RT_NULL, function_cable, RT_NULL},
-	{"返回播放器", RT_NULL, function_player, RT_NULL},
-};
 
 static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
@@ -429,6 +445,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 		struct rtgui_dc* dc;
 		struct rtgui_rect rect;
 		rtgui_color_t saved;
+		rtgui_image_t *background;
 
 		dc = rtgui_dc_begin_drawing(widget);
 		if (dc == RT_NULL) return RT_FALSE;
@@ -544,14 +561,14 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			case RTGUIK_RIGHT:
                 if (player_mode == PLAYER_PLAY_FILE && play_list_items() > 0)
                 {
-					player_stop();
+					player_stop_req();
 					next_step = PLAYER_STEP_NEXT;
                 }
                 break;
 			case RTGUIK_LEFT:
                 if (player_mode == PLAYER_PLAY_FILE && play_list_items() > 0)
                 {
-					player_stop();
+					player_stop_req();
 					next_step = PLAYER_STEP_PREV;
                 }
 				break;
@@ -559,7 +576,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			case RTGUIK_RETURN:
 				if (player_is_playing() == RT_TRUE)
 				{
-					player_stop();
+					player_stop_req();
 					next_step = PLAYER_STEP_STOP;
 				}
 				else
@@ -573,7 +590,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				break;
 
 			case RTGUIK_DOWN:
-                rtgui_view_show(function_view, RT_FALSE);
+                rtgui_view_show(RTGUI_VIEW(function_view), RT_FALSE);
 				break;
 			}
 		}
@@ -735,10 +752,10 @@ static void player_entry(void* parameter)
 
     /* add function view */
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
-	function_view = (struct rtgui_view*)list_view_create(function_list,
-		sizeof(function_list)/sizeof(struct list_item),
+	function_view = rtgui_list_view_create(function_list,
+		sizeof(function_list)/sizeof(struct rtgui_list_item),
 		&rect);
-	rtgui_workbench_add_view(workbench, function_view);
+	rtgui_workbench_add_view(workbench, RTGUI_VIEW(function_view));
 
 	rtgui_workbench_event_loop(workbench);
 
@@ -769,7 +786,8 @@ void player_notify_stop()
 void player_ui_init()
 {
 	player_ui_tid = rt_thread_create("ply_ui", player_entry, RT_NULL,
-		4096, 25, 5);
+		0x800, 25, 5);
 	if (player_ui_tid != RT_NULL)
 		rt_thread_startup(player_ui_tid);
 }
+

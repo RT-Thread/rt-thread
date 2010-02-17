@@ -503,7 +503,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         {
             rt_uint16_t dummy;
 
-            DM9000_TRACE("dm9000 rx: no pbuf\n");
+            rt_kprintf("dm9000 rx: no pbuf\n");
 
             /* no pbuf, discard data from DM9000 */
             data = &dummy;

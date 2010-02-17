@@ -121,7 +121,7 @@
 #define RT_LWIP_TCP_SND_BUF	2048
 
 /* TCP Window Size */
-#define RT_LWIP_TCP_WND	(1024 * 2)
+#define RT_LWIP_TCP_WND	(1024 * 20)
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */

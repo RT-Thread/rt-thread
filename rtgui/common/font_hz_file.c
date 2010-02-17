@@ -13,8 +13,8 @@
 static int _font_cache_compare(struct hz_cache* node1, struct hz_cache* node2);
 
 static void rtgui_hz_file_font_load(struct rtgui_font* font);
-static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect);
-static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect);
+static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect);
+static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect);
 struct rtgui_font_engine rtgui_hz_file_font_engine =
 {
 	RT_NULL,
@@ -91,7 +91,7 @@ static void rtgui_hz_file_font_load(struct rtgui_font* font)
     hz_file_font->fd = open(hz_file_font->font_fn, O_RDONLY, 0);
 }
 
-static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const rt_uint8_t* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	rt_base_t h;
 	rt_uint8_t* str;
@@ -133,7 +133,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 	}
 }
 
-static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const rt_uint8_t* text, rtgui_rect_t* rect)
+static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
     struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
     RT_ASSERT(hz_file_font != RT_NULL);

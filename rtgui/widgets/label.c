@@ -64,7 +64,7 @@ rt_bool_t rtgui_label_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 	return RT_FALSE;
 }
 
-rtgui_label_t* rtgui_label_create(const unsigned char* text)
+rtgui_label_t* rtgui_label_create(const char* text)
 {
     struct rtgui_label* label;
 
@@ -80,7 +80,7 @@ rtgui_label_t* rtgui_label_create(const unsigned char* text)
 		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 
 		/* set text */
-		label->text = (unsigned char*)rt_strdup((const char*)text);
+		label->text = (char*)rt_strdup((const char*)text);
     }
 
     return label;
@@ -91,14 +91,14 @@ void rtgui_label_destroy(rtgui_label_t* label)
 	rtgui_widget_destroy(RTGUI_WIDGET(label));
 }
 
-unsigned char* rtgui_label_get_text(rtgui_label_t* label)
+char* rtgui_label_get_text(rtgui_label_t* label)
 {
 	RT_ASSERT(label != RT_NULL);
 
 	return label->text;
 }
 
-void rtgui_label_set_text(rtgui_label_t* label, const unsigned char* text)
+void rtgui_label_set_text(rtgui_label_t* label, const char* text)
 {
 	RT_ASSERT(label != RT_NULL);
 
@@ -108,7 +108,7 @@ void rtgui_label_set_text(rtgui_label_t* label, const unsigned char* text)
 		rt_free(label->text);
 	}
 
-	if (text != RT_NULL) label->text = (unsigned char*)rt_strdup((const char*)text);
+	if (text != RT_NULL) label->text = (char*)rt_strdup((const char*)text);
 	else label->text = RT_NULL;
 
 	/* update widget */

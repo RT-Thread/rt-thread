@@ -54,7 +54,7 @@ void rtgui_list_view_ondraw(struct rtgui_list_view* view)
 	struct rtgui_rect rect, item_rect;
 	struct rtgui_dc* dc;
 	rt_uint16_t page_index, index;
-	struct rtgui_list_item* item;
+	const struct rtgui_list_item* item;
 
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(view));
 	if (dc == RT_NULL) return;
@@ -103,7 +103,7 @@ void rtgui_list_view_ondraw(struct rtgui_list_view* view)
 void rtgui_list_view_update_current(struct rtgui_list_view* view, rt_uint16_t old_item)
 {
 	struct rtgui_dc* dc;
-	struct rtgui_list_item* item;
+	const struct rtgui_list_item* item;
 	rtgui_rect_t rect, item_rect;
 
 	if (old_item/view->page_items != view->current_item/view->page_items)
@@ -267,7 +267,7 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
     return rtgui_view_event_handler(widget, event);
 }
 
-rtgui_list_view_t* rtgui_list_view_create(struct rtgui_list_item* items, rt_uint16_t count, rtgui_rect_t *rect)
+rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, rt_uint16_t count, rtgui_rect_t *rect)
 {
 	struct rtgui_list_view* view = RT_NULL;
 

@@ -219,7 +219,6 @@ const static char * folder_xpm[] = {
 
 /* image for file and folder */
 static rtgui_image_t *file_image, *folder_image;
-static struct rtgui_filelist_view *filelist_view = RT_NULL; /* only one view in global */
 
 static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 {
@@ -489,7 +488,7 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 						if (strcmp(view->items[view->current_item].name, ".") == 0) return RT_FALSE;
 						if (strcmp(view->items[view->current_item].name, "..") == 0)
 						{
-							rt_uint8_t *ptr;
+							char *ptr;
 							ptr = strrchr(view->current_directory, PATH_SEPARATOR);
 
 							if (ptr == RT_NULL) return RT_FALSE;
@@ -526,11 +525,11 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 						else
 						{
 							if (view->current_directory[strlen(view->current_directory) - 1] != PATH_SEPARATOR)
-								sprintf(new_path, "%s%c%s",view->current_directory, PATH_SEPARATOR,
+								rt_snprintf(new_path, sizeof(new_path), "%s%c%s",view->current_directory, PATH_SEPARATOR,
 									view->items[view->current_item].name);
 							else
-								sprintf(new_path, "%s%s",view->current_directory, 
-								view->items[view->current_item].name);
+								rt_snprintf(new_path, sizeof(new_path), "%s%s",view->current_directory, 
+									view->items[view->current_item].name);
 						}
 						rtgui_filelist_view_set_directory(view, new_path);
 					}
@@ -616,7 +615,7 @@ void rtgui_filelist_view_clear(rtgui_filelist_view_t* view)
 
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory)
 {
-    rt_uint8_t fullpath[256];
+    char fullpath[256];
     struct rtgui_file_item *item;
 
     RT_ASSERT(view != RT_NULL);
@@ -693,9 +692,9 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 
 			/* build full path for the file */
 			if (directory[strlen(directory) - 1] != PATH_SEPARATOR)
-				sprintf(fullpath, "%s%c%s", directory, PATH_SEPARATOR, dirent->d_name);
+				rt_sprintf(fullpath, "%s%c%s", directory, PATH_SEPARATOR, dirent->d_name);
 			else
-				sprintf(fullpath, "%s%s", directory, dirent->d_name);
+				rt_sprintf(fullpath, "%s%s", directory, dirent->d_name);
 
 			stat(fullpath, &s);
 			if ( s.st_mode & S_IFDIR )

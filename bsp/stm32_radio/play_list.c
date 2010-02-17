@@ -1,5 +1,7 @@
 #include "play_list.h"
 #include "player_ui.h"
+#include "mp3.h"
+
 #include <string.h>
 
 static struct play_item **play_list = RT_NULL;

@@ -37,7 +37,7 @@ struct rtgui_iconbox
 	/* widget private data */
 	struct rtgui_image* image;
 
-	unsigned char *text;
+	char *text;
 	rt_ubase_t text_position;
 
 	rt_bool_t selected;
@@ -46,7 +46,7 @@ typedef struct rtgui_iconbox rtgui_iconbox_t;
 
 rtgui_type_t *rtgui_iconbox_type_get(void);
 
-struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image, const unsigned char* text, int position);
+struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image, const char* text, int position);
 void rtgui_iconbox_destroy(struct rtgui_iconbox* iconbox);
 
 rt_bool_t rtgui_iconbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);

@@ -43,7 +43,7 @@ rtgui_type_t* rtgui_wintitle_type_get()
 	return wintitle_type;
 }
 
-rtgui_wintitle_t* rtgui_wintitle_create(const rt_uint8_t* title)
+rtgui_wintitle_t* rtgui_wintitle_create(const char* title)
 {
 	rtgui_wintitle_t* wintitle;
 
@@ -61,7 +61,7 @@ void rtgui_wintitle_destroy(rtgui_wintitle_t* wintitle)
 	rtgui_widget_destroy(RTGUI_WIDGET(wintitle));
 }
 
-void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const rt_uint8_t* title)
+void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const char* title)
 {
 	RT_ASSERT(wintitle != RT_NULL);
 
@@ -70,11 +70,11 @@ void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const rt_uint8_t* titl
 		rtgui_free(wintitle->title);
 	}
 
-	if (title != RT_NULL) wintitle->title = (unsigned char*)rt_strdup((const char*)title);
+	if (title != RT_NULL) wintitle->title = (char*)rt_strdup((const char*)title);
 	else wintitle->title = RT_NULL;
 }
 
-rt_uint8_t *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle)
+char *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle)
 {
 	RT_ASSERT(wintitle != RT_NULL);
 
