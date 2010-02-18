@@ -238,6 +238,14 @@ alloc_socket(struct netconn *newconn)
   return -1;
 }
 
+int lwip_get_error(int s)
+{
+	struct lwip_socket *sock;
+	sock = get_socket(s);
+
+	return sock->err;
+}
+
 /* Below this, the well-known socket functions are implemented.
  * Use google.com or opengroup.org to get a good description :-)
  *
