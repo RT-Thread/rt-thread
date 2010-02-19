@@ -410,6 +410,7 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 			{
 				rt_uint32_t frames = ((rt_uint32_t) mp3_fd_buffer[p + 8] << 24) | ((rt_uint32_t) mp3_fd_buffer[p + 9] << 16) | ((rt_uint32_t) mp3_fd_buffer[p + 10] << 8) | (rt_uint32_t) mp3_fd_buffer[p + 11];
 				info->duration = frames * samples_per_frame / frame_info.samprate;
+				info->bit_rate = lseek(fd, 0, SEEK_END) * 8 / info->duration;
 			}
 		}
 		/*
@@ -420,8 +421,8 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 		{
 			// CBR
 			info->duration = lseek(fd, 0, SEEK_END) / (frame_info.bitrate / 8); /* second */
+			info->bit_rate = frame_info.bitrate;
 		}
-		info->bit_rate = frame_info.bitrate;
 		info->sampling = frame_info.samprate;
 	}
 
