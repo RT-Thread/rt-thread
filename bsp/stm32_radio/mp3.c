@@ -158,7 +158,7 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	if (decoder->read_offset < 0)
 	{
 		/* discard this data */
-		rt_kprintf("outof sync\n");
+		rt_kprintf("outof sync, byte left: %d\n", decoder->bytes_left);
 
 		decoder->bytes_left = 0;
 		return 0;
@@ -439,8 +439,14 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 rt_size_t fd_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
 {
 	int fd = (int)parameter;
-	return read(fd, (char*)buffer, length);
+	int read_bytes;
+
+	read_bytes = read(fd, (char*)buffer, length);
+	if (read_bytes <= 0) return 0;
+
+	return read_bytes;
 }
+
 void mp3(char* filename)
 {
 	int fd;
@@ -492,6 +498,7 @@ rt_size_t http_data_fetch(void* parameter, rt_uint8_t *buffer, rt_size_t length)
 {
 	return net_buf_read(buffer, length);
 }
+
 void http_mp3(char* url)
 {
     struct http_session* session;

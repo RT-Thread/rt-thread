@@ -175,7 +175,7 @@ SD_Error SD_Init(void)
   SDIO_InitStructure.SDIO_ClockBypass = SDIO_ClockBypass_Disable;
   SDIO_InitStructure.SDIO_ClockPowerSave = SDIO_ClockPowerSave_Disable;
   SDIO_InitStructure.SDIO_BusWide = SDIO_BusWide_1b;
-  SDIO_InitStructure.SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Disable;
+  SDIO_InitStructure.SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Enable;
   SDIO_Init(&SDIO_InitStructure);
 
   return(errorstatus);
@@ -953,11 +953,21 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   }
   else if (DeviceMode == SD_DMA_MODE)
   {
+    rt_tick_t tick;
+	
     SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
     SDIO_DMACmd(ENABLE);
+	tick = rt_tick_get();
     DMA_RxConfiguration(readbuff, BlockSize);
     while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-    {}
+    { 
+      if ((TransferError != SD_OK) || (rt_tick_get() - tick > 2))
+	  { 
+	    errorstatus = SD_ERROR; 
+		// rt_kprintf("sd error\n");
+		break;
+	  }
+	}
   }
   return(errorstatus);
 }
@@ -1151,11 +1161,21 @@ SD_Error SD_ReadMultiBlocks(uint32_t addr, uint32_t *readbuff, uint16_t BlockSiz
     }
     else if (DeviceMode == SD_DMA_MODE)
     {
+      rt_tick_t tick;
+	  
       SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
       SDIO_DMACmd(ENABLE);
+	  tick = rt_tick_get();
       DMA_RxConfiguration(readbuff, (NumberOfBlocks * BlockSize));
       while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-      {}
+	  { 
+		if ((TransferError != SD_OK) || (rt_tick_get() - tick > 2))
+		{ 
+		  errorstatus = SD_ERROR; 
+		  // rt_kprintf("sd error\n");
+		  return errorstatus;
+		}
+	  }
       while ((TransferEnd == 0) && (TransferError == SD_OK))
       {}
       if (TransferError != SD_OK)
@@ -3001,42 +3021,49 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	SD_Error status;
-	rt_uint32_t nr = size / SECTOR_SIZE;
+	rt_uint32_t nr = size / SECTOR_SIZE, retry;
 
 	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
 
-	/* read all sectors */
-	if (((rt_uint32_t)buffer % 4 != 0) ||
-        ((rt_uint32_t)buffer > 0x20080000))
-	{
-	    rt_uint32_t index;
-
-        /* which is not alignment with 4 or chip SRAM */
-        for (index = 0; index < nr; index ++)
+    retry = 3;
+    while(retry)
+    {
+        /* read all sectors */
+        if (((rt_uint32_t)buffer % 4 != 0) ||
+            ((rt_uint32_t)buffer > 0x20080000))
         {
-            status = SD_ReadBlock((part.offset + index) * SECTOR_SIZE + pos,
-                (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
+            rt_uint32_t index;
 
-            if (status != SD_OK) break;
+            /* which is not alignment with 4 or chip SRAM */
+            for (index = 0; index < nr; index ++)
+            {
+                status = SD_ReadBlock((part.offset + index) * SECTOR_SIZE + pos,
+                    (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
 
-            /* copy to the buffer */
-            rt_memcpy(((rt_uint8_t*)buffer + index * SECTOR_SIZE), _sdcard_buffer, SECTOR_SIZE);
-        }
-	}
-	else
-	{
-        if (nr == 1)
-        {
-            status = SD_ReadBlock(part.offset * SECTOR_SIZE + pos,
-                (uint32_t*)buffer, SECTOR_SIZE);
+                if (status != SD_OK) break;
+
+                /* copy to the buffer */
+                rt_memcpy(((rt_uint8_t*)buffer + index * SECTOR_SIZE), _sdcard_buffer, SECTOR_SIZE);
+            }
         }
         else
         {
-            status = SD_ReadMultiBlocks(part.offset * SECTOR_SIZE + pos,
-                (uint32_t*)buffer, SECTOR_SIZE, nr);
+            if (nr == 1)
+            {
+                status = SD_ReadBlock(part.offset * SECTOR_SIZE + pos,
+                    (uint32_t*)buffer, SECTOR_SIZE);
+            }
+            else
+            {
+                status = SD_ReadMultiBlocks(part.offset * SECTOR_SIZE + pos,
+                    (uint32_t*)buffer, SECTOR_SIZE, nr);
+            }
         }
-	}
 
+        if (status == SD_OK) break;
+
+        retry --;
+    }
 	rt_sem_release(&sd_lock);
 
 	if (status == SD_OK) return size;
@@ -3110,7 +3137,7 @@ void rt_hw_sdcard_init()
 		status = SD_SelectDeselect((u32) (SDCardInfo.RCA << 16));
 		if (status != SD_OK) goto __return;
 
-		SD_EnableWideBusOperation(SDIO_BusWide_4b);
+		SD_EnableWideBusOperation(SDIO_BusWide_1b);
 		SD_SetDeviceMode(SD_DMA_MODE);
 
 		/* get the first sector to read partition table */
