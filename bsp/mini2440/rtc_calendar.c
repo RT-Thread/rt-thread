@@ -209,7 +209,7 @@ void rt_rtc_weekdate_calculate(void)
 
 }
 
-void rt_rtc_show_calendar(void)
+void rt_calendar(void)
 {
 	rt_uint32_t year;
 	//static rt_uint8_t receive_char;
@@ -237,5 +237,5 @@ void rt_rtc_show_calendar(void)
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(rt_rtc_show_calendar, print calendar)
+FINSH_FUNCTION_EXPORT(rt_calendar, print calendar)
 #endif

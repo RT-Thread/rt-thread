@@ -31,7 +31,7 @@ extern "C" {
 
 rt_int32_t  	rt_rtc_isleap(rt_uint32_t year);
 rt_int32_t   	rt_rtc_week_of_newyears_day(rt_uint32_t year);
-void 			rt_rtc_show_calendar(void);
+void 			rt_calendar(void);
 void 			rt_rtc_print_calendar(rt_uint32_t year);
 rt_int32_t 		rt_rtc_month_day_num(rt_int32_t month, rt_int32_t leapyn);
 rt_int32_t 		rt_rtc_space_days(rt_int32_t month, rt_int32_t year);
