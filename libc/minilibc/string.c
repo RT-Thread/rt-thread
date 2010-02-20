@@ -41,13 +41,6 @@ int strcmp (const char *s1, const char *s2)
 	return (*s1 - *s2);
 }
 
-int strcmp (const char *s1, const char *s2)
-{
-	while (*s1 && *s1 == *s2)
-		s1++, s2++;
-	return (*s1 - *s2);
-}
-
 char* strcat(register char* s,register const char* t)
 {
 	char *dest = s;
