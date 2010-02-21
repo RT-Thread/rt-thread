@@ -22,6 +22,37 @@
 
 #define RADIO_FN    "/radio.pls"
 
+const static char *time_bg_xpm[] = {
+"48 20 7 1",
+".	c #007DC6",
+"+	c #0079C6",
+"@	c #0079BD",
+"#	c #0075BD",
+"$	c #0071BD",
+"%	c #0071B5",
+"&	c #006DB5",
+"................................................",
+"................................................",
+"................................................",
+"................................................",
+"................................................",
+"++++++++++++++++++++++++++++++++++++++++++++++++",
+"++++++++++++++++++++++++++++++++++++++++++++++++",
+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+"################################################",
+"################################################",
+"################################################",
+"################################################",
+"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",
+"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",
+"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",
+"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",
+"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",
+"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"};
+
 static struct rtgui_view* home_view;
 static struct rtgui_list_view* function_view;
 static struct rtgui_workbench* workbench;
@@ -30,6 +61,8 @@ static rt_thread_t player_ui_tid = RT_NULL;
 static enum PLAYER_MODE player_mode = PLAYER_STOP;
 static enum PLAYER_STEP next_step = PLAYER_STEP_STOP;
 static struct tag_info tinfo;
+static rt_uint32_t play_time;
+static rtgui_image_t *time_bg_image;
 
 void player_play_file(const char* fn);
 void player_play_url(const char* url);
@@ -45,16 +78,29 @@ static void info_timer_timeout(rtgui_timer_t* timer, void* parameter)
 	saved = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view));
 
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(206, 231, 255);
-	rtgui_dc_draw_hline(dc, 14, 14	+ (tinfo.position * 212)/ tinfo.duration,
-		75);
+	rtgui_dc_draw_hline(dc, 14, 14	+ (tinfo.position * 212) / tinfo.duration, 75);
 
 	if ((player_mode == PLAYER_PLAY_RADIO) && ((tinfo.position * 212 + 14)/tinfo.duration) < 226)
 	{
 		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = RTGUI_RGB(82, 199, 16);
-		rtgui_dc_draw_hline(dc, 14  + (tinfo.position * 212)/ tinfo.duration, 226, 75);
+		rtgui_dc_draw_hline(dc, 14  + (tinfo.position * 212) / tinfo.duration, 226, 75);
+	}
+    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
+
+	if (player_mode == PLAYER_PLAY_FILE)
+	{
+		rtgui_rect_t rect;
+	    char line[32];
+
+	    play_time++;
+		rt_snprintf(line, sizeof(line), "%3d:%02d", play_time / 60, play_time % 60);
+
+		rect.x1 = 172; rect.y1 = 39;
+	    rect.x2 = 220; rect.y2 = 59;
+	    rtgui_image_blit(time_bg_image, dc, &rect);
+	    rtgui_dc_draw_text(dc, line, &rect);
 	}
 
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(home_view)) = saved;
 	rtgui_dc_end_drawing(dc);
 }
 
@@ -71,8 +117,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 	rect.x1 = 0; rect.y1 = 0;
 	rect.x2 = 240; rect.y2 = 65;
 	/* draw background */
-    background = rtgui_image_create_from_file("hdc",
-        "/resource/bg.hdc", RT_FALSE);
+    background = rtgui_image_create_from_file("hdc", "/resource/bg.hdc", RT_FALSE);
 	if (background != RT_NULL)
 	{
         rtgui_image_blit(background, dc, &rect);
@@ -90,8 +135,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
     rect.x2 = 220; rect.y2 = rect.y1 + 16;
 	if (player_mode == PLAYER_STOP)
 	{
-		rt_snprintf(line, sizeof(line),
-			"网络收音机");
+		rt_snprintf(line, sizeof(line), "网络收音机");
 	    rtgui_dc_draw_text(dc, line, &rect);
 	}
 	else
@@ -101,8 +145,7 @@ static void player_update_tag_info(struct rtgui_dc* dc)
     rect.x2 = 220; rect.y2 = 59;
 	if (player_mode == PLAYER_STOP)
 	{
-		rt_snprintf(line, sizeof(line),
-			"radio.rt-thread.org");
+		rt_snprintf(line, sizeof(line), "radio.rt-thread.org");
 	    rtgui_dc_draw_text(dc, line, &rect);
 	}
 	else
@@ -110,9 +153,10 @@ static void player_update_tag_info(struct rtgui_dc* dc)
 
 	if ((tinfo.duration != 0) && player_mode == PLAYER_PLAY_FILE)
 	{
-        rect.x1 = rect.x2 - 64;
-		rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-			tinfo.duration / 3600, tinfo.duration / 60, tinfo.duration % 60);
+		play_time = 0;
+
+        rect.x1 = 172;
+		rt_snprintf(line, sizeof(line), "  0:00");
         rtgui_dc_draw_text(dc, line, &rect);
 	}
 
@@ -225,8 +269,7 @@ static void function_filelist(void* parameter)
                         	}
 							else if (line[0] != '/')
                             {
-                                rt_snprintf(fn, sizeof(fn),
-                                    "%s/%s", view->current_directory, line);
+                                rt_snprintf(fn, sizeof(fn), "%s/%s", view->current_directory, line);
                                 play_list_append(fn);
                             }
                             else play_list_append(line);
@@ -453,8 +496,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 		saved = RTGUI_WIDGET_FOREGROUND(widget);
 
 		/* draw background */
-	    background = rtgui_image_create_from_file("hdc",
-	        "/resource/bg.hdc", RT_FALSE);
+	    background = rtgui_image_create_from_file("hdc", "/resource/bg.hdc", RT_FALSE);
 		if (background != RT_NULL)
 		{
             rtgui_image_t *play;
@@ -466,11 +508,9 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			background = RT_NULL;
 
 			if (player_mode == PLAYER_STOP)
-				play = rtgui_image_create_from_mem("hdc",
-	                stop_hdh, sizeof(stop_hdh), RT_FALSE);
+				play = rtgui_image_create_from_mem("hdc", stop_hdh, sizeof(stop_hdh), RT_FALSE);
 			else
-				play = rtgui_image_create_from_mem("hdc",
-	                play_hdh, sizeof(play_hdh), RT_FALSE);
+				play = rtgui_image_create_from_mem("hdc", play_hdh, sizeof(play_hdh), RT_FALSE);
             play_rect.x1 = 32; play_rect.y1 = 92;
             play_rect.x2 = 61; play_rect.y2 = 114;
             rtgui_image_blit(play, dc, &play_rect);
@@ -490,19 +530,18 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
             rect.x2 = 220; rect.y2 = rect.y1 + 16;
 			if (player_mode == PLAYER_STOP)
 			{
-				rt_snprintf(line, sizeof(line),
-					"网络收音机");
+				rt_snprintf(line, sizeof(line), "网络收音机");
 			    rtgui_dc_draw_text(dc, line, &rect);
 			}
 			else
 			    rtgui_dc_draw_text(dc, tinfo.title, &rect);
 
             rect.x1 = 28; rect.y1 = 39;
-            rect.x2 = 220; rect.y2 = 59;
+            rect.x2 = 170; rect.y2 = 59;
 			if (player_mode == PLAYER_STOP)
 			{
-				rt_snprintf(line, sizeof(line),
-					"radio.rt-thread.org");
+				rect.x2 = 220;
+				rt_snprintf(line, sizeof(line), "radio.rt-thread.org");
 			    rtgui_dc_draw_text(dc, line, &rect);
 			}
 			else
@@ -510,9 +549,10 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 
 			if ((tinfo.duration != 0) && (player_mode == PLAYER_PLAY_FILE))
 			{
-	            rect.x1 = rect.x2 - 64;
-				rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-					tinfo.duration / 3600, tinfo.duration / 60, tinfo.duration % 60);
+	            rt_uint32_t t = player_mode == PLAYER_STOP ? tinfo.duration : play_time;
+
+	            rect.x1 = 172; rect.x2 = 220;
+				rt_snprintf(line, sizeof(line), "%3d:%02d", t / 60, t % 60);
 	            rtgui_dc_draw_text(dc, line, &rect);
 			}
         }
@@ -529,21 +569,18 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			struct play_item* item;
 
 			rect.x1 = 20; rect.y1 = 150;
-			rect.x2 = 220; rect.y2 = 168;
+			rect.x2 = 170; rect.y2 = 168;
 			for (index = 0; index < play_list_items() && index < 8; index ++)
 			{
 				item = play_list_item(index);
 				rtgui_dc_draw_text(dc, item->title, &rect);
 
-	            rect.x1 = rect.x2 - 64;
-				rt_snprintf(line, sizeof(line), "%02d:%02d:%02d",
-					item->duration / 3600,
-					item->duration / 60,
-					item->duration % 60);
+	            rect.x1 = 172; rect.x2 = 220;
+				rt_snprintf(line, sizeof(line), "%3d:%02d", item->duration / 60, item->duration % 60);
 	            rtgui_dc_draw_text(dc, line, &rect);
 
 				/* move to next item */
-				rect.x1 = 20;
+				rect.x1 = 20; rect.x2 = 170;
 				rect.y1 += 18; rect.y2 += 18;
 			}
 		}
@@ -565,6 +602,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 					next_step = PLAYER_STEP_NEXT;
                 }
                 break;
+
 			case RTGUIK_LEFT:
                 if (player_mode == PLAYER_PLAY_FILE && play_list_items() > 0)
                 {
@@ -606,6 +644,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 		case PLAYER_REQUEST_PLAY_LIST:
 			rtgui_timer_start(info_timer);
 			break;
+
 		case PLAYER_REQUEST_STOP:
 		{
 			rtgui_timer_stop(info_timer);
@@ -632,8 +671,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				rtgui_dc_draw_hline(dc, 14, 226, 75);
 
 				/* update play button */
-				button = rtgui_image_create_from_mem("hdc",
-	                stop_hdh, sizeof(stop_hdh), RT_FALSE);
+				button = rtgui_image_create_from_mem("hdc", stop_hdh, sizeof(stop_hdh), RT_FALSE);
 	            play_rect.x1 = 32; play_rect.y1 = 92;
 	            play_rect.x2 = 61; play_rect.y2 = 114;
 	            rtgui_image_blit(button, dc, &play_rect);
@@ -643,6 +681,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				rtgui_dc_end_drawing(dc);
 			}
 				break;
+
 			case PLAYER_STEP_NEXT:
 				if (play_list_is_end() == RT_TRUE)
 				{
@@ -730,9 +769,9 @@ static void player_entry(void* parameter)
 	rtgui_thread_register(rt_thread_self(), mq);
 
 	/* create information timer */
-	info_timer = rtgui_timer_create(RT_TICK_PER_SECOND,
-		RT_TIMER_FLAG_PERIODIC,
-		info_timer_timeout, RT_NULL);
+	info_timer = rtgui_timer_create(RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC, info_timer_timeout, RT_NULL);
+
+	time_bg_image = rtgui_image_create_from_mem("xpm", (rt_uint8_t *) time_bg_xpm, sizeof(time_bg_xpm), RT_TRUE);
 
 	workbench = rtgui_workbench_create("main", "workbench");
 	if (workbench == RT_NULL) return;

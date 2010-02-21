@@ -403,7 +403,7 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 		}
 		p += sync_word + 4;
 
-		if (strncmp("Xing", (char *) mp3_fd_buffer + p, 4) || strncmp("Info", (char *) mp3_fd_buffer + p, 4))
+		if (strncmp("Xing", (char *) mp3_fd_buffer + p, 4) == 0 || strncmp("Info", (char *) mp3_fd_buffer + p, 4) == 0)
 		{
 			// VBR
 			if (mp3_fd_buffer[p + 7] & 1 == 1) /* Checks if the frames field exists */
@@ -411,6 +411,12 @@ void mp3_get_info(const char* filename, struct tag_info* info)
 				rt_uint32_t frames = ((rt_uint32_t) mp3_fd_buffer[p + 8] << 24) | ((rt_uint32_t) mp3_fd_buffer[p + 9] << 16) | ((rt_uint32_t) mp3_fd_buffer[p + 10] << 8) | (rt_uint32_t) mp3_fd_buffer[p + 11];
 				info->duration = frames * samples_per_frame / frame_info.samprate;
 				info->bit_rate = lseek(fd, 0, SEEK_END) * 8 / info->duration;
+			}
+			else
+			{
+				// Calculate as CBR
+				info->duration = lseek(fd, 0, SEEK_END) / (frame_info.bitrate / 8); /* second */
+				info->bit_rate = frame_info.bitrate;
 			}
 		}
 		/*
