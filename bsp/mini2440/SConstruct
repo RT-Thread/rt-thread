@@ -42,7 +42,7 @@ if rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript(RTT_ROOT + '/rtgui/SConscript', variant_dir='build/rtgui', duplicate=0)
 	objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
 
-src_bsp = ['application.c', 'startup.c', 'board.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c' ]
 src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:

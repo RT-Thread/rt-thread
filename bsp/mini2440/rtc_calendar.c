@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-02-10     Gary Lee     first implementation
+ * 2010-02-21	  Gary Lee	   add __DATA__
  */
 
 #include "rtc_calendar.h"
@@ -209,17 +210,34 @@ void rt_rtc_weekdate_calculate(void)
 
 }
 
+extern char *rt_strlcpy(char *dest, const char *src, rt_ubase_t n);
+rt_uint8_t *list_month[12]={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 void rt_calendar(void)
 {
-	rt_uint32_t year;
 	//static rt_uint8_t receive_char;
-
-
+	static rt_int32_t year;
+	rt_uint8_t i = 0;
+	rt_int32_t result, num_month, num_year;
+	rt_uint8_t date_year[7], date_month[3], *date = __DATE__;
+	
+	rt_strlcpy((char *)date_month, (const char *)date, 3);
+	date += 7;
+	rt_strlcpy((char *)date_year,  (const char *)date, 4);
+	date = RT_NULL;
+	num_year = atoi(date_year);
+	do{
+		result = strcmp((const char *)date_month, (const char *)list_month[i++]);
+		if(result !=0)
+			result = 1;
+		else
+			num_month = i;
+	}while(result);	
+	i = 0;
+	result = 1;
+	year = num_year*100 + num_month;
 		//year = Uart_GetIntNum_MT();
-		year = 201002;
 		//rt_kprintf("\nThe date is %d\n", year);
 		rt_rtc_year_month_day_seperate(year);
-
 
 		if (day_seprt == 0 && month_seprt == 0) {
 			//rt_kprintf("\nYear: %d\n", year_seprt);
@@ -232,7 +250,6 @@ void rt_calendar(void)
 		} else {
 			//rt_kprintf("\n%d/%d/%d\n", year_seprt, month_seprt, day_seprt);
 			rt_rtc_weekdate_calculate();
-			
 		}
 }
 #ifdef RT_USING_FINSH
