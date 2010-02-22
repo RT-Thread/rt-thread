@@ -83,6 +83,7 @@
 
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_DRIVES			2
 
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */

@@ -158,16 +158,36 @@ static rt_err_t rt_spi_flash_control(rt_device_t dev, rt_uint8_t cmd, void *args
 
 static rt_size_t rt_spi_flash_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    /* only supply single block read: block size 512Byte */
-    read_page(pos/512,buffer);
-    return RT_EOK;
+    rt_uint8_t *ptr;
+    rt_uint32_t index, nr;
+
+    nr = size/512;
+    ptr = (rt_uint8_t*)buffer;
+
+    for (index = 0; index < nr; index ++)
+    {
+        /* only supply single block read: block size 512Byte */
+        read_page((pos + index * 512)/512, &ptr[index * 512]);
+    }
+
+    return nr * 512;
 }
 
 static rt_size_t rt_spi_flash_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    /* only supply single block write: block size 512Byte */
-    write_page(pos/512,(unsigned char*)buffer);
-    return RT_EOK;
+    rt_uint8_t *ptr;
+    rt_uint32_t index, nr;
+
+    nr = size / 512;
+    ptr = (rt_uint8_t*)buffer;
+
+    for (index = 0; index < nr; index ++)
+    {
+        /* only supply single block write: block size 512Byte */
+        write_page((pos + index * 512)/512, &ptr[index * 512]);
+    }
+
+    return nr * 512;
 }
 
 void rt_hw_spi_flash_init(void)
@@ -175,6 +195,7 @@ void rt_hw_spi_flash_init(void)
     GPIO_Configuration();
 
     /* register spi_flash device */
+    spi_flash_device.type    = RT_Device_Class_Block;
     spi_flash_device.init    = rt_spi_flash_init;
     spi_flash_device.open    = rt_spi_flash_open;
     spi_flash_device.close   = rt_spi_flash_close;
@@ -186,5 +207,5 @@ void rt_hw_spi_flash_init(void)
     spi_flash_device.private = RT_NULL;
 
     rt_device_register(&spi_flash_device, "spi0",
-                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
+                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 }

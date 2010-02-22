@@ -75,6 +75,12 @@ void rt_init_thread_entry(void *parameter)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
+
+		/* mount spi flash fat as resource directory */
+		if (dfs_mount("spi0", "/flash", "elm", 0, 0) == 0)
+			rt_kprintf("SPI File System initialized!\n");
+		else
+			rt_kprintf("SPI File System init failed!\n");
 #endif
     }
 #endif
