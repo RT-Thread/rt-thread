@@ -94,6 +94,19 @@ void rt_hw_board_init()
         GPIO_SetBits(GPIOE,GPIO_Pin_5);
     }
 
+#if LCD_VERSION == 2
+    {
+        GPIO_InitTypeDef GPIO_InitStructure;
+
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF,ENABLE);
+
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+        GPIO_Init(GPIOF,&GPIO_InitStructure);
+    }
+#endif
+
     /* NVIC Configuration */
     NVIC_Configuration();
 

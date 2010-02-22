@@ -46,6 +46,10 @@
 // 	<i>Default: 1
 #define CODEC_VERSION	1
 
+// <o> LCD Modul Version <1=>Version 1 <2=>Version 2
+// 	<i>Default: 1
+#define LCD_VERSION	    1
+
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
 void rt_hw_board_init(void);

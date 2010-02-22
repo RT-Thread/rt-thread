@@ -378,6 +378,11 @@ void player_set_buffer_status(rt_bool_t buffering)
 		strncpy(tinfo.artist, "≤•∑≈÷–...", 40);
 }
 
+enum PLAYER_MODE player_get_mode()
+{
+	return player_mode;
+}
+
 void player_play_file(const char* fn)
 {
 	struct rtgui_dc* dc;
@@ -652,6 +657,11 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 			switch (next_step)
 			{
 			case PLAYER_STEP_STOP:
+// #define TEST_MODE
+#ifdef TEST_MODE
+				player_play_file(play_list_start());
+				next_step = PLAYER_STEP_STOP;
+#else
 			{
 				struct rtgui_dc* dc;
 				rtgui_color_t saved;
@@ -680,6 +690,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				RTGUI_WIDGET_FOREGROUND(widget) = saved;
 				rtgui_dc_end_drawing(dc);
 			}
+#endif
 				break;
 
 			case PLAYER_STEP_NEXT:

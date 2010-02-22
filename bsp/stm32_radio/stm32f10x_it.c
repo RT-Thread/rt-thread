@@ -234,17 +234,6 @@ void EXTI0_IRQHandler(void)
 }
 
 /*******************************************************************************
-* Function Name  : EXTI1_IRQHandler
-* Description    : This function handles External interrupt Line 1 request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void EXTI1_IRQHandler(void)
-{
-}
-
-/*******************************************************************************
 * Function Name  : EXTI2_IRQHandler
 * Description    : This function handles External interrupt Line 2 request.
 * Input          : None

@@ -49,4 +49,7 @@ void player_set_position(rt_uint32_t position);
 void player_set_title(const char* title);
 void player_set_buffer_status(rt_bool_t buffering);
 
+/* get playing mode */
+enum PLAYER_MODE player_get_mode(void);
+
 #endif

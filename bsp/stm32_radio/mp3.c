@@ -183,7 +183,8 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	delta += (decoder->bytes_left_before_decoding - decoder->bytes_left);
 
 	current_offset += delta;
-	player_set_position(current_offset);
+	if (player_get_mode() != PLAYER_PLAY_RADIO)
+		player_set_position(current_offset);
 
 	// rt_kprintf("bytes left after decode: %d\n", decoder->bytes_left);
 

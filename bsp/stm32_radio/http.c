@@ -371,7 +371,7 @@ static int shoutcast_connect(struct shoutcast_session* session,
 	int socket_handle;
 	int peer_handle;
 	int rc;
-	char mimeBuffer[100];
+	char mimeBuffer[256];
 
 	if((socket_handle = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP )) < 0)
 	{
@@ -460,7 +460,7 @@ static int shoutcast_connect(struct shoutcast_session* session,
 		if (strstr(mimeBuffer, "content-type:"))
 		{
 			/* check content-type */
-			if (strstr(mimeBuffer, "content-type: audio/mpeg") == RT_NULL)
+			if (strstr(mimeBuffer, "audio/mpeg") == RT_NULL)
 			{
 				rt_kprintf("ICY content is not audio/mpeg.\n");
 				return -1;
@@ -470,7 +470,7 @@ static int shoutcast_connect(struct shoutcast_session* session,
 		if (strstr(mimeBuffer, "Content-Type:"))
 		{
 			/* check content-type */
-			if (strstr(mimeBuffer, "Content-Type: audio/mpeg") == RT_NULL)
+			if (strstr(mimeBuffer, "audio/mpeg") == RT_NULL)
 			{
 				rt_kprintf("ICY content is not audio/mpeg.\n");
 				return -1;
@@ -530,6 +530,7 @@ rt_size_t shoutcast_session_read(struct shoutcast_session* session, rt_uint8_t *
 	int bytesRead = 0;
 	int totalRead = 0;
 	int left = length;
+	static rt_uint32_t first_meta_size = 0;
 
 	// Read until: there is an error, we've read "size" bytes or the remote
 	//             side has closed the connection.
@@ -548,32 +549,56 @@ rt_size_t shoutcast_session_read(struct shoutcast_session* session, rt_uint8_t *
 	} while(left);
 
 	/* handle meta */
-	if (session->current_meta_chunk + totalRead >= session->metaint)
+	if (first_meta_size > 0)
 	{
-		int meta_length, next_chunk_length;
-
-		// rt_kprintf("c: %d, total: %d\n", session->current_meta_chunk, totalRead);
-
-		/* get the length of meta data */
-		meta_length = buffer[session->metaint - session->current_meta_chunk] * 16;
-		next_chunk_length = totalRead - (session->metaint - session->current_meta_chunk) - 
-			(meta_length + 1);
-
-		// rt_kprintf("l: %d, n: %d\n", meta_length, next_chunk_length);
-
 		/* skip meta data */
-		memmove(&buffer[session->metaint - session->current_meta_chunk], 
-			&buffer[session->metaint - session->current_meta_chunk + meta_length + 1],
-			next_chunk_length);
+		memmove(&buffer[0], &buffer[first_meta_size], totalRead - first_meta_size);
 
-		/* set new current meta chunk */
-		session->current_meta_chunk = next_chunk_length;
-		totalRead = totalRead - (meta_length + 1);
-		// rt_kprintf("total: %d\n", totalRead);
+		// rt_kprintf("remove meta: len %d\n", first_meta_size);
+
+		totalRead = totalRead - first_meta_size;
+		first_meta_size = 0;
+		session->current_meta_chunk = totalRead;
 	}
-	else 
+	else
 	{
-		session->current_meta_chunk += totalRead;
+		if (session->current_meta_chunk + totalRead == session->metaint)
+		{
+			rt_uint8_t meta_data;
+			recv(session->socket, &meta_data, 1, 0);
+		
+			/* remove meta data in next packet */
+			first_meta_size = meta_data * 16;
+			session->current_meta_chunk = 0;
+
+			// rt_kprintf("get meta: len %d\n", first_meta_size);
+		}
+		else if (session->current_meta_chunk + totalRead > session->metaint)
+		{
+			int meta_length, next_chunk_length;
+
+			// rt_kprintf("c: %d, total: %d, m: %d\n", session->current_meta_chunk, totalRead, session->metaint);
+
+			/* get the length of meta data */
+			meta_length = buffer[session->metaint - session->current_meta_chunk] * 16;
+			next_chunk_length = totalRead - (session->metaint - session->current_meta_chunk) - 
+				(meta_length + 1);
+
+			// rt_kprintf("l: %d, n: %d\n", meta_length, next_chunk_length);
+
+			/* skip meta data */
+			memmove(&buffer[session->metaint - session->current_meta_chunk], 
+				&buffer[session->metaint - session->current_meta_chunk + meta_length + 1],
+				next_chunk_length);
+
+			/* set new current meta chunk */
+			session->current_meta_chunk = next_chunk_length;
+			totalRead = totalRead - (meta_length + 1);
+		}
+		else 
+		{
+			session->current_meta_chunk += totalRead;
+		}
 	}
 
 	return totalRead;
