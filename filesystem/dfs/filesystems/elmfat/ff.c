@@ -3151,3 +3151,19 @@ int f_printf (
 
 #endif /* !_FS_READONLY */
 #endif /* _USE_STRFUNC */
+
+#include <rtthread.h>
+#if _DRIVES > 1
+int elm_get_vol(FATFS *fat)
+{
+	int vol;
+
+	for (vol = 0; vol < _DRIVES; vol ++)
+	{
+		if (FatFs[vol] == fat) return vol;
+	}
+
+	return -1;
+}
+#endif
+

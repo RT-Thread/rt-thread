@@ -114,8 +114,11 @@
 /*---------------------------------------------------------------------------/
 / Physical Drive Configurations
 /----------------------------------------------------------------------------*/
-
+#ifdef RT_DFS_ELM_DRIVES
+#define _DRIVES RT_DFS_ELM_DRIVES
+#else
 #define _DRIVES		1
+#endif
 /* Number of volumes (logical drives) to be used. */
 
 
