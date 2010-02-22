@@ -16,7 +16,16 @@ extern rt_device_t dev_spi_flash;
 extern unsigned long test_unit_ready_last;
 void msc_thread_entry(void *parameter)
 {
-    test_unit_ready_last = rt_tick_get();
+    unsigned long test_unit_ready_start = rt_tick_get();
+    test_unit_ready_last = test_unit_ready_start;
+
+    /* wait connection */
+    while( test_unit_ready_last == test_unit_ready_start )
+    {
+        rt_thread_delay( RT_TICK_PER_SECOND );
+    }
+
+    /* wait remove */
     while(1)
     {
         rt_thread_delay( RT_TICK_PER_SECOND/2 );
