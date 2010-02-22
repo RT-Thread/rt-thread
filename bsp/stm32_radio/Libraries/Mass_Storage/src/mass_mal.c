@@ -27,6 +27,9 @@ uint32_t Max_Lun = 2;
 
 rt_device_t dev_sdio = RT_NULL;
 rt_device_t dev_spi_flash = RT_NULL;
+#if (USB_USE_AUTO_REMOVE == 1)
+unsigned long test_unit_ready_last = 0;
+#endif
 
 uint16_t MAL_Init(uint8_t lun)
 {
@@ -51,7 +54,9 @@ uint16_t MAL_Init(uint8_t lun)
 
 uint16_t MAL_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length)
 {
-
+#if (USB_USE_AUTO_REMOVE == 1)
+    test_unit_ready_last = rt_tick_get();
+#endif
     switch (lun)
     {
     case 0:
@@ -72,7 +77,9 @@ uint16_t MAL_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uin
 
 uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length)
 {
-
+#if (USB_USE_AUTO_REMOVE == 1)
+    test_unit_ready_last = rt_tick_get();
+#endif
     switch (lun)
     {
     case 0:
@@ -91,9 +98,6 @@ uint16_t MAL_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint1
     return MAL_OK;
 }
 
-#if (USB_USE_AUTO_REMOVE == 1)
-unsigned long test_unit_ready_last = 0;
-#endif
 uint16_t MAL_GetStatus (uint8_t lun)
 {
 #if (USB_USE_AUTO_REMOVE == 1)
