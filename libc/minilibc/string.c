@@ -41,6 +41,25 @@ int strcmp (const char *s1, const char *s2)
 	return (*s1 - *s2);
 }
 
+/**
+ * strncmp - Compare two length-limited strings
+ * @cs: One string
+ * @ct: Another string
+ * @count: The maximum number of bytes to compare
+ */
+int strncmp(const char * cs,const char * ct,rt_ubase_t count)
+{
+	register signed char __res = 0;
+
+	while (count) {
+		if ((__res = *cs - *ct++) != 0 || !*cs++)
+			break;
+		count--;
+	}
+
+	return __res;
+}
+
 char* strcat(register char* s,register const char* t)
 {
 	char *dest = s;
