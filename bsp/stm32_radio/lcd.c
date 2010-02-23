@@ -1,21 +1,16 @@
 #include "stm32f10x.h"
 #include "rtthread.h"
+#include "board.h"
 #include <rtgui/rtgui.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 
-#define lcd_hw_version       1
-/*
-1 FMT0371
-2 ILI9325
-*/
-
-#if (lcd_hw_version == 1)
+#if (LCD_VERSION == 1)
 #include "fmt0371/FMT0371.h"
 #endif
 
-#if (lcd_hw_version == 2)
+#if (LCD_VERSION == 2)
 #include "ili9325/ili9320.h"
 #endif
 
@@ -72,7 +67,7 @@ void radio_rtgui_init(void)
     player_init();
 }
 
-#if (lcd_hw_version == 1)
+#if (LCD_VERSION == 1)
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
     /* nothing for none-DMA mode driver */
@@ -105,8 +100,6 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 
 void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
-    unsigned short p;
-
     /* set X point */
     LCD_ADDR = 0x02;
     LCD_DATA = x;
@@ -117,9 +110,10 @@ void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 
     /* read pixel */
     LCD_ADDR = 0x0F;
-    LCD_DATA16_READ(p);
+    /* dummy read */
+    x = LCD_DATA;
 
-    *c = rtgui_color_from_565p(p);
+    *c = rtgui_color_from_565p( LCD_DATA16_READ() );
 }
 
 void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
@@ -210,6 +204,61 @@ rt_err_t rt_hw_lcd_init(void)
     ftm0371_port_init();
     ftm0371_init();
 
+    //LCD GRAM test
+    {
+        unsigned int test_x;
+        unsigned int test_y;
+        unsigned short temp;
+
+        rt_kprintf("\r\nLCD GRAM test....");
+
+        //write
+        temp = 0;
+        for( test_y=0; test_y<320; test_y++)
+        {
+            /* set X point */
+            LCD_ADDR = 0x02;
+            LCD_DATA = 0;
+
+            /* set Y point */
+            LCD_ADDR = 0x03;
+            LCD_DATA16( test_y );
+
+            /* write pixel */
+            LCD_ADDR = 0x0E;
+            for(test_x=0; test_x<240; test_x++)
+            {
+                LCD_DATA16(temp++);
+            }
+        }
+
+        temp = 0;
+        for( test_y=0; test_y<320; test_y++)
+        {
+            /* set X point */
+            LCD_ADDR = 0x02;
+            LCD_DATA = 0;
+
+            /* set Y point */
+            LCD_ADDR = 0x03;
+            LCD_DATA16( test_y );
+
+            /* write pixel */
+            LCD_ADDR = 0x0f;
+            /* dummy read */
+            test_x = LCD_DATA;
+            for(test_x=0; test_x<240; test_x++)
+            {
+                if ( LCD_DATA16_READ() != temp++)
+                {
+                    rt_kprintf("  LCD GRAM ERR!!");
+                    while(1);
+                }
+            }
+        }
+        rt_kprintf("  TEST PASS!\r\n");
+    }//LCD GRAM TEST
+
 #ifndef DRIVER_TEST
     /* add lcd driver into graphic driver */
     rtgui_graphic_driver_add(&_rtgui_lcd_driver);
@@ -243,7 +292,7 @@ void cls()
 FINSH_FUNCTION_EXPORT(cls, clear screen);
 #endif
 
-#if (lcd_hw_version == 2)
+#if (LCD_VERSION == 2)
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
     /* nothing for none-DMA mode driver */
