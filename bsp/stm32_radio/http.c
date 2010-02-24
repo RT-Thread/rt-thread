@@ -121,18 +121,16 @@ int http_read_line( int socket, char * buffer, int size )
 	return count;
 }
 
-//
-// Before we can connect we need to parse the server address and optional
-// port from the url provided.  the format of "url" as passed to this function
-// is "//192.168.0.1:8080/blah.elf" where "192.168.0.1" can be either an IP
-// or a domain name and ":8080" is the optional port to connect to, default
-// port is 80.
-//
-// This function will return a filename string for use in GET
-// requests, and fill the structure pointed to by *server with the
-// correct values.
-//
-const char *http_resolve_address( struct sockaddr_in *server, const char * url, char *host_addr)
+/*
+ * resolve server address
+ * @param server the server sockaddress
+ * @param url the input URL address, for example, http://www.rt-thread.org/index.html
+ * @param host_addr the buffer pointer to save server host address
+ * @param request the pointer to point the request url, for example, /index.html
+ *
+ * @return 0 on resolve server address OK, others failed
+ */
+int http_resolve_address(struct sockaddr_in *server, const char * url, char *host_addr, char** request)
 {
 	char *ptr;
 	char port[6] = "80"; /* default port of 80(HTTP) */
@@ -147,26 +145,31 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 	}
 
 	/* URL must start with double forward slashes. */
-	if((url[0] != '/') || (url[1] != '/' )) return(NULL);
+	if((url[0] != '/') || (url[1] != '/' )) return -1;
 
 	url += 2; is_domain = 0;
-	for(i = 0; ((url[i] != '\0') && (url[i] != '/')) && (i < 30); i++)
+	i = 0;
+	/* allow specification of port in URL like http://www.server.net:8080/ */
+	while (*url)
 	{
-		if((((host_addr[i] = url[i]) < '0') || (url[i] > '9')) && (url[i] != '.'))
+		if (*url == '/') break;
+		if (*url == ':')
 		{
-			if(url[i] == ':')
-			{
-				unsigned char w;
-				/* allow specification of port in URL like http://www.server.net:8080/ */
-				for(w = 0; ((w + i + 1) < 127) && (w < 5) && (url[w + i + 1] != '/') && (url[w + i + 1] != '\0'); w++)
-					port[w] = url[w + i + 1];
-				port[w] = '\0';
-
-				break;
-			}
-			else is_domain = 1;
+			unsigned char w;
+			for (w = 0; w < 5 && url[w] != '/' && url[w] != '\0'; w ++)
+				port[w] = url[w + 1];
+			
+			/* get port ok */
+			port[w] = '\0';
+			url += w + 1;
+			break;
 		}
+
+		host_addr[i++] = *url;
+		url ++;
 	}
+	*request = (char*)url;
+
 	/* get host addr ok. */
 	host_addr[i] = '\0';
 
@@ -177,7 +180,7 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 		if(hptr == 0)
 		{
 			rt_kprintf("HTTP: failed to resolve domain '%s'\n", host_addr);
-			return RT_NULL;
+			return -1;
 		}
 		memcpy(&server->sin_addr, *hptr->h_addr_list, sizeof(server->sin_addr));
 	}
@@ -189,8 +192,7 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 	server->sin_port = htons((int) strtol(port, NULL, 10));
 	server->sin_family = AF_INET;
 
-	while (*url != '/') url ++;
-	return url;
+	return 0;
 }
 
 //
@@ -199,7 +201,7 @@ const char *http_resolve_address( struct sockaddr_in *server, const char * url, 
 // to leave the stream at the start of the real data.
 //
 static int http_connect(struct http_session* session,
-    struct sockaddr_in * server, char *host_addr, const char * url)
+    struct sockaddr_in * server, char *host_addr, const char *url)
 {
 	int socket_handle;
 	int peer_handle;
@@ -224,8 +226,11 @@ static int http_connect(struct http_session* session,
 		rt_uint32_t length;
 
 		buf = rt_malloc (512);
-		length = rt_snprintf(buf, 512, _http_get, url, host_addr, server->sin_port);
-
+		if (*url)
+			length = rt_snprintf(buf, 512, _http_get, url, host_addr, server->sin_port);
+		else
+			length = rt_snprintf(buf, 512, _http_get, "/", host_addr, server->sin_port);
+		
 		rc = send(peer_handle, buf, length, 0);
 		rt_kprintf("HTTP request:\n%s", buf);
 		
@@ -278,8 +283,7 @@ struct http_session* http_session_open(char* url)
 {
 	int peer_handle = 0;
 	struct sockaddr_in server;
-	const char *get_name;
-	char host_addr[32];
+	char *request, host_addr[32];
 	struct http_session* session;
 
     session = (struct http_session*) rt_malloc(sizeof(struct http_session));
@@ -289,8 +293,7 @@ struct http_session* http_session_open(char* url)
 	session->position = 0;
 
 	/* Check valid IP address and URL */
-	get_name = http_resolve_address(&server, url, &host_addr[0]);
-	if(get_name == NULL)
+	if(http_resolve_address(&server, url, &host_addr[0], &request) != 0)
 	{
 		rt_free(session);
 		return RT_NULL;
@@ -298,7 +301,7 @@ struct http_session* http_session_open(char* url)
 
 	// Now we connect and initiate the transfer by sending a
 	// request header to the server, and receiving the response header
-	if((peer_handle = http_connect(session, &server, host_addr, get_name)) < 0)
+	if((peer_handle = http_connect(session, &server, host_addr, request)) < 0)
 	{
         rt_kprintf("HTTP: failed to connect to '%s'!\n", host_addr);
 		rt_free(session);
@@ -366,7 +369,7 @@ int http_session_close(struct http_session* session)
 // to leave the stream at the start of the real data.
 //
 static int shoutcast_connect(struct shoutcast_session* session,
-    struct sockaddr_in* server, char *host_addr, const char * url)
+    struct sockaddr_in* server, char* host_addr, const char* url)
 {
 	int socket_handle;
 	int peer_handle;
@@ -391,7 +394,10 @@ static int shoutcast_connect(struct shoutcast_session* session,
 		rt_uint32_t length;
 
 		buf = rt_malloc (512);
-		length = rt_snprintf(buf, 512, _shoutcast_get, url, host_addr, server->sin_port);
+		if (*url)
+			length = rt_snprintf(buf, 512, _shoutcast_get, url, host_addr, server->sin_port);
+		else
+			length = rt_snprintf(buf, 512, _shoutcast_get, "/", host_addr, server->sin_port);
 
 		rc = send(peer_handle, buf, length, 0);
 		rt_kprintf("SHOUTCAST request:\n%s", buf);
@@ -487,8 +493,7 @@ struct shoutcast_session* shoutcast_session_open(char* url)
 {
 	int peer_handle = 0;
 	struct sockaddr_in server;
-	const char *get_name;
-	char host_addr[32];
+	char *request, host_addr[32];
 	struct shoutcast_session* session;
 
     session = (struct shoutcast_session*) rt_malloc(sizeof(struct shoutcast_session));
@@ -500,8 +505,7 @@ struct shoutcast_session* shoutcast_session_open(char* url)
 	session->station_name = RT_NULL;
 
 	/* Check valid IP address and URL */
-	get_name = http_resolve_address(&server, url, &host_addr[0]);
-	if(get_name == NULL)
+	if(http_resolve_address(&server, url, &host_addr[0], &request) != 0)
 	{
 		rt_free(session);
 		return RT_NULL;
@@ -509,7 +513,7 @@ struct shoutcast_session* shoutcast_session_open(char* url)
 
 	// Now we connect and initiate the transfer by sending a
 	// request header to the server, and receiving the response header
-	if((peer_handle = shoutcast_connect(session, &server, host_addr, get_name)) < 0)
+	if((peer_handle = shoutcast_connect(session, &server, host_addr, request)) < 0)
 	{
         rt_kprintf("SHOUTCAST: failed to connect to '%s'!\n", host_addr);
 		if (session->station_name != RT_NULL)

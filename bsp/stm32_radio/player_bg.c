@@ -71,6 +71,8 @@ void player_thread(void* parameter)
 					is_playing = RT_TRUE;
 					player_notify_play();
 					ice_mp3(request.fn);
+					/* notfiy net buffer worker to stop */
+					net_buf_stop_job();
 					player_notify_stop();
 					is_playing = RT_FALSE;
 				}

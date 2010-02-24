@@ -8,7 +8,7 @@
 #include "player_ui.h"
 #include "player_bg.h"
 
-#define MP3_AUDIO_BUF_SZ    8192
+#define MP3_AUDIO_BUF_SZ    (5 * 1024)
 #ifndef MIN
 #define MIN(x, y)			((x) < (y)? (x) : (y))
 #endif
@@ -518,22 +518,28 @@ void http_mp3(char* url)
 	session = http_session_open(url);
 	if (session != RT_NULL)
 	{
-		/* add a job to netbuf worker */
-		net_buf_add_job(http_fetch, http_close, (void*)session);
-
-		decoder = mp3_decoder_create();
-		if (decoder != RT_NULL)
+		/* start a job to netbuf worker */
+		if (net_buf_start_job(http_fetch, http_close, (void*)session) == 0)
 		{
-			decoder->fetch_data = http_data_fetch;
-			decoder->fetch_parameter = RT_NULL;
+			decoder = mp3_decoder_create();
+			if (decoder != RT_NULL)
+			{
+				decoder->fetch_data = http_data_fetch;
+				decoder->fetch_parameter = RT_NULL;
 
-			current_offset = 0;
-			while (mp3_decoder_run(decoder) != -1);
+				current_offset = 0;
+				while (mp3_decoder_run(decoder) != -1);
 
-			/* delete decoder object */
-			mp3_decoder_delete(decoder);
+				/* delete decoder object */
+				mp3_decoder_delete(decoder);
+			}
+			session = RT_NULL;
 		}
-		session = RT_NULL;
+		else
+		{
+			/* start job failed, close session */
+			http_session_close(session);
+		}
 	}
 }
 FINSH_FUNCTION_EXPORT(http_mp3, http mp3 decode test);
@@ -571,22 +577,28 @@ void ice_mp3(char* url)
 	session = shoutcast_session_open(url);
 	if (session != RT_NULL)
 	{
-		/* add a job to netbuf worker */
-		net_buf_add_job(ice_fetch, ice_close, (void*)session);
-
-		decoder = mp3_decoder_create();
-		if (decoder != RT_NULL)
+		/* start a job to netbuf worker */
+		if (net_buf_start_job(ice_fetch, ice_close, (void*)session) == 0)
 		{
-			decoder->fetch_data = ice_data_fetch;
-			decoder->fetch_parameter = RT_NULL;
+			decoder = mp3_decoder_create();
+			if (decoder != RT_NULL)
+			{
+				decoder->fetch_data = ice_data_fetch;
+				decoder->fetch_parameter = RT_NULL;
 
-			current_offset = 0;
-			while (mp3_decoder_run(decoder) != -1);
+				current_offset = 0;
+				while (mp3_decoder_run(decoder) != -1);
 
-			/* delete decoder object */
-			mp3_decoder_delete(decoder);
+				/* delete decoder object */
+				mp3_decoder_delete(decoder);
+			}
+			session = RT_NULL;
 		}
-		session = RT_NULL;
+		else
+		{
+			/* start a job failed, close session */
+			shoutcast_session_close(session);
+		}
 	}
 }
 FINSH_FUNCTION_EXPORT(ice_mp3, shoutcast mp3 decode test);

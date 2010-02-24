@@ -3,6 +3,7 @@
 
 #include "netbuffer.h"
 #include "player_ui.h"
+#include "player_bg.h"
 
 #define MP3_DECODE_MP_CNT   2
 #define MP3_DECODE_MP_SZ    2560
@@ -39,11 +40,10 @@ void sbuf_release(void* ptr)
 
 #if STM32_EXT_SRAM
 /* netbuf worker stat */
-#define NETBUF_STAT_FREE		0
+#define NETBUF_STAT_STOPPED		0
 #define NETBUF_STAT_BUFFERING	1
-#define NETBUF_STAT_BUSY		2
+#define NETBUF_STAT_SUSPEND		2
 #define NETBUF_STAT_STOPPING	3
-#define NETBUF_STAT_STOPPED		4
 
 /* net buffer module */
 struct net_buffer
@@ -58,7 +58,7 @@ struct net_buffer
 
 	/* buffer ready water mater */
 	rt_uint32_t ready_wm, resume_wm;
-	rt_bool_t is_wait_ready, is_wait_resume;
+	rt_bool_t is_wait_ready;
     rt_sem_t wait_ready, wait_resume;
 
 	/* netbuf worker stat */
@@ -75,6 +75,7 @@ struct net_buffer_job
 static struct net_buffer _netbuf;
 static rt_mq_t _netbuf_mq = RT_NULL;
 
+/* netbuf worker public API */
 rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
 {
     rt_size_t data_length, read_index;
@@ -83,32 +84,23 @@ rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
 	data_length = _netbuf.data_length;
 
     if ((data_length == 0) &&
-		(_netbuf.stat != NETBUF_STAT_STOPPED && _netbuf.stat != NETBUF_STAT_STOPPING))
+		(_netbuf.stat == NETBUF_STAT_BUFFERING || _netbuf.stat == NETBUF_STAT_SUSPEND))
     {
-    	/* set stat */
-    	_netbuf.stat = NETBUF_STAT_BUFFERING;
-		rt_kprintf("stat -> buffering\n");
+    	rt_err_t result;
 
         /* buffer is not ready. */
         _netbuf.is_wait_ready = RT_TRUE;
 		rt_kprintf("wait ready, data len: %d, stat %d\n", data_length, _netbuf.stat);
 		/* set buffer status to buffering */
 		player_set_buffer_status(RT_TRUE);
-        rt_sem_take(_netbuf.wait_ready, RT_WAITING_FOREVER);
-    }
+        result = rt_sem_take(_netbuf.wait_ready, RT_WAITING_FOREVER);
 
-    if ((data_length <= _netbuf.ready_wm) &&
-		(_netbuf.stat == NETBUF_STAT_BUFFERING))
-    {
-        /* buffer is not ready. */
-        _netbuf.is_wait_ready = RT_TRUE;
-		rt_kprintf("wait ready, data len: %d, stat %d\n", data_length, _netbuf.stat);
-        rt_sem_take(_netbuf.wait_ready, RT_WAITING_FOREVER);
+		/* take semaphore failed, netbuf worker is stopped */
+		if (result != RT_EOK) return 0;
     }
 
     /* get read and save index */
     read_index = _netbuf.read_index;
-
     /* re-get data legnth */
     data_length = _netbuf.data_length;
 
@@ -139,12 +131,13 @@ rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
 		_netbuf.data_length -= length;
 		data_length = _netbuf.data_length;
 
-        if ((_netbuf.is_wait_resume == RT_TRUE) && data_length < _netbuf.resume_wm)
+        if ((_netbuf.stat == NETBUF_STAT_SUSPEND) && data_length < _netbuf.resume_wm)
         {
-        	_netbuf.is_wait_resume = RT_FALSE;
+        	_netbuf.stat = NETBUF_STAT_BUFFERING;
 			rt_hw_interrupt_enable(level);
 
-			rt_kprintf("resume netbuf worker\n");
+			/* resume netbuf worker */
+			rt_kprintf("stat[suspend] -> buffering\n");
             rt_sem_release(_netbuf.wait_resume);
         }
 		else
@@ -156,17 +149,34 @@ rt_size_t net_buf_read(rt_uint8_t* buffer, rt_size_t length)
     return length;
 }
 
-void net_buf_add_job(rt_size_t (*fetch)(rt_uint8_t* ptr, rt_size_t len, void* parameter),
+int net_buf_start_job(rt_size_t (*fetch)(rt_uint8_t* ptr, rt_size_t len, void* parameter),
 	void (*close)(void* parameter),
 	void* parameter)
 {
 	struct net_buffer_job job;
+	rt_uint32_t level;
 
+	/* job message */
 	job.fetch = fetch;
 	job.close = close;
 	job.parameter = parameter;
 
-	rt_mq_send(_netbuf_mq, (void*)&job, sizeof(struct net_buffer_job));
+	level = rt_hw_interrupt_disable();
+	/* check netbuf worker is stopped */
+	if (_netbuf.stat == NETBUF_STAT_STOPPED)
+	{
+		/* change stat to buffering if netbuf stopped */
+		_netbuf.stat = NETBUF_STAT_BUFFERING;
+		rt_hw_interrupt_enable(level);
+
+		rt_kprintf("stat[stoppped] -> buffering\n");
+
+		rt_mq_send(_netbuf_mq, (void*)&job, sizeof(struct net_buffer_job));
+		return 0;
+	}
+	rt_hw_interrupt_enable(level);
+
+	return -1;
 }
 
 void net_buf_stop_job()
@@ -174,8 +184,20 @@ void net_buf_stop_job()
 	rt_uint32_t level;
 
 	level = rt_hw_interrupt_disable();
-	_netbuf.stat = NETBUF_STAT_STOPPING;
-	rt_kprintf("stat -> stopping\n");
+	if (_netbuf.stat == NETBUF_STAT_SUSPEND)
+	{
+		/* resume the net buffer worker */
+		rt_sem_release(_netbuf.wait_resume);
+		_netbuf.stat = NETBUF_STAT_STOPPING;
+		rt_kprintf("stat[suspend] -> stopping\n");
+		
+	}
+	else if (_netbuf.stat == NETBUF_STAT_BUFFERING)
+	{
+		/* netbuf worker is working, set stat to stopping */
+		_netbuf.stat = NETBUF_STAT_STOPPING;
+		rt_kprintf("stat[buffering] -> stopping\n");
+	}
 	rt_hw_interrupt_enable(level);
 }
 
@@ -183,6 +205,8 @@ static void net_buf_do_stop(struct net_buffer_job* job)
 {
 	/* source closed */
 	job->close(job->parameter);
+
+	/* set stat to stopped */
 	_netbuf.stat = NETBUF_STAT_STOPPED;
 	rt_kprintf("stat -> stopped\n");
 	if (_netbuf.is_wait_ready == RT_TRUE)
@@ -191,8 +215,12 @@ static void net_buf_do_stop(struct net_buffer_job* job)
 		_netbuf.is_wait_ready = RT_FALSE;
 		rt_sem_release(_netbuf.wait_ready);
 	}
+	/* reset buffer stat */
+	_netbuf.data_length = 0;
+	_netbuf.read_index = 0 ;
+	_netbuf.save_index = 0;
 
-	rt_kprintf("job done, stat %d\n", _netbuf.stat);
+	rt_kprintf("job done\n");
 }
 
 #define NETBUF_BLOCK_SIZE  4096
@@ -227,10 +255,13 @@ static void net_buf_do_job(struct net_buffer_job* job)
 			/* check avaible buffer to save */
 			if ((_netbuf.size - data_length) < read_length)
 			{
-				rt_err_t result;
+				rt_err_t result, level;
 
-				_netbuf.is_wait_resume = RT_TRUE;
-				rt_kprintf("netbuf suspend, avaible room %d\n", data_length);
+				/* no free space yet, suspend itself */
+				rt_kprintf("stat[buffering] -> suspend, avaible room %d\n", data_length);
+				level = rt_hw_interrupt_disable();
+				_netbuf.stat = NETBUF_STAT_SUSPEND;
+				rt_hw_interrupt_enable(level);
 				result = rt_sem_take(_netbuf.wait_resume, RT_WAITING_FOREVER);
 				if (result != RT_EOK)
 				{
@@ -240,7 +271,7 @@ static void net_buf_do_job(struct net_buffer_job* job)
 				}
 			}
 
-			/* there are free space to fetch data */
+			/* there are enough free space to fetch data */
 	        if ((_netbuf.size - _netbuf.save_index) < read_length)
 	        {
 	        	rt_memcpy(&_netbuf.buffer_data[_netbuf.save_index],
@@ -273,20 +304,17 @@ static void net_buf_do_job(struct net_buffer_job* job)
 		/* set buffer position */
 		player_set_position(data_length);
 
-		if ((_netbuf.stat == NETBUF_STAT_BUFFERING) && (data_length >= _netbuf.ready_wm))
+		if ((_netbuf.stat == NETBUF_STAT_BUFFERING) 
+			&& (data_length >= _netbuf.ready_wm) 
+			&& _netbuf.is_wait_ready == RT_TRUE)
 		{
-			_netbuf.stat = NETBUF_STAT_BUSY;
-			rt_kprintf("stat -> busy\n");
-
 			/* notify the thread for waitting buffer ready */
 			rt_kprintf("resume wait buffer\n");
-			if (_netbuf.is_wait_ready == RT_TRUE)
-			{
-				_netbuf.is_wait_ready = RT_FALSE;
-				/* set buffer status to playing */
-				player_set_buffer_status(RT_FALSE);
-				rt_sem_release(_netbuf.wait_ready);
-			}
+
+			_netbuf.is_wait_ready = RT_FALSE;
+			/* set buffer status to playing */
+			player_set_buffer_status(RT_FALSE);
+			rt_sem_release(_netbuf.wait_ready);
 		}
     }
 
@@ -305,11 +333,16 @@ static void net_buf_thread_entry(void* parameter)
 		result = rt_mq_recv(_netbuf_mq, (void*)&job, sizeof(struct net_buffer_job), RT_WAITING_FOREVER);
 		if (result == RT_EOK)
 		{
-			_netbuf.stat = NETBUF_STAT_BUFFERING;
-			rt_kprintf("stat -> buffering\n");
+			/* set stat to buffering */
+			if (_netbuf.stat == NETBUF_STAT_BUFFERING)
+			{
+				/* reset data length and read/save index */
+				_netbuf.data_length = 0;
+				_netbuf.read_index = _netbuf.save_index = 0;
 
-			/* perform the job */
-			net_buf_do_job(&job);
+				/* perform the job */
+				net_buf_do_job(&job);
+			}
 		}
     }
 }
@@ -331,13 +364,12 @@ void net_buf_init(rt_size_t size)
 	_netbuf.resume_wm = _netbuf.size * 80/100;
 
 	/* set init stat */
-	_netbuf.stat = NETBUF_STAT_FREE;
-	rt_kprintf("stat -> free\n");
+	_netbuf.stat = NETBUF_STAT_STOPPED;
+	rt_kprintf("stat -> stopped\n");
 
 	_netbuf.wait_ready  = rt_sem_create("nready", 0, RT_IPC_FLAG_FIFO);
 	_netbuf.wait_resume = rt_sem_create("nresum", 0, RT_IPC_FLAG_FIFO);
 	_netbuf.is_wait_ready = RT_FALSE;
-	_netbuf.is_wait_resume = RT_FALSE;
 
 	/* crate message queue */
 	_netbuf_mq = rt_mq_create("njob", sizeof(struct net_buffer_job),
