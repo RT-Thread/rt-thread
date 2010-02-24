@@ -308,8 +308,6 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
     unsigned short p;
 
-    if ( (x>320)||(y>240) ) return;
-
     /* get color pixel */
     p = rtgui_color_to_565p(*c);
     ili9325_SetCursor(x,y);
@@ -459,7 +457,7 @@ FINSH_FUNCTION_EXPORT(vline, draw a vline);
 
 void cls()
 {
-    ili9325_Clear(0xF800);
+    ili9325_Clear(0x051F);
 }
 FINSH_FUNCTION_EXPORT(cls, clear screen);
 #endif
