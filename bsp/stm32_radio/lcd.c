@@ -314,8 +314,8 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
     p = rtgui_color_to_565p(*c);
     ili9325_SetCursor(x,y);
 
-    LCD_WriteRAM_Prepare();
-    LCD_WriteRAM(p);
+    ili9325_WriteRAM_Prepare();
+    ili9325_WriteRAM(p);
 }
 
 /* 获取像素点颜色 */
@@ -335,16 +335,14 @@ void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_
     p = rtgui_color_to_565p(*c);
 
     /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
-    LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(1<<4) | (0<<3) );
+    ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(1<<4) | (0<<3) );
 
     ili9325_SetCursor(x1, y);
-    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (x1 < x2)
     {
-        //LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        LCD_WriteRAM(p);
+        ili9325_WriteRAM(p);
         x1++;
-        //ili9320_SetCursor(x1, y);
     }
 }
 
@@ -357,16 +355,14 @@ void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t
     p = rtgui_color_to_565p(*c);
 
     /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
-    LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
+    ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
 
     ili9325_SetCursor(x, y1);
-    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (y1 < y2)
     {
-        //LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        LCD_WriteRAM(p);
+        ili9325_WriteRAM(p);
         y1++;
-        //ili9320_SetCursor(x, y1);
     }
 }
 
@@ -379,17 +375,15 @@ void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt
     ptr = (rt_uint16_t*) pixels;
 
     /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
-    LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(1<<4) | (0<<3) );
+    ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(1<<4) | (0<<3) );
 
     ili9325_SetCursor(x1, y);
-    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (x1 < x2)
     {
-        LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        LCD_WriteRAM( *ptr );
+        ili9325_WriteRAM( *ptr );
         x1 ++;
         ptr ++;
-        ili9325_SetCursor(x1, y);
     }
 }
 
@@ -416,14 +410,13 @@ rt_err_t rt_hw_lcd_init(void)
 
         /* write */
         temp=0;
-        for(test_y=0; test_y<320; test_y++)
+        /* [5:4]-ID~ID0 [3]-AM-1垂直-0水平 */
+        ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(1<<4) | (0<<3) );
+        ili9325_SetCursor(0,0);
+        ili9325_WriteRAM_Prepare();
+        for(test_y=0; test_y<76800; test_y++)
         {
-            for(test_x=0; test_x<240; test_x++)
-            {
-                ili9325_SetCursor(test_x,test_y);
-                LCD->LCD_REG = 34;
-                LCD->LCD_RAM = temp++;
-            }
+            ili9325_WriteRAM(temp++);
         }
 
         /* read */

@@ -25,6 +25,7 @@ static void GPIO_Configuration(void)
     GPIO_Init(GPIOA,&GPIO_InitStructure);
 
     FLASH_RST_0(); // RESET
+    FLASH_CS_1();
     FLASH_RST_1();
 }
 

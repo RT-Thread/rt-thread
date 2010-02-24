@@ -123,7 +123,6 @@
 #define Cyan           0x7FFF
 #define Yellow         0xFFE0
 
-
 static u16 DeviceCode;
 
 static void LCD_CtrlLinesConfig(void)
@@ -159,7 +158,7 @@ static void LCD_CtrlLinesConfig(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
     GPIO_Init(GPIOF, &GPIO_InitStructure);
 
-    /* Set PG.12(NE4 (LCD/CS)) as alternate function push pull - CE3(LCD /CS) */
+    /* Set NE2(LCD/CS) as alternate function push pull */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_Init(GPIOG, &GPIO_InitStructure);
 }
@@ -171,7 +170,7 @@ static void LCD_CtrlLinesConfig(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void LCD_FSMCConfig(void)
+static void LCD_FSMCConfig(void)
 {
     FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
     FSMC_NORSRAMTimingInitTypeDef  p;
@@ -206,19 +205,16 @@ void LCD_FSMCConfig(void)
     FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
     FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
     FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
-//  FSMC_NORSRAMInitStructure.FSMC_AsyncWait = FSMC_AsyncWait_Disable;
     FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
     FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
     FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
 
     FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
-
-    /* BANK 4 (of NOR/SRAM Bank 1~4) is enabled */
     FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM2, ENABLE);
 }
 
 
-void LCD_X_Init(void)
+static void LCD_X_Init(void)
 {
     /* Configure the LCD Control pins --------------------------------------------*/
     LCD_CtrlLinesConfig();
@@ -229,19 +225,19 @@ void LCD_X_Init(void)
 
 
 /*******************************************************************************
-* Function Name  : LCD_WriteReg
+* Function Name  : ili9325_WriteReg
 * Description    : Writes to the selected LCD register.
 * Input          : - LCD_Reg: address of the selected register.
 *                  - LCD_RegValue: value to write to the selected register.
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void LCD_WriteReg(u8 LCD_Reg,u16 LCD_RegValue)
+void ili9325_WriteReg(u8 LCD_Reg,u16 LCD_RegValue)
 {
     /* Write 16-bit Index, then Write Reg */
-    LCD->LCD_REG = LCD_Reg;
+    ili9325_REG = LCD_Reg;
     /* Write 16-bit Reg */
-    LCD->LCD_RAM = LCD_RegValue;
+    ili9325_RAM = LCD_RegValue;
 }
 
 /*******************************************************************************
@@ -254,108 +250,51 @@ void LCD_WriteReg(u8 LCD_Reg,u16 LCD_RegValue)
 u16 LCD_ReadReg(u8 LCD_Reg)
 {
     /* Write 16-bit Index (then Read Reg) */
-    LCD->LCD_REG = LCD_Reg;
+    ili9325_REG = LCD_Reg;
     /* Read 16-bit Reg */
-    return (LCD->LCD_RAM);
+    return (ili9325_RAM);
 }
 
 /*******************************************************************************
-* Function Name  : LCD_WriteRAM_Prepare
+* Function Name  : ili9325_WriteRAM_Prepare
 * Description    : Prepare to write to the LCD RAM.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void LCD_WriteRAM_Prepare(void)
+void ili9325_WriteRAM_Prepare(void)
 {
-    LCD->LCD_REG = R34;
+    ili9325_REG = R34;
 }
 
 /*******************************************************************************
-* Function Name  : LCD_WriteRAM
+* Function Name  : ili9325_WriteRAM
 * Description    : Writes to the LCD RAM.
 * Input          : - RGB_Code: the pixel color in RGB mode (5-6-5).
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void LCD_WriteRAM(u16 RGB_Code)
+void ili9325_WriteRAM(u16 RGB_Code)
 {
     /* Write 16-bit GRAM Reg */
-    LCD->LCD_RAM = RGB_Code;
+    ili9325_RAM = RGB_Code;
 }
-
-/*******************************************************************************
-* Function Name  : LCD_ReadRAM
-* Description    : Reads the LCD RAM.
-* Input          : None
-* Output         : None
-* Return         : LCD RAM Value.
-*******************************************************************************/
-u16 LCD_ReadRAM(void)
-{
-    //u16 dummy;
-    /* Write 16-bit Index (then Read Reg) */
-    LCD->LCD_REG = R34; /* Select GRAM Reg */
-    /* Read 16-bit Reg */
-    //dummy = LCD->LCD_RAM;
-    return LCD->LCD_RAM;
-}
-
 
 /* 读取指定地址的GRAM */
 unsigned short ili9325_ReadGRAM(unsigned short x,unsigned short y)
 {
     unsigned short temp;
     ili9325_SetCursor(x,y);
-    LCD->LCD_REG = R34;
+    ili9325_REG = R34;
     /* dummy read */
-    temp = LCD->LCD_RAM;
-    temp = LCD->LCD_RAM;
+    temp = ili9325_RAM;
+    temp = ili9325_RAM;
     return temp;
-}
-/*******************************************************************************
-* Function Name  : LCD_SetCursor
-* Description    : Sets the cursor position.
-* Input          : - Xpos: specifies the X position.
-*                  - Ypos: specifies the Y position.
-* Output         : None
-* Return         : None
-*******************************************************************************/
-
-
-//void LCD_SetCursor(u16 Xpos, u16 Ypos)
-//{
-//    LCD_WriteReg(0x06,Ypos>>8);
-//    LCD_WriteReg(0x07,Ypos);
-//
-//    LCD_WriteReg(0x02,Xpos>>8);
-//    LCD_WriteReg(0x03,Xpos);
-//}
-
-
-void Delay(u32 nCount)
-{
-    u32 TimingDelay;
-    while (nCount--)
-    {
-        for (TimingDelay=0; TimingDelay<10000; TimingDelay++);
-    }
 }
 
 void ili9325_Initializtion(void)
 {
-    /*****************************
-    **    硬件连接说明          **
-    ** STM32         ili9320    **
-    ** PE0~15 <----> DB0~15     **
-    ** PD15   <----> nRD        **
-    ** PD14   <----> RS         **
-    ** PD13   <----> nWR        **
-    ** PD12   <----> nCS        **
-    ** PD11   <----> nReset     **
-    ** PC0    <----> BK_LED     **
-    ******************************/
-    u16 i;
+    volatile unsigned int i;
     LCD_X_Init();
 
     {
@@ -368,88 +307,82 @@ void ili9325_Initializtion(void)
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
         GPIO_Init(GPIOF,&GPIO_InitStructure);
     }
-    GPIO_ResetBits(GPIOF, GPIO_Pin_10);
-    Delay(5);
     GPIO_SetBits(GPIOF, GPIO_Pin_10);
-    Delay(5);
 
     DeviceCode = LCD_ReadReg(0x0000);
     if (DeviceCode==0x9325||DeviceCode==0x9328)
     {
-        LCD_WriteReg(0x00e7,0x0010);
-        LCD_WriteReg(0x0000,0x0001);  			        //start internal osc
-        LCD_WriteReg(0x0001,0x0100);
-        LCD_WriteReg(0x0002,0x0700); 				    //power on sequence
+        ili9325_WriteReg(0x00e7,0x0010);
+        ili9325_WriteReg(0x0000,0x0001);  			        //start internal osc
+        ili9325_WriteReg(0x0001,0x0100);
+        ili9325_WriteReg(0x0002,0x0700); 				    //power on sequence
         /* [5:4]-ID1~ID0 [3]-AM-1垂直-0水平 */
-        LCD_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
-        LCD_WriteReg(0x0004,0x0000);
-        LCD_WriteReg(0x0008,0x0207);
-        LCD_WriteReg(0x0009,0x0000);
-        LCD_WriteReg(0x000a,0x0000); 				//display setting
-        LCD_WriteReg(0x000c,0x0001);				//display setting
-        LCD_WriteReg(0x000d,0x0000); 				//0f3c
-        LCD_WriteReg(0x000f,0x0000);
+        ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
+        ili9325_WriteReg(0x0004,0x0000);
+        ili9325_WriteReg(0x0008,0x0207);
+        ili9325_WriteReg(0x0009,0x0000);
+        ili9325_WriteReg(0x000a,0x0000); 				//display setting
+        ili9325_WriteReg(0x000c,0x0001);				//display setting
+        ili9325_WriteReg(0x000d,0x0000); 				//0f3c
+        ili9325_WriteReg(0x000f,0x0000);
         //Power On sequence //
-        LCD_WriteReg(0x0010,0x0000);
-        LCD_WriteReg(0x0011,0x0007);
-        LCD_WriteReg(0x0012,0x0000);
-        LCD_WriteReg(0x0013,0x0000);
+        ili9325_WriteReg(0x0010,0x0000);
+        ili9325_WriteReg(0x0011,0x0007);
+        ili9325_WriteReg(0x0012,0x0000);
+        ili9325_WriteReg(0x0013,0x0000);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0010,0x1590);
-        LCD_WriteReg(0x0011,0x0227);
+        ili9325_WriteReg(0x0010,0x1590);
+        ili9325_WriteReg(0x0011,0x0227);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0012,0x009c);
+        ili9325_WriteReg(0x0012,0x009c);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0013,0x1900);
-        LCD_WriteReg(0x0029,0x0023);
-        LCD_WriteReg(0x002b,0x000e);
+        ili9325_WriteReg(0x0013,0x1900);
+        ili9325_WriteReg(0x0029,0x0023);
+        ili9325_WriteReg(0x002b,0x000e);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0020,0x0000);
-        LCD_WriteReg(0x0021,0x0000);
-///////////////////////////////////////////////////////
+        ili9325_WriteReg(0x0020,0x0000);
+        ili9325_WriteReg(0x0021,0x0000);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0030,0x0007);
-        LCD_WriteReg(0x0031,0x0707);
-        LCD_WriteReg(0x0032,0x0006);
-        LCD_WriteReg(0x0035,0x0704);
-        LCD_WriteReg(0x0036,0x1f04);
-        LCD_WriteReg(0x0037,0x0004);
-        LCD_WriteReg(0x0038,0x0000);
-        LCD_WriteReg(0x0039,0x0706);
-        LCD_WriteReg(0x003c,0x0701);
-        LCD_WriteReg(0x003d,0x000f);
+        ili9325_WriteReg(0x0030,0x0007);
+        ili9325_WriteReg(0x0031,0x0707);
+        ili9325_WriteReg(0x0032,0x0006);
+        ili9325_WriteReg(0x0035,0x0704);
+        ili9325_WriteReg(0x0036,0x1f04);
+        ili9325_WriteReg(0x0037,0x0004);
+        ili9325_WriteReg(0x0038,0x0000);
+        ili9325_WriteReg(0x0039,0x0706);
+        ili9325_WriteReg(0x003c,0x0701);
+        ili9325_WriteReg(0x003d,0x000f);
         for (i=50000; i>0; i--);
         for (i=50000; i>0; i--);
-        LCD_WriteReg(0x0050,0x0000);
-        LCD_WriteReg(0x0051,0x00ef);
-        LCD_WriteReg(0x0052,0x0000);
-        LCD_WriteReg(0x0053,0x013f);
-        LCD_WriteReg(0x0060,0xa700);
-        LCD_WriteReg(0x0061,0x0001);
-        LCD_WriteReg(0x006a,0x0000);
-        LCD_WriteReg(0x0080,0x0000);
-        LCD_WriteReg(0x0081,0x0000);
-        LCD_WriteReg(0x0082,0x0000);
-        LCD_WriteReg(0x0083,0x0000);
-        LCD_WriteReg(0x0084,0x0000);
-        LCD_WriteReg(0x0085,0x0000);
-
-        LCD_WriteReg(0x0090,0x0010);
-        LCD_WriteReg(0x0092,0x0000);
-        LCD_WriteReg(0x0093,0x0003);
-        LCD_WriteReg(0x0095,0x0110);
-        LCD_WriteReg(0x0097,0x0000);
-        LCD_WriteReg(0x0098,0x0000);
+        ili9325_WriteReg(0x0050,0x0000);
+        ili9325_WriteReg(0x0051,0x00ef);
+        ili9325_WriteReg(0x0052,0x0000);
+        ili9325_WriteReg(0x0053,0x013f);
+        ili9325_WriteReg(0x0060,0xa700);
+        ili9325_WriteReg(0x0061,0x0001);
+        ili9325_WriteReg(0x006a,0x0000);
+        ili9325_WriteReg(0x0080,0x0000);
+        ili9325_WriteReg(0x0081,0x0000);
+        ili9325_WriteReg(0x0082,0x0000);
+        ili9325_WriteReg(0x0083,0x0000);
+        ili9325_WriteReg(0x0084,0x0000);
+        ili9325_WriteReg(0x0085,0x0000);
+        ili9325_WriteReg(0x0090,0x0010);
+        ili9325_WriteReg(0x0092,0x0000);
+        ili9325_WriteReg(0x0093,0x0003);
+        ili9325_WriteReg(0x0095,0x0110);
+        ili9325_WriteReg(0x0097,0x0000);
+        ili9325_WriteReg(0x0098,0x0000);
         //display on sequence
-        LCD_WriteReg(0x0007,0x0133);
-
-        LCD_WriteReg(0x0020,0x0000);
-        LCD_WriteReg(0x0021,0x0000);
+        ili9325_WriteReg(0x0007,0x0133);
+        ili9325_WriteReg(0x0020,0x0000);
+        ili9325_WriteReg(0x0021,0x0000);
     }
     ili9325_Clear( Blue );
 }
@@ -461,16 +394,16 @@ void ili9325_Initializtion(void)
 *           y      列座标
 * 出口参数：无
 * 说    明：
-* 调用方法：ili9320_SetCursor(10,10);
+* 调用方法：ili9325_SetCursor(10,10);
 ****************************************************************************/
 void ili9325_SetCursor(u16 x,u16 y)
 {
-    LCD_WriteReg(R32,x); /* 0-239 */
-    LCD_WriteReg(R33,y); /* 0-319 */
+    ili9325_WriteReg(R32,x); /* 0-239 */
+    ili9325_WriteReg(R33,y); /* 0-319 */
 }
 
 /****************************************************************************
-* 名    称：void ili9320_SetWindows(u16 StartX,u16 StartY,u16 EndX,u16 EndY)
+* 名    称：void ili9325_SetWindows(u16 StartX,u16 StartY,u16 EndX,u16 EndY)
 * 功    能：设置窗口区域
 * 入口参数：StartX     行起始座标
 *           StartY     列起始座标
@@ -478,71 +411,38 @@ void ili9325_SetCursor(u16 x,u16 y)
 *           EndY       列结束座标
 * 出口参数：无
 * 说    明：
-* 调用方法：ili9320_SetWindows(0,0,100,100)；
+* 调用方法：ili9325_SetWindows(0,0,100,100)；
 ****************************************************************************/
-void ili9320_SetWindows(u16 StartX,u16 StartY,u16 EndX,u16 EndY)
+void ili9325_SetWindows(u16 StartX,u16 StartY,u16 EndX,u16 EndY)
 {
     ili9325_SetCursor(StartX,StartY);
-    LCD_WriteReg(0x0050, StartX);
-    LCD_WriteReg(0x0052, StartY);
-    LCD_WriteReg(0x0051, EndX);
-    LCD_WriteReg(0x0053, EndY);
+    ili9325_WriteReg(0x0050, StartX);
+    ili9325_WriteReg(0x0052, StartY);
+    ili9325_WriteReg(0x0051, EndX);
+    ili9325_WriteReg(0x0053, EndY);
 }
 
 /****************************************************************************
-* 名    称：void ili9320_Clear(u16 dat)
+* 名    称：void ili9325_Clear(u16 dat)
 * 功    能：将屏幕填充成指定的颜色，如清屏，则填充 0xffff
 * 入口参数：dat      填充值
 * 出口参数：无
 * 说    明：
-* 调用方法：ili9320_Clear(0xffff);
+* 调用方法：ili9325_Clear(0xffff);
 ****************************************************************************/
 void ili9325_Clear(u16 Color)
 {
     u32 index=0;
     ili9325_SetCursor(0,0);
-    LCD_WriteRAM_Prepare(); /* Prepare to write GRAM */
+    ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     for (index=0; index<76800; index++)
     {
-        LCD->LCD_RAM=Color;
+        ili9325_RAM=Color;
     }
 }
 
 /****************************************************************************
-* 名    称：u16 ili9320_GetPoint(u16 x,u16 y)
-* 功    能：获取指定座标的颜色值
-* 入口参数：x      行座标
-*           y      列座标
-* 出口参数：当前座标颜色值
-* 说    明：
-* 调用方法：i=ili9320_GetPoint(10,10);
-****************************************************************************/
-u16 ili9320_GetPoint(u16 x,u16 y)
-{
-    ili9325_SetCursor(x,y);
-    return (ili9325_BGR2RGB(LCD_ReadRAM()));
-}
-/****************************************************************************
-* 名    称：void ili9320_SetPoint(u16 x,u16 y,u16 point)
-* 功    能：在指定座标画点
-* 入口参数：x      行座标
-*           y      列座标
-*           point  点的颜色
-* 出口参数：无
-* 说    明：
-* 调用方法：ili9320_SetPoint(10,10,0x0fe0);
-****************************************************************************/
-void ili9320_SetPoint(u16 x,u16 y,u16 point)
-{
-    if ( (x>320)||(y>240) ) return;
-    ili9325_SetCursor(x,y);
-
-    LCD_WriteRAM_Prepare();
-    LCD_WriteRAM(point);
-}
-
-/****************************************************************************
-* 名    称：void ili9320_DrawPicture(u16 StartX,u16 StartY,u16 EndX,u16 EndY,u16 *pic)
+* 名    称：void ili9325_DrawPicture(u16 StartX,u16 StartY,u16 EndX,u16 EndY,u16 *pic)
 * 功    能：在指定座标范围显示一副图片
 * 入口参数：StartX     行起始座标
 *           StartY     列起始座标
@@ -551,18 +451,18 @@ void ili9320_SetPoint(u16 x,u16 y,u16 point)
             pic        图片头指针
 * 出口参数：无
 * 说    明：图片取模格式为水平扫描，16位颜色模式
-* 调用方法：ili9320_DrawPicture(0,0,100,100,(u16*)demo);
+* 调用方法：ili9325_DrawPicture(0,0,100,100,(u16*)demo);
 ****************************************************************************/
-void ili9320_DrawPicture(u16 StartX,u16 StartY,u16 EndX,u16 EndY,u16 *pic)
+void ili9325_DrawPicture(u16 StartX,u16 StartY,u16 EndX,u16 EndY,u16 *pic)
 {
     u16  i;
-    ili9320_SetWindows(StartX,StartY,EndX,EndY);
+    ili9325_SetWindows(StartX,StartY,EndX,EndY);
     ili9325_SetCursor(StartX,StartY);
 
-    LCD_WriteRAM_Prepare();
+    ili9325_WriteRAM_Prepare();
     for (i=0; i<(EndX*EndY); i++)
     {
-        LCD_WriteRAM(*pic++);
+        ili9325_WriteRAM(*pic++);
     }
 }
 
