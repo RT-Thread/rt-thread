@@ -27,6 +27,8 @@ static void _rtgui_win_constructor(rtgui_win_t *win)
 	win->on_deactivate	= RT_NULL;
 	win->on_close		= RT_NULL;
 	win->title			= RT_NULL;
+	win->modal_code		= RTGUI_MODAL_OK;
+	win->modal_widget	= RT_NULL;
 
 	/* set window hide */
 	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(win));

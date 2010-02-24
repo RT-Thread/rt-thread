@@ -21,11 +21,12 @@ static void _rtgui_workbench_constructor(rtgui_workbench_t *workbench)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(workbench), rtgui_workbench_event_handler);
 
 	/* set attributes */
-	workbench->panel = RT_NULL;
-	workbench->flag = RTGUI_WORKBENCH_FLAG_DEFAULT;
-	workbench->modal_code = RTGUI_MODAL_OK;
-	workbench->title = RT_NULL;
+	workbench->flag 		= RTGUI_WORKBENCH_FLAG_DEFAULT;
+	workbench->panel 		= RT_NULL;
+	workbench->title 		= RT_NULL;
 	workbench->current_view = RT_NULL;
+	workbench->modal_code 	= RTGUI_MODAL_OK;
+	workbench->modal_widget = RT_NULL;
 }
 
 static void _rtgui_workbench_destructor(rtgui_workbench_t *workbench)
