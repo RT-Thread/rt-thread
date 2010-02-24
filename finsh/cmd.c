@@ -54,7 +54,7 @@ long hello()
 
 	return 0;
 }
-FINSH_FUNCTION_EXPORT(hello, say hello world)
+FINSH_FUNCTION_EXPORT(hello, say hello world);
 
 extern void rt_show_version(void);
 long version()
@@ -63,7 +63,7 @@ long version()
 
 	return 0;
 }
-FINSH_FUNCTION_EXPORT(version, show RT-Thread version information)
+FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
 
 #define rt_list_entry(node, type, member) \
     ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
@@ -101,7 +101,7 @@ int list_thread()
 	}
 	return 0;
 }
-FINSH_FUNCTION_EXPORT(list_thread, list thread)
+FINSH_FUNCTION_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node* list)
 {
@@ -231,7 +231,16 @@ int list_msgqueue()
 	for (node = list->next; node != list; node = node->next)
 	{
 		m = (struct rt_messagequeue*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s %04d  %d\n", m->parent.parent.name, m->entry, rt_list_len(&m->parent.suspend_thread));
+		if( !rt_list_isempty(&m->parent.suspend_thread) )
+		{
+			rt_kprintf("%-8s %04d  %d:", m->parent.parent.name, m->entry, rt_list_len(&m->parent.suspend_thread));
+			show_wait_queue(&(m->parent.suspend_thread));
+			rt_kprintf("\n");
+		}
+		else
+		{
+			rt_kprintf("%-8s %04d  %d\n", m->parent.parent.name, m->entry, rt_list_len(&m->parent.suspend_thread));
+		}
 	}
 
 	return 0;
@@ -243,7 +252,6 @@ FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
 int list_mempool()
 {
 	struct rt_mempool *mp;
-
 	struct rt_list_node *list, *node;
 
 	list = &rt_object_container[RT_Object_Class_MemPool].object_list;
