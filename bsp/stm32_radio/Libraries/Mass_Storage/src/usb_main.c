@@ -16,6 +16,7 @@ extern rt_device_t dev_spi_flash;
 extern unsigned long test_unit_ready_last;
 void msc_thread_entry(void *parameter)
 {
+	extern void player_ui_freeze(void);
     unsigned long test_unit_ready_start = rt_tick_get();
     test_unit_ready_last = test_unit_ready_start;
 
@@ -24,6 +25,10 @@ void msc_thread_entry(void *parameter)
     {
         rt_thread_delay( RT_TICK_PER_SECOND );
     }
+
+
+	/* freeze player UI */
+	player_ui_freeze();
 
     /* wait remove */
     while(1)

@@ -39,6 +39,7 @@ enum PLAYER_STEP
 
 /* init player ui */
 void player_ui_init(void);
+void player_ui_freeze(void);
 
 /* notification function, which invoked by player background thread */
 void player_notify_play(void);

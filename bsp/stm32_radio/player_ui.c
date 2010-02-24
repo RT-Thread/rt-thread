@@ -3,6 +3,7 @@
 #include <rtgui/rtgui_system.h>
 
 #include <rtgui/widgets/view.h>
+#include <rtgui/widgets/label.h>
 #include <rtgui/widgets/list_view.h>
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/filelist_view.h>
@@ -742,6 +743,44 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 		}
 			break;
 
+		case PLAYER_REQUEST_FREEZE:
+		{
+			/* stop play */
+			if (player_is_playing() == RT_TRUE)
+			{
+				player_stop_req();
+				next_step = PLAYER_STEP_STOP;
+			}
+
+			/* delay some tick */
+			rt_thread_delay(50);
+
+			/* show a modal view */
+			{
+				rtgui_view_t *view;
+				rtgui_label_t *label;
+				rtgui_rect_t rect = {0, 0, 150, 150}, container_rect;
+			
+				rtgui_graphic_driver_get_default_rect(&container_rect);
+				/* set centre */
+				rtgui_rect_moveto_align(&container_rect, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+				view = rtgui_view_create("USB");
+				rtgui_workbench_add_view(workbench, view);
+			
+				/* set container to window rect */
+				container_rect = rect;
+			
+				rect.x1 = 0; rect.y1 = 0;
+				rect.x2 = 120; rect.y2 = 20;
+				label = rtgui_label_create("USB Áª»úÖÐ...");
+				rtgui_rect_moveto_align(&container_rect, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+				rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+				rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+			
+				rtgui_view_show(view, RT_TRUE);
+				/* never reach hear */
+			}
+		}
 		default:
 			break;
 		}
@@ -757,7 +796,8 @@ rt_bool_t player_workbench_event_handler(rtgui_widget_t *widget, rtgui_event_t *
     if (event->type == RTGUI_EVENT_KBD)
     {
         struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-        if ((ekbd->type == RTGUI_KEYUP) && ekbd->key == RTGUIK_HOME)
+        if (((ekbd->type == RTGUI_KEYUP) && ekbd->key == RTGUIK_HOME) 
+			&& !RTGUI_WORKBENCH_IS_MODAL_MODE(workbench))
         {
             /* active home view */
             if (workbench->current_view != home_view)
@@ -839,5 +879,19 @@ void player_ui_init()
 		0x800, 25, 5);
 	if (player_ui_tid != RT_NULL)
 		rt_thread_startup(player_ui_tid);
+}
+
+void player_ui_freeze()
+{
+    struct rtgui_event_command ecmd;
+
+	/* check whether UI starts. */
+	if (home_view == RT_NULL || workbench == RT_NULL) return;
+
+    RTGUI_EVENT_COMMAND_INIT(&ecmd);
+    ecmd.type = RTGUI_CMD_USER_INT;
+    ecmd.command_id = PLAYER_REQUEST_FREEZE;
+
+    rtgui_thread_send(player_ui_tid, &ecmd.parent, sizeof(ecmd));
 }
 
