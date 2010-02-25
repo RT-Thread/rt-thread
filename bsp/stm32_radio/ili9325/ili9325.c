@@ -125,44 +125,6 @@
 
 static u16 DeviceCode;
 
-static void LCD_CtrlLinesConfig(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-
-    /* Enable FSMC, GPIOD, GPIOE, GPIOF, GPIOG and AFIO clocks */
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE |
-                           RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG |
-                           RCC_APB2Periph_AFIO, ENABLE);
-
-    /* Set PD.00(D2), PD.01(D3), PD.04(NOE), PD.05(NWE), PD.08(D13), PD.09(D14),
-       PD.10(D15), PD.14(D0), PD.15(D1) as alternate
-       function push pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 |
-                                  GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_14 |
-                                  GPIO_Pin_15;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-    /* Set PE.07(D4), PE.08(D5), PE.09(D6), PE.10(D7), PE.11(D8), PE.12(D9), PE.13(D10),
-       PE.14(D11), PE.15(D12) as alternate function push pull */
-    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
-                                   GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
-                                   GPIO_Pin_15;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-    GPIO_WriteBit(GPIOE, GPIO_Pin_6, Bit_SET);
-    /* Set PF.00(A0 (RS)) as alternate function push pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
-    GPIO_Init(GPIOF, &GPIO_InitStructure);
-
-    /* Set NE2(LCD/CS) as alternate function push pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-    GPIO_Init(GPIOG, &GPIO_InitStructure);
-}
-
 /*******************************************************************************
 * Function Name  : LCD_FSMCConfig
 * Description    : Configures the Parallel interface (FSMC) for LCD(Parallel mode)
@@ -212,17 +174,6 @@ static void LCD_FSMCConfig(void)
     FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
     FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM2, ENABLE);
 }
-
-
-static void LCD_X_Init(void)
-{
-    /* Configure the LCD Control pins --------------------------------------------*/
-    LCD_CtrlLinesConfig();
-
-    /* Configure the FSMC Parallel interface -------------------------------------*/
-    LCD_FSMCConfig();
-}
-
 
 /*******************************************************************************
 * Function Name  : ili9325_WriteReg
@@ -295,19 +246,7 @@ unsigned short ili9325_ReadGRAM(unsigned short x,unsigned short y)
 void ili9325_Initializtion(void)
 {
     volatile unsigned int i;
-    LCD_X_Init();
-
-    {
-        GPIO_InitTypeDef GPIO_InitStructure;
-
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF,ENABLE);
-
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-        GPIO_Init(GPIOF,&GPIO_InitStructure);
-    }
-    GPIO_SetBits(GPIOF, GPIO_Pin_10);
+    LCD_FSMCConfig();
 
     DeviceCode = LCD_ReadReg(0x0000);
     if (DeviceCode==0x9325||DeviceCode==0x9328)

@@ -3,61 +3,61 @@
 
 #define FSMC_GPIO_CONFIG
 
-static void delay_ms(unsigned int dt)
-{
-    volatile unsigned int u;
-    for (u=0;u<dt*30;u++);
-}
+//static void delay_ms(unsigned int dt)
+//{
+//    volatile unsigned int u;
+//    for (u=0;u<dt*30;u++);
+//}
 
 static void FSMC_Init(void)
 {
     FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
     FSMC_NORSRAMTimingInitTypeDef  p;
-
-#ifdef FSMC_GPIO_CONFIG
-    GPIO_InitTypeDef GPIO_InitStructure;
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOG | RCC_APB2Periph_GPIOE |
-                           RCC_APB2Periph_GPIOF, ENABLE);
-
-    /*-- GPIO Configuration ------------------------------------------------------*/
-    /* SRAM Data lines configuration */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | GPIO_Pin_9 |
-                                  GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
-                                  GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
-                                  GPIO_Pin_15;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-    /* SRAM Address lines configuration */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
-                                  GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 |
-                                  GPIO_Pin_14 | GPIO_Pin_15;
-    GPIO_Init(GPIOF, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
-                                  GPIO_Pin_4 | GPIO_Pin_5;
-    GPIO_Init(GPIOG, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-    /* NOE and NWE configuration */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 |GPIO_Pin_5;
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-    /* NE2 configuration */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
-    GPIO_Init(GPIOG, &GPIO_InitStructure);
-
-    /* NBL0, NBL1 configuration */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-#endif
+//
+//#ifdef FSMC_GPIO_CONFIG
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//
+//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOG | RCC_APB2Periph_GPIOE |
+//                           RCC_APB2Periph_GPIOF, ENABLE);
+//
+//    /*-- GPIO Configuration ------------------------------------------------------*/
+//    /* SRAM Data lines configuration */
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_8 | GPIO_Pin_9 |
+//                                  GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_Init(GPIOD, &GPIO_InitStructure);
+//
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
+//                                  GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
+//                                  GPIO_Pin_15;
+//    GPIO_Init(GPIOE, &GPIO_InitStructure);
+//
+//    /* SRAM Address lines configuration */
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
+//                                  GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 |
+//                                  GPIO_Pin_14 | GPIO_Pin_15;
+//    GPIO_Init(GPIOF, &GPIO_InitStructure);
+//
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 |
+//                                  GPIO_Pin_4 | GPIO_Pin_5;
+//    GPIO_Init(GPIOG, &GPIO_InitStructure);
+//
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
+//    GPIO_Init(GPIOD, &GPIO_InitStructure);
+//
+//    /* NOE and NWE configuration */
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 |GPIO_Pin_5;
+//    GPIO_Init(GPIOD, &GPIO_InitStructure);
+//
+//    /* NE2 configuration */
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
+//    GPIO_Init(GPIOG, &GPIO_InitStructure);
+//
+//    /* NBL0, NBL1 configuration */
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+//    GPIO_Init(GPIOE, &GPIO_InitStructure);
+//#endif
 
     /*-- FSMC Configuration ------------------------------------------------------*/
     p.FSMC_AddressSetupTime = 2; // safe value 2
@@ -91,14 +91,14 @@ static void FSMC_Init(void)
 
 void ftm0371_port_init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-
-    RCC_APB2PeriphClockCmd(LCD_RST_RCC, ENABLE);
-    GPIO_InitStructure.GPIO_Pin   = LCD_RST_PIN;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(LCD_RST_PORT, &GPIO_InitStructure);
-    LCD_RST_0; // reset the lcd
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//
+//    RCC_APB2PeriphClockCmd(LCD_RST_RCC, ENABLE);
+//    GPIO_InitStructure.GPIO_Pin   = LCD_RST_PIN;
+//    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+//    GPIO_Init(LCD_RST_PORT, &GPIO_InitStructure);
+//    LCD_RST_0; // reset the lcd
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
     FSMC_Init();
@@ -107,8 +107,8 @@ void ftm0371_port_init(void)
 //³õÊ¼»¯º¯Êý
 void ftm0371_init(void)
 {
-    LCD_RST_1;
-	delay_ms(1000);
+//    LCD_RST_1;
+//	delay_ms(1000);
 
     //initializing funciton 1
     LCD_WR_REG(0xA1);

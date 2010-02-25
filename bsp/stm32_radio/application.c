@@ -113,8 +113,6 @@ int rt_application_init()
 {
     rt_thread_t init_thread;
 
-    rt_hw_lcd_init();
-
 #if (RT_THREAD_PRIORITY_MAX == 32)
     init_thread = rt_thread_create("init",
                                    rt_init_thread_entry, RT_NULL,
