@@ -313,7 +313,7 @@ void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
     ili9325_SetCursor(x,y);
 
     ili9325_WriteRAM_Prepare();
-    ili9325_WriteRAM(p);
+    ili9325_RAM = p ;
 }
 
 /* 获取像素点颜色 */
@@ -339,7 +339,7 @@ void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_
     ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (x1 < x2)
     {
-        ili9325_WriteRAM(p);
+        ili9325_RAM = p ;
         x1++;
     }
 }
@@ -359,7 +359,7 @@ void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t
     ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (y1 < y2)
     {
-        ili9325_WriteRAM(p);
+        ili9325_RAM = p ;
         y1++;
     }
 }
@@ -379,7 +379,7 @@ void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt
     ili9325_WriteRAM_Prepare(); /* Prepare to write GRAM */
     while (x1 < x2)
     {
-        ili9325_WriteRAM( *ptr );
+        ili9325_RAM = *ptr ;
         x1 ++;
         ptr ++;
     }
@@ -414,7 +414,7 @@ rt_err_t rt_hw_lcd_init(void)
         ili9325_WriteRAM_Prepare();
         for(test_y=0; test_y<76800; test_y++)
         {
-            ili9325_WriteRAM(temp++);
+            ili9325_RAM = temp++ ;
         }
 
         /* read */

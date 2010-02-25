@@ -31,7 +31,19 @@ static void GPIO_Configuration(void)
 
 static unsigned char SPI_HostReadByte(void)
 {
-    return SPI_WriteByte(0x00);
+    //return SPI_WriteByte(0x00);
+    //Wait until the transmit buffer is empty
+    //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+    while( (SPI1->SR & SPI_I2S_FLAG_TXE) == RESET);
+    // Send the byte
+    SPI_I2S_SendData(SPI1, 0);
+
+    //Wait until a data is received
+    //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+    while( (SPI1->SR & SPI_I2S_FLAG_RXNE) == RESET);
+    // Get the received data
+    return SPI_I2S_ReceiveData(SPI1);
+
 }
 
 static void SPI_HostWriteByte(unsigned char wByte)
