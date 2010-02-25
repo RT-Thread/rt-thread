@@ -1,5 +1,6 @@
 #include <stm32f10x.h>
 #include "spi_flash.h"
+#include "rtthread.h"
 
 extern unsigned char SPI_WriteByte(unsigned char data);
 
@@ -77,12 +78,16 @@ static unsigned char AT45DB_StatusRegisterRead(void)
 static void wait_busy(void)
 {
     unsigned int    i=0;
-    while (i++<2000)
+    while (i++<3000)
     {
         if (AT45DB_StatusRegisterRead()&0x80)
         {
             break;
         }
+    }
+    if( !(i<3000) )
+    {
+        rt_kprintf("\r\nSPI_FLASH timeout!!!");
     }
 }
 
