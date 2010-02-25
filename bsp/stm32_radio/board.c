@@ -70,6 +70,59 @@ void rt_hw_timer_handler(void)
 /* NAND Flash */
 #include "fsmc_nand.h"
 
+static void all_device_reset(void)
+{
+    /* RESET */
+    /* DM9000A     PE5  */
+    /* LCD         PF10 */
+    /* SPI-FLASH   PA3  */
+
+    /*  CS */
+    /* DM9000A FSMC_NE4 PG12 */
+    /* LCD     FSMC_NE2 PG9  */
+    /* SPI_FLASH        PA4  */
+    /* CODEC            PC5  */
+    /* TOUCH            PC4  */
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOE
+                           | RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG,ENABLE);
+
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    /* SPI_FLASH CS */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+    GPIO_Init(GPIOA,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOA,GPIO_Pin_4);
+
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+
+    /* CODEC && TOUCH CS */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+    GPIO_Init(GPIOC,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOC,GPIO_Pin_4 | GPIO_Pin_5);
+
+    /*  DM9000A RESET */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_Init(GPIOE,&GPIO_InitStructure);
+    GPIO_ResetBits(GPIOE,GPIO_Pin_5);
+
+    /* LCD RESET */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
+    GPIO_ResetBits(GPIOF,GPIO_Pin_10);
+
+    /* SPI_FLASH RESET */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+    GPIO_Init(GPIOA,&GPIO_InitStructure);
+    GPIO_ResetBits(GPIOA,GPIO_Pin_3);
+
+    GPIO_SetBits(GPIOE,GPIO_Pin_5);  /* DM9000A   */
+    GPIO_SetBits(GPIOF,GPIO_Pin_10); /* LCD       */
+    GPIO_SetBits(GPIOA,GPIO_Pin_3);  /* SPI_FLASH */
+}
+
 /**
  * This function will initial STM32 Radio board.
  */
@@ -81,31 +134,7 @@ void rt_hw_board_init()
     /* Configure the system clocks */
     SystemInit();
 
-    /* DM9000A */
-    {
-        GPIO_InitTypeDef GPIO_InitStructure;
-
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE,ENABLE);
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(GPIOE,&GPIO_InitStructure);
-        GPIO_SetBits(GPIOE,GPIO_Pin_5);
-    }
-
-#if LCD_VERSION == 2
-    {
-        GPIO_InitTypeDef GPIO_InitStructure;
-
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF,ENABLE);
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-        GPIO_Init(GPIOF,&GPIO_InitStructure);
-    }
-#endif
+    all_device_reset();
 
     /* NVIC Configuration */
     NVIC_Configuration();
