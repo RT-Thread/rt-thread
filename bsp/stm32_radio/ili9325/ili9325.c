@@ -323,6 +323,67 @@ void ili9325_Initializtion(void)
         ili9325_WriteReg(0x0020,0x0000);
         ili9325_WriteReg(0x0021,0x0000);
     }
+    else if(DeviceCode==0x7783)
+    {
+        // Start Initial Sequence
+        ili9325_WriteReg(0x00FF,0x0001);
+        ili9325_WriteReg(0x00F3,0x0008);
+        ili9325_WriteReg(0x0001,0x0100);
+        ili9325_WriteReg(0x0002,0x0700);
+        ili9325_WriteReg(0x0003,0x1030);  //0x1030
+        ili9325_WriteReg(0x0008,0x0302);
+        ili9325_WriteReg(0x0008,0x0207);
+        ili9325_WriteReg(0x0009,0x0000);
+        ili9325_WriteReg(0x000A,0x0000);
+        ili9325_WriteReg(0x0010,0x0000);  //0x0790
+        ili9325_WriteReg(0x0011,0x0005);
+        ili9325_WriteReg(0x0012,0x0000);
+        ili9325_WriteReg(0x0013,0x0000);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+        ili9325_WriteReg(0x0010,0x12B0);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+        ili9325_WriteReg(0x0011,0x0007);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+        ili9325_WriteReg(0x0012,0x008B);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+        ili9325_WriteReg(0x0013,0x1700);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+        ili9325_WriteReg(0x0029,0x0022);
+
+        //################# void Gamma_Set(void) ####################//
+        ili9325_WriteReg(0x0030,0x0000);
+        ili9325_WriteReg(0x0031,0x0707);
+        ili9325_WriteReg(0x0032,0x0505);
+        ili9325_WriteReg(0x0035,0x0107);
+        ili9325_WriteReg(0x0036,0x0008);
+        ili9325_WriteReg(0x0037,0x0000);
+        ili9325_WriteReg(0x0038,0x0202);
+        ili9325_WriteReg(0x0039,0x0106);
+        ili9325_WriteReg(0x003C,0x0202);
+        ili9325_WriteReg(0x003D,0x0408);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+
+
+        ili9325_WriteReg(0x0050,0x0000);
+        ili9325_WriteReg(0x0051,0x00EF);
+        ili9325_WriteReg(0x0052,0x0000);
+        ili9325_WriteReg(0x0053,0x013F);
+        ili9325_WriteReg(0x0060,0xA700);
+        ili9325_WriteReg(0x0061,0x0001);
+        ili9325_WriteReg(0x0090,0x0033);
+        ili9325_WriteReg(0x002B,0x000B);
+        ili9325_WriteReg(0x0007,0x0133);
+        for (i=50000; i>0; i--);
+        for (i=50000; i>0; i--);
+    }
+
+
     ili9325_Clear( Blue );
 }
 
