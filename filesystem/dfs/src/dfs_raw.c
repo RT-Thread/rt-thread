@@ -581,7 +581,7 @@ int dfile_raw_rename(const char* oldpath, const char* newpath)
 static char fullpath[256 + 1];
 static struct dfs_fd fd;
 static struct dfs_dirent dirent;
-void __ls(const char* pathname)
+void ls(const char* pathname)
 {
 	struct dfs_stat stat;
 	int length;
@@ -622,9 +622,9 @@ void __ls(const char* pathname)
 		rt_kprintf("No such directory\n");
 	}
 }
-FINSH_FUNCTION_EXPORT(__ls, list directory contents)
+FINSH_FUNCTION_EXPORT(ls, list directory contents)
 
-void __mkdir(const char* pathname)
+void _mkdir(const char* pathname)
 {
 	/* make a new directory */
 	if (dfile_raw_open(&fd, pathname, DFS_O_DIRECTORY | DFS_O_CREAT) == 0)
@@ -633,18 +633,18 @@ void __mkdir(const char* pathname)
 	}
 	else rt_kprintf("Can't mkdir %s\n", pathname);
 }
-FINSH_FUNCTION_EXPORT(__mkdir, make a directory)
+FINSH_FUNCTION_EXPORT(_mkdir, make a directory)
 
-void __rm(const char* filename)
+void rm(const char* filename)
 {
 	if (dfile_raw_unlink(filename) < 0)
 	{
 		rt_kprintf("Delete %s failed\n", filename);
 	}
 }
-FINSH_FUNCTION_EXPORT(__rm, remove files or directories)
+FINSH_FUNCTION_EXPORT(rm, remove files or directories)
 
-void __cat(const char* filename)
+void cat(const char* filename)
 {
 	rt_uint32_t length;
 	char buffer[81];
@@ -667,15 +667,6 @@ void __cat(const char* filename)
 	
 	dfile_raw_close(&fd);
 }
-FINSH_FUNCTION_EXPORT(__cat, print file)
+FINSH_FUNCTION_EXPORT(cat, print file)
 
-#ifndef FINSH_USING_SYMTAB
-void dfs_export_finsh(void)
-{
-	finsh_syscall_append("ls", (syscall_func)__ls);
-	finsh_syscall_append("mkdir", (syscall_func)__mkdir);
-	finsh_syscall_append("rm", (syscall_func)__rm);
-	finsh_syscall_append("cat", (syscall_func)__cat);
-}
-#endif
 #endif

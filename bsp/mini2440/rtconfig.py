@@ -90,9 +90,10 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    if RT_USING_FINSH:
+        CFLAGS += ' -D FINSH_USING_SYMTAB -DFINSH_USING_DESCRIPTION'
     if RT_USING_WEBSERVER:
         CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
-
     RT_USING_MINILIBC = True
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 

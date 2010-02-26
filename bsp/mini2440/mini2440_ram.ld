@@ -6,10 +6,22 @@ SECTIONS
 	. = 0x30000000;
 
 	. = ALIGN(4);
-	.text :	{
+	.text :	
+	{
 		*(.init)
 		*(.text)
 		*(.gnu.linkonce.t*)
+		
+		/* section information for finsh shell */
+		. = ALIGN(4);
+		__fsymtab_start = .;
+		KEEP(*(FSymTab))
+		__fsymtab_end = .;
+		. = ALIGN(4);
+		__vsymtab_start = .;
+		KEEP(*(VSymTab))
+		__vsymtab_end = .;
+		. = ALIGN(4);	
 	}
 
 	. = ALIGN(4);

@@ -68,10 +68,6 @@ void dfs_init()
 
 	/* clean fd table */
 	rt_memset(fd_table, 0, sizeof(fd_table));
-
-#if defined(RT_USING_FINSH) && !defined(FINSH_USING_SYMTAB)
-	dfs_export_finsh();
-#endif
 }
 
 void dfs_lock()
