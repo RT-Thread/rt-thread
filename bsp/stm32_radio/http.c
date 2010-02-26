@@ -156,7 +156,7 @@ int http_resolve_address(struct sockaddr_in *server, const char * url, char *hos
 		if (*url == ':')
 		{
 			unsigned char w;
-			for (w = 0; w < 5 && url[w] != '/' && url[w] != '\0'; w ++)
+			for (w = 0; w < 5 && url[w + 1] != '/' && url[w + 1] != '\0'; w ++)
 				port[w] = url[w + 1];
 			
 			/* get port ok */
@@ -165,6 +165,8 @@ int http_resolve_address(struct sockaddr_in *server, const char * url, char *hos
 			break;
 		}
 
+		if ((*url < '0' || *url > '9') && *url != '.')
+			is_domain = 1;
 		host_addr[i++] = *url;
 		url ++;
 	}
@@ -395,9 +397,9 @@ static int shoutcast_connect(struct shoutcast_session* session,
 
 		buf = rt_malloc (512);
 		if (*url)
-			length = rt_snprintf(buf, 512, _shoutcast_get, url, host_addr, server->sin_port);
+			length = rt_snprintf(buf, 512, _shoutcast_get, url, host_addr, ntohs(server->sin_port));
 		else
-			length = rt_snprintf(buf, 512, _shoutcast_get, "/", host_addr, server->sin_port);
+			length = rt_snprintf(buf, 512, _shoutcast_get, "/", host_addr, ntohs(server->sin_port));
 
 		rc = send(peer_handle, buf, length, 0);
 		rt_kprintf("SHOUTCAST request:\n%s", buf);
@@ -510,6 +512,8 @@ struct shoutcast_session* shoutcast_session_open(char* url)
 		rt_free(session);
 		return RT_NULL;
 	}
+
+	rt_kprintf("connect to: %s...\n", host_addr);
 
 	// Now we connect and initiate the transfer by sending a
 	// request header to the server, and receiving the response header
