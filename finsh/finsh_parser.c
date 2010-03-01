@@ -656,8 +656,11 @@ static struct finsh_node* proc_cast_expr(struct finsh_parser* self)
 		match_token(token, &(self->token), finsh_token_type_right_paren);
 
 		cast = proc_cast_expr(self);
-		cast->data_type = type;
-		return cast;
+		if (cast != NULL)
+		{
+			cast->data_type = type;
+			return cast;
+		}
 	}
 
 	finsh_token_replay(&(self->token));
@@ -835,6 +838,7 @@ static struct finsh_node* proc_param_list(struct finsh_parser* self)
 	struct finsh_node *node, *assign;
 
 	assign = proc_assign_expr(self);
+	if (assign == NULL) return NULL;
 	node = assign;
 
 	next_token(token, &(self->token));
@@ -867,8 +871,11 @@ static struct finsh_node* make_sys_node(u_char type, struct finsh_node* node1, s
 
 	node = finsh_node_allocate(type);
 
-	finsh_node_child(node) = node1;
-	if (node1 != NULL) finsh_node_sibling(node1) = node2;
+	if (node1 != NULL)
+	{
+		finsh_node_child(node) = node1;
+		finsh_node_sibling(node1) = node2;
+	}
 	else finsh_error_set(FINSH_ERROR_NULL_NODE);
 
 	return node;

@@ -326,6 +326,8 @@ void finsh_thread_entry(void* parameter)
 						continue;
 					}
 
+					if (pos >= 256) /* it's a large line, discard it */
+						pos = 0;
 					line[pos] = ch;
 
 					rt_kprintf("%c", line[pos]);
