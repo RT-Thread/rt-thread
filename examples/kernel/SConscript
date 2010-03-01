@@ -1,0 +1,13 @@
+Import('env')
+
+src_local = Split("""
+tc_comm.c
+thread_static.c
+thread_dynamic.c
+thread_priority.c
+""")
+
+# The set of source files associated with this SConscript file.
+obj = env.Object(src_local)
+
+Return('obj')
