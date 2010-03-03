@@ -5,6 +5,10 @@ tc_comm.c
 thread_static.c
 thread_dynamic.c
 thread_priority.c
+thread_same_priority.c
+thread_static_simple.c
+thread_dynamic_simple.c
+thread_delete.c
 """)
 
 # The set of source files associated with this SConscript file.

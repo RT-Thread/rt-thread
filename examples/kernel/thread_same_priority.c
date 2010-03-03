@@ -1,46 +1,30 @@
 #include <rtthread.h>
 #include "tc_comm.h"
 
-struct rt_thread thread1;
-struct rt_thread thread2;
+static struct rt_thread thread1;
+static struct rt_thread thread2;
 static char thread1_stack[THREAD_STACK_SIZE];
 static char thread2_stack[THREAD_STACK_SIZE];
-static rt_uint32_t count = 0;
 
-/*
- * the priority of thread1 > the priority of thread2
- */
+static rt_uint32_t t1_count = 0;
+static rt_uint32_t t2_count = 0;
 static void thread1_entry(void* parameter)
 {
 	while (1)
 	{
-		count ++;
-		rt_kprintf("count = %d\n", count);
-
-		rt_thread_delay(10);
+		t1_count ++;
 	}
 }
 
 static void thread2_entry(void* parameter)
 {
-	rt_tick_t tick;
-
-	tick = rt_tick_get();
 	while (1)
 	{
-		if (rt_tick_get() - tick >= 100)
-		{
-			if (count == 0)
-				tc_done(TC_STAT_FAILED);
-			else
-				tc_done(TC_STAT_PASSED);
-
-			break;
-		}
+		t2_count ++;
 	}
 }
 
-int thread_priority_init()
+rt_err_t thread_same_priority_init()
 {
 	rt_err_t result;
 
@@ -48,24 +32,23 @@ int thread_priority_init()
 		"t1",
 		thread1_entry, RT_NULL,
 		&thread1_stack[0], sizeof(thread1_stack),
-		THREAD_PRIORITY - 1, THREAD_TIMESLICE);
+		THREAD_PRIORITY, 10);
 	if (result == RT_EOK)
 		rt_thread_startup(&thread1);
 	else
-		tc_stat(TC_STAT_FAILED);
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-	rt_thread_init(&thread2,
+	result = rt_thread_init(&thread2,
 		"t2",
 		thread2_entry, RT_NULL,
 		&thread2_stack[0], sizeof(thread2_stack),
-		THREAD_PRIORITY + 1, THREAD_TIMESLICE);
-
+		THREAD_PRIORITY, 5);
 	if (result == RT_EOK)
 		rt_thread_startup(&thread2);
 	else
-		tc_stat(TC_STAT_FAILED);
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-	return 0;
+	return result;
 }
 
 #ifdef RT_USING_TC
@@ -81,24 +64,29 @@ static void _tc_cleanup()
 
 	/* unlock scheduler */
 	rt_exit_critical();
+
+	if (t1_count / t2_count != 2)
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 }
-int _tc_thread_priority()
+
+int _tc_thread_same_priority()
 {
-	count = 0;
+	t1_count = 0;
+	t2_count = 0;
 
 	/* set tc cleanup */
 	tc_cleanup(_tc_cleanup);
-	thread_priority_init();
 
-	return RT_TICK_PER_SECOND;
+	thread_same_priority_init();
+
+	return 100;
 }
-FINSH_FUNCTION_EXPORT(_tc_thread_priority, a priority thread test);
+FINSH_FUNCTION_EXPORT(_tc_thread_same_priority, a same priority thread test);
 #else
 int rt_application_init()
 {
-	thread_priority_init();
+	thread_same_priority_init();
 
 	return 0;
 }
 #endif
-

@@ -37,22 +37,32 @@ void tc_thread_entry(void* parameter)
 				if (tick > 0)
 				{
 					result = rt_sem_take(&_tc_sem, tick);
+
+					if (_tc_cleanup != RT_NULL)
+					{
+						/* perform testcase cleanup */
+						_tc_cleanup();
+						_tc_cleanup = RT_NULL;
+					}
+
 					if (result != RT_EOK)
 						rt_kprintf("TestCase[%s] failed\n", _tc_current);
 					else
 					{
 						if (_tc_stat & TC_STAT_FAILED)
 							rt_kprintf("TestCase[%s] failed\n", _tc_current);
-						else 
+						else
 							rt_kprintf("TestCase[%s] passed\n", _tc_current);
 					}
 				}
-
-				if (_tc_cleanup != RT_NULL)
+				else
 				{
-					/* perform testcase cleanup */
-					_tc_cleanup();
-					_tc_cleanup = RT_NULL;
+					if (_tc_cleanup != RT_NULL)
+					{
+						/* perform testcase cleanup */
+						_tc_cleanup();
+						_tc_cleanup = RT_NULL;
+					}
 				}
 			}
 		}
@@ -126,12 +136,12 @@ void tc_start(const char* tc_prefix)
 	}
 
 	rt_memset(_tc_prefix, 0, sizeof(_tc_prefix));
-	rt_snprintf(_tc_prefix, sizeof(_tc_prefix), 
+	rt_snprintf(_tc_prefix, sizeof(_tc_prefix),
 		"_tc_%s", tc_prefix);
 
-	result = rt_thread_init(&_tc_thread, "tc", 
+	result = rt_thread_init(&_tc_thread, "tc",
 		tc_thread_entry, RT_NULL,
-		&_tc_stack[0], sizeof(_tc_stack), 
+		&_tc_stack[0], sizeof(_tc_stack),
 		TC_PRIORITY - 3, 5);
 
 	/* set tc stat */
