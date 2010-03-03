@@ -21,7 +21,47 @@
 
 #include "kservice.h"
 
-struct rt_object_information rt_object_container[RT_Object_Class_Unknown];
+#define _OBJ_CONTAINER_LIST_INIT(c) 	\
+	{&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
+struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
+{
+	/* init object container - thread */
+	{RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Thread), sizeof(struct rt_thread)},
+#ifdef RT_USING_SEMAPHORE
+	/* init object container - semaphore */
+	{RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Semaphore), sizeof(struct rt_semaphore)},
+#endif
+#ifdef RT_USING_MUTEX
+	/* init object container - mutex */
+	{RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Mutex), sizeof(struct rt_mutex)},
+#endif
+#ifdef RT_USING_EVENT
+	/* init object container - event */
+	{RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Event), sizeof(struct rt_event)},
+#endif
+#ifdef RT_USING_MAILBOX
+	/* init object container - mailbox */
+	{RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MailBox), sizeof(struct rt_mailbox)},
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+	/* init object container - message queue */
+	{RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MessageQueue), sizeof(struct rt_messagequeue)},
+#endif
+#ifdef RT_USING_MEMPOOL
+	/* init object container - memory pool */
+	{RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemPool), sizeof(struct rt_mempool)},
+#endif
+#ifdef RT_USING_DEVICE
+	/* init object container - device */
+	{RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Device), sizeof(struct rt_device)},
+#endif
+	/* init object container - timer */
+	{RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Timer), sizeof(struct rt_timer)},
+#ifdef RT_USING_MODULE
+	/* init object container - module */
+	{RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Module), sizeof(struct rt_module)},
+#endif
+};
 
 #ifdef RT_USING_HOOK
 static void (*rt_object_attach_hook)(struct rt_object* object);
@@ -116,71 +156,6 @@ void rt_object_put_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_system_object_init(void)
 {
-	/* init object container - thread */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Thread].object_list));
-	rt_object_container[RT_Object_Class_Thread].object_size = sizeof(struct rt_thread);
-	rt_object_container[RT_Object_Class_Thread].type = RT_Object_Class_Thread;
-
-#ifdef RT_USING_MODULE
-	/* init object container - module */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Module].object_list));
-	rt_object_container[RT_Object_Class_Module].object_size = sizeof(struct rt_module);
-	rt_object_container[RT_Object_Class_Module].type = RT_Object_Class_Module;
-#endif
-
-#ifdef RT_USING_SEMAPHORE
-	/* init object container - semaphore */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Semaphore].object_list));
-	rt_object_container[RT_Object_Class_Semaphore].object_size = sizeof(struct rt_semaphore);
-	rt_object_container[RT_Object_Class_Semaphore].type = RT_Object_Class_Semaphore;
-#endif
-
-#ifdef RT_USING_MUTEX
-	/* init object container - mutex */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Mutex].object_list));
-	rt_object_container[RT_Object_Class_Mutex].object_size = sizeof(struct rt_mutex);
-	rt_object_container[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
-#endif
-
-#ifdef RT_USING_EVENT
-	/* init object container - event */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Event].object_list));
-	rt_object_container[RT_Object_Class_Event].object_size = sizeof(struct rt_event);
-	rt_object_container[RT_Object_Class_Event].type = RT_Object_Class_Event;
-#endif
-
-#ifdef RT_USING_MAILBOX
-	/* init object container - mailbox */
-	rt_list_init(&(rt_object_container[RT_Object_Class_MailBox].object_list));
-	rt_object_container[RT_Object_Class_MailBox].object_size = sizeof(struct rt_mailbox);
-	rt_object_container[RT_Object_Class_MailBox].type = RT_Object_Class_MailBox;
-#endif
-
-#ifdef RT_USING_MESSAGEQUEUE
-	/* init object container - message queue */
-	rt_list_init(&(rt_object_container[RT_Object_Class_MessageQueue].object_list));
-	rt_object_container[RT_Object_Class_MessageQueue].object_size = sizeof(struct rt_messagequeue);
-	rt_object_container[RT_Object_Class_MessageQueue].type = RT_Object_Class_MessageQueue;
-#endif
-
-#ifdef RT_USING_MEMPOOL
-	/* init object container - memory pool */
-	rt_list_init(&(rt_object_container[RT_Object_Class_MemPool].object_list));
-	rt_object_container[RT_Object_Class_MemPool].object_size = sizeof(struct rt_mempool);
-	rt_object_container[RT_Object_Class_MemPool].type = RT_Object_Class_MemPool;
-#endif
-
-#ifdef RT_USING_DEVICE
-	/* init object container - device */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Device].object_list));
-	rt_object_container[RT_Object_Class_Device].object_size = sizeof(struct rt_device);
-	rt_object_container[RT_Object_Class_Device].type = RT_Object_Class_Device;
-#endif
-
-	/* init object container - timer */
-	rt_list_init(&(rt_object_container[RT_Object_Class_Timer].object_list));
-	rt_object_container[RT_Object_Class_Timer].object_size = sizeof(struct rt_timer);
-	rt_object_container[RT_Object_Class_Timer].type = RT_Object_Class_Timer;
 }
 
 /**
