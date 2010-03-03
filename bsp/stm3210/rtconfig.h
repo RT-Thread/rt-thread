@@ -74,8 +74,8 @@
 
 /* SECTION: device filesystem support */
 #define RT_USING_DFS
-#define RT_USING_DFS_EFSL
-/* #define RT_USING_DFS_ELMFAT */
+#define RT_USING_DFS_ELMFAT
+#define RT_DFS_ELM_WORD_ACCESS
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2

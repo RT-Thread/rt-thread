@@ -24,7 +24,7 @@
 /* dfs init */
 #include <dfs_init.h>
 /* dfs filesystem:EFS filesystem init */
-#include <dfs_efs.h>
+#include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #endif
