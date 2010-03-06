@@ -253,7 +253,11 @@ void ili9325_Initializtion(void)
     {
         ili9325_WriteReg(0x00e7,0x0010);
         ili9325_WriteReg(0x0000,0x0001);  			        //start internal osc
-        ili9325_WriteReg(0x0001,0x0100);
+#if defined(_ILI_REVERSE_DIRECTION_)
+        ili9325_WriteReg(0x0001,0x0000);                    //Reverse Display
+#else
+        ili9325_WriteReg(0x0001,0x0100);                    //
+#endif
         ili9325_WriteReg(0x0002,0x0700); 				    //power on sequence
         /* [5:4]-ID1~ID0 [3]-AM-1´¹Ö±-0Ë®Æ½ */
         ili9325_WriteReg(0x0003,(1<<12)|(1<<5)|(0<<4) | (1<<3) );
@@ -303,7 +307,11 @@ void ili9325_Initializtion(void)
         ili9325_WriteReg(0x0051,0x00ef);
         ili9325_WriteReg(0x0052,0x0000);
         ili9325_WriteReg(0x0053,0x013f);
-        ili9325_WriteReg(0x0060,0xa700);
+#if defined(_ILI_REVERSE_DIRECTION_)
+        ili9325_WriteReg(0x0060,0x2700);       
+#else
+        ili9325_WriteReg(0x0060,0xA700);
+#endif
         ili9325_WriteReg(0x0061,0x0001);
         ili9325_WriteReg(0x006a,0x0000);
         ili9325_WriteReg(0x0080,0x0000);
