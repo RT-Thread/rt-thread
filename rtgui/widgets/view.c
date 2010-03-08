@@ -122,6 +122,7 @@ void rtgui_view_destroy(rtgui_view_t* view)
 		rtgui_widget_destroy(RTGUI_WIDGET(view));
 }
 
+#ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box)
 {
 	if (view == RT_NULL ||
@@ -130,6 +131,7 @@ void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box)
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(box));
 	rtgui_widget_set_rect(RTGUI_WIDGET(box), &(RTGUI_WIDGET(view)->extent));
 }
+#endif
 
 rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal)
 {

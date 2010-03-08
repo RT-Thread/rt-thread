@@ -295,7 +295,7 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 	return RT_FALSE;
 }
 
-struct rtgui_textbox* rtgui_textbox_create(const char* text)
+struct rtgui_textbox* rtgui_textbox_create(const char* text, rt_uint8_t flag)
 {
     struct rtgui_textbox* box;
 
@@ -306,6 +306,7 @@ struct rtgui_textbox* rtgui_textbox_create(const char* text)
 
 		/* allocate default line buffer */
 		rtgui_textbox_set_value(box, text);
+		box->flag = flag;
 
 		rtgui_font_get_metrics(RTGUI_WIDGET(box)->gc.font, "h", &rect);
 	}
@@ -354,7 +355,7 @@ const char* rtgui_textbox_get_value(struct rtgui_textbox* box)
 	return (const char*)box->text;
 }
 
-void rtgui_widget_set_line_length(struct rtgui_textbox* box, rt_size_t length)
+void rtgui_textbox_set_line_length(struct rtgui_textbox* box, rt_size_t length)
 {
 	rt_uint8_t* new_line;
 

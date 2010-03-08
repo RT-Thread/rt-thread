@@ -42,3 +42,4 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui
 void rtgui_radiobox_set_orientation(struct rtgui_radiobox* radiobox, int orientation);
 
 #endif
+

@@ -127,26 +127,10 @@ rtgui_type_t *rtgui_widget_type_get(void);
 rtgui_widget_t *rtgui_widget_create(rtgui_type_t *widget_type);
 void rtgui_widget_destroy(rtgui_widget_t* widget);
 
-/* initial a widget */
-void rtgui_widget_init(rtgui_widget_t* widget, rtgui_type_t type, rtgui_rect_t* rect);
-/* detach a widget */
-void rtgui_widget_detach(rtgui_widget_t* widget);
-
-/* update toplevel widget */
-void rtgui_widget_update_toplevel(rtgui_widget_t* widget);
-
 /* set the event handler of widget */
 void rtgui_widget_set_event_handler(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 /* widget default event handler */
 rt_bool_t rtgui_widget_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
-
-/* dispatch event to child widget */
-rt_bool_t rtgui_widget_dispatch_event(rtgui_widget_t* widget, rtgui_event_t* event);
-rt_bool_t rtgui_widget_dispatch_mouse_event(rtgui_widget_t* widget, struct rtgui_event_mouse* event);
-
-/* set and get widget label */
-char* rtgui_widget_get_label(rtgui_widget_t* widget);
-void rtgui_widget_set_label(rtgui_widget_t* widget, const char* label);
 
 /* focus and unfocus */
 void rtgui_widget_focus(rtgui_widget_t * widget);

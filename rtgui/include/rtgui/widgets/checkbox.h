@@ -27,10 +27,12 @@ typedef struct rtgui_checkbox rtgui_checkbox_t;
 
 rtgui_type_t *rtgui_checkbox_type_get(void);
 
-rtgui_checkbox_t* rtgui_checkbox_create(unsigned char* text);
+rtgui_checkbox_t* rtgui_checkbox_create(unsigned char* text, rt_bool_t checked);
 void rtgui_checkbox_destroy(rtgui_checkbox_t* checkbox);
 
-void rtgui_checkbox_ondraw(rtgui_checkbox_t* checkbox);
+void rtgui_checkbox_set_checked(rtgui_checkbox_t* checkbox, rt_bool_t checked);
+rt_bool_t rtgui_checkbox_get_checked(rtgui_checkbox_t* checkbox);
+
 rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 
 #endif

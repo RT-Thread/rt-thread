@@ -87,7 +87,7 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui
 	return RT_FALSE;
 }
 
-struct rtgui_checkbox* rtgui_checkbox_create(unsigned char* text)
+struct rtgui_checkbox* rtgui_checkbox_create(unsigned char* text, rt_bool_t checked)
 {
     struct rtgui_checkbox* box;
 
@@ -103,6 +103,11 @@ struct rtgui_checkbox* rtgui_checkbox_create(unsigned char* text)
 
 		rtgui_widget_set_rect(RTGUI_WIDGET(box), &rect);
 		rtgui_label_set_text(RTGUI_LABEL(box), text);
+		
+		if (checked == RT_TRUE)
+			box->status_down = RTGUI_CHECKBOX_STATUS_CHECKED;
+		else
+			box->status_down = RTGUI_CHECKBOX_STATUS_UNCHECKED;
 	}
 
 	return box;
@@ -111,5 +116,25 @@ struct rtgui_checkbox* rtgui_checkbox_create(unsigned char* text)
 void rtgui_checkbox_destroy(rtgui_checkbox_t* box)
 {
 	rtgui_widget_destroy(RTGUI_WIDGET(box));
+}
+
+void rtgui_checkbox_set_checked(rtgui_checkbox_t* checkbox, rt_bool_t checked)
+{
+	RT_ASSERT(checkbox != RT_NULL);
+	if (checked == RT_TRUE)
+		checkbox->status_down = RTGUI_CHECKBOX_STATUS_CHECKED;
+	else
+		checkbox->status_down = RTGUI_CHECKBOX_STATUS_UNCHECKED;
+		
+}
+
+rt_bool_t rtgui_checkbox_get_checked(rtgui_checkbox_t* checkbox)
+{
+	RT_ASSERT(checkbox != RT_NULL);
+
+	if (checkbox->status_down == RTGUI_CHECKBOX_STATUS_CHECKED)
+		return RT_TRUE;
+
+	return RT_FALSE;
 }
 

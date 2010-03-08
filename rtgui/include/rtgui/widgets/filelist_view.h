@@ -48,8 +48,6 @@ rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench,
 	const char* directory, const char* pattern, const rtgui_rect_t* rect);
 void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view);
 
-void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
-
 rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory);
 

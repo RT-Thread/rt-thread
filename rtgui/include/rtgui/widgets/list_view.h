@@ -61,8 +61,6 @@ rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, r
     rtgui_rect_t *rect);
 void rtgui_list_view_destroy(rtgui_list_view_t* view);
 
-void rtgui_list_view_clear(rtgui_list_view_t* view);
-
 rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 
 #endif

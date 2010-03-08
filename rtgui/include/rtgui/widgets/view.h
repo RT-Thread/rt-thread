@@ -49,7 +49,9 @@ void rtgui_view_destroy(rtgui_view_t* view);
 
 rt_bool_t rtgui_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 
+#ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_view_set_box(rtgui_view_t* view, rtgui_box_t* box);
+#endif
 
 rtgui_modal_code_t rtgui_view_show(rtgui_view_t* view, rt_bool_t is_modal);
 void rtgui_view_hide(rtgui_view_t* view);
