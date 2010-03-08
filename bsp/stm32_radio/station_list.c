@@ -213,6 +213,8 @@ struct station_item* station_list_select(struct station_list* list, struct rtgui
 
 	/* destroy view */
 	rtgui_list_view_destroy(view);
+	/* release items */
+	rt_free(items);
 
 	return station;
 }

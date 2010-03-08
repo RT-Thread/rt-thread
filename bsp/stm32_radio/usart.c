@@ -243,7 +243,7 @@ static void DMA_Configuration(void)
 
 /*
  * Init all related hardware in here
- * rt_hw_serial_init() will register all supported USART device
+ * rt_hw_usart_init() will register all supported USART device
  */
 void rt_hw_usart_init()
 {
@@ -251,11 +251,8 @@ void rt_hw_usart_init()
     USART_ClockInitTypeDef USART_ClockInitStructure;
 
     RCC_Configuration();
-
     GPIO_Configuration();
-
     NVIC_Configuration();
-
     DMA_Configuration();
 
     /* uart init */
