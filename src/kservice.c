@@ -351,7 +351,7 @@ char *rt_strlcpy(char *dest, const char *src, rt_ubase_t n)
 	while(n--)
 		*tmp++ = *s++;
 	*tmp = '\0';
-	
+
 	return dest;
 }
 
@@ -426,8 +426,6 @@ void rt_show_version()
 	rt_kprintf(" / | \\ 0.%d.%d build %s\n", RT_VERSION, RT_SUBVERSION, __DATE__);
 	rt_kprintf(" 2006 - 2009 Copyright by rt-thread team\n");
 }
-
-static char rt_log_buf[RT_CONSOLEBUF_SIZE]; /* Message log buffer */
 
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
@@ -905,6 +903,51 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 	return n;
 }
 
+static rt_device_t _console_device = RT_NULL;
+/**
+ * This function will set console to a device.
+ * After set a device to console, all output of rt_kprintf will be
+ * written to this device.
+ *
+ * @param device the new console device
+ *
+ * @return the old console device
+ */
+rt_device_t rt_console_set_device(const char* name)
+{
+	rt_device_t new, old;
+
+	/* save old device */
+	old = _console_device;
+
+	/* find new console device */
+	new = rt_device_find(name);
+	if (new != RT_NULL)
+	{
+		if (_console_device != RT_NULL)
+		{
+			/* close old console device */
+			rt_device_close(_console_device);
+		}
+
+		/* set new console device */
+		_console_device = new;
+		rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR);
+	}
+
+	return old;
+}
+
+#if defined(__GNUC__)
+void rt_hw_console_output(const char* str) __attribute__((weak))
+#elif defined(__CC_ARM)
+__weak void rt_hw_console_output(const char* str)
+#elif defined(__ICCARM__)
+__weak void rt_hw_console_output(const char* str)
+#endif
+{
+    /* empty console output */
+}
 
 /**
  * This function will print a formatted string on system console
@@ -914,10 +957,20 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 void rt_kprintf(const char *fmt, ...)
 {
 	va_list args;
+	rt_size_t length;
+	static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
 	va_start(args, fmt);
 
-	vsnprintf(rt_log_buf, sizeof(rt_log_buf), fmt, args);
-	rt_hw_console_output(rt_log_buf);
+	length = vsnprintf(rt_log_buf, sizeof(rt_log_buf), fmt, args);
+	if (_console_device == RT_NULL)
+	{
+        rt_hw_console_output(rt_log_buf);
+	}
+	else
+	{
+		rt_device_write(_console_device, 0, rt_log_buf, length);
+	}
 
 	va_end(args);
 }

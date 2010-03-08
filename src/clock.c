@@ -12,12 +12,12 @@
  * 2006-03-12     Bernard      first version
  * 2006-05-27     Bernard      add support for same priority thread schedule
  * 2006-08-10     Bernard      remove the last rt_schedule in rt_tick_increase
+ * 2010-03-08     Bernard      remove rt_passed_second
  */
 
 #include <rtthread.h>
 
 static rt_tick_t rt_tick;
-static rt_time_t rt_passed_second;
 
 extern void rt_timer_check(void);
 
@@ -29,7 +29,6 @@ extern void rt_timer_check(void);
 void rt_system_tick_init()
 {
 	rt_tick = 0;
-	rt_passed_second = 0;
 }
 
 /**
@@ -59,11 +58,6 @@ void rt_tick_increase()
 
 	/* increase the global tick */
 	++ rt_tick;
-
-	if (rt_tick % RT_TICK_PER_SECOND == 0)
-	{
-		++rt_passed_second;
-	}
 
 	/* check timer  */
 	rt_timer_check();

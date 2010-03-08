@@ -24,7 +24,7 @@
 
 /*@{*/
 
-volatile rt_uint32_t rt_interrupt_nest;
+volatile rt_uint8_t rt_interrupt_nest;
 
 /**
  * This function will be invoked by BSP, when enter interrupt service routine

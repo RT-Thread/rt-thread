@@ -124,6 +124,22 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 
 	result = RT_EOK;
 
+	/* if device is not initialized, initialize it. */
+	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+	{
+		result = dev->init(dev);
+		if (result != RT_EOK)
+		{
+			rt_kprintf("To initialize device:%s failed. The error code is %d\n",
+				dev->parent.name, result);
+			return result;
+		}
+		else
+		{
+			dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+		}
+	}
+
 	/* device is a standalone device and opened */
 	if ((dev->flag & RT_DEVICE_FLAG_STANDALONE) &&
 		(dev->open_flag & RT_DEVICE_OFLAG_OPEN))
