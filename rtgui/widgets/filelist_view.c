@@ -219,7 +219,7 @@ const static char * folder_xpm[] = {
 
 /* image for file and folder */
 static rtgui_image_t *file_image, *folder_image;
-static static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
+static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
 
 static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 {
