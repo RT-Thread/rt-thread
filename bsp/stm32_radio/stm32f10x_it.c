@@ -344,7 +344,6 @@ void DMA1_Channel4_IRQHandler(void)
 {
 }
 
-#if CODEC_VERSION == 1
 /*******************************************************************************
 * Function Name  : DMA1_Channel5_IRQHandler
 * Description    : This function handles DMA1 Channel 5 interrupt request.
@@ -372,7 +371,6 @@ void DMA1_Channel5_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
 /*******************************************************************************
 * Function Name  : DMA1_Channel6_IRQHandler
@@ -425,7 +423,6 @@ void EXTI9_5_IRQHandler(void)
 #endif
 }
 
-#if CODEC_VERSION == 1
 /*******************************************************************************
 * Function Name  : SPI2_IRQHandler
 * Description    : This function handles SPI2 global interrupt request.
@@ -445,7 +442,6 @@ void SPI2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
 /*******************************************************************************
 * Function Name  : USART1_IRQHandler
@@ -639,55 +635,6 @@ void SDIO_IRQHandler(void)
     rt_hw_interrupt_thread_switch();
 #endif
 }
-
-#if CODEC_VERSION == 2
-/*******************************************************************************
-* Function Name  : SPI3_IRQHandler
-* Description    : This function handles SPI3 global interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void SPI3_IRQHandler(void)
-{
-    extern void wm8978_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    wm8978_isr();
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-/*******************************************************************************
-* Function Name  : DMA2_Channel2_IRQHandler
-* Description    : This function handles DMA2 Channel 2 interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void DMA2_Channel2_IRQHandler(void)
-{
-    extern void wm8978_dma_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    if (DMA_GetITStatus(DMA2_IT_TC2))
-    {
-        /* clear DMA flag */
-        DMA_ClearFlag(DMA2_FLAG_TC2 | DMA2_FLAG_TE2);
-
-        /* transmission complete, invoke serial dma tx isr */
-        wm8978_dma_isr();
-    }
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif
 
 /* add on 2009-12-31 for usb */
 extern void CTR_HP(void);

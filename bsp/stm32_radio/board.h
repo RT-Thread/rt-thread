@@ -19,7 +19,7 @@
 /* board configuration */
 // <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
 // 	<i>Default: 1
-#define STM32_USE_SDIO			1
+#define STM32_USE_SDIO          1
 
 /* whether use board external SRAM memory */
 // <e>Use external SRAM memory on the board
@@ -40,15 +40,13 @@
 
 // <o> Console on USART: <0=> no console <1=>USART 1 <2=>USART 2 <3=> USART 3
 // 	<i>Default: 1
-#define STM32_CONSOLE_USART			1
+#define STM32_CONSOLE_USART     1
 
-// <o> Codec Version <1=>Version 1 <2=>Version 2
+// <o> LCD Modul Version
+// <1=>Version 1:fmt0371
+// <2=>Version 2:ili9320/9325
 // 	<i>Default: 1
-#define CODEC_VERSION	1
-
-// <o> LCD Modul Version <1=>Version 1 <2=>Version 2
-// 	<i>Default: 1
-#define LCD_VERSION	    1
+#define LCD_VERSION             1
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
