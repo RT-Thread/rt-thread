@@ -23,7 +23,7 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;
 	rect.y1 += 5; rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
-	checkbox = rtgui_checkbox_create("Red");
+	checkbox = rtgui_checkbox_create("Red",RT_TRUE);
 	/* 设置前景色为红色 */
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = red;
 	/* 设置checkbox的位置 */
@@ -36,7 +36,7 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25; rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
-	checkbox = rtgui_checkbox_create("Blue");
+	checkbox = rtgui_checkbox_create("Blue",RT_TRUE);
 	/* 设置前景色为蓝色 */
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = blue;
 	/* 设置checkbox的位置 */
@@ -49,7 +49,7 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25 + 25; rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
-	checkbox = rtgui_checkbox_create("12 font");
+	checkbox = rtgui_checkbox_create("12 font",RT_TRUE);
 	/* 设置字体为12点阵 */
 	font = rtgui_font_refer("asc", 12);
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(checkbox)) = font;
@@ -63,7 +63,7 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	rect.x1 += 5; rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25 + 25 + 25; rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
-	checkbox = rtgui_checkbox_create("16 font");
+	checkbox = rtgui_checkbox_create("16 font",RT_TRUE);
 	/* 设置字体为16点阵 */
 	font = rtgui_font_refer("asc", 16);
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(checkbox)) = font;

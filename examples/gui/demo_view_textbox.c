@@ -33,7 +33,7 @@ rtgui_view_t* demo_view_textbox(rtgui_workbench_t* workbench)
 	textbox_rect = rect;
 	textbox_rect.x1 = textbox_rect.x2 + 5; textbox_rect.x2 = textbox_rect.x1 + 160;
     /* 创建一个textbox控件 */
-	text = rtgui_textbox_create("bernard");
+	text = rtgui_textbox_create("bernard",RTGUI_TEXTBOX_SINGLE);
     /* 设置textbox控件的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(text), &textbox_rect);
     /* 添加textbox控件到视图中 */
@@ -50,7 +50,7 @@ rtgui_view_t* demo_view_textbox(rtgui_workbench_t* workbench)
 	textbox_rect = rect;
 	textbox_rect.x1 = textbox_rect.x2 + 5; textbox_rect.x2 = textbox_rect.x1 + 160;
     /* 创建一个textbox控件 */
-	text = rtgui_textbox_create("bernard.xiong@gmail.com");
+	text = rtgui_textbox_create("bernard.xiong@gmail.com",RTGUI_TEXTBOX_SINGLE);
     /* 设置textbox控件的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(text), &textbox_rect);
     /* 添加textbox控件到视图中 */
@@ -66,7 +66,7 @@ rtgui_view_t* demo_view_textbox(rtgui_workbench_t* workbench)
 	textbox_rect = rect;
 	textbox_rect.x1 = textbox_rect.x2 + 5; textbox_rect.x2 = textbox_rect.x1 + 160;
     /* 创建一个textbox控件 */
-	text = rtgui_textbox_create("rt-thread");
+	text = rtgui_textbox_create("rt-thread",RTGUI_TEXTBOX_SINGLE);
     /* 设置textbox显示文本为掩码形式(即显示为*号，适合于显示密码的情况) */
 	text->flag |= RTGUI_TEXTBOX_MASK;
     /* 设置textbox控件的位置 */
@@ -84,7 +84,7 @@ rtgui_view_t* demo_view_textbox(rtgui_workbench_t* workbench)
 	textbox_rect = rect;
 	textbox_rect.x1 = textbox_rect.x2 + 5; textbox_rect.x2 = textbox_rect.x1 + 160;
     /* 创建一个textbox控件 */
-	text = rtgui_textbox_create("http://www.rt-thread.org");
+	text = rtgui_textbox_create("http://www.rt-thread.org",RTGUI_TEXTBOX_SINGLE);
     /* 设置textbox控件的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(text), &textbox_rect);
     /* 添加textbox控件到视图中 */
