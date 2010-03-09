@@ -3,6 +3,10 @@
 #include "stm32f10x.h"
 #include "codec.h"
 
+/*
+ * IMPORTANT NOTICE:
+ * CODEC_MASTER_MODE = 1 is still unusable due to a suspecting hardware bug of STM32.
+ */
 #define CODEC_MASTER_MODE	0
 
 /*
@@ -41,7 +45,6 @@ struct codec_device
 struct codec_device codec;
 
 static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8;
-static uint16_t zero = 0;
 
 static void NVIC_Configuration(void)
 {
@@ -78,19 +81,19 @@ static void GPIO_Configuration(void)
 #if CODEC_MASTER_MODE
 	// WS, CK
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	// SD
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 #else
 	/* Configure SPI2 pins: CK, WS and SD */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 #endif
@@ -120,13 +123,9 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
 	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-#if CODEC_MASTER_MODE
-	while ((SPI2->SR & SPI_SR_CHSIDE) == 1);
-	DMA_ClearFlag(DMA1_FLAG_TC5);
-#endif
 	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
 	/* Enable SPI2 DMA Tx request */
@@ -135,35 +134,6 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
 	DMA_Cmd(DMA1_Channel5, ENABLE);
 }
-
-#if CODEC_MASTER_MODE
-static void DMA_ZeroFill_I2S()
-{
-    DMA_InitTypeDef DMA_InitStructure;
-
-	/* DMA1 Channel2 configuration ----------------------------------------------*/
-	DMA_Cmd(DMA1_Channel5, DISABLE);
-	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, DISABLE);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(SPI2->DR));
-	DMA_InitStructure.DMA_MemoryBaseAddr = (u32) &zero;
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-	DMA_InitStructure.DMA_BufferSize = 1;
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
-
-	/* Enable SPI2 DMA Tx request */
-	SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
-
-	//DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
-	DMA_Cmd(DMA1_Channel5, ENABLE);
-}
-#endif
 
 static void I2S_Configuration(void)
 {
@@ -241,15 +211,21 @@ static rt_err_t codec_init(rt_device_t dev)
 	codec_send(REG_AUDIO_INTERFACE | BCP_NORMAL | LRP_NORMAL | WL_16BITS | FMT_I2S);
 
 	// PLL setup.
-	// fs = 44.1KHz / 256fs = 11.2896MHz
+	// fs = 44.1KHz * 256fs = 11.2896MHz
 	// F_PLL = 11.2896MHz * 4 * 2 = 90.3168MHz
 	// R = 90.3168MHz / 12.288MHz = 7.35
 	// PLL_N = 7
 	// PLL_K = 5872026 (5921370 for STM32's 44.117KHz fs generated from 72MHz clock)
 	codec_send(REG_PLL_N | 7);
+#if CODEC_MASTER_MODE
+	codec_send(REG_PLL_K1 | 0x16);
+	codec_send(REG_PLL_K2 | 0xCC);
+	codec_send(REG_PLL_K3 | 0x19A);
+#else
 	codec_send(REG_PLL_K1 | 0x16);
 	codec_send(REG_PLL_K2 | 0x12D);
 	codec_send(REG_PLL_K3 | 0x5A);
+#endif
 	codec_send(REG_POWER_MANAGEMENT1 | BUFDCOPEN | BUFIOEN | VMIDSEL_75K | BIASEN | PLLEN);
 	codec_send(r06);
 
@@ -259,7 +235,7 @@ static rt_err_t codec_init(rt_device_t dev)
 	// Set LOUT2/ROUT2 in BTL operation.
 	codec_send(REG_BEEP | INVROUT2);
 
-	// Set output volume to -22dB.
+	// Set output volume.
 	vol(20);
 
 	return RT_EOK;
@@ -307,53 +283,67 @@ void eq3d(uint8_t depth)
 	codec_send(REG_3D | ((depth & DEPTH3D_MASK) << DEPTH3D_POS));
 }
 
-void sample_rate(uint8_t sr)
+rt_err_t sample_rate(uint8_t sr)
 {
-	if (sr == 44)
+	uint16_t r07 = REG_ADDITIONAL;
+
+	switch (sr)
 	{
-		codec_send(REG_ADDITIONAL | SR_48KHZ);
+	case 8:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_8KHZ;
+		break;
+
+	case 11:
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV8 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_12KHZ;
+		break;
+
+#if CODEC_MASTER_MODE
+	case 12:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_12KHZ;
+		break;
+#endif
+
+	case 16:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_16KHZ;
+		break;
+
+	case 22:
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_24KHZ;
+		break;
+
+#if CODEC_MASTER_MODE
+	case 24:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_24KHZ;
+		break;
+#endif
+
+	case 32:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_32KHZ;
+		break;
+
+	case 44:
 		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
-		codec_send(r06);
+		r07 |= SR_48KHZ;
+		break;
+
+	case 48:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV8 | (r06 & MS);
+		r07 |= SR_48KHZ;
+		break;
+
+	default:
+		return RT_ERROR;
 	}
-	else
-	{
-		switch (sr)
-		{
-		case 8:
-			codec_send(REG_ADDITIONAL | SR_8KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		case 12:
-			codec_send(REG_ADDITIONAL | SR_12KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		case 16:
-			codec_send(REG_ADDITIONAL | SR_16KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		case 24:
-			codec_send(REG_ADDITIONAL | SR_24KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		case 32:
-			codec_send(REG_ADDITIONAL | SR_32KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		case 48:
-			codec_send(REG_ADDITIONAL | SR_48KHZ);
-			r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV8 | (r06 & MS);
-			break;
-
-		default:
-			return;
-		}
-		codec_send(r06);
-	}
+	codec_send(r06);
+	codec_send(r07);
+	return RT_EOK;
 }
 
 FINSH_FUNCTION_EXPORT(vol, Set volume);
@@ -367,14 +357,9 @@ FINSH_FUNCTION_EXPORT(sample_rate, Set sample rate);
 
 static rt_err_t codec_open(rt_device_t dev, rt_uint16_t oflag)
 {
+#if !CODEC_MASTER_MODE
 	/* enable I2S */
 	I2S_Cmd(SPI2, ENABLE);
-
-#if CODEC_MASTER_MODE
-	DMA_ZeroFill_I2S();
-
-	r06 |= MS;
-	codec_send(r06);
 #endif
 
 	return RT_EOK;
@@ -385,13 +370,27 @@ static rt_err_t codec_close(rt_device_t dev)
 	/* interrupt mode */
 	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
 	{
+#if CODEC_MASTER_MODE
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+
+		I2S_Cmd(SPI2, DISABLE);
+
+		r06 &= ~MS;
+		codec_send(r06);
+#else
 		/* Disable the I2S2 */
 		I2S_Cmd(SPI2, DISABLE);
+#endif
 	}
 #if CODEC_MASTER_MODE
 	else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
 	{
 		DMA_Cmd(DMA1_Channel5, DISABLE);
+
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+
 		I2S_Cmd(SPI2, DISABLE);
 
 		r06 &= ~MS;
@@ -458,6 +457,16 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
 		{
 			DMA_Configuration((rt_uint32_t) node->data_ptr, node->data_size);
 		}
+
+#if CODEC_MASTER_MODE
+		if ((r06 & MS) == 0)
+		{
+			I2S_Cmd(SPI2, ENABLE);
+
+			r06 |= MS;
+			codec_send(r06);
+		}
+#endif
 	}
 	rt_hw_interrupt_enable(level);
 
@@ -506,7 +515,22 @@ void codec_isr()
 
 	if (SPI_I2S_GetITStatus(SPI2, SPI_I2S_IT_TXE) == SET)
 	{
+#if CODEC_MASTER_MODE
+		if ((r06 & MS) == 0)
+		{
+			I2S_Cmd(SPI2, ENABLE);
+			SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+
+			r06 |= MS;
+			codec_send(r06);
+		}
+		else
+		{
+			SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+		}
+#else
 		SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+#endif
 	}
 
 	if (codec.offset == node->data_size)
@@ -533,6 +557,16 @@ void codec_isr()
 			/* no data on the list, disable I2S interrupt */
 			SPI_I2S_ITConfig(SPI2, SPI_I2S_IT_TXE, DISABLE);
 
+#if CODEC_MASTER_MODE
+			while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+			while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+
+			I2S_Cmd(SPI2, DISABLE);
+
+			r06 &= ~MS;
+			codec_send(r06);
+#endif
+
 			rt_kprintf("*\n");
 		}
 	}
@@ -556,11 +590,29 @@ void codec_dma_isr()
 	{
 		/* enable next dma request */
 		DMA_Configuration((rt_uint32_t) codec.data_list[codec.read_index].data_ptr, codec.data_list[codec.read_index].data_size);
+
+#if CODEC_MASTER_MODE
+		if ((r06 & MS) == 0)
+		{
+			I2S_Cmd(SPI2, ENABLE);
+
+			r06 |= MS;
+			codec_send(r06);
+		}
+#endif
 	}
 	else
 	{
 #if CODEC_MASTER_MODE
-		DMA_ZeroFill_I2S();
+		DMA_Cmd(DMA1_Channel5, DISABLE);
+
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+
+		I2S_Cmd(SPI2, DISABLE);
+
+		r06 &= ~MS;
+		codec_send(r06);
 #endif
 
 		rt_kprintf("*\n");
