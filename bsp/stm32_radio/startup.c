@@ -106,8 +106,7 @@ void rtthread_startup(void)
 
     codec_hw_init();
 
-    /* init hardware serial device */
-    rt_hw_usart_init();
+    /* init hardware device */
 #ifdef RT_USING_DFS
     GPIO_ResetBits(GPIOC,GPIO_Pin_6);
     rt_hw_sdcard_init();
