@@ -353,6 +353,7 @@ void DMA1_Channel4_IRQHandler(void)
 *******************************************************************************/
 void DMA1_Channel5_IRQHandler(void)
 {
+#if !CODEC_USE_SPI3
     extern void codec_dma_isr(void);
 
     /* enter interrupt */
@@ -370,6 +371,7 @@ void DMA1_Channel5_IRQHandler(void)
 
     /* leave interrupt */
     rt_interrupt_leave();
+#endif
 }
 
 /*******************************************************************************
@@ -633,6 +635,57 @@ void SDIO_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
     rt_hw_interrupt_thread_switch();
+#endif
+}
+
+/*******************************************************************************
+* Function Name  : SPI3_IRQHandler
+* Description    : This function handles SPI3 global interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SPI3_IRQHandler(void)
+{
+#if CODEC_USE_SPI3
+    extern void codec_isr(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    codec_isr();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+#endif
+}
+
+/*******************************************************************************
+* Function Name  : DMA2_Channel2_IRQHandler
+* Description    : This function handles DMA2 Channel 2 interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void DMA2_Channel2_IRQHandler(void)
+{
+#if CODEC_USE_SPI3
+    extern void codec_dma_isr(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    if (DMA_GetITStatus(DMA2_IT_TC2))
+    {
+        /* clear DMA flag */
+        DMA_ClearFlag(DMA2_FLAG_TC2 | DMA2_FLAG_TE2);
+
+        /* transmission complete, invoke serial dma tx isr */
+        codec_dma_isr();
+    }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 #endif
 }
 

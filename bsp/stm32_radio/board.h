@@ -42,11 +42,25 @@
 // 	<i>Default: 1
 #define STM32_CONSOLE_USART     1
 
-// <o> LCD Modul Version
+// <o> LCD Module Version
 // <1=>Version 1:fmt0371
 // <2=>Version 2:ili9320/9325
 // 	<i>Default: 1
 #define LCD_VERSION             1
+
+/*
+ * IMPORTANT NOTICE:
+ * CODEC_MASTER_MODE = 1 with CODEC_USE_SPI3 = 0 is unusable due to a hardware bug of STM32's SPI2.
+ */
+// <o> CODEC Mode
+// <0=>I2S Slave
+// <1=>I2S Master
+#define CODEC_MASTER_MODE	0
+
+// <o> CODEC SPI Port
+// <0=>SPI2
+// <1=>SPI3
+#define CODEC_USE_SPI3		0
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);

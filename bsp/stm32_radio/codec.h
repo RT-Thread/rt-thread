@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+/* Register Definitions */
 #define REG_SOFTWARE_RESET		((uint16_t)0)
 #define REG_POWER_MANAGEMENT1	((uint16_t)(1 << 9))
 #define REG_POWER_MANAGEMENT2	((uint16_t)(2 << 9))

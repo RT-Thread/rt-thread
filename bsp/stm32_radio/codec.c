@@ -1,13 +1,48 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "stm32f10x.h"
+#include "board.h"
 #include "codec.h"
 
-/*
- * IMPORTANT NOTICE:
- * CODEC_MASTER_MODE = 1 is still unusable due to a suspecting hardware bug of STM32.
- */
-#define CODEC_MASTER_MODE	0
+#if CODEC_USE_SPI3
+
+#define CODEC_I2S_PORT		SPI3
+#define CODEC_I2S_IRQ		SPI3_IRQn
+#define CODEC_I2S_DMA		DMA2_Channel2
+#define CODEC_I2S_DMA_IRQ	DMA2_Channel2_IRQn
+#define CODEC_I2S_RCC_APB1	RCC_APB1Periph_SPI3
+#define CODEC_I2S_RCC_AHB	RCC_AHBPeriph_DMA2
+
+// I2S3_WS -> PA15
+#define CODEC_I2S_WS_PIN	GPIO_Pin_15
+#define CODEC_I2S_WS_PORT	GPIOA
+// I2S3_CK -> PB3
+#define CODEC_I2S_CK_PIN	GPIO_Pin_3
+#define CODEC_I2S_CK_PORT	GPIOB
+// I2S3_SD -> PB5
+#define CODEC_I2S_SD_PIN	GPIO_Pin_5
+#define CODEC_I2S_SD_PORT	GPIOB
+
+#else
+
+#define CODEC_I2S_PORT		SPI2
+#define CODEC_I2S_IRQ		SPI2_IRQn
+#define CODEC_I2S_DMA		DMA1_Channel5
+#define CODEC_I2S_DMA_IRQ	DMA1_Channel5_IRQn
+#define CODEC_I2S_RCC_APB1	RCC_APB1Periph_SPI2
+#define CODEC_I2S_RCC_AHB	RCC_AHBPeriph_DMA1
+
+// I2S2_WS -> PB12
+#define CODEC_I2S_WS_PIN	GPIO_Pin_12
+#define CODEC_I2S_WS_PORT	GPIOB
+// I2S2_CK -> PB13
+#define CODEC_I2S_CK_PIN	GPIO_Pin_13
+#define CODEC_I2S_CK_PORT	GPIOB
+// I2S2_SD -> PB15
+#define CODEC_I2S_SD_PIN	GPIO_Pin_15
+#define CODEC_I2S_SD_PORT	GPIOB
+
+#endif	// #if CODEC_USE_SPI3
 
 /*
 SCLK  PA5  SPI1_SCK
@@ -44,21 +79,21 @@ struct codec_device
 };
 struct codec_device codec;
 
-static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8;
+static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV4;
 
 static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* SPI2 IRQ Channel configuration */
-    NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
+    /* SPI IRQ Channel configuration */
+    NVIC_InitStructure.NVIC_IRQChannel = CODEC_I2S_IRQ;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    /* DMA1 IRQ Channel configuration */
-    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
+    /* DMA IRQ Channel configuration */
+    NVIC_InitStructure.NVIC_IRQChannel = CODEC_I2S_DMA_IRQ;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -78,25 +113,31 @@ static void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(CODEC_CSB_PORT, &GPIO_InitStructure);
 
-#if CODEC_MASTER_MODE
-	// WS, CK
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
+	// WS
+	GPIO_InitStructure.GPIO_Pin = CODEC_I2S_WS_PIN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+#if CODEC_MASTER_MODE
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+#else
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+#endif
+	GPIO_Init(CODEC_I2S_WS_PORT, &GPIO_InitStructure);
+
+	// CK
+	GPIO_InitStructure.GPIO_Pin = CODEC_I2S_CK_PIN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+#if CODEC_MASTER_MODE
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+#else
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+#endif
+	GPIO_Init(CODEC_I2S_CK_PORT, &GPIO_InitStructure);
 
 	// SD
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Pin = CODEC_I2S_SD_PIN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-#else
-	/* Configure SPI2 pins: CK, WS and SD */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-#endif
+	GPIO_Init(CODEC_I2S_SD_PORT, &GPIO_InitStructure);
 
 #ifdef CODEC_USE_MCO
 	/*    MCO    configure */
@@ -113,9 +154,9 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 {
     DMA_InitTypeDef DMA_InitStructure;
 
-	/* DMA1 Channel2 configuration ----------------------------------------------*/
-	DMA_Cmd(DMA1_Channel5, DISABLE);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(SPI2->DR));
+	/* DMA Channel configuration ----------------------------------------------*/
+	DMA_Cmd(CODEC_I2S_DMA, DISABLE);
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(CODEC_I2S_PORT->DR));
 	DMA_InitStructure.DMA_MemoryBaseAddr = (u32) addr;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_InitStructure.DMA_BufferSize = size;
@@ -123,16 +164,16 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
 	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+	DMA_Init(CODEC_I2S_DMA, &DMA_InitStructure);
 
-	/* Enable SPI2 DMA Tx request */
-	SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
+	/* Enable SPI DMA Tx request */
+	SPI_I2S_DMACmd(CODEC_I2S_PORT, SPI_I2S_DMAReq_Tx, ENABLE);
 
-	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
-	DMA_Cmd(DMA1_Channel5, ENABLE);
+	DMA_ITConfig(CODEC_I2S_DMA, DMA_IT_TC, ENABLE);
+	DMA_Cmd(CODEC_I2S_DMA, ENABLE);
 }
 
 static void I2S_Configuration(void)
@@ -141,7 +182,7 @@ static void I2S_Configuration(void)
 
 	/* I2S peripheral configuration */
 	I2S_InitStructure.I2S_Standard = I2S_Standard_Phillips;
-	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
+	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16bextended;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Disable;
 	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq_44k;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
@@ -152,7 +193,7 @@ static void I2S_Configuration(void)
 #else
 	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
 #endif
-	I2S_Init(SPI2, &I2S_InitStructure);
+	I2S_Init(CODEC_I2S_PORT, &I2S_InitStructure);
 }
 
 uint8_t SPI_WriteByte(unsigned char data)
@@ -215,7 +256,7 @@ static rt_err_t codec_init(rt_device_t dev)
 	// F_PLL = 11.2896MHz * 4 * 2 = 90.3168MHz
 	// R = 90.3168MHz / 12.288MHz = 7.35
 	// PLL_N = 7
-	// PLL_K = 5872026 (5921370 for STM32's 44.117KHz fs generated from 72MHz clock)
+	// PLL_K = 0x59999A (0x5A5A5A for STM32's 44.117KHz fs generated from 72MHz clock)
 	codec_send(REG_PLL_N | 7);
 #if CODEC_MASTER_MODE
 	codec_send(REG_PLL_K1 | 0x16);
@@ -236,7 +277,7 @@ static rt_err_t codec_init(rt_device_t dev)
 	codec_send(REG_BEEP | INVROUT2);
 
 	// Set output volume.
-	vol(20);
+	vol(40);
 
 	return RT_EOK;
 }
@@ -290,51 +331,51 @@ rt_err_t sample_rate(uint8_t sr)
 	switch (sr)
 	{
 	case 8:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_8KHZ;
 		break;
 
 	case 11:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV8 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV8 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_12KHZ;
 		break;
 
 #if CODEC_MASTER_MODE
 	case 12:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_12KHZ;
 		break;
 #endif
 
 	case 16:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_16KHZ;
 		break;
 
 	case 22:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV4 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_24KHZ;
 		break;
 
 #if CODEC_MASTER_MODE
 	case 24:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_24KHZ;
 		break;
 #endif
 
 	case 32:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_32KHZ;
 		break;
 
 	case 44:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_48KHZ;
 		break;
 
 	case 48:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV8 | (r06 & MS);
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV4 | (r06 & MS);
 		r07 |= SR_48KHZ;
 		break;
 
@@ -359,7 +400,7 @@ static rt_err_t codec_open(rt_device_t dev, rt_uint16_t oflag)
 {
 #if !CODEC_MASTER_MODE
 	/* enable I2S */
-	I2S_Cmd(SPI2, ENABLE);
+	I2S_Cmd(CODEC_I2S_PORT, ENABLE);
 #endif
 
 	return RT_EOK;
@@ -371,27 +412,27 @@ static rt_err_t codec_close(rt_device_t dev)
 	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
 	{
 #if CODEC_MASTER_MODE
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
+		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
 
-		I2S_Cmd(SPI2, DISABLE);
+		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
 
 		r06 &= ~MS;
 		codec_send(r06);
 #else
 		/* Disable the I2S2 */
-		I2S_Cmd(SPI2, DISABLE);
+		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
 #endif
 	}
 #if CODEC_MASTER_MODE
-	else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
+	else if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (r06 & MS))
 	{
-		DMA_Cmd(DMA1_Channel5, DISABLE);
+		DMA_Cmd(CODEC_I2S_DMA, DISABLE);
 
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
+		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
 
-		I2S_Cmd(SPI2, DISABLE);
+		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
 
 		r06 &= ~MS;
 		codec_send(r06);
@@ -451,7 +492,7 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
 		{
 			device->offset = 0;
 			/* enable I2S interrupt */
-			SPI_I2S_ITConfig(SPI2, SPI_I2S_IT_TXE, ENABLE);
+			SPI_I2S_ITConfig(CODEC_I2S_PORT, SPI_I2S_IT_TXE, ENABLE);
 		}
 		else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
 		{
@@ -461,7 +502,7 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
 #if CODEC_MASTER_MODE
 		if ((r06 & MS) == 0)
 		{
-			I2S_Cmd(SPI2, ENABLE);
+			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
 
 			r06 |= MS;
 			codec_send(r06);
@@ -477,9 +518,9 @@ rt_err_t codec_hw_init(void)
 {
 	rt_device_t dev;
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB1PeriphClockCmd(CODEC_I2S_RCC_APB1, ENABLE);
+	RCC_AHBPeriphClockCmd(CODEC_I2S_RCC_AHB, ENABLE);
 
 	NVIC_Configuration();
 	GPIO_Configuration();
@@ -513,23 +554,23 @@ void codec_isr()
 	struct codec_data_node* node;
 	node = &codec.data_list[codec.read_index]; /* get current data node */
 
-	if (SPI_I2S_GetITStatus(SPI2, SPI_I2S_IT_TXE) == SET)
+	if (SPI_I2S_GetITStatus(CODEC_I2S_PORT, SPI_I2S_IT_TXE) == SET)
 	{
 #if CODEC_MASTER_MODE
 		if ((r06 & MS) == 0)
 		{
-			I2S_Cmd(SPI2, ENABLE);
-			SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
+			SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
 
 			r06 |= MS;
 			codec_send(r06);
 		}
 		else
 		{
-			SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+			SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
 		}
 #else
-		SPI_I2S_SendData(SPI2, node->data_ptr[codec.offset++]);
+		SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
 #endif
 	}
 
@@ -555,13 +596,13 @@ void codec_isr()
 		if (next_index == codec.put_index)
 		{
 			/* no data on the list, disable I2S interrupt */
-			SPI_I2S_ITConfig(SPI2, SPI_I2S_IT_TXE, DISABLE);
+			SPI_I2S_ITConfig(CODEC_I2S_PORT, SPI_I2S_IT_TXE, DISABLE);
 
 #if CODEC_MASTER_MODE
-			while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
-			while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
+			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
 
-			I2S_Cmd(SPI2, DISABLE);
+			I2S_Cmd(CODEC_I2S_PORT, DISABLE);
 
 			r06 &= ~MS;
 			codec_send(r06);
@@ -594,7 +635,7 @@ void codec_dma_isr()
 #if CODEC_MASTER_MODE
 		if ((r06 & MS) == 0)
 		{
-			I2S_Cmd(SPI2, ENABLE);
+			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
 
 			r06 |= MS;
 			codec_send(r06);
@@ -604,15 +645,18 @@ void codec_dma_isr()
 	else
 	{
 #if CODEC_MASTER_MODE
-		DMA_Cmd(DMA1_Channel5, DISABLE);
+		if (r06 & MS)
+		{
+			DMA_Cmd(CODEC_I2S_DMA, DISABLE);
 
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
+			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
 
-		I2S_Cmd(SPI2, DISABLE);
+			I2S_Cmd(CODEC_I2S_PORT, DISABLE);
 
-		r06 &= ~MS;
-		codec_send(r06);
+			r06 &= ~MS;
+			codec_send(r06);
+		}
 #endif
 
 		rt_kprintf("*\n");
