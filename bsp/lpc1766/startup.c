@@ -18,7 +18,6 @@
 
 #include "lpc17xx.h"
 #include "board.h"
-#include "rtc.h"
 
 /**
  * @addtogroup LPC17
