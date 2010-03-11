@@ -426,26 +426,6 @@ void EXTI9_5_IRQHandler(void)
 }
 
 /*******************************************************************************
-* Function Name  : SPI2_IRQHandler
-* Description    : This function handles SPI2 global interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void SPI2_IRQHandler(void)
-{
-    extern void codec_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    codec_isr();
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-/*******************************************************************************
 * Function Name  : USART1_IRQHandler
 * Description    : This function handles USART1 global interrupt request.
 * Input          : None
@@ -635,28 +615,6 @@ void SDIO_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
     rt_hw_interrupt_thread_switch();
-#endif
-}
-
-/*******************************************************************************
-* Function Name  : SPI3_IRQHandler
-* Description    : This function handles SPI3 global interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void SPI3_IRQHandler(void)
-{
-#if CODEC_USE_SPI3
-    extern void codec_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    codec_isr();
-
-    /* leave interrupt */
-    rt_interrupt_leave();
 #endif
 }
 

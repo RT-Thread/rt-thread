@@ -625,4 +625,21 @@
 #define RMIX2OUT4				(1 << 1)
 #define RDAC2OUT4				(1)
 
+
+/* Device Control Commands */
+#define CODEC_CMD_RESET			0
+#define CODEC_CMD_VOLUME		1
+#define CODEC_CMD_SAMPLERATE	2
+#define CODEC_CMD_EQ			3
+#define CODEC_CMD_3D			4
+
+struct codec_eq_args
+{
+	uint8_t channel;
+	uint8_t frequency;
+	uint8_t gain;
+	uint8_t mode_bandwidth;
+};
+typedef struct codec_eq_args* codec_eq_args_t;
+
 #endif	// #ifndef __CODEC_H__

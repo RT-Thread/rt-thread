@@ -79,18 +79,11 @@ struct codec_device
 };
 struct codec_device codec;
 
-static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV4;
+static uint16_t r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8;
 
 static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
-
-    /* SPI IRQ Channel configuration */
-    NVIC_InitStructure.NVIC_IRQChannel = CODEC_I2S_IRQ;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
 
     /* DMA IRQ Channel configuration */
     NVIC_InitStructure.NVIC_IRQChannel = CODEC_I2S_DMA_IRQ;
@@ -117,7 +110,7 @@ static void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Pin = CODEC_I2S_WS_PIN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 #if CODEC_MASTER_MODE
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 #else
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 #endif
@@ -182,7 +175,7 @@ static void I2S_Configuration(void)
 
 	/* I2S peripheral configuration */
 	I2S_InitStructure.I2S_Standard = I2S_Standard_Phillips;
-	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16bextended;
+	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Disable;
 	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq_44k;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
@@ -294,6 +287,33 @@ void vol(uint16_t v)
 	codec_send(REG_ROUT2_VOL | SPKVU | v);
 }
 
+void eq(codec_eq_args_t args)
+{
+	switch (args->channel)
+	{
+	case 1:
+		codec_send(REG_EQ1 | ((args->frequency & EQC_MASK) << EQC_POS) | ((args->gain & EQG_MASK) << EQG_POS) | (args->mode_bandwidth ? EQ3DMODE_DAC : EQ3DMODE_ADC));
+		break;
+
+	case 2:
+		codec_send(REG_EQ2 | ((args->frequency & EQC_MASK) << EQC_POS) | ((args->gain & EQG_MASK) << EQG_POS) | (args->mode_bandwidth ? EQ2BW_WIDE : EQ2BW_NARROW));
+		break;
+
+	case 3:
+		codec_send(REG_EQ3 | ((args->frequency & EQC_MASK) << EQC_POS) | ((args->gain & EQG_MASK) << EQG_POS) | (args->mode_bandwidth ? EQ3BW_WIDE : EQ3BW_NARROW));
+		break;
+
+	case 4:
+		codec_send(REG_EQ4 | ((args->frequency & EQC_MASK) << EQC_POS) | ((args->gain & EQG_MASK) << EQG_POS) | (args->mode_bandwidth ? EQ4BW_WIDE : EQ4BW_NARROW));
+		break;
+
+	case 5:
+		codec_send(REG_EQ5 | ((args->frequency & EQC_MASK) << EQC_POS) | ((args->gain & EQG_MASK) << EQG_POS));
+		break;
+	}
+}
+
+// TODO eq1() ~ eq5() are just for testing. To be removed.
 void eq1(uint8_t freq, uint8_t gain, uint8_t mode)
 {
 	codec_send(REG_EQ1 | ((freq & EQC_MASK) << EQC_POS) | ((gain & EQG_MASK) << EQG_POS) | (mode ? EQ3DMODE_DAC : EQ3DMODE_ADC));
@@ -324,58 +344,58 @@ void eq3d(uint8_t depth)
 	codec_send(REG_3D | ((depth & DEPTH3D_MASK) << DEPTH3D_POS));
 }
 
-rt_err_t sample_rate(uint8_t sr)
+rt_err_t sample_rate(int sr)
 {
 	uint16_t r07 = REG_ADDITIONAL;
 
 	switch (sr)
 	{
-	case 8:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV4 | (r06 & MS);
+	case 8000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV6 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_8KHZ;
 		break;
 
-	case 11:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV8 | BCLK_DIV4 | (r06 & MS);
+	case 11025:
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV8 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_12KHZ;
 		break;
 
 #if CODEC_MASTER_MODE
-	case 12:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV4 | (r06 & MS);
+	case 12000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_12KHZ;
 		break;
 #endif
 
-	case 16:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV4 | (r06 & MS);
+	case 16000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV3 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_16KHZ;
 		break;
 
-	case 22:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV4 | BCLK_DIV4 | (r06 & MS);
+	case 22050:
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV4 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_24KHZ;
 		break;
 
 #if CODEC_MASTER_MODE
-	case 24:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV4 | (r06 & MS);
+	case 24000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_24KHZ;
 		break;
 #endif
 
-	case 32:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV4 | (r06 & MS);
+	case 32000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1_5 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_32KHZ;
 		break;
 
-	case 44:
-		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV4 | (r06 & MS);
+	case 44100:
+		r06 = REG_CLOCK_GEN | CLKSEL_PLL | MCLK_DIV2 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_48KHZ;
 		break;
 
-	case 48:
-		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV4 | (r06 & MS);
+	case 48000:
+		r06 = REG_CLOCK_GEN | CLKSEL_MCLK | MCLK_DIV1 | BCLK_DIV8 | (r06 & MS);
 		r07 |= SR_48KHZ;
 		break;
 
@@ -408,45 +428,68 @@ static rt_err_t codec_open(rt_device_t dev, rt_uint16_t oflag)
 
 static rt_err_t codec_close(rt_device_t dev)
 {
-	/* interrupt mode */
-	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
-	{
 #if CODEC_MASTER_MODE
-		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
-		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
-
-		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
+	if (r06 & MS)
+	{
+		CODEC_I2S_DMA->CCR &= ~DMA_CCR1_EN;
+		while ((CODEC_I2S_PORT->SR & SPI_I2S_FLAG_TXE) == 0);
+		while ((CODEC_I2S_PORT->SR & SPI_I2S_FLAG_BSY) != 0);
+		CODEC_I2S_PORT->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 
 		r06 &= ~MS;
 		codec_send(r06);
-#else
-		/* Disable the I2S2 */
-		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
-#endif
+
+		/* remove all data node */
+		if (codec.parent.tx_complete != RT_NULL)
+		{
+			rt_base_t level = rt_hw_interrupt_disable();
+
+			do
+			{
+				codec.parent.tx_complete(&codec.parent, codec.data_list[codec.read_index].data_ptr);
+				codec.read_index++;
+				if (codec.read_index >= DATA_NODE_MAX)
+				{
+					codec.read_index = 0;
+				}
+			}
+			while (codec.read_index != codec.put_index);
+
+			rt_hw_interrupt_enable(level);
+		}
 	}
-#if CODEC_MASTER_MODE
-	else if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (r06 & MS))
-	{
-		DMA_Cmd(CODEC_I2S_DMA, DISABLE);
-
-		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
-		while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
-
-		I2S_Cmd(CODEC_I2S_PORT, DISABLE);
-
-		r06 &= ~MS;
-		codec_send(r06);
-	}
 #endif
-
-	/* remove all data node */
 
 	return RT_EOK;
 }
 
 static rt_err_t codec_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	/* rate control */
+	switch (cmd)
+	{
+	case CODEC_CMD_RESET:
+		codec_init(dev);
+		break;
+
+	case CODEC_CMD_VOLUME:
+		vol(*((uint16_t*) args));
+		break;
+
+	case CODEC_CMD_SAMPLERATE:
+		sample_rate(*((int*) args));
+		break;
+
+	case CODEC_CMD_EQ:
+		eq((codec_eq_args_t) args);
+		break;
+
+	case CODEC_CMD_3D:
+		eq3d(*((uint8_t*) args));
+		break;
+
+	default:
+		return RT_ERROR;
+	}
 	return RT_EOK;
 }
 
@@ -476,7 +519,6 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
 	node = &device->data_list[device->put_index];
 	device->put_index = next_index;
 
-	// rt_kprintf("+\n");
 	/* set node attribute */
 	node->data_ptr = (rt_uint16_t*) buffer;
 	node->data_size = size >> 1; /* size is byte unit, convert to half word unit */
@@ -488,22 +530,12 @@ static rt_size_t codec_write(rt_device_t dev, rt_off_t pos,
 	/* check data list whether is empty */
 	if (next_index == device->put_index)
 	{
-		if (dev->flag & RT_DEVICE_FLAG_INT_TX)
-		{
-			device->offset = 0;
-			/* enable I2S interrupt */
-			SPI_I2S_ITConfig(CODEC_I2S_PORT, SPI_I2S_IT_TXE, ENABLE);
-		}
-		else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
-		{
-			DMA_Configuration((rt_uint32_t) node->data_ptr, node->data_size);
-		}
+		DMA_Configuration((rt_uint32_t) node->data_ptr, node->data_size);
 
 #if CODEC_MASTER_MODE
 		if ((r06 & MS) == 0)
 		{
-			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
-
+			CODEC_I2S_PORT->I2SCFGR |= SPI_I2SCFGR_I2SE;
 			r06 |= MS;
 			codec_send(r06);
 		}
@@ -549,71 +581,7 @@ rt_err_t codec_hw_init(void)
 	return rt_device_register(&codec.parent, "snd", RT_DEVICE_FLAG_WRONLY | RT_DEVICE_FLAG_DMA_TX);
 }
 
-void codec_isr()
-{
-	struct codec_data_node* node;
-	node = &codec.data_list[codec.read_index]; /* get current data node */
-
-	if (SPI_I2S_GetITStatus(CODEC_I2S_PORT, SPI_I2S_IT_TXE) == SET)
-	{
-#if CODEC_MASTER_MODE
-		if ((r06 & MS) == 0)
-		{
-			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
-			SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
-
-			r06 |= MS;
-			codec_send(r06);
-		}
-		else
-		{
-			SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
-		}
-#else
-		SPI_I2S_SendData(CODEC_I2S_PORT, node->data_ptr[codec.offset++]);
-#endif
-	}
-
-	if (codec.offset == node->data_size)
-	{
-		/* move to next node */
-		rt_uint16_t next_index;
-
-		next_index = codec.read_index + 1;
-		if (next_index >= DATA_NODE_MAX)
-			next_index = 0;
-
-		/* notify transmitted complete. */
-		if (codec.parent.tx_complete != RT_NULL)
-		{
-			codec.parent.tx_complete(&codec.parent,
-					codec.data_list[codec.read_index].data_ptr);
-			rt_kprintf("-\n");
-		}
-
-		codec.offset = 0;
-		codec.read_index = next_index;
-		if (next_index == codec.put_index)
-		{
-			/* no data on the list, disable I2S interrupt */
-			SPI_I2S_ITConfig(CODEC_I2S_PORT, SPI_I2S_IT_TXE, DISABLE);
-
-#if CODEC_MASTER_MODE
-			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
-			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
-
-			I2S_Cmd(CODEC_I2S_PORT, DISABLE);
-
-			r06 &= ~MS;
-			codec_send(r06);
-#endif
-
-			rt_kprintf("*\n");
-		}
-	}
-}
-
-void codec_dma_isr()
+void codec_dma_isr(void)
 {
 	/* switch to next buffer */
 	rt_uint16_t next_index;
@@ -635,8 +603,7 @@ void codec_dma_isr()
 #if CODEC_MASTER_MODE
 		if ((r06 & MS) == 0)
 		{
-			I2S_Cmd(CODEC_I2S_PORT, ENABLE);
-
+			CODEC_I2S_PORT->I2SCFGR |= SPI_I2SCFGR_I2SE;
 			r06 |= MS;
 			codec_send(r06);
 		}
@@ -647,12 +614,10 @@ void codec_dma_isr()
 #if CODEC_MASTER_MODE
 		if (r06 & MS)
 		{
-			DMA_Cmd(CODEC_I2S_DMA, DISABLE);
-
-			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_TXE) == RESET);
-			while (SPI_I2S_GetFlagStatus(CODEC_I2S_PORT, SPI_I2S_FLAG_BSY) == SET);
-
-			I2S_Cmd(CODEC_I2S_PORT, DISABLE);
+			CODEC_I2S_DMA->CCR &= ~DMA_CCR1_EN;
+			while ((CODEC_I2S_PORT->SR & SPI_I2S_FLAG_TXE) == 0);
+			while ((CODEC_I2S_PORT->SR & SPI_I2S_FLAG_BSY) != 0);
+			CODEC_I2S_PORT->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 
 			r06 &= ~MS;
 			codec_send(r06);
@@ -666,6 +631,5 @@ void codec_dma_isr()
 	if (codec.parent.tx_complete != RT_NULL)
 	{
 		codec.parent.tx_complete(&codec.parent, data_ptr);
-		// rt_kprintf("-\n");
 	}
 }
