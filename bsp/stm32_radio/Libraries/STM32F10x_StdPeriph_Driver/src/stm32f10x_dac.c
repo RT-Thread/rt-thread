@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_dac.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the DAC firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -194,6 +194,39 @@ void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState)
     DAC->CR &= ~(CR_EN_Set << DAC_Channel);
   }
 }
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)
+/**
+  * @brief  Enables or disables the specified DAC interrupts.
+  * @param  DAC_Channel: the selected DAC channel. 
+  *   This parameter can be one of the following values:
+  *     @arg DAC_Channel_1: DAC Channel1 selected
+  *     @arg DAC_Channel_2: DAC Channel2 selected
+  * @param  DAC_IT: specifies the DAC interrupt sources to be enabled or disabled. 
+  *   This parameter can be the following values:
+  *     @arg DAC_IT_DMAUDR: DMA underrun interrupt mask                      
+  * @param  NewState: new state of the specified DAC interrupts.
+  *   This parameter can be: ENABLE or DISABLE.
+  * @retval None
+  */ 
+void DAC_ITConfig(uint32_t DAC_Channel, uint32_t DAC_IT, FunctionalState NewState)  
+{
+  /* Check the parameters */
+  assert_param(IS_DAC_CHANNEL(DAC_Channel));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  assert_param(IS_DAC_IT(DAC_IT)); 
+
+  if (NewState != DISABLE)
+  {
+    /* Enable the selected DAC interrupts */
+    DAC->CR |=  (DAC_IT << DAC_Channel);
+  }
+  else
+  {
+    /* Disable the selected DAC interrupts */
+    DAC->CR &= (~(uint32_t)(DAC_IT << DAC_Channel));
+  }
+}
+#endif
 
 /**
   * @brief  Enables or disables the specified DAC channel DMA request.
@@ -416,9 +449,120 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel)
   return (uint16_t) (*(__IO uint32_t*) tmp);
 }
 
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)
 /**
-  * @}
+  * @brief  Checks whether the specified DAC flag is set or not.
+  * @param  DAC_Channel: thee selected DAC channel. 
+  *   This parameter can be one of the following values:
+  *     @arg DAC_Channel_1: DAC Channel1 selected
+  *     @arg DAC_Channel_2: DAC Channel2 selected
+  * @param  DAC_FLAG: specifies the flag to check. 
+  *   This parameter can be only of the following value:
+  *     @arg DAC_FLAG_DMAUDR: DMA underrun flag                                                 
+  * @retval The new state of DAC_FLAG (SET or RESET).
   */
+FlagStatus DAC_GetFlagStatus(uint32_t DAC_Channel, uint32_t DAC_FLAG)
+{
+  FlagStatus bitstatus = RESET;
+  /* Check the parameters */
+  assert_param(IS_DAC_CHANNEL(DAC_Channel));
+  assert_param(IS_DAC_FLAG(DAC_FLAG));
+
+  /* Check the status of the specified DAC flag */
+  if ((DAC->SR & (DAC_FLAG << DAC_Channel)) != (uint8_t)RESET)
+  {
+    /* DAC_FLAG is set */
+    bitstatus = SET;
+  }
+  else
+  {
+    /* DAC_FLAG is reset */
+    bitstatus = RESET;
+  }
+  /* Return the DAC_FLAG status */
+  return  bitstatus;
+}
+
+/**
+  * @brief  Clears the DAC channelx's pending flags.
+  * @param  DAC_Channel: the selected DAC channel. 
+  *   This parameter can be one of the following values:
+  *     @arg DAC_Channel_1: DAC Channel1 selected
+  *     @arg DAC_Channel_2: DAC Channel2 selected
+  * @param  DAC_FLAG: specifies the flag to clear. 
+  *   This parameter can be of the following value:
+  *     @arg DAC_FLAG_DMAUDR: DMA underrun flag                           
+  * @retval None
+  */
+void DAC_ClearFlag(uint32_t DAC_Channel, uint32_t DAC_FLAG)
+{
+  /* Check the parameters */
+  assert_param(IS_DAC_CHANNEL(DAC_Channel));
+  assert_param(IS_DAC_FLAG(DAC_FLAG));
+
+  /* Clear the selected DAC flags */
+  DAC->SR = (DAC_FLAG << DAC_Channel);
+}
+
+/**
+  * @brief  Checks whether the specified DAC interrupt has occurred or not.
+  * @param  DAC_Channel: the selected DAC channel. 
+  *   This parameter can be one of the following values:
+  *     @arg DAC_Channel_1: DAC Channel1 selected
+  *     @arg DAC_Channel_2: DAC Channel2 selected
+  * @param  DAC_IT: specifies the DAC interrupt source to check. 
+  *   This parameter can be the following values:
+  *     @arg DAC_IT_DMAUDR: DMA underrun interrupt mask                       
+  * @retval The new state of DAC_IT (SET or RESET).
+  */
+ITStatus DAC_GetITStatus(uint32_t DAC_Channel, uint32_t DAC_IT)
+{
+  ITStatus bitstatus = RESET;
+  uint32_t enablestatus = 0;
+  
+  /* Check the parameters */
+  assert_param(IS_DAC_CHANNEL(DAC_Channel));
+  assert_param(IS_DAC_IT(DAC_IT));
+
+  /* Get the DAC_IT enable bit status */
+  enablestatus = (DAC->CR & (DAC_IT << DAC_Channel)) ;
+  
+  /* Check the status of the specified DAC interrupt */
+  if (((DAC->SR & (DAC_IT << DAC_Channel)) != (uint32_t)RESET) && enablestatus)
+  {
+    /* DAC_IT is set */
+    bitstatus = SET;
+  }
+  else
+  {
+    /* DAC_IT is reset */
+    bitstatus = RESET;
+  }
+  /* Return the DAC_IT status */
+  return  bitstatus;
+}
+
+/**
+  * @brief  Clears the DAC channelx’s interrupt pending bits.
+  * @param  DAC_Channel: the selected DAC channel. 
+  *   This parameter can be one of the following values:
+  *     @arg DAC_Channel_1: DAC Channel1 selected
+  *     @arg DAC_Channel_2: DAC Channel2 selected
+  * @param  DAC_IT: specifies the DAC interrupt pending bit to clear.
+  *   This parameter can be the following values:
+  *     @arg DAC_IT_DMAUDR: DMA underrun interrupt mask                         
+  * @retval None
+  */
+void DAC_ClearITPendingBit(uint32_t DAC_Channel, uint32_t DAC_IT)
+{
+  /* Check the parameters */
+  assert_param(IS_DAC_CHANNEL(DAC_Channel));
+  assert_param(IS_DAC_IT(DAC_IT)); 
+
+  /* Clear the selected DAC interrupt pending bits */
+  DAC->SR = (DAC_IT << DAC_Channel);
+}
+#endif
 
 /**
   * @}
@@ -428,4 +572,8 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/**
+  * @}
+  */
+
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

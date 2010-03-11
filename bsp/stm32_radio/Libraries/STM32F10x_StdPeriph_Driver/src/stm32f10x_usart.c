@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_usart.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the USART firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -78,6 +78,14 @@
 #define GTPR_LSB_Mask             ((uint16_t)0x00FF)  /*!< Guard Time Register LSB Mask */
 #define GTPR_MSB_Mask             ((uint16_t)0xFF00)  /*!< Guard Time Register MSB Mask */
 #define IT_Mask                   ((uint16_t)0x001F)  /*!< USART Interrupt Mask */
+
+/* USART OverSampling-8 Mask */
+#define CR1_OVER8_Set             ((u16)0x8000)  /* USART OVER8 mode Enable Mask */
+#define CR1_OVER8_Reset           ((u16)0x7FFF)  /* USART OVER8 mode Disable Mask */
+
+/* USART One Bit Sampling Mask */
+#define CR3_ONEBITE_Set           ((u16)0x0800)  /* USART ONEBITE mode Enable Mask */
+#define CR3_ONEBITE_Reset         ((u16)0xF7FF)  /* USART ONEBITE mode Disable Mask */
 
 /**
   * @}
@@ -230,12 +238,33 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   {
     apbclock = RCC_ClocksStatus.PCLK1_Frequency;
   }
+  
   /* Determine the integer part */
-  integerdivider = ((0x19 * apbclock) / (0x04 * (USART_InitStruct->USART_BaudRate)));
-  tmpreg = (integerdivider / 0x64) << 0x04;
+  if ((USARTx->CR1 & CR1_OVER8_Set) != 0)
+  {
+    /* Integer part computing in case Oversampling mode is 8 Samples */
+    integerdivider = ((25 * apbclock) / (2 * (USART_InitStruct->USART_BaudRate)));    
+  }
+  else /* if ((USARTx->CR1 & CR1_OVER8_Set) == 0) */
+  {
+    /* Integer part computing in case Oversampling mode is 16 Samples */
+    integerdivider = ((25 * apbclock) / (4 * (USART_InitStruct->USART_BaudRate)));    
+  }
+  tmpreg = (integerdivider / 100) << 4;
+
   /* Determine the fractional part */
-  fractionaldivider = integerdivider - (0x64 * (tmpreg >> 0x04));
-  tmpreg |= ((((fractionaldivider * 0x10) + 0x32) / 0x64)) & ((uint8_t)0x0F);
+  fractionaldivider = integerdivider - (100 * (tmpreg >> 4));
+
+  /* Implement the fractional part in the register */
+  if ((USARTx->CR1 & CR1_OVER8_Set) != 0)
+  {
+    tmpreg |= ((((fractionaldivider * 8) + 50) / 100)) & ((uint8_t)0x07);
+  }
+  else /* if ((USARTx->CR1 & CR1_OVER8_Set) == 0) */
+  {
+    tmpreg |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
+  }
+  
   /* Write to USART BRR */
   USARTx->BRR = (uint16_t)tmpreg;
 }
@@ -713,6 +742,64 @@ void USART_HalfDuplexCmd(USART_TypeDef* USARTx, FunctionalState NewState)
   }
 }
 
+
+/**
+  * @brief  Enables or disables the USART's 8x oversampling mode.
+  * @param  USARTx: Select the USART or the UART peripheral.
+  *   This parameter can be one of the following values:
+  *   USART1, USART2, USART3, UART4 or UART5.
+  * @param  NewState: new state of the USART one bit sampling methode.
+  *   This parameter can be: ENABLE or DISABLE.
+  * @note
+  *     This function has to be called before calling USART_Init()
+  *     function in order to have correct baudrate Divider value.   
+  * @retval None
+  */
+void USART_OverSampling8Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_USART_ALL_PERIPH(USARTx));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  
+  if (NewState != DISABLE)
+  {
+    /* Enable the 8x Oversampling mode by setting the OVER8 bit in the CR1 register */
+    USARTx->CR1 |= CR1_OVER8_Set;
+  }
+  else
+  {
+    /* Disable the 8x Oversampling mode by clearing the OVER8 bit in the CR1 register */
+    USARTx->CR1 &= CR1_OVER8_Reset;
+  }
+}
+
+/**
+  * @brief  Enables or disables the USART's one bit sampling methode.
+  * @param  USARTx: Select the USART or the UART peripheral.
+  *   This parameter can be one of the following values:
+  *   USART1, USART2, USART3, UART4 or UART5.
+  * @param  NewState: new state of the USART one bit sampling methode.
+  *   This parameter can be: ENABLE or DISABLE.
+  * @retval None
+  */
+void USART_OneBitMethodCmd(USART_TypeDef* USARTx, FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_USART_ALL_PERIPH(USARTx));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  
+  if (NewState != DISABLE)
+  {
+    /* Enable the one bit method by setting the ONEBITE bit in the CR3 register */
+    USARTx->CR3 |= CR3_ONEBITE_Set;
+  }
+  else
+  {
+    /* Disable tthe one bit method by clearing the ONEBITE bit in the CR3 register */
+    USARTx->CR3 &= CR3_ONEBITE_Reset;
+  }
+}
+
 /**
   * @brief  Configures the USART’s IrDA interface.
   * @param  USARTx: Select the USART or the UART peripheral. 
@@ -964,4 +1051,4 @@ void USART_ClearITPendingBit(USART_TypeDef* USARTx, uint16_t USART_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    system_stm32f10x.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   CMSIS Cortex-M3 Device Peripheral Access Layer System Header File.
   ******************************************************************************  
   *
@@ -14,7 +14,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   ******************************************************************************
   */
 
@@ -49,11 +49,7 @@
   * @{
   */
 
-extern const uint32_t SystemFrequency;          /*!< System Clock Frequency (Core Clock) */
-extern const uint32_t SystemFrequency_SysClk;   /*!< System clock                        */
-extern const uint32_t SystemFrequency_AHBClk;   /*!< AHB System bus speed                */
-extern const uint32_t SystemFrequency_APB1Clk;  /*!< APB Peripheral Bus 1 (low)  speed   */
-extern const uint32_t SystemFrequency_APB2Clk;  /*!< APB Peripheral Bus 2 (high) speed   */
+extern uint32_t SystemCoreClock;          /*!< System Clock Frequency (Core Clock) */
 
 /**
   * @}
@@ -80,6 +76,7 @@ extern const uint32_t SystemFrequency_APB2Clk;  /*!< APB Peripheral Bus 2 (high)
   */
   
 extern void SystemInit(void);
+extern void SystemCoreClockUpdate(void);
 /**
   * @}
   */
@@ -97,4 +94,4 @@ extern void SystemInit(void);
 /**
   * @}
   */  
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

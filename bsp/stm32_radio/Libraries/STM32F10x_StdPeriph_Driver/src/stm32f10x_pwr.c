@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_pwr.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the PWR firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -79,6 +79,8 @@
 
 /* SLEEPDEEP bit mask */
 #define SysCtrl_SLEEPDEEP_Set    ((uint32_t)0x00000004)
+#define SysCtrl_SLEEPDEEP_Reset  ((uint32_t)0xFFFFFFFB)
+
 /**
   * @}
   */
@@ -230,6 +232,9 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
     /* Request Wait For Event */
     __WFE();
   }
+  
+  /* Reset SLEEPDEEP bit of Cortex System Control Register */
+  *(__IO uint32_t *) SCB_SysCtrl &= SysCtrl_SLEEPDEEP_Reset;  
 }
 
 /**
@@ -308,4 +313,4 @@ void PWR_ClearFlag(uint32_t PWR_FLAG)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

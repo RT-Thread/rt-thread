@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_i2c.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the I2C firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -360,7 +360,7 @@ void I2C_DMACmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
 }
 
 /**
-  * @brief  Specifies that the next DMA transfer is the last one.
+  * @brief  Specifies if the next DMA transfer will be the last one.
   * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
   * @param  NewState: new state of the I2C DMA last transfer.
   *   This parameter can be: ENABLE or DISABLE.
@@ -885,16 +885,26 @@ uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
   * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
   * @param  I2C_EVENT: specifies the event to be checked. 
   *   This parameter can be one of the following values:
-  *     @arg I2C_EVENT_SLAVE_ADDRESS_MATCHED   : EV1
-  *     @arg I2C_EVENT_SLAVE_BYTE_RECEIVED     : EV2
-  *     @arg I2C_EVENT_SLAVE_BYTE_TRANSMITTED  : EV3
-  *     @arg I2C_EVENT_SLAVE_ACK_FAILURE       : EV3-2
-  *     @arg I2C_EVENT_MASTER_MODE_SELECT      : EV5
-  *     @arg I2C_EVENT_MASTER_MODE_SELECTED    : EV6
-  *     @arg I2C_EVENT_MASTER_BYTE_RECEIVED    : EV7
-  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTED : EV8
-  *     @arg I2C_EVENT_MASTER_MODE_ADDRESS10   : EV9
-  *     @arg I2C_EVENT_SLAVE_STOP_DETECTED     : EV4
+  *     @arg I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED           : EV1
+  *     @arg I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED              : EV1
+  *     @arg I2C_EVENT_SLAVE_TRANSMITTER_SECONDADDRESS_MATCHED     : EV1
+  *     @arg I2C_EVENT_SLAVE_RECEIVER_SECONDADDRESS_MATCHED        : EV1
+  *     @arg I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED            : EV1
+  *     @arg I2C_EVENT_SLAVE_BYTE_RECEIVED                         : EV2
+  *     @arg (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_DUALF)      : EV2
+  *     @arg (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_GENCALL)    : EV2
+  *     @arg I2C_EVENT_SLAVE_BYTE_TRANSMITTED                      : EV3
+  *     @arg (I2C_EVENT_SLAVE_BYTE_TRANSMITTED | I2C_FLAG_DUALF)   : EV3
+  *     @arg (I2C_EVENT_SLAVE_BYTE_TRANSMITTED | I2C_FLAG_GENCALL) : EV3
+  *     @arg I2C_EVENT_SLAVE_ACK_FAILURE                           : EV3_2
+  *     @arg I2C_EVENT_SLAVE_STOP_DETECTED                         : EV4
+  *     @arg I2C_EVENT_MASTER_MODE_SELECT                          : EV5
+  *     @arg I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED            : EV6     
+  *     @arg I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED               : EV6
+  *     @arg I2C_EVENT_MASTER_BYTE_RECEIVED                        : EV7
+  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTING                    : EV8
+  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTED                     : EV8_2
+  *     @arg I2C_EVENT_MASTER_MODE_ADDRESS10                       : EV9
   * @retval An ErrorStatus enumuration value:
   * - SUCCESS: Last event is equal to the I2C_EVENT
   * - ERROR: Last event is different from the I2C_EVENT
@@ -1149,4 +1159,4 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

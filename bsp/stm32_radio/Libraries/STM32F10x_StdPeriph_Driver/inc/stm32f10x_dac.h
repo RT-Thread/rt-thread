@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_dac.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file contains all the functions prototypes for the DAC firmware 
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -81,9 +81,11 @@ typedef struct
 #define DAC_Trigger_T8_TRGO                ((uint32_t)0x0000000C) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel
                                                                        only in High-density devices*/
 #define DAC_Trigger_T3_TRGO                ((uint32_t)0x0000000C) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel
-                                                                       only in Connectivity line devices */
+                                                                       only in Connectivity line, Medium-density and Low-density Value Line devices */
 #define DAC_Trigger_T7_TRGO                ((uint32_t)0x00000014) /*!< TIM7 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_Trigger_T5_TRGO                ((uint32_t)0x0000001C) /*!< TIM5 TRGO selected as external conversion trigger for DAC channel */
+#define DAC_Trigger_T15_TRGO               ((uint32_t)0x0000001C) /*!< TIM15 TRGO selected as external conversion trigger for DAC channel 
+                                                                       only in Medium-density and Low-density Value Line devices*/
 #define DAC_Trigger_T2_TRGO                ((uint32_t)0x00000024) /*!< TIM2 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_Trigger_T4_TRGO                ((uint32_t)0x0000002C) /*!< TIM4 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_Trigger_Ext_IT9                ((uint32_t)0x00000034) /*!< EXTI Line9 event selected as external conversion trigger for DAC channel */
@@ -232,6 +234,29 @@ typedef struct
 /**
   * @}
   */
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)  
+/** @defgroup DAC_interrupts_definition 
+  * @{
+  */ 
+  
+#define DAC_IT_DMAUDR                      ((uint32_t)0x00002000)  
+#define IS_DAC_IT(IT) (((IT) == DAC_IT_DMAUDR)) 
+
+/**
+  * @}
+  */ 
+
+/** @defgroup DAC_flags_definition 
+  * @{
+  */ 
+  
+#define DAC_FLAG_DMAUDR                    ((uint32_t)0x00002000)  
+#define IS_DAC_FLAG(FLAG) (((FLAG) == DAC_FLAG_DMAUDR))  
+
+/**
+  * @}
+  */
+#endif
 
 /**
   * @}
@@ -253,6 +278,9 @@ void DAC_DeInit(void);
 void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct);
 void DAC_StructInit(DAC_InitTypeDef* DAC_InitStruct);
 void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState);
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)  
+void DAC_ITConfig(uint32_t DAC_Channel, uint32_t DAC_IT, FunctionalState NewState);
+#endif
 void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState);
 void DAC_SoftwareTriggerCmd(uint32_t DAC_Channel, FunctionalState NewState);
 void DAC_DualSoftwareTriggerCmd(FunctionalState NewState);
@@ -261,6 +289,12 @@ void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data);
 void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data);
 void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1);
 uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel);
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)  
+FlagStatus DAC_GetFlagStatus(uint32_t DAC_Channel, uint32_t DAC_FLAG);
+void DAC_ClearFlag(uint32_t DAC_Channel, uint32_t DAC_FLAG);
+ITStatus DAC_GetITStatus(uint32_t DAC_Channel, uint32_t DAC_IT);
+void DAC_ClearITPendingBit(uint32_t DAC_Channel, uint32_t DAC_IT);
+#endif
 
 #ifdef __cplusplus
 }
@@ -279,4 +313,4 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

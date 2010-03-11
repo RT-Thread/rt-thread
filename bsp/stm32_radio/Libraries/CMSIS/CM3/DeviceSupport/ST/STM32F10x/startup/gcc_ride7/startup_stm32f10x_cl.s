@@ -1,20 +1,21 @@
 /**
-  ******************************************************************************
-  * @file    startup_stm32f10x_cl.s
-  * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
-  * @brief   STM32F10x Connectivity line Devices vector table for RIDE7 toolchain.
-  *          This module performs:
-  *                - Set the initial SP
-  *                - Set the initial PC == Reset_Handler,
-  *                - Set the vector table entries with the exceptions ISR 
-  *                  address.
-  *                - Branches to main in the C library (which eventually
-  *                  calls main()).
-  *          After Reset the Cortex-M3 processor is in Thread mode,
-  *          priority is Privileged, and the Stack is set to Main.
-  *******************************************************************************
+ ******************************************************************************
+ * @file    startup_stm32f10x_cl.s
+ * @author  MCD Application Team
+ * @version   V3.2.0
+ * @date      03/01/2010
+ * @brief   STM32F10x Connectivity line Devices vector table for RIDE7 toolchain.
+ *          This module performs:
+ *                - Set the initial SP
+ *                - Set the initial PC == Reset_Handler,
+ *                - Set the vector table entries with the exceptions ISR 
+ *                  address.
+ *                - Configure the clock system    
+ *                - Branches to main in the C library (which eventually
+ *                  calls main()).
+ *          After Reset the Cortex-M3 processor is in Thread mode,
+ *          priority is Privileged, and the Stack is set to Main.
+ *******************************************************************************
  * @copy
  *
  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
@@ -24,8 +25,8 @@
  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
  *
- * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
- */  
+ * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+ */
     
   .syntax unified
   .cpu cortex-m3
@@ -60,48 +61,49 @@ defined in linker script */
     .section  .text.Reset_Handler
   .weak  Reset_Handler
   .type  Reset_Handler, %function
-Reset_Handler:  
+Reset_Handler:
 
-/* Copy the data segment initializers from flash to SRAM */  
+/* Copy the data segment initializers from flash to SRAM */
   movs  r1, #0
-  b  LoopCopyDataInit
+  b     LoopCopyDataInit
 
 CopyDataInit:
-  ldr  r3, =_sidata
-  ldr  r3, [r3, r1]
-  str  r3, [r0, r1]
+  ldr   r3, =_sidata
+  ldr   r3, [r3, r1]
+  str   r3, [r0, r1]
   adds  r1, r1, #4
     
 LoopCopyDataInit:
-  ldr  r0, =_sdata
-  ldr  r3, =_edata
+  ldr   r0, =_sdata
+  ldr   r3, =_edata
   adds  r2, r0, r1
-  cmp  r2, r3
-  bcc  CopyDataInit
-  ldr  r2, =_sbss
-  b  LoopFillZerobss
+  cmp   r2, r3
+  bcc   CopyDataInit
+  ldr   r2, =_sbss
+  b     LoopFillZerobss
 
-/* Zero fill the bss segment. */  
+/* Zero fill the bss segment. */
 FillZerobss:
   movs  r3, #0
-  str  r3, [r2], #4
+  str   r3, [r2], #4
     
 LoopFillZerobss:
-  ldr  r3, = _ebss
-  cmp  r2, r3
-  bcc  FillZerobss
+  ldr   r3, = _ebss
+  cmp   r2, r3
+  bcc   FillZerobss
+/* Call the clock system intitialization function.*/
+  bl  SystemInit  
 /* Call the application's entry point.*/
-  bl  main
-  bx  lr    
-.size  Reset_Handler, .-Reset_Handler
+  bl    main
+  bx    lr
+.size   Reset_Handler, .-Reset_Handler
 
 /**
  * @brief  This is the code that gets called when the processor receives an 
- *         unexpected interrupt.  This simply enters an infinite loop, preserving
+ *         unexpected interrupt. This simply enters an infinite loop, preserving
  *         the system state for examination by a debugger.
- *
- * @param  None     
- * @retval : None       
+ * @param  None
+ * @retval None
 */
     .section  .text.Default_Handler,"ax",%progbits
 Default_Handler:
@@ -111,12 +113,12 @@ Infinite_Loop:
 
 /******************************************************************************
 *
-* The minimal vector table for a Cortex M3.  Note that the proper constructs
+* The minimal vector table for a Cortex M3. Note that the proper constructs
 * must be placed on this to ensure that it ends up at physical address
 * 0x0000.0000.
-*
-******************************************************************************/    
-   .section  .isr_vector,"a",%progbits
+* 
+*******************************************************************************/
+  .section  .isr_vector,"a",%progbits
   .type  g_pfnVectors, %object
   .size  g_pfnVectors, .-g_pfnVectors
     
@@ -157,9 +159,9 @@ g_pfnVectors:
   .word  DMA1_Channel6_IRQHandler
   .word  DMA1_Channel7_IRQHandler
   .word  ADC1_2_IRQHandler
-  .word CAN1_TX_IRQHandler
-  .word CAN1_RX0_IRQHandler
-   .word  CAN1_RX1_IRQHandler
+  .word  CAN1_TX_IRQHandler
+  .word  CAN1_RX0_IRQHandler
+  .word  CAN1_RX1_IRQHandler
   .word  CAN1_SCE_IRQHandler
   .word  EXTI9_5_IRQHandler
   .word  TIM1_BRK_IRQHandler
@@ -180,7 +182,7 @@ g_pfnVectors:
   .word  USART3_IRQHandler
   .word  EXTI15_10_IRQHandler
   .word  RTCAlarm_IRQHandler
-  .word  OTG_FS_WKUP_IRQHandler  
+  .word  OTG_FS_WKUP_IRQHandler
   .word  0
   .word  0
   .word  0
@@ -188,63 +190,63 @@ g_pfnVectors:
   .word  0
   .word  0
   .word  0
-  .word TIM5_IRQHandler            
-  .word SPI3_IRQHandler            
-  .word UART4_IRQHandler           
-  .word UART5_IRQHandler           
-  .word TIM6_IRQHandler           
-  .word TIM7_IRQHandler            
-  .word DMA2_Channel1_IRQHandler   
-  .word DMA2_Channel2_IRQHandler   
-  .word DMA2_Channel3_IRQHandler   
-  .word DMA2_Channel4_IRQHandler  
-  .word DMA2_Channel5_IRQHandler   
-  .word ETH_IRQHandler            
-  .word ETH_WKUP_IRQHandler        
-  .word CAN2_TX_IRQHandler         
-  .word CAN2_RX0_IRQHandler        
-  .word CAN2_RX1_IRQHandler        
-  .word CAN2_SCE_IRQHandler        
-  .word OTG_FS_IRQHandler          
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0           
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0            
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0            
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0
-  .word 0            
-  .word 0
-  .word 0
-  .word 0
-  .word 0               
-  .word BootRAM     /* @0x1E0. This is for boot in RAM mode for 
+  .word  TIM5_IRQHandler
+  .word  SPI3_IRQHandler
+  .word  UART4_IRQHandler
+  .word  UART5_IRQHandler
+  .word  TIM6_IRQHandler
+  .word  TIM7_IRQHandler
+  .word  DMA2_Channel1_IRQHandler
+  .word  DMA2_Channel2_IRQHandler
+  .word  DMA2_Channel3_IRQHandler
+  .word  DMA2_Channel4_IRQHandler
+  .word  DMA2_Channel5_IRQHandler
+  .word  ETH_IRQHandler
+  .word  ETH_WKUP_IRQHandler
+  .word  CAN2_TX_IRQHandler
+  .word  CAN2_RX0_IRQHandler
+  .word  CAN2_RX1_IRQHandler
+  .word  CAN2_SCE_IRQHandler
+  .word  OTG_FS_IRQHandler
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  0
+  .word  BootRAM     /* @0x1E0. This is for boot in RAM mode for 
                          STM32F10x Connectivity line Devices. */
-    
+
 /*******************************************************************************
 *
 * Provide weak aliases for each Exception handler to the Default_Handler. 
@@ -462,3 +464,4 @@ g_pfnVectors:
   .weak  OTG_FS_IRQHandler  
   .thumb_set OTG_FS_IRQHandler ,Default_Handler
  
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

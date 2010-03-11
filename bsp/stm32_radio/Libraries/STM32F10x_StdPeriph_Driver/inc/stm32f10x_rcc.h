@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_rcc.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file contains all the functions prototypes for the RCC firmware 
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -79,7 +79,7 @@ typedef struct
 
 #define RCC_PLLSource_HSI_Div2           ((uint32_t)0x00000000)
 
-#ifndef STM32F10X_CL
+#if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_CL)
  #define RCC_PLLSource_HSE_Div1           ((uint32_t)0x00010000)
  #define RCC_PLLSource_HSE_Div2           ((uint32_t)0x00030000)
  #define IS_RCC_PLL_SOURCE(SOURCE) (((SOURCE) == RCC_PLLSource_HSI_Div2) || \
@@ -87,7 +87,7 @@ typedef struct
                                    ((SOURCE) == RCC_PLLSource_HSE_Div2))
 #else
  #define RCC_PLLSource_PREDIV1            ((uint32_t)0x00010000)
-#define IS_RCC_PLL_SOURCE(SOURCE) (((SOURCE) == RCC_PLLSource_HSI_Div2) || \
+ #define IS_RCC_PLL_SOURCE(SOURCE) (((SOURCE) == RCC_PLLSource_HSI_Div2) || \
                                    ((SOURCE) == RCC_PLLSource_PREDIV1))
 #endif /* STM32F10X_CL */ 
 
@@ -141,10 +141,10 @@ typedef struct
   * @}
   */
 
-#ifdef STM32F10X_CL
 /** @defgroup PREDIV1_division_factor
   * @{
   */
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_CL)
  #define  RCC_PREDIV1_Div1               ((uint32_t)0x00000000)
  #define  RCC_PREDIV1_Div2               ((uint32_t)0x00000001)
  #define  RCC_PREDIV1_Div3               ((uint32_t)0x00000002)
@@ -170,6 +170,7 @@ typedef struct
                                   ((PREDIV1) == RCC_PREDIV1_Div11) || ((PREDIV1) == RCC_PREDIV1_Div12) || \
                                   ((PREDIV1) == RCC_PREDIV1_Div13) || ((PREDIV1) == RCC_PREDIV1_Div14) || \
                                   ((PREDIV1) == RCC_PREDIV1_Div15) || ((PREDIV1) == RCC_PREDIV1_Div16))
+#endif
 /**
   * @}
   */
@@ -178,17 +179,24 @@ typedef struct
 /** @defgroup PREDIV1_clock_source
   * @{
   */
-/* PREDIV1 clock source (only for STM32 connectivity line devices) */
+#ifdef STM32F10X_CL
+/* PREDIV1 clock source (for STM32 connectivity line devices) */
  #define  RCC_PREDIV1_Source_HSE         ((uint32_t)0x00000000) 
  #define  RCC_PREDIV1_Source_PLL2        ((uint32_t)0x00010000) 
 
  #define IS_RCC_PREDIV1_SOURCE(SOURCE) (((SOURCE) == RCC_PREDIV1_Source_HSE) || \
                                         ((SOURCE) == RCC_PREDIV1_Source_PLL2)) 
+#elif defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL)
+/* PREDIV1 clock source (for STM32 Value line devices) */
+ #define  RCC_PREDIV1_Source_HSE         ((uint32_t)0x00000000) 
+
+ #define IS_RCC_PREDIV1_SOURCE(SOURCE) (((SOURCE) == RCC_PREDIV1_Source_HSE)) 
+#endif
 /**
   * @}
   */
 
-
+#ifdef STM32F10X_CL
 /** @defgroup PREDIV2_division_factor
   * @{
   */
@@ -368,6 +376,9 @@ typedef struct
 
  #define IS_RCC_USBCLK_SOURCE(SOURCE) (((SOURCE) == RCC_USBCLKSource_PLLCLK_1Div5) || \
                                       ((SOURCE) == RCC_USBCLKSource_PLLCLK_Div1))
+/**
+  * @}
+  */
 #else
 /** @defgroup USB_OTG_FS_clock_source 
   * @{
@@ -377,10 +388,11 @@ typedef struct
 
  #define IS_RCC_OTGFSCLK_SOURCE(SOURCE) (((SOURCE) == RCC_OTGFSCLKSource_PLLVCO_Div3) || \
                                          ((SOURCE) == RCC_OTGFSCLKSource_PLLVCO_Div2))
-#endif /* STM32F10X_CL */ 
 /**
   * @}
   */
+#endif /* STM32F10X_CL */ 
+
 
 #ifdef STM32F10X_CL
 /** @defgroup I2S2_clock_source 
@@ -496,8 +508,11 @@ typedef struct
 #define RCC_APB2Periph_TIM8              ((uint32_t)0x00002000)
 #define RCC_APB2Periph_USART1            ((uint32_t)0x00004000)
 #define RCC_APB2Periph_ADC3              ((uint32_t)0x00008000)
+#define RCC_APB2Periph_TIM15             ((uint32_t)0x00010000)
+#define RCC_APB2Periph_TIM16             ((uint32_t)0x00020000)
+#define RCC_APB2Periph_TIM17             ((uint32_t)0x00040000)
 
-#define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFFF0002) == 0x00) && ((PERIPH) != 0x00))
+#define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFF80002) == 0x00) && ((PERIPH) != 0x00))
 /**
   * @}
   */ 
@@ -523,11 +538,13 @@ typedef struct
 #define RCC_APB1Periph_I2C2              ((uint32_t)0x00400000)
 #define RCC_APB1Periph_USB               ((uint32_t)0x00800000)
 #define RCC_APB1Periph_CAN1              ((uint32_t)0x02000000)
+#define RCC_APB1Periph_CAN2              ((uint32_t)0x04000000)
 #define RCC_APB1Periph_BKP               ((uint32_t)0x08000000)
 #define RCC_APB1Periph_PWR               ((uint32_t)0x10000000)
 #define RCC_APB1Periph_DAC               ((uint32_t)0x20000000)
-#define RCC_APB1Periph_CAN2             ((uint32_t)0x04000000) 
-#define IS_RCC_APB1_PERIPH(PERIPH) ((((PERIPH) & 0xC10137C0) == 0x00) && ((PERIPH) != 0x00))
+#define RCC_APB1Periph_CEC               ((uint32_t)0x40000000)
+ 
+#define IS_RCC_APB1_PERIPH(PERIPH) ((((PERIPH) & 0x810137C0) == 0x00) && ((PERIPH) != 0x00))
 
 /**
   * @}
@@ -628,8 +645,11 @@ void RCC_HSICmd(FunctionalState NewState);
 void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul);
 void RCC_PLLCmd(FunctionalState NewState);
 
-#ifdef STM32F10X_CL
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_CL)
  void RCC_PREDIV1Config(uint32_t RCC_PREDIV1_Source, uint32_t RCC_PREDIV1_Div);
+#endif
+
+#ifdef  STM32F10X_CL
  void RCC_PREDIV2Config(uint32_t RCC_PREDIV2_Div);
  void RCC_PLL2Config(uint32_t RCC_PLL2Mul);
  void RCC_PLL2Cmd(FunctionalState NewState);
@@ -697,4 +717,4 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT);
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

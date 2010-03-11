@@ -46,7 +46,7 @@
 // <1=>Version 1:fmt0371
 // <2=>Version 2:ili9320/9325
 // 	<i>Default: 1
-#define LCD_VERSION             1
+#define LCD_VERSION             2
 
 /*
  * IMPORTANT NOTICE:

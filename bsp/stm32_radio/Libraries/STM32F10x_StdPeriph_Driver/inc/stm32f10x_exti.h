@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_exti.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file contains all the functions prototypes for the EXTI firmware
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -118,11 +118,10 @@ typedef struct
 #define EXTI_Line16      ((uint32_t)0x10000)  /*!< External interrupt line 16 Connected to the PVD Output */
 #define EXTI_Line17      ((uint32_t)0x20000)  /*!< External interrupt line 17 Connected to the RTC Alarm event */
 #define EXTI_Line18      ((uint32_t)0x40000)  /*!< External interrupt line 18 Connected to the USB Device/USB OTG FS
-                                                   Wakeup from suspend event */
-#define EXTI_Line19      ((uint32_t)0x80000)  /*!< External interrupt line 19 Connected to the Ethernet Wakeup event */ 
-                                            
+                                                   Wakeup from suspend event */                                    
+#define EXTI_Line19      ((uint32_t)0x80000)  /*!< External interrupt line 19 Connected to the Ethernet Wakeup event */
+                                          
 #define IS_EXTI_LINE(LINE) ((((LINE) & (uint32_t)0xFFF00000) == 0x00) && ((LINE) != (uint16_t)0x00))
-
 #define IS_GET_EXTI_LINE(LINE) (((LINE) == EXTI_Line0) || ((LINE) == EXTI_Line1) || \
                             ((LINE) == EXTI_Line2) || ((LINE) == EXTI_Line3) || \
                             ((LINE) == EXTI_Line4) || ((LINE) == EXTI_Line5) || \
@@ -134,6 +133,7 @@ typedef struct
                             ((LINE) == EXTI_Line16) || ((LINE) == EXTI_Line17) || \
                             ((LINE) == EXTI_Line18) || ((LINE) == EXTI_Line19))
 
+                    
 /**
   * @}
   */
@@ -180,4 +180,4 @@ void EXTI_ClearITPendingBit(uint32_t EXTI_Line);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

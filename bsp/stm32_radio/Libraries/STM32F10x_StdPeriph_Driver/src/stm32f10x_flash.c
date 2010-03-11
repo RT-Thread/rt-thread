@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_flash.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the FLASH firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -77,8 +77,8 @@
 #define FLASH_KEY2               ((uint32_t)0xCDEF89AB)
 
 /* Delay definition */   
-#define EraseTimeout             ((uint32_t)0x00000FFF)
-#define ProgramTimeout           ((uint32_t)0x0000000F)
+#define EraseTimeout             ((uint32_t)0x000B0000)
+#define ProgramTimeout           ((uint32_t)0x00002000)
 
 /**
   * @}
@@ -103,8 +103,7 @@
 /** @defgroup FLASH_Private_FunctionPrototypes
   * @{
   */
-
-static void delay(void);
+  
 /**
   * @}
   */
@@ -264,18 +263,24 @@ FLASH_Status FLASH_EraseAllPages(void)
 
 /**
   * @brief  Erases the FLASH option bytes.
-  * @note   This functions erases all option bytes and then deactivates the Read
-  *         protection. If the user needs to keep the Read protection activated,
-  *         he has to enable it after this function call (using
-  *         FLASH_ReadOutProtection function)
+  * @note   This functions erases all option bytes except the Read protection 
+  *         (RDP). 
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EraseOptionBytes(void)
 {
+  uint16_t rdptmp = RDP_Key;
+
   FLASH_Status status = FLASH_COMPLETE;
-  
+
+  /* Get the actual read protection Option Byte value */ 
+  if(FLASH_GetReadOutProtectionStatus() != RESET)
+  {
+    rdptmp = 0x00;  
+  }
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(EraseTimeout);
   if(status == FLASH_COMPLETE)
@@ -297,8 +302,8 @@ FLASH_Status FLASH_EraseOptionBytes(void)
        
       /* Enable the Option Bytes Programming operation */
       FLASH->CR |= CR_OPTPG_Set;
-      /* Disable the Read protection */
-      OB->RDP= RDP_Key; 
+      /* Restore the last read protection Option Byte value */
+      OB->RDP = (uint16_t)rdptmp; 
       /* Wait for last operation to be completed */
       status = FLASH_WaitForLastOperation(ProgramTimeout);
  
@@ -582,7 +587,7 @@ FLASH_Status FLASH_ReadOutProtection(FunctionalState NewState)
     }
   }
   /* Return the protection operation Status */
-  return status;      
+  return status;       
 }
 
 /**
@@ -838,7 +843,6 @@ FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
   /* Wait for a Flash operation to complete or a TIMEOUT to occur */
   while((status == FLASH_BUSY) && (Timeout != 0x00))
   {
-    delay();
     status = FLASH_GetStatus();
     Timeout--;
   }
@@ -851,19 +855,6 @@ FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
 }
 
 /**
-  * @brief  Inserts a time delay.
-  * @param  None
-  * @retval None
-  */
-static void delay(void)
-{
-  __IO uint32_t i = 0;
-  for(i = 0xFF; i != 0; i--)
-  {
-  }
-}
-
-/**
   * @}
   */
 
@@ -875,4 +866,4 @@ static void delay(void)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

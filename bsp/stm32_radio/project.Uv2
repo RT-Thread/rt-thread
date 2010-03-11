@@ -101,8 +101,8 @@ File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_int.c><usb_int.c>
 File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_mem.c><usb_mem.c>
 File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_regs.c><usb_regs.c>
 File 5,1,<.\Libraries\STM32_USB-FS-Device_Driver\src\usb_sil.c><usb_sil.c>
-File 6,1,<.\Libraries\CMSIS\Core\CM3\core_cm3.c><core_cm3.c>
-File 6,1,<.\Libraries\CMSIS\Core\CM3\system_stm32f10x.c><system_stm32f10x.c>
+File 6,1,<.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.c><core_cm3.c>
+File 6,1,<.\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c><system_stm32f10x.c>
 File 7,1,<..\..\finsh\finsh_compiler.c><finsh_compiler.c>
 File 7,1,<..\..\finsh\finsh_error.c><finsh_error.c>
 File 7,1,<..\..\finsh\finsh_heap.c><finsh_heap.c>
@@ -248,8 +248,8 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  EnvBin ()
  EnvInc ()
  EnvLib ()
- EnvReg (ÿST\STM32F10x\)
- OrgReg (ÿST\STM32F10x\)
+ EnvReg (ST\STM32F10x\)
+ OrgReg (ST\STM32F10x\)
  TgStat=16
  OutDir (.\obj\)
  OutName (rtthread-stm32)
@@ -284,7 +284,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
  ADSCMISC (--diag_suppress=870)
  ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD,)
  ADSCUDEF ()
- ADSCINCD (.;.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include;..\..\rtgui\common\libz)
+ ADSCINCD (.;.\Libraries\CMSIS\CM3\CoreSupport;.\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;.\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\include;..\..\libcpu\arm\stm32;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include;..\..\rtgui\include;..\..\rtgui\common\libz)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
@@ -312,7 +312,7 @@ Options 1,0,0  // Target 'RT-Thread STM32 Radio'
   OPTDBG 49142,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,6,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
- FLASH3 ("" ())
+ FLASH3 ()
  FLASH4 ()
 EndOpt
 

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_spi.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file contains all the functions prototypes for the SPI firmware 
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -49,32 +49,32 @@
 typedef struct
 {
   uint16_t SPI_Direction;           /*!< Specifies the SPI unidirectional or bidirectional data mode.
-                                         This parameter can be any combination of @ref SPI_data_direction */
+                                         This parameter can be a value of @ref SPI_data_direction */
 
   uint16_t SPI_Mode;                /*!< Specifies the SPI operating mode.
-                                         This parameter can be any combination of @ref SPI_mode */
+                                         This parameter can be a value of @ref SPI_mode */
 
   uint16_t SPI_DataSize;            /*!< Specifies the SPI data size.
-                                         This parameter can be any combination of @ref SPI_data_size */
+                                         This parameter can be a value of @ref SPI_data_size */
 
   uint16_t SPI_CPOL;                /*!< Specifies the serial clock steady state.
-                                         This parameter can be any combination of @ref SPI_Clock_Polarity */
+                                         This parameter can be a value of @ref SPI_Clock_Polarity */
 
   uint16_t SPI_CPHA;                /*!< Specifies the clock active edge for the bit capture.
-                                         This parameter can be any combination of @ref SPI_Clock_Phase */
+                                         This parameter can be a value of @ref SPI_Clock_Phase */
 
   uint16_t SPI_NSS;                 /*!< Specifies whether the NSS signal is managed by
                                          hardware (NSS pin) or by software using the SSI bit.
-                                         This parameter can be any combination of @ref SPI_Slave_Select_management */
+                                         This parameter can be a value of @ref SPI_Slave_Select_management */
  
   uint16_t SPI_BaudRatePrescaler;   /*!< Specifies the Baud Rate prescaler value which will be
                                          used to configure the transmit and receive SCK clock.
-                                         This parameter can be any combination of @ref SPI_BaudRate_Prescaler.
+                                         This parameter can be a value of @ref SPI_BaudRate_Prescaler.
                                          @note The communication clock is derived from the master
                                                clock. The slave clock does not need to be set. */
 
   uint16_t SPI_FirstBit;            /*!< Specifies whether data transfers start from MSB or LSB bit.
-                                         This parameter can be any combination of @ref SPI_MSB_LSB_transmission */
+                                         This parameter can be a value of @ref SPI_MSB_LSB_transmission */
 
   uint16_t SPI_CRCPolynomial;       /*!< Specifies the polynomial used for the CRC calculation. */
 }SPI_InitTypeDef;
@@ -87,22 +87,22 @@ typedef struct
 {
 
   uint16_t I2S_Mode;         /*!< Specifies the I2S operating mode.
-                                  This parameter can be any combination of @ref I2S_Mode */
+                                  This parameter can be a value of @ref I2S_Mode */
 
   uint16_t I2S_Standard;     /*!< Specifies the standard used for the I2S communication.
-                                  This parameter can be any combination of @ref I2S_Standard */
+                                  This parameter can be a value of @ref I2S_Standard */
 
   uint16_t I2S_DataFormat;   /*!< Specifies the data format for the I2S communication.
-                                  This parameter can be any combination of @ref I2S_Data_Format */
+                                  This parameter can be a value of @ref I2S_Data_Format */
 
   uint16_t I2S_MCLKOutput;   /*!< Specifies whether the I2S MCLK output is enabled or not.
-                                  This parameter can be any combination of @ref I2S_MCLK_Output */
+                                  This parameter can be a value of @ref I2S_MCLK_Output */
 
   uint32_t I2S_AudioFreq;    /*!< Specifies the frequency selected for the I2S communication.
-                                  This parameter can be any combination of @ref I2S_Audio_Frequency */
+                                  This parameter can be a value of @ref I2S_Audio_Frequency */
 
   uint16_t I2S_CPOL;         /*!< Specifies the idle state of the I2S clock.
-                                  This parameter can be any combination of @ref I2S_Clock_Polarity */
+                                  This parameter can be a value of @ref I2S_Clock_Polarity */
 }I2S_InitTypeDef;
 
 /**
@@ -487,4 +487,4 @@ void SPI_I2S_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

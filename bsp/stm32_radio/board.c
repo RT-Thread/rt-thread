@@ -206,7 +206,7 @@ void rt_hw_board_init()
     NVIC_Configuration();
 
     /* Configure the SysTick */
-    SysTick_Config( SystemFrequency_SysClk / RT_TICK_PER_SECOND );
+    SysTick_Config( SystemCoreClock / RT_TICK_PER_SECOND );
 
     /* Console Initialization*/
 	rt_hw_usart_init();
@@ -220,17 +220,17 @@ void rt_hw_board_init()
 
     /* memtest */
     {
-        unsigned char * p_extram = (unsigned char *)0x68000000;
+        unsigned char * p_extram = (unsigned char *)STM32_EXT_SRAM_BEGIN;
         unsigned int temp;
 
         rt_kprintf("\r\nmem testing....");
-        for(temp=0; temp<0x80000; temp++)
+        for(temp=0; temp<(STM32_EXT_SRAM_END-STM32_EXT_SRAM_BEGIN); temp++)
         {
             *p_extram++ = (unsigned char)temp;
         }
 
-        p_extram = (unsigned char *)0x68000000;
-        for(temp=0; temp<0x80000; temp++)
+        p_extram = (unsigned char *)STM32_EXT_SRAM_BEGIN;
+        for(temp=0; temp<(STM32_EXT_SRAM_END-STM32_EXT_SRAM_BEGIN); temp++)
         {
             if( *p_extram++ != (unsigned char)temp )
             {

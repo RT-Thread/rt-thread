@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_gpio.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.2.0
+  * @date    03/01/2010
   * @brief   This file provides all the GPIO firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -57,7 +57,7 @@
 /* ---  MAPR Register ---*/ 
 /* Alias word address of MII_RMII_SEL bit */ 
 #define MAPR_OFFSET                 (AFIO_OFFSET + 0x04) 
-#define MII_RMII_SEL_BitNumber      ((uint8_t)0x17) 
+#define MII_RMII_SEL_BitNumber      ((u8)0x17) 
 #define MAPR_MII_RMII_SEL_BB        (PERIPH_BB_BASE + (MAPR_OFFSET * 32) + (MII_RMII_SEL_BitNumber * 4))
 
 
@@ -520,7 +520,12 @@ void GPIO_EventOutputCmd(FunctionalState NewState)
   *     @arg GPIO_Remap_SWJ_Disable
   *     @arg GPIO_Remap_SPI3
   *     @arg GPIO_Remap_TIM2ITR1_PTP_SOF
-  *     @arg GPIO_Remap_PTP_PPS  
+  *     @arg GPIO_Remap_PTP_PPS
+  *     @arg GPIO_Remap_TIM15
+  *     @arg GPIO_Remap_TIM16
+  *     @arg GPIO_Remap_TIM17
+  *     @arg GPIO_Remap_CEC
+  *     @arg GPIO_Remap_TIM1_DMA              
   * @note  If the GPIO_Remap_TIM2ITR1_PTP_SOF is enabled the TIM2 ITR1 is connected 
   *        to Ethernet PTP output. When Reset TIM2 ITR1 is connected to USB OTG SOF output.       
   * @param  NewState: new state of the port pin remapping.
@@ -535,7 +540,14 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
   assert_param(IS_GPIO_REMAP(GPIO_Remap));
   assert_param(IS_FUNCTIONAL_STATE(NewState));  
   
-  tmpreg = AFIO->MAPR;
+  if((GPIO_Remap & 0x80000000) == 0x80000000)
+  {
+    tmpreg = AFIO->MAPR2;
+  }
+  else
+  {
+    tmpreg = AFIO->MAPR;
+  }
 
   tmpmask = (GPIO_Remap & DBGAFR_POSITION_MASK) >> 0x10;
   tmp = GPIO_Remap & LSB_MASK;
@@ -562,7 +574,14 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
     tmpreg |= (tmp << ((GPIO_Remap >> 0x15)*0x10));
   }
 
-  AFIO->MAPR = tmpreg;
+  if((GPIO_Remap & 0x80000000) == 0x80000000)
+  {
+    AFIO->MAPR2 = tmpreg;
+  }
+  else
+  {
+    AFIO->MAPR = tmpreg;
+  }  
 }
 
 /**
@@ -614,4 +633,4 @@ void GPIO_ETH_MediaInterfaceConfig(uint32_t GPIO_ETH_MediaInterface)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

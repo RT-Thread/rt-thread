@@ -1,12 +1,13 @@
-;/******************** (C) COPYRIGHT 2009 STMicroelectronics ********************
+;/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
 ;* File Name          : startup_stm32f10x_cl.s
 ;* Author             : MCD Application Team
-;* Version            : V3.1.2
-;* Date               : 09/28/2009
+;* Version            : V3.2.0
+;* Date               : 03/01/2010
 ;* Description        : STM32F10x Connectivity line devices vector table for 
 ;*                      EWARM5.x toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
+;*                      - Configure the clock system
 ;*                      - Set the initial PC == __iar_program_start,
 ;*                      - Set the vector table entries with the exceptions ISR 
 ;*                        address.
@@ -45,13 +46,13 @@
         SECTION .intvec:CODE:NOROOT(2)
 
         EXTERN  __iar_program_start
+        EXTERN  SystemInit        
         PUBLIC  __vector_table
 
         DATA
 __vector_table
         DCD     sfe(CSTACK)
-        DCD     __iar_program_start
-
+        DCD     Reset_Handler             ; Reset Handler
         DCD     NMI_Handler               ; NMI Handler
         DCD     HardFault_Handler         ; Hard Fault Handler
         DCD     MemManage_Handler         ; MPU Fault Handler
@@ -143,6 +144,14 @@ __vector_table
 ;;
         THUMB
 
+        PUBWEAK Reset_Handler
+        SECTION .text:CODE:REORDER(2)
+Reset_Handler
+        LDR     R0, =SystemInit
+        BLX     R0
+        LDR     R0, =__iar_program_start
+        BX      R0
+        
         PUBWEAK NMI_Handler
         SECTION .text:CODE:REORDER(1)
 NMI_Handler
@@ -495,4 +504,4 @@ OTG_FS_IRQHandler
         B OTG_FS_IRQHandler
 
         END
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
