@@ -256,7 +256,7 @@ void ili9325_Initializtion(void)
     if( (DeviceCode != 0x9325) && (DeviceCode != 0x9328) && (DeviceCode != 0x7783) )
     {
         printf("Invalid LCD ID:%08X\r\n",DeviceCode);
-        printf("Please check you hardware.")
+        printf("Please check you hardware.");
         while(1);
     }
 
