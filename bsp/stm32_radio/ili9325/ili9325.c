@@ -243,12 +243,23 @@ unsigned short ili9325_ReadGRAM(unsigned short x,unsigned short y)
     return temp;
 }
 
+void rt_kprintf(const char *fmt, ...);
+#define printf   rt_kprintf
 void ili9325_Initializtion(void)
 {
     volatile unsigned int i;
     LCD_FSMCConfig();
 
     DeviceCode = LCD_ReadReg(0x0000);
+
+    /* DeviceCode check */
+    if( (DeviceCode != 0x9325) && (DeviceCode != 0x9328) && (DeviceCode != 0x7783) )
+    {
+        printf("Invalid LCD ID:%08X\r\n",DeviceCode);
+        printf("Please check you hardware.")
+        while(1);
+    }
+
     if (DeviceCode==0x9325||DeviceCode==0x9328)
     {
         ili9325_WriteReg(0x00e7,0x0010);
@@ -308,7 +319,7 @@ void ili9325_Initializtion(void)
         ili9325_WriteReg(0x0052,0x0000);
         ili9325_WriteReg(0x0053,0x013f);
 #if defined(_ILI_REVERSE_DIRECTION_)
-        ili9325_WriteReg(0x0060,0x2700);       
+        ili9325_WriteReg(0x0060,0x2700);
 #else
         ili9325_WriteReg(0x0060,0xA700);
 #endif
