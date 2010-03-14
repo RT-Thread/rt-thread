@@ -114,8 +114,8 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 /*@}*/
 
 #ifdef RT_DEBUG
-#define RT_ASSERT(EX)					if (!(EX)) { rt_kprintf("(%s) assert failed at %s:%d \n", \
-										#EX, __FUNCTION__, __LINE__); while (1);}
+#define RT_ASSERT(EX)					if (!(EX)) {volatile char dummy=0; rt_kprintf("(%s) assert failed at %s:%d \n", \
+										#EX, __FUNCTION__, __LINE__); while (dummy==0);}
 #else
 #define RT_ASSERT(EX)
 #endif
@@ -206,7 +206,7 @@ enum rt_object_class_type
 #endif
 	RT_Object_Class_Unknown,							/* The object is unknown. 					*/
 	RT_Object_Class_Static = 0x80						/* The object is a static object. 			*/
-};	
+};
 
 /*
  * the information of the kernel object
@@ -499,7 +499,7 @@ struct rt_mempool
 
 	void		*start_address;						/* memory pool start 							*/
 	rt_size_t 	size;								/* size of memory pool 							*/
-	
+
 	rt_size_t 	block_size;							/* size of memory blocks 						*/
 	rt_uint8_t	*block_list;						/* memory blocks list 							*/
 
