@@ -55,41 +55,59 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 			rtgui_rect_t rect = {0, 0, 16, 16};
 			rtgui_rect_moveto(&rect, 30, 120);
 
-			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_RAISE); 
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_RAISE);
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "raise", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SIMPLE);
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "simple", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "sunken", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "box", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_STATIC);
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "static", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_EXTRA);
-			rect.x1 += 20; rect.x2 += 20 + 50;
+			rect.x1 += 20;
+			rect.x2 += 20 + 50;
 			rtgui_dc_draw_text(dc, "extra", &rect);
-			rect.x1 -= 20; rect.x2 -= 20 + 50;
-			rect.y1 += 20; rect.y2 += 20;
+			rect.x1 -= 20;
+			rect.x2 -= 20 + 50;
+			rect.y1 += 20;
+			rect.y2 += 20;
 		}
 		/* »æÍ¼Íê³É */
 		rtgui_dc_end_drawing(dc);

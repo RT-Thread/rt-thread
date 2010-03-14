@@ -34,32 +34,34 @@ void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 /* 创建一个演示视图，需提供父workbench和演示用的标题 */
 rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 {
-    char view_name[32];
-    struct rtgui_view* view;
+	char view_name[32];
+	struct rtgui_view* view;
 
-    /* 设置视图的名称 */
-    rt_sprintf(view_name, "view %d", demo_view_number + 1);
-    view = rtgui_view_create(view_name);
-    if (view == RT_NULL) return RT_NULL;
+	/* 设置视图的名称 */
+	rt_sprintf(view_name, "view %d", demo_view_number + 1);
+	view = rtgui_view_create(view_name);
+	if (view == RT_NULL) return RT_NULL;
 
 	/* 创建成功后，添加到数组中 */
 	demo_view_list[demo_view_number] = view;
 	demo_view_number ++;
 
-    /* 添加到父workbench中 */
+	/* 添加到父workbench中 */
 	rtgui_workbench_add_view(workbench, view);
 
-    /* 添加下一个视图和前一个视图按钮 */
-    {
-    	struct rtgui_rect rect;
-        struct rtgui_button *next_btn, *prev_btn;
+	/* 添加下一个视图和前一个视图按钮 */
+	{
+		struct rtgui_rect rect;
+		struct rtgui_button *next_btn, *prev_btn;
 		struct rtgui_label *label;
 		struct rtgui_staticline *line;
 
 		/* 获得视图的位置信息(在加入到workbench中时，workbench会自动调整视图的大小) */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
-		rect.x1 += 5; rect.y1 += 5;
-		rect.x2 -= 5; rect.y2 = rect.y1 + 20;
+		rect.x1 += 5;
+		rect.y1 += 5;
+		rect.x2 -= 5;
+		rect.y2 = rect.y1 + 20;
 
 		/* 创建标题用的标签 */
 		label = rtgui_label_create(title);
@@ -68,7 +70,8 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 		/* 添加标签到视图中 */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
 
-		rect.y1 += 20; rect.y2 += 20;
+		rect.y1 += 20;
+		rect.y2 += 20;
 		/* 创建一个水平的staticline线 */
 		line = rtgui_staticline_create(RTGUI_HORIZONTAL);
 		/* 设置静态线的位置信息 */
@@ -78,12 +81,14 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 
 		/* 获得视图的位置信息 */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
-		rect.x2 -= 5; rect.y2 -= 5;
-		rect.x1 = rect.x2 - 50; rect.y1 = rect.y2 - 20;
+		rect.x2 -= 5;
+		rect.y2 -= 5;
+		rect.x1 = rect.x2 - 50;
+		rect.y1 = rect.y2 - 20;
 
 		/* 创建"下一个"按钮 */
-        next_btn = rtgui_button_create("Next");
-        /* 设置onbutton动作到demo_view_next函数 */
+		next_btn = rtgui_button_create("Next");
+		/* 设置onbutton动作到demo_view_next函数 */
 		rtgui_button_set_onbutton(next_btn, demo_view_next);
 		/* 设置按钮的位置信息 */
 		rtgui_widget_set_rect(RTGUI_WIDGET(next_btn), &rect);
@@ -92,8 +97,10 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 
 		/* 获得视图的位置信息 */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
-		rect.x1 += 5; rect.y2 -= 5;
-		rect.x2 = rect.x1 + 50; rect.y1 = rect.y2 - 20;
+		rect.x1 += 5;
+		rect.y2 -= 5;
+		rect.x2 = rect.x1 + 50;
+		rect.y1 = rect.y2 - 20;
 
 		/* 创建"上一个"按钮 */
 		prev_btn = rtgui_button_create("Prev");
@@ -103,9 +110,9 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 		rtgui_widget_set_rect(RTGUI_WIDGET(prev_btn), &rect);
 		/* 添加按钮到视图中 */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(prev_btn));
-    }
+	}
 
-    /* 返回创建的视图 */
+	/* 返回创建的视图 */
 	return view;
 }
 
@@ -133,7 +140,7 @@ rtgui_box_t* demo_view_create_box(rtgui_view_t* view, int orient)
 	rect.y1 += 45;
 	rect.y2 -= 25;
 
-    /* 创建一个自动布局引擎 */
+	/* 创建一个自动布局引擎 */
 	box = rtgui_box_create(orient, &rect);
 	/* 添加box控件到视图中 */
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(box));

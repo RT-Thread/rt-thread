@@ -22,8 +22,10 @@ static void listitem_action(void* parameter)
 	win = rtgui_win_create(RTGUI_TOPLEVEL(workbench),
 		"窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
 
-	rect.x1 += 20; rect.x2 -= 5;
-	rect.y1 += 5; rect.y2 = rect.y1 + 20;
+	rect.x1 += 20;
+	rect.x2 -= 5;
+	rect.y1 += 5;
+	rect.y2 = rect.y1 + 20;
 
 	rt_sprintf(label_text, "动作 %d", no);
 	label = rtgui_label_create(label_text);
@@ -51,7 +53,7 @@ static struct rtgui_list_item items[] =
 	{"列表项3", RT_NULL, listitem_action, (void*)3},
 	{"列表项4", RT_NULL, listitem_action, (void*)4},
 	{"列表项5", RT_NULL, listitem_action, (void*)5},
-	{"返回", RT_NULL, return_action, RT_NULL},
+	{"返回",    RT_NULL, return_action,    RT_NULL},
 };
 
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
@@ -62,7 +64,8 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 
-	_view = rtgui_list_view_create(items, sizeof(items)/sizeof(struct rtgui_list_item), &rect);
+	_view = rtgui_list_view_create(items, sizeof(items)/sizeof(struct rtgui_list_item),
+		&rect);
 	rtgui_workbench_add_view(workbench, RTGUI_VIEW(_view));
 
 	/* 模式显示视图 */
@@ -78,8 +81,10 @@ rtgui_view_t* demo_listview_view(rtgui_workbench_t* workbench)
 	view = demo_view(workbench, "列表视图演示");
 
 	demo_view_get_rect(view, &rect);
-	rect.x1 += 5; rect.x2 = rect.x1 + 80;
-	rect.y1 += 30; rect.y2 = rect.y1 + 20;
+	rect.x1 += 5;
+	rect.x2 = rect.x1 + 80;
+	rect.y1 += 30;
+	rect.y2 = rect.y1 + 20;
 	open_btn = rtgui_button_create("打开列表");
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(open_btn));
 	rtgui_widget_set_rect(RTGUI_WIDGET(open_btn), &rect);

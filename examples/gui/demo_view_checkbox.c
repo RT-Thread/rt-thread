@@ -18,10 +18,12 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	/* 先创建一个演示用的视图 */
 	view = demo_view(workbench, "CheckBox View");
 
-    /* 获得视图的位置信息 */
+	/* 获得视图的位置信息 */
 	demo_view_get_rect(view, &rect);
-	rect.x1 += 5; rect.x2 = rect.x1 + 100;
-	rect.y1 += 5; rect.y2 = rect.y1 + 20;
+	rect.x1 += 5;
+	rect.x2 = rect.x1 + 100;
+	rect.y1 += 5;
+	rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
 	checkbox = rtgui_checkbox_create("Red",RT_TRUE);
 	/* 设置前景色为红色 */
@@ -31,10 +33,12 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	/* view是一个container控件，调用add_child方法添加这个checkbox控件 */
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(checkbox));
 
-    /* 获得视图的位置信息 */
+	/* 获得视图的位置信息 */
 	demo_view_get_rect(view, &rect);
-	rect.x1 += 5; rect.x2 = rect.x1 + 100;
-	rect.y1 += 5 + 25; rect.y2 = rect.y1 + 20;
+	rect.x1 += 5;
+	rect.x2 = rect.x1 + 100;
+	rect.y1 += 5 + 25;
+	rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
 	checkbox = rtgui_checkbox_create("Blue",RT_TRUE);
 	/* 设置前景色为蓝色 */
@@ -44,10 +48,12 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	/* view是一个container控件，调用add_child方法添加这个checkbox控件 */
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(checkbox));
 
-    /* 获得视图的位置信息 */
+	/* 获得视图的位置信息 */
 	demo_view_get_rect(view, &rect);
-	rect.x1 += 5; rect.x2 = rect.x1 + 100;
-	rect.y1 += 5 + 25 + 25; rect.y2 = rect.y1 + 20;
+	rect.x1 += 5;
+	rect.x2 = rect.x1 + 100;
+	rect.y1 += 5 + 25 + 25;
+	rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
 	checkbox = rtgui_checkbox_create("12 font",RT_TRUE);
 	/* 设置字体为12点阵 */
@@ -58,10 +64,12 @@ rtgui_view_t* demo_view_checkbox(rtgui_workbench_t* workbench)
 	/* view是一个container控件，调用add_child方法添加这个checkbox控件 */
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(checkbox));
 
-    /* 获得视图的位置信息 */
+	/* 获得视图的位置信息 */
 	demo_view_get_rect(view, &rect);
-	rect.x1 += 5; rect.x2 = rect.x1 + 100;
-	rect.y1 += 5 + 25 + 25 + 25; rect.y2 = rect.y1 + 20;
+	rect.x1 += 5;
+	rect.x2 = rect.x1 + 100;
+	rect.y1 += 5 + 25 + 25 + 25;
+	rect.y2 = rect.y1 + 20;
 	/* 创建一个checkbox控件 */
 	checkbox = rtgui_checkbox_create("16 font",RT_TRUE);
 	/* 设置字体为16点阵 */

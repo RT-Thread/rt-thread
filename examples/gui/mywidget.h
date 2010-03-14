@@ -28,7 +28,7 @@
 /* 个性化控件类定义 */
 struct rtgui_mywidget
 {
-    /* 这个控件是继承自rtgui_widget控件 */
+	/* 这个控件是继承自rtgui_widget控件 */
 	struct rtgui_widget parent;
 
 	/* 状态：ON、OFF */
