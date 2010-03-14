@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2006-08-23     Bernard      first version
  * 2009-05-14     Bernard      add RT-THread device interface
+ * 2010-03-14     MingBai      US_IMR is read-only.
  */
 
 #include <rthw.h>
@@ -194,7 +195,8 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 	{
 		/* enable UART rx interrupt */
 		serial->hw_base->US_IER = 1 << 0; 		/* RxReady interrupt */
-		serial->hw_base->US_IMR |= 1 << 0; 		/* umask RxReady interrupt */
+        // US_IMR is a READ-ONLY register!
+		//serial->hw_base->US_IMR |= 1 << 0; 		/* umask RxReady interrupt */
 
 		/* install UART handler */
 		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_isr, RT_NULL);
@@ -214,7 +216,7 @@ static rt_err_t rt_serial_close(rt_device_t dev)
 	{
 		/* disable interrupt */
 		serial->hw_base->US_IDR = 1 << 0; 		/* RxReady interrupt */
-		serial->hw_base->US_IMR &= ~(1 << 0); 	/* mask RxReady interrupt */
+		//serial->hw_base->US_IMR &= ~(1 << 0); 	/* mask RxReady interrupt */
 	}
 
 	serial->hw_base->US_CR = AT91C_US_RSTRX	    | 	/* Reset Receiver      */
