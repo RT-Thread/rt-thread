@@ -1,3 +1,9 @@
+/*
+ * 程序清单：窗口演示
+ *
+ * 这个例子会先创建出一个演示用的view，当点击上面的按钮时会不同的模式创建窗口
+ */
+
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/window.h>
@@ -79,6 +85,7 @@ static void demo_win_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 	rect.y1 += 5;
 	rect.y2 = rect.y1 + 20;
 
+	/* 添加一个文本标签 */
 	label = rtgui_label_create("这是一个普通窗口");
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(label));
@@ -91,10 +98,7 @@ static void demo_win_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
 {
 	rtgui_toplevel_t *parent;
-	struct rtgui_rect rect =
-		{
-			50, 50, 200, 200
-		};
+	struct rtgui_rect rect ={50, 50, 200, 200};
 
 	parent = RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(widget));
 	msgbox = rtgui_win_create(parent, "Information", &rect, RTGUI_WIN_STYLE_DEFAULT);

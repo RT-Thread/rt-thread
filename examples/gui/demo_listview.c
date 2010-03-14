@@ -1,3 +1,9 @@
+/*
+ * 程序清单：列表视图演示
+ *
+ * 这个例子会先创建出一个演示用的view，当点击上面的按钮时会按照模式显示的形式显示
+ * 新的列表视图
+ */
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
@@ -8,6 +14,7 @@ static rtgui_workbench_t* workbench = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
 static rtgui_image_t* return_image = RT_NULL;
 
+/* 列表项的动作函数 */
 static void listitem_action(void* parameter)
 {
 	char label_text[32];
@@ -27,6 +34,7 @@ static void listitem_action(void* parameter)
 	rect.y1 += 5;
 	rect.y2 = rect.y1 + 20;
 
+	/* 添加相应的标签 */
 	rt_sprintf(label_text, "动作 %d", no);
 	label = rtgui_label_create(label_text);
 
@@ -37,15 +45,18 @@ static void listitem_action(void* parameter)
 	rtgui_win_show(win, RT_FALSE);
 }
 
+/* 返回功能的动作函数 */
 static void return_action(void* parameter)
 {
 	if (_view != RT_NULL)
 	{
+		/* 删除列表视图 */
 		rtgui_view_destroy(RTGUI_VIEW(_view));
 		_view = RT_NULL;
 	}
 }
 
+/* 各个列表项定义 */
 static struct rtgui_list_item items[] =
 {
 	{"列表项1", RT_NULL, listitem_action, (void*)1},
@@ -56,22 +67,26 @@ static struct rtgui_list_item items[] =
 	{"返回",    RT_NULL, return_action,    RT_NULL},
 };
 
+/* 打开列表视图用的按钮触发函数 */
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
-	/* create a file list view */
 	rtgui_rect_t rect;
 
+	/* 获得顶层的workbench */
 	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 
+	/* 创建一个列表视图， 项指定为items */
 	_view = rtgui_list_view_create(items, sizeof(items)/sizeof(struct rtgui_list_item),
 		&rect);
+	/* 在workbench中添加相应的视图 */
 	rtgui_workbench_add_view(workbench, RTGUI_VIEW(_view));
 
 	/* 模式显示视图 */
 	rtgui_view_show(RTGUI_VIEW(_view), RT_FALSE);
 }
 
+/* 创建用于演示列表视图的视图 */
 rtgui_view_t* demo_listview_view(rtgui_workbench_t* workbench)
 {
 	rtgui_rect_t rect;
@@ -80,6 +95,7 @@ rtgui_view_t* demo_listview_view(rtgui_workbench_t* workbench)
 
 	view = demo_view(workbench, "列表视图演示");
 
+	/* 添加动作按钮 */
 	demo_view_get_rect(view, &rect);
 	rect.x1 += 5;
 	rect.x2 = rect.x1 + 80;
