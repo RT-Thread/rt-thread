@@ -57,11 +57,11 @@ int strcasecmp(const char *a, const char *b);
 int strncasecmp(const char *cs, const char *ct, size_t count);
 int sscanf(const char * buf, const char * fmt, ...);
 size_t strlen(const char *s);
-char * strstr(const char * s1,const char * s2);
+char *strstr(const char * s1,const char * s2);
 char *strcpy(char *dest, const char *src);
 char *strncpy(char *dest, const char *src, size_t n);
-char *strncat(char *s, const char *t, size_t n) ;
-char* strcat(register char* s,register const char* t);
+char *strncat(char *dest, const char *src, size_t count);
+char *strcat(char * dest, const char * src);
 char *strrchr(const char *t, int c);
 char *strdup(const char *s);
 

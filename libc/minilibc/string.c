@@ -60,38 +60,34 @@ int strncmp(const char * cs,const char * ct,rt_ubase_t count)
 	return __res;
 }
 
-char* strcat(register char* s,register const char* t)
+char *strcat(char * dest, const char * src)
 {
-	char *dest = s;
-	
-	s += strlen(s);
-	for (;;) 
-	{
-		if (!(*s = *t)) break; 
-		++s; 
-		++t;
-	}
-	
-	return dest;
+	char *tmp = dest;
+
+	while (*dest)
+		dest++;
+	while ((*dest++ = *src++) != '\0')
+		;
+
+	return tmp;
 }
 
-char *strncat(char *s, const char *t, size_t n) 
+char *strncat(char *dest, const char *src, size_t count)
 {
-	char *dest = s;
-	register char *max;
-	
-	s += rt_strlen(s);
-	if ((max=s+n)==s)
-		goto fini;
-	for (;;) 
-	{
-		if (!(*s = *t)) break; 
-		if (++s==max) break; 
-		++t;
+	char *tmp = dest;
+
+	if (count) {
+		while (*dest)
+			dest++;
+		while ((*dest++ = *src++)) {
+			if (--count == 0) {
+				*dest = '\0';
+				break;
+			}
+		}
 	}
-	*s=0;
-fini:
-	return dest;
+
+	return tmp;
 }
 
 char *strrchr(const char *t, int c) 
