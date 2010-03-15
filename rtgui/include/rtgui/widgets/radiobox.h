@@ -25,7 +25,8 @@ struct rtgui_radiobox
 	rt_uint8_t item_size;
 
 	char** items;
-	rt_uint16_t item_count, item_selection;
+	rt_uint16_t item_count;
+	rt_int16_t  item_selection;
 };
 typedef struct rtgui_radiobox rtgui_radiobox_t;
 
