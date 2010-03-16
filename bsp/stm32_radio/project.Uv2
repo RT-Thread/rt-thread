@@ -48,6 +48,7 @@ File 1,1,<.\picture.c><picture.c>
 File 1,1,<.\station_list.c><station_list.c>
 File 1,1,<.\ili9325\ili9325.c><ili9325.c>
 File 1,1,<.\touch.c><touch.c>
+File 1,1,<.\radio_list_update.c><radio_list_update.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\ipc.c><ipc.c>

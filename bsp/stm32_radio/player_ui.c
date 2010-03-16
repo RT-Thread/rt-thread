@@ -213,6 +213,33 @@ static void function_play_radio(void* parameter)
 	}
 }
 
+static void function_radio_list_update(void* parameter)
+{
+	extern void update_radio_list_req(void);
+	extern void update_radio_thread(void* parameter);
+	extern rt_mq_t update_radio_mq;
+	rt_thread_t update_radio_list_thread;
+
+
+	if(update_radio_mq == RT_NULL)
+	{
+		update_radio_mq = rt_mq_create("updateRadioList", sizeof(struct player_request),
+			1, RT_IPC_FLAG_FIFO);
+		RT_ASSERT(update_radio_mq != RT_NULL);
+
+		update_radio_list_thread = rt_thread_create("update_bg", update_radio_thread, RT_NULL,
+			1024 ,20, 5);
+
+		if (update_radio_list_thread == RT_NULL) rt_kprintf("updateRadioList thread init failed\n");
+		else
+		{
+			rt_thread_startup(update_radio_list_thread);
+			update_radio_list_req();
+		}
+	}
+	return;
+}
+
 static void function_filelist(void* parameter)
 {
 	rtgui_rect_t rect;
@@ -345,7 +372,7 @@ void function_cable(void* parameter)
 const struct rtgui_list_item function_list[] =
 {
 	{"选择电台", RT_NULL, function_play_radio, RT_NULL},
-	{"更新电台", RT_NULL, function_action, RT_NULL},
+	{"更新电台", RT_NULL, function_radio_list_update, RT_NULL},
 	{"播放文件", RT_NULL, function_filelist, RT_NULL},
 	{"浏览图片", RT_NULL, function_show_picure, RT_NULL},
 	{"设备信息", RT_NULL, function_device, RT_NULL},
@@ -760,23 +787,23 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				rtgui_view_t *view;
 				rtgui_label_t *label;
 				rtgui_rect_t rect = {0, 0, 150, 150}, container_rect;
-			
+
 				rtgui_graphic_driver_get_default_rect(&container_rect);
 				/* set centre */
 				rtgui_rect_moveto_align(&container_rect, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 				view = rtgui_view_create("USB");
 				rtgui_workbench_add_view(workbench, view);
-			
+
 				/* set container to window rect */
 				container_rect = rect;
-			
+
 				rect.x1 = 0; rect.y1 = 0;
 				rect.x2 = 120; rect.y2 = 20;
 				label = rtgui_label_create("USB 联机中...");
 				rtgui_rect_moveto_align(&container_rect, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 				rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 				rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
-			
+
 				rtgui_view_show(view, RT_TRUE);
 				/* never reach hear */
 			}
@@ -796,7 +823,7 @@ rt_bool_t player_workbench_event_handler(rtgui_widget_t *widget, rtgui_event_t *
     if (event->type == RTGUI_EVENT_KBD)
     {
         struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-        if (((ekbd->type == RTGUI_KEYUP) && ekbd->key == RTGUIK_HOME) 
+        if (((ekbd->type == RTGUI_KEYUP) && ekbd->key == RTGUIK_HOME)
 			&& !RTGUI_WORKBENCH_IS_MODAL_MODE(workbench))
         {
             /* active home view */
