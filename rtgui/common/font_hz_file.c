@@ -72,7 +72,7 @@ static rt_uint8_t* _font_cache_get(struct rtgui_hz_file_font* font, rt_uint16_t 
     {
         /* remove a cache */
         struct hz_cache* left;
-        left = SPLAY_LEFT(font->cache_root.sph_root, hz_node);
+        left = font->cache_root.sph_root;
         while (SPLAY_LEFT(left, hz_node) != RT_NULL) left = SPLAY_LEFT(left, hz_node);
 
         /* remove the left node */
