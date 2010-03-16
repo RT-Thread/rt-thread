@@ -422,8 +422,8 @@ char *rt_strdup(const char *s)
 void rt_show_version()
 {
 	rt_kprintf("\n \\ | /\n");
-	rt_kprintf("- RT - Thread Operating System\n");
-	rt_kprintf(" / | \\ 0.%d.%d build %s\n", RT_VERSION, RT_SUBVERSION, __DATE__);
+	rt_kprintf("- RT -     Thread Operating System\n");
+	rt_kprintf(" / | \\ 0.%d.%d build %s %s\n", RT_VERSION, RT_SUBVERSION, __DATE__, __TIME__);
 	rt_kprintf(" 2006 - 2009 Copyright by rt-thread team\n");
 }
 
@@ -983,12 +983,12 @@ void* memmove(void *dest, const void *src, size_t n) __attribute__((weak, alias(
 int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alias("rt_memcmp")));
 
 size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
-char * strstr(const char * s1,const char * s2) __attribute__((weak, alias("rt_strstr")));
+char *strstr(const char *s1,const char *s2) __attribute__((weak, alias("rt_strstr")));
 int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
 char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
-int strncmp(const char * cs, const char * ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
+int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
 #ifdef RT_USING_HEAP
-char* strdup(const char* s) __attribute__((weak, alias("rt_strdup")));
+char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
 #endif
 #endif
 
