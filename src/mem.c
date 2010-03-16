@@ -396,7 +396,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	/* expand memory */
 	nmem = rt_malloc(newsize);
-	rt_memcpy(nmem, rmem, size);
+	rt_memcpy(nmem, rmem, size < newsize ? size : newsize);
 
 	rt_free(rmem);
 
