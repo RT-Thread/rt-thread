@@ -14,6 +14,7 @@
  */
 
 #include "rtc_calendar.h"
+#include <string.h>
 
 extern void rt_hw_console_putc(char c);
 extern rt_uint8_t rt_hw_serial_getc(void);
@@ -145,18 +146,18 @@ void rt_rtc_year_month_day_seperate(rt_uint32_t year)
 		rt_kprintf("\nPlease input year and month, if not, system default is loaded!\n");
 		year = DEFAULT_YEAR;
 	}
-	if (year / 100 < 30 && year / 100 > 18)					
+	if (year / 100 < 30 && year / 100 > 18)
 	{
 		year_seprt = year;
 		month_seprt = 0;
 		day_seprt = 0;
-	} else if (year / 100 < 300 && year / 100 > 196)		
+	} else if (year / 100 < 300 && year / 100 > 196)
 	{
 		year_seprt = year / 10;
 		month_seprt = year % 10;
 		day_seprt = 0;
-	} else if (year / 100 < 3000 && year / 100 > 1960)		
-	{														
+	} else if (year / 100 < 3000 && year / 100 > 1960)
+	{
 		year_seprt = year / 100;
 		month_seprt = year % 100;
 		if (month_seprt > 12) {
@@ -166,11 +167,11 @@ void rt_rtc_year_month_day_seperate(rt_uint32_t year)
 		} else if (month_seprt < 10)
 			day_seprt = 0;
 
-	} else if (year / 100 < 30000 && year / 100 > 19600)	                                                                                        
-	{														
+	} else if (year / 100 < 30000 && year / 100 > 19600)
+	{
 		year_seprt = year / 1000;
 		month_seprt = (year % 1000) / 100;
-		if (month_seprt == 0)								
+		if (month_seprt == 0)
 		{
 			month_seprt = (year % 100) / 10;
 			day_seprt = year % 10;
@@ -210,7 +211,7 @@ void rt_rtc_weekdate_calculate(void)
 
 }
 
-extern char *rt_strlcpy(char *dest, const char *src, rt_ubase_t n);
+extern size_t strlcpy(char *dest, const char *src, size_t siz);
 rt_uint8_t *list_month[12]={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 void rt_calendar(void)
 {
@@ -219,10 +220,10 @@ void rt_calendar(void)
 	rt_uint8_t i = 0;
 	rt_int32_t result, num_month, num_year;
 	rt_uint8_t date_year[7], date_month[3], *date = __DATE__;
-	
-	rt_strlcpy((char *)date_month, (const char *)date, 3);
+
+	strlcpy((char *)date_month, (const char *)date, 3);
 	date += 7;
-	rt_strlcpy((char *)date_year,  (const char *)date, 4);
+	strlcpy((char *)date_year,  (const char *)date, 4);
 	date = RT_NULL;
 	num_year = atoi(date_year);
 	do{
@@ -231,7 +232,7 @@ void rt_calendar(void)
 			result = 1;
 		else
 			num_month = i;
-	}while(result);	
+	}while(result);
 	i = 0;
 	result = 1;
 	year = num_year*100 + num_month;
