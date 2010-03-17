@@ -12,6 +12,8 @@
  * 2006-03-16     Bernard      the first version
  * 2006-05-25     Bernard      rewrite vsprintf
  * 2006-08-10     Bernard      add rt_show_version
+ * 2010-03-17     Bernard      remove rt_strlcpy function
+ *                             fix gcc compiling issue.
  */
 
 #include <rtthread.h>
@@ -28,6 +30,7 @@ int errno;
 #else
 #include <errno.h>
 #endif
+static rt_device_t _console_device = RT_NULL;
 
 /*
  * This function will get errno
@@ -336,26 +339,6 @@ char *rt_strncpy(char *dest, const char *src, rt_ubase_t n)
 }
 
 /**
- * This function will copy string no more than n bytes.
- *
- * @param dest the string to copy
- * @param src the string to be copied
- * @param n the maximum copied length
- *
- * @return the result with '\0' at the end
- */
-char *rt_strlcpy(char *dest, const char *src, rt_ubase_t n)
-{
-	char *tmp = (char *) dest, *s = (char *) src;
-
-	while(n--)
-		*tmp++ = *s++;
-	*tmp = '\0';
-
-	return dest;
-}
-
-/**
  * This function will compare two strings with specified maximum length
  *
  * @param cs the string to be compared
@@ -423,7 +406,7 @@ void rt_show_version()
 {
 	rt_kprintf("\n \\ | /\n");
 	rt_kprintf("- RT -     Thread Operating System\n");
-	rt_kprintf(" / | \\ 0.%d.%d build %s %s\n", RT_VERSION, RT_SUBVERSION, __DATE__, __TIME__);
+	rt_kprintf(" / | \\ 0.%d.%d build %s\n", RT_VERSION, RT_SUBVERSION, __DATE__);
 	rt_kprintf(" 2006 - 2009 Copyright by rt-thread team\n");
 }
 
@@ -903,7 +886,6 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 	return n;
 }
 
-static rt_device_t _console_device = RT_NULL;
 /**
  * This function will set console to a device.
  * After set a device to console, all output of rt_kprintf will be
@@ -939,7 +921,10 @@ rt_device_t rt_console_set_device(const char* name)
 }
 
 #if defined(__GNUC__)
-void __attribute__((weak)) rt_hw_console_output(const char* str)
+void rt_hw_console_output(const char* str) __attribute__((weak));
+
+
+void rt_hw_console_output(const char* str)
 #elif defined(__CC_ARM)
 __weak void rt_hw_console_output(const char* str)
 #elif defined(__ICCARM__)
