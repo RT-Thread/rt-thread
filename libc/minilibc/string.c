@@ -11,6 +11,8 @@
  * Date           Author       Notes
  * 2008-08-14     Bernard      the first version
  * 2010-02-15     Gary Lee     add strlcpy
+ * 2010-03-17     Bernard      add strlcpy implementation to this file.
+ *                             fix strlcpy declaration
  */
 
 #include <rtthread.h>
@@ -24,14 +26,34 @@ char *strcpy(char *dest, const char *src)
 	return (char *)rt_strncpy(dest, src, rt_strlen(src) + 1);
 }
 
-char *strncpy(char *dest, const char *src, rt_ubase_t n)
+char *strncpy(char *dest, const char *src, size_t siz)
 {
-	return (char *)rt_strncpy(dest, src, n);
+	return (char *)rt_strncpy(dest, src, siz);
 }
 
-char *strlcpy(char *dest, const char *src, rt_ubase_t n)
+size_t strlcpy(char *dst, const char *src, size_t siz)
 {
-	return (char *)rt_strlcpy(dest, src, n);
+	register char *d = dst;
+	register const char *s = src;
+	register size_t n = siz;
+
+	/* Copy as many bytes as will fit */
+	if (n != 0 && --n != 0)
+	{
+		do
+		{
+			if ((*d++ = *s++) == 0) break;
+		} while (--n != 0);
+	}
+
+	/* Not enough room in dst, add NUL and traverse rest of src */
+	if (n == 0)
+	{
+		if (siz != 0) *d = '\0';	/* NUL-terminate dst */
+		while (*s++) ;
+	}
+
+	return(s - src - 1);			/* count does not include NUL */
 }
 
 int strcmp (const char *s1, const char *s2)
@@ -47,7 +69,7 @@ int strcmp (const char *s1, const char *s2)
  * @ct: Another string
  * @count: The maximum number of bytes to compare
  */
-int strncmp(const char * cs,const char * ct,rt_ubase_t count)
+int strncmp(const char *cs,const char *ct, size_t count)
 {
 	register signed char __res = 0;
 
