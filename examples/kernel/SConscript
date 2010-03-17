@@ -9,9 +9,16 @@ thread_same_priority.c
 thread_static_simple.c
 thread_dynamic_simple.c
 thread_delete.c
+semaphore_static.c
+semaphore_dynamic.c
+semaphore_priority.c
+semaphore_buffer_worker.c
+heap_malloc.c
+heap_realloc.c
 """)
 
 # The set of source files associated with this SConscript file.
 obj = env.Object(src_local)
+env.Append(CPPDEFINES='RT_USING_TC')
 
 Return('obj')
