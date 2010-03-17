@@ -108,7 +108,7 @@ void rtthread_startup(void)
 
     /* init hardware device */
 #ifdef RT_USING_DFS
-    GPIO_ResetBits(GPIOC,GPIO_Pin_6);
+    GPIO_ResetBits(GPIOC,GPIO_Pin_6); /* SD card power up */
     rt_hw_sdcard_init();
     rt_hw_spi_flash_init();
 #endif

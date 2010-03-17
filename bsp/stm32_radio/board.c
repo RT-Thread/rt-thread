@@ -71,9 +71,9 @@ void rt_hw_timer_handler(void)
 static void all_device_reset(void)
 {
     /* RESET */
-    /* DM9000A     PE5  */
-    /* LCD         PF10 */
-    /* SPI-FLASH   PA3  */
+    /* DM9000A          PE5  */
+    /* LCD              PF10 */
+    /* SPI-FLASH        PA3  */
 
     /*  CS */
     /* DM9000A FSMC_NE4 PG12 */
@@ -88,6 +88,11 @@ static void all_device_reset(void)
 
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    /* SDIO POWER */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    GPIO_Init(GPIOC,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOC,GPIO_Pin_6); /* SD card power down */
 
     /* SPI_FLASH CS */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
@@ -184,9 +189,9 @@ static void all_device_reset(void)
     }
     /* FSMC GPIO configure */
 
-    GPIO_SetBits(GPIOE,GPIO_Pin_5);  /* DM9000A   */
-    GPIO_SetBits(GPIOF,GPIO_Pin_10); /* LCD       */
-    GPIO_SetBits(GPIOA,GPIO_Pin_3);  /* SPI_FLASH */
+    GPIO_SetBits(GPIOE,GPIO_Pin_5);   /* DM9000A          */
+    GPIO_SetBits(GPIOF,GPIO_Pin_10);  /* LCD              */
+    GPIO_SetBits(GPIOA,GPIO_Pin_3);   /* SPI_FLASH        */
 }
 
 /**
@@ -209,8 +214,8 @@ void rt_hw_board_init()
     SysTick_Config( SystemCoreClock / RT_TICK_PER_SECOND );
 
     /* Console Initialization*/
-	rt_hw_usart_init();
-	rt_console_set_device("uart1");
+    rt_hw_usart_init();
+    rt_console_set_device("uart1");
 
     rt_kprintf("\r\n\r\nSystemInit......\r\n");
 
@@ -240,17 +245,6 @@ void rt_hw_board_init()
         }
         rt_kprintf("\rmem test pass!!\r\n");
     }/* memtest */
-
-    {
-        /* PC6 for SDCard Rst */
-        GPIO_InitTypeDef GPIO_InitStructure;
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(GPIOC,&GPIO_InitStructure);
-        GPIO_SetBits(GPIOC,GPIO_Pin_6);
-    }
 
     /* SPI1 config */
     {
