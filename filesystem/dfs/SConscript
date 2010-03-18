@@ -3,7 +3,6 @@ Import('rtconfig')
 Import('RTT_ROOT')
 
 dfs = Split("""
-src/dfs_cache.c
 src/dfs_fs.c
 src/dfs_init.c
 src/dfs_posix.c
@@ -21,21 +20,6 @@ filesystems/fatfs/fatfs_filename.c
 filesystems/fatfs/fatfs_init.c
 filesystems/fatfs_misc.c
 filesystems/fatfs/fatfs_mount.c""")
-
-# DFS-EFSL options
-efsl = Split("""
-filesystems/efsl/src/base/efs.c
-filesystems/efsl/src/base/extract.c
-filesystems/efsl/src/base/partition.c
-filesystems/efsl/src/base/plibc.c
-filesystems/efsl/src/fs/vfat/dir.c
-filesystems/efsl/src/fs/vfat/fat.c
-filesystems/efsl/src/fs/vfat/file.c
-filesystems/efsl/src/fs/vfat/fs.c
-filesystems/efsl/src/fs/vfat/ls.c
-filesystems/efsl/src/fs/vfat/time.c
-filesystems/efsl/src/fs/vfat/ui.c
-""")
 
 # DFS-ELMFAT options
 elmfat = Split("""
@@ -71,10 +55,6 @@ path = [RTT_ROOT + '/filesystem/dfs', RTT_ROOT + '/filesystem/dfs/include']
 if rtconfig.RT_USING_DFS_YAFFS2:
     src_local = src_local + yaffs2_main + yaffs2_comm
     path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/yaffs2', RTT_ROOT + '/filesystem/dfs/filesystems/yaffs2/direct']
-
-if rtconfig.RT_USING_DFS_EFSL:
-    src_local = src_local + efsl
-    path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/include', RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/base/include', RTT_ROOT + '/filesystem/dfs/filesystems/efsl/src/fs/vfat/include']
 
 if rtconfig.RT_USING_DFS_ELMFAT:
     src_local = src_local + elmfat
