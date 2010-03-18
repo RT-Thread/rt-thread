@@ -12,7 +12,6 @@
  * 2006-03-13     Bernard      first version
  * 2006-10-05     Alsor.Z      for s3c2440 initialize
  * 2008-01-29     Yi.Qiu       for QEMU emulator
- * 2010-03-15	  Gary Lee	   Modified the structure of startcode
  */
 
 #define CONFIG_STACKSIZE 	512
@@ -37,10 +36,6 @@
 #define S_R2  				8
 #define S_R1  				4
 #define S_R0 				0
-
-#define CLK_CTL_BASE	    0x4C000000	/* Gary Lee 				*/
-#define MDIV_405		    0x7f << 12	/* Gary Lee 				*/
-#define PSDIV_405		    0x21		/* Gary Lee 				*/
 
 .equ 	USERMODE, 			0x10
 .equ 	FIQMODE,			0x11
@@ -180,14 +175,46 @@ _load_address:
  *************************************************************************
  */
 reset:
-    bl      mode_svn32
-    bl      watchdog_disable
-    bl      interrupt_disable
-    bl     sys_clock_setup
-    bl		cpu_crit_init
-    bl		interrupt_vector_setup
+	/* set the cpu to SVC32 mode 	                                    */
+	mrs		r0, cpsr
+	bic		r0, r0,#MODEMASK
+	orr		r0, r0,#SVCMODE
+	msr		cpsr, r0
+	
+    /* watch dog disable 			                                    */   
+	ldr 	r0, =WTCON
+	ldr 	r1, =0x0
+	str 	r1, [r0]
+	
+	/* mask all IRQs by clearing all bits in the INTMRs 				*/
+	ldr		r1, =INTMSK
+	ldr		r0, =0xffffffff
+	str		r0, [r1]
+	ldr		r1, =INTSUBMSK
+	ldr		r0, =0x7fff				/*all sub interrupt disable			*/
+	str		r0, [r1]
+
+	/* set interrupt vector 		*/
+	ldr 	r0, _load_address       /* _load_address = 0x30000000       */
+	mov		r1, #0x0				/* target address    				*/
+	add		r2, r0, #0x20			/* size, 32bytes         			*/
+
+copy_loop:
+	ldmia	r0!, {r3-r10}			/* copy from source address [r0]    */
+	stmia	r1!, {r3-r10}			/* copy to   target address [r1]    */
+	cmp		r0, r2					/* until source end addreee [r2]    */
+	ble		copy_loop
+	
 	bl		stack_setup
-    bl      bss_clear
+    /* clear .bss */ 
+	mov   	r0,#0                   /* get a zero 						*/
+	ldr   	r1,=__bss_start         /* bss start 						*/
+	ldr   	r2,=__bss_end           /* bss end 							*/
+	
+bss_loop:
+	cmp   	r1,r2                   /* check if data to clear 			*/
+	strlo 	r0,[r1],#4              /* clear 4 bytes 					*/
+	blo   	bss_loop                /* loop until done 					*/	
 	/* call C++ constructors of global objects 							*/
 	ldr 	r0, =__ctors_start__
 	ldr 	r1, =__ctors_end__
@@ -213,87 +240,6 @@ _rtthread_startup:
  * Subroutines
  *************************************************************************
  */
-	/* set the cpu to SVC32 mode 	                                    */
-mode_svn32:
-	mrs		r0, cpsr
-	bic		r0, r0,#MODEMASK
-	orr		r0, r0,#SVCMODE
-	msr		cpsr, r0
-
-	mov     pc, lr
-
-    /* watch dog disable 			                                    */
-watchdog_disable:    
-	ldr 	r0, =WTCON
-	ldr 	r1, =0x0
-	str 	r1, [r0]
-
-	mov     pc, lr
-
-	/* mask all IRQs by clearing all bits in the INTMRs 				*/
-interrupt_disable:	
-	ldr		r1, =INTMSK
-	ldr		r0, =0xffffffff
-	str		r0, [r1]
-	ldr		r1, =INTSUBMSK
-	ldr		r0, =0x7fff				/*all sub interrupt disable			*/
-	str		r0, [r1]
-
-	mov     pc, lr
-
-sys_clock_setup:	/* FCLK:HCLK:PCLK = 1:4:8           */	
-    ldr		r0, =CLKDIVN	
-    mov		r1, #5	
-    str		r1, [r0]
-    
-    mrc		p15, 0, r1, c1, c0, 0		/* switch to asynchronous mode			*/	
-    orr		r1, r1, #0xc0000000			
-    mcr		p15, 0, r1, c1, c0, 0
-    
-    mov		r1, #CLK_CTL_BASE		
-    mov		r2, #MDIV_405		
-    add		r2, r2, #PSDIV_405		
-    str		r2, [r1, #0x04]				/* MPLLCON Gary Lee 					*/ 
-
-    mov     pc, lr
-
-/*==============================================================================*/
-cpu_crit_init:
-	/* flush v4 I/D caches              */
-
-	mov		r0, #0
-	mcr		p15, 0, r0, c7, c7, 0		/* flush v3/v4 cache 					*/
-	mcr		p15, 0, r0, c8, c7, 0		/* flush v4 TLB 						*/
-
-	/* disable MMU stuff and caches     */
-	mrc		p15, 0, r0, c1, c0, 0
-	bic		r0, r0, #0x00002300	        /* clear bits 13, 9:8 (--V- --RS)       */
-	bic		r0, r0, #0x00000087	        /* clear bits 7,  2:0 (B--- -CAM)        */
-	orr		r0, r0, #0x00000002	        /* set bit 2  (A) Align                  */
-	orr		r0, r0, #0x00001000	        /* set bit 12 (I) I-Cache               */
-	mcr		p15, 0, r0, c1, c0, 0
-
-	mov	    ip, lr
-
-	bl		lowlevel_init
-
-	mov		lr, ip
-	mov		pc, lr
-
-	/* set interrupt vector 		*/
-interrupt_vector_setup:
-	ldr 	r0, _load_address       /* _load_address = 0x30000000       */
-	mov		r1, #0x0				/* target address    				*/
-	add		r2, r0, #0x20			/* size, 32bytes         			*/
-
-copy_loop:
-	ldmia	r0!, {r3-r10}			/* copy from source address [r0]    */
-	stmia	r1!, {r3-r10}			/* copy to   target address [r1]    */
-	cmp		r0, r2					/* until source end addreee [r2]    */
-	ble		copy_loop
-
-	mov		pc, lr	
-	
 stack_setup:
 	mrs		r0, cpsr
 	bic		r0, r0, #MODEMASK
@@ -322,19 +268,6 @@ stack_setup:
 	/* USER mode is not initialized. */
 
 	mov		pc,lr					/* The LR register may be not valid for the mode changes.*/
-
-    /* clear .bss */
-bss_clear:    
-	mov   	r0,#0                   /* get a zero 						*/
-	ldr   	r1,=__bss_start         /* bss start 						*/
-	ldr   	r2,=__bss_end           /* bss end 							*/
-	
-bss_loop:
-	cmp   	r1,r2                   /* check if data to clear 			*/
-	strlo 	r0,[r1],#4              /* clear 4 bytes 					*/
-	blo   	bss_loop                /* loop until done 					*/	
-
-	mov     pc, lr
 	
 /*
  *************************************************************************
