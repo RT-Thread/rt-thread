@@ -37,7 +37,7 @@ if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript(RTT_ROOT + '/net/lwip/SConscript', variant_dir='build/net/lwip', duplicate=0)
 
 src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
-src_drv = ['rtc.c', 'usart.c']
+src_drv = ['rtc.c', 'usart.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:
 	if rtconfig.STM32_TYPE == 'STM32F10X_HD':

@@ -335,6 +335,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 		if (size > 0)
 			err_code = -RT_EFULL;
 	}
+#ifdef RT_USING_HEAP
 	else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
 	{
 		/* DMA mode Tx */
@@ -381,6 +382,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 			rt_hw_interrupt_enable(level);
 		}
 	}
+#endif
 	else
 	{
 		/* polling mode */
@@ -544,6 +546,7 @@ void rt_hw_serial_dma_rx_isr(rt_device_t device)
  */
 void rt_hw_serial_dma_tx_isr(rt_device_t device)
 {
+#ifdef RT_USING_HEAP
 	rt_uint32_t level;
 	struct stm32_serial_data_node* data_node;
 	struct stm32_serial_device* uart = (struct stm32_serial_device*) device->private;
@@ -570,7 +573,7 @@ void rt_hw_serial_dma_tx_isr(rt_device_t device)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
-	/* free data node memory */
+	/* free data node memory(!!) */
 	rt_free(data_node);
 
 	if (uart->dma_tx->list_tail != RT_NULL)
@@ -585,6 +588,7 @@ void rt_hw_serial_dma_tx_isr(rt_device_t device)
 		/* no data to be transmitted, disable DMA */
 		DMA_Cmd(uart->dma_tx->dma_channel, DISABLE);
 	}
+#endif
 }
 
 /*@}*/
