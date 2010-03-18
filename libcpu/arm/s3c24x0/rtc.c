@@ -10,6 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-04-26     yi.qiu       first version
+ * 2010-03-18     Gary Lee     add functions such as GregorianDay
+ *                             and rt_rtc_time_to_tm
  */
 
 #include <rtthread.h>
@@ -93,6 +95,85 @@ void rt_hw_rtc_reset (void)
 	RTCCON = (RTCCON & ~0x06) | 0x08;
 	RTCCON &= ~(0x08|0x01);
 }
+
+/*
+ * This only works for the Gregorian calendar - i.e. after 1752 (in the UK)
+ */
+void GregorianDay(struct rtc_time * tm)
+{
+	int leapsToDate;
+	int lastYear;
+	int day;
+	int MonthOffset[] = { 0,31,59,90,120,151,181,212,243,273,304,334 };
+
+	lastYear=tm->tm_year-1;
+
+	/*
+	 * Number of leap corrections to apply up to end of last year
+	 */
+	leapsToDate = lastYear/4 - lastYear/100 + lastYear/400;
+
+	/*
+	 * This year is a leap year if it is divisible by 4 except when it is
+	 * divisible by 100 unless it is divisible by 400
+	 *
+	 * e.g. 1904 was a leap year, 1900 was not, 1996 is, and 2000 will be
+	 */
+	if((tm->tm_year%4==0) &&
+	   ((tm->tm_year%100!=0) || (tm->tm_year%400==0)) &&
+	   (tm->tm_mon>2)) {
+		/*
+		 * We are past Feb. 29 in a leap year
+		 */
+		day=1;
+	} else {
+		day=0;
+	}
+
+	day += lastYear*365 + leapsToDate + MonthOffset[tm->tm_mon-1] + tm->tm_mday;
+
+	tm->tm_wday=day%7;
+}
+
+void rt_rtc_time_to_tm(rt_uint32_t tim, struct rtc_time *tm)
+{
+	register int    i;
+	register long   hms, day;
+
+	day = tim / SECDAY;
+	hms = tim % SECDAY;
+
+	/* Hours, minutes, seconds are easy */
+	tm->tm_hour = hms / 3600;
+	tm->tm_min = (hms % 3600) / 60;
+	tm->tm_sec = (hms % 3600) % 60;
+
+	/* Number of years in days */
+	for (i = STARTOFTIME; day >= days_in_year(i); i++) {
+		day -= days_in_year(i);
+	}
+	tm->tm_year = i;
+
+	/* Number of months in days left */
+	if (LEAP_YEAR(tm->tm_year)) {
+		days_in_month(FEBRUARY) = 29;
+	}
+	for (i = 1; day >= days_in_month(i); i++) {
+		day -= days_in_month(i);
+	}
+	days_in_month(FEBRUARY) = 28;
+	tm->tm_mon = i;
+
+	/* Days are what is left over (+1) from all that. */
+	tm->tm_mday = day + 1;
+
+	/*
+	 * Determine the day of week
+	 */
+	GregorianDay(tm);
+}
+
+
 
 static struct rt_device rtc;
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
