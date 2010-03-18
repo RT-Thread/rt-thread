@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -17,105 +17,71 @@
  */
 /*@{*/
 
-#include <board.h>
 #include <rtthread.h>
+#include "led.h"
 
-#ifdef RT_USING_DFS
-/* dfs init */
-#include <dfs_init.h>
-/* dfs filesystem:EFS filesystem init */
-#include <dfs_elm.h>
-/* dfs Filesystem APIs */
-#include <dfs_fs.h>
-#endif
-
-#ifdef RT_USING_LWIP
-#include <lwip/sys.h>
-#include <lwip/api.h>
-#include <netif/ethernetif.h>
-#endif
-
-void rt_init_thread_entry(void* parameter)
+char thread_led1_stack[512];
+struct rt_thread thread_led1;
+static void rt_thread_entry_led1(void* parameter)
 {
-/* Filesystem Initialization */
-#ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
+    /* init led configuration */
+    rt_hw_led_init();
 
-#ifdef RT_USING_DFS_EFSL
-		/* init the efsl filesystam*/
-		efsl_init();
+    while (1)
+    {
+        /* led on */
+        rt_kprintf("led1 on\r\n");
+        rt_hw_led_on(0);
+        rt_thread_delay(50); /* sleep 0.5 second and switch to other thread */
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
-		{
-			rt_kprintf("File System initialized!\n");
-		}
-		else
-			rt_kprintf("File System initialzation failed!\n");
-#elif defined(RT_USING_DFS_ELMFAT)
-		/* init the elm chan FatFs filesystam*/
-		elm_init();
+        /* led off */
+        rt_kprintf("led1 off\r\n");
+        rt_hw_led_off(0);
+        rt_thread_delay(50);
+    }
+}
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-		{
-			rt_kprintf("File System initialized!\n");
-		}
-		else
-			rt_kprintf("File System initialzation failed!\n");
-#endif
-	}
-#endif
+char thread_led2_stack[512];
+struct rt_thread thread_led2;
+void rt_thread_entry_led2(void* parameter)
+{
+    unsigned int count=0;
+    while (1)
+    {
+        /* led on */
+        rt_kprintf("led2 on,count : %d\r\n",count);
+        count++;
+        rt_hw_led_on(1);
+        rt_thread_delay(RT_TICK_PER_SECOND);
 
-/* LwIP Initialization */
-#ifdef RT_USING_LWIP
-	{
-		extern void lwip_sys_init(void);
-
-		/* register ethernetif device */
-		eth_system_device_init();
-
-#ifdef STM32F10X_CL
-		rt_hw_stm32_eth_init();
-#else
-	/* STM32F103 */
-	#if STM32_ETH_IF == 0
-			rt_hw_enc28j60_init();
-	#elif STM32_ETH_IF == 1
-			rt_hw_dm9000_init();
-	#endif
-#endif
-
-		/* re-init device driver */
-		rt_device_init_all();
-
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
-	}
-#endif
+        /* led off */
+        rt_kprintf("led2 off\r\n");
+        rt_hw_led_off(1);
+        rt_thread_delay(RT_TICK_PER_SECOND);
+    }
 }
 
 int rt_application_init()
 {
-	rt_thread_t init_thread;
+    /* init led1 thread */
+    rt_thread_init(&thread_led1,
+                   "led1",
+                   rt_thread_entry_led1,
+                   RT_NULL,
+                   &thread_led1_stack[0],
+                   sizeof(thread_led1_stack),10,10);
+    rt_thread_startup(&thread_led1);
 
-#if (RT_THREAD_PRIORITY_MAX == 32)
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								2048, 8, 20);
-#else
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								2048, 80, 20);
-#endif
+    /* init led2 thread */
+    rt_thread_init(&thread_led2,
+                   "led2",
+                   rt_thread_entry_led2,
+                   RT_NULL,
+                   &thread_led2_stack[0],
+                   sizeof(thread_led2_stack),10,10);
+    rt_thread_startup(&thread_led2);
 
-	if (init_thread != RT_NULL)
-		rt_thread_startup(init_thread);
-
-	return 0;
+    return 0;
 }
 
 /*@}*/

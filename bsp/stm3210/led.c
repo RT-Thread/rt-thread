@@ -14,6 +14,15 @@
 #include <rtthread.h>
 #include <stm32f10x.h>
 
+#ifdef STM32_SIMULATOR
+#define led1_rcc                    RCC_APB2Periph_GPIOA
+#define led1_gpio                   GPIOA
+#define led1_pin                    (GPIO_Pin_5)
+
+#define led2_rcc                    RCC_APB2Periph_GPIOA
+#define led2_gpio                   GPIOA
+#define led2_pin                    (GPIO_Pin_6)
+#else
 #define led1_rcc                    RCC_APB2Periph_GPIOF
 #define led1_gpio                   GPIOF
 #define led1_pin                    (GPIO_Pin_6 | GPIO_Pin_7)
@@ -21,6 +30,7 @@
 #define led2_rcc                    RCC_APB2Periph_GPIOF
 #define led2_gpio                   GPIOF
 #define led2_pin                    (GPIO_Pin_8)
+#endif
 
 void rt_hw_led_init(void)
 {
