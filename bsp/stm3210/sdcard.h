@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    SDIO/sdcard.h 
+  * @file    SDIO/sdcard.h
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
-  * @brief   This file contains all the functions prototypes for the SD Card 
+  * @version V3.1.2
+  * @date    09/28/2009
+  * @brief   This file contains all the functions prototypes for the SD Card
   *          driver firmware library.
   ******************************************************************************
   * @copy
@@ -17,7 +17,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
-  */ 
+  */
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -25,7 +25,7 @@
 
 /** @addtogroup SDIO_Example
   * @{
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __SDCARD_H
@@ -73,15 +73,15 @@ typedef enum
   SD_SDIO_UNKNOWN_FUNCTION           = (33),
 
   /* Standard error defines */
-  SD_INTERNAL_ERROR, 
+  SD_INTERNAL_ERROR,
   SD_NOT_CONFIGURED,
-  SD_REQUEST_PENDING, 
-  SD_REQUEST_NOT_APPLICABLE, 
-  SD_INVALID_PARAMETER,  
-  SD_UNSUPPORTED_FEATURE,  
-  SD_UNSUPPORTED_HW,  
-  SD_ERROR,  
-  SD_OK,  
+  SD_REQUEST_PENDING,
+  SD_REQUEST_NOT_APPLICABLE,
+  SD_INVALID_PARAMETER,
+  SD_UNSUPPORTED_FEATURE,
+  SD_UNSUPPORTED_HW,
+  SD_ERROR,
+  SD_OK,
 } SD_Error;
 
 /* SDIO Commands  Index */
@@ -281,5 +281,5 @@ SD_Error SD_ProcessIRQSrc(void);
 /**
   * @}
   */
-  
+
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
