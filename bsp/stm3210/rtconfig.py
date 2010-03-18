@@ -5,8 +5,8 @@ import SCons.cpp
 # make all component false
 RT_USING_FINSH 		= False
 RT_USING_DFS 		= False
-RT_USING_DFS_EFSL 	= False
-RT_USING_DFS_YAFFS2 = False
+RT_USING_DFS_ELMFAT 	= False
+RT_USING_DFS_YAFFS2	= False
 RT_USING_LWIP 		= False
 RT_USING_WEBSERVER	= False
 RT_USING_RTGUI 		= False
@@ -27,8 +27,8 @@ if rtconfig_ns.has_key('RT_USING_FINSH'):
 if rtconfig_ns.has_key('RT_USING_DFS'):
     RT_USING_DFS = True
 
-    if rtconfig_ns.has_key('RT_USING_DFS_EFSL'):
-        RT_USING_DFS_EFSL = True
+    if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
+        RT_USING_DFS_ELMFAT = True
     if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
         RT_USING_DFS_YAFFS2 = True
 
