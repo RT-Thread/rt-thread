@@ -53,36 +53,8 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 	return RT_EOK;
 }
 
-/**
- * This function read a character from serial without interrupt enable mode
- *
- * @return the read char
- */
-char rt_serial_getc(struct serial_device* uart)
-{
-	rt_base_t level;
-	char ch = 0;
-	
-	/* disable interrupt */
-	level = rt_hw_interrupt_disable();
-	
-	if (uart->int_rx->read_index != uart->int_rx->save_index)
-	{
-		ch = uart->int_rx->rx_buffer[uart->int_rx->read_index];
-
-		uart->int_rx->read_index ++;
-		if (uart->int_rx->read_index >= UART_RX_BUFFER_SIZE)
-			uart->int_rx->read_index = 0;
-	}
-	
-	/* enable interrupt */
-	rt_hw_interrupt_enable(level);
-	
-	return ch;
-}
-
 /* save a char to serial buffer */
-void rt_serial_savechar(struct serial_device* uart, char ch)
+static void rt_serial_savechar(struct serial_device* uart, char ch)
 {
 	rt_base_t level;
 	
@@ -104,26 +76,6 @@ void rt_serial_savechar(struct serial_device* uart, char ch)
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
-}
-
-/**
- * This function will write a character to serial without interrupt enable mode
- *
- * @param c the char to write
- */
-void rt_serial_putc(rt_device_t device, const char c)
-{
-	struct serial_device* uart = (struct serial_device*) device->private;
-
-	/*
-	 * to be polite with serial console add a line feed
-	 * to the carriage return character
-	 */
-	if (c=='\n' && (device->flag & RT_DEVICE_FLAG_STREAM))
-		rt_serial_putc(device, '\r');
-
-	while (!(uart->uart_device->ustat & USTAT_TXB_EMPTY));
-	uart->uart_device->utxh = (c & 0x1FF);
 }
 
 static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
@@ -152,22 +104,31 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
-		rt_int32_t ch;
+		rt_base_t level;
 
 		/* interrupt mode Rx */
 		while (size)
 		{
-			/* get a character */
-			ch = rt_serial_getc(uart);
-			if (ch < 0)
+			if (uart->int_rx->read_index != uart->int_rx->save_index)
 			{
-				/* set error code */
-				err_code = -RT_EEMPTY;
+				*ptr++ = uart->int_rx->rx_buffer[uart->int_rx->read_index];
+				size --;
+
+				/* disable interrupt */
+				level = rt_hw_interrupt_disable();
+
+				uart->int_rx->read_index ++;
+				if (uart->int_rx->read_index >= UART_RX_BUFFER_SIZE)
+					uart->int_rx->read_index = 0;
+
+				/* enable interrupt */
+				rt_hw_interrupt_enable(level);
 			}
 			else
 			{
-				*ptr++ = ch;
-				size --;
+				/* set error code */
+				err_code = -RT_EEMPTY;
+				break;
 			}
 		}
 	}
@@ -226,7 +187,19 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 		/* polling mode */
 		while (size)
 		{
-			rt_serial_putc(dev, *ptr);
+			/*
+			 * to be polite with serial console add a line feed
+			 * to the carriage return character
+			 */
+			if (*ptr == '\n' && (dev->flag & RT_DEVICE_FLAG_STREAM))
+			{
+				while (!(uart->uart_device->ustat & USTAT_TXB_EMPTY));
+				uart->uart_device->utxh = '\r';
+			}
+
+			while (!(uart->uart_device->ustat & USTAT_TXB_EMPTY));
+			uart->uart_device->utxh = (*ptr & 0x1FF);
+
 			++ptr; --size;
 		}
 	}	
@@ -239,11 +212,8 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	struct serial_device* uart;
-	
 	RT_ASSERT(dev != RT_NULL);
 
-	uart = (struct serial_device*)dev->private;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
