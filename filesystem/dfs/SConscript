@@ -25,7 +25,6 @@ filesystems/fatfs/fatfs_mount.c""")
 elmfat = Split("""
 filesystems/elmfat/dfs_elm.c
 filesystems/elmfat/ff.c
-filesystems/elmfat/option/cc936.c
 """)
 
 # DFS-YAFFS2 options
