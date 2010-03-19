@@ -37,7 +37,7 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 		{
 			rt_memset(uart->int_rx->rx_buffer, 0, 
 				sizeof(uart->int_rx->rx_buffer));
-			uart->int_rx->read_index = uart->int_rx->read_index = 0;
+			uart->int_rx->read_index = uart->int_rx->save_index = 0;
 		}
 		
 		if (dev->flag & RT_DEVICE_FLAG_INT_TX)
