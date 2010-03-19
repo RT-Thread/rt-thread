@@ -14,6 +14,7 @@
  * 2006-06-03     Bernard      add support for skyeye
  * 2006-09-24     Bernard      remove the code related with hardware
  * 2010-01-18     Bernard      fix down then up key bug.
+ * 2010-03-19     Bernard      fix backspace issue and fix device read in shell.
  */
 
 #include <rtthread.h>
@@ -57,9 +58,7 @@ extern char rt_serial_getc(void);
 struct rt_thread finsh_thread;
 char finsh_thread_stack[2048];
 struct rt_semaphore uart_sem;
-#ifdef RT_USING_DEVICE
 rt_device_t finsh_device;
-#endif
 #ifdef FINSH_USING_HISTORY
 enum input_stat
 {
@@ -148,7 +147,6 @@ int isprint(unsigned char ch)
 #endif
 #endif
 
-#ifdef RT_USING_DEVICE
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
 	/* release semaphore to let finsh thread rx data */
@@ -178,12 +176,6 @@ void finsh_set_device(char* device_name)
 		rt_kprintf("finsh: can not find device:%s\n", device_name);
 	}
 }
-#else
-void finsh_notify()
-{
-	rt_sem_release(&uart_sem);
-}
-#endif
 
 void finsh_auto_complete(char* prefix)
 {
@@ -194,10 +186,50 @@ void finsh_auto_complete(char* prefix)
 	rt_kprintf("finsh>>%s", prefix);
 }
 
+void finsh_run_line(struct finsh_parser *parser, const char* line)
+{
+	rt_kprintf("\n");
+	finsh_parser_run(parser, (unsigned char*)line);
+
+	/* compile node root */
+	if (finsh_errno() == 0)
+	{
+		finsh_compiler_run(parser->root);
+	}
+	else
+	{
+		rt_kprintf("%s\n", finsh_error_string(finsh_errno()));
+	}
+
+	/* run virtual machine */
+	if (finsh_errno() == 0)
+	{
+		char ch;
+		finsh_vm_run();
+
+		ch = (unsigned char)finsh_stack_bottom();
+		if (ch > 0x20 && ch < 0x7e)
+		{
+			rt_kprintf("\t'%c', %d, 0x%08x\n",
+				(unsigned char)finsh_stack_bottom(),
+				(unsigned int)finsh_stack_bottom(),
+				(unsigned int)finsh_stack_bottom());
+		}
+		else
+		{
+			rt_kprintf("\t%d, 0x%08x\n",
+				(unsigned int)finsh_stack_bottom(),
+				(unsigned int)finsh_stack_bottom());
+		}
+	}
+
+    finsh_flush(parser);
+}
+
 void finsh_thread_entry(void* parameter)
 {
 	struct finsh_parser parser;
-    char line[256];
+    char line[256], ch;
 	int  pos ;
 #ifdef FINSH_USING_HISTORY
 	enum input_stat stat;
@@ -207,215 +239,165 @@ void finsh_thread_entry(void* parameter)
 	stat = WAIT_NORMAL;
 	current_history = 0;
 	use_history = 0;
+	memset(line, 0, sizeof(line));
 
     finsh_init(&parser);
 
 	while (1)
 	{
-		rt_kprintf("finsh>>");
+		if (rt_sem_take(&uart_sem, RT_WAITING_FOREVER) != RT_EOK) continue;
 
-		memset(line, 0, sizeof(line));
-		pos = 0;
-		while (1)
+		/* read one character from device */
+		while (rt_device_read(finsh_device, 0, &ch, 1) == 1)
 		{
-			if (rt_sem_take(&uart_sem, -1) == RT_EOK)
+			#ifdef FINSH_USING_HISTORY
+			/*
+			 * handle up and down key
+			 * up key  : 0x1b 0x5b 0x41
+			 * down key: 0x1b 0x5b 0x42
+			 */
+			if (ch == 0x1b)
 			{
-				/* read one character from serial */
-				char ch;
+				stat = WAIT_SPEC_KEY;
+				continue;
+			}
 
-#ifndef RT_USING_DEVICE
-				ch = rt_serial_getc();
-				if (ch != 0)
-#else
-				rt_err_t rx_result;
-				rx_result = rt_device_read(finsh_device, 0, &ch, 1);
-				if (ch != 0 && rx_result == 1)
-#endif
+			if ((stat == WAIT_SPEC_KEY) && (ch == 0x5b))
+			{
+				if (ch == 0x5b)
 				{
-#ifdef FINSH_USING_HISTORY
-					/*
-					 * handle up and down key
-					 * up key  : 0x1b 0x5b 0x41
-					 * down key: 0x1b 0x5b 0x42
-					 */
-					if (ch == 0x1b)
+					stat = WAIT_FUNC_KEY;
+					continue;
+				}
+				stat = WAIT_NORMAL;
+			}
+
+			if (stat == WAIT_FUNC_KEY)
+			{
+				stat = WAIT_NORMAL;
+
+				if (ch == 0x41) /* up key */
+				{
+					/* prev history */
+					if (current_history > 0)current_history --;
+					else
 					{
-						stat = WAIT_SPEC_KEY;
+						current_history = 0;
 						continue;
 					}
 
-					if ((stat == WAIT_SPEC_KEY) && (ch == 0x5b))
+					/* copy the history command */
+					memcpy(line, &finsh_cmd_history[current_history][0],
+						FINSH_CMD_SIZE);
+					pos = strlen(line);
+					use_history = 1;
+				}
+				else if (ch == 0x42) /* down key */
+				{
+					/* next history */
+					if (current_history < finsh_history_count - 1)
+						current_history ++;
+					else
 					{
-						if (ch == 0x5b)
+						/* set to the end of history */
+						if (finsh_history_count != 0)
 						{
-							stat = WAIT_FUNC_KEY;
-							continue;
+							current_history = finsh_history_count - 1;
 						}
-						stat = WAIT_NORMAL;
+						else continue;
 					}
 
-					if (stat == WAIT_FUNC_KEY)
-					{
-						stat = WAIT_NORMAL;
+					memcpy(line, &finsh_cmd_history[current_history][0],
+						FINSH_CMD_SIZE);
+					pos = strlen(line);
+					use_history = 1;
+				}
 
-						if (ch == 0x41) /* up key */
-						{
-							/* prev history */
-							if (current_history > 0)current_history --;
-							else
-							{
-								current_history = 0;
-								continue;
-							}
-
-							/* copy the history command */
-							memcpy(line, &finsh_cmd_history[current_history][0],
-								FINSH_CMD_SIZE);
-							pos = strlen(line);
-							use_history = 1;
-						}
-						else if (ch == 0x42) /* down key */
-						{
-							/* next history */
-							if (current_history < finsh_history_count - 1)
-								current_history ++;
-							else
-							{
-								/* set to the end of history */
-								if (finsh_history_count != 0)
-								{
-									current_history = finsh_history_count - 1;
-								}
-								else continue;
-							}
-
-							memcpy(line, &finsh_cmd_history[current_history][0],
-								FINSH_CMD_SIZE);
-							pos = strlen(line);
-							use_history = 1;
-						}
-
-						if (use_history)
-						{
-							rt_kprintf("\033[2K\r");
-							rt_kprintf("finsh>>%s", line);
-							continue;
-						}
-					}
-#endif
-					/*
-					 * handle tab key
-					 */
-					if (ch == '\t')
-					{
-						/* auto complete */
-						finsh_auto_complete(&line[0]);
-						/* re-calculate position */
-						pos = strlen(line);
-						continue;
-					}
-
-					/*
-					 * handle backspace key
-					 */
-					if (ch == 0x7f || ch == 0x08)
-					{
-						if (pos != 0)rt_kprintf("%c", ch);
-						line[pos--] = 0;
-						if (pos < 0) pos = 0;
-						continue;
-					}
-
-					if (pos >= 256) /* it's a large line, discard it */
-						pos = 0;
-					line[pos] = ch;
-
-					rt_kprintf("%c", line[pos]);
-
-					/* if it's the end of line, break */
-					if (line[pos] == 0xd || line[pos] == 0xa)
-					{
-						/* change to ';' and break */
-						line[pos] = ';';
-						break;
-					}
-					else use_history = 0; /* not "\n", it's a new command */
-					pos ++;
+				if (use_history)
+				{
+					rt_kprintf("\033[2K\r");
+					rt_kprintf("finsh>>%s", line);
+					continue;
 				}
 			}
-		}
+			#endif
 
-		if (pos == 0)
-		{
-			rt_kprintf("\n");
-			continue;
-		}
-
-#ifdef FINSH_USING_HISTORY
-		if (use_history == 0)
-		{
-			/* push history */
-			if (finsh_history_count >= FINSH_HISTORY_LINES)
+			/* handle tab key */
+			if (ch == '\t')
 			{
-				/* move history */
-				int index;
-				for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+				/* auto complete */
+				finsh_auto_complete(&line[0]);
+				/* re-calculate position */
+				pos = strlen(line);
+				continue;
+			}
+			/* handle backspace key */
+			else if (ch == 0x7f || ch == 0x08)
+			{
+				if (pos != 0)
 				{
-					memcpy(&finsh_cmd_history[index][0],
-						&finsh_cmd_history[index + 1][0], FINSH_CMD_SIZE);
+					rt_kprintf("%c %c", ch, ch);
 				}
-				memset(&finsh_cmd_history[index][0], 0, FINSH_CMD_SIZE);
-				memcpy(&finsh_cmd_history[index][0], line, pos);
-
-				/* it's the maximum history */
-				finsh_history_count = FINSH_HISTORY_LINES;
+				if (pos <= 0) pos = 0;
+				else pos --;
+				line[pos] = 0;
+				continue;
 			}
-			else
+			/* handle end of line, break */
+			else if (ch == 0x0d || ch == 0x0a)
 			{
-				memset(&finsh_cmd_history[finsh_history_count][0], 0, FINSH_CMD_SIZE);
-				memcpy(&finsh_cmd_history[finsh_history_count][0], line, pos);
+				/* change to ';' and break */
+				line[pos] = ';';
 
-				/* increase count and set current history position */
-				finsh_history_count ++;
+				#ifdef FINSH_USING_HISTORY
+				if (use_history == 0)
+				{
+					/* push history */
+					if (finsh_history_count >= FINSH_HISTORY_LINES)
+					{
+						/* move history */
+						int index;
+						for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+						{
+							memcpy(&finsh_cmd_history[index][0],
+								&finsh_cmd_history[index + 1][0], FINSH_CMD_SIZE);
+						}
+						memset(&finsh_cmd_history[index][0], 0, FINSH_CMD_SIZE);
+						memcpy(&finsh_cmd_history[index][0], line, pos);
+
+						/* it's the maximum history */
+						finsh_history_count = FINSH_HISTORY_LINES;
+					}
+					else
+					{
+						memset(&finsh_cmd_history[finsh_history_count][0], 0, FINSH_CMD_SIZE);
+						memcpy(&finsh_cmd_history[finsh_history_count][0], line, pos);
+
+						/* increase count and set current history position */
+						finsh_history_count ++;
+					}
+				}
+				current_history = finsh_history_count;
+				#endif
+
+				if (pos != 0) finsh_run_line(&parser, line);
+				else rt_kprintf("\n");
+
+				rt_kprintf("finsh>>");
+				memset(line, 0, sizeof(line));
+				pos = 0;
+
+				break;
 			}
-		}
-		current_history = finsh_history_count;
-#endif
 
-		rt_kprintf("\n");
-		finsh_parser_run(&parser, (unsigned char*)&line[0]);
+			/* it's a large line, discard it */
+			if (pos >= 256) pos = 0;
 
-		/* compile node root */
-		if (finsh_errno() == 0)
-		{
-			finsh_compiler_run(parser.root);
-		}
-		else
-		{
-			rt_kprintf("%s\n", finsh_error_string(finsh_errno()));
-		}
-
-		/* run virtual machine */
-		if (finsh_errno() == 0)
-		{
-			finsh_vm_run();
-
-			if (isprint((unsigned char)finsh_stack_bottom()))
-			{
-				rt_kprintf("\t'%c', %d, 0x%08x\n",
-					(unsigned char)finsh_stack_bottom(),
-					(unsigned int)finsh_stack_bottom(),
-					(unsigned int)finsh_stack_bottom());
-			}
-			else
-			{
-				rt_kprintf("\t%d, 0x%04x\n",
-					(unsigned int)finsh_stack_bottom(),
-					(unsigned int)finsh_stack_bottom());
-			}
-		}
-
-        finsh_flush(&parser);
+			/* normal character */
+			line[pos] = ch; ch = 0;
+			rt_kprintf("%c", line[pos++]);
+			use_history = 0; /* it's a new command */
+		} /* end of device read */
 	}
 }
 
