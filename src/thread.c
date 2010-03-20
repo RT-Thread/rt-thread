@@ -18,6 +18,7 @@
  * 2006-09-03     Bernard      change rt_timer_delete to rt_timer_detach
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
+ * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
  */
 
 #include <rtthread.h>
@@ -404,6 +405,10 @@ rt_err_t rt_thread_sleep (rt_tick_t tick)
 	rt_hw_interrupt_enable(temp);
 
 	rt_schedule();
+
+	/* clear error number of this thread to RT_EOK */
+	if (thread->error == -RT_ETIMEOUT)
+		thread->error = RT_EOK;
 
 	return RT_EOK;
 }
