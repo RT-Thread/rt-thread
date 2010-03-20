@@ -1,7 +1,5 @@
 /*
- * 程序清单：动态线程
- *
- * 这个程序会初始化2个动态线程，它们拥有共同的入口函数，但参数不相同
+ * 程序清单：
  */
 #include <rtthread.h>
 #include "tc_comm.h"
@@ -9,27 +7,41 @@
 /* 指向线程控制块的指针 */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
-/* 线程入口 */
-static void thread_entry(void* parameter)
+/* 线程1入口 */
+static void thread1_entry(void* parameter)
 {
 	rt_uint32_t count = 0;
-	rt_uint32_t no = (rt_uint32_t) parameter; /* 获得正确的入口参数 */
 
 	while (1)
 	{
-		/* 打印线程计数值输出 */
-		rt_kprintf("thread%d count: %d\n", no, count ++);
+		/* 打印线程1的输出 */
+		rt_kprintf("thread1: count = %d\n", count ++);
 
-		/* 休眠10个OS Tick */
-		rt_thread_delay(10);
+		/* 执行yield后应该切换到thread2执行 */
+		rt_thread_yield();
 	}
 }
 
-int thread_dynamic_simple_init()
+/* 线程2入口 */
+static void thread2_entry(void* parameter)
+{
+	rt_uint32_t count = 0;
+
+	while (1)
+	{
+		/* 打印线程2的输出 */
+		rt_kprintf("thread2: count = %d\n", count ++);
+
+		/* 执行yield后应该切换到thread1执行 */
+		rt_thread_yield();
+	}
+}
+
+int thread_yield_init()
 {
 	/* 创建线程1 */
 	tid1 = rt_thread_create("thread",
-		thread_entry, RT_NULL, /* 线程入口是thread1_entry, 入口参数是RT_NULL */
+		thread1_entry, RT_NULL, /* 线程入口是thread1_entry, 入口参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid1 != RT_NULL)
 		rt_thread_startup(tid1);
@@ -38,7 +50,7 @@ int thread_dynamic_simple_init()
 
 	/* 创建线程2 */
 	tid2 = rt_thread_create("thread",
-		thread_entry, RT_NULL, /* 线程入口是thread2_entry, 入口参数是RT_NULL */
+		thread2_entry, RT_NULL, /* 线程入口是thread2_entry, 入口参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid2 != RT_NULL)
 		rt_thread_startup(tid2);
@@ -67,22 +79,22 @@ static void _tc_cleanup()
 	tc_done(TC_STAT_PASSED);
 }
 
-int _tc_thread_dynamic_simple()
+int _tc_thread_yield()
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
-	thread_dynamic_simple_init();
+	thread_yield_init();
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
 }
 /* 输出函数命令到finsh shell中 */
-FINSH_FUNCTION_EXPORT(_tc_thread_dynamic_simple, a dynamic thread example);
+FINSH_FUNCTION_EXPORT(_tc_thread_yield, a thread yield example);
 #else
 /* 用户应用入口 */
 int rt_application_init()
 {
-	thread_dynamic_simple_init();
+	thread_yield_init();
 
 	return 0;
 }

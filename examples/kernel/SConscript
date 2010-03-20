@@ -9,6 +9,10 @@ thread_same_priority.c
 thread_static_simple.c
 thread_dynamic_simple.c
 thread_delete.c
+thread_detach.c
+thread_yield.c
+thread_suspend.c
+thread_resume.c
 semaphore_static.c
 semaphore_dynamic.c
 semaphore_priority.c
