@@ -1,3 +1,16 @@
+/*
+ * File      : symbol.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-03-22     Bernard      first version
+ */
 #include "finsh.h"
 
 long hello(void);
@@ -44,7 +57,7 @@ struct finsh_syscall _syscall_table[] =
 	{"list_mq", list_msgqueue},
 #endif
 #ifdef RT_USING_MEMPOOL
-	{"list_memp", list_mempool}, 
+	{"list_memp", list_mempool},
 #endif
 	{"list_timer", list_timer},
 };
