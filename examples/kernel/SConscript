@@ -17,6 +17,8 @@ semaphore_static.c
 semaphore_dynamic.c
 semaphore_priority.c
 semaphore_buffer_worker.c
+semaphore_producer_consumer.c
+mutex_simple.c
 heap_malloc.c
 heap_realloc.c
 """)
