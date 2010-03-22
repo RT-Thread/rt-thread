@@ -19,8 +19,13 @@ semaphore_priority.c
 semaphore_buffer_worker.c
 semaphore_producer_consumer.c
 mutex_simple.c
+event_simple.c
+mbox_simple.c
+messageq_simple.c
+timer_simple.c
 heap_malloc.c
 heap_realloc.c
+memp_simple.c
 """)
 
 # The set of source files associated with this SConscript file.
