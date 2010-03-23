@@ -7,6 +7,7 @@
 #include "netbuffer.h"
 #include "player_ui.h"
 #include "player_bg.h"
+#include "codec.h"
 
 #define MP3_AUDIO_BUF_SZ    (5 * 1024)
 #ifndef MIN
@@ -14,6 +15,7 @@
 #endif
 
 rt_uint8_t mp3_fd_buffer[MP3_AUDIO_BUF_SZ];
+int current_sample_rate = 0;
 
 struct mp3_decoder
 {
@@ -232,15 +234,33 @@ int mp3_decoder_run(struct mp3_decoder* decoder)
 	}
 	else
 	{
+		int outputSamps;
 		/* no error */
 		MP3GetLastFrameInfo(decoder->decoder, &decoder->frame_info);
 
         /* set sample rate */
+		if (decoder->frame_info.samprate != current_sample_rate)
+		{
+			current_sample_rate = decoder->frame_info.samprate;
+			rt_device_control(decoder->snd_device, CODEC_CMD_SAMPLERATE, &current_sample_rate);
+		}
 
 		/* write to sound device */
-		if (decoder->frame_info.outputSamps > 0)
+		outputSamps = decoder->frame_info.outputSamps;
+		if (outputSamps > 0)
 		{
-			rt_device_write(decoder->snd_device, 0, buffer, decoder->frame_info.outputSamps * 2);
+			if (decoder->frame_info.nChans == 1)
+			{
+				int i;
+				for (i = outputSamps - 1; i >= 0; i--)
+				{
+					buffer[i * 2] = buffer[i];
+					buffer[i * 2 + 1] = buffer[i];
+				}
+				outputSamps *= 2;
+			}
+
+			rt_device_write(decoder->snd_device, 0, buffer, outputSamps * sizeof(rt_uint16_t));
 		}
 		else
 		{

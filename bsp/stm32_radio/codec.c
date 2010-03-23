@@ -270,7 +270,7 @@ static rt_err_t codec_init(rt_device_t dev)
 	codec_send(REG_BEEP | INVROUT2);
 
 	// Set output volume.
-	vol(40);
+	vol(25);
 
 	return RT_EOK;
 }
