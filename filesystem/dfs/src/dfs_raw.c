@@ -18,6 +18,8 @@
 
 extern struct dfs_fd fd_table[];
 
+#define NO_WORKING_DIR	"system does not support working dir\n"
+
 /*
 +------------------------------------------------------------------------------
 | Function    : fd_new
@@ -150,9 +152,7 @@ int dfile_raw_open(struct dfs_fd* fd, const char *path, int flags)
 		build_fullpath(working_directory, path, fullpath);
 		dfs_unlock();
 #else
-#ifdef RT_USING_FINSH
-		rt_kprintf("bad filename");
-#endif
+		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 #endif
 	}
@@ -367,9 +367,7 @@ int dfile_raw_unlink(const char *path)
 		build_fullpath(working_directory, path, fullpath);
 		dfs_unlock();
 #else
-#ifdef RT_USING_FINSH
-		rt_kprintf("bad filename");
-#endif
+		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 #endif
 	}
@@ -476,9 +474,7 @@ int dfile_raw_stat(const char *path, struct dfs_stat *buf)
 		build_fullpath(working_directory, path, fullpath);
 		dfs_unlock();
 #else
-#ifdef RT_USING_FINSH
-		rt_kprintf("not support working directory, bad filename\n");
-#endif
+		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 #endif
 	}
@@ -491,9 +487,24 @@ int dfile_raw_stat(const char *path, struct dfs_stat *buf)
 
 	fspathlen = strlen(fs->path);
 	rt_memset(real_path, 0, sizeof(real_path));
-	if (*(fullpath + fspathlen) != '/') strcpy(real_path, "/");
+	if (*(fullpath + fspathlen) != '/') real_path[0] = '/';
 	strcat(real_path, fullpath + fspathlen);
 
+	if (real_path[0] == '/' && real_path[1] == '\0')
+	{
+		/* it's the root directory */
+		buf->st_dev   = 0;
+
+		buf->st_mode = DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
+			DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+		buf->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+
+		buf->st_size  = 0;
+		buf->st_mtime = 0;
+		buf->st_blksize = 512;
+		return DFS_STATUS_OK;
+	}
+	
 	if (fs->ops->stat == RT_NULL)
 	{
 		dfs_log(DFS_DEBUG_ERROR, ("the filesystem didn't implement this function"));
@@ -535,7 +546,7 @@ int dfile_raw_rename(const char* oldpath, const char* newpath)
 		build_fullpath(working_directory, oldpath, oldfullpath);
 		dfs_unlock();
 #else
-		rt_kprintf("bad filename\n");
+		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 #endif
 	}
@@ -549,7 +560,7 @@ int dfile_raw_rename(const char* oldpath, const char* newpath)
 		build_fullpath(working_directory, newpath, newfullpath);
 		dfs_unlock();
 #else
-		rt_kprintf("bad filename");
+		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 #endif
 	}
@@ -597,11 +608,12 @@ void ls(const char* pathname)
 			if ( length > 0 ) 
 			{
 				rt_memset(&stat, 0, sizeof(struct dfs_stat));
-				
+
 				/* build full path for each file */
-				strncpy(fullpath, pathname, 256);
-				strcat(fullpath, "/");
-				strcat(fullpath, dirent.d_name);
+				if (pathname[strlen(pathname) - 1] != '/')
+					rt_snprintf(fullpath, sizeof(fullpath), "%s%c%s", pathname, '/', dirent.d_name);
+				else
+					rt_snprintf(fullpath, sizeof(fullpath), "%s%s", pathname, dirent.d_name);
 				
 				dfile_raw_stat(fullpath, &stat);
 				if ( stat.st_mode & DFS_S_IFDIR )
@@ -624,7 +636,7 @@ void ls(const char* pathname)
 }
 FINSH_FUNCTION_EXPORT(ls, list directory contents)
 
-void _mkdir(const char* pathname)
+static void mkdir(const char* pathname)
 {
 	/* make a new directory */
 	if (dfile_raw_open(&fd, pathname, DFS_O_DIRECTORY | DFS_O_CREAT) == 0)
@@ -633,7 +645,7 @@ void _mkdir(const char* pathname)
 	}
 	else rt_kprintf("Can't mkdir %s\n", pathname);
 }
-FINSH_FUNCTION_EXPORT(_mkdir, make a directory)
+FINSH_FUNCTION_EXPORT(mkdir, make a directory)
 
 void rm(const char* filename)
 {

@@ -945,7 +945,7 @@ void player_notify_stop()
 void player_ui_init()
 {
     player_ui_tid = rt_thread_create("ply_ui", player_entry, RT_NULL,
-                                     0x800, 25, 5);
+                                     4096, 25, 5);
     if (player_ui_tid != RT_NULL)
         rt_thread_startup(player_ui_tid);
 }

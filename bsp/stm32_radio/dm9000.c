@@ -541,7 +541,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
             }
 
             /* it issues an error, release pbuf */
-            pbuf_free(p);
+            if (p != RT_NULL) pbuf_free(p);
             p = RT_NULL;
         }
     }

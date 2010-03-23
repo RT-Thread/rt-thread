@@ -78,7 +78,7 @@
 #define SD_CARD_LOCKED                  ((uint32_t)0x02000000)
 #define SD_CARD_PROGRAMMING             ((uint32_t)0x00000007)
 #define SD_CARD_RECEIVING               ((uint32_t)0x00000006)
-#define SD_DATATIMEOUT                  ((uint32_t)0x000FFFFF)
+#define SD_DATATIMEOUT                  ((uint32_t)0xFFFFFFFF)
 #define SD_0TO7BITS                     ((uint32_t)0x000000FF)
 #define SD_8TO15BITS                    ((uint32_t)0x0000FF00)
 #define SD_16TO23BITS                   ((uint32_t)0x00FF0000)

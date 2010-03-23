@@ -1042,28 +1042,3 @@ void rtgui_topwin_get_clipinfo(struct rtgui_rect* rect_list, rt_int32_t count)
 	rt_sem_release(&_rtgui_topwin_lock);
 }
 #endif
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-void rtgui_topwin_dump()
-{
-	struct rtgui_list_node* node;
-
-	rtgui_list_foreach(node, &_rtgui_topwin_show_list)
-	{
-		struct rtgui_topwin* wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
-
-		rt_kprintf("wnd at (%d, %d) - (%d, %d)\n",
-			wnd->extent.x1, wnd->extent.y1, wnd->extent.x2, wnd->extent.y2);
-
-		if (wnd->title != RT_NULL)
-		{
-			rt_kprintf("title[%s] border (%d, %d) - (%d, %d)\n", wnd->title->title,
-				RTGUI_WIDGET(wnd->title)->extent.x1, RTGUI_WIDGET(wnd->title)->extent.y1,
-				RTGUI_WIDGET(wnd->title)->extent.x2, RTGUI_WIDGET(wnd->title)->extent.y2);
-		}
-	}
-}
-FINSH_FUNCTION_EXPORT(rtgui_topwin_dump, dump topwindow list);
-#endif
-

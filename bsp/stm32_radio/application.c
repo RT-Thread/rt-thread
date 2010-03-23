@@ -57,17 +57,17 @@ void rt_init_thread_entry(void *parameter)
         /* init the elm FAT filesystam*/
         elm_init();
 
-        /* mount sd card fat partition 1 as root directory */
-        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-            rt_kprintf("File System initialized!\n");
-        else
-            rt_kprintf("File System init failed!\n");
-
-		/* mount spi flash fat as resource directory */
-		if (dfs_mount("spi0", "/flash", "elm", 0, 0) == 0)
+		/* mount spi flash fat as root directory */
+		if (dfs_mount("spi0", "/", "elm", 0, 0) == 0)
 			rt_kprintf("SPI File System initialized!\n");
 		else
 			rt_kprintf("SPI File System init failed!\n");
+
+        /* mount sd card fat partition 1 as SD directory */
+        if (dfs_mount("sd0", "/SD", "elm", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
     }
 #endif
 
