@@ -169,7 +169,7 @@ static void DMA_Configuration(rt_uint32_t addr, rt_size_t size)
 	DMA_Cmd(CODEC_I2S_DMA, ENABLE);
 }
 
-static void I2S_Configuration(void)
+static void I2S_Configuration(uint32_t I2S_AudioFreq)
 {
 	I2S_InitTypeDef I2S_InitStructure;
 
@@ -177,7 +177,7 @@ static void I2S_Configuration(void)
 	I2S_InitStructure.I2S_Standard = I2S_Standard_Phillips;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Disable;
-	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq_44k;
+	I2S_InitStructure.I2S_AudioFreq = I2S_AudioFreq;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
 
 	/* I2S2 configuration */
@@ -404,6 +404,11 @@ rt_err_t sample_rate(int sr)
 	}
 	codec_send(r06);
 	codec_send(r07);
+
+#if !CODEC_MASTER_MODE
+	I2S_Configuration((uint32_t) sr);
+#endif
+
 	return RT_EOK;
 }
 
@@ -556,7 +561,7 @@ rt_err_t codec_hw_init(void)
 
 	NVIC_Configuration();
 	GPIO_Configuration();
-	I2S_Configuration();
+	I2S_Configuration(I2S_AudioFreq_44k);
 
 	dev = (rt_device_t) &codec;
 	dev->type = RT_Device_Class_Sound;
