@@ -85,7 +85,7 @@ void consumer_thread_entry(void* parameter)
 	rt_kprintf("the consumer[%d] exit!\n");
 }
 
-int producer_consumer_init()
+int semaphore_producer_consumer_init()
 {
 	/* 初始化3个信号量 */
 	rt_sem_init(&sem_lock , "lock",     1,      RT_IPC_FLAG_FIFO);
@@ -132,22 +132,22 @@ static void _tc_cleanup()
 	tc_done(TC_STAT_PASSED);
 }
 
-int _tc_producer_consumer()
+int _tc_semaphore_producer_consumer()
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
-	producer_consumer_init();
+	semaphore_producer_consumer_init();
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
 }
 /* 输出函数命令到finsh shell中 */
-FINSH_FUNCTION_EXPORT(_tc_producer_consumer, producer and consumer example);
+FINSH_FUNCTION_EXPORT(_tc_semaphore_producer_consumer, producer and consumer example);
 #else
 /* 用户应用入口 */
 int rt_application_init()
 {
-	producer_consumer_init();
+	semaphore_producer_consumer_init();
 
 	return 0;
 }

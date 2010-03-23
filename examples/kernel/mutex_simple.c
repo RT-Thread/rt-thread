@@ -8,33 +8,83 @@
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 static rt_thread_t tid3 = RT_NULL;
+static rt_mutex_t mutex = RT_NULL;
 
 /* 线程1入口 */
 static void thread1_entry(void* parameter)
 {
-	while (1)
+	/* 先让低优先级线程运行 */
+	rt_thread_delay(10);
+
+	/* 此时thread3持有mutex，并且thread2等待持有mutex */
+
+	/* 检查thread2与thread3的优先级情况 */
+	if (tid2->current_priority != tid3->current_priority)
 	{
+		/* 优先级不相同，测试失败 */
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
+		return;
 	}
 }
 
 /* 线程2入口 */
 static void thread2_entry(void* parameter)
 {
+	rt_err_t result;
+
+	/* 先让低优先级线程运行 */
+	rt_thread_delay(5);
+
 	while (1)
 	{
+		/*
+		 * 试图持有互斥锁，此时thread3持有，应把thread3的优先级提升到thread2相同
+		 * 的优先级
+		 */
+		result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
+
+		if (result == RT_EOK)
+		{
+			/* 释放互斥锁 */
+			rt_mutex_release(mutex);
+		}
 	}
 }
 
 /* 线程3入口 */
 static void thread3_entry(void* parameter)
 {
+	rt_tick_t tick;
+	rt_err_t result;
+
 	while (1)
 	{
+		result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
+		result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
+		if (result != RT_EOK)
+		{
+			tc_stat(TC_STAT_END | TC_STAT_FAILED);
+		}
+
+		/* 做一个长时间的循环，总共50个OS Tick */
+		tick = rt_tick_get();
+		while (rt_tick_get() - tick < 50) ;
+
+		rt_mutex_release(mutex);
+		rt_mutex_release(mutex);
 	}
 }
 
 int mutex_simple_init()
 {
+	/* 创建互斥锁 */
+	mutex = rt_mutex_create("mutex", RT_IPC_FLAG_FIFO);
+	if (mutex == RT_NULL)
+	{
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
+		return 0;
+	}
+
 	/* 创建线程1 */
 	tid1 = rt_thread_create("t1",
 		thread1_entry, RT_NULL, /* 线程入口是thread1_entry, 入口参数是RT_NULL */
@@ -78,6 +128,11 @@ static void _tc_cleanup()
 		rt_thread_delete(tid2);
 	if (tid3 != RT_NULL && tid3->stat != RT_THREAD_CLOSE)
 		rt_thread_delete(tid3);
+
+	if (mutex != RT_NULL)
+	{
+		rt_mutex_delete(mutex);
+	}
 
 	/* 调度器解锁 */
 	rt_exit_critical();

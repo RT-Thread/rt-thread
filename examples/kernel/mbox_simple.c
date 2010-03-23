@@ -11,8 +11,11 @@
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 
+/* 邮箱控制块 */
 static struct rt_mailbox mb;
+/* 用于放邮件的内存池 */
 static char mb_pool[128];
+
 static char mb_str1[] = "I'm a mail!";
 static char mb_str2[] = "this is another mail!";
 
@@ -24,11 +27,14 @@ static void thread1_entry(void* parameter)
 	while (1)
 	{
 		rt_kprintf("thread1: try to recv a mail\n");
+
+		/* 从邮箱中收取邮件 */
 		if (rt_mb_recv(&mb, (rt_uint32_t*)&str, RT_WAITING_FOREVER) == RT_EOK)
 		{
 			rt_kprintf("thread1: get a mail from mailbox, the content:%s\n", str);
 
-			rt_thread_delay(100);
+			/* 延时10个OS Tick */
+			rt_thread_delay(10);
 		}
 	}
 }
@@ -44,14 +50,17 @@ static void thread2_entry(void* parameter)
 		count ++;
 		if (count & 0x1)
 		{
+			/* 发送mb_str1地址到邮箱中 */
 			rt_mb_send(&mb, (rt_uint32_t)&mb_str1[0]);
 		}
 		else
 		{
+			/* 发送mb_str2地址到邮箱中 */
 			rt_mb_send(&mb, (rt_uint32_t)&mb_str2[0]);
 		}
 
-		rt_thread_delay(200);
+		/* 延时20个OS Tick */
+		rt_thread_delay(20);
 	}
 }
 
@@ -92,6 +101,9 @@ static void _tc_cleanup()
 		rt_thread_delete(tid1);
 	if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
 		rt_thread_delete(tid2);
+
+	/* 执行邮箱对象脱离 */
+	rt_mb_detach(&mb);
 
 	/* 调度器解锁 */
 	rt_exit_critical();

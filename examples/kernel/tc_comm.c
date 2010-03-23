@@ -13,9 +13,11 @@ static char _tc_prefix[64];
 static const char* _tc_current;
 static void (*_tc_cleanup)(void) = RT_NULL;
 
+static rt_uint32_t _tc_scale = 1;
+FINSH_VAR_EXPORT(_tc_scale, finsh_type_int, the testcase timer timeout scale)
+
 void tc_thread_entry(void* parameter)
 {
-	rt_err_t result;
 	struct finsh_syscall* index;
 
 	/* create tc semaphore */
@@ -36,7 +38,7 @@ void tc_thread_entry(void* parameter)
 				tick = index->func();
 				if (tick > 0)
 				{
-					result = rt_sem_take(&_tc_sem, tick);
+					rt_sem_take(&_tc_sem, tick * _tc_scale);
 
 					if (_tc_cleanup != RT_NULL)
 					{
@@ -45,15 +47,10 @@ void tc_thread_entry(void* parameter)
 						_tc_cleanup = RT_NULL;
 					}
 
-					if (result != RT_EOK)
+					if (_tc_stat & TC_STAT_FAILED)
 						rt_kprintf("TestCase[%s] failed\n", _tc_current);
 					else
-					{
-						if (_tc_stat & TC_STAT_FAILED)
-							rt_kprintf("TestCase[%s] failed\n", _tc_current);
-						else
-							rt_kprintf("TestCase[%s] passed\n", _tc_current);
-					}
+						rt_kprintf("TestCase[%s] passed\n", _tc_current);
 				}
 				else
 				{
