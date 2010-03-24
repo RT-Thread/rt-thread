@@ -564,6 +564,21 @@ size_t strspn(const char *s, const char *accept)
 	return l;
 }
 
+size_t strcspn(const char *s, const char *reject)
+{
+	size_t l=0;
+	int a=1,i,al=strlen(reject);
+
+	while((a)&&(*s))
+	{
+		for(i=0;(a)&&(i<al);i++)
+			if (*s==reject[i]) a=0;
+		if (a) l++;
+		s++;
+	}
+	return l;
+}
+
 char*strtok_r(char*s,const char*delim,char**ptrptr)
 {
 	char*tmp=0;

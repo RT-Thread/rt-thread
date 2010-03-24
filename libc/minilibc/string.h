@@ -70,6 +70,9 @@ char *strdup(const char *s);
 char *strtok(char *s, const char *delim);
 char*strtok_r(char*s, const char*delim, char**ptrptr);
 
+size_t strcspn(const char *s, const char *reject);
+size_t strspn (const char *s, const char *accept);
+
 #endif
 
 #endif
