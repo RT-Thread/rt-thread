@@ -21,8 +21,8 @@
 
 #define RTC_DEBUG
 
-#define RTC_ENABLE		(RTCCON |=  0x01);	/*RTC read and write enable */
-#define RTC_DISABLE		(RTCCON &= ~0x01);	/* RTC read and write disable */
+#define RTC_ENABLE		RTCCON |=  0x01;	/*RTC read and write enable */
+#define RTC_DISABLE		RTCCON &= ~0x01;	/* RTC read and write disable */
 #define BCD2BIN(n)		(((((n) >> 4) & 0x0F) * 10) + ((n) & 0x0F))
 #define BIN2BCD(n)		((((n) / 10) << 4) | ((n) % 10))
 
@@ -34,7 +34,7 @@ void rt_hw_rtc_get(struct tm *ti)
 	rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
 	/* enable access to RTC registers */
-	RTC_ENABLE
+	RTCCON |= RTC_ENABLE;
 
 	/* read RTC registers */
 	do
@@ -46,7 +46,12 @@ void rt_hw_rtc_get(struct tm *ti)
 		wday 	= BCDDAY;
 		mon 	= BCDMON;
 		year 	= BCDYEAR;
-    } while (sec != BCDSEC);
+    	} while (sec != BCDSEC);
+
+	/*
+	rt_kprintf("sec:%x min:%x hour:%x mday:%x wday:%x mon:%x year:%x\n",
+		sec, min, hour, mday, wday, mon, year);
+	*/	
 
 	/* disable access to RTC registers */
 	RTC_DISABLE
@@ -80,15 +85,17 @@ void rt_hw_rtc_set(struct tm *ti)
 	/* enable access to RTC registers */
 	RTC_ENABLE
 
-	/* write RTC registers */
-	BCDSEC 		= sec;
-	BCDMIN 		= min;
-	BCDHOUR 	= hour;
-	BCDDATE 	= mday;
-	BCDDAY 		= wday;
-	BCDMON 	= mon;
-	BCDYEAR 	= year;
-
+	do{
+		/* write RTC registers */
+		BCDSEC 		= sec;
+		BCDMIN 		= min;
+		BCDHOUR 	= hour;
+		BCDDATE 	= mday;
+		BCDDAY 		= wday;
+		BCDMON 	= mon;
+		BCDYEAR 	= year;
+	}while (sec != BCDSEC);
+	
 	/* disable access to RTC registers */
 	RTC_DISABLE
 }
@@ -162,23 +169,9 @@ void rt_hw_rtc_init(void)
 }
 
 time_t time(time_t* t)
-{
-	rt_device_t device;
-	struct tm ti;
-	time_t time;
-	
-	device = rt_device_find("rtc");
-	if (device != RT_NULL)
-	{
-		rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
-		if (t != RT_NULL) 
-		{
-			time = mktime(&ti);
-			*t = time;
-		}	
-	}
-	
-	return time;
+{	
+	rt_kprintf("not implement yet\n");
+	return 0;
 }
 
 #ifdef RT_USING_FINSH
@@ -219,10 +212,18 @@ FINSH_FUNCTION_EXPORT(set_time, set time(hour, minute, second))
 
 void list_date(void)
 {
-	time_t now;
-	
-	time(&now);
-	rt_kprintf("%s\n", ctime(&now));
+	struct tm ti;
+	rt_device_t device;
+
+	device = rt_device_find("rtc");
+	if (device != RT_NULL)
+	{
+		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
+		
+		rt_kprintf("%04d-%02d-%02d %02d-%02d-%02d\n", 
+			ti.tm_year + 1900, ti.tm_mon+1, ti.tm_mday,
+			ti.tm_hour, ti.tm_min, ti.tm_sec);
+	}
 }
 FINSH_FUNCTION_EXPORT(list_date, list date)
 #endif
