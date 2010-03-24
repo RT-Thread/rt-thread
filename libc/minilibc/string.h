@@ -64,8 +64,11 @@ char *strncpy(char *dest, const char *src, size_t n);
 size_t strlcpy(char *dst, const char *src, size_t siz);
 char *strncat(char *dest, const char *src, size_t count);
 char *strcat(char * dest, const char * src);
+char *strchr(const char *s1, int i);
 char *strrchr(const char *t, int c);
 char *strdup(const char *s);
+char *strtok(char *s, const char *delim);
+char*strtok_r(char*s, const char*delim, char**ptrptr);
 
 #endif
 

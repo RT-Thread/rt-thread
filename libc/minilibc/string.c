@@ -13,6 +13,7 @@
  * 2010-02-15     Gary Lee     add strlcpy
  * 2010-03-17     Bernard      add strlcpy implementation to this file.
  *                             fix strlcpy declaration
+ * 2010-03-24     Bernard      add strchr and strtok implementation.
  */
 
 #include <rtthread.h>
@@ -546,6 +547,62 @@ int sscanf(const char * buf, const char * fmt, ...)
 	va_end(args);
 	
 	return i;
+}
+
+size_t strspn(const char *s, const char *accept)
+{
+	size_t l=0;
+	int a=1,i, al=strlen(accept);
+
+	while((a)&&(*s))
+	{
+		for(a=i=0;(!a)&&(i<al);i++)
+			if (*s==accept[i]) a=1;
+		if (a) l++;
+		s++;
+	}
+	return l;
+}
+
+char*strtok_r(char*s,const char*delim,char**ptrptr)
+{
+	char*tmp=0;
+
+	if (s==0) s=*ptrptr;
+	s += strspn(s,delim);	/* overread leading delimiter */
+	if (*s)
+	{
+		tmp=s;
+		s+=strcspn(s,delim);
+
+		if (*s) *s++=0;		/* not the end ? => terminate it */
+	}
+	*ptrptr=s;
+	return tmp;
+}
+
+char *strtok(char *s, const char *delim)
+{
+	static char *strtok_pos;
+	return strtok_r(s,delim,&strtok_pos);
+}
+
+char *strchr(const char *s1, int i)
+{
+	const unsigned char *s = (const unsigned char *)s1;
+	unsigned char c = (unsigned int)i;
+
+	while (*s && *s != c)
+	{
+		s++;
+	}
+
+	if (*s != c)
+	{
+		s = NULL;
+	}
+
+	return (char *) s;
 }
 
 #endif
