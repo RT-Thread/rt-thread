@@ -1,74 +1,84 @@
 #include <rtthread.h>
-#include <lwip/sockets.h>
+#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
 
 void udpserv(void* paramemter)
 {
-	int sock;
-	int bytes_read;
-	char *recv_data;
-	rt_uint32_t addr_len;
-	struct sockaddr_in server_addr , client_addr;
+   int sock;
+   int bytes_read;
+   char *recv_data;
+   rt_uint32_t addr_len;
+   struct sockaddr_in server_addr, client_addr;
 
-    recv_data = rt_malloc(1024);
-    if (recv_data == RT_NULL)
-    {
-        rt_kprintf("No memory\n");
-        return;
-    }
+   /* 分配接收用的数据缓冲 */
+   recv_data = rt_malloc(1024);
+   if (recv_data == RT_NULL)
+   {
+       /* 分配内存失败，返回 */
+       rt_kprintf("No memory\n");
+       return;
+   }
 
-    /* create socket */
-	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-	{
-		rt_kprintf("Socket error\n");
+   /* 创建一个socket，类型是SOCK_DGRAM，UDP类型 */
+   if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+   {
+       rt_kprintf("Socket error\n");
 
-        /* release recv buffer */
-        rt_free(recv_data);
-		return;
-	}
+       /* 释放接收用的数据缓冲 */
+       rt_free(recv_data);
+       return;
+   }
 
-    /* init server socket address */
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(5000);
-	server_addr.sin_addr.s_addr = INADDR_ANY;
-	rt_memset(&(server_addr.sin_zero),0, sizeof(server_addr.sin_zero));
+   /* 初始化服务端地址 */
+   server_addr.sin_family = AF_INET;
+   server_addr.sin_port = htons(5000);
+   server_addr.sin_addr.s_addr = INADDR_ANY;
+   rt_memset(&(server_addr.sin_zero),0, sizeof(server_addr.sin_zero));
 
-	if (bind(sock,(struct sockaddr *)&server_addr,
-			 sizeof(struct sockaddr)) == -1)
-	{
-		rt_kprintf("Bind error\n");
+   /* 绑定socket到服务端地址 */
+   if (bind(sock,(struct sockaddr *)&server_addr,
+            sizeof(struct sockaddr)) == -1)
+   {
+       /* 绑定地址失败 */
+       rt_kprintf("Bind error\n");
 
-        /* release recv buffer */
-        rt_free(recv_data);
-        return;
-	}
+       /* 释放接收用的数据缓冲 */
+       rt_free(recv_data);
+       return;
+   }
 
-	addr_len = sizeof(struct sockaddr);
+   addr_len = sizeof(struct sockaddr);
+   rt_kprintf("UDPServer Waiting for client on port 5000...\n");
 
-	rt_kprintf("UDPServer Waiting for client on port 5000...\n");
+   while (1)
+   {
+       /* 从sock中收取最大1024字节数据 */
+       bytes_read = recvfrom(sock, recv_data, 1024, 0,
+                             (struct sockaddr *)&client_addr, &addr_len);
+       /* UDP不同于TCP，它基本不会出现收取的数据失败的情况，除非设置了超时等待 */
 
-	while (1)
-	{
-		bytes_read = recvfrom(sock, recv_data, 1024, 0,
-            (struct sockaddr *)&client_addr, &addr_len);
-		recv_data[bytes_read] = '\0';
-		rt_kprintf("\n(%s , %d) said : ",inet_ntoa(client_addr.sin_addr),
-			   ntohs(client_addr.sin_port));
-		rt_kprintf("%s", recv_data);
+       recv_data[bytes_read] = '\0'; /* 把末端清零 */
 
-        if (strcmp(recv_data, "exit") == 0)
-        {
-            lwip_close(sock);
+       /* 输出接收的数据 */
+       rt_kprintf("\n(%s , %d) said : ",inet_ntoa(client_addr.sin_addr),
+                  ntohs(client_addr.sin_port));
+       rt_kprintf("%s", recv_data);
 
-            /* release recv buffer */
-            rt_free(recv_data);
-            break;
-        }
-	}
+       /* 如果接收数据是exit，退出 */
+       if (strcmp(recv_data, "exit") == 0)
+       {
+           lwip_close(sock);
 
-	return;
+           /* 释放接收用的数据缓冲 */
+           rt_free(recv_data);
+           break;
+       }
+   }
+
+   return;
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+/* 输出udpserv函数到finsh shell中 */
 FINSH_FUNCTION_EXPORT(udpserv, startup udp server);
 #endif

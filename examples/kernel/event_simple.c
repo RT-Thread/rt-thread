@@ -14,9 +14,11 @@ static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 static rt_thread_t tid3 = RT_NULL;
 
-struct rt_event event;
+/* 事件控制块 */
+static struct rt_event event;
 
-void thread1_entry(void *param)
+/* 线程1入口函数 */
+static void thread1_entry(void *param)
 {
 	rt_uint32_t e;
 
@@ -31,7 +33,7 @@ void thread1_entry(void *param)
 		}
 
 		rt_kprintf("thread1: delay 1s to prepare second event\n");
-		rt_thread_delay(100);
+		rt_thread_delay(10);
 
 		/* receive second event */
 		if (rt_event_recv(&event, ((1 << 3) | (1 << 5)),
@@ -41,34 +43,37 @@ void thread1_entry(void *param)
 			rt_kprintf("thread1: OR recv event 0x%x\n", e);
 		}
 
-		rt_thread_delay(50);
+		rt_thread_delay(5);
 	}
 }
 
-void thread2_entry(void *param)
+/* 线程2入口函数 */
+static void thread2_entry(void *param)
 {
 	while (1)
 	{
 		rt_kprintf("thread2: send event1\n");
 		rt_event_send(&event, (1 << 3));
 
-		rt_thread_delay(100);
+		rt_thread_delay(10);
 	}
 }
 
-void thread3_entry(void *param)
+/* 线程3入口函数 */
+static void thread3_entry(void *param)
 {
 	while (1)
 	{
 		rt_kprintf("thread3: send event2\n");
 		rt_event_send(&event, (1 << 5));
 
-		rt_thread_delay(200);
+		rt_thread_delay(20);
 	}
 }
 
 int event_simple_init()
 {
+	/* 初始化事件对象 */
 	rt_event_init(&event, "event", RT_IPC_FLAG_FIFO);
 
 	/* 创建线程1 */
@@ -114,6 +119,9 @@ static void _tc_cleanup()
 		rt_thread_delete(tid2);
 	if (tid3 != RT_NULL && tid3->stat != RT_THREAD_CLOSE)
 		rt_thread_delete(tid3);
+
+	/* 执行事件对象脱离 */
+	rt_event_detach(&event);
 
 	/* 调度器解锁 */
 	rt_exit_critical();
