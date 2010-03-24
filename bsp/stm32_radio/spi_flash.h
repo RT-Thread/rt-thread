@@ -18,7 +18,8 @@ thanks to gxlujd.
 #define AT45DB_PAGE_ERASE                     0x81	/* 页删除（每页512/528字节） */
 #define AT45DB_SECTOR_ERASE                   0x7C	/* 扇区擦除（每扇区128K字节）*/
 #define AT45DB_READ_STATE_REGISTER            0xD7	/* 读取状态寄存器 */
-
+#define AT45DB_MM_PAGE_READ                   0xD2	/* 读取主储存器的指定页 */
+#define AT45DB_MM_PAGE_PROG_THRU_BUFFER1      0x82  /* 通过缓冲区写入主储存器 */
 
 extern void rt_hw_spi_flash_init(void);
 

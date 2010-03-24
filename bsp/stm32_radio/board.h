@@ -69,6 +69,8 @@ void rt_hw_board_init(void);
 void rt_hw_usart_init(void);
 void rt_hw_sdcard_init(void);
 
+extern struct rt_semaphore spi1_lock;
+
 #endif
 
 // <<< Use Configuration Wizard in Context Menu >>>

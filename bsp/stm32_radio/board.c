@@ -18,6 +18,8 @@
 #include "stm32f10x.h"
 #include "board.h"
 
+struct rt_semaphore spi1_lock;
+
 /**
  * @addtogroup STM32
  */
@@ -87,7 +89,7 @@ static void all_device_reset(void)
                            | RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOG,ENABLE);
 
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
     /* SDIO POWER */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -279,6 +281,11 @@ void rt_hw_board_init()
         /* Enable SPI_MASTER */
         SPI_Cmd(SPI1, ENABLE);
         SPI_CalculateCRC(SPI1, DISABLE);
+
+    	if (rt_sem_init(&spi1_lock, "spi1lock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+    	{
+    		rt_kprintf("init spi1 lock semaphore failed\n");
+    	}
     }
 
 }/* rt_hw_board_init */
