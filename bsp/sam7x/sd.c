@@ -545,11 +545,11 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 	if (count)
 	{
-		// rt_set_errno(-RT_ERROR);
+		rt_set_errno(-RT_ERROR);
 		return 0;
 	}
-	
-	return size / 512;
+
+	return size;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
