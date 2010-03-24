@@ -1,7 +1,7 @@
 /*
  * 程序清单：删除线程
  *
- * 这个例子会创建两个线程，在其中一个线程中删除另外一个线程。
+ * 这个例子会创建两个线程，在一个线程中删除另外一个线程。
  */
 #include <rtthread.h>
 #include "tc_comm.h"
@@ -37,6 +37,7 @@ static void thread2_entry(void* parameter)
 	 * 队列
 	 */
 	rt_thread_delete(tid1);
+	tid1 = RT_NULL;
 
 	/*
 	 * 线程2继续休眠10个OS Tick然后退出，线程2休眠后应切换到idle线程
@@ -48,6 +49,7 @@ static void thread2_entry(void* parameter)
 	 * 线程2运行结束后也将自动被删除(线程控制块和线程栈依然在idle线
 	 * 程中释放)
 	 */
+	tid2 = RT_NULL;
 }
 
 /* 线程删除示例的初始化 */
@@ -55,7 +57,7 @@ int thread_delete_init()
 {
 	/* 创建线程1 */
 	tid1 = rt_thread_create("t1", /* 线程1的名称是t1 */
-		thread1_entry, RT_NULL,   /* 入口时thread1_entry，参数是RT_NULL */
+		thread1_entry, RT_NULL,   /* 入口是thread1_entry，参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid1 != RT_NULL) /* 如果获得线程控制块，启动这个线程 */
 		rt_thread_startup(tid1);
@@ -64,7 +66,7 @@ int thread_delete_init()
 
 	/* 创建线程1 */
 	tid2 = rt_thread_create("t2", /* 线程1的名称是t2 */
-		thread2_entry, RT_NULL,   /* 入口时thread2_entry，参数是RT_NULL */
+		thread2_entry, RT_NULL,   /* 入口是thread2_entry，参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
 	if (tid2 != RT_NULL) /* 如果获得线程控制块，启动这个线程 */
 		rt_thread_startup(tid2);
