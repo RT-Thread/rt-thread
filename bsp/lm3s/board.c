@@ -14,6 +14,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <board.h>
 
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
@@ -23,6 +24,7 @@
 #include <driverlib/sysctl.h>
 #include <driverlib/systick.h>
 #include <driverlib/interrupt.h>
+
 
 static void rt_hw_console_init(void);
 
@@ -71,7 +73,7 @@ void rt_hw_board_init()
 	SysCtlLDOSet(SYSCTL_LDO_2_50V);
 	/* set clock */
 	SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
-                   SYSCTL_XTAL_6MHZ);
+                   LM3S_XTAL_TYPE);
 
 	/* init systick */
 	SysTickDisable();

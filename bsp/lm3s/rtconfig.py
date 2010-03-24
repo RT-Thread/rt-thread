@@ -1,18 +1,47 @@
-# component options
-# finsh shell option
-RT_USING_FINSH = True
+import SCons.cpp
 
-# device file system options
-RT_USING_DFS = True
-RT_USING_DFS_EFSL = True
-RT_USING_DFS_ELMFAT = False
-RT_USING_DFS_YAFFS2 = False
+# component options
+
+# make all component false 
+RT_USING_DFS 		= False
+RT_USING_FINSH 		= False
+RT_USING_DFS_ELMFAT= False
+RT_USING_DFS_YAFFS2= False
+RT_USING_LWIP 		= False
+RT_USING_RTGUI 		= False
+
+# parse rtconfig.h to get used component
+PreProcessor = SCons.cpp.PreProcessor()
+f = file('rtconfig.h', 'r')
+contents = f.read()
+f.close()
+PreProcessor.process_contents(contents)
+rtconfig_ns = PreProcessor.cpp_namespace
+
+# finsh shell options
+if rtconfig_ns.has_key('RT_USING_FINSH'):
+	RT_USING_FINSH = True
+
+# device virtual filesystem options 
+if rtconfig_ns.has_key('RT_USING_DFS'):
+    RT_USING_DFS = True
+    
+    if rtconfig_ns.has_key('RT_USING_DFS_EFSL'):
+        RT_USING_DFS_EFSL = True
+    if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
+        RT_USING_DFS_ELMFAT = True
+    if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
+        RT_USING_DFS_YAFFS2 = True
 
 # lwip options
-RT_USING_LWIP = True
+if rtconfig_ns.has_key('RT_USING_LWIP'):
+    RT_USING_LWIP = True
+    if rtconfig_ns.has_key('RT_USING_WEBSERVER'):
+        RT_USING_WEBSERVER = True
 
 # rtgui options
-RT_USING_RTGUI = False
+if rtconfig_ns.has_key('RT_USING_RTGUI'):
+    RT_USING_RTGUI = True
 
 # toolchains options
 ARCH='arm'

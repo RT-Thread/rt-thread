@@ -14,14 +14,31 @@
  * in this file does not attempt to share the SSI port with the osram,
  * it assumes the osram is not being used.
  */
+#include <rtthread.h>
 
-#include "sdcard.h"
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
 #include <driverlib/ssi.h>
 #include <driverlib/gpio.h>
 #include <driverlib/sysctl.h>
 
+/* Status of Disk Functions */
+typedef rt_uint8_t	DSTATUS;
+
+/* Results of Disk Functions */
+typedef enum {
+	RES_OK = 0,		/* 0: Successful */
+	RES_ERROR,		/* 1: R/W Error */
+	RES_WRPRT,		/* 2: Write Protected */
+	RES_NOTRDY,		/* 3: Not Ready */
+	RES_PARERR		/* 4: Invalid Parameter */
+} DRESULT;
+
+/* Disk Status Bits (DSTATUS) */
+
+#define STA_NOINIT		0x01	/* Drive not initialized */
+#define STA_NODISK		0x02	/* No medium in the drive */
+#define STA_PROTECT		0x04	/* Write protected */
 
 /* Definitions for MMC/SDC command */
 #define CMD0    (0x40+0)    /* GO_IDLE_STATE */
@@ -39,6 +56,27 @@
 #define CMD41    (0x40+41)    /* SEND_OP_COND (ACMD) */
 #define CMD55    (0x40+55)    /* APP_CMD */
 #define CMD58    (0x40+58)    /* READ_OCR */
+
+/* Command code for disk_ioctrl() */
+
+/* Generic command */
+#define CTRL_SYNC			0	/* Mandatory for write functions */
+#define GET_SECTOR_COUNT	1	/* Mandatory for only f_mkfs() */
+#define GET_SECTOR_SIZE		2	/* Mandatory for multiple sector size cfg */
+#define GET_BLOCK_SIZE		3	/* Mandatory for only f_mkfs() */
+#define CTRL_POWER			4
+#define CTRL_LOCK			5
+#define CTRL_EJECT			6
+/* MMC/SDC command */
+#define MMC_GET_TYPE		10
+#define MMC_GET_CSD			11
+#define MMC_GET_CID			12
+#define MMC_GET_OCR			13
+#define MMC_GET_SDSTAT		14
+/* ATA/CF command */
+#define ATA_GET_REV			20
+#define ATA_GET_MODEL		21
+#define ATA_GET_SN			22
 
 /* Peripheral definitions for EK-LM3S6965 board */
 // SSI port
@@ -377,8 +415,8 @@ rt_uint8_t send_cmd (
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                 */
 /*-----------------------------------------------------------------------*/
-
-DSTATUS disk_initialize (
+static
+DSTATUS sdcard_initialize (
     rt_uint8_t drv        /* Physical drive nmuber (0) */
 )
 {
@@ -433,27 +471,11 @@ DSTATUS disk_initialize (
     return Stat;
 }
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Get Disk Status                                                       */
-/*-----------------------------------------------------------------------*/
-
-DSTATUS disk_status (
-    rt_uint8_t drv        /* Physical drive nmuber (0) */
-)
-{
-    if (drv) return STA_NOINIT;        /* Supports only single drive */
-    return Stat;
-}
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Read Sector(s)                                                        */
 /*-----------------------------------------------------------------------*/
-
-DRESULT disk_read (
+static
+DRESULT sdcard_read (
     rt_uint8_t drv,            /* Physical drive nmuber (0) */
     rt_uint8_t *buff,            /* Pointer to the data buffer to store read data */
     rt_uint32_t sector,        /* Start sector number (LBA) */
@@ -495,7 +517,8 @@ DRESULT disk_read (
 /*-----------------------------------------------------------------------*/
 
 #if _READONLY == 0
-DRESULT disk_write (
+static
+DRESULT sdcard_write (
     rt_uint8_t drv,            /* Physical drive nmuber (0) */
     const rt_uint8_t *buff,    /* Pointer to the data to be written */
     rt_uint32_t sector,        /* Start sector number (LBA) */
@@ -541,8 +564,8 @@ DRESULT disk_write (
 /*-----------------------------------------------------------------------*/
 /* Miscellaneous Functions                                               */
 /*-----------------------------------------------------------------------*/
-
-DRESULT disk_ioctl (
+static
+DRESULT sdcard_ioctl (
     rt_uint8_t drv,        /* Physical drive nmuber (0) */
     rt_uint8_t ctrl,        /* Control code */
     void *buff        /* Buffer to send/receive control data */
@@ -641,46 +664,6 @@ DRESULT disk_ioctl (
     return res;
 }
 
-
-
-/*-----------------------------------------------------------------------*/
-/* Device Timer Interrupt Procedure  (Platform dependent)                */
-/*-----------------------------------------------------------------------*/
-/* This function must be called in period of 10ms                        */
-
-void disk_timerproc (void)
-{
-//    rt_uint8_t n, s;
-    rt_uint8_t n;
-
-
-    n = Timer1;                        /* 100Hz decrement timer */
-    if (n) Timer1 = --n;
-    n = Timer2;
-    if (n) Timer2 = --n;
-
-}
-
-/*---------------------------------------------------------*/
-/* User Provided Timer Function for FatFs module           */
-/*---------------------------------------------------------*/
-/* This is a real time clock service to be called from     */
-/* FatFs module. Any valid time must be returned even if   */
-/* the system does not support a real time clock.          */
-
-rt_uint32_t get_fattime (void)
-{
-
-    return    ((2007UL-1980) << 25)    // Year = 2007
-            | (6UL << 21)            // Month = June
-            | (5UL << 16)            // Day = 5
-            | (11U << 11)            // Hour = 11
-            | (38U << 5)            // Min = 38
-            | (0U >> 1)                // Sec = 0
-            ;
-
-}
-
 /*
  * RT-Thread SD Card Driver
  * 20090705 Yi.Qiu
@@ -714,7 +697,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 {
 	DRESULT status;
 
-	status = disk_read(0, buffer, part.offset + pos / SECTOR_SIZE, size / SECTOR_SIZE);
+	status = sdcard_read(0, buffer, part.offset + pos / SECTOR_SIZE, size / SECTOR_SIZE);
 	if (status != RES_OK)
 	{
 		rt_kprintf("sd card read failed\n");
@@ -728,7 +711,7 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 {
 	DRESULT status;
 
-	status = disk_write(0, buffer, part.offset + pos / SECTOR_SIZE, size / SECTOR_SIZE);
+	status = sdcard_write(0, buffer, part.offset + pos / SECTOR_SIZE, size / SECTOR_SIZE);
 	if (status != RES_OK)
 	{
 		rt_kprintf("sd card write failed\n");
@@ -743,9 +726,9 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
-void rt_hw_sdcard_init()
+void rt_hw_sdcard_init(void)
 {
-	if (disk_initialize(0) == RES_OK)
+	if (sdcard_initialize(0) == RES_OK)
 	{
 		DRESULT status;
 		rt_uint8_t *sector;
@@ -757,7 +740,7 @@ void rt_hw_sdcard_init()
 			rt_kprintf("allocate partition sector buffer failed\n");
 			return;
 		}
-		status = disk_read(0, sector, 0, 1);
+		status = sdcard_read(0, sector, 0, 1);
 		if (status == RES_OK)
 		{
 			/* get the first partition */
@@ -781,9 +764,9 @@ void rt_hw_sdcard_init()
 		/* register sdcard device */
 		sdcard_device.init 	= rt_sdcard_init;
 		sdcard_device.open 	= rt_sdcard_open;
-		sdcard_device.close = rt_sdcard_close;
+		sdcard_device.close 	= rt_sdcard_close;
 		sdcard_device.read 	= rt_sdcard_read;
-		sdcard_device.write = rt_sdcard_write;
+		sdcard_device.write 	= rt_sdcard_write;
 		sdcard_device.control = rt_sdcard_control;
 		
 		/* no private */
