@@ -1,5 +1,5 @@
 /*
-+-----------------------
++----------------------------------------------------
 |
 | 红外自学习遥控
 |
@@ -7,6 +7,7 @@
 | Date           Author       Notes
 | 2010-01-02     aozima       The bate version.
 | 2010-02-10     aozima       change printf string 中文 to english.
+| 2010-03-25     aozima       add remote_fn define.
 +----------------------------------------------------
 */
 
@@ -19,7 +20,8 @@
 /* 设置允许偏差,单位0.01ms */
 #define remote_deviation         15
 #define remote_code_len_max      100
-
+/* 样本保存文件名全路径 */
+#define remote_fn                "/resource/remote.txt"
 
 /* 红外模式 0:没启动,1:自学习,2:正常解码 */
 unsigned int rem_mode = 0;
@@ -155,7 +157,7 @@ void rem_start(void)
             unsigned int EOF_flag = 1;
 
             printf("\r\ndecode remote codes");
-            fd = open("/resource/remote.txt",O_RDONLY,0);
+            fd = open(remote_fn,O_RDONLY,0);
             if( fd>0 )
             {
                 printf("\r/resource/remote.txt open succeed");
@@ -403,7 +405,7 @@ int rem_study(void)
     rem_mode = 1;
     rx_count = 0;
     printf("\r\nremote studing.....");
-    fd = open("/resource/remote.txt",O_WRONLY | O_TRUNC,0);
+    fd = open(remote_fn,O_WRONLY | O_TRUNC,0);
     if( !(fd<0) )
     {
         printf("\r\n/resource/remote.txt create succeed.");
