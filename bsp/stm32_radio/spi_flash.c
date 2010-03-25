@@ -86,45 +86,6 @@ static void DMA_RxConfiguration(rt_uint32_t addr, rt_size_t size)
 
 	DMA_Cmd(DMA1_Channel3, ENABLE);
 }
-
-static void DMA_TxConfiguration(rt_uint32_t addr, rt_size_t size)
-{
-    DMA_InitTypeDef DMA_InitStructure;
-
-    DMA_ClearFlag(DMA1_FLAG_TC2 | DMA1_FLAG_TE2 | DMA1_FLAG_TC3 | DMA1_FLAG_TE3);
-
-	/* DMA Channel configuration ----------------------------------------------*/
-	DMA_Cmd(DMA1_Channel2, DISABLE);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(SPI1->DR));
-	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(&dummy);
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	DMA_InitStructure.DMA_BufferSize = size;
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-	DMA_Init(DMA1_Channel2, &DMA_InitStructure);
-
-    /* DMA Channel configuration ----------------------------------------------*/
-	DMA_Cmd(DMA1_Channel3, DISABLE);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&(SPI1->DR));
-	DMA_InitStructure.DMA_MemoryBaseAddr = (u32) addr;
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-	DMA_InitStructure.DMA_BufferSize = size;
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-	DMA_Init(DMA1_Channel3, &DMA_InitStructure);
-
-	DMA_Cmd(DMA1_Channel3, ENABLE);
-}
 #endif
 
 static uint8_t SPI_HostReadByte(void)
@@ -245,29 +206,6 @@ static void read_page(uint32_t page, uint8_t *pHeader)
 
 static void write_page(uint32_t page, uint8_t *pHeader)
 {
-#if SPI_FLASH_USE_DMA
-    rt_sem_take(&spi1_lock, RT_WAITING_FOREVER);
-
-    DMA_TxConfiguration((rt_uint32_t) pHeader, SECTOR_SIZE);
-
-    FLASH_CS_0();
-
-    SPI_HostWriteByte(AT45DB_MM_PAGE_PROG_THRU_BUFFER1);
-    SPI_HostWriteByte((uint8_t) (page >> 6));
-    SPI_HostWriteByte((uint8_t) (page << 2));
-    SPI_HostWriteByte(0x00);
-
-	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
-	while (DMA_GetFlagStatus(DMA1_FLAG_TC3) == RESET);
-
-	FLASH_CS_1();
-
-    SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, DISABLE);
-
-    wait_busy();
-
-    rt_sem_release(&spi1_lock);
-#else
     uint16_t i;
 
     rt_sem_take(&spi1_lock, RT_WAITING_FOREVER);
@@ -289,7 +227,6 @@ static void write_page(uint32_t page, uint8_t *pHeader)
     wait_busy();
 
     rt_sem_release(&spi1_lock);
-#endif
 }
 
 
@@ -348,12 +285,7 @@ static rt_size_t rt_spi_flash_write(rt_device_t dev, rt_off_t pos, const void* b
     for (index = 0; index < nr; index++)
     {
         /* only supply single block write: block size 512Byte */
-#if SPI_FLASH_USE_DMA
-    	rt_memcpy(_spi_flash_buffer, ((rt_uint8_t *) buffer + index * SECTOR_SIZE), SECTOR_SIZE);
-        write_page((pos / SECTOR_SIZE + index), _spi_flash_buffer);
-#else
         write_page((pos / SECTOR_SIZE + index), ((rt_uint8_t *) buffer + index * SECTOR_SIZE));
-#endif
     }
 
     return nr * SECTOR_SIZE;
