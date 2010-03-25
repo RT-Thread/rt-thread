@@ -7,22 +7,22 @@
 #include "tc_comm.h"
 
 /* 定时器的控制块 */
-struct rt_timer timer1;
-struct rt_timer timer2;
+static struct rt_timer timer1;
+static struct rt_timer timer2;
 
 /* 定时器1超时函数 */
-void timeout1(void* parameter)
+static void timeout1(void* parameter)
 {
 	rt_kprintf("periodic timer is timeout\n");
 }
 
 /* 定时器2超时函数 */
-void timeout2(void* parameter)
+static void timeout2(void* parameter)
 {
 	rt_kprintf("one shot timer is timeout\n");
 }
 
-void timer_simple_init()
+void timer_static_init()
 {
 	/* 初始化定时器 */
 	rt_timer_init(&timer1, "timer1", timeout1, RT_NULL, 10, RT_TIMER_FLAG_PERIODIC);
@@ -50,24 +50,24 @@ static void _tc_cleanup()
 	tc_done(TC_STAT_PASSED);
 }
 
-int _tc_timer_simple()
+int _tc_timer_static()
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
 
 	/* 执行定时器例程 */
-	timer_simple_init();
+	timer_static_init();
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
 }
 /* 输出函数命令到finsh shell中 */
-FINSH_FUNCTION_EXPORT(_tc_timer_simple, a simple timer example);
+FINSH_FUNCTION_EXPORT(_tc_timer_static, a simple timer example);
 #else
 /* 用户应用入口 */
 int rt_application_init()
 {
-	timer_simple_init();
+	timer_static_init();
 
 	return 0;
 }
