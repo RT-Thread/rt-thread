@@ -25,8 +25,16 @@ static void timeout2(void* parameter)
 void timer_static_init()
 {
 	/* 初始化定时器 */
-	rt_timer_init(&timer1, "timer1", timeout1, RT_NULL, 10, RT_TIMER_FLAG_PERIODIC);
-	rt_timer_init(&timer2, "timer2", timeout2, RT_NULL, 30, RT_TIMER_FLAG_ONE_SHOT);
+	rt_timer_init(&timer1, "timer1",  /* 定时器名字是 timer1 */
+		timeout1, /* 超时时回调的处理函数 */
+		RT_NULL, /* 超时函数的入口参数 */
+		10, /* 定时长度，以OS Tick为单位，即10个OS Tick */
+		RT_TIMER_FLAG_PERIODIC); /* 周期性定时器 */
+	rt_timer_init(&timer2, "timer2",   /* 定时器名字是 timer2 */
+		timeout2, /* 超时时回调的处理函数 */
+		RT_NULL, /* 超时函数的入口参数 */
+		30, /* 定时长度为30个OS Tick */
+		RT_TIMER_FLAG_ONE_SHOT); /* 单次定时器 */
 
 	/* 启动定时器 */
 	rt_timer_start(&timer1);

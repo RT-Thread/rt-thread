@@ -1,7 +1,7 @@
 /*
  * 程序清单：动态定时器例程
  *
- * 这个例程会创建1个动态周期型定时器对象
+ * 这个例程会创建1个动态周期型定时器对象，然后控制它进行定时时间长度的更改。
  */
 #include <rtthread.h>
 #include "tc_comm.h"
@@ -19,8 +19,8 @@ static void timeout1(void* parameter)
 	/* 停止定时器自身 */
 	if (count >= 8)
 	{
-		/* 停止定时器 */
-		rt_timer_stop(timer1);
+		/* 控制定时器然后更改超时时间长度 */
+		rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, 50);
 		count = 0;
 	}
 }
