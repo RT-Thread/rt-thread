@@ -20,12 +20,12 @@ static void timeout1(void* parameter)
 	if (count >= 8)
 	{
 		/* 控制定时器然后更改超时时间长度 */
-		rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, 50);
+		rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, (void*)50);
 		count = 0;
 	}
 }
 
-void timer_stop_self_init()
+void timer_control_init()
 {
 	/* 创建定时器1 */
 	timer1 = rt_timer_create("timer1",  /* 定时器名字是 timer1 */
@@ -57,25 +57,25 @@ static void _tc_cleanup()
 	tc_done(TC_STAT_PASSED);
 }
 
-int _tc_timer_stop_self()
+int _tc_timer_control()
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
 
 	/* 执行定时器例程 */
 	count = 0;
-	timer_stop_self_init();
+	timer_control_init();
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
 }
 /* 输出函数命令到finsh shell中 */
-FINSH_FUNCTION_EXPORT(_tc_timer_stop_self, a dynamic timer example);
+FINSH_FUNCTION_EXPORT(_tc_timer_control, a timer control example);
 #else
 /* 用户应用入口 */
 int rt_application_init()
 {
-	timer_stop_self_init();
+	timer_control_init();
 
 	return 0;
 }

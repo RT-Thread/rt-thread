@@ -22,7 +22,10 @@ mutex_simple.c
 event_simple.c
 mbox_simple.c
 messageq_simple.c
-timer_simple.c
+timer_static.c
+timer_dynamic.c
+timer_stop_self.c
+timer_control.c
 heap_malloc.c
 heap_realloc.c
 memp_simple.c

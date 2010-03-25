@@ -11,13 +11,13 @@ static rt_timer_t timer1;
 static rt_timer_t timer2;
 
 /* 定时器1超时函数 */
-void timeout1(void* parameter)
+static void timeout1(void* parameter)
 {
 	rt_kprintf("periodic timer is timeout\n");
 }
 
 /* 定时器2超时函数 */
-void timeout2(void* parameter)
+static void timeout2(void* parameter)
 {
 	rt_kprintf("one shot timer is timeout\n");
 }

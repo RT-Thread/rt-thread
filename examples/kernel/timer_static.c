@@ -70,7 +70,7 @@ int _tc_timer_static()
 	return 100;
 }
 /* 输出函数命令到finsh shell中 */
-FINSH_FUNCTION_EXPORT(_tc_timer_static, a simple timer example);
+FINSH_FUNCTION_EXPORT(_tc_timer_static, a static timer example);
 #else
 /* 用户应用入口 */
 int rt_application_init()
