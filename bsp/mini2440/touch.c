@@ -69,20 +69,20 @@ static struct s3c2410ts ts;
 #include <rtgui/event.h>
 void report_touch_input(int updown)
 {
-	long tmp;
+	long xp, yp;
 	struct rtgui_event_mouse emouse;
 
-	ts.xp >>= ts.shift;
-	ts.yp >>= ts.shift;
+	xp = ts.xp >> ts.shift;
+	yp = ts.yp >> ts.shift;
 
-	ts.xp = 240 * (ts.xp-X_MIN)/(X_MAX-X_MIN);
-	ts.yp = 320 - (320*(ts.yp-Y_MIN)/(Y_MAX-Y_MIN));
+	xp = 240 * (xp-X_MIN)/(X_MAX-X_MIN);
+	yp = 320 - (320*(yp-Y_MIN)/(Y_MAX-Y_MIN));
 
 	emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
 	emouse.parent.sender = RT_NULL;
 
-	emouse.x = ts.xp;
-	emouse.y = ts.yp;
+	emouse.x = xp;
+	emouse.y = yp;
 
 	/* set emouse button */
 	if (updown)
@@ -95,7 +95,7 @@ void report_touch_input(int updown)
 	}
 
 	/* rt_kprintf("touch %s: ts.x: %d, ts.y: %d, count:%d\n", updown? "down" : "up",
-		ts.xp, ts.yp, ts.count); */
+		xp, yp, ts.count); */
 
 	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
 
@@ -170,6 +170,7 @@ void s3c2410_intc_stylus_updown()
 		if (ts.xp >= 0 && ts.yp >= 0)
 		{
 		#ifdef RT_USING_RTGUI
+			report_touch_input(1);
 			report_touch_input(0);
 			first_down_report = 1;
 		#endif
