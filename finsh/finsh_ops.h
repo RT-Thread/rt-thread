@@ -115,6 +115,6 @@
 #define FINSH_OP_HALT			0xFF
 
 typedef void (*op_func)();
-extern op_func op_table[];
+extern const op_func op_table[];
 
 #endif

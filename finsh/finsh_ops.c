@@ -553,7 +553,7 @@ void OP_call()
 	return ;
 }
 
-op_func op_table[] =
+const op_func op_table[] =
 {
 	/* 00 */ OP_no_op,
 	/* 01 */ OP_add_byte,
