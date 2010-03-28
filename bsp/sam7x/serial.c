@@ -12,6 +12,7 @@
  * 2006-08-23     Bernard      first version
  * 2009-05-14     Bernard      add RT-THread device interface
  * 2010-03-14     MingBai      US_IMR is read-only.
+ * 2010-03-16     MingBai      Changed interrupt source mode to level sensitive.
  */
 
 #include <rthw.h>
@@ -148,12 +149,14 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 	if (serial->peripheral_id == AT91C_ID_US0)
 	{
 		/* set pinmux */
-		AT91C_PIO_PDR = (1 << 5) | (1 << 6);
+		//AT91C_PIO_PDR = (1 << 5) | (1 << 6);
+		AT91C_PIO_PDR = 1 | (1 << 1);  //fix bug 2010-3-9
 	}
 	else if (serial->peripheral_id == AT91C_ID_US1)
 	{
 		/* set pinmux */
-		AT91C_PIO_PDR = (1 << 21) | (1 << 22);
+		//AT91C_PIO_PDR = (1 << 21) | (1 << 22);
+		AT91C_PIO_PDR = (1 << 5) | (1 << 6);  //fix bug 2010-3-9
 	}
 
 	serial->hw_base->US_CR = AT91C_US_RSTRX	    | 	/* Reset Receiver      */
@@ -200,7 +203,10 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 
 		/* install UART handler */
 		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_isr, RT_NULL);
-		AT91C_AIC_SMR(serial->peripheral_id) = 5 | (0x01 << 5);
+		// SAM7X Datasheet 30.5.3:
+		// It is notrecommended to use the USART interrupt line in edge sensitive mode
+		//AT91C_AIC_SMR(serial->peripheral_id) = 5 | (0x01 << 5);
+		AT91C_AIC_SMR(serial->peripheral_id) = 5;
 		rt_hw_interrupt_umask(serial->peripheral_id);
 	}
 

@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-08-23     Bernard      first implementation
+ * 2010-03-09     ljt8015      Fix a bug in rt_hw_console_init()
  */
 
 #include <rtthread.h>
@@ -128,8 +129,9 @@ static void rt_hw_console_init()
 {
 	/* Enable Clock for USART0 */
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;
-	/* Enable RxD0 and TxDO Pin */
-	AT91C_BASE_PIOA->PIO_PDR = (1 << 5) | (1 << 6);
+	/* Enable RxD0 and TxD0 Pin */
+	//AT91C_BASE_PIOA->PIO_PDR = (1 << 5) | (1 << 6);
+	AT91C_BASE_PIOA->PIO_PDR = 1 | (1 << 1);//fix bug 2010-3-9
 
 	AT91C_BASE_US0->US_CR = AT91C_US_RSTRX	|		/* Reset Receiver      */
 				AT91C_US_RSTTX		|		/* Reset Transmitter   */

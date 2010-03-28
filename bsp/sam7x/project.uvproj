@@ -116,7 +116,7 @@
           <Simulator>
             <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -343,7 +343,7 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>RT_DEBUG</Define>
               <Undefine></Undefine>
               <IncludePath>.;..\..\include;..\sam7x;..\..\finsh;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</IncludePath>
             </VariousControls>

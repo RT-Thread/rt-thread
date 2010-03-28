@@ -7,6 +7,27 @@
 #include "lwipopts.h"
 
 #define MAX_ADDR_LEN 6
+
+#ifdef DM9161
+#define EMAC_PIO_CFG	(AT91C_PB8_EMDC         | \
+						 AT91C_PB9_EMDIO         | \
+						 AT91C_PB2_ETX0          | \
+						 AT91C_PB3_ETX1          | \
+						 AT91C_PB10_ETX2         | \
+						 AT91C_PB11_ETX3         | \
+						 AT91C_PB1_ETXEN         | \
+						 AT91C_PB0_ETXCK_EREFCK  | \
+						 AT91C_PB15_ERXDV_ECRSDV | \
+						 AT91C_PB5_ERX0			| \
+						 AT91C_PB6_ERX1			| \
+						 AT91C_PB12_ETXER        | \
+						 AT91C_PB13_ERX2			| \
+						 AT91C_PB14_ERX3			| \
+						 AT91C_PB17_ERXCK		| \
+						 AT91C_PB16_ECOL			| \
+						 AT91C_PB4_ECRS			| \
+						 AT91C_PB7_ERXER)
+#else
 #define EMAC_PIO_CFG	(AT91C_PB0_ETXCK_EREFCK | \
 		AT91C_PB1_ETXEN        | \
 		AT91C_PB2_ETX0         | \
@@ -25,6 +46,7 @@
 		AT91C_PB15_ERXDV_ECRSDV| \
 		AT91C_PB16_ECOL        | \
 		AT91C_PB17_ERXCK)
+#endif
 
 #define RB_BUFFER_SIZE		8			/* max number of receive buffers */
 #define ETH_RX_BUF_SIZE		128
@@ -61,7 +83,6 @@ rt_inline void write_phy(rt_uint8_t addr, rt_uint32_t value)
 {
 	AT91C_BASE_EMAC->EMAC_MAN = ((0x01<<30) | (2 << 16) | (1 << 28) |
 								 (AT91C_PHY_ADDR << 23) | (addr << 18))  | value;
-
 	/* Wait until IDLE bit in Network Status register is cleared */
 	while (!(AT91C_BASE_EMAC->EMAC_NSR & AT91C_EMAC_IDLE));
 }
@@ -83,7 +104,7 @@ rt_inline void sam7xether_reset_tx_desc(void)
 
 	if(tb_descriptors[index].status & TxDESC_STATUS_USED)
 	{
-		while(!tb_descriptors[index].status & TxDESC_STATUS_LAST_BUF)
+		while(!(tb_descriptors[index].status & TxDESC_STATUS_LAST_BUF))
 		{
 			index ++;
 			if(index >= TB_BUFFER_SIZE)index = 0;
@@ -95,6 +116,7 @@ rt_inline void sam7xether_reset_tx_desc(void)
 		if(index >= TB_BUFFER_SIZE)index = 0;
 	}
 }
+
 
 /* interrupt service routing */
 static void sam7xether_isr(int irq)
@@ -128,15 +150,81 @@ static void sam7xether_isr(int irq)
 
 rt_inline void linksetup(void)
 {
-	rt_uint32_t value;
+	rt_uint32_t value, tout, id1, id2;
+#ifdef DM9161
+	rt_uint32_t ulBMSR,ulBMCR,i;
+#endif
 
-	/* Check if this is a RTL8201 PHY. */
-	rt_uint16_t id1 = read_phy(PHY_REG_PHYID1);
-	rt_uint16_t id2 = read_phy(PHY_REG_PHYID2);
+#ifdef DM9161
+  	//PHY has internal pull down : disable MII isolate
+  	tout = read_phy(PHY_REG_BMCR);
+  	tout = read_phy(PHY_REG_BMCR);
+  	tout &= ~BMCR_ISOLATE;
+  	write_phy(PHY_REG_BMCR, tout);
+
+	/* Check if this is a RTL8201 or DM9161 PHY. */
+	id1 = read_phy(PHY_REG_PHYID1);
+	id2 = read_phy(PHY_REG_PHYID2);
+
+	if (((id1 << 16) | (id2 & 0xfff0)) == MII_DM9161_ID)
+	{
+		rt_kprintf("read MII_DM9161_ID ok!\n");	
+
+        tout = DM9161_NP | DM9161_TX_FDX | DM9161_TX_HDX |
+               DM9161_10_FDX | DM9161_10_HDX | DM9161_AN_IEEE_802_3;
+        write_phy(PHY_REG_ANAR, tout);
+   	    // Wait for PHY auto negotiation completed
+		i = 0;
+  	    do {
+    		ulBMSR = read_phy(PHY_REG_BMSR);
+			ulBMSR = read_phy(PHY_REG_BMSR);
+			i++;
+
+			if(i >= 0xffff)
+			   break;
+  	    }while (!(ulBMSR & BMSR_ANEGCOMPLETE));
+
+		if(i >= 0xffff)
+		   rt_kprintf("PHY No Link!\n");
+		else
+		   rt_kprintf("PHY auto negotiation completed!\n");
+
+		/* Update the MAC register NCFGR. */
+		AT91C_BASE_EMAC->EMAC_NCFGR = 0;
+		ulBMCR = read_phy(PHY_REG_BMCR);
+			
+	    if (ulBMCR & BMCR_ANENABLE)
+	    {				
+			/* AutoNegotiation is enabled. */
+			if(!(ulBMSR & BMSR_ANEGCOMPLETE))
+			{
+			    /* Auto-negotitation in progress. */		
+				rt_kprintf("Auto-negotitation in progress!\n");
+			    return;			
+			}		
+
+	    	if (ulBMCR & BMCR_SPEED100) 
+	    	{
+		    	/* Speed 100Mbit is enabled. */
+		    	AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_SPD;
+		    	    
+	    	}
+	    	if (ulBMCR & BMCR_FULLDPLX) 
+	    	{
+		    	/* Full duplex is enabled. */
+		    	AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_FD;		    
+	    	}
+       }
+    }
+#else
+	/* Check if this is a RTL8201 or DM9161 PHY. */
+	id1 = read_phy(PHY_REG_PHYID1);
+	id2 = read_phy(PHY_REG_PHYID2);
 
 	if (((id2 << 16) | (id1 & 0xfff0)) == MII_RTL8201_ID)
 	{
-		rt_uint32_t tout;
+	    rt_kprintf("read MII_RTL8201_ID ok!\n");	
+
 
 		/* Configure the PHY device */
 		/* Use autonegotiation about the link speed. */
@@ -156,7 +244,6 @@ rt_inline void linksetup(void)
 			if (value & BMSR_LINKST) break; /* Link is on. */
 		}
 	}
-
 	value = read_phy (PHY_REG_ANLPAR);
 
 	/* Update the MAC register NCFGR. */
@@ -166,6 +253,7 @@ rt_inline void linksetup(void)
 	if (value & 0xA000) AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_FD;
 	/* set speed */
 	if (value & 0xC000) AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_SPD;
+ #endif 
 }
 
 /*
@@ -214,6 +302,8 @@ rt_inline void sam7xether_desc_init()
 /* initialize the interface */
 rt_err_t sam7xether_init(rt_device_t dev)
 {
+	rt_uint32_t i;
+	
 	/* enable peripheral clock for EMAC and PIO B */
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOB | 1 << AT91C_ID_EMAC;
 
@@ -240,9 +330,20 @@ rt_err_t sam7xether_init(rt_device_t dev)
 
 	AT91C_BASE_RSTC->RSTC_RMR = 0xA5000000 | (0x08 << 8) ;
 	AT91C_BASE_RSTC->RSTC_RCR = 0xA5000000 | AT91C_RSTC_EXTRST;
-	while(!(AT91C_BASE_RSTC->RSTC_RSR & AT91C_RSTC_NRSTL));
+
+	i = 0;
+	while(!(AT91C_BASE_RSTC->RSTC_RSR & AT91C_RSTC_NRSTL))
+	{
+	   i++;
+	   if(i >= 0xfffff)
+	     break;
+	}
+
+    for(i=0; i<0xfffff; i++);//* 等待一段指定的时间，使PHY就绪
 
 	linksetup();
+
+	rt_kprintf("linksetup ok!\n");
 
 	/* Disable management port in MAC control register. */
 	AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
@@ -262,13 +363,16 @@ rt_err_t sam7xether_init(rt_device_t dev)
 								  AT91C_EMAC_RLES| AT91C_EMAC_COL | AT91C_EMAC_UBR);
 
 	/* Configure EMAC operation mode. */
-	AT91C_BASE_EMAC->EMAC_NCFGR |= (AT91C_EMAC_BIG | AT91C_EMAC_DRFCS);
+	//AT91C_BASE_EMAC->EMAC_NCFGR |= (AT91C_EMAC_BIG | AT91C_EMAC_DRFCS);
+ 	//                   复制所有有效帧到接收缓冲区   *不复制FCS字段       不接收广播帧    不接收1526字节长帧                 
+	AT91C_BASE_EMAC->EMAC_NCFGR |= AT91C_EMAC_CAF |AT91C_EMAC_DRFCS | AT91C_EMAC_NBC | AT91C_EMAC_BIG;
 	AT91C_BASE_EMAC->EMAC_NCR   |= (AT91C_EMAC_TE  | AT91C_EMAC_RE | AT91C_EMAC_WESTAT);
 
 	/* update MAC address */
 	update_mac_address(sam7x_dev);
 
 	/* enable interrupt */
+	AT91C_BASE_EMAC->EMAC_IDR = 0x3fff;
 	AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP | AT91C_EMAC_TCOMP;
 
 	/* setup interrupt */
@@ -496,12 +600,13 @@ struct pbuf *sam7xether_rx(rt_device_t dev)
 			if (pkt_len > 0) break;
 
 			index ++;
-			if (index > RB_BUFFER_SIZE) index = 0;
+			if (index >= RB_BUFFER_SIZE) index = 0;
 		}
 
 		if (pkt_len)
 		{
-			p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+			//p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+			p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_POOL);
 			if(p != RT_NULL)
 			{
 				sam7xether_read_frame(RT_NULL, 0, pkt_len);

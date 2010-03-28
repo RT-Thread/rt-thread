@@ -23,6 +23,7 @@
 
 #ifdef RT_USING_LWIP
 #include "sam7x_emac.h"
+extern rt_err_t eth_system_device_init(void);
 #endif
 
 #ifdef RT_USING_FINSH
