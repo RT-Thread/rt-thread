@@ -80,7 +80,7 @@
 #define SD_CARD_LOCKED                  ((uint32_t)0x02000000)
 #define SD_CARD_PROGRAMMING             ((uint32_t)0x00000007)
 #define SD_CARD_RECEIVING               ((uint32_t)0x00000006)
-#define SD_DATATIMEOUT                  ((uint32_t)0x000FFFFF)
+#define SD_DATATIMEOUT                  ((uint32_t)0xFFFFFFFF)
 #define SD_0TO7BITS                     ((uint32_t)0x000000FF)
 #define SD_8TO15BITS                    ((uint32_t)0x0000FF00)
 #define SD_16TO23BITS                   ((uint32_t)0x00FF0000)
@@ -956,16 +956,16 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   else if (DeviceMode == SD_DMA_MODE)
   {
     rt_tick_t tick;
-	
+
     SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
     SDIO_DMACmd(ENABLE);
 	tick = rt_tick_get();
     DMA_RxConfiguration(readbuff, BlockSize);
     while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-    { 
+    {
       if ((TransferError != SD_OK) || (rt_tick_get() - tick > 10))
-	  { 
-	    errorstatus = SD_ERROR; 
+	  {
+	    errorstatus = SD_ERROR;
 		// rt_kprintf("sd error\n");
 		break;
 	  }
@@ -1164,16 +1164,16 @@ SD_Error SD_ReadMultiBlocks(uint32_t addr, uint32_t *readbuff, uint16_t BlockSiz
     else if (DeviceMode == SD_DMA_MODE)
     {
       rt_tick_t tick;
-	  
+
       SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
       SDIO_DMACmd(ENABLE);
 	  tick = rt_tick_get();
       DMA_RxConfiguration(readbuff, (NumberOfBlocks * BlockSize));
       while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-	  { 
+	  {
 		if ((TransferError != SD_OK) || (rt_tick_get() - tick > 10))
-		{ 
-		  errorstatus = SD_ERROR; 
+		{
+		  errorstatus = SD_ERROR;
 		  // rt_kprintf("sd error\n");
 		  return errorstatus;
 		}
