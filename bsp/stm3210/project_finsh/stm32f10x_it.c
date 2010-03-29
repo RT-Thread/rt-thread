@@ -157,31 +157,6 @@ void DMA1_Channel2_IRQHandler(void)
 }
 
 /*******************************************************************************
-* Function Name  : DMA1_Channel6_IRQHandler
-* Description    : This function handles DMA1 Channel 6 interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void DMA1_Channel6_IRQHandler(void)
-{
-#ifdef RT_USING_UART2
-    extern struct rt_device uart2_device;
-	extern void rt_hw_serial_dma_rx_isr(struct rt_device *device);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    /* clear DMA flag */
-    DMA_ClearFlag(DMA1_FLAG_TC6 | DMA1_FLAG_TE6);
-    rt_hw_serial_dma_rx_isr(&uart2_device);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-#endif
-}
-
-/*******************************************************************************
 * Function Name  : USART1_IRQHandler
 * Description    : This function handles USART1 global interrupt request.
 * Input          : None

@@ -2,6 +2,7 @@
 ### Do not modify !
 
 Target (RT-Thread STM32), 0x0004 // Tools: 'ARM-ADS'
+Target (RT-Thread STM32 Simulator), 0x0004 // Tools: 'ARM-ADS'
 
 Group (Startup)
 Group (StdPeriph_Driver)
@@ -16,6 +17,7 @@ File 1,1,<.\startup.c><startup.c>
 File 1,1,<.\led.c><led.c>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
+File 1,1,<.\usart.c><usart.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c><misc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c><stm32f10x_wwdg.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c><stm32f10x_adc.c>
@@ -60,6 +62,7 @@ File 5,1,<..\..\libcpu\arm\stm32\stack.c><stack.c>
 File 5,2,<..\..\libcpu\arm\stm32\context_rvds.S><context_rvds.S>
 File 5,2,<..\..\libcpu\arm\stm32\fault_rvds.S><fault_rvds.S>
 File 5,2,<..\..\libcpu\arm\stm32\start_rvds.s><start_rvds.s>
+File 5,1,<..\..\libcpu\arm\stm32\serial.c><serial.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32'
@@ -144,10 +147,100 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  ADSLDMC ()
  ADSLDIF ()
  ADSLDDW ()
-  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F107xCSchedule)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F107xC)
-  OPTDBG 49149,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103ZE)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103ZE)
+  OPTDBG 49150,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 9,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+
+Options 2,0,0  // Target 'RT-Thread STM32 Simulator'
+ Device (STM32F103ZE)
+ Vendor (STMicroelectronics)
+ Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0x8000000-0x807FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\ST\STM32F10x.s" ("STM32 Startup Code"))
+ FlashDR (UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_512 -FS08000000 -FL080000))
+ DevID (4216)
+ Rgf (stm32f10x_lib.h)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ÿST\STM32F10x\)
+ OrgReg (ÿST\STM32F10x\)
+ TgStat=16
+ OutDir (.\obj\)
+ OutName (rtthread-stm32)
+ GenApp=1
+ GenLib=0
+ GenHex=0
+ Debug=1
+ Browse=0
+ LstDir (.\obj\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,0,2,99,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,32,0,0,1,0 }
+ OCMADSIROM { 1,0,0,0,8,0,0,8,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,1,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,32,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN (USE_STDPERIPH_DRIVER, STM32F10X_HD, STM32_SIMULATOR)
+ ADSCUDEF ()
+ ADSCINCD (.\Libraries\STM32F10x_StdPeriph_Driver\inc;.\Libraries\CMSIS\Core\CM3;..\..\include;.;..\..\libcpu\arm\stm32)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x08000000)
+ ADSLDDA (0x20000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103ZE)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103ZE)
+  OPTDBG 49149,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JLTAgdi.dll)
  FLASH3 ("" ())
  FLASH4 ()
 EndOpt

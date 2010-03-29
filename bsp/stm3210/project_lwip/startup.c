@@ -96,12 +96,6 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-	/* init hardware serial device */
-	rt_hw_usart_init();
-
-	/* init all device */
-	rt_device_init_all();
-
 	/* init application */
 	rt_application_init();
 
