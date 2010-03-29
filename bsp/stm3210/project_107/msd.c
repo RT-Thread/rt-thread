@@ -40,7 +40,6 @@
 #define MSD_CS_HIGH()    GPIO_SetBits(GPIOC, GPIO_Pin_7)
 /* MSD Card SPI */
 #define MSD_SPI			SPI3
-#define MSD_RCC_SPI     RCC_APB1Periph_SPI3
 
 /* Private function prototypes -----------------------------------------------*/
 static void SPI_Config(void);
@@ -757,9 +756,9 @@ void SPI_Config(void)
   GPIO_PinRemapConfig(GPIO_Remap_SPI3, ENABLE);
 
   /* SPI Periph clock enable */
-  RCC_APB2PeriphClockCmd(MSD_RCC_SPI, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
 
-  /* Configure SPI pins: SCK, MISO and MOSI */
+  /* Configure SPI3 pins: SCK, MISO and MOSI */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -771,7 +770,7 @@ void SPI_Config(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-  /* SPI Config */
+  /* SPI3 Config */
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
@@ -786,8 +785,7 @@ void SPI_Config(void)
   /* SPI enable */
   SPI_Cmd(MSD_SPI, ENABLE);
 
-  /* active SD card */
-  for (delay = 0; delay < 0xfffff; delay ++);
+  for(delay = 0; delay < 0xfffff; delay++);
 }
 
 /******************* (C) COPYRIGHT 2008 STMicroelectronics *****END OF FILE****/

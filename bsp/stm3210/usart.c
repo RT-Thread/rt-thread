@@ -112,8 +112,18 @@ static void RCC_Configuration(void)
 #endif
 
 #ifdef RT_USING_UART2
-	/* Enable GPIOD clocks */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+
+#if (defined(STM32F10X_LD) || defined(STM32F10X_MD) || defined(STM32F10X_CL))
+    /* Enable AFIO and GPIOD clock */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOD, ENABLE);
+
+    /* Enable the USART2 Pins Software Remapping */
+    GPIO_PinRemapConfig(GPIO_Remap_USART2, ENABLE);
+#else
+    /* Enable AFIO and GPIOA clock */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA, ENABLE);
+#endif
+
 	/* Enable USART2 clock */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 #endif
@@ -122,9 +132,7 @@ static void RCC_Configuration(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	/* Enable USART3 clock */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
-#endif
 
-#if defined (RT_USING_UART3)
 	/* DMA clock enable */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 #endif
