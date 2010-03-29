@@ -67,7 +67,11 @@ static void thread2_entry(void* parameter)
 int mbox_simple_init()
 {
 	/* 初始化一个mailbox */
-	rt_mb_init(&mb, "mbt", &mb_pool[0], 128 / 4, RT_IPC_FLAG_FIFO);
+	rt_mb_init(&mb,
+		"mbt",             /* 名称是mbt */
+		&mb_pool[0],       /* 邮箱用到的内存池是mb_pool */
+		size(mb_pool)/4,   /* 大小是mb_pool大小除以4，因为一封邮件的大小是4字节 */
+		RT_IPC_FLAG_FIFO); /* 采用FIFO方式进行线程等待 */
 
 	/* 创建线程1 */
 	tid1 = rt_thread_create("t1",
