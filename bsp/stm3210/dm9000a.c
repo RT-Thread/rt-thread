@@ -32,8 +32,8 @@
 //--------------------------------------------------------
 
 #define DM9000_PHY          0x40    /* PHY address 0x01 */
-#define RST_1()             GPIO_SetBits(GPIOF,GPIO_Pin_6)
-#define RST_0()             GPIO_ResetBits(GPIOF,GPIO_Pin_6)
+#define RST_1()             GPIO_SetBits(GPIOE,GPIO_Pin_5)
+#define RST_0()             GPIO_ResetBits(GPIOE,GPIO_Pin_5)
 
 #define MAX_ADDR_LEN 6
 enum DM9000_PHY_mode
@@ -516,15 +516,17 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         else
         {
             rt_uint16_t dummy;
+			rt_int32_t len;
 
 			DM9000_TRACE("dm9000 rx: no pbuf\n");
 
             /* no pbuf, discard data from DM9000 */
             data = &dummy;
-            while (rx_len)
+			len = rx_len;
+            while (len > 0)
             {
                 *data = DM9000_inw(DM9000_DATA_BASE);
-                rx_len -= 2;
+                len -= 2;
             }
         }
 
@@ -575,7 +577,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 static void RCC_Configuration(void)
 {
     /* enable gpiob port clock */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF | RCC_APB2Periph_GPIOE | RCC_APB2Periph_AFIO, ENABLE);
 	/* enable FSMC clock */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 }
@@ -584,12 +586,9 @@ static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Configure one bit for preemption priority */
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
     /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
@@ -600,32 +599,32 @@ static void GPIO_Configuration()
     GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
 
-    /* configure PF6 as eth RST */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    /* configure PE5 as eth RST */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOF,&GPIO_InitStructure);
-    GPIO_ResetBits(GPIOF,GPIO_Pin_6);
-    RST_1();
+    GPIO_Init(GPIOE,&GPIO_InitStructure);
+    GPIO_SetBits(GPIOE,GPIO_Pin_5);
+    //RST_1();
 
-    /* configure PF7 as external interrupt */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    /* configure PE4 as external interrupt */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOF, &GPIO_InitStructure);
+    GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-    /* Connect DM9000 EXTI Line to GPIOF Pin 7 */
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOF, GPIO_PinSource7);
+    /* Connect DM9000 EXTI Line to GPIOE Pin 4 */
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource4);
 
     /* Configure DM9000 EXTI Line to generate an interrupt on falling edge */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line7;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line4;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
 
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line7);
+    /* Clear DM9000A EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
 static void FSMC_Configuration()
@@ -726,12 +725,12 @@ void rt_hw_dm9000_init()
      */
     dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
 
-    dm9000_device.dev_addr[0] = 0x01;
+    dm9000_device.dev_addr[0] = 0x00;
     dm9000_device.dev_addr[1] = 0x60;
     dm9000_device.dev_addr[2] = 0x6E;
     dm9000_device.dev_addr[3] = 0x11;
-    dm9000_device.dev_addr[4] = 0x02;
-    dm9000_device.dev_addr[5] = 0x0F;
+    dm9000_device.dev_addr[4] = 0x22;
+    dm9000_device.dev_addr[5] = 0x33;
 
     dm9000_device.parent.parent.init       = rt_dm9000_init;
     dm9000_device.parent.parent.open       = rt_dm9000_open;
