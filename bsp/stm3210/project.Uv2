@@ -17,6 +17,7 @@ File 1,1,<.\startup.c><startup.c>
 File 1,1,<.\led.c><led.c>
 File 1,5,<.\rtconfig.h><rtconfig.h>
 File 1,5,<.\board.h><board.h>
+File 1,1,<.\usart.c><usart.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c><misc.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c><stm32f10x_wwdg.c>
 File 2,1,<.\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c><stm32f10x_adc.c>
@@ -61,6 +62,7 @@ File 5,1,<..\..\libcpu\arm\stm32\stack.c><stack.c>
 File 5,2,<..\..\libcpu\arm\stm32\context_rvds.S><context_rvds.S>
 File 5,2,<..\..\libcpu\arm\stm32\fault_rvds.S><fault_rvds.S>
 File 5,2,<..\..\libcpu\arm\stm32\start_rvds.s><start_rvds.s>
+File 5,1,<..\..\libcpu\arm\stm32\serial.c><serial.c>
 
 
 Options 1,0,0  // Target 'RT-Thread STM32'

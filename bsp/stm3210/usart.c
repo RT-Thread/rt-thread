@@ -39,8 +39,6 @@ struct stm32_serial_device uart1 =
 {
 	USART1,
 	&uart1_int_rx,
-	RT_NULL,
-	RT_NULL,
 	RT_NULL
 };
 struct rt_device uart1_device;
@@ -48,13 +46,10 @@ struct rt_device uart1_device;
 
 #ifdef RT_USING_UART2
 struct stm32_serial_int_rx uart2_int_rx;
-struct stm32_serial_dma_rx uart2_dma_rx;
 struct stm32_serial_device uart2 =
 {
 	USART2,
 	&uart2_int_rx,
-	RT_NULL,
-	RT_NULL,
 	RT_NULL
 };
 struct rt_device uart2_device;
@@ -67,8 +62,6 @@ struct stm32_serial_device uart3 =
 {
 	USART3,
 	&uart3_int_rx,
-	RT_NULL,
-	RT_NULL,
 	&uart3_dma_tx
 };
 struct rt_device uart3_device;

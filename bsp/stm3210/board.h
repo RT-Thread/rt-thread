@@ -50,6 +50,16 @@ void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
 void rt_hw_board_init(void);
 
+#if STM32_CONSOLE_USART == 0
+#define CONSOLE_DEVICE "no"
+#elif STM32_CONSOLE_USART == 1
+#define CONSOLE_DEVICE "uart1"
+#elif STM32_CONSOLE_USART == 2
+#define CONSOLE_DEVICE "uart2"
+#elif STM32_CONSOLE_USART == 3
+#define CONSOLE_DEVICE "uart3"
+#endif
+
 void rt_hw_usart_init(void);
 
 /* SD Card init function */
