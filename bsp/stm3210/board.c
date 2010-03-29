@@ -66,7 +66,6 @@ void  SysTick_Configuration(void)
 }
 
 #if STM32_EXT_SRAM
-#define Bank1_SRAM3_ADDR    ((u32)0x68000000)
 void EXT_SRAM_Configuration(void)
 {
 	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
@@ -204,9 +203,9 @@ void rt_hw_board_init()
 #endif
 
 #define CONSOLE_USART	USART2
-#elif STM32_CONSOLE_USART == 2
-#define CONSOLE_RX_PIN	    GPIO_Pin_11
+#elif STM32_CONSOLE_USART == 3
 #define CONSOLE_TX_PIN	    GPIO_Pin_10
+#define CONSOLE_RX_PIN	    GPIO_Pin_11
 #define CONSOLE_GPIO	    GPIOB
 #define CONSOLE_USART	    USART3
 #define CONSOLE_RCC         RCC_APB1Periph_USART3

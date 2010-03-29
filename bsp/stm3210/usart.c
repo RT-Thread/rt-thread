@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
+ * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
  */
 
 #include "usart.h"
@@ -20,7 +21,7 @@
  * Use UART1 as console output and finsh input
  * interrupt Rx and poll Tx (stream mode)
  *
- * Use UART2 with DMA Rx and poll Tx -- DMA channel 6
+ * Use UART2 with interrupt Rx and poll Tx
  * Use UART3 with DMA Tx and interrupt Rx -- DMA channel 2
  *
  * USART DMA setting on STM32
@@ -78,13 +79,19 @@ struct rt_device uart3_device;
 #define USART3_DR_Base  0x40004804
 
 /* USART1_REMAP = 0 */
-#define UART1_GPIO_TX	GPIO_Pin_9
-#define UART1_GPIO_RX	GPIO_Pin_10
-#define UART1_GPIO		GPIOA
+#define UART1_GPIO_TX		GPIO_Pin_9
+#define UART1_GPIO_RX		GPIO_Pin_10
+#define UART1_GPIO			GPIOA
 #define RCC_APBPeriph_UART1	RCC_APB2Periph_USART1
 #define UART1_TX_DMA		DMA1_Channel4
 #define UART1_RX_DMA		DMA1_Channel5
 
+#if defined(STM32F10X_LD) || defined(STM32F10X_MD) || defined(STM32F10X_CL)
+#define UART2_GPIO_TX	    GPIO_Pin_5
+#define UART2_GPIO_RX	    GPIO_Pin_6
+#define UART2_GPIO	    	GPIOD
+#define RCC_APBPeriph_UART2	RCC_APB1Periph_USART2
+#else /* for STM32F10X_HD */
 /* USART2_REMAP = 0 */
 #define UART2_GPIO_TX		GPIO_Pin_2
 #define UART2_GPIO_RX		GPIO_Pin_3
@@ -92,6 +99,7 @@ struct rt_device uart3_device;
 #define RCC_APBPeriph_UART2	RCC_APB1Periph_USART2
 #define UART2_TX_DMA		DMA1_Channel7
 #define UART2_RX_DMA		DMA1_Channel6
+#endif
 
 /* USART3_REMAP[1:0] = 00 */
 #define UART3_GPIO_RX		GPIO_Pin_11
@@ -123,7 +131,7 @@ static void RCC_Configuration(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 #endif
 
-#if defined (RT_USING_UART2) || defined (RT_USING_UART3)
+#if defined (RT_USING_UART3)
 	/* DMA clock enable */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 #endif
