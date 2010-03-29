@@ -110,7 +110,6 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name)
 }
 
 #ifdef VM_DISASSEMBLE
-#include <stdio.h>
 void finsh_disassemble()
 {
 	u_char *pc, op;
@@ -123,242 +122,242 @@ void finsh_disassemble()
 		{
 		case FINSH_OP_ADD_BYTE:
 			pc ++;
-			printf("addb\n");
+			rt_kprintf("addb\n");
 			break;
 
 		case FINSH_OP_SUB_BYTE:
 			pc ++;
-			printf("subb\n");
+			rt_kprintf("subb\n");
 			break;
 
 		case FINSH_OP_DIV_BYTE:
 			pc ++;
-			printf("divb\n");
+			rt_kprintf("divb\n");
 			break;
 
 		case FINSH_OP_MOD_BYTE:
 			pc ++;
-			printf("modb\n");
+			rt_kprintf("modb\n");
 			break;
 
 		case FINSH_OP_MUL_BYTE:
 			pc ++;
-			printf("mulb\n");
+			rt_kprintf("mulb\n");
 			break;
 
 		case FINSH_OP_AND_BYTE:
 			pc ++;
-			printf("andb\n");
+			rt_kprintf("andb\n");
 			break;
 
 		case FINSH_OP_OR_BYTE:
 			pc ++;
-			printf("orb\n");
+			rt_kprintf("orb\n");
 			break;
 
 		case FINSH_OP_XOR_BYTE:
 			pc ++;
-			printf("xorb\n");
+			rt_kprintf("xorb\n");
 			break;
 
 		case FINSH_OP_BITWISE_BYTE:
 			pc ++;
-			printf("bwb\n");
+			rt_kprintf("bwb\n");
 			break;
 
 		case FINSH_OP_SHL_BYTE:
 			pc ++;
-			printf("shlb\n");
+			rt_kprintf("shlb\n");
 			break;
 
 		case FINSH_OP_SHR_BYTE:
 			pc ++;
-			printf("shrb\n");
+			rt_kprintf("shrb\n");
 			break;
 
 		case FINSH_OP_LD_BYTE:
 			pc ++;
-			printf("ldb %d\n", *pc++);
+			rt_kprintf("ldb %d\n", *pc++);
 			break;
 
 		case FINSH_OP_LD_VALUE_BYTE:
 			pc ++;
-			printf("ldb [0x%x]\n", FINSH_GET32(pc));
+			rt_kprintf("ldb [0x%x]\n", FINSH_GET32(pc));
 			pc += 4;
 			break;
 
 		case FINSH_OP_ST_BYTE:
 			pc ++;
-			printf("stb\n");
+			rt_kprintf("stb\n");
 			break;
 
 		case FINSH_OP_ADD_WORD:
 			pc ++;
-			printf("addw\n");
+			rt_kprintf("addw\n");
 			break;
 
 		case FINSH_OP_SUB_WORD:
 			pc ++;
-			printf("subw\n");
+			rt_kprintf("subw\n");
 			break;
 
 		case FINSH_OP_DIV_WORD:
 			pc ++;
-			printf("divw\n");
+			rt_kprintf("divw\n");
 			break;
 
 		case FINSH_OP_MOD_WORD:
 			pc ++;
-			printf("modw\n");
+			rt_kprintf("modw\n");
 			break;
 
 		case FINSH_OP_MUL_WORD:
 			pc ++;
-			printf("mulw\n");
+			rt_kprintf("mulw\n");
 			break;
 
 		case FINSH_OP_AND_WORD:
 			pc ++;
-			printf("andw\n");
+			rt_kprintf("andw\n");
 			break;
 
 		case FINSH_OP_OR_WORD:
 			pc ++;
-			printf("orw\n");
+			rt_kprintf("orw\n");
 			break;
 
 		case FINSH_OP_XOR_WORD:
 			pc ++;
-			printf("xorw\n");
+			rt_kprintf("xorw\n");
 			break;
 
 		case FINSH_OP_BITWISE_WORD:
 			pc ++;
-			printf("bww\n");
+			rt_kprintf("bww\n");
 			break;
 
 		case FINSH_OP_SHL_WORD:
 			pc ++;
-			printf("shlw\n");
+			rt_kprintf("shlw\n");
 			break;
 
 		case FINSH_OP_SHR_WORD:
 			pc ++;
-			printf("shrw\n");
+			rt_kprintf("shrw\n");
 			break;
 
 		case FINSH_OP_LD_WORD:
 			pc ++;
-			printf("ldw %d\n", FINSH_GET16(pc));
+			rt_kprintf("ldw %d\n", FINSH_GET16(pc));
 			pc += 2;
 			break;
 
 		case FINSH_OP_LD_VALUE_WORD:
 			pc ++;
-			printf("ldw [0x%x]\n", FINSH_GET32(pc));
+			rt_kprintf("ldw [0x%x]\n", FINSH_GET32(pc));
 			pc += 4;
 			break;
 
 		case FINSH_OP_ST_WORD:
 			pc ++;
-			printf("stw\n");
+			rt_kprintf("stw\n");
 			break;
 
 		case FINSH_OP_ADD_DWORD:
 			pc ++;
-			printf("addd\n");
+			rt_kprintf("addd\n");
 			break;
 
 		case FINSH_OP_SUB_DWORD:
 			pc ++;
-			printf("subd\n");
+			rt_kprintf("subd\n");
 			break;
 
 		case FINSH_OP_DIV_DWORD:
 			pc ++;
-			printf("divd\n");
+			rt_kprintf("divd\n");
 			break;
 
 		case FINSH_OP_MOD_DWORD:
 			pc ++;
-			printf("modd\n");
+			rt_kprintf("modd\n");
 			break;
 
 		case FINSH_OP_MUL_DWORD:
 			pc ++;
-			printf("muld\n");
+			rt_kprintf("muld\n");
 			break;
 
 		case FINSH_OP_AND_DWORD:
 			pc ++;
-			printf("andd\n");
+			rt_kprintf("andd\n");
 			break;
 
 		case FINSH_OP_OR_DWORD:
 			pc ++;
-			printf("ord\n");
+			rt_kprintf("ord\n");
 			break;
 
 		case FINSH_OP_XOR_DWORD:
 			pc ++;
-			printf("xord\n");
+			rt_kprintf("xord\n");
 			break;
 
 		case FINSH_OP_BITWISE_DWORD:
 			pc ++;
-			printf("bwd\n");
+			rt_kprintf("bwd\n");
 			break;
 
 		case FINSH_OP_SHL_DWORD:
 			pc ++;
-			printf("shld\n");
+			rt_kprintf("shld\n");
 			break;
 
 		case FINSH_OP_SHR_DWORD:
 			pc ++;
-			printf("shrd\n");
+			rt_kprintf("shrd\n");
 			break;
 
 		case FINSH_OP_LD_DWORD:
 			pc ++;
-			printf("ldd 0x%x\n", FINSH_GET32(pc));
+			rt_kprintf("ldd 0x%x\n", FINSH_GET32(pc));
 			pc += 4;
 			break;
 
 		case FINSH_OP_LD_VALUE_DWORD:
 			pc ++;
-			printf("ldd [0x%x]\n", FINSH_GET32(pc));
+			rt_kprintf("ldd [0x%x]\n", FINSH_GET32(pc));
 			pc += 4;
 			break;
 
 		case FINSH_OP_ST_DWORD:
 			pc ++;
-			printf("std\n");
+			rt_kprintf("std\n");
 			break;
 
 		case FINSH_OP_POP:
-			printf("pop\n");
+			rt_kprintf("pop\n");
 			pc ++;
 			break;
 
 		case FINSH_OP_SYSCALL:
 			pc ++;
-			printf("syscall %d\n", *pc++);
+			rt_kprintf("syscall %d\n", *pc++);
 			break;
 
 		case FINSH_OP_LD_VALUE_BYTE_STACK:
 			pc ++;
-			printf("ldb [sp]\n");
+			rt_kprintf("ldb [sp]\n");
 			break;
 
 		case FINSH_OP_LD_VALUE_WORD_STACK:
 			pc ++;
-			printf("ldw [sp]\n");
+			rt_kprintf("ldw [sp]\n");
 			break;
 
 		case FINSH_OP_LD_VALUE_DWORD_STACK:
 			pc ++;
-			printf("ldd [sp]\n");
+			rt_kprintf("ldd [sp]\n");
 			break;
 
 		default:
