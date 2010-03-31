@@ -6,7 +6,9 @@
  *
  */
 #include <rtthread.h>
+#ifdef RT_USING_FINSH
 #include <finsh.h>
+#endif
 
 #if RT_THREAD_PRIORITY_MAX == 8
 #define THREAD_PRIORITY		6
