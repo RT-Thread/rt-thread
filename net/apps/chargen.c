@@ -1,9 +1,13 @@
 #include <rtthread.h>
 
 #include "lwip/sockets.h"
-#define MAX_SERV                 5         /* Maximum number of chargen services. Don't need too many */
+#define MAX_SERV                 32         /* Maximum number of chargen services. Don't need too many */
 #define CHARGEN_THREAD_NAME      "chargen"
+#if RT_THREAD_PRIORITY_MAX == 32
+#define CHARGEN_PRIORITY         20        /* Really low priority */
+#else
 #define CHARGEN_PRIORITY         200       /* Really low priority */
+#endif
 #define CHARGEN_THREAD_STACKSIZE 1024
 struct charcb
 {
@@ -202,3 +206,11 @@ void chargen_init(void)
 		CHARGEN_PRIORITY, 5);
 	if (chargen != RT_NULL) rt_thread_startup(chargen);
 }
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+void chargen()
+{
+	chargen_init();
+}
+FINSH_FUNCTION_EXPORT(chargen, start chargen server);
+#endif
