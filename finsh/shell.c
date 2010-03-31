@@ -436,10 +436,19 @@ void finsh_system_init()
 #endif
 #endif
 
+#if RT_THREAD_PRIORITY_MAX == 8
 	rt_thread_init(&finsh_thread,
 		"tshell",
 		finsh_thread_entry, RT_NULL,
 		&finsh_thread_stack[0], sizeof(finsh_thread_stack),
-		20, 100);
+		5, 10);
+#else
+	rt_thread_init(&finsh_thread,
+		"tshell",
+		finsh_thread_entry, RT_NULL,
+		&finsh_thread_stack[0], sizeof(finsh_thread_stack),
+		20, 10);
+#endif
+
 	rt_thread_startup(&finsh_thread);
 }
