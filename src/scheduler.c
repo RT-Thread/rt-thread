@@ -148,16 +148,19 @@ void rt_system_scheduler_init(void)
 }
 
 /**
+ * @ingroup SystemInit
  * This function will startup scheduler. It will select one thread
  * with the highest priority level, then switch to it.
  */
 void rt_system_scheduler_start()
 {
-    register rt_uint8_t number;
-    register rt_uint8_t highest_ready_priority;
+    register struct rt_thread *to_thread;
+    register rt_ubase_t highest_ready_priority;
 
-    struct rt_thread *to_thread;
-
+#if RT_THREAD_PRIORITY_MAX == 8
+	highest_ready_priority = rt_lowest_bitmap[rt_thread_ready_priority_group];
+#else
+    register rt_ubase_t number;
     /* find out the highest priority task */
     if (rt_thread_ready_priority_group & 0xff)
     {
@@ -180,6 +183,7 @@ void rt_system_scheduler_start()
     highest_ready_priority = (number << 3) + rt_lowest_bitmap[rt_thread_ready_table[number]];
 #else
     highest_ready_priority = number;
+#endif
 #endif
 
     /* get switch to thread */
@@ -205,10 +209,7 @@ void rt_system_scheduler_start()
  */
 void rt_schedule()
 {
-    register rt_uint8_t number;
-    register rt_base_t level;
-    register rt_uint8_t highest_ready_priority;
-
+    rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
 
@@ -218,6 +219,12 @@ void rt_schedule()
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
     {
+	    register rt_ubase_t highest_ready_priority;
+
+#if RT_THREAD_PRIORITY_MAX == 8
+		highest_ready_priority = rt_lowest_bitmap[rt_thread_ready_priority_group];
+#else
+	    register rt_ubase_t number;
         /* find out the highest priority task */
         if (rt_thread_ready_priority_group & 0xff)
         {
@@ -240,6 +247,7 @@ void rt_schedule()
         highest_ready_priority = (number << 3) + rt_lowest_bitmap[rt_thread_ready_table[number]];
 #else
         highest_ready_priority = number;
+#endif
 #endif
         /* get switch to thread */
         to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
@@ -309,7 +317,7 @@ void rt_schedule_insert_thread(struct rt_thread* thread)
 
     /* set priority mask */
 #ifdef SCHEDULER_DEBUG
-#if RT_THREAD_PRIORITY_MAX == 32
+#if RT_THREAD_PRIORITY_MAX <= 32
     rt_kprintf("insert thread, the priority: %d\n", thread->current_priority);
 #else
     rt_kprintf("insert thread, the priority: %d 0x%x %d\n", thread->number, thread->number_mask, thread->high_mask);
@@ -342,7 +350,7 @@ void rt_schedule_remove_thread(struct rt_thread* thread)
     temp = rt_hw_interrupt_disable();
 
 #ifdef SCHEDULER_DEBUG
-#if RT_THREAD_PRIORITY_MAX == 32
+#if RT_THREAD_PRIORITY_MAX <= 32
     rt_kprintf("remove thread, the priority: %d\n", thread->current_priority);
 #else
     rt_kprintf("remove thread, the priority: %d 0x%x %d\n", thread->number,
