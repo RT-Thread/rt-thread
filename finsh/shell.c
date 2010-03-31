@@ -5,7 +5,7 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,6 +15,7 @@
  * 2006-09-24     Bernard      remove the code related with hardware
  * 2010-01-18     Bernard      fix down then up key bug.
  * 2010-03-19     Bernard      fix backspace issue and fix device read in shell.
+ * 2010-04-01     Bernard      add prompt output when start and remove the empty history
  */
 
 #include <rtthread.h>
@@ -236,12 +237,14 @@ void finsh_thread_entry(void* parameter)
 	unsigned short  current_history, use_history;
 #endif
 
+	pos = 0;
 	stat = WAIT_NORMAL;
 	current_history = 0;
 	use_history = 0;
 	memset(line, 0, sizeof(line));
 
     finsh_init(&parser);
+	rt_kprintf("finsh>>");
 
 	while (1)
 	{
@@ -350,7 +353,7 @@ void finsh_thread_entry(void* parameter)
 				line[pos] = ';';
 
 				#ifdef FINSH_USING_HISTORY
-				if (use_history == 0)
+				if ((use_history == 0) && (pos != 0))
 				{
 					/* push history */
 					if (finsh_history_count >= FINSH_HISTORY_LINES)
