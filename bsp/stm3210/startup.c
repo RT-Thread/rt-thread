@@ -17,6 +17,7 @@
 
 #include "stm32f10x.h"
 #include "board.h"
+#include "rtc.h"
 
 /**
  * @addtogroup STM32
@@ -25,6 +26,18 @@
 /*@{*/
 
 extern int  rt_application_init(void);
+#ifdef RT_USING_FINSH
+extern void finsh_system_init(void);
+extern void finsh_set_device(const char* device);
+#endif
+
+#ifdef __CC_ARM
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#elif __ICCARM__
+#pragma section="HEAP"
+#else
+extern int __bss_end;
+#endif
 
 #ifdef  DEBUG
 /*******************************************************************************
@@ -66,11 +79,49 @@ void rtthread_startup(void)
 	/* init timer system */
 	rt_system_timer_init();
 
+#ifdef RT_USING_HEAP
+#if STM32_EXT_SRAM
+	rt_system_heap_init((void*)STM32_EXT_SRAM_BEGIN, (void*)STM32_EXT_SRAM_END);
+#else
+	#ifdef __CC_ARM
+		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)STM32_SRAM_END);
+	#elif __ICCARM__
+	    rt_system_heap_init(__segment_end("HEAP"), (void*)STM32_SRAM_END);
+	#else
+		/* init memory system */
+		rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
+	#endif
+#endif
+#endif
+
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
+#ifdef RT_USING_DFS
+	/* init sdcard driver */
+#if STM32_USE_SDIO
+	rt_hw_sdcard_init();
+#else
+	rt_hw_msd_init();
+#endif
+#endif
+
+    rt_hw_rtc_init();
+
+	/* init all device */
+	rt_device_init_all();
+
 	/* init application */
 	rt_application_init();
+
+#ifdef RT_USING_FINSH
+	/* init finsh */
+	finsh_system_init();
+	finsh_set_device("uart1");
+#endif
+
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
 	/* init idle thread */
 	rt_thread_idle_init();

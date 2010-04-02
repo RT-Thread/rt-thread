@@ -285,6 +285,16 @@
           <state>$PROJ_DIR$\Libraries\CMSIS\Core\CM3</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
+          <state>$PROJ_DIR$\..\..\finsh</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\include\ipv4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1079,6 +1089,16 @@
           <state>$PROJ_DIR$\Libraries\CMSIS\Core\CM3</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
+          <state>$PROJ_DIR$\..\..\finsh</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\include</state>
+          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\net\lwip\src\include\ipv4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1599,6 +1619,102 @@
     </file>
   </group>
   <group>
+    <name>Filesystem</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_cache.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_init.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_posix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_raw.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\src\dfs_util.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\dir.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\efs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\extract.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fat.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\partition.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\plibc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\ui.c</name>
+    </file>
+  </group>
+  <group>
+    <name>finsh</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_compiler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_error.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_heap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_init.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_node.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_ops.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_parser.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_token.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_var.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\finsh_vm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\shell.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\finsh\symbol.c</name>
+    </file>
+  </group>
+  <group>
     <name>Kernel</name>
     <file>
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
@@ -1641,6 +1757,108 @@
     </file>
   </group>
   <group>
+    <name>LwIP</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\api_lib.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\api_msg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\autoip.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\dhcp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\dns.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\err.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\netif\etharp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\netif\ethernetif.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\icmp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\igmp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\inet.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\inet_chksum.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\init.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\ip.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\ip_addr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\ipv4\ip_frag.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\memp_tiny.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\netbuf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\netdb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\netif.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\netifapi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\pbuf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\raw.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\sockets.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\stats.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\sys.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\arch\sys_arch.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\arch\sys_arch_init.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\tcp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\tcp_in.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\tcp_out.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\api\tcpip.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\net\lwip\src\core\udp.c</name>
+    </file>
+  </group>
+  <group>
     <name>Startup</name>
     <file>
       <name>$PROJ_DIR$\application.c</name>
@@ -1649,16 +1867,37 @@
       <name>$PROJ_DIR$\board.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\board.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\dm9000a.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\enc28j60.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\led.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\msd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\rtc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\rtconfig.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\sdcard.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\startup.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\stm32f10x_it.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\usart.c</name>
     </file>
   </group>
   <group>
@@ -1746,6 +1985,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\interrupt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\serial.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\stack.c</name>
