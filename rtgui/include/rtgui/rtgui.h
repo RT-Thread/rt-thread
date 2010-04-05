@@ -36,6 +36,7 @@ struct rtgui_point
 	rt_int16_t x, y;
 };
 typedef struct rtgui_point rtgui_point_t;
+extern rtgui_point_t rtgui_empty_point;
 
 struct rtgui_rect
 {

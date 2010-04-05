@@ -38,6 +38,8 @@
 #define PIXREGION_SZOF(n) (sizeof(rtgui_region_data_t) + ((n) * sizeof(rtgui_rect_t)))
 
 rtgui_rect_t rtgui_empty_rect = {0, 0, 0, 0};
+rtgui_point_t rtgui_empty_point = {0, 0};
+
 static rtgui_region_data_t rtgui_region_emptydata = {0, 0};
 static rtgui_region_data_t  rtgui_brokendata = {0, 0};
 

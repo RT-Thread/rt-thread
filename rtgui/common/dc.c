@@ -201,7 +201,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 	while (*text)
 	{
 		len = 0;
-		while (*(text + len) < 0x80 && *(text + len)) len ++;
+		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len)) len ++;
 		if (len > 0)
 		{
 			rtgui_font_draw(font, dc, text, len, &text_rect);
@@ -210,7 +210,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 		}
 
 		len = 0;
-		while (*(text + len) > 0x80) len ++;
+		while (((rt_uint8_t)*(text + len)) > 0x80) len ++;
 		if (len > 0)
 		{
 			rtgui_font_draw(gb2312_font, dc, text, len, &text_rect);

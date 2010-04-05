@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "freetype.vcproj", "{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug Multithreaded = Debug Multithreaded
+		Debug Singlethreaded = Debug Singlethreaded
+		Release = Release
+		Release Multithreaded = Release Multithreaded
+		Release Singlethreaded = Release Singlethreaded
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug.ActiveCfg = Debug|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug.Build.0 = Debug|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug Multithreaded.ActiveCfg = Debug Multithreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug Multithreaded.Build.0 = Debug Multithreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug Singlethreaded.ActiveCfg = Debug Singlethreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Debug Singlethreaded.Build.0 = Debug Singlethreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release.ActiveCfg = Release|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release.Build.0 = Release|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release Multithreaded.ActiveCfg = Release Multithreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release Multithreaded.Build.0 = Release Multithreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release Singlethreaded.ActiveCfg = Release Singlethreaded|Win32
+		{C2AF082C-0E25-49EB-8BFF-38DFDD4F77F8}.Release Singlethreaded.Build.0 = Release Singlethreaded|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

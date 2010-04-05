@@ -103,9 +103,7 @@ struct rtgui_widget
 
 	/* the rect clip */
 	rtgui_region_t clip;
-#ifndef RTGUI_USING_SMALL_SIZE
-	rt_uint32_t clip_sync;
-#endif
+	rt_uint16_t clip_sync;
 
 	/* the event handler */
 	rt_bool_t (*event_handler)	(struct rtgui_widget* widget, struct rtgui_event* event);

@@ -16,7 +16,6 @@
 #include <rtgui/color.h>
 #include <rtgui/rtgui_system.h>
 
-#ifndef RTGUI_USING_SMALL_SIZE
 struct rtgui_dc_buffer
 {
 	struct rtgui_dc parent;
@@ -244,10 +243,13 @@ rt_inline void rtgui_blit_line_4(rtgui_color_t* color, rt_uint8_t* dest, int lin
 	rt_memcpy(dest, color, line * 4);
 }
 
+/* blit a dc to a hardware dc */
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
 	struct rtgui_dc_hw* hw = (struct rtgui_dc_hw*)dest;
+
+	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 
 	if (dest->type == RTGUI_DC_HW)
 	{
@@ -391,5 +393,4 @@ static void rtgui_dc_buffer_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	rect->x2 = dc->width;
 	rect->y2 = dc->height;
 }
-#endif
 

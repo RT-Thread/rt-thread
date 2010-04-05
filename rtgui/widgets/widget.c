@@ -53,9 +53,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 
 	/* does not set widget extent and only set clip_sync to zero */
 	rtgui_region_init(&(widget->clip));
-#ifndef RTGUI_USING_SMALL_SIZE
 	widget->clip_sync = 0;
-#endif
 }
 
 /* Destroys the widget */
@@ -73,9 +71,7 @@ static void _rtgui_widget_destructor(rtgui_widget_t *widget)
 
 	/* fini clip region */
 	rtgui_region_fini(&(widget->clip));
-#ifndef RTGUI_USING_SMALL_SIZE
 	widget->clip_sync = 0;
-#endif
 }
 
 rtgui_type_t *rtgui_widget_type_get(void)
@@ -415,10 +411,8 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget)
 	/* if there is no parent, do not update clip (please use toplevel widget API) */
 	if (parent == RT_NULL) return;
 
-#ifndef RTGUI_USING_SMALL_SIZE
 	/* increase clip sync */
 	widget->clip_sync ++;
-#endif
 
 	/* reset clip to extent */
 	rtgui_region_reset(&(widget->clip), &(widget->extent));

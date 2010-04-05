@@ -167,9 +167,7 @@ void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
 
 	/* reset toplevel widget clip to extent */
 	rtgui_region_reset(&(RTGUI_WIDGET(top)->clip), &(RTGUI_WIDGET(top)->extent));
-#ifndef RTGUI_USING_SMALL_SIZE
 	RTGUI_WIDGET(top)->clip_sync ++;
-#endif
 
 	/* subtract the screen rect */
 	screen_rect.x1 = screen_rect.y1 = 0;
