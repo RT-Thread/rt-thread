@@ -20,7 +20,7 @@ void panel_init(void)
     /* register main panel */
     rect.x1 = 0;
     rect.y1 = 25;
-    rect.x2 = 320;
+    rect.x2 = 240;
     rect.y2 = 320;
     rtgui_panel_register("main", &rect);
     rtgui_panel_set_default_focused("main");

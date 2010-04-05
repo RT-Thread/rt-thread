@@ -53,6 +53,7 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 	demo_view_dc(workbench);
+	demo_view_dc_buffer(workbench);
 	demo_view_animation(workbench);
 	demo_view_window(workbench);
 	demo_view_label(workbench);
