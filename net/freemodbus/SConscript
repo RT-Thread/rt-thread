@@ -1,0 +1,33 @@
+Import('env')
+Import('rtconfig')
+Import('RTT_ROOT')
+
+src_local = Split("""
+modbus/mb.c
+modbus/mbmaster.c
+modbus/ascii/mbascii.c
+modbus/functions/mbfunccoils.c
+modbus/functions/mbfuncdiag.c
+modbus/functions/mbfuncdisc.c
+modbus/functions/mbfuncholding.c
+modbus/functions/mbfuncinput.c
+modbus/functions/mbfuncother.c
+modbus/functions/mbutils.c
+modbus/port/demo.c
+modbus/port/port.c
+modbus/port/portevent.c
+modbus/port/portserial.c
+modbus/port/porttimer.c
+modbus/rtu/mbcrc.c
+modbus/rtu/mbrtu.c
+modbus/tcp/mbtcp.c
+""")
+
+# The set of source files associated with this SConscript file.
+path = [RTT_ROOT + '/net/freemodbus/modbus/include', RTT_ROOT + '/net/freemodbus/modbus/port', RTT_ROOT + '/net/freemodbus/modbus/rtu', RTT_ROOT + '/net/freemodbus/modbus/ascii']
+
+env.Append(CPPPATH = path)
+
+obj = env.Object(src_local)
+
+Return('obj')
