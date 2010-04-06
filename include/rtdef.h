@@ -60,12 +60,14 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
     #include <stdarg.h>
     #define SECTION(x)  				__attribute__((section(x)))
     #define UNUSED  					__attribute__((unused))
+	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline   				static __inline
 
 #elif defined (__ICCARM__)        		/* for IAR Compiler */
     #include <stdarg.h>
     #define SECTION(x)  				@ x
     #define UNUSED
+	#define ALIGN(n)					#pragma pack(n)
     #define rt_inline 					inline
 
 #elif defined (__GNUC__)        		/* GNU GCC Compiler */
@@ -87,6 +89,7 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 
     #define SECTION(x) 					__attribute__((section(x)))
     #define UNUSED 						__attribute__((unused))
+	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline 					static __inline
 #endif
 
