@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-04-04     yi.qiu      first version
+ * 2010-04-07     LiJin
  */
  
 /* ----------------------- Platform includes --------------------------------*/
@@ -23,10 +24,13 @@
 #include "mbproto.h"
 #include "mbfunc.h"
 
+
+USHORT buf[256];
+
+
 void rt_modbus_thread_entry(void* parameter)
 {
 	eMBErrorCode eStatus;
-	USHORT buf[100];
 		
 	eStatus = eMBInit( MB_RTU, 0x0A, 0, 115200, MB_PAR_EVEN );
 
@@ -37,10 +41,14 @@ void rt_modbus_thread_entry(void* parameter)
 	while(1)
 	{
 
-		eMBMReadHoldingRegisters(0x0A, 0x10000, 0x1, buf);
+		/* request holding reg  */
+		eMBMReadHoldingRegisters(0x0A, 0x1, 0x10, buf);
 		rt_kprintf("stop\n");
 		rt_thread_delay(100);
-		
+		/* request coils  */
+		eMBMReadCoils(0x0A, 0x1, 128, buf);
+		rt_thread_delay(100);
+
 		//while(1);
 	}
 }

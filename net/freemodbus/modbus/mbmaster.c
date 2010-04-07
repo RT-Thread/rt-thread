@@ -66,3 +66,63 @@ eMBErrorCode eMBMReadHoldingRegisters  (UCHAR ucSlaveAddress, USHORT usRegStartA
 	return eStatus;
 }
 
+/*! @fn eMBErrorCode eMBMReadCoils  (UCHAR ucSlaveAddress, USHORT usCoilStartAddress,
+			UBYTE ubNCoils, USHORT arusBufferOut[])
+** @brief  request coils
+** @details
+** @param     ucSlaveAddress slave station address :from 1 to 247(max)
+** @param     usCoilStartAddress coils address
+** @param     ubNCoils  request coils number
+** @param     arusBufferOut  response packet buf
+** @return    eMBErrorCode
+** @author   LiJin
+** @date     2010-04-07
+** @note
+*/
+eMBErrorCode eMBMReadCoils  (UCHAR ucSlaveAddress, USHORT usCoilStartAddress,
+			UBYTE ubNCoils, USHORT arusBufferOut[])
+{
+	static UCHAR ucMBFrame[5];
+		eMBErrorCode eStatus = MB_ENOERR;
+		eMBEventType eEvent;
+		static UCHAR ucRcvAddress;
+		static USHORT usLength;
+
+		/* make up request frame */
+		ucMBFrame[0] = MB_FUNC_READ_COILS;
+		ucMBFrame[1] = (UCHAR)(usCoilStartAddress >> 8);
+		ucMBFrame[2] = (UCHAR)(usCoilStartAddress);
+		ucMBFrame[3] = (UCHAR)(ubNCoils >> 8);
+		ucMBFrame[4] = (UCHAR)(ubNCoils);
+
+
+			rt_kprintf("send frame [%x%x%x%x%x]\n",
+			ucMBFrame[0], ucMBFrame[1], ucMBFrame[2], ucMBFrame[3], ucMBFrame[4]);
+
+
+		/* send request frame to slave device */
+		eStatus = eMBRTUSend( ucSlaveAddress, ucMBFrame, 5 );
+
+		/* wait on receive event */
+		if( xMBPortEventGet( &eEvent ) == TRUE )
+		{
+			eStatus = eMBRTUReceive( &ucRcvAddress, &ucMBFrame, &usLength );
+			if( eStatus == MB_ENOERR )
+			{
+				/* Check if the frame is for us. If not ignore the frame. */
+				if( ( ucRcvAddress == ucSlaveAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
+				{
+					/* parse and restore data */
+					rt_kprintf("parse and restore date here\n");
+				}
+			}
+		}
+		else eStatus = MB_ETIMEDOUT;
+
+		return eStatus;
+
+}
+
+
+
+
