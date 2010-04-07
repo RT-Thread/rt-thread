@@ -1,0 +1,8 @@
+Import('env')
+
+src = ('hello.c')
+
+obj = env.Object(src)
+
+Return('obj')
+
