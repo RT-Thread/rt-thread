@@ -1,5 +1,5 @@
 #include <rtthread.h>
-#include <S3C24x0.h>
+#include <s3c24x0.h>
 
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
