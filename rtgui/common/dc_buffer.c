@@ -13,6 +13,7 @@
  */
 #include <rtgui/rtgui.h>
 #include <rtgui/dc.h>
+#include <rtgui/dc_hw.h>
 #include <rtgui/color.h>
 #include <rtgui/rtgui_system.h>
 
@@ -251,89 +252,63 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 
-	if (dest->type == RTGUI_DC_HW)
+	if ((dest->type == RTGUI_DC_HW) && rtgui_dc_get_visible(dest) == RT_TRUE)
 	{
-		register int index;
-		int fb_pitch;
-		rtgui_rect_t abs_rect;
+		rtgui_color_t* pixel;
+		rt_uint8_t *line_ptr;
+		rt_uint16_t rect_width, rect_height, index;
 		void (*blit_line)(rtgui_color_t* color, rt_uint8_t* dest, int line);
 
-		abs_rect.x1 = hw->owner->extent.x1 + rect->x1;
-		abs_rect.y1 = hw->owner->extent.y1 + rect->y1;
-		abs_rect.x2 = abs_rect.x1 + rtgui_rect_width(*rect);
-		abs_rect.y2 = abs_rect.y1 + rtgui_rect_height(*rect);
+		/* calculate correct width and height */
+		if (rtgui_rect_width(*rect) > (dc->width - dc_point->x))
+			rect_width = dc->width - dc_point->x;
+		else
+			rect_width = rtgui_rect_width(*rect);
 
-		/* hw fb pitch */
-		fb_pitch = hw->device->byte_per_pixel * hw->device->width;
+		if (rtgui_rect_height(*rect) > (dc->height - dc_point->y))
+			rect_height = dc->height - dc_point->y;
+		else
+			rect_height = rtgui_rect_height(*rect);
 
-		/* hardware dc blit */
-		if (!rtgui_region_not_empty(&dc->clip) ||
-			dc->clip_sync != hw->owner->clip_sync)
-		{
-			/* should re-calculate clip */
-			rtgui_region_intersect_rect(&(dc->clip),
-				&(hw->owner->clip), &abs_rect);
-		}
-
+		/* get blit line function */
 		switch (hw->device->byte_per_pixel)
 		{
 		case 1:
 			blit_line = rtgui_blit_line_1;
 			break;
+
 		case 2:
 			blit_line = rtgui_blit_line_2;
 			break;
-		case 3:
+
+		case 4:
 			blit_line = rtgui_blit_line_4;
 			break;
 
 		default:
-			/* can not blit */
+			/* not support byte per pixel */
 			return;
 		}
 
-		/* blit each clip rect */
-		if (dc->clip.data == RT_NULL)
+		/* create line buffer */
+		line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * hw->device->byte_per_pixel);
+
+		/* prepare pixel line */
+		pixel = (rtgui_color_t*)(dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t));
+
+		/* draw each line */
+		for (index = rect->y1; index < rect->y1 + rect_height; index ++)
 		{
-			int y;
-			rtgui_color_t* pixel;
-			rt_uint8_t* fb;
+			/* blit on line buffer */
+			blit_line(pixel, line_ptr, rect_width);
+			pixel += dc->width;
 
-			pixel = (rtgui_color_t*)(dc->pixel + (dc_point->y + dc->clip.extents.y1 - abs_rect.y1) * dc->pitch +
-				(dc_point->x + dc->clip.extents.x1 - abs_rect.x1) * sizeof(rtgui_color_t));
-			fb = hw->device->get_framebuffer() + dc->clip.extents.y1 * fb_pitch +
-				dc->clip.extents.x1 * hw->device->byte_per_pixel;
-
-			for (y = dc->clip.extents.y1; y < dc->clip.extents.y2; y ++)
-			{
-				blit_line(pixel, fb, dc->clip.extents.x2 - dc->clip.extents.x1);
-
-				fb += fb_pitch;
-				pixel += dc->width;
-			}
+			/* draw on hardware dc */
+			rtgui_dc_hw_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
 		}
-		else for (index = 0; index < rtgui_region_num_rects(&(dc->clip)); index ++)
-		{
-			int y;
-			rtgui_rect_t* prect;
-			rtgui_color_t* pixel;
-			rt_uint8_t* fb;
 
-			prect = ((rtgui_rect_t *)(dc->clip.data + index + 1));
-
-			pixel = (rtgui_color_t*)(dc->pixel + (dc_point->y + prect->y1 - abs_rect.y1) * dc->pitch +
-				(dc_point->x + prect->x1 - abs_rect.x1) * sizeof(rtgui_color_t));
-			fb = hw->device->get_framebuffer() + prect->y1 * fb_pitch +
-				prect->x1 * hw->device->byte_per_pixel;
-
-			for (y = prect->y1; y < prect->y2; y ++)
-			{
-				blit_line(pixel, fb, prect->x2 - prect->x1);
-
-				fb += fb_pitch;
-				pixel += dc->width;
-			}
-		}
+		/* release line buffer */
+		rtgui_free(line_ptr);
 	}
 }
 

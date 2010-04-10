@@ -12,6 +12,7 @@
  * 2009-10-16     Bernard      first version
  */
 #include <rtgui/dc.h>
+#include <rtgui/dc_hw.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
@@ -435,4 +436,52 @@ static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
 
 	rtgui_widget_get_rect(dc->owner, rect);
+}
+
+void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc_hw* dc, rt_uint8_t* raw_ptr, int x1, int x2, int y)
+{
+	register rt_base_t index;
+	register rt_base_t bpp;
+
+	/* convert logic to device */
+	x1 = x1 + dc->owner->extent.x1;
+	x2 = x2 + dc->owner->extent.x1;
+	y  = y + dc->owner->extent.y1;
+
+	bpp = dc->device->byte_per_pixel;
+	if (dc->owner->clip.data == RT_NULL)
+	{
+		rtgui_rect_t* prect;
+
+		prect = &(dc->owner->clip.extents);
+
+		/* calculate hline intersect */
+		if (prect->y1 > y  || prect->y2 <= y ) return;
+		if (prect->x2 <= x1 || prect->x1 > x2) return;
+
+		if (prect->x1 > x1) x1 = prect->x1;
+		if (prect->x2 < x2) x2 = prect->x2;
+
+		/* draw raw hline */
+		dc->device->draw_raw_hline(raw_ptr, x1, x2, y);
+	}
+	else for (index = 0; index < rtgui_region_num_rects(&(dc->owner->clip)); index ++)
+	{
+		rtgui_rect_t* prect;
+		register rt_base_t draw_x1, draw_x2;
+
+		prect = ((rtgui_rect_t *)(dc->owner->clip.data + index + 1));
+		draw_x1 = x1;
+		draw_x2 = x2;
+
+		/* calculate hline clip */
+		if (prect->y1 > y  || prect->y2 <= y ) continue;
+		if (prect->x2 <= x1 || prect->x1 > x2) continue;
+
+		if (prect->x1 > x1) draw_x1 = prect->x1;
+		if (prect->x2 < x2) draw_x2 = prect->x2;
+
+		/* draw raw hline */
+		dc->device->draw_raw_hline(raw_ptr + (draw_x1 - x1) * bpp, draw_x1, draw_x2, y);
+	}
 }

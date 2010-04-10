@@ -23,6 +23,7 @@ enum rtgui_dc_type
 {
 	RTGUI_DC_HW,
 	RTGUI_DC_BUFFER,
+	RTGUI_DC_IMLIB2,
 };
 
 /* the abstract device context */
@@ -57,29 +58,9 @@ struct rtgui_dc
 	rt_bool_t (*fini )(struct rtgui_dc* dc);
 };
 
-/* hardware device context */
-struct rtgui_dc_hw
-{
-	struct rtgui_dc parent;
-
-	/* widget owner */
-	rtgui_widget_t* owner;
-
-	/* visible */
-	rt_bool_t visible;
-
-	/* display driver */
-	struct rtgui_graphic_driver* device;
-};
-
 /* create a buffer dc */
 struct rtgui_dc* rtgui_dc_buffer_create(int width, int height);
 rt_uint8_t* rtgui_dc_buffer_get_pixel(struct rtgui_dc* dc);
-
-/* create a hardware dc */
-struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner);
-struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner);
-void rtgui_dc_end_drawing(struct rtgui_dc* dc);
 
 /* destroy a dc */
 void rtgui_dc_destory(struct rtgui_dc* dc);
