@@ -941,12 +941,12 @@ __weak void rt_hw_console_output(const char* str)
  */
 void rt_kprintf(const char *fmt, ...)
 {
+
 	va_list args;
 	rt_size_t length;
 	static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
 	va_start(args, fmt);
-
 	length = vsnprintf(rt_log_buf, sizeof(rt_log_buf), fmt, args);
 	if (_console_device == RT_NULL)
 	{
@@ -977,4 +977,9 @@ char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
 #endif
 #endif
 
+#ifdef RT_USING_MODULE
+#include <rtm.h>
+/* some buildin kernel symbol */
+RTM_EXPORT(rt_kprintf)
+#endif
 /*@}*/

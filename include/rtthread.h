@@ -14,6 +14,8 @@
  * 2006-08-10     Bernard      add version information
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
+ * 2010-04-11     yi.qiu          add module feature
+
  */
 
 #ifndef __RT_THREAD_H__
@@ -23,6 +25,16 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(__CC_ARM)
+#ifdef RT_USING_MODULE
+#define RTT_API	__declspec(dllimport)
+#else
+#define RTT_API __declspec(dllexport)
+#endif
+#elif defined(__GNUC__)
+#define RTT_API
 #endif
 
 /**
@@ -91,27 +103,27 @@ void rt_timer_timeout_sethook(void (*hook)(struct rt_timer* timer));
 /*
  * thread interface
  */
-rt_err_t rt_thread_init(struct rt_thread* thread,
+RTT_API rt_err_t rt_thread_init(struct rt_thread* thread,
 	const char* name,
 	void (*entry)(void* parameter), void* parameter,
 	void* stack_start, rt_uint32_t stack_size,
 	rt_uint8_t priority, rt_uint32_t tick);
-rt_err_t rt_thread_detach(rt_thread_t thread);
-rt_thread_t rt_thread_create (const char* name,
+RTT_API rt_err_t rt_thread_detach(rt_thread_t thread);
+RTT_API rt_thread_t rt_thread_create (const char* name,
 	void (*entry)(void* parameter), void* parameter,
 	rt_uint32_t stack_size,
 	rt_uint8_t priority, rt_uint32_t tick);
-rt_thread_t rt_thread_self(void);
-rt_thread_t rt_thread_find(char* name);
-rt_err_t rt_thread_startup(rt_thread_t thread);
-rt_err_t rt_thread_delete(rt_thread_t thread);
+RTT_API rt_thread_t rt_thread_self(void);
+RTT_API rt_thread_t rt_thread_find(char* name);
+RTT_API rt_err_t rt_thread_startup(rt_thread_t thread);
+RTT_API rt_err_t rt_thread_delete(rt_thread_t thread);
 
-rt_err_t rt_thread_yield(void);
-rt_err_t rt_thread_delay(rt_tick_t tick);
-rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
-rt_err_t rt_thread_suspend(rt_thread_t thread);
-rt_err_t rt_thread_resume(rt_thread_t thread);
-void rt_thread_timeout(void* parameter);
+RTT_API rt_err_t rt_thread_yield(void);
+RTT_API rt_err_t rt_thread_delay(rt_tick_t tick);
+RTT_API rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
+RTT_API rt_err_t rt_thread_suspend(rt_thread_t thread);
+RTT_API rt_err_t rt_thread_resume(rt_thread_t thread);
+RTT_API void rt_thread_timeout(void* parameter);
 
 /*
  * idle thread interface

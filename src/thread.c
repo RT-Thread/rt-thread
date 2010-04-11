@@ -19,6 +19,7 @@
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
+ * 2010-04-11     yi.qiu          add module feature
  */
 
 #include <rtthread.h>
@@ -627,4 +628,21 @@ rt_thread_t rt_thread_find(char* name)
 	return thread;
 }
 
+#ifdef RT_USING_MODULE
+#include <rtm.h>
+/* some buildin kernel symbol */
+RTM_EXPORT(rt_thread_init)
+RTM_EXPORT(rt_thread_detach)
+RTM_EXPORT(rt_thread_create)
+RTM_EXPORT(rt_thread_self)
+RTM_EXPORT(rt_thread_find)
+RTM_EXPORT(rt_thread_startup)
+RTM_EXPORT(rt_thread_delete)
+RTM_EXPORT(rt_thread_yield)
+RTM_EXPORT(rt_thread_delay)
+RTM_EXPORT(rt_thread_control)
+RTM_EXPORT(rt_thread_suspend)
+RTM_EXPORT(rt_thread_resume)
+RTM_EXPORT(rt_thread_timeout)
+#endif
 /*@}*/
