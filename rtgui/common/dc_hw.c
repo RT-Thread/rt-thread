@@ -21,16 +21,13 @@
 #include <rtgui/widgets/title.h>
 
 static void rtgui_dc_hw_draw_point(struct rtgui_dc* dc, int x, int y);
+static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
 static void rtgui_dc_hw_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 static void rtgui_dc_hw_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 static void rtgui_dc_hw_fill_rect (struct rtgui_dc* dc, rtgui_rect_t* rect);
 static void rtgui_dc_hw_blit	  (struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
-static void rtgui_dc_hw_set_color (struct rtgui_dc* dc, rtgui_color_t color);
-static rtgui_color_t rtgui_dc_hw_get_color (struct rtgui_dc* dc);
-static void rtgui_dc_hw_set_font(struct rtgui_dc* dc, rtgui_font_t* font);
-static rtgui_font_t* rtgui_dc_hw_get_font(struct rtgui_dc* dc);
-static void rtgui_dc_hw_set_textalign(struct rtgui_dc* dc, rt_int32_t textalign);
-static rt_int32_t rtgui_dc_hw_get_textalign(struct rtgui_dc* dc);
+static void rtgui_dc_hw_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
+static rtgui_gc_t *rtgui_dc_hw_get_gc (struct rtgui_dc* dc);
 static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc);
 static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* dc);
 static void rtgui_dc_hw_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
@@ -54,18 +51,14 @@ void rtgui_dc_hw_init(struct rtgui_dc_hw* dc)
 
 	dc->parent.type		  = RTGUI_DC_HW;
 	dc->parent.draw_point = rtgui_dc_hw_draw_point;
+	dc->parent.draw_color_point = rtgui_dc_hw_draw_color_point;
 	dc->parent.draw_hline = rtgui_dc_hw_draw_hline;
 	dc->parent.draw_vline = rtgui_dc_hw_draw_vline;
 	dc->parent.fill_rect  = rtgui_dc_hw_fill_rect ;
 	dc->parent.blit		  = rtgui_dc_hw_blit;
 
-	dc->parent.set_color  = rtgui_dc_hw_set_color;
-	dc->parent.get_color  = rtgui_dc_hw_get_color;
-
-	dc->parent.set_font	  = rtgui_dc_hw_set_font;
-	dc->parent.get_font	  = rtgui_dc_hw_get_font;
-	dc->parent.set_textalign  = rtgui_dc_hw_set_textalign;
-	dc->parent.get_textalign  = rtgui_dc_hw_get_textalign;
+	dc->parent.set_gc     = rtgui_dc_hw_set_gc;
+	dc->parent.get_gc     = rtgui_dc_hw_get_gc;
 
 	dc->parent.get_visible= rtgui_dc_hw_get_visible;
 	dc->parent.get_rect	  = rtgui_dc_hw_get_rect;
@@ -240,6 +233,24 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	}
 }
 
+static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
+{
+	struct rtgui_dc_hw* dc;
+	rtgui_rect_t rect;
+
+	dc = (struct rtgui_dc_hw*)self;
+	if (dc == RT_NULL || dc->visible != RT_TRUE) return;
+
+	x = x + dc->owner->extent.x1;
+	y = y + dc->owner->extent.y1;
+
+	if (rtgui_region_contains_point(&(dc->owner->clip), x, y, &rect) == RT_EOK)
+	{
+		/* draw this point */
+		dc->device->set_pixel(&color, x, y);
+	}
+}
+
 /*
  * draw a logic vertical line on device
  */
@@ -376,52 +387,21 @@ static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, 
 	return ;
 }
 
-static void rtgui_dc_hw_set_color(struct rtgui_dc* self, rtgui_color_t color)
+static void rtgui_dc_hw_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 {
 	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
 
 	if (self != RT_NULL)
 	{
-		dc->owner->gc.foreground = color;
+		dc->owner->gc = *gc;
 	}
 }
 
-static rtgui_color_t rtgui_dc_hw_get_color(struct rtgui_dc* self)
+static rtgui_gc_t* rtgui_dc_hw_get_gc(struct rtgui_dc* self)
 {
 	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
 
-	return self != RT_NULL? dc->owner->gc.foreground : white;
-}
-
-static void rtgui_dc_hw_set_font(struct rtgui_dc* self, rtgui_font_t* font)
-{
-	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
-
-	if (self != RT_NULL)
-	{
-		dc->owner->gc.font = font;
-	}
-}
-
-static rtgui_font_t* rtgui_dc_hw_get_font(struct rtgui_dc* self)
-{
-	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
-
-	return self != RT_NULL? dc->owner->gc.font : RT_NULL;
-}
-
-static void rtgui_dc_hw_set_textalign(struct rtgui_dc* self, rt_int32_t textalign)
-{
-	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
-
-	dc->owner->gc.textalign = textalign;
-}
-
-static rt_int32_t rtgui_dc_hw_get_textalign(struct rtgui_dc* self)
-{
-	struct rtgui_dc_hw* dc = (struct rtgui_dc_hw*)self;
-
-	return dc->owner->gc.textalign;
+	return self != RT_NULL? &(dc->owner->gc) : RT_NULL;
 }
 
 static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* self)
@@ -441,14 +421,14 @@ static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc_hw* dc, rt_uint8_t* raw_ptr, int x1, int x2, int y)
 {
 	register rt_base_t index;
-	register rt_base_t bpp;
+
+	if (dc == RT_NULL || dc->visible != RT_TRUE) return;
 
 	/* convert logic to device */
 	x1 = x1 + dc->owner->extent.x1;
 	x2 = x2 + dc->owner->extent.x1;
 	y  = y + dc->owner->extent.y1;
 
-	bpp = dc->device->byte_per_pixel;
 	if (dc->owner->clip.data == RT_NULL)
 	{
 		rtgui_rect_t* prect;
@@ -482,6 +462,6 @@ void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc_hw* dc, rt_uint8_t* raw_ptr, int
 		if (prect->x2 < x2) draw_x2 = prect->x2;
 
 		/* draw raw hline */
-		dc->device->draw_raw_hline(raw_ptr + (draw_x1 - x1) * bpp, draw_x1, draw_x2, y);
+		dc->device->draw_raw_hline(raw_ptr + (draw_x1 - x1) * dc->device->byte_per_pixel, draw_x1, draw_x2, y);
 	}
 }

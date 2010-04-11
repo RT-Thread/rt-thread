@@ -16,7 +16,6 @@
 
 #include <rtgui/rtgui.h>
 
-typedef unsigned long rtgui_color_t;
 #define RTGUI_ARGB(a, r, g, b)	\
 		((rtgui_color_t)(((rt_uint8_t)(r)|\
 		(((unsigned)(rt_uint8_t)(g))<<8))|\

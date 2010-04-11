@@ -365,16 +365,12 @@ static void rtgui_image_jpeg_blit(struct rtgui_image* image, struct rtgui_dc* dc
 {
 	rt_uint16_t x, y;
 	rtgui_color_t* ptr;
-	rtgui_color_t foreground;
 	struct rtgui_image_jpeg* jpeg;
 
 	RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
 
 	jpeg = (struct rtgui_image_jpeg*) image->data;
 	RT_ASSERT(jpeg != RT_NULL);
-
-	/* save foreground color */
-	foreground = rtgui_dc_get_color(dc);
 
 	if (jpeg->pixels != RT_NULL)
 	{
@@ -388,8 +384,7 @@ static void rtgui_image_jpeg_blit(struct rtgui_image* image, struct rtgui_dc* dc
 				/* not alpha */
 				if ((*ptr >> 24) != 255)
 				{
-					rtgui_dc_set_color(dc, *ptr);
-					rtgui_dc_draw_point(dc, x + rect->x1, y + rect->y1);
+					rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, *ptr);
 				}
 
 				/* move to next color buffer */
@@ -411,8 +406,7 @@ static void rtgui_image_jpeg_blit(struct rtgui_image* image, struct rtgui_dc* dc
 				/* not alpha */
 				if ((*ptr >> 24) != 255)
 				{
-					rtgui_dc_set_color(dc, *ptr);
-					rtgui_dc_draw_point(dc, x + rect->x1, y + rect->y1);
+					rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, *ptr);
 				}
 
 				/* move to next color buffer */
@@ -420,9 +414,6 @@ static void rtgui_image_jpeg_blit(struct rtgui_image* image, struct rtgui_dc* dc
 			}
 		}
 	}
-
-	/* restore foreground */
-	rtgui_dc_set_color(dc, foreground);
 }
 
 static rt_bool_t rtgui_image_jpeg_check(struct rtgui_filerw* file)

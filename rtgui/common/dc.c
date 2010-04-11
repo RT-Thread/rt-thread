@@ -42,6 +42,16 @@ void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
 }
 
 /*
+ * draw a color point on dc
+ */
+void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color)
+{
+	if (dc == RT_NULL) return;
+
+	dc->draw_color_point(dc, x, y, color);
+}
+
+/*
  * draw a vertical line on dc
  */
 void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2)
@@ -178,7 +188,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 
 	RT_ASSERT(dc != RT_NULL);
 
-	font = rtgui_dc_get_font(dc);
+	font = RTGUI_DC_FONT(dc);
 	if (font == RT_NULL)
 	{
 		/* use system default font */
@@ -195,7 +205,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 
 	/* text align */
 	rtgui_font_get_metrics(font, text, &text_rect);
-	rtgui_rect_moveto_align(rect, &text_rect, rtgui_dc_get_textalign(dc));
+	rtgui_rect_moveto_align(rect, &text_rect, RTGUI_DC_TEXTALIGN(dc));
 
 #ifdef RTGUI_USING_FONTHZ
 	while (*text)
@@ -261,58 +271,22 @@ void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_
 	}
 }
 
-void rtgui_dc_set_color(struct rtgui_dc* dc, rtgui_color_t color)
+void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc)
 {
 	if (dc != RT_NULL)
 	{
-		dc->set_color(dc, color);
+		dc->set_gc(dc, gc);
 	}
 }
 
-rtgui_color_t rtgui_dc_get_color(struct rtgui_dc* dc)
+rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc)
 {
 	if (dc != RT_NULL)
 	{
-		return dc->get_color(dc);
-	}
-
-	return white;
-}
-
-void rtgui_dc_set_font(struct rtgui_dc* dc, rtgui_font_t* font)
-{
-	if (dc != RT_NULL)
-	{
-		dc->set_font(dc, font);
-	}
-}
-
-rtgui_font_t* rtgui_dc_get_font(struct rtgui_dc* dc)
-{
-	if (dc != RT_NULL)
-	{
-		return dc->get_font(dc);
+		return dc->get_gc(dc);
 	}
 
 	return RT_NULL;
-}
-
-void rtgui_dc_set_textalign(struct rtgui_dc* dc, rt_int32_t align)
-{
-	if (dc != RT_NULL)
-	{
-		dc->set_textalign(dc, align);
-	}
-}
-
-rt_int32_t rtgui_dc_get_textalign(struct rtgui_dc* dc)
-{
-	if (dc != RT_NULL)
-	{
-		return dc->get_textalign(dc);
-	}
-
-	return RTGUI_ALIGN_NOT;
 }
 
 rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc)
@@ -330,11 +304,11 @@ void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
 {
 	RT_ASSERT(dc != RT_NULL);
 
-	rtgui_dc_set_color(dc, c1);
+	RTGUI_DC_FC(dc) = c1;
     rtgui_dc_draw_vline(dc, rect->x1, rect->y1, rect->y2);
     rtgui_dc_draw_hline(dc, rect->x1 + 1, rect->x2, rect->y1);
 
-	rtgui_dc_set_color(dc, c2);
+	RTGUI_DC_FC(dc) = c2;
     rtgui_dc_draw_vline(dc, rect->x2, rect->y1, rect->y2);
     rtgui_dc_draw_hline(dc, rect->x1, rect->x2 + 1, rect->y2);
 }
@@ -347,7 +321,7 @@ void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 	if (dc == RT_NULL) return ;
 
 	/* save old color */
-	color = rtgui_dc_get_color(dc);
+	color = RTGUI_DC_FC(dc);
 
 	r = *rect;
 	switch (flag)
@@ -375,12 +349,12 @@ void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 		break;
 
 	case RTGUI_BORDER_EXTRA:
-		rtgui_dc_set_color(dc, light_grey);
+		RTGUI_DC_FC(dc) = light_grey;
 		rtgui_dc_draw_rect(dc, &r);
 		break;
 
 	case RTGUI_BORDER_SIMPLE:
-		rtgui_dc_set_color(dc, black);
+		RTGUI_DC_FC(dc) = black;
 		rtgui_dc_draw_rect(dc, &r);
 		break;
 
@@ -389,7 +363,7 @@ void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 	}
 
 	/* restore color */
-	rtgui_dc_set_color(dc, color);
+	RTGUI_DC_FC(dc) = color;
 }
 
 void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
@@ -399,18 +373,18 @@ void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
 	if (dc == RT_NULL) return ;
 
 	/* save old color */
-	color = rtgui_dc_get_color(dc);
+	color = RTGUI_DC_FC(dc);
 
-	rtgui_dc_set_color(dc, dark_grey);
+	RTGUI_DC_FC(dc) = dark_grey;
 	rtgui_dc_draw_hline(dc, x1, x2, y);
 
 	y ++;
 
-	rtgui_dc_set_color(dc, high_light);
+	RTGUI_DC_FC(dc) = high_light;
 	rtgui_dc_draw_hline(dc, x1, x2, y);
 
 	/* restore color */
-	rtgui_dc_set_color(dc, color);
+	RTGUI_DC_FC(dc) = color;
 }
 
 void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
@@ -420,18 +394,18 @@ void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
 	if (dc == RT_NULL) return ;
 
 	/* save old color */
-	color = rtgui_dc_get_color(dc);
+	color = RTGUI_DC_FC(dc);
 
-	rtgui_dc_set_color(dc, dark_grey);
+	RTGUI_DC_FC(dc) = dark_grey;
 	rtgui_dc_draw_hline(dc, x, y1, y2);
 
 	x ++;
 
-	rtgui_dc_set_color(dc, high_light);
+	RTGUI_DC_FC(dc) = high_light;
 	rtgui_dc_draw_hline(dc, x, y1, y2);
 
 	/* restore color */
-	rtgui_dc_set_color(dc, color);
+	RTGUI_DC_FC(dc) = color;
 }
 
 void rtgui_dc_draw_arrow(struct rtgui_dc* dc, rtgui_rect_t* rect, int kind)

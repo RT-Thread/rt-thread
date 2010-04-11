@@ -42,7 +42,7 @@ static void rtgui_image_png_read_data(png_structp png_ptr, png_bytep data, png_s
 
 static rt_bool_t rtgui_image_png_process(png_structp png_ptr, png_infop info_ptr, struct rtgui_image_png* png)
 {
-    int x, y;
+    rt_uint32_t x, y;
     png_bytep row;
     png_bytep data;
     rtgui_color_t *ptr;
@@ -229,7 +229,6 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 {
 	rt_uint16_t x, y, w, h;
 	rtgui_color_t* ptr;
-	rtgui_color_t foreground;
 	struct rtgui_image_png* png;
 
 	RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
@@ -242,9 +241,6 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
     if (image->h < rtgui_rect_height(*rect)) h = image->h;
     else h = rtgui_rect_height(*rect);
 
-	/* save foreground color */
-	foreground = rtgui_dc_get_color(dc);
-
     if (png->pixels != RT_NULL)
     {
         ptr = (rtgui_color_t*)png->pixels;
@@ -256,8 +252,7 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                 /* not alpha */
                 if ((*ptr >> 24) != 255)
                 {
-                    rtgui_dc_set_color(dc, *ptr);
-                    rtgui_dc_draw_point(dc, x + rect->x1, y + rect->y1);
+                    rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, *ptr);
                 }
 
                 /* move to next color buffer */
@@ -284,8 +279,8 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                     data = &(row[x * 4]);
                     if (data[3] != 0)
                     {
-                        rtgui_dc_set_color(dc, RTGUI_ARGB((255 - data[3]), data[0], data[1], data[2]));
-                        rtgui_dc_draw_point(dc, x + rect->x1, y + rect->y1);
+                        rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, 
+							RTGUI_ARGB((255 - data[3]), data[0], data[1], data[2]));
                     }
                 }
             }
@@ -300,10 +295,10 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                 {
                     data = &(row[x]);
 
-                    rtgui_dc_set_color(dc, RTGUI_ARGB(0, png->info_ptr->palette[data[0]].red,
-                        png->info_ptr->palette[data[0]].green,
-                        png->info_ptr->palette[data[0]].blue));
-                    rtgui_dc_draw_point(dc, x + rect->x1, y + rect->y1);
+                    rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1,
+						RTGUI_ARGB(0, png->info_ptr->palette[data[0]].red,
+						png->info_ptr->palette[data[0]].green,
+						png->info_ptr->palette[data[0]].blue));
                 }
             }
 
@@ -313,9 +308,6 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
         rtgui_free(row);
     }
-
-	/* restore foreground */
-	rtgui_dc_set_color(dc, foreground);
 }
 
 void rtgui_image_png_init()

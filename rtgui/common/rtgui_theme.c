@@ -505,7 +505,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 		bord_size = item_size;
 	else
 	{
-		rtgui_font_get_metrics(rtgui_dc_get_font(dc), "H", &item_rect);
+		rtgui_font_get_metrics(RTGUI_DC_FONT(dc), "H", &item_rect);
 		bord_size = rtgui_rect_height(item_rect);
 	}
 
@@ -529,7 +529,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 		struct rtgui_rect text_rect;
 
 		/* draw group text */
-		rtgui_font_get_metrics(rtgui_dc_get_font(dc), radiobox->text, &text_rect);
+		rtgui_font_get_metrics(RTGUI_DC_FONT(dc), radiobox->text, &text_rect);
 		rtgui_rect_moveto(&text_rect, rect.x1 + bord_size + 5, rect.y1);
 		rect.x1 -= 5; rect.x2 += 5;
 		rtgui_dc_fill_rect(dc, &text_rect);
@@ -804,8 +804,8 @@ void rtgui_theme_draw_selected(struct rtgui_dc* dc, rtgui_rect_t *rect)
 	rtgui_color_t bc;
 	rt_uint16_t index;
 	
-	bc = rtgui_dc_get_color(dc);
-	rtgui_dc_set_color(dc, selected_color);
+	bc = RTGUI_DC_FC(dc);
+	RTGUI_DC_FC(dc) = selected_color;
 
 	rtgui_dc_draw_hline(dc, rect->x1 + 3, rect->x2 - 2, rect->y1 + 1);
 	rtgui_dc_draw_hline(dc, rect->x1 + 3, rect->x2 - 2, rect->y2 - 2);
@@ -816,7 +816,7 @@ void rtgui_theme_draw_selected(struct rtgui_dc* dc, rtgui_rect_t *rect)
 	for (index = rect->y1 + 1; index < rect->y2 - 2; index ++)
 		rtgui_dc_draw_hline(dc, rect->x1 + 3, rect->x2 - 2, index);
 
-	rtgui_dc_set_color(dc, bc);
+	RTGUI_DC_FC(dc) = bc;
 }
 
 /* get default background color */

@@ -34,20 +34,15 @@ struct rtgui_dc
 
 	/* interface */
 	void (*draw_point)(struct rtgui_dc* dc, int x, int y);
+	void (*draw_color_point)(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
 	void (*draw_vline)(struct rtgui_dc* dc, int x, int y1, int y2);
 	void (*draw_hline)(struct rtgui_dc* dc, int x1, int x2, int y);
 	void (*fill_rect )(struct rtgui_dc* dc, rtgui_rect_t* rect);
 	void (*blit		 )(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
 
-	/* set and get color */
-	void (*set_color )(struct rtgui_dc* dc, rtgui_color_t color);
-	rtgui_color_t (*get_color)(struct rtgui_dc* dc);
-
-	/* set and get font */
-	void (*set_font  )(struct rtgui_dc* dc, rtgui_font_t* font);
-	rtgui_font_t* (*get_font)(struct rtgui_dc* dc);
-	void (*set_textalign)(struct rtgui_dc* dc, rt_int32_t align);
-	rt_int32_t (*get_textalign)(struct rtgui_dc* dc);
+	/* set and get graphic context */
+	void (*set_gc)(struct rtgui_dc* dc, struct rtgui_gc *gc);
+	struct rtgui_gc* (*get_gc)(struct rtgui_dc* dc);
 
 	/* get dc visible */
 	rt_bool_t (*get_visible)(struct rtgui_dc* dc);
@@ -58,27 +53,32 @@ struct rtgui_dc
 	rt_bool_t (*fini )(struct rtgui_dc* dc);
 };
 
+#define RTGUI_DC_FC(dc)			(rtgui_dc_get_gc(dc)->foreground)
+#define RTGUI_DC_BC(dc)			(rtgui_dc_get_gc(dc)->background)
+#define RTGUI_DC_FONT(dc)		(rtgui_dc_get_gc(dc)->font)
+#define RTGUI_DC_TEXTALIGN(dc)	(rtgui_dc_get_gc(dc)->textalign)
+
 /* create a buffer dc */
 struct rtgui_dc* rtgui_dc_buffer_create(int width, int height);
 rt_uint8_t* rtgui_dc_buffer_get_pixel(struct rtgui_dc* dc);
+
+/* begin and end a drawing */
+struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner);
+void rtgui_dc_end_drawing(struct rtgui_dc* dc);
 
 /* destroy a dc */
 void rtgui_dc_destory(struct rtgui_dc* dc);
 
 void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y);
+void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
 
 void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
 void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
 
-void rtgui_dc_set_color(struct rtgui_dc* dc, rtgui_color_t color);
-rtgui_color_t rtgui_dc_get_color(struct rtgui_dc* dc);
-
-void rtgui_dc_set_font(struct rtgui_dc* dc, rtgui_font_t* font);
-rtgui_font_t* rtgui_dc_get_font(struct rtgui_dc* dc);
-void rtgui_dc_set_textalign(struct rtgui_dc* dc, rt_int32_t align);
-rt_int32_t rtgui_dc_get_textalign(struct rtgui_dc* dc);
+void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc);
+rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc);
 
 rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc);
 void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect);

@@ -21,6 +21,9 @@ struct rtgui_dc_buffer
 {
 	struct rtgui_dc parent;
 
+	/* graphic context */
+	rtgui_gc_t gc;
+
 	/* color and font */
 	rtgui_color_t color;
 	struct rtgui_font* font;
@@ -41,17 +44,16 @@ struct rtgui_dc_buffer
 
 static rt_bool_t rtgui_dc_buffer_fini(struct rtgui_dc* dc);
 static void rtgui_dc_buffer_draw_point(struct rtgui_dc* dc, int x, int y);
+static void rtgui_dc_buffer_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
 static void rtgui_dc_buffer_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 static void rtgui_dc_buffer_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point,
 	struct rtgui_dc* dest, rtgui_rect_t* rect);
-static void rtgui_dc_buffer_set_color (struct rtgui_dc* dc, rtgui_color_t color);
-static rtgui_color_t rtgui_dc_buffer_get_color(struct rtgui_dc* dc);
-static void rtgui_dc_buffer_set_font(struct rtgui_dc* dc, rtgui_font_t* font);
-static rtgui_font_t* rtgui_dc_buffer_get_font(struct rtgui_dc* dc);
-static void rtgui_dc_buffer_set_textalign(struct rtgui_dc* dc, rt_int32_t textalign);
-static rt_int32_t rtgui_dc_buffer_get_textalign(struct rtgui_dc* dc);
+
+static void rtgui_dc_buffer_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
+static rtgui_gc_t* rtgui_dc_buffer_get_gc(struct rtgui_dc* dc);
+
 static rt_bool_t rtgui_dc_buffer_get_visible(struct rtgui_dc* dc);
 static void rtgui_dc_buffer_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
@@ -61,18 +63,14 @@ static void rtgui_dc_buffer_init(struct rtgui_dc_buffer* dc)
 
 	dc->parent.type = RTGUI_DC_BUFFER;
 	dc->parent.draw_point = rtgui_dc_buffer_draw_point;
+	dc->parent.draw_color_point = rtgui_dc_buffer_draw_color_point;
 	dc->parent.draw_hline = rtgui_dc_buffer_draw_hline;
 	dc->parent.draw_vline = rtgui_dc_buffer_draw_vline;
 	dc->parent.fill_rect  = rtgui_dc_buffer_fill_rect;
 	dc->parent.blit		  = rtgui_dc_buffer_blit;
 
-	dc->parent.set_color  = rtgui_dc_buffer_set_color;
-	dc->parent.get_color  = rtgui_dc_buffer_get_color;
-
-	dc->parent.set_font	  = rtgui_dc_buffer_set_font;
-	dc->parent.get_font	  = rtgui_dc_buffer_get_font;
-	dc->parent.set_textalign  = rtgui_dc_buffer_set_textalign;
-	dc->parent.get_textalign  = rtgui_dc_buffer_get_textalign;
+	dc->parent.set_gc	  = rtgui_dc_buffer_set_gc;
+	dc->parent.get_gc	  = rtgui_dc_buffer_get_gc;
 
 	dc->parent.get_visible= rtgui_dc_buffer_get_visible;
 	dc->parent.get_rect	  = rtgui_dc_buffer_get_rect;
@@ -135,6 +133,19 @@ static void rtgui_dc_buffer_draw_point(struct rtgui_dc* self, int x, int y)
 	ptr = (rtgui_color_t*)(dc->pixel + y * dc->pitch + x * sizeof(rtgui_color_t));
 
 	*ptr = dc->color;
+}
+
+static void rtgui_dc_buffer_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
+{
+	rtgui_color_t* ptr;
+	struct rtgui_dc_buffer* dc;
+
+	dc = (struct rtgui_dc_buffer*)self;
+
+	/* note: there is no parameter check in this function */
+	ptr = (rtgui_color_t*)(dc->pixel + y * dc->pitch + x * sizeof(rtgui_color_t));
+
+	*ptr = color;
 }
 
 static void rtgui_dc_buffer_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
@@ -252,7 +263,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 
-	if ((dest->type == RTGUI_DC_HW) && rtgui_dc_get_visible(dest) == RT_TRUE)
+	if (dest->type == RTGUI_DC_HW)
 	{
 		rtgui_color_t* pixel;
 		rt_uint8_t *line_ptr;
@@ -312,46 +323,19 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 	}
 }
 
-static void rtgui_dc_buffer_set_color (struct rtgui_dc* self, rtgui_color_t color)
+
+static void rtgui_dc_buffer_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 {
 	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
 
-	dc->color = color;
+	dc->gc = *gc;
 }
 
-static rtgui_color_t rtgui_dc_buffer_get_color(struct rtgui_dc* self)
+static rtgui_gc_t *rtgui_dc_buffer_get_gc(struct rtgui_dc* self)
 {
 	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
 
-	return dc->color;
-}
-
-static void rtgui_dc_buffer_set_font(struct rtgui_dc* self, rtgui_font_t* font)
-{
-	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-
-	dc->font = font;
-}
-
-static rtgui_font_t* rtgui_dc_buffer_get_font(struct rtgui_dc* self)
-{
-	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-
-	return dc->font;
-}
-
-static void rtgui_dc_buffer_set_textalign(struct rtgui_dc* self, rt_int32_t textalign)
-{
-	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-
-	dc->align = textalign;
-}
-
-static rt_int32_t rtgui_dc_buffer_get_textalign(struct rtgui_dc* self)
-{
-	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-
-	return dc->align;
+	return &dc->gc;
 }
 
 static rt_bool_t rtgui_dc_buffer_get_visible(struct rtgui_dc* dc)

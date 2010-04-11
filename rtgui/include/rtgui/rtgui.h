@@ -25,6 +25,7 @@ struct rtgui_event;
 
 struct rtgui_widget;
 struct rtgui_win;
+struct rtgui_font;
 
 typedef struct rtgui_panel rtgui_panel_t;
 typedef struct rtgui_win rtgui_win_t;
@@ -45,6 +46,21 @@ struct rtgui_rect
 typedef struct rtgui_rect rtgui_rect_t;
 #define rtgui_rect_width(r)		((r).x2 - (r).x1)
 #define rtgui_rect_height(r)	((r).y2 - (r).y1)
+
+typedef unsigned long rtgui_color_t;
+
+struct rtgui_gc
+{
+	/* foreground and background color */
+	rtgui_color_t foreground, background;
+
+	/* text align */
+	rt_base_t textalign;
+
+	/* font */
+	struct rtgui_font* font;
+};
+typedef struct rtgui_gc rtgui_gc_t;
 
 enum RTGUI_MARGIN_STYLE
 {
@@ -86,7 +102,13 @@ enum RTGUI_ALIGN
 	RTGUI_ALIGN_BOTTOM				= 0x04,
 	RTGUI_ALIGN_CENTER_VERTICAL		= 0x08,
 	RTGUI_ALIGN_EXPAND				= 0x10,
-	RTGUI_ALIGN_STRETCH				= 0x20
+	RTGUI_ALIGN_STRETCH				= 0x20,
+};
+
+enum RTGUI_TEXTATTR
+{
+	RTGUI_TEXTATTR_NORMAL			= 0x0000,
+	RTGUI_TEXTATTR_
 };
 
 enum RTGUI_ARRAW

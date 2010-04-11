@@ -33,8 +33,6 @@ struct rtgui_dc_hw
 
 /* create a hardware dc */
 struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner);
-struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner);
-void rtgui_dc_end_drawing(struct rtgui_dc* dc);
 
 /* draw a hline with raw pixel data */
 void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc_hw* dc, rt_uint8_t* raw_ptr, int x1, int x2, int y);
