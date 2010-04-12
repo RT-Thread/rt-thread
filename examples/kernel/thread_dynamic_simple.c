@@ -28,8 +28,8 @@ static void thread_entry(void* parameter)
 int thread_dynamic_simple_init()
 {
 	/* 创建线程1 */
-	tid1 = rt_thread_create("thread",
-		thread_entry, RT_NULL, /* 线程入口是thread1_entry, 入口参数是RT_NULL */
+	tid1 = rt_thread_create("t1",
+		thread_entry, (void*)1, /* 线程入口是thread_entry, 入口参数是1 */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid1 != RT_NULL)
 		rt_thread_startup(tid1);
@@ -37,8 +37,8 @@ int thread_dynamic_simple_init()
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
 	/* 创建线程2 */
-	tid2 = rt_thread_create("thread",
-		thread_entry, RT_NULL, /* 线程入口是thread2_entry, 入口参数是RT_NULL */
+	tid2 = rt_thread_create("t2",
+		thread_entry, (void*)2, /* 线程入口是thread_entry, 入口参数是2 */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid2 != RT_NULL)
 		rt_thread_startup(tid2);
