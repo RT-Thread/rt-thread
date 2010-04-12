@@ -977,9 +977,4 @@ char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
 #endif
 #endif
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-/* some buildin kernel symbol */
-RTM_EXPORT(rt_kprintf)
-#endif
 /*@}*/

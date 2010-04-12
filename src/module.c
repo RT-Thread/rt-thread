@@ -19,6 +19,19 @@
 #include "module.h"
 #include "kservice.h"
 
+/* #define RT_MODULE_DEBUG */
+
+#define elf_module 	((Elf32_Ehdr *)module_ptr)
+#define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
+
+#define IS_PROG(s)		(s.sh_type == SHT_PROGBITS)
+#define IS_NOPROG(s)	(s.sh_type == SHT_NOBITS)
+#define IS_REL(s)		(s.sh_type == SHT_REL)
+#define IS_RELA(s)		(s.sh_type == SHT_RELA)
+#define IS_ALLOC(s)		(s.sh_flags == SHF_ALLOC)
+#define IS_AX(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
+#define IS_AW(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
+
 #ifdef RT_USING_MODULE
 rt_list_t rt_module_symbol_list;
 struct rt_module* rt_current_module;
@@ -55,17 +68,6 @@ rt_uint32_t rt_module_symbol_find(const rt_uint8_t* sym_str)
 	return 0;
 }
 
-#define elf_module 	((Elf32_Ehdr *)module_ptr)
-#define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
-
-#define IS_PROG(s)		(s.sh_type == SHT_PROGBITS)
-#define IS_NOPROG(s)	(s.sh_type == SHT_NOBITS)
-#define IS_REL(s)		(s.sh_type == SHT_REL)
-#define IS_RELA(s)		(s.sh_type == SHT_RELA)
-#define IS_ALLOC(s)		(s.sh_flags == SHF_ALLOC)
-#define IS_AX(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
-#define IS_AW(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
-
 int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val, rt_uint32_t module_addr)
 {
 	Elf32_Addr *where, tmp;
@@ -79,7 +81,9 @@ int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr 
 
 	case R_ARM_ABS32:
 		*where += (Elf32_Addr)sym_val;
+#ifdef RT_MODULE_DEBUG
 		rt_kprintf("R_ARM_ABS32: %x -> %x\n", where, *where);
+#endif
 		break;
 
 	case R_ARM_PC24:
@@ -92,7 +96,9 @@ int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr 
 		tmp = sym_val - (Elf32_Addr)where + (addend << 2);
 		tmp >>= 2;
 		*where = (*where & 0xff000000) | (tmp & 0x00ffffff);
+#ifdef RT_MODULE_DEBUG
 		rt_kprintf("R_ARM_PC24: %x -> %x\n", where, *where);
+#endif
 		break;
 
 	default:
@@ -275,7 +281,9 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 			for (i = 0; i < nr_reloc; i ++)
 			{
 				Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
+#ifdef RT_MODULE_DEBUG
 				rt_kprintf("relocate symbol: %s\n", strtab + sym->st_name);
+#endif
 				if (sym->st_shndx != STN_UNDEF)
 				{				
 					if(ELF_ST_TYPE(sym->st_info) == STT_SECTION)
@@ -310,7 +318,9 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 				}
 				else
 				{
+#ifdef RT_MODULE_DEBUG
 					rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
+#endif
 					/* need to resolve symbol in kernel symbol table */
 					Elf32_Addr addr = rt_module_symbol_find(strtab + sym->st_name);
 					if (addr != (Elf32_Addr)RT_NULL)

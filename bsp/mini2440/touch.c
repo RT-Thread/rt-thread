@@ -95,7 +95,7 @@ void report_touch_input(int updown)
 	}
 
 	/* rt_kprintf("touch %s: ts.x: %d, ts.y: %d, count:%d\n", updown? "down" : "up",
-		xp, yp, ts.count); */
+		xp, yp, ts.count);  */
 
 	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
 
@@ -122,7 +122,7 @@ static void touch_timer_fire(void)
 	ADCCON |= S3C2410_ADCCON_ENABLE_START;
 }
 
-void s3c2410_adc_stylus_action()
+void s3c2410_adc_stylus_action(void)
 {
 	rt_uint32_t data0;
 	rt_uint32_t data1;
@@ -148,7 +148,7 @@ void s3c2410_adc_stylus_action()
 	}
 }
 
-void s3c2410_intc_stylus_updown()
+void s3c2410_intc_stylus_updown(void)
 {
 	rt_uint32_t data0;
 	rt_uint32_t data1;
@@ -186,13 +186,13 @@ void s3c2410_intc_stylus_updown()
 
 void rt_touch_handler(int irqno)
 {
-	if (SUBSRCPND & (1 << 10))
+	if (SUBSRCPND & BIT_SUB_ADC)
 	{
 		/* INT_SUB_ADC */
 		s3c2410_adc_stylus_action();
 	}
 
-	if (SUBSRCPND & (1 << 9))
+	if (SUBSRCPND & BIT_SUB_TC)
 	{
 		/* INT_SUB_TC */
 		s3c2410_intc_stylus_updown();
@@ -202,7 +202,7 @@ void rt_touch_handler(int irqno)
 	INTPND |= (rt_uint32_t)(1 << INTADC);
 }
 
-void rt_hw_touch_init()
+void rt_hw_touch_init(void)
 {
 	/* init touch screen structure */
 	rt_memset(&ts, 0, sizeof(struct s3c2410ts));
@@ -233,3 +233,4 @@ void rt_hw_touch_init()
 
 	first_down_report = 1;
 }
+

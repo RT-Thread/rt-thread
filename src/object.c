@@ -21,6 +21,10 @@
 
 #include "kservice.h"
 
+#ifdef RT_USING_MODULE
+extern struct rt_module* rt_current_module;
+#endif
+
 #define _OBJ_CONTAINER_LIST_INIT(c) 	\
 	{&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
 struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
@@ -249,8 +253,14 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	register rt_base_t temp;
 	struct rt_object_information* information;
 
+#ifdef RT_USING_MODULE
+	/* get module object information */
+	information = (rt_current_module != RT_NULL) ? 
+		&rt_current_module->module_object[type] : &rt_object_container[type];
+#else
 	/* get object information */
 	information = &rt_object_container[type];
+#endif
 
 	object = (struct rt_object*)rt_malloc(information->object_size);
 	if (object == RT_NULL)

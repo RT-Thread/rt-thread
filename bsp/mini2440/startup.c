@@ -139,6 +139,11 @@ void rtthread_startup(void)
 	rt_device_init_all();
 #endif
 
+#ifdef RT_USING_MODULE
+	/* init module system */
+	rt_system_module_init();
+#endif
+
 	/* init application */
 	rt_application_init();
 

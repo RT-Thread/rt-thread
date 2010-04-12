@@ -22,6 +22,12 @@ SECTIONS
 		KEEP(*(VSymTab))
 		__vsymtab_end = .;
 		. = ALIGN(4);	
+
+		/* section information for modules */
+		. = ALIGN(4);
+		__rtmsymtab_start = .;
+		KEEP(*(RTMSymTab))
+		__rtmsymtab_end = .;
 	}
 
 	. = ALIGN(4);

@@ -63,6 +63,9 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 
+/* Using Module System */
+#define RT_USING_MODULE
+
 /* SECTION: Console options */
 /* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
@@ -84,7 +87,7 @@
 /* SECTION: Device filesystem support */
 /* using DFS support */
 #define RT_USING_DFS
-#define RT_USING_DFS_ELMFATFS
+#define RT_USING_DFS_ELMFAT
 /* #define RT_USING_DFS_YAFFS2 */
 
 /* #define DFS_USING_WORKDIR */
@@ -95,6 +98,9 @@
 #define DFS_FD_MAX					16
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
+
+/* Enable freemodbus protocal stack*/
+/* #define RT_USING_MODBUS */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack */
@@ -158,7 +164,7 @@
 #define RT_LWIP_TCPTHREAD_PRIORITY	128
 
 /* mail box size of tcpip thread to wait for */
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE	32
 
 /* thread stack size of tcpip thread */
 #define RT_LWIP_TCPTHREAD_STACKSIZE	4096

@@ -336,6 +336,28 @@ int list_device()
 FINSH_FUNCTION_EXPORT(list_device, list device in system)
 #endif
 
+#ifdef RT_USING_MODULE
+int list_module()
+{
+	struct rt_module *module;
+	struct rt_list_node *list, *node;
+
+	list = &rt_object_container[RT_Object_Class_Module].object_list;
+
+	rt_kprintf("module    entry      stack size\n");
+	rt_kprintf("-------- ---------- ----------\n");
+	for (node = list->next; node != list; node = node->next)
+	{
+		module = (struct rt_device*)(rt_list_entry(node, struct rt_object, list));
+		rt_kprintf("%-8s 0x%08x 0x%08x \n", module->parent.name, (rt_uint32_t)module->module_entry,
+			module->stack_size);
+	}
+
+	return 0;
+}
+FINSH_FUNCTION_EXPORT(list_module, list module in system)
+#endif
+
 int list()
 {
 	struct finsh_syscall_item* syscall_item;

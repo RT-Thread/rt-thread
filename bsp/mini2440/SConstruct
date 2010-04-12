@@ -42,7 +42,10 @@ if rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript(RTT_ROOT + '/rtgui/SConscript', variant_dir='build/rtgui', duplicate=0)
 	objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c' ]
+if rtconfig.RT_USING_MODBUS:
+	objs = objs + SConscript(RTT_ROOT + '/net/freemodbus/SConscript', variant_dir='build/net/freemodbus', duplicate=0)	
+
+src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c', 'info.c', 'today.c', 'picture.c', 'osc.c', 'device_info.c', 'run_module.c']
 src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:

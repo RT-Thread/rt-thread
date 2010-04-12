@@ -1,5 +1,9 @@
 #include <rtthread.h>
 
+#define THREAD_PRIORITY		25
+#define THREAD_STACK_SIZE	512
+#define THREAD_TIMESLICE	5
+
 static void thread_entry(void* parameter)
 {
 	rt_kprintf("thread dynamicly created ok\n");
@@ -16,8 +20,6 @@ int rtm_main()
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid != RT_NULL)
 		rt_thread_startup(tid);
-	else
-		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
 	return 0;
 }

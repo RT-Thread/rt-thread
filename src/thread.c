@@ -32,6 +32,10 @@ extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread* rt_current_thread;
 extern rt_uint8_t rt_current_priority;
 
+#ifdef RT_USING_MODULE
+extern struct rt_module* rt_current_module;
+#endif
+
 #ifdef RT_USING_HEAP
 extern rt_list_t rt_thread_defunct;
 #endif
@@ -78,7 +82,8 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 
 #ifdef RT_USING_MODULE
 	/* init module parent */
-	thread->module_parent = RT_NULL;
+	thread->module_parent = 
+		(rt_current_module != RT_NULL) ? rt_current_module : RT_NULL;
 #endif
 
 	/* init user data */
@@ -228,12 +233,12 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 static void rt_thread_exit()
 {
 	struct rt_thread* thread;
-    register rt_base_t temp;
+	register rt_base_t temp;
 
-    /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 
-    /* get current thread */
+	/* get current thread */
 	thread = rt_current_thread;
 
 	/* remove from schedule */
@@ -628,21 +633,4 @@ rt_thread_t rt_thread_find(char* name)
 	return thread;
 }
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-/* some buildin kernel symbol */
-RTM_EXPORT(rt_thread_init)
-RTM_EXPORT(rt_thread_detach)
-RTM_EXPORT(rt_thread_create)
-RTM_EXPORT(rt_thread_self)
-RTM_EXPORT(rt_thread_find)
-RTM_EXPORT(rt_thread_startup)
-RTM_EXPORT(rt_thread_delete)
-RTM_EXPORT(rt_thread_yield)
-RTM_EXPORT(rt_thread_delay)
-RTM_EXPORT(rt_thread_control)
-RTM_EXPORT(rt_thread_suspend)
-RTM_EXPORT(rt_thread_resume)
-RTM_EXPORT(rt_thread_timeout)
-#endif
 /*@}*/
