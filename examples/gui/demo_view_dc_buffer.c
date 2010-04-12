@@ -24,7 +24,6 @@ static rt_bool_t dc_buffer_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 	{
 		struct rtgui_dc* dc;
 		rtgui_rect_t rect;
-		rtgui_point_t point = {0, 0};
 
 		/*
 		 * 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view
@@ -41,7 +40,9 @@ static rt_bool_t dc_buffer_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 		/* 获得demo view允许绘图的区域 */
 		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
 
-		rtgui_dc_blit(dc_buffer, &point, dc, &rect);
+		rect.x1 += 10;
+		rect.y1 += 10;
+		rtgui_dc_blit(dc_buffer, NULL, dc, &rect);
 
 		/* 绘图完成 */
 		rtgui_dc_end_drawing(dc);
@@ -62,9 +63,13 @@ rtgui_view_t *demo_view_dc_buffer(rtgui_workbench_t* workbench)
 
 	if (dc_buffer == RT_NULL)
 	{
+		rtgui_rect_t rect = {0, 0, 50, 50};
+
 		/* 创建 DC Buffer，长 50，宽 50 */
 		dc_buffer = rtgui_dc_buffer_create(50, 50);
-		rtgui_dc_set_color(dc_buffer, blue);
+		RTGUI_DC_FC(dc_buffer) = blue;
+		rtgui_dc_fill_rect(dc_buffer, &rect);
+		RTGUI_DC_FC(dc_buffer) = red;
 		rtgui_dc_draw_circle(dc_buffer, 25, 25, 10);
 	}
 

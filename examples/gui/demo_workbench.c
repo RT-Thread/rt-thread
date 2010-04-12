@@ -33,7 +33,6 @@ static rt_bool_t demo_workbench_event_handler(struct rtgui_widget* widget, struc
 static void workbench_entry(void* parameter)
 {
 	rt_mq_t mq;
-	struct rtgui_view* view;
 	struct rtgui_workbench* workbench;
 
 	/* 创建GUI应用需要的消息队列 */
@@ -53,7 +52,7 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 	demo_view_dc(workbench);
-	/* demo_view_dc_buffer(workbench); */
+	demo_view_dc_buffer(workbench);
 	demo_view_animation(workbench);
 	demo_view_window(workbench);
 	demo_view_label(workbench);

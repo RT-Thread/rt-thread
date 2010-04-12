@@ -5,6 +5,7 @@
  */
 
 #include "demo_view.h"
+#include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/slider.h>
@@ -41,7 +42,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 获得demo view允许绘图的区域 */
 		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
 
-		rtgui_dc_set_textalign(dc, RTGUI_ALIGN_BOTTOM | RTGUI_ALIGN_CENTER_HORIZONTAL);
+		RTGUI_DC_TEXTALIGN(dc) = RTGUI_ALIGN_BOTTOM | RTGUI_ALIGN_CENTER_HORIZONTAL;
 		/* 显示GUI的版本信息 */
 #ifdef RTGUI_USING_SMALL_SIZE
 		rtgui_dc_draw_text(dc, "RT-Thread/GUI小型版本", &rect);
@@ -50,19 +51,19 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 #endif
 
 		/* 绘制一个圆形 */
-		rtgui_dc_set_color(dc, red);
+		RTGUI_DC_FC(dc) = red;
 		rtgui_dc_draw_circle(dc, rect.x1 + 10, rect.y1 + 10, 10);
 
 		/* 填充一个圆形 */
-		rtgui_dc_set_color(dc, green);
+		RTGUI_DC_FC(dc) = green;
 		rtgui_dc_fill_circle(dc, rect.x1 + 30, rect.y1 + 10, 10);
 
 		/* 画一个圆弧 */
-		rtgui_dc_set_color(dc, RTGUI_RGB(250, 120, 120));
+		RTGUI_DC_FC(dc) = RTGUI_RGB(250, 120, 120);
 		rtgui_dc_draw_arc(dc, rect.x1 + 120, rect.y1 + 60, 30, 0, 120);
 
 		/* 多边形 */
-		rtgui_dc_set_color(dc, blue);
+		RTGUI_DC_FC(dc) = blue;
 		rtgui_dc_draw_polygon(dc, vx, vy, 6);
 
 		/* 绘制不同的边框 */

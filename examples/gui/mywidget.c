@@ -15,7 +15,7 @@ static void rtgui_mywidget_ondraw(struct rtgui_mywidget* me)
 	/* 获得窗口的尺寸 */
 	rtgui_widget_get_rect(RTGUI_WIDGET(me), &rect);
 	/* 绘制背景色 */
-	rtgui_dc_set_color(dc, white);
+	RTGUI_DC_BC(dc) = white;
 	rtgui_dc_fill_rect(dc, &rect);
 
 	/* 计算中心原点 */
@@ -23,15 +23,15 @@ static void rtgui_mywidget_ondraw(struct rtgui_mywidget* me)
 	y = (rect.y2 + rect.y1)/2;
 
 	/* 绘制十字架 */
-	rtgui_dc_set_color(dc, black);
+	RTGUI_DC_BC(dc) = black;
 	rtgui_dc_draw_hline(dc, rect.x1, rect.x2, y);
 	rtgui_dc_draw_vline(dc, x, rect.y1, rect.y2);
 
 	/* 根据状态绘制圆圈 */
 	if (me->status == MYWIDGET_STATUS_ON)
-		rtgui_dc_set_color(dc, green);
+		RTGUI_DC_BC(dc) = green;
 	else
-		rtgui_dc_set_color(dc, red);
+		RTGUI_DC_BC(dc) = red;
 	rtgui_dc_fill_circle(dc, x, y, 5);
 
 	/* 结束绘图 */
