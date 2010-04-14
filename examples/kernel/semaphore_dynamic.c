@@ -21,7 +21,7 @@ static void thread_entry(void* parameter)
 	/* 获得当前的OS Tick */
 	tick = rt_tick_get();
 
-	/* 视图持有一个信号量，如果10个OS Tick依然没拿到，则超时返回 */
+	/* 试图持有一个信号量，如果10个OS Tick依然没拿到，则超时返回 */
 	result = rt_sem_take(sem, 10);
 	if (result == -RT_ETIMEOUT)
 	{
