@@ -36,7 +36,7 @@ static void finsh_block_remove(struct finsh_block_header** list, struct finsh_bl
 static void finsh_block_split(struct finsh_block_header* header, size_t size);
 static void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_header* header);
 
-int finsh_heap_init()
+int finsh_heap_init(void)
 {
 	/* clear heap to zero */
 	memset(&finsh_heap[0], 0, sizeof(finsh_heap));

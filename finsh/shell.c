@@ -115,7 +115,7 @@ char *strdup(const char *s)
 }
 #endif
 
-#if !defined(__CC_ARM) && !defined(__ICCARM__)
+#if !defined(__CC_ARM) && !defined(__ICCARM__) && !defined(__ICCM16C__)
 int isalpha( int ch )
 {
 	return (unsigned int)((ch | 0x20) - 'a') < 26u;
@@ -156,7 +156,7 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 	return RT_EOK;
 }
 
-void finsh_set_device(char* device_name)
+void finsh_set_device(const char* device_name)
 {
 	rt_device_t dev = RT_NULL;
 
@@ -187,6 +187,7 @@ void finsh_auto_complete(char* prefix)
 	rt_kprintf("finsh>>%s", prefix);
 }
 
+extern const char* finsh_error_string_table[];
 void finsh_run_line(struct finsh_parser *parser, const char* line)
 {
 	rt_kprintf("\n");
@@ -417,7 +418,7 @@ void finsh_system_var_init(void* begin, void* end)
 }
 
 /* init finsh */
-void finsh_system_init()
+void finsh_system_init(void)
 {
 	rt_sem_init(&uart_sem, "uart", 0, 0);
 

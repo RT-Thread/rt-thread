@@ -48,7 +48,7 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 	return len;
 }
 
-long hello()
+long hello(void)
 {
 	rt_kprintf("Hello RT-Thread!\n");
 
@@ -57,7 +57,7 @@ long hello()
 FINSH_FUNCTION_EXPORT(hello, say hello world);
 
 extern void rt_show_version(void);
-long version()
+long version(void)
 {
 	rt_show_version();
 
@@ -69,7 +69,7 @@ FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
     ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
 extern struct rt_object_information rt_object_container[];
 
-int list_thread()
+long list_thread(void)
 {
 	struct rt_thread *thread;
 	struct rt_list_node *list, *node;
@@ -117,7 +117,7 @@ static void show_wait_queue(struct rt_list_node* list)
 }
 
 #ifdef RT_USING_SEMAPHORE
-int list_sem()
+long list_sem(void)
 {
 	struct rt_semaphore *sem;
 	struct rt_list_node *list, *node;
@@ -147,7 +147,7 @@ FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system)
 #endif
 
 #ifdef RT_USING_EVENT
-int list_event()
+long list_event(void)
 {
 	struct rt_event *e;
 	struct rt_list_node *list, *node;
@@ -168,7 +168,7 @@ FINSH_FUNCTION_EXPORT(list_event, list event in system)
 #endif
 
 #ifdef RT_USING_MUTEX
-int list_mutex()
+long list_mutex(void)
 {
 	struct rt_mutex *m;
 	struct rt_list_node *list, *node;
@@ -189,7 +189,7 @@ FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system)
 #endif
 
 #ifdef RT_USING_MAILBOX
-int list_mailbox()
+long list_mailbox(void)
 {
 	struct rt_mailbox *m;
 	struct rt_list_node *list, *node;
@@ -219,7 +219,7 @@ FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system)
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
-int list_msgqueue()
+long list_msgqueue(void)
 {
 	struct rt_messagequeue *m;
 	struct rt_list_node *list, *node;
@@ -249,7 +249,7 @@ FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
 #endif
 
 #ifdef RT_USING_MEMPOOL
-int list_mempool()
+long list_mempool(void)
 {
 	struct rt_mempool *mp;
 	struct rt_list_node *list, *node;
@@ -282,7 +282,7 @@ int list_mempool()
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
 #endif
 
-int list_timer()
+long list_timer(void)
 {
 	struct rt_timer *timer;
 	struct rt_list_node *list, *node;
@@ -306,7 +306,7 @@ int list_timer()
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system)
 
 #ifdef RT_USING_DEVICE
-int list_device()
+long list_device(void)
 {
 	struct rt_device *device;
 	struct rt_list_node *list, *node;
@@ -337,7 +337,7 @@ FINSH_FUNCTION_EXPORT(list_device, list device in system)
 #endif
 
 #ifdef RT_USING_MODULE
-int list_module()
+int list_module(void)
 {
 	struct rt_module *module;
 	struct rt_list_node *list, *node;

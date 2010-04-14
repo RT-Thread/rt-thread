@@ -346,7 +346,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
 #ifdef RT_USING_TIMER_SOFT
 void  rt_soft_timer_tick_increase (void);
 #endif
-void rt_timer_check()
+void rt_timer_check(void)
 {
 	rt_tick_t current_tick;
 	rt_list_t *n;

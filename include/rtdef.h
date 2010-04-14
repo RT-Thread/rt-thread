@@ -91,6 +91,11 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
     #define UNUSED 						__attribute__((unused))
 	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline 					static __inline
+#elif defined (__ICCM16C__)        		/* for IAR EW M16C Compiler */
+    #include <stdarg.h>
+    #define SECTION(x)  				@ x
+    #define UNUSED
+    #define rt_inline 					inline
 #endif
 
 /* event length 			*/

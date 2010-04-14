@@ -64,7 +64,7 @@ typedef unsigned char  u_char;
 typedef unsigned short u_short;
 typedef unsigned long  u_long;
 
-#if !defined(__CC_ARM) && !defined(__ICCARM__)
+#if !defined(__CC_ARM) && !defined(__ICCARM__) && !defined(__ICCM16C__)
 typedef unsigned int size_t;
 
 #ifndef NULL
@@ -283,7 +283,7 @@ int finsh_flush(struct finsh_parser* parser);
 int finsh_reset(struct finsh_parser* parser);
 #ifdef RT_USING_DEVICE
 /* set finsh device */
-void finsh_set_device(char* device_name);
+void finsh_set_device(const char* device_name);
 #endif
 
 /* run finsh parser to generate abstract synatx tree */
