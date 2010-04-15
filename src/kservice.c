@@ -14,6 +14,7 @@
  * 2006-08-10     Bernard      add rt_show_version
  * 2010-03-17     Bernard      remove rt_strlcpy function
  *                             fix gcc compiling issue.
+ * 2010-04-15     Bernard      remove weak definition on ICCM16C compiler
  */
 
 #include <rtthread.h>
@@ -928,7 +929,7 @@ __weak void rt_hw_console_output(const char* str)
 #elif defined(__ICCARM__)
 __weak void rt_hw_console_output(const char* str)
 #elif defined(__ICCM16C__)
-__weak void rt_hw_console_output(const char* str)
+void rt_hw_console_output(const char* str)
 #endif
 {
     /* empty console output */
