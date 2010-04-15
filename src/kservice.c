@@ -922,12 +922,12 @@ rt_device_t rt_console_set_device(const char* name)
 
 #if defined(__GNUC__)
 void rt_hw_console_output(const char* str) __attribute__((weak));
-
-
 void rt_hw_console_output(const char* str)
 #elif defined(__CC_ARM)
 __weak void rt_hw_console_output(const char* str)
 #elif defined(__ICCARM__)
+__weak void rt_hw_console_output(const char* str)
+#elif defined(__ICCM16C__)
 __weak void rt_hw_console_output(const char* str)
 #endif
 {

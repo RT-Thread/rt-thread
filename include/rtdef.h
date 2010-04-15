@@ -22,8 +22,8 @@ extern "C" {
 #endif
 
 /* RT-Thread version information */
-#define RT_VERSION						3
-#define RT_SUBVERSION					0
+#define RT_VERSION						4L
+#define RT_SUBVERSION					0L
 
 /* date type defination					*/
 typedef signed 	 char  					rt_int8_t;
@@ -56,12 +56,19 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 #define RT_UINT16_MAX					0xffff			/* Maxium number of UINT16.					*/
 #define RT_UINT32_MAX					0xffffffff		/* Maxium number of UINT32.					*/
 
+/* Compiler Related Definitions */
 #ifdef __CC_ARM                			 /* ARM Compiler 	*/
     #include <stdarg.h>
     #define SECTION(x)  				__attribute__((section(x)))
     #define UNUSED  					__attribute__((unused))
 	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline   				static __inline
+	/* module compiling */
+	#ifdef RT_USING_MODULE
+		#define RTT_API	__declspec(dllimport)
+	#else
+		#define RTT_API __declspec(dllexport)
+	#endif
 
 #elif defined (__ICCARM__)        		/* for IAR Compiler */
     #include <stdarg.h>
@@ -69,6 +76,7 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
     #define UNUSED
 	#define ALIGN(n)					#pragma pack(n)
     #define rt_inline 					inline
+	#define RTT_API
 
 #elif defined (__GNUC__)        		/* GNU GCC Compiler */
     #ifdef RT_USING_NEWLIB
@@ -91,11 +99,15 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
     #define UNUSED 						__attribute__((unused))
 	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline 					static __inline
+	#define RTT_API
+
 #elif defined (__ICCM16C__)        		/* for IAR EW M16C Compiler */
     #include <stdarg.h>
     #define SECTION(x)  				@ x
     #define UNUSED
     #define rt_inline 					inline
+	#define RTT_API
+
 #endif
 
 /* event length 			*/

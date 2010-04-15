@@ -27,16 +27,6 @@
 extern "C" {
 #endif
 
-#if defined(__CC_ARM)
-#ifdef RT_USING_MODULE
-#define RTT_API	__declspec(dllimport)
-#else
-#define RTT_API __declspec(dllexport)
-#endif
-#elif defined(__GNUC__)
-#define RTT_API
-#endif
-
 /**
  * @addtogroup KernelObject
  */
