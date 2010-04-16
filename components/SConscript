@@ -1,0 +1,10 @@
+# for module compile 
+Import('env')
+Import('rtconfig')
+
+# build each components
+
+# build each modules
+SConscript('hello/SConscript')
+SConscript('thread/SConscript')
+

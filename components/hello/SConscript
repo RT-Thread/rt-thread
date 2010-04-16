@@ -1,8 +1,10 @@
 Import('env')
 
-src = ('hello.c')
+target = 'hello.mo'
 
-obj = env.Object(src)
+module_env = env.Clone(CPPDEFINE = 'RT_MODULE')
+module_env.Replace(LINKFLAGS = ' -r -d -e rtm_main -nostdlib')
 
-Return('obj')
+src_local = Glob('*.c')
 
+module_env.Program(target, src_local)
