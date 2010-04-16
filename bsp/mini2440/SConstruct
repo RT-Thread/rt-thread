@@ -70,3 +70,7 @@ objs = objs + env.Object(src_bsp + src_drv)
 TARGET = target + '.' + rtconfig.TARGET_EXT
 env.Program(TARGET, objs)
 env.AddPostAction(TARGET, rtconfig.POST_ACTION)
+
+if rtconfig.CROSS_TOOL == 'gcc':
+	Repository('../../components')
+	SConscript('SConscript')
