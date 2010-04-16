@@ -19,6 +19,7 @@
  * 2006-09-05     Bernard      add 32 priority level support
  * 2006-09-24     Bernard      add rt_system_scheduler_start function
  * 2009-09-16     Bernard      fix _rt_scheduler_stack_check
+ * 2010-04-11     yi.qiu          add module feature
  */
 
 #include <rtthread.h>
@@ -264,8 +265,8 @@ void rt_schedule()
             rt_current_thread = to_thread;
 
 #ifdef RT_USING_MODULE
-            if(rt_current_thread->module_parent != RT_NULL)	
-                rt_current_module = rt_current_thread->module_parent;
+            rt_current_module = (rt_current_thread->module_parent != RT_NULL) ? 
+                rt_current_thread->module_parent : RT_NULL;			
 #endif
 
 #ifdef RT_USING_HOOK

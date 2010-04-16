@@ -186,6 +186,10 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	struct rt_module* module = RT_NULL;
 	rt_uint8_t *ptr, *strtab, *shstrab;
 
+#ifdef RT_MODULE_DEBUG
+		rt_kprintf("rt_module_load: %s\n", name);
+#endif
+
 	/* check ELF header */
 	if (rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0 ||
 		elf_module->e_ident[EI_CLASS] != ELFCLASS32)

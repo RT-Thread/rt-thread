@@ -344,13 +344,44 @@ int list_module(void)
 
 	list = &rt_object_container[RT_Object_Class_Module].object_list;
 
-	rt_kprintf("module    entry      stack size\n");
+	rt_kprintf("module entry      stack size\n");
 	rt_kprintf("-------- ---------- ----------\n");
 	for (node = list->next; node != list; node = node->next)
 	{
+		struct rt_thread *thread;
+		struct rt_list_node *tlist, *tnode;
+		rt_uint8_t* ptr;
+		
 		module = (struct rt_device*)(rt_list_entry(node, struct rt_object, list));
 		rt_kprintf("%-8s 0x%08x 0x%08x \n", module->parent.name, (rt_uint32_t)module->module_entry,
 			module->stack_size);
+
+		tlist = &module->module_object[RT_Object_Class_Thread].object_list;
+		if(tlist->next != tlist)
+		{	
+			rt_kprintf(" sub-thread  pri  status      sp     stack size max used   left tick  error\n");
+			rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+		}	
+		
+		for (tnode = tlist->next; tnode != tlist; tnode = tnode->next)
+		{
+			thread = rt_list_entry(tnode, struct rt_thread, tlist);
+			rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
+
+			if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
+			else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+			else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
+
+			ptr = (rt_uint8_t*)thread->stack_addr;
+			while (*ptr == '#')ptr ++;
+
+			rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
+				thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+				thread->stack_size,
+				thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+				thread->remaining_tick,
+				thread->error);
+		}
 	}
 
 	return 0;
