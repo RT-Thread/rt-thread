@@ -45,7 +45,7 @@ if rtconfig_ns.has_key('RT_USING_RTGUI'):
 # toolchains options
 ARCH='arm'
 CPU='stm32'
-CROSS_TOOL='gcc'
+CROSS_TOOL='keil'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -111,8 +111,6 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     RT_USING_MINILIBC = False
-    if RT_USING_FINSH:
-        LFLAGS += ' --keep __fsym_* --keep __vsym_*'
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':

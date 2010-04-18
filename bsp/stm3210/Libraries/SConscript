@@ -1,5 +1,6 @@
 Import('env')
 Import('RTT_ROOT')
+Import('projects')
 
 # The set of source files associated with this SConscript file.
 src_local = Split("""
@@ -29,7 +30,20 @@ STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c
 STM32F10x_StdPeriph_Driver/src/misc.c
 """)
 
-path = [RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/Core/CM3']
+path = [RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', 
+    RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/Core/CM3']
+
+# group definitions
+group = {}
+group['name'] = 'STM32_StdPeriph'
+group['CCFLAGS'] = ''
+group['CPPPATH'] = path
+group['CPPDEFINES'] = []
+group['LINKFLAGS'] = ''
+group['src'] = File(src_local)
+
+# add group to project list
+projects.append(group)
 
 env.Append(CPPPATH = path)
 

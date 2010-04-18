@@ -1,10 +1,23 @@
 Import('env')
 Import('RTT_ROOT')
+Import('projects')
 
 # The set of source files associated with this SConscript file.
 src_local = Glob('*.c')
 
-env.Append(CPPPATH = [RTT_ROOT + '/include'])
-obj = env.Object(src_local)
+# group definitions
+group = {}
+group['name'] = 'Kernel'
+group['src'] = File(src_local)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/include']
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
+
+# add group to project list
+projects.append(group)
+
+env.Append(CPPPATH = group['CPPPATH'])
+obj = env.Object(group['src'])
 
 Return('obj')

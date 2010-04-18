@@ -17,6 +17,7 @@
 
 #include "serial.h"
 #include <stm32f10x_dma.h>
+#include <stm32f10x_usart.h>
 
 static void rt_serial_enable_dma(DMA_Channel_TypeDef* dma_channel,
 	rt_uint32_t address, rt_uint32_t size);
