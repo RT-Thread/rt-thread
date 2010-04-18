@@ -3,8 +3,26 @@ Import('env')
 Import('rtconfig')
 
 # build each components
+objs = ''
+
+if rtconfig.RT_USING_MINILIBC:
+	objs = objs + SConscript('libc/minilibc/SConscript')
+
+if rtconfig.RT_USING_FINSH:
+	objs = objs + SConscript('finsh/SConscript')
+
+if rtconfig.RT_USING_DFS:
+	objs = objs + SConscript('dfs/SConscript')
+
+if rtconfig.RT_USING_LWIP:
+	objs = objs + SConscript('net/lwip/SConscript')
+
+if rtconfig.RT_USING_RTGUI:
+	objs = objs + SConscript('rtgui/SConscript')
 
 # build each modules
-SConscript('hello/SConscript')
-SConscript('thread/SConscript')
+if rtconfig.CROSS_TOOL == 'gcc':
+	SConscript('hello/SConscript')
+	SConscript('thread/SConscript')
 
+Return('objs')

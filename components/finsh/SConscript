@@ -1,10 +1,28 @@
 Import('env')
+Import('projects')
 Import('RTT_ROOT')
+Import('rtconfig')
 
-# The set of source files associated with this SConscript file.
-src_local = Glob('*.c')
+# group definitions
+group = {}
+group['name'] = 'finsh'
+group['src'] = Glob('*.c')
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/components/finsh']
+group['CPPDEFINES'] = ''
+if rtconfig.CROSS_TOOL == 'keil':
+    group['LINKFLAGS'] = ' --keep __fsym_* --keep __vsym_*'
+else:
+    group['LINKFLAGS'] = ''
 
-env.Append(CPPPATH = RTT_ROOT + '/finsh')
+# add group to project list
+projects.append(group)
 
-obj = env.Object(src_local)
-Return('obj')
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')

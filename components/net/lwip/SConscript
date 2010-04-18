@@ -1,6 +1,7 @@
 Import('env')
 Import('rtconfig')
 Import('RTT_ROOT')
+Import('projects')
 
 src_local = Split("""
 src/api/api_lib.c
@@ -60,10 +61,31 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/net/lwip/src', RTT_ROOT + '/net/lwip/src/include', RTT_ROOT + '/net/lwip/src/include/ipv4', RTT_ROOT + '/net/lwip/src/arch/include', RTT_ROOT + '/net/lwip/src/include/netif', RTT_ROOT + '/net/lwip/src/netif/ppp']
+path = [RTT_ROOT + '/components/net/lwip/src', 
+    RTT_ROOT + '/components/net/lwip/src/include', 
+    RTT_ROOT + '/components/net/lwip/src/include/ipv4', 
+    RTT_ROOT + '/components/net/lwip/src/arch/include', 
+    RTT_ROOT + '/components/net/lwip/src/include/netif', 
+    RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
-env.Append(CPPPATH = path)
+# group definitions
+print 'LwIP group=='
+group = {}
+group['name'] = 'LwIP'
+group['src'] = File(src_local)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = path
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
 
-obj = env.Object(src_local)
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+obj = env.Object(group['src'])
 
 Return('obj')

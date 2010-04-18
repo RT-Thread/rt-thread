@@ -4,7 +4,7 @@ Import('RTT_ROOT')
 # The set of source files associated with this SConscript file.
 src_local = Glob('*.c')
 
-env.Append(CPPPATH = RTT_ROOT + '/libc/minilibc')
+env.Append(CPPPATH = RTT_ROOT + '/components/libc/minilibc')
 
 obj = env.Object(src_local)
 Return('obj')

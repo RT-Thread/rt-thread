@@ -1,6 +1,7 @@
 Import('env')
 Import('rtconfig')
 Import('RTT_ROOT')
+Import('projects')
 
 dfs = Split("""
 src/dfs_fs.c
@@ -47,20 +48,35 @@ filesystems/yaffs2/yaffs_checkptrw.c
 filesystems/yaffs2/yaffs_qsort.c
 """)
 
-# The set of source files associated with this SConscript file.
 src_local = dfs
-path = [RTT_ROOT + '/filesystem/dfs', RTT_ROOT + '/filesystem/dfs/include']
+# The set of source files associated with this SConscript file.
+path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
 
 if rtconfig.RT_USING_DFS_YAFFS2:
     src_local = src_local + yaffs2_main + yaffs2_comm
-    path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/yaffs2', RTT_ROOT + '/filesystem/dfs/filesystems/yaffs2/direct']
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
 
 if rtconfig.RT_USING_DFS_ELMFAT:
     src_local = src_local + elmfat
-    path = path + [RTT_ROOT + '/filesystem/dfs/filesystems/elmfat']
+    # path = path + [RTT_ROOT + '/components/dfs/filesystems/elmfat']
 
-env.Append(CPPPATH = path)
+# group definitions
+group = {}
+group['name'] = 'Filesystem'
+group['src'] = File(src_local)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = path
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
 
-obj = env.Object(src_local)
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+obj = env.Object(group['src'])
 
 Return('obj')
