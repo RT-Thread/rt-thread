@@ -9,6 +9,14 @@ import mdk
 target = 'rtthread-stm32'
 projects = []
 
+AddOption('--target',
+                  dest='target',
+                  type='string',
+                  help='set target project: mdk')
+
+if GetOption('target'):
+	SetOption('no_exec', 1)
+
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -39,4 +47,5 @@ TARGET = target + '.' + rtconfig.TARGET_EXT
 env.Program(TARGET, objs)
 env.AddPostAction(TARGET, rtconfig.POST_ACTION)
 
-mdk.MDKProject('project_2.uV2', projects)
+if GetOption('target') == 'mdk':
+	mdk.MDKProject('project_2.uV2', projects)

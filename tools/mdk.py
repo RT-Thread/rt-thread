@@ -107,7 +107,7 @@ def MDKProject(target, script):
     # number of groups 
     group_index = 1
     for group in script:
-        print group['name']
+        # print group['name']
 
         # get each include path
         if group.has_key('CPPPATH') and group['CPPPATH']:

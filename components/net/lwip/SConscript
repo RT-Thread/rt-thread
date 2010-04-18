@@ -69,7 +69,6 @@ path = [RTT_ROOT + '/components/net/lwip/src',
     RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
 # group definitions
-print 'LwIP group=='
 group = {}
 group['name'] = 'LwIP'
 group['src'] = File(src_local)
