@@ -17,6 +17,9 @@ if rtconfig.RT_USING_DFS:
 if rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript('net/lwip/SConscript')
 
+if rtconfig.RT_USING_MODBUS:
+	objs = objs + SConscript('net//freemodbus/SConscript')
+
 if rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript('rtgui/SConscript')
 

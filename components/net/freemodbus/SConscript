@@ -1,6 +1,7 @@
 Import('env')
 Import('rtconfig')
 Import('RTT_ROOT')
+Import('projects')
 
 src_local = Split("""
 modbus/mb.c
@@ -24,10 +25,28 @@ modbus/tcp/mbtcp.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/net/freemodbus/modbus/include', RTT_ROOT + '/net/freemodbus/modbus/port', RTT_ROOT + '/net/freemodbus/modbus/rtu', RTT_ROOT + '/net/freemodbus/modbus/ascii']
+path = [RTT_ROOT + '/components/net/freemodbus/modbus/include', 
+	RTT_ROOT + '/components/net/freemodbus/modbus/port', 
+	RTT_ROOT + '/components/net/freemodbus/modbus/rtu', 
+	RTT_ROOT + '/components/net/freemodbus/modbus/ascii']
 
-env.Append(CPPPATH = path)
+# group definitions
+group = {}
+group['name'] = 'FreeModBus'
+group['src'] = File(src_local)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = path
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
 
-obj = env.Object(src_local)
+# add group to project list
+projects.append(group)
 
-Return('obj')
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')

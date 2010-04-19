@@ -352,7 +352,7 @@ int list_module(void)
 		struct rt_list_node *tlist, *tnode;
 		rt_uint8_t* ptr;
 		
-		module = (struct rt_device*)(rt_list_entry(node, struct rt_object, list));
+		module = (struct rt_module*)(rt_list_entry(node, struct rt_object, list));
 		rt_kprintf("%-8s 0x%08x 0x%08x \n", module->parent.name, (rt_uint32_t)module->module_entry,
 			module->stack_size);
 
