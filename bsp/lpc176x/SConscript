@@ -1,0 +1,30 @@
+Import('env')
+Import('projects')
+Import('RTT_ROOT')
+Import('rtconfig')
+
+# group definitions
+group = {}
+group['name'] = 'Startup'
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/bsp/lpc176x', RTT_ROOT + '/bsp/lpc176x/CMSIS']
+group['CPPDEFINES'] = []
+group['LINKFLAGS'] = ''
+
+src_bsp   = ['application.c', 'startup.c', 'board.c']
+src_drv   = ['uart.c']
+src_cmsis = ['CMSIS/core_cm3.c', 'CMSIS/system_LPC17xx.c']
+
+group['src'] = File(src_bsp + src_drv + src_cmsis)
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+obj = env.Object(group['src'])
+
+Return('obj')
