@@ -5,22 +5,22 @@ Import('rtconfig')
 # build each components
 objs = ''
 
-if rtconfig.RT_USING_MINILIBC:
+if 'RT_USING_MINILIBC' in dir(rtconfig) and rtconfig.RT_USING_MINILIBC:
 	objs = objs + SConscript('libc/minilibc/SConscript')
 
-if rtconfig.RT_USING_FINSH:
+if 'RT_USING_FINSH' in dir(rtconfig) and rtconfig.RT_USING_FINSH:
 	objs = objs + SConscript('finsh/SConscript')
 
-if rtconfig.RT_USING_DFS:
+if 'RT_USING_DFS' in dir(rtconfig) and rtconfig.RT_USING_DFS:
 	objs = objs + SConscript('dfs/SConscript')
 
-if rtconfig.RT_USING_LWIP:
+if 'RT_USING_LWIP' in dir(rtconfig) and rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript('net/lwip/SConscript')
 
-if rtconfig.RT_USING_MODBUS:
+if 'RT_USING_MODBUS' in dir(rtconfig) and rtconfig.RT_USING_MODBUS:
 	objs = objs + SConscript('net//freemodbus/SConscript')
 
-if rtconfig.RT_USING_RTGUI:
+if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript('rtgui/SConscript')
 
 # build each modules
