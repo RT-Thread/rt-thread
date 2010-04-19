@@ -2,15 +2,15 @@ import SCons.cpp
 
 # component options
 
-# make all component false 
+# make all component false
 RT_USING_FINSH 		= False
 RT_USING_DFS 		= False
-RT_USING_DFS_EFSL 	= False
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
 RT_USING_LWIP 		= False
 RT_USING_WEBSERVER	= False
 RT_USING_RTGUI 		= False
+RT_USING_MODBUS		= False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -24,12 +24,10 @@ rtconfig_ns = PreProcessor.cpp_namespace
 if rtconfig_ns.has_key('RT_USING_FINSH'):
 	RT_USING_FINSH = True
 
-# device virtual filesystem options 
+# device virtual filesystem options
 if rtconfig_ns.has_key('RT_USING_DFS'):
     RT_USING_DFS = True
-    
-    if rtconfig_ns.has_key('RT_USING_DFS_EFSL'):
-        RT_USING_DFS_EFSL = True
+
     if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
         RT_USING_DFS_ELMFAT = True
     if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
@@ -59,7 +57,7 @@ CROSS_TOOL 	= 'keil'
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
-elif CROSS_TOOL == 'keil':	
+elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
 BUILD = 'debug'
@@ -90,8 +88,6 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    if RT_USING_FINSH:
-        CFLAGS += ' -D FINSH_USING_SYMTAB -DFINSH_USING_DESCRIPTION'
     if RT_USING_WEBSERVER:
         CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
     RT_USING_MINILIBC = True

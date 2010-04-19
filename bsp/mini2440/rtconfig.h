@@ -73,6 +73,9 @@
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
 #define RT_USING_FINSH
+/* Using symbol table */
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
