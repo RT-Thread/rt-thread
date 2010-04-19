@@ -1,0 +1,46 @@
+Import('env')
+Import('projects')
+Import('RTT_ROOT')
+Import('rtconfig')
+
+# group definitions
+group = {}
+group['name'] = 'Startup'
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/bsp/mini2440']
+group['CPPDEFINES'] = []
+group['LINKFLAGS'] = ''
+
+src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c', 'info.c', 'today.c', 'picture.c', 'osc.c', 'device_info.c', 'run_module.c']
+src_drv = ['console.c', 'led.c']
+
+if rtconfig.RT_USING_DFS:
+	src_drv += ['sdcard.c']
+
+if rtconfig.RT_USING_LWIP:
+	src_drv += ['dm9000.c']
+
+if rtconfig.RT_USING_RTGUI:
+    src_drv += ['touch.c', 'key.c']
+
+if rtconfig.RT_USING_RTGUI:
+	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
+		src_drv += ['lcd_a70.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_N35':
+		src_drv += ['lcd_n35.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_T35':
+		src_drv += ['lcd_t35.c']
+
+group['src'] = File(src_bsp + src_drv)
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+obj = env.Object(group['src'])
+
+Return('obj')
