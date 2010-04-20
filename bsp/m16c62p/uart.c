@@ -65,6 +65,7 @@ void  u0rec_handler(void)
 
 static rt_err_t rt_uart_init (rt_device_t dev)
 {
+    rt_uint32_t level;
     /* set UART0 bit rate generator bit rate can be calculated by:
           bit rate = ((BRG count source / 16)/baud rate) - 1
           Baud rate is based on main crystal or PLL not CPU core clock */
@@ -124,13 +125,11 @@ static rt_err_t rt_uart_init (rt_device_t dev)
     u0tb = 0;
 
     /* disable irqs before setting irq registers */
-    //DISABLE_IRQ
+    level = rt_hw_interrupt_disable();
     /* Enable UART0 receive interrupt, priority level 4 */
-	asm("fset i");
     s0ric = 0x04;
-	asm("fclr i");
     /* Enable all interrupts */
-    //ENABLE_IRQ
+    rt_hw_interrupt_enable(level);
 
     /* UART0 transmit/receive control register 1 */
     /* enable transmit and receive */

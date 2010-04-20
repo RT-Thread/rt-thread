@@ -341,7 +341,7 @@
           <name>newCCIncludePaths</name>
           <state>$PROJ_DIR$\</state>
           <state>$PROJ_DIR$\..\..\include\</state>
-          <state>$PROJ_DIR$\..\..\finsh\</state>
+          <state>$PROJ_DIR$\..\..\components\finsh\</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1793,70 +1793,70 @@
   <group>
     <name>finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_compiler.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_error.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_error.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_heap.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_heap.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_init.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_init.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_node.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_node.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_ops.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_ops.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_parser.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_parser.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_token.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_token.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_var.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_var.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_vm.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\finsh_vm.h</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\finsh\symbol.c</name>
+      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
     </file>
   </group>
   <group>

@@ -64,7 +64,7 @@ LDSTACK MACRO   segment,reg
 
 __program_start:
         LDC     #sfe(ISTACK),   ISP                             ; Set up interrupt stack
-        FSET    I                                               ; Select interrupt stack
+        FCLR    U                                               ; Select interrupt stack
         LDC     #sfe(CSTACK),   SP                              ; Set up C         stack
         LDINTB  #RelocatableVectTbl                             ; Set up INTB register
         JSR.A   __low_level_init                                ; Call __low_level_init

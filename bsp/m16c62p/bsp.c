@@ -29,12 +29,12 @@ void led_init(void)
 
 void led_on(void)
 {
-    p11_0 = 1;
+    p11_0 = 0;
 }
 
 void led_off(void)
 {
-    p11_0 = 0;
+    p11_0 = 1;
 }
 
 static void mcu_init(void)
