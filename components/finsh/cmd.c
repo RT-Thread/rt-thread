@@ -357,15 +357,13 @@ int list_module(void)
 			module->stack_size);
 
 		tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-		if(tlist->next != tlist)
-		{	
-			rt_kprintf(" sub-thread  pri  status      sp     stack size max used   left tick  error\n");
-			rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-		}	
-		
+
+		rt_kprintf(" sub-thread  pri  status      sp     stack size max used   left tick  error\n");
+		rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+
 		for (tnode = tlist->next; tnode != tlist; tnode = tnode->next)
 		{
-			thread = rt_list_entry(tnode, struct rt_thread, tlist);
+			thread = rt_list_entry(tnode, struct rt_thread, list);
 			rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
 
 			if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");

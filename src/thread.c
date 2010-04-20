@@ -170,7 +170,7 @@ rt_thread_t rt_thread_create (const char* name,
 	{
 		/* allocate stack failure */
 		rt_object_delete((rt_object_t)thread);
-		return RT_NULL;
+		return RT_NULL; 
 	}
 
 	_rt_thread_init(thread, name, entry, parameter,
@@ -251,7 +251,7 @@ static void rt_thread_exit()
 	rt_timer_detach(&(thread->thread_timer));
 
 	/* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+	rt_hw_interrupt_enable(temp);
 
 	if (rt_object_is_systemobject((rt_object_t)thread) == RT_EOK)
 	{

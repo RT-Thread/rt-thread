@@ -131,13 +131,6 @@ static void rt_module_init_object_container(struct rt_module* module)
 	module->module_object[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
 #endif
 
-#ifdef RT_USING_FASTEVENT
-	/* init object container - fast event */
-	rt_list_init(&(module->module_object[RT_Object_Class_FastEvent].object_list));
-	module->module_object[RT_Object_Class_FastEvent].object_size = sizeof(struct rt_fast_event);
-	module->module_object[RT_Object_Class_FastEvent].type = RT_Object_Class_FastEvent;
-#endif
-
 #ifdef RT_USING_EVENT
 	/* init object container - event */
 	rt_list_init(&(module->module_object[RT_Object_Class_Event].object_list));
@@ -182,7 +175,7 @@ static void rt_module_init_object_container(struct rt_module* module)
 struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 {
 	rt_uint32_t index;
-	rt_uint32_t module_addr = 0, module_size = 0;
+	rt_uint32_t module_addr = 0, module_size = 0, rodata_addr = 0;
 	struct rt_module* module = RT_NULL;
 	rt_uint8_t *ptr, *strtab, *shstrab;
 
@@ -219,7 +212,6 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 		{
 			module_size += shdr[index].sh_size;
 		}	
-		
 	}
 
 	/* no text, data and bss on image */
@@ -244,13 +236,21 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	/* load text and data section */
 	for (index = 0; index < elf_module->e_shnum; index++)
 	{
-		/* load text and rodata section */
-		if (IS_PROG(shdr[index]) && (IS_AX(shdr[index])||IS_ALLOC(shdr[index])))
+		/* load text section */
+		if (IS_PROG(shdr[index]) && IS_AX(shdr[index]))
 		{
 			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
 			ptr += shdr[index].sh_size;
 		}
 
+		/* load rodata section */
+		if (IS_PROG(shdr[index]) && IS_ALLOC(shdr[index]))
+		{
+			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
+			rodata_addr = (rt_uint32_t)ptr;
+			ptr += shdr[index].sh_size;
+		}
+		
 		/* load data section */
 		if (IS_PROG(shdr[index]) && IS_AW(shdr[index]))
 		{
@@ -294,10 +294,10 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 					{	
 						if (strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
 						{
-							/* relocate rodata section, fix me, module_ptr should be freed */
+							/* relocate rodata section */
 							rt_module_arm_relocate(module, rel,
-								(Elf32_Addr)((rt_uint8_t*)module_ptr + shdr[sym->st_shndx].sh_offset),
-								module_addr);
+								(Elf32_Addr)(rodata_addr),
+								module_addr); 
 						}
 						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
 						{
@@ -314,9 +314,9 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 					}
 					else if(ELF_ST_TYPE(sym->st_info) == STT_OBJECT)
 					{
-						/* relocate object, fix me, module_ptr should be freed */
+						/* relocate object in data section */
 						rt_module_arm_relocate(module, rel,
-							(Elf32_Addr)((rt_uint8_t*)module_ptr + shdr[sym->st_shndx].sh_offset + sym->st_value),
+							(Elf32_Addr)(ptr + sym->st_value),
 							module_addr); 
 					}
 				}
@@ -352,15 +352,29 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 
 void rt_module_unload(struct rt_module* module)
 {
+	int i;
 	struct rt_object* object;
-
+	struct rt_timer *timer;
+	struct rt_list_node *list, *node;
+		
 	/* suspend module main thread */
 	if (module->module_thread->stat == RT_THREAD_READY)
 		rt_thread_suspend(module->module_thread);
 
 	/* delete all module object */
-
+	for(i = RT_Object_Class_Thread; i < RT_Object_Class_Module; i++)
+	{	
+		list = &module->module_object[i].object_list;	
+		for (node = list->next; node != list; node = node->next)
+		{
+			object = rt_list_entry(node, struct rt_object, list);
+			rt_object_delete(object);
+		}
+	}	
+	
 	/* release module memory */
+	rt_free(module->module_space);
+	rt_free((void *)module);
 }
 
 rt_module_t rt_module_find(char* name)
