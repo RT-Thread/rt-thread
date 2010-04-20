@@ -23,6 +23,7 @@
 
     EXTERN  rt_hw_timer_handler
     EXTERN  rt_hw_uart0_receive_handler
+    EXTERN  os_context_switch
     
     PUBLIC  RelocatableVectTbl
 
@@ -30,7 +31,7 @@
 
 RelocatableVectTbl:
     ORG     0
-    DC32    0                           ; Vector  0: BRK
+    DC32    os_context_switch           ; Vector  0: BRK
     DC32    0                           ; Vector  1: Reserved
     DC32    0                           ; Vector  2: Reserved
     DC32    0                           ; Vector  3: Reserved
