@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2010-04-09     fify         the first version
  * 2010-04-19     fify         rewrite rt_hw_interrupt_disable/enable fuction
+ * 2010-04-20     fify         move peripheral ISR to bsp/interrupts.s34 
  *
  * For       : Renesas M16C
  * Toolchain : IAR's EW for M16C v3.401
@@ -25,18 +26,12 @@
     EXTERN    rt_thread_switch_interrput_flag
     EXTERN    rt_interrupt_from_thread
     EXTERN    rt_interrupt_to_thread
-    EXTERN    rt_interrupt_enter
-    EXTERN    rt_tick_increase
-    EXTERN    rt_interrupt_leave
-    EXTERN    u0rec_handler
 
     PUBLIC    rt_hw_interrupt_disable
     PUBLIC    rt_hw_interrupt_enable    
     PUBLIC    rt_hw_context_switch_to
     PUBLIC    rt_hw_context_switch
     PUBLIC    rt_hw_context_switch_interrupt
-    PUBLIC    rt_hw_timer_handler
-    PUBLIC    rt_hw_uart0_receive_handler
     PUBLIC    os_context_switch
 
 rt_hw_interrupt_disable
@@ -91,41 +86,5 @@ rt_hw_context_switch_interrupt
 jump
     MOV.W    R1, rt_interrupt_to_thread
     RTS
-
-rt_hw_context_switch_interrupt_do
-    MOV.W    #0, rt_thread_switch_interrput_flag    
-    MOV.W    rt_interrupt_from_thread, A0
-    STC      ISP, [A0]    
-    
-    MOV.W    rt_interrupt_to_thread, A0
-    LDC      [A0], ISP
-    POPM     R0,R1,R2,R3,A0,A1,SB,FB             ; Restore all processor registers from the new task's stack
-    REIT
-    
-    .EVEN
-rt_hw_timer_handler:
-    PUSHM    R0,R1,R2,R3,A0,A1,SB,FB             ; Save current task's registers
-    JSR      rt_interrupt_enter                   
-    JSR      rt_tick_increase                           
-    JSR      rt_interrupt_leave
-
-    CMP.W    #1,rt_thread_switch_interrput_flag
-    JEQ      rt_hw_context_switch_interrupt_do
-    
-    POPM     R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
-    REIT                                         ; Return from interrup
-
-    .EVEN
-rt_hw_uart0_receive_handler:
-    PUSHM    R0,R1,R2,R3,A0,A1,SB,FB             ; Save current task's registers
-    JSR      rt_interrupt_enter 
-    JSR      u0rec_handler                         
-    JSR      rt_interrupt_leave
-
-    CMP.W    #1, rt_thread_switch_interrput_flag
-    JEQ      rt_hw_context_switch_interrupt_do
-    
-    POPM     R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
-    REIT                                         ; Return from interrup
 
     END
