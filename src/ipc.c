@@ -31,6 +31,7 @@
  * 2009-12-16     Bernard      fix the rt_ipc_object_suspend issue when IPC flag
  *                             is RT_IPC_FLAG_PRIO
  * 2010-01-20     mbbill       remove rt_ipc_object_decrease function.
+ * 2010-04-20     Bernard      move memcpy outside interrupt disable in mq
  */
 
 #include <rtthread.h>
@@ -1616,7 +1617,6 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 
 	/* get a free list, there must be an empty item */
 	msg = (struct rt_mq_message*)mq->msg_queue_free;
-
 	/* message queue is full */
 	if (msg == RT_NULL)
 	{
@@ -1625,13 +1625,17 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 
 		return -RT_EFULL;
 	}
-
 	/* move free list pointer */
 	mq->msg_queue_free = msg->next;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 
 	/* copy buffer */
 	rt_memcpy(msg + 1, buffer, size);
 
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 	/* link msg to message queue */
 	if (mq->msg_queue_tail != RT_NULL)
 	{
@@ -1643,7 +1647,6 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 
 	/* set new tail */
 	mq->msg_queue_tail = msg;
-
 	/* if the head is empty, set head */
 	if (mq->msg_queue_head == RT_NULL)mq->msg_queue_head = msg;
 
@@ -1696,7 +1699,6 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 
 	/* get a free list, there must be an empty item */
 	msg = (struct rt_mq_message*)mq->msg_queue_free;
-
 	/* message queue is full */
 	if (msg == RT_NULL)
 	{
@@ -1705,12 +1707,17 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 
 		return -RT_EFULL;
 	}
-
 	/* move free list pointer */
 	mq->msg_queue_free = msg->next;
 
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
+
 	/* copy buffer */
 	rt_memcpy(msg + 1, buffer, size);
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 
 	/* link msg to the beginning of message queue */
 	msg->next = mq->msg_queue_head;
@@ -1764,11 +1771,11 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 #endif
 
 	tick_delta = 0;
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	/* get current thread */
 	thread = rt_thread_self();
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 
 	/* message queue is empty */
 	while (mq->entry == 0)
@@ -1833,21 +1840,24 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 
 	/* move message queue head */
 	mq->msg_queue_head = msg->next;
-
 	/* reach queue tail, set to NULL */
 	if (mq->msg_queue_tail == msg) mq->msg_queue_tail = RT_NULL;
+
+	/* decrease message entry */
+	mq->entry --;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 
 	/* copy message */
 	rt_memcpy(buffer, msg + 1,
 		size > mq->msg_size? mq->msg_size : size);
 
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
 	/* put message to free list */
 	msg->next = (struct rt_mq_message*)mq->msg_queue_free;
 	mq->msg_queue_free = msg;
-
-	/* decrease message entry */
-	mq->entry --;
-
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
