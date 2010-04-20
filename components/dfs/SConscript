@@ -56,10 +56,13 @@ if rtconfig.RT_USING_DFS_YAFFS2:
     src_local = src_local + yaffs2_main + yaffs2_comm
     path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
 
+if rtconfig.RT_DFS_ELM_USE_LFN:
+    elmfat += ['filesystems/elmfat/option/cc936.c']
+
 if rtconfig.RT_USING_DFS_ELMFAT:
     src_local = src_local + elmfat
     # path = path + [RTT_ROOT + '/components/dfs/filesystems/elmfat']
-
+		
 # group definitions
 group = {}
 group['name'] = 'Filesystem'

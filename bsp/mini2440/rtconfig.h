@@ -3,7 +3,7 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX	32
 
 /* RT_ALIGN_SIZE*/
 #define RT_ALIGN_SIZE	4
@@ -91,6 +91,10 @@
 /* using DFS support */
 #define RT_USING_DFS
 #define RT_USING_DFS_ELMFAT
+/* use long file name feature 			*/
+#define RT_DFS_ELM_USE_LFN			1
+/* the max number of file length 			*/
+#define RT_DFS_ELM_MAX_LFN		32		
 /* #define RT_USING_DFS_YAFFS2 */
 
 /* #define DFS_USING_WORKDIR */

@@ -93,27 +93,27 @@ void rt_timer_timeout_sethook(void (*hook)(struct rt_timer* timer));
 /*
  * thread interface
  */
-RTT_API rt_err_t rt_thread_init(struct rt_thread* thread,
+rt_err_t rt_thread_init(struct rt_thread* thread,
 	const char* name,
 	void (*entry)(void* parameter), void* parameter,
 	void* stack_start, rt_uint32_t stack_size,
 	rt_uint8_t priority, rt_uint32_t tick);
-RTT_API rt_err_t rt_thread_detach(rt_thread_t thread);
-RTT_API rt_thread_t rt_thread_create (const char* name,
+rt_err_t rt_thread_detach(rt_thread_t thread);
+rt_thread_t rt_thread_create (const char* name,
 	void (*entry)(void* parameter), void* parameter,
 	rt_uint32_t stack_size,
 	rt_uint8_t priority, rt_uint32_t tick);
-RTT_API rt_thread_t rt_thread_self(void);
-RTT_API rt_thread_t rt_thread_find(char* name);
-RTT_API rt_err_t rt_thread_startup(rt_thread_t thread);
-RTT_API rt_err_t rt_thread_delete(rt_thread_t thread);
+rt_thread_t rt_thread_self(void);
+rt_thread_t rt_thread_find(char* name);
+rt_err_t rt_thread_startup(rt_thread_t thread);
+rt_err_t rt_thread_delete(rt_thread_t thread);
 
-RTT_API rt_err_t rt_thread_yield(void);
-RTT_API rt_err_t rt_thread_delay(rt_tick_t tick);
-RTT_API rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
-RTT_API rt_err_t rt_thread_suspend(rt_thread_t thread);
-RTT_API rt_err_t rt_thread_resume(rt_thread_t thread);
-RTT_API void rt_thread_timeout(void* parameter);
+rt_err_t rt_thread_yield(void);
+rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void* arg);
+rt_err_t rt_thread_suspend(rt_thread_t thread);
+rt_err_t rt_thread_resume(rt_thread_t thread);
+void rt_thread_timeout(void* parameter);
 
 /*
  * idle thread interface

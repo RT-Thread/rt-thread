@@ -30,6 +30,8 @@ if rtconfig_ns.has_key('RT_USING_DFS'):
 
     if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
         RT_USING_DFS_ELMFAT = True
+    if rtconfig_ns.has_key('RT_DFS_ELM_USE_LFN'):
+        RT_DFS_ELM_USE_LFN = True			
     if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
         RT_USING_DFS_YAFFS2 = True
 
@@ -107,7 +109,7 @@ elif PLATFORM == 'armcc':
     LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
     CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
-    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
+    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"' + ' --keep __RTMsym_*'
 
     EXEC_PATH += '/arm/bin40/'
 
