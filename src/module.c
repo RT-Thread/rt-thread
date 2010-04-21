@@ -255,8 +255,14 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 		if (IS_PROG(shdr[index]) && IS_AW(shdr[index]))
 		{
 			module->module_data = (rt_uint32_t)ptr;
-			rt_memset(ptr, 0, shdr[index].sh_size);
+			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
 			ptr += shdr[index].sh_size;
+		}
+
+		/* load bss section */
+		if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
+		{
+			rt_memset(ptr, 0, shdr[index].sh_size);
 		}
 	}
 
@@ -316,7 +322,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 					{
 						/* relocate object in data section */
 						rt_module_arm_relocate(module, rel,
-							(Elf32_Addr)(ptr + sym->st_value),
+							(Elf32_Addr)(module->module_data + sym->st_value),
 							module_addr); 
 					}
 				}

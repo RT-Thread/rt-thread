@@ -180,8 +180,14 @@ void rt_object_init(struct rt_object* object, enum rt_object_class_type type, co
 	register rt_base_t temp;
 	struct rt_object_information* information;
 
+#ifdef RT_USING_MODULE
+	/* get module object information */
+	information = (rt_current_module != RT_NULL) ? 
+		&rt_current_module->module_object[type] : &rt_object_container[type];
+#else
 	/* get object information */
 	information = &rt_object_container[type];
+#endif
 
 	/* init object's parameters */
 

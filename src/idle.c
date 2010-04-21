@@ -79,6 +79,11 @@ static void rt_thread_idle_entry(void* parameter)
 			/* release thread's stack */
 			rt_free(thread->stack_addr);
 
+#ifdef RT_USING_MODULE
+			/* release thread point in module */
+			if(thread->module_parent != RT_NULL)
+				thread->module_parent->module_thread = RT_NULL;
+#endif
 			/* delete thread object */
 			rt_object_delete((rt_object_t)thread);
 		}

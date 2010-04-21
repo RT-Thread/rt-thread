@@ -14,6 +14,7 @@
 
 #include <rtthread.h>
 #include <dfs_posix.h>
+#include "string.h"
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -22,18 +23,21 @@ static char buffer[4096];
 void run_module(const char* filename)
 {
 	int fd, length;
-	struct dfs_stat s;
-
+	char *module_name;
+	
+	rt_memset(buffer, 0, 4096);
 	fd = open(filename, O_RDONLY, 0);
 	length = read(fd, buffer, 4096);
-	if (length == 0)
+	if (length <= 0)
 	{
 		rt_kprintf("check: read file failed\n");
 		close(fd);
 		return;
 	}
-
-	rt_module_load(buffer, filename);
+	rt_kprintf("read %d bytes from file\n", length);
+	module_name = strrchr(filename, '/');
+	rt_module_load(buffer, ++module_name);
+	close(fd);
 }
 
 FINSH_FUNCTION_EXPORT(run_module, run module from file);

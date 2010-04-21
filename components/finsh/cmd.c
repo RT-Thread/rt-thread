@@ -24,6 +24,7 @@
  * 2008-09-10     Bernard      update the list function for finsh syscall
  *                                 list and sysvar list
  * 2009-05-30     Bernard      add list_device
+ * 2010-04-21     yi.qiu          add list_module
  */
 
 #include <rtthread.h>
@@ -69,13 +70,11 @@ FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
     ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
 extern struct rt_object_information rt_object_container[];
 
-long list_thread(void)
+static long _list_thread(struct rt_list_node* list)
 {
 	struct rt_thread *thread;
-	struct rt_list_node *list, *node;
+	struct rt_list_node *node;
 	rt_uint8_t* ptr;
-
-	list = &rt_object_container[RT_Object_Class_Thread].object_list;
 
 	rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
 	rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
@@ -101,6 +100,11 @@ long list_thread(void)
 	}
 	return 0;
 }
+
+long list_thread(void)
+{
+	return _list_thread(&rt_object_container[RT_Object_Class_Thread].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node* list)
@@ -117,12 +121,10 @@ static void show_wait_queue(struct rt_list_node* list)
 }
 
 #ifdef RT_USING_SEMAPHORE
-long list_sem(void)
+static long _list_sem(struct rt_list_node *list)
 {
 	struct rt_semaphore *sem;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_Semaphore].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("semaphore v   suspend thread\n");
 	rt_kprintf("--------  --- --------------\n");
@@ -143,16 +145,19 @@ long list_sem(void)
 
 	return 0;
 }
+
+long list_sem(void)
+{
+	return _list_sem(&rt_object_container[RT_Object_Class_Semaphore].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system)
 #endif
 
 #ifdef RT_USING_EVENT
-long list_event(void)
+static long _list_event(struct rt_list_node *list)
 {
 	struct rt_event *e;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_Event].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("event    set        suspend thread\n");
 	rt_kprintf("-------- ---------- --------------\n");
@@ -164,16 +169,19 @@ long list_event(void)
 
 	return 0;
 }
+
+long list_event(void)
+{
+	return _list_event(&rt_object_container[RT_Object_Class_Event].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_event, list event in system)
 #endif
 
 #ifdef RT_USING_MUTEX
-long list_mutex(void)
+static long _list_mutex(struct rt_list_node *list)
 {
 	struct rt_mutex *m;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_Mutex].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("mutex    owner    hold suspend thread\n");
 	rt_kprintf("-------- -------- ---- --------------\n");
@@ -185,16 +193,19 @@ long list_mutex(void)
 
 	return 0;
 }
+
+long list_mutex(void)
+{
+	return _list_mutex(&rt_object_container[RT_Object_Class_Mutex].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system)
 #endif
 
 #ifdef RT_USING_MAILBOX
-long list_mailbox(void)
+static long _list_mailbox(struct rt_list_node *list)
 {
 	struct rt_mailbox *m;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_MailBox].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("mailbox  entry size suspend thread\n");
 	rt_kprintf("-------- ----  ---- --------------\n");
@@ -215,16 +226,19 @@ long list_mailbox(void)
 
 	return 0;
 }
+
+long list_mailbox(void)
+{
+	return _list_mailbox(&rt_object_container[RT_Object_Class_MailBox].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system)
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
-long list_msgqueue(void)
+static long _list_msgqueue(struct rt_list_node *list)
 {
 	struct rt_messagequeue *m;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_MessageQueue].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("msgqueue entry suspend thread\n");
 	rt_kprintf("-------- ----  --------------\n");
@@ -245,16 +259,19 @@ long list_msgqueue(void)
 
 	return 0;
 }
+
+long list_msgqueue(void)
+{
+	return _list_msgqueue(&rt_object_container[RT_Object_Class_MessageQueue].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
 #endif
 
 #ifdef RT_USING_MEMPOOL
-long list_mempool(void)
+static long _list_mempool(struct rt_list_node *list)
 {
 	struct rt_mempool *mp;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_MemPool].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("mempool  block total free suspend thread\n");
 	rt_kprintf("-------- ----  ----  ---- --------------\n");
@@ -279,15 +296,18 @@ long list_mempool(void)
 
 	return 0;
 }
+
+long list_mempool(void)
+{
+	return _list_mempool(&rt_object_container[RT_Object_Class_MemPool].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
 #endif
 
-long list_timer(void)
+static long _list_timer(struct rt_list_node *list)
 {
 	struct rt_timer *timer;
-	struct rt_list_node *list, *node;
-
-	list = &rt_object_container[RT_Object_Class_Timer].object_list;
+	struct rt_list_node *node;
 
 	rt_kprintf("timer    periodic   timeout    flag\n");
 	rt_kprintf("-------- ---------- ---------- -----------\n");
@@ -303,13 +323,18 @@ long list_timer(void)
 
 	return 0;
 }
+
+long list_timer(void)
+{
+	return _list_timer(&rt_object_container[RT_Object_Class_Timer].object_list);
+}
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system)
 
 #ifdef RT_USING_DEVICE
-long list_device(void)
+static long _list_device(struct rt_list_node *list)
 {
 	struct rt_device *device;
-	struct rt_list_node *list, *node;
+	struct rt_list_node *node;
 	const char *device_type_str[] =
 	{
 		"Character Device",
@@ -321,8 +346,6 @@ long list_device(void)
 		"Unknown"
 	};
 
-	list = &rt_object_container[RT_Object_Class_Device].object_list;
-
 	rt_kprintf("device    type      \n");
 	rt_kprintf("-------- ---------- \n");
 	for (node = list->next; node != list; node = node->next)
@@ -332,6 +355,11 @@ long list_device(void)
 	}
 
 	return 0;
+}
+
+long list_device(void)
+{
+	return _list_device(&rt_object_container[RT_Object_Class_Device].object_list);
 }
 FINSH_FUNCTION_EXPORT(list_device, list device in system)
 #endif
@@ -344,26 +372,22 @@ int list_module(void)
 
 	list = &rt_object_container[RT_Object_Class_Module].object_list;
 
-	rt_kprintf("module entry      stack size\n");
-	rt_kprintf("-------- ---------- ----------\n");
 	for (node = list->next; node != list; node = node->next)
 	{
-		struct rt_thread *thread;
-		struct rt_list_node *tlist, *tnode;
+		struct rt_list_node *tlist;
+		struct rt_thread *thread;	
 		rt_uint8_t* ptr;
 		
 		module = (struct rt_module*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s 0x%08x 0x%08x \n", module->parent.name, (rt_uint32_t)module->module_entry,
-			module->stack_size);
+		rt_kprintf("______________________________________________________________________\n");
+		rt_kprintf("[module]%-8s \n", module->parent.name);
 
-		tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-
-		rt_kprintf(" sub-thread  pri  status      sp     stack size max used   left tick  error\n");
-		rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-
-		for (tnode = tlist->next; tnode != tlist; tnode = tnode->next)
-		{
-			thread = rt_list_entry(tnode, struct rt_thread, list);
+		/* list main thread in module */
+		if(module->module_thread != RT_NULL)
+		{	
+			rt_kprintf(" main thread  pri  status      sp     stack size max used   left tick  error\n");
+			rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+			thread = module->module_thread;
 			rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
 
 			if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
@@ -379,8 +403,51 @@ int list_module(void)
 				thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
 				thread->remaining_tick,
 				thread->error);
-		}
+		}	
+
+		/* list sub thread in module */
+		tlist = &module->module_object[RT_Object_Class_Thread].object_list;
+		if(!rt_list_isempty(tlist)) _list_thread(tlist);
+#ifdef RT_USING_SEMAPHORE
+		/* list semaphored in module */
+		tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
+		if(!rt_list_isempty(tlist)) _list_sem(tlist);
+#endif
+#ifdef RT_USING_MUTEX
+		/* list mutex in module */
+		tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
+		if(!rt_list_isempty(tlist)) _list_mutex(tlist);
+#endif
+#ifdef RT_USING_EVENT
+		/* list event in module */
+		tlist = &module->module_object[RT_Object_Class_Event].object_list;
+		if(!rt_list_isempty(tlist)) _list_event(tlist);
+#endif
+#ifdef RT_USING_MAILBOX
+		/* list mailbox in module */
+		tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
+		if(!rt_list_isempty(tlist)) _list_mailbox(tlist);
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+		/* list message queue in module */
+		tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
+		if(!rt_list_isempty(tlist)) _list_msgqueue(tlist);
+#endif
+#ifdef RT_USING_MEMPOOL
+		/* list memory pool in module */
+		tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
+		if(!rt_list_isempty(tlist)) _list_mempool(tlist);
+#endif
+#ifdef RT_USING_DEVICE
+		/* list device in module */
+		tlist = &module->module_object[RT_Object_Class_Device].object_list;
+		if(!rt_list_isempty(tlist)) _list_device(tlist);
+#endif
+		/* list timer in module */
+		tlist = &module->module_object[RT_Object_Class_Timer].object_list;
+		if(!rt_list_isempty(tlist)) _list_timer(tlist);
 	}
+	rt_kprintf("______________________________________________________________________\n");
 
 	return 0;
 }
