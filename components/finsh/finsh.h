@@ -30,8 +30,8 @@
 #define HEAP_ALIGNMENT          4       /* heap alignment */
 
 #define FINSH_GET16(x)    (*(x)) | (*((x)+1) << 8)
-#define FINSH_GET32(x)    (rt_uint32_t)(*(x)) | (rt_uint32_t)(*((x)+1) << 8) | \
-    (rt_uint32_t)(*((x)+2) << 16) | (rt_uint32_t)(*((x)+3) << 24)
+#define FINSH_GET32(x)    (rt_uint32_t)(*(x)) | ((rt_uint32_t)*((x)+1) << 8) | \
+    ((rt_uint32_t)*((x)+2) << 16) | ((rt_uint32_t)*((x)+3) << 24)
 
 #define FINSH_SET16(x, v)           \
     do                              \
@@ -44,9 +44,9 @@
     do                                                          \
     {                                                           \
         *(x)     = (rt_uint32_t)(v)  & 0x000000ff;              \
-        (*((x)+1)) = (rt_uint32_t)((v) >> 8) & 0x000000ff;      \
-        (*((x)+2)) = (rt_uint32_t)((v) >> 16) & 0x000000ff;     \
-        (*((x)+3)) = (rt_uint32_t)((v) >> 24);                  \
+        (*((x)+1)) = ((rt_uint32_t)(v) >> 8) & 0x000000ff;      \
+        (*((x)+2)) = ((rt_uint32_t)(v) >> 16) & 0x000000ff;     \
+        (*((x)+3)) = ((rt_uint32_t)(v) >> 24);                  \
     } while ( 0 )
 
 /* -- the end of option -- */
