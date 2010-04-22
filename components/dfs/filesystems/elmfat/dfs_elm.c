@@ -49,7 +49,7 @@ static int elm_result_to_dfs(FRESULT result)
 	return status;
 }
 
-int dfs_elm_mount(struct dfs_filesystem* fs)
+int dfs_elm_mount(struct dfs_filesystem* fs, unsigned long rwflag, const void* data)
 {
 	FATFS *fat;
 	FRESULT result;

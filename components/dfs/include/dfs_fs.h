@@ -28,7 +28,7 @@ struct dfs_filesystem_operation
 {
 	char name[DFS_FS_NAME_MAX + 1];
 
-	int (*mount)	(struct dfs_filesystem* fs);
+	int (*mount)	(struct dfs_filesystem* fs, unsigned long rwflag, const void* data);
 	int (*unmount)	(struct dfs_filesystem* fs);
 
 	int (*open)	(struct dfs_fd* fd);

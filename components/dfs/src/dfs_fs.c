@@ -206,13 +206,21 @@ int dfs_mount(const char* device_name, const char* path,
     int index;
 
     /* open specific device */
-    dev_id = rt_device_find(device_name);
-    if (dev_id == RT_NULL)
-    {
-        /* no this device */
-        rt_set_errno(-DFS_STATUS_ENODEV);
-        return -1;
-    }
+	if (device_name != RT_NULL)
+	{
+		dev_id = rt_device_find(device_name);
+		if (dev_id == RT_NULL)
+		{
+			/* no this device */
+			rt_set_errno(-DFS_STATUS_ENODEV);
+			return -1;
+		}
+	}
+	else
+	{
+		/* which is a non-device filesystem mount */
+		dev_id = RT_NULL;
+	}
 
     /* find out specific filesystem */
 	dfs_lock();
@@ -289,11 +297,12 @@ int dfs_mount(const char* device_name, const char* path,
     /* release filesystem_table lock */
 	dfs_unlock();
 
-    /* open device, but do not check the status of device */
-    rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR);
+	/* open device, but do not check the status of device */
+	if (dev_id != RT_NULL) rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR);
 
-    if ( ops->mount == RT_NULL ) /* there is no mount implementation */
+    if (ops->mount == RT_NULL) /* there is no mount implementation */
     {
+		if (dev_id != RT_NULL) rt_device_close(dev_id);
     	dfs_lock();
         /* clear filesystem table entry */
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
@@ -303,19 +312,18 @@ int dfs_mount(const char* device_name, const char* path,
         return -1;
     }
     /* call mount of this filesystem */
-    else if ( ops->mount(fs) < 0 )
+    else if (ops->mount(fs, rwflag, data) < 0)
     {
+        /* close device */
+        if (dev_id != RT_NULL) rt_device_close(fs->dev_id);
+
         /* mount failed */
 		dfs_lock();
-
-        /* close device */
-        rt_device_close(fs->dev_id);
-
         /* clear filesystem table entry */
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
-
 		dfs_unlock();
-        return -1;
+
+		return -1;
     }
 
     return 0;

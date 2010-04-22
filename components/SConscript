@@ -5,8 +5,12 @@ Import('rtconfig')
 # build each components
 objs = ''
 
-if 'RT_USING_MINILIBC' in dir(rtconfig) and rtconfig.RT_USING_MINILIBC:
-	objs = objs + SConscript('libc/minilibc/SConscript')
+if rtconfig.CROSS_TOOL == 'gcc':
+	if 'RT_USING_NEWLIB' in dir(rtconfig) and rtconfig.RT_USING_NEWLIB:
+		objs = objs + SConscript('libc/newlib/SConscript')
+	else:
+		rtconfig.RT_USING_MINILIBC = True
+		objs = objs + SConscript('libc/minilibc/SConscript')
 
 if 'RT_USING_FINSH' in dir(rtconfig) and rtconfig.RT_USING_FINSH:
 	objs = objs + SConscript('finsh/SConscript')
