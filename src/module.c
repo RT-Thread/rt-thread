@@ -385,7 +385,7 @@ void rt_module_unload(struct rt_module* module)
 	
 	/* release module memory */
 	rt_free(module->module_space);
-	rt_object_delete((rt_object *)module);
+	rt_object_delete((struct rt_object *)module);
 }
 
 rt_module_t rt_module_find(char* name)
