@@ -155,6 +155,8 @@ void rtthread_startup(void)
 #endif
 #endif
 
+	rt_system_timer_thread_init();
+
 	/* init idle thread */
 	rt_thread_idle_init();
 

@@ -19,7 +19,7 @@
 #include "module.h"
 #include "kservice.h"
 
-/* #define RT_MODULE_DEBUG */
+/* #define RT_MODULE_DEBUG  */
 
 #define elf_module 	((Elf32_Ehdr *)module_ptr)
 #define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
@@ -174,8 +174,8 @@ static void rt_module_init_object_container(struct rt_module* module)
 
 struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 {
-	rt_uint32_t index;
-	rt_uint32_t module_addr = 0, module_size = 0, rodata_addr = 0;
+	rt_uint32_t index, rodata_addr = 0, bss_addr = 0;
+	rt_uint32_t module_addr = 0, module_size = 0;
 	struct rt_module* module = RT_NULL;
 	rt_uint8_t *ptr, *strtab, *shstrab;
 
@@ -262,6 +262,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 		/* load bss section */
 		if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
 		{
+			bss_addr = (rt_uint32_t)ptr;
 			rt_memset(ptr, 0, shdr[index].sh_size);
 		}
 	}
@@ -298,7 +299,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 				{				
 					if(ELF_ST_TYPE(sym->st_info) == STT_SECTION)
 					{	
-						if (strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
+						if (rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
 						{
 							/* relocate rodata section */
 							rt_module_arm_relocate(module, rel,
@@ -308,7 +309,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
 						{
 							/* relocate bss section */
-							rt_module_arm_relocate(module, rel, (Elf32_Addr)ptr, module_addr);
+							rt_module_arm_relocate(module, rel, (Elf32_Addr)bss_addr, module_addr);
 						}	
 					}
 					else if(ELF_ST_TYPE(sym->st_info) == STT_FUNC )
@@ -328,11 +329,12 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 				}
 				else
 				{
+					Elf32_Addr addr;
 #ifdef RT_MODULE_DEBUG
 					rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
 #endif
 					/* need to resolve symbol in kernel symbol table */
-					Elf32_Addr addr = rt_module_symbol_find(strtab + sym->st_name);
+					addr = rt_module_symbol_find(strtab + sym->st_name);
 					if (addr != (Elf32_Addr)RT_NULL)
 						rt_module_arm_relocate(module, rel, addr, module_addr);
 					else rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
@@ -346,6 +348,9 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	/* init module object container */
 	rt_module_init_object_container(module);
 
+	/* set module defalut clean type */
+	module->parent.flag |= RT_MODULE_FLAG_AUTO_CLEAN;
+	
 	/* create module main thread */
 	module->module_thread = rt_thread_create((const char*)name,
 		module->module_entry, RT_NULL,
@@ -380,7 +385,7 @@ void rt_module_unload(struct rt_module* module)
 	
 	/* release module memory */
 	rt_free(module->module_space);
-	rt_free((void *)module);
+	rt_object_delete((rt_object *)module);
 }
 
 rt_module_t rt_module_find(char* name)

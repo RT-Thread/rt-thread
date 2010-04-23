@@ -361,6 +361,10 @@ struct rt_thread
 };
 /*@}*/
 
+/* module clean types */
+#define RT_MODULE_FLAG_AUTO_CLEAN			0x01			/* auto clean	*/
+#define RT_MODULE_FLAG_MANUAL_CLEAN			0x02			/* manual clean */
+
 #ifdef RT_USING_MODULE
 struct rt_module
 {
