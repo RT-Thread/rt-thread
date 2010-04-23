@@ -81,8 +81,6 @@ static void rt_thread_idle_entry(void* parameter)
 			/* release thread's stack */
 			rt_free(thread->stack_addr);
 
-			rt_kprintf("thread %s was deleted\n", thread->name);
-
 #ifdef RT_USING_MODULE
 			module = thread->module_parent;
 
