@@ -48,7 +48,7 @@ void rt_init_thread_entry(void* parameter)
 		/* init the device filesystem */
 		dfs_init();
 
-#ifdef defined(RT_USING_DFS_ELMFAT)
+#if defined(RT_USING_DFS_ELMFAT)
 		/* init the elm chan FatFs filesystam*/
 		elm_init();
 

@@ -20,9 +20,13 @@ f.close()
 PreProcessor.process_contents(contents)
 rtconfig_ns = PreProcessor.cpp_namespace
 
+# libc options
+if rtconfig_ns.has_key('RT_USING_NEWLIB'):
+    RT_USING_NEWLIB = True
+
 # finsh shell options
 if rtconfig_ns.has_key('RT_USING_FINSH'):
-	RT_USING_FINSH = True
+    RT_USING_FINSH = True
 
 # device virtual filesystem options
 if rtconfig_ns.has_key('RT_USING_DFS'):
@@ -77,9 +81,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=arm920t'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC' + ' -nostdinc -nostdlib -fno-builtin'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=main.elf.map,-cref,-u,_start -T mini2440_ram.ld' + ' -Ttext ' + TextBase
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread_mini2440.map,-cref,-u,_start -T mini2440_ram.ld' + ' -Ttext ' + TextBase
 
     CPATH = ''
     LPATH = ''
@@ -92,7 +96,7 @@ if PLATFORM == 'gcc':
 
     if RT_USING_WEBSERVER:
         CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
-    RT_USING_MINILIBC = True
+
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':

@@ -81,8 +81,6 @@
 /* a runtime libc library */
 /* #define RT_USING_NEWLIB */
 
-/* SECTION: a mini libc */
-
 /* SECTION: C++ support */
 /* Using C++ support */
 /* #define RT_USING_CPLUSPLUS */
