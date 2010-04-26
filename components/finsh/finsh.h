@@ -59,6 +59,7 @@
 /*@{*/
 
 #if defined(RT_USING_NEWLIB) || defined (RT_USING_MINILIBC)
+#include <sys/types.h>
 #include <string.h>
 #else
 typedef unsigned char  u_char;

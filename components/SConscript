@@ -22,7 +22,7 @@ if 'RT_USING_LWIP' in dir(rtconfig) and rtconfig.RT_USING_LWIP:
 	objs = objs + SConscript('net/lwip/SConscript')
 
 if 'RT_USING_MODBUS' in dir(rtconfig) and rtconfig.RT_USING_MODBUS:
-	objs = objs + SConscript('net//freemodbus/SConscript')
+	objs = objs + SConscript('net/freemodbus/SConscript')
 
 if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript('rtgui/SConscript')
@@ -30,6 +30,5 @@ if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
 # build each modules
 if rtconfig.CROSS_TOOL == 'gcc':
 	SConscript('hello/SConscript')
-	SConscript('thread/SConscript')
 
 Return('objs')
