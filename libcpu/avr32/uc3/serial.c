@@ -160,7 +160,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 			/* write data directly */
 			while (size)
 			{
-				while (usart_write_char(uart->uart_device, (int) *ptr) != USART_SUCCESS);
+				while (usart_bw_write_char(uart->uart_device, (int) *ptr) != USART_SUCCESS);
 
 				++ptr; --size;
 			}

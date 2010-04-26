@@ -202,16 +202,21 @@ _int\priority:
   call    rt_interrupt_enter
   icall   r12
   call    rt_interrupt_leave
-_spint\priority:
-  lda.w   r12, rt_thread_switch_interrupt_flag
+  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
+  lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 0
+  brne    _spint\priority
+  lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
   ld.w    r11, r12[0]
   cp.w    r11, 1
   breq    rt_hw_context_switch_interrupt_do
+_spint\priority:
+  csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
   rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
   .endr
 
 rt_hw_context_switch_interrupt_do:
-  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
   mov     r11, 0
   st.w    r12[0], r11					/* Clear rt_thread_switch_interrupt_flag */
   stm     --sp, r0-r7					/* Push R0-R7 */
