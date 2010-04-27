@@ -55,6 +55,8 @@ typedef rt_uint32_t	mem_ptr_t;
 
 #ifdef RT_USING_NEWLIB
 #include <errno.h>
+/* some errno not defined in newlib */
+#define ENSRNOTFOUND 163  /* Domain name not found */
 #else
 #define LWIP_PROVIDE_ERRNO
 #endif
