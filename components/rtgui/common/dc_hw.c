@@ -201,7 +201,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			/* send to server to end drawing */
 			struct rtgui_event_update_end eupdate;
 			RTGUI_EVENT_UPDATE_END_INIT(&(eupdate));
-			eupdate.rect = RTGUI_WIDGET(top)->extent;
+			eupdate.rect = hw->owner->extent;
 
 			rtgui_thread_send(top->server, (struct rtgui_event*)&eupdate, sizeof(eupdate));
 #endif
