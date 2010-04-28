@@ -24,12 +24,6 @@ struct rtgui_dc_buffer
 	/* graphic context */
 	rtgui_gc_t gc;
 
-	/* color and font */
-	rtgui_color_t color;
-	struct rtgui_font* font;
-	/* text align */
-	rt_int32_t align;
-
 	/* width and height */
 	rt_uint16_t width, height;
 	rt_uint16_t pitch;
@@ -84,9 +78,10 @@ struct rtgui_dc* rtgui_dc_buffer_create(int w, int h)
 
 	dc = (struct rtgui_dc_buffer*)rtgui_malloc(sizeof(struct rtgui_dc_buffer));
 	rtgui_dc_buffer_init(dc);
-	dc->color	= 0;
-	dc->font	= RT_NULL;
-	dc->align	= 0;
+	dc->gc.foreground = default_foreground;
+	dc->gc.background = default_background;
+	dc->gc.font = rtgui_font_default();
+	dc->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
 
 	dc->width	= w;
 	dc->height	= h;
@@ -132,7 +127,7 @@ static void rtgui_dc_buffer_draw_point(struct rtgui_dc* self, int x, int y)
 	/* note: there is no parameter check in this function */
 	ptr = (rtgui_color_t*)(dc->pixel + y * dc->pitch + x * sizeof(rtgui_color_t));
 
-	*ptr = dc->color;
+	*ptr = dc->gc.foreground;
 }
 
 static void rtgui_dc_buffer_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
@@ -164,7 +159,7 @@ static void rtgui_dc_buffer_draw_vline(struct rtgui_dc* self, int x, int y1, int
 	for (index = y1; index < y2; index ++)
 	{
 		/* draw this point */
-		*ptr = dc->color;
+		*ptr = dc->gc.foreground;
 		ptr += dc->width;
 	}
 }
@@ -184,7 +179,7 @@ static void rtgui_dc_buffer_draw_hline(struct rtgui_dc* self, int x1, int x2, in
 	for (index = x1; index < x2; index ++)
 	{
 		/* draw this point */
-		*ptr++ = dc->color;
+		*ptr++ = dc->gc.foreground;
 	}
 }
 
