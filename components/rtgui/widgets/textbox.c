@@ -326,6 +326,8 @@ void rtgui_textbox_set_value(struct rtgui_textbox* box, const char* text)
 		if (box->line_length > rt_strlen(text) + 1)
 		{
 			rt_memcpy(box->text, text, rt_strlen(text) + 1);
+			/* set current position */
+			box->position = 0;
 			return;
 		}
 		else
