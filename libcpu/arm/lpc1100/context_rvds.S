@@ -107,9 +107,10 @@ rt_hw_pend_sv	PROC
 	BEQ		swtich_to_thread    	; skip register save at the first time
 
 	MRS     r1, psp                 ; get from thread stack pointer
-	STMIA	r1!, {r4 - r7}			; push r4 - r7 register
+	SUBS	r1, r1, #0x10
 	LDR		r0, [r0]
 	STR		r1, [r0]				; update from thread stack pointer
+	STMIA	r1!, {r4 - r7}			; push r4 - r7 register
 
 swtich_to_thread
 	LDR		r1, =rt_interrupt_to_thread
@@ -123,9 +124,8 @@ pendsv_exit
 	; restore interrupt
 	MSR		PRIMASK, r2
 
-	MOV		r0, lr
-	MOVS	r1, #0x04
-	ORRS	r0, r0, r1
+	MOVS	r0, #0x04
+	RSBS	r0, #0
 	BX		r0
 	ENDP
 
