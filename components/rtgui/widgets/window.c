@@ -156,6 +156,11 @@ void rtgui_win_destroy(struct rtgui_win* win)
 	}
 }
 
+void rtgui_win_close(struct rtgui_win* win)
+{
+	win->style |= RTGUI_WIN_STYLE_CLOSED;
+}
+
 rtgui_modal_code_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 {
 	rtgui_modal_code_t result;
@@ -416,7 +421,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
 		else 
 #endif
-		rtgui_win_ondraw(win);
+		rtgui_widget_update(RTGUI_WIDGET(win));
 
 		if (win->on_activate != RT_NULL)
 		{

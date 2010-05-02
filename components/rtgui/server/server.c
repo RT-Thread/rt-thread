@@ -456,12 +456,18 @@ void rtgui_server_handle_kbd(struct rtgui_event_kbd* event)
 	panel = rtgui_server_focus_panel;
 	if (panel != RT_NULL)
 	{
-		/* send to focus panel */
-		event->wid = RT_NULL;
+		rt_thread_t tid;
 
-		/* send keyboard event to thread */
-		rtgui_thread_send(rtgui_panel_get_active_thread(panel),
-			(struct rtgui_event*)event, sizeof(struct rtgui_event_kbd));
+		/* get active thread in this panel */
+		tid = rtgui_panel_get_active_thread(panel);
+		if (tid != RT_NULL)
+		{
+			/* send to focus panel */
+			event->wid = RT_NULL;
+	
+			/* send keyboard event to thread */
+				rtgui_thread_send(tid, (struct rtgui_event*)event, sizeof(struct rtgui_event_kbd));
+		}
 	}
 }
 
