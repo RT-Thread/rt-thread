@@ -74,7 +74,7 @@ int mempool_simple_init()
 	for (i = 0; i < 48; i ++) ptr[i] = RT_NULL;
 
 	/* 初始化内存池对象 */
-	rt_mp_init(&mp, "mp1", &mempool[0], 80, sizeof(mempool), RT_IPC_FLAG_FIFO);
+	rt_mp_init(&mp, "mp1", &mempool[0], 80, sizeof(mempool));
 
 	/* 创建线程1 */
 	tid1 = rt_thread_create("t1",
