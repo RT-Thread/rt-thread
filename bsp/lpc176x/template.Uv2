@@ -32,7 +32,7 @@ Options 1,0,0  // Target 'RT-Thread LPC17xx'
  OrgReg (ÿNXP\)
  TgStat=16
  OutDir (.\obj\)
- OutName (project)
+ OutName (rtthread-lpc)
  GenApp=1
  GenLib=0
  GenHex=0
@@ -89,9 +89,9 @@ Options 1,0,0  // Target 'RT-Thread LPC17xx'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)(-MPU)(DARMP1.DLL)(-pLPC1768)(SARMCM3.DLL)(-MPU)(TARMP1.DLL)(-pLPC1768)
-  OPTDBG 48125,1,()()()()()()()()()() (BIN\UL2CM3.DLL)()()()
- FLASH1 { 9,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (BIN\UL2CM3.DLL)
+  OPTDBG 48126,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,6,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JL2CM3.dll)
  FLASH3 ("" ())
  FLASH4 ()
 EndOpt
