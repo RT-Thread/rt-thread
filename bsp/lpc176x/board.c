@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
  * 2010-02-04     Magicoe      ported to LPC17xx
+ * 2010-05-02     Aozima       update CMSIS to 130
  */
 
 #include <rthw.h>
@@ -18,7 +19,7 @@
 
 #include "uart.h"
 #include "board.h"
-#include "CMSIS/LPC17xx.h"
+#include "LPC17xx.h"
 
 /**
  * @addtogroup LPC17xx
@@ -57,7 +58,7 @@ void rt_hw_board_init()
 #endif
 
 	/* init systick */
-	SysTick_Config(SystemFrequency/RT_TICK_PER_SECOND - 1);
+	SysTick_Config( SystemCoreClock/RT_TICK_PER_SECOND - 1);
 	/* set pend exception priority */
 	NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 

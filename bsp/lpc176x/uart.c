@@ -10,11 +10,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-03-08     Bernard      The first version for LPC17xx
+ * 2010-05-02     Aozima       update CMSIS to 130
  */
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "CMSIS/LPC17xx.h"
+#include "LPC17xx.h"
 
 #define IER_RBR		0x01
 #define IER_THRE	0x02
@@ -111,16 +112,16 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 		{
 		  case 0x00:
 		  default:
-			pclk = SystemFrequency/4;
+			pclk = SystemCoreClock/4;
 			break;
 		  case 0x01:
-			pclk = SystemFrequency;
+			pclk = SystemCoreClock;
 			break; 
 		  case 0x02:
-			pclk = SystemFrequency/2;
+			pclk = SystemCoreClock/2;
 			break; 
 		  case 0x03:
-			pclk = SystemFrequency/8;
+			pclk = SystemCoreClock/8;
 			break;
 		}
 	
@@ -144,16 +145,16 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 		{
 		  case 0x00:
 		  default:
-			pclk = SystemFrequency/4;
+			pclk = SystemCoreClock/4;
 			break;
 		  case 0x01:
-			pclk = SystemFrequency;
+			pclk = SystemCoreClock;
 			break; 
 		  case 0x02:
-			pclk = SystemFrequency/2;
+			pclk = SystemCoreClock/2;
 			break; 
 		  case 0x03:
-			pclk = SystemFrequency/8;
+			pclk = SystemCoreClock/8;
 			break;
 		}
 	

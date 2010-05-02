@@ -7,13 +7,13 @@ Import('rtconfig')
 group = {}
 group['name'] = 'Startup'
 group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/bsp/lpc176x', RTT_ROOT + '/bsp/lpc176x/CMSIS']
+group['CPPPATH'] = [ RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/CoreSupport', RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/DeviceSupport/NXP/LPC17xx',RTT_ROOT + '/bsp/lpc176x']
 group['CPPDEFINES'] = []
 group['LINKFLAGS'] = ''
 
 src_bsp   = ['application.c', 'startup.c', 'board.c']
 src_drv   = ['uart.c']
-src_cmsis = ['CMSIS/core_cm3.c', 'CMSIS/system_LPC17xx.c']
+src_cmsis = ['CMSIS/CM3/CoreSupport/core_cm3.c', 'CMSIS/CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
 
 group['src'] = File(src_bsp + src_drv + src_cmsis)
 
