@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2007-01-21     Bernard      the first version
+ * 2010-05-04     Bernard      add rt_device_init implementation
  */
 
 #include <rtthread.h>
@@ -103,9 +104,71 @@ rt_err_t rt_device_init_all()
  */
 rt_device_t rt_device_find(const char* name)
 {
+	struct rt_object* object;
+	struct rt_list_node* node;
+	struct rt_object_information *information;
+
+	extern struct rt_object_information rt_object_container[];
+
+	/* enter critical */
+	if (rt_thread_self() != RT_NULL)
+		rt_enter_critical();
+
 	/* try to find device object */
-	return (struct rt_device*) rt_object_find (RT_Object_Class_Device,
-		name);
+	information = &rt_object_container[RT_Object_Class_Device];
+	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+	{
+		object = rt_list_entry(node, struct rt_object, list);
+		if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
+		{
+			/* leave critical */
+			if (rt_thread_self() != RT_NULL)
+				rt_exit_critical();
+
+			return (rt_device_t)object;
+		}
+	}
+
+	/* leave critical */
+	if (rt_thread_self() != RT_NULL)
+		rt_exit_critical();
+
+	/* not found */
+	return RT_NULL;
+}
+
+/**
+ * This function will initialize the speicial device
+ *
+ * @param dev the pointer of device driver structure
+ * 
+ * @return the result
+ */
+rt_err_t rt_device_init(rt_device_t dev)
+{
+	rt_err_t result;
+	rt_err_t (*init)(rt_device_t dev);
+	
+	RT_ASSERT(dev != RT_NULL);
+
+	/* get device init handler */
+	init = dev->init;
+	if (init != RT_NULL && !(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+	{
+		result = init(dev);
+		if (result != RT_EOK)
+		{
+			rt_kprintf("To initialize device:%s failed. The error code is %d\n",
+				dev->parent.name, result);
+		}
+		else
+		{
+			dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+		}
+	}
+	else result = -RT_ENOSYS;
+	
+	return result;
 }
 
 /**

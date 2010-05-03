@@ -335,35 +335,6 @@ void rt_object_delete(rt_object_t object)
 #endif
 
 /**
- * This fucntion will find the object id by specified object name
- *
- * @param type the type of object
- * @param name the specified object name
- *
- * @return object id for successful
- */
-rt_object_t rt_object_find(enum rt_object_class_type type, const char* name)
-{
-	struct rt_object_information *information;
-	struct rt_object* object;
-	struct rt_list_node* node;
-
-	information = &rt_object_container[type];
-
-	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
-	{
-		object = rt_list_entry(node, struct rt_object, list);
-		if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-		{
-			return object;
-		}
-	}
-
-	/* not found */
-	return RT_NULL;
-}
-
-/**
  * This function will judge the object is system object or not.
  * Normally, the system object is a static object and the type
  * of object set to RT_Object_Class_Static.

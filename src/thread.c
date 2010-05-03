@@ -1,7 +1,7 @@
 /*
  * File      : thread.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -19,7 +19,7 @@
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
- * 2010-04-11     yi.qiu          add module feature
+ * 2010-04-11     Yi.Qiu       add module feature
  */
 
 #include <rtthread.h>
@@ -49,8 +49,7 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 	void* stack_start, rt_uint32_t stack_size,
 	rt_uint8_t priority, rt_uint32_t tick)
 {
-	/* set thread id and init thread list */
-	thread->tid = thread;
+	/* init thread list */
 	rt_list_init(&(thread->tlist));
 
 	thread->entry = (void*)entry;
@@ -82,7 +81,7 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 
 #ifdef RT_USING_MODULE
 	/* init module parent */
-	thread->module_parent = 
+	thread->module_parent =
 		(rt_current_module != RT_NULL) ? rt_current_module : RT_NULL;
 #endif
 
@@ -626,11 +625,37 @@ void rt_thread_timeout(void* parameter)
  */
 rt_thread_t rt_thread_find(char* name)
 {
-	struct rt_thread* thread;
+	struct rt_object_information *information;
+	struct rt_object* object;
+	struct rt_list_node* node;
 
-	thread = (struct rt_thread*)rt_object_find(RT_Object_Class_Thread, name);
+	extern struct rt_object_information rt_object_container[];
 
-	return thread;
+	/* enter critical */
+	if (rt_thread_self() != RT_NULL)
+		rt_enter_critical();
+
+	/* try to find device object */
+	information = &rt_object_container[RT_Object_Class_Thread];
+	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+	{
+		object = rt_list_entry(node, struct rt_object, list);
+		if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
+		{
+			/* leave critical */
+			if (rt_thread_self() != RT_NULL)
+				rt_exit_critical();
+
+			return (rt_thread_t)object;
+		}
+	}
+
+	/* leave critical */
+	if (rt_thread_self() != RT_NULL)
+		rt_exit_critical();
+
+	/* not found */
+	return RT_NULL;
 }
 
 /*@}*/

@@ -40,7 +40,6 @@ void rt_object_init(struct rt_object* object, enum rt_object_class_type type, co
 void rt_object_detach(rt_object_t object);
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name);
 void rt_object_delete(rt_object_t object);
-rt_object_t rt_object_find(enum rt_object_class_type type, const char* name);
 rt_err_t rt_object_is_systemobject(rt_object_t object);
 
 #ifdef RT_USING_HOOK
@@ -285,6 +284,7 @@ rt_err_t rt_device_init_all(void);
 rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind )(rt_device_t dev, rt_size_t size));
 rt_err_t rt_device_set_tx_complete(rt_device_t dev, rt_err_t (*tx_done)(rt_device_t dev, void *buffer));
 
+rt_err_t  rt_device_init (rt_device_t dev);
 rt_err_t  rt_device_open (rt_device_t dev, rt_uint16_t oflag);
 rt_err_t  rt_device_close(rt_device_t dev);
 rt_size_t rt_device_read (rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size);
