@@ -390,10 +390,34 @@ void rt_module_unload(struct rt_module* module)
 
 rt_module_t rt_module_find(char* name)
 {
-	struct rt_module* module;
-	module = (struct rt_module*)rt_object_find(RT_Object_Class_Module, name);
+	struct rt_object_information *information;
+	struct rt_object* object;
+	struct rt_list_node* node;
 
-	return module;
+	extern struct rt_object_information rt_object_container[];
+
+	/* enter critical */
+	rt_enter_critical();
+
+	/* try to find device object */
+	information = &rt_object_container[RT_Object_Class_Thread];
+	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+	{
+		object = rt_list_entry(node, struct rt_object, list);
+		if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
+		{
+			/* leave critical */
+			rt_exit_critical();
+
+			return (rt_module_t)object;
+		}
+	}
+
+	/* leave critical */
+	rt_exit_critical();
+
+	/* not found */
+	return RT_NULL;
 }
 
 #endif
