@@ -45,6 +45,7 @@ widgets/radiobox.c
 widgets/slider.c
 widgets/staticline.c
 widgets/textbox.c
+widgets/listbox.c
 widgets/title.c
 widgets/toplevel.c
 widgets/view.c
