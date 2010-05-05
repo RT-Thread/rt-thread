@@ -62,6 +62,7 @@ static void workbench_entry(void* parameter)
 	demo_view_progressbar(workbench);
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
+	demo_view_listbox(workbench);
 	demo_view_slider(workbench);
 	demo_view_mywidget(workbench);
 	demo_view_image(workbench);

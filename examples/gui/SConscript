@@ -17,6 +17,7 @@ demo_view_label.c
 demo_view_mywidget.c
 demo_view_progressbar.c
 demo_view_radiobox.c
+demo_view_listbox.c
 demo_view_slider.c
 demo_view_textbox.c
 demo_view_window.c
