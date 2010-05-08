@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-04     Bernard      first version
+ * 2010-05-03     Bernard      add win close function
  */
 #ifndef __RTGUI_WINDOW_H__
 #define __RTGUI_WINDOW_H__
@@ -74,6 +75,7 @@ rtgui_type_t *rtgui_win_type_get(void);
 rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, 
 	rtgui_rect_t *rect, rt_uint8_t flag);
 void rtgui_win_destroy(rtgui_win_t* win);
+void rtgui_win_close(struct rtgui_win* win);
 
 rtgui_modal_code_t rtgui_win_show(rtgui_win_t* win, rt_bool_t is_modal);
 void rtgui_win_hiden(rtgui_win_t* win);

@@ -22,7 +22,7 @@ static void _rtgui_button_constructor(rtgui_button_t *button)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(button), rtgui_button_event_handler);
 
 	/* un-press button */
-	button->flag &= ~RTGUI_BUTTON_FLAG_PRESS;
+	button->flag = 0;
 
 	/* set flag and on_button event handler */
 	button->pressed_image = RT_NULL;
@@ -119,9 +119,13 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 				if (emouse->button & RTGUI_MOUSE_BUTTON_UP)
 				{
 					if (btn->flag & RTGUI_BUTTON_FLAG_PRESS)
+					{
 						btn->flag &= ~RTGUI_BUTTON_FLAG_PRESS;
+					}
 					else
+					{
 						btn->flag |= RTGUI_BUTTON_FLAG_PRESS;
+					}
 
 					/* draw button */
 #ifndef RTGUI_USING_SMALL_SIZE

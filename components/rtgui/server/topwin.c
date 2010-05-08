@@ -946,11 +946,13 @@ void rtgui_topwin_title_onmouse(struct rtgui_topwin* win, struct rtgui_event_mou
 				win->flag |= WINTITLE_CB_PRESSED;
 				rtgui_theme_draw_win(win);
 			}
+#ifdef RTGUI_USING_WINMOVE
 			else
 			{
 				/* maybe move window */
 				rtgui_winrect_set(win);
 			}
+#endif
 		}
 		else if (event->button & RTGUI_MOUSE_BUTTON_UP)
 		{

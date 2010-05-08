@@ -207,7 +207,7 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
 					old_item = view->current_item;
 
 					/* set selected item */
-					view->current_item = view->current_item/view->page_items + index;
+					view->current_item = (view->current_item/view->page_items) * view->page_items + index;
 					rtgui_list_view_update_current(view, old_item);
 				}
 			}

@@ -44,12 +44,14 @@ struct rtgui_cursor
 	rt_uint8_t		*cursor_saved;
 #endif
 
+#ifdef RTGUI_USING_WINMOVE
 	/* move window rect and border */
 	struct rtgui_topwin *topwin;
 	rtgui_rect_t	win_rect;
 	rt_uint8_t		*win_left, *win_right;
 	rt_uint8_t		*win_top, *win_bottom;
 	rt_bool_t		win_rect_show, win_rect_has_saved;
+#endif
 
 	/* screen framebuffer */
 	rt_uint8_t*		framebuffer;
@@ -118,9 +120,11 @@ static void rtgui_cursor_save		(void);
 static void rtgui_cursor_show		(void);
 #endif
 
+#ifdef RTGUI_USING_WINMOVE
 static void rtgui_winrect_restore	(void);
 static void rtgui_winrect_save		(void);
 static void rtgui_winrect_show		(void);
+#endif
 
 #define WIN_MOVE_BORDER	4
 void rtgui_mouse_init()
@@ -163,6 +167,7 @@ void rtgui_mouse_init()
 		_rtgui_cursor->cursor_image->h * _rtgui_cursor->bpp);
 #endif
 
+#ifdef RTGUI_USING_WINMOVE
 	/* init window move save image */
 	_rtgui_cursor->win_rect_has_saved	= RT_FALSE;
 	_rtgui_cursor->win_rect_show		= RT_FALSE;
@@ -171,6 +176,7 @@ void rtgui_mouse_init()
 	_rtgui_cursor->win_right	= rtgui_malloc(_rtgui_cursor->bpp * gd->height * WIN_MOVE_BORDER);
 	_rtgui_cursor->win_top		= rtgui_malloc(_rtgui_cursor->bpp * gd->width  * WIN_MOVE_BORDER);
 	_rtgui_cursor->win_bottom	= rtgui_malloc(_rtgui_cursor->bpp * gd->width  * WIN_MOVE_BORDER);
+#endif
 }
 
 void rtgui_mouse_moveto(int x, int y)
@@ -182,6 +188,7 @@ void rtgui_mouse_moveto(int x, int y)
 	if (x != _rtgui_cursor->cx ||
 		y != _rtgui_cursor->cy)
 	{
+#ifdef RTGUI_USING_WINMOVE
 		if (_rtgui_cursor->win_rect_show)
 		{
 			if (_rtgui_cursor->win_rect_has_saved == RT_TRUE)
@@ -210,6 +217,7 @@ void rtgui_mouse_moveto(int x, int y)
 			rtgui_winrect_show();
 		}
 		else
+#endif
 		{
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			rtgui_mouse_hide_cursor();
@@ -371,6 +379,7 @@ static void rtgui_cursor_show()
 }
 #endif
 
+#ifdef RTGUI_USING_WINMOVE
 void rtgui_winrect_set(struct rtgui_topwin* topwin)
 {
 	/* set win rect show */
@@ -562,6 +571,7 @@ static void rtgui_winrect_save()
 	display_direct_memcpy(fb_ptr, winrect_ptr, _rtgui_cursor->screen_pitch, winrect_pitch,
 		WIN_MOVE_BORDER, winrect_pitch);
 }
+#endif
 
 void rtgui_mouse_monitor_append(rtgui_list_t* head, rtgui_rect_t* rect)
 {

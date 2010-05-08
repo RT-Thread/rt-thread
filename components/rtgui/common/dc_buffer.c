@@ -29,7 +29,6 @@ struct rtgui_dc_buffer
 	rt_uint16_t pitch;
 
 	/* blit info */
-	rt_uint32_t clip_sync;
 	rtgui_region_t clip;
 
 	/* pixel data */
@@ -87,7 +86,6 @@ struct rtgui_dc* rtgui_dc_buffer_create(int w, int h)
 	dc->height	= h;
 	dc->pitch	= w * sizeof(rtgui_color_t);
 
-	dc->clip_sync = 0;
 	rtgui_region_init(&(dc->clip));
 
 	dc->pixel = rtgui_malloc(h * dc->pitch);
@@ -282,7 +280,6 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		case 1:
 			blit_line = rtgui_blit_line_1;
 			break;
-
 		case 2:
 			blit_line = rtgui_blit_line_2;
 			break;
