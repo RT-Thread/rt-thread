@@ -1,0 +1,10 @@
+Import('env')
+Import('RTT_ROOT')
+
+# The set of source files associated with this SConscript file.
+src_local = Glob('*.c')
+
+env.Append(CPPPATH = RTT_ROOT + '/components/libc/newlib')
+
+obj = env.Object(src_local)
+Return('obj')
