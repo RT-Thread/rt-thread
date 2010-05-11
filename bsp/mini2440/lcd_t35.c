@@ -15,6 +15,7 @@
 #include <rtthread.h>
 
 #include <s3c24x0.h>
+#include <string.h>
 
 /* LCD driver for T3'5 */
 #define LCD_WIDTH 240
@@ -171,10 +172,12 @@ void LcdBkLtSet(rt_uint32_t HiRatio)
 
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
-	rt_uint16_t *src_ptr, *dst_ptr;
+	volatile rt_uint16_t *src_ptr, *dst_ptr;
 	rt_uint32_t pitch, index;
 
 	pitch = 2 * (rect->x2 - rect->x1);
+
+	rt_kprintf("update (%d,%d - %d,%d)\n", rect->x1, rect->y1, rect->x2, rect->y2);
 
 	/* copy from framebuffer to physical framebuffer */
 	src_ptr = &_rt_framebuffer[rect->x1][rect->y1];
@@ -182,7 +185,7 @@ void rt_hw_lcd_update(rtgui_rect_t *rect)
 
 	for (index = rect->y1; index < rect->y2; index ++)
 	{
-		memcpy(dst_ptr, src_ptr, pitch);
+		memcpy((void*)dst_ptr, (void*)src_ptr, pitch);
 
 		src_ptr += (rect->x2 - rect->x1);
 		dst_ptr += (rect->x2 - rect->x1);
