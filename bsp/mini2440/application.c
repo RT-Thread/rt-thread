@@ -20,6 +20,7 @@
 
 #include <board.h>
 #include <rtthread.h>
+#include "touch.h"
 #include "led.h"
 
 #ifdef RT_USING_DFS
@@ -63,6 +64,14 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
+#ifdef RT_USING_RTGUI
+	{
+		rtgui_touch_hw_init();
+		
+		rtgui_startup();
+	}
+#endif
+
 /* LwIP Initialization */
 #ifdef RT_USING_LWIP
 	{
@@ -81,12 +90,6 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
-#ifdef RT_USING_RTGUI
-	{
-		rt_hw_touch_init();
-		rtgui_startup();
-	}
-#endif
 }
 
 void rt_led_thread_entry(void* parameter)
@@ -105,7 +108,6 @@ void rt_led_thread_entry(void* parameter)
 
 	}
 }
-
 
 int rt_application_init()
 {

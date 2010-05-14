@@ -11,7 +11,7 @@ group['CPPPATH'] = [RTT_ROOT + '/bsp/mini2440']
 group['CPPDEFINES'] = []
 group['LINKFLAGS'] = ''
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c', 'info.c', 'today.c', 'picture.c', 'osc.c', 'device_info.c', 'run_module.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c', 'calibration.c', 'info.c', 'today.c', 'picture.c', 'osc.c', 'device_info.c', 'run_module.c']
 src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:
