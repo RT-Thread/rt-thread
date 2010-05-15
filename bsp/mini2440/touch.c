@@ -3,6 +3,7 @@
 #include <s3c24x0.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
+#include <rtgui/event.h>
 
 #include "touch.h"
 
@@ -82,13 +83,12 @@ struct rtgui_touch_device
 static struct rtgui_touch_device *touch = RT_NULL;
 static int first_down_report;
 
-#include <rtgui/event.h>
 static void report_touch_input(int updown)
 {
 	struct rtgui_event_mouse emouse;
 
 	/* set emouse button */
-	emouse.button |= RTGUI_MOUSE_BUTTON_LEFT;
+	emouse.button = RTGUI_MOUSE_BUTTON_LEFT;
 	emouse.parent.sender = RT_NULL;
 	
 	if (updown)
@@ -96,15 +96,19 @@ static void report_touch_input(int updown)
 		ts.xp = ts.xp / ts.count;
 		ts.yp = ts.yp / ts.count;;
 
-		ts.xp = 240 * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
-		ts.yp = 320 - (320*(ts.yp-touch->min_y)/(touch->max_y-touch->min_y));
-
-		touch->x = ts.xp;
-		touch->y = ts.yp;
+		if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
+		{
+			touch->x = ts.xp;
+			touch->y = ts.yp;
+		}
+		else
+		{	
+			touch->x = 240 * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
+			touch->y = 320 - (320*(ts.yp-touch->min_y)/(touch->max_y-touch->min_y));
+		}
 
 		emouse.x = touch->x;
 		emouse.y = touch->y;
-	
 		if(first_down_report == 1)
 		{
 			emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
@@ -291,59 +295,64 @@ static rt_err_t rtgui_touch_init (rt_device_t dev)
 
 static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-    switch (cmd)
-    {
-    case RT_TOUCH_CALIBRATION:
-        touch->calibrating = RT_TRUE;
-        touch->calibration_func = (rt_touch_calibration_func_t)args;
-        break;
+	switch (cmd)
+	{
+	case RT_TOUCH_CALIBRATION:
+		touch->calibrating = RT_TRUE;
+		touch->calibration_func = (rt_touch_calibration_func_t)args;
+		break;
 
-    case RT_TOUCH_NORMAL:
-        touch->calibrating = RT_FALSE;
-        break;
+	case RT_TOUCH_NORMAL:
+		touch->calibrating = RT_FALSE;
+		break;
 
-    case RT_TOUCH_CALIBRATION_DATA:
-    {
-        struct calibration_data* data;
+	case RT_TOUCH_CALIBRATION_DATA:
+	{
+		struct calibration_data* data;
 
-        data = (struct calibration_data*) args;
+		data = (struct calibration_data*) args;
 
-        //update
-        touch->min_x = data->min_x;
-        touch->max_x = data->max_x;
-        touch->min_y = data->min_y;
-        touch->max_y = data->max_y;
-    }
-    break;
-    }
+		//update
+		touch->min_x = data->min_x;
+		touch->max_x = data->max_x;
+		touch->min_y = data->max_y;
+		touch->max_y = data->min_y;
 
-    return RT_EOK;
+		/*
+			rt_kprintf("min_x = %d, max_x = %d, min_y = %d, max_y = %d\n",
+				touch->min_x, touch->max_x, touch->min_y, touch->max_y);
+		*/		
+	}
+	break;
+	}
+
+	return RT_EOK;
 }
 
 void rtgui_touch_hw_init(void)
 {
-    touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
-    if (touch == RT_NULL) return; /* no memory yet */
+	touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
+	if (touch == RT_NULL) return; /* no memory yet */
 
-    /* clear device structure */
-    rt_memset(&(touch->parent), 0, sizeof(struct rt_device));
-    touch->calibrating = RT_FALSE;
-    touch->min_x = X_MIN;
-    touch->max_x = X_MAX;
-    touch->min_y = Y_MIN;
-    touch->max_y = X_MAX;
+	/* clear device structure */
+	rt_memset(&(touch->parent), 0, sizeof(struct rt_device));
+	touch->calibrating = RT_FALSE;
+	touch->min_x = X_MIN;
+	touch->max_x = X_MAX;
+	touch->min_y = Y_MIN;
+	touch->max_y = X_MAX;
 
-    /* init device structure */
-    touch->parent.type = RT_Device_Class_Unknown;
-    touch->parent.init = rtgui_touch_init;
-    touch->parent.control = rtgui_touch_control;
-    touch->parent.private = RT_NULL;
+	/* init device structure */
+	touch->parent.type = RT_Device_Class_Unknown;
+	touch->parent.init = rtgui_touch_init;
+	touch->parent.control = rtgui_touch_control;
+	touch->parent.private = RT_NULL;
 
-    /* create 1/8 second timer */
-    touch->poll_timer = rt_timer_create("touch", touch_timer_fire, RT_NULL,
-                                        RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
+	/* create 1/8 second timer */
+	touch->poll_timer = rt_timer_create("touch", touch_timer_fire, RT_NULL,
+	                                    RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
 
-    /* register touch device to RT-Thread */
-    rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
+	/* register touch device to RT-Thread */
+	rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
 }
 
