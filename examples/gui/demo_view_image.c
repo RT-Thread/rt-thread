@@ -34,7 +34,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 		char path[32], image_type[8];
 
 		/* 设置文件路径的标签 */
-		rtgui_filelist_get_fullpath(view, path, sizeof(path));
+		rtgui_filelist_view_get_fullpath(view, path, sizeof(path));
 		if (image != RT_NULL) rtgui_image_destroy(image);
 
 		rt_memset(image_type, 0, sizeof(image_type));

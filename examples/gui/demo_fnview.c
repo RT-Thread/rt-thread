@@ -35,7 +35,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 		char path[32];
 
 		/* 在文件列表视图中成功选择文件，这里获得相应的路径名 */
-		rtgui_filelist_get_fullpath(view, path, sizeof(path));
+		rtgui_filelist_view_get_fullpath(view, path, sizeof(path));
 
 		/* 设置文件路径到文本标签 */
 		rtgui_label_set_text(label, path);

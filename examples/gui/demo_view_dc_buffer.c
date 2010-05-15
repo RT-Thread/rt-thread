@@ -69,6 +69,7 @@ rtgui_view_t *demo_view_dc_buffer(rtgui_workbench_t* workbench)
 		dc_buffer = rtgui_dc_buffer_create(50, 50);
 		RTGUI_DC_FC(dc_buffer) = blue;
 		rtgui_dc_fill_rect(dc_buffer, &rect);
+
 		RTGUI_DC_FC(dc_buffer) = red;
 		rtgui_dc_draw_circle(dc_buffer, 25, 25, 10);
 	}

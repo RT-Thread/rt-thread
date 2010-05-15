@@ -48,12 +48,7 @@ static void listitem_action(void* parameter)
 /* 返回功能的动作函数 */
 static void return_action(void* parameter)
 {
-	if (_view != RT_NULL)
-	{
-		/* 删除列表视图 */
-		rtgui_view_destroy(RTGUI_VIEW(_view));
-		_view = RT_NULL;
-	}
+	rtgui_view_end_modal(RTGUI_VIEW(_view), RTGUI_MODAL_OK);
 }
 
 /* 各个列表项定义 */
@@ -78,12 +73,14 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 
 	/* 创建一个列表视图， 项指定为items */
 	_view = rtgui_list_view_create(items, sizeof(items)/sizeof(struct rtgui_list_item),
-		&rect);
+		&rect, RTGUI_LIST_VIEW_LIST);
 	/* 在workbench中添加相应的视图 */
 	rtgui_workbench_add_view(workbench, RTGUI_VIEW(_view));
 
 	/* 模式显示视图 */
-	rtgui_view_show(RTGUI_VIEW(_view), RT_FALSE);
+	rtgui_view_show(RTGUI_VIEW(_view), RT_TRUE);
+	rtgui_view_destroy(RTGUI_VIEW(_view));
+	_view = RT_NULL;
 }
 
 /* 创建用于演示列表视图的视图 */

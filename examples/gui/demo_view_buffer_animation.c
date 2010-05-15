@@ -95,11 +95,11 @@ rtgui_view_t *demo_view_buffer_animation(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 
-	view = demo_view(workbench, "DC 动画");
+	view = demo_view(workbench, "DC 缓冲区动画");
 	if (view != RT_NULL)
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), animation_event_handler);
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), "飞线乱飞", &text_rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), "缓冲动画", &text_rect);
 	if (dc_buffer == RT_NULL)
 	{
 		rtgui_rect_t rect;
@@ -113,7 +113,7 @@ rtgui_view_t *demo_view_buffer_animation(rtgui_workbench_t* workbench)
 		rtgui_dc_fill_rect(dc_buffer, &rect);
 		RTGUI_DC_FC(dc_buffer) = black;
 		rect.x1 = 1; rect.y1 = 1;
-		rtgui_dc_draw_text(dc_buffer, "飞线乱飞", &rect);
+		rtgui_dc_draw_text(dc_buffer, "缓冲动画", &rect);
 	}
 
 	/* 启动定时器以触发动画 */
