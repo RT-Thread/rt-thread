@@ -51,6 +51,6 @@ void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view);
 rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory);
 
-void rtgui_filelist_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len);
+void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len);
 
 #endif

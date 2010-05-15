@@ -21,6 +21,8 @@
 #include <rtgui/widgets/view.h>
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/filelist_view.h>
+#include <rtgui/widgets/listbox.h>
+#include <rtgui/widgets/window.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -219,7 +221,95 @@ const static char * folder_xpm[] = {
 
 /* image for file and folder */
 static rtgui_image_t *file_image, *folder_image;
+static struct rtgui_listbox_item items[] = 
+{
+	{"打开文件夹", RT_NULL},
+	{"选择文件夹", RT_NULL},
+	{"退出", RT_NULL}
+};
 static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
+
+static void rtgui_filelist_view_on_folder_item(rtgui_widget_t* widget, struct rtgui_event* event)
+{
+	rtgui_win_t *menu;
+	rtgui_listbox_t *listbox;
+	rtgui_filelist_view_t *view;
+
+	listbox = RTGUI_LISTBOX(widget);
+	menu = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+	view = RTGUI_FILELIST_VIEW(menu->user_data);
+
+	/* hide window */
+	rtgui_win_hiden(menu);
+
+	switch (listbox->current_item)
+	{
+	case 0:
+		{
+			char* dir_ptr;
+
+			/* destroy menu window */
+			rtgui_win_destroy(menu);
+
+			dir_ptr = (char*) rtgui_malloc (256);
+			rtgui_filelist_view_get_fullpath(view, dir_ptr, 256);
+			rtgui_filelist_view_set_directory(view, dir_ptr);
+			rt_free(dir_ptr);
+		}
+		break;
+	case 1:
+		/* destroy menu window */
+		rtgui_win_destroy(menu);
+		if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
+		{
+			rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
+		}
+		break;
+
+	default:
+		/* destroy menu window */
+		rtgui_win_destroy(menu);
+		break;
+	}
+}
+
+static rt_bool_t rtgui_filelist_view_on_menu_deactivate(rtgui_widget_t* widget, struct rtgui_event* event)
+{
+	rtgui_win_t *menu;
+	menu = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+
+	/* destroy menu window */
+	rtgui_win_destroy(menu);
+
+	return RT_TRUE;
+}
+
+static void rtgui_filelist_view_menu_pop(rtgui_widget_t *parent)
+{
+	rtgui_win_t *menu;
+	rtgui_listbox_t *listbox;
+	rtgui_rect_t screen, rect = {0, 0, 140, 85};
+
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &screen);
+	rtgui_rect_moveto_align(&screen, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+
+	menu = rtgui_win_create(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(parent)), 
+		"Folder Menu", &rect, RTGUI_WIN_STYLE_DEFAULT);
+	if (menu != RT_NULL)
+	{
+		/* set user data on menu window */
+		menu->user_data = (rt_uint32_t)parent;
+
+		rtgui_win_set_ondeactivate(menu, rtgui_filelist_view_on_menu_deactivate);
+
+		listbox = rtgui_listbox_create(items, sizeof(items)/sizeof(items[0]), &rect);
+		rtgui_listbox_set_onitem(listbox, rtgui_filelist_view_on_folder_item);
+		rtgui_container_add_child(RTGUI_CONTAINER(menu), RTGUI_WIDGET(listbox));
+		rtgui_widget_focus(RTGUI_WIDGET(listbox));
+
+		rtgui_win_show(menu, RT_FALSE);
+	}
+}
 
 static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 {
@@ -390,6 +480,65 @@ void rtgui_filelist_view_update_current(struct rtgui_filelist_view* view, rt_uin
 	rtgui_dc_end_drawing(dc);
 }
 
+static void rtgui_filelist_view_onenturn(struct rtgui_filelist_view* view)
+{
+	if (view->items[view->current_item].type == RTGUI_FITEM_DIR)
+	{
+		char new_path[64];
+
+		if (strcmp(view->items[view->current_item].name, ".") == 0) return ;
+		if (strcmp(view->items[view->current_item].name, "..") == 0)
+		{
+			char *ptr;
+			ptr = strrchr(view->current_directory, PATH_SEPARATOR);
+
+			if (ptr == RT_NULL) return ;
+			if (ptr == &(view->current_directory[0]))
+			{
+				/* it's root directory */
+				new_path[0] = PATH_SEPARATOR;
+				new_path[1] = '\0';
+			}
+			else
+			{
+				strncpy(new_path, view->current_directory, ptr - view->current_directory + 1);
+				new_path[ptr - view->current_directory] = '\0';
+			}
+		}
+		else if (view->current_item == 0 && 
+#ifdef _WIN32
+			(view->current_directory[1] == ':') && (view->current_directory[2] == '\\'))
+#else
+			(view->current_directory[0] == '/') && (view->current_directory[1] == '\0'))
+#endif
+		{
+			if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
+			{
+				rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_CANCEL);
+			}
+			else
+			{
+				rtgui_filelist_view_destroy(view);
+			}
+
+			return ;
+		}
+		else
+		{
+			rtgui_filelist_view_menu_pop(RTGUI_WIDGET(view));
+			return ;
+		}
+		rtgui_filelist_view_set_directory(view, new_path);
+	}
+	else
+	{
+		if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
+		{
+			rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
+		}
+	}
+}
+
 rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
 	struct rtgui_filelist_view* view = RT_NULL;
@@ -431,18 +580,31 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 			if (rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK)
 			{
 				rt_uint16_t index;
+				rt_uint16_t current_page;
+				rt_uint16_t old_item;
+
 				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
+				
+				/* get current page */
+				current_page = view->current_item/view->page_items;
+				old_item = view->current_item;
 
-				if ((index < view->items_count) && (index < view->page_items))
+				if (index + current_page * view->page_items < view->items_count)
 				{
-					rt_uint16_t old_item;
-
-					old_item = view->current_item;
-
 					/* set selected item */
-					view->current_item = (old_item/view->page_items) * view->page_items + index;
-					rtgui_filelist_view_update_current(view, old_item);
+					view->current_item = index + current_page * view->page_items;
+					if (emouse->button & RTGUI_MOUSE_BUTTON_DOWN)
+					{
+						rtgui_filelist_view_update_current(view, old_item);
+					}
+					else
+					{
+						/* up event */
+						rtgui_filelist_view_onenturn(view);
+					}
 				}
+
+				return RT_TRUE;
 			}
 		}
 		break;
@@ -461,87 +623,29 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 					if (view->current_item > 0)
 						view->current_item --;
 					rtgui_filelist_view_update_current(view, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
                 case RTGUIK_DOWN:
 					if (view->current_item < view->items_count - 1)
 						view->current_item ++;
 					rtgui_filelist_view_update_current(view, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_LEFT:
 					if (view->current_item - view->page_items >= 0)
 						view->current_item -= view->page_items;
 					rtgui_filelist_view_update_current(view, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RIGHT:
 					if (view->current_item + view->page_items < view->items_count - 1)
 						view->current_item += view->page_items;
 					rtgui_filelist_view_update_current(view, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RETURN:
-					if (view->items[view->current_item].type == RTGUI_FITEM_DIR)
-					{
-						char new_path[64];
-
-						if (strcmp(view->items[view->current_item].name, ".") == 0) return RT_FALSE;
-						if (strcmp(view->items[view->current_item].name, "..") == 0)
-						{
-							char *ptr;
-							ptr = strrchr(view->current_directory, PATH_SEPARATOR);
-
-							if (ptr == RT_NULL) return RT_FALSE;
-							if (ptr == &(view->current_directory[0]))
-							{
-								/* it's root directory */
-								new_path[0] = PATH_SEPARATOR;
-								new_path[1] = '\0';
-							}
-							else
-							{
-								strncpy(new_path, view->current_directory, ptr - view->current_directory + 1);
-								new_path[ptr - view->current_directory] = '\0';
-							}
-						}
-						else if (view->current_item == 0 && 
-#ifdef _WIN32
-							(view->current_directory[1] == ':') && (view->current_directory[2] == '\\'))
-#else
-							(view->current_directory[0] == '/') && (view->current_directory[1] == '\0'))
-#endif
-						{
-							if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
-							{
-								rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_CANCEL);
-							}
-							else
-							{
-								rtgui_filelist_view_destroy(view);
-							}
-
-							return RT_FALSE;
-						}
-						else
-						{
-							if (view->current_directory[strlen(view->current_directory) - 1] != PATH_SEPARATOR)
-								rt_snprintf(new_path, sizeof(new_path), "%s%c%s",view->current_directory, PATH_SEPARATOR,
-									view->items[view->current_item].name);
-							else
-								rt_snprintf(new_path, sizeof(new_path), "%s%s",view->current_directory, 
-									view->items[view->current_item].name);
-						}
-						rtgui_filelist_view_set_directory(view, new_path);
-					}
-					else
-					{
-						if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
-						{
-							rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
-						}
-					}
-					return RT_FALSE;
+					rtgui_filelist_view_onenturn(view);
+					return RT_TRUE;
 
                 default:
                     break;
@@ -720,10 +824,14 @@ __return:
     rtgui_widget_update(RTGUI_WIDGET(view));
 }
 
-void rtgui_filelist_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len)
+void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len)
 {
 	RT_ASSERT(view != RT_NULL);
 
-	rt_sprintf(path, "%s%c%s", view->current_directory, PATH_SEPARATOR,
-		view->items[view->current_item].name);
+	if (view->current_directory[strlen(view->current_directory) - 1] != PATH_SEPARATOR)
+		rt_snprintf(path, len, "%s%c%s",view->current_directory, PATH_SEPARATOR,
+			view->items[view->current_item].name);
+	else
+		rt_snprintf(path, len, "%s%s",view->current_directory, 
+			view->items[view->current_item].name);
 }

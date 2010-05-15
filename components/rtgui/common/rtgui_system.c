@@ -125,6 +125,14 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 		}
 		break;
 
+	case RTGUI_EVENT_KBD:
+		{
+			struct rtgui_event_kbd *ekbd = (struct rtgui_event_kbd*) event;
+			if (ekbd->wid != RT_NULL)
+				rt_kprintf("win: %s", ekbd->wid->title);
+		}
+		break;
+
 	case RTGUI_EVENT_CLIP_INFO:
 		{
 			struct rtgui_event_clip_info *info = (struct rtgui_event_clip_info *)event;

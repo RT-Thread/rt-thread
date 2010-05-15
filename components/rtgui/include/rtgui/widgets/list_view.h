@@ -38,6 +38,10 @@ struct rtgui_list_item
 /** Checks if the object is a filelist view */
 #define RTGUI_IS_LIST_VIEW(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_LIST_VIEW_TYPE))
 
+#define RTGUI_LIST_VIEW_LIST		0x00
+#define RTGUI_LIST_VIEW_ICON		0x01
+#define RTGUI_LIST_VIEW_REPORT		0x02
+
 struct rtgui_list_view
 {
 	struct rtgui_view parent;
@@ -46,19 +50,25 @@ struct rtgui_list_view
 	/* list item */
     const struct rtgui_list_item* items;
 
+	/* layout flag */
+	rt_uint16_t flag;
+
 	/* total number of items */
 	rt_uint16_t items_count;
     /* the number of item in a page */
     rt_uint16_t page_items;
-    /* current item */
+	/* current item */
     rt_uint16_t current_item;
+
+	/* icon layout */
+	rt_uint8_t row_items, col_items;
 };
 typedef struct rtgui_list_view rtgui_list_view_t;
 
 rtgui_type_t *rtgui_list_view_type_get(void);
 
 rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, rt_uint16_t count,
-    rtgui_rect_t *rect);
+    rtgui_rect_t *rect, rt_uint16_t flag);
 void rtgui_list_view_destroy(rtgui_list_view_t* view);
 
 rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);

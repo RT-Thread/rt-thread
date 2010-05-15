@@ -201,7 +201,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 			rtgui_widget_get_rect(widget, &rect);
 			rtgui_widget_rect_to_device(widget, &rect);
 
-			if (rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK)
+			if ((rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK) && (box->items_count > 0))
 			{
 				rt_uint16_t index;
 				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
@@ -249,13 +249,14 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 					}
 				}
 			}
+
+			return RT_TRUE;
 		}
-		break;
 
     case RTGUI_EVENT_KBD:
         {
             struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-            if (ekbd->type == RTGUI_KEYDOWN)
+            if ((ekbd->type == RTGUI_KEYDOWN) && (box->items_count > 0))
             {
 				rt_uint16_t old_item;
 
@@ -334,3 +335,18 @@ void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_onitem_func_t func)
 
 	box->on_item = func;
 }
+
+void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* items, rt_uint16_t count)
+{
+	rtgui_rect_t rect;
+	
+	box->items = items;
+	box->items_count = count;
+	box->current_item = 0;
+
+	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
+	box->page_items = rtgui_rect_height(rect) / (2 + rtgui_theme_get_selected_height());
+
+	rtgui_widget_update(RTGUI_WIDGET(box));
+}
+

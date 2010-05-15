@@ -465,7 +465,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
-		if (win->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
+		if (win->flag & RTGUI_WIN_STYLE_MODAL)
 		{
 			if (win->modal_widget != RT_NULL)
 				return win->modal_widget->event_handler(win->modal_widget, event);
@@ -500,7 +500,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
     case RTGUI_EVENT_KBD:
-		if (win->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
+		if (win->flag & RTGUI_WIN_STYLE_MODAL)
 		{
 			if (win->modal_widget != RT_NULL)
 				return win->modal_widget->event_handler(win->modal_widget, event);

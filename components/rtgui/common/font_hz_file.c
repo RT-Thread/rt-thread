@@ -93,7 +93,7 @@ static void rtgui_hz_file_font_load(struct rtgui_font* font)
 
 static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
-	rt_base_t h;
+	register rt_base_t h, word_bytes;
 	rt_uint8_t* str;
     struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
     RT_ASSERT(hz_file_font != RT_NULL);
@@ -101,6 +101,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 	/* drawing height */
 	h = (hz_file_font->font_size + rect->y1 > rect->y2)?
         rect->y2 - rect->y1 : hz_file_font->font_size;
+	word_bytes = (hz_file_font->font_size + 7) / 8;
 
 	str = (rt_uint8_t*)text;
 
