@@ -158,7 +158,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 		rtgui_toplevel_t* top = RTGUI_TOPLEVEL(hw->owner->toplevel);
 
 		top->drawing --;
-		if (top->drawing == 0)
+		if ((top->drawing == 0) && (hw->visible == RT_TRUE))
 		{
 #ifdef __WIN32__
 #ifdef RTGUI_USING_MOUSE_CURSOR
@@ -186,7 +186,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 		rtgui_toplevel_t* top = RTGUI_TOPLEVEL(hw->owner->toplevel);
 		top->drawing --;
 
-		if (top->drawing == 0)
+		if ((top->drawing == 0) && (hw->visible == RT_TRUE))
 		{
 #ifdef __WIN32__
 #ifdef RTGUI_USING_MOUSE_CURSOR
@@ -207,7 +207,6 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 #endif
 		}
 	}
-
 
 	return RT_TRUE;
 }

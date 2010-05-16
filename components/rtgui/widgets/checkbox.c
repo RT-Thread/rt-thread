@@ -87,7 +87,7 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui
 	return RT_FALSE;
 }
 
-struct rtgui_checkbox* rtgui_checkbox_create(unsigned char* text, rt_bool_t checked)
+struct rtgui_checkbox* rtgui_checkbox_create(const char* text, rt_bool_t checked)
 {
     struct rtgui_checkbox* box;
 

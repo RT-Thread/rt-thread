@@ -1,4 +1,5 @@
 #include <rtgui/rtgui_xml.h>
+#include <rtgui/rtgui_system.h>
 
 /* Internal states that the parser can be in at any given time. */
 enum {
@@ -173,22 +174,16 @@ const char* rtgui_xml_event_str(rt_uint8_t event)
 	{
 	case EVENT_START:
 		return "start tag";
-		break;
 	case EVENT_END:
 		return "end tag";
-		break;
 	case EVENT_TEXT:
 		return "text";
-		break;
 	case EVENT_NAME:
 		return "attr name";
-		break;
 	case EVENT_VAL:
 		return "attr val";
-		break;
 	case EVENT_END_DOC:
 		return "end document";
-		break;
 	default:
 		break;
 	}
