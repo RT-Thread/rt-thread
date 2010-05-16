@@ -14,8 +14,7 @@
  * 2006-08-10     Bernard      add version information
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
- * 2010-04-11     yi.qiu          add module feature
-
+ * 2010-04-11     yi.qiu       add module feature
  */
 
 #ifndef __RT_THREAD_H__

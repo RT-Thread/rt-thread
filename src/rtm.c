@@ -16,7 +16,7 @@
 #include <rtm.h>
 
 /* some buildin kernel symbol */
-
+#ifdef RT_USING_MODULE
 /*
  * thread  interface symbol 
  */
@@ -142,3 +142,4 @@ RTM_EXPORT(rt_timer_control)
  */
 RTM_EXPORT(rt_kprintf)
 
+#endif
