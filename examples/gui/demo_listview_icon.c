@@ -12,7 +12,6 @@
 
 static rtgui_workbench_t* workbench = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
-static rtgui_image_t* return_image = RT_NULL;
 
 /* 列表项的动作函数 */
 static void listitem_action(void* parameter)
@@ -294,7 +293,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 			rt_snprintf(item_name, sizeof(item_name), "图标%d", index);
 			items[index].action = listitem_action;
 			items[index].image = item_icon;
-			items[index].name = strdup(item_name);
+			items[index].name = rt_strdup(item_name);
 			items[index].parameter = (void*) index;
 		}
 
@@ -313,7 +312,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	rtgui_view_show(RTGUI_VIEW(_view), RT_TRUE);
 	rtgui_view_destroy(RTGUI_VIEW(_view));
 
-	_view = RT_TRUE;
+	_view = RT_NULL;
 }
 
 /* 创建用于演示列表视图的视图 */
@@ -327,10 +326,10 @@ rtgui_view_t* demo_listview_icon_view(rtgui_workbench_t* workbench)
 
 	if (item_icon == RT_NULL)
 		item_icon = rtgui_image_create_from_mem("xpm",
-			image_xpm, sizeof(image_xpm), RT_TRUE);
+			(const rt_uint8_t*)image_xpm, sizeof(image_xpm), RT_TRUE);
 	if (exit_icon == RT_NULL)
 		exit_icon = rtgui_image_create_from_mem("xpm",
-			exit_xpm, sizeof(image_xpm), RT_TRUE);
+			(const rt_uint8_t*)exit_xpm, sizeof(image_xpm), RT_TRUE);
 
 	/* 添加动作按钮 */
 	demo_view_get_rect(view, &rect);
