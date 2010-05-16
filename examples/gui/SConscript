@@ -1,6 +1,7 @@
 Import('env')
+Import('projects')
 
-src_local = Split("""
+src = Split("""
 demo_view_dc_buffer.c
 demo_fnview.c
 demo_listview.c
@@ -27,7 +28,22 @@ gui_init.c
 mywidget.c
 """)
 
-# The set of source files associated with this SConscript file.
-obj = env.Object(src_local)
+group = {}
+group['name'] = 'GUI demo'
+group['src'] = File(src)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = ['']
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
 
-Return('obj')
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')

@@ -1,5 +1,6 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_server.h>
+#include <rtgui/rtgui_system.h>
 
 extern void rt_hw_lcd_init(void);
 extern void rt_hw_key_init(void);
