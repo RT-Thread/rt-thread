@@ -177,8 +177,8 @@ void rt_hw_lcd_update(rtgui_rect_t *rect)
 	pitch = 2 * (rect->x2 - rect->x1);
 
 	/* copy from framebuffer to physical framebuffer */
-	src_ptr = &_rt_framebuffer[rect->x1][rect->y1];
-	dst_ptr = &_rt_hw_framebuffer[rect->x1][rect->y1];
+	src_ptr = &_rt_framebuffer[rect->y1][rect->x1];
+	dst_ptr = &_rt_hw_framebuffer[rect->y1][rect->x1];
 
 	for (index = rect->y1; index < rect->y2; index ++)
 	{
