@@ -148,7 +148,7 @@ rt_bool_t today_workbench_event_handler(rtgui_widget_t *widget, rtgui_event_t *e
     {
         struct rtgui_event_mouse* emouse = (struct rtgui_event_mouse*)event;
         //if (emouse->button == RTGUI_MOUSE_BUTTON_UP | RTGUI_MOUSE_BUTTON_LEFT)
-	if(0)
+		if(0)
 		{
             /* active home view */
             if (workbench->current_view != home_view)
@@ -192,7 +192,7 @@ static void today_entry(void* parameter)
     /* add function view */
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 	function_view = (struct rtgui_view*)rtgui_list_view_create(function_list,
-		sizeof(function_list)/sizeof(struct rtgui_list_item), &rect);
+		sizeof(function_list)/sizeof(struct rtgui_list_item), &rect, RTGUI_LIST_VIEW_LIST);
 	rtgui_workbench_add_view(workbench, function_view);
 
 	rtgui_workbench_event_loop(workbench);

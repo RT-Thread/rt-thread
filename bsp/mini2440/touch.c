@@ -255,7 +255,7 @@ static void rt_touch_handler(int irqno)
 	}
 
 	/* clear interrupt */
-	INTPND |= (rt_uint32_t)(1 << INTADC);
+	INTPND |= (1ul << INTADC);
 }
 
 /* RT-Thread Device Interface */
@@ -279,7 +279,7 @@ static rt_err_t rtgui_touch_init (rt_device_t dev)
 	rt_hw_interrupt_umask(INTADC);
 
 	/* clear interrupt */
-	INTPND |= (rt_uint32_t)(1 << INTADC);
+	INTPND |= (1ul << INTADC);
 	
 	SUBSRCPND |= BIT_SUB_TC;
 	SUBSRCPND |= BIT_SUB_ADC;

@@ -16,7 +16,7 @@
 #include <dfs_posix.h>
 #include "string.h"
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(RT_USING_MODULE)
 #include <finsh.h>
 static char buffer[4096];
 
