@@ -201,8 +201,7 @@ CLIENT *clntudp_create(struct sockaddr_in *raddr,
 }
 
 static enum clnt_stat
-clntudp_call(CLIENT *cl, 
-	unsigned long proc, 
+clntudp_call(CLIENT *cl, unsigned long proc, 
 	xdrproc_t xargs, char* argsp, 
 	xdrproc_t xresults, char* resultsp, 
 	struct timeval utimeout)
@@ -259,6 +258,9 @@ send_again:
 		inlen = recvfrom(cu->cu_sock, cu->cu_inbuf,
 						 (int) cu->cu_recvsz, 0,
 						 (struct sockaddr *) &from, &fromlen);
+
+		if (inlen <= 0)
+			rt_kprintf("recv error: len %d, errno %d\n", inlen, lwip_get_error(cu->cu_sock));
 	}while (inlen < 0 && errno == EINTR);
 
 	if (inlen < 4)
@@ -316,20 +318,14 @@ send_again:
 	return (cu->cu_error.re_status);
 }
 
-static void clntudp_geterr(cl, errp)
-CLIENT *cl;
-struct rpc_err *errp;
+static void clntudp_geterr(CLIENT *cl, struct rpc_err *errp)
 {
 	register struct cu_data *cu = (struct cu_data *) cl->cl_private;
 
 	*errp = cu->cu_error;
 }
 
-
-static bool_t clntudp_freeres(cl, xdr_res, res_ptr)
-CLIENT *cl;
-xdrproc_t xdr_res;
-char* res_ptr;
+static bool_t clntudp_freeres(CLIENT *cl, xdrproc_t xdr_res, char* res_ptr)
 {
 	register struct cu_data *cu = (struct cu_data *) cl->cl_private;
 	register XDR *xdrs = &(cu->cu_outxdrs);
@@ -338,15 +334,11 @@ char* res_ptr;
 	return ((*xdr_res) (xdrs, res_ptr));
 }
 
-static void clntudp_abort( /*h */ )
-/*CLIENT *h; */
+static void clntudp_abort()
 {
 }
 
-static bool_t clntudp_control(cl, request, info)
-CLIENT *cl;
-int request;
-char *info;
+static bool_t clntudp_control(CLIENT *cl, int request, char *info)
 {
 	register struct cu_data *cu = (struct cu_data *) cl->cl_private;
 
@@ -377,8 +369,7 @@ char *info;
 	return (TRUE);
 }
 
-static void clntudp_destroy(cl)
-CLIENT *cl;
+static void clntudp_destroy(CLIENT *cl)
 {
 	register struct cu_data *cu = (struct cu_data *) cl->cl_private;
 
@@ -391,4 +382,3 @@ CLIENT *cl;
 	rt_free(cu);
 	rt_free(cl);
 }
-
