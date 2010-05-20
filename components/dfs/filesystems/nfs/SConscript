@@ -1,0 +1,40 @@
+Import('env')
+Import('projects')
+Import('RTT_ROOT')
+Import('rtconfig')
+
+src = Split('''
+mount_clnt.c
+mount_xdr.c
+nfs_clnt.c
+nfs_xdr.c
+dfs_nfs.c
+rpc/auth_none.c
+rpc/clnt_generic.c
+rpc/clnt_udp.c
+rpc/rpc_prot.c
+rpc/pmap.c
+rpc/xdr.c
+rpc/xdr_mem.c
+''')
+
+# group definitions
+group = {}
+group['name'] = 'nfsclient'
+group['src'] = File(src) #Glob('*.c')
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/components/dfs/filesystems/nfs']
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')
