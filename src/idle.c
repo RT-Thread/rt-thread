@@ -66,7 +66,7 @@ static void rt_thread_idle_entry(void* parameter)
 		{
 			rt_base_t lock;
 #ifdef RT_USING_MODULE
-			rt_module_t module;
+			rt_module_t module = thread->module_parent;
 #endif
 			struct rt_thread* thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
 
@@ -81,12 +81,10 @@ static void rt_thread_idle_entry(void* parameter)
 			/* release thread's stack */
 			rt_free(thread->stack_addr);
 
-#ifdef RT_USING_MODULE
-			module = thread->module_parent;
-
 			/* delete thread object */
 			rt_object_delete((rt_object_t)thread);
 
+#ifdef RT_USING_MODULE
 			if(module != RT_NULL)
 			{	
 				/* if the thread is module's main thread */
