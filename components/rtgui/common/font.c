@@ -171,27 +171,31 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 	rtgui_rect_t* rect)
 {
 	const rt_uint8_t* font_ptr;
-	rt_uint16_t x, y, w, h;
-	register rt_base_t i, j;
-
-	x = rect->x1;
-	y = rect->y1;
+	rt_uint16_t x, y, h;
+	register rt_base_t i, j, k, word_bytes;
 
 	/* check first and last char */
 	if (ch < font->first_char || ch > font->last_char) return;
-	font_ptr = font->bmp + (ch - font->first_char) * font->height;
 
-	w = (font->width + x > rect->x2)? rect->x2 - rect->x1 : font->width;
-	h = (font->height + y > rect->y2)? rect->y2 - rect->y1 : font->height;
+	x = rect->x1;
+	y = rect->y1;
+	word_bytes = (((font->width - 1) / 8) + 1);
 
-	for (i = 0; i < h; i ++ )
+	font_ptr = font->bmp + (ch - font->first_char) * word_bytes * font->height;
+
+	h = (font->height + y > rect->y2) ? rect->y2 - rect->y1 : font->height;
+
+	for (i = 0; i < h; i++)
 	{
-		for (j = 0; j < w; j ++)
+		for (j = 0; j < word_bytes; j++)
 		{
-			if ( ((font_ptr[i] >> (7-j)) & 0x01) != 0)
+			for (k = 0; k < 8; k++)
 			{
-				/* draw a pixel */
-				rtgui_dc_draw_point(dc, j + x, i + y);
+				if (((font_ptr[i * word_bytes + j] >> (7 - k)) & 0x01) != 0)
+				{
+					/* draw a pixel */
+					rtgui_dc_draw_point(dc, k + 8 * j + x, i + y);
+				}
 			}
 		}
 	}
