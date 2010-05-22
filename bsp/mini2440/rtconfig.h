@@ -76,6 +76,7 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_STACK_SIZE 4096
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
@@ -91,9 +92,12 @@
 #define RT_USING_DFS_ELMFAT
 /* use long file name feature 			*/
 #define RT_DFS_ELM_USE_LFN			1
-/* the max number of file length 			*/
-#define RT_DFS_ELM_MAX_LFN		32		
+/* the max number of file length 		*/
+#define RT_DFS_ELM_MAX_LFN		32
 /* #define RT_USING_DFS_YAFFS2 */
+
+#define RT_USING_DFS_NFS
+#define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
 
 /* #define DFS_USING_WORKDIR */
 

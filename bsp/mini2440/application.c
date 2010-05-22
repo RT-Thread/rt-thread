@@ -90,6 +90,20 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
+/* NFSv3 Initialization */
+#if defined(RT_USING_DFS) && defined(RT_USING_LWIP) && defined(RT_USING_DFS_NFS)
+	{
+		extern void nfs_init(void);
+		nfs_init();
+
+		if (dfs_mount(RT_NULL, "/nfs", "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
+		{
+			rt_kprintf("NFSv3 File System initialized!\n");
+		}
+		else
+			rt_kprintf("NFSv3 File System initialzation failed!\n");
+	}
+#endif
 }
 
 void rt_led_thread_entry(void* parameter)

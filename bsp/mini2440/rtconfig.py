@@ -3,14 +3,15 @@ import SCons.cpp
 # component options
 
 # make all component false
-RT_USING_FINSH 		= False
-RT_USING_DFS 		= False
+RT_USING_FINSH      = False
+RT_USING_DFS        = False
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
-RT_USING_LWIP 		= False
-RT_USING_WEBSERVER	= False
-RT_USING_RTGUI 		= False
-RT_USING_MODBUS		= False
+RT_USING_DFS_NFS    = False
+RT_USING_LWIP       = False
+RT_USING_WEBSERVER  = False
+RT_USING_RTGUI      = False
+RT_USING_MODBUS     = False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -35,9 +36,11 @@ if rtconfig_ns.has_key('RT_USING_DFS'):
     if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
         RT_USING_DFS_ELMFAT = True
     if rtconfig_ns.has_key('RT_DFS_ELM_USE_LFN'):
-        RT_DFS_ELM_USE_LFN = True			
+        RT_DFS_ELM_USE_LFN = True           
     if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
         RT_USING_DFS_YAFFS2 = True
+    if rtconfig_ns.has_key('RT_USING_DFS_NFS'):
+        RT_USING_DFS_NFS    = True
 
 # lwip options
 if rtconfig_ns.has_key('RT_USING_LWIP'):
@@ -54,8 +57,8 @@ if rtconfig_ns.has_key('RT_USING_RTGUI'):
 RT_USING_LCD_TYPE = 'PNL_T35'
 
 # toolchains options
-ARCH	 = 'arm'
-CPU		 = 's3c24x0'
+ARCH     = 'arm'
+CPU      = 's3c24x0'
 TextBase = '0x30000000'
 
 CROSS_TOOL 	= 'keil'
