@@ -74,7 +74,7 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
     #include <stdarg.h>
     #define SECTION(x)  				@ x
     #define UNUSED
-	#define ALIGN(n)					#pragma pack(n)
+	#define ALIGN(n)					#pragma data_alignment=n
     #define rt_inline 					inline
 	#define RTT_API
 
@@ -317,8 +317,6 @@ struct rt_thread
 	rt_uint8_t  flags;									/* thread's flags 							*/
 
 	rt_list_t	list;									/* the object list 							*/
-
-	rt_thread_t tid;									/* the thread id 							*/
 	rt_list_t	tlist;									/* the thread list 							*/
 
 	/* stack point and entry */
@@ -330,6 +328,8 @@ struct rt_thread
 
 	/* error code */
 	rt_err_t    error;									/* error code 								*/
+
+	rt_uint8_t	stat;									/* thread stat 								*/
 
 	/* priority */
 	rt_uint8_t	current_priority;						/* current priority 						*/
@@ -345,8 +345,6 @@ struct rt_thread
 	rt_uint32_t event_set;
 	rt_uint8_t	event_info;
 #endif
-
-	rt_uint8_t	stat;									/* thread stat 								*/
 
 	rt_ubase_t	init_tick;								/* thread's tick 							*/
 	rt_ubase_t 	remaining_tick;							/* remaining tick 							*/
@@ -421,7 +419,7 @@ struct rt_semaphore
 {
 	struct rt_ipc_object parent;
 
-	rt_ubase_t value;									/* value of semaphore. 						*/
+	rt_uint16_t value;									/* value of semaphore. 						*/
 };
 typedef struct rt_semaphore* rt_sem_t;
 #endif
@@ -434,12 +432,12 @@ struct rt_mutex
 {
 	struct rt_ipc_object 	parent;
 
-	rt_ubase_t 				value;						/* value of mutex. 							*/
+	rt_uint8_t 				value;						/* value of mutex. 							*/
+
+	rt_uint8_t 				original_priority;			/* priority of last thread hold the mutex. 	*/
+	rt_uint8_t 				hold;			 			/* numbers of thread hold the mutex. 		*/
 
 	struct rt_thread		*owner;						/* current owner of mutex. 					*/
-	rt_uint8_t 				original_priority;			/* priority of last thread hold the mutex. 	*/
-
-	rt_ubase_t hold;			 						/* numbers of thread hold the mutex. 		*/
 };
 typedef struct rt_mutex* rt_mutex_t;
 #endif
@@ -474,10 +472,10 @@ struct rt_mailbox
 
 	rt_uint32_t* msg_pool;							/* start address of message buffer. 			*/
 
-	rt_size_t size;									/* size of message pool. 						*/
+	rt_uint16_t size;								/* size of message pool. 						*/
 
-	rt_ubase_t entry;								/* index of messages in msg_pool. 				*/
-	rt_ubase_t in_offset, out_offset;				/* in/output offset of the message buffer.		*/
+	rt_uint16_t entry;								/* index of messages in msg_pool. 				*/
+	rt_uint16_t in_offset, out_offset;				/* in/output offset of the message buffer.		*/
 };
 typedef struct rt_mailbox* rt_mailbox_t;
 #endif
@@ -492,14 +490,14 @@ struct rt_messagequeue
 
 	void* msg_pool;									/* start address of message queue. 				*/
 
-	rt_size_t msg_size;								/* message size of each message. 				*/
-	rt_size_t max_msgs;								/* max number of messages. 						*/
+	rt_uint16_t msg_size;							/* message size of each message. 				*/
+	rt_uint16_t max_msgs;							/* max number of messages. 						*/
+
+	rt_uint16_t entry;								/* index of messages in the queue. 				*/
 
 	void* msg_queue_head;							/* list head. 									*/
 	void* msg_queue_tail;							/* list tail. 									*/
 	void* msg_queue_free;							/* pointer indicated the free node of queue. 	*/
-
-	rt_ubase_t entry;								/* index of messages in the queue. 				*/
 };
 typedef struct rt_messagequeue* rt_mq_t;
 #endif
