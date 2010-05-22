@@ -13,6 +13,7 @@
  * 2006-05-27     Bernard      add support for same priority thread schedule
  * 2006-08-10     Bernard      remove the last rt_schedule in rt_tick_increase
  * 2010-03-08     Bernard      remove rt_passed_second
+ * 2010-05-20     Bernard      fix the tick exceeds the maximum limits
  */
 
 #include <rtthread.h>
@@ -20,6 +21,7 @@
 static rt_tick_t rt_tick;
 
 extern void rt_timer_check(void);
+extern void rt_timer_switch(void);
 
 /**
  * This function will init system tick and set it to zero.
@@ -57,10 +59,14 @@ void rt_tick_increase()
 	struct rt_thread* thread;
 
 	/* increase the global tick */
-	++ rt_tick;
+	if (rt_tick == RT_TICK_MAX)
+	{
+		/* switch to long timer list */
+		rt_timer_switch();
 
-	/* check timer  */
-	rt_timer_check();
+		rt_tick = 0;
+	}
+	else ++ rt_tick;
 
 	/* check time slice */
 	thread = rt_thread_self();
@@ -74,6 +80,9 @@ void rt_tick_increase()
 		/* yield */
 	    rt_thread_yield();
 	}
+
+	/* check timer  */
+	rt_timer_check();
 }
 
 /**

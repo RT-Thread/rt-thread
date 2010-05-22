@@ -15,6 +15,7 @@
  * 2006-08-10     Bernard      fix the periodic timer bug
  * 2006-09-03     Bernard      implement rt_timer_detach
  * 2009-11-11     LiJin        add soft timer
+ * 2010-05-12     Bernard      fix the timer check bug.
  */
 
 #include <rtthread.h>
@@ -25,11 +26,11 @@
 /* #define RT_TIMER_DEBUG */
 
 /* hard timer list */
-static rt_list_t rt_timer_list;
+static rt_list_t rt_timer_list, rt_long_timer_list;
 
 #ifdef RT_USING_TIMER_SOFT
 /* soft timer list */
-static rt_list_t rt_soft_timer_list;
+static rt_list_t rt_soft_timer_list, rt_soft_long_timer_list;
 #endif
 
 #ifdef RT_USING_HOOK
@@ -202,9 +203,9 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
  */
 rt_err_t rt_timer_start(rt_timer_t timer)
 {
-	rt_list_t *n;
 	struct rt_timer* t;
 	register rt_base_t level;
+	rt_list_t *n, *timer_list;
 
 	/* timer check */
 	RT_ASSERT(timer != RT_NULL);
@@ -214,15 +215,24 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	if (rt_object_take_hook != RT_NULL) rt_object_take_hook(&(timer->parent));
 #endif
 
-	timer->timeout_tick = rt_tick_get() + timer->init_tick;
-
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
+
+	/* get timeout tick, which will wrap around if it reaches max ticks */
+	timer->timeout_tick = rt_tick_get() + timer->init_tick;
+
 #ifdef RT_USING_TIMER_SOFT
 	if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
 	{
+		if ((RT_TICK_MAX - timer->init_tick) < rt_tick_get())
+			/* it's a long timer */
+			timer_list = &rt_soft_long_timer_list;
+		else
+			/* it's a short timer */
+			timer_list = &rt_soft_timer_list;
+
         /* insert timer to soft timer list */
-		for (n = rt_soft_timer_list.next; n != &rt_soft_timer_list; n = n->next)
+		for (n = timer_list->next; n != timer_list; n = n->next)
 		{
 			t = rt_list_entry(n, struct rt_timer, list);
 			if (t->timeout_tick > timer->timeout_tick)
@@ -232,7 +242,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 			}
 		}
 		/* no found suitable position in timer list */
-		if (n == &rt_soft_timer_list)
+		if (n == timer_list)
 		{
 			rt_list_insert_before(n, &(timer->list));
 		}
@@ -240,8 +250,15 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	else
 #endif
 	{
+		if ((RT_TICK_MAX - timer->init_tick) < rt_tick_get())
+			/* it's a long timer */
+			timer_list = &rt_long_timer_list;
+		else
+			/* it's a short timer */
+			timer_list = &rt_timer_list;
+
 		/* insert timer to system timer list */
-		for (n = rt_timer_list.next; n != &rt_timer_list; n = n->next)
+		for (n = timer_list->next; n != timer_list; n = n->next)
 		{
 			t = rt_list_entry(n, struct rt_timer, list);
 			if (t->timeout_tick > timer->timeout_tick)
@@ -251,8 +268,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 			}
 		}
 
-		/* no found suitable position in timer list */
-		if (n == &rt_timer_list)
+		/* not found suitable position in timer list */
+		if (n == timer_list)
 		{
 			rt_list_insert_before(n, &(timer->list));
 		}
@@ -338,6 +355,64 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
 	return RT_EOK;
 }
 
+void rt_timer_switch(void)
+{
+	rt_base_t level;
+	rt_timer_t t;
+
+	/* disable interrupt */
+	level = rt_hw_interrupt_disable();
+
+	/* switch system timer list to long timer list */
+
+	/* remove all timer in the old timer list */
+	while (!rt_list_isempty(&rt_timer_list))
+	{
+		t = rt_list_entry(rt_timer_list.next, struct rt_timer, list);
+#ifdef RT_USING_HOOK
+		if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
+#endif
+
+		/* remove timer from timer list firstly */
+		rt_list_remove(&(t->list));
+
+		/* call timeout function */
+		t->timeout_func(t->parameter);
+	}
+
+	rt_timer_list.next = rt_long_timer_list.next;
+	rt_timer_list.prev = rt_long_timer_list.prev;
+	rt_long_timer_list.next->prev = &rt_timer_list;
+	rt_long_timer_list.prev->next = &rt_timer_list;
+	rt_list_init(&rt_long_timer_list);
+
+#ifdef RT_USING_TIMER_SOFT
+	/* remove all timer in the old timer list */
+	while (!rt_list_isempty(&rt_soft_timer_list))
+	{
+		t = rt_list_entry(rt_soft_timer_list.next, struct rt_timer, list);
+#ifdef RT_USING_HOOK
+		if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
+#endif
+
+		/* remove timer from timer list firstly */
+		rt_list_remove(&(t->list));
+
+		/* call timeout function */
+		t->timeout_func(t->parameter);
+	}
+
+	rt_soft_timer_list.next = rt_soft_long_timer_list.next;
+	rt_soft_timer_list.prev = rt_soft_long_timer_list.prev;
+	rt_soft_long_timer_list.next->prev = &rt_soft_timer_list;
+	rt_soft_long_timer_list.prev->next = &rt_soft_timer_list;
+	rt_list_init(&rt_soft_long_timer_list);
+#endif
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(level);
+}
+
 /**
  * This function will check timer list, if a timeout event happens, the
  * corresponding timeout function will be invoked.
@@ -348,9 +423,8 @@ void  rt_soft_timer_tick_increase (void);
 #endif
 void rt_timer_check(void)
 {
-	rt_tick_t current_tick;
-	rt_list_t *n;
 	struct rt_timer *t;
+	rt_tick_t current_tick;
 	register rt_base_t level;
 
 #ifdef RT_TIMER_DEBUG
@@ -362,16 +436,14 @@ void rt_timer_check(void)
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
 
-	for (n = rt_timer_list.next; n != &(rt_timer_list); )
+	while (!rt_list_isempty(&rt_timer_list))
 	{
-		t = rt_list_entry(n, struct rt_timer, list);
+		t = rt_list_entry(rt_timer_list.next, struct rt_timer, list);
 		if (current_tick >= t->timeout_tick)
 		{
 #ifdef RT_USING_HOOK
 			if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
 #endif
-			/* move node to the next */
-			n = n->next;
 
 			/* remove timer from timer list firstly */
 			rt_list_remove(&(t->list));
@@ -379,7 +451,7 @@ void rt_timer_check(void)
 			/* call timeout function */
 			t->timeout_func(t->parameter);
 
-			/* reget tick */
+			/* re-get tick */
 			current_tick = rt_tick_get();
 
 #ifdef RT_TIMER_DEBUG
@@ -410,7 +482,7 @@ void rt_timer_check(void)
 	rt_soft_timer_tick_increase ( );
 #endif
 
-#ifdef TIMER_DEBUG
+#ifdef RT_TIMER_DEBUG
 	rt_kprintf("timer check leave\n");
 #endif
 }
@@ -523,9 +595,11 @@ static void rt_thread_timer_entry(void* parameter)
 void rt_system_timer_init()
 {
 	rt_list_init(&rt_timer_list);
+	rt_list_init(&rt_long_timer_list);
 
 #ifdef RT_USING_TIMER_SOFT
 	rt_list_init(&rt_soft_timer_list);
+	rt_list_init(&rt_soft_long_timer_list);
     rt_sem_init(&timer_sem, "timer", 0, RT_IPC_FLAG_FIFO);
 #endif
 }

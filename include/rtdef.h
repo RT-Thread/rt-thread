@@ -55,6 +55,7 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 #define RT_UINT8_MAX					0xff			/* Maxium number of UINT8.					*/
 #define RT_UINT16_MAX					0xffff			/* Maxium number of UINT16.					*/
 #define RT_UINT32_MAX					0xffffffff		/* Maxium number of UINT32.					*/
+#define RT_TICK_MAX						RT_UINT32_MAX	/* Maxium number of tick                    */
 
 /* Compiler Related Definitions */
 #ifdef __CC_ARM                			 /* ARM Compiler 	*/
