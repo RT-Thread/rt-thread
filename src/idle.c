@@ -65,10 +65,10 @@ static void rt_thread_idle_entry(void* parameter)
 		if (!rt_list_isempty(&rt_thread_defunct))
 		{
 			rt_base_t lock;
+			struct rt_thread* thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
 #ifdef RT_USING_MODULE
 			rt_module_t module = thread->module_parent;
 #endif
-			struct rt_thread* thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
 
 			/* disable interrupt */
 			lock = rt_hw_interrupt_disable();
