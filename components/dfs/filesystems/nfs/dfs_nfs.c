@@ -3,7 +3,6 @@
 #include <dfs_fs.h>
 #include <dfs_def.h>
 
-#ifdef RT_USING_LWIP /* NFSv3 must use lwip as network protocol */
 #include <rpc/rpc.h>
 
 #include "mount.h"
@@ -17,6 +16,7 @@ struct nfs_file
 	size_t offset;		/* current offset */
 
 	size_t size;		/* total size */
+	bool_t eof;			/* end of file */
 };
 
 struct nfs_dir
@@ -251,6 +251,43 @@ static size_t nfs_get_filesize(struct nfs_filesystem* nfs, nfs_fh3 *handle)
 	xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
 	
 	return size;
+}
+
+rt_bool_t nfs_is_directory(struct nfs_filesystem* nfs, const char* name)
+{
+	GETATTR3args args;
+	GETATTR3res res;
+	fattr3 *info;
+	nfs_fh3 *handle;
+	rt_bool_t result;
+
+	result = RT_FALSE;
+	handle = get_handle(nfs, name);
+	if(handle == RT_NULL) return RT_FALSE;
+
+	args.object = *handle;
+
+	memset(&res, '\0', sizeof(res));
+
+	if (nfsproc3_getattr_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
+	{
+		rt_kprintf("GetAttr failed\n");
+		return RT_FALSE;
+	}
+	else if(res.status!=NFS3_OK)
+	{
+		rt_kprintf("Getattr failed: %d\n", res.status);
+		return RT_FALSE;
+	}
+
+	info=&res.GETATTR3res_u.resok.obj_attributes;
+
+	if (info->type == NFS3DIR) result = RT_TRUE;
+
+	xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
+	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+
+	return result;
 }
 
 int nfs_create(struct nfs_filesystem* nfs, const char *name, mode_t mode)
@@ -489,12 +526,15 @@ int nfs_read(struct dfs_fd* file, void *buf, rt_size_t count)
 	if(nfs->nfs_client==RT_NULL)
 		return -1;
 
+	/* end of file */
+	if (fd->eof == TRUE) return 0;
+
 	args.file=fd->handle;
 	args.offset=fd->offset;
 	args.count=count;
 
 	memset(&res, 0, sizeof(res));
-	if(nfsproc3_read_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
+	if(nfsproc3_read_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
 	{
 		rt_kprintf("Read failed\n");
 		bytes = 0;
@@ -509,6 +549,7 @@ int nfs_read(struct dfs_fd* file, void *buf, rt_size_t count)
 		if(res.READ3res_u.resok.eof)
 		{
 			/* something should probably be here */
+			fd->eof = TRUE;
 		}
 		bytes=res.READ3res_u.resok.count;
 		fd->offset += bytes;
@@ -659,6 +700,7 @@ int nfs_open(struct dfs_fd* file)
 		/* get size of file */
 		fp->size = nfs_get_filesize(nfs, handle);
 		fp->offset=0;
+		fp->eof = FALSE;
 
 		copy_handle(&fp->handle, handle);
 		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
@@ -706,7 +748,7 @@ int nfs_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *st)
 		return -1;
 	}
 
-	info=&res.GETATTR3res_u.resok.obj_attributes;
+	info = &res.GETATTR3res_u.resok.obj_attributes;
 
 	st->st_dev   = 0;
 
@@ -804,82 +846,79 @@ char *nfs_readdir(struct nfs_filesystem* nfs, nfs_dir *dir)
 
 int nfs_unlink(struct dfs_filesystem* fs, const char* path)
 {
-	REMOVE3args args;
-	REMOVE3res res;
-	int ret=0;
-	nfs_fh3 *handle;
+	int ret = 0;
 	struct nfs_filesystem* nfs;
 
 	RT_ASSERT(fs != RT_NULL);
 	RT_ASSERT(fs->data != RT_NULL);
 	nfs = (struct nfs_filesystem *)fs->data;
 
-	if(nfs->nfs_client==RT_NULL)
-		return -1;
-
-	handle = get_dir_handle(nfs, path);
-	if(handle == RT_NULL)
-		return -1;
-
-	args.object.dir=*handle;
-	args.object.name=strrchr(path, '/');
-	if(args.object.name==RT_NULL)
+	if (nfs_is_directory(nfs, path) == RT_FALSE)
 	{
-		args.object.name=(char *)path;
+		/* remove file */
+		REMOVE3args args;
+		REMOVE3res res;
+		nfs_fh3 *handle;
+
+		handle = get_dir_handle(nfs, path);
+		if(handle == RT_NULL) return -1;
+
+		args.object.dir=*handle;
+		args.object.name=strrchr(path, '/');
+		if(args.object.name==RT_NULL)
+		{
+			args.object.name=(char *)path;
+		}
+
+		memset(&res, 0, sizeof(res));
+
+		if(nfsproc3_remove_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
+		{
+			rt_kprintf("Remove failed\n");
+			ret=-1;
+		}
+		else if(res.status!=NFS3_OK)
+		{
+			rt_kprintf("Remove failed: %d\n", res.status);
+			ret=-1;
+		}
+		xdr_free((xdrproc_t)xdr_REMOVE3res, (char *)&res);
+		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+	}
+	else
+	{
+		/* remove directory */
+		RMDIR3args args;
+		RMDIR3res res;
+		nfs_fh3 *handle;
+
+		handle=get_dir_handle(nfs, path);
+		if(handle==RT_NULL) return -1;
+
+		args.object.dir=*handle;
+		args.object.name=strrchr(path, '/');
+		if(args.object.name==RT_NULL)
+		{
+			args.object.name=(char *)path;
+		}
+
+		memset(&res, 0, sizeof(res));
+
+		if(nfsproc3_rmdir_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
+		{
+			rt_kprintf("Rmdir failed\n");
+			ret = -1;
+		}
+		else if(res.status!=NFS3_OK)
+		{
+			rt_kprintf("Rmdir failed: %d\n", res.status);
+			ret = -1;
+		}
+
+		xdr_free((xdrproc_t)xdr_RMDIR3res, (char *)&res);
+		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
 	}
 
-	memset(&res, 0, sizeof(res));
-
-	if(nfsproc3_remove_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
-	{
-		rt_kprintf("Remove failed\n");
-		ret=-1;
-	}
-	else if(res.status!=NFS3_OK)
-	{
-		rt_kprintf("Remove failed: %d\n", res.status);
-		ret=-1;
-	}
-	xdr_free((xdrproc_t)xdr_REMOVE3res, (char *)&res);
-	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
-	return ret;
-}
-
-int nfs_rmdir(struct nfs_filesystem* nfs, const char *name)
-{
-	RMDIR3args args;
-	RMDIR3res res;
-	int ret=0;
-	nfs_fh3 *handle;
-
-	if(nfs->nfs_client==RT_NULL)
-		return -1;
-
-	handle=get_dir_handle(nfs, name);
-	if(handle==RT_NULL)
-		return -1;
-
-	args.object.dir=*handle;
-	args.object.name=strrchr(name, '/');
-	if(args.object.name==RT_NULL)
-	{
-		args.object.name=(char *)name;
-	}
-
-	memset(&res, 0, sizeof(res));
-
-	if(nfsproc3_rmdir_3(args, &res, nfs->nfs_client)!=RPC_SUCCESS)
-	{
-		rt_kprintf("Rmdir failed\n");
-		ret = -1;
-	}
-	else if(res.status!=NFS3_OK)
-	{
-		rt_kprintf("Rmdir failed: %d\n", res.status);
-		ret = -1;
-	}
-	xdr_free((xdrproc_t)xdr_RMDIR3res, (char *)&res);
-	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
 	return ret;
 }
 
@@ -938,7 +977,44 @@ int nfs_rename(struct dfs_filesystem* fs, const char *src, const char *dest)
 
 int nfs_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t count)
 {
-	return 0;
+	nfs_dir *dir;
+	rt_uint32_t index;
+	struct dfs_dirent* d;
+	struct nfs_filesystem* nfs;
+	char *name;
+
+	dir = (nfs_dir *)(file->data);
+	RT_ASSERT(dir != RT_NULL);
+	RT_ASSERT(file->fs != RT_NULL);
+	RT_ASSERT(file->fs->data != RT_NULL);
+	nfs = (struct nfs_filesystem *)file->fs->data;
+
+	/* make integer count */
+	count = (count / sizeof(struct dfs_dirent)) * sizeof(struct dfs_dirent);
+	if ( count == 0 ) return -DFS_STATUS_EINVAL;
+
+	index = 0;
+	while (1)
+	{
+		char *fn;
+
+		d = dirp + index;
+
+		name = nfs_readdir(nfs, dir);
+		if (name == RT_NULL) break;
+
+		d->d_type &= DFS_DT_REG;
+
+		d->d_namlen = rt_strlen(name);
+		d->d_reclen = (rt_uint16_t)sizeof(struct dfs_dirent);
+		rt_strncpy(d->d_name, name, rt_strlen(name) + 1);
+
+		index ++;
+		if ( index * sizeof(struct dfs_dirent) >= count )
+			break;
+	}
+
+	return index * sizeof(struct dfs_dirent);
 }
 
 static struct dfs_filesystem_operation _nfs;
@@ -964,12 +1040,3 @@ int nfs_init(void)
 
 	return RT_EOK;
 }
-
-#include <finsh.h>
-void nfs_test(char* host)
-{
-	dfs_mount(RT_NULL, "/nfs", "nfs", 0, (void*)host);
-}
-FINSH_FUNCTION_EXPORT(nfs_test, test nfs mount);
-
-#endif

@@ -41,7 +41,6 @@
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
-typedef rt_int32_t  ssize_t;
 
 typedef rt_int8_t   int8_t;
 typedef rt_uint8_t  uint8_t;
@@ -56,8 +55,11 @@ typedef unsigned long long uint64_t;
 typedef int bool_t;
 typedef int enum_t;
 
+#ifndef RT_USING_NEWLIB
+typedef rt_int32_t  ssize_t;
 typedef unsigned long mode_t;
 typedef unsigned long dev_t;
+#endif
 
 /* This needs to be changed to uint32_t in the future */
 typedef unsigned long rpcprog_t;

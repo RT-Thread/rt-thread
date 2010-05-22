@@ -48,6 +48,21 @@ filesystems/yaffs2/yaffs_checkptrw.c
 filesystems/yaffs2/yaffs_qsort.c
 """)
 
+nfs = Split('''
+filesystems/nfs/mount_clnt.c
+filesystems/nfs/mount_xdr.c
+filesystems/nfs/nfs_clnt.c
+filesystems/nfs/nfs_xdr.c
+filesystems/nfs/dfs_nfs.c
+filesystems/nfs/rpc/auth_none.c
+filesystems/nfs/rpc/clnt_generic.c
+filesystems/nfs/rpc/clnt_udp.c
+filesystems/nfs/rpc/rpc_prot.c
+filesystems/nfs/rpc/pmap.c
+filesystems/nfs/rpc/xdr.c
+filesystems/nfs/rpc/xdr_mem.c
+''')
+
 src_local = dfs
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
@@ -61,6 +76,10 @@ if 'RT_DFS_ELM_USE_LFN' in dir(rtconfig) and rtconfig.RT_DFS_ELM_USE_LFN:
 
 if 'RT_USING_DFS_ELMFAT' in dir(rtconfig) and rtconfig.RT_USING_DFS_ELMFAT:
     src_local = src_local + elmfat
+
+if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS:
+    src_local = src_local + nfs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/nfs']
 
 # group definitions
 group = {}

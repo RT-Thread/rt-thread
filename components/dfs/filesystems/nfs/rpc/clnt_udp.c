@@ -200,8 +200,7 @@ CLIENT *clntudp_create(struct sockaddr_in *raddr,
 							  UDPMSGSIZE, UDPMSGSIZE));
 }
 
-static enum clnt_stat
-clntudp_call(CLIENT *cl, unsigned long proc, 
+static enum clnt_stat clntudp_call(CLIENT *cl, unsigned long proc, 
 	xdrproc_t xargs, char* argsp, 
 	xdrproc_t xresults, char* resultsp, 
 	struct timeval utimeout)
@@ -210,7 +209,6 @@ clntudp_call(CLIENT *cl, unsigned long proc,
 	register XDR *xdrs;
 	register int outlen;
 	register int inlen;
-	struct timeval singlewait;
 	socklen_t fromlen;
 
 	struct sockaddr_in from;
@@ -223,10 +221,12 @@ call_again:
 	xdrs = &(cu->cu_outxdrs);
 	xdrs->x_op = XDR_ENCODE;
 	XDR_SETPOS(xdrs, cu->cu_xdrpos);
+
 	/*
 	 * the transaction is the first thing in the out buffer
 	 */
-	(*(uint32_t *) (cu->cu_outbuf))++;
+	(*(unsigned long *) (cu->cu_outbuf))++;
+
 	if ((!XDR_PUTLONG(xdrs, (long *) &proc)) ||
 			(!AUTH_MARSHALL(cl->cl_auth, xdrs)) || (!(*xargs) (xdrs, argsp)))
 		return (cu->cu_error.re_status = RPC_CANTENCODEARGS);
@@ -258,9 +258,6 @@ send_again:
 		inlen = recvfrom(cu->cu_sock, cu->cu_inbuf,
 						 (int) cu->cu_recvsz, 0,
 						 (struct sockaddr *) &from, &fromlen);
-
-		if (inlen <= 0)
-			rt_kprintf("recv error: len %d, errno %d\n", inlen, lwip_get_error(cu->cu_sock));
 	}while (inlen < 0 && errno == EINTR);
 
 	if (inlen < 4)
@@ -296,8 +293,7 @@ send_again:
 			if (reply_msg.acpted_rply.ar_verf.oa_base != NULL)
 			{
 				xdrs->x_op = XDR_FREE;
-				(void) xdr_opaque_auth(xdrs,
-									   &(reply_msg.acpted_rply.ar_verf));
+				(void) xdr_opaque_auth(xdrs, &(reply_msg.acpted_rply.ar_verf));
 			}
 		} /* end successful completion */
 		else
@@ -308,7 +304,7 @@ send_again:
 				nrefreshes--;
 				goto call_again;
 			}
-		}						/* end of unsuccessful completion */
+		} /* end of unsuccessful completion */
 	} /* end of valid reply message */
 	else
 	{
@@ -345,11 +341,16 @@ static bool_t clntudp_control(CLIENT *cl, int request, char *info)
 	switch (request)
 	{
 	case CLSET_TIMEOUT:
-		cu->cu_total = *(struct timeval *) info;
-		
-		/* set socket option */
-		setsockopt(cu->cu_sock, SOL_SOCKET, SO_RCVTIMEO, &cu->cu_total, sizeof(cu->cu_total));
+		{
+		int mtimeout;
 
+		cu->cu_total = *(struct timeval *) info;
+		mtimeout = ((cu->cu_total.tv_sec * 1000) + ((cu->cu_total.tv_usec + 500)/1000));
+
+		/* set socket option, note: lwip only support msecond timeout */
+		setsockopt(cu->cu_sock, SOL_SOCKET, SO_RCVTIMEO, 
+			&mtimeout, sizeof(mtimeout));
+		}
 		break;
 	case CLGET_TIMEOUT:
 		*(struct timeval *) info = cu->cu_total;
