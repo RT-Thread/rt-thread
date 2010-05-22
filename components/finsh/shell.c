@@ -56,8 +56,14 @@ extern char rt_serial_getc(void);
 #endif
 
 /* finsh thread */
+#ifndef FINSH_THREAD_PRIORITY
+#define FINSH_THREAD_PRIORITY 20
+#endif
+#ifndef FINSH_THREAD_STACK_SIZE
+#define FINSH_THREAD_STACK_SIZE 2048
+#endif
 struct rt_thread finsh_thread;
-char finsh_thread_stack[2048];
+char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct rt_semaphore uart_sem;
 rt_device_t finsh_device;
 #ifdef FINSH_USING_HISTORY
@@ -420,6 +426,7 @@ void finsh_system_var_init(void* begin, void* end)
 /* init finsh */
 void finsh_system_init(void)
 {
+	rt_err_t result;
 	rt_sem_init(&uart_sem, "uart", 0, 0);
 
 #ifdef FINSH_USING_SYMTAB
@@ -437,19 +444,12 @@ void finsh_system_init(void)
 #endif
 #endif
 
-#if RT_THREAD_PRIORITY_MAX == 8
-	rt_thread_init(&finsh_thread,
+	result = rt_thread_init(&finsh_thread,
 		"tshell",
 		finsh_thread_entry, RT_NULL,
 		&finsh_thread_stack[0], sizeof(finsh_thread_stack),
-		5, 10);
-#else
-	rt_thread_init(&finsh_thread,
-		"tshell",
-		finsh_thread_entry, RT_NULL,
-		&finsh_thread_stack[0], sizeof(finsh_thread_stack),
-		20, 10);
-#endif
+		FINSH_THREAD_PRIORITY, 10);
 
-	rt_thread_startup(&finsh_thread);
+	if (result == RT_EOK)
+		rt_thread_startup(&finsh_thread);
 }
