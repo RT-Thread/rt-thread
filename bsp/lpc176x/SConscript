@@ -12,8 +12,11 @@ group['CPPDEFINES'] = []
 group['LINKFLAGS'] = ''
 
 src_bsp   = ['application.c', 'startup.c', 'board.c']
-src_drv   = ['uart.c']
+src_drv   = ['uart.c', 'led.c']
 src_cmsis = ['CMSIS/CM3/CoreSupport/core_cm3.c', 'CMSIS/CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
+
+if rtconfig.RT_USING_DFS:
+    src_drv += ['sd.c', 'spi.c']
 
 group['src'] = File(src_bsp + src_drv + src_cmsis)
 

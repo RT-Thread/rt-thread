@@ -19,6 +19,10 @@
 #include "lpc17xx.h"
 #include "board.h"
 
+#ifdef RT_USING_DFS
+#include "sd.h"
+#endif
+
 /**
  * @addtogroup LPC17
  */
@@ -94,6 +98,9 @@ void rtthread_startup(void)
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
+#ifdef RT_USING_DFS
+	rt_hw_sdcard_init();
+#endif
 	/* init all device */
 	rt_device_init_all();
 #endif

@@ -12,110 +12,60 @@
  * 2009-01-05     Bernard      the first version
  * 2010-03-04     Magicoe      for LPC1766 version
  * 2010-05-02     Aozima       add led function
+ * 2010-05-24     Bernard      add filesystem initialization and move led function to led.c
  */
 
-/**2q
+/**
  * @addtogroup LPC17
  */
 /*@{*/
 
 #include <rtthread.h>
-#include "LPC17xx.h"
 
-static void rt_hw_led_init(void)
-{
-    LPC_GPIO2->FIODIR0 |= 1<<0; /* led0:P2.0 */
-    LPC_GPIO2->FIODIR0 |= 1<<1; /* led1:P2.1 */
-}
+#ifdef RT_USING_DFS
+/* dfs init */
+#include <dfs_init.h>
+/* dfs filesystem:ELM FatFs filesystem init */
+#include <dfs_elm.h>
+/* dfs Filesystem APIs */
+#include <dfs_fs.h>
+#endif
 
-static void rt_hw_led_on(unsigned int led)
+/* thread phase init */
+void rt_init_thread_entry(void *parameter)
 {
-    switch(led)
+    /* Filesystem Initialization */
+#ifdef RT_USING_DFS
     {
-    case 0: /* P2.0 = 1 */
-        LPC_GPIO2->FIOSET0 = 1<<0;
-        break;
-    case 1: /* P2.1 = 1 */
-        LPC_GPIO2->FIOSET0 = 1<<1;
-        break;
-    default:
-        break;
+        /* init the device filesystem */
+        dfs_init();
+
+        /* init the elm FAT filesystam*/
+        elm_init();
+
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
     }
-}
-
-static void rt_hw_led_off(unsigned int led)
-{
-    switch(led)
-    {
-    case 0: /* P2.0 = 0 */
-        LPC_GPIO2->FIOCLR0 = 1<<0;
-        break;
-    case 1: /* P2.1 = 0 */
-        LPC_GPIO2->FIOCLR0 = 1<<1;
-        break;
-    default:
-        break;
-    }
-}
-static void rt_thread_entry_led1(void* parameter)
-{
-    /* init led configuration */
-    rt_hw_led_init();
-
-    while (1)
-    {
-        /* led on */
-        rt_kprintf("led1 on\r\n");
-        rt_hw_led_on(0);
-        rt_thread_delay(50); /* sleep 0.5 second and switch to other thread */
-
-        /* led off */
-        rt_kprintf("led1 off\r\n");
-        rt_hw_led_off(0);
-        rt_thread_delay(50);
-    }
-}
-
-char thread_led2_stack[1024];
-struct rt_thread thread_led2;
-void rt_thread_entry_led2(void* parameter)
-{
-    unsigned int count=0;
-    while (1)
-    {
-        /* led on */
-        rt_kprintf("led2 on,count : %d\r\n",count);
-        count++;
-        rt_hw_led_on(1);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-
-        /* led off */
-        rt_kprintf("led2 off\r\n");
-        rt_hw_led_off(1);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-    }
+#endif
 }
 
 int rt_application_init()
 {
-    rt_thread_t thread;
+    rt_thread_t init_thread;
 
-    /* create led1 thread */
-    thread = rt_thread_create("led1",
-                              rt_thread_entry_led1, RT_NULL,
-                              512,
-                              20, 5);
-    if (thread != RT_NULL)
-        rt_thread_startup(thread);
-
-    /* init led2 thread */
-    rt_thread_init(&thread_led2,
-                   "led2",
-                   rt_thread_entry_led2,
-                   RT_NULL,
-                   &thread_led2_stack[0],
-                   sizeof(thread_led2_stack),10,10);
-    rt_thread_startup(&thread_led2);
+#if (RT_THREAD_PRIORITY_MAX == 32)
+    init_thread = rt_thread_create("init",
+                                   rt_init_thread_entry, RT_NULL,
+                                   2048, 8, 20);
+#else
+    init_thread = rt_thread_create("init",
+                                   rt_init_thread_entry, RT_NULL,
+                                   2048, 80, 20);
+#endif
+    if (init_thread != RT_NULL) rt_thread_startup(init_thread);
 
     return 0;
 }

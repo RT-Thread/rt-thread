@@ -75,7 +75,7 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem support */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define RT_USING_DFS_ELMFAT
 
 /* the max number of mounted filesystem */
