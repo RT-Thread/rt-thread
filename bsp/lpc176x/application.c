@@ -31,6 +31,12 @@
 #include <dfs_fs.h>
 #endif
 
+#ifdef RT_USING_LWIP
+#include <lwip/sys.h>
+#include <lwip/api.h>
+#include <netif/ethernetif.h>
+#endif
+
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -48,6 +54,25 @@ void rt_init_thread_entry(void *parameter)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
+    }
+#endif
+
+    /* LwIP Initialization */
+#ifdef RT_USING_LWIP
+    {
+        extern void lwip_sys_init(void);
+        extern void lpc17xx_emac_hw_init(void);
+
+        eth_system_device_init();
+
+        /* register ethernetif device */
+        lpc17xx_emac_hw_init();
+        /* init all device */
+        rt_device_init_all();
+
+        /* init lwip system */
+        lwip_sys_init();
+        rt_kprintf("TCP/IP initialized!\n");
     }
 #endif
 }

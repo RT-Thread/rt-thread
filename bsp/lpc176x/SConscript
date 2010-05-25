@@ -18,6 +18,9 @@ src_cmsis = ['CMSIS/CM3/CoreSupport/core_cm3.c', 'CMSIS/CM3/DeviceSupport/NXP/LP
 if rtconfig.RT_USING_DFS:
     src_drv += ['sd.c', 'spi.c']
 
+if rtconfig.RT_USING_LWIP:
+    src_drv += ['emac.c']
+
 group['src'] = File(src_bsp + src_drv + src_cmsis)
 
 # add group to project list
