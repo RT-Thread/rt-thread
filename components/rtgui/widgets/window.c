@@ -221,12 +221,12 @@ rtgui_modal_code_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 			{
 				rtgui_win_t* parent_win;
 				parent_win = RTGUI_WIN(win->parent_toplevel);
-				parent_win->flag |= RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				parent_win->style |= RTGUI_WIN_STYLE_UNDER_MODAL;
 				parent_win->modal_widget = RTGUI_WIDGET(win);
 
 				rtgui_win_event_loop(parent_win);
 				result = parent_win->modal_code;
-				parent_win->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;
+				parent_win->style &= ~RTGUI_WIN_STYLE_UNDER_MODAL;
 				parent_win->modal_widget = RT_NULL;
 			}
 		}
@@ -264,7 +264,7 @@ void rtgui_win_end_modal(struct rtgui_win* win, rtgui_modal_code_t modal_code)
 			/* which is shown under win */
 			parent_win = RTGUI_WIN(win->parent_toplevel);
 			parent_win->modal_code = modal_code;
-			parent_win->flag &= ~RTGUI_WORKBENCH_FLAG_MODAL_MODE;		
+			parent_win->style &= ~RTGUI_WIN_STYLE_UNDER_MODAL;		
 		}
 	}
 	else
@@ -432,7 +432,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 	case RTGUI_EVENT_WIN_DEACTIVATE:
 		if (win->style & RTGUI_WIN_STYLE_MODAL)
 		{
-			/* do not deactivate a modal win */
+			/* do not deactivate a modal win, re-send win-show event */
 			struct rtgui_event_win_show eshow;
 			RTGUI_EVENT_WIN_SHOW_INIT(&eshow);
 			eshow.wid = win;
@@ -465,7 +465,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
-		if (win->flag & RTGUI_WIN_STYLE_MODAL)
+		if (win->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
 			if (win->modal_widget != RT_NULL)
 				return win->modal_widget->event_handler(win->modal_widget, event);
@@ -500,7 +500,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
     case RTGUI_EVENT_KBD:
-		if (win->flag & RTGUI_WIN_STYLE_MODAL)
+		if (win->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
 			if (win->modal_widget != RT_NULL)
 				return win->modal_widget->event_handler(win->modal_widget, event);
@@ -527,9 +527,9 @@ void rtgui_win_event_loop(rtgui_win_t* wnd)
 
 	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
 
-	if (wnd->style & RTGUI_WIN_STYLE_MODAL)
+	if (wnd->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 	{
-		while (wnd->style & RTGUI_WIN_STYLE_MODAL)
+		while (wnd->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
 			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
 			{

@@ -2,6 +2,7 @@
 #include <rtgui/dc_hw.h>
 #include <rtgui/image.h>
 #include <rtgui/rtgui_system.h>
+#include <rtgui/image_hdc.h>
 
 #define HDC_MAGIC_LEN       4
 
@@ -9,21 +10,22 @@ struct rtgui_image_hdc
 {
 	rt_bool_t is_loaded;
 
-	struct rtgui_filerw* filerw;
-	struct rtgui_graphic_driver* hw_driver;
-
 	/* hdc image information */
 	rt_uint16_t byte_per_pixel;
     rt_uint16_t pitch;
 
 	rt_size_t   pixel_offset;
 	rt_uint8_t *pixels;
+
+	struct rtgui_filerw* filerw;
+	struct rtgui_graphic_driver* hw_driver;
 };
 
 static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file);
 static rt_bool_t rtgui_image_hdc_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load);
 static void rtgui_image_hdc_unload(struct rtgui_image* image);
 static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect);
+static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect);
 
 struct rtgui_image_engine rtgui_image_hdc_engine =
 {
@@ -33,6 +35,16 @@ struct rtgui_image_engine rtgui_image_hdc_engine =
 	rtgui_image_hdc_load,
 	rtgui_image_hdc_unload,
 	rtgui_image_hdc_blit
+};
+
+struct rtgui_image_engine rtgui_image_hdcmm_engine =
+{
+	"hdcmm",
+	{RT_NULL},
+	{RT_NULL},
+	{RT_NULL},
+	{RT_NULL},
+	rtgui_image_hdcmm_blit
 };
 
 static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file)
@@ -186,8 +198,40 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
     }
 }
 
+static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect)
+{
+	rt_uint8_t* ptr;
+	rt_uint16_t y, w, h;
+	struct rtgui_image_hdcmm* hdc;
+
+	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
+
+	/* this dc is not visible */
+	if ((dc->get_visible(dc) != RT_TRUE) || (dc->type != RTGUI_DC_HW)) return;
+
+	hdc = (struct rtgui_image_hdcmm*) image;
+	RT_ASSERT(hdc != RT_NULL);
+
+	/* the minimum rect */
+    if (image->w < rtgui_rect_width(*dst_rect)) w = image->w;
+    else w = rtgui_rect_width(*dst_rect);
+    if (image->h < rtgui_rect_height(*dst_rect)) h = image->h;
+    else h = rtgui_rect_height(*dst_rect);
+
+
+	/* get pixel pointer */
+	ptr = hdc->pixels;
+
+	for (y = 0; y < h; y ++)
+	{
+		rtgui_dc_hw_draw_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
+		ptr += hdc->pitch;
+	}
+}
+
 void rtgui_image_hdc_init()
 {
 	/* register hdc on image system */
 	rtgui_image_register_engine(&rtgui_image_hdc_engine);
 }
+
