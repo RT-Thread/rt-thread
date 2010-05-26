@@ -86,6 +86,18 @@ static bool LPC17xx_SD_Init (void)
 					ct = CT_NONE;
 			}
 		}
+		else {  /* SDSC or MMC */
+			if (LPC17xx_SD_SendCmd(SD_SEND_OP_COND, 0) <= 1) 	{
+				ct = CT_SD1; cmd = SD_SEND_OP_COND;	/* SDSC */
+			} else {
+				ct = CT_MMC; cmd = SEND_OP_COND;	/* MMC */
+			}
+			/* Wait for leaving idle state */
+			while (timeout-- && LPC17xx_SD_SendCmd(cmd, 0));
+			/* Set R/W block length to 512 */
+			if (!timeout || LPC17xx_SD_SendCmd(SET_BLOCKLEN, SD_SECTOR_SIZE) != 0)
+				ct = CT_NONE;
+		}
 	}
 	CardType = ct;
 	LPC17xx_SPI_Release();
@@ -364,11 +376,11 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 	bool status;
 	rt_uint32_t nr = size / SD_SECTOR_SIZE;
 
-	status = LPC17xx_SD_ReadSector(part.offset * SECTOR_SIZE + pos, buffer, nr);
+	status = LPC17xx_SD_ReadSector(part.offset + pos/SECTOR_SIZE, buffer, nr);
 
 	if (status == true) return nr * SECTOR_SIZE;
 
-	rt_kprintf("read failed: %d, buffer 0x%08x\n", status, buffer);
+	rt_kprintf("read failed: %d, pos 0x%08x, size %d\n", status, pos, size);
 	return 0;
 }
 
@@ -377,11 +389,11 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	bool status;
 	rt_uint32_t nr = size / SD_SECTOR_SIZE;
 
-	status = LPC17xx_SD_WriteSector(part.offset * SECTOR_SIZE + pos, buffer, nr);
+	status = LPC17xx_SD_WriteSector(part.offset + pos/SECTOR_SIZE, buffer, nr);
 
 	if (status == true) return nr * SECTOR_SIZE;
 
-	rt_kprintf("write failed: %d, buffer 0x%08x\n", status, buffer);
+	rt_kprintf("write failed: %d, pos 0x%08x, size %d\n", status, pos, size);
 	return 0;
 }
 
@@ -405,7 +417,7 @@ void rt_hw_sdcard_init()
 			return;
 		}
 
-		status = LPC17xx_SD_ReadSector(0, sector, 512);
+		status = LPC17xx_SD_ReadSector(0, sector, 1);
 		if (status == true)
 		{
 			/* get the first partition */
