@@ -484,6 +484,90 @@ static const rt_uint8_t radio_checked_byte[] =
 	0x40, 0x20, 0x30, 0xc0, 0x0f, 0x00,
 };
 
+void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t item)
+{
+	struct rtgui_dc* dc;
+	struct rtgui_rect rect, item_rect;
+	rt_size_t item_size, bord_size;
+
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(radiobox));
+	if (dc == RT_NULL) return;
+	/* get widget rect */
+	rtgui_widget_get_rect(RTGUI_WIDGET(radiobox), &rect);
+
+	item_size = radiobox->item_size;
+	/* get board size */
+	if (radiobox->orient == RTGUI_VERTICAL)
+		bord_size = item_size;
+	else
+	{
+		rtgui_font_get_metrics(RTGUI_DC_FONT(dc), "H", &item_rect);
+		bord_size = rtgui_rect_height(item_rect);
+	}
+
+	item_rect = rect;
+	rtgui_rect_inflate(&item_rect, - bord_size);
+	if (radiobox->orient == RTGUI_VERTICAL)
+	{
+		/* set the first text rect */
+		item_rect.y1 += item * item_size;
+		item_rect.y2 = item_rect.y1 + item_size;
+
+		/* draw radio */
+		if (radiobox->item_selection == item)
+		{
+			if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+				rtgui_dc_draw_focus_rect(dc, &item_rect);
+
+			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1 + (item_size - RADIO_BOX_H) / 2, 
+				RADIO_BOX_H, radio_checked_byte);
+		}
+		else
+		{
+			item_rect.x2 += 1; item_rect.y2 += 1;
+			rtgui_dc_fill_rect(dc, &item_rect);
+			item_rect.x2 -= 1; item_rect.y2 -= 1;
+			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1 + (item_size - RADIO_BOX_H) / 2, 
+				RADIO_BOX_H, radio_unchecked_byte);
+		}
+
+		/* draw text */
+		item_rect.x1 += item_size + 3;
+		rtgui_dc_draw_text(dc, radiobox->items[item], &item_rect);
+	}
+	else
+	{
+		item_rect.x1 += item * item_size;
+
+		/* set the first text rect */
+		item_rect.x2 = item_rect.x1 + item_size;
+		item_rect.y2 = item_rect.y1 + bord_size;
+
+		/* draw radio */
+		if (radiobox->item_selection == item)
+		{
+			if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+				rtgui_dc_draw_focus_rect(dc, &item_rect);
+			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1, RADIO_BOX_H, radio_checked_byte);
+		}
+		else
+		{
+			item_rect.x2 += 1; item_rect.y2 += 1;
+			rtgui_dc_fill_rect(dc, &item_rect);
+			item_rect.x2 -= 1; item_rect.y2 -= 1;
+			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1, RADIO_BOX_H, radio_unchecked_byte);
+		}
+
+		/* draw text */
+		item_rect.x1 += bord_size + 3;
+		rtgui_dc_draw_text(dc, radiobox->items[item], &item_rect);
+	}
+
+	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+}
+
 void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 {
 	struct rtgui_dc* dc;
@@ -590,8 +674,8 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			/* draw radio */
 			if (radiobox->item_selection == index)
 			{
-				rtgui_dc_draw_focus_rect(dc, &item_rect);
-
+				if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+					rtgui_dc_draw_focus_rect(dc, &item_rect);
 				rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1, RADIO_BOX_H, radio_checked_byte);
 			}
 			else

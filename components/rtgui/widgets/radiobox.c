@@ -224,13 +224,19 @@ void rtgui_radiobox_set_orientation(struct rtgui_radiobox* radiobox, int orienta
 
 void rtgui_radiobox_set_selection(struct rtgui_radiobox* radiobox, int selection)
 {
+	rt_uint16_t old_item;
+
+	if (selection == radiobox->item_selection) return;
+
+	old_item = radiobox->item_selection;
     if (selection >= 0 && selection < radiobox->item_count)
     {
     	radiobox->item_selection = selection;
     }
 
     /* update radiobox widget */
-    rtgui_theme_draw_radiobox(radiobox);
+	rtgui_theme_draw_radiobutton(radiobox, old_item);
+	rtgui_theme_draw_radiobutton(radiobox, radiobox->item_selection);
 }
 
 int rtgui_radiobox_get_selection(struct rtgui_radiobox* radiobox)

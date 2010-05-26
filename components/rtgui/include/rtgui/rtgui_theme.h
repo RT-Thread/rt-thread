@@ -45,6 +45,7 @@ void rtgui_theme_draw_label(rtgui_label_t* label);
 void rtgui_theme_draw_textbox(rtgui_textbox_t* box);
 void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox);
 void rtgui_theme_draw_checkbox(rtgui_checkbox_t* checkbox);
+void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t item);
 void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox);
 void rtgui_theme_draw_slider(struct rtgui_slider* slider);
 void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar);
