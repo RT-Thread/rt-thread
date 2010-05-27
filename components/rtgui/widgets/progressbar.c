@@ -77,7 +77,6 @@ void rtgui_progressbar_destroy(struct rtgui_progressbar* bar)
 	rtgui_widget_destroy(RTGUI_WIDGET(bar));
 }
 
-
 void rtgui_progressbar_set_value(struct rtgui_progressbar *bar, int value)
 {
     RT_ASSERT(bar != RT_NULL);

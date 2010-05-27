@@ -541,7 +541,7 @@ void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t i
 		item_rect.x1 += item * item_size;
 
 		/* set the first text rect */
-		item_rect.x2 = item_rect.x1 + item_size;
+		item_rect.x2 = item_rect.x1 + item_size - 1;
 		item_rect.y2 = item_rect.y1 + bord_size;
 
 		/* draw radio */
@@ -689,7 +689,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			item_rect.x1 -= bord_size + 3;
 
 			item_rect.x1 += item_size;
-			item_rect.x2 += item_size;
+			item_rect.x2 += (item_size - 1);
 		}
 	}
 
@@ -788,7 +788,6 @@ void rtgui_theme_draw_slider(struct rtgui_slider* slider)
 	return;
 }
 
-
 void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 {
 	/* draw progress bar */
@@ -797,40 +796,30 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
     int max = bar->range;
     int pos = bar->position;
     int left;
+	rtgui_color_t bc;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(&(bar->parent));
 	if (dc == RT_NULL) return;
 
+	bc = RTGUI_DC_BC(dc);
 	rtgui_widget_get_rect(&(bar->parent), &rect);
 
 	/* fill button rect with background color */
 	bar->parent.gc.background = RTGUI_RGB(212, 208, 200);
-	rtgui_dc_fill_rect(dc, &rect);
 
     /* draw border */
-    bar->parent.gc.foreground = RTGUI_RGB(128, 128, 128);
-    rtgui_dc_draw_hline(dc, rect.x1, rect.x2 - 1, rect.y1);
-    rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2 - 1);
-    bar->parent.gc.foreground = RTGUI_RGB(64, 64, 64);
-    rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1 + 1);
-    rtgui_dc_draw_vline(dc, rect.x1 + 1, rect.y1, rect.y2);
+	rect.x2 --; rect.y2 --;
+	rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
 
-	bar->parent.gc.foreground = RTGUI_RGB(212, 208, 200);
-	rtgui_dc_draw_hline(dc, rect.x1, rect.x2 + 1, rect.y2);
-	rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2);
-
-	bar->parent.gc.foreground = RTGUI_RGB(255, 255, 255);
-	rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2, rect.y2 - 1);
-	rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1 + 1, rect.y2 - 1);
-
-    /* Nothing to draw */
+	/* Nothing to draw */
     if (max == 0)
     {
         rtgui_dc_end_drawing(dc);
         return;
     }
 
+	rect.x2 ++; rect.y2 ++;
     left = max - pos;
 	rtgui_rect_inflate(&rect, -2);
     bar->parent.gc.background = RTGUI_RGB(0, 0, 255);
@@ -841,13 +830,22 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
         int dy = (rtgui_rect_height(rect) * left) / max;
         rect.y1 += dy;
         rtgui_dc_fill_rect(dc, &rect);
+
+		RTGUI_DC_BC(dc) = bc;
+		rect.y1 -= dy; rect.y2 = dy;
+		rtgui_dc_fill_rect(dc, &rect);
     }
     else
     {
         /* Horizontal bar grows from left to right */
-        rect.x2 -= (rtgui_rect_width(rect) * left) / max;
+		int dx = (rtgui_rect_width(rect) * left) / max;
+        rect.x2 -= dx;
         rtgui_dc_fill_rect(dc, &rect);
-    }
+
+		RTGUI_DC_BC(dc) = bc;
+		rect.x1 = rect.x2; rect.x2 += dx;
+		rtgui_dc_fill_rect(dc, &rect);
+	}
 
 	/* end drawing */
 	rtgui_dc_end_drawing(dc);
