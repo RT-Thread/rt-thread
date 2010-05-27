@@ -29,8 +29,14 @@ void ENET_IRQHandler(void)
 {
 	rt_uint32_t status;
 
+    /* enter interrupt */
+    rt_interrupt_enter();
+
 	status = LPC_EMAC->IntStatus & LPC_EMAC->IntEnable;
 
+	/* Clear the interrupt. */ 
+	LPC_EMAC->IntClear = status; 
+ 
 	if (status & INT_RX_DONE)
 	{
 		/* Disable EMAC RxDone interrupts. */
@@ -44,6 +50,9 @@ void ENET_IRQHandler(void)
 		/* release one slot */
 		rt_sem_release(&sem_slot);
 	}
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /* phy write */
