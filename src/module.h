@@ -203,6 +203,6 @@ typedef struct {
 /* Symbol table index */
 #define STN_UNDEF	0		/* undefined */
 
-typedef rt_err_t (*elf_entry)( const void * env, struct rt_module_info **module_info;);
+typedef rt_err_t (*elf_entry)( const void * env, struct rt_module_info **module_info);
 
 #endif

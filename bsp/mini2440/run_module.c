@@ -19,6 +19,9 @@
 #if defined(RT_USING_FINSH) && defined(RT_USING_MODULE)
 #include <finsh.h>
 
+extern struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name);
+extern void rt_module_run(struct rt_module* module);
+
 void run_module(const char* filename)
 {
 	int fd, length;
