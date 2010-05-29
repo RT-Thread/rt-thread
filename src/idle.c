@@ -97,7 +97,7 @@ static void rt_thread_idle_entry(void* parameter)
 				/* if sub thread list and main thread are null */
 				if((module->module_thread == RT_NULL) &&
 					rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) &&
-					(module->parent.flag & RT_MODULE_FLAG_AUTO_CLEAN))
+					(module->module_info->module_type == RT_Module_Class_APP))
 				{
 					/* unload module */
 					rt_module_unload(module);

@@ -155,11 +155,12 @@ typedef struct {
  * Relocation type for arm
  */
 #define	R_ARM_NONE	0
-#define	R_ARM_PC24	1
+#define	R_ARM_PC24		1
 #define	R_ARM_ABS32	2
 #define	R_ARM_PLT32	27
-#define	R_ARM_CALL	28
-#define R_ARM_JUMP24	29
+#define	R_ARM_CALL		28
+#define	R_ARM_JUMP24	29
+#define	R_ARM_V4BX		40
 
 /* Program Header */
 typedef struct {
@@ -201,5 +202,7 @@ typedef struct {
 
 /* Symbol table index */
 #define STN_UNDEF	0		/* undefined */
+
+typedef rt_err_t (*elf_entry)( const void * env, struct rt_module_info **module_info;);
 
 #endif

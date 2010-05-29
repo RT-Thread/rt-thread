@@ -2,6 +2,7 @@
 #define __RTM_H__
 
 #include <rtdef.h>
+#include <rtthread.h>
 
 #ifdef RT_USING_MODULE
 #define RTM_EXPORT(symbol)					 							\
@@ -11,6 +12,7 @@ const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= 	\
 	(rt_uint32_t)&symbol,		\
 	__rtmsym_##symbol##_name,	\
 };
+
 #else
 #define RTM_EXPORT(symbol)	
 #endif

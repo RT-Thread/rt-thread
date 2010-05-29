@@ -360,17 +360,37 @@ struct rt_thread
 };
 /*@}*/
 
-/* module clean types */
-#define RT_MODULE_FLAG_AUTO_CLEAN			0x01			/* auto clean	*/
-#define RT_MODULE_FLAG_MANUAL_CLEAN			0x02			/* manual clean */
-
 #ifdef RT_USING_MODULE
+/*
+ * module system
+ */
+enum rt_module_class_type
+{
+	RT_Module_Class_APP = 0,						/* application module								*/
+	RT_Module_Class_EXTENSION,		
+	RT_Module_Class_SERVICE,							/* service module 								*/
+	RT_Module_Class_Unknown							/* unknown module 								*/
+};
+
+struct rt_module_info
+{
+	/* export interface */
+	void *module_interface;
+	/* refence count */
+	rt_uint32_t module_refs;
+	/* module type */
+	enum rt_module_class_type module_type;
+	/* module guid */
+	rt_uint32_t module_guid;	
+	/* application entry */
+	void* exec_entry;
+};
+
 struct rt_module
 {
 	/* inherit from object */
 	struct rt_object parent;
 
-	rt_uint32_t module_data;
 	void* module_space;
 
 	void* module_entry;
@@ -381,6 +401,8 @@ struct rt_module
 	/* module memory pool */
 	rt_uint32_t mempool_size;
 	void* module_mempool;
+
+	struct rt_module_info *module_info;
 
 	/* object in this module, module object is the last basic object type */
 	struct rt_object_information module_object[RT_Object_Class_Module];
