@@ -12,6 +12,7 @@ RT_USING_LWIP       = False
 RT_USING_WEBSERVER  = False
 RT_USING_RTGUI      = False
 RT_USING_MODBUS     = False
+RT_USING_MODULE     = False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -52,6 +53,10 @@ if rtconfig_ns.has_key('RT_USING_LWIP'):
 if rtconfig_ns.has_key('RT_USING_RTGUI'):
     RT_USING_RTGUI = True
 
+# module options
+if rtconfig_ns.has_key('RT_USING_MODULE'):
+    RT_USING_MODULE = True
+		
 # panel options
 # 'PNL_A70','PNL_N35', 'PNL_T35'
 RT_USING_LCD_TYPE = 'PNL_T35'
@@ -61,7 +66,7 @@ ARCH     = 'arm'
 CPU      = 's3c24x0'
 TextBase = '0x30000000'
 
-CROSS_TOOL 	= 'keil'
+CROSS_TOOL 	= 'gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'

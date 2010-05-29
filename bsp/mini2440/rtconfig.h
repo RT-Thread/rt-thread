@@ -3,7 +3,7 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	32
+#define RT_NAME_MAX	8
 
 /* RT_ALIGN_SIZE*/
 #define RT_ALIGN_SIZE	4
