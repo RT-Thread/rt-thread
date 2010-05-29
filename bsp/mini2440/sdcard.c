@@ -74,9 +74,10 @@ static int sd_cmd_end(int cmd, int be_resp)
 		{
 		    	if( (finish0&0x1f00) != 0xa00 )
 		    	{
+                    		/* 
                     		rt_kprintf("CMD%d:SDICSTA=0x%x, SDIRSP0=0x%x\n",
                         		cmd, SDICSTA, SDIRSP0);
-
+				*/
 		    		SDICSTA=finish0;
 		    		if(((finish0&0x400)==0x400))
 		        		return RT_ERROR;
@@ -140,7 +141,7 @@ static int sd_cmd55(void)
 
 	if(sd_cmd_end(55, 1) == RT_ERROR)
 	{
-		rt_kprintf("CMD55 error\n");
+		/* rt_kprintf("CMD55 error\n"); */
 		return RT_ERROR;
 	}	
 
