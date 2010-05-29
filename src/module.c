@@ -19,7 +19,7 @@
 #include "module.h"
 #include "kservice.h"
 
-#define RT_MODULE_DEBUG
+/* #define RT_MODULE_DEBUG */
 #ifdef RT_USING_MODULE
 
 #define elf_module 	((Elf32_Ehdr *)module_ptr)
@@ -262,7 +262,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 		if (IS_PROG(shdr[index]) && IS_AW(shdr[index]))
 		{
 			data_addr = (rt_uint32_t)ptr;
-			rt_kprintf("data section address 0x%x\n", data_addr);			
+			/* rt_kprintf("data section address 0x%x\n", data_addr); */
 			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
 			ptr += shdr[index].sh_size;
 		}
@@ -271,7 +271,7 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 		if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
 		{
 			bss_addr = (rt_uint32_t)ptr;
-			rt_kprintf("bss section address 0x%x\n", bss_addr);			
+			/* rt_kprintf("bss section address 0x%x\n", bss_addr); */
 			rt_memset(ptr, 0, shdr[index].sh_size);
 		}
 	}
@@ -309,7 +309,6 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 					if((ELF_ST_TYPE(sym->st_info) == STT_SECTION) 
 						|| (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
 					{	
-						rt_kprintf("section name %s\n", shstrab + shdr[sym->st_shndx].sh_name);
 						if (rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
 						{
 							/* relocate rodata section */
@@ -387,7 +386,7 @@ void rt_module_run(struct rt_module* module)
 	{
 		/* application */
 		module->module_thread = rt_thread_create(module->parent.name,
-			module->module_entry, RT_NULL,
+			module->module_info->exec_entry, RT_NULL,
 			512, 90, 10);
 		module->module_thread->module_parent = module;
 		rt_thread_startup(module->module_thread);

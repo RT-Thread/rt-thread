@@ -18,16 +18,19 @@
 
 #if defined(RT_USING_FINSH) && defined(RT_USING_MODULE)
 #include <finsh.h>
-static char buffer[4096];
 
 void run_module(const char* filename)
 {
 	int fd, length;
 	char *module_name;
+	struct rt_module* module;
+	struct dfs_stat s;
+	char *buffer;
 	
-	rt_memset(buffer, 0, 4096);
+	stat(filename, &s);
+	buffer = (char *)rt_malloc(s.st_size);
 	fd = open(filename, O_RDONLY, 0);
-	length = read(fd, buffer, 4096);
+	length = read(fd, buffer, s.st_size);
 	if (length <= 0)
 	{
 		rt_kprintf("check: read file failed\n");
@@ -36,7 +39,12 @@ void run_module(const char* filename)
 	}
 	rt_kprintf("read %d bytes from file\n", length);
 	module_name = strrchr(filename, '/');
-	rt_module_load(buffer, ++module_name);
+	module = rt_module_load((void *)buffer, ++module_name);
+	if(module != RT_NULL)
+	{
+		rt_module_run(module);
+	}
+	
 	close(fd);
 }
 

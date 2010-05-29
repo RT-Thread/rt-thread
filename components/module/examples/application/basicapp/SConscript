@@ -11,7 +11,7 @@ group['CCFLAGS'] = ''
 group['CPPPATH'] = [RTT_ROOT + '/components/module/interface']
 group['CPPDEFINES'] = ''
 
-target = 'hello.mo'
+target = 'basicapp.mo'
 
 # add group to project list
 projects.append(group)
