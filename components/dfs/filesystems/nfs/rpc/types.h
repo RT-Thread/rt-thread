@@ -38,9 +38,12 @@
 #include <lwip/sockets.h>
 
 #include <string.h>
+
+#ifndef RT_USING_MINILIBC
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
+#endif
 
 typedef rt_int8_t   int8_t;
 typedef rt_uint8_t  uint8_t;
