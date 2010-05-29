@@ -38,7 +38,7 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	register rt_uint32_t idx;
 
@@ -77,7 +77,7 @@ void rt_hw_interrupt_init()
  * This function will mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_mask(rt_uint32_t vector)
+void rt_hw_interrupt_mask(int vector)
 {
 	INTMSK |= 1 << vector;
 }
@@ -86,7 +86,7 @@ void rt_hw_interrupt_mask(rt_uint32_t vector)
  * This function will un-mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_umask(rt_uint32_t vector)
+void rt_hw_interrupt_umask(int vector)
 {
 	if (vector == INTNOTUSED6)
 	{
@@ -105,7 +105,7 @@ void rt_hw_interrupt_umask(rt_uint32_t vector)
  * @param new_handler the interrupt service routine to be installed
  * @param old_handler the old interrupt service routine
  */
-void rt_hw_interrupt_install(rt_uint32_t vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
 {
 	if(vector < MAX_HANDLERS)
 	{
