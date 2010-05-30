@@ -488,7 +488,7 @@ void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t i
 {
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect, item_rect;
-	rt_size_t item_size, bord_size;
+	int item_size, bord_size;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(radiobox));
@@ -572,7 +572,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 {
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect, item_rect;
-	rt_size_t item_size, bord_size, index;
+	int item_size, bord_size, index;
 	rtgui_color_t fc;
 
 	/* begin drawing */

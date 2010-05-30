@@ -39,7 +39,7 @@ struct rtgui_image
 	rt_uint16_t w, h;
 
 	/* image engine */
-	struct rtgui_image_engine* engine;
+	const struct rtgui_image_engine* engine;
 
 	/* image private data */
 	void* data;

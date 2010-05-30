@@ -29,9 +29,6 @@
 
 void rtgui_system_server_init()
 {
-	/* init rtgui_thread */
-	rtgui_thread_system_init();
-
 	/* init image */
 	rtgui_system_image_init();
 	/* init font */
@@ -276,13 +273,6 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 #define rtgui_event_dump(tid, event)
 #endif
 
-struct rt_semaphore _rtgui_thread_hash_semaphore;
-
-void rtgui_thread_system_init()
-{
-	rt_sem_init(&_rtgui_thread_hash_semaphore, "rtgui", 1, RT_IPC_FLAG_FIFO);
-}
-
 rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 {
 	rtgui_thread_t* thread = rtgui_malloc(sizeof(struct rtgui_thread));
@@ -296,12 +286,8 @@ rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 		thread->mq			= mq;
 		thread->widget		= RT_NULL;
 
-		/* take semaphore */
-		rt_sem_take(&_rtgui_thread_hash_semaphore, RT_WAITING_FOREVER);
 		/* set user thread */
 		tid->user_data = (rt_uint32_t)thread;
-		/* release semaphore */
-		rt_sem_release(&_rtgui_thread_hash_semaphore);
 	}
 
 	return thread;
@@ -316,16 +302,25 @@ void rtgui_thread_deregister(rt_thread_t tid)
 
 	if (thread != RT_NULL)
 	{
-		/* take semaphore */
-		rt_sem_take(&_rtgui_thread_hash_semaphore, RT_WAITING_FOREVER);
 		/* remove rtgui_thread */
 		tid->user_data = 0;
-		/* release semaphore */
-		rt_sem_release(&_rtgui_thread_hash_semaphore);
 
 		/* free rtgui_thread */
 		rtgui_free(thread);
 	}
+}
+
+/* get current gui thread */
+rtgui_thread_t* rtgui_thread_self()
+{
+	struct rtgui_thread* thread;
+	rt_thread_t self;
+
+	/* get current thread */
+	self = rt_thread_self();
+	thread = (struct rtgui_thread*)(self->user_data);
+
+	return thread;
 }
 
 extern rt_thread_t rt_thread_find(char* name);

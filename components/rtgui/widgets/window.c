@@ -522,16 +522,20 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 /* windows event loop */
 void rtgui_win_event_loop(rtgui_win_t* wnd)
 {
-	/* the buffer uses to receive event */
-	char event_buf[256];
+	rtgui_thread_t* tid;
+	struct rtgui_event* event;
 
-	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
+	tid = rtgui_thread_self();
+	RT_ASSERT(tid != RT_NULL);
+
+	/* point to event buffer */
+	event = (struct rtgui_event*)tid->event_buffer;
 
 	if (wnd->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 	{
 		while (wnd->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
-			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
 			{
 				/* perform event handler */
 				RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
@@ -542,7 +546,7 @@ void rtgui_win_event_loop(rtgui_win_t* wnd)
 	{
 		while (!(wnd->style & RTGUI_WIN_STYLE_CLOSED))
 		{
-			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
 			{
 				/* perform event handler */
 				RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);

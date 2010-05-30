@@ -116,7 +116,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 		/* draw word */
 		for (i=0; i < h; i ++)
 		{
-			for (j=0; j < 2; j++)
+			for (j=0; j < word_bytes; j++)
 				for (k=0; k < 8; k++)
 				{
 					if ( ((font_ptr[i*2 + j] >> (7-k)) & 0x01) != 0 &&

@@ -31,46 +31,6 @@ void rtgui_dc_destory(struct rtgui_dc* dc)
 	rtgui_free(dc);
 }
 
-/*
- * draw a point on dc
- */
-void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
-{
-	if (dc == RT_NULL) return;
-
-	dc->draw_point(dc, x, y);
-}
-
-/*
- * draw a color point on dc
- */
-void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color)
-{
-	if (dc == RT_NULL) return;
-
-	dc->draw_color_point(dc, x, y, color);
-}
-
-/*
- * draw a vertical line on dc
- */
-void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2)
-{
-	if (dc == RT_NULL) return;
-
-	dc->draw_vline(dc, x, y1, y2);
-}
-
-/*
- * draw a horizontal line on dc
- */
-void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y)
-{
-	if (dc == RT_NULL) return;
-
-	dc->draw_hline(dc, x1, x2, y);
-}
-
 void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 {
 	if (dc == RT_NULL) return;
@@ -163,20 +123,6 @@ void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect)
 	rtgui_dc_draw_vline(dc, rect->x2, rect->y1 + r, rect->y2 - r);
 }
 
-void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
-{
-	if (dc == RT_NULL) return;
-
-	dc->fill_rect(dc, rect);
-}
-
-void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
-{
-	if (dc == RT_NULL || dest == RT_NULL || rect == RT_NULL) return;
-
-	dc->blit(dc, dc_point, dest, rect);
-}
-
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect)
 {
 	rt_uint32_t len;
@@ -236,67 +182,33 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 #endif
 }
 
+/*
+ * draw a monochrome color bitmap data
+ */
+void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, const rt_uint8_t* data)
+{
+	int word_bytes;
+	int i, j, k;
+
+	/* get word bytes */
+	word_bytes = (w + 7)/8;
+
+	/* draw mono bitmap data */
+	for (i = 0; i < h; i ++)
+		for (j = 0; j < word_bytes; j++)
+			for (k = 0; k < 8; k++)
+				if ( ((data[i*2 + j] >> (7-k)) & 0x01) != 0)
+					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
+}
+
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	int i, k;
-
-	/* draw byte */
-	for (i=0; i < h; i ++)
-	{
-		for (k=0; k < 8; k++)
-		{
-			if (((data[i] >> (7-k)) & 0x01) != 0)
-			{
-				rtgui_dc_draw_point(dc, x + k, y + i);
-			}
-		}
-	}
+	rtgui_dc_draw_mono_bmp(dc, x, y, 8, h, data);
 }
 
 void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	int i, j, k;
-
-	/* draw word */
-	for (i=0; i < h; i ++)
-	{
-		for (j=0; j < 2; j++)
-			for (k=0; k < 8; k++)
-			{
-				if (((data[i * 2 + j] >> (7-k)) & 0x01) != 0)
-				{
-					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
-				}
-			}
-	}
-}
-
-void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc)
-{
-	if (dc != RT_NULL)
-	{
-		dc->set_gc(dc, gc);
-	}
-}
-
-rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc)
-{
-	if (dc != RT_NULL)
-	{
-		return dc->get_gc(dc);
-	}
-
-	return RT_NULL;
-}
-
-rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc)
-{
-	if (dc != RT_NULL)
-	{
-		return dc->get_visible(dc);
-	}
-
-	return RT_FALSE;
+	rtgui_dc_draw_mono_bmp(dc, x, y, 16, h, data);
 }
 
 void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
@@ -1293,13 +1205,5 @@ void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 	{
 		rtgui_dc_draw_point(dc, rect->x1, i);
 		rtgui_dc_draw_point(dc, rect->x2, i);
-	}
-}
-
-void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect)
-{
-	if (dc != RT_NULL && rect != RT_NULL)
-	{
-		dc->get_rect(dc, rect);
 	}
 }

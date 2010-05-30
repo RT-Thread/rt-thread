@@ -37,7 +37,7 @@ struct rtgui_image_engine rtgui_image_hdc_engine =
 	rtgui_image_hdc_blit
 };
 
-struct rtgui_image_engine rtgui_image_hdcmm_engine =
+const struct rtgui_image_engine rtgui_image_hdcmm_engine =
 {
 	"hdcmm",
 	{RT_NULL},

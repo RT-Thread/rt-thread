@@ -21,6 +21,12 @@ struct rtgui_dc;
 struct rtgui_event;
 struct rtgui_widget;
 
+#ifdef RTGUI_USING_SMALL_SIZE
+#define RTGUI_EVENT_BUFFER_SIZE	64
+#else
+#define RTGUI_EVENT_BUFFER_SIZE	256
+#endif
+
 struct rtgui_thread
 {
 	/* the thread id */
@@ -31,6 +37,8 @@ struct rtgui_thread
 
 	/* the owner of thread */
 	struct rtgui_widget* widget;
+	/* event buffer */
+	rt_uint8_t event_buffer[RTGUI_EVENT_BUFFER_SIZE];
 };
 typedef struct rtgui_thread rtgui_thread_t;
 struct rtgui_timer;
@@ -55,9 +63,9 @@ void rtgui_timer_destory(rtgui_timer_t* timer);
 void rtgui_timer_start(rtgui_timer_t* timer);
 void rtgui_timer_stop (rtgui_timer_t* timer);
 
-void rtgui_thread_system_init(void);
 rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq);
 void rtgui_thread_deregister(rt_thread_t tid);
+rtgui_thread_t* rtgui_thread_self(void);
 
 rt_thread_t rtgui_thread_get_server(void);
 

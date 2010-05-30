@@ -69,25 +69,13 @@ void rtgui_dc_end_drawing(struct rtgui_dc* dc);
 /* destroy a dc */
 void rtgui_dc_destory(struct rtgui_dc* dc);
 
-void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y);
-void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
-
-void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
-void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
-void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
-void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
-
-void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc);
-rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc);
-
-rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc);
-void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect);
-
 void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2);
 void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
 void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect);
 
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect);
+
+void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, const rt_uint8_t* data);
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data);
 void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data);
 
@@ -106,5 +94,97 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 
 void rtgui_dc_draw_ellipse(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry);
 void rtgui_dc_fill_ellipse(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry);
+
+/*
+ * dc inline function
+ *
+ * Note:
+ * In order to improve drawing speed, put most of common function of dc to inline
+ */
+
+/*
+ * draw a point on dc
+ */
+rt_inline void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
+{
+	dc->draw_point(dc, x, y);
+}
+
+/*
+ * draw a color point on dc
+ */
+rt_inline void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color)
+{
+	dc->draw_color_point(dc, x, y, color);
+}
+
+/*
+ * draw a vertical line on dc
+ */
+rt_inline void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2)
+{
+	dc->draw_vline(dc, x, y1, y2);
+}
+
+/*
+ * draw a horizontal line on dc
+ */
+rt_inline void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y)
+{
+	dc->draw_hline(dc, x1, x2, y);
+}
+
+/*
+ * fill a rect with background color 
+ */
+rt_inline void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
+{
+	dc->fill_rect(dc, rect);
+}
+
+/*
+ * blit a dc on hardware dc
+ */
+rt_inline void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
+{
+	if (dest == RT_NULL || rect == RT_NULL) return;
+
+	dc->blit(dc, dc_point, dest, rect);
+}
+
+/*
+ * set gc of dc
+ */
+rt_inline void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc)
+{
+	dc->set_gc(dc, gc);
+}
+
+/*
+ * get gc of dc
+ */
+rt_inline rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc)
+{
+	return dc->get_gc(dc);
+}
+
+/*
+ * get visible status of dc 
+ */
+rt_inline rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc)
+{
+	return dc->get_visible(dc);
+}
+
+/*
+ * get rect of dc
+ */
+rt_inline void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect)
+{
+	if (rect != RT_NULL)
+	{
+		dc->get_rect(dc, rect);
+	}
+}
 
 #endif

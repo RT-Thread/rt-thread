@@ -162,16 +162,21 @@ void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag)
 
 rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 {
-	/* the buffer uses to receive event */
-	char event_buf[256];
-	struct rtgui_event* event = (struct rtgui_event*)&event_buf[0];
+	rtgui_thread_t* tid;
+	struct rtgui_event* event;
+
+	tid = rtgui_thread_self();
+	RT_ASSERT(tid != RT_NULL);
+
+	/* point to event buffer */
+	event = (struct rtgui_event*)tid->event_buffer;
 
 	if (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 	{
 		/* event loop for modal mode shown view */
 		while (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 		{
-			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
 			{
 				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
 			}
@@ -184,7 +189,7 @@ rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 		
 		while (!(workbench->flag & RTGUI_WORKBENCH_FLAG_CLOSED))
 		{
-			if (rtgui_thread_recv(event, sizeof(event_buf)) == RT_EOK)
+			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
 			{
 				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
 			}
