@@ -27,17 +27,17 @@ struct serial_int_tx
 
 typedef struct uartport
 {
-	rt_uint32_t ulcon;
-	rt_uint32_t ucon;
-	rt_uint32_t ufcon;
-	rt_uint32_t umcon;
-	rt_uint32_t ustat;
-	rt_uint32_t urxb;
-	rt_uint32_t ufstat;
-	rt_uint32_t umstat;
-	rt_uint32_t utxh;	
-	rt_uint32_t urxh;	
-	rt_uint32_t ubrd;
+	volatile rt_uint32_t ulcon;
+	volatile rt_uint32_t ucon;
+	volatile rt_uint32_t ufcon;
+	volatile rt_uint32_t umcon;
+	volatile rt_uint32_t ustat;
+	volatile rt_uint32_t urxb;
+	volatile rt_uint32_t ufstat;
+	volatile rt_uint32_t umstat;
+	volatile rt_uint32_t utxh;	
+	volatile rt_uint32_t urxh;	
+	volatile rt_uint32_t ubrd;
 }uartport;
 
 struct serial_device
