@@ -52,6 +52,9 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 	demo_view_dc(workbench);
+#ifdef RTGUI_USING_TTF
+	demo_view_ttf(workbench);
+#endif
 	demo_view_dc_buffer(workbench);
 	demo_view_animation(workbench);
 	demo_view_buffer_animation(workbench);
