@@ -50,33 +50,31 @@ static rtgui_gc_t* rtgui_dc_buffer_get_gc(struct rtgui_dc* dc);
 static rt_bool_t rtgui_dc_buffer_get_visible(struct rtgui_dc* dc);
 static void rtgui_dc_buffer_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
-static void rtgui_dc_buffer_init(struct rtgui_dc_buffer* dc)
+const static struct rtgui_dc_engine dc_buffer_engine = 
 {
-	if (dc == RT_NULL) return;
+	rtgui_dc_buffer_draw_point,
+	rtgui_dc_buffer_draw_color_point,
+	rtgui_dc_buffer_draw_vline,
+	rtgui_dc_buffer_draw_hline,
+	rtgui_dc_buffer_fill_rect,
+	rtgui_dc_buffer_blit,
 
-	dc->parent.type = RTGUI_DC_BUFFER;
-	dc->parent.draw_point = rtgui_dc_buffer_draw_point;
-	dc->parent.draw_color_point = rtgui_dc_buffer_draw_color_point;
-	dc->parent.draw_hline = rtgui_dc_buffer_draw_hline;
-	dc->parent.draw_vline = rtgui_dc_buffer_draw_vline;
-	dc->parent.fill_rect  = rtgui_dc_buffer_fill_rect;
-	dc->parent.blit		  = rtgui_dc_buffer_blit;
+	rtgui_dc_buffer_set_gc,
+	rtgui_dc_buffer_get_gc,
 
-	dc->parent.set_gc	  = rtgui_dc_buffer_set_gc;
-	dc->parent.get_gc	  = rtgui_dc_buffer_get_gc;
+	rtgui_dc_buffer_get_visible,
+	rtgui_dc_buffer_get_rect,
 
-	dc->parent.get_visible= rtgui_dc_buffer_get_visible;
-	dc->parent.get_rect	  = rtgui_dc_buffer_get_rect;
-
-	dc->parent.fini		  = rtgui_dc_buffer_fini;
-}
+	rtgui_dc_buffer_fini,
+};
 
 struct rtgui_dc* rtgui_dc_buffer_create(int w, int h)
 {
 	struct rtgui_dc_buffer* dc;
 
 	dc = (struct rtgui_dc_buffer*)rtgui_malloc(sizeof(struct rtgui_dc_buffer));
-	rtgui_dc_buffer_init(dc);
+	dc->parent.type   = RTGUI_DC_BUFFER;
+	dc->parent.engine = &dc_buffer_engine;
 	dc->gc.foreground = default_foreground;
 	dc->gc.background = default_background;
 	dc->gc.font = rtgui_font_default();

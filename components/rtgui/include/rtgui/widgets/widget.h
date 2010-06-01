@@ -75,8 +75,10 @@ struct rtgui_widget
 
 	/* widget flag */
 	rt_int32_t flag;
+#ifndef RTGUI_USING_SMALL_SIZE
 	/* widget align */
 	rt_int32_t align;
+#endif
 
 	/* the graphic context of widget */
 	rtgui_gc_t gc;

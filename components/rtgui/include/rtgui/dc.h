@@ -26,12 +26,8 @@ enum rtgui_dc_type
 	RTGUI_DC_IMLIB2,
 };
 
-/* the abstract device context */
-struct rtgui_dc
+struct rtgui_dc_engine
 {
-	/* type of device context */
-	rt_uint32_t type;
-
 	/* interface */
 	void (*draw_point)(struct rtgui_dc* dc, int x, int y);
 	void (*draw_color_point)(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
@@ -51,6 +47,16 @@ struct rtgui_dc
 	void (*get_rect  )(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
 	rt_bool_t (*fini )(struct rtgui_dc* dc);
+};
+
+/* the abstract device context */
+struct rtgui_dc
+{
+	/* type of device context */
+	rt_uint32_t type;
+
+	/* dc engine */
+	const struct rtgui_dc_engine* engine;
 };
 
 #define RTGUI_DC_FC(dc)			(rtgui_dc_get_gc(dc)->foreground)
@@ -82,7 +88,6 @@ void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_
 void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag);
 void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y);
 void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2);
-void rtgui_dc_draw_arrow(struct rtgui_dc* dc, rtgui_rect_t* rect, int kind);
 void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
 void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, int count);
@@ -107,7 +112,7 @@ void rtgui_dc_fill_ellipse(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_i
  */
 rt_inline void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
 {
-	dc->draw_point(dc, x, y);
+	dc->engine->draw_point(dc, x, y);
 }
 
 /*
@@ -115,7 +120,7 @@ rt_inline void rtgui_dc_draw_point(struct rtgui_dc* dc, int x, int y)
  */
 rt_inline void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color)
 {
-	dc->draw_color_point(dc, x, y, color);
+	dc->engine->draw_color_point(dc, x, y, color);
 }
 
 /*
@@ -123,7 +128,7 @@ rt_inline void rtgui_dc_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgu
  */
 rt_inline void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2)
 {
-	dc->draw_vline(dc, x, y1, y2);
+	dc->engine->draw_vline(dc, x, y1, y2);
 }
 
 /*
@@ -131,7 +136,7 @@ rt_inline void rtgui_dc_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2)
  */
 rt_inline void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y)
 {
-	dc->draw_hline(dc, x1, x2, y);
+	dc->engine->draw_hline(dc, x1, x2, y);
 }
 
 /*
@@ -139,7 +144,7 @@ rt_inline void rtgui_dc_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y)
  */
 rt_inline void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
-	dc->fill_rect(dc, rect);
+	dc->engine->fill_rect(dc, rect);
 }
 
 /*
@@ -149,7 +154,7 @@ rt_inline void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, 
 {
 	if (dest == RT_NULL || rect == RT_NULL) return;
 
-	dc->blit(dc, dc_point, dest, rect);
+	dc->engine->blit(dc, dc_point, dest, rect);
 }
 
 /*
@@ -157,7 +162,7 @@ rt_inline void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, 
  */
 rt_inline void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc)
 {
-	dc->set_gc(dc, gc);
+	dc->engine->set_gc(dc, gc);
 }
 
 /*
@@ -165,7 +170,7 @@ rt_inline void rtgui_dc_set_gc(struct rtgui_dc* dc, rtgui_gc_t* gc)
  */
 rt_inline rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc)
 {
-	return dc->get_gc(dc);
+	return dc->engine->get_gc(dc);
 }
 
 /*
@@ -173,7 +178,7 @@ rt_inline rtgui_gc_t *rtgui_dc_get_gc(struct rtgui_dc* dc)
  */
 rt_inline rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc)
 {
-	return dc->get_visible(dc);
+	return dc->engine->get_visible(dc);
 }
 
 /*
@@ -183,7 +188,7 @@ rt_inline void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect)
 {
 	if (rect != RT_NULL)
 	{
-		dc->get_rect(dc, rect);
+		dc->engine->get_rect(dc, rect);
 	}
 }
 

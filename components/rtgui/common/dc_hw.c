@@ -45,26 +45,23 @@ void rtgui_dc_end_drawing(struct rtgui_dc* dc)
 	}
 }
 
-void rtgui_dc_hw_init(struct rtgui_dc_hw* dc)
+const static struct rtgui_dc_engine dc_hw_engine = 
 {
-	if (dc == RT_NULL) return;
+	rtgui_dc_hw_draw_point,
+	rtgui_dc_hw_draw_color_point,
+	rtgui_dc_hw_draw_vline,
+	rtgui_dc_hw_draw_hline,
+	rtgui_dc_hw_fill_rect,
+	rtgui_dc_hw_blit,
 
-	dc->parent.type		  = RTGUI_DC_HW;
-	dc->parent.draw_point = rtgui_dc_hw_draw_point;
-	dc->parent.draw_color_point = rtgui_dc_hw_draw_color_point;
-	dc->parent.draw_hline = rtgui_dc_hw_draw_hline;
-	dc->parent.draw_vline = rtgui_dc_hw_draw_vline;
-	dc->parent.fill_rect  = rtgui_dc_hw_fill_rect ;
-	dc->parent.blit		  = rtgui_dc_hw_blit;
+	rtgui_dc_hw_set_gc,
+	rtgui_dc_hw_get_gc,
 
-	dc->parent.set_gc     = rtgui_dc_hw_set_gc;
-	dc->parent.get_gc     = rtgui_dc_hw_get_gc;
+	rtgui_dc_hw_get_visible,
+	rtgui_dc_hw_get_rect,
 
-	dc->parent.get_visible= rtgui_dc_hw_get_visible;
-	dc->parent.get_rect	  = rtgui_dc_hw_get_rect;
-
-	dc->parent.fini		  = rtgui_dc_hw_fini;
-}
+	rtgui_dc_hw_fini,
+};
 
 extern struct rt_mutex cursor_mutex;
 #define dc_set_foreground(c) dc->owner->gc.foreground = c
@@ -82,7 +79,8 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 
 	/* malloc a dc object */
 	dc = (struct rtgui_dc_hw*) rtgui_malloc(sizeof(struct rtgui_dc_hw));
-	rtgui_dc_hw_init(dc);
+	dc->parent.type   = RTGUI_DC_HW;
+	dc->parent.engine = &dc_hw_engine;
 	dc->owner	= owner;
 	dc->visible = RT_TRUE;
 	dc->device  = rtgui_graphic_driver_get_default();

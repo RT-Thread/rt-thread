@@ -27,7 +27,7 @@ void rtgui_dc_destory(struct rtgui_dc* dc)
 {
 	if (dc == RT_NULL) return;
 
-	dc->fini(dc);
+	dc->engine->fini(dc);
 	rtgui_free(dc);
 }
 
@@ -77,7 +77,7 @@ void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 				px += sdx;
 
 				/* draw this point */
-				dc->draw_point(dc, px, py);
+				rtgui_dc_draw_point(dc, px, py);
 			}
 		}
 		else				/* the line is more vertical than horizontal */
@@ -93,7 +93,7 @@ void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 				py += sdy;
 
 				/* draw this point */
-				dc->draw_point(dc, px, py);
+				rtgui_dc_draw_point(dc, px, py);
 			}
 		}
 	}
@@ -203,12 +203,37 @@ void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, con
 
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	rtgui_dc_draw_mono_bmp(dc, x, y, 8, h, data);
+	int i, k;
+
+	/* draw byte */
+	for (i=0; i < h; i ++)
+	{
+		for (k=0; k < 8; k++)
+		{
+			if (((data[i] >> (7-k)) & 0x01) != 0)
+			{
+				rtgui_dc_draw_point(dc, x + k, y + i);
+			}
+		}
+	}
 }
 
 void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	rtgui_dc_draw_mono_bmp(dc, x, y, 16, h, data);
+	int i, j, k;
+
+	/* draw word */
+	for (i=0; i < h; i ++)
+	{
+		for (j=0; j < 2; j++)
+			for (k=0; k < 8; k++)
+			{
+				if (((data[i * 2 + j] >> (7-k)) & 0x01) != 0)
+				{
+					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
+				}
+			}
+	}
 }
 
 void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
@@ -318,94 +343,6 @@ void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
 
 	/* restore color */
 	RTGUI_DC_FC(dc) = color;
-}
-
-void rtgui_dc_draw_arrow(struct rtgui_dc* dc, rtgui_rect_t* rect, int kind)
-{
-	rt_int32_t i;
-	rt_int32_t x1, y1, x2, y2;
-	rtgui_rect_t r = {0, 0, 0, 0};
-
-    static const rt_uint8_t ARROW_WIDTH  = 7;
-    static const rt_uint8_t ARROW_LENGTH = 4;
-
-	x1 = y1 = 0;
-
-	switch (kind)
-	{
-	case RTGUI_ARRAW_UP:
-	case RTGUI_ARRAW_DOWN:
-		r.x2 = ARROW_WIDTH;
-		r.y2 = ARROW_LENGTH;
-		break;
-
-	case RTGUI_ARRAW_LEFT:
-	case RTGUI_ARRAW_RIGHT:
-		r.x2 = ARROW_LENGTH;
-		r.y2 = ARROW_WIDTH;
-		break;
-	}
-	rtgui_rect_moveto_align(rect, &r, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
-
-	switch (kind)
-	{
-	case RTGUI_ARRAW_UP:
-		x1 = r.x1 + (ARROW_WIDTH - 1)/2;;
-		y1 = r.y1;
-		break;
-	case RTGUI_ARRAW_DOWN:
-		x1 = r.x1 + (ARROW_WIDTH - 1)/2;
-		y1 = r.y1 + ARROW_LENGTH - 1;
-		break;
-	case RTGUI_ARRAW_LEFT:
-		x1 = r.x1;
-		y1 = r.y1 + (ARROW_WIDTH - 1)/2;
-		break;
-	case RTGUI_ARRAW_RIGHT:
-		x1 = r.x1 + ARROW_LENGTH - 1;
-		y1 = r.y1 + (ARROW_WIDTH - 1)/2;
-		break;
-	default:
-		return;
-	}
-	x2 = x1;
-	y2 = y1;
-
-	for (i = 0; i < ARROW_LENGTH; i++)
-	{
-		rtgui_dc_draw_line(dc, x1, y1, x2, y2);
-
-		switch (kind)
-		{
-		case RTGUI_ARRAW_UP:
-			x1 --;
-			x2 ++;
-			y1 ++;
-			y2 ++;
-			break;
-
-		case RTGUI_ARRAW_DOWN:
-			x1 --;
-			x2 ++;
-			y1 --;
-			y2 --;
-			break;
-
-		case RTGUI_ARRAW_LEFT:
-			y1 --;
-			y2 ++;
-			x1 ++;
-			x2 ++;
-			break;
-
-		case RTGUI_ARRAW_RIGHT:
-			y1 --;
-			y2 ++;
-			x1 --;
-			x2 --;
-			break;
-		}
-	}
 }
 
 void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, int count)
@@ -524,44 +461,6 @@ void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, in
 	}
 }
 
-#if 1
-void rtgui_dc_draw_circle(struct rtgui_dc *dc, 
-	int xCenter, int yCenter, int radius)
-{
-	int x =0;
-	int y = radius;
-	int p = 1-radius;
-
-	rtgui_dc_draw_point(dc,xCenter+x,yCenter+y);
-	rtgui_dc_draw_point(dc,xCenter-x,yCenter+y);
-	rtgui_dc_draw_point(dc,xCenter+x,yCenter-y);
-	rtgui_dc_draw_point(dc,xCenter-x,yCenter-y);
-	
-	rtgui_dc_draw_point(dc,xCenter+y,yCenter+x);
-	rtgui_dc_draw_point(dc,xCenter-y,yCenter+x);
-	rtgui_dc_draw_point(dc,xCenter+y,yCenter-x);
-	rtgui_dc_draw_point(dc,xCenter-y,yCenter-x);
-
-	while(x<y){
-		x++;
-		if(p<0)
-			p+=2*x+1;
-		else{
-			y--;
-			p+=2*(x-y)+1;
-		}
-		rtgui_dc_draw_point(dc,xCenter+x,yCenter+y);
-		rtgui_dc_draw_point(dc,xCenter-x,yCenter+y);
-		rtgui_dc_draw_point(dc,xCenter+x,yCenter-y);
-		rtgui_dc_draw_point(dc,xCenter-x,yCenter-y);
-
-		rtgui_dc_draw_point(dc,xCenter+y,yCenter+x);
-		rtgui_dc_draw_point(dc,xCenter-y,yCenter+x);
-		rtgui_dc_draw_point(dc,xCenter+y,yCenter-x);
-		rtgui_dc_draw_point(dc,xCenter-y,yCenter-x);
-	}
-}
-#else
 void rtgui_dc_draw_circle(struct rtgui_dc* dc, int x, int y, int r)
 {
     rt_int16_t cx = 0;
@@ -637,7 +536,6 @@ void rtgui_dc_draw_circle(struct rtgui_dc* dc, int x, int y, int r)
 	    cx++;
 	}while (cx <= cy);
 }
-#endif
 
 void rtgui_dc_fill_circle(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t r)
 {

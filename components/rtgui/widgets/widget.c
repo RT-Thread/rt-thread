@@ -30,7 +30,9 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->gc.background = default_background;
 	widget->gc.font = rtgui_font_default();
 	widget->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
+#ifndef RTGUI_USING_SMALL_SIZE
 	widget->align = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
+#endif
 
 	/* set parent and toplevel root */
 	widget->parent			= RT_NULL;
