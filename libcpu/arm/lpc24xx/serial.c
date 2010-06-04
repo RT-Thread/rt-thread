@@ -15,7 +15,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "lpc214x.h"
+#include "LPC24xx.h"
 #include "board.h"
 
 /* serial hardware register */
