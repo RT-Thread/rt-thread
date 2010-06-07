@@ -48,4 +48,4 @@ env.Program(TARGET, objs)
 env.AddPostAction(TARGET, rtconfig.POST_ACTION)
 
 if GetOption('target') == 'mdk':
-	mdk.MDKProject('project_2.uV2', projects)
+	mdk.MDKProject('project.Uv2', projects)
