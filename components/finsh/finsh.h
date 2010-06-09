@@ -24,7 +24,7 @@
 #define FINSH_STRING_MAX        128     /* max length of string */
 #define FINSH_VARIABLE_MAX      8       /* max number of variable */
 
-#define FINSH_STACK_MAX         128     /* max stack size */
+#define FINSH_STACK_MAX         64      /* max stack size */
 #define FINSH_TEXT_MAX          128     /* max text segment size */
 
 #define HEAP_ALIGNMENT          4       /* heap alignment */

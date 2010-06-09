@@ -144,9 +144,10 @@ void finsh_auto_complete(char* prefix)
 	rt_kprintf("finsh>>%s", prefix);
 }
 
-extern const char* finsh_error_string_table[];
 void finsh_run_line(struct finsh_parser* parser, const char *line)
 {
+	const char* err_str;
+
 	rt_kprintf("\n");
 	finsh_parser_run(parser, (unsigned char*)line);
 
@@ -157,7 +158,8 @@ void finsh_run_line(struct finsh_parser* parser, const char *line)
 	}
 	else
 	{
-		rt_kprintf("%s\n", finsh_error_string(finsh_errno()));
+		err_str = finsh_error_string(finsh_errno());
+		rt_kprintf("%s\n", err_str);
 	}
 
 	/* run virtual machine */

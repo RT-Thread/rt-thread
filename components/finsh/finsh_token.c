@@ -28,7 +28,7 @@ struct name_table
 };
 
 /* keyword */
-static struct name_table finsh_name_table[] =
+static const struct name_table finsh_name_table[] =
 {
 	{"void",		finsh_token_type_void},
 	{"char",		finsh_token_type_char},
