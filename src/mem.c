@@ -9,7 +9,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2008-7-12     Bernard      the first version
+ * 2008-7-12      Bernard      the first version
+ * 2010-06-09     Bernard      fix the end stub of heap
+ *                             fix memory check in rt_realloc function
  */
 
 /*
@@ -168,7 +170,7 @@ void rt_system_heap_init(void* begin_addr, void* end_addr)
 	begin_addr = (void*)RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
 
 	/* calculate the aligned memory size */
-	mem_size_aligned = RT_ALIGN((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr, RT_ALIGN_SIZE) - 2 * sizeof(struct heap_mem);
+	mem_size_aligned = RT_ALIGN((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr, RT_ALIGN_SIZE) - 2 * SIZEOF_STRUCT_MEM;
 
 	/* point to begin address of heap */
 	heap_ptr = begin_addr;
@@ -180,16 +182,16 @@ void rt_system_heap_init(void* begin_addr, void* end_addr)
 	/* initialize the start of the heap */
 	mem = (struct heap_mem *)heap_ptr;
 	mem->magic= HEAP_MAGIC;
-	mem->next = mem_size_aligned;
+	mem->next = mem_size_aligned + SIZEOF_STRUCT_MEM;
 	mem->prev = 0;
 	mem->used = 0;
 
 	/* initialize the end of the heap */
-	heap_end = (struct heap_mem *)&heap_ptr[mem_size_aligned];
+	heap_end = (struct heap_mem *)&heap_ptr[mem->next];
 	heap_end->magic= HEAP_MAGIC;
 	heap_end->used = 1;
-	heap_end->next = mem_size_aligned;
-	heap_end->prev = mem_size_aligned;
+	heap_end->next = mem_size_aligned + SIZEOF_STRUCT_MEM;
+	heap_end->prev = mem_size_aligned + SIZEOF_STRUCT_MEM;
 
 	rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
@@ -274,7 +276,7 @@ void *rt_malloc(rt_size_t size)
 				mem->next = ptr2;
 				mem->used = 1;
 
-				if (mem2->next != mem_size_aligned)
+				if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
 				{
 					((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
 				}
@@ -368,9 +370,16 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	ptr = (rt_uint8_t *)mem - heap_ptr;
 	size = mem->next - ptr - SIZEOF_STRUCT_MEM;
+	if (size == newsize)
+	{
+		/* the size is the same as */
+		rt_sem_release(&heap_sem);
+		return rmem;
+	}
 
 	if (newsize + SIZEOF_STRUCT_MEM + MIN_SIZE < size)
 	{
+		/* split memory block */
 #ifdef RT_MEM_STATS
   		used_mem -= (size - newsize);
 #endif
@@ -382,7 +391,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 		mem2->next = mem->next;
 		mem2->prev = ptr;
 		mem->next = ptr2;
-		if (mem2->next != mem_size_aligned)
+		if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
 		{
 			((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
 		}
@@ -396,9 +405,11 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	/* expand memory */
 	nmem = rt_malloc(newsize);
-	rt_memcpy(nmem, rmem, size < newsize ? size : newsize);
-
-	rt_free(rmem);
+	if (nmem != RT_NULL) /* check memory */
+	{
+		rt_memcpy(nmem, rmem, size < newsize ? size : newsize);	
+		rt_free(rmem);
+	}
 
 	return nmem;
 }
