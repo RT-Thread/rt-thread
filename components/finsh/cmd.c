@@ -107,61 +107,6 @@ long list_thread(void)
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
 
-#if 0
-long dump_thread(rt_thread_t tid)
-{
-	rt_uint8_t *ptr;
-	rt_uint32_t sp;
-	rt_thread_t thread;
-
-	rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
-	rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-
-	thread = rt_thread_self();
-	if ((thread == tid) || (tid == RT_NULL)) /* it's current thread */
-	{
-		ptr = (rt_uint8_t*)thread->stack_addr;
-		while (*ptr == '#')ptr ++;
-		sp = (rt_uint32_t)__current_sp();
-		rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
-
-		if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
-		else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-		else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
-
-		rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-			thread->stack_size + ((rt_uint32_t)thread->stack_addr - sp),
-			thread->stack_size,
-			thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-			thread->remaining_tick,
-			thread->error);
-	}
-	else
-	{
-		thread = tid;
-		sp = (rt_uint32_t)thread->sp;
-
-		ptr = (rt_uint8_t*)thread->stack_addr;
-		while (*ptr == '#')ptr ++;
-
-		rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
-
-		if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
-		else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-		else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
-
-		rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-			thread->stack_size + ((rt_uint32_t)thread->stack_addr - sp),
-			thread->stack_size,
-			thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-			thread->remaining_tick,
-			thread->error);
-	}
-
-	return 0;
-}
-#endif
-
 static void show_wait_queue(struct rt_list_node* list)
 {
 	struct rt_thread *thread;

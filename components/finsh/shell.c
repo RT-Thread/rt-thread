@@ -437,6 +437,12 @@ void finsh_system_init(void)
 #else
 	shell = &_shell;
 #endif
+	if (shell == RT_NULL)
+	{
+		rt_kprintf("no memory for shell\n");
+		return;
+	}
+	
 	memset(shell, 0, sizeof(struct finsh_shell));
 
 	rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
