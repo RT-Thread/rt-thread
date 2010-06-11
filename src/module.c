@@ -16,11 +16,11 @@
 #include <rtm.h>
 #include <rtthread.h>
 
-#include "module.h"
 #include "kservice.h"
 
 /* #define RT_MODULE_DEBUG */
 #ifdef RT_USING_MODULE
+#include "module.h"
 
 #define elf_module 	((Elf32_Ehdr *)module_ptr)
 #define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
