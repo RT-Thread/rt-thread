@@ -26,7 +26,7 @@ void sys_init(void)
 
 sys_sem_t sys_sem_new(u8_t count)
 {
-	static int counter = 0;
+	static unsigned short counter = 0;
 	char tname[RT_NAME_MAX];
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_SEM_NAME, counter);
@@ -123,7 +123,7 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 
 sys_mbox_t sys_mbox_new(int size)
 {
-	static int counter = 0;
+	static unsigned short counter = 0;
 	char tname[RT_NAME_MAX];
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MBOX_NAME, counter);
