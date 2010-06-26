@@ -10,7 +10,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-04     Bernard      first version
+ * 2010-06-26     Bernard      add user_data to widget structure
  */
+
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/view.h>
@@ -52,6 +54,9 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 
 	/* set default event handler */
 	widget->event_handler = rtgui_widget_event_handler;
+
+	/* init user data private to 0 */
+	widget->user_data = 0;
 
 	/* init clip information */
 	rtgui_region_init(&(widget->clip));
