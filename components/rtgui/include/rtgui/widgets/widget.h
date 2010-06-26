@@ -106,6 +106,9 @@ struct rtgui_widget
 	rt_bool_t (*on_size)		(struct rtgui_widget* widget, struct rtgui_event* event);
 	rt_bool_t (*on_command)		(struct rtgui_widget* widget, struct rtgui_event* event);
 #endif
+
+	/* user private data */
+	rt_uint32_t user_data;
 };
 typedef struct rtgui_widget rtgui_widget_t;
 
