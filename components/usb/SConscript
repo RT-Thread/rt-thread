@@ -1,0 +1,26 @@
+Import('env')
+Import('projects')
+Import('RTT_ROOT')
+Import('rtconfig')
+
+# group definitions
+group = {}
+group['name'] = 'USB'
+group['src'] = Glob('*.c')
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/components/usb']
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
+group['DEPEND'] = 'RT_USING_USB'
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')
