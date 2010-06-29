@@ -71,11 +71,12 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 		#define RTT_API __declspec(dllexport)
 	#endif
 
-#elif defined (__ICCARM__)        		/* for IAR Compiler */
+#elif defined (__IAR_SYSTEMS_ICC__)        		/* for IAR Compiler */
     #include <stdarg.h>
     #define SECTION(x)  				@ x
     #define UNUSED
-	#define ALIGN(n)					#pragma data_alignment=n
+	#define PRAGMA(x)					_Pragma(#x)
+	#define ALIGN(n)					PRAGMA(data_alignment=n)
     #define rt_inline 					inline
 	#define RTT_API
 
@@ -101,14 +102,6 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 	#define ALIGN(n)					__attribute__((aligned(n)))
     #define rt_inline 					static __inline
 	#define RTT_API
-
-#elif defined (__ICCM16C__)        		/* for IAR EW M16C Compiler */
-    #include <stdarg.h>
-    #define SECTION(x)  				@ x
-    #define UNUSED
-    #define rt_inline 					inline
-	#define RTT_API
-
 #endif
 
 /* event length 			*/
