@@ -26,6 +26,7 @@
 
 /* finsh thread */
 static struct rt_thread finsh_thread;
+ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct finsh_shell* shell;
 
@@ -50,7 +51,7 @@ char *strdup(const char *s)
 }
 #endif
 
-#if !defined(__CC_ARM) && !defined(__ICCARM__) && !defined(__ICCM16C__)
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
 int isalpha( int ch )
 {
 	return (unsigned int)((ch | 0x20) - 'a') < 26u;

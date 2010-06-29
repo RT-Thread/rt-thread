@@ -66,7 +66,7 @@ typedef unsigned char  u_char;
 typedef unsigned short u_short;
 typedef unsigned long  u_long;
 
-#if !defined(__CC_ARM) && !defined(__ICCARM__) && !defined(__ICCM16C__)
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
 typedef unsigned int size_t;
 
 #ifndef NULL
