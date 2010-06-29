@@ -1,0 +1,1575 @@
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by luoy (NEC Electronics(China) Co.,Ltd) -->
+<V850ESJx3>
+  <VAR>
+    <ProjectName Name="PrjName" Text="upd70f3454" />
+    <ProjectPath Name="PrjPath" Text="E:\RTT\RTTV850\rt-thread\bsp\upd70f3454" />
+    <DeviceName Name="DeviceName" Fixed="" Text="V850ESJx3" />
+    <MCUName Name="MCUName" Text="V850ESJJ3" />
+    <ChipName Name="ChipName" Text="uPD70F3746" />
+    <ChipID Name="ChipID" Text="DF3746" />
+    <MCUType Name="MCUType" Fixed="" Text="V850ES" />
+    <Compiler Name="Compiler" Text="EW850" />
+    <fCLK Name="fCLK" Value="0.5" Comment="4M" Trigger="fCPU">
+      <Effect>
+        <LVI />
+      </Effect>
+    </fCLK>
+    <fXX Name="fXX" Value="4" Trigger="fXX" Comment="4M">
+      <Effect>
+        <AD />
+        <UARTA0 />
+        <UARTA1 />
+        <UARTA2 />
+        <UARTA3 />
+        <UARTA4 />
+        <UARTA5 />
+        <UARTC0 />
+        <CSIB0 />
+        <CSIB1 />
+        <CSIB2 />
+        <CSIB3 />
+        <CSIB4 />
+        <CSIB5 />
+        <IIC00 />
+        <IIC01 />
+        <IIC02 />
+        <TMP0 />
+        <TMP1 />
+        <TMP2 />
+        <TMP3 />
+        <TMP4 />
+        <TMP5 />
+        <TMP6 />
+        <TMP7 />
+        <TMP8 />
+        <TMQ0 />
+        <TMM0 />
+        <INTP />
+        <BUS />
+      </Effect>
+    </fXX>
+    <fXT Name="fXT" Value="0" Trigger="fXT" Comment="32.768kHz">
+      <Effect>
+        <INTP />
+        <TMM0 />
+        <RTC />
+        <WatchTimer />
+      </Effect>
+    </fXT>
+    <fR Name="fR" Value="220" Trigger="fR" Comment="220K">
+      <Effect>
+        <TMM0 />
+      </Effect>
+    </fR>
+    <fBRG Name="fBRG" Value="0" Trigger="fBRG" Comment="32.768kHz">
+      <Effect>
+        <RTC />
+        <WatchTimer />
+      </Effect>
+    </fBRG>
+    <INTWT Name="INTWT" Value="0" Trigger="INTWT" Comment="scale is interval, not frequency">
+      <Effect>
+        <TMM0 />
+      </Effect>
+    </INTWT>
+    <IIC00 Name="IIC00" Text="false" Comment="scale is interval, not frequency" Trigger="IIC00">
+      <Effect>
+        <PORT Forcible="" />
+      </Effect>
+    </IIC00>
+    <IIC01 Name="IIC01" Text="false" Comment="scale is interval, not frequency" Trigger="IIC01">
+      <Effect>
+        <PORT Forcible="" />
+      </Effect>
+    </IIC01>
+    <IIC02 Name="IIC02" Text="false" Comment="scale is interval, not frequency" Trigger="IIC02">
+      <Effect>
+        <PORT Forcible="" />
+      </Effect>
+    </IIC02>
+    <RompFile Name="RompFile" Text="1" />
+    <SecurityId Name="SecurityId" Text="FFFFFFFFFFFFFFFFFFFF" />
+    <MacroDef Name="MacroDef" Text="__nec__" />
+    <RAMStartAddress Chip="DF3741,DF3742,DF3745,DF3746" Fixed="" Name="RAMStartAddress" Text="03FF0000" />
+    <RAMEndAddress Fixed="" Name="RAMEndAddress" Text="03FFEFFF" />
+    <ROMStartAddress Fixed="" Name="ROMStartAddress" Text="00000000" />
+    <ROMEndAddress Chip="DF3746,DF3742" Fixed="" Name="ROMEndAddress" Text="000FFFFF" />
+    <BUSArea Name="BUSArea" Text="0,0,0,0" Comment="scale is interval, not frequency" Trigger="BUSArea">
+      <Effect>
+        <DMA0 />
+        <DMA1 />
+        <DMA2 />
+        <DMA3 />
+      </Effect>
+    </BUSArea>
+    <PrjKind Name="PrjKind" Text="ProjectV850" />
+    <CodePath Name="CodePath" Text=".\" />
+    <ReportType Name="ReportType" Text="Html" />
+    <GenerateType Name="GenerateType" Text="Merge" />
+    <PrjVersion Name="PrjVersion" Text="1.2.0.1" />
+    <UICultureNumberDecimalSeparator Name="UICultureNumberDecimalSeparator" Text="." />
+    <UICultureNumberGroupSeparator Name="UICultureNumberGroupSeparator" Text="," />
+  </VAR>
+  <DIR>
+    <PIN>
+      <System>
+        <FLMD0 AltFunc="" Point="I" />
+        <FLMD1 Port="PDL5" Point="I" UnConflict="AD5" />
+        <X1 AltFunc="" Point="I" />
+        <X2 AltFunc="" Point="-" />
+        <XT1 AltFunc="" Point="I" />
+        <XT2 AltFunc="" Point="-" />
+        <CLKOUT Port="PCM1" Point="O" />
+        <DRST Port="P05" RealName="_DRST" Point="I" />
+        <DDI Port="P52" Point="I" />
+        <DDO Port="P53" Point="O" />
+        <DCK Port="P54" Point="I" />
+        <DMS Port="P55" Point="I" />
+        <TXDA0_OCD Port="P30" RealName="TXDA0" Point="O" />
+        <RXDA0_OCD Port="P31" RealName="RXDA0" Point="I" Pset="" />
+        <SIB0_OCD Port="P40" RealName="SIB0" Point="I" Pset="" />
+        <SOB0_OCD Port="P41" RealName="SOB0" Point="O" Pset="" />
+        <SCKB0_OCD Port="P42" RealName="_SCKB0" Point="I/O" Pset="" />
+        <SIB3_OCD Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" RealName="SIB3" UnConflict="A10" Port="P910" Point="I" Pset="" />
+        <SOB3_OCD Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" RealName="SOB3" UnConflict="A11" Port="P911" Point="O" Pset="" />
+        <SCKB3_OCD Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" RealName="_SCKB3" UnConflict="A12" Port="P912" Point="I/O" Pset="" />
+        <PCM0_OCD Port="PCM0" RealName="PCM0" Point="I" Pset="" />
+      </System>
+      <BUS>
+        <WAIT Port="PCM0" RealName="_WAIT" Point="I" />
+        <HLDAK Port="PCM2" RealName="_HLDAK" Point="O" />
+        <HLDRQ Port="PCM3" RealName="_HLDRQ" Point="I" />
+        <CS0 Chip="V850ESJJ3" Port="PCS0" RealName="_CS0" Point="O" />
+        <CS1 Chip="V850ESJJ3" Port="PCS1" RealName="_CS1" Point="O" />
+        <CS2 Chip="V850ESJJ3" Port="PCS2" RealName="_CS2" Point="O" />
+        <CS3 Chip="V850ESJJ3" Port="PCS3" RealName="_CS3" Point="O" />
+        <WR0 Port="PCT0" RealName="_WR0" Point="O" />
+        <WR1 Port="PCT1" RealName="_WR1" Point="O" />
+        <RD Port="PCT4" RealName="_RD" Point="O" />
+        <ASTB Port="PCT6" Point="O" />
+        <AD0 Port="PDL0" Point="I/O" />
+        <AD1 Port="PDL1" Point="I/O" />
+        <AD2 Port="PDL2" Point="I/O" />
+        <AD3 Port="PDL3" Point="I/O" />
+        <AD4 Port="PDL4" Point="I/O" />
+        <AD5 Port="PDL5" Point="I/O" UnConflict="FLMD1" />
+        <AD6 Port="PDL6" Point="I/O" />
+        <AD7 Port="PDL7" Point="I/O" />
+        <AD8 Port="PDL8" Point="I/O" />
+        <AD9 Port="PDL9" Point="I/O" />
+        <AD10 Port="PDL10" Point="I/O" />
+        <AD11 Port="PDL11" Point="I/O" />
+        <AD12 Port="PDL12" Point="I/O" />
+        <AD13 Port="PDL13" Point="I/O" />
+        <AD14 Port="PDL14" Point="I/O" />
+        <AD15 Port="PDL15" Point="I/O" />
+        <A0 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P90" Point="O" />
+        <A1 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P91" Point="O" />
+        <A2 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P92" Point="O" />
+        <A3 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P93" Point="O" />
+        <A4 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P94" Point="O" />
+        <A5 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P95" Point="O" />
+        <A6 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P96" Point="O" />
+        <A7 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P97" Point="O" />
+        <A8 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P98" Point="O" />
+        <A9 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P99" Point="O" />
+        <A10 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" UnConflict="SIB3_OCD" Port="P910" Point="O" />
+        <A11 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" UnConflict="SOB3_OCD" Port="P911" Point="O" />
+        <A12 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" UnConflict="SCKB3_OCD" Port="P912" Point="O" />
+        <A13 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P913" Point="O" />
+        <A14 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P914" Point="O" />
+        <A15 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="P915" Point="O" />
+        <A16 Port="PDH0" Point="O" />
+        <A17 Port="PDH1" Point="O" />
+        <A18 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="PDH2" Point="O" />
+        <A19 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="PDH3" Point="O" />
+        <A20 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Port="PDH4" Point="O" />
+        <A21 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Port="PDH5" Point="O" />
+        <A22 Chip="V850ESJJ3" Port="PDH6" Point="O" />
+        <A23 Chip="V850ESJJ3" Port="PDH7" Point="O" />
+      </BUS>
+      <PORT>
+        <Port0 Nch="true">
+          <P00 Chip="V850ESJJ3" Name="P00/TIP61/TOP61" AltFunc="" Point="I/O" />
+          <P01 Chip="V850ESJJ3" Name="P01/TIP60/TOP60" AltFunc="" Point="I/O" />
+          <P02 Chip="V850ESJF3L,DF3737,DF3738,V850ESJG3,V850ESJJ3" Name="P02/NMI" AltFunc="" Point="I/O" />
+          <P03 Chip="V850ESJF3L,DF3737,DF3738,V850ESJG3,V850ESJJ3" Name="P03/INTP0/ADTRG" AltFunc="" Point="I/O" />
+          <P04 Chip="V850ESJF3L,DF3737,DF3738,V850ESJG3,V850ESJJ3" Name="P04/INTP1" AltFunc="" Point="I/O" />
+          <P05 Name="P05/INTP2/DRST" AltFunc="" Point="I/O" />
+          <P06 Name="P06/INTP3" AltFunc="" Point="I/O" />
+        </Port0>
+        <Port1 NoRegPMC="true">
+          <P10 Name="P10/ANO0" AltFunc="" Point="I/O" />
+          <P11 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P11/ANO1" AltFunc="" Point="I/O" />
+        </Port1>
+        <Port3 Nch="true">
+          <P30 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P30/TXDA0/SOB4" AltFunc="" Point="I/O" />
+          <P31 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P31/RXDA0/INTP7/SIB4" AltFunc="" Point="I/O" />
+          <P32 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P32/ASCKA0/SCKB4/TIP00/TOP00" AltFunc="" Point="I/O" />
+          <P33 Name="P33/TIP01/TOP01" AltFunc="" Point="I/O" />
+          <P34 Name="P34/TIP10/TOP10" AltFunc="" Point="I/O" />
+          <P35 Name="P35/TIP11/TOP11" AltFunc="" Point="I/O" />
+          <P36 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P36" AltFunc="" Point="I/O" />
+          <P37 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P37" AltFunc="" Point="I/O" />
+          <P38 Name="P38/TXDA2/SDA00" AltFunc="" Point="I/O" />
+          <P39 Name="P39/RXDA2/SCL00" AltFunc="" Point="I/O" />
+        </Port3>
+        <Port4 Nch="true">
+          <P40 Name="P40/SIB0/SDA01" AltFunc="" Point="I/O" />
+          <P41 Name="P41/SOB0/SCL01" AltFunc="" Point="I/O" />
+          <P42 Name="P42/SCKB0" AltFunc="" Point="I/O" />
+        </Port4>
+        <Port5 Nch="true">
+          <P50 Name="P50/TIQ01/KR0/TOQ01/RTP00" AltFunc="" Point="I/O" />
+          <P51 Name="P51/TIQ02/KR1/TOQ02/RTP01" AltFunc="" Point="I/O" />
+          <P52 Name="P52/TIQ03/KR2/TOQ03/RTP02/DDI" AltFunc="" Point="I/O" />
+          <P53 Name="P53/SIB2/TIQ00/KR3/TOQ00/RTP03/DDO" AltFunc="" Point="I/O" />
+          <P54 Name="P54/SOB2/KR4/RTP04/DCK" AltFunc="" Point="I/O" />
+          <P55 Name="P55/SCKB2/KR5/RTP05/DMS" AltFunc="" Point="I/O" />
+        </Port5>
+        <Port6 Chip="V850ESJJ3" Nch="true">
+          <P60 Name="P60/RTP10" AltFunc="" Point="I/O" />
+          <P61 Name="P61/RTP11" AltFunc="" Point="I/O" />
+          <P62 Name="P62/RTP12" AltFunc="" Point="I/O" />
+          <P63 Name="P63/RTP13" AltFunc="" Point="I/O" />
+          <P64 Name="P64/RTP14" AltFunc="" Point="I/O" />
+          <P65 Name="P65/RTP15" AltFunc="" Point="I/O" />
+          <P66 Name="P66/SIB5" AltFunc="" Point="I/O" />
+          <P67 Name="P67/SOB5" AltFunc="" Point="I/O" />
+          <P68 Name="P68/SCKB5" AltFunc="" Point="I/O" />
+          <P69 Name="P69/TIP70/TOP70" AltFunc="" Point="I/O" />
+          <P610 Name="P610/TIP71" AltFunc="" Point="I/O" />
+          <P611 Name="P611/TOP71" AltFunc="" Point="I/O" />
+          <P612 Name="P612/TIP80/TOP80" AltFunc="" Point="I/O" />
+          <P613 Name="P613/TIP81/TOP81" AltFunc="" Point="I/O" />
+          <P614 Name="P614" AltFunc="" Point="I/O" />
+          <P615 Name="P615" AltFunc="" Point="I/O" />
+        </Port6>
+        <Port7 NoRegPMC="true">
+          <P70 Name="P70/ANI0" AltFunc="" Point="I/O" />
+          <P71 Name="P71/ANI1" AltFunc="" Point="I/O" />
+          <P72 Name="P72/ANI2" AltFunc="" Point="I/O" />
+          <P73 Name="P73/ANI3" AltFunc="" Point="I/O" />
+          <P74 Name="P74/ANI4" AltFunc="" Point="I/O" />
+          <P75 Name="P75/ANI5" AltFunc="" Point="I/O" />
+          <P76 Name="P76/ANI6" AltFunc="" Point="I/O" />
+          <P77 Name="P77/ANI7" AltFunc="" Point="I/O" />
+          <P78 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P78/ANI8" AltFunc="" Point="I/O" />
+          <P79 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P79/ANI9" AltFunc="" Point="I/O" />
+          <P710 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P710/ANI10" AltFunc="" Point="I/O" />
+          <P711 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P711/ANI11" AltFunc="" Point="I/O" />
+          <P712 Chip="V850ESJJ3" Name="P712/ANI12" AltFunc="" Point="I/O" />
+          <P713 Chip="V850ESJJ3" Name="P713/ANI13" AltFunc="" Point="I/O" />
+          <P714 Chip="V850ESJJ3" Name="P714/ANI14" AltFunc="" Point="I/O" />
+          <P715 Chip="V850ESJJ3" Name="P715/ANI15" AltFunc="" Point="I/O" />
+        </Port7>
+        <Port8 Chip="V850ESJJ3" Nch="true">
+          <P80 Name="P80/RXDA3/INTP8" AltFunc="" Point="I/O" />
+          <P81 Name="P81/TXDA3" AltFunc="" Point="I/O" />
+        </Port8>
+        <Port9 Nch="true">
+          <P90 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P90/A0/KR6/TXDA1/SDA02" AltFunc="" Point="I/O" />
+          <P91 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P91/A1/KR7/RXDA1/SCL02" AltFunc="" Point="I/O" />
+          <P92 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P92/A2/TIP41/TOP41" AltFunc="" Point="I/O" />
+          <P93 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P93/A3/TIP40/TOP40" AltFunc="" Point="I/O" />
+          <P94 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P94/A4/TIP31/TOP31" AltFunc="" Point="I/O" />
+          <P95 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P95/A5/TIP30/TOP30" AltFunc="" Point="I/O" />
+          <P96 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P96/A6/TIP21/TOP21" AltFunc="" Point="I/O" />
+          <P97 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="P97/A7/SIB1/TIP20/TOP20" AltFunc="" Point="I/O" />
+          <P98 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P98/A8/SOB1" AltFunc="" Point="I/O" />
+          <P99 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P99//A9/SCKB1" AltFunc="" Point="I/O" />
+          <P910 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P910/A10/SIB3" AltFunc="" Point="I/O" />
+          <P911 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P911/A11/SOB3" AltFunc="" Point="I/O" />
+          <P912 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P912/A12/SCKB3" AltFunc="" Point="I/O" />
+          <P913 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P913/A13/INTP4" AltFunc="" Point="I/O" />
+          <P914 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P914/A14/INTP5/TIP51/TOP51" AltFunc="" Point="I/O" />
+          <P915 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="P915/A15/INTP6/TIP50/TOP50" AltFunc="" Point="I/O" />
+        </Port9>
+        <PortCD Chip="V850ESJJ3" PortOnly="true">
+          <PCD0 Name="PCD0" AltFunc="" Point="I/O" />
+          <PCD1 Name="PCD1" AltFunc="" Point="I/O" />
+          <PCD2 Name="PCD2" AltFunc="" Point="I/O" />
+          <PCD3 Name="PCD3" AltFunc="" Point="I/O" />
+        </PortCD>
+        <PortCM>
+          <PCM0 Name="PCM0/WAIT" AltFunc="" Point="I/O" />
+          <PCM1 Name="PCM1/CLKOUT" AltFunc="" Point="I/O" />
+          <PCM2 Name="PCM2/HLDAK" AltFunc="" Point="I/O" />
+          <PCM3 Name="PCM3/HLDRQ" AltFunc="" Point="I/O" />
+          <PCM4 Chip="V850ESJJ3" Name="PCM4" AltFunc="" Point="I/O" />
+          <PCM5 Chip="V850ESJJ3" Name="PCM5" AltFunc="" Point="I/O" />
+        </PortCM>
+        <PortCS Chip="V850ESJJ3">
+          <PCS0 Name="PCS0/CS0" AltFunc="" Point="I/O" />
+          <PCS1 Name="PCS1/CS1" AltFunc="" Point="I/O" />
+          <PCS2 Name="PCS2/CS2" AltFunc="" Point="I/O" />
+          <PCS3 Name="PCS3/CS3" AltFunc="" Point="I/O" />
+          <PCS4 Name="PCS4" AltFunc="" Point="I/O" />
+          <PCS5 Name="PCS5" AltFunc="" Point="I/O" />
+          <PCS6 Name="PCS6" AltFunc="" Point="I/O" />
+          <PCS7 Name="PCS7" AltFunc="" Point="I/O" />
+        </PortCS>
+        <PortCT>
+          <PCT0 Name="PCT0/WR0" AltFunc="" Point="I/O" />
+          <PCT1 Name="PCT1/WR1" AltFunc="" Point="I/O" />
+          <PCT2 Chip="V850ESJJ3" Name="PCT2" AltFunc="" Point="I/O" />
+          <PCT3 Chip="V850ESJJ3" Name="PCT3" AltFunc="" Point="I/O" />
+          <PCT4 Name="PCT4/RD" AltFunc="" Point="I/O" />
+          <PCT5 Chip="V850ESJJ3" Name="PCT5" AltFunc="" Point="I/O" />
+          <PCT6 Name="PCT6/ASTB" AltFunc="" Point="I/O" />
+          <PCT7 Chip="V850ESJJ3" Name="PCT7" AltFunc="" Point="I/O" />
+        </PortCT>
+        <PortDH>
+          <PDH0 Name="PDH0/A16" AltFunc="" Point="I/O" />
+          <PDH1 Name="PDH1/A17" AltFunc="" Point="I/O" />
+          <PDH2 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="PDH2/A18" AltFunc="" Point="I/O" />
+          <PDH3 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="PDH3/A19" AltFunc="" Point="I/O" />
+          <PDH4 Chip="V850ESJG3,V850ESJG3L,V850ESJJ3" Name="PDH4/A20" AltFunc="" Point="I/O" />
+          <PDH5 Chip="V850ESJG3,DF3737,DF3738,V850ESJJ3" Name="PDH5/A21" AltFunc="" Point="I/O" />
+          <PDH6 Chip="V850ESJJ3" Name="PDH6/A22" AltFunc="" Point="I/O" />
+          <PDH7 Chip="V850ESJJ3" Name="PDH7/A23" AltFunc="" Point="I/O" />
+        </PortDH>
+        <PortDL>
+          <PDL0 Name="PDL0/AD0" AltFunc="" Point="I/O" />
+          <PDL1 Name="PDL1/AD1" AltFunc="" Point="I/O" />
+          <PDL2 Name="PDL2/AD2" AltFunc="" Point="I/O" />
+          <PDL3 Name="PDL3/AD3" AltFunc="" Point="I/O" />
+          <PDL4 Name="PDL4/AD4" AltFunc="" Point="I/O" />
+          <PDL5 Name="PDL5/AD5/FLMD1" AltFunc="" Point="I/O" />
+          <PDL6 Name="PDL6/AD6" AltFunc="" Point="I/O" />
+          <PDL7 Name="PDL7/AD7" AltFunc="" Point="I/O" />
+          <PDL8 Name="PDL8/AD8" AltFunc="" Point="I/O" />
+          <PDL9 Name="PDL9/AD9" AltFunc="" Point="I/O" />
+          <PDL10 Name="PDL10/AD10" AltFunc="" Point="I/O" />
+          <PDL11 Name="PDL11/AD11" AltFunc="" Point="I/O" />
+          <PDL12 Name="PDL12/AD12" AltFunc="" Point="I/O" />
+          <PDL13 Name="PDL13/AD13" AltFunc="" Point="I/O" />
+          <PDL14 Name="PDL14/AD14" AltFunc="" Point="I/O" />
+          <PDL15 Name="PDL15/AD15" AltFunc="" Point="I/O" />
+        </PortDL>
+      </PORT>
+      <INT>
+        <INTP>
+          <NMI Port="P02" Point="I" />
+          <INTP0 Port="P03" Point="I" />
+          <INTP1 Port="P04" Point="I" />
+          <INTP2 Port="P05" Point="I" />
+          <INTP3 Port="P06" Point="I" />
+          <INTP4 Port="P913" Point="I" />
+          <INTP5 Port="P914" Point="I" />
+          <INTP6 Port="P915" Point="I" />
+          <INTP7 Port="P31" Point="I" />
+          <INTP8 Chip="V850ESJJ3" Port="P80" Point="I" />
+        </INTP>
+        <KEY>
+          <KR0 Port="P50" Point="I" />
+          <KR1 Port="P51" Point="I" />
+          <KR2 Port="P52" Point="I" />
+          <KR3 Port="P53" Point="I" />
+          <KR4 Port="P54" Point="I" />
+          <KR5 Port="P55" Point="I" />
+          <KR6 Port="P90" Point="I" />
+          <KR7 Port="P91" Point="I" />
+        </KEY>
+      </INT>
+      <Serial>
+        <UARTA0>
+          <ASCKA0 Port="P32" Point="I" />
+          <TXDA0 Port="P30" Point="O" />
+          <RXDA0 Port="P31" Point="I" />
+        </UARTA0>
+        <UARTA1>
+          <TXDA1 Port="P90" Point="O" />
+          <RXDA1 Port="P91" Point="I" />
+        </UARTA1>
+        <UARTA2>
+          <TXDA2 Port="P38" Point="O" />
+          <RXDA2 Port="P39" Point="I" />
+        </UARTA2>
+        <UARTA3 Chip="V850ESJJ3">
+          <TXDA3 Port="P81" Point="O" />
+          <RXDA3 Port="P80" Point="I" />
+        </UARTA3>
+        <CSIB0>
+          <SIB0 Port="P40" Point="I" />
+          <SOB0 Port="P41" Point="O" />
+          <SCKB0 Port="P42" RealName="_SCKB0" Point="I/O" />
+        </CSIB0>
+        <CSIB1>
+          <SIB1 Port="P97" Point="I" />
+          <SOB1 Port="P98" Point="O" />
+          <SCKB1 Port="P99" RealName="_SCKB1" Point="I/O" />
+        </CSIB1>
+        <CSIB2>
+          <SIB2 Port="P53" Point="I" />
+          <SOB2 Port="P54" Point="O" />
+          <SCKB2 Port="P55" RealName="_SCKB2" Point="I/O" />
+        </CSIB2>
+        <CSIB3 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <SIB3 Port="P910" Point="I" />
+          <SOB3 Port="P911" Point="O" />
+          <SCKB3 Port="P912" RealName="_SCKB3" Point="I/O" />
+        </CSIB3>
+        <CSIB4 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <SIB4 Port="P31" Point="I" />
+          <SOB4 Port="P30" Point="O" />
+          <SCKB4 Port="P32" RealName="_SCKB4" Point="I/O" />
+        </CSIB4>
+        <CSIB5 Chip="V850ESJJ3">
+          <SIB5 Port="P66" Point="I" />
+          <SOB5 Port="P67" Point="O" />
+          <SCKB5 Port="P68" RealName="_SCKB5" Point="I/O" />
+        </CSIB5>
+        <IIC00>
+          <SDA00 Port="P38" Point="I/O" CheckNch="true" />
+          <SCL00 Port="P39" Point="I/O" CheckNch="true" />
+        </IIC00>
+        <IIC01>
+          <SDA01 Port="P40" Point="I/O" CheckNch="true" />
+          <SCL01 Port="P41" Point="I/O" CheckNch="true" />
+        </IIC01>
+        <IIC02 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <SDA02 Port="P90" Point="I/O" CheckNch="true" />
+          <SCL02 Port="P91" Point="I/O" CheckNch="true" />
+        </IIC02>
+      </Serial>
+      <AD>
+        <ADTRG Port="P03" Point="I" />
+        <ANI0 Port="P70" Point="I" />
+        <ANI1 Port="P71" Point="I" />
+        <ANI2 Port="P72" Point="I" />
+        <ANI3 Port="P73" Point="I" />
+        <ANI4 Port="P74" Point="I" />
+        <ANI5 Port="P75" Point="I" />
+        <ANI6 Port="P76" Point="I" />
+        <ANI7 Port="P77" Point="I" />
+        <ANI8 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" Port="P78" Point="I" />
+        <ANI9 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" Port="P79" Point="I" />
+        <ANI10 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" Port="P710" Point="I" />
+        <ANI11 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" Port="P711" Point="I" />
+        <ANI12 Chip="V850ESJJ3" Port="P712" Point="I" />
+        <ANI13 Chip="V850ESJJ3" Port="P713" Point="I" />
+        <ANI14 Chip="V850ESJJ3" Port="P714" Point="I" />
+        <ANI15 Chip="V850ESJJ3" Port="P715" Point="I" />
+      </AD>
+      <DA>
+        <DA0>
+          <ANO0 Port="P10" Point="O" />
+        </DA0>
+        <DA1 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3">
+          <ANO1 Port="P11" Point="O" />
+        </DA1>
+      </DA>
+      <Timer>
+        <TMP0>
+          <TIP00 Port="P32" Point="I" />
+          <TOP00 Port="P32" Point="O" />
+          <TIP01 Port="P33" Point="I" />
+          <TOP01 Port="P33" Point="O" />
+        </TMP0>
+        <TMP1>
+          <TIP10 Port="P34" Point="I" />
+          <TOP10 Port="P34" Point="O" />
+          <TIP11 Port="P35" Point="I" />
+          <TOP11 Port="P35" Point="O" />
+        </TMP1>
+        <TMP2>
+          <TIP20 Port="P97" Point="I" />
+          <TOP20 Port="P97" Point="O" />
+          <TIP21 Port="P96" Point="I" />
+          <TOP21 Port="P96" Point="O" />
+        </TMP2>
+        <TMP3 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3">
+          <TIP30 Port="P95" Point="I" />
+          <TOP30 Port="P95" Point="O" />
+          <TIP31 Port="P94" Point="I" />
+          <TOP31 Port="P94" Point="O" />
+        </TMP3>
+        <TMP4 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3">
+          <TIP40 Port="P93" Point="I" />
+          <TOP40 Port="P93" Point="O" />
+          <TIP41 Port="P92" Point="I" />
+          <TOP41 Port="P92" Point="O" />
+        </TMP4>
+        <TMP5>
+          <TIP50 Port="P915" Point="I" />
+          <TOP50 Port="P915" Point="O" />
+          <TIP51 Port="P914" Point="I" />
+          <TOP51 Port="P914" Point="O" />
+        </TMP5>
+        <TMP6 Chip="V850ESJJ3">
+          <TIP60 Port="P01" Point="I" />
+          <TOP60 Port="P01" Point="O" />
+          <TIP61 Port="P00" Point="I" />
+          <TOP61 Port="P00" Point="O" />
+        </TMP6>
+        <TMP7 Chip="V850ESJJ3">
+          <TIP70 Port="P69" Point="I" />
+          <TOP70 Port="P69" Point="O" />
+          <TIP71 Port="P610" Point="I" />
+          <TOP71 Port="P611" Point="O" />
+        </TMP7>
+        <TMP8 Chip="V850ESJJ3">
+          <TIP80 Port="P612" Point="I" />
+          <TOP80 Port="P612" Point="O" />
+          <TIP81 Port="P613" Point="I" />
+          <TOP81 Port="P613" Point="O" />
+        </TMP8>
+        <TMQ0>
+          <TIQ00 Port="P53" Point="I" />
+          <TIQ01 Port="P50" Point="I" />
+          <TIQ02 Port="P51" Point="I" />
+          <TIQ03 Port="P52" Point="I" />
+          <TOQ00 Port="P53" Point="O" />
+          <TOQ01 Port="P50" Point="O" />
+          <TOQ02 Port="P51" Point="O" />
+          <TOQ03 Port="P52" Point="O" />
+        </TMQ0>
+      </Timer>
+      <RTO>
+        <RTO0>
+          <RTP00 Port="P50" Point="O" />
+          <RTP01 Port="P51" Point="O" />
+          <RTP02 Port="P52" Point="O" />
+          <RTP03 Port="P53" Point="O" />
+          <RTP04 Port="P54" Point="O" />
+          <RTP05 Port="P55" Point="O" />
+        </RTO0>
+        <RTO1 Chip="V850ESJJ3">
+          <RTP10 Port="P60" Point="O" />
+          <RTP11 Port="P61" Point="O" />
+          <RTP12 Port="P62" Point="O" />
+          <RTP13 Port="P63" Point="O" />
+          <RTP14 Port="P64" Point="O" />
+          <RTP15 Port="P65" Point="O" />
+        </RTO1>
+      </RTO>
+      <Others>
+        <Power>
+          <AVREF0 AltFunc="AVREF0" Point="-" />
+          <AVSS AltFunc="AVSS" Point="-" />
+          <VDD AltFunc="VDD" Point="-" />
+          <VSS AltFunc="VSS" Point="-" />
+          <EVSS AltFunc="EVSS" Point="-" />
+          <EVDD AltFunc="EVDD" Point="-" />
+        </Power>
+        <Regular>
+          <REGC AltFunc="REGC" Point="-" />
+        </Regular>
+        <RESET AltFunc="RESET" RealName="_RESET" Point="I" />
+      </Others>
+    </PIN>
+    <INT>
+      <System>
+        <INTWDT2 InUse="0" ISR="MD_INTWDT2" />
+      </System>
+      <INT>
+        <INTP>
+          <NMI InUse="0" ISR="MD_INTNMI" />
+          <INTP0 InUse="0" ISR="MD_INTP0" />
+          <INTP1 InUse="0" ISR="MD_INTP1" />
+          <INTP2 InUse="0" ISR="MD_INTP2" />
+          <INTP3 InUse="0" ISR="MD_INTP3" />
+          <INTP4 InUse="0" ISR="MD_INTP4" />
+          <INTP5 InUse="0" ISR="MD_INTP5" />
+          <INTP6 InUse="0" ISR="MD_INTP6" />
+          <INTP7 InUse="0" ISR="MD_INTP7" />
+          <INTP8 Chip="V850ESJJ3" InUse="0" ISR="MD_INTP8" />
+        </INTP>
+        <KEY>
+          <INTKR InUse="0" ISR="MD_INTKR" />
+        </KEY>
+      </INT>
+      <Serial>
+        <UARTA0>
+          <INTUA0R InUse="0" ISR="MD_INTUA0R" />
+          <INTUA0T InUse="0" ISR="MD_INTUA0T" />
+        </UARTA0>
+        <UARTA1>
+          <INTUA1R InUse="0" ISR="MD_INTUA1R" />
+          <INTUA1T InUse="0" ISR="MD_INTUA1T" />
+        </UARTA1>
+        <UARTA2>
+          <INTUA2R InUse="0" ISR="MD_INTUA2R" IsDMATrigger="true" />
+          <INTUA2T InUse="0" ISR="MD_INTUA2T" IsDMATrigger="true" />
+        </UARTA2>
+        <UARTA3 Chip="DF3792,DF3793,V850ESJJ3">
+          <INTUA3R InUse="0" ISR="MD_INTUA3R" />
+          <INTUA3T InUse="0" ISR="MD_INTUA3T" />
+        </UARTA3>
+        <CSIB0>
+          <INTCB0R InUse="0" ISR="MD_INTCB0R" />
+          <INTCB0T InUse="0" ISR="MD_INTCB0T" />
+        </CSIB0>
+        <CSIB1>
+          <INTCB1R InUse="0" ISR="MD_INTCB1R" />
+          <INTCB1T InUse="0" ISR="MD_INTCB1T" />
+        </CSIB1>
+        <CSIB2>
+          <INTCB2R InUse="0" ISR="MD_INTCB2R" />
+          <INTCB2T InUse="0" ISR="MD_INTCB2T" />
+        </CSIB2>
+        <CSIB3 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <INTCB3R InUse="0" ISR="MD_INTCB3R" />
+          <INTCB3T InUse="0" ISR="MD_INTCB3T" />
+        </CSIB3>
+        <CSIB4 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <INTCB4R InUse="0" ISR="MD_INTCB4R" />
+          <INTCB4T InUse="0" ISR="MD_INTCB4T" />
+        </CSIB4>
+        <CSIB5 Chip="V850ESJJ3">
+          <INTCB5R InUse="0" ISR="MD_INTCB5R" />
+          <INTCB5T InUse="0" ISR="MD_INTCB5T" />
+        </CSIB5>
+        <IIC00>
+          <INTIIC0 InUse="0" ISR="MD_INTIIC0" />
+        </IIC00>
+        <IIC01>
+          <INTIIC1 InUse="0" ISR="MD_INTIIC1" />
+        </IIC01>
+        <IIC02 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L">
+          <INTIIC2 InUse="0" ISR="MD_INTIIC2" />
+        </IIC02>
+      </Serial>
+      <AD>
+        <INTAD InUse="0" ISR="MD_INTAD" />
+      </AD>
+      <Timer>
+        <TMP0>
+          <INTTP0OV InUse="0" ISR="MD_INTTP0OV" />
+          <INTTP0CC0 InUse="0" ISR="MD_INTTP0CC0" />
+          <INTTP0CC1 InUse="0" ISR="MD_INTTP0CC1" />
+        </TMP0>
+        <TMP1>
+          <INTTP1OV InUse="0" ISR="MD_INTTP1OV" />
+          <INTTP1CC0 InUse="0" ISR="MD_INTTP1CC0" />
+          <INTTP1CC1 InUse="0" ISR="MD_INTTP1CC1" />
+        </TMP1>
+        <TMP2>
+          <INTTP2OV InUse="0" ISR="MD_INTTP2OV" />
+          <INTTP2CC0 InUse="0" ISR="MD_INTTP2CC0" />
+          <INTTP2CC1 InUse="0" ISR="MD_INTTP2CC1" />
+        </TMP2>
+        <TMP3 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3">
+          <INTTP3OV InUse="0" ISR="MD_INTTP3OV" />
+          <INTTP3CC0 InUse="0" ISR="MD_INTTP3CC0" />
+          <INTTP3CC1 InUse="0" ISR="MD_INTTP3CC1" />
+        </TMP3>
+        <TMP4 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3">
+          <INTTP4OV InUse="0" ISR="MD_INTTP4OV" />
+          <INTTP4CC0 InUse="0" ISR="MD_INTTP4CC0" />
+          <INTTP4CC1 InUse="0" ISR="MD_INTTP4CC1" />
+        </TMP4>
+        <TMP5>
+          <INTTP5OV InUse="0" ISR="MD_INTTP5OV" />
+          <INTTP5CC0 InUse="0" ISR="MD_INTTP5CC0" />
+          <INTTP5CC1 InUse="0" ISR="MD_INTTP5CC1" />
+        </TMP5>
+        <TMP6 Chip="V850ESJJ3">
+          <INTTP6OV InUse="0" ISR="MD_INTTP6OV" />
+          <INTTP6CC0 InUse="0" ISR="MD_INTTP6CC0" />
+          <INTTP6CC1 InUse="0" ISR="MD_INTTP6CC1" />
+        </TMP6>
+        <TMP7 Chip="V850ESJJ3">
+          <INTTP7OV InUse="0" ISR="MD_INTTP7OV" />
+          <INTTP7CC0 InUse="0" ISR="MD_INTTP7CC0" />
+          <INTTP7CC1 InUse="0" ISR="MD_INTTP7CC1" />
+        </TMP7>
+        <TMP8 Chip="V850ESJJ3">
+          <INTTP8OV InUse="0" ISR="MD_INTTP8OV" />
+          <INTTP8CC0 InUse="0" ISR="MD_INTTP8CC0" />
+          <INTTP8CC1 InUse="0" ISR="MD_INTTP8CC1" />
+        </TMP8>
+        <TMQ0>
+          <INTTQ0OV InUse="0" ISR="MD_INTTQ0OV" />
+          <INTTQ0CC0 InUse="0" ISR="MD_INTTQ0CC0" />
+          <INTTQ0CC1 InUse="0" ISR="MD_INTTQ0CC1" />
+          <INTTQ0CC2 InUse="0" ISR="MD_INTTQ0CC2" />
+          <INTTQ0CC3 InUse="0" ISR="MD_INTTQ0CC3" />
+        </TMQ0>
+        <TMM0>
+          <INTTM0EQ0 InUse="0" ISR="MD_INTTM0EQ0" />
+        </TMM0>
+      </Timer>
+      <WatchTimer>
+        <INTWTI InUse="0" ISR="MD_INTWTI" />
+        <INTWT InUse="0" ISR="MD_INTWT" />
+      </WatchTimer>
+      <DMA>
+        <DMA0>
+          <INTDMA0 InUse="0" ISR="MD_INTDMA0" />
+        </DMA0>
+        <DMA1>
+          <INTDMA1 InUse="0" ISR="MD_INTDMA1" />
+        </DMA1>
+        <DMA2>
+          <INTDMA2 InUse="0" ISR="MD_INTDMA2" />
+        </DMA2>
+        <DMA3>
+          <INTDMA3 InUse="0" ISR="MD_INTDMA3" />
+        </DMA3>
+      </DMA>
+      <LVI>
+        <INTLVI InUse="0" ISR="MD_INTLVI" IsDMATrigger="true" />
+      </LVI>
+    </INT>
+    <FUNC>
+      <Common InUse="true">
+        <CG_main.c UserName="CG_main.c" LibName="main.c" InUse="2" IsLibrary="false">
+          <Type main="void main(void)" />
+          <main UserName="main" FixedName="" LibName="main" InUse="2" ForRTOS="false" />
+        </CG_main.c>
+        <CG_systeminit.c UserName="CG_systeminit.c" LibName="systeminit.c" InUse="1">
+          <Type systeminit="void systeminit(void)" />
+          <systeminit UserName="systeminit" LibName="systeminit" InUse="1" />
+        </CG_systeminit.c>
+        <CG_macrodriver.h UserName="CG_macrodriver.h" LibName="macrodriver.h" InUse="1" />
+        <CG_userdefine.h UserName="CG_userdefine.h" LibName="userdefine.h" InUse="1" />
+        <CG_lk.dir UserName="CG_lk.dir" LibName="lk.dir" IsLibrary="false" Compiler="CA850" InUse="1" />
+        <CG_start.s UserName="CG_start.s" LibName="start.s" IsLibrary="false" Compiler="CA850" InUse="1" />
+        <CG_inttab.s UserName="CG_inttab.s" LibName="inttab.s" Compiler="CA850,GHS850" InUse="1" />
+        <DF_ghs.head UserName="DF_ghs.head" CplName="" LibName="df_ghs.head" Compiler="GHS850" Visible="false" InUse="1" />
+        <io_macros.head UserName="io_macros.head" CplName="" LibName="io_macros.head" Compiler="GHS850" Visible="false" InUse="1" />
+        <CG_GHS850.lx UserName="CG_GHS850.lx" LibName="GHS850.lx" Visible="false" IsLibrary="false" Compiler="GHS850" InUse="1" />
+        <CG_mdt.prj UserName="CG_mdt.prj" Visible="false" IsLibrary="false" ForAP="true" LibName="mdt.prj" Compiler="CA850" InUse="1" />
+        <CG_mdt.prw UserName="CG_mdt.prw" Visible="false" IsLibrary="false" ForAP="true" LibName="mdt.prw" Compiler="CA850" InUse="1" />
+        <CG_startup.s UserName="CG_startup.s" LibName="startup.s" IsLibrary="false" Compiler="GHS850" InUse="1" />
+        <CG_mdt.eww UserName="CG_mdt.eww" Visible="false" IsLibrary="false" LibName="mdt.eww" Compiler="EW850" InUse="1" />
+        <CG_mdt.ewp UserName="CG_mdt.ewp" Visible="false" IsLibrary="false" LibName="mdt.ewp" Compiler="EW850" InUse="1" />
+        <CG_mdt.gpj UserName="CG_mdt.gpj" Visible="false" IsLibrary="false" LibName="mdt.gpj" Compiler="GHS850" InUse="1" />
+        <CG_mdt.gpw UserName="CG_mdt.gpw" Visible="false" IsLibrary="false" LibName="mdt.gpw" Compiler="GHS850" InUse="1" />
+        <CG_mdlnk.xcl UserName="CG_mdlnk.xcl" Visible="false" IsLibrary="false" LibName="md_lnk.xcl" Compiler="EW850" InUse="1" />
+        <CG_option.s85 UserName="CG_option.s85" LibName="option.s" Compiler="EW850" InUse="1" />
+      </Common>
+      <System InUse="1">
+        <CG_system.c UserName="CG_system.c" LibName=".c" InUse="1">
+          <Type CLOCK_Init="void CLOCK_Init(void)" CG_ChangeFrequency="MD_STATUS CG_ChangeFrequency(enum CPUClock clock)" CG_SelectPowerSaveMode="MD_STATUS CG_SelectPowerSaveMode(enum PSLevel level)" CG_ChangeClockMode="MD_STATUS CG_ChangeClockMode(enum ClockMode mode)" CG_SelectStabTime="MD_STATUS CG_SelectStabTime(enum StabTime waittime)" CG_SelectPllMode="MD_STATUS CG_SelectPllMode(enum PllMode pllmode)" WDT2_Restart="void WDT2_Restart(void)" CRC_Start="void CRC_Start(void)" CRC_SetData="void CRC_SetData(UCHAR data)" CRC_GetResult="void CRC_GetResult(USHORT *result)" />
+          <CLOCK_Init UserName="CLOCK_Init" LibName="CLOCK_Init" InUse="1" gInit="1" />
+          <CG_ChangeFrequency UserName="CG_ChangeFrequency" LibName="CG_ChangeFrequency" InUse="0" />
+          <CG_SelectPowerSaveMode UserName="CG_SelectPowerSaveMode" LibName="CG_SelectPowerSaveMode" InUse="0" />
+          <CG_ChangeClockMode UserName="CG_ChangeClockMode" LibName="CG_ChangeClockMode" InUse="0" />
+          <CG_SelectStabTime UserName="CG_SelectStabTime" LibName="CG_SelectStabTime" InUse="0" />
+          <CG_SelectPllMode UserName="CG_SelectPllMode" LibName="CG_SelectPllMode" InUse="0" />
+          <WDT2_Restart UserName="WDT2_Restart" LibName="WDT2_Restart" InUse="1" />
+          <CRC>
+            <CRC_Start NotSubMacro="" UserName="CRC_Start" LibName="CRC_Start" InUse="0" />
+            <CRC_SetData NotSubMacro="" UserName="CRC_SetData" LibName="CRC_SetData" InUse="0" />
+            <CRC_GetResult NotSubMacro="" UserName="CRC_GetResult" LibName="CRC_GetResult" InUse="0" />
+          </CRC>
+        </CG_system.c>
+        <CG_system_user.c UserName="CG_system_user.c" LibName="_user.c" InUse="1">
+          <Type Clock_UserInit="void CLOCK_UserInit(void)" CG_ReadResetSource="void CG_ReadResetSource(void)" MD_INTWDT2="__interrupt void MD_INTWDT2(void)" />
+          <CLOCK_UserInit UserName="CLOCK_UserInit" LibName="Clock_UserInit" InUse="0" />
+          <CG_ReadResetSource UserName="CG_ReadResetSource" LibName="CG_ReadResetSource" Init="0" InUse="1" />
+          <MD_INTWDT2 UserName="MD_INTWDT2" LibName="MD_INTWDT2" INTHandle="" InUse="0" />
+        </CG_system_user.c>
+        <CG_system.h UserName="CG_system.h" LibName=".h" InUse="1" />
+      </System>
+      <BUS InUse="">
+        <CG_bus.c UserName="CG_bus.c" LibName=".c" InUse="">
+          <Type BUS_Init="void BUS_Init(void)" />
+          <BUS_Init UserName="BUS_Init" LibName="BUS_Init" InUse="" Init="1" />
+        </CG_bus.c>
+        <CG_bus_user.c UserName="CG_bus_user.c" LibName="_user.c" InUse="">
+          <Type BUS_UserInit="void BUS_UserInit(void)" />
+          <BUS_UserInit UserName="BUS_UserInit" LibName="BUS_UserInit" InUse="" />
+        </CG_bus_user.c>
+        <CG_bus.h InUse="CG_bus.h" LibName=".h" UserName="CG_bus.h" />
+      </BUS>
+      <PORT InUse="">
+        <CG_port.c UserName="CG_port.c" LibName=".c" InUse="">
+          <Type PORT_Init="void PORT_Init(void)" PORT_ChangePmnInput3="void PORT_ChangePmnInput3(BOOL enablePU, BOOL enableTTL)" PORT_ChangePmnInput2="void PORT_ChangePmnInput2(BOOL enablePU)" PORT_ChangePmnInput1="void PORT_ChangePmnInput1(BOOL enableTTL)" PORT_ChangePmnInput0="void PORT_ChangePmnInput0(void)" PORT_ChangePmnOutput1="void PORT_ChangePmnOutput1(BOOL enableNch, BOOL initialValue)" PORT_ChangePmnOutput0="void PORT_ChangePmnOutput0(BOOL initialValue)" />
+          <PORT_Init UserName="PORT_Init" LibName="PORT_Init" InUse="" Init="0" />
+        </CG_port.c>
+        <CG_port_user.c UserName="CG_port_user.c" LibName="_user.c" InUse="">
+          <Type PORT_UserInit="void PORT_UserInit(void)" />
+          <PORT_UserInit UserName="PORT_UserInit" LibName="PORT_UserInit" InUse="" />
+        </CG_port_user.c>
+        <CG_port.h UserName="CG_port.h" LibName=".h" InUse="" />
+      </PORT>
+      <INT InUse="">
+        <CG_int.c UserName="CG_int.c" LibName=".c" InUse="">
+          <Type INTP_Init="void INTP_Init(void)" INTPn_Enable="void INTPn_Enable(void)" INTPn_Disable="void INTPn_Disable(void)" KEY_Init="void KEY_Init(void)" KEY_Enable="void KEY_Enable(void)" KEY_Disable="void KEY_Disable(void)" INT_MaskableInterruptEnable="void INT_MaskableInterruptEnable(enum MaskableSource name, BOOL enableflag)" />
+          <INTP>
+            <INTP_Init UserName="INTP_Init" LibName="INTP_Init" InUse="" Init="2" />
+            <INT_MaskableInterruptEnable UserName="INT_MaskableInterruptEnable" LibName="INT_MaskableInterruptEnable" InUse="" />
+            <INTP0>
+              <INTP0_Enable UserName="INTP0_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP0_Disable UserName="INTP0_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP0>
+            <INTP1>
+              <INTP1_Enable UserName="INTP1_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP1_Disable UserName="INTP1_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP1>
+            <INTP2>
+              <INTP2_Enable UserName="INTP2_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP2_Disable UserName="INTP2_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP2>
+            <INTP3>
+              <INTP3_Enable UserName="INTP3_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP3_Disable UserName="INTP3_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP3>
+            <INTP4>
+              <INTP4_Enable UserName="INTP4_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP4_Disable UserName="INTP4_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP4>
+            <INTP5>
+              <INTP5_Enable UserName="INTP5_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP5_Disable UserName="INTP5_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP5>
+            <INTP6>
+              <INTP6_Enable UserName="INTP6_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP6_Disable UserName="INTP6_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP6>
+            <INTP7>
+              <INTP7_Enable UserName="INTP7_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP7_Disable UserName="INTP7_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP7>
+            <INTP8 Chip="V850ESJJ3">
+              <INTP8_Enable UserName="INTP8_Enable" LibName="INTPn_Enable" InUse="" />
+              <INTP8_Disable UserName="INTP8_Disable" LibName="INTPn_Disable" InUse="" />
+            </INTP8>
+          </INTP>
+          <KEY>
+            <KEY_Init UserName="KEY_Init" LibName="KEY_Init" InUse="" Init="2" />
+            <KEY_Enable UserName="KEY_Enable" LibName="KEY_Enable" InUse="" />
+            <KEY_Disable UserName="KEY_Disable" LibName="KEY_Disable" InUse="" />
+          </KEY>
+        </CG_int.c>
+        <CG_int_user.c UserName="CG_int_user.c" LibName="_user.c" InUse="">
+          <Type INTP_UserInit="void INTP_UserInit(void)" KEY_UserInit="void KEY_UserInit(void)" MD_INTNMI="__interrupt void MD_INTNMI(void)" MD_INTPn="__interrupt void MD_INTPn(void)" MD_INTKR="__interrupt void MD_INTKR(void)" />
+          <INTP>
+            <INTP_UserInit UserName="INTP_UserInit" LibName="INTP_UserInit" InUse="" />
+            <NMI>
+              <MD_INTNMI UserName="MD_INTNMI" LibName="MD_INTNMI" INTHandle="" InUse="" />
+            </NMI>
+            <INTP0>
+              <MD_INTP0 UserName="MD_INTP0" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP0>
+            <INTP1>
+              <MD_INTP1 UserName="MD_INTP1" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP1>
+            <INTP2>
+              <MD_INTP2 UserName="MD_INTP2" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP2>
+            <INTP3>
+              <MD_INTP3 UserName="MD_INTP3" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP3>
+            <INTP4>
+              <MD_INTP4 UserName="MD_INTP4" INTHandle="" LibName="MD_INTPn" InUse="" />
+            </INTP4>
+            <INTP5>
+              <MD_INTP5 UserName="MD_INTP5" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP5>
+            <INTP6>
+              <MD_INTP6 UserName="MD_INTP6" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP6>
+            <INTP7>
+              <MD_INTP7 UserName="MD_INTP7" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP7>
+            <INTP8>
+              <MD_INTP8 Chip="V850ESJJ3" UserName="MD_INTP8" LibName="MD_INTPn" INTHandle="" InUse="" />
+            </INTP8>
+          </INTP>
+          <KEY>
+            <KEY_UserInit UserName="KEY_UserInit" LibName="KEY_UserInit" InUse="" />
+            <MD_INTKR UserName="MD_INTKR" LibName="MD_INTKR" INTHandle="" InUse="" />
+          </KEY>
+        </CG_int_user.c>
+        <CG_int.h UserName="CG_int.h" LibName=".h" InUse="" />
+      </INT>
+      <Serial InUse="">
+        <CG_serial.c Name="CG_serial.c" UserName="CG_serial.c" LibName=".c" InUse="">
+          <Type UARTAn_Init="void UARTAn_Init(void)" UARTAn_Start="void UARTAn_Start(void)" UARTAn_Stop="void UARTAn_Stop(void)" UARTAn_ReceiveData="MD_STATUS UARTAn_ReceiveData(UCHAR *rxbuf, USHORT rxnum)" UARTAn_SendData="MD_STATUS UARTAn_SendData(UCHAR *txbuf, USHORT txnum)" UARTCn_Init="void UARTCn_Init(void)" UARTCn_Start="void UARTCn_Start(void)" UARTCn_Stop="void UARTCn_Stop(void)" UARTCn_ReceiveData="MD_STATUS UARTCn_ReceiveData(UCHAR *rxbuf, USHORT rxnum)" UARTCn_SendData="MD_STATUS UARTCn_SendData(UCHAR *txbuf, USHORT txnum)" CSIBn_Init="void CSIBn_Init(void)" CSIBn_Start="void CSIBn_Start(void)" CSIBn_Stop="void CSIBn_Stop(void)" CSIBn_SendData="MD_STATUS CSIBn_SendData(UCHAR *txbuf, USHORT txnum)" CSIBn_ReceiveData="MD_STATUS CSIBn_ReceiveData(UCHAR *rxbuf, USHORT rxnum)" CSIBn_SendReceiveData="MD_STATUS CSIBn_SendReceiveData(UCHAR *txbuf, USHORT txnum, UCHAR *rxbuf)" IIC0n_Init="void IIC0n_Init(void)" IIC0n_Stop="void IIC0n_Stop(void)" IIC0n_StopCondition="void IIC0n_StopCondition(void)" IIC0n_MasterSendStart="MD_STATUS IIC0n_MasterSendStart(UCHAR adr, UCHAR *txbuf, USHORT txnum, UCHAR wait)" IIC0n_MasterReceiveStart="MD_STATUS IIC0n_MasterReceiveStart(UCHAR adr, UCHAR *rxbuf, USHORT rxnum, UCHAR wait)" IIC0n_SlaveSendStart="void IIC0n_SlaveSendStart(UCHAR *txbuf, USHORT txnum)" IIC0n_SlaveReceiveStart="void IIC0n_SlaveReceiveStart(UCHAR *rxbuf, USHORT rxnum)" />
+          <UARTA0 InUse="">
+            <UARTA0_Init UserName="UARTA0_Init" LibName="UARTAn_Init" InUse="" Init="2" />
+            <UARTA0_Start UserName="UARTA0_Start" LibName="UARTAn_Start" InUse="" />
+            <UARTA0_Stop UserName="UARTA0_Stop" LibName="UARTAn_Stop" InUse="" />
+            <UARTA0_SendData UserName="UARTA0_SendData" LibName="UARTAn_SendData" InUse="" />
+            <UARTA0_ReceiveData UserName="UARTA0_ReceiveData" LibName="UARTAn_ReceiveData" InUse="" />
+          </UARTA0>
+          <UARTA1 InUse="">
+            <UARTA1_Init UserName="UARTA1_Init" LibName="UARTAn_Init" InUse="" Init="2" />
+            <UARTA1_Start UserName="UARTA1_Start" LibName="UARTAn_Start" InUse="" />
+            <UARTA1_Stop UserName="UARTA1_Stop" LibName="UARTAn_Stop" InUse="" />
+            <UARTA1_SendData UserName="UARTA1_SendData" LibName="UARTAn_SendData" InUse="" />
+            <UARTA1_ReceiveData UserName="UARTA1_ReceiveData" LibName="UARTAn_ReceiveData" InUse="" />
+          </UARTA1>
+          <UARTA2 InUse="">
+            <UARTA2_Init UserName="UARTA2_Init" LibName="UARTAn_Init" InUse="" Init="2" />
+            <UARTA2_Start UserName="UARTA2_Start" LibName="UARTAn_Start" InUse="" />
+            <UARTA2_Stop UserName="UARTA2_Stop" LibName="UARTAn_Stop" InUse="" />
+            <UARTA2_SendData UserName="UARTA2_SendData" LibName="UARTAn_SendData" InUse="" />
+            <UARTA2_ReceiveData UserName="UARTA2_ReceiveData" LibName="UARTAn_ReceiveData" InUse="" />
+          </UARTA2>
+          <UARTA3 Chip="DF3792,DF3793,V850ESJJ3" InUse="">
+            <UARTA3_Init UserName="UARTA3_Init" LibName="UARTAn_Init" InUse="" Init="2" />
+            <UARTA3_Start UserName="UARTA3_Start" LibName="UARTAn_Start" InUse="" />
+            <UARTA3_Stop UserName="UARTA3_Stop" LibName="UARTAn_Stop" InUse="" />
+            <UARTA3_SendData UserName="UARTA3_SendData" LibName="UARTAn_SendData" InUse="" />
+            <UARTA3_ReceiveData UserName="UARTA3_ReceiveData" LibName="UARTAn_ReceiveData" InUse="" />
+          </UARTA3>
+          <CSIB0 InUse="">
+            <CSIB0_Init UserName="CSIB0_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB0_Start UserName="CSIB0_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB0_Stop UserName="CSIB0_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB0_SendData UserName="CSIB0_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB0_ReceiveData UserName="CSIB0_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB0_SendReceiveData UserName="CSIB0_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB0>
+          <CSIB1 InUse="">
+            <CSIB1_Init UserName="CSIB1_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB1_Start UserName="CSIB1_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB1_Stop UserName="CSIB1_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB1_SendData UserName="CSIB1_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB1_ReceiveData UserName="CSIB1_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB1_SendReceiveData UserName="CSIB1_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB1>
+          <CSIB2 InUse="">
+            <CSIB2_Init UserName="CSIB2_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB2_Start UserName="CSIB2_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB2_Stop UserName="CSIB2_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB2_SendData UserName="CSIB2_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB2_ReceiveData UserName="CSIB2_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB2_SendReceiveData UserName="CSIB2_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB2>
+          <CSIB3 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <CSIB3_Init UserName="CSIB3_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB3_Start UserName="CSIB3_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB3_Stop UserName="CSIB3_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB3_SendData UserName="CSIB3_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB3_ReceiveData UserName="CSIB3_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB3_SendReceiveData UserName="CSIB3_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB3>
+          <CSIB4 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <CSIB4_Init UserName="CSIB4_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB4_Start UserName="CSIB4_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB4_Stop UserName="CSIB4_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB4_SendData UserName="CSIB4_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB4_ReceiveData UserName="CSIB4_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB4_SendReceiveData UserName="CSIB4_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB4>
+          <CSIB5 Chip="V850ESJJ3" InUse="">
+            <CSIB5_Init UserName="CSIB5_Init" LibName="CSIBn_Init" InUse="" Init="2" />
+            <CSIB5_Start UserName="CSIB5_Start" LibName="CSIBn_Start" InUse="" />
+            <CSIB5_Stop UserName="CSIB5_Stop" LibName="CSIBn_Stop" InUse="" />
+            <CSIB5_SendData UserName="CSIB5_SendData" LibName="CSIBn_SendData" InUse="" />
+            <CSIB5_ReceiveData UserName="CSIB5_ReceiveData" LibName="CSIBn_ReceiveData" InUse="" />
+            <CSIB5_SendReceiveData UserName="CSIB5_SendReceiveData" LibName="CSIBn_SendReceiveData" InUse="" />
+          </CSIB5>
+          <IIC00 InUse="">
+            <IIC00_Init UserName="IIC00_Init" LibName="IIC0n_Init" InUse="" Init="2" />
+            <IIC00_Stop UserName="IIC00_Stop" LibName="IIC0n_Stop" InUse="" />
+            <IIC00_StopCondition UserName="IIC00_StopCondition" LibName="IIC0n_StopCondition" InUse="" />
+            <IIC00_MasterSendStart UserName="IIC00_MasterSendStart" LibName="IIC0n_MasterSendStart" InUse="" />
+            <IIC00_MasterReceiveStart UserName="IIC00_MasterReceiveStart" LibName="IIC0n_MasterReceiveStart" InUse="" />
+            <IIC00_SlaveSendStart UserName="IIC00_SlaveSendStart" LibName="IIC0n_SlaveSendStart" InUse="" />
+            <IIC00_SlaveReceiveStart UserName="IIC00_SlaveReceiveStart" LibName="IIC0n_SlaveReceiveStart" InUse="" />
+          </IIC00>
+          <IIC01 InUse="">
+            <IIC01_Init UserName="IIC01_Init" LibName="IIC0n_Init" InUse="" Init="2" />
+            <IIC01_Stop UserName="IIC01_Stop" LibName="IIC0n_Stop" InUse="" />
+            <IIC01_StopCondition UserName="IIC01_StopCondition" LibName="IIC0n_StopCondition" InUse="" />
+            <IIC01_MasterSendStart UserName="IIC01_MasterSendStart" LibName="IIC0n_MasterSendStart" InUse="" />
+            <IIC01_MasterReceiveStart UserName="IIC01_MasterReceiveStart" LibName="IIC0n_MasterReceiveStart" InUse="" />
+            <IIC01_SlaveSendStart UserName="IIC01_SlaveSendStart" LibName="IIC0n_SlaveSendStart" InUse="" />
+            <IIC01_SlaveReceiveStart UserName="IIC01_SlaveReceiveStart" LibName="IIC0n_SlaveReceiveStart" InUse="" />
+          </IIC01>
+          <IIC02 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <IIC02_Init UserName="IIC02_Init" LibName="IIC0n_Init" InUse="" Init="2" />
+            <IIC02_Stop UserName="IIC02_Stop" LibName="IIC0n_Stop" InUse="" />
+            <IIC02_StopCondition UserName="IIC02_StopCondition" LibName="IIC0n_StopCondition" InUse="" />
+            <IIC02_MasterSendStart UserName="IIC02_MasterSendStart" LibName="IIC0n_MasterSendStart" InUse="" />
+            <IIC02_MasterReceiveStart UserName="IIC02_MasterReceiveStart" LibName="IIC0n_MasterReceiveStart" InUse="" />
+            <IIC02_SlaveSendStart UserName="IIC02_SlaveSendStart" LibName="IIC0n_SlaveSendStart" InUse="" />
+            <IIC02_SlaveReceiveStart UserName="IIC02_SlaveReceiveStart" LibName="IIC0n_SlaveReceiveStart" InUse="" />
+          </IIC02>
+        </CG_serial.c>
+        <CG_serial_user.c UserName="CG_serial_user.c" LibName="_user.c" InUse="">
+          <Type UARTAn_UserInit="void UARTAn_UserInit(void)" UARTAn_ErrorCallback="void UARTAn_ErrorCallback(UCHAR err_type)" UARTAn_ReceiveEndCallback="void UARTAn_ReceiveEndCallback(void)" UARTAn_SendEndCallback="void UARTAn_SendEndCallback(void)" UARTAn_SoftOverRunCallback="void UARTAn_SoftOverRunCallback(UCHAR rx_data)" MD_INTUAnR="__interrupt void MD_INTUAnR(void)" MD_INTUAnT="__interrupt void MD_INTUAnT(void)" UARTCn_UserInit="void UARTCn_UserInit(void)" UARTCn_ErrorCallback="void UARTCn_ErrorCallback(UCHAR err_type)" UARTCn_ReceiveEndCallback="void UARTCn_ReceiveEndCallback(void)" UARTCn_SendEndCallback="void UARTCn_SendEndCallback(void)" UARTCn_SoftOverRunCallback="void UARTCn_SoftOverRunCallback(USHORT rx_data)" MD_INTUCnR="__interrupt void MD_INTUCnR(void)" MD_INTUCnT="__interrupt void MD_INTUCnT(void)" CSIBn_UserInit="void CSIBn_UserInit(void)" CSIBn_ErrorCallback="void CSIBn_ErrorCallback(void)" CSIBn_ReceiveEndCallback="void CSIBn_ReceiveEndCallback(void)" CSIBn_SendEndCallback="void CSIBn_SendEndCallback(void)" MD_INTCBnR="__interrupt void MD_INTCBnR(void)" MD_INTCBnT="__interrupt void MD_INTCBnT(void)" IIC0n_UserInit="void IIC0n_UserInit(void)" IIC0n_MasterReceiveEndCallback="void IIC0n_MasterReceiveEndCallback(void)" IIC0n_MasterSendEndCallback="void IIC0n_MasterSendEndCallback(void)" IIC0n_MasterErrorCallback="void IIC0n_MasterErrorCallback(MD_STATUS flag)" IIC0n_SlaveReceiveEndCallback="void IIC0n_SlaveReceiveEndCallback(void)" IIC0n_SlaveSendEndCallback="void IIC0n_SlaveSendEndCallback(void)" IIC0n_SlaveErrorCallback="void IIC0n_SlaveErrorCallback(MD_STATUS flag)" IIC0n_GetStopConditionCallback="void IIC0n_GetStopConditionCallback(void)" MD_INTIICn="__interrupt void MD_INTIICn(void)" />
+          <UARTA0 InUse="">
+            <UARTA0_UserInit UserName="UARTA0_UserInit" LibName="UARTAn_UserInit" InUse="" />
+            <UARTA0_ErrorCallback UserName="UARTA0_ErrorCallback" LibName="UARTAn_ErrorCallback" InUse="" />
+            <UARTA0_ReceiveEndCallback UserName="UARTA0_ReceiveEndCallback" LibName="UARTAn_ReceiveEndCallback" InUse="" />
+            <UARTA0_SendEndCallback UserName="UARTA0_SendEndCallback" LibName="UARTAn_SendEndCallback" InUse="" />
+            <UARTA0_SoftOverRunCallback UserName="UARTA0_SoftOverRunCallback" LibName="UARTAn_SoftOverRunCallback" InUse="" />
+            <MD_INTUA0R UserName="MD_INTUA0R" LibName="MD_INTUAnR" INTHandle="" InUse="" />
+            <MD_INTUA0T UserName="MD_INTUA0T" LibName="MD_INTUAnT" INTHandle="" InUse="" />
+          </UARTA0>
+          <UARTA1 InUse="">
+            <UARTA1_UserInit UserName="UARTA1_UserInit" LibName="UARTAn_UserInit" InUse="" />
+            <UARTA1_ErrorCallback UserName="UARTA1_ErrorCallback" LibName="UARTAn_ErrorCallback" InUse="" />
+            <UARTA1_ReceiveEndCallback UserName="UARTA1_ReceiveEndCallback" LibName="UARTAn_ReceiveEndCallback" InUse="" />
+            <UARTA1_SendEndCallback UserName="UARTA1_SendEndCallback" LibName="UARTAn_SendEndCallback" InUse="" />
+            <UARTA1_SoftOverRunCallback UserName="UARTA1_SoftOverRunCallback" LibName="UARTAn_SoftOverRunCallback" InUse="" />
+            <MD_INTUA1R UserName="MD_INTUA1R" LibName="MD_INTUAnR" INTHandle="" InUse="" />
+            <MD_INTUA1T UserName="MD_INTUA1T" LibName="MD_INTUAnT" INTHandle="" InUse="" />
+          </UARTA1>
+          <UARTA2 InUse="">
+            <UARTA2_UserInit UserName="UARTA2_UserInit" LibName="UARTAn_UserInit" InUse="" />
+            <UARTA2_ErrorCallback UserName="UARTA2_ErrorCallback" LibName="UARTAn_ErrorCallback" InUse="" />
+            <UARTA2_ReceiveEndCallback UserName="UARTA2_ReceiveEndCallback" LibName="UARTAn_ReceiveEndCallback" InUse="" />
+            <UARTA2_SendEndCallback UserName="UARTA2_SendEndCallback" LibName="UARTAn_SendEndCallback" InUse="" />
+            <UARTA2_SoftOverRunCallback UserName="UARTA2_SoftOverRunCallback" LibName="UARTAn_SoftOverRunCallback" InUse="" />
+            <MD_INTUA2R UserName="MD_INTUA2R" LibName="MD_INTUAnR" INTHandle="" InUse="" />
+            <MD_INTUA2T UserName="MD_INTUA2T" LibName="MD_INTUAnT" INTHandle="" InUse="" />
+          </UARTA2>
+          <UARTA3 Chip="DF3792,DF3793,V850ESJJ3" InUse="">
+            <UARTA3_UserInit UserName="UARTA3_UserInit" LibName="UARTAn_UserInit" InUse="" />
+            <UARTA3_ErrorCallback UserName="UARTA3_ErrorCallback" LibName="UARTAn_ErrorCallback" InUse="" />
+            <UARTA3_ReceiveEndCallback UserName="UARTA3_ReceiveEndCallback" LibName="UARTAn_ReceiveEndCallback" InUse="" />
+            <UARTA3_SendEndCallback UserName="UARTA3_SendEndCallback" LibName="UARTAn_SendEndCallback" InUse="" />
+            <UARTA3_SoftOverRunCallback UserName="UARTA3_SoftOverRunCallback" LibName="UARTAn_SoftOverRunCallback" InUse="" />
+            <MD_INTUA3R UserName="MD_INTUA3R" INTHandle="" LibName="MD_INTUAnR" InUse="" />
+            <MD_INTUA3T UserName="MD_INTUA3T" LibName="MD_INTUAnT" INTHandle="" InUse="" />
+          </UARTA3>
+          <CSIB0 InUse="">
+            <CSIB0_UserInit UserName="CSIB0_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB0_ErrorCallback UserName="CSIB0_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB0_ReceiveEndCallback UserName="CSIB0_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB0_SendEndCallback UserName="CSIB0_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB0R UserName="MD_INTCB0R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB0T UserName="MD_INTCB0T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB0>
+          <CSIB1 InUse="">
+            <CSIB1_UserInit UserName="CSIB1_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB1_ErrorCallback UserName="CSIB1_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB1_ReceiveEndCallback UserName="CSIB1_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB1_SendEndCallback UserName="CSIB1_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB1R UserName="MD_INTCB1R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB1T UserName="MD_INTCB1T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB1>
+          <CSIB2 InUse="">
+            <CSIB2_UserInit UserName="CSIB2_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB2_ErrorCallback UserName="CSIB2_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB2_ReceiveEndCallback UserName="CSIB2_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB2_SendEndCallback UserName="CSIB2_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB2R UserName="MD_INTCB2R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB2T UserName="MD_INTCB2T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB2>
+          <CSIB3 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <CSIB3_UserInit UserName="CSIB3_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB3_ErrorCallback UserName="CSIB3_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB3_ReceiveEndCallback UserName="CSIB3_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB3_SendEndCallback UserName="CSIB3_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB3R UserName="MD_INTCB3R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB3T UserName="MD_INTCB3T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB3>
+          <CSIB4 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <CSIB4_UserInit UserName="CSIB4_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB4_ErrorCallback UserName="CSIB4_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB4_ReceiveEndCallback UserName="CSIB4_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB4_SendEndCallback UserName="CSIB4_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB4R UserName="MD_INTCB4R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB4T UserName="MD_INTCB4T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB4>
+          <CSIB5 Chip="V850ESJJ3" InUse="">
+            <CSIB5_UserInit UserName="CSIB5_UserInit" LibName="CSIBn_UserInit" InUse="" />
+            <CSIB5_ErrorCallback UserName="CSIB5_ErrorCallback" LibName="CSIBn_ErrorCallback" InUse="" />
+            <CSIB5_ReceiveEndCallback UserName="CSIB5_ReceiveEndCallback" LibName="CSIBn_ReceiveEndCallback" InUse="" />
+            <CSIB5_SendEndCallback UserName="CSIB5_SendEndCallback" LibName="CSIBn_SendEndCallback" InUse="" />
+            <MD_INTCB5R UserName="MD_INTCB5R" LibName="MD_INTCBnR" INTHandle="" InUse="" />
+            <MD_INTCB5T UserName="MD_INTCB5T" LibName="MD_INTCBnT" INTHandle="" InUse="" />
+          </CSIB5>
+          <IIC00 InUse="">
+            <IIC00_UserInit UserName="IIC00_UserInit" LibName="IIC0n_UserInit" InUse="" />
+            <IIC00_MasterReceiveEndCallback UserName="IIC00_MasterReceiveEndCallback" LibName="IIC0n_MasterReceiveEndCallback" InUse="" />
+            <IIC00_MasterSendEndCallback UserName="IIC00_MasterSendEndCallback" LibName="IIC0n_MasterSendEndCallback" InUse="" />
+            <IIC00_MasterErrorCallback UserName="IIC00_MasterErrorCallback" LibName="IIC0n_MasterErrorCallback" InUse="" />
+            <IIC00_SlaveReceiveEndCallback UserName="IIC00_SlaveReceiveEndCallback" LibName="IIC0n_SlaveReceiveEndCallback" InUse="" />
+            <IIC00_SlaveSendEndCallback UserName="IIC00_SlaveSendEndCallback" LibName="IIC0n_SlaveSendEndCallback" InUse="" />
+            <IIC00_SlaveErrorCallback UserName="IIC00_SlaveErrorCallback" LibName="IIC0n_SlaveErrorCallback" InUse="" />
+            <IIC00_GetStopConditionCallback UserName="IIC00_GetStopConditionCallback" LibName="IIC0n_GetStopConditionCallback" InUse="" />
+            <MD_INTIIC0 UserName="MD_INTIIC0" LibName="MD_INTIICn" INTHandle="" InUse="" />
+          </IIC00>
+          <IIC01 InUse="">
+            <IIC01_UserInit UserName="IIC01_UserInit" LibName="IIC0n_UserInit" InUse="" />
+            <IIC01_MasterReceiveEndCallback UserName="IIC01_MasterReceiveEndCallback" LibName="IIC0n_MasterReceiveEndCallback" InUse="" />
+            <IIC01_MasterSendEndCallback UserName="IIC01_MasterSendEndCallback" LibName="IIC0n_MasterSendEndCallback" InUse="" />
+            <IIC01_MasterErrorCallback UserName="IIC01_MasterErrorCallback" LibName="IIC0n_MasterErrorCallback" InUse="" />
+            <IIC01_SlaveReceiveEndCallback UserName="IIC01_SlaveReceiveEndCallback" LibName="IIC0n_SlaveReceiveEndCallback" InUse="" />
+            <IIC01_SlaveSendEndCallback UserName="IIC01_SlaveSendEndCallback" LibName="IIC0n_SlaveSendEndCallback" InUse="" />
+            <IIC01_SlaveErrorCallback UserName="IIC01_SlaveErrorCallback" LibName="IIC0n_SlaveErrorCallback" InUse="" />
+            <IIC01_GetStopConditionCallback UserName="IIC01_GetStopConditionCallback" LibName="IIC0n_GetStopConditionCallback" InUse="" />
+            <MD_INTIIC1 UserName="MD_INTIIC1" LibName="MD_INTIICn" INTHandle="" InUse="" />
+          </IIC01>
+          <IIC02 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" InUse="">
+            <IIC02_UserInit UserName="IIC02_UserInit" LibName="IIC0n_UserInit" InUse="" />
+            <IIC02_MasterReceiveEndCallback UserName="IIC02_MasterReceiveEndCallback" LibName="IIC0n_MasterReceiveEndCallback" InUse="" />
+            <IIC02_MasterSendEndCallback UserName="IIC02_MasterSendEndCallback" LibName="IIC0n_MasterSendEndCallback" InUse="" />
+            <IIC02_MasterErrorCallback UserName="IIC02_MasterErrorCallback" LibName="IIC0n_MasterErrorCallback" InUse="" />
+            <IIC02_SlaveReceiveEndCallback UserName="IIC02_SlaveReceiveEndCallback" LibName="IIC0n_SlaveReceiveEndCallback" InUse="" />
+            <IIC02_SlaveSendEndCallback UserName="IIC02_SlaveSendEndCallback" LibName="IIC0n_SlaveSendEndCallback" InUse="" />
+            <IIC02_SlaveErrorCallback UserName="IIC02_SlaveErrorCallback" LibName="IIC0n_SlaveErrorCallback" InUse="" />
+            <IIC02_GetStopConditionCallback UserName="IIC02_GetStopConditionCallback" LibName="IIC0n_GetStopConditionCallback" InUse="" />
+            <MD_INTIIC2 UserName="MD_INTIIC2" LibName="MD_INTIICn" INTHandle="" InUse="" />
+          </IIC02>
+        </CG_serial_user.c>
+        <CG_serial.h UserName="CG_serial.h" LibName=".h" InUse="" />
+      </Serial>
+      <AD InUse="">
+        <CG_ad.c UserName="CG_ad.c" LibName=".c" InUse="">
+          <Type AD_Init="void AD_Init(void)" AD_Start="void AD_Start(void)" AD_Stop="void AD_Stop(void)" AD_Read="MD_STATUS AD_Read(USHORT *buffer)" AD_ReadByte="MD_STATUS AD_ReadByte(UCHAR *buffer)" AD_SelectADChannel="MD_STATUS AD_SelectADChannel(enum ADChannel channel)" AD_SetPFTCondition="MD_STATUS AD_SetPFTCondition(UCHAR pftvalue, enum ADPFTMode mode)" />
+          <AD_Init UserName="AD_Init" LibName="AD_Init" InUse="" Init="2" />
+          <AD_Start UserName="AD_Start" LibName="AD_Start" InUse="" />
+          <AD_Stop UserName="AD_Stop" LibName="AD_Stop" InUse="" />
+          <AD_Read UserName="AD_Read" LibName="AD_Read" InUse="" />
+          <AD_ReadByte UserName="AD_ReadByte" LibName="AD_ReadByte" InUse="" />
+          <AD_SelectADChannel UserName="AD_SelectADChannel" LibName="AD_SelectADChannel" InUse="" />
+          <AD_SetPFTCondition UserName="AD_SetPFTCondition" LibName="AD_SetPFTCondition" InUse="" />
+        </CG_ad.c>
+        <CG_ad_user.c UserName="CG_ad_user.c" LibName="_user.c" InUse="">
+          <Type AD_UserInit="void AD_UserInit(void)" MD_INTAD="__interrupt void MD_INTAD(void)" />
+          <AD_UserInit UserName="AD_UserInit" LibName="AD_UserInit" InUse="" />
+          <MD_INTAD UserName="MD_INTAD" LibName="MD_INTAD" INTHandle="" InUse="" />
+        </CG_ad_user.c>
+        <CG_ad.h UserName="CG_ad.h" LibName=".h" InUse="" />
+      </AD>
+      <DA InUse="">
+        <CG_da.c UserName="CG_da.c" LibName=".c" InUse="">
+          <Type DAn_Init="void DAn_Init(void)" DAn_Start="void DAn_Start(void)" DAn_Stop="void DAn_Stop(void)" DAn_SetValue="void DAn_SetValue(UCHAR value)" />
+          <DA0 InUse="">
+            <DA0_Init UserName="DA0_Init" LibName="DAn_Init" InUse="" Init="2" />
+            <DA0_Start UserName="DA0_Start" LibName="DAn_Start" InUse="" />
+            <DA0_Stop UserName="DA0_Stop" LibName="DAn_Stop" InUse="" />
+            <DA0_SetValue UserName="DA0_SetValue" LibName="DAn_SetValue" InUse="" />
+          </DA0>
+          <DA1 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" InUse="">
+            <DA1_Init UserName="DA1_Init" LibName="DAn_Init" InUse="" Init="2" />
+            <DA1_Start UserName="DA1_Start" LibName="DAn_Start" InUse="" />
+            <DA1_Stop UserName="DA1_Stop" LibName="DAn_Stop" InUse="" />
+            <DA1_SetValue UserName="DA1_SetValue" LibName="DAn_SetValue" InUse="" />
+          </DA1>
+        </CG_da.c>
+        <CG_da_user.c UserName="CG_da_user.c" LibName="_user.c" InUse="">
+          <Type DAn_UserInit="void DAn_UserInit(void)" />
+          <DA0 InUse="">
+            <DA0_UserInit UserName="DA0_UserInit" LibName="DAn_UserInit" InUse="" />
+          </DA0>
+          <DA1 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" InUse="">
+            <DA1_UserInit UserName="DA1_UserInit" LibName="DAn_UserInit" InUse="" />
+          </DA1>
+        </CG_da_user.c>
+        <CG_da.h UserName="CG_da.h" LibName=".h" InUse="" />
+      </DA>
+      <Timer InUse="">
+        <CG_timer.c UserName="CG_timer.c" LibName=".c" InUse="">
+          <Type TMPn_Init="void TMPn_Init(void)" TMPn_Start="void TMPn_Start(void)" TMPn_Stop="void TMPn_Stop(void)" TMPn_ChangeTimerCondition="MD_STATUS TMPn_ChangeTimerCondition(USHORT *array_reg, UCHAR array_num)&#xD;&#xA;" TMPn_ChangeDuty="void TMPn_ChangeDuty(UCHAR array_duty)" TMPn_SoftwareTriggerOn="void TMPn_SoftwareTriggerOn(void)" TMPn_GetPulseWidth="void TMPn_GetPulseWidth(ULONG *activewidth, ULONG *inactivewidth)" TMPn_GetFreeRunningValue="MD_STATUS TMPn_GetFreeRunningValue(ULONG *count, enum TMChannel channel)" TMQn_Init="void TMQn_Init(void)" TMQn_Start="void TMQn_Start(void)" TMQn_Stop="void TMQn_Stop(void)" TMQn_ChangeTimerCondition="MD_STATUS TMQn_ChangeTimerCondition(USHORT *array_reg, UCHAR array_num)" TMQn_ChangeDuty="MD_STATUS TMQn_ChangeDuty(UCHAR *array_duty, UCHAR array_num)" TMQn_SoftwareTriggerOn="void TMQn_SoftwareTriggerOn(void)" TMQn_GetPulseWidth="void TMQn_GetPulseWidth(ULONG *activewidth, ULONG *inactivewidth)" TMQn_GetFreeRunningValue="MD_STATUS TMQn_GetFreeRunningValue(ULONG *count, enum TMChannel channel)" TMMn_Init="void TMMn_Init(void)" TMMn_Start="void TMMn_Start(void)" TMMn_Stop="void TMMn_Stop(void)" TMMn_ChangeTimerCondition="void TMMn_ChangeTimerCondition(USHORT regvalue)&#xD;&#xA;" />
+          <TMP0 InUse="">
+            <TMP0_Init UserName="TMP0_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP0_Start UserName="TMP0_Start" LibName="TMPn_Start" InUse="" />
+            <TMP0_Stop UserName="TMP0_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP0_ChangeTimerCondition UserName="TMP0_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP0_ChangeDuty UserName="TMP0_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP0_SoftwareTriggerOn UserName="TMP0_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP0_GetPulseWidth UserName="TMP0_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP0_GetFreeRunningValue UserName="TMP0_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP0>
+          <TMP1 InUse="">
+            <TMP1_Init UserName="TMP1_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP1_Start UserName="TMP1_Start" LibName="TMPn_Start" InUse="" />
+            <TMP1_Stop UserName="TMP1_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP1_ChangeTimerCondition UserName="TMP1_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP1_ChangeDuty UserName="TMP1_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP1_SoftwareTriggerOn UserName="TMP1_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP1_GetPulseWidth UserName="TMP1_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP1_GetFreeRunningValue UserName="TMP1_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP1>
+          <TMP2 InUse="">
+            <TMP2_Init UserName="TMP2_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP2_Start UserName="TMP2_Start" LibName="TMPn_Start" InUse="" />
+            <TMP2_Stop UserName="TMP2_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP2_ChangeTimerCondition UserName="TMP2_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP2_ChangeDuty UserName="TMP2_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP2_SoftwareTriggerOn UserName="TMP2_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP2_GetPulseWidth UserName="TMP2_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP2_GetFreeRunningValue UserName="TMP2_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP2>
+          <TMP3 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" InUse="">
+            <TMP3_Init UserName="TMP3_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP3_Start UserName="TMP3_Start" LibName="TMPn_Start" InUse="" />
+            <TMP3_Stop UserName="TMP3_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP3_ChangeTimerCondition UserName="TMP3_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP3_ChangeDuty UserName="TMP3_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP3_SoftwareTriggerOn UserName="TMP3_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP3_GetPulseWidth UserName="TMP3_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP3_GetFreeRunningValue UserName="TMP3_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP3>
+          <TMP4 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" InUse="">
+            <TMP4_Init UserName="TMP4_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP4_Start UserName="TMP4_Start" LibName="TMPn_Start" InUse="" />
+            <TMP4_Stop UserName="TMP4_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP4_ChangeTimerCondition UserName="TMP4_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP4_ChangeDuty UserName="TMP4_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP4_SoftwareTriggerOn UserName="TMP4_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP4_GetPulseWidth UserName="TMP4_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP4_GetFreeRunningValue UserName="TMP4_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP4>
+          <TMP5 InUse="">
+            <TMP5_Init UserName="TMP5_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP5_Start UserName="TMP5_Start" LibName="TMPn_Start" InUse="" />
+            <TMP5_Stop UserName="TMP5_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP5_ChangeTimerCondition UserName="TMP5_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP5_ChangeDuty UserName="TMP5_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP5_SoftwareTriggerOn UserName="TMP5_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP5_GetPulseWidth UserName="TMP5_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP5_GetFreeRunningValue UserName="TMP5_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP5>
+          <TMP6 Chip="V850ESJJ3" InUse="">
+            <TMP6_Init UserName="TMP6_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP6_Start UserName="TMP6_Start" LibName="TMPn_Start" InUse="" />
+            <TMP6_Stop UserName="TMP6_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP6_ChangeTimerCondition UserName="TMP6_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP6_ChangeDuty UserName="TMP6_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP6_SoftwareTriggerOn UserName="TMP6_SoftwareTriggerOn" LibName="Vn_SoftwareTriggerOn" InUse="" />
+            <TMP6_GetPulseWidth UserName="TMP6_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP6_GetFreeRunningValue UserName="TMP6_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP6>
+          <TMP7 Chip="V850ESJJ3" InUse="">
+            <TMP7_Init UserName="TMP7_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP7_Start UserName="TMP7_Start" LibName="TMPn_Start" InUse="" />
+            <TMP7_Stop UserName="TMP7_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP7_ChangeTimerCondition UserName="TMP7_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP7_ChangeDuty UserName="TMP7_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP7_SoftwareTriggerOn UserName="TMP7_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP7_GetPulseWidth UserName="TMP7_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP7_GetFreeRunningValue UserName="TMP7_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP7>
+          <TMP8 Chip="V850ESJJ3" InUse="">
+            <TMP8_Init UserName="TMP8_Init" LibName="TMPn_Init" InUse="" Init="2" />
+            <TMP8_Start UserName="TMP8_Start" LibName="TMPn_Start" InUse="" />
+            <TMP8_Stop UserName="TMP8_Stop" LibName="TMPn_Stop" InUse="" />
+            <TMP8_ChangeTimerCondition UserName="TMP8_ChangeTimerCondition" LibName="TMPn_ChangeTimerCondition" InUse="" />
+            <TMP8_ChangeDuty UserName="TMP8_ChangeDuty" LibName="TMPn_ChangeDuty" InUse="" />
+            <TMP8_SoftwareTriggerOn UserName="TMP8_SoftwareTriggerOn" LibName="TMPn_SoftwareTriggerOn" InUse="" />
+            <TMP8_GetPulseWidth UserName="TMP8_GetPulseWidth" LibName="TMPn_GetPulseWidth" InUse="" />
+            <TMP8_GetFreeRunningValue UserName="TMP8_GetFreeRunningValue" LibName="TMPn_GetFreeRunningValue" InUse="" />
+          </TMP8>
+          <TMQ0 InUse="">
+            <TMQ0_Init UserName="TMQ0_Init" LibName="TMQn_Init" InUse="" Init="2" />
+            <TMQ0_Start UserName="TMQ0_Start" LibName="TMQn_Start" InUse="" />
+            <TMQ0_Stop UserName="TMQ0_Stop" LibName="TMQn_Stop" InUse="" />
+            <TMQ0_ChangeTimerCondition UserName="TMQ0_ChangeTimerCondition" LibName="TMQn_ChangeTimerCondition" InUse="" />
+            <TMQ0_ChangeDuty UserName="TMQ0_ChangeDuty" LibName="TMQn_ChangeDuty" InUse="" />
+            <TMQ0_SoftwareTriggerOn UserName="TMQ0_SoftwareTriggerOn" LibName="TMQn_SoftwareTriggerOn" InUse="" />
+            <TMQ0_GetPulseWidth UserName="TMQ0_GetPulseWidth" LibName="TMQn_GetPulseWidth" InUse="" />
+            <TMQ0_GetFreeRunningValue UserName="TMQ0_GetFreeRunningValue" LibName="TMQn_GetFreeRunningValue" InUse="" />
+          </TMQ0>
+          <TMM0 InUse="">
+            <TMM0_Init UserName="TMM0_Init" LibName="TMMn_Init" InUse="" Init="2" />
+            <TMM0_Start UserName="TMM0_Start" LibName="TMMn_Start" InUse="" />
+            <TMM0_Stop UserName="TMM0_Stop" LibName="TMMn_Stop" InUse="" />
+            <TMM0_ChangeTimerCondition UserName="TMM0_ChangeTimerCondition" LibName="TMMn_ChangeTimerCondition" InUse="" />
+          </TMM0>
+        </CG_timer.c>
+        <CG_timer_user.c UserName="CG_timer_user.c" LibName="_user.c" InUse="">
+          <Type TMPn_UserInit="void TMPn_UserInit(void)" MD_INTTPnCC0="__interrupt void MD_INTTPnCC0(void)" MD_INTTPnCC1="__interrupt void MD_INTTPnCC1(void)" MD_INTTPnOV="__interrupt void MD_INTTPnOV(void)&#xD;&#xA;" TMQn_UserInit="void TMQn_UserInit(void)" MD_INTTQnCC0="__interrupt void MD_INTTQnCC0(void)" MD_INTTQnCC1="__interrupt void MD_INTTQnCC1(void)" MD_INTTQnCC2="__interrupt void MD_INTTQnCC2(void)" MD_INTTQnCC3="__interrupt void MD_INTTQnCC3(void)" MD_INTTQnOV="__interrupt void MD_INTTQnOV(void)" TMMn_UserInit="void TMMn_UserInit(void)" MD_INTTMnEQ0="__interrupt void MD_INTTMnEQ0(void)" />
+          <TMP0 InUse="">
+            <TMP0_UserInit UserName="TMP0_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP0CC0 UserName="MD_INTTP0CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP0CC1 UserName="MD_INTTP0CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP0OV UserName="MD_INTTP0OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP0>
+          <TMP1 InUse="">
+            <TMP1_UserInit UserName="TMP1_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP1CC0 UserName="MD_INTTP1CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP1CC1 UserName="MD_INTTP1CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP1OV UserName="MD_INTTP1OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP1>
+          <TMP2 InUse="">
+            <TMP2_UserInit UserName="TMP2_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP2CC0 UserName="MD_INTTP2CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP2CC1 UserName="MD_INTTP2CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP2OV UserName="MD_INTTP2OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP2>
+          <TMP3 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" InUse="">
+            <TMP3_UserInit UserName="TMP3_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP3CC0 UserName="MD_INTTP3CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP3CC1 UserName="MD_INTTP3CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP3OV UserName="MD_INTTP3OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP3>
+          <TMP4 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" InUse="">
+            <TMP4_UserInit UserName="TMP4_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP4CC0 UserName="MD_INTTP4CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP4CC1 UserName="MD_INTTP4CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP4OV UserName="MD_INTTP4OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP4>
+          <TMP5 InUse="">
+            <TMP5_UserInit UserName="TMP5_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP5CC0 UserName="MD_INTTP5CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP5CC1 UserName="MD_INTTP5CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP5OV UserName="MD_INTTP5OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP5>
+          <TMP6 Chip="V850ESJJ3" InUse="">
+            <TMP6_UserInit UserName="TMP6_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP6CC0 UserName="MD_INTTP6CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP6CC1 UserName="MD_INTTP6CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP6OV UserName="MD_INTTP6OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP6>
+          <TMP7 Chip="V850ESJJ3" InUse="">
+            <TMP7_UserInit UserName="TMP7_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP7CC0 UserName="MD_INTTP7CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP7CC1 UserName="MD_INTTP7CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP7OV UserName="MD_INTTP7OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP7>
+          <TMP8 Chip="V850ESJJ3" InUse="">
+            <TMP8_UserInit UserName="TMP8_UserInit" LibName="TMPn_UserInit" InUse="" />
+            <MD_INTTP8CC0 UserName="MD_INTTP8CC0" LibName="MD_INTTPnCC0" INTHandle="" InUse="" />
+            <MD_INTTP8CC1 UserName="MD_INTTP8CC1" LibName="MD_INTTPnCC1" INTHandle="" InUse="" />
+            <MD_INTTP8OV UserName="MD_INTTP8OV" LibName="MD_INTTPnOV" INTHandle="" InUse="" />
+          </TMP8>
+          <TMQ0 InUse="">
+            <TMQ0_UserInit UserName="TMQ0_UserInit" LibName="TMQn_UserInit" InUse="" />
+            <MD_INTTQ0CC0 UserName="MD_INTTQ0CC0" LibName="MD_INTTQnCC0" INTHandle="" InUse="" />
+            <MD_INTTQ0CC1 UserName="MD_INTTQ0CC1" LibName="MD_INTTQnCC1" INTHandle="" InUse="" />
+            <MD_INTTQ0CC2 UserName="MD_INTTQ0CC2" LibName="MD_INTTQnCC2" INTHandle="" InUse="" />
+            <MD_INTTQ0CC3 UserName="MD_INTTQ0CC3" LibName="MD_INTTQnCC3" INTHandle="" InUse="" />
+            <MD_INTTQ0OV UserName="MD_INTTQ0OV" LibName="MD_INTTQnOV" INTHandle="" InUse="" />
+          </TMQ0>
+          <TMM0 InUse="">
+            <TMM0_UserInit UserName="TMM0_UserInit" LibName="TMMn_UserInit" InUse="" />
+            <MD_INTTM0EQ0 UserName="MD_INTTM0EQ0" LibName="MD_INTTMnEQ0" INTHandle="" InUse="" />
+          </TMM0>
+        </CG_timer_user.c>
+        <CG_timer.h UserName="CG_timer.h" LibName=".h" InUse="" />
+      </Timer>
+      <WatchTimer InUse="">
+        <CG_wt.c UserName="CG_wt.c" LibName=".c" InUse="">
+          <Type WT_Init="void WT_Init(void)" WT_Start="void WT_Start(void)" WT_Stop="void WT_Stop(void)" />
+          <WT_Init UserName="WT_Init" LibName="WT_Init" InUse="" Init="2" />
+          <WT_Start UserName="WT_Start" LibName="WT_Start" InUse="" />
+          <WT_Stop UserName="WT_Stop" LibName="WT_Stop" InUse="" />
+        </CG_wt.c>
+        <CG_wt_user.c UserName="CG_wt_user.c" LibName="_user.c" InUse="">
+          <Type WT_UserInit="void WT_UserInit(void)" MD_INTWT="__interrupt void MD_INTWT(void)" MD_INTWTI="__interrupt void MD_INTWTI(void)" />
+          <WT_UserInit UserName="WT_UserInit" LibName="WT_UserInit" InUse="" />
+          <MD_INTWTI UserName="MD_INTWTI" LibName="MD_INTWTI" INTHandle="" InUse="" />
+          <MD_INTWT UserName="MD_INTWT" LibName="MD_INTWT" INTHandle="" InUse="" />
+        </CG_wt_user.c>
+        <CG_wt.h UserName="CG_wt.h" LibName=".h" InUse="" />
+      </WatchTimer>
+      <RTO InUse="">
+        <CG_rto.c UserName="CG_rto.c" LibName=".c" InUse="">
+          <Type RTOn_Init="void RTOn_Init(void)" RTOn_Enable="void RTOn_Enable(void)" RTOn_Disable="void RTOn_Disable(void)" RTOn_Set2BitsData="void RTOn_Set2BitsData(UCHAR data)" RTOn_Set4BitsData="void RTOn_Set4BitsData(UCHAR data)" RTOn_Set6BitsData="void RTOn_Set6BitsData(UCHAR data)" RTOn_GetValue="void RTOn_GetValue(UCHAR *value)" />
+          <RTO0 InUse="">
+            <RTO0_Init UserName="RTO0_Init" LibName="RTOn_Init" InUse="" Init="2" />
+            <RTO0_Enable UserName="RTO0_Enable" LibName="RTOn_Enable" InUse="" />
+            <RTO0_Disable UserName="RTO0_Disable" LibName="RTOn_Disable" InUse="" />
+            <RTO0_Set2BitsData UserName="RTO0_Set2BitsData" LibName="RTOn_Set2BitsData" InUse="" />
+            <RTO0_Set4BitsData UserName="RTO0_Set4BitsData" LibName="RTOn_Set4BitsData" InUse="" />
+            <RTO0_Set6BitsData UserName="RTO0_Set6BitsData" LibName="RTOn_Set6BitsData" InUse="" />
+            <RTO0_GetValue UserName="RTO0_GetValue" LibName="RTOn_GetValue" InUse="" />
+          </RTO0>
+          <RTO1 Chip="V850ESJJ3" InUse="">
+            <RTO1_Init UserName="RTO1_Init" LibName="RTOn_Init" InUse="" Init="2" />
+            <RTO1_Enable UserName="RTO1_Enable" LibName="RTOn_Enable" InUse="" />
+            <RTO1_Disable UserName="RTO1_Disable" LibName="RTOn_Disable" InUse="" />
+            <RTO1_Set2BitsData UserName="RTO1_Set2BitsData" LibName="RTOn_Set2BitsData" InUse="" />
+            <RTO1_Set4BitsData UserName="RTO1_Set4BitsData" LibName="RTOn_Set4BitsData" InUse="" />
+            <RTO1_Set6BitsData UserName="RTO1_Set6BitsData" LibName="RTOn_Set6BitsData" InUse="" />
+            <RTO1_GetValue UserName="RTO1_GetValue" LibName="RTOn_GetValue" InUse="" />
+          </RTO1>
+        </CG_rto.c>
+        <CG_rto_user.c UserName="CG_rto_user.c" LibName="_user.c" InUse="">
+          <Type RTOn_UserInit="void RTOn_UserInit(void)" />
+          <RTO0 InUse="">
+            <RTO0_UserInit UserName="RTO0_UserInit" LibName="RTOn_UserInit" InUse="" />
+          </RTO0>
+          <RTO1 Chip="V850ESJJ3" InUse="">
+            <RTO1_UserInit UserName="RTO1_UserInit" LibName="RTOn_UserInit" InUse="" />
+          </RTO1>
+        </CG_rto_user.c>
+        <CG_rto.h UserName="CG_rto.h" LibName=".h" InUse="" />
+      </RTO>
+      <DMA InUse="">
+        <CG_dma.c UserName="CG_dma.c" LibName=".c" InUse="">
+          <Type DMAn_Init="void DMAn_Init(void)	" DMAn_Enable="void DMAn_Enable(void)" DMAn_Disable="void DMAn_Disable(void)" DMAn_CheckStatus="MD_STATUS DMAn_CheckStatus(void)" DMAn_SoftwareTriggerOn="void DMAn_SoftwareTriggerOn(void)" DMAn_SetData="MD_STATUS DMAn_SetData(UINT srcaddr, UINT dstaddr, UINT count)" />
+          <DMA0 InUse="">
+            <DMA0_Init UserName="DMA0_Init" LibName="DMAn_Init" InUse="" Init="2" />
+            <DMA0_Enable UserName="DMA0_Enable" LibName="DMAn_Enable" InUse="" />
+            <DMA0_Disable UserName="DMA0_Disable" LibName="DMAn_Disable" InUse="" />
+            <DMA0_CheckStatus UserName="DMA0_CheckStatus" LibName="DMAn_CheckStatus" InUse="" />
+            <DMA0_SoftwareTriggerOn UserName="DMA0_SoftwareTriggerOn" LibName="DMAn_SoftwareTriggerOn" InUse="" />
+            <DMA0_SetData UserName="DMA0_SetData" LibName="DMAn_SetData" InUse="" />
+          </DMA0>
+          <DMA1 InUse="">
+            <DMA1_Init UserName="DMA1_Init" LibName="DMAn_Init" InUse="" Init="2" />
+            <DMA1_Enable UserName="DMA1_Enable" LibName="DMAn_Enable" InUse="" />
+            <DMA1_Disable UserName="DMA1_Disable" LibName="DMAn_Disable" InUse="" />
+            <DMA1_CheckStatus UserName="DMA1_CheckStatus" LibName="DMAn_CheckStatus" InUse="" />
+            <DMA1_SoftwareTriggerOn UserName="DMA1_SoftwareTriggerOn" LibName="DMAn_SoftwareTriggerOn" InUse="" />
+            <DMA1_SetData UserName="DMA1_SetData" LibName="DMAn_SetData" InUse="" />
+          </DMA1>
+          <DMA2 InUse="">
+            <DMA2_Init UserName="DMA2_Init" LibName="DMAn_Init" InUse="" Init="2" />
+            <DMA2_Enable UserName="DMA2_Enable" LibName="DMAn_Enable" InUse="" />
+            <DMA2_Disable UserName="DMA2_Disable" LibName="DMAn_Disable" InUse="" />
+            <DMA2_CheckStatus UserName="DMA2_CheckStatus" LibName="DMAn_CheckStatus" InUse="" />
+            <DMA2_SoftwareTriggerOn UserName="DMA2_SoftwareTriggerOn" LibName="DMAn_SoftwareTriggerOn" InUse="" />
+            <DMA2_SetData UserName="DMA2_SetData" LibName="DMAn_SetData" InUse="" />
+          </DMA2>
+          <DMA3 InUse="">
+            <DMA3_Init UserName="DMA3_Init" LibName="DMAn_Init" InUse="" Init="2" />
+            <DMA3_Enable UserName="DMA3_Enable" LibName="DMAn_Enable" InUse="" />
+            <DMA3_Disable UserName="DMA3_Disable" LibName="DMAn_Disable" InUse="" />
+            <DMA3_CheckStatus UserName="DMA3_CheckStatus" LibName="DMAn_CheckStatus" InUse="" />
+            <DMA3_SoftwareTriggerOn UserName="DMA3_SoftwareTriggerOn" LibName="DMAn_SoftwareTriggerOn" InUse="" />
+            <DMA3_SetData UserName="DMA3_SetData" LibName="DMAn_SetData" InUse="" />
+          </DMA3>
+        </CG_dma.c>
+        <CG_dma_user.c UserName="CG_dma_user.c" LibName="_user.c" InUse="">
+          <Type DMAn_UserInit="void DMAn_UserInit(void)" MD_INTDMAn="__interrupt void MD_INTDMAn(void)" />
+          <DMA0>
+            <DMA0_UserInit UserName="DMA0_UserInit" LibName="DMAn_UserInit" InUse="" />
+            <MD_INTDMA0 UserName="MD_INTDMA0" LibName="MD_INTDMAn" INTHandle="" InUse="" />
+          </DMA0>
+          <DMA1>
+            <DMA1_UserInit UserName="DMA1_UserInit" LibName="DMAn_UserInit" InUse="" />
+            <MD_INTDMA1 UserName="MD_INTDMA1" LibName="MD_INTDMAn" INTHandle="" InUse="" />
+          </DMA1>
+          <DMA2>
+            <DMA2_UserInit UserName="DMA2_UserInit" LibName="DMAn_UserInit" InUse="" />
+            <MD_INTDMA2 UserName="MD_INTDMA2" LibName="MD_INTDMAn" INTHandle="" InUse="" />
+          </DMA2>
+          <DMA3>
+            <DMA3_UserInit UserName="DMA3_UserInit" LibName="DMAn_UserInit" InUse="" />
+            <MD_INTDMA3 UserName="MD_INTDMA3" LibName="MD_INTDMAn" INTHandle="" InUse="" />
+          </DMA3>
+        </CG_dma_user.c>
+        <CG_dma.h UserName="CG_dma.h" LibName=".h" InUse="" />
+      </DMA>
+      <LVI InUse="">
+        <CG_lvi.c UserName="CG_lvi.c" LibName=".c" InUse="">
+          <Type LVI_Init="void LVI_Init(void)" LVI_InterruptModeStart="void LVI_INTModeStart(void)" LVI_ResetModeStart="MD_STATUS LVI_ResetModeStart(void)" LVI_Stop="void LVI_Stop(void)" LVI_SetLVILevel="MD_STATUS LVI_SetLVILevel(enum LVILevel level)" />
+          <LVI_Init UserName="LVI_Init" LibName="LVI_Init" InUse="" Init="2" />
+          <LVI_InterruptModeStart UserName="LVI_InterruptModeStart" LibName="LVI_InterruptModeStart" InUse="" />
+          <LVI_ResetModeStart UserName="LVI_ResetModeStart" LibName="LVI_ResetModeStart" InUse="" />
+          <LVI_Stop UserName="LVI_Stop" LibName="LVI_Stop" InUse="" />
+        </CG_lvi.c>
+        <CG_lvi_user.c UserName="CG_lvi_user.c" LibName="_user.c" InUse="">
+          <Type LVI_UserInit="void LVI_UserInit(void)" MD_INTLVI="__interrupt void MD_INTLVI(void)" />
+          <LVI_UserInit UserName="LVI_UserInit" LibName="LVI_UserInit" InUse="" />
+          <MD_INTLVI UserName="MD_INTLVI" LibName="MD_INTLVI" INTHandle="" InUse="" />
+        </CG_lvi_user.c>
+        <CG_lvi.h UserName="CG_lvi.h" LibName=".h" InUse="" />
+      </LVI>
+    </FUNC>
+    <TAG>
+      <GlobleUserTag>
+        <cg_vswc Name="cg_vswc" Value="00" />
+        <cg_security2 Name="cg_security2" Value="FF" />
+        <cg_security8 Name="cg_security8" Value="FF" />
+        <cg_security4 Name="cg_security4" Value="FF" />
+        <cg_security6 Name="cg_security6" Value="FF" />
+        <cg_security Name="cg_security" Value="FFFFFFFFFFFFFFFFFFFF" />
+        <cg_security3 Name="cg_security3" Value="FF" />
+        <cg_security0 Name="cg_security0" Value="FF" />
+        <cg_security9 Name="cg_security9" Value="FF" />
+        <cg_security5 Name="cg_security5" Value="FF" />
+        <cg_security7 Name="cg_security7" Value="FF" />
+        <cg_security1 Name="cg_security1" Value="FF" />
+        <use_cg_security Name="use_cg_security" Value="" />
+      </GlobleUserTag>
+    </TAG>
+  </DIR>
+  <MACRO>
+    <System SetFlag="True" Prepared="true" HelpID="system" NeedRefresh="False">
+      <System SetFlag="True" MacroName="System" />
+    </System>
+    <BUS SetFlag="" HelpID="externalbus" NeedRefresh="False">
+      <BUS SetFlag="" BusMode="15" />
+    </BUS>
+    <PORT HelpID="port" SetFlag="" NeedRefresh="False">
+      <PORT SetFlag="" MacroName="PORT" />
+    </PORT>
+    <INT HelpID="int" SetFlag="" NeedRefresh="False">
+      <INTP Chip="V850ESJJ3" SetFlag="" MacroName="INTP" NMIproperty="true" INTPproperty="9(3)" />
+      <KEY SetFlag="" MacroName="KEY" />
+    </INT>
+    <Serial HelpID="serial" SetFlag="" NeedRefresh="False">
+      <UARTA0 SetFlag="" MacroName="uarta" Channel="0" />
+      <UARTA1 SetFlag="" MacroName="uarta" Channel="1" />
+      <UARTA2 SetFlag="" MacroName="uarta" Channel="2" />
+      <UARTA3 Chip="DF3792,DF3793,V850ESJJ3" SetFlag="" MacroName="uarta" Channel="3" />
+      <CSIB0 SetFlag="" MacroName="csib" Channel="0" />
+      <CSIB1 SetFlag="" MacroName="csib" Channel="1" />
+      <CSIB2 SetFlag="" MacroName="csib" Channel="2" />
+      <CSIB3 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" SetFlag="" MacroName="csib" Channel="3" />
+      <CSIB4 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" SetFlag="" MacroName="csib" Channel="4" />
+      <CSIB5 Chip="V850ESJJ3" SetFlag="" MacroName="csib" Channel="5" />
+      <IIC00 SetFlag="" MacroName="iic0" Channel="0" />
+      <IIC01 SetFlag="" MacroName="iic0" Channel="1" />
+      <IIC02 Chip="V850ESJJ3,V850ESJG3,V850ESJG3L" SetFlag="" MacroName="iic0" Channel="2" />
+    </Serial>
+    <AD HelpID="ad" SetFlag="" NeedRefresh="False">
+      <AD Chip="V850ESJJ3" ANI="16" SetFlag="" />
+    </AD>
+    <DA HelpID="da" SetFlag="" NeedRefresh="False">
+      <DA0 SetFlag="" MacroName="DA" Channel="0" />
+      <DA1 Chip="V850ESJG3L,V850ESJG3,V850ESJJ3" SetFlag="" MacroName="DA" Channel="1" />
+    </DA>
+    <Timer HelpID="timer" SetFlag="" NeedRefresh="False">
+      <TMP0 SetFlag="" MacroName="TMP" Channel="0" />
+      <TMP1 SetFlag="" MacroName="TMP" Channel="1" />
+      <TMP2 SetFlag="" MacroName="TMP" Channel="2" />
+      <TMP3 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" SetFlag="" MacroName="TMP" Channel="3" />
+      <TMP4 Chip="V850ESJJ3,V850ESJG3L,V850ESJG3" SetFlag="" MacroName="TMP" Channel="4" />
+      <TMP5 SetFlag="" MacroName="TMP" Channel="5" />
+      <TMP6 Chip="V850ESJJ3" SetFlag="" MacroName="TMP" Channel="6" />
+      <TMP7 Chip="V850ESJJ3" SetFlag="" MacroName="TMP" Channel="7" />
+      <TMP8 Chip="V850ESJJ3" SetFlag="" MacroName="TMP" Channel="8" />
+      <TMQ0 SetFlag="" MacroName="TMQ" Channel="0" />
+      <TMM0 SetFlag="" MacroName="TMM" Channel="0" />
+    </Timer>
+    <WatchTimer HelpID="watchtimer" SetFlag="" NeedRefresh="False">
+      <WatchTimer SetFlag="" MacroName="WatchTimer" />
+    </WatchTimer>
+    <RTO HelpID="realtimeoutput" SetFlag="" NeedRefresh="False">
+      <RTO0 SetFlag="" MacroName="RTO" Channel="0" />
+      <RTO1 Chip="V850ESJJ3" SetFlag="" MacroName="RTO" Channel="1" />
+    </RTO>
+    <DMA HelpID="dma" SetFlag="" NeedRefresh="False">
+      <DMA0 SetFlag="" MacroName="DMA" Channel="0" />
+      <DMA1 SetFlag="" MacroName="DMA" Channel="1" />
+      <DMA2 SetFlag="" MacroName="DMA" Channel="2" />
+      <DMA3 SetFlag="" MacroName="DMA" Channel="3" />
+    </DMA>
+    <LVI HelpID="lvi" SetFlag="" NeedRefresh="False">
+      <LVI SetFlag="" MacroName="LVI" />
+    </LVI>
+  </MACRO>
+  <SETTING>
+    <System>
+      <setting name="MainOSCFeedback" value="0" />
+      <setting name="MainOSCValue" value="4" />
+      <setting name="SubOSCValue" value="32.768" />
+      <setting name="SubclkFeedback" value="0" />
+      <setting name="InterOSCValue" value="220" />
+      <setting name="InterOSC" value="operation" />
+      <setting name="MainClock" value="0" />
+      <setting name="CPUClock" value="3" />
+      <setting name="PLLLockupTime" value="1" />
+      <setting name="fBRGValue" value="32.768" />
+      <setting name="fBRG" value="stop" />
+      <setting name="CLKOUT" value="off" />
+      <setting name="ClockMonitor" value="off" />
+      <setting name="StandbyReleaseNMI" value="Enable" />
+      <setting name="StandbyReleaseMask" value="Enable" />
+      <setting name="StandbyReleaseINTWDT2" value="Enable" />
+      <setting name="OCDMode" value="OCDUnused" />
+      <setting name="OCDMiniMode" value="MiniAndNWire" />
+      <setting name="OCDSecurityId" value="Used" />
+      <setting name="OCDSecurityIdValue" value="0xffffffffffffffffffff" />
+      <setting name="OCDRAMMode" value="Unused" />
+      <setting name="OCDMini2Interface" value="0" />
+      <setting name="WDT2Mode" value="ResetMode" />
+      <setting name="WDT2OPT" value="Off" />
+      <setting name="WDT2ClockMode" value="fR" />
+      <setting name="WDT2ClockSelection" value="7" />
+      <setting name="PowerOnClear" value="OutFunction" />
+      <setting name="Subclk" value="stop" />
+      <setting name="InterOSCOPT1" value="On" />
+      <setting name="InterOSC1" value="stop" />
+    </System>
+  </SETTING>
+</V850ESJx3>
