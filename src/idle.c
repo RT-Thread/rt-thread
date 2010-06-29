@@ -23,6 +23,7 @@
 #endif
 
 static struct rt_thread idle;
+ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_HEAP

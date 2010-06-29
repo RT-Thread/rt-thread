@@ -926,9 +926,7 @@ void rt_hw_console_output(const char* str) __attribute__((weak));
 void rt_hw_console_output(const char* str)
 #elif defined(__CC_ARM)
 __weak void rt_hw_console_output(const char* str)
-#elif defined(__ICCARM__)
-__weak void rt_hw_console_output(const char* str)
-#elif defined(__ICCM16C__)
+#elif defined(__IAR_SYSTEMS_ICC__)
 void rt_hw_console_output(const char* str)
 #endif
 {
