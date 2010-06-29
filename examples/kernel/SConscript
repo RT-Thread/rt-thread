@@ -26,6 +26,7 @@ timer_static.c
 timer_dynamic.c
 timer_stop_self.c
 timer_control.c
+timer_timeout.c
 heap_malloc.c
 heap_realloc.c
 memp_simple.c
