@@ -33,15 +33,16 @@ BOOL xMBPortEventPost( eMBEventType eEvent )
 {
 	/* only care abot EV_FRAME_RECEIVED event */
 	if(eEvent == EV_FRAME_RECEIVED)
+	{	
 		rt_event_send(&event, 1<<eEvent);
-
+	}
 	return TRUE;
 }
 
 BOOL xMBPortEventGet( eMBEventType * eEvent )
 {
 	rt_uint32_t e;
-	rt_int32_t time_out = 100/(1000/RT_TICK_PER_SECOND);
+	rt_int32_t time_out = 3000/(1000/RT_TICK_PER_SECOND);
 		
 	if(rt_event_recv(&event, (1<<EV_FRAME_RECEIVED),
 			RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
@@ -50,6 +51,11 @@ BOOL xMBPortEventGet( eMBEventType * eEvent )
 		*eEvent = EV_FRAME_RECEIVED;
 		return TRUE;
 	}		
-	else return FALSE;
+	else 
+	{
+		rt_kprintf("get event timeout\n");
+
+		return FALSE;
+	}	
 }
 

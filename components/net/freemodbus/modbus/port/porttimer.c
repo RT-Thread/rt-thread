@@ -33,14 +33,14 @@ BOOL xMBPortTimersInit(USHORT usTim1Timerout50us)
 	TCFG1  &= 0xffff0fff;
 	TCFG1  |= 0x00001000;
 
-	TCNTB3 = (rt_int32_t)(usTim1Timerout50us*(PCLK/ (4 *16* 20000))) - 1;
+	TCNTB3 = (rt_int32_t)(usTim1Timerout50us*(PCLK/ (4 *16* 1000))) - 1;
 	/* manual update */
 	TCON = TCON & (~(0x0f<<16)) | (0x02<<16);
 	/* install interrupt handler */
 	rt_hw_interrupt_install(INTTIMER3, prvvTIMERExpiredISR, RT_NULL);
 	rt_hw_interrupt_umask(INTTIMER3);
 
-	/* start timer4, reload */
+	/* start timer3, reload */
 	TCON = TCON & (~(0x0f<<16)) | (0x09<<16);
 
 	return TRUE;

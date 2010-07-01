@@ -24,13 +24,14 @@
 #include "mbfunc.h"
 
 eMBErrorCode eMBMReadHoldingRegisters  (UCHAR ucSlaveAddress, USHORT usRegStartAddress, 
-			UBYTE ubNRegs, USHORT arusBufferOut[]) 
+			UBYTE ubNRegs, UBYTE arusBufferOut[]) 
 {
 	static UCHAR ucMBFrame[5];
 	eMBErrorCode eStatus = MB_ENOERR;
 	eMBEventType eEvent;
 	static UCHAR ucRcvAddress;
 	static USHORT usLength;
+	UCHAR *ucRcvFrame;
 
 	/* make up request frame */	
 	ucMBFrame[0] = MB_FUNC_READ_HOLDING_REGISTER;
@@ -38,26 +39,24 @@ eMBErrorCode eMBMReadHoldingRegisters  (UCHAR ucSlaveAddress, USHORT usRegStartA
 	ucMBFrame[2] = (UCHAR)(usRegStartAddress);
 	ucMBFrame[3] = (UCHAR)(ubNRegs >> 8);
 	ucMBFrame[4] = (UCHAR)(ubNRegs);	
-
 	 
-		rt_kprintf("send frame [%x%x%x%x%x]\n", 
-		ucMBFrame[0], ucMBFrame[1], ucMBFrame[2], ucMBFrame[3], ucMBFrame[4]); 
-	
-	
 	/* send request frame to slave device */
 	eStatus = eMBRTUSend( ucSlaveAddress, ucMBFrame, 5 );
 
 	/* wait on receive event */
 	if( xMBPortEventGet( &eEvent ) == TRUE )
 	{		
-		eStatus = eMBRTUReceive( &ucRcvAddress, &ucMBFrame, &usLength );
+		eStatus = eMBRTUReceive( &ucRcvAddress, &ucRcvFrame, &usLength );
+
 		if( eStatus == MB_ENOERR )
 		{
 			/* Check if the frame is for us. If not ignore the frame. */
 			if( ( ucRcvAddress == ucSlaveAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
 			{
-				/* parse and restore data */
-				rt_kprintf("parse and restore date here\n");
+				RT_ASSERT(ucRcvFrame[0] == MB_FUNC_READ_HOLDING_REGISTER);
+				RT_ASSERT(ucRcvFrame[1] == 2*ubNRegs)
+
+				rt_memcpy((UCHAR *)arusBufferOut, &ucRcvFrame[2], 2*ubNRegs);
 			}
 		}
 	}
@@ -80,49 +79,43 @@ eMBErrorCode eMBMReadHoldingRegisters  (UCHAR ucSlaveAddress, USHORT usRegStartA
 ** @note
 */
 eMBErrorCode eMBMReadCoils  (UCHAR ucSlaveAddress, USHORT usCoilStartAddress,
-			UBYTE ubNCoils, USHORT arusBufferOut[])
+			UBYTE ubNCoils, UBYTE arusBufferOut[])
 {
 	static UCHAR ucMBFrame[5];
-		eMBErrorCode eStatus = MB_ENOERR;
-		eMBEventType eEvent;
-		static UCHAR ucRcvAddress;
-		static USHORT usLength;
+	eMBErrorCode eStatus = MB_ENOERR;
+	eMBEventType eEvent;
+	static UCHAR ucRcvAddress;
+	static USHORT usLength;
+	UCHAR *ucRcvFrame;
 
-		/* make up request frame */
-		ucMBFrame[0] = MB_FUNC_READ_COILS;
-		ucMBFrame[1] = (UCHAR)(usCoilStartAddress >> 8);
-		ucMBFrame[2] = (UCHAR)(usCoilStartAddress);
-		ucMBFrame[3] = (UCHAR)(ubNCoils >> 8);
-		ucMBFrame[4] = (UCHAR)(ubNCoils);
+	/* make up request frame */
+	ucMBFrame[0] = MB_FUNC_READ_COILS;
+	ucMBFrame[1] = (UCHAR)(usCoilStartAddress >> 8);
+	ucMBFrame[2] = (UCHAR)(usCoilStartAddress);
+	ucMBFrame[3] = (UCHAR)(ubNCoils >> 8);
+	ucMBFrame[4] = (UCHAR)(ubNCoils);
 
+	/* send request frame to slave device */
+	eStatus = eMBRTUSend( ucSlaveAddress, ucMBFrame, 5 );
 
-			rt_kprintf("send frame [%x%x%x%x%x]\n",
-			ucMBFrame[0], ucMBFrame[1], ucMBFrame[2], ucMBFrame[3], ucMBFrame[4]);
-
-
-		/* send request frame to slave device */
-		eStatus = eMBRTUSend( ucSlaveAddress, ucMBFrame, 5 );
-
-		/* wait on receive event */
-		if( xMBPortEventGet( &eEvent ) == TRUE )
+	/* wait on receive event */
+	if( xMBPortEventGet( &eEvent ) == TRUE )
+	{
+		eStatus = eMBRTUReceive( &ucRcvAddress, &ucRcvFrame, &usLength );
+		if( eStatus == MB_ENOERR )
 		{
-			eStatus = eMBRTUReceive( &ucRcvAddress, &ucMBFrame, &usLength );
-			if( eStatus == MB_ENOERR )
+			/* Check if the frame is for us. If not ignore the frame. */
+			if( ucRcvAddress == ucSlaveAddress )
 			{
-				/* Check if the frame is for us. If not ignore the frame. */
-				if( ( ucRcvAddress == ucSlaveAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
-				{
-					/* parse and restore data */
-					rt_kprintf("parse and restore date here\n");
-				}
+				RT_ASSERT(ucRcvFrame[0] == MB_FUNC_READ_COILS);
+
+				rt_memcpy((UCHAR *)arusBufferOut, &ucRcvFrame[2], ucRcvFrame[1]);
 			}
 		}
-		else eStatus = MB_ETIMEDOUT;
+	}
+	else eStatus = MB_ETIMEDOUT;
 
-		return eStatus;
+	return eStatus;
 
 }
-
-
-
 

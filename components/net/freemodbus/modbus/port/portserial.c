@@ -21,7 +21,7 @@
 #include "mb.h"
 #include "mbport.h"
 
-#define UART1	((struct uartport *)U1BASE)
+#define UART1	((struct uartport *)&U1BASE)
 
 /* ----------------------- static functions ---------------------------------*/
 static void rt_serial1_handler(int vector);
@@ -73,7 +73,7 @@ BOOL xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBPar
 	UART1->ucon = 0x245;
 	/* Set uart0 bps */
 	UART1->ubrd = (rt_int32_t)(PCLK / (ulBaudRate * 16)) - 1;
-
+	
 	for (i = 0; i < 100; i++);
 
 	SUBSRCPND |= BIT_SUB_RXD1;
@@ -97,26 +97,25 @@ BOOL xMBPortSerialPutByte( CHAR ucByte )
 
 BOOL xMBPortSerialGetByte( CHAR * pucByte )
 {
-	while ((USTAT1 & USTAT_RCV_READY) == 0);
+	while (!(USTAT1 & USTAT_RCV_READY));
 
-	*pucByte = URXB1;
-
+	*pucByte = URXH1;
+	
 	return TRUE;
 }
 
 static void rt_serial1_handler(int vector)
 {	
-
 	if (SUBSRCPND & BIT_SUB_RXD1)
 	{			
 		SUBSRCPND |= BIT_SUB_RXD1;
 		prvvUARTRxISR();
 	}	
-	if (SUBSRCPND & BIT_SUB_TXD1)
-	{	
+	else if (SUBSRCPND & BIT_SUB_TXD1)
+	{
 		SUBSRCPND |= BIT_SUB_TXD1;	
 		prvvUARTTxReadyISR();
-	}	
+	}		
 }
 
 /* 

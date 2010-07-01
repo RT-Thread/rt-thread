@@ -24,36 +24,36 @@
 #include "mbproto.h"
 #include "mbfunc.h"
 
-
-USHORT buf[256];
-
+#include "varible.h"
 
 void rt_modbus_thread_entry(void* parameter)
 {
 	eMBErrorCode eStatus;
-		
+	USHORT buf[1];
+	varible_group_t var_group;
+	
+	var_group = varible_group_get();
+	
 	eStatus = eMBInit( MB_RTU, 0x0A, 0, 115200, MB_PAR_EVEN );
 
 	/* Enable the Modbus Protocol Stack. */
-	eStatus = eMBEnable(  );
+	eStatus = eMBEnable();
 	rt_thread_delay(50);
 	
 	while(1)
 	{
+		int i = 0;
 
-		/* request holding reg  */
-		eMBMReadHoldingRegisters(0x0A, 0x1, 0x10, buf);
-		rt_kprintf("stop\n");
-		rt_thread_delay(100);
-		/* request coils  */
-		eMBMReadCoils(0x0A, 0x1, 128, buf);
-		rt_thread_delay(100);
+		var_group->table->hash_table[].
+		if(eMBMReadCoils(0x01, 0x0, 0x6, buf) != MB_ETIMEDOUT)
 
-		//while(1);
+		
+
+		rt_thread_delay(100);
 	}
 }
 
-int modbus_demo_init(void)
+int modbus_start(void)
 {
 	rt_thread_t modbus_thread;
 
