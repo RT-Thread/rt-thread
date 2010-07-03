@@ -105,9 +105,9 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 			delta = 64 / (float)(rect.x2 - rect.x1);
 		}
 
-		for (index = rect.x1; index < rect.x2; index ++)
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(r, g, b);
+		for (index = rect.x1; index < rect.x2 + 1; index ++)
 		{
-			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(r, g, b);
 			rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
 			r += delta; g += delta; b += delta;
 		}
