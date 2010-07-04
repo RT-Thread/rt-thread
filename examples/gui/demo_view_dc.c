@@ -9,6 +9,12 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/slider.h>
+#include <rtgui/image_hdc.h>
+
+#include "play.hdh"
+#include "stop.hdh"
+struct rtgui_image_hdcmm play_image = RTGUI_IMAGE_HDC_DEF(2, 0x1c, 0x16, play_hdh);
+struct rtgui_image_hdcmm stop_image = RTGUI_IMAGE_HDC_DEF(2, 0x1c, 0x16, stop_hdh);
 
 /*
  * view的事件处理函数
@@ -50,6 +56,16 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		rtgui_dc_draw_text(dc, "RT-Thread/GUI标准版本", &rect);
 #endif
 
+		{
+			rtgui_rect_t rect = {0, 0, 0x1c, 0x16};
+			rtgui_rect_moveto(&rect, 80, 80);
+			rtgui_image_blit((rtgui_image_t*)&play_image, dc, &rect);
+
+			rect.x1 = 0; rect.y1 = 0;
+			rect.x2 = 0x1c; rect.y2 = 0x16;
+			rtgui_rect_moveto(&rect, 130, 80);
+			rtgui_image_blit((rtgui_image_t*)&stop_image, dc, &rect);
+		}
 		/* 绘制一个圆形 */
 		RTGUI_DC_FC(dc) = red;
 		rtgui_dc_draw_circle(dc, rect.x1 + 10, rect.y1 + 10, 10);
