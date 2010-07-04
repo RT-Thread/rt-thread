@@ -25,12 +25,13 @@
 extern "C" {
 #endif
 
-#define RTGUI_WIDGET_FLAG_HIDE			0x01
-#define RTGUI_WIDGET_FLAG_DISABLE		0x02
-#define RTGUI_WIDGET_FLAG_FOCUS			0x04
-#define RTGUI_WIDGET_FLAG_TRANSPARENT	0x08
-#define RTGUI_WIDGET_FLAG_FOCUSABLE		0x10
-#define RTGUI_WIDGET_FLAG_DEFAULT		0x00
+#define RTGUI_WIDGET_FLAG_DEFAULT		0x0000
+#define RTGUI_WIDGET_FLAG_HIDE			0x0001
+#define RTGUI_WIDGET_FLAG_DISABLE		0x0002
+#define RTGUI_WIDGET_FLAG_FOCUS			0x0004
+#define RTGUI_WIDGET_FLAG_TRANSPARENT	0x0008
+#define RTGUI_WIDGET_FLAG_FOCUSABLE		0x0010
+#define RTGUI_WIDGET_FLAG_DC_VISIBLE	0x0100
 
 #define RTGUI_WIDGET_UNHIDE(w)			(w)->flag &= ~RTGUI_WIDGET_FLAG_HIDE
 #define RTGUI_WIDGET_HIDE(w)			(w)->flag |= RTGUI_WIDGET_FLAG_HIDE
@@ -45,6 +46,11 @@ extern "C" {
 #define RTGUI_WIDGET_IS_FOCUSED(w)		((w)->flag & RTGUI_WIDGET_FLAG_FOCUS)
 
 #define RTGUI_WIDGET_IS_FOCUSABLE(w) 	((w)->flag & RTGUI_WIDGET_FLAG_FOCUSABLE)
+
+#define RTGUI_WIDGET_IS_DC_VISIBLE(w)	((w)->flag & RTGUI_WIDGET_FLAG_DC_VISIBLE)
+#define RTGUI_WIDGET_DC_SET_VISIBLE(w)	(w)->flag |= RTGUI_WIDGET_FLAG_DC_VISIBLE 
+#define RTGUI_WIDGET_DC_SET_UNVISIBLE(w) (w)->flag &= ~RTGUI_WIDGET_FLAG_DC_VISIBLE
+#define RTGUI_WIDGET_DC(w)				((struct rtgui_dc*)&((w)->dc_type))
 
 /* get rtgui widget object */
 #define RTGUI_WIDGET_FOREGROUND(w) 		((w)->gc.foreground)
@@ -75,19 +81,24 @@ struct rtgui_widget
 
 	/* widget flag */
 	rt_int32_t flag;
-#ifndef RTGUI_USING_SMALL_SIZE
-	/* widget align */
-	rt_int32_t align;
-#endif
+
+	/* hardware device context */
+	rt_uint32_t dc_type;
+	const struct rtgui_dc_engine* dc_engine;
 
 	/* the graphic context of widget */
 	rtgui_gc_t gc;
 
 	/* the widget extent */
 	rtgui_rect_t extent;
+
 #ifndef RTGUI_USING_SMALL_SIZE
+	/* minimal width and height of widget */
 	rt_int16_t mini_width, mini_height;
 	rt_int16_t margin, margin_style;
+
+	/* widget align */
+	rt_int32_t align;
 #endif
 
 	/* the rect clip */

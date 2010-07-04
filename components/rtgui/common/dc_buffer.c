@@ -250,7 +250,7 @@ rt_inline void rtgui_blit_line_4(rtgui_color_t* color, rt_uint8_t* dest, int lin
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-	struct rtgui_dc_hw* hw = (struct rtgui_dc_hw*)dest;
+	struct rtgui_dc* hw = dest;
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 
@@ -273,7 +273,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 			rect_height = rtgui_rect_height(*rect);
 
 		/* get blit line function */
-		switch (hw->device->byte_per_pixel)
+		switch (rtgui_graphic_driver_get_default()->byte_per_pixel)
 		{
 		case 1:
 			blit_line = rtgui_blit_line_1;
@@ -292,7 +292,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		}
 
 		/* create line buffer */
-		line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * hw->device->byte_per_pixel);
+		line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * rtgui_graphic_driver_get_default()->byte_per_pixel);
 
 		/* prepare pixel line */
 		pixel = (rtgui_color_t*)(dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t));

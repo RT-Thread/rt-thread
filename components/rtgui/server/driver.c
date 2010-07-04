@@ -13,6 +13,7 @@
  */
 #include <rtgui/driver.h>
 
+#ifdef RTGUI_USING_GRAPHIC_DRIVER_LIST
 struct rtgui_list_node _rtgui_graphic_driver_list = {RT_NULL};
 
 void rtgui_graphic_driver_add(struct rtgui_graphic_driver* driver)
@@ -50,10 +51,25 @@ struct rtgui_graphic_driver* rtgui_graphic_driver_get_default()
 	return rtgui_list_entry(_rtgui_graphic_driver_list.next,
 		struct rtgui_graphic_driver, list);
 }
+#else
+static const struct rtgui_graphic_driver* _default_graphic_driver = RT_NULL;
 
-void rtgui_graphic_driver_get_rect(struct rtgui_graphic_driver *driver, rtgui_rect_t *rect)
+void rtgui_graphic_driver_add(const struct rtgui_graphic_driver* driver)
 {
-	if (rect == RT_NULL || driver == RT_NULL) return;
+	_default_graphic_driver = driver;
+}
+
+const struct rtgui_graphic_driver* rtgui_graphic_driver_get_default()
+{
+	return _default_graphic_driver;
+}
+#endif
+
+
+void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rtgui_rect_t *rect)
+{
+	RT_ASSERT(rect != RT_NULL);
+	RT_ASSERT(driver != RT_NULL);
 
 	rect->x1 = rect->y1 = 0;
 	rect->x2 = driver->width;
@@ -65,3 +81,4 @@ void rtgui_graphic_driver_get_default_rect(rtgui_rect_t *rect)
 	/* return default the extent of default driver */
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), rect);
 }
+

@@ -47,6 +47,9 @@ struct rtgui_panel
 
 	/* the workbench manager thread */
 	rt_thread_t wm_thread;
+
+	/* is focusable */
+	rt_bool_t is_focusable;
 };
 
 /* find panel by name */
@@ -66,3 +69,4 @@ void rtgui_panel_append_monitor_rect(rtgui_panel_t* panel, rt_thread_t tid, rtgu
 void rtgui_panel_remove_monitor_rect(rtgui_panel_t* panel, rt_thread_t tid, rtgui_rect_t* rect);
 
 #endif
+

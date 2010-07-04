@@ -129,7 +129,7 @@ static void rtgui_winrect_show		(void);
 #define WIN_MOVE_BORDER	4
 void rtgui_mouse_init()
 {
-	struct rtgui_graphic_driver* gd = rtgui_graphic_driver_get_default();
+	const struct rtgui_graphic_driver* gd = rtgui_graphic_driver_get_default();
 
 	_rtgui_cursor = (struct rtgui_cursor*) rtgui_malloc(sizeof(struct rtgui_cursor));
 	rt_memset(_rtgui_cursor, 0, sizeof(struct rtgui_cursor));

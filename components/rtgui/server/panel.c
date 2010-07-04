@@ -54,6 +54,7 @@ void rtgui_panel_register(char* name, rtgui_rect_t* extent)
 	panel->extent = *extent;
 
 	panel->wm_thread = RT_NULL;
+	panel->is_focusable = RT_TRUE;
 
 	/* init list */
 	rtgui_list_init(&(panel->sibling));
@@ -87,6 +88,18 @@ void rtgui_panel_set_default_focused(char* name)
 	if (panel != RT_NULL)
 	{
 		rtgui_server_focus_panel = panel;
+	}
+}
+
+void rtgui_panel_set_nofocused(char* name)
+{
+	extern struct rtgui_panel* rtgui_server_focus_panel;
+	struct rtgui_panel* panel;
+	
+	panel = rtgui_panel_find(name);
+	if (panel != RT_NULL)
+	{
+		panel->is_focusable = RT_FALSE;
 	}
 }
 
@@ -304,3 +317,4 @@ void rtgui_panel_set_wm(rtgui_panel_t* panel, rt_thread_t wm)
 
 	panel->wm_thread = wm;
 }
+

@@ -129,3 +129,4 @@ typedef enum RTGUI_MODAL_CODE rtgui_modal_code_t;
 #include <rtgui/rtgui_object.h>
 
 #endif
+

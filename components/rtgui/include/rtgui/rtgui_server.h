@@ -72,7 +72,9 @@ void rtgui_server_post_event(struct rtgui_event* event, rt_size_t size);
 /* register or deregister panel in server */
 void rtgui_panel_register(char* name, rtgui_rect_t* extent);
 void rtgui_panel_deregister(char* name);
+
 void rtgui_panel_set_default_focused(char* name);
+void rtgui_panel_set_nofocused(char* name);
 
 #endif
 

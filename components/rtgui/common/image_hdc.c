@@ -18,7 +18,7 @@ struct rtgui_image_hdc
 	rt_uint8_t *pixels;
 
 	struct rtgui_filerw* filerw;
-	struct rtgui_graphic_driver* hw_driver;
+	const struct rtgui_graphic_driver* hw_driver;
 };
 
 static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file);
@@ -172,7 +172,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 		for (y = 0; y < h; y ++)
 		{
-			rtgui_dc_hw_draw_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
+			rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
 			ptr += hdc->pitch;
 		}
     }
@@ -191,7 +191,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			if (rtgui_filerw_read(hdc->filerw, ptr, 1, hdc->pitch) != hdc->pitch)
 				break; /* read data failed */
 
-			rtgui_dc_hw_draw_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
+			rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
 		}
 
 		rtgui_free(ptr);
@@ -224,7 +224,7 @@ static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* d
 
 	for (y = 0; y < h; y ++)
 	{
-		rtgui_dc_hw_draw_raw_hline((struct rtgui_dc_hw*)dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
+		rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
 		ptr += hdc->pitch;
 	}
 }

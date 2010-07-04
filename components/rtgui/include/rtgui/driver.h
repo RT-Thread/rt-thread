@@ -49,13 +49,19 @@ struct rtgui_graphic_driver
 	rtgui_list_t list;
 };
 
+#ifdef RTGUI_USING_GRAPHIC_DRIVER_LIST
 void rtgui_graphic_driver_add(struct rtgui_graphic_driver* driver);
 void rtgui_graphic_driver_remove(struct rtgui_graphic_driver* driver);
 
 struct rtgui_graphic_driver* rtgui_graphic_driver_find(char* name);
-struct rtgui_graphic_driver* rtgui_graphic_driver_get_default(void);
+#else
+void rtgui_graphic_driver_add(const struct rtgui_graphic_driver* driver);
+#endif
 
-void rtgui_graphic_driver_get_rect(struct rtgui_graphic_driver *driver, rtgui_rect_t *rect);
+const struct rtgui_graphic_driver* rtgui_graphic_driver_get_default(void);
+
+void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rtgui_rect_t *rect);
 void rtgui_graphic_driver_get_default_rect(rtgui_rect_t *rect);
 
 #endif
+

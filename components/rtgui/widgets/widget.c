@@ -60,6 +60,9 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 
 	/* init clip information */
 	rtgui_region_init(&(widget->clip));
+
+	/* init hardware dc */
+	rtgui_dc_hw_init(widget);
 }
 
 /* Destroys the widget */

@@ -182,7 +182,7 @@ void rtgui_server_handle_set_wm(struct rtgui_event_set_wm *event)
 
 void rtgui_server_handle_update(struct rtgui_event_update_end* event)
 {
-	struct rtgui_graphic_driver* driver = rtgui_graphic_driver_get_default();
+	const struct rtgui_graphic_driver* driver = rtgui_graphic_driver_get_default();
 	if (driver != RT_NULL)
 	{
 		driver->screen_update(&(event->rect));
@@ -290,7 +290,7 @@ void rtgui_server_handle_mouse_btn(struct rtgui_event_mouse* event)
 
 	/* get the panel which contains the mouse */
 	panel = rtgui_panel_get_contain(event->x, event->y);
-	if (panel != RT_NULL)
+	if ((panel != RT_NULL) && (panel->is_focusable == RT_TRUE))
 	{
 		/* deactivate old window */
 		if (rtgui_server_focus_topwin != RT_NULL)

@@ -22,6 +22,8 @@ extern "C" {
 #endif
 
 /* rtgui object type */
+#define RTGUI_CONTAINER_OF(obj, type, member)	\
+	((type *)((char *)(obj) - (unsigned long)(&((type *)0)->member)))
 
 /** Casts the function pointer to an rtgui_constructor */
 #define RTGUI_CONSTRUCTOR(constructor)                ((rtgui_constructor_t)(constructor))
