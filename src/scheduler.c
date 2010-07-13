@@ -19,7 +19,9 @@
  * 2006-09-05     Bernard      add 32 priority level support
  * 2006-09-24     Bernard      add rt_system_scheduler_start function
  * 2009-09-16     Bernard      fix _rt_scheduler_stack_check
- * 2010-04-11     yi.qiu          add module feature
+ * 2010-04-11     yi.qiu       add module feature
+ * 2010-07-13     Bernard      fix the maximal number of rt_scheduler_lock_nest 
+ *                             issue found by kuronca
  */
 
 #include <rtthread.h>
@@ -396,8 +398,9 @@ void rt_enter_critical()
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    if (rt_scheduler_lock_nest < 255u)
-        rt_scheduler_lock_nest++;
+	/* the maximal number of nest is RT_UINT16_MAX, which is big 
+	 * enough and does not check here */
+    rt_scheduler_lock_nest++;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);

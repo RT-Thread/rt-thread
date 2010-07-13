@@ -12,6 +12,7 @@
  * 2008-7-12      Bernard      the first version
  * 2010-06-09     Bernard      fix the end stub of heap
  *                             fix memory check in rt_realloc function
+ * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  */
 
 /*
@@ -170,7 +171,7 @@ void rt_system_heap_init(void* begin_addr, void* end_addr)
 	begin_addr = (void*)RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
 
 	/* calculate the aligned memory size */
-	mem_size_aligned = RT_ALIGN((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr, RT_ALIGN_SIZE) - 2 * SIZEOF_STRUCT_MEM;
+	mem_size_aligned = RT_ALIGN_DOWN((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr, RT_ALIGN_SIZE) - 2 * SIZEOF_STRUCT_MEM;
 
 	/* point to begin address of heap */
 	heap_ptr = begin_addr;
@@ -220,7 +221,10 @@ void *rt_malloc(rt_size_t size)
 	if (size == 0) return RT_NULL;
 
 #ifdef RT_MEM_DEBUG
-	rt_kprintf("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE));
+	if (size != RT_ALIGN(size, RT_ALIGN_SIZE)
+		rt_kprintf("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE));
+	else
+		rt_kprintf("malloc size %d\n", size);
 #endif
 
 	/* alignment size */
@@ -351,7 +355,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	if (newsize > mem_size_aligned)
 	{
 #ifdef RT_MEM_DEBUG
-		rt_kprintf("no memory\n");
+		rt_kprintf("realloc: out of memory\n");
 #endif
 		return RT_NULL;
 	}

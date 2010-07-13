@@ -14,6 +14,7 @@
  * 2006-06-30     Bernard      fix the allocate/free block bug
  * 2006-08-04     Bernard      add hook support
  * 2006-08-10     Bernard      fix interrupt bug in rt_mp_alloc
+ * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  */
 
 #include <rthw.h>
@@ -88,7 +89,7 @@ rt_err_t rt_mp_init(struct rt_mempool* mp, const char* name, void *start, rt_siz
 
 	/* init memory pool */
 	mp->start_address = start;
-	mp->size = RT_ALIGN(size, RT_ALIGN_SIZE);
+	mp->size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
 	mp->block_size = block_size;
 

@@ -14,6 +14,7 @@
  * 2006-08-10     Bernard      remove the last rt_schedule in rt_tick_increase
  * 2010-03-08     Bernard      remove rt_passed_second
  * 2010-05-20     Bernard      fix the tick exceeds the maximum limits
+ * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  */
 
 #include <rtthread.h>
@@ -95,7 +96,7 @@ void rt_tick_increase()
 rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
 {
 	/* return the calculated tick */
-	return RT_TICK_PER_SECOND * (ms / 1000);
+	return (RT_TICK_PER_SECOND * ms) / 1000 + (RT_TICK_PER_SECOND * ms) % 1000 ? 1:0; 
 }
 
 /*@}*/

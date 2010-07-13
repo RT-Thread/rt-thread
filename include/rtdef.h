@@ -137,9 +137,14 @@ typedef rt_uint32_t						rt_off_t;		/* Type for offset.							*/
 /**
  * @def RT_ALIGN(size, align)
  * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
- * would equal to 16. It is needed in some critical contexts.
+ * would return 16.
+ *
+ * @def RT_ALIGN_DOWN(size, align)
+ * Return the down number of aligned at specified width. RT_ALIGN_DOWN(13, 4)
+ * would return 12. 
  */
 #define RT_ALIGN(size, align)			(((size) + (align) - 1) & ~((align)-1))
+#define RT_ALIGN_DOWN(size, align)		((size) & ~((align) -1))
 
 /**
  * @def RT_NULL

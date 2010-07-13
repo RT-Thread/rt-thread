@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2008-07-12     Bernard      the first version
+ * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  */
 
 /*
@@ -326,7 +327,7 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 
 	/* align begin and end addr to page */
 	heap_start	= RT_ALIGN((rt_uint32_t)begin_addr, RT_MM_PAGE_SIZE);
-	heap_end	= RT_ALIGN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
+	heap_end	= RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
 
 	limsize = heap_end - heap_start;
 	npages = limsize / RT_MM_PAGE_SIZE;
