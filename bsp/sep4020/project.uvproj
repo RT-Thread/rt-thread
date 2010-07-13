@@ -126,8 +126,8 @@
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>0</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>0</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -159,10 +159,10 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4100</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JLTAgdi.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -330,7 +330,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -483,32 +483,32 @@
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\interrupt.c</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\interrupt.c</FilePath>
             </File>
             <File>
               <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\stack.c</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\stack.c</FilePath>
             </File>
             <File>
               <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\trap.c</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\trap.c</FilePath>
             </File>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\cpu.c</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\cpu.c</FilePath>
             </File>
             <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\start_rvds.S</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\start_rvds.S</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>E:\temp\rt-thread-sep4020\libcpu\arm\sep4020\context_rvds.S</FilePath>
+              <FilePath>E:\temp\rt-thread\libcpu\arm\sep4020\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>clk.c</FileName>

@@ -27,13 +27,13 @@ struct serial_int_tx
 /* serial port registers */
 typedef struct uartport
 {
-	rt_uint32_t dlbl_rxfifo_txfifo;
-	rt_uint32_t dlbh_ier;
-	rt_uint32_t iir_fcr;
-	rt_uint32_t lcr;
-	rt_uint32_t mcr;
-	rt_uint32_t lsr;
-	rt_uint32_t msr;
+	volatile rt_uint32_t dlbl_rxfifo_txfifo;
+	volatile rt_uint32_t dlbh_ier;
+	volatile rt_uint32_t iir_fcr;
+	volatile rt_uint32_t lcr;
+	volatile rt_uint32_t mcr;
+	volatile rt_uint32_t lsr;
+	volatile rt_uint32_t msr;
 }uartport;
 
 struct serial_device
