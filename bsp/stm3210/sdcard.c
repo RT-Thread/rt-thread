@@ -192,7 +192,7 @@ SD_Error SD_Init(void)
 SD_Error SD_PowerON(void)
 {
   SD_Error errorstatus = SD_OK;
-  uint32_t response = 0, count = 0;
+  uint32_t response = 0, count = 0, i = 0;
   bool validvoltage = FALSE;
   uint32_t SDType = SD_STD_CAPACITY;
 
@@ -219,9 +219,12 @@ SD_Error SD_PowerON(void)
   SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_No;
   SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
   SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
-  SDIO_SendCommand(&SDIO_CmdInitStructure);
 
-  errorstatus = CmdError();
+  for(i = 0;i < 74; i++)
+  {
+    SDIO_SendCommand(&SDIO_CmdInitStructure);
+    errorstatus = CmdError();
+  }
 
   if (errorstatus != SD_OK)
   {
@@ -841,7 +844,7 @@ SD_Error SD_ReadBlock(uint32_t addr, uint32_t *readbuff, uint16_t BlockSize)
   if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
   {
     BlockSize = 512;
-    addr /= 512;
+    // addr /= 512;
   }
   if ((BlockSize > 0) && (BlockSize <= 2048) && ((BlockSize & (BlockSize - 1)) == 0))
   {
@@ -1018,7 +1021,7 @@ SD_Error SD_ReadMultiBlocks(uint32_t addr, uint32_t *readbuff, uint16_t BlockSiz
   if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
   {
     BlockSize = 512;
-    addr /= 512;
+    // addr /= 512;
   }
 
   if ((BlockSize > 0) && (BlockSize <= 2048) && (0 == (BlockSize & (BlockSize - 1))))
@@ -1234,7 +1237,7 @@ SD_Error SD_WriteBlock(uint32_t addr, uint32_t *writebuff, uint16_t BlockSize)
   if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
   {
     BlockSize = 512;
-    addr /= 512;
+    // addr /= 512;
   }
 
   /* Set the block size, both on controller and card */
@@ -1469,7 +1472,7 @@ SD_Error SD_WriteMultiBlocks(uint32_t addr, uint32_t *writebuff, uint16_t BlockS
   if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
   {
     BlockSize = 512;
-    addr /= 512;
+    // addr /= 512;
   }
 
   /* Set the block size, both on controller and card */
@@ -2798,6 +2801,11 @@ static SD_Error FindSCR(uint16_t rca, uint32_t *pscr)
   SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
   SDIO_DataConfig(&SDIO_DataInitStructure);
 
+  /* make a delay */
+  {
+    volatile uint32_t delay;
+    for(delay = 0; delay < 20; delay++);
+  }
 
   /* Send ACMD51 SD_APP_SEND_SCR with argument as 0 */
   SDIO_CmdInitStructure.SDIO_Argument = 0x0;
@@ -2977,7 +2985,7 @@ static void DMA_RxConfiguration(uint32_t *BufferDST, uint32_t BufferSize)
 
 /*
  * RT-Thread SD Card Driver
- * 20090417 Bernard
+ * 20100715 Bernard support SDHC card great than 4G.
  */
 #include <rtthread.h>
 #include <dfs_fs.h>
@@ -3023,7 +3031,11 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	SD_Error status;
-	rt_uint32_t nr = size / SECTOR_SIZE, retry;
+	rt_uint32_t retry;
+	rt_uint32_t factor;
+
+	if (CardType == SDIO_HIGH_CAPACITY_SD_CARD) factor = 1;
+	else factor = SECTOR_SIZE;
 
 	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
 
@@ -3037,9 +3049,9 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
             rt_uint32_t index;
 
             /* which is not alignment with 4 or chip SRAM */
-            for (index = 0; index < nr; index ++)
+            for (index = 0; index < size; index ++)
             {
-                status = SD_ReadBlock((part.offset + index) * SECTOR_SIZE + pos,
+                status = SD_ReadBlock((part.offset + index + pos) * factor,
                     (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
 
                 if (status != SD_OK) break;
@@ -3050,15 +3062,15 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
         }
         else
         {
-            if (nr == 1)
+            if (size == 1)
             {
-                status = SD_ReadBlock(part.offset * SECTOR_SIZE + pos,
+                status = SD_ReadBlock((part.offset + pos) * factor,
                     (uint32_t*)buffer, SECTOR_SIZE);
             }
             else
             {
-                status = SD_ReadMultiBlocks(part.offset * SECTOR_SIZE + pos,
-                    (uint32_t*)buffer, SECTOR_SIZE, nr);
+                status = SD_ReadMultiBlocks((part.offset + pos) * factor,
+                    (uint32_t*)buffer, SECTOR_SIZE, size);
             }
         }
 
@@ -3077,7 +3089,10 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	SD_Error status;
-	rt_uint32_t nr = size / SECTOR_SIZE;
+	rt_uint32_t factor;
+
+	if (CardType == SDIO_HIGH_CAPACITY_SD_CARD) factor = 1;
+	else factor = SECTOR_SIZE;
 
 	rt_sem_take(&sd_lock, RT_WAITING_FOREVER);
 
@@ -3087,13 +3102,13 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	{
 	    rt_uint32_t index;
 
-        /* which is not alignment with 4 or chip SRAM */
-        for (index = 0; index < nr; index ++)
+        /* which is not alignment with 4 or not chip SRAM */
+        for (index = 0; index < size; index ++)
         {
             /* copy to the buffer */
             rt_memcpy(_sdcard_buffer, ((rt_uint8_t*)buffer + index * SECTOR_SIZE), SECTOR_SIZE);
 
-            status = SD_WriteBlock((part.offset + index) * SECTOR_SIZE + pos,
+            status = SD_WriteBlock((part.offset + index + pos) * factor,
                 (uint32_t*)_sdcard_buffer, SECTOR_SIZE);
 
             if (status != SD_OK) break;
@@ -3101,15 +3116,15 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	}
 	else
 	{
-        if (nr == 1)
+        if (size == 1)
         {
-            status = SD_WriteBlock(part.offset * SECTOR_SIZE + pos,
+            status = SD_WriteBlock((part.offset + pos) * factor,
                 (uint32_t*)buffer, SECTOR_SIZE);
         }
         else
         {
-            status = SD_WriteMultiBlocks(part.offset * SECTOR_SIZE + pos,
-                (uint32_t*)buffer, SECTOR_SIZE, nr);
+            status = SD_WriteMultiBlocks((part.offset + pos) * factor,
+                (uint32_t*)buffer, SECTOR_SIZE, size);
         }
 	}
 
@@ -3123,6 +3138,23 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
+    RT_ASSERT(dev != RT_NULL);
+
+    if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
+    {
+        struct rt_device_blk_geometry *geometry;
+
+        geometry = (struct rt_device_blk_geometry *)args;
+        if (geometry == RT_NULL) return -RT_ERROR;
+
+        geometry->bytes_per_sector = 512;
+        geometry->block_size = SDCardInfo.CardBlockSize;
+		if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
+			geometry->sector_count = (SDCardInfo.SD_csd.DeviceSize + 1)  * 1024;
+		else
+        	geometry->sector_count = SDCardInfo.CardCapacity/SDCardInfo.CardBlockSize;
+    }
+
 	return RT_EOK;
 }
 
@@ -3139,7 +3171,7 @@ void rt_hw_sdcard_init()
 		status = SD_SelectDeselect((u32) (SDCardInfo.RCA << 16));
 		if (status != SD_OK) goto __return;
 
-		SD_EnableWideBusOperation(SDIO_BusWide_1b);
+		SD_EnableWideBusOperation(SDIO_BusWide_4b);
 		SD_SetDeviceMode(SD_DMA_MODE);
 
 		/* get the first sector to read partition table */
@@ -3171,6 +3203,7 @@ void rt_hw_sdcard_init()
 		rt_free(sector);
 
 		/* register sdcard device */
+		sdcard_device.type  = RT_Device_Class_Block;
 		sdcard_device.init 	= rt_sdcard_init;
 		sdcard_device.open 	= rt_sdcard_open;
 		sdcard_device.close = rt_sdcard_close;

@@ -285,10 +285,10 @@ void EXTI0_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    enc28j60_isr();
-
     /* Clear the Key Button EXTI line pending bit */
     EXTI_ClearITPendingBit(EXTI_Line0);
+
+    enc28j60_isr();
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -310,10 +310,10 @@ void EXTI9_5_IRQHandler(void)
 	/* enter interrupt */
 	rt_interrupt_enter();
 
-	rt_dm9000_isr();
-
 	/* Clear the Key Button EXTI line pending bit */
 	EXTI_ClearITPendingBit(EXTI_Line7);
+
+	rt_dm9000_isr();
 
 	/* leave interrupt */
 	rt_interrupt_leave();

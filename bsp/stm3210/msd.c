@@ -791,20 +791,21 @@ void SPI_Config(void)
 
 /*
  * RT-Thread SD Card Driver
- * 20090417 Bernard
+ * 2009-04-17 Bernard first version
+ * 2010-07-15 Modify read/write according new block driver interface 
  */
 #include <rtthread.h>
 #include <dfs_fs.h>
 
 static struct rt_device sdcard_device;
 static struct dfs_partition part;
+
 #define SECTOR_SIZE 512
 
 /* RT-Thread Device Driver Interface */
 static rt_err_t rt_msd_init(rt_device_t dev)
 {
 	sMSD_CSD MSD_csd;
-
 	MSD_GetCSDRegister(&MSD_csd);
 
 	return RT_EOK;
@@ -829,11 +830,10 @@ static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_siz
 	// rt_kprintf("read: 0x%x, size %d\n", pos, size);
 
 	/* read all sectors */
-	for (i = 0; i < size / SECTOR_SIZE; i ++)
+	for (i = 0; i < size; i ++)
 	{
 		status = MSD_ReadBlock((rt_uint8_t*)((rt_uint8_t*)buffer + i * SECTOR_SIZE),
-			(part.offset + i)* SECTOR_SIZE + pos,
-			SECTOR_SIZE);
+			(part.offset + pos + i)* SECTOR_SIZE, SECTOR_SIZE);
 		if (status != MSD_RESPONSE_NO_ERROR)
 		{
 			rt_kprintf("sd card read failed\n");
@@ -859,8 +859,7 @@ static rt_size_t rt_msd_write (rt_device_t dev, rt_off_t pos, const void* buffer
 	for (i = 0; i < size / SECTOR_SIZE; i ++)
 	{
 		status = MSD_WriteBuffer((rt_uint8_t*)((rt_uint8_t*)buffer + i * SECTOR_SIZE),
-			(part.offset + i)* SECTOR_SIZE + pos,
-			SECTOR_SIZE);
+			(part.offset + pos + i)* SECTOR_SIZE, SECTOR_SIZE);
 		if (status != MSD_RESPONSE_NO_ERROR)
 		{
 			rt_kprintf("sd card write failed\n");
@@ -876,6 +875,8 @@ static rt_size_t rt_msd_write (rt_device_t dev, rt_off_t pos, const void* buffer
 
 static rt_err_t rt_msd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
+    RT_ASSERT(dev != RT_NULL);
+
 	return RT_EOK;
 }
 
