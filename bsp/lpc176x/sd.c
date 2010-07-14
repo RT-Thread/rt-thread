@@ -374,11 +374,10 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	bool status;
-	rt_uint32_t nr = size / SD_SECTOR_SIZE;
 
-	status = LPC17xx_SD_ReadSector(part.offset + pos/SECTOR_SIZE, buffer, nr);
+	status = LPC17xx_SD_ReadSector(part.offset + pos, buffer, size);
 
-	if (status == true) return nr * SECTOR_SIZE;
+	if (status == true) return size;
 
 	rt_kprintf("read failed: %d, pos 0x%08x, size %d\n", status, pos, size);
 	return 0;
@@ -387,11 +386,10 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	bool status;
-	rt_uint32_t nr = size / SD_SECTOR_SIZE;
 
-	status = LPC17xx_SD_WriteSector(part.offset + pos/SECTOR_SIZE, buffer, nr);
+	status = LPC17xx_SD_WriteSector(part.offset + pos, buffer, size);
 
-	if (status == true) return nr * SECTOR_SIZE;
+	if (status == true) return size;
 
 	rt_kprintf("write failed: %d, pos 0x%08x, size %d\n", status, pos, size);
 	return 0;
