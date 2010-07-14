@@ -2772,7 +2772,7 @@ FRESULT f_forward (
 /* Create File System on the Drive                                       */
 /*-----------------------------------------------------------------------*/
 #define N_ROOTDIR	512			/* Multiple of 32 and <= 2048 */
-#define N_FATS		1			/* 1 or 2 */
+#define N_FATS		2			/* 1 or 2 */  //	my edit
 #define MAX_SECTOR	131072000UL	/* Maximum partition size */
 #define MIN_SECTOR	2000UL		/* Minimum partition size */
 
@@ -2780,7 +2780,7 @@ FRESULT f_forward (
 FRESULT f_mkfs (
 	BYTE drv,			/* Logical drive number */
 	BYTE partition,		/* Partitioning rule 0:FDISK, 1:SFD */
-	WORD allocsize		/* Allocation unit size [bytes] */
+	DWORD allocsize		/* Allocation unit size [bytes] */
 )
 {
 	static const DWORD sstbl[] = { 2048000, 1024000, 512000, 256000, 128000, 64000, 32000, 16000, 8000, 4000,   0 };

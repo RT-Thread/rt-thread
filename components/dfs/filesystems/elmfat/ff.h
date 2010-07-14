@@ -434,7 +434,7 @@ FRESULT f_chmod (const XCHAR*, BYTE, BYTE);			/* Change attriburte of the file/d
 FRESULT f_utime (const XCHAR*, const FILINFO*);		/* Change timestamp of the file/dir */
 FRESULT f_rename (const XCHAR*, const XCHAR*);		/* Rename/Move a file or directory */
 FRESULT f_forward (FIL*, UINT(*)(const BYTE*,UINT), UINT, UINT*);	/* Forward data to the stream */
-FRESULT f_mkfs (BYTE, BYTE, WORD);					/* Create a file system on the drive */
+FRESULT f_mkfs (BYTE, BYTE, DWORD);					/* Create a file system on the drive */
 FRESULT f_chdir (const XCHAR*);						/* Change current directory */
 FRESULT f_chdrive (BYTE);							/* Change current drive */
 

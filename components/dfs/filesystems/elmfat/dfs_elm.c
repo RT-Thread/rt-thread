@@ -41,6 +41,10 @@ static int elm_result_to_dfs(FRESULT result)
 		status = -DFS_STATUS_EROFS;
 		break;
 
+	case FR_MKFS_ABORTED:
+		status = -DFS_STATUS_EINVAL;
+		break;
+		
 	default:
 		status = -1;
 		break;
@@ -534,8 +538,8 @@ DRESULT disk_read (BYTE drv, BYTE *buff, DWORD sector, BYTE count)
 	rt_size_t result;
 	rt_device_t device = disk[drv];
 
-	result = rt_device_read(device, sector * 512, buff, count * 512);
-	if (result == count * 512)
+	result = rt_device_read(device, sector, buff, count);
+	if (result == count)
 	{
 		return RES_OK;
 	}
@@ -549,8 +553,8 @@ DRESULT disk_write (BYTE drv, const BYTE *buff, DWORD sector, BYTE count)
 	rt_size_t result;
 	rt_device_t device = disk[drv];
 
-	result = rt_device_write(device, sector * 512, buff, count * 512);
-	if (result == count * 512)
+	result = rt_device_write(device, sector, buff, count);
+	if (result == count)
 	{
 		return RES_OK;
 	}
@@ -561,6 +565,38 @@ DRESULT disk_write (BYTE drv, const BYTE *buff, DWORD sector, BYTE count)
 /* Miscellaneous Functions */
 DRESULT disk_ioctl (BYTE drv, BYTE ctrl, void *buff)
 {
+	rt_device_t device = disk[drv];
+
+	if (device == RT_NULL) return RES_ERROR;
+	
+	if (ctrl == GET_SECTOR_COUNT)
+	{
+		struct rt_device_blk_geometry geometry;
+
+		rt_memset(&geometry, 0, sizeof(geometry));
+		rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
+
+		*(DWORD*)buff = geometry.sector_count;
+	}
+	else if (ctrl == GET_SECTOR_SIZE)
+	{
+		struct rt_device_blk_geometry geometry;
+
+		rt_memset(&geometry, 0, sizeof(geometry));
+		rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
+
+		*(DWORD*)buff = geometry.bytes_per_sector;
+	}
+	else if (ctrl == GET_BLOCK_SIZE) /* Get erase block size in unit of sectors (DWORD) */
+	{
+		struct rt_device_blk_geometry geometry;
+
+		rt_memset(&geometry, 0, sizeof(geometry));
+		rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
+
+		*(DWORD*)buff = geometry.block_size/geometry.bytes_per_sector;
+	}
+
 	return RES_OK;
 }
 
