@@ -647,6 +647,13 @@ struct rt_device
 	void* private;
 };
 
+struct rt_device_blk_geometry
+{
+	rt_uint32_t sector_count;		/* count of sectors */
+	rt_uint32_t bytes_per_sector;	/* number of bytes per sector */
+	rt_uint32_t block_size;			/* size to erase one block */
+};
+
 /*@}*/
 #endif
 
