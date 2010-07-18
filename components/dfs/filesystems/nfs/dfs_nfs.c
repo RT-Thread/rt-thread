@@ -1017,24 +1017,28 @@ int nfs_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t count
 	return index * sizeof(struct dfs_dirent);
 }
 
-static struct dfs_filesystem_operation _nfs;
+static const struct dfs_filesystem_operation _nfs = 
+{
+	"nfs", 
+	nfs_mount,
+	nfs_unmount,
+	RT_NULL, /* mkfs */
+	RT_NULL, /* statfs */
+	nfs_open,
+	nfs_close,
+	nfs_ioctl,
+	nfs_read,
+	nfs_write,
+	RT_NULL, /* flush */
+	nfs_lseek,
+	nfs_getdents,
+	nfs_unlink, 
+	nfs_stat,
+	nfs_rename,
+};
+
 int nfs_init(void)
 {
-	rt_strncpy(_nfs.name, "nfs", DFS_FS_NAME_MAX);
-
-	_nfs.mount 		= nfs_mount;
-	_nfs.unmount	= nfs_unmount;
-	_nfs.open		= nfs_open;
-	_nfs.close 		= nfs_close;
-	_nfs.ioctl 		= nfs_ioctl;
-	_nfs.read		= nfs_read;
-	_nfs.write 		= nfs_write;
-	_nfs.lseek 		= nfs_lseek;
-	_nfs.getdents	= nfs_getdents;
-	_nfs.unlink 	= nfs_unlink;
-	_nfs.stat		= nfs_stat;
-	_nfs.rename 	= nfs_rename;
-
 	/* register fatfs file system */
 	dfs_register(&_nfs);
 

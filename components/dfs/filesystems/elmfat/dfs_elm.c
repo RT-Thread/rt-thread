@@ -104,6 +104,63 @@ int dfs_elm_unmount(struct dfs_filesystem* fs)
 	return 0;
 }
 
+int dfs_elm_mkfs(const char* device_name)
+{
+	BYTE drv;
+	rt_device_t dev;
+	FRESULT result;
+
+	/* find device name */
+	for (drv = 0; drv < _DRIVES; drv ++)
+	{
+		dev = disk[drv];
+		if (rt_strncmp(dev->parent.name, device_name, RT_NAME_MAX) == 0)
+		{
+			/* 1: no partition table */
+			/* 0: auto selection of cluster size */
+			result = f_mkfs(drv, 1, 0);
+			if ( result != FR_OK)
+			{
+				rt_kprintf("format error\n");
+				return elm_result_to_dfs(result);
+			}
+
+			return DFS_STATUS_OK;
+		}
+	}
+
+	/* can't find device driver */
+	rt_kprintf("can not find device driver: %s\n", device_name);
+	return -DFS_STATUS_EIO;
+}
+
+int dfs_elm_statfs(struct dfs_filesystem* fs, struct dfs_statfs *buf)
+{
+	FATFS *f;
+	FRESULT res;
+	char driver[4];
+	DWORD fre_clust, fre_sect, tot_sect;
+
+	RT_ASSERT(fs != RT_NULL);
+	RT_ASSERT(buf != RT_NULL);
+
+	f = (FATFS*) fs->data;
+
+	rt_snprintf(driver, sizeof(driver), "%d:", f->drive);
+	res = f_getfree(driver, &fre_clust, &f);
+	if (res) return elm_result_to_dfs(res);
+	
+	/* Get total sectors and free sectors */
+	tot_sect = (f->max_clust - 2) * f->csize;
+	fre_sect = fre_clust * f->csize;
+
+	buf->f_bfree = fre_sect;
+	buf->f_blocks = tot_sect;
+	buf->f_bsize = 512;
+
+	return 0;
+}
+
 int dfs_elm_open(struct dfs_fd* file)
 {
 	FIL* fd;
@@ -289,6 +346,18 @@ int dfs_elm_write(struct dfs_fd* file, const void* buf, rt_size_t len)
 	file->pos  = fd->fptr;
 	if (result == FR_OK) return byte_write;
 
+	return elm_result_to_dfs(result);
+}
+
+int dfs_elm_flush(struct dfs_fd* file)
+{
+	FIL* fd;
+	FRESULT result;
+
+	fd = (FIL*)(file->data);
+	RT_ASSERT(fd != RT_NULL);
+
+	result = f_sync(fd);
 	return elm_result_to_dfs(result);
 }
 
@@ -491,24 +560,29 @@ int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *s
 	return elm_result_to_dfs(result);
 }
 
-static struct dfs_filesystem_operation dfs_elm;
+static const struct dfs_filesystem_operation dfs_elm = 
+{
+	"elm",
+	dfs_elm_mount,
+	dfs_elm_unmount,
+	dfs_elm_mkfs,
+	dfs_elm_statfs,
+
+	dfs_elm_open,
+	dfs_elm_close,
+	dfs_elm_ioctl,
+	dfs_elm_read,
+	dfs_elm_write,
+	dfs_elm_flush,
+	dfs_elm_lseek,
+	dfs_elm_getdents,
+	dfs_elm_unlink,
+	dfs_elm_stat,
+	dfs_elm_rename,
+};
+
 int elm_init(void)
 {
-	rt_strncpy(dfs_elm.name, "elm", DFS_FS_NAME_MAX);
-
-	dfs_elm.mount 	= dfs_elm_mount;
-	dfs_elm.unmount = dfs_elm_unmount;
-	dfs_elm.open	= dfs_elm_open;
-	dfs_elm.close 	= dfs_elm_close;
-	dfs_elm.ioctl 	= dfs_elm_ioctl;
-	dfs_elm.read	= dfs_elm_read;
-	dfs_elm.write 	= dfs_elm_write;
-	dfs_elm.lseek 	= dfs_elm_lseek;
-	dfs_elm.getdents= dfs_elm_getdents;
-	dfs_elm.unlink 	= dfs_elm_unlink;
-	dfs_elm.stat	= dfs_elm_stat;
-	dfs_elm.rename 	= dfs_elm_rename;
-
     /* register fatfs file system */
     dfs_register(&dfs_elm);
 
@@ -577,6 +651,7 @@ DRESULT disk_ioctl (BYTE drv, BYTE ctrl, void *buff)
 		rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
 
 		*(DWORD*)buff = geometry.sector_count;
+		if (geometry.sector_count == 0) return RES_ERROR;
 	}
 	else if (ctrl == GET_SECTOR_SIZE)
 	{

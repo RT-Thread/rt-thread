@@ -2772,7 +2772,7 @@ FRESULT f_forward (
 /* Create File System on the Drive                                       */
 /*-----------------------------------------------------------------------*/
 #define N_ROOTDIR	512			/* Multiple of 32 and <= 2048 */
-#define N_FATS		2			/* 1 or 2 */  //	my edit
+#define N_FATS		2			/* 1 or 2 */
 #define MAX_SECTOR	131072000UL	/* Maximum partition size */
 #define MIN_SECTOR	2000UL		/* Minimum partition size */
 
