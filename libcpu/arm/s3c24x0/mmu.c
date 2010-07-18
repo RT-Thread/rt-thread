@@ -44,7 +44,7 @@
 #ifdef __GNUC__
 void mmu_setttbase(register rt_uint32_t i)
 {
-	asm ("mcr p15, 0, %0, c2, c2, 0": :"r" (i));
+	asm ("mcr p15, 0, %0, c2, c0, 0": :"r" (i));
 }
 
 void mmu_set_domain(register rt_uint32_t i)
@@ -177,7 +177,7 @@ void mmu_setttbase(rt_uint32_t i)
 {
     __asm
     {
-        mcr p15, 0, i, c2, c2, 0
+        mcr p15, 0, i, c2, c0, 0
     }
 }
 
