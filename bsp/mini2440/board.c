@@ -43,7 +43,7 @@ extern void rt_hw_set_dividor(rt_uint8_t hdivn, rt_uint8_t pdivn);
 extern void rt_hw_set_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv);
 
 
-#define UART0	((struct uartport *)U0BASE)
+#define UART0	((struct uartport *)&U0BASE)
 struct serial_int_rx uart0_int_rx;
 struct serial_device uart0 =
 {
