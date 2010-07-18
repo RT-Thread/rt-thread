@@ -198,7 +198,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 			}
 
 			while (!(uart->uart_device->ustat & USTAT_TXB_EMPTY));
-			uart->uart_device->utxh = (*ptr & 0x1FF);
+			uart->uart_device->utxh = (*ptr & 0xFF);
 
 			++ptr; --size;
 		}
