@@ -1,20 +1,18 @@
 /*
-+------------------------------------------------------------------------------
-|        Device FileSystem
-+------------------------------------------------------------------------------
-| Copyright 2004, 2005  www.fayfayspace.org.
-| All rights reserved.
-|------------------------------------------------------------------------------
-| File      : dfs_def.h, the definitions of Device FileSystem
-|------------------------------------------------------------------------------
-| Chang Logs:
-| Date           Author       notes
-| 2004-10-01     ffxz         The first version.
-| 2004-10-14     ffxz         Clean up the code.
-| 2005-01-22     ffxz		  Clean up the code, port to MinGW
-+------------------------------------------------------------------------------
-*/
-
+ * File      : dfs_def.h
+ * This file is part of Device File System in RT-Thread RTOS
+ * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2004-10-01     Beranard     The first version.
+ * 2004-10-14     Beranard     Clean up the code.
+ * 2005-01-22     Beranard     Clean up the code, port to MinGW
+ */
 #ifndef __DFS_DEF_H__
 #define __DFS_DEF_H__
 
@@ -113,15 +111,6 @@
 #define DEVICE_FORMAT 			2
 #define DEVICE_CLEAN_SECTOR 	3
 
-struct device_geometry
-{
-	rt_uint32_t sector_count;		/* count of sectors */
-	rt_uint32_t cylinder_count;		/* count of cylinder */
-	rt_uint32_t sectors_per_track;	/* number of sectors per track */
-	rt_uint32_t head_count;			/* count of head */
-	rt_uint32_t bytes_per_sector;	/* number of bytes per sector */
-};
-
 struct dfs_stat
 {
 	rt_device_t st_dev;
@@ -130,7 +119,13 @@ struct dfs_stat
 	rt_time_t  	st_mtime;
 	rt_uint32_t st_blksize;
 };
-#define stat dfs_stat
+
+struct dfs_statfs
+{
+	rt_size_t f_bsize; 	 /* block size */
+	rt_size_t f_blocks;  /* total data blocks in file system */
+	rt_size_t f_bfree;	 /* free blocks in file system */
+};
 
 /* File types */
 #define FT_REGULAR		0	/* regular file */
@@ -141,7 +136,7 @@ struct dfs_stat
 /* file descriptor */
 struct dfs_fd
 {
-    char path[DFS_PATH_MAX + 1];/* Name (below mount point) */
+    char* path;					/* Name (below mount point) */
     int type;					/* Type (regular or socket) */
     int ref_count;				/* Descriptor reference count */
 
@@ -162,14 +157,9 @@ struct dfs_dirent
 {
 	rt_uint8_t d_type;				/* The type of the file */
 	rt_uint8_t d_namlen;			/* The length of the not including the terminating null file name */
-	rt_uint16_t d_reclen;				/* length of this record */
-	char   d_name[256];			/* The null-terminated file name */
+	rt_uint16_t d_reclen;			/* length of this record */
+	char d_name[DFS_PATH_MAX];		/* The null-terminated file name */
 };
 #define dirent dfs_dirent
-
-struct dfs_session
-{
-	rt_mailbox_t mbox;
-};
 
 #endif

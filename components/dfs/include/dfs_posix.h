@@ -1,21 +1,21 @@
 /*
-+------------------------------------------------------------------------------
-| Project   : Device Filesystem
-+------------------------------------------------------------------------------
-| Copyright 2004, 2005  www.fayfayspace.org.
-| All rights reserved.
-|------------------------------------------------------------------------------
-| File      : dfs_posix.h, the filesystem related defines of Device FileSystem
-|------------------------------------------------------------------------------
-| Chang Logs:
-| Date           Author       Notes
-| 2009-05-27     Yi.qiu         The first version.
-+------------------------------------------------------------------------------
-*/
+ * File      : dfs_def.h
+ * This file is part of Device File System in RT-Thread RTOS
+ * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-05-27     Yi.qiu       The first version.
+ * 2010-07-18     Bernard      add stat and statfs structure definitions.
+ */
 #ifndef __DFS_POSIX_H__
 #define __DFS_POSIX_H__
 
-#include <dfs_raw.h>
+#include <dfs_file.h>
 
 #define O_RDONLY	DFS_O_RDONLY
 #define O_WRONLY 	DFS_O_WRONLY
@@ -74,6 +74,15 @@ typedef struct
 	int cur;
 } DIR;
 
+struct stat
+{
+	struct dfs_stat parent;
+};
+struct statfs
+{
+	struct dfs_statfs parent;
+};
+
 /* file api*/
 int open(const char *file, int flags, int mode);
 int close(int d);
@@ -83,6 +92,7 @@ int lseek(int fd, int offset, int dir);
 int rename(const char* old, const char* new );
 int unlink(const char *pathname);
 int stat(const char *file, struct dfs_stat *buf);
+int statfs(const char *path, struct dfs_statfs *buf);
 
 /* directory api*/
 int mkdir (const char *path, rt_uint16_t mode);

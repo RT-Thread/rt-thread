@@ -4,11 +4,10 @@ Import('RTT_ROOT')
 Import('projects')
 
 dfs = Split("""
+src/dfs.c
 src/dfs_fs.c
-src/dfs_init.c
+src/dfs_file.c
 src/dfs_posix.c
-src/dfs_raw.c
-src/dfs_util.c
 """)
 
 # DFS-FatFs options

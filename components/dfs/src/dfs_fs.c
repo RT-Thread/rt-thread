@@ -1,36 +1,28 @@
 /*
-+------------------------------------------------------------------------------
-| Project   : Device Filesystem
-+------------------------------------------------------------------------------
-| Copyright 2004, 2005  www.fayfayspace.org.
-| All rights reserved.
-|------------------------------------------------------------------------------
-| File      : dfs_fs.c, the filesystem related implementations of Device FileSystem
-|------------------------------------------------------------------------------
-| Chang Logs:
-| Date           Author       Notes
-| 2005-02-22     ffxz         The first version.
-+------------------------------------------------------------------------------
-*/
+ * File      : dfs_fs.c
+ * This file is part of Device File System in RT-Thread RTOS
+ * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2005-02-22     Bernard      The first version.
+ * 2010-06-30     Bernard      Optimize for RT-Thread RTOS
+ */
 #include <dfs_fs.h>
-#include <dfs_raw.h>
-#include <dfs_util.h>
+#include <dfs_file.h>
 
-#include <string.h>
-
-/*
-+------------------------------------------------------------------------------
-| Function    : dfs_register
-+------------------------------------------------------------------------------
-| Description : registers a filesystem
-|
-| Parameters  : ops, the implementation of filesystem
-| Returns     : the status of register
-|               0 , successful
-|               -1, failed
-+------------------------------------------------------------------------------
-*/
-int dfs_register(struct dfs_filesystem_operation* ops)
+/**
+ * this function will register a file system instance to device file system.
+ *
+ * @param ops the file system instance to be registered.
+ *
+ * @return 0 on sucessful, -1 on failed.
+ */
+int dfs_register(const struct dfs_filesystem_operation* ops)
 {
     int index, result;
 
@@ -69,16 +61,14 @@ err:
     return result;
 }
 
-/*
-+------------------------------------------------------------------------------
-| Function    : dfs_filesystem_lookup
-+------------------------------------------------------------------------------
-| Description : lookup the mounted filesystem on the specified path
-|
-| Parameters  : path, the specified path string
-| Returns     : the found filesystem
-+------------------------------------------------------------------------------
-*/
+/**
+ * this function will return the file system mounted on specified path.
+ *
+ * @param path the specified path string.
+ *
+ * @return the found file system or NULL if no file system mounted on 
+ * specified path
+ */
 struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
 {
     struct dfs_filesystem* fs;
@@ -97,7 +87,7 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
         if (fspath < prefixlen) continue;
 
         if ((filesystem_table[index].ops != RT_NULL) &&
-                str_is_prefix(filesystem_table[index].path, path) == 0)
+                strncmp(filesystem_table[index].path, path, fspath) == 0)
         {
             fs = &filesystem_table[index];
             prefixlen = fspath;
@@ -109,6 +99,15 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
     return fs;
 }
 
+/**
+ * this function will fetch the partition table on specified buffer.
+ *
+ * @param part the returned partition structure.
+ * @param buf the buffer contains partition table.
+ * @param pindex the index of partition table to fetch.
+ *
+ * @return RT_EOK on successful or -RT_ERROR on failed.
+ */
 rt_err_t dfs_filesystem_get_partition(struct dfs_partition* part, rt_uint8_t* buf, rt_uint32_t pindex)
 {
 #define DPT_ADDRESS		0x1be		/* device partition offset in Boot Sector */
@@ -146,8 +145,7 @@ rt_err_t dfs_filesystem_get_partition(struct dfs_partition* part, rt_uint8_t* bu
         part->size = *(dpt+12) | *(dpt+13) << 8 |
                      *(dpt+14) << 16 | *(dpt+15) << 24;
 
-#ifdef RT_USING_FINSH
-        rt_kprintf("part[%d], begin: %d, size: ",
+        rt_kprintf("found part[%d], begin: %d, size: ",
                    pindex, part->offset * 512);
         if ( (part->size>>11) > 0 ) /* MB */
         {
@@ -166,7 +164,6 @@ rt_err_t dfs_filesystem_get_partition(struct dfs_partition* part, rt_uint8_t* bu
         {
             rt_kprintf("%d%s",part->size>>1,"KB\r\n");/* KB */
         }
-#endif
     }
     else
     {
@@ -176,32 +173,23 @@ rt_err_t dfs_filesystem_get_partition(struct dfs_partition* part, rt_uint8_t* bu
     return result;
 }
 
-/*
-+------------------------------------------------------------------------------
-| Function    : dfs_mount
-+------------------------------------------------------------------------------
-| Description : mount a filesystem to specified path
-|
-| Parameters  : device_name, the implementation of filesystem
-|               path,
-|               filesystemtype,
-|               rwflag,
-|               data,
-| Returns     : the status of register
-|               0 , successful
-|               -1, failed
-+------------------------------------------------------------------------------
-*/
+/**
+ * this function will mount a file system on a specified path.
+ *
+ * @param device_name the name of device which includes a file system.
+ * @param filesystemtype the file system type
+ * @param rwflag the read/write etc. flag.
+ * @param data the privated data(parameter) for this file system.
+ *
+ * @return 0 on successful or -1 on failed.
+ */
 int dfs_mount(const char* device_name, const char* path,
               const char* filesystemtype, unsigned long rwflag, const
               void* data)
 {
-    struct dfs_filesystem_operation* ops;
+    const struct dfs_filesystem_operation* ops;
     struct dfs_filesystem* fs;
     char *fullpath=RT_NULL;
-#ifdef DFS_USING_WORKDIR
-    char full_path[DFS_PATH_MAX + 1];
-#endif
     rt_device_t dev_id;
     int index;
 
@@ -240,19 +228,11 @@ int dfs_mount(const char* device_name, const char* path,
     dfs_unlock();
 
     /* make full path for special file */
-    fullpath = (char*)path;
-    if ( fullpath[0] != '/') /* not an abstract path */
+	fullpath = dfs_normalize_path(RT_NULL, path);
+    if ( fullpath == RT_NULL) /* not an abstract path */
     {
-#ifdef DFS_USING_WORKDIR
-        /* build full path */
-        fullpath = full_path;
-        dfs_lock();
-        build_fullpath(working_directory, path, fullpath);
-        dfs_unlock();
-#else
         rt_set_errno(-DFS_STATUS_ENOTDIR);
         return -1;
-#endif
     }
 
     /* Check if the path exists or not, raw APIs call, fixme */
@@ -260,12 +240,13 @@ int dfs_mount(const char* device_name, const char* path,
     {
         struct dfs_fd fd;
 
-        if ( dfile_raw_open(&fd, fullpath, DFS_O_RDONLY | DFS_O_DIRECTORY) < 0 )
+        if ( dfs_file_open(&fd, fullpath, DFS_O_RDONLY | DFS_O_DIRECTORY) < 0 )
         {
+        	rt_free(fullpath);
             rt_set_errno(-DFS_STATUS_ENOTDIR);
             return -1;
         }
-        dfile_raw_close(&fd);
+        dfs_file_close(&fd);
     }
 
     /* check whether the file system mounted or not */
@@ -291,7 +272,7 @@ int dfs_mount(const char* device_name, const char* path,
 
     /* register file system */
     fs = &(filesystem_table[index]);
-    strncpy(fs->path, fullpath, strlen(fullpath));
+	fs->path = fullpath;
     fs->ops = ops;
     fs->dev_id = dev_id;
     /* release filesystem_table lock */
@@ -308,6 +289,7 @@ int dfs_mount(const char* device_name, const char* path,
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 		dfs_unlock();
 
+		rt_free(fullpath);
         rt_set_errno(-DFS_STATUS_ENOSYS);
         return -1;
     }
@@ -323,6 +305,7 @@ int dfs_mount(const char* device_name, const char* path,
         rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 		dfs_unlock();
 
+		rt_free(fullpath);
 		return -1;
     }
 
@@ -330,42 +313,28 @@ int dfs_mount(const char* device_name, const char* path,
 
 err1:
     dfs_unlock();
+	if (fullpath != RT_NULL) rt_free(fullpath);
+
     return -1;
 }
 
-/*
-+------------------------------------------------------------------------------
-| Function    : dfs_unmount
-+------------------------------------------------------------------------------
-| Description : unmount a filesystem
-|
-| Parameters  :
-| Returns     : the status of register
-|               0 , successful
-|               -1, failed
-+------------------------------------------------------------------------------
-*/
+/**
+ * this function will umount a file system on specified path.
+ *
+ * @param specialfile the specified path which mounted a file system.
+ *
+ * @return 0 on successful or -1 on failed.
+ */
 int dfs_unmount(const char *specialfile)
 {
     char *fullpath;
-#ifdef DFS_USING_WORKDIR
-    char full_path[DFS_PATH_MAX + 1];
-#endif
     struct dfs_filesystem* fs = RT_NULL;
 
-    fullpath = (char*)specialfile;
-    if ( fullpath[0] != '/')
+    fullpath = dfs_normalize_path(RT_NULL, specialfile);
+    if (fullpath == RT_NULL)
     {
-#ifdef DFS_USING_WORKDIR
-        /* build full path */
-        fullpath = full_path;
-		dfs_lock();
-        build_fullpath(working_directory, specialfile, fullpath);
-        dfs_unlock();
-#else
         rt_set_errno(-DFS_STATUS_ENOTDIR);
         return -1;
-#endif
     }
 
     /* lock filesystem */
@@ -385,11 +354,91 @@ int dfs_unmount(const char *specialfile)
     rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
 	dfs_unlock();
+	rt_free(fullpath);
 
     return 0;
 
 err1:
 	dfs_unlock();
+	rt_free(fullpath);
 
     return -1;
 }
+
+/**
+ * make a file system on the special device
+ *
+ * @param fs_name, the file system name
+ * @param device_name, the special device name
+ *
+ * @return 0 on successful, otherwise failed.
+ */
+int dfs_mkfs(const char* fs_name, const char* device_name)
+{
+    int index;
+
+	/* lock filesystem */
+	dfs_lock();
+    /* find the file system operations */
+    for (index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index++)
+    {
+        if (filesystem_operation_table[index] != RT_NULL &&
+                strcmp(filesystem_operation_table[index]->name, fs_name) == 0)
+        {
+			/* find file system operation */
+			const struct dfs_filesystem_operation* ops = filesystem_operation_table[index];
+			dfs_unlock();
+
+			if (ops->mkfs != RT_NULL)
+				return ops->mkfs(device_name);
+
+			break;
+        }
+    }
+	dfs_unlock();
+
+	return -1;
+}
+
+/**
+ * this function will return the information about a mounted file system.
+ *
+ * @param path the path which mounted file system.
+ * @param buffer the buffer to save the returned information.
+ *
+ * @return 0 on successful, others on failed.
+ */
+int dfs_statfs(const char* path, struct dfs_statfs* buffer)
+{
+	struct dfs_filesystem* fs;
+
+	fs = dfs_filesystem_lookup(path);
+	if (fs != NULL)
+	{
+		if (fs->ops->statfs!= RT_NULL)
+			return fs->ops->statfs(fs, buffer);
+	}
+
+	return -1;
+}
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+void mkfs(const char* fs_name, const char* device_name)
+{
+	dfs_mkfs(fs_name, device_name);
+}
+FINSH_FUNCTION_EXPORT(mkfs, make a file system);
+
+void df(const char* path)
+{
+	struct dfs_statfs buffer;
+
+	if (dfs_statfs(path, &buffer) == 0)
+	{
+		rt_kprintf("disk free: %d block[%d bytes per block]\n", buffer.f_bfree, buffer.f_bsize);
+	}
+}
+FINSH_FUNCTION_EXPORT(df, get disk free);
+#endif
+
