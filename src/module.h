@@ -16,7 +16,7 @@ typedef rt_uint16_t	Elf32_Half;	/* Unsigned medium integer */
 #define	ELFMAG1		'E'			/* e_ident[EI_MAG1] */
 #define	ELFMAG2		'L'			/* e_ident[EI_MAG2] */
 #define	ELFMAG3		'F'			/* e_ident[EI_MAG3] */
-#define	ELFMAG		"\177ELF"	/* magic */
+#define	RTMMAG		"\177RTM"	/* magic */
 #define	SELFMAG		4			/* size of magic */
 
 #define EI_CLASS	4		/* file class */
@@ -154,13 +154,15 @@ typedef struct {
 /*
  * Relocation type for arm
  */
-#define	R_ARM_NONE	0
-#define	R_ARM_PC24		1
-#define	R_ARM_ABS32	2
-#define	R_ARM_PLT32	27
-#define	R_ARM_CALL		28
-#define	R_ARM_JUMP24	29
-#define	R_ARM_V4BX		40
+#define	R_ARM_NONE		0
+#define	R_ARM_PC24			1
+#define	R_ARM_ABS32		2
+#define	R_ARM_GLOB_DAT	21
+#define	R_ARM_JUMP_SLOT	22
+#define	R_ARM_PLT32		27
+#define	R_ARM_CALL			28
+#define	R_ARM_JUMP24		29
+#define	R_ARM_V4BX			40
 
 /* Program Header */
 typedef struct {
@@ -173,6 +175,14 @@ typedef struct {
 	Elf32_Word	p_flags;	/* flags */
 	Elf32_Word	p_align;	/* memory alignment */
 } Elf32_Phdr;
+
+/* p_type */
+#define PT_LOAD 		1
+
+/* p_flags */
+#define PF_X			1
+#define PF_W		2
+#define PF_R			4
 
 /* sh_type */
 #define SHT_NULL	0		/* inactive */
@@ -199,10 +209,5 @@ typedef struct {
 #define SHF_EXECINSTR	0x4		/* executable */
 #define SHF_MASKPROC	0xf0000000	/* reserved bits for processor */
 					/*  specific section attributes */
-
-/* Symbol table index */
-#define STN_UNDEF	0		/* undefined */
-
-typedef rt_err_t (*elf_entry)( const void * env, struct rt_module_info **module_info);
 
 #endif

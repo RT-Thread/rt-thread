@@ -16,14 +16,16 @@
 #include <rtm.h>
 #include <rtthread.h>
 
+#include "string.h"
 #include "kservice.h"
 
-/* #define RT_MODULE_DEBUG */
+#define RT_MODULE_DEBUG
 #ifdef RT_USING_MODULE
 #include "module.h"
 
 #define elf_module 	((Elf32_Ehdr *)module_ptr)
 #define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
+#define phdr		((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
 
 #define IS_PROG(s)		(s.sh_type == SHT_PROGBITS)
 #define IS_NOPROG(s)	(s.sh_type == SHT_NOBITS)
@@ -33,49 +35,15 @@
 #define IS_AX(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
-rt_list_t rt_module_symbol_list;
 struct rt_module* rt_current_module;
-struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
 extern const struct  rt_shell ishell;
 
-void rt_system_module_init()
-{
-#ifdef __CC_ARM
-	extern int RTMSymTab$$Base;
-	extern int RTMSymTab$$Limit;
-
-	_rt_module_symtab_begin = (struct rt_module_symtab *)&RTMSymTab$$Base;
-	_rt_module_symtab_end   = (struct rt_module_symtab *)&RTMSymTab$$Limit;
-#elif defined(__GNUC__)
-	extern int __rtmsymtab_start;
-	extern int __rtmsymtab_end;
-
-	_rt_module_symtab_begin = (struct rt_module_symtab *)&__rtmsymtab_start;
-	_rt_module_symtab_end   = (struct rt_module_symtab *)&__rtmsymtab_end;
-#endif
-
-	rt_list_init(&rt_module_symbol_list);
-}
-
-rt_uint32_t rt_module_symbol_find(const rt_uint8_t* sym_str)
-{
-	/* find in kernel symbol table */
-	struct rt_module_symtab* index;
-	for (index = _rt_module_symtab_begin; index != _rt_module_symtab_end; index ++)
-	{
-		if (strcmp(index->name, (const char*)sym_str) == 0)
-			return index->addr;
-	}
-
-	return 0;
-}
-
-int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val, rt_uint32_t module_addr)
+int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
 	Elf32_Addr *where, tmp;
 	Elf32_Sword addend;
 
-	where = (Elf32_Addr *)((rt_uint8_t*)module->module_space + rel->r_offset - module_addr);
+	where = (Elf32_Addr *)((rt_uint8_t*)module->module_space + rel->r_offset);
 	switch (ELF32_R_TYPE(rel->r_info))
 	{
 	case R_ARM_NONE:
@@ -107,7 +75,11 @@ int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr 
 		*where &= 0xf000000f;
 		*where |= 0x01a0f000;
 		break;
-
+	case R_ARM_GLOB_DAT:
+		*where += (Elf32_Addr)sym_val;
+		break;
+	case R_ARM_JUMP_SLOT:
+		break;
 	default:
 		return -1;
 	}
@@ -181,8 +153,8 @@ static void rt_module_init_object_container(struct rt_module* module)
 
 struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 {
-	rt_uint32_t index, rodata_addr = 0, data_addr = 0, bss_addr = 0;
-	rt_uint32_t module_addr = 0, module_size = 0;
+	rt_uint32_t index;
+	rt_uint32_t module_size = 0;
 	struct rt_module* module = RT_NULL;
 	rt_uint8_t *ptr, *strtab, *shstrab;
 
@@ -191,37 +163,20 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 #endif
 
 	/* check ELF header */
-	if (rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0 ||
+	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 ||
 		elf_module->e_ident[EI_CLASS] != ELFCLASS32)
-		return RT_NULL;
-
-	/* get the ELF image size */
-	for (index = 0; index < elf_module->e_shnum; index++)
 	{
-		/* text */
-		if (IS_PROG(shdr[index]) && IS_AX(shdr[index]))
-		{
-			module_size += shdr[index].sh_size;
-			module_addr = shdr[index].sh_addr;
-		}
-		/* rodata */
-		if (IS_PROG(shdr[index]) && IS_ALLOC(shdr[index]))
-		{
-			module_size += shdr[index].sh_size;
-		}			
-		/* data */
-		if (IS_PROG(shdr[index]) && IS_AW(shdr[index]))
-		{
-			module_size += shdr[index].sh_size;
-		}
-		/* bss */
-		if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
-		{
-			module_size += shdr[index].sh_size;
-		}	
+		rt_kprintf(" wrong magic\n");
+		return RT_NULL;
 	}
-
-	/* no text, data and bss on image */
+	
+	/* get the ELF image size */
+	for (index = 0; index < elf_module->e_phnum; index++)
+	{
+		if(phdr[index].p_type == PT_LOAD)
+			module_size += phdr[index].p_memsz;
+	}	
+	
 	if (module_size == 0) return module;
 
 	/* allocate module */
@@ -240,45 +195,18 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	ptr = module->module_space;
 	rt_memset(ptr, 0, module_size);
 
-	/* load text and data section */
-	for (index = 0; index < elf_module->e_shnum; index++)
+	for (index = 0; index < elf_module->e_phnum; index++)
 	{
-		/* load text section */
-		if (IS_PROG(shdr[index]) && IS_AX(shdr[index]))
+		if(phdr[index].p_type == PT_LOAD)
 		{
-			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
-			ptr += shdr[index].sh_size;
-		}
-
-		/* load rodata section */
-		if (IS_PROG(shdr[index]) && IS_ALLOC(shdr[index]))
-		{
-			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
-			rodata_addr = (rt_uint32_t)ptr;
-			ptr += shdr[index].sh_size;
-		}
-		
-		/* load data section */
-		if (IS_PROG(shdr[index]) && IS_AW(shdr[index]))
-		{
-			data_addr = (rt_uint32_t)ptr;
-			/* rt_kprintf("data section address 0x%x\n", data_addr); */
-			rt_memcpy(ptr, (rt_uint8_t*)elf_module + shdr[index].sh_offset, shdr[index].sh_size);
-			ptr += shdr[index].sh_size;
-		}
-
-		/* load bss section */
-		if (IS_NOPROG(shdr[index]) && IS_AW(shdr[index]))
-		{
-			bss_addr = (rt_uint32_t)ptr;
-			/* rt_kprintf("bss section address 0x%x\n", bss_addr); */
-			rt_memset(ptr, 0, shdr[index].sh_size);
-		}
-	}
+			rt_memcpy(ptr, (rt_uint8_t*)elf_module + phdr[index].p_offset, phdr[index].p_filesz);
+			ptr += phdr[index].p_memsz;
+		}		
+	}	
 
 	/* set module entry */
-	module->module_entry = (rt_uint8_t*)module->module_space + elf_module->e_entry - module_addr;
-
+	module->module_entry = (rt_uint8_t*)module->module_space + elf_module->e_entry;
+	
 	/* handle relocation section */
 	for (index = 0; index < elf_module->e_shnum; index ++)
 	{
@@ -291,75 +219,20 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 			/* get relocate item */
 			rel = (Elf32_Rel *) ((rt_uint8_t*)module_ptr + shdr[index].sh_offset);
 
-			/* locate .dynsym and .dynstr */
+			/* locate .rel.plt and .rel.dyn */
 			symtab =(Elf32_Sym *) ((rt_uint8_t*)module_ptr + shdr[shdr[index].sh_link].sh_offset);
 			strtab = (rt_uint8_t*) module_ptr + shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
-			shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
-			nr_reloc = (rt_uint32_t) (shdr[index].sh_size / sizeof(Elf32_Rel));
+ 			nr_reloc = (rt_uint32_t) (shdr[index].sh_size / sizeof(Elf32_Rel));
 
 			/* relocate every items */
 			for (i = 0; i < nr_reloc; i ++)
 			{
+				Elf32_Addr addr = 0;
 				Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
 #ifdef RT_MODULE_DEBUG
 				rt_kprintf("relocate symbol %s\n", strtab + sym->st_name);
 #endif
-				if (sym->st_shndx != STN_UNDEF)
-				{				
-					if((ELF_ST_TYPE(sym->st_info) == STT_SECTION) 
-						|| (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
-					{	
-						if (rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
-						{
-							/* relocate rodata section */
-							rt_module_arm_relocate(module, rel,
-								(Elf32_Addr)(rodata_addr + sym->st_value),
-								module_addr); 
-						}
-						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
-						{
-							/* relocate bss section */
-							rt_module_arm_relocate(module, rel, 
-								(Elf32_Addr)bss_addr + sym->st_value, 
-								module_addr);
-						}
-						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_DATA, 6) == 0)
-						{
-							/* relocate bss section */
-							rt_module_arm_relocate(module, rel, 
-								(Elf32_Addr)data_addr + sym->st_value, 
-								module_addr);
-						}						
-					}
-					else if(ELF_ST_TYPE(sym->st_info) == STT_FUNC )
-					{	
-						/* relocate function */
-						rt_module_arm_relocate(module, rel,
-							(Elf32_Addr)((rt_uint8_t*)module->module_space - module_addr + sym->st_value),
-							module_addr); 
-					}
-				}
-				else
-				{
-					Elf32_Addr addr;
-
-					if(ELF32_R_TYPE(rel->r_info) != R_ARM_V4BX)
-					{	
-#ifdef RT_MODULE_DEBUG
-						rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
-#endif
-						/* need to resolve symbol in kernel symbol table */
-						addr = rt_module_symbol_find(strtab + sym->st_name);
-						if (addr != (Elf32_Addr)RT_NULL)
-							rt_module_arm_relocate(module, rel, addr, module_addr);
-						else rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
-					}
-					else
-					{
-						rt_module_arm_relocate(module, rel, addr, module_addr);
-					}	
-				}
-
+				rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
 				rel ++;
 			}
 		}
@@ -367,45 +240,22 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 
 	/* init module object container */
 	rt_module_init_object_container(module);
-	/* enter elf entry */
-	((elf_entry)module->module_entry)(&ishell, &module->module_info);
 
-	return module;
-}
+	module->module_thread = rt_thread_create(name,
+		module->module_entry, RT_NULL,
+		512, 90, 10);
+	module->module_thread->module_parent = module;
+	rt_thread_startup(module->module_thread);
 
-void rt_module_run(struct rt_module* module)
-{
-	struct rt_module_info *info;
+	rt_free(module_ptr);
 		
-	/* check parameter */
-	RT_ASSERT(module != RT_NULL);
-	RT_ASSERT(module->module_info != RT_NULL);
-
-	info = module->module_info;
-	if(info->module_type == RT_Module_Class_APP)
-	{
-		/* application */
-		module->module_thread = rt_thread_create(module->parent.name,
-			module->module_info->exec_entry, RT_NULL,
-			512, 90, 10);
-		module->module_thread->module_parent = module;
-		rt_thread_startup(module->module_thread);
-	}
-	else if(info->module_type == RT_Module_Class_EXTENSION)
-	{
-		/* extension */
-	}
-	else if(info->module_type == RT_Module_Class_SERVICE)
-	{
-		/* service */	
-	}	
+	return module;
 }	
 
 void rt_module_unload(struct rt_module* module)
 {
 	int i;
 	struct rt_object* object;
-	struct rt_timer *timer;
 	struct rt_list_node *list, *node;
 
 	/* check parameter */
