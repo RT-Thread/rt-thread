@@ -8,7 +8,7 @@ group = {}
 group['name'] = 'examples'
 group['src'] = Glob('*.c')
 group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/components/module/interface']
+group['CPPPATH'] = ['']
 group['CPPDEFINES'] = ''
 
 target = 'basicapp.mo'
@@ -20,7 +20,9 @@ env.Append(CCFLAGS = group['CCFLAGS'])
 env.Append(CPPPATH = group['CPPPATH'])
 env.Append(CPPDEFINES = group['CPPDEFINES'])
 module_env = env.Clone(CPPDEFINE = 'RT_MODULE')
-module_env.Replace(LINKFLAGS = ' -mcpu=arm920t -r -d -e rt_module_entry -nostdlib -s')
+module_env = env.Clone(CCFLAGS = ' -mcpu=arm920t -O0 -fPIC')
+module_env.Replace(LINK =  'arm-none-eabi-ld')
+module_env.Replace(LINKFLAGS = '-z max-page-size=0x4 -shared -fPIC -e rt_application_entry -nostdlib -s')
 
 src_local = Glob('*.c')
 
