@@ -166,15 +166,22 @@ static void plug_holes(struct heap_mem *mem)
 void rt_system_heap_init(void* begin_addr, void* end_addr)
 {
 	struct heap_mem *mem;
+	rt_uint32_t begin_align = RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
+	rt_uint32_t end_align = RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_ALIGN_SIZE);
 
 	/* alignment addr */
-	begin_addr = (void*)RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
-
+	if((end_align > (2 * SIZEOF_STRUCT_MEM) ) &&
+		((end_align - 2 * SIZEOF_STRUCT_MEM) >= begin_align )) {
 	/* calculate the aligned memory size */
-	mem_size_aligned = RT_ALIGN_DOWN((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr, RT_ALIGN_SIZE) - 2 * SIZEOF_STRUCT_MEM;
+		mem_size_aligned = end_align - begin_align - 2 * SIZEOF_STRUCT_MEM;
+	}
+	else {
+		rt_kprintf("mem init, error begin address 0x%x, and end address 0x%x\n", (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+		return;
+	}
 
 	/* point to begin address of heap */
-	heap_ptr = begin_addr;
+	heap_ptr = (rt_uint8_t *)begin_align;
 
 #ifdef RT_MEM_DEBUG
 	rt_kprintf("mem init, heap begin address 0x%x, size %d\n", (rt_uint32_t)heap_ptr, mem_size_aligned);

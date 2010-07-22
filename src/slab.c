@@ -329,6 +329,11 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 	heap_start	= RT_ALIGN((rt_uint32_t)begin_addr, RT_MM_PAGE_SIZE);
 	heap_end	= RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
 
+	if(heap_start >= heap_end) {
+		rt_kprintf("rt_system_heap_init, error begin address 0x%x, and end address 0x%x\n", (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+		return;
+	}
+	
 	limsize = heap_end - heap_start;
 	npages = limsize / RT_MM_PAGE_SIZE;
 

@@ -96,7 +96,7 @@ void rt_tick_increase()
 rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
 {
 	/* return the calculated tick */
-	return (RT_TICK_PER_SECOND * ms) / 1000 + (RT_TICK_PER_SECOND * ms) % 1000 ? 1:0; 
+	return (RT_TICK_PER_SECOND * ms+999) / 1000; 
 }
 
 /*@}*/
