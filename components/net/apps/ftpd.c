@@ -542,6 +542,7 @@ err1:
 		}
 		rt_sprintf(sbuf, "226 Finished.\r\n");
 		send(session->sockfd, sbuf, strlen(sbuf), 0);
+		close(fd);
 		closesocket(session->pasv_sockfd);
 	}
 	else if (str_begin_with(buf, "STOR")==0)
