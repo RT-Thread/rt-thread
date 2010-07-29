@@ -80,11 +80,10 @@ time_t timegm(struct tm *const t) {
 
   if (t->tm_sec>60) { t->tm_min += t->tm_sec/60; t->tm_sec%=60; }
   if (t->tm_min>60) { t->tm_hour += t->tm_min/60; t->tm_min%=60; }
-  if (t->tm_hour>60) { t->tm_mday += t->tm_hour/60; t->tm_hour%=60; }
+  if (t->tm_hour>24) { t->tm_mday += t->tm_hour/24; t->tm_hour%=24; }
   if (t->tm_mon>12) { t->tm_year += t->tm_mon/12; t->tm_mon%=12; }
   while (t->tm_mday>__spm[1+t->tm_mon]) {
     if (t->tm_mon==1 && __isleap(t->tm_year+1900)) {
-      if (t->tm_mon==31+29) break;
       --t->tm_mday;
     }
     t->tm_mday-=__spm[t->tm_mon];
