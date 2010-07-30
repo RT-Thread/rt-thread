@@ -39,6 +39,12 @@
 	#define RTGUI_USING_HZ_BMP
 	#define RTGUI_MEM_TRACE
 	#define RTGUI_USING_WINMOVE
+#else
+	/* native running under RT-Thread */
+	#ifndef RT_USING_DFS
+		#undef RTGUI_USING_DFS_FILERW
+		#undef RTGUI_USING_HZ_FILE
+	#endif
 #endif
 
 #if RTGUI_DEFAULT_FONT_SIZE == 0

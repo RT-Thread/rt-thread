@@ -3,6 +3,7 @@
 
 #include <rtgui/widgets/view.h>
 
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 #define RTGUI_FITEM_FILE      0x0
 #define RTGUI_FITEM_DIR       0x1
 struct rtgui_file_item
@@ -52,5 +53,6 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory);
 
 void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len);
+#endif
 
 #endif

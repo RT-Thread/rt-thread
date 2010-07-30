@@ -68,6 +68,7 @@ static struct rtgui_image_engine* rtgui_image_get_engine(const char* type)
 	return RT_NULL;
 }
 
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* filename, rt_bool_t load)
 {
 	struct rtgui_filerw* filerw;
@@ -114,6 +115,7 @@ struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* f
 
 	return image;
 }
+#endif
 
 struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length, rt_bool_t load)
 {

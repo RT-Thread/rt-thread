@@ -24,6 +24,7 @@
 #include <rtgui/widgets/listbox.h>
 #include <rtgui/widgets/window.h>
 
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 #ifdef _WIN32
 #include <io.h>
 #include <dirent.h>
@@ -835,3 +836,4 @@ void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, r
 		rt_snprintf(path, len, "%s%s",view->current_directory, 
 			view->items[view->current_item].name);
 }
+#endif
