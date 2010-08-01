@@ -36,7 +36,6 @@
 #define IS_AW(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
 struct rt_module* rt_current_module;
-extern const struct  rt_shell ishell;
 
 int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
