@@ -26,7 +26,7 @@ void tftp_get(const char* host, const char* dir, const char* filename)
 		"%s/%s", dir, filename);
 
 	/* open local file for write */
-	fd = open((char*)tftp_buffer, O_RDWR, 0);
+	fd = open((char*)tftp_buffer, O_RDWR | O_CREAT, 0);
 	if (fd < 0)
 	{
 		rt_kprintf("can't open local filename\n");
