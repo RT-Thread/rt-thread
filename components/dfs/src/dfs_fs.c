@@ -408,7 +408,7 @@ int dfs_mkfs(const char* fs_name, const char* device_name)
  *
  * @return 0 on successful, others on failed.
  */
-int dfs_statfs(const char* path, struct dfs_statfs* buffer)
+int dfs_statfs(const char* path, struct _statfs* buffer)
 {
 	struct dfs_filesystem* fs;
 
@@ -432,7 +432,7 @@ FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 
 void df(const char* path)
 {
-	struct dfs_statfs buffer;
+	struct _statfs buffer;
 
 	if (dfs_statfs(path, &buffer) == 0)
 	{

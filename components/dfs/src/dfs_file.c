@@ -173,7 +173,7 @@ int dfs_file_read(struct dfs_fd* fd, void *buf, rt_size_t len)
  *
  * @return the read dirent, others on failed.
  */
-int dfs_file_getdents(struct dfs_fd* fd, struct dfs_dirent* dirp, rt_size_t nbytes)
+int dfs_file_getdents(struct dfs_fd* fd, struct _dirent* dirp, rt_size_t nbytes)
 {
 	struct dfs_filesystem* fs;
 
@@ -298,7 +298,7 @@ int dfs_file_lseek(struct dfs_fd* fd, rt_off_t offset)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_stat(const char *path, struct dfs_stat *buf)
+int dfs_file_stat(const char *path, struct _stat *buf)
 {
 	int result;
 	char* fullpath;
@@ -422,10 +422,10 @@ __exit:
 #include <finsh.h>
 
 static struct dfs_fd fd;
-static struct dfs_dirent dirent;
+static struct _dirent dirent;
 void ls(const char* pathname)
 {
-	struct dfs_stat stat;
+	struct _stat stat;
 	int length;
 	char* fullpath;
 
@@ -437,11 +437,11 @@ void ls(const char* pathname)
 		rt_kprintf("Directory %s:\n", pathname);
 		do
 		{
-			rt_memset(&dirent, 0, sizeof(struct dfs_dirent));
-			length = dfs_file_getdents(&fd, &dirent, sizeof(struct dfs_dirent));
+			rt_memset(&dirent, 0, sizeof(struct _dirent));
+			length = dfs_file_getdents(&fd, &dirent, sizeof(struct _dirent));
 			if ( length > 0 ) 
 			{
-				rt_memset(&stat, 0, sizeof(struct dfs_stat));
+				rt_memset(&stat, 0, sizeof(struct _stat));
 
 				/* build full path for each file */
 				if (pathname[strlen(pathname) - 1] != '/')

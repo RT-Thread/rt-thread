@@ -134,7 +134,7 @@ int dfs_elm_mkfs(const char* device_name)
 	return -DFS_STATUS_EIO;
 }
 
-int dfs_elm_statfs(struct dfs_filesystem* fs, struct dfs_statfs *buf)
+int dfs_elm_statfs(struct dfs_filesystem* fs, struct _statfs *buf)
 {
 	FATFS *f;
 	FRESULT res;
@@ -373,19 +373,19 @@ int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 	return elm_result_to_dfs(result);
 }
 
-int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t count)
+int dfs_elm_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t count)
 {
 	DIR* dir;
 	FILINFO fno;
 	FRESULT result;
 	rt_uint32_t index;
-	struct dfs_dirent* d;
+	struct _dirent* d;
 
 	dir = (DIR*)(file->data);
 	RT_ASSERT(dir != RT_NULL);
 
 	/* make integer count */
-	count = (count / sizeof(struct dfs_dirent)) * sizeof(struct dfs_dirent);
+	count = (count / sizeof(struct _dirent)) * sizeof(struct _dirent);
 	if ( count == 0 ) return -DFS_STATUS_EINVAL;
 
 #if _USE_LFN
@@ -415,11 +415,11 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 		else d->d_type &= DFS_DT_REG;
 
 		d->d_namlen = rt_strlen(fn);
-		d->d_reclen = (rt_uint16_t)sizeof(struct dfs_dirent);
+		d->d_reclen = (rt_uint16_t)sizeof(struct _dirent);
 		rt_strncpy(d->d_name, fn, rt_strlen(fn) + 1);
 
 		index ++;
-		if ( index * sizeof(struct dfs_dirent) >= count )
+		if ( index * sizeof(struct _dirent) >= count )
 			break;
 	}
 
@@ -430,7 +430,7 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dfs_dirent* dirp, rt_uint32_t c
 	if (index == 0)
 		return elm_result_to_dfs(result);
 
-	return index * sizeof(struct dfs_dirent);
+	return index * sizeof(struct _dirent);
 }
 
 int dfs_elm_unlink(struct dfs_filesystem* fs, const char* path)
@@ -500,7 +500,7 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 	return elm_result_to_dfs(result);
 }
 
-int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct dfs_stat *st)
+int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct _stat *st)
 {
 	FILINFO file_info;
 	FRESULT result;

@@ -33,7 +33,7 @@ struct dfs_filesystem_operation
 
 	/* make a file system */
 	int (*mkfs)     (const char* device_name);
-	int (*statfs)   (struct dfs_filesystem* fs, struct dfs_statfs *buf);
+	int (*statfs)   (struct dfs_filesystem* fs, struct _statfs *buf);
 
 	int (*open)		(struct dfs_fd* fd);
 	int (*close)	(struct dfs_fd* fd);
@@ -42,10 +42,10 @@ struct dfs_filesystem_operation
 	int (*write)	(struct dfs_fd* fd, const void* buf, rt_size_t count);
 	int (*flush)    (struct dfs_fd* fd);
 	int (*lseek)	(struct dfs_fd* fd, rt_off_t offset);
-	int (*getdents)	(struct dfs_fd* fd, struct dfs_dirent* dirp, rt_uint32_t count);
+	int (*getdents)	(struct dfs_fd* fd, struct _dirent* dirp, rt_uint32_t count);
 
 	int (*unlink)	(struct dfs_filesystem* fs, const char* pathname);
-	int (*stat)		(struct dfs_filesystem* fs, const char* filename, struct dfs_stat* buf);
+	int (*stat)		(struct dfs_filesystem* fs, const char* filename, struct _stat* buf);
 	int (*rename)	(struct dfs_filesystem* fs, const char* oldpath, const char* newpath);
 };
 
@@ -86,6 +86,6 @@ extern char working_directory[];
 
 void dfs_lock(void);
 void dfs_unlock(void);
-int dfs_statfs(const char* path, struct dfs_statfs* buffer);
+int dfs_statfs(const char* path, struct _statfs* buffer);
 
 #endif

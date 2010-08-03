@@ -261,7 +261,7 @@ int unlink(const char *pathname)
  *
  * @return 0 on successful, -1 on failed.
  */
-int stat(const char *file, struct dfs_stat *buf)
+int stat(const char *file, struct _stat *buf)
 {
 	int result;
 
@@ -283,7 +283,7 @@ int stat(const char *file, struct dfs_stat *buf)
  *
  * @return 0 on successful, others on failed.
  */
-int statfs(const char *path, struct dfs_statfs *buf)
+int statfs(const char *path, struct _statfs *buf)
 {
 	int result;
 
@@ -404,7 +404,7 @@ DIR* opendir(const char* name)
  *
  * @return the next directory entry, NULL on the end of directory or failed.
  */
-struct dfs_dirent* readdir(DIR *d)
+struct _dirent* readdir(DIR *d)
 {
 	int result;
 	struct dfs_fd* fd;
@@ -416,9 +416,9 @@ struct dfs_dirent* readdir(DIR *d)
 		return RT_NULL;
 	}
 
-	if (!d->num || (d->cur += ((struct dfs_dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
+	if (!d->num || (d->cur += ((struct _dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
 	{
-		result = dfs_file_getdents(fd, (struct dfs_dirent*)d->buf, sizeof(d->buf) - 1);
+		result = dfs_file_getdents(fd, (struct _dirent*)d->buf, sizeof(d->buf) - 1);
 		if (result <= 0)
 		{
 			rt_set_errno(result);
@@ -432,7 +432,7 @@ struct dfs_dirent* readdir(DIR *d)
 	}
 
 	fd_put(fd);
-	return (struct dfs_dirent*)(d->buf+d->cur);
+	return (struct _dirent*)(d->buf+d->cur);
 }
 
 /**

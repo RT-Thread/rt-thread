@@ -111,7 +111,7 @@
 #define DEVICE_FORMAT 			2
 #define DEVICE_CLEAN_SECTOR 	3
 
-struct dfs_stat
+struct _stat
 {
 	rt_device_t st_dev;
 	rt_uint16_t st_mode;
@@ -120,7 +120,7 @@ struct dfs_stat
 	rt_uint32_t st_blksize;
 };
 
-struct dfs_statfs
+struct _statfs
 {
 	rt_size_t f_bsize; 	 /* block size */
 	rt_size_t f_blocks;  /* total data blocks in file system */
@@ -153,13 +153,12 @@ struct dfs_fd
 #define DFS_DT_REG		0x01
 #define DFS_DT_DIR		0x02
 
-struct dfs_dirent
+struct _dirent
 {
 	rt_uint8_t d_type;				/* The type of the file */
 	rt_uint8_t d_namlen;			/* The length of the not including the terminating null file name */
 	rt_uint16_t d_reclen;			/* length of this record */
 	char d_name[DFS_PATH_MAX];		/* The null-terminated file name */
 };
-#define dirent dfs_dirent
 
 #endif

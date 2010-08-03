@@ -16,6 +16,7 @@
 #define __DFS_POSIX_H__
 
 #include <dfs_file.h>
+#include <dfs_def.h>
 
 #define O_RDONLY	DFS_O_RDONLY
 #define O_WRONLY 	DFS_O_WRONLY
@@ -74,14 +75,9 @@ typedef struct
 	int cur;
 } DIR;
 
-struct stat
-{
-	struct dfs_stat parent;
-};
-struct statfs
-{
-	struct dfs_statfs parent;
-};
+#define stat _stat
+#define statfs _statfs
+#define dirent _dirent
 
 /* file api*/
 int open(const char *file, int flags, int mode);
@@ -91,14 +87,14 @@ int write(int fd, char *buf, int len);
 int lseek(int fd, int offset, int dir);
 int rename(const char* old, const char* new );
 int unlink(const char *pathname);
-int stat(const char *file, struct dfs_stat *buf);
-int statfs(const char *path, struct dfs_statfs *buf);
+int stat(const char *file, struct _stat *buf);
+int statfs(const char *path, struct _statfs *buf);
 
 /* directory api*/
 int mkdir (const char *path, rt_uint16_t mode);
 int rmdir(const char *path);
 DIR* opendir(const char* name);
-struct dfs_dirent* readdir(DIR *d);
+struct _dirent* readdir(DIR *d);
 rt_off_t telldir(DIR *d);
 void seekdir(DIR *d, rt_off_t offset);
 void rewinddir(DIR *d);

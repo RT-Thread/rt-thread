@@ -10,17 +10,6 @@ src/dfs_file.c
 src/dfs_posix.c
 """)
 
-# DFS-FatFs options
-fatfs = Split("""
-filesystems/fatfs/fatfs_cache.c
-filesystems/fatfs/fatfs_direntry.c
-filesystems/fatfs/fatfs_fat.c
-filesystems/fatfs/fatfs_file.c
-filesystems/fatfs/fatfs_filename.c
-filesystems/fatfs/fatfs_init.c
-filesystems/fatfs_misc.c
-filesystems/fatfs/fatfs_mount.c""")
-
 # DFS-ELMFAT options
 elmfat = Split("""
 filesystems/elmfat/dfs_elm.c
