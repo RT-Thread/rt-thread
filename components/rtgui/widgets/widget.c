@@ -13,6 +13,7 @@
  * 2010-06-26     Bernard      add user_data to widget structure
  */
 
+#include <rtgui/dc_hw.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/view.h>

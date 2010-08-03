@@ -41,9 +41,9 @@ const struct rtgui_image_engine rtgui_image_hdcmm_engine =
 {
 	"hdcmm",
 	{RT_NULL},
-	{RT_NULL},
-	{RT_NULL},
-	{RT_NULL},
+	RT_NULL,
+	RT_NULL,
+	RT_NULL,
 	rtgui_image_hdcmm_blit
 };
 

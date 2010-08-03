@@ -100,7 +100,7 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 #ifdef RTGUI_USING_SMALL_SIZE
 		topwin->title = rtgui_wintitle_create(event->wid->title);
 #else
-		topwin->title = rtgui_wintitle_create(event->title);
+		topwin->title = rtgui_wintitle_create((const char*)event->title);
 #endif
 		rtgui_widget_set_rect(RTGUI_WIDGET(topwin->title), &rect);
 

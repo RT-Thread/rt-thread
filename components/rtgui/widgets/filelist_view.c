@@ -803,7 +803,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 				rt_sprintf(fullpath, "%s%s", directory, dirent->d_name);
 
 			stat(fullpath, &s);
-			if ( s.parent.st_mode & S_IFDIR )
+			if ( s.st_mode & S_IFDIR )
 			{
 				item->type = RTGUI_FITEM_DIR;
 				item->size = 0;
@@ -811,7 +811,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 			else
 			{
 				item->type = RTGUI_FITEM_FILE;
-				item->size = s.parent.st_size;
+				item->size = s.st_size;
 			}
 		}
 
