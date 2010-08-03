@@ -26,8 +26,8 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 	{
 		struct rtgui_dc* dc;
 		rtgui_rect_t rect;
-		rt_uint32_t vx[] = {20, 50, 60, 45, 60, 20};
-		rt_uint32_t vy[] = {150, 50, 90, 60, 45, 50};
+		const int vx[] = {20, 50, 60, 45, 60, 20};
+		const int vy[] = {150, 50, 90, 60, 45, 50};
 
 		/*
 		 * 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view

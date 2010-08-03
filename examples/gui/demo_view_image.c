@@ -7,6 +7,7 @@
 #include "demo_view.h"
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/filelist_view.h>
+#include <string.h>
 
 static rtgui_image_t* image = RT_NULL;
 static rtgui_view_t* _view = RT_NULL;

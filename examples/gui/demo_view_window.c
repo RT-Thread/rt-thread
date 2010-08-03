@@ -10,6 +10,7 @@
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
 #include "demo_view.h"
+#include <string.h>
 
 static struct rtgui_timer *timer;
 static struct rtgui_label* label;
@@ -43,7 +44,7 @@ void window_demo_close(struct rtgui_widget* widget, rtgui_event_t *even)
 void diag_close(struct rtgui_timer* timer, void* parameter)
 {
 	cnt --;
-	sprintf(label_text, "closed then %d second!", cnt);
+	rt_sprintf(label_text, "closed then %d second!", cnt);
 
 	/* 设置标签文本并更新控件 */
 	rtgui_label_set_text(label, label_text);
@@ -105,7 +106,7 @@ static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* ev
 	if (msgbox != RT_NULL)
 	{
 		cnt = 5;
-		sprintf(label_text, "closed then %d second!", cnt);
+		rt_sprintf(label_text, "closed then %d second!", cnt);
 		label = rtgui_label_create(label_text);
 		rect.x1 += 5;
 		rect.x2 -= 5;
