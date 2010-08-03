@@ -141,7 +141,7 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_MODULE
 	/* init module system */
-	rt_system_module_init();
+	// rt_system_module_init();
 #endif
 
 	/* init application */

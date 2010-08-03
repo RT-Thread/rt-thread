@@ -27,7 +27,7 @@ void run_module(const char* filename)
 	int fd, length;
 	char *module_name;
 	struct rt_module* module;
-	struct dfs_stat s;
+	struct _stat s;
 	char *buffer;
 	
 	stat(filename, &s);
@@ -45,7 +45,7 @@ void run_module(const char* filename)
 	module = rt_module_load((void *)buffer, ++module_name);
 	if(module != RT_NULL)
 	{
-		rt_module_run(module);
+		// rt_module_run(module);
 	}
 	
 	close(fd);
