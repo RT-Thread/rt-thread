@@ -42,7 +42,7 @@ void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry)
 
 	for(i=0; i<10; i++)
 	{
-		fp = *(fp - 3);
+		fp = (rt_uint32_t *)*(fp - 3);
 		pc = *fp ;
 
 		func_entry = pc - 0xC;
