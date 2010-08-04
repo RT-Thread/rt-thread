@@ -162,6 +162,7 @@ void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag)
 
 rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 {
+	rt_err_t result;
 	rtgui_thread_t* tid;
 	struct rtgui_event* event;
 
@@ -176,9 +177,19 @@ rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 		/* event loop for modal mode shown view */
 		while (workbench->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 		{
-			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
+			if (tid->on_idle != RT_NULL)
 			{
-				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+				result = rtgui_thread_recv_nosuspend(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+					RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+				else if (result == -RT_ETIMEOUT)
+					tid->on_idle(RTGUI_WIDGET(workbench), RT_NULL);
+			}
+			else
+			{
+				result = rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+					RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
 			}
 		}
 	}
@@ -186,12 +197,22 @@ rt_bool_t rtgui_workbench_event_loop(rtgui_workbench_t* workbench)
 	{
 		/* show workbench firstly */
 		rtgui_workbench_show(workbench);
-		
+
 		while (!(workbench->flag & RTGUI_WORKBENCH_FLAG_CLOSED))
 		{
-			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
+			if (tid->on_idle != RT_NULL)
 			{
-				RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+				result = rtgui_thread_recv_nosuspend(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+					RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
+				else if (result == -RT_ETIMEOUT)
+					tid->on_idle(RTGUI_WIDGET(workbench), RT_NULL);
+			}
+			else 
+			{
+				result = rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+					RTGUI_WIDGET(workbench)->event_handler(RTGUI_WIDGET(workbench), event);
 			}
 		}
 	}

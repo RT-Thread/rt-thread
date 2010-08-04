@@ -522,6 +522,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 /* windows event loop */
 void rtgui_win_event_loop(rtgui_win_t* wnd)
 {
+	rt_err_t result;
 	rtgui_thread_t* tid;
 	struct rtgui_event* event;
 
@@ -535,10 +536,27 @@ void rtgui_win_event_loop(rtgui_win_t* wnd)
 	{
 		while (wnd->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
-			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
+			if (tid->on_idle != RT_NULL)
 			{
-				/* perform event handler */
-				RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				result = rtgui_thread_recv_nosuspend(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+				{
+					/* perform event handler */
+					RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				}
+				else if (result == -RT_ETIMEOUT)
+				{
+					tid->on_idle(RTGUI_WIDGET(wnd), RT_NULL);
+				}
+			}
+			else
+			{
+				result = rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+				{
+					/* perform event handler */
+					RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				}
 			}
 		}
 	}
@@ -546,10 +564,27 @@ void rtgui_win_event_loop(rtgui_win_t* wnd)
 	{
 		while (!(wnd->style & RTGUI_WIN_STYLE_CLOSED))
 		{
-			if (rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE) == RT_EOK)
+			if (tid->on_idle != RT_NULL)
 			{
-				/* perform event handler */
-				RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				result = rtgui_thread_recv_nosuspend(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+				{
+					/* perform event handler */
+					RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				}
+				else if (result == -RT_ETIMEOUT)
+				{
+					tid->on_idle(RTGUI_WIDGET(wnd), RT_NULL);
+				}
+			}
+			else
+			{
+				result = rtgui_thread_recv(event, RTGUI_EVENT_BUFFER_SIZE);
+				if (result == RT_EOK)
+				{
+					/* perform event handler */
+					RTGUI_WIDGET(wnd)->event_handler(RTGUI_WIDGET(wnd), event);
+				}
 			}
 		}
 	}

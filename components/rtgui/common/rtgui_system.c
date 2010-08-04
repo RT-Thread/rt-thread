@@ -285,6 +285,7 @@ rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 		thread->tid			= tid;
 		thread->mq			= mq;
 		thread->widget		= RT_NULL;
+		thread->on_idle     = RT_NULL;
 
 		/* set user thread */
 		tid->user_data = (rt_uint32_t)thread;
@@ -321,6 +322,26 @@ rtgui_thread_t* rtgui_thread_self()
 	thread = (struct rtgui_thread*)(self->user_data);
 
 	return thread;
+}
+
+void rtgui_thread_set_onidle(rtgui_idle_func onidle)
+{
+	struct rtgui_thread* thread;
+
+	thread = rtgui_thread_self();
+	RT_ASSERT(thread != RT_NULL);
+
+	thread->on_idle = onidle;
+}
+
+rtgui_idle_func rtgui_thread_get_onidle()
+{
+	struct rtgui_thread* thread;
+
+	thread = rtgui_thread_self();
+	RT_ASSERT(thread != RT_NULL);
+
+	return thread->on_idle;
 }
 
 extern rt_thread_t rt_thread_find(char* name);
@@ -451,6 +472,20 @@ rt_err_t rtgui_thread_recv(rtgui_event_t* event, rt_size_t event_size)
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	r = rt_mq_recv(thread->mq, event, event_size, RT_WAITING_FOREVER);
+
+	return r;
+}
+
+rt_err_t rtgui_thread_recv_nosuspend(rtgui_event_t* event, rt_size_t event_size)
+{
+	struct rtgui_thread* thread;
+	rt_err_t r;
+
+	/* find rtgui_thread */
+	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	if (thread == RT_NULL) return -RT_ERROR;
+
+	r = rt_mq_recv(thread->mq, event, event_size, 0);
 
 	return r;
 }
