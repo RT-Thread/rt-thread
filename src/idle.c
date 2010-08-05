@@ -52,6 +52,78 @@ void rt_thread_idle_sethook(void (*hook)())
 /*@}*/
 #endif
 
+/**
+ * This function will do some things when system idle.
+ */
+void rt_thread_idle_excute(void)
+{
+#ifdef RT_USING_HEAP
+	/* check the defunct thread list */
+	if (!rt_list_isempty(&rt_thread_defunct))
+	{
+		rt_base_t lock;
+		rt_thread_t thread;
+#ifdef RT_USING_MODULE
+		rt_module_t module;
+#endif
+
+		/* disable interrupt */
+		lock = rt_hw_interrupt_disable();
+
+		/* re-check whether list is empty */
+		if (!rt_list_isempty(&rt_thread_defunct))
+		{
+			/* get defunct thread */
+			thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
+
+			/* get thread's parent module */
+#ifdef RT_USING_MODULE
+			module = thread->module_parent;
+#endif
+			/* remove defunct thread */
+			rt_list_remove(&(thread->tlist));
+		}
+		else
+		{
+			/* enable interrupt */
+			rt_hw_interrupt_enable(lock);
+
+			/* may the defunct thread list is removed by others, just return */
+			return;
+		}
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(lock);
+
+#ifdef RT_USING_MODULE
+		if(module != RT_NULL)
+		{	
+			/* if the thread is module's main thread */
+			if(module->module_thread == thread)
+			{	
+				/* detach module's main thread */
+				module->module_thread = RT_NULL;
+			}
+
+			/* if sub thread list and main thread are null */
+			if((module->module_thread == RT_NULL) &&
+				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) &&
+				(module->module_info->module_type == RT_Module_Class_APP))
+			{
+				/* unload module */
+				rt_module_unload(module);
+			}						
+		}	
+#endif
+		/* release thread's stack */
+		rt_free(thread->stack_addr);
+
+		/* delete thread object */
+		rt_object_delete((rt_object_t)thread);
+	}
+#endif
+}
+
 static void rt_thread_idle_entry(void* parameter)
 {
 	while (1)
@@ -61,52 +133,7 @@ static void rt_thread_idle_entry(void* parameter)
 		if (rt_thread_idle_hook != RT_NULL) rt_thread_idle_hook();
 #endif
 
-#ifdef RT_USING_HEAP
-		/* check the defunct thread list */
-		if (!rt_list_isempty(&rt_thread_defunct))
-		{
-			rt_base_t lock;
-			struct rt_thread* thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
-#ifdef RT_USING_MODULE
-			rt_module_t module = thread->module_parent;
-#endif
-
-			/* disable interrupt */
-			lock = rt_hw_interrupt_disable();
-
-			rt_list_remove(&(thread->tlist));
-
-			/* enable interrupt */
-			rt_hw_interrupt_enable(lock);
-
-			/* release thread's stack */
-			rt_free(thread->stack_addr);
-
-			/* delete thread object */
-			rt_object_delete((rt_object_t)thread);
-
-#ifdef RT_USING_MODULE
-			if(module != RT_NULL)
-			{	
-				/* if the thread is module's main thread */
-				if(module->module_thread == thread)
-				{	
-					/* detach module's main thread */
-					module->module_thread = RT_NULL;
-				}
-
-				/* if sub thread list and main thread are null */
-				if((module->module_thread == RT_NULL) &&
-					rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) &&
-					(module->module_info->module_type == RT_Module_Class_APP))
-				{
-					/* unload module */
-					rt_module_unload(module);
-				}						
-			}	
-#endif
-		}
-#endif
+		rt_thread_idle_excute();
 	}
 }
 

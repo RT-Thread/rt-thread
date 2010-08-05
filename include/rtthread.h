@@ -120,6 +120,7 @@ void rt_thread_idle_init(void);
 #ifdef RT_USING_HOOK
 void rt_thread_idle_sethook(void (*hook)(void));
 #endif
+void rt_thread_idle_excute(void);
 
 /*
  * schedule service
