@@ -174,15 +174,12 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 		else if (box->position != 0)
 		{
 			/* remove current character */
-			if (box->position != 0)
-			{
-				char *c;
+			char *c;
 
-				/* remove character */
-				for (c = &box->text[box->position - 1]; c[1] != '\0'; c++)
-					*c = c[1];
-				*c = '\0';
-			}
+			/* remove character */
+			for (c = &box->text[box->position - 1]; c[1] != '\0'; c++)
+				*c = c[1];
+			*c = '\0';
 			box->position --;
 		}
 	}
