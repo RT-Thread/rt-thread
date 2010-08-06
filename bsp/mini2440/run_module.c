@@ -43,10 +43,6 @@ void run_module(const char* filename)
 	rt_kprintf("read %d bytes from file\n", length);
 	module_name = strrchr(filename, '/');
 	module = rt_module_load((void *)buffer, ++module_name);
-	if(module != RT_NULL)
-	{
-		// rt_module_run(module);
-	}
 	
 	close(fd);
 }
