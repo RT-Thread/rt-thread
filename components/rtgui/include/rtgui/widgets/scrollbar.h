@@ -1,3 +1,16 @@
+/*
+ * File      : scrollbar.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-08-09     Bernard      first version
+ */
 #ifndef __RTGUI_SCROLLBAR_H__
 #define __RTGUI_SCROLLBAR_H__
 
@@ -48,8 +61,6 @@ struct rtgui_scrollbar
 	/* position 1:1 width of scrollbar */
 	rt_int16_t min_position, max_position;
 
-	rt_int16_t bar_width;
-
 	rt_bool_t (*on_scroll) (struct rtgui_widget* widget, struct rtgui_event* event);
 };
 typedef struct rtgui_scrollbar rtgui_scrollbar_t;
@@ -58,6 +69,8 @@ rtgui_type_t *rtgui_scrollbar_type_get(void);
 
 struct rtgui_scrollbar* rtgui_scrollbar_create(int orient, rtgui_rect_t* r);
 void rtgui_scrollbar_destroy(struct rtgui_scrollbar* bar);
+
+void rtgui_scrollbar_get_thumb_rect(rtgui_scrollbar_t *bar, rtgui_rect_t *rect);
 
 void rtgui_scrollbar_set_range(struct rtgui_scrollbar* bar, int min, int max);
 rt_int16_t rtgui_scrollbar_get_value(struct rtgui_scrollbar* bar);

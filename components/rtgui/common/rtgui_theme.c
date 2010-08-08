@@ -29,6 +29,7 @@
 const rtgui_color_t default_foreground = RTGUI_RGB(0x00, 0x00, 0x00);
 const rtgui_color_t default_background = RTGUI_RGB(212, 208, 200);
 const rtgui_color_t selected_color = RTGUI_RGB(0xc0, 0xc0, 0xc0);
+const rtgui_color_t disable_foreground = RTGUI_RGB(0x80, 0x80, 0x80);
 
 extern struct rtgui_font rtgui_font_asc16;
 extern struct rtgui_font rtgui_font_arial16;
@@ -785,6 +786,127 @@ void rtgui_theme_draw_slider(struct rtgui_slider* slider)
 
 	/* end drawing */
 	rtgui_dc_end_drawing(dc);
+	return;
+}
+
+
+const static rt_uint8_t _up_arrow[]    = {0x10, 0x38, 0x7C, 0xFE};
+const static rt_uint8_t _down_arrow[]  = {0xFE,0x7C, 0x38, 0x10};
+const static rt_uint8_t _left_arrow[]  = {0x10, 0x30, 0x70, 0xF0, 0x70, 0x30, 0x10};
+const static rt_uint8_t _right_arrow[] = {0x80, 0xC0, 0xE0, 0xF0, 0xE0, 0xC0, 0x80};
+
+void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar)
+{
+	/* draw scroll bar */
+	struct rtgui_dc* dc;
+	rtgui_rect_t rect, btn_rect, thum_rect, arrow_rect;
+	rtgui_color_t bc, fc;
+
+	/* begin drawing */
+	dc = rtgui_dc_begin_drawing(&(bar->parent));
+	if (dc == RT_NULL) return;
+
+	rtgui_widget_get_rect(RTGUI_WIDGET(bar), &rect);
+
+	/* draw background */
+	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar));
+	if (!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
+		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(128, 128, 128);
+
+	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar));
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = white;
+	rtgui_dc_fill_rect(dc, &rect);
+
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = bc;
+
+	if (bar->orient == RTGUI_VERTICAL)
+	{
+		btn_rect = rect;
+		btn_rect.y2 = btn_rect.y1 + (rect.x2 - rect.x1);
+
+		/* draw up button */
+		rtgui_dc_fill_rect(dc, &btn_rect);
+		if (bar->status & SBS_UPARROW) rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_SUNKEN);
+		else rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_RAISE);
+
+		/* draw arrow */
+		arrow_rect.x1 = 0; arrow_rect.y1 = 0;
+		arrow_rect.x2 = 7; arrow_rect.y2 = 4;
+		rtgui_rect_moveto_align(&btn_rect, &arrow_rect, 
+			RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+		rtgui_dc_draw_byte(dc, arrow_rect.x1, arrow_rect.y1, 
+			rtgui_rect_height(arrow_rect), _up_arrow);
+
+		/* draw thumb */
+		if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
+		{
+			rtgui_scrollbar_get_thumb_rect(bar, &thum_rect);
+			rtgui_dc_fill_rect(dc, &thum_rect);
+			rtgui_dc_draw_border(dc, &thum_rect, RTGUI_BORDER_RAISE);
+		}
+
+		/* draw down button */
+		btn_rect.y1 = rect.y2 - (rect.x2 - rect.x1);
+		btn_rect.y2 = rect.y2;
+
+		rtgui_dc_fill_rect(dc, &btn_rect);
+		if (bar->status & SBS_DOWNARROW) rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_SUNKEN);
+		else rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_RAISE);
+
+		arrow_rect.x1 = 0; arrow_rect.y1 = 0;
+		arrow_rect.x2 = 7; arrow_rect.y2 = 4;
+		rtgui_rect_moveto_align(&btn_rect, &arrow_rect, 
+			RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+		rtgui_dc_draw_byte(dc, arrow_rect.x1, arrow_rect.y1, 
+			rtgui_rect_height(arrow_rect), _down_arrow);
+	}
+	else
+	{
+		btn_rect.x1 = rect.x1;
+		btn_rect.y1 = rect.y1;
+		btn_rect.x2 = rect.y2;
+		btn_rect.y2 = rect.y2;
+
+		/* draw left button */
+		rtgui_dc_fill_rect(dc, &btn_rect);
+		if (bar->status & SBS_LEFTARROW) rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_SUNKEN);
+		else rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_RAISE);
+
+		arrow_rect.x1 = 0; arrow_rect.y1 = 0;
+		arrow_rect.x2 = 4; arrow_rect.y2 = 7;
+		rtgui_rect_moveto_align(&btn_rect, &arrow_rect, 
+			RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+		rtgui_dc_draw_byte(dc, arrow_rect.x1, arrow_rect.y1, 
+			rtgui_rect_height(arrow_rect), _left_arrow);
+
+		/* draw thumb */
+		if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
+		{
+			rtgui_scrollbar_get_thumb_rect(bar, &thum_rect);
+			rtgui_dc_fill_rect(dc, &thum_rect);
+			rtgui_dc_draw_border(dc, &thum_rect, RTGUI_BORDER_RAISE);
+		}
+
+		btn_rect.x1 = rect.x2 - rect.y2;
+		btn_rect.x2 = rect.x2;
+
+		/* draw right button */
+		rtgui_dc_fill_rect(dc, &btn_rect);
+		if (bar->status & SBS_RIGHTARROW) rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_SUNKEN);
+		else rtgui_dc_draw_border(dc, &btn_rect, RTGUI_BORDER_RAISE);
+
+		arrow_rect.x1 = 0; arrow_rect.y1 = 0;
+		arrow_rect.x2 = 4; arrow_rect.y2 = 7;
+		rtgui_rect_moveto_align(&btn_rect, &arrow_rect, 
+			RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+		rtgui_dc_draw_byte(dc, arrow_rect.x1, arrow_rect.y1, 
+			rtgui_rect_height(arrow_rect), _right_arrow);
+	}
+
+	/* end drawing */
+	rtgui_dc_end_drawing(dc);
+	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar)) = fc;
+
 	return;
 }
 
