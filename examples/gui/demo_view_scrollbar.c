@@ -3,15 +3,14 @@
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/scrollbar.h>
 
-static rtgui_scrollbar_t* hbar;
-static rtgui_scrollbar_t* vbar;
-
 rtgui_view_t *demo_view_scrollbar(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 	rtgui_rect_t rect;
 	rtgui_label_t *label;
-	
+	rtgui_scrollbar_t* hbar;
+	rtgui_scrollbar_t* vbar;
+
 	/* create a demo view */
 	view = demo_view(workbench, "ScrollBar View");
 	
@@ -37,6 +36,8 @@ rtgui_view_t *demo_view_scrollbar(rtgui_workbench_t* workbench)
 	rect.y1 += 18 + 5; rect.y2 = rect.y1 + 150;
 	vbar = rtgui_scrollbar_create(RTGUI_VERTICAL, &rect);
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(vbar));
+	rtgui_scrollbar_set_line_step(vbar, 1);
+	// RTGUI_WIDGET_DISABLE(RTGUI_WIDGET(vbar));
 
 	return view;
 }
