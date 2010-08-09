@@ -13,7 +13,7 @@
  * 2010-06-26     Bernard      add user_data to widget structure
  */
 
-#include <rtgui/dc_hw.h>
+#include <rtgui/dc_client.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/view.h>
@@ -63,7 +63,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	rtgui_region_init(&(widget->clip));
 
 	/* init hardware dc */
-	rtgui_dc_hw_init(widget);
+	rtgui_dc_client_init(widget);
 }
 
 /* Destroys the widget */

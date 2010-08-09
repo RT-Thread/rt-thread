@@ -254,7 +254,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 
-	if (dest->type == RTGUI_DC_HW)
+	if ((dest->type == RTGUI_DC_HW) || (dest->type == RTGUI_DC_CLIENT))
 	{
 		rtgui_color_t* pixel;
 		rt_uint8_t *line_ptr;
@@ -305,7 +305,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 			pixel += dc->width;
 
 			/* draw on hardware dc */
-			rtgui_dc_hw_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
+			rtgui_dc_client_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
 		}
 
 		/* release line buffer */

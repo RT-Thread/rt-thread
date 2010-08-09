@@ -1,5 +1,5 @@
 /*
- * File      : dc_hw.c
+ * File      : dc_client.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
  *
@@ -10,9 +10,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2010-08-09     Bernard      rename hardware dc to client dc
  */
 #include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
+#include <rtgui/dc_client.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
@@ -20,44 +21,65 @@
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/title.h>
 
-static void rtgui_dc_hw_draw_point(struct rtgui_dc* dc, int x, int y);
-static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
-static void rtgui_dc_hw_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
-static void rtgui_dc_hw_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
-static void rtgui_dc_hw_fill_rect (struct rtgui_dc* dc, rtgui_rect_t* rect);
-static void rtgui_dc_hw_blit	  (struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
-static void rtgui_dc_hw_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
-static rtgui_gc_t *rtgui_dc_hw_get_gc (struct rtgui_dc* dc);
-static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc);
-static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* dc);
-static void rtgui_dc_hw_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
+static void rtgui_dc_client_draw_point(struct rtgui_dc* dc, int x, int y);
+static void rtgui_dc_client_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
+static void rtgui_dc_client_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
+static void rtgui_dc_client_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
+static void rtgui_dc_client_fill_rect (struct rtgui_dc* dc, rtgui_rect_t* rect);
+static void rtgui_dc_client_blit	  (struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
+static void rtgui_dc_client_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
+static rtgui_gc_t *rtgui_dc_client_get_gc (struct rtgui_dc* dc);
+static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc);
+static rt_bool_t rtgui_dc_client_get_visible(struct rtgui_dc* dc);
+static void rtgui_dc_client_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
 #define hw_driver				(rtgui_graphic_driver_get_default())
 #define dc_set_foreground(c) 	dc->gc.foreground = c
 #define dc_set_background(c) 	dc->gc.background = c
 
-const struct rtgui_dc_engine dc_hw_engine = 
+struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner)
 {
-	rtgui_dc_hw_draw_point,
-	rtgui_dc_hw_draw_color_point,
-	rtgui_dc_hw_draw_vline,
-	rtgui_dc_hw_draw_hline,
-	rtgui_dc_hw_fill_rect,
-	rtgui_dc_hw_blit,
+	return rtgui_dc_client_create(owner);
+}
 
-	rtgui_dc_hw_set_gc,
-	rtgui_dc_hw_get_gc,
+void rtgui_dc_end_drawing(struct rtgui_dc* dc)
+{
+	rtgui_dc_client_fini(dc);
+}
 
-	rtgui_dc_hw_get_visible,
-	rtgui_dc_hw_get_rect,
+const struct rtgui_dc_engine dc_client_engine = 
+{
+	rtgui_dc_client_draw_point,
+	rtgui_dc_client_draw_color_point,
+	rtgui_dc_client_draw_vline,
+	rtgui_dc_client_draw_hline,
+	rtgui_dc_client_fill_rect,
+	rtgui_dc_client_blit,
 
-	rtgui_dc_hw_fini,
+	rtgui_dc_client_set_gc,
+	rtgui_dc_client_get_gc,
+
+	rtgui_dc_client_get_visible,
+	rtgui_dc_client_get_rect,
+
+	rtgui_dc_client_fini,
 };
+
+void rtgui_dc_client_init(rtgui_widget_t* owner)
+{
+	struct rtgui_dc* dc;
+
+	RT_ASSERT(owner != RT_NULL);
+
+	dc = RTGUI_WIDGET_DC(owner);
+	dc->type = RTGUI_DC_CLIENT;
+	dc->engine = &dc_client_engine;
+}
 
 extern struct rt_mutex cursor_mutex;
 extern void rtgui_mouse_show_cursor(void);
 extern void rtgui_mouse_hide_cursor(void);
-struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
+struct rtgui_dc* rtgui_dc_client_create(rtgui_widget_t* owner)
 {
 	struct rtgui_dc* dc;
 	rtgui_widget_t* widget;
@@ -130,11 +152,11 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 	return dc;
 }
 
-static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
+static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc)
 {
 	rtgui_widget_t* owner;
 	
-	if (dc == RT_NULL || dc->type != RTGUI_DC_HW) return RT_FALSE;
+	if (dc == RT_NULL || dc->type != RTGUI_DC_CLIENT) return RT_FALSE;
 
 	/* get owner */
 	owner = RTGUI_CONTAINER_OF(dc, struct rtgui_widget, dc_type);
@@ -201,7 +223,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 /*
  * draw a logic point on device
  */
-static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
+static void rtgui_dc_client_draw_point(struct rtgui_dc* self, int x, int y)
 {
 	rtgui_rect_t rect;
 	rtgui_widget_t *owner;
@@ -211,6 +233,7 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	/* get owner */
 	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
 	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+
 
 	x = x + owner->extent.x1;
 	y = y + owner->extent.y1;
@@ -222,7 +245,7 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	}
 }
 
-static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
+static void rtgui_dc_client_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
 {
 	rtgui_rect_t rect;
 	rtgui_widget_t *owner;
@@ -246,7 +269,7 @@ static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rt
 /*
  * draw a logic vertical line on device
  */
-static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
+static void rtgui_dc_client_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 {
 	register rt_base_t index;
 	rtgui_widget_t *owner;
@@ -301,7 +324,7 @@ static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 /*
  * draw a logic horizontal line on device
  */
-static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
+static void rtgui_dc_client_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 {
 	register rt_base_t index;
 	rtgui_widget_t *owner;
@@ -354,7 +377,7 @@ static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 	}
 }
 
-static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
+static void rtgui_dc_client_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
 {
 	rtgui_color_t foreground;
 	register rt_base_t index;
@@ -375,20 +398,20 @@ static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rec
 	/* fill rect */
 	for (index = rect->y1; index < rect->y2; index ++)
 	{
-		rtgui_dc_hw_draw_hline(self, rect->x1, rect->x2, index);
+		rtgui_dc_client_draw_hline(self, rect->x1, rect->x2, index);
 	}
 
 	/* restore foreground color */
 	owner->gc.foreground = foreground;
 }
 
-static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
+static void rtgui_dc_client_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	/* not blit in hardware dc */
 	return ;
 }
 
-static void rtgui_dc_hw_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
+static void rtgui_dc_client_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 {
 	rtgui_widget_t *owner;
 
@@ -399,7 +422,7 @@ static void rtgui_dc_hw_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 	owner->gc = *gc;
 }
 
-static rtgui_gc_t* rtgui_dc_hw_get_gc(struct rtgui_dc* self)
+static rtgui_gc_t* rtgui_dc_client_get_gc(struct rtgui_dc* self)
 {
 	rtgui_widget_t *owner;
 
@@ -415,7 +438,7 @@ static rtgui_gc_t* rtgui_dc_hw_get_gc(struct rtgui_dc* self)
 	return &(owner->gc);
 }
 
-static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* self)
+static rt_bool_t rtgui_dc_client_get_visible(struct rtgui_dc* self)
 {
 	rtgui_widget_t *owner;
 
@@ -428,7 +451,7 @@ static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* self)
 	return RT_TRUE;
 }
 
-static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
+static void rtgui_dc_client_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 {
 	rtgui_widget_t *owner;
 
@@ -439,7 +462,7 @@ static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	rtgui_widget_get_rect(owner, rect);
 }
 
-void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int x1, int x2, int y)
+void rtgui_dc_client_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int x1, int x2, int y)
 {
 	register rt_base_t index;
 	rtgui_widget_t *owner;

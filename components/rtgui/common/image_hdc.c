@@ -155,7 +155,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	hdc = (struct rtgui_image_hdc*) image->data;
 	RT_ASSERT(hdc != RT_NULL);
 
-	if (dc->type != RTGUI_DC_HW) return;
+	if ((dc->type != RTGUI_DC_HW) || (dc->type != RTGUI_DC_CLIENT)) return;
 
 	/* the minimum rect */
     if (image->w < rtgui_rect_width(*dst_rect)) w = image->w;
@@ -172,7 +172,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 		for (y = 0; y < h; y ++)
 		{
-			rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
+			rtgui_dc_client_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
 			ptr += hdc->pitch;
 		}
     }
@@ -191,7 +191,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			if (rtgui_filerw_read(hdc->filerw, ptr, 1, hdc->pitch) != hdc->pitch)
 				break; /* read data failed */
 
-			rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
+			rtgui_dc_client_draw_raw_hline(dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
 		}
 
 		rtgui_free(ptr);
@@ -207,7 +207,7 @@ static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* d
 	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
 
 	/* this dc is not visible */
-	if (rtgui_dc_get_visible(dc) != RT_TRUE || (dc->type != RTGUI_DC_HW)) return;
+	if (rtgui_dc_get_visible(dc) != RT_TRUE || (dc->type != RTGUI_DC_HW) || (dc->type != RTGUI_DC_CLIENT)) return;
 
 	hdc = (struct rtgui_image_hdcmm*) image;
 	RT_ASSERT(hdc != RT_NULL);
@@ -224,7 +224,7 @@ static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* d
 
 	for (y = 0; y < h; y ++)
 	{
-		rtgui_dc_hw_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
+		rtgui_dc_client_draw_raw_hline(dc, ptr, dst_rect->x1, dst_rect->x1 + w, dst_rect->y1 + y);
 		ptr += hdc->pitch;
 	}
 }
