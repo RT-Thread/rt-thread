@@ -34,12 +34,10 @@ void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 /* 创建一个演示视图，需提供父workbench和演示用的标题 */
 rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 {
-	char view_name[32];
 	struct rtgui_view* view;
 
 	/* 设置视图的名称 */
-	rt_sprintf(view_name, "view %d", demo_view_number + 1);
-	view = rtgui_view_create(view_name);
+	view = rtgui_view_create(title);
 	if (view == RT_NULL) return RT_NULL;
 
 	/* 创建成功后，添加到数组中 */
