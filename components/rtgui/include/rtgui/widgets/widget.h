@@ -188,6 +188,9 @@ rtgui_widget_t* rtgui_widget_get_next_sibling(rtgui_widget_t* widget);
 /* get the prev sibling of widget */
 rtgui_widget_t* rtgui_widget_get_prev_sibling(rtgui_widget_t* widget);
 
+/* dump widget information */
+void rtgui_widget_dump(rtgui_widget_t* widget);
+
 #ifdef __cplusplus
 }
 #endif

@@ -250,37 +250,31 @@ void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr 
  */
 void rtgui_widget_focus(rtgui_widget_t *widget)
 {
-	rtgui_widget_t *focused;
 	rtgui_container_t *parent;
 
 	RT_ASSERT(widget != RT_NULL);
 
-	if (!widget->parent || !RTGUI_WIDGET_IS_FOCUSABLE(widget) || !RTGUI_WIDGET_IS_ENABLE(widget))
+	if (!widget->parent || !widget->toplevel) return;
+	if (!RTGUI_WIDGET_IS_FOCUSABLE(widget) || !RTGUI_WIDGET_IS_ENABLE(widget))
 		return;
 
 	/* set widget as focused */
 	widget->flag |= RTGUI_WIDGET_FLAG_FOCUS;
 
-	/* get parent container */
-	parent = RTGUI_CONTAINER(widget->parent);
+	/* get root parent container and old focused widget */
+	parent = RTGUI_CONTAINER(widget->toplevel);
+	if (parent->focused == widget) return ; /* it's the same focused widget */
 
-	/* get old focused widget */
-	focused = parent->focused;
-	if (focused == widget) return ; /* it's the same focused widget */
-
-	if (focused != RT_NULL)
-		rtgui_widget_unfocus(focused);
+	/* unfocused the old widget */
+	if (parent->focused != RT_NULL)	rtgui_widget_unfocus(parent->focused);
 
 	/* set widget as focused widget in parent link */
-	parent->focused = widget;
-	while (RTGUI_WIDGET(parent)->parent != RT_NULL)
+	parent = RTGUI_CONTAINER(widget->parent);
+	do 
 	{
-		parent = RTGUI_CONTAINER(RTGUI_WIDGET(parent)->parent);
 		parent->focused = widget;
-
-		/* if the parent is hide, break it */
-		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(parent))) break;
-	}
+		parent = RTGUI_CONTAINER(RTGUI_WIDGET(parent)->parent);
+	} while ((parent != RT_NULL) && !RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(parent)));
 
 	/* invoke on focus in call back */
 	if (widget->on_focus_in != RT_NULL)
@@ -559,3 +553,26 @@ rtgui_widget_t* rtgui_widget_get_prev_sibling(rtgui_widget_t* widget)
 
 	return sibling;
 }
+
+#ifdef RTGUI_WIDGET_DEBUG
+#include <rtgui/widgets/label.h>
+#include <rtgui/widgets/button.h>
+void rtgui_widget_dump(rtgui_widget_t* widget)
+{
+	struct rtgui_object *obj;
+
+	obj = RTGUI_OBJECT(widget);
+	rt_kprintf("widget type: %s ", obj->type->name);
+
+	if (RTGUI_IS_VIEW(widget) == RT_TRUE)
+		rt_kprintf(":%s ", RTGUI_VIEW(widget)->title);
+	if (RTGUI_IS_WIN(widget) == RT_TRUE)
+		rt_kprintf(":%s ", RTGUI_WIN(widget)->title);
+	if ((RTGUI_IS_LABEL(widget) == RT_TRUE) || (RTGUI_IS_BUTTON(widget) == RT_TRUE))
+		rt_kprintf(":%s ", RTGUI_LABEL(widget)->text);
+
+	rt_kprintf("extent(%d, %d) - (%d, %d)\n", widget->extent.x1, 
+		widget->extent.y1, widget->extent.x2, widget->extent.y2);
+	// rtgui_region_dump(&(widget->clip));
+}
+#endif
