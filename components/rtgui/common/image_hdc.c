@@ -155,7 +155,7 @@ static void rtgui_image_hdc_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	hdc = (struct rtgui_image_hdc*) image->data;
 	RT_ASSERT(hdc != RT_NULL);
 
-	if ((dc->type != RTGUI_DC_HW) || (dc->type != RTGUI_DC_CLIENT)) return;
+	if ((dc->type != RTGUI_DC_HW) && (dc->type != RTGUI_DC_CLIENT)) return;
 
 	/* the minimum rect */
     if (image->w < rtgui_rect_width(*dst_rect)) w = image->w;
@@ -207,7 +207,7 @@ static void rtgui_image_hdcmm_blit(struct rtgui_image* image, struct rtgui_dc* d
 	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
 
 	/* this dc is not visible */
-	if (rtgui_dc_get_visible(dc) != RT_TRUE || (dc->type != RTGUI_DC_HW) || (dc->type != RTGUI_DC_CLIENT)) return;
+	if (rtgui_dc_get_visible(dc) != RT_TRUE || ((dc->type != RTGUI_DC_HW) && (dc->type != RTGUI_DC_CLIENT))) return;
 
 	hdc = (struct rtgui_image_hdcmm*) image;
 	RT_ASSERT(hdc != RT_NULL);

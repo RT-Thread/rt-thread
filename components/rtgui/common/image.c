@@ -98,6 +98,7 @@ struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* f
 			return RT_NULL;
 		}
 
+		image->palette = RT_NULL;
 		if (engine->image_load(image, filerw, load) != RT_TRUE)
 		{
 			/* close filerw context */
@@ -146,6 +147,7 @@ struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8
 			return RT_NULL;
 		}
 
+		image->palette = RT_NULL;
 		if (engine->image_load(image, filerw, load) != RT_TRUE)
 		{
 			/* close filerw context */
@@ -169,6 +171,8 @@ void rtgui_image_destroy(struct rtgui_image* image)
 	RT_ASSERT(image != RT_NULL);
 
 	image->engine->image_unload(image);
+	if (image->palette != RT_NULL)
+		rtgui_free(image->palette);
 	rtgui_free(image);
 }
 
@@ -194,3 +198,16 @@ void rtgui_image_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtg
 	}
 }
 
+struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors)
+{
+	struct rtgui_image_palette* palette = RT_NULL;
+
+	if (ncolors > 0)
+	{
+		palette = (struct rtgui_image_palette*) rtgui_malloc(sizeof(struct rtgui_image_palette) + 
+			sizeof(rtgui_color_t) * ncolors);
+		if (palette != RT_NULL) palette->colors = (rtgui_color_t*)(palette + 1);
+	}
+
+	return palette;
+}
