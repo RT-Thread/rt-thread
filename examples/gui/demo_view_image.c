@@ -36,11 +36,18 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 
 		/* 设置文件路径的标签 */
 		rtgui_filelist_view_get_fullpath(view, path, sizeof(path));
-		if (image != RT_NULL) rtgui_image_destroy(image);
+		if (image != RT_NULL) 
+		{
+			rtgui_image_destroy(image);
+			image = RT_NULL;
+		}
 
 		rt_memset(image_type, 0, sizeof(image_type));
 
 		/* 获得图像的类型 */
+		if (rt_strstr(path, ".bmp") != RT_NULL ||
+			rt_strstr(path, ".BMP") != RT_NULL)
+			strcat(image_type, "bmp");
 		if (rt_strstr(path, ".png") != RT_NULL ||
 			rt_strstr(path, ".PNG") != RT_NULL)
 			strcat(image_type, "png");

@@ -1,8 +1,9 @@
 #include <rtgui/rtgui.h>
+#include <rtgui/driver.h>
 #include <rtgui/rtgui_server.h>
 
 /*
- * a single panel for 240x320
+ * a single panel
  */
 void panel_init(void)
 {
@@ -11,8 +12,8 @@ void panel_init(void)
     /* register main panel */
     rect.x1 = 0;
     rect.y1 = 0;
-    rect.x2 = 240;
-    rect.y2 = 320;
+    rect.x2 = rtgui_graphic_driver_get_default()->width;
+    rect.y2 = rtgui_graphic_driver_get_default()->height;
     rtgui_panel_register("main", &rect);
     rtgui_panel_set_default_focused("main");
 }
