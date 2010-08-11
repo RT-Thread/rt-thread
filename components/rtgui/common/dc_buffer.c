@@ -13,6 +13,7 @@
  */
 #include <rtgui/rtgui.h>
 #include <rtgui/dc.h>
+#include <rtgui/blit.h>
 #include <rtgui/dc_hw.h>
 #include <rtgui/color.h>
 #include <rtgui/rtgui_system.h>
@@ -207,45 +208,6 @@ static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* self, struct rtgui_rect*
 	}
 }
 
-/* rtgui_color to RGB323 */
-rt_inline void rtgui_blit_line_1(rtgui_color_t* color, rt_uint8_t* dest, int line)
-{
-	struct _color {rt_uint8_t r, g, b, a;} *c;
-
-	c = (struct _color*)color;
-	while (line-- > 0)
-	{
-		*dest = (c->r & 0xe0) | (c->g & 0xc0) >> 3 | (c->b & 0xe0) >> 5 ;
-
-		c ++;
-		dest ++;
-	}
-}
-
-/* rtgui_color to RGB565 */
-rt_inline void rtgui_blit_line_2(rtgui_color_t* color, rt_uint8_t* dest, int line)
-{
-	struct _color {rt_uint8_t r, g, b, a;} *c;
-	rt_uint16_t* ptr;
-
-	c = (struct _color*)color;
-	ptr = (rt_uint16_t*)dest;
-
-	while (line-- > 0)
-	{
-		*ptr = ((c->r & 0xf8) << 8) | ((c->g & 0xfc) << 3) | (c->b >> 3);
-
-		c ++;
-		ptr ++;
-	}
-}
-
-/* rtgui_color to RGB888 */
-rt_inline void rtgui_blit_line_4(rtgui_color_t* color, rt_uint8_t* dest, int line)
-{
-	rt_memcpy(dest, color, line * 4);
-}
-
 /* blit a dc to a hardware dc */
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
@@ -259,7 +221,9 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		rtgui_color_t* pixel;
 		rt_uint8_t *line_ptr;
 		rt_uint16_t rect_width, rect_height, index;
-		void (*blit_line)(rtgui_color_t* color, rt_uint8_t* dest, int line);
+		rtgui_blit_line_func blit_line;
+
+		if (rtgui_dc_get_visible(hw) == RT_FALSE) return;
 
 		/* calculate correct width and height */
 		if (rtgui_rect_width(*rect) > (dc->width - dc_point->x))
@@ -273,23 +237,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 			rect_height = rtgui_rect_height(*rect);
 
 		/* get blit line function */
-		switch (rtgui_graphic_driver_get_default()->byte_per_pixel)
-		{
-		case 1:
-			blit_line = rtgui_blit_line_1;
-			break;
-		case 2:
-			blit_line = rtgui_blit_line_2;
-			break;
-
-		case 4:
-			blit_line = rtgui_blit_line_4;
-			break;
-
-		default:
-			/* not support byte per pixel */
-			return;
-		}
+		blit_line = rtgui_blit_line_get(rtgui_graphic_driver_get_default()->byte_per_pixel, 4);
 
 		/* create line buffer */
 		line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * rtgui_graphic_driver_get_default()->byte_per_pixel);
@@ -297,11 +245,14 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		/* prepare pixel line */
 		pixel = (rtgui_color_t*)(dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t));
 
+		/* calculate pitch */
+		rect_width = rect_width * rtgui_graphic_driver_get_default()->byte_per_pixel;
+
 		/* draw each line */
 		for (index = rect->y1; index < rect->y1 + rect_height; index ++)
 		{
 			/* blit on line buffer */
-			blit_line(pixel, line_ptr, rect_width);
+			blit_line(line_ptr, (rt_uint8_t*)pixel, rect_width);
 			pixel += dc->width;
 
 			/* draw on hardware dc */
@@ -312,7 +263,6 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		rtgui_free(line_ptr);
 	}
 }
-
 
 static void rtgui_dc_buffer_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 {

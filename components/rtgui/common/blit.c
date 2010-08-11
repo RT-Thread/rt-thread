@@ -27,18 +27,16 @@ static void rtgui_blit_line_3_1(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int li
 /* 4 bpp to 1 bpp */
 static void rtgui_blit_line_4_1(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 {
-	line = line / 4;
-	while (line)
-	{
-		*dst_ptr = (rt_uint8_t)(((*src_ptr & 0x00E00000)>>16)|
-			((*(src_ptr + 1) & 0x0000E000)>>11) |
-			((*(src_ptr + 2) & 0x000000C0)>>6));
+	struct _color {rt_uint8_t r, g, b, a;} *c;
 
-		src_ptr += 4;
+	c = (struct _color*)src_ptr;
+	while (line-- > 0)
+	{
+		*dst_ptr = (c->r & 0xe0) | (c->g & 0xc0) >> 3 | (c->b & 0xe0) >> 5 ;
+
+		c ++;
 		dst_ptr ++;
-		line --;
 	}
-	return;
 }
 
 /* 1 bpp to 2 bpp */
@@ -72,22 +70,20 @@ static void rtgui_blit_line_3_2(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int li
 /* 4 bpp to 2 bpp */
 static void rtgui_blit_line_4_2(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 {
-	rt_uint16_t* dst;
+	struct _color {rt_uint8_t r, g, b, a;} *c;
+	rt_uint16_t* ptr;
 
-	dst = (rt_uint16_t*)dst_ptr;
+	c = (struct _color*)src_ptr;
+	ptr = (rt_uint16_t*)dst_ptr;
+
 	line = line / 4;
-	while (line)
+	while (line-- > 0)
 	{
-		*dst = (((*(src_ptr + 1) << 8) & 0x0000F800) | 
-			((*(src_ptr + 1) << 3) & 0x000007E0)     | 
-			((*src_ptr >> 3) & 0x0000001F)); 
+		*ptr = ((c->r & 0xf8) << 8) | ((c->g & 0xfc) << 3) | (c->b >> 3);
 
-		src_ptr += 4; /* skip alpha */
-		dst ++;
-		line --;
+		c ++;
+		ptr ++;
 	}
-
-	return;
 }
 
 static void rtgui_blit_line_1_3(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
@@ -253,11 +249,16 @@ void rtgui_blit_line_direct(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 	rt_memcpy(dst_ptr, src_ptr, line);
 }
 
+/* convert 4bpp to 3bpp */
 static void rtgui_blit_line_4_3(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 {
 	line = line / 4;
 	while (line)
 	{
+		*dst_ptr++ = *src_ptr++;
+		*dst_ptr++ = *src_ptr++;
+		*dst_ptr++ = *src_ptr++;
+		src_ptr ++;
 		line --;
 	}
 }
@@ -270,9 +271,18 @@ static void rtgui_blit_line_2_4(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int li
 {
 }
 
+/* convert 3bpp to 4bpp */
 static void rtgui_blit_line_3_4(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 {
 	line = line / 4;
+	while (line)
+	{
+		*dst_ptr++ = *src_ptr++;
+		*dst_ptr++ = *src_ptr++;
+		*dst_ptr++ = *src_ptr++;
+		*dst_ptr++ = 0;
+		line --;
+	}
 }
 
 static const rtgui_blit_line_func _blit_table[5][5] = 
@@ -291,8 +301,8 @@ static const rtgui_blit_line_func _blit_table[5][5] =
 
 const rtgui_blit_line_func rtgui_blit_line_get(int dst_bpp, int src_bpp)
 {
-	RT_ASSERT(dst_bpp>1 && dst_bpp < 5);
-	RT_ASSERT(src_bpp>1 && src_bpp < 5);
+	RT_ASSERT(dst_bpp>0 && dst_bpp < 5);
+	RT_ASSERT(src_bpp>0 && src_bpp < 5);
 
 	return _blit_table[dst_bpp][src_bpp];
 }
