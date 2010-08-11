@@ -18,6 +18,8 @@
 #include <rtgui/color.h>
 #include <rtgui/rtgui_system.h>
 
+#define hw_driver				(rtgui_graphic_driver_get_default())
+
 struct rtgui_dc_buffer
 {
 	struct rtgui_dc parent;
@@ -215,15 +217,13 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 	struct rtgui_dc* hw = dest;
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
+	if (rtgui_dc_get_visible(dest) == RT_FALSE) return;
 
 	if ((dest->type == RTGUI_DC_HW) || (dest->type == RTGUI_DC_CLIENT))
 	{
-		rtgui_color_t* pixel;
-		rt_uint8_t *line_ptr;
-		rt_uint16_t rect_width, rect_height, index;
+		rt_uint8_t *line_ptr, *pixels;
+		rt_uint16_t rect_width, rect_height, index, pitch;
 		rtgui_blit_line_func blit_line;
-
-		if (rtgui_dc_get_visible(hw) == RT_FALSE) return;
 
 		/* calculate correct width and height */
 		if (rtgui_rect_width(*rect) > (dc->width - dc_point->x))
@@ -236,31 +236,41 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		else
 			rect_height = rtgui_rect_height(*rect);
 
-		/* get blit line function */
-		blit_line = rtgui_blit_line_get(rtgui_graphic_driver_get_default()->byte_per_pixel, 4);
-
-		/* create line buffer */
-		line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * rtgui_graphic_driver_get_default()->byte_per_pixel);
-
 		/* prepare pixel line */
-		pixel = (rtgui_color_t*)(dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t));
+		pixels = dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t);
 
-		/* calculate pitch */
-		rect_width = rect_width * rtgui_graphic_driver_get_default()->byte_per_pixel;
-
-		/* draw each line */
-		for (index = rect->y1; index < rect->y1 + rect_height; index ++)
+		if (hw_driver->byte_per_pixel == sizeof(rtgui_color_t))
 		{
-			/* blit on line buffer */
-			blit_line(line_ptr, (rt_uint8_t*)pixel, rect_width);
-			pixel += dc->width;
-
-			/* draw on hardware dc */
-			rtgui_dc_client_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
+			/* it's the same byte per pixel, draw it directly */
+			for (index = rect->y1; index < rect->y1 + rect_height; index++)
+			{
+				rtgui_dc_client_draw_raw_hline(hw, pixels, rect->x1, rect->x1 + rect_width, index);
+				pixels += dc->width * sizeof(rtgui_color_t);
+			}
 		}
+		else
+		{
+			/* get blit line function */
+			blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel, 4);
+			/* calculate pitch */
+			pitch = rect_width * sizeof(rtgui_color_t);
+			/* create line buffer */
+			line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * hw_driver->byte_per_pixel);
 
-		/* release line buffer */
-		rtgui_free(line_ptr);
+			/* draw each line */
+			for (index = rect->y1; index < rect->y1 + rect_height; index ++)
+			{
+				/* blit on line buffer */
+				blit_line(line_ptr, (rt_uint8_t*)pixels, pitch);
+				pixels += dc->width * sizeof(rtgui_color_t);
+
+				/* draw on hardware dc */
+				rtgui_dc_client_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
+			}
+
+			/* release line buffer */
+			rtgui_free(line_ptr);
+		}
 	}
 }
 
