@@ -215,11 +215,8 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	x = x + owner->extent.x1;
 	y = y + owner->extent.y1;
 
-	if (rtgui_region_contains_point(&(owner->clip), x, y, &rect) == RT_EOK)
-	{
-		/* draw this point */
-		hw_driver->set_pixel(&(owner->gc.foreground), x, y);
-	}
+	/* draw this point */
+	hw_driver->set_pixel(&(owner->gc.foreground), x, y);
 }
 
 static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
@@ -236,11 +233,8 @@ static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rt
 	x = x + owner->extent.x1;
 	y = y + owner->extent.y1;
 
-	if (rtgui_region_contains_point(&(owner->clip), x, y, &rect) == RT_EOK)
-	{
-		/* draw this point */
-		hw_driver->set_pixel(&color, x, y);
-	}
+	/* draw this point */
+	hw_driver->set_pixel(&color, x, y);
 }
 
 /*
@@ -261,41 +255,8 @@ static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 	y1 = y1 + owner->extent.y1;
 	y2 = y2 + owner->extent.y1;
 
-	if (owner->clip.data == RT_NULL)
-	{
-		rtgui_rect_t* prect;
-
-		prect = &(owner->clip.extents);
-
-		/* calculate vline intersect */
-		if (prect->x1 > x   || prect->x2 <= x) return;
-		if (prect->y2 <= y1 || prect->y1 > y2) return;
-
-		if (prect->y1 > y1) y1 = prect->y1;
-		if (prect->y2 < y2) y2 = prect->y2;
-
-		/* draw vline */
-		hw_driver->draw_vline(&(owner->gc.foreground), x, y1, y2);
-	}
-	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
-	{
-		rtgui_rect_t* prect;
-		register rt_base_t draw_y1, draw_y2;
-
-		prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
-		draw_y1 = y1;
-		draw_y2 = y2;
-
-		/* calculate vline clip */
-		if (prect->x1 > x   || prect->x2 <= x) continue;
-		if (prect->y2 <= y1 || prect->y1 > y2) continue;
-
-		if (prect->y1 > y1) draw_y1 = prect->y1;
-		if (prect->y2 < y2) draw_y2 = prect->y2;
-
-		/* draw vline */
-		hw_driver->draw_vline(&(owner->gc.foreground), x, draw_y1, draw_y2);
-	}
+	/* draw vline */
+	hw_driver->draw_vline(&(owner->gc.foreground), x, y1, y2);
 }
 
 /*
@@ -317,69 +278,33 @@ static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 	x2 = x2 + owner->extent.x1;
 	y  = y + owner->extent.y1;
 
-	if (owner->clip.data == RT_NULL)
-	{
-		rtgui_rect_t* prect;
-
-		prect = &(owner->clip.extents);
-
-		/* calculate vline intersect */
-		if (prect->y1 > y  || prect->y2 <= y ) return;
-		if (prect->x2 <= x1 || prect->x1 > x2) return;
-
-		if (prect->x1 > x1) x1 = prect->x1;
-		if (prect->x2 < x2) x2 = prect->x2;
-
-		/* draw hline */
-		hw_driver->draw_hline(&(owner->gc.foreground), x1, x2, y);
-	}
-	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
-	{
-		rtgui_rect_t* prect;
-		register rt_base_t draw_x1, draw_x2;
-
-		prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
-		draw_x1 = x1;
-		draw_x2 = x2;
-
-		/* calculate hline clip */
-		if (prect->y1 > y  || prect->y2 <= y ) continue;
-		if (prect->x2 <= x1 || prect->x1 > x2) continue;
-
-		if (prect->x1 > x1) draw_x1 = prect->x1;
-		if (prect->x2 < x2) draw_x2 = prect->x2;
-
-		/* draw hline */
-		hw_driver->draw_hline(&(owner->gc.foreground), draw_x1, draw_x2, y);
-	}
+	/* draw hline */
+	hw_driver->draw_hline(&(owner->gc.foreground), x1, x2, y);
 }
 
 static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
 {
-	rtgui_color_t foreground;
-	register rt_base_t index;
+	rtgui_color_t color;
+	register rt_base_t index, x1, x2;
 	rtgui_widget_t *owner;
 
 	if (self == RT_NULL) return;
-	
+
 	/* get owner */
 	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
 	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
 
-	/* save foreground color */
-	foreground = owner->gc.foreground;
-
-	/* set background color as foreground color */
-	owner->gc.foreground = owner->gc.background;
+	/* get background color */
+	color = owner->gc.background;
+	/* convert logic to device */
+	x1 = rect->x1 + owner->extent.x1;
+	x2 = rect->x2 + owner->extent.x1;
 
 	/* fill rect */
-	for (index = rect->y1; index < rect->y2; index ++)
+	for (index = owner->extent.y1 + rect->y1; index < owner->extent.y1 + rect->y2; index ++)
 	{
-		rtgui_dc_hw_draw_hline(self, rect->x1, rect->x2, index);
+		hw_driver->draw_hline(&color, x1, x2, index);
 	}
-
-	/* restore foreground color */
-	owner->gc.foreground = foreground;
 }
 
 static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
@@ -455,40 +380,7 @@ void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int 
 	x2 = x2 + owner->extent.x1;
 	y  = y + owner->extent.y1;
 
-	if (owner->clip.data == RT_NULL)
-	{
-		rtgui_rect_t* prect;
-
-		prect = &(owner->clip.extents);
-
-		/* calculate hline intersect */
-		if (prect->y1 > y  || prect->y2 <= y ) return;
-		if (prect->x2 <= x1 || prect->x1 > x2) return;
-
-		if (prect->x1 > x1) x1 = prect->x1;
-		if (prect->x2 < x2) x2 = prect->x2;
-
-		/* draw raw hline */
-		hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
-	}
-	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
-	{
-		rtgui_rect_t* prect;
-		register rt_base_t draw_x1, draw_x2;
-
-		prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
-		draw_x1 = x1;
-		draw_x2 = x2;
-
-		/* calculate hline clip */
-		if (prect->y1 > y  || prect->y2 <= y ) continue;
-		if (prect->x2 <= x1 || prect->x1 > x2) continue;
-
-		if (prect->x1 > x1) draw_x1 = prect->x1;
-		if (prect->x2 < x2) draw_x2 = prect->x2;
-
-		/* draw raw hline */
-		hw_driver->draw_raw_hline(raw_ptr + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
-	}
+	/* draw raw hline */
+	hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
 }
 

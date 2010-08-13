@@ -13,7 +13,9 @@
  * 2010-08-09     Bernard      rename hardware dc to client dc
  */
 #include <rtgui/dc.h>
+#include <rtgui/dc_hw.h>
 #include <rtgui/dc_client.h>
+
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
@@ -39,12 +41,18 @@ static void rtgui_dc_client_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
 struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner)
 {
+	if (rtgui_region_is_flat(&owner->clip))
+	{
+		/* use hardware DC */
+		return rtgui_dc_hw_create(owner);
+	}
+
 	return rtgui_dc_client_create(owner);
 }
 
 void rtgui_dc_end_drawing(struct rtgui_dc* dc)
 {
-	rtgui_dc_client_fini(dc);
+	dc->engine->fini(dc);
 }
 
 const struct rtgui_dc_engine dc_client_engine = 

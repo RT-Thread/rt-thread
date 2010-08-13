@@ -82,6 +82,7 @@ rtgui_region_status_t rtgui_region_validate (rtgui_region_t *badreg, int *pOverl
 void rtgui_region_reset(rtgui_region_t *region, rtgui_rect_t* rect);
 void rtgui_region_empty (rtgui_region_t *region);
 void rtgui_region_dump(rtgui_region_t* region);
+int rtgui_region_is_flat(rtgui_region_t* region);
 
 /* rect functions */
 extern rtgui_rect_t rtgui_empty_rect;

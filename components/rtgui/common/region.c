@@ -2128,6 +2128,17 @@ void rtgui_region_dump(rtgui_region_t* region)
 	}
 }
 
+
+int rtgui_region_is_flat(rtgui_region_t* region)
+{
+	int num;
+
+	num = PIXREGION_NUM_RECTS(region);
+	if (num == 1) return RT_EOK;
+
+	return -RT_ERROR;
+}
+
 void rtgui_rect_moveto(rtgui_rect_t *rect, int x, int y)
 {
 	rect->x1 += x;
