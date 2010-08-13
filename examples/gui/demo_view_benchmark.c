@@ -3,6 +3,33 @@
 #include <rtgui/widgets/view.h>
 #include "demo_view.h"
 
+#define RAND(x1, x2) (rand() % ((x2 - x1) + x1))
+
+void _onidle(rtgui_widget_t* widget, rtgui_event_t *event)
+{
+	rtgui_color_t color;
+	rtgui_rect_t rect, draw_rect;
+
+	/* 获得控件所属的DC */
+	dc = rtgui_dc_begin_drawing(widget);
+	if (dc == RT_NULL) return ;
+
+	demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+	draw_rect.x1 = RAND(rect.x1, rect.x2);
+	draw_rect.y1 = RAND(rect.y1, rect.y2);
+	draw_rect.x2 = RAND(draw_rect.x1, rect.x2);
+	draw_rect.y2 = RAND(draw_rect.y1, rect.y2);
+
+	RTGUI_RGB_R(color) = rand() % 255;
+	RTGUI_RGB_G(color) = rand() % 255;
+	RTGUI_RGB_B(color) = rand() % 255;
+
+	rtgui_dc_fill_rect(dc, &rect);
+
+	/* 绘图完成 */
+	rtgui_dc_end_drawing(dc);
+}
+
 rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 {
 	if (event->type == RTGUI_EVENT_PAINT)
@@ -24,9 +51,6 @@ rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 擦除所有 */
 		rtgui_dc_fill_rect(dc, &rect);
 
-		/* 绘图 */
-		rtgui_dc_draw_text(dc, "飞线乱飞", &text_rect);
-
 		/* 绘图完成 */
 		rtgui_dc_end_drawing(dc);
 	}
@@ -43,9 +67,12 @@ rtgui_view_t *demo_view_benchmark(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 
+	srand(100);
 	view = demo_view(workbench, "绘图测试");
 	if (view != RT_NULL)
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), benchmark_event_handler);
+
+	rtgui_thread_set_onidle(_onidle);
 
 	return view;
 }
