@@ -51,6 +51,7 @@ static void workbench_entry(void* parameter)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(workbench), demo_workbench_event_handler);
 
 	/* 初始化各个例子的视图 */
+	demo_view_benchmark(workbench);
 	demo_view_dc(workbench);
 #ifdef RTGUI_USING_TTF
 	demo_view_ttf(workbench);
