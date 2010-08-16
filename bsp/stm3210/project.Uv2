@@ -74,11 +74,10 @@ File 4,1,<..\..\components\finsh\finsh_var.c><finsh_var.c>
 File 4,1,<..\..\components\finsh\finsh_vm.c><finsh_vm.c>
 File 4,1,<..\..\components\finsh\shell.c><shell.c>
 File 4,1,<..\..\components\finsh\symbol.c><symbol.c>
+File 5,1,<..\..\components\dfs\src\dfs.c><dfs.c>
 File 5,1,<..\..\components\dfs\src\dfs_fs.c><dfs_fs.c>
-File 5,1,<..\..\components\dfs\src\dfs_init.c><dfs_init.c>
+File 5,1,<..\..\components\dfs\src\dfs_file.c><dfs_file.c>
 File 5,1,<..\..\components\dfs\src\dfs_posix.c><dfs_posix.c>
-File 5,1,<..\..\components\dfs\src\dfs_raw.c><dfs_raw.c>
-File 5,1,<..\..\components\dfs\src\dfs_util.c><dfs_util.c>
 File 5,1,<..\..\components\dfs\filesystems\elmfat\dfs_elm.c><dfs_elm.c>
 File 5,1,<..\..\components\dfs\filesystems\elmfat\ff.c><ff.c>
 File 6,1,<..\..\components\net\lwip\src\api\api_lib.c><api_lib.c>
@@ -146,6 +145,8 @@ File 7,1,<.\sdcard.c><sdcard.c>
 File 7,1,<.\enc28j60.c><enc28j60.c>
 
 
+
+
 Options 1,0,0  // Target 'RT-Thread STM32'
  Device (STM32F103ZE)
  Vendor (STMicroelectronics)
@@ -178,7 +179,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\obj\)
+ LstDir (.\)
  HexSel=1
  MG32K=0
  TGMORE=0
@@ -229,7 +230,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103ZE)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103ZE)
-  OPTDBG 49150,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+  OPTDBG 49142,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,6,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
  FLASH3 ("" ())
