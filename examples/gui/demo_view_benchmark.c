@@ -1,32 +1,35 @@
 #include <rtgui/dc.h>
+#include <rtgui/dc_hw.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
 #include "demo_view.h"
 
-#define RAND(x1, x2) (rand() % ((x2 - x1) + x1))
+#define RAND(x1, x2) ((rand() % (x2 - x1)) + x1)
 
+static rtgui_view_t* view = RT_NULL;
 void _onidle(rtgui_widget_t* widget, rtgui_event_t *event)
 {
 	rtgui_color_t color;
 	rtgui_rect_t rect, draw_rect;
+	struct rtgui_dc *dc;
 
-	/* è·å¾—æ§ä»¶æ‰€å±çš„DC */
-	dc = rtgui_dc_begin_drawing(widget);
+	/* »ñµÃ¿Ø¼şËùÊôµÄDC */
+	// dc = rtgui_dc_hw_create(RTGUI_WIDGET(view)); 
+	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(view));
 	if (dc == RT_NULL) return ;
 
-	demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+	demo_view_get_rect(RTGUI_VIEW(view), &rect);
 	draw_rect.x1 = RAND(rect.x1, rect.x2);
 	draw_rect.y1 = RAND(rect.y1, rect.y2);
 	draw_rect.x2 = RAND(draw_rect.x1, rect.x2);
 	draw_rect.y2 = RAND(draw_rect.y1, rect.y2);
 
-	RTGUI_RGB_R(color) = rand() % 255;
-	RTGUI_RGB_G(color) = rand() % 255;
-	RTGUI_RGB_B(color) = rand() % 255;
+	color = RTGUI_RGB(rand() % 255, rand() % 255, rand() % 255);
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = color;
 
-	rtgui_dc_fill_rect(dc, &rect);
+	rtgui_dc_fill_rect(dc, &draw_rect);
 
-	/* ç»˜å›¾å®Œæˆ */
+	/* »æÍ¼Íê³É */
 	rtgui_dc_end_drawing(dc);
 }
 
@@ -37,26 +40,26 @@ rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		struct rtgui_dc* dc;
 		rtgui_rect_t rect;
 
-		/* å› ä¸ºç”¨çš„æ˜¯demo viewï¼Œä¸Šé¢æœ¬èº«æœ‰ä¸€éƒ¨åˆ†æ§ä»¶ï¼Œæ‰€ä»¥åœ¨ç»˜å›¾æ—¶å…ˆè¦è®©demo viewå…ˆç»˜å›¾ */
+		/* ÒòÎªÓÃµÄÊÇdemo view£¬ÉÏÃæ±¾ÉíÓĞÒ»²¿·Ö¿Ø¼ş£¬ËùÒÔÔÚ»æÍ¼Ê±ÏÈÒªÈÃdemo viewÏÈ»æÍ¼ */
 		rtgui_view_event_handler(widget, event);
 
-		/* è·å¾—æ§ä»¶æ‰€å±çš„DC */
+		/* »ñµÃ¿Ø¼şËùÊôµÄDC */
 		dc = rtgui_dc_begin_drawing(widget);
-		if (dc == RT_NULL) /* å¦‚æœä¸èƒ½æ­£å¸¸è·å¾—DCï¼Œè¿”å›ï¼ˆå¦‚æœæ§ä»¶æˆ–çˆ¶æ§ä»¶æ˜¯éšè—çŠ¶æ€ï¼ŒDCæ˜¯è·å–ä¸æˆåŠŸçš„ï¼‰ */
+		if (dc == RT_NULL) /* Èç¹û²»ÄÜÕı³£»ñµÃDC£¬·µ»Ø£¨Èç¹û¿Ø¼ş»ò¸¸¿Ø¼şÊÇÒş²Ø×´Ì¬£¬DCÊÇ»ñÈ¡²»³É¹¦µÄ£© */
 			return RT_FALSE;
 
-		/* è·å¾—demo viewå…è®¸ç»˜å›¾çš„åŒºåŸŸ */
+		/* »ñµÃdemo viewÔÊĞí»æÍ¼µÄÇøÓò */
 		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
 
-		/* æ“¦é™¤æ‰€æœ‰ */
+		/* ²Á³ıËùÓĞ */
 		rtgui_dc_fill_rect(dc, &rect);
 
-		/* ç»˜å›¾å®Œæˆ */
+		/* »æÍ¼Íê³É */
 		rtgui_dc_end_drawing(dc);
 	}
 	else
 	{
-		/* è°ƒç”¨é»˜è®¤çš„äº‹ä»¶å¤„ç†å‡½æ•° */
+		/* µ÷ÓÃÄ¬ÈÏµÄÊÂ¼ş´¦Àíº¯Êı */
 		return rtgui_view_event_handler(widget, event);
 	}
 
@@ -65,12 +68,11 @@ rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 
 rtgui_view_t *demo_view_benchmark(rtgui_workbench_t* workbench)
 {
-	rtgui_view_t *view;
+	// rtgui_view_t *view;
 
 	srand(100);
-	view = demo_view(workbench, "ç»˜å›¾æµ‹è¯•");
-	if (view != RT_NULL)
-		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), benchmark_event_handler);
+	view = demo_view(workbench, "»æÍ¼²âÊÔ");
+	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), benchmark_event_handler);
 
 	rtgui_thread_set_onidle(_onidle);
 
