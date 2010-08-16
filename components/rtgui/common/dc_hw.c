@@ -32,9 +32,12 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc);
 static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* dc);
 static void rtgui_dc_hw_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
-#define hw_driver				(rtgui_graphic_driver_get_default())
-#define dc_set_foreground(c) 	dc->gc.foreground = c
-#define dc_set_background(c) 	dc->gc.background = c
+struct rtgui_dc_hw
+{
+	struct rtgui_dc parent;
+	rtgui_widget_t *owner;
+	const struct rtgui_graphic_driver* hw_driver;
+};
 
 const struct rtgui_dc_engine dc_hw_engine = 
 {
@@ -59,14 +62,13 @@ extern void rtgui_mouse_show_cursor(void);
 extern void rtgui_mouse_hide_cursor(void);
 struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 {
-	struct rtgui_dc* dc;
+	struct rtgui_dc_hw* dc;
 	rtgui_widget_t* widget;
 
 	/* adjudge owner */
 	if (owner == RT_NULL || owner->toplevel == RT_NULL) return RT_NULL;
 	if (!RTGUI_IS_TOPLEVEL(owner->toplevel)) return RT_NULL;
 
-	dc = RTGUI_WIDGET_DC(owner);
 	/* set init visible as true */
 	RTGUI_WIDGET_DC_SET_VISIBLE(owner);
 
@@ -82,6 +84,15 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 
 		widget = widget->parent;
 	}
+
+	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return RT_NULL;
+
+	/* create DC */
+	dc = (struct rtgui_dc_hw*) rtgui_malloc(sizeof(struct rtgui_dc_hw));
+	dc->parent.type = RTGUI_DC_HW;
+	dc->parent.engine = &dc_hw_engine;
+	dc->owner = owner;
+	dc->hw_driver = rtgui_graphic_driver_get_default();
 
 	if (RTGUI_IS_WINTITLE(owner->toplevel))
 	{
@@ -127,17 +138,19 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 		}
 	}
 
-	return dc;
+	return &(dc->parent);
 }
 
 static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 {
 	rtgui_widget_t* owner;
-	
+	struct rtgui_dc_hw* self;
+
 	if (dc == RT_NULL || dc->type != RTGUI_DC_HW) return RT_FALSE;
 
+	self = (struct rtgui_dc_hw*)dc;
 	/* get owner */
-	owner = RTGUI_CONTAINER_OF(dc, struct rtgui_widget, dc_type);
+	owner = self->owner;
 
 	if (RTGUI_IS_WINTITLE(owner->toplevel))
 	{
@@ -155,7 +168,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			self->hw_driver->screen_update(&(owner->extent));
 #else
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			/* show cursor */
@@ -163,7 +176,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 #endif
 
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			self->hw_driver->screen_update(&(owner->extent));
 #endif
 		}
 	}
@@ -183,7 +196,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			self->hw_driver->screen_update(&(owner->extent));
 #else
 			/* send to server to end drawing */
 			struct rtgui_event_update_end eupdate;
@@ -195,6 +208,9 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 		}
 	}
 
+	/* release hardware dc */
+	rtgui_free(self);
+
 	return RT_TRUE;
 }
 
@@ -203,38 +219,30 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
  */
 static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 {
-	rtgui_rect_t rect;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
-	x = x + owner->extent.x1;
-	y = y + owner->extent.y1;
+	x = x + dc->owner->extent.x1;
+	y = y + dc->owner->extent.y1;
 
 	/* draw this point */
-	hw_driver->set_pixel(&(owner->gc.foreground), x, y);
+	dc->hw_driver->set_pixel(&(dc->owner->gc.foreground), x, y);
 }
 
 static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
 {
-	rtgui_rect_t rect;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
-	x = x + owner->extent.x1;
-	y = y + owner->extent.y1;
+	x = x + dc->owner->extent.x1;
+	y = y + dc->owner->extent.y1;
 
 	/* draw this point */
-	hw_driver->set_pixel(&color, x, y);
+	dc->hw_driver->set_pixel(&color, x, y);
 }
 
 /*
@@ -242,21 +250,17 @@ static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rt
  */
 static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 {
-	register rt_base_t index;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
-	x  = x + owner->extent.x1;
-	y1 = y1 + owner->extent.y1;
-	y2 = y2 + owner->extent.y1;
+	x = x + dc->owner->extent.x1;
+	y1 = y1 + dc->owner->extent.y1;
+	y2 = y2 + dc->owner->extent.y1;
 
 	/* draw vline */
-	hw_driver->draw_vline(&(owner->gc.foreground), x, y1, y2);
+	dc->hw_driver->draw_vline(&(dc->owner->gc.foreground), x, y1, y2);
 }
 
 /*
@@ -264,46 +268,39 @@ static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
  */
 static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 {
-	register rt_base_t index;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
 	/* convert logic to device */
-	x1 = x1 + owner->extent.x1;
-	x2 = x2 + owner->extent.x1;
-	y  = y + owner->extent.y1;
+	x1 = x1 + dc->owner->extent.x1;
+	x2 = x2 + dc->owner->extent.x1;
+	y  = y + dc->owner->extent.y1;
 
 	/* draw hline */
-	hw_driver->draw_hline(&(owner->gc.foreground), x1, x2, y);
+	dc->hw_driver->draw_hline(&(dc->owner->gc.foreground), x1, x2, y);
 }
 
 static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
 {
 	rtgui_color_t color;
 	register rt_base_t index, x1, x2;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
 	/* get background color */
-	color = owner->gc.background;
+	color = dc->owner->gc.background;
 	/* convert logic to device */
-	x1 = rect->x1 + owner->extent.x1;
-	x2 = rect->x2 + owner->extent.x1;
+	x1 = rect->x1 + dc->owner->extent.x1;
+	x2 = rect->x2 + dc->owner->extent.x1;
 
 	/* fill rect */
-	for (index = owner->extent.y1 + rect->y1; index < owner->extent.y1 + rect->y2; index ++)
+	for (index = dc->owner->extent.y1 + rect->y1; index < dc->owner->extent.y1 + rect->y2; index ++)
 	{
-		hw_driver->draw_hline(&color, x1, x2, index);
+		dc->hw_driver->draw_hline(&color, x1, x2, index);
 	}
 }
 
@@ -315,72 +312,61 @@ static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, 
 
 static void rtgui_dc_hw_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
 {
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	owner->gc = *gc;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
+
+	/* set gc */
+	dc->owner->gc = *gc;
 }
 
 static rtgui_gc_t* rtgui_dc_hw_get_gc(struct rtgui_dc* self)
 {
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) 
-	{
-	rt_kprintf("why!!\n");
-	return RT_NULL;
-	}
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
-	return &(owner->gc);
+	return &(dc->owner->gc);
 }
 
 static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc* self)
 {
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return RT_FALSE;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return RT_FALSE;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
+
+	if (!RTGUI_WIDGET_IS_DC_VISIBLE(dc->owner)) return RT_FALSE;
 
 	return RT_TRUE;
 }
 
 static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 {
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
+
 	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	rtgui_widget_get_rect(owner, rect);
+	rtgui_widget_get_rect(dc->owner, rect);
 }
 
 void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int x1, int x2, int y)
 {
-	register rt_base_t index;
-	rtgui_widget_t *owner;
+	struct rtgui_dc_hw* dc;
 
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
 
 	/* convert logic to device */
-	x1 = x1 + owner->extent.x1;
-	x2 = x2 + owner->extent.x1;
-	y  = y + owner->extent.y1;
+	x1 = x1 + dc->owner->extent.x1;
+	x2 = x2 + dc->owner->extent.x1;
+	y  = y + dc->owner->extent.y1;
 
 	/* draw raw hline */
-	hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
+	dc->hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
 }
 
