@@ -7,6 +7,8 @@
 #define RAND(x1, x2) ((rand() % (x2 - x1)) + x1)
 
 static rtgui_view_t* view = RT_NULL;
+static int running = 0;
+
 void _onidle(rtgui_widget_t* widget, rtgui_event_t *event)
 {
 	rtgui_color_t color;
@@ -33,29 +35,60 @@ void _onidle(rtgui_widget_t* widget, rtgui_event_t *event)
 	rtgui_dc_end_drawing(dc);
 }
 
+void _draw_default(rtgui_widget_t* widget, rtgui_event_t* event)
+{
+	struct rtgui_dc* dc;
+	rtgui_rect_t rect;
+
+	/* 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view先绘图 */
+	rtgui_view_event_handler(widget, event);
+
+	/* 获得控件所属的DC */
+	dc = rtgui_dc_begin_drawing(widget);
+	if (dc == RT_NULL) /* 如果不能正常获得DC，返回（如果控件或父控件是隐藏状态，DC是获取不成功的） */
+		return ;
+
+	/* 获得demo view允许绘图的区域 */
+	demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+
+	/* 擦除所有 */
+	RTGUI_WIDGET_BACKGROUND(widget) = default_background;
+	rtgui_dc_fill_rect(dc, &rect);
+
+	/* 显示提示 */
+	rtgui_dc_draw_text(dc, "按任意键开始/停止测试...", &rect);
+
+	/* 绘图完成 */
+	rtgui_dc_end_drawing(dc);
+}
+
 rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 {
 	if (event->type == RTGUI_EVENT_PAINT)
 	{
-		struct rtgui_dc* dc;
-		rtgui_rect_t rect;
+		_draw_default(widget, event);
+	}
+	else if (event->type == RTGUI_EVENT_KBD)
+	{
+		struct rtgui_event_kbd *kbd = (struct rtgui_event_kbd*)event;
 
-		/* 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view先绘图 */
-		rtgui_view_event_handler(widget, event);
+		if (RTGUI_KBD_IS_UP(kbd))
+		{
+			if (running)
+			{
+				/* stop */
+				rtgui_thread_set_onidle(RT_NULL);
+				_draw_default(widget, event);
+			}
+			else
+			{
+				/* run */
+				rtgui_thread_set_onidle(_onidle);
+			}
 
-		/* 获得控件所属的DC */
-		dc = rtgui_dc_begin_drawing(widget);
-		if (dc == RT_NULL) /* 如果不能正常获得DC，返回（如果控件或父控件是隐藏状态，DC是获取不成功的） */
-			return RT_FALSE;
-
-		/* 获得demo view允许绘图的区域 */
-		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
-
-		/* 擦除所有 */
-		rtgui_dc_fill_rect(dc, &rect);
-
-		/* 绘图完成 */
-		rtgui_dc_end_drawing(dc);
+			running = !running;
+		}
+		return RT_TRUE;
 	}
 	else
 	{
@@ -68,13 +101,9 @@ rt_bool_t benchmark_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 
 rtgui_view_t *demo_view_benchmark(rtgui_workbench_t* workbench)
 {
-	// rtgui_view_t *view;
-
 	srand(100);
 	view = demo_view(workbench, "绘图测试");
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), benchmark_event_handler);
-
-	rtgui_thread_set_onidle(_onidle);
 
 	return view;
 }
