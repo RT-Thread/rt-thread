@@ -25,6 +25,7 @@ static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgu
 static void rtgui_dc_hw_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 static void rtgui_dc_hw_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 static void rtgui_dc_hw_fill_rect (struct rtgui_dc* dc, rtgui_rect_t* rect);
+static void rtgui_dc_hw_blit_line (struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data);
 static void rtgui_dc_hw_blit	  (struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
 static void rtgui_dc_hw_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
 static rtgui_gc_t *rtgui_dc_hw_get_gc (struct rtgui_dc* dc);
@@ -46,6 +47,7 @@ const struct rtgui_dc_engine dc_hw_engine =
 	rtgui_dc_hw_draw_vline,
 	rtgui_dc_hw_draw_hline,
 	rtgui_dc_hw_fill_rect,
+	rtgui_dc_hw_blit_line,
 	rtgui_dc_hw_blit,
 
 	rtgui_dc_hw_set_gc,
@@ -304,6 +306,21 @@ static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rec
 	}
 }
 
+static void rtgui_dc_hw_blit_line (struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data)
+{
+	struct rtgui_dc_hw* dc;
+
+	RT_ASSERT(self != RT_NULL);
+	dc = (struct rtgui_dc_hw*) self;
+
+	/* convert logic to device */
+	x1 = x1 + dc->owner->extent.x1;
+	x2 = x2 + dc->owner->extent.x1;
+	y  = y + dc->owner->extent.y1;
+
+	dc->hw_driver->draw_raw_hline(line_data, x1, x2, y);
+}
+
 static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	/* not blit in hardware dc */
@@ -353,20 +370,3 @@ static void rtgui_dc_hw_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	/* get owner */
 	rtgui_widget_get_rect(dc->owner, rect);
 }
-
-void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int x1, int x2, int y)
-{
-	struct rtgui_dc_hw* dc;
-
-	RT_ASSERT(self != RT_NULL);
-	dc = (struct rtgui_dc_hw*) self;
-
-	/* convert logic to device */
-	x1 = x1 + dc->owner->extent.x1;
-	x2 = x2 + dc->owner->extent.x1;
-	y  = y + dc->owner->extent.y1;
-
-	/* draw raw hline */
-	dc->hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
-}
-

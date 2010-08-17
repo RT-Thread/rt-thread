@@ -116,17 +116,58 @@ static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file)
 	return(is_bmp);
 }
 
+static struct rtgui_image_palette* rtgui_image_bmp_load_palette(struct rtgui_image_bmp_header* header, struct rtgui_filerw* src)
+{
+	/* Load the palette, if any */
+	rt_size_t i;
+	struct rtgui_image_palette* palette;
+
+	if (header->biClrUsed == 0)
+		header->biClrUsed = 1 << header->biBitCount;
+
+	palette = rtgui_image_palette_create(header->biClrUsed);
+	if (palette == RT_NULL) return RT_NULL;
+
+	if ( header->biSize == 12 )
+	{
+		rt_uint8_t r, g, b;
+		for ( i = 0; i < (int)header->biClrUsed; ++i )
+		{
+			rtgui_filerw_read(src, &b, 1, 1);
+			rtgui_filerw_read(src, &g, 1, 1);
+			rtgui_filerw_read(src, &r, 1, 1);
+			palette->colors[i] = RTGUI_RGB(r, g, b);
+		}
+	}
+	else
+	{
+		rt_uint8_t r, g, b, a;
+		for ( i = 0; i < (int)header->biClrUsed; ++i )
+		{
+			rtgui_filerw_read(src, &b, 1, 1);
+			rtgui_filerw_read(src, &g, 1, 1);
+			rtgui_filerw_read(src, &r, 1, 1);
+			rtgui_filerw_read(src, &a, 1, 1);
+			palette->colors[i] = RTGUI_ARGB(a, r, g, b);
+		}
+	}
+
+	return palette;
+}
+
 static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_filerw* src, rt_bool_t load)
 {
-	struct rtgui_image_bmp* bmp;
-	struct rtgui_image_bmp_header* header;
-	int ExpandBMP, bmpPitch;
 	rt_uint32_t Rmask;
 	rt_uint32_t Gmask;
 	rt_uint32_t Bmask;
+	int ExpandBMP, bmpPitch;
+	struct rtgui_image_bmp* bmp;
+	struct rtgui_image_bmp_header* header;
+	struct rtgui_image_palette* palette;
 
 	bmp = RT_NULL;
 	header = RT_NULL;
+	palette = RT_NULL;
 	header = (struct rtgui_image_bmp_header*) rtgui_malloc(sizeof(struct rtgui_image_bmp_header));
 	if (header == RT_NULL) return RT_FALSE;
 
@@ -177,13 +218,24 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 
 	}
 
-	/* Expand 1 and 4 bit bitmaps to 8 bits per pixel */
+	/* allocate palette and expand 1 and 4 bit bitmaps to 8 bits per pixel */
 	switch (header->biBitCount)
 	{
 	case 1:
+		ExpandBMP = header->biBitCount;
+		palette = rtgui_image_bmp_load_palette(header, src);
+		header->biBitCount = 8;
+		break;
+
 	case 4:
 		ExpandBMP = header->biBitCount;
+		palette = rtgui_image_bmp_load_palette(header, src);
 		header->biBitCount = 8;
+		break;
+
+	case 8:
+		palette = rtgui_image_bmp_load_palette(header, src);
+		ExpandBMP = 0;
 		break;
 
 	default:
@@ -259,39 +311,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 	bmp->pixel_offset = header->bfOffBits;
 	bmp->Rmask = Rmask; bmp->Gmask = Gmask; bmp->Bmask = Bmask;
 	bmp->ExpandBMP = ExpandBMP;
-
-	/* Load the palette, if any */
-#if 0
-	if ( palette )
-	{
-		rt_size_t i;
-
-		if (header->biClrUsed == 0)
-			header->biClrUsed = 1 << header->biBitCount;
-
-		image->palette = rtgui_image_palette_create(header->biClrUsed);
-		if ( header->biSize == 12 )
-		{
-			for ( i = 0; i < (int)header->biClrUsed; ++i )
-			{
-				rtgui_filerw_read(src, &RTGUI_RGB_R(image->palette->colors[i]), 1, 1);
-				rtgui_filerw_read(src, &RTGUI_RGB_G(image->palette->colors[i]), 1, 1);
-				rtgui_filerw_read(src, &RTGUI_RGB_B(image->palette->colors[i]), 1, 1);
-				RTGUI_RGB_A(image->palette->colors[i]) = 0;
-			}
-		}
-		else
-		{
-			for ( i = 0; i < (int)header->biClrUsed; ++i )
-			{
-				rtgui_filerw_read(src, &RTGUI_RGB_R(image->palette->colors[i]), 1, 1);
-				rtgui_filerw_read(src, &RTGUI_RGB_G(image->palette->colors[i]), 1, 1);
-				rtgui_filerw_read(src, &RTGUI_RGB_B(image->palette->colors[i]), 1, 1);
-				rtgui_filerw_read(src, &RTGUI_RGB_A(image->palette->colors[i]), 1, 1);
-			}
-		}
-	}
-#endif
+	if (palette != RT_NULL) image->palette = palette;
 
 	/* get padding */
 	switch (ExpandBMP)
@@ -379,6 +399,12 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 
 __exit:
 	rtgui_free(header);
+	if (palette != RT_NULL)
+	{
+		rtgui_free(palette);
+		image->palette = RT_NULL;
+	}
+
 	if (bmp != RT_NULL)
 		rtgui_free(bmp->pixels);
 	rtgui_free(bmp);
@@ -418,8 +444,6 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	bmp = (struct rtgui_image_bmp*) image->data;
 	RT_ASSERT(bmp != RT_NULL);
 
-	if ((dc->type != RTGUI_DC_HW) && (dc->type != RTGUI_DC_CLIENT)) return;
-
 	/* the minimum rect */
 	if (image->w < rtgui_rect_width(*dst_rect)) w = image->w;
 	else w = rtgui_rect_width(*dst_rect);
@@ -438,34 +462,55 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			{
 				for (y = 0; y < h; y ++)
 				{
-					rtgui_dc_hw_draw_raw_hline(dc, ptr, 
+					dc->engine->blit_line(dc, 
 						dst_rect->x1, dst_rect->x1 + w,
-						dst_rect->y1 + y);
+						dst_rect->y1 + y, 
+						ptr);
 					ptr += bmp->pitch;
 				}
 			}
 			else
 			{
-				rt_uint8_t *line_ptr;
-				rtgui_blit_line_func blit_line;
 				rt_size_t pitch;
+				rt_uint8_t *line_ptr;
 
-				line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
-				blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
-				pitch = w * bmp->byte_per_pixel;
-				if (line_ptr != RT_NULL)
+				if (image->palette == RT_NULL)
 				{
+					rtgui_blit_line_func blit_line;
+					line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
+					blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
+					pitch = w * bmp->byte_per_pixel;
+					if (line_ptr != RT_NULL)
+					{
+						for (y = 0; y < h; y ++)
+						{
+							blit_line(line_ptr, ptr, pitch);
+							dc->engine->blit_line(dc,
+								dst_rect->x1, dst_rect->x1 + w,
+								dst_rect->y1 + y, 
+								line_ptr);
+							ptr += bmp->pitch;
+						}
+					}
+					rtgui_free(line_ptr);
+				}
+				else
+				{
+					int x, p;
+					rtgui_color_t color;
+
+					/* use palette */
 					for (y = 0; y < h; y ++)
 					{
-						blit_line(line_ptr, ptr, pitch);
-						rtgui_dc_hw_draw_raw_hline(dc, line_ptr, 
-							dst_rect->x1, dst_rect->x1 + w,
-							dst_rect->y1 + y);
-						ptr += bmp->pitch;
+						ptr = bmp->pixels + (y * bmp->pitch);
+						for (x = 0; x < w; x ++)
+						{
+							p = *ptr;
+							color = image->palette->colors[*ptr]; ptr ++;
+							rtgui_dc_draw_color_point(dc, dst_rect->x1 + x, dst_rect->y1 + y, color);
+						}
 					}
 				}
-
-				rtgui_free(line_ptr);
 			}
 		}
 	}
@@ -484,7 +529,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			if (rtgui_filerw_read(bmp->filerw, ptr, 1, bmp->pitch) != bmp->pitch)
 				break; /* read data failed */
 
-			rtgui_dc_client_draw_raw_hline(dc, ptr, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y);
+			dc->engine->blit_line(dc, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y, ptr);
 		}
 
 		rtgui_free(ptr);

@@ -35,6 +35,7 @@ struct rtgui_dc_engine
 	void (*draw_vline)(struct rtgui_dc* dc, int x, int y1, int y2);
 	void (*draw_hline)(struct rtgui_dc* dc, int x1, int x2, int y);
 	void (*fill_rect )(struct rtgui_dc* dc, rtgui_rect_t* rect);
+	void (*blit_line) (struct rtgui_dc* dc, int x1, int x2, int y, rt_uint8_t* line_data);
 	void (*blit		 )(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
 
 	/* set and get graphic context */
@@ -153,8 +154,6 @@ rt_inline void rtgui_dc_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
  */
 rt_inline void rtgui_dc_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
-	if (dest == RT_NULL || rect == RT_NULL) return;
-
 	dc->engine->blit(dc, dc_point, dest, rect);
 }
 
@@ -187,10 +186,7 @@ rt_inline rt_bool_t rtgui_dc_get_visible(struct rtgui_dc* dc)
  */
 rt_inline void rtgui_dc_get_rect(struct rtgui_dc*dc, rtgui_rect_t* rect)
 {
-	if (rect != RT_NULL)
-	{
-		dc->engine->get_rect(dc, rect);
-	}
+	dc->engine->get_rect(dc, rect);
 }
 
 #endif

@@ -28,6 +28,7 @@ static void rtgui_dc_client_draw_color_point(struct rtgui_dc* dc, int x, int y, 
 static void rtgui_dc_client_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 static void rtgui_dc_client_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 static void rtgui_dc_client_fill_rect (struct rtgui_dc* dc, rtgui_rect_t* rect);
+static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data);
 static void rtgui_dc_client_blit	  (struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect);
 static void rtgui_dc_client_set_gc (struct rtgui_dc* dc, rtgui_gc_t *gc);
 static rtgui_gc_t *rtgui_dc_client_get_gc (struct rtgui_dc* dc);
@@ -62,6 +63,7 @@ const struct rtgui_dc_engine dc_client_engine =
 	rtgui_dc_client_draw_vline,
 	rtgui_dc_client_draw_hline,
 	rtgui_dc_client_fill_rect,
+	rtgui_dc_client_blit_line,
 	rtgui_dc_client_blit,
 
 	rtgui_dc_client_set_gc,
@@ -413,6 +415,59 @@ static void rtgui_dc_client_fill_rect (struct rtgui_dc* self, struct rtgui_rect*
 	owner->gc.foreground = foreground;
 }
 
+static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data)
+{
+	register rt_base_t index;
+	rtgui_widget_t *owner;
+
+	if (self == RT_NULL) return;
+
+	/* get owner */
+	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
+	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
+
+	/* convert logic to device */
+	x1 = x1 + owner->extent.x1;
+	x2 = x2 + owner->extent.x1;
+	y  = y + owner->extent.y1;
+
+	if (rtgui_region_is_flat(&(owner->clip)) == RT_EOK)
+	{
+		rtgui_rect_t* prect;
+
+		prect = &(owner->clip.extents);
+
+		/* calculate vline intersect */
+		if (prect->y1 > y  || prect->y2 <= y ) return;
+		if (prect->x2 <= x1 || prect->x1 > x2) return;
+
+		if (prect->x1 > x1) x1 = prect->x1;
+		if (prect->x2 < x2) x2 = prect->x2;
+
+		/* draw hline */
+		hw_driver->draw_raw_hline(line_data, x1, x2, y);
+	}
+	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
+	{
+		rtgui_rect_t* prect;
+		register rt_base_t draw_x1, draw_x2;
+
+		prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
+		draw_x1 = x1;
+		draw_x2 = x2;
+
+		/* calculate hline clip */
+		if (prect->y1 > y  || prect->y2 <= y ) continue;
+		if (prect->x2 <= x1 || prect->x1 > x2) continue;
+
+		if (prect->x1 > x1) draw_x1 = prect->x1;
+		if (prect->x2 < x2) draw_x2 = prect->x2;
+
+		/* draw hline */
+		hw_driver->draw_raw_hline(line_data, draw_x1, draw_x2, y);
+	}
+}
+
 static void rtgui_dc_client_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	/* not blit in hardware dc */
@@ -468,58 +523,5 @@ static void rtgui_dc_client_get_rect(struct rtgui_dc* self, rtgui_rect_t* rect)
 	/* get owner */
 	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
 	rtgui_widget_get_rect(owner, rect);
-}
-
-void rtgui_dc_client_draw_raw_hline(struct rtgui_dc* self, rt_uint8_t* raw_ptr, int x1, int x2, int y)
-{
-	register rt_base_t index;
-	rtgui_widget_t *owner;
-
-	if (self == RT_NULL) return;
-	
-	/* get owner */
-	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
-
-	/* convert logic to device */
-	x1 = x1 + owner->extent.x1;
-	x2 = x2 + owner->extent.x1;
-	y  = y + owner->extent.y1;
-
-	if (owner->clip.data == RT_NULL)
-	{
-		rtgui_rect_t* prect;
-
-		prect = &(owner->clip.extents);
-
-		/* calculate hline intersect */
-		if (prect->y1 > y  || prect->y2 <= y ) return;
-		if (prect->x2 <= x1 || prect->x1 > x2) return;
-
-		if (prect->x1 > x1) x1 = prect->x1;
-		if (prect->x2 < x2) x2 = prect->x2;
-
-		/* draw raw hline */
-		hw_driver->draw_raw_hline(raw_ptr, x1, x2, y);
-	}
-	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
-	{
-		rtgui_rect_t* prect;
-		register rt_base_t draw_x1, draw_x2;
-
-		prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
-		draw_x1 = x1;
-		draw_x2 = x2;
-
-		/* calculate hline clip */
-		if (prect->y1 > y  || prect->y2 <= y ) continue;
-		if (prect->x2 <= x1 || prect->x1 > x2) continue;
-
-		if (prect->x1 > x1) draw_x1 = prect->x1;
-		if (prect->x2 < x2) draw_x2 = prect->x2;
-
-		/* draw raw hline */
-		hw_driver->draw_raw_hline(raw_ptr + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
-	}
 }
 

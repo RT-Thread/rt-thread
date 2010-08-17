@@ -20,8 +20,5 @@
 /* create a hardware dc */
 struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner);
 
-/* draw a hline with raw pixel data */
-void rtgui_dc_hw_draw_raw_hline(struct rtgui_dc* dc, rt_uint8_t* raw_ptr, int x1, int x2, int y);
-
 #endif
 

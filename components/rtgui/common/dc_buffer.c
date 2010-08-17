@@ -44,6 +44,7 @@ static void rtgui_dc_buffer_draw_color_point(struct rtgui_dc* dc, int x, int y, 
 static void rtgui_dc_buffer_draw_vline(struct rtgui_dc* dc, int x, int y1, int y2);
 static void rtgui_dc_buffer_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
 static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* dc, struct rtgui_rect* rect);
+static void rtgui_dc_buffer_blit_line(struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data);
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point,
 	struct rtgui_dc* dest, rtgui_rect_t* rect);
 
@@ -60,6 +61,7 @@ const static struct rtgui_dc_engine dc_buffer_engine =
 	rtgui_dc_buffer_draw_vline,
 	rtgui_dc_buffer_draw_hline,
 	rtgui_dc_buffer_fill_rect,
+	rtgui_dc_buffer_blit_line,
 	rtgui_dc_buffer_blit,
 
 	rtgui_dc_buffer_set_gc,
@@ -244,7 +246,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 			/* it's the same byte per pixel, draw it directly */
 			for (index = rect->y1; index < rect->y1 + rect_height; index++)
 			{
-				rtgui_dc_client_draw_raw_hline(hw, pixels, rect->x1, rect->x1 + rect_width, index);
+				dest->engine->blit_line(dest, rect->x1, rect->x1 + rect_width, index, pixels);
 				pixels += dc->width * sizeof(rtgui_color_t);
 			}
 		}
@@ -265,13 +267,30 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 				pixels += dc->width * sizeof(rtgui_color_t);
 
 				/* draw on hardware dc */
-				rtgui_dc_client_draw_raw_hline(hw, line_ptr, rect->x1, rect->x1 + rect_width, index);
+				dest->engine->blit_line(dest, rect->x1, rect->x1 + rect_width, index, line_ptr);
 			}
 
 			/* release line buffer */
 			rtgui_free(line_ptr);
 		}
 	}
+}
+
+static void rtgui_dc_buffer_blit_line(struct rtgui_dc* self, int x1, int x2, int y, rt_uint8_t* line_data)
+{
+	rtgui_color_t* color_ptr;
+	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
+
+	RT_ASSERT(dc != RT_NULL);
+	RT_ASSERT(line_data != RT_NULL);
+
+	/* out of range */
+	if ((x1 > dc->width) || (y > dc->height)) return;
+	/* check range */
+	if (x2 > dc->width) x2 = dc->width;
+
+	color_ptr = (rtgui_color_t*)(dc->pixel + y * dc->pitch + x1 * sizeof(rtgui_color_t));
+	rt_memcpy(color_ptr, line_data, (x2 - x1) * sizeof(rtgui_color_t));
 }
 
 static void rtgui_dc_buffer_set_gc(struct rtgui_dc* self, rtgui_gc_t *gc)
