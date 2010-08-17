@@ -21,7 +21,7 @@
 
 #include <rtgui/widgets/view.h>
 
-typedef void (*item_action)(void* parameter);
+typedef void (*item_action)(struct rtgui_widget* widget, void* parameter);
 struct rtgui_list_item
 {
     char* name;

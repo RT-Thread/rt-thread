@@ -373,7 +373,8 @@ static rt_bool_t rtgui_list_view_onmouse(struct rtgui_list_view* view, struct rt
 					/* up event */
 					if (view->items[view->current_item].action != RT_NULL)
 					{
-						view->items[view->current_item].action(view->items[view->current_item].parameter);
+						view->items[view->current_item].action(RTGUI_WIDGET(view), 
+							view->items[view->current_item].parameter);
 					}
 				}
 			}
@@ -407,7 +408,8 @@ static rt_bool_t rtgui_list_view_onmouse(struct rtgui_list_view* view, struct rt
 						/* up event */
 						if (view->items[view->current_item].action != RT_NULL)
 						{
-							view->items[view->current_item].action(view->items[view->current_item].parameter);
+							view->items[view->current_item].action(RTGUI_WIDGET(view),
+								view->items[view->current_item].parameter);
 						}
 					}
 				}
@@ -537,7 +539,8 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
 				case RTGUIK_RETURN:
                     if (view->items[view->current_item].action != RT_NULL)
 					{
-					    view->items[view->current_item].action(view->items[view->current_item].parameter);
+					    view->items[view->current_item].action(RTGUI_WIDGET(view),
+							view->items[view->current_item].parameter);
 					}
 					return RT_FALSE;
 
