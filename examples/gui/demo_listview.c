@@ -15,7 +15,7 @@ static rtgui_list_view_t* _view = RT_NULL;
 static rtgui_image_t* return_image = RT_NULL;
 
 /* 列表项的动作函数 */
-static void listitem_action(void* parameter)
+static void listitem_action(rtgui_widget_t *widget, void* parameter)
 {
 	char label_text[32];
 	rtgui_win_t *win;
@@ -46,7 +46,7 @@ static void listitem_action(void* parameter)
 }
 
 /* 返回功能的动作函数 */
-static void return_action(void* parameter)
+static void return_action(rtgui_widget_t* widget, void* parameter)
 {
 	rtgui_view_end_modal(RTGUI_VIEW(_view), RTGUI_MODAL_OK);
 }
