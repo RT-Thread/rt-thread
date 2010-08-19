@@ -131,6 +131,11 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
 
 	/* reset clip info */
 	rtgui_region_init_with_extents(&(widget->clip), rect);
+	if ((widget->parent != RT_NULL) && (widget->toplevel != RT_NULL))
+	{
+		/* update widget clip */
+		rtgui_widget_update_clip(widget);
+	}
 }
 
 #ifndef RTGUI_USING_SMALL_SIZE
