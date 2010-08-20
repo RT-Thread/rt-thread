@@ -54,6 +54,19 @@ static rt_bool_t rtgui_image_png_process(png_structp png_ptr, png_infop info_ptr
 
     switch (info_ptr->color_type)
     {
+		case PNG_COLOR_TYPE_RGB:
+			for (y = 0; y < info_ptr->height; y++)
+			{
+				png_read_row(png_ptr, row, png_bytep_NULL);
+				for (x = 0; x < info_ptr->width; x++)
+				{
+					data = &(row[x * 3]);
+
+					ptr[x+y*info_ptr->width] = RTGUI_RGB(data[0], data[1], data[2]);
+				}
+			}
+			break;
+
         case PNG_COLOR_TYPE_RGBA:
             for (y = 0; y < info_ptr->height; y++)
             {
