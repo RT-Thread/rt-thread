@@ -30,6 +30,7 @@ struct rtgui_image_bmp
 	rt_uint8_t  ExpandBMP;
 
 	rt_uint8_t *pixels;
+	rt_uint8_t *line_pixels;
 	rt_uint32_t pitch;
 
 	struct rtgui_filerw* filerw;
@@ -387,12 +388,14 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 		}
 
 		rtgui_filerw_close(bmp->filerw);
+		bmp->line_pixels = RT_NULL;
 		bmp->filerw = RT_NULL;
 		bmp->pixel_offset = 0;
 	}
 	else
 	{
 		bmp->pixels = RT_NULL;
+		bmp->line_pixels = rtgui_malloc(bmp->pitch);
 	}
 
 	return RT_TRUE;
@@ -420,6 +423,7 @@ static void rtgui_image_bmp_unload(struct rtgui_image* image)
 		bmp = (struct rtgui_image_bmp*) image->data;
 
 		if (bmp->pixels != RT_NULL) rtgui_free(bmp->pixels);
+		if (bmp->line_pixels != RT_NULL) rtgui_free(bmp->line_pixels);
 		if (bmp->filerw != RT_NULL)
 		{
 			rtgui_filerw_close(bmp->filerw);
@@ -433,7 +437,8 @@ static void rtgui_image_bmp_unload(struct rtgui_image* image)
 
 static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect)
 {
-	rt_uint16_t y, w, h;
+	int y;
+	rt_uint16_t w, h;
 	struct rtgui_image_bmp* bmp;
 
 	RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL);
@@ -456,59 +461,55 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 		/* get pixel pointer */
 		ptr = bmp->pixels;
-		if ((dc->type == RTGUI_DC_HW) || (dc->type == RTGUI_DC_CLIENT))
+		if (bmp->byte_per_pixel == hw_driver->byte_per_pixel)
 		{
-			if (bmp->byte_per_pixel == hw_driver->byte_per_pixel)
+			for (y = 0; y < h; y ++)
 			{
-				for (y = 0; y < h; y ++)
+				dc->engine->blit_line(dc, 
+					dst_rect->x1, dst_rect->x1 + w,
+					dst_rect->y1 + y, 
+					ptr);
+				ptr += bmp->pitch;
+			}
+		}
+		else
+		{
+			rt_size_t pitch;
+			rt_uint8_t *line_ptr;
+
+			if (image->palette == RT_NULL)
+			{
+				rtgui_blit_line_func blit_line;
+				line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
+				blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
+				pitch = w * bmp->byte_per_pixel;
+				if (line_ptr != RT_NULL)
 				{
-					dc->engine->blit_line(dc, 
-						dst_rect->x1, dst_rect->x1 + w,
-						dst_rect->y1 + y, 
-						ptr);
-					ptr += bmp->pitch;
+					for (y = 0; y < h; y ++)
+					{
+						blit_line(line_ptr, ptr, pitch);
+						dc->engine->blit_line(dc,
+							dst_rect->x1, dst_rect->x1 + w,
+							dst_rect->y1 + y, 
+							line_ptr);
+						ptr += bmp->pitch;
+					}
 				}
+				rtgui_free(line_ptr);
 			}
 			else
 			{
-				rt_size_t pitch;
-				rt_uint8_t *line_ptr;
+				int x;
+				rtgui_color_t color;
 
-				if (image->palette == RT_NULL)
+				/* use palette */
+				for (y = 0; y < h; y ++)
 				{
-					rtgui_blit_line_func blit_line;
-					line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
-					blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
-					pitch = w * bmp->byte_per_pixel;
-					if (line_ptr != RT_NULL)
+					ptr = bmp->pixels + (y * bmp->pitch);
+					for (x = 0; x < w; x ++)
 					{
-						for (y = 0; y < h; y ++)
-						{
-							blit_line(line_ptr, ptr, pitch);
-							dc->engine->blit_line(dc,
-								dst_rect->x1, dst_rect->x1 + w,
-								dst_rect->y1 + y, 
-								line_ptr);
-							ptr += bmp->pitch;
-						}
-					}
-					rtgui_free(line_ptr);
-				}
-				else
-				{
-					int x, p;
-					rtgui_color_t color;
-
-					/* use palette */
-					for (y = 0; y < h; y ++)
-					{
-						ptr = bmp->pixels + (y * bmp->pitch);
-						for (x = 0; x < w; x ++)
-						{
-							p = *ptr;
-							color = image->palette->colors[*ptr]; ptr ++;
-							rtgui_dc_draw_color_point(dc, dst_rect->x1 + x, dst_rect->y1 + y, color);
-						}
+						color = image->palette->colors[*ptr]; ptr ++;
+						rtgui_dc_draw_color_point(dc, dst_rect->x1 + x, dst_rect->y1 + y, color);
 					}
 				}
 			}
@@ -516,23 +517,122 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 	}
 	else
 	{
-		rt_uint8_t* ptr;
-		ptr = rtgui_malloc(bmp->pitch);
-		if (ptr == RT_NULL) return; /* no memory */
+		int offset;
+		rt_uint8_t *bits;
 
-		/* seek to the begin of pixel data */
-		rtgui_filerw_seek(bmp->filerw, bmp->pixel_offset, RTGUI_FILE_SEEK_SET);
-
-		for (y = 0; y < h; y ++)
+		/* calculate offset */
+		switch (bmp->ExpandBMP)
 		{
-			/* read pixel data */
-			if (rtgui_filerw_read(bmp->filerw, ptr, 1, bmp->pitch) != bmp->pitch)
-				break; /* read data failed */
+		case 1:
+			offset = (image->h - h) * (image->w/8) * bmp->byte_per_pixel;
+			break;
 
-			dc->engine->blit_line(dc, dst_rect->x1,  dst_rect->x1 + w, dst_rect->y1 + y, ptr);
+		case 4:
+			offset = (image->h - h) * (image->w/2) * bmp->byte_per_pixel;
+			break;
+
+		default:
+			offset = (image->h - h) * image->w * bmp->byte_per_pixel;
+			break;
 		}
+		/* seek to the begin of pixel data */
+		rtgui_filerw_seek(bmp->filerw, bmp->pixel_offset + offset, RTGUI_FILE_SEEK_SET);
 
-		rtgui_free(ptr);
+		if (bmp->ExpandBMP == 1 || bmp->ExpandBMP == 4)
+		{
+			int x;
+			rtgui_color_t color;
+			/* 1, 4 bit per pixels */
+
+			/* draw each line */
+			for (y = h - 1; y >= 0; y --)
+			{
+				/* read pixel data */
+				rt_uint8_t pixel = 0;
+				int   shift = (8 - bmp->ExpandBMP);
+				int i;
+
+				bits = bmp->line_pixels;
+				for ( i=0; i < image->w; ++i )
+				{
+					if ( i % (8/bmp->ExpandBMP) == 0 )
+					{
+						if ( !rtgui_filerw_read(bmp->filerw, &pixel, 1, 1) )
+							return;
+					}
+					*(bits+i) = (pixel>>shift);
+					pixel <<= bmp->ExpandBMP;
+				}
+
+				/* Skip padding bytes  */
+				if (bmp->pad)
+				{
+					int i;
+					rt_uint8_t padbyte;
+					for ( i=0; i < bmp->pad; ++i )
+						rtgui_filerw_read(bmp->filerw, &padbyte, 1, 1);
+				}
+
+				/* use palette */
+				bits = bmp->line_pixels;
+				for (x = 0; x < w; x ++)
+				{
+					color = image->palette->colors[*bits]; bits ++;
+					rtgui_dc_draw_color_point(dc, dst_rect->x1 + x, dst_rect->y1 + y, color);
+				}
+			}
+		}
+		else
+		{
+			rt_uint8_t *line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
+			if (line_ptr == RT_NULL) return;
+
+			/* draw each line */
+			for (y = h - 1; y >= 0; y --)
+			{
+				/* read line pixels */
+				rtgui_filerw_read(bmp->filerw, bmp->line_pixels, 1, bmp->pitch);
+
+				/* Skip padding bytes  */
+				if (bmp->pad)
+				{
+					int i;
+					rt_uint8_t padbyte;
+					for ( i=0; i < bmp->pad; ++i )
+						rtgui_filerw_read(bmp->filerw, &padbyte, 1, 1);
+				}
+
+				if (image->palette == RT_NULL)
+				{
+					int pitch;
+					rtgui_blit_line_func blit_line;
+					blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
+					pitch = w * bmp->byte_per_pixel;
+					if (line_ptr != RT_NULL)
+					{
+						blit_line(line_ptr, bmp->line_pixels, pitch);
+						dc->engine->blit_line(dc,
+							dst_rect->x1, dst_rect->x1 + w,
+							dst_rect->y1 + y, 
+							line_ptr);
+					}
+				}
+				else 
+				{
+					int x;
+					rtgui_color_t color;
+
+					/* use palette */
+					bits = bmp->line_pixels;
+					for (x = 0; x < w; x ++)
+					{
+						color = image->palette->colors[*bits]; bits ++;
+						rtgui_dc_draw_color_point(dc, dst_rect->x1 + x, dst_rect->y1 + y, color);
+					}
+				}
+			}
+			if (line_ptr != RT_NULL) rtgui_free(line_ptr);
+		}
 	}
 }
 
