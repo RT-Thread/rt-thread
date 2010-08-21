@@ -51,11 +51,17 @@ static void workbench_entry(void* parameter)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(workbench), demo_workbench_event_handler);
 
 	/* 初始化各个例子的视图 */
+#if RT_VERSION == 4
 	demo_view_benchmark(workbench);
+#endif
+
 	demo_view_dc(workbench);
+#if RT_VERSION == 4
 #ifdef RTGUI_USING_TTF
 	demo_view_ttf(workbench);
 #endif
+#endif
+
 	demo_view_dc_buffer(workbench);
 	demo_view_animation(workbench);
 	demo_view_buffer_animation(workbench);
@@ -64,7 +70,9 @@ static void workbench_entry(void* parameter)
 	demo_view_button(workbench);
 	demo_view_checkbox(workbench);
 	demo_view_progressbar(workbench);
+#if RT_VERSION == 4
 	demo_view_scrollbar(workbench);
+#endif
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
 	demo_view_listbox(workbench);

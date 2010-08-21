@@ -117,7 +117,7 @@ rtgui_view_t *demo_view_buffer_animation(rtgui_workbench_t* workbench)
 	}
 
 	/* 启动定时器以触发动画 */
-	timer = rtgui_timer_create(2, RT_TIMER_FLAG_PERIODIC, timeout, (void*)view);
+	timer = rtgui_timer_create(1, RT_TIMER_FLAG_PERIODIC, timeout, (void*)view);
 	rtgui_timer_start(timer);
 
 	return view;

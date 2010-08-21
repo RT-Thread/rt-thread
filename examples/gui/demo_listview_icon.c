@@ -14,7 +14,11 @@ static rtgui_workbench_t* workbench = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
 
 /* 列表项的动作函数 */
+#if RT_VERSION == 4
 static void listitem_action(rtgui_widget_t* widget, void* parameter)
+#else
+static void listitem_action(void* parameter)
+#endif
 {
 	char label_text[32];
 	rtgui_win_t *win;
@@ -45,7 +49,11 @@ static void listitem_action(rtgui_widget_t* widget, void* parameter)
 }
 
 /* 返回功能的动作函数 */
+#if RT_VERSION == 4
 static void return_action(rtgui_widget_t* widget, void* parameter)
+#else
+static void return_action(void* parameter)
+#endif
 {
 	/* 退出模态显示 */
 	rtgui_view_end_modal(RTGUI_VIEW(_view), RTGUI_MODAL_OK);
