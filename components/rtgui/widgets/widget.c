@@ -134,7 +134,7 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
 	if ((widget->parent != RT_NULL) && (widget->toplevel != RT_NULL))
 	{
 		/* update widget clip */
-		rtgui_widget_update_clip(widget);
+		rtgui_widget_update_clip(widget->parent);
 	}
 }
 
@@ -417,7 +417,15 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget)
 
 	parent = widget->parent;
 	/* if there is no parent, do not update clip (please use toplevel widget API) */
-	if (parent == RT_NULL) return;
+	if (parent == RT_NULL)
+	{
+		if (RTGUI_IS_TOPLEVEL(widget))
+		{
+			/* if it's toplevel widget, update it by toplevel function */
+			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(widget));
+		}
+		return;
+	}
 
 	/* reset clip to extent */
 	rtgui_region_reset(&(widget->clip), &(widget->extent));
