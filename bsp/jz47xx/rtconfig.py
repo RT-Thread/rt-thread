@@ -5,11 +5,12 @@ import SCons.cpp
 # make all component false
 RT_USING_FINSH 		= False
 RT_USING_DFS 		= False
-RT_USING_DFS_ELMFAT 	= False
+RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2	= False
 RT_USING_LWIP 		= False
 RT_USING_WEBSERVER	= False
 RT_USING_RTGUI 		= False
+RT_USING_MODULE		= False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -42,6 +43,10 @@ if rtconfig_ns.has_key('RT_USING_LWIP'):
 if rtconfig_ns.has_key('RT_USING_RTGUI'):
     RT_USING_RTGUI = True
 
+# module options
+if rtconfig_ns.has_key('RT_USING_MODULE'):
+    RT_USING_MODULE = True
+
 # toolchains options
 ARCH='mips'
 CPU='jz47xx'
@@ -65,7 +70,7 @@ OBJCPY = PREFIX + 'objcopy'
 DEVICE = ' -mips32 -msoft-float'
 CFLAGS = DEVICE + ' -G0 -DRT_USING_MINILIBC -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-jz47xx.map,-cref,-u,Reset_Handler -T jz47xx_ram.ld'
+LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-jz47xx.map,-cref,-u,Reset_Handler -T jz47xx_ram.lds'
 
 CPATH = ''
 LPATH = ''

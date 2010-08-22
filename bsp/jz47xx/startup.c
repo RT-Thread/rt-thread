@@ -42,7 +42,9 @@ void rtthread_startup(void)
 	/* init timer system */
 	rt_system_timer_init();
 
+#ifdef RT_USING_HEAP
 	rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
+#endif
 
 	/* init scheduler system */
 	rt_system_scheduler_init();

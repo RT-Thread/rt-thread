@@ -49,7 +49,7 @@
 #define RT_USING_MEMPOOL
 
 /* Using Dynamic Heap Management */
-#define RT_USING_HEAP
+/* #define RT_USING_HEAP */
 
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
@@ -74,7 +74,7 @@
 #define FINSH_DEVICE_NAME "uart"
 
 /* SECTION: device filesystem support */
-#define RT_USING_DFS
+/* #define RT_USING_DFS */
 #define RT_USING_DFS_ELMFAT
 
 /* the max number of mounted filesystem */
