@@ -42,7 +42,8 @@ static void rtgui_dc_client_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 
 struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner)
 {
-	if (rtgui_region_is_flat(&owner->clip) == RT_EOK)
+	if ((rtgui_region_is_flat(&owner->clip) == RT_EOK) && 
+		rtgui_rect_is_equal(&(owner->extent), &(owner->clip.extents)) == RT_EOK)
 	{
 		/* use hardware DC */
 		return rtgui_dc_hw_create(owner);

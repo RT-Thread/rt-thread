@@ -2239,3 +2239,14 @@ int rtgui_rect_is_intersect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2
 
 	return -RT_ERROR;
 }
+
+int rtgui_rect_is_equal(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2)
+{
+	if (*((rt_uint32_t*)(rect1)) == *((rt_uint32_t*)(rect2)) &&
+		*(((rt_uint32_t*)(rect1)) + 1) == *(((rt_uint32_t*)(rect2)) + 1))
+	{
+		return RT_EOK;
+	}
+
+	return -RT_ERROR;
+}

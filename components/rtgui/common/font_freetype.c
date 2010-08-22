@@ -1,3 +1,4 @@
+#ifdef RTGUI_USING_TTF
 #include <rtgui/dc.h>
 #include <rtgui/font.h>
 #include <rtgui/tree.h>
@@ -199,3 +200,4 @@ void rtgui_freetype_font_destroy(rtgui_font_t* font)
 	rtgui_free(freetype);
 	rtgui_free(font);
 }
+#endif
