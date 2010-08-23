@@ -88,7 +88,8 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui
 #endif
 				if (box->on_button != RT_NULL)
 				{
-					return box->on_button(widget, event);
+					box->on_button(widget, event);
+					return RT_TRUE;
 				}
 			}
 

@@ -31,7 +31,7 @@ typedef struct rtgui_panel rtgui_panel_t;
 typedef struct rtgui_win rtgui_win_t;
 typedef struct rtgui_workbench rtgui_workbench_t;
 typedef rt_bool_t (*rtgui_event_handler_ptr)(struct rtgui_widget* widget, struct rtgui_event* event);
-typedef void (*rtgui_onbutton_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);
+typedef void (*rtgui_onbutton_func_t)(struct rtgui_widget* widget, struct rtgui_event* event);
 
 struct rtgui_point
 {
