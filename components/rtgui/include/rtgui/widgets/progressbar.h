@@ -18,7 +18,7 @@ struct rtgui_progressbar
 {
 	struct rtgui_widget parent;
 
-	int orientation;
+	int orient;
 
     int range;
     int position;

@@ -58,7 +58,6 @@ struct rtgui_button
 	void (*on_button)(struct rtgui_widget* widget, rtgui_event_t *event);
 };
 typedef struct rtgui_button rtgui_button_t;
-typedef void (*rtgui_onbutton_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);
 
 rtgui_type_t *rtgui_button_type_get(void);
 

@@ -20,7 +20,7 @@ struct rtgui_staticline
 	/* inherit from widget */
 	struct rtgui_widget parent;
 
-	int orientation;
+	int orient;
 };
 typedef struct rtgui_staticline rtgui_staticline_t;
 

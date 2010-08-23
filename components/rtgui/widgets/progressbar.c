@@ -11,7 +11,7 @@ static void _rtgui_progressbar_constructor(rtgui_progressbar_t *bar)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(bar), rtgui_progressbar_event_handler);
 	rtgui_widget_set_rect(RTGUI_WIDGET(bar), &rect);
 
-	bar->orientation = RTGUI_HORIZONTAL;
+	bar->orient = RTGUI_HORIZONTAL;
 	bar->range = RTGUI_PROGRESSBAR_DEFAULT_RANGE;
 	bar->position = 0;
 
@@ -65,7 +65,7 @@ struct rtgui_progressbar* rtgui_progressbar_create(int orientation, int range,
 		if (r != RT_NULL)
 			rtgui_widget_set_rect(RTGUI_WIDGET(bar), r);
 
-		bar->orientation = orientation;
+		bar->orient = orientation;
         bar->range = range;
     }
 

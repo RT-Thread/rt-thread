@@ -8,7 +8,7 @@ static void _rtgui_staticline_constructor(rtgui_staticline_t *staticline)
 	rtgui_rect_t rect = {0, 0, 100, 2};
 
 	rtgui_widget_set_rect(RTGUI_WIDGET(staticline), &rect);
-	staticline->orientation= RTGUI_HORIZONTAL;
+	staticline->orient= RTGUI_HORIZONTAL;
 
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(staticline), rtgui_staticline_event_handler);
 }
@@ -68,7 +68,7 @@ void rtgui_staticline_set_orientation(rtgui_staticline_t* staticline, int orient
 {
 	RT_ASSERT(staticline != RT_NULL);
 
-	staticline->orientation = orientation;
+	staticline->orient = orientation;
 #ifndef RTGUI_USING_SMALL_SIZE
 	if (orientation == RTGUI_HORIZONTAL)
 	{

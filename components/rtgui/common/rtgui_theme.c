@@ -948,7 +948,7 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 	rtgui_rect_inflate(&rect, -2);
     bar->parent.gc.background = RTGUI_RGB(0, 0, 255);
 
-    if (bar->orientation == RTGUI_VERTICAL)
+    if (bar->orient == RTGUI_VERTICAL)
     {
         /* Vertical bar grows from bottom to top */
         int dy = (rtgui_rect_height(rect) * left) / max;
@@ -988,7 +988,7 @@ void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline)
 	rtgui_widget_get_rect(RTGUI_WIDGET(staticline), &rect);
 	rtgui_dc_fill_rect(dc, &rect);
 	
-	if (staticline->orientation == RTGUI_HORIZONTAL)
+	if (staticline->orient == RTGUI_HORIZONTAL)
 	{
 		rtgui_dc_draw_horizontal_line(dc, rect.x1, rect.x2, rect.y1);
 	}

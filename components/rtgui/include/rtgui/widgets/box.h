@@ -33,7 +33,7 @@ struct rtgui_box
 {
 	struct rtgui_container parent;
 
-	rt_uint16_t orientation;
+	rt_uint16_t orient;
 	rt_uint16_t border_size;
 };
 typedef struct rtgui_box rtgui_box_t;

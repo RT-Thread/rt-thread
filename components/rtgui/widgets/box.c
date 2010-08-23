@@ -24,7 +24,7 @@ static void _rtgui_box_constructor(rtgui_box_t *box)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(box), rtgui_box_event_handler);
 
 	/* set proper of control */
-	box->orientation = RTGUI_HORIZONTAL;
+	box->orient = RTGUI_HORIZONTAL;
 	box->border_size = RTGUI_BORDER_DEFAULT_WIDTH;
 }
 
@@ -70,7 +70,7 @@ struct rtgui_box* rtgui_box_create(int orientation, rtgui_rect_t* rect)
     {
 		/* set proper of control */
 		rtgui_widget_set_rect(RTGUI_WIDGET(box), rect);
-		box->orientation = orientation;
+		box->orient = orientation;
 	}
 
 	return box;
@@ -270,7 +270,7 @@ void rtgui_box_layout(rtgui_box_t* box)
 {
     RT_ASSERT(box != RT_NULL);
 
-	if (box->orientation & RTGUI_VERTICAL)
+	if (box->orient & RTGUI_VERTICAL)
 	{
 		rtgui_box_layout_vertical(box);
 	}
@@ -298,7 +298,7 @@ rt_uint32_t rtgui_box_get_width(rtgui_box_t* box)
 		rt_uint32_t widget_width;
 
 		widget_width = rtgui_rect_width(widget->extent);
-		if (box->orientation & RTGUI_VERTICAL)
+		if (box->orient & RTGUI_VERTICAL)
 		{
 			/* get the max width */
 			if (width < widget_width) width = widget_width;
@@ -325,7 +325,7 @@ rt_uint32_t rtgui_box_get_height(rtgui_box_t* box)
 		rt_uint32_t widget_height;
 
 		widget_height = rtgui_rect_height(widget->extent);
-		if (box->orientation & RTGUI_HORIZONTAL)
+		if (box->orient & RTGUI_HORIZONTAL)
 		{
 			/* get the max height */
 			if (height < widget_height) height = widget_height;

@@ -31,6 +31,7 @@ typedef struct rtgui_panel rtgui_panel_t;
 typedef struct rtgui_win rtgui_win_t;
 typedef struct rtgui_workbench rtgui_workbench_t;
 typedef rt_bool_t (*rtgui_event_handler_ptr)(struct rtgui_widget* widget, struct rtgui_event* event);
+typedef void (*rtgui_onbutton_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);
 
 struct rtgui_point
 {
@@ -103,20 +104,6 @@ enum RTGUI_ALIGN
 	RTGUI_ALIGN_CENTER_VERTICAL		= 0x08,
 	RTGUI_ALIGN_EXPAND				= 0x10,
 	RTGUI_ALIGN_STRETCH				= 0x20,
-};
-
-enum RTGUI_TEXTATTR
-{
-	RTGUI_TEXTATTR_NORMAL			= 0x0000,
-	RTGUI_TEXTATTR_
-};
-
-enum RTGUI_ARRAW
-{
-	RTGUI_ARRAW_UP = 0,
-	RTGUI_ARRAW_DOWN,
-	RTGUI_ARRAW_LEFT,
-	RTGUI_ARRAW_RIGHT
 };
 
 enum RTGUI_MODAL_CODE

@@ -10,6 +10,7 @@ static void _rtgui_checkbox_constructor(rtgui_checkbox_t *box)
 
 	/* set status */
 	box->status_down = RTGUI_CHECKBOX_STATUS_UNCHECKED;
+	box->on_button = RT_NULL;
 
 	/* set default gc */
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
@@ -26,6 +27,13 @@ rtgui_type_t *rtgui_checkbox_type_get(void)
 	}
 
 	return checkbox_type;
+}
+
+void rtgui_checkbox_set_onbutton(rtgui_checkbox_t* checkbox, rtgui_onbutton_func_t func)
+{
+	RT_ASSERT(checkbox != RT_NULL);
+
+	checkbox->on_button = func;
 }
 
 rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
@@ -78,6 +86,10 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui
 					return widget->on_mouseclick(widget, event);
 				}
 #endif
+				if (box->on_button != RT_NULL)
+				{
+					return box->on_button(widget, event);
+				}
 			}
 
 			return RT_TRUE;
