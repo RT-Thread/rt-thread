@@ -61,7 +61,10 @@ int dfs_file_open(struct dfs_fd* fd, const char *path, int flags)
 	fd->size = 0;
 	fd->pos = 0;
 
-	fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
+	if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+		fd->path = rt_strdup("/");
+	else
+		fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
 	rt_free(fullpath);
 	dfs_log(DFS_DEBUG_INFO, ("actul file path: %s\n", fd->path));
 
@@ -224,7 +227,12 @@ int dfs_file_unlink(const char *path)
 	}
 
 	if (fs->ops->unlink != RT_NULL) 
-		result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
+	{
+		if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+			result = fs->ops->unlink(fs, "/");
+		else
+			result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
+	}
 	else result = -DFS_STATUS_ENOSYS;
 
 __exit:

@@ -228,6 +228,9 @@ const char* dfs_subdir(const char* directory, const char* filename)
 {
 	const char* dir;
 
+	if (strlen(directory) == strlen(filename)) /* it's a same path */
+		return RT_NULL;
+
 	dir = filename + strlen(directory);
 	if ((*dir != '/') && (dir != filename))
 	{
