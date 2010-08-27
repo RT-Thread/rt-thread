@@ -729,8 +729,6 @@ int nfs_stat(struct dfs_filesystem* fs, const char *path, struct _stat *st)
 	RT_ASSERT(fs->data != RT_NULL);
 	nfs = (struct nfs_filesystem *)fs->data;
 
-	rt_kprintf("get path:%s stat\n", path);
-
 	handle = get_handle(nfs, path);
 	if(handle == RT_NULL)
 		return -1;

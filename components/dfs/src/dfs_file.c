@@ -354,7 +354,11 @@ int dfs_file_stat(const char *path, struct _stat *buf)
 		return -DFS_STATUS_ENOSYS;
 	}
 
-	result = fs->ops->stat(fs, fullpath, buf);
+	if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+		result = fs->ops->stat(fs, "/", buf);
+	else
+		result = fs->ops->stat(fs, dfs_subdir(fs->path, fullpath), buf);
+
 	rt_free(fullpath);
 
 	return result;
