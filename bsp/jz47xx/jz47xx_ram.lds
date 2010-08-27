@@ -13,6 +13,9 @@
  * 2010-08-23     bernard      change to jz47xx
  */
 
+OUTPUT_FORMAT("elf32-tradlittlemips", "elf32-tradlittlemips", "elf32-tradlittlemips")
+OUTPUT_ARCH(mips)
+
 ENTRY(_entry)
 SECTIONS
 {

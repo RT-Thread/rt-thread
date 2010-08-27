@@ -68,9 +68,9 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 
 DEVICE = ' -mips32 -msoft-float'
-CFLAGS = DEVICE + ' -G0 -DRT_USING_MINILIBC -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
-AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-jz47xx.map,-cref,-u,Reset_Handler -T jz47xx_ram.lds'
+CFLAGS = DEVICE + ' -EL -G0 -DRT_USING_MINILIBC -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
+AFLAGS = ' -c' + DEVICE + ' -EL -x assembler-with-cpp'
+LFLAGS = DEVICE + ' -EL -Wl,--gc-sections,-Map=rtthread-jz47xx.map,-cref,-u,Reset_Handler -T jz47xx_ram.lds'
 
 CPATH = ''
 LPATH = ''
