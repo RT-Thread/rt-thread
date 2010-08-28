@@ -155,7 +155,6 @@ xdr_nfsstat3(register XDR *xdrs, nfsstat3 *objp)
 		return (FALSE);
 	}
 
-	*objp = enum_objp;
 	return (TRUE);
 }
 
@@ -170,7 +169,6 @@ xdr_ftype3(register XDR *xdrs, ftype3 *objp)
 		return (FALSE);
 	}
 	
-	*objp = enum_objp;
 	return (TRUE);
 }
 
@@ -185,7 +183,6 @@ xdr_stable_how(register XDR *xdrs, stable_how *objp)
 		return (FALSE);
 	}
 	
-	*objp = enum_objp;
 	return (TRUE);
 }
 
@@ -200,7 +197,6 @@ xdr_createmode3(register XDR *xdrs, createmode3 *objp)
 		return (FALSE);
 	}
 	
-	*objp = enum_objp;
 	return (TRUE);
 }
 
@@ -351,7 +347,6 @@ xdr_time_how(register XDR *xdrs, time_how *objp)
 		return (FALSE);
 	}
 	
-	*objp = enum_objp;
 	return (TRUE);
 }
 

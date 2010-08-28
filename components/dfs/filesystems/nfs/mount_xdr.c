@@ -117,7 +117,6 @@ xdr_mountstat3(register XDR *xdrs, mountstat3 *objp)
 		return (FALSE);
 	}
 
-	*objp = enum_objp;
 	return (TRUE);
 }
 

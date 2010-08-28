@@ -359,10 +359,6 @@ bool_t xdr_enum(xdrs, ep)
 XDR *xdrs;
 enum_t *ep;
 {
-	long lp;
-
-	lp = *ep;
-
 	/*
 	 * enums are treated as ints
 	 */

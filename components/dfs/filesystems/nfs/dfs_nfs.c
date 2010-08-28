@@ -308,7 +308,7 @@ int nfs_create(struct nfs_filesystem* nfs, const char *name, mode_t mode)
 		return -1;
 	}
 	args.where.dir=*handle;
-	args.where.name=strrchr(name, '/');
+	args.where.name=strrchr(name, '/') + 1;
 	if(args.where.name==RT_NULL)
 	{
 		args.where.name=(char *)name;
@@ -356,7 +356,7 @@ int nfs_mkdir(struct nfs_filesystem* nfs, const char *name, mode_t mode)
 		return -1;
 
 	args.where.dir=*handle;
-	args.where.name=strrchr(name, '/');
+	args.where.name=strrchr(name, '/') + 1;
 	if(args.where.name==RT_NULL)
 	{
 		args.where.name=(char *)name;
@@ -864,7 +864,7 @@ int nfs_unlink(struct dfs_filesystem* fs, const char* path)
 		if(handle == RT_NULL) return -1;
 
 		args.object.dir=*handle;
-		args.object.name=strrchr(path, '/');
+		args.object.name=strrchr(path, '/') + 1;
 		if(args.object.name==RT_NULL)
 		{
 			args.object.name=(char *)path;
@@ -896,7 +896,7 @@ int nfs_unlink(struct dfs_filesystem* fs, const char* path)
 		if(handle==RT_NULL) return -1;
 
 		args.object.dir=*handle;
-		args.object.name=strrchr(path, '/');
+		args.object.name=strrchr(path, '/') + 1;
 		if(args.object.name==RT_NULL)
 		{
 			args.object.name=(char *)path;
@@ -947,12 +947,12 @@ int nfs_rename(struct dfs_filesystem* fs, const char *src, const char *dest)
 		return -1;
 
 	args.from.dir=*sHandle;
-	args.from.name=strrchr(src, '/');
+	args.from.name=strrchr(src, '/') + 1;
 	if(args.from.name==RT_NULL)
 		args.from.name=(char *)src;
 
 	args.to.dir=*dHandle;
-	args.to.name=strrchr(src, '/');
+	args.to.name=strrchr(src, '/') + 1;
 	if(args.to.name==RT_NULL)
 		args.to.name=(char *)dest;
 
