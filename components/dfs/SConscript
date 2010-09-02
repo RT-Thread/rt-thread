@@ -16,6 +16,12 @@ filesystems/elmfat/dfs_elm.c
 filesystems/elmfat/ff.c
 """)
 
+# DFS-ROMFS options
+romfs = Split("""
+filesystems/romfs/dfs_romfs.c
+filesystems/romfs/romfs.c
+""")
+
 # DFS-YAFFS2 options
 yaffs2_main = Split("""
 filesystems/yaffs2/direct/yaffscfg.c
@@ -68,6 +74,10 @@ if 'RT_USING_DFS_ELMFAT' in dir(rtconfig) and rtconfig.RT_USING_DFS_ELMFAT:
 if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS:
     src_local = src_local + nfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/nfs']
+
+if 'RT_USING_DFS_ROMFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_ROMFS:
+    src_local = src_local + romfs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/romfs']
 
 # group definitions
 group = {}
