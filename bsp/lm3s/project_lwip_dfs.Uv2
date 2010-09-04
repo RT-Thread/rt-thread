@@ -53,13 +53,12 @@ File 4,1,<..\..\libcpu\arm\lm3s\serial.c><serial.c>
 File 4,1,<..\..\libcpu\arm\lm3s\fault.c><fault.c>
 File 4,2,<..\..\libcpu\arm\lm3s\fault_rvds.S><fault_rvds.S>
 File 5,4,<..\..\bsp\lm3s\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
-File 6,1,<..\..\components\dfs\src\dfs_init.c><dfs_init.c>
 File 6,1,<..\..\components\dfs\src\dfs_fs.c><dfs_fs.c>
-File 6,1,<..\..\components\dfs\src\dfs_raw.c><dfs_raw.c>
-File 6,1,<..\..\components\dfs\src\dfs_util.c><dfs_util.c>
 File 6,1,<..\..\components\dfs\src\dfs_posix.c><dfs_posix.c>
 File 6,1,<..\..\components\dfs\filesystems\elmfat\ff.c><ff.c>
 File 6,1,<..\..\components\dfs\filesystems\elmfat\dfs_elm.c><dfs_elm.c>
+File 6,1,<..\..\components\dfs\src\dfs.c><dfs.c>
+File 6,1,<..\..\components\dfs\src\dfs_file.c><dfs_file.c>
 File 7,1,<..\..\components\net\lwip\src\core\dhcp.c><dhcp.c>
 File 7,1,<..\..\components\net\lwip\src\core\dns.c><dns.c>
 File 7,1,<..\..\components\net\lwip\src\core\init.c><init.c>
