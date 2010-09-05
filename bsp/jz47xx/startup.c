@@ -25,16 +25,32 @@
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 
-extern int  rt_application_init(void);
+extern int rt_application_init(void);
+
+void dump_memory(rt_uint8_t* ptr, rt_size_t size)
+{
+	rt_size_t index;
+
+	for (index = 0; index < size; index ++)
+	{
+		rt_kprintf("%02x ", ptr[index] & 0xff);
+		if ((index + 1) % 16 == 0) rt_kprintf("\n");
+	}
+}
 
 /**
  * This function will startup RT-Thread RTOS.
  */
 void rtthread_startup(void)
 {
+	/* init hardware interrupt */
+	rt_hw_interrupt_init();
+
 	/* init board */
 	rt_hw_board_init();
 	rt_show_version();
+
+	dump_memory((rt_uint8_t*)0x80000200, 32);
 
 	/* init tick */
 	rt_system_tick_init();

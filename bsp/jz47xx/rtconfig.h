@@ -3,13 +3,13 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX	10
 
 /* RT_ALIGN_SIZE*/
 #define RT_ALIGN_SIZE	4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX	256
 
 /* Tick per Second */
 #define RT_TICK_PER_SECOND	100
@@ -57,12 +57,13 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
-/* RT_USING_UART */
-#define RT_USING_UART0
+#define RT_USING_UART
+#define RT_USING_UART1
 #define RT_UART_RX_BUFFER_SIZE	64
 
 /* SECTION: Console options */
 /* the buffer size of console */
+#define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE	128
 
 /* SECTION: finsh, a C-Express shell */

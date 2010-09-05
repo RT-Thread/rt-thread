@@ -51,7 +51,7 @@ if rtconfig_ns.has_key('RT_USING_MODULE'):
 ARCH='mips'
 CPU='jz47xx'
 
-CROSS_TOOL      = 'gcc'
+CROSS_TOOL  = 'gcc'
 PLATFORM 	= 'gcc'
 EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 BUILD		= 'debug'
@@ -82,4 +82,6 @@ else:
 	CFLAGS += ' -O2'
 
 RT_USING_MINILIBC = True
-POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
+COPY_ACTION = 'copy rtthread.bin usbboot\n'
+POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' + DUMP_ACTION + COPY_ACTION

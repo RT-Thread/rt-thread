@@ -17,6 +17,7 @@
 
 void rt_hw_board_init(void);
 
+/* 32M SDRAM */
 #define RT_HW_HEAP_END	(0x80000000 + 32 * 1024 * 1024)
 
 #endif

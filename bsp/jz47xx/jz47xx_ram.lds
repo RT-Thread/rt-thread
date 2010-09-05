@@ -11,20 +11,33 @@
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
  * 2010-08-23     bernard      change to jz47xx
+ * 2010-09-04     bernard      move the beginning entry to 0x80100000
  */
 
 OUTPUT_FORMAT("elf32-tradlittlemips", "elf32-tradlittlemips", "elf32-tradlittlemips")
 OUTPUT_ARCH(mips)
 
-ENTRY(_entry)
+MEMORY
+{
+   /* 16M SDRAM */
+   DRAM : ORIGIN = 0x80100000, LENGTH = 0x01000000
+   /* 16K SRAM  */
+   IRAM : ORIGIN = 0x80000000, LENGTH = 0x00004000
+}
+
+ENTRY(_start)
 SECTIONS
 {
-	.start 0x80000000:
+	. = 0x80100000 ;
+
+	.start :
     {
         *(.start);
-    }
-    
-    .text ALIGN(0x4) : 
+    } > DRAM
+
+    . = ALIGN(4);
+
+	.text : 
     {
      *(.text)
      *(.text.*)
@@ -43,9 +56,11 @@ SECTIONS
      KEEP(*(VSymTab))
      __vsymtab_end = .;
      . = ALIGN(4);
-    }
-    
-	.data ALIGN(0x4) : 
+    } > DRAM
+
+    . = ALIGN(4);
+
+	.data : 
     {
      *(.data)
      *(.data.*)
@@ -58,25 +73,48 @@ SECTIONS
      
      *(.sdata)
      *(.sdata.*)
-    }
+    } > DRAM
 
-	__bss_start = ABSOLUTE(.);
+    . = ALIGN(4);
+	_iramat = .;
+
+	.iram : AT(_iramat)
+    {
+		_iramstart = .;
+        *(.vectors.1);
+        . = 0x100;
+        *(.vectors.2);
+        . = 0x180;
+        *(.vectors.3);
+        . = 0x200;
+        *(.vectors.4);
+        *(.vectors);
+
+        *(.icode);
+        *(.irodata);
+        *(.idata);
+        KEEP(*(.vectors*))
+		_iramend = .;
+    } > IRAM
+    _iramcopy = LOADADDR(.iram);
+
 	.sbss : 
   	{
+	__bss_start = .;
 		*(.sbss)
         *(.sbss.*)
         *(.dynsbss)
 		*(.scommon)
- 	}
- 	
+ 	} > DRAM
+
  	.bss :
  	{
 		*(.bss)
         *(.bss.*)
         *(.dynbss)
 		*(COMMON)
- 	}
-	__bss_end = ABSOLUTE(.);
+	__bss_end = .;
+ 	} > DRAM
 	
     _end = .;
 
