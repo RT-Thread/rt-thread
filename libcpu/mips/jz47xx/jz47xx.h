@@ -91,6 +91,6 @@
 #define IRQ_GPIO0	28
 #define IRQ_LCD		30
 
-#define SYSTEM_STACK          0x8000ffe8		/* the kernel system stack address */
+#define SYSTEM_STACK          0x80003fe8		/* the kernel system stack address */
 
 #endif

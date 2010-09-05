@@ -53,7 +53,8 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	*(--stk) = (rt_uint32_t) 0xffff;		/* c0_badvaddr */
 	*(--stk) = (rt_uint32_t) cp0_get_lo();	/* lo */
 	*(--stk) = (rt_uint32_t) cp0_get_hi();	/* hi */
-	*(--stk) = (rt_uint32_t) g_sr; 			/* C0_SR: HW2 = En, IE = En */
+	// *(--stk) = (rt_uint32_t) g_sr; 			/* C0_SR: HW2 = En, IE = En */
+	*(--stk) = (rt_uint32_t) 0xFC01; 		/* C0_SR: HW2 = En, IE = En */
 	*(--stk) = (rt_uint32_t) texit;	        /* ra */
 	*(--stk) = (rt_uint32_t) 0x0000001e;	/* s8 */
 	*(--stk) = (rt_uint32_t) stack_addr;	/* sp */

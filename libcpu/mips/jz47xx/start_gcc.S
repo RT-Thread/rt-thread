@@ -20,7 +20,7 @@ _start:
     la      ra, _start
 
     /* init cp0 registers. */
-    li	    t0, 0x0040FC00
+    li	    t0, 0x0000FC00 /* BEV = 0 and mask all interrupt */
     mtc0    t0, CP0_STATUS
 
     li	    t1, 0x00800000

@@ -128,7 +128,7 @@ struct rt_uart_jz
 	rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 }uart_device;
 
-static void rt_uart_irqhandler(void)
+static void rt_uart_irqhandler(int irqno)
 {
 	rt_ubase_t level, isr;
     struct rt_uart_jz* uart = &uart_device;
