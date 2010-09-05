@@ -1,5 +1,11 @@
 /*
  * File      : interrupt.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,11 +22,6 @@ rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrput_flag;
 
 static rt_isr_handler_t irq_handle_table[JZ47XX_MAX_INTR];
-
-extern rt_uint32_t cp0_get_cause(void);
-extern rt_uint32_t cp0_get_status(void);
-extern void disable_cp0_counter(void);
-extern void enable_cp0_counter(void);
 
 /**
  * @addtogroup Jz47xx
@@ -58,7 +59,7 @@ void rt_hw_interrupt_init()
 void rt_hw_interrupt_mask(int vector)
 {
 	/* mask interrupt */
-	INTC_IMSR = 1 << vector;
+	INTC_IMSR = (1 << vector);
 }
 
 /**
@@ -67,7 +68,7 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
-	INTC_IMCR = 1 << vector;
+	INTC_IMCR = (1 << vector);
 }
 
 /**
@@ -87,14 +88,14 @@ void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_ha
 	}
 }
 
+static rt_uint32_t pending ;
 void rt_interrupt_dispatch(void *ptreg)
 {
     int i;
-    rt_uint32_t pending;
 	rt_isr_handler_t irq_func;
 
     /* the hardware interrupt */
-	pending = INTC_IPR;
+	pending |= INTC_IPR;
 	if (!pending) return;
 
     for (i = 0; i < JZ47XX_MAX_INTR; i++)
@@ -108,7 +109,7 @@ void rt_interrupt_dispatch(void *ptreg)
 			(*irq_func)(i);
 
 			/* ack interrupt */
-			INTC_IPR = 1 << i;
+			INTC_IPR = (1 << i);
 		}
 	}
 }
