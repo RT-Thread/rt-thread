@@ -7,6 +7,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include "../common/exception.h"
+#include "../common/mipsregs.h"
 
 /**
  * @addtogroup Jz47xx
@@ -35,9 +36,16 @@ exception_func_t rt_set_except_vector(int n, exception_func_t func)
     return old_handler;
 }
 
-void tlbmiss_handle(rt_uint32_t epc)
+void tlb_refill_handler(void)
 {
-	rt_kprintf("tlb-miss happens, epc: 0x%08x\n", epc);
+	rt_kprintf("tlb-miss happens, epc: 0x%08x\n", read_c0_epc());
+	rt_hw_cpu_shutdown();
+}
+
+void cache_error_handler(void)
+{
+	rt_kprintf("cache exception happens, epc: 0x%08x\n", read_c0_epc());
+	rt_hw_cpu_shutdown();
 }
 
 static void unhandled_exception_handle(pt_regs_t *regs)
