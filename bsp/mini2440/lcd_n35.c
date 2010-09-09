@@ -172,20 +172,12 @@ void LcdBkLtSet(rt_uint32_t HiRatio)
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
 	volatile rt_uint16_t *src_ptr, *dst_ptr;
-	rt_uint32_t pitch, index;
+	rt_uint32_t i, j;
 
-	pitch = 2 * (rect->x2 - rect->x1);
-
-	/* copy from framebuffer to physical framebuffer */
-	src_ptr = &_rt_framebuffer[rect->y1][rect->x1];
-	dst_ptr = &_rt_hw_framebuffer[rect->y1][rect->x1];
-
-	for (index = rect->y1; index < rect->y2; index ++)
+	for (i = rect->y1; i < rect->y2; i ++)
 	{
-		memcpy((void*)dst_ptr, (void*)src_ptr, pitch);
-
-		src_ptr += (rect->x2 - rect->x1);
-		dst_ptr += (rect->x2 - rect->x1);
+		for(j = rect->x1; j < rect->x2; j++)
+			_rt_hw_framebuffer[i][j] = _rt_framebuffer[i][j];
 	}
 }
 

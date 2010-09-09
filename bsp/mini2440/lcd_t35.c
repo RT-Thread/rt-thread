@@ -173,20 +173,12 @@ void LcdBkLtSet(rt_uint32_t HiRatio)
 void rt_hw_lcd_update(rtgui_rect_t *rect)
 {
 	volatile rt_uint16_t *src_ptr, *dst_ptr;
-	rt_uint32_t pitch, index;
+	rt_uint32_t i, j;
 
-	pitch = 2 * (rect->x2 - rect->x1);
-
-	/* copy from framebuffer to physical framebuffer */
-	src_ptr = &_rt_framebuffer[rect->y1][rect->x1];
-	dst_ptr = &_rt_hw_framebuffer[rect->y1][rect->x1];
-
-	for (index = rect->y1; index < rect->y2; index ++)
+	for (i = rect->y1; i < rect->y2; i ++)
 	{
-		memcpy((void*)dst_ptr, (void*)src_ptr, pitch);
-
-		src_ptr += (rect->x2 - rect->x1);
-		dst_ptr += (rect->x2 - rect->x1);
+		for(j = rect->x1; j < rect->x2; j++)
+			_rt_hw_framebuffer[i][j] = _rt_framebuffer[i][j];
 	}
 }
 
@@ -229,7 +221,7 @@ void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_
 
 void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t y2)
 {
-    rt_uint32_t idy;
+	rt_uint32_t idy;
 	rt_uint16_t color;
 
 	/* get color pixel */
@@ -243,7 +235,7 @@ void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t
 
 void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
-    rt_memcpy((void*)&_rt_framebuffer[y][x1], pixels, (x2 - x1) * 2);
+ 	rt_memcpy((void*)&_rt_framebuffer[y][x1], pixels, (x2 - x1) * 2);
 }
 
 struct rtgui_graphic_driver _rtgui_lcd_driver =
@@ -304,14 +296,15 @@ void rt_hw_lcd_init()
    	LCDCON2 = (LCD_UPPER_MARGIN << 24) | ((LCD_HEIGHT - 1) << 14) | (LCD_LOWER_MARGIN << 6) | (LCD_VSYNC_LEN << 0);
    	LCDCON3 = (LCD_RIGHT_MARGIN << 19) | ((LCD_WIDTH  - 1) <<  8) | (LCD_LEFT_MARGIN << 0);
    	LCDCON4 = (13 <<  8) | (LCD_HSYNC_LEN << 0);
-#if !defined(LCD_CON5)
-    #define LCD_CON5 ((1<<11) | (1 << 9) | (1 << 8) | (1 << 3) | (1 << 0))
-#endif
-    LCDCON5   =  LCD_CON5;
 
-    LCDSADDR1 = ((LCD_ADDR >> 22) << 21) | ((M5D(LCD_ADDR >> 1)) <<  0);
-    LCDSADDR2 = M5D((LCD_ADDR + LCD_WIDTH * LCD_HEIGHT * 2) >> 1);
-    LCDSADDR3 = LCD_WIDTH;
+#if !defined(LCD_CON5)
+#define LCD_CON5 ((1<<11) | (1 << 9) | (1 << 8) | (1 << 3) | (1 << 0))
+#endif
+	LCDCON5   =  LCD_CON5;
+
+	LCDSADDR1 = ((LCD_ADDR >> 22) << 21) | ((M5D(LCD_ADDR >> 1)) <<  0);
+	LCDSADDR2 = M5D((LCD_ADDR + LCD_WIDTH * LCD_HEIGHT * 2) >> 1);
+	LCDSADDR3 = LCD_WIDTH;
 
 	LCDINTMSK |= (3);
 	LPCSEL &= (~7) ;
