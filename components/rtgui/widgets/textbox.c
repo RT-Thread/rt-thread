@@ -273,6 +273,8 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
+		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
+
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_mouseclick != RT_NULL) widget->on_mouseclick(widget, event);
 		else 
@@ -281,6 +283,8 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 		return RT_TRUE;
 
 	case RTGUI_EVENT_KBD:
+		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
+
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
 		else 

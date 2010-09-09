@@ -286,7 +286,7 @@ rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_widget * widget,
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
-		if (RTGUI_WIDGET_IS_ENABLE(widget))
+		if (RTGUI_WIDGET_IS_ENABLE(widget) && !RTGUI_WIDGET_IS_HIDE(widget))
 		{
 #ifndef RTGUI_USING_SMALL_SIZE
 			if (widget->on_mouseclick != RT_NULL)

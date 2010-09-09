@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2010-09-10     Bernard      fix hide issue
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_theme.h>
@@ -37,6 +38,7 @@ static void _rtgui_slider_constructor(rtgui_slider_t *slider)
 
 	slider->ticks = 10;
 	slider->thumb_width = 8;
+	slider->on_changed = RT_NULL;
 }
 
 rtgui_type_t *rtgui_slider_type_get(void)
@@ -95,6 +97,8 @@ static void rtgui_slider_onmouse(struct rtgui_slider* slider, struct rtgui_event
 
 		rtgui_widget_focus(RTGUI_WIDGET(slider));
 		rtgui_slider_set_value(slider, sel);
+		if (slider->on_changed != RT_NULL) /* invoke callback function */
+			slider->on_changed(RTGUI_WIDGET(slider), RT_NULL);
 	}
 }
 
@@ -119,6 +123,8 @@ static void rtgui_slider_onkey(struct rtgui_slider* slider, struct rtgui_event_k
 
 	/* update widget */
 	rtgui_widget_update(RTGUI_WIDGET(slider));
+	if (slider->on_changed != RT_NULL) /* invoke callback function */
+		slider->on_changed(RTGUI_WIDGET(slider), RT_NULL);
 }
 
 rt_bool_t rtgui_slider_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
@@ -139,6 +145,8 @@ rt_bool_t rtgui_slider_event_handler(struct rtgui_widget* widget, struct rtgui_e
 		break;
 
 	case RTGUI_EVENT_KBD:
+		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
+
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
 		else
@@ -149,6 +157,8 @@ rt_bool_t rtgui_slider_event_handler(struct rtgui_widget* widget, struct rtgui_e
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
+		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
+
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_mouseclick != RT_NULL) widget->on_mouseclick(widget, event);
 		else
@@ -195,13 +205,16 @@ void rtgui_slider_set_value(struct rtgui_slider* slider, rt_size_t value)
 {
 	RT_ASSERT(slider != RT_NULL);
 
-	if (value < slider->min) value = slider->min;
-	if (value > slider->max) value = slider->max;
-
-	if (slider->value != value)
+	if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(slider)))
 	{
-		slider->value = value;
-		rtgui_theme_draw_slider(slider);
+		if (value < slider->min) value = slider->min;
+		if (value > slider->max) value = slider->max;
+
+		if (slider->value != value)
+		{
+			slider->value = value;
+			rtgui_theme_draw_slider(slider);
+		}
 	}
 }
 

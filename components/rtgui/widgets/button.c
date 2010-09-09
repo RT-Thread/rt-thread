@@ -86,7 +86,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 		{
 			struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*) event;
 
-			if (RTGUI_WIDGET_IS_HIDE(widget)) RT_FALSE;
+			if (RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
 			if ((ekbd->key == RTGUIK_RETURN) || (ekbd->key == RTGUIK_SPACE))
 			{
 				if (RTGUI_KBD_IS_DOWN(ekbd))
@@ -111,7 +111,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
-		if (RTGUI_WIDGET_IS_HIDE(widget)) RT_FALSE;
+		if (RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
 		{
 			struct rtgui_event_mouse* emouse = (struct rtgui_event_mouse*)event;
 

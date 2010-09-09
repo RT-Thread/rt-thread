@@ -81,6 +81,8 @@ void rtgui_progressbar_set_value(struct rtgui_progressbar *bar, int value)
 {
     RT_ASSERT(bar != RT_NULL);
 
+	if (!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar))) return;
+
     bar->position = value;
 
     rtgui_theme_draw_progressbar(bar);

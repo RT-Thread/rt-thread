@@ -40,6 +40,10 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 	RT_ASSERT(radiobox != RT_NULL);
 	RT_ASSERT(event  != RT_NULL);
 
+	/* widget is hide, return */
+	if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(radiobox)) || 
+		!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(radiobox))) return;
+
 	if (event->button & RTGUI_MOUSE_BUTTON_DOWN &&
 		event->button & RTGUI_MOUSE_BUTTON_LEFT)
 	{
@@ -97,6 +101,8 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui
 		break;
 
 	case RTGUI_EVENT_KBD:
+		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(radiobox))) return RT_FALSE;
+
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
 		else

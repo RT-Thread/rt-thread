@@ -33,6 +33,8 @@ struct rtgui_slider
 	rt_size_t thumb_width;
 
 	int orient;
+
+	void (*on_changed)(struct rtgui_widget* widget, struct rtgui_event *event);
 };
 typedef struct rtgui_slider rtgui_slider_t;
 
