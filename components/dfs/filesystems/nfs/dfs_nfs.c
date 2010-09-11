@@ -286,7 +286,8 @@ rt_bool_t nfs_is_directory(struct nfs_filesystem* nfs, const char* name)
 
 	xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
 	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
-
+	rt_free(handle);
+	
 	return result;
 }
 
@@ -337,6 +338,7 @@ int nfs_create(struct nfs_filesystem* nfs, const char *name, mode_t mode)
 	}
 	xdr_free((xdrproc_t)xdr_CREATE3res, (char *)&res);
 	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+	rt_free(handle);
 
 	return ret;
 }
@@ -384,6 +386,8 @@ int nfs_mkdir(struct nfs_filesystem* nfs, const char *name, mode_t mode)
 	}
 	xdr_free((xdrproc_t)xdr_MKDIR3res, (char *)&res);
 	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+	rt_free(handle);
+	
 	return ret;
 }
 
@@ -704,6 +708,7 @@ int nfs_open(struct dfs_fd* file)
 
 		copy_handle(&fp->handle, handle);
 		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+		rt_free(handle);
 
 		if (file->flags & DFS_O_APPEND)
 		{
@@ -766,6 +771,7 @@ int nfs_stat(struct dfs_filesystem* fs, const char *path, struct _stat *st)
 
 	xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
 	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+	rt_free(handle);
 
 	return 0;
 }
@@ -790,6 +796,7 @@ nfs_dir *nfs_opendir(struct nfs_filesystem* nfs, const char *path)
 
 	copy_handle(&dir->handle, handle);
 	xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+	rt_free(handle);
 
 	dir->cookie=0;
 	memset(&dir->cookieverf, '\0', sizeof(cookieverf3));
@@ -884,6 +891,7 @@ int nfs_unlink(struct dfs_filesystem* fs, const char* path)
 		}
 		xdr_free((xdrproc_t)xdr_REMOVE3res, (char *)&res);
 		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+		rt_free(handle);
 	}
 	else
 	{
@@ -917,6 +925,7 @@ int nfs_unlink(struct dfs_filesystem* fs, const char* path)
 
 		xdr_free((xdrproc_t)xdr_RMDIR3res, (char *)&res);
 		xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
+		rt_free(handle);	
 	}
 
 	return ret;
