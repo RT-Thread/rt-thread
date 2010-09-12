@@ -17,6 +17,7 @@
 
 #include "board.h"
 #include "uart.h"
+#include <jz4755.h>
 
 /**
  * @addtogroup JZ47xx
@@ -28,13 +29,68 @@
  */
 void rt_hw_timer_handler()
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
-
+	/* increase a OS tick */
 	rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+	/* clear flag */
+	TCU_TFCR = TCU_TFCR_OSTFLAG;
+}
+
+/**
+ * This function will initial OS timer
+ */
+void rt_hw_timer_init()
+{
+	rt_uint32_t val;
+
+	/* disable TCU clock */
+	CPM_CLKGR &= ~CPM_CLKGR_TCU;
+	TCU_TECR = TCU_TECR_OSTCL;
+
+	/* set */
+	OST_DR = RT_TICK_PER_SECOND * 0xcffff;
+	/* clear counter */
+	OST_CNT = 0;
+
+#if 0
+	switch (RTC_DIV)
+	{
+	case 1: 
+		val = OST_TCSR_PRESCALE1; 
+		break;
+	case 4: 
+		val = OST_TCSR_PRESCALE4; 
+		break;
+	case 16: 
+		val = OST_TCSR_PRESCALE16; 
+		break;
+	case 64: 
+		val = OST_TCSR_PRESCALE64; 
+		break;
+	case 256: 
+		val = OST_TCSR_PRESCALE256; 
+		break;
+	case 1024: 
+		val = OST_TCSR_PRESCALE1024; 
+		break;
+	default: 
+		val = OST_TCSR_PRESCALE4; 
+		break;
+	}
+#endif
+
+#ifdef RTC_SRC_EXTAL
+	OST_CSR = (val | OST_TCSR_EXT_EN);
+#else
+	OST_CSR = (val | OST_TCSR_PCLK_EN);
+#endif
+
+	TCU_TFCR = TCU_TFCR_OSTFLAG;
+	TCU_TMCR = TCU_TMCR_OSTMCL;
+	TCU_TESR = TCU_TESR_OSTST;
+
+	rt_hw_interrupt_install(IRQ_TCU0, rt_hw_timer_handler, RT_NULL);
+	rt_hw_interrupt_umask  (IRQ_TCU0);
 }
 
 /**
@@ -51,5 +107,8 @@ void rt_hw_board_init()
 	/* set console device */
 	rt_console_set_device("uart");
 #endif
+
+	/* init operating system timer */
+	rt_hw_timer_init();
 }
 /*@}*/

@@ -1,6 +1,7 @@
 #include <rthw.h>
 #include <rtthread.h>
-#include <jz47xx.h>
+
+#include <jz4755.h>
 
 /**
  * @addtogroup Jz47xx

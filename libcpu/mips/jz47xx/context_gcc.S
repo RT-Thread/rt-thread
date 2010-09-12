@@ -3,6 +3,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
+ * 2010-09-11     bernard      port to Jz4755
  */
 #include "../common/mips.inc"
 #include "../common/stackframe.h"
@@ -79,6 +80,7 @@ _reswitch:
     jr      ra
     nop
 
+	.globl system_dump
 
 /*
  * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
@@ -97,13 +99,11 @@ mips_irq_handle:
     beqz    t0, spurious_interrupt
     nop
 
+	/* let k0 keep the current context sp */
+    move    k0, sp 
     /* switch to kernel stack */
-    move    k0, sp
     li      sp, SYSTEM_STACK
-    addiu   sp, sp, -4
-    sw      k0, 0(sp)
 
-1:
     jal     rt_interrupt_enter
     nop
     jal     rt_interrupt_dispatch
@@ -112,8 +112,6 @@ mips_irq_handle:
     nop
 
     /* switch sp back to thread's context */
-    lw      k0, 0(sp)
-    nop
     move    sp, k0
 
     /*
@@ -124,15 +122,17 @@ mips_irq_handle:
     lw      k1, 0(k0)
     beqz    k1, spurious_interrupt
     nop
+    sw      zero, 0(k0)                     /* clear flag */
+	nop
 
     /*
      * switch to the new thread
      */
-    sw      zero, 0(k0)                     /* clear flag */
     la      k0, rt_interrupt_from_thread
     lw      k1, 0(k0)
     nop
     sw      sp, 0(k1)                       /* store sp in preempted tasks's TCB */
+
     la      k0, rt_interrupt_to_thread
     lw      k1, 0(k0)
     nop

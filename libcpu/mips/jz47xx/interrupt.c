@@ -88,17 +88,17 @@ void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_ha
 	}
 }
 
-static rt_uint32_t pending ;
 void rt_interrupt_dispatch(void *ptreg)
 {
     int i;
 	rt_isr_handler_t irq_func;
+	static rt_uint32_t pending = 0;
 
     /* the hardware interrupt */
 	pending |= INTC_IPR;
 	if (!pending) return;
 
-    for (i = 0; i < JZ47XX_MAX_INTR; i++)
+    for (i = JZ47XX_MAX_INTR; i > 0; --i)
     {
 		if ((pending & (1<<i)))
         {

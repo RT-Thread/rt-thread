@@ -84,4 +84,4 @@ else:
 RT_USING_MINILIBC = True
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 COPY_ACTION = 'copy rtthread.bin usbboot\n'
-POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' + DUMP_ACTION + COPY_ACTION
+POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' + COPY_ACTION
