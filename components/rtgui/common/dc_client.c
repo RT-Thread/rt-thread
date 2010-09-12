@@ -11,6 +11,8 @@
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
  * 2010-08-09     Bernard      rename hardware dc to client dc
+ * 2010-09-13     Bernard      fix rtgui_dc_client_blit_line issue, which found 
+ *                             by appele 
  */
 #include <rtgui/dc.h>
 #include <rtgui/dc_hw.h>
@@ -467,7 +469,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) draw_x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->draw_raw_hline(line_data, draw_x1, draw_x2, y);
+		hw_driver->draw_raw_hline(line_data + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
 	}
 }
 
