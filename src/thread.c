@@ -19,7 +19,7 @@
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
- * 2010-04-11     Yi.Qiu       add module feature
+ * 2010-04-11     Yi.Qiu         add module feature
  */
 
 #include <rtthread.h>
