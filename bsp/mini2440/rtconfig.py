@@ -66,7 +66,7 @@ ARCH     = 'arm'
 CPU      = 's3c24x0'
 TextBase = '0x30000000'
 
-CROSS_TOOL 	= 'gcc'
+CROSS_TOOL 	= 'keil'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -121,7 +121,7 @@ elif PLATFORM == 'armcc':
     LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
 
     CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
-    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"' + ' --keep __RTMsym_*'
+    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
 
     EXEC_PATH += '/arm/bin40/'
 

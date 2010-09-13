@@ -11,7 +11,7 @@
  * nLAN_CS connects to nGCS4
  */
 
-// #define DM9000_DEBUG		1
+/* #define DM9000_DEBUG		1 */
 #if DM9000_DEBUG
 #define DM9000_TRACE	rt_kprintf
 #else
@@ -162,8 +162,8 @@ void rt_dm9000_isr(int irqno)
 
 		last_io = DM9000_IO;
 
-		/* Disable all interrupts */
-		dm9000_io_write(DM9000_IMR, IMR_PAR);
+    /* Disable all interrupts */
+    // dm9000_io_write(DM9000_IMR, IMR_PAR);
 
 		/* Got DM9000 interrupt status */
 		int_status = dm9000_io_read(DM9000_ISR);               /* Got ISR */
@@ -182,11 +182,13 @@ void rt_dm9000_isr(int irqno)
 			rt_kprintf("overflow counter overflow\n");
 		}
 
-		/* Received the coming packet */
-		if (int_status & ISR_PRS)
-		{
-			/* disable receive interrupt */
-			dm9000_device.imr_all = IMR_PAR | IMR_PTM;
+    /* Received the coming packet */
+    if (int_status & ISR_PRS)
+    {
+        /* disable receive interrupt */
+		dm9000_io_write(DM9000_IMR, IMR_PAR);
+        dm9000_device.imr_all = IMR_PAR | IMR_PTM;
+		dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
 
 			/* a frame has been received */
 			eth_device_ready(&(dm9000_device.parent));
@@ -219,8 +221,8 @@ void rt_dm9000_isr(int irqno)
 			}
 		}
 
-		/* Re-enable interrupt mask */
-		dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+    /* Re-enable interrupt mask */
+    // dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
 
 		DM9000_IO = last_io;
     }
@@ -285,20 +287,20 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
     dm9000_io_write(DM9000_RCR, RCR_DIS_LONG | RCR_DIS_CRC | RCR_RXEN);	/* RX enable */
     dm9000_io_write(DM9000_IMR, IMR_PAR);
 
-	if (dm9000_device.mode == DM9000_AUTO)
-	{
-	    while (!(phy_read(1) & 0x20))
-	    {
-	        /* autonegation complete bit */
-	        rt_thread_delay(10);
-	        i++;
-	        if (i == 10000)
-	        {
-	            rt_kprintf("could not establish link\n");
-	            return 0;
-	        }
-	    }
-	}
+    if (dm9000_device.mode == DM9000_AUTO)
+    {
+        while (!(phy_read(1) & 0x20))
+        {
+            /* autonegation complete bit */
+            rt_thread_delay( 10 );
+            i++;
+            if (i > 20)
+            {
+                rt_kprintf("could not establish link\n");
+                return 0;
+            }
+        }
+    }
 
     /* see what we've got */
     lnk = phy_read(17) >> 12;
@@ -462,6 +464,8 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 {
     struct pbuf* p;
     rt_uint32_t rxbyte;
+    rt_uint16_t rx_status, rx_len;
+    rt_uint16_t* data;
 
     /* init p pointer */
     p = RT_NULL;
@@ -469,14 +473,12 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     /* lock DM9000 device */
     rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
+__error_retry:
     /* Check packet ready or not */
     dm9000_io_read(DM9000_MRCMDX);	    		/* Dummy read */
     rxbyte = DM9000_inb(DM9000_DATA_BASE);		/* Got most updated data */
     if (rxbyte)
     {
-        rt_uint16_t rx_status, rx_len;
-        rt_uint16_t* data;
-
         if (rxbyte > 1)
         {
 			DM9000_TRACE("dm9000 rx: rx error, stop device\n");
@@ -512,13 +514,12 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
                     len -= 2;
                 }
             }
-			DM9000_TRACE("\n");
         }
         else
         {
             rt_uint16_t dummy;
 
-			DM9000_TRACE("dm9000 rx: no pbuf\n");
+            rt_kprintf("dm9000 rx: no pbuf\n");
 
             /* no pbuf, discard data from DM9000 */
             data = &dummy;
@@ -532,7 +533,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
         if ((rx_status & 0xbf00) || (rx_len < 0x40)
                 || (rx_len > DM9000_PKT_MAX))
         {
-			rt_kprintf("rx error: status %04x\n", rx_status);
+            rt_kprintf("rx error: status %04x, rx_len: %d\n", rx_status, rx_len);
 
             if (rx_status & 0x100)
             {
@@ -556,12 +557,17 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
             }
 
             /* it issues an error, release pbuf */
-            pbuf_free(p);
+            if (p != RT_NULL) pbuf_free(p);
             p = RT_NULL;
+
+			goto __error_retry;
         }
     }
     else
     {
+		/* clear packet received latch status */
+	    dm9000_io_write(DM9000_ISR, ISR_PTS);
+
         /* restore receive interrupt */
 	    dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
         dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);

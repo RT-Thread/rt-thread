@@ -169,6 +169,9 @@
 /* the number of blocks for pbuf */
 #define RT_LWIP_PBUF_NUM	16
 
+/* the number of simultaneously queued TCP */
+#define RT_LWIP_TCP_SEG_NUM    40
+
 /* thread priority of tcpip thread */
 #define RT_LWIP_TCPTHREAD_PRIORITY	128
 

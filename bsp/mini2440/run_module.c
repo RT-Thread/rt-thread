@@ -19,9 +19,6 @@
 #if defined(RT_USING_FINSH) && defined(RT_USING_MODULE)
 #include <finsh.h>
 
-extern struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name);
-extern void rt_module_run(struct rt_module* module);
-
 void run_module(const char* filename)
 {
 	int fd, length;
@@ -38,12 +35,13 @@ void run_module(const char* filename)
 	{
 		rt_kprintf("check: read file failed\n");
 		close(fd);
+		rt_free(buffer);
 		return;
 	}
 	rt_kprintf("read %d bytes from file\n", length);
 	module_name = strrchr(filename, '/');
-	module = rt_module_load((void *)buffer, ++module_name);
-	
+	module = rt_module_load(++module_name, (void *)buffer);
+	rt_free(buffer);
 	close(fd);
 }
 
