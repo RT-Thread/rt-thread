@@ -23,21 +23,32 @@
 #ifdef RT_USING_MODULE
 #include "module.h"
 
-#define elf_module 	((Elf32_Ehdr *)module_ptr)
-#define shdr		((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
-#define phdr		((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
+#define elf_module 		((Elf32_Ehdr *)module_ptr)
+#define shdr				((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
+#define phdr				((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
 
 #define IS_PROG(s)		(s.sh_type == SHT_PROGBITS)
-#define IS_NOPROG(s)	(s.sh_type == SHT_NOBITS)
-#define IS_REL(s)		(s.sh_type == SHT_REL)
+#define IS_NOPROG(s)		(s.sh_type == SHT_NOBITS)
+#define IS_REL(s)			(s.sh_type == SHT_REL)
 #define IS_RELA(s)		(s.sh_type == SHT_RELA)
 #define IS_ALLOC(s)		(s.sh_flags == SHF_ALLOC)
-#define IS_AX(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
-#define IS_AW(s)		((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
+#define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
+#define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
 struct rt_module* rt_current_module;
 
-int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
+/**
+ * This function will return self module object
+ *
+ * @return the self thread object
+ *
+ */
+rt_module_t rt_module_self (void)
+{
+	return rt_current_module;
+}
+
+static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
 	Elf32_Addr *where, tmp;
 	Elf32_Sword addend;
@@ -150,7 +161,16 @@ static void rt_module_init_object_container(struct rt_module* module)
 	module->module_object[RT_Object_Class_Timer].type = RT_Object_Class_Timer;
 }
 
-struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
+/**
+ * This function will load a module from memory and create a thread for it
+ *
+ * @param name the name of module, which shall be unique
+ * @param module_ptr the memory address of module image
+ *
+ * @return the module object
+ *
+ */
+rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 {
 	rt_uint32_t index;
 	rt_uint32_t module_size = 0;
@@ -158,14 +178,13 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	rt_uint8_t *ptr, *strtab, *shstrab;
 
 #ifdef RT_MODULE_DEBUG
-		rt_kprintf("rt_module_load: %s\n", name);
+	rt_kprintf("rt_module_load: %s\n", name);
 #endif
-
 	/* check ELF header */
 	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 ||
 		elf_module->e_ident[EI_CLASS] != ELFCLASS32)
 	{
-		rt_kprintf(" wrong magic\n");
+		rt_kprintf(" module magic error\n");
 		return RT_NULL;
 	}
 	
@@ -176,7 +195,11 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 			module_size += phdr[index].p_memsz;
 	}	
 	
-	if (module_size == 0) return module;
+	if (module_size == 0) 
+	{
+		rt_kprintf(" module size error\n");
+		return module;
+	}	
 
 	/* allocate module */
 	module = (struct rt_module *)rt_object_allocate(RT_Object_Class_Module, (const char*)name);
@@ -240,18 +263,27 @@ struct rt_module* rt_module_load(void* module_ptr, const rt_uint8_t* name)
 	/* init module object container */
 	rt_module_init_object_container(module);
 
+	module->stack_size = 512;
+	module->thread_priority = 90;
 	module->module_thread = rt_thread_create(name,
 		module->module_entry, RT_NULL,
-		512, 90, 10);
+		module->stack_size,
+		module->thread_priority, 10);
 	module->module_thread->module_parent = module;
 	rt_thread_startup(module->module_thread);
-
-	rt_free(module_ptr);
 		
 	return module;
 }	
 
-void rt_module_unload(struct rt_module* module)
+/**
+ * This function will unload a module from memory and release resources 
+ *
+ * @param module the module to be unloaded
+ *
+ * @return the operation status, RT_EOK on OK; -RT_ERROR on error
+ *
+ */
+rt_err_t rt_module_unload(rt_module_t module)
 {
 	int i;
 	struct rt_object* object;
@@ -287,8 +319,17 @@ void rt_module_unload(struct rt_module* module)
 	/* release module memory */
 	rt_free(module->module_space);
 	rt_object_delete((struct rt_object *)module);
+
+	return RT_EOK;
 }
 
+/**
+ * This function will find the specified module.
+ *
+ * @param name the name of module finding
+ *
+ * @return the module
+ */
 rt_module_t rt_module_find(char* name)
 {
 	struct rt_object_information *information;

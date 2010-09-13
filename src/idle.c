@@ -105,10 +105,9 @@ void rt_thread_idle_excute(void)
 				module->module_thread = RT_NULL;
 			}
 
-			/* if sub thread list and main thread are null */
+			/* if sub thread list and main thread are all enmpy */
 			if((module->module_thread == RT_NULL) &&
-				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) &&
-				(module->module_info->module_type == RT_Module_Class_APP))
+				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
 			{
 				/* unload module */
 				rt_module_unload(module);
