@@ -101,8 +101,8 @@ void rt_hw_set_divider(rt_uint8_t hdivn, rt_uint8_t pdivn)
 void rt_hw_clock_init(void)
 {
 	LOCKTIME = 0xFFFFFFFF;
-	rt_hw_set_divider(HDIVN, PDIVN);
-	rt_hw_set_upll_clock(UPL_SDIV, UPL_PDIV, UPL_MDIV);
 	rt_hw_set_mpll_clock(MPL_SDIV, MPL_PDIV, MPL_MIDV);
+	rt_hw_set_upll_clock(UPL_SDIV, UPL_PDIV, UPL_MDIV);
+	rt_hw_set_divider(HDIVN, PDIVN);
 }
 

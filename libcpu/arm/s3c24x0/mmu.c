@@ -17,7 +17,7 @@
 #include "s3c24x0.h"
 
 // #define _MMUTT_STARTADDRESS	 0x30080000
-#define _MMUTT_STARTADDRESS	 0x30200000
+#define _MMUTT_STARTADDRESS	 0x30400000
 
 #define DESC_SEC		(0x2|(1<<4))
 #define CB				(3<<2)  //cache_on, write_back

@@ -57,8 +57,12 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
 
 	rt_kprintf("undefined instruction\n");
 	rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
-	rt_hw_backtrace((rt_uint32_t *)regs->fp, (rt_uint32_t)rt_current_thread->entry);
 
+#ifdef RT_USING_FINSH
+	list_thread();
+#endif
+	while (1);
+	
 	rt_hw_cpu_shutdown();
 }
 
@@ -93,8 +97,12 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
 
 	rt_kprintf("prefetch abort\n");
 	rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
-	rt_hw_backtrace((rt_uint32_t *)regs->fp, (rt_uint32_t)rt_current_thread->entry);
 
+#ifdef RT_USING_FINSH
+	list_thread();
+#endif
+	while (1);
+	
 	rt_hw_cpu_shutdown();
 }
 
@@ -112,8 +120,12 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
 
 	rt_kprintf("data abort\n");
 	rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
-	rt_hw_backtrace((rt_uint32_t *)regs->fp, (rt_uint32_t)rt_current_thread->entry);
 
+#ifdef RT_USING_FINSH
+	list_thread();
+#endif
+	while (1);
+	
 	rt_hw_cpu_shutdown();
 }
 
