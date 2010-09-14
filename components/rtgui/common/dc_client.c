@@ -13,6 +13,7 @@
  * 2010-08-09     Bernard      rename hardware dc to client dc
  * 2010-09-13     Bernard      fix rtgui_dc_client_blit_line issue, which found 
  *                             by appele 
+ * 2010-09-14     Bernard      fix vline and hline coordinate issue
  */
 #include <rtgui/dc.h>
 #include <rtgui/dc_hw.h>
@@ -41,6 +42,7 @@ static void rtgui_dc_client_get_rect(struct rtgui_dc* dc, rtgui_rect_t* rect);
 #define hw_driver				(rtgui_graphic_driver_get_default())
 #define dc_set_foreground(c) 	dc->gc.foreground = c
 #define dc_set_background(c) 	dc->gc.background = c
+#define _int_swap(x, y)			do {x ^= y; y ^= x; x ^= y;} while (0)
 
 struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner)
 {
@@ -298,6 +300,7 @@ static void rtgui_dc_client_draw_vline(struct rtgui_dc* self, int x, int y1, int
 	x  = x + owner->extent.x1;
 	y1 = y1 + owner->extent.y1;
 	y2 = y2 + owner->extent.y1;
+	if (y1 > y2) _int_swap(y1, y2);
 
 	if (owner->clip.data == RT_NULL)
 	{
@@ -353,6 +356,7 @@ static void rtgui_dc_client_draw_hline(struct rtgui_dc* self, int x1, int x2, in
 	/* convert logic to device */
 	x1 = x1 + owner->extent.x1;
 	x2 = x2 + owner->extent.x1;
+	if (x1 > x2) _int_swap(x1, x2);
 	y  = y + owner->extent.y1;
 
 	if (owner->clip.data == RT_NULL)
@@ -434,6 +438,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 	/* convert logic to device */
 	x1 = x1 + owner->extent.x1;
 	x2 = x2 + owner->extent.x1;
+	if (x1 > x2) _int_swap(x1, x2);
 	y  = y + owner->extent.y1;
 
 	if (rtgui_region_is_flat(&(owner->clip)) == RT_EOK)
@@ -494,15 +499,11 @@ static rtgui_gc_t* rtgui_dc_client_get_gc(struct rtgui_dc* self)
 {
 	rtgui_widget_t *owner;
 
-	if (self == RT_NULL) 
-	{
-	rt_kprintf("why!!\n");
-	return RT_NULL;
-	}
+	RT_ASSERT(self != RT_NULL);
 	
 	/* get owner */
 	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
-
+	
 	return &(owner->gc);
 }
 
