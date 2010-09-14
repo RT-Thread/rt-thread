@@ -113,7 +113,7 @@ int dfs_romfs_open(struct dfs_fd* file)
 
 	root_dirent = (struct romfs_dirent*)file->fs->data;
 
-	if (file->flags & DFS_O_CREAT | DFS_O_WRONLY | DFS_O_APPEND | DFS_O_TRUNC)
+	if (file->flags & (DFS_O_CREAT | DFS_O_WRONLY | DFS_O_APPEND | DFS_O_TRUNC | DFS_O_RDWR))
 		return -DFS_STATUS_EINVAL;
 
 	dirent = dfs_romfs_lookup(root_dirent, file->path);

@@ -228,6 +228,7 @@ int dfs_elm_open(struct dfs_fd* file)
 		mode = FA_READ;
 
 		if (file->flags & DFS_O_WRONLY) mode |= FA_WRITE;
+		if ((file->flags & DFS_O_ACCMODE) & DFS_O_RDWR) mode |= FA_WRITE;
 		/* Opens the file, if it is existing. If not, a new file is created. */
 		if (file->flags & DFS_O_CREAT) mode |= FA_OPEN_ALWAYS;
 		/* Creates a new file. If the file is existing, it is truncated and overwritten. */
@@ -489,7 +490,7 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 	const char *drivers_oldfn, *drivers_newfn;
 
 	drivers_oldfn = oldpath;
-	drivers_newfn = oldpath;
+	drivers_newfn = newpath;
 #endif
 
 	result = f_rename(drivers_oldfn, drivers_newfn);
