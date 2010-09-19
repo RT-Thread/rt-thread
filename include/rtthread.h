@@ -304,9 +304,9 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
 
 rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
-rt_module_t rt_module_find(char* name);
+rt_err_t rt_module_self_set (rt_module_t module);
 rt_module_t rt_module_self (void);
-
+rt_module_t rt_module_find(char* name);
 #endif
  
 /*

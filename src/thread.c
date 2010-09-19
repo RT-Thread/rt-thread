@@ -32,10 +32,6 @@ extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread* rt_current_thread;
 extern rt_uint8_t rt_current_priority;
 
-#ifdef RT_USING_MODULE
-extern struct rt_module* rt_current_module;
-#endif
-
 #ifdef RT_USING_HEAP
 extern rt_list_t rt_thread_defunct;
 #endif
@@ -82,7 +78,7 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 #ifdef RT_USING_MODULE
 	/* init module parent */
 	thread->module_parent =
-		(rt_current_module != RT_NULL) ? rt_current_module : RT_NULL;
+		(rt_module_self() != RT_NULL) ? rt_module_self() : RT_NULL;
 #endif
 
 	/* init user data */

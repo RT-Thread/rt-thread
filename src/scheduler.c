@@ -38,9 +38,6 @@ rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread* rt_current_thread;
 
 rt_uint8_t rt_current_priority;
-#ifdef RT_USING_MODULE
-extern struct rt_module* rt_current_module;
-#endif
 
 #if RT_THREAD_PRIORITY_MAX > 32
 /* maximun priority level, 256 */
@@ -267,8 +264,8 @@ void rt_schedule()
             rt_current_thread = to_thread;
 
 #ifdef RT_USING_MODULE
-            rt_current_module = (rt_current_thread->module_parent != RT_NULL) ? 
-                rt_current_thread->module_parent : RT_NULL;			
+            rt_module_set ((rt_current_thread->module_parent != RT_NULL) ? 
+                rt_current_thread->module_parent : RT_NULL);		
 #endif
 
 #ifdef RT_USING_HOOK

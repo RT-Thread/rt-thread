@@ -12,9 +12,9 @@
  * 2010-01-09      Bernard	first version
  * 2010-04-09      yi.qiu	implement based on first version
  */
- 
-#include <rtm.h>
+
 #include <rtthread.h>
+#include <rtm.h>
 
 #include "string.h"
 #include "kservice.h"
@@ -35,17 +35,31 @@
 #define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
-struct rt_module* rt_current_module;
+static struct rt_module* rt_current_module;
 
 /**
  * This function will return self module object
  *
- * @return the self thread object
+ * @return the self module object
  *
  */
 rt_module_t rt_module_self (void)
 {
+	/* return current module */
 	return rt_current_module;
+}
+
+/**
+ * This function will set current module object
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_module_set (rt_module_t module)
+{
+	/* set current module */
+	rt_current_module = module;
+
+	return RT_EOK;
 }
 
 static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
@@ -288,6 +302,10 @@ rt_err_t rt_module_unload(rt_module_t module)
 	int i;
 	struct rt_object* object;
 	struct rt_list_node *list, *node;
+
+#ifdef RT_MODULE_DEBUG
+	rt_kprintf("rt_module_unload %s\n", module->parent.name);
+#endif
 
 	/* check parameter */
 	RT_ASSERT(module != RT_NULL);
