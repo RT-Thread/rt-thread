@@ -92,6 +92,10 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 画一个圆弧 */
 		RTGUI_DC_FC(dc) = RTGUI_RGB(250, 120, 120);
 		rtgui_dc_draw_arc(dc, rect.x1 + 120, rect.y1 + 60, 30, 0, 120);
+		
+		/* 画一个扇形圆环 */
+		RTGUI_DC_FC(dc) = RTGUI_RGB(150, 23, 100);
+		rtgui_dc_draw_annulus(dc, 180, 170, 30, 50, 210, 330);
 
 		/* 多边形 */
 		RTGUI_DC_FC(dc) = blue;
@@ -150,7 +154,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_EXTRA);
 			rect.x1 += 20;
 			rect.x2 += 20 + 50;
-			rtgui_dc_draw_text(dc, "额外", &rect);
+			rtgui_dc_draw_text(dc, "extera", &rect);
 			rect.x1 -= 20;
 			rect.x2 -= 20 + 50;
 			rect.y1 += 20;
