@@ -108,19 +108,67 @@ void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 	rtgui_dc_draw_vline(dc, rect->x2 - 1, rect->y1, rect->y2);
 }
 
-void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect)
+void rtgui_dc_fill_rect_forecolor(struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
-	int r = 3;
+    int i = 0;
+    
+    rtgui_dc_draw_rect(dc, rect);
+    do
+    {
+        rtgui_dc_draw_hline(dc, rect->x1+1, rect->x2-1, rect->y1+i);
+		i++;
+    }while(!(rect->y1+i == rect->y2));
+}
 
-	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y1 + r, r, 180, 270);
-	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y1 + r, r, 270, 360);
-	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y2 - r, r, 90, 180);
-	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y2 - r, r, 0, 90);
+void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int r)
+{
+	RT_ASSERT(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r));
+	
+	if(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r))
+    {
+    	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y1 + r, r, 180, 270);
+    	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y1 + r, r, 270, 360);
+    	rtgui_dc_draw_arc(dc, rect->x1 + r, rect->y2 - r, r, 90,  180);
+    	rtgui_dc_draw_arc(dc, rect->x2 - r, rect->y2 - r, r, 0,   90);
 
-	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y1);
-	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y2);
-	rtgui_dc_draw_vline(dc, rect->x1, rect->y1 + r, rect->y2 - r);
-	rtgui_dc_draw_vline(dc, rect->x2, rect->y1 + r, rect->y2 - r);
+    	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y1);
+    	rtgui_dc_draw_hline(dc, rect->x1 + r, rect->x2 - r, rect->y2);
+    	rtgui_dc_draw_vline(dc, rect->x1, rect->y1 + r, rect->y2 - r);
+    	rtgui_dc_draw_vline(dc, rect->x2, rect->y1 + r, rect->y2 - r);
+    }
+}
+
+void rtgui_dc_fill_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int r)
+{
+    struct rtgui_rect rect_temp;
+
+	RT_ASSERT(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r));
+	
+	if(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r))
+	{
+		rect_temp.x1 = rect->x1 + r;
+		rect_temp.y1 = rect->y1;
+		rect_temp.x2 = rect->x2 - r;
+		rect_temp.y2 = rect->y2;
+		rtgui_dc_fill_rect_forecolor(dc, &rect_temp);//fill rect with foreground
+	    
+		rect_temp.x1 = rect->x1;
+		rect_temp.y1 = rect->y1 + r;
+		rect_temp.x2 = rect->x1 + r;
+		rect_temp.y2 = rect->y2 - r;
+		rtgui_dc_fill_rect_forecolor(dc, &rect_temp);//fill rect with foreground
+
+		rect_temp.x1 = rect->x2 - r;
+		rect_temp.y1 = rect->y1 + r;
+		rect_temp.x2 = rect->x2;
+		rect_temp.y2 = rect->y2 - r;
+		rtgui_dc_fill_rect_forecolor(dc, &rect_temp);//fill rect with foreground
+
+		rtgui_dc_fill_circle(dc, rect->x1 + r, rect->y1 + r, r);
+		rtgui_dc_fill_circle(dc, rect->x2 - r, rect->y2 - r, r);
+		rtgui_dc_fill_circle(dc, rect->x2 - r, rect->y1 + r, r);
+		rtgui_dc_fill_circle(dc, rect->x1 + r, rect->y2 - r, r); 
+	}
 }
 
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect)
@@ -638,10 +686,6 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 		 return;
 	}
 
-	/* Fixup angles */
-	start = start % 360;
-	end = end % 360;
-
 	/*
 	* Draw arc
 	*/
@@ -666,9 +710,11 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 	// 0 <= start & end < 360; note that sometimes start > end - if so, arc goes back through 0.
 	while (start < 0) start += 360;
 	while (end < 0) end += 360;
-	start %= 360;
-	end %= 360;
+	/* Fixup angles */
+	start = start % 360;
+	end = end % 360;
 
+    
 	// now, we find which octants we're drawing in.
 	startoct = start / 45;
 	endoct = end / 45;
@@ -831,6 +877,125 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 
 		cx++;
 	} while (cx <= cy);
+}
+
+void rtgui_dc_draw_annulus(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r1, rt_int16_t r2, rt_int16_t start, rt_int16_t end)
+{
+    rt_int16_t start_x, start_y;
+    rt_int16_t end_x, end_y;
+	double temp;
+	rt_int16_t temp_val = 0;
+
+    /* Sanity check radius */
+	if ((r1 < 0) || (r1 < 0)) return ;
+	/* Special case for r=0 - draw a point */
+	if ((r1 == 0) && (r2 == 0))
+	{
+		 rtgui_dc_draw_point(dc, x, y);
+		 return;
+	}
+	
+	while (start < 0) start += 360;
+	while (end < 0) end += 360;
+
+    rtgui_dc_draw_arc(dc, x, y, r1, start, end);
+    rtgui_dc_draw_arc(dc, x, y, r2, start, end);
+	
+	temp	 = cos(start * M_PI / 180);
+	temp_val = (int)(temp * r1);
+    start_x  = x + temp_val;
+	temp_val = (int)(temp * r2);
+	end_x    = x + temp_val;
+
+	temp	 = sin(start * M_PI / 180);
+	temp_val = (int)(temp * r1);
+    start_y  = y + temp_val;
+	temp_val = (int)(temp * r2);
+	end_y    = y + temp_val; 
+
+    rtgui_dc_draw_line(dc, start_x, start_y, end_x, end_y);
+
+	temp	 = cos(end * M_PI / 180);
+	temp_val = (int)(temp * r1);
+    start_x  = x + temp_val;
+	temp_val = (int)(temp * r2);
+	end_x    = x + temp_val;
+
+	temp	 = sin(end * M_PI / 180);
+	temp_val = (int)(temp * r1);
+    start_y  = y + temp_val;
+	temp_val = (int)(temp * r2);
+	end_y    = y + temp_val; 
+
+    rtgui_dc_draw_line(dc, start_x, start_y, end_x, end_y);    
+}
+
+void rtgui_dc_draw_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
+{
+    int start_x, start_y;
+    int end_x, end_y;
+
+    /* Sanity check radius */
+	if (r < 0) return ;
+	/* Special case for r=0 - draw a point */
+	if (r == 0)
+	{
+		 rtgui_dc_draw_point(dc, x, y);
+		 return;
+	}
+	
+	while (start < 0) start += 360;
+	while (end < 0) end += 360;
+
+	/* Fixup angles */
+	start = start % 360;
+	end = end % 360;
+
+    rtgui_dc_draw_arc(dc, x, y, r, start, end);         
+
+    start_x = x + r * cos(start * M_PI / 180);
+    start_y = y + r * sin(start * M_PI / 180);
+
+    end_x = x + r * cos(end * M_PI / 180);
+    end_y = y + r * sin(end * M_PI / 180);
+
+    rtgui_dc_draw_line(dc, x, y, start_x, start_y);
+    rtgui_dc_draw_line(dc, x, y, end_x, end_y); 
+}
+
+void rtgui_dc_fill_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
+{
+    int start_x, start_y;
+    int end_x, end_y;
+    float start_f;
+
+    /* Sanity check radius */
+	if (r < 0) return ;
+	/* Special case for r=0 - draw a point */
+	if (r == 0)
+	{
+		 rtgui_dc_draw_point(dc, x, y);
+		 return;
+	}
+	
+	while (start < 0) start += 360;
+	while (end < 0) end += 360;
+
+	/* Fixup angles */
+	start = start % 360;
+	end = end % 360;
+
+    end_x = x + r * cos(end * M_PI / 180);
+    end_y = y + r * sin(end * M_PI / 180);
+
+    do
+    {
+        start_x = x + r * cos(start * M_PI / 180);
+        start_y = y + r * sin(start * M_PI / 180); 
+        start ++;
+        
+	    rtgui_dc_draw_line(dc, x, y, start_x, start_y); 
+	}while(!((start_x == end_x) && (start_y == end_y)));
 }
 
 void rtgui_dc_draw_ellipse(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry)
@@ -1105,3 +1270,4 @@ void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 		rtgui_dc_draw_point(dc, rect->x2, i);
 	}
 }
+
