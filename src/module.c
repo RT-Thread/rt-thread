@@ -35,7 +35,7 @@
 #define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
-static struct rt_module* rt_current_module;
+static struct rt_module* rt_current_module = RT_NULL;
 
 /**
  * This function will return self module object

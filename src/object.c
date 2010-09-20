@@ -258,10 +258,10 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 #ifdef RT_USING_MODULE
 	/* get module object information */
 	information = (rt_module_self() != RT_NULL) ? 
-		&rt_module_self()->module_object[type] : &rt_module_self()[type];
+		&rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
 	/* get object information */
-	information = &rt_module_self()[type];
+	information = &rt_object_container[type];
 #endif
 
 	object = (struct rt_object*)rt_malloc(information->object_size);
