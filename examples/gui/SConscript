@@ -3,6 +3,7 @@ Import('projects')
 
 src = Split("""
 demo_view_dc_buffer.c
+demo_view_instrument_panel.c
 demo_fnview.c
 demo_listview.c
 demo_listview_icon.c

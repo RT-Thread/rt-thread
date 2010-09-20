@@ -104,7 +104,7 @@ rtgui_view_t *demo_view_animation(rtgui_workbench_t* workbench)
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), animation_event_handler);
 
 	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), "飞线乱飞", &text_rect);
-
+	rtgui_rect_moveto(&text_rect, 0, 45);
 	/* 启动定时器以触发动画 */
 	timer = rtgui_timer_create(2, RT_TIMER_FLAG_PERIODIC, timeout, (void*)view);
 	rtgui_timer_start(timer);

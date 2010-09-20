@@ -31,8 +31,8 @@ rt_bool_t instrument_panel_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 		rtgui_rect_t rect;
 		const int vx[] = {85, 85,  105, 105};
 		const int vy[] = {60, 100, 100, 60}; 
-		const int arrowx[] = {x0+75, x0+75, x0+85};
-		const int arrowy[] = {y0-5,  y0+5,  y0};
+		const int arrowx[] = {120+75, 120+75, 120+85};
+		const int arrowy[] = {170-5,  170+5,  170};
 
 		/*
 		 * 因为用的是demo view，上面本身有一部分控件，所以在绘图时先要让demo view
@@ -85,7 +85,7 @@ rt_bool_t instrument_panel_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 			rect.y1 = y;
 			rect.x2 = rect.x1 + 12 * 3;
 			rect.y2 = rect.y1 + 12;
-			sprintf(ac, "%d", 10 * i);
+			rt_sprintf(ac, "%d", 10 * i);
 			rtgui_dc_draw_text(dc, ac, &rect);	
 		}
 		else
@@ -99,7 +99,7 @@ rt_bool_t instrument_panel_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 			rect.y1 = y;
 			rect.x2 = rect.x1 + 12 * 3;
 			rect.y2 = rect.y1 + 12;
-			sprintf(ac, "%d", 10 * i);
+			rt_sprintf(ac, "%d", 10 * i);
 			rtgui_dc_draw_text(dc, ac, &rect);
 		}
 

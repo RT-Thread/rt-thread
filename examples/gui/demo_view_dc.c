@@ -73,7 +73,22 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 填充一个圆形 */
 		RTGUI_DC_FC(dc) = green;
 		rtgui_dc_fill_circle(dc, rect.x1 + 30, rect.y1 + 10, 10);
+		
+		/* 画一个圆角矩形 */
+		rect.x1 = 150;
+		rect.y1 = 180;
+		rect.x2 = 210;
+		rect.y2 = 260;
+		RTGUI_DC_FC(dc) = RTGUI_RGB(25, 70, 150);
+		rtgui_dc_draw_round_rect(dc, &rect, 10);
 
+		rect.x1 = 160;
+		rect.y1 = 190;
+		rect.x2 = 200;
+		rect.y2 = 250;
+		RTGUI_DC_FC(dc) = RTGUI_RGB(170, 7, 80);
+		rtgui_dc_fill_round_rect(dc, &rect, 7);
+		
 		/* 画一个圆弧 */
 		RTGUI_DC_FC(dc) = RTGUI_RGB(250, 120, 120);
 		rtgui_dc_draw_arc(dc, rect.x1 + 120, rect.y1 + 60, 30, 0, 120);
@@ -135,7 +150,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_EXTRA);
 			rect.x1 += 20;
 			rect.x2 += 20 + 50;
-			rtgui_dc_draw_text(dc, "extra", &rect);
+			rtgui_dc_draw_text(dc, "额外", &rect);
 			rect.x1 -= 20;
 			rect.x2 -= 20 + 50;
 			rect.y1 += 20;
