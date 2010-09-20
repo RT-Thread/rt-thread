@@ -38,8 +38,7 @@
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
-extern void rt_hw_lcd_init(void);
-extern void rt_hw_key_init(void);
+extern void rt_hw_touch_init(void);
 #endif
 
 void rt_init_thread_entry(void* parameter)
@@ -67,8 +66,10 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-		rtgui_system_server_init();
-		
+		/* init touch panel */
+		rtgui_touch_hw_init();	
+
+		/* startup rtgui */
 		rtgui_startup();
 	}
 #endif
