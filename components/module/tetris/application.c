@@ -33,8 +33,8 @@ int rt_application_init()
 	/* ×¢²áÃæ°å */
 	rect.x1 = 0;
 	rect.y1 = 0;
-	rect.x2 = 128;
-	rect.y2 = 96;
+	rect.x2 = 240;
+	rect.y2 = 320;
 	rtgui_panel_register("main", &rect);
 	rtgui_panel_set_default_focused("main");
 

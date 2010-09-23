@@ -27,8 +27,4 @@ if 'RT_USING_MODBUS' in dir(rtconfig) and rtconfig.RT_USING_MODBUS:
 if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript('rtgui/SConscript')
 
-# build each modules
-if rtconfig.CROSS_TOOL == 'gcc' and rtconfig.RT_USING_MODULE:
-	SConscript('module/basicapp/SConscript')	
-
 Return('objs')

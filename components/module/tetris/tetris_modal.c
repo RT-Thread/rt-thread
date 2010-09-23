@@ -62,7 +62,7 @@ rt_tetris_t* rt_tetris_create(rt_uint32_t width, rt_uint32_t height)
 
 	rt_tetris_t* thiz = (rt_tetris_t*)rt_malloc(sizeof(rt_tetris_t));
 	RT_ASSERT(thiz != RT_NULL);
-	
+
 	thiz->height 	= height;
 	thiz->width		= width;
 	thiz->panel 	= rt_malloc(thiz->height * sizeof(rt_uint32_t));

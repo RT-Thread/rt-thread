@@ -18,7 +18,7 @@ group['CPPPATH'] = [RTT_ROOT + '/include',
 group['CPPDEFINES'] = ''
 
 target = 'tetris.so'
-POST_ACTION = RTMLINKER + ' -D 1 -l ' + TARGET + ' -o tetris.mo ' + '$TARGET'
+POST_ACTION = RTMLINKER + ' -l ' + TARGET + ' -o tetris.mo ' + '$TARGET'
 
 # add group to project list
 projects.append(group)

@@ -136,8 +136,6 @@ void tetris_ui_entry(void* parameter)
 {
 	rt_mq_t mq;
 
-	rt_kprintf("tetris_ui_entry\n");
-
 	mq = rt_mq_create("tetris_ui", 256, 4, RT_IPC_FLAG_FIFO);
 	rtgui_thread_register(rt_thread_self(), mq);
 
@@ -154,8 +152,7 @@ void tetris_ui_entry(void* parameter)
 	RTGUI_WIDGET(g_app_info.home_view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 	/* set widget focus */
 	rtgui_widget_focus(RTGUI_WIDGET(g_app_info.home_view));
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(g_app_info.home_view)) = 10;
-			
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(g_app_info.home_view)) = RTGUI_RGB(0xff, 0xff, 0xff);	
 	rtgui_view_show(g_app_info.home_view, RT_FALSE);
 
 	/* create tetris modal instance */

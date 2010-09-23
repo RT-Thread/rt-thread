@@ -79,7 +79,7 @@ static rt_err_t _rt_tetris_view_update_next_brick(rt_tetris_view_t* thiz, rt_tet
 	rect.y1 = 16;
 	rect.y2 = rect.y1 + 2 * ppb;
 
-	RTGUI_WIDGET_BACKGROUND(widget) = 10;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0xff, 0xff);
 	rtgui_dc_fill_rect(dc, &rect);
 
 	for(i=0; i<4; i++)
@@ -92,7 +92,7 @@ static rt_err_t _rt_tetris_view_update_next_brick(rt_tetris_view_t* thiz, rt_tet
 		rect.y1 = 16 + ppb * y ;
 		rect.y2 = rect.y1 + ppb - 1;
 
-		RTGUI_WIDGET_BACKGROUND(widget) = 3;
+		RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0x00, 0x00);
 		rtgui_dc_fill_rect(dc, &rect);
 	}
 
@@ -119,10 +119,10 @@ static rt_err_t _rt_tetris_view_update_level(rt_tetris_view_t* thiz, rt_tetris_t
 	rect.y1 = 42;
 	rect.x2 = 128;
 	rect.y2 = rect.y1 + 10;
-	RTGUI_WIDGET_BACKGROUND(widget) = 10;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0xff, 0xff);
 	rtgui_dc_fill_rect(dc, &rect);
 	rt_sprintf(text, "%d", rt_tetris_level(tetris));
-	RTGUI_WIDGET_BACKGROUND(widget) = 3;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0x00, 0x00);
 	rtgui_dc_draw_text(dc, text, &rect);
 
 	/* Redraw panel */	
@@ -149,18 +149,18 @@ static rt_err_t _rt_tetris_view_update_score_and_lines(rt_tetris_view_t* thiz, r
 	rect.y1 = 64;
 	rect.x2 = 128;
 	rect.y2 = rect.y1 + 10;
-	RTGUI_WIDGET_BACKGROUND(widget) = 10;
-    rtgui_dc_fill_rect(dc, &rect);
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0xff, 0xff);
+    	rtgui_dc_fill_rect(dc, &rect);
 	rt_sprintf(text, "%d", rt_tetris_lines(tetris));
-	RTGUI_WIDGET_BACKGROUND(widget) = 3;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0x00, 0x00);
 	rtgui_dc_draw_text(dc, text, &rect);
 
 	rect.y1 += 22;
 	rect.y2 = rect.y1 + 10;
-	RTGUI_WIDGET_BACKGROUND(widget) = 10;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0xff, 0xff);
 	rtgui_dc_fill_rect(dc, &rect);
 	rt_sprintf(text, "%d", rt_tetris_score(tetris));
-	RTGUI_WIDGET_BACKGROUND(widget) = 3;
+	RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0x00, 0x00);
 	rtgui_dc_draw_text(dc, text, &rect);
 
 	/* Redraw panel */	
@@ -200,11 +200,11 @@ static rt_err_t _rt_tetris_view_update(rt_tetris_view_t* thiz, rt_tetris_t* tetr
 
 			if(rt_tetris_check_collision(tetris, k * width + j))
 			{
-				RTGUI_WIDGET_BACKGROUND(widget) = 13;
+				RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0xff, 0xff);
 			}
 			else
 			{
-				RTGUI_WIDGET_BACKGROUND(widget) = 3;
+				RTGUI_DC_BC(dc) = RTGUI_RGB(0xff, 0x00, 0x00);
 			}
 
 			rtgui_dc_fill_rect(dc, &rect);
