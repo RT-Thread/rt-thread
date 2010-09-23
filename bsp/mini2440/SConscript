@@ -11,8 +11,8 @@ group['CPPPATH'] = [RTT_ROOT + '/bsp/mini2440']
 group['CPPDEFINES'] = []
 group['LINKFLAGS'] = ''
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'rtc_calendar.c', 'calibration.c']
-src_drv = ['console.c', 'led.c', 'run_module.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'calendar.c', 'calibration.c']
+src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:
 	src_drv += ['sdcard.c']

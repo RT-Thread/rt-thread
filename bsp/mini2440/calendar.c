@@ -10,32 +10,26 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-02-10     Gary Lee     first implementation
- * 2010-02-21	  Gary Lee	   add __DATA__
+ * 2010-02-21     Gary Lee	  add __DATA__
  */
-
-#include "rtc_calendar.h"
+#include <rtthread.h>
 #include <string.h>
 
-extern void rt_hw_console_putc(char c);
-extern rt_uint8_t rt_hw_serial_getc(void);
+#define DEFAULT_YEAR_MONTH_DAY  (DEFAULT_YEAR*10000+DEFAULT_MONTH*100+DEFAULT_DAY)  
+#define DEFAULT_YEAR                    2010  
+#define DEFAULT_MONTH                 01  
+#define DEFAULT_DAY                      01 
 
-rt_uint32_t year_seprt=0;
-rt_uint8_t  month_seprt=0;
-rt_uint8_t  day_seprt=0;
+static rt_uint32_t year_seprt = 0;
+static rt_uint8_t  month_seprt = 0;
+static rt_uint8_t  day_seprt = 0;
 
-static const rt_int8_t *month_cn[12] ={ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月",
-						   "九月", "十月", "十一月", "十二月"
-						 };
-static const rt_int8_t *month_en[12] ={ "January", "February", "March", "April", "May", "June", "July",
-						   "Auguest", "September", "October", "November", "December"
-						 };
+static const rt_int8_t *month_cn[12] 	=	{ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月","九月", "十月", "十一月", "十二月"};
+static const rt_int8_t *day_cn[7] 		=	{"星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
+static const rt_int8_t *month_en[12] 	=	{ "January", "February", "March", "April", "May", "June", "July","Auguest", "September", "October", "November", "December"};
+static const rt_uint8_t *list_month[12] =	{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-static const rt_int8_t *day_en[7]={"Sunday","Monday","Tuesday","Wednesday","Thursday","Firday","Saturday"};
-static const rt_int8_t *day_cn[7]={"星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
-//=====================================================================
-//read from uart
-
-rt_int32_t rt_rtc_isleap(rt_uint32_t year)
+static rt_int32_t rt_rtc_isleap(rt_uint32_t year)
 {
 	rt_int32_t leap = 0;
 	if (((year % 4 == 0) && (year % 100 != 0)) || (year % 4 == 0))
@@ -43,7 +37,7 @@ rt_int32_t rt_rtc_isleap(rt_uint32_t year)
 	return leap;
 }
 
-rt_int32_t rt_rtc_week_of_newyears_day(rt_uint32_t year)
+static rt_int32_t rt_rtc_week_of_newyears_day(rt_uint32_t year)
 {
 	rt_int32_t n = year - 1900;
 	n = n + (n - 1) / 4 + 1;
@@ -51,7 +45,7 @@ rt_int32_t rt_rtc_week_of_newyears_day(rt_uint32_t year)
 	return n;
 }
 
-rt_int32_t rt_rtc_month_day_num(rt_int32_t month, rt_int32_t leapyn)
+static rt_int32_t rt_rtc_month_day_num(rt_int32_t month, rt_int32_t leapyn)
 {
 	rt_int32_t len_month = 0;
 	if ((month == 4) || (month == 6) || (month == 9) || (month == 11))
@@ -68,19 +62,7 @@ rt_int32_t rt_rtc_month_day_num(rt_int32_t month, rt_int32_t leapyn)
 	return len_month;
 }
 
-rt_int32_t rt_rtc_space_days(rt_int32_t month, rt_int32_t year)
-{
-	rt_int32_t all_days = 0;
-	rt_int32_t i = 1;
-	rt_int32_t leap = rt_rtc_isleap(year);
-	for (i = 1; i <= month; i++)
-	{
-		all_days = all_days + rt_rtc_month_day_num(i, leap);
-	}
-	return all_days;
-}
-
-rt_int32_t rt_rtc_weekday_month(rt_int32_t month, rt_int32_t year)
+static rt_int32_t rt_rtc_weekday_month(rt_int32_t month, rt_int32_t year)
 {
 	rt_int32_t space = 0, j, all_days = 0;
 	rt_int32_t leap = rt_rtc_isleap(year);
@@ -91,10 +73,10 @@ rt_int32_t rt_rtc_weekday_month(rt_int32_t month, rt_int32_t year)
 	}
 
 	space = (space + all_days) % 7;
-	return space;
+	return space; 
 }
 
-void rt_rtc_print_common_fmt(rt_uint8_t month, rt_uint8_t weekday, rt_uint8_t leapyear)
+static void rt_rtc_print_common_fmt(rt_uint8_t month, rt_uint8_t weekday, rt_uint8_t leapyear)
 {
 	rt_int32_t day, j, len_of_month;
 
@@ -123,15 +105,14 @@ void rt_rtc_print_common_fmt(rt_uint8_t month, rt_uint8_t weekday, rt_uint8_t le
 	rt_kprintf("\n");
 }
 
-void rt_rtc_print_one_month(rt_int32_t month, rt_int32_t year)
+static void rt_rtc_print_one_month(rt_int32_t month, rt_int32_t year)
 {
 	rt_int32_t weekday = rt_rtc_weekday_month(month, year);
 	rt_int32_t leapyear = rt_rtc_isleap(year);
 	rt_rtc_print_common_fmt(month, weekday, leapyear);
 }
 
-
-void rt_rtc_print_calendar(rt_uint32_t year)
+static void rt_rtc_print_calendar(rt_uint32_t year)
 {
 	rt_uint8_t month;
 
@@ -147,7 +128,7 @@ void rt_rtc_print_calendar(rt_uint32_t year)
 
 }
 
-void rt_rtc_year_month_day_seperate(rt_uint32_t year)
+static void rt_rtc_year_month_day_seperate(rt_uint32_t year)
 {
 	rt_uint32_t temp;
 
@@ -219,7 +200,7 @@ void rt_rtc_year_month_day_seperate(rt_uint32_t year)
 	}
 }
 
-void rt_rtc_weekdate_calculate(void)
+static void rt_rtc_weekdate_calculate(void)
 {
 	rt_uint32_t temp;
 
@@ -229,10 +210,8 @@ void rt_rtc_weekdate_calculate(void)
 
 }
 
-static const rt_uint8_t *list_month[12]={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-void rt_calendar(void)
+void calendar(void)
 {
-	//static rt_uint8_t receive_char;
 	static rt_int32_t year;
 	rt_uint8_t i = 0;
 	rt_int32_t result, num_month, num_year;
@@ -254,29 +233,23 @@ void rt_calendar(void)
 	i = 0;
 	result = 1;
 	year = num_year*100 + num_month;
-	//year = Uart_GetIntNum_MT();
-	//rt_kprintf("\nThe date is %d\n", year);
+
 	rt_rtc_year_month_day_seperate(year);
 
 	if (day_seprt == 0 && month_seprt == 0)
 	{
-		//rt_kprintf("\nYear: %d\n", year_seprt);
 		rt_rtc_print_calendar(year_seprt);
-
 	}
 	else if (day_seprt == 0)
 	{
-		//rt_kprintf("\n%d/%d\n", year_seprt, month_seprt);
 		rt_rtc_print_calendar(year_seprt);
-
 	}
 	else
 	{
-		//rt_kprintf("\n%d/%d/%d\n", year_seprt, month_seprt, day_seprt);
 		rt_rtc_weekdate_calculate();
 	}
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(rt_calendar, print calendar)
+FINSH_FUNCTION_EXPORT(calendar, print calendar)
 #endif
