@@ -16,6 +16,7 @@ demo_view_button.c
 demo_view_checkbox.c
 demo_view_dc.c
 demo_view_image.c
+demo_view_module.c
 demo_view_label.c
 demo_view_mywidget.c
 demo_view_progressbar.c

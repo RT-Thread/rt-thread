@@ -80,6 +80,9 @@ static void workbench_entry(void* parameter)
 	demo_view_slider(workbench);
 	demo_view_mywidget(workbench);
 	demo_view_image(workbench);
+#ifdef RT_USING_MODULE	
+	demo_view_module(workbench);
+#endif
 	demo_listview_view(workbench);
 	demo_listview_icon_view(workbench);
 	demo_fn_view(workbench);
