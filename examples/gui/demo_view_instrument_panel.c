@@ -29,8 +29,6 @@ rt_bool_t instrument_panel_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 	{
 		struct rtgui_dc* dc;
 		rtgui_rect_t rect;
-		const int vx[] = {85, 85,  105, 105};
-		const int vy[] = {60, 100, 100, 60}; 
 		const int arrowx[] = {120+75, 120+75, 120+85};
 		const int arrowy[] = {170-5,  170+5,  170};
 

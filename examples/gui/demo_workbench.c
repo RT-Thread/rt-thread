@@ -62,18 +62,20 @@ static void workbench_entry(void* parameter)
 #endif
 #endif
 
+#ifndef RTGUI_USING_SMALL_SIZE
 	demo_view_dc_buffer(workbench);
+#endif
 	demo_view_animation(workbench);
+#ifndef RTGUI_USING_SMALL_SIZE
 	demo_view_buffer_animation(workbench);
 	demo_view_instrument_panel(workbench);
+#endif
 	demo_view_window(workbench);
 	demo_view_label(workbench);
 	demo_view_button(workbench);
 	demo_view_checkbox(workbench);
 	demo_view_progressbar(workbench);
-#if RT_VERSION == 4
 	demo_view_scrollbar(workbench);
-#endif
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
 	demo_view_listbox(workbench);
