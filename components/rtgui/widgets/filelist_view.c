@@ -30,7 +30,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #define PATH_SEPARATOR		'\\'
-#define stat _stat
 #else
 #include <dfs_posix.h>
 #define PATH_SEPARATOR		'/'
@@ -731,7 +730,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
     if (directory != RT_NULL)
     {
 		DIR* dir;
-		struct stat s;
+		struct _stat s;
 		rt_uint32_t index;
 		struct dirent* dirent;
 
@@ -794,7 +793,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 			item = &(view->items[index]);
 			item->name = rt_strdup(dirent->d_name);
 
-			rt_memset(&s, 0, sizeof(struct stat));
+			rt_memset(&s, 0, sizeof(struct _stat));
 
 			/* build full path for the file */
 			if (directory[strlen(directory) - 1] != PATH_SEPARATOR)
