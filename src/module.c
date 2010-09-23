@@ -19,7 +19,7 @@
 #include "string.h"
 #include "kservice.h"
 
-#define RT_MODULE_DEBUG
+/* #define RT_MODULE_DEBUG */
 #ifdef RT_USING_MODULE
 #include "module.h"
 
@@ -100,10 +100,11 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 		*where |= 0x01a0f000;
 		break;
 	case R_ARM_GLOB_DAT:
-		*where += (Elf32_Addr)sym_val;
-		break;
 	case R_ARM_JUMP_SLOT:
-		break;
+		*where = (Elf32_Addr)sym_val;
+#ifdef RT_MODULE_DEBUG
+		rt_kprintf("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val);
+#endif		break;
 	default:
 		return -1;
 	}
@@ -189,7 +190,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	rt_uint32_t index;
 	rt_uint32_t module_size = 0;
 	struct rt_module* module = RT_NULL;
-	rt_uint8_t *ptr, *strtab, *shstrab;
+	rt_uint8_t *ptr, *strtab;
 
 #ifdef RT_MODULE_DEBUG
 	rt_kprintf("rt_module_load: %s\n", name);
@@ -241,7 +242,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	}	
 
 	/* set module entry */
-	module->module_entry = (rt_uint8_t*)module->module_space + elf_module->e_entry;
+	module->module_entry = module->module_space + elf_module->e_entry;
 	
 	/* handle relocation section */
 	for (index = 0; index < elf_module->e_shnum; index ++)
@@ -263,12 +264,14 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 			/* relocate every items */
 			for (i = 0; i < nr_reloc; i ++)
 			{
-				Elf32_Addr addr = 0;
 				Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
 #ifdef RT_MODULE_DEBUG
-				rt_kprintf("relocate symbol %s\n", strtab + sym->st_name);
+				rt_kprintf("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx);
 #endif
-				rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
+				if(sym->st_shndx != 0)
+				{	
+					rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
+				}
 				rel ++;
 			}
 		}
@@ -288,6 +291,44 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		
 	return module;
 }	
+
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+/**
+ * This function will load a module from file
+ *
+ * @param name the name of module, which shall be unique
+ * @param filename the file name of application module image
+ *
+ * @return the module object
+ *
+ */
+rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filename)
+{
+	int fd, length;
+	struct rt_module* module;
+	struct _stat s;
+	char *buffer;
+	
+	stat(filename, &s);
+	buffer = (char *)rt_malloc(s.st_size);
+	fd = open(filename, O_RDONLY, 0);
+	length = read(fd, buffer, s.st_size);
+	if (length <= 0)
+	{
+		rt_kprintf("check: read file failed\n");
+		close(fd);
+		rt_free(buffer);
+		return RT_NULL;
+	}
+	rt_kprintf("read %d bytes from file\n", length);
+	module = rt_module_load(name, (void *)buffer);
+	rt_free(buffer);
+	close(fd);
+
+	return module;
+}
+#endif
 
 /**
  * This function will unload a module from memory and release resources 
@@ -379,5 +420,11 @@ rt_module_t rt_module_find(char* name)
 	/* not found */
 	return RT_NULL;
 }
+
+#if defined(RT_USING_FINSH)
+#include <finsh.h>
+
+FINSH_FUNCTION_EXPORT(rt_module_load_from_file, load module from file);
+#endif
 
 #endif

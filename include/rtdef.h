@@ -389,7 +389,7 @@ struct rt_module
 	/* inherit from object */
 	struct rt_object parent;
 
-	void* module_space;
+	rt_uint8_t* module_space;
 
 	void* module_entry;
 	rt_uint32_t stack_size;
