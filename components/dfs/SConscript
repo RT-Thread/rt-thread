@@ -71,7 +71,7 @@ if 'RT_DFS_ELM_USE_LFN' in dir(rtconfig) and rtconfig.RT_DFS_ELM_USE_LFN:
 if 'RT_USING_DFS_ELMFAT' in dir(rtconfig) and rtconfig.RT_USING_DFS_ELMFAT:
     src_local = src_local + elmfat
 
-if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS:
+if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS and rtconfig.RT_USING_LWIP:
     src_local = src_local + nfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/nfs']
 

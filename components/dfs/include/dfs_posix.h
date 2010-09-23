@@ -75,7 +75,6 @@ typedef struct
 	int cur;
 } DIR;
 
-#define stat _stat
 #define statfs _statfs
 #define dirent _dirent
 
