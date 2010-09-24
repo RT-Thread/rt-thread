@@ -10,8 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2006-10-05     Alsor.Z      for s3c2440 initialize
- * 2008-01-29     Yi.Qiu       for QEMU emulator
+ * 2006-10-05     Alsor.Z       for s3c2440 initialize
+ * 2008-01-29     Yi.Qiu         for QEMU emulator
  */
 
 #define CONFIG_STACKSIZE 	512
@@ -23,7 +23,7 @@
 #define S_LR  				56
 #define S_SP  				52
 
-#define S_IP  				48
+#define S_IP  					48
 #define S_FP  				44
 #define S_R10  				40
 #define S_R9  				36
@@ -88,14 +88,14 @@
 
 .globl _start
 _start:
-	b		    reset
-	ldr		    pc, _vector_undef
-	ldr		    pc, _vector_swi
-	ldr		    pc, _vector_pabt
-	ldr		    pc, _vector_dabt
-	ldr		    pc, _vector_resv
-	ldr		    pc, _vector_irq
-	ldr		    pc, _vector_fiq
+	b		reset
+	ldr		pc, _vector_undef
+	ldr		pc, _vector_swi
+	ldr		pc, _vector_pabt
+	ldr		pc, _vector_dabt
+	ldr		pc, _vector_resv
+	ldr		pc, _vector_irq
+	ldr		pc, _vector_fiq
 
 _vector_undef:	.word vector_undef
 _vector_swi:	.word vector_swi
@@ -105,7 +105,7 @@ _vector_resv:	.word vector_resv
 _vector_irq:	.word vector_irq
 _vector_fiq:	.word vector_fiq
 
-.balignl 	    16, 0xdeadbeef
+.balignl 	16,0xdeadbeef
 
 /*
  *************************************************************************
@@ -116,21 +116,26 @@ _vector_fiq:	.word vector_fiq
  * jump to second stage
  *
  *************************************************************************
- */       
-_TEXT_BASE:                  /* TEXT_BASE was defined in rtconfig.py */
+ */
+
+_TEXT_BASE:
 	.word	TEXT_BASE
 
-/* rtthread kernel start and end which are defined in linker script */
+/*
+ * rtthread kernel start and end
+ * which are defined in linker script
+ */
 .globl _rtthread_start
 _rtthread_start:
 	.word _start
-
-/* _end	was defined in link script                                  */
+	
 .globl _rtthread_end
 _rtthread_end:
 	.word  _end
 
-/* rtthread bss start and end which are defined in linker script    */
+/*
+ * rtthread bss start and end which are defined in linker script
+ */
 .globl _bss_start
 _bss_start:	
 	.word __bss_start
@@ -160,32 +165,20 @@ ABORT_STACK_START:
 _STACK_START:
 	.word _svc_stack_start + 4096
 
-.globl _load_address
-#if defined (__FLASH_BUILD__)
-_load_address: 
-	.word ROM_BASE + _TEXT_BASE
-#else
-_load_address: 
-	.word RAM_BASE + _TEXT_BASE
-#endif	
-
-/*
- *************************************************************************
- * Actual start (entry point)
- *************************************************************************
- */
+/* ----------------------------------entry------------------------------*/
 reset:
-	/* set the cpu to SVC32 mode 	                                    */
-	mrs		r0, cpsr
-	bic		r0, r0,#MODEMASK
-	orr		r0, r0,#SVCMODE
-	msr		cpsr, r0
 	
-    /* watch dog disable 			                                    */   
-	ldr 	r0, =WTCON
-	ldr 	r1, =0x0
-	str 	r1, [r0]
+	/* set the cpu to SVC32 mode 	*/
+	mrs		r0,cpsr
+	bic		r0,r0,#MODEMASK
+	orr		r0,r0,#SVCMODE
+	msr		cpsr,r0
 	
+	/* watch dog disable 			*/
+	ldr 	r0,=WTCON
+	ldr 	r1,=0x0
+	str 	r1,[r0]
+
 	/* mask all IRQs by clearing all bits in the INTMRs 				*/
 	ldr		r1, =INTMSK
 	ldr		r0, =0xffffffff
@@ -195,7 +188,7 @@ reset:
 	str		r0, [r1]
 
 	/* set interrupt vector 		*/
-	ldr 	r0, _load_address       /* _load_address = 0x30000000       */
+	ldr 	r0, _load_address
 	mov		r1, #0x0				/* target address    				*/
 	add		r2, r0, #0x20			/* size, 32bytes         			*/
 
@@ -204,9 +197,11 @@ copy_loop:
 	stmia	r1!, {r3-r10}			/* copy to   target address [r1]    */
 	cmp		r0, r2					/* until source end addreee [r2]    */
 	ble		copy_loop
-	
+
+	/* setup stack */
 	bl		stack_setup
-    /* clear .bss */ 
+
+	/* clear .bss */
 	mov   	r0,#0                   /* get a zero 						*/
 	ldr   	r1,=__bss_start         /* bss start 						*/
 	ldr   	r2,=__bss_end           /* bss end 							*/
@@ -214,61 +209,37 @@ copy_loop:
 bss_loop:
 	cmp   	r1,r2                   /* check if data to clear 			*/
 	strlo 	r0,[r1],#4              /* clear 4 bytes 					*/
-	blo   	bss_loop                /* loop until done 					*/	
+	blo   	bss_loop                /* loop until done 					*/
+
 	/* call C++ constructors of global objects 							*/
 	ldr 	r0, =__ctors_start__
 	ldr 	r1, =__ctors_end__
 	
 ctor_loop:
-    cmp     r0, r1
-	beq 	kernel_start
+	cmp 	r0, r1
+	beq 	ctor_end
 	ldr 	r2, [r0], #4
 	stmfd 	sp!, {r0-r1}
 	mov 	lr, pc
 	bx 		r2
 	ldmfd 	sp!, {r0-r1}
 	b		ctor_loop
+	
+ctor_end:
 
-kernel_start:
-	/* start RT-Thread Kernel 		                                    */
+	/* start RT-Thread Kernel 		*/
 	ldr		pc, _rtthread_startup
 
 _rtthread_startup: 
-	.word rtthread_startup	
-/*
- *************************************************************************
- * Subroutines
- *************************************************************************
- */
-stack_setup:
-	mrs		r0, cpsr
-	bic		r0, r0, #MODEMASK
-	orr		r1, r0, #UNDEFMODE|NOINT
-	msr		cpsr_cxsf, r1			/* undef mode						*/
-	ldr		sp, UNDEFINED_STACK_START
+	.word rtthread_startup
+#if defined (__FLASH_BUILD__)
+_load_address: 
+	.word ROM_BASE + _TEXT_BASE
+#else
+_load_address: 
+	.word RAM_BASE + _TEXT_BASE
+#endif
 
-	orr		r1,r0,#ABORTMODE|NOINT
-	msr		cpsr_cxsf,r1			/* abort mode						*/
-	ldr		sp, ABORT_STACK_START
-
-	orr		r1,r0,#IRQMODE|NOINT
-	msr		cpsr_cxsf,r1			/* IRQ mode							*/
-	ldr		sp, IRQ_STACK_START
-
-	orr		r1,r0,#FIQMODE|NOINT
-	msr		cpsr_cxsf,r1			/* FIQ mode							*/
-	ldr		sp, FIQ_STACK_START
-
-	bic		r0,r0,#MODEMASK
-	orr		r1,r0,#SVCMODE|NOINT
-	msr		cpsr_cxsf,r1			/* SVC mode							*/
-
-	ldr		sp, _STACK_START
-
-	/* USER mode is not initialized. */
-
-	mov		pc,lr					/* The LR register may be not valid for the mode changes.*/
-	
 /*
  *************************************************************************
  *
@@ -387,4 +358,33 @@ _interrupt_thread_switch:
 
 	ldmfd	sp!, {r0-r12,lr,pc}		/* pop new task's r0-r12,lr & pc	*/
 
+stack_setup:
+	mrs		r0, cpsr
+	bic		r0, r0, #MODEMASK
+	orr		r1, r0, #UNDEFMODE|NOINT
+	msr		cpsr_cxsf, r1			/* undef mode						*/
+	ldr		sp, UNDEFINED_STACK_START
+
+	orr		r1,r0,#ABORTMODE|NOINT
+	msr		cpsr_cxsf,r1			/* abort mode						*/
+	ldr		sp, ABORT_STACK_START
+
+	orr		r1,r0,#IRQMODE|NOINT
+	msr		cpsr_cxsf,r1			/* IRQ mode							*/
+	ldr		sp, IRQ_STACK_START
+
+	orr		r1,r0,#FIQMODE|NOINT
+	msr		cpsr_cxsf,r1			/* FIQ mode							*/
+	ldr		sp, FIQ_STACK_START
+
+	bic		r0,r0,#MODEMASK
+	orr		r1,r0,#SVCMODE|NOINT
+	msr		cpsr_cxsf,r1			/* SVC mode							*/
+
+	ldr		sp, _STACK_START
+
+	/* USER mode is not initialized. */
+	mov		pc,lr					/* The LR register may be not valid for the mode changes.*/
+
 /*/*}*/
+
