@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2010-09-24     Bernard      fix view destroy issue
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
@@ -119,7 +120,10 @@ void rtgui_view_destroy(rtgui_view_t* view)
 	if (view->modal_show == RT_TRUE)
 		rtgui_view_end_modal(view, RTGUI_MODAL_CANCEL);
 	else
+	{
+		rtgui_view_hide(view);
 		rtgui_widget_destroy(RTGUI_WIDGET(view));
+	}
 }
 
 #ifndef RTGUI_USING_SMALL_SIZE

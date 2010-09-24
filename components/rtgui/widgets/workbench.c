@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-04     Bernard      first version
+ * 2010-09-24     Bernard      fix workbench destroy issue
  */
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/window.h>
@@ -133,6 +134,9 @@ rtgui_workbench_t *rtgui_workbench_create(const char* panel_name, const unsigned
 void rtgui_workbench_destroy(rtgui_workbench_t* workbench)
 {
 	RT_ASSERT(workbench != RT_NULL);
+
+	/* hide workbench firstly */
+	rtgui_workbench_hide(workbench);
 
 	if (RTGUI_TOPLEVEL(workbench)->server != RT_NULL)
 	{

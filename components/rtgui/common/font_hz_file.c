@@ -15,7 +15,7 @@ static int _font_cache_compare(struct hz_cache* node1, struct hz_cache* node2);
 static void rtgui_hz_file_font_load(struct rtgui_font* font);
 static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect);
 static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect);
-struct rtgui_font_engine rtgui_hz_file_font_engine =
+const struct rtgui_font_engine rtgui_hz_file_font_engine =
 {
 	RT_NULL,
 	rtgui_hz_file_font_load,
