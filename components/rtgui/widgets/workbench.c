@@ -135,6 +135,20 @@ void rtgui_workbench_destroy(rtgui_workbench_t* workbench)
 {
 	RT_ASSERT(workbench != RT_NULL);
 
+	if (workbench->flag & RTGUI_WORKBENCH_FLAG_CLOSED)
+	{
+		rtgui_widget_destroy(RTGUI_WIDGET(workbench));
+	}
+	else
+	{
+		/* just close workbench */
+		rtgui_workbench_close(workbench);
+	}
+}
+
+void rtgui_workbench_close(rtgui_workbench_t* workbench)
+{
+	/* detach workbench in server */
 	if (RTGUI_TOPLEVEL(workbench)->server != RT_NULL)
 	{
 		struct rtgui_event_panel_detach edetach;
@@ -148,10 +162,11 @@ void rtgui_workbench_destroy(rtgui_workbench_t* workbench)
 			RTGUI_EVENT(&edetach), sizeof(struct rtgui_event_panel_detach)) != RT_EOK)
 			return;
 
-			RTGUI_TOPLEVEL(workbench)->server = RT_NULL;
+		RTGUI_TOPLEVEL(workbench)->server = RT_NULL;
 	}
 
-	rtgui_widget_destroy(RTGUI_WIDGET(workbench));
+	/* set status to close */
+	workbench->flag |= RTGUI_WORKBENCH_FLAG_CLOSED;
 }
 
 void rtgui_workbench_set_flag(rtgui_workbench_t* workbench, rt_uint8_t flag)
