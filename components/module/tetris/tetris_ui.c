@@ -26,7 +26,6 @@
 struct app_info
 {
 	struct rtgui_view* home_view;
-	struct rtgui_view* info_view;
 	struct rtgui_workbench* workbench;
 	rt_tetris_t * tetris;
 	rt_tetris_view_t* tetris_view;
@@ -34,6 +33,17 @@ struct app_info
 };
 typedef struct app_info app_info;
 static app_info g_app_info;
+
+static void _game_over(void)
+{
+	rtgui_timer_stop(g_app_info._timer);
+	rt_tetris_pause(g_app_info.tetris);	
+	rt_tetris_destory(g_app_info.tetris);
+	rt_tetris_view_destroy(g_app_info.tetris_view);	
+	rtgui_view_destroy(g_app_info.home_view);
+	rtgui_workbench_destroy(g_app_info.workbench);
+	rt_kprintf("GAME OVER\n");
+}
 
 static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
@@ -90,9 +100,7 @@ static rt_bool_t home_view_event_handler(struct rtgui_widget* widget, struct rtg
 				if( rt_tetris_drop(g_app_info.tetris) == -RT_ETIMEOUT
 					&& rt_tetris_status(g_app_info.tetris) != RT_FALSE)
 				{
-					rt_kprintf("GAME OVER\n");
-					rtgui_timer_stop(g_app_info._timer);
-					rt_tetris_pause(g_app_info.tetris);
+					_game_over();
 				}
 			}
 		}
@@ -105,10 +113,7 @@ static void _timer_timeout(rtgui_timer_t* timer, void* parameter)
 {
 	if( rt_tetris_down(g_app_info.tetris) == -RT_ETIMEOUT)
 	{
-		rt_kprintf("GAME OVER\n");
-		rtgui_timer_stop(g_app_info._timer);
-		rt_tetris_destory(g_app_info.tetris);
-		rt_tetris_view_destroy(g_app_info.tetris_view);
+		_game_over();
 	}		
 }
 
@@ -132,7 +137,7 @@ static rt_bool_t workbench_event_handler(rtgui_widget_t *widget, rtgui_event_t *
 	return rtgui_workbench_event_handler(widget, event);
 }
 
-void tetris_ui_entry(void* parameter)
+rt_err_t tetris_ui_entry(void* parameter)
 {
 	rt_mq_t mq;
 
@@ -140,7 +145,11 @@ void tetris_ui_entry(void* parameter)
 	rtgui_thread_register(rt_thread_self(), mq);
 
 	g_app_info.workbench = rtgui_workbench_create("main", "workbench");
-	if (g_app_info.workbench == RT_NULL) return;
+	if (g_app_info.workbench == RT_NULL) 
+	{
+		rt_kprintf("can't find panel 'main'\n");
+		return -RT_ERROR;
+	}	
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(g_app_info.workbench), workbench_event_handler);
 
 	/* add home view */
@@ -171,5 +180,7 @@ void tetris_ui_entry(void* parameter)
 
 	rtgui_thread_deregister(rt_thread_self());
 	rt_mq_delete(mq);
+
+	return RT_EOK;
 }
 

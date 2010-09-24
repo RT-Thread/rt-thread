@@ -11,35 +11,20 @@
  * Date           Author       Notes
  * 2010-08-28     Yi.Qiu       the first version
  */
-
-/**
- * @addtogroup LM3S
- */
-/*@{*/
-
+ 
 #include <rtthread.h>
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/workbench.h>
-
-extern void tetris_ui_entry(void* parameter);
+#include "tetris.h"
 
 int rt_application_init()
 {
 	rt_thread_t tid;
-	rtgui_rect_t rect;
-
-	/* ×¢²áÃæ°å */
-	rect.x1 = 0;
-	rect.y1 = 0;
-	rect.x2 = 240;
-	rect.y2 = 320;
-	rtgui_panel_register("main", &rect);
-	rtgui_panel_set_default_focused("main");
 
 	tid = rt_thread_create("wb", tetris_ui_entry, RT_NULL, 2048, 20, 5);
 	if (tid != RT_NULL) rt_thread_startup(tid);
 	return 0;
 }
-/*@}*/
+

@@ -57,3 +57,5 @@
  rt_tetris_view_t* rt_tetris_view_create(void* private);
  rt_err_t rt_tetris_view_destroy(rt_tetris_view_t* thiz);
 
+rt_err_t tetris_ui_entry(void* parameter);
+
