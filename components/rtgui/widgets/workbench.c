@@ -135,9 +135,6 @@ void rtgui_workbench_destroy(rtgui_workbench_t* workbench)
 {
 	RT_ASSERT(workbench != RT_NULL);
 
-	/* hide workbench firstly */
-	rtgui_workbench_hide(workbench);
-
 	if (RTGUI_TOPLEVEL(workbench)->server != RT_NULL)
 	{
 		struct rtgui_event_panel_detach edetach;
@@ -397,6 +394,9 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			else
 			{
 				rtgui_view_t* view;
+
+				/* un-hide workbench */
+				RTGUI_WIDGET_UNHIDE(widget);
 
 				/* paint a view */
 				view = workbench->current_view;

@@ -136,7 +136,6 @@ void rtgui_server_thread_panel_hide(struct rtgui_event_panel_hide* event)
 	if (panel != RT_NULL)
 	{
 		rt_thread_t tid;
-		struct rtgui_event_paint epaint;
 
 		/* send the responses */
 		rtgui_thread_ack(RTGUI_EVENT(event), RTGUI_STATUS_OK);
@@ -153,15 +152,20 @@ void rtgui_server_thread_panel_hide(struct rtgui_event_panel_hide* event)
 			rtgui_list_append(&(panel->thread_list), &(thread->list));
 		}
 
-		/* get new active thread */
-		tid = rtgui_panel_get_active_thread(panel);
 		/* send all topwin clip info */
 		rtgui_topwin_update_clip_to_panel(panel);
 
-		/* send paint event */
-		RTGUI_EVENT_PAINT_INIT(&epaint);
-		epaint.wid = RT_NULL;
-		rtgui_thread_send(tid, (struct rtgui_event*)&epaint, sizeof(epaint));
+		/* get new active thread */
+		tid = rtgui_panel_get_active_thread(panel);
+		if (tid != RT_NULL)
+		{
+			struct rtgui_event_paint epaint;
+
+			/* send paint event */
+			RTGUI_EVENT_PAINT_INIT(&epaint);
+			epaint.wid = RT_NULL;
+			rtgui_thread_send(tid, (struct rtgui_event*)&epaint, sizeof(epaint));
+		}
 	}
 	else
 	{
