@@ -17,7 +17,6 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
 #include <rtgui/dc.h>
-
 #include "tetris.h"
 
 static rt_err_t _rt_tetris_view_update(rt_tetris_view_t* thiz, rt_tetris_t* tetris);
@@ -216,3 +215,4 @@ static rt_err_t _rt_tetris_view_update(rt_tetris_view_t* thiz, rt_tetris_t* tetr
 
 	return RT_EOK;	
 }
+

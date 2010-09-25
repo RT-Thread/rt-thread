@@ -20,7 +20,6 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/dc.h>
-
 #include "tetris.h"
 
 struct app_info
@@ -41,7 +40,7 @@ static void _game_over(void)
 	rt_tetris_destory(g_app_info.tetris);
 	rt_tetris_view_destroy(g_app_info.tetris_view);	
 	rtgui_view_destroy(g_app_info.home_view);
-	rtgui_workbench_destroy(g_app_info.workbench);
+	rtgui_workbench_close(g_app_info.workbench);
 	rt_kprintf("GAME OVER\n");
 }
 
@@ -137,7 +136,7 @@ static rt_bool_t workbench_event_handler(rtgui_widget_t *widget, rtgui_event_t *
 	return rtgui_workbench_event_handler(widget, event);
 }
 
-rt_err_t tetris_ui_entry(void* parameter)
+void tetris_ui_entry(void* parameter)
 {
 	rt_mq_t mq;
 
@@ -148,7 +147,7 @@ rt_err_t tetris_ui_entry(void* parameter)
 	if (g_app_info.workbench == RT_NULL) 
 	{
 		rt_kprintf("can't find panel 'main'\n");
-		return -RT_ERROR;
+		return;
 	}	
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(g_app_info.workbench), workbench_event_handler);
 
@@ -177,10 +176,9 @@ rt_err_t tetris_ui_entry(void* parameter)
 	rtgui_timer_start(g_app_info._timer);
 
 	rtgui_workbench_event_loop(g_app_info.workbench);
+	rtgui_workbench_destroy(g_app_info.workbench);
 
 	rtgui_thread_deregister(rt_thread_self());
 	rt_mq_delete(mq);
-
-	return RT_EOK;
 }
 

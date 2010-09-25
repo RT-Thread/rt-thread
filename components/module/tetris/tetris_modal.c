@@ -14,21 +14,20 @@
  
 #include <rtthread.h>
 #include <stdlib.h> 
-
 #include "tetris.h"
 
 struct rt_tetris
 {
 	rt_uint32_t	width;			/* the width of the tetris */
 	rt_uint32_t	height;			/* the height of the tetris */
-	rt_uint16_t* panel;			/* the panel of the tetris */
-	rt_uint32_t* brick;			/* the current brick of the tetris */
-	rt_uint32_t* next_brick;	/* the next brick  of the tetris */
-	rt_tetris_view_t* view;		/* the view on which the tetris show */
-	rt_uint32_t level;			/* game level */
-	rt_uint32_t lines;			/* released lines count */
-	rt_uint32_t score;			/* total scores statistic */
-	rt_bool_t status;			/* game status, pause or runing */
+	rt_uint16_t* 	panel;			/* the panel of the tetris */
+	rt_uint32_t* 	brick;			/* the current brick of the tetris */
+	rt_uint32_t* 	next_brick;		/* the next brick  of the tetris */
+	rt_tetris_view_t* view;			/* the view on which the tetris show */
+	rt_uint32_t 	level;			/* game level */
+	rt_uint32_t 	lines;			/* released lines count */
+	rt_uint32_t 	score;			/* total scores statistic */
+	rt_bool_t 		status;			/* game status, pause or runing */
 };
 
 static const rt_uint32_t g_brick[][4] = 
@@ -728,3 +727,4 @@ static rt_err_t rt_tetris_release_lines(rt_tetris_t* thiz, rt_uint32_t brick[])
 		return -RT_ERROR;
 	}
 }
+

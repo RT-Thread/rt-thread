@@ -385,7 +385,7 @@ int list_module(void)
 		/* list main thread in module */
 		if(module->module_thread != RT_NULL)
 		{	
-			rt_kprintf(" main thread  pri  status      sp     stack size max used   left tick  error\n");
+			rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
 			rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
 			thread = module->module_thread;
 			rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
