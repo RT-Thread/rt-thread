@@ -19,8 +19,8 @@
 #include "string.h"
 #include "kservice.h"
 
-/* #define RT_MODULE_DEBUG */
-#ifdef RT_USING_MODULE
+#define RT_MODULE_DEBUG
+/* #ifdef RT_USING_MODULE */
 #include "module.h"
 
 #define elf_module 		((Elf32_Ehdr *)module_ptr)
@@ -104,7 +104,8 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 		*where = (Elf32_Addr)sym_val;
 #ifdef RT_MODULE_DEBUG
 		rt_kprintf("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val);
-#endif		break;
+#endif		
+	break;
 	default:
 		return -1;
 	}
@@ -342,7 +343,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 {
 	int i;
 	struct rt_object* object;
-	struct rt_list_node *list, *node;
+	struct rt_list_node *list;
 
 #ifdef RT_MODULE_DEBUG
 	rt_kprintf("rt_module_unload %s\n", module->parent.name);
@@ -355,29 +356,167 @@ rt_err_t rt_module_unload(rt_module_t module)
 	if (module->module_thread->stat == RT_THREAD_READY)
 		rt_thread_suspend(module->module_thread);
 
-	/* delete all module object */
-	for(i = RT_Object_Class_Thread; i < RT_Object_Class_Module; i++)
-	{	
-		list = &module->module_object[i].object_list;	
-		for (node = list->next; node != list; node = node->next)
+	/* delete threads */
+	list = &module->module_object[RT_Object_Class_Thread].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
 		{
-			object = rt_list_entry(node, struct rt_object, list);
-			if (rt_object_is_systemobject(object) == RT_EOK)
-			{
-				/* detach static objcet */
-				rt_object_detach(object);
-			}
-			else
-			{	
-				/* delete dynamic object */
-				rt_object_delete(object);
-			}	
+			/* detach static objcet */
+			rt_thread_detach((rt_thread_t)object);
 		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_thread_delete((rt_thread_t)object);
+		}	
+	}
+	
+#ifdef RT_USING_SEMAPHORE
+	/* delete semaphores */
+	list = &module->module_object[RT_Object_Class_Thread].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_sem_detach((rt_sem_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_sem_delete((rt_sem_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_MUTEX
+	/* delete mutexs*/
+	list = &module->module_object[RT_Object_Class_Mutex].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_mutex_detach((rt_mutex_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_mutex_delete((rt_mutex_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_EVENT
+	/* delete mailboxs */
+	list = &module->module_object[RT_Object_Class_Event].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_event_detach((rt_event_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_event_delete((rt_event_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_MAILBOX
+	/* delete mailboxs */
+	list = &module->module_object[RT_Object_Class_MailBox].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_mb_detach((rt_mailbox_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_mb_delete((rt_mailbox_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_MESSAGEQUEUE
+	/* delete msgqueues */
+	list = &module->module_object[RT_Object_Class_MessageQueue].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_mq_detach((rt_mq_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_mq_delete((rt_mq_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_MEMPOOL
+	/* delete mempools */
+	list = &module->module_object[RT_Object_Class_MemPool].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_mp_detach((rt_mp_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_mp_delete((rt_mp_t)object);
+		}	
+	}
+#endif
+
+#ifdef RT_USING_DEVICE
+	/* delete devices */
+	list = &module->module_object[RT_Object_Class_Device].object_list;	
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		rt_device_unregister((rt_device_t)object);
 	}	
+#endif
+
+	/* delete timers */
+	list = &module->module_object[RT_Object_Class_Timer].object_list;
+	while(list->next != list)
+	{
+		object = rt_list_entry(list->next, struct rt_object, list);
+		if (rt_object_is_systemobject(object) == RT_EOK)
+		{
+			/* detach static objcet */
+			rt_timer_detach((rt_timer_t)object);
+		}
+		else
+		{	
+			/* delete dynamic object */
+			rt_timer_delete((rt_timer_t)object);
+		}	
+	}
 	
 	/* release module memory */
 	rt_free(module->module_space);
-	rt_object_delete((struct rt_object *)module);
+	rt_object_delete((rt_object_t)module);
 
 	return RT_EOK;
 }

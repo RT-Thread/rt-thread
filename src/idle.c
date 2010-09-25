@@ -103,15 +103,7 @@ void rt_thread_idle_excute(void)
 			{	
 				/* detach module's main thread */
 				module->module_thread = RT_NULL;
-			}
-
-			/* if sub thread list and main thread are all enmpy */
-			if((module->module_thread == RT_NULL) &&
-				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
-			{
-				/* unload module */
-				rt_module_unload(module);
-			}						
+			}					
 		}	
 #endif
 		/* release thread's stack */
@@ -119,7 +111,20 @@ void rt_thread_idle_excute(void)
 
 		/* delete thread object */
 		rt_object_delete((rt_object_t)thread);
+
+#ifdef RT_USING_MODULE
+		if(module != RT_NULL)
+		{	
+			/* if sub thread list and main thread are all empty */
+			if((module->module_thread == RT_NULL) &&
+				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
+			{
+				/* unload module */
+				rt_module_unload(module);
+			}	
+		}	
 	}
+#endif	
 #endif
 }
 
