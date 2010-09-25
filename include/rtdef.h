@@ -370,20 +370,6 @@ enum rt_module_class_type
 	RT_Module_Class_Unknown							/* unknown module 								*/
 };
 
-struct rt_module_info
-{
-	/* export interface */
-	void *module_interface;
-	/* refence count */
-	rt_uint32_t module_refs;
-	/* module type */
-	enum rt_module_class_type module_type;
-	/* module guid */
-	rt_uint32_t module_guid;	
-	/* application entry */
-	void* exec_entry;
-};
-
 struct rt_module
 {
 	/* inherit from object */
@@ -399,8 +385,6 @@ struct rt_module
 	/* module memory pool */
 	rt_uint32_t mempool_size;
 	void* module_mempool;
-
-	struct rt_module_info *module_info;
 
 	/* object in this module, module object is the last basic object type */
 	struct rt_object_information module_object[RT_Object_Class_Module];
