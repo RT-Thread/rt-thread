@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2010-09-20	  richard	   modified rtgui_dc_draw_round_rect
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
@@ -22,6 +23,11 @@
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
 #endif
+
+static int _int_compare(const void *a, const void *b)
+{
+	return (*(const int *) a) - (*(const int *) b);
+}
 
 void rtgui_dc_destory(struct rtgui_dc* dc)
 {
@@ -99,6 +105,48 @@ void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 	}
 }
 
+void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
+{
+	rtgui_color_t color;
+
+	if (dc == RT_NULL) return ;
+
+	/* save old color */
+	color = RTGUI_DC_FC(dc);
+
+	RTGUI_DC_FC(dc) = dark_grey;
+	rtgui_dc_draw_hline(dc, x1, x2, y);
+
+	y ++;
+
+	RTGUI_DC_FC(dc) = high_light;
+	rtgui_dc_draw_hline(dc, x1, x2, y);
+
+	/* restore color */
+	RTGUI_DC_FC(dc) = color;
+}
+
+void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
+{
+	rtgui_color_t color;
+
+	if (dc == RT_NULL) return ;
+
+	/* save old color */
+	color = RTGUI_DC_FC(dc);
+
+	RTGUI_DC_FC(dc) = dark_grey;
+	rtgui_dc_draw_hline(dc, x, y1, y2);
+
+	x ++;
+
+	RTGUI_DC_FC(dc) = high_light;
+	rtgui_dc_draw_hline(dc, x, y1, y2);
+
+	/* restore color */
+	RTGUI_DC_FC(dc) = color;
+}
+
 void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
 	rtgui_dc_draw_hline(dc, rect->x1, rect->x2, rect->y1);
@@ -123,6 +171,16 @@ void rtgui_dc_fill_rect_forecolor(struct rtgui_dc* dc, struct rtgui_rect* rect)
 void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int r)
 {
 	RT_ASSERT(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r));
+	
+	if(r < 0)
+	{
+		return;
+	}
+	
+	if(r == 0)
+	{
+		return rtgui_dc_draw_rect(dc, rect);
+	}
 	
 	if(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r))
     {
@@ -168,6 +226,37 @@ void rtgui_dc_fill_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int 
 		rtgui_dc_fill_circle(dc, rect->x2 - r, rect->y2 - r, r);
 		rtgui_dc_fill_circle(dc, rect->x2 - r, rect->y1 + r, r);
 		rtgui_dc_fill_circle(dc, rect->x1 + r, rect->y2 - r, r); 
+	}
+}
+
+void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
+							   rtgui_color_t c1, rtgui_color_t c2)
+{
+	RT_ASSERT(dc != RT_NULL);
+
+	RTGUI_DC_FC(dc) = c1;
+    rtgui_dc_draw_vline(dc, rect->x1, rect->y1, rect->y2);
+    rtgui_dc_draw_hline(dc, rect->x1 + 1, rect->x2, rect->y1);
+
+	RTGUI_DC_FC(dc) = c2;
+    rtgui_dc_draw_vline(dc, rect->x2, rect->y1, rect->y2);
+    rtgui_dc_draw_hline(dc, rect->x1, rect->x2 + 1, rect->y2);
+}
+
+void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
+{
+	int i;
+
+	for (i = rect->x1; i <= rect->x2; i += 2)
+	{
+		rtgui_dc_draw_point(dc, i, rect->y1);
+		rtgui_dc_draw_point(dc, i, rect->y2);
+	}
+
+	for (i = rect->y1; i <= rect->y2; i += 2)
+	{
+		rtgui_dc_draw_point(dc, rect->x1, i);
+		rtgui_dc_draw_point(dc, rect->x2, i);
 	}
 }
 
@@ -284,20 +373,6 @@ void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_
 	}
 }
 
-void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
-							   rtgui_color_t c1, rtgui_color_t c2)
-{
-	RT_ASSERT(dc != RT_NULL);
-
-	RTGUI_DC_FC(dc) = c1;
-    rtgui_dc_draw_vline(dc, rect->x1, rect->y1, rect->y2);
-    rtgui_dc_draw_hline(dc, rect->x1 + 1, rect->x2, rect->y1);
-
-	RTGUI_DC_FC(dc) = c2;
-    rtgui_dc_draw_vline(dc, rect->x2, rect->y1, rect->y2);
-    rtgui_dc_draw_hline(dc, rect->x1, rect->x2 + 1, rect->y2);
-}
-
 void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 {
 	rtgui_rect_t r;
@@ -351,48 +426,6 @@ void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 	RTGUI_DC_FC(dc) = color;
 }
 
-void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
-{
-	rtgui_color_t color;
-
-	if (dc == RT_NULL) return ;
-
-	/* save old color */
-	color = RTGUI_DC_FC(dc);
-
-	RTGUI_DC_FC(dc) = dark_grey;
-	rtgui_dc_draw_hline(dc, x1, x2, y);
-
-	y ++;
-
-	RTGUI_DC_FC(dc) = high_light;
-	rtgui_dc_draw_hline(dc, x1, x2, y);
-
-	/* restore color */
-	RTGUI_DC_FC(dc) = color;
-}
-
-void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
-{
-	rtgui_color_t color;
-
-	if (dc == RT_NULL) return ;
-
-	/* save old color */
-	color = RTGUI_DC_FC(dc);
-
-	RTGUI_DC_FC(dc) = dark_grey;
-	rtgui_dc_draw_hline(dc, x, y1, y2);
-
-	x ++;
-
-	RTGUI_DC_FC(dc) = high_light;
-	rtgui_dc_draw_hline(dc, x, y1, y2);
-
-	/* restore color */
-	RTGUI_DC_FC(dc) = color;
-}
-
 void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, int count)
 {
 	int i;
@@ -425,9 +458,51 @@ void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, in
 	rtgui_dc_draw_line(dc, *x1, *y1, *vx, *vy);
 }
 
-static int _int_compare(const void *a, const void *b)
+void rtgui_dc_draw_regular_polygon(struct rtgui_dc* dc, int x, int y, int r, int count, rt_uint16_t angle)
 {
-	return (*(const int *) a) - (*(const int *) b);
+	int i, temp_val;
+	double temp;
+	float angle_interval;
+	int *xx;
+	int *x_head;
+	int *yy;
+	int *y_head;
+
+	/*
+	* Sanity check
+	*/
+	 if (count < 3) return;
+	
+    angle_interval = 360.0 / count;
+
+	/*
+	* Pointer setup
+	*/
+
+	x_head = xx = (int *)rt_malloc(sizeof(int) * count);
+	y_head = yy = (int *)rt_malloc(sizeof(int) * count);
+
+    for(i = 0; i < count; i++)
+    {
+        temp	 = cos(((angle_interval * i) + angle) * M_PI / 180);
+        temp     *= r;
+	    temp_val = (int)temp;
+	    *xx      = temp_val + x;
+		
+		temp	 = sin(((angle_interval * i) + angle) * M_PI / 180); 
+		temp     *= r;
+	    temp_val = (int)temp;
+	    *yy      = temp_val + y;
+
+	    xx++;
+	    yy++;
+    }
+    
+    rtgui_dc_draw_polygon(dc, (const int *)x_head, (const int *)y_head, count);  
+
+	rt_free(x_head);
+	rt_free(y_head);
+
 }
 
 void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, int count)
@@ -1254,20 +1329,4 @@ void rtgui_dc_fill_ellipse(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_i
     }
 }
 
-void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
-{
-	int i;
-
-	for (i = rect->x1; i <= rect->x2; i += 2)
-	{
-		rtgui_dc_draw_point(dc, i, rect->y1);
-		rtgui_dc_draw_point(dc, i, rect->y2);
-	}
-
-	for (i = rect->y1; i <= rect->y2; i += 2)
-	{
-		rtgui_dc_draw_point(dc, rect->x1, i);
-		rtgui_dc_draw_point(dc, rect->x2, i);
-	}
-}
 
