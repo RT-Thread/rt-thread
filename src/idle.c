@@ -122,10 +122,11 @@ void rt_thread_idle_excute(void)
 				/* unload module */
 				rt_module_unload(module);
 			}	
-		}	
+		}
+#endif	//RT_USING_MODULE
 	}
-#endif	
-#endif
+	
+#endif //RT_USING_HEAP
 }
 
 static void rt_thread_idle_entry(void* parameter)
