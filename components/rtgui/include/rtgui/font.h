@@ -35,19 +35,19 @@ struct rtgui_font_engine
 /*
  * bitmap font engine
  */
-/* bitmap font private data */
 struct rtgui_font_bitmap
 {
-	/* bitmap data */
-	const rt_uint8_t* bmp;
+	const rt_uint8_t*  bmp;			/* bitmap font data */
+	const rt_uint8_t*  char_width;	/* each character width, NULL for fixed font */
+	const rt_uint32_t* offset;		/* offset for each character */
 
-	rt_uint16_t width;
-	rt_uint16_t height;
+	rt_uint16_t width;				/* font width  */
+	rt_uint16_t height;				/* font height */
 
 	rt_uint8_t first_char;
 	rt_uint8_t last_char;
 };
-extern struct rtgui_font_engine bmp_font_engine;
+extern const struct rtgui_font_engine bmp_font_engine;
 
 #include <rtgui/tree.h>
 SPLAY_HEAD(cache_tree, hz_cache);
@@ -87,7 +87,7 @@ struct rtgui_font
 	rt_uint32_t refer_count;
 
 	/* font engine */
-	struct rtgui_font_engine* engine;
+	const struct rtgui_font_engine* engine;
 
 	/* font private data */
 	void* data;

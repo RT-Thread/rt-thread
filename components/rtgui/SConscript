@@ -20,6 +20,7 @@ common/image.c
 common/image_xpm.c
 common/image_hdc.c
 common/font.c
+common/font_bmp.c
 common/font_hz_file.c
 common/font_hz_bmp.c
 common/asc12font.c

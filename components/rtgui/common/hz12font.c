@@ -12275,6 +12275,8 @@ const unsigned char hz12_font[] = {
 const struct rtgui_font_bitmap hz12 =
 {
 	hz12_font, 			/* bmp */
+	RT_NULL,			/* each character width, NULL for fixed font */
+	RT_NULL,			/* offset for each character */
 	12, 				/* width */
 	12, 				/* height */
 	0, 					/* first char */

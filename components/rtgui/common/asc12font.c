@@ -211,6 +211,8 @@ const rt_uint8_t asc12_font[] = {
 const struct rtgui_font_bitmap asc12 =
 {
 	asc12_font, 		/* bmp */
+	RT_NULL,			/* each character width, NULL for fixed font */
+	RT_NULL,			/* offset for each character */
 	6, 					/* width */
 	12, 				/* height */
 	0, 					/* first char */

@@ -16733,6 +16733,8 @@ const unsigned char hz16_font[] = {
 const struct rtgui_font_bitmap hz16 =
 {
 	hz16_font, 			/* bmp */
+	RT_NULL,			/* each character width, NULL for fixed font */
+	RT_NULL,			/* offset for each character */
 	16, 				/* width */
 	16, 				/* height */
 	0, 					/* first char */
@@ -16746,7 +16748,7 @@ struct rtgui_font rtgui_font_hz16 =
 	16, 				/* height */
 	1, 					/* refer count */
 	&hz_bmp_font_engine,/* font engine */
-	(void *)&hz16,				/* font private data */
+	(void *)&hz16,		/* font private data */
 };
 
 /* size = 267616 bytes */
