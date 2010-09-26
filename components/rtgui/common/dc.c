@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
  * 2010-09-20	  richard	   modified rtgui_dc_draw_round_rect
+ * 2010-09-27     Bernard      fix draw_mono_bmp issue
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
@@ -324,53 +325,27 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
  */
 void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, const rt_uint8_t* data)
 {
-	int word_bytes;
 	int i, j, k;
 
 	/* get word bytes */
-	word_bytes = (w + 7)/8;
+	w = (w + 7)/8;
 
 	/* draw mono bitmap data */
 	for (i = 0; i < h; i ++)
-		for (j = 0; j < word_bytes; j++)
+		for (j = 0; j < w; j++)
 			for (k = 0; k < 8; k++)
-				if ( ((data[i*2 + j] >> (7-k)) & 0x01) != 0)
+				if ( ((data[i*w + j] >> (7-k)) & 0x01) != 0)
 					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
 }
 
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	int i, k;
-
-	/* draw byte */
-	for (i=0; i < h; i ++)
-	{
-		for (k=0; k < 8; k++)
-		{
-			if (((data[i] >> (7-k)) & 0x01) != 0)
-			{
-				rtgui_dc_draw_point(dc, x + k, y + i);
-			}
-		}
-	}
+	rtgui_dc_draw_mono_bmp(dc, x, y, 8, h, data);
 }
 
 void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
-	int i, j, k;
-
-	/* draw word */
-	for (i=0; i < h; i ++)
-	{
-		for (j=0; j < 2; j++)
-			for (k=0; k < 8; k++)
-			{
-				if (((data[i * 2 + j] >> (7-k)) & 0x01) != 0)
-				{
-					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
-				}
-			}
-	}
+	rtgui_dc_draw_mono_bmp(dc, x, y, 16, h, data);
 }
 
 void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
