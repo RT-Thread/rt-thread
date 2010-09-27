@@ -14,11 +14,10 @@ const struct rtgui_font_engine hz_bmp_font_engine =
 	rtgui_hz_bitmap_font_get_metrics
 };
 
-static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void _rtgui_hz_bitmap_font_draw_text(struct rtgui_font_bitmap* bmp_font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	register rt_base_t h, word_bytes;
 	rt_uint8_t* str;
-	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 
 	RT_ASSERT(bmp_font != RT_NULL);
 
@@ -62,6 +61,45 @@ static void rtgui_hz_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui
 	}
 }
 
+static void rtgui_hz_bitmap_font_draw_text (struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t length, struct rtgui_rect* rect)
+{
+	rt_uint32_t len;
+	struct rtgui_font *efont;
+	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
+
+	RT_ASSERT(dc != RT_NULL);
+
+	/* get English font */
+	efont = rtgui_font_refer("asc", bmp_font->height);
+	if (efont == RT_NULL) efont = rtgui_font_default(); /* use system default font */
+
+	while (length > 0)
+	{
+		len = 0;
+		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len)) len ++;
+		/* draw text with English font */
+		if (len > 0)
+		{
+			rtgui_font_draw(efont, dc, text, len, rect);
+
+			text += len;
+			length -= len;
+		}
+
+		len = 0;
+		while (((rt_uint8_t)*(text + len)) >= 0x80) len ++;
+		if (len > 0)
+		{
+			_rtgui_hz_bitmap_font_draw_text(bmp_font, dc, text, len, rect);
+
+			text += len;
+			length -= len;
+		}
+	}
+
+	rtgui_font_derefer(efont);
+}
+
 static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
@@ -70,6 +108,7 @@ static void rtgui_hz_bitmap_font_get_metrics(struct rtgui_font* font, const char
 
 	/* set metrics rect */
 	rect->x1 = rect->y1 = 0;
+	/* Chinese font is always fixed font */
 	rect->x2 = (rt_int16_t)(bmp_font->width * rt_strlen((const char*)text));
 	rect->y2 = bmp_font->height;
 }

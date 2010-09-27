@@ -5,6 +5,7 @@
 #include <rtgui/font.h>
 #include <rtgui/tree.h>
 #include <rtgui/rtgui_system.h>
+
 #ifdef RTGUI_USING_HZ_FILE
 #include <dfs_posix.h>
 
@@ -91,12 +92,10 @@ static void rtgui_hz_file_font_load(struct rtgui_font* font)
     hz_file_font->fd = open(hz_file_font->font_fn, O_RDONLY, 0);
 }
 
-static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void _rtgui_hz_file_font_draw_text(struct rtgui_hz_file_font* hz_file_font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	register rt_base_t h, word_bytes;
 	rt_uint8_t* str;
-    struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
-    RT_ASSERT(hz_file_font != RT_NULL);
 
 	/* drawing height */
 	h = (hz_file_font->font_size + rect->y1 > rect->y2)?
@@ -132,6 +131,46 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 		str += 2;
 		len -= 2;
 	}
+}
+
+static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t length, struct rtgui_rect* rect)
+{
+	rt_uint32_t len;
+	struct rtgui_font *efont;
+	struct rtgui_hz_file_font* hz_file_font = (struct rtgui_hz_file_font*)font->data;
+
+	RT_ASSERT(dc != RT_NULL);
+	RT_ASSERT(hz_file_font != RT_NULL);
+
+	/* get English font */
+	efont = rtgui_font_refer("asc", hz_file_font->font_size);
+	if (efont == RT_NULL) efont = rtgui_font_default(); /* use system default font */
+
+	while (length > 0)
+	{
+		len = 0;
+		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len)) len ++;
+		/* draw text with English font */
+		if (len > 0)
+		{
+			rtgui_font_draw(efont, dc, text, len, rect);
+
+			text += len;
+			length -= len;
+		}
+
+		len = 0;
+		while (((rt_uint8_t)*(text + len)) >= 0x80) len ++;
+		if (len > 0)
+		{
+			_rtgui_hz_file_font_draw_text(hz_file_font, dc, text, len, rect);
+
+			text += len;
+			length -= len;
+		}
+	}
+
+	rtgui_font_derefer(efont);
 }
 
 static void rtgui_hz_file_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)

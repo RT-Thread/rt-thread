@@ -70,49 +70,81 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 
 static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
+	rt_uint32_t length;
+	struct rtgui_font* hz_font;
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 
 	RT_ASSERT(bmp_font != RT_NULL);
 
-	while (len-- && rect->x1 < rect->x2)
+	hz_font = rtgui_font_refer("hz", font->height);
+	while ((rect->x1 < rect->x2) && len)
 	{
-		rtgui_bitmap_font_draw_char(bmp_font, dc, *text, rect);
+		length = 0;
+		while ((rt_uint8_t)*(text + length) >= 0x80) length ++; /* it's not a ascii character */
+		if (length > 0)
+		{
+			if (hz_font != RT_NULL)
+				rtgui_font_draw(hz_font, dc, text, length, rect);
+			text += length;
+			len -= length;
+		}
 
-		/* move x to next character */
-		if (bmp_font->char_width == RT_NULL)
-			rect->x1 += bmp_font->width;
-		else
-			rect->x1 += bmp_font->char_width[*text - bmp_font->first_char];
-		text ++;
+		length = 0;
+		while (((rt_uint8_t)*(text + length) < 0x80) && *(text + length)) length ++;
+		if (length > 0)
+		{
+			len -= length;
+			while (length-- && rect->x1 < rect->x2)
+			{
+				rtgui_bitmap_font_draw_char(bmp_font, dc, *text, rect);
+
+				/* move x to next character */
+				if (bmp_font->char_width == RT_NULL)
+					rect->x1 += bmp_font->width;
+				else
+					rect->x1 += bmp_font->char_width[*text - bmp_font->first_char];
+				text ++;
+			}
+		}
 	}
+
+	rtgui_font_derefer(hz_font);
 }
 
 static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
+	rt_uint32_t length;
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
 
 	RT_ASSERT(bmp_font != RT_NULL);
 
-	if (bmp_font->char_width != NULL)
+	/* set init metrics rect */
+	rect->x1 = rect->y1 = 0;rect->x2 = 0;
+	rect->y2 = bmp_font->height;
+
+	while (*text)
 	{
-		rt_uint32_t index;
+		length = 0;
+		while (*(text + length) >= 0x80) length ++; /* it's not a ascii character */
+		rect->x2 += (font->height/2) * length;
+		text += length;
 
-		/* set metrics rect */
-		rect->x1 = rect->y1 = 0;rect->x2 = 0;
-		rect->y2 = bmp_font->height;
-
-		/* get width for each character */
-		while (*text)
+		length = 0;
+		while ((*(text + length) < 0x80) && *(text + length)) length ++;
+		if (bmp_font->char_width != NULL)
 		{
-			rect->x2 += bmp_font->char_width[*text - bmp_font->first_char];
-			text ++;
+			/* get width for each character */
+			while (*text < 0x80)
+			{
+				rect->x2 += bmp_font->char_width[*text - bmp_font->first_char];
+				text ++;
+			}
 		}
-	}
-	else
-	{
-		/* set metrics rect */
-		rect->x1 = rect->y1 = 0;
-		rect->x2 = bmp_font->width * (rt_int16_t)rt_strlen((const char*)text);
-		rect->y2 = bmp_font->height;
+		else
+		{
+			/* set metrics rect */
+			rect->x2 += bmp_font->width * length;
+			text += length;
+		}
 	}
 }

@@ -265,9 +265,6 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 {
 	rt_uint32_t len;
 	struct rtgui_font *font;
-#ifdef RTGUI_USING_FONTHZ
-	struct rtgui_font *gb2312_font;
-#endif
 	struct rtgui_rect text_rect;
 
 	RT_ASSERT(dc != RT_NULL);
@@ -279,45 +276,12 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 		font = rtgui_font_default();
 	}
 
-#ifdef RTGUI_USING_FONTHZ
-	gb2312_font = rtgui_font_refer("hz", font->height);
-	if (gb2312_font == RT_NULL)
-	{
-		gb2312_font = rtgui_font_refer("hz", 16);
-	}
-#endif
-
 	/* text align */
 	rtgui_font_get_metrics(font, text, &text_rect);
 	rtgui_rect_moveto_align(rect, &text_rect, RTGUI_DC_TEXTALIGN(dc));
 
-#ifdef RTGUI_USING_FONTHZ
-	while (*text)
-	{
-		len = 0;
-		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len)) len ++;
-		if (len > 0)
-		{
-			rtgui_font_draw(font, dc, text, len, &text_rect);
-
-			text += len;
-		}
-
-		len = 0;
-		while (((rt_uint8_t)*(text + len)) > 0x80) len ++;
-		if (len > 0)
-		{
-			rtgui_font_draw(gb2312_font, dc, text, len, &text_rect);
-
-			text += len;
-		}
-	}
-
-	rtgui_font_derefer(gb2312_font);
-#else
 	len = strlen((const char*)text);
 	rtgui_font_draw(font, dc, text, len, &text_rect);
-#endif
 }
 
 /*
