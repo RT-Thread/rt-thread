@@ -25,6 +25,8 @@
 	#define RTGUI_USING_FONT16
 	/* support Chinese font */
 	#define RTGUI_USING_FONTHZ
+	/* support FreeType TTF font */
+	#define RTGUI_USING_TTF
 	/* use small size in RTGUI */
 	#define RTGUI_USING_SMALL_SIZE
 	/* use mouse cursor */

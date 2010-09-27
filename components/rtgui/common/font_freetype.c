@@ -1,9 +1,6 @@
-#ifdef RTGUI_USING_TTF
-#include <rtgui/dc.h>
-#include <rtgui/font.h>
-#include <rtgui/tree.h>
-#include <rtgui/rtgui_system.h>
+#include <rtgui/font_freetype.h>
 
+#ifdef RTGUI_USING_TTF
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <freetype/ftglyph.h>
@@ -28,31 +25,53 @@ struct rtgui_freetype_font
 	FT_Library  library;
 };
 
-static rt_uint16_t *LATIN1_to_UNICODE(rt_uint16_t *unicode, const char *text, int len)
+static void gbk_to_unicode(rt_uint16_t *unicode, const unsigned char *text, int len)
 {
 	int i;
+	unsigned short wch;
+	extern unsigned short ff_convert(unsigned short wch, int direction);
 
-	for ( i=0; i < len; ++i ) {
-		unicode[i] = ((const unsigned char *)text)[i];
+	for (i = 0; i < len; )
+	{
+		if (*text < 0x80)
+		{
+			wch = *text;
+			*unicode = ff_convert(wch, 1);
+			text ++;
+			i ++;
+		}
+		else
+		{
+			wch = wch = *(text + 1) | (*text << 8);
+			*unicode = ff_convert(wch, 1);
+			text += 2;
+			i += 2;
+		}
+
+		unicode ++;
 	}
-	unicode[i] = 0;
 
-	return unicode;
+	*unicode = '\0';
 }
 
 static void rtgui_freetype_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	int index = 0;
 	FT_Error err = 0;
-	rt_uint16_t text_short[32], *text_ptr;
+	rt_uint16_t *text_short, *text_ptr;
 	struct rtgui_freetype_font* freetype;
 
 	RT_ASSERT(font != RT_NULL);
 	freetype = (struct rtgui_freetype_font*) font->data;
 	RT_ASSERT(freetype != RT_NULL);
 
-	LATIN1_to_UNICODE(text_short, text, len);
-	text_ptr = &text_short[0];
+	/* allocate unicode buffer */
+	text_short = (rt_uint16_t*)rtgui_malloc((len + 1)* 2);
+	if (text_short == RT_NULL) return ; /* out of memory */
+
+	/* convert gbk to unicode */
+	gbk_to_unicode(text_short, text, len);
+	text_ptr = text_short;
 
 	while (*text_ptr)
 	{
@@ -71,8 +90,6 @@ static void rtgui_freetype_font_draw_text(struct rtgui_font* font, struct rtgui_
 				{
 					if (*ptr > 0)
 						rtgui_dc_draw_color_point(dc, rect->x1 + x, rect->y1 + rows, RTGUI_RGB(0xff - *ptr, 0xff - *ptr, 0xff - *ptr));
-						// rtgui_dc_draw_point(dc, rect->x1 + x, rect->y1 + rows);
-					
 					ptr ++;
 				}
 		}
@@ -80,24 +97,38 @@ static void rtgui_freetype_font_draw_text(struct rtgui_font* font, struct rtgui_
 		text_ptr ++;
 		rect->x1 += freetype->face->glyph->bitmap.width;
 	}
+
+	/* release unicode buffer */
+	rtgui_free(text_short);
 }
 
 static void rtgui_freetype_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)
 {
-	int index = 0;
+	int index = 0, len;
 	FT_Error err = 0;
 	rt_uint16_t w = 0, h = 0;
-	const rt_uint16_t *text_short;
+	rt_uint16_t *text_short, *text_ptr;
 	struct rtgui_freetype_font* freetype;
 	
 	RT_ASSERT(font != RT_NULL);
+	RT_ASSERT(rect != RT_NULL);
 	freetype = (struct rtgui_freetype_font*) font->data;
 	RT_ASSERT(freetype != RT_NULL);
 
-	text_short = (const rt_uint16_t*) text;
-	while (*text_short)
+	len = strlen(text);
+	memset(rect, 0, sizeof(struct rtgui_rect));
+
+	/* allocate unicode buffer */
+	text_short = (rt_uint16_t*)rtgui_malloc((len + 1)* 2);
+	if (text_short == RT_NULL) return ; /* out of memory */
+
+	/* convert gbk to unicode */
+	gbk_to_unicode(text_short, text, len);
+	text_ptr = text_short;
+
+	while (*text_ptr)
 	{
-		index = FT_Get_Char_Index(freetype->face, *text_short);
+		index = FT_Get_Char_Index(freetype->face, *text_ptr);
 		err = FT_Load_Glyph(freetype->face, index, FT_LOAD_DEFAULT);
 
 		if (err == 0)
@@ -109,11 +140,14 @@ static void rtgui_freetype_font_get_metrics(struct rtgui_font* font, const char*
 			}
 		}
 
-		text_short ++;
+		text_ptr ++;
 	}
 
 	rect->x1 = 0; rect->y1 = 0;
 	rect->x2 = w; rect->y2 = h;
+
+	/* release unicode buffer */
+	rtgui_free(text_short);
 }
 
 rtgui_font_t* rtgui_freetype_font_create(const char* filename, int bold, int italic, rt_size_t size)
