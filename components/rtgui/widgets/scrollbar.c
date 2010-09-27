@@ -12,6 +12,7 @@
  * 2010-08-09     Bernard      first version
  */
 #include <rtgui/dc.h>
+#include <rtgui/rtgui_theme.h>
 #include <rtgui/widgets/scrollbar.h>
 
 static void _rtgui_scrollbar_constructor(rtgui_scrollbar_t *bar)
@@ -103,7 +104,7 @@ rtgui_type_t *rtgui_scrollbar_type_get(void)
 
 static void _rtgui_scrollbar_on_mouseclick(struct rtgui_widget * widget, struct rtgui_event * event)
 {
-	rtgui_rect_t rect, btn_rect, bar_rect;
+	rtgui_rect_t btn_rect, bar_rect;
 	rt_uint32_t thumb_size, thumb_position;
     struct rtgui_scrollbar* bar = (struct rtgui_scrollbar*)widget;
     struct rtgui_event_mouse* mouse = (struct rtgui_event_mouse*)event;

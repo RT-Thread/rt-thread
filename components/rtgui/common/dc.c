@@ -180,7 +180,8 @@ void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int 
 	
 	if(r == 0)
 	{
-		return rtgui_dc_draw_rect(dc, rect);
+		rtgui_dc_draw_rect(dc, rect);
+		return;
 	}
 	
 	if(((rect->x2 - rect->x1)/2 >= r)&&((rect->y2-rect->y1)/2 >= r))
@@ -981,7 +982,6 @@ void rtgui_dc_fill_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_in
 {
     int start_x, start_y;
     int end_x, end_y;
-    float start_f;
 
     /* Sanity check radius */
 	if (r < 0) return ;

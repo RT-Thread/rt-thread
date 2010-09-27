@@ -70,7 +70,7 @@ void rtgui_timer_stop (rtgui_timer_t* timer);
 rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq);
 void rtgui_thread_deregister(rt_thread_t tid);
 void rtgui_thread_set_onidle(rtgui_idle_func onidle);
-rtgui_idle_func rtgui_thread_get_onidle();
+rtgui_idle_func rtgui_thread_get_onidle(void);
 rtgui_thread_t* rtgui_thread_self(void);
 
 rt_thread_t rtgui_thread_get_server(void);

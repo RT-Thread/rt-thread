@@ -216,7 +216,6 @@ static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* self, struct rtgui_rect*
 static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)
 {
 	struct rtgui_dc_buffer* dc = (struct rtgui_dc_buffer*)self;
-	struct rtgui_dc* hw = dest;
 
 	if (dc_point == RT_NULL) dc_point = &rtgui_empty_point;
 	if (rtgui_dc_get_visible(dest) == RT_FALSE) return;

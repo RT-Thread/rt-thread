@@ -49,7 +49,6 @@ static void rtgui_blit_line_1_2(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int li
 static void rtgui_blit_line_3_2(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
 {
 	rt_uint16_t* dst;
-	rt_uint32_t* src;
 
 	dst = (rt_uint16_t*)dst_ptr;
 	line = line / 3;
@@ -299,7 +298,7 @@ static const rtgui_blit_line_func _blit_table[5][5] =
 	{RT_NULL, rtgui_blit_line_1_4, rtgui_blit_line_2_4, rtgui_blit_line_3_4, rtgui_blit_line_direct }, 
 };
 
-const rtgui_blit_line_func rtgui_blit_line_get(int dst_bpp, int src_bpp)
+rtgui_blit_line_func rtgui_blit_line_get(int dst_bpp, int src_bpp)
 {
 	RT_ASSERT(dst_bpp>0 && dst_bpp < 5);
 	RT_ASSERT(src_bpp>0 && src_bpp < 5);
