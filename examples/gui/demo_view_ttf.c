@@ -46,19 +46,19 @@ rt_bool_t ttf_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		saved = RTGUI_WIDGET_FONT(widget);
 
 		RTGUI_WIDGET_FONT(widget) = font_16;
-		rtgui_dc_draw_text(dc, "ABCD", &rect);
+		rtgui_dc_draw_text(dc, "ABCD中文", &rect);
 		rect.y1 += 18; 
 
 		RTGUI_WIDGET_FONT(widget) = font_24;
-		rtgui_dc_draw_text(dc, "ABCD", &rect);
+		rtgui_dc_draw_text(dc, "ABCD中文", &rect);
 		rect.y1 += 26; 
 
 		RTGUI_WIDGET_FONT(widget) = font_36;
-		rtgui_dc_draw_text(dc, "ABCD", &rect);
+		rtgui_dc_draw_text(dc, "ABCD中文", &rect);
 		rect.y1 += 38; 
 
 		RTGUI_WIDGET_FONT(widget) = font_48;
-		rtgui_dc_draw_text(dc, "ABCD", &rect);
+		rtgui_dc_draw_text(dc, "ABCD中文", &rect);
 
 		RTGUI_WIDGET_FONT(widget) = saved;
 		/* 绘图完成 */
@@ -73,22 +73,20 @@ rt_bool_t ttf_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 	return RT_FALSE;
 }
 
-extern rtgui_font_t* rtgui_freetype_font_create(const char* filename, int bold, int italic, rt_size_t size);
-
 /* 创建用于TTF字体显示演示用的视图 */
 rtgui_view_t *demo_view_ttf(rtgui_workbench_t* workbench)
 {
 	rtgui_view_t *view;
 
-	font_16 = rtgui_freetype_font_create("d:/arial.ttf", 0, 0, 16);
-	font_24 = rtgui_freetype_font_create("d:/arial.ttf", 0, 0, 24);
-	font_36 = rtgui_freetype_font_create("d:/arial.ttf", 0, 0, 36);
-	font_48 = rtgui_freetype_font_create("d:/HARNGTON.TTF", 0, 0, 72);
+	font_16 = rtgui_freetype_font_create("d:/simsun.ttf", 0, 0, 16);
+	font_24 = rtgui_freetype_font_create("d:/simsun.ttf", 0, 0, 24);
+	font_36 = rtgui_freetype_font_create("d:/simsun.ttf", 0, 0, 36);
+	font_48 = rtgui_freetype_font_create("d:/simsun.TTF", 0, 0, 72);
 
 	view = demo_view(workbench, "TTF 演示");
 	if (view != RT_NULL)
 	{
-		// RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
+		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
 		/* 设置成自己的事件处理函数 */
 		rtgui_widget_set_event_handler(RTGUI_WIDGET(view), ttf_event_handler);
 	}
