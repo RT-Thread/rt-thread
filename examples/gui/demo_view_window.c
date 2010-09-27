@@ -15,7 +15,7 @@
 static struct rtgui_timer *timer;
 static struct rtgui_label* label;
 static struct rtgui_win* msgbox = RT_NULL;
-static rt_uint8_t label_text[80];
+static char label_text[80];
 static rt_uint8_t cnt = 5;
 
 /* 获取一个递增的窗口标题 */
