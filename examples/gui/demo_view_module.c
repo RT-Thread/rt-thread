@@ -9,6 +9,7 @@
 #include <rtgui/widgets/filelist_view.h>
 #include <string.h>
 
+#ifdef RT_USING_MODULE
 static rt_module_t module = RT_NULL;
 static rtgui_view_t* _view = RT_NULL;
 
@@ -81,3 +82,4 @@ rtgui_view_t* demo_view_module(rtgui_workbench_t* workbench)
 
 	return _view;
 }
+#endif
