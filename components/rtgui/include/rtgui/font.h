@@ -73,7 +73,7 @@ struct rtgui_hz_file_font
     /* font file name */
     const char* font_fn;
 };
-extern struct rtgui_font_engine rtgui_hz_file_font_engine;
+extern const struct rtgui_font_engine rtgui_hz_file_font_engine;
 
 struct rtgui_font
 {
