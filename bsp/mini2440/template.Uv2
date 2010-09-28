@@ -1,12 +1,12 @@
 ### uVision2 Project, (C) Keil Software
 ### Do not modify !
 
-Target (RT-Thread Debug), 0x0004 // Tools: 'ARM-ADS'
+Target (RT-Thread Mini2440), 0x0004 // Tools: 'ARM-ADS'
 
 
 
 
-Options 1,0,0  // Target 'RT-Thread Debug'
+Options 1,0,0  // Target 'RT-Thread Mini2440'
  Device (S3C2440A)
  Vendor (Samsung)
  Cpu (IRAM(0x40000000-0x40000FFF) CLOCK(12000000) CPUTYPE(ARM920T))
@@ -53,7 +53,7 @@ Options 1,0,0  // Target 'RT-Thread Debug'
  ADSFLGA { 242,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ACPUTYP (ARM920T)
  RVDEV ()
- ADSTFLGA { 0,8,64,0,96,0,64,64,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSTFLGA { 0,8,0,0,96,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSIRAM { 0,0,0,0,64,0,16,0,0 }
  OCMADSIROM { 0,0,0,0,0,0,0,0,0 }
@@ -61,7 +61,7 @@ Options 1,0,0  // Target 'RT-Thread Debug'
  OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,16,0,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- ADSCMISC ()
+ ADSCMISC (--diag_suppress=870)
  ADSCDEFN ()
  ADSCUDEF ()
  ADSCINCD ()
@@ -79,10 +79,10 @@ Options 1,0,0  // Target 'RT-Thread Debug'
  StopCode=3
  CustArgs ()
  LibMods ()
- ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- ADSLDTA (0x00000000)
+ ADSLDFG { 16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x30000000)
  ADSLDDA (0x40000000)
- ADSLDSC ()
+ ADSLDSC (rtthread-mini2440.sct)
  ADSLDIB ()
  ADSLDIC ()
  ADSLDMC ()
