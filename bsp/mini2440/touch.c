@@ -1,9 +1,13 @@
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <s3c24x0.h>
+
+#ifdef RT_USING_RTGUI
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/event.h>
+#endif
 
 #include "touch.h"
 
@@ -77,12 +81,17 @@ struct rtgui_touch_device
     rt_bool_t calibrating;
     rt_touch_calibration_func_t calibration_func;
 
+	rt_touch_eventpost_func_t eventpost_func;
+	void *eventpost_param;
+
     rt_uint16_t min_x, max_x;
     rt_uint16_t min_y, max_y;
 };
 static struct rtgui_touch_device *touch = RT_NULL;
+
 static int first_down_report;
 
+#ifdef RT_USING_RTGUI
 static void report_touch_input(int updown)
 {
 	struct rtgui_event_mouse emouse;
@@ -144,6 +153,58 @@ static void report_touch_input(int updown)
 		rtgui_server_post_event((&emouse.parent), sizeof(emouse));
 	}	
 }
+#else
+static void report_touch_input(int updown)
+{
+	struct rt_touch_event touch_event;
+
+	if (updown)
+	{
+		ts.xp = ts.xp / ts.count;
+		ts.yp = ts.yp / ts.count;
+
+		if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
+		{
+			touch->x = ts.xp;
+			touch->y = ts.yp;
+		}
+		else
+		{	
+			touch->x = 240 * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
+			touch->y = 320 - (320*(ts.yp-touch->min_y)/(touch->max_y-touch->min_y));
+		}
+
+		touch_event.x = touch->x;
+		touch_event.y = touch->y;
+		touch_event.pressed = 1;
+
+		if(first_down_report == 1)
+		{
+			if (touch->calibrating != RT_TRUE && touch->eventpost_func)
+			{	
+				touch->eventpost_func(touch->eventpost_param, &touch_event); 
+			}
+		}
+	}
+	else
+	{
+		touch_event.x = touch->x;
+		touch_event.y = touch->y;
+		touch_event.pressed = 0;
+
+		if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
+		{
+			/* callback function */
+			touch->calibration_func(touch_event.x, touch_event.y);
+		}
+
+		if (touch->calibrating != RT_TRUE && touch->eventpost_func)
+		{	
+			touch->eventpost_func(touch->eventpost_param, &touch_event); 
+		}
+	}
+}
+#endif
 
 static void touch_timer_fire(void* parameter)
 {
@@ -324,6 +385,14 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args
 		*/		
 	}
 	break;
+
+	case RT_TOUCH_EVENTPOST:
+		touch->eventpost_func = (rt_touch_eventpost_func_t)args;
+		break;
+
+	case RT_TOUCH_EVENTPOST_PARAM:
+		touch->eventpost_param = args;
+		break;
 	}
 
 	return RT_EOK;
@@ -341,6 +410,8 @@ void rtgui_touch_hw_init(void)
 	touch->max_x = X_MAX;
 	touch->min_y = Y_MIN;
 	touch->max_y = X_MAX;
+	touch->eventpost_func  = RT_NULL;
+	touch->eventpost_param = RT_NULL;
 
 	/* init device structure */
 	touch->parent.type = RT_Device_Class_Unknown;
@@ -355,4 +426,3 @@ void rtgui_touch_hw_init(void)
 	/* register touch device to RT-Thread */
 	rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
 }
-

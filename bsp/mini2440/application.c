@@ -110,8 +110,16 @@ void rt_init_thread_entry(void* parameter)
 		void rt_hw_lcd_init();	
 		int FTK_MAIN(int argc, char* argv[]);
 
+		/* init lcd */
 		rt_hw_lcd_init();
 
+		/* init touch panel */
+		rtgui_touch_hw_init();	
+
+		/* re-init device driver */
+		rt_device_init_all();		
+
+		/* enter ftk main */
 		FTK_MAIN(0, NULL);
 	}
 #endif
