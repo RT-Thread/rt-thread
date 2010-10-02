@@ -2,9 +2,6 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-/* Init thread stack space size */
-#define RT_INIT_THREAD_STACK_SIZE  2048
-
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
 
@@ -236,11 +233,6 @@
 
 #undef  RT_DFS_ELM_MAX_LFN
 #define RT_DFS_ELM_MAX_LFN    64
-
-#undef  RT_USING_OVERFLOW_CHECK
-
-#undef  RT_INIT_THREAD_STACK_SIZE
-#define RT_INIT_THREAD_STACK_SIZE (256*1024)
 
 #endif
 

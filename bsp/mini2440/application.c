@@ -45,6 +45,12 @@ extern void rt_hw_touch_init(void);
 #include "ftk.h"
 #endif
 
+#ifdef RT_USING_FTK
+#define RT_INIT_THREAD_STACK_SIZE (256*1024)
+#else
+#define RT_INIT_THREAD_STACK_SIZE (2*1024)
+#endif
+
 void rt_init_thread_entry(void* parameter)
 {
 /* Filesystem Initialization */
