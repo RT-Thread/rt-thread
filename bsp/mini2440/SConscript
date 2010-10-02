@@ -11,7 +11,7 @@ group['CPPPATH'] = [RTT_ROOT + '/bsp/mini2440']
 group['CPPDEFINES'] = []
 group['LINKFLAGS'] = ''
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'calendar.c', 'calibration.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'calendar.c']
 src_drv = ['console.c', 'led.c']
 
 if rtconfig.RT_USING_DFS:
@@ -21,9 +21,17 @@ if rtconfig.RT_USING_LWIP:
 	src_drv += ['dm9000.c']
 
 if rtconfig.RT_USING_RTGUI:
-    src_drv += ['touch.c', 'key.c']
+    src_drv += ['touch.c', 'key.c', 'calibration.c']
 
 if rtconfig.RT_USING_RTGUI:
+	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
+		src_drv += ['lcd_a70.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_N35':
+		src_drv += ['lcd_n35.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_T35':
+		src_drv += ['lcd_t35.c']
+
+if rtconfig.RT_USING_FTK:
 	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
 		src_drv += ['lcd_a70.c']
 	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_N35':

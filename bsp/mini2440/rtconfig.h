@@ -2,6 +2,9 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+/* Init thread stack space size */
+#define RT_INIT_THREAD_STACK_SIZE  2048
+
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
 
@@ -212,5 +215,31 @@
 /* #define RTGUI_USING_SMALL_SIZE */
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
+
+/* SECTION: FTK support */
+/* using FTK support */
+#define RT_USING_FTK
+
+#ifdef  RT_USING_FTK  
+
+#undef  RT_USING_RTGUI
+
+#ifndef RT_USING_NEWLIB
+#define RT_USING_NEWLIB
+#endif
+
+#ifndef DFS_USING_WORKDIR
+#define DFS_USING_WORKDIR
+#endif
+
+#undef  RT_DFS_ELM_MAX_LFN
+#define RT_DFS_ELM_MAX_LFN    64
+
+#undef  RT_USING_OVERFLOW_CHECK
+
+#undef  RT_INIT_THREAD_STACK_SIZE
+#define RT_INIT_THREAD_STACK_SIZE (256*1024)
+
+#endif
 
 #endif

@@ -41,6 +41,10 @@
 extern void rt_hw_touch_init(void);
 #endif
 
+#ifdef RT_USING_FTK
+#include "ftk.h"
+#endif
+
 void rt_init_thread_entry(void* parameter)
 {
 /* Filesystem Initialization */
@@ -94,6 +98,17 @@ void rt_init_thread_entry(void* parameter)
 		rt_kprintf("TCP/IP initialized!\n");
 	}
 #endif
+
+#ifdef RT_USING_FTK
+	{
+		void rt_hw_lcd_init();	
+		int FTK_MAIN(int argc, char* argv[]);
+
+		rt_hw_lcd_init();
+
+		FTK_MAIN(0, NULL);
+	}
+#endif
 }
 
 void rt_led_thread_entry(void* parameter)
@@ -121,7 +136,7 @@ int rt_application_init()
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
-								2048, 8, 20);
+								RT_INIT_THREAD_STACK_SIZE, 8, 20);
 
 	led_thread = rt_thread_create("led",
 								rt_led_thread_entry, RT_NULL,
@@ -129,7 +144,7 @@ int rt_application_init()
 #else
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
-								2048, 80, 20);
+								RT_INIT_THREAD_STACK_SIZE, 80, 20);
 
 	led_thread = rt_thread_create("led",
 								rt_led_thread_entry, RT_NULL,

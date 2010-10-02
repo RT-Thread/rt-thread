@@ -279,6 +279,8 @@ void clear()
 }
 FINSH_FUNCTION_EXPORT(clear, clear screen);
 
+#endif
+
 void rt_hw_lcd_init()
 {
 	GPB1_TO_OUT();
@@ -314,8 +316,8 @@ void rt_hw_lcd_init()
 	lcd_power_enable(0, 1);
 	lcd_envid_on_off(1);
 
+#ifdef RT_USING_RTGUI
 	/* add lcd driver into graphic driver */
 	rtgui_graphic_driver_add(&_rtgui_lcd_driver);
-}
-
 #endif
+}
