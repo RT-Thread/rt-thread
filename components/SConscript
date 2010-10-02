@@ -27,4 +27,7 @@ if 'RT_USING_MODBUS' in dir(rtconfig) and rtconfig.RT_USING_MODBUS:
 if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
 	objs = objs + SConscript('rtgui/SConscript')
 
+if 'RT_USING_FTK' in dir(rtconfig) and rtconfig.RT_USING_FTK:
+	objs = objs + SConscript('external/ftk/src/os/rt-thread/SConscript')
+
 Return('objs')
