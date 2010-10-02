@@ -192,7 +192,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-/* #define RT_USING_RTGUI */
+#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
@@ -215,7 +215,7 @@
 
 /* SECTION: FTK support */
 /* using FTK support */
-#define RT_USING_FTK	
+/* #define RT_USING_FTK */	
 
 #ifdef  RT_USING_FTK  
 
