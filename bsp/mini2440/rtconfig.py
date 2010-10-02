@@ -13,6 +13,7 @@ RT_USING_WEBSERVER  = False
 RT_USING_RTGUI      = False
 RT_USING_MODBUS     = False
 RT_USING_MODULE     = False
+RT_USING_FTK        = False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -53,6 +54,9 @@ if rtconfig_ns.has_key('RT_USING_LWIP'):
 if rtconfig_ns.has_key('RT_USING_RTGUI'):
     RT_USING_RTGUI = True
 
+if rtconfig_ns.has_key('RT_USING_FTK'):
+    RT_USING_FTK = True
+
 # module options
 if rtconfig_ns.has_key('RT_USING_MODULE'):
     RT_USING_MODULE = True
@@ -66,11 +70,11 @@ ARCH     = 'arm'
 CPU      = 's3c24x0'
 TextBase = '0x30000000'
 
-CROSS_TOOL 	= 'keil'
+CROSS_TOOL 	= 'gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
