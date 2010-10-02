@@ -10,3 +10,5 @@
 5). make sure RT_USING_FTK is defined and RT_USING_RTGUI is undefined
 
 6). compile it
+
+                                                   Jiao JinXing <jiaojinxing1987@gmail.com>
