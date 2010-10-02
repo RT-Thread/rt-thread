@@ -195,7 +195,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-#define RT_USING_RTGUI
+/* #define RT_USING_RTGUI */
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
@@ -218,11 +218,13 @@
 
 /* SECTION: FTK support */
 /* using FTK support */
-#define RT_USING_FTK
+#define RT_USING_FTK	
 
 #ifdef  RT_USING_FTK  
 
-#undef  RT_USING_RTGUI
+#ifdef  RT_USING_RTGUI
+#error  "can't using RTGUI and FTK in the same time"
+#endif
 
 #ifndef RT_USING_NEWLIB
 #define RT_USING_NEWLIB
