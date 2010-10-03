@@ -412,8 +412,8 @@ int dfs_elm_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t coun
 #endif
 
 		d->d_type = DFS_DT_UNKNOWN;
-		if (fno.fattrib & AM_DIR) d->d_type &= DFS_DT_DIR;
-		else d->d_type &= DFS_DT_REG;
+		if (fno.fattrib & AM_DIR) d->d_type = DFS_DT_DIR;
+		else d->d_type = DFS_DT_REG;
 
 		d->d_namlen = rt_strlen(fn);
 		d->d_reclen = (rt_uint16_t)sizeof(struct _dirent);
