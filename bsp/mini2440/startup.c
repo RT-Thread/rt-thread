@@ -112,7 +112,7 @@ void rtthread_startup(void)
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x34000000);
 #else
-	rt_system_heap_init(&__bss_end, (void*)0x34000000);
+	rt_system_heap_init((void*)0x33000000, (void*)0x34000000);
 #endif
 
 	/* init scheduler system */

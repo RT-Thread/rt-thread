@@ -46,7 +46,7 @@ extern void rt_hw_touch_init(void);
 #endif
 
 #ifdef RT_USING_FTK
-#define RT_INIT_THREAD_STACK_SIZE (256*1024)
+#define RT_INIT_THREAD_STACK_SIZE (10*1024)
 #else
 #define RT_INIT_THREAD_STACK_SIZE (2*1024)
 #endif
@@ -117,8 +117,8 @@ void rt_init_thread_entry(void* parameter)
 		rtgui_touch_hw_init();	
 
 		/* re-init device driver */
-		rt_device_init_all();		
-
+		rt_device_init_all();
+		
 		/* enter ftk main */
 		FTK_MAIN(0, NULL);
 	}
