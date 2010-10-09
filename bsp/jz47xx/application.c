@@ -19,7 +19,6 @@
 #include <rtthread.h>
 
 #include <jz4755.h>
-#include <mipsregs.h>
 
 static struct rt_thread thread1;
 static rt_uint8_t thread1_stack[1024];

@@ -1,6 +1,8 @@
 #ifndef __JZ47XX_H__
 #define __JZ47XX_H__
 
+#include "../common/mipsregs.h"
+
 #define __REG8(addr)	*((volatile unsigned char *)(addr))
 #define __REG16(addr)	*((volatile unsigned short *)(addr))
 #define __REG32(addr)	*((volatile unsigned int *)(addr))

@@ -13,7 +13,6 @@
  */
 #include <rtthread.h>
 #include "jz47xx.h"
-#include "interrupt.h"
 
 #define JZ47XX_MAX_INTR 32
 
