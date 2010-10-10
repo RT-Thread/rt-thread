@@ -16,14 +16,13 @@
 #include <rtthread.h>
 #include "s3c24x0.h"
 
-// #define _MMUTT_STARTADDRESS	 0x30080000
-#define _MMUTT_STARTADDRESS	 0x30400000
+#define _MMUTT_STARTADDRESS	 0x33FF0000
 
 #define DESC_SEC		(0x2|(1<<4))
 #define CB				(3<<2)  //cache_on, write_back
 #define CNB				(2<<2)  //cache_on, write_through
 #define NCB				(1<<2)  //cache_off,WR_BUF on
-#define NCNB			(0<<2)  //cache_off,WR_BUF off
+#define NCNB				(0<<2)  //cache_off,WR_BUF off
 #define AP_RW			(3<<10) //supervisor=RW, user=RW
 #define AP_RO			(2<<10) //supervisor=RW, user=RO
 
@@ -367,9 +366,9 @@ void rt_hw_mmu_init(void)
 	mmu_setmtt(0x28000000,0x2ff00000,0x28000000,RW_NCNB); //bank5
 	//30f00000->30100000, 31000000->30200000
 	mmu_setmtt(0x30000000,0x30100000,0x30000000,RW_CB);	  //bank6-1
-	mmu_setmtt(0x30200000,0x33e00000,0x30200000,RW_NCNB); //bank6-2
+	mmu_setmtt(0x30200000,0x33e00000,0x30200000,RW_CB); //bank6-2
 
-	mmu_setmtt(0x33f00000,0x33f00000,0x33f00000,RW_CB);   //bank6-3
+	mmu_setmtt(0x33f00000,0x34000000,0x33f00000,RW_NCNB);   //bank6-3
 	mmu_setmtt(0x38000000,0x3ff00000,0x38000000,RW_NCNB); //bank7
 
 	mmu_setmtt(0x40000000,0x47f00000,0x40000000,RW_NCNB); //SFR
@@ -392,3 +391,4 @@ void rt_hw_mmu_init(void)
 	/* DCache should be turned on after mmu is turned on. */
 	mmu_enable_dcache();
 }
+
