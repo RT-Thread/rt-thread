@@ -5,14 +5,14 @@ LR_IROM1 0x30000000 0x1000000 {
    .ANY (+RO)
   }
 
-  ER_MMU 0x30400000 EMPTY 0x00100000 {
-  }
-
-  RW_IRAM1 0x30500000 {  ; RW data
+  RW_IRAM1 +0 {  ; RW data
    .ANY (+RW)
   }
 
   ER_ZI +0 { ; ZI data
    .ANY (+ZI)
+  }
+
+  ER_MMU 0x33FF0000 EMPTY 0x00100000 {
   }
 }

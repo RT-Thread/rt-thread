@@ -62,9 +62,6 @@ SECTIONS
 	.nobss : { *(.nobss) }
 
 	. = 0x30200000;
-	.mmu_table : { *(.mmu_table) }
-
-	. = 0x30300000;
 	. = ALIGN(4);
 	__bss_start = .;
 	.bss : { *(.bss) }

@@ -54,7 +54,8 @@ extern struct rt_device uart0_device;
 	rt_uint8_t _undefined_stack_start[512];
 	rt_uint8_t _abort_stack_start[512];
 	rt_uint8_t _svc_stack_start[1024] SECTION(".nobss");
-	extern int __bss_end;
+	extern unsigned char __bss_start;
+	extern unsigned char __bss_end;
 #endif
 
 /**
@@ -63,7 +64,6 @@ extern struct rt_device uart0_device;
  #if (defined (__GNUC__))
 void *_sbrk (int incr)
 { 
-	extern int   __bss_end; /* Set by linker.  */
 	static char * heap_end; 
 	char *        prev_heap_end; 
 
@@ -110,9 +110,9 @@ void rtthread_startup(void)
 
 	/* init heap memory system */
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x34000000);
+	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x33F00000);
 #else
-	rt_system_heap_init((void*)0x32000000, (void*)0x34000000);
+	rt_system_heap_init((void*)&__bss_end, (void*)0x33F00000);
 #endif
 
 	/* init scheduler system */
