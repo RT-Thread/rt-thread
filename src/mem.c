@@ -13,6 +13,7 @@
  * 2010-06-09     Bernard      fix the end stub of heap
  *                             fix memory check in rt_realloc function
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
  */
 
 /*
@@ -366,6 +367,10 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 #endif
 		return RT_NULL;
 	}
+
+	/* allocate a new memory block */
+	if (rmem == RT_NULL)
+		return rt_malloc(newsize);
 
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
