@@ -12,6 +12,9 @@ if rtconfig.CROSS_TOOL == 'gcc':
 		rtconfig.RT_USING_MINILIBC = True
 		objs = objs + SConscript('libc/minilibc/SConscript')
 
+if 'RT_USING_PTHREAD' in dir(rtconfig) and rtconfig.RT_USING_PTHREAD:
+	objs = objs + SConscript('pthreads/SConscript')
+
 if 'RT_USING_FINSH' in dir(rtconfig) and rtconfig.RT_USING_FINSH:
 	objs = objs + SConscript('finsh/SConscript')
 
