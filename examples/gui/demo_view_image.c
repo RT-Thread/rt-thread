@@ -12,6 +12,7 @@
 static rtgui_image_t* image = RT_NULL;
 static rtgui_view_t* _view = RT_NULL;
 
+#ifdef RT_USING_DFS
 /* 打开按钮的回调函数 */
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
@@ -127,3 +128,4 @@ rtgui_view_t* demo_view_image(rtgui_workbench_t* workbench)
 
 	return _view;
 }
+#endif

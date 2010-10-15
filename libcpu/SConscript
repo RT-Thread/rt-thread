@@ -21,7 +21,7 @@ group = {}
 group['name'] = rtconfig.CPU.upper()
 group['src'] = File(src_local)
 group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU]
+group['CPPPATH'] = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
 group['CPPDEFINES'] = ''
 group['LINKFLAGS'] = ''
 

@@ -52,7 +52,7 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 #if RT_VERSION == 4
-	demo_view_benchmark(workbench);
+	// demo_view_benchmark(workbench);
 #endif
 
 	demo_view_dc(workbench);
@@ -81,13 +81,17 @@ static void workbench_entry(void* parameter)
 	demo_view_listbox(workbench);
 	demo_view_slider(workbench);
 	demo_view_mywidget(workbench);
+#ifdef RT_USING_DFS
 	demo_view_image(workbench);
+#endif
 #ifdef RT_USING_MODULE	
 	demo_view_module(workbench);
 #endif
 	demo_listview_view(workbench);
 	demo_listview_icon_view(workbench);
+#ifdef RT_USING_DFS
 	demo_fn_view(workbench);
+#endif
 
 	/* 显示视图 */
 	demo_view_show();

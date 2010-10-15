@@ -140,8 +140,6 @@
 
 #define GDB_FR_SIZE			((((GDB_FR_CP0_PRID) + LONGSIZE) + (PTRSIZE-1)) & ~(PTRSIZE-1))
 
-
-
 /*
  * This is the same as above, but for the high-level
  * part of the INT stub.
@@ -161,7 +159,7 @@ typedef struct pt_regs_s
 
 typedef void (* exception_func_t)(pt_regs_t *regs);
 
-extern exception_func_t sys_exception_handlers[33];
+extern exception_func_t sys_exception_handlers[];
 exception_func_t rt_set_except_vector(int n, exception_func_t func);
 void install_default_execpt_handle(void);
 
