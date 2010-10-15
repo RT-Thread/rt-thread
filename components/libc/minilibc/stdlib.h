@@ -24,4 +24,8 @@ int atoi(const char *nptr);
 #define realloc rt_realloc
 #define calloc  rt_calloc
 
+int rand(void);
+int rand_r(unsigned int *seed);
+void srand(unsigned int seed);
+
 #endif

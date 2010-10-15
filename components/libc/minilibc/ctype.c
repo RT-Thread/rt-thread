@@ -29,4 +29,9 @@ int isalpha(int ch)
 	return (unsigned int)((ch | 0x20) - 'a') < 26u;
 }
 
+int isdigit (int ch)
+{
+    return (unsigned int)(ch - '0') < 10u;
+}
+
 #endif

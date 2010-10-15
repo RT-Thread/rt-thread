@@ -14,6 +14,9 @@ typedef rt_uint32_t u_long;
 typedef rt_uint8_t 	u_int8_t;
 typedef rt_uint16_t u_int16_t;
 typedef rt_uint32_t u_int32_t;
+typedef rt_int8_t 	int8_t;
+typedef rt_int16_t  int16_t;
+typedef rt_int32_t  int32_t;
 
 typedef rt_time_t time_t;
 
