@@ -24,7 +24,7 @@ if rtconfig.RT_USING_RTGUI:
     src_drv += ['touch.c', 'key.c', 'calibration.c']
 
 if rtconfig.RT_USING_FTK:
-    src_drv += ['touch.c']
+    src_drv += ['touch.c', 'key.c']
 
 if rtconfig.RT_USING_RTGUI:
 	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
