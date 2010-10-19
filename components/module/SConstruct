@@ -32,5 +32,5 @@ Export('rtconfig')
 Export('projects')
 Export('TARGET')
 
-objs = SConscript(RTT_ROOT + '/components/module/tetris/SConscript', variant_dir='build/tetris', duplicate=0)
-
+SConscript(RTT_ROOT + '/components/module/tetris/SConscript', variant_dir='build/tetris', duplicate=0)
+SConscript(RTT_ROOT + '/components/module/basicapp/SConscript', variant_dir='build/basicapp', duplicate=0)
