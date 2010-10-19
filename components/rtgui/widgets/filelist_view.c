@@ -730,7 +730,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
     if (directory != RT_NULL)
     {
 		DIR* dir;
-		struct _stat s;
+		struct stat s;
 		rt_uint32_t index;
 		struct dirent* dirent;
 
@@ -793,7 +793,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 			item = &(view->items[index]);
 			item->name = rt_strdup(dirent->d_name);
 
-			rt_memset(&s, 0, sizeof(struct _stat));
+			rt_memset(&s, 0, sizeof(struct stat));
 
 			/* build full path for the file */
 			if (directory[strlen(directory) - 1] != PATH_SEPARATOR)
