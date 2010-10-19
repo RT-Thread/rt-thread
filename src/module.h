@@ -17,6 +17,7 @@ typedef rt_uint16_t	Elf32_Half;	/* Unsigned medium integer */
 #define	ELFMAG2		'L'			/* e_ident[EI_MAG2] */
 #define	ELFMAG3		'F'			/* e_ident[EI_MAG3] */
 #define	RTMMAG		"\177RTM"	/* magic */
+#define	ELFMAG		"\177ELF"		/* magic */
 #define	SELFMAG		4			/* size of magic */
 
 #define EI_CLASS	4		/* file class */

@@ -363,6 +363,21 @@ rt_ubase_t rt_strncmp(const char * cs, const char * ct, rt_ubase_t count)
 }
 
 /**
+ * This function will compare two strings without specified length
+ *
+ * @param cs the string to be compared
+ * @param ct the string to be compared
+ *
+ * @return the result
+ */
+rt_uint32_t rt_strcmp (const char *cs, const char *ct)
+{
+	while (*cs && *cs == *ct)
+		cs++, ct++;
+	return (*cs - *ct);
+}
+
+/**
  * This function will return the length of a string, which terminate will
  * null character.
  *
@@ -970,6 +985,7 @@ size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
 char *strstr(const char *s1,const char *s2) __attribute__((weak, alias("rt_strstr")));
 int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
 char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
+char *strcpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strcpy")));
 int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
 #ifdef RT_USING_HEAP
 char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));

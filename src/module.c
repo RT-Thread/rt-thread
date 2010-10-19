@@ -36,6 +36,38 @@
 #define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
 static struct rt_module* rt_current_module = RT_NULL;
+rt_list_t rt_module_symbol_list;
+struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
+
+/**
+ * @ingroup SystemInit
+ *
+ * This function will init system module
+ *
+ */
+void rt_system_module_init(void)
+{
+	extern int __rtmsymtab_start;
+	extern int __rtmsymtab_end;
+
+	_rt_module_symtab_begin = (struct rt_module_symtab *)&__rtmsymtab_start;
+	_rt_module_symtab_end   = (struct rt_module_symtab *)&__rtmsymtab_end;
+
+	rt_list_init(&rt_module_symbol_list);
+}
+
+static rt_uint32_t rt_module_symbol_find(const rt_uint8_t* sym_str)
+{
+	/* find in kernel symbol table */
+	struct rt_module_symtab* index;
+	for (index = _rt_module_symtab_begin; index != _rt_module_symtab_end; index ++)
+	{
+		if (rt_strcmp(index->name, (const char*)sym_str) == 0)
+			return index->addr;
+	}
+
+	return 0;
+}
 
 /**
  * This function will return self module object
@@ -190,17 +222,29 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 {
 	rt_uint32_t index;
 	rt_uint32_t module_size = 0;
-	struct rt_module* module = RT_NULL;
+	rt_module_t module = RT_NULL;
 	rt_uint8_t *ptr, *strtab;
+	rt_bool_t linked = RT_FALSE;
 
 #ifdef RT_MODULE_DEBUG
 	rt_kprintf("rt_module_load: %s\n", name);
 #endif
 	/* check ELF header */
-	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 ||
-		elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) == 0)
+	{
+		/* rtmlinke finished */
+		linked = RT_TRUE;
+	}
+	else	 if (rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
 	{
 		rt_kprintf(" module magic error\n");
+		return RT_NULL;
+	}
+
+	/* check ELF class */
+	if(elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+	{
+		rt_kprintf(" module class error\n");
 		return RT_NULL;
 	}
 	
@@ -273,6 +317,23 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 				{	
 					rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
 				}
+				else if(linked == RT_FALSE)
+				{
+					Elf32_Addr addr;
+#ifdef RT_MODULE_DEBUG
+					rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
+#endif
+					/* need to resolve symbol in kernel symbol table */
+					addr = rt_module_symbol_find(strtab + sym->st_name);
+					if (addr == 0)
+					{
+						rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
+						rt_object_delete(&(module->parent));
+						rt_free(module);
+						return RT_NULL;
+					}	
+					rt_module_arm_relocate(module, rel, addr);
+				}
 				rel ++;
 			}
 		}
@@ -308,7 +369,7 @@ rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filenam
 {
 	int fd, length;
 	struct rt_module* module;
-	struct stat s;
+	struct _stat s;
 	char *buffer;
 	
 	stat(filename, &s);
@@ -341,7 +402,6 @@ rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filenam
  */
 rt_err_t rt_module_unload(rt_module_t module)
 {
-	int i;
 	struct rt_object* object;
 	struct rt_list_node *list;
 
@@ -563,7 +623,12 @@ rt_module_t rt_module_find(char* name)
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
 
-FINSH_FUNCTION_EXPORT(rt_module_load_from_file, load module from file);
+void run_module(const rt_uint8_t* name, const char* filename)
+{
+	rt_module_load_from_file(name, filename);
+}
+
+FINSH_FUNCTION_EXPORT(run_module, load module from file);
 #endif
 
 #endif
