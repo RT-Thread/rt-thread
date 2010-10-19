@@ -176,7 +176,7 @@ int dfs_file_read(struct dfs_fd* fd, void *buf, rt_size_t len)
  *
  * @return the read dirent, others on failed.
  */
-int dfs_file_getdents(struct dfs_fd* fd, struct _dirent* dirp, rt_size_t nbytes)
+int dfs_file_getdents(struct dfs_fd* fd, struct dirent* dirp, rt_size_t nbytes)
 {
 	struct dfs_filesystem* fs;
 
@@ -306,7 +306,7 @@ int dfs_file_lseek(struct dfs_fd* fd, rt_off_t offset)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_stat(const char *path, struct _stat *buf)
+int dfs_file_stat(const char *path, struct stat *buf)
 {
 	int result;
 	char* fullpath;
@@ -434,10 +434,10 @@ __exit:
 #include <finsh.h>
 
 static struct dfs_fd fd;
-static struct _dirent dirent;
+static struct dirent dirent;
 void ls(const char* pathname)
 {
-	struct _stat stat;
+	struct stat stat;
 	int length;
 	char* fullpath;
 
@@ -449,11 +449,11 @@ void ls(const char* pathname)
 		rt_kprintf("Directory %s:\n", pathname);
 		do
 		{
-			rt_memset(&dirent, 0, sizeof(struct _dirent));
-			length = dfs_file_getdents(&fd, &dirent, sizeof(struct _dirent));
+			rt_memset(&dirent, 0, sizeof(struct dirent));
+			length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
 			if ( length > 0 ) 
 			{
-				rt_memset(&stat, 0, sizeof(struct _stat));
+				rt_memset(&stat, 0, sizeof(struct stat));
 
 				/* build full path for each file */
 				if (pathname[strlen(pathname) - 1] != '/')
@@ -482,17 +482,6 @@ void ls(const char* pathname)
 	rt_free(fullpath);
 }
 FINSH_FUNCTION_EXPORT(ls, list directory contents)
-
-static void mkdir(const char* pathname)
-{
-	/* make a new directory */
-	if (dfs_file_open(&fd, pathname, DFS_O_DIRECTORY | DFS_O_CREAT) == 0)
-	{
-		dfs_file_close(&fd);
-	}
-	else rt_kprintf("Can't mkdir %s\n", pathname);
-}
-FINSH_FUNCTION_EXPORT(mkdir, make a directory)
 
 void rm(const char* filename)
 {

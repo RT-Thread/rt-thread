@@ -19,12 +19,113 @@
 #include <rtthread.h>
 #include <dfs_config.h>
 
-#if defined(RT_USING_NEWLIB) || defined (RT_USING_MINILIBC)
-#include <string.h>
-#endif
-
 #ifndef __D_FS__
 #define __D_FS__
+#endif
+
+#define DEVICE_GETGEOME 		0
+#define DEVICE_GETINFO			1
+#define DEVICE_FORMAT 			2
+#define DEVICE_CLEAN_SECTOR 	3
+
+/* File flags */
+#define DFS_F_OPEN			0x01000000
+#define DFS_F_DIRECTORY		0x02000000
+#define DFS_F_EOF			0x04000000
+#define DFS_F_ERR			0x08000000
+
+#if defined(RT_USING_NEWLIB) 
+#include <string.h>
+#include <sys/stat.h> 			/* used for struct stat 	*/
+#include <sys/statfs.h>			/* used for struct statfs 	*/
+#include <sys/errno.h>			/* used for error number 	*/
+#include <sys/fcntl.h>			/* used for operation flags */
+#include <sys/unistd.h>			/* used for SEEK_SET/CUR/END */
+#include <dirent.h>				/* used for struct dirent 	*/
+
+/* Device error codes */
+#define DFS_STATUS_OK			0			/* no error */
+#define DFS_STATUS_ENOENT		ENOENT		/* No such file or directory */
+#define DFS_STATUS_EIO		 	EIO			/* I/O error */
+#define DFS_STATUS_ENXIO		ENXIO		/* No such device or address */
+#define DFS_STATUS_EBADF		EBADF		/* Bad file number */
+#define DFS_STATUS_EAGAIN		EAGAIN		/* Try again */
+#define DFS_STATUS_ENOMEM		ENOMEM		/* no memory */
+#define DFS_STATUS_EBUSY		EBUSY		/* Device or resource busy */
+#define DFS_STATUS_EEXIST		EEXIST 		/* File exists */
+#define DFS_STATUS_EXDEV		EXDEV		/* Cross-device link */
+#define DFS_STATUS_ENODEV		ENODEV		/* No such device */
+#define DFS_STATUS_ENOTDIR		ENOTDIR		/* Not a directory */
+#define DFS_STATUS_EISDIR		EISDIR		/* Is a directory */
+#define DFS_STATUS_EINVAL		EINVAL		/* Invalid argument */
+#define DFS_STATUS_ENOSPC		ENOSPC		/* No space left on device */
+#define DFS_STATUS_EROFS		EROFS		/* Read-only file system */
+#define DFS_STATUS_ENOSYS		ENOSYS		/* Function not implemented */
+#define DFS_STATUS_ENOTEMPTY	ENOTEMPTY	/* Directory not empty */
+
+/* Operation flags */
+#define DFS_O_RDONLY			O_RDONLY
+#define DFS_O_WRONLY			O_WRONLY
+#define DFS_O_RDWR				O_RDWR
+#define DFS_O_ACCMODE			O_ACCMODE
+#define DFS_O_CREAT				O_CREAT
+#define DFS_O_EXCL				O_EXCL
+#define DFS_O_TRUNC				O_TRUNC
+#define DFS_O_APPEND			O_APPEND
+#define DFS_O_DIRECTORY			O_DIRECTORY
+
+/* Seek flags */
+#define DFS_SEEK_SET         	SEEK_SET
+#define DFS_SEEK_CUR         	SEEK_CUR
+#define DFS_SEEK_END         	SEEK_END
+
+/* Stat codes */
+#define DFS_S_IFMT				S_IFMT
+#define DFS_S_IFSOCK			S_IFSOCK
+#define DFS_S_IFLNK				S_IFLNK
+#define DFS_S_IFREG				S_IFREG
+#define DFS_S_IFBLK				S_IFBLK
+#define DFS_S_IFDIR  			S_IFDIR
+#define DFS_S_IFCHR  			S_IFCHR
+#define DFS_S_IFIFO  			S_IFIFO
+#define DFS_S_ISUID  			S_ISUID
+#define DFS_S_ISGID  			S_ISGID
+#define DFS_S_ISVTX  			S_ISVTX
+
+#define DFS_S_ISLNK(m)			S_ISLNK(m)
+#define DFS_S_ISREG(m)			S_ISREG(m)
+#define DFS_S_ISDIR(m)			S_ISDIR(m)
+#define DFS_S_ISCHR(m)			S_ISCHR(m)
+#define DFS_S_ISBLK(m)			S_ISBLK(m)
+#define DFS_S_ISFIFO(m)			S_ISFIFO(m)
+#define DFS_S_ISSOCK(m)			S_ISSOCK(m)
+
+#define DFS_S_IRWXU 			S_IRWXU
+#define DFS_S_IRUSR 			S_IRUSR
+#define DFS_S_IWUSR 			S_IWUSR
+#define DFS_S_IXUSR 			S_IXUSR
+
+#define DFS_S_IRWXG 			S_IRWXG
+#define DFS_S_IRGRP 			S_IRGRP
+#define DFS_S_IWGRP 			S_IWGRP
+#define DFS_S_IXGRP 			S_IXGRP
+
+#define DFS_S_IRWXO 			S_IRWXO
+#define DFS_S_IROTH 			S_IROTH
+#define DFS_S_IWOTH 			S_IWOTH
+#define DFS_S_IXOTH 			S_IXOTH
+
+/* Dirent types */
+#define DFS_DT_UNKNOWN			DT_UNKNOWN
+#define DFS_DT_REG				DT_REG
+#define DFS_DT_DIR				DT_DIR
+
+#else
+#ifdef RT_USING_MINILIBC
+#include <string.h>
+#else
+typedef long off_t;
+typedef int mode_t;
 #endif
 
 /* Device error codes */
@@ -46,7 +147,6 @@
 #define DFS_STATUS_EROFS		30		/* Read-only file system */
 #define DFS_STATUS_ENOSYS		38		/* Function not implemented */
 #define DFS_STATUS_ENOTEMPTY	39		/* Directory not empty */
-#define DFS_STATUS_EMMOUNT		128		/* Filesystem table full */
 
 /* Operation flags */
 #define DFS_O_RDONLY		0000000
@@ -106,12 +206,7 @@
 #define DFS_S_IWOTH 	00002
 #define DFS_S_IXOTH 	00001
 
-#define DEVICE_GETGEOME 		0
-#define DEVICE_GETINFO			1
-#define DEVICE_FORMAT 			2
-#define DEVICE_CLEAN_SECTOR 	3
-
-struct _stat
+struct stat
 {
 	rt_device_t st_dev;
 	rt_uint16_t st_mode;
@@ -120,7 +215,7 @@ struct _stat
 	rt_uint32_t st_blksize;
 };
 
-struct _statfs
+struct statfs
 {
 	rt_size_t f_bsize; 	 /* block size */
 	rt_size_t f_blocks;  /* total data blocks in file system */
@@ -132,6 +227,20 @@ struct _statfs
 #define FT_SOCKET		1	/* socket file  */
 #define FT_DIRECTORY	2	/* directory    */
 #define FT_USER			3	/* user defined */
+
+/* Dirent types */
+#define DFS_DT_UNKNOWN	0x00
+#define DFS_DT_REG		0x01
+#define DFS_DT_DIR		0x02
+
+struct dirent
+{
+	rt_uint8_t d_type;				/* The type of the file */
+	rt_uint8_t d_namlen;			/* The length of the not including the terminating null file name */
+	rt_uint16_t d_reclen;			/* length of this record */
+	char d_name[DFS_PATH_MAX];		/* The null-terminated file name */
+};
+#endif
 
 /* file descriptor */
 struct dfs_fd
@@ -149,16 +258,5 @@ struct dfs_fd
     void *data;					/* Specific file system data */
 };
 
-#define DFS_DT_UNKNOWN	0x00
-#define DFS_DT_REG		0x01
-#define DFS_DT_DIR		0x02
-
-struct _dirent
-{
-	rt_uint8_t d_type;				/* The type of the file */
-	rt_uint8_t d_namlen;			/* The length of the not including the terminating null file name */
-	rt_uint16_t d_reclen;			/* length of this record */
-	char d_name[DFS_PATH_MAX];		/* The null-terminated file name */
-};
-
 #endif
+

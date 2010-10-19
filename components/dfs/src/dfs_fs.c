@@ -266,7 +266,7 @@ int dfs_mount(const char* device_name, const char* path,
             index++) ;
     if ( index == DFS_FILESYSTEMS_MAX )	/* can't find en empty filesystem table entry */
     {
-        rt_set_errno(-DFS_STATUS_EMMOUNT);
+        rt_set_errno(-DFS_STATUS_ENOSPC);
         goto err1;
     }
 
@@ -408,7 +408,7 @@ int dfs_mkfs(const char* fs_name, const char* device_name)
  *
  * @return 0 on successful, others on failed.
  */
-int dfs_statfs(const char* path, struct _statfs* buffer)
+int dfs_statfs(const char* path, struct statfs* buffer)
 {
 	struct dfs_filesystem* fs;
 
@@ -432,7 +432,7 @@ FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 
 void df(const char* path)
 {
-	struct _statfs buffer;
+	struct statfs buffer;
 
 	if (dfs_statfs(path, &buffer) == 0)
 	{

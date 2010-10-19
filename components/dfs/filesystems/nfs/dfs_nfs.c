@@ -722,7 +722,7 @@ int nfs_open(struct dfs_fd* file)
 	return 0;
 }
 
-int nfs_stat(struct dfs_filesystem* fs, const char *path, struct _stat *st)
+int nfs_stat(struct dfs_filesystem* fs, const char *path, struct stat *st)
 {
 	GETATTR3args args;
 	GETATTR3res res;
@@ -984,11 +984,11 @@ int nfs_rename(struct dfs_filesystem* fs, const char *src, const char *dest)
 	return ret;
 }
 
-int nfs_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t count)
+int nfs_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count)
 {
 	nfs_dir *dir;
 	rt_uint32_t index;
-	struct _dirent* d;
+	struct dirent* d;
 	struct nfs_filesystem* nfs;
 	char *name;
 
@@ -999,7 +999,7 @@ int nfs_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t count)
 	nfs = (struct nfs_filesystem *)file->fs->data;
 
 	/* make integer count */
-	count = (count / sizeof(struct _dirent)) * sizeof(struct _dirent);
+	count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
 	if ( count == 0 ) return -DFS_STATUS_EINVAL;
 
 	index = 0;
@@ -1015,15 +1015,15 @@ int nfs_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t count)
 		d->d_type &= DFS_DT_REG;
 
 		d->d_namlen = rt_strlen(name);
-		d->d_reclen = (rt_uint16_t)sizeof(struct _dirent);
+		d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
 		rt_strncpy(d->d_name, name, rt_strlen(name) + 1);
 
 		index ++;
-		if ( index * sizeof(struct _dirent) >= count )
+		if ( index * sizeof(struct dirent) >= count )
 			break;
 	}
 
-	return index * sizeof(struct _dirent);
+	return index * sizeof(struct dirent);
 }
 
 static const struct dfs_filesystem_operation _nfs = 

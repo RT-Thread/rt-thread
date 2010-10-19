@@ -18,6 +18,7 @@
 #include <dfs_file.h>
 #include <dfs_def.h>
 
+#ifndef RT_USING_NEWLIB
 #define O_RDONLY	DFS_O_RDONLY
 #define O_WRONLY 	DFS_O_WRONLY
 #define O_RDWR		DFS_O_RDWR
@@ -75,30 +76,35 @@ typedef struct
 	int cur;
 } DIR;
 
-#define statfs _statfs
-#define dirent _dirent
+/* directory api*/
+int mkdir (const char *path, mode_t mode);
+DIR* opendir(const char* name);
+struct dirent* readdir(DIR *d);
+long telldir(DIR *d);
+void seekdir(DIR *d, off_t offset);
+void rewinddir(DIR *d);
+int closedir(DIR* d);
+
+#else
+/* use newlib header file */
+#include <sys/stat.h>
+#endif
 
 /* file api*/
 int open(const char *file, int flags, int mode);
 int close(int d);
-int read(int fd, char *buf, int len);
-int write(int fd, char *buf, int len);
-int lseek(int fd, int offset, int dir);
+int read(int fd, void *buf, size_t len);
+int write(int fd, const void *buf, size_t len);
+off_t lseek(int fd, off_t offset, int whence);
 int rename(const char* old, const char* new );
 int unlink(const char *pathname);
-int stat(const char *file, struct _stat *buf);
-int statfs(const char *path, struct _statfs *buf);
+int stat(const char *file, struct stat *buf);
+int statfs(const char *path, struct statfs *buf);
 
 /* directory api*/
-int mkdir (const char *path, rt_uint16_t mode);
 int rmdir(const char *path);
-DIR* opendir(const char* name);
-struct _dirent* readdir(DIR *d);
-rt_off_t telldir(DIR *d);
-void seekdir(DIR *d, rt_off_t offset);
-void rewinddir(DIR *d);
-int closedir(DIR* d);
 int chdir(const char *path);
-char* getcwd(char *buf, rt_size_t size);
+char *getcwd(char *buf, size_t size);
 
 #endif
+

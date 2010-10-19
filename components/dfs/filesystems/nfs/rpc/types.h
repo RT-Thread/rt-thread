@@ -43,7 +43,6 @@
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
-#endif
 
 typedef rt_int8_t   int8_t;
 typedef rt_uint8_t  uint8_t;
@@ -51,6 +50,10 @@ typedef rt_int16_t  int16_t;
 typedef rt_uint16_t uint16_t;
 typedef rt_int32_t  int32_t;
 typedef rt_uint32_t uint32_t;
+#else
+#include <sys/types.h>
+#include <stdint.h>
+#endif
 
 typedef long long   int64_t;
 typedef unsigned long long uint64_t;
@@ -60,7 +63,6 @@ typedef int enum_t;
 
 #ifndef RT_USING_NEWLIB
 typedef rt_int32_t  ssize_t;
-typedef unsigned long mode_t;
 typedef unsigned long dev_t;
 #endif
 

@@ -1,8 +1,11 @@
-#include <dfs_fs.h>
-#include <dfs_def.h>
-
 #include "ffconf.h"
 #include "ff.h"
+
+/* ELM FatFs provide a DIR struct */
+#define HAVE_DIR_STRUCTURE
+
+#include <dfs_fs.h>
+#include <dfs_def.h>
 
 static rt_device_t disk[_DRIVES] = {0};
 
@@ -67,7 +70,7 @@ int dfs_elm_mount(struct dfs_filesystem* fs, unsigned long rwflag, const void* d
 			break;
 		}
 	}
-	if (index == _DRIVES) return -DFS_STATUS_EMMOUNT;
+	if (index == _DRIVES) return -DFS_STATUS_ENOSPC;
 
 	/* get device */
 	disk[index] = fs->dev_id;
@@ -94,14 +97,31 @@ int dfs_elm_mount(struct dfs_filesystem* fs, unsigned long rwflag, const void* d
 int dfs_elm_unmount(struct dfs_filesystem* fs)
 {
 	FATFS *fat;
+	FRESULT result;
+	rt_uint32_t index;
+
 	fat = (FATFS*) fs->data;
 
 	RT_ASSERT(fat != RT_NULL);
 
-	/* elm not support unmount */
-	rt_kprintf("elm fatfs not support unmount\n");
+	/* find the device index and then umount it */
+	for (index = 0; index < _DRIVES; index ++)
+	{
+		if (disk[index] == fs->dev_id)
+		{
+			result = f_mount(index, RT_NULL);
 
-	return 0;
+			if (result == FR_OK)
+			{
+				fs->data = RT_NULL;
+				disk[index] = RT_NULL;
+				rt_free(fat);
+				return DFS_STATUS_OK;
+			}
+		}
+	}
+
+	return -DFS_STATUS_ENOENT;
 }
 
 int dfs_elm_mkfs(const char* device_name)
@@ -134,7 +154,7 @@ int dfs_elm_mkfs(const char* device_name)
 	return -DFS_STATUS_EIO;
 }
 
-int dfs_elm_statfs(struct dfs_filesystem* fs, struct _statfs *buf)
+int dfs_elm_statfs(struct dfs_filesystem* fs, struct statfs *buf)
 {
 	FATFS *f;
 	FRESULT res;
@@ -374,19 +394,19 @@ int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 	return elm_result_to_dfs(result);
 }
 
-int dfs_elm_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t count)
+int dfs_elm_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count)
 {
 	DIR* dir;
 	FILINFO fno;
 	FRESULT result;
 	rt_uint32_t index;
-	struct _dirent* d;
+	struct dirent* d;
 
 	dir = (DIR*)(file->data);
 	RT_ASSERT(dir != RT_NULL);
 
 	/* make integer count */
-	count = (count / sizeof(struct _dirent)) * sizeof(struct _dirent);
+	count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
 	if ( count == 0 ) return -DFS_STATUS_EINVAL;
 
 #if _USE_LFN
@@ -416,11 +436,11 @@ int dfs_elm_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t coun
 		else d->d_type = DFS_DT_REG;
 
 		d->d_namlen = rt_strlen(fn);
-		d->d_reclen = (rt_uint16_t)sizeof(struct _dirent);
+		d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
 		rt_strncpy(d->d_name, fn, rt_strlen(fn) + 1);
 
 		index ++;
-		if ( index * sizeof(struct _dirent) >= count )
+		if ( index * sizeof(struct dirent) >= count )
 			break;
 	}
 
@@ -431,7 +451,7 @@ int dfs_elm_getdents(struct dfs_fd* file, struct _dirent* dirp, rt_uint32_t coun
 	if (index == 0)
 		return elm_result_to_dfs(result);
 
-	return index * sizeof(struct _dirent);
+	return index * sizeof(struct dirent);
 }
 
 int dfs_elm_unlink(struct dfs_filesystem* fs, const char* path)
@@ -501,7 +521,7 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 	return elm_result_to_dfs(result);
 }
 
-int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct _stat *st)
+int dfs_elm_stat(struct dfs_filesystem* fs, const char *path, struct stat *st)
 {
 	FILINFO file_info;
 	FRESULT result;

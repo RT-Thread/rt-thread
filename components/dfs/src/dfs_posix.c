@@ -95,7 +95,7 @@ int close(int fd)
  *
  * @return the actual read data buffer length
  */
-int read(int fd, char *buf, int   len)
+int read(int fd, void *buf, size_t len)
 {
 	int result;
 	struct dfs_fd* d;
@@ -132,7 +132,7 @@ int read(int fd, char *buf, int   len)
  *
  * @return the actual written data buffer length.
  */
-int write(int fd, char *buf, int   len)
+int write(int fd, const void *buf, size_t len)
 {
 	int result;
 	struct dfs_fd* d;
@@ -169,7 +169,7 @@ int write(int fd, char *buf, int   len)
  *
  * @return the current file position, or -1 on failed.
  */
-int lseek(int fd, int offset, int dir)
+off_t lseek(int fd, off_t offset, int whence)
 {
 	int result;
 	struct dfs_fd* d;
@@ -181,7 +181,7 @@ int lseek(int fd, int offset, int dir)
 		return -1;
 	}
 
-	switch (dir)
+	switch (whence)
 	{
 	case DFS_SEEK_SET:
 		break;
@@ -261,7 +261,7 @@ int unlink(const char *pathname)
  *
  * @return 0 on successful, -1 on failed.
  */
-int stat(const char *file, struct _stat *buf)
+int stat(const char *file, struct stat *buf)
 {
 	int result;
 
@@ -283,7 +283,7 @@ int stat(const char *file, struct _stat *buf)
  *
  * @return 0 on successful, others on failed.
  */
-int statfs(const char *path, struct _statfs *buf)
+int statfs(const char *path, struct statfs *buf)
 {
 	int result;
 
@@ -305,7 +305,7 @@ int statfs(const char *path, struct _statfs *buf)
  *
  * @return 0 on successful, others on failed.
  */
-int mkdir (const char *path, rt_uint16_t mode)
+int mkdir (const char *path, mode_t mode)
 {
 	int fd;
 	struct dfs_fd* d;
@@ -326,6 +326,10 @@ int mkdir (const char *path, rt_uint16_t mode)
 	fd_put(d);
 	return 0;
 }
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+FINSH_FUNCTION_EXPORT(mkdir, create a directory);
+#endif
 
 /**
  * this function is a POSIX compliant version, which will remove a directory.
@@ -404,7 +408,7 @@ DIR* opendir(const char* name)
  *
  * @return the next directory entry, NULL on the end of directory or failed.
  */
-struct _dirent* readdir(DIR *d)
+struct dirent* readdir(DIR *d)
 {
 	int result;
 	struct dfs_fd* fd;
@@ -416,9 +420,9 @@ struct _dirent* readdir(DIR *d)
 		return RT_NULL;
 	}
 
-	if (!d->num || (d->cur += ((struct _dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
+	if (!d->num || (d->cur += ((struct dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
 	{
-		result = dfs_file_getdents(fd, (struct _dirent*)d->buf, sizeof(d->buf) - 1);
+		result = dfs_file_getdents(fd, (struct dirent*)d->buf, sizeof(d->buf) - 1);
 		if (result <= 0)
 		{
 			rt_set_errno(result);
@@ -432,7 +436,7 @@ struct _dirent* readdir(DIR *d)
 	}
 
 	fd_put(fd);
-	return (struct _dirent*)(d->buf+d->cur);
+	return (struct dirent*)(d->buf+d->cur);
 }
 
 /**
@@ -443,10 +447,10 @@ struct _dirent* readdir(DIR *d)
  *
  * @return the current location in directory stream.
  */
-rt_off_t telldir(DIR *d)
+long telldir(DIR *d)
 {
 	struct dfs_fd* fd;
-	rt_off_t result;
+	long result;
 
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
@@ -468,7 +472,7 @@ rt_off_t telldir(DIR *d)
  * @param d the directory stream.
  * @param offset the offset in directory stream.
  */
-void seekdir(DIR *d, rt_off_t offset)
+void seekdir(DIR *d, off_t offset)
 {
 	struct dfs_fd* fd;
 
@@ -589,7 +593,7 @@ int chdir(const char *path)
  *
  * @return the returned current directory.
  */
-char* getcwd(char *buf, rt_size_t size)
+char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
 	dfs_lock();

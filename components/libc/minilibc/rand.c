@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 static unsigned int seed=1;
