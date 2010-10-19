@@ -1,110 +1,146 @@
 #include <rtthread.h>
 #include <s3c24x0.h>
 
+#ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+#endif
 
-/*
-key_enter   GPG0
-key_down    GPG3
-key_up      GPG5
-key_right   GPG6
-key_left    GPG7
-key_power   GPG11
-*/
-#define key_enter_GETVALUE()  (GPGDAT & (1 << 0))
-#define key_down_GETVALUE()   (GPGDAT & (1 << 3))
-#define key_up_GETVALUE()     (GPGDAT & (1 << 5))
-#define key_right_GETVALUE()  (GPGDAT & (1 << 6))
-#define key_left_GETVALUE()   (GPGDAT & (1 << 7))
-#define key_power_GETVALUE()  (GPGDAT & (1 << 11))
-
-static void key_thread_entry(void *parameter)
+static void key_handle(int key_value)
 {
-	rt_time_t next_delay;
+#ifdef RT_USING_RTGUI
 	struct rtgui_event_kbd kbd_event;
-
-	/* init gpio configuration */
-	GPGCON = GPGCON & (~((3<<22)|(3<<6)|(3<<0)|(3<<10)|(3<<12)|(3<<14))) |
-					((2<<22)|(2<<6)|(2<<0)|(2<<10)|(2<<12)|(2<<14));
-
+	
 	/* init keyboard event */
 	RTGUI_EVENT_KBD_INIT(&kbd_event);
 	kbd_event.mod  = RTGUI_KMOD_NONE;
 	kbd_event.unicode = 0;
+	kbd_event.key = RTGUIK_UNKNOWN;
 
-	while (1)
+	if(key_value &  0x80)
+	{	
+		kbd_event.type = RTGUI_KEYUP;
+	}	
+	else
 	{
-		next_delay = 20;
-		kbd_event.key = RTGUIK_UNKNOWN;
-
 		kbd_event.type = RTGUI_KEYDOWN;
-		if ( key_enter_GETVALUE() == 0 )
-		{
-			rt_thread_delay(next_delay);
-			if (key_enter_GETVALUE() == 0)
-			{
-				/* HOME key */
-				rt_kprintf("key_home\n");
-				kbd_event.key  = RTGUIK_HOME;
-			}
-			else
-			{
-				rt_kprintf("key_enter\n");
-				kbd_event.key  = RTGUIK_RETURN;
-			}
-		}
-
-		if ( key_down_GETVALUE()  == 0 )
-		{
-			rt_kprintf("key_down\n");
-			kbd_event.key  = RTGUIK_DOWN;
-		}
-
-		if ( key_up_GETVALUE()    == 0 )
-		{
-			rt_kprintf("key_up\n");
-			kbd_event.key  = RTGUIK_UP;
-		}
-
-		if ( key_right_GETVALUE() == 0 )
-		{
-			rt_kprintf("key_right\n");
-			kbd_event.key  = RTGUIK_RIGHT;
-		}
-
-		if ( key_left_GETVALUE()  == 0 )
-		{
-			rt_kprintf("key_left\n");
-			kbd_event.key  = RTGUIK_LEFT;
-		}
-
-		if (kbd_event.key != RTGUIK_UNKNOWN)
-		{
-			/* post down event */
-			rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
-
-			next_delay = 10;
-			/* delay to post up event */
-			rt_thread_delay(next_delay);
-
-			/* post up event */
-			kbd_event.type = RTGUI_KEYUP;
-			rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
-		}
-
-		/* wait next key press */
-		rt_thread_delay(next_delay);
+	}	
+	
+	key_value &= 0x7F;
+	switch(key_value)
+	{
+	case 80:	
+		kbd_event.key  = RTGUIK_DOWN;
+		break;	
+	case 72:
+		kbd_event.key  = RTGUIK_UP;
+		break;
+	case 77:
+		kbd_event.key  = RTGUIK_RIGHT;
+		break;
+	case 75:
+		kbd_event.key  = RTGUIK_LEFT;
+		break;
+	case 31:
+		kbd_event.key  = 's';
+		break;
+	case 30:
+		kbd_event.key  = 'a';
+		break;
+	case 44:
+		kbd_event.key  = 'z';
+		break;
+	case 45:
+		kbd_event.key  = 'x';
+		break;
+	case 46:
+		kbd_event.key  = 'c';
+		break;
+	case 16:
+		kbd_event.key  = 'q';
+		break;
+	case 33:
+		kbd_event.key  = 'r';
+		break;
+	case 23:
+		kbd_event.key  = 'i';
+		break;
+	case 50:
+		kbd_event.key  = 'm';
+		break;
+	case 38:
+		kbd_event.key  = 'l';
+		break;
+	case 47:
+		kbd_event.key  = 'v';
+		break;				
+		
+	default:
+		break;
 	}
+	
+	if (kbd_event.key != RTGUIK_UNKNOWN)
+	{
+		/* post down event */
+		rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
+	}
+#endif
 }
 
-void rt_hw_key_init()
+/**
+ * This function is only for QEMU emulation
+ */
+void rt_virtual_key_isr(int vector)
 {
-	#if 0
-	rt_thread_t key_tid;
-	key_tid = rt_thread_create("key",
-	                           key_thread_entry, RT_NULL,
-	                           512, 30, 5);
-	if (key_tid != RT_NULL) rt_thread_startup(key_tid);
-	#endif
+	INTSUBMSK |= (BIT_SUB_RXD1);
+
+	key_handle(URXH1);
+	
+	SUBSRCPND |= BIT_SUB_RXD1;
+	
+	/*Unmask sub interrupt (RXD0)*/
+	INTSUBMSK  &=~(BIT_SUB_RXD1);
 }
+
+/**
+ * This function is only for QEMU emulation
+ */
+void rt_hw_key_init(void)
+{
+	unsigned long i;
+
+	GPHCON |= 0xa0;
+	/*PULLUP is enable */
+	GPHUP  |= 0x0c;  
+	
+	/* FIFO enable, Tx/Rx FIFO clear */
+	UFCON1 = 0x0;
+	/* disable the flow control */
+	UMCON1= 0x0;
+	/* Normal,No parity,1 stop,8 bit */
+	ULCON1 = 0x3;
+	/*
+	 * tx=level,rx=edge,disable timeout int.,enable rx error int.,
+	 * normal,interrupt or polling
+	 */
+	UCON1 = 0x245;
+
+	//UBRD0 = div;
+	// UBRD0 = 0x500;	/* baudrate = 19200bps */
+	UBRD1 = 0x1a;
+
+	UTXH1 = 0x2;
+	URXH1 = 0x1;
+
+	/* output PCLK to UART0/1, PWMTIMER */
+	CLKCON |= 0x0D00;
+
+	for (i = 0; i < 100; i++);
+
+	/* install keypad isr */
+	INTSUBMSK &= ~(BIT_SUB_RXD1);
+
+	rt_hw_interrupt_install(INTUART1, rt_virtual_key_isr, RT_NULL);
+	rt_hw_interrupt_umask(INTUART1);
+}
+

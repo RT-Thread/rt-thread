@@ -58,25 +58,6 @@ extern struct rt_device uart0_device;
 	extern unsigned char __bss_end;
 #endif
 
-/**
- * Fix me 
- */
- #if (defined (__GNUC__))
-void *_sbrk (int incr)
-{ 
-	static char * heap_end; 
-	char *        prev_heap_end; 
-
-	if (heap_end == 0)
-	 heap_end = & __bss_end; 
-
-	prev_heap_end = heap_end; 
-	heap_end += incr; 
-
-	return (void *) prev_heap_end; 
-} 
-#endif
-
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
 #endif
@@ -113,6 +94,11 @@ void rtthread_startup(void)
 	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x33F00000);
 #else
 	rt_system_heap_init((void*)&__bss_end, (void*)0x33F00000);
+#endif
+
+#ifdef RT_USING_MODULE
+	/* init module system*/
+	rt_system_module_init();
 #endif
 
 	/* init scheduler system */

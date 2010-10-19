@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2006-03-24     Bernard      first implementation
  * 2006-05-05     Bernard      add DATA_COUNT definition
- * 2006-10-05     Alsor.Z      for s3c2410x porting
+ * 2006-10-05     Alsor.Z       for s3c2410x porting
  * 2007-11-20     Yi.Qiu	     add lcd,touch,console
  */
 
@@ -27,16 +27,12 @@
 /*@{*/
 
 extern rt_uint32_t PCLK, FCLK, HCLK, UCLK;
-extern rt_uint8_t asc16_font[];
-extern rt_uint16_t _rt_hw_framebuffer[];
 
 extern void rt_hw_clock_init(void);
 extern void rt_hw_lcd_init(void);
 extern void rt_hw_mmu_init(void);
 extern void rt_hw_touch_init(void);
-
-extern void rt_kbd_init(void);
-extern void rt_console_init(rt_uint8_t*, rt_uint8_t*, rt_uint8_t);
+extern void rt_hw_key_init(void);
 
 extern void rt_hw_get_clock(void);
 extern void rt_hw_set_dividor(rt_uint8_t hdivn, rt_uint8_t pdivn);
@@ -151,6 +147,9 @@ void rt_hw_board_init()
 
 	/* initialize uart */
 	rt_hw_uart_init();
+
+	/* init virtual keypad */
+	rt_hw_key_init();
 
 	/* initialize mmu */
 	rt_hw_mmu_init();
