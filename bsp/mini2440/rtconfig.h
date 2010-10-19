@@ -217,23 +217,15 @@
 /* using FTK support */
 /* #define RT_USING_FTK */	
 
-#ifdef  RT_USING_FTK  
-
-#ifdef  RT_USING_RTGUI
-#error  "can't using RTGUI and FTK in the same time"
-#endif
-
-#ifndef RT_USING_NEWLIB
-#define RT_USING_NEWLIB
-#endif
-
-#ifndef DFS_USING_WORKDIR
-#define DFS_USING_WORKDIR
-#endif
-
-#undef  RT_DFS_ELM_MAX_LFN
-#define RT_DFS_ELM_MAX_LFN    64
-
-#endif
+/*
+ * Note on FTK:
+ * 
+ * FTK depends :
+ * #define RT_USING_NEWLIB
+ * #define DFS_USING_WORKDIR
+ * 
+ * And the maximal length must great than 64
+ * #define RT_DFS_ELM_MAX_LFN	128
+ */
 
 #endif
