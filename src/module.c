@@ -308,7 +308,7 @@ rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filenam
 {
 	int fd, length;
 	struct rt_module* module;
-	struct _stat s;
+	struct stat s;
 	char *buffer;
 	
 	stat(filename, &s);

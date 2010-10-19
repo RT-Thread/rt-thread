@@ -25,6 +25,9 @@
 /*@{*/
 
 extern struct rt_thread *rt_current_thread;
+#ifdef RT_USING_FINSH
+extern long list_thread(void);
+#endif
 
 /**
  * this function will show registers of CPU
@@ -61,8 +64,6 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
 	list_thread();
 #endif
-	while (1);
-	
 	rt_hw_cpu_shutdown();
 }
 
@@ -101,8 +102,6 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
 	list_thread();
 #endif
-	while (1);
-	
 	rt_hw_cpu_shutdown();
 }
 
@@ -124,8 +123,6 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
 	list_thread();
 #endif
-	while (1);
-	
 	rt_hw_cpu_shutdown();
 }
 

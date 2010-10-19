@@ -8,12 +8,15 @@ RT_USING_DFS        = False
 RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
 RT_USING_DFS_NFS    = False
+RT_USING_DFS_ROMFS  = False
 RT_USING_LWIP       = False
 RT_USING_WEBSERVER  = False
 RT_USING_RTGUI      = False
 RT_USING_MODBUS     = False
 RT_USING_MODULE     = False
 RT_USING_FTK        = False
+RT_USING_NEWLIB     = False
+RT_USING_PTHREAD    = False
 
 # parse rtconfig.h to get used component
 PreProcessor = SCons.cpp.PreProcessor()
@@ -26,6 +29,9 @@ rtconfig_ns = PreProcessor.cpp_namespace
 # libc options
 if rtconfig_ns.has_key('RT_USING_NEWLIB'):
     RT_USING_NEWLIB = True
+
+if rtconfig_ns.has_key('RT_USING_PTHREAD'):
+    RT_USING_PTHREAD = True
 
 # finsh shell options
 if rtconfig_ns.has_key('RT_USING_FINSH'):
@@ -43,6 +49,8 @@ if rtconfig_ns.has_key('RT_USING_DFS'):
         RT_USING_DFS_YAFFS2 = True
     if rtconfig_ns.has_key('RT_USING_DFS_NFS'):
         RT_USING_DFS_NFS    = True
+    if rtconfig_ns.has_key('RT_USING_DFS_ROMFS'):
+        RT_USING_DFS_ROMFS    = True
 
 # lwip options
 if rtconfig_ns.has_key('RT_USING_LWIP'):
@@ -74,7 +82,7 @@ CROSS_TOOL 	= 'gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
@@ -136,9 +144,6 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     RT_USING_MINILIBC = False
-    if RT_USING_FINSH:
-        CFLAGS += ' -D FINSH_USING_SYMTAB -DFINSH_USING_DESCRIPTION'
-        LFLAGS += ' --keep __fsym_* --keep __vsym_*'
     if RT_USING_WEBSERVER:
         CFLAGS += ' -DWEBS -DUEMF -DRTT -D__NO_FCNTL=1 -DRT_USING_WEBSERVER'
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
