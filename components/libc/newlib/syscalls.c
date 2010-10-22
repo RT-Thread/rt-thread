@@ -51,6 +51,8 @@ _getpid_r(struct _reent *ptr)
 int
 _isatty_r(struct _reent *ptr, int fd)
 {
+	if (fd >=0 && fd < 3) return 1;
+
 	/* return "not supported" */
 	ptr->_errno = ENOTSUP;
 	return -1;
@@ -198,3 +200,18 @@ _free_r (struct _reent *ptr, void *addr)
 {
 	rt_free (addr);
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+void nltest()
+{
+	printf("stdout test!!\n");
+	fprintf(stdout, "fprintf test!!\n");
+	fprintf(stderr, "fprintf test!!\n");
+}
+FINSH_FUNCTION_EXPORT(nltest, newlib test);
+#endif
+
