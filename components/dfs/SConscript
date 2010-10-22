@@ -22,6 +22,12 @@ filesystems/romfs/dfs_romfs.c
 filesystems/romfs/romfs.c
 """)
 
+# DFS-DeviceFS options
+devfs = Split("""
+filesystems/devfs/devfs.c
+filesystems/devfs/console.c
+""")
+
 # DFS-YAFFS2 options
 yaffs2_main = Split("""
 filesystems/yaffs2/direct/yaffscfg.c
@@ -78,6 +84,10 @@ if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS and rtconfi
 if 'RT_USING_DFS_ROMFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_ROMFS:
     src_local = src_local + romfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/romfs']
+
+if 'RT_USING_DFS_DEVFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_DEVFS:
+    src_local = src_local + devfs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/devfs']
 
 # group definitions
 group = {}
