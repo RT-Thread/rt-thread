@@ -460,16 +460,21 @@ void ls(const char* pathname)
 					rt_snprintf(fullpath, DFS_PATH_MAX + 1, "%s%c%s", pathname, '/', dirent.d_name);
 				else
 					rt_snprintf(fullpath, DFS_PATH_MAX + 1, "%s%s", pathname, dirent.d_name);
-				
-				dfs_file_stat(fullpath, &stat);
-				if ( stat.st_mode & DFS_S_IFDIR )
+
+				if (dfs_file_stat(fullpath, &stat) == 0)
 				{
-					rt_kprintf("%s\t\t<DIR>\n", dirent.d_name);
+					if ( stat.st_mode & DFS_S_IFDIR )
+					{
+						rt_kprintf("%s\t\t<DIR>\n", dirent.d_name);
+					}
+					else
+					{
+						rt_kprintf("%s\t\t%lu\n", dirent.d_name, stat.st_size);
+					}
 				}
 				else
-				{
-					rt_kprintf("%s\t\t%lu\n", dirent.d_name, stat.st_size);
-				}
+					rt_kprintf("BAD file: %s\n", dirent.d_name);
+					
 			}
 		}while(length > 0);
 

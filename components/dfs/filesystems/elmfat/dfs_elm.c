@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include "ffconf.h"
 #include "ff.h"
 
