@@ -14,6 +14,7 @@
  * 2006-05-18     Bernard      fix the object init bug
  * 2006-08-03     Bernard      add hook support
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
+ * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
  */
 
 #include <rtthread.h>
@@ -270,11 +271,22 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 		/* no memory can be allocated */
 		return RT_NULL;
 	}
-
+	
 	/* init object's parameters */
 
 	/* set object type */
 	object->type = type;
+
+	/* set object flag */
+	object->flag = 0;
+
+#ifdef RT_USING_MODULE
+	if(rt_module_self() != RT_NULL)
+	{
+		object->module_id = (void*)rt_module_self();
+		object->flag |= RT_OBJECT_FLAG_MODULE;
+	}	
+#endif
 
 	/* copy name */
 	for (temp = 0; temp < RT_NAME_MAX; temp ++)
@@ -324,6 +336,12 @@ void rt_object_delete(rt_object_t object)
 
 	/* unlock interrupt */
 	rt_hw_interrupt_enable(temp);
+
+#ifdef RT_USING_MODULE
+	if(object->flag & RT_OBJECT_FLAG_MODULE) 
+		rt_module_free((rt_module_t)object->module_id, object);
+	else
+#endif
 
 	/* free the memory of object */
 	rt_free(object);

@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2008-07-12     Bernard      the first version
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-10-23     yi.qiu      add module memory allocator
  */
 
 /*
@@ -52,6 +53,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include "kservice.h"
 
 /* #define RT_SLAB_DEBUG */
 
@@ -222,11 +224,11 @@ struct rt_page_head
 	rt_size_t page;					/* number of page  */
 
 	/* dummy */
-	char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head*) + sizeof (rt_size_t))];
+	char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head*) + sizeof (rt_size_t) + sizeof(rt_list_t))];
 };
 static struct rt_page_head *rt_page_list;
 
-static void *rt_page_alloc(rt_size_t npages)
+void *rt_page_alloc(rt_size_t npages)
 {
 	struct rt_page_head *b, *n;
 	struct rt_page_head **prev;
@@ -256,7 +258,7 @@ static void *rt_page_alloc(rt_size_t npages)
 	return b;
 }
 
-static void rt_page_free(void *addr, rt_size_t npages)
+void rt_page_free(void *addr, rt_size_t npages)
 {
 	struct rt_page_head *b, *n;
 	struct rt_page_head **prev;
@@ -450,6 +452,10 @@ void *rt_malloc(rt_size_t size)
 	/* zero size, return RT_NULL */
 	if (size == 0) return RT_NULL;
 
+#ifdef RT_USING_MODULE
+	if(rt_module_self() != RT_NULL) return rt_module_malloc(size);
+#endif
+
 	/*
 	 * Handle large allocations directly.  There should not be very many of
 	 * these so performance is not a big issue.
@@ -630,6 +636,10 @@ void *rt_realloc(void *ptr, rt_size_t size)
 		return RT_NULL;
 	}
 
+#ifdef RT_USING_MODULE
+	if(rt_module_self() != RT_NULL) return rt_module_realloc(ptr, size);
+#endif
+
 	/*
 	 * Get the original allocation's zone.  If the new request winds up
 	 * using the same chunk size we do not have to do anything.
@@ -713,6 +723,14 @@ void rt_free(void *ptr)
 
 #ifdef RT_USING_HOOK
 	if (rt_free_hook != RT_NULL) rt_free_hook(ptr);
+#endif
+
+#ifdef RT_USING_MODULE
+	if(rt_module_self() != RT_NULL)
+	{
+		rt_module_free(rt_module_self(), ptr); 
+		return;
+	}
 #endif
 
 	/* get memory usage */

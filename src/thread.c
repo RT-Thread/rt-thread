@@ -19,7 +19,6 @@
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
- * 2010-04-11     Yi.Qiu         add module feature
  */
 
 #include <rtthread.h>
@@ -73,13 +72,6 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 	/* error and flags */
 	thread->error = RT_EOK;
 	thread->stat  = RT_THREAD_INIT;
-	thread->flags = 0;
-
-#ifdef RT_USING_MODULE
-	/* init module parent */
-	thread->module_parent =
-		(rt_module_self() != RT_NULL) ? rt_module_self() : RT_NULL;
-#endif
 
 	/* init user data */
 	thread->user_data = 0;

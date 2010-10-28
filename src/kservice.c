@@ -370,7 +370,7 @@ rt_ubase_t rt_strncmp(const char * cs, const char * ct, rt_ubase_t count)
  *
  * @return the result
  */
-rt_uint32_t rt_strcmp (const char *cs, const char *ct)
+rt_ubase_t rt_strcmp (const char *cs, const char *ct)
 {
 	while (*cs && *cs == *ct)
 		cs++, ct++;

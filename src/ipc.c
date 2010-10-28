@@ -32,6 +32,7 @@
  *                             is RT_IPC_FLAG_PRIO
  * 2010-01-20     mbbill       remove rt_ipc_object_decrease function.
  * 2010-04-20     Bernard      move memcpy outside interrupt disable in mq
+ * 2010-10-26     yi.qiu       add module support in rt_mp_delete and rt_mq_delete
  */
 
 #include <rtthread.h>
@@ -1228,6 +1229,13 @@ rt_err_t rt_mb_delete (rt_mailbox_t mb)
 	/* resume all suspended thread */
 	rt_ipc_object_resume_all(&(mb->parent));
 
+#ifdef RT_USING_MODULE
+	/* the mb object belongs to an application module */
+	if(mb->parent.parent.flag & RT_OBJECT_FLAG_MODULE) 
+		rt_module_free(mb->parent.parent.module_id, mb->msg_pool);
+	else
+#endif
+
 	/* free mailbox pool */
 	rt_free(mb->msg_pool);
 
@@ -1580,10 +1588,17 @@ rt_err_t rt_mq_delete (rt_mq_t mq)
 	/* resume all suspended thread */
 	rt_ipc_object_resume_all(&(mq->parent));
 
-	/* free mailbox pool */
+#ifdef RT_USING_MODULE
+	/* the mq object belongs to an application module */
+	if(mq->parent.parent.flag & RT_OBJECT_FLAG_MODULE) 
+		rt_module_free(mq->parent.parent.module_id, mq->msg_pool);
+	else
+#endif
+
+	/* free message queue pool */
 	rt_free(mq->msg_pool);
 
-	/* delete mailbox object */
+	/* delete message queue object */
 	rt_object_delete(&(mq->parent.parent));
 
 	return RT_EOK;

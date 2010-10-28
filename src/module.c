@@ -11,6 +11,7 @@
  * Date           Author		Notes
  * 2010-01-09      Bernard	first version
  * 2010-04-09      yi.qiu	implement based on first version
+ * 2010-10-23      yi.qiu	implement module memory allocator
  */
 
 #include <rtthread.h>
@@ -35,7 +36,7 @@
 #define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
-static struct rt_module* rt_current_module = RT_NULL;
+static rt_module_t rt_current_module = RT_NULL;
 rt_list_t rt_module_symbol_list;
 struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
 
@@ -50,8 +51,10 @@ void rt_system_module_init(void)
 	extern int __rtmsymtab_start;
 	extern int __rtmsymtab_end;
 
+#ifdef __GNUC__
 	_rt_module_symtab_begin = (struct rt_module_symtab *)&__rtmsymtab_start;
 	_rt_module_symtab_end   = (struct rt_module_symtab *)&__rtmsymtab_end;
+#endif
 
 	rt_list_init(&rt_module_symbol_list);
 }
@@ -348,7 +351,9 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		module->module_entry, RT_NULL,
 		module->stack_size,
 		module->thread_priority, 10);
-	module->module_thread->module_parent = module;
+	module->module_thread->module_id = (void*)module;
+	module->module_mem_list = RT_NULL;
+	rt_list_init(&module->module_page);
 	rt_thread_startup(module->module_thread);
 		
 	return module;
@@ -618,6 +623,147 @@ rt_module_t rt_module_find(char* name)
 
 	/* not found */
 	return RT_NULL;
+}
+
+/* module memory allocator */
+struct rt_mem_head
+{
+	rt_size_t size;				/* size of memory block  */
+	struct rt_mem_head *next;		/* next valid memory block */
+};
+static struct rt_mem_head *morepage(rt_size_t nu);
+
+/*
+  rt_module_free - alloc memory block in free list
+*/
+void *rt_module_malloc(rt_size_t size)
+{
+	struct rt_mem_head *b, *n;
+	struct rt_mem_head **prev;
+	rt_size_t nunits;
+	
+	nunits = (size + sizeof(struct rt_mem_head) -1)/sizeof(struct rt_mem_head) + 1; 
+
+	RT_ASSERT(size != 0);
+	RT_ASSERT(nunits != 0);
+
+	prev = (struct rt_mem_head **)&rt_current_module->module_mem_list;
+
+	while(RT_TRUE)
+	{
+		b = *prev;
+		if(b == RT_NULL)
+		{
+			if ((b = morepage(nunits)) == RT_NULL) 
+				return RT_NULL;
+		}	
+		
+		if (b->size > nunits)
+		{
+			/* splite memory */
+			n = b + nunits;
+			n->next = b->next;
+			n->size = b->size - nunits;
+			b->size = nunits;
+			*prev = n;
+			break;
+		}
+
+		if (b->size == nunits)
+		{
+			/* this node fit, remove this node */
+			*prev = b->next;
+			break;
+		}
+
+		prev = &(b->next);
+	}
+
+	return (void *)(b + 1);
+}
+
+/*
+  rt_module_free - insert memory block in free list
+*/
+void rt_module_free(rt_module_t module, void *addr)
+{
+	struct rt_mem_head *b, *n;
+	struct rt_mem_head **prev;
+
+	RT_ASSERT(addr != RT_NULL);
+	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
+
+	n = (struct rt_mem_head *)addr - 1;
+	prev = (struct rt_mem_head **)&module->module_mem_list;
+
+	while ((b = *prev) != RT_NULL)
+	{		
+		RT_ASSERT(b->size > 0);
+		RT_ASSERT(b > n || b + b->size <= n);
+
+		if (b + b->size == n)
+		{
+			if (b + (b->size += n->size) == b->next)
+			{
+				b->size += b->next->size;
+				b->next  = b->next->next;
+			}
+
+			return;
+		}
+
+		if (b == n + n->size)
+		{
+			n->size = b->size + n->size;
+			n->next = b->next;
+			*prev = n;
+
+			return;
+		}
+		if (b > n + n->size) break;
+
+		prev = &(b->next);
+	}
+
+	n->next = b;
+	*prev = n;
+}
+
+/*
+  rt_module_realloc - realloc memory block in free list
+*/
+void *rt_module_realloc(void *ptr, rt_size_t size)
+{
+	RT_ASSERT(RT_NULL);
+
+	/* TO DO */
+}
+
+/* module memory allocator */
+struct rt_module_page
+{
+	rt_uint8_t *ptr;				/* address of memory block  */
+	rt_size_t npage;					/* number of pages  */
+	rt_list_t list;
+};
+static struct rt_module_page *rt_module_page_list;
+
+static struct rt_mem_head *morepage(rt_size_t nu)
+{
+	rt_uint8_t *cp;
+	rt_uint32_t npage;
+	struct rt_mem_head *up;
+
+	RT_ASSERT (nu != 0);
+
+	npage = (nu * sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
+	cp = rt_page_alloc(npage);
+	if(cp == RT_NULL) return RT_NULL;
+	
+	up = (struct rt_mem_head *) cp;
+	up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
+	rt_module_free(rt_current_module, (void *)(up+1));
+	return up;
 }
 
 #if defined(RT_USING_FINSH)

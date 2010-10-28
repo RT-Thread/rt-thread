@@ -10,7 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2007-01-10     Bernard      the first version
- * 2008-07-12	  Bernard	   remove all rt_int8, rt_uint32_t etc typedef
+ * 2008-07-12     Bernard	  remove all rt_int8, rt_uint32_t etc typedef
+ * 2010-10-26     yi.qiu       add module support
  */
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
@@ -163,6 +164,12 @@ typedef struct rt_list_node rt_list_t;					/* Type for lists. 							*/
  * @addtogroup KernelObject
  */
 /*@{*/
+
+/*
+ * kernel object macros
+ */
+#define RT_OBJECT_FLAG_MODULE		0x80			/* is module object. 						*/
+
 /*
  * Base structure of Kernel object
  */
@@ -174,6 +181,12 @@ struct rt_object
 	rt_uint8_t  type;
 	/* flag of kernel object			*/
 	rt_uint8_t  flag;
+	
+#ifdef RT_USING_MODULE
+	/* id of application module			*/
+	void* module_id;
+#endif	
+
 	/* list pointer of kernel object 	*/
 	rt_list_t	list;
 };
@@ -303,7 +316,6 @@ typedef struct rt_timer* rt_timer_t;
 #define RT_THREAD_CTRL_INFO				0x03			/* Get thread information. 					*/
 
 typedef struct rt_thread* rt_thread_t;
-typedef struct rt_module* rt_module_t;
 
 /*
  * Thread related structure
@@ -314,6 +326,10 @@ struct rt_thread
 	char        name[RT_NAME_MAX];						/* the name of thread 						*/
 	rt_uint8_t	type;									/* type of object 							*/
 	rt_uint8_t  flags;									/* thread's flags 							*/
+	
+#ifdef RT_USING_MODULE
+	void* module_id;								/* id of application module					*/
+#endif
 
 	rt_list_t	list;									/* the object list 							*/
 	rt_list_t	tlist;									/* the thread list 							*/
@@ -350,10 +366,6 @@ struct rt_thread
 
 	struct rt_timer thread_timer;						/* thread timer 							*/
 
-#ifdef RT_USING_MODULE
-	rt_module_t module_parent;							/* module parent 							*/
-#endif
-
 	rt_uint32_t user_data;								/* user data 								*/
 };
 /*@}*/
@@ -362,33 +374,26 @@ struct rt_thread
 /*
  * module system
  */
-enum rt_module_class_type
-{
-	RT_Module_Class_APP = 0,						/* application module								*/
-	RT_Module_Class_EXTENSION,		
-	RT_Module_Class_SERVICE,							/* service module 								*/
-	RT_Module_Class_Unknown							/* unknown module 								*/
-};
-
 struct rt_module
 {
 	/* inherit from object */
-	struct rt_object parent;
+	struct	rt_object parent;
 
-	rt_uint8_t* module_space;
+	rt_uint8_t* module_space;							/* module memory space						*/
 
-	void* module_entry;
-	rt_uint32_t stack_size;
+	void*		module_entry;							/* entry address of module's thread			*/
+	rt_thread_t module_thread;							/* stack size of module's thread			*/
+	rt_uint32_t stack_size;								/* priority of module's thread				*/
 	rt_uint32_t thread_priority;
-	rt_thread_t module_thread;
 
-	/* module memory pool */
-	rt_uint32_t mempool_size;
-	void* module_mempool;
+	/* module memory allocator */
+	void*		module_mem_list;
+	rt_list_t	module_page;
 
 	/* object in this module, module object is the last basic object type */
 	struct rt_object_information module_object[RT_Object_Class_Module];
 };
+typedef struct rt_module* rt_module_t;
 #endif
 
 /**

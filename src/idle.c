@@ -64,9 +64,8 @@ void rt_thread_idle_excute(void)
 		rt_base_t lock;
 		rt_thread_t thread;
 #ifdef RT_USING_MODULE
-		rt_module_t module;
+		rt_module_t module = RT_NULL;
 #endif
-
 		/* disable interrupt */
 		lock = rt_hw_interrupt_disable();
 
@@ -76,9 +75,16 @@ void rt_thread_idle_excute(void)
 			/* get defunct thread */
 			thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
 
-			/* get thread's parent module */
 #ifdef RT_USING_MODULE
-			module = thread->module_parent;
+			/* get thread's parent module */
+			module = (rt_module_t)thread->module_id;
+
+			/* if the thread is module's main thread */
+			if(module->module_thread == thread)
+			{	
+				/* detach module's main thread */
+				module->module_thread = RT_NULL;
+			}	
 #endif
 			/* remove defunct thread */
 			rt_list_remove(&(thread->tlist));
@@ -96,15 +102,10 @@ void rt_thread_idle_excute(void)
 		rt_hw_interrupt_enable(lock);
 
 #ifdef RT_USING_MODULE
-		if(module != RT_NULL)
-		{	
-			/* if the thread is module's main thread */
-			if(module->module_thread == thread)
-			{	
-				/* detach module's main thread */
-				module->module_thread = RT_NULL;
-			}					
-		}	
+		/* the thread belongs to an application module */
+		if(thread->flags & RT_OBJECT_FLAG_MODULE)
+			rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
+		else
 #endif
 		/* release thread's stack */
 		rt_free(thread->stack_addr);

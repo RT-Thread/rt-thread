@@ -264,8 +264,8 @@ void rt_schedule()
             rt_current_thread = to_thread;
 
 #ifdef RT_USING_MODULE
-            rt_module_set ((rt_current_thread->module_parent != RT_NULL) ? 
-                rt_current_thread->module_parent : RT_NULL);		
+            rt_module_set ((rt_current_thread->module_id != RT_NULL) ? 
+                (rt_module_t)rt_current_thread->module_id : RT_NULL);		
 #endif
 
 #ifdef RT_USING_HOOK

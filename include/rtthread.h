@@ -14,7 +14,7 @@
  * 2006-08-10     Bernard      add version information
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
- * 2010-04-11     yi.qiu          add module feature
+ * 2010-04-11     yi.qiu      add module feature
  */
 
 #ifndef __RT_THREAD_H__
@@ -184,6 +184,11 @@ void rt_memory_info(rt_uint32_t *total,
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
+
+#ifdef RT_USING_SLAB
+void *rt_page_alloc(rt_size_t npages);
+void rt_page_free(void *addr, rt_size_t npages);
+#endif
 #endif
 /*@}*/
 
@@ -305,8 +310,11 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
 rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr);
 rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filename);
 rt_err_t rt_module_unload(rt_module_t module);
-rt_err_t rt_module_self_set (rt_module_t module);
+void *rt_module_malloc(rt_size_t size);
+void *rt_module_realloc(void *ptr, rt_size_t size);
+void rt_module_free(rt_module_t module, void *addr);
 rt_module_t rt_module_self (void);
+rt_err_t rt_module_set (rt_module_t module);
 rt_module_t rt_module_find(char* name);
 #endif
  
@@ -343,6 +351,7 @@ void* rt_memset(void *src, int c, rt_ubase_t n);
 void* rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
 rt_ubase_t rt_strncmp(const char * cs, const char * ct, rt_ubase_t count);
+rt_ubase_t rt_strcmp (const char *cs, const char *ct);
 rt_ubase_t rt_strlen (const char *src);
 char *rt_strdup(const char *s);
 

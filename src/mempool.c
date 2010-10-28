@@ -15,6 +15,7 @@
  * 2006-08-04     Bernard      add hook support
  * 2006-08-10     Bernard      fix interrupt bug in rt_mp_alloc
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
+ * 2010-10-26     yi.qiu       add module support in rt_mp_delete
  */
 
 #include <rthw.h>
@@ -251,6 +252,13 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 		/* enable interrupt */
 		rt_hw_interrupt_enable(temp);
 	}
+
+#ifdef RT_USING_MODULE
+	/* the mp object belongs to an application module */
+	if(mp->parent.flag & RT_OBJECT_FLAG_MODULE) 
+		rt_module_free(mp->parent.module_id, mp->start_address);
+	else
+#endif
 
 	/* release allocated room */
 	rt_free(mp->start_address);
