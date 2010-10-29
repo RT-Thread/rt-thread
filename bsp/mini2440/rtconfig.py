@@ -9,6 +9,7 @@ RT_USING_DFS_ELMFAT = False
 RT_USING_DFS_YAFFS2 = False
 RT_USING_DFS_NFS    = False
 RT_USING_DFS_ROMFS  = False
+RT_USING_DFS_DEVFS  = False
 RT_USING_LWIP       = False
 RT_USING_WEBSERVER  = False
 RT_USING_RTGUI      = False
@@ -51,6 +52,8 @@ if rtconfig_ns.has_key('RT_USING_DFS'):
         RT_USING_DFS_NFS    = True
     if rtconfig_ns.has_key('RT_USING_DFS_ROMFS'):
         RT_USING_DFS_ROMFS    = True
+    if rtconfig_ns.has_key('RT_USING_DFS_DEVFS'):
+        RT_USING_DFS_DEVFS    = True
 
 # lwip options
 if rtconfig_ns.has_key('RT_USING_LWIP'):

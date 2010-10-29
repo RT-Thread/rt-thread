@@ -71,6 +71,17 @@ void rt_init_thread_entry(void* parameter)
 		else
 			rt_kprintf("File System initialzation failed!\n");
 #endif
+
+#if defined(RT_USING_DFS_DEVFS)
+		devfs_init();
+		if (dfs_mount(RT_NULL, "/dev", "devfs", 0, 0) == 0)
+			rt_kprintf("Device File System initialized!\n");
+		else
+			rt_kprintf("Device File System initialzation failed!\n");
+
+		/* init libc */
+		libc_system_init("uart0");
+#endif
 	}
 #endif
 

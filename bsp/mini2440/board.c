@@ -148,8 +148,10 @@ void rt_hw_board_init()
 	/* initialize uart */
 	rt_hw_uart_init();
 
+#ifdef RT_USING_RTGUI
 	/* init virtual keypad */
 	rt_hw_key_init();
+#endif
 
 	/* initialize mmu */
 	rt_hw_mmu_init();
