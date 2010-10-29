@@ -557,6 +557,8 @@ int nfs_read(struct dfs_fd* file, void *buf, rt_size_t count)
 		}
 		bytes=res.READ3res_u.resok.count;
 		fd->offset += bytes;
+		/* update current position */
+		file->pos = fd->offset;
 		memcpy(buf, res.READ3res_u.resok.data.data_val, bytes);
 	}
 	xdr_free((xdrproc_t)xdr_READ3res, (char *)&res);
@@ -606,6 +608,9 @@ int nfs_write(struct dfs_fd* file, const void *buf, rt_size_t count)
 	{
 		bytes=res.WRITE3res_u.resok.count;
 		fd->offset+=bytes;
+		/* update current position */
+		file->pos = fd->offset;
+		/* todo: update file size */
 	}
 	xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
 

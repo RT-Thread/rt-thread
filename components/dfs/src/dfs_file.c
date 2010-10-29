@@ -290,12 +290,19 @@ int dfs_file_flush(struct dfs_fd* fd)
  */
 int dfs_file_lseek(struct dfs_fd* fd, rt_off_t offset)
 {
+	int result;
 	struct dfs_filesystem* fs = fd->fs;
 
 	if (fd == RT_NULL) return -DFS_STATUS_EINVAL;
 	if (fs->ops->lseek == RT_NULL) return -DFS_STATUS_ENOSYS;
 
-	return fs->ops->lseek(fd, offset);
+	result = fs->ops->lseek(fd, offset);
+
+	/* update current position */
+	if (result >= 0)
+		fd->pos = result;
+
+	return result;
 }
 
 /**

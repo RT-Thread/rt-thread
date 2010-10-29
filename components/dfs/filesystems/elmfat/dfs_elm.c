@@ -364,8 +364,9 @@ int dfs_elm_write(struct dfs_fd* file, const void* buf, rt_size_t len)
 	RT_ASSERT(fd != RT_NULL);
 
 	result = f_write(fd, buf, len, &byte_write);
-	/* update position */
+	/* update position and file size */
 	file->pos  = fd->fptr;
+	file->size = fd->fsize;
 	if (result == FR_OK) return byte_write;
 
 	return elm_result_to_dfs(result);
@@ -392,6 +393,11 @@ int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 	RT_ASSERT(fd != RT_NULL);
 
 	result = f_lseek(fd, offset);
+	if (result == FR_OK)
+	{
+		/* return current position */
+		return fd->fptr;
+	}
 	return elm_result_to_dfs(result);
 }
 
