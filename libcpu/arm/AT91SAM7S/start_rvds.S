@@ -393,8 +393,9 @@ MC_RCR  EQU     0x00            ; MC_RCR Offset
 
                 ELSE
 
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
+                ; No usr mode stack here.
+                ;MOV     SP, R0
+                ;SUB     SL, SP, #USR_Stack_Size
 
                 ENDIF
 
@@ -489,7 +490,7 @@ rt_hw_context_switch_interrupt_do	PROC
 __user_initial_stackheap
 
                 LDR     R0, =  Heap_Mem
-                LDR     R1, =(Stack_Mem + USR_Stack_Size)
+                LDR     R1, = (Stack_Mem + IRQ_Stack_Size)
                 LDR     R2, = (Heap_Mem +      Heap_Size)
                 LDR     R3, = Stack_Mem
                 BX      LR
