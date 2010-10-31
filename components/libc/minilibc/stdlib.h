@@ -15,6 +15,8 @@
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
+#include <sys/types.h>
+
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC)
 int atoi(const char *nptr);
 #endif
@@ -27,5 +29,7 @@ int atoi(const char *nptr);
 int rand(void);
 int rand_r(unsigned int *seed);
 void srand(unsigned int seed);
+
+void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
 
 #endif
