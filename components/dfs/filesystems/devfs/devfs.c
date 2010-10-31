@@ -82,7 +82,7 @@ int dfs_device_fs_close(struct dfs_fd* file)
 
 	RT_ASSERT(file != RT_NULL);
 
-	if (file->flags & FT_DIRECTORY)
+	if (file->type == FT_DIRECTORY)
 	{
 		struct device_dirent *root_dirent;
 
@@ -225,10 +225,10 @@ int dfs_device_fs_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t
 	RT_ASSERT(root_dirent != RT_NULL);
 
 	/* make integer count */
-	count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
+	count = (count / sizeof(struct dirent));
 	if ( count == 0 ) return -DFS_STATUS_EINVAL;
 
-	for (index = 0; index < count/sizeof(struct dirent) && index + root_dirent->read_index < root_dirent->device_count; 
+	for (index = 0; index < count && index + root_dirent->read_index < root_dirent->device_count; 
 		index ++)
 	{
 		object = (rt_object_t)root_dirent->devices[root_dirent->read_index + index];

@@ -470,7 +470,7 @@ void ls(const char* pathname)
 
 				if (dfs_file_stat(fullpath, &stat) == 0)
 				{
-					if ( stat.st_mode & DFS_S_IFDIR )
+					if ( DFS_S_ISDIR(stat.st_mode))
 					{
 						rt_kprintf("%s\t\t<DIR>\n", dirent.d_name);
 					}

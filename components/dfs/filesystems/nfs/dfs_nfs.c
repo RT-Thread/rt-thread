@@ -1017,7 +1017,7 @@ int nfs_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count)
 		name = nfs_readdir(nfs, dir);
 		if (name == RT_NULL) break;
 
-		d->d_type &= DFS_DT_REG;
+		d->d_type = DFS_DT_REG;
 
 		d->d_namlen = rt_strlen(name);
 		d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
