@@ -224,7 +224,7 @@ struct rt_page_head
 	rt_size_t page;					/* number of page  */
 
 	/* dummy */
-	char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head*) + sizeof (rt_size_t) + sizeof(rt_list_t))];
+	char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head*) + sizeof (rt_size_t))];
 };
 static struct rt_page_head *rt_page_list;
 

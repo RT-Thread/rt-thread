@@ -36,6 +36,15 @@
 #define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
+/* module memory allocator */
+struct rt_module_page
+{
+	rt_uint8_t *ptr;				/* address of memory block  */
+	rt_size_t npage;					/* number of pages  */
+	rt_list_t list;
+};
+static struct rt_module_page *rt_module_page_list;
+
 static rt_module_t rt_current_module = RT_NULL;
 rt_list_t rt_module_symbol_list;
 struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
@@ -318,7 +327,10 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 #endif
 				if(sym->st_shndx != 0)
 				{	
-					rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
+					rt_module_arm_relocate(
+						module, 
+						rel, 
+						(Elf32_Addr)((rt_uint8_t*)module->module_space + sym->st_value));
 				}
 				else if(linked == RT_FALSE)
 				{
@@ -353,6 +365,8 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		module->thread_priority, 10);
 	module->module_thread->module_id = (void*)module;
 	module->module_mem_list = RT_NULL;
+	module->page_node_pool = rt_malloc(sizeof(struct rt_mempool));
+	rt_memset(module->page_node_pool, 0, sizeof(struct rt_mempool));
 	rt_list_init(&module->module_page);
 	rt_thread_startup(module->module_thread);
 		
@@ -578,8 +592,28 @@ rt_err_t rt_module_unload(rt_module_t module)
 			rt_timer_delete((rt_timer_t)object);
 		}	
 	}
+
+	/* free module pages */
+	list = &module->module_page;
+	while(list->next != list)
+	{
+		struct rt_module_page* page;
+
+		/* free page */
+		page = rt_list_entry(list->next, struct rt_module_page, list);
+		rt_page_free(page->ptr, page->npage);
+		rt_list_remove(list->next);
+	}	
+
+	/* free page node mempool */
+	if(((struct rt_mempool*)module->page_node_pool)->start_address != 0)
+	{
+		rt_page_free(((struct rt_mempool*)module->page_node_pool)->start_address, 1);
+	}
+	rt_mp_detach(module->page_node_pool);
+	rt_free(module->page_node_pool);
 	
-	/* release module memory */
+	/* release module space memory */
 	rt_free(module->module_space);
 	rt_object_delete((rt_object_t)module);
 
@@ -634,7 +668,7 @@ struct rt_mem_head
 static struct rt_mem_head *morepage(rt_size_t nu);
 
 /*
-  rt_module_free - alloc memory block in free list
+  rt_module_malloc - alloc memory block in free list
 */
 void *rt_module_malloc(rt_size_t size)
 {
@@ -649,6 +683,8 @@ void *rt_module_malloc(rt_size_t size)
 
 	prev = (struct rt_mem_head **)&rt_current_module->module_mem_list;
 
+	/* if alloc size is the multipal of 1K, TODO */
+	
 	while(RT_TRUE)
 	{
 		b = *prev;
@@ -727,6 +763,8 @@ void rt_module_free(rt_module_t module, void *addr)
 
 	n->next = b;
 	*prev = n;
+
+	/* free page, TODO */
 }
 
 /*
@@ -734,25 +772,80 @@ void rt_module_free(rt_module_t module, void *addr)
 */
 void *rt_module_realloc(void *ptr, rt_size_t size)
 {
-	RT_ASSERT(RT_NULL);
+	struct rt_mem_head *b, *p, *prev, *tmpp;
+	rt_size_t nunits;
 
-	/* TO DO */
+	if (ptr == RT_NULL) return rt_module_malloc(size);
+	if (size == 0)
+	{
+		rt_module_free(rt_current_module, ptr);
+		return RT_NULL;
+	}
+
+	nunits = (size + sizeof(struct rt_mem_head) - 1) / sizeof(struct rt_mem_head) + 1;
+	b = (struct rt_mem_head *)ptr - 1;
+
+	if (nunits <= b->size) 
+	{   
+		/* new size is smaller or equal then before */    
+		if (nunits == b->size) return ptr;
+		else 
+		{
+			p = b + nunits;
+			p->size = b->size - nunits;
+			b->size = nunits;
+			rt_module_free(rt_current_module, (void *)(p + 1));
+			return (void *)(b + 1);
+		}
+	}
+	else 
+	{      
+		/* more space then required */
+		prev = (struct rt_mem_head *)rt_current_module->module_mem_list;
+		for (p = prev->next; p != (b->size + b) && p != RT_NULL; prev = p, p = p->next) break;
+
+		/* available block after ap in freelist */ 
+		if (p != RT_NULL && (p->size >= (nunits - (b->size))) &&  p == (b + b->size))  
+		{
+			/* perfect match */
+			if (p->size == (nunits - (b->size)))  
+			{
+				b->size = nunits;
+				prev->next = p->next;
+			}
+			else  /* more space then required, split block*/
+			{
+				/* pointer to old header */
+				tmpp = p;  
+				p = b + nunits;
+
+				/* restoring old pointer */
+				p->next = tmpp->next;
+				
+				/* new size for p */
+				p->size = tmpp->size + b->size - nunits; 
+				b->size = nunits;
+				prev->next = p;
+			}
+			rt_current_module->module_mem_list = (void *)prev;
+			return (void *) (b + 1);
+		}
+		else /* allocate new memory and copy old data */
+		{
+			if ((p = rt_module_malloc(size)) == RT_NULL) return RT_NULL;
+			rt_memmove(p, (b+1), ((b->size) * sizeof(struct rt_mem_head)));
+			rt_module_free(rt_current_module, (void *)(b + 1));
+			return (void *) (p);
+		}
+	}
 }
-
-/* module memory allocator */
-struct rt_module_page
-{
-	rt_uint8_t *ptr;				/* address of memory block  */
-	rt_size_t npage;					/* number of pages  */
-	rt_list_t list;
-};
-static struct rt_module_page *rt_module_page_list;
 
 static struct rt_mem_head *morepage(rt_size_t nu)
 {
 	rt_uint8_t *cp;
 	rt_uint32_t npage;
 	struct rt_mem_head *up;
+	struct rt_module_page *node;
 
 	RT_ASSERT (nu != 0);
 
@@ -760,9 +853,31 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 	cp = rt_page_alloc(npage);
 	if(cp == RT_NULL) return RT_NULL;
 	
+	if(((struct rt_mempool*)rt_current_module->page_node_pool)->start_address == 0)
+	{
+		/* allocate a page for page node */
+		void *start = 	rt_page_alloc(1);		
+		rt_mp_init(
+			(struct rt_mempool *)rt_current_module->page_node_pool, 
+			"pnp", 
+			start,
+			RT_MM_PAGE_SIZE, 
+			sizeof(struct rt_module_page));
+	}	
+
+	/* allocate page node from mempool */
+	node = rt_mp_alloc((struct rt_mempool *)rt_current_module->page_node_pool, RT_WAITING_FOREVER);
+	node->ptr = cp;
+	node->npage = npage;
+
+	/* insert page node to moudle's page list */
+	if(rt_module_self() != RT_NULL) 	
+		rt_list_insert_after (&rt_current_module->module_page, &node->list);
+
 	up = (struct rt_mem_head *) cp;
 	up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 	rt_module_free(rt_current_module, (void *)(up+1));
+	
 	return up;
 }
 

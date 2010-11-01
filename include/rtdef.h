@@ -387,8 +387,9 @@ struct rt_module
 	rt_uint32_t thread_priority;
 
 	/* module memory allocator */
-	void*		module_mem_list;
-	rt_list_t	module_page;
+	void*		module_mem_list;						/* module memory free list					*/
+	rt_list_t	module_page;								/* module using page		 				*/
+	void*		page_node_pool;						
 
 	/* object in this module, module object is the last basic object type */
 	struct rt_object_information module_object[RT_Object_Class_Module];
