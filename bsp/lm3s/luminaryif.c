@@ -121,9 +121,10 @@ void luminaryif_isr(void)
         // Indicate that a packet has been received.
         //
         rt_err_t result;
+		
         /* a frame has been received */
         result = eth_device_ready((struct eth_device*)&(luminaryif_dev->parent));
-        RT_ASSERT(result == RT_EOK);
+
         //
         // Disable Ethernet RX Interrupt.
         //
@@ -340,6 +341,11 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
 
     if(!EthernetPacketAvail(ETH_BASE))
     {
+        // 
+        // Enable Ethernet RX Interrupt. 
+        // 
+        EthernetIntEnable(ETH_BASE, ETH_INT_RX); 
+
         return(NULL);
     }
 	
@@ -417,11 +423,6 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
 #endif
     }
 	
-    //
-    // Enable Ethernet RX Interrupt.
-    //
-    EthernetIntEnable(ETH_BASE, ETH_INT_RX);
-		
     return(p);
 }
 
