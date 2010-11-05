@@ -243,7 +243,7 @@ RECMD3:
 
 rt_uint8_t sd_readblock(rt_uint32_t address, rt_uint8_t* buf)
 {
-	int status;
+	rt_uint32_t status, tmp;
 
 	rd_cnt=0;
 	SDIFSTA = SDIFSTA | (1<<16);
@@ -271,7 +271,8 @@ RERDCMD:
 		status = SDIFSTA;
 		if((status & 0x1000) == 0x1000)
 		{
-			*(rt_uint32_t *)buf = SDIDAT;
+			tmp = SDIDAT;
+			rt_memcpy(buf, &tmp, sizeof(rt_uint32_t));
 			rd_cnt++;
 			buf += 4;
 		}
@@ -291,7 +292,7 @@ RERDCMD:
 
 rt_uint8_t sd_writeblock(rt_uint32_t address, rt_uint8_t* buf)
 {
-	int status;
+	rt_uint32_t status, tmp;
 
 	wt_cnt=0;
 	SDIFSTA = SDIFSTA | (1 << 16);
@@ -311,7 +312,8 @@ REWTCMD:
     		status = SDIFSTA;
     		if((status & 0x2000) == 0x2000)
     		{
-        		SDIDAT=*(rt_uint32_t*)buf;
+    			rt_memcpy(&tmp, buf, sizeof(rt_uint32_t));
+        		SDIDAT = tmp;
         		wt_cnt++;
 			buf += 4;
     		}
