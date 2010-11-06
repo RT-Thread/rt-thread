@@ -1,6 +1,4 @@
-#include <sys/cdefs.h>
 #include <sys/types.h>
-
 #include <stdlib.h>
 
 static void exch(char* base,size_t size,size_t a,size_t b) {
