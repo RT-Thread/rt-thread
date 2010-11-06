@@ -61,6 +61,21 @@ void diag_close(struct rtgui_timer* timer, void* parameter)
 	}
 }
 
+/* AUTO窗口关闭时的事件处理 */
+rt_bool_t auto_window_close(struct rtgui_widget* widget, struct rtgui_event* event)
+{
+	if (timer != RT_NULL)
+	{
+		/* 停止并删除定时器 */
+		rtgui_timer_stop(timer);
+		rtgui_timer_destory(timer);
+
+		timer = RT_NULL;
+	}
+
+	return RT_TRUE;
+}
+
 static rt_uint16_t delta_x = 20;
 static rt_uint16_t delta_y = 40;
 
@@ -114,6 +129,9 @@ static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* ev
 		rect.y2 = rect.y1 + 20;
 		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
 		rtgui_container_add_child(RTGUI_CONTAINER(msgbox), RTGUI_WIDGET(label));
+
+		/* 设置关闭窗口时的动作 */
+		rtgui_win_set_onclose(msgbox, auto_window_close);
 
 		rtgui_win_show(msgbox, RT_FALSE);
 	}
