@@ -104,7 +104,9 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 
 	if (event->sender != RT_NULL) sender = event->sender->name;
 
-	if (event->type == RTGUI_EVENT_TIMER)
+	if ((event->type == RTGUI_EVENT_TIMER) ||
+		(event->type == RTGUI_EVENT_UPDATE_BEGIN) ||
+		(event->type == RTGUI_EVENT_UPDATE_END))
 	{
 		/* don't dump timer event */
 		return ;
@@ -127,6 +129,8 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 			struct rtgui_event_kbd *ekbd = (struct rtgui_event_kbd*) event;
 			if (ekbd->wid != RT_NULL)
 				rt_kprintf("win: %s", ekbd->wid->title);
+			if (RTGUI_KBD_IS_UP(ekbd)) rt_kprintf(", up");
+			else rt_kprintf(", down");
 		}
 		break;
 

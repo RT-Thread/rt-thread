@@ -86,7 +86,7 @@ static void rtgui_list_view_onicondraw(struct rtgui_list_view* view, struct rtgu
 				drawing_rect.x2 = image->w;
 				drawing_rect.y2 = image->h;
 				rtgui_rect_moveto_align(&item_rect, &drawing_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
-				drawing_rect.y1 += 3; drawing_rect.y2 += 3;
+				drawing_rect.y1 += 5; drawing_rect.y2 += 5;
 				rtgui_image_blit(view->items[item_index].image, dc, &drawing_rect);
 
 				item_rect.y1 = drawing_rect.y2 + LIST_MARGIN; 
@@ -145,7 +145,7 @@ static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_uint16_
 	drawing_rect.x2 = image->w;
 	drawing_rect.y2 = image->h;
 	rtgui_rect_moveto_align(&item_rect, &drawing_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
-	drawing_rect.y1 += 3; drawing_rect.y2 += 3;
+	drawing_rect.y1 += 5; drawing_rect.y2 += 5;
 	rtgui_image_blit(view->items[old_item].image, dc, &drawing_rect);
 
 	/* draw text */
@@ -576,8 +576,10 @@ static void rtgui_list_view_calc(struct rtgui_list_view* view)
 
 	item_width = (image->w + LIST_MARGIN);
 	if (item_width < (text_width + LIST_MARGIN)) item_width = text_width + LIST_MARGIN;
-	item_height = image->h + 3 + text_height + LIST_MARGIN; 
-
+	item_height = image->h + 8 + text_height + LIST_MARGIN; 
+	if (item_width > item_height) item_height = item_width;
+	else item_width = item_height;
+	
 	view->row_items = (rtgui_rect_height(rect) - 2 * LIST_MARGIN) / item_height;
 	view->col_items = (rtgui_rect_width(rect) - 2 * LIST_MARGIN) / item_width;
 	view->page_items = view->row_items * view->col_items;
