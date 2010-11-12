@@ -19,6 +19,7 @@
  * 2006-09-03     Bernard      implement rt_thread_detach
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
+ * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  */
 
 #include <rtthread.h>
@@ -240,7 +241,8 @@ static void rt_thread_exit()
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
-	if (rt_object_is_systemobject((rt_object_t)thread) == RT_EOK)
+	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_EOK) &&
+		thread->cleanup == RT_NULL)
 	{
 		rt_object_detach((rt_object_t)thread);
 	}
@@ -273,6 +275,8 @@ static void rt_thread_exit()
  */
 rt_err_t rt_thread_detach (rt_thread_t thread)
 {
+	rt_base_t lock;
+
 	/* thread check */
 	RT_ASSERT(thread != RT_NULL);
 
@@ -282,7 +286,23 @@ rt_err_t rt_thread_detach (rt_thread_t thread)
 	/* release thread timer */
 	rt_timer_detach(&(thread->thread_timer));
 
+	/* change stat */
+	thread->stat = RT_THREAD_CLOSE;
+
+	/* detach object */
 	rt_object_detach((rt_object_t)thread);
+
+	if (thread->cleanup != RT_NULL)
+	{
+		/* disable interrupt */
+		lock = rt_hw_interrupt_disable();
+
+		/* insert to defunct thread list */
+		rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(lock);
+	}
 
 	return RT_EOK;
 }

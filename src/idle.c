@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-23     Bernard      the first version
+ * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  */
 
 #include <rthw.h>
@@ -74,20 +75,29 @@ void rt_thread_idle_excute(void)
 		{
 			/* get defunct thread */
 			thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
-
 #ifdef RT_USING_MODULE
 			/* get thread's parent module */
 			module = (rt_module_t)thread->module_id;
 
 			/* if the thread is module's main thread */
-			if(module->module_thread == thread)
+			if(module != RT_NULL && module->module_thread == thread)
 			{	
 				/* detach module's main thread */
 				module->module_thread = RT_NULL;
-			}	
+			}
 #endif
 			/* remove defunct thread */
 			rt_list_remove(&(thread->tlist));
+			/* invoke thread cleanup */
+			if (thread->cleanup != RT_NULL) thread->cleanup(thread);
+
+			/* if it's a system object, not delete it */
+			if (rt_object_is_systemobject((rt_object_t)thread) == RT_EOK)
+			{
+				/* enable interrupt */
+				rt_hw_interrupt_enable(lock);
+				return;
+			}
 		}
 		else
 		{
@@ -109,7 +119,6 @@ void rt_thread_idle_excute(void)
 #endif
 		/* release thread's stack */
 		rt_free(thread->stack_addr);
-
 		/* delete thread object */
 		rt_object_delete((rt_object_t)thread);
 
@@ -126,7 +135,6 @@ void rt_thread_idle_excute(void)
 		}
 #endif	//RT_USING_MODULE
 	}
-	
 #endif //RT_USING_HEAP
 }
 

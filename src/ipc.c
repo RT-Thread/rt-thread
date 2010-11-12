@@ -33,6 +33,7 @@
  * 2010-01-20     mbbill       remove rt_ipc_object_decrease function.
  * 2010-04-20     Bernard      move memcpy outside interrupt disable in mq
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete and rt_mq_delete
+ * 2010-11-10     Bernard      add IPC reset command implementation.
  */
 
 #include <rtthread.h>
@@ -448,7 +449,27 @@ rt_err_t rt_sem_release(rt_sem_t sem)
  */
 rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void* arg)
 {
-	return RT_EOK;
+	rt_ubase_t level;
+	RT_ASSERT(sem != RT_NULL);
+
+	if (cmd == RT_IPC_CMD_RESET)
+	{
+		/* disable interrupt */
+		level = rt_hw_interrupt_disable();
+
+		/* resume all waiting thread */
+		rt_ipc_object_resume_all(&sem->parent);
+
+		/* set new value */
+		sem->value = (rt_uint16_t)arg;
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+
+		return RT_EOK;
+	}
+
+	return -RT_ERROR;
 }
 
 #endif /* end of RT_USING_SEMAPHORE */
@@ -738,20 +759,20 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 	if (mutex->hold == 0)
 	{
 		/* change the owner thread to original priority */
-		if (mutex->owner->init_priority != mutex->owner->current_priority)
+		if (mutex->original_priority != mutex->owner->current_priority)
 		{
 			rt_thread_control(mutex->owner, RT_THREAD_CTRL_CHANGE_PRIORITY,
-				&(mutex->owner->init_priority));
+				&(mutex->original_priority));
 		}
 
 		/* wakeup suspended thread */
 		if( !rt_list_isempty(&mutex->parent.suspend_thread) )
 		{
-			/* get thread entry */
+			/* get suspended thread */
 			thread = rt_list_entry(mutex->parent.suspend_thread.next, struct rt_thread, tlist);
 
 #ifdef RT_IPC_DEBUG
-		rt_kprintf("mutex_release: resume thread: %s\n", thread->name);
+			rt_kprintf("mutex_release: resume thread: %s\n", thread->name);
 #endif
 			/* set new owner and priority */
 			mutex->owner = thread;
@@ -770,7 +791,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
 			/* clear owner */
 			mutex->owner = RT_NULL;
-			mutex->original_priority = 0;
+			mutex->original_priority = 0xff;
 		}
 	}
 
@@ -794,7 +815,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
  */
 rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void* arg)
 {
-	return RT_EOK;
+	return -RT_ERROR;
 }
 
 #endif /* end of RT_USING_MUTEX */
@@ -1110,7 +1131,27 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
  */
 rt_err_t rt_event_control (rt_event_t event, rt_uint8_t cmd, void* arg)
 {
-	return RT_EOK;
+	rt_ubase_t level;
+	RT_ASSERT(event != RT_NULL);
+
+	if (cmd == RT_IPC_CMD_RESET)
+	{
+		/* disable interrupt */
+		level = rt_hw_interrupt_disable();
+
+		/* resume all waiting thread */
+		rt_ipc_object_resume_all(&event->parent);
+
+		/* init event set */
+		event->set = 0;
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+
+		return RT_EOK;
+	}
+
+	return -RT_ERROR;
 }
 
 #endif /* end of RT_USING_EVENT */
@@ -1422,7 +1463,29 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
  */
 rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void* arg)
 {
-	return RT_EOK;
+	rt_ubase_t level;
+	RT_ASSERT(mb != RT_NULL);
+
+	if (cmd == RT_IPC_CMD_RESET)
+	{
+		/* disable interrupt */
+		level = rt_hw_interrupt_disable();
+
+		/* resume all waiting thread */
+		rt_ipc_object_resume_all(&mb->parent);
+
+		/* re-init mailbox */
+		mb->entry 	 	= 0;
+		mb->in_offset 	= 0;
+		mb->out_offset 	= 0;
+	
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+
+		return RT_EOK;
+	}
+
+	return -RT_ERROR;
 }
 
 #endif /* end of RT_USING_MAILBOX */
@@ -1894,7 +1957,45 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
  */
 rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void* arg)
 {
-	return RT_EOK;
+	rt_ubase_t level;
+	struct rt_mq_message *msg;
+
+	RT_ASSERT(mq != RT_NULL);
+
+	if (cmd == RT_IPC_CMD_RESET)
+	{
+		/* disable interrupt */
+		level = rt_hw_interrupt_disable();
+
+		/* resume all waiting thread */
+		rt_ipc_object_resume_all(&mq->parent);
+
+		/* release all message in the queue */
+		while (mq->msg_queue_head != RT_NULL)
+		{
+			/* get message from queue */
+			msg = (struct rt_mq_message*) mq->msg_queue_head;
+
+			/* move message queue head */
+			mq->msg_queue_head = msg->next;
+			/* reach queue tail, set to NULL */
+			if (mq->msg_queue_tail == msg) mq->msg_queue_tail = RT_NULL;
+
+			/* put message to free list */
+			msg->next = (struct rt_mq_message*)mq->msg_queue_free;
+			mq->msg_queue_free = msg;
+		}
+
+		/* clean entry */
+		mq->entry = 0;
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+
+		return RT_EOK;
+	}
+
+	return -RT_ERROR;
 }
 
 #endif /* end of RT_USING_MESSAGEQUEUE */

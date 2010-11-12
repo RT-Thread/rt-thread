@@ -10,8 +10,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2007-01-10     Bernard      the first version
- * 2008-07-12     Bernard	  remove all rt_int8, rt_uint32_t etc typedef
+ * 2008-07-12     Bernard	   remove all rt_int8, rt_uint32_t etc typedef
  * 2010-10-26     yi.qiu       add module support
+ * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  */
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
@@ -301,14 +302,12 @@ typedef struct rt_timer* rt_timer_t;
  */
 
 /* thread state definitions */
-#define RT_THREAD_RUNNING				0x0				/* Running. 								*/
-#define RT_THREAD_READY					0x1				/* Ready. 									*/
-#define RT_THREAD_SUSPEND				0x2				/* Suspend. 								*/
-#define RT_THREAD_BLOCK					RT_THREAD_SUSPEND	/* Blocked. 							*/
-#define RT_THREAD_CLOSE					0x3				/* Closed. 									*/
-#define RT_THREAD_INIT					RT_THREAD_CLOSE	/* Inited. 									*/
-
-#define RT_THREAD_FLAGS_TIMERSLICE 		0x01
+#define RT_THREAD_INIT					0x00				/* Inited. 									*/
+#define RT_THREAD_READY					0x01				/* Ready. 									*/
+#define RT_THREAD_SUSPEND				0x02				/* Suspend. 								*/
+#define RT_THREAD_RUNNING				0x03				/* Running. 								*/
+#define RT_THREAD_BLOCK					RT_THREAD_SUSPEND	/* Blocked. 								*/
+#define RT_THREAD_CLOSE					0x04				/* Closed. 									*/
 
 #define RT_THREAD_CTRL_STARTUP			0x00			/* Starup thread. 							*/
 #define RT_THREAD_CTRL_CLOSE			0x01			/* Close thread. 							*/
@@ -328,7 +327,7 @@ struct rt_thread
 	rt_uint8_t  flags;									/* thread's flags 							*/
 	
 #ifdef RT_USING_MODULE
-	void* module_id;								/* id of application module					*/
+	void* 		module_id;								/* id of application module					*/
 #endif
 
 	rt_list_t	list;									/* the object list 							*/
@@ -365,6 +364,8 @@ struct rt_thread
 	rt_ubase_t 	remaining_tick;							/* remaining tick 							*/
 
 	struct rt_timer thread_timer;						/* thread timer 							*/
+
+	void 		(*cleanup)(struct rt_thread* tid);		/* cleanup function when thread exit 		*/
 
 	rt_uint32_t user_data;								/* user data 								*/
 };
@@ -407,6 +408,9 @@ typedef struct rt_module* rt_module_t;
 #define RT_IPC_FLAG_FIFO				0x00			/* FIFOed IPC. @ref IPC. 					*/
 #define RT_IPC_FLAG_PRIO				0x01			/* PRIOed IPC. @ref IPC. 					*/
 
+#define RT_IPC_CMD_UNKNOWN				0x00			/* unknown IPC command 						*/
+#define RT_IPC_CMD_RESET				0x01			/* reset IPC object 						*/
+
 #define RT_WAITING_FOREVER				-1				/* Block forever until get resource.		*/
 #define RT_WAITING_NO					0				/* Non-block. 								*/
 
@@ -443,7 +447,7 @@ struct rt_mutex
 {
 	struct rt_ipc_object 	parent;
 
-	rt_uint8_t 				value;						/* value of mutex. 							*/
+	rt_uint16_t 			value;						/* value of mutex. 							*/
 
 	rt_uint8_t 				original_priority;			/* priority of last thread hold the mutex. 	*/
 	rt_uint8_t 				hold;			 			/* numbers of thread hold the mutex. 		*/
