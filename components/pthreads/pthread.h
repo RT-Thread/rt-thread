@@ -18,22 +18,7 @@
 #include <errno.h>
 #include <sys/types.h>
 
-typedef rt_thread_t pthread_t;
-typedef long pthread_condattr_t;
-typedef long pthread_rwlockattr_t;
-typedef long pthread_mutexattr_t;
-typedef long pthread_barrierattr_t;
-
-typedef int pthread_key_t;
-typedef int pthread_once_t;
-
-enum {
-	PTHREAD_CANCEL_ASYNCHRONOUS = 0,
-	PTHREAD_CANCEL_ENABLE,
-	PTHREAD_CANCEL_DEFERRED,
-	PTHREAD_CANCEL_DISABLE,
-	PTHREAD_CANCELED
-};
+#define PTHREAD_KEY_MAX				8
 
 #define PTHREAD_COND_INITIALIZER	{-1, 0}
 #define PTHREAD_RWLOCK_INITIALIZER	{-1, 0}
@@ -44,6 +29,30 @@ enum {
 
 #define PTHREAD_EXPLICIT_SCHED		0
 #define PTHREAD_INHERIT_SCHED		1
+
+typedef rt_thread_t pthread_t;
+typedef long pthread_condattr_t;
+typedef long pthread_rwlockattr_t;
+typedef long pthread_mutexattr_t;
+typedef long pthread_barrierattr_t;
+
+typedef int pthread_key_t;
+typedef int pthread_once_t;
+
+/*
+ * Scheduling policies required by IEEE Std 1003.1-2001
+ */
+#define	SCHED_OTHER	0	/* Behavior can be FIFO or RR, or not */
+#define	SCHED_FIFO	1
+#define	SCHED_RR	2
+
+enum {
+	PTHREAD_CANCEL_ASYNCHRONOUS = 0,
+	PTHREAD_CANCEL_ENABLE,
+	PTHREAD_CANCEL_DEFERRED,
+	PTHREAD_CANCEL_DISABLE,
+	PTHREAD_CANCELED
+};
 
 enum {
     PTHREAD_MUTEX_NORMAL = 0,
@@ -65,7 +74,6 @@ enum {
 
 #define PTHREAD_PROCESS_PRIVATE  0
 #define PTHREAD_PROCESS_SHARED   1
-
 
 #define PTHREAD_SCOPE_PROCESS	0
 #define PTHREAD_SCOPE_SYSTEM	1
@@ -128,13 +136,6 @@ struct pthread_barrier
 	pthread_mutex_t mutex;
 };
 typedef struct pthread_barrier pthread_barrier_t;
-
-/*
- * Scheduling policies required by IEEE Std 1003.1-2001
- */
-#define	SCHED_OTHER	0	/* Behavior can be FIFO or RR, or not */
-#define	SCHED_FIFO	1
-#define	SCHED_RR	2
 
 /* pthread thread interface */
 int pthread_attr_destroy(pthread_attr_t *attr);

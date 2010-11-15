@@ -1,41 +1,18 @@
-#include "pthread.h"
-
-#define PTHREAD_MAGIC	0x70746873
-struct _pthread_data
-{
-	rt_uint32_t magic;
-	pthread_attr_t attr;
-	rt_thread_t tid;
-
-	void* (*thread_entry)(void* parameter);
-	void* thread_parameter;
-
-	/* return value */
-	void* return_value;
-
-	/* semaphore for joinable thread */
-	rt_sem_t joinable_sem;
-
-	void** tls; /* thread-local storage area */
-};
-typedef struct _pthread_data _pthread_data_t;
-
-rt_inline _pthread_data_t* get_pthread_data(pthread_t thread)
-{
-	RT_ASSERT(thread != RT_NULL);
-
-	return (_pthread_data_t*)thread->user_data;
-}
+#include <pthread.h>
+#include "pthread_internal.h"
 
 int pthread_system_init(void)
 {
+	/* initialize key area */
+	pthread_key_system_init();
+
 	return 0;
 }
 
 static void _pthread_cleanup(rt_thread_t tid)
 {
 	_pthread_data_t *ptd;
-	ptd = get_pthread_data(tid);
+	ptd = _pthread_get_data(tid);
 
 	/* clear cleanup function */
 	tid->cleanup = RT_NULL;
@@ -75,10 +52,10 @@ int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
 	/* tid shall be provided */
 	RT_ASSERT(tid != RT_NULL);
 
-	/* allocate pthread data */
+	/* allocate posix thread data */
 	ptd = (_pthread_data_t*)rt_malloc(sizeof(_pthread_data_t));
 	if (ptd == RT_NULL) return ENOMEM;
-	/* clean memory */
+	/* clean posix thread data memory */
 	rt_memset(ptd, 0, sizeof(_pthread_data_t));
 
 	if (attr != RT_NULL) ptd->attr = *attr;
@@ -161,7 +138,7 @@ int pthread_detach(pthread_t thread)
 {
 	_pthread_data_t* ptd;
 
-	ptd = get_pthread_data(thread);
+	ptd = _pthread_get_data(thread);
 
 	if (thread->stat == RT_THREAD_CLOSE)
 	{
@@ -177,6 +154,12 @@ int pthread_detach(pthread_t thread)
 			/* release thread allocated stack */
 			rt_free(ptd->tid->stack_addr);
 		}
+
+		/*
+		 * if this thread create the local thread data,
+		 * delete it
+		 */
+		if (ptd->tls != RT_NULL) rt_free(ptd->tls);
 		rt_free(ptd->tid);
 		rt_free(ptd);
 	}
@@ -205,7 +188,7 @@ int pthread_join (pthread_t thread, void **value_ptr)
 		return EDEADLK;
 	}
 
-	ptd = get_pthread_data(thread);
+	ptd = _pthread_get_data(thread);
 	if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)
 		return EINVAL; /* join on a detached pthread */
 
@@ -225,7 +208,7 @@ int pthread_cancel (pthread_t thread)
 {
 	_pthread_data_t* ptd;
 
-	ptd = get_pthread_data(thread);
+	ptd = _pthread_get_data(thread);
 
 	/* check cancel point */
 }
@@ -234,7 +217,7 @@ void pthread_exit (void* value)
 {
 	_pthread_data_t* ptd;
 
-	ptd = get_pthread_data(rt_thread_self());
+	ptd = _pthread_get_data(rt_thread_self());
 
 	/* set return value */
 	ptd->return_value = value;
@@ -281,10 +264,50 @@ int pthread_kill(pthread_t thread, int sig)
 
 void pthread_cleanup_pop(int execute)
 {
+	_pthread_data_t* ptd;
+	_pthread_cleanup_t* cleanup;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(rt_thread_self());
+	RT_ASSERT(ptd != RT_NULL);
+
+	if (execute)
+	{
+		rt_enter_critical();
+		cleanup = ptd->cleanup;
+		if (cleanup)
+			ptd->cleanup = cleanup->next;
+		rt_exit_critical();
+
+		if (cleanup)
+		{
+			cleanup->cleanup_func(cleanup->parameter);
+
+			rt_free(cleanup);
+		}
+	}
 }
 
 void pthread_cleanup_push(void (*routine)(void*), void *arg)
 {
+	_pthread_data_t* ptd;
+	_pthread_cleanup_t* cleanup;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(rt_thread_self());
+	RT_ASSERT(ptd != RT_NULL);
+
+	cleanup = (_pthread_cleanup_t*)rt_malloc(sizeof(_pthread_cleanup_t));
+	if (cleanup != RT_NULL)
+	{
+		cleanup->cleanup_func = routine;
+		cleanup->parameter = arg;
+
+		rt_enter_critical();
+		cleanup->next = ptd->cleanup;
+		ptd->cleanup = cleanup;
+		rt_exit_critical();
+	}
 }
 
 int pthread_setcancelstate(int state, int *oldstate)
