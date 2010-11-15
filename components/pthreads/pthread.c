@@ -274,3 +274,29 @@ int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(vo
 	return ENOTSUP;
 }
 
+int pthread_kill(pthread_t thread, int sig)
+{
+	return ENOTSUP;
+}
+
+void pthread_cleanup_pop(int execute)
+{
+}
+
+void pthread_cleanup_push(void (*routine)(void*), void *arg)
+{
+}
+
+int pthread_setcancelstate(int state, int *oldstate)
+{
+}
+
+int pthread_setcanceltype(int type, int *oldtype)
+{
+	return 0;
+}
+
+void pthread_testcancel(void)
+{
+}
+

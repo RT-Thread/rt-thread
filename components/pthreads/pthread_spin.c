@@ -1,4 +1,4 @@
-#include "pthread_spin.h"
+#include <pthread.h>
 
 int pthread_spin_init (pthread_spinlock_t *lock, int pshared)
 {
