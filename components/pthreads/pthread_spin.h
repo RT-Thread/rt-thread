@@ -2,9 +2,10 @@
 #define __PTHREAD_SPIN_H__
 #include <pthread.h>
 
+/* spinlock implementation, (ADVANCED REALTIME THREADS)*/
 struct pthread_spinlock
 {
-	int pshared;
+	int lock;
 };
 typedef struct pthread_spinlock pthread_spinlock_t;
 

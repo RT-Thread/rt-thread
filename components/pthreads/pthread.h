@@ -23,6 +23,8 @@
 typedef rt_thread_t pthread_t;
 
 typedef long pthread_condattr_t;
+typedef long pthread_rwlockattr_t;
+
 typedef int pthread_key_t;
 typedef int pthread_once_t;
 
@@ -34,8 +36,8 @@ enum {
 	PTHREAD_CANCELED
 };
 
-#define PTHREAD_COND_INITIALIZER
-#define PTHREAD_RWLOCK_INITIALIZER
+#define PTHREAD_COND_INITIALIZER	{-1, 0}
+#define PTHREAD_RWLOCK_INITIALIZER	{-1, 0}
 #define PTHREAD_MUTEX_INITIALIZER	{-1, 0}
 
 #define PTHREAD_CREATE_JOINABLE		0x00
