@@ -29,7 +29,7 @@ rtgui_view_t *demo_view_progressbar(rtgui_workbench_t* workbench)
 	
 	/* get demo view rect */
 	demo_view_get_rect(view, &rect);
-	label = rtgui_label_create("horizontal progress bar:");
+	label = rtgui_label_create("水平进度条:");
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
 	rect.x1 += 5; rect.x2 -= 5;
 	rect.y1 += 5; rect.y2 = rect.y1 + 18;
@@ -40,7 +40,7 @@ rtgui_view_t *demo_view_progressbar(rtgui_workbench_t* workbench)
 
 	/* get demo view rect */
 	demo_view_get_rect(view, &rect);
-	label = rtgui_label_create("vertical progress bar:");
+	label = rtgui_label_create("垂直进度条:");
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
 	rect.x1 += 5; rect.x2 -= 5;
 	rect.y1 += 45; rect.y2 = rect.y1 + 18;

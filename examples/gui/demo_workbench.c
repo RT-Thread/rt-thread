@@ -52,7 +52,7 @@ static void workbench_entry(void* parameter)
 
 	/* 初始化各个例子的视图 */
 #if RT_VERSION == 4
-	// demo_view_benchmark(workbench);
+	demo_view_benchmark(workbench);
 #endif
 
 	demo_view_dc(workbench);
@@ -68,7 +68,7 @@ static void workbench_entry(void* parameter)
 	demo_view_animation(workbench);
 #ifndef RTGUI_USING_SMALL_SIZE
 	demo_view_buffer_animation(workbench);
-	demo_view_instrument_panel(workbench);
+	// demo_view_instrument_panel(workbench);
 #endif
 	demo_view_window(workbench);
 	demo_view_label(workbench);

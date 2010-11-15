@@ -28,7 +28,7 @@ static void timeout(struct rtgui_timer* timer, void* parameter)
 		return ;
 
 	/* 获得demo view允许绘图的区域，主要用于判断边界 */
-	demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+	demo_view_get_logic_rect(RTGUI_VIEW(widget), &rect);
 	rect.y2 -= 5;
 
 	/* 判断是否是第一次绘图 */
@@ -72,7 +72,7 @@ static rt_bool_t animation_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 			return RT_FALSE;
 
         /* 获得demo view允许绘图的区域 */
-        demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+        demo_view_get_logic_rect(RTGUI_VIEW(widget), &rect);
 
 		/* 绘图 */
 		rect = text_rect;

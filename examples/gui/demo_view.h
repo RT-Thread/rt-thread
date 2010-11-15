@@ -27,6 +27,7 @@
 rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title);
 /* 获得演示视图提供给演示控件用的区域信息 */
 void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect);
+void demo_view_get_logic_rect(rtgui_view_t* view, rtgui_rect_t *rect);
 void demo_view_show(void);
 
 /* 如果是标准版，可以调用这个函数获得一个自动布局引擎 */

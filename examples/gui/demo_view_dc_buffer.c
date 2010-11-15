@@ -38,7 +38,7 @@ static rt_bool_t dc_buffer_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 			return RT_FALSE;
 
 		/* 获得demo view允许绘图的区域 */
-		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+		demo_view_get_logic_rect(RTGUI_VIEW(widget), &rect);
 
 		rect.x1 += 10;
 		rect.y1 += 10;

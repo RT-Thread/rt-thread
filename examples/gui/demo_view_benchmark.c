@@ -21,7 +21,7 @@ void _onidle(rtgui_widget_t* widget, rtgui_event_t *event)
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(view));
 	if (dc == RT_NULL) return ;
 
-	demo_view_get_rect(RTGUI_VIEW(view), &rect);
+	demo_view_get_logic_rect(RTGUI_VIEW(view), &rect);
 	draw_rect.x1 = RAND(rect.x1, rect.x2);
 	draw_rect.y1 = RAND(rect.y1, rect.y2);
 	draw_rect.x2 = RAND(draw_rect.x1, rect.x2);
@@ -50,7 +50,7 @@ void _draw_default(rtgui_widget_t* widget, rtgui_event_t* event)
 		return ;
 
 	/* 获得demo view允许绘图的区域 */
-	demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+	demo_view_get_logic_rect(RTGUI_VIEW(widget), &rect);
 
 	/* 擦除所有 */
 	RTGUI_WIDGET_BACKGROUND(widget) = default_background;

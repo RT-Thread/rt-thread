@@ -46,7 +46,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 			return RT_FALSE;
 
 		/* 获得demo view允许绘图的区域 */
-		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+		demo_view_get_logic_rect(RTGUI_VIEW(widget), &rect);
 
 		RTGUI_DC_TEXTALIGN(dc) = RTGUI_ALIGN_BOTTOM | RTGUI_ALIGN_CENTER_HORIZONTAL;
 		/* 显示GUI的版本信息 */
@@ -73,7 +73,7 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 填充一个圆形 */
 		RTGUI_DC_FC(dc) = green;
 		rtgui_dc_fill_circle(dc, rect.x1 + 30, rect.y1 + 10, 10);
-		
+#if 0
 		/* 画一个圆角矩形 */
 		rect.x1 = 150;
 		rect.y1 = 180;
@@ -100,6 +100,9 @@ rt_bool_t dc_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
 		/* 多边形 */
 		RTGUI_DC_FC(dc) = blue;
 		rtgui_dc_draw_polygon(dc, vx, vy, 6);
+
+#endif
+		RTGUI_DC_FC(dc) = blue;
 
 		/* 绘制不同的边框 */
 		{

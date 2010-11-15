@@ -56,6 +56,7 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 
 		/* 获得视图的位置信息(在加入到workbench中时，workbench会自动调整视图的大小) */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x1 += 5;
 		rect.y1 += 5;
 		rect.x2 -= 5;
@@ -79,13 +80,14 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 
 		/* 获得视图的位置信息 */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x2 -= 5;
 		rect.y2 -= 5;
-		rect.x1 = rect.x2 - 50;
-		rect.y1 = rect.y2 - 20;
+		rect.x1 = rect.x2 - 100;
+		rect.y1 = rect.y2 - 25;
 
 		/* 创建"下一个"按钮 */
-		next_btn = rtgui_button_create("Next");
+		next_btn = rtgui_button_create("下一个");
 		/* 设置onbutton动作到demo_view_next函数 */
 		rtgui_button_set_onbutton(next_btn, demo_view_next);
 		/* 设置按钮的位置信息 */
@@ -95,13 +97,14 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 
 		/* 获得视图的位置信息 */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
+		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x1 += 5;
 		rect.y2 -= 5;
-		rect.x2 = rect.x1 + 50;
-		rect.y1 = rect.y2 - 20;
+		rect.x2 = rect.x1 + 100;
+		rect.y1 = rect.y2 - 25;
 
 		/* 创建"上一个"按钮 */
-		prev_btn = rtgui_button_create("Prev");
+		prev_btn = rtgui_button_create("上一个");
 		/* 设置onbutton动作到demo_view_prev函数 */
 		rtgui_button_set_onbutton(prev_btn, demo_view_prev);
 		/* 设置按钮的位置信息 */
@@ -121,9 +124,21 @@ void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect)
 	RT_ASSERT(rect != RT_NULL);
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), rect);
+	rtgui_widget_rect_to_device(RTGUI_WIDGET(view), rect);
 	/* 去除演示标题和下方按钮的区域 */
 	rect->y1 += 45;
-	rect->y2 -= 25;
+	rect->y2 -= 35;
+}
+
+void demo_view_get_logic_rect(rtgui_view_t* view, rtgui_rect_t *rect)
+{
+	RT_ASSERT(view != RT_NULL);
+	RT_ASSERT(rect != RT_NULL);
+
+	rtgui_widget_get_rect(RTGUI_WIDGET(view), rect);
+	/* 去除演示标题和下方按钮的区域 */
+	rect->y1 += 45;
+	rect->y2 -= 35;
 }
 
 /* 当是标准版本时，这个函数用于返回自动布局引擎box控件 */
