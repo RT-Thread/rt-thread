@@ -36,6 +36,7 @@ _start:
     li      sp, SYSTEM_STACK
     la      gp, _gp
 
+#if 0
     /* copy IRAM section */
     la     t0, _iramcopy
     la     t1, _iramstart
@@ -46,6 +47,7 @@ _iram_loop:
     addiu  t1, 4
     bne    t1, t2, _iram_loop
     addiu  t0, 4
+#endif
 
     /* clear bss */
     la      t0, __bss_start
@@ -94,6 +96,9 @@ cp0_get_lo:
 	/* Exception Handler */
 	/* 0x0 - TLB refill handler */
     .section .vectors.1, "ax", %progbits
+	.global tlb_refill_exception
+	.type	tlb_refill_exception,@function
+tlb_refill_exception:
     j      tlb_refill_handler
     nop
 	
@@ -104,11 +109,17 @@ cp0_get_lo:
     
 	/* 0x180 - Exception/Interrupt handler */
     .section .vectors.3, "ax", %progbits
+	.global general_exception
+	.type	general_exception,@function
+general_exception:
     j      _general_exception_handler
     nop
     
 	/* 0x200 - Special Exception Interrupt handler (when IV is set in CP0_CAUSE) */
     .section .vectors.4, "ax", %progbits
+	.global irq_exception
+	.type	irq_exception,@function
+irq_exception:
     j      _irq_handler
     nop
 	
