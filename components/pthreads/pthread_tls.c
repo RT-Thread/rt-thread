@@ -1,13 +1,7 @@
 #include <pthread.h>
 #include "pthread_internal.h"
 
-struct _pthread_key_data
-{
-	int is_used;
-	void* (*destructor)(void* parameter);
-};
-typedef struct _pthread_key_data _pthread_key_data_t;
-static _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
+_pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
 
 void pthread_key_system_init()
 {
@@ -82,3 +76,4 @@ int pthread_key_delete(pthread_key_t key)
 
 	return 0;
 }
+

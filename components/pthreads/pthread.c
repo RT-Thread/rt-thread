@@ -57,6 +57,9 @@ int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
 	if (ptd == RT_NULL) return ENOMEM;
 	/* clean posix thread data memory */
 	rt_memset(ptd, 0, sizeof(_pthread_data_t));
+	ptd->canceled = 0;
+	ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
+	ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
 
 	if (attr != RT_NULL) ptd->attr = *attr;
 	else 
@@ -204,23 +207,54 @@ int pthread_join (pthread_t thread, void **value_ptr)
 	else return ESRCH;
 }
 
-int pthread_cancel (pthread_t thread)
-{
-	_pthread_data_t* ptd;
-
-	ptd = _pthread_get_data(thread);
-
-	/* check cancel point */
-}
-
 void pthread_exit (void* value)
 {
 	_pthread_data_t* ptd;
+	_pthread_cleanup_t* cleanup;
+	_pthread_key_data_t* key;
+	extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
 
 	ptd = _pthread_get_data(rt_thread_self());
 
+	rt_enter_critical();
+	/* disable cancel */
+	ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
 	/* set return value */
 	ptd->return_value = value;
+	rt_exit_critical();
+
+	/* invoke pushed cleanup */
+	while (ptd->cleanup != RT_NULL)
+	{
+		cleanup = ptd->cleanup;
+		ptd->cleanup = cleanup->next;
+
+		cleanup->cleanup_func(cleanup->parameter);
+		/* release this cleanup function */
+		rt_free(cleanup);
+	}
+
+	/* destruct thread local key */
+	if (ptd->tls != RT_NULL)
+	{
+		void* data;
+		rt_uint32_t index;
+		
+		for (index = 0; index < PTHREAD_KEY_MAX; index ++)
+		{
+			if (_thread_keys[index].is_used)
+			{
+				data = ptd->tls[index];
+				if (data)
+					_thread_keys[index].destructor(data);
+			}
+		}
+
+		/* release tls area */
+		rt_free(ptd->tls);
+		ptd->tls = RT_NULL;
+	}
+
 	if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)
 	{
 		/* release the joinable pthread */
@@ -312,14 +346,71 @@ void pthread_cleanup_push(void (*routine)(void*), void *arg)
 
 int pthread_setcancelstate(int state, int *oldstate)
 {
+	_pthread_data_t* ptd;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(rt_thread_self());
+	RT_ASSERT(ptd != RT_NULL);
+
+	if ((state == PTHREAD_CANCEL_ENABLE) || (state == PTHREAD_CANCEL_DISABLE))
+	{
+    	if (oldstate) *oldstate = ptd->cancelstate;
+		ptd->cancelstate = state;
+
+		return 0;
+	}
+
+	return EINVAL;
 }
 
 int pthread_setcanceltype(int type, int *oldtype)
 {
+	_pthread_data_t* ptd;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(rt_thread_self());
+	RT_ASSERT(ptd != RT_NULL);
+
+	if ((type != PTHREAD_CANCEL_DEFERRED) && (type != PTHREAD_CANCEL_ASYNCHRONOUS)) 
+		return EINVAL;
+
+	if (oldtype) *oldtype = ptd->canceltype;
+	ptd->canceltype = type;
+
 	return 0;
 }
 
 void pthread_testcancel(void)
 {
+	int cancel=0;
+	_pthread_data_t* ptd;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(rt_thread_self());
+	RT_ASSERT(ptd != RT_NULL);
+
+	if (ptd->cancelstate == PTHREAD_CANCEL_ENABLE) cancel = ptd->canceled;
+	if (cancel) pthread_exit((void*)PTHREAD_CANCELED);
+}
+
+int pthread_cancel(pthread_t thread)
+{
+	_pthread_data_t* ptd;
+
+	/* get posix thread data */
+	ptd = _pthread_get_data(thread);
+	RT_ASSERT(ptd != RT_NULL);
+
+	/* set canceled */
+	if (ptd->cancelstate == PTHREAD_CANCEL_ENABLE)
+	{
+		ptd->canceled = 1;
+		if (ptd->canceltype == PTHREAD_CANCEL_ASYNCHRONOUS)
+		{
+			/* TODO: need cancel thread */
+		}
+	}
+
+	return 0;
 }
 

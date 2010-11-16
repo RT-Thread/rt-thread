@@ -13,6 +13,13 @@ struct _pthread_cleanup
 };
 typedef struct _pthread_cleanup _pthread_cleanup_t;
 
+struct _pthread_key_data
+{
+	int is_used;
+	void (*destructor)(void* parameter);
+};
+typedef struct _pthread_key_data _pthread_key_data_t;
+
 #define PTHREAD_MAGIC	0x70746873
 struct _pthread_data
 {
@@ -28,6 +35,11 @@ struct _pthread_data
 
 	/* semaphore for joinable thread */
 	rt_sem_t joinable_sem;
+
+	/* cancel state and type */
+	rt_uint8_t cancelstate;
+	volatile rt_uint8_t canceltype;
+	volatile rt_uint8_t canceled;
 
 	_pthread_cleanup_t* cleanup;
 	void** tls; /* thread-local storage area */
