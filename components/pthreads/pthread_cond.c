@@ -148,7 +148,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
 
 	result = rt_sem_take(&(cond->sem), timeout);
 	/* lock mutex again */
-	pthred_mutex_lock(mutex);
+	pthread_mutex_lock(mutex);
 	return result;
 }
 

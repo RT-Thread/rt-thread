@@ -1,5 +1,6 @@
 #include <rtthread.h>
 #include "pthread.h"
+#include "sched.h"
 #include <string.h>
 
 #define DEFAULT_STACK_SIZE	2048

@@ -39,13 +39,6 @@ typedef long pthread_barrierattr_t;
 typedef int pthread_key_t;
 typedef int pthread_once_t;
 
-/*
- * Scheduling policies required by IEEE Std 1003.1-2001
- */
-#define	SCHED_OTHER	0	/* Behavior can be FIFO or RR, or not */
-#define	SCHED_FIFO	1
-#define	SCHED_RR	2
-
 enum {
 	PTHREAD_CANCEL_ASYNCHRONOUS = 0,
 	PTHREAD_CANCEL_ENABLE,
@@ -77,10 +70,6 @@ enum {
 
 #define PTHREAD_SCOPE_PROCESS	0
 #define PTHREAD_SCOPE_SYSTEM	1
-
-struct sched_param {
-	int	sched_priority;
-};
 
 struct pthread_attr
 {

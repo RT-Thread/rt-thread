@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include <sched.h>
 #include "pthread_internal.h"
 
 int pthread_system_init(void)
