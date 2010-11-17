@@ -36,19 +36,6 @@ _start:
     li      sp, SYSTEM_STACK
     la      gp, _gp
 
-#if 0
-    /* copy IRAM section */
-    la     t0, _iramcopy
-    la     t1, _iramstart
-    la     t2, _iramend
-_iram_loop:
-    lw     t3, 0(t0)
-    sw     t3, 0(t1)
-    addiu  t1, 4
-    bne    t1, t2, _iram_loop
-    addiu  t0, 4
-#endif
-
     /* clear bss */
     la      t0, __bss_start
     la      t1, __bss_end

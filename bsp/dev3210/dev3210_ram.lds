@@ -16,105 +16,71 @@
 OUTPUT_FORMAT("elf32-tradlittlemips", "elf32-tradlittlemips", "elf32-tradlittlemips")
 OUTPUT_ARCH(mips)
 
-MEMORY
-{
-   /* 16M SDRAM */
-   DRAM : ORIGIN = 0x80200000, LENGTH = 0x01000000
-   /* 16K SRAM  */
-   IRAM : ORIGIN = 0x80000000, LENGTH = 0x00004000
-}
-
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x80200000 ;
+    . = 0x80200000 ;
 
-	.start :
+    .start :
     {
         *(.start);
-    } > DRAM
+    }
 
     . = ALIGN(4);
-
-	.text : 
+    .text : 
     {
-     *(.text)
-     *(.text.*)
-     *(.rodata)
-     *(.rodata.*)
-     *(.rodata1)
-     *(.rodata1.*)
-     
-     /* section information for finsh shell */
-     . = ALIGN(4);
-     __fsymtab_start = .;
-     KEEP(*(FSymTab))
-     __fsymtab_end = .;
-     . = ALIGN(4);
-     __vsymtab_start = .;
-     KEEP(*(VSymTab))
-     __vsymtab_end = .;
-     . = ALIGN(4);
-    } > DRAM
+         *(.text)
+         *(.text.*)
+         *(.rodata)
+         *(.rodata.*)
+         *(.rodata1)
+         *(.rodata1.*)
+         
+         /* section information for finsh shell */
+         . = ALIGN(4);
+         __fsymtab_start = .;
+         KEEP(*(FSymTab))
+         __fsymtab_end = .;
+         . = ALIGN(4);
+         __vsymtab_start = .;
+         KEEP(*(VSymTab))
+         __vsymtab_end = .;
+         . = ALIGN(4);
+    }
 
     . = ALIGN(4);
-
-	.data : 
+    .data : 
     {
-     *(.data)
-     *(.data.*)
-    
-     *(.data1)
-     *(.data1.*)
-     
-     . = ALIGN(8);
-     _gp = ABSOLUTE(.);     /* Base of small data */
-     
-     *(.sdata)
-     *(.sdata.*)
-    } > DRAM
+         *(.data)
+         *(.data.*)
+        
+         *(.data1)
+         *(.data1.*)
+         
+         . = ALIGN(8);
+         _gp = ABSOLUTE(.);     /* Base of small data */
+         
+         *(.sdata)
+         *(.sdata.*)
+    }
 
-    . = ALIGN(4);
-	_iramat = .;
-
-	.iram : AT(_iramat)
+    .sbss : 
     {
-		_iramstart = .;
-        *(.vectors.1);
-        . = 0x100;
-        *(.vectors.2);
-        . = 0x180;
-        *(.vectors.3);
-        . = 0x200;
-        *(.vectors.4);
-        *(.vectors);
-
-        *(.icode);
-        *(.irodata);
-        *(.idata);
-        KEEP(*(.vectors*))
-		_iramend = .;
-    } > IRAM
-    _iramcopy = LOADADDR(.iram);
-
-	.sbss : 
-  	{
-	__bss_start = .;
-		*(.sbss)
+        __bss_start = .;
+        *(.sbss)
         *(.sbss.*)
         *(.dynsbss)
-		*(.scommon)
- 	} > DRAM
+        *(.scommon)
+    }
 
- 	.bss :
- 	{
-		*(.bss)
+    .bss :
+    {
+        *(.bss)
         *(.bss.*)
         *(.dynbss)
-		*(COMMON)
-	__bss_end = .;
- 	} > DRAM
-	
+        *(COMMON)
+        __bss_end = .;
+    }
     _end = .;
 
     /* Stabs debugging sections.  */

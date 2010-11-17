@@ -1,6 +1,11 @@
+# download script for boot loader
 ifaddr dmfe0 192.168.1.100
 load tftp://192.168.1.5/boot_3210 0x80200000
 
+# download script for RT-Thread
 ifaddr dmfe0 192.168.1.100
-load tftp://192.168.1.5/rtthread.elf 0x80200000
-oload tftp://192.168.1.5/rtthread.bin 0x80200000
+load tftp://192.168.1.5/rtthread.elf
+
+# burn script for RT-Thread
+ifaddr dmfe0 192.168.1.100
+devcp tftp://192.168.1.5/rtthread.elf /dev/mtd0
