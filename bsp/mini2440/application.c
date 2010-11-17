@@ -51,6 +51,10 @@ extern void rt_hw_touch_init(void);
 #define RT_INIT_THREAD_STACK_SIZE (2*1024)
 #endif
 
+#ifdef RT_USING_DFS_ROMFS
+#include <dfs_romfs.h>
+#endif
+
 void rt_init_thread_entry(void* parameter)
 {
 /* Filesystem Initialization */
@@ -62,7 +66,6 @@ void rt_init_thread_entry(void* parameter)
 #if defined(RT_USING_DFS_ELMFAT)
 		/* init the elm chan FatFs filesystam*/
 		elm_init();
-
 		/* mount sd card fat partition 1 as root directory */
 		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
 		{
@@ -72,6 +75,16 @@ void rt_init_thread_entry(void* parameter)
 			rt_kprintf("File System initialzation failed!\n");
 #endif
 
+#if defined(RT_USING_DFS_ROMFS)
+		dfs_romfs_init();
+		if (dfs_mount(RT_NULL, "/rom", "rom", 0, &romfs_root) == 0)
+		{
+			rt_kprintf("ROM File System initialized!\n");
+		}
+		else
+			rt_kprintf("ROM File System initialzation failed!\n");
+#endif
+
 #if defined(RT_USING_DFS_DEVFS)
 		devfs_init();
 		if (dfs_mount(RT_NULL, "/dev", "devfs", 0, 0) == 0)
@@ -79,8 +92,10 @@ void rt_init_thread_entry(void* parameter)
 		else
 			rt_kprintf("Device File System initialzation failed!\n");
 
+		#ifdef RT_USING_NEWLIB
 		/* init libc */
 		libc_system_init("uart0");
+		#endif
 #endif
 	}
 #endif
