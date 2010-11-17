@@ -344,6 +344,34 @@ void pthread_cleanup_push(void (*routine)(void*), void *arg)
 	}
 }
 
+/*
+ * According to IEEE Std 1003.1, 2004 Edition , following pthreads
+ * interface support cancellation point:
+ * mq_receive()
+ * mq_send()
+ * mq_timedreceive()
+ * mq_timedsend()
+ * msgrcv()
+ * msgsnd()
+ * msync()
+ * pthread_cond_timedwait()
+ * pthread_cond_wait()
+ * pthread_join()
+ * pthread_testcancel()
+ * sem_timedwait()
+ * sem_wait()
+ *
+ * A cancellation point may also occur when a thread is
+ * executing the following functions:
+ * pthread_rwlock_rdlock()
+ * pthread_rwlock_timedrdlock()
+ * pthread_rwlock_timedwrlock()
+ * pthread_rwlock_wrlock()
+ *
+ * The pthread_cancel(), pthread_setcancelstate(), and pthread_setcanceltype()
+ * functions are defined to be async-cancel safe.
+ */
+
 int pthread_setcancelstate(int state, int *oldstate)
 {
 	_pthread_data_t* ptd;
@@ -397,6 +425,9 @@ int pthread_cancel(pthread_t thread)
 {
 	_pthread_data_t* ptd;
 
+	/* cancel self */
+	if (thread == rt_thread_self()) return 0;
+
 	/* get posix thread data */
 	ptd = _pthread_get_data(thread);
 	RT_ASSERT(ptd != RT_NULL);
@@ -407,7 +438,14 @@ int pthread_cancel(pthread_t thread)
 		ptd->canceled = 1;
 		if (ptd->canceltype == PTHREAD_CANCEL_ASYNCHRONOUS)
 		{
-			/* TODO: need cancel thread */
+			/*
+			 * to detach thread.
+			 * this thread will be removed from scheduler list
+			 * and because there is a cleanup function in the
+			 * thread (pthread_cleanup), it will move to defunct
+			 * thread list and wait for handling in idle thread.
+			 */
+			rt_thread_detach(thread);
 		}
 	}
 
