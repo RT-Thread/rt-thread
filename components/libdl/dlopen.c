@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rtm.h>
 
-void* rt_dlopen(const char *filename, int flags)
+void* dlopen(const char *filename, int flags)
 {
 	rt_module_t module;
 	
@@ -35,5 +35,5 @@ void* rt_dlopen(const char *filename, int flags)
 	}	
 }
 
-RTM_EXPORT(rt_dlopen)
+RTM_EXPORT(dlopen)
 

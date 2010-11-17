@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rtm.h>
 
-int rt_dlclose (void *handle)
+int dlclose (void *handle)
 {
 	rt_module_t module;
 	
@@ -32,5 +32,5 @@ int rt_dlclose (void *handle)
 	return RT_TRUE;
 }
 
-RTM_EXPORT(rt_dlclose)
+RTM_EXPORT(dlclose)
 

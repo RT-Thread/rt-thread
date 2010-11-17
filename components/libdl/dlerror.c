@@ -15,10 +15,10 @@
 #include <rtthread.h>
 #include <rtm.h>
 
-const char *rt_dlerror(void)
+const char *dlerror(void)
 {
 	return "TODO";
 }
 
-RTM_EXPORT(rt_dlerror)
+RTM_EXPORT(dlerror)
 

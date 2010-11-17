@@ -15,12 +15,14 @@
 #include <rtthread.h>
 #include <rtm.h>
 
-void* rt_dlsym(void *handle, const char* symbol)
+void* dlsym(void *handle, const char* symbol)
 {
 	int i;
-	rt_module_t module = (rt_module_t)handle;
+	rt_module_t module;
 	
 	RT_ASSERT(handle != RT_NULL);
+
+	module = (rt_module_t)handle;
 
 	for(i=0; i<module->nsym; i++)
 	{
@@ -31,5 +33,5 @@ void* rt_dlsym(void *handle, const char* symbol)
 	return RT_NULL;
 }
 
-RTM_EXPORT(rt_dlsym)
+RTM_EXPORT(dlsym)
 
