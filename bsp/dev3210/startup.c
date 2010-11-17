@@ -17,6 +17,7 @@
 #include <cache.h>
 
 #include "board.h"
+#define A_K0BASE		0x80000000
 
 /**
  * @addtogroup Loongson SoC3210
@@ -42,6 +43,10 @@ void dump_mem(const unsigned char* addr)
 	rt_kprintf("\n");
 }
 
+extern void tlb_refill_exception(void);
+extern void general_exception(void);
+extern void irq_exception(void);
+
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -52,12 +57,10 @@ void rtthread_startup(void)
 	/* init hardware interrupt */
 	rt_hw_interrupt_init();
 
-	/*
-	dump_mem((rt_uint8_t*)0x80000000);
-	dump_mem((rt_uint8_t*)0x80000100);
-	dump_mem((rt_uint8_t*)0x80000180);
-	dump_mem((rt_uint8_t*)0x80000200);
-	*/
+	/* copy vector */
+	memcpy((void *)A_K0BASE, tlb_refill_exception, 0x20);
+	memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x20);
+	memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x20);
 
 	/* init board */
 	rt_hw_board_init();
