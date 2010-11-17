@@ -129,13 +129,15 @@ void rt_thread_idle_excute(void)
 			if((module->module_thread == RT_NULL) &&
 				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
 			{
-				/* unload module */
-				rt_module_unload(module);
+				module->nref--;
 			}	
 		}
-#endif	//RT_USING_MODULE
+
+		/* unload module */
+		if(module->nref == 0) 	rt_module_unload(module);
+#endif
 	}
-#endif //RT_USING_HEAP
+#endif
 }
 
 static void rt_thread_idle_entry(void* parameter)

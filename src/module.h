@@ -97,6 +97,7 @@ typedef struct {
 #define ELF_STRTAB      ".strtab"	/* string table */
 #define ELF_SYMTAB      ".symtab"	/* symbol table */
 #define ELF_TEXT        ".text"		/* code */
+#define ELF_RTMSYMTAB 	"RTMSymTab"
 
 /* Symbol Table Entry */
 typedef struct elf32_sym {

@@ -1,5 +1,5 @@
 /*
- * File      : module.c
+ * File      : rtm.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
  *

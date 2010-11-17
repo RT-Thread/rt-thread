@@ -39,15 +39,11 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 
 		rt_memset(name, 0, sizeof(name));
 
-		/* 获得图像的类型 */
+		/* 获得应用模块的类型 */
 		if (rt_strstr(path, ".mo") != RT_NULL || rt_strstr(path, ".so") != RT_NULL)
 		{
-			rt_memcpy(name, "mod", 4);
+			rt_module_open(path);
 		}	
-
-		/* 如果图像文件有效，创建相应的rtgui_image对象 */
-		if (name[0] != '\0')
-				rt_module_load_from_file(name, path);
 	}
 
 	/* 删除 文件列表 视图 */

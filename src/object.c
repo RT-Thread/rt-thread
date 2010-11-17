@@ -283,9 +283,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 #ifdef RT_USING_MODULE
 	if(rt_module_self() != RT_NULL)
 	{
-		object->module_id = (void*)rt_module_self();
 		object->flag |= RT_OBJECT_FLAG_MODULE;
-	}	
+	}
+	object->module_id = (void*)rt_module_self();
 #endif
 
 	/* copy name */

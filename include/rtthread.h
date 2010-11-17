@@ -308,8 +308,8 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
  */
 
 rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr);
-rt_module_t rt_module_load_from_file(const rt_uint8_t* name, const char* filename);
 rt_err_t rt_module_unload(rt_module_t module);
+rt_module_t rt_module_open(const char* filename);
 void *rt_module_malloc(rt_size_t size);
 void *rt_module_realloc(void *ptr, rt_size_t size);
 void rt_module_free(rt_module_t module, void *addr);

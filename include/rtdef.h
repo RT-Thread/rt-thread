@@ -392,6 +392,13 @@ struct rt_module
 	rt_list_t	module_page;								/* module using page		 				*/
 	void*		page_node_pool;						
 
+	/* module symbol table */
+	rt_uint32_t nsym;
+	struct rt_module_symtab *symtab;
+
+	/* reference count */
+	rt_uint32_t nref;		
+	
 	/* object in this module, module object is the last basic object type */
 	struct rt_object_information module_object[RT_Object_Class_Module];
 };
