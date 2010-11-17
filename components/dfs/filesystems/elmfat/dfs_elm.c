@@ -220,7 +220,6 @@ int dfs_elm_open(struct dfs_fd* file)
 			}
 		}
 
-
 		/* open directory */
 		dir = (DIR *)rt_malloc(sizeof(DIR));
 		if (dir == RT_NULL)

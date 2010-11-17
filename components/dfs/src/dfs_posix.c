@@ -257,7 +257,7 @@ int unlink(const char *pathname)
  * this function is a POSIX compliant version, which will get file information.
  * 
  * @param file the file name
- * @param buf the the data buffer to save stat description.
+ * @param buf the data buffer to save stat description.
  *
  * @return 0 on successful, -1 on failed.
  */
@@ -272,6 +272,45 @@ int stat(const char *file, struct stat *buf)
 		return -1;
 	}
 	return result;
+}
+
+/**
+ * this function is a POSIX compliant version, which will get file status.
+ *
+ * @param fildes the file description
+ * @param buf the data buffer to save stat description.
+ */
+int fstat(int fildes, struct stat *buf)
+{
+	int result;
+	struct dfs_fd* d;
+
+	/* get the fd */
+	d  = fd_get(fildes);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-RT_ERROR);
+		return -1;
+	}
+
+	/* it's the root directory */
+	buf->st_dev   = 0;
+
+	buf->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
+			DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+	if (d->type == FT_DIRECTORY)
+	{
+		buf->st_mode &= ~DFS_S_IFREG;
+		buf->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+	}
+
+	buf->st_size  = d->size;
+	buf->st_mtime = 0;
+	buf->st_blksize = 512;
+
+	fd_put(d);
+
+	return DFS_STATUS_OK;
 }
 
 /**

@@ -99,6 +99,7 @@ off_t lseek(int fd, off_t offset, int whence);
 int rename(const char* old, const char* new );
 int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
+int fstat(int fildes, struct stat *buf);
 int statfs(const char *path, struct statfs *buf);
 
 /* directory api*/
