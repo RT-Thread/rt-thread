@@ -50,12 +50,15 @@ void thread_test()
 }
 FINSH_FUNCTION_EXPORT(thread_test, test thread!!);
 
+#ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+#endif
 
 int rt_application_init()
 {
+#ifdef RT_USING_RTGUI
 	rtgui_rect_t rect;
 
 	rtgui_system_server_init();
@@ -76,57 +79,9 @@ int rt_application_init()
 	rtgui_panel_set_default_focused("main");
 
 	rt_hw_lcd_init();
-
-	/* init example workbench */
-	// workbench_init();
+#endif
 
 	return 0;
 }
-
-/* key simulator */
-static struct rtgui_event_kbd kbd_event;
-void key_simulator(int key)
-{
-    /* init keyboard event */
-    RTGUI_EVENT_KBD_INIT(&kbd_event);
-    kbd_event.mod  = RTGUI_KMOD_NONE;
-    kbd_event.unicode = 0;
-    kbd_event.type = RTGUI_KEYDOWN;
-	kbd_event.key  = key;
-
-	/* post down event */
-	rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
-	
-	/* delay to post up event */
-	rt_thread_delay(50);
-
-	/* post up event */
-	kbd_event.type = RTGUI_KEYUP;
-	rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
-}
-
-void left()
-{
-	key_simulator(RTGUIK_LEFT);
-}
-FINSH_FUNCTION_EXPORT(left, left key);
-
-void right()
-{
-	key_simulator(RTGUIK_LEFT);
-}
-FINSH_FUNCTION_EXPORT(right, right key);
-
-void down()
-{
-	key_simulator(RTGUIK_DOWN);
-}
-FINSH_FUNCTION_EXPORT(down, down key);
-
-void up()
-{
-	key_simulator(RTGUI_KEYUP);
-}
-FINSH_FUNCTION_EXPORT(up, up key);
 
 /*@}*/

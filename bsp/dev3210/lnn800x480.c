@@ -13,6 +13,7 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_RTGUI
 #include <soc3210.h>
 #include <rtgui/driver.h>
 #include <rtgui/color.h>
@@ -171,10 +172,8 @@ void lcd_init()
 	rt_kprintf("HVLEN 0x%08x\n", LCD_HVLEN);
 	rt_kprintf("HSB_MISC 0x%08x\n", HSB_MISC_REG);
 
-#ifdef RT_USING_RTGUI
 	/* add lcd driver into graphic driver */
 	rtgui_graphic_driver_add(&_rtgui_lcd_driver);
-#endif
 }
 FINSH_FUNCTION_EXPORT(lcd_init, init lcd);
 
@@ -182,3 +181,4 @@ void rt_hw_lcd_init()
 {
 	lcd_init();
 }
+#endif
