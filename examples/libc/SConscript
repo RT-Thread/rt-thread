@@ -1,0 +1,8 @@
+Import('env')
+
+src_local = Glob('*.c')
+
+# The set of source files associated with this SConscript file.
+obj = env.Object(src_local)
+
+Return('obj')
