@@ -1,0 +1,7 @@
+# for module compiling
+import os
+Import('RTT_ROOT')
+
+objs = SConscript('ftk/src/os/rt-thread/SConscript')
+
+Return('objs')
