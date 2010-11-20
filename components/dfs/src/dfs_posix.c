@@ -282,7 +282,6 @@ int stat(const char *file, struct stat *buf)
  */
 int fstat(int fildes, struct stat *buf)
 {
-	int result;
 	struct dfs_fd* d;
 
 	/* get the fd */

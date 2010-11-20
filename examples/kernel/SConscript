@@ -1,6 +1,6 @@
-Import('env')
+from building import *
 
-src_local = Split("""
+src = Split("""
 tc_comm.c
 thread_static.c
 thread_dynamic.c
@@ -32,8 +32,6 @@ heap_realloc.c
 memp_simple.c
 """)
 
-# The set of source files associated with this SConscript file.
-obj = env.Object(src_local)
-env.Append(CPPDEFINES='RT_USING_TC')
+group = DefineGroup('examples', src, depend = ['RT_USING_TC'])
 
-Return('obj')
+Return('group')

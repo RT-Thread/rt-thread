@@ -1,41 +1,25 @@
-Import('env')
-Import('projects')
+import rtconfig
 Import('RTT_ROOT')
-Import('rtconfig')
-
-# group definitions
-group = {}
-group['name'] = 'Startup'
-group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/bsp/stm3210']
-group['CPPDEFINES'] = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
-group['LINKFLAGS'] = ''
+from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
 src_drv = ['rtc.c', 'usart.c', 'led.c']
 
-if rtconfig.RT_USING_DFS:
+if GetDepend('RT_USING_DFS'):
 	if rtconfig.STM32_TYPE == 'STM32F10X_HD':
 		src_drv += ['sdcard.c']
 	else:
 		src_drv += ['msd.c']
 
-if rtconfig.RT_USING_LWIP:
+if GetDepend('RT_USING_LWIP'):
 	if rtconfig.STM32_TYPE == 'STM32F10X_CL':
 		src_drv += ['stm32_eth.c']
 	else:
 		src_drv += ['enc28j60.c']
 
-group['src'] = File(src_bsp + src_drv)
+src = src_bsp + src_drv
+CPPPATH = [RTT_ROOT + '/bsp/stm3210']
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-obj = env.Object(group['src'])
-
-Return('obj')
+Return('group')

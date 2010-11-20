@@ -1,5 +1,4 @@
-Import('env')
-Import('projects')
+from building import *
 
 src = Split("""
 demo_view_dc_buffer.c
@@ -32,22 +31,6 @@ gui_init.c
 mywidget.c
 """)
 
-group = {}
-group['name'] = 'GUI demo'
-group['src'] = File(src)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = ['']
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
+group = DefineGroup('gui_examples', src, depend = ['RTGUI_USING_EXAMPLES'])
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-objs = env.Object(group['src'])
-
-Return('objs')
+Return('group')

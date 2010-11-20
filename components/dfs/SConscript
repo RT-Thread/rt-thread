@@ -1,8 +1,8 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
-Import('projects')
+Import('rtconfig')
+from building import *
 
+# The set of source files associated with this SConscript file.
 dfs = Split("""
 src/dfs.c
 src/dfs_fs.c
@@ -67,45 +67,27 @@ src_local = dfs
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
 
-if 'RT_USING_DFS_YAFFS2' in dir(rtconfig) and rtconfig.RT_USING_DFS_YAFFS2:
+if GetDepend('RT_USING_DFS_YAFFS2'):
     src_local = src_local + yaffs2_main + yaffs2_comm
     path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
 
-if 'RT_DFS_ELM_USE_LFN' in dir(rtconfig) and rtconfig.RT_DFS_ELM_USE_LFN:
-    elmfat += ['filesystems/elmfat/option/cc936.c']
-
-if 'RT_USING_DFS_ELMFAT' in dir(rtconfig) and rtconfig.RT_USING_DFS_ELMFAT:
+if GetDepend('RT_USING_DFS_ELMFAT'):
+    if GetDepend('RT_DFS_ELM_USE_LFN'):
+        elmfat += ['filesystems/elmfat/option/cc936.c']
     src_local = src_local + elmfat
 
-if 'RT_USING_DFS_NFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_NFS and rtconfig.RT_USING_LWIP:
+if GetDepend(['RT_USING_DFS_NFS', 'RT_USING_LWIP']):
     src_local = src_local + nfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/nfs']
 
-if 'RT_USING_DFS_ROMFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_ROMFS:
+if GetDepend('RT_USING_DFS_ROMFS'):
     src_local = src_local + romfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/romfs']
 
-if 'RT_USING_DFS_DEVFS' in dir(rtconfig) and rtconfig.RT_USING_DFS_DEVFS:
+if GetDepend('RT_USING_DFS_DEVFS'):
     src_local = src_local + devfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/devfs']
 
-# group definitions
-group = {}
-group['name'] = 'Filesystem'
-group['src'] = File(src_local)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = path
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
+group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-obj = env.Object(group['src'])
-
-Return('obj')
+Return('group')

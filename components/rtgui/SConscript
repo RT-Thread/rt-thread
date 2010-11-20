@@ -1,7 +1,5 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
-Import('projects')
+from building import *
 
 common_src = Split("""
 common/blit.c
@@ -63,30 +61,12 @@ widgets/workbench.c
 """)
 
 # The set of source files associated with this SConscript file.
-src_local = common_src + server_src + widgets_src
+src = common_src + server_src + widgets_src
 
 path = [RTT_ROOT + '/components/rtgui/include',
 	RTT_ROOT + '/components/rgtui/common', 
 	RTT_ROOT + '/components/rtgui/server', 
 	RTT_ROOT + '/components/rtgui/widgets']
+group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI'], CPPPATH = path)
 
-# group definitions
-group = {}
-group['name'] = 'GUI'
-group['src'] = File(src_local)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = path
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
-
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-objs = env.Object(group['src'])
-
-Return('objs')
+Return('group')

@@ -1,9 +1,7 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
-Import('projects')
+from building import *
 
-src_local = Split("""
+src = Split("""
 modbus/mb.c
 modbus/mbmaster.c
 modbus/ascii/mbascii.c
@@ -30,23 +28,6 @@ path = [RTT_ROOT + '/components/net/freemodbus/modbus/include',
 	RTT_ROOT + '/components/net/freemodbus/modbus/rtu', 
 	RTT_ROOT + '/components/net/freemodbus/modbus/ascii']
 
-# group definitions
-group = {}
-group['name'] = 'FreeModBus'
-group['src'] = File(src_local)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = path
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
+group = DefineGroup('FreeModbus', src, depend = ['RT_USING_FREEMODBUS'], CPPPATH = path)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-objs = env.Object(group['src'])
-
-Return('objs')
+Return('group')

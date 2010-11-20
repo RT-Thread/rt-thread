@@ -201,12 +201,14 @@ _free_r (struct _reent *ptr, void *addr)
 	rt_free (addr);
 }
 
+#if 0
 void __assert(const char *file, int line, const char *failedexpr)
 {
     rt_kprintf("assertion \"%s\" failed: file \"%s\", line %d\n",
                failedexpr, file, line);
     RT_ASSERT(0);
 }
+#endif
 
 void
 _exit (int status)

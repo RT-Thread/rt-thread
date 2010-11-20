@@ -1,34 +1,21 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
-Import('projects')
+Import('rtconfig')
+from building import *
 
 comm = rtconfig.ARCH + '/common'
 path = rtconfig.ARCH + '/' + rtconfig.CPU
 
 # The set of source files associated with this SConscript file.
 if rtconfig.PLATFORM == 'armcc':
-	src_local = Glob(path + '/*.c') + Glob(path + '/*_rvds.S') + Glob(comm + '/*.c')
+	src = Glob(path + '/*.c') + Glob(path + '/*_rvds.S') + Glob(comm + '/*.c')
 
 if rtconfig.PLATFORM == 'gcc':
-	src_local = Glob(path + '/*.c') + Glob(path + '/*_gcc.S') + Glob(comm + '/*.c') + Glob(path + '/*_init.S')
+	src = Glob(path + '/*.c') + Glob(path + '/*_gcc.S') + Glob(comm + '/*.c') + Glob(path + '/*_init.S')
 
 if rtconfig.PLATFORM == 'iar':
-	src_local = Glob(path + '/*.c') + Glob(path + '/*_iar.S') + Glob(comm + '/*.c')
+	src = Glob(path + '/*.c') + Glob(path + '/*_iar.S') + Glob(comm + '/*.c')
 
-# group definitions
-group = {}
-group['name'] = rtconfig.CPU.upper()
-group['src'] = File(src_local)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
+CPPPATH = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
+group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CPPPATH = group['CPPPATH'])
-obj = env.Object(group['src'])
-
-Return('obj')
+Return('group')

@@ -454,6 +454,10 @@ rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void* arg)
 
 	if (cmd == RT_IPC_CMD_RESET)
 	{
+		rt_uint32_t value;
+
+		/* get value */
+		value = (rt_uint32_t)arg;		
 		/* disable interrupt */
 		level = rt_hw_interrupt_disable();
 
@@ -461,7 +465,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void* arg)
 		rt_ipc_object_resume_all(&sem->parent);
 
 		/* set new value */
-		sem->value = (rt_uint16_t)arg;
+		sem->value = (rt_uint16_t)value;
 
 		/* enable interrupt */
 		rt_hw_interrupt_enable(level);

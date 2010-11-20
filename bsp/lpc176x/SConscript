@@ -1,36 +1,19 @@
-Import('env')
-Import('projects')
+import rtconfig
 Import('RTT_ROOT')
-Import('rtconfig')
-
-# group definitions
-group = {}
-group['name'] = 'Startup'
-group['CCFLAGS'] = ''
-group['CPPPATH'] = [ RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/CoreSupport', RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/DeviceSupport/NXP/LPC17xx',RTT_ROOT + '/bsp/lpc176x']
-group['CPPDEFINES'] = []
-group['LINKFLAGS'] = ''
+from building import *
 
 src_bsp   = ['application.c', 'startup.c', 'board.c']
 src_drv   = ['uart.c', 'led.c']
 src_cmsis = ['CMSIS/CM3/CoreSupport/core_cm3.c', 'CMSIS/CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
 
-if rtconfig.RT_USING_DFS:
+if GetDepend('RT_USING_DFS'):
     src_drv += ['sd.c', 'spi.c']
 
-if rtconfig.RT_USING_LWIP:
+if GetDepend('RT_USING_LWIP'):
     src_drv += ['emac.c']
 
-group['src'] = File(src_bsp + src_drv + src_cmsis)
+src = File(src_bsp + src_drv + src_cmsis)
+CPPPATH = [ RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/CoreSupport', RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/DeviceSupport/NXP/LPC17xx',RTT_ROOT + '/bsp/lpc176x']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-obj = env.Object(group['src'])
-
-Return('obj')
+Return('group')

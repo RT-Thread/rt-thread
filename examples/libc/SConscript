@@ -1,8 +1,6 @@
-Import('env')
+from building import *
 
-src_local = Glob('*.c')
+src   = Glob('*.c')
+group = DefineGroup('libc_test', src, depend = ['RT_USING_NEWLIB', 'RT_USING_PTHREADS', 'RT_USING_LIBC_TEST'])
 
-# The set of source files associated with this SConscript file.
-obj = env.Object(src_local)
-
-Return('obj')
+Return('group')

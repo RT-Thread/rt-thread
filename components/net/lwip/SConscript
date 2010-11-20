@@ -1,9 +1,7 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
-Import('projects')
+from building import *
 
-src_local = Split("""
+src = Split("""
 src/api/api_lib.c
 src/api/api_msg.c
 src/api/err.c
@@ -68,23 +66,6 @@ path = [RTT_ROOT + '/components/net/lwip/src',
     RTT_ROOT + '/components/net/lwip/src/include/netif', 
     RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
-# group definitions
-group = {}
-group['name'] = 'LwIP'
-group['src'] = File(src_local)
-group['CCFLAGS'] = ''
-group['CPPPATH'] = path
-group['CPPDEFINES'] = ''
-group['LINKFLAGS'] = ''
+group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 
-# add group to project list
-projects.append(group)
-
-env.Append(CCFLAGS = group['CCFLAGS'])
-env.Append(CPPPATH = group['CPPPATH'])
-env.Append(CPPDEFINES = group['CPPDEFINES'])
-env.Append(LINKFLAGS = group['LINKFLAGS'])
-
-obj = env.Object(group['src'])
-
-Return('obj')
+Return('group')

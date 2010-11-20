@@ -1,10 +1,7 @@
-Import('env')
-Import('rtconfig')
 Import('RTT_ROOT')
+from building import *
 
-# The set of source files associated with this SConscript file.
-src_local = Glob('*.c')
+src   = Glob('*.c')
+group = DefineGroup('netutils', src, depend = ['RT_USING_NETUTILS'])
 
-obj = env.Object(src_local)
-
-Return('obj')
+Return('group')

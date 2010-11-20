@@ -1,47 +1,3 @@
-import SCons.cpp
-
-# component options
-
-# make all component false
-RT_USING_FINSH 		= False
-RT_USING_DFS 		= False
-RT_USING_DFS_ELMFAT 	= False
-RT_USING_DFS_YAFFS2	= False
-RT_USING_LWIP 		= False
-RT_USING_WEBSERVER	= False
-RT_USING_RTGUI 		= False
-
-# parse rtconfig.h to get used component
-PreProcessor = SCons.cpp.PreProcessor()
-f = file('rtconfig.h', 'r')
-contents = f.read()
-f.close()
-PreProcessor.process_contents(contents)
-rtconfig_ns = PreProcessor.cpp_namespace
-
-# finsh shell options
-if rtconfig_ns.has_key('RT_USING_FINSH'):
-	RT_USING_FINSH = True
-
-# device virtual filesystem options
-if rtconfig_ns.has_key('RT_USING_DFS'):
-    RT_USING_DFS = True
-
-    if rtconfig_ns.has_key('RT_USING_DFS_ELMFAT'):
-        RT_USING_DFS_ELMFAT = True
-    if rtconfig_ns.has_key('RT_USING_DFS_YAFFS2'):
-        RT_USING_DFS_YAFFS2 = True
-
-# lwip options
-if rtconfig_ns.has_key('RT_USING_LWIP'):
-    RT_USING_LWIP = True
-    if rtconfig_ns.has_key('RT_USING_WEBSERVER'):
-        RT_USING_WEBSERVER = True
-
-# rtgui options
-if rtconfig_ns.has_key('RT_USING_RTGUI'):
-    RT_USING_RTGUI = True
-
 # toolchains options
 ARCH='arm'
 CPU='lpc17xx'
@@ -82,7 +38,6 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    RT_USING_MINILIBC = True
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
@@ -109,7 +64,6 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    RT_USING_MINILIBC = False
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':

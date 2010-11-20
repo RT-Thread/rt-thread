@@ -1,36 +1,13 @@
-# for module compile 
-Import('env')
-Import('rtconfig')
+# for module compiling
+import os
+Import('RTT_ROOT')
 
-# build each components
-objs = ''
+objs = []
+list = os.listdir(os.path.join(RTT_ROOT, 'components'))
 
-if rtconfig.CROSS_TOOL == 'gcc':
-	if 'RT_USING_NEWLIB' in dir(rtconfig) and rtconfig.RT_USING_NEWLIB:
-		objs = objs + SConscript('libc/newlib/SConscript')
-	else:
-		rtconfig.RT_USING_MINILIBC = True
-		objs = objs + SConscript('libc/minilibc/SConscript')
-
-if 'RT_USING_PTHREAD' in dir(rtconfig) and rtconfig.RT_USING_PTHREAD:
-	objs = objs + SConscript('pthreads/SConscript')
-
-if 'RT_USING_FINSH' in dir(rtconfig) and rtconfig.RT_USING_FINSH:
-	objs = objs + SConscript('finsh/SConscript')
-
-if 'RT_USING_DFS' in dir(rtconfig) and rtconfig.RT_USING_DFS:
-	objs = objs + SConscript('dfs/SConscript')
-
-if 'RT_USING_LWIP' in dir(rtconfig) and rtconfig.RT_USING_LWIP:
-	objs = objs + SConscript('net/lwip/SConscript')
-
-if 'RT_USING_MODBUS' in dir(rtconfig) and rtconfig.RT_USING_MODBUS:
-	objs = objs + SConscript('net/freemodbus/SConscript')
-
-if 'RT_USING_RTGUI' in dir(rtconfig) and rtconfig.RT_USING_RTGUI:
-	objs = objs + SConscript('rtgui/SConscript')
-
-if 'RT_USING_FTK' in dir(rtconfig) and rtconfig.RT_USING_FTK:
-	objs = objs + SConscript('external/ftk/ftk/src/os/rt-thread/SConscript')
+for d in list:
+    path = os.path.join(RTT_ROOT, 'components', d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
 Return('objs')
