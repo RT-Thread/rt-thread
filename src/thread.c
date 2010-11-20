@@ -74,7 +74,8 @@ static rt_err_t _rt_thread_init(struct rt_thread* thread,
 	thread->error = RT_EOK;
 	thread->stat  = RT_THREAD_INIT;
 
-	/* init user data */
+	/* initialize cleanup function and user data */
+	thread->cleanup = 0;
 	thread->user_data = 0;
 
 	/* init thread timer */
