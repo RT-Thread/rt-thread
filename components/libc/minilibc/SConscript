@@ -3,6 +3,11 @@ from building import *
 
 src	= Glob('*.c')
 CPPPATH = [RTT_ROOT + '/components/libc/minilibc']
-group = DefineGroup('minilibc', src, depend = ['RT_USING_MINILIBC'], CPPPATH = CPPPATH)
+CPPDEFINES = ['RT_USING_MINILIBC']
+group = DefineGroup('minilibc', src, 
+	depend = ['RT_USING_MINILIBC'], 
+	CPPPATH = CPPPATH,
+	CPPDEFINES = CPPDEFINES
+	)
 
 Return('group')
