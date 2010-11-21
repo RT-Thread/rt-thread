@@ -367,4 +367,54 @@ rt_err_t rt_object_is_systemobject(rt_object_t object)
 	return -RT_ERROR;
 }
 
+/**
+ * This function will find specified name object from object
+ * container.
+ *
+ * @param name the specified name of object.
+ * @param type the type of object
+ *
+ * @return the found object or RT_NULL if there is no this object
+ * in object container.
+ *
+ * @note this routine only can be invoke in none-interrupt status.
+ */
+rt_object_t rt_object_find(const char* name, rt_uint8_t type)
+{
+	struct rt_object* object;
+	struct rt_list_node* node;
+	struct rt_object_information *information;
+	extern volatile rt_uint8_t rt_interrupt_nest;
+
+	/* parameter check */
+	if ((name == RT_NULL) ||
+		(type > RT_Object_Class_Unknown))
+		return RT_NULL;
+
+	/* which is invoke in interrupt status */
+	if (rt_interrupt_nest != 0)
+		RT_ASSERT(0);
+
+	/* enter critical */
+	rt_enter_critical();
+
+	/* try to find object */
+	information = &rt_object_container[type];
+	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+	{
+		object = rt_list_entry(node, struct rt_object, list);
+		if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
+		{
+			/* leave critical */
+			rt_exit_critical();
+
+			return (rt_object_t)object;
+		}
+	}
+
+	/* leave critical */
+	rt_exit_critical();
+
+	return RT_NULL;
+}
 /*@}*/
