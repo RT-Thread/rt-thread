@@ -58,16 +58,12 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
 	return ENOSPC;
 }
 
-/* introduce from kservice.c */
-#define rt_list_entry(node, type, member) \
-    ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
-
 sem_t *sem_open(const char *name, int oflag, ...)
 {
 	rt_sem_t sem;
 
 	sem = RT_NULL;
-	if (oflag == O_CREAT)
+	if (oflag & O_CREAT)
 	{
 		sem = rt_sem_create(name, 1, RT_IPC_FLAG_FIFO);
 		if (sem == RT_NULL)
@@ -75,35 +71,10 @@ sem_t *sem_open(const char *name, int oflag, ...)
 	}
 
 	/* find semaphore */
-	if (oflag == O_EXCL)
+	if (oflag & O_EXCL)
 	{
-		struct rt_object* object;
-		struct rt_list_node* node;
-		struct rt_object_information *information;
-		extern struct rt_object_information rt_object_container[];
-
-		/* enter critical */
-		rt_enter_critical();
-
-		/* try to find device object */
-		information = &rt_object_container[RT_Object_Class_Semaphore];
-		for (node = information->object_list.next; node != &(information->object_list); node = node->next)
-		{
-			object = rt_list_entry(node, struct rt_object, list);
-			if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-			{
-				/* leave critical */
-				rt_exit_critical();
-
-				return (rt_sem_t)object;
-			}
-		}
-
-		/* leave critical */
-		rt_exit_critical();
-		rt_set_errno(ENOENT);
-
-		return RT_NULL;
+		sem = (rt_sem_t)rt_object_find(name, RT_Object_Class_Semaphore);
+		if (sem == RT_NULL) rt_set_errno(ENOSPC);
 	}
 
 	return sem;

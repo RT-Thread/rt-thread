@@ -53,4 +53,6 @@ rt_inline _pthread_data_t* _pthread_get_data(pthread_t thread)
 	return (_pthread_data_t*)thread->user_data;
 }
 
+#define NSEC_PER_TICK	(1000000000UL/RT_TICK_PER_SECOND)
+
 #endif
