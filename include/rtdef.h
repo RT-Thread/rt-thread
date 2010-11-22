@@ -375,6 +375,10 @@ struct rt_thread
 /*
  * module system
  */
+
+#define RT_MODULE_FLAG_WITHENTRY		0x00		/* with entry point								*/
+#define RT_MODULE_FLAG_WITHOUTENTRY		0x01		/* no entry point								*/
+
 struct rt_module
 {
 	/* inherit from object */
@@ -400,7 +404,7 @@ struct rt_module
 	rt_uint32_t nref;		
 	
 	/* object in this module, module object is the last basic object type */
-	struct rt_object_information module_object[RT_Object_Class_Module];
+	struct rt_object_information module_object[RT_Object_Class_Unknown];
 };
 typedef struct rt_module* rt_module_t;
 #endif
