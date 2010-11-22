@@ -1,5 +1,6 @@
 #include <reent.h>
 #include <sys/errno.h>
+#include <sys/time.h>
 #include <rtthread.h>
 
 /* Reentrant versions of system calls.  */
@@ -172,6 +173,19 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 int
 _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
 {
+	struct timespec tp;
+
+	if (libc_get_time(&tp) == 0)
+	{
+		if (__tp != RT_NULL)
+		{
+			__tp->tv_sec  = tp.tv_sec;
+			__tp->tv_usec = tp.tv_nsec * 1000UL;
+		}
+
+		return tp.tv_sec;
+	}
+
 	/* return "not supported" */
 	ptr->_errno = ENOTSUP;
 	return -1;
