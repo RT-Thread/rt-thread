@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2009-04-26     yi.qiu       	first version
  * 2010-03-18     Gary Lee	add functions such as GregorianDay
- *                             		and rt_rtc_time_to_tm
+ *                             		and rtc_time_to_tm
  * 2009-03-20     yi.qiu       	clean up
  */
 
@@ -39,19 +39,19 @@ void rt_hw_rtc_get(struct tm *ti)
 	/* read RTC registers */
 	do
 	{
-		sec 		= BCDSEC;
-		min 		= BCDMIN;
+		sec 	= BCDSEC;
+		min 	= BCDMIN;
 		hour 	= BCDHOUR;
 		mday	= BCDDATE;
 		wday 	= BCDDAY;
 		mon 	= BCDMON;
 		year 	= BCDYEAR;
-    	} while (sec != BCDSEC);
+    } while (sec != BCDSEC);
 
-	/*
+#ifdef RTC_DEBUG
 	rt_kprintf("sec:%x min:%x hour:%x mday:%x wday:%x mon:%x year:%x\n",
 		sec, min, hour, mday, wday, mon, year);
-	*/	
+#endif
 
 	/* disable access to RTC registers */
 	RTC_DISABLE
@@ -74,13 +74,13 @@ void rt_hw_rtc_set(struct tm *ti)
 {
 	rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
-	year		= BIN2BCD(ti->tm_year);
+	year	= BIN2BCD(ti->tm_year);
 	mon 	= BIN2BCD(ti->tm_mon);
 	wday 	= BIN2BCD(ti->tm_wday);
 	mday 	= BIN2BCD(ti->tm_mday);
 	hour 	= BIN2BCD(ti->tm_hour);
-	min 		= BIN2BCD(ti->tm_min);
-	sec 		= BIN2BCD(ti->tm_sec);
+	min 	= BIN2BCD(ti->tm_min);
+	sec 	= BIN2BCD(ti->tm_sec);
 
 	/* enable access to RTC registers */
 	RTC_ENABLE
@@ -110,39 +110,42 @@ void rt_hw_rtc_reset (void)
 }
 
 static struct rt_device rtc;
-static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	RTC_ENABLE
 	return RT_EOK;
 }
 
-static rt_err_t rt_rtc_close(rt_device_t dev)
+static rt_err_t rtc_close(rt_device_t dev)
 {
 	RTC_DISABLE
 	return RT_EOK;
 }
 
-static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	return RT_EOK;
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	struct tm* time;
+	struct tm tm, *tm_ptr;
+    time_t *time;
 	RT_ASSERT(dev != RT_NULL);
 
-	time = (struct tm*)args;
+	time = (time_t *)args;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_RTC_GET_TIME:
 		/* read device */
-		rt_hw_rtc_get(time);
+		rt_hw_rtc_get(&tm);
+		*((rt_time_t *)args) = mktime(&tm);
 		break;
 
 	case RT_DEVICE_CTRL_RTC_SET_TIME:
+		tm_ptr = localtime(time);
 		/* write device */
-		rt_hw_rtc_set(time);
+		rt_hw_rtc_set(tm_ptr);
 		break;
 	}
 
@@ -155,75 +158,30 @@ void rt_hw_rtc_init(void)
 
 	/* register rtc device */
 	rtc.init 	= RT_NULL;
-	rtc.open 	= rt_rtc_open;
-	rtc.close	= rt_rtc_close;
-	rtc.read 	= rt_rtc_read;
+	rtc.open 	= rtc_open;
+	rtc.close	= rtc_close;
+	rtc.read 	= rtc_read;
 	rtc.write	= RT_NULL;
-	rtc.control = rt_rtc_control;
+	rtc.control = rtc_control;
 	
 	/* no private */
 	rtc.private = RT_NULL;
 	
 	rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
-
 }
 
-time_t time(time_t* t)
-{	
-	rt_kprintf("not implement yet\n");
-	return 0;
-}
-
-#ifdef RT_USING_FINSH
 #include <finsh.h>
-void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
+void list_date()
 {
-	struct tm ti;
-	rt_device_t device;
-		
-	device = rt_device_find("rtc");
-	if (device != RT_NULL)
-	{
-		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
-		ti.tm_year 	= year - 1900;
-		ti.tm_mon 	= month - 1;
-		ti.tm_mday 	= day;
-		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &ti);
-	}
-}
-FINSH_FUNCTION_EXPORT(set_date, set date(year, month, day))
-
-void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
-{
-	struct tm ti;
-	rt_device_t device;
-		
-	device = rt_device_find("rtc");
-	if (device != RT_NULL)
-	{
-		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
-		ti.tm_hour	= hour;
-		ti.tm_min		= minute;
-		ti.tm_sec 	= second;
-		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &ti);
-	}
-}
-FINSH_FUNCTION_EXPORT(set_time, set time(hour, minute, second))
-
-void list_date(void)
-{
-	struct tm ti;
+	time_t time;
 	rt_device_t device;
 
 	device = rt_device_find("rtc");
 	if (device != RT_NULL)
 	{
-		rt_rtc_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &ti);
-		
-		rt_kprintf("%04d-%02d-%02d %02d-%02d-%02d\n", 
-			ti.tm_year + 1900, ti.tm_mon+1, ti.tm_mday,
-			ti.tm_hour, ti.tm_min, ti.tm_sec);
+		rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+
+		rt_kprintf("%d, %s\n", time, ctime(&time));
 	}
 }
-FINSH_FUNCTION_EXPORT(list_date, list date)
-#endif
+FINSH_FUNCTION_EXPORT(list_date, list date);
