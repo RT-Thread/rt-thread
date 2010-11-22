@@ -1,20 +1,7 @@
 Import('RTT_ROOT')
 from building import *
 
-src	= Split('''
-clock_time.c
-pthread.c
-pthread_attr.c
-pthread_barrier.c
-pthread_cond.c
-pthread_internal.c
-pthread_mutex.c
-pthread_rwlock.c
-pthread_spin.c
-pthread_tls.c
-sched.c
-semaphore.c
-''')
+src	= Glob('*.c')
 CPPPATH = [RTT_ROOT + '/components/pthreads']
 group = DefineGroup('pthreads', src, depend = ['RT_USING_PTHREADS'], CPPPATH = CPPPATH)
 

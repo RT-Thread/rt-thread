@@ -1,6 +1,9 @@
 #include "mqueue.h"
-#include <stdargs.h>
 #include "pthread_internal.h"
+
+#include <stdarg.h>
+#include <errno.h>
+#include <sys/fcntl.h>
 
 int mq_setattr(mqd_t mqdes, const struct mq_attr *mqstat,
 		struct mq_attr *omqstat)
@@ -103,13 +106,13 @@ ssize_t mq_timedreceive(mqd_t mqdes, char *msg_ptr, size_t msg_len,
 		rt_set_errno(EINVAL);
 		return -1;
 	}
-	tick = time_to_tick(abs_timeout);
+	tick = libc_time_to_tick(abs_timeout);
 
 	result = rt_mq_recv(mqdes, msg_ptr, msg_len, tick);
 	if (result == RT_EOK) return msg_len;
 
 	if (result == -RT_ETIMEOUT)
-		rt_set_errno(ETIMEOUT);
+		rt_set_errno(ETIMEDOUT);
 	else
 		rt_set_errno(EBADMSG);
 
@@ -125,7 +128,7 @@ int mq_timedsend(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_
 
 int mq_notify(mqd_t mqdes, const struct sigevent *notification)
 {
-	rt_set_errno(-RT_ERROT);
+	rt_set_errno(-RT_ERROR);
 	return -1;
 }
 
@@ -145,6 +148,7 @@ int mq_unlink(const char *name)
 		return -1;
 	}
 
+	/* delete this message queue */
 	rt_mq_delete(mq);
 	return 0;
 }

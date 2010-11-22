@@ -93,7 +93,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 	if (!sem || !abs_timeout) return EINVAL;
 
 	/* calculate os tick */
-	tick = abs_timeout->tv_sec/RT_TICK_PER_SECOND + (abs_timeout->tv_nsec/1000) * (1000/RT_TICK_PER_SECOND);
+	tick = libc_time_to_tick(abs_timeout);
 	
 	result = rt_sem_take(sem, tick);
 	if (result == -RT_ETIMEOUT) return ETIMEDOUT;

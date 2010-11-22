@@ -166,11 +166,10 @@ int pthread_cond_timedwait(pthread_cond_t *cond,
 	pthread_mutex_t * mutex,
 	const struct timespec *abstime)
 {
-	rt_int32_t timeout;
+	int timeout;
 	rt_err_t result;
 
-	timeout = abstime->tv_sec * RT_TICK_PER_SECOND +
-			abstime->tv_nsec * RT_TICK_PER_SECOND/1000000000;
+	timeout = libc_time_to_tick(abstime);
 	result = _pthread_cond_timedwait(cond, mutex, timeout);
 	if (result == RT_EOK) return 0;
 	if (result == -RT_ETIMEOUT) return ETIMEDOUT;

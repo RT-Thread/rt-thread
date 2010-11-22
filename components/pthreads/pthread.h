@@ -237,5 +237,22 @@ int pthread_barrier_init(pthread_barrier_t *barrier,
 
 int pthread_barrier_wait(pthread_barrier_t *barrier);
 
+/*  Signal Generation and Delivery, P1003.1b-1993, p. 63
+    NOTE: P1003.1c/D10, p. 34 adds sigev_notify_function and
+          sigev_notify_attributes to the sigevent structure.  */
+union sigval {
+  int    sival_int;    /* Integer signal value */
+  void  *sival_ptr;    /* Pointer signal value */
+};
+
+struct sigevent {
+  int              sigev_notify;               /* Notification type */
+  int              sigev_signo;                /* Signal number */
+  union sigval     sigev_value;                /* Signal value */
+  void           (*sigev_notify_function)( union sigval );
+                                               /* Notification function */
+  pthread_attr_t  *sigev_notify_attributes;    /* Notification Attributes */
+};
+
 #endif
 

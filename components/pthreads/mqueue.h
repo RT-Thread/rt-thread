@@ -4,7 +4,8 @@
 #include <rtthread.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <signal.h>
+#include <sys/signal.h>
+#include <pthread.h>
 
 typedef rt_mq_t mqd_t;
 struct mq_attr
