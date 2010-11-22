@@ -32,6 +32,6 @@ heap_realloc.c
 memp_simple.c
 """)
 
-group = DefineGroup('examples', src, depend = ['RT_USING_TC'])
+group = DefineGroup('examples', src, depend = [''])
 
 Return('group')

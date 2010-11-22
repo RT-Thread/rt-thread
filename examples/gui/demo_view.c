@@ -4,14 +4,14 @@
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/staticline.h>
 
-/* ç”¨äºå­˜æ”¾æ¼”ç¤ºè§†å›¾çš„æ•°ç»„ï¼Œæœ€å¤šå¯åˆ›å»º32ä¸ªæ¼”ç¤ºè§†å›¾ */
+/* ÓÃÓÚ´æ·ÅÑİÊ¾ÊÓÍ¼µÄÊı×é£¬×î¶à¿É´´½¨32¸öÑİÊ¾ÊÓÍ¼ */
 static rtgui_view_t* demo_view_list[32];
-/* å½“å‰æ¼”ç¤ºè§†å›¾ç´¢å¼• */
+/* µ±Ç°ÑİÊ¾ÊÓÍ¼Ë÷Òı */
 static rt_uint16_t demo_view_current = 0;
-/* æ€»å…±åŒ…æ‹¬çš„æ¼”ç¤ºè§†å›¾æ•°ç›® */
+/* ×Ü¹²°üÀ¨µÄÑİÊ¾ÊÓÍ¼ÊıÄ¿ */
 static rt_uint16_t demo_view_number = 0;
 
-/* æ˜¾ç¤ºä¸‹ä¸€ä¸ªæ¼”ç¤ºè§†å›¾ */
+/* ÏÔÊ¾ÏÂÒ»¸öÑİÊ¾ÊÓÍ¼ */
 void demo_view_next(struct rtgui_widget* widget, rtgui_event_t *event)
 {
 	if (demo_view_current + 1< demo_view_number)
@@ -21,7 +21,7 @@ void demo_view_next(struct rtgui_widget* widget, rtgui_event_t *event)
 	}
 }
 
-/* æ˜¾ç¤ºå‰ä¸€ä¸ªæ¼”ç¤ºè§†å›¾ */
+/* ÏÔÊ¾Ç°Ò»¸öÑİÊ¾ÊÓÍ¼ */
 void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 {
 	if (demo_view_current != 0)
@@ -31,30 +31,30 @@ void demo_view_prev(struct rtgui_widget* widget, rtgui_event_t *event)
 	}
 }
 
-/* åˆ›å»ºä¸€ä¸ªæ¼”ç¤ºè§†å›¾ï¼Œéœ€æä¾›çˆ¶workbenchå’Œæ¼”ç¤ºç”¨çš„æ ‡é¢˜ */
+/* ´´½¨Ò»¸öÑİÊ¾ÊÓÍ¼£¬ĞèÌá¹©¸¸workbenchºÍÑİÊ¾ÓÃµÄ±êÌâ */
 rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 {
 	struct rtgui_view* view;
 
-	/* è®¾ç½®è§†å›¾çš„åç§° */
+	/* ÉèÖÃÊÓÍ¼µÄÃû³Æ */
 	view = rtgui_view_create(title);
 	if (view == RT_NULL) return RT_NULL;
 
-	/* åˆ›å»ºæˆåŠŸåï¼Œæ·»åŠ åˆ°æ•°ç»„ä¸­ */
+	/* ´´½¨³É¹¦ºó£¬Ìí¼Óµ½Êı×éÖĞ */
 	demo_view_list[demo_view_number] = view;
 	demo_view_number ++;
 
-	/* æ·»åŠ åˆ°çˆ¶workbenchä¸­ */
+	/* Ìí¼Óµ½¸¸workbenchÖĞ */
 	rtgui_workbench_add_view(workbench, view);
 
-	/* æ·»åŠ ä¸‹ä¸€ä¸ªè§†å›¾å’Œå‰ä¸€ä¸ªè§†å›¾æŒ‰é’® */
+	/* Ìí¼ÓÏÂÒ»¸öÊÓÍ¼ºÍÇ°Ò»¸öÊÓÍ¼°´Å¥ */
 	{
 		struct rtgui_rect rect;
 		struct rtgui_button *next_btn, *prev_btn;
 		struct rtgui_label *label;
 		struct rtgui_staticline *line;
 
-		/* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯(åœ¨åŠ å…¥åˆ°workbenchä¸­æ—¶ï¼Œworkbenchä¼šè‡ªåŠ¨è°ƒæ•´è§†å›¾çš„å¤§å°) */
+		/* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢(ÔÚ¼ÓÈëµ½workbenchÖĞÊ±£¬workbench»á×Ô¶¯µ÷ÕûÊÓÍ¼µÄ´óĞ¡) */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x1 += 5;
@@ -62,23 +62,23 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 		rect.x2 -= 5;
 		rect.y2 = rect.y1 + 20;
 
-		/* åˆ›å»ºæ ‡é¢˜ç”¨çš„æ ‡ç­¾ */
+		/* ´´½¨±êÌâÓÃµÄ±êÇ© */
 		label = rtgui_label_create(title);
-		/* è®¾ç½®æ ‡ç­¾ä½ç½®ä¿¡æ¯ */
+		/* ÉèÖÃ±êÇ©Î»ÖÃĞÅÏ¢ */
 		rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-		/* æ·»åŠ æ ‡ç­¾åˆ°è§†å›¾ä¸­ */
+		/* Ìí¼Ó±êÇ©µ½ÊÓÍ¼ÖĞ */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
 
 		rect.y1 += 20;
 		rect.y2 += 20;
-		/* åˆ›å»ºä¸€ä¸ªæ°´å¹³çš„staticlineçº¿ */
+		/* ´´½¨Ò»¸öË®Æ½µÄstaticlineÏß */
 		line = rtgui_staticline_create(RTGUI_HORIZONTAL);
-		/* è®¾ç½®é™æ€çº¿çš„ä½ç½®ä¿¡æ¯ */
+		/* ÉèÖÃ¾²Ì¬ÏßµÄÎ»ÖÃĞÅÏ¢ */
 		rtgui_widget_set_rect(RTGUI_WIDGET(line), &rect);
-		/* æ·»åŠ é™æ€çº¿åˆ°è§†å›¾ä¸­ */
+		/* Ìí¼Ó¾²Ì¬Ïßµ½ÊÓÍ¼ÖĞ */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(line));
 
-		/* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+		/* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x2 -= 5;
@@ -86,16 +86,16 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 		rect.x1 = rect.x2 - 100;
 		rect.y1 = rect.y2 - 25;
 
-		/* åˆ›å»º"ä¸‹ä¸€ä¸ª"æŒ‰é’® */
-		next_btn = rtgui_button_create("ä¸‹ä¸€ä¸ª");
-		/* è®¾ç½®onbuttonåŠ¨ä½œåˆ°demo_view_nextå‡½æ•° */
+		/* ´´½¨"ÏÂÒ»¸ö"°´Å¥ */
+		next_btn = rtgui_button_create("ÏÂÒ»¸ö");
+		/* ÉèÖÃonbutton¶¯×÷µ½demo_view_nextº¯Êı */
 		rtgui_button_set_onbutton(next_btn, demo_view_next);
-		/* è®¾ç½®æŒ‰é’®çš„ä½ç½®ä¿¡æ¯ */
+		/* ÉèÖÃ°´Å¥µÄÎ»ÖÃĞÅÏ¢ */
 		rtgui_widget_set_rect(RTGUI_WIDGET(next_btn), &rect);
-		/* æ·»åŠ æŒ‰é’®åˆ°è§†å›¾ä¸­ */
+		/* Ìí¼Ó°´Å¥µ½ÊÓÍ¼ÖĞ */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(next_btn));
 
-		/* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+		/* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
 		rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 		rtgui_widget_rect_to_device(RTGUI_WIDGET(view), &rect);
 		rect.x1 += 5;
@@ -103,21 +103,21 @@ rtgui_view_t* demo_view(rtgui_workbench_t* workbench, const char* title)
 		rect.x2 = rect.x1 + 100;
 		rect.y1 = rect.y2 - 25;
 
-		/* åˆ›å»º"ä¸Šä¸€ä¸ª"æŒ‰é’® */
-		prev_btn = rtgui_button_create("ä¸Šä¸€ä¸ª");
-		/* è®¾ç½®onbuttonåŠ¨ä½œåˆ°demo_view_prevå‡½æ•° */
+		/* ´´½¨"ÉÏÒ»¸ö"°´Å¥ */
+		prev_btn = rtgui_button_create("ÉÏÒ»¸ö");
+		/* ÉèÖÃonbutton¶¯×÷µ½demo_view_prevº¯Êı */
 		rtgui_button_set_onbutton(prev_btn, demo_view_prev);
-		/* è®¾ç½®æŒ‰é’®çš„ä½ç½®ä¿¡æ¯ */
+		/* ÉèÖÃ°´Å¥µÄÎ»ÖÃĞÅÏ¢ */
 		rtgui_widget_set_rect(RTGUI_WIDGET(prev_btn), &rect);
-		/* æ·»åŠ æŒ‰é’®åˆ°è§†å›¾ä¸­ */
+		/* Ìí¼Ó°´Å¥µ½ÊÓÍ¼ÖĞ */
 		rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(prev_btn));
 	}
 
-	/* è¿”å›åˆ›å»ºçš„è§†å›¾ */
+	/* ·µ»Ø´´½¨µÄÊÓÍ¼ */
 	return view;
 }
 
-/* è¿™ä¸ªå‡½æ•°ç”¨äºè¿”å›æ¼”ç¤ºè§†å›¾çš„å¯¹å¤–å¯ç”¨åŒºåŸŸ */
+/* Õâ¸öº¯ÊıÓÃÓÚ·µ»ØÑİÊ¾ÊÓÍ¼µÄ¶ÔÍâ¿ÉÓÃÇøÓò */
 void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect)
 {
 	RT_ASSERT(view != RT_NULL);
@@ -125,7 +125,7 @@ void demo_view_get_rect(rtgui_view_t* view, rtgui_rect_t *rect)
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), rect);
 	rtgui_widget_rect_to_device(RTGUI_WIDGET(view), rect);
-	/* å»é™¤æ¼”ç¤ºæ ‡é¢˜å’Œä¸‹æ–¹æŒ‰é’®çš„åŒºåŸŸ */
+	/* È¥³ıÑİÊ¾±êÌâºÍÏÂ·½°´Å¥µÄÇøÓò */
 	rect->y1 += 45;
 	rect->y2 -= 35;
 }
@@ -136,33 +136,33 @@ void demo_view_get_logic_rect(rtgui_view_t* view, rtgui_rect_t *rect)
 	RT_ASSERT(rect != RT_NULL);
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), rect);
-	/* å»é™¤æ¼”ç¤ºæ ‡é¢˜å’Œä¸‹æ–¹æŒ‰é’®çš„åŒºåŸŸ */
+	/* È¥³ıÑİÊ¾±êÌâºÍÏÂ·½°´Å¥µÄÇøÓò */
 	rect->y1 += 45;
 	rect->y2 -= 35;
 }
 
-/* å½“æ˜¯æ ‡å‡†ç‰ˆæœ¬æ—¶ï¼Œè¿™ä¸ªå‡½æ•°ç”¨äºè¿”å›è‡ªåŠ¨å¸ƒå±€å¼•æ“boxæ§ä»¶ */
+/* µ±ÊÇ±ê×¼°æ±¾Ê±£¬Õâ¸öº¯ÊıÓÃÓÚ·µ»Ø×Ô¶¯²¼¾ÖÒıÇæbox¿Ø¼ş */
 #ifndef RTGUI_USING_SMALL_SIZE
 rtgui_box_t* demo_view_create_box(rtgui_view_t* view, int orient)
 {
 	rtgui_rect_t rect;
 	rtgui_box_t* box;
 
-	/* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+	/* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 	rect.y1 += 45;
 	rect.y2 -= 25;
 
-	/* åˆ›å»ºä¸€ä¸ªè‡ªåŠ¨å¸ƒå±€å¼•æ“ */
+	/* ´´½¨Ò»¸ö×Ô¶¯²¼¾ÖÒıÇæ */
 	box = rtgui_box_create(orient, &rect);
-	/* æ·»åŠ boxæ§ä»¶åˆ°è§†å›¾ä¸­ */
+	/* Ìí¼Óbox¿Ø¼şµ½ÊÓÍ¼ÖĞ */
 	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(box));
 
 	return box;
 }
 #endif
 
-/* è¿™ä¸ªå‡½æ•°ç”¨äºæ˜¾ç¤ºå½“å‰çš„è§†å›¾ */
+/* Õâ¸öº¯ÊıÓÃÓÚÏÔÊ¾µ±Ç°µÄÊÓÍ¼ */
 void demo_view_show()
 {
 	if (demo_view_number != 0)

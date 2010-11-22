@@ -31,6 +31,6 @@ gui_init.c
 mywidget.c
 """)
 
-group = DefineGroup('gui_examples', src, depend = ['RTGUI_USING_EXAMPLES'])
+group = DefineGroup('gui_examples', src, depend = ['RT_USING_RTGUI'])
 
 Return('group')
