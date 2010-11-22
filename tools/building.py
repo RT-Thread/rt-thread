@@ -226,7 +226,11 @@ class Win32Spawn:
             print "====="
             print err
             print "====="
-        return rv
+            return rv
+           
+        if data:
+            print data
+        return 0
 
 def PrepareBuilding(env, root_directory):
     import SCons.cpp
