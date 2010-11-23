@@ -61,8 +61,8 @@ typedef struct rtgui_button rtgui_button_t;
 
 rtgui_type_t *rtgui_button_type_get(void);
 
-rtgui_button_t* rtgui_button_create(char* text);
-rtgui_button_t* rtgui_pushbutton_create(char* text);
+rtgui_button_t* rtgui_button_create(const char* text);
+rtgui_button_t* rtgui_pushbutton_create(const char* text);
 void rtgui_button_destroy(rtgui_button_t* btn);
 
 void rtgui_button_set_pressed_image(rtgui_button_t* btn, rtgui_image_t* image);
