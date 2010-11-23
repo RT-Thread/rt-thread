@@ -93,8 +93,8 @@ typedef enum {
 #define SDC_SSI_PINS            (SDC_SSI_TX | SDC_SSI_RX | SDC_SSI_CLK)
 
 // GPIO for card chip select
-#define SDC_CS_GPIO_PORT_BASE      GPIO_PORTD_BASE
-#define SDC_CS_GPIO_SYSCTL_PERIPH  SYSCTL_PERIPH_GPIOD
+#define SDC_CS_GPIO_PORT_BASE      GPIO_PORTG_BASE
+#define SDC_CS_GPIO_SYSCTL_PERIPH  SYSCTL_PERIPH_GPIOG
 #define SDC_CS                     GPIO_PIN_0
 
 // asserts the CS pin to the card
