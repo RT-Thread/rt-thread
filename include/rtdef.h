@@ -377,7 +377,7 @@ struct rt_thread
  */
 
 #define RT_MODULE_FLAG_WITHENTRY		0x00		/* with entry point								*/
-#define RT_MODULE_FLAG_WITHOUTENTRY		0x01		/* no entry point								*/
+#define RT_MODULE_FLAG_WITHOUTENTRY		0x01		/* without entry point								*/
 
 struct rt_module
 {

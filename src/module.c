@@ -253,9 +253,8 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	rt_uint8_t *ptr, *strtab;
 	rt_bool_t linked = RT_FALSE;
 
-#ifdef RT_MODULE_DEBUG
 	rt_kprintf("rt_module_load: %s\n", name);
-#endif
+
 	/* check ELF header */
 	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) == 0)
 	{
@@ -393,11 +392,10 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		
 		/* init module memory allocator */
 		module->module_mem_list = RT_NULL;
-		module->page_node_pool = rt_malloc(sizeof(struct rt_mempool));
-		rt_memset(module->page_node_pool, 0, sizeof(struct rt_mempool));
+		module->page_node_pool = RT_NULL;
 		
 		/* create module thread */
-		module->stack_size = 512;
+		module->stack_size = 2048;
 		module->thread_priority = 90;
 		module->module_thread = rt_thread_create(name,
 			module->module_entry, RT_NULL,
@@ -447,7 +445,9 @@ rt_module_t rt_module_open(const char* filename)
 		rt_free(buffer);
 		return RT_NULL;
 	}
-	rt_kprintf("read %d bytes from file\n", length);
+	
+	/* rt_kprintf("read %d bytes from file\n", length); */
+	
 	module = rt_module_load(filename, (void *)buffer);
 	rt_free(buffer);
 	close(fd);
@@ -474,13 +474,12 @@ rt_err_t rt_module_unload(rt_module_t module)
 	struct rt_object* object;
 	struct rt_list_node *list;
 
-#ifdef RT_MODULE_DEBUG
-	rt_kprintf("rt_module_unload %s\n", module->parent.name);
-#endif
+	rt_kprintf("rt_module_unload: %s\n", module->parent.name);
 
 	/* check parameter */
 	RT_ASSERT(module != RT_NULL);
 
+	/* module has entry point */
 	if(!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
 	{	
 		/* suspend module main thread */
@@ -660,16 +659,18 @@ rt_err_t rt_module_unload(rt_module_t module)
 			rt_list_remove(list->next);
 		}	
 
-		/* free page node mempool */
-		if(((struct rt_mempool*)module->page_node_pool)->start_address != 0)
-			rt_page_free(((struct rt_mempool*)module->page_node_pool)->start_address, 1);
+		if(module->page_node_pool)
+		{	
+			/* free page node mempool */
+			if(((struct rt_mempool*)module->page_node_pool)->start_address != 0)
+				rt_page_free(((struct rt_mempool*)module->page_node_pool)->start_address, 1);		
 
-		/* detach page node mempool */
-		if(module->page_node_pool != RT_NULL)
+			/* detach page node mempool */
 			rt_mp_detach(module->page_node_pool);
 
-		/* free page node mempool structure */
-		rt_free(module->page_node_pool);
+			/* free page node mempool structure */
+			rt_free(module->page_node_pool);
+		}
 	}
 	
 	/* release module space memory */
@@ -688,7 +689,7 @@ rt_err_t rt_module_unload(rt_module_t module)
  *
  * @return the module
  */
-rt_module_t rt_module_find(char* name)
+rt_module_t rt_module_find(const char* name)
 {
 	struct rt_object_information *information;
 	struct rt_object* object;
@@ -733,8 +734,11 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 	cp = rt_page_alloc(npage);
 	if(cp == RT_NULL) return RT_NULL;
 	
-	if(((struct rt_mempool*)rt_current_module->page_node_pool)->start_address == 0)
+	if(!rt_current_module->page_node_pool)
 	{
+		rt_current_module->page_node_pool = rt_malloc(sizeof(struct rt_mempool));
+		rt_memset(rt_current_module->page_node_pool, 0, sizeof(struct rt_mempool));
+		
 		/* allocate a page for page node */
 		void *start = 	rt_page_alloc(1);		
 		rt_mp_init(

@@ -316,7 +316,7 @@ void *rt_module_realloc(void *ptr, rt_size_t size);
 void rt_module_free(rt_module_t module, void *addr);
 rt_module_t rt_module_self (void);
 rt_err_t rt_module_set (rt_module_t module);
-rt_module_t rt_module_find(char* name);
+rt_module_t rt_module_find(const char* name);
 #endif
  
 /*
