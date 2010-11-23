@@ -27,8 +27,8 @@ int rt_application_entry(void)
 		if(f5 != RT_NULL) f5();
 		else rt_kprintf("dlsym function5 failed.\n");
 	}
-	
-	dlclose(handle);
+
+	if(handle != RT_NULL) dlclose(handle);
 
 	return 0;
 }
