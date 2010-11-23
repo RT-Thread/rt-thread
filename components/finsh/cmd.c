@@ -365,6 +365,8 @@ FINSH_FUNCTION_EXPORT(list_device, list device in system)
 #endif
 
 #ifdef RT_USING_MODULE
+#include <rtm.h>
+
 int list_module(void)
 {
 	struct rt_module *module;
@@ -372,86 +374,113 @@ int list_module(void)
 
 	list = &rt_object_container[RT_Object_Class_Module].object_list;
 
+	rt_kprintf("module name     ref\n");
+	rt_kprintf("------------ --------\n");
 	for (node = list->next; node != list; node = node->next)
 	{
-		struct rt_list_node *tlist;
-		struct rt_thread *thread;	
-		rt_uint8_t* ptr;
-		
 		module = (struct rt_module*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("______________________________________________________________________\n");
-		rt_kprintf("[module]%-8s \n", module->parent.name);
+		rt_kprintf("%-16s ", module->parent.name);
+		rt_kprintf("%-04d \n", module->nref);
+	}
+}
 
-		/* list main thread in module */
-		if(module->module_thread != RT_NULL)
+FINSH_FUNCTION_EXPORT(list_module, list module in system)
+
+int list_module_obj(const char* name)
+{
+	int i;
+	struct rt_module *module;
+	struct rt_list_node *list, *node;
+	
+	/* find module */
+	if((module = rt_module_find(name)) != RT_NULL)
+	{
+		/* module has entry point */
+		if(!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
 		{	
-			rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
-			rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-			thread = module->module_thread;
-			rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
+			struct rt_thread *thread;
+			struct rt_list_node *tlist;
+			rt_uint8_t* ptr;
 
-			if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
-			else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-			else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
+			/* list main thread in module */
+			if(module->module_thread != RT_NULL)
+			{	
+				rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
+				rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+				thread = module->module_thread;
+				rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
 
-			ptr = (rt_uint8_t*)thread->stack_addr;
-			while (*ptr == '#')ptr ++;
+				if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
+				else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+				else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
 
-			rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-				thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-				thread->stack_size,
-				thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-				thread->remaining_tick,
-				thread->error);
-		}	
+				ptr = (rt_uint8_t*)thread->stack_addr;
+				while (*ptr == '#')ptr ++;
 
-		/* list sub thread in module */
-		tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-		if(!rt_list_isempty(tlist)) _list_thread(tlist);
+				rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
+					thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+					thread->stack_size,
+					thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+					thread->remaining_tick,
+					thread->error);
+			}	
+
+			/* list sub thread in module */
+			tlist = &module->module_object[RT_Object_Class_Thread].object_list;
+			if(!rt_list_isempty(tlist)) _list_thread(tlist);
 #ifdef RT_USING_SEMAPHORE
-		/* list semaphored in module */
-		tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
-		if(!rt_list_isempty(tlist)) _list_sem(tlist);
+			/* list semaphored in module */
+			tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
+			if(!rt_list_isempty(tlist)) _list_sem(tlist);
 #endif
 #ifdef RT_USING_MUTEX
-		/* list mutex in module */
-		tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
-		if(!rt_list_isempty(tlist)) _list_mutex(tlist);
+			/* list mutex in module */
+			tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
+			if(!rt_list_isempty(tlist)) _list_mutex(tlist);
 #endif
 #ifdef RT_USING_EVENT
-		/* list event in module */
-		tlist = &module->module_object[RT_Object_Class_Event].object_list;
-		if(!rt_list_isempty(tlist)) _list_event(tlist);
+			/* list event in module */
+			tlist = &module->module_object[RT_Object_Class_Event].object_list;
+			if(!rt_list_isempty(tlist)) _list_event(tlist);
 #endif
 #ifdef RT_USING_MAILBOX
-		/* list mailbox in module */
-		tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
-		if(!rt_list_isempty(tlist)) _list_mailbox(tlist);
+			/* list mailbox in module */
+			tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
+			if(!rt_list_isempty(tlist)) _list_mailbox(tlist);
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
-		/* list message queue in module */
-		tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
-		if(!rt_list_isempty(tlist)) _list_msgqueue(tlist);
+			/* list message queue in module */
+			tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
+			if(!rt_list_isempty(tlist)) _list_msgqueue(tlist);
 #endif
 #ifdef RT_USING_MEMPOOL
-		/* list memory pool in module */
-		tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
-		if(!rt_list_isempty(tlist)) _list_mempool(tlist);
+			/* list memory pool in module */
+			tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
+			if(!rt_list_isempty(tlist)) _list_mempool(tlist);
 #endif
 #ifdef RT_USING_DEVICE
-		/* list device in module */
-		tlist = &module->module_object[RT_Object_Class_Device].object_list;
-		if(!rt_list_isempty(tlist)) _list_device(tlist);
+			/* list device in module */
+			tlist = &module->module_object[RT_Object_Class_Device].object_list;
+			if(!rt_list_isempty(tlist)) _list_device(tlist);
 #endif
-		/* list timer in module */
-		tlist = &module->module_object[RT_Object_Class_Timer].object_list;
-		if(!rt_list_isempty(tlist)) _list_timer(tlist);
+			/* list timer in module */
+			tlist = &module->module_object[RT_Object_Class_Timer].object_list;
+			if(!rt_list_isempty(tlist)) _list_timer(tlist);
+		}
+
+		rt_kprintf("symbol    address   \n");
+		rt_kprintf("-------- ----------\n");
+	
+		/* list module export symbols */
+		for(i=0; i<module->nsym; i++)
+		{
+			rt_kprintf("%s 0x%x\n", module->symtab[i].name, module->symtab[i].addr);
+		}	
 	}
-	rt_kprintf("______________________________________________________________________\n");
 
 	return 0;
 }
-FINSH_FUNCTION_EXPORT(list_module, list module in system)
+FINSH_FUNCTION_EXPORT(list_module_obj, list module objects in system)
 #endif
 
 int list()
