@@ -6,6 +6,10 @@ int pthread_system_init(void)
 {
 	/* initialize key area */
 	pthread_key_system_init();
+	/* initialize posix mqueue */
+	posix_mq_system_init();
+	/* initialize posix semaphore */
+	posix_sem_system_init();
 
 	return 0;
 }

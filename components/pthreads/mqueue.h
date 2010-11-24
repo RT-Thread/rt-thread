@@ -7,7 +7,26 @@
 #include <sys/signal.h>
 #include <pthread.h>
 
-typedef rt_mq_t mqd_t;
+struct posix_mq
+{
+	/* reference count and unlinked */
+	rt_uint16_t refcount;
+	rt_uint16_t unlinked;
+
+	/* RT-Thread message queue */
+	rt_mq_t mq;
+	/* next posix mqueue */
+	struct posix_mq* next;
+};
+typedef struct posix_mq posix_mq_t;
+
+struct mqdes
+{
+	rt_uint32_t flags;
+	posix_mq_t* mq;
+};
+typedef struct mqdes* mqd_t;
+
 struct mq_attr
 {
 	long mq_flags; 		/* Message queue flags. */

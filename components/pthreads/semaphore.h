@@ -4,7 +4,27 @@
 #include <rtthread.h>
 #include <sys/time.h>
 
-typedef struct rt_semaphore sem_t;
+struct posix_sem
+{
+	/* reference count and unlinked */
+	rt_uint16_t refcount;
+	rt_uint8_t unlinked;
+	rt_uint8_t unamed;
+
+	/* RT-Thread semaphore */
+	rt_sem_t sem;
+
+	/* next posix semaphore */
+	struct posix_sem* next;
+};
+typedef struct posix_sem posix_sem_t;
+
+struct semdes
+{
+	rt_uint32_t flags;
+	posix_sem_t* sem;
+};
+typedef struct semdes sem_t;
 
 int sem_close(sem_t *sem);
 int sem_destroy(sem_t *sem);
