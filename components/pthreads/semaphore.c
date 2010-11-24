@@ -4,22 +4,22 @@
 #include <rtthread.h>
 #include "semaphore.h"
 
-static posix_sem_t* posix_sem_list = RT_NULL;
+static sem_t* posix_sem_list = RT_NULL;
 static struct rt_semaphore posix_sem_lock;
 void posix_sem_system_init()
 {
 	rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_FIFO);
 }
 
-rt_inline void posix_sem_insert(posix_sem_t *psem)
+rt_inline void posix_sem_insert(sem_t *psem)
 {
 	psem->next = posix_sem_list;
 	posix_sem_list = psem;
 }
 
-static void posix_sem_delete(posix_sem_t *psem)
+static void posix_sem_delete(sem_t *psem)
 {
-	posix_sem_t *iter;
+	sem_t *iter;
 	if (posix_sem_list == psem)
 	{
 		posix_sem_list = psem->next;
@@ -47,9 +47,9 @@ static void posix_sem_delete(posix_sem_t *psem)
 	}
 }
 
-static posix_sem_t *posix_sem_find(const char* name)
+static sem_t *posix_sem_find(const char* name)
 {
-	posix_sem_t *iter;
+	sem_t *iter;
 	rt_object_t object;
 
 	for (iter = posix_sem_list; iter != RT_NULL; iter = iter->next)
@@ -73,17 +73,16 @@ int sem_close(sem_t *sem)
 
     /* lock posix semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
-    sem->sem->refcount --;
-    if (sem->sem->refcount == 0)
+    sem->refcount --;
+    if (sem->refcount == 0)
     {
     	/* delete from posix semaphore list */
-    	if (sem->sem->unlinked)
-    		posix_sem_delete(sem->sem);
-    	sem->sem = RT_NULL;
+    	if (sem->unlinked)
+    		posix_sem_delete(sem);
+    	sem = RT_NULL;
     }
     rt_sem_release(&posix_sem_lock);
 
-    rt_free(sem);
     return 0;
 }
 
@@ -91,7 +90,7 @@ int sem_destroy(sem_t *sem)
 {
 	rt_err_t result;
 
-	if ((!sem) || !(sem->sem->unamed))
+	if ((!sem) || !(sem->unamed))
 	{
 		rt_set_errno(EINVAL);
 		return -1;
@@ -99,7 +98,7 @@ int sem_destroy(sem_t *sem)
 
     /* lock posix semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
-    result = rt_sem_trytake(sem->sem->sem);
+    result = rt_sem_trytake(sem->sem);
     if (result != RT_EOK)
     {
         rt_sem_release(&posix_sem_lock);
@@ -108,16 +107,15 @@ int sem_destroy(sem_t *sem)
     }
 
     /* destroy an unamed posix semaphore */
-   	posix_sem_delete(sem->sem);
+   	posix_sem_delete(sem);
     rt_sem_release(&posix_sem_lock);
 
-    rt_free(sem);
     return 0;
 }
 
 int sem_unlink(const char *name)
 {
-	posix_sem_t *psem;
+	sem_t *psem;
 
     /* lock posix semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
@@ -147,7 +145,7 @@ int sem_getvalue(sem_t *sem, int *sval)
 		rt_set_errno(EINVAL);
 		return -1;
 	}
-	*sval = sem->sem->sem->value;
+	*sval = sem->sem->value;
 	return 0;
 }
 
@@ -157,33 +155,28 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
 	char name[RT_NAME_MAX];
 	static rt_uint16_t psem_number = 0;
 
-	RT_ASSERT(sem != RT_NULL);
-
-	rt_snprintf(name, sizeof(name), "psem%02d", psem_number++);
-	sem->sem = (struct posix_sem*) rt_malloc (sizeof(struct posix_sem));
-	if (sem->sem == RT_NULL)
+	if (sem == RT_NULL)
 	{
 		rt_set_errno(EINVAL);
 		return -1;
 	}
-	sem->sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
-	if (sem->sem->sem == RT_NULL)
+
+	rt_snprintf(name, sizeof(name), "psem%02d", psem_number++);
+	sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
+	if (sem == RT_NULL)
 	{
-		rt_free(sem->sem);
-		sem->sem = RT_NULL;
 		rt_set_errno(ENOMEM);
 		return -1;
 	}
 
 	/* initialize posix semaphore */
-	sem->sem->refcount = 1;
-	sem->sem->unlinked = 0;
-	sem->sem->unamed = 1;
+	sem->refcount = 1;
+	sem->unlinked = 0;
+	sem->unamed = 1;
     /* lock posix semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
-    posix_sem_insert(sem->sem);
+    posix_sem_insert(sem);
     rt_sem_release(&posix_sem_lock);
-	sem->flags = 0;
 
 	return 0;
 }
@@ -214,48 +207,35 @@ sem_t *sem_open(const char *name, int oflag, ...)
 	    		goto __return;
 	    	}
 	    }
-	    sem = (sem_t*) rt_malloc (sizeof(struct semdes));
+	    sem = (sem_t*) rt_malloc (sizeof(struct posix_sem));
 	    if (sem == RT_NULL)
 	    {
 	    	rt_set_errno(ENFILE);
 	    	goto __return;
 	    }
 
-	    sem->flags = oflag;
-	    sem->sem = (posix_sem_t*) rt_malloc (sizeof(posix_sem_t));
-	    if (sem->sem == RT_NULL)
-	    {
-	    	rt_set_errno(ENFILE);
-	    	goto __return;
-	    }
-
 	    /* create RT-Thread semaphore */
-	    sem->sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
-		if (sem->sem->sem == RT_NULL) /* create failed */
+	    sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
+		if (sem->sem == RT_NULL) /* create failed */
 		{
 			rt_set_errno(ENFILE);
 			goto __return;
 		}
 		/* initialize reference count */
-		sem->sem->refcount = 1;
-		sem->sem->unlinked = 0;
-		sem->sem->unamed = 0;
+		sem->refcount = 1;
+		sem->unlinked = 0;
+		sem->unamed = 0;
 
 		/* insert semaphore to posix semaphore list */
-		posix_sem_insert(sem->sem);
+		posix_sem_insert(sem);
 	}
 	else
 	{
-		posix_sem_t *psem;
-
 		/* find semaphore */
-		psem = posix_sem_find(name);
-		if (psem != RT_NULL)
+		sem = posix_sem_find(name);
+		if (sem != RT_NULL)
 		{
-			sem = (sem_t*) rt_malloc (sizeof(struct semdes));
-			sem->sem = psem;
-			sem->flags = oflag;
-			psem->refcount ++; /* increase reference count */
+			sem->refcount ++; /* increase reference count */
 		}
 		else
 		{
@@ -273,13 +253,9 @@ __return:
 	/* release allocated memory */
 	if (sem != RT_NULL)
 	{
+		/* delete RT-Thread semaphore */
 		if (sem->sem != RT_NULL)
-		{
-			/* delete RT-Thread semaphore */
-			if (sem->sem->sem != RT_NULL)
-				rt_sem_delete(sem->sem->sem);
-			rt_free(sem->sem);
-		}
+			rt_sem_delete(sem->sem);
 		rt_free(sem);
 	}
 	return RT_NULL;
@@ -295,7 +271,7 @@ int sem_post(sem_t *sem)
 		return -1;
 	}
 
-	result = rt_sem_release(sem->sem->sem);
+	result = rt_sem_release(sem->sem);
 	if (result == RT_EOK) return 0;
 
 	rt_set_errno(EINVAL);
@@ -312,7 +288,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 	/* calculate os tick */
 	tick = libc_time_to_tick(abs_timeout);
 	
-	result = rt_sem_take(sem->sem->sem, tick);
+	result = rt_sem_take(sem->sem, tick);
 	if (result == -RT_ETIMEOUT)
 	{
 		rt_set_errno(ETIMEDOUT);
@@ -334,7 +310,7 @@ int sem_trywait(sem_t *sem)
 		return -1;
 	}
 
-	result = rt_sem_take(sem->sem->sem, RT_WAITING_FOREVER);
+	result = rt_sem_take(sem->sem, RT_WAITING_FOREVER);
 	if (result == -RT_ETIMEOUT)
 	{
 		rt_set_errno(EAGAIN);
@@ -356,7 +332,7 @@ int sem_wait(sem_t *sem)
 		return -1;
 	}
 
-	result = rt_sem_take(sem->sem->sem, RT_WAITING_FOREVER);
+	result = rt_sem_take(sem->sem, RT_WAITING_FOREVER);
 	if (result == RT_EOK) return 0;
 
 	rt_set_errno(EINTR);

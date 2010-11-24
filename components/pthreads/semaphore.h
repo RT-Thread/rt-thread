@@ -17,14 +17,7 @@ struct posix_sem
 	/* next posix semaphore */
 	struct posix_sem* next;
 };
-typedef struct posix_sem posix_sem_t;
-
-struct semdes
-{
-	rt_uint32_t flags;
-	posix_sem_t* sem;
-};
-typedef struct semdes sem_t;
+typedef struct posix_sem sem_t;
 
 int sem_close(sem_t *sem);
 int sem_destroy(sem_t *sem);

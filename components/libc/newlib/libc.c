@@ -97,6 +97,7 @@ int libc_time_to_tick(const struct timespec *time)
 void libc_system_init(const char* tty_name)
 {
 	int fd;
+	extern int pthread_system_init(void);
 
 	/* init console device */
 	rt_console_init(tty_name);
@@ -112,4 +113,7 @@ void libc_system_init(const char* tty_name)
 
 	/* initialize system time */
 	libc_system_time_init();
+#ifdef RT_USING_PTHREADS
+	pthread_system_init();
+#endif
 }
