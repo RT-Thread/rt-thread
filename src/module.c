@@ -284,7 +284,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 
 	/* allocate module */
 	module = (struct rt_module *)rt_object_allocate(RT_Object_Class_Module, (const char*)name);
-	if (module == RT_NULL) return RT_NULL;
+	if (!module) return RT_NULL;
 
 	/* allocate module space */
 	module->module_space = rt_malloc(module_size);
@@ -720,7 +720,7 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 	/* alloc pages from system heap */
 	npage = (nu * sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
 	cp = rt_page_alloc(npage);
-	if(cp == RT_NULL) return RT_NULL;
+	if(!cp) return RT_NULL;
 	
 	/* allocate page list node from mpool */
 	node = rt_mp_alloc(rt_current_module->mpool, RT_WAITING_FOREVER);
@@ -753,15 +753,33 @@ void *rt_module_malloc(rt_size_t size)
 
 	prev = (struct rt_mem_head **)&rt_current_module->mem_list;
 
-	/* if alloc size is the multipal of 1K, TODO */
-	
+	/* if size can be devided by page, alloc page directly */
+	if(size % RT_MM_PAGE_SIZE == 0)
+	{
+		rt_uint8_t *cp;
+		struct rt_module_page *node;
+		rt_uint32_t npage = size / RT_MM_PAGE_SIZE;
+
+		/* alloc pages from system heap */
+		cp = rt_page_alloc(npage);
+		if(!cp) return RT_NULL;
+
+		/* allocate page list node from mpool */
+		node = rt_mp_alloc(rt_current_module->mpool, RT_WAITING_FOREVER);
+		node->ptr = cp;
+		node->npage = npage;
+
+		/* insert page list node to moudle's page list */
+		rt_list_insert_after (&rt_current_module->page_list, &node->list);
+	}	
+		
 	while(RT_TRUE)
 	{
 		b = *prev;
-		if(b == RT_NULL)
+		if(!b)
 		{
-			if ((b = morepage(nunits)) == RT_NULL) 
-				return RT_NULL;
+			if ((b = morepage(nunits)) == RT_NULL) return RT_NULL;
+			else return rt_module_malloc(size); /* To be improved */
 		}	
 		
 		if (b->size > nunits)
@@ -795,8 +813,8 @@ void rt_module_free(rt_module_t module, void *addr)
 {
 	struct rt_mem_head *b, *n;
 	struct rt_mem_head **prev;
-
-	RT_ASSERT(addr != RT_NULL);
+	
+	RT_ASSERT(addr);
 	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
 
 	n = (struct rt_mem_head *)addr - 1;
@@ -845,7 +863,7 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 	struct rt_mem_head *b, *p, *prev, *tmpp;
 	rt_size_t nunits;
 
-	if (ptr == RT_NULL) return rt_module_malloc(size);
+	if (!ptr) return rt_module_malloc(size);
 	if (size == 0)
 	{
 		rt_module_free(rt_current_module, ptr);
