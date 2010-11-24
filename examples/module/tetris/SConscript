@@ -1,0 +1,42 @@
+Import('env')
+Import('projects')
+Import('RTT_ROOT')
+Import('rtconfig')
+Import('TARGET')
+
+RTMLINKER = RTT_ROOT + '/tools/rtmlinker.exe '
+
+# group definitions
+group = {}
+group['CCFLAGS'] = ''
+group['CPPPATH'] = [RTT_ROOT + '/include',
+		RTT_ROOT + '/components/module',
+		RTT_ROOT + '/components/rtgui/include',
+		RTT_ROOT + '/components/rgtui/common', 
+		RTT_ROOT + '/components/rtgui/server', 
+		RTT_ROOT + '/components/rtgui/widgets']
+group['CPPDEFINES'] = ''
+
+target = 'tetris.so'
+POST_ACTION = RTMLINKER + ' -l ' + TARGET + ' -o tetris.mo ' + '$TARGET'
+
+# add group to project list
+projects.append(group)
+
+src_local = Split("""
+application.c
+tetris_ui.c
+tetris_modal.c
+tetris_view.c
+""")
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+module_env = env.Clone(CPPDEFINE = 'RT_MODULE')
+module_env = env.Clone(CCFLAGS = ' -mcpu=arm920t -O0 -fPIC')
+module_env.Replace(LINK =  'arm-none-eabi-ld')
+module_env.Replace(LINKFLAGS = '-z max-page-size=0x4 -shared -fPIC -e rt_application_init -nostdlib -s')
+module_env.Program(target, src_local) 
+module_env.AddPostAction(target, POST_ACTION) 
+

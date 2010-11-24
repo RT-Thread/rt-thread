@@ -1,0 +1,38 @@
+import os
+import sys
+import rtconfig
+
+RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import mdk
+
+target = RTT_ROOT + '/bsp/mini2440/rtthread-mini2440'
+projects = []
+
+AddOption('--target',
+                  dest='target',
+                  type='string',
+                  help='set target project: mdk')
+
+if GetOption('target'):
+	SetOption('no_exec', 1)
+
+TARGET = target + '.' + rtconfig.TARGET_EXT
+
+env = Environment(tools = ['mingw'],
+	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+Export('env')
+Export('RTT_ROOT')
+Export('rtconfig')
+Export('projects')
+Export('TARGET')
+
+SConscript(RTT_ROOT + '/components/module/tetris/SConscript', duplicate=0)
+SConscript(RTT_ROOT + '/components/module/basicapp/SConscript', duplicate=0)
+SConscript(RTT_ROOT + '/components/module/extension/SConscript', duplicate=0)
+SConscript(RTT_ROOT + '/components/module/extapp/SConscript', duplicate=0)
