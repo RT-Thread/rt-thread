@@ -257,8 +257,8 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	struct rt_object_information* information;
 
 #ifdef RT_USING_MODULE
-	/* get module object information */
-	information = (rt_module_self() != RT_NULL) ? 
+	/* get module object information, module object should be managed by kernel object container */
+	information = (rt_module_self() != RT_NULL && (type != RT_Object_Class_Module)) ? 
 		&rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
 	/* get object information */

@@ -371,44 +371,6 @@ struct rt_thread
 };
 /*@}*/
 
-#ifdef RT_USING_MODULE
-/*
- * module system
- */
-
-#define RT_MODULE_FLAG_WITHENTRY		0x00		/* with entry point								*/
-#define RT_MODULE_FLAG_WITHOUTENTRY		0x01		/* without entry point								*/
-
-struct rt_module
-{
-	/* inherit from object */
-	struct	rt_object parent;
-
-	rt_uint8_t* module_space;							/* module memory space						*/
-
-	void*		module_entry;							/* entry address of module's thread			*/
-	rt_thread_t module_thread;							/* stack size of module's thread			*/
-	rt_uint32_t stack_size;								/* priority of module's thread				*/
-	rt_uint32_t thread_priority;
-
-	/* module memory allocator */
-	void*		module_mem_list;						/* module memory free list					*/
-	rt_list_t	module_page;								/* module using page		 				*/
-	void*		page_node_pool;						
-
-	/* module symbol table */
-	rt_uint32_t nsym;
-	struct rt_module_symtab *symtab;
-
-	/* reference count */
-	rt_uint32_t nref;		
-	
-	/* object in this module, module object is the last basic object type */
-	struct rt_object_information module_object[RT_Object_Class_Unknown];
-};
-typedef struct rt_module* rt_module_t;
-#endif
-
 /**
  * @addtogroup IPC
  */
@@ -658,6 +620,44 @@ struct rt_device_blk_geometry
 	rt_uint32_t bytes_per_sector;	/* number of bytes per sector */
 	rt_uint32_t block_size;			/* size to erase one block */
 };
+
+#ifdef RT_USING_MODULE
+/*
+ * module system
+ */
+
+#define RT_MODULE_FLAG_WITHENTRY		0x00		/* with entry point								*/
+#define RT_MODULE_FLAG_WITHOUTENTRY		0x01		/* without entry point								*/
+
+struct rt_module
+{
+	/* inherit from object */
+	struct	rt_object parent;
+
+	rt_uint8_t* module_space;							/* module memory space						*/
+
+	void*		module_entry;							/* entry address of module's thread			*/
+	rt_thread_t module_thread;							/* stack size of module's thread			*/
+	rt_uint32_t stack_size;								/* priority of module's thread				*/
+	rt_uint32_t thread_priority;
+
+	/* module memory allocator */
+	void*		mem_list;								/* module's free memory list				*/
+	rt_list_t	page_list;								/* module's using page list	 				*/
+	rt_mp_t	mpool;															
+
+	/* module symbol table */
+	rt_uint32_t nsym;
+	struct rt_module_symtab *symtab;
+
+	/* reference count */
+	rt_uint32_t nref;		
+	
+	/* object in this module, module object is the last basic object type */
+	struct rt_object_information module_object[RT_Object_Class_Unknown];
+};
+typedef struct rt_module* rt_module_t;
+#endif
 
 /*@}*/
 #endif

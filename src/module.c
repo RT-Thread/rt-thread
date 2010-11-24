@@ -229,11 +229,6 @@ static void rt_module_init_object_container(struct rt_module* module)
 	rt_list_init(&(module->module_object[RT_Object_Class_Timer].object_list));
 	module->module_object[RT_Object_Class_Timer].object_size = sizeof(struct rt_timer);
 	module->module_object[RT_Object_Class_Timer].type = RT_Object_Class_Timer;
-
-	/* init object container - module */
-	rt_list_init(&(module->module_object[RT_Object_Class_Module].object_list));
-	module->module_object[RT_Object_Class_Module].object_size = sizeof(struct rt_timer);
-	module->module_object[RT_Object_Class_Module].type = RT_Object_Class_Module;
 }
 
 /**
@@ -388,11 +383,13 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	if(elf_module->e_entry != 0)
 	{	
 		/* init module page list */
-		rt_list_init(&module->module_page);	
-		
+		rt_list_init(&module->page_list);	
+
 		/* init module memory allocator */
-		module->module_mem_list = RT_NULL;
-		module->page_node_pool = RT_NULL;
+		module->mem_list = RT_NULL;
+		
+		/* create mpool for page node */
+		module->mpool = rt_mp_create(name, 1024, sizeof(struct rt_module_page));
 		
 		/* create module thread */
 		module->stack_size = 2048;
@@ -648,7 +645,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 		}
 
 		/* free module pages */
-		list = &module->module_page;
+		list = &module->page_list;
 		while(list->next != list)
 		{
 			struct rt_module_page* page;
@@ -659,18 +656,8 @@ rt_err_t rt_module_unload(rt_module_t module)
 			rt_list_remove(list->next);
 		}	
 
-		if(module->page_node_pool)
-		{	
-			/* free page node mempool */
-			if(((struct rt_mempool*)module->page_node_pool)->start_address != 0)
-				rt_page_free(((struct rt_mempool*)module->page_node_pool)->start_address, 1);		
-
-			/* detach page node mempool */
-			rt_mp_detach(module->page_node_pool);
-
-			/* free page node mempool structure */
-			rt_free(module->page_node_pool);
-		}
+		/* delete mpool */
+		if(module->mpool) rt_mp_delete(module->mpool);
 	}
 	
 	/* release module space memory */
@@ -730,33 +717,18 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 
 	RT_ASSERT (nu != 0);
 
+	/* alloc pages from system heap */
 	npage = (nu * sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
 	cp = rt_page_alloc(npage);
 	if(cp == RT_NULL) return RT_NULL;
 	
-	if(!rt_current_module->page_node_pool)
-	{
-		rt_current_module->page_node_pool = rt_malloc(sizeof(struct rt_mempool));
-		rt_memset(rt_current_module->page_node_pool, 0, sizeof(struct rt_mempool));
-		
-		/* allocate a page for page node */
-		void *start = 	rt_page_alloc(1);		
-		rt_mp_init(
-			(struct rt_mempool *)rt_current_module->page_node_pool, 
-			"pnp", 
-			start,
-			RT_MM_PAGE_SIZE, 
-			sizeof(struct rt_module_page));
-	}
-
-	/* allocate page node from mempool */
-	node = rt_mp_alloc((struct rt_mempool *)rt_current_module->page_node_pool, RT_WAITING_FOREVER);
+	/* allocate page list node from mpool */
+	node = rt_mp_alloc(rt_current_module->mpool, RT_WAITING_FOREVER);
 	node->ptr = cp;
 	node->npage = npage;
 
-	/* insert page node to moudle's page list */
-	if(rt_module_self() != RT_NULL) 	
-		rt_list_insert_after (&rt_current_module->module_page, &node->list);
+	/* insert page list node to moudle's page list */
+	rt_list_insert_after (&rt_current_module->page_list, &node->list);
 
 	up = (struct rt_mem_head *) cp;
 	up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
@@ -779,7 +751,7 @@ void *rt_module_malloc(rt_size_t size)
 	RT_ASSERT(size != 0);
 	RT_ASSERT(nunits != 0);
 
-	prev = (struct rt_mem_head **)&rt_current_module->module_mem_list;
+	prev = (struct rt_mem_head **)&rt_current_module->mem_list;
 
 	/* if alloc size is the multipal of 1K, TODO */
 	
@@ -828,7 +800,7 @@ void rt_module_free(rt_module_t module, void *addr)
 	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
 
 	n = (struct rt_mem_head *)addr - 1;
-	prev = (struct rt_mem_head **)&module->module_mem_list;
+	prev = (struct rt_mem_head **)&module->mem_list;
 
 	while ((b = *prev) != RT_NULL)
 	{		
@@ -899,7 +871,7 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 	else 
 	{      
 		/* more space then required */
-		prev = (struct rt_mem_head *)rt_current_module->module_mem_list;
+		prev = (struct rt_mem_head *)rt_current_module->mem_list;
 		for (p = prev->next; p != (b->size + b) && p != RT_NULL; prev = p, p = p->next) break;
 
 		/* available block after ap in freelist */ 
@@ -925,7 +897,7 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 				b->size = nunits;
 				prev->next = p;
 			}
-			rt_current_module->module_mem_list = (void *)prev;
+			rt_current_module->mem_list = (void *)prev;
 			return (void *) (b + 1);
 		}
 		else /* allocate new memory and copy old data */
