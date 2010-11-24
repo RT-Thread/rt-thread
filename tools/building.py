@@ -223,11 +223,9 @@ class Win32Spawn:
         data, err = proc.communicate()
         rv = proc.wait()
         if rv:
-            print "====="
             print err
-            print "====="
             return rv
-           
+
         if data:
             print data
         return 0
