@@ -65,6 +65,7 @@ int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
 	ptd->canceled = 0;
 	ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
 	ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
+	ptd->magic = PTHREAD_MAGIC;
 
 	if (attr != RT_NULL) ptd->attr = *attr;
 	else 

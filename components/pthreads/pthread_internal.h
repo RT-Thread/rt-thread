@@ -48,9 +48,14 @@ typedef struct _pthread_data _pthread_data_t;
 
 rt_inline _pthread_data_t* _pthread_get_data(pthread_t thread)
 {
+	_pthread_data_t* ptd;
 	RT_ASSERT(thread != RT_NULL);
 
-	return (_pthread_data_t*)thread->user_data;
+	ptd = (_pthread_data_t*)thread->user_data;
+	RT_ASSERT(ptd != RT_NULL);
+	RT_ASSERT(ptd->magic == PTHREAD_MAGIC);
+
+	return ptd;
 }
 
 extern int libc_time_to_tick(const struct timespec *time);

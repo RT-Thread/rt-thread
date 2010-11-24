@@ -55,13 +55,15 @@ static posix_mq_t *posix_mq_find(const char* name)
 
 	for (iter = posix_mq_list; iter != RT_NULL; iter = iter->next)
 	{
-		object = (rt_object_t)&(iter->mq);
+		object = (rt_object_t)(iter->mq);
 
 		if (strncmp(object->name, name, RT_NAME_MAX) == 0)
 		{
 			return iter;
 		}
 	}
+
+	return RT_NULL;
 }
 
 int mq_setattr(mqd_t mqdes, const struct mq_attr *mqstat,
@@ -193,13 +195,6 @@ ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_pri
 		return -1;
 	}
 
-	/* permission check */
-	if (!(mqdes->flags & O_RDONLY))
-	{
-		rt_set_errno(EBADF);
-		return -1;
-	}
-
 	result = rt_mq_recv(mqdes->mq->mq, msg_ptr, msg_len, RT_WAITING_FOREVER);
 	if (result == RT_EOK)
 		return msg_len;
@@ -215,13 +210,6 @@ int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 	if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
 	{
 		rt_set_errno(EINVAL);
-		return -1;
-	}
-
-	/* permission check */
-	if (!(mqdes->flags & O_WRONLY))
-	{
-		rt_set_errno(EBADF);
 		return -1;
 	}
 
@@ -243,12 +231,6 @@ ssize_t mq_timedreceive(mqd_t mqdes, char *msg_ptr, size_t msg_len,
 	if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
 	{
 		rt_set_errno(EINVAL);
-		return -1;
-	}
-	/* permission check */
-	if (!(mqdes->flags & O_RDONLY))
-	{
-		rt_set_errno(EBADF);
 		return -1;
 	}
 
