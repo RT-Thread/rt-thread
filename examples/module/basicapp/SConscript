@@ -11,7 +11,7 @@ group = {}
 group['name'] = 'examples'
 group['src'] = Glob('*.c')
 group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/include', RTT_ROOT + '/components/module']
+group['CPPPATH'] = [RTT_ROOT + '/include', RTT_ROOT + '/components/examples']
 group['CPPDEFINES'] = ''
 
 target = 'basicapp.so'

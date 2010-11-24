@@ -11,7 +11,7 @@ group = {}
 group['name'] = 'examples'
 group['src'] = Glob('*.c')
 group['CCFLAGS'] = ''
-group['CPPPATH'] = [RTT_ROOT + '/include', RTT_ROOT + '/components/module', RTT_ROOT + '/components/libdl']
+group['CPPPATH'] = [RTT_ROOT + '/include', RTT_ROOT + '/examples/module', RTT_ROOT + '/components/libdl']
 group['CPPDEFINES'] = ''
 
 target = 'extapp.so'
