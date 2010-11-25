@@ -2,6 +2,9 @@ Import('RTT_ROOT')
 from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
+if GetDepend('RT_USING_NEWLIB'):
+	src_bsp = src_bsp + ['newlib_stub.c']
+
 src_drv = ['uart.c', 'lnn800x480.c']
 src	= File(src_bsp + src_drv)
 CPPPATH = [RTT_ROOT + '/bsp/dev3210']

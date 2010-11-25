@@ -20,7 +20,7 @@ OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
 DEVICE = ' -mips2'
-CFLAGS = DEVICE + ' -EL -G0 -DRT_USING_MINILIBC -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
+CFLAGS = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp'
 LFLAGS = DEVICE + ' -EL -Wl,--gc-sections,-Map=rtthread-3210.map,-cref,-u,Reset_Handler -T dev3210_ram.lds'
 

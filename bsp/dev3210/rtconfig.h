@@ -66,6 +66,11 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE	128
 
+/* SECTION: the runtime libc library */
+/* the runtime libc library */
+#define RT_USING_NEWLIB
+#define RT_USING_PTHREADS
+
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
 #define RT_USING_FINSH
@@ -75,8 +80,9 @@
 #define FINSH_DEVICE_NAME "uart"
 
 /* SECTION: device filesystem support */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define RT_USING_DFS_ELMFAT
+#define RT_USING_DFS_ROMFS
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
