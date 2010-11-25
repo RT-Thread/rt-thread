@@ -13,8 +13,8 @@
  * 2010-09-04     bernard      move the beginning entry to 0x80200000
  */
 
-OUTPUT_FORMAT("elf32-tradlittlemips", "elf32-tradlittlemips", "elf32-tradlittlemips")
 OUTPUT_ARCH(mips)
+GROUP(-lgcc -lc)
 
 ENTRY(_start)
 SECTIONS
