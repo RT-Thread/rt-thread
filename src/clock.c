@@ -60,14 +60,7 @@ void rt_tick_increase()
 	struct rt_thread* thread;
 
 	/* increase the global tick */
-	if (rt_tick == RT_TICK_MAX)
-	{
-		/* switch to long timer list */
-		rt_timer_switch();
-
-		rt_tick = 0;
-	}
-	else ++ rt_tick;
+	++ rt_tick;
 
 	/* check time slice */
 	thread = rt_thread_self();
