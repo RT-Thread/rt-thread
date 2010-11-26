@@ -2,26 +2,23 @@
 //
 // hw_ints.h - Macros that define the interrupt assignment on Stellaris.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Firmware Development Package.
+// This is part of revision 6459 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -62,10 +59,10 @@
 #define INT_PWM1                27          // PWM Generator 1
 #define INT_PWM2                28          // PWM Generator 2
 #define INT_QEI0                29          // Quadrature Encoder 0
-#define INT_ADC0                30          // ADC Sequence 0
-#define INT_ADC1                31          // ADC Sequence 1
-#define INT_ADC2                32          // ADC Sequence 2
-#define INT_ADC3                33          // ADC Sequence 3
+#define INT_ADC0SS0             30          // ADC0 Sequence 0
+#define INT_ADC0SS1             31          // ADC0 Sequence 1
+#define INT_ADC0SS2             32          // ADC0 Sequence 2
+#define INT_ADC0SS3             33          // ADC0 Sequence 3
 #define INT_WATCHDOG            34          // Watchdog timer
 #define INT_TIMER0A             35          // Timer 0 subtimer A
 #define INT_TIMER0B             36          // Timer 0 subtimer B
@@ -109,7 +106,7 @@
 // The following are defines for the total number of interrupts.
 //
 //*****************************************************************************
-#define NUM_INTERRUPTS          70
+#define NUM_INTERRUPTS          71
 
 //*****************************************************************************
 //
@@ -134,6 +131,10 @@
 #define INT_SSI                 23          // SSI Rx and Tx
 #define INT_I2C                 24          // I2C Master and Slave
 #define INT_QEI                 29          // Quadrature Encoder
+#define INT_ADC0                30          // ADC Sequence 0
+#define INT_ADC1                31          // ADC Sequence 1
+#define INT_ADC2                32          // ADC Sequence 2
+#define INT_ADC3                33          // ADC Sequence 3
 
 #endif
 

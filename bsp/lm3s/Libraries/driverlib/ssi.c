@@ -2,26 +2,23 @@
 //
 // ssi.c - Driver for Synchronous Serial Interface.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -149,7 +146,7 @@ SSIConfigSetExpClk(unsigned long ulBase, unsigned long ulSSIClk,
     //
     // Set protocol and clock rate.
     //
-    ulSPH_SPO = ulProtocol << 6;
+    ulSPH_SPO = (ulProtocol & 3) << 6;
     ulProtocol &= SSI_CR0_FRF_M;
     ulRegVal = (ulSCR << 8) | ulSPH_SPO | ulProtocol | (ulDataWidth - 1);
     HWREG(ulBase + SSI_O_CR0) = ulRegVal;
@@ -161,8 +158,8 @@ SSIConfigSetExpClk(unsigned long ulBase, unsigned long ulSSIClk,
 //!
 //! \param ulBase specifies the SSI module base address.
 //!
-//! This will enable operation of the synchronous serial interface.  It must be
-//! configured before it is enabled.
+//! This function enables operation of the synchronous serial interface.  The
+//! synchronous serial interface must be configured before it is enabled.
 //!
 //! \return None.
 //
@@ -187,7 +184,7 @@ SSIEnable(unsigned long ulBase)
 //!
 //! \param ulBase specifies the SSI module base address.
 //!
-//! This will disable operation of the synchronous serial interface.
+//! This function disables operation of the synchronous serial interface.
 //!
 //! \return None.
 //
@@ -356,12 +353,12 @@ SSIIntDisable(unsigned long ulBase, unsigned long ulIntFlags)
 //! Gets the current interrupt status.
 //!
 //! \param ulBase specifies the SSI module base address.
-//! \param bMasked is \b false if the raw interrupt status is required and
+//! \param bMasked is \b false if the raw interrupt status is required or
 //! \b true if the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the SSI module.  Either the raw
-//! interrupt status or the status of interrupts that are allowed to reflect to
-//! the processor can be returned.
+//! This function returns the interrupt status for the SSI module.  Either the
+//! raw interrupt status or the status of interrupts that are allowed to
+//! reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, enumerated as a bit field of
 //! \b SSI_TXFF, \b SSI_RXFF, \b SSI_RXTO, and \b SSI_RXOR.
@@ -396,11 +393,11 @@ SSIIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase specifies the SSI module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
-//! The specified SSI interrupt sources are cleared, so that
-//! they no longer assert.  This must be done in the interrupt handler to
-//! keep it from being called again immediately upon exit.
-//! The \e ulIntFlags parameter can consist of either or both the \b SSI_RXTO
-//! and \b SSI_RXOR values.
+//! The specified SSI interrupt sources are cleared so that they no longer
+//! assert.  This function must be called in the interrupt handler to keep the
+//! interrupts from being recognized again immediately upon exit.  The
+//! \e ulIntFlags parameter can consist of either or both the \b SSI_RXTO and
+//! \b SSI_RXOR values.
 //!
 //! \note Since there is a write buffer in the Cortex-M3 processor, it may take
 //! several clock cycles before the interrupt source is actually cleared.
@@ -433,15 +430,15 @@ SSIIntClear(unsigned long ulBase, unsigned long ulIntFlags)
 //! Puts a data element into the SSI transmit FIFO.
 //!
 //! \param ulBase specifies the SSI module base address.
-//! \param ulData data to be transmitted over the SSI interface.
+//! \param ulData is the data to be transmitted over the SSI interface.
 //!
-//! This function will place the supplied data into the transmit FIFO of
-//! the specified SSI module.
+//! This function places the supplied data into the transmit FIFO of the
+//! specified SSI module.
 //!
-//! \note The upper 32 - N bits of the \e ulData will be discarded by the
-//! hardware, where N is the data width as configured by SSIConfigSetExpClk().
-//! For example, if the interface is configured for 8-bit data width, the upper
-//! 24 bits of \e ulData will be discarded.
+//! \note The upper 32 - N bits of the \e ulData are discarded by the hardware,
+//! where N is the data width as configured by SSIConfigSetExpClk().  For
+//! example, if the interface is configured for 8-bit data width, the upper 24
+//! bits of \e ulData are discarded.
 //!
 //! \return None.
 //
@@ -474,20 +471,20 @@ SSIDataPut(unsigned long ulBase, unsigned long ulData)
 //! Puts a data element into the SSI transmit FIFO.
 //!
 //! \param ulBase specifies the SSI module base address.
-//! \param ulData data to be transmitted over the SSI interface.
+//! \param ulData is the data to be transmitted over the SSI interface.
 //!
-//! This function will place the supplied data into the transmit FIFO of
-//! the specified SSI module.  If there is no space in the FIFO, then this
-//! function will return a zero.
+//! This function places the supplied data into the transmit FIFO of the
+//! specified SSI module.  If there is no space in the FIFO, then this function
+//! returns a zero.
 //!
 //! This function replaces the original SSIDataNonBlockingPut() API and
 //! performs the same actions.  A macro is provided in <tt>ssi.h</tt> to map
 //! the original API to this API.
 //!
-//! \note The upper 32 - N bits of the \e ulData will be discarded by the
-//! hardware, where N is the data width as configured by SSIConfigSetExpClk().
-//! For example, if the interface is configured for 8-bit data width, the upper
-//! 24 bits of \e ulData will be discarded.
+//! \note The upper 32 - N bits of the \e ulData are discarded by the hardware,
+//! where N is the data width as configured by SSIConfigSetExpClk().  For
+//! example, if the interface is configured for 8-bit data width, the upper 24
+//! bits of \e ulData are discarded.
 //!
 //! \return Returns the number of elements written to the SSI transmit FIFO.
 //
@@ -521,18 +518,18 @@ SSIDataPutNonBlocking(unsigned long ulBase, unsigned long ulData)
 //! Gets a data element from the SSI receive FIFO.
 //!
 //! \param ulBase specifies the SSI module base address.
-//! \param pulData pointer to a storage location for data that was received
-//! over the SSI interface.
+//! \param pulData is a pointer to a storage location for data that was
+//! received over the SSI interface.
 //!
-//! This function will get received data from the receive FIFO of the specified
-//! SSI module, and place that data into the location specified by the
+//! This function gets received data from the receive FIFO of the specified
+//! SSI module and places that data into the location specified by the
 //! \e pulData parameter.
 //!
-//! \note Only the lower N bits of the value written to \e pulData will contain
+//! \note Only the lower N bits of the value written to \e pulData contain
 //! valid data, where N is the data width as configured by
 //! SSIConfigSetExpClk().  For example, if the interface is configured for
 //! 8-bit data width, only the lower 8 bits of the value written to \e pulData
-//! will contain valid data.
+//! contain valid data.
 //!
 //! \return None.
 //
@@ -563,23 +560,23 @@ SSIDataGet(unsigned long ulBase, unsigned long *pulData)
 //! Gets a data element from the SSI receive FIFO.
 //!
 //! \param ulBase specifies the SSI module base address.
-//! \param pulData pointer to a storage location for data that was received
-//! over the SSI interface.
+//! \param pulData is a pointer to a storage location for data that was
+//! received over the SSI interface.
 //!
-//! This function will get received data from the receive FIFO of
-//! the specified SSI module, and place that data into the location specified
-//! by the \e ulData parameter.  If there is no data in the FIFO, then this
-//! function will return a zero.
+//! This function gets received data from the receive FIFO of the specified SSI
+//! module and places that data into the location specified by the \e ulData
+//! parameter.  If there is no data in the FIFO, then this function  returns a
+//! zero.
 //!
 //! This function replaces the original SSIDataNonBlockingGet() API and
 //! performs the same actions.  A macro is provided in <tt>ssi.h</tt> to map
 //! the original API to this API.
 //!
-//! \note Only the lower N bits of the value written to \e pulData will contain
+//! \note Only the lower N bits of the value written to \e pulData contain
 //! valid data, where N is the data width as configured by
 //! SSIConfigSetExpClk().  For example, if the interface is configured for
 //! 8-bit data width, only the lower 8 bits of the value written to \e pulData
-//! will contain valid data.
+//! contain valid data.
 //!
 //! \return Returns the number of elements read from the SSI receive FIFO.
 //
@@ -670,6 +667,35 @@ SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags)
     // Clear the requested bits in the UART DMA control register.
     //
     HWREG(ulBase + SSI_O_DMACTL) &= ~ulDMAFlags;
+}
+
+//*****************************************************************************
+//
+//! Determines whether the SSI transmitter is busy or not.
+//!
+//! \param ulBase is the base address of the SSI port.
+//!
+//! Allows the caller to determine whether all transmitted bytes have cleared
+//! the transmitter hardware.  If \b false is returned, then the transmit FIFO
+//! is empty and all bits of the last transmitted word have left the hardware
+//! shift register.
+//!
+//! \return Returns \b true if the SSI is transmitting or \b false if all
+//! transmissions are complete.
+//
+//*****************************************************************************
+tBoolean
+SSIBusy(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == SSI0_BASE) || (ulBase == SSI1_BASE));
+
+    //
+    // Determine if the SSI is busy.
+    //
+    return((HWREG(ulBase + SSI_O_SR) & SSI_SR_BSY) ? true : false);
 }
 
 //*****************************************************************************

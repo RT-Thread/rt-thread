@@ -2,26 +2,23 @@
 //
 // sysctl.c - Driver for the system controller.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -347,19 +344,21 @@ SysCtlPinPresent(unsigned long ulPin)
 //! determine which are present on this device.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_IEEE1588, \b SYSCTL_PERIPH_MPU,
-//! \b SYSCTL_PERIPH_PLL, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TEMP, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
-//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0,
-//! \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA,
-//! \b SYSCTL_PERIPH_USB0, or \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_IEEE1588,
+//! \b SYSCTL_PERIPH_MPU, \b SYSCTL_PERIPH_PLL, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return Returns \b true if the specified peripheral is present and \b false
 //! if it is not.
@@ -376,8 +375,22 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
     //
     // Read the correct DC register and determine if this peripheral exists.
     //
-    if(HWREG(g_pulDCRegs[SYSCTL_PERIPH_INDEX(ulPeripheral)]) &
-       SYSCTL_PERIPH_MASK(ulPeripheral))
+    if(ulPeripheral == SYSCTL_PERIPH_USB0)
+    {
+        //
+        // USB is a special case since the DC bit is missing for USB0.
+        //
+        if(HWREG(SYSCTL_DC6) & SYSCTL_DC6_USB0_M)
+        {
+            return(true);
+        }
+        else
+        {
+            return(false);
+        }
+    }
+    else if(HWREG(g_pulDCRegs[SYSCTL_PERIPH_INDEX(ulPeripheral)]) &
+            SYSCTL_PERIPH_MASK(ulPeripheral))
     {
         return(true);
     }
@@ -395,22 +408,24 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
 //!
 //! This function performs a software reset of the specified peripheral.  An
 //! individual peripheral reset signal is asserted for a brief period and then
-//! deasserted, leaving the peripheral in a operating state but in its reset
+//! deasserted, returning the internal state of the peripheral to its reset
 //! condition.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -456,18 +471,20 @@ SysCtlPeripheralReset(unsigned long ulPeripheral)
 //! register reads/writes.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \note It takes five clock cycles after the write to enable a peripheral
 //! before the the peripheral is actually enabled.  During this time, attempts
@@ -503,18 +520,20 @@ SysCtlPeripheralEnable(unsigned long ulPeripheral)
 //! operate or respond to register reads/writes.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -551,18 +570,20 @@ SysCtlPeripheralDisable(unsigned long ulPeripheral)
 //! configuration is maintained but has no effect when sleep mode is entered.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -600,18 +621,20 @@ SysCtlPeripheralSleepEnable(unsigned long ulPeripheral)
 //! configuration is maintained but has no effect when sleep mode is entered.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -649,19 +672,21 @@ SysCtlPeripheralSleepDisable(unsigned long ulPeripheral)
 //! configuration is maintained but has no effect when deep-sleep mode is
 //! entered.
 //!
-//! The \e ulPeripheral parameter must be one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! The \e ulPeripheral parameter must be only one of the following values:
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -701,19 +726,21 @@ SysCtlPeripheralDeepSleepEnable(unsigned long ulPeripheral)
 //! configuration is maintained but has no effect when deep-sleep mode is
 //! entered.
 //!
-//! The \e ulPeripheral parameter must be one of the following values:
-//! \b SYSCTL_PERIPH_ADC, \b SYSCTL_PERIPH_CAN0, \b SYSCTL_PERIPH_CAN1,
-//! \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0, \b SYSCTL_PERIPH_COMP1,
-//! \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA,
-//! \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD,
-//! \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG,
-//! \b SYSCTL_PERIPH_GPIOH, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
-//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_PWM, \b SYSCTL_PERIPH_QEI0,
-//! \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0, \b SYSCTL_PERIPH_SSI1,
-//! \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1, \b SYSCTL_PERIPH_TIMER2,
-//! \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1,
-//! \b SYSCTL_PERIPH_UART2, \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, or
-//! \b SYSCTL_PERIPH_WDOG.
+//! The \e ulPeripheral parameter must be only one of the following values:
+//! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
+//! \b SYSCTL_PERIPH_CAN1, \b SYSCTL_PERIPH_CAN2, \b SYSCTL_PERIPH_COMP0,
+//! \b SYSCTL_PERIPH_COMP1, \b SYSCTL_PERIPH_COMP2, \b SYSCTL_PERIPH_EPI0,
+//! \b SYSCTL_PERIPH_ETH, \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB,
+//! \b SYSCTL_PERIPH_GPIOC, \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE,
+//! \b SYSCTL_PERIPH_GPIOF, \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH,
+//! \b SYSCTL_PERIPH_GPIOJ, \b SYSCTL_PERIPH_HIBERNATE, \b SYSCTL_PERIPH_I2C0,
+//! \b SYSCTL_PERIPH_I2C1, \b SYSCTL_PERIPH_I2S0, \b SYSCTL_PERIPH_PWM,
+//! \b SYSCTL_PERIPH_QEI0, \b SYSCTL_PERIPH_QEI1, \b SYSCTL_PERIPH_SSI0,
+//! \b SYSCTL_PERIPH_SSI1, \b SYSCTL_PERIPH_TIMER0, \b SYSCTL_PERIPH_TIMER1,
+//! \b SYSCTL_PERIPH_TIMER2, \b SYSCTL_PERIPH_TIMER3, \b SYSCTL_PERIPH_TEMP,
+//! \b SYSCTL_PERIPH_UART0, \b SYSCTL_PERIPH_UART1, \b SYSCTL_PERIPH_UART2,
+//! \b SYSCTL_PERIPH_UDMA, \b SYSCTL_PERIPH_USB0, \b SYSCTL_PERIPH_WDOG0, or
+//! \b SYSCTL_PERIPH_WDOG1.
 //!
 //! \return None.
 //
@@ -1256,6 +1283,21 @@ SysCtlDelay(unsigned long ulCount)
     bx      lr;
 }
 #endif
+#if defined(ccs)
+volatile unsigned long g_ulInlineCCSWorkaround;
+void
+SysCtlDelay(unsigned long ulCount)
+{
+    __asm("delay?: subs    r0, #1\n"
+          "    bne.n   delay?\n"
+          "    bx lr\n");
+
+    //
+    // This is needed to keep TI compiler from optimizing away this code.
+    //
+    g_ulInlineCCSWorkaround += ulCount;
+}
+#endif
 
 //*****************************************************************************
 //
@@ -1455,15 +1497,15 @@ SysCtlClockSet(unsigned long ulConfig)
                          SYSCTL_RCC_IOSCDIS | SYSCTL_RCC_MOSCDIS);
     ulRCC2 &= ~(SYSCTL_RCC2_SYSDIV2_M);
     ulRCC2 |= ulConfig & SYSCTL_RCC2_SYSDIV2_M;
-    if(ulConfig & SYSCTL_RCC2_USEFRACT)
+    if(ulConfig & SYSCTL_RCC2_DIV400)
     {
         ulRCC |= SYSCTL_RCC_USESYSDIV;
         ulRCC2 &= ~(SYSCTL_RCC_USESYSDIV);
-        ulRCC2 |= ulConfig & (SYSCTL_RCC2_USEFRACT | SYSCTL_RCC2_FRACT);
+        ulRCC2 |= ulConfig & (SYSCTL_RCC2_DIV400 | SYSCTL_RCC2_SYSDIV2LSB);
     }
     else
     {
-        ulRCC2 &= ~(SYSCTL_RCC2_USEFRACT);
+        ulRCC2 &= ~(SYSCTL_RCC2_DIV400);
     }
 
     //
@@ -1713,6 +1755,12 @@ SysCtlClockGet(void)
         {
             ulClk /= 4;
         }
+
+        //
+        // Force the system divider to be enabled.  It is always used when
+        // using the PLL, but in some cases it will not read as being enabled.
+        //
+        ulRCC |= SYSCTL_RCC_USESYSDIV;
     }
 
     //
@@ -1725,7 +1773,7 @@ SysCtlClockGet(void)
         //
         if(ulRCC2 & SYSCTL_RCC2_USERCC2)
         {
-            if((ulRCC2 & SYSCTL_RCC2_USEFRACT) &&
+            if((ulRCC2 & SYSCTL_RCC2_DIV400) &&
                (((ulRCC2 & SYSCTL_RCC2_USERCC2) &&
                  !(ulRCC2 & SYSCTL_RCC2_BYPASS2)) ||
                 (!(ulRCC2 & SYSCTL_RCC2_USERCC2) &&
@@ -1733,7 +1781,7 @@ SysCtlClockGet(void)
 
             {
                 ulClk = ((ulClk * 2) / (((ulRCC2 & (SYSCTL_RCC2_SYSDIV2_M |
-                                                    SYSCTL_RCC2_FRACT)) >>
+                                                    SYSCTL_RCC2_SYSDIV2LSB)) >>
                                          (SYSCTL_RCC2_SYSDIV2_S - 1)) + 1));
             }
             else
@@ -1881,8 +1929,6 @@ SysCtlADCSpeedSet(unsigned long ulSpeed)
     HWREG(SYSCTL_RCGC0) = ((HWREG(SYSCTL_RCGC0) & ~(SYSCTL_RCGC0_ADCSPD_M)) |
                            ulSpeed);
     HWREG(SYSCTL_SCGC0) = ((HWREG(SYSCTL_SCGC0) & ~(SYSCTL_SCGC0_ADCSPD_M)) |
-                           ulSpeed);
-    HWREG(SYSCTL_DCGC0) = ((HWREG(SYSCTL_DCGC0) & ~(SYSCTL_DCGC0_ADCSPD_M)) |
                            ulSpeed);
 }
 

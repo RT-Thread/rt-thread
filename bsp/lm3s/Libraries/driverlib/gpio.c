@@ -2,26 +2,23 @@
 //
 // gpio.c - API for GPIO ports
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -214,6 +211,9 @@ GPIOGetIntNumber(unsigned long ulPort)
 //! The pin(s) are specified using a bit-packed byte, where each bit that is
 //! set identifies the pin to be accessed, and where bit 0 of the byte
 //! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
+//!
+//! \note GPIOPadConfigSet() must also be used to configure the corresponding
+//! pad(s) in order for them to propagate the signal to/from the GPIO.
 //!
 //! \return None.
 //
@@ -1333,6 +1333,10 @@ GPIOPinTypeUART(unsigned long ulPort, unsigned char ucPins)
 //! the digital USB pin(s); other configurations may work as well depending
 //! upon the board setup (for example, using the on-chip pull-ups).
 //!
+//! This function should only be used with EPEN and PFAULT pins as all other
+//! USB pins are analog in nature or are not used in devices without OTG
+//! functionality.
+//!
 //! The pin(s) are specified using a bit-packed byte, where each bit that is
 //! set identifies the pin to be accessed, and where bit 0 of the byte
 //! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
@@ -1371,7 +1375,8 @@ GPIOPinTypeUSBDigital(unsigned long ulPort, unsigned char ucPins)
 //!
 //! Some USB analog pins must be properly configured for the USB peripheral to
 //! function correctly.  This function provides the proper configuration for
-//! those pin(s).
+//! any USB pin(s).  This can also be used to configure the EPEN and PFAULT pins
+//! so that they are no longer used by the USB controller.
 //!
 //! The pin(s) are specified using a bit-packed byte, where each bit that is
 //! set identifies the pin to be accessed, and where bit 0 of the byte
@@ -1445,10 +1450,93 @@ GPIOPinTypeI2S(unsigned long ulPort, unsigned char ucPins)
 
 //*****************************************************************************
 //
+//! Configures pin(s) for use by the Ethernet peripheral as LED signals.
+//!
+//! \param ulPort is the base address of the GPIO port.
+//! \param ucPins is the bit-packed representation of the pin(s).
+//!
+//! The Ethernet peripheral provides two signals that can be used to drive
+//! an LED (e.g. for link status/activity).  This function provides a typical
+//! configuration for the pins.
+//!
+//! The pin(s) are specified using a bit-packed byte, where each bit that is
+//! set identifies the pin to be accessed, and where bit 0 of the byte
+//! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
+//!
+//! \note This cannot be used to turn any pin into an Ethernet LED pin; it only
+//! configures an Ethernet LED pin for proper operation.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+GPIOPinTypeEthernetLED(unsigned long ulPort, unsigned char ucPins)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(GPIOBaseValid(ulPort));
+
+    //
+    // Make the pin(s) be peripheral controlled.
+    //
+    GPIODirModeSet(ulPort, ucPins, GPIO_DIR_MODE_HW);
+
+    //
+    // Set the pad(s) for standard push-pull operation.
+    //
+    GPIOPadConfigSet(ulPort, ucPins, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD);
+}
+
+//*****************************************************************************
+//
+//! Configures pin(s) for use by the external peripheral interface.
+//!
+//! \param ulPort is the base address of the GPIO port.
+//! \param ucPins is the bit-packed representation of the pin(s).
+//!
+//! The external peripheral interface pins must be properly configured for the
+//! external peripheral interface to function correctly.  This function
+//! provides a typica configuration for those pin(s); other configurations may
+//! work as well depending upon the board setup (for exampe, using the on-chip
+//! pull-ups).
+//!
+//! The pin(s) are specified using a bit-packed byte, where each bit that is
+//! set identifies the pin to be accessed, and where bit 0 of the byte
+//! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
+//!
+//! \note This cannot be used to turn any pin into an external peripheral
+//! interface pin; it only configures an external peripheral interface pin for
+//! proper operation.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+GPIOPinTypeEPI(unsigned long ulPort, unsigned char ucPins)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(GPIOBaseValid(ulPort));
+
+    //
+    // Make the pin(s) be peripheral controlled.
+    //
+    GPIODirModeSet(ulPort, ucPins, GPIO_DIR_MODE_HW);
+
+    //
+    // Set the pad(s) for standard push-pull operation.
+    //
+    GPIOPadConfigSet(ulPort, ucPins, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD);
+}
+
+//*****************************************************************************
+//
 //! Configures the alternate function of a GPIO pin.
 //!
-//! \param ulPinConfig is the pin configuration value, specified as one of the
-//! \b GPIO_P??_??? values.
+//! \param ulPinConfig is the pin configuration value, specified as only one of
+//! the \b GPIO_P??_??? values.
 //!
 //! This function configures the pin mux that selects the peripheral function
 //! associated with a particular GPIO pin.  Only one peripheral function at a

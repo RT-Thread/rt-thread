@@ -2,26 +2,23 @@
 //
 // epi.c - Driver for the EPI module.
 //
-// Copyright (c) 2008-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -50,7 +47,7 @@
 //! This functions sets the operating mode of the EPI module.  The parameter
 //! \e ulMode must be one of the following:
 //!
-//! - \b EPI_MODE_NONE - non-moded operation
+//! - \b EPI_MODE_GENERAL - use for general-purpose mode operation
 //! - \b EPI_MODE_SDRAM - use with SDRAM device
 //! - \b EPI_MODE_HB8 - use with host-bus 8-bit interface
 //! - \b EPI_MODE_DISABLE - disable the EPI module
@@ -68,7 +65,7 @@ EPIModeSet(unsigned long ulBase, unsigned long ulMode)
     // Check the arguments.
     //
     ASSERT(ulBase == EPI0_BASE);
-    ASSERT((ulMode == EPI_MODE_NONE) ||
+    ASSERT((ulMode == EPI_MODE_GENERAL) ||
            (ulMode == EPI_MODE_SDRAM) ||
            (ulMode == EPI_MODE_HB8) ||
            (ulMode == EPI_MODE_DISABLE));
@@ -87,13 +84,21 @@ EPIModeSet(unsigned long ulBase, unsigned long ulMode)
 //! \param ulDivider is the value of the clock divider to be applied to
 //! the external interface (0-65535).
 //!
-//! This functions sets the clock divider that will be used to determine the
-//! clock rate of the external interface.  The value is the number of high
-//! and low ticks of the system clock per external bus clock.  A value of 0
-//! means that the system clock is used without any reduction.  The system
-//! clock will be divided by the value of \e ulDivider multiplied by 2.  A
-//! value of 1 gives a divider of 2, and value of 2 gives a divider of 4, a
-//! value of 3 gives a divider of 6, and so on.
+//! This functions sets the clock divider(s) that will be used to determine the
+//! clock rate of the external interface.  The \e ulDivider value is used to
+//! derive the EPI clock rate from the system clock based upon the following
+//! formula.
+//!
+//! EPIClock = (Divider == 0) ? SysClk : (SysClk / (((Divider / 2) + 1) * 2))
+//!
+//! For example, a divider value of 1 results in an EPI clock rate of half
+//! the system clock, value of 2 or 3 yield one quarter of the system clock and
+//! a value of 4 results in one sixth of the system clock rate.
+//!
+//! In cases where a dual chip select mode is in use and different clock rates
+//! are required for each chip select, the \e ulDivider parameter must contain
+//! two dividers.  The lower 16 bits define the divider to be used with CS0n
+//! and the upper 16 bits define the divider for CS1n.
 //!
 //! \return None.
 //
@@ -198,6 +203,26 @@ EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
 //! - one of \b EPI_HB8_RDWAIT_0, \b EPI_HB8_RDWAIT_1, \b EPI_HB8_RDWAIT_2,
 //! or \b EPI_HB8_RDWAIT_3 to select the number of read wait states (default
 //! is 0 wait states)
+//! - \b EPI_HB8_WORD_ACCESS - use Word Access mode to route bytes to the
+//! correct byte lanes allowing data to be stored in bits [31:8].  If absent,
+//! all data transfers use bits [7:0].
+//! - \b EPI_HB8_CSBAUD_DUAL - use different baud rates when accessing devices
+//! on each CSn. CS0n uses the baud rate specified by the lower 16 bits of the
+//! divider passed to EPIDividerSet() and CS1n uses the divider passed in the
+//! upper 16 bits.  If this option is absent, both chip selects use the baud
+//! rate resulting from the divider in the lower 16 bits of the parameter passed
+//! to EPIDividerSet().
+//! - one of \b EPI_HB8_CSCFG_CS, \b EPI_HB8_CSCFG_ALE,
+//! \b EPI_HB8_CSCFG_DUAL_CS or \b EPI_HB8_CSCFG_ALE_DUAL. \b EPI_HB8_CSCFG_CS
+//! sets EPI30 to operate as a Chip Select (CSn) signal.  When using this mode,
+//! \b EPI_HB8_MODE_ADMUX must not be specified. \b EPI_HB8_CSCFG_ALE sets
+//! EPI30 to operate as an address latch (ALE). \b EPI_HB8_CSCFG_DUAL_CS sets
+//! EPI30 to operate as CS0n and EPI27 as CS1n with the asserted chip select
+//! determined from the most significant address bit for the respective external
+//! address map. \b EPI_HB8_CSCFG_DUAL_ALE sets EPI30 as an address latch (ALE),
+//! EPI27 as CS0n and EPI26 as CS1n with the asserted chip select determined
+//! from the most significant address bit for the respective external address
+//! map.
 //!
 //! The parameter \e ulMaxWait is used if the FIFO mode is chosen.  If a
 //! FIFO is used along with RXFULL or TXEMPTY ready signals, then this
@@ -219,20 +244,26 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
     ASSERT(ulMaxWait < 256);
 
     //
+    // Determine the CS and word access modes.
+    //
+    HWREG(ulBase + EPI_O_HB8CFG2) = (((ulConfig & EPI_HB8_WORD_ACCESS) ?
+                                       EPI_HB8CFG2_WORD : 0) |
+                                     ((ulConfig & EPI_HB8_CSBAUD_DUAL) ?                                       EPI_HB8CFG2_CSBAUD : 0) |                                      ((ulConfig & EPI_HB8_CSCFG_MASK) << 15));
+    //
     // Fill in the max wait field of the configuration word.
     //
     ulConfig &= ~EPI_HB8CFG_MAXWAIT_M;
     ulConfig |= ulMaxWait << EPI_HB8CFG_MAXWAIT_S;
 
     //
-    // Write the non-moded configuration register.
+    // Write the main HostBus8 configuration register.
     //
-    HWREG(ulBase + EPI_O_HB8CFG) = ulConfig;
+    HWREG(ulBase + EPI_O_HB8CFG)  = ulConfig;
 }
 
 //*****************************************************************************
 //
-//! Configures the interface for non-moded operation.
+//! Configures the interface for general-purpose mode operation.
 //!
 //! \param ulBase is the EPI module base address.
 //! \param ulConfig is the interface configuration.
@@ -241,37 +272,44 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //! \param ulMaxWait is the maximum number of external clocks to wait
 //! when the external clock enable is holding off the transaction (0-255).
 //!
-//! This function is used to configure the interface when used in non-moded
-//! operation as chosen with the function EPIModeSet().  The parameter
+//! This function is used to configure the interface when used in
+//! general-purpose operation as chosen with the function EPIModeSet().  The
+//! parameter
 //! \e ulConfig is the logical OR of any of the following:
 //!
-//! - \b EPI_NONMODE_CLKPIN - interface clock is output on a pin
-//! - \b EPI_NONMODE_CLKSTOP - clock is stopped when there is no transaction,
+//! - \b EPI_GPMODE_CLKPIN - interface clock is output on a pin
+//! - \b EPI_GPMODE_CLKGATE - clock is stopped when there is no transaction,
 //! otherwise it is free-running
-//! - \b EPI_NONMODE_CLKENA - enable the clock enable input from the device
-//! - \b EPI_NONMODE_FRAMEPIN - framing signal is emitted on a pin
-//! - \b EPI_NONMODE_FRAME50 - framing signal is 50/50 duty cycle, otherwise it
+//! - \b EPI_GPMODE_RDYEN - the external peripheral drives an iRDY signal into
+//! pin EPI0S27.  If absent, the peripheral is assumed to be ready at all times.
+//! This flag may only be used with a free-running clock (\b EPI_GPMODE_CLKGATE
+//! is absent).
+//! - \b EPI_GPMODE_FRAMEPIN - framing signal is emitted on a pin
+//! - \b EPI_GPMODE_FRAME50 - framing signal is 50/50 duty cycle, otherwise it
 //! is a pulse
-//! - \b EPI_NONMODE_READWRITE - read and write strobes are emitted on pins
-//! - \b EPI_NONMODE_WRITE2CYCLE - a two cycle write is used, otherwise a
+//! - \b EPI_GPMODE_READWRITE - read and write strobes are emitted on pins
+//! - \b EPI_GPMODE_WRITE2CYCLE - a two cycle write is used, otherwise a
 //! single-cycle write is used
-//! - \b EPI_NONMODE_READ2CYCLE - a two cycle read is used, otherwise a
+//! - \b EPI_GPMODE_READ2CYCLE - a two cycle read is used, otherwise a
 //! single-cycle read is used
-//! - \b EPI_NONMODE_ASIZE_NONE, \b EPI_NONMODE_ASIZE_4,
-//! \b EPI_NONMODE_ASIZE_12, or \b EPI_NONMODE_ASIZE_20 to choose no address
+//! - \b EPI_GPMODE_ASIZE_NONE, \b EPI_GPMODE_ASIZE_4,
+//! \b EPI_GPMODE_ASIZE_12, or \b EPI_GPMODE_ASIZE_20 to choose no address
 //! bus, or and address bus size of 4, 12, or 20 bits
-//! - \b EPI_NONMODE_DSIZE_8, \b EPI_NONMODE_DSIZE_16,
-//! \b EPI_NONMODE_DSIZE_24, or \b EPI_NONMODE_DSIZE_32 to select a data bus
+//! - \b EPI_GPMODE_DSIZE_8, \b EPI_GPMODE_DSIZE_16,
+//! \b EPI_GPMODE_DSIZE_24, or \b EPI_GPMODE_DSIZE_32 to select a data bus
 //! size of 8, 16, 24, or 32 bits
+//! - \b EPI_GPMODE_WORD_ACCESS - use Word Access mode to route bytes to the
+//! correct byte lanes allowing data to be stored in the upper bits of the word
+//! when necessary.
 //!
 //! The parameter \e ulFrameCount is the number of clocks used to form the
 //! framing signal, if the framing signal is used.  The behavior depends on
 //! whether the frame signal is a pulse or a 50/50 duty cycle.  This value
 //! is not used if the framing signal is not enabled with the option
-//! \b EPI_NONMMODE_FRAMEPIN.
+//! \b EPI_GPMODE_FRAMEPIN.
 //!
 //! The parameter \e ulMaxWait is used if the external clock enable is turned
-//! on with the \b EPI_NONMODE_CLKENA option is used.  In the case that
+//! on with the \b EPI_GPMODE_CLKENA option is used.  In the case that
 //! external clock enable is used, this parameter determines the maximum
 //! number of clocks to wait when the external clock enable signal is holding
 //! off a transaction.  A value of 0 means to wait forever.  If a non-zero
@@ -282,7 +320,7 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //
 //*****************************************************************************
 void
-EPIConfigNoModeSet(unsigned long ulBase, unsigned long ulConfig,
+EPIConfigGPModeSet(unsigned long ulBase, unsigned long ulConfig,
                    unsigned long ulFrameCount, unsigned long ulMaxWait)
 {
     //
@@ -291,6 +329,12 @@ EPIConfigNoModeSet(unsigned long ulBase, unsigned long ulConfig,
     ASSERT(ulBase == EPI0_BASE);
     ASSERT(ulFrameCount < 16);
     ASSERT(ulMaxWait < 256);
+
+    //
+    // Set the word access mode.
+    //
+    HWREG(ulBase + EPI_O_GPCFG2) = ((ulConfig & EPI_GPMODE_WORD_ACCESS) ?
+                                    EPI_GPCFG2_WORD : 0);
 
     //
     // Fill in the frame count field of the configuration word.
@@ -778,7 +822,7 @@ EPIFIFOConfig(unsigned long ulBase, unsigned long ulConfig)
 //
 //*****************************************************************************
 unsigned long
-EPINonBlockingWriteCount(unsigned long ulBase)
+EPIWriteFIFOCountGet(unsigned long ulBase)
 {
     //
     // Check the arguments.

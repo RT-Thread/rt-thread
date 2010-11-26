@@ -2,26 +2,23 @@
 //
 // sysctl.h - Prototypes for the system control driver.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -234,9 +231,9 @@ extern "C"
 // API.
 //
 //*****************************************************************************
-#define SYSCTL_ADCSPEED_1MSPS   0x00000300  // 1,000,000 samples per second
-#define SYSCTL_ADCSPEED_500KSPS 0x00000200  // 500,000 samples per second
-#define SYSCTL_ADCSPEED_250KSPS 0x00000100  // 250,000 samples per second
+#define SYSCTL_ADCSPEED_1MSPS   0x00000F00  // 1,000,000 samples per second
+#define SYSCTL_ADCSPEED_500KSPS 0x00000A00  // 500,000 samples per second
+#define SYSCTL_ADCSPEED_250KSPS 0x00000500  // 250,000 samples per second
 #define SYSCTL_ADCSPEED_125KSPS 0x00000000  // 125,000 samples per second
 
 //*****************************************************************************

@@ -2,26 +2,23 @@
 //
 // adc.h - ADC headers for using the ADC driver functions.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -54,6 +51,7 @@ extern "C"
 #define ADC_TRIGGER_PWM0        0x00000006  // PWM0 event
 #define ADC_TRIGGER_PWM1        0x00000007  // PWM1 event
 #define ADC_TRIGGER_PWM2        0x00000008  // PWM2 event
+#define ADC_TRIGGER_PWM3        0x00000009  // PWM3 event
 #define ADC_TRIGGER_ALWAYS      0x0000000F  // Always event
 
 //*****************************************************************************
@@ -82,6 +80,99 @@ extern "C"
 #define ADC_CTL_CH13            0x0000000D  // Input channel 13
 #define ADC_CTL_CH14            0x0000000E  // Input channel 14
 #define ADC_CTL_CH15            0x0000000F  // Input channel 15
+#define ADC_CTL_CMP0            0x00080000  // Select Comparator 0
+#define ADC_CTL_CMP1            0x00090000  // Select Comparator 1
+#define ADC_CTL_CMP2            0x000A0000  // Select Comparator 2
+#define ADC_CTL_CMP3            0x000B0000  // Select Comparator 3
+#define ADC_CTL_CMP4            0x000C0000  // Select Comparator 4
+#define ADC_CTL_CMP5            0x000D0000  // Select Comparator 5
+#define ADC_CTL_CMP6            0x000E0000  // Select Comparator 6
+#define ADC_CTL_CMP7            0x000F0000  // Select Comparator 7
+
+//*****************************************************************************
+//
+// Values that can be passed to ADCComparatorConfigure as part of the
+// ulConfig parameter.
+//
+//*****************************************************************************
+#define ADC_COMP_TRIG_NONE      0x00000000  // Trigger Disabled
+#define ADC_COMP_TRIG_LOW_ALWAYS \
+                                0x00001000  // Trigger Low Always
+#define ADC_COMP_TRIG_LOW_ONCE  0x00001100  // Trigger Low Once
+#define ADC_COMP_TRIG_LOW_HALWAYS \
+                                0x00001200  // Trigger Low Always (Hysteresis)
+#define ADC_COMP_TRIG_LOW_HONCE 0x00001300  // Trigger Low Once (Hysteresis)
+#define ADC_COMP_TRIG_MID_ALWAYS \
+                                0x00001400  // Trigger Mid Always
+#define ADC_COMP_TRIG_MID_ONCE  0x00001500  // Trigger Mid Once
+#define ADC_COMP_TRIG_HIGH_ALWAYS \
+                                0x00001C00  // Trigger High Always
+#define ADC_COMP_TRIG_HIGH_ONCE 0x00001D00  // Trigger High Once
+#define ADC_COMP_TRIG_HIGH_HALWAYS \
+                                0x00001E00  // Trigger High Always (Hysteresis)
+#define ADC_COMP_TRIG_HIGH_HONCE \
+                                0x00001F00  // Trigger High Once (Hysteresis)
+
+#define ADC_COMP_INT_NONE       0x00000000  // Interrupt Disabled
+#define ADC_COMP_INT_LOW_ALWAYS \
+                                0x00000010  // Interrupt Low Always
+#define ADC_COMP_INT_LOW_ONCE   0x00000011  // Interrupt Low Once
+#define ADC_COMP_INT_LOW_HALWAYS \
+                                0x00000012  // Interrupt Low Always
+                                            // (Hysteresis)
+#define ADC_COMP_INT_LOW_HONCE  0x00000013  // Interrupt Low Once (Hysteresis)
+#define ADC_COMP_INT_MID_ALWAYS \
+                                0x00000014  // Interrupt Mid Always
+#define ADC_COMP_INT_MID_ONCE   0x00000015  // Interrupt Mid Once
+#define ADC_COMP_INT_HIGH_ALWAYS \
+                                0x0000001C  // Interrupt High Always
+#define ADC_COMP_INT_HIGH_ONCE  0x0000001D  // Interrupt High Once
+#define ADC_COMP_INT_HIGH_HALWAYS \
+                                0x0000001E  // Interrupt High Always
+                                            // (Hysteresis)
+#define ADC_COMP_INT_HIGH_HONCE \
+                                0x0000001F  // Interrupt High Once (Hysteresis)
+
+//*****************************************************************************
+//
+// Values that can be used to modify the sequence number passed to
+// ADCProcessorTrigger in order to get cross-module synchronous processor
+// triggers.
+//
+//*****************************************************************************
+#define ADC_TRIGGER_WAIT        0x08000000  // Wait for the synchronous trigger
+#define ADC_TRIGGER_SIGNAL      0x80000000  // Signal the synchronous trigger
+
+//*****************************************************************************
+//
+// Values that can be passed to ADCPhaseDelaySet as the ulPhase parameter and
+// returned from ADCPhaseDelayGet.
+//
+//*****************************************************************************
+#define ADC_PHASE_0             0x00000000  // 0 degrees
+#define ADC_PHASE_22_5          0x00000001  // 22.5 degrees
+#define ADC_PHASE_45            0x00000002  // 45 degrees
+#define ADC_PHASE_67_5          0x00000003  // 67.5 degrees
+#define ADC_PHASE_90            0x00000004  // 90 degrees
+#define ADC_PHASE_112_5         0x00000005  // 112.5 degrees
+#define ADC_PHASE_135           0x00000006  // 135 degrees
+#define ADC_PHASE_157_5         0x00000007  // 157.5 degrees
+#define ADC_PHASE_180           0x00000008  // 180 degrees
+#define ADC_PHASE_202_5         0x00000009  // 202.5 degrees
+#define ADC_PHASE_225           0x0000000A  // 225 degrees
+#define ADC_PHASE_247_5         0x0000000B  // 247.5 degrees
+#define ADC_PHASE_270           0x0000000C  // 270 degrees
+#define ADC_PHASE_292_5         0x0000000D  // 292.5 degrees
+#define ADC_PHASE_315           0x0000000E  // 315 degrees
+#define ADC_PHASE_337_5         0x0000000F  // 337.5 degrees
+
+//*****************************************************************************
+//
+// Values that can be passed to ADCReferenceSet as the ulRef parameter.
+//
+//*****************************************************************************
+#define ADC_REF_INT             0x00000000  // Internal reference
+#define ADC_REF_EXT_3V          0x00000001  // External 3V reference
 
 //*****************************************************************************
 //
@@ -136,6 +227,24 @@ extern void ADCSoftwareOversampleDataGet(unsigned long ulBase,
                                          unsigned long ulCount);
 extern void ADCHardwareOversampleConfigure(unsigned long ulBase,
                                            unsigned long ulFactor);
+extern void ADCComparatorConfigure(unsigned long ulBase, unsigned long ulComp,
+                                   unsigned long ulConfig);
+extern void ADCComparatorRegionSet(unsigned long ulBase, unsigned long ulComp,
+                                   unsigned long ulLowRef,
+                                   unsigned long ulHighRef);
+extern void ADCComparatorReset(unsigned long ulBase, unsigned long ulComp,
+                               tBoolean bTrigger, tBoolean bInterrupt);
+extern void ADCComparatorIntDisable(unsigned long ulBase,
+                                    unsigned long ulSequenceNum);
+extern void ADCComparatorIntEnable(unsigned long ulBase,
+                                   unsigned long ulSequenceNum);
+extern unsigned long ADCComparatorIntStatus(unsigned long ulBase);
+extern void ADCComparatorIntClear(unsigned long ulBase,
+                                  unsigned long ulStatus);
+extern void ADCReferenceSet(unsigned long ulBase, unsigned long ulRef);
+extern unsigned long ADCReferenceGet(unsigned long ulBase);
+extern void ADCPhaseDelaySet(unsigned long ulBase, unsigned long ulPhase);
+extern unsigned long ADCPhaseDelayGet(unsigned long ulBase);
 
 //*****************************************************************************
 //

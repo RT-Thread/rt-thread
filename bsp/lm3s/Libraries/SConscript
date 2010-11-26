@@ -1,8 +1,9 @@
-Import('env')
 Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
 
 # The set of source files associated with this SConscript file.
-src_local = Split("""
+src = Split("""
 	driverlib/adc.c
 	driverlib/can.c
 	driverlib/comp.c
@@ -28,10 +29,8 @@ src_local = Split("""
 	driverlib/watchdog.c
 """)
 
-path = [RTT_ROOT + '/bsp/lm3s/Libraries/inc', RTT_ROOT + '/bsp/lm3s/Libraries', RTT_ROOT + '/bsp/lm3s/Libraries/driverlib']
+CPPPATH = [RTT_ROOT + '/bsp/lm3s/Libraries/inc', RTT_ROOT + '/bsp/lm3s/Libraries', RTT_ROOT + '/bsp/lm3s/Libraries/driverlib']
 
-env.Append(CPPPATH = path)
+group = DefineGroup('library', src, depend = [''], CPPPATH = CPPPATH)
 
-obj = env.Object(src_local)
-
-Return('obj')
+Return('group')

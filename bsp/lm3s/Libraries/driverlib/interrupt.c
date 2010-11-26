@@ -2,26 +2,23 @@
 //
 // interrupt.c - Driver for the NVIC Interrupt Controller.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -103,6 +100,9 @@ IntDefaultHandler(void)
 static __no_init void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void) @ "VTABLE";
 #elif defined(sourcerygxx)
 static __attribute__((section(".cs3.region-head.ram")))
+void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void);
+#elif defined(ccs)
+#pragma DATA_SECTION(g_pfnRAMVectors, ".vtable")
 void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void);
 #else
 static __attribute__((section("vtable")))
@@ -540,6 +540,181 @@ IntDisable(unsigned long ulInterrupt)
         //
         HWREG(NVIC_DIS1) = 1 << (ulInterrupt - 48);
     }
+}
+
+//*****************************************************************************
+//
+//! Pends an interrupt.
+//!
+//! \param ulInterrupt specifies the interrupt to be pended.
+//!
+//! The specified interrupt is pended in the interrupt controller.  This will
+//! cause the interrupt controller to execute the corresponding interrupt
+//! handler at the next available time, based on the current interrupt state
+//! priorities.  For example, if called by a higher priority interrupt handler,
+//! the specified interrupt handler will not be called until after the current
+//! interrupt handler has completed execution.  The interrupt must have been
+//! enabled for it to be called.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+IntPendSet(unsigned long ulInterrupt)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulInterrupt < NUM_INTERRUPTS);
+
+    //
+    // Determine the interrupt to pend.
+    //
+    if(ulInterrupt == FAULT_NMI)
+    {
+        //
+        // Pend the NMI interrupt.
+        //
+        HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_NMI_SET;
+    }
+    else if(ulInterrupt == FAULT_PENDSV)
+    {
+        //
+        // Pend the PendSV interrupt.
+        //
+        HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PEND_SV;
+    }
+    else if(ulInterrupt == FAULT_SYSTICK)
+    {
+        //
+        // Pend the SysTick interrupt.
+        //
+        HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PENDSTSET;
+    }
+    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    {
+        //
+        // Pend the general interrupt.
+        //
+        HWREG(NVIC_PEND0) = 1 << (ulInterrupt - 16);
+    }
+    else if(ulInterrupt >= 48)
+    {
+        //
+        // Pend the general interrupt.
+        //
+        HWREG(NVIC_PEND1) = 1 << (ulInterrupt - 48);
+    }
+}
+
+//*****************************************************************************
+//
+//! Unpends an interrupt.
+//!
+//! \param ulInterrupt specifies the interrupt to be unpended.
+//!
+//! The specified interrupt is unpended in the interrupt controller.  This will
+//! cause any previously generated interrupts that have not been handled yet
+//! (due to higher priority interrupts or the interrupt no having been enabled
+//! yet) to be discarded.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+IntPendClear(unsigned long ulInterrupt)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulInterrupt < NUM_INTERRUPTS);
+
+    //
+    // Determine the interrupt to unpend.
+    //
+    if(ulInterrupt == FAULT_PENDSV)
+    {
+        //
+        // Unpend the PendSV interrupt.
+        //
+        HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_UNPEND_SV;
+    }
+    else if(ulInterrupt == FAULT_SYSTICK)
+    {
+        //
+        // Unpend the SysTick interrupt.
+        //
+        HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PENDSTCLR;
+    }
+    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    {
+        //
+        // Unpend the general interrupt.
+        //
+        HWREG(NVIC_UNPEND0) = 1 << (ulInterrupt - 16);
+    }
+    else if(ulInterrupt >= 48)
+    {
+        //
+        // Unpend the general interrupt.
+        //
+        HWREG(NVIC_UNPEND1) = 1 << (ulInterrupt - 48);
+    }
+}
+
+//*****************************************************************************
+//
+//! Sets the priority masking level
+//!
+//! \param ulPriorityMask is the priority level that will be masked.
+//!
+//! This function sets the interrupt priority masking level so that all
+//! interrupts at the specified or lesser priority level is masked.  This
+//! can be used to globally disable a set of interrupts with priority below
+//! a predetermined threshold.  A value of 0 disables priority
+//! masking.
+//!
+//! Smaller numbers correspond to higher interrupt priorities.  So for example
+//! a priority level mask of 4 will allow interrupts of priority level 0-3,
+//! and interrupts with a numerical priority of 4 and greater will be blocked.
+//!
+//! The hardware priority mechanism will only look at the upper N bits of the
+//! priority level (where N is 3 for the Stellaris family), so any
+//! prioritization must be performed in those bits.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+IntPriorityMaskSet(unsigned long ulPriorityMask)
+{
+    CPUbasepriSet(ulPriorityMask);
+}
+
+//*****************************************************************************
+//
+//! Gets the priority masking level
+//!
+//! This function gets the current setting of the interrupt priority masking
+//! level.  The value returned is the priority level such that all interrupts
+//! of that and lesser priority are masked.  A value of 0 means that priority
+//! masking is disabled.
+//!
+//! Smaller numbers correspond to higher interrupt priorities.  So for example
+//! a priority level mask of 4 will allow interrupts of priority level 0-3,
+//! and interrupts with a numerical priority of 4 and greater will be blocked.
+//!
+//! The hardware priority mechanism will only look at the upper N bits of the
+//! priority level (where N is 3 for the Stellaris family), so any
+//! prioritization must be performed in those bits.
+//!
+//! \return Returns the value of the interrupt priority level mask.
+//
+//*****************************************************************************
+unsigned long
+IntPriorityMaskGet(void)
+{
+    return(CPUbasepriGet());
 }
 
 //*****************************************************************************

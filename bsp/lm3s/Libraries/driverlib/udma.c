@@ -2,26 +2,23 @@
 //
 // udma.c - Driver for the micro-DMA controller.
 //
-// Copyright (c) 2007-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -932,14 +929,32 @@ uDMAChannelSizeGet(unsigned long ulChannel)
     pControlTable = (tDMAControlTable *)HWREG(UDMA_CTLBASE);
 
     //
-    // Get the current control word value and mask off all but the size field.
+    // Get the current control word value and mask off all but the size field
+    // and the mode field.
     //
-    ulControl = pControlTable[ulChannel].ulControl & UDMA_CHCTL_XFERSIZE_M;
+    ulControl = pControlTable[ulChannel].ulControl &
+                (UDMA_CHCTL_XFERSIZE_M | UDMA_CHCTL_XFERMODE_M);
 
     //
-    // Shift the size field and add one, then return to user.
+    // If the size field and mode field are 0 then the transfer is finished
+    // and there are no more items to transfer
     //
-    return((ulControl >> 4) + 1);
+    if(ulControl == 0)
+    {
+        return(0);
+    }
+
+    //
+    // Otherwise, if either the size field or more field is non-zero, then
+    // not all the items have been transferred.
+    //
+    else
+    {
+        //
+        // Shift the size field and add one, then return to user.
+        //
+        return((ulControl >> 4) + 1);
+    }
 }
 
 //*****************************************************************************
@@ -1003,7 +1018,7 @@ uDMAChannelModeGet(unsigned long ulChannel)
 
 //*****************************************************************************
 //
-//! Select the secondary peripheral for a set of uDMA channels.
+//! Selects the secondary peripheral for a set of uDMA channels.
 //!
 //! \param ulSecPeriphs is the logical or of the uDMA channels for which to
 //! use the secondary peripheral, instead of the default peripheral.
@@ -1038,8 +1053,8 @@ uDMAChannelModeGet(unsigned long ulChannel)
 //! - \b UDMA_DEF_ADC03_SEC_RESERVED
 //! - \b UDMA_DEF_TMR0A_SEC_TMR1A
 //! - \b UDMA_DEF_TMR0B_SEC_TMR1B
-//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
-//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_TMR1A_SEC_EPI0RX
+//! - \b UDMA_DEF_TMR1B_SEC_EPI0TX
 //! - \b UDMA_DEF_UART1RX_SEC_RESERVED
 //! - \b UDMA_DEF_UART1TX_SEC_RESERVED
 //! - \b UDMA_DEF_SSI1RX_SEC_ADC10
@@ -1063,7 +1078,7 @@ uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
 
 //*****************************************************************************
 //
-//! Select the default peripheral for a set of uDMA channels.
+//! Selects the default peripheral for a set of uDMA channels.
 //!
 //! \param ulDefPeriphs is the logical or of the uDMA channels for which to
 //! use the default peripheral, instead of the secondary peripheral.
@@ -1096,8 +1111,8 @@ uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
 //! - \b UDMA_DEF_ADC03_SEC_RESERVED
 //! - \b UDMA_DEF_TMR0A_SEC_TMR1A
 //! - \b UDMA_DEF_TMR0B_SEC_TMR1B
-//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
-//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_TMR1A_SEC_EPI0RX
+//! - \b UDMA_DEF_TMR1B_SEC_EPI0TX
 //! - \b UDMA_DEF_UART1RX_SEC_RESERVED
 //! - \b UDMA_DEF_UART1TX_SEC_RESERVED
 //! - \b UDMA_DEF_SSI1RX_SEC_ADC10
@@ -1117,47 +1132,6 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
     // Select the default peripheral for the specified channels.
     //
     HWREG(UDMA_CHALT) &= ~ulDefPeriphs;
-}
-
-//*****************************************************************************
-//
-//! Gets the uDMA controller channel interrupt status.
-//!
-//! This function is used to get the interrupt status of the uDMA controller.
-//! The returned value is a 32-bit bit mask that indicates which channels are
-//! requesting an interrupt.  This function can be used from within an
-//! interrupt handler to determine or confirm which uDMA channel has requested
-//! an interrupt.
-//!
-//! \return Returns a 32-bit mask which indicates requesting uDMA channels.
-//! There is a bit for each channel, and a 1 in a bit indicates that channel
-//! is requesting an interrupt.  Multiple bits can be set.
-//
-//*****************************************************************************
-unsigned long
-uDMAIntStatus(void)
-{
-    return(HWREG(UDMA_CHIS));
-}
-
-//*****************************************************************************
-//
-//! Clears uDMA interrupt status.
-//!
-//! \param ulChanMask is a 32-bit mask with one bit for each uDMA channel.
-//!
-//! Clears bits in the uDMA interrupt status register according to which bits
-//! are set in \e ulChanMask.  There is one bit for each channel.  If a a bit
-//! is set in \e ulChanMask, then that corresponding channel's interrupt
-//! status will be cleared (if it was set).
-//!
-//! \return None.
-//
-//*****************************************************************************
-void
-uDMAIntClear(unsigned long ulChanMask)
-{
-    HWREG(UDMA_CHIS) = ulChanMask;
 }
 
 //*****************************************************************************

@@ -2,26 +2,23 @@
 //
 // uart.c - Driver for the UART.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -85,7 +82,7 @@ UARTBaseValid(unsigned long ulBase)
 //! The \e ulParity parameter must be one of \b UART_CONFIG_PAR_NONE,
 //! \b UART_CONFIG_PAR_EVEN, \b UART_CONFIG_PAR_ODD, \b UART_CONFIG_PAR_ONE,
 //! or \b UART_CONFIG_PAR_ZERO.  The last two allow direct control of the
-//! parity bit; it will always be either be one or zero based on the mode.
+//! parity bit; it is always either one or zero based on the mode.
 //!
 //! \return None.
 //
@@ -117,7 +114,7 @@ UARTParityModeSet(unsigned long ulBase, unsigned long ulParity)
 //!
 //! \param ulBase is the base address of the UART port.
 //!
-//! This function gets the type of parity used for transmitting data, and
+//! This function gets the type of parity used for transmitting data and
 //! expected when receiving data.
 //!
 //! \return Returns the current parity settings, specified as one of
@@ -153,7 +150,7 @@ UARTParityModeGet(unsigned long ulBase)
 //! \b UART_FIFO_RX6_8, or \b UART_FIFO_RX7_8.
 //!
 //! This function sets the FIFO level at which transmit and receive interrupts
-//! will be generated.
+//! are generated.
 //!
 //! \return None.
 //
@@ -190,13 +187,13 @@ UARTFIFOLevelSet(unsigned long ulBase, unsigned long ulTxLevel,
 //! \param ulBase is the base address of the UART port.
 //! \param pulTxLevel is a pointer to storage for the transmit FIFO level,
 //! returned as one of \b UART_FIFO_TX1_8, \b UART_FIFO_TX2_8,
-//! \b UART_FIFO_TX4_8, \b UART_FIFO_TX6_8, or UART_FIFO_TX7_8.
+//! \b UART_FIFO_TX4_8, \b UART_FIFO_TX6_8, or \b UART_FIFO_TX7_8.
 //! \param pulRxLevel is a pointer to storage for the receive FIFO level,
 //! returned as one of \b UART_FIFO_RX1_8, \b UART_FIFO_RX2_8,
 //! \b UART_FIFO_RX4_8, \b UART_FIFO_RX6_8, or \b UART_FIFO_RX7_8.
 //!
 //! This function gets the FIFO level at which transmit and receive interrupts
-//! will be generated.
+//! are xogenerated.
 //!
 //! \return None.
 //
@@ -234,7 +231,7 @@ UARTFIFOLevelGet(unsigned long ulBase, unsigned long *pulTxLevel,
 //! \param ulConfig is the data format for the port (number of data bits,
 //! number of stop bits, and parity).
 //!
-//! This function will configure the UART for operation in the specified data
+//! This function configures the UART for operation in the specified data
 //! format.  The baud rate is provided in the \e ulBaud parameter and the data
 //! format in the \e ulConfig parameter.
 //!
@@ -970,7 +967,7 @@ UARTTxIntModeGet(unsigned long ulBase)
 //! This function returns a flag indicating whether or not there is data
 //! available in the receive FIFO.
 //!
-//! \return Returns \b true if there is data in the receive FIFO, and \b false
+//! \return Returns \b true if there is data in the receive FIFO or \b false
 //! if there is no data in the receive FIFO.
 //
 //*****************************************************************************
@@ -997,8 +994,8 @@ UARTCharsAvail(unsigned long ulBase)
 //! This function returns a flag indicating whether or not there is space
 //! available in the transmit FIFO.
 //!
-//! \return Returns \b true if there is space available in the transmit FIFO,
-//! and \b false if there is no space available in the transmit FIFO.
+//! \return Returns \b true if there is space available in the transmit FIFO
+//! or \b false if there is no space available in the transmit FIFO.
 //
 //*****************************************************************************
 tBoolean
@@ -1028,8 +1025,8 @@ UARTSpaceAvail(unsigned long ulBase)
 //! the original API to this API.
 //!
 //! \return Returns the character read from the specified port, cast as a
-//! \e long.  A \b -1 will be returned if there are no characters present in
-//! the receive FIFO.  The UARTCharsAvail() function should be called before
+//! \e long.  A \b -1 is returned if there are no characters present in the
+//! receive FIFO.  The UARTCharsAvail() function should be called before
 //! attempting to call this function.
 //
 //*****************************************************************************
@@ -1067,10 +1064,10 @@ UARTCharGetNonBlocking(unsigned long ulBase)
 //! \param ulBase is the base address of the UART port.
 //!
 //! Gets a character from the receive FIFO for the specified port.  If there
-//! are no characters available, this function will wait until a character is
+//! are no characters available, this function waits until a character is
 //! received before returning.
 //!
-//! \return Returns the character read from the specified port, cast as an
+//! \return Returns the character read from the specified port, cast as a
 //! \e long.
 //
 //*****************************************************************************
@@ -1104,15 +1101,14 @@ UARTCharGet(unsigned long ulBase)
 //!
 //! Writes the character \e ucData to the transmit FIFO for the specified port.
 //! This function does not block, so if there is no space available, then a
-//! \b false is returned, and the application will have to retry the function
-//! later.
+//! \b false is returned, and the application must retry the function later.
 //!
 //! This function replaces the original UARTCharNonBlockingPut() API and
 //! performs the same actions.  A macro is provided in <tt>uart.h</tt> to map
 //! the original API to this API.
 //!
 //! \return Returns \b true if the character was successfully placed in the
-//! transmit FIFO, and \b false if there was no space available in the transmit
+//! transmit FIFO or \b false if there was no space available in the transmit
 //! FIFO.
 //
 //*****************************************************************************
@@ -1156,8 +1152,8 @@ UARTCharPutNonBlocking(unsigned long ulBase, unsigned char ucData)
 //! \param ucData is the character to be transmitted.
 //!
 //! Sends the character \e ucData to the transmit FIFO for the specified port.
-//! If there is no space available in the transmit FIFO, this function will
-//! wait until there is space available before returning.
+//! If there is no space available in the transmit FIFO, this function waits
+//! until there is space available before returning.
 //!
 //! \return None.
 //
@@ -1190,10 +1186,10 @@ UARTCharPut(unsigned long ulBase, unsigned char ucData)
 //! \param ulBase is the base address of the UART port.
 //! \param bBreakState controls the output level.
 //!
-//! Calling this function with \e bBreakState set to \b true will assert a
-//! break condition on the UART.  Calling this function with \e bBreakState set
-//! to \b false will remove the break condition.  For proper transmission of a
-//! break command, the break must be asserted for at least two complete frames.
+//! Calling this function with \e bBreakState set to \b true asserts a break
+//! condition on the UART.  Calling this function with \e bBreakState set to
+//! \b false removes the break condition.  For proper transmission of a break
+//! command, the break must be asserted for at least two complete frames.
 //!
 //! \return None.
 //
@@ -1412,8 +1408,8 @@ UARTIntDisable(unsigned long ulBase, unsigned long ulIntFlags)
 //! Gets the current interrupt status.
 //!
 //! \param ulBase is the base address of the UART port.
-//! \param bMasked is false if the raw interrupt status is required and true
-//! if the masked interrupt status is required.
+//! \param bMasked is \b false if the raw interrupt status is required and
+//! \b true if the masked interrupt status is required.
 //!
 //! This returns the interrupt status for the specified UART.  Either the raw
 //! interrupt status or the status of interrupts that are allowed to reflect to
@@ -1453,8 +1449,8 @@ UARTIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified UART interrupt sources are cleared, so that they no longer
-//! assert.  This must be done in the interrupt handler to keep it from being
-//! called again immediately upon exit.
+//! assert.  This function must be called in the interrupt handler to keep the
+//! interrupt from being recognized again immediately upon exit.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to UARTIntEnable().

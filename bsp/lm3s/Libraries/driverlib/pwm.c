@@ -2,26 +2,23 @@
 //
 // pwm.c - API for the PWM modules
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1510,11 +1507,15 @@ PWMGenFaultConfigure(unsigned long ulBase, unsigned long ulGen,
 //! \param ulGen is the PWM generator whose fault triggers are being set.  Must
 //! be one of \b PWM_GEN_0, \b PWM_GEN_1, \b PWM_GEN_2, or \b PWM_GEN_3.
 //! \param ulGroup indicates the subset of possible faults that are to be
-//! configured.  This must be \b PWM_FAULT_GROUP_0.
+//! configured.  This must be \b PWM_FAULT_GROUP_0 or \b PWM_FAULT_GROUP_1.
 //! \param ulFaultTriggers defines the set of inputs that are to contribute
 //! towards generation of the fault signal to the given PWM generator.  For
 //! \b PWM_FAULT_GROUP_0, this will be the logical OR of \b PWM_FAULT_FAULT0,
-//! \b PWM_FAULT_FAULT1, \b PWM_FAULT_FAULT2, or \b PWM_FAULT_FAULT3.
+//! \b PWM_FAULT_FAULT1, \b PWM_FAULT_FAULT2, or \b PWM_FAULT_FAULT3.  For
+//! \b PWM_FAULT_GROUP_1, this will be the logical OR of \b PWM_FAULT_DCMP0,
+//!  \b PWM_FAULT_DCMP1, \b PWM_FAULT_DCMP2, \b PWM_FAULT_DCMP3, \b
+//! PWM_FAULT_DCMP4, \b PWM_FAULT_DCMP5, \b PWM_FAULT_DCMP6, or \b
+//! PWM_FAULT_DCMP7.
 //!
 //! This function allows selection of the set of fault inputs that will be
 //! combined to generate a fault condition to a given PWM generator.  By
@@ -1545,8 +1546,14 @@ PWMGenFaultTriggerSet(unsigned long ulBase, unsigned long ulGen,
     ASSERT(ulBase == PWM_BASE);
     ASSERT(PWMGenValid(ulGen));
     ASSERT((ulGroup == PWM_FAULT_GROUP_0) || (ulGroup == PWM_FAULT_GROUP_1));
-    ASSERT((ulFaultTriggers & ~(PWM_FAULT_FAULT0 | PWM_FAULT_FAULT1 |
-                                PWM_FAULT_FAULT2 | PWM_FAULT_FAULT3)) == 0);
+    ASSERT((ulGroup == PWM_FAULT_GROUP_0) &&
+           ((ulFaultTriggers & ~(PWM_FAULT_FAULT0 | PWM_FAULT_FAULT1 |
+                                 PWM_FAULT_FAULT2 | PWM_FAULT_FAULT3)) == 0));
+    ASSERT((ulGroup == PWM_FAULT_GROUP_1) &&
+           ((ulFaultTriggers & ~(PWM_FAULT_DCMP0 | PWM_FAULT_DCMP1 |
+                                 PWM_FAULT_DCMP2 | PWM_FAULT_DCMP3 |
+                                 PWM_FAULT_DCMP4 | PWM_FAULT_DCMP5 |
+                                 PWM_FAULT_DCMP6 | PWM_FAULT_DCMP7)) == 0));
 
     //
     // Write the fault triggers to the appropriate register.
@@ -1572,7 +1579,7 @@ PWMGenFaultTriggerSet(unsigned long ulBase, unsigned long ulGen,
 //! \param ulGen is the PWM generator whose fault triggers are being queried.
 //! Must be one of \b PWM_GEN_0, \b PWM_GEN_1, \b PWM_GEN_2, or \b PWM_GEN_3.
 //! \param ulGroup indicates the subset of faults that are being queried.  This
-//! must be \b PWM_FAULT_GROUP_0.
+//! must be \b PWM_FAULT_GROUP_0 or \b PWM_FAULT_GROUP_1.
 //!
 //! This function allows an application to query the current set of inputs that
 //! contribute towards the generation of a fault condition to a given PWM
@@ -1584,7 +1591,10 @@ PWMGenFaultTriggerSet(unsigned long ulBase, unsigned long ulGen,
 //! \return Returns the current fault triggers configured for the fault group
 //! provided.  For \b PWM_FAULT_GROUP_0, the returned value will be a logical
 //! OR of \b PWM_FAULT_FAULT0, \b PWM_FAULT_FAULT1, \b PWM_FAULT_FAULT2, or
-//! \b PWM_FAULT_FAULT3.
+//! \b PWM_FAULT_FAULT3.  For \b PWM_FAULT_GROUP_1, the return value will be
+//! the logical OR of \b PWM_FAULT_DCMP0, \b PWM_FAULT_DCMP1, \b
+//! PWM_FAULT_DCMP2, \b PWM_FAULT_DCMP3, \b PWM_FAULT_DCMP4, \b PWM_FAULT_DCMP5,
+//! \b PWM_FAULT_DCMP6, or \b PWM_FAULT_DCMP7.
 //
 //*****************************************************************************
 unsigned long
@@ -1621,7 +1631,7 @@ PWMGenFaultTriggerGet(unsigned long ulBase, unsigned long ulGen,
 //! queried.  Must be one of \b PWM_GEN_0, \b PWM_GEN_1, \b PWM_GEN_2, or
 //! \b PWM_GEN_3.
 //! \param ulGroup indicates the subset of faults that are being queried.  This
-//! must be \b PWM_FAULT_GROUP_0.
+//! must be \b PWM_FAULT_GROUP_0 or \b PWM_FAULT_GROUP_1.
 //!
 //! This function allows an application to query the current state of each of
 //! the fault trigger inputs to a given PWM generator.  The current state of
@@ -1640,7 +1650,10 @@ PWMGenFaultTriggerGet(unsigned long ulBase, unsigned long ulGen,
 //! generator.  A set bit indicates that the associated trigger is active.  For
 //! \b PWM_FAULT_GROUP_0, the returned value will be a logical OR of
 //! \b PWM_FAULT_FAULT0, \b PWM_FAULT_FAULT1, \b PWM_FAULT_FAULT2, or
-//! \b PWM_FAULT_FAULT3.
+//! \b PWM_FAULT_FAULT3.  For \b PWM_FAULT_GROUP_1, the return value will be
+//! the logical OR of \b PWM_FAULT_DCMP0, \b PWM_FAULT_DCMP1, \b
+//! PWM_FAULT_DCMP2, \b PWM_FAULT_DCMP3, \b PWM_FAULT_DCMP4, \b PWM_FAULT_DCMP5,
+//! \b PWM_FAULT_DCMP6, or \b PWM_FAULT_DCMP7.
 //
 //*****************************************************************************
 unsigned long
@@ -1677,7 +1690,7 @@ PWMGenFaultStatus(unsigned long ulBase, unsigned long ulGen,
 //! queried.  Must be one of \b PWM_GEN_0, \b PWM_GEN_1, \b PWM_GEN_2, or
 //! \b PWM_GEN_3.
 //! \param ulGroup indicates the subset of faults that are being queried.  This
-//! must be \b PWM_FAULT_GROUP_0.
+//! must be \b PWM_FAULT_GROUP_0 or \b PWM_FAULT_GROUP_1.
 //! \param ulFaultTriggers is the set of fault triggers which are to be
 //! cleared.
 //!
@@ -1702,8 +1715,14 @@ PWMGenFaultClear(unsigned long ulBase, unsigned long ulGen,
     ASSERT(ulBase == PWM_BASE);
     ASSERT(PWMGenValid(ulGen));
     ASSERT((ulGroup == PWM_FAULT_GROUP_0) || (ulGroup == PWM_FAULT_GROUP_1));
-    ASSERT((ulFaultTriggers & ~(PWM_FAULT_FAULT0 | PWM_FAULT_FAULT1 |
-                                PWM_FAULT_FAULT2 | PWM_FAULT_FAULT3)) == 0);
+    ASSERT((ulGroup == PWM_FAULT_GROUP_0) &&
+           ((ulFaultTriggers & ~(PWM_FAULT_FAULT0 | PWM_FAULT_FAULT1 |
+                                 PWM_FAULT_FAULT2 | PWM_FAULT_FAULT3)) == 0));
+    ASSERT((ulGroup == PWM_FAULT_GROUP_1) &&
+           ((ulFaultTriggers & ~(PWM_FAULT_DCMP0 | PWM_FAULT_DCMP1 |
+                                 PWM_FAULT_DCMP2 | PWM_FAULT_DCMP3 |
+                                 PWM_FAULT_DCMP4 | PWM_FAULT_DCMP5 |
+                                 PWM_FAULT_DCMP6 | PWM_FAULT_DCMP7)) == 0));
 
     //
     // Clear the given faults.

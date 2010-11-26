@@ -2,26 +2,23 @@
 //
 // hw_nvic.h - Macros used when accessing the NVIC hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Firmware Development Package.
+// This is part of revision 6459 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,19 +30,19 @@
 // The following are defines for the NVIC register addresses.
 //
 //*****************************************************************************
-#define NVIC_INT_TYPE           0xE000E004  // Interrupt Controller Type Reg.
-#define NVIC_ST_CTRL            0xE000E010  // SysTick Control and Status Reg.
+#define NVIC_INT_TYPE           0xE000E004  // Interrupt Controller Type Reg
+#define NVIC_ST_CTRL            0xE000E010  // SysTick Control and Status Reg
 #define NVIC_ST_RELOAD          0xE000E014  // SysTick Reload Value Register
 #define NVIC_ST_CURRENT         0xE000E018  // SysTick Current Value Register
-#define NVIC_ST_CAL             0xE000E01C  // SysTick Calibration Value Reg.
+#define NVIC_ST_CAL             0xE000E01C  // SysTick Calibration Value Reg
 #define NVIC_EN0                0xE000E100  // IRQ 0 to 31 Set Enable Register
 #define NVIC_EN1                0xE000E104  // IRQ 32 to 63 Set Enable Register
-#define NVIC_DIS0               0xE000E180  // IRQ 0 to 31 Clear Enable Reg.
-#define NVIC_DIS1               0xE000E184  // IRQ 32 to 63 Clear Enable Reg.
+#define NVIC_DIS0               0xE000E180  // IRQ 0 to 31 Clear Enable Reg
+#define NVIC_DIS1               0xE000E184  // IRQ 32 to 63 Clear Enable Reg
 #define NVIC_PEND0              0xE000E200  // IRQ 0 to 31 Set Pending Register
-#define NVIC_PEND1              0xE000E204  // IRQ 32 to 63 Set Pending Reg.
-#define NVIC_UNPEND0            0xE000E280  // IRQ 0 to 31 Clear Pending Reg.
-#define NVIC_UNPEND1            0xE000E284  // IRQ 32 to 63 Clear Pending Reg.
+#define NVIC_PEND1              0xE000E204  // IRQ 32 to 63 Set Pending Reg
+#define NVIC_UNPEND0            0xE000E280  // IRQ 0 to 31 Clear Pending Reg
+#define NVIC_UNPEND1            0xE000E284  // IRQ 32 to 63 Clear Pending Reg
 #define NVIC_ACTIVE0            0xE000E300  // IRQ 0 to 31 Active Register
 #define NVIC_ACTIVE1            0xE000E304  // IRQ 32 to 63 Active Register
 #define NVIC_PRI0               0xE000E400  // IRQ 0 to 3 Priority Register
@@ -65,14 +62,14 @@
 #define NVIC_CPUID              0xE000ED00  // CPUID Base Register
 #define NVIC_INT_CTRL           0xE000ED04  // Interrupt Control State Register
 #define NVIC_VTABLE             0xE000ED08  // Vector Table Offset Register
-#define NVIC_APINT              0xE000ED0C  // App. Int & Reset Control Reg.
+#define NVIC_APINT              0xE000ED0C  // App. Int & Reset Control Reg
 #define NVIC_SYS_CTRL           0xE000ED10  // System Control Register
 #define NVIC_CFG_CTRL           0xE000ED14  // Configuration Control Register
 #define NVIC_SYS_PRI1           0xE000ED18  // Sys. Handlers 4 to 7 Priority
 #define NVIC_SYS_PRI2           0xE000ED1C  // Sys. Handlers 8 to 11 Priority
 #define NVIC_SYS_PRI3           0xE000ED20  // Sys. Handlers 12 to 15 Priority
 #define NVIC_SYS_HND_CTRL       0xE000ED24  // System Handler Control and State
-#define NVIC_FAULT_STAT         0xE000ED28  // Configurable Fault Status Reg.
+#define NVIC_FAULT_STAT         0xE000ED28  // Configurable Fault Status Reg
 #define NVIC_HFAULT_STAT        0xE000ED2C  // Hard Fault Status Register
 #define NVIC_DEBUG_STAT         0xE000ED30  // Debug Status Register
 #define NVIC_MM_ADDR            0xE000ED34  // Mem Manage Address Register
@@ -81,12 +78,12 @@
 #define NVIC_MPU_CTRL           0xE000ED94  // MPU Control Register
 #define NVIC_MPU_NUMBER         0xE000ED98  // MPU Region Number Register
 #define NVIC_MPU_BASE           0xE000ED9C  // MPU Region Base Address Register
-#define NVIC_MPU_ATTR           0xE000EDA0  // MPU Region Attribute & Size Reg.
-#define NVIC_DBG_CTRL           0xE000EDF0  // Debug Control and Status Reg.
+#define NVIC_MPU_ATTR           0xE000EDA0  // MPU Region Attribute & Size Reg
+#define NVIC_DBG_CTRL           0xE000EDF0  // Debug Control and Status Reg
 #define NVIC_DBG_XFER           0xE000EDF4  // Debug Core Reg. Transfer Select
 #define NVIC_DBG_DATA           0xE000EDF8  // Debug Core Register Data
 #define NVIC_DBG_INT            0xE000EDFC  // Debug Reset Interrupt Control
-#define NVIC_SW_TRIG            0xE000EF00  // Software Trigger Interrupt Reg.
+#define NVIC_SW_TRIG            0xE000EF00  // Software Trigger Interrupt Reg
 
 //*****************************************************************************
 //
@@ -665,6 +662,8 @@
 #define NVIC_INT_CTRL_NMI_SET   0x80000000  // Pend a NMI
 #define NVIC_INT_CTRL_PEND_SV   0x10000000  // Pend a PendSV
 #define NVIC_INT_CTRL_UNPEND_SV 0x08000000  // Unpend a PendSV
+#define NVIC_INT_CTRL_PENDSTSET 0x04000000  // Set pending SysTick interrupt
+#define NVIC_INT_CTRL_PENDSTCLR 0x02000000  // Clear pending SysTick interrupt
 #define NVIC_INT_CTRL_ISR_PRE   0x00800000  // Debug interrupt handling
 #define NVIC_INT_CTRL_ISR_PEND  0x00400000  // Debug interrupt pending
 #define NVIC_INT_CTRL_VEC_PEN_M 0x003FF000  // Highest pending exception
@@ -691,17 +690,17 @@
 #define NVIC_APINT_VECTKEY      0x05FA0000  // Vector key
 #define NVIC_APINT_ENDIANESS    0x00008000  // Data endianess
 #define NVIC_APINT_PRIGROUP_M   0x00000700  // Priority group
-#define NVIC_APINT_PRIGROUP_0_8 0x00000700  // Priority group 0.8 split
-#define NVIC_APINT_PRIGROUP_1_7 0x00000600  // Priority group 1.7 split
-#define NVIC_APINT_PRIGROUP_2_6 0x00000500  // Priority group 2.6 split
-#define NVIC_APINT_PRIGROUP_3_5 0x00000400  // Priority group 3.5 split
-#define NVIC_APINT_PRIGROUP_4_4 0x00000300  // Priority group 4.4 split
-#define NVIC_APINT_PRIGROUP_5_3 0x00000200  // Priority group 5.3 split
+#define NVIC_APINT_PRIGROUP_7_1 0x00000000  // Priority group 7.1 split
 #define NVIC_APINT_PRIGROUP_6_2 0x00000100  // Priority group 6.2 split
+#define NVIC_APINT_PRIGROUP_5_3 0x00000200  // Priority group 5.3 split
+#define NVIC_APINT_PRIGROUP_4_4 0x00000300  // Priority group 4.4 split
+#define NVIC_APINT_PRIGROUP_3_5 0x00000400  // Priority group 3.5 split
+#define NVIC_APINT_PRIGROUP_2_6 0x00000500  // Priority group 2.6 split
+#define NVIC_APINT_PRIGROUP_1_7 0x00000600  // Priority group 1.7 split
+#define NVIC_APINT_PRIGROUP_0_8 0x00000700  // Priority group 0.8 split
 #define NVIC_APINT_SYSRESETREQ  0x00000004  // System reset request
 #define NVIC_APINT_VECT_CLR_ACT 0x00000002  // Clear active NMI/fault info
 #define NVIC_APINT_VECT_RESET   0x00000001  // System reset
-#define NVIC_APINT_PRIGROUP_7_1 0x00000000  // Priority group 7.1 split
 
 //*****************************************************************************
 //
@@ -969,27 +968,27 @@
 //*****************************************************************************
 #define NVIC_DBG_XFER_REG_WNR   0x00010000  // Write or not read
 #define NVIC_DBG_XFER_REG_SEL_M 0x0000001F  // Register
-#define NVIC_DBG_XFER_REG_CFBP  0x00000014  // Control/Fault/BasePri/PriMask
-#define NVIC_DBG_XFER_REG_DSP   0x00000013  // Deep SP
-#define NVIC_DBG_XFER_REG_PSP   0x00000012  // Process SP
-#define NVIC_DBG_XFER_REG_MSP   0x00000011  // Main SP
-#define NVIC_DBG_XFER_REG_FLAGS 0x00000010  // xPSR/Flags register
-#define NVIC_DBG_XFER_REG_R15   0x0000000F  // Register R15
-#define NVIC_DBG_XFER_REG_R14   0x0000000E  // Register R14
-#define NVIC_DBG_XFER_REG_R13   0x0000000D  // Register R13
-#define NVIC_DBG_XFER_REG_R12   0x0000000C  // Register R12
-#define NVIC_DBG_XFER_REG_R11   0x0000000B  // Register R11
-#define NVIC_DBG_XFER_REG_R10   0x0000000A  // Register R10
-#define NVIC_DBG_XFER_REG_R9    0x00000009  // Register R9
-#define NVIC_DBG_XFER_REG_R8    0x00000008  // Register R8
-#define NVIC_DBG_XFER_REG_R7    0x00000007  // Register R7
-#define NVIC_DBG_XFER_REG_R6    0x00000006  // Register R6
-#define NVIC_DBG_XFER_REG_R5    0x00000005  // Register R5
-#define NVIC_DBG_XFER_REG_R4    0x00000004  // Register R4
-#define NVIC_DBG_XFER_REG_R3    0x00000003  // Register R3
-#define NVIC_DBG_XFER_REG_R2    0x00000002  // Register R2
-#define NVIC_DBG_XFER_REG_R1    0x00000001  // Register R1
 #define NVIC_DBG_XFER_REG_R0    0x00000000  // Register R0
+#define NVIC_DBG_XFER_REG_R1    0x00000001  // Register R1
+#define NVIC_DBG_XFER_REG_R2    0x00000002  // Register R2
+#define NVIC_DBG_XFER_REG_R3    0x00000003  // Register R3
+#define NVIC_DBG_XFER_REG_R4    0x00000004  // Register R4
+#define NVIC_DBG_XFER_REG_R5    0x00000005  // Register R5
+#define NVIC_DBG_XFER_REG_R6    0x00000006  // Register R6
+#define NVIC_DBG_XFER_REG_R7    0x00000007  // Register R7
+#define NVIC_DBG_XFER_REG_R8    0x00000008  // Register R8
+#define NVIC_DBG_XFER_REG_R9    0x00000009  // Register R9
+#define NVIC_DBG_XFER_REG_R10   0x0000000A  // Register R10
+#define NVIC_DBG_XFER_REG_R11   0x0000000B  // Register R11
+#define NVIC_DBG_XFER_REG_R12   0x0000000C  // Register R12
+#define NVIC_DBG_XFER_REG_R13   0x0000000D  // Register R13
+#define NVIC_DBG_XFER_REG_R14   0x0000000E  // Register R14
+#define NVIC_DBG_XFER_REG_R15   0x0000000F  // Register R15
+#define NVIC_DBG_XFER_REG_FLAGS 0x00000010  // xPSR/Flags register
+#define NVIC_DBG_XFER_REG_MSP   0x00000011  // Main SP
+#define NVIC_DBG_XFER_REG_PSP   0x00000012  // Process SP
+#define NVIC_DBG_XFER_REG_DSP   0x00000013  // Deep SP
+#define NVIC_DBG_XFER_REG_CFBP  0x00000014  // Control/Fault/BasePri/PriMask
 
 //*****************************************************************************
 //

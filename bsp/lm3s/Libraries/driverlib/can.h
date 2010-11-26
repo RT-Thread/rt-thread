@@ -2,26 +2,23 @@
 //
 // can.h - Defines and Macros for the CAN controller.
 //
-// Copyright (c) 2006-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -54,77 +51,80 @@ extern "C"
 
 //*****************************************************************************
 //
-//! These are the flags used by the tCANMsgObject variable when calling the
-//! CANMessageSet() and CANMessageGet() functions.
+// These are the flags used by the tCANMsgObject.ulFlags value when calling the
+// CANMessageSet() and CANMessageGet() functions.
 //
 //*****************************************************************************
-typedef enum
-{
-    //
-    //! This indicates that transmit interrupts should be enabled, or are
-    //! enabled.
-    //
-    MSG_OBJ_TX_INT_ENABLE =     0x00000001,
 
-    //
-    //! This indicates that receive interrupts should be enabled, or are
-    //! enabled.
-    //
-    MSG_OBJ_RX_INT_ENABLE =     0x00000002,
+//
+//! This definition is used with the tCANMsgObject ulFlags value and indicates
+//! that transmit interrupts should be enabled, or are enabled.
+//
+#define MSG_OBJ_TX_INT_ENABLE   0x00000001
 
-    //
-    //! This indicates that a message object will use or is using an extended
-    //! identifier.
-    //
-    MSG_OBJ_EXTENDED_ID =       0x00000004,
+//
+//! This indicates that receive interrupts should be enabled, or are
+//! enabled.
+//
+#define MSG_OBJ_RX_INT_ENABLE   0x00000002
 
-    //
-    //! This indicates that a message object will use or is using filtering
-    //! based on the object's message identifier.
-    //
-    MSG_OBJ_USE_ID_FILTER =     0x00000008,
+//
+//! This indicates that a message object will use or is using an extended
+//! identifier.
+//
+#define MSG_OBJ_EXTENDED_ID     0x00000004
 
-    //
-    //! This indicates that new data was available in the message object.
-    //
-    MSG_OBJ_NEW_DATA =          0x00000080,
+//
+//! This indicates that a message object will use or is using filtering
+//! based on the object's message identifier.
+//
+#define MSG_OBJ_USE_ID_FILTER   0x00000008
 
-    //
-    //! This indicates that data was lost since this message object was last
-    //! read.
-    //
-    MSG_OBJ_DATA_LOST =         0x00000100,
+//
+//! This indicates that new data was available in the message object.
+//
+#define MSG_OBJ_NEW_DATA        0x00000080
 
-    //
-    //! This indicates that a message object will use or is using filtering
-    //! based on the direction of the transfer.  If the direction filtering is
-    //! used, then ID filtering must also be enabled.
-    //
-    MSG_OBJ_USE_DIR_FILTER =    (0x00000010 | MSG_OBJ_USE_ID_FILTER),
+//
+//! This indicates that data was lost since this message object was last
+//! read.
+//
+#define MSG_OBJ_DATA_LOST       0x00000100
 
-    //
-    //! This indicates that a message object will use or is using message
-    //! identifier filtering based on the extended identifier.  If the extended
-    //! identifier filtering is used, then ID filtering must also be enabled.
-    //
-    MSG_OBJ_USE_EXT_FILTER =    (0x00000020 | MSG_OBJ_USE_ID_FILTER),
+//
+//! This indicates that a message object will use or is using filtering
+//! based on the direction of the transfer.  If the direction filtering is
+//! used, then ID filtering must also be enabled.
+//
+#define MSG_OBJ_USE_DIR_FILTER  (0x00000010 | MSG_OBJ_USE_ID_FILTER)
 
-    //
-    //! This indicates that a message object is a remote frame.
-    //
-    MSG_OBJ_REMOTE_FRAME =      0x00000040,
+//
+//! This indicates that a message object will use or is using message
+//! identifier filtering based on the extended identifier.  If the extended
+//! identifier filtering is used, then ID filtering must also be enabled.
+//
+#define MSG_OBJ_USE_EXT_FILTER  (0x00000020 | MSG_OBJ_USE_ID_FILTER)
 
-    //
-    //! This indicates that a message object has no flags set.
-    //
-    MSG_OBJ_NO_FLAGS =          0x00000000
-}
-tCANObjFlags;
+//
+//! This indicates that a message object is a remote frame.
+//
+#define MSG_OBJ_REMOTE_FRAME    0x00000040
+
+//
+//! This indicates that this message object is part of a FIFO structure and
+//! not the final message object in a FIFO.
+//
+#define MSG_OBJ_FIFO            0x00000200
+
+//
+//! This indicates that a message object has no flags set.
+//
+#define MSG_OBJ_NO_FLAGS        0x00000000
 
 //*****************************************************************************
 //
-//! This define is used with the #tCANObjFlags enumerated values to allow
-//! checking only status flags and not configuration flags.
+//! This define is used with the flag values to allow checking only status
+//! flags and not configuration flags.
 //
 //*****************************************************************************
 #define MSG_OBJ_STATUS_MASK     (MSG_OBJ_NEW_DATA | MSG_OBJ_DATA_LOST)
@@ -254,32 +254,28 @@ tCANStsReg;
 
 //*****************************************************************************
 //
-//! These definitions are used to specify interrupt sources to CANIntEnable()
-//! and CANIntDisable().
+// These definitions are used to specify interrupt sources to CANIntEnable()
+// and CANIntDisable().
 //
 //*****************************************************************************
-typedef enum
-{
-    //
-    //! This flag is used to allow a CAN controller to generate error
-    //! interrupts.
-    //
-    CAN_INT_ERROR =             0x00000008,
+//
+//! This flag is used to allow a CAN controller to generate error
+//! interrupts.
+//
+#define CAN_INT_ERROR           0x00000008
 
-    //
-    //! This flag is used to allow a CAN controller to generate status
-    //! interrupts.
-    //
-    CAN_INT_STATUS =            0x00000004,
+//
+//! This flag is used to allow a CAN controller to generate status
+//! interrupts.
+//
+#define CAN_INT_STATUS          0x00000004
 
-    //
-    //! This flag is used to allow a CAN controller to generate any CAN
-    //! interrupts.  If this is not set, then no interrupts will be generated
-    //! by the CAN controller.
-    //
-    CAN_INT_MASTER =            0x00000002
-}
-tCANIntFlags;
+//
+//! This flag is used to allow a CAN controller to generate any CAN
+//! interrupts.  If this is not set, then no interrupts will be generated
+//! by the CAN controller.
+//
+#define CAN_INT_MASTER          0x00000002
 
 //*****************************************************************************
 //
@@ -318,84 +314,80 @@ tMsgObjType;
 
 //*****************************************************************************
 //
-//! The following enumeration contains all error or status indicators that can
-//! be returned when calling the CANStatusGet() function.
+// The following enumeration contains all error or status indicators that can
+// be returned when calling the CANStatusGet() function.
 //
 //*****************************************************************************
-typedef enum
-{
-    //
-    //! CAN controller has entered a Bus Off state.
-    //
-    CAN_STATUS_BUS_OFF =        0x00000080,
+//
+//! CAN controller has entered a Bus Off state.
+//
+#define CAN_STATUS_BUS_OFF      0x00000080
 
-    //
-    //! CAN controller error level has reached warning level.
-    //
-    CAN_STATUS_EWARN =          0x00000040,
+//
+//! CAN controller error level has reached warning level.
+//
+#define CAN_STATUS_EWARN        0x00000040
 
-    //
-    //! CAN controller error level has reached error passive level.
-    //
-    CAN_STATUS_EPASS =          0x00000020,
+//
+//! CAN controller error level has reached error passive level.
+//
+#define CAN_STATUS_EPASS        0x00000020
 
-    //
-    //! A message was received successfully since the last read of this status.
-    //
-    CAN_STATUS_RXOK =           0x00000010,
+//
+//! A message was received successfully since the last read of this status.
+//
+#define CAN_STATUS_RXOK         0x00000010
 
-    //
-    //! A message was transmitted successfully since the last read of this
-    //! status.
-    //
-    CAN_STATUS_TXOK =           0x00000008,
+//
+//! A message was transmitted successfully since the last read of this
+//! status.
+//
+#define CAN_STATUS_TXOK         0x00000008
 
-    //
-    //! This is the mask for the last error code field.
-    //
-    CAN_STATUS_LEC_MSK =        0x00000007,
+//
+//! This is the mask for the last error code field.
+//
+#define CAN_STATUS_LEC_MSK      0x00000007
 
-    //
-    //! There was no error.
-    //
-    CAN_STATUS_LEC_NONE =       0x00000000,
+//
+//! There was no error.
+//
+#define CAN_STATUS_LEC_NONE     0x00000000
 
-    //
-    //! A bit stuffing error has occurred.
-    //
-    CAN_STATUS_LEC_STUFF =      0x00000001,
+//
+//! A bit stuffing error has occurred.
+//
+#define CAN_STATUS_LEC_STUFF    0x00000001
 
-    //
-    //! A formatting error has occurred.
-    //
-    CAN_STATUS_LEC_FORM =       0x00000002,
+//
+//! A formatting error has occurred.
+//
+#define CAN_STATUS_LEC_FORM     0x00000002
 
-    //
-    //! An acknowledge error has occurred.
-    //
-    CAN_STATUS_LEC_ACK =        0x00000003,
+//
+//! An acknowledge error has occurred.
+//
+#define CAN_STATUS_LEC_ACK      0x00000003
 
-    //
-    //! The bus remained a bit level of 1 for longer than is allowed.
-    //
-    CAN_STATUS_LEC_BIT1 =       0x00000004,
+//
+//! The bus remained a bit level of 1 for longer than is allowed.
+//
+#define CAN_STATUS_LEC_BIT1     0x00000004
 
-    //
-    //! The bus remained a bit level of 0 for longer than is allowed.
-    //
-    CAN_STATUS_LEC_BIT0 =       0x00000005,
+//
+//! The bus remained a bit level of 0 for longer than is allowed.
+//
+#define CAN_STATUS_LEC_BIT0     0x00000005
 
-    //
-    //! A CRC error has occurred.
-    //
-    CAN_STATUS_LEC_CRC =        0x00000006,
+//
+//! A CRC error has occurred.
+//
+#define CAN_STATUS_LEC_CRC      0x00000006
 
-    //
-    //! This is the mask for the CAN Last Error Code (LEC).
-    //
-    CAN_STATUS_LEC_MASK =       0x00000007
-}
-tCANStatusCtrl;
+//
+//! This is the mask for the CAN Last Error Code (LEC).
+//
+#define CAN_STATUS_LEC_MASK     0x00000007
 
 //*****************************************************************************
 //

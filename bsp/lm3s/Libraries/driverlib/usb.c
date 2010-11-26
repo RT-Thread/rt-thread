@@ -2,26 +2,23 @@
 //
 // usb.c - Driver for the USB Interface.
 //
-// Copyright (c) 2007-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -47,7 +44,10 @@
 // interrupt calls.
 //
 //*****************************************************************************
+#ifndef DEPRECATED
 #define USB_INT_RX_SHIFT        8
+#endif
+#define USB_INTEP_RX_SHIFT      16
 
 //*****************************************************************************
 //
@@ -55,7 +55,9 @@
 // interrupt calls.
 //
 //*****************************************************************************
+#ifndef DEPRECATED
 #define USB_INT_STATUS_SHIFT    24
+#endif
 
 //*****************************************************************************
 //
@@ -146,7 +148,7 @@ USBIndexWrite(unsigned long ulBase, unsigned long ulEndpoint,
 // \param ulEndpoint is the endpoint index to target for this write.
 // \param ulIndexedReg is the indexed register to write to.
 //
-// This function is used interally to access the indexed registers for each
+// This function is used internally to access the indexed registers for each
 // endpoint.  The only registers that are indexed are the FIFO configuration
 // registers which are not used after configuration.
 //
@@ -379,10 +381,15 @@ USBHostSpeedGet(unsigned long ulBase)
 //! \note This call will clear the source of all of the general status
 //! interrupts.
 //!
+//! \note WARNING: This API cannot be used on endpoint numbers greater than
+//! endpoint 3 so USBIntStatusControl() or USBIntStatusEndpoint() should be
+//! used instead.
+//!
 //! \return Returns the status of the sources for the USB controller's
 //! interrupt.
 //
 //*****************************************************************************
+#ifndef DEPRECATED
 unsigned long
 USBIntStatus(unsigned long ulBase)
 {
@@ -396,13 +403,13 @@ USBIntStatus(unsigned long ulBase)
     //
     // Get the transmit interrupt status.
     //
-    ulStatus = (HWREGH(ulBase + USB_O_TXIS));
+    ulStatus = (HWREGB(ulBase + USB_O_TXIS));
 
     //
     // Get the receive interrupt status, these bits go into the second byte of
     // the returned value.
     //
-    ulStatus |= (HWREGH(ulBase + USB_O_RXIS) << USB_INT_RX_SHIFT);
+    ulStatus |= (HWREGB(ulBase + USB_O_RXIS) << USB_INT_RX_SHIFT);
 
     //
     // Get the general interrupt status, these bits go into the upper 8 bits
@@ -444,6 +451,7 @@ USBIntStatus(unsigned long ulBase)
     //
     return(ulStatus);
 }
+#endif
 
 //*****************************************************************************
 //
@@ -459,9 +467,14 @@ USBIntStatus(unsigned long ulBase)
 //! \b USB_INT_DEV_IN, \b USB_INT_DEV_OUT, and \b USB_INT_STATUS.  If
 //! \b USB_INT_ALL is specified then all interrupts will be disabled.
 //!
+//! \note WARNING: This API cannot be used on endpoint numbers greater than
+//! endpoint 3 so USBIntDisableControl() or USBIntDisableEndpoint() should be
+//! used instead.
+//!
 //! \return None.
 //
 //*****************************************************************************
+#ifndef DEPRECATED
 void
 USBIntDisable(unsigned long ulBase, unsigned long ulFlags)
 {
@@ -518,6 +531,7 @@ USBIntDisable(unsigned long ulBase, unsigned long ulFlags)
         HWREG(USB0_BASE + USB_O_IDVIM) = 0;
     }
 }
+#endif
 
 //*****************************************************************************
 //
@@ -540,9 +554,14 @@ USBIntDisable(unsigned long ulBase, unsigned long ulFlags)
 //! are used then then a call to IntEnable() must be made in order to allow any
 //! USB interrupts to occur.
 //!
+//! \note WARNING: This API cannot be used on endpoint numbers greater than
+//! endpoint 3 so USBIntEnableControl() or USBIntEnableEndpoint() should be
+//! used instead.
+//!
 //! \return None.
 //
 //*****************************************************************************
+#ifndef DEPRECATED
 void
 USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
 {
@@ -599,6 +618,322 @@ USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
         HWREG(USB0_BASE + USB_O_IDVIM) = USB_IDVIM_ID;
     }
 }
+#endif
+
+//*****************************************************************************
+//
+//! Disable control interrupts on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulFlags specifies which control interrupts to disable.
+//!
+//! This function will disable the control interrupts for the USB controller
+//! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
+//! which control interrupts to disable.  The flags passed in the \e ulFlags
+//! parameters should be the definitions that start with \b USB_INTCTRL_* and
+//! not any other \b USB_INT flags.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBIntDisableControl(unsigned long ulBase, unsigned long ulFlags)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+    ASSERT((ulFlags & ~(USB_INTCTRL_ALL)) == 0);
+
+    //
+    // If any general interrupts were disabled then write the general interrupt
+    // settings out to the hardware.
+    //
+    if(ulFlags & USB_INTCTRL_STATUS)
+    {
+        HWREGB(ulBase + USB_O_IE) &= ~(ulFlags & USB_INTCTRL_STATUS);
+    }
+
+    //
+    // Disable the power fault interrupt.
+    //
+    if(ulFlags & USB_INTCTRL_POWER_FAULT)
+    {
+        HWREG(ulBase + USB_O_EPCIM) = 0;
+    }
+
+    //
+    // Disable the ID pin detect interrupt.
+    //
+    if(ulFlags & USB_INTCTRL_MODE_DETECT)
+    {
+        HWREG(USB0_BASE + USB_O_IDVIM) = 0;
+    }
+}
+
+//*****************************************************************************
+//
+//! Enable control interrupts on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulFlags specifies which control interrupts to enable.
+//!
+//! This function will enable the control interrupts for the USB controller
+//! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
+//! which control interrupts to enable.  The flags passed in the \e ulFlags
+//! parameters should be the definitions that start with \b USB_INTCTRL_* and
+//! not any other \b USB_INT flags.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBIntEnableControl(unsigned long ulBase, unsigned long ulFlags)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+    ASSERT((ulFlags & (~USB_INTCTRL_ALL)) == 0);
+
+    //
+    // If any general interrupts were enabled then write the general interrupt
+    // settings out to the hardware.
+    //
+    if(ulFlags & USB_INTCTRL_STATUS)
+    {
+        HWREGB(ulBase + USB_O_IE) |= ulFlags;
+    }
+
+    //
+    // Enable the power fault interrupt.
+    //
+    if(ulFlags & USB_INTCTRL_POWER_FAULT)
+    {
+        HWREG(ulBase + USB_O_EPCIM) = USB_EPCIM_PF;
+    }
+
+    //
+    // Enable the ID pin detect interrupt.
+    //
+    if(ulFlags & USB_INTCTRL_MODE_DETECT)
+    {
+        HWREG(USB0_BASE + USB_O_IDVIM) = USB_IDVIM_ID;
+    }
+}
+
+//*****************************************************************************
+//
+//! Returns the control interrupt status on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//!
+//! This function will read control interrupt status for a USB controller.
+//! This call will return the current status for control interrupts only, the
+//! endpoint interrupt status is retrieved by calling USBIntStatusEndpoint().
+//! The bit values returned should be compared against the \b USB_INTCTRL_*
+//! values.
+//!
+//! The following are the meanings of all \b USB_INCTRL_ flags and the modes
+//! for which they are valid.  These values apply to any calls to
+//! USBIntStatusControl(), USBIntEnableControl(), and USBIntDisableConrol().
+//! Some of these flags are only valid in the following modes as indicated in
+//! the parenthesis:  Host, Device, and OTG.
+//!
+//! - \b USB_INTCTRL_ALL - A full mask of all control interrupt sources.
+//! - \b USB_INTCTRL_VBUS_ERR - A VBUS error has occurred (Host Only).
+//! - \b USB_INTCTRL_SESSION - Session Start Detected on A-side of cable
+//!                            (OTG Only).
+//! - \b USB_INTCTRL_SESSION_END - Session End Detected (Device Only)
+//! - \b USB_INTCTRL_DISCONNECT - Device Disconnect Detected (Host Only)
+//! - \b USB_INTCTRL_CONNECT - Device Connect Detected (Host Only)
+//! - \b USB_INTCTRL_SOF - Start of Frame Detected.
+//! - \b USB_INTCTRL_BABBLE - USB controller detected a device signaling past
+//!                           the end of a frame. (Host Only)
+//! - \b USB_INTCTRL_RESET - Reset signaling detected by device. (Device Only)
+//! - \b USB_INTCTRL_RESUME - Resume signaling detected.
+//! - \b USB_INTCTRL_SUSPEND - Suspend signaling detected by device (Device
+//!                            Only)
+//! - \b USB_INTCTRL_MODE_DETECT - OTG cable mode detection has completed
+//!                                (OTG Only)
+//! - \b USB_INTCTRL_POWER_FAULT - Power Fault detected. (Host Only)
+//!
+//! \note This call will clear the source of all of the control status
+//! interrupts.
+//!
+//! \return Returns the status of the control interrupts for a USB controller.
+//
+//*****************************************************************************
+unsigned long
+USBIntStatusControl(unsigned long ulBase)
+{
+    unsigned long ulStatus;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Get the general interrupt status, these bits go into the upper 8 bits
+    // of the returned value.
+    //
+    ulStatus = HWREGB(ulBase + USB_O_IS);
+
+    //
+    // Add the power fault status.
+    //
+    if(HWREG(ulBase + USB_O_EPCISC) & USB_EPCISC_PF)
+    {
+        //
+        // Indicate a power fault was detected.
+        //
+        ulStatus |= USB_INTCTRL_POWER_FAULT;
+
+        //
+        // Clear the power fault interrupt.
+        //
+        HWREGB(ulBase + USB_O_EPCISC) |= USB_EPCISC_PF;
+    }
+
+    if(HWREG(USB0_BASE + USB_O_IDVISC) & USB_IDVRIS_ID)
+    {
+        //
+        // Indicate a id detection was detected.
+        //
+        ulStatus |= USB_INTCTRL_MODE_DETECT;
+
+        //
+        // Clear the id detection interrupt.
+        //
+        HWREG(USB0_BASE + USB_O_IDVISC) |= USB_IDVRIS_ID;
+    }
+
+    //
+    // Return the combined interrupt status.
+    //
+    return(ulStatus);
+}
+
+//*****************************************************************************
+//
+//! Disable endpoint interrupts on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulFlags specifies which endpoint interrupts to disable.
+//!
+//! This function will disable endpoint interrupts for the USB controller
+//! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
+//! which endpoint interrupts to disable.  The flags passed in the \e ulFlags
+//! parameters should be the definitions that start with \b USB_INTEP_* and not
+//! any other \b USB_INT flags.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBIntDisableEndpoint(unsigned long ulBase, unsigned long ulFlags)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // If any transmit interrupts were disabled then write the transmit
+    // interrupt settings out to the hardware.
+    //
+    HWREGH(ulBase + USB_O_TXIE) &=
+        ~(ulFlags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0));
+
+    //
+    // If any receive interrupts were disabled then write the receive interrupt
+    // settings out to the hardware.
+    //
+    HWREGH(ulBase + USB_O_RXIE) &=
+        ~((ulFlags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >>
+          USB_INTEP_RX_SHIFT);
+}
+
+//*****************************************************************************
+//
+//! Enable endpoint interrupts on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulFlags specifies which endpoint interrupts to enable.
+//!
+//! This function will enable endpoint interrupts for the USB controller
+//! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
+//! which endpoint interrupts to enable.  The flags passed in the \e ulFlags
+//! parameters should be the definitions that start with \b USB_INTEP_* and not
+//! any other \b USB_INT flags.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBIntEnableEndpoint(unsigned long ulBase, unsigned long ulFlags)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Enable any transmit endpoint interrupts.
+    //
+    HWREGH(ulBase + USB_O_TXIE) |=
+           ulFlags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0);
+
+    //
+    // Enable any receive endpoint interrupts.
+    //
+    HWREGH(ulBase + USB_O_RXIE) |=
+        ((ulFlags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >>
+         USB_INTEP_RX_SHIFT);
+}
+
+//*****************************************************************************
+//
+//! Returns the endpoint interrupt status on a given USB controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//!
+//! This function will read endpoint interrupt status for a USB controller.
+//! This call will return the current status for endpoint interrupts only, the
+//! control interrupt status is retrieved by calling USBIntStatusControl().
+//! The bit values returned should be compared against the \b USB_INTEP_*
+//! values.  These are grouped into classes for \b USB_INTEP_HOST_* and
+//! \b USB_INTEP_DEV_* values to handle both host and device modes with all
+//! endpoints.
+//!
+//! \note This call will clear the source of all of the endpoint interrupts.
+//!
+//! \return Returns the status of the endpoint interrupts for a USB controller.
+//
+//*****************************************************************************
+unsigned long
+USBIntStatusEndpoint(unsigned long ulBase)
+{
+    unsigned long ulStatus;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Get the transmit interrupt status.
+    //
+    ulStatus = HWREGH(ulBase + USB_O_TXIS);
+
+    ulStatus |= (HWREGH(ulBase + USB_O_RXIS) << USB_INTEP_RX_SHIFT);
+
+    //
+    // Return the combined interrupt status.
+    //
+    return(ulStatus);
+}
 
 //*****************************************************************************
 //
@@ -612,7 +947,8 @@ USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
 //! also enable the global USB interrupt in the interrupt controller.  The
 //! specific desired USB interrupts must be enabled via a separate call to
 //! USBIntEnable().  It is the interrupt handler's responsibility to clear the
-//! interrupt sources via a call to USBIntStatus().
+//! interrupt sources via a calls to USBIntStatusControl() and
+//! USBIntStatusEndpoint().
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -1204,7 +1540,7 @@ USBDevEndpointStallClear(unsigned long ulBase, unsigned long ulEndpoint,
         // Reset the data toggle.
         //
         HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) |=
-            USB_TXCSRL1_CLRDT;
+            USB_RXCSRL1_CLRDT;
     }
 }
 
@@ -1646,8 +1982,8 @@ USBHostEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
 //
 //*****************************************************************************
 void
-USBDevEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
-                     unsigned long ulMaxPacketSize, unsigned long ulFlags)
+USBDevEndpointConfigSet(unsigned long ulBase, unsigned long ulEndpoint,
+                        unsigned long ulMaxPacketSize, unsigned long ulFlags)
 {
     unsigned long ulRegister;
 
@@ -1758,7 +2094,7 @@ USBDevEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
         //
         // Enable isochronous mode if requested.
         //
-        if(USB_EP_MODE_ISOC & (ulFlags & USB_EP_MODE_MASK))
+        if((ulFlags & USB_EP_MODE_MASK) == USB_EP_MODE_ISOC)
         {
             ulRegister |= USB_RXCSRH1_ISO;
         }
@@ -1793,7 +2129,7 @@ USBDevEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
 //! This function will return the basic configuration for an endpoint in device
 //! mode. The values returned in \e *pulMaxPacketSize and \e *pulFlags are
 //! equivalent to the \e ulMaxPacketSize and \e ulFlags previously passed to
-//! USBDevEndpointConfig for this endpoint.
+//! USBDevEndpointConfigSet() for this endpoint.
 //!
 //! \note This function should only be called in device mode.
 //!
@@ -1882,7 +2218,7 @@ USBDevEndpointConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
             // and control mode for the endpoint so we just set something
             // that isn't isochronous.  This ensures that anyone modifying
             // the returned flags in preparation for a call to
-            // USBDevEndpointConfig will not see an unexpected mode change.
+            // USBDevEndpointConfigSet will not see an unexpected mode change.
             // If they decode the returned mode, however, they may be in for
             // a surprise.
             //
@@ -1947,7 +2283,7 @@ USBDevEndpointConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
             // and control mode for the endpoint so we just set something
             // that isn't isochronous.  This ensures that anyone modifying
             // the returned flags in preparation for a call to
-            // USBDevEndpointConfig will not see an unexpected mode change.
+            // USBDevEndpointConfigSet will not see an unexpected mode change.
             // If they decode the returned mode, however, they may be in for
             // a surprise.
             //
@@ -2125,19 +2461,15 @@ USBEndpointDMAEnable(unsigned long ulBase, unsigned long ulEndpoint,
     if(ulFlags & USB_EP_DEV_IN)
     {
         //
-        // Enable DMA on this end point.
+        // Enable DMA on the transmit end point.
         //
         HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_TXCSRH1) |=
             USB_TXCSRH1_DMAEN;
     }
-
-    //
-    // See if the receive DMA is being enabled.
-    //
-    if(ulFlags & USB_EP_DEV_OUT)
+    else
     {
         //
-        // Enable DMA on this end point.
+        // Enable DMA on the receive end point.
         //
         HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_RXCSRH1) |=
             USB_RXCSRH1_DMAEN;
@@ -2164,7 +2496,7 @@ USBEndpointDMADisable(unsigned long ulBase, unsigned long ulEndpoint,
                       unsigned long ulFlags)
 {
     //
-    // If this was a reques to disable DMA on the IN portion of the end point
+    // If this was a request to disable DMA on the IN portion of the end point
     // then handle it.
     //
     if(ulFlags & USB_EP_DEV_IN)
@@ -2173,20 +2505,15 @@ USBEndpointDMADisable(unsigned long ulBase, unsigned long ulEndpoint,
         // Just disable DMA leave the mode setting.
         //
         HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_TXCSRH1) &=
-            ~USB_TXCSRH1_DMAEN;
+               ~USB_TXCSRH1_DMAEN;
     }
-
-    //
-    // If this was a request to disable DMA on the OUT portion of the end point
-    // then handle it.
-    //
-    if(ulFlags & USB_EP_DEV_OUT)
+    else
     {
         //
         // Just disable DMA leave the mode setting.
         //
         HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_RXCSRH1) &=
-            ~USB_RXCSRH1_DMAEN;
+               ~USB_RXCSRH1_DMAEN;
     }
 }
 
@@ -2674,31 +3001,34 @@ USBFIFOFlush(unsigned long ulBase, unsigned long ulEndpoint,
         //
         // Only reset the IN or OUT FIFO.
         //
-        if(ulFlags & (USB_EP_HOST_IN | USB_EP_DEV_OUT))
+        if(ulFlags & (USB_EP_HOST_OUT | USB_EP_DEV_IN))
         {
             //
-            // Nothing in the FIFO if neither of these bits are set.
+            // Make sure the FIFO is not empty.
             //
-            if((HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) &
-                USB_RXCSRL1_RXRDY) == 0)
-            {
-                //
-                // Hit the Flush FIFO bit.
-                //
-                HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) |=
-                    USB_RXCSRL1_FLUSH;
-            }
-        }
-        else
-        {
-            if((HWREGB(ulBase + USB_O_TXCSRL1 + EP_OFFSET(ulEndpoint)) &
-                USB_TXCSRL1_TXRDY) == 0)
+            if(HWREGB(ulBase + USB_O_TXCSRL1 + EP_OFFSET(ulEndpoint)) &
+               USB_TXCSRL1_TXRDY)
             {
                 //
                 // Hit the Flush FIFO bit.
                 //
                 HWREGB(ulBase + USB_O_TXCSRL1 + EP_OFFSET(ulEndpoint)) |=
                     USB_TXCSRL1_FLUSH;
+            }
+        }
+        else
+        {
+            //
+            // Make sure that the FIFO is not empty.
+            //
+            if(HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) &
+               USB_RXCSRL1_RXRDY)
+            {
+                //
+                // Hit the Flush FIFO bit.
+                //
+                HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) |=
+                    USB_RXCSRL1_FLUSH;
             }
         }
     }
@@ -3010,42 +3340,67 @@ USBHostHubAddrGet(unsigned long ulBase, unsigned long ulEndpoint,
 //! \param ulBase specifies the USB module base address.
 //! \param ulFlags specifies the configuration of the power fault.
 //!
-//! This function will set the behavior of the USB controller during a power
-//! fault and the behavior of the USBPEN pin.  The flags specify the power
+//! This function controls how the USB controller uses its external power
+//! control pins(USBnPFTL and USBnEPEN).  The flags specify the power
 //! fault level sensitivity, the power fault action, and the power enable level
-//! and source.  One of the following can be selected as the power fault level
+//! and source.
+//!
+//! One of the following can be selected as the power fault level
 //! sensitivity:
 //!
-//! - \b USB_HOST_PWRFLT_LOW - Power fault is indicated by the pin being driven
-//!   low.
-//! - \b USB_HOST_PWRFLT_HIGH - Power fault is indicated by the pin being
-//!   driven! high.
+//! - \b USB_HOST_PWRFLT_LOW - An external power fault is indicated by the pin
+//!                            being driven low.
+//! - \b USB_HOST_PWRFLT_HIGH - An external power fault is indicated by the pin
+//!                             being driven high.
 //!
 //! One of the following can be selected as the power fault action:
 //!
 //! - \b USB_HOST_PWRFLT_EP_NONE - No automatic action when power fault
 //!   detected.
-//! - \b USB_HOST_PWRFLT_EP_TRI - Automatically Tri-state the USBEPEN pin on a
-//!   power fault.
-//! - \b USB_HOST_PWRFLT_EP_LOW - Automatically drive USBEPEN pin low on a
-//!   power fault.
-//! - \b USB_HOST_PWRFLT_EP_HIGH - Automatically drive USBEPEN pin high on a
-//!   power fault.
+//! - \b USB_HOST_PWRFLT_EP_TRI - Automatically Tri-state the USBnEPEN pin on a
+//!                               power fault.
+//! - \b USB_HOST_PWRFLT_EP_LOW - Automatically drive USBnEPEN pin low on a
+//!                               power fault.
+//! - \b USB_HOST_PWRFLT_EP_HIGH - Automatically drive USBnEPEN pin high on a
+//!                                power fault.
 //!
 //! One of the following can be selected as the power enable level and source:
 //!
-//! - \b USB_HOST_PWREN_LOW - USBEPEN is driven low when power is enabled.
-//! - \b USB_HOST_PWREN_HIGH - USBEPEN is driven high when power is enabled.
-//! - \b USB_HOST_PWREN_VBLOW - USBEPEN is driven high when VBUS is low.
-//! - \b USB_HOST_PWREN_VBHIGH - USBEPEN is driven high when VBUS is high.
+//! - \b USB_HOST_PWREN_MAN_LOW - USBEPEN is driven low by the USB controller
+//!                               when USBHostPwrEnable() is called.
+//! - \b USB_HOST_PWREN_MAN_HIGH - USBEPEN is driven high by the USB controller
+//!                                when USBHostPwrEnable() is called.
+//! - \b USB_HOST_PWREN_AUTOLOW - USBEPEN is driven low by the USB controller
+//!                               automatically if USBOTGSessionRequest() has
+//!                               enabled a session.
+//! - \b USB_HOST_PWREN_AUTOHIGH - USBEPEN is driven high by the USB controller
+//!                                automatically if USBOTGSessionRequest() has
+//!                                enabled a session.
 //!
-//! \note This function should only be called in host mode.
+//! On devices that support the VBUS glitch filter, the
+//! \b USB_HOST_PWREN_FILTER can be added to ignore small short drops in VBUS
+//! level caused by high power consumption.  This is mainly used to avoid
+//! causing VBUS errors caused by devices with high in-rush current.
+//!
+//! \note The following values have been deprecated and should no longer be
+//!       used.
+//! - \b USB_HOST_PWREN_LOW - Automatically drive USBnEPEN low when power is
+//!                           enabled.
+//! - \b USB_HOST_PWREN_HIGH - Automatically drive USBnEPEN high when power is
+//!                            enabled.
+//! - \b USB_HOST_PWREN_VBLOW - Automatically drive USBnEPEN low when power is
+//!                             enabled.
+//! - \b USB_HOST_PWREN_VBHIGH - Automatically drive USBnEPEN high when power is
+//!                              enabled.
+//!
+//! \note This function should only be called on microcontrollers that support
+//! host mode or OTG operation.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags)
+USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags)
 {
     //
     // Check the arguments.
@@ -3053,6 +3408,12 @@ USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags)
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulFlags & ~(USB_EPC_PFLTACT_M | USB_EPC_PFLTAEN |
                        USB_EPC_PFLTSEN_HIGH | USB_EPC_EPEN_M)) == 0);
+
+    //
+    // If requested, enable VBUS droop detection on parts that support this
+    // feature.
+    //
+    HWREG(ulBase + USB_O_VDC) = ulFlags >> 16;
 
     //
     // Set the power fault configuration as specified.  This will not change
@@ -3142,7 +3503,7 @@ USBHostPwrEnable(unsigned long ulBase)
     ASSERT(ulBase == USB0_BASE);
 
     //
-    // Enable the external power suppply enable signal.
+    // Enable the external power supply enable signal.
     //
     HWREGH(ulBase + USB_O_EPC) |= USB_EPC_EPENDE;
 }
@@ -3385,7 +3746,7 @@ USBEndpointDMAChannel(unsigned long ulBase, unsigned long ulEndpoint,
     //
     // Clear out the current selection for the channel.
     //
-    ulMask = HWREG(ulBase + USB_O_EPS) & (~ulMask);
+    ulMask = HWREG(ulBase + USB_O_DMASEL) & (~ulMask);
 
     //
     // The input select is now shifted into the correct position based on the
@@ -3396,7 +3757,7 @@ USBEndpointDMAChannel(unsigned long ulBase, unsigned long ulEndpoint,
     //
     // Write the value out to the register.
     //
-    HWREG(ulBase + USB_O_EPS) = ulMask;
+    HWREG(ulBase + USB_O_DMASEL) = ulMask;
 }
 
 //*****************************************************************************
@@ -3421,9 +3782,39 @@ USBHostMode(unsigned long ulBase)
     ASSERT(ulBase == USB0_BASE);
 
     //
-    // Set the USB controller mode to host.
+    // Force mode in OTG parts that support forcing USB controller mode.
+    // This bit is not writable in USB controllers that do not support
+    // forcing the mode.  Not setting the USB_GPCS_DEVMOD bit makes this a
+    // force of host mode.
     //
-    HWREGB(ulBase + USB_O_GPCS) &= ~(USB_GPCS_DEVMOD);
+    HWREGB(ulBase + USB_O_GPCS) = USB_GPCS_DEVMODOTG;
+}
+
+//*****************************************************************************
+//
+//! Change the mode of the USB controller to device.
+//!
+//! \param ulBase specifies the USB module base address.
+//!
+//! This function changes the mode of the USB controller to device mode.  This
+//! is only valid on microcontrollers that have the host and device
+//! capabilities and not the OTG capabilities.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBDevMode(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Set the USB controller mode to device.
+    //
+    HWREGB(ulBase + USB_O_GPCS) = USB_GPCS_DEVMODOTG | USB_GPCS_DEVMOD;
 }
 
 //*****************************************************************************

@@ -2,26 +2,23 @@
 //
 // timer.c - Driver for the timer module.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -134,8 +131,12 @@ TimerDisable(unsigned long ulBase, unsigned long ulTimer)
 //! state.  The configuration is specified in \e ulConfig as one of the
 //! following values:
 //!
-//! - \b TIMER_CFG_32_BIT_OS - 32-bit one shot timer
+//! - \b TIMER_CFG_32_BIT_OS - 32-bit one-shot timer
+//! - \b TIMER_CFG_32_BIT_OS_UP - 32-bit one-shot timer that counts up instead
+//!   of down (not available on all parts)
 //! - \b TIMER_CFG_32_BIT_PER - 32-bit periodic timer
+//! - \b TIMER_CFG_32_BIT_PER_UP - 32-bit periodic timer that counts up instead
+//!   of down (not available on all parts)
 //! - \b TIMER_CFG_32_RTC - 32-bit real time clock timer
 //! - \b TIMER_CFG_16_BIT_PAIR - Two 16-bit timers
 //!
@@ -144,8 +145,12 @@ TimerDisable(unsigned long ulBase, unsigned long ulTimer)
 //! the result of a logical OR operation between one of the following values
 //! and \e ulConfig:
 //!
-//! - \b TIMER_CFG_A_ONE_SHOT - 16-bit one shot timer
+//! - \b TIMER_CFG_A_ONE_SHOT - 16-bit one-shot timer
+//! - \b TIMER_CFG_A_ONE_SHOT_UP - 16-bit one-shot timer that counts up instead
+//!   of down (not available on all parts)
 //! - \b TIMER_CFG_A_PERIODIC - 16-bit periodic timer
+//! - \b TIMER_CFG_A_PERIODIC_UP - 16-bit periodic timer that counts up instead
+//!   of down (not available on all parts)
 //! - \b TIMER_CFG_A_CAP_COUNT - 16-bit edge count capture
 //! - \b TIMER_CFG_A_CAP_TIME - 16-bit edge time capture
 //! - \b TIMER_CFG_A_PWM - 16-bit PWM output
@@ -165,17 +170,23 @@ TimerConfigure(unsigned long ulBase, unsigned long ulConfig)
     //
     ASSERT(TimerBaseValid(ulBase));
     ASSERT((ulConfig == TIMER_CFG_32_BIT_OS) ||
+           (ulConfig == TIMER_CFG_32_BIT_OS_UP) ||
            (ulConfig == TIMER_CFG_32_BIT_PER) ||
+           (ulConfig == TIMER_CFG_32_BIT_PER_UP) ||
            (ulConfig == TIMER_CFG_32_RTC) ||
            ((ulConfig & 0xff000000) == TIMER_CFG_16_BIT_PAIR));
     ASSERT(((ulConfig & 0xff000000) != TIMER_CFG_16_BIT_PAIR) ||
            ((((ulConfig & 0x000000ff) == TIMER_CFG_A_ONE_SHOT) ||
+             ((ulConfig & 0x000000ff) == TIMER_CFG_A_ONE_SHOT_UP) ||
              ((ulConfig & 0x000000ff) == TIMER_CFG_A_PERIODIC) ||
+             ((ulConfig & 0x000000ff) == TIMER_CFG_A_PERIODIC_UP) ||
              ((ulConfig & 0x000000ff) == TIMER_CFG_A_CAP_COUNT) ||
              ((ulConfig & 0x000000ff) == TIMER_CFG_A_CAP_TIME) ||
              ((ulConfig & 0x000000ff) == TIMER_CFG_A_PWM)) &&
             (((ulConfig & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT) ||
+             ((ulConfig & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT_UP) ||
              ((ulConfig & 0x0000ff00) == TIMER_CFG_B_PERIODIC) ||
+             ((ulConfig & 0x0000ff00) == TIMER_CFG_B_PERIODIC_UP) ||
              ((ulConfig & 0x0000ff00) == TIMER_CFG_B_CAP_COUNT) ||
              ((ulConfig & 0x0000ff00) == TIMER_CFG_B_CAP_TIME) ||
              ((ulConfig & 0x0000ff00) == TIMER_CFG_B_PWM))));
@@ -346,6 +357,67 @@ TimerControlStall(unsigned long ulBase, unsigned long ulTimer,
 
 //*****************************************************************************
 //
+//! Controls the wait on trigger handling.
+//!
+//! \param ulBase is the base address of the timer module.
+//! \param ulTimer specifies the timer(s) to be adjusted; must be one of
+//! \b TIMER_A, \b TIMER_B, or \b TIMER_BOTH.
+//! \param bWait specifies if the timer should wait for a trigger input.
+//!
+//! This function controls whether or not a timer waits for a trigger input to
+//! start counting.  When enabled, the previous timer in the trigger chain must
+//! count to its timeout in order for this timer to start counting.  Refer to
+//! the part's data sheet for a description of the trigger chain.
+//!
+//! \note This functionality is not available on all parts.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+TimerControlWaitOnTrigger(unsigned long ulBase, unsigned long ulTimer,
+                          tBoolean bWait)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(TimerBaseValid(ulBase));
+    ASSERT((ulTimer == TIMER_A) || (ulTimer == TIMER_B) ||
+           (ulTimer == TIMER_BOTH));
+
+    //
+    // Set the wait on trigger mode for timer A.
+    //
+    if((ulTimer & TIMER_A) != 0)
+    {
+        if(bWait)
+        {
+            HWREG(ulBase + TIMER_O_TAMR) |= TIMER_TAMR_TAWOT;
+        }
+        else
+        {
+            HWREG(ulBase + TIMER_O_TAMR) &= ~(TIMER_TAMR_TAWOT);
+        }
+    }
+
+    //
+    // Set the wait on trigger mode for timer A.
+    //
+    if((ulTimer & TIMER_B) != 0)
+    {
+        if(bWait)
+        {
+            HWREG(ulBase + TIMER_O_TBMR) |= TIMER_TBMR_TBWOT;
+        }
+        else
+        {
+            HWREG(ulBase + TIMER_O_TBMR) &= ~(TIMER_TBMR_TBWOT);
+        }
+    }
+}
+
+//*****************************************************************************
+//
 //! Enable RTC counting.
 //!
 //! \param ulBase is the base address of the timer module.
@@ -471,6 +543,88 @@ TimerPrescaleGet(unsigned long ulBase, unsigned long ulTimer)
     //
     return((ulTimer == TIMER_A) ? HWREG(ulBase + TIMER_O_TAPR) :
            HWREG(ulBase + TIMER_O_TBPR));
+}
+
+//*****************************************************************************
+//
+//! Set the timer prescale match value.
+//!
+//! \param ulBase is the base address of the timer module.
+//! \param ulTimer specifies the timer(s) to adjust; must be one of \b TIMER_A,
+//! \b TIMER_B, or \b TIMER_BOTH.
+//! \param ulValue is the timer prescale match value; must be between 0 and
+//! 255, inclusive.
+//!
+//! This function sets the value of the input clock prescaler match value.
+//! When in a 16-bit mode that uses the counter match and the prescaler, the
+//! prescale match effectively extends the range of the counter to 24-bits.
+//!
+//! \note This functionality is not available on all parts.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+TimerPrescaleMatchSet(unsigned long ulBase, unsigned long ulTimer,
+                      unsigned long ulValue)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(TimerBaseValid(ulBase));
+    ASSERT((ulTimer == TIMER_A) || (ulTimer == TIMER_B) ||
+           (ulTimer == TIMER_BOTH));
+    ASSERT(ulValue < 256);
+
+    //
+    // Set the timer A prescale match if requested.
+    //
+    if(ulTimer & TIMER_A)
+    {
+        HWREG(ulBase + TIMER_O_TAPMR) = ulValue;
+    }
+
+    //
+    // Set the timer B prescale match if requested.
+    //
+    if(ulTimer & TIMER_B)
+    {
+        HWREG(ulBase + TIMER_O_TBPMR) = ulValue;
+    }
+}
+
+//*****************************************************************************
+//
+//! Get the timer prescale match value.
+//!
+//! \param ulBase is the base address of the timer module.
+//! \param ulTimer specifies the timer; must be one of \b TIMER_A or
+//! \b TIMER_B.
+//!
+//! This function gets the value of the input clock prescaler match value.
+//! When in a 16-bit mode that uses the counter match and prescaler, the
+//! prescale match effectively extends the range of the counter to 24-bits.
+//!
+//! \note This functionality is not available on all parts.
+//!
+//! \return The value of the timer prescale match.
+//
+//*****************************************************************************
+unsigned long
+TimerPrescaleMatchGet(unsigned long ulBase, unsigned long ulTimer)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(TimerBaseValid(ulBase));
+    ASSERT((ulTimer == TIMER_A) || (ulTimer == TIMER_B) ||
+           (ulTimer == TIMER_BOTH));
+
+    //
+    // Return the appropriate prescale match value.
+    //
+    return((ulTimer == TIMER_A) ? HWREG(ulBase + TIMER_O_TAPMR) :
+           HWREG(ulBase + TIMER_O_TBPMR));
 }
 
 //*****************************************************************************

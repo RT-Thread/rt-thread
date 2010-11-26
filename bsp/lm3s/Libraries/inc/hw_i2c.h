@@ -2,26 +2,23 @@
 //
 // hw_i2c.h - Macros used when accessing the I2C master and slave hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Firmware Development Package.
+// This is part of revision 6459 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,8 +27,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the offsets between the I2C master and slave
-// registers.
+// The following are defines for the I2C register offsets.
 //
 //*****************************************************************************
 #define I2C_O_MSA               0x00000000  // I2C Master Slave Address
@@ -58,8 +54,8 @@
 // The following are defines for the bit fields in the I2C_O_MSA register.
 //
 //*****************************************************************************
-#define I2C_MSA_SA_M            0x000000FE  // I2C Slave Address.
-#define I2C_MSA_RS              0x00000001  // Receive not Send
+#define I2C_MSA_SA_M            0x000000FE  // I2C Slave Address
+#define I2C_MSA_RS              0x00000001  // Receive not send
 #define I2C_MSA_SA_S            1
 
 //*****************************************************************************
@@ -67,7 +63,7 @@
 // The following are defines for the bit fields in the I2C_O_SOAR register.
 //
 //*****************************************************************************
-#define I2C_SOAR_OAR_M          0x0000007F  // I2C Slave Own Address.
+#define I2C_SOAR_OAR_M          0x0000007F  // I2C Slave Own Address
 #define I2C_SOAR_OAR_S          0
 
 //*****************************************************************************
@@ -75,34 +71,34 @@
 // The following are defines for the bit fields in the I2C_O_SCSR register.
 //
 //*****************************************************************************
-#define I2C_SCSR_FBR            0x00000004  // First Byte Received.
-#define I2C_SCSR_TREQ           0x00000002  // Transmit Request.
-#define I2C_SCSR_DA             0x00000001  // Device Active.
-#define I2C_SCSR_RREQ           0x00000001  // Receive Request.
+#define I2C_SCSR_FBR            0x00000004  // First Byte Received
+#define I2C_SCSR_TREQ           0x00000002  // Transmit Request
+#define I2C_SCSR_DA             0x00000001  // Device Active
+#define I2C_SCSR_RREQ           0x00000001  // Receive Request
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MCS register.
 //
 //*****************************************************************************
-#define I2C_MCS_BUSBSY          0x00000040  // Bus Busy.
-#define I2C_MCS_IDLE            0x00000020  // I2C Idle.
-#define I2C_MCS_ARBLST          0x00000010  // Arbitration Lost.
-#define I2C_MCS_ACK             0x00000008  // Data Acknowledge Enable.
-#define I2C_MCS_DATACK          0x00000008  // Acknowledge Data.
-#define I2C_MCS_ADRACK          0x00000004  // Acknowledge Address.
-#define I2C_MCS_STOP            0x00000004  // Generate STOP.
-#define I2C_MCS_START           0x00000002  // Generate START.
-#define I2C_MCS_ERROR           0x00000002  // Error.
-#define I2C_MCS_RUN             0x00000001  // I2C Master Enable.
-#define I2C_MCS_BUSY            0x00000001  // I2C Busy.
+#define I2C_MCS_BUSBSY          0x00000040  // Bus Busy
+#define I2C_MCS_IDLE            0x00000020  // I2C Idle
+#define I2C_MCS_ARBLST          0x00000010  // Arbitration Lost
+#define I2C_MCS_ACK             0x00000008  // Data Acknowledge Enable
+#define I2C_MCS_DATACK          0x00000008  // Acknowledge Data
+#define I2C_MCS_ADRACK          0x00000004  // Acknowledge Address
+#define I2C_MCS_STOP            0x00000004  // Generate STOP
+#define I2C_MCS_START           0x00000002  // Generate START
+#define I2C_MCS_ERROR           0x00000002  // Error
+#define I2C_MCS_RUN             0x00000001  // I2C Master Enable
+#define I2C_MCS_BUSY            0x00000001  // I2C Busy
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_SDR register.
 //
 //*****************************************************************************
-#define I2C_SDR_DATA_M          0x000000FF  // Data for Transfer.
+#define I2C_SDR_DATA_M          0x000000FF  // Data for Transfer
 #define I2C_SDR_DATA_S          0
 
 //*****************************************************************************
@@ -110,7 +106,7 @@
 // The following are defines for the bit fields in the I2C_O_MDR register.
 //
 //*****************************************************************************
-#define I2C_MDR_DATA_M          0x000000FF  // Data Transferred.
+#define I2C_MDR_DATA_M          0x000000FF  // Data Transferred
 #define I2C_MDR_DATA_S          0
 
 //*****************************************************************************
@@ -118,7 +114,7 @@
 // The following are defines for the bit fields in the I2C_O_MTPR register.
 //
 //*****************************************************************************
-#define I2C_MTPR_TPR_M          0x000000FF  // SCL Clock Period.
+#define I2C_MTPR_TPR_M          0x0000007F  // SCL Clock Period
 #define I2C_MTPR_TPR_S          0
 
 //*****************************************************************************
@@ -126,9 +122,9 @@
 // The following are defines for the bit fields in the I2C_O_SIMR register.
 //
 //*****************************************************************************
-#define I2C_SIMR_STOPIM         0x00000004  // Stop Condition Interrupt Mask.
-#define I2C_SIMR_STARTIM        0x00000002  // Start Condition Interrupt Mask.
-#define I2C_SIMR_DATAIM         0x00000001  // Data Interrupt Mask.
+#define I2C_SIMR_STOPIM         0x00000004  // Stop Condition Interrupt Mask
+#define I2C_SIMR_STARTIM        0x00000002  // Start Condition Interrupt Mask
+#define I2C_SIMR_DATAIM         0x00000001  // Data Interrupt Mask
 
 //*****************************************************************************
 //
@@ -136,24 +132,24 @@
 //
 //*****************************************************************************
 #define I2C_SRIS_STOPRIS        0x00000004  // Stop Condition Raw Interrupt
-                                            // Status.
+                                            // Status
 #define I2C_SRIS_STARTRIS       0x00000002  // Start Condition Raw Interrupt
-                                            // Status.
-#define I2C_SRIS_DATARIS        0x00000001  // Data Raw Interrupt Status.
+                                            // Status
+#define I2C_SRIS_DATARIS        0x00000001  // Data Raw Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MIMR register.
 //
 //*****************************************************************************
-#define I2C_MIMR_IM             0x00000001  // Interrupt Mask.
+#define I2C_MIMR_IM             0x00000001  // Interrupt Mask
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MRIS register.
 //
 //*****************************************************************************
-#define I2C_MRIS_RIS            0x00000001  // Raw Interrupt Status.
+#define I2C_MRIS_RIS            0x00000001  // Raw Interrupt Status
 
 //*****************************************************************************
 //
@@ -161,42 +157,42 @@
 //
 //*****************************************************************************
 #define I2C_SMIS_STOPMIS        0x00000004  // Stop Condition Masked Interrupt
-                                            // Status.
+                                            // Status
 #define I2C_SMIS_STARTMIS       0x00000002  // Start Condition Masked Interrupt
-                                            // Status.
-#define I2C_SMIS_DATAMIS        0x00000001  // Data Masked Interrupt Status.
+                                            // Status
+#define I2C_SMIS_DATAMIS        0x00000001  // Data Masked Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_SICR register.
 //
 //*****************************************************************************
-#define I2C_SICR_STOPIC         0x00000004  // Stop Condition Interrupt Clear.
-#define I2C_SICR_STARTIC        0x00000002  // Start Condition Interrupt Clear.
-#define I2C_SICR_DATAIC         0x00000001  // Data Clear Interrupt.
+#define I2C_SICR_STOPIC         0x00000004  // Stop Condition Interrupt Clear
+#define I2C_SICR_STARTIC        0x00000002  // Start Condition Interrupt Clear
+#define I2C_SICR_DATAIC         0x00000001  // Data Interrupt Clear
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MMIS register.
 //
 //*****************************************************************************
-#define I2C_MMIS_MIS            0x00000001  // Masked Interrupt Status.
+#define I2C_MMIS_MIS            0x00000001  // Masked Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MICR register.
 //
 //*****************************************************************************
-#define I2C_MICR_IC             0x00000001  // Interrupt Clear.
+#define I2C_MICR_IC             0x00000001  // Interrupt Clear
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MCR register.
 //
 //*****************************************************************************
-#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable.
-#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable.
-#define I2C_MCR_LPBK            0x00000001  // I2C Loopback.
+#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
+#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
+#define I2C_MCR_LPBK            0x00000001  // I2C Loopback
 
 //*****************************************************************************
 //
@@ -207,11 +203,42 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the offsets between the I2C master
-// and slave registers.
+// The following are deprecated defines for the I2C register offsets.
 //
 //*****************************************************************************
 #define I2C_O_SLAVE             0x00000800  // Offset from master to slave
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the I2C_O_SIMR
+// register.
+//
+//*****************************************************************************
+#define I2C_SIMR_IM             0x00000001  // Interrupt Mask
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the I2C_O_SRIS
+// register.
+//
+//*****************************************************************************
+#define I2C_SRIS_RIS            0x00000001  // Raw Interrupt Status
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the I2C_O_SMIS
+// register.
+//
+//*****************************************************************************
+#define I2C_SMIS_MIS            0x00000001  // Masked Interrupt Status
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the I2C_O_SICR
+// register.
+//
+//*****************************************************************************
+#define I2C_SICR_IC             0x00000001  // Clear Interrupt
 
 //*****************************************************************************
 //
@@ -374,38 +401,6 @@
 //
 //*****************************************************************************
 #define I2C_SLAVE_SICR_IC       0x00000001  // Slave interrupt clear
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the I2C_O_SIMR
-// register.
-//
-//*****************************************************************************
-#define I2C_SIMR_IM             0x00000001  // Interrupt Mask.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the I2C_O_SRIS
-// register.
-//
-//*****************************************************************************
-#define I2C_SRIS_RIS            0x00000001  // Raw Interrupt Status.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the I2C_O_SMIS
-// register.
-//
-//*****************************************************************************
-#define I2C_SMIS_MIS            0x00000001  // Masked Interrupt Status.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the I2C_O_SICR
-// register.
-//
-//*****************************************************************************
-#define I2C_SICR_IC             0x00000001  // Clear Interrupt.
 
 #endif
 

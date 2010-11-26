@@ -2,26 +2,23 @@
 //
 // flash.c - Driver for programming the on-chip flash.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -802,7 +799,7 @@ FlashIntUnregister(void)
 //! Enables individual flash controller interrupt sources.
 //!
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
-//! Can be any of the \b FLASH_FCIM_PROGRAM or \b FLASH_FCIM_ACCESS values.
+//! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_ACCESS values.
 //!
 //! Enables the indicated flash controller interrupt sources.  Only the sources
 //! that are enabled can be reflected to the processor interrupt; disabled
@@ -825,7 +822,7 @@ FlashIntEnable(unsigned long ulIntFlags)
 //! Disables individual flash controller interrupt sources.
 //!
 //! \param ulIntFlags is a bit mask of the interrupt sources to be disabled.
-//! Can be any of the \b FLASH_FCIM_PROGRAM or \b FLASH_FCIM_ACCESS values.
+//! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_ACCESS values.
 //!
 //! Disables the indicated flash controller interrupt sources.  Only the
 //! sources that are enabled can be reflected to the processor interrupt;
@@ -855,11 +852,11 @@ FlashIntDisable(unsigned long ulIntFlags)
 //! the processor can be returned.
 //!
 //! \return The current interrupt status, enumerated as a bit field of
-//! \b FLASH_FCMISC_PROGRAM and \b FLASH_FCMISC_AMISC.
+//! \b FLASH_INT_PROGRAM and \b FLASH_INT_ACCESS.
 //
 //*****************************************************************************
 unsigned long
-FlashIntGetStatus(tBoolean bMasked)
+FlashIntStatus(tBoolean bMasked)
 {
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -880,7 +877,7 @@ FlashIntGetStatus(tBoolean bMasked)
 //! Clears flash controller interrupt sources.
 //!
 //! \param ulIntFlags is the bit mask of the interrupt sources to be cleared.
-//! Can be any of the \b FLASH_FCMISC_PROGRAM or \b FLASH_FCMISC_AMISC values.
+//! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_AMISC values.
 //!
 //! The specified flash controller interrupt sources are cleared, so that they
 //! no longer assert.  This must be done in the interrupt handler to keep it

@@ -2,26 +2,23 @@
 //
 // usb.h - Prototypes for the USB Interface Driver.
 //
-// Copyright (c) 2007-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -41,42 +38,103 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to USBIntEnable(),
-// USBIntDisable(), and USBIntClear() as the ulIntFlags parameter, and which
-// are returned from USBIntStatus().
+// The following are values that can be passed to USBIntEnableControl() and
+// USBIntDisableControl() as the ulFlags parameter, and are returned from
+// USBIntStatusControl().
 //
 //*****************************************************************************
-#define USB_INT_ALL             0xFF030E0F  // All Interrupt sources
-#define USB_INT_STATUS          0xFF000000  // Status Interrupts
-#define USB_INT_VBUS_ERR        0x80000000  // VBUS Error
-#define USB_INT_SESSION_START   0x40000000  // Session Start Detected
-#define USB_INT_SESSION_END     0x20000000  // Session End Detected
-#define USB_INT_DISCONNECT      0x20000000  // Disconnect Detected
-#define USB_INT_CONNECT         0x10000000  // Device Connect Detected
-#define USB_INT_SOF             0x08000000  // Start of Frame Detected
-#define USB_INT_BABBLE          0x04000000  // Babble signaled
-#define USB_INT_RESET           0x04000000  // Reset signaled
-#define USB_INT_RESUME          0x02000000  // Resume detected
-#define USB_INT_SUSPEND         0x01000000  // Suspend detected
-#define USB_INT_MODE_DETECT     0x00020000  // Mode value valid
-#define USB_INT_POWER_FAULT     0x00010000  // Power Fault detected
-#define USB_INT_HOST_IN         0x00000E00  // Host IN Interrupts
-#define USB_INT_DEV_OUT         0x00000E00  // Device OUT Interrupts
-#define USB_INT_HOST_IN_EP3     0x00000800  // Endpoint 3 Host IN Interrupt
-#define USB_INT_HOST_IN_EP2     0x00000400  // Endpoint 2 Host IN Interrupt
-#define USB_INT_HOST_IN_EP1     0x00000200  // Endpoint 1 Host IN Interrupt
-#define USB_INT_DEV_OUT_EP3     0x00000800  // Endpoint 3 Device OUT Interrupt
-#define USB_INT_DEV_OUT_EP2     0x00000400  // Endpoint 2 Device OUT Interrupt
-#define USB_INT_DEV_OUT_EP1     0x00000200  // Endpoint 1 Device OUT Interrupt
-#define USB_INT_HOST_OUT        0x0000000E  // Host OUT Interrupts
-#define USB_INT_DEV_IN          0x0000000E  // Device IN Interrupts
-#define USB_INT_HOST_OUT_EP3    0x00000008  // Endpoint 3 HOST_OUT Interrupt
-#define USB_INT_HOST_OUT_EP2    0x00000004  // Endpoint 2 HOST_OUT Interrupt
-#define USB_INT_HOST_OUT_EP1    0x00000002  // Endpoint 1 HOST_OUT Interrupt
-#define USB_INT_DEV_IN_EP3      0x00000008  // Endpoint 3 DEV_IN Interrupt
-#define USB_INT_DEV_IN_EP2      0x00000004  // Endpoint 2 DEV_IN Interrupt
-#define USB_INT_DEV_IN_EP1      0x00000002  // Endpoint 1 DEV_IN Interrupt
-#define USB_INT_EP0             0x00000001  // Endpoint 0 Interrupt
+#define USB_INTCTRL_ALL         0x000003FF  // All control interrupt sources
+#define USB_INTCTRL_STATUS      0x000000FF  // Status Interrupts
+#define USB_INTCTRL_VBUS_ERR    0x00000080  // VBUS Error
+#define USB_INTCTRL_SESSION     0x00000040  // Session Start Detected
+#define USB_INTCTRL_SESSION_END 0x00000040  // Session End Detected
+#define USB_INTCTRL_DISCONNECT  0x00000020  // Disconnect Detected
+#define USB_INTCTRL_CONNECT     0x00000010  // Device Connect Detected
+#define USB_INTCTRL_SOF         0x00000008  // Start of Frame Detected
+#define USB_INTCTRL_BABBLE      0x00000004  // Babble signaled
+#define USB_INTCTRL_RESET       0x00000004  // Reset signaled
+#define USB_INTCTRL_RESUME      0x00000002  // Resume detected
+#define USB_INTCTRL_SUSPEND     0x00000001  // Suspend detected
+#define USB_INTCTRL_MODE_DETECT 0x00000200  // Mode value valid
+#define USB_INTCTRL_POWER_FAULT 0x00000100  // Power Fault detected
+
+//*****************************************************************************
+//
+// The following are values that can be passed to USBIntEnableEndpoint() and
+// USBIntDisableEndpoint() as the ulFlags parameter, and are returned from
+// USBIntStatusEndpoint().
+//
+//*****************************************************************************
+#define USB_INTEP_ALL           0xFFFFFFFF  // Host IN Interrupts
+#define USB_INTEP_HOST_IN       0xFFFE0000  // Host IN Interrupts
+#define USB_INTEP_HOST_IN_15    0x80000000  // Endpoint 15 Host IN Interrupt
+#define USB_INTEP_HOST_IN_14    0x40000000  // Endpoint 14 Host IN Interrupt
+#define USB_INTEP_HOST_IN_13    0x20000000  // Endpoint 13 Host IN Interrupt
+#define USB_INTEP_HOST_IN_12    0x10000000  // Endpoint 12 Host IN Interrupt
+#define USB_INTEP_HOST_IN_11    0x08000000  // Endpoint 11 Host IN Interrupt
+#define USB_INTEP_HOST_IN_10    0x04000000  // Endpoint 10 Host IN Interrupt
+#define USB_INTEP_HOST_IN_9     0x02000000  // Endpoint 9 Host IN Interrupt
+#define USB_INTEP_HOST_IN_8     0x01000000  // Endpoint 8 Host IN Interrupt
+#define USB_INTEP_HOST_IN_7     0x00800000  // Endpoint 7 Host IN Interrupt
+#define USB_INTEP_HOST_IN_6     0x00400000  // Endpoint 6 Host IN Interrupt
+#define USB_INTEP_HOST_IN_5     0x00200000  // Endpoint 5 Host IN Interrupt
+#define USB_INTEP_HOST_IN_4     0x00100000  // Endpoint 4 Host IN Interrupt
+#define USB_INTEP_HOST_IN_3     0x00080000  // Endpoint 3 Host IN Interrupt
+#define USB_INTEP_HOST_IN_2     0x00040000  // Endpoint 2 Host IN Interrupt
+#define USB_INTEP_HOST_IN_1     0x00020000  // Endpoint 1 Host IN Interrupt
+
+#define USB_INTEP_DEV_OUT       0xFFFE0000  // Device OUT Interrupts
+#define USB_INTEP_DEV_OUT_15    0x80000000  // Endpoint 15 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_14    0x40000000  // Endpoint 14 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_13    0x20000000  // Endpoint 13 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_12    0x10000000  // Endpoint 12 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_11    0x08000000  // Endpoint 11 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_10    0x04000000  // Endpoint 10 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_9     0x02000000  // Endpoint 9 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_8     0x01000000  // Endpoint 8 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_7     0x00800000  // Endpoint 7 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_6     0x00400000  // Endpoint 6 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_5     0x00200000  // Endpoint 5 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_4     0x00100000  // Endpoint 4 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_3     0x00080000  // Endpoint 3 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_2     0x00040000  // Endpoint 2 Device OUT Interrupt
+#define USB_INTEP_DEV_OUT_1     0x00020000  // Endpoint 1 Device OUT Interrupt
+
+#define USB_INTEP_HOST_OUT      0x0000FFFE  // Host OUT Interrupts
+#define USB_INTEP_HOST_OUT_15   0x00008000  // Endpoint 15 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_14   0x00004000  // Endpoint 14 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_13   0x00002000  // Endpoint 13 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_12   0x00001000  // Endpoint 12 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_11   0x00000800  // Endpoint 11 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_10   0x00000400  // Endpoint 10 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_9    0x00000200  // Endpoint 9 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_8    0x00000100  // Endpoint 8 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_7    0x00000080  // Endpoint 7 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_6    0x00000040  // Endpoint 6 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_5    0x00000020  // Endpoint 5 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_4    0x00000010  // Endpoint 4 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_3    0x00000008  // Endpoint 3 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_2    0x00000004  // Endpoint 2 Host OUT Interrupt
+#define USB_INTEP_HOST_OUT_1    0x00000002  // Endpoint 1 Host OUT Interrupt
+
+#define USB_INTEP_DEV_IN        0x0000FFFE  // Device IN Interrupts
+#define USB_INTEP_DEV_IN_15     0x00008000  // Endpoint 15 Device IN Interrupt
+#define USB_INTEP_DEV_IN_14     0x00004000  // Endpoint 14 Device IN Interrupt
+#define USB_INTEP_DEV_IN_13     0x00002000  // Endpoint 13 Device IN Interrupt
+#define USB_INTEP_DEV_IN_12     0x00001000  // Endpoint 12 Device IN Interrupt
+#define USB_INTEP_DEV_IN_11     0x00000800  // Endpoint 11 Device IN Interrupt
+#define USB_INTEP_DEV_IN_10     0x00000400  // Endpoint 10 Device IN Interrupt
+#define USB_INTEP_DEV_IN_9      0x00000200  // Endpoint 9 Device IN Interrupt
+#define USB_INTEP_DEV_IN_8      0x00000100  // Endpoint 8 Device IN Interrupt
+#define USB_INTEP_DEV_IN_7      0x00000080  // Endpoint 7 Device IN Interrupt
+#define USB_INTEP_DEV_IN_6      0x00000040  // Endpoint 6 Device IN Interrupt
+#define USB_INTEP_DEV_IN_5      0x00000020  // Endpoint 5 Device IN Interrupt
+#define USB_INTEP_DEV_IN_4      0x00000010  // Endpoint 4 Device IN Interrupt
+#define USB_INTEP_DEV_IN_3      0x00000008  // Endpoint 3 Device IN Interrupt
+#define USB_INTEP_DEV_IN_2      0x00000004  // Endpoint 2 Device IN Interrupt
+#define USB_INTEP_DEV_IN_1      0x00000002  // Endpoint 1 Device IN Interrupt
+
+#define USB_INTEP_0             0x00000001  // Endpoint 0 Interrupt
 
 //*****************************************************************************
 //
@@ -142,7 +200,7 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to USBHostEndpointConfig() and
-// USBDevEndpointConfig() as the ulFlags parameter.
+// USBDevEndpointConfigSet() as the ulFlags parameter.
 //
 //*****************************************************************************
 #define USB_EP_AUTO_SET         0x00000001  // Auto set feature enabled
@@ -157,16 +215,14 @@ extern "C"
 #define USB_EP_MODE_MASK        0x00000300  // Mode Mask
 #define USB_EP_SPEED_LOW        0x00000000  // Low Speed
 #define USB_EP_SPEED_FULL       0x00001000  // Full Speed
-#define USB_EP_HOST_EP0         0x00002000  // Host endpoint 0
-#define USB_EP_HOST_IN          0x00001000  // Host IN endpoint
+#define USB_EP_HOST_IN          0x00000000  // Host IN endpoint
 #define USB_EP_HOST_OUT         0x00002000  // Host OUT endpoint
-#define USB_EP_DEV_EP0          0x00002000  // Device endpoint 0
 #define USB_EP_DEV_IN           0x00002000  // Device IN endpoint
-#define USB_EP_DEV_OUT          0x00001000  // Device OUT endpoint
+#define USB_EP_DEV_OUT          0x00000000  // Device OUT endpoint
 
 //*****************************************************************************
 //
-// The following are values that can be passed to USBHostPwrFaultConfig() as
+// The following are values that can be passed to USBHostPwrConfig() as
 // the ulFlags parameter.
 //
 //*****************************************************************************
@@ -176,10 +232,17 @@ extern "C"
 #define USB_HOST_PWRFLT_EP_TRI  0x00000140
 #define USB_HOST_PWRFLT_EP_LOW  0x00000240
 #define USB_HOST_PWRFLT_EP_HIGH 0x00000340
-#define USB_HOST_PWREN_LOW      0x00000000
-#define USB_HOST_PWREN_HIGH     0x00000001
+#ifndef DEPRECATED
+#define USB_HOST_PWREN_LOW      0x00000002
+#define USB_HOST_PWREN_HIGH     0x00000003
 #define USB_HOST_PWREN_VBLOW    0x00000002
 #define USB_HOST_PWREN_VBHIGH   0x00000003
+#endif
+#define USB_HOST_PWREN_MAN_LOW  0x00000000
+#define USB_HOST_PWREN_MAN_HIGH 0x00000001
+#define USB_HOST_PWREN_AUTOLOW  0x00000002
+#define USB_HOST_PWREN_AUTOHIGH 0x00000003
+#define USB_HOST_PWREN_FILTER   0x00010000
 
 //*****************************************************************************
 //
@@ -305,6 +368,10 @@ extern "C"
                                             // the cable.
 #define USB_OTG_MODE_ASIDE_NPWR 0x00000001  // OTG controller on the A side of
                                             // the cable.
+#define USB_OTG_MODE_ASIDE_SESS 0x00000009  // OTG controller on the A side of
+                                            // the cable Session Valid.
+#define USB_OTG_MODE_ASIDE_AVAL 0x00000011  // OTG controller on the A side of
+                                            // the cable A valid.
 #define USB_OTG_MODE_ASIDE_DEV  0x00000019  // OTG controller on the A side of
                                             // the cable.
 #define USB_OTG_MODE_BSIDE_HOST 0x0000009d  // OTG controller on the B side of
@@ -324,10 +391,10 @@ extern unsigned long USBDevAddrGet(unsigned long ulBase);
 extern void USBDevAddrSet(unsigned long ulBase, unsigned long ulAddress);
 extern void USBDevConnect(unsigned long ulBase);
 extern void USBDevDisconnect(unsigned long ulBase);
-extern void USBDevEndpointConfig(unsigned long ulBase,
-                                 unsigned long ulEndpoint,
-                                 unsigned long ulMaxPacketSize,
-                                 unsigned long ulFlags);
+extern void USBDevEndpointConfigSet(unsigned long ulBase,
+                                    unsigned long ulEndpoint,
+                                    unsigned long ulMaxPacketSize,
+                                    unsigned long ulFlags);
 extern void USBDevEndpointConfigGet(unsigned long ulBase,
                                     unsigned long ulEndpoint,
                                     unsigned long *pulMaxPacketSize,
@@ -400,7 +467,10 @@ extern void USBHostHubAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
                               unsigned long ulAddr, unsigned long ulFlags);
 extern void USBHostPwrDisable(unsigned long ulBase);
 extern void USBHostPwrEnable(unsigned long ulBase);
-extern void USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags);
+extern void USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags);
+#ifndef DEPRECATED
+#define USBHostPwrFaultConfig   USBHostPwrConfig
+#endif
 extern void USBHostPwrFaultDisable(unsigned long ulBase);
 extern void USBHostPwrFaultEnable(unsigned long ulBase);
 extern void USBHostRequestIN(unsigned long ulBase, unsigned long ulEndpoint);
@@ -409,10 +479,17 @@ extern void USBHostReset(unsigned long ulBase, tBoolean bStart);
 extern void USBHostResume(unsigned long ulBase, tBoolean bStart);
 extern unsigned long USBHostSpeedGet(unsigned long ulBase);
 extern void USBHostSuspend(unsigned long ulBase);
-extern void USBIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
-extern void USBIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
+extern void USBIntDisableControl(unsigned long ulBase,
+                                 unsigned long ulIntFlags);
+extern void USBIntEnableControl(unsigned long ulBase,
+                                unsigned long ulIntFlags);
+extern unsigned long USBIntStatusControl(unsigned long ulBase);
+extern void USBIntDisableEndpoint(unsigned long ulBase,
+                                  unsigned long ulIntFlags);
+extern void USBIntEnableEndpoint(unsigned long ulBase,
+                                 unsigned long ulIntFlags);
+extern unsigned long USBIntStatusEndpoint(unsigned long ulBase);
 extern void USBIntRegister(unsigned long ulBase, void(*pfnHandler)(void));
-extern unsigned long USBIntStatus(unsigned long ulBase);
 extern void USBIntUnregister(unsigned long ulBase);
 extern void USBOTGSessionRequest(unsigned long ulBase, tBoolean bStart);
 extern unsigned long USBModeGet(unsigned long ulBase);
@@ -420,6 +497,61 @@ extern void USBEndpointDMAChannel(unsigned long ulBase,
                                   unsigned long ulEndpoint,
                                   unsigned long ulChannel);
 extern void USBHostMode(unsigned long ulBase);
+extern void USBHostMode(unsigned long ulBase);
+extern void USBDevMode(unsigned long ulBase);
+
+//*****************************************************************************
+//
+// Several USB APIs have been renamed, with the original function name being
+// deprecated.  These defines and function protypes provide backward
+// compatibility.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+//*****************************************************************************
+//
+// The following are values that can be passed to USBIntEnable() and
+// USBIntDisable() as the ulIntFlags parameter, and are returned from
+// USBIntStatus().
+//
+//*****************************************************************************
+#define USB_INT_ALL             0xFF030E0F  // All Interrupt sources
+#define USB_INT_STATUS          0xFF000000  // Status Interrupts
+#define USB_INT_VBUS_ERR        0x80000000  // VBUS Error
+#define USB_INT_SESSION_START   0x40000000  // Session Start Detected
+#define USB_INT_SESSION_END     0x20000000  // Session End Detected
+#define USB_INT_DISCONNECT      0x20000000  // Disconnect Detected
+#define USB_INT_CONNECT         0x10000000  // Device Connect Detected
+#define USB_INT_SOF             0x08000000  // Start of Frame Detected
+#define USB_INT_BABBLE          0x04000000  // Babble signaled
+#define USB_INT_RESET           0x04000000  // Reset signaled
+#define USB_INT_RESUME          0x02000000  // Resume detected
+#define USB_INT_SUSPEND         0x01000000  // Suspend detected
+#define USB_INT_MODE_DETECT     0x00020000  // Mode value valid
+#define USB_INT_POWER_FAULT     0x00010000  // Power Fault detected
+#define USB_INT_HOST_IN         0x00000E00  // Host IN Interrupts
+#define USB_INT_DEV_OUT         0x00000E00  // Device OUT Interrupts
+#define USB_INT_HOST_IN_EP3     0x00000800  // Endpoint 3 Host IN Interrupt
+#define USB_INT_HOST_IN_EP2     0x00000400  // Endpoint 2 Host IN Interrupt
+#define USB_INT_HOST_IN_EP1     0x00000200  // Endpoint 1 Host IN Interrupt
+#define USB_INT_DEV_OUT_EP3     0x00000800  // Endpoint 3 Device OUT Interrupt
+#define USB_INT_DEV_OUT_EP2     0x00000400  // Endpoint 2 Device OUT Interrupt
+#define USB_INT_DEV_OUT_EP1     0x00000200  // Endpoint 1 Device OUT Interrupt
+#define USB_INT_HOST_OUT        0x0000000E  // Host OUT Interrupts
+#define USB_INT_DEV_IN          0x0000000E  // Device IN Interrupts
+#define USB_INT_HOST_OUT_EP3    0x00000008  // Endpoint 3 HOST_OUT Interrupt
+#define USB_INT_HOST_OUT_EP2    0x00000004  // Endpoint 2 HOST_OUT Interrupt
+#define USB_INT_HOST_OUT_EP1    0x00000002  // Endpoint 1 HOST_OUT Interrupt
+#define USB_INT_DEV_IN_EP3      0x00000008  // Endpoint 3 DEV_IN Interrupt
+#define USB_INT_DEV_IN_EP2      0x00000004  // Endpoint 2 DEV_IN Interrupt
+#define USB_INT_DEV_IN_EP1      0x00000002  // Endpoint 1 DEV_IN Interrupt
+#define USB_INT_EP0             0x00000001  // Endpoint 0 Interrupt
+
+#define USBDevEndpointConfig    USBDevEndpointConfigSet
+extern void USBIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
+extern void USBIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
+extern unsigned long USBIntStatus(unsigned long ulBase);
+#endif
 
 //*****************************************************************************
 //
