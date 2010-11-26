@@ -48,7 +48,7 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
+    DEVICE = ' --device DLM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lm3s.map --scatter lm3s_rom.sct'
