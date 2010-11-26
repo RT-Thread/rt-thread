@@ -203,7 +203,7 @@ Options 1,0,0  // Target 'RT-Thread LPC17xx'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)(-MPU)(DARMP1.DLL)(-pLPC1768)(SARMCM3.DLL)(-MPU)(TARMP1.DLL)(-pLPC1768)
-  OPTDBG 48126,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+  OPTDBG 49150,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 9,0,0,0,1,0,0,0,6,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (Segger\JL2CM3.dll)
  FLASH3 ("" ())

@@ -435,7 +435,7 @@ struct pbuf *lpc17xx_emac_rx(rt_device_t dev)
 
 void lpc17xx_emac_hw_init(void)
 {
-	rt_sem_init(&sem_slot,  "tx_slot", NUM_TX_FRAG, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&sem_slot, "tx_slot", NUM_TX_FRAG, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
 	/* set autonegotiation mode */
