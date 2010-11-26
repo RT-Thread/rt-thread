@@ -1,0 +1,1180 @@
+
+
+/**
+\mainpage The uIP TCP/IP stack
+\author Adam Dunkels, http://www.sics.se/~adam/
+
+The uIP TCP/IP stack is intended to make it possible to communicate
+using the TCP/IP protocol suite even on small 8-bit
+micro-controllers. Despite being small and simple, uIP do not require
+their peers to have complex, full-size stacks, but can communicate
+with peers running a similarly light-weight stack. The code size is on
+the order of a few kilobytes and RAM usage can be configured to be as
+low as a few hundred bytes.
+
+uIP can be found at the uIP web page: http://www.sics.se/~adam/uip/
+
+\sa \ref apps "Application programs"
+\sa \ref uipopt "Compile-time configuration options"
+\sa \ref uipconffunc "Run-time configuration functions"
+\sa \ref uipinit "Initialization functions"
+\sa \ref uipdevfunc "Device driver interface" and
+    \ref uipdrivervars "variables used by device drivers"
+\sa \ref uipappfunc "uIP functions called from application programs"
+(see below) and the \ref psock "protosockets API" and their underlying
+\ref pt "protothreads" 
+
+\section uIPIntroduction Introduction
+
+With the success of the Internet, the TCP/IP protocol suite has become
+a global standard for communication. TCP/IP is the underlying protocol
+used for web page transfers, e-mail transmissions, file transfers, and
+peer-to-peer networking over the Internet. For embedded systems, being
+able to run native TCP/IP makes it possible to connect the system
+directly to an intranet or even the global Internet. Embedded devices
+with full TCP/IP support will be first-class network citizens, thus
+being able to fully communicate with other hosts in the network.
+
+Traditional TCP/IP implementations have required far too much
+resources both in terms of code size and memory usage to be useful in
+small 8 or 16-bit systems. Code size of a few hundred kilobytes and
+RAM requirements of several hundreds of kilobytes have made it
+impossible to fit the full TCP/IP stack into systems with a few tens
+of kilobytes of RAM and room for less than 100 kilobytes of
+code.
+
+The uIP implementation is designed to have only the absolute minimal
+set of features needed for a full TCP/IP stack. It can only handle a
+single network interface and contains the IP, ICMP, UDP and TCP
+protocols. uIP is written in the C programming language.
+
+Many other TCP/IP implementations for small systems assume that the
+embedded device always will communicate with a full-scale TCP/IP
+implementation running on a workstation-class machine. Under this
+assumption, it is possible to remove certain TCP/IP mechanisms that
+are very rarely used in such situations. Many of those mechanisms are
+essential, however, if the embedded device is to communicate with
+another equally limited device, e.g., when running distributed
+peer-to-peer services and protocols. uIP is designed to be RFC
+compliant in order to let the embedded devices to act as first-class
+network citizens. The uIP TCP/IP implementation that is not tailored
+for any specific application.
+
+
+\section tcpip TCP/IP Communication
+
+The full TCP/IP suite consists of numerous protocols, ranging from low
+level protocols such as ARP which translates IP addresses to MAC
+addresses, to application level protocols such as SMTP that is used to
+transfer e-mail. The uIP is mostly concerned with the TCP and IP
+protocols and upper layer protocols will be referred to as "the
+application". Lower layer protocols are often implemented in hardware
+or firmware and will be referred to as "the network device" that are
+controlled by the network device driver.
+
+TCP provides a reliable byte stream to the upper layer protocols. It
+breaks the byte stream into appropriately sized segments and each
+segment is sent in its own IP packet. The IP packets are sent out on
+the network by the network device driver. If the destination is not on
+the physically connected network, the IP packet is forwarded onto
+another network by a router that is situated between the two
+networks. If the maximum packet size of the other network is smaller
+than the size of the IP packet, the packet is fragmented into smaller
+packets by the router. If possible, the size of the TCP segments are
+chosen so that fragmentation is minimized. The final recipient of the
+packet will have to reassemble any fragmented IP packets before they
+can be passed to higher layers.
+
+The formal requirements for the protocols in the TCP/IP stack is
+specified in a number of RFC documents published by the Internet
+Engineering Task Force, IETF. Each of the protocols in the stack is
+defined in one more RFC documents and RFC1122 collects
+all requirements and updates the previous RFCs. 
+
+The RFC1122 requirements can be divided into two categories; those
+that deal with the host to host communication and those that deal with
+communication between the application and the networking stack. An
+example of the first kind is "A TCP MUST be able to receive a TCP
+option in any segment" and an example of the second kind is "There
+MUST be a mechanism for reporting soft TCP error conditions to the
+application." A TCP/IP implementation that violates requirements of
+the first kind may not be able to communicate with other TCP/IP
+implementations and may even lead to network failures. Violation of
+the second kind of requirements will only affect the communication
+within the system and will not affect host-to-host communication.
+
+In uIP, all RFC requirements that affect host-to-host communication
+are implemented. However, in order to reduce code size, we have
+removed certain mechanisms in the interface between the application
+and the stack, such as the soft error reporting mechanism and
+dynamically configurable type-of-service bits for TCP
+connections. Since there are only very few applications that make use
+of those features they can be removed without loss of generality.
+
+\section mainloop Main Control Loop
+
+The uIP stack can be run either as a task in a multitasking system, or
+as the main program in a singletasking system. In both cases, the main
+control loop does two things repeatedly:
+
+ - Check if a packet has arrived from the network.
+ - Check if a periodic timeout has occurred.
+
+If a packet has arrived, the input handler function, uip_input(),
+should be invoked by the main control loop. The input handler function
+will never block, but will return at once. When it returns, the stack
+or the application for which the incoming packet was intended may have
+produced one or more reply packets which should be sent out. If so,
+the network device driver should be called to send out these packets.
+
+Periodic timeouts are used to drive TCP mechanisms that depend on
+timers, such as delayed acknowledgments, retransmissions and
+round-trip time estimations. When the main control loop infers that
+the periodic timer should fire, it should invoke the timer handler
+function uip_periodic(). Because the TCP/IP stack may perform
+retransmissions when dealing with a timer event, the network device
+driver should called to send out the packets that may have been produced.
+
+\section arch Architecture Specific Functions
+
+uIP requires a few functions to be implemented specifically for the
+architecture on which uIP is intended to run. These functions should
+be hand-tuned for the particular architecture, but generic C
+implementations are given as part of the uIP distribution.
+
+\subsection checksums Checksum Calculation
+
+The TCP and IP protocols implement a checksum that covers the data and
+header portions of the TCP and IP packets. Since the calculation of
+this checksum is made over all bytes in every packet being sent and
+received it is important that the function that calculates the
+checksum is efficient. Most often, this means that the checksum
+calculation must be fine-tuned for the particular architecture on
+which the uIP stack runs.
+
+While uIP includes a generic checksum function, it also leaves it open
+for an architecture specific implementation of the two functions
+uip_ipchksum() and uip_tcpchksum(). The checksum calculations in those
+functions can be written in highly optimized assembler rather than
+generic C code.
+
+\subsection longarith 32-bit Arithmetic
+
+The TCP protocol uses 32-bit sequence numbers, and a TCP
+implementation will have to do a number of 32-bit additions as part of
+the normal protocol processing. Since 32-bit arithmetic is not
+natively available on many of the platforms for which uIP is intended,
+uIP leaves the 32-bit additions to be implemented by the architecture
+specific module and does not make use of any 32-bit arithmetic in the
+main code base.
+
+While uIP implements a generic 32-bit addition, there is support for
+having an architecture specific implementation of the uip_add32()
+function.
+
+
+\section memory Memory Management
+
+In the architectures for which uIP is intended, RAM is the most
+scarce resource. With only a few kilobytes of RAM available for the
+TCP/IP stack to use, mechanisms used in traditional TCP/IP cannot be
+directly applied.
+
+
+The uIP stack does not use explicit dynamic memory
+allocation. Instead, it uses a single global buffer for holding
+packets and has a fixed table for holding connection state. The global
+packet buffer is large enough to contain one packet of maximum
+size. When a packet arrives from the network, the device driver places
+it in the global buffer and calls the TCP/IP stack. If the packet
+contains data, the TCP/IP stack will notify the corresponding
+application. Because the data in the buffer will be overwritten by the
+next incoming packet, the application will either have to act
+immediately on the data or copy the data into a secondary buffer for
+later processing. The packet buffer will not be overwritten by new
+packets before the application has processed the data. Packets that
+arrive when the application is processing the data must be queued,
+either by the network device or by the device driver. Most single-chip
+Ethernet controllers have on-chip buffers that are large enough to
+contain at least 4 maximum sized Ethernet frames. Devices that are
+handled by the processor, such as RS-232 ports, can copy incoming
+bytes to a separate buffer during application processing. If the
+buffers are full, the incoming packet is dropped. This will cause
+performance degradation, but only when multiple connections are
+running in parallel. This is because uIP advertises a very small
+receiver window, which means that only a single TCP segment will be in
+the network per connection.
+
+In uIP, the same global packet buffer that is used for incoming
+packets is also used for the TCP/IP headers of outgoing data. If the
+application sends dynamic data, it may use the parts of the global
+packet buffer that are not used for headers as a temporary storage
+buffer. To send the data, the application passes a pointer to the data
+as well as the length of the data to the stack. The TCP/IP headers are
+written into the global buffer and once the headers have been
+produced, the device driver sends the headers and the application data
+out on the network. The data is not queued for
+retransmissions. Instead, the application will have to reproduce the
+data if a retransmission is necessary.
+
+The total amount of memory usage for uIP depends heavily on the
+applications of the particular device in which the implementations are
+to be run. The memory configuration determines both the amount of
+traffic the system should be able to handle and the maximum amount of
+simultaneous connections. A device that will be sending large e-mails
+while at the same time running a web server with highly dynamic web
+pages and multiple simultaneous clients, will require more RAM than a
+simple Telnet server. It is possible to run the uIP implementation
+with as little as 200 bytes of RAM, but such a configuration will
+provide extremely low throughput and will only allow a small number of
+simultaneous connections.
+
+\section api Application Program Interface (API)
+
+
+The Application Program Interface (API) defines the way the
+application program interacts with the TCP/IP stack. The most commonly
+used API for TCP/IP is the BSD socket API which is used in most Unix
+systems and has heavily influenced the Microsoft Windows WinSock
+API. Because the socket API uses stop-and-wait semantics, it requires
+support from an underlying multitasking operating system. Since the
+overhead of task management, context switching and allocation of stack
+space for the tasks might be too high in the intended uIP target
+architectures, the BSD socket interface is not suitable for our
+purposes.
+
+uIP provides two APIs to programmers: protosockets, a BSD socket-like
+API without the overhead of full multi-threading, and a "raw"
+event-based API that is nore low-level than protosockets but uses less
+memory.
+
+\sa \ref psock
+\sa \ref pt
+
+
+\subsection rawapi The uIP raw API
+
+The "raw" uIP API uses an event driven interface where the application is
+invoked in response to certain events. An application running on top
+of uIP is implemented as a C function that is called by uIP in
+response to certain events. uIP calls the application when data is
+received, when data has been successfully delivered to the other end
+of the connection, when a new connection has been set up, or when data
+has to be retransmitted. The application is also periodically polled
+for new data. The application program provides only one callback
+function; it is up to the application to deal with mapping different
+network services to different ports and connections. Because the
+application is able to act on incoming data and connection requests as
+soon as the TCP/IP stack receives the packet, low response times can
+be achieved even in low-end systems.
+
+uIP is different from other TCP/IP stacks in that it requires help
+from the application when doing retransmissions. Other TCP/IP stacks
+buffer the transmitted data in memory until the data is known to be
+successfully delivered to the remote end of the connection. If the
+data needs to be retransmitted, the stack takes care of the
+retransmission without notifying the application. With this approach,
+the data has to be buffered in memory while waiting for an
+acknowledgment even if the application might be able to quickly
+regenerate the data if a retransmission has to be made.
+
+In order to reduce memory usage, uIP utilizes the fact that the
+application may be able to regenerate sent data and lets the
+application take part in retransmissions. uIP does not keep track of
+packet contents after they have been sent by the device driver, and
+uIP requires that the application takes an active part in performing
+the retransmission. When uIP decides that a segment should be
+retransmitted, it calls the application with a flag set indicating
+that a retransmission is required. The application checks the
+retransmission flag and produces the same data that was previously
+sent. From the application's standpoint, performing a retransmission
+is not different from how the data originally was sent. Therefore the
+application can be written in such a way that the same code is used
+both for sending data and retransmitting data. Also, it is important
+to note that even though the actual retransmission operation is
+carried out by the application, it is the responsibility of the stack
+to know when the retransmission should be made. Thus the complexity of
+the application does not necessarily increase because it takes an
+active part in doing retransmissions.
+
+\subsubsection appevents Application Events
+
+The application must be implemented as a C function, UIP_APPCALL(),
+that uIP calls whenever an event occurs. Each event has a corresponding
+test function that is used to distinguish between different
+events. The functions are implemented as C macros that will evaluate
+to either zero or non-zero. Note that certain events can happen in
+conjunction with each other (i.e., new data can arrive at the same
+time as data is acknowledged).
+
+\subsubsection connstate The Connection Pointer
+
+When the application is called by uIP, the global variable uip_conn is
+set to point to the uip_conn structure for the connection that
+currently is handled, and is called the "current connection". The
+fields in the uip_conn structure for the current connection can be
+used, e.g., to distinguish between different services, or to check to
+which IP address the connection is connected. One typical use would be
+to inspect the uip_conn->lport (the local TCP port number) to decide
+which service the connection should provide. For instance, an
+application might decide to act as an HTTP server if the value of
+uip_conn->lport is equal to 80 and act as a TELNET server if the value
+is 23. 
+
+\subsubsection recvdata Receiving Data
+
+If the uIP test function uip_newdata() is non-zero, the remote host of
+the connection has sent new data. The uip_appdata pointer point to the
+actual data. The size of the data is obtained through the uIP function
+uip_datalen(). The data is not buffered by uIP, but will be
+overwritten after the application function returns, and the
+application will therefor have to either act directly on the incoming
+data, or by itself copy the incoming data into a buffer for later
+processing.
+
+\subsubsection senddata Sending Data
+
+When sending data, uIP adjusts the length of the data sent by the
+application according to the available buffer space and the current
+TCP window advertised by the receiver. The amount of buffer space is
+dictated by the memory configuration. It is therefore possible that
+all data sent from the application does not arrive at the receiver,
+and the application may use the uip_mss() function to see how much
+data that actually will be sent by the stack.
+
+The application sends data by using the uIP function uip_send(). The
+uip_send() function takes two arguments; a pointer to the data to be
+sent and the length of the data. If the application needs RAM space
+for producing the actual data that should be sent, the packet buffer
+(pointed to by the uip_appdata pointer) can be used for this purpose.
+
+The application can send only one chunk of data at a time on a
+connection and it is not possible to call uip_send() more than once
+per application invocation; only the data from the last call will be
+sent.
+
+\subsubsection rexmitdata Retransmitting Data
+
+Retransmissions are driven by the periodic TCP timer. Every time the
+periodic timer is invoked, the retransmission timer for each
+connection is decremented. If the timer reaches zero, a retransmission
+should be made. As uIP does not keep track of packet contents after they have
+been sent by the device driver, uIP requires that the
+application takes an active part in performing the
+retransmission. When uIP decides that a segment should be
+retransmitted, the application function is called with the
+uip_rexmit() flag set, indicating that a retransmission is
+required.
+
+The application must check the uip_rexmit() flag and produce the same
+data that was previously sent. From the application's standpoint,
+performing a retransmission is not different from how the data
+originally was sent. Therefor, the application can be written in such
+a way that the same code is used both for sending data and
+retransmitting data. Also, it is important to note that even though
+the actual retransmission operation is carried out by the application,
+it is the responsibility of the stack to know when the retransmission
+should be made. Thus the complexity of the application does not
+necessarily increase because it takes an active part in doing
+retransmissions.
+
+\subsubsection closing Closing Connections
+
+The application closes the current connection by calling the
+uip_close() during an application call. This will cause the connection
+to be cleanly closed. In order to indicate a fatal error, the
+application might want to abort the connection and does so by calling
+the uip_abort() function.
+
+If the connection has been closed by the remote end, the test function
+uip_closed() is true. The application may then do any necessary
+cleanups.
+
+\subsubsection errors Reporting Errors
+
+There are two fatal errors that can happen to a connection, either
+that the connection was aborted by the remote host, or that the
+connection retransmitted the last data too many times and has been
+aborted. uIP reports this by calling the application function. The
+application can use the two test functions uip_aborted() and
+uip_timedout() to test for those error conditions.
+
+\subsubsection polling Polling
+
+When a connection is idle, uIP polls the application every time the
+periodic timer fires. The application uses the test function
+uip_poll() to check if it is being polled by uIP.
+
+The polling event has two purposes. The first is to let the
+application periodically know that a connection is idle, which allows
+the application to close connections that have been idle for too
+long. The other purpose is to let the application send new data that
+has been produced. The application can only send data when invoked by
+uIP, and therefore the poll event is the only way to send data on an
+otherwise idle connection.
+
+\subsubsection listen Listening Ports
+
+uIP maintains a list of listening TCP ports. A new port is opened for
+listening with the uip_listen() function. When a connection request
+arrives on a listening port, uIP creates a new connection and calls
+the application function. The test function uip_connected() is true if
+the application was invoked because a new connection was created.
+
+The application can check the lport field in the uip_conn structure to
+check to which port the new connection was connected.
+
+\subsubsection connect Opening Connections
+
+New connections can be opened from within
+uIP by the function uip_connect(). This function
+allocates a new connection and sets a flag in the connection state
+which will open a TCP connection to the specified IP address and port
+the next time the connection is polled by uIP. The uip_connect()
+function returns
+a pointer to the uip_conn structure for the new
+connection. If there are no free connection slots, the function
+returns NULL. 
+
+The function uip_ipaddr() may be used to pack an IP address into the
+two element 16-bit array used by uIP to represent IP addresses.
+
+Two examples of usage are shown below. The first example shows how to
+open a connection to TCP port 8080 of the remote end of the current
+connection. If there are not enough TCP connection slots to allow a
+new connection to be opened, the uip_connect() function returns NULL
+and the current connection is aborted by uip_abort(). 
+
+\code
+void connect_example1_app(void) {
+   if(uip_connect(uip_conn->ripaddr, HTONS(8080)) == NULL) {
+      uip_abort();
+   }
+}   
+\endcode
+
+The second example shows how to open a new connection to a specific IP
+address. No error checks are made in this example.
+
+\code
+void connect_example2(void) {
+   u16_t ipaddr[2];
+
+   uip_ipaddr(ipaddr, 192,168,0,1);
+   uip_connect(ipaddr, HTONS(8080));
+}
+\endcode
+
+\section examples Examples
+
+This section presents a number of very simple uIP applications. The
+uIP code distribution contains several more complex applications.
+
+\subsection example1 A Very Simple Application
+
+This first example shows a very simple application. The application
+listens for incoming connections on port 1234. When a connection has
+been established, the application replies to all data sent to it by
+saying "ok"
+
+The implementation of this application is shown below. The application
+is initialized with the function called example1_init() and the uIP
+callback function is called example1_app(). For this application, the
+configuration variable UIP_APPCALL should be defined to be
+example1_app().
+
+\code
+void example1_init(void) {
+   uip_listen(HTONS(1234));
+}
+
+void example1_app(void) {
+   if(uip_newdata() || uip_rexmit()) {
+      uip_send("ok\n", 3);
+   }
+}
+\endcode
+
+The initialization function calls the uIP function uip_listen() to
+register a listening port. The actual application function
+example1_app() uses the test functions uip_newdata() and uip_rexmit()
+to determine why it was called. If the application was called because
+the remote end has sent it data, it responds with an "ok". If the
+application function was called because data was lost in the network
+and has to be retransmitted, it also sends an "ok".  Note that this
+example actually shows a complete uIP application. It is not required
+for an application to deal with all types of events such as
+uip_connected() or uip_timedout(). 
+
+\subsection example2 A More Advanced Application
+
+This second example is slightly more advanced than the previous one,
+and shows how the application state field in the uip_conn structure is
+used.
+
+This application is similar to the first application in that it
+listens to a port for incoming connections and responds to data sent
+to it with a single "ok". The big difference is that this application
+prints out a welcoming "Welcome!" message when the connection has been
+established.
+
+This seemingly small change of operation makes a big difference in how
+the application is implemented. The reason for the increase in
+complexity is that if data should be lost in the network, the
+application must know what data to retransmit. If the "Welcome!"
+message was lost, the application must retransmit the welcome and if
+one of the "ok" messages is lost, the application must send a new
+"ok".
+
+The application knows that as long as the "Welcome!" message has not
+been acknowledged by the remote host, it might have been dropped in
+the network. But once the remote host has sent an acknowledgment
+back, the application can be sure that the welcome has been received
+and knows that any lost data must be an "ok" message. Thus the
+application can be in either of two states: either in the WELCOME-SENT
+state where the "Welcome!" has been sent but not acknowledged, or in
+the WELCOME-ACKED state where the "Welcome!" has been acknowledged.
+
+When a remote host connects to the application, the application sends
+the "Welcome!" message and sets it's state to WELCOME-SENT. When the
+welcome message is acknowledged, the application moves to the
+WELCOME-ACKED state. If the application receives any new data from the
+remote host, it responds by sending an "ok" back.
+
+If the application is requested to retransmit the last message, it
+looks at in which state the application is. If the application is in
+the WELCOME-SENT state, it sends a "Welcome!"  message since it
+knows that the previous welcome message hasn't been acknowledged. If
+the application is in the WELCOME-ACKED state, it knows that the last
+message was an "ok" message and sends such a message.
+
+The implementation of this application is seen below. This
+configuration settings for the application is follows after its
+implementation.
+
+\code
+struct example2_state {
+   enum {WELCOME_SENT, WELCOME_ACKED} state;
+};
+
+void example2_init(void) {
+   uip_listen(HTONS(2345));
+}
+
+void example2_app(void) {
+   struct example2_state *s;
+
+   s = (struct example2_state *)uip_conn->appstate;
+   
+   if(uip_connected()) {
+      s->state = WELCOME_SENT;
+      uip_send("Welcome!\n", 9);
+      return;
+   } 
+
+   if(uip_acked() && s->state == WELCOME_SENT) {
+      s->state = WELCOME_ACKED;
+   }
+
+   if(uip_newdata()) {
+      uip_send("ok\n", 3);
+   }
+
+   if(uip_rexmit()) {
+      switch(s->state) {
+      case WELCOME_SENT:
+         uip_send("Welcome!\n", 9);
+         break;
+      case WELCOME_ACKED:
+         uip_send("ok\n", 3);
+         break;
+      }
+   }
+}
+\endcode
+
+The configuration for the application:
+
+\code
+#define UIP_APPCALL       example2_app
+#define UIP_APPSTATE_SIZE sizeof(struct example2_state)
+\endcode
+
+\subsection example3 Differentiating Between Applications
+
+If the system should run multiple applications, one technique to
+differentiate between them is to use the TCP port number of either the
+remote end or the local end of the connection. The example below shows
+how the two examples above can be combined into one application.
+
+\code
+void example3_init(void) {
+   example1_init();
+   example2_init();   
+}
+
+void example3_app(void) {
+   switch(uip_conn->lport) {
+   case HTONS(1234):
+      example1_app();
+      break;
+   case HTONS(2345):
+      example2_app();
+      break;
+   }
+}
+\endcode
+
+\subsection example4 Utilizing TCP Flow Control
+
+This example shows a simple application that connects to a host, sends
+an HTTP request for a file and downloads it to a slow device such a
+disk drive. This shows how to use the flow control functions of uIP.
+
+\code
+void example4_init(void) {
+   u16_t ipaddr[2];
+   uip_ipaddr(ipaddr, 192,168,0,1);
+   uip_connect(ipaddr, HTONS(80));
+}
+
+void example4_app(void) {
+   if(uip_connected() || uip_rexmit()) {
+      uip_send("GET /file HTTP/1.0\r\nServer:192.186.0.1\r\n\r\n",
+               48);
+      return;
+   }
+
+   if(uip_newdata()) {
+      device_enqueue(uip_appdata, uip_datalen());
+      if(device_queue_full()) {
+         uip_stop();
+      }
+   }
+
+   if(uip_poll() && uip_stopped()) {
+      if(!device_queue_full()) {
+         uip_restart();
+      }
+   }
+}
+\endcode
+
+When the connection has been established, an HTTP request is sent to
+the server. Since this is the only data that is sent, the application
+knows that if it needs to retransmit any data, it is that request that
+should be retransmitted. It is therefore possible to combine these two
+events as is done in the example.
+
+When the application receives new data from the remote host, it sends
+this data to the device by using the function device_enqueue(). It is
+important to note that this example assumes that this function copies
+the data into its own buffers. The data in the uip_appdata buffer will
+be overwritten by the next incoming packet.
+
+If the device's queue is full, the application stops the data from the
+remote host by calling the uIP function uip_stop(). The application
+can then be sure that it will not receive any new data until
+uip_restart() is called. The application polling event is used to
+check if the device's queue is no longer full and if so, the data flow
+is restarted with uip_restart().
+
+\subsection example5 A Simple Web Server
+
+This example shows a very simple file server application that listens
+to two ports and uses the port number to determine which file to
+send. If the files are properly formatted, this simple application can
+be used as a web server with static pages. The implementation follows.
+
+\code
+struct example5_state {
+   char *dataptr;
+   unsigned int dataleft;
+};
+
+void example5_init(void) {
+   uip_listen(HTONS(80));
+   uip_listen(HTONS(81));
+}
+
+void example5_app(void) {
+   struct example5_state *s;
+   s = (struct example5_state)uip_conn->appstate;
+   
+   if(uip_connected()) {
+      switch(uip_conn->lport) {
+      case HTONS(80):
+         s->dataptr = data_port_80;
+         s->dataleft = datalen_port_80;
+         break;
+      case HTONS(81):
+         s->dataptr = data_port_81;
+         s->dataleft = datalen_port_81;
+         break;
+      }
+      uip_send(s->dataptr, s->dataleft);
+      return;      
+   }
+
+   if(uip_acked()) {
+      if(s->dataleft < uip_mss()) {
+         uip_close();
+         return;
+      }
+      s->dataptr += uip_conn->len;
+      s->dataleft -= uip_conn->len;
+      uip_send(s->dataptr, s->dataleft);      
+   }
+}
+\endcode
+
+The application state consists of a pointer to the data that should be
+sent and the size of the data that is left to send. When a remote host
+connects to the application, the local port number is used to
+determine which file to send. The first chunk of data is sent using
+uip_send(). uIP makes sure that no more than MSS bytes of data is
+actually sent, even though s->dataleft may be larger than the MSS. 
+
+The application is driven by incoming acknowledgments. When data has
+been acknowledged, new data can be sent. If there is no more data to
+send, the connection is closed using uip_close().
+
+\subsection example6 Structured Application Program Design
+
+When writing larger programs using uIP it is useful to be able to
+utilize the uIP API in a structured way. The following example
+provides a structured design that has showed itself to be useful for
+writing larger protocol implementations than the previous examples
+showed here. The program is divided into an uIP event handler function
+that calls seven application handler functions that process new data,
+act on acknowledged data, send new data, deal with connection
+establishment or closure events and handle errors. The functions are
+called newdata(), acked(), senddata(), connected(), closed(),
+aborted(), and timedout(), and needs to be written specifically for
+the protocol that is being implemented.
+
+The uIP event handler function is shown below.
+
+\code
+void example6_app(void) {
+  if(uip_aborted()) {
+    aborted();
+  }
+  if(uip_timedout()) {
+    timedout();
+  }
+  if(uip_closed()) {
+    closed();
+  }
+  if(uip_connected()) {
+    connected();
+  }
+  if(uip_acked()) {
+    acked();
+  }
+  if(uip_newdata()) {
+    newdata();
+  }
+  if(uip_rexmit() ||
+     uip_newdata() ||
+     uip_acked() ||
+     uip_connected() ||
+     uip_poll()) {
+    senddata();
+  }
+}
+\endcode
+
+The function starts with dealing with any error conditions that might
+have happened by checking if uip_aborted() or uip_timedout() are
+true. If so, the appropriate error function is called. Also, if the
+connection has been closed, the closed() function is called to the it
+deal with the event.
+
+Next, the function checks if the connection has just been established
+by checking if uip_connected() is true. The connected() function is
+called and is supposed to do whatever needs to be done when the
+connection is established, such as intializing the application state
+for the connection. Since it may be the case that data should be sent
+out, the senddata() function is called to deal with the outgoing data.
+
+The following very simple application serves as an example of how the
+application handler functions might look. This application simply
+waits for any data to arrive on the connection, and responds to the
+data by sending out the message "Hello world!". To illustrate how to
+develop an application state machine, this message is sent in two
+parts, first the "Hello" part and then the "world!" part.
+
+\code
+#define STATE_WAITING 0
+#define STATE_HELLO   1
+#define STATE_WORLD   2
+
+struct example6_state {
+  u8_t state;
+  char *textptr;
+  int  textlen;
+};
+
+static void aborted(void) {}
+static void timedout(void) {}
+static void closed(void) {}
+
+static void connected(void) {
+  struct example6_state *s = (struct example6_state *)uip_conn->appstate;
+
+  s->state   = STATE_WAITING;
+  s->textlen = 0;
+}
+
+static void newdata(void) {
+  struct example6_state *s = (struct example6_state *)uip_conn->appstate;
+
+  if(s->state == STATE_WAITING) {
+    s->state   = STATE_HELLO;
+    s->textptr = "Hello ";
+    s->textlen = 6;
+  }
+}
+
+static void acked(void) {
+  struct example6_state *s = (struct example6_state *)uip_conn->appstate;
+  
+  s->textlen -= uip_conn->len;
+  s->textptr += uip_conn->len;
+  if(s->textlen == 0) {
+    switch(s->state) {
+    case STATE_HELLO:
+      s->state   = STATE_WORLD;
+      s->textptr = "world!\n";
+      s->textlen = 7;
+      break;
+    case STATE_WORLD:
+      uip_close();
+      break;
+    }
+  }
+}
+
+static void senddata(void) {
+  struct example6_state *s = (struct example6_state *)uip_conn->appstate;
+
+  if(s->textlen > 0) {
+    uip_send(s->textptr, s->textlen);
+  }
+}
+\endcode
+
+The application state consists of a "state" variable, a "textptr"
+pointer to a text message and the "textlen" length of the text
+message. The "state" variable can be either "STATE_WAITING", meaning
+that the application is waiting for data to arrive from the network,
+"STATE_HELLO", in which the application is sending the "Hello" part of
+the message, or "STATE_WORLD", in which the application is sending the
+"world!" message. 
+
+The application does not handle errors or connection closing events,
+and therefore the aborted(), timedout() and closed() functions are
+implemented as empty functions.
+
+The connected() function will be called when a connection has been
+established, and in this case sets the "state" variable to be
+"STATE_WAITING" and the "textlen" variable to be zero, indicating that
+there is no message to be sent out.
+
+When new data arrives from the network, the newdata() function will be
+called by the event handler function. The newdata() function will
+check if the connection is in the "STATE_WAITING" state, and if so
+switches to the "STATE_HELLO" state and registers a 6 byte long "Hello
+" message with the connection. This message will later be sent out by
+the senddata() function.
+
+The acked() function is called whenever data that previously was sent
+has been acknowleged by the receiving host. This acked() function
+first reduces the amount of data that is left to send, by subtracting
+the length of the previously sent data (obtained from "uip_conn->len")
+from the "textlen" variable, and also adjusts the "textptr" pointer
+accordingly. It then checks if the "textlen" variable now is zero,
+which indicates that all data now has been successfully received, and
+if so changes application state. If the application was in the
+"STATE_HELLO" state, it switches state to "STATE_WORLD" and sets up a
+7 byte "world!\n" message to be sent. If the application was in the
+"STATE_WORLD" state, it closes the connection.
+
+Finally, the senddata() function takes care of actually sending the
+data that is to be sent. It is called by the event handler function
+when new data has been received, when data has been acknowledged, when
+a new connection has been established, when the connection is polled
+because of inactivity, or when a retransmission should be made. The
+purpose of the senddata() function is to optionally format the data
+that is to be sent, and to call the uip_send() function to actually
+send out the data. In this particular example, the function simply
+calls uip_send() with the appropriate arguments if data is to be sent,
+after checking if data should be sent out or not as indicated by the
+"textlen" variable.
+
+It is important to note that the senddata() function never should
+affect the application state; this should only be done in the acked()
+and newdata() functions.
+
+\section protoimpl Protocol Implementations
+
+The protocols in the TCP/IP protocol suite are designed in a layered
+fashion where each protocol performs a specific function and the
+interactions between the protocol layers are strictly defined. While
+the layered approach is a good way to design protocols, it is not
+always the best way to implement them. In uIP, the protocol
+implementations are tightly coupled in order to save code space.
+
+This section gives detailed information on the specific protocol
+implementations in uIP.
+
+\subsection ip IP --- Internet Protocol
+
+When incoming packets are processed by uIP, the IP layer is the first
+protocol that examines the packet. The IP layer does a few simple
+checks such as if the destination IP address of the incoming packet
+matches any of the local IP address and verifies the IP header
+checksum. Since there are no IP options that are strictly required and
+because they are very uncommon, any IP options in received packets are
+dropped.
+
+\subsubsection ipreass IP Fragment Reassembly
+
+IP fragment reassembly is implemented using a separate buffer that
+holds the packet to be reassembled. An incoming fragment is copied
+into the right place in the buffer and a bit map is used to keep track
+of which fragments have been received. Because the first byte of an IP
+fragment is aligned on an 8-byte boundary, the bit map requires a
+small amount of memory. When all fragments have been reassembled, the
+resulting IP packet is passed to the transport layer. If all fragments
+have not been received within a specified time frame, the packet is
+dropped.
+
+The current implementation only has a single buffer for holding
+packets to be reassembled, and therefore does not support simultaneous
+reassembly of more than one packet. Since fragmented packets are
+uncommon, this ought to be a reasonable decision. Extending the
+implementation to support multiple buffers would be straightforward,
+however.
+
+\subsubsection ipbroadcast Broadcasts and Multicasts
+
+IP has the ability to broadcast and multicast packets on the local
+network. Such packets are addressed to special broadcast and multicast
+addresses. Broadcast is used heavily in many UDP based protocols such
+as the Microsoft Windows file-sharing SMB protocol. Multicast is
+primarily used in protocols used for multimedia distribution such as
+RTP. TCP is a point-to-point protocol and does not use broadcast or
+multicast packets. uIP current supports broadcast packets as well as
+sending multicast packets. Joining multicast groups (IGMP) and
+receiving non-local multicast packets is not currently supported.
+
+\subsection icmp ICMP --- Internet Control Message Protocol
+
+The ICMP protocol is used for reporting soft error conditions and for
+querying host parameters. Its main use is, however, the echo mechanism
+which is used by the "ping" program.
+
+The ICMP implementation in uIP is very simple as itis restricted to
+only implement ICMP echo messages. Replies to echo messages are
+constructed by simply swapping the source and destination IP addresses
+of incoming echo requests and rewriting the ICMP header with the
+Echo-Reply message type. The ICMP checksum is adjusted using standard
+techniques (see RFC1624).
+
+Since only the ICMP echo message is implemented, there is no support
+for Path MTU discovery or ICMP redirect messages. Neither of these is
+strictly required for interoperability; they are performance
+enhancement mechanisms.
+
+\subsection tcp TCP --- Transmission Control Protocol
+
+The TCP implementation in uIP is driven by incoming packets and timer
+events. Incoming packets are parsed by TCP and if the packet contains
+data that is to be delivered to the application, the application is
+invoked by the means of the application function call. If the incoming
+packet acknowledges previously sent data, the connection state is
+updated and the application is informed, allowing it to send out new
+data.
+
+\subsubsection listeb Listening Connections
+
+TCP allows a connection to listen for incoming connection requests. In
+uIP, a listening connection is identified by the 16-bit port number
+and incoming connection requests are checked against the list of
+listening connections. This list of listening connections is dynamic
+and can be altered by the applications in the system.
+
+\subsubsection slidingwindow Sliding Window
+
+Most TCP implementations use a sliding window mechanism for sending
+data. Multiple data segments are sent in succession without waiting
+for an acknowledgment for each segment.
+
+The sliding window algorithm uses a lot of 32-bit operations and
+because 32-bit arithmetic is fairly expensive on most 8-bit CPUs, uIP
+does not implement it. Also, uIP does not buffer sent packets and a
+sliding window implementation that does not buffer sent packets will have
+to be supported by a complex application layer. Instead, uIP allows
+only a single TCP segment per connection to be unacknowledged at any
+given time.
+
+It is important to note that even though most TCP implementations use
+the sliding window algorithm, it is not required by the TCP
+specifications. Removing the sliding window mechanism does not affect
+interoperability in any way.
+
+\subsubsection rttest Round-Trip Time Estimation
+
+TCP continuously estimates the current Round-Trip Time (RTT) of every
+active connection in order to find a suitable value for the
+retransmission time-out.
+
+The RTT estimation in uIP is implemented using TCP's periodic
+timer. Each time the periodic timer fires, it increments a counter for
+each connection that has unacknowledged data in the network. When an
+acknowledgment is received, the current value of the counter is used
+as a sample of the RTT. The sample is used together with Van
+Jacobson's standard TCP RTT estimation function to calculate an
+estimate of the RTT. Karn's algorithm is used to ensure that
+retransmissions do not skew the estimates.
+
+\subsubsection rexmit Retransmissions
+
+Retransmissions are driven by the periodic TCP timer. Every time the
+periodic timer is invoked, the retransmission timer for each
+connection is decremented. If the timer reaches zero, a retransmission
+should be made.
+
+As uIP does not keep track of packet contents after they have
+been sent by the device driver, uIP requires that the
+application takes an active part in performing the
+retransmission. When uIP decides that a segment should be
+retransmitted, it calls the application with a flag set indicating
+that a retransmission is required. The application checks the
+retransmission flag and produces the same data that was previously
+sent. From the application's standpoint, performing a retransmission
+is not different from how the data originally was sent. Therefore the
+application can be written in such a way that the same code is used
+both for sending data and retransmitting data. Also, it is important
+to note that even though the actual retransmission operation is
+carried out by the application, it is the responsibility of the stack
+to know when the retransmission should be made. Thus the complexity of
+the application does not necessarily increase because it takes an
+active part in doing retransmissions.
+
+\subsubsection flowcontrol Flow Control
+
+The purpose of TCP's flow control mechanisms is to allow communication
+between hosts with wildly varying memory dimensions. In each TCP
+segment, the sender of the segment indicates its available buffer
+space. A TCP sender must not send more data than the buffer space
+indicated by the receiver.
+
+In uIP, the application cannot send more data than the receiving host
+can buffer. And application cannot send more data than the amount of
+bytes it is allowed to send by the receiving host. If the remote host
+cannot accept any data at all, the stack initiates the zero window
+probing mechanism.
+
+\subsubsection congestioncontrol Congestion Control
+
+The congestion control mechanisms limit the number of simultaneous TCP
+segments in the network. The algorithms used for congestion control
+are designed to be simple to implement and require only a few lines of
+code.
+
+Since uIP only handles one in-flight TCP segment per connection,
+the amount of simultaneous segments cannot be further limited, thus
+the congestion control mechanisms are not needed.
+
+\subsubsection urgdata Urgent Data
+
+TCP's urgent data mechanism provides an application-to-application
+notification mechanism, which can be used by an application to mark
+parts of the data stream as being more urgent than the normal
+stream. It is up to the receiving application to interpret the meaning
+of the urgent data.
+
+In many TCP implementations, including the BSD implementation, the
+urgent data feature increases the complexity of the implementation
+because it requires an asynchronous notification mechanism in an
+otherwise synchronous API. As uIP already use an asynchronous event
+based API, the implementation of the urgent data feature does not lead
+to increased complexity.
+
+\section performance Performance
+
+In TCP/IP implementations for high-end systems, processing time is
+dominated by the checksum calculation loop, the operation of copying
+packet data and context switching. Operating systems for high-end
+systems often have multiple protection domains for protecting kernel
+data from user processes and user processes from each other. Because
+the TCP/IP stack is run in the kernel, data has to be copied between
+the kernel space and the address space of the user processes and a
+context switch has to be performed once the data has been
+copied. Performance can be enhanced by combining the copy operation
+with the checksum calculation. Because high-end systems usually have
+numerous active connections, packet demultiplexing is also an
+expensive operation.
+
+A small embedded device does not have the necessary processing power
+to have multiple protection domains and the power to run a
+multitasking operating system. Therefore there is no need to copy
+data between the TCP/IP stack and the application program. With an
+event based API there is no context switch between the TCP/IP stack
+and the applications.
+
+In such limited systems, the TCP/IP processing overhead is dominated
+by the copying of packet data from the network device to host memory,
+and checksum calculation. Apart from the checksum calculation and
+copying, the TCP processing done for an incoming packet involves only
+updating a few counters and flags before handing the data over to the
+application. Thus an estimate of the CPU overhead of our TCP/IP
+implementations can be obtained by calculating the amount of CPU
+cycles needed for the checksum calculation and copying of a maximum
+sized packet.
+
+\subsection delack The Impact of Delayed Acknowledgments
+
+Most TCP receivers implement the delayed acknowledgment algorithm for
+reducing the number of pure acknowledgment packets sent. A TCP
+receiver using this algorithm will only send acknowledgments for every
+other received segment. If no segment is received within a specific
+time-frame, an acknowledgment is sent. The time-frame can be as high
+as 500 ms but typically is 200 ms.
+
+A TCP sender such as uIP that only handles a single outstanding TCP
+segment will interact poorly with the delayed acknowledgment
+algorithm. Because the receiver only receives a single segment at a
+time, it will wait as much as 500 ms before an acknowledgment is
+sent. This means that the maximum possible throughput is severely
+limited by the 500 ms idle time.
+
+Thus the maximum throughput equation when sending data from uIP will
+be $p = s / (t + t_d)$ where $s$ is the segment size and $t_d$ is the
+delayed acknowledgment timeout, which typically is between 200 and
+500 ms. With a segment size of 1000 bytes, a round-trip time of 40 ms
+and a delayed acknowledgment timeout of 200 ms, the maximum
+throughput will be 4166 bytes per second. With the delayed acknowledgment
+algorithm disabled at the receiver, the maximum throughput would be
+25000 bytes per second.
+
+It should be noted, however, that since small systems running uIP are
+not very likely to have large amounts of data to send, the delayed
+acknowledgmen t throughput degradation of uIP need not be very
+severe. Small amounts of data sent by such a system will not span more
+than a single TCP segment, and would therefore not be affected by the
+throughput degradation anyway.
+
+The maximum throughput when uIP acts as a receiver is not affected by
+the delayed acknowledgment throughput degradation.
+
+
+
+*/
+
+
+/** @} */
+
