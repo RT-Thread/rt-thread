@@ -178,7 +178,7 @@
 
   <Group>
     <GroupName>Startup</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -203,8 +203,8 @@
       <Focus>0</Focus>
       <ColumnNumber>7</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>69</TopLine>
-      <CurrentLine>84</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup.c</PathWithFileName>
       <FilenameWithoutPath>startup.c</FilenameWithoutPath>
@@ -231,8 +231,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>41</TopLine>
-      <CurrentLine>41</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\rtconfig.h</PathWithFileName>
       <FilenameWithoutPath>rtconfig.h</FilenameWithoutPath>
@@ -243,10 +243,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>6</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>7</TopLine>
-      <CurrentLine>7</CurrentLine>
+      <TopLine>5</TopLine>
+      <CurrentLine>26</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\application.c</PathWithFileName>
       <FilenameWithoutPath>application.c</FilenameWithoutPath>
@@ -266,8 +266,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>33</TopLine>
-      <CurrentLine>46</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\nuc1xx\fault.c</PathWithFileName>
       <FilenameWithoutPath>fault.c</FilenameWithoutPath>
@@ -336,8 +336,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>235</TopLine>
-      <CurrentLine>240</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\nuc1xx\start_rvds.S</PathWithFileName>
       <FilenameWithoutPath>start_rvds.S</FilenameWithoutPath>
@@ -570,7 +570,7 @@
 
   <Group>
     <GroupName>finsh</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -584,7 +584,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\symbol.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\symbol.c</PathWithFileName>
       <FilenameWithoutPath>symbol.c</FilenameWithoutPath>
     </File>
     <File>
@@ -598,7 +598,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\cmd.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\cmd.c</PathWithFileName>
       <FilenameWithoutPath>cmd.c</FilenameWithoutPath>
     </File>
     <File>
@@ -612,7 +612,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_compiler.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_compiler.c</PathWithFileName>
       <FilenameWithoutPath>finsh_compiler.c</FilenameWithoutPath>
     </File>
     <File>
@@ -623,10 +623,10 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>47</TopLine>
+      <CurrentLine>60</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_error.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_error.c</PathWithFileName>
       <FilenameWithoutPath>finsh_error.c</FilenameWithoutPath>
     </File>
     <File>
@@ -640,7 +640,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_heap.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_heap.c</PathWithFileName>
       <FilenameWithoutPath>finsh_heap.c</FilenameWithoutPath>
     </File>
     <File>
@@ -654,7 +654,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_init.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_init.c</PathWithFileName>
       <FilenameWithoutPath>finsh_init.c</FilenameWithoutPath>
     </File>
     <File>
@@ -668,7 +668,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_node.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_node.c</PathWithFileName>
       <FilenameWithoutPath>finsh_node.c</FilenameWithoutPath>
     </File>
     <File>
@@ -682,7 +682,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_ops.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_ops.c</PathWithFileName>
       <FilenameWithoutPath>finsh_ops.c</FilenameWithoutPath>
     </File>
     <File>
@@ -696,7 +696,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_parser.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_parser.c</PathWithFileName>
       <FilenameWithoutPath>finsh_parser.c</FilenameWithoutPath>
     </File>
     <File>
@@ -710,7 +710,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_token.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_token.c</PathWithFileName>
       <FilenameWithoutPath>finsh_token.c</FilenameWithoutPath>
     </File>
     <File>
@@ -724,7 +724,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_var.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_var.c</PathWithFileName>
       <FilenameWithoutPath>finsh_var.c</FilenameWithoutPath>
     </File>
     <File>
@@ -738,7 +738,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\finsh_vm.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\finsh_vm.c</PathWithFileName>
       <FilenameWithoutPath>finsh_vm.c</FilenameWithoutPath>
     </File>
     <File>
@@ -749,10 +749,10 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>435</TopLine>
-      <CurrentLine>455</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\finsh\shell.c</PathWithFileName>
+      <PathWithFileName>..\..\components\finsh\shell.c</PathWithFileName>
       <FilenameWithoutPath>shell.c</FilenameWithoutPath>
     </File>
   </Group>
