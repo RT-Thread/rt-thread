@@ -16,10 +16,24 @@ SECTIONS
   __text_end = .;
   
   __rodata_start = .;
-  .rodata   : { *(.rodata) *(.rodata.*)}
+  .rodata   :
+  {
+    *(.rodata)
+    *(.rodata.*)
+    /* section information for finsh shell */
+    . = ALIGN(4);
+    __fsymtab_start = .;
+    KEEP(*(FSymTab))
+    __fsymtab_end = .;
+    . = ALIGN(4);
+    __vsymtab_start = .;
+    KEEP(*(VSymTab))
+    __vsymtab_end = .;
+    . = ALIGN(4);	
+  }
   __rodata_end = .;
   	
-	. = 0x40000000;		/*Data in SRAM*/
+  . = 0x40000000;		/*Data in SRAM*/
 	
   __data_start = .;
   . = ALIGN(4);
