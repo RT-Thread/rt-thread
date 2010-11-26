@@ -7,7 +7,7 @@
 #include <sys/signal.h>
 #include <pthread.h>
 
-struct posix_mq
+struct mqdes
 {
 	/* reference count and unlinked */
 	rt_uint16_t refcount;
@@ -16,14 +16,7 @@ struct posix_mq
 	/* RT-Thread message queue */
 	rt_mq_t mq;
 	/* next posix mqueue */
-	struct posix_mq* next;
-};
-typedef struct posix_mq posix_mq_t;
-
-struct mqdes
-{
-	rt_uint32_t flags;
-	posix_mq_t* mq;
+	struct mqdes* next;
 };
 typedef struct mqdes* mqd_t;
 
