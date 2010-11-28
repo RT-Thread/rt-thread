@@ -146,7 +146,9 @@ rt_hw_context_switch_to:
 	/* set the PendSV exception priority */
 	LDR		r0, =NVIC_SYSPRI2
 	LDR		r1, =NVIC_PENDSV_PRI
-	STR		r1, [r0]
+  LDR.W   r2, [r0,#0x00]       ; read
+  ORR     r1,r1,r2             ; modify
+  STR     r1, [r0]             ; write-back
 
 	LDR		r0, =NVIC_INT_CTRL      /* trigger the PendSV exception (causes context switch) */
 	LDR		r1, =NVIC_PENDSVSET
