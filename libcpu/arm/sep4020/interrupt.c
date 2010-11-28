@@ -9,12 +9,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-08-23     Bernard      first version
- * 2010-03-17     zchong       SEP4020
+ * 2006-03-13     Bernard      first version
  */
 
 #include <rtthread.h>
-#include "sep4020.h"
+#include <sep4020.h>
 
 #define MAX_HANDLERS	32
 
@@ -26,13 +25,14 @@ rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrput_flag;
 
 /**
- * @addtogroup SEP4020
+ * @addtogroup S3C24X0
  */
 /*@{*/
 
-void rt_hw_interrupt_handler(int vector)
+rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+	return RT_NULL;
 }
 
 /**
@@ -42,16 +42,33 @@ void rt_hw_interrupt_init()
 {
 	register rt_uint32_t idx;
 
-    /* disable all interrupts */
-    INTC_IER = 0x0;
+	/*Make sure all intc registers in proper state*/
 
-    /* mask all interrupts */
-    INTC_IMR = 0xFFFFFFFF;
+	/*mask all the irq*/
+	*(RP)(INTC_IMR) = 0xFFFFFFFF;
+
+	/*enable all the irq*/
+	*(RP)(INTC_IER)	= 0XFFFFFFFF;
+
+	/*Dont use any forced irq*/
+	*(RP)(INTC_IFR) = 0x0;
+
+	/*Disable all the fiq*/
+	*(RP)(INTC_FIER) = 0x0;
+
+	/*Mask all the fiq*/
+	*(RP)(INTC_FIMR) = 0x0F;
+
+	/*Dont use forced fiq*/
+	*(RP)(INTC_FIFR) = 0x0;
+
+	/*Intrrupt priority register*/
+	*(RP)(INTC_IPLR) = 0x0;
 
 	/* init exceptions table */
 	for(idx=0; idx < MAX_HANDLERS; idx++)
 	{
-		isr_table[idx] = (rt_isr_handler_t)rt_hw_interrupt_handler;
+		isr_table[idx] = (rt_isr_handler_t)rt_hw_interrupt_handle;
 	}
 
 	/* init interrupt nest, and context in thread sp */
@@ -65,29 +82,25 @@ void rt_hw_interrupt_init()
  * This function will mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_mask(int vector)
+void rt_hw_interrupt_mask(rt_uint32_t vector)
 {
-    INTC_IMR |= 1 << vector;
+	*(RP)(INTC_IMR) |= 1 << vector;
 }
 
 /**
  * This function will un-mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_umask(int vector)
+void rt_hw_interrupt_umask(rt_uint32_t vector)
 {
-	/* un-mask interrupt */
-	if ((vector == INT_NOTUSED0) || (vector == INT_NOTUSED16))
+	if(vector == 16)
 	{
 		rt_kprintf("Interrupt vec %d is not used!\n", vector);
-		// while(1);
 	}
-	else if (vector == INTGLOBAL)
-		INTC_IMR = 0x0;
 	else
-		INTC_IMR &= ~(1 << vector);
-
+		*(RP)(INTC_IMR) &= ~(1 << vector);
 }
+
 
 /**
  * This function will install a interrupt service routine to a interrupt.
@@ -95,12 +108,14 @@ void rt_hw_interrupt_umask(int vector)
  * @param new_handler the interrupt service routine to be installed
  * @param old_handler the old interrupt service routine
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+void rt_hw_interrupt_install(rt_uint32_t vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
 {
-	if(vector >= 0 && vector < MAX_HANDLERS)
+	if(vector < MAX_HANDLERS)
 	{
-		if (*old_handler != RT_NULL) *old_handler = isr_table[vector];
-		if (new_handler != RT_NULL) isr_table[vector] = new_handler;
+		if (*old_handler != RT_NULL)
+			*old_handler = isr_table[vector];
+		if (new_handler != RT_NULL) 
+			isr_table[vector] = new_handler;
 	}
 }
 

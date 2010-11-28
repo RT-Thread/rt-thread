@@ -8,8 +8,6 @@
 ; 2010-03-17     zchong 
 ;=============================================================================================
 
-;
-
 PMU_PLTR        EQU     0x10001000     	; PLL的稳定过渡时间
 PMU_PMCR        EQU     0x10001004      ; 系统主时钟PLL的控制寄存器
 PMU_PUCR        EQU     0x10001008      ; USB时钟PLL的控制寄存器
@@ -51,42 +49,51 @@ MODE_SVC32		EQU		0x00000013
 ; Internal Memory Base Addresses
 FLASH_BASE      EQU     0x20000000   
 RAM_BASE        EQU     0x04000000
+SDRAM_BASE      EQU     0x30000000
 
 ; Stack
-UND_Stack_Size  EQU     0x00000000
-SVC_Stack_Size  EQU     0x00000400
-ABT_Stack_Size  EQU     0x00000000
-FIQ_Stack_Size  EQU     0x00000000
-IRQ_Stack_Size  EQU     0x00000100
-USR_Stack_Size  EQU     0x00000000
+Unused_Stack_Size  EQU     0x00000100
+Svc_Stack_Size  EQU     0x00001000
+Abt_Stack_Size  EQU     0x00000000
+Fiq_Stack_Size  EQU     0x00000000
+Irq_Stack_Size  EQU     0x00001000
+Usr_Stack_Size  EQU     0x00000000
 
-ISR_Stack_Size  EQU     (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
-                         FIQ_Stack_Size + IRQ_Stack_Size)
-
+;SVC STACK
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
+Svc_Stack    	SPACE   Svc_Stack_Size
+__initial_sp
+Svc_Stack_Top
 
-Stack_Mem       SPACE   USR_Stack_Size
-__initial_sp    SPACE   ISR_Stack_Size
-Stack_Top
+;IRQ STACK
+				AREA	STACK, NOINIT, READWRITE, ALIGN=3
+Irq_Stack		SPACE	Irq_Stack_Size
+Irq_Stack_Top
+
+;UNUSED STACK
+				AREA	STACK, NOINIT, READWRITE, ALIGN=3
+Unused_Stack	SPACE	Unused_Stack_Size
+Unused_Stack_Top
+
 
 ; Heap
-Heap_Size       EQU     0x00000000
+Heap_Size       EQU     0x0000100
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
+				EXPORT	Heap_Mem
 __heap_base
 Heap_Mem        SPACE   Heap_Size
 __heap_limit
 
-
                 PRESERVE8
                 
-; Area Definition and Entry Point
+;  Area Definition and Entry Point
 ;  Startup Code must be linked first at Address at which it expects to run.
 
                 AREA    RESET, CODE, READONLY
                 ARM
 
-; Exception Vectors
+;  Exception Vectors
 ;  Mapped to Address 0.
 ;  Absolute addressing mode must be used.
 ;  Dummy Handlers are implemented as infinite loops which can be modified.
@@ -110,265 +117,268 @@ IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 
 Undef_Handler   B       Undef_Handler
-SWI_Handler     B       SWI_Handler
-PAbt_Handler    B       PAbt_Handler
-DAbt_Handler    B       DAbt_Handler
+SWI_Handler     B		SWI_Handler
+PAbt_Handler    B       Abort_Handler
+DAbt_Handler    B       Abort_Handler
 FIQ_Handler     B       FIQ_Handler
+
+Abort_Handler	PROC
+				ARM
+				EXPORT	Abort_Handler
+DeadLoop	BHI	DeadLoop    ; Abort happened in irq mode, halt system.
+				ENDP
 
 
 ; Reset Handler
-
+				;IMPORT	__user_initial_stackheap
                 EXPORT  Reset_Handler
-Reset_Handler   
+Reset_Handler
 
 ;****************************************************************
-;* 关闭看门狗
+;* Shutdown watchdog
 ;****************************************************************
-		LDR		R0,=RTC_CTR	
-		LDR		R1,=0x0			
-		STR		R1,[R0]	
+				LDR		R0,=RTC_CTR	
+				LDR		R1,=0x0			
+				STR		R1,[R0]	
 
 ;****************************************************************
-;* 关中断
+;* shutdown interrupts
 ;****************************************************************	
-		MRS		R0, CPSR
-		BIC		R0, R0, #MASK_MODE
-		ORR		R0, R0, #MODE_SVC32
-		ORR 	R0, R0, #I_Bit
-		ORR 	R0, R0, #F_Bit
-		MSR		CPSR_c, r0
-	
-		LDR		R0,=INTC_IER			
-		LDR		R1,=0x0 	
-		STR		R1,[R0]
-		LDR		R0,=INTC_IMR
-		LDR		R1,=0xFFFFFFFF			
-		STR		R1,[R0]	
-	
-		LDR		R0,=INTC_FIER			
-		LDR		R1,=0x0 	
-		STR		R1,[R0]
-		LDR		R0,=INTC_FIMR
-		LDR		R1,=0x0F				
-		STR		R1,[R0]
+				MRS		R0, CPSR
+				BIC		R0, R0, #MASK_MODE
+				ORR		R0, R0, #MODE_SVC32
+				ORR 	R0, R0, #I_Bit
+				ORR 	R0, R0, #F_Bit
+				MSR		CPSR_c, r0
+			
+				LDR		R0,=INTC_IER			
+				LDR		R1,=0x0 	
+				STR		R1,[R0]
+				LDR		R0,=INTC_IMR
+				LDR		R1,=0xFFFFFFFF			
+				STR		R1,[R0]	
+			
+				LDR		R0,=INTC_FIER			
+				LDR		R1,=0x0 	
+				STR		R1,[R0]
+				LDR		R0,=INTC_FIMR
+				LDR		R1,=0x0F				
+				STR		R1,[R0]
 
 ;****************************************************************
-;* 初始化PMU模块, 配置系统时钟
+;* Initialize Stack Pointer
 ;****************************************************************
-		LDR	   	R4,    =PMU_PCSR        ; 打开所有模块时钟
-		LDR    	R5,    =0x0001ffff                 
-  	  	STR    	R5,    [ R4 ] 
-
-		LDR    	R4,    =PMU_PLTR        ; 配置PLL稳定过度时间为保守值50us*100M.
-		LDR    	R5,    =0x00fa00fa
-		STR    	R5,    [ R4 ] 
-   
-    	LDR    	R4,    =PMU_PMDR        ; 由SLOW模式进入NORMAL模式
-	   	LDR    	R5,    =0x00000001                
-    	STR    	R5,    [ R4 ] 
-    
-    	LDR    	R4,    =PMU_PMCR        ; 配置系统时钟为72MHz 2*Fin*9=2*4*9=72MHz
-    	LDR    	R5,    =0x00004009      ; MFCN 0->1 trigger PLL to reconfigure event when mode isn''t SLOW        
-    	STR    	R5,    [ R4 ]
-    	LDR    	R4,    =PMU_PMCR        ; 
-    	LDR    	R5,    =0x0000c009                 
-    	STR    	R5,    [ R4 ]
-    
+			
+			    LDR		SP, =Svc_Stack_Top	;init SP_svc
+				
+			    MOV		R4, #0xD2			;chmod to irq and init SP_irq
+			    MSR		cpsr_c, R4   
+			    LDR		SP, =Irq_Stack_Top
+				
+			    MOV		R4, #0XD1			;chomod to fiq and init SP_fiq
+			    MSR		cpsr_c, R4   
+			    LDR		SP, =Unused_Stack_Top  
+				
+			    MOV		R4, #0XD7			;chomod to abt and init SP_ABT
+			    MSR		cpsr_c, R4   
+			    LDR		SP, =Unused_Stack_Top 
+				
+			    MOV		R4, #0XDB			;chomod to undf and init SP_UNDF
+			    MSR		cpsr_c, R4   
+			    LDR		SP, =Unused_Stack_Top 	
+			    
+			                                ;chomod to abt and init SP_sys
+			    MOV 	R4, #0xDF           ;all interrupts disabled      
+			    MSR		cpsr_c, R4       ;SYSTEM mode, @32-bit code mode     
+			    LDR		SP, =Unused_Stack_Top   	
+			    
+			    MOV		R4, #0XD3           ;chmod to svc modle, CPSR IRQ bit  is disable
+			    MSR		cpsr_c, R4
+			
+			
+			
+;****************************************************************
+;* Initialize PMU & System Clock
+;****************************************************************
+			
+			    LDR    R4,    =PMU_PCSR         ; 打所有模块时钟
+			    LDR    R5,    =0x0001ffff                 
+			    STR    R5,    [ R4 ] 
+			
+			    LDR    R4,    =PMU_PLTR         ; 配置PLL稳定过度时间为保守值50us*100M.
+			    LDR    R5,    =0x00fa00fa
+			    STR    R5,    [ R4 ] 
+			   
+			    LDR    R4,    =PMU_PMDR         ; 由SLOW模式进入NORMAL模式
+			    LDR    R5,    =0x00000001                
+			    STR    R5,    [ R4 ] 
+			    
+			    LDR    R4,    =PMU_PMCR         ; 配置系统时钟为80MHz       
+			    LDR    R5,    =0x00004009       ; 400b -- 88M
+			    STR    R5,    [ R4 ] 
+			    
+			    ;PMU_PMCR寄存器第15位需要有从低到高的翻转，才能触发PLL的时钟配置
+			    LDR    R4,    =PMU_PMCR        
+			    LDR    R5,    =0x0000c009               
+			    STR    R5,    [ R4 ]
+			    
 ;****************************************************************
 ;* 初始化EMI
 ;****************************************************************
-;    	LDR    	R4,    =EMI_CSACONF     ; CSA片选时序参数配置
-;    	LDR    	R5,    =0x08a6a6a1                 
-;    	STR    	R5,    [ R4 ]     
- 
-;    	LDR    	R4,    =EMI_CSECONF     ; CSE片选时序参数配置,最保守配置
-;    	LDR    	R5,    =0x8cfffff1                 
-;    	STR    	R5,    [ R4 ]
- 
-;    	LDR    	R4,    =EMI_SDCONF1     ; SDRAM参数配置1
-;    	LDR    	R5,    =0x1E104177                 
-;    	STR    	R5,    [ R4 ] 
 
-;    	LDR    	R4,    =EMI_SDCONF2     ; SDRAM参数配置2
-;    	LDR   	R5,    =0x80001860                 
-;    	STR    	R5,    [ R4 ]
+				IF		:DEF:INIT_EMI
 
+		    	LDR    	R4,    =EMI_CSACONF     ; CSA片选时序参数配置
+		    	LDR    	R5,    =0x08a6a6a1                 
+		    	STR    	R5,    [ R4 ]     
+		 
+		    	LDR    	R4,    =EMI_CSECONF     ; CSE片选时序参数配置,最保守配置
+		    	LDR    	R5,    =0x8cfffff1                 
+		    	STR    	R5,    [ R4 ]
+		 
+		    	LDR    	R4,    =EMI_SDCONF1     ; SDRAM参数配置1
+		    	LDR    	R5,    =0x1E104177                 
+		    	STR    	R5,    [ R4 ] 
+		
+		    	LDR    	R4,    =EMI_SDCONF2     ; SDRAM参数配置2
+		    	LDR   	R5,    =0x80001860                 
+		    	STR    	R5,    [ R4 ]
+				 
+				ENDIF
 
-; Copy Exception Vectors to Internal RAM
+; Copy Exception Vectors to Internal RAM 
 
-	IF      :DEF:RAM_INTVEC
-		ADR     R8, 	Vectors         ; Source
-		LDR     R9, 	=RAM_BASE       ; Destination
-		LDMIA   R8!, 	{R0-R7}        	; Load Vectors 
-		STMIA   R9!, 	{R0-R7}        	; Store Vectors 
-		LDMIA   R8!, 	{R0-R7}        	; Load Handler Addresses 
-		STMIA   R9!, 	{R0-R7}        	; Store Handler Addresses
-	ENDIF
+				IF      :DEF:RAM_INTVEC
 
+				ADR     R8, 	Vectors         ; Source
+				LDR     R9, 	=RAM_BASE       ; Destination
+				LDMIA   R8!, 	{R0-R7}        	; Load Vectors 
+				STMIA   R9!, 	{R0-R7}        	; Store Vectors 
+				LDMIA   R8!, 	{R0-R7}        	; Load Handler Addresses 
+				STMIA   R9!, 	{R0-R7}        	; Store Handler Addresses
+
+				ENDIF
 
 ; Remap on-chip RAM to address 0
 
-	IF      :DEF:REMAP
-		LDR     R0, 	=EMI_REMAPCONF
-		MOV     R1, 	#0x80000000
-		STR     R1, 	[R0, #0]   ; Remap
-	ENDIF
+				IF      :DEF:REMAP
 
+				LDR     R0, 	=EMI_REMAPCONF
+				IF		:DEF:RAM_INTVEC
+				MOV     R1, 	#0x80000000
+				ELSE
+				MOV		R1,		#0x0000000b
+				ENDIF
+				STR     R1, 	[R0, #0]   ; Remap
 
-; Setup Stack for each mode
+				ENDIF
 
-		LDR     R0, 	=Stack_Top
-
-;  Enter Undefined Instruction Mode and set its Stack Pointer
-		MSR     CPSR_c, #Mode_UND:OR:I_Bit:OR:F_Bit
-		MOV     SP, 	R0
-		SUB     R0, R0, #UND_Stack_Size
-
-;  Enter Abort Mode and set its Stack Pointer
-		MSR     CPSR_c, #Mode_ABT:OR:I_Bit:OR:F_Bit
-		MOV     SP, 	R0
-		SUB     R0, R0, #ABT_Stack_Size
-
-;  Enter FIQ Mode and set its Stack Pointer
-		MSR     CPSR_c, #Mode_FIQ:OR:I_Bit:OR:F_Bit
-		MOV     SP, 	R0
-		SUB     R0, R0, #FIQ_Stack_Size
-
-;  Enter IRQ Mode and set its Stack Pointer
-		MSR     CPSR_c, #Mode_IRQ:OR:I_Bit:OR:F_Bit
-		MOV     SP, 	R0
-		SUB     R0, R0, #IRQ_Stack_Size
-
-;  Enter Supervisor Mode and set its Stack Pointer
-		MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
-		MOV     SP, 	R0
-	 	SUB     R0, R0, #SVC_Stack_Size
-
-;  Enter User Mode and set its Stack Pointer
-	; MSR     CPSR_c, #Mode_USR
-	IF      :DEF:__MICROLIB
-
-		EXPORT __initial_sp
+;***************************************************************
+;* Open irq interrupt											 
+;***************************************************************
 	
-	ELSE
-
-	; No usr mode stack here.
-	;MOV     SP, R0
-	;SUB     SL, SP, #USR_Stack_Size
-
-	ENDIF
-
+			    MRS		R4, cpsr
+			    BIC		R4, R4, #0x80  		    ; set bit7 to zero
+			    MSR		cpsr_c, R4
 
 ; Enter the C code
+				IMPORT  __main
+				LDR		R0,=__main
+				BX		R0
 
-		IMPORT  __main
-		LDR     R0, 	=__main
-		BX      R0
 
-	IMPORT rt_interrupt_enter
-	IMPORT rt_interrupt_leave
-	IMPORT rt_thread_switch_interrput_flag
-	IMPORT rt_interrupt_from_thread
-	IMPORT rt_interrupt_to_thread
-	IMPORT rt_hw_trap_irq
-	IMPORT rt_hw_trap_abort
-	IMPORT rt_interrupt_nest
+                IMPORT rt_interrupt_enter
+                IMPORT rt_interrupt_leave
+                IMPORT rt_thread_switch_interrput_flag
+                IMPORT rt_interrupt_from_thread
+                IMPORT rt_interrupt_to_thread
+                IMPORT rt_hw_trap_irq
 
-Abort_Handler	PROC
-		EXPORT	Abort_Handler
-		STMFD	SP!, 	{R0-R12,LR}
-		LDR		R0, 	=rt_interrupt_nest
-		LDR		R1, 	[R0]
-		CMP		R1, 	#0
-DeadLoop	BHI	DeadLoop    ; Abort happened in irq mode, halt system.
-		BL		rt_interrupt_enter
-		BL		rt_hw_trap_abort
-		BL		rt_interrupt_leave
-		B		SWITCH
-				ENDP
-				
-IRQ_Handler		PROC
-		EXPORT IRQ_Handler
-		STMFD	SP!,	{R0-R12,LR}
-		BL		rt_interrupt_enter
-		BL		rt_hw_trap_irq
-		BL		rt_interrupt_leave
+IRQ_Handler     PROC
+                EXPORT IRQ_Handler
+                STMFD   sp!, {r0-r12,lr}
+                BL  rt_interrupt_enter
+                BL  rt_hw_trap_irq
+                BL  rt_interrupt_leave
 
-				; if rt_thread_switch_interrput_flag set, jump to
-				; rt_hw_context_switch_interrupt_do and don't return
-SWITCH			
-		LDR		R0, 	=rt_thread_switch_interrput_flag
-		LDR		R1, 	[R0]
-		CMP		R1, 	#1
-		BEQ		rt_hw_context_switch_interrupt_do
+                ; if rt_thread_switch_interrput_flag set, jump to
+                ; rt_hw_context_switch_interrupt_do and don't return
+                LDR r0, =rt_thread_switch_interrput_flag
+                LDR r1, [r0]
+                CMP r1, #1
+                BEQ rt_hw_context_switch_interrupt_do
 
-		LDMFD	SP!, 	{R0-R12,LR}
-		SUBS	PC, 	LR, #4
-	ENDP
+                LDMFD   sp!, {r0-r12,lr}
+                SUBS    pc, lr, #4
+                ENDP
 
 ; /*
 ; * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
 ; */
-rt_hw_context_switch_interrupt_do	PROC
-		EXPORT rt_hw_context_switch_interrupt_do
-		MOV		r1,  #0			; clear flag
-		STR		r1,  [r0]
+rt_hw_context_switch_interrupt_do   PROC
+                EXPORT rt_hw_context_switch_interrupt_do
+                MOV     r1,  #0         ; clear flag
+                STR     r1,  [r0]
 
-		LDMFD	sp!, {r0-r12,lr}; reload saved registers
-		STMFD	sp!, {r0-r3}	; save r0-r3
-		MOV		r1,  sp
-		ADD		sp,  sp, #16	; restore sp
-		SUB		r2,  lr, #4		; save old task's pc to r2
+                LDMFD   sp!, {r0-r12,lr}; reload saved registers
+                STMFD   sp!, {r0-r3}    ; save r0-r3
+                MOV     r1,  sp
+                ADD     sp,  sp, #16    ; restore sp
+                SUB     r2,  lr, #4     ; save old task's pc to r2
 
-		MRS		r3,  spsr		; get cpsr of interrupt thread
+                MRS     r3,  spsr       ; get cpsr of interrupt thread
 
-		; switch to SVC mode and no interrupt
-		MSR     cpsr_c, #I_Bit:OR:F_Bit:OR:Mode_SVC
+                ; switch to SVC mode and no interrupt
+                MSR     cpsr_c, #I_Bit :OR F_Bit :OR Mode_SVC
 
-		STMFD	sp!, {r2}		; push old task's pc
-		STMFD	sp!, {r4-r12,lr}; push old task's lr,r12-r4
-		MOV		r4,  r1			; Special optimised code below
-		MOV		r5,  r3
-		LDMFD	r4!, {r0-r3}
-		STMFD	sp!, {r0-r3}	; push old task's r3-r0
-		STMFD	sp!, {r5}		; push old task's cpsr
-		MRS		r4,  spsr
-		STMFD	sp!, {r4}		; push old task's spsr
+                STMFD   sp!, {r2}       ; push old task's pc
+                STMFD   sp!, {r4-r12,lr}; push old task's lr,r12-r4
+                MOV     r4,  r1         ; Special optimised code below
+                MOV     r5,  r3
+                LDMFD   r4!, {r0-r3}
+                STMFD   sp!, {r0-r3}    ; push old task's r3-r0
+                STMFD   sp!, {r5}       ; push old task's cpsr
+                MRS     r4,  spsr
+                STMFD   sp!, {r4}       ; push old task's spsr
 
-		LDR		r4,  =rt_interrupt_from_thread
-		LDR		r5,  [r4]
-		STR		sp,  [r5]		; store sp in preempted tasks's TCB
+                LDR     r4,  =rt_interrupt_from_thread
+                LDR     r5,  [r4]
+                STR     sp,  [r5]       ; store sp in preempted tasks's TCB
 
-		LDR		r6,  =rt_interrupt_to_thread
-		LDR		r6,  [r6]
-		LDR		sp,  [r6]		; get new task's stack pointer
-			
-		LDMFD	sp!, {r4}		; pop new task's spsr
-		MSR		spsr_cxsf, r4
-		LDMFD	sp!, {r4}		; pop new task's psr
-		MSR		cpsr_cxsf, r4
- 	
-		LDMFD	sp!, {r0-r12,lr,pc}	; pop new task's r0-r12,lr & pc
-		ENDP
+                LDR     r6,  =rt_interrupt_to_thread
+                LDR     r6,  [r6]
+                LDR     sp,  [r6]       ; get new task's stack pointer
 
-	IF      :DEF:__MICROLIB
+                LDMFD   sp!, {r4}       ; pop new task's spsr
+                MSR     spsr_cxsf, r4
+                LDMFD   sp!, {r4}       ; pop new task's psr
+                MSR     cpsr_cxsf, r4
 
-		EXPORT  __heap_base
-		EXPORT  __heap_limit
+                LDMFD   sp!, {r0-r12,lr,pc} ; pop new task's r0-r12,lr & pc
+                ENDP
 
-	ELSE
+
+
+				ALIGN		
+				IF      :DEF:__MICROLIB
+		
+				EXPORT  __heap_base
+				EXPORT  __heap_limit
+				EXPORT __initial_sp
+		
+				ELSE	;__MICROLIB 
 ; User Initial Stack & Heap
-		AREA    |.text|, CODE, READONLY
-
-		IMPORT  __use_two_region_memory
-		EXPORT  __user_initial_stackheap
+				AREA    |.text|, CODE, READONLY
+		
+				IMPORT  __use_two_region_memory
+				EXPORT  __user_initial_stackheap
 __user_initial_stackheap
-
-		LDR     R0, =  Heap_Mem
-		LDR     R1, = (Stack_Mem + IRQ_Stack_Size)
-		LDR     R2, = (Heap_Mem +      Heap_Size)
-		LDR     R3, = Stack_Mem
-		BX      LR
-	ENDIF
-
-	END
+		
+				LDR     R0, =  Heap_Mem
+				LDR     R1, = (Svc_Stack + 	   Svc_Stack_Size)
+				LDR     R2, = (Heap_Mem +      Heap_Size)
+				LDR     R3, = Svc_Stack
+				BX      LR
+				ALIGN
+				ENDIF
+				END
