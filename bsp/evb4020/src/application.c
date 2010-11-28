@@ -63,6 +63,7 @@ void rt_init_thread_entry(void* parameter)
 		else
 			rt_kprintf("haven't written\n");
 
+		lseek(fd,0,SEEK_SET);
 		
 		sz = read(fd,buffer,sizeof(buffer));
 
@@ -71,6 +72,7 @@ void rt_init_thread_entry(void* parameter)
 			rt_kprintf("READ %d:",sz);
 			while(sz--)
 				rt_kprintf("%c",buffer[sz]);//opposite
+			rt_kprintf("\n");
 		}
 		else
 			rt_kprintf("haven't read\n");
