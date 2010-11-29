@@ -71,7 +71,7 @@ CLIENT *clnt_create (const char *hostname, const unsigned long prog,
 		tv.tv_usec = 0;
 		client = clntudp_create(&sin, prog, vers, tv, &sock);
 		if (client == NULL) return NULL;
-		tv.tv_sec = 25;
+		tv.tv_sec = 1;
 		clnt_control(client, CLSET_TIMEOUT, (char*)&tv);
 	}
 	else

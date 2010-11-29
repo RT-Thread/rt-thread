@@ -534,6 +534,50 @@ void cat(const char* filename)
 }
 FINSH_FUNCTION_EXPORT(cat, print file)
 
+#define BUF_SZ	4096
+void copy(const char* src, const char* dst)
+{
+	struct dfs_fd src_fd;
+	rt_uint8_t *block_ptr;
+	rt_uint32_t read_bytes, write_bytes;
+
+	block_ptr = rt_malloc(BUF_SZ);
+	if (block_ptr == RT_NULL)
+	{
+		rt_kprintf("out of memory\n");
+		return;
+	}
+	
+	if (dfs_file_open(&src_fd, src, DFS_O_RDONLY) < 0)
+	{
+		rt_free(block_ptr);
+		rt_kprintf("Read %s failed\n", src);
+		return;
+	}
+	if (dfs_file_open(&fd, dst, DFS_O_WRONLY | DFS_O_CREAT) < 0)
+	{
+		rt_free(block_ptr);
+		dfs_file_close(&src_fd);
+
+		rt_kprintf("Write %s failed\n", dst);
+		return;
+	}
+
+	do
+	{
+		read_bytes = dfs_file_read(&src_fd, block_ptr, BUF_SZ);
+		if (read_bytes > 0)
+		{
+			dfs_file_write(&fd, block_ptr, read_bytes);
+		}
+	} while (read_bytes > 0);
+
+	dfs_file_close(&src_fd);
+	dfs_file_close(&fd);
+	rt_free(block_ptr);
+}
+FINSH_FUNCTION_EXPORT(copy, copy source file to destination file)
+
 #endif
 /* @} */
 
