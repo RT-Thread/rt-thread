@@ -81,15 +81,17 @@ static void workbench_entry(void* parameter)
 	demo_view_listbox(workbench);
 	demo_view_slider(workbench);
 	demo_view_mywidget(workbench);
-#ifdef RT_USING_DFS
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 	demo_view_image(workbench);
 #endif
 #ifdef RT_USING_MODULE	
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 	demo_view_module(workbench);
+#endif
 #endif
 	demo_listview_view(workbench);
 	demo_listview_icon_view(workbench);
-#ifdef RT_USING_DFS
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 	demo_fn_view(workbench);
 #endif
 

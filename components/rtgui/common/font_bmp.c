@@ -71,8 +71,9 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	rt_uint32_t length;
-	struct rtgui_font* hz_font;
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
+#ifdef RTGUI_USING_FONTHZ
+	struct rtgui_font* hz_font;
 
 	RT_ASSERT(bmp_font != RT_NULL);
 
@@ -109,6 +110,27 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 	}
 
 	rtgui_font_derefer(hz_font);
+#else
+	while ((rect->x1 < rect->x2) && len)
+	{
+		while (((rt_uint8_t)*(text + length) < 0x80) && *(text + length)) length ++;
+		if (length > 0)
+		{
+			len -= length;
+			while (length-- && rect->x1 < rect->x2)
+			{
+				rtgui_bitmap_font_draw_char(bmp_font, dc, *text, rect);
+
+				/* move x to next character */
+				if (bmp_font->char_width == RT_NULL)
+					rect->x1 += bmp_font->width;
+				else
+					rect->x1 += bmp_font->char_width[*text - bmp_font->first_char];
+				text ++;
+			}
+		}
+	}
+#endif
 }
 
 static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* text, rtgui_rect_t* rect)

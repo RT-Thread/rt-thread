@@ -10,6 +10,7 @@
 #include <string.h>
 
 #ifdef RT_USING_MODULE
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 static rtgui_view_t* _view = RT_NULL;
 
 /* 打开按钮的回调函数 */
@@ -72,3 +73,5 @@ rtgui_view_t* demo_view_module(rtgui_workbench_t* workbench)
 	return _view;
 }
 #endif
+#endif
+
