@@ -87,7 +87,7 @@ def _make_path_relative(origin, dest):
         return os.path.join(*segments)
 
 def MDKProject(target, script):
-    template = file('template.uV2', "rb")
+    template = file('template.Uv2', "rb")
     lines = template.readlines()
 
     project = file(target, "wb")
@@ -337,4 +337,4 @@ def EndBuilding(target):
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
     if GetOption('target') == 'mdk':
-        MDKProject('project.uV2', Projects)
+        MDKProject('project.Uv2', Projects)
