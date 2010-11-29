@@ -253,7 +253,7 @@ void rt_hw_uart_init(void)
 	uart->parent.read 	    = rt_uart_read;
 	uart->parent.write      = rt_uart_write;
 	uart->parent.control    = RT_NULL;
-	uart->parent.private    = RT_NULL;
+	uart->parent.user_data  = RT_NULL;
 
 	rt_device_register(&uart->parent,
 		"uart", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX);

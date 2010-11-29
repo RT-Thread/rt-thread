@@ -25,6 +25,7 @@ void LPC17xx_SPI_Init (void)
 
 	dummy = dummy; // avoid warning
 
+#if 0
 	/* Initialize and enable the SSP0 Interface module. */
 	LPC_SC->PCONP |= (1 << 21);          /* Enable power to SSPI0 block  */
 
@@ -38,6 +39,24 @@ void LPC17xx_SPI_Init (void)
 	LPC_PINCON->PINSEL0 |=  (2UL<<30);          /* P0.15 SCK0 */
 	LPC_PINCON->PINSEL1 &= ~((3<<2) | (3<<4));  /* P0.17, P0.18 cleared */
 	LPC_PINCON->PINSEL1 |=  ((2<<2) | (2<<4));  /* P0.17 MISO0, P0.18 MOSI0 */
+#else
+	LPC_SC->PCONP       |= (1 << 21);           /* Enable power to SSPI0 block */
+
+	/* SSEL is GPIO, output set to high. */
+	LPC_GPIO1->FIODIR   |=  (1<<21);            /* P1.21 is output             */
+	LPC_GPIO1->FIOPIN   |=  (1<<21);            /* set P1.21 high (SSEL inact.)*/
+	LPC_PINCON->PINSEL3 &= ~(0<<10);             /* P1.21 SSEL (used as GPIO)   */
+
+	/* P3.26 is SD Card Power Supply Enable Pin */
+	LPC_GPIO3->FIODIR   |=  (1<<26);            /* P3.26 is output             */
+	LPC_GPIO3->FIOPIN   &= ~(1<<26);            /* set P3.26 low(enable power) */
+
+	/* SCK, MISO, MOSI are SSP pins. */
+	LPC_PINCON->PINSEL3 &= ~(3UL<<8);          /* P1.20 cleared               */
+	LPC_PINCON->PINSEL3 |=  (3UL<<8);          /* P1.20 SCK0                  */
+	LPC_PINCON->PINSEL3 &= ~((3<<14) | (3<<16));  /* P1.23, P1.24 cleared        */
+	LPC_PINCON->PINSEL3 |=  ((3<<14) | (3<<16));  /* P1.23 MISO0, P1.24 MOSI0    */
+#endif
 
 	/* PCLK_SSP0=CCLK */
 	LPC_SC->PCLKSEL1 &= ~(3<<10);               /* PCLKSP0 = CCLK/4 (18MHz) */
@@ -64,9 +83,14 @@ void LPC17xx_SPI_DeInit( void )
 	// disable SPI
 	LPC_SSP0->CR1  = 0;
 
+#if 0
 	// Pins to GPIO
 	LPC_PINCON->PINSEL0 &= ~(3UL<<30);
 	LPC_PINCON->PINSEL1 &= ~((3<<2) | (3<<4));
+#else
+	LPC_PINCON->PINSEL3 &= ~(3UL<<8);          /* P1.20 cleared               */
+	LPC_PINCON->PINSEL3 &= ~((3<<14) | (3<<16));  /* P1.23, P1.24 cleared        */
+#endif
 
 	// disable SSP power
 	LPC_SC->PCONP &= ~(1 << 21);
@@ -85,13 +109,21 @@ void LPC17xx_SPI_SetSpeed (uint8_t speed)
 /* SSEL: low */
 void LPC17xx_SPI_Select ()
 {
+#if 0
 	LPC_GPIO0->FIOPIN &= ~(1<<16);
+#else
+	LPC_GPIO1->FIOPIN &= ~(1<<21);            /* SSEL is GPIO, set to high.  */
+#endif
 }
 
 /* SSEL: high */
 void LPC17xx_SPI_DeSelect ()
 {
+#if 0
 	LPC_GPIO0->FIOPIN |= (1<<16);
+#else
+	LPC_GPIO1->FIOPIN |= (1<<21);             /* SSEL is GPIO, set to high.  */
+#endif
 }
 
 /* Send one byte then recv one byte of response. */
@@ -101,7 +133,6 @@ static uint8_t LPC17xx_SPI_SendRecvByte (uint8_t byte_s)
 
 	LPC_SSP0->DR = byte_s;
 	while (LPC_SSP0->SR & (1 << SSPSR_BSY) /*BSY*/); 	/* Wait for transfer to finish */
-//	while( !( LPC_SSP0->SR & ( 1 << SSPSR_RNE ) ) );	/* Wait untill the Rx FIFO is not empty */
 	byte_r = LPC_SSP0->DR;
 
 	return byte_r;                      /* Return received value */

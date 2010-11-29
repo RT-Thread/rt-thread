@@ -3571,7 +3571,7 @@ void rt_hw_stm32_eth_init()
 	stm32_eth_device.parent.parent.read       = rt_stm32_eth_read;
 	stm32_eth_device.parent.parent.write      = rt_stm32_eth_write;
 	stm32_eth_device.parent.parent.control    = rt_stm32_eth_control;
-	stm32_eth_device.parent.parent.private    = RT_NULL;
+	stm32_eth_device.parent.parent.user_data  = RT_NULL;
 
 	stm32_eth_device.parent.eth_rx     = rt_stm32_eth_rx;
 	stm32_eth_device.parent.eth_tx     = rt_stm32_eth_tx;

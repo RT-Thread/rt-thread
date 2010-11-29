@@ -455,7 +455,7 @@ void lpc17xx_emac_hw_init(void)
 	lpc17xx_emac_device.parent.parent.read		= lpc17xx_emac_read;
 	lpc17xx_emac_device.parent.parent.write		= lpc17xx_emac_write;
 	lpc17xx_emac_device.parent.parent.control	= lpc17xx_emac_control;
-	lpc17xx_emac_device.parent.parent.private	= RT_NULL;
+	lpc17xx_emac_device.parent.parent.user_data	= RT_NULL;
 
 	lpc17xx_emac_device.parent.eth_rx			= lpc17xx_emac_rx;
 	lpc17xx_emac_device.parent.eth_tx			= lpc17xx_emac_tx;

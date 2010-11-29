@@ -57,7 +57,7 @@ void rt_hw_sdcard_init()
 	sd.read 	= rt_sdcard_read;
 	sd.write    = rt_sdcard_write;
 	sd.control  = rt_sdcard_control;
-	sd.private  = RT_NULL;
+	sd.user_data  = RT_NULL;
 
 	/* get the first sector to read partition table */
 	sector = (rt_uint8_t*) rt_malloc (512);

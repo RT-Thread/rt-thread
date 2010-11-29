@@ -896,7 +896,7 @@ void rt_hw_msd_init()
 		sdcard_device.control = rt_msd_control;
 
 		/* no private */
-		sdcard_device.private = RT_NULL;
+		sdcard_device.user_data = RT_NULL;
 		/* get the first sector to read partition table */
 		sector = (rt_uint8_t*) rt_malloc (512);
 		if (sector == RT_NULL)

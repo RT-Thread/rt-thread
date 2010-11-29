@@ -3212,7 +3212,7 @@ void rt_hw_sdcard_init()
 		sdcard_device.control = rt_sdcard_control;
 
 		/* no private */
-		sdcard_device.private = &SDCardInfo;
+		sdcard_device.user_data = &SDCardInfo;
 
 		rt_device_register(&sdcard_device, "sd0",
 			RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);

@@ -147,7 +147,7 @@ void rt_hw_dm9000_init()
 	dm9000_device.parent.parent.read       = rt_dm9000_read;
 	dm9000_device.parent.parent.write      = rt_dm9000_write;
 	dm9000_device.parent.parent.control    = rt_dm9000_control;
-	dm9000_device.parent.parent.private    = RT_NULL;
+	dm9000_device.parent.parent.user_data  = RT_NULL;
 
 	dm9000_device.parent.eth_rx     = rt_dm9000_rx;
 	dm9000_device.parent.eth_tx     = rt_dm9000_tx;

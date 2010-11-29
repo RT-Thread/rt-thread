@@ -150,7 +150,7 @@ void rt_hw_rtc_init(void)
     rtc.control = rt_rtc_control;
 
     /* no private */
-    rtc.private = RT_NULL;
+    rtc.user_data = RT_NULL;
 
     rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 

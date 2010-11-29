@@ -417,7 +417,7 @@ void rtgui_touch_hw_init(void)
 	touch->parent.type = RT_Device_Class_Unknown;
 	touch->parent.init = rtgui_touch_init;
 	touch->parent.control = rtgui_touch_control;
-	touch->parent.private = RT_NULL;
+	touch->parent.user_data = RT_NULL;
 
 	/* create 1/8 second timer */
 	touch->poll_timer = rt_timer_create("touch", touch_timer_fire, RT_NULL,

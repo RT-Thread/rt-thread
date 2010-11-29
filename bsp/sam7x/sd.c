@@ -569,7 +569,7 @@ void rt_hw_sdcard_init()
 	sd.read 	= rt_sdcard_read;
 	sd.write    = rt_sdcard_write;
 	sd.control  = rt_sdcard_control;
-	sd.private  = RT_NULL;
+	sd.user_data = RT_NULL;
 
 	AT91C_PIOA_PER  = CARD_PWR_PIN; // enable GPIO of CS-pin
 	AT91C_PIOA_CODR = CARD_PWR_PIN; // set high

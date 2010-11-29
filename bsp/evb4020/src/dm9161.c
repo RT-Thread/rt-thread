@@ -677,7 +677,7 @@ void rt_hw_dm9161_init()
     dm9161_device.parent.parent.read       = rt_dm9161_read;
     dm9161_device.parent.parent.write      = rt_dm9161_write;
     dm9161_device.parent.parent.control    = rt_dm9161_control;
-    dm9161_device.parent.parent.private    = RT_NULL;
+    dm9161_device.parent.parent.user_data  = RT_NULL;
 
     dm9161_device.parent.eth_rx     = rt_dm9161_rx;
     dm9161_device.parent.eth_tx     = rt_dm9161_tx;

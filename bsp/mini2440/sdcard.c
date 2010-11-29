@@ -361,7 +361,7 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	int i;
-	struct dfs_partition *part = (struct dfs_partition *)dev->private;
+	struct dfs_partition *part = (struct dfs_partition *)dev->user_data;
 
 	if ( dev == RT_NULL )
 	{
@@ -385,7 +385,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	int i;
-	struct dfs_partition *part = (struct dfs_partition *)dev->private;
+	struct dfs_partition *part = (struct dfs_partition *)dev->user_data;
 
 	if ( dev == RT_NULL )
 	{
@@ -452,7 +452,7 @@ void rt_hw_sdcard_init()
 					sdcard_device[i].read = rt_sdcard_read;
 					sdcard_device[i].write = rt_sdcard_write;
 					sdcard_device[i].control = rt_sdcard_control;
-					sdcard_device[i].private= &part[i];
+					sdcard_device[i].user_data = &part[i];
 
 					rt_device_register(&sdcard_device[i], dname,
 						RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
@@ -474,7 +474,7 @@ void rt_hw_sdcard_init()
 						sdcard_device[0].read = rt_sdcard_read;
 						sdcard_device[0].write = rt_sdcard_write;
 						sdcard_device[0].control = rt_sdcard_control;
-						sdcard_device[0].private= &part[0];
+						sdcard_device[0].user_data = &part[0];
 
 						rt_device_register(&sdcard_device[0], "sd0",
 							RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
