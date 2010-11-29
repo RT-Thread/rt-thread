@@ -271,6 +271,10 @@ def PrepareBuilding(env, root_directory):
     if GetOption('target'):
         SetOption('no_exec', 1)
 
+    #env['CCCOMSTR'] = "CC $TARGET"
+    #env['ASCOMSTR'] = "AS $TARGET"
+    #env['LINKCOMSTR'] = "Link $TARGET"
+
     # board build script
     objs = SConscript('SConscript', variant_dir='bsp', duplicate=0)
     Repository(Rtt_Root)
