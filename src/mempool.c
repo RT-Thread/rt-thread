@@ -66,15 +66,16 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool* mp, void *block))
 /*@{*/
 
 /**
- * This function will initialize a mempool object, normally which is used for static object.
+ * This function will initialize a memory pool object, normally which is used for
+ * static object.
  *
- * @param mp the mempool object
+ * @param mp the memory pool object
  * @param name the name of memory pool
  * @param start the star address of memory pool
  * @param size the total size of memory pool
  * @param block_size the size for each block
  *
- * @return the operation status, RT_EOK on OK; RT_ERROR on error
+ * @return RT_EOK
  *
  */
 rt_err_t rt_mp_init(struct rt_mempool* mp, const char* name, void *start, rt_size_t size, rt_size_t block_size)
@@ -117,6 +118,13 @@ rt_err_t rt_mp_init(struct rt_mempool* mp, const char* name, void *start, rt_siz
 	return RT_EOK;
 }
 
+/**
+ * This function will detach a memory pool from system object management.
+ *
+ * @param mp the memory pool object
+ *
+ * @return RT_EOK
+ */
 rt_err_t rt_mp_detach(struct rt_mempool* mp)
 {
 	struct rt_thread* thread;
@@ -217,7 +225,7 @@ rt_mp_t rt_mp_create(const char* name, rt_size_t block_count, rt_size_t block_si
  *
  * @param mp the memory pool object
  *
- * @return the operation status, RT_EOK on OK; -RT_ERROR on error
+ * @return RT_EOK
  *
  */
 rt_err_t rt_mp_delete(rt_mp_t mp)
@@ -276,7 +284,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
  * @param mp the memory pool object
  * @param time the waiting time
  *
- * @return the allocated memory block
+ * @return the allocated memory block or RT_NULL on allocated failed
  *
  */
 void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)

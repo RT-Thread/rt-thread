@@ -16,6 +16,11 @@
 #include <dfs_file.h>
 
 /**
+ * @addtogroup FsApi
+ */
+/*@{*/
+
+/**
  * this function will register a file system instance to device file system.
  *
  * @param ops the file system instance to be registered.
@@ -177,9 +182,10 @@ rt_err_t dfs_filesystem_get_partition(struct dfs_partition* part, rt_uint8_t* bu
  * this function will mount a file system on a specified path.
  *
  * @param device_name the name of device which includes a file system.
+ * @param path the path to mount a file system
  * @param filesystemtype the file system type
  * @param rwflag the read/write etc. flag.
- * @param data the privated data(parameter) for this file system.
+ * @param data the private data(parameter) for this file system.
  *
  * @return 0 on successful or -1 on failed.
  */
@@ -368,8 +374,8 @@ err1:
 /**
  * make a file system on the special device
  *
- * @param fs_name, the file system name
- * @param device_name, the special device name
+ * @param fs_name the file system name
+ * @param device_name the special device name
  *
  * @return 0 on successful, otherwise failed.
  */
@@ -442,3 +448,4 @@ void df(const char* path)
 FINSH_FUNCTION_EXPORT(df, get disk free);
 #endif
 
+/* @} */

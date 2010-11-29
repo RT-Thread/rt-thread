@@ -199,7 +199,7 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
  *
  * @param timer the timer to be started
  *
- * @return the operation status, RT_EOK on OK; RT_ERROR on error
+ * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  *
  */
 rt_err_t rt_timer_start(rt_timer_t timer)
@@ -219,7 +219,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
 
-	/* get timeout tick, which will wrap around if it reaches max ticks */
+	/* get timeout tick, the max timeout tick shall not great than RT_TICK_MAX/2 */
+	RT_ASSERT(timer->init_tick < RT_TICK_MAX/2);
 	timer->timeout_tick = rt_tick_get() + timer->init_tick;
 
 #ifdef RT_USING_TIMER_SOFT
@@ -267,7 +268,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
  *
  * @param timer the timer to be stopped
  *
- * @return the operation status, RT_EOK on OK; RT_ERROR on error
+ * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  *
  */
 rt_err_t rt_timer_stop(rt_timer_t timer)
@@ -304,7 +305,7 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
  * @param cmd the control command
  * @param arg the argument
  *
- * @return the operation status, RT_EOK on OK; RT_ERROR on error
+ * @return RT_EOK
  *
  */
 rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
@@ -338,6 +339,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void* arg)
  * This function will check timer list, if a timeout event happens, the
  * corresponding timeout function will be invoked.
  *
+ * @note this function shall be invoked in operating system timer interrupt.
  */
 #ifdef RT_USING_TIMER_SOFT
 void  rt_soft_timer_tick_increase (void);

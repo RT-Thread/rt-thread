@@ -229,7 +229,7 @@ void *rt_malloc(rt_size_t size)
 	if (size == 0) return RT_NULL;
 
 #ifdef RT_MEM_DEBUG
-	if (size != RT_ALIGN(size, RT_ALIGN_SIZE)
+	if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
 		rt_kprintf("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE));
 	else
 		rt_kprintf("malloc size %d\n", size);

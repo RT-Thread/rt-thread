@@ -36,6 +36,11 @@ struct dfs_fd fd_table[DFS_FD_MAX];
 #endif
 
 /**
+ * @addtogroup DFS
+ */
+/*@{*/
+
+/**
  * this function will initialize device file system.
  */
 void dfs_init()
@@ -60,7 +65,7 @@ void dfs_init()
 /**
  * this function will lock device file system.
  *
- * note: please don't invoke it on ISR.
+ * @note please don't invoke it on ISR.
  */
 void dfs_lock()
 {
@@ -73,7 +78,7 @@ void dfs_lock()
 /**
  * this function will lock device file system.
  *
- * note: please don't invoke it on ISR.
+ * @note please don't invoke it on ISR.
  */
 void dfs_unlock()
 {
@@ -81,7 +86,8 @@ void dfs_unlock()
 }
 
 /**
- * this function will allocate a file descriptor.
+ * @ingroup Fd
+ * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
  */
@@ -120,7 +126,9 @@ __result:
 }
 
 /**
- * this function will return a file descriptor structure according to file 
+ * @ingroup Fd
+ *
+ * This function will return a file descriptor structure according to file
  * descriptor.
  *
  * @return NULL on on this file descriptor or the file descriptor structure
@@ -147,7 +155,9 @@ struct dfs_fd* fd_get(int fd)
 }
 
 /**
- * this function will put the file descriptor.
+ * @ingroup Fd
+ *
+ * This function will put the file descriptor.
  */
 void fd_put(struct dfs_fd* fd)
 {
@@ -163,11 +173,13 @@ void fd_put(struct dfs_fd* fd)
 };
 
 /** 
- * this function will return whether this file has been opend.
+ * @ingroup Fd
+ *
+ * This function will return whether this file has been opend.
  * 
  * @param pathname the file path name.
  *
- * @return 0 on file has been open, -1 on not open.
+ * @return 0 on file has been open successfully, -1 on open failed.
  */
 int fd_is_open(const char* pathname)
 {
@@ -337,3 +349,5 @@ up_one:
 	*dst = '\0';
 	return fullpath;
 }
+/*@}*/
+

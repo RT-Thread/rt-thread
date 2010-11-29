@@ -119,7 +119,7 @@ static void _rt_scheduler_stack_check(struct rt_thread* thread)
 
 /**
  * @ingroup SystemInit
- * This function will init the system scheduler
+ * This function will initialize the system scheduler
  *
  */
 void rt_system_scheduler_init(void)
@@ -300,7 +300,7 @@ void rt_schedule()
     rt_hw_interrupt_enable(level);
 }
 
-/**
+/*
  * This function will insert a thread to system ready queue. The state of
  * thread will be set as READY and remove from suspend queue.
  *
@@ -341,7 +341,7 @@ void rt_schedule_insert_thread(struct rt_thread* thread)
     rt_hw_interrupt_enable(temp);
 }
 
-/**
+/*
  * This function will remove a thread from system ready queue.
  *
  * @param thread the thread to be removed

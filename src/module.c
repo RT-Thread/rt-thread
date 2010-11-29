@@ -59,7 +59,7 @@ struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_e
 /**
  * @ingroup SystemInit
  *
- * This function will init system module
+ * This function will initialize system module
  *
  */
 void rt_system_module_init(void)
@@ -171,61 +171,61 @@ static void rt_module_init_object_container(struct rt_module* module)
 {
 	RT_ASSERT(module != RT_NULL);
 
-	/* init object container - thread */
+	/* initialize object container - thread */
 	rt_list_init(&(module->module_object[RT_Object_Class_Thread].object_list));
 	module->module_object[RT_Object_Class_Thread].object_size = sizeof(struct rt_thread);
 	module->module_object[RT_Object_Class_Thread].type = RT_Object_Class_Thread;
 
 #ifdef RT_USING_SEMAPHORE
-	/* init object container - semaphore */
+	/* initialize object container - semaphore */
 	rt_list_init(&(module->module_object[RT_Object_Class_Semaphore].object_list));
 	module->module_object[RT_Object_Class_Semaphore].object_size = sizeof(struct rt_semaphore);
 	module->module_object[RT_Object_Class_Semaphore].type = RT_Object_Class_Semaphore;
 #endif
 
 #ifdef RT_USING_MUTEX
-	/* init object container - mutex */
+	/* initialize object container - mutex */
 	rt_list_init(&(module->module_object[RT_Object_Class_Mutex].object_list));
 	module->module_object[RT_Object_Class_Mutex].object_size = sizeof(struct rt_mutex);
 	module->module_object[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
 #endif
 
 #ifdef RT_USING_EVENT
-	/* init object container - event */
+	/* initialize object container - event */
 	rt_list_init(&(module->module_object[RT_Object_Class_Event].object_list));
 	module->module_object[RT_Object_Class_Event].object_size = sizeof(struct rt_event);
 	module->module_object[RT_Object_Class_Event].type = RT_Object_Class_Event;
 #endif
 
 #ifdef RT_USING_MAILBOX
-	/* init object container - mailbox */
+	/* initialize object container - mailbox */
 	rt_list_init(&(module->module_object[RT_Object_Class_MailBox].object_list));
 	module->module_object[RT_Object_Class_MailBox].object_size = sizeof(struct rt_mailbox);
 	module->module_object[RT_Object_Class_MailBox].type = RT_Object_Class_MailBox;
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
-	/* init object container - message queue */
+	/* initialize object container - message queue */
 	rt_list_init(&(module->module_object[RT_Object_Class_MessageQueue].object_list));
 	module->module_object[RT_Object_Class_MessageQueue].object_size = sizeof(struct rt_messagequeue);
 	module->module_object[RT_Object_Class_MessageQueue].type = RT_Object_Class_MessageQueue;
 #endif
 
 #ifdef RT_USING_MEMPOOL
-	/* init object container - memory pool */
+	/* initialize object container - memory pool */
 	rt_list_init(&(module->module_object[RT_Object_Class_MemPool].object_list));
 	module->module_object[RT_Object_Class_MemPool].object_size = sizeof(struct rt_mempool);
 	module->module_object[RT_Object_Class_MemPool].type = RT_Object_Class_MemPool;
 #endif
 
 #ifdef RT_USING_DEVICE
-	/* init object container - device */
+	/* initialize object container - device */
 	rt_list_init(&(module->module_object[RT_Object_Class_Device].object_list));
 	module->module_object[RT_Object_Class_Device].object_size = sizeof(struct rt_device);
 	module->module_object[RT_Object_Class_Device].type = RT_Object_Class_Device;
 #endif
 
-	/* init object container - timer */
+	/* initialize object container - timer */
 	rt_list_init(&(module->module_object[RT_Object_Class_Timer].object_list));
 	module->module_object[RT_Object_Class_Timer].object_size = sizeof(struct rt_timer);
 	module->module_object[RT_Object_Class_Timer].type = RT_Object_Class_Timer;
@@ -416,10 +416,9 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 /**
- * This function will load a module from file
+ * This function will load a module from a file
  *
- * @param name the name of module, which shall be unique
- * @param filename the file name of application module image
+ * @param filename the file name of application module
  *
  * @return the module object
  *
@@ -717,7 +716,7 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 
 	RT_ASSERT (nu != 0);
 
-	/* alloc pages from system heap */
+	/* allocate pages from system heap */
 	npage = (nu * sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
 	cp = rt_page_alloc(npage);
 	if(!cp) return RT_NULL;
@@ -738,7 +737,7 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 }
 
 /*
-  rt_module_malloc - alloc memory block in free list
+  rt_module_malloc - allocate memory block in free list
 */
 void *rt_module_malloc(rt_size_t size)
 {
@@ -753,14 +752,14 @@ void *rt_module_malloc(rt_size_t size)
 
 	prev = (struct rt_mem_head **)&rt_current_module->mem_list;
 
-	/* if size can be devided by page, alloc page directly */
+	/* if size can be divided by page, allocate page directly */
 	if(size % RT_MM_PAGE_SIZE == 0)
 	{
 		rt_uint8_t *cp;
 		struct rt_module_page *node;
 		rt_uint32_t npage = size / RT_MM_PAGE_SIZE;
 
-		/* alloc pages from system heap */
+		/* allocate pages from system heap */
 		cp = rt_page_alloc(npage);
 		if(!cp) return RT_NULL;
 
@@ -784,7 +783,7 @@ void *rt_module_malloc(rt_size_t size)
 		
 		if (b->size > nunits)
 		{
-			/* splite memory */
+			/* split memory */
 			n = b + nunits;
 			n->next = b->next;
 			n->size = b->size - nunits;

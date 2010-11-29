@@ -16,6 +16,11 @@
 #include <dfs_posix.h>
 
 /**
+ * @addtogroup FsPosixApi
+ */
+/*@{*/
+
+/**
  * this function is a POSIX compliant version, which will open a file and return
  * a file descriptor.
  *
@@ -165,7 +170,7 @@ int write(int fd, const void *buf, size_t len)
  *
  * @param fd the file descriptor.
  * @param offset the offset to be seeked.
- * @param dir the directory of seek.
+ * @param whence the directory of seek.
  *
  * @return the current file position, or -1 on failed.
  */
@@ -627,7 +632,7 @@ int chdir(const char *path)
  * working directory.
  *
  * @param buf the returned current directory.
- * @size the buffer size.
+ * @param size the buffer size.
  *
  * @return the returned current directory.
  */
@@ -643,3 +648,4 @@ char *getcwd(char *buf, size_t size)
 	return buf;
 }
 
+/* @} */

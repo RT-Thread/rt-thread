@@ -17,6 +17,11 @@
 #define NO_WORKING_DIR	"system does not support working dir\n"
 
 /**
+ * @addtogroup FileApi
+ */
+/*@{*/
+
+/**
  * this function will open a file which specified by path with specified flags.
  *
  * @param fd the file descriptor pointer to return the corresponding result.
@@ -530,3 +535,5 @@ void cat(const char* filename)
 FINSH_FUNCTION_EXPORT(cat, print file)
 
 #endif
+/* @} */
+

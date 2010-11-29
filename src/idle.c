@@ -54,7 +54,9 @@ void rt_thread_idle_sethook(void (*hook)())
 #endif
 
 /**
- * This function will do some things when system idle.
+ * @ingroup Thread
+ *
+ * This function will perform system background job when system idle.
  */
 void rt_thread_idle_excute(void)
 {
@@ -154,11 +156,8 @@ static void rt_thread_idle_entry(void* parameter)
 }
 
 /**
- * @addtogroup SystemInit
- */
-/*@{*/
-
-/**
+ * @ingroup SymstemInit
+ *
  * This function will initialize idle thread, then start it.
  *
  * @note this function must be invoked when system init.
@@ -175,5 +174,3 @@ void rt_thread_idle_init()
 	/* startup */
 	rt_thread_startup(&idle);
 }
-
-/*@}*/

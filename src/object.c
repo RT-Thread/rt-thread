@@ -26,40 +26,40 @@
 	{&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
 struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
 {
-	/* init object container - thread */
+	/* initialize object container - thread */
 	{RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Thread), sizeof(struct rt_thread)},
 #ifdef RT_USING_SEMAPHORE
-	/* init object container - semaphore */
+	/* initialize object container - semaphore */
 	{RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Semaphore), sizeof(struct rt_semaphore)},
 #endif
 #ifdef RT_USING_MUTEX
-	/* init object container - mutex */
+	/* initialize object container - mutex */
 	{RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Mutex), sizeof(struct rt_mutex)},
 #endif
 #ifdef RT_USING_EVENT
-	/* init object container - event */
+	/* initialize object container - event */
 	{RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Event), sizeof(struct rt_event)},
 #endif
 #ifdef RT_USING_MAILBOX
-	/* init object container - mailbox */
+	/* initialize object container - mailbox */
 	{RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MailBox), sizeof(struct rt_mailbox)},
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
-	/* init object container - message queue */
+	/* initialize object container - message queue */
 	{RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MessageQueue), sizeof(struct rt_messagequeue)},
 #endif
 #ifdef RT_USING_MEMPOOL
-	/* init object container - memory pool */
+	/* initialize object container - memory pool */
 	{RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemPool), sizeof(struct rt_mempool)},
 #endif
 #ifdef RT_USING_DEVICE
-	/* init object container - device */
+	/* initialize object container - device */
 	{RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Device), sizeof(struct rt_device)},
 #endif
-	/* init object container - timer */
+	/* initialize object container - timer */
 	{RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Timer), sizeof(struct rt_timer)},
 #ifdef RT_USING_MODULE
-	/* init object container - module */
+	/* initialize object container - module */
 	{RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Module), sizeof(struct rt_module)},
 #endif
 };
@@ -102,7 +102,7 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
  * This function will set a hook function, which will be invoked when object
  * is taken from kernel object system.
  *
- * The object is taken means that
+ * The object is taken means:
  * semaphore - semaphore is taken by thread
  * mutex - mutex is taken by thread
  * event - event is received by thread
@@ -120,7 +120,7 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
  * This function will set a hook function, which will be invoked when object
  * have been taken from kernel object system.
  *
- * The object have been taken means that
+ * The object have been taken means:
  * semaphore - semaphore have been taken by thread
  * mutex - mutex have been taken by thread
  * event - event have been received by thread
@@ -152,8 +152,10 @@ void rt_object_put_sethook(void (*hook)(struct rt_object* object))
 /**
  * @ingroup SystemInit
  *
- * This function will initialize system object management
+ * This function will initialize system object management.
  *
+ * @deprecated since 0.3.0, this function does not need to be invoked
+ * in the system initialization.
  */
 void rt_system_object_init(void)
 {
@@ -165,12 +167,11 @@ void rt_system_object_init(void)
 /*@{*/
 
 /**
- * This function will init an object and add it to object system management.
+ * This function will initialize an object and add it to object system management.
  *
  * @param object the specified object to be initialized.
  * @param type the object type.
- * @param name the object name. In system, the object's name must
- * be unique.
+ * @param name the object name. In system, the object's name must be unique.
  */
 void rt_object_init(struct rt_object* object, enum rt_object_class_type type, const char* name)
 {
@@ -186,7 +187,7 @@ void rt_object_init(struct rt_object* object, enum rt_object_class_type type, co
 	information = &rt_object_container[type];
 #endif
 
-	/* init object's parameters */
+	/* initialize object's parameters */
 
 	/* set object type to static */
 	object->type = type | RT_Object_Class_Static;
@@ -272,7 +273,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 		return RT_NULL;
 	}
 	
-	/* init object's parameters */
+	/* initialize object's parameters */
 
 	/* set object type */
 	object->type = type;
@@ -377,7 +378,7 @@ rt_err_t rt_object_is_systemobject(rt_object_t object)
  * @return the found object or RT_NULL if there is no this object
  * in object container.
  *
- * @note this routine only can be invoke in none-interrupt status.
+ * @note this function shall not be invoked in interrupt status.
  */
 rt_object_t rt_object_find(const char* name, rt_uint8_t type)
 {

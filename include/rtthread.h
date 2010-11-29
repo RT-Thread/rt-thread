@@ -318,6 +318,7 @@ rt_module_t rt_module_self (void);
 rt_err_t rt_module_set (rt_module_t module);
 rt_module_t rt_module_find(const char* name);
 #endif
+/*@}*/
  
 /*
  * interrupt service

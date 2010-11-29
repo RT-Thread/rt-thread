@@ -903,13 +903,13 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 }
 
 /**
- * This function will set console to a device.
+ * This function will set a device as console device.
  * After set a device to console, all output of rt_kprintf will be
- * written to this device.
+ * redirected to this new device.
  *
- * @param device the new console device
+ * @param name the name of new console device
  *
- * @return the old console device
+ * @return the old console device handler
  */
 rt_device_t rt_console_set_device(const char* name)
 {

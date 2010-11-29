@@ -24,6 +24,11 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup KernelService
+ */
+/*@{*/
+
+/**
  * @brief initialize a list
  *
  * @param l list to be initialized
@@ -92,6 +97,8 @@ rt_inline int rt_list_isempty(const rt_list_t *l)
  */
 #define rt_list_entry(node, type, member) \
     ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
+
+/*@}*/
 
 #ifdef __cplusplus
 }

@@ -94,6 +94,13 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 	return RT_EOK;
 }
 
+/**
+ * @ingroup finsh
+ *
+ * This function sets the input device of finsh shell.
+ *
+ * @param device_name the name of new input device.
+ */
 void finsh_set_device(const char* device_name)
 {
 	rt_device_t dev = RT_NULL;
@@ -117,18 +124,41 @@ void finsh_set_device(const char* device_name)
 	}
 }
 
+/**
+ * @ingroup finsh
+ *
+ * This function returns current finsh shell input device.
+ *
+ * @return the finsh shell input device name is returned.
+ */
 const char* finsh_get_device()
 {
 	RT_ASSERT(shell != RT_NULL);
 	return shell->device->parent.name;
 }
 
-void finsh_set_echo(rt_uint32_t enable)
+/**
+ * @ingroup finsh
+ *
+ * This function set the echo mode of finsh shell.
+ *
+ * FINSH_OPTION_ECHO=0x01 is echo mode, other values are none-echo mode.
+ *
+ * @param echo the echo mode
+ */
+void finsh_set_echo(rt_uint32_t echo)
 {
 	RT_ASSERT(shell != RT_NULL);
-	shell->echo_mode = enable;
+	shell->echo_mode = echo;
 }
 
+/**
+ * @ingroup finsh
+ *
+ * This function gets the echo mode of finsh shell.
+ *
+ * @return the echo mode
+ */
 rt_uint32_t finsh_get_echo()
 {
 	RT_ASSERT(shell != RT_NULL);
@@ -406,7 +436,12 @@ void finsh_system_var_init(void* begin, void* end)
     #pragma section="VSymTab"
   #endif
 #endif
-/* init finsh */
+
+/*
+ * @ingroup finsh
+ *
+ * This function will initialize finsh shell
+ */
 void finsh_system_init(void)
 {
 	rt_err_t result;

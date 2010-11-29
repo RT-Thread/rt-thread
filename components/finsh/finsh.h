@@ -51,13 +51,6 @@
 
 /* -- the end of option -- */
 
- /**
- * @defgroup finsh finsh shell
- *
- * finsh is a C-expression shell which gives user access to some symbols present in RT-Thread.
- */
-/*@{*/
-
 #if defined(RT_USING_NEWLIB) || defined (RT_USING_MINILIBC)
 #include <sys/types.h>
 #include <string.h>
@@ -94,22 +87,26 @@ int atoi(const char* s);
 #define FINSH_VERSION_MAJOR			0
 #define FINSH_VERSION_MINOR			5
 
-/* error code */
-#define FINSH_ERROR_OK              0   /** No error */
-#define FINSH_ERROR_INVALID_TOKEN	1	/**  Invalid token */
-#define FINSH_ERROR_EXPECT_TYPE		2	/** Expect a type */
-#define FINSH_ERROR_UNKNOWN_TYPE	3	/** Unknown type */
-#define FINSH_ERROR_VARIABLE_EXIST	4	/** Variable exist */
-#define FINSH_ERROR_EXPECT_OPERATOR	5	/** Expect a operater */
-#define FINSH_ERROR_MEMORY_FULL		6	/** Memory full */
-#define FINSH_ERROR_UNKNOWN_OP		7 	/** Unknown operator */
-#define FINSH_ERROR_UNKNOWN_NODE	8	/** Unknown node */
-#define FINSH_ERROR_EXPECT_CHAR		9	/** Expect a character */
-#define FINSH_ERROR_UNEXPECT_END	10	/** Unexpect end */
-#define FINSH_ERROR_UNKNOWN_TOKEN	11	/** Unknown token */
-#define FINSH_ERROR_NO_FLOAT		12	/** Float not supported */
-#define FINSH_ERROR_UNKNOWN_SYMBOL	13	/** Unknown symbol */
-#define FINSH_ERROR_NULL_NODE		14	/** Null node */
+/**
+ * @addtogroup finsh
+ */
+/*@{*/
+#define FINSH_ERROR_OK              0   /**< No error 			*/
+#define FINSH_ERROR_INVALID_TOKEN	1	/**< Invalid token 		*/
+#define FINSH_ERROR_EXPECT_TYPE		2	/**< Expect a type 		*/
+#define FINSH_ERROR_UNKNOWN_TYPE	3	/**< Unknown type 		*/
+#define FINSH_ERROR_VARIABLE_EXIST	4	/**< Variable exist 	*/
+#define FINSH_ERROR_EXPECT_OPERATOR	5	/**< Expect a operator 	*/
+#define FINSH_ERROR_MEMORY_FULL		6	/**< Memory full 		*/
+#define FINSH_ERROR_UNKNOWN_OP		7 	/**< Unknown operator 	*/
+#define FINSH_ERROR_UNKNOWN_NODE	8	/**< Unknown node 		*/
+#define FINSH_ERROR_EXPECT_CHAR		9	/**< Expect a character */
+#define FINSH_ERROR_UNEXPECT_END	10	/**< Unexpect end 		*/
+#define FINSH_ERROR_UNKNOWN_TOKEN	11	/**< Unknown token 		*/
+#define FINSH_ERROR_NO_FLOAT		12	/**< Float not supported */
+#define FINSH_ERROR_UNKNOWN_SYMBOL	13	/**< Unknown symbol 	*/
+#define FINSH_ERROR_NULL_NODE		14	/**< Null node 			*/
+/*@}*/
 
 typedef long (*syscall_func)();
 
@@ -158,6 +155,14 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 
 #ifdef FINSH_USING_SYMTAB
 	#ifdef FINSH_USING_DESCRIPTION
+		/**
+		 * @ingroup finsh
+		 *
+		 * This macro exports a system function to finsh shell.
+		 *
+		 * @param name the name of function.
+		 * @param desc the description of function, which will show in help.
+		 */
 		#define FINSH_FUNCTION_EXPORT(name, desc)					 \
 		const char __fsym_##name##_name[] = #name;					 \
 		const char __fsym_##name##_desc[] = #desc;					 \
@@ -168,6 +173,15 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 			(syscall_func)&name		\
 		};
 
+		/**
+		 * @ingroup finsh
+		 *
+		 * This macro exports a variable to finsh shell.
+		 *
+		 * @param name the name of function.
+		 * @param type the type of variable.
+		 * @param desc the description of function, which will show in help.
+		 */
 		#define FINSH_VAR_EXPORT(name, type, desc)					\
 		const char __vsym_##name##_name[] = #name;					\
 		const char __vsym_##name##_desc[] = #desc;					\
@@ -257,24 +271,27 @@ struct finsh_parser
 };
 
 /**
- * finsh basic data type
+ * @ingroup finsh
+ *
+ * The basic data type in finsh shell
  */
+
 enum finsh_type {
-	finsh_type_unknown = 0,
-	finsh_type_void,		/** void  			*/
-	finsh_type_voidp,		/** void pointer  	*/
-	finsh_type_char,		/** char  			*/
-	finsh_type_uchar,		/** unsigned char  	*/
-	finsh_type_charp,		/** char pointer  	*/
-	finsh_type_short,		/** short  			*/
-	finsh_type_ushort,		/** unsigned short 	*/
-	finsh_type_shortp,		/** short pointer  	*/
-	finsh_type_int,			/** int 			*/
-	finsh_type_uint,		/** unsigned int 	*/
-	finsh_type_intp,		/** int pointer 	*/
-	finsh_type_long,		/** long 			*/
-	finsh_type_ulong,		/** unsigned long 	*/
-	finsh_type_longp		/** long pointer 	*/
+	finsh_type_unknown = 0, /**< unknown data type */
+	finsh_type_void,		/**< void  			*/
+	finsh_type_voidp,		/**< void pointer  	*/
+	finsh_type_char,		/**< char  			*/
+	finsh_type_uchar,		/**< unsigned char  */
+	finsh_type_charp,		/**< char pointer  	*/
+	finsh_type_short,		/**< short  		*/
+	finsh_type_ushort,		/**< unsigned short */
+	finsh_type_shortp,		/**< short pointer  */
+	finsh_type_int,			/**< int 			*/
+	finsh_type_uint,		/**< unsigned int 	*/
+	finsh_type_intp,		/**< int pointer 	*/
+	finsh_type_long,		/**< long 			*/
+	finsh_type_ulong,		/**< unsigned long 	*/
+	finsh_type_longp		/**< long pointer 	*/
 };
 
 /* init finsh environment */
@@ -284,7 +301,6 @@ int finsh_flush(struct finsh_parser* parser);
 /* reset all of finsh */
 int finsh_reset(struct finsh_parser* parser);
 #ifdef RT_USING_DEVICE
-/* set finsh device */
 void finsh_set_device(const char* device_name);
 #endif
 
@@ -307,20 +323,23 @@ const char* finsh_error_string(u_char type);
 
 #ifdef RT_USING_HEAP
 /**
- * append a system call to finsh runtime environment
+ * @ingroup finsh
+ *
+ * This function appends a system call to finsh runtime environment
  * @param name the name of system call
  * @param func the function pointer of system call
  */
 void finsh_syscall_append(const char* name, syscall_func func);
+
 /**
- * append a system variable to finsh runtime environment
+ * @ingroup finsh
+ *
+ * This function appends a system variable to finsh runtime environment
  * @param name the name of system variable
  * @param type the data type of system variable
  * @param addr the address of system variable
  */
 void finsh_sysvar_append(const char* name, u_char type, void* addr);
 #endif
-
-/*@}*/
 
 #endif
