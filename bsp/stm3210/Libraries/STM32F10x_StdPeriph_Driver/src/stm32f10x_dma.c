@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_dma.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the DMA firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -42,25 +42,22 @@
   * @{
   */
 
-/* DMA ENABLE mask */
-#define CCR_ENABLE_Set          ((uint32_t)0x00000001)
-#define CCR_ENABLE_Reset        ((uint32_t)0xFFFFFFFE)
 
 /* DMA1 Channelx interrupt pending bit masks */
-#define DMA1_Channel1_IT_Mask    ((uint32_t)0x0000000F)
-#define DMA1_Channel2_IT_Mask    ((uint32_t)0x000000F0)
-#define DMA1_Channel3_IT_Mask    ((uint32_t)0x00000F00)
-#define DMA1_Channel4_IT_Mask    ((uint32_t)0x0000F000)
-#define DMA1_Channel5_IT_Mask    ((uint32_t)0x000F0000)
-#define DMA1_Channel6_IT_Mask    ((uint32_t)0x00F00000)
-#define DMA1_Channel7_IT_Mask    ((uint32_t)0x0F000000)
+#define DMA1_Channel1_IT_Mask    ((uint32_t)(DMA_ISR_GIF1 | DMA_ISR_TCIF1 | DMA_ISR_HTIF1 | DMA_ISR_TEIF1))
+#define DMA1_Channel2_IT_Mask    ((uint32_t)(DMA_ISR_GIF2 | DMA_ISR_TCIF2 | DMA_ISR_HTIF2 | DMA_ISR_TEIF2))
+#define DMA1_Channel3_IT_Mask    ((uint32_t)(DMA_ISR_GIF3 | DMA_ISR_TCIF3 | DMA_ISR_HTIF3 | DMA_ISR_TEIF3))
+#define DMA1_Channel4_IT_Mask    ((uint32_t)(DMA_ISR_GIF4 | DMA_ISR_TCIF4 | DMA_ISR_HTIF4 | DMA_ISR_TEIF4))
+#define DMA1_Channel5_IT_Mask    ((uint32_t)(DMA_ISR_GIF5 | DMA_ISR_TCIF5 | DMA_ISR_HTIF5 | DMA_ISR_TEIF5))
+#define DMA1_Channel6_IT_Mask    ((uint32_t)(DMA_ISR_GIF6 | DMA_ISR_TCIF6 | DMA_ISR_HTIF6 | DMA_ISR_TEIF6))
+#define DMA1_Channel7_IT_Mask    ((uint32_t)(DMA_ISR_GIF7 | DMA_ISR_TCIF7 | DMA_ISR_HTIF7 | DMA_ISR_TEIF7))
 
 /* DMA2 Channelx interrupt pending bit masks */
-#define DMA2_Channel1_IT_Mask    ((uint32_t)0x0000000F)
-#define DMA2_Channel2_IT_Mask    ((uint32_t)0x000000F0)
-#define DMA2_Channel3_IT_Mask    ((uint32_t)0x00000F00)
-#define DMA2_Channel4_IT_Mask    ((uint32_t)0x0000F000)
-#define DMA2_Channel5_IT_Mask    ((uint32_t)0x000F0000)
+#define DMA2_Channel1_IT_Mask    ((uint32_t)(DMA_ISR_GIF1 | DMA_ISR_TCIF1 | DMA_ISR_HTIF1 | DMA_ISR_TEIF1))
+#define DMA2_Channel2_IT_Mask    ((uint32_t)(DMA_ISR_GIF2 | DMA_ISR_TCIF2 | DMA_ISR_HTIF2 | DMA_ISR_TEIF2))
+#define DMA2_Channel3_IT_Mask    ((uint32_t)(DMA_ISR_GIF3 | DMA_ISR_TCIF3 | DMA_ISR_HTIF3 | DMA_ISR_TEIF3))
+#define DMA2_Channel4_IT_Mask    ((uint32_t)(DMA_ISR_GIF4 | DMA_ISR_TCIF4 | DMA_ISR_HTIF4 | DMA_ISR_TEIF4))
+#define DMA2_Channel5_IT_Mask    ((uint32_t)(DMA_ISR_GIF5 | DMA_ISR_TCIF5 | DMA_ISR_HTIF5 | DMA_ISR_TEIF5))
 
 /* DMA2 FLAG mask */
 #define FLAG_Mask                ((uint32_t)0x10000000)
@@ -111,8 +108,10 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
 {
   /* Check the parameters */
   assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
+  
   /* Disable the selected DMAy Channelx */
-  DMAy_Channelx->CCR &= CCR_ENABLE_Reset;
+  DMAy_Channelx->CCR &= (uint16_t)(~DMA_CCR1_EN);
+  
   /* Reset DMAy Channelx control register */
   DMAy_Channelx->CCR  = 0;
   
@@ -300,12 +299,12 @@ void DMA_Cmd(DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState)
   if (NewState != DISABLE)
   {
     /* Enable the selected DMAy Channelx */
-    DMAy_Channelx->CCR |= CCR_ENABLE_Set;
+    DMAy_Channelx->CCR |= DMA_CCR1_EN;
   }
   else
   {
     /* Disable the selected DMAy Channelx */
-    DMAy_Channelx->CCR &= CCR_ENABLE_Reset;
+    DMAy_Channelx->CCR &= (uint16_t)(~DMA_CCR1_EN);
   }
 }
 
@@ -339,6 +338,25 @@ void DMA_ITConfig(DMA_Channel_TypeDef* DMAy_Channelx, uint32_t DMA_IT, Functiona
     /* Disable the selected DMA interrupts */
     DMAy_Channelx->CCR &= ~DMA_IT;
   }
+}
+
+/**
+  * @brief  Sets the number of data units in the current DMAy Channelx transfer.
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  *         x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
+  * @param  DataNumber: The number of data units in the current DMAy Channelx
+  *         transfer.   
+  * @note   This function can only be used when the DMAy_Channelx is disabled.                 
+  * @retval None.
+  */
+void DMA_SetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx, uint16_t DataNumber)
+{
+  /* Check the parameters */
+  assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
+  
+/*--------------------------- DMAy Channelx CNDTR Configuration ---------------*/
+  /* Write to DMAy Channelx CNDTR */
+  DMAy_Channelx->CNDTR = DataNumber;  
 }
 
 /**
@@ -690,4 +708,4 @@ void DMA_ClearITPendingBit(uint32_t DMA_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

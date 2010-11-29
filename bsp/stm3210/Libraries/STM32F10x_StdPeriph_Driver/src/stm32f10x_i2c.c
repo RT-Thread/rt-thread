@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_i2c.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the I2C firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -360,7 +360,7 @@ void I2C_DMACmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
 }
 
 /**
-  * @brief  Specifies that the next DMA transfer is the last one.
+  * @brief  Specifies if the next DMA transfer will be the last one.
   * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
   * @param  NewState: new state of the I2C DMA last transfer.
   *   This parameter can be: ENABLE or DISABLE.
@@ -858,26 +858,94 @@ void I2C_FastModeDutyCycleConfig(I2C_TypeDef* I2Cx, uint16_t I2C_DutyCycle)
   }
 }
 
+
+
 /**
-  * @brief  Returns the last I2Cx Event.
-  * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
-  * @retval The last event
-  */
-uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
-{
-  uint32_t lastevent = 0;
-  uint32_t flag1 = 0, flag2 = 0;
-  /* Check the parameters */
-  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
-  /* Read the I2Cx status register */
-  flag1 = I2Cx->SR1;
-  flag2 = I2Cx->SR2;
-  flag2 = flag2 << 16;
-  /* Get the last event value from I2C status register */
-  lastevent = (flag1 | flag2) & FLAG_Mask;
-  /* Return status */
-  return lastevent;
-}
+ * @brief
+ ****************************************************************************************
+ *
+ *                         I2C State Monitoring Functions
+ *                       
+ ****************************************************************************************   
+ * This I2C driver provides three different ways for I2C state monitoring
+ *  depending on the application requirements and constraints:
+ *        
+ *  
+ * 1) Basic state monitoring:
+ *    Using I2C_CheckEvent() function:
+ *    It compares the status registers (SR1 and SR2) content to a given event
+ *    (can be the combination of one or more flags).
+ *    It returns SUCCESS if the current status includes the given flags 
+ *    and returns ERROR if one or more flags are missing in the current status.
+ *    - When to use:
+ *      - This function is suitable for most applciations as well as for startup 
+ *      activity since the events are fully described in the product reference manual 
+ *      (RM0008).
+ *      - It is also suitable for users who need to define their own events.
+ *    - Limitations:
+ *      - If an error occurs (ie. error flags are set besides to the monitored flags),
+ *        the I2C_CheckEvent() function may return SUCCESS despite the communication
+ *        hold or corrupted real state. 
+ *        In this case, it is advised to use error interrupts to monitor the error
+ *        events and handle them in the interrupt IRQ handler.
+ *        
+ *        @note 
+ *        For error management, it is advised to use the following functions:
+ *          - I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
+ *          - I2Cx_ER_IRQHandler() which is called when the error interurpt occurs.
+ *            Where x is the peripheral instance (I2C1, I2C2 ...)
+ *          - I2C_GetFlagStatus() or I2C_GetITStatus() to be called into I2Cx_ER_IRQHandler() 
+ *            in order to determine which error occured.
+ *          - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd()
+ *            and/or I2C_GenerateStop() in order to clear the error flag and source,
+ *            and return to correct communication status.
+ *            
+ *
+ *  2) Advanced state monitoring:
+ *     Using the function I2C_GetLastEvent() which returns the image of both status 
+ *     registers in a single word (uint32_t) (Status Register 2 value is shifted left 
+ *     by 16 bits and concatenated to Status Register 1).
+ *     - When to use:
+ *       - This function is suitable for the same applications above but it allows to
+ *         overcome the mentionned limitation of I2C_GetFlagStatus() function.
+ *         The returned value could be compared to events already defined in the 
+ *         library (stm32f10x_i2c.h) or to custom values defiend by user.
+ *       - This function is suitable when multiple flags are monitored at the same time.
+ *       - At the opposite of I2C_CheckEvent() function, this function allows user to
+ *         choose when an event is accepted (when all events flags are set and no 
+ *         other flags are set or just when the needed flags are set like 
+ *         I2C_CheckEvent() function).
+ *     - Limitations:
+ *       - User may need to define his own events.
+ *       - Same remark concerning the error management is applicable for this 
+ *         function if user decides to check only regular communication flags (and 
+ *         ignores error flags).
+ *     
+ *
+ *  3) Flag-based state monitoring:
+ *     Using the function I2C_GetFlagStatus() which simply returns the status of 
+ *     one single flag (ie. I2C_FLAG_RXNE ...). 
+ *     - When to use:
+ *        - This function could be used for specific applications or in debug phase.
+ *        - It is suitable when only one flag checking is needed (most I2C events 
+ *          are monitored through multiple flags).
+ *     - Limitations: 
+ *        - When calling this function, the Status register is accessed. Some flags are
+ *          cleared when the status register is accessed. So checking the status
+ *          of one Flag, may clear other ones.
+ *        - Function may need to be called twice or more in order to monitor one 
+ *          single event.
+ *
+ *  For detailed description of Events, please refer to section I2C_Events in 
+ *  stm32f10x_i2c.h file.
+ *  
+ */
+
+/**
+ * 
+ *  1) Basic state monitoring
+ *******************************************************************************
+ */
 
 /**
   * @brief  Checks whether the last I2Cx Event is equal to the one passed
@@ -885,16 +953,30 @@ uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
   * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
   * @param  I2C_EVENT: specifies the event to be checked. 
   *   This parameter can be one of the following values:
-  *     @arg I2C_EVENT_SLAVE_ADDRESS_MATCHED   : EV1
-  *     @arg I2C_EVENT_SLAVE_BYTE_RECEIVED     : EV2
-  *     @arg I2C_EVENT_SLAVE_BYTE_TRANSMITTED  : EV3
-  *     @arg I2C_EVENT_SLAVE_ACK_FAILURE       : EV3-2
-  *     @arg I2C_EVENT_MASTER_MODE_SELECT      : EV5
-  *     @arg I2C_EVENT_MASTER_MODE_SELECTED    : EV6
-  *     @arg I2C_EVENT_MASTER_BYTE_RECEIVED    : EV7
-  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTED : EV8
-  *     @arg I2C_EVENT_MASTER_MODE_ADDRESS10   : EV9
-  *     @arg I2C_EVENT_SLAVE_STOP_DETECTED     : EV4
+  *     @arg I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED           : EV1
+  *     @arg I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED              : EV1
+  *     @arg I2C_EVENT_SLAVE_TRANSMITTER_SECONDADDRESS_MATCHED     : EV1
+  *     @arg I2C_EVENT_SLAVE_RECEIVER_SECONDADDRESS_MATCHED        : EV1
+  *     @arg I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED            : EV1
+  *     @arg I2C_EVENT_SLAVE_BYTE_RECEIVED                         : EV2
+  *     @arg (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_DUALF)      : EV2
+  *     @arg (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_GENCALL)    : EV2
+  *     @arg I2C_EVENT_SLAVE_BYTE_TRANSMITTED                      : EV3
+  *     @arg (I2C_EVENT_SLAVE_BYTE_TRANSMITTED | I2C_FLAG_DUALF)   : EV3
+  *     @arg (I2C_EVENT_SLAVE_BYTE_TRANSMITTED | I2C_FLAG_GENCALL) : EV3
+  *     @arg I2C_EVENT_SLAVE_ACK_FAILURE                           : EV3_2
+  *     @arg I2C_EVENT_SLAVE_STOP_DETECTED                         : EV4
+  *     @arg I2C_EVENT_MASTER_MODE_SELECT                          : EV5
+  *     @arg I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED            : EV6     
+  *     @arg I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED               : EV6
+  *     @arg I2C_EVENT_MASTER_BYTE_RECEIVED                        : EV7
+  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTING                    : EV8
+  *     @arg I2C_EVENT_MASTER_BYTE_TRANSMITTED                     : EV8_2
+  *     @arg I2C_EVENT_MASTER_MODE_ADDRESS10                       : EV9
+  *     
+  * @note: For detailed description of Events, please refer to section 
+  *    I2C_Events in stm32f10x_i2c.h file.
+  *    
   * @retval An ErrorStatus enumuration value:
   * - SUCCESS: Last event is equal to the I2C_EVENT
   * - ERROR: Last event is different from the I2C_EVENT
@@ -904,17 +986,21 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
   uint32_t lastevent = 0;
   uint32_t flag1 = 0, flag2 = 0;
   ErrorStatus status = ERROR;
+
   /* Check the parameters */
   assert_param(IS_I2C_ALL_PERIPH(I2Cx));
   assert_param(IS_I2C_EVENT(I2C_EVENT));
+
   /* Read the I2Cx status register */
   flag1 = I2Cx->SR1;
   flag2 = I2Cx->SR2;
   flag2 = flag2 << 16;
+
   /* Get the last event value from I2C status register */
   lastevent = (flag1 | flag2) & FLAG_Mask;
-  /* Check whether the last event is equal to I2C_EVENT */
-  if (lastevent == I2C_EVENT )
+
+  /* Check whether the last event contains the I2C_EVENT */
+  if ((lastevent & I2C_EVENT) == I2C_EVENT)
   {
     /* SUCCESS: last event is equal to I2C_EVENT */
     status = SUCCESS;
@@ -927,6 +1013,47 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
   /* Return status */
   return status;
 }
+
+/**
+ * 
+ *  2) Advanced state monitoring
+ *******************************************************************************
+ */
+
+/**
+  * @brief  Returns the last I2Cx Event.
+  * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
+  *     
+  * @note: For detailed description of Events, please refer to section 
+  *    I2C_Events in stm32f10x_i2c.h file.
+  *    
+  * @retval The last event
+  */
+uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
+{
+  uint32_t lastevent = 0;
+  uint32_t flag1 = 0, flag2 = 0;
+
+  /* Check the parameters */
+  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
+
+  /* Read the I2Cx status register */
+  flag1 = I2Cx->SR1;
+  flag2 = I2Cx->SR2;
+  flag2 = flag2 << 16;
+
+  /* Get the last event value from I2C status register */
+  lastevent = (flag1 | flag2) & FLAG_Mask;
+
+  /* Return status */
+  return lastevent;
+}
+
+/**
+ * 
+ *  3) Flag-based state monitoring
+ *******************************************************************************
+ */
 
 /**
   * @brief  Checks whether the specified I2C flag is set or not.
@@ -1003,6 +1130,8 @@ FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
   return  bitstatus;
 }
 
+
+
 /**
   * @brief  Clears the I2Cx's pending flags.
   * @param  I2Cx: where x can be 1 or 2 to select the I2C peripheral.
@@ -1072,13 +1201,17 @@ ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
 {
   ITStatus bitstatus = RESET;
   uint32_t enablestatus = 0;
+
   /* Check the parameters */
   assert_param(IS_I2C_ALL_PERIPH(I2Cx));
   assert_param(IS_I2C_GET_IT(I2C_IT));
+
   /* Check if the interrupt source is enabled or not */
-  enablestatus = (uint32_t)(((I2C_IT & ITEN_Mask) >> 16) & (I2Cx->CR2)) ;  
+  enablestatus = (uint32_t)(((I2C_IT & ITEN_Mask) >> 16) & (I2Cx->CR2)) ;
+  
   /* Get bit[23:0] of the flag */
   I2C_IT &= FLAG_Mask;
+
   /* Check the status of the specified I2C flag */
   if (((I2Cx->SR1 & I2C_IT) != (uint32_t)RESET) && enablestatus)
   {
@@ -1149,4 +1282,4 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_sdio.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file contains all the functions prototypes for the SDIO firmware
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -455,8 +455,8 @@ typedef struct
   * @{
   */
 
-#define SDIO_ReadWaitMode_CLK               ((uint32_t)0x00000000)
-#define SDIO_ReadWaitMode_DATA2             ((uint32_t)0x00000001)
+#define SDIO_ReadWaitMode_CLK               ((uint32_t)0x00000001)
+#define SDIO_ReadWaitMode_DATA2             ((uint32_t)0x00000000)
 #define IS_SDIO_READWAIT_MODE(MODE) (((MODE) == SDIO_ReadWaitMode_CLK) || \
                                      ((MODE) == SDIO_ReadWaitMode_DATA2))
 /**
@@ -527,4 +527,4 @@ void SDIO_ClearITPendingBit(uint32_t SDIO_IT);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

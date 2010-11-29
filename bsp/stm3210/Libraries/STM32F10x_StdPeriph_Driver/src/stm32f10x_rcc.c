@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_rcc.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the RCC firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -124,10 +124,10 @@
 #define CR_HSITRIM_Mask           ((uint32_t)0xFFFFFF07)
 
 /* CFGR register bit mask */
-#ifndef STM32F10X_CL
- #define CFGR_PLL_Mask            ((uint32_t)0xFFC0FFFF)
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL) || defined (STM32F10X_CL) 
+ #define CFGR_PLL_Mask            ((uint32_t)0xFFC2FFFF)
 #else
- #define CFGR_PLL_Mask           ((uint32_t)0xFFC2FFFF)
+ #define CFGR_PLL_Mask            ((uint32_t)0xFFC0FFFF)
 #endif /* STM32F10X_CL */ 
 
 #define CFGR_PLLMull_Mask         ((uint32_t)0x003C0000)
@@ -147,10 +147,12 @@
 /* CSR register bit mask */
 #define CSR_RMVF_Set              ((uint32_t)0x01000000)
 
-#ifdef STM32F10X_CL
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL) || defined (STM32F10X_CL) 
 /* CFGR2 register bit mask */
  #define CFGR2_PREDIV1SRC         ((uint32_t)0x00010000)
  #define CFGR2_PREDIV1            ((uint32_t)0x0000000F)
+#endif
+#ifdef STM32F10X_CL
  #define CFGR2_PREDIV2            ((uint32_t)0x000000F0)
  #define CFGR2_PLL2MUL            ((uint32_t)0x00000F00)
  #define CFGR2_PLL3MUL            ((uint32_t)0x0000F000)
@@ -158,11 +160,6 @@
 
 /* RCC Flag Mask */
 #define FLAG_Mask                 ((uint8_t)0x1F)
-
-#ifndef HSI_Value
-/* Typical Value of the HSI in Hz */
- #define HSI_Value                 ((uint32_t)8000000)
-#endif /* HSI_Value */
 
 /* CIR register byte 2 (Bits[15:8]) base address */
 #define CIR_BYTE2_ADDRESS         ((uint32_t)0x40021009)
@@ -175,11 +172,6 @@
 
 /* BDCR register base address */
 #define BDCR_ADDRESS              (PERIPH_BASE + BDCR_OFFSET)
-
-#ifndef HSEStartUp_TimeOut
-/* Time out for HSE start up */
- #define HSEStartUp_TimeOut        ((uint16_t)0x0500)
-#endif /* HSEStartUp_TimeOut */
 
 /**
   * @}
@@ -242,10 +234,7 @@ void RCC_DeInit(void)
   /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
   RCC->CFGR &= (uint32_t)0xFF80FFFF;
 
-#ifndef STM32F10X_CL
-  /* Disable all interrupts and clear pending bits  */
-  RCC->CIR = 0x009F0000;
-#else
+#ifdef STM32F10X_CL
   /* Reset PLL2ON and PLL3ON bits */
   RCC->CR &= (uint32_t)0xEBFFFFFF;
 
@@ -254,7 +243,17 @@ void RCC_DeInit(void)
 
   /* Reset CFGR2 register */
   RCC->CFGR2 = 0x00000000;
+#elif defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL)
+  /* Disable all interrupts and clear pending bits  */
+  RCC->CIR = 0x009F0000;
+
+  /* Reset CFGR2 register */
+  RCC->CFGR2 = 0x00000000;      
+#else
+  /* Disable all interrupts and clear pending bits  */
+  RCC->CIR = 0x009F0000;
 #endif /* STM32F10X_CL */
+
 }
 
 /**
@@ -312,7 +311,7 @@ ErrorStatus RCC_WaitForHSEStartUp(void)
   {
     HSEStatus = RCC_GetFlagStatus(RCC_FLAG_HSERDY);
     StartUpCounter++;  
-  } while((StartUpCounter != HSEStartUp_TimeOut) && (HSEStatus == RESET));
+  } while((StartUpCounter != HSE_STARTUP_TIMEOUT) && (HSEStatus == RESET));
   
   if (RCC_GetFlagStatus(RCC_FLAG_HSERDY) != RESET)
   {
@@ -362,8 +361,8 @@ void RCC_HSICmd(FunctionalState NewState)
   * @brief  Configures the PLL clock source and multiplication factor.
   * @note   This function must be used only when the PLL is disabled.
   * @param  RCC_PLLSource: specifies the PLL entry clock source.
-  *   For @b STM32_Connectivity_line_devices, this parameter can be one of the
-  *   following values:
+  *   For @b STM32_Connectivity_line_devices or @b STM32_Value_line_devices, 
+  *   this parameter can be one of the following values:
   *     @arg RCC_PLLSource_HSI_Div2: HSI oscillator clock divided by 2 selected as PLL clock entry
   *     @arg RCC_PLLSource_PREDIV1: PREDIV1 clock selected as PLL clock entry
   *   For @b other_STM32_devices, this parameter can be one of the following values:
@@ -406,16 +405,19 @@ void RCC_PLLCmd(FunctionalState NewState)
   *(__IO uint32_t *) CR_PLLON_BB = (uint32_t)NewState;
 }
 
-#ifdef STM32F10X_CL
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL) || defined (STM32F10X_CL)
 /**
   * @brief  Configures the PREDIV1 division factor.
   * @note 
   *   - This function must be used only when the PLL is disabled.
-  *   - This function applies only to STM32 Connectivity line devices.
+  *   - This function applies only to STM32 Connectivity line and Value line 
+  *     devices.
   * @param  RCC_PREDIV1_Source: specifies the PREDIV1 clock source.
   *   This parameter can be one of the following values:
   *     @arg RCC_PREDIV1_Source_HSE: HSE selected as PREDIV1 clock
   *     @arg RCC_PREDIV1_Source_PLL2: PLL2 selected as PREDIV1 clock
+  * @note 
+  *   For @b STM32_Value_line_devices this parameter is always RCC_PREDIV1_Source_HSE  
   * @param  RCC_PREDIV1_Div: specifies the PREDIV1 clock division factor.
   *   This parameter can be RCC_PREDIV1_Divx where x:[1,16]
   * @retval None
@@ -436,8 +438,9 @@ void RCC_PREDIV1Config(uint32_t RCC_PREDIV1_Source, uint32_t RCC_PREDIV1_Div)
   /* Store the new value */
   RCC->CFGR2 = tmpreg;
 }
+#endif
 
-
+#ifdef STM32F10X_CL
 /**
   * @brief  Configures the PREDIV2 division factor.
   * @note 
@@ -896,7 +899,9 @@ void RCC_RTCCLKCmd(FunctionalState NewState)
 /**
   * @brief  Returns the frequencies of different on chip clocks.
   * @param  RCC_Clocks: pointer to a RCC_ClocksTypeDef structure which will hold
-  *   the clocks frequencies.
+  *         the clocks frequencies.
+  * @note   The result of this function could be not correct when using 
+  *         fractional value for HSE crystal.  
   * @retval None
   */
 void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
@@ -906,6 +911,10 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
 #ifdef  STM32F10X_CL
   uint32_t prediv1source = 0, prediv1factor = 0, prediv2factor = 0, pll2mull = 0;
 #endif /* STM32F10X_CL */
+
+#if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL)
+  uint32_t prediv1factor = 0;
+#endif
     
   /* Get SYSCLK source -------------------------------------------------------*/
   tmp = RCC->CFGR & CFGR_SWS_Mask;
@@ -913,10 +922,10 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
   switch (tmp)
   {
     case 0x00:  /* HSI used as system clock */
-      RCC_Clocks->SYSCLK_Frequency = HSI_Value;
+      RCC_Clocks->SYSCLK_Frequency = HSI_VALUE;
       break;
     case 0x04:  /* HSE used as system clock */
-      RCC_Clocks->SYSCLK_Frequency = HSE_Value;
+      RCC_Clocks->SYSCLK_Frequency = HSE_VALUE;
       break;
     case 0x08:  /* PLL used as system clock */
 
@@ -929,18 +938,25 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
       
       if (pllsource == 0x00)
       {/* HSI oscillator clock divided by 2 selected as PLL clock entry */
-        RCC_Clocks->SYSCLK_Frequency = (HSI_Value >> 1) * pllmull;
+        RCC_Clocks->SYSCLK_Frequency = (HSI_VALUE >> 1) * pllmull;
       }
       else
-      {/* HSE selected as PLL clock entry */
+      {
+ #if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL)
+       prediv1factor = (RCC->CFGR2 & CFGR2_PREDIV1) + 1;
+       /* HSE oscillator clock selected as PREDIV1 clock entry */
+       RCC_Clocks->SYSCLK_Frequency = (HSE_VALUE / prediv1factor) * pllmull; 
+ #else
+        /* HSE selected as PLL clock entry */
         if ((RCC->CFGR & CFGR_PLLXTPRE_Mask) != (uint32_t)RESET)
         {/* HSE oscillator clock divided by 2 */
-          RCC_Clocks->SYSCLK_Frequency = (HSE_Value >> 1) * pllmull;
+          RCC_Clocks->SYSCLK_Frequency = (HSE_VALUE >> 1) * pllmull;
         }
         else
         {
-          RCC_Clocks->SYSCLK_Frequency = HSE_Value * pllmull;
+          RCC_Clocks->SYSCLK_Frequency = HSE_VALUE * pllmull;
         }
+ #endif
       }
 #else
       pllmull = pllmull >> 18;
@@ -956,7 +972,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
             
       if (pllsource == 0x00)
       {/* HSI oscillator clock divided by 2 selected as PLL clock entry */
-        RCC_Clocks->SYSCLK_Frequency = (HSI_Value >> 1) * pllmull;
+        RCC_Clocks->SYSCLK_Frequency = (HSI_VALUE >> 1) * pllmull;
       }
       else
       {/* PREDIV1 selected as PLL clock entry */
@@ -967,7 +983,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
         
         if (prediv1source == 0)
         { /* HSE oscillator clock selected as PREDIV1 clock entry */
-          RCC_Clocks->SYSCLK_Frequency = (HSE_Value / prediv1factor) * pllmull;          
+          RCC_Clocks->SYSCLK_Frequency = (HSE_VALUE / prediv1factor) * pllmull;          
         }
         else
         {/* PLL2 clock selected as PREDIV1 clock entry */
@@ -975,14 +991,14 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
           /* Get PREDIV2 division factor and PLL2 multiplication factor */
           prediv2factor = ((RCC->CFGR2 & CFGR2_PREDIV2) >> 4) + 1;
           pll2mull = ((RCC->CFGR2 & CFGR2_PLL2MUL) >> 8 ) + 2; 
-          RCC_Clocks->SYSCLK_Frequency = (((HSE_Value / prediv2factor) * pll2mull) / prediv1factor) * pllmull;                         
+          RCC_Clocks->SYSCLK_Frequency = (((HSE_VALUE / prediv2factor) * pll2mull) / prediv1factor) * pllmull;                         
         }
       }
 #endif /* STM32F10X_CL */ 
       break;
 
     default:
-      RCC_Clocks->SYSCLK_Frequency = HSI_Value;
+      RCC_Clocks->SYSCLK_Frequency = HSI_VALUE;
       break;
   }
 
@@ -1068,7 +1084,9 @@ void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState)
   *          RCC_APB2Periph_GPIOC, RCC_APB2Periph_GPIOD, RCC_APB2Periph_GPIOE,
   *          RCC_APB2Periph_GPIOF, RCC_APB2Periph_GPIOG, RCC_APB2Periph_ADC1,
   *          RCC_APB2Periph_ADC2, RCC_APB2Periph_TIM1, RCC_APB2Periph_SPI1,
-  *          RCC_APB2Periph_TIM8, RCC_APB2Periph_USART1, RCC_APB2Periph_ADC3
+  *          RCC_APB2Periph_TIM8, RCC_APB2Periph_USART1, RCC_APB2Periph_ADC3,
+  *          RCC_APB2Periph_TIM15, RCC_APB2Periph_TIM16, RCC_APB2Periph_TIM17,
+  *          RCC_APB2Periph_TIM9, RCC_APB2Periph_TIM10, RCC_APB2Periph_TIM11     
   * @param  NewState: new state of the specified peripheral clock.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -1098,7 +1116,8 @@ void RCC_APB2PeriphClockCmd(uint32_t RCC_APB2Periph, FunctionalState NewState)
   *          RCC_APB1Periph_USART2, RCC_APB1Periph_USART3, RCC_APB1Periph_USART4, 
   *          RCC_APB1Periph_USART5, RCC_APB1Periph_I2C1, RCC_APB1Periph_I2C2,
   *          RCC_APB1Periph_USB, RCC_APB1Periph_CAN1, RCC_APB1Periph_BKP,
-  *          RCC_APB1Periph_PWR, RCC_APB1Periph_DAC
+  *          RCC_APB1Periph_PWR, RCC_APB1Periph_DAC, RCC_APB1Periph_CEC,
+  *          RCC_APB1Periph_TIM12, RCC_APB1Periph_TIM13, RCC_APB1Periph_TIM14
   * @param  NewState: new state of the specified peripheral clock.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -1155,7 +1174,9 @@ void RCC_AHBPeriphResetCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState)
   *          RCC_APB2Periph_GPIOC, RCC_APB2Periph_GPIOD, RCC_APB2Periph_GPIOE,
   *          RCC_APB2Periph_GPIOF, RCC_APB2Periph_GPIOG, RCC_APB2Periph_ADC1,
   *          RCC_APB2Periph_ADC2, RCC_APB2Periph_TIM1, RCC_APB2Periph_SPI1,
-  *          RCC_APB2Periph_TIM8, RCC_APB2Periph_USART1, RCC_APB2Periph_ADC3
+  *          RCC_APB2Periph_TIM8, RCC_APB2Periph_USART1, RCC_APB2Periph_ADC3,
+  *          RCC_APB2Periph_TIM15, RCC_APB2Periph_TIM16, RCC_APB2Periph_TIM17,
+  *          RCC_APB2Periph_TIM9, RCC_APB2Periph_TIM10, RCC_APB2Periph_TIM11  
   * @param  NewState: new state of the specified peripheral reset.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -1185,7 +1206,8 @@ void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState)
   *          RCC_APB1Periph_USART2, RCC_APB1Periph_USART3, RCC_APB1Periph_USART4, 
   *          RCC_APB1Periph_USART5, RCC_APB1Periph_I2C1, RCC_APB1Periph_I2C2,
   *          RCC_APB1Periph_USB, RCC_APB1Periph_CAN1, RCC_APB1Periph_BKP,
-  *          RCC_APB1Periph_PWR, RCC_APB1Periph_DAC
+  *          RCC_APB1Periph_PWR, RCC_APB1Periph_DAC, RCC_APB1Periph_CEC,
+  *          RCC_APB1Periph_TIM12, RCC_APB1Periph_TIM13, RCC_APB1Periph_TIM14  
   * @param  NewState: new state of the specified peripheral clock.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -1444,4 +1466,4 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

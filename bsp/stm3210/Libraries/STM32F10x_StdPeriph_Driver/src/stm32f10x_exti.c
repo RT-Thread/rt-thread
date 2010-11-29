@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_exti.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the EXTI firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -42,7 +42,7 @@
   * @{
   */
 
-#define EXTI_LineNone    ((uint32_t)0x00000)  /* No interrupt selected */
+#define EXTI_LINENONE    ((uint32_t)0x00000)  /* No interrupt selected */
 
 /**
   * @}
@@ -155,7 +155,7 @@ void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
   */
 void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)
 {
-  EXTI_InitStruct->EXTI_Line = EXTI_LineNone;
+  EXTI_InitStruct->EXTI_Line = EXTI_LINENONE;
   EXTI_InitStruct->EXTI_Mode = EXTI_Mode_Interrupt;
   EXTI_InitStruct->EXTI_Trigger = EXTI_Trigger_Falling;
   EXTI_InitStruct->EXTI_LineCmd = DISABLE;
@@ -265,4 +265,4 @@ void EXTI_ClearITPendingBit(uint32_t EXTI_Line)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

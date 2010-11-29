@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_can.h
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file contains all the functions prototypes for the CAN firmware 
   *          library.
   ******************************************************************************
@@ -16,7 +16,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -427,41 +427,88 @@ typedef struct
 /** @defgroup CAN_flags 
   * @{
   */
+/* If the flag is 0x3XXXXXXX, it means that it can be used with CAN_GetFlagStatus()
+   and CAN_ClearFlag() functions. */
+/* If the flag is 0x1XXXXXXX, it means that it can only be used with CAN_GetFlagStatus() function.  */
 
-#define CAN_FLAG_EWG                ((uint32_t)0x00000001) /*!< Error Warning Flag */
-#define CAN_FLAG_EPV                ((uint32_t)0x00000002) /*!< Error Passive Flag */
-#define CAN_FLAG_BOF                ((uint32_t)0x00000004) /*!< Bus-Off Flag */
+/* Transmit Flags */
+#define CAN_FLAG_RQCP0             ((uint32_t)0x38000001) /*!< Request MailBox0 Flag */
+#define CAN_FLAG_RQCP1             ((uint32_t)0x38000100) /*!< Request MailBox1 Flag */
+#define CAN_FLAG_RQCP2             ((uint32_t)0x38010000) /*!< Request MailBox2 Flag */
 
-#define IS_CAN_FLAG(FLAG) (((FLAG) == CAN_FLAG_EWG) || ((FLAG) == CAN_FLAG_EPV) ||\
-                           ((FLAG) == CAN_FLAG_BOF))
+/* Receive Flags */
+#define CAN_FLAG_FMP0              ((uint32_t)0x12000003) /*!< FIFO 0 Message Pending Flag */
+#define CAN_FLAG_FF0               ((uint32_t)0x32000008) /*!< FIFO 0 Full Flag            */
+#define CAN_FLAG_FOV0              ((uint32_t)0x32000010) /*!< FIFO 0 Overrun Flag         */
+#define CAN_FLAG_FMP1              ((uint32_t)0x14000003) /*!< FIFO 1 Message Pending Flag */
+#define CAN_FLAG_FF1               ((uint32_t)0x34000008) /*!< FIFO 1 Full Flag            */
+#define CAN_FLAG_FOV1              ((uint32_t)0x34000010) /*!< FIFO 1 Overrun Flag         */
 
+/* Operating Mode Flags */
+#define CAN_FLAG_WKU               ((uint32_t)0x31000008) /*!< Wake up Flag */
+#define CAN_FLAG_SLAK              ((uint32_t)0x31000012) /*!< Sleep acknowledge Flag */
+/* Note: When SLAK intterupt is disabled (SLKIE=0), no polling on SLAKI is possible. 
+         In this case the SLAK bit can be polled.*/
+
+/* Error Flags */
+#define CAN_FLAG_EWG               ((uint32_t)0x10F00001) /*!< Error Warning Flag   */
+#define CAN_FLAG_EPV               ((uint32_t)0x10F00002) /*!< Error Passive Flag   */
+#define CAN_FLAG_BOF               ((uint32_t)0x10F00004) /*!< Bus-Off Flag         */
+#define CAN_FLAG_LEC               ((uint32_t)0x30F00070) /*!< Last error code Flag */
+
+#define IS_CAN_GET_FLAG(FLAG) (((FLAG) == CAN_FLAG_LEC)  || ((FLAG) == CAN_FLAG_BOF)   || \
+                               ((FLAG) == CAN_FLAG_EPV)  || ((FLAG) == CAN_FLAG_EWG)   || \
+                               ((FLAG) == CAN_FLAG_WKU)  || ((FLAG) == CAN_FLAG_FOV0)  || \
+                               ((FLAG) == CAN_FLAG_FF0)  || ((FLAG) == CAN_FLAG_FMP0)  || \
+                               ((FLAG) == CAN_FLAG_FOV1) || ((FLAG) == CAN_FLAG_FF1)   || \
+                               ((FLAG) == CAN_FLAG_FMP1) || ((FLAG) == CAN_FLAG_RQCP2) || \
+                               ((FLAG) == CAN_FLAG_RQCP1)|| ((FLAG) == CAN_FLAG_RQCP0) || \
+                               ((FLAG) == CAN_FLAG_SLAK ))
+
+#define IS_CAN_CLEAR_FLAG(FLAG)(((FLAG) == CAN_FLAG_LEC) || ((FLAG) == CAN_FLAG_RQCP2) || \
+                                ((FLAG) == CAN_FLAG_RQCP1)  || ((FLAG) == CAN_FLAG_RQCP0) || \
+                                ((FLAG) == CAN_FLAG_FF0)  || ((FLAG) == CAN_FLAG_FOV0) ||\
+                                ((FLAG) == CAN_FLAG_FF1) || ((FLAG) == CAN_FLAG_FOV1) || \
+                                ((FLAG) == CAN_FLAG_WKU) || ((FLAG) == CAN_FLAG_SLAK))
 /**
   * @}
   */
 
+  
 /** @defgroup CAN_interrupts 
   * @{
   */
 
-#define CAN_IT_RQCP0                ((uint32_t)0x00000005) /*!< Request completed mailbox 0 */
-#define CAN_IT_RQCP1                ((uint32_t)0x00000006) /*!< Request completed mailbox 1 */
-#define CAN_IT_RQCP2                ((uint32_t)0x00000007) /*!< Request completed mailbox 2 */
-#define CAN_IT_TME                  ((uint32_t)0x00000001) /*!< Transmit mailbox empty */
-#define CAN_IT_FMP0                 ((uint32_t)0x00000002) /*!< FIFO 0 message pending */
-#define CAN_IT_FF0                  ((uint32_t)0x00000004) /*!< FIFO 0 full */
-#define CAN_IT_FOV0                 ((uint32_t)0x00000008) /*!< FIFO 0 overrun */
-#define CAN_IT_FMP1                 ((uint32_t)0x00000010) /*!< FIFO 1 message pending */
-#define CAN_IT_FF1                  ((uint32_t)0x00000020) /*!< FIFO 1 full */
-#define CAN_IT_FOV1                 ((uint32_t)0x00000040) /*!< FIFO 1 overrun */
-#define CAN_IT_EWG                  ((uint32_t)0x00000100) /*!< Error warning */
-#define CAN_IT_EPV                  ((uint32_t)0x00000200) /*!< Error passive */
-#define CAN_IT_BOF                  ((uint32_t)0x00000400) /*!< Bus-off */
-#define CAN_IT_LEC                  ((uint32_t)0x00000800) /*!< Last error code */
-#define CAN_IT_ERR                  ((uint32_t)0x00008000) /*!< Error */
-#define CAN_IT_WKU                  ((uint32_t)0x00010000) /*!< Wake-up */
-#define CAN_IT_SLK                  ((uint32_t)0x00020000) /*!< Sleep */
 
-#define IS_CAN_ITConfig(IT) (((IT) == CAN_IT_TME)   || ((IT) == CAN_IT_FMP0)  ||\
+  
+#define CAN_IT_TME                  ((uint32_t)0x00000001) /*!< Transmit mailbox empty Interrupt*/
+
+/* Receive Interrupts */
+#define CAN_IT_FMP0                 ((uint32_t)0x00000002) /*!< FIFO 0 message pending Interrupt*/
+#define CAN_IT_FF0                  ((uint32_t)0x00000004) /*!< FIFO 0 full Interrupt*/
+#define CAN_IT_FOV0                 ((uint32_t)0x00000008) /*!< FIFO 0 overrun Interrupt*/
+#define CAN_IT_FMP1                 ((uint32_t)0x00000010) /*!< FIFO 1 message pending Interrupt*/
+#define CAN_IT_FF1                  ((uint32_t)0x00000020) /*!< FIFO 1 full Interrupt*/
+#define CAN_IT_FOV1                 ((uint32_t)0x00000040) /*!< FIFO 1 overrun Interrupt*/
+
+/* Operating Mode Interrupts */
+#define CAN_IT_WKU                  ((uint32_t)0x00010000) /*!< Wake-up Interrupt*/
+#define CAN_IT_SLK                  ((uint32_t)0x00020000) /*!< Sleep acknowledge Interrupt*/
+
+/* Error Interrupts */
+#define CAN_IT_EWG                  ((uint32_t)0x00000100) /*!< Error warning Interrupt*/
+#define CAN_IT_EPV                  ((uint32_t)0x00000200) /*!< Error passive Interrupt*/
+#define CAN_IT_BOF                  ((uint32_t)0x00000400) /*!< Bus-off Interrupt*/
+#define CAN_IT_LEC                  ((uint32_t)0x00000800) /*!< Last error code Interrupt*/
+#define CAN_IT_ERR                  ((uint32_t)0x00008000) /*!< Error Interrupt*/
+
+/* Flags named as Interrupts : kept only for FW compatibility */
+#define CAN_IT_RQCP0   CAN_IT_TME
+#define CAN_IT_RQCP1   CAN_IT_TME
+#define CAN_IT_RQCP2   CAN_IT_TME
+
+
+#define IS_CAN_IT(IT)        (((IT) == CAN_IT_TME)   || ((IT) == CAN_IT_FMP0)  ||\
                              ((IT) == CAN_IT_FF0)   || ((IT) == CAN_IT_FOV0)  ||\
                              ((IT) == CAN_IT_FMP1)  || ((IT) == CAN_IT_FF1)   ||\
                              ((IT) == CAN_IT_FOV1)  || ((IT) == CAN_IT_EWG)   ||\
@@ -469,12 +516,13 @@ typedef struct
                              ((IT) == CAN_IT_LEC)   || ((IT) == CAN_IT_ERR)   ||\
                              ((IT) == CAN_IT_WKU)   || ((IT) == CAN_IT_SLK))
 
-#define IS_CAN_ITStatus(IT) (((IT) == CAN_IT_RQCP0)  || ((IT) == CAN_IT_RQCP1)  ||\
-                             ((IT) == CAN_IT_RQCP2)  || ((IT) == CAN_IT_FF0)    ||\
+#define IS_CAN_CLEAR_IT(IT) (((IT) == CAN_IT_TME)    || ((IT) == CAN_IT_FF0)    ||\
                              ((IT) == CAN_IT_FOV0)   || ((IT) == CAN_IT_FF1)    ||\
                              ((IT) == CAN_IT_FOV1)   || ((IT) == CAN_IT_EWG)    ||\
                              ((IT) == CAN_IT_EPV)    || ((IT) == CAN_IT_BOF)    ||\
+                             ((IT) == CAN_IT_LEC)    || ((IT) == CAN_IT_ERR)    ||\
                              ((IT) == CAN_IT_WKU)    || ((IT) == CAN_IT_SLK))
+
 /**
   * @}
   */
@@ -532,4 +580,4 @@ void CAN_ClearITPendingBit(CAN_TypeDef* CANx, uint32_t CAN_IT);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

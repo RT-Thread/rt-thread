@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_rtc.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the RTC firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -40,11 +40,8 @@
 /** @defgroup RTC_Private_Defines
   * @{
   */
-
-#define CRL_CNF_Set      ((uint16_t)0x0010)      /*!< Configuration Flag Enable Mask */
-#define CRL_CNF_Reset    ((uint16_t)0xFFEF)      /*!< Configuration Flag Disable Mask */
-#define RTC_LSB_Mask     ((uint32_t)0x0000FFFF)  /*!< RTC LSB Mask */
-#define PRLH_MSB_Mask    ((uint32_t)0x000F0000)  /*!< RTC Prescaler MSB Mask */
+#define RTC_LSB_MASK     ((uint32_t)0x0000FFFF)  /*!< RTC LSB Mask */
+#define PRLH_MSB_MASK    ((uint32_t)0x000F0000)  /*!< RTC Prescaler MSB Mask */
 
 /**
   * @}
@@ -113,7 +110,7 @@ void RTC_ITConfig(uint16_t RTC_IT, FunctionalState NewState)
 void RTC_EnterConfigMode(void)
 {
   /* Set the CNF flag to enter in the Configuration Mode */
-  RTC->CRL |= CRL_CNF_Set;
+  RTC->CRL |= RTC_CRL_CNF;
 }
 
 /**
@@ -124,7 +121,7 @@ void RTC_EnterConfigMode(void)
 void RTC_ExitConfigMode(void)
 {
   /* Reset the CNF flag to exit from the Configuration Mode */
-  RTC->CRL &= CRL_CNF_Reset;
+  RTC->CRL &= (uint16_t)~((uint16_t)RTC_CRL_CNF); 
 }
 
 /**
@@ -150,7 +147,7 @@ void RTC_SetCounter(uint32_t CounterValue)
   /* Set RTC COUNTER MSB word */
   RTC->CNTH = CounterValue >> 16;
   /* Set RTC COUNTER LSB word */
-  RTC->CNTL = (CounterValue & RTC_LSB_Mask);
+  RTC->CNTL = (CounterValue & RTC_LSB_MASK);
   RTC_ExitConfigMode();
 }
 
@@ -166,9 +163,9 @@ void RTC_SetPrescaler(uint32_t PrescalerValue)
   
   RTC_EnterConfigMode();
   /* Set RTC PRESCALER MSB word */
-  RTC->PRLH = (PrescalerValue & PRLH_MSB_Mask) >> 16;
+  RTC->PRLH = (PrescalerValue & PRLH_MSB_MASK) >> 16;
   /* Set RTC PRESCALER LSB word */
-  RTC->PRLL = (PrescalerValue & RTC_LSB_Mask);
+  RTC->PRLL = (PrescalerValue & RTC_LSB_MASK);
   RTC_ExitConfigMode();
 }
 
@@ -183,7 +180,7 @@ void RTC_SetAlarm(uint32_t AlarmValue)
   /* Set the ALARM MSB word */
   RTC->ALRH = AlarmValue >> 16;
   /* Set the ALARM LSB word */
-  RTC->ALRL = (AlarmValue & RTC_LSB_Mask);
+  RTC->ALRL = (AlarmValue & RTC_LSB_MASK);
   RTC_ExitConfigMode();
 }
 
@@ -338,4 +335,4 @@ void RTC_ClearITPendingBit(uint16_t RTC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_pwr.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the PWR firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -67,18 +67,10 @@
 /* ------------------ PWR registers bit mask ------------------------ */
 
 /* CR register bit mask */
-#define CR_PDDS_Set              ((uint32_t)0x00000002)
-#define CR_DS_Mask               ((uint32_t)0xFFFFFFFC)
-#define CR_CWUF_Set              ((uint32_t)0x00000004)
-#define CR_PLS_Mask              ((uint32_t)0xFFFFFF1F)
+#define CR_DS_MASK               ((uint32_t)0xFFFFFFFC)
+#define CR_PLS_MASK              ((uint32_t)0xFFFFFF1F)
 
-/* --------- Cortex System Control register bit mask ---------------- */
 
-/* Cortex System Control register address */
-#define SCB_SysCtrl              ((uint32_t)0xE000ED10)
-
-/* SLEEPDEEP bit mask */
-#define SysCtrl_SLEEPDEEP_Set    ((uint32_t)0x00000004)
 /**
   * @}
   */
@@ -169,7 +161,7 @@ void PWR_PVDLevelConfig(uint32_t PWR_PVDLevel)
   assert_param(IS_PWR_PVD_LEVEL(PWR_PVDLevel));
   tmpreg = PWR->CR;
   /* Clear PLS[7:5] bits */
-  tmpreg &= CR_PLS_Mask;
+  tmpreg &= CR_PLS_MASK;
   /* Set PLS[7:5] bits according to PWR_PVDLevel value */
   tmpreg |= PWR_PVDLevel;
   /* Store the new value */
@@ -211,13 +203,13 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
   /* Select the regulator state in STOP mode ---------------------------------*/
   tmpreg = PWR->CR;
   /* Clear PDDS and LPDS bits */
-  tmpreg &= CR_DS_Mask;
+  tmpreg &= CR_DS_MASK;
   /* Set LPDS bit according to PWR_Regulator value */
   tmpreg |= PWR_Regulator;
   /* Store the new value */
   PWR->CR = tmpreg;
   /* Set SLEEPDEEP bit of Cortex System Control Register */
-  *(__IO uint32_t *) SCB_SysCtrl |= SysCtrl_SLEEPDEEP_Set;
+  SCB->SCR |= SCB_SCR_SLEEPDEEP;
   
   /* Select STOP mode entry --------------------------------------------------*/
   if(PWR_STOPEntry == PWR_STOPEntry_WFI)
@@ -230,6 +222,9 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
     /* Request Wait For Event */
     __WFE();
   }
+  
+  /* Reset SLEEPDEEP bit of Cortex System Control Register */
+  SCB->SCR &= (uint32_t)~((uint32_t)SCB_SCR_SLEEPDEEP);  
 }
 
 /**
@@ -240,11 +235,11 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
 void PWR_EnterSTANDBYMode(void)
 {
   /* Clear Wake-up flag */
-  PWR->CR |= CR_CWUF_Set;
+  PWR->CR |= PWR_CR_CWUF;
   /* Select STANDBY mode */
-  PWR->CR |= CR_PDDS_Set;
+  PWR->CR |= PWR_CR_PDDS;
   /* Set SLEEPDEEP bit of Cortex System Control Register */
-  *(__IO uint32_t *) SCB_SysCtrl |= SysCtrl_SLEEPDEEP_Set;
+  SCB->SCR |= SCB_SCR_SLEEPDEEP;
 /* This option is used to ensure that store operations are completed */
 #if defined ( __CC_ARM   )
   __force_stores();
@@ -308,4 +303,4 @@ void PWR_ClearFlag(uint32_t PWR_FLAG)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

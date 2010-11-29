@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f10x_bkp.c
   * @author  MCD Application Team
-  * @version V3.1.2
-  * @date    09/28/2009
+  * @version V3.4.0
+  * @date    10/15/2010
   * @brief   This file provides all the BKP firmware functions.
   ******************************************************************************
   * @copy
@@ -15,7 +15,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -75,12 +75,8 @@
 /* ---------------------- BKP registers bit mask ------------------------ */
 
 /* RTCCR register bit mask */
-#define RTCCR_CAL_Mask    ((uint16_t)0xFF80)
-#define RTCCR_Mask        ((uint16_t)0xFC7F)
-
-/* CSR register bit mask */
-#define CSR_CTE_Set       ((uint16_t)0x0001)
-#define CSR_CTI_Set       ((uint16_t)0x0002)
+#define RTCCR_CAL_MASK    ((uint16_t)0xFF80)
+#define RTCCR_MASK        ((uint16_t)0xFC7F)
 
 /**
   * @}
@@ -187,7 +183,7 @@ void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource)
   assert_param(IS_BKP_RTC_OUTPUT_SOURCE(BKP_RTCOutputSource));
   tmpreg = BKP->RTCCR;
   /* Clear CCO, ASOE and ASOS bits */
-  tmpreg &= RTCCR_Mask;
+  tmpreg &= RTCCR_MASK;
   
   /* Set CCO, ASOE and ASOS bits according to BKP_RTCOutputSource value */
   tmpreg |= BKP_RTCOutputSource;
@@ -208,7 +204,7 @@ void BKP_SetRTCCalibrationValue(uint8_t CalibrationValue)
   assert_param(IS_BKP_CALIBRATION_VALUE(CalibrationValue));
   tmpreg = BKP->RTCCR;
   /* Clear CAL[6:0] bits */
-  tmpreg &= RTCCR_CAL_Mask;
+  tmpreg &= RTCCR_CAL_MASK;
   /* Set CAL[6:0] bits according to CalibrationValue value */
   tmpreg |= CalibrationValue;
   /* Store the new value */
@@ -272,7 +268,7 @@ FlagStatus BKP_GetFlagStatus(void)
 void BKP_ClearFlag(void)
 {
   /* Set CTE bit to clear Tamper Pin Event flag */
-  BKP->CSR |= CSR_CTE_Set;
+  BKP->CSR |= BKP_CSR_CTE;
 }
 
 /**
@@ -293,7 +289,7 @@ ITStatus BKP_GetITStatus(void)
 void BKP_ClearITPendingBit(void)
 {
   /* Set CTI bit to clear Tamper Pin Interrupt pending bit */
-  BKP->CSR |= CSR_CTI_Set;
+  BKP->CSR |= BKP_CSR_CTI;
 }
 
 /**
@@ -308,4 +304,4 @@ void BKP_ClearITPendingBit(void)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

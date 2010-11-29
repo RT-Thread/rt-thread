@@ -4,8 +4,7 @@ from building import *
 
 # The set of source files associated with this SConscript file.
 src = Split("""
-CMSIS/Core/CM3/core_cm3.c
-CMSIS/Core/CM3/system_stm32f10x.c
+CMSIS/CM3/CoreSupport/core_cm3.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c
@@ -27,11 +26,12 @@ STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c
 STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c
 STM32F10x_StdPeriph_Driver/src/misc.c
 """)
 
 path = [RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', 
-    RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/Core/CM3']
+    RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/CM3/CoreSupport']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
 group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path)
