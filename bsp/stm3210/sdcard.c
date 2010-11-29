@@ -22,6 +22,7 @@
 #include "sdcard.h"
 #include "stm32f10x_dma.h"
 #include "stm32f10x_sdio.h"
+#include "stdbool.h"
 #include <rtthread.h>
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
@@ -193,7 +194,7 @@ SD_Error SD_PowerON(void)
 {
   SD_Error errorstatus = SD_OK;
   uint32_t response = 0, count = 0, i = 0;
-  bool validvoltage = FALSE;
+  bool validvoltage = false;
   uint32_t SDType = SD_STD_CAPACITY;
 
   /* Power ON Sequence -------------------------------------------------------*/

@@ -2,7 +2,7 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c', 'system_stm32f10x.c']
 src_drv = ['rtc.c', 'usart.c', 'led.c']
 
 if GetDepend('RT_USING_DFS'):
