@@ -517,7 +517,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_thread_detach((rt_thread_t)object);
 			}
 			else
@@ -535,7 +535,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_sem_detach((rt_sem_t)object);
 			}
 			else
@@ -554,7 +554,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_mutex_detach((rt_mutex_t)object);
 			}
 			else
@@ -573,7 +573,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_event_detach((rt_event_t)object);
 			}
 			else
@@ -592,7 +592,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_mb_detach((rt_mailbox_t)object);
 			}
 			else
@@ -611,7 +611,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_mq_detach((rt_mq_t)object);
 			}
 			else
@@ -630,7 +630,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_mp_detach((rt_mp_t)object);
 			}
 			else
@@ -658,7 +658,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
 			{
-				/* detach static objcet */
+				/* detach static object */
 				rt_timer_detach((rt_timer_t)object);
 			}
 			else
