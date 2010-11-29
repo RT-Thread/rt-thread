@@ -377,7 +377,7 @@ void rt_hw_serial_init(void)
 	lpc_serial->parent.read 	= rt_serial_read;
 	lpc_serial->parent.write    = rt_serial_write;
 	lpc_serial->parent.control  = rt_serial_control;
-	lpc_serial->parent.private  = RT_NULL;
+	lpc_serial->parent.user_data  = RT_NULL;
 
 	rt_device_register(&lpc_serial->parent, 
 		"uart2", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);

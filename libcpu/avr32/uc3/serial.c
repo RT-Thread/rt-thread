@@ -37,7 +37,7 @@ struct avr32_serial_device uart =
 /* RT-Thread Device Interface */
 static rt_err_t rt_serial_init (rt_device_t dev)
 {
-	struct avr32_serial_device* uart = (struct avr32_serial_device*) dev->private;
+	struct avr32_serial_device* uart = (struct avr32_serial_device*) dev->user_data;
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 	{
@@ -72,7 +72,7 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 
 	ptr = buffer;
 	err_code = RT_EOK;
-	uart = (struct avr32_serial_device*)dev->private;
+	uart = (struct avr32_serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -135,7 +135,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 	err_code = RT_EOK;
 	ptr = (rt_uint8_t*)buffer;
-	uart = (struct avr32_serial_device*)dev->private;
+	uart = (struct avr32_serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
 	{
@@ -179,7 +179,7 @@ static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 
 	RT_ASSERT(dev != RT_NULL);
 
-	uart = (struct avr32_serial_device*)dev->private;
+	uart = (struct avr32_serial_device*)dev->user_data;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
@@ -219,7 +219,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 	device->read 		= rt_serial_read;
 	device->write 		= rt_serial_write;
 	device->control 	= rt_serial_control;
-	device->private		= serial;
+	device->user_data	= serial;
 
 	/* register a character device */
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
@@ -228,7 +228,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(void)
 {
-	struct avr32_serial_device* uart = (struct avr32_serial_device*) _rt_usart_device.private;
+	struct avr32_serial_device* uart = (struct avr32_serial_device*) _rt_usart_device.user_data;
 	rt_base_t level;
 
 	if (usart_test_hit(uart->uart_device))

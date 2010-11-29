@@ -329,7 +329,7 @@ void rt_hw_serial_init(void)
 	serial->parent.read 	= rt_serial_read;
 	serial->parent.write    = rt_serial_write;
 	serial->parent.control  = rt_serial_control;
-	serial->parent.private  = RT_NULL;
+	serial->parent.user_data  = RT_NULL;
 
 	rt_device_register(&serial->parent,
 		"uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
@@ -352,7 +352,7 @@ void rt_hw_serial_init(void)
 	serial->parent.read 	= rt_serial_read;
 	serial->parent.write    = rt_serial_write;
 	serial->parent.control  = rt_serial_control;
-	serial->parent.private  = RT_NULL;
+	serial->parent.user_data  = RT_NULL;
 
 	rt_device_register(&serial->parent,
 		"uart2", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);

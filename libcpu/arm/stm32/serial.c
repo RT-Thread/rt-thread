@@ -30,7 +30,7 @@ static void rt_serial_enable_dma(DMA_Channel_TypeDef* dma_channel,
 /* RT-Thread Device Interface */
 static rt_err_t rt_serial_init (rt_device_t dev)
 {
-	struct stm32_serial_device* uart = (struct stm32_serial_device*) dev->private;
+	struct stm32_serial_device* uart = (struct stm32_serial_device*) dev->user_data;
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 	{
@@ -81,7 +81,7 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 
 	ptr = buffer;
 	err_code = RT_EOK;
-	uart = (struct stm32_serial_device*)dev->private;
+	uart = (struct stm32_serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -161,7 +161,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 	err_code = RT_EOK;
 	ptr = (rt_uint8_t*)buffer;
-	uart = (struct stm32_serial_device*)dev->private;
+	uart = (struct stm32_serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
 	{
@@ -259,7 +259,7 @@ static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 
 	RT_ASSERT(dev != RT_NULL);
 
-	uart = (struct stm32_serial_device*)dev->private;
+	uart = (struct stm32_serial_device*)dev->user_data;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
@@ -301,7 +301,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 	device->read 		= rt_serial_read;
 	device->write 		= rt_serial_write;
 	device->control 	= rt_serial_control;
-	device->private		= serial;
+	device->user_data	= serial;
 
 	/* register a character device */
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
@@ -310,7 +310,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(rt_device_t device)
 {
-	struct stm32_serial_device* uart = (struct stm32_serial_device*) device->private;
+	struct stm32_serial_device* uart = (struct stm32_serial_device*) device->user_data;
 
 	if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
 	{
@@ -374,7 +374,7 @@ void rt_hw_serial_dma_tx_isr(rt_device_t device)
 {
 	rt_uint32_t level;
 	struct stm32_serial_data_node* data_node;
-	struct stm32_serial_device* uart = (struct stm32_serial_device*) device->private;
+	struct stm32_serial_device* uart = (struct stm32_serial_device*) device->user_data;
 
 	/* DMA mode receive */
 	RT_ASSERT(device->flag & RT_DEVICE_FLAG_DMA_TX);
