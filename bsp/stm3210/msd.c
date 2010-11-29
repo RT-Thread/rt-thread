@@ -855,8 +855,8 @@ static rt_size_t rt_msd_write (rt_device_t dev, rt_off_t pos, const void* buffer
 	status = MSD_RESPONSE_NO_ERROR;
 	// rt_kprintf("write: 0x%x, size %d\n", pos, size);
 
-	/* read all sectors */
-	for (i = 0; i < size / SECTOR_SIZE; i ++)
+	/* write all sectors */
+	for (i = 0; i < size; i ++)
 	{
 		status = MSD_WriteBuffer((rt_uint8_t*)((rt_uint8_t*)buffer + i * SECTOR_SIZE),
 			(part.offset + pos + i)* SECTOR_SIZE, SECTOR_SIZE);
