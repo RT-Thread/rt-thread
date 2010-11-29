@@ -428,25 +428,50 @@ rt_module_t rt_module_open(const char* filename)
 	int fd, length;
 	struct rt_module* module;
 	struct stat s;
-	char *buffer;
+	char *buffer, *offset_ptr;;
 	
-	stat(filename, &s);
+	if (stat(filename, &s) !=0)
+	{
+		rt_kprintf("access file failed\n");
+		return RT_NULL;
+	}
 	buffer = (char *)rt_malloc(s.st_size);
+	if (buffer == RT_NULL)
+	{
+		rt_kprintf("out of memory\n");
+		return RT_NULL;
+	}
+
+	offset_ptr = buffer;
 	fd = open(filename, O_RDONLY, 0);
-	length = read(fd, buffer, s.st_size);
-	if (length <= 0)
+	if (fd < 0)
+	{
+		rt_kprintf("open file failed\n");
+		rt_free(buffer);
+		return RT_NULL;
+	}
+
+	do
+	{
+		length = read(fd, offset_ptr, 4096);
+		if (length > 0)
+		{
+			offset_ptr += length;
+		}
+	}while (length > 0);
+
+	/* close fd */
+	close(fd);
+
+	if ((rt_uint32_t)offset_ptr - (rt_uint32_t)buffer != s.st_size)
 	{
 		rt_kprintf("check: read file failed\n");
-		close(fd);
 		rt_free(buffer);
 		return RT_NULL;
 	}
 	
-	/* rt_kprintf("read %d bytes from file\n", length); */
-	
 	module = rt_module_load(filename, (void *)buffer);
 	rt_free(buffer);
-	close(fd);
 
 	return module;
 }
