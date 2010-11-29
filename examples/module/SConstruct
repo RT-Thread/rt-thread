@@ -4,7 +4,7 @@ import rtconfig
 
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
-import mdk
+import building
 
 target = RTT_ROOT + '/bsp/mini2440/rtthread-mini2440'
 projects = []
