@@ -176,6 +176,25 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 		/**
 		 * @ingroup finsh
 		 *
+		 * This macro exports a system function with an alias name to finsh shell.
+		 *
+		 * @param name the name of function.
+		 * @param alias the alias name of function.
+		 * @param desc the description of function, which will show in help.
+		 */
+		#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+		const char __fsym_##name##_name[] = #alias;					 \
+		const char __fsym_##name##_desc[] = #desc;					 \
+		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+		{							\
+			__fsym_##name##_name,	\
+			__fsym_##name##_desc,	\
+			(syscall_func)&name		\
+		};
+
+		/**
+		 * @ingroup finsh
+		 *
 		 * This macro exports a variable to finsh shell.
 		 *
 		 * @param name the name of function.
@@ -201,6 +220,14 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 			(syscall_func)&name		\
 		};
 
+		#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+		const char __fsym_##name##_name[] = #alias;					 \
+		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+		{							\
+			__fsym_##name##_name,	\
+			(syscall_func)&name		\
+		};
+
 		#define FINSH_VAR_EXPORT(name, type, desc)					\
 		const char __vsym_##name##_name[] = #name;					\
 		const struct finsh_sysvar __vsym_##name SECTION("VSymTab")=	\
@@ -212,6 +239,7 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 	#endif
 #else
 	#define FINSH_FUNCTION_EXPORT(name, desc)
+	#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
 	#define FINSH_VAR_EXPORT(name, type, desc)
 #endif
 

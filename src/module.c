@@ -478,7 +478,7 @@ rt_module_t rt_module_open(const char* filename)
 
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(rt_module_open, load module from file);
+FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from file);
 #endif
 #endif
 
