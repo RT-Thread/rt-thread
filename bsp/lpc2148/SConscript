@@ -1,0 +1,15 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c']
+src_drv = []
+
+
+
+src = src_bsp + src_drv
+CPPPATH = [RTT_ROOT + '/bsp/lpc2148']
+CPPDEFINES = []
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
