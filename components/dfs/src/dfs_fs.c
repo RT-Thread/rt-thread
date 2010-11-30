@@ -88,8 +88,12 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
     /* lookup it in the filesystem table */
     for (index = 0; index < DFS_FILESYSTEMS_MAX + 1; index++)
     {
-        fspath = strlen(filesystem_table[index].path);
-        if (fspath < prefixlen) continue;
+		if (filesystem_table[index].path == RT_NULL) continue;
+		else
+		{
+			fspath = strlen(filesystem_table[index].path);
+			if (fspath < prefixlen) continue;
+		}
 
         if ((filesystem_table[index].ops != RT_NULL) &&
                 strncmp(filesystem_table[index].path, path, fspath) == 0)
