@@ -263,12 +263,8 @@ struct sys_timeouts *sys_arch_timeouts(void)
 	rt_thread_t self = rt_thread_self();
 	struct lwip_thread* lwip_th = (struct lwip_thread*)self->user_data;
 
-	if (lwip_th != RT_NULL)
-	{
-		RT_ASSERT(lwip_th->magic == LWIP_THREAD_MAGIC);
-
+	if ((lwip_th != RT_NULL) && (lwip_th->magic == LWIP_THREAD_MAGIC))
 		return &(lwip_th->timeouts);
-	}
 
 	return RT_NULL;
 }
