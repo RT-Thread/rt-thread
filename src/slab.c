@@ -233,7 +233,7 @@ void *rt_page_alloc(rt_size_t npages)
 	struct rt_page_head *b, *n;
 	struct rt_page_head **prev;
 
-	RT_ASSERT(npages != 0);
+	if(npages == 0) return RT_NULL;
 
 	for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
 	{
