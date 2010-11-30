@@ -27,9 +27,7 @@ static struct rt_thread idle;
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 
-#ifdef RT_USING_HEAP
 extern rt_list_t rt_thread_defunct;
-#endif
 
 #ifdef RT_USING_HOOK
 /**
@@ -60,7 +58,6 @@ void rt_thread_idle_sethook(void (*hook)())
  */
 void rt_thread_idle_excute(void)
 {
-#ifdef RT_USING_HEAP
 	/* check the defunct thread list */
 	if (!rt_list_isempty(&rt_thread_defunct))
 	{
@@ -113,6 +110,7 @@ void rt_thread_idle_excute(void)
 		/* enable interrupt */
 		rt_hw_interrupt_enable(lock);
 
+#ifdef RT_USING_HEAP
 #ifdef RT_USING_MODULE
 		/* the thread belongs to an application module */
 		if(thread->flags & RT_OBJECT_FLAG_MODULE)
@@ -138,8 +136,8 @@ void rt_thread_idle_excute(void)
 		/* unload module */
 		if(module->nref == 0) 	rt_module_unload(module);
 #endif
-	}
 #endif
+	}
 }
 
 static void rt_thread_idle_entry(void* parameter)

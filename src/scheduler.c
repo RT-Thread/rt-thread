@@ -48,9 +48,7 @@ rt_uint8_t rt_thread_ready_table[32];
 rt_uint32_t rt_thread_ready_priority_group;
 #endif
 
-#ifdef RT_USING_HEAP
 rt_list_t rt_thread_defunct;
-#endif
 
 const rt_uint8_t rt_lowest_bitmap[] =
 {
@@ -106,6 +104,12 @@ static void _rt_scheduler_stack_check(struct rt_thread* thread)
         rt_uint32_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
+		#ifdef RT_USING_FINSH
+		{
+			extern long list_thread(void);
+			list_thread();
+		}
+		#endif
         level = rt_hw_interrupt_disable();
         while (level);
     }
