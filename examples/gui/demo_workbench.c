@@ -116,7 +116,7 @@ void workbench_init()
 
 		tid = rt_thread_create("wb",
 			workbench_entry, RT_NULL,
-			2048, 25, 10);
+			2048 * 2, 25, 10);
 
 		if (tid != RT_NULL) rt_thread_startup(tid);
 
