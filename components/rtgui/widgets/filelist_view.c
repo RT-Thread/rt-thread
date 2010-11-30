@@ -223,9 +223,15 @@ const static char * folder_xpm[] = {
 static rtgui_image_t *file_image, *folder_image;
 static struct rtgui_listbox_item items[] = 
 {
+#ifdef RTGUI_USING_FONTHZ
 	{"打开文件夹", RT_NULL},
 	{"选择文件夹", RT_NULL},
 	{"退出", RT_NULL}
+#else
+	{"Open folder", RT_NULL},
+	{"Select folder", RT_NULL},
+	{"Cancel", RT_NULL}
+#endif
 };
 static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
 
@@ -337,6 +343,19 @@ static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 		(rt_uint8_t*)folder_xpm, sizeof(folder_xpm), RT_TRUE);
 }
 
+static void _rtgui_filelist_view_destructor(struct rtgui_filelist_view *view)
+{
+    /* delete all file items */
+    rtgui_filelist_view_clear(view);
+	/* delete current directory and pattern */
+	rtgui_free(view->current_directory); view->current_directory = RT_NULL;
+	rtgui_free(view->pattern); view->pattern = RT_NULL;
+
+	/* delete image */
+	rtgui_image_destroy(file_image);
+	rtgui_image_destroy(folder_image);
+}
+
 rtgui_type_t *rtgui_filelist_view_type_get(void)
 {
 	static rtgui_type_t *filelist_view_type = RT_NULL;
@@ -344,7 +363,9 @@ rtgui_type_t *rtgui_filelist_view_type_get(void)
 	if (!filelist_view_type)
 	{
 		filelist_view_type = rtgui_type_create("flview", RTGUI_VIEW_TYPE,
-			sizeof(rtgui_filelist_view_t), RTGUI_CONSTRUCTOR(_rtgui_filelist_view_constructor), RT_NULL);
+			sizeof(rtgui_filelist_view_t), 
+			RTGUI_CONSTRUCTOR(_rtgui_filelist_view_constructor), 
+			RTGUI_DESTRUCTOR(_rtgui_filelist_view_destructor));
 	}
 
 	return filelist_view_type;
@@ -681,16 +702,6 @@ rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench,
 
 void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view)
 {
-    /* delete all file items */
-    rtgui_filelist_view_clear(view);
-	/* delete current directory and pattern */
-	rtgui_free(view->current_directory); view->current_directory = RT_NULL;
-	rtgui_free(view->pattern); view->pattern = RT_NULL;
-
-	/* delete image */
-	rtgui_image_destroy(file_image);
-	rtgui_image_destroy(folder_image);
-
     /* destroy view */
 	rtgui_widget_destroy(RTGUI_WIDGET(view));
 }
@@ -720,7 +731,6 @@ static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view)
 
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory)
 {
-    char fullpath[256];
     struct rtgui_file_item *item;
 
     RT_ASSERT(view != RT_NULL);
@@ -731,6 +741,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
     {
 		DIR* dir;
 		struct stat s;
+		char* fullpath;
 		rt_uint32_t index;
 		struct dirent* dirent;
 
@@ -785,10 +796,14 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 
 		/* reopen directory */
 		dir = opendir(directory);
-		for (; index < view->items_count; index ++)
+		fullpath = rtgui_malloc(256);
+		while (index < view->items_count)
 		{
 			dirent = readdir(dir);
 			if (dirent == RT_NULL) break;
+
+			if (strcmp(dirent->d_name, ".") == 0) continue;
+			if (strcmp(dirent->d_name, "..") == 0) continue;
 
 			item = &(view->items[index]);
 			item->name = rt_strdup(dirent->d_name);
@@ -797,9 +812,9 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 
 			/* build full path for the file */
 			if (directory[strlen(directory) - 1] != PATH_SEPARATOR)
-				rt_sprintf(fullpath, "%s%c%s", directory, PATH_SEPARATOR, dirent->d_name);
+				rt_snprintf(fullpath, 256, "%s%c%s", directory, PATH_SEPARATOR, dirent->d_name);
 			else
-				rt_sprintf(fullpath, "%s%s", directory, dirent->d_name);
+				rt_snprintf(fullpath, 256, "%s%s", directory, dirent->d_name);
 
 			stat(fullpath, &s);
 			if ( s.st_mode & S_IFDIR )
@@ -812,8 +827,10 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 				item->type = RTGUI_FITEM_FILE;
 				item->size = s.st_size;
 			}
-		}
 
+			index ++;
+		}
+		rtgui_free(fullpath);
 		closedir(dir);
     }
 
