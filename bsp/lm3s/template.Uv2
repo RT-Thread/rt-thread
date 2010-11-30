@@ -89,9 +89,9 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S6918)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S6918)
-  OPTDBG 48118,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
- FLASH1 { 1,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (Segger\JLTAgdi.dll)
+  OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\lmidk-agdi.dll)
  FLASH3 ("" ())
  FLASH4 ()
 EndOpt
