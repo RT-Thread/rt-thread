@@ -195,18 +195,42 @@ _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
 void *
 _malloc_r (struct _reent *ptr, size_t size)
 {
-	return (void*)rt_malloc (size);
+	void* result;
+
+	result = (void*)rt_malloc (size);
+	if (result == RT_NULL)
+	{
+		ptr->_errno = ENOMEM;
+	}
+
+	return result;
 }
 
 void *
 _realloc_r (struct _reent *ptr, void *old, size_t newlen)
 {
-	return (void*)rt_realloc (old, newlen);
+	void* result;
+
+	result = (void*)rt_realloc (old, newlen);
+	if (result == RT_NULL)
+	{
+		ptr->_errno = ENOMEM;
+	}
+
+	return result;
 }
 
 void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
 {
-  return (void*)rt_calloc (size, len);
+	void* result;
+
+	result = (void*)rt_calloc (size, len);
+	if (result == RT_NULL)
+	{
+		ptr->_errno = ENOMEM;
+	}
+
+	return result;
 }
 
 void 
@@ -215,19 +239,9 @@ _free_r (struct _reent *ptr, void *addr)
 	rt_free (addr);
 }
 
-#if 0
-void __assert(const char *file, int line, const char *failedexpr)
-{
-    rt_kprintf("assertion \"%s\" failed: file \"%s\", line %d\n",
-               failedexpr, file, line);
-    RT_ASSERT(0);
-}
-#endif
-
 void
 _exit (int status)
 {
 	rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
     RT_ASSERT(0);
 }
-
