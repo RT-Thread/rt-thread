@@ -62,8 +62,11 @@ typedef int bool_t;
 typedef int enum_t;
 
 #ifndef RT_USING_NEWLIB
-typedef rt_int32_t  ssize_t;
 typedef unsigned long dev_t;
+#endif
+
+#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MINILIBC)
+typedef rt_int32_t  ssize_t;
 #endif
 
 /* This needs to be changed to uint32_t in the future */
