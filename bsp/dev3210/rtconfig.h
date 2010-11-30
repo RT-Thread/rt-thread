@@ -53,6 +53,7 @@
 
 /* Using SLAB MM */
 #define RT_USING_SLAB
+/* #define RT_USING_SMALL_MEM */
 
 /* SECTION: Device System */
 /* Using Device System */
@@ -68,8 +69,8 @@
 
 /* SECTION: the runtime libc library */
 /* the runtime libc library */
-#define RT_USING_NEWLIB
-#define RT_USING_PTHREADS
+/* #define RT_USING_NEWLIB */
+/* #define RT_USING_PTHREADS */
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
@@ -81,8 +82,9 @@
 
 /* SECTION: device filesystem support */
 #define RT_USING_DFS
-#define RT_USING_DFS_ELMFAT
+/* #define RT_USING_DFS_ELMFAT */
 #define RT_USING_DFS_ROMFS
+/* #define RT_USING_DFS_DEVFS */
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
@@ -90,6 +92,8 @@
 #define DFS_FD_MAX					4
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		4
+/* Using working directory */
+#define DFS_USING_WORKDIR
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */

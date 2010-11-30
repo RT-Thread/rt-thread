@@ -29,20 +29,6 @@ extern unsigned char __bss_end;
 
 extern int rt_application_init(void);
 
-void dump_mem(const unsigned char* addr)
-{
-	int size;
-	rt_kprintf("---- memory: 0x%08x ----\n", addr);
-	for (size = 0; size < 32 * 4; size ++)
-	{
-		rt_kprintf("%02x ", (*addr) & 0xff);
-		addr ++;
-		if ((size + 1) % 16 == 0)
-			rt_kprintf("\n");
-	}
-	rt_kprintf("\n");
-}
-
 extern void tlb_refill_exception(void);
 extern void general_exception(void);
 extern void irq_exception(void);
