@@ -19,7 +19,7 @@
 #include <time.h>
 #include <s3c24x0.h>
 
-#define RTC_DEBUG
+// #define RTC_DEBUG
 
 #define RTC_ENABLE		RTCCON |=  0x01;	/*RTC read and write enable */
 #define RTC_DISABLE		RTCCON &= ~0x01;	/* RTC read and write disable */
