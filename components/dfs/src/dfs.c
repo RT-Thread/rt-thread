@@ -18,6 +18,8 @@
 #include <dfs_config.h>
 #include <dfs_file.h>
 
+#define NO_WORKING_DIR	"system does not support working dir\n"
+
 /* Global variables */
 const struct dfs_filesystem_operation* filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
 struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
@@ -273,6 +275,7 @@ char* dfs_normalize_path(const char* directory, const char* filename)
 #else
 	if ((directory == NULL) && (filename[0] != '/'))
 	{
+		rt_kprintf(NO_WORKING_DIR);
 		return RT_NULL;
 	}
 #endif

@@ -14,8 +14,6 @@
 #include <dfs.h>
 #include <dfs_file.h>
 
-#define NO_WORKING_DIR	"system does not support working dir\n"
-
 /**
  * @addtogroup FileApi
  */
@@ -43,7 +41,6 @@ int dfs_file_open(struct dfs_fd* fd, const char *path, int flags)
 	fullpath = dfs_normalize_path(RT_NULL, path);
 	if (fullpath == RT_NULL)
 	{
-		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 	}
 
@@ -213,7 +210,6 @@ int dfs_file_unlink(const char *path)
 	fullpath = dfs_normalize_path(RT_NULL, path);
 	if ( fullpath == RT_NULL)
 	{
-		rt_kprintf(NO_WORKING_DIR);
 		return -DFS_STATUS_EINVAL;
 	}
 
@@ -327,7 +323,6 @@ int dfs_file_stat(const char *path, struct stat *buf)
 	fullpath = dfs_normalize_path(RT_NULL, path);
 	if ( fullpath == RT_NULL )
 	{
-		rt_kprintf(NO_WORKING_DIR);
 		return -1;
 	}
 
@@ -395,7 +390,6 @@ int dfs_file_rename(const char* oldpath, const char* newpath)
 	oldfullpath = dfs_normalize_path(RT_NULL, oldpath);
 	if ( oldfullpath == RT_NULL )
 	{
-		rt_kprintf(NO_WORKING_DIR);
 		result = -DFS_STATUS_ENOENT;
 		goto __exit;
 	}
@@ -403,7 +397,6 @@ int dfs_file_rename(const char* oldpath, const char* newpath)
 	newfullpath = dfs_normalize_path(RT_NULL, newpath);
 	if ( newfullpath == RT_NULL )
 	{
-		rt_kprintf(NO_WORKING_DIR);
 		result = -DFS_STATUS_ENOENT;
 		goto __exit;
 	}
