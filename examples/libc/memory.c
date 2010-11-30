@@ -43,7 +43,9 @@ int libc_mem(void)
 
 	p = malloc(0);
 	if (p == NULL)
-		merror("malloc (0) failed.");
+	{
+		printf("malloc(0) returns NULL\n");
+	}
 
 	p = realloc(p, 0);
 	if (p != NULL)
