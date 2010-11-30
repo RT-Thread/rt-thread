@@ -127,7 +127,11 @@
 /* Number of volumes (logical drives) to be used. */
 
 
+#ifdef RT_DFS_ELM_MAX_SECTOR_SIZE
+#define _MAX_SS     RT_DFS_ELM_MAX_SECTOR_SIZE
+#else
 #define	_MAX_SS		512		/* 512, 1024, 2048 or 4096 */
+#endif
 /* Maximum sector size to be handled.
 /  Always set 512 for memory card and hard disk but a larger value may be
 /  required for floppy disk (512/1024) and optical disk (512/2048).
@@ -162,8 +166,11 @@
 /  If it is not the case, the value can also be set to 1 to improve the
 /  performance and code size. */
 
-
-#define _FS_REENTRANT	0			/* 0 or 1 */
+#ifdef RT_DFS_ELM_REENTRANT
+#define _FS_REENTRANT	RT_DFS_ELM_REENTRANT			/* 0 or 1 */
+#else
+#define _FS_REENTRANT	0
+#endif
 #define _FS_TIMEOUT		1000		/* Timeout period in unit of time ticks */
 #define	_SYNC_t			rt_mutex_t	/* O/S dependent type of sync object. e.g. HANDLE, OS_EVENT*, ID and etc.. */
 /* The _FS_REENTRANT option switches the reentrancy of the FatFs module.
