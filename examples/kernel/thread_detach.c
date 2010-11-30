@@ -91,9 +91,6 @@ static void _tc_cleanup()
 
 	/* 调度器解锁 */
 	rt_exit_critical();
-
-	/* 设置TestCase状态 */
-	tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_detach()
