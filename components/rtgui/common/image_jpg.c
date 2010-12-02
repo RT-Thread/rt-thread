@@ -1,10 +1,11 @@
+#include <rtthread.h>
+#include <rtgui/rtgui.h>
 
+#ifdef RTGUI_USING_JPEG
 #include <stdio.h>
 #include <stdlib.h>
 #include "jpeg/jpeglib.h"
 
-#include <rtthread.h>
-#include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/filerw.h>
 #include <rtgui/image_jpeg.h>
@@ -476,3 +477,4 @@ static rt_bool_t rtgui_image_jpeg_check(struct rtgui_filerw* file)
 	return is_JPG;
 }
 
+#endif

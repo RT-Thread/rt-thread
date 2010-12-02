@@ -26,7 +26,7 @@
 	/* support Chinese font */
 	#define RTGUI_USING_FONTHZ
 	/* support FreeType TTF font */
-	#define RTGUI_USING_TTF
+	// #define RTGUI_USING_TTF
 	/* use small size in RTGUI */
 	#define RTGUI_USING_SMALL_SIZE
 	/* use mouse cursor */
@@ -36,8 +36,8 @@
 
 	#define RTGUI_USING_STDIO_FILERW
 	#define RTGUI_IMAGE_BMP
-	#define RTGUI_IMAGE_PNG
-	#define RTGUI_IMAGE_JPEG
+	// #define RTGUI_IMAGE_PNG
+	// #define RTGUI_IMAGE_JPEG
 	#define RTGUI_USING_FONT12
 	#define RTGUI_USING_HZ_BMP
 	#define RTGUI_MEM_TRACE

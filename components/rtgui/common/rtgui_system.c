@@ -403,7 +403,6 @@ rt_err_t rtgui_thread_send_urgent(rt_thread_t tid, rtgui_event_t* event, rt_size
 	struct rtgui_thread* thread;
 
 	rtgui_event_dump(tid, event);
-	rt_kprintf("event size: %d\n", event_size);
 
 	/* find rtgui_thread */
 	thread = (struct rtgui_thread*) (tid->user_data);
@@ -424,7 +423,6 @@ rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t
 	struct rt_mailbox ack_mb;
 
 	rtgui_event_dump(tid, event);
-	rt_kprintf("event size: %d\n", event_size);
 
 	/* init ack mailbox */
 	r = rt_mb_init(&ack_mb, "ack", &ack_buffer, 1, 0);

@@ -1,7 +1,9 @@
-#include "libpng/png.h"
 #include <rtthread.h>
-#include <rtgui/image_png.h>
 #include <rtgui/rtgui_system.h>
+
+#ifdef RTGUI_USING_PNG
+#include "libpng/png.h"
+#include <rtgui/image_png.h>
 
 #define PNG_MAGIC_LEN       8
 
@@ -328,3 +330,4 @@ void rtgui_image_png_init()
 	/* register png on image system */
 	rtgui_image_register_engine(&rtgui_image_png_engine);
 }
+#endif

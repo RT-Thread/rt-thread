@@ -156,7 +156,7 @@ static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* t
 		if (bmp_font->char_width != NULL)
 		{
 			/* get width for each character */
-			while (*text < 0x80)
+			while (*text && (*text < 0x80))
 			{
 				rect->x2 += bmp_font->char_width[*text - bmp_font->first_char];
 				text ++;
