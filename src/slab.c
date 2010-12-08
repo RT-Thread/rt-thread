@@ -342,7 +342,8 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 	heap_end	= RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
 
 	if(heap_start >= heap_end) {
-		rt_kprintf("rt_system_heap_init, error begin address 0x%x, and end address 0x%x\n", (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+		rt_kprintf("rt_system_heap_init, wrong address[0x%x - 0x%x]\n", 
+			(rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
 		return;
 	}
 	
@@ -353,7 +354,8 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 	rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
 #ifdef RT_SLAB_DEBUG
-	rt_kprintf("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n", heap_start, heap_end, limsize, npages);
+	rt_kprintf("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n", heap_start, heap_end, 
+	limsize, npages);
 #endif
 
 	/* init pages */
@@ -441,6 +443,52 @@ rt_inline int zoneindex(rt_uint32_t *bytes)
  */
 
 /*@{*/
+
+/*
+ * This function will allocate the numbers page with specified size
+ * in page memory.
+ *
+ * @param size the size of memory to be allocated.
+ * @note this function is used for RT-Thread Application Module
+ */
+void *rt_malloc_page(rt_size_t npages)
+{
+	void* chunk;
+
+	chunk = rt_page_alloc(npages);
+	if (chunk == RT_NULL) return RT_NULL;
+
+	/* update memory usage */
+#ifdef RT_MEM_STATS
+	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+	used_mem += npages * RT_MM_PAGE_SIZE;
+	if (used_mem > max_mem) max_mem = used_mem;
+	rt_sem_release(&heap_sem);
+#endif
+
+	return chunk;
+}
+
+/*
+ * This function will release the previously allocated memory page 
+ * by rt_malloc_page.
+ *
+ * @param page_ptr the page address to be released.
+ * @param npages the number of page shall be released.
+ * 
+ * @note this function is used for RT-Thread Application Module
+ */
+void rt_free_page(void *page_ptr, rt_size_t npages)
+{
+	rt_page_free(page_ptr, npages);
+
+	/* update memory usage */
+#ifdef RT_MEM_STATS
+	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+	used_mem -= npages * RT_MM_PAGE_SIZE;
+	rt_sem_release(&heap_sem);
+#endif
+}
 
 /**
  * This function will allocate a block from system heap memory.

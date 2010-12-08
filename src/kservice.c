@@ -942,7 +942,10 @@ void rt_hw_console_output(const char* str)
 #elif defined(__CC_ARM)
 __weak void rt_hw_console_output(const char* str)
 #elif defined(__IAR_SYSTEMS_ICC__)
-__weak void rt_hw_console_output(const char* str)
+#if __VER__ > 540
+__weak 
+#endif
+void rt_hw_console_output(const char* str)
 #endif
 {
     /* empty console output */

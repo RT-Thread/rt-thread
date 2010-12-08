@@ -416,6 +416,7 @@ void rt_timer_check(void)
 
 #ifdef RT_USING_TIMER_SOFT
 static struct rt_thread timer_thread;
+ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 static struct rt_semaphore timer_sem;
 
