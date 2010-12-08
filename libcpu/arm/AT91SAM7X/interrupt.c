@@ -83,7 +83,7 @@ void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_ha
 {
 	if(vector >= 0 && vector < MAX_HANDLERS)
 	{
-		if (*old_handler != RT_NULL) *old_handler = (rt_isr_handler_t)AT91C_BASE_AIC->AIC_SVR[vector];
+		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t)AT91C_BASE_AIC->AIC_SVR[vector];
 		if (new_handler != RT_NULL) AT91C_BASE_AIC->AIC_SVR[vector] = (rt_uint32_t)new_handler;
 	}
 }
