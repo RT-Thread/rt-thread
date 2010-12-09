@@ -13,7 +13,11 @@
 #define FINSH_CMD_SIZE		80
 
 #define FINSH_OPTION_ECHO	0x01
+#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#define FINSH_PROMPT		finsh_get_prompt()
+#else
 #define FINSH_PROMPT		"finsh>>"
+#endif
 
 #ifdef FINSH_USING_HISTORY
 enum input_stat

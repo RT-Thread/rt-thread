@@ -84,6 +84,21 @@ int isprint(unsigned char ch)
 #endif
 #endif
 
+#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#include <dfs_posix.h>
+const char* finsh_get_prompt()
+{
+	#define _PROMPT "finsh "
+	static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};
+	
+	/* get current working directory */
+	getcwd(&finsh_prompt[6], RT_CONSOLEBUF_SIZE - 8);
+	strcat(finsh_prompt, ">");
+
+	return finsh_prompt;
+}
+#endif
+
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
 	RT_ASSERT(shell != RT_NULL);
@@ -172,7 +187,7 @@ void finsh_auto_complete(char* prefix)
 
 	rt_kprintf("\n");
 	list_prefix(prefix);
-	rt_kprintf("finsh>>%s", prefix);
+	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 }
 
 void finsh_run_line(struct finsh_parser* parser, const char *line)
