@@ -451,7 +451,7 @@ void OP_call()
 	switch (parameters)
 	{
 	case 0:
-		r = f();
+		r = f(0);
 		break;
 
 	case 1:
