@@ -33,16 +33,24 @@ src/core/ipv4/inet_chksum.c
 src/core/ipv4/ip.c
 src/core/ipv4/ip_addr.c
 src/core/ipv4/ip_frag.c
+src/netif/etharp.c
+src/netif/ethernetif.c
+src/netif/loopif.c
+src/netif/slipif.c
+""")
+
+snmp_src = Split("""
 src/core/snmp/asn1_dec.c
 src/core/snmp/asn1_enc.c
 src/core/snmp/mib2.c
 src/core/snmp/mib_structs.c
 src/core/snmp/msg_in.c
 src/core/snmp/msg_out.c
-src/netif/etharp.c
-src/netif/ethernetif.c
-src/netif/loopif.c
-src/netif/slipif.c
+""")
+if GetDepend(['RT_LWIP_PPP']):
+    src += ppp_src
+
+ppp_src = Split("""
 src/netif/ppp/auth.c
 src/netif/ppp/chap.c
 src/netif/ppp/chpms.c
@@ -63,8 +71,14 @@ path = [RTT_ROOT + '/components/net/lwip/src',
     RTT_ROOT + '/components/net/lwip/src/include', 
     RTT_ROOT + '/components/net/lwip/src/include/ipv4', 
     RTT_ROOT + '/components/net/lwip/src/arch/include', 
-    RTT_ROOT + '/components/net/lwip/src/include/netif', 
-    RTT_ROOT + '/components/net/lwip/src/netif/ppp']
+    RTT_ROOT + '/components/net/lwip/src/include/netif']
+
+if GetDepend(['RT_LWIP_SNMP']):
+    src += snmp_src
+
+if GetDepend(['RT_LWIP_PPP']):
+    src += ppp_src
+    path += [RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
 group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 
