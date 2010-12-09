@@ -444,14 +444,28 @@ void ls(const char* pathname)
 {
 	struct stat stat;
 	int length;
-	char* fullpath;
+	char *fullpath, *path;
 
-	fullpath = rt_malloc(DFS_PATH_MAX + 1);
-	if (fullpath == RT_NULL) return; /* out of memory */
-	/* list directory */
-	if ( dfs_file_open(&fd, pathname, DFS_O_DIRECTORY) == 0 )
+	fullpath = RT_NULL;
+	if (pathname == RT_NULL)
 	{
-		rt_kprintf("Directory %s:\n", pathname);
+#ifdef DFS_USING_WORKDIR
+		/* open current working directory */
+		path = rt_strdup(working_directory);
+#else
+		path = rt_strdup("/");
+#endif
+		if (path == RT_NULL) return ; /* out of memory */
+	}
+	else
+	{
+		path = (char*)pathname;
+	}
+
+	/* list directory */
+	if ( dfs_file_open(&fd, path, DFS_O_DIRECTORY) == 0 )
+	{
+		rt_kprintf("Directory %s:\n", path);
 		do
 		{
 			rt_memset(&dirent, 0, sizeof(struct dirent));
@@ -461,25 +475,24 @@ void ls(const char* pathname)
 				rt_memset(&stat, 0, sizeof(struct stat));
 
 				/* build full path for each file */
-				if (pathname[strlen(pathname) - 1] != '/')
-					rt_snprintf(fullpath, DFS_PATH_MAX + 1, "%s%c%s", pathname, '/', dirent.d_name);
-				else
-					rt_snprintf(fullpath, DFS_PATH_MAX + 1, "%s%s", pathname, dirent.d_name);
+				fullpath = dfs_normalize_path(path, dirent.d_name);
+				if (fullpath == RT_NULL) break;
 
 				if (dfs_file_stat(fullpath, &stat) == 0)
 				{
+					rt_kprintf("%-20s", dirent.d_name);
 					if ( DFS_S_ISDIR(stat.st_mode))
 					{
-						rt_kprintf("%s\t\t<DIR>\n", dirent.d_name);
+						rt_kprintf("%-25s\n", "<DIR>");
 					}
 					else
 					{
-						rt_kprintf("%s\t\t%lu\n", dirent.d_name, stat.st_size);
+						rt_kprintf("%-25lu\n", stat.st_size);
 					}
 				}
 				else
 					rt_kprintf("BAD file: %s\n", dirent.d_name);
-					
+				rt_free(fullpath);
 			}
 		}while(length > 0);
 
@@ -489,7 +502,7 @@ void ls(const char* pathname)
 	{
 		rt_kprintf("No such directory\n");
 	}
-	rt_free(fullpath);
+	if (pathname == RT_NULL) rt_free(path);
 }
 FINSH_FUNCTION_EXPORT(ls, list directory contents)
 

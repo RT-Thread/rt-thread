@@ -74,7 +74,10 @@ void dfs_lock()
 	rt_err_t result;
 
 	result = rt_mutex_take(&fslock, RT_WAITING_FOREVER);
-	RT_ASSERT(result == RT_EOK);
+	if (result != RT_EOK)
+	{
+		RT_ASSERT(0);
+	}
 }
 
 /**
@@ -350,6 +353,11 @@ up_one:
 	}
 
 	*dst = '\0';
+
+	/* remove '/' in the end of path if exist */
+	dst --;
+	if ((dst != fullpath) && (*dst == '/')) *dst = '\0';
+
 	return fullpath;
 }
 /*@}*/
