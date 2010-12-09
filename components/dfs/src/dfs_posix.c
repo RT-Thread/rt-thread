@@ -355,6 +355,8 @@ int mkdir (const char *path, mode_t mode)
 	int result;
 
 	fd = fd_new();
+	if (fd == -1) { rt_kprintf("no fd\n"); return -1; }
+
 	d = fd_get(fd);
 
 	result = dfs_file_open(d, path, DFS_O_DIRECTORY | DFS_O_CREAT);
@@ -362,10 +364,11 @@ int mkdir (const char *path, mode_t mode)
 	if (result < 0)
 	{
 		rt_set_errno(result);
+		fd_put(d);
 		return -1;
 	}
 
-	fd_put(d);
+	dfs_file_close(d);
 	fd_put(d);
 	return 0;
 }
@@ -597,7 +600,15 @@ int chdir(const char *path)
 	char* fullpath;
 	DIR* d;
 
-	if(path == RT_NULL || rt_strlen(path) > DFS_PATH_MAX)
+	if(path == RT_NULL)
+	{
+		dfs_lock();
+		rt_kprintf("%s\n", working_directory);
+		dfs_unlock();
+		return 0;
+	}
+
+	if (rt_strlen(path) > DFS_PATH_MAX)
 		return -1;
 
 	fullpath = dfs_normalize_path(NULL, path);
@@ -625,6 +636,9 @@ int chdir(const char *path)
 
 	return 0;
 }
+#ifdef RT_USING_FINSH
+FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
+#endif
 #endif
 
 /**
@@ -639,9 +653,9 @@ int chdir(const char *path)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
-	dfs_lock();
+	rt_enter_critical();
 	rt_strncpy(buf, working_directory, size);
-	dfs_unlock();
+	rt_exit_critical();
 #else
 	rt_kprintf("WARNING: not support working directory\n");
 #endif

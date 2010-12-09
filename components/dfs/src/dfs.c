@@ -28,7 +28,7 @@ struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
 static struct rt_mutex fslock;
 
 #ifdef DFS_USING_WORKDIR
-char working_directory[DFS_PATH_MAX];
+char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 #ifdef DFS_USING_STDIO
