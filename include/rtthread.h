@@ -186,10 +186,6 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
-#ifdef RT_USING_SLAB
-void *rt_page_alloc(rt_size_t npages);
-void rt_page_free(void *addr, rt_size_t npages);
-#endif
 #endif
 /*@}*/
 

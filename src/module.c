@@ -52,6 +52,9 @@ struct rt_mem_head
 	struct rt_mem_head *next;		/* next valid memory block */
 };
 
+extern void *rt_malloc_page(rt_size_t npages);
+extern void rt_free_page(void *page_ptr, rt_size_t npages);
+
 static rt_module_t rt_current_module = RT_NULL;
 rt_list_t rt_module_symbol_list;
 struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
@@ -676,7 +679,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 
 			/* free page */
 			page = rt_list_entry(list->next, struct rt_module_page, list);
-			rt_page_free(page->ptr, page->npage);
+			rt_free_page(page->ptr, page->npage);
 			rt_list_remove(list->next);
 		}	
 
@@ -743,7 +746,7 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 
 	/* allocate pages from system heap */
 	npage = (nu * sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
-	cp = rt_page_alloc(npage);
+	cp = rt_malloc_page(npage);
 	if(!cp) return RT_NULL;
 	
 	/* allocate page list node from mpool */
@@ -785,7 +788,7 @@ void *rt_module_malloc(rt_size_t size)
 		rt_uint32_t npage = size / RT_MM_PAGE_SIZE;
 
 		/* allocate pages from system heap */
-		cp = rt_page_alloc(npage);
+		cp = rt_malloc_page(npage);
 		if(!cp) return RT_NULL;
 
 		/* allocate page list node from mpool */
