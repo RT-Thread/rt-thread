@@ -37,4 +37,8 @@
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
+
+/* Using newlib as libc */
+#define RT_USING_NEWLIB
+
 #endif
