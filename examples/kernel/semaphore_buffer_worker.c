@@ -135,7 +135,7 @@ static rt_bool_t rb_get(struct rb* rb, rt_uint8_t *ptr, rt_uint16_t length)
 static void thread_entry(void* parameter)
 {
 	rt_bool_t result;
-	rt_uint8_t data_buffer[BUFFER_ITEM];
+	rt_uint8_t data_buffer[BUFFER_ITEM + 1];
 
 	while (1)
 	{
@@ -145,6 +145,7 @@ static void thread_entry(void* parameter)
 		result = rb_get(&working_rb, &data_buffer[0], BUFFER_ITEM);
 		/* 释放信号量 */
 		rt_sem_release(sem);
+		data_buffer[BUFFER_ITEM] = '\0';
 
 		if (result == RT_TRUE)
 		{

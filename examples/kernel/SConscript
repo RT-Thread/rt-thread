@@ -31,7 +31,8 @@ heap_malloc.c
 heap_realloc.c
 memp_simple.c
 """)
+CPPDEFINES = ['RT_USING_TC']
 
-group = DefineGroup('examples', src, depend = [''])
+group = DefineGroup('examples', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')
