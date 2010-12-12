@@ -6,7 +6,7 @@
 #include "demo_view.h"
 #include <rtgui/widgets/combobox.h>
 
-struct rtgui_combobox_item items[] = 
+struct rtgui_listbox_item items[] = 
 {
 	{"item 1", RT_NULL},
 	{"item 2", RT_NULL},
