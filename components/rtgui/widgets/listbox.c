@@ -26,7 +26,7 @@ static void _rtgui_listbox_constructor(struct rtgui_listbox *box)
 
 	box->current_item = 0;
 	box->items_count = 0;
-	box->page_items = 0;
+	box->page_items = 1;
 	box->on_item = 0;
 
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
@@ -317,6 +317,7 @@ rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt
 	    box->items_count = count;
 
 		box->page_items = rtgui_rect_height(*rect) / (2 + rtgui_theme_get_selected_height());
+		if (box->page_items == 0) box->page_items = 1;
 		rtgui_widget_set_rect(RTGUI_WIDGET(box), rect);
 	}
 

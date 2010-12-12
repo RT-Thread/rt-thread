@@ -4,13 +4,7 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/image.h>
 #include <rtgui/widgets/window.h>
-
-/* combobox item */
-struct rtgui_combobox_item
-{
-    char* name;
-	rtgui_image_t *image;
-};
+#include <rtgui/widgets/listbox.h>
 
 /** Gets the type of a combobox */
 #define RTGUI_COMBOBOX_TYPE       (rtgui_combobox_type_get())
@@ -32,24 +26,24 @@ struct rtgui_combobox
 	/* pull down window */
 	struct rtgui_win* pd_win;
 	rt_bool_t pd_pressed;
-	rt_uint16_t pd_win_width;
-	rt_uint16_t pd_win_height;
 
 	/* combobox items */
-	struct rtgui_combobox_item* items;
+	struct rtgui_listbox_item* items;
 	rt_uint16_t items_count;
 	rt_uint16_t current_item;
 
 	/* call back */
-	rt_bool_t (*on_selected) (struct rtgui_widget* widget, struct rtgui_event* event);
+	void (*on_selected) (struct rtgui_widget* widget, struct rtgui_event* event);
 };
 typedef struct rtgui_combobox rtgui_combobox_t;
 
 rtgui_type_t *rtgui_combobox_type_get(void);
-rtgui_combobox_t *rtgui_combobox_create();
+rtgui_combobox_t *rtgui_combobox_create(struct rtgui_listbox_item* items, rt_uint16_t counter, struct rtgui_rect* rect);
 void rtgui_combobox_destroy(rtgui_combobox_t* box);
 
 rt_bool_t rtgui_combobox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
-struct rtgui_combobox_item* rtgui_combox_get_select(struct rtgui_combobox* box);
+struct rtgui_listbox_item* rtgui_combox_get_select(struct rtgui_combobox* box);
+
+void rtgui_combobox_set_onselected(struct rtgui_combobox* box, rtgui_onitem_func_t func);
 
 #endif
