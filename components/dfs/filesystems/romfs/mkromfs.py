@@ -12,6 +12,7 @@ def mkromfs_output(out):
 def mkromfs_file(filename, arrayname):
     f = file(filename, "rb")
     arrayname = arrayname.replace('.', '_')
+    arrayname = arrayname.replace('-', '_')
     mkromfs_output('const static unsigned char %s[] = {\n' % arrayname)
 
     count = 0
@@ -76,6 +77,7 @@ def mkromfs_dir(dirname, is_root = False):
         items = subpath.split('\\')
         item_name = string.join(items, '_')
         item_name = item_name.replace('.', '_')
+        item_name = item_name.replace('-', '_')
         subpath = subpath.replace('\\', '/')
         if subpath[0] == '/':
             subpath = subpath[1:]
@@ -98,6 +100,7 @@ def mkromfs_dir(dirname, is_root = False):
         items = subpath.split('\\')
         item_name = string.join(items, '_')
         item_name = item_name.replace('.', '_')
+        item_name = item_name.replace('-', '_')
         subpath = subpath.replace('\\', '/')
         if subpath[0] == '/':
             subpath = subpath[1:]
