@@ -217,7 +217,7 @@ class Win32Spawn:
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False)
         data, err = proc.communicate()
@@ -276,14 +276,14 @@ def PrepareBuilding(env, root_directory):
     #env['LINKCOMSTR'] = "Link $TARGET"
 
     # board build script
-    objs = SConscript('SConscript', variant_dir='bsp', duplicate=0)
+    objs = SConscript('SConscript', variant_dir='build/bsp', duplicate=0)
     Repository(Rtt_Root)
     # include kernel
-    objs.append(SConscript('src/SConscript'))
+    objs.append(SConscript('src/SConscript', variant_dir='build/src', duplicate=0))
     # include libcpu
-    objs.append(SConscript('libcpu/SConscript'))
+    objs.append(SConscript('libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
     # include components
-    objs.append(SConscript('components/SConscript'))
+    objs.append(SConscript('components/SConscript', variant_dir='build/components', duplicate=0))
 
     return objs
 
