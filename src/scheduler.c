@@ -22,6 +22,7 @@
  * 2010-04-11     yi.qiu       add module feature
  * 2010-07-13     Bernard      fix the maximal number of rt_scheduler_lock_nest 
  *                             issue found by kuronca
+ * 2010-12-13     Bernard      add defunct list initialization even if not use heap.
  */
 
 #include <rtthread.h>
@@ -148,10 +149,8 @@ void rt_system_scheduler_init(void)
     rt_memset(rt_thread_ready_table, 0, sizeof(rt_thread_ready_table));
 #endif
 
-#ifdef RT_USING_HEAP
     /* init thread defunct */
     rt_list_init(&rt_thread_defunct);
-#endif
 }
 
 /**
