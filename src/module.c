@@ -163,6 +163,8 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 		rt_kprintf("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val);
 #endif		
 	break;
+	case R_ARM_RELATIVE:		
+		 break;
 	default:
 		return -1;
 	}
@@ -337,14 +339,14 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 #ifdef RT_MODULE_DEBUG
 				rt_kprintf("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx);
 #endif
-				if(sym->st_shndx != 0)
+				if(sym->st_shndx != SHT_NULL || ELF_ST_TYPE(sym->st_info) == STB_LOCAL )	
 				{	
 					rt_module_arm_relocate(
 						module, 
 						rel, 
 						(Elf32_Addr)(module->module_space + sym->st_value));
 				}
-				else if(linked == RT_FALSE)
+				else if(!linked)
 				{
 					Elf32_Addr addr;
 #ifdef RT_MODULE_DEBUG

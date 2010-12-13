@@ -161,6 +161,7 @@ typedef struct {
 #define	R_ARM_ABS32		2
 #define	R_ARM_GLOB_DAT	21
 #define	R_ARM_JUMP_SLOT	22
+#define	R_ARM_RELATIVE	23
 #define	R_ARM_PLT32		27
 #define	R_ARM_CALL			28
 #define	R_ARM_JUMP24		29
