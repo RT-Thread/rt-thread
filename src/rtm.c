@@ -13,6 +13,10 @@
  */
 
 #include <rtthread.h> 
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 /* some buildin kernel symbol */
 
@@ -142,25 +146,39 @@ RTM_EXPORT(rt_timer_control)
 /* 
  * kservice interface symbol
  */
+RTM_EXPORT(rt_memcpy)
+RTM_EXPORT(rt_memset)
+RTM_EXPORT(rt_kprintf)
+RTM_EXPORT(rt_sprintf)
+
+/* 
+ * misc interface symbol
+ */
 extern int __aeabi_ddiv; 
 extern int __aeabi_dmul;
 extern int __aeabi_i2d;
 extern int __aeabi_uidiv;
 extern int __aeabi_uidivmod;
 extern int __aeabi_d2iz;
-extern int rand;
 
-RTM_EXPORT(rt_kprintf)
-RTM_EXPORT(rt_memcpy)
-RTM_EXPORT(rt_memset)
-RTM_EXPORT(rt_sprintf)
 RTM_EXPORT(__aeabi_ddiv)
 RTM_EXPORT(__aeabi_dmul)
 RTM_EXPORT(__aeabi_i2d)
 RTM_EXPORT(__aeabi_uidiv)
 RTM_EXPORT(__aeabi_uidivmod)
 RTM_EXPORT(__aeabi_d2iz)
+RTM_EXPORT(strcmp)
 RTM_EXPORT(rand)
+
+#ifdef RT_USING_NEWLIB
+
+#include <unistd.h>
+
+RTM_EXPORT(snprintf)
+RTM_EXPORT(access)
+RTM_EXPORT(__assert_func)
+
+#endif
 
 #ifdef RT_USING_RTGUI
 /* FIX ME , should be removed from here */
