@@ -154,6 +154,7 @@ RTM_EXPORT(rt_sprintf)
 /* 
  * misc interface symbol
  */
+extern int __aeabi_idiv; 
 extern int __aeabi_ddiv; 
 extern int __aeabi_dmul;
 extern int __aeabi_i2d;
@@ -165,10 +166,12 @@ RTM_EXPORT(__aeabi_ddiv)
 RTM_EXPORT(__aeabi_dmul)
 RTM_EXPORT(__aeabi_i2d)
 RTM_EXPORT(__aeabi_uidiv)
+RTM_EXPORT(__aeabi_idiv)
 RTM_EXPORT(__aeabi_uidivmod)
 RTM_EXPORT(__aeabi_d2iz)
 RTM_EXPORT(strcmp)
 RTM_EXPORT(rand)
+RTM_EXPORT(memset)
 
 #ifdef RT_USING_NEWLIB
 
