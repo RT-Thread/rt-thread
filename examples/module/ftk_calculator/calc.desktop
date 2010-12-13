@@ -1,0 +1,3 @@
+<applications>
+<application name="calc" exec="/ftk/apps/calculator.so" init="ftk_app_calc_create" />
+</applications>
