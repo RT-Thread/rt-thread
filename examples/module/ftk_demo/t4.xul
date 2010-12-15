@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window value="Image">
+	<image  id="1" x="0" y="5" w="$ww/2" h="3*$wh/4-5" value="jpeg1.jpg" />
+	<image  id="1" x="$ww/2" y="5" w="$ww/2" h="3*$wh/4-5" attr="$FTK_ATTR_BG_CENTER" value="Acrobat.png" />
+	
+	<button id="99" x="5" y="3*$wh/4" w="$ww/2-5" h="50" value="Save" />
+	<button id="100" x="$ww/2" y="3*$wh/4" w="$ww/2-5" h="50" value="Quit" />
+</window>

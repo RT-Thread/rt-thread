@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window value="background">
+	<button id="99" x="5" y="30" w="64" h="64" attr="$FTK_ATTR_INSENSITIVE"
+		bg_image[disable]="Flickr.png" bg[disable]="ffff0000"/>
+	
+	<button id="99" x="$ww/2-32" y="30" w="64" h="64" 
+		bg[normal]="ffff0000" bg[focused]="ff00ff00" bg[active]="ff0000ff"
+		bg_image[normal]="Acrobat.png" bg_image[focused]="Chat.png" bg_image[active]="Flickr.png" />
+
+	<button id="99" x="$ww-70" y="30" w="64" h="64" 
+		bg_image[normal]="Acrobat.png" bg_image[focused]="Chat.png" bg_image[active]="Flickr.png" />
+
+	<button id="99" x="5" y="3*$wh/4" w="$ww/2-5" h="50" value="Save" />
+	<button id="100" x="$ww/2" y="3*$wh/4" w="$ww/2-5" h="50" value="Quit" />
+</window>

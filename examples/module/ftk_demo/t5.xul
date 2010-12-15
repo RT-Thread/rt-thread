@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window value="Check button">
+	<check_button  id="1" x="5" y="10" w="$ww/2" h="50" checked="1" value="Check Option1" />
+	<check_button  id="3" x="5" y="60" w="$ww/2" h="50" checked="0" value="Check Option2" />
+	<check_button  id="5" x="5" y="110" w="$ww/2" h="50" checked="1" value="Check Option3" />
+	
+	<button id="99" x="5" y="3*$wh/4" w="$ww/2-5" h="50" value="Save" />
+	<button id="100" x="$ww/2" y="3*$wh/4" w="$ww/2-5" h="50" value="Quit" />
+</window>

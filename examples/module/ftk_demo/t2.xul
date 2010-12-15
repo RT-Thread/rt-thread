@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window value="ProgressBar">
+	<label  id="1" x="5" y="5" w="$ww/4" h="30" value="Progress1" />
+	<progress_bar id="2" x="$ww/4+5" y="5" w="3*$ww/4-15" h="30" value="0" />
+	
+	<label  id="3" x="5" y="40" w="$ww/4" h="30" value="Progress2" />
+	<progress_bar id="4" x="$ww/4+5" y="40" w="3*$ww/4-15" h="30" value="50" />
+	
+	<label  id="5" x="5" y="75" w="$ww/4" h="30" value="Progress3" />
+	<progress_bar id="6" x="$ww/4+5" y="75" w="3*$ww/4-15" h="30" value="100" />
+	
+	<button id="99" x="5" y="3*$wh/4" w="$ww/2-5" h="50" value="Save" />
+	<button id="100" x="$ww/2" y="3*$wh/4" w="$ww/2-5" h="50" value="Quit" />
+</window>

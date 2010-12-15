@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window value="Radio button">
+	<radio_group x="0" y="0" w="$ww" h="$wh/3">
+	<radio_button  id="1" x="5" y="10" w="$ww/2" h="50" checked="1" value="Radio Option1" />
+	<radio_button  id="3" x="5" y="60" w="$ww/2" h="50" checked="0" value="Radio Option2" />
+	</radio_group>
+	
+	<radio_group x="0" y="$wh/3+5" w="$ww" h="$wh/3">
+	<radio_button  id="1" x="5" y="10" w="$ww/2" h="50" checked="1" value="Radio Option1" />
+	<radio_button  id="3" x="5" y="60" w="$ww/2" h="50" checked="0" value="Radio Option2" />
+	</radio_group>
+
+	<button id="99" x="5" y="3*$wh/4" w="$ww/2-5" h="50" value="Save" />
+	<button id="100" x="$ww/2" y="3*$wh/4" w="$ww/2-5" h="50" value="Quit" />
+</window>
