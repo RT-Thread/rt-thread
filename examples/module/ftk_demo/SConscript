@@ -1,0 +1,49 @@
+import os
+
+Import('env')
+Import('RTT_ROOT')
+Import('rtconfig')
+Import('TARGET')
+
+RTMLINKER = RTT_ROOT + '/tools/rtmlinker.exe '
+
+# group definitions
+CPATH = [RTT_ROOT + '/include',
+		RTT_ROOT + '/examples/module',
+		RTT_ROOT + '/components/external/ftk/ftk/apps/common',
+		RTT_ROOT + '/components/external/ftk/ftk/src/os/rt-thread',
+		RTT_ROOT + '/components/external/ftk/ftk/src',
+		RTT_ROOT + '/components/dfs', 
+		RTT_ROOT + '/components/dfs/include',
+		RTT_ROOT + '/components/libc/newlib']
+
+src = Glob('*.c')
+
+def GenerateDesktopApp(name):
+        xml = '<applications>\n<application name=\"%s\" exec=\"/ftk/apps/%s.so\" init=\"ftk_app_%s_create\" />\n</applications>\n' % (name, name, name)
+
+        f = file(name + '.desktop', 'wb')
+        f.write(xml)
+        f.close
+
+def Demo(env, name):
+	if name == 'ftk_app_demo':
+		return
+
+	target = name + '.so'
+	module_env = env.Clone(CCFLAGS = ' -DRT_THREAD -DFTK_AS_PLUGIN -mcpu=arm920t -O0 -fPIC')
+	module_env.Append(CPPPATH = CPATH)
+	module_env.Replace(LINKFLAGS = ('-z max-page-size=0x4 -shared -fPIC -e ftk_app_%s_create -nostdlib' % name))
+	module_env.Program(name + '.so', [name + '.c', 'ftk_app_demo.o']) 
+	POST_ACTION = RTMLINKER + ' -l ' + TARGET + (' -o %s.mo ' % name) + ('ftk_demo/%s.so' % name)
+	module_env.AddPostAction(target, POST_ACTION)
+	module_env.Clean(target, name + '.desktop')
+	GenerateDesktopApp(name)
+
+demo_env = env.Clone(CCFLAGS = ' -DRT_THREAD -DFTK_AS_PLUGIN -mcpu=arm920t -O0 -fPIC')
+demo_env.Append(CPPPATH = CPATH)
+demo_env.Object('ftk_app_demo.c') 
+
+for item in src:
+	item = item.rstr()
+	Demo(env, item.split('.c')[0])

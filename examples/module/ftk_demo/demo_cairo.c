@@ -1,4 +1,5 @@
 #include <math.h>
+#ifdef ENABLE_CAIRO
 #include "ftk_cairo.h"
 
 static cairo_t* cr = NULL;
@@ -371,3 +372,4 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 
 	return 0;
 }
+#endif

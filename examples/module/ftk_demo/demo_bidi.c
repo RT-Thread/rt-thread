@@ -28,6 +28,17 @@ static Ret timeout(void* ctx)
 	}
 }
 
+#ifdef FTK_AS_PLUGIN
+#include "ftk_app_demo.h"
+FTK_HIDE int FTK_MAIN(int argc, char* argv[]);
+FtkApp* ftk_app_demo_bidi_create()
+{
+	return ftk_app_demo_create(_("bidi"), ftk_main);
+}
+#else
+#define FTK_HIDE extern
+#endif /*FTK_AS_PLUGIN*/
+
 FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 {
 	int width = 0;
