@@ -40,8 +40,11 @@ widgets/box.c
 widgets/button.c
 widgets/checkbox.c
 widgets/container.c
+widgets/combobox.c
 widgets/iconbox.c
 widgets/label.c
+widgets/listctrl.c
+widgets/menu.c
 widgets/progressbar.c
 widgets/radiobox.c
 widgets/slider.c
