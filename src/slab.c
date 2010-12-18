@@ -12,6 +12,7 @@
  * 2008-07-12     Bernard      the first version
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-23     yi.qiu      add module memory allocator
+ * 2010-12-18     yi.qiu      fix zone release bug 
  */
 
 /*
@@ -507,7 +508,6 @@ void *rt_malloc(rt_size_t size)
 	slab_zone *z;
 	rt_int32_t zi;
 	slab_chunk *chunk;
-	rt_base_t interrupt_level;
 	struct memusage *kup;
 
 	/* zero size, return RT_NULL */
@@ -818,7 +818,7 @@ void rt_free(void *ptr)
 	/* get memory usage */
 #ifdef RT_SLAB_DEBUG
 	{
-		rt_uint32 addr = ((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
+		rt_uint32_t addr = ((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
 		rt_kprintf("free a memory 0x%x and align to 0x%x, kup index %d\n",
 			(rt_uint32_t)ptr,
 			(rt_uint32_t)addr,
@@ -926,7 +926,7 @@ void rt_free(void *ptr)
 			rt_sem_release(&heap_sem);
 
 			/* release pages */
-			rt_page_free(z, zone_size);
+			rt_page_free(z, zone_size / RT_MM_PAGE_SIZE);
 			return;
 		}
 	}
