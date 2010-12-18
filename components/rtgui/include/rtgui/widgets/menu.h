@@ -1,9 +1,9 @@
 #ifndef __RTGUI_MENU_H__
 #define __RTGUI_MENU_H__
-:q
+
 #include <rtgui/image.h>
-#include <rtgui/widgets/label.h>
 #include <rtgui/widgets/window.h>
+#include <rtgui/widgets/listctrl.h>
 
 /* rtgui menu item */
 enum rtgui_menu_item_type
@@ -33,14 +33,6 @@ struct rtgui_menu_item
 };
 typedef struct rtgui_menu_item rtgui_menu_item_t;
 
-rtgui_menu_item_t items[] = 
-{
-	{RTGUI_ITEM_NORMAL, "item #1", RT_NULL, RT_NULL, 0, RT_NULL},
-	{RTGUI_ITEM_NORMAL, "item #2", RT_NULL, RT_NULL, 0, RT_NULL},
-	{RTGUI_ITEM_SEPARATOR, RT_NULL, RT_NULL, RT_NULL, 0, RT_NULL},
-	{RTGUI_ITEM_NORMAL, "item #3", RT_NULL, RT_NULL, 0, RT_NULL},
-};
-
 /** Gets the type of a menu */
 #define RTGUI_MENU_TYPE       (rtgui_menu_type_get())
 /** Casts the object to an rtgui_menu */
@@ -57,10 +49,11 @@ struct rtgui_menu
 	/* menu items */
 	const struct rtgui_menu_item *items;
 	rt_uint16_t items_count;
-	rt_uint16_t current_item;
 
 	/* parent menu */
 	struct rtgui_menu *parent_menu;
+	struct rtgui_menu *sub_menu;
+
 	/* menu item list control */
 	struct rtgui_listctrl *items_list;
 

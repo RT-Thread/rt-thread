@@ -4,7 +4,6 @@
 
 static rt_bool_t rtgui_combobox_pulldown_hide(struct rtgui_widget* widget, struct rtgui_event* event);
 const static rt_uint8_t down_arrow[]  = {0xff, 0x7e, 0x3c, 0x18};
-const static rt_uint8_t right_arrow[] = {0x80, 0xc0, 0xe0, 0xf0, 0xe0, 0xc0, 0x80};
 
 static void _rtgui_combobox_constructor(rtgui_combobox_t *box)
 {
