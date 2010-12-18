@@ -79,6 +79,9 @@ static void workbench_entry(void* parameter)
 	demo_view_radiobox(workbench);
 	demo_view_textbox(workbench);
 	demo_view_listbox(workbench);
+	demo_view_menu(workbench);
+	demo_view_listctrl(workbench);
+	demo_view_combobox(workbench);
 	demo_view_slider(workbench);
 	demo_view_mywidget(workbench);
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
