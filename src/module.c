@@ -251,11 +251,10 @@ static void rt_module_init_object_container(struct rt_module* module)
  */
 rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 {
-	rt_uint32_t index;
-	rt_uint32_t module_size = 0;
+	rt_uint8_t *ptr = RT_NULL;
 	rt_module_t module = RT_NULL;
-	rt_uint8_t *ptr, *strtab;
 	rt_bool_t linked = RT_FALSE;
+	rt_uint32_t index, module_size = 0;
 
 	rt_kprintf("rt_module_load: %s\n", name);
 
@@ -327,11 +326,13 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 			rt_uint32_t i, nr_reloc;
 			Elf32_Sym *symtab;
 			Elf32_Rel *rel;
+			rt_uint8_t *strtab;
+			static rt_bool_t unsolved = RT_FALSE;
 
 			/* get relocate item */
 			rel = (Elf32_Rel *) ((rt_uint8_t*)module_ptr + shdr[index].sh_offset);
 
-			/* locate .rel.plt and .rel.dyn */
+			/* locate .rel.plt and .rel.dyn section */
 			symtab =(Elf32_Sym *) ((rt_uint8_t*)module_ptr + shdr[shdr[index].sh_link].sh_offset);
 			strtab = (rt_uint8_t*) module_ptr + shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
  			nr_reloc = (rt_uint32_t) (shdr[index].sh_size / sizeof(Elf32_Rel));
@@ -344,12 +345,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 				rt_kprintf("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx);
 #endif
 				if((sym->st_shndx != SHT_NULL) || (ELF_ST_BIND(sym->st_info) == STB_LOCAL))	
-				{	
-					rt_module_arm_relocate(
-						module, 
-						rel, 
-						(Elf32_Addr)(module->module_space + sym->st_value));
-				}
+					rt_module_arm_relocate(module, rel,  (Elf32_Addr)(module->module_space + sym->st_value));
 				else if(!linked)
 				{
 					Elf32_Addr addr;
@@ -361,17 +357,64 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 					if (addr == 0)
 					{
 						rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
-						rt_object_delete(&(module->parent));
-						rt_free(module);
-						return RT_NULL;
+						unsolved = RT_TRUE;
 					}	
-					rt_module_arm_relocate(module, rel, addr);
+					else rt_module_arm_relocate(module, rel, addr);
 				}
 				rel ++;
 			}
+
+			if(unsolved) 
+			{
+				rt_object_delete(&(module->parent));
+				rt_free(module);
+				return RT_NULL;
+			}	
 		}
 	}
 
+	/* construct module symbol table */
+	for (index = 0; index < elf_module->e_shnum; index ++)
+	{	
+		/* find .dynsym section */
+		rt_uint8_t* shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
+		if (rt_strcmp(shstrab + shdr[index].sh_name, ELF_DYNSYM) == 0) break;
+	}
+
+	/* found .dynsyn section */
+	if(index != elf_module->e_shnum)
+	{
+		int i, count = 0;
+		Elf32_Sym *symtab = RT_NULL;
+		rt_uint8_t *strtab  = RT_NULL;
+
+		symtab =(Elf32_Sym *) ((rt_uint8_t*)module_ptr + shdr[index].sh_offset);
+		strtab = (rt_uint8_t*) module_ptr + shdr[shdr[index].sh_link].sh_offset;			
+
+		for(i=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+		{
+			if((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
+				count++;
+		}
+
+		module->symtab = (struct rt_module_symtab*)rt_malloc(count * sizeof(struct rt_module_symtab));
+		module->nsym = count;
+		for(i=0, count=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+		{
+			if((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
+			{
+				rt_size_t length = rt_strlen(strtab + symtab[i].st_name) + 1;
+
+				module->symtab[count].addr = module->module_space + symtab[i].st_value; 
+				module->symtab[count].name = rt_malloc(length);
+				rt_memset(module->symtab[count].name, 0, length);
+				rt_memcpy(module->symtab[count].name, strtab + symtab[i].st_name, length);
+				count++;
+			}	
+		}	
+	}	
+	
+#if 0
 	/* construct module symbol table */
 	for (index = 0; index < elf_module->e_shnum; index ++)
 	{	
@@ -382,6 +425,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 			module->nsym = shdr[index].sh_size / sizeof(struct rt_module_symtab);
 		}	
 	}
+#endif
 
 	/* init module object container */
 	rt_module_init_object_container(module);
@@ -501,6 +545,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from file);
  */
 rt_err_t rt_module_unload(rt_module_t module)
 {
+	int i;
 	struct rt_object* object;
 	struct rt_list_node *list;
 
@@ -696,6 +741,10 @@ rt_err_t rt_module_unload(rt_module_t module)
 	/* release module space memory */
 	rt_free(module->module_space);
 
+	/* release module symbol table */
+	for(i=0; i<module->nsym; i++) rt_free(module->symtab[i].name);
+	if(module->symtab != RT_NULL) rt_free(module->symtab);
+	
 	/* delete module object */
 	rt_object_delete((rt_object_t)module);
 
