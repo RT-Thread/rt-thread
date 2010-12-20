@@ -170,8 +170,10 @@ RTM_EXPORT(__aeabi_idiv)
 RTM_EXPORT(__aeabi_uidivmod)
 RTM_EXPORT(__aeabi_d2iz)
 RTM_EXPORT(strcmp)
+RTM_EXPORT(strlen)
 RTM_EXPORT(rand)
 RTM_EXPORT(memset)
+RTM_EXPORT(memcpy)
 
 #ifdef RT_USING_NEWLIB
 
@@ -180,6 +182,10 @@ RTM_EXPORT(memset)
 RTM_EXPORT(snprintf)
 RTM_EXPORT(access)
 RTM_EXPORT(__assert_func)
+
+#include <time.h>
+RTM_EXPORT(localtime)
+RTM_EXPORT(time)
 
 #endif
 
