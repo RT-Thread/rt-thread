@@ -7,7 +7,14 @@
 #include "ftk_xul.h"
 #include "ftk_expr.h"
 #include "ftk_pipe.h"
+#include "ftk_tab.h"
 #include "ftk_mmap.h"
+#include "ftk_app_demo.h"
+#include "ftk_message_box.h"
+#include "ftk_animator_expand.h"
+#include "ftk_animator_zoom.h"
+#include "ftk_animator_alpha.h"
+#include "ftk_file_browser.h"
 #include "ftk_text_buffer.h"
 #include "ftk_xml_parser.h"
 #include "Ftk_text_buffer.h"
@@ -18,7 +25,6 @@
 #include "ftk_source_primary.h"
 #include "ftk_allocator_default.h"
 #include "ftk_input_method_py.h"
-#include "ftk_animator_expand.h"
 #include "ftk_input_method_util.h"
 #include "ftk_image_bmp_decoder.h"
 #include "ftk_image_png_decoder.h"
@@ -418,4 +424,26 @@ RTM_EXPORT(ftk_pipe_check)
 RTM_EXPORT(ftk_get_relative_time)
 RTM_EXPORT(ftk_platform_init)
 RTM_EXPORT(ftk_platform_deinit)
+RTM_EXPORT(ftk_file_browser_load)
+RTM_EXPORT(ftk_file_browser_set_path)
+RTM_EXPORT(ftk_file_browser_create)
+RTM_EXPORT(ftk_file_browser_set_filter)
+RTM_EXPORT(ftk_file_browser_set_choosed_handler)
+RTM_EXPORT(ftk_app_demo_create)
+RTM_EXPORT(ftk_animator_alpha_create)
+RTM_EXPORT(ftk_animator_zoom_create)
+RTM_EXPORT(ftk_combo_box_append)
+RTM_EXPORT(ftk_text_view_set_readonly)
+RTM_EXPORT(ftk_text_view_create)
+RTM_EXPORT(ftk_tab_set_active_page)
+RTM_EXPORT(ftk_tab_create)
+RTM_EXPORT(ftk_tab_add_page)
+RTM_EXPORT(ftk_popup_menu_create)
+RTM_EXPORT(ftk_popup_menu_add)
+RTM_EXPORT(ftk_combo_box_create)
+RTM_EXPORT(ftk_combo_box_set_text)
+RTM_EXPORT(ftk_tips)
+RTM_EXPORT(ftk_warning)
+RTM_EXPORT(ftk_question)
+RTM_EXPORT(ftk_infomation)
 
