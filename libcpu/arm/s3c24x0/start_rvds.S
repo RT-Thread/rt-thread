@@ -498,7 +498,7 @@ GPDAT_OFS       EQU     0x04            ; Data Register Offset
 GPUP_OFS        EQU     0x08            ; Pull-up Disable Register Offset
 
 ;// <e> I/O Setup
-GP_SETUP        EQU     0
+GP_SETUP        EQU     1
 
 ;//   <e> Port A Settings
 ;//     <h> Port A Control Register (GPACON)
@@ -710,9 +710,9 @@ GPEUP_Val       EQU     0x00000000
 ;//       <o2.0>      GPF0  Pull-up Disable
 ;//     </h>
 ;//   </e>
-GPF_SETUP       EQU     0
-GPFCON_Val      EQU     0x00000000
-GPFUP_Val       EQU     0x00000000
+GPF_SETUP       EQU     1
+GPFCON_Val      EQU     0x000000AA
+GPFUP_Val       EQU     0x0000000F
 
 ;//   <e> Port G Settings
 ;//     <h> Port G Control Register (GPGCON)
@@ -866,10 +866,34 @@ FIQ_Addr        DCD     FIQ_Handler
 Undef_Handler   B       Undef_Handler
 SWI_Handler     B       SWI_Handler
 PAbt_Handler    B       PAbt_Handler
-DAbt_Handler    B       DAbt_Handler
+;DAbt_Handler    B       DAbt_Handler
 FIQ_Handler     B       FIQ_Handler
 
+;*
+;*************************************************************************
+;*
+;* Interrupt handling
+;*
+;*************************************************************************
+;*
+; DAbt Handler
+DAbt_Handler
+               IMPORT rt_hw_trap_dabt
 
+                	sub 	sp, sp, #72
+	                stmia 	sp, {r0 - r12}   		;/* Calling r0-r12					*/
+                    add		r8, sp, #60
+	                stmdb   r8, {sp, lr}            ;/* Calling SP, LR					*/
+	                str		lr, [r8, #0]            ;/* Save calling PC					*/
+	                mrs		r6, spsr
+	                str		r6, [r8, #4]            ;/* Save CPSR						*/
+	                str		r0, [r8, #8]            ;/* Save OLD_R0						*/
+	                mov		r0, sp
+
+	                bl 		rt_hw_trap_dabt
+
+
+;##########################################
 ; Reset Handler
 
                 EXPORT  Reset_Handler

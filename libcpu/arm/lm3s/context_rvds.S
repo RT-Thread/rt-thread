@@ -155,7 +155,9 @@ rt_hw_context_switch_to    PROC
 	; trigger the PendSV exception (causes context switch)
 	LDR		r0, =NVIC_INT_CTRL
 	LDR		r1, =NVIC_PENDSVSET
-	STR		r1, [r0]
+	LDR.W   R2, [r0,#0x00]          ; read
+	ORR     r1,r1,r2                ; modify
+    STR     r1, [r0]                ; write-bak
 
 	; enable interrupts at processor level
 	CPSIE		I
