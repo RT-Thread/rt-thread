@@ -15,24 +15,34 @@
 #include <rtthread.h>
 #include <rtm.h>
 
+#define MODULE_ROOT_DIR		"/module"
+
 void* dlopen(const char *filename, int flags)
 {
 	rt_module_t module;
-	
+	char *fullpath;
+	const char*def_path = MODULE_ROOT_DIR;
+
+	/* check parameters */
 	RT_ASSERT(filename != RT_NULL);
 
-	/* find in module list */
-	module = rt_module_find(filename);
+	if (filename[0] != '/') /* it's a absolute path, use it directly */
+	{
+		fullpath = rt_malloc(strlen(def_path) + strlen(filename) + 2);
+
+		/* join path and file name */
+		rt_snprintf(fullpath, strlen(def_path) + strlen(filename) + 2, 
+			"%s/%s", def_path, filename);
+	}
 	
-	if(module)
-	{
-		module->nref++;
-		return (void*)module;
-	}	
-	else
-	{
-		module = rt_module_open(filename);
-	}	
+	/* find in module list */
+	module = rt_module_find(fullpath);
+	
+	if(module != RT_NULL) module->nref++;
+	else module = rt_module_open(fullpath);
+
+	rt_free(fullpath);
+	return (void*)module;
 }
 
 RTM_EXPORT(dlopen)
