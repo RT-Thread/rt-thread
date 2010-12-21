@@ -2,10 +2,6 @@
 #include <rtgui/widgets/menu.h>
 #include <rtgui/rtgui_theme.h>
 
-#define RTGUI_MENU_IMAGE_MAGIN		18
-#define RTGUI_MENU_SUBMENU_MAGIN	16
-
-static void rtgui_menu_item_unselect(struct rtgui_menu_item* item);
 static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t* event);
 const static rt_uint8_t right_arrow[] = {0x80, 0xc0, 0xe0, 0xf0, 0xe0, 0xc0, 0x80};
 
@@ -31,6 +27,14 @@ static void _rtgui_menu_constructor(rtgui_menu_t *menu)
 
 static void _rtgui_menu_destructor(rtgui_menu_t* menu)
 {
+	if (menu->sub_menu != RT_NULL)
+	{
+		rtgui_menu_destroy(menu->sub_menu);
+		menu->sub_menu = RT_NULL;
+	}
+
+	rtgui_listctrl_destroy(menu->items_list);
+	menu->items_list = RT_NULL;
 }
 
 static void _rtgui_menu_onitem(struct rtgui_widget* widget, struct rtgui_event* event)
@@ -43,15 +47,45 @@ static void _rtgui_menu_onitem(struct rtgui_widget* widget, struct rtgui_event* 
 	{
 		const rtgui_menu_item_t* items;
 		rt_uint16_t count;
+		rtgui_rect_t item_rect;
 
 		items = menu->items[menu->items_list->current_item].submenu;
 		count = menu->items[menu->items_list->current_item].submenu_count;
+		if (menu->sub_menu != RT_NULL)
+		{
+			if (menu->sub_menu->items == items)
+			{
+				if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(menu->sub_menu)))
+				{
+					/* hide this sub menu */
+					rtgui_win_hiden(RTGUI_WIN(menu->sub_menu));
+					return;
+				}
+
+				/* show this sub menu */
+				rtgui_listctrl_get_item_rect(menu->items_list, menu->items_list->current_item, &item_rect);
+				rtgui_menu_pop(menu->sub_menu, item_rect.x2, item_rect.y1);
+				return;
+			}
+
+			/* delete sub menu */
+			rtgui_menu_destroy(menu->sub_menu);
+			menu->sub_menu = RT_NULL;
+		}
+
+		/* create sub menu */
 		menu->sub_menu = rtgui_menu_create("submenu", menu, items, count);
-		rtgui_menu_pop(menu, 10, 10);
+
+		rtgui_listctrl_get_item_rect(menu->items_list, menu->items_list->current_item, &item_rect);
+		rtgui_menu_pop(menu->sub_menu, item_rect.x2 + 5, item_rect.y1);
 	}
 	else /* other menu item */
 	{
-		rtgui_win_hiden(RTGUI_WIN(menu));
+		/* invoke action */
+		if (menu->items[menu->items_list->current_item].on_menuaction != RT_NULL)
+			menu->items[menu->items_list->current_item].on_menuaction(RTGUI_WIDGET(menu), RT_NULL);
+
+		rtgui_menu_hiden(menu);
 	}
 }
 
@@ -126,10 +160,21 @@ static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t*
 {
 	rtgui_menu_t* menu = (rtgui_menu_t*) widget;
 
+	if (menu->parent_menu != RT_NULL)
+	{
+		/* whether click on parent menu */
+		if (rtgui_win_is_activated(RTGUI_WIN(menu->parent_menu)) == RT_TRUE &&
+			menu->parent_menu->items[menu->parent_menu->items_list->current_item].submenu == menu->items)
+			return RT_TRUE;
+	}
+
 	/* submenu is activate */
 	if (menu->items[menu->items_list->current_item].type == RTGUI_ITEM_SUBMENU)
 	{
 		/* if sub menu activated, not hide menu */
+		if (menu->sub_menu != RT_NULL && 
+			rtgui_win_is_activated(RTGUI_WIN(menu->sub_menu)) == RT_TRUE)
+			return RT_TRUE;
 	}
 
 	rtgui_win_hiden(RTGUI_WIN(menu));
@@ -140,7 +185,7 @@ static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t*
 
 	/* if it's a submenu, try to hide parent menu */
 	if (menu->parent_menu != RT_NULL &&
-		!rtgui_win_is_activated(RTGUI_WIN(menu->parent_menu)))
+		rtgui_win_is_activated(RTGUI_WIN(menu->parent_menu)) == RT_FALSE)
 	{
 		rtgui_menu_on_deactivate(RTGUI_WIDGET(menu->parent_menu), event);
 	}
@@ -221,4 +266,12 @@ void rtgui_menu_pop(struct rtgui_menu* menu, int x, int y)
 
 	/* show menu window */
 	rtgui_win_show(RTGUI_WIN(menu), RT_FALSE);
+}
+
+void rtgui_menu_hiden(struct rtgui_menu* menu)
+{
+	rtgui_win_hiden(RTGUI_WIN(menu));
+
+	if (menu->parent_menu != RT_NULL)
+		rtgui_menu_hiden(menu->parent_menu);
 }

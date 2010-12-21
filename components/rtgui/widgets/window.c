@@ -306,7 +306,9 @@ rt_bool_t rtgui_win_is_activated(struct rtgui_win* win)
 {
 	RT_ASSERT(win != RT_NULL);
 
-	return win->style & RTGUI_WIN_STYLE_ACTIVATE;
+	if (win->style & RTGUI_WIN_STYLE_ACTIVATE) return RT_TRUE;
+
+	return RT_FALSE;
 }
 
 void rtgui_win_move(struct rtgui_win* win, int x, int y)
@@ -413,7 +415,8 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 	case RTGUI_EVENT_WIN_ACTIVATE:
 		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(win)))
 		{
-			rt_kprintf("activate window, but window is hide!\n");
+			/* activate a hide window */
+			return RT_TRUE;
 		}
 
 		win->style |= RTGUI_WIN_STYLE_ACTIVATE;

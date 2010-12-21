@@ -150,6 +150,7 @@ void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 /* get and set rect of widget */
 void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect);
 void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect);
+void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect);
 
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width);

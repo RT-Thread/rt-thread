@@ -138,6 +138,14 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
 	}
 }
 
+void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
+{
+	RT_ASSERT(widget != RT_NULL);
+	RT_ASSERT(rect != RT_NULL);
+
+	*rect = widget->extent;
+}
+
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width)
 {

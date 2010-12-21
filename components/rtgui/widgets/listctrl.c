@@ -59,8 +59,8 @@ void rtgui_listctrl_ondraw(struct rtgui_listctrl* ctrl)
 
 	rect.x2 -= 1; rect.y2 -= 1;
 	/* draw focused border */
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(ctrl)))
-		rtgui_dc_draw_focus_rect(dc, &rect);
+	// if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(ctrl)))
+	// 	rtgui_dc_draw_focus_rect(dc, &rect);
 
 	/* get item base rect */
 	item_rect = rect;
@@ -191,8 +191,8 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_widget* widget, struct rtgui
 						/* update focus border */
 						rect.x2 -= 1; rect.y2 -= 1;
 						/* draw focused border */
-						if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(ctrl)))
-							rtgui_dc_draw_focus_rect(dc, &rect);
+						// if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(ctrl)))
+						//	rtgui_dc_draw_focus_rect(dc, &rect);
 						rtgui_dc_end_drawing(dc);
 					}
 				}
@@ -321,4 +321,24 @@ void rtgui_listctrl_set_items(rtgui_listctrl_t* ctrl, rt_uint32_t items, rt_uint
 	ctrl->page_items = rtgui_rect_height(rect) / (2 + rtgui_theme_get_selected_height());
 
 	rtgui_widget_update(RTGUI_WIDGET(ctrl));
+}
+
+rt_bool_t rtgui_listctrl_get_item_rect(rtgui_listctrl_t* ctrl, rt_uint16_t item, rtgui_rect_t* item_rect)
+{
+	if (item < ctrl->items_count)
+	{
+		rt_uint16_t index;
+
+		/* check whether this item in current page */
+		index = (ctrl->current_item / ctrl->page_items) * ctrl->page_items;
+		if (index > item || index + ctrl->page_items <= item) return RT_FALSE;
+
+		rtgui_widget_get_extent(RTGUI_WIDGET(ctrl), item_rect);
+		item_rect->y1 -= 2;
+		item_rect->y1 += (item % ctrl->page_items) * (2 + rtgui_theme_get_selected_height());
+		item_rect->y2 = item_rect->y1 + (2 + rtgui_theme_get_selected_height());
+		return RT_TRUE;
+	}
+
+	return RT_FALSE;
 }

@@ -73,6 +73,7 @@ void rtgui_menu_set_onmenupop(struct rtgui_menu* menu, rtgui_event_handler_ptr h
 void rtgui_menu_set_onmenuhide(struct rtgui_menu* menu, rtgui_event_handler_ptr handler);
 
 void rtgui_menu_pop(struct rtgui_menu* menu, int x, int y);
+void rtgui_menu_hiden(struct rtgui_menu* menu);
 
 #endif
 
