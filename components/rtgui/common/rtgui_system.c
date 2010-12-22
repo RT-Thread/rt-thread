@@ -736,6 +736,24 @@ void* rtgui_malloc(rt_size_t size)
 	return ptr;
 }
 
+void* rtgui_realloc(void* ptr, rt_size_t size)
+{
+	void* new_ptr;
+
+#ifdef RTGUI_MEM_TRACE
+	new_ptr = rtgui_malloc(size);
+	if ((new_ptr != RT_NULL) && (ptr != RT_NULL))
+	{
+		rt_memcpy(new_ptr, ptr, size);
+		rtgui_free(ptr);
+	}
+#else
+	new_ptr = rt_realloc(ptr, size);
+#endif
+
+	return new_ptr;
+}
+
 void rtgui_free(void* ptr)
 {
 #ifdef RTGUI_MEM_TRACE

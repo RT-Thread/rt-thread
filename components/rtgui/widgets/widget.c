@@ -111,7 +111,7 @@ void rtgui_widget_destroy(rtgui_widget_t* widget)
 	rtgui_object_destroy(RTGUI_OBJECT(widget));
 }
 
-void rtgui_widget_set_rect(rtgui_widget_t* widget, rtgui_rect_t* rect)
+void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 {
 	if (widget == RT_NULL || rect == RT_NULL) return;
 

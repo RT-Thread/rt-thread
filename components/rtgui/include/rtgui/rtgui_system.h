@@ -91,6 +91,7 @@ void rtgui_system_server_init(void);
 
 void* rtgui_malloc(rt_size_t size);
 void rtgui_free(void* ptr);
+void* rtgui_realloc(void* ptr, rt_size_t size);
 
 #endif
 
