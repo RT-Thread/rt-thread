@@ -7,21 +7,25 @@
 #include <rtgui/widgets/menu.h>
 #include <rtgui/widgets/button.h>
 
-
-static rtgui_menu_item_t sub_items[] = 
+static rt_bool_t _onmenuitem(struct rtgui_widget *widget, struct rtgui_event* event)
 {
-	{RTGUI_ITEM_NORMAL, "item #1", RT_NULL, RT_NULL, 0, RT_NULL},
+	rt_kprintf("menu action!!\n");
+	return RT_TRUE;
+}
+
+static const rtgui_menu_item_t sub_items[] = 
+{
+	{RTGUI_ITEM_NORMAL, "item #1", RT_NULL, RT_NULL, 0, _onmenuitem},
 	{RTGUI_ITEM_NORMAL, "item #2", RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_SEPARATOR, RT_NULL, RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_NORMAL, "item #3", RT_NULL, RT_NULL, 0, RT_NULL},
 };
-static rtgui_menu_item_t items[] = 
+static const rtgui_menu_item_t items[] = 
 {
 	{RTGUI_ITEM_NORMAL, "item #1", RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_NORMAL, "item #2", RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_SEPARATOR, RT_NULL, RT_NULL, RT_NULL, 0, RT_NULL},
-	{RTGUI_ITEM_NORMAL, "item #3", RT_NULL, RT_NULL, 0, RT_NULL},
-	// {RTGUI_ITEM_SUBMENU, "item #3", RT_NULL, sub_items, sizeof(sub_items)/sizeof(sub_items[0]), RT_NULL},
+	{RTGUI_ITEM_SUBMENU, "item #3", RT_NULL, sub_items, sizeof(sub_items)/sizeof(sub_items[0]), RT_NULL},
 };
 static rtgui_menu_t* menu;
 
@@ -33,7 +37,7 @@ static _onmenu(struct rtgui_widget* widget, struct rtgui_event* event)
 	rtgui_widget_rect_to_device(widget, &rect);
 
 	if (menu != RT_NULL)
-		rtgui_menu_pop(menu, rect.x1, rect.y2);
+		rtgui_menu_pop(menu, rect.x1, rect.y2 + 5);
 }
 
 /* 创建用于演示menu控件的视图 */
