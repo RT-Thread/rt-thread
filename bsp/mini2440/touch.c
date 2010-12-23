@@ -83,7 +83,7 @@ struct s3c2410ts
 
 	char phys[32];
 };
-static struct s3c2410ts ts = RT_NULL;
+static struct s3c2410ts ts;
 
 struct rtgui_touch_device
 {
