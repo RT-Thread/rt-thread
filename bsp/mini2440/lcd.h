@@ -18,4 +18,9 @@
 
 void rt_hw_lcd_init();
 
+#define RT_DEVICE_CTRL_LCD_GET_WIDTH				0
+#define RT_DEVICE_CTRL_LCD_GET_HEIGHT			1
+#define RT_DEVICE_CTRL_LCD_GET_BPP			 	2
+#define RT_DEVICE_CTRL_LCD_GET_FRAMEBUFFER		3
+
 #endif

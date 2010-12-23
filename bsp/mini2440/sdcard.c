@@ -159,7 +159,7 @@ static void sd_setbus(void)
     SDICSTA=0xa00;	    /* Clear cmd_end(with rsp) */
 }
 
-int sd_ocr(void)
+static int sd_ocr(void)
 {
 	int i;
 
@@ -186,7 +186,7 @@ int sd_ocr(void)
 	return RT_ERROR;
 }
 
-rt_uint8_t sd_init(void)
+static rt_uint8_t sd_init(void)
 {
 	//-- SD controller & card initialize
 	int i;
@@ -241,7 +241,7 @@ RECMD3:
 	return RT_EOK;
 }
 
-rt_uint8_t sd_readblock(rt_uint32_t address, rt_uint8_t* buf)
+static rt_uint8_t sd_readblock(rt_uint32_t address, rt_uint8_t* buf)
 {
 	rt_uint32_t status, tmp;
 
@@ -290,7 +290,7 @@ RERDCMD:
 	return RT_EOK;
 }
 
-rt_uint8_t sd_writeblock(rt_uint32_t address, rt_uint8_t* buf)
+static rt_uint8_t sd_writeblock(rt_uint32_t address, rt_uint8_t* buf)
 {
 	rt_uint32_t status, tmp;
 

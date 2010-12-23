@@ -19,9 +19,10 @@
 /*@{*/
 
 #include <rtthread.h>
-#include "dm9000.h"
 #include "touch.h"
+#include "lcd.h"
 #include "led.h"
+#include "dm9000.h"
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -45,11 +46,7 @@ extern void rt_hw_touch_init(void);
 #include "ftk.h"
 #endif
 
-#ifdef RT_USING_FTK
-#define RT_INIT_THREAD_STACK_SIZE (10*1024)
-#else
 #define RT_INIT_THREAD_STACK_SIZE (2*1024)
-#endif
 
 #ifdef RT_USING_DFS_ROMFS
 #include <dfs_romfs.h>
@@ -102,12 +99,15 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
+		/* init lcd */
+		rt_hw_lcd_init();
+			
 		/* init touch panel */
 		rtgui_touch_hw_init();	
 
 		/* re-init device driver */
-		rt_device_init_all();		
-		
+		rt_device_init_all();
+
 		/* startup rtgui */
 		rtgui_startup();
 	}
@@ -133,7 +133,8 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_FTK
 	{
-		void rt_hw_lcd_init();	
+		rt_thread_t ftk_thread;
+
 		int FTK_MAIN(int argc, char* argv[]);
 
 		/* init lcd */
@@ -144,9 +145,15 @@ void rt_init_thread_entry(void* parameter)
 
 		/* re-init device driver */
 		rt_device_init_all();
-		
-		/* enter ftk main */
-		FTK_MAIN(0, NULL);
+
+		/* create ftk thread */
+		ftk_thread = rt_thread_create("ftk",
+									FTK_MAIN, RT_NULL,
+									10 * 1024, 8, 20);	
+
+		/* startup ftk thread */
+		if(ftk_thread != RT_NULL)
+			rt_thread_startup(ftk_thread);		
 	}
 #endif
 }
@@ -164,7 +171,6 @@ void rt_led_thread_entry(void* parameter)
 		rt_hw_led_off(LED2|LED3);
 		rt_hw_led_on(LED1|LED4);
 		rt_thread_delay(100);
-
 	}
 }
 
