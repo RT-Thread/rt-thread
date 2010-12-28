@@ -337,7 +337,7 @@ rtgui_view_t* demo_listview_icon_view(rtgui_workbench_t* workbench)
 			(const rt_uint8_t*)image_xpm, sizeof(image_xpm), RT_TRUE);
 	if (exit_icon == RT_NULL)
 		exit_icon = rtgui_image_create_from_mem("xpm",
-			(const rt_uint8_t*)exit_xpm, sizeof(image_xpm), RT_TRUE);
+			(const rt_uint8_t*)exit_xpm, sizeof(exit_xpm), RT_TRUE);
 
 	/* 添加动作按钮 */
 	demo_view_get_rect(view, &rect);
