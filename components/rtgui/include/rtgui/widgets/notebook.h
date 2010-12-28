@@ -2,7 +2,7 @@
 #define __RTGUI_NOTEBOOK_H__
 
 #include <rtgui/rtgui.h>
-#include <rtgui/widgets/widget.h>
+#include <rtgui/widgets/container.h>
 
 /** Gets the type of a notebook */
 #define RTGUI_NOTEBOOK_TYPE       (rtgui_notebook_type_get())
@@ -10,6 +10,10 @@
 #define RTGUI_NOTEBOOK(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_NOTEBOOK_TYPE, rtgui_notebook_t))
 /** Checks if the object is a notebook control */
 #define RTGUI_IS_NOTEBOOK(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_NOTEBOOK_TYPE))
+
+#define RTGUI_NOTEBOOK_TOP			0x00
+#define RTGUI_NOTEBOOK_BOTTOM		0x01
+#define RTGUI_NOTEBOOK_NOTAB		0x02
 
 struct rtgui_notebook_tab
 {
@@ -20,7 +24,9 @@ typedef struct rtgui_notebook_tab rtgui_notebook_tab_t;
 
 struct rtgui_notebook
 {
-	struct rtgui_widget parent;
+	struct rtgui_container parent;
+
+	rt_uint8_t flag;
 
 	/* widget private data */
 	rtgui_notebook_tab_t* childs;
@@ -31,7 +37,7 @@ typedef struct rtgui_notebook rtgui_notebook_t;
 
 rtgui_type_t *rtgui_notebook_type_get(void);
 
-rtgui_notebook_t* rtgui_notebook_create(const rtgui_rect_t* rect);
+rtgui_notebook_t* rtgui_notebook_create(const rtgui_rect_t* rect, rt_uint8_t style);
 void rtgui_notebook_destroy(rtgui_notebook_t* notebook);
 
 void rtgui_notebook_add(rtgui_notebook_t* notebook, const char* label, rtgui_widget_t* child);

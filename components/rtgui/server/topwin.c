@@ -281,6 +281,7 @@ void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 		struct rtgui_list_node* node;
 		struct rtgui_event_clip_info eclip;
 		RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
+		eclip.wid = RT_NULL;
 
 		/* the window is already placed in front */
 		if (&(topwin->list) == _rtgui_topwin_show_list.next)
@@ -879,6 +880,7 @@ static void rtgui_topwin_redraw(struct rtgui_rect* rect)
 	struct rtgui_list_node* node;
 	struct rtgui_event_paint epaint;
 	RTGUI_EVENT_PAINT_INIT(&epaint);
+	epaint.wid = RT_NULL;
 
 	rtgui_list_foreach(node, &_rtgui_topwin_show_list)
 	{

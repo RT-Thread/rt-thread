@@ -157,6 +157,8 @@ void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width);
 void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height);
 #endif
 
+void rtgui_widget_set_parent(rtgui_widget_t* widget, rtgui_widget_t* parent);
+
 /* get the physical position of a logic point on widget */
 void rtgui_widget_point_to_device(rtgui_widget_t * widget, rtgui_point_t * point);
 /* get the physical position of a logic rect on widget */

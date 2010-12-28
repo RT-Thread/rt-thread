@@ -138,6 +138,19 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 	}
 }
 
+void rtgui_widget_set_parent(rtgui_widget_t* widget, rtgui_widget_t* parent)
+{
+	/* set parent and toplevel widget */
+	widget->parent = parent;
+
+	/* update children toplevel */
+	if (parent->toplevel != RT_NULL &&
+		RTGUI_IS_TOPLEVEL(parent->toplevel))
+	{
+		widget->toplevel = rtgui_widget_get_toplevel(parent);
+	}
+}
+
 void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
 {
 	RT_ASSERT(widget != RT_NULL);
@@ -488,11 +501,37 @@ void rtgui_widget_show(rtgui_widget_t* widget)
 
 void rtgui_widget_hide(rtgui_widget_t* widget)
 {
+	rtgui_rect_t rect;
+
 	/* hide this widget */
 	RTGUI_WIDGET_HIDE(widget);
 
-	/* update the clip info of widget parent */
-	rtgui_widget_update_clip(widget->parent);
+	if (widget->parent != RT_NULL)
+	{
+		int index;
+		rtgui_widget_t *parent;
+		rtgui_toplevel_t *toplevel;
+
+		rect = widget->extent;
+		parent = widget->parent;
+		/* get the no transparent parent */
+		while (parent != RT_NULL && parent->flag & RTGUI_WIDGET_FLAG_TRANSPARENT)
+		{
+			parent = parent->parent;
+		}
+
+		/* union widget rect */
+		rtgui_region_union_rect(&(widget->parent->clip), &(widget->parent->clip), &rect);
+
+		/* handle extern rect */
+		toplevel = RTGUI_TOPLEVEL(widget->toplevel);
+		/* subtract the external rect */
+		for (index = 0; index < toplevel->external_clip_size; index ++)
+		{
+			rtgui_region_subtract_rect(&(widget->parent->clip), &(widget->parent->clip),
+				&(toplevel->external_clip_rect[index]));
+		}
+	}
 }
 
 rtgui_color_t rtgui_widget_get_parent_foreground(rtgui_widget_t* widget)
