@@ -33,7 +33,7 @@ env.Append(CCFLAGS = group['CCFLAGS'])
 env.Append(CPPPATH = group['CPPPATH'])
 env.Append(CPPDEFINES = group['CPPDEFINES'])
 module_env = env.Clone(CCFLAGS = ' -DRT_THREAD -mcpu=arm920t -O0 -fPIC')
-module_env.Replace(LINKFLAGS = '-z max-page-size=0x4 -shared -fPIC -e ftk_app_calc_create -nostdlib')
+module_env.Replace(LINKFLAGS = '-z max-page-size=0x4 -shared -fPIC -e 0 -nostdlib -s')
 module_env.Program(target, src_local) 
 module_env.AddPostAction(target, POST_ACTION) 
 
