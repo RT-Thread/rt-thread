@@ -37,7 +37,7 @@ static Ret button_more_clicked(void* ctx, void* obj)
 	return RET_OK;
 }
 
-Ret on_item_clicked(void* ctx, void* list)
+static Ret on_item_clicked(void* ctx, void* list)
 {
 	FtkListItemInfo* info = NULL;
 	FtkListModel* model = ftk_list_view_get_model(list);
