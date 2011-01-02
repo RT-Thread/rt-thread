@@ -20,7 +20,7 @@ void writespeed(const char* filename, int total_length, int block_size)
     char *buff_ptr;
     rt_tick_t tick;
 
-    fd = open(filename, O_WRONLY | O_WRONLY | O_TRUNC, 0);
+    fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0);
     if (fd < 0)
     {
         rt_kprintf("open file:%s failed\n", filename);
@@ -53,7 +53,7 @@ void writespeed(const char* filename, int total_length, int block_size)
 			rt_kprintf("write failed\n");
 			break;
 		}
-		
+
 		index ++;
 	}
     tick = rt_tick_get() - tick;
@@ -63,7 +63,7 @@ void writespeed(const char* filename, int total_length, int block_size)
 	rt_free(buff_ptr);
 
     /* calculate write speed */
-    rt_kprintf("File write speed: %d byte/s\n", total_length/ (tick/RT_TICK_PER_SECOND));
+    rt_kprintf("File write speed: %d byte/s\n", total_length*RT_TICK_PER_SECOND/tick);
 }
 
 #ifdef RT_USING_FINSH
