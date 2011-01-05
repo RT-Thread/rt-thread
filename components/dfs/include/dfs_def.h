@@ -121,12 +121,12 @@
 #define DFS_DT_DIR				DT_DIR
 
 #else
-#ifdef RT_USING_MINILIBC
-#include <string.h>
-#else
-typedef long off_t;
-typedef int mode_t;
-#endif
+	#ifdef RT_USING_MINILIBC
+		#include <string.h>
+	#else
+		typedef long off_t;
+		typedef int mode_t;
+	#endif
 
 /* Device error codes */
 #define DFS_STATUS_OK			0		/* no error */
@@ -166,9 +166,16 @@ typedef int mode_t;
 #define DFS_F_ERR			0x08000000
 
 /* Seek flags */
+#ifdef __CC_ARM
+#include <stdio.h>
+#define DFS_SEEK_SET		SEEK_SET
+#define DFS_SEEK_CUR		SEEK_CUR
+#define DFS_SEEK_END		SEEK_END
+#else
 #define DFS_SEEK_SET         0
 #define DFS_SEEK_CUR         1
 #define DFS_SEEK_END         2
+#endif
 
 /* Stat codes */
 #define DFS_S_IFMT		00170000

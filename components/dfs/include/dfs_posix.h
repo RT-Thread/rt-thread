@@ -64,9 +64,13 @@
 #define S_IWOTH		DFS_S_IWOTH
 #define S_IXOTH		DFS_S_IXOTH
 
+#if defined(__CC_ARM)
+#include <stdio.h>
+#else
 #define SEEK_SET	DFS_SEEK_SET
 #define SEEK_CUR	DFS_SEEK_CUR
 #define SEEK_END	DFS_SEEK_END
+#endif
 
 typedef struct 
 {
