@@ -839,7 +839,7 @@ void rt_free(void *ptr)
 		kup->size = 0;
 
 #ifdef RT_MEM_STATS
-		used_mem -= size;
+		used_mem -= size * RT_MM_PAGE_SIZE;
 #endif
 		rt_sem_release(&heap_sem);
 
