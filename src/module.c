@@ -381,7 +381,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		if (rt_strcmp(shstrab + shdr[index].sh_name, ELF_DYNSYM) == 0) break;
 	}
 
-	/* found .dynsyn section */
+	/* found .dynsym section */
 	if(index != elf_module->e_shnum)
 	{
 		int i, count = 0;
@@ -413,19 +413,6 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 			}	
 		}	
 	}	
-	
-#if 0
-	/* construct module symbol table */
-	for (index = 0; index < elf_module->e_shnum; index ++)
-	{	
-		rt_uint8_t* shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
-		if (rt_strcmp(shstrab + shdr[index].sh_name, ELF_RTMSYMTAB) == 0)
-		{
-			module->symtab = (struct rt_module_symtab *)(module->module_space + shdr[index].sh_addr);
-			module->nsym = shdr[index].sh_size / sizeof(struct rt_module_symtab);
-		}	
-	}
-#endif
 
 	/* init module object container */
 	rt_module_init_object_container(module);
@@ -442,7 +429,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		module->mem_list = RT_NULL;
 		
 		/* create mpool for page node */
-		module->mpool = rt_mp_create(name, 1024, sizeof(struct rt_module_page));
+		module->mpool = rt_mp_create(name, 256, sizeof(struct rt_module_page));
 		
 		/* create module thread */
 		module->stack_size = 2048;
@@ -482,7 +469,10 @@ rt_module_t rt_module_open(const char* filename)
 	struct rt_module* module;
 	struct stat s;
 	char *buffer, *offset_ptr;;
-	
+
+	/* check parameters */
+	RT_ASSERT(filename != RT_NULL);
+
 	if (stat(filename, &s) !=0)
 	{
 		rt_kprintf("access file failed\n");
@@ -744,7 +734,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 	/* release module symbol table */
 	for(i=0; i<module->nsym; i++) rt_free(module->symtab[i].name);
 	if(module->symtab != RT_NULL) rt_free(module->symtab);
-	
+
 	/* delete module object */
 	rt_object_delete((rt_object_t)module);
 
