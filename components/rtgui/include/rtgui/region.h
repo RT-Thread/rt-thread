@@ -47,7 +47,7 @@ typedef enum
 void rtgui_region_init(rtgui_region_t *region);
 void rtgui_region_init_rect(rtgui_region_t *region,
 	int x, int y, unsigned int width, unsigned int height);
-void rtgui_region_init_with_extents(rtgui_region_t *region, rtgui_rect_t *extents);
+void rtgui_region_init_with_extents(rtgui_region_t *region, const rtgui_rect_t *extents);
 void rtgui_region_fini (rtgui_region_t *region);
 
 void rtgui_region_translate (rtgui_region_t *region, int x, int y);
