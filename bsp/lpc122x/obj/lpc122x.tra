@@ -1,0 +1,47 @@
+*** Creating Trace Output File '.\obj\lpc122x.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\application.o"'
+### List of Objects: adding '".\obj\board.o"'
+### List of Objects: adding '".\obj\startup.o"'
+### List of Objects: adding '".\obj\uart.o"'
+### List of Objects: adding '".\obj\tc_comm.o"'
+### List of Objects: adding '".\obj\clock.o"'
+### List of Objects: adding '".\obj\device.o"'
+### List of Objects: adding '".\obj\idle.o"'
+### List of Objects: adding '".\obj\ipc.o"'
+### List of Objects: adding '".\obj\irq.o"'
+### List of Objects: adding '".\obj\kservice.o"'
+### List of Objects: adding '".\obj\mem.o"'
+### List of Objects: adding '".\obj\mempool.o"'
+### List of Objects: adding '".\obj\module.o"'
+### List of Objects: adding '".\obj\object.o"'
+### List of Objects: adding '".\obj\rtm.o"'
+### List of Objects: adding '".\obj\scheduler.o"'
+### List of Objects: adding '".\obj\slab.o"'
+### List of Objects: adding '".\obj\thread.o"'
+### List of Objects: adding '".\obj\timer.o"'
+### List of Objects: adding '".\obj\cpu.o"'
+### List of Objects: adding '".\obj\fault.o"'
+### List of Objects: adding '".\obj\interrupt.o"'
+### List of Objects: adding '".\obj\stack.o"'
+### List of Objects: adding '".\obj\context_rvds.o"'
+### List of Objects: adding '".\obj\fault_rvds.o"'
+### List of Objects: adding '".\obj\start_rvds.o"'
+### List of Objects: adding '".\obj\system_lpc122x.o"'
+### List of Objects: adding '".\obj\core_cm0.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M0 ".\obj\application.o" ".\obj\board.o" ".\obj\startup.o" ".\obj\uart.o" ".\obj\tc_comm.o" ".\obj\clock.o" ".\obj\device.o" ".\obj\idle.o" ".\obj\ipc.o" ".\obj\irq.o" ".\obj\kservice.o" ".\obj\mem.o" ".\obj\mempool.o" ".\obj\module.o" ".\obj\object.o" ".\obj\rtm.o" ".\obj\scheduler.o" ".\obj\slab.o" ".\obj\thread.o" ".\obj\timer.o" ".\obj\cpu.o" ".\obj\fault.o" ".\obj\interrupt.o" ".\obj\stack.o" ".\obj\context_rvds.o" ".\obj\fault_rvds.o" ".\obj\start_rvds.o" ".\obj\system_lpc122x.o" ".\obj\core_cm0.o" --library_type=microlib --strict --scatter ".\obj\lpc122x.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\lst\lpc122x.map" -o ".\obj\lpc122x.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\obj\lpc122x.axf'
+### ADS-LD Command File: '.\obj\lpc122x.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\obj\lpc122x.lnp', Handle=0x000002B4
+### Writing '.lnp' file
+### ADS-LD Command file '.\obj\lpc122x.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.
