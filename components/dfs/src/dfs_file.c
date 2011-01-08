@@ -74,7 +74,7 @@ int dfs_file_open(struct dfs_fd* fd, const char *path, int flags)
 	if (fs->ops->open == RT_NULL)
 	{
 		/* clear fd */
-		rt_free(fd->path);		
+		rt_free(fd->path);
 		rt_memset(fd, 0, sizeof(*fd));
 
 		return -DFS_STATUS_ENOSYS;
@@ -104,7 +104,7 @@ int dfs_file_open(struct dfs_fd* fd, const char *path, int flags)
 
 /**
  * this function will close a file descriptor.
- * 
+ *
  * @param fd the file descriptor to be closed.
  *
  * @return 0 on successful, -1 on failed.
@@ -116,7 +116,7 @@ int dfs_file_close(struct dfs_fd* fd)
 	if (fd != RT_NULL && fd->fs->ops->close != RT_NULL) result = fd->fs->ops->close(fd);
 
 	/* close fd error, return */
-	if ( result < 0 ) return result; 
+	if ( result < 0 ) return result;
 
 	rt_free(fd->path);
 	rt_memset(fd, 0, sizeof(struct dfs_fd));
@@ -126,7 +126,7 @@ int dfs_file_close(struct dfs_fd* fd)
 
 /**
  * this function will perform a io control on a file descriptor.
- * 
+ *
  * @param fd the file descriptor.
  * @param cmd the command to send to file descriptor.
  * @param args the argument to send to file descriptor.
@@ -160,7 +160,7 @@ int dfs_file_read(struct dfs_fd* fd, void *buf, rt_size_t len)
 	int result = 0;
 
 	if (fd == RT_NULL) return -DFS_STATUS_EINVAL;
-	
+
 	fs = (struct dfs_filesystem*) fd->fs;
 	if (fs->ops->read == RT_NULL) return -DFS_STATUS_ENOSYS;
 
@@ -227,7 +227,7 @@ int dfs_file_unlink(const char *path)
 		goto __exit;
 	}
 
-	if (fs->ops->unlink != RT_NULL) 
+	if (fs->ops->unlink != RT_NULL)
 	{
 		if (dfs_subdir(fs->path, fullpath) == RT_NULL)
 			result = fs->ops->unlink(fs, "/");
@@ -243,7 +243,7 @@ __exit:
 
 /**
  * this function will write some specified length data to file system.
- * 
+ *
  * @param fd the file descriptor.
  * @param buf the data buffer to be written.
  * @param len the data buffer length
@@ -333,7 +333,8 @@ int dfs_file_stat(const char *path, struct stat *buf)
 		return -DFS_STATUS_ENOENT;
 	}
 
-	if (fullpath[0] == '/' && fullpath[1] == '\0')
+	if ((fullpath[0] == '/' && fullpath[1] == '\0') ||
+		(dfs_subdir(fs->path, fullpath) == RT_NULL))
 	{
 		/* it's the root directory */
 		buf->st_dev   = 0;
@@ -351,20 +352,18 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
 		return DFS_STATUS_OK;
 	}
-	
-	/* get the real file path */
-	
-	if (fs->ops->stat == RT_NULL)
-	{
-		rt_free(fullpath);
-		dfs_log(DFS_DEBUG_ERROR, ("the filesystem didn't implement this function"));
-		return -DFS_STATUS_ENOSYS;
-	}
-
-	if (dfs_subdir(fs->path, fullpath) == RT_NULL)
-		result = fs->ops->stat(fs, "/", buf);
 	else
+	{
+		if (fs->ops->stat == RT_NULL)
+		{
+			rt_free(fullpath);
+			dfs_log(DFS_DEBUG_ERROR, ("the filesystem didn't implement this function"));
+			return -DFS_STATUS_ENOSYS;
+		}
+
+		/* get the real file path and get file stat */
 		result = fs->ops->stat(fs, dfs_subdir(fs->path, fullpath), buf);
+	}
 
 	rt_free(fullpath);
 
@@ -470,7 +469,7 @@ void ls(const char* pathname)
 		{
 			rt_memset(&dirent, 0, sizeof(struct dirent));
 			length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
-			if ( length > 0 ) 
+			if ( length > 0 )
 			{
 				rt_memset(&stat, 0, sizeof(struct stat));
 
@@ -519,13 +518,13 @@ void cat(const char* filename)
 {
 	rt_uint32_t length;
 	char buffer[81];
-	
+
 	if (dfs_file_open(&fd, filename, DFS_O_RDONLY) < 0)
 	{
 		rt_kprintf("Open %s failed\n", filename);
 		return;
 	}
-	
+
 	do
 	{
 		rt_memset(buffer, 0, sizeof(buffer));
@@ -535,7 +534,7 @@ void cat(const char* filename)
 			rt_kprintf("%s", buffer);
 		}
 	}while (length > 0);
-	
+
 	dfs_file_close(&fd);
 }
 FINSH_FUNCTION_EXPORT(cat, print file)
@@ -553,7 +552,7 @@ void copy(const char* src, const char* dst)
 		rt_kprintf("out of memory\n");
 		return;
 	}
-	
+
 	if (dfs_file_open(&src_fd, src, DFS_O_RDONLY) < 0)
 	{
 		rt_free(block_ptr);

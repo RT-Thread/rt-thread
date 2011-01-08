@@ -71,7 +71,7 @@ err:
  *
  * @param path the specified path string.
  *
- * @return the found file system or NULL if no file system mounted on 
+ * @return the found file system or NULL if no file system mounted on
  * specified path
  */
 struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
@@ -96,8 +96,12 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
 		}
 
         if ((filesystem_table[index].ops != RT_NULL) &&
-                strncmp(filesystem_table[index].path, path, fspath) == 0)
+            (strncmp(filesystem_table[index].path, path, fspath) == 0))
         {
+        	/* check next path separator */
+        	if ( fspath > 1 && (strlen(path) > fspath) &&
+        		(path[fspath] != '/')) continue;
+
             fs = &filesystem_table[index];
             prefixlen = fspath;
         }

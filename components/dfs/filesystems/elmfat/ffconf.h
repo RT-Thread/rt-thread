@@ -102,8 +102,11 @@
 /  two Unicode handling functions ff_convert() and ff_wtoupper() must be added
 /  to the project. */
 
-
+#ifdef RT_DFS_ELM_LFN_UNICODE
+#define _LFN_UNICODE	1	/* 0 or 1 */
+#else
 #define	_LFN_UNICODE	0	/* 0 or 1 */
+#endif
 /* To switch the character code set on FatFs API to Unicode,
 /  enable LFN feature and set _LFN_UNICODE to 1.
 */
