@@ -105,6 +105,9 @@ void rt_init_thread_entry(void* parameter)
 		/* init touch panel */
 		rtgui_touch_hw_init();	
 
+		/* init keypad */
+		rt_hw_key_init();
+		
 		/* re-init device driver */
 		rt_device_init_all();
 
@@ -142,6 +145,9 @@ void rt_init_thread_entry(void* parameter)
 
 		/* init touch panel */
 		rtgui_touch_hw_init();	
+
+		/* init keypad */
+		rt_hw_key_init();
 
 		/* re-init device driver */
 		rt_device_init_all();

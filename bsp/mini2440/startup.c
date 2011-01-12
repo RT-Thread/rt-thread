@@ -38,6 +38,8 @@ extern void rt_application_init(void);
 
 extern struct serial_device uart0;
 extern struct rt_device uart0_device;
+extern struct serial_device uart2;
+extern struct rt_device uart2_device;
 
 /**
  * @addtogroup mini2440
@@ -105,11 +107,16 @@ void rtthread_startup(void)
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
-	/* register uart1 */
+	/* register uart0 */
 	rt_hw_serial_register(&uart0_device, "uart0",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart0);
 
+	/* register uart2, used for RTI debug */
+	rt_hw_serial_register(&uart2_device, "uart2",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+		&uart2);
+	
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif

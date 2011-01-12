@@ -113,8 +113,8 @@
 
 #define	S3C2410_LCDINT_FRSYNC	(1<<1)
 
-static volatile rt_uint16_t _rt_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
-static volatile rt_uint16_t _rt_hw_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
+volatile rt_uint16_t _rt_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
+volatile rt_uint16_t _rt_hw_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
 
 struct rtgui_lcd_device
 {
@@ -307,7 +307,7 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 	GPDCON = 0xaaaaaaaa;
 
 #define	M5D(n)	((n)&0x1fffff)
-#define LCD_ADDR ((rt_uint32_t)_rt_hw_framebuffer)
+#define LCD_ADDR ((rt_uint32_t)_rt_framebuffer)
 	LCDCON1 = (LCD_PIXCLOCK << 8) | (3 <<  5) | (12 << 1);
    	LCDCON2 = (LCD_UPPER_MARGIN << 24) | ((LCD_HEIGHT - 1) << 14) | (LCD_LOWER_MARGIN << 6) | (LCD_VSYNC_LEN << 0);
    	LCDCON3 = (LCD_RIGHT_MARGIN << 19) | ((LCD_WIDTH  - 1) <<  8) | (LCD_LEFT_MARGIN << 0);
@@ -357,6 +357,20 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
+static rt_err_t rt_lcd_open(rt_device_t dev, rt_uint16_t oflag)
+{	
+	RT_ASSERT(dev != RT_NULL);
+	
+	return RT_EOK;
+}
+
+static rt_err_t rt_lcd_close(rt_device_t dev)
+{	
+	RT_ASSERT(dev != RT_NULL);
+
+	return RT_EOK;
+}
+
 void rt_hw_lcd_init(void)
 {
 	lcd = (struct rtgui_lcd_device*)rt_malloc(sizeof(struct rtgui_lcd_device));
@@ -365,12 +379,14 @@ void rt_hw_lcd_init(void)
 	/* init device structure */
 	lcd->parent.type = RT_Device_Class_Unknown;
 	lcd->parent.init = rt_lcd_init;
+	lcd->parent.open = rt_lcd_open;
+	lcd->parent.open = rt_lcd_close;
 	lcd->parent.control = rt_lcd_control;
 	lcd->parent.user_data = RT_NULL;
 	lcd->byte_per_pixel = 2;
 	lcd->width = LCD_WIDTH;
 	lcd->height = LCD_HEIGHT;
-	lcd->hw_framebuffer = (void*)_rt_hw_framebuffer;
+	lcd->hw_framebuffer = (void*)_rt_framebuffer;
 	
 	/* register touch device to RT-Thread */
 	rt_device_register(&(lcd->parent), "lcd", RT_DEVICE_FLAG_RDWR);

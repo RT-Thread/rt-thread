@@ -340,22 +340,22 @@ struct dfs_partition part[4];
 
 static rt_err_t rt_sdcard_init(rt_device_t dev)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_close(rt_device_t dev)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
@@ -406,7 +406,7 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	return size;
 }
 
-void rt_hw_sdcard_init()
+void rt_hw_sdcard_init(void)
 {
 	rt_uint8_t i, status;
 	rt_uint8_t *sector;
