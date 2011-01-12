@@ -25,7 +25,7 @@ static const rtgui_menu_item_t items[] =
 	{RTGUI_ITEM_NORMAL, "item #1", RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_NORMAL, "item #2", RT_NULL, RT_NULL, 0, RT_NULL},
 	{RTGUI_ITEM_SEPARATOR, RT_NULL, RT_NULL, RT_NULL, 0, RT_NULL},
-	{RTGUI_ITEM_SUBMENU, "item #3", RT_NULL, sub_items, sizeof(sub_items)/sizeof(sub_items[0]), RT_NULL},
+	{RTGUI_ITEM_SUBMENU, "item #3", RT_NULL, (struct rtgui_menu_item_t *)sub_items, sizeof(sub_items)/sizeof(sub_items[0]), RT_NULL},
 };
 static rtgui_menu_t* menu;
 

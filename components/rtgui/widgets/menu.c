@@ -49,7 +49,7 @@ static void _rtgui_menu_onitem(struct rtgui_widget* widget, struct rtgui_event* 
 		rt_uint16_t count;
 		rtgui_rect_t item_rect;
 
-		items = menu->items[menu->items_list->current_item].submenu;
+		items = (rtgui_menu_item_t*)menu->items[menu->items_list->current_item].submenu;
 		count = menu->items[menu->items_list->current_item].submenu_count;
 		if (menu->sub_menu != RT_NULL)
 		{
@@ -164,7 +164,7 @@ static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t*
 	{
 		/* whether click on parent menu */
 		if (rtgui_win_is_activated(RTGUI_WIN(menu->parent_menu)) == RT_TRUE &&
-			menu->parent_menu->items[menu->parent_menu->items_list->current_item].submenu == menu->items)
+			menu->parent_menu->items[menu->parent_menu->items_list->current_item].submenu == (struct rtgui_menu_item_t *)menu->items)
 			return RT_TRUE;
 	}
 
