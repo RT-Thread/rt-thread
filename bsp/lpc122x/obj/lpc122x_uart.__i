@@ -1,1 +1,0 @@
--c --cpu Cortex-M0 -D__MICROLIB --li -g -O0 --apcs=interwork -I. -I..\..\include -I..\..\libcpu\arm\lpc122x -I.\peripheral -I "F:\Program Files\KEIL\ARM\INC" -I "F:\Program Files\KEIL\ARM\INC\ARM" -o ".\obj\lpc122x_uart.o" --omf_browse ".\obj\lpc122x_uart.crf" --depend ".\obj\lpc122x_uart.d" "peripheral\lpc122x_uart.c"
