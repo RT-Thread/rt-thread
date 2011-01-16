@@ -96,16 +96,19 @@ URET uffs_InitMountTable(void)
 		}
 
 		work->dev->par.start = work->start_block;
-		if (work->end_block < 0) {
+		if (work->end_block < 0) 
+		{
 			work->dev->par.end = work->dev->attr->total_blocks + work->end_block;
 		}
-		else {
+		else 
+		{
 			work->dev->par.end = work->end_block;
 		}
 		uffs_Perror(UFFS_ERR_NOISY, "mount partiton: %d,%d",
 			work->dev->par.start, work->dev->par.end);
 
-		if (uffs_InitDevice(work->dev) != U_SUCC) {
+		if (uffs_InitDevice(work->dev) != U_SUCC) 
+		{
 			uffs_Perror(UFFS_ERR_SERIOUS, "init device fail !");
 			return U_FAIL;
 		}

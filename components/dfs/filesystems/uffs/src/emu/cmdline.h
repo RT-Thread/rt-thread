@@ -57,7 +57,7 @@ struct cli_commandset {
 const char * cli_getparam(const char *tail, const char **next);
 void cli_add_commandset(struct cli_commandset *cmds);
 void cliInterpret(const char *line);
-void cliMain();
+void cliMain(void);
 
 #endif
 

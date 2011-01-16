@@ -191,7 +191,7 @@
  *
  * \note Enable this will ensure your data always be stored on completly good blocks.
  */
-#define CONFIG_BAD_BLOCK_POLICY_STRICT
+//#define CONFIG_BAD_BLOCK_POLICY_STRICT
 
 
 

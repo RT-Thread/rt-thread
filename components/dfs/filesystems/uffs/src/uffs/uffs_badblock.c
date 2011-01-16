@@ -40,15 +40,15 @@
 #include "uffs/uffs_config.h"
 #include "uffs/uffs_ecc.h"
 #include "uffs/uffs_badblock.h"
-#include <string.h>
+
+#include <rtthread.h>
 
 #define PFX "bbl:  "
 
 void uffs_BadBlockInit(uffs_Device *dev)
-{
+{	
 	dev->bad.block = UFFS_INVALID_BLOCK;
 }
-
 
 /** 
  * \brief process bad block: erase bad block, mark it as 'bad' and put the node to bad block list.
@@ -196,7 +196,7 @@ void uffs_BadBlockRecover(uffs_Device *dev)
 			dev->ops->EraseBlock(dev, good->u.list.block);
 		uffs_TreeInsertToErasedListTail(dev, good); //put back to erased list
 	}
-
+	type = type;
 	uffs_BlockInfoPut(dev, bc);
 
 }

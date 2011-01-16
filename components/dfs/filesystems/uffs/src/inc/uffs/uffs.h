@@ -37,58 +37,58 @@
 
 #ifndef _UFFS_H_
 #define _UFFS_H_
-
+#include <dfs_def.h>
 #include "uffs/uffs_types.h"
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-#define UO_RDONLY		0x0000		/** read only */
-#define UO_WRONLY		0x0001		/** write only */
-#define UO_RDWR			0x0002		/** read and write */
-#define UO_APPEND		0x0008		/** append */
+#define UO_RDONLY		DFS_O_RDONLY	/** read only */
+#define UO_WRONLY		DFS_O_WRONLY	/** write only */
+#define UO_RDWR			DFS_O_RDWR		/** read and write */
+#define UO_APPEND		DFS_O_APPEND	/** append */
 
-#define UO_BINARY		0x0000		/** no used in uffs */
+#define UO_BINARY		0x0000			/** no used in uffs */
 
-#define UO_CREATE		0x0100
-#define UO_TRUNC		0x0200
-#define UO_EXCL			0x0400		
+#define UO_CREATE		DFS_O_CREAT		
+#define UO_TRUNC		DFS_O_TRUNC		
+#define UO_EXCL			DFS_O_EXCL
 
-#define UO_DIR			0x1000		/** open a directory */
+#define UO_DIR			DFS_O_DIRECTORY	/** open a directory */
 
 
 
-#define UENOERR 0		/** no error */
-#define UEACCES	1		/** Tried to open read-only file
-						 for writing, or files sharing mode
-						 does not allow specified operations,
-						 or given path is directory */
+#define UENOERR 		0	/** no error */
+#define UEACCES			1	/** Tried to open read-only file
+						 	for writing, or files sharing mode
+						 	does not allow specified operations,
+						 	or given path is directory */
 
-#define UEEXIST	2		/** _O_CREAT and _O_EXCL flags specified,
+#define UEEXIST			2	/** _O_CREAT and _O_EXCL flags specified,
 							but filename already exists */
-#define UEINVAL	3		/** Invalid oflag or pmode argument */
-#define UEMFILE	4		/** No more file handles available
-						  (too many open files)  */
-#define UENOENT	5		/** file or path not found */
-#define UETIME	6		/** can't set file time */
-#define UEBADF	9		/** invalid file handle */
-#define UENOMEM	10		/** no enough memory */
-#define UEIOERR	11		/** I/O error from lower level flash operation */
-#define UENOTDIR 12		/** Not a directory */
-#define UEISDIR 13		/** Is a directory */    
+#define UEINVAL			3	/** Invalid oflag or pmode argument */
+#define UEMFILE			4	/** No more file handles available
+						  	(too many open files)  */
+#define UENOENT			5	/** file or path not found */
+#define UETIME			6	/** can't set file time */
+#define UEBADF			9	/** invalid file handle */
+#define UENOMEM			10	/** no enough memory */
+#define UEIOERR			11	/** I/O error from lower level flash operation */
+#define UENOTDIR 		12	/** Not a directory */
+#define UEISDIR 		13	/** Is a directory */ 
 
-#define UEUNKNOWN	100	/** unknown error */
-
-
+#define UEUNKNOWN		100	/** unknown error */
+	
 
 #define _SEEK_CUR		0		/** seek from current position */
 #define _SEEK_SET		1		/** seek from beginning of file */
 #define _SEEK_END		2		/** seek from end of file */
 
-#define USEEK_CUR		_SEEK_CUR
-#define USEEK_SET		_SEEK_SET
-#define USEEK_END		_SEEK_END
+#define USEEK_SET		DFS_SEEK_SET  	/*0* 从当前点寻找 */
+#define USEEK_CUR		DFS_SEEK_CUR	/*1* 从文件的开始寻找 */
+#define USEEK_END		DFS_SEEK_END	/*2* 从文件的结尾寻找 */
+
 
 
 
@@ -104,7 +104,7 @@ extern "C"{
 #define FILE_ATTR_WRITE		(1 << 0)	//!< writable
 
 
-/**
+/*
  * \structure uffs_FileInfoSt
  * \brief file/dir entry info in physical storage format
  */

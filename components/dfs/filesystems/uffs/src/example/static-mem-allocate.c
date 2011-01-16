@@ -33,7 +33,7 @@
 /**
  * \file static-mem-allocate.c
  * \brief demostrate how to use static memory allocation. This example use 
- *        file emulated NAND flash.
+ *        file emulated NAND flash, one partition only.
  * \author Ricky Zheng
  */
 
@@ -61,8 +61,6 @@ int main()
 
 extern struct cli_commandset * get_helper_cmds(void);
 
-#define DEFAULT_EMU_FILENAME "uffsemfile.bin"
-
 #define PAGE_DATA_SIZE    512
 #define PAGE_SPARE_SIZE   16
 #define PAGES_PER_BLOCK   32
@@ -86,46 +84,41 @@ static struct uffs_MountTableEntrySt demo_mount = {
 	NULL
 };
 
-static struct uffs_StorageAttrSt emu_storage = {0};
-static struct uffs_FileEmuSt emu_private = {0};
-
 /* static alloc the memory */
 static int static_buffer_pool[UFFS_STATIC_BUFF_SIZE(PAGES_PER_BLOCK, PAGE_SIZE, TOTAL_BLOCKS) / sizeof(int)];
 
 
-static void setup_emu_storage(struct uffs_StorageAttrSt *attr)
+static void setup_storage(struct uffs_StorageAttrSt *attr)
 {
 	attr->total_blocks = TOTAL_BLOCKS;			/* total blocks */
 	attr->page_data_size = PAGE_DATA_SIZE;		/* page data size */
 	attr->spare_size = PAGE_SPARE_SIZE;		  	/* page spare size */
 	attr->pages_per_block = PAGES_PER_BLOCK;	/* pages per block */
 	attr->block_status_offs = 4;				/* block status offset is 5th byte in spare */
-    attr->ecc_opt = UFFS_ECC_SOFT;              /* ecc option */
+    attr->ecc_opt = UFFS_ECC_SOFT;              /* use UFFS software ecc */
     attr->layout_opt = UFFS_LAYOUT_UFFS;        /* let UFFS do the spare layout */    
-
 }
 
-static void setup_emu_private(uffs_FileEmu *emu)
+static void setup_device(uffs_Device *dev)
 {
-	memset(emu, 0, sizeof(uffs_FileEmu));
-	emu->emu_filename = DEFAULT_EMU_FILENAME;
+	// using file emulator device
+	dev->Init = femu_InitDevice;
+	dev->Release = femu_ReleaseDevice;
+	dev->attr = femu_GetStorage();
 }
 
 static int init_uffs_fs(void)
 {
 	struct uffs_MountTableEntrySt *mtbl = &demo_mount;
 
-	/* setup emu storage */
-	setup_emu_storage(&emu_storage);
-	setup_emu_private(&emu_private);
-	emu_storage._private = &emu_private;
-	mtbl->dev->attr = &emu_storage;
+	/* setup flash storage attributes */
+	setup_storage(femu_GetStorage());
 
 	/* setup memory allocator */
 	uffs_MemSetupStaticAllocator(&mtbl->dev->mem, static_buffer_pool, sizeof(static_buffer_pool));
 
-	/* setup device */
-	uffs_fileem_setup_device(mtbl->dev);
+	/* setup device: init, release, attr */
+	setup_device(mtbl->dev);
 
 	/* register mount table */
 	uffs_RegisterMountTable(mtbl);
@@ -150,6 +143,7 @@ int main(int argc, char *argv[])
 	}
 
 	cli_add_commandset(get_helper_cmds());
+	cli_add_commandset(get_test_cmds());
 	cliMain();
 
 	release_uffs_fs();

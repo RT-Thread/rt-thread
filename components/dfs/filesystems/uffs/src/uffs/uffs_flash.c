@@ -295,7 +295,7 @@ static void UnloadSpare(uffs_Device *dev, const u8 *spare, uffs_Tags *tag, u8 *e
 int uffs_FlashReadPageSpare(uffs_Device *dev, int block, int page, uffs_Tags *tag, u8 *ecc)
 {
 	uffs_FlashOps *ops = dev->ops;
-	struct uffs_StorageAttrSt *attr = dev->attr;
+//	struct uffs_StorageAttrSt *attr = dev->attr;
 	u8 * spare_buf;
 	int ret = UFFS_FLASH_UNKNOWN_ERR;
 	UBOOL is_bad = U_FALSE;

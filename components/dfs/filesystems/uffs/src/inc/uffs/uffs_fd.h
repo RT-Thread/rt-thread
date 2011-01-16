@@ -69,48 +69,50 @@
 /**
  * \brief POSIX dirent
  */
-struct uffs_dirent {
-    int d_ino;							/* inode number (serial number or this record) */
-	char d_name[MAX_FILENAME_LENGTH];	/* name of this record */
-
-    int d_off;							/* offset to this dirent */
-    unsigned short int d_reclen;		/* length of this uffs_dirent */
-    unsigned short int d_namelen;		/* length of this d_name */
-	unsigned char d_type;				/* type of this record */
+struct uffs_dirent 
+{
+    int 	d_ino;						/* inode number (serial number or this record) */
+	char 	d_name[MAX_FILENAME_LENGTH];	/* name of this record */
+    int 	d_off;						/* offset to this dirent */
+    u16 	d_reclen;						/* length of this uffs_dirent */
+    u16 	d_namelen;						/* length of this d_name */
+	u32 	d_type;							/* type of this record ,要与info.attr的类型保持一致*/
 };
 
 /**
  * \brief POSIX DIR
  */
-typedef struct uffs_dirSt {
-    struct uffs_ObjectSt   *obj;		/* dir object */
-    struct uffs_FindInfoSt f;			/* find info */
-    struct uffs_ObjectInfoSt info;		/* object info */
-    struct uffs_dirent dirent;			/* dir entry */
-} uffs_DIR;
+typedef struct uffs_dirSt 
+{
+    struct uffs_ObjectSt   	*obj;		/* dir object */
+    struct uffs_FindInfoSt	f;		/* find info */
+    struct uffs_ObjectInfoSt	info;		/* object info */
+    struct uffs_dirent 	dirent;	/* dir entry */
+}uffs_DIR;
 
 /**
  * \brief POSIX stat
  */
-struct uffs_stat {
-    int			st_dev;     /* ID of device containing file */
-    int			st_ino;     /* inode number */
-    int			st_mode;    /* protection */
-    int			st_nlink;   /* number of hard links */
-    int			st_uid;     /* user ID of owner */
-    int			st_gid;     /* group ID of owner */
-    int			st_rdev;    /* device ID (if special file) */
-    long		st_size;    /* total size, in bytes */
-    int			st_blksize; /* blocksize for filesystem I/O */
-    int			st_blocks;  /* number of blocks allocated */
-    u32			st_atime;   /* time of last access */
-    u32			st_mtime;   /* time of last modification */
-    u32			st_ctime;   /* time of last status change */
+struct uffs_stat 
+{
+    int				st_dev;     /* ID of device containing file */
+    int				st_ino;     /* inode number */
+    int				st_mode;    /* protection */
+    int				st_nlink;   /* number of hard links */
+    int				st_uid;     /* user ID of owner */
+    int				st_gid;     /* group ID of owner */
+    int				st_rdev;    /* device ID (if special file) */
+    long			st_size;    /* total size, in bytes */
+    int				st_blksize; /* blocksize for filesystem I/O */
+    int				st_blocks;  /* number of blocks allocated */
+    u32		st_atime;   /* time of last access */
+    u32		st_mtime;   /* time of last modification */
+    u32		st_ctime;   /* time of last status change */
 };
 
 
-URET uffs_InitDirEntryBuf(void);
-URET uffs_ReleaseDirEntryBuf(void);
+int uffs_InitDirEntryBuf(void);
+int uffs_ReleaseDirEntryBuf(void);
 uffs_Pool * uffs_GetDirEntryBufPool(void);
 
 /* POSIX compliant file system APIs */

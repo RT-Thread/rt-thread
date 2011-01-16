@@ -229,7 +229,7 @@ int uffs_PoolPutLocked(uffs_Pool *pool, void *p)
 void *uffs_PoolGetBufByIndex(uffs_Pool *pool, u32 index)
 {
 	uffs_Assert(pool, "pool missing");
-	uffs_Assert(index >= 0 && index < pool->num_bufs, "index out of range");
+	uffs_Assert(index < pool->num_bufs, "index out of range");
 
 	return (u8 *) pool->mem + index * pool->buf_size;
 }

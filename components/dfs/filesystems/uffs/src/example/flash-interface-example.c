@@ -44,6 +44,50 @@
 
 #define PFX "nand-drv:"
 
+struct my_nand_chip {
+	void *IOR_ADDR;
+	void *IOW_ADDR;
+	UBOOL inited;
+	// ... 
+};
+
+/*
+ * Standard NAND flash commands
+ */
+#define NAND_CMD_READ0		0
+#define NAND_CMD_READ1		1
+#define NAND_CMD_RNDOUT		5
+#define NAND_CMD_PAGEPROG	0x10
+#define NAND_CMD_READOOB	0x50
+#define NAND_CMD_ERASE1		0x60
+#define NAND_CMD_STATUS		0x70
+#define NAND_CMD_STATUS_MULTI	0x71
+#define NAND_CMD_SEQIN		0x80
+#define NAND_CMD_RNDIN		0x85
+#define NAND_CMD_READID		0x90
+#define NAND_CMD_ERASE2		0xd0
+#define NAND_CMD_RESET		0xff
+
+
+/* impelent the following functions for your NAND flash */
+#define CHIP_SET_CLE(chip) {}
+#define CHIP_CLR_CLE(chip) {}
+#define CHIP_SET_ALE(chip) {}
+#define CHIP_CLR_ALE(chip) {}
+#define CHIP_SET_NCS(chip) {}
+#define CHIP_CLR_NCS(chip) {}
+#define CHIP_BUSY(chip) {}
+#define CHIP_READY(chip) {}
+#define WRITE_COMMAND(chip, cmd) {}
+#define WRITE_DATA_ADDR(chip, block, page, offset) {}
+#define WRITE_ERASE_ADDR(chip, block) {}
+#define WRITE_DATA(chip, data, len) {}
+#define READ_DATA(chip, data, len) {}
+
+#define PARSE_STATUS(v) (UFFS_FLASH_NO_ERR)	// parse status to UFFS_FLASH_NO_ERR or UFFS_FLASH_BAD_BLK
+
+
+
 #if CONFIG_USE_STATIC_MEMORY_ALLOCATOR == 0
 int main()
 {
@@ -53,165 +97,207 @@ int main()
 #else
 
 
-#define USE_SINGLE_WRITE_FUN
-
-
-#ifdef USE_SINGLE_WRITE_FUN
-static int nand_write_full_page(uffs_Device *dev, u32 block, u32 pageNum, const u8 *page, int len, const u8 *tag, int tag_len, const u8 *ecc);
-#else
-static int nand_write_page_data(uffs_Device *dev, u32 block, u32 pageNum, const u8 *page, int len, u8 *ecc);
-static int nand_write_page_spare(uffs_Device *dev, u32 block, u32 pageNum, const u8 *spare, int ofs, int len, UBOOL eod);
-#endif
-
-static int nand_read_page_data(uffs_Device *dev, u32 block, u32 pageNum, u8 *page, int len, u8 *ecc);
-static int nand_read_page_spare(uffs_Device *dev, u32 block, u32 pageNum, u8 *spare, int ofs, int len);
-
-static int nand_erase_block(uffs_Device *dev, u32 blockNumber);
-
-static URET nand_init_device(uffs_Device *dev);
-
-
-#ifdef USE_SINGLE_WRITE_FUN
-// if you want to optimize nand flash driver, or use special nand hardware controller, 
-// or use other NAND driver (for example, eCos NAND lib), you shoud do layout in nand driver.
-static int nand_write_full_page(uffs_Device *dev, u32 block, u32 pageNum, const u8 *page, int len, const u8 *tag, int tag_len, const u8 *ecc)
+static int nand_read_page(uffs_Device *dev, u32 block, u32 page, u8 *data, int data_len, u8 *ecc,
+						u8 *spare, int spare_len)
 {
-#define SPOOL(dev) &((dev)->mem.spare_pool)
+	u8 val = 0;
+	int ret = UFFS_FLASH_NO_ERR;
+	struct my_nand_chip *chip = (struct my_nand_chip *) dev->attr->_private;
 
-	u8 *spare_buf = NULL;
-	
-	spare_buf = (u8 *) uffs_PoolGet(SPOOL(dev));  // alloc a spare buffer
-	
-	// ... START WRITE COMMAND ...
-	// ...
-	
-	if (page) {
-		// WRITE page data
-		// ....		
-		if (dev->attr->ecc_opt == UFFS_ECC_HW) {
-			// read ECC from hardware controller to ecc buf,
-			// ...
+	CHIP_CLR_NCS(chip);
+	if (data && data_len > 0) {
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_READ0);
+		CHIP_CLR_CLE(chip);
+		CHIP_SET_ALE(chip);
+		WRITE_DATA_ADDR(chip, block, page, 0);
+		CHIP_CLR_ALE(chip);
+		READ_DATA(chip, data, data_len);
+
+		// for now, we return all 0xFF to pass UFFS mount, you should remove this at your driver
+		memset(data, 0xFF, data_len);
+	}
+
+	if (spare && spare_len > 0) {
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_READOOB);
+		CHIP_CLR_CLE(chip);
+		CHIP_SET_ALE(chip);
+		WRITE_DATA_ADDR(chip, block, page, dev->attr->page_data_size);
+		CHIP_CLR_ALE(chip);
+		READ_DATA(chip, spare, spare_len);
+
+		// for now, we return all 0xFF to pass UFFS mount, you should remove this at your driver
+		memset(spare, 0xFF, spare_len);
+	}
+
+	if (data == NULL && spare == NULL) {
+		// read bad block mark
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_READOOB);
+		CHIP_CLR_CLE(chip);
+		CHIP_SET_ALE(chip);
+		WRITE_DATA_ADDR(chip, block, page, dev->attr->page_data_size + attr->block_status_offs);
+		CHIP_CLR_ALE(chip);
+		READ_DATA(chip, &val, 1);
+		ret = (val == 0xFF ? UFFS_FLASH_NO_ERR : UFFS_FLASH_BAD_BLK);
+
+		// for now, we return UFFS_FLASH_NO_ERR to pass UFFS mount, you should remove this at your driver
+		ret = UFFS_FLASH_NO_ERR;
+	}
+
+	CHIP_SET_NCS(chip);
+
+	return ret;
+}
+
+static int nand_write_page(uffs_Device *dev, u32 block, u32 page,
+							const u8 *data, int data_len, const u8 *spare, int spare_len)
+{
+	u8 val = 0;
+	int ret = UFFS_FLASH_NO_ERR;
+	UBOOL fall_through = FALSE;
+	struct my_nand_chip *chip = (struct my_nand_chip *) dev->attr->_private;
+
+	CHIP_CLR_NCS(chip);
+
+	if (data && data_len > 0) {
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_READ0);
+		WRITE_COMMAND(chip, NAND_CMD_SEQIN);
+		CHIP_CLR_CLE(chip);
+		CHIP_SET_ALE(chip);
+		WRITE_DATA_ADDR(chip, block, page, 0);
+		CHIP_CLR_ALE(chip);
+		CHIP_BUSY(chip);
+		WRITE_DATA(chip, data, data_len);
+		if (data_len == dev->attr->page_data_size)
+			fall_through = U_TRUE;
+		else {
+			CHIP_SET_CLE(chip);
+			WRITE_COMMAND(chip, NAND_CMD_PAGEPROG);
+			WRITE_COMMAND(chip, NAND_CMD_STATUS);
+			CHIP_CLR_CLE(chip);
+			CHIP_READY(chip);
+			READ_DATA(chip, &val, 1);
+			ret = PARSE_STATUS(val);
 		}
 	}
-	
-	if (tag && tag_len > 0) {
-		
-		// now, you can use UFFS's layout function
-			uffs_FlashMakeSpare(dev, (uffs_TagStore *)tag, ecc, spare_buf);
-		// or, do your own layout
-		//   ....
-		
-		// WRITE spare_buf to page spare ...
-		// ...
-	}
-	
-	// FINISH write command ...
-	// ...
-	// read program status ...
-	// ...
-  
-	if (page)
-		dev->st.page_write_count++;
-	if (tag)
-		dev->st.spare_write_count++;
-	
-	if (spare_buf)
-		uffs_PoolPut(SPOOL(dev), spare_buf);  // release spare buffer
-	
-	return UFFS_FLASH_NO_ERR;
-}
 
-#else
+	if (ret != UFFS_FLASH_NO_ERR)
+		goto ext;
 
-static int nand_write_page_data(uffs_Device *dev, u32 block, u32 pageNum, const u8 *page, int len, u8 *ecc)
-{
-	// send WRITE command
-
-	// ... transfer data ...
-	
-	dev->st.page_write_count++;
-	return UFFS_FLASH_NO_ERR;
-}
-
-
-static int nand_write_page_spare(uffs_Device *dev, u32 block, u32 pageNum, const u8 *spare, int ofs, int len, UBOOL eod)
-{
-	if (eod == U_FALSE) {
-		// send WRITE command
-	}
-	else {
-		// do not need to send WRITE command if eod == U_FALSE because 'nand_write_page_data' is called before.
+	if (spare && spare_len > 0) {
+		if (!fall_through) {
+			CHIP_SET_CLE(chip);
+			WRITE_COMMAND(chip, NAND_CMD_READOOB);
+			WRITE_COMMAND(chip, NAND_CMD_SEQIN);
+			CHIP_CLR_CLE(chip);
+			CHIP_SET_ALE(chip);
+			WRITE_DATA_ADDR(chip, block, page, dev->attr->page_data_size);
+			CHIP_CLR_ALE(chip);
+			CHIP_BUSY(chip);
+		}
+		WRITE_DATA(chip, spare, spare_len);
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_PAGEPROG);
+		WRITE_COMMAND(chip, NAND_CMD_STATUS);
+		CHIP_CLR_CLE(chip);
+		CHIP_READY(chip);
+		READ_DATA(chip, &val, 1);
+		ret = PARSE_STATUS(val);
 	}
 
-	// ... transfer data ...
+	if (data == NULL && spare == NULL) {
+		// mark bad block
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_READOOB);
+		WRITE_COMMAND(chip, NAND_CMD_SEQIN);
+		CHIP_CLR_CLE(chip);
+		CHIP_SET_ALE(chip);
+		WRITE_DATA_ADDR(chip, block, page, dev->attr->page_data_size + attr->block_status_offs);
+		CHIP_CLR_ALE(chip);
+		CHIP_BUSY(chip);
+		val = 0;
+		WRITE_DATA(chip, &val, 1);
+		CHIP_SET_CLE(chip);
+		WRITE_COMMAND(chip, NAND_CMD_PAGEPROG);
+		WRITE_COMMAND(chip, NAND_CMD_STATUS);
+		CHIP_CLR_CLE(chip);
+		CHIP_READY(chip);
+		READ_DATA(chip, &val, 1);
+		ret = PARSE_STATUS(val);
+	}
 
-	// send COMMIT command
+ext:
+	CHIP_SET_NCS(chip);
 
-	// read STATUS
-
-	dev->st.spare_write_count++;  
-	return UFFS_FLASH_NO_ERR;
+	return ret;
 }
 
-#endif
-
-
-static int nand_read_page_data(uffs_Device *dev, u32 block, u32 pageNum, u8 *page, int len, u8 *ecc)
+static int nand_erase_block(uffs_Device *dev, u32 block)
 {
-	// send READ command
+	u8 val;
+	struct my_nand_chip *chip = (struct my_nand_chip *) dev->attr->_private;
 
-	// ... transfer data ...
+	CHIP_CLR_NCS(chip);
 
-	// read STATUS
+	CHIP_SET_CLE(chip);
+	WRITE_COMMAND(chip, NAND_CMD_ERASE1);
+	CHIP_CLR_CLE(chip);
+	CHIP_SET_ALE(chip);
+	WRITE_ERASE_ADDR(chip, blcok);
+	CHIP_CLR_ALE(chip);
+	CHIP_SET_CLE(chip);
+	WRITE_COMMAND(chip, NAND_CMD_ERASE2);
+	WRITE_COMMAND(chip, NAND_CMD_STATUS);
+	CHIP_CLR_CLE(chip);
+	CHIP_READY(chip);
+	READ_DATA(chip, &val, 1);
 
-	dev->st.page_read_count++;
-	return UFFS_FLASH_NO_ERR;
+	CHIP_SET_NCS(chip);
+
+	return PARSE_STATUS(val);
 }
 
-static int nand_read_page_spare(uffs_Device *dev, u32 block, u32 pageNum, u8 *spare, int ofs, int len)
+
+static int nand_init_flash(uffs_Device *dev)
 {
-	// send READ command
+	// initialize your hardware here ...
+	struct my_nand_chip *chip = (struct my_nand_chip *) dev->attr->_private;
 
-	// ... transfer data ...
-
-	// read STATUS
-
-	dev->st.spare_read_count++;		
-	return UFFS_FLASH_NO_ERR;
+	if (!chip->inited) {
+		// setup chip I/O address, setup NAND flash controller ... etc.
+		// chip->IOR_ADDR = 0xF0000000
+		// chip->IOW_ADDR = 0xF0000000
+		chip->inited = U_TRUE;
+	}
+	return 0;
 }
 
-
-static int nand_erase_block(uffs_Device *dev, u32 blockNumber)
+static int nand_release_flash(uffs_Device *dev)
 {
-	// insert your nand driver codes here ...
+	// release your hardware here
+	struct my_nand_chip *chip = (struct my_nand_chip *) dev->attr->_private;
 
-	dev->st.block_erase_count++;
-	return UFFS_FLASH_NO_ERR;
+	return 0;
 }
 
+static uffs_FlashOps g_my_nand_ops = {
+	nand_init_flash,	// InitFlash()
+	nand_release_flash,	// ReleaseFlash()
+	nand_read_page,		// ReadPage()
+	NULL,				// ReadPageWithLayout
+	nand_write_page,	// WritePage()
+	NULL,				// WirtePageWithLayout
+	NULL,				// IsBadBlock(), let UFFS take care of it.
+	NULL,				// MarkBadBlock(), let UFFS take care of it.
+	nand_erase_block,	// EraseBlock()
+};
 
 /////////////////////////////////////////////////////////////////////////////////
 
-static struct uffs_FlashOpsSt my_nand_driver_ops = {
-	nand_read_page_data,    //ReadPageData
-	nand_read_page_spare,   //ReadPageSpare
-	NULL,                   //ReadPageSpareWithLayout
-#ifdef USE_SINGLE_WRITE_FUN
-	NULL,
-	NULL,
-	nand_write_full_page,   //WriteFullPages
-#else
-	nand_write_page_data,   //WritePageData
-	nand_write_page_spare,  //WritePageSpare
-	NULL,
-#endif	
-	NULL,                   //IsBadBlock
-	NULL,                   //MarkBadBlock
-	nand_erase_block,       //EraseBlock
-};
-
 // change these parameters to fit your nand flash specification
-#define MAN_ID          MAN_ID_SAMSUNG  // simulate Samsung's NAND flash
 
 #define TOTAL_BLOCKS    1024
 #define PAGE_DATA_SIZE  512
@@ -224,13 +310,27 @@ static struct uffs_FlashOpsSt my_nand_driver_ops = {
 #define PAR_1_BLOCKS	100								/* partition 1 */
 #define PAR_2_BLOCKS	(TOTAL_BLOCKS - PAR_1_BLOCKS)	/* partition 2 */
 
-static struct uffs_StorageAttrSt flash_storage = {0};
+struct my_nand_chip g_nand_chip = {0};
+static struct uffs_StorageAttrSt g_my_flash_storage = {0};
+
+/* define mount table */
+static uffs_Device demo_device_1 = {0};
+static uffs_Device demo_device_2 = {0};
+
+static uffs_MountTable demo_mount_table[] = {
+	{ &demo_device_1,  0, PAR_1_BLOCKS - 1, "/data/" },
+	{ &demo_device_2,  PAR_1_BLOCKS, PAR_1_BLOCKS + PAR_2_BLOCKS - 1, "/" },
+	{ NULL, 0, 0, NULL }
+};
 
 /* static alloc the memory for each partition */
-
 static int static_buffer_par1[UFFS_STATIC_BUFF_SIZE(PAGES_PER_BLOCK, PAGE_SIZE, PAR_1_BLOCKS) / sizeof(int)];
 static int static_buffer_par2[UFFS_STATIC_BUFF_SIZE(PAGES_PER_BLOCK, PAGE_SIZE, PAR_2_BLOCKS) / sizeof(int)];;
 
+static void init_nand_chip(struct my_nand_chip *chip)
+{
+	// init chip IO address, etc.
+}
 
 static void setup_flash_storage(struct uffs_StorageAttrSt *attr)
 {
@@ -245,35 +345,27 @@ static void setup_flash_storage(struct uffs_StorageAttrSt *attr)
 	attr->layout_opt = UFFS_LAYOUT_UFFS;        /* let UFFS do the spare layout */    
 }
 
-
-static URET my_initDevice(uffs_Device *dev)
+static URET my_InitDevice(uffs_Device *dev)
 {
-	dev->ops = &my_nand_driver_ops;
+	dev->attr = &g_my_flash_storage;
+	dev->attr->_private = (void *) &g_nand_chip;	// hook nand_chip data structure to attr->_private
+	dev->ops = &g_my_nand_ops;
     
 	return U_SUCC;
 }
 
-static URET my_releaseDevice(uffs_Device *dev)
+static URET my_ReleaseDevice(uffs_Device *dev)
 {
 	return U_SUCC;
 }
 
-/* define mount table */
-static uffs_Device demo_device_1 = {0};
-static uffs_Device demo_device_2 = {0};
-
-static uffs_MountTable demo_mount_table[] = {
-	{ &demo_device_1,  0, PAR_1_BLOCKS - 1, "/data/" },
-	{ &demo_device_2,  PAR_1_BLOCKS, PAR_1_BLOCKS + PAR_2_BLOCKS - 1, "/" },
-	{ NULL, 0, 0, NULL }
-};
 
 static int my_init_filesystem(void)
 {
 	uffs_MountTable *mtbl = &(demo_mount_table[0]);
 
 	/* setup nand storage attributes */
-	setup_flash_storage(&flash_storage);
+	setup_flash_storage(&g_my_flash_storage);
 
 	/* setup memory allocator */
 	uffs_MemSetupStaticAllocator(&demo_device_1.mem, static_buffer_par1, sizeof(static_buffer_par1));
@@ -281,9 +373,9 @@ static int my_init_filesystem(void)
 
 	/* register mount table */
 	while(mtbl->dev) {
-		mtbl->dev->Init = my_initDevice;
-		mtbl->dev->Release = my_releaseDevice;
-		mtbl->dev->attr = &flash_storage;
+		// setup device init/release entry
+		mtbl->dev->Init = my_InitDevice;
+		mtbl->dev->Release = my_ReleaseDevice;
 		uffs_RegisterMountTable(mtbl);
 		mtbl++;
 	}

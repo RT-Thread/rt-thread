@@ -40,9 +40,9 @@
 #include "uffs/uffs_public.h"
 #include "uffs/uffs_os.h"
 
-#include <string.h>
+#include <rtthread.h>
 
-#define PFX "bc  : "
+#define PFX "bc:   "
 
 #define UFFS_CLONE_BLOCK_INFO_NEXT ((uffs_BlockInfo *)(-2))
 
@@ -52,8 +52,8 @@
  * \param[in] dev uffs device
  * \param[in] maxCachedBlocks maximum cache buffers to be allocated
  * \return result of initialization
- *		\retval U_SUCC successful
- *		\retval U_FAIL failed
+ *		\retval RT_EOK successful
+ *		\retval RT_ERROR failed
  */
 URET uffs_BlockInfoInitCache(uffs_Device *dev, int maxCachedBlocks)
 {
@@ -195,11 +195,11 @@ static void _MoveBcToTail(uffs_Device *dev, uffs_BlockInfo *bc)
  * \brief load page spare data to given block info structure with given page number
  * \param[in] dev uffs device
  * \param[in] work given block info to be filled with
- * \param[in] page given page number to be read from, if #UFFS_ALL_PAGES is presented, it will read
+ * \param[in] page given page number to be read from, if#UFFS_ALL_PAGES is presented, it will read
  *			all pages, otherwise it will read only one given page.
  * \return load result
- * \retval U_SUCC successful
- * \retval U_FAIL fail to load
+ * \retval RT_EOK successful
+ * \retval RT_ERROR fail to load
  * \note work->block must be set before load block info
  */
 URET uffs_BlockInfoLoad(uffs_Device *dev, uffs_BlockInfo *work, int page)
@@ -330,7 +330,7 @@ void uffs_BlockInfoPut(uffs_Device *dev, uffs_BlockInfo *p)
  * \brief make the given pages expired in given block info buffer
  * \param[in] dev uffs device
  * \param[in] p pointer of block info buffer
- * \param[in] page given page number. if #UFFS_ALL_PAGES presented, all pages in the block should be made expired.
+ * \param[in] page given page number. if#UFFS_ALL_PAGES presented, all pages in the block should be made expired.
  */
 void uffs_BlockInfoExpire(uffs_Device *dev, uffs_BlockInfo *p, int page)
 {

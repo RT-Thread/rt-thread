@@ -71,7 +71,7 @@ void uffs_DebugMessage(int level, const char *prefix, const char *suffix, const 
 
 		if (strlen(errFmt) > 800) {
 			// dangerous!!
-			printf("uffs_Perror buffer is not enough !");
+			rt_kprintf("uffs_Perror buffer is not enough !");
 			return;
 		}
 
@@ -96,7 +96,7 @@ void uffs_DebugMessage(int level, const char *prefix, const char *suffix, const 
 			fclose(fp);
 		}
 #else
-		printf("%s", buf);
+		rt_kprintf("%s", buf);
 #endif
 	}
 #endif //ENABLE_DEBUG
@@ -139,6 +139,6 @@ void uffs_Perror( int level, const char *errFmt, ...)
  */
 void uffs_AssertCall(const char *file, int line, const char *msg)
 {
-	printf("ASSERT %s:%d - msg:%s\n", file, line, msg);
+	rt_kprintf("ASSERT %s:%d - msg:%s\n", file, line, msg);
 	while (1);
 }

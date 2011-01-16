@@ -1,20 +1,30 @@
 /*
- * File      : dfs_uffs.h
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE.
- *
- * Change Logs:
- * Date           Author       Notes
- * 2010-09-02     Bernard      The first version.
- */
++------------------------------------------------------------------------------
+| Project   : Device Filesystem
++------------------------------------------------------------------------------
+| Copyright 2010  
+| All rights reserved.
+|------------------------------------------------------------------------------
+| File      : dfs_uffs.h
+|------------------------------------------------------------------------------
+| Chang Logs:
+| Date           Author       Notes
+| 2010-12-24     amsl         Add dfs_uffs_init function declaration
++------------------------------------------------------------------------------
+*/
 
 #ifndef __DFS_UFFS_H__
 #define __DFS_UFFS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int dfs_uffs_init(void);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+

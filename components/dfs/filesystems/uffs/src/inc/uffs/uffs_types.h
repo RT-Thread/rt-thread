@@ -145,7 +145,9 @@ typedef int URET;
 #endif
 
 #endif // _UBASE_
-
+
+/* RT-Thread info */
+#define memset rt_memset
 
 #ifdef __cplusplus
 }

@@ -577,7 +577,7 @@ static URET uffs_BufFlush_Exist_With_BlockCover(
 	UBOOL succRecover;			//U_TRUE: recover successful, erase old block,
 								//U_FALSE: fail to recover, erase new block
 	UBOOL flash_op_err;
-	u16 data_sum;
+	u16 data_sum=0;
 
 	type = dev->buf.dirtyGroup[slot].dirty->type;
 	parent = dev->buf.dirtyGroup[slot].dirty->parent;

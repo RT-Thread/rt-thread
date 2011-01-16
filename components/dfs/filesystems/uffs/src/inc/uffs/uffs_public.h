@@ -151,7 +151,7 @@ UBOOL uffs_IsSrcNewerThanObj(int src, int obj);
 #define TENDSTR "\n"
 
 //#define UFFS_DBG_LEVEL	UFFS_ERR_NORMAL	
-#define UFFS_DBG_LEVEL	UFFS_ERR_NOISY	
+#define UFFS_DBG_LEVEL	UFFS_ERR_DEAD	
 
 void uffs_DebugMessage(int level, const char *prefix, const char *suffix, const char *errFmt, ...);
 

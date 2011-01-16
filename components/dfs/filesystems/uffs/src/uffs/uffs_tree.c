@@ -74,14 +74,17 @@ URET uffs_TreeInit(uffs_Device *dev)
 	
 	pool = &(dev->mem.tree_pool);
 
-	if (dev->mem.tree_nodes_pool_size == 0) {
-		if (dev->mem.malloc) {
+	if (dev->mem.tree_nodes_pool_size == 0) 
+	{
+		if (dev->mem.malloc) 
+		{
 			dev->mem.tree_nodes_pool_buf = dev->mem.malloc(dev, size * num);
 			if (dev->mem.tree_nodes_pool_buf)
 				dev->mem.tree_nodes_pool_size = size * num;
 		}
 	}
-	if (size * num > dev->mem.tree_nodes_pool_size) {
+	if (size * num > dev->mem.tree_nodes_pool_size) 
+	{
 		uffs_Perror(UFFS_ERR_DEAD, "Tree buffer require %d but only %d available.", size * num, dev->mem.tree_nodes_pool_size);
 		memset(pool, 0, sizeof(uffs_Pool));
 		return U_FAIL;
@@ -96,15 +99,18 @@ URET uffs_TreeInit(uffs_Device *dev)
 	dev->tree.bad = NULL;
 	dev->tree.bad_count = 0;
 
-	for (i = 0; i < DIR_NODE_ENTRY_LEN; i++) {
+	for (i = 0; i < DIR_NODE_ENTRY_LEN; i++) 
+	{
 		dev->tree.dir_entry[i] = EMPTY_NODE;
 	}
 
-	for (i = 0; i < FILE_NODE_ENTRY_LEN; i++) {
+	for (i = 0; i < FILE_NODE_ENTRY_LEN; i++) 
+	{
 		dev->tree.file_entry[i] = EMPTY_NODE;
 	}
 
-	for (i = 0; i < DATA_NODE_ENTRY_LEN; i++) {
+	for (i = 0; i < DATA_NODE_ENTRY_LEN; i++) 
+	{
 		dev->tree.data_entry[i] = EMPTY_NODE;
 	}
 
@@ -121,7 +127,8 @@ URET uffs_TreeRelease(uffs_Device *dev)
 	uffs_Pool *pool;
 	
 	pool = &(dev->mem.tree_pool);
-	if (pool->mem && dev->mem.free) {
+	if (pool->mem && dev->mem.free) 
+	{
 		dev->mem.free(dev, pool->mem);
 		pool->mem = NULL;
 		dev->mem.tree_nodes_pool_size = 0;
@@ -1003,7 +1010,7 @@ TreeNode * uffs_TreeGetErasedNode(uffs_Device *dev)
 
 static void _InsertToEntry(uffs_Device *dev, u16 *entry, int hash, TreeNode *node)
 {
-	struct uffs_TreeSt *tree = &(dev->tree);
+	/* struct uffs_TreeSt *tree = &(dev->tree); */
 
 	node->hash_next = entry[hash];
 #ifdef CONFIG_TREE_NODE_USE_DOUBLE_LINK

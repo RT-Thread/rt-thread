@@ -30,16 +30,15 @@
   on this file might be covered by the GNU General Public License.
 */
 
-/**
- * \file uffs_fd.c
- * \brief POSIX like, hight level file operations
- * \author Ricky Zheng, created 8th Jun, 2005
- */
-
 #include <string.h>
 #include "uffs/uffs_config.h"
+#include "uffs/uffs_device.h"
+#include "uffs/uffs_mtb.h"
+#include "uffs/uffs_utils.h"
 #include "uffs/uffs_fs.h"
 #include "uffs/uffs_fd.h"
+
+
 #define PFX "fd: "
 
 
@@ -83,7 +82,7 @@ static int _uffs_errno = 0;
 /**
  * initialise uffs_DIR buffers, called by UFFS internal
  */
-URET uffs_InitDirEntryBuf(void)
+int uffs_InitDirEntryBuf(void)
 {
 	return uffs_PoolInit(&_dir_pool, _dir_pool_data, sizeof(_dir_pool_data),
 			sizeof(uffs_DIR), MAX_DIR_HANDLE);
@@ -92,7 +91,7 @@ URET uffs_InitDirEntryBuf(void)
 /**
  * Release uffs_DIR buffers, called by UFFS internal
  */
-URET uffs_ReleaseDirEntryBuf(void)
+int uffs_ReleaseDirEntryBuf(void)
 {
 	return uffs_PoolRelease(&_dir_pool);
 }
@@ -106,7 +105,7 @@ static uffs_DIR * GetDirEntry(void)
 {
 	uffs_DIR *dirp = (uffs_DIR *) uffs_PoolGet(&_dir_pool);
 
-	if (dirp)
+	if(dirp)
 		memset(dirp, 0, sizeof(uffs_DIR));
 
 	return dirp;
@@ -292,6 +291,7 @@ int uffs_remove(const char *name)
 	return ret;
 }
 
+
 int uffs_truncate(int fd, long remain)
 {
 	int ret;
@@ -436,14 +436,16 @@ ext:
 	return ret;
 }
 
-struct uffs_dirent * uffs_readdir(uffs_DIR *dirp)
+struct uffs_dirent* uffs_readdir(uffs_DIR *dirp)
 {
-	struct uffs_dirent *ent;
+	struct uffs_dirent *ent = &dirp->dirent;
 
-	CHK_DIR(dirp, NULL);
-
-	if (uffs_FindObjectNext(&dirp->info, &dirp->f) == U_SUCC) {
-		ent = &dirp->dirent;
+	//CHK_DIR(dirp, NULL);
+	if(dirp == NULL)
+		return NULL;
+	
+	if(uffs_FindObjectNext(&dirp->info, &dirp->f) == RT_EOK) 
+	{
 		ent->d_ino = dirp->info.serial;
 		ent->d_namelen = dirp->info.info.name_len;
 		memcpy(ent->d_name, dirp->info.info.name, ent->d_namelen);
@@ -462,10 +464,14 @@ void uffs_rewinddir(uffs_DIR *dirp)
 {
 	CHK_DIR_VOID(dirp);
 
-	uffs_FindObjectRewind(&dirp->f);
+	uffs_FindObjectRewind(&dirp->f);	//fi(=)find info
 }
 
-
+/*
+ * 函数功能: 创建一个文件夹
+ * 输入参数: 文件夹名称,参数
+ * 返回参数: 
+ */
 int uffs_mkdir(const char *name, ...)
 {
 	uffs_Object *obj;
@@ -493,6 +499,11 @@ int uffs_mkdir(const char *name, ...)
 	return ret;
 }
 
+/*
+ * 函数功能: 移除一个文件夹
+ * 输入参数: 文件夹名称
+ * 返回参数: 
+ */
 int uffs_rmdir(const char *name)
 {
 	int err = 0;
@@ -518,15 +529,3 @@ int uffs_rmdir(const char *name)
 	return ret;
 }
 
-
-#if 0
-void uffs_seekdir(uffs_DIR *dirp, long loc)
-{
-	return ;
-}
-
-long uffs_telldir(uffs_DIR *dirp)
-{
-	return 0;
-}
-#endif

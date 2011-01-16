@@ -37,7 +37,7 @@
  */
 #include "uffs/uffs_os.h"
 #include "uffs/uffs_public.h"
-#include <memory.h>
+//#include <memory.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -98,7 +98,7 @@ unsigned int uffs_GetCurDateTime(void)
 	//			or just return 0 if you don't care about file time.
 	time_t tvalue;
 
-	tvalue = time(NULL);
+	tvalue = 0;//time(NULL);
 	
 	return (unsigned int)tvalue;
 }

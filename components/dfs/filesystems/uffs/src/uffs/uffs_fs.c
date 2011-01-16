@@ -243,18 +243,22 @@ URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev,
 	obj->name = name;
 	obj->name_len = name_len;
 
-	if (obj->type == UFFS_TYPE_DIR) {
+	if (obj->type == UFFS_TYPE_DIR) 
+	{
 		if (name[obj->name_len - 1] == '/')
 			obj->name_len--;
 	}
-	else {
-		if (name[obj->name_len - 1] == '/') {
+	else 
+	{
+		if (name[obj->name_len - 1] == '/') 
+		{
 			obj->err = UENOENT;
 			goto ext;
 		}
 	}
 
-	if (obj->name_len == 0) {
+	if (obj->name_len == 0) 
+	{
 		obj->err = UENOENT;
 		goto ext;
 	}
@@ -263,28 +267,34 @@ URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev,
 
 	uffs_ObjectDevLock(obj);
 
-	if (obj->type == UFFS_TYPE_DIR) {
+	if (obj->type == UFFS_TYPE_DIR) 
+	{
 		//find out whether have file with the same name
 		node = uffs_TreeFindFileNodeByName(obj->dev, obj->name, obj->name_len, obj->sum, obj->parent);
-		if (node != NULL) {
+		if (node != NULL) 
+		{
 			obj->err = UEEXIST;	// we can't create a dir has the same name with exist file.
 			goto ext_1;
 		}
 		obj->node = uffs_TreeFindDirNodeByName(obj->dev, obj->name, obj->name_len, obj->sum, obj->parent);
-		if (obj->node != NULL) {
+		if (obj->node != NULL) 
+		{
 			obj->err = UEEXIST; // we can't create a dir already exist.
 			goto ext_1;
 		}
 	}
-	else {
+	else 
+	{
 		//find out whether have dir with the same name
 		node = uffs_TreeFindDirNodeByName(obj->dev, obj->name, obj->name_len, obj->sum, obj->parent);
-		if (node != NULL) {
+		if (node != NULL) 
+		{
 			obj->err = UEEXIST;
 			goto ext_1;
 		}
 		obj->node = uffs_TreeFindFileNodeByName(obj->dev, obj->name, obj->name_len, obj->sum, obj->parent);
-		if (obj->node) {
+		if (obj->node) 
+		{
 			/* file already exist, truncate it to zero length */
 			obj->serial = GET_OBJ_NODE_SERIAL(obj);
 			obj->open_succ = U_TRUE; // set open_succ to U_TRUE before call do_TruncateObject()
@@ -296,20 +306,23 @@ URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev,
 
 	/* dir|file does not exist, create a new one */
 	obj->serial = uffs_FindFreeFsnSerial(obj->dev);
-	if (obj->serial == INVALID_UFFS_SERIAL) {
+	if (obj->serial == INVALID_UFFS_SERIAL) 
+	{
 		uffs_Perror(UFFS_ERR_SERIOUS, "No free serial num!");
 		obj->err = UENOMEM;
 		goto ext_1;
 	}
 
-	if (obj->dev->tree.erased_count < MINIMUN_ERASED_BLOCK) {
+	if (obj->dev->tree.erased_count < MINIMUN_ERASED_BLOCK) 
+	{
 		uffs_Perror(UFFS_ERR_NOISY, "insufficient block in create obj");
 		obj->err = UENOMEM;
 		goto ext_1;
 	}
 
 	buf = uffs_BufNew(obj->dev, obj->type, obj->parent, obj->serial, 0);
-	if (buf == NULL) {
+	if (buf == NULL) 
+	{
 		uffs_Perror(UFFS_ERR_SERIOUS, "Can't create new buffer when create obj!");
 		goto ext_1;
 	}
@@ -338,7 +351,8 @@ URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev,
 	else
 		obj->node = uffs_TreeFindFileNode(obj->dev, obj->serial);
 
-	if (obj->node == NULL) {
+	if (obj->node == NULL) 
+	{
 		uffs_Perror(UFFS_ERR_NOISY, "Can't find the node in the tree ?");
 		obj->err = UEIOERR;
 		goto ext_1;
@@ -609,7 +623,7 @@ static URET do_FlushObject(uffs_Object *obj)
 URET uffs_FlushObject(uffs_Object *obj)
 {
 	uffs_Device *dev;
-
+	dev = dev;
 	if(obj->dev == NULL || obj->open_succ != U_TRUE) {
 		obj->err = UEBADF;
 		goto ext;
@@ -640,7 +654,7 @@ URET uffs_CloseObject(uffs_Object *obj)
 	uffs_Buf *buf;
 	uffs_FileInfo fi;
 #endif
-
+	dev = dev;
 	if(obj->dev == NULL || obj->open_succ != U_TRUE) {
 		obj->err = UEBADF;
 		goto ext;
@@ -1406,17 +1420,20 @@ URET uffs_DeleteObject(const char * name, int *err)
 	uffs_ObjectDevLock(obj);
 	dev = obj->dev;
 
-	if (obj->type == UFFS_TYPE_DIR) {
+	if (obj->type == UFFS_TYPE_DIR) 
+	{
 		// if the dir is not empty, can't delete it.
 		node = uffs_TreeFindDirNodeWithParent(dev, obj->serial);
-		if (node != NULL) {
+		if (node != NULL) 
+		{
 			if (err)
 				*err = UEACCES;
 			goto err;  //have sub dirs ?
 		}
 
 		node = uffs_TreeFindFileNodeWithParent(dev, obj->serial);
-		if (node != NULL) {
+		if (node != NULL) 
+		{
 			if (err)
 				*err = UEACCES;
 			goto err;  //have sub files ?

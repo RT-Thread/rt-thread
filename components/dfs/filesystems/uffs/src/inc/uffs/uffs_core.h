@@ -42,12 +42,12 @@ typedef struct uffs_DeviceSt		uffs_Device;
 /** \typedef uffs_FlashOps */
 typedef struct uffs_FlashOpsSt		uffs_FlashOps;
 
-typedef struct uffs_BlockInfoSt uffs_BlockInfo;
-typedef struct uffs_PageSpareSt uffs_PageSpare;
+typedef struct uffs_BlockInfoSt 	uffs_BlockInfo;
+typedef struct uffs_PageSpareSt 	uffs_PageSpare;
 typedef struct uffs_TagsSt			uffs_Tags;		//!< UFFS page tags
 typedef struct uffs_TagStoreSt      uffs_TagStore;  //!< UFFS page tags physical store structure
 
-typedef struct uffs_BufSt uffs_Buf;
+typedef struct uffs_BufSt 			uffs_Buf;
 
 
 #ifdef __cplusplus

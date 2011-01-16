@@ -167,10 +167,13 @@ static URET do_FindObject(uffs_FindInfo *f, uffs_ObjectInfo *info, u16 x)
 	TreeNode *node;
 	uffs_Device *dev = f->dev;
 
-	if (f->step == 0) { //!< working on dirs
-		while (x != EMPTY_NODE) {
+	if (f->step == 0) 
+	{ //!< working on dirs
+		while (x != EMPTY_NODE) 
+		{
 			node = FROM_IDX(x, TPOOL(dev));
-			if (node->u.dir.parent == f->serial) {
+			if (node->u.dir.parent == f->serial) 
+			{
 				f->work = node;
 				f->pos++;
 				if (info)
@@ -182,11 +185,14 @@ static URET do_FindObject(uffs_FindInfo *f, uffs_ObjectInfo *info, u16 x)
 
 		f->hash++; //come to next hash entry
 
-		for (; f->hash < DIR_NODE_ENTRY_LEN; f->hash++) {
+		for (; f->hash < DIR_NODE_ENTRY_LEN; f->hash++) 
+		{
 			x = dev->tree.dir_entry[f->hash];
-			while (x != EMPTY_NODE) {
+			while (x != EMPTY_NODE) 
+			{
 				node = FROM_IDX(x, TPOOL(dev));
-				if (node->u.dir.parent == f->serial) {
+				if (node->u.dir.parent == f->serial) 
+				{
 					f->work = node;
 					f->pos++;
 					if (info)
@@ -203,11 +209,14 @@ static URET do_FindObject(uffs_FindInfo *f, uffs_ObjectInfo *info, u16 x)
 		x = EMPTY_NODE;
 	}
 
-	if (f->step == 1) {
+	if (f->step == 1) 
+	{
 
-		while (x != EMPTY_NODE) {
+		while (x != EMPTY_NODE) 
+		{
 			node = FROM_IDX(x, TPOOL(dev));
-			if (node->u.file.parent == f->serial) {
+			if (node->u.file.parent == f->serial) 
+			{
 				f->work = node;
 				f->pos++;
 				if (info)
@@ -219,11 +228,14 @@ static URET do_FindObject(uffs_FindInfo *f, uffs_ObjectInfo *info, u16 x)
 
 		f->hash++; //come to next hash entry
 
-		for (; f->hash < FILE_NODE_ENTRY_LEN; f->hash++) {
+		for (; f->hash < FILE_NODE_ENTRY_LEN; f->hash++) 
+		{
 			x = dev->tree.file_entry[f->hash];
-			while (x != EMPTY_NODE) {
+			while (x != EMPTY_NODE) 
+			{
 				node = FROM_IDX(x, TPOOL(dev));
-				if (node->u.file.parent == f->serial) {
+				if (node->u.file.parent == f->serial) 
+				{
 					f->work = node;
 					f->pos++;
 					if (info) 
