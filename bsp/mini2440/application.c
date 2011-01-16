@@ -31,6 +31,8 @@
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
+/* dfs filesystem:UFFS filesystem init */
+#include <dfs_uffs.h>
 #endif
 
 #ifdef RT_USING_LWIP
@@ -93,6 +95,19 @@ void rt_init_thread_entry(void* parameter)
 		/* init libc */
 		libc_system_init("uart0");
 		#endif
+#endif
+
+#if defined(RT_USING_UFFS)
+	{
+		/* init the uffs filesystem */
+		dfs_uffs_init();
+
+		/* mount flash device as flash directory */
+		if(dfs_mount("nand0", "/nand0", "uffs", 0, 0) == 0)
+			rt_kprintf("UFFS File System initialized!\n");
+		else
+			rt_kprintf("UFFS File System initialzation failed!\n");
+	}
 #endif
 	}
 #endif
