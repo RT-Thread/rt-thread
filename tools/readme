@@ -2,7 +2,7 @@ About uffs_demo_win32.exe?
 Compile OS: Windows XP SP3
 Compile Tools:Visul C++ 6.0
 
-This is a uffs filesystem demo applet.
+This is an uffs filesystem demo applet.
 you can make it ,in accordance with you resource.
  Use document :
  \uffs\src\emu\*.*
