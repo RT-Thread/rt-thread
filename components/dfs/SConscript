@@ -63,6 +63,35 @@ filesystems/nfs/rpc/xdr.c
 filesystems/nfs/rpc/xdr_mem.c
 ''')
 
+uffs = Split('''
+filesystems/uffs/src/uffs/uffs_badblock.c
+filesystems/uffs/src/uffs/uffs_blockinfo.c
+filesystems/uffs/src/uffs/uffs_buf.c
+filesystems/uffs/src/uffs/uffs_debug.c
+filesystems/uffs/src/uffs/uffs_device.c
+filesystems/uffs/src/uffs/uffs_ecc.c
+filesystems/uffs/src/uffs/uffs_fd.c
+filesystems/uffs/src/uffs/uffs_find.c
+filesystems/uffs/src/uffs/uffs_flash.c
+filesystems/uffs/src/uffs/uffs_fs.c
+filesystems/uffs/src/uffs/uffs_init.c
+filesystems/uffs/src/uffs/uffs_mem.c
+filesystems/uffs/src/uffs/uffs_mtb.c
+filesystems/uffs/src/uffs/uffs_pool.c
+filesystems/uffs/src/uffs/uffs_public.c
+filesystems/uffs/src/uffs/uffs_tree.c
+filesystems/uffs/src/uffs/uffs_utils.c
+filesystems/uffs/src/uffs/uffs_version.c
+filesystems/uffs/dfs_uffs.c
+''')
+
+others = '''
+filesystems/uffs/dfs_nand_if.c
+filesystems/uffs/uffs_ext.c
+filesystems/uffs/flash/k9f2g08.c
+filesystems/uffs/flash/nand_ids.c
+'''
+
 src_local = dfs
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
@@ -87,6 +116,10 @@ if GetDepend('RT_USING_DFS_ROMFS'):
 if GetDepend('RT_USING_DFS_DEVFS'):
     src_local = src_local + devfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/devfs']
+
+if GetDepend('RT_USING_DFS_DEVFS'):
+    src_local = src_local + uffs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/uffs/src/inc', RTT_ROOT + '/components/dfs/filesystems/uffs', RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
 
 group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path)
 
