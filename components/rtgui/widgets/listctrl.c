@@ -24,7 +24,7 @@ static void _rtgui_listctrl_constructor(struct rtgui_listctrl *ctrl)
 
 	RTGUI_WIDGET(ctrl)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
-	ctrl->current_item = 0;
+	ctrl->current_item = -1;
 	ctrl->items_count = 0;
 	ctrl->page_items = 0;
 	ctrl->on_item = 0;

@@ -56,8 +56,10 @@ struct rtgui_gc
 	/* foreground and background color */
 	rtgui_color_t foreground, background;
 
+	/* text style */
+	rt_uint16_t textstyle;
 	/* text align */
-	rt_base_t textalign;
+	rt_uint16_t textalign;
 
 	/* font */
 	struct rtgui_font* font;
@@ -105,6 +107,14 @@ enum RTGUI_ALIGN
 	RTGUI_ALIGN_CENTER_VERTICAL		= 0x08,
 	RTGUI_ALIGN_EXPAND				= 0x10,
 	RTGUI_ALIGN_STRETCH				= 0x20,
+};
+
+enum RTGUI_TEXTSTYLE
+{
+	RTGUI_TEXTSTYLE_NORMAL 			= 0x00,
+	RTGUI_TEXTSTYLE_DRAW_BACKGROUND = 0x01,
+	RTGUI_TEXTSTYLE_SHADOW 			= 0x02,
+	RTGUI_TEXTSTYLE_OUTLINE 		= 0x04,
 };
 
 enum RTGUI_MODAL_CODE

@@ -24,7 +24,7 @@ static void _rtgui_listbox_constructor(struct rtgui_listbox *box)
 
 	RTGUI_WIDGET(box)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
-	box->current_item = 0;
+	box->current_item = -1;
 	box->items_count = 0;
 	box->page_items = 1;
 	box->on_item = 0;
@@ -71,7 +71,11 @@ void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 	item_rect.y2 = item_rect.y1 + (2 + rtgui_theme_get_selected_height());
 
 	/* get current page */
-	page_index = (box->current_item / box->page_items) * box->page_items;
+	if (box->current_item == -1)
+		page_index = 0;
+	else
+		page_index = (box->current_item / box->page_items) * box->page_items;
+
 	for (index = 0; index < box->page_items; index ++)
 	{
 		if (page_index + index >= box->items_count) break;
@@ -103,13 +107,13 @@ void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 	rtgui_dc_end_drawing(dc);
 }
 
-void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_uint16_t old_item)
+static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t old_item)
 {
 	struct rtgui_dc* dc;
 	const struct rtgui_listbox_item* item;
 	rtgui_rect_t rect, item_rect;
 
-	if (old_item/box->page_items != box->current_item/box->page_items)
+	if ((old_item == -1) || (old_item/box->page_items != box->current_item/box->page_items))
 	{
 		/* it's not a same page, update all */
 		rtgui_widget_update(RTGUI_WIDGET(box));
@@ -258,9 +262,11 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
             struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
             if ((ekbd->type == RTGUI_KEYDOWN) && (box->items_count > 0))
             {
-				rt_uint16_t old_item;
+				rt_int16_t old_item;
 
+				if (box->current_item == -1) return RT_FALSE;
 				old_item = box->current_item;
+
                 switch (ekbd->key)
                 {
 				case RTGUIK_LEFT:
@@ -343,7 +349,7 @@ void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* it
 	
 	box->items = items;
 	box->items_count = count;
-	box->current_item = 0;
+	box->current_item = -1;
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
 	box->page_items = rtgui_rect_height(rect) / (2 + rtgui_theme_get_selected_height());

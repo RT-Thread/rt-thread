@@ -16,10 +16,16 @@ const struct rtgui_font_engine hz_bmp_font_engine =
 
 static void _rtgui_hz_bitmap_font_draw_text(struct rtgui_font_bitmap* bmp_font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
-	register rt_base_t h, word_bytes;
 	rt_uint8_t* str;
+	rtgui_color_t bc;
+	rt_uint16_t style;
+	register rt_base_t h, word_bytes;
 
 	RT_ASSERT(bmp_font != RT_NULL);
+
+	/* get text style */
+	style = rtgui_dc_get_gc(dc)->textstyle;
+	bc = rtgui_dc_get_gc(dc)->background;
 
 	/* drawing height */
 	h = (bmp_font->height + rect->y1 > rect->y2)? rect->y2 - rect->y1 : bmp_font->height;
@@ -50,6 +56,10 @@ static void _rtgui_hz_bitmap_font_draw_text(struct rtgui_font_bitmap* bmp_font, 
 						(rect->x1 + 8 * j + k < rect->x2))
 					{
 						rtgui_dc_draw_point(dc, rect->x1 + 8*j + k, rect->y1 + i);
+					}
+					else if (style & RTGUI_TEXTSTYLE_DRAW_BACKGROUND)
+					{
+						rtgui_dc_draw_color_point(dc, rect->x1 + 8*j + k, rect->y1 + i, bc);
 					}
 				}
 		}

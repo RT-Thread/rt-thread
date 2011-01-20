@@ -32,6 +32,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->gc.foreground = default_foreground;
 	widget->gc.background = default_background;
 	widget->gc.font = rtgui_font_default();
+	widget->gc.textstyle = RTGUI_TEXTSTYLE_NORMAL;
 	widget->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
 #ifndef RTGUI_USING_SMALL_SIZE
 	widget->align = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;

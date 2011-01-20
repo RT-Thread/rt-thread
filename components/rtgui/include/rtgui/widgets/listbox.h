@@ -49,7 +49,7 @@ struct rtgui_listbox
     /* the number of item in a page */
     rt_uint16_t page_items;
     /* current item */
-    rt_uint16_t current_item;
+    rt_int16_t current_item;
 };
 typedef struct rtgui_listbox rtgui_listbox_t;
 typedef void (*rtgui_onitem_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);

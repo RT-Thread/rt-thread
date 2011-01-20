@@ -29,12 +29,17 @@ const struct rtgui_font_engine bmp_font_engine =
 void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc* dc, const char ch,
 	rtgui_rect_t* rect)
 {
+	rtgui_color_t bc;
 	const rt_uint8_t* font_ptr;
-	rt_uint16_t x, y, h;
+	rt_uint16_t x, y, h, style;
 	register rt_base_t i, j, k, word_bytes;
 
 	/* check first and last char */
 	if (ch < font->first_char || ch > font->last_char) return;
+
+	/* get text style */
+	style = rtgui_dc_get_gc(dc)->textstyle;
+	bc = rtgui_dc_get_gc(dc)->background;
 
 	x = rect->x1;
 	y = rect->y1;
@@ -62,6 +67,10 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 				{
 					/* draw a pixel */
 					rtgui_dc_draw_point(dc, k + 8 * j + x, i + y);
+				}
+				else if (style & RTGUI_TEXTSTYLE_DRAW_BACKGROUND)
+				{
+					rtgui_dc_draw_color_point(dc, k + 8 * j + x, i + y, bc);
 				}
 			}
 		}

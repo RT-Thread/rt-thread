@@ -20,11 +20,11 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/widget.h>
 
-/** Gets the type of a list ctrl */
+/** Gets the type of a listctrl */
 #define RTGUI_LISTCTRL_TYPE		(rtgui_listctrl_type_get())
-/** Casts the object to a filelist */
+/** Casts the object to a listctrl */
 #define RTGUI_LISTCTRL(obj)		(RTGUI_OBJECT_CAST((obj), RTGUI_LISTCTRL_TYPE, rtgui_listctrl_t))
-/** Checks if the object is a filelist ctrl */
+/** Checks if the object is a listctrl */
 #define RTGUI_IS_LISTCTRL(obj)	(RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_LISTCTRL_TYPE))
 
 struct rtgui_listctrl
@@ -40,7 +40,7 @@ struct rtgui_listctrl
     /* the number of item in a page */
     rt_uint16_t page_items;
     /* current item */
-    rt_uint16_t current_item;
+    rt_int16_t current_item;
 
 	/* item event handler */
 	void (*on_item)(rtgui_widget_t *widget, struct rtgui_event* event);
