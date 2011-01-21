@@ -117,7 +117,7 @@ if GetDepend('RT_USING_DFS_DEVFS'):
     src_local = src_local + devfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/devfs']
 
-if GetDepend('RT_USING_DFS_DEVFS'):
+if GetDepend('RT_USING_DFS_UFFS'):
     src_local = src_local + uffs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/uffs/src/inc', RTT_ROOT + '/components/dfs/filesystems/uffs', RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
 

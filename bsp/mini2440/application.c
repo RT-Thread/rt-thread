@@ -31,8 +31,10 @@
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
+#ifdef RT_USING_DFS_UFFS
 /* dfs filesystem:UFFS filesystem init */
 #include <dfs_uffs.h>
+#endif
 #endif
 
 #ifdef RT_USING_LWIP

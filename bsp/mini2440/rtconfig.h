@@ -96,7 +96,7 @@
 /* the max number of file length 		*/
 #define RT_DFS_ELM_MAX_LFN		32
 /* #define RT_USING_DFS_YAFFS2 */
-#define RT_USING_UFFS
+/* #define RT_USING_DFS_UFFS */
 
 #define RT_USING_DFS_NFS
 #define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
