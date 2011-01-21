@@ -99,7 +99,7 @@ void rt_init_thread_entry(void* parameter)
 		#endif
 #endif
 
-#if defined(RT_USING_UFFS)
+#if defined(RT_USING_DFS_UFFS)
 	{
 		/* init the uffs filesystem */
 		dfs_uffs_init();

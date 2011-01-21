@@ -119,7 +119,7 @@ void rtthread_startup(void)
 	
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
-#ifdef RT_USING_UFFS
+#ifdef RT_USING_DFS_UFFS
 	rt_hw_nand_init();
 #endif
 #endif
