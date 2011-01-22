@@ -352,6 +352,13 @@ rt_bool_t string_equal_func(const void* a, const void* b)
 	return RT_FALSE;
 }
 
+/* hash node for imnage */
+struct image_hash_node
+{
+	rt_image_t *image;
+	char *filename;
+};
+
 static rtgui_hash_table_t* image_hash_table;
 rt_bool_t load_image = RT_FALSE;
 void image_container_system_init(rt_bool_t is_load)
@@ -362,15 +369,75 @@ void image_container_system_init(rt_bool_t is_load)
 	load_image = is_load;
 }
 
-rtgui_image_t* image_container_get(const char* filename)
+rtgui_image_t* rtgui_image_container_get(const char* filename)
 {
-	/* get image type */
+	struct image_hash_node* node;
+	
+	node = hash_table_find(image_hash_table, filename);
+	if (node == RT_NULL)
+	{
+		rtgui_image_t *image;
+
+		node = (struct image_hash_node*) rt_malloc (sizeof(struct image_hash_node));
+		if (node == RT_NULL) return RT_NULL;
+
+		/* create a image object */
+		image = rtgui_image_create(filename, load_image);
+		if (image == RT_NULL)
+		{
+			rt_free(node);
+			return RT_NULL; /* create image failed */
+		}
+
+		node->image = image;
+		node->filename = rt_strdup(filename);
+		hash_table_add(image_hash_table, node->filename, node);
+	}
+	else
+	{
+		node->image->ref ++; /* increase refcount */
+	}
+
+	return node->image;
 }
 
-rtgui_image_t* image_container_get_memref(const rt_uint8_t* memory, const char* type)
+rtgui_image_t* rtgui_image_container_get_memref(const rt_uint8_t* memory, const char* type)
 {
+	struct image_hash_node* node;
+	char filename[32];
+
+	/* create filename for image identification */
+	rt_snprintf(filename, sizeof(filename), "0x%08x_%s", memory, type);
+
+	/* search in container */
+	node = hash_table_find(image_hash_table, filename);
+	if (node == RT_NULL)
+	{
+		node = (struct image_hash_node*) rt_malloc (sizeof(struct image_hash_node));
+		if (node == RT_NULL) return RT_NULL;
+
+		/* create image object */
+		image = rtgui_image_create_from_mem(memory, type, load_image);
+		if (image == RT_NULL)
+		{
+			rt_free(node);
+			return RT_NULL; /* create image failed */
+		}
+
+		node->image = image;
+		node->filename = rt_strdup(image_id);
+		hash_table_add(image_hash_table, node->filename, node);
+	}
+	else node->image->ref ++;
+
+	return node->image;
 }
 
-void image_container_put(rtgui_image_t* image)
+void rtgui_image_container_put(rtgui_image_t* image)
 {
+	image->ref --;
+	if (image->ref == 0)
+	{
+	}
 }
+

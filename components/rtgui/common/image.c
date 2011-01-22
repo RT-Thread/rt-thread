@@ -52,6 +52,30 @@ void rtgui_system_image_init(void)
 #endif
 }
 
+static struct rtgui_image_engine* rtgui_image_get_engine_by_filename(const char* fn)
+{
+	struct rtgui_list_node *node;
+	struct rtgui_image_engine *engine;
+	const char* ext;
+
+	ext = fn + rt_strlen(fn);
+	while (ext != fn)
+	{
+		if (*ext == '.') { ext ++; break; }
+		ext --;
+	}
+	if (ext == fn) return RT_NULL; /* no ext */
+
+	rtgui_list_foreach(node, &_rtgui_system_image_list)
+	{
+		engine = rtgui_list_entry(node, struct rtgui_image_engine, list);
+		if (strncasecmp(engine->name, ext, strlen(engine->name)) == 0)
+			return engine;
+	}
+
+	return RT_NULL;
+}
+
 static struct rtgui_image_engine* rtgui_image_get_engine(const char* type)
 {
 	struct rtgui_list_node *node;
@@ -81,6 +105,54 @@ struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* f
 
 	/* get image engine */
 	engine = rtgui_image_get_engine(type);
+	if (engine == RT_NULL)
+	{
+		/* close filerw context */
+		rtgui_filerw_close(filerw);
+		return RT_NULL;
+	}
+
+	if (engine->image_check(filerw) == RT_TRUE)
+	{
+		image = (struct rtgui_image*) rtgui_malloc(sizeof(struct rtgui_image));
+		if (image == RT_NULL)
+		{
+			/* close filerw context */
+			rtgui_filerw_close(filerw);
+			return RT_NULL;
+		}
+
+		image->palette = RT_NULL;
+		if (engine->image_load(image, filerw, load) != RT_TRUE)
+		{
+			/* close filerw context */
+			rtgui_filerw_close(filerw);
+			return RT_NULL;
+		}
+
+		/* set image engine */
+		image->engine = engine;
+	}
+	else
+	{
+		rtgui_filerw_close(filerw);
+	}
+
+	return image;
+}
+
+struct rtgui_image* rtgui_image_create(const char* filename, rt_bool_t load)
+{
+	struct rtgui_filerw* filerw;
+	struct rtgui_image_engine* engine;
+	struct rtgui_image* image = RT_NULL;
+
+	/* create filerw context */
+	filerw = rtgui_filerw_create_file(filename, "rb");
+	if (filerw == RT_NULL) return RT_NULL;
+
+	/* get image engine */
+	engine = rtgui_image_get_engine_by_filename(filename);
 	if (engine == RT_NULL)
 	{
 		/* close filerw context */
