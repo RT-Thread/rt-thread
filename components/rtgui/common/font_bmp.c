@@ -77,7 +77,8 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 	}
 }
 
-static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, const char* text, rt_ubase_t len, struct rtgui_rect* rect)
+static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc* dc, 
+	const char* text, rt_ubase_t len, struct rtgui_rect* rect)
 {
 	rt_uint32_t length;
 	struct rtgui_font_bitmap* bmp_font = (struct rtgui_font_bitmap*)(font->data);
@@ -122,6 +123,7 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 #else
 	while ((rect->x1 < rect->x2) && len)
 	{
+		length = 0;
 		while (((rt_uint8_t)*(text + length) < 0x80) && *(text + length)) length ++;
 		if (length > 0)
 		{
