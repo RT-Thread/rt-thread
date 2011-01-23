@@ -1,5 +1,6 @@
 #include <rtgui/image_container.h>
 
+#ifdef RTGUI_IMAGE_CONTAINER
 typedef unsigned int (*rtgui_hash_func_t) (const void* key);
 typedef struct _rtgui_hash_table  rtgui_hash_table_t;
 typedef rt_bool_t (*rtgui_equal_func_t) (const void* a, const void* b);
@@ -352,92 +353,93 @@ rt_bool_t string_equal_func(const void* a, const void* b)
 	return RT_FALSE;
 }
 
-/* hash node for imnage */
-struct image_hash_node
-{
-	rt_image_t *image;
-	char *filename;
-};
-
 static rtgui_hash_table_t* image_hash_table;
-rt_bool_t load_image = RT_FALSE;
-void image_container_system_init(rt_bool_t is_load)
+static rt_bool_t load_image = RT_FALSE;
+void rtgui_system_image_container_init(rt_bool_t load)
 {
 	/* create image hash table */
 	image_hash_table = hash_table_create(string_hash_func, string_equal_func);
 	RT_ASSERT(image_hash_table != RT_NULL);
-	load_image = is_load;
+
+	/* set load type */
+	load_image = load;
 }
 
-rtgui_image_t* rtgui_image_container_get(const char* filename)
+rtgui_image_item_t* rtgui_image_container_get(const char* filename)
 {
-	struct image_hash_node* node;
+	struct rtgui_image_item* item;
 	
-	node = hash_table_find(image_hash_table, filename);
-	if (node == RT_NULL)
+	item = hash_table_find(image_hash_table, filename);
+	if (item == RT_NULL)
 	{
-		rtgui_image_t *image;
-
-		node = (struct image_hash_node*) rt_malloc (sizeof(struct image_hash_node));
-		if (node == RT_NULL) return RT_NULL;
+		item = (struct rtgui_image_item*) rt_malloc (sizeof(struct rtgui_image_item));
+		if (item == RT_NULL) return RT_NULL;
 
 		/* create a image object */
-		image = rtgui_image_create(filename, load_image);
-		if (image == RT_NULL)
+		item->image = rtgui_image_create(filename, load_image);
+		if (item->image == RT_NULL)
 		{
-			rt_free(node);
+			rt_free(item);
 			return RT_NULL; /* create image failed */
 		}
 
-		node->image = image;
-		node->filename = rt_strdup(filename);
-		hash_table_add(image_hash_table, node->filename, node);
+		item->refcount = 1;
+		item->filename = rt_strdup(filename);
+		hash_table_insert(image_hash_table, item->filename, item);
 	}
 	else
 	{
-		node->image->ref ++; /* increase refcount */
+		item->refcount ++; /* increase refcount */
 	}
 
-	return node->image;
+	return item;
 }
 
-rtgui_image_t* rtgui_image_container_get_memref(const rt_uint8_t* memory, const char* type)
+rtgui_image_item_t* rtgui_image_container_get_memref(const char* type, const rt_uint8_t* memory, rt_uint32_t length)
 {
-	struct image_hash_node* node;
 	char filename[32];
+	struct rtgui_image_item* item;
 
 	/* create filename for image identification */
 	rt_snprintf(filename, sizeof(filename), "0x%08x_%s", memory, type);
 
 	/* search in container */
-	node = hash_table_find(image_hash_table, filename);
-	if (node == RT_NULL)
+	item = hash_table_find(image_hash_table, filename);
+	if (item == RT_NULL)
 	{
-		node = (struct image_hash_node*) rt_malloc (sizeof(struct image_hash_node));
-		if (node == RT_NULL) return RT_NULL;
+		item = (struct rtgui_image_item*) rt_malloc (sizeof(struct rtgui_image_item));
+		if (item == RT_NULL) return RT_NULL;
 
 		/* create image object */
-		image = rtgui_image_create_from_mem(memory, type, load_image);
-		if (image == RT_NULL)
+		item->image = rtgui_image_create_from_mem(type, memory, length, load_image);
+		if (item->image == RT_NULL)
 		{
-			rt_free(node);
+			rt_free(item);
 			return RT_NULL; /* create image failed */
 		}
 
-		node->image = image;
-		node->filename = rt_strdup(image_id);
-		hash_table_add(image_hash_table, node->filename, node);
+		item->refcount = 1;
+		item->filename = rt_strdup(filename);
+		hash_table_insert(image_hash_table, item->filename, item);
 	}
-	else node->image->ref ++;
+	else item->refcount ++;
 
-	return node->image;
+	return item;
 }
 
-void rtgui_image_container_put(rtgui_image_t* image)
+void rtgui_image_container_put(rtgui_image_item_t* item)
 {
-	image->ref --;
-	if (image->ref == 0)
+	item->refcount --;
+	if (item->refcount == 0)
 	{
+		/* remove item from container */
+		hash_table_remove(image_hash_table, item->filename);
+
+		/* destroy image and image item */
+		rt_free(item->filename);
+		rtgui_image_destroy(item->image);
+		rt_free(item);
 	}
 }
 
+#endif

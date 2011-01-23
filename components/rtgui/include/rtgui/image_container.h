@@ -4,9 +4,23 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/image.h>
 
-void image_container_system_init(void);
+#ifdef RTGUI_IMAGE_CONTAINER
+/* image item in image container */
+struct rtgui_image_item
+{
+	rtgui_image_t *image;
+	char *filename;
 
-rtgui_image_t* image_container_get(const char* filename);
-void image_container_put(rtgui_image_t* image);
+	rt_uint32_t refcount;
+};
+typedef struct rtgui_image_item rtgui_image_item_t;
+
+void rtgui_system_image_container_init(rt_bool_t load);
+
+rtgui_image_item_t* rtgui_image_container_get(const char* filename);
+rtgui_image_item_t* rtgui_image_container_get_from_mem(const rt_uint8_t* mem, const char* type, rt_uint32_t len);
+
+void rtgui_image_container_put(rtgui_image_item_t* item);
+#endif
 
 #endif

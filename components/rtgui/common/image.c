@@ -14,11 +14,15 @@
 #include <rtthread.h>
 #include <rtgui/image.h>
 
-#include <rtgui/image_xpm.h>
 #include <rtgui/image_hdc.h>
 #include <rtgui/rtgui_system.h>
+#include <rtgui/image_container.h>
 
 #include <string.h>
+
+#ifdef RTGUI_IMAGE_XPM
+#include <rtgui/image_xpm.h>
+#endif
 
 #ifdef RTGUI_IMAGE_BMP
 #include <rtgui/image_bmp.h>
@@ -32,12 +36,15 @@
 
 static rtgui_list_t _rtgui_system_image_list = {RT_NULL};
 
-/* init rtgui image system */
+/* initialize rtgui image system */
 void rtgui_system_image_init(void)
 {
-	/* always support XPM image */
-	rtgui_image_xpm_init();
+	/* always support HDC image */
 	rtgui_image_hdc_init();
+
+#ifdef RTGUI_IMAGE_XPM
+	rtgui_image_xpm_init();
+#endif
 	
 #ifdef RTGUI_IMAGE_BMP
 	rtgui_image_bmp_init();
@@ -49,6 +56,11 @@ void rtgui_system_image_init(void)
 
 #ifdef RTGUI_IMAGE_PNG
 	rtgui_image_png_init();
+#endif
+
+#ifdef RTGUI_IMAGE_CONTAINER
+	/* initialize image container */
+	rtgui_system_image_container_init(RT_FALSE);
 #endif
 }
 

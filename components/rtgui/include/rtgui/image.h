@@ -73,5 +73,4 @@ void rtgui_image_register_engine(struct rtgui_image_engine* engine);
 void rtgui_image_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect);
 struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors);
 
-
 #endif
