@@ -760,11 +760,12 @@ void rt_hw_sdcard_init(void)
 		rt_free(sector);
 		
 		/* register sdcard device */
+		sdcard_device.type  = RT_Device_Class_Block;
 		sdcard_device.init 	= rt_sdcard_init;
 		sdcard_device.open 	= rt_sdcard_open;
-		sdcard_device.close 	= rt_sdcard_close;
+		sdcard_device.close = rt_sdcard_close;
 		sdcard_device.read 	= rt_sdcard_read;
-		sdcard_device.write 	= rt_sdcard_write;
+		sdcard_device.write = rt_sdcard_write;
 		sdcard_device.control = rt_sdcard_control;
 		
 		/* no private */
