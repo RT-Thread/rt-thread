@@ -16,6 +16,7 @@
  * 2006-08-10     Bernard      fix interrupt bug in rt_mp_alloc
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete
+ * 2011-01-24     Bernard      add object allocation check.
  */
 
 #include <rthw.h>
@@ -183,6 +184,7 @@ rt_mp_t rt_mp_create(const char* name, rt_size_t block_count, rt_size_t block_si
 
 	/* allocate object */
 	mp = (struct rt_mempool*)rt_object_allocate(RT_Object_Class_MemPool, name);
+	if (mp == RT_NULL) return RT_NULL; /* allocate object failed */
 
 	/* init memory pool */
 	mp->block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
