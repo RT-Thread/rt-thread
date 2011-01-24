@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2011-01-224    Bernard      fix backspace issue.
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_theme.h>
@@ -166,7 +167,7 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 	}
 	else if (event->key == RTGUIK_BACKSPACE)
 	{
-		if (box->position == length - 1)
+		if ((box->position == length - 1) && length != 1)
 		{
 			box->text[box->position] = '\0';
 			box->position --;
