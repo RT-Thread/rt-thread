@@ -339,7 +339,9 @@ rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_sprintf(char *buf ,const char *format,...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
+#ifdef RT_USING_DEVICE
 rt_device_t rt_console_set_device(const char* name);
+#endif
 void rt_kprintf(const char *fmt, ...);
 
 rt_err_t rt_get_errno(void);

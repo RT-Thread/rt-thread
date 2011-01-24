@@ -31,7 +31,9 @@ int errno;
 #else
 #include <errno.h>
 #endif
+#ifdef RT_USING_DEVICE
 static rt_device_t _console_device = RT_NULL;
+#endif
 
 /*
  * This function will get errno
@@ -902,6 +904,7 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 	return n;
 }
 
+#ifdef RT_USING_DEVICE
 /**
  * This function will set a device as console device.
  * After set a device to console, all output of rt_kprintf will be
@@ -935,6 +938,7 @@ rt_device_t rt_console_set_device(const char* name)
 
 	return old;
 }
+#endif
 
 #if defined(__GNUC__)
 void rt_hw_console_output(const char* str) __attribute__((weak));
@@ -965,6 +969,7 @@ void rt_kprintf(const char *fmt, ...)
 
 	va_start(args, fmt);
 	length = vsnprintf(rt_log_buf, sizeof(rt_log_buf), fmt, args);
+#ifdef RT_USING_DEVICE
 	if (_console_device == RT_NULL)
 	{
         rt_hw_console_output(rt_log_buf);
@@ -973,7 +978,9 @@ void rt_kprintf(const char *fmt, ...)
 	{
 		rt_device_write(_console_device, 0, rt_log_buf, length);
 	}
-
+#else
+	rt_hw_console_output(rt_log_buf);
+#endif
 	va_end(args);
 }
 
