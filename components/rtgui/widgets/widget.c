@@ -509,11 +509,8 @@ void rtgui_widget_hide(rtgui_widget_t* widget)
 
 	if (widget->parent != RT_NULL)
 	{
-		int index;
 		rtgui_widget_t *parent;
-		rtgui_toplevel_t *toplevel;
 
-		rect = widget->extent;
 		parent = widget->parent;
 		/* get the no transparent parent */
 		while (parent != RT_NULL && parent->flag & RTGUI_WIDGET_FLAG_TRANSPARENT)
@@ -522,16 +519,10 @@ void rtgui_widget_hide(rtgui_widget_t* widget)
 		}
 
 		/* union widget rect */
-		rtgui_region_union_rect(&(widget->parent->clip), &(widget->parent->clip), &rect);
+		rtgui_region_union_rect(&(parent->clip), &(parent->clip), &(widget->extent));
 
-		/* handle extern rect */
-		toplevel = RTGUI_TOPLEVEL(widget->toplevel);
 		/* subtract the external rect */
-		for (index = 0; index < toplevel->external_clip_size; index ++)
-		{
-			rtgui_region_subtract_rect(&(widget->parent->clip), &(widget->parent->clip),
-				&(toplevel->external_clip_rect[index]));
-		}
+		rtgui_topwin_do_clip(RTGUI_WIDGET(parent));
 	}
 }
 

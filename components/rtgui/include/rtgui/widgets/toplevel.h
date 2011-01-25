@@ -44,8 +44,6 @@ rtgui_type_t *rtgui_toplevel_type_get(void);
 
 rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
 
-void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
-								struct rtgui_event_clip_info* info);
 void rtgui_toplevel_update_clip(rtgui_toplevel_t* top);
 
 #endif

@@ -22,7 +22,7 @@
 
 // #define RTGUI_EVENT_DEBUG
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #define RTGUI_EVENT_DEBUG
 #define RTGUI_MEM_TRACE
 #endif

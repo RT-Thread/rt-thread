@@ -24,8 +24,6 @@ static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 
 	/* init toplevel property */
 	toplevel->drawing = 0;
-	toplevel->external_clip_rect = RT_NULL;
-	toplevel->external_clip_size = 0;
 
 	/* hide toplevel default */
 	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(toplevel));
@@ -38,12 +36,6 @@ static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)
 {
 	/* release external clip info */
 	toplevel->drawing = 0;
-	if (toplevel->external_clip_size > 0)
-	{
-		rtgui_free(toplevel->external_clip_rect);
-		toplevel->external_clip_rect = RT_NULL;
-		toplevel->external_clip_size = 0;
-	}
 }
 
 rtgui_type_t *rtgui_toplevel_type_get(void)
@@ -75,9 +67,6 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 		break;
 
 	case RTGUI_EVENT_CLIP_INFO:
-		/* set toplevel external clip info */
-		rtgui_toplevel_handle_clip(toplevel, (struct rtgui_event_clip_info*)event);
-
 		/* update toplevel clip */
 		rtgui_toplevel_update_clip(toplevel);
 		break;
@@ -116,44 +105,6 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 	return RT_FALSE;
 }
 
-#include <rtgui/widgets/window.h>
-#include <rtgui/widgets/workbench.h>
-#include <rtgui/widgets/title.h>
-
-void rtgui_toplevel_handle_clip(struct rtgui_toplevel* top,
-	struct rtgui_event_clip_info* info)
-{
-	RT_ASSERT(top != RT_NULL);
-	RT_ASSERT(info != RT_NULL);
-
-	/* release old rect array */
-	if (top->external_clip_size != 0)
-	{
-		rtgui_free(top->external_clip_rect);
-		top->external_clip_rect = RT_NULL;
-		top->external_clip_size = 0;
-	}
-
-	/* no rect info */
-	if (info->num_rect == 0) return;
-
-	top->external_clip_rect = (rtgui_rect_t*) rtgui_malloc(sizeof(rtgui_rect_t) *
-		info->num_rect);
-	top->external_clip_size = info->num_rect;
-
-#ifdef RTGUI_USING_SMALL_SIZE
-	{
-		extern void rtgui_topwin_get_clipinfo(struct rtgui_rect* list, rt_int32_t count);
-
-		/* get rect list from topwin list */
-		rtgui_topwin_get_clipinfo(top->external_clip_rect, top->external_clip_size);
-	}
-#else
-	/* copy rect array */
-	rt_memcpy(top->external_clip_rect, (void*)(info + 1), sizeof(rtgui_rect_t) * info->num_rect);
-#endif
-}
-
 #include <rtgui/driver.h> /* to get screen rect */
 
 void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
@@ -176,11 +127,7 @@ void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
 		&screen_rect);
 
 	/* subtract the external rect */
-	for (idx = 0; idx < top->external_clip_size; idx ++)
-	{
-		rtgui_region_subtract_rect(&(RTGUI_WIDGET(top)->clip), &(RTGUI_WIDGET(top)->clip),
-			&(top->external_clip_rect[idx]));
-	}
+	rtgui_topwin_do_clip(RTGUI_WIDGET(top));
 
 	/* update the clip info of each child */
 	container = RTGUI_CONTAINER(top);
