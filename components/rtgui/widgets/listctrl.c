@@ -85,6 +85,7 @@ static void _rtgui_listctrl_scrollbar_ondraw(struct rtgui_listctrl* ctrl, struct
 	y1 = (ctrl->current_item / ctrl->page_items) * height;
 
 	rect.y1 = rect.y1 + y1; rect.y2 = rect.y1 + height;
+	rect.x1 -= 3;
 	rtgui_theme_draw_selected(dc, &rect);
 }
 
@@ -114,6 +115,8 @@ static void _rtgui_listctrl_scrollbar_onmouse(struct rtgui_listctrl* ctrl, struc
 	{
 		if (ctrl->current_item + ctrl->page_items < ctrl->items_count - 1)
 			ctrl->current_item += ctrl->page_items;
+		else
+			ctrl->current_item = ((ctrl->current_item / ctrl->page_items) + 1) * ctrl->page_items;
 		rtgui_listctrl_update_current(ctrl, old_item);
 	}
 }
@@ -254,7 +257,8 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_widget* widget, struct rtgui
 			_rtgui_listctrl_get_rect(ctrl, &rect);
 			rtgui_widget_rect_to_device(widget, &rect);
 
-			if ((rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK) && (ctrl->items_count > 0))
+			if ((rtgui_rect_contains_point(&rect, emouse->x, emouse->y) == RT_EOK) &&
+					(ctrl->items_count > 0))
 			{
 				rt_uint16_t index;
 				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
@@ -276,7 +280,8 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_widget* widget, struct rtgui
 					}
 				}
 
-				if ((index < ctrl->items_count) && (index < ctrl->page_items))
+				if ((index < ctrl->page_items) &&
+					(ctrl->current_item/ctrl->page_items)* ctrl->page_items + index < ctrl->items_count)
 				{
 					rt_uint16_t old_item;
 
@@ -328,6 +333,11 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_widget* widget, struct rtgui
 				case RTGUIK_RIGHT:
 					if (ctrl->current_item + ctrl->page_items < ctrl->items_count - 1)
 						ctrl->current_item += ctrl->page_items;
+					else
+					{
+						if ((((ctrl->current_item/ctrl->page_items) + 1) * ctrl->page_items) < ctrl->items_count - 1)
+							ctrl->current_item = ((ctrl->current_item / ctrl->page_items) + 1) * ctrl->page_items;
+					}
 					rtgui_listctrl_update_current(ctrl, old_item);
 					return RT_FALSE;
 
