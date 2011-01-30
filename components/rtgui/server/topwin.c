@@ -938,7 +938,7 @@ void rtgui_topwin_remove_monitor_rect(struct rtgui_win* wid, rtgui_rect_t* rect)
  */
 void rtgui_topwin_do_clip(rtgui_widget_t* widget)
 {
-	rtgui_toplevel_t* wid;
+	rtgui_widget_t* wid;
 	struct rtgui_rect* rect;
 	struct rtgui_topwin* topwin;
 	struct rtgui_list_node* node;
