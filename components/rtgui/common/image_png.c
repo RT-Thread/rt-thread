@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include <rtgui/rtgui_system.h>
 
-#ifdef RTGUI_USING_PNG
+#ifdef RTGUI_IMAGE_PNG
 #include "libpng/png.h"
 #include <rtgui/image_png.h>
 

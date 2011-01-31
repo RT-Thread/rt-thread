@@ -5,6 +5,7 @@
 #include <rtgui/image_bmp.h>
 #include <rtgui/blit.h>
 
+#ifdef RTGUI_IMAGE_BMP
 /* Compression encodings for BMP files */
 #ifndef BI_RGB
 #define BI_RGB			0
@@ -641,3 +642,4 @@ void rtgui_image_bmp_init()
 	/* register bmp on image system */
 	rtgui_image_register_engine(&rtgui_image_bmp_engine);
 }
+#endif

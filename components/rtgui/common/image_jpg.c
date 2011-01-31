@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include <rtgui/rtgui.h>
 
-#ifdef RTGUI_USING_JPEG
+#ifdef RTGUI_IMAGE_JPEG
 #include <stdio.h>
 #include <stdlib.h>
 #include "jpeg/jpeglib.h"

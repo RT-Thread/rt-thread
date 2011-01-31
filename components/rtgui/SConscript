@@ -18,6 +18,8 @@ common/image.c
 common/image_xpm.c
 common/image_hdc.c
 common/image_bmp.c
+common/image_png.c
+common/image_jpg.c
 common/image_container.c
 common/font.c
 common/font_bmp.c

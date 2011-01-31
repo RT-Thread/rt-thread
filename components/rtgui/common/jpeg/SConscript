@@ -1,0 +1,38 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src	= Split('''
+jaricom.c
+jcomapi.c
+jutils.c
+jerror.c
+jmemmgr.c
+jdapimin.c
+jdapistd.c
+jdarith.c
+jdtrans.c
+jdatasrc.c
+jdmaster.c
+jdinput.c
+jdmarker.c
+jdhuff.c
+jdmainct.c
+jdcoefct.c
+jdpostct.c
+jddctmgr.c
+jidctfst.c
+jidctflt.c
+jidctint.c
+jdsample.c
+jdcolor.c
+jquant1.c
+jquant2.c
+jdmerge.c
+jmemnobs.c
+''')
+CPPPATH = [RTT_ROOT + '/components/rtgui/common/jpeg']
+
+group = DefineGroup('jpeg', src, depend = ['RTGUI_IMAGE_JPEG'], CPPPATH = CPPPATH)
+
+Return('group')
