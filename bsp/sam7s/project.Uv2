@@ -32,19 +32,19 @@ File 3,1,<..\..\libcpu\arm\AT91SAM7S\stack.c><stack.c>
 File 3,1,<..\..\libcpu\arm\AT91SAM7S\trap.c><trap.c>
 File 3,2,<..\..\libcpu\arm\AT91SAM7S\context_rvds.S><context_rvds.S>
 File 3,2,<..\..\libcpu\arm\AT91SAM7S\start_rvds.S><start_rvds.S>
-File 4,1,<..\..\finsh\cmd.c><cmd.c>
-File 4,1,<..\..\finsh\finsh_compiler.c><finsh_compiler.c>
-File 4,1,<..\..\finsh\finsh_error.c><finsh_error.c>
-File 4,1,<..\..\finsh\finsh_heap.c><finsh_heap.c>
-File 4,1,<..\..\finsh\finsh_init.c><finsh_init.c>
-File 4,1,<..\..\finsh\finsh_node.c><finsh_node.c>
-File 4,1,<..\..\finsh\finsh_ops.c><finsh_ops.c>
-File 4,1,<..\..\finsh\finsh_parser.c><finsh_parser.c>
-File 4,1,<..\..\finsh\finsh_token.c><finsh_token.c>
-File 4,1,<..\..\finsh\finsh_var.c><finsh_var.c>
-File 4,1,<..\..\finsh\finsh_vm.c><finsh_vm.c>
-File 4,1,<..\..\finsh\shell.c><shell.c>
-File 4,1,<..\..\finsh\symbol.c><symbol.c>
+File 4,1,<..\..\components\finsh\cmd.c><cmd.c>
+File 4,1,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c>
+File 4,1,<..\..\components\finsh\finsh_error.c><finsh_error.c>
+File 4,1,<..\..\components\finsh\finsh_heap.c><finsh_heap.c>
+File 4,1,<..\..\components\finsh\finsh_init.c><finsh_init.c>
+File 4,1,<..\..\components\finsh\finsh_node.c><finsh_node.c>
+File 4,1,<..\..\components\finsh\finsh_ops.c><finsh_ops.c>
+File 4,1,<..\..\components\finsh\finsh_parser.c><finsh_parser.c>
+File 4,1,<..\..\components\finsh\finsh_token.c><finsh_token.c>
+File 4,1,<..\..\components\finsh\finsh_var.c><finsh_var.c>
+File 4,1,<..\..\components\finsh\finsh_vm.c><finsh_vm.c>
+File 4,1,<..\..\components\finsh\shell.c><shell.c>
+File 4,1,<..\..\components\finsh\symbol.c><symbol.c>
 
 
 Options 1,0,0  // Target 'RT-Thread/AT91SAM7S'
@@ -105,7 +105,7 @@ Options 1,0,0  // Target 'RT-Thread/AT91SAM7S'
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
- ADSCINCD (.;..\..\include;..\..\libcpu\arm\AT91SAM7S;..\..\finsh)
+ ADSCINCD (.;..\..\include;..\..\libcpu\arm\AT91SAM7S;..\..\components\finsh)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
