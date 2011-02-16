@@ -12,7 +12,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>9</version>
+        <version>10</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -66,27 +66,7 @@
         </option>
         <option>
           <name>DdfFileName</name>
-          <state>$TOOLKIT_DIR$\config\M30627FHP.ddf</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashDownload</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoader</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoaderArgs</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCDownloadFlashBaseAddrOverride</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashBaseAddr</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\config\debugger\m30627fhp.ddf</state>
         </option>
         <option>
           <name>OCDownloadSuppressDownload</name>
@@ -95,10 +75,6 @@
         <option>
           <name>OCDownloadVerifyAll</name>
           <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoaderSlave</name>
-          <state></state>
         </option>
         <option>
           <name>CExtraOptionsCheck</name>
@@ -248,65 +224,6 @@
       </data>
     </settings>
     <settings>
-      <name>M16CROM</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <version>1</version>
-        <wantNonLocal>1</wantNonLocal>
-        <debug>1</debug>
-        <option>
-          <name>PortP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>BaudP7</name>
-          <version>0</version>
-          <state>7</state>
-        </option>
-        <option>
-          <name>ParityP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>DataBitsP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>StopBitsP7</name>
-          <version>0</version>
-          <state>1</state>
-        </option>
-        <option>
-          <name>HandshakeP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AAllP7</name>
-          <state>1</state>
-        </option>
-        <option>
-          <name>DoLogfileP7</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>LogFileP7</name>
-          <state>cspycomm.log</state>
-        </option>
-        <option>
-          <name>ExitBreakP7</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CRomMonitorMandatory</name>
-          <state>0</state>
-        </option>
-      </data>
-    </settings>
-    <settings>
       <name>M16CSIM</name>
       <archiveVersion>2</archiveVersion>
       <data>
@@ -319,26 +236,13 @@
         </option>
       </data>
     </settings>
-    <settings>
-      <name>M16CUSBROM</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <version>1</version>
-        <wantNonLocal>1</wantNonLocal>
-        <debug>1</debug>
-        <option>
-          <name>ExitBreakUSB</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CUsbRomMonitorMandatory</name>
-          <state>0</state>
-        </option>
-      </data>
-    </settings>
     <debuggerPlugins>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
@@ -377,7 +281,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>9</version>
+        <version>10</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -434,36 +338,12 @@
           <state></state>
         </option>
         <option>
-          <name>OCDownloadFlashDownload</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoader</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoaderArgs</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCDownloadFlashBaseAddrOverride</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashBaseAddr</name>
-          <state></state>
-        </option>
-        <option>
           <name>OCDownloadSuppressDownload</name>
           <state>0</state>
         </option>
         <option>
           <name>OCDownloadVerifyAll</name>
           <state>0</state>
-        </option>
-        <option>
-          <name>OCDownloadFlashLoaderSlave</name>
-          <state></state>
         </option>
         <option>
           <name>CExtraOptionsCheck</name>
@@ -613,65 +493,6 @@
       </data>
     </settings>
     <settings>
-      <name>M16CROM</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <version>1</version>
-        <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
-        <option>
-          <name>PortP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>BaudP7</name>
-          <version>0</version>
-          <state>7</state>
-        </option>
-        <option>
-          <name>ParityP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>DataBitsP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>StopBitsP7</name>
-          <version>0</version>
-          <state>1</state>
-        </option>
-        <option>
-          <name>HandshakeP7</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>AAllP7</name>
-          <state>1</state>
-        </option>
-        <option>
-          <name>DoLogfileP7</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>LogFileP7</name>
-          <state>cspycomm.log</state>
-        </option>
-        <option>
-          <name>ExitBreakP7</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CRomMonitorMandatory</name>
-          <state>0</state>
-        </option>
-      </data>
-    </settings>
-    <settings>
       <name>M16CSIM</name>
       <archiveVersion>2</archiveVersion>
       <data>
@@ -684,26 +505,13 @@
         </option>
       </data>
     </settings>
-    <settings>
-      <name>M16CUSBROM</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <version>1</version>
-        <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
-        <option>
-          <name>ExitBreakUSB</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CUsbRomMonitorMandatory</name>
-          <state>0</state>
-        </option>
-      </data>
-    </settings>
     <debuggerPlugins>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>

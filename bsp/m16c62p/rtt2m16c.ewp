@@ -160,9 +160,9 @@
     </settings>
     <settings>
       <name>ICCM16C</name>
-      <archiveVersion>3</archiveVersion>
+      <archiveVersion>4</archiveVersion>
       <data>
-        <version>18</version>
+        <version>20</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -286,20 +286,12 @@
           <state>1</state>
         </option>
         <option>
-          <name>CCLangSelect</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>OutputFile</name>
           <state>$FILE_BNAME$.r34</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
           <state>1</state>
-        </option>
-        <option>
-          <name>CCRequirePrototypes</name>
-          <state>0</state>
         </option>
         <option>
           <name>CCExt</name>
@@ -395,6 +387,22 @@
           <name>CompilerMisraRules04</name>
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccRequirePrototypes2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AggressiveInlining</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1039,9 +1047,9 @@
     </settings>
     <settings>
       <name>ICCM16C</name>
-      <archiveVersion>3</archiveVersion>
+      <archiveVersion>4</archiveVersion>
       <data>
-        <version>18</version>
+        <version>20</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1165,20 +1173,12 @@
           <state>1</state>
         </option>
         <option>
-          <name>CCLangSelect</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>OutputFile</name>
           <state></state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
           <state>1</state>
-        </option>
-        <option>
-          <name>CCRequirePrototypes</name>
-          <state>0</state>
         </option>
         <option>
           <name>CCExt</name>
@@ -1271,6 +1271,22 @@
           <name>CompilerMisraRules04</name>
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccRequirePrototypes2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AggressiveInlining</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
