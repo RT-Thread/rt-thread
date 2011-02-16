@@ -1787,10 +1787,10 @@
         <name>$PROJ_DIR$\bsp.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\cstartup.s34</name>
+        <name>$PROJ_DIR$\cstartup.asm</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\interrupts.s34</name>
+        <name>$PROJ_DIR$\interrupts.asm</name>
       </file>
       <file>
         <name>$PROJ_DIR$\lnkm30627fhp.xcl</name>
@@ -1805,7 +1805,7 @@
         <name>$PROJ_DIR$\uart.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\vectors.s34</name>
+        <name>$PROJ_DIR$\vectors.asm</name>
       </file>
     </group>
   </group>
@@ -1939,15 +1939,18 @@
     <name>libcpu</name>
     <group>
       <name>m16c</name>
-      <file>
-        <name>$PROJ_DIR$\..\..\libcpu\m16c\context.asm</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\libcpu\m16c\interrupt.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\libcpu\m16c\stack.c</name>
-      </file>
+      <group>
+        <name>m16c62p</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\context_iar.asm</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\interrupt.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\stack.c</name>
+        </file>
+      </group>
     </group>
   </group>
 </project>
