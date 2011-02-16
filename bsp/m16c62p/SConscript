@@ -1,0 +1,13 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_c = ['application.c', 'startup.c', 'board.c', 'bsp.c', 'uart.c']
+src_asm = ['cstartup.asm', 'interrupts.asm', 'vectors.asm']
+
+src	= File(src_c + src_asm)
+
+CPPPATH = [RTT_ROOT + '/bsp/m16c62p']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
