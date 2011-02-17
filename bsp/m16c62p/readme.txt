@@ -1,0 +1,87 @@
+/*
+ * File      : readme.txt
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2011-02-17     lgnq         the first version
+ */
+ 
+Summary:
+========
+This directory contains the source code for M16C porting to rt-thread
+
+two tasks is running:
+led_task - blink the LED
+finsh    - a user shell, comes with rt-thread
+
+Where to get help:
+==================
+In case you have questions about, problems with or contributions for
+Renesas M16C prot to rt-thread, you can send a mail to dzzxzz@gmail.com. 
+
+or you can post a message to the rt-thread forum
+there are two forums:
+http://www.rt-thread.org/phpbbforum
+http://www.ourdev.cn/bbs
+
+Where to get source code:
+=========================
+The rt-thread source code is maintained in google code
+http://code.google.com/p/rt-thread/
+
+you can use the following command to anonymously check out the latest source code
+svn checkout http://rt-thread.googlecode.com/svn/trunk/ rt-thread-read-only
+
+Directory Hierarchy:
+====================
+/rt-thread
+    /bsp
+        /m16c62p
+            /application.c          - init led task
+            /board.c                - hardware init, init uart0
+            /board.h                
+            /bsp.c                  - include led_init(), mcu_init(), timer0_init()
+            /bsp.h
+            /cstartup.asm           - assembly start
+            /interrupts.asm         - include time0 interrupt handler, uart0 interrupt handler
+            /lnkm30627fhp.xcl       - IAR link file for m16c62p(m30627fhp)
+            /rtconfig.h             - rt-thread config file
+            /rtconfig.py            - SCONS config file
+            /rtt2m16c.dep           - IAR project file
+            /rtt2m16c.ewd           - IAR project file
+            /rtt2m16c.ewp           - IAR project file
+            /rtt2m16c.eww           - IAR project file
+            /SConsscript            - SCONS script file
+            /SConstruct             - SCONS struct file
+            /startup.c              - rt-thread start, include main()
+            /uart.c                 - implement uart0 device 
+            /uart.h
+            /vectors.asm            - relocatable exception vector table
+    /libcpu
+        /m16c
+            /m16c62p
+                /context_iar.asm    - rt-thread context switch, used by IAR project
+                /context_iar.S      - rt-thread context switch, used by SCONS
+                /interrupt.c
+                /stack.c            - rt-thread stack initlization
+                
+Build Project:
+==============
+there are two ways to build the renesase M16C project:
+1,  make sure your PC has installed IAR Embedded Workbench for renesas m16c(recommend EWM16C-EV-3501.exe)
+    Open Workspace rtt2m16c.eww by IAR directly
+    rebuild all
+    the target file(rtt2m16c.mot) will be produced in /rt-thread/bsp/m16c62p/Debug/Exe
+    you can download the rtt2m16c.mot to m16c board with E8A
+                   
+2,  make sure your PC has installed python, scons and IAR for m16c(recommend python2.7, scons1.3.1 and EWM16C-EV-3501.exe)
+    open a windows cmd, and change directory to you rt-thread, like /rt-thread/bsp/m16c62p/
+    #set PATH=C:\Python27\Scripts;%PATH%
+    #scons -c
+    #scons -j 2
