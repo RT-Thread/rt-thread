@@ -35,7 +35,7 @@ Where to get source code:
 The rt-thread source code is maintained in google code
 http://code.google.com/p/rt-thread/
 
-you can use the following command to anonymously check out the latest source code
+use the following command to anonymously check out the latest source code:
 svn checkout http://rt-thread.googlecode.com/svn/trunk/ rt-thread-read-only
 
 Directory Hierarchy:
@@ -74,14 +74,14 @@ Directory Hierarchy:
 Build Project:
 ==============
 there are two ways to build the renesase M16C project:
-1,  make sure your PC has installed IAR Embedded Workbench for renesas m16c(recommend EWM16C-EV-3501.exe)
+1,  install IAR Embedded Workbench for renesas m16c(recommend EWM16C-EV-3501.exe)
     Open Workspace rtt2m16c.eww by IAR directly
     rebuild all
     the target file(rtt2m16c.mot) will be produced in /rt-thread/bsp/m16c62p/Debug/Exe
     you can download the rtt2m16c.mot to m16c board with E8A
                    
-2,  make sure your PC has installed python, scons and IAR for m16c(recommend python2.7, scons1.3.1 and EWM16C-EV-3501.exe)
-    open a windows cmd, and change directory to you rt-thread, like /rt-thread/bsp/m16c62p/
+2,  install python, scons and IAR for m16c(recommend python2.7, scons1.3.1 and EWM16C-EV-3501.exe)
+    open a windows cmd, and change directory to m16c project, like /rt-thread/bsp/m16c62p/
     #set PATH=C:\Python27\Scripts;%PATH%
     #scons -c
     #scons -j 2
