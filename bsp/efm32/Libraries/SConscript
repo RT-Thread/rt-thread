@@ -1,0 +1,44 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/CM3/CoreSupport/core_cm3.c
+CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/system_efm32.c
+efm32lib/src/efm32_acmp.c
+efm32lib/src/efm32_adc.c
+efm32lib/src/efm32_aes.c
+efm32lib/src/efm32_assert.c
+efm32lib/src/efm32_cmu.c
+efm32lib/src/efm32_dac.c
+efm32lib/src/efm32_dbg.c
+efm32lib/src/efm32_dma.c
+efm32lib/src/efm32_ebi.c
+efm32lib/src/efm32_emu.c
+efm32lib/src/efm32_gpio.c
+efm32lib/src/efm32_i2c.c
+efm32lib/src/efm32_lcd.c
+efm32lib/src/efm32_letimer.c
+efm32lib/src/efm32_leuart.c
+efm32lib/src/efm32_mpu.c
+efm32lib/src/efm32_msc.c
+efm32lib/src/efm32_pcnt.c
+efm32lib/src/efm32_prs.c
+efm32lib/src/efm32_rmu.c
+efm32lib/src/efm32_rtc.c
+efm32lib/src/efm32_system.c
+efm32lib/src/efm32_timer.c
+efm32lib/src/efm32_usart.c
+efm32lib/src/efm32_vcmp.c
+efm32lib/src/efm32_wdog.c
+""")
+
+path = [RTT_ROOT + '/bsp/efm32/Libraries/efm32lib/inc', 
+    RTT_ROOT + '/bsp/efm32/Libraries/CMSIS/CM3/CoreSupport',
+    RTT_ROOT + '/bsp/efm32/Libraries/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.EFM32_TYPE]
+group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path)
+
+Return('group')
