@@ -7,9 +7,6 @@ CROSS_TOOL 	= 'iar'
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
-elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
@@ -44,32 +41,6 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
-elif PLATFORM == 'armcc':
-    # toolchains
-    CC = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-    TARGET_EXT = 'axf'
-
-    DEVICE = ' --device DARMSS9'
-    CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
-
-    CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
-    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
-
-    EXEC_PATH += '/arm/bin40/'
-
-    if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
-        AFLAGS += ' -g'
-    else:
-        CFLAGS += ' -O2'
-
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
