@@ -8,7 +8,10 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= 'D:/SourceryGCC/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'E:/Keil'
+	EXEC_PATH 	= 'C:/Keil'
+elif CROSS_TOOL == 'iar':
+	PLATFORM 	= 'iar'
+	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 5.4 Evaluation_0'	
 
 BUILD = 'debug'
 STM32_TYPE = 'STM32F10X_HD'
@@ -78,8 +81,37 @@ elif PLATFORM == 'iar':
     DEVICE = ' --cpu DARMSTM --thumb'
 
     CFLAGS = ''
+    CFLAGS += ' --diag_suppress Pa050'
+    CFLAGS += ' --no_cse' 
+    CFLAGS += ' --no_unroll' 
+    CFLAGS += ' --no_inline' 
+    CFLAGS += ' --no_code_motion' 
+    CFLAGS += ' --no_tbaa' 
+    CFLAGS += ' --no_clustering' 
+    CFLAGS += ' --no_scheduling' 
+    CFLAGS += ' --debug' 
+    CFLAGS += ' --endian=little' 
+    CFLAGS += ' --cpu=Cortex-M3' 
+    CFLAGS += ' -e' 
+    CFLAGS += ' --fpu=None'
+    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/DLib_Config_Normal.h"'    
+    CFLAGS += ' -Ol'    
+    CFLAGS += ' -I"' + IAR_PATH + '/arm/inc"'
+        
     AFLAGS = ''
+    AFLAGS += ' -s+' 
+#    AFLAGS += ' -M<>' 
+    AFLAGS += ' -w+' 
+    AFLAGS += ' -r' 
+    AFLAGS += ' --cpu Cortex-M3' 
+    AFLAGS += ' --fpu None' 
+    AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
+    
     LFLAGS = ' --config stm32f10x_flash.icf'
+    LFLAGS += ' --redirect _Printf=_PrintfTiny' 
+    LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
+#    LFLAGS = ' --map I:\RTT\20110219\rt-thread\bsp\stm3210\Debug\List\project.map 
+    LFLAGS += ' --entry __iar_program_start'    
 
-    EXEC_PATH += '/arm/bin/'
+    EXEC_PATH = IAR_PATH + '/arm/bin/'
     POST_ACTION = ''
