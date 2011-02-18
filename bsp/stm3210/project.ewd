@@ -12,7 +12,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>18</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>5.30.0.51236</state>
+          <state>5.50.5.51996</state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -116,8 +116,60 @@
           <state>1</state>
         </option>
         <option>
-          <name>FlashLoadersV2</name>
-          <state>,,,,(default),</state>
+          <name>FlashLoadersV3</name>
+          <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32F10xxE.board</state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck3</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OverrideDefFlashBoard</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesOffset1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesOffset2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesOffset3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesUse1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesUse2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesUse3</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -265,7 +317,7 @@
       <name>JLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>10</version>
+        <version>11</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -375,11 +427,47 @@
         </option>
         <option>
           <name>CCJLinkResetList</name>
-          <version>0</version>
+          <version>2</version>
           <state>7</state>
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchCORERESET</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchMMERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchNOCPERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchCHRERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchSTATERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchBUSERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchINTERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchHARDERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchDummy</name>
           <state>0</state>
         </option>
       </data>
@@ -388,7 +476,7 @@
       <name>LMIFTDI_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>1</version>
+        <version>2</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -406,6 +494,14 @@
         <option>
           <name>CCLmiftdiLogFile</name>
           <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+        <option>
+          <name>CCLmiFtdiInterfaceRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCLmiFtdiInterfaceCmdLine</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -563,12 +659,20 @@
       <name>STLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
           <name>OCDriverInfo</name>
           <state>1</state>
+        </option>
+        <option>
+          <name>CCSTLinkInterfaceRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCSTLinkInterfaceCmdLine</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -599,22 +703,6 @@
     </settings>
     <debuggerPlugins>
       <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\PowerPac\PowerPacRTOS.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-KA-CSpy.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\OSE\OseEpsilonPlugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\CMX\CmxArmPlugin.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
@@ -623,7 +711,31 @@
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\OSE\OseEpsilonPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\PowerPac\PowerPacRTOS.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB5_Plugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
@@ -631,12 +743,12 @@
         <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
-        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
-      </plugin>
-      <plugin>
         <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
+        <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Stack\Stack.ENU.ewplugin</file>
@@ -658,7 +770,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>18</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -762,8 +874,60 @@
           <state>1</state>
         </option>
         <option>
-          <name>FlashLoadersV2</name>
-          <state>,,,,(default),</state>
+          <name>FlashLoadersV3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesSuppressCheck3</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesPath3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OverrideDefFlashBoard</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesOffset1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesOffset2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesOffset3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>OCImagesUse1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesUse2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCImagesUse3</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -911,7 +1075,7 @@
       <name>JLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>10</version>
+        <version>11</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1021,11 +1185,47 @@
         </option>
         <option>
           <name>CCJLinkResetList</name>
-          <version>0</version>
+          <version>2</version>
           <state>7</state>
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchCORERESET</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchMMERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchNOCPERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchCHRERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchSTATERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchBUSERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchINTERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchHARDERR</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCatchDummy</name>
           <state>0</state>
         </option>
       </data>
@@ -1034,7 +1234,7 @@
       <name>LMIFTDI_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>1</version>
+        <version>2</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1052,6 +1252,14 @@
         <option>
           <name>CCLmiftdiLogFile</name>
           <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+        <option>
+          <name>CCLmiFtdiInterfaceRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCLmiFtdiInterfaceCmdLine</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1209,12 +1417,20 @@
       <name>STLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>OCDriverInfo</name>
           <state>1</state>
+        </option>
+        <option>
+          <name>CCSTLinkInterfaceRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCSTLinkInterfaceCmdLine</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1245,22 +1461,6 @@
     </settings>
     <debuggerPlugins>
       <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\PowerPac\PowerPacRTOS.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-KA-CSpy.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\OSE\OseEpsilonPlugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\CMX\CmxArmPlugin.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
@@ -1269,7 +1469,31 @@
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\OSE\OseEpsilonPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\PowerPac\PowerPacRTOS.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB5_Plugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
@@ -1277,12 +1501,12 @@
         <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
-        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
-      </plugin>
-      <plugin>
         <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
+        <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Stack\Stack.ENU.ewplugin</file>
