@@ -9,10 +9,15 @@
 
         /* get exception back */
         ldw ea, 72(sp)
+
+        /* if(rt_thread_switch_interrput_flag == 0) goto no_need_context */
         ldw r4,%gprel(rt_thread_switch_interrput_flag)(gp)
         beq r4,zero,no_need_context
+
 need_context:
         movia ea, rt_hw_context_switch_interrupt_do
+        /* disable interrput */
+        mov r5, zero
 
 no_need_context:
         ldw ra,  0(sp)

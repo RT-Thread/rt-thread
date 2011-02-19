@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-02-14     aozima       first implementation for Nios II.
+ * 2011-02-20     aozima       fix context&switch bug.
  */
 
 /**
@@ -47,16 +48,20 @@ rt_hw_context_switch_interrupt_do:
     /* save from thread */
     addi sp,sp,-72
 
-    rdctl r2, status
-    stw r2,  68(sp)  /* status */
-
+    /* frist save r2,so that save status */
     stw r2,   4(sp)
+
+    /* save status */
+    /* when the interrupt happen,the interrupt is enable */
+    movi r2, 1
+    stw  r2, 68(sp)  /* status */
+
     stw r3,   8(sp)
     stw r4,  12(sp)
 
     /* get & save from thread pc */
     ldw r4,%gprel(rt_current_thread_entry)(gp)
-    stw r4,   0(sp)  /* thread back */
+    stw r4,   0(sp)  /* thread pc */
 
     stw r5,  16(sp)
     stw r6,  20(sp)
@@ -75,20 +80,25 @@ rt_hw_context_switch_interrupt_do:
     stw ra,  64(sp)
 
     /* save from thread sp */
+    /* rt_interrupt_from_thread = &from_thread->sp */
     ldw r4, %gprel(rt_interrupt_from_thread)(gp)
+    /* *r4(from_thread->sp) = sp */
     stw sp, (r4)
 
     /* clear rt_thread_switch_interrput_flag */
+    /* rt_thread_switch_interrput_flag = 0 */
     stw zero,%gprel(rt_thread_switch_interrput_flag)(gp)
 
     /* load to thread sp */
+    /* r4 = rt_interrupt_to_thread(&to_thread->sp) */
     ldw r4, %gprel(rt_interrupt_to_thread)(gp)
+    /* sp = to_thread->sp */
     ldw sp, (r4)
 
     ldw r2,  68(sp)  /* status */
-    wrctl status, r2
+    wrctl estatus, r2
 
-    ldw at,   0(sp)  /* thread pc */
+    ldw ea,   0(sp)  /* thread pc */
     ldw r2,   4(sp)
     ldw r3,   8(sp)
     ldw r4,  12(sp)
@@ -110,7 +120,8 @@ rt_hw_context_switch_interrupt_do:
 
     addi sp, sp, 72
 
-    jmp at
+    /* estatus --> status,ea --> pc */
+    eret
 
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
@@ -123,11 +134,14 @@ rt_hw_context_switch:
     /* save from thread */
     addi sp,sp,-72
 
+    /* frist save r2,so that save status */
+    stw r2,   4(sp)
+
+    /* save status */
     rdctl r2, status
     stw r2,  68(sp)  /* status */
 
-    stw ra,   0(sp)  /* thread back */
-    stw r2,   4(sp)
+    stw ra,   0(sp)  /* return from rt_hw_context_switch */
     stw r3,   8(sp)
     stw r4,  12(sp)
     stw r5,  16(sp)
@@ -147,21 +161,26 @@ rt_hw_context_switch:
     stw ra,  64(sp)
 
     /* save form thread sp */
+    /* from_thread->sp(r4) = sp */
     stw sp, (r4)
 
     /* update rt_interrupt_from_thread */
+    /* rt_interrupt_from_thread = r4(from_thread->sp) */
     stw r4,%gprel(rt_interrupt_from_thread)(gp)
 
     /* update rt_interrupt_to_thread */
+    /* rt_interrupt_to_thread = r5 */
     stw r5,%gprel(rt_interrupt_to_thread)(gp)
 
     /* get to thread sp */
+    /* sp = rt_interrupt_to_thread(r5:to_thread->sp) */
     ldw sp, (r5)
 
     ldw r2,  68(sp)  /* status */
-    wrctl status, r2
+    wrctl estatus, r2
 
-    ldw at,   0(sp)  /* thread pc */
+    ldw ea, 0(sp)    /* thread pc */
+
     ldw r2,   4(sp)
     ldw r3,   8(sp)
     ldw r4,  12(sp)
@@ -183,7 +202,8 @@ rt_hw_context_switch:
 
     addi sp, sp, 72
 
-    jmp at
+    /* estatus --> status,ea --> pc */
+    eret
 
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
@@ -223,9 +243,10 @@ rt_hw_context_switch_to:
     ldw sp, (r4) // sp = *r4
 
     ldw r2,  68(sp)  /* status */
-    wrctl status, r2
+    wrctl estatus, r2
 
-    ldw at,   0(sp)  /* thread entry */
+    ldw ea, 0(sp)    /* thread entry */
+
     ldw r2,   4(sp)
     ldw r3,   8(sp)
     ldw r4,  12(sp)
@@ -247,6 +268,7 @@ rt_hw_context_switch_to:
 
     addi sp, sp, 72
 
-    jmp at
+    /* estatus --> status,ea --> pc */
+    eret
 
 /*@}*/
