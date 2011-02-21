@@ -29,7 +29,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
 
@@ -100,13 +100,12 @@ elif PLATFORM == 'iar':
         
     AFLAGS = ''
     AFLAGS += ' -s+' 
-#    AFLAGS += ' -M<>' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
     AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
-    
+
     LFLAGS = ' --config stm32f10x_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
