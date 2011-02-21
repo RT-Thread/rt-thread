@@ -2,8 +2,7 @@
 #define __SCHED_H__
 
 #include <rtthread.h>
-#include <sys/types.h>
-#include <errno.h>
+#include <pthread.h>
 
 /* Thread scheduling policies */
 enum

@@ -44,7 +44,6 @@ int pthread_barrier_destroy(pthread_barrier_t *barrier)
 int pthread_barrier_init(pthread_barrier_t *barrier,
        const pthread_barrierattr_t *attr, unsigned count)
 {
-	rt_err_t result;
 	if (!barrier) return EINVAL;
 	if (attr &&(*attr != PTHREAD_PROCESS_PRIVATE)) return EINVAL;
 

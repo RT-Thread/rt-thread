@@ -1,12 +1,6 @@
 #include "mqueue.h"
 #include "pthread_internal.h"
 
-#include <stdarg.h>
-#include <errno.h>
-#ifdef __GNUC__
-#include <sys/fcntl.h>
-#endif
-
 static mqd_t posix_mq_list = RT_NULL;
 static struct rt_semaphore posix_mq_lock;
 void posix_mq_system_init()
@@ -105,7 +99,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
 	if (oflag & O_CREAT)
 	{
 	    va_start(arg, oflag);
-	    mode = (mode_t) va_arg(arg, unsigned int);
+	    mode = (mode_t) va_arg(arg, unsigned int); mode = mode;
 	    attr = (struct mq_attr *) va_arg(arg, struct mq_attr *);
 	    va_end(arg);
 
@@ -221,7 +215,7 @@ ssize_t mq_timedreceive(mqd_t mqdes, char *msg_ptr, size_t msg_len,
 		return -1;
 	}
 
-	tick = libc_time_to_tick(abs_timeout);
+	tick = clock_time_to_tick(abs_timeout);
 
 	result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
 	if (result == RT_EOK) return msg_len;

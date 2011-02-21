@@ -4,6 +4,9 @@
 
 int pthread_system_init(void)
 {
+	/* initialize clock and time */
+	clock_time_system_init();
+
 	/* initialize key area */
 	pthread_key_system_init();
 	/* initialize posix mqueue */
@@ -211,13 +214,14 @@ int pthread_join (pthread_t thread, void **value_ptr)
 		pthread_detach(thread);
 	}
 	else return ESRCH;
+	
+	return 0;
 }
 
 void pthread_exit (void* value)
 {
 	_pthread_data_t* ptd;
 	_pthread_cleanup_t* cleanup;
-	_pthread_key_data_t* key;
 	extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
 
 	ptd = _pthread_get_data(rt_thread_self());
@@ -457,4 +461,3 @@ int pthread_cancel(pthread_t thread)
 
 	return 0;
 }
-

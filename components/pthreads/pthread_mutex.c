@@ -172,6 +172,8 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
 
 	result = rt_mutex_release(&(mutex->lock));
 	if (result == RT_EOK) return 0;
+	
+	return EINVAL;
 }
 
 int pthread_mutex_trylock(pthread_mutex_t *mutex)

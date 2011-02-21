@@ -2,7 +2,7 @@
 #define __POSIX_SEMAPHORE_H__
 
 #include <rtthread.h>
-#include <sys/time.h>
+#include <pthread.h>
 
 struct posix_sem
 {

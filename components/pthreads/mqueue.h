@@ -2,9 +2,6 @@
 #define __MQUEUE_H__
 
 #include <rtthread.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/signal.h>
 #include <pthread.h>
 
 struct mqdes

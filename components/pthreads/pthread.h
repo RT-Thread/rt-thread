@@ -15,8 +15,7 @@
 #define __PTHREAD_H__
 
 #include <rtthread.h>
-#include <errno.h>
-#include <sys/types.h>
+#include <posix_types.h>
 
 #define PTHREAD_KEY_MAX				8
 
@@ -253,6 +252,21 @@ struct sigevent {
                                                /* Notification function */
   pthread_attr_t  *sigev_notify_attributes;    /* Notification Attributes */
 };
+
+/* posix clock and timer */
+#define MILLISECOND_PER_SECOND	1000UL
+#define MICROSECOND_PER_SECOND	1000000UL
+#define NANOSECOND_PER_SECOND	1000000000UL
+
+#define MILLISECOND_PER_TICK	(MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
+#define MICROSECOND_PER_TICK	(MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
+#define NANOSECOND_PER_TICK		(NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
+
+#define CLOCK_REALTIME      0
+
+int clock_getres  (clockid_t clockid, struct timespec *res);
+int clock_gettime (clockid_t clockid, struct timespec *tp);
+int clock_settime (clockid_t clockid, const struct timespec *tp);
 
 #endif
 
