@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='stm32'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -28,7 +28,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m3 -mthumb'
+    DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
@@ -110,7 +110,6 @@ elif PLATFORM == 'iar':
     LFLAGS = ' --config stm32f10x_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
-#    LFLAGS = ' --map I:\RTT\20110219\rt-thread\bsp\stm3210\Debug\List\project.map 
     LFLAGS += ' --entry __iar_program_start'    
 
     EXEC_PATH = IAR_PATH + '/arm/bin/'
