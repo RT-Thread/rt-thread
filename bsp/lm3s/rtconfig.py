@@ -1,9 +1,8 @@
-
-
 # toolchains options
 ARCH='arm'
 CPU='lm3s'
-CROSS_TOOL 	= 'keil'
+CROSS_TOOL 	= 'gcc'
+
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
@@ -25,7 +24,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
-    CFLAGS = DEVICE + ' -Dsourcerygxx' 
+    CFLAGS = DEVICE + ' -Dsourcerygxx -ffunction-sections -fdata-sections'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lm3s.map,-cref,-u,Reset_Handler -T lm3s_rom.ld'
 
