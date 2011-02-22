@@ -16,6 +16,8 @@
  * 2010-01-18     Bernard      fix down then up key bug.
  * 2010-03-19     Bernard      fix backspace issue and fix device read in shell.
  * 2010-04-01     Bernard      add prompt output when start and remove the empty history
+ * 2011-02-23     Bernard      fix variable section end issue of finsh shell
+ *                             initialization when use GNU GCC compiler.
  */
 
 #include <rtthread.h>
@@ -480,7 +482,7 @@ void finsh_system_init(void)
 	extern int __vsymtab_start;
 	extern int __vsymtab_end;
 	finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
-	finsh_system_var_init(&__vsymtab_start, &__vsymtab_start);
+	finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #endif
 #endif
 
