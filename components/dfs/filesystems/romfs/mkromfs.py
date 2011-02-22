@@ -85,7 +85,7 @@ def mkromfs_dir(dirname, is_root = False):
         if not os.path.isfile(fullpath):
             l = os.listdir(fullpath)
             if len(l):
-                mkromfs_output(('\t{ROMFS_DIRENT_DIR, "%s", %s, sizeof(%s)/sizeof(%s[0])},\n' % (fn, item_name, item_name, item_name)))
+                mkromfs_output(('\t{ROMFS_DIRENT_DIR, "%s", (rt_uint8_t*) %s, sizeof(%s)/sizeof(%s[0])},\n' % (fn, item_name, item_name, item_name)))
             else:
                 mkromfs_output(('\t{ROMFS_DIRENT_DIR, "%s", RT_NULL, 0},\n' % fn))
 
@@ -122,4 +122,4 @@ if __name__ == "__main__":
     mkromfs_output("#include <dfs_romfs.h>\n\n")
     mkromfs_dir(basename, is_root = True)
     
-    mkromfs_output("const struct romfs_dirent romfs_root = {ROMFS_DIRENT_DIR, \"/\", _root_dirent, sizeof(_root_dirent)/sizeof(_root_dirent[0])};\n\n")
+    mkromfs_output("const struct romfs_dirent romfs_root = {ROMFS_DIRENT_DIR, \"/\", (rt_uint8_t*) _root_dirent, sizeof(_root_dirent)/sizeof(_root_dirent[0])};\n\n")
