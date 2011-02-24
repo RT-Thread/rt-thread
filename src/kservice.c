@@ -425,7 +425,7 @@ void rt_show_version()
 	rt_kprintf("\n \\ | /\n");
 	rt_kprintf("- RT -     Thread Operating System\n");
 	rt_kprintf(" / | \\ 0.%d.%d build %s\n", RT_VERSION, RT_SUBVERSION, __DATE__);
-	rt_kprintf(" 2006 - 2009 Copyright by rt-thread team\n");
+	rt_kprintf(" 2006 - 2011 Copyright by rt-thread team\n");
 }
 
 /* private function */
