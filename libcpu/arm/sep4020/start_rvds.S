@@ -97,7 +97,8 @@ __heap_limit
 ;  Mapped to Address 0.
 ;  Absolute addressing mode must be used.
 ;  Dummy Handlers are implemented as infinite loops which can be modified.
-
+			EXPORT Entry_Point
+Entry_Point
 Vectors         LDR     PC,Reset_Addr         
                 LDR     PC,Undef_Addr
                 LDR     PC,SWI_Addr

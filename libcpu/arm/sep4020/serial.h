@@ -1,16 +1,52 @@
-#ifndef __RT_SERIAL_H__
-#define __RT_SERIAL_H__
+/*
+ * File      : serial.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://openlab.rt-thread.com/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2006-03-13     Bernard      first version
+ * 2009-04-20     yi.qiu      modified according bernard's stm32 version
+ * 2010-10-6      wangmeng    added sep4020 surpport     	  	
+ */
 
-#include <rthw.h>
-#include <rtthread.h>
+#ifndef __SERIAL_H__
+#define __SERIAL_H__
 
+#include <sep4020.h>
 
-#define	USTAT_RCV_READY			0x01   	/* receive data ready */ 
-#define	USTAT_TXB_EMPTY			0x20   	/* tx buffer empty */
-#define BPS						115200	/* serial baudrate */
+#define	USTAT_RCV_READY		0x01   	/* receive data ready */ 
+#define	USTAT_TXB_EMPTY		0x40   	/* tx buffer empty */
+#define BPS					115200	/* serial baudrate */
 
 #define UART_RX_BUFFER_SIZE		64
 #define UART_TX_BUFFER_SIZE		64
+
+/*For sep4020's uart have several secondary function*/
+/*we use union to decribe it*/
+
+union dlbl_fifo
+{
+	rt_uint32_t dlbl;
+	rt_uint32_t rxfifo;
+	rt_uint32_t txfifo;	
+};
+
+union dlbh_ier
+{
+	rt_uint32_t dlbh;
+	rt_uint32_t ier;
+};
+
+union iir_fcr
+{
+	rt_uint32_t iir;
+	rt_uint32_t fcr;
+};
 
 struct serial_int_rx
 {
@@ -24,21 +60,19 @@ struct serial_int_tx
 	rt_uint32_t write_index, save_index;
 };
 
-/* serial port registers */
 typedef struct uartport
 {
-	volatile rt_uint32_t dlbl_rxfifo_txfifo;
-	volatile rt_uint32_t dlbh_ier;
-	volatile rt_uint32_t iir_fcr;
-	volatile rt_uint32_t lcr;
-	volatile rt_uint32_t mcr;
-	volatile rt_uint32_t lsr;
-	volatile rt_uint32_t msr;
+	union dlbl_fifo dlbl_fifo;
+	union dlbh_ier	dlbh_ier;
+	union iir_fcr	iir_fcr;
+	rt_uint32_t lcr;
+	rt_uint32_t mcr;
+	rt_uint32_t lsr;
+	rt_uint32_t msr;
 }uartport;
 
 struct serial_device
 {
-	/* uart hardware registers */
 	uartport* uart_device;
 	
 	/* rx structure */
@@ -52,5 +86,5 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 
 void rt_hw_serial_isr(rt_device_t device);
 
-#endif
 
+#endif

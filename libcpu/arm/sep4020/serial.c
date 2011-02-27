@@ -1,21 +1,20 @@
 /*
  * File      : serial.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * http://openlab.rt-thread.com/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-02-05     Bernard      first version
- * 2009-10-25     Bernard      fix rt_serial_read bug when there is no data
- *                             in the buffer.
- * 2010-03-29     Bernard      cleanup code.
- * 2010-06-14     zchong       for sep4020
+ * 2006-03-13     Bernard      first version
+ * 2009-04-20     yi.qiu      modified according bernard's stm32 version
+ * 2010-10-6      wangmeng    added sep4020 surpport     	  	
  */
-
+#include <rtthread.h>
+#include <rthw.h>
 #include "serial.h"
 
 /**
@@ -24,6 +23,9 @@
 /*@{*/
 
 /* RT-Thread Device Interface */
+/**
+ * This function initializes serial
+ */
 static rt_err_t rt_serial_init (rt_device_t dev)
 {
 	struct serial_device* uart = (struct serial_device*) dev->user_data;
@@ -51,13 +53,40 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 	return RT_EOK;
 }
 
+/* save a char to serial buffer */
+static void rt_serial_savechar(struct serial_device* uart, char ch)
+{
+	rt_base_t level;
+	
+	/* disable interrupt */
+	level = rt_hw_interrupt_disable();
+
+	uart->int_rx->rx_buffer[uart->int_rx->save_index] = ch;
+	uart->int_rx->save_index ++;
+	if (uart->int_rx->save_index >= UART_RX_BUFFER_SIZE)
+		uart->int_rx->save_index = 0;
+	
+	/* if the next position is read index, discard this 'read char' */
+	if (uart->int_rx->save_index == uart->int_rx->read_index)
+	{
+		uart->int_rx->read_index ++;
+		if (uart->int_rx->read_index >= UART_RX_BUFFER_SIZE)
+			uart->int_rx->read_index = 0;
+	}
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(level);
+}
+
 static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 {
+	RT_ASSERT(dev != RT_NULL);	
 	return RT_EOK;
 }
 
 static rt_err_t rt_serial_close(rt_device_t dev)
 {
+	RT_ASSERT(dev != RT_NULL);	
 	return RT_EOK;
 }
 
@@ -66,44 +95,39 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 	rt_uint8_t* ptr;
 	rt_err_t err_code;
 	struct serial_device* uart;
-
+	
 	ptr = buffer;
 	err_code = RT_EOK;
 	uart = (struct serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
+		rt_base_t level;
+
 		/* interrupt mode Rx */
 		while (size)
 		{
-			rt_base_t level;
-
-			/* disable interrupt */
-			level = rt_hw_interrupt_disable();
-
 			if (uart->int_rx->read_index != uart->int_rx->save_index)
 			{
-				/* read a character */
 				*ptr++ = uart->int_rx->rx_buffer[uart->int_rx->read_index];
-				size--;
+				size --;
 
-				/* move to next position */
+				/* disable interrupt */
+				level = rt_hw_interrupt_disable();
+
 				uart->int_rx->read_index ++;
 				if (uart->int_rx->read_index >= UART_RX_BUFFER_SIZE)
 					uart->int_rx->read_index = 0;
+
+				/* enable interrupt */
+				rt_hw_interrupt_enable(level);
 			}
 			else
 			{
 				/* set error code */
 				err_code = -RT_EEMPTY;
-
-				/* enable interrupt */
-				rt_hw_interrupt_enable(level);
 				break;
 			}
-
-			/* enable interrupt */
-			rt_hw_interrupt_enable(level);
 		}
 	}
 	else
@@ -113,7 +137,7 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 		{
 			while (uart->uart_device->lsr & USTAT_RCV_READY)
 			{
-				*ptr = uart->uart_device->dlbl_rxfifo_txfifo & 0xff;
+				*ptr = uart->uart_device->dlbl_fifo.txfifo & 0xff;
 				ptr ++;
 			}
 		}
@@ -121,12 +145,11 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 
 	/* set error code */
 	rt_set_errno(err_code);
-	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
+	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;	
 }
 
-
 static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
-{
+{	
 	rt_uint8_t* ptr;
 	rt_err_t err_code;
 	struct serial_device* uart;
@@ -169,11 +192,11 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 			if (*ptr == '\n' && (dev->flag & RT_DEVICE_FLAG_STREAM))
 			{
 				while (!(uart->uart_device->lsr & USTAT_TXB_EMPTY));
-				uart->uart_device->dlbl_rxfifo_txfifo = '\r';
+				uart->uart_device->dlbl_fifo.txfifo = '\r';
 			}
 
 			while (!(uart->uart_device->lsr & USTAT_TXB_EMPTY));
-			uart->uart_device->dlbl_rxfifo_txfifo = (*ptr & 0x1FF);
+			uart->uart_device->dlbl_fifo.txfifo = (*ptr & 0x1FF);
 
 			++ptr; --size;
 		}
@@ -187,34 +210,30 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-//	struct serial_device* uart;
-
 	RT_ASSERT(dev != RT_NULL);
 
-//	uart = (struct serial_device*)dev->private;
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
 		/* suspend device */
 		dev->flag |= RT_DEVICE_FLAG_SUSPENDED;
 		break;
-
+	
 	case RT_DEVICE_CTRL_RESUME:
 		/* resume device */
 		dev->flag &= ~RT_DEVICE_FLAG_SUSPENDED;
 		break;
 	}
-
+	
 	return RT_EOK;
 }
 
 /*
- * serial register for SEP4020
+ * serial register
  */
 rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t flag, struct serial_device *serial)
 {
 	RT_ASSERT(device != RT_NULL);
-
 
 	device->type 		= RT_Device_Class_Char;
 	device->rx_indicate = RT_NULL;
@@ -225,16 +244,15 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 	device->read 		= rt_serial_read;
 	device->write 		= rt_serial_write;
 	device->control 	= rt_serial_control;
-	device->user_data	= serial;
+	device->user_data   = serial;
 
 	/* register a character device */
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
 }
-
+	
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(rt_device_t device)
 {
-	rt_base_t level;
 	struct serial_device* uart = (struct serial_device*) device->user_data;
 	
 	/* interrupt mode receive */	
@@ -243,24 +261,7 @@ void rt_hw_serial_isr(rt_device_t device)
 	/* save on rx buffer */
 	while (uart->uart_device->lsr & USTAT_RCV_READY)
 	{
-		/* disable interrupt */
-		level = rt_hw_interrupt_disable();
-
-		uart->int_rx->rx_buffer[uart->int_rx->save_index] = uart->uart_device->dlbl_rxfifo_txfifo & 0xff;
-		uart->int_rx->save_index ++;
-		if (uart->int_rx->save_index >= UART_RX_BUFFER_SIZE)
-			uart->int_rx->save_index = 0;
-	
-		/* if the next position is read index, discard this 'read char' */
-		if (uart->int_rx->save_index == uart->int_rx->read_index)
-		{
-			uart->int_rx->read_index ++;
-			if (uart->int_rx->read_index >= UART_RX_BUFFER_SIZE)
-				uart->int_rx->read_index = 0;
-		}
-
-		/* enable interrupt */
-		rt_hw_interrupt_enable(level);
+		rt_serial_savechar(uart, uart->uart_device->dlbl_fifo.rxfifo & 0xff);
 	}
 
 	/* invoke callback */
@@ -274,8 +275,8 @@ void rt_hw_serial_isr(rt_device_t device)
 			uart->int_rx->save_index - uart->int_rx->read_index;
 
 		device->rx_indicate(device, rx_length);
-	}	
+	}
 }
 
-
 /*@}*/
+

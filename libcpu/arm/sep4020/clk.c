@@ -42,19 +42,19 @@ static void rt_hw_set_system_clock(void)
 	/* pv value*/
 	pv  = SYSCLK/2/CLK_IN;
 	/* go to normal mode*/
-	PMC_PMDR = 0x01;
+	*(RP)PMU_PMDR = 0x01;
 	/* set the clock */
-	PMC_PMCR = 0x4000 | pv;
+	*(RP)PMU_PMCR = 0x4000 | pv;
 	/* trige configurate*/
-	PMC_PMCR = 0xc000 | pv;
+	*(RP)PMU_PMCR = 0xc000 | pv;
 }
 
 static void rt_hw_set_usb_clock(void)
 {
 	/* set the clock */
-	PMC_PUCR = 0x000c;
+	*(RP)PMU_PUCR = 0x000c;
 	/* trige configurate*/
-	PMC_PMCR = 0x800c;
+	*(RP)PMU_PMCR = 0x800c;
 
 }
 
@@ -78,7 +78,7 @@ rt_uint32_t rt_hw_get_clock(void)
 	rt_uint8_t pv, pd, npd;
 
 	/* get PMCR value */
-	val = PMC_PMCR;
+	val =*(RP) PMU_PMCR;
 	/* get NPD */
 	npd = (val >> 14) & 0x01;
 	/* get PD  */
