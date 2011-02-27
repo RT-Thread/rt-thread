@@ -86,7 +86,7 @@
 /* SECTION: Device filesystem support */
 /* using DFS support */
 #define RT_USING_DFS
-#define RT_USING_DFS_ELMFATFS
+#define RT_USING_DFS_ELMFAT
 /* #define RT_USING_DFS_YAFFS2 */
 
 /* #define DFS_USING_WORKDIR */
@@ -100,7 +100,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 #define RT_LWIP_DNS
 
 /* Trace LwIP protocol */

@@ -40,7 +40,7 @@ void rt_init_thread_entry(void* parameter)
 	char buffer[20];
 #ifdef RT_USING_DFS
 	dfs_init();
-#ifdef RT_USING_DFS_ELMFATFS
+#ifdef RT_USING_DFS_ELMFAT
 	elm_init();
 	/* mount sd card fat partition 1 as root directory */
 	if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)

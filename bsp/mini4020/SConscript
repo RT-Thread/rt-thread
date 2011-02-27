@@ -1,0 +1,9 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src	= Glob('*.c')
+CPPPATH = [RTT_ROOT + '/bsp/mini4020']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
