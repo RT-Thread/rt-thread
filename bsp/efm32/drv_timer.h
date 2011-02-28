@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		drv_timer.h
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -22,7 +22,7 @@
 /* Exported types -------------------------------------------------------------*/
 struct efm32_timer_device_t
 {
-	TIMER_TypeDef* 		timer_device;
+	TIMER_TypeDef		*timer_device;
 	efm32_irq_hook_t 	hook;
 };
 

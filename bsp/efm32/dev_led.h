@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		dev_led.h
  * @brief 	LED driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -38,7 +38,7 @@
 #endif
 
 /* Exported functions --------------------------------------------------------- */
-void rt_hw_led_init(void);
+rt_err_t rt_hw_led_init(void);
 void rt_hw_led_on(rt_uint8_t num);
 void rt_hw_led_off(rt_uint8_t num);
 void rt_hw_led_toggle(rt_uint8_t num);

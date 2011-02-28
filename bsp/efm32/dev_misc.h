@@ -1,6 +1,6 @@
 /******************************************************************//**
- * @file 		drv_dma.h
- * @brief 	USART driver of RT-Thread RTOS for EFM32
+ * @file 		dev_misc.h
+ * @brief 	Miscellaneous drivers of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
@@ -11,16 +11,18 @@
  **********************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2010-12-23	onelife		Initial creation for EFM32
+ * 2011-02-22	onelife		Initial creation for EFM32
  *********************************************************************/
-#ifndef __DRV_DMA_H__
-#define __DRV_DMA_H__
+#ifndef __DEV_MISC_H__
+#define __DEV_MISC_H__
 
 /* Includes -------------------------------------------------------------------*/
 /* Exported types -------------------------------------------------------------*/
 /* Exported constants ---------------------------------------------------------*/
 /* Exported macro -------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------- */
-void rt_hw_dma_init(void);
+rt_err_t rt_hw_misc_init(void);
+rt_int32_t rt_hw_get_temp(void);
+rt_uint32_t rt_hw_get_vdd(void);
 
-#endif /*__DRV_DMA_H__ */
+#endif /* __DEV_MISC_H__ */

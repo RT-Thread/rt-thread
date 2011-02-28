@@ -34,6 +34,7 @@
 //#define THREAD_DEBUG
 //#define IRQ_DEBUG
 //#define RT_IRQHDL_DEBUG
+//#define RT_ADC_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USART_DEBUG
 
@@ -86,6 +87,20 @@
 #define RT_USART1_NAME			"debug"
 #define RT_USART1_USING_DMA		0x0UL
 #endif
+
+/* SECTION: RTC options */
+#if (defined(EFM32_G290_DK) || defined(EFM32_G890_STK))
+#define RT_USING_RTC
+#endif
+#define RT_RTC_NAME 			"rtc"
+
+/* SECTION: ADC options */
+#define RT_USING_ACMP0
+#define RT_ACMP0_NAME 			"acmp0"
+
+/* SECTION: ADC options */
+#define RT_USING_ADC0
+#define RT_ADC0_NAME 			"adc"
 
 /* SECTION: Serial options */
 #if defined(EFM32_G290_DK)

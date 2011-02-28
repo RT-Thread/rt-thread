@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		drv_usart.c
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -125,10 +125,11 @@ static rt_err_t rt_usart_init (rt_device_t dev)
  *********************************************************************/
 static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 {
+	RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_usart_device_t	*usart;
 	IRQn_Type 					rxIrq;
 	
-	RT_ASSERT(dev != RT_NULL);
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
 
 	//if (usart->state & USART_STATE_CONSOLE)
@@ -454,9 +455,10 @@ static rt_err_t rt_usart_control (
 	rt_uint8_t 		cmd, 
 	void 			*args)
 {
+	RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_usart_device_t *usart;
 
-	RT_ASSERT(dev != RT_NULL);
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
 	
 	switch (cmd)
@@ -473,7 +475,7 @@ static rt_err_t rt_usart_control (
 		USART_Enable(usart->usart_device, usartEnable);
 		break;
 
-	case RT_DEVICE_CTRL_USART:
+	case RT_DEVICE_CTRL_USART_RBUFFER:
 		/* Set RX buffer */
 		{
 			struct efm32_usart_int_mode_t *int_rx;

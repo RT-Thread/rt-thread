@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		drv_dma.h
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -17,9 +17,8 @@
 #define __BOARD_H__
 
 #if defined(EFM32G890F128)
-#define EFM32_G890_STK
 #elif defined(EFM32G290F128)
-#define EFM32_G290_DK
+#elif defined(EFM32G230F128)
 #else
 #error Unknown MCU type 
 #endif
@@ -30,9 +29,11 @@
 #include <efm32_cmu.h>
 #include <efm32_rmu.h>
 #include <efm32_dma.h>
+#include <efm32_rtc.h>
 #include <efm32_timer.h>
 #include <efm32_gpio.h>
-#include <efm32_rtc.h>
+#include <efm32_acmp.h>
+#include <efm32_adc.h>
 #include <efm32_usart.h>
 #include <efm32_i2c.h>
 
@@ -51,21 +52,26 @@ extern rt_uint32_t rt_system_status;
 #define EFM32_NO_OFFSET			(-1)
 #define EFM32_NO_POINTER		(RT_NULL)
 
-
-#define HFXO_FREQUENCY 			(32000000)
-#define UART_PERCLK_FREQUENCY	HFXO_FREQUENCY
-#define UART_BAUDRATE			(115200)
-#define SERIAL_RX_BUFFER_SIZE	(64)
-
-#define IIC_RX_BUFFER_SIZE		(32)
-
-
-
 #define EFM32_SRAM_END 			(RAM_MEM_BASE + SRAM_SIZE)
 
 #define EFM32_BASE_PRI_DEFAULT 	(0x0UL << 5)
 #define EFM32_IRQ_PRI_DEFAULT 	(0x4UL << 5)
 
+#if (defined(EFM32_G890_STK) || defined(EFM32_G290_DK))
+#define EFM32_HFXO_FREQUENCY 	(32000000)
+#else
+#define EFM32_HFXO_FREQUENCY	(00000000)
+#endif
+
+#define UART_BAUDRATE			(115200)
+
+#define SERIAL_RX_BUFFER_SIZE	(64)
+
+#define IIC_RX_BUFFER_SIZE		(32)
+
+#define ADC_INIT_REF			adcRef2V5
+#define ADC_INIT_CH 			adcSingleInpCh5
+#define ADC_CONVERT_FREQUENCY 	(7000000)
 
 #if (RT_CONSOLE_DEVICE == 0x0UL)
 #define CONSOLE_DEVICE 			RT_USART0_NAME
@@ -77,9 +83,14 @@ extern rt_uint32_t rt_system_status;
 #define CONSOLE_DEVICE 			"no"
 #endif
 
-#define RT_DEVICE_CTRL_USART    (0x04)		/*!< USART control */
-#define RT_DEVICE_CTRL_IIC	    (0x08)		/*!< IIC control */
-#define RT_DEVICE_CTRL_TIMER    (0x10)		/*!< Timer control */
+/*! fixme: move the following define to Rtdef.h */
+#define RT_DEVICE_CTRL_USART_RBUFFER	(0xF1)		/*!< set USART rx buffer */
+#define RT_DEVICE_CTRL_IIC_SETTING		(0xF2)		/*!< change IIC setting */
+#define RT_DEVICE_CTRL_TIMER_PERIOD		(0xF3)		/*!< set Timer timeout period */
+#define RT_DEVICE_CTRL_ADC_MODE			(0xF4)		/*!< change ADC mode */
+#define RT_DEVICE_CTRL_ADC_RESULT		(0xF5)		/*!< get ADC result */
+#define RT_DEVICE_CTRL_ACMP_INIT		(0xF6)		/*!< Initialize ACMP */
+#define RT_DEVICE_CTRL_ACMP_OUTPUT		(0xF7)		/*!< get ACMP output */
 
 /* Exported functions --------------------------------------------------------- */
 void rt_hw_board_init(void);

@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		interrupt.c
  * @brief 	This file is part of RT-Thread RTOS
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -118,9 +118,11 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
+#ifdef RT_USING_RTC	
 	/* init RTC */
     rt_hw_rtc_init();
-	
+#endif
+
 	/* init all device */
 	rt_device_init_all();
 

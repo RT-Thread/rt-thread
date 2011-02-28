@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		drv_iic.c
  * @brief 	Serial API of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -71,16 +71,6 @@ static rt_err_t rt_iic_init (rt_device_t dev)
 		dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
 	}
 
-	return RT_EOK;
-}
-
-static rt_err_t rt_iic_open(rt_device_t dev, rt_uint16_t oflag)
-{
-	return RT_EOK;
-}
-
-static rt_err_t rt_iic_close(rt_device_t dev)
-{
 	return RT_EOK;
 }
 
@@ -296,9 +286,10 @@ static rt_err_t rt_iic_control (
 	rt_uint8_t 		cmd, 
 	void 			*args)
 {
+	 RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_iic_device_t *iic;
 
-	RT_ASSERT(dev != RT_NULL);
 	iic = (struct efm32_iic_device_t*)dev->user_data;
 	switch (cmd)
 	{
@@ -314,7 +305,7 @@ static rt_err_t rt_iic_control (
 		I2C_Enable(iic->iic_device, true);
 		break;
 
-	case RT_DEVICE_CTRL_IIC:
+	case RT_DEVICE_CTRL_IIC_SETTING:
 		{
 			/* change device setting */
 			struct efm32_iic_control_t *control;
@@ -371,8 +362,8 @@ rt_err_t rt_hw_iic_register(
 	device->rx_indicate = RT_NULL;
 	device->tx_complete = RT_NULL;
 	device->init 		= rt_iic_init;
-	device->open		= rt_iic_open;
-	device->close		= rt_iic_close;
+	device->open		= RT_NULL;
+	device->close		= RT_NULL;
 	device->read 		= rt_iic_read;
 	device->write 		= rt_iic_write;
 	device->control 	= rt_iic_control;
@@ -486,7 +477,7 @@ void rt_hw_iic_init(void)
 	rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
 #endif
 
-		/* register iic1 */
+	/* register iic1 */
 #ifdef RT_USING_IIC1
 	iic = rt_malloc(sizeof(struct efm32_iic_device_t));
 	if (iic == RT_NULL)

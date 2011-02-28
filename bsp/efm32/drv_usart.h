@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		drv_usart.h
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************

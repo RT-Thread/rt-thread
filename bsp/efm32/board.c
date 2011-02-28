@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		board.c
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -192,6 +192,9 @@ void rt_hw_board_init(void)
 	/* NVIC Configuration */
 	NVIC_Configuration();
 
+	/* Configure external oscillator */
+	SystemHFXOClockSet(EFM32_HFXO_FREQUENCY);
+	
 	/* Configure the SysTick */
 	SysTick_Configuration();	
 }
@@ -215,23 +218,24 @@ void rt_hw_driver_init(void)
 	/* Enabling clock to the interface of the low energy modules */
 	CMU_ClockEnable(cmuClock_CORELE, true);
 
-	/* Initialize TIMER */
-	//rt_hw_timer_init();
-
 	/* Initialize DMA */
 	rt_hw_dma_init();
-
-	/* Initialize Timer */
-	rt_hw_timer_init();
 
 	/* Initialize USART */
 	rt_hw_usart_init();
 
+	/* Initialize Timer */
+	rt_hw_timer_init();
+
+	/* Initialize ADC */
+	rt_hw_adc_init();
+
+	/* Initialize ACMP */
+	rt_hw_acmp_init();
+	
 	/* Initialize IIC */
 	rt_hw_iic_init();
 
-	rt_hw_led_init();
-	
 	rt_console_set_device(CONSOLE_DEVICE);
 }
 

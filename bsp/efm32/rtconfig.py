@@ -3,12 +3,18 @@ ARCH     = 'arm'
 CPU      = 'cortex-m3'
 CROSS_TOOL 	= 'gcc'
 
-if  CROSS_TOOL == 'gcc':
+if CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
 
 BUILD = 'debug'
-EFM32_TYPE = 'EFM32G890F128'
+EFM32_BOARD 	=  'EFM32_G890_STK'
+# EFM32_BOARD 	=  'EFM32_G290_DK'
+
+if EFM32_BOARD == 'EFM32_G890_STK':
+	EFM32_TYPE = 'EFM32G890F128'
+elif EFM32_BOARD == 'EFM32_G290_DK':
+	EFM32_TYPE = 'EFM32G290F128'
 
 if PLATFORM == 'gcc':
     # toolchains

@@ -27,7 +27,7 @@
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
 #define TIMER_TopCalculate(p) \
-		(p * (HFXO_FREQUENCY / (1 << TMR_CFG_PRESCALER) / 1000))
+		(p * (EFM32_HFXO_FREQUENCY / (1 << TMR_CFG_PRESCALER) / 1000))
 
 /* Private variables ------------------------------------------------------------*/
 #ifdef RT_USING_TIMER2
@@ -56,7 +56,6 @@
 
 	struct efm32_timer_device_t *timer;
 
-	RT_ASSERT(dev != RT_NULL);
 	timer = (struct efm32_timer_device_t *)(dev->user_data);
 
 	timer->hook.cbFunc = RT_NULL;
@@ -90,9 +89,10 @@ static rt_err_t rt_hs_timer_control (
 	rt_uint8_t 		cmd, 
 	void 			*args)
 {
+	RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_timer_device_t *timer;
 
-	RT_ASSERT(dev != RT_NULL);
 	timer = (struct efm32_timer_device_t *)(dev->user_data);
 
 	switch (cmd)
@@ -109,7 +109,7 @@ static rt_err_t rt_hs_timer_control (
 		TIMER_Enable(timer->timer_device, true);
 		break;
 
-	case RT_DEVICE_CTRL_TIMER:
+	case RT_DEVICE_CTRL_TIMER_PERIOD:
 		{
 			/* change device setting */
 			struct efm32_timer_control_t *control;
@@ -185,9 +185,10 @@ rt_err_t rt_hw_timer_register(
  *********************************************************************/
 void rt_hw_timer_isr(rt_device_t dev)
 {
+	RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_timer_device_t *timer;
 
-	RT_ASSERT(dev != RT_NULL);
 	timer = (struct efm32_timer_device_t *)(dev->user_data);
 
 	if (timer->hook.cbFunc != RT_NULL)

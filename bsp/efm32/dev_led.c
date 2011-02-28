@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		dev_led.c
  * @brief 	LED driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -111,8 +111,10 @@ rt_uint8_t rt_hw_led_state(rt_uint8_t num)
  *
  * @note
  *
+ * @return
+ *	 Error code
  *********************************************************************/
-void rt_hw_led_init(void)
+rt_err_t rt_hw_led_init(void)
 {
 	rt_uint8_t i;
 		
@@ -125,6 +127,8 @@ void rt_hw_led_init(void)
 			gpioModePushPull,
 			0);
 	}
+
+	return RT_EOK;
 }
 
 /*********************************************************************

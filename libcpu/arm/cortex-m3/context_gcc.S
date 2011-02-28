@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		context_gcc.S
  * @brief 	Context switch functions
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  **********************************************************************

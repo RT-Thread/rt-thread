@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		hdl_interrupt.c
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -29,9 +29,10 @@
 /* Private variables ---------------------------------------------------------*/
 efm32_irq_hook_t dmaCbTable[DMA_CHAN_COUNT * 2]	= {RT_NULL};
 efm32_irq_hook_t timerCbTable[TIMER_COUNT] 		= {RT_NULL};
-efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
-efm32_irq_hook_t usartCbTable[USART_COUNT * 2] 	= {RT_NULL};
 efm32_irq_hook_t rtcCbTable[RTC_COUNT] 			= {RT_NULL};
+efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
+efm32_irq_hook_t acmpCbTable[ACMP_COUNT] 		= {RT_NULL};
+efm32_irq_hook_t usartCbTable[USART_COUNT * 2] 	= {RT_NULL};
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -207,6 +208,34 @@ void TIMER2_IRQHandler(void)
 
 /******************************************************************//**
  * @brief
+ * 	Common RTC interrupt handler
+ *
+ * @details
+ * 	This function handles RTC counter overflow interrupt request
+ *
+ * @note
+ *
+ *********************************************************************/
+void RTC_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+	if (RTC->IF & RTC_IF_OF)
+	{
+		/* invoke callback function */
+		if (rtcCbTable[0].cbFunc != RT_NULL)
+		{
+			(rtcCbTable[0].cbFunc)(rtcCbTable[0].userPtr);
+		}
+	}
+	
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+/******************************************************************//**
+ * @brief
  * 	Common even number GPIO interrupt handler
  *
  * @details
@@ -266,6 +295,49 @@ void GPIO_ODD_IRQHandler(void)
 
 	/* clear interrupt */
 	GPIO->IFC = 0xAAAAUL;
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+/******************************************************************//**
+ * @brief
+ * 	Common ACMP interrupt handler
+ *
+ * @details
+ * 	This function handles ACMP edge trigger interrupt request
+ *
+ * @note
+ *
+ *********************************************************************/
+void ACMP0_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+	if (ACMP0->IF & ACMP_IF_EDGE)
+	{
+		/* invoke callback function */
+		if (acmpCbTable[0].cbFunc != RT_NULL)
+		{
+			(acmpCbTable[0].cbFunc)(acmpCbTable[0].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(ACMP0->IFC), _ACMP_IF_EDGE_SHIFT, 0x1UL);
+	}
+
+	if (ACMP1->IF & ACMP_IF_EDGE)
+	{
+		/* invoke callback function */
+		if (acmpCbTable[1].cbFunc != RT_NULL)
+		{
+			(acmpCbTable[1].cbFunc)(acmpCbTable[1].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(ACMP1->IFC), _ACMP_IF_EDGE_SHIFT, 0x1UL);
+	}
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -432,34 +504,6 @@ void USART2_RX_IRQHandler(void)
 
 /******************************************************************//**
  * @brief
- * 	Common RTC interrupt handler
- *
- * @details
- * 	This function handles RTC counter overflow interrupt request
- *
- * @note
- *
- *********************************************************************/
-void RTC_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-	if (RTC->IF & RTC_IF_OF)
-	{
-		/* invoke callback function */
-		if (rtcCbTable[0].cbFunc != RT_NULL)
-		{
-			(rtcCbTable[0].cbFunc)(rtcCbTable[0].userPtr);
-		}
-	}
-	
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-/******************************************************************//**
- * @brief
  * 	EFM32 common interrupt handlers register function
  *
  * @details
@@ -475,7 +519,12 @@ rt_err_t efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 		dmaCbTable[hook->unit].cbFunc = hook->cbFunc;
 		dmaCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-		
+
+	case efm32_irq_type_rtc:
+		rtcCbTable[hook->unit].cbFunc = hook->cbFunc;
+		rtcCbTable[hook->unit].userPtr = hook->userPtr;
+		break;
+
 	case efm32_irq_type_timer:
 		timerCbTable[hook->unit].cbFunc = hook->cbFunc;
 		timerCbTable[hook->unit].userPtr = hook->userPtr;
@@ -485,17 +534,17 @@ rt_err_t efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 		gpioCbTable[hook->unit].cbFunc = hook->cbFunc;
 		gpioCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-		
+
+	case efm32_irq_type_acmp:
+		acmpCbTable[hook->unit].cbFunc = hook->cbFunc;
+		acmpCbTable[hook->unit].userPtr = hook->userPtr;
+		break;
+
 	case efm32_irq_type_usart:
 		usartCbTable[hook->unit].cbFunc = hook->cbFunc;
 		usartCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-		
-	case efm32_irq_type_rtc:
-		rtcCbTable[hook->unit].cbFunc = hook->cbFunc;
-		rtcCbTable[hook->unit].userPtr = hook->userPtr;
-		break;
-		
+
 	default:
 		break;
 	}

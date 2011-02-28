@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		hdl_interrupt.h
  * @brief 	USART driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -21,10 +21,11 @@
 enum efm32_irq_hook_type_t
 {
 	efm32_irq_type_dma = 0,
+	efm32_irq_type_rtc,
 	efm32_irq_type_timer,
 	efm32_irq_type_gpio,
-	efm32_irq_type_usart,
-	efm32_irq_type_rtc
+	efm32_irq_type_acmp,
+	efm32_irq_type_usart	
 };
 
 typedef void (*efm32_irq_callback_t)(rt_device_t device);

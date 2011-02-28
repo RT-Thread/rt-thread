@@ -1,7 +1,7 @@
 /******************************************************************//**
  * @file 		application.c
  * @brief 	application tasks
- * 	COPYRIGHT (C) 2009, RT-Thread Development Team
+ * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  **********************************************************************
@@ -42,7 +42,7 @@
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
 /* Private variables ------------------------------------------------------------*/
-rt_uint32_t rt_system_status = 0;
+rt_uint32_t	rt_system_status = 0;
 
 /* Private function prototypes ---------------------------------------------------*/
 /* Private functions ------------------------------------------------------------*/
@@ -68,7 +68,18 @@ void rt_led_thread_entry(void* parameter)
 int rt_application_init()
 {
 	rt_thread_t led_thread;
-	rt_thread_t test_thread;
+
+	/* Initialize all device drivers (dev_?.c) */
+	if (rt_hw_led_init() != RT_EOK)
+	{
+		rt_kprintf("*** Failed to initialize LED driver!");
+		while(1); //Or do something?
+	}
+	if (rt_hw_misc_init() != RT_EOK)
+	{
+		rt_kprintf("*** Failed to miscellaneous driver!");
+		while(1); //Or do something?
+	}
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	led_thread = rt_thread_create(
