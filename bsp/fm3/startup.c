@@ -16,7 +16,7 @@
 #include <rtthread.h>
 
 #include "board.h"
-
+#include "mb9bf506r.h"
 /**
  * @addtogroup FM3
  */
@@ -55,12 +55,12 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
 	#ifdef __CC_ARM
-		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x10008000);
+		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)FM3_SRAM_END);
 	#elif __ICCARM__
-	    rt_system_heap_init(__segment_end("HEAP"), (void*)0x10008000);
+		rt_system_heap_init(__segment_end("HEAP"), (void*)FM3_SRAM_END);
 	#else
 		/* init memory system */
-		rt_system_heap_init((void*)&__bss_end, (void*)0x10008000);
+		rt_system_heap_init((void*)&__bss_end, (void*)FM3_SRAM_END);
 	#endif
 #endif
 
@@ -95,6 +95,9 @@ int main(void)
 	/* disable interrupt first */
 	level = rt_hw_interrupt_disable();
 
+	/* init system setting */
+	SystemInit();
+    
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 

@@ -73,8 +73,8 @@ static void ClockInit(void)
     while(!(FM3_CRG->SCM_STR & 0x02));
 
     /* sub CLK enable */
-	FM3_CRG->SCM_CTL |= 0x08;				
-	while(!(FM3_CRG->SCM_STR & 0x08));
+    //FM3_CRG->SCM_CTL |= 0x08;				
+    //while(!(FM3_CRG->SCM_STR & 0x08));
 
     /*Set PLL stabilization 
     wait time to 512uS*/
