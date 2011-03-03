@@ -380,7 +380,7 @@ void rt_hw_lcd_init(void)
 	lcd->parent.type = RT_Device_Class_Unknown;
 	lcd->parent.init = rt_lcd_init;
 	lcd->parent.open = rt_lcd_open;
-	lcd->parent.open = rt_lcd_close;
+	lcd->parent.close = rt_lcd_close;
 	lcd->parent.control = rt_lcd_control;
 	lcd->parent.user_data = RT_NULL;
 	lcd->byte_per_pixel = 2;
