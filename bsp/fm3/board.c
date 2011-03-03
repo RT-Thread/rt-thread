@@ -16,8 +16,8 @@
 #include <rtthread.h>
 
 #include "board.h"
-#include <mb9bf506r.h>
-#include <core_cm3.h>
+#include "mb9bf506r.h"
+#include "core_cm3.h"
 
 extern const uint32_t SystemFrequency;
 

@@ -15,8 +15,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <mb9bf506r.h>
-#include <core_cm3.h>
+#include "mb9bf506r.h"
+#include "core_cm3.h"
 
 /* switch flag on interrupt and thread pointer to save switch record */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
