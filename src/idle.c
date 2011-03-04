@@ -17,10 +17,12 @@
 #include <rtthread.h>
 #include "kservice.h"
 
+#ifndef IDLE_THREAD_STACK_SIZE
 #if defined (RT_USING_HOOK) || defined(RT_USING_HEAP)
 #define IDLE_THREAD_STACK_SIZE	256
 #else
 #define IDLE_THREAD_STACK_SIZE	128
+#endif
 #endif
 
 static struct rt_thread idle;
