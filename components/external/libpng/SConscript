@@ -21,7 +21,7 @@ pngwrite.c
 pngwtran.c
 pngwutil.c
 ''')
-CPPPATH = [RTT_ROOT + '/components/rtgui/common/libpng']
+CPPPATH = [RTT_ROOT + '/components/external/libpng']
 
 group = DefineGroup('libpng', src, depend = ['RTGUI_IMAGE_PNG'], CPPPATH = CPPPATH)
 

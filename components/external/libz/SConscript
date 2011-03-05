@@ -16,7 +16,7 @@ trees.c
 uncompr.c
 zutil.c
 ''')
-CPPPATH = [RTT_ROOT + '/components/rtgui/common/libz']
+CPPPATH = [RTT_ROOT + '/components/external/libz']
 
 group = DefineGroup('libz', src, depend = ['RTGUI_IMAGE_PNG'], CPPPATH = CPPPATH)
 

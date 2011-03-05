@@ -31,7 +31,7 @@ jquant2.c
 jdmerge.c
 jmemnobs.c
 ''')
-CPPPATH = [RTT_ROOT + '/components/rtgui/common/jpeg']
+CPPPATH = [RTT_ROOT + '/components/external/jpeg']
 
 group = DefineGroup('jpeg', src, depend = ['RTGUI_IMAGE_JPEG'], CPPPATH = CPPPATH)
 
