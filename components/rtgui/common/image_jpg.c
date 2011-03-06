@@ -4,11 +4,15 @@
 #ifdef RTGUI_IMAGE_JPEG
 #include <stdio.h>
 #include <stdlib.h>
-#include "jpeg/jpeglib.h"
+#include "jpeglib.h"
 
 #include <rtgui/rtgui_system.h>
 #include <rtgui/filerw.h>
 #include <rtgui/image_jpeg.h>
+
+#ifdef RTGUI_USING_DFS_FILERW
+#include <dfs_posix.h>
+#endif
 
 static rt_bool_t rtgui_image_jpeg_check(struct rtgui_filerw* file);
 static rt_bool_t rtgui_image_jpeg_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load);
@@ -37,6 +41,16 @@ struct rtgui_image_jpeg
 struct rtgui_image_engine rtgui_image_jpeg_engine =
 {
 	"jpeg",
+	{RT_NULL},
+	rtgui_image_jpeg_check,
+	rtgui_image_jpeg_load,
+	rtgui_image_jpeg_unload,
+	rtgui_image_jpeg_blit
+};
+
+struct rtgui_image_engine rtgui_image_jpg_engine =
+{
+	"jpg",
 	{RT_NULL},
 	rtgui_image_jpeg_check,
 	rtgui_image_jpeg_load,
@@ -271,6 +285,8 @@ void rtgui_image_jpeg_init()
 {
 	/* register jpeg on image system */
 	rtgui_image_register_engine(&rtgui_image_jpeg_engine);
+	/* register jpg on image system */
+	rtgui_image_register_engine(&rtgui_image_jpg_engine);
 }
 
 static void my_error_exit(j_common_ptr cinfo)

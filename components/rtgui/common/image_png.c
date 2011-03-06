@@ -2,7 +2,7 @@
 #include <rtgui/rtgui_system.h>
 
 #ifdef RTGUI_IMAGE_PNG
-#include "libpng/png.h"
+#include "png.h"
 #include <rtgui/image_png.h>
 
 #define PNG_MAGIC_LEN       8
