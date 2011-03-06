@@ -146,6 +146,10 @@ int dfs_romfs_open(struct dfs_fd* file)
 	dirent = dfs_romfs_lookup(root_dirent, file->path, &size);
 	if (dirent == RT_NULL) return -DFS_STATUS_ENOENT;
 
+	/* is a directory but not with O_DIRECTORY flag */
+	if ((dirent->type == ROMFS_DIRENT_DIR) && !(file->flags & DFS_O_DIRECTORY))
+		return -DFS_STATUS_ENOENT;
+
 	file->data = dirent;
 	file->size = size;
 	file->pos = 0;
