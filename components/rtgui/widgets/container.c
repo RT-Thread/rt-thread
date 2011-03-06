@@ -84,13 +84,18 @@ rt_bool_t rtgui_container_dispatch_mouse_event(rtgui_container_t *container, str
 {
 	/* handle in child widget */
 	struct rtgui_list_node* node;
+	rtgui_widget_t *focus;
 
+	/* get focus widget on toplevel */
+	focus = RTGUI_CONTAINER(RTGUI_WIDGET(container)->toplevel)->focused;
 	rtgui_list_foreach(node, &(container->children))
 	{
 		struct rtgui_widget* w;
 		w = rtgui_list_entry(node, struct rtgui_widget, sibling);
 		if (rtgui_rect_contains_point(&(w->extent), event->x, event->y) == RT_EOK)
 		{
+			if ((focus != w) && RTGUI_WIDGET_IS_FOCUSABLE(w))
+				rtgui_widget_focus(w);
 			if (w->event_handler(w, (rtgui_event_t*)event) == RT_TRUE) return RT_TRUE;
 		}
 	}
@@ -105,24 +110,10 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
-#ifndef RTGUI_USING_SMALL_SIZE	
-		if (widget->on_draw != RT_NULL)
-		{
-			return widget->on_draw(widget, event);
-		}
-#endif
-
 		rtgui_container_dispatch_event(container, event);
 		break;
 
 	case RTGUI_EVENT_KBD:
-#ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_key != RT_NULL)
-		{
-			return widget->on_key(widget, event);
-		}
-		else
-#endif
 		{
 			/* let parent to handle keyboard event */
 			if (widget->parent != RT_NULL && widget->parent != widget->toplevel)
@@ -137,13 +128,6 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 		if (rtgui_container_dispatch_mouse_event(container,
 			(struct rtgui_event_mouse*)event) == RT_FALSE)
 		{
-#ifndef RTGUI_USING_SMALL_SIZE
-			/* handle event in current widget */
-			if (widget->on_mouseclick != RT_NULL)
-			{
-				return widget->on_mouseclick(widget, event);
-			}
-#endif
 		}
 		else return RT_TRUE;
 		break;

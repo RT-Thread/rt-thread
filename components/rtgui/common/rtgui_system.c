@@ -140,21 +140,6 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 
 			if(info->wid != RT_NULL)
 				rt_kprintf("win: %s", info->wid->title);
-#ifdef RTGUI_USING_SMALL_SIZE
-			rt_kprintf(" clip no. %d", info->num_rect);
-#else
-			{
-				rtgui_rect_t *rect;
-				rt_uint32_t index;
-
-				rect = (rtgui_rect_t*)(info + 1);
-				for (index = 0; index < info->num_rect; index ++)
-				{
-					rt_kprintf(" (x1:%d, y1:%d, x2:%d, y2:%d)", rect->x1, rect->y1, rect->x2, rect->y2);
-					rect ++;
-				}
-			}
-#endif
 		}
 		break;
 
