@@ -558,15 +558,25 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
 
 static void rtgui_list_view_calc(struct rtgui_list_view* view)
 {
-	/* get image of first item*/
-	rtgui_image_t *image;
 	rtgui_rect_t rect;
+	rt_uint32_t image_width, image_height;
 	rt_ubase_t text_width, text_height;
 	rt_ubase_t item_width, item_height;
 
 	if (view->items_count == 0) return;
 
-	image = view->items[0].image;
+	/* get image width and height */
+	if (view->items[0].image != RT_NULL)
+	{
+		image_width  = view->items[0].image->w;
+		image_height = view->items[0].image->h;
+	}
+	else
+	{
+		image_width  = 0;
+		image_height = 0;
+	}
+
 	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), "HHHHHH", &rect);
 
 	text_height = rtgui_rect_height(rect);
@@ -574,9 +584,9 @@ static void rtgui_list_view_calc(struct rtgui_list_view* view)
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(view), &rect);
 
-	item_width = (image->w + LIST_MARGIN);
+	item_width = (image_width + LIST_MARGIN);
 	if (item_width < (text_width + LIST_MARGIN)) item_width = text_width + LIST_MARGIN;
-	item_height = image->h + 8 + text_height + LIST_MARGIN; 
+	item_height = image_height + 8 + text_height + LIST_MARGIN; 
 	if (item_width > item_height) item_height = item_width;
 	else item_width = item_height;
 	
