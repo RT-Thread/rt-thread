@@ -110,6 +110,8 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
+	case RTGUI_EVENT_COMMAND:
+	case RTGUI_EVENT_RESIZE:
 		rtgui_container_dispatch_event(container, event);
 		break;
 
@@ -125,52 +127,13 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
 		/* handle in child widget */
-		if (rtgui_container_dispatch_mouse_event(container,
-			(struct rtgui_event_mouse*)event) == RT_FALSE)
-		{
-		}
-		else return RT_TRUE;
+		return rtgui_container_dispatch_mouse_event(container,
+			(struct rtgui_event_mouse*)event);
 		break;
 
 	case RTGUI_EVENT_MOUSE_MOTION:
-		if (rtgui_container_dispatch_mouse_event(container,
-			(struct rtgui_event_mouse*)event) == RT_FALSE)
-		{
-#ifndef RTGUI_USING_SMALL_SIZE
-#if 0
-			/* handle event in current widget */
-			if (widget->on_mousemotion != RT_NULL)
-			{
-				return widget->on_mousemotion(widget, event);
-			}
-#endif
-#endif
-		}
-		else return RT_TRUE;
-		break;
-
-	case RTGUI_EVENT_COMMAND:
-		if (rtgui_container_dispatch_event(container, event) == RT_FALSE)
-		{
-#ifndef RTGUI_USING_SMALL_SIZE
-			if (widget->on_command != RT_NULL)
-			{
-				return widget->on_command(widget, event);
-			}
-#endif
-		}
-		else return RT_TRUE;
-		break;
-
-	case RTGUI_EVENT_RESIZE:
-		if (rtgui_container_dispatch_event(container, event) == RT_FALSE)
-		{
-#ifndef RTGUI_USING_SMALL_SIZE
-			if (widget->on_size != RT_NULL)
-				return widget->on_size(widget, event);
-#endif
-		}
-		else return RT_TRUE;
+		return rtgui_container_dispatch_mouse_event(container,
+			(struct rtgui_event_mouse*)event);
 		break;
 
 	default:

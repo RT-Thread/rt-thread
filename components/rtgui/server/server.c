@@ -79,12 +79,14 @@ void rtgui_server_destroy_application(struct rtgui_event_panel_detach* event)
 		{
 			/* get next thread and active it */
 			rt_thread_t tid = rtgui_panel_get_active_thread(panel);
-
-			/* let this thread repaint */
-			struct rtgui_event_paint epaint;
-			RTGUI_EVENT_PAINT_INIT(&epaint);
-			epaint.wid = RT_NULL;
-			rtgui_thread_send(tid, (struct rtgui_event*)&epaint, sizeof(epaint));
+			if (tid != RT_NULL)
+			{
+				/* let this thread repaint */
+				struct rtgui_event_paint epaint;
+				RTGUI_EVENT_PAINT_INIT(&epaint);
+				epaint.wid = RT_NULL;
+				rtgui_thread_send(tid, (struct rtgui_event*)&epaint, sizeof(epaint));
+			}
 		}
 	}
 	else
