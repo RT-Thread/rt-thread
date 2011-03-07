@@ -34,7 +34,7 @@
 //MB9BF505 : 48
 //MB9BF506 : 64
 #define FM3_SRAM_SIZE         32
-#define FM3_SRAM_END          (0x20000000 + FM3_SRAM_SIZE * 1024)
+#define FM3_SRAM_END          (0x1FFFC000 + FM3_SRAM_SIZE * 1024)
 
 void rt_hw_led_on(int n);
 void rt_hw_led_off(int n);
