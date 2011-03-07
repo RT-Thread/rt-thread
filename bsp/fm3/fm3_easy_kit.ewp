@@ -666,7 +666,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>D:\work\RTT\FM3\20110303\SVN\bsp\fm3\mb9bf500r.icf</state>
+          <state>$PROJ_DIR$\mb9bf500r.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
