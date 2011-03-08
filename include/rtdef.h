@@ -90,7 +90,7 @@ typedef rt_uint32_t						rt_off_t;		/**< Type for offset			*/
     #define UNUSED
 	#define PRAGMA(x)					_Pragma(#x)
 	#define ALIGN(n)					PRAGMA(data_alignment=n)
-    #define rt_inline 					inline
+    #define rt_inline 					static inline
 	#define RTT_API
 
 #elif defined (__GNUC__)        		/* GNU GCC Compiler */
