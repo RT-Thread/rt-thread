@@ -61,4 +61,28 @@
 /* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
 
+/* SECTION: RTGUI support */
+/* using RTGUI support */
+#define RT_USING_RTGUI
+
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX		16
+/* support 16 weight font */
+//#define RTGUI_USING_FONT16
+/* support 12 weight font */
+#define RTGUI_USING_FONT12
+/* support Chinese font */
+//#define RTGUI_USING_FONTHZ
+/* use DFS as file interface */
+//#define RTGUI_USING_DFS_FILERW
+/* use font file as Chinese font */
+/* #define RTGUI_USING_HZ_FILE */
+/* use Chinese bitmap font */
+//#define RTGUI_USING_HZ_BMP
+/* use small size in RTGUI */
+//#define RTGUI_USING_SMALL_SIZE
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+#define RTGUI_DEFAULT_FONT_SIZE 12
+
 #endif

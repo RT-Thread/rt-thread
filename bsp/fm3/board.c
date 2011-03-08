@@ -42,58 +42,11 @@ void rt_hw_timer_handler(void)
 	rt_interrupt_leave();
 }
 
-void led_init(void)
-{
-    /*Select CPIO function*/
-    LED_PFR &= ~LED_MASK;
-    /*Set Pin to turn off leds*/
-    LED_PDOR |= LED_MASK;
-    /*Make led pins outputs*/
-    LED_DDR |= LED_MASK;
-}
-
-void rt_hw_led_on(int n)
-{
-    switch(n)
-    {
-        case LED1:
-            LED_PDOR &= ~LED1;
-        break;
-        case LED2:
-            LED_PDOR &= ~LED2;
-        break;
-        case LED3:
-            LED_PDOR &= ~LED3;        
-        break;
-        default:
-        break;
-    }
-}
-
-void rt_hw_led_off(int n)
-{
-    switch(n)
-    {
-        case LED1:
-            LED_PDOR |= LED1;
-        break;
-        case LED2:
-            LED_PDOR |= LED2;
-        break;
-        case LED3:
-            LED_PDOR |= LED3;        
-        break;
-        default:
-        break;
-    }
-}
-
 /**
 * This function will initial FM3 Easy Kit board.
  */
 void rt_hw_board_init()
 {
-    led_init();
     /* init systick */
     SysTick_Config(SystemFrequency/RT_TICK_PER_SECOND - 1);
 }
