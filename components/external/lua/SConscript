@@ -1,0 +1,61 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+
+from building import *
+import os
+
+LUA_VERSION = '5.1.4'
+LUA_PATH = 'lua-' + LUA_VERSION
+
+if GetDepend('RT_USING_LUA') and not os.path.exists(LUA_PATH):
+    print '================ERROR============================'
+    print 'Please get lua dist and put them under lua folder'
+    print '================================================='
+    exit(0)
+
+# core source files 
+core_src = Split('''
+lapi.c
+lcode.c
+ldebug.c
+ldo.c
+ldump.c
+lfunc.c
+lgc.c
+llex.c
+lmem.c
+lobject.c
+lopcodes.c
+lparser.c
+lstate.c
+lstring.c
+ltable.c
+ltm.c
+lundump.c
+lvm.c
+lzio.c
+''')
+
+# library source files 
+lib_src = Split('''
+lauxlib.c
+lbaselib.c
+ldblib.c
+liolib.c
+lmathlib.c
+loslib.c
+ltablib.c
+lstrlib.c
+loadlib.c
+linit.c
+''')
+
+src = core_src + lib_src
+
+for item in range(len(src)):
+    src[item] = LUA_PATH + '/src/' + src[item]
+
+CPPPATH = [RTT_ROOT + '/components/external/lua/' + LUA_PATH + '/src']
+group = DefineGroup('lua', src, depend = ['RT_USING_LUA'], CPPPATH = CPPPATH)
+
+Return('group')
