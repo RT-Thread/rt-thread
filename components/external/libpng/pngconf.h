@@ -20,12 +20,16 @@
 #define __RT_THREAD__
 
 #ifdef __RT_THREAD__
+#include <rtthread.h>
+#define PNG_MAX_MALLOC_64K
+
+#ifndef RT_USING_NEWLIB
 #define PNG_NO_WRITE_SUPPORTED
 #define PNG_NO_STDIO
 #define PNG_NO_SETJMP_SUPPORTED
-#define PNG_MAX_MALLOC_64K
 #define malloc	rtgui_malloc
 #define free	rtgui_free
+#endif
 #endif
 
 #define PNG_1_2_X
