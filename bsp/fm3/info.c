@@ -100,11 +100,13 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
         char str[16];
         struct rtgui_dc* dc;
         struct rtgui_rect rect;
+        struct rtgui_event_command* ecmd;
+        rt_uint8_t major,minor;
         dc = rtgui_dc_begin_drawing(widget);
         if (dc == RT_NULL) 
             return RT_FALSE;
             
-        struct rtgui_event_command* ecmd = (struct rtgui_event_command*)event;
+        ecmd = (struct rtgui_event_command*)event;
         switch (ecmd->command_id)
         {   
             case ADC_UPDATE:
@@ -117,7 +119,6 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 			    rtgui_dc_draw_text(dc, str, &rect);	
             break;
             case CPU_UPDATE:
-                rt_uint8_t major,minor;
                 cpu_usage_get(&major, &minor);
                 rect.x1 = 1;
                 rect.y1 = 12;  
