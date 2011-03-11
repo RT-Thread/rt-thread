@@ -37,5 +37,6 @@ void rt_hw_led_init(void);
 void rt_hw_led_on(rt_uint8_t num);
 void rt_hw_led_off(rt_uint8_t num);
 void rt_hw_led_toggle(rt_uint8_t num);
+void pwm_update(rt_uint16_t value);
 
 #endif

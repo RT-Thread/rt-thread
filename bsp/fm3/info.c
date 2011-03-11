@@ -6,19 +6,20 @@
 #include <rtgui/widgets/workbench.h>
 
 #include "adc.h"
+#include "cpuusage.h"
 #include <rtthread.h>
 
 extern rt_uint16_t adc_value;
-
+static rt_uint8_t index = 0 ;
 static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
-	if(event->type == RTGUI_EVENT_PAINT)
+	if (event->type == RTGUI_EVENT_PAINT)
 	{
 		struct rtgui_dc* dc;
 		struct rtgui_rect rect;
 
 		dc = rtgui_dc_begin_drawing(widget);
-		if(dc == RT_NULL) 
+		if (dc == RT_NULL) 
             return RT_FALSE;
 		rtgui_widget_get_rect(widget, &rect);
 
@@ -35,77 +36,112 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
         
 		/* draw text */
         rtgui_widget_get_rect(widget, &rect);
-        rect.x1 += 1;
-        rect.y1 += 1;        
-		rtgui_dc_draw_text(dc, "FM3 Easy Kit Demo", &rect);
+        rect.y1 += 25;        
+        rtgui_dc_draw_text(dc, "  FM3 Easy Kit Demo", &rect);
         rect.y1 += 10;
-        rtgui_dc_draw_text(dc, "[rt-thread/RTGUI]", &rect);
-        
+        rtgui_dc_draw_text(dc, "  rt-thread / RTGUI", &rect);
 		rtgui_dc_end_drawing(dc);
 
 		return RT_FALSE;
 	}
-    else if(event->type == RTGUI_EVENT_KBD)
+    else if (event->type == RTGUI_EVENT_KBD)
     {
+        struct rtgui_dc* dc;
+        struct rtgui_rect rect;
         struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-        if(ekbd->type == RTGUI_KEYDOWN)
+        if (ekbd->type == RTGUI_KEYDOWN)
         {
             char key_str[16];
-            struct rtgui_dc* dc;
-            struct rtgui_rect rect;
-
-            switch(ekbd->key)
+            switch (ekbd->key)
             {
                 case RTGUIK_LEFT:
-                rt_sprintf(key_str, "KEY = %s", "LEFT");
+                rt_sprintf(key_str, "%s", "L");
                 break;
                 case RTGUIK_RIGHT:
-                rt_sprintf(key_str, "KEY = %s", "RIGHT");
+                rt_sprintf(key_str, "%s", "R");
                 break;
                 case RTGUIK_DOWN:
-                rt_sprintf(key_str, "KEY = %s", "DOWN");
+                rt_sprintf(key_str, "%s", "D");
                 break;
                 case RTGUIK_UP:
-                rt_sprintf(key_str, "KEY = %s", "UP");
+                rt_sprintf(key_str, "%s", "U");
                 break;                
                 default:
-                rt_sprintf(key_str, "KEY = %s", "UNKNOWN");
+                rt_sprintf(key_str, "%s", "S");
                 break;
             }
             dc = rtgui_dc_begin_drawing(widget);
-            if(dc == RT_NULL) 
+            if (dc == RT_NULL) 
                 return RT_FALSE;
-            rect.x1 = 10;
-            rect.y1 = 30;  
-            rect.x2 = 120;
-            rect.y2 = 40;       
+            rect.x1 = 118;
+            rect.y1 = 1;  
+            rect.x2 = 127;
+            rect.y2 = 10;       
             rtgui_dc_fill_rect(dc, &rect);
             rtgui_dc_draw_text(dc, key_str, &rect);
             rtgui_dc_end_drawing(dc);
         }
+        else if (ekbd->type == RTGUI_KEYUP)
+        {
+            dc = rtgui_dc_begin_drawing(widget);
+            if (dc == RT_NULL) 
+                return RT_FALSE;
+            rect.x1 = 118;
+            rect.y1 = 1;  
+            rect.x2 = 127;
+            rect.y2 = 10;       
+            rtgui_dc_fill_rect(dc, &rect);
+            //rtgui_dc_draw_text(dc, key_str, &rect);
+            rtgui_dc_end_drawing(dc);
+        }
     }
-    else if(event->type == RTGUI_EVENT_COMMAND)
+    else if (event->type == RTGUI_EVENT_COMMAND)
     {
-        char adc_str[10];
+        char str[16];
         struct rtgui_dc* dc;
         struct rtgui_rect rect;
         dc = rtgui_dc_begin_drawing(widget);
-        if(dc == RT_NULL) 
+        if (dc == RT_NULL) 
             return RT_FALSE;
             
         struct rtgui_event_command* ecmd = (struct rtgui_event_command*)event;
-        switch(ecmd->command_id)
+        switch (ecmd->command_id)
         {   
             case ADC_UPDATE:
-            rect.x1 = 10;
-            rect.y1 = 40;  
-            rect.x2 = 120;
-            rect.y2 = 50;       
-            rtgui_dc_fill_rect(dc, &rect);     
-			rt_sprintf(adc_str, "ADC = %d mv", adc_value);
-			rtgui_dc_draw_text(dc, adc_str, &rect);	
-            rtgui_dc_end_drawing(dc);
+                rect.x1 = 1;
+                rect.y1 = 1;  
+                rect.x2 = 117;
+                rect.y2 = 10;       
+                rtgui_dc_fill_rect(dc, &rect);     
+			    rt_sprintf(str, "ADC = %d mv", adc_value);
+			    rtgui_dc_draw_text(dc, str, &rect);	
+            break;
+            case CPU_UPDATE:
+                rt_uint8_t major,minor;
+                cpu_usage_get(&major, &minor);
+                rect.x1 = 1;
+                rect.y1 = 12;  
+                rect.x2 = 127;
+                rect.y2 = 22;       
+                rtgui_dc_fill_rect(dc, &rect);     
+			    rt_sprintf(str, "CPU : %d.%d%", major, minor);
+			    rtgui_dc_draw_text(dc, str, &rect);
+
+                rect.y1 = 23;  
+                rect.y2 = 63;                 
+                index++;
+                if (index == 127)
+                {    
+                    index = 1;
+                    rtgui_dc_fill_rect(dc, &rect);     
+                }
+                if (major>40)
+                    rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
+                else
+                    rtgui_dc_draw_vline(dc, index, rect.y2-major, rect.y2);
+                break;
         }
+        rtgui_dc_end_drawing(dc); 
     }
 
 	return rtgui_view_event_handler(widget, event);
@@ -148,7 +184,7 @@ void info_init()
 {
     info_tid = rt_thread_create("info",
         info_entry, RT_NULL,
-        2048, 26, 10);
+        2048, 25, 10);
 
     if (info_tid != RT_NULL) rt_thread_startup(info_tid);
 }

@@ -20,11 +20,8 @@ static rt_uint8_t gui_disp_buf[GUI_LCM_YMAX/8][GUI_LCM_XMAX];
 struct rtgui_lcd_device
 {
     struct rt_device parent;
-
-    /* screen width and height */
     rt_uint16_t width;
     rt_uint16_t height;
-
     void* hw_framebuffer;
 };
 static struct rtgui_lcd_device *lcd = RT_NULL;
@@ -59,7 +56,7 @@ void LCD_WriteCmd(unsigned char command)
     LCD_CD_LOW();
     for(i=0; i<8; i++)
     {
-        if(command & (0x80 >> i))
+        if (command & (0x80 >> i))
             LCD_DATA_HIGH();
         else
             LCD_DATA_LOW();
@@ -81,7 +78,7 @@ void LCD_WriteData(unsigned char data)
     LCD_CD_HIGH();
     for(i=0; i<8; i++)
     {
-        if(data & (0x80 >> i))
+        if (data & (0x80 >> i))
             LCD_DATA_HIGH();
         else
             LCD_DATA_LOW();
@@ -103,13 +100,13 @@ static void rt_hw_lcd_update(rtgui_rect_t *rect)
     rt_uint8_t i,j = GUI_LCM_XMAX;
     rt_uint8_t* p = (rt_uint8_t*)gui_disp_buf;  
     
-    for(i=0; i<GUI_LCM_PAGE; i++)
+    for (i=0; i<GUI_LCM_PAGE; i++)
     { 
         LCD_WriteCmd(Set_Page_Addr_0|i);    
         LCD_WriteCmd(Set_ColH_Addr_0);        
         LCD_WriteCmd(Set_ColL_Addr_0);
         j = GUI_LCM_XMAX;
-        while(j--)
+        while (j--)
         {
             LCD_WriteData(*p++);
             Delay();
@@ -127,10 +124,10 @@ static void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
     rt_uint8_t page;
     page = y/8;
 
-    if(*c == black)
+    if (*c == black)
         gui_disp_buf[page][x] |= 1<<(y%8);
     else 
-        if(*c == white)
+        if (*c == white)
             gui_disp_buf[page][x] &= ~(1<<(y%8));
 }
 
@@ -139,7 +136,7 @@ static void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
     rt_uint8_t page;
     page = y/8;
     
-    if(gui_disp_buf[page][x] & (1<<(y%8)))
+    if (gui_disp_buf[page][x] & (1<<(y%8)))
         *c = black;
     else
         *c = white;
@@ -151,12 +148,12 @@ static void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, r
 	rt_uint8_t i;
     page = y/8;
   
-    for(i=x1; i<x2; i++)
+    for (i=x1; i<x2; i++)
     {
-        if(*c == black)
+        if (*c == black)
             gui_disp_buf[page][i] |= 1<<(y%8);
         else 
-            if(*c == white)
+            if (*c == white)
                 gui_disp_buf[page][i] &= ~(1<<(y%8));      
     }
 }
@@ -165,7 +162,7 @@ static void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt
 {
     rt_uint8_t y;
 
-    for(y = y1; y < y2; y ++)
+    for (y = y1; y < y2; y ++)
     {
         rt_hw_lcd_set_pixel(c, x, y);
     }
@@ -180,7 +177,7 @@ static void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t
 
     page = y/8;
   
-    for(i=x1; i<x2; i++)
+    for (i=x1; i<x2; i++)
     {
         gui_disp_buf[page][i] |= 1<<(y%8);
         coll = i & 0x0f;
@@ -311,7 +308,6 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
             LCD_WriteCmd(Display_Off);
             break;        
     }
-
     return RT_EOK;
 }
 

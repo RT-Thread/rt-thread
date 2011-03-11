@@ -20,6 +20,7 @@
 
 #include "mb9bf506r.h"
 #include "adc.h"
+#include "led.h"
 
 static struct rt_device adc;
 
@@ -46,7 +47,6 @@ static rt_err_t rt_adc_init(rt_device_t dev)
         
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
 	}
-
 	return RT_EOK;
 }
 
@@ -68,7 +68,6 @@ static rt_err_t rt_adc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
             *((rt_uint16_t*)args) = (*((rt_uint16_t*)args)*3300)/1024;
 		break;
 	}
-
 	return RT_EOK;
 }
 
@@ -87,6 +86,7 @@ static void adc_thread_entry(void *parameter)
     {
         rt_device_control(device, RT_DEVICE_CTRL_ADC_START, RT_NULL);    
         rt_device_control(device, RT_DEVICE_CTRL_ADC_RESULT, &adc_value);
+        pwm_update(adc_value/3);
         rtgui_thread_send(info_tid, &ecmd.parent, sizeof(ecmd));
         rt_thread_delay(20);
     }
@@ -95,7 +95,7 @@ static void adc_thread_entry(void *parameter)
 static rt_thread_t adc_thread;
 void rt_hw_adc_init(void)
 {
-	adc.type 		= RT_Device_Class_Char; /* fixme: should be adc type */
+	adc.type 		= RT_Device_Class_Char;
 	adc.rx_indicate = RT_NULL;
 	adc.tx_complete = RT_NULL;
 	adc.init 		= rt_adc_init;
@@ -106,7 +106,7 @@ void rt_hw_adc_init(void)
 	adc.control 	= rt_adc_control;
 	adc.user_data	= RT_NULL;
 
-    adc_thread = rt_thread_create("adc", adc_thread_entry, RT_NULL, 384, 29, 5);
+    adc_thread = rt_thread_create("adc", adc_thread_entry, RT_NULL, 384, 26, 5);
     if(adc_thread != RT_NULL) 
         rt_thread_startup(adc_thread);
     
