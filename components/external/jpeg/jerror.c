@@ -75,7 +75,7 @@ error_exit (j_common_ptr cinfo)
   /* Let the memory manager delete any temp files before we die */
   jpeg_destroy(cinfo);
 
-  exit(EXIT_FAILURE);
+  // exit(EXIT_FAILURE);
 }
 
 
@@ -108,7 +108,7 @@ output_message (j_common_ptr cinfo)
 	     MB_OK | MB_ICONERROR);
 #else
   /* Send it to stderr, adding a newline */
-  fprintf(stderr, "%s\n", buffer);
+  // fprintf(stderr, "%s\n", buffer);
 #endif
 }
 
