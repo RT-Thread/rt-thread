@@ -31,7 +31,7 @@ int errno;
 #else
 #include <errno.h>
 #endif
-#ifdef RT_USING_DEVICE
+#if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
 #endif
 
@@ -428,6 +428,7 @@ void rt_show_version()
 	rt_kprintf(" 2006 - 2011 Copyright by rt-thread team\n");
 }
 
+#ifdef RT_USING_CONSOLE
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
@@ -983,6 +984,11 @@ void rt_kprintf(const char *fmt, ...)
 #endif
 	va_end(args);
 }
+#else
+void rt_kprintf(const char *fmt, ...)
+{
+}
+#endif
 
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__)
 #include <sys/types.h>
@@ -999,6 +1005,11 @@ int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, a
 #ifdef RT_USING_HEAP
 char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
 #endif
+
+int sprintf(char * buf,const char * format,...) __attribute__((weak, alias("rt_sprintf")));
+int snprintf(char *buf, rt_size_t size, const char *fmt, ...) __attribute__((weak, alias("rt_snprintf")));
+int vsprintf(char *buf, const char *format, va_list arg_ptr) __attribute__((weak, alias("rt_vsprintf")));
+
 #endif
 
 /*@}*/
