@@ -15,7 +15,6 @@
 
 #include <dfs.h>
 #include <dfs_fs.h>
-#include <dfs_config.h>
 #include <dfs_file.h>
 
 #define NO_WORKING_DIR	"system does not support working dir\n"

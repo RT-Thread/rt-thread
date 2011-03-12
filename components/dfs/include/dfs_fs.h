@@ -15,7 +15,6 @@
 #define __DFS_FS_H__
 
 #include <dfs_def.h>
-#include <dfs_config.h>
 
 /* Pre-declaration */
 struct dfs_filesystem;

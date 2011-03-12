@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
  * 2010-06-30     Bernard      Optimize for RT-Thread RTOS
+ * 2011-03-12     Bernard      fix the filesystem lookup issue.
  */
 #include <dfs_fs.h>
 #include <dfs_file.h>
@@ -86,7 +87,7 @@ struct dfs_filesystem* dfs_filesystem_lookup(const char *path)
 	dfs_lock();
 
     /* lookup it in the filesystem table */
-    for (index = 0; index < DFS_FILESYSTEMS_MAX + 1; index++)
+    for (index = 0; index < DFS_FILESYSTEMS_MAX; index++)
     {
 		if (filesystem_table[index].path == RT_NULL) continue;
 		else

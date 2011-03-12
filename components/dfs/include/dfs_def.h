@@ -17,7 +17,6 @@
 #define __DFS_DEF_H__
 
 #include <rtthread.h>
-#include <dfs_config.h>
 
 #ifndef __D_FS__
 #define __D_FS__
@@ -33,6 +32,32 @@
 #define DFS_F_DIRECTORY		0x02000000
 #define DFS_F_EOF			0x04000000
 #define DFS_F_ERR			0x08000000
+
+#ifndef DFS_PATH_MAX
+#define DFS_PATH_MAX 			256
+#endif
+
+#ifndef SECTOR_SIZE
+#define SECTOR_SIZE				512
+#endif
+
+#ifndef DFS_FILESYSTEM_TYPES_MAX
+#define DFS_FILESYSTEM_TYPES_MAX	4
+#endif
+
+#define DFS_DEBUG_INFO				0x01
+#define DFS_DEBUG_WARNING			0x02
+#define DFS_DEBUG_ERROR				0x04
+#define DFS_DEBUG_LEVEL				(DFS_DEBUG_INFO | DFS_DEBUG_WARNING | DFS_DEBUG_ERROR)
+
+/* #define DFS_DEBUG */
+#ifdef DFS_DEBUG
+#define dfs_log(level, x)		do { if (level & DFS_DEBUG_LEVEL) 	\
+	{rt_kprintf("DFS %s, %d:", __FUNCTION__, __LINE__); rt_kprintf x;	\
+	rt_kprintf ("\n");}}while (0)
+#else
+#define dfs_log(level, x)
+#endif
 
 #if defined(RT_USING_NEWLIB) 
 #include <string.h>
