@@ -68,6 +68,7 @@
 #define RT_USING_LIBDL
 
 /* SECTION: Console options */
+#define RT_USING_CONSOLE
 /* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
 
@@ -82,6 +83,7 @@
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
 /* #define RT_USING_NEWLIB */
+/* #define RT_USING_PTHREADS */
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -97,6 +99,7 @@
 #define RT_DFS_ELM_MAX_LFN		32
 /* #define RT_USING_DFS_YAFFS2 */
 /* #define RT_USING_DFS_UFFS */
+/* #define RT_USING_DFS_DEVFS */
 
 #define RT_USING_DFS_NFS
 #define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
@@ -214,6 +217,10 @@
 /* #define RTGUI_USING_SMALL_SIZE */
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
+/* RTGUI image options */
+#define RTGUI_IMAGE_XPM
+#define RTGUI_IMAGE_JPEG
+#define RTGUI_IMAGE_BMP
 
 /* SECTION: FTK support */
 /* using FTK support */
