@@ -12,11 +12,6 @@ elif CROSS_TOOL == 'keil':
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
-    print "========================="
-    print "Can not support GNU GCC!!"
-    print "========================="
-    exit (0)
-
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'

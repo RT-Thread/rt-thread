@@ -67,6 +67,7 @@
 #define RT_UART_RX_BUFFER_SIZE	64
 
 /* SECTION: Console options */
+#define RT_USING_CONSOLE
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
@@ -76,14 +77,6 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
-
-/* SECTION: C++ support */
-/* Using C++ support*/
-/* #define RT_USING_CPLUSPLUS */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/

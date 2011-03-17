@@ -3,15 +3,8 @@ Import('RTT_ROOT')
 from building import *
 
 src_bsp   = ['application.c', 'startup.c', 'board.c']
-src_drv   = []
 
-if GetDepend('RT_USING_DFS'):
-    src_drv += ['sd.c', 'spi.c']
-
-if GetDepend('RT_USING_LWIP'):
-    src_drv += ['emac.c']
-
-src = File(src_bsp + src_drv)
+src = File(src_bsp)
 CPPPATH = [RTT_ROOT + '/bsp/lpc2478']
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 

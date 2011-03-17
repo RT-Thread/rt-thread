@@ -322,7 +322,7 @@ void rt_hw_serial_init(void)
 	lpc_serial->read_index = lpc_serial->save_index = 0;
 
 	/* Enable UART0 RxD and TxD pins */
-  	PINSEL0 |= 0x05;
+  	PINSEL0 |= 0x50;
 
 	/* 8 bits, no Parity, 1 Stop bit */
 	UART_LCR(lpc_serial->hw_base) = 0x83;
@@ -334,6 +334,7 @@ void rt_hw_serial_init(void)
 	/* DLAB = 0 */
 	UART_LCR(lpc_serial->hw_base) = 0x03;
 
+	lpc_serial->parent.type     = RT_Device_Class_Char;
 	lpc_serial->parent.init 	= rt_serial_init;
 	lpc_serial->parent.open 	= rt_serial_open;
 	lpc_serial->parent.close    = rt_serial_close;
@@ -343,7 +344,7 @@ void rt_hw_serial_init(void)
 	lpc_serial->parent.user_data  = RT_NULL;
 
 	rt_device_register(&lpc_serial->parent, 
-		"uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+		"uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM);
 #endif
 
 #ifdef RT_USING_UART2
@@ -371,6 +372,7 @@ void rt_hw_serial_init(void)
 	/* DLAB = 0 */
 	UART_LCR(lpc_serial->hw_base) = 0x03;
 
+	lpc_serial->parent.type     = RT_Device_Class_Char;
 	lpc_serial->parent.init 	= rt_serial_init;
 	lpc_serial->parent.open 	= rt_serial_open;
 	lpc_serial->parent.close    = rt_serial_close;

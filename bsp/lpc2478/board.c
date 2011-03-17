@@ -18,9 +18,9 @@
 #include <LPC24xx.h>
 #include "board.h"
 
-/* #define RT_BOARD_DEBUG */
-
 #define DATA_COUNT 14400000/RT_TICK_PER_SECOND	/* T0MR0 = delayInMs * (Fpclk / 1000); */
+
+extern void rt_hw_serial_init(void);
 
 /**
  * @addtogroup LPC2478
@@ -29,60 +29,9 @@
 
 void rt_timer_handler(int vector)
 {
-#ifdef BOARD_DEBUG
-	rt_kprintf("timer handler, increase a tick\n");
-#endif
-
 	T0IR |= 0x01;			/* clear interrupt flag */
 	rt_tick_increase();
 	VICVectAddr = 0;		/* Acknowledge Interrupt */
-}
-
-
-/**
- * This function is used to display a string on console, normally, it's
- * invoked by rt_kprintf
- *
- * @param str the displayed string
- */
-void rt_hw_console_output(const char* str)
-{
-	while (*str)
-	{
-		if (*str=='\n')
-		{
-			while (!(U0LSR & 0x20));
-			U0THR = '\r';
-		}
-	
-		while (!(U0LSR & 0x20));
-		U0THR = *str;
-		
-		str ++;
-	}
-}
-
-#define BAUD_RATE	115200
-#define U0PINS		0x50
-void rt_hw_console_init()
-{
-	rt_uint32_t fdiv;
-
-	/* Enable RxD and TxD pins */
-  	PINSEL0 = U0PINS;
-
-	/* 8 bits, no Parity, 1 Stop bit */
-	U0LCR = 0x83;
-
-	/* Setup Baudrate */
-	fdiv = ( PCLK / 16 ) / BAUD_RATE ;	/*baud rate */
-	U0DLM = fdiv / 256;							
-	U0DLL = fdiv % 256;
-	U0FCR = 0x00;		/* Enable and reset TX and RX FIFO. */
-	U0LCR = 0x03;		/* DLAB = 0 */
-
-	/* DLAB = 0 */
-	U0LCR = 0x03;
 }
 
 /**
@@ -90,9 +39,11 @@ void rt_hw_console_init()
  */
 void rt_hw_board_init()
 {
-	/* init console for rt_kprintf function */
-	rt_hw_console_init();
-	
+#if defined(RT_USING_DEVICE) && defined(RT_USING_UART1)
+	rt_hw_serial_init();
+	rt_console_set_device("uart1");
+#endif
+
 	T0IR 	= 0xff; 
 	T0TC 	= 0;
 	T0MCR 	= 0x03; 

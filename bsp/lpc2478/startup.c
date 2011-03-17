@@ -73,14 +73,7 @@ void rtthread_startup(void)
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
-	
-#ifdef RT_USING_DEVICE
-	/* init hardware serial device */
-	rt_hw_serial_init();
 
-	/*init all registed devices*/
-	rt_device_init_all();
-#endif
 	/* init application */
 	rt_application_init();
 	
@@ -106,6 +99,11 @@ void rtthread_startup(void)
 #ifdef __CC_ARM
 int main(void)
 {
+	rt_uint32_t UNUSED level;
+
+	/* disable interrupt first */
+	level = rt_hw_interrupt_disable();
+
 	/* invoke rtthread_startup */
 	rtthread_startup();
 	

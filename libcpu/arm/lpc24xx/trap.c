@@ -121,6 +121,8 @@ void rt_hw_trap_irq()
 	rt_isr_handler_t isr_func;
 	
 	isr_func = (rt_isr_handler_t) VICVectAddr;
+
+	/* fixme, how to get interrupt number */
 	isr_func(0);
 }
 

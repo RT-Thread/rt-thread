@@ -1,105 +1,144 @@
-OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
-OUTPUT_ARCH(arm)
+/*
+ * linker script for LPC2478 with GNU ld
+ * bernard.xiong 2011-03-17
+ */
+
+/* Program Entry, set to mark it as "used" and avoid gc */
+MEMORY
+{
+    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00080000
+    DATA (rw) : ORIGIN = 0x40000000, LENGTH = 0x00010000
+}
 ENTRY(_start)
+
 SECTIONS
 {
-  . = 0x00000000;
+    .text :
+    {
+		*(.init)
+		*(.text)
+        *(.text.*)                      /* remaining code */
+        *(.rodata)                      /* read-only data (constants) */
+        *(.rodata*)
+        *(.glue_7)
+        *(.glue_7t)
+        *(.gnu.linkonce.t*)
 
-  __text_start = .;
-  .text      :
-  {
-    *(.vectors)
-    *(.text)
-    *(.text.*)
-  } =0
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+        . = ALIGN(4);
 
-  __text_end = .;
-  
-  __rodata_start = .;
-  .rodata   :
-  {
-    *(.rodata)
-    *(.rodata.*)
-    /* section information for finsh shell */
-    . = ALIGN(4);
-    __fsymtab_start = .;
-    KEEP(*(FSymTab))
-    __fsymtab_end = .;
-    . = ALIGN(4);
-    __vsymtab_start = .;
-    KEEP(*(VSymTab))
-    __vsymtab_end = .;
-    . = ALIGN(4);	
-  }
-  __rodata_end = .;
-  	
-  . = 0x40000000;		/*Data in SRAM*/
-	
-  __data_start = .;
-  . = ALIGN(4);
-  .data : 
-  {	
-    	*(.data)
-    	*(.data.*)
-  }
-  __data_end = .;
+        . = ALIGN(4);
+        _etext = .;
+    } > CODE = 0
 
-  . = ALIGN(4);
-  __bss_start = __data_end;
-  .bss       :
-  {
-   *(.bss)
-   *(.bss.*)
-   *(COMMON)
-   . = ALIGN(4);
-  }
-  . = ALIGN(4);
-  __bss_end = .;
+	. = ALIGN(4);
+	.ctors :
+	{
+		PROVIDE(__ctors_start__ = .);
+		KEEP(*(SORT(.ctors.*)))
+		KEEP(*(.ctors))
+		PROVIDE(__ctors_end__ = .);
+	} > CODE
 
-  . = ALIGN(4);
-  __UndStack_start = __bss_end;
-  .UndStack : { *(.UndStack) }
-  __UndStack_end = ( __UndStack_start + 0x00000100 );
-	
-  . = ALIGN(4);
-  __IRQStack_start = __UndStack_end;
-  .IRQStack : { *(.IRQStack) }
-  __IRQStack_end = ( __IRQStack_start + 0x00000400 );
-	
-  . = ALIGN(4);
-  __FIQStack_start = __IRQStack_end;
-  .FIQStack : { *(.FIQStack) }
-  __FIQStack_end = ( __FIQStack_start + 0x00000400 );
-	
-  . = ALIGN(4);
-  __SVCStack_start = __FIQStack_end;
-  .SVCStack : { *(.SVCStack) }
-  __SVCStack_end = ( __SVCStack_start + 0x00000400 );
-	
-  . = ALIGN(4);
-  __ABTStack_start = __SVCStack_end;
-  .ABTStack : { *(.ABTStack) }
-  __ABTStack_end = ( __ABTStack_start + 0x00000400 );
-  
-    . = ALIGN(4);
-  __USRStack_start = __ABTStack_end;
-  .USRStack : { *(.USRStack) }
-  __USRStack_end = ( __USRStack_start + 0x00000400 );
-	
-  . = ALIGN(4);
-  __Heap_start = __USRStack_end;
-  .Heap : { *(.Heap) }
-  __Heap_end = (__Heap_start + 0x00004000);
+	.dtors :
+	{
+		PROVIDE(__dtors_start__ = .);
+		KEEP(*(SORT(.dtors.*)))
+		KEEP(*(.dtors))
+		PROVIDE(__dtors_end__ = .);
+	} > CODE
 
+    /* .ARM.exidx is sorted, so has to go in its own output section.  */
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
 
-  /* Stabs debugging sections.  */
-  .stab 0 : { *(.stab) }
-  .stabstr 0 : { *(.stabstr) }
-  .stab.excl 0 : { *(.stab.excl) }
-  .stab.exclstr 0 : { *(.stab.exclstr) }
-  .stab.index 0 : { *(.stab.index) }
-  .stab.indexstr 0 : { *(.stab.indexstr) }
-  .comment 0 : { *(.comment) }
+        /* This is used by the startup in order to initialize the .data secion */
+        _sidata = .;
+    } > CODE
+    __exidx_end = .;
 
-  _end = .;
+    /* .data section which is used for initialized data */
+    .data : AT (_sidata)
+    {
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _sdata = . ;
+
+        *(.data)
+        *(.data.*)
+        *(.gnu.linkonce.d*)
+
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _edata = . ;
+    } >DATA
+	__data_end = .;
+
+	.noinit :
+	{
+	    *(.bss.noinit)
+	} > DATA
+
+    __bss_start = .;
+    .bss :
+    {
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _sbss = .;
+
+        *(.bss)
+        *(COMMON)
+
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _ebss = . ;
+        _estack = .;
+    } > DATA
+    __bss_end = .;
+
+    _end = .;
+
+    /* Stabs debugging sections.  */
+    .stab          0 : { *(.stab) }
+    .stabstr       0 : { *(.stabstr) }
+    .stab.excl     0 : { *(.stab.excl) }
+    .stab.exclstr  0 : { *(.stab.exclstr) }
+    .stab.index    0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment       0 : { *(.comment) }
+    /* DWARF debug sections.
+     * Symbols in the DWARF debugging sections are relative to the beginning
+     * of the section so we begin them at 0.  */
+    /* DWARF 1 */
+    .debug          0 : { *(.debug) }
+    .line           0 : { *(.line) }
+    /* GNU DWARF 1 extensions */
+    .debug_srcinfo  0 : { *(.debug_srcinfo) }
+    .debug_sfnames  0 : { *(.debug_sfnames) }
+    /* DWARF 1.1 and DWARF 2 */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    /* DWARF 2 */
+    .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
+    /* SGI/MIPS DWARF 2 extensions */
+    .debug_weaknames 0 : { *(.debug_weaknames) }
+    .debug_funcnames 0 : { *(.debug_funcnames) }
+    .debug_typenames 0 : { *(.debug_typenames) }
+    .debug_varnames  0 : { *(.debug_varnames) }
 }
