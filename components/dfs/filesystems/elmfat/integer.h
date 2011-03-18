@@ -3,10 +3,14 @@
 /*-------------------------------------------*/
 
 #ifndef _INTEGER
+#define _INTEGER
 
-#if 0
+#ifdef _WIN32	/* FatFs development platform */
+
 #include <windows.h>
-#else
+#include <tchar.h>
+
+#else			/* Embedded platform */
 
 /* These types must be 16-bit, 32-bit or larger integer */
 typedef int				INT;
@@ -28,10 +32,6 @@ typedef long			LONG;
 typedef unsigned long	ULONG;
 typedef unsigned long	DWORD;
 
-/* Boolean type */
-typedef enum { FALSE = 0, TRUE } BOOL;
-
 #endif
 
-#define _INTEGER
 #endif

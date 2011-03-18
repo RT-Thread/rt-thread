@@ -1,17 +1,17 @@
 /*------------------------------------------------------------------------*/
-/* Sample code of OS dependent synchronization object controls            */
-/* for FatFs R0.07d  (C)ChaN, 2009                                        */
+/* Sample code of OS dependent controls for FatFs R0.08                   */
+/* (C)ChaN, 2010                                                          */
 /*------------------------------------------------------------------------*/
 
-#include <windows.h>	// Win32
-//#include <ucos_ii.h>	// uC/OS-II
+#include <stdlib.h>		/* ANSI memory controls */
+#include <malloc.h>		/* ANSI memory controls */
 
 #include "../ff.h"
 
-#if _FS_REENTRANT
 
+#if _FS_REENTRANT
 /*------------------------------------------------------------------------*/
-/* Create a Synchronization Object for a Volume
+/* Create a Synchronization Object
 /*------------------------------------------------------------------------*/
 /* This function is called in f_mount function to create a new
 /  synchronization object, such as semaphore and mutex. When a FALSE is
@@ -25,14 +25,17 @@ BOOL ff_cre_syncobj (	/* TRUE:Function succeeded, FALSE:Could not create due to 
 {
 	BOOL ret;
 
-	*sobj = CreateMutex(NULL, FALSE, NULL);					// Win32
-	ret = (*sobj != INVALID_HANDLE_VALUE) ? TRUE : FALSE;	//
+	*sobj = CreateMutex(NULL, FALSE, NULL);					/* Win32 */
+	ret = (*sobj != INVALID_HANDLE_VALUE) ? TRUE : FALSE;
 
-//	*sobj = VolumeSemId[vol];	// uITRON (give a static created sync object)
-//	ret = TRUE;					// The initial value of the semaphore must be 1.
+//	*sobj = SyncObjects[vol];	/* uITRON (give a static created sync object) */
+//	ret = TRUE;					/* The initial value of the semaphore must be 1. */
 
-//	*sobj = OSMutexCreate(0, &err);				// uC/OS-II
-//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;	//
+//	*sobj = OSMutexCreate(0, &err);				/* uC/OS-II */
+//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;
+
+//	*sobj = xSemaphoreCreateMutex();			/* FreeRTOS */
+//	ret = (*sobj != NULL) ? TRUE : FALSE;
 
 	return ret;
 }
@@ -53,12 +56,14 @@ BOOL ff_del_syncobj (	/* TRUE:Function succeeded, FALSE:Could not delete due to 
 {
 	BOOL ret;
 
-	ret = CloseHandle(sobj);	// Win32
+	ret = CloseHandle(sobj);	/* Win32 *
 
-//	ret = TRUE;					// uITRON (nothing to do)
+//	ret = TRUE;					/* uITRON (nothing to do) *
 
-//	OSMutexDel(sobj, OS_DEL_ALWAYS, &err);		// uC/OS-II
-//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;	//
+//	OSMutexDel(sobj, OS_DEL_ALWAYS, &err);		/* uC/OS-II */
+//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;
+
+//	ret = TRUE;					/* FreeRTOS (nothing to do) */
 
 	return ret;
 }
@@ -78,12 +83,14 @@ BOOL ff_req_grant (	/* TRUE:Got a grant to access the volume, FALSE:Could not ge
 {
 	BOOL ret;
 
-	ret = (WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0) ? TRUE : FALSE;	// Win32
+	ret = (WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0) ? TRUE : FALSE;	/* Win32 */
 
-//	ret = (wai_sem(sobj) == E_OK) ? TRUE : FALSE;	// uITRON
+//	ret = (wai_sem(sobj) == E_OK) ? TRUE : FALSE;	/* uITRON */
 
-//	OSMutexPend(sobj, _FS_TIMEOUT, &err));				// uC/OS-II
-//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;		//
+//	OSMutexPend(sobj, _FS_TIMEOUT, &err));			/* uC/OS-II */
+//	ret = (err == OS_NO_ERR) ? TRUE : FALSE;
+
+//	ret = (xSemaphoreTake(sobj, _FS_TIMEOUT) == pdTRUE) ? TRUE : FALSE;	/* FreeRTOS */
 
 	return ret;
 }
@@ -100,16 +107,45 @@ void ff_rel_grant (
 	_SYNC_t sobj	/* Sync object to be signaled */
 )
 {
-	ReleaseMutex(sobj);	// Win32
+	ReleaseMutex(sobj);		/* Win32 */
 
-//	sig_sem(sobj);		// uITRON
+//	sig_sem(sobj);			/* uITRON */
 
-//	OSMutexPost(sobj);	// uC/OS-II
+//	OSMutexPost(sobj);		/* uC/OS-II */
+
+//	xSemaphoreGive(sobj);	/* FreeRTOS */
+
+}
+
+#endif
+
+
+
+
+#if _USE_LFN == 3	/* LFN with a working buffer on the heap */
+/*------------------------------------------------------------------------*/
+/* Allocate a memory block                                                */
+/*------------------------------------------------------------------------*/
+/* If a NULL is returned, the file function fails with FR_NOT_ENOUGH_CORE.
+*/
+
+void* ff_memalloc (	/* Returns pointer to the allocated memory block */
+	UINT size		/* Number of bytes to allocate */
+)
+{
+	return malloc(size);
 }
 
 
-#else
+/*------------------------------------------------------------------------*/
+/* Free a memory block                                                    */
+/*------------------------------------------------------------------------*/
 
-#error This file is not needed in this configuration.
+void ff_memfree(
+	void* mblock	/* Pointer to the memory block to free */
+)
+{
+	free(mblock);
+}
 
 #endif
