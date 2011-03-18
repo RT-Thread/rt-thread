@@ -11,18 +11,18 @@
  * Date           Author       Notes
  * 2011-01-02     aozima       the first version.
  * 2011-03-17     aozima       fix some bug.
+ * 2011-03-18     aozima       to dynamic thread.
  */
 
 #include <rtthread.h>
 #include <dfs_posix.h>
 
 static rt_uint32_t stop_flag = 0;
+static rt_thread_t fsrw1_thread = RT_NULL;
+static rt_thread_t fsrw2_thread = RT_NULL;
 
 #define fsrw1_fn                   "/test1.dat"
 #define fsrw1_data_len             120               /* Less than 256 */
-
-static struct rt_thread fsrw1_thread;
-static rt_uint32_t fsrw1_stack[1024/sizeof(rt_uint32_t)];
 static void fsrw1_thread_entry(void* parameter)
 {
     int fd;
@@ -40,6 +40,8 @@ static void fsrw1_thread_entry(void* parameter)
         if( stop_flag )
         {
             rt_kprintf("thread fsrw2 error,thread fsrw1 quit!\r\n");
+            fsrw1_thread = RT_NULL;
+            stop_flag = 0;
             return;
         }
 
@@ -49,6 +51,7 @@ static void fsrw1_thread_entry(void* parameter)
         {
             rt_kprintf("fsrw1 open file for write failed\n");
             stop_flag = 1;
+            fsrw1_thread = RT_NULL;
             return;
         }
 
@@ -67,6 +70,7 @@ static void fsrw1_thread_entry(void* parameter)
             {
                 rt_kprintf("fsrw1 write data failed\n");
                 close(fd);
+                fsrw1_thread = RT_NULL;
                 stop_flag = 1;
                 return;
             }
@@ -83,6 +87,7 @@ static void fsrw1_thread_entry(void* parameter)
         {
             rt_kprintf("fsrw1 open file for read failed\n");
             stop_flag = 1;
+            fsrw1_thread = RT_NULL;
             return;
         }
 
@@ -98,6 +103,7 @@ static void fsrw1_thread_entry(void* parameter)
                 rt_kprintf("fsrw1 read file failed\r\n");
                 close(fd);
                 stop_flag = 1;
+                fsrw1_thread = RT_NULL;
                 return;
             }
             for(i=0; i<fsrw1_data_len; i++)
@@ -107,6 +113,7 @@ static void fsrw1_thread_entry(void* parameter)
                     rt_kprintf("fsrw1 data error!\r\n");
                     close(fd);
                     stop_flag = 1;
+                    fsrw1_thread = RT_NULL;
                     return;
                 }
             }
@@ -124,9 +131,6 @@ static void fsrw1_thread_entry(void* parameter)
 
 #define fsrw2_fn                   "/test2.dat"
 #define fsrw2_data_len             180              /* Less than 256 */
-
-static struct rt_thread fsrw2_thread;
-static rt_uint32_t fsrw2_stack[1024/sizeof(rt_uint32_t)];
 static void fsrw2_thread_entry(void* parameter)
 {
     int fd;
@@ -144,6 +148,8 @@ static void fsrw2_thread_entry(void* parameter)
         if( stop_flag )
         {
             rt_kprintf("thread fsrw1 error,thread fsrw2 quit!\r\n");
+            fsrw2_thread = RT_NULL;
+            stop_flag = 0;
             return;
         }
 
@@ -153,6 +159,7 @@ static void fsrw2_thread_entry(void* parameter)
         {
             rt_kprintf("fsrw2 open file for write failed\n");
             stop_flag = 1;
+            fsrw2_thread = RT_NULL;
             return;
         }
 
@@ -172,6 +179,7 @@ static void fsrw2_thread_entry(void* parameter)
                 rt_kprintf("fsrw2 write data failed\n");
                 close(fd);
                 stop_flag = 1;
+                fsrw2_thread = RT_NULL;
                 return;
             }
         }
@@ -187,6 +195,7 @@ static void fsrw2_thread_entry(void* parameter)
         {
             rt_kprintf("fsrw2 open file for read failed\n");
             stop_flag = 1;
+            fsrw2_thread = RT_NULL;
             return;
         }
 
@@ -202,6 +211,7 @@ static void fsrw2_thread_entry(void* parameter)
                 rt_kprintf("fsrw2 read file failed\r\n");
                 close(fd);
                 stop_flag = 1;
+                fsrw2_thread = RT_NULL;
                 return;
             }
             for(i=0; i<fsrw2_data_len; i++)
@@ -211,6 +221,7 @@ static void fsrw2_thread_entry(void* parameter)
                     rt_kprintf("fsrw2 data error!\r\n");
                     close(fd);
                     stop_flag = 1;
+                    fsrw2_thread = RT_NULL;
                     return;
                 }
             }
@@ -235,39 +246,47 @@ static void fsrw2_thread_entry(void* parameter)
  */
 void fs_test(rt_uint32_t arg)
 {
-    rt_err_t result;
-
-    rt_kprintf("arg is : 0x%02X",arg);
+    rt_kprintf("arg is : 0x%02X ",arg);
 
     if(arg & 0x01)
     {
-        /* init fsrw1 thread */
-        result = rt_thread_init(&fsrw1_thread,
-                                "fsrw1",
-                                fsrw1_thread_entry, RT_NULL,
-                                (rt_uint8_t*)&fsrw1_stack[0],
-                                sizeof(fsrw1_stack),
-                                RT_THREAD_PRIORITY_MAX-2,
-                                1);
-        if (result == RT_EOK)
+        if( fsrw1_thread != RT_NULL )
         {
-            rt_thread_startup(&fsrw1_thread);
+            rt_kprintf("fsrw1_thread already exists!\r\n");
+        }
+        else
+        {
+            fsrw1_thread = rt_thread_create( "fsrw1",
+                                             fsrw1_thread_entry,
+                                             RT_NULL,
+                                             2048,
+                                             RT_THREAD_PRIORITY_MAX-2,
+                                             1);
+            if ( fsrw1_thread != RT_NULL)
+            {
+                rt_thread_startup(fsrw1_thread);
+            }
         }
     }
 
     if( arg & 0x02)
     {
-        /* init fsrw2 thread */
-        result = rt_thread_init(&fsrw2_thread,
-                                "fsrw2",
-                                fsrw2_thread_entry, RT_NULL,
-                                (rt_uint8_t*)&fsrw2_stack[0],
-                                sizeof(fsrw2_stack),
-                                RT_THREAD_PRIORITY_MAX-2,
-                                1);
-        if (result == RT_EOK)
+        if( fsrw2_thread != RT_NULL )
         {
-            rt_thread_startup(&fsrw2_thread);
+            rt_kprintf("fsrw2_thread already exists!\r\n");
+        }
+        else
+        {
+            fsrw2_thread = rt_thread_create( "fsrw2",
+                                             fsrw2_thread_entry,
+                                             RT_NULL,
+                                             2048,
+                                             RT_THREAD_PRIORITY_MAX-2,
+                                             1);
+            if ( fsrw2_thread != RT_NULL)
+            {
+                rt_thread_startup(fsrw2_thread);
+            }
         }
     }
 }
