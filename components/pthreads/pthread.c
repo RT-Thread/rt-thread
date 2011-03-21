@@ -180,10 +180,11 @@ int pthread_detach(pthread_t thread)
 		rt_enter_critical();
 		/* change to detach state */
 		ptd->attr.detachstate = PTHREAD_CREATE_DETACHED;
-		rt_exit_critical();
 
 		/* detach joinable semaphore */
 		rt_sem_delete(ptd->joinable_sem);
+		ptd->joinable_sem = RT_NULL;
+		rt_exit_critical();
 	}
 
 	return 0;

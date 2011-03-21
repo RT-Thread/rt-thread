@@ -129,7 +129,7 @@ typedef struct pthread_barrier pthread_barrier_t;
 int pthread_attr_destroy(pthread_attr_t *attr);
 int pthread_attr_init(pthread_attr_t *attr);
 
-int pthread_init (void);
+int pthread_system_init(void);
 int pthread_create (pthread_t *tid, const pthread_attr_t *attr, 
 	void *(*start) (void *), void *arg);
 
