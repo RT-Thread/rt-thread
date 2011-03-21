@@ -13,7 +13,6 @@
  * 2011-03-17     Bernard      update to 0.4.x
  */
 
-#define CONFIG_STACKSIZE        512
 #define WDMOD          (0xE0000000 + 0x00)
 #define VICIntEnClr    (0xFFFFF000 + 0x014)
 #define VICVectAddr    (0xFFFFF000 + 0xF00)

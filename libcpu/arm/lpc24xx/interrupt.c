@@ -78,7 +78,10 @@ void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_ha
 	{
 		/* find first un-assigned VIC address for the handler */
 		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + vector*4);
-		if (old_handler != RT_NULL) *old_handler = *vect_addr; /* get old handler */
+
+		/* get old handler */
+		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t)*vect_addr; 
+
 		*vect_addr = (rt_uint32_t)new_handler;	/* set interrupt vector */
 	}
 }

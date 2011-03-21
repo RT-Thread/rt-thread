@@ -1056,7 +1056,7 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
                 NOP                            ; Reserved Vector 
-               	LDR     PC, IRQ_Addr
+                LDR     PC, IRQ_Addr
                 LDR     PC, FIQ_Addr
 
 Reset_Addr      DCD     Reset_Handler
@@ -1328,7 +1328,7 @@ Wait_2          SUBS    R6, R6, #1                ; Delay
 Wait_3          SUBS    R6, R6, #1                ; Delay ~1 ms @ proc clk 57.6 MHz
                 BNE     Wait_3
 
-                ENDIF		; EMC_DYNAMIC_SETUP
+                ENDIF       ; EMC_DYNAMIC_SETUP
 
 ;  Setup Static Memory Interface
                 IF      (EMC_STATIC_SETUP != 0)
@@ -1487,75 +1487,75 @@ MEMMAP          EQU     0xE01FC040      ; Memory Mapping Control
                 LDR     R0, =__main
                 BX      R0
 
-				IMPORT rt_interrupt_enter
-				IMPORT rt_interrupt_leave
-				IMPORT rt_thread_switch_interrput_flag
-				IMPORT rt_interrupt_from_thread
-				IMPORT rt_interrupt_to_thread
-				IMPORT rt_hw_trap_irq
+                IMPORT rt_interrupt_enter
+                IMPORT rt_interrupt_leave
+                IMPORT rt_thread_switch_interrput_flag
+                IMPORT rt_interrupt_from_thread
+                IMPORT rt_interrupt_to_thread
+                IMPORT rt_hw_trap_irq
 
-IRQ_Handler		PROC
-				EXPORT IRQ_Handler
-				STMFD	sp!, {r0-r12,lr}
-				BL	rt_interrupt_enter
-				BL	rt_hw_trap_irq
-				BL	rt_interrupt_leave
+IRQ_Handler     PROC
+                EXPORT IRQ_Handler
+                STMFD   sp!, {r0-r12,lr}
+                BL  rt_interrupt_enter
+                BL  rt_hw_trap_irq
+                BL  rt_interrupt_leave
 
-				; if rt_thread_switch_interrput_flag set, jump to
-				; rt_hw_context_switch_interrupt_do and don't return
-				LDR	r0, =rt_thread_switch_interrput_flag
-				LDR	r1, [r0]
-				CMP	r1, #1
-				BEQ	rt_hw_context_switch_interrupt_do
+                ; if rt_thread_switch_interrput_flag set, jump to
+                ; rt_hw_context_switch_interrupt_do and don't return
+                LDR r0, =rt_thread_switch_interrput_flag
+                LDR r1, [r0]
+                CMP r1, #1
+                BEQ rt_hw_context_switch_interrupt_do
 
-				LDMFD	sp!, {r0-r12,lr}
-				SUBS	pc, lr, #4
-				ENDP
+                LDMFD   sp!, {r0-r12,lr}
+                SUBS    pc, lr, #4
+                ENDP
 
 ; /*
 ; * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
 ; */
-rt_hw_context_switch_interrupt_do	PROC
-				EXPORT rt_hw_context_switch_interrupt_do
-				MOV		r1,  #0			; clear flag
-				STR		r1,  [r0]
+rt_hw_context_switch_interrupt_do   PROC
+                EXPORT rt_hw_context_switch_interrupt_do
+                MOV     r1,  #0         ; clear flag
+                STR     r1,  [r0]
 
-				LDMFD	sp!, {r0-r12,lr}; reload saved registers
-				STMFD	sp!, {r0-r3}	; save r0-r3
-				MOV		r1,  sp
-				ADD		sp,  sp, #16	; restore sp
-				SUB		r2,  lr, #4		; save old task's pc to r2
+                LDMFD   sp!, {r0-r12,lr}; reload saved registers
+                STMFD   sp!, {r0-r3}    ; save r0-r3
+                MOV     r1,  sp
+                ADD     sp,  sp, #16    ; restore sp
+                SUB     r2,  lr, #4     ; save old task's pc to r2
 
-				MRS		r3,  spsr		; get cpsr of interrupt thread
+                MRS     r3,  spsr       ; get cpsr of interrupt thread
 
-				; switch to SVC mode and no interrupt
+                ; switch to SVC mode and no interrupt
                 MSR     cpsr_c, #I_Bit|F_Bit|Mode_SVC
 
-				STMFD	sp!, {r2}		; push old task's pc
-				STMFD	sp!, {r4-r12,lr}; push old task's lr,r12-r4
-				MOV		r4,  r1			; Special optimised code below
-				MOV		r5,  r3
-				LDMFD	r4!, {r0-r3}
-				STMFD	sp!, {r0-r3}	; push old task's r3-r0
-				STMFD	sp!, {r5}		; push old task's cpsr
-				MRS		r4,  spsr
-				STMFD	sp!, {r4}		; push old task's spsr
+                STMFD   sp!, {r2}       ; push old task's pc
+                STMFD   sp!, {r4-r12,lr}; push old task's lr,r12-r4
+                MOV     r4,  r1         ; Special optimised code below
+                MOV     r5,  r3
+                LDMFD   r4!, {r0-r3}
+                STMFD   sp!, {r0-r3}    ; push old task's r3-r0
+                STMFD   sp!, {r5}       ; push old task's cpsr
+                MRS     r4,  spsr
+                STMFD   sp!, {r4}       ; push old task's spsr
 
-				LDR		r4,  =rt_interrupt_from_thread
-				LDR		r5,  [r4]
-				STR		sp,  [r5]		; store sp in preempted tasks's TCB
+                LDR     r4,  =rt_interrupt_from_thread
+                LDR     r5,  [r4]
+                STR     sp,  [r5]       ; store sp in preempted tasks's TCB
 
-				LDR		r6,  =rt_interrupt_to_thread
-				LDR		r6,  [r6]
-				LDR		sp,  [r6]		; get new task's stack pointer
-			
-				LDMFD	sp!, {r4}		; pop new task's spsr
-				MSR		spsr_cxsf, r4
-				LDMFD	sp!, {r4}		; pop new task's psr
-				MSR		cpsr_cxsf, r4
+                LDR     r6,  =rt_interrupt_to_thread
+                LDR     r6,  [r6]
+                LDR     sp,  [r6]       ; get new task's stack pointer
+            
+                LDMFD   sp!, {r4}       ; pop new task's spsr
+                MSR     spsr_cxsf, r4
+                LDMFD   sp!, {r4}       ; pop new task's psr
+                MSR     cpsr_cxsf, r4
 
-				LDMFD	sp!, {r0-r12,lr,pc}	; pop new task's r0-r12,lr & pc
-				ENDP
+                LDMFD   sp!, {r0-r12,lr,pc} ; pop new task's r0-r12,lr & pc
+                ENDP
 
                 IF      :DEF:__MICROLIB
 
