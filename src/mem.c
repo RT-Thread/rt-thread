@@ -327,7 +327,9 @@ void *rt_malloc(rt_size_t size)
 			RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE-1)) == 0);
 
 #ifdef RT_MEM_DEBUG
-			rt_kprintf("allocate memory at 0x%x\n", (rt_uint32_t)((rt_uint8_t*)mem + SIZEOF_STRUCT_MEM));
+			rt_kprintf("allocate memory at 0x%x, size: %d\n", 
+				(rt_uint32_t)((rt_uint8_t*)mem + SIZEOF_STRUCT_MEM),
+				(rt_uint32_t)(mem->next - ((rt_uint8_t*)mem - heap_ptr)));
 #endif
 
 #ifdef RT_USING_HOOK
@@ -467,37 +469,39 @@ void rt_free(void *rmem)
 
 	if (rmem == RT_NULL) return;
 	RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE-1)) == 0);
+	RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
+			  (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
 #ifdef RT_USING_HOOK
 	if (rt_free_hook != RT_NULL) rt_free_hook(rmem);
 #endif
-
-#ifdef RT_MEM_DEBUG
-	rt_kprintf("release memory 0x%x\n", (rt_uint32_t)rmem);
-#endif
-
-	/* protect the heap from concurrent access */
-	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-
-	RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
-			  (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
 	if ((rt_uint8_t *)rmem < (rt_uint8_t *)heap_ptr || (rt_uint8_t *)rmem >= (rt_uint8_t *)heap_end)
 	{
 #ifdef RT_MEM_DEBUG
 		rt_kprintf("illegal memory\n");
 #endif
-		/* illegal memory */
-		rt_sem_release(&heap_sem);
 		return;
 	}
 
 	/* Get the corresponding struct heap_mem ... */
 	mem = (struct heap_mem *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
+
+#ifdef RT_MEM_DEBUG
+	rt_kprintf("release memory 0x%x, size: %d\n", 
+		(rt_uint32_t)rmem, 
+		(rt_uint32_t)(mem->next - ((rt_uint8_t*)mem - heap_ptr)));
+#endif
+
+	/* protect the heap from concurrent access */
+	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+
 	/* ... which has to be in a used state ... */
 	RT_ASSERT(mem->used);
+	RT_ASSERT(mem->magic != HEAP_MAGIC);
 	/* ... and is now unused. */
 	mem->used = 0;
+	mem->magic = 0;
 
 	if (mem < lfree)
 	{
