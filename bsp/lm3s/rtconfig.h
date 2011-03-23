@@ -16,7 +16,7 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
-/* #define RT_DEBUG*/
+#define RT_DEBUG
 /* #define RT_THREAD_DEBUG */
 
 /* Using Hook*/
