@@ -1,5 +1,7 @@
 /*
  * 这个一个RTGUI的例子，演示了如何创建一个RTGUI程序
+ * 在rtgui_win这个分支中，没有toplevel控件，默认panel
+ * 作为toplevel级别控件，可以把它看作一个“桌面”
  */
 #include <rtthread.h>
 #include <rtgui/rtgui.h>
@@ -11,6 +13,8 @@
 #include <rtgui/widgets/view.h>
 #include <rtgui/widgets/listbox.h>
 #include <rtgui/rtgui_theme.h>
+
+void demo_gui_win(PVOID wdt, rtgui_event_t *event);
 
 rtgui_listbox_t *__lbox;
 
@@ -62,6 +66,9 @@ static void rtgui_panel_entry(void* parameter)
 		"demo multi text.\n",
 		10,150,180,50,
 		RTGUI_TEXTBOX_MULTI);
+
+	button = rtgui_button_create(panel, "win",140,90,50,25);
+	rtgui_button_set_onbutton(button,demo_gui_win);
 
 	///////////////////////////////////////////////////////
 	rtgui_panel_show(panel);	
