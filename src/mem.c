@@ -279,7 +279,6 @@ void *rt_malloc(rt_size_t size)
 
 				/* create mem2 struct */
 				mem2 = (struct heap_mem *)&heap_ptr[ptr2];
-				mem2->magic = HEAP_MAGIC;
 				mem2->used = 0;
 				mem2->next = mem->next;
 				mem2->prev = ptr;
@@ -312,6 +311,8 @@ void *rt_malloc(rt_size_t size)
 				if (max_mem < used_mem) max_mem = used_mem;
 #endif
 			}
+			/* set memory block magic */
+			mem->magic = HEAP_MAGIC;
 
 			if (mem == lfree)
 			{
