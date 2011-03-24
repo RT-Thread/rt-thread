@@ -1,0 +1,27 @@
+Import('env')
+Import('projects')
+
+src = Split("""
+gui_init.c
+demo_gui_main.c
+""")
+
+group = {}
+group['name'] = 'GUI demo'
+group['src'] = File(src)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = ['']
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')

@@ -1,0 +1,85 @@
+Import('env')
+Import('rtconfig')
+Import('RTT_ROOT')
+Import('projects')
+
+common_src = Split("""
+common/color.c
+common/region.c
+common/rtgui_object.c
+common/rtgui_system.c
+common/rtgui_theme.c
+common/rtgui_xml.c
+common/dc.c
+common/dc_buffer.c
+common/dc_hw.c
+common/filerw.c
+common/image.c
+common/image_xpm.c
+common/image_hdc.c
+common/font.c
+common/font_hz_file.c
+common/font_hz_bmp.c
+common/asc12font.c
+common/asc16font.c
+common/hz12font.c
+common/hz16font.c
+""")
+
+server_src = Split("""
+server/driver.c
+server/mouse.c
+server/panel.c
+server/server.c
+server/topwin.c
+""")
+
+widgets_src = Split("""
+widgets/button.c
+widgets/checkbox.c
+widgets/container.c
+widgets/iconbox.c
+widgets/label.c
+widgets/progressbar.c
+widgets/radiobox.c
+widgets/slider.c
+widgets/staticline.c
+widgets/textbox.c
+widgets/listbox.c
+widgets/view.c
+widgets/list_view.c
+widgets/filelist_view.c
+widgets/widget.c
+widgets/window.c
+widgets/combobox.c
+widgets/scrollbar.c
+""")
+
+# The set of source files associated with this SConscript file.
+src_local = common_src + server_src + widgets_src
+
+path = [RTT_ROOT + '/components/rtgui/include',
+	RTT_ROOT + '/components/rgtui/common', 
+	RTT_ROOT + '/components/rtgui/server', 
+	RTT_ROOT + '/components/rtgui/widgets']
+
+# group definitions
+group = {}
+group['name'] = 'GUI'
+group['src'] = File(src_local)
+group['CCFLAGS'] = ''
+group['CPPPATH'] = path
+group['CPPDEFINES'] = ''
+group['LINKFLAGS'] = ''
+
+# add group to project list
+projects.append(group)
+
+env.Append(CCFLAGS = group['CCFLAGS'])
+env.Append(CPPPATH = group['CPPPATH'])
+env.Append(CPPDEFINES = group['CPPDEFINES'])
+env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+objs = env.Object(group['src'])
+
+Return('objs')
