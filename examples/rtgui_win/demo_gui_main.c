@@ -9,31 +9,65 @@
 #include <rtgui/event.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/button.h>
-#include <rtgui/widgets/textbox.h>
 #include <rtgui/widgets/view.h>
-#include <rtgui/widgets/listbox.h>
 #include <rtgui/rtgui_theme.h>
 
-void demo_gui_win(PVOID wdt, rtgui_event_t *event);
+#include "demo_view.h"
 
-rtgui_listbox_t *__lbox;
+/* 用于存放演示视图的数组，最多可创建32个演示视图 */
+static rtgui_view_t* demo_list[32];
+/* 当前演示视图索引 */
+static rt_uint16_t demo_current = 0;
+/* 总共包括的演示视图数目 */
+static rt_uint16_t demo_number = 0;
 
-static rtgui_listbox_item_t _demo_list[] = 
+/* 显示前一个演示视图 */
+void demo_gui_prev(PVOID wdt, rtgui_event_t *event)
 {
-	{"item1",  RT_NULL},
-	{"item2",  RT_NULL},
-};
-
-/* 给列表添加一个项目 */
-void user_add_one_item(PVOID wdt, rtgui_event_t *event)
-{
-	rtgui_listbox_item_t item={"new item", RT_NULL};
-	if(__lbox != RT_NULL)
+	if (demo_current != 0)
 	{
-		__lbox->add_item(__lbox, &item);
-	}	 	
+		RTGUI_WIDGET_HIDE(demo_list[demo_current]);
+		demo_current --;
+		RTGUI_WIDGET_UNHIDE(demo_list[demo_current]);
+		rtgui_widget_update(demo_list[demo_current]);
+	}
 }
 
+/* 显示下一个演示视图 */
+void demo_gui_next(PVOID wdt, rtgui_event_t *event)
+{
+	if (demo_current + 1< demo_number)
+	{
+		RTGUI_WIDGET_HIDE(demo_list[demo_current]);
+		demo_current ++;
+		RTGUI_WIDGET_UNHIDE(demo_list[demo_current]);
+		rtgui_widget_update(demo_list[demo_current]);
+	}
+}
+
+rtgui_view_t* demo_view_create(rtgui_view_t* parent_view, const char* title)
+{
+	rtgui_view_t* view;
+
+	/* 设置视图的名称 */
+	view = rtgui_view_create(parent_view, title, 0,0,
+				rtgui_widget_get_width(parent_view),
+				rtgui_widget_get_height(parent_view));
+	if (view == RT_NULL) return RT_NULL;
+	rtgui_widget_set_style(view, RTGUI_BORDER_SIMPLE);
+	RTGUI_WIDGET_HIDE(view);
+
+	/* 创建标题用的标签 */
+	rtgui_label_create(view, title, 10, 5, 200, 20);
+	/* 创建一个水平的staticline线 */
+	rtgui_staticline_create(view, 10, 30, 2, rtgui_widget_get_width(view)-20, RTGUI_HORIZONTAL);
+
+	/* 创建成功后，添加到数组中 */
+	demo_list[demo_number] = view;
+	demo_number ++;
+
+	return view;
+}
 static void rtgui_panel_entry(void* parameter)
 {
 	const struct rtgui_graphic_driver* gd = rtgui_graphic_driver_get_default();
@@ -46,31 +80,70 @@ static void rtgui_panel_entry(void* parameter)
 	mq = rt_mq_create("Panel", 256, 32, RT_IPC_FLAG_FIFO);
 	/* 注册当前线程为GUI线程 */
 	rtgui_thread_register(rt_thread_self(), mq);
-
 	panel = rtgui_panel_create(0,0,gd->width,gd->height);
 
-	//创建一个标题/信息栏
-	view = rtgui_view_create(panel,"titlebar",0,0,gd->width,30);
-	rtgui_widget_set_style(view, RTGUI_BORDER_SIMPLE);
-	rtgui_label_create(view, "hello world!",5,2,150,24);	
+	//{{{ TODO: START ADD CODE HERE.
 
-	//创建一个列表
-	__lbox = rtgui_listbox_create(panel,10,30,120,100,RTGUI_BORDER_SUNKEN);
-	rtgui_listbox_set_items(__lbox,_demo_list,RT_COUNT(_demo_list));
-	button = rtgui_button_create(panel,"add",140,60,50,25);
-	rtgui_button_set_onbutton(button,user_add_one_item);
+	view = rtgui_view_create(panel, "demo_view", 5, 5, gd->width-10,gd->height-40);
 
-	//创建一个编辑框
-	rtgui_textbox_create(panel,
-		"this is a textbox,\n"
-		"demo multi text.\n",
-		10,150,180,50,
-		RTGUI_TEXTBOX_MULTI);
+	button = rtgui_button_create(panel, "Prev", 5,gd->height-30,50,25);
+	rtgui_button_set_onbutton(button, demo_gui_prev);
+	button = rtgui_button_create(panel, "Next", gd->width-55,gd->height-30,50,25);
+	rtgui_button_set_onbutton(button, demo_gui_next);
 
-	button = rtgui_button_create(panel, "win",140,90,50,25);
-	rtgui_button_set_onbutton(button,demo_gui_win);
 
-	///////////////////////////////////////////////////////
+	/* 初始化各个例子的视图 */
+//#if RT_VERSION == 4
+//	demo_view_benchmark(view);
+//#endif
+
+//	demo_view_dc(view);
+//#if RT_VERSION == 4
+//#ifdef RTGUI_USING_TTF
+//	demo_view_ttf(view);
+//#endif
+//#endif
+
+#ifndef RTGUI_USING_SMALL_SIZE
+	demo_gui_dc_buffer(view);
+#endif
+//	demo_gui_animation(view);
+//#ifndef RTGUI_USING_SMALL_SIZE
+//	demo_view_buffer_animation(view);
+//	// demo_view_instrument_panel(view);
+//#endif
+	demo_gui_window(view);
+	demo_gui_label(view);
+	demo_gui_button(view);
+	demo_gui_checkbox(view);
+	demo_gui_progressbar(view);
+	demo_gui_scrollbar(view);
+	demo_gui_radiobox(view);
+	demo_gui_textbox(view);
+	demo_gui_listbox(view);
+//////	demo_gui_menu(view); /* debugging */
+//////	demo_gui_listctrl(view); /* debugging */
+	demo_gui_combobox(view);
+	demo_gui_slider(view);
+
+//////#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+//////	demo_gui_image(view); /* debugging */
+//////#endif
+//#ifdef RT_USING_MODULE	
+//#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+//	demo_gui_module(view);
+//#endif
+//#endif
+//	demo_gui_listview(view);
+//	demo_gui_listview_icon(view);
+//#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+//	demo_gui_fn(view);
+//#endif
+
+	rtgui_view_show(demo_list[demo_current]);
+
+	//}}} END ADD CODE.
+
 	rtgui_panel_show(panel);	
 
 	/* 执行工作台事件循环 */

@@ -8,6 +8,7 @@
 #include <rtgui/driver.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
+#include <rtgui/widgets/radiobox.h>
 #include <rtgui/widgets/window.h>
 
 static rt_bool_t demo_win_inited = RT_FALSE;
@@ -32,7 +33,9 @@ static void gui_win_entry(void* parameter)
 	rtgui_win_t *win;
 	rtgui_button_t *button;
 	rtgui_point_t p;
-	rtgui_rect_t rect = {0,0,150,120};
+	rtgui_rect_t rect = {0,0,200,180};
+	rtgui_label_t *label;
+	rtgui_font_t *font;
 	
 	/* 创建GUI应用需要的消息队列 */
 	mq = rt_mq_create("demo_win", 256, 32, RT_IPC_FLAG_FIFO);
@@ -47,9 +50,12 @@ static void gui_win_entry(void* parameter)
  
 	/* 取得客户区坐标零点 */
 	p = rtgui_win_get_client_zero(win);
-	rtgui_label_create(win, "hello world!", p.x+10, p.y+10, 100,25);	
+	label = rtgui_label_create(win, "hello world!", p.x+5, p.y+5, 100,25);
+	font = rtgui_font_refer("asc", 12);	
+	RTGUI_WIDGET_FONT(label) = font;
 
-	button = rtgui_button_create(win, "Exit", 50,80,50,25);
+	button = rtgui_button_create(win, "Exit", (rtgui_rect_width(rect)-50)/2,
+								rtgui_rect_height(rect)-40,50,25);
 	rtgui_button_set_onbutton(button,rtgui_win_close);
 
 	rtgui_widget_set_event_handler(win, demo_gui_win_event_handler);
