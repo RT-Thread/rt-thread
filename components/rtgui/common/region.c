@@ -114,6 +114,13 @@ static rtgui_region_status_t rtgui_break(rtgui_region_t *pReg);
         ((r1)->y1 <= (r2)->y1) && \
         ((r1)->y2 >= (r2)->y2) )
 
+/* true iff Box r1 and Box r2 constitute cross */
+#define CROSS(r1,r2) \
+	  ( ((r1)->x1 <= (r2)->x1) && \
+        ((r1)->x2 >= (r2)->x2) && \
+        ((r1)->y1 >= (r2)->y1) && \
+        ((r1)->y2 <= (r2)->y2) )
+
 #define allocData(n) rtgui_malloc(PIXREGION_SZOF(n))
 #define freeData(reg) if ((reg)->data && (reg)->data->size) rtgui_free((reg)->data)
 
@@ -2233,6 +2240,14 @@ int rtgui_rect_is_intersect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2
 		INBOX(rect2, rect1->x1, rect1->y2) ||
 		INBOX(rect2, rect1->x2, rect1->y1) ||
 		INBOX(rect2, rect1->x2, rect1->y2))
+	{
+		return RT_EOK;
+	}
+	else if (CROSS(rect1,rect2))
+	{
+		return RT_EOK;
+	}
+	else if (CROSS(rect2,rect1))
 	{
 		return RT_EOK;
 	}
