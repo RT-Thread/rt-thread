@@ -30,6 +30,9 @@
 		(p * (EFM32_HFXO_FREQUENCY / (1 << TMR_CFG_PRESCALER) / 1000))
 
 /* Private variables ------------------------------------------------------------*/
+#ifdef RT_USING_TIMER1
+	static struct rt_device timer1_device;
+#endif
 #ifdef RT_USING_TIMER2
 	static struct rt_device timer2_device;
 #endif
@@ -113,15 +116,20 @@ static rt_err_t rt_hs_timer_control (
 		{
 			/* change device setting */
 			struct efm32_timer_control_t *control;
+			rt_uint32_t running;
 
 			control = (struct efm32_timer_control_t *)args;
-
+			running = timer->timer_device->STATUS & 0x00000001;
+			
 			TIMER_Enable(timer->timer_device, false);
 			timer->timer_device->CNT = _TIMER_CNT_RESETVALUE;
 			TIMER_TopSet(timer->timer_device, TIMER_TopCalculate(control->period));
 			timer->hook.cbFunc = control->hook.cbFunc;
 			timer->hook.userPtr = control->hook.userPtr;
-			TIMER_Enable(timer->timer_device, true);
+			if (running)
+			{
+				TIMER_Enable(timer->timer_device, true);
+			}
 		}
 		break;
 	}
@@ -224,16 +232,67 @@ void rt_hw_timer_init(void)
 	init.oneShot		= false;
 	init.sync			= false;
 
+#ifdef RT_USING_TIMER1
+	timer = rt_malloc(sizeof(struct efm32_timer_device_t));
+	if (timer == RT_NULL)
+	{
+#ifdef RT_TIMER_DEBUG
+		rt_kprintf("no memory for TIMER1 driver\n");
+#endif
+		return;
+	}
+	
+	timer->timer_device = TIMER1;
+#if (RT_USING_TIMER1 == RT_TIMER_ONCE)
+	init.oneShot		= true;
+#elif (RT_USING_TIMER1 == RT_TIMER_CONTINUE)
+	init.oneShot		= false;
+#endif
+
+	/* Enable clock for TIMERn module */
+	CMU_ClockEnable(cmuClock_TIMER1, true);
+
+	/* Reset */
+	TIMER_Reset(TIMER1);
+
+	/* Configure TIMER */
+	TIMER_Init(TIMER1, &init);
+
+	hook.type			= efm32_irq_type_timer;
+	hook.unit			= 1;
+	hook.cbFunc 		= rt_hw_timer_isr;
+	hook.userPtr		= &timer1_device;
+	efm32_irq_hook_register(&hook);
+
+	/* Enable overflow interrupt */
+	TIMER_IntEnable(TIMER1, TIMER_IF_OF);
+	TIMER_IntClear(TIMER1, TIMER_IF_OF);
+
+	/* Enable TIMERn interrupt vector in NVIC */
+	NVIC_ClearPendingIRQ(TIMER1_IRQn);
+	NVIC_SetPriority(TIMER1_IRQn, EFM32_IRQ_PRI_DEFAULT);
+	NVIC_EnableIRQ(TIMER1_IRQn);
+
+    rt_hw_timer_register(&timer1_device, RT_TIMER1_NAME, 0, timer);	
+#endif
+
 #ifdef RT_USING_TIMER2
 	timer = rt_malloc(sizeof(struct efm32_timer_device_t));
 	if (timer == RT_NULL)
 	{
-		rt_kprintf("no memory for TIMER driver\n");
+#ifdef RT_TIMER_DEBUG
+		rt_kprintf("no memory for TIMER2 driver\n");
+#endif
 		return;
 	}
 	
 	timer->timer_device = TIMER2;
-	
+#if (RT_USING_TIMER2 == RT_TIMER_ONCE)
+	init.oneShot		= true;
+#elif (RT_USING_TIMER2 == RT_TIMER_CONTINUE)
+	init.oneShot		= false;
+#endif
+
 	/* Enable clock for TIMERn module */
 	CMU_ClockEnable(cmuClock_TIMER2, true);
 

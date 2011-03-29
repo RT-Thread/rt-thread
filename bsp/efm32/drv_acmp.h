@@ -50,12 +50,12 @@ struct efm32_acmp_control_t
 	false, 					/* Full bias current*/ 					\
 	true, 					/* Half bias current */ 				\
 	0, 						/* Biasprog current configuration */ 		\
-	false, 					/* Enable interrupt for falling edge */ 	\
-	false, 					/* Enable interrupt for rising edge */ 	\
+	true, 					/* Enable interrupt for falling edge */ 	\
+	true, 					/* Enable interrupt for rising edge */ 	\
 	acmpWarmTime512, 		/* Warm-up time must be >10us */ 		\
 	acmpHysteresisLevel0,	/* Hysteresis configuration */ 			\
 	0, 						/* Inactive comparator output value */ 	\
-	false, 					/* Enable low power mode */ 			\
+	false, 					/* Disable low power mode */ 			\
 	0 						/* Vdd reference scaling */ 			\
 }
 

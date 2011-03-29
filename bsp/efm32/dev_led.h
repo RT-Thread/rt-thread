@@ -34,7 +34,7 @@
 #define LEDS_PIN_NUMBER_3 		(3)
 
 #elif defined(EFM32_G290_DK)
-	//TODO
+	// TODO:
 #endif
 
 /* Exported functions --------------------------------------------------------- */

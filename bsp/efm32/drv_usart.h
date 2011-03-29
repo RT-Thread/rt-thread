@@ -39,16 +39,12 @@ struct efm32_usart_device_t
 {
 	/* Unit number */
 	rt_uint8_t unit;
-
 	/* State */
-	rt_uint32_t state;
-
+	rt_uint8_t state;
 	/*  Pointer to USART device structure */
 	USART_TypeDef* usart_device;
-
 	/* Pointer to RX structure */
 	void *rx_mode;
-
 	/* Pointer to TX structure */
 	void *tx_mode;
 };

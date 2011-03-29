@@ -33,6 +33,7 @@ efm32_irq_hook_t rtcCbTable[RTC_COUNT] 			= {RT_NULL};
 efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
 efm32_irq_hook_t acmpCbTable[ACMP_COUNT] 		= {RT_NULL};
 efm32_irq_hook_t usartCbTable[USART_COUNT * 2] 	= {RT_NULL};
+efm32_irq_hook_t iicCbTable[I2C_COUNT] 			= {RT_NULL};
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -179,6 +180,31 @@ void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user)
 
     /* leave interrupt */
     rt_interrupt_leave();
+}
+
+/******************************************************************//**
+ * @brief
+ * 	Common Timer1 interrupt handler
+ *
+ * @details
+ * 	This function handles Timer1 counter overflow interrupt request
+ *
+ * @note
+ *
+ *********************************************************************/
+void TIMER1_IRQHandler(void)
+{
+	if (TIMER1->IF & TIMER_IF_OF)
+	{
+		/* invoke callback function */
+		if (timerCbTable[1].cbFunc != RT_NULL)
+		{
+			(timerCbTable[1].cbFunc)(timerCbTable[1].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(TIMER1->IFC), _TIMER_IF_OF_SHIFT, 0x1UL);
+	}
 }
 
 /******************************************************************//**
@@ -504,6 +530,32 @@ void USART2_RX_IRQHandler(void)
 
 /******************************************************************//**
  * @brief
+ * 	Common IIC0 interrupt handler
+ *
+ * @details
+ * 	This function handles IIC0 slave mode interrupt requests
+ *
+ * @note
+ *
+ *********************************************************************/
+void I2C0_IRQHandler(void)
+{
+	if ((I2C0->IF & I2C_IF_ADDR) || \
+		(I2C0->IF & I2C_IF_RXDATAV) || \
+		(I2C0->IF & I2C_IF_SSTOP))
+	{
+		/* invoke callback function */
+		if (iicCbTable[0].cbFunc != RT_NULL)
+		{
+			(iicCbTable[0].cbFunc)(iicCbTable[0].userPtr);
+		}
+	}
+
+	I2C_IntClear(I2C0, I2C_IFC_ADDR | I2C_IFC_SSTOP);
+}
+
+/******************************************************************//**
+ * @brief
  * 	EFM32 common interrupt handlers register function
  *
  * @details
@@ -543,6 +595,11 @@ rt_err_t efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 	case efm32_irq_type_usart:
 		usartCbTable[hook->unit].cbFunc = hook->cbFunc;
 		usartCbTable[hook->unit].userPtr = hook->userPtr;
+		break;
+
+	case efm32_irq_type_iic:
+		iicCbTable[hook->unit].cbFunc = hook->cbFunc;
+		iicCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
 
 	default:

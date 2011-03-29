@@ -253,7 +253,8 @@ void rt_hw_adc_init(void)
 	struct efm32_adc_device_t 	*adc;
 	ADC_Init_TypeDef 			init = ADC_INIT_DEFAULT;
 
-	init.ovsRateSel	= adcOvsRateSel4096; //TODO
+	// TODO: Fixed oversampling rate?
+	init.ovsRateSel	= adcOvsRateSel4096;
 	init.timebase 	= ADC_TimebaseCalc(0);
 	init.prescale 	= ADC_PrescaleCalc(ADC_CONVERT_FREQUENCY, 0);
 
@@ -262,7 +263,9 @@ void rt_hw_adc_init(void)
 	adc = rt_malloc(sizeof(struct efm32_adc_device_t));
 	if (adc == RT_NULL)
 	{
+#ifdef RT_ADC_DEBUG
 		rt_kprintf("no memory for ADC driver\n");
+#endif
 		return;
 	}
 	adc->adc_device	= ADC0;

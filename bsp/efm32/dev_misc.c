@@ -112,8 +112,10 @@ rt_err_t rt_hw_misc_init(void)
 	adc0 = rt_device_find(RT_ADC0_NAME);
 	if (adc0 == RT_NULL)
 	{
-		rt_kprintf("Batt error: Can't find device: %s!\n", RT_ADC0_NAME);
-		
+#ifdef RT_MISC_DEBUG
+		rt_kprintf("Batt err: Can't find device: %s!\n", RT_ADC0_NAME);
+#endif
+
 		goto MISC_INIT_ERROR;
 	}
 
@@ -122,7 +124,7 @@ rt_err_t rt_hw_misc_init(void)
 
 MISC_INIT_ERROR:
 #ifdef RT_MISC_DEBUG
-	rt_kprintf("Misc error: Init failed!\n");
+	rt_kprintf("Misc err: Init failed!\n");
 #endif
 
 	return -RT_ERROR;

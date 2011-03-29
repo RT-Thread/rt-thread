@@ -33,13 +33,16 @@
 #define RT_MEM_DEBUG
 //#define THREAD_DEBUG
 //#define IRQ_DEBUG
+#define RT_USING_OVERFLOW_CHECK
+
 //#define RT_IRQHDL_DEBUG
 //#define RT_ADC_DEBUG
-#define RT_USING_OVERFLOW_CHECK
-#define RT_USART_DEBUG
+//#define RT_ACMP_DEBUG
+//#define RT_TIMER_DEBUG
+//#define RT_USART_DEBUG
 
 /* Using Hook */
-#define RT_USING_HOOK
+//#define RT_USING_HOOK
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
@@ -52,20 +55,20 @@
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
-#define RT_USING_MUTEX
+//#define RT_USING_MUTEX
 
 /* Using Event */
-#define RT_USING_EVENT
+//#define RT_USING_EVENT
 
 /* Using MailBox */
-#define RT_USING_MAILBOX
+//#define RT_USING_MAILBOX
 
 /* Using Message Queue */
-#define RT_USING_MESSAGEQUEUE
+//#define RT_USING_MESSAGEQUEUE
 
 /* SECTION: Memory Management */
 /* Using Memory Pool Management*/
-#define RT_USING_MEMPOOL
+//#define RT_USING_MEMPOOL
 
 /* Using Dynamic Heap Management */
 #define RT_USING_HEAP
@@ -110,6 +113,7 @@
 #endif
 
 /* SECTION: Console options */
+#define RT_USING_CONSOLE
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE		128
 

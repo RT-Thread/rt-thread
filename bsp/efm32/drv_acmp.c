@@ -116,7 +116,10 @@ static rt_err_t rt_acmp_control(
 		{
 			rt_bool_t int_en = false;
 
+#ifdef RT_ACMP_DEBUG
 			rt_kprintf("ACMP: control -> init start\n");
+#endif
+
 			/* change device setting */
 			struct efm32_acmp_control_t *control;
 
@@ -257,7 +260,9 @@ void rt_hw_acmp_init(void)
 	acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
 	if (acmp == RT_NULL)
 	{
+#ifdef RT_ACMP_DEBUG
 		rt_kprintf("no memory for ACMP0 driver\n");
+#endif
 		return;
 	}
 	acmp->acmp_device		= ACMP0;
@@ -281,7 +286,9 @@ void rt_hw_acmp_init(void)
 	acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
 	if (acmp == RT_NULL)
 	{
+#ifdef RT_ACMP_DEBUG
 		rt_kprintf("no memory for ACMP1 driver\n");
+#endif
 		return;
 	}
 	acmp->acmp_device		= ACMP1;

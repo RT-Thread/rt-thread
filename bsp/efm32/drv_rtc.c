@@ -173,8 +173,9 @@ void rt_hw_rtc_init(void)
 	rt_uint32_t reset;
 	
 	reset = RMU_ResetCauseGet();
-		
-	if (reset & RMU_RSTCAUSE_PORST || reset & RMU_RSTCAUSE_EXTRST) //TODO
+
+	// TODO: What is the current reset mode?
+	if (reset & RMU_RSTCAUSE_PORST || reset & RMU_RSTCAUSE_EXTRST)
     {
     	RTC_Init_TypeDef rtcInit;
 		efm32_irq_hook_init_t hook;

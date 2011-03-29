@@ -140,7 +140,9 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 
 		if ((int_mode->data_ptr = rt_malloc(SERIAL_RX_BUFFER_SIZE)) == RT_NULL)
 		{
+#ifdef RT_USART_DEBUG
 			rt_kprintf("no memory for serial RX buffer\n");
+#endif
 			return -RT_ENOMEM;
 		}
 		rt_memset(int_mode->data_ptr, 0, SERIAL_RX_BUFFER_SIZE);
@@ -498,10 +500,13 @@ static rt_err_t rt_usart_control (
 					if ((int_rx->data_ptr = rt_realloc(int_rx->data_ptr, size)) \
 						== RT_NULL)
 					{
+#ifdef RT_USART_DEBUG
 						rt_kprintf("no memory for usart rx buffer\n");
+#endif
 						return -RT_ENOMEM;
 					}
-					//rt_memset(int_rx->data_ptr, 0, size); //TODO
+					// TODO: Is the following line necessary?
+					//rt_memset(int_rx->data_ptr, 0, size); 
 				}
 			}	
 			else
@@ -509,7 +514,9 @@ static rt_err_t rt_usart_control (
 				/* Allocate new RX buffer */
 				if ((int_rx->data_ptr = rt_malloc(size)) == RT_NULL)
 				{
+#ifdef RT_USART_DEBUG
 					rt_kprintf("no memory for usart rx buffer\n");
+#endif
 					return -RT_ENOMEM;
 				}
 			}
@@ -726,7 +733,9 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	usart = rt_malloc(sizeof(struct efm32_usart_device_t));
 	if (usart == RT_NULL)
 	{
+#ifdef RT_USART_DEBUG
 		rt_kprintf("no memory for USART driver\n");
+#endif
 		return usart;
 	}
 	usart->unit 	= unitNumber;
@@ -748,7 +757,9 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		usart->tx_mode = dma_mode = rt_malloc(sizeof(struct efm32_usart_dma_mode_t));
 		if (dma_mode == RT_NULL)
 		{
+#ifdef RT_USART_DEBUG
 			rt_kprintf("no memory for USART TX by DMA\n");
+#endif
 			rt_free(usart->rx_mode);
 			rt_free(usart);
 			usart = RT_NULL;
@@ -763,7 +774,9 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		usart->rx_mode = rt_malloc(sizeof(struct efm32_usart_int_mode_t));
 		if (usart->rx_mode == RT_NULL)
 		{
+#ifdef RT_USART_DEBUG
 			rt_kprintf("no memory for USART RX by interrupt\n");
+#endif
 			rt_free(usart->tx_mode);
 			rt_free(usart);
 			usart = RT_NULL;
