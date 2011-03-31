@@ -39,6 +39,7 @@ void zs_start(char *path)
 {
     struct zfile *zf;
 	rt_err_t res = RT_ERROR;
+
 	zf = rt_malloc(sizeof(struct zfile));
 	if (zf == RT_NULL)
 	{
@@ -59,12 +60,14 @@ void zs_start(char *path)
         rt_kprintf("\r\nfile: %s \r\nsize: 0 bytes\r\nsend failed.\r\n",zf->fname+1);
     }
 	rt_free(zf);
+
 	return;
 }
 /* init the parameters */
 static void zsend_init(void)
 {
 	rt_err_t res = -RT_ERROR;
+
 	zinit_parameter();
 	for(;;)          /* wait ZPAD */
 	{
@@ -153,6 +156,7 @@ static rt_err_t zsend_file(struct zfile *zf,rt_uint8_t *buf, rt_uint16_t len)
 {
 	rt_uint8_t cnt;
 	rt_err_t res = -RT_ERROR;
+
 	for (cnt=0;cnt<5;cnt++) 
 	{  
 		tx_header[ZF0] = ZF0_CMD;	            /* file conversion option */
@@ -195,6 +199,7 @@ loop:
 			 break;
 		} 
 	}
+
 	return res;
 }
 
@@ -256,6 +261,7 @@ static rt_uint16_t zfill_buffer(struct zfile *zf,rt_uint8_t *buf,rt_uint16_t siz
 static rt_err_t zget_sync(void)
 {
     rt_err_t res = -RT_ERROR;
+
 	for (;;) 
 	{
 		res = zget_header(rx_header);

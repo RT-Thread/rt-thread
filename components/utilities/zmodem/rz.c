@@ -53,6 +53,7 @@ void zr_start(char *path)
 		rt_kprintf("size: %ld bytes\r\n",zf->bytes_received);
 		rt_kprintf("receive completed.\r\n");
 		close(zf->fd);
+		rt_free(zf->fname);
 		rt_free(zf);
     }
     else
@@ -60,8 +61,12 @@ void zr_start(char *path)
         rt_kprintf("\b\b\bfile: %s                           \r\n",zf->fname+1);
 		rt_kprintf("size: 0 bytes\r\n");
 		rt_kprintf("receive failed.\r\n");
-	    close(zf->fd);
-	    unlink(zf->fname);    /* remove this file */ 
+		if (zf->fd >= 0)
+		{
+	        close(zf->fd);
+	        unlink(zf->fname);    /* remove this file */ 
+		}
+		rt_free(zf->fname);
 	    rt_free(zf);
     }
 	/* waiting,clear console buffer */
@@ -101,7 +106,7 @@ again:
 			 res = zget_data(rxbuf, RX_BUFFER_SIZE);
 			 if (res == GOTCRCW)
 			 {
-	             if (zget_file_info((char*)rxbuf,zf) != RT_EOK) 
+	             if ((res =zget_file_info((char*)rxbuf,zf))!= RT_EOK) 
 	             {
 	                 zsend_hex_header(ZSKIP, tx_header);
 		             return (res);
@@ -149,7 +154,7 @@ static rt_err_t zrec_files(struct zfile *zf)
 	rt_kprintf("rz: ready...\r\n");	   /* here ready to receive things */
 	if ((res = zrec_init(rxbuf,zf))!= RT_EOK)
 	{
-	     rt_kprintf("receive init failed !\r\n");
+	     rt_kprintf("\b\b\breceive init failed\r\n");
 		 rt_free(rxbuf);
 		 return -RT_ERROR;
 	}
@@ -254,7 +259,8 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
     ftemp = rt_malloc(len);
     if (ftemp == RT_NULL)		 
 	{
-	    rt_kprintf("ftemp: out of memory\n");
+	    zsend_can();
+		rt_kprintf("\b\b\bftemp: out of memory\n");
 		return -RT_ERROR;
 	}
 	memset(ftemp,0,len);
@@ -265,7 +271,8 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 	/* check if is a directory */
 	if ((zf->fd=open(ftemp, DFS_O_DIRECTORY,0)) < 0)	 
 	{
-	    rt_kprintf("can not open file:%s\r\n",zf->fname+1);
+	    zsend_can();
+	    rt_kprintf("\b\b\bcan not open file:%s\r\n",zf->fname+1);
 		close(zf->fd);
 		zf->fd = -1;
 	    return res;
@@ -286,14 +293,16 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 	dfs_statfs(working_directory,&buf);
 	if (zf->bytes_total > (buf.f_blocks * buf.f_bfree))
 	{
-	    rt_kprintf(" not enough disk space !\r\n");
+	    zsend_can();
+	    rt_kprintf("\b\b\bnot enough disk space\r\n");
+		zf->fd = -1;
 		return -RT_ERROR;  
 	}
 	zf->bytes_received   = 0L;
 	if ((zf->fd = open(zf->fname,DFS_O_CREAT|DFS_O_WRONLY,0)) < 0)	 /* create or replace exist file */
 	{
-	    rt_kprintf("can not create file:%s \r\n",zf->fname);	
-		rt_free(ftemp);
+	    zsend_can();
+	    rt_kprintf("\b\b\bcan not create file:%s \r\n",zf->fname);	
 		return -RT_ERROR;
 	}
 	return RT_EOK;
@@ -346,6 +355,7 @@ more_data:
 /* write file */
 static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf)
 {
+//    return 0;
 	return (write(zf->fd,buf,size));
 }
 

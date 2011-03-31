@@ -38,7 +38,7 @@ void finsh_rz(void *parameter)
     /* save old rx_indicate	*/
     rx_indicate = zmodem.device->rx_indicate;
     /* set new rx_indicate */
-    rt_device_set_rx_indicate(zmodem.device, zmodem_rx_ind);
+    rt_device_set_rx_indicate(zmodem.device, RT_NULL);
 	/* start receive remote files */
     zr_start(path);
 	zmodem.device->flag |=flag;

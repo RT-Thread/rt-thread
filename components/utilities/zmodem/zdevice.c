@@ -22,7 +22,7 @@ rt_uint32_t Baudrate   = BITRATE; 	 /* console baudrate */
  
 
 
-rt_uint32_t get_device_speed(void)
+rt_uint32_t get_device_baud(void)
 {
     return(Baudrate);
 }
@@ -35,23 +35,25 @@ rt_uint32_t get_sys_time(void)
 void zsend_byte(rt_uint16_t ch)
 {
     rt_device_write(zmodem.device,0,&ch,1);  
+
     return;
 }
 
 void zsend_line(rt_uint16_t c)
 {
     rt_uint16_t ch;
+
 	ch = (c & 0377);
     rt_device_write(zmodem.device,0,&ch,1);   
+
     return;
 }
-
-static char buf[RX_BUFFER_SIZE + 1];
 
 rt_int16_t zread_line(rt_uint16_t timeout)
 {
 	char *str;	 
-	
+	static char buf[10];
+
 	if (Line_left > 0)
 	{
 	    Line_left -= 1;
@@ -61,7 +63,7 @@ rt_int16_t zread_line(rt_uint16_t timeout)
 	timeout/=5;
 	while (1)
 	{
-     	if (rt_sem_take(&zmodem.zsem, RT_TICK_PER_SECOND*timeout) != RT_EOK) continue;
+//     	if (rt_sem_take(&zmodem.zsem, RT_TICK_PER_SECOND*timeout) != RT_EOK) continue;
      	Line_left = rt_device_read(shell->device, 0, buf, 1);
 		if (Line_left)
 		{
@@ -72,6 +74,7 @@ rt_int16_t zread_line(rt_uint16_t timeout)
 	}
 	if (Line_left < 1) return TIMEOUT;
 	Line_left -=1;
+
 	return (*str++ & 0377);
 }
 
@@ -101,9 +104,12 @@ void zsend_break(char *cmd)
 void zsend_can(void)
 {
 	static char cmd[] = {24,24,24,24,24,24,24,24,24,24,0};
+
 	zsend_break(cmd);
 	rt_kprintf("\x0d");
 	Line_left=0;	       /* clear Line_left */
+
+	return;
 }
 
-/* end of rbsb.c */
+/* end of zdevice.c */

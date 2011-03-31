@@ -29,7 +29,8 @@ rt_uint32_t  Rxpos;		         /* received file position */
 rt_uint32_t  Txpos;		         /* transmitted file position */
 rt_uint8_t   Txfcs32;		     /* TURE means send binary frames with 32 bit FCS */
 rt_uint8_t   TxCRC;		         /* controls 32 bit CRC being sent */
-rt_uint8_t   RxCRC;		         /* indicates/controls 32 bit CRC being received */			                     /* 0 == CRC16,  1 == CRC32,  2 == CRC32 + RLE */
+rt_uint8_t   RxCRC;		         /* indicates/controls 32 bit CRC being received */			                     
+                                 /* 0 == CRC16,  1 == CRC32,  2 == CRC32 + RLE */
 char Attn[ZATTNLEN+1];	         /* attention string rx sends to tx on err */
 
 void zinit_parameter(void);
@@ -59,7 +60,7 @@ void zinit_parameter(void)
 {
     rt_uint8_t i;
 
-    ZF0_CMD  = /*CANFC32|*/CANFDX|CANOVIO;		/*  not chose CANFC32,CANRLE,although it have been supported */
+    ZF0_CMD  = CANFC32|CANFDX|CANOVIO;		/*  not chose CANFC32,CANRLE,although it have been supported */
 	ZF1_CMD  = 0;							    /* fix header length,not support CANVHDR */
 	ZF2_CMD  = 0;
 	ZF3_CMD  = 0;	
@@ -70,6 +71,7 @@ void zinit_parameter(void)
 	Rxpos    = Txpos = 0;
 	RxCRC    = 0;	
 	Txfcs32  = 0;
+
 	return ;
 }
 
@@ -136,6 +138,7 @@ void zsend_bin_header(rt_uint8_t type, rt_uint8_t *hdr)
 		    crc >>= 8;
 	    }
 	}
+
 	return;
 }
 
@@ -162,6 +165,7 @@ void zsend_hex_header(rt_uint8_t type, rt_uint8_t *hdr)
 	if (type != ZFIN && type != ZACK)
 		zsend_line(021);
 	TxCRC = 0;               /* clear tx crc type */
+
 	return;
 }
 
@@ -262,6 +266,7 @@ void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend)
 	}
 	if (frameend == ZCRCW)
 		zsend_byte(XON);
+
 	return;
 }
 
@@ -272,9 +277,11 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 	rt_uint16_t crc;
 	rt_err_t res = -RT_ERROR;
  	rt_uint8_t *p,flag = 0;
+	rt_uint8_t i =0, debug[20];
 	p = buf;
 	crc = 0L;  
-    Rxcount = 0;  
+    Rxcount = 0; 
+	debug[0] = debug[4] = 0; 
 	while(buf <= p+len) 
 	{
 		if ((res = zread_byte()) & ~0377)
@@ -282,6 +289,9 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 		    if (res == GOTCRCE || res == GOTCRCG ||
 			    res == GOTCRCQ || res == GOTCRCW)
 			{
+				  c = res;
+				  debug[i++] = res;
+				  c = debug[0];
 				  c = res;
 				  crc = updcrc16(res&0377, crc);
 				  flag = 1;	
@@ -298,6 +308,7 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 		   {
 		       crc = updcrc16(res, crc); 
 			   crc_cnt++;
+			   debug[i++] = res;
 			   if (crc_cnt < 2) continue;
 			   if ((crc & 0xffff))
 			   {
@@ -316,6 +327,7 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 		   }
 		}
 	}
+
 	return -RT_ERROR;
 }
 
@@ -370,6 +382,7 @@ static rt_int16_t zrec_data32(rt_uint8_t *buf,rt_int16_t len)
 		   }
 		}
 	}
+
 	return -RT_ERROR;
 }
 /* receive data,with RLE encoded,32bits CRC check */
@@ -480,6 +493,7 @@ rt_int16_t zget_data(rt_uint8_t *buf, rt_uint16_t len)
 	{
 	    res = zrec_data32r(buf, len);
 	}
+
 	return res;
 }
 /* get type and cmd of header, fix lenght */
@@ -489,7 +503,7 @@ rt_int16_t zget_header(rt_uint8_t *hdr)
 	rt_uint32_t bit;
 	rt_uint16_t get_can,step_out;
 
-	bit = get_device_speed();	  /* getbaudrate */
+	bit = get_device_baud();	             /* get console baud rate */
 	Rxframeind = header_type = 0;
     step_out = 0;
 	prev_char = 0xff;
@@ -613,6 +627,7 @@ static rt_int16_t zget_bin_header(rt_uint8_t *hdr)
 		rt_kprintf("CRC error\n");
 		return -RT_ERROR;
 	}
+
 	return header_type;
 }
 
@@ -649,6 +664,7 @@ static rt_int16_t zget_bin_fcs(rt_uint8_t *hdr)
 #endif
 		return -RT_ERROR;
 	}
+
 	return header_type;
 }
 
@@ -690,6 +706,7 @@ rt_int16_t zget_hex_header(rt_uint8_t *hdr)
 	res = zread_line(100);
 	if (res < 0)
 		return res;
+
 	return header_type;
 }
 
@@ -700,6 +717,7 @@ static void zsend_ascii(rt_uint8_t c)
 
 	zsend_line(hex[(c&0xF0)>>4]);
 	zsend_line(hex[(c)&0xF]);
+
 	return;
 }
 
@@ -754,6 +772,7 @@ static rt_int16_t zget_hex(void)
 	if (res & ~0x0f)
 		return -RT_ERROR;
 	res += (n<<4);
+
 	return res;
 }
 
@@ -814,6 +833,7 @@ again2:
 			return (res ^ 0100);
 		 break;
 	}
+
 	return -RT_ERROR;
 }
 
@@ -850,6 +870,7 @@ void zput_pos(rt_uint32_t pos)
 	tx_header[ZP1] = pos>>8;
 	tx_header[ZP2] = pos>>16;
 	tx_header[ZP3] = pos>>24;
+
 	return;
 }
 
@@ -860,6 +881,8 @@ void zget_pos(rt_uint32_t pos)
 	Rxpos = (Rxpos << 8) | (rx_header[ZP2] & 0377);
 	Rxpos = (Rxpos << 8) | (rx_header[ZP1] & 0377);
 	Rxpos = (Rxpos << 8) | (rx_header[ZP0] & 0377);
+
+	return;
 }
 
-/* End of zm.c */
+/* end of zcore.c */

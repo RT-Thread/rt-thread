@@ -65,20 +65,20 @@
 #define ZP2	      2
 #define ZP3	      3	    /* high order 8 bits of file position */
 
-/* Parameters for ZRINIT header */
+/* parameters for ZRINIT header */
 #define ZRPXWN	  8	    /* 9th byte in header contains window size/256 */
 #define ZRPXQQ	  9	    /* 10th to 14th bytes contain quote mask */
-/* Bit Masks for ZRINIT flags byte ZF0 */
-#define CANFDX	  01	/* rx can send and receive true FDX */
-#define CANOVIO	  02	/* rx can receive data during disk I/O */
-#define CANBRK	  04	/* rx can send a break signal */
-#define CANRLE	  010	/* receiver can decode RLE */
-#define CANLZW	  020	/* receiver can uncompress */
-#define CANFC32	  040	/* receiver can use 32 bit Frame Check */
-#define ESCCTL    0100	/* receiver expects ctl chars to be escaped */
-#define ESC8      0200	/* receiver expects 8th bit to be escaped */
+/* bit Masks for ZRINIT flags byte ZF0 */
+#define CANFDX	  0x01	/* rx can send and receive true FDX */
+#define CANOVIO	  0x02	/* rx can receive data during disk I/O */
+#define CANBRK	  0x04	/* rx can send a break signal */
+#define CANRLE	  0x10	/* receiver can decode RLE */
+#define CANLZW	  0x20	/* receiver can uncompress */
+#define CANFC32	  0x28	/* receiver can use 32 bit Frame Check */
+#define ESCCTL    0x64	/* receiver expects ctl chars to be escaped */
+#define ESC8      0xc8	/* receiver expects 8th bit to be escaped */
 
-/* Bit Masks for ZRINIT flags byte ZF1 */
+/* bit Masks for ZRINIT flags byte ZF1 */
 #define CANVHDR	  01	/* variable headers OK */
 #define ZRRQWN	  8	    /* receiver specified window size in ZRPXWN */
 #define ZRRQQQ	  16	/* additional control chars to quote in ZRPXQQ	*/
@@ -93,43 +93,43 @@
 #define ZCBIN	  1	   /* binary transfer - inhibit conversion */
 #define ZCNL	  2	   /* convert NL to local end of line convention */
 #define ZCRESUM	  3	   /* resume interrupted file transfer */
-/* Management include options, one of these ored in ZF1 */
+/* management include options, one of these ored in ZF1 */
 #define ZMSKNOLOC 0200 /* skip file if not present at rx */
-/* Management options, one of these ored in ZF1 */
+/* management options, one of these ored in ZF1 */
 #define ZMMASK	  037  /* mask for the choices below */
 #define ZMNEWL	  1	   /* transfer if source newer or longer */
 #define ZMCRC	  2	   /* transfer if different file CRC or length */
 #define ZMAPND	  3	   /* append contents to existing file (if any) */
 #define ZMCLOB	  4	   /* replace existing file */
 #define ZMNEW	  5	   /* transfer if source newer */
-	/* Number 5 is alive ... */
+/* number 5 is alive ... */
 #define ZMDIFF	  6	   /* transfer if dates or lengths different */
 #define ZMPROT	  7	   /* protect destination file */
 #define ZMCHNG	  8	   /* change filename if destination exists */
-/* Transport options, one of these in ZF2 */
+/* transport options, one of these in ZF2 */
 #define ZTLZW	  1	   /* lempel-Ziv compression */
 #define ZTRLE	  3	   /* run Length encoding */
-/* Extended options for ZF3, bit encoded */
+/* extended options for ZF3, bit encoded */
 #define ZXSPARS	  64   /* encoding for sparse file operations */
 #define ZCANVHDR  01   /* variable headers OK */
-/* Receiver window size override */
+/* receiver window size override */
 #define ZRWOVR    4	   /* byte position for receive window override/256 */
 
-/* Parameters for ZCOMMAND frame ZF0 (otherwise 0) */
+/* parameters for ZCOMMAND frame ZF0 (otherwise 0) */
 #define ZCACK1	  1	   /* acknowledge, then do command */
 extern char Attn[ZATTNLEN+1];	/* Attention string rx sends to tx on err */
 
-/* Globals used by ZMODEM functions */
-extern rt_uint8_t  Rxframeind; /* ZBIN ZBIN32, or ZHEX type of frame */
-extern char header_type;	   /* type of header received */
-extern rt_uint8_t  rx_header[4];		/* received header */
-extern rt_uint8_t  tx_header[4];		/* transmitted header */
-extern rt_uint8_t  Txfcs32;		/* TRUE means send binary frames with 32 bit FCS */
-extern rt_uint16_t Rxcount;	   /* count of data bytes received */
-extern rt_uint16_t Rxtimeout;  /* tenths of seconds to wait for something */
-extern rt_uint32_t Rxpos;	   /* received file position */
-extern rt_uint32_t Txpos;	   /* transmitted file position */
-extern rt_uint8_t  Txfcs32;	   /* TURE means send binary frames with 32 bit FCS */
+/* globals used by ZMODEM functions */
+extern rt_uint8_t  Rxframeind;     /* ZBIN ZBIN32, or ZHEX type of frame */
+extern char header_type;	       /* type of header received */
+extern rt_uint8_t  rx_header[4];   /* received header */
+extern rt_uint8_t  tx_header[4];   /* transmitted header */
+extern rt_uint8_t  Txfcs32;		   /* TRUE means send binary frames with 32 bit FCS */
+extern rt_uint16_t Rxcount;	       /* count of data bytes received */
+extern rt_uint16_t Rxtimeout;      /* tenths of seconds to wait for something */
+extern rt_uint32_t Rxpos;	       /* received file position */
+extern rt_uint32_t Txpos;	       /* transmitted file position */
+extern rt_uint8_t  Txfcs32;	       /* TURE means send binary frames with 32 bit FCS */
 
 /* ward Christensen / CP/M parameters - Don't change these! */
 #define ENQ     005
@@ -153,18 +153,18 @@ extern rt_uint8_t  Txfcs32;	   /* TURE means send binary frames with 32 bit FCS 
 #define ERRORMAX 5
 #define RETRYMAX 5
 #define WCEOT   (-10)
-#define PATHLEN  257	/* ready for 4.2 bsd ? */
-#define UNIXFILE 0xF000	/* the S_IFMT file mask bit for stat */
+ 
+ 
 
 
 
 #define BITRATE 115200
-#define TX_BUFFER_SIZE 1024
-#define RX_BUFFER_SIZE  1024	  /*sender or receiver's max buffer size */
-extern char ZF0_CMD;	/* local ZMODEM file conversion request */
-extern char ZF1_CMD;	/* local ZMODEM file management request */
-extern char ZF2_CMD;	/* local ZMODEM file management request */
-extern char ZF3_CMD;	/* local ZMODEM file management request */
+#define TX_BUFFER_SIZE  1024
+#define RX_BUFFER_SIZE  1024	  /* sender or receiver's max buffer size */
+extern char ZF0_CMD;	          /* local ZMODEM file conversion request */
+extern char ZF1_CMD;	          /* local ZMODEM file management request */
+extern char ZF2_CMD;	          /* local ZMODEM file management request */
+extern char ZF3_CMD;	          /* local ZMODEM file management request */
 extern rt_uint32_t Baudrate ;
 extern rt_uint32_t Left_bytes;
 extern rt_uint32_t Left_sizes;
@@ -191,7 +191,7 @@ struct zfile
 };
 extern struct finsh_shell* shell;
  
-#define ZDEBUG 1
+#define ZDEBUG 0
 /* sz.c */
 extern void zs_start(char *path);
 /* rz.c */
@@ -207,7 +207,7 @@ extern void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend)
 extern void zput_pos(rt_uint32_t pos);
 extern void zget_pos(rt_uint32_t pos);
 /* zdevice.c */
-extern rt_uint32_t get_device_speed(void);
+extern rt_uint32_t get_device_baud(void);
 extern void zsend_byte(rt_uint16_t c);
 extern void zsend_line(rt_uint16_t c);
 extern rt_int16_t zread_line(rt_uint16_t timeout);
