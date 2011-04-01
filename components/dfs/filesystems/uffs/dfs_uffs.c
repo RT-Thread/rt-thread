@@ -216,7 +216,7 @@ int dfs_uffs_lseek(struct dfs_fd* fd, rt_off_t offset)
 	fp = (uffs_Object*)(fd->data);
 	RT_ASSERT(fp != RT_NULL);
 
-	return uffs_SeekObject(fp, USEEK_SET, offset);
+	return uffs_SeekObject(fp, offset, USEEK_SET);
 }      
 
 int dfs_uffs_getdents(struct dfs_fd* fd, struct dirent* dir, rt_uint32_t count)   
