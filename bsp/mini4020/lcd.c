@@ -58,7 +58,6 @@ void radio_rtgui_init(void)
     rtgui_graphic_driver_add(&_rtgui_lcd_driver);
 
 
-	info_init();
 
 
 	
