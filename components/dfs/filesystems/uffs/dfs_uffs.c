@@ -37,36 +37,46 @@ int dfs_uffs_statfs(struct dfs_filesystem* fs, struct statfs *buf)
 }      
 
 int dfs_uffs_open(struct dfs_fd* fd)   
-{	
-	int ret=U_SUCC;
-
+{
 	if (fd->flags & DFS_O_DIRECTORY)
-	{//文件夹
-		uffs_DIR *dirp;
-		/* open directory */
+	{	/* directory */
+		uffs_DIR* dirp;
+		int oflag = UO_DIR;
+
+		if (fd->flags & DFS_O_CREAT) oflag |= UO_CREATE;
+		if (fd->flags & DFS_O_RDONLY) oflag |= UO_RDONLY;
+		if (fd->flags & DFS_O_WRONLY) oflag |= UO_WRONLY;
 		
-		if (fd->flags & DFS_O_CREAT)
-		{//创建
-			ret = uffs_open(fd->path,UO_CREATE|UO_DIR);
-			if(ret != U_SUCC)
+		if (oflag & UO_CREATE)
+		{	/* create directory right now */
+			uffs_Object* fp = uffs_GetObject();
+			if(fp == NULL) 
+			{
+				uffs_set_error(-UEMFILE);
+				return U_FAIL;
+			}
+	
+			if(uffs_OpenObject(fp, fd->path, oflag) != U_SUCC)
 			{
 				return U_FAIL;
 			}
+			/* release object hander */
+			uffs_PutObject(fp);	
 		}
 
+		/* use directory handler */
 		dirp = uffs_opendir(fd->path);
 		if(dirp == NULL) 
 		{
 			uffs_set_error(-UEMFILE);
-			ret = U_FAIL;
+			return U_FAIL;
 		}
-
 		fd->data = dirp;
 
 		return U_SUCC;
 	}
 	else
-	{//文件
+	{/* file */
 		uffs_Object *fp;
 		
 		int mode = UO_RDONLY;
@@ -80,17 +90,15 @@ int dfs_uffs_open(struct dfs_fd* fd)
 		/* Creates a new file. The function fails if the file is already existing. */
 		if (fd->flags & DFS_O_EXCL) mode |= UO_EXCL;
 
-		/* allocate a fd */
-		
-		/* open directory */
+		/* get an object hander */
 		fp = uffs_GetObject();
 		if(fp == NULL) 
 		{
 			uffs_set_error(-UEMFILE);
-			ret = U_FAIL;
+			return U_FAIL;
 		}
 
-		if(uffs_OpenObject(fp, fd->path, mode) == RT_EOK)
+		if(uffs_OpenObject(fp, fd->path, mode) == U_SUCC)
 		{
 			struct uffs_stat stat_buf;
 
@@ -104,19 +112,19 @@ int dfs_uffs_open(struct dfs_fd* fd)
 			{
 				fd->pos = uffs_SeekObject(fp, 0, USEEK_END);
 			}
-			ret = U_SUCC;
+			return U_SUCC;
 		}
 		else
 		{
 			/* open failed, return */
 			uffs_set_error(-uffs_GetObjectErr(fp));
+			/* release object hander */
 			uffs_PutObject(fp);
 			return U_FAIL;
 		}
-	}
-
-	return ret;  
+	} 
 }      
+
 
 int dfs_uffs_close(struct dfs_fd* fd)   
 {
@@ -125,21 +133,18 @@ int dfs_uffs_close(struct dfs_fd* fd)
 	if (fd->type == FT_DIRECTORY)
 	{
 		uffs_DIR* dirp;
-
 		dirp = (uffs_DIR*)(fd->data);
 		RT_ASSERT(dirp != RT_NULL);
 
-		uffs_closedir(dirp);
+		ret = uffs_closedir(dirp);
 	}
 	else if (fd->type == FT_REGULAR)
 	{
-		uffs_Object* fp;
-
-		fp = (uffs_Object*)(fd->data);
-
+		uffs_Object* fp = (uffs_Object*)(fd->data);
 		RT_ASSERT(fd != RT_NULL);
 
 		ret = uffs_CloseObject(fp);
+		/* release object hander */
 		uffs_PutObject(fp);
 	}
 
@@ -169,7 +174,7 @@ int dfs_uffs_read(struct dfs_fd* fd, void* buf, rt_size_t count)
 	RT_ASSERT(fd != RT_NULL);
 
 	/* update position */
-	fd->pos  = fp->pos;
+	fp->pos  = fd->pos;
 
 	return uffs_ReadObject(fp, buf, count);  
 }      
@@ -179,7 +184,7 @@ int dfs_uffs_write(struct dfs_fd* fd, const void* buf, rt_size_t count)
 	uffs_Object* fp;
 	u32 byte_write;
 	struct uffs_stat stat_buf;
-
+rt_kprintf("count=%d\n",count);
 	if(fd->type == FT_DIRECTORY)
 	{
 		return -DFS_STATUS_EISDIR;
@@ -225,6 +230,11 @@ int dfs_uffs_getdents(struct dfs_fd* fd, struct dirent* dir, rt_uint32_t count)
 	struct uffs_dirent *ent;
 	rt_uint32_t index;
 	struct dirent* d;
+
+	if(fd->type != FT_DIRECTORY)
+	{
+		return -DFS_STATUS_EISDIR;
+	}
 
 	dirp = (uffs_DIR*)(fd->data);
 	RT_ASSERT(dirp != RT_NULL);
@@ -276,18 +286,25 @@ int dfs_uffs_stat(struct dfs_filesystem* fs, const char* path, struct stat* st)
 
 	if (ret == U_SUCC)
 	{
+		rt_uint32_t mode=0;
 		st->st_dev = 0;
-		//st->st_mode = stat_buf.st_mode;
 		
-		st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-		DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
-		if (stat_buf.st_mode & US_IFDIR)
-		{
-			st->st_mode &= ~DFS_S_IFREG;
-			st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
-		}
-		if (stat_buf.st_mode & US_IREAD)
-			st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
+		if(stat_buf.st_mode & US_IFREG)	mode |= DFS_S_IFREG; 
+		if(stat_buf.st_mode & US_IFDIR)	mode |= DFS_S_IFDIR; 
+		if(stat_buf.st_mode & US_IRWXU)	mode |= DFS_S_IRWXU; 
+		if(stat_buf.st_mode & US_IRUSR)	mode |= DFS_S_IRUSR; 
+		if(stat_buf.st_mode & US_IWUSR)	mode |= DFS_S_IWUSR; 
+		if(stat_buf.st_mode & US_IXUSR)	mode |= DFS_S_IXUSR; 
+		if(stat_buf.st_mode & US_IRWXG)	mode |= DFS_S_IRWXG; 
+		if(stat_buf.st_mode & US_IRGRP)	mode |= DFS_S_IRGRP; 
+		if(stat_buf.st_mode & US_IWGRP)	mode |= DFS_S_IWGRP; 
+		if(stat_buf.st_mode & US_IXGRP)	mode |= DFS_S_IXGRP; 
+		if(stat_buf.st_mode & US_IRWXO)	mode |= DFS_S_IRWXO; 
+		if(stat_buf.st_mode & US_IROTH)	mode |= DFS_S_IROTH; 
+		if(stat_buf.st_mode & US_IWOTH)	mode |= DFS_S_IWOTH; 
+		if(stat_buf.st_mode & US_IXOTH)	mode |= DFS_S_IXOTH; 
+
+		st->st_mode = mode;
 		st->st_size = stat_buf.st_size;
 		st->st_mtime= stat_buf.st_mtime;
 		st->st_blksize= stat_buf.st_blksize;

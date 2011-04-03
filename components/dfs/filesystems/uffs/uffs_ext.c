@@ -19,7 +19,7 @@
 #include "uffs_ext.h"
 
 #include <dfs_posix.h>
-#include <filerw.h>
+#include <rtgui/filerw.h>
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

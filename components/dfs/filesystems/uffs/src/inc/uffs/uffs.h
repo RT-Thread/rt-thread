@@ -37,25 +37,25 @@
 
 #ifndef _UFFS_H_
 #define _UFFS_H_
-#include <dfs_def.h>
+#include <rtthread.h>
 #include "uffs/uffs_types.h"
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-#define UO_RDONLY		DFS_O_RDONLY	/** read only */
-#define UO_WRONLY		DFS_O_WRONLY	/** write only */
-#define UO_RDWR			DFS_O_RDWR		/** read and write */
-#define UO_APPEND		DFS_O_APPEND	/** append */
+#define UO_RDONLY		0x0000		/** read only */
+#define UO_WRONLY		0x0001		/** write only */
+#define UO_RDWR			0x0002		/** read and write */
+#define UO_APPEND		0x0008		/** append */
 
-#define UO_BINARY		0x0000			/** no used in uffs */
+#define UO_BINARY		0x0000		/** no used in uffs */
 
-#define UO_CREATE		DFS_O_CREAT		
-#define UO_TRUNC		DFS_O_TRUNC		
-#define UO_EXCL			DFS_O_EXCL
+#define UO_CREATE		0x0100
+#define UO_TRUNC		0x0200
+#define UO_EXCL			0x0400		
 
-#define UO_DIR			DFS_O_DIRECTORY	/** open a directory */
+#define UO_DIR			0x1000		/** open a directory */
 
 
 
@@ -85,9 +85,9 @@ extern "C"{
 #define _SEEK_SET		1		/** seek from beginning of file */
 #define _SEEK_END		2		/** seek from end of file */
 
-#define USEEK_SET		DFS_SEEK_SET  	/*0* 从当前点寻找 */
-#define USEEK_CUR		DFS_SEEK_CUR	/*1* 从文件的开始寻找 */
-#define USEEK_END		DFS_SEEK_END	/*2* 从文件的结尾寻找 */
+#define USEEK_CUR		_SEEK_CUR
+#define USEEK_SET		_SEEK_SET
+#define USEEK_END		_SEEK_END
 
 
 

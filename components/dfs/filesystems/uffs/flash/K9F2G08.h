@@ -2,6 +2,7 @@
 #define __K9F2G08_H__
 
 #include <rtdef.h>
+#include <s3c24x0.h>
 #include <nand.h>
 
 void K9F2G08_Program(u32 blockIndex, u32 srcAddress, u32 fileSize);

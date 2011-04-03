@@ -1,24 +1,40 @@
-//
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-//
-//
-// Use of this source code is subject to the terms of the Microsoft end-user
-// license agreement (EULA) under which you licensed this SOFTWARE PRODUCT.
-// If you did not accept the terms of the EULA, you are not authorized to use
-// this source code. For a copy of the EULA, please see the LICENSE.RTF on your
-// install media.
-//
-/*++
-THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-PARTICULAR PURPOSE.
---*/
-#ifndef __NAND_H__
-#define __NAND_H__
+/*
+ * uffs/flash/nand.h
+ *
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Info:
+ *	Contains standard defines and IDs for NAND flash devices
+ */
+#ifndef __RTT_DFS_NAND_H__
+#define __RTT_DFS_NAND_H__
 
-#include <s3c24x0.h>
-#include <uffs/uffs_types.h>
+/*
+ * Standard NAND flash commands
+ */ 
+#define NAND_CMD_READ0				0		/* Read0 */
+#define NAND_CMD_READ1				1		/* Read1 */
+#define NAND_CMD_RNDOUT				5		/* Random data output */
+#define NAND_CMD_PAGEPROG			0x10	/* Write phase 2 */
+#define NAND_CMD_READOOB			0x50	/* Read oob	*/
+#define NAND_CMD_ERASE1				0x60	/* Erase phase 1 */
+#define NAND_CMD_STATUS				0x70	/* Status read */
+#define NAND_CMD_STATUS_MULTI		0x71								 
+#define NAND_CMD_SEQIN				0x80	/* Write phase 1 */
+#define NAND_CMD_RNDIN				0x85	/* Random data input */
+#define NAND_CMD_READID				0x90	/* ReadID,all-purpose command */
+#define NAND_CMD_ERASE2				0xd0	/* Erase phase 2 */
+#define NAND_CMD_RESET				0xff	/* Reset */
+
+/* Extended commands for large page devices */
+#define NAND_CMD_READSTART			0x30
+#define NAND_CMD_RNDOUTSTART		0xE0
+#define NAND_CMD_CACHEDPROG			0x15
+#define NAND_CMD_READ_EDC			0x7b	
 
 /* define low accessing value */
 #define TOTAL_BLOCKS    	2048							/* total block of whole chip */
@@ -28,9 +44,9 @@ PARTICULAR PURPOSE.
 #define PAGE_SIZE			(PAGE_DATA_SIZE+PAGE_SPARE_SIZE)/* max size per whole page */
 #define BLOCK_DATA_SIZE 	(PAGE_DATA_SIZE*PAGES_PER_BLOCK)/* max size per block' */
 
-//bad flags offset in the oob area. 
-#define NAND_SMALL_BADBLOCK_POS		5	//small page FLASH
-#define NAND_LARGE_BADBLOCK_POS		0	//large page FLASH
+/* bad flags offset in the oob area. */
+#define NAND_SMALL_BADBLOCK_POS		5	/* small page FLASH	*/
+#define NAND_LARGE_BADBLOCK_POS		0	/* large page FLASH	*/
 
 /* Option constants for bizarre disfunctionality and real
 *  features
@@ -56,16 +72,14 @@ PARTICULAR PURPOSE.
 #define NAND_SAMSUNG_LP_OPTIONS \
 	(NAND_NO_PADDING | NAND_CACHEPRG | NAND_COPYBACK)
 
-
 struct nand_flash_dev 
-
 {
-	char 		  *name;	//chip name
-	int 		  id;		//chip ID
-	unsigned long pagesize;	//max pages
-	unsigned long chipsize;	//size of whole chip iMB
-	unsigned long blocksize;//size of block 
-	unsigned long options;	//option
+	char 		  *name;	/* chip name */
+	int 		  id;		/* chip ID */
+	unsigned long pagesize;	/* max pages */
+	unsigned long chipsize;	/* size of whole chip iMB */
+	unsigned long blocksize;/* size of block */
+	unsigned long options;	/* option */
 };
 
 struct nand_manufacturers 
@@ -74,4 +88,4 @@ struct nand_manufacturers
 	char * name;
 };
 
-#endif /*__NAND_H__*/
+#endif /*__RTT_DFS_NAND_H__*/

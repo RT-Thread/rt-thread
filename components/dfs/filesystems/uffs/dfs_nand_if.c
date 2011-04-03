@@ -10,6 +10,7 @@
  * \file nand flash interface example
  * \brief example for using nand flash driver and multiple partitions, with system memory allocator.
  * \author Ricky Zheng, created at 27 Nov, 2007
+ * \modify amsl, at 17 Jan, 2010 iamyhw@gmail.com 
  */
 
 #include <rtthread.h>
@@ -88,40 +89,42 @@ static int nand_is_badblock(uffs_Device *dev,u32 block)
 	return K9F2G08_Check_badblk(block);
 }
 
+/* The only uffs v1.3.2-4 can used. */
 static uffs_FlashOps nand_driver_ops = 
 {
-	nand_read_page_data,    //ReadPageData
-	nand_read_page_spare,   //ReadPageSpare
-	NULL,                	//ReadPageSpareWithLayout
-	nand_write_page_data,   //WritePageData
-	nand_write_page_spare,  //WritePageSpare
-	NULL,					//WriteFullPage		
-	nand_is_badblock,       //IsBadBlock
-	nand_mark_badblock,     //MarkBadBlock
-	nand_erase_block,       //EraseBlock
+	nand_read_page_data,    /* ReadPageData	*/
+	nand_read_page_spare,   /* ReadPageSpare */
+	NULL,                	/* ReadPageSpareWithLayout */
+	nand_write_page_data,   /* WritePageData */
+	nand_write_page_spare,  /* WritePageSpare */
+	NULL,					/* WriteFullPage */		
+	nand_is_badblock,       /* IsBadBlock */
+	nand_mark_badblock,     /* MarkBadBlock */
+	nand_erase_block,       /* EraseBlock */
 };
-
-//change these parameters to fit your nand flash specification
-//#define MAN_ID          	MAN_ID_SAMSUNG  // simulate Samsung's NAND flash
 
 static struct uffs_StorageAttrSt flash_storage = {0};
 
 static int initDevice(uffs_Device *dev)
 {
 	dev->ops = &nand_driver_ops;
-	return RT_EOK;
+	return U_SUCC;
 }
 
 static int releaseDevice(uffs_Device *dev)
 {
-	return RT_EOK;
+	return U_SUCC;
 }
 
 #include <dfs_uffs.h>
 
 static uffs_Device uffs_device = {0};
-/* define mount table,UFFS FS private data */
-/* it is absolute accessing for uffs.*/
+
+/* 
+ * define mount table,UFFS FS private data
+ * it is absolute accessing for uffs.
+ * set struct data on the RT-Thread device 
+ */
 static uffs_MountTable uffs_mount_table = 
 {
 	&uffs_device, 
@@ -175,40 +178,42 @@ struct nand_flash_dev* nand_init(u8* buf)
 	return RT_NULL;
 }
 
-/* RT-Thread Device Driver Interface */
-/* UFFS FileSystem NandFlash InterFace */
-/* we don't use entity, let uffs autarky */
+/* 
+ * RT-Thread Device Driver Interface
+ * UFFS FileSystem NandFlash InterFace
+ * we don't use entity, let uffs autarky 
+ */
 
 struct rt_device nand_device;
 
 static rt_err_t rt_nand_init(rt_device_t dev)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_nand_open(rt_device_t dev, u16 oflag)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_nand_close(rt_device_t dev)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_err_t rt_nand_control(rt_device_t dev, u8 cmd, void *args)
 {
-	return 0;
+	return RT_EOK;
 }
 
 static rt_size_t rt_nand_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {	
-	return 0;
+	return RT_EOK;
 }
 
 static rt_size_t rt_nand_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	return 0;
+	return RT_EOK;
 }
 
 void rt_hw_nand_init(void)
@@ -236,7 +241,7 @@ void rt_hw_nand_init(void)
 
 		/* about uffs codes */
 		entry = &uffs_mount_table;
-		//entry->lock = rt_sem_create("sem_nand0", 1, RT_IPC_FLAG_FIFO);//??it's lonely!how to do?
+		/* entry->lock = rt_sem_create("sem_nand0", 1, RT_IPC_FLAG_FIFO); */ /* it's lonely!how to do? */
 
 		uffs_MemSetupSystemAllocator(&(entry->dev->mem));
 		entry->dev->Init    = initDevice;
@@ -261,7 +266,7 @@ void rt_hw_nand_init(void)
 			extid >>= 2;
 			/* Calc blocksize. Blocksize is multiples of 64KiB */
 			chip->pages_per_block = ((64*1024)<<(extid & 0x03))/(chip->page_data_size);
-			/* The 5th id byte */
+			/* The 5th id byte,it is no use */
 			chip->total_blocks = (type->chipsize*1024*1024) / 
 								 chip->page_data_size / chip->pages_per_block;
 	
@@ -279,7 +284,7 @@ void rt_hw_nand_init(void)
 			chip->block_status_offs = NAND_SMALL_BADBLOCK_POS;
 		chip->ecc_opt    = UFFS_ECC_SOFT;    		/* ecc option, do not use ECC,debug */
 		chip->layout_opt = UFFS_LAYOUT_UFFS; 		/* let UFFS do the spare layout */
-#if (0)	//DEBUG trace facility 
+#if (0)	/* DEBUG trace facility */
 		rt_kprintf("page_data_size  = %d\n",chip->page_data_size);		
 		rt_kprintf("pages_per_block = %d\n",chip->pages_per_block);
 		rt_kprintf("spare_size      = %d\n",chip->spare_size);
@@ -289,5 +294,5 @@ void rt_hw_nand_init(void)
 	}
 }
 
-//end of file																				 
+/* end of file */																				 
 
