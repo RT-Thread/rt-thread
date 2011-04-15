@@ -39,20 +39,20 @@
         <option>
           <name>Input variant</name>
           <version>1</version>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>0</version>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>No specifier a, A, no specifier n, no float nor long long, no flags.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GOutputBinary</name>

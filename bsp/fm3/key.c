@@ -8,15 +8,18 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date                Author       Notes
  * 2011-03-03     lgnq
  */
 
 #include <rtthread.h>
 #include "key.h"
+#include "lcd.h"
 
+#ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+#endif
 
 static void key_io_init(void)
 {
@@ -30,9 +33,11 @@ static void key_io_init(void)
 
 static void key_thread_entry(void *parameter)
 {
+#ifdef RT_USING_RTGUI
     rt_time_t next_delay;
-    struct rtgui_event_kbd kbd_event;
     rt_uint8_t i;
+
+    struct rtgui_event_kbd kbd_event;
     
     key_io_init();
 
@@ -103,6 +108,53 @@ static void key_thread_entry(void *parameter)
         /* wait next key press */
         rt_thread_delay(next_delay);
     }
+#else
+extern struct rt_messagequeue mq;
+rt_time_t next_delay;
+rt_uint8_t i;
+struct lcd_msg msg;
+msg.type = KEY_MSG;
+
+key_io_init();
+
+while (1)
+{
+	msg.key = NO_KEY;
+
+	next_delay = RT_TICK_PER_SECOND/10;
+
+	if (KEY_ENTER_GETVALUE() == 0 )
+	{
+		msg.key  = KEY_ENTER;
+	}
+
+	if (KEY_DOWN_GETVALUE() == 0)
+	{
+		msg.key  = KEY_DOWN;
+	}
+
+	if (KEY_UP_GETVALUE() == 0)
+	{
+		msg.key  = KEY_UP;
+	}
+
+	if (KEY_RIGHT_GETVALUE() == 0)
+	{
+		msg.key  = KEY_RIGHT;
+	}
+
+	if (KEY_LEFT_GETVALUE() == 0)
+	{
+		msg.key  = KEY_LEFT;
+	}
+
+	rt_mq_send(&mq, &msg, sizeof(msg));
+
+	/* wait next key press */
+	rt_thread_delay(next_delay);
+}
+
+#endif
 }
 
 static rt_thread_t key_thread;

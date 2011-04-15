@@ -1,9 +1,13 @@
 #include <rtthread.h>
 #include <rthw.h>
+#include "cpuusage.h"
+#include "lcd.h"
+
+#ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-#include "cpuusage.h"
+#endif
 
 #define CPU_USAGE_CALC_TICK	10
 #define CPU_USAGE_LOOP		100
@@ -73,19 +77,30 @@ void cpu_usage_init()
 	/* set idle thread hook */
 	rt_thread_idle_sethook(cpu_usage_idle_hook);
 }
-
+extern struct rt_messagequeue mq;
 extern rt_thread_t info_tid;
 static void cpu_thread_entry(void *parameter)
 {
+#ifdef RT_USING_RTGUI
     struct rtgui_event_command ecmd;
     
     RTGUI_EVENT_COMMAND_INIT(&ecmd);
     ecmd.type = RTGUI_CMD_USER_INT;
     ecmd.command_id = CPU_UPDATE;
-    
+#else
+	struct lcd_msg msg;
+#endif
+
     while (1)
     {
+#ifdef RT_USING_RTGUI
         rtgui_thread_send(info_tid, &ecmd.parent, sizeof(ecmd));
+#else
+		msg.type = CPU_MSG;
+		msg.major = cpu_usage_major;
+		msg.minor = cpu_usage_minor;
+		rt_mq_send(&mq, &msg, sizeof(msg));
+#endif
         rt_thread_delay(20);
     }
 }

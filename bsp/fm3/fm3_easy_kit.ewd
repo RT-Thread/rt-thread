@@ -45,7 +45,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\debugger\Fujitsu\iomb9bf506.ddf</state>
+          <state></state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -117,7 +117,7 @@
         </option>
         <option>
           <name>FlashLoadersV3</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\Fujitsu\MB9BF506.board</state>
+          <state>$TOOLKIT_DIR$\config\flashloader\</state>
         </option>
         <option>
           <name>OCImagesSuppressCheck1</name>

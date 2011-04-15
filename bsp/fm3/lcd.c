@@ -14,8 +14,15 @@
 
 #include <rtthread.h>
 #include "lcd.h"
+#include "font.h"
 
 static rt_uint8_t gui_disp_buf[GUI_LCM_YMAX/8][GUI_LCM_XMAX];
+const unsigned char BIT_MASK[8] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+/* simple font: ' ', '0'~'9','a'~'z','A'~'Z' */
+extern const unsigned char  FONTTYPE8_8[][8];
+
+rt_uint32_t x;
+rt_uint32_t y;
 
 struct rtgui_lcd_device
 {
@@ -291,6 +298,139 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
     return RT_EOK;
 }
 
+/*******************************************************************************
+* Function Name  : LCD_FillAll
+* Description    : Fill the whole LCD.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void LCD_FillAll(unsigned char*	buffer)
+{
+  unsigned char i,j = GUI_LCM_XMAX;
+  unsigned char* p = buffer;  
+	
+  for (i=0; i<GUI_LCM_PAGE; i++)
+  { 
+    LCD_WriteCmd(Set_Page_Addr_0|i);	
+    LCD_WriteCmd(Set_ColH_Addr_0);		
+    LCD_WriteCmd(Set_ColL_Addr_0);
+    j = GUI_LCM_XMAX;
+    while (j--)
+    {
+      LCD_WriteData(*p++);
+      Delay();
+    }
+  }
+}
+
+/*******************************************************************************
+* Function Name  : LCD_ClearSCR
+* Description    : clean screen
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void LCD_ClearSCR(void)
+{
+  for(unsigned char i=0; i<GUI_LCM_PAGE; i++)
+  { 
+    for(unsigned char j = 0; j < GUI_LCM_XMAX; j++) 
+      gui_disp_buf[i][j] = 0;
+  }
+  LCD_FillAll((unsigned char*)gui_disp_buf);
+}
+
+/****************************************************************************
+* Function Name  : LCD_UpdatePoint
+* Description    : refresh the point in screen 
+* Input          : x      X-coordinate
+                   y      Y-coordinate
+* Output         : None
+* Return         : None
+****************************************************************************/
+
+void  LCD_UpdatePoint(unsigned int x, unsigned int y)
+{
+  unsigned char coll, colh, page;
+  page = y / 8;
+  coll = x & 0x0f;
+  colh = x >> 4;
+	
+  LCD_WriteCmd(Set_Page_Addr_0 | page);	        // page no.
+  LCD_WriteCmd(Set_ColH_Addr_0 | colh);		// fixed col first addr
+  LCD_WriteCmd(Set_ColL_Addr_0 | coll);
+  LCD_WriteData(gui_disp_buf[page][x]);
+}
+
+/****************************************************************************
+* Function Name  : LCD_PutChar
+* Description    : output a char to screen 
+                  (the char only can be ' ','0'~'9','A'~'Z','a'~'z')
+* Input          : x      X-coordinate
+                   y      Y-coordinate
+                   ch     character
+* Output         : None
+* Return         : 1    Success
+                   0    Fail
+****************************************************************************/
+unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
+{  
+   unsigned char data;
+
+   if( x >=(GUI_LCM_XMAX-8) ) return(0);
+   if( y >=(GUI_LCM_YMAX-8) ) return(0);
+   
+   if(ch == 0x20)
+     ch -= 0x20;
+     else if((ch >= 0x30)&&(ch <= 0x39))
+       ch -= 0x2f;
+       else if((ch >= 0x41)&&(ch <= 0x5a))
+         ch -= 0x36;
+         else if((ch >= 0x61)&&(ch <= 0x7a))
+          ch -= 0x3C;
+          else
+            return(0);
+    
+   for(unsigned char i = 0; i < 8; i++)
+   {  
+      data = FONTTYPE8_8[ch][i];
+      
+      for(unsigned char j = 0; j < 8; j++)
+      {  
+         if( (data&BIT_MASK[j]) == 0)
+           gui_disp_buf[y / 8][x] &= (~(0x01 << ( y % 8)));
+         else  
+           gui_disp_buf[y / 8][x] |= (0x01 <<( y % 8));
+         LCD_UpdatePoint(x, y);
+         x ++;
+      }
+      x -= 8;								
+      y++;									
+   }
+   
+   return(1);
+}
+
+/****************************************************************************
+* Function Name  : LCD_PutString
+* Description    : output string to screen 
+* Input          : x      X-coordinate
+                   y      Y-coordinate
+                  str     pointer to string
+* Output         : None
+* Return         : None
+****************************************************************************/
+void  LCD_PutString(unsigned long x, unsigned long y, char *str)
+{  
+  while(1)
+  {  
+    if( (*str)=='\0' ) break;
+    if( LCD_PutChar(x, y, *str++) == 0 ) break;
+    x += 6;								
+  }
+}
+
 static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
     switch (cmd)
@@ -307,6 +447,12 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
         case RT_DEVICE_CTRL_LCD_DISPLAY_OFF:
             LCD_WriteCmd(Display_Off);
             break;        
+        case RT_DEVICE_CTRL_LCD_PUT_STRING:
+            LCD_PutString(x, y, (rt_uint8_t*)args);
+            break;
+        case RT_DEVICE_CTRL_LCD_CLEAR_SCR:
+            LCD_ClearSCR();
+            break;
     }
     return RT_EOK;
 }

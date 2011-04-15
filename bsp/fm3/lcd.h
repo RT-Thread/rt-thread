@@ -161,6 +161,27 @@ LCD_DATA[0..7]		PORT5.[0..7]
 #define RT_DEVICE_CTRL_LCD_UPDATE_POINT    		8
 #define RT_DEVICE_CTRL_LCD_DISPLAY_ON    		9
 #define RT_DEVICE_CTRL_LCD_DISPLAY_OFF    		10
+#define RT_DEVICE_CTRL_LCD_PUT_STRING    		11
+
+enum 
+{
+	ADC_MSG,
+	KEY_MSG,
+	CPU_MSG,
+	MAX_MSG,
+};
+
+struct lcd_msg
+{
+	rt_uint8_t type;
+	rt_uint16_t adc_value;
+	rt_uint8_t key;
+	rt_uint16_t major;
+	rt_uint16_t minor;
+};
+
+extern rt_uint32_t x;
+extern rt_uint32_t y;
 
 void rt_hw_lcd_init(void);
 

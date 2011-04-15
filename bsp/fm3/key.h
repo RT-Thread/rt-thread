@@ -21,6 +21,7 @@
 #define KEY_LEFT      (1<<2)
 #define KEY_RIGHT     (1<<3)
 #define KEY_UP        (1<<4)
+#define NO_KEY        (1<<5)
 
 #define KEY_MASK        (KEY_DOWN | KEY_ENTER | KEY_LEFT | KEY_RIGHT | KEY_UP)
 #define KEY_PFR         (FM3_GPIO->PFR7)
