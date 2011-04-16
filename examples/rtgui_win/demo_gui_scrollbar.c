@@ -13,13 +13,13 @@ rtgui_view_t *demo_gui_scrollbar(rtgui_view_t* parent_view)
 	view = demo_view_create(parent_view, "ScrollBar View");
 	
 	rtgui_label_create(view, "horizontal bar:", 5, 40, 150, 20);
-	hbar = rtgui_scrollbar_create(view, 5, 70, 20, 100, RTGUI_HORIZONTAL);
+	hbar = rtgui_scrollbar_create(view, 5, 65, 20, 100, RTGUI_HORIZONTAL);
 	rtgui_scrollbar_set_range(hbar, 10);
 	rtgui_scrollbar_set_page_step(hbar, 5);
 	rtgui_scrollbar_set_line_step(hbar, 1);
 
-	rtgui_label_create(view, "vertical bar:", 5, 100, 150, 20);
-	vbar = rtgui_scrollbar_create(view, 10, 140, 20, 80, RTGUI_VERTICAL);
+	rtgui_label_create(view, "vertical bar:", 5, 90, 150, 20);
+	vbar = rtgui_scrollbar_create(view, 10, 115, 20, 80, RTGUI_VERTICAL);
 	rtgui_scrollbar_set_range(vbar, 5);
 	rtgui_scrollbar_set_page_step(vbar, 3);
 	rtgui_scrollbar_set_line_step(vbar, 1);

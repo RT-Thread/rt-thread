@@ -153,10 +153,11 @@ static void demo_ntitlewin_onbutton(PVOID wdt, rtgui_event_t* event)
 	delta_x += 20;
 	delta_y += 20;
 	/* 创建一个窗口，风格为无标题及无边框 */
-	win = rtgui_win_create(parent,"no title", &rect, RTGUI_WIN_NOBORDER);
+	win = rtgui_win_create(parent,"no title", &rect, RTGUI_WIN_DEFAULT);
 	RTGUI_WIDGET_BACKGROUND(win) = white;
+	win->level = RTGUI_WIN_LEVEL_EXPERT;
 	/* 创建一个文本标签 */
-	label = rtgui_label_create(win, "无边框窗口", 10, 20, 100, 20);
+	label = rtgui_label_create(win, "无标题栏窗口", 10, 30, 100, 20);
 	RTGUI_WIDGET_BACKGROUND(label) = white;
 
 	button = rtgui_button_create(win,"关闭", 65, 85, 60, 25);

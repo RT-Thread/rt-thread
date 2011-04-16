@@ -24,24 +24,30 @@ static rt_uint16_t demo_number = 0;
 /* 显示前一个演示视图 */
 void demo_gui_prev(PVOID wdt, rtgui_event_t *event)
 {
+	rtgui_panel_t *panel = rtgui_panel_get();
+
 	if (demo_current != 0)
 	{
 		RTGUI_WIDGET_HIDE(demo_list[demo_current]);
 		demo_current --;
 		RTGUI_WIDGET_UNHIDE(demo_list[demo_current]);
-		rtgui_widget_update(demo_list[demo_current]);
+		rtgui_panel_update_clip(panel);
+		rtgui_panel_redraw(&RTGUI_WIDGET_EXTENT(demo_list[demo_current]));
 	}
 }
 
 /* 显示下一个演示视图 */
 void demo_gui_next(PVOID wdt, rtgui_event_t *event)
 {
+	rtgui_panel_t *panel = rtgui_panel_get();
+
 	if (demo_current + 1< demo_number)
 	{
 		RTGUI_WIDGET_HIDE(demo_list[demo_current]);
 		demo_current ++;
 		RTGUI_WIDGET_UNHIDE(demo_list[demo_current]);
-		rtgui_widget_update(demo_list[demo_current]);
+		rtgui_panel_update_clip(panel);
+		rtgui_panel_redraw(&RTGUI_WIDGET_EXTENT(demo_list[demo_current]));
 	}
 }
 
@@ -93,25 +99,24 @@ static void rtgui_panel_entry(void* parameter)
 
 
 	/* 初始化各个例子的视图 */
-//#if RT_VERSION == 4
-//	demo_view_benchmark(view);
-//#endif
+#if RT_VERSION == 4
+	demo_gui_benchmark(view);
+#endif
 
-//	demo_view_dc(view);
-//#if RT_VERSION == 4
-//#ifdef RTGUI_USING_TTF
-//	demo_view_ttf(view);
-//#endif
-//#endif
+/*	demo_view_dc(view);
+#if RT_VERSION == 4
+#ifdef RTGUI_USING_TTF
+	demo_view_ttf(view);
+#endif
+#endif */
 
 #ifndef RTGUI_USING_SMALL_SIZE
 	demo_gui_dc_buffer(view);
 #endif
-//	demo_gui_animation(view);
-//#ifndef RTGUI_USING_SMALL_SIZE
-//	demo_view_buffer_animation(view);
-//	// demo_view_instrument_panel(view);
-//#endif
+	demo_gui_animation(view);
+#ifndef RTGUI_USING_SMALL_SIZE
+	demo_gui_buffer_animation(view);
+#endif
 	demo_gui_window(view);
 	demo_gui_label(view);
 	demo_gui_button(view);
@@ -121,24 +126,24 @@ static void rtgui_panel_entry(void* parameter)
 	demo_gui_radiobox(view);
 	demo_gui_textbox(view);
 	demo_gui_listbox(view);
-//////	demo_gui_menu(view); /* debugging */
-//////	demo_gui_listctrl(view); /* debugging */
+	demo_gui_menu(view);
+	demo_gui_listctrl(view);
 	demo_gui_combobox(view);
 	demo_gui_slider(view);
 
-//////#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
-//////	demo_gui_image(view); /* debugging */
-//////#endif
-//#ifdef RT_USING_MODULE	
-//#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
-//	demo_gui_module(view);
-//#endif
-//#endif
-//	demo_gui_listview(view);
-//	demo_gui_listview_icon(view);
-//#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
-//	demo_gui_fn(view);
-//#endif
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+	demo_gui_image(view);
+#endif
+#ifdef RT_USING_MODULE	
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+	demo_gui_module(view);
+#endif
+#endif
+	/* demo_gui_listview(view); */
+	/* demo_gui_listview_icon(view); */
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+	demo_gui_fnview(view);
+#endif
 
 	rtgui_view_show(demo_list[demo_current]);
 

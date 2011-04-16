@@ -6,7 +6,7 @@
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/listctrl.h>
-/*
+
 static rtgui_image_t* item_icon = RT_NULL;
 static const char * image_xpm[] = {
 	"16 16 106 2",
@@ -132,7 +132,7 @@ static const char * image_xpm[] = {
 	"    $.G I $.%.R &.Y *.& =.      ",
 	"  -.;.>.,.L L ,.& M             ",
 	"                                "};
-*/
+
 static struct list_item
 {
 	const char* name;
@@ -163,7 +163,7 @@ static struct list_item
 	{"index19", "m19", 30, RT_NULL},
 };
 
-void _rtgui_listctrl_item_draw(struct rtgui_listctrl *list, struct rtgui_dc* dc, rtgui_rect_t* rect, rt_uint16_t index)
+void _rtgui_listctrl_item_draw(rtgui_listctrl_t *list, struct rtgui_dc* dc, rtgui_rect_t* rect, rt_uint16_t index)
 {
 	char age_str[8];
 	rtgui_rect_t item_rect;
@@ -214,23 +214,21 @@ static void on_items(rtgui_widget_t* widget, struct rtgui_event* event)
 /* 创建用于演示label控件的视图 */
 rtgui_view_t* demo_gui_listctrl(rtgui_view_t* parent_view)
 {
-	rtgui_rect_t rect;
 	rtgui_view_t* view;
-	rtgui_label_t* label;
 	rtgui_listctrl_t* box;
 
 	/* 先创建一个演示用的视图 */
 	view = demo_view_create(parent_view, "List Control Demo");
 
-	/* if (item_icon == RT_NULL)
+	if (item_icon == RT_NULL)
 		item_icon = rtgui_image_create_from_mem("xpm",
 			(const rt_uint8_t*)image_xpm, sizeof(image_xpm), RT_TRUE);
-	items[1].image = item_icon; */
+	items[1].image = item_icon; 
 
 	rtgui_label_create(view, "List Control: ", 5, 40, 120, 20);
 
-	box = rtgui_listctrl_create((rt_uint32_t)items, sizeof(items)/sizeof(items[0]), &rect,
-		_rtgui_listctrl_item_draw);
+	box = rtgui_listctrl_create(view, (rt_uint32_t)items, sizeof(items)/sizeof(items[0]), 
+			5, 60, 210, 100, _rtgui_listctrl_item_draw);
 	rtgui_listctrl_set_onitem(box, on_items);
 
 	return view;

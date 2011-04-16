@@ -37,8 +37,8 @@ rtgui_view_t *demo_gui_progressbar(rtgui_view_t* parent_view)
 	rtgui_label_create(view, "水平进度条:", 5, 40, 100, 20);
 	hbar = rtgui_progressbar_create(view, RTGUI_HORIZONTAL, 100, 10, 70, 150, 15);
 
-	rtgui_label_create(view, "垂直进度条:", 5, 100, 100, 20);
-	vbar = rtgui_progressbar_create(view, RTGUI_VERTICAL, 100, 10, 130, 15, 60);
+	rtgui_label_create(view, "垂直进度条:", 5, 90, 100, 20);
+	vbar = rtgui_progressbar_create(view, RTGUI_VERTICAL, 100, 10, 110, 15, 60);
 
 	timer = rtgui_timer_create(20, RT_TIMER_FLAG_PERIODIC, hbar_timeout, hbar);
 	rtgui_timer_start(timer);

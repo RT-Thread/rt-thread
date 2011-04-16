@@ -4,7 +4,7 @@
 #include "touch.h"
 
 void rt_hw_lcd_init(void);
-void rt_key_init(void);
+void rt_hw_key_init(void);
 void rtgui_panel_init(void);
 
 
@@ -15,7 +15,7 @@ void rtgui_startup()
     rtgui_system_server_init();
 
 	/* 按键初始化 */
-	//rt_key_hw_init();
+	rt_hw_key_init();
 	/* LCD驱动初始化 */
 	rt_hw_lcd_init();
 	rtgui_touch_hw_init();

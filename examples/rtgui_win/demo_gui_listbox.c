@@ -154,6 +154,14 @@ void user_add_one_item(PVOID wdt, rtgui_event_t *event)
 	}	 	
 }
 
+void user_set_one_item(PVOID wdt, rtgui_event_t *event)
+{
+	if(__lbox != RT_NULL)
+	{
+		rtgui_listbox_update_aloc(__lbox, __lbox->item_count-1);
+	}	 	
+}
+
 static rt_bool_t on_items(PVOID wdt, rtgui_event_t* event)
 {
 	rtgui_listbox_t* box;
@@ -180,13 +188,16 @@ rtgui_view_t* demo_gui_listbox(rtgui_view_t* parent_view)
 			(const rt_uint8_t*)image_xpm, sizeof(image_xpm), RT_TRUE);
 	items[1].image = item_icon; */
 
-	rtgui_label_create(view, "listbox: ", 5, 40, 100, 20);
-	__lbox = rtgui_listbox_create(view, 5, 60, 120, 115, RTGUI_BORDER_SUNKEN);
+	rtgui_label_create(view, "listbox: ", 5, 35, 100, 20);
+	__lbox = rtgui_listbox_create(view, 5, 55, 120, 115, RTGUI_BORDER_SUNKEN);
 	rtgui_listbox_set_items(__lbox, items, RT_COUNT(items));
 	rtgui_listbox_set_onitem(__lbox, on_items);
 
-	button = rtgui_button_create(view, "Add", 5, 185, 50, 20);
+	button = rtgui_button_create(view, "Add", 5, 175, 50, 20);
 	rtgui_button_set_onbutton(button, user_add_one_item);
+
+	button = rtgui_button_create(view, "last", 65, 175, 50, 20);
+	rtgui_button_set_onbutton(button, user_set_one_item);
 
 	return view;
 }

@@ -26,16 +26,16 @@ rtgui_view_t* demo_gui_radiobox(rtgui_view_t* parent_view)
 	rtgui_radiobox_create(view, "radio2", 5, 60, 100, 20, group);
 	
 	/* 使用方法二 */
-	rbox = rtgui_radiobox_create(view, "radio-x", 5, 100, 100, 20, RT_NULL);
+	rbox = rtgui_radiobox_create(view, "radio-x", 5, 90, 100, 20, RT_NULL);
 	/* 也可以从radiobox控件中获得一个组对象 */
 	group = rtgui_radiobox_get_group(rbox);
 
 	_group = rtgui_radiobox_create_group();
-	rtgui_radiobox_create(view, "radio_m", 20,120, 100, 20, _group);
-	rtgui_radiobox_create(view, "radio_n", 20,140, 100, 20, _group); 
+	rtgui_radiobox_create(view, "radio_m", 20,110, 100, 20, _group);
+	rtgui_radiobox_create(view, "radio_n", 20,130, 100, 20, _group); 
 	/* 设定一个初始值 */
 	rtgui_rb_group_set_sel(_group, 1);
-	rtgui_radiobox_create(view, "radio-y", 5, 160, 100, 20, group);
+	rtgui_radiobox_create(view, "radio-y", 5, 150, 100, 20, group);
 
 	/* 可以为组绑定一个变量,之后可以使用该变量获得group的当前焦点 */
 	rtgui_rb_group_bind(group, &bind_var);
