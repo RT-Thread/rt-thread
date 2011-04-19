@@ -1,4 +1,5 @@
 import os
+import sys
 import string
 from SCons.Script import *
 
@@ -86,6 +87,14 @@ def _make_path_relative(origin, dest):
         # return os.path.join(*segments).replace('\\', '/')
         return os.path.join(*segments)
 
+def IARProject(target, script):
+    import xml.etree.ElementTree as etree
+    project = file(target, "wb")
+    project_path = os.path.dirname(os.path.abspath(target))
+    
+    tree = etree.parse('template.ewp')
+    tree.write('project.ewp')
+
 def MDKProject(target, script):
     template = file('template.Uv2', "rb")
     lines = template.readlines()
@@ -104,6 +113,7 @@ def MDKProject(target, script):
 
     # write file
 
+    ProjectFiles = []
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
@@ -140,8 +150,12 @@ def MDKProject(target, script):
             fn = node.rfile()
             name = fn.name
             path = os.path.dirname(fn.abspath)
+            basename = os.path.basename(path)
             path = _make_path_relative(project_path, path)
             path = os.path.join(path, name)
+            if ProjectFiles.count(name):
+                name = basename + '_' + name
+            ProjectFiles.append(name)
             lines.insert(line_index, 'File %d,%d,<%s><%s>\r\n'
                 % (group_index, _get_filetype(name), path, name))
             line_index += 1
@@ -243,7 +257,7 @@ def PrepareBuilding(env, root_directory):
     Rtt_Root = root_directory
 
     # patch for win32 spawn
-    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
+    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc' and sys.version_info < (2, 6, 0):
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
@@ -335,6 +349,9 @@ def DefineGroup(name, src, depend, **parameters):
 def EndBuilding(target):
     import rtconfig
     Env.AddPostAction(target, rtconfig.POST_ACTION)
+
+    if GetOption('target') == 'iar':
+        IARProject('project.ewp', Projects)
 
     if GetOption('target') == 'mdk':
         MDKProject('project.Uv2', Projects)
