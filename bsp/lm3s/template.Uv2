@@ -7,14 +7,14 @@ Target (RT-Thread-lm3s), 0x0004 // Tools: 'ARM-ADS'
 
 
 Options 1,0,0  // Target 'RT-Thread-lm3s'
- Device (LM3S6918)
+ Device (LM3S8962)
  Vendor (Luminary Micro)
  Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0-0x3FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
  FlashUt ()
  StupF ("STARTUP\Luminary\Startup.s" ("Luminary Startup Code"))
  FlashDR (UL2CM3(-UU0101L5E -O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0LM3S_256 -FS00 -FL040000))
- DevID (4722)
- Rgf (LM3Sxxxx.H)
+ DevID (4285)
+ Rgf (LM3Sxxx.H)
  Mem ()
  C ()
  A ()
@@ -28,17 +28,17 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  EnvBin ()
  EnvInc ()
  EnvLib ()
- EnvReg (ÿLuminary\)
- OrgReg (ÿLuminary\)
+ EnvReg (Luminary\)
+ OrgReg (Luminary\)
  TgStat=16
- OutDir (.\)
+ OutDir (.\objs\)
  OutName (rtthread-lm3s)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=1
- LstDir (.\)
+ LstDir (.\objs\)
  HexSel=1
  MG32K=0
  TGMORE=0
@@ -88,11 +88,11 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDMC ()
  ADSLDIF ()
  ADSLDDW ()
-  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S6918)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S6918)
+  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S8962)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S8962)
   OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\lmidk-agdi.dll)
- FLASH3 ("" ())
+ FLASH3 ()
  FLASH4 ()
 EndOpt
 
