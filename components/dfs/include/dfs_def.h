@@ -174,15 +174,15 @@
 #define DFS_STATUS_ENOTEMPTY	39		/* Directory not empty */
 
 /* Operation flags */
-#define DFS_O_RDONLY		0000000
-#define DFS_O_WRONLY		0000001
-#define DFS_O_RDWR			0000002
-#define DFS_O_ACCMODE		0000003
-#define DFS_O_CREAT			0000100
-#define DFS_O_EXCL			0000200
-#define DFS_O_TRUNC			0001000
-#define DFS_O_APPEND		0002000
-#define DFS_O_DIRECTORY		0200000
+#define DFS_O_RDONLY		0x0000000
+#define DFS_O_WRONLY		0x0000001
+#define DFS_O_RDWR			0x0000002
+#define DFS_O_ACCMODE		0x0000003
+#define DFS_O_CREAT			0x0000100
+#define DFS_O_EXCL			0x0000200
+#define DFS_O_TRUNC			0x0001000
+#define DFS_O_APPEND		0x0002000
+#define DFS_O_DIRECTORY		0x0200000
 
 /* File flags */
 #define DFS_F_OPEN			0x01000000
