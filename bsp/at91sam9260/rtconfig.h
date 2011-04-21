@@ -120,7 +120,7 @@
 
 /* SECTION: lwip, a lightweight TCP/IP protocol stack */
 /* Using lightweight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 #define RT_LWIP_DNS
 
 /* Trace LwIP protocol */

@@ -116,7 +116,12 @@ void rtthread_startup(void)
 #endif
 
 #ifdef RT_USING_LWIP
+	/* register ethernetif device */
+	eth_system_device_init();
 	rt_hw_macb_init();
+	/* init lwip system */
+	lwip_sys_init();
+	rt_kprintf("TCP/IP initialized!\n");
 #endif
 
 	/*init all registed devices */
