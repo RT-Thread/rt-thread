@@ -12,6 +12,7 @@
  * 2009-10-16     Bernard      first version
  * 2010-09-20	  richard	   modified rtgui_dc_draw_round_rect
  * 2010-09-27     Bernard      fix draw_mono_bmp issue
+ * 2011-04-25     Bernard      fix fill polygon issue, which found by loveic
  */
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
@@ -464,7 +465,7 @@ void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, in
 	/*
 	* Allocate temp array, only grow array
 	*/
-	poly_ints = (int *) rt_malloc(sizeof(int) * count);
+	poly_ints = (int *) rtgui_malloc(sizeof(int) * count);
 	if (poly_ints == RT_NULL) return ; /* no memory, failed */
 
 	/*
@@ -522,6 +523,9 @@ void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, in
 			rtgui_dc_draw_hline(dc, xa, xb, y);
 		}
 	}
+
+	/* release memory */
+	rtgui_free(poly_ints);
 }
 
 void rtgui_dc_draw_circle(struct rtgui_dc* dc, int x, int y, int r)
