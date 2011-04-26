@@ -333,9 +333,11 @@ void LCD_FillAll(unsigned char*	buffer)
 *******************************************************************************/
 void LCD_ClearSCR(void)
 {
-  for(unsigned char i=0; i<GUI_LCM_PAGE; i++)
+  unsigned char i, j;
+
+  for(i=0; i<GUI_LCM_PAGE; i++)
   { 
-    for(unsigned char j = 0; j < GUI_LCM_XMAX; j++) 
+    for(j = 0; j < GUI_LCM_XMAX; j++) 
       gui_disp_buf[i][j] = 0;
   }
   LCD_FillAll((unsigned char*)gui_disp_buf);
@@ -377,6 +379,7 @@ void  LCD_UpdatePoint(unsigned int x, unsigned int y)
 unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
 {  
    unsigned char data;
+   unsigned char i, j;
 
    if( x >=(GUI_LCM_XMAX-8) ) return(0);
    if( y >=(GUI_LCM_YMAX-8) ) return(0);
@@ -392,11 +395,11 @@ unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
           else
             return(0);
     
-   for(unsigned char i = 0; i < 8; i++)
+   for(i = 0; i < 8; i++)
    {  
       data = FONTTYPE8_8[ch][i];
       
-      for(unsigned char j = 0; j < 8; j++)
+      for(j = 0; j < 8; j++)
       {  
          if( (data&BIT_MASK[j]) == 0)
            gui_disp_buf[y / 8][x] &= (~(0x01 << ( y % 8)));
@@ -448,7 +451,7 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
             LCD_WriteCmd(Display_Off);
             break;        
         case RT_DEVICE_CTRL_LCD_PUT_STRING:
-            LCD_PutString(x, y, (rt_uint8_t*)args);
+            LCD_PutString(x, y, (char*)args);
             break;
         case RT_DEVICE_CTRL_LCD_CLEAR_SCR:
             LCD_ClearSCR();

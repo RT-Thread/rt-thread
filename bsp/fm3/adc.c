@@ -80,7 +80,6 @@ rt_uint16_t adc_value;
 static void adc_thread_entry(void *parameter)
 {
     rt_device_t device;
-    device = rt_device_find("adc");
     
 #ifdef RT_USING_RTGUI
     struct rtgui_event_command ecmd;
@@ -91,6 +90,8 @@ static void adc_thread_entry(void *parameter)
 #else
     struct lcd_msg msg;
 #endif	
+
+    device = rt_device_find("adc");
 
     while(1)
     {

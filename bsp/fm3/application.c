@@ -48,6 +48,7 @@ void rt_init_thread_entry(void *parameter)
 	/* startup rtgui */
 	rtgui_startup();
 #else
+	{
 	char buf[20] = {'\0'};
     struct lcd_msg msg;
     rt_device_t device;   
@@ -113,6 +114,7 @@ void rt_init_thread_entry(void *parameter)
     		}
         }
     }
+	}
 #endif
 }
 

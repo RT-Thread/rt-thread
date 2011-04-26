@@ -1,3 +1,6 @@
+#include <rtthread.h>
+
+#ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
@@ -7,7 +10,6 @@
 
 #include "adc.h"
 #include "cpuusage.h"
-#include <rtthread.h>
 
 extern rt_uint16_t adc_value;
 static rt_uint8_t index = 0 ;
@@ -209,3 +211,4 @@ void rtgui_startup()
 	info_init();
 }
 
+#endif

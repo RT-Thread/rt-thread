@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date                Author       Notes
- * 2011-03-03     lgnq
+ * 2011-03-03     	   lgnq
  */
 
 #include <rtthread.h>
@@ -109,51 +109,49 @@ static void key_thread_entry(void *parameter)
         rt_thread_delay(next_delay);
     }
 #else
-extern struct rt_messagequeue mq;
-rt_time_t next_delay;
-rt_uint8_t i;
-struct lcd_msg msg;
-msg.type = KEY_MSG;
-
-key_io_init();
-
-while (1)
-{
-	msg.key = NO_KEY;
-
-	next_delay = RT_TICK_PER_SECOND/10;
-
-	if (KEY_ENTER_GETVALUE() == 0 )
+	extern struct rt_messagequeue mq;
+	rt_time_t next_delay;
+	struct lcd_msg msg;
+	msg.type = KEY_MSG;
+	
+	key_io_init();
+	
+	while (1)
 	{
-		msg.key  = KEY_ENTER;
+		msg.key = NO_KEY;
+	
+		next_delay = RT_TICK_PER_SECOND/10;
+	
+		if (KEY_ENTER_GETVALUE() == 0 )
+		{
+			msg.key  = KEY_ENTER;
+		}
+	
+		if (KEY_DOWN_GETVALUE() == 0)
+		{
+			msg.key  = KEY_DOWN;
+		}
+	
+		if (KEY_UP_GETVALUE() == 0)
+		{
+			msg.key  = KEY_UP;
+		}
+	
+		if (KEY_RIGHT_GETVALUE() == 0)
+		{
+			msg.key  = KEY_RIGHT;
+		}
+	
+		if (KEY_LEFT_GETVALUE() == 0)
+		{
+			msg.key  = KEY_LEFT;
+		}
+	
+		rt_mq_send(&mq, &msg, sizeof(msg));
+	
+		/* wait next key press */
+		rt_thread_delay(next_delay);
 	}
-
-	if (KEY_DOWN_GETVALUE() == 0)
-	{
-		msg.key  = KEY_DOWN;
-	}
-
-	if (KEY_UP_GETVALUE() == 0)
-	{
-		msg.key  = KEY_UP;
-	}
-
-	if (KEY_RIGHT_GETVALUE() == 0)
-	{
-		msg.key  = KEY_RIGHT;
-	}
-
-	if (KEY_LEFT_GETVALUE() == 0)
-	{
-		msg.key  = KEY_LEFT;
-	}
-
-	rt_mq_send(&mq, &msg, sizeof(msg));
-
-	/* wait next key press */
-	rt_thread_delay(next_delay);
-}
-
 #endif
 }
 
