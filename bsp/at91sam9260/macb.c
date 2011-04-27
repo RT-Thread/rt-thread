@@ -58,6 +58,9 @@ struct macb_dma_desc {
 #define MACB_RX_INT_FLAGS	(MACB_BIT(RCOMP) | MACB_BIT(RXUBR)	\
 				 | MACB_BIT(ISR_ROVR))
 
+/* Duplex, half or full. */
+#define DUPLEX_HALF		0x00
+#define DUPLEX_FULL		0x01
 
 #define MAX_ADDR_LEN 6
 struct rt_macb_eth
@@ -83,6 +86,12 @@ struct rt_macb_eth
 	/* interface address info. */
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];		/* hw address	*/
 	unsigned short		phy_addr;
+
+	struct rt_semaphore mdio_bus_lock;
+	rt_uint32_t  speed;
+	rt_uint32_t  duplex;
+	rt_uint32_t link;
+	struct rt_timer  timer;
 };
 static struct rt_macb_eth macb_device;
 static struct rt_semaphore sem_ack, sem_lock;
@@ -100,14 +109,11 @@ static void rt_macb_isr(int irq)
 	rt_device_t dev = &(macb->parent.parent);
 	rt_uint32_t status, rsr, tsr;
 
-	//rt_kprintf("%s:irq enter\n", __func__);
 	status = macb_readl(macb, ISR);
 
 	while (status) {
 
 		if (status & MACB_RX_INT_FLAGS) {
-			//rt_kprintf("macb recv isr\n");
-			//macb_writel(macb, IDR, MACB_RX_INT_FLAGS);
 			rsr = macb_readl(macb, RSR);
 			macb_writel(macb, RSR, rsr);
 			/* a frame has been received */
@@ -118,13 +124,11 @@ static void rt_macb_isr(int irq)
 		if (status & (MACB_BIT(TCOMP) | MACB_BIT(ISR_TUND) |
 			    MACB_BIT(ISR_RLE)))
 		{
-			//rt_kprintf("macb tx complete\n");
 			tsr = macb_readl(macb, TSR);
 			macb_writel(macb, TSR, tsr);
 			/* One packet sent complete */
 			rt_sem_release(&sem_ack);
 		}
-			//macb_tx(bp);
 
 		/*
 		 * Link change detection isn't possible with RMII, so we'll
@@ -152,6 +156,7 @@ static void macb_mdio_write(struct rt_macb_eth *macb, rt_uint8_t reg, rt_uint16_
 	unsigned long netstat;
 	unsigned long frame;
 
+	rt_sem_take(&macb->mdio_bus_lock, RT_WAITING_FOREVER);
 	netctl = macb_readl(macb, NCR);
 	netctl |= MACB_BIT(MPE);
 	macb_writel(macb, NCR, netctl);
@@ -171,6 +176,7 @@ static void macb_mdio_write(struct rt_macb_eth *macb, rt_uint8_t reg, rt_uint16_
 	netctl = macb_readl(macb, NCR);
 	netctl &= ~MACB_BIT(MPE);
 	macb_writel(macb, NCR, netctl);
+	rt_sem_release(&macb->mdio_bus_lock);
 }
 
 static rt_uint16_t macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
@@ -179,6 +185,7 @@ static rt_uint16_t macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
 	unsigned long netstat;
 	unsigned long frame;
 
+	rt_sem_take(&macb->mdio_bus_lock, RT_WAITING_FOREVER);
 	netctl = macb_readl(macb, NCR);
 	netctl |= MACB_BIT(MPE);
 	macb_writel(macb, NCR, netctl);
@@ -199,6 +206,7 @@ static rt_uint16_t macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
 	netctl = macb_readl(macb, NCR);
 	netctl &= ~MACB_BIT(MPE);
 	macb_writel(macb, NCR, netctl);
+	rt_sem_release(&macb->mdio_bus_lock);
 
 	return MACB_BFEXT(DATA, frame);
 }
@@ -232,7 +240,6 @@ static void macb_phy_reset(rt_device_t dev)
 
 static int macb_phy_init(rt_device_t dev)
 {
-	//struct eth_device *netdev = &macb->netdev;
 	struct rt_macb_eth *macb = dev->user_data;
 	rt_uint32_t ncfgr;
 	rt_uint16_t phy_id, status, adv, lpa;
@@ -251,7 +258,7 @@ static int macb_phy_init(rt_device_t dev)
 		/* Try to re-negotiate if we don't have link already. */
 		macb_phy_reset(dev);
 
-		for (i = 0; i < MACB_LINK_TIMEOUT / 100; i++) {   //modified by luohui@2009-11-27 CFG_MACB_AUTONEG_TIMEOUT
+		for (i = 0; i < MACB_LINK_TIMEOUT / 100; i++) {
 			status = macb_mdio_read(macb, MII_BMSR);
 			if (status & BMSR_LSTATUS)
 				break;
@@ -285,6 +292,45 @@ static int macb_phy_init(rt_device_t dev)
 		macb_writel(macb, NCFGR, ncfgr);
 		return 1;
 	}
+}
+
+void macb_update_link(struct rt_macb_eth *macb)
+{
+	rt_device_t dev = &macb->parent.parent;
+	rt_uint32_t status, status_change = 0;
+	rt_uint32_t link;
+	rt_uint32_t media;
+	rt_uint16_t adv, lpa;
+
+	status = macb_mdio_read(macb, MII_BMSR);
+	if ((status & BMSR_LSTATUS) == 0)
+		link = 0;
+	else
+		link = 1;
+
+	if (link != macb->link) {
+		macb->link = link;
+		status_change = 1;
+	}
+
+	if (status_change) {
+		if (macb->link) {
+			adv = macb_mdio_read(macb, MII_ADVERTISE);
+			lpa = macb_mdio_read(macb, MII_LPA);
+			media = mii_nway_result(lpa & adv);
+			macb->speed = (media & (ADVERTISE_100FULL | ADVERTISE_100HALF)
+				 ? 100 : 10);
+			macb->duplex = (media & ADVERTISE_FULL) ? 1 : 0;
+			rt_kprintf("%s: link up (%dMbps/%s-duplex)\n",
+			       dev->parent.name, macb->speed,
+			       DUPLEX_FULL == macb->duplex ? "Full":"Half");
+			netif_set_link_up(macb->parent.netif);
+		} else {
+			rt_kprintf("%s: link down\n", dev->parent.name);
+			netif_set_link_down(macb->parent.netif);
+		}
+	}
+
 }
 
 /* RT-Thread Device Interface */
@@ -325,27 +371,17 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 	macb_writel(macb, TBQP, macb->tx_ring_dma);
 	
 	/* set hardware address */
-	//hwaddr_bottom = cpu_to_le32(*((u32 *)netdev->enetaddr));
 	hwaddr_bottom = (*((rt_uint32_t *)macb->dev_addr));
 	macb_writel(macb, SA1B, hwaddr_bottom);
-	//hwaddr_top = cpu_to_le16(*((u16 *)(netdev->enetaddr + 4)));
 	hwaddr_top = (*((rt_uint16_t *)(macb->dev_addr + 4)));
 	macb_writel(macb, SA1T, hwaddr_top);
 
 	
 	/* choose RMII or MII mode. This depends on the board */
 #ifdef CONFIG_RMII
-#if defined(CONFIG_AVR32)
-	macb_writel(macb, USRIO, 0);
-#else
 	macb_writel(macb, USRIO, MACB_BIT(RMII) | MACB_BIT(CLKEN));
-#endif
-#else
-#if defined(CONFIG_AVR32)
-	macb_writel(macb, USRIO, MACB_BIT(MII));
 #else
 	macb_writel(macb, USRIO, MACB_BIT(CLKEN));
-#endif
 #endif /* CONFIG_RMII */
 
 	if (!macb_phy_init(dev))
@@ -367,6 +403,14 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 	/* instal interrupt */
 	rt_hw_interrupt_install(AT91SAM9260_ID_EMAC, rt_macb_isr, RT_NULL);
 	rt_hw_interrupt_umask(AT91SAM9260_ID_EMAC);
+
+	rt_timer_init(&macb->timer, "link_timer", 
+		macb_update_link, 
+		macb, 
+		RT_TICK_PER_SECOND, 
+		RT_TIMER_FLAG_PERIODIC);
+
+	rt_timer_start(&macb->timer);
 	
 	return RT_EOK;
 }
@@ -424,7 +468,6 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 	
 	/* lock macb device */
 	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	//rt_kprintf("macb tx enter, packetlen=%d\n", p->tot_len);
 	buf = rt_malloc(p->tot_len);
 	if (!buf) {
 		rt_kprintf("%s:alloc buf failed\n", __func__);
@@ -435,30 +478,8 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 
 	for (q = p; q != NULL; q = q->next)
 	{
-		//len = q->len;
-		//paddr = (unsigned long)q->payload;
 		memcpy(bufptr, q->payload, q->len);
 		bufptr += q->len;
-
-		/* write data to device */
-		/*ctrl = len & TXBUF_FRMLEN_MASK;
-		ctrl |= TXBUF_FRAME_END;
-		if (tx_head == (MACB_TX_RING_SIZE - 1)) {
-			ctrl |= TXBUF_WRAP;
-			macb->tx_head = 0;
-		} else
-			macb->tx_head++;
-
-		macb->tx_ring[tx_head].ctrl = ctrl;
-		macb->tx_ring[tx_head].addr = paddr;
-		macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));*/
-		
-		/*
-		 * I guess this is necessary because the networking core may
-		 * re-use the transmit buffer as soon as we return...
-		 */
-		
-		
 	}
 
 	ctrl = p->tot_len & TXBUF_FRMLEN_MASK;
@@ -472,10 +493,6 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 	macb->tx_ring[tx_head].ctrl = ctrl;
 	macb->tx_ring[tx_head].addr = (rt_uint32_t)buf;
 	macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));
-	//rt_uint32_t netcr = macb_readl(macb, NCR); //e0: DMA bus error: HRESP not OK
-	//rt_kprintf("NCR = 0x%08x\n");
-	//macb_writel(macb, NCR, netcr | MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));
-
 	
 	/* unlock macb device */
 	rt_sem_release(&sem_lock);
@@ -506,7 +523,6 @@ static void reclaim_rx_buffers(struct rt_macb_eth *macb,
 		i++;
 	}
 
-	//barrier();
 	macb->rx_tail = new_tail;
 }
 
@@ -518,18 +534,14 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 	rt_uint32_t len;
 	unsigned int rx_tail = macb->rx_tail;
 	void *buffer;
-	//int length;
 	int wrapped = 0;
 	rt_uint32_t status;
 
-	//rt_uint8_t* data;
 	struct pbuf* q;
 	rt_uint8_t *buf = RT_NULL;
-	//rt_kprintf("macb rx enter\n");
 	
 	/* lock macb device */
 	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	//rt_kprintf("macb rx enter2\n");
 	
 	for (;;) {
 		if (!(macb->rx_ring[rx_tail].addr & RXADDR_USED))
@@ -545,7 +557,6 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 		if (status & RXBUF_FRAME_END) {
 			buffer = macb->rx_buffer + 128 * macb->rx_tail;
 			len = status & RXBUF_FRMLEN_MASK;
-			//rt_kprintf("%s:recv %d bytes\n", __func__, len);
 			p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
 			if (!p)
 			{
@@ -588,9 +599,6 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				}
 			
 			}
-
-			//NetReceive(buffer, length);
-			/* allocate buffer */
 			
 			if (++rx_tail >= MACB_RX_RING_SIZE)
 				rx_tail = 0;
@@ -603,7 +611,6 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 			}
 		}
 	}
-	
 	/* unlock macb device */
 	rt_sem_release(&sem_lock);
 
@@ -615,6 +622,11 @@ void macb_gpio_init()
 	/* Pins used for MII and RMII */
 	at91_sys_write(AT91_PIOA + PIO_PDR, (1 << 19)|(1 << 17)|(1 << 14)|(1 << 15)|(1 << 18)|(1 << 16)|(1 << 12)|(1 << 13)|(1 << 21)|(1 << 20));
 	at91_sys_write(AT91_PIOA + PIO_ASR, (1 << 19)|(1 << 17)|(1 << 14)|(1 << 15)|(1 << 18)|(1 << 16)|(1 << 12)|(1 << 13)|(1 << 21)|(1 << 20));
+
+#ifndef GONFIG_RMII
+	at91_sys_write(AT91_PIOA + PIO_PDR, (1 << 22)|(1 << 23)|(1 << 24)|(1 << 25)|(1 << 26)|(1 << 27)|(1 << 28)|(1 << 29));
+	at91_sys_write(AT91_PIOA + PIO_ASR, (1 << 22)|(1 << 23)|(1 << 24)|(1 << 25)|(1 << 26)|(1 << 27)|(1 << 28)|(1 << 29));
+#endif
 }
 
 void macb_initialize()
@@ -655,6 +667,7 @@ void rt_hw_macb_init()
 {
 	at91_sys_write(AT91_PMC + AT91_PMC_PCER, 1 << AT91SAM9260_ID_EMAC); //enable macb clock
 	macb_gpio_init();
+	rt_memset(&macb_device, 0, sizeof(macb_device));
 	macb_initialize();
 	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
@@ -677,10 +690,8 @@ void rt_hw_macb_init()
 	macb_device.parent.eth_rx     = rt_macb_rx;
 	macb_device.parent.eth_tx     = rt_macb_tx;
 
+	rt_sem_init(&macb_device.mdio_bus_lock, "mdio_bus_lock", 1, RT_IPC_FLAG_FIFO);
+
 	eth_device_init(&(macb_device.parent), "e0");
-	//eth_system_device_init();
-	//set_if("192.168.1.30", "192.168.1.1", "255.255.255.0");
-	/* instal interrupt */
-	//rt_hw_interrupt_install(AT91SAM9260_ID_EMAC, rt_macb_isr, RT_NULL);
-	//rt_hw_interrupt_umask(AT91SAM9260_ID_EMAC);
+	
 }
