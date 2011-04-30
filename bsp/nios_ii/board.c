@@ -70,7 +70,7 @@ static void rt_hw_show_info(void)
     rt_kprintf("\r\n\r\n---------- board info ----------\r\n");
     rt_kprintf("ALT_DEVICE_FAMILY:    %s\r\n",ALT_DEVICE_FAMILY);
     rt_kprintf("ALT_CPU_ARCHITECTURE: %s\r\n",ALT_CPU_ARCHITECTURE);
-    rt_kprintf("ALT_CPU_CPU_FREQ:     %u\r\n",ALT_CPU_CPU_FREQ);
+    rt_kprintf("ALT_CPU_CPU_FREQ:     %uHz\r\n",ALT_CPU_CPU_FREQ);
     rt_kprintf("memory size:          at 0x%08X 0x%08X byte\r\n",SDRAM_BASE,SDRAM_SPAN);
 }
 
