@@ -16,7 +16,8 @@
 
 #else
 
-#ifdef __CC_ARM                				/* ARM Compiler 	*/
+/* ARM compiler and IAR compiler */
+#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)	
 #include <stddef.h>
 #include <stdarg.h>
 #include <string.h>
@@ -186,7 +187,6 @@ typedef rt_uint16_t mode_t;
 #define O_DIRECTORY		0200000
 #endif
 
-#elif defined (__IAR_SYSTEMS_ICC__)			/* IAR Compiler		*/
 #elif defined (__GNUC__)        			/* GNU GCC Compiler, with minilibc */
 #endif
 
