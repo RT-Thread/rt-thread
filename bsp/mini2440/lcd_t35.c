@@ -348,10 +348,6 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 	case RT_DEVICE_CTRL_LCD_GET_BPP:
 		*((rt_uint16_t*)args) = lcd->byte_per_pixel;			
 		break;
-		
-	case RT_DEVICE_CTRL_LCD_GET_FRAMEBUFFER:
-		*((rt_uint16_t*)args) = lcd->hw_framebuffer;			
-		break;		
 	}
 
 	return RT_EOK;
