@@ -1,3 +1,6 @@
+ /* system.h - SOPC Builder system and BSP software package information */
+ #include "system.h"
+
 /* RT-Thread config file */
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
@@ -13,7 +16,7 @@
 
 /* Tick per Second */
 /* TIMER_TICKS_PER_SEC define in system.h */
-#define RT_TICK_PER_SECOND	1000 //TIMER_TICKS_PER_SEC
+#define RT_TICK_PER_SECOND	TIMER_TICKS_PER_SEC
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -109,6 +112,9 @@
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
+
+/* Using DHCP */
+//#define RT_LWIP_DHCP
 
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
