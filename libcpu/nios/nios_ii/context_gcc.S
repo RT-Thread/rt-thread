@@ -213,6 +213,11 @@ rt_hw_context_switch:
 .global rt_hw_context_switch_interrupt
 .type rt_hw_context_switch_interrupt, %function
 rt_hw_context_switch_interrupt:
+    /* if( rt_thread_switch_interrput_flag != 0 ) _from_thread_not_change */
+    ldw r2,%gprel(rt_thread_switch_interrput_flag)(gp)
+    bne r2,zero,_from_thread_not_change
+
+_from_thread_change:
     /* save ea -> rt_current_thread_entry */
     addi ea,ea,-4
     stw ea,%gprel(rt_current_thread_entry)(gp)
@@ -224,6 +229,7 @@ rt_hw_context_switch_interrupt:
     /* update rt_interrupt_from_thread */
     stw r4,%gprel(rt_interrupt_from_thread)(gp)
 
+_from_thread_not_change:
     /* update rt_interrupt_to_thread */
     stw r5,%gprel(rt_interrupt_to_thread)(gp)
 
