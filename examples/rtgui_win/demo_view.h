@@ -25,6 +25,7 @@ rtgui_view_t* demo_gui_combobox(rtgui_view_t* parent_view);
 rtgui_view_t* demo_gui_slider(rtgui_view_t* parent_view);
 rtgui_view_t* demo_gui_image(rtgui_view_t* parent_view);
 rtgui_view_t* demo_gui_fnview(rtgui_view_t* parent_view);
+rtgui_view_t* demo_gui_rttab(rtgui_view_t* parent_view);
 
 #endif
 

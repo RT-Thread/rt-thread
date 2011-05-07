@@ -4,8 +4,10 @@ Import('projects')
 src = Split("""
 gui_init.c
 demo_gui_main.c
+demo_gui_benchmark.c
 demo_gui_button.c
 demo_gui_dc_buffer.c
+demo_gui_buffer_animation.c
 demo_gui_label.c
 demo_gui_radiobox.c
 demo_gui_window.c
@@ -15,6 +17,12 @@ demo_gui_scrollbar.c
 demo_gui_textbox.c
 demo_gui_listbox.c
 demo_gui_combobox.c
+demo_gui_menu.c
+demo_gui_listctrl.c
+demo_gui_slider.c
+demo_gui_image.c
+demo_gui_fnview.c
+demo_gui_rttab.c
 """)
 
 group = {}

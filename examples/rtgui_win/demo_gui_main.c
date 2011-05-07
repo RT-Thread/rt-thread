@@ -144,7 +144,7 @@ static void rtgui_panel_entry(void* parameter)
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 	demo_gui_fnview(view);
 #endif
-
+	demo_gui_rttab(view);
 	rtgui_view_show(demo_list[demo_current]);
 
 	//}}} END ADD CODE.
