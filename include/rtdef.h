@@ -13,6 +13,7 @@
  * 2008-07-12     Bernard	   remove all rt_int8, rt_uint32_t etc typedef
  * 2010-10-26     yi.qiu       add module support
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
+ * 2011-05-09     Bernard      use builtin va_arg in GCC 4.x
  */
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
@@ -97,17 +98,25 @@ typedef rt_uint32_t						rt_off_t;		/**< Type for offset			*/
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-        typedef void *__sys_va_list;
-        typedef __sys_va_list va_list;
-        #define __va_rounded_size(type)	\
-            (((sizeof (type) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))
-        #define va_start(ap, lastarg)	\
-            (ap = ((char *) &(lastarg) + __va_rounded_size(lastarg)))
-        #define va_end(ap)	((void)0)
-        /*	little endian */
-        #define va_arg(ap, type)	\
-            (ap = (__sys_va_list) ((char *) (ap) + __va_rounded_size (type)),  \
-            *((type *) (void *) ((char *) (ap) - __va_rounded_size (type))))
+		#if __GNUC__ < 4
+			typedef void *__sys_va_list;
+			typedef __sys_va_list va_list;
+			#define __va_rounded_size(type)	\
+				(((sizeof (type) + sizeof (int) - 1) / sizeof (int)) * sizeof (int))
+			#define va_start(ap, lastarg)	\
+				(ap = ((char *) &(lastarg) + __va_rounded_size(lastarg)))
+			#define va_end(ap)	((void)0)
+			/*	little endian */
+			#define va_arg(ap, type)	\
+				(ap = (__sys_va_list) ((char *) (ap) + __va_rounded_size (type)),  \
+				*((type *) (void *) ((char *) (ap) - __va_rounded_size (type))))
+		#else
+			typedef __builtin_va_list __gnuc_va_list;
+			typedef __gnuc_va_list va_list;
+			#define va_start(v,l)	__builtin_va_start(v,l)
+			#define va_end(v)		__builtin_va_end(v)
+			#define va_arg(v,l)		__builtin_va_arg(v,l)
+		#endif
     #endif
 
     #define SECTION(x) 					__attribute__((section(x)))
