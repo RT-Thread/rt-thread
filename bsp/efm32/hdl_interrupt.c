@@ -563,7 +563,7 @@ void I2C0_IRQHandler(void)
  * @note
  *
  *********************************************************************/
-rt_err_t efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
+void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 {
 	switch (hook->type)
 	{

@@ -54,8 +54,11 @@ struct efm32_usart_device_t
 #define USART_WAIT_TIME_TX		(RT_TICK_PER_SECOND / 100 * 3)
 
 #define USART_STATE_CONSOLE 	(1 << 0)
-#define USART_STATE_TX_BUSY 	(1 << 1)
-#define USART_STATE_RX_BUSY 	(1 << 2)
+#define USART_STATE_SYNC		(1 << 1)
+#define USART_STATE_MASTER		(1 << 2)
+#define USART_STATE_AUTOCS 		(1 << 3)
+#define USART_STATE_TX_BUSY 	(1 << 4)
+#define USART_STATE_RX_BUSY 	(1 << 5)
 
 
 /* Exported functions --------------------------------------------------------- */

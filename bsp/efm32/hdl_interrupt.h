@@ -55,7 +55,7 @@ typedef struct
 //void SVC_Handler(void);
 //void DebugMon_Handler(void);
 void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user);
-rt_err_t efm32_irq_hook_register(efm32_irq_hook_init_t *hook);
+void efm32_irq_hook_register(efm32_irq_hook_init_t *hook);
 
 #endif /* __HDL_INTERRUPT_H__ */
 

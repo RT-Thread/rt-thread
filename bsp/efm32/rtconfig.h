@@ -39,7 +39,7 @@
 //#define RT_ADC_DEBUG
 //#define RT_ACMP_DEBUG
 //#define RT_TIMER_DEBUG
-//#define RT_USART_DEBUG
+#define RT_USART_DEBUG
 
 /* Using Hook */
 //#define RT_USING_HOOK
@@ -82,13 +82,26 @@
 
 /* USART Device for Console */
 #if defined(EFM32_G290_DK)
-#define RT_USING_USART0			0x2UL
-#define RT_USART0_NAME			"debug"
-#define RT_USART0_USING_DMA		0x0UL
+#define RT_USING_USART1			0x0UL
+#define RT_USART1_NAME			"debug"
+#define RT_USART1_USING_DMA		0x0UL
 #elif defined(EFM32_G890_STK)
 #define RT_USING_USART1			0x1UL
 #define RT_USART1_NAME			"debug"
 #define RT_USART1_USING_DMA		0x0UL
+#endif
+
+/* SECTION: SPI options */
+#if defined(EFM32_G290_DK)
+#define RT_USING_USART0			0x2UL
+#define RT_USART0_SYNC_MODE		0x1UL 	/* Master */
+#define RT_USART0_NAME			"spi0"
+#define RT_USART0_USING_DMA		0x1UL
+#elif defined(EFM32_G890_STK)
+//#define RT_USING_USART0			0x0UL
+//#define RT_USART0_SYNC_MODE		0x1UL 	/* Master */
+//#define RT_USART0_NAME			"spi0"
+//#define RT_USART0_USING_DMA		0x1UL
 #endif
 
 /* SECTION: RTC options */
@@ -107,7 +120,7 @@
 
 /* SECTION: Serial options */
 #if defined(EFM32_G290_DK)
-#define RT_CONSOLE_DEVICE		0x0UL
+#define RT_CONSOLE_DEVICE		0x1UL
 #elif defined(EFM32_G890_STK)
 #define RT_CONSOLE_DEVICE		0x1UL
 #endif

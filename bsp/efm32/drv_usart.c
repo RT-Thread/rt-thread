@@ -13,6 +13,7 @@
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
  * 2011-01-17	onelife		Merge with serial.c
+ * 2011-05-06	onelife		Add sync mode (SPI) support
  *
  * @section Change Logs of serial.c
  * 2009-02-05	Bernard		first version
@@ -31,8 +32,20 @@
 #include "drv_usart.h"
 
 /* Private typedef -------------------------------------------------------------*/
+union efm32_usart_init_t
+{
+	USART_InitAsync_TypeDef 	async;
+	USART_InitSync_TypeDef		sync;
+};							
+
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_USART_DEBUG
+#define usart_debug(format,args...) 		rt_kprintf(format, ##args)
+#else
+#define usart_debug(format,args...)
+#endif
+
 /* Private variables ------------------------------------------------------------*/
 #ifdef RT_USING_USART0
 #if (RT_USING_USART0 > 3)
@@ -128,64 +141,64 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 	RT_ASSERT(dev != RT_NULL);
 
 	struct efm32_usart_device_t	*usart;
-	IRQn_Type 					rxIrq;
-	
+
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
-
-	//if (usart->state & USART_STATE_CONSOLE)
-	{	/* Allocate new RX buffer */
-		struct efm32_usart_int_mode_t	*int_mode;
-		
-		int_mode = (struct efm32_usart_int_mode_t *)(usart->rx_mode);
-
-		if ((int_mode->data_ptr = rt_malloc(SERIAL_RX_BUFFER_SIZE)) == RT_NULL)
-		{
-#ifdef RT_USART_DEBUG
-			rt_kprintf("no memory for serial RX buffer\n");
-#endif
-			return -RT_ENOMEM;
-		}
-		rt_memset(int_mode->data_ptr, 0, SERIAL_RX_BUFFER_SIZE);
-		int_mode->data_size = SERIAL_RX_BUFFER_SIZE;
-		int_mode->read_index = 0;
-		int_mode->save_index = 0;
-	}
 	
-	/* Enable TX/RX interrupt */	
-	switch (usart->unit)
+	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
-	case 0:
-		rxIrq 		= USART0_RX_IRQn;
-		break;
-	case 1:
-		rxIrq		= USART1_RX_IRQn;
-		break;
-	case 2:
-		rxIrq		= USART2_RX_IRQn;
-		break;
-	}
+		IRQn_Type 					rxIrq;
+		
+		//if (usart->state & USART_STATE_CONSOLE)
+		{	/* Allocate new RX buffer */
+			struct efm32_usart_int_mode_t	*int_mode;
+			
+			int_mode = (struct efm32_usart_int_mode_t *)(usart->rx_mode);
 
-	/* Enable RX interrupts */
-	usart->usart_device->IEN 	= USART_IEN_RXDATAV;
+			if ((int_mode->data_ptr = rt_malloc(USART_RX_BUFFER_SIZE)) == RT_NULL)
+			{
+				usart_debug("USART: no memory for RX buffer\n");
+				return -RT_ENOMEM;
+			}
+			rt_memset(int_mode->data_ptr, 0, USART_RX_BUFFER_SIZE);
+			int_mode->data_size = USART_RX_BUFFER_SIZE;
+			int_mode->read_index = 0;
+			int_mode->save_index = 0;
+		}
+		
+		/* Enable TX/RX interrupt */	
+		switch (usart->unit)
+		{
+		case 0:
+			rxIrq 		= USART0_RX_IRQn;
+			break;
+		case 1:
+			rxIrq		= USART1_RX_IRQn;
+			break;
+		case 2:
+			rxIrq		= USART2_RX_IRQn;
+			break;
+		}
+
+		/* Enable RX interrupts */
+		usart->usart_device->IEN 	= USART_IEN_RXDATAV;
+
+		/* Enable IRQ */
+		if (oflag != RT_DEVICE_OFLAG_WRONLY)
+		{
+			NVIC_ClearPendingIRQ(rxIrq);
+			NVIC_SetPriority(rxIrq, EFM32_IRQ_PRI_DEFAULT);
+			NVIC_EnableIRQ(rxIrq);
+		}
+	}
 	usart->usart_device->IFC 	= _USART_IFC_MASK;
-
-	/* Enable IRQ */
-	if (oflag != RT_DEVICE_OFLAG_WRONLY)
-	{
-		NVIC_ClearPendingIRQ(rxIrq);
-		NVIC_SetPriority(rxIrq, EFM32_IRQ_PRI_DEFAULT);
-		NVIC_EnableIRQ(rxIrq);
-	}
-	if (oflag != RT_DEVICE_OFLAG_RDONLY)
+	
+	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (oflag != RT_DEVICE_OFLAG_RDONLY))
 	{
 		/* DMA IRQ is enabled by DMA_Init() */
 		NVIC_SetPriority(DMA_IRQn, EFM32_IRQ_PRI_DEFAULT);
 	}
 
-#ifdef RT_USART_DEBUG
-		rt_kprintf("USART%d: Open with flag %x\n", usart->unit, oflag);
-#endif
-
+	usart_debug("USART%d: Open with flag %x\n", usart->unit, oflag);
 	return RT_EOK;
 }
 
@@ -205,14 +218,16 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
  *********************************************************************/
 static rt_err_t rt_usart_close(rt_device_t dev)
 {
-	struct efm32_usart_int_mode_t *int_rx;
+	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
+	{
+		struct efm32_usart_int_mode_t *int_rx;
 
-	int_rx = (struct efm32_usart_int_mode_t *)\
-		(((struct efm32_usart_device_t *)(dev->user_data))->rx_mode);
-	
-	rt_free(int_rx->data_ptr);
-	int_rx->data_ptr = RT_NULL;
-	
+		int_rx = (struct efm32_usart_int_mode_t *)\
+			(((struct efm32_usart_device_t *)(dev->user_data))->rx_mode);
+		
+		rt_free(int_rx->data_ptr);
+		int_rx->data_ptr = RT_NULL;
+	}
 	return RT_EOK;
 }
 
@@ -242,17 +257,19 @@ static rt_err_t rt_usart_close(rt_device_t dev)
 static rt_size_t rt_usart_read (
 	rt_device_t 	dev, 
 	rt_off_t 		pos, 
-	void* 			buffer, 
+	void 			*buffer, 
 	rt_size_t 		size)
 {
-	rt_uint8_t* ptr;
+	rt_uint8_t 	*ptr;
 	rt_err_t 	err_code;
+	rt_size_t 	read_len;
 
-	ptr = buffer;
 	err_code = RT_EOK;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
+		ptr = buffer;
+
 		/* interrupt mode Rx */
 		while (size)
 		{
@@ -273,7 +290,7 @@ static rt_size_t rt_usart_read (
 
 				/* move to next position */
 				int_rx->read_index ++;
-				if (int_rx->read_index >= SERIAL_RX_BUFFER_SIZE)
+				if (int_rx->read_index >= USART_RX_BUFFER_SIZE)
 				{
 					int_rx->read_index = 0;
 				}
@@ -291,28 +308,77 @@ static rt_size_t rt_usart_read (
 			/* enable interrupt */
 			rt_hw_interrupt_enable(level);
 		}
+
+		read_len = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 	}
 	else
 	{
-		/* polling mode */
+		RT_ASSERT(buffer != RT_NULL);
+	
+		struct efm32_usart_device_t *usart;
 		USART_TypeDef *usart_device;
 
-		RT_ASSERT(buffer != RT_NULL);
+		usart = (struct efm32_usart_device_t *)(dev->user_data);
 		usart_device = ((struct efm32_usart_device_t *)(dev->user_data))->usart_device;
-			
-		while ((rt_uint32_t)ptr - (rt_uint32_t)buffer < size)
+
+		if (usart->state & USART_STATE_SYNC)
 		{
-			while (usart_device->STATUS & USART_STATUS_RXDATAV)
+			/* SPI read */
+			rt_uint8_t inst_len = *((rt_uint8_t *)buffer);
+			rt_uint8_t *inst_ptr = (rt_uint8_t *)(buffer + 1);
+			rt_uint8_t *rx_buf = *((rt_uint8_t **)(buffer + inst_len + 1));
+
+			ptr = rx_buf;
+
+			/* write instruction */
+			while (inst_len)
 			{
+				while (!(usart->usart_device->STATUS & USART_STATUS_TXBL));
+				usart->usart_device->TXDATA = (rt_uint32_t)*inst_ptr;
+				++inst_ptr; --inst_len;
+			}
+
+			/* Flushing RX */
+			usart_device->CMD = USART_CMD_CLEARRX;
+			/* dummy write */
+			while (!(usart_device->STATUS & USART_STATUS_TXBL));
+			usart_device->TXDATA = (rt_uint32_t)0x00;
+			/* dummy read */
+			while (!(usart_device->STATUS & USART_STATUS_RXDATAV));
+			*((rt_uint32_t *)0x00) = usart_device->RXDATA;
+	
+			while ((rt_uint32_t)ptr - (rt_uint32_t)rx_buf < size)
+			{
+				/* dummy write */
+				while (!(usart_device->STATUS & USART_STATUS_TXBL));
+				usart_device->TXDATA = (rt_uint32_t)0x00;
+				/* read a byte of data */
+				while (!(usart_device->STATUS & USART_STATUS_RXDATAV));
 				*ptr = usart_device->RXDATA & 0xff;
 				ptr ++;
 			}
 		}
+		else
+		{
+			ptr = buffer;
+
+			/* polling mode */
+			while ((rt_uint32_t)ptr - (rt_uint32_t)buffer < size)
+			{
+				while (usart_device->STATUS & USART_STATUS_RXDATAV)
+				{
+					*ptr = usart_device->RXDATA & 0xff;
+					ptr ++;
+				}
+			}
+		}
+
+		read_len = size;
 	}
 
 	/* set error code */
 	rt_set_errno(err_code);
-	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
+	return read_len;
 }
 
 /******************************************************************//**
@@ -336,7 +402,7 @@ static rt_size_t rt_usart_read (
  *   Buffer size in byte
  *
  * @return
- *   Error code
+ *   Number of written bytes
  *********************************************************************/
 static rt_size_t rt_usart_write (
 	rt_device_t 	dev, 
@@ -352,7 +418,7 @@ static rt_size_t rt_usart_write (
 	write_size = 0;
 	usart = (struct efm32_usart_device_t*)(dev->user_data);
 
-	if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
+	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 1))
 	{	/* DMA mode Tx */
 		struct efm32_usart_dma_mode_t *dma_tx;
 	
@@ -393,7 +459,7 @@ static rt_size_t rt_usart_write (
 	}
 	else
 	{	/* polling mode */	
-		rt_uint8_t* ptr = (rt_uint8_t*)buffer;
+		rt_uint8_t *ptr = (rt_uint8_t *)buffer;
 	
 		if (dev->flag & RT_DEVICE_FLAG_STREAM)
 		{
@@ -408,7 +474,6 @@ static rt_size_t rt_usart_write (
 
 				while (!(usart->usart_device->STATUS & USART_STATUS_TXBL));
 				usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
-
 				++ptr; --size;
 			}
 		}
@@ -419,7 +484,6 @@ static rt_size_t rt_usart_write (
 			{
 				while (!(usart->usart_device->STATUS & USART_STATUS_TXBL));
 				usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
-
 				++ptr; --size;
 			}
 		}
@@ -500,9 +564,7 @@ static rt_err_t rt_usart_control (
 					if ((int_rx->data_ptr = rt_realloc(int_rx->data_ptr, size)) \
 						== RT_NULL)
 					{
-#ifdef RT_USART_DEBUG
-						rt_kprintf("no memory for usart rx buffer\n");
-#endif
+						usart_debug("USART: no memory for RX buffer\n");
 						return -RT_ENOMEM;
 					}
 					// TODO: Is the following line necessary?
@@ -514,9 +576,7 @@ static rt_err_t rt_usart_control (
 				/* Allocate new RX buffer */
 				if ((int_rx->data_ptr = rt_malloc(size)) == RT_NULL)
 				{
-#ifdef RT_USART_DEBUG
-					rt_kprintf("no memory for usart rx buffer\n");
-#endif
+					usart_debug("USART: no memory for RX buffer\n");
 					return -RT_ENOMEM;
 				}
 			}
@@ -570,14 +630,14 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
 		int_rx->data_ptr[int_rx->save_index] = \
 			(rt_uint8_t)(usart->usart_device->RXDATA & 0xFFUL);
 		int_rx->save_index ++;
-		if (int_rx->save_index >= SERIAL_RX_BUFFER_SIZE)
+		if (int_rx->save_index >= USART_RX_BUFFER_SIZE)
 			int_rx->save_index = 0;
 
 		/* if the next position is read index, discard this 'read char' */
 		if (int_rx->save_index == int_rx->read_index)
 		{
 			int_rx->read_index ++;
-			if (int_rx->read_index >= SERIAL_RX_BUFFER_SIZE)
+			if (int_rx->read_index >= USART_RX_BUFFER_SIZE)
 			{
 				int_rx->read_index = 0;
 			}
@@ -594,7 +654,7 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
 
 		/* get rx length */
 		rx_length = int_rx->read_index > int_rx->save_index ?
-			SERIAL_RX_BUFFER_SIZE - int_rx->read_index + int_rx->save_index : \
+			USART_RX_BUFFER_SIZE - int_rx->read_index + int_rx->save_index : \
 			int_rx->save_index - int_rx->read_index;
 
 		dev->rx_indicate(dev, rx_length);
@@ -720,33 +780,24 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	rt_uint8_t 	location,
 	rt_uint32_t flag,
 	rt_uint32_t	dmaChannel,
-	rt_bool_t 	console)
+	rt_uint8_t 	config)
 {
 	struct efm32_usart_device_t 	*usart;
 	struct efm32_usart_dma_mode_t	*dma_mode;
 	CMU_Clock_TypeDef				usartClock;
 	rt_uint32_t						txDmaSelect;
-	USART_InitAsync_TypeDef			init;
+	union efm32_usart_init_t 		init;
 	efm32_irq_hook_init_t			hook;
 
 	/* Allocate device */
 	usart = rt_malloc(sizeof(struct efm32_usart_device_t));
 	if (usart == RT_NULL)
 	{
-#ifdef RT_USART_DEBUG
-		rt_kprintf("no memory for USART driver\n");
-#endif
+		usart_debug("USART: no memory for device\n");
 		return usart;
 	}
 	usart->unit 	= unitNumber;
-	if (console == true)
-	{
-		usart->state = USART_STATE_CONSOLE;
-	}
-	else
-	{
-		usart->state = 0;
-	}
+	usart->state 	= config;
 	usart->tx_mode 	= RT_NULL;
 	usart->rx_mode 	= RT_NULL;
 
@@ -757,9 +808,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		usart->tx_mode = dma_mode = rt_malloc(sizeof(struct efm32_usart_dma_mode_t));
 		if (dma_mode == RT_NULL)
 		{
-#ifdef RT_USART_DEBUG
-			rt_kprintf("no memory for USART TX by DMA\n");
-#endif
+			usart_debug("USART: no memory for DMA TX\n");
 			rt_free(usart->rx_mode);
 			rt_free(usart);
 			usart = RT_NULL;
@@ -774,9 +823,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		usart->rx_mode = rt_malloc(sizeof(struct efm32_usart_int_mode_t));
 		if (usart->rx_mode == RT_NULL)
 		{
-#ifdef RT_USART_DEBUG
-			rt_kprintf("no memory for USART RX by interrupt\n");
-#endif
+			usart_debug("USART: no memory for interrupt RX\n");
 			rt_free(usart->tx_mode);
 			rt_free(usart);
 			usart = RT_NULL;
@@ -823,6 +870,22 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		AF_PIN(AF_USART_RX(unitNumber), location),
 		gpioModeInputPull,
 		1);
+	if (config & USART_STATE_SYNC)
+	{
+		GPIO_PinModeSet(
+			(GPIO_Port_TypeDef)AF_PORT(AF_USART_CLK(unitNumber), location),
+			AF_PIN(AF_USART_CLK(unitNumber), location),
+			gpioModePushPull,
+			0);
+	}
+	if (config & USART_STATE_AUTOCS)
+	{
+		GPIO_PinModeSet(
+			(GPIO_Port_TypeDef)AF_PORT(AF_USART_CS(unitNumber), location),
+			AF_PIN(AF_USART_CS(unitNumber), location),
+			gpioModePushPull,
+			1);
+	}
 
 	/* Config interrupt and NVIC */
 	if (flag & RT_DEVICE_FLAG_INT_RX)
@@ -871,16 +934,49 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	/* Enable RX and TX pins and set location */
 	usart->usart_device->ROUTE = USART_ROUTE_RXPEN | USART_ROUTE_TXPEN | \
 					(location << _USART_ROUTE_LOCATION_SHIFT);
+	if (config & USART_STATE_SYNC)
+	{
+		usart->usart_device->ROUTE |= USART_ROUTE_CLKPEN;
+	}
+	if (config & USART_STATE_AUTOCS)
+	{
+		usart->usart_device->ROUTE |= USART_ROUTE_CSPEN;
+		if (config & USART_STATE_MASTER)
+		{
+			usart->usart_device->CTRL |= USART_CTRL_AUTOCS;
+		}
+	}
 
 	/* Init specified USART unit */
-	init.enable 		= usartEnable;
-	init.refFreq		= 0;
-	init.baudrate		= UART_BAUDRATE;
-	init.oversampling	= USART_CTRL_OVS_X4;
-	init.databits		= USART_FRAME_DATABITS_EIGHT;
-	init.parity 		= USART_FRAME_PARITY_NONE;
-	init.stopbits		= USART_FRAME_STOPBITS_ONE;
-	USART_InitAsync(usart->usart_device, &init);
+	if (config & USART_STATE_SYNC)
+	{
+		init.sync.enable 		= usartEnable;
+		init.sync.refFreq		= 0;
+		init.sync.baudrate		= SPI_BAUDRATE;
+		init.sync.databits 		= usartDatabits8;
+		if (config & USART_STATE_MASTER)
+		{
+			init.sync.master 	= true;
+		}
+		else
+		{
+			init.sync.master	= false;
+		}
+		init.sync.msbf 			= true;
+		init.sync.clockMode 	= usartClockMode0; /* Clock idle low, sample on rising edge. */  
+		USART_InitSync(usart->usart_device, &init.sync);
+	}
+	else
+	{
+		init.async.enable 		= usartEnable;
+		init.async.refFreq		= 0;
+		init.async.baudrate		= UART_BAUDRATE;
+		init.async.oversampling	= USART_CTRL_OVS_X4;
+		init.async.databits		= USART_FRAME_DATABITS_EIGHT;
+		init.async.parity 		= USART_FRAME_PARITY_NONE;
+		init.async.stopbits		= USART_FRAME_STOPBITS_ONE;
+		USART_InitAsync(usart->usart_device, &init.async);
+	}
 
 	/* Clear RX/TX buffers */
 	usart->usart_device->CMD = USART_CMD_CLEARRX | USART_CMD_CLEARTX;
@@ -900,17 +996,31 @@ void rt_hw_usart_init(void)
 {
 	struct efm32_usart_device_t	*usart;
 	rt_uint32_t 				flag;
-	rt_bool_t					console;
+	rt_uint8_t					config;
 
 	/* Register usart0 */
 #ifdef RT_USING_USART0
+	config = 0x00;
 	flag = RT_DEVICE_FLAG_RDWR;
 
- #if (RT_CONSOLE_DEVICE == 0x0UL)
-	console = true;
-	flag |= RT_DEVICE_FLAG_STREAM;
+ #ifdef RT_USART0_SYNC_MODE
+	config |= USART_STATE_SYNC;
+  #if (RT_USART0_SYNC_MODE != 0x0UL)
+	config |= USART_STATE_MASTER;
+  #else
+	 flag |= RT_DEVICE_FLAG_INT_RX;
+  #endif
  #else
-	console = false;
+	 flag |= RT_DEVICE_FLAG_INT_RX;
+ #endif
+
+ #if (SPI_AUTOCS_ENABLE & (1 << 0))
+	config |= USART_STATE_AUTOCS;
+ #endif
+
+ #if (RT_CONSOLE_DEVICE == 0x0UL)
+	config |= USART_STATE_CONSOLE;
+	flag |= RT_DEVICE_FLAG_STREAM;
  #endif
 
  #ifdef RT_USART0_USING_DMA
@@ -920,28 +1030,40 @@ void rt_hw_usart_init(void)
    #define RT_USART0_USING_DMA EFM32_NO_DATA
  #endif
 
-	flag |= RT_DEVICE_FLAG_INT_RX;
-
 	usart = rt_hw_usart_unit_init(
 		&usart0_device, 
 		0, 
 		RT_USING_USART0, 
 		flag, 
 		RT_USART0_USING_DMA, 
-		console);
+		config);
 
 	rt_hw_usart_register(&usart0_device, RT_USART0_NAME, flag, usart);
 #endif
 
 	/* Register usart1 */
 #ifdef RT_USING_USART1
+	config = 0x00;
 	flag = RT_DEVICE_FLAG_RDWR;
 
- #if (RT_CONSOLE_DEVICE == 0x1UL)
-	console = true;
-	flag |= RT_DEVICE_FLAG_STREAM;
+ #ifdef RT_USART1_SYNC_MODE
+	config |= USART_STATE_SYNC;
+  #if (RT_USART1_SYNC_MODE != 0x0UL)
+	config |= USART_STATE_MASTER;
+  #else
+	 flag |= RT_DEVICE_FLAG_INT_RX;
+  #endif
  #else
-	console = false;
+	 flag |= RT_DEVICE_FLAG_INT_RX;
+ #endif
+
+ #if (SPI_AUTOCS_ENABLE & (1 << 1))
+	config |= USART_STATE_AUTOCS;
+ #endif
+
+ #if (RT_CONSOLE_DEVICE == 0x1UL)
+	config |= USART_STATE_CONSOLE;
+	flag |= RT_DEVICE_FLAG_STREAM;
  #endif
 
  #ifdef RT_USART1_USING_DMA
@@ -951,8 +1073,6 @@ void rt_hw_usart_init(void)
 	
    #define RT_USART1_USING_DMA EFM32_NO_DATA
  #endif
-
-	flag |= RT_DEVICE_FLAG_INT_RX;
   
 	usart = rt_hw_usart_unit_init(
 		&usart1_device, 
@@ -960,21 +1080,35 @@ void rt_hw_usart_init(void)
 		RT_USING_USART1, 
 		flag, 
 		RT_USART1_USING_DMA, 
-		console);
+		config);
 
 	rt_hw_usart_register(&usart1_device, RT_USART1_NAME, flag, usart);
 #endif
 
 	/* Register usart2 */
 #ifdef RT_USING_USART2
+	config = 0x00;
 	flag = RT_DEVICE_FLAG_RDWR;
 
- #if (RT_CONSOLE_DEVICE == 0x2UL)
-	console = true;
-	flag |= RT_DEVICE_FLAG_STREAM;
+ #ifdef RT_USART2_SYNC_MODE
+	config |= USART_STATE_SYNC;
+  #if (RT_USART2_SYNC_MODE != 0x0UL)
+	config |= USART_STATE_MASTER;
+  #else
+	flag |= RT_DEVICE_FLAG_INT_RX;
+  #endif
  #else
-	console = false;
+	flag |= RT_DEVICE_FLAG_INT_RX;
  #endif
+
+#if (SPI_AUTOCS_ENABLE & (1 << 2))
+	config |= USART_STATE_AUTOCS;
+#endif
+
+#if (RT_CONSOLE_DEVICE == 0x2UL)
+	config |= USART_STATE_CONSOLE;
+	flag |= RT_DEVICE_FLAG_STREAM;
+#endif
 
  #ifdef RT_USART2_USING_DMA
  	RT_ASSERT(RT_USART2_USING_DMA < DMA_CHAN_COUNT);
@@ -985,15 +1119,13 @@ void rt_hw_usart_init(void)
    #define RT_USART2_USING_DMA EFM32_NO_DATA
  #endif
 
-	flag |= RT_DEVICE_FLAG_INT_RX;
-  
 	usart = rt_hw_usart_unit_init(
 		&usart2_device, 
 		2, 
 		RT_USING_USART2, 
 		flag, 
 		RT_USART2_USING_DMA, 
-		console);
+		config);
 
 	rt_hw_usart_register(&usart2_device, RT_USART2_NAME, flag, usart);
 #endif

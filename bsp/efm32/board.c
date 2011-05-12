@@ -12,6 +12,7 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-21	onelife		Initial creation for EFM32
+ * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support
  *********************************************************************/
  
 /******************************************************************//**
@@ -189,6 +190,11 @@ void rt_hw_board_init(void)
 	/* Chip errata */
 	CHIP_Init();
 
+#if defined(EFM32_G290_DK)
+	/* Initialize DVK board register access */
+	DVK_init();
+#endif
+
 	/* NVIC Configuration */
 	NVIC_Configuration();
 
@@ -222,6 +228,10 @@ void rt_hw_driver_init(void)
 	rt_hw_dma_init();
 
 	/* Initialize USART */
+#if defined(EFM32_G290_DK)
+	DVK_enablePeripheral(DVK_RS232A);
+	DVK_enablePeripheral(DVK_SPI);
+#endif
 	rt_hw_usart_init();
 
 	/* Initialize Timer */

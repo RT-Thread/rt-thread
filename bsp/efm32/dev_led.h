@@ -12,7 +12,8 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2009-01-05	Bernard		the first version
- * 2010-12-27	onelife		modify for EFM32
+ * 2010-12-27	onelife		Modify for EFM32
+ * 2011-05-06	onelife		Add EFM32 development kit support
  *********************************************************************/
 #ifndef __DEV_LED_H__
 #define __DEV_LED_H__
@@ -32,9 +33,8 @@
 #define LEDS_PIN_NUMBER_2 		(2)
 #define LEDS_PIN_PORT_3 		gpioPortC
 #define LEDS_PIN_NUMBER_3 		(3)
-
 #elif defined(EFM32_G290_DK)
-	// TODO:
+#define LEDS_MAX_NUMBER 		(16)
 #endif
 
 /* Exported functions --------------------------------------------------------- */

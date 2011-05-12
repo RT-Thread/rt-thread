@@ -2,13 +2,20 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
+if rtconfig.EFM32_BOARD == 'EFM32_G290_DK':
+  src_kit = Glob('EFM32_Gxxx_DK/*.c')
+  CPPPATH = [RTT_ROOT + '/bsp/efm32/EFM32_Gxxx_DK']
+else:
+  src_kit = []
+  CPPPATH = []
+
 src_bsp = ['application.c', 'startup.c', 'board.c']
 src_drv = ['drv_dma.c', 'drv_rtc.c', 'drv_adc.c', 'drv_acmp.c', 'drv_usart.c', 'drv_iic.c', 'drv_timer.c']
-src_dev = ['dev_misc.c', 'dev_led.c']
+src_dev = ['dev_misc.c', 'dev_led.c', 'dev_sflash.c']
 src_hdl = ['hdl_interrupt.c']
 
-src = src_bsp + src_drv + src_dev + src_hdl
-CPPPATH = [RTT_ROOT + '/bsp/efm32']
+src = src_kit + src_bsp + src_drv + src_dev + src_hdl
+CPPPATH.append(RTT_ROOT + '/bsp/efm32')
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.EFM32_BOARD, rtconfig.EFM32_TYPE]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
