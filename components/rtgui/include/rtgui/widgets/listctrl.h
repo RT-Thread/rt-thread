@@ -20,8 +20,9 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(listctrl);
 /** Gets the type of a listctrl */
-#define RTGUI_LISTCTRL_TYPE		(rtgui_listctrl_type_get())
+#define RTGUI_LISTCTRL_TYPE		(RTGUI_TYPE(listctrl))
 /** Casts the object to a listctrl */
 #define RTGUI_LISTCTRL(obj)		(RTGUI_OBJECT_CAST((obj), RTGUI_LISTCTRL_TYPE, rtgui_listctrl_t))
 /** Checks if the object is a listctrl */

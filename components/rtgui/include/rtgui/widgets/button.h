@@ -27,8 +27,10 @@ extern "C" {
  * @{
  */
 
+DECLARE_CLASS_TYPE(button);
+
 /** Gets the type of a button */
-#define RTGUI_BUTTON_TYPE       (rtgui_button_type_get())
+#define RTGUI_BUTTON_TYPE       (RTGUI_TYPE(button))
 /** Casts the object to an rtgui_button */
 #define RTGUI_BUTTON(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_BUTTON_TYPE, rtgui_button_t))
 /** Checks if the object is an rtgui_button */
@@ -58,8 +60,6 @@ struct rtgui_button
 	void (*on_button)(struct rtgui_widget* widget, rtgui_event_t *event);
 };
 typedef struct rtgui_button rtgui_button_t;
-
-rtgui_type_t *rtgui_button_type_get(void);
 
 rtgui_button_t* rtgui_button_create(const char* text);
 rtgui_button_t* rtgui_pushbutton_create(const char* text);

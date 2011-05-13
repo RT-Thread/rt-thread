@@ -40,19 +40,11 @@ static void _rtgui_iconbox_destructor(rtgui_iconbox_t *iconbox)
 	iconbox->text = RT_NULL;
 }
 
-rtgui_type_t *rtgui_iconbox_type_get(void)
-{
-	static rtgui_type_t *iconbox_type = RT_NULL;
-
-	if (!iconbox_type)
-	{
-		iconbox_type = rtgui_type_create("iconbox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_iconbox_t), RTGUI_CONSTRUCTOR(_rtgui_iconbox_constructor), 
-			RTGUI_DESTRUCTOR(_rtgui_iconbox_destructor));
-	}
-
-	return iconbox_type;
-}
+DEFINE_CLASS_TYPE(iconbox, "iconbox", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_iconbox_constructor,
+	_rtgui_iconbox_destructor,
+	sizeof(struct rtgui_iconbox));
 
 rt_bool_t rtgui_iconbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {

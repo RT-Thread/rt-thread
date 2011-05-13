@@ -41,18 +41,11 @@ static void _rtgui_slider_constructor(rtgui_slider_t *slider)
 	slider->on_changed = RT_NULL;
 }
 
-rtgui_type_t *rtgui_slider_type_get(void)
-{
-	static rtgui_type_t *slider_type = RT_NULL;
-
-	if (!slider_type)
-	{
-		slider_type = rtgui_type_create("slider", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_slider_t), RTGUI_CONSTRUCTOR(_rtgui_slider_constructor), RT_NULL);
-	}
-
-	return slider_type;
-}
+DEFINE_CLASS_TYPE(slider, "slider", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_slider_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_slider));
 
 static void rtgui_slider_onmouse(struct rtgui_slider* slider, struct rtgui_event_mouse* event)
 {

@@ -49,20 +49,11 @@ static void _rtgui_container_update_toplevel(rtgui_container_t* container)
 	}
 }
 
-rtgui_type_t *rtgui_container_type_get(void)
-{
-	static rtgui_type_t *container_type = RT_NULL;
-
-	if (!container_type)
-	{
-		container_type = rtgui_type_create("container", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_container_t),
-			RTGUI_CONSTRUCTOR(_rtgui_container_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_container_destructor));
-	}
-
-	return container_type;
-}
+DEFINE_CLASS_TYPE(container, "container", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_container_constructor,
+	_rtgui_container_destructor,
+	sizeof(struct rtgui_container));
 
 rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_event_t* event)
 {

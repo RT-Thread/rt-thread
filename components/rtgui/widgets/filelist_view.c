@@ -356,20 +356,11 @@ static void _rtgui_filelist_view_destructor(struct rtgui_filelist_view *view)
 	rtgui_image_destroy(folder_image);
 }
 
-rtgui_type_t *rtgui_filelist_view_type_get(void)
-{
-	static rtgui_type_t *filelist_view_type = RT_NULL;
-
-	if (!filelist_view_type)
-	{
-		filelist_view_type = rtgui_type_create("flview", RTGUI_VIEW_TYPE,
-			sizeof(rtgui_filelist_view_t), 
-			RTGUI_CONSTRUCTOR(_rtgui_filelist_view_constructor), 
-			RTGUI_DESTRUCTOR(_rtgui_filelist_view_destructor));
-	}
-
-	return filelist_view_type;
-}
+DEFINE_CLASS_TYPE(filelist, "filelist", 
+	RTGUI_VIEW_TYPE,
+	_rtgui_filelist_view_constructor,
+	_rtgui_filelist_view_destructor,
+	sizeof(struct rtgui_filelist_view));
 
 void rtgui_filelist_view_ondraw(struct rtgui_filelist_view* view)
 {

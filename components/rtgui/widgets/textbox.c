@@ -84,20 +84,11 @@ static void _rtgui_textbox_deconstructor(rtgui_textbox_t *box)
 	box->caret_timer = RT_NULL;
 }
 
-rtgui_type_t *rtgui_textbox_type_get(void)
-{
-	static rtgui_type_t *textbox_type = RT_NULL;
-
-	if (!textbox_type)
-	{
-		textbox_type = rtgui_type_create("textbox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_textbox_t),
-			RTGUI_CONSTRUCTOR(_rtgui_textbox_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_textbox_deconstructor));
-	}
-
-	return textbox_type;
-}
+DEFINE_CLASS_TYPE(textbox, "textbox", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_textbox_constructor,
+	_rtgui_textbox_deconstructor,
+	sizeof(struct rtgui_textbox));
 
 static void rtgui_textbox_onmouse(struct rtgui_textbox* box, struct rtgui_event_mouse* event)
 {

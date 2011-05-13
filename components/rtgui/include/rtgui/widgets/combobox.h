@@ -6,8 +6,9 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/listbox.h>
 
+DECLARE_CLASS_TYPE(combobox);
 /** Gets the type of a combobox */
-#define RTGUI_COMBOBOX_TYPE       (rtgui_combobox_type_get())
+#define RTGUI_COMBOBOX_TYPE       (RTGUI_TYPE(combobox))
 /** Casts the object to a rtgui_combobox */
 #define RTGUI_COMBOBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_COMBOBOX_TYPE, rtgui_combobox_t))
 /** Checks if the object is a rtgui_combobox */
@@ -37,7 +38,6 @@ struct rtgui_combobox
 };
 typedef struct rtgui_combobox rtgui_combobox_t;
 
-rtgui_type_t *rtgui_combobox_type_get(void);
 rtgui_combobox_t *rtgui_combobox_create(struct rtgui_listbox_item* items, rt_uint16_t counter, struct rtgui_rect* rect);
 void rtgui_combobox_destroy(rtgui_combobox_t* box);
 

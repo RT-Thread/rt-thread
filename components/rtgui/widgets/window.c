@@ -100,20 +100,11 @@ static rt_bool_t _rtgui_win_create_in_server(rtgui_win_t* win)
 	return RT_TRUE;
 }
 
-rtgui_type_t *rtgui_win_type_get(void)
-{
-	static rtgui_type_t *win_type = RT_NULL;
-
-	if (!win_type)
-	{
-		win_type = rtgui_type_create("win", RTGUI_TOPLEVEL_TYPE,
-			sizeof(rtgui_win_t),
-			RTGUI_CONSTRUCTOR(_rtgui_win_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_win_destructor));
-	}
-
-	return win_type;
-}
+DEFINE_CLASS_TYPE(win, "win", 
+	RTGUI_TOPLEVEL_TYPE,
+	_rtgui_win_constructor,
+	_rtgui_win_destructor,
+	sizeof(struct rtgui_win));
 
 rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, rtgui_rect_t *rect, rt_uint8_t style)
 {

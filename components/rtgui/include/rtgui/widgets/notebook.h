@@ -4,8 +4,9 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/container.h>
 
+DECLARE_CLASS_TYPE(notebook);
 /** Gets the type of a notebook */
-#define RTGUI_NOTEBOOK_TYPE       (rtgui_notebook_type_get())
+#define RTGUI_NOTEBOOK_TYPE       (RTGUI_TYPE(notebook))
 /** Casts the object to a notebook control */
 #define RTGUI_NOTEBOOK(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_NOTEBOOK_TYPE, rtgui_notebook_t))
 /** Checks if the object is a notebook control */

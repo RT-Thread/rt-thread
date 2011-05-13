@@ -16,8 +16,9 @@
 
 #include <rtgui/widgets/toplevel.h>
 
-/** Gets the type of a top win */
-#define RTGUI_WINTITLE_TYPE       (rtgui_wintitle_type_get())
+DECLARE_CLASS_TYPE(wintitle);
+/** Gets the type of a title */
+#define RTGUI_WINTITLE_TYPE       (RTGUI_TYPE(wintitle))
 /** Casts the object to an rtgui_wintitle */
 #define RTGUI_WINTITLE(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WINTITLE_TYPE, rtgui_wintitle_t))
 /** Checks if the object is an rtgui_wintitle */
@@ -31,8 +32,6 @@ struct rtgui_wintitle
 	char* title;
 };
 typedef struct rtgui_wintitle rtgui_wintitle_t;
-
-rtgui_type_t* rtgui_wintitle_type_get(void);
 
 rtgui_wintitle_t* rtgui_wintitle_create(const char* title);
 void rtgui_wintitle_destroy(rtgui_wintitle_t* wintitle);

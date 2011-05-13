@@ -84,19 +84,11 @@ static void _rtgui_widget_destructor(rtgui_widget_t *widget)
 	rtgui_region_fini(&(widget->clip));
 }
 
-rtgui_type_t *rtgui_widget_type_get(void)
-{
-	static rtgui_type_t *widget_type = RT_NULL;
-
-	if (!widget_type)
-	{
-		widget_type = rtgui_type_create("rtgui_widget", RTGUI_OBJECT_TYPE,
-			sizeof(rtgui_widget_t), RTGUI_CONSTRUCTOR(_rtgui_widget_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_widget_destructor));
-	}
-
-	return widget_type;
-}
+DEFINE_CLASS_TYPE(widget, "widget", 
+	RTGUI_OBJECT_TYPE,
+	_rtgui_widget_constructor,
+	_rtgui_widget_destructor,
+	sizeof(struct rtgui_widget));
 
 rtgui_widget_t *rtgui_widget_create(rtgui_type_t *widget_type)
 {

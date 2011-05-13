@@ -16,18 +16,11 @@ static void _rtgui_checkbox_constructor(rtgui_checkbox_t *box)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-rtgui_type_t *rtgui_checkbox_type_get(void)
-{
-	static rtgui_type_t *checkbox_type = RT_NULL;
-
-	if (!checkbox_type)
-	{
-		checkbox_type = rtgui_type_create("checkbox", RTGUI_LABEL_TYPE,
-			sizeof(rtgui_checkbox_t), RTGUI_CONSTRUCTOR(_rtgui_checkbox_constructor), RT_NULL);
-	}
-
-	return checkbox_type;
-}
+DEFINE_CLASS_TYPE(checkbox, "checkbox", 
+	RTGUI_LABEL_TYPE,
+	_rtgui_checkbox_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_checkbox));
 
 void rtgui_checkbox_set_onbutton(rtgui_checkbox_t* checkbox, rtgui_onbutton_func_t func)
 {

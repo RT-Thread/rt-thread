@@ -14,8 +14,9 @@ struct rtgui_file_item
 	rt_uint32_t size;
 };
 
+DECLARE_CLASS_TYPE(filelist);
 /** Gets the type of a filelist view */
-#define RTGUI_FILELIST_VIEW_TYPE       (rtgui_filelist_view_type_get())
+#define RTGUI_FILELIST_VIEW_TYPE       (RTGUI_TYPE(filelist))
 /** Casts the object to a filelist */
 #define RTGUI_FILELIST_VIEW(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_FILELIST_VIEW_TYPE, rtgui_filelist_view_t))
 /** Checks if the object is a filelist view */
@@ -42,8 +43,6 @@ struct rtgui_filelist_view
 	struct rtgui_file_item *items;
 };
 typedef struct rtgui_filelist_view rtgui_filelist_view_t;
-
-rtgui_type_t *rtgui_filelist_view_type_get(void);
 
 rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench, 
 	const char* directory, const char* pattern, const rtgui_rect_t* rect);

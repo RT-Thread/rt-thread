@@ -16,8 +16,9 @@
 
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(container);
 /** Gets the type of a container */
-#define RTGUI_CONTAINER_TYPE       (rtgui_container_type_get())
+#define RTGUI_CONTAINER_TYPE       (RTGUI_TYPE(container))
 /** Casts the object to a rtgui_container */
 #define RTGUI_CONTAINER(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_CONTAINER_TYPE, rtgui_container_t))
 /** Checks if the object is a rtgui_container */
@@ -32,8 +33,6 @@ struct rtgui_container
 	rtgui_list_t children;
 };
 typedef struct rtgui_container rtgui_container_t;
-
-rtgui_type_t *rtgui_container_type_get(void);
 
 void rtgui_container_add_child(rtgui_container_t *container, rtgui_widget_t* child);
 void rtgui_container_remove_child(rtgui_container_t *container, rtgui_widget_t* child);

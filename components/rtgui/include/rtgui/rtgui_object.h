@@ -42,9 +42,8 @@ struct rtgui_type
 	/* type name */
 	char* name;
 
-	/* hierarchy and depth */
-	struct rtgui_type **hierarchy;
-	int hierarchy_depth;
+	/* parent type link */
+	struct rtgui_type *parent;
 
 	/* constructor and destructor */
 	rtgui_constructor_t constructor;
@@ -54,11 +53,16 @@ struct rtgui_type
 	int size;
 };
 typedef struct rtgui_type rtgui_type_t;
+#define RTGUI_TYPE(type)			(struct rtgui_type*)&(_rtgui_##type)
 
-rtgui_type_t	*rtgui_type_create(const char *type_name, rtgui_type_t *parent_type,
-                           int type_size, rtgui_constructor_t constructor,
-                           rtgui_destructor_t destructor);
-void          rtgui_type_destroy(rtgui_type_t *type);
+#define DECLARE_CLASS_TYPE(type)	extern const struct rtgui_type _rtgui_##type
+#define DEFINE_CLASS_TYPE(type, name, parent, constructor, destructor, size) \
+	const struct rtgui_type _rtgui_##type = { \
+	name, \
+	parent, \
+	constructor, \
+	destructor, \
+	size }
 
 void          rtgui_type_object_construct(rtgui_type_t *type, rtgui_object_t *object);
 void          rtgui_type_destructors_call(rtgui_type_t *type, rtgui_object_t *object);
@@ -68,17 +72,18 @@ const char	  *rtgui_type_name_get(rtgui_type_t *type);
 rtgui_type_t  *rtgui_type_get_from_name(const char *name);
 
 #ifdef RTGUI_USING_CAST_CHECK
-	#define RTGUI_OBJECT_CAST(obj, rtgui_type_t, c_type) \
-		((c_type *)rtgui_object_check_cast((rtgui_object_t *)(obj), (rtgui_type_t)))
+	#define RTGUI_OBJECT_CAST(obj, obj_type, c_type) \
+		((c_type *)rtgui_object_check_cast((rtgui_object_t *)(obj), (obj_type)))
 #else
-	#define RTGUI_OBJECT_CAST(obj, rtgui_type_t, c_type)     ((c_type *)(obj))
+	#define RTGUI_OBJECT_CAST(obj, obj_type, c_type)     ((c_type *)(obj))
 #endif
 
 #define RTGUI_OBJECT_CHECK_TYPE(_obj, _type) \
 	(rtgui_type_inherits_from(((rtgui_object_t *)(_obj))->type, (_type)))
 
+DECLARE_CLASS_TYPE(type);
 /** Gets the type of an object */
-#define RTGUI_OBJECT_TYPE       (rtgui_object_type_get())
+#define RTGUI_OBJECT_TYPE       RTGUI_TYPE(type)
 /** Casts the object to an rtgui_object_t */
 #define RTGUI_OBJECT(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_OBJECT_TYPE, rtgui_object_t))
 /** Checks if the object is an rtgui_Object */
@@ -88,7 +93,7 @@ rtgui_type_t  *rtgui_type_get_from_name(const char *name);
 struct rtgui_object
 {
 	/* object type */
-	rtgui_type_t* type;
+	const rtgui_type_t* type;
 
 	rt_bool_t is_static;
 };

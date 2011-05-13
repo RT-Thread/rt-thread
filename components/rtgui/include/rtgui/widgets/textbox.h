@@ -17,8 +17,9 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(textbox);
 /** Gets the type of a textbox */
-#define RTGUI_TEXTBOX_TYPE       (rtgui_textbox_type_get())
+#define RTGUI_TEXTBOX_TYPE       (RTGUI_TYPE(textbox))
 /** Casts the object to a rtgui_textbox */
 #define RTGUI_TEXTBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_TEXTBOX_TYPE, rtgui_textbox_t))
 /** Checks if the object is a rtgui_textbox */
@@ -60,8 +61,6 @@ struct rtgui_textbox
 	rt_bool_t (*on_enter) 	(struct rtgui_widget* widget, struct rtgui_event* event);
 };
 typedef struct rtgui_textbox rtgui_textbox_t;
-
-rtgui_type_t *rtgui_textbox_type_get(void);
 
 struct rtgui_textbox* rtgui_textbox_create(const char* text, rt_uint8_t flag);
 void rtgui_textbox_destroy(struct rtgui_textbox* box);

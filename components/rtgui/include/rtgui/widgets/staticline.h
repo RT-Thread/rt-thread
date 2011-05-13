@@ -8,8 +8,9 @@
  * the static line widget
  */
 
+DECLARE_CLASS_TYPE(staticline);
 /** Gets the type of a staticline */
-#define RTGUI_STATICLINE_TYPE       (rtgui_staticline_type_get())
+#define RTGUI_STATICLINE_TYPE       (RTGUI_TYPE(staticline))
 /** Casts the object to an rtgui_staticline */
 #define RTGUI_STATICLINE(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_STATICLINE_TYPE, rtgui_staticline_t))
 /** Checks if the object is an rtgui_staticline */

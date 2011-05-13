@@ -31,8 +31,9 @@ struct rtgui_list_item
     void *parameter;
 };
 
+DECLARE_CLASS_TYPE(listview);
 /** Gets the type of a list view */
-#define RTGUI_LIST_VIEW_TYPE       (rtgui_list_view_type_get())
+#define RTGUI_LIST_VIEW_TYPE       (RTGUI_TYPE(listview))
 /** Casts the object to a filelist */
 #define RTGUI_LIST_VIEW(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_LIST_VIEW_TYPE, rtgui_list_view_t))
 /** Checks if the object is a filelist view */

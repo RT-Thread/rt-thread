@@ -35,8 +35,10 @@
 
 #define RTGUI_WORKBENCH_IS_MODAL_MODE(w) ((w)->flag & RTGUI_WORKBENCH_FLAG_MODAL_MODE)
 
+DECLARE_CLASS_TYPE(workbench);
+
 /** Gets the type of a workbench */
-#define RTGUI_WORKBENCH_TYPE       (rtgui_workbench_type_get())
+#define RTGUI_WORKBENCH_TYPE       (RTGUI_TYPE(workbench))
 /** Casts the object to an rtgui_workbench */
 #define RTGUI_WORKBENCH(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WORKBENCH_TYPE, rtgui_workbench_t))
 /** Checks if the object is an rtgui_workbench */

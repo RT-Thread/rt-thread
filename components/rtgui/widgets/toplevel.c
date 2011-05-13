@@ -38,20 +38,11 @@ static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)
 	toplevel->drawing = 0;
 }
 
-rtgui_type_t *rtgui_toplevel_type_get(void)
-{
-	static rtgui_type_t *toplevel_type = RT_NULL;
-
-	if (!toplevel_type)
-	{
-		toplevel_type = rtgui_type_create("toplevel", RTGUI_CONTAINER_TYPE,
-			sizeof(rtgui_toplevel_t),
-			RTGUI_CONSTRUCTOR(_rtgui_toplevel_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_toplevel_destructor));
-	}
-
-	return toplevel_type;
-}
+DEFINE_CLASS_TYPE(toplevel, "toplevel", 
+	RTGUI_CONTAINER_TYPE,
+	_rtgui_toplevel_constructor,
+	_rtgui_toplevel_destructor,
+	sizeof(struct rtgui_toplevel));
 
 rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* event)
 {

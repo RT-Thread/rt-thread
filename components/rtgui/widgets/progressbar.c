@@ -19,18 +19,11 @@ static void _rtgui_progressbar_constructor(rtgui_progressbar_t *bar)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(bar)) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-rtgui_type_t *rtgui_progressbar_type_get(void)
-{
-	static rtgui_type_t *progressbar_type = RT_NULL;
-
-	if (!progressbar_type)
-	{
-		progressbar_type = rtgui_type_create("progressbar", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_progressbar_t), RTGUI_CONSTRUCTOR(_rtgui_progressbar_constructor), RT_NULL);
-	}
-
-	return progressbar_type;
-}
+DEFINE_CLASS_TYPE(progressbar, "progressbar", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_progressbar_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_progressbar));
 
 rt_bool_t rtgui_progressbar_event_handler(struct rtgui_widget* widget,
                                             struct rtgui_event* event)

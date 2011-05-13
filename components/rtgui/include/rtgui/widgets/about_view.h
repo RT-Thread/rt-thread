@@ -20,8 +20,9 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/view.h>
 
+DECLARE_CLASS_TYPE(aboutview);
 /** Gets the type of a about view */
-#define RTGUI_ABOUT_VIEW_TYPE       (rtgui_about_view_type_get())
+#define RTGUI_ABOUT_VIEW_TYPE       (RTGUI_TYPE(aboutview))
 /** Casts the object to a about view */
 #define RTGUI_ABOUT_VIEW(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_ABOUT_VIEW_TYPE, rtgui_about_view_t))
 /** Checks if the object is a about view */

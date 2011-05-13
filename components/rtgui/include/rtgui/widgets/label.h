@@ -17,8 +17,10 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(label);
+
 /** Gets the type of a button */
-#define RTGUI_LABEL_TYPE       (rtgui_label_type_get())
+#define RTGUI_LABEL_TYPE       (RTGUI_TYPE(label))
 /** Casts the object to an rtgui_button */
 #define RTGUI_LABEL(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_LABEL_TYPE, rtgui_label_t))
 /** Checks if the object is an rtgui_button */
@@ -35,8 +37,6 @@ struct rtgui_label
 	char* text;
 };
 typedef struct rtgui_label rtgui_label_t;
-
-rtgui_type_t *rtgui_label_type_get(void);
 
 rtgui_label_t* rtgui_label_create(const char* text);
 void rtgui_label_destroy(rtgui_label_t* label);

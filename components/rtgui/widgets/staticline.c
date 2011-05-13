@@ -13,18 +13,12 @@ static void _rtgui_staticline_constructor(rtgui_staticline_t *staticline)
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(staticline), rtgui_staticline_event_handler);
 }
 
-rtgui_type_t *rtgui_staticline_type_get(void)
-{
-	static rtgui_type_t *staticline_type = RT_NULL;
 
-	if (!staticline_type)
-	{
-		staticline_type = rtgui_type_create("staticline", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_staticline_t), RTGUI_CONSTRUCTOR(_rtgui_staticline_constructor), RT_NULL);
-	}
-
-	return staticline_type;
-}
+DEFINE_CLASS_TYPE(staticline, "staticline", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_staticline_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_staticline));
 
 rt_bool_t rtgui_staticline_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {

@@ -50,20 +50,11 @@ static void _rtgui_button_destructor(rtgui_button_t *button)
 	}
 }
 
-rtgui_type_t *rtgui_button_type_get(void)
-{
-	static rtgui_type_t *button_type = RT_NULL;
-
-	if (!button_type)
-	{
-		button_type = rtgui_type_create("button", RTGUI_LABEL_TYPE,
-			sizeof(rtgui_button_t), 
-			RTGUI_CONSTRUCTOR(_rtgui_button_constructor), 
-			RTGUI_DESTRUCTOR(_rtgui_button_destructor));
-	}
-
-	return button_type;
-}
+DEFINE_CLASS_TYPE(button, "button", 
+	RTGUI_LABEL_TYPE,
+	_rtgui_button_constructor,
+	_rtgui_button_destructor,
+	sizeof(struct rtgui_button));
 
 rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {

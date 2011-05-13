@@ -22,18 +22,11 @@ static void _rtgui_radiobox_constructor(rtgui_radiobox_t *radiobox)
 	radiobox->orient = RTGUI_HORIZONTAL;
 }
 
-rtgui_type_t *rtgui_radiobox_type_get(void)
-{
-	static rtgui_type_t *radiobox_type = RT_NULL;
-
-	if (!radiobox_type)
-	{
-		radiobox_type = rtgui_type_create("radiobox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_radiobox_t), RTGUI_CONSTRUCTOR(_rtgui_radiobox_constructor), RT_NULL);
-	}
-
-	return radiobox_type;
-}
+DEFINE_CLASS_TYPE(radiobox, "radiobox", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_radiobox_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_radiobox));
 
 static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui_event_mouse* event)
 {

@@ -35,7 +35,6 @@ void rtgui_system_server_init()
 	rtgui_font_system_init();
 
 	/* init rtgui server */
-	rtgui_panel_init();
 	rtgui_topwin_init();
 	rtgui_server_init();
 
@@ -236,11 +235,6 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 			struct rtgui_event_monitor *monitor = (struct rtgui_event_monitor*)event;
 			if (monitor->panel != RT_NULL)
 			{
-#if 0
-				rt_kprintf("panel: %s, the rect is:(%d, %d) - (%d, %d)", monitor->panel->name,
-					monitor->rect.x1, monitor->rect.y1,
-					monitor->rect.x2, monitor->rect.y2);
-#endif
 				rt_kprintf("the rect is:(%d, %d) - (%d, %d)",
 					monitor->rect.x1, monitor->rect.y1,
 					monitor->rect.x2, monitor->rect.y2);

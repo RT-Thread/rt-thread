@@ -56,20 +56,11 @@ rt_bool_t rtgui_combobox_pdwin_ondeactive(struct rtgui_widget* widget, struct rt
 	return RT_TRUE;
 }
 
-rtgui_type_t *rtgui_combobox_type_get(void)
-{
-	static rtgui_type_t *combobox_type = RT_NULL;
-
-	if (!combobox_type)
-	{
-		combobox_type = rtgui_type_create("combobox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_combobox_t),
-			RTGUI_CONSTRUCTOR(_rtgui_combobox_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_combobox_destructor));
-	}
-
-	return combobox_type;
-}
+DEFINE_CLASS_TYPE(combobox, "combobox", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_combobox_constructor,
+	_rtgui_combobox_destructor,
+	sizeof(struct rtgui_combobox));
 
 rtgui_combobox_t *rtgui_combobox_create(struct rtgui_listbox_item* items, rt_uint16_t count, struct rtgui_rect* rect)
 {

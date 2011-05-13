@@ -26,8 +26,9 @@ struct rtgui_listbox_item
 	rtgui_image_t *image;
 };
 
+DECLARE_CLASS_TYPE(listbox);
 /** Gets the type of a list box */
-#define RTGUI_LISTBOX_TYPE		(rtgui_listbox_type_get())
+#define RTGUI_LISTBOX_TYPE		(RTGUI_TYPE(listbox))
 /** Casts the object to a filelist */
 #define RTGUI_LISTBOX(obj)		(RTGUI_OBJECT_CAST((obj), RTGUI_LISTBOX_TYPE, rtgui_listbox_t))
 /** Checks if the object is a filelist box */
@@ -53,8 +54,6 @@ struct rtgui_listbox
 };
 typedef struct rtgui_listbox rtgui_listbox_t;
 typedef void (*rtgui_onitem_func_t)(struct rtgui_widget* widget, rtgui_event_t *event);
-
-rtgui_type_t *rtgui_listbox_type_get(void);
 
 rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt_uint16_t count,
     rtgui_rect_t *rect);

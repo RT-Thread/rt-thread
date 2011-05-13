@@ -22,8 +22,10 @@
 extern "C" {
 #endif
 
+DECLARE_CLASS_TYPE(box);
+
 /** Gets the type of a box */
-#define RTGUI_BOX_TYPE       (rtgui_box_type_get())
+#define RTGUI_BOX_TYPE       (RTGUI_TYPE(box))
 /** Casts the object to an rtgui_box */
 #define RTGUI_BOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_BOX_TYPE, rtgui_box_t))
 /** Checks if the object is an rtgui_box */
@@ -37,8 +39,6 @@ struct rtgui_box
 	rt_uint16_t border_size;
 };
 typedef struct rtgui_box rtgui_box_t;
-
-rtgui_type_t *rtgui_box_type_get(void);
 
 struct rtgui_box* rtgui_box_create(int orientation, rtgui_rect_t* rect);
 void rtgui_box_destroy(struct rtgui_box* box);

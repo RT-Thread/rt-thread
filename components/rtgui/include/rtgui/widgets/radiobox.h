@@ -4,8 +4,9 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(radiobox);
 /** Gets the type of a radiobox */
-#define RTGUI_RADIOBOX_TYPE       (rtgui_radiobox_type_get())
+#define RTGUI_RADIOBOX_TYPE       (RTGUI_TYPE(radiobox))
 /** Casts the object to an rtgui_radiobox */
 #define RTGUI_RADIOBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_RADIOBOX_TYPE, rtgui_radiobox_t))
 /** Checks if the object is an rtgui_radiobox */
@@ -29,8 +30,6 @@ struct rtgui_radiobox
 	rt_int16_t  item_selection;
 };
 typedef struct rtgui_radiobox rtgui_radiobox_t;
-
-rtgui_type_t *rtgui_radiobox_type_get(void);
 
 struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char** radio_items, int number);
 void rtgui_radiobox_destroy(struct rtgui_radiobox* radiobox);

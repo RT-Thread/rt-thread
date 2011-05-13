@@ -48,20 +48,11 @@ static void _rtgui_view_destructor(rtgui_view_t *view)
 	}
 }
 
-rtgui_type_t *rtgui_view_type_get(void)
-{
-	static rtgui_type_t *view_type = RT_NULL;
-
-	if (!view_type)
-	{
-		view_type = rtgui_type_create("view", RTGUI_CONTAINER_TYPE,
-			sizeof(rtgui_view_t), 
-			RTGUI_CONSTRUCTOR(_rtgui_view_constructor), 
-			RTGUI_DESTRUCTOR(_rtgui_view_destructor));
-	}
-
-	return view_type;
-}
+DEFINE_CLASS_TYPE(view, "view", 
+	RTGUI_CONTAINER_TYPE,
+	_rtgui_view_constructor,
+	_rtgui_view_destructor,
+	sizeof(struct rtgui_view));
 
 rt_bool_t rtgui_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {

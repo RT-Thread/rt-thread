@@ -147,20 +147,11 @@ static void _rtgui_notebook_get_bar_rect(rtgui_notebook_t *notebook, struct rtgu
 		rect->y1 = rect->y2 - 25;
 }
 
-rtgui_type_t *rtgui_notebook_type_get(void)
-{
-	static rtgui_type_t *noteboot_type = RT_NULL;
-
-	if (!noteboot_type)
-	{
-		noteboot_type = rtgui_type_create("notebook", RTGUI_CONTAINER_TYPE,
-			sizeof(rtgui_notebook_t), 
-			RTGUI_CONSTRUCTOR(_rtgui_notebook_constructor), 
-			RTGUI_DESTRUCTOR(_rtgui_notebook_destructor));
-	}
-
-	return noteboot_type;
-}
+DEFINE_CLASS_TYPE(notebook, "notebook", 
+	RTGUI_CONTAINER_TYPE,
+	_rtgui_notebook_constructor,
+	_rtgui_notebook_destructor,
+	sizeof(struct rtgui_notebook));
 
 rtgui_notebook_tab_t *tabs;
 struct rtgui_notebook *_notebook;

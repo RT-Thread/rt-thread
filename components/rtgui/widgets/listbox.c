@@ -33,18 +33,11 @@ static void _rtgui_listbox_constructor(struct rtgui_listbox *box)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-rtgui_type_t *rtgui_listbox_type_get(void)
-{
-	static rtgui_type_t *listbox_type = RT_NULL;
-
-	if (!listbox_type)
-	{
-		listbox_type = rtgui_type_create("listbox", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_listbox_t), RTGUI_CONSTRUCTOR(_rtgui_listbox_constructor), RT_NULL);
-	}
-
-	return listbox_type;
-}
+DEFINE_CLASS_TYPE(listbox, "listbox", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_listbox_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_listbox));
 
 void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 {

@@ -4,8 +4,9 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(progressbar);
 /** Gets the type of a progressbar */
-#define RTGUI_PROGRESSBAR_TYPE       (rtgui_progressbar_type_get())
+#define RTGUI_PROGRESSBAR_TYPE       (RTGUI_TYPE(progressbar))
 /** Casts the object to a rtgui_progressbar */
 #define RTGUI_PROGRESSBAR(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_PROGRESSBAR_TYPE, rtgui_progressbar_t))
 /** Checks if the object is a rtgui_progressbar */
@@ -24,8 +25,6 @@ struct rtgui_progressbar
     int position;
 };
 typedef struct rtgui_progressbar rtgui_progressbar_t;
-
-rtgui_type_t *rtgui_progressbar_type_get(void);
 
 struct rtgui_progressbar* rtgui_progressbar_create(int orientation, int range, rtgui_rect_t* r);
 void rtgui_progressbar_destroy(struct rtgui_progressbar* p_bar);

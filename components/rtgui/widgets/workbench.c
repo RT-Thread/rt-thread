@@ -55,20 +55,11 @@ static void _rtgui_workbench_destructor(rtgui_workbench_t *workbench)
 	workbench->title = RT_NULL;
 }
 
-rtgui_type_t *rtgui_workbench_type_get(void)
-{
-	static rtgui_type_t *workbench_type = RT_NULL;
-
-	if (!workbench_type)
-	{
-		workbench_type = rtgui_type_create("workbench", RTGUI_TOPLEVEL_TYPE,
-			sizeof(rtgui_workbench_t),
-			RTGUI_CONSTRUCTOR(_rtgui_workbench_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_workbench_destructor));
-	}
-
-	return workbench_type;
-}
+DEFINE_CLASS_TYPE(workbench, "workbench", 
+	RTGUI_TOPLEVEL_TYPE,
+	_rtgui_workbench_constructor,
+	_rtgui_workbench_destructor,
+	sizeof(struct rtgui_workbench));
 
 rtgui_workbench_t *rtgui_workbench_create(const char* panel_name, const unsigned char* title)
 {

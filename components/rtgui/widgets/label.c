@@ -32,20 +32,11 @@ static void _rtgui_label_destructor(rtgui_label_t *label)
 	label->text = RT_NULL;
 }
 
-rtgui_type_t *rtgui_label_type_get(void)
-{
-	static rtgui_type_t *label_type = RT_NULL;
-
-	if (!label_type)
-	{
-		label_type = rtgui_type_create("label", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_label_t),
-			RTGUI_CONSTRUCTOR(_rtgui_label_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_label_destructor));
-	}
-
-	return label_type;
-}
+DEFINE_CLASS_TYPE(label, "label", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_label_constructor,
+	_rtgui_label_destructor,
+	sizeof(struct rtgui_label));
 
 rt_bool_t rtgui_label_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {

@@ -32,18 +32,11 @@ static void _rtgui_about_view_constructor(struct rtgui_about_view *view)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(view)) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-rtgui_type_t *rtgui_about_view_type_get(void)
-{
-	static rtgui_type_t *list_view_type = RT_NULL;
-
-	if (!list_view_type)
-	{
-		list_view_type = rtgui_type_create("aboutview", RTGUI_VIEW_TYPE,
-			sizeof(rtgui_about_view_t), RTGUI_CONSTRUCTOR(_rtgui_about_view_constructor), RT_NULL);
-	}
-
-	return list_view_type;
-}
+DEFINE_CLASS_TYPE(aboutview, "aboutview", 
+	RTGUI_VIEW_TYPE,
+	_rtgui_about_view_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_about_view));
 
 void rtgui_about_view_ondraw(struct rtgui_about_view* view)
 {

@@ -59,8 +59,10 @@ extern "C" {
 #define RTGUI_WIDGET_FONT(w)			((w)->gc.font)
 #define RTGUI_WIDGET_FLAG(w)			((w)->flag)
 
+DECLARE_CLASS_TYPE(widget);
+
 /** Gets the type of a widget */
-#define RTGUI_WIDGET_TYPE       (rtgui_widget_type_get())
+#define RTGUI_WIDGET_TYPE       (RTGUI_TYPE(widget))
 /** Casts the object to a rtgui_widget */
 #define RTGUI_WIDGET(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WIDGET_TYPE, rtgui_widget_t))
 /** Check if the object is a rtgui_widget */

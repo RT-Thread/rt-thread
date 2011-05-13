@@ -16,8 +16,9 @@
 
 #include <rtgui/widgets/container.h>
 
+DECLARE_CLASS_TYPE(toplevel);
 /** Gets the type of a toplevel */
-#define RTGUI_TOPLEVEL_TYPE       (rtgui_toplevel_type_get())
+#define RTGUI_TOPLEVEL_TYPE       (RTGUI_TYPE(toplevel))
 /** Casts the object to an rtgui_toplevel */
 #define RTGUI_TOPLEVEL(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_TOPLEVEL_TYPE, rtgui_toplevel_t))
 /** Checks if the object is an rtgui_toplevel */
@@ -40,10 +41,7 @@ struct rtgui_toplevel
 };
 typedef struct rtgui_toplevel rtgui_toplevel_t;
 
-rtgui_type_t *rtgui_toplevel_type_get(void);
-
 rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
-
 void rtgui_toplevel_update_clip(rtgui_toplevel_t* top);
 
 #endif

@@ -141,20 +141,11 @@ static void _rtgui_menu_item_onmouse()
 {
 }
 
-rtgui_type_t *rtgui_menu_type_get(void)
-{
-	static rtgui_type_t *menu_type = RT_NULL;
-
-	if (!menu_type)
-	{
-		menu_type = rtgui_type_create("menu", RTGUI_WIN_TYPE,
-			sizeof(rtgui_menu_t), 
-			RTGUI_CONSTRUCTOR(_rtgui_menu_constructor), 
-			RTGUI_DESTRUCTOR (_rtgui_menu_destructor));
-	}
-
-	return menu_type;
-}
+DEFINE_CLASS_TYPE(menu, "menu", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_menu_constructor,
+	_rtgui_menu_destructor,
+	sizeof(struct rtgui_menu));
 
 static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t* event)
 {

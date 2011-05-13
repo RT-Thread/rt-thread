@@ -18,12 +18,7 @@
 #include <rtgui/rtgui_system.h>
 
 /* the global parameter */
-struct rtgui_list_node _rtgui_panel_list;
-
-void rtgui_panel_init()
-{
-	rtgui_list_init(&_rtgui_panel_list);
-}
+struct rtgui_list_node _rtgui_panel_list = {RT_NULL};
 
 void rtgui_panel_register(char* name, rtgui_rect_t* extent)
 {

@@ -17,8 +17,9 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(slider);
 /** Gets the type of a slider */
-#define RTGUI_SLIDER_TYPE       (rtgui_slider_type_get())
+#define RTGUI_SLIDER_TYPE       (RTGUI_TYPE(slider))
 /** Casts the object to an rtgui_slider */
 #define RTGUI_SLIDER(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_SLIDER_TYPE, rtgui_slider_t))
 /** Checks if the object is an rtgui_slider */
@@ -37,8 +38,6 @@ struct rtgui_slider
 	void (*on_changed)(struct rtgui_widget* widget, struct rtgui_event *event);
 };
 typedef struct rtgui_slider rtgui_slider_t;
-
-rtgui_type_t *rtgui_slider_type_get(void);
 
 struct rtgui_slider* rtgui_slider_create(rt_size_t min, rt_size_t max, int orient);
 void rtgui_slider_destroy(struct rtgui_slider* slider);

@@ -63,7 +63,6 @@ typedef struct rtgui_topwin rtgui_topwin_t;
 
 /* top win manager init */
 void rtgui_topwin_init(void);
-void rtgui_panel_init (void);
 void rtgui_server_init(void);
 
 /* post an event to server */

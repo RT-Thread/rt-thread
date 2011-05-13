@@ -275,6 +275,7 @@ struct rtgui_event_paint
 	struct rtgui_event parent;
 
 	rtgui_win_t* wid;		/* destination window */
+	rtgui_rect_t rect;		/* rect to be updated */
 };
 
 struct rtgui_timer;

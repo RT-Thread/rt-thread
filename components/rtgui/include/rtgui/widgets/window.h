@@ -21,8 +21,9 @@
 #include <rtgui/widgets/toplevel.h>
 #include <rtgui/widgets/box.h>
 
+DECLARE_CLASS_TYPE(win);
 /** Gets the type of a win */
-#define RTGUI_WIN_TYPE       (rtgui_win_type_get())
+#define RTGUI_WIN_TYPE       (RTGUI_TYPE(win))
 /** Casts the object to an rtgui_win */
 #define RTGUI_WIN(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WIN_TYPE, rtgui_win_t))
 /** Checks if the object is an rtgui_win */
@@ -71,8 +72,6 @@ struct rtgui_win
 	/* reserved user data */
 	rt_uint32_t user_data;
 };
-
-rtgui_type_t *rtgui_win_type_get(void);
 
 rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, 
 	rtgui_rect_t *rect, rt_uint8_t flag);

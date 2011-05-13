@@ -21,8 +21,9 @@
 extern "C" {
 #endif
 
+DECLARE_CLASS_TYPE(scrollbar);
 /** Gets the type of a scrollbar */
-#define RTGUI_SCROLLBAR_TYPE       (rtgui_scrollbar_type_get())
+#define RTGUI_SCROLLBAR_TYPE       (RTGUI_TYPE(scrollbar))
 /** Casts the object to an rtgui_scrollbar */
 #define RTGUI_SCROLLBAR(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_SCROLLBAR_TYPE, rtgui_scrollbar_t))
 /** Checks if the object is an rtgui_scrollbar */
@@ -64,8 +65,6 @@ struct rtgui_scrollbar
 	rt_bool_t (*on_scroll) (struct rtgui_widget* widget, struct rtgui_event* event);
 };
 typedef struct rtgui_scrollbar rtgui_scrollbar_t;
-
-rtgui_type_t *rtgui_scrollbar_type_get(void);
 
 struct rtgui_scrollbar* rtgui_scrollbar_create(int orient, rtgui_rect_t* r);
 void rtgui_scrollbar_destroy(struct rtgui_scrollbar* bar);

@@ -33,8 +33,9 @@ struct rtgui_menu_item
 };
 typedef struct rtgui_menu_item rtgui_menu_item_t;
 
+DECLARE_CLASS_TYPE(menu);
 /** Gets the type of a menu */
-#define RTGUI_MENU_TYPE       (rtgui_menu_type_get())
+#define RTGUI_MENU_TYPE       (RTGUI_TYPE(menu))
 /** Casts the object to an rtgui_menu */
 #define RTGUI_MENU(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_MENU_TYPE, rtgui_menu_t))
 /** Checks if the object is an rtgui_menu */

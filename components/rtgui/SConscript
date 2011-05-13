@@ -58,6 +58,7 @@ widgets/textbox.c
 widgets/listbox.c
 widgets/title.c
 widgets/toplevel.c
+widgets/notebook.c
 widgets/view.c
 widgets/list_view.c
 widgets/about_view.c

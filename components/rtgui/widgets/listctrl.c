@@ -34,18 +34,11 @@ static void _rtgui_listctrl_constructor(struct rtgui_listctrl *ctrl)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(ctrl)) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-rtgui_type_t *rtgui_listctrl_type_get(void)
-{
-	static rtgui_type_t *listctrl_type = RT_NULL;
-
-	if (!listctrl_type)
-	{
-		listctrl_type = rtgui_type_create("listctrl", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_listctrl_t), RTGUI_CONSTRUCTOR(_rtgui_listctrl_constructor), RT_NULL);
-	}
-
-	return listctrl_type;
-}
+DEFINE_CLASS_TYPE(listctrl, "listctrl", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_listctrl_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_listctrl));
 
 static void _rtgui_listctrl_get_rect(struct rtgui_listctrl* ctrl, rtgui_rect_t* rect)
 {

@@ -89,18 +89,11 @@ void rtgui_scrollbar_get_thumb_rect(rtgui_scrollbar_t *bar, rtgui_rect_t *rect)
 	}
 }
 
-rtgui_type_t *rtgui_scrollbar_type_get(void)
-{
-	static rtgui_type_t *scrollbar_type = RT_NULL;
-
-	if (!scrollbar_type)
-	{
-		scrollbar_type = rtgui_type_create("scrollbar", RTGUI_WIDGET_TYPE,
-			sizeof(rtgui_scrollbar_t), RTGUI_CONSTRUCTOR(_rtgui_scrollbar_constructor), RT_NULL);
-	}
-
-	return scrollbar_type;
-}
+DEFINE_CLASS_TYPE(scrollbar, "scrollbar", 
+	RTGUI_WIDGET_TYPE,
+	_rtgui_scrollbar_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_scrollbar));
 
 static void _rtgui_scrollbar_on_mouseclick(struct rtgui_widget * widget, struct rtgui_event * event)
 {

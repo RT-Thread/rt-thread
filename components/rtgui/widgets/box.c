@@ -28,18 +28,11 @@ static void _rtgui_box_constructor(rtgui_box_t *box)
 	box->border_size = RTGUI_BORDER_DEFAULT_WIDTH;
 }
 
-rtgui_type_t *rtgui_box_type_get(void)
-{
-	static rtgui_type_t *box_type = RT_NULL;
-
-	if (!box_type)
-	{
-		box_type = rtgui_type_create("box", RTGUI_CONTAINER_TYPE,
-			sizeof(rtgui_box_t), RTGUI_CONSTRUCTOR(_rtgui_box_constructor), RT_NULL);
-	}
-
-	return box_type;
-}
+DEFINE_CLASS_TYPE(box, "box", 
+	RTGUI_CONTAINER_TYPE,
+	_rtgui_box_constructor,
+	RT_NULL,
+	sizeof(struct rtgui_box));
 
 rt_bool_t rtgui_box_event_handler(rtgui_widget_t* widget, rtgui_event_t* event)
 {

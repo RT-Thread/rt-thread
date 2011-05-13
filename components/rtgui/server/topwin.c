@@ -268,154 +268,66 @@ void rtgui_topwin_deactivate_win(struct rtgui_topwin* win)
 }
 
 /* raise window to front */
-#ifdef RTGUI_USING_SMALL_SIZE
 void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
 {
 	struct rtgui_topwin* topwin;
+	struct rtgui_list_node* node;
+	struct rtgui_event_clip_info eclip;
 
-	/* find the topwin node */
-	topwin = rtgui_topwin_search_in_list(wid, &_rtgui_topwin_show_list);
-	if (topwin)
+	RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
+	eclip.wid = RT_NULL;
+
+	/* the window is already placed in front */
+	if (&(topwin->list) == _rtgui_topwin_show_list.next)
 	{
-		rt_int32_t count;
-		struct rtgui_list_node* node;
-		struct rtgui_event_clip_info eclip;
-		RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
-		eclip.wid = RT_NULL;
-
-		/* the window is already placed in front */
-		if (&(topwin->list) == _rtgui_topwin_show_list.next)
-		{
-			rtgui_server_focus_topwin = RT_NULL;
-			rtgui_topwin_activate_win(topwin);
-		    return ;
-		}
-
-		/* remove node from list */
-		rtgui_list_remove(&_rtgui_topwin_show_list, &(topwin->list));
-		/* add to front */
-		rtgui_list_insert(&_rtgui_topwin_show_list, &(topwin->list));
-
-		/* send clip info event */
-		count = 0;
-		for (node = _rtgui_topwin_show_list.next; node != RT_NULL; node  = node->next)
-		{
-			struct rtgui_topwin* wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
-
-			eclip.num_rect = count;
-			eclip.wid = wnd->wid;
-
-			count ++;
-
-			/* send to destination window */
-			rtgui_thread_send(wnd->tid, &(eclip.parent), sizeof(struct rtgui_event_clip_info));
-
-			/* reset clip info in title */
-			if (wnd->title != RT_NULL)
-			{
-				rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
-				rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
-					&(RTGUI_WIDGET(wnd->title)->clip),
-					&(wnd->extent));
-			}
-		}
-
+		rtgui_server_focus_topwin = RT_NULL;
 		rtgui_topwin_activate_win(topwin);
+	    return ;
 	}
-}
-#else
-void rtgui_topwin_raise(struct rtgui_win* wid, rt_thread_t sender)
-{
-	struct rtgui_topwin* topwin;
 
+	// rt_sem_take(&_rtgui_topwin_lock, RT_WAITING_FOREVER);
 	/* find the topwin node */
-	topwin = rtgui_topwin_search_in_list(wid, &_rtgui_topwin_show_list);
-	if (topwin)
+	for (node = _rtgui_topwin_show_list.next; node->next != RT_NULL; node = node->next)
 	{
-		rt_int32_t count;
-		struct rtgui_list_node* node;
-		struct rtgui_event_clip_info* eclip;
-		struct rtgui_rect* rect;
-
-		/* the window is already placed in front */
-		if (&(topwin->list) == _rtgui_topwin_show_list.next)
+		topwin = rtgui_list_entry(node->next, struct rtgui_topwin, list);
+		if (topwin->wid == wid)
 		{
-			rtgui_server_focus_topwin = RT_NULL;
-			rtgui_topwin_activate_win(topwin);
-		    return ;
-		}
+			/* found target */
 
-		/* update clip info */
-		count = 0;
-		node = _rtgui_topwin_show_list.next;
-		while (node != &(topwin->list))
-		{
-			count ++;
-			node = node->next;
-		}
+			struct rtgui_list_node* n;
+			n = node->next;
+			/* remove node */
+			node->next = node->next->next;
+			/* insert node to the header */
+			n->next = _rtgui_topwin_show_list.next;
+			_rtgui_topwin_show_list.next = n;
 
-		eclip = (struct rtgui_event_clip_info*)rtgui_malloc(sizeof(struct rtgui_event_clip_info)
-			+ (count + 1)* sizeof(struct rtgui_rect));
-
-		/* reset clip info to top window */
-		RTGUI_EVENT_CLIP_INFO_INIT(eclip);
-		eclip->num_rect = 0;
-		eclip->wid = topwin->wid;
-		/* send to destination window */
-		rtgui_thread_send(topwin->tid, &(eclip->parent), sizeof(struct rtgui_event_clip_info));
-
-		/* reset clip info in title */
-		if (topwin->title != RT_NULL)
-		{
-			rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(topwin->title));
-			rtgui_region_subtract_rect(&(RTGUI_WIDGET(topwin->title)->clip),
-				&(RTGUI_WIDGET(topwin->title)->clip),
-				&(topwin->extent));
-		}
-
-		rect = RTGUI_EVENT_GET_RECT(eclip, 0);
-		*rect = (topwin->title != RT_NULL)? RTGUI_WIDGET(topwin->title)->extent : topwin->extent;
-
-		count = 1;
-		for (node = _rtgui_topwin_show_list.next;
-			node != &(topwin->list);
-			node  = node->next)
-		{
-			struct rtgui_topwin* wnd;
-			wnd = rtgui_list_entry(node, struct rtgui_topwin, list);
-
-			eclip->num_rect = count;
-			eclip->wid = wnd->wid;
-
-			/* send to destination window */
-			rtgui_thread_send(wnd->tid, &(eclip->parent),
-				sizeof(struct rtgui_event_clip_info) + count * sizeof(struct rtgui_rect));
-
-			/* reset clip info in title */
-			if (wnd->title != RT_NULL)
+			/* send clip update to each upper window */
+			for (n = _rtgui_topwin_show_list.next; n != node->next; n = n->next)
 			{
-				rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
-				rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
-					&(RTGUI_WIDGET(wnd->title)->clip),
-					&(wnd->extent));
+				struct rtgui_topwin* wnd = rtgui_list_entry(n, struct rtgui_topwin, list);
+				eclip.wid = wnd->wid;
+
+				/* send to destination window */
+				rtgui_thread_send(wnd->tid, &(eclip.parent), sizeof(struct rtgui_event_clip_info));
+
+				/* reset clip info in title */
+				if (wnd->title != RT_NULL)
+				{
+					rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(wnd->title));
+					rtgui_region_subtract_rect(&(RTGUI_WIDGET(wnd->title)->clip),
+						&(RTGUI_WIDGET(wnd->title)->clip),
+						&(wnd->extent));
+				}
 			}
 
-			rect = RTGUI_EVENT_GET_RECT(eclip, count++);
-			*rect = (wnd->title != RT_NULL)? RTGUI_WIDGET(wnd->title)->extent : wnd->extent;
+			/* active window */
+			rtgui_topwin_activate_win(topwin);
+			break;
 		}
-
-		/* release clip info event */
-		rtgui_free(eclip);
-
-		/* remove node from list */
-		rtgui_list_remove(&_rtgui_topwin_show_list, &(topwin->list));
-		/* add to front */
-		rtgui_list_insert(&_rtgui_topwin_show_list, &(topwin->list));
-
-		rtgui_topwin_activate_win(topwin);
 	}
+	// rt_sem_release(&_rtgui_topwin_lock);
 }
-#endif
 
 /* show a window */
 void rtgui_topwin_show(struct rtgui_event_win* event)

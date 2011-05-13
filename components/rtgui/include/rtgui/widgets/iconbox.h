@@ -18,8 +18,9 @@
 #include <rtgui/image.h>
 #include <rtgui/widgets/widget.h>
 
+DECLARE_CLASS_TYPE(iconbox);
 /** Gets the type of a iconbox */
-#define RTGUI_ICONBOX_TYPE       (rtgui_iconbox_type_get())
+#define RTGUI_ICONBOX_TYPE       (RTGUI_TYPE(iconbox))
 /** Casts the object to a rtgui_iconbox */
 #define RTGUI_ICONBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_ICONBOX_TYPE, rtgui_iconbox_t))
 /** Checks if the object is a rtgui_iconbox */
@@ -43,8 +44,6 @@ struct rtgui_iconbox
 	rt_bool_t selected;
 };
 typedef struct rtgui_iconbox rtgui_iconbox_t;
-
-rtgui_type_t *rtgui_iconbox_type_get(void);
 
 struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image, const char* text, int position);
 void rtgui_iconbox_destroy(struct rtgui_iconbox* iconbox);

@@ -28,90 +28,36 @@ static void _rtgui_object_destructor(rtgui_object_t *object)
 	/* nothing */
 }
 
-rtgui_type_t *rtgui_type_create(const char *type_name, rtgui_type_t *parent_type,
-						 int type_size, rtgui_constructor_t constructor,
-						 rtgui_destructor_t destructor)
-{
-	rtgui_type_t *new_type;
-
-	if (!type_name)
-		return RT_NULL;
-
-	new_type = rtgui_malloc(sizeof(rtgui_type_t));
-	new_type->name = rt_strdup(type_name);
-	new_type->size = type_size;
-	new_type->constructor = constructor;
-	new_type->destructor = destructor;
-
-	if (!parent_type)
-	{
-		new_type->hierarchy_depth = 0;
-		new_type->hierarchy = RT_NULL;
-	}
-	else
-	{
-		/* Build the type hierarchy */
-		new_type->hierarchy_depth = parent_type->hierarchy_depth + 1;
-		new_type->hierarchy = rtgui_malloc(sizeof(rtgui_type_t *) * new_type->hierarchy_depth);
-
-		new_type->hierarchy[0] = parent_type;
-		rt_memcpy(new_type->hierarchy + 1, parent_type->hierarchy,
-				  parent_type->hierarchy_depth * sizeof(rtgui_type_t *));
-	}
-
-	return new_type;
-}
-
-void rtgui_type_destroy(rtgui_type_t *type)
-{
-	if (!type) return;
-
-	if (type->hierarchy) rtgui_free(type->hierarchy);
-
-	rtgui_free(type->name);
-	rtgui_free(type);
-}
+DEFINE_CLASS_TYPE(type, "object", 
+	RT_NULL,
+	_rtgui_object_constructor,
+	_rtgui_object_destructor,
+	sizeof(struct rtgui_object));
 
 void rtgui_type_object_construct(rtgui_type_t *type, rtgui_object_t *object)
 {
-	int i;
+	/* first call parent's type */
+	if (type->parent != RT_NULL)
+		rtgui_type_object_construct(type->parent, object);
 
-	if (!type || !object) return;
-
-	/* Call the constructors */
-	for (i = type->hierarchy_depth - 1; i >= 0; i--)
-	{
-		if (type->hierarchy[i]->constructor)
-			type->hierarchy[i]->constructor(object);
-	}
 	if (type->constructor) type->constructor(object);
 }
 
 void rtgui_type_destructors_call(rtgui_type_t *type, rtgui_object_t *object)
 {
-	int i;
-
-	if (!type || !object) return;
-
-	if (type->destructor) type->destructor(object);
-	for (i = 0; i < type->hierarchy_depth; i++)
+	while (type)
 	{
-		if (type->hierarchy[i]->destructor)
-			type->hierarchy[i]->destructor(object);
+		if (type->destructor) type->destructor(object);
+		type = type->parent;
 	}
 }
 
 rt_bool_t rtgui_type_inherits_from(rtgui_type_t *type, rtgui_type_t *parent)
 {
-	int i;
-
-	if (!type || !parent) return RT_FALSE;
-
-	if (type == parent) return RT_TRUE;
-
-	for (i = 0; i < type->hierarchy_depth; i++)
+	while (type)
 	{
-		if (type->hierarchy[i] == parent) return RT_TRUE;
+		if (type == parent) return RT_TRUE;
+		type = type->parent;
 	}
 
 	return RT_FALSE;
@@ -119,9 +65,7 @@ rt_bool_t rtgui_type_inherits_from(rtgui_type_t *type, rtgui_type_t *parent)
 
 rtgui_type_t *rtgui_type_parent_type_get(rtgui_type_t *type)
 {
-	if (!type || !type->hierarchy) return RT_NULL;
-
-	return type->hierarchy[0];
+	return type->parent;
 }
 
 const char *rtgui_type_name_get(rtgui_type_t *type)
@@ -131,6 +75,7 @@ const char *rtgui_type_name_get(rtgui_type_t *type)
 	return type->name;
 }
 
+#ifdef RTGUI_OBJECT_TRACE
 struct rtgui_object_information
 {
 	rt_uint32_t objs_number;
@@ -138,6 +83,7 @@ struct rtgui_object_information
 	rt_uint32_t max_allocated;
 };
 struct rtgui_object_information obj_info = {0, 0, 0};
+#endif
 
 /**
  * @brief Creates a new object: it calls the corresponding constructors (from the constructor of the base class to the
@@ -155,10 +101,12 @@ rtgui_object_t *rtgui_object_create(rtgui_type_t *object_type)
 	new_object = rtgui_malloc(object_type->size);
 	if (new_object == RT_NULL) return RT_NULL;
 
+#ifdef RTGUI_OBJECT_TRACE
 	obj_info.objs_number ++;
 	obj_info.allocated_size += object_type->size;
 	if (obj_info.allocated_size > obj_info.max_allocated)
 		obj_info.max_allocated = obj_info.allocated_size;
+#endif
 
 	new_object->type = object_type;
 	new_object->is_static = RT_FALSE;
@@ -179,8 +127,10 @@ void rtgui_object_destroy(rtgui_object_t *object)
 {
 	if (!object || object->is_static == RT_TRUE) return;
 
+#ifdef RTGUI_OBJECT_TRACE
 	obj_info.objs_number --;
 	obj_info.allocated_size -= object->type->size;
+#endif
 
 	/* call destructor */
 	RT_ASSERT(object->type != RT_NULL);
@@ -191,25 +141,6 @@ void rtgui_object_destroy(rtgui_object_t *object)
 }
 
 /**
- * @internal
- * @brief Gets the type of a rtgui_object
- * @return Returns the type of a rtgui_object
- */
-rtgui_type_t *rtgui_object_type_get(void)
-{
-	static rtgui_type_t *object_type = RT_NULL;
-
-	if (!object_type)
-	{
-		object_type = rtgui_type_create("object", RT_NULL,
-			sizeof(rtgui_object_t), RTGUI_CONSTRUCTOR(_rtgui_object_constructor),
-			RTGUI_DESTRUCTOR(_rtgui_object_destructor));
-	}
-
-	return object_type;
-}
-
-/**
  * @brief Checks if @a object can be cast to @a type.
  * If @a object doesn't inherit from @a type, a warning is displayed in the console but the object is returned anyway.
  * @param object the object to cast
@@ -217,16 +148,16 @@ rtgui_type_t *rtgui_object_type_get(void)
  * @return Returns the object
  * @note You usually do not need to call this function, use specific macros instead (ETK_IS_WIDGET() for example)
  */
-rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *object, rtgui_type_t *type)
+rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *obj, rtgui_type_t *obj_type)
 {
-	if (!object) return RT_NULL;
+	if (!obj) return RT_NULL;
 
-	if (!rtgui_type_inherits_from(object->type, type))
+	if (!rtgui_type_inherits_from(obj->type, obj_type))
 	{
-		rt_kprintf("Invalid cast from \"%s\" to \"%s\"\n", rtgui_type_name_get(object->type), rtgui_type_name_get(type));
+		rt_kprintf("Invalid cast from \"%s\" to \"%s\"\n", rtgui_type_name_get(obj->type), rtgui_type_name_get(obj_type));
 	}
 
-	return object;
+	return obj;
 }
 
 /**
@@ -240,3 +171,4 @@ rtgui_type_t *rtgui_object_object_type_get(rtgui_object_t *object)
 
 	return object->type;
 }
+

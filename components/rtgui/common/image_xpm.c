@@ -18,6 +18,7 @@
 #include <rtgui/image_xpm.h>
 #include <rtgui/rtgui_system.h>
 
+#ifdef RTGUI_IMAGE_XPM
 #define XPM_MAGIC_LEN       9
 
 static rt_bool_t rtgui_image_xpm_check(struct rtgui_filerw * file);
@@ -607,4 +608,4 @@ static void rtgui_image_xpm_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 		}
 	}
 }
-
+#endif

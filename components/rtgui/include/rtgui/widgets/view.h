@@ -21,8 +21,9 @@
 extern "C" {
 #endif
 
+DECLARE_CLASS_TYPE(view);
 /** Gets the type of a view */
-#define RTGUI_VIEW_TYPE       (rtgui_view_type_get())
+#define RTGUI_VIEW_TYPE       (RTGUI_TYPE(view))
 /** Casts the object to an rtgui_view */
 #define RTGUI_VIEW(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_VIEW_TYPE, rtgui_view_t))
 /** Checks if the object is an rtgui_view */
@@ -41,8 +42,6 @@ struct rtgui_view
 	rt_bool_t modal_show;
 };
 typedef struct rtgui_view rtgui_view_t;
-
-rtgui_type_t *rtgui_view_type_get(void);
 
 rtgui_view_t* rtgui_view_create(const char* title);
 void rtgui_view_destroy(rtgui_view_t* view);
