@@ -23,6 +23,7 @@
  * 2010-07-13     Bernard      fix the maximal number of rt_scheduler_lock_nest 
  *                             issue found by kuronca
  * 2010-12-13     Bernard      add defunct list initialization even if not use heap.
+ * 2011-05-10     Bernard      clean scheduler debug log.
  */
 
 #include <rtthread.h>
@@ -30,7 +31,7 @@
 
 #include "kservice.h"
 
-/* #define SCHEDULER_DEBUG */
+/* #define RT_SCHEDULER_DEBUG */
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
@@ -132,6 +133,10 @@ void rt_system_scheduler_init(void)
     register rt_base_t offset;
 
     rt_scheduler_lock_nest = 0;
+
+#ifdef RT_SCHEDULER_DEBUG
+	rt_kprintf("start scheduler: max priority 0x%02x\n", RT_THREAD_PRIORITY_MAX);
+#endif
 
     for (offset = 0; offset < RT_THREAD_PRIORITY_MAX; offset ++)
     {
@@ -276,7 +281,7 @@ void rt_schedule()
 #endif
 
             /* switch to new thread */
-#ifdef SCHEDULER_DEBUG
+#ifdef RT_SCHEDULER_DEBUG
             rt_kprintf("[%d]switch to priority#%d thread:%s\n", rt_interrupt_nest,
                        highest_ready_priority, to_thread->name);
 #endif
@@ -290,7 +295,7 @@ void rt_schedule()
             }
             else
             {
-#ifdef SCHEDULER_DEBUG
+#ifdef RT_SCHEDULER_DEBUG
                 rt_kprintf("switch in interrupt\n");
 #endif
                 rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
@@ -327,11 +332,11 @@ void rt_schedule_insert_thread(struct rt_thread* thread)
                           &(thread->tlist));
 
     /* set priority mask */
-#ifdef SCHEDULER_DEBUG
+#ifdef RT_SCHEDULER_DEBUG
 #if RT_THREAD_PRIORITY_MAX <= 32
-    rt_kprintf("insert thread, the priority: %d\n", thread->current_priority);
+    rt_kprintf("insert thread[%s], the priority: %d\n", thread->name, thread->current_priority);
 #else
-    rt_kprintf("insert thread, the priority: %d 0x%x %d\n", thread->number, thread->number_mask, thread->high_mask);
+    rt_kprintf("insert thread[%s], the priority: %d 0x%x %d\n", thread->name, thread->number, thread->number_mask, thread->high_mask);
 #endif
 #endif
 
@@ -360,11 +365,11 @@ void rt_schedule_remove_thread(struct rt_thread* thread)
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
-#ifdef SCHEDULER_DEBUG
+#ifdef RT_SCHEDULER_DEBUG
 #if RT_THREAD_PRIORITY_MAX <= 32
-    rt_kprintf("remove thread, the priority: %d\n", thread->current_priority);
+    rt_kprintf("remove thread[%s], the priority: %d\n", thread->name, thread->current_priority);
 #else
-    rt_kprintf("remove thread, the priority: %d 0x%x %d\n", thread->number,
+    rt_kprintf("remove thread[%s], the priority: %d 0x%x %d\n", thread->name, thread->number,
                thread->number_mask, thread->high_mask);
 #endif
 #endif
