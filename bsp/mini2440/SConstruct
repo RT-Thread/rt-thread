@@ -32,7 +32,7 @@ elif rtconfig.PLATFORM == 'armcc':
 libs = PrepareBuilding(env, RTT_ROOT)
 
 if GetDepend('RT_USING_RTGUI'):
-    libs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
+    libs = libs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
 
 # libc testsuite 
 # libs = libs + SConscript(RTT_ROOT + '/examples/libc/SConscript', variant_dir='build/examples/libc', duplicate=0)
