@@ -20,7 +20,7 @@
 #include "string.h"
 #include "kservice.h"
 
-/* #define RT_MODULE_DEBUG */
+#define RT_MODULE_DEBUG
 #ifdef RT_USING_MODULE
 #include "module.h"
 
@@ -43,7 +43,6 @@ struct rt_module_page
 	rt_size_t npage;					/* number of pages  */
 	rt_list_t list;
 };
-static struct rt_module_page *rt_module_page_list;
 
 /* module memory allocator */
 struct rt_mem_head
@@ -67,12 +66,18 @@ struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_e
  */
 void rt_system_module_init(void)
 {
+#ifdef __GNUC__
 	extern int __rtmsymtab_start;
 	extern int __rtmsymtab_end;
-
-#ifdef __GNUC__
+	
 	_rt_module_symtab_begin = (struct rt_module_symtab *)&__rtmsymtab_start;
 	_rt_module_symtab_end   = (struct rt_module_symtab *)&__rtmsymtab_end;
+#elif defined (__CC_ARM) 
+	extern int RTMSymTab$$Base;
+	extern int RTMSymTab$$Limit;
+
+	_rt_module_symtab_begin = (struct rt_module_symtab *)&RTMSymTab$$Base;
+	_rt_module_symtab_end   = (struct rt_module_symtab *)&RTMSymTab$$Limit;	
 #endif
 
 	rt_list_init(&rt_module_symbol_list);
@@ -81,14 +86,14 @@ void rt_system_module_init(void)
 	rt_current_module = RT_NULL;
 }
 
-static rt_uint32_t rt_module_symbol_find(const rt_uint8_t* sym_str)
+static rt_uint32_t rt_module_symbol_find(const char* sym_str)
 {
 	/* find in kernel symbol table */
 	struct rt_module_symtab* index;
 	for (index = _rt_module_symtab_begin; index != _rt_module_symtab_end; index ++)
 	{
-		if (rt_strcmp(index->name, (const char*)sym_str) == 0)
-			return index->addr;
+		if (rt_strcmp(index->name, sym_str) == 0)
+			return (rt_uint32_t)index->addr;
 	}
 
 	return 0;
@@ -249,14 +254,14 @@ static void rt_module_init_object_container(struct rt_module* module)
  * @return the module object
  *
  */
-rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
+rt_module_t rt_module_load(const char* name, void* module_ptr)
 {
 	rt_uint8_t *ptr = RT_NULL;
 	rt_module_t module = RT_NULL;
 	rt_bool_t linked = RT_FALSE;
 	rt_uint32_t index, module_size = 0;
 
-	rt_kprintf("rt_module_load: %s\n", name);
+	rt_kprintf("rt_module_load: %s ,", name);
 
 	/* check ELF header */
 	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) == 0)
@@ -306,6 +311,8 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	ptr = module->module_space;
 	rt_memset(ptr, 0, module_size);
 
+	rt_kprintf(" load address at 0x%x\n", ptr);
+
 	for (index = 0; index < elf_module->e_phnum; index++)
 	{
 		if(phdr[index].p_type == PT_LOAD)
@@ -353,7 +360,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 					rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
 #endif
 					/* need to resolve symbol in kernel symbol table */
-					addr = rt_module_symbol_find(strtab + sym->st_name);
+					addr = rt_module_symbol_find((const char*)(strtab + sym->st_name));
 					if (addr == 0)
 					{
 						rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
@@ -378,7 +385,7 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 	{	
 		/* find .dynsym section */
 		rt_uint8_t* shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
-		if (rt_strcmp(shstrab + shdr[index].sh_name, ELF_DYNSYM) == 0) break;
+		if (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_DYNSYM) == 0) break;
 	}
 
 	/* found .dynsym section */
@@ -403,12 +410,12 @@ rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr)
 		{
 			if((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
 			{
-				rt_size_t length = rt_strlen(strtab + symtab[i].st_name) + 1;
+				rt_size_t length = rt_strlen((const char*)(strtab + symtab[i].st_name)) + 1;
 
-				module->symtab[count].addr = module->module_space + symtab[i].st_value; 
+				module->symtab[count].addr = (void*)(module->module_space + symtab[i].st_value); 
 				module->symtab[count].name = rt_malloc(length);
-				rt_memset(module->symtab[count].name, 0, length);
-				rt_memcpy(module->symtab[count].name, strtab + symtab[i].st_name, length);
+				rt_memset((void*)module->symtab[count].name, 0, length);
+				rt_memcpy((void*)module->symtab[count].name, strtab + symtab[i].st_name, length);
 				count++;
 			}	
 		}	
@@ -732,7 +739,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 	rt_free(module->module_space);
 
 	/* release module symbol table */
-	for(i=0; i<module->nsym; i++) rt_free(module->symtab[i].name);
+	for(i=0; i<module->nsym; i++) rt_free((void *)module->symtab[i].name);
 	if(module->symtab != RT_NULL) rt_free(module->symtab);
 
 	/* delete module object */

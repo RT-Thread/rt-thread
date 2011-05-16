@@ -304,7 +304,7 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void* arg);
  * module interface
  */
 
-rt_module_t rt_module_load(const rt_uint8_t* name, void* module_ptr);
+rt_module_t rt_module_load(const char* name, void* module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
 rt_module_t rt_module_open(const char* filename);
 void *rt_module_malloc(rt_size_t size);

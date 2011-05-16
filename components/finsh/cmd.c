@@ -386,7 +386,7 @@ int list_module(void)
 
 FINSH_FUNCTION_EXPORT(list_module, list module in system)
 
-int list_module_obj(const char* name)
+int list_mod_detail(const char* name)
 {
 	int i;
 	struct rt_module *module;
@@ -480,7 +480,7 @@ int list_module_obj(const char* name)
 
 	return 0;
 }
-FINSH_FUNCTION_EXPORT(list_module_obj, list module objects in system)
+FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
 #endif
 
 int list()

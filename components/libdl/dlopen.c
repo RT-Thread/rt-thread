@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rtm.h>
 
-#define MODULE_ROOT_DIR		"/module"
+#define MODULE_ROOT_DIR		"/module/lib"
 
 void* dlopen(const char *filename, int flags)
 {
