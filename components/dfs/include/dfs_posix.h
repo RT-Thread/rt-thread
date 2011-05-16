@@ -10,7 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version.
- * 2010-07-18     Bernard      add stat and statfs structure definitions.
+ * 2010-07-18     Bernard      add stat and statfs structure definitions. 
+ * 2011-05-16     Yi.qiu       Change parameter name of rename, "new" is C++ key word.
  */
 #ifndef __DFS_POSIX_H__
 #define __DFS_POSIX_H__
@@ -100,7 +101,7 @@ int close(int d);
 int read(int fd, void *buf, size_t len);
 int write(int fd, const void *buf, size_t len);
 off_t lseek(int fd, off_t offset, int whence);
-int rename(const char* old, const char* new );
+int rename(const char *from, const char *to);
 int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);

@@ -11,16 +11,17 @@ CROSS_TOOL 	= 'gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'E:/Keil'
+	EXEC_PATH 	= 'C:/Keil'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -48,6 +49,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'    
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'

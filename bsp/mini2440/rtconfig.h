@@ -96,12 +96,12 @@
 /* use long file name feature 			*/
 #define RT_DFS_ELM_USE_LFN			1
 /* the max number of file length 		*/
-#define RT_DFS_ELM_MAX_LFN		32
+#define RT_DFS_ELM_MAX_LFN		128
 /* #define RT_USING_DFS_YAFFS2 */
 /* #define RT_USING_DFS_UFFS */
 /* #define RT_USING_DFS_DEVFS */
 
-#define RT_USING_DFS_NFS
+/* #define RT_USING_DFS_NFS */
 #define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
 
 /* #define DFS_USING_WORKDIR */
@@ -220,11 +220,12 @@
 /* RTGUI image options */
 #define RTGUI_IMAGE_XPM
 #define RTGUI_IMAGE_JPEG
+#define RTGUI_IMAGE_PNG
 #define RTGUI_IMAGE_BMP
 
 /* SECTION: FTK support */
 /* using FTK support */
-/* #define RT_USING_FTK */	
+/* #define RT_USING_FTK */
 
 /*
  * Note on FTK:

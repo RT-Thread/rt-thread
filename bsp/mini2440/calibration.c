@@ -224,10 +224,12 @@ void calibration_init()
 		2048, 20, 5);
 	if (calibration_ptr->tid != RT_NULL) rt_thread_startup(calibration_ptr->tid);
 }
+
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 void calibration()
 {
 	calibration_init();
 }
 FINSH_FUNCTION_EXPORT(calibration, perform touch calibration);
-
+#endif

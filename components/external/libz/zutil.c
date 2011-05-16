@@ -291,6 +291,7 @@ void  zcfree (voidpf opaque, voidpf ptr)
 
 #ifndef MY_ZCALLOC /* Any system without a special alloc function */
 
+#ifdef RT_USING_RTGUI
 extern voidp  rtgui_malloc OF((uInt size));
 extern voidp  rtgui_calloc OF((uInt items, uInt size));
 extern void   rtgui_free   OF((voidpf ptr));
@@ -312,5 +313,25 @@ void  zcfree (opaque, ptr)
     rtgui_free(ptr);
     if (opaque) return; /* make compiler happy */
 }
+#else
+voidpf zcalloc (opaque, items, size)
+    voidpf opaque;
+    unsigned items;
+    unsigned size;
+{
+    if (opaque) items += size - size; /* make compiler happy */
+    return sizeof(uInt) > 2 ? (voidpf)rt_malloc(items * size) :
+                              (voidpf)rt_calloc(items, size);
+}
+
+void  zcfree (opaque, ptr)
+    voidpf opaque;
+    voidpf ptr;
+{
+    rt_free(ptr);
+    if (opaque) return; /* make compiler happy */
+}
+
+#endif
 
 #endif /* MY_ZCALLOC */
