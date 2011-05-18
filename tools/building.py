@@ -344,6 +344,8 @@ def DefineGroup(name, src, depend, **parameters):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
 
     objs = Env.Object(group['src'])
+    objs = Env.Library(name, objs)
+    
     return objs
 
 def EndBuilding(target):
