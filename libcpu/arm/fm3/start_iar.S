@@ -49,6 +49,7 @@
     IMPORT  rt_hw_hard_fault
     IMPORT  rt_hw_pend_sv
     IMPORT  rt_hw_timer_handler
+    IMPORT  rt_hw_uart2_rx_handler
 
     PUBLIC  __low_level_init
 
@@ -108,7 +109,7 @@ __vector_table
         DCD     EXTI2_IRQHandler          ; EXTI Line 2
         DCD     EXTI3_IRQHandler          ; EXTI Line 3
         DCD     EXTI4_IRQHandler          ; EXTI Line 4
-        DCD     DMA1_Channel1_IRQHandler  ; DMA1 Channel 1
+        DCD     rt_hw_uart2_rx_handler
         DCD     DMA1_Channel2_IRQHandler  ; DMA1 Channel 2
         DCD     DMA1_Channel3_IRQHandler  ; DMA1 Channel 3
         DCD     DMA1_Channel4_IRQHandler  ; DMA1 Channel 4
