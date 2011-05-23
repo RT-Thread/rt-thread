@@ -2,7 +2,7 @@ import os
 import sys
 
 EXEC_PATH = '/home/shaolin/CodeSourcery/Sourcery_G++_Lite/bin'
-RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+RTT_ROOT = os.path.normpath(os.getcwd() + '/../../../..')
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 PREFIX = 'arm-none-eabi-'
 env = Environment(tools = ['mingw'],
