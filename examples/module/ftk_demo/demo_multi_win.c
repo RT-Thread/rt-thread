@@ -52,7 +52,7 @@ static void create_app_window(void)
 	ftk_widget_set_text(button, "关闭窗口");
 	ftk_button_set_clicked_listener(button, button_close_clicked, win);
 
-	snprintf(title, sizeof(title), "window%02d", g_index++);
+	ftk_snprintf(title, sizeof(title), "window%02d", g_index++);
 	label = ftk_label_create(win, width/4, height/2, width/2, 30);
 	ftk_widget_set_text(label, title);
 	

@@ -33,6 +33,7 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 	FTK_INIT(argc, argv);
 	
 	win = ftk_app_window_create();
+	ftk_window_set_animation_hint(win, "app_main_window");
 	width = ftk_widget_width(win);
 	height = ftk_widget_height(win);
 	

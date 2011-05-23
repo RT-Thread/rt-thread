@@ -1,0 +1,34 @@
+import os
+import sys
+
+EXEC_PATH = '/home/shaolin/CodeSourcery/Sourcery_G++_Lite/bin'
+RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+PREFIX = 'arm-none-eabi-'
+env = Environment(tools = ['mingw'],
+	AS = PREFIX + 'gcc', 
+	ASFLAGS = '',
+	CC = PREFIX + 'gcc',
+	CCFLAGS = '-DRT_THREAD -DFTK_AS_PLUGIN -mcpu=arm920t -O0 -fPIC' ,
+	AR = PREFIX + 'ar', 
+	ARFLAGS = '-rc',
+	LINK = PREFIX + 'ld',
+	LINKFLAGS = '-z max-page-size=0x4 -shared -fPIC -e 0 -nostdlib -s',
+	CPPPATH = [
+		RTT_ROOT + '/include', 
+		RTT_ROOT + '/bsp/mini2440',
+		RTT_ROOT + '/components/external/ftk/ftk/src/os/rt-thread',
+		RTT_ROOT + '/components/external/ftk/ftk/src/demos',	
+		RTT_ROOT + '/components/external/ftk/ftk/apps/common',
+		RTT_ROOT + '/components/external/ftk/ftk/src',
+		RTT_ROOT + '/components/dfs', 
+		RTT_ROOT + '/components/dfs/include',
+		RTT_ROOT + '/components/libc/newlib'
+		])
+env.PrependENVPath('PATH', EXEC_PATH)
+
+target = 'calculator.so'
+src = Glob('*.c')
+
+env.Program(target, src) 
+

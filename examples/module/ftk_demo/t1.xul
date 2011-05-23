@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window value="Entry Label" animator="$FTK_ANI_TO_UP" visible="1">
+<window  value="Entry Label" visible="1">
 	<label  id="1" x="5" y="5" w="$ww/4" h="30" value="Name" />
 	<entry  id="2" x="$ww/4+5" y="5" w="3*$ww/4-15" h="30" value="Li XianJing" />
 	

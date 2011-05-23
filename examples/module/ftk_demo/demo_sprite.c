@@ -6,14 +6,14 @@ static Ret button_quit_clicked(void* ctx, void* obj)
 	return RET_OK;
 }
 
-static Ret on_move(void* ctx, void* obj)
+Ret on_move(void* ctx, void* obj)
 {
 	ftk_logd("%s: %d %d\n", __func__, ftk_sprite_get_x(obj), ftk_sprite_get_y(obj));
 
 	return RET_OK;
 }
 
-static Ret move_cursor(void* ctx, void* obj)
+Ret move_cursor(void* ctx, void* obj)
 {
 	FtkEvent* event = obj;
 

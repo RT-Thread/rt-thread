@@ -19,6 +19,7 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 	FTK_INIT(argc, argv);
 	
 	win = ftk_app_window_create();
+	ftk_window_set_animation_hint(win, "app_main_window");
 
 	ftk_snprintf(filename, FTK_MAX_PATH, "%s/earth.png", 
 		ftk_config_get_test_data_dir(ftk_default_config()));

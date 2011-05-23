@@ -13,7 +13,7 @@ static Ret update_time(void* ctx)
 	struct tm* t = localtime(&now);
 	panel = ftk_default_status_panel();
 
-	snprintf(text, sizeof(text)-1, "%2d:%2d", t->tm_hour, t->tm_min);
+	ftk_snprintf(text, sizeof(text)-1, "%2d:%2d", t->tm_hour, t->tm_min);
 
 	item = ftk_widget_lookup(panel, IDC_TIME_ITEM);
 

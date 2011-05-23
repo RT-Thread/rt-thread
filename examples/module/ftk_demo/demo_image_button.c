@@ -77,6 +77,7 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 
 	gc.mask = FTK_GC_BITMAP;
 	win = ftk_app_window_create();
+	ftk_window_set_animation_hint(win, "app_main_window");
 	width = ftk_widget_width(win);
 	height = ftk_widget_height(win);
 	for(i = 0; i < height/80; i++)

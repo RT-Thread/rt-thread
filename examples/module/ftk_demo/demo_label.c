@@ -12,7 +12,7 @@ static Ret timeout(void* ctx)
 	char buffer[32] = {0};
 	if(info->times > 0)
 	{
-		snprintf(buffer, sizeof(buffer), "Quit after %d seconds", info->times);
+		ftk_snprintf(buffer, sizeof(buffer), "Quit after %d seconds", info->times);
 		ftk_widget_set_text(info->label, buffer);
 		info->times--;
 
@@ -43,22 +43,30 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 {
 	int width = 0;
 	int height = 0;
-	FtkGc gc = {.mask = FTK_GC_BG};
+	FtkGc gc = {0};
 	TimerInfo* info = NULL;
+	FtkSource* timer = NULL;
+	FtkWidget* win = NULL;
+	FtkWidget* label = NULL;
+
+	gc.mask = FTK_GC_BG;
 
 	FTK_INIT(argc, argv);
 	info = (TimerInfo*)FTK_ZALLOC(sizeof(TimerInfo));
 	info->times = 5;
 		
-	FtkSource* timer = ftk_source_timer_create(1000, timeout, info);
-	FtkWidget* win = ftk_app_window_create();
+	timer = ftk_source_timer_create(1000, timeout, info);
+	win = ftk_app_window_create();
+	ftk_window_set_animation_hint(win, "app_main_window");
 
 	width = ftk_widget_width(win);
 	height = ftk_widget_height(win);
 
-	FtkWidget* label = ftk_label_create(win, 10, 10, width - 20, 20);
+#ifdef WIN32	
+	label = ftk_label_create(win, 10, 10, width - 20, 20);
 	ftk_widget_set_text(label, "中文文本");
-	
+#else
+#endif
 	label = ftk_label_create(win, 10, 40, width - 20, 20);
 	ftk_widget_set_text(label, "English Text(center)");
 	ftk_label_set_alignment(label, FTK_ALIGN_CENTER);
@@ -75,8 +83,11 @@ FTK_HIDE int FTK_MAIN(int argc, char* argv[])
 	label = ftk_label_create(win, 10, height/2, width - 20, 120);
 	ftk_widget_set_gc(label, FTK_WIDGET_INSENSITIVE, &gc);
 	ftk_widget_unset_attr(label, FTK_ATTR_TRANSPARENT);
+#ifdef WIN32	
+	ftk_widget_set_text(label, "The linux mobile development(with background color)");
+#else
 	ftk_widget_set_text(label, "中英文混合多行文本显示:the linux mobile development.带有背景颜色。");
-	
+#endif
 	label = ftk_label_create(win, 50, height/2-30, width, 20);
 	info->label = label;
 	

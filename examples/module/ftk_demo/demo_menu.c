@@ -51,7 +51,7 @@ static void create_app_window(void)
 {
 	int width = 0;
 	int height = 0;
-	char title[32] = {0};
+	char title[128] = {0};
 	FtkWidget* win = ftk_app_window_create();
 	FtkWidget* label = NULL;
 	FtkWidget* button = NULL;
@@ -68,7 +68,10 @@ static void create_app_window(void)
 	ftk_button_set_clicked_listener(button, button_close_clicked, win);
 
 	label = ftk_label_create(win, 10, height/2, width-20, 60);
-	ftk_widget_set_text(label, "Press F2 to open menu, Presss F3 close window.");
+
+	ftk_snprintf(title, sizeof(title), 
+		"Press F2 to open menu, Presss F3 close window%02d", g_index++);
+	ftk_widget_set_text(label, title);
 	
 	ftk_snprintf(title, sizeof(title), "window%02d", g_index++);
 	ftk_widget_set_text(win, title);
