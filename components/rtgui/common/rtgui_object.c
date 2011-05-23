@@ -34,7 +34,7 @@ DEFINE_CLASS_TYPE(type, "object",
 	_rtgui_object_destructor,
 	sizeof(struct rtgui_object));
 
-void rtgui_type_object_construct(rtgui_type_t *type, rtgui_object_t *object)
+void rtgui_type_object_construct(const rtgui_type_t *type, rtgui_object_t *object)
 {
 	/* first call parent's type */
 	if (type->parent != RT_NULL)
@@ -43,32 +43,38 @@ void rtgui_type_object_construct(rtgui_type_t *type, rtgui_object_t *object)
 	if (type->constructor) type->constructor(object);
 }
 
-void rtgui_type_destructors_call(rtgui_type_t *type, rtgui_object_t *object)
+void rtgui_type_destructors_call(const rtgui_type_t *type, rtgui_object_t *object)
 {
-	while (type)
+	const rtgui_type_t *t;
+	
+	t = type;
+	while (t)
 	{
-		if (type->destructor) type->destructor(object);
-		type = type->parent;
+		if (t->destructor) t->destructor(object);
+		t = t->parent;
 	}
 }
 
-rt_bool_t rtgui_type_inherits_from(rtgui_type_t *type, rtgui_type_t *parent)
+rt_bool_t rtgui_type_inherits_from(const rtgui_type_t *type, const rtgui_type_t *parent)
 {
-	while (type)
+	const rtgui_type_t *t;
+	
+	t = type;
+	while (t)
 	{
-		if (type == parent) return RT_TRUE;
-		type = type->parent;
+		if (t == parent) return RT_TRUE;
+		t = t->parent;
 	}
 
 	return RT_FALSE;
 }
 
-rtgui_type_t *rtgui_type_parent_type_get(rtgui_type_t *type)
+const rtgui_type_t *rtgui_type_parent_type_get(const rtgui_type_t *type)
 {
 	return type->parent;
 }
 
-const char *rtgui_type_name_get(rtgui_type_t *type)
+const char *rtgui_type_name_get(const rtgui_type_t *type)
 {
 	if (!type) return RT_NULL;
 
@@ -165,7 +171,7 @@ rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *obj, rtgui_type_t *obj_t
  * @param object an object
  * @return Returns the type of @a object (RT_NULL on failure)
  */
-rtgui_type_t *rtgui_object_object_type_get(rtgui_object_t *object)
+const rtgui_type_t *rtgui_object_object_type_get(rtgui_object_t *object)
 {
 	if (!object) return RT_NULL;
 

@@ -17,6 +17,7 @@
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/view.h>
+extern void rtgui_topwin_do_clip(rtgui_widget_t* widget);
 
 static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 {
@@ -494,8 +495,6 @@ void rtgui_widget_show(rtgui_widget_t* widget)
 
 void rtgui_widget_hide(rtgui_widget_t* widget)
 {
-	rtgui_rect_t rect;
-
 	/* hide this widget */
 	RTGUI_WIDGET_HIDE(widget);
 

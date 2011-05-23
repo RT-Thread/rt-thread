@@ -120,12 +120,10 @@ rt_bool_t rtgui_container_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 		/* handle in child widget */
 		return rtgui_container_dispatch_mouse_event(container,
 			(struct rtgui_event_mouse*)event);
-		break;
 
 	case RTGUI_EVENT_MOUSE_MOTION:
 		return rtgui_container_dispatch_mouse_event(container,
 			(struct rtgui_event_mouse*)event);
-		break;
 
 	default:
 		/* call parent widget event handler */

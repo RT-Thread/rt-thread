@@ -137,10 +137,6 @@ static void _rtgui_menu_item_ondraw(struct rtgui_listctrl *list, struct rtgui_dc
 	}
 }
 
-static void _rtgui_menu_item_onmouse()
-{
-}
-
 DEFINE_CLASS_TYPE(menu, "menu", 
 	RTGUI_WIDGET_TYPE,
 	_rtgui_menu_constructor,

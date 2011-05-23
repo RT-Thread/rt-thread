@@ -13,6 +13,7 @@
  */
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/toplevel.h>
+extern void rtgui_topwin_do_clip(rtgui_widget_t* widget);
 
 static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 {
@@ -100,7 +101,6 @@ rt_bool_t rtgui_toplevel_event_handler(rtgui_widget_t* widget, rtgui_event_t* ev
 
 void rtgui_toplevel_update_clip(rtgui_toplevel_t* top)
 {
-	rt_uint32_t idx;
 	rtgui_container_t* container;
 	struct rtgui_list_node* node;
 	rtgui_rect_t screen_rect;
