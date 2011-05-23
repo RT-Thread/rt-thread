@@ -343,8 +343,10 @@ def DefineGroup(name, src, depend, **parameters):
     if group.has_key('LINKFLAGS'):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
 
-    objs = Env.Object(group['src'])
-    objs = Env.Library(name, objs)
+    objs = Env.Object(group['src'])    
+
+    if group.has_key('LIBRARY'):
+        objs = Env.Library(name, objs)
     
     return objs
 

@@ -23,25 +23,17 @@ env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 Export('RTT_ROOT')
 Export('rtconfig')
 
-if rtconfig.PLATFORM == 'gcc':
-	start_obj  = 'build/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU + '/start_gcc.o',
-elif rtconfig.PLATFORM == 'armcc':
-	start_obj  = 'build/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU + '/start_rvds.o',
-
 # prepare building environment
-libs = PrepareBuilding(env, RTT_ROOT)
+objs = PrepareBuilding(env, RTT_ROOT)
 
 if GetDepend('RT_USING_RTGUI'):
-    libs = libs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
+    objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
 
 # libc testsuite 
-# libs = libs + SConscript(RTT_ROOT + '/examples/libc/SConscript', variant_dir='build/examples/libc', duplicate=0)
+# objs = objs + SConscript(RTT_ROOT + '/examples/libc/SConscript', variant_dir='build/examples/libc', duplicate=0)
 
 # build program 
-if GetDepend('RT_USING_NEWLIB'):
-    env.Program(target = TARGET, source = [start_obj, 'build/components/libc/newlib/syscalls.o', 'build/components/libc/newlib/libc.o'], LIBS = libs)
-else:
-    env.Program(target = TARGET, source = start_obj, LIBS = libs)
+env.Program(TARGET, objs)
 
 # end building 
 EndBuilding(TARGET)

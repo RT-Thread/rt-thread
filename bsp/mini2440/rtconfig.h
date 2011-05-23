@@ -82,8 +82,8 @@
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */
-/* #define RT_USING_NEWLIB */
-/* #define RT_USING_PTHREADS */
+#define RT_USING_NEWLIB
+#define RT_USING_PTHREADS
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -99,12 +99,12 @@
 #define RT_DFS_ELM_MAX_LFN		128
 /* #define RT_USING_DFS_YAFFS2 */
 /* #define RT_USING_DFS_UFFS */
-/* #define RT_USING_DFS_DEVFS */
+#define RT_USING_DFS_DEVFS
 
 /* #define RT_USING_DFS_NFS */
 #define RT_NFS_HOST_EXPORT		"192.168.1.5:/"
 
-/* #define DFS_USING_WORKDIR */
+#define DFS_USING_WORKDIR
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX		4
