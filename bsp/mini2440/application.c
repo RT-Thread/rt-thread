@@ -56,6 +56,21 @@ extern void rt_hw_touch_init(void);
 #include <dfs_romfs.h>
 #endif
 
+#ifdef RT_USING_FTK
+static int argc = 1;
+static char* argv[] = {"ftk", NULL};
+
+void rt_ftk_thread_entry(void* parameter)
+{
+	int FTK_MAIN(int argc, char* argv[]);
+
+	FTK_MAIN(argc, argv);
+
+	return;
+}
+
+#endif
+
 void rt_init_thread_entry(void* parameter)
 {
 /* Filesystem Initialization */
@@ -155,8 +170,6 @@ void rt_init_thread_entry(void* parameter)
 	{
 		rt_thread_t ftk_thread;
 
-		int FTK_MAIN(int argc, char* argv[]);
-
 		/* init lcd */
 		rt_hw_lcd_init();
 
@@ -171,7 +184,7 @@ void rt_init_thread_entry(void* parameter)
 
 		/* create ftk thread */
 		ftk_thread = rt_thread_create("ftk",
-									FTK_MAIN, RT_NULL,
+									rt_ftk_thread_entry, RT_NULL,
 									10 * 1024, 8, 20);	
 
 		/* startup ftk thread */

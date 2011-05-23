@@ -8,24 +8,20 @@
 #include "ftk_expr.h"
 #include "ftk_pipe.h"
 #include "ftk_tab.h"
+#include "ftk_globals.h"
 #include "ftk_mmap.h"
 #include "ftk_app_demo.h"
 #include "ftk_message_box.h"
-#include "ftk_animator_expand.h"
-#include "ftk_animator_zoom.h"
-#include "ftk_animator_alpha.h"
+#include "ftk_animation_expand.h"
+#include "ftk_animation_alpha.h"
 #include "ftk_file_browser.h"
 #include "ftk_text_buffer.h"
 #include "ftk_xml_parser.h"
-#include "Ftk_text_buffer.h"
-#include "ftk_font_default.h"
-#include "ftk_lookup_table.h"
+#include "ftk_text_buffer.h"
 #include "ftk_display_mem.h"
 #include "ftk_display_rotate.h"
 #include "ftk_source_primary.h"
 #include "ftk_allocator_default.h"
-#include "ftk_input_method_py.h"
-#include "ftk_input_method_util.h"
 #include "ftk_image_bmp_decoder.h"
 #include "ftk_image_png_decoder.h"
 #include "ftk_image_jpeg_decoder.h"
@@ -42,7 +38,7 @@ RTM_EXPORT(ftk_allocator_zalloc)
 RTM_EXPORT(ftk_allocator_zfree)
 RTM_EXPORT(ftk_strdup)
 RTM_EXPORT(ftk_allocator_default_create)
-RTM_EXPORT(ftk_animator_expand_create)
+RTM_EXPORT(ftk_animation_expand_create)
 RTM_EXPORT(ftk_app_window_create)
 RTM_EXPORT(ftk_app_window_set_on_prepare_options_menu)
 RTM_EXPORT(ftk_bitmap_create)
@@ -72,21 +68,14 @@ RTM_EXPORT(ftk_canvas_create)
 RTM_EXPORT(ftk_canvas_reset_gc)
 RTM_EXPORT(ftk_canvas_set_gc)
 RTM_EXPORT(ftk_canvas_get_gc)
-RTM_EXPORT(ftk_canvas_put_pixel)
 RTM_EXPORT(ftk_canvas_get_pixel)
 RTM_EXPORT(ftk_canvas_draw_vline)
 RTM_EXPORT(ftk_canvas_draw_hline)
-RTM_EXPORT(ftk_canvas_fast_fill_rect)
 RTM_EXPORT(ftk_canvas_draw_rect)
-RTM_EXPORT(ftk_canvas_draw_round_rect)
-RTM_EXPORT(ftk_canvas_draw_string_ex)
 RTM_EXPORT(ftk_canvas_draw_string)
-RTM_EXPORT(ftk_canvas_draw_bitmap_zoom)
 RTM_EXPORT(ftk_canvas_draw_bitmap)
-RTM_EXPORT(ftk_canvas_bitmap)
 RTM_EXPORT(ftk_canvas_font_height)
 RTM_EXPORT(ftk_canvas_get_extent)
-RTM_EXPORT(ftk_canvas_get_char_extent)
 RTM_EXPORT(ftk_canvas_calc_str_visible_range)
 RTM_EXPORT(ftk_canvas_destroy)
 RTM_EXPORT(ftk_canvas_draw_bg_image)
@@ -142,8 +131,6 @@ RTM_EXPORT(ftk_expr_eval)
 RTM_EXPORT(ftk_font_get_char_extent)
 RTM_EXPORT(ftk_font_get_extent)
 RTM_EXPORT(ftk_font_calc_str_visible_range)
-RTM_EXPORT(ftk_font_default_create)
-RTM_EXPORT(ftk_default_font)
 RTM_EXPORT(ftk_default_display)
 RTM_EXPORT(ftk_shared_canvas)
 RTM_EXPORT(ftk_default_theme)
@@ -159,7 +146,6 @@ RTM_EXPORT(ftk_default_wnd_manager)
 RTM_EXPORT(ftk_default_status_panel)
 RTM_EXPORT(ftk_default_bitmap_factory)
 RTM_EXPORT(ftk_default_sources_manager)
-RTM_EXPORT(ftk_set_font)
 RTM_EXPORT(ftk_set_display)
 RTM_EXPORT(ftk_set_main_loop)
 RTM_EXPORT(ftk_set_log_level)
@@ -401,14 +387,6 @@ RTM_EXPORT(ftk_xml_parser_destroy)
 RTM_EXPORT(ftk_xul_load_ex)
 RTM_EXPORT(ftk_xul_load)
 RTM_EXPORT(ftk_xul_load_file)
-RTM_EXPORT(ftk_input_method_py_create)
-RTM_EXPORT(ftk_input_method_wb_create)
-RTM_EXPORT(ftk_im_candidate_info_parse)
-RTM_EXPORT(ftk_lookup_table_create)
-RTM_EXPORT(ftk_lookup_table_load)
-RTM_EXPORT(ftk_lookup_table_unload)
-RTM_EXPORT(ftk_lookup_table_lookup)
-RTM_EXPORT(ftk_lookup_table_destroy)
 RTM_EXPORT(ftk_mmap_exist)
 RTM_EXPORT(ftk_mmap_create)
 RTM_EXPORT(ftk_mmap_data)
@@ -429,9 +407,7 @@ RTM_EXPORT(ftk_file_browser_set_path)
 RTM_EXPORT(ftk_file_browser_create)
 RTM_EXPORT(ftk_file_browser_set_filter)
 RTM_EXPORT(ftk_file_browser_set_choosed_handler)
-RTM_EXPORT(ftk_app_demo_create)
-RTM_EXPORT(ftk_animator_alpha_create)
-RTM_EXPORT(ftk_animator_zoom_create)
+RTM_EXPORT(ftk_animation_alpha_create)
 RTM_EXPORT(ftk_combo_box_append)
 RTM_EXPORT(ftk_text_view_set_readonly)
 RTM_EXPORT(ftk_text_view_create)
@@ -446,4 +422,6 @@ RTM_EXPORT(ftk_tips)
 RTM_EXPORT(ftk_warning)
 RTM_EXPORT(ftk_question)
 RTM_EXPORT(ftk_infomation)
+RTM_EXPORT(ftk_window_set_animation_hint)
+RTM_EXPORT(ftk_widget_set_font_size)
 

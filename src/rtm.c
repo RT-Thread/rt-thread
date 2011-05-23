@@ -153,6 +153,7 @@ RTM_EXPORT(rt_memset)
 RTM_EXPORT(rt_kprintf)
 RTM_EXPORT(rt_sprintf)
 RTM_EXPORT(rt_strstr)
+RTM_EXPORT(rt_snprintf)
 
 /* 
  * misc interface symbol

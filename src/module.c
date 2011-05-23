@@ -20,7 +20,7 @@
 #include "string.h"
 #include "kservice.h"
 
-#define RT_MODULE_DEBUG
+/* #define RT_MODULE_DEBUG */
 #ifdef RT_USING_MODULE
 #include "module.h"
 
