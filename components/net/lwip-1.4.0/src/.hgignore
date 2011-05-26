@@ -1,0 +1,26 @@
+syntax: glob 
+ 
+*.pyc 
+*.orig 
+*.rej 
+*~ 
+TAGS 
+Module.symvers 
+*.ncb
+*.suo
+*.bak
+*.orig
+*.rej
+
+syntax: regexp
+\.\#.+
+[\\/]CVS$
+^CVS$
+^build$
+^install$
+^logs.build_tree$
+[\\/]bin$
+^bin$
+[\\/]obj$
+^obj$
+\.cvsignore
