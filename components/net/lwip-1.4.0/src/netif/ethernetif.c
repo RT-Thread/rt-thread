@@ -128,8 +128,18 @@ static err_t ethernetif_init(struct netif *netif)
 	netif->hwaddr_len	= 6;
 	/* maximum transfer unit */
 	netif->mtu			= ETHERNET_MTU;
-	/* broadcast capability */
-	netif->flags		= NETIF_FLAG_BROADCAST;
+
+	/* NOTE: the NETIF_FLAG_UP and NETIF_FLAG_LINK_UP flag is not set here.
+	They should be set by netif_set_up() and netif_set_link_up() automatically */
+	netif->flags		= NETIF_FLAG_BROADCAST |
+						NETIF_FLAG_ETHARP;
+#ifdef LWIP_IGMP
+	netif->flags |= NETIF_FLAG_IGMP;
+#endif
+
+#ifdef LWIP_DHCP
+	netif->flags |= NETIF_FLAG_DHCP;
+#endif
 
 	/* get hardware address */
 	rt_device_control(&(eth_dev->parent), NIOCTL_GADDR, netif->hwaddr);
@@ -145,19 +155,19 @@ static err_t ethernetif_init(struct netif *netif)
 /* ethernetif APIs */
 rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 {
-	struct netif* netif;
+	struct netif* pnetif;
 	/* allocate memory */
-	netif = (struct netif*) rt_malloc (sizeof(struct netif));
-	if (netif == RT_NULL)
+	pnetif = (struct netif*) rt_malloc (sizeof(struct netif));
+	if (pnetif == RT_NULL)
 	{
 		rt_kprintf("malloc netif failed\n");
 		return -RT_ERROR;
 	}
-	rt_memset(netif, 0, sizeof(struct netif));
+	rt_memset(pnetif, 0, sizeof(struct netif));
 
 
 	/* set netif */
-	dev->netif = netif;
+	dev->netif = pnetif;
 	/* register to rt-thread device manager */
 	rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
 	dev->parent.type = RT_Device_Class_NetIf;
@@ -168,18 +178,23 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 	/* NOTE: eth_init will be called back by netif_add, we should put some initialization
 	         code to eth_init(). See include/lwip/netif.h line 97 */
 	eth_dev = dev;
-	if (netif_add(netif, IP_ADDR_ANY, IP_ADDR_BROADCAST, IP_ADDR_ANY, dev,
+	if (netif_add(pnetif, IP_ADDR_ANY, IP_ADDR_BROADCAST, IP_ADDR_ANY, dev,
 		ethernetif_init, ethernet_input) == RT_NULL)
 	{
 		/* failed, unregister device and free netif */
 		rt_device_unregister(&(dev->parent));
-		rt_free(netif);
+		rt_free(pnetif);
 		eth_dev = RT_NULL;
 		return -RT_ERROR;
 	}
 	eth_dev = RT_NULL;
 
-	netif_set_default(netif);
+	netif_set_default(pnetif);
+
+	/* We bring up the netif here cause we still don't have a call back function
+	which indicates the ethernet interface status from the ethernet driver. */
+	netif_set_up(pnetif);
+	netif_set_link_up(pnetif);
 
 	return RT_EOK;
 }
