@@ -39,8 +39,8 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0 -gstabs+'
+        AFLAGS += ' -gstabs+'
     else:
         CFLAGS += ' -O2'
 
