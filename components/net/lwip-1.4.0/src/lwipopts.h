@@ -325,7 +325,5 @@
 /* no read/write/close for socket */
 #define LWIP_POSIX_SOCKETS_IO_NAMES	0
 
-/* this should be removed */
-#define LWIP_COMPAT_MUTEX 1
 
 #endif /* __LWIPOPTS_H__ */

@@ -130,9 +130,6 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 /** Check if a sempahore is valid/allocated: return 1 for valid, 0 for invalid */
 int sys_sem_valid(sys_sem_t *sem)
 {
-	////////////////////
-	// to be implemented.
-	////////////////////
 	return (int)(*sem);
 }
 #endif
@@ -140,15 +137,115 @@ int sys_sem_valid(sys_sem_t *sem)
 /** Set a semaphore invalid so that sys_sem_valid returns 0 */
 void sys_sem_set_invalid(sys_sem_t *sem)
 {
-	////////////////////
-	// to be implemented.
-	////////////////////
 	*sem = RT_NULL;
 }
 #endif
 
 
+/* ====================== Mutex ====================== */
 
+/** Create a new mutex
+ * @param mutex pointer to the mutex to create
+ * @return a new mutex */
+err_t sys_mutex_new(sys_mutex_t *mutex)
+{
+	static unsigned short counter = 0;
+	char tname[RT_NAME_MAX];
+	sys_mutex_t tmpmutex;
+
+	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MUTEX_NAME, counter);
+
+#if SYS_DEBUG
+	{
+		struct rt_thread *thread;
+
+		thread = rt_thread_self();
+		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create mutex: %s \n",thread->name, tname));
+	}
+#endif
+
+	counter++;
+
+	tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_FIFO);
+	if( tmpmutex == RT_NULL )
+		return ERR_MEM;
+	else
+	{
+		*mutex = tmpmutex;
+		return ERR_OK;
+	}
+}
+
+/** Lock a mutex
+ * @param mutex the mutex to lock */
+void sys_mutex_lock(sys_mutex_t *mutex)
+{
+
+#if SYS_DEBUG
+	{
+		struct rt_thread *thread;
+		thread = rt_thread_self();
+
+		LWIP_DEBUGF(SYS_DEBUG, ("%s, Wait mutex: %s , %d\n",thread->name,
+			(*mutex)->parent.parent.name, (*mutex)->value));
+	}
+#endif
+
+	rt_mutex_take(*mutex, RT_WAITING_FOREVER);
+
+	return;
+}
+
+
+/** Unlock a mutex
+ * @param mutex the mutex to unlock */
+void sys_mutex_unlock(sys_mutex_t *mutex)
+{
+#if SYS_DEBUG
+	{
+		struct rt_thread *thread;
+		thread = rt_thread_self();
+
+		LWIP_DEBUGF(SYS_DEBUG, ("%s, Release signal: %s , %d\n",thread->name,
+			(*mutex)->parent.parent.name, (*mutex)->value));
+	}
+#endif
+
+	rt_mutex_release(*mutex);
+}
+
+/** Delete a semaphore
+ * @param mutex the mutex to delete */
+void sys_mutex_free(sys_mutex_t *mutex)
+{
+#if SYS_DEBUG
+	{
+		struct rt_thread *thread;
+		thread = rt_thread_self();
+
+		LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete sem: %s \n",thread->name,
+			(*mutex)->parent.parent.name));
+	}
+#endif
+
+	rt_mutex_delete(*mutex);
+}
+
+#ifndef sys_mutex_valid
+/** Check if a mutex is valid/allocated: return 1 for valid, 0 for invalid */
+int sys_mutex_valid(sys_mutex_t *mutex)
+{
+	return (int)(*mutex);
+}
+#endif
+
+#ifndef sys_mutex_set_invalid
+/** Set a mutex invalid so that sys_mutex_valid returns 0 */
+void sys_mutex_set_invalid(sys_mutex_t *mutex)
+{
+	*mutex = RT_NULL;
+}
+#endif
 
 /* ====================== Mailbox ====================== */
 
