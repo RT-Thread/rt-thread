@@ -64,13 +64,12 @@ extern void finsh_system_init(void);
  */
 void rtthread_startup(void)
 {
-	rt_uint32_t UNUSED level;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+	rt_hw_interrupt_disable();
 	/* enable cpu cache */
+	rt_hw_cpu_icache_disable();
+	mmu_invalidate_icache();
 	rt_hw_cpu_icache_enable();
-	rt_hw_cpu_dcache_enable();
 
 	/* initialize hardware interrupt */
 	rt_hw_interrupt_init();
