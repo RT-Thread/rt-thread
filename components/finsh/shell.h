@@ -1,3 +1,17 @@
+/*
+ * File      : shell.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2011-06-02     Bernard      Add finsh_get_prompt function declaration
+ */
+
 #ifndef __SHELL_H__
 #define __SHELL_H__
 
@@ -15,6 +29,7 @@
 #define FINSH_OPTION_ECHO	0x01
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 #define FINSH_PROMPT		finsh_get_prompt()
+const char* finsh_get_prompt(void);
 #else
 #define FINSH_PROMPT		"finsh>>"
 #endif
