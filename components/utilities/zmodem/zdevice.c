@@ -63,7 +63,6 @@ rt_int16_t zread_line(rt_uint16_t timeout)
 	timeout/=5;
 	while (1)
 	{
-//     	if (rt_sem_take(&zmodem.zsem, RT_TICK_PER_SECOND*timeout) != RT_EOK) continue;
      	Line_left = rt_device_read(shell->device, 0, buf, 1);
 		if (Line_left)
 		{

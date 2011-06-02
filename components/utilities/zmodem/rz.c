@@ -34,8 +34,9 @@ void zr_start(char *path)
 {
     struct zfile *zf;
     rt_uint8_t n;
-	char ch;
+	char ch,*p,*q;
 	rt_err_t res = -RT_ERROR;
+
 	zf = rt_malloc(sizeof(struct zfile));
 	if (zf == RT_NULL)
 	{
@@ -45,30 +46,35 @@ void zr_start(char *path)
 	memset(zf, 0, sizeof(struct zfile));
     zf->fname = path;
 	zf->fd = -1;
-    rt_kprintf("\r\n");
-	res = zrec_files(zf);      
+	res = zrec_files(zf);   
+	p = zf->fname;
+	for (;;)
+	{
+		q = strstr(p,"/");
+		if (q == RT_NULL)  break;
+		p = q+1;
+	}	   
     if (res == RT_EOK)
     {		  
-        rt_kprintf("\b\b\bfile: %s                           \r\n",zf->fname+1);
+        rt_kprintf("\b\b\bfile: %s                           \r\n",p);
 		rt_kprintf("size: %ld bytes\r\n",zf->bytes_received);
 		rt_kprintf("receive completed.\r\n");
 		close(zf->fd);
 		rt_free(zf->fname);
-		rt_free(zf);
     }
     else
     {
-        rt_kprintf("\b\b\bfile: %s                           \r\n",zf->fname+1);
+        rt_kprintf("\b\b\bfile: %s                           \r\n",p);
 		rt_kprintf("size: 0 bytes\r\n");
 		rt_kprintf("receive failed.\r\n");
 		if (zf->fd >= 0)
 		{
 	        close(zf->fd);
 	        unlink(zf->fname);    /* remove this file */ 
-		}
-		rt_free(zf->fname);
-	    rt_free(zf);
+			rt_free(zf->fname);
+		}	
     }
+	rt_free(zf);
 	/* waiting,clear console buffer */
 	rt_thread_delay(RT_TICK_PER_SECOND/2);
 	while(1)                     
@@ -76,17 +82,16 @@ void zr_start(char *path)
 	   n=rt_device_read(shell->device, 0, &ch, 1);
 	   if (n == 0) break;
 	}
+
 	return ;
 }
-
-
-
 
 /* receiver init, wait for ack */
 static rt_err_t zrec_init(rt_uint8_t *rxbuf,struct zfile *zf)
 {
     rt_uint8_t err_cnt = 0;
 	rt_err_t res = -RT_ERROR;
+
 	for (;;) 
 	{
 		zput_pos(0L);
@@ -144,14 +149,15 @@ static rt_err_t zrec_files(struct zfile *zf)
 {
 	rt_uint8_t *rxbuf;
 	rt_err_t res = -RT_ERROR;
+
 	zinit_parameter();
 	rxbuf = rt_malloc(RX_BUFFER_SIZE*sizeof(rt_uint8_t));
 	if (rxbuf == RT_NULL)
 	{
-		 rt_kprintf("not enough memory\r\n");
+		 rt_kprintf("rxbuf: out of memory\r\n");
 		 return -RT_ERROR;
 	}
-	rt_kprintf("rz: ready...\r\n");	   /* here ready to receive things */
+	rt_kprintf("\r\nrz: ready...\r\n");	   /* here ready to receive things */
 	if ((res = zrec_init(rxbuf,zf))!= RT_EOK)
 	{
 	     rt_kprintf("\b\b\breceive init failed\r\n");
@@ -181,6 +187,7 @@ static rt_err_t zrec_file(rt_uint8_t *rxbuf,struct zfile *zf)
 {
 	rt_err_t res = - RT_ERROR;
 	rt_uint16_t err_cnt = 0;
+
 	do 
 	{
 		zput_pos(zf->bytes_received);
@@ -223,7 +230,6 @@ again:
 #ifdef ZDEBUG
              rt_kprintf("error code: sender cancelled \r\n");
 #endif
-			 unlink(zf->fname);
 			 zf->bytes_received = 0L;		 /* throw the received data */  
 		     return res;
 		case ZSKIP:
@@ -237,6 +243,7 @@ again:
 			continue;
 		}
 	} while(++err_cnt < 100);
+
 	return res;
 }
 
@@ -244,7 +251,7 @@ again:
 static rt_err_t zget_file_info(char *name,struct zfile *zf)
 {
 	char *p;
-	char *ftemp,*ptr;
+	char *full_path,*ptr;
 	rt_uint16_t i,len;
 	rt_err_t res  = -RT_ERROR;
 	struct statfs buf;
@@ -256,25 +263,27 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 	}
 	else
 	    len = strlen(zf->fname)+strlen(name)+2; 
-    ftemp = rt_malloc(len);
-    if (ftemp == RT_NULL)		 
+    full_path = rt_malloc(len);
+    if (full_path == RT_NULL)		 
 	{
 	    zsend_can();
-		rt_kprintf("\b\b\bftemp: out of memory\n");
+		rt_kprintf("\b\b\bfull_path: out of memory\n");
+		rt_free(full_path);
 		return -RT_ERROR;
 	}
-	memset(ftemp,0,len);
+	memset(full_path,0,len);
 
     for (i=0,ptr=zf->fname;i<len-strlen(name)-2;i++)
-		 ftemp[i] = *ptr++;
-    ftemp[len-strlen(name)-2] = '/';
+		 full_path[i] = *ptr++;
+    full_path[len-strlen(name)-2] = '/';
 	/* check if is a directory */
-	if ((zf->fd=open(ftemp, DFS_O_DIRECTORY,0)) < 0)	 
+	if ((zf->fd=open(full_path, DFS_O_DIRECTORY,0)) < 0)	 
 	{
 	    zsend_can();
 	    rt_kprintf("\b\b\bcan not open file:%s\r\n",zf->fname+1);
 		close(zf->fd);
 		zf->fd = -1;
+		rt_free(full_path);
 	    return res;
 	}
 	fstat(zf->fd, &finfo);
@@ -286,18 +295,23 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 	}
 	close(zf->fd);	   
 	/* get fullpath && file attributes */
-    strcat(ftemp,name);
-    zf->fname = ftemp;
+    strcat(full_path,name);
+    zf->fname = full_path;
 	p = strlen(name)+name+1;	   
 	sscanf((const char *)p, "%ld%lo%o", &zf->bytes_total,&zf->ctime,&zf->mode);
+#ifdef DFS_USING_WORKDIR
 	dfs_statfs(working_directory,&buf);
 	if (zf->bytes_total > (buf.f_blocks * buf.f_bfree))
 	{
 	    zsend_can();
 	    rt_kprintf("\b\b\bnot enough disk space\r\n");
 		zf->fd = -1;
+		rt_free(full_path);
 		return -RT_ERROR;  
 	}
+#else
+    buf = buf;
+#endif
 	zf->bytes_received   = 0L;
 	if ((zf->fd = open(zf->fname,DFS_O_CREAT|DFS_O_WRONLY,0)) < 0)	 /* create or replace exist file */
 	{
@@ -305,6 +319,7 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 	    rt_kprintf("\b\b\bcan not create file:%s \r\n",zf->fname);	
 		return -RT_ERROR;
 	}
+
 	return RT_EOK;
 }
 
@@ -312,6 +327,7 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 static rt_err_t zrec_file_data(rt_uint8_t *buf,struct zfile *zf)
 {
     rt_err_t res = -RT_ERROR;
+
 more_data:
 	res = zget_data(buf,RX_BUFFER_SIZE);
 	switch(res)
@@ -355,7 +371,6 @@ more_data:
 /* write file */
 static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf)
 {
-//    return 0;
 	return (write(zf->fd,buf,size));
 }
 
@@ -363,6 +378,7 @@ static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf)
 static void zrec_ack_bibi(void)
 {
 	rt_uint8_t i;
+
 	zput_pos(0L);
 	for (i=0;i<3;i++) 
 	{

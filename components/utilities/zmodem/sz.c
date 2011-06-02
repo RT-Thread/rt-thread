@@ -39,30 +39,39 @@ void zs_start(char *path)
 {
     struct zfile *zf;
 	rt_err_t res = RT_ERROR;
-
+    char *p,*q;
 	zf = rt_malloc(sizeof(struct zfile));
 	if (zf == RT_NULL)
 	{
 	    rt_kprintf("zf: out of memory\r\n");
 		return;
 	}
+	rt_kprintf("\r\nsz: ready...\r\n");	   /* here ready to send things */
 	memset(zf, 0, sizeof(struct zfile));
     zf->fname = path;
 	zf->fd = -1;
 	res = zsend_files(zf);
-    if (!res)
+	p = zf->fname;
+	for (;;)
+	{
+		q = strstr(p,"/");
+		if (q == RT_NULL)  break;
+		p = q+1;
+	}
+    if (res == RT_EOK)
     {
         rt_kprintf("\r\nfile: %s \r\nsize: %ld bytes\r\nsend completed.\r\n",
-		          zf->fname+1,zf->bytes_received);
+		          p,zf->bytes_received);
     }
     else
     {
-        rt_kprintf("\r\nfile: %s \r\nsize: 0 bytes\r\nsend failed.\r\n",zf->fname+1);
+        rt_kprintf("\r\nfile: %s \r\nsize: 0 bytes\r\nsend failed.\r\n",p);
     }
 	rt_free(zf);
 
 	return;
 }
+
 /* init the parameters */
 static void zsend_init(void)
 {
@@ -94,6 +103,7 @@ static void zsend_init(void)
     /* send SINIT cmd */
 	return;
 }
+
 /* send files */
 static rt_err_t zsend_files(struct zfile *zf)
 {
@@ -147,7 +157,7 @@ static rt_err_t zsend_files(struct zfile *zf)
 	res = zsend_file(zf,TX_BUFFER, (p-(char*)TX_BUFFER)+strlen(p)+1);
 	zsay_bibi();
 	close(zf->fd);
-/*	unlink(path);   */
+ 
 	return res;
 }
 

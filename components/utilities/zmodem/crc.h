@@ -1,5 +1,5 @@
 /*
- *  Crc calculation stuff
+ *  crc calculation stuff
  */
 
 /* crctab calculated by Mark G. Mendel, Network Systems Corporation */
@@ -126,4 +126,4 @@ static unsigned long cr3tab[] = { /* CRC polynomial 0xedb88320 */
 
 #define updcrc32(b, c) (cr3tab[((int)c ^ b) & 0xff] ^ ((c >> 8) & 0x00FFFFFF))
 
-/* End of crctab.c */
+/* End of crc.c */
