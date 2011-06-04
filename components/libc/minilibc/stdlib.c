@@ -38,4 +38,24 @@ int atoi(const char* s)
 	return sign==-1?-v:v;
 }
 
+void *malloc(size_t size)
+{
+	return rt_malloc(size);
+}
+
+void free(void *ptr)
+{
+	rt_free(ptr);
+}
+
+void *realloc(void *ptr, size_t size)
+{
+	return rt_realloc(ptr, size);
+}
+
+void *calloc(size_t nelem, size_t elsize)
+{
+	return rt_calloc(nelem, elsize);
+}
+
 #endif
