@@ -1713,6 +1713,8 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
+	/* the msg is the new tailer of list, the next shall be NULL */
+	msg->next = RT_NULL;
 	/* copy buffer */
 	rt_memcpy(msg + 1, buffer, size);
 
@@ -1724,8 +1726,6 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 		/* if the tail exists, */
 		((struct rt_mq_message*)mq->msg_queue_tail)->next = msg;
 	}
-	/* the msg is the new tail of list, the next shall be NULL */
-	msg->next = RT_NULL;
 
 	/* set new tail */
 	mq->msg_queue_tail = msg;
@@ -1820,7 +1820,6 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 		rt_hw_interrupt_enable(temp);
 
 		rt_schedule();
-
 		return RT_EOK;
 	}
 
