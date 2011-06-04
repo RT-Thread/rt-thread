@@ -3028,6 +3028,13 @@ FRESULT f_readdir (
 	LEAVE_FF(dj->fs, res);
 }
 
+FRESULT f_seekdir(
+	DIR *dj,		/* Pointer to the open directory object */
+	int offset		/* the seek offset */
+)
+{
+	return dir_sdi(dj, offset);				/* seek directory index to offset */
+}
 
 
 #if _FS_MINIMIZE == 0

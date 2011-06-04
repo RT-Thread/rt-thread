@@ -468,6 +468,7 @@ struct dirent* readdir(DIR *d)
 
 	if (!d->num || (d->cur += ((struct dirent*)(d->buf + d->cur))->d_reclen) >= d->num)
 	{
+		/* get a new entry */
 		result = dfs_file_getdents(fd, (struct dirent*)d->buf, sizeof(d->buf) - 1);
 		if (result <= 0)
 		{
@@ -478,7 +479,7 @@ struct dirent* readdir(DIR *d)
 		}
 
 		d->num = result;
-		d->cur = 0;
+		d->cur = 0; /* current entry index */
 	}
 
 	fd_put(fd);
@@ -529,6 +530,7 @@ void seekdir(DIR *d, off_t offset)
 		return ;
 	}
 
+	/* seek to the offset position of directory */
 	if (dfs_file_lseek(fd, offset) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
 }
@@ -549,6 +551,7 @@ void rewinddir(DIR *d)
 		return ;
 	}
 
+	/* seek to the beginning of directory */
 	if (dfs_file_lseek(fd, 0) >= 0) d->num = d->cur = 0;
 	fd_put(fd);
 }

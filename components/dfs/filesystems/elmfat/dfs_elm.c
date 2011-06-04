@@ -385,18 +385,39 @@ int dfs_elm_flush(struct dfs_fd* file)
 
 int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 {
-	FIL* fd;
 	FRESULT result;
-
-	fd = (FIL*)(file->data);
-	RT_ASSERT(fd != RT_NULL);
-
-	result = f_lseek(fd, offset);
-	if (result == FR_OK)
+	if (file->type == DFS_DT_REG)
 	{
-		/* return current position */
-		return fd->fptr;
+		FIL* fd;
+
+		/* regular file type */
+		fd = (FIL*)(file->data);
+		RT_ASSERT(fd != RT_NULL);
+		
+		result = f_lseek(fd, offset);
+		if (result == FR_OK)
+		{
+			/* return current position */
+			return fd->fptr;
+		}
 	}
+	else if (file->type == DFS_DT_DIR)
+	{
+		/* which is a directory */
+		DIR* dir;
+
+		dir = (DIR*)(file->data);
+		RT_ASSERT(dir != RT_NULL);
+
+		result = f_seekdir(dir, offset / sizeof(struct dirent));
+		if (result == FR_OK)
+		{
+			/* update file position */
+			file->pos = offset;
+			return file->pos;
+		}
+	}
+
 	return elm_result_to_dfs(result);
 }
 
@@ -456,6 +477,8 @@ int dfs_elm_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count
 
 	if (index == 0)
 		return elm_result_to_dfs(result);
+
+	file->pos += index * sizeof(struct dirent);
 
 	return index * sizeof(struct dirent);
 }
