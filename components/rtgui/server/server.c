@@ -188,10 +188,12 @@ void rtgui_server_handle_set_wm(struct rtgui_event_set_wm *event)
 
 void rtgui_server_handle_update(struct rtgui_event_update_end* event)
 {
-	const struct rtgui_graphic_driver* driver = rtgui_graphic_driver_get_default();
+	struct rtgui_graphic_driver* driver;
+
+	driver = rtgui_graphic_driver_get_default();
 	if (driver != RT_NULL)
 	{
-		driver->screen_update(&(event->rect));
+		rtgui_graphic_driver_screen_update(driver, &(event->rect));
 	}
 }
 
@@ -277,7 +279,7 @@ void rtgui_server_handle_mouse_btn(struct rtgui_event_mouse* event)
 		if (rtgui_server_focus_topwin != wnd)
 		{
 			/* raise this window */
-			rtgui_topwin_raise(wnd->wid, wnd->tid);
+			rtgui_topwin_activate_win(wnd);
 			rtgui_server_focus_panel = RT_NULL;
 		}
 

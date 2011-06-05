@@ -194,7 +194,7 @@ static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(hw_driver, &(owner->extent));
 #else
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			/* show cursor */
@@ -202,7 +202,7 @@ static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc)
 #endif
 
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(hw_driver, &(owner->extent));
 #endif
 		}
 	}
@@ -222,7 +222,7 @@ static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(hw_driver, &(owner->extent));
 #else
 			/* send to server to end drawing */
 			struct rtgui_event_update_end eupdate;
@@ -258,7 +258,7 @@ static void rtgui_dc_client_draw_point(struct rtgui_dc* self, int x, int y)
 	if (rtgui_region_contains_point(&(owner->clip), x, y, &rect) == RT_EOK)
 	{
 		/* draw this point */
-		hw_driver->set_pixel(&(owner->gc.foreground), x, y);
+		hw_driver->ops->set_pixel(&(owner->gc.foreground), x, y);
 	}
 }
 
@@ -279,7 +279,7 @@ static void rtgui_dc_client_draw_color_point(struct rtgui_dc* self, int x, int y
 	if (rtgui_region_contains_point(&(owner->clip), x, y, &rect) == RT_EOK)
 	{
 		/* draw this point */
-		hw_driver->set_pixel(&color, x, y);
+		hw_driver->ops->set_pixel(&color, x, y);
 	}
 }
 
@@ -316,7 +316,7 @@ static void rtgui_dc_client_draw_vline(struct rtgui_dc* self, int x, int y1, int
 		if (prect->y2 < y2) y2 = prect->y2;
 
 		/* draw vline */
-		hw_driver->draw_vline(&(owner->gc.foreground), x, y1, y2);
+		hw_driver->ops->draw_vline(&(owner->gc.foreground), x, y1, y2);
 	}
 	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
 	{
@@ -335,7 +335,7 @@ static void rtgui_dc_client_draw_vline(struct rtgui_dc* self, int x, int y1, int
 		if (prect->y2 < y2) draw_y2 = prect->y2;
 
 		/* draw vline */
-		hw_driver->draw_vline(&(owner->gc.foreground), x, draw_y1, draw_y2);
+		hw_driver->ops->draw_vline(&(owner->gc.foreground), x, draw_y1, draw_y2);
 	}
 }
 
@@ -373,7 +373,7 @@ static void rtgui_dc_client_draw_hline(struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->draw_hline(&(owner->gc.foreground), x1, x2, y);
+		hw_driver->ops->draw_hline(&(owner->gc.foreground), x1, x2, y);
 	}
 	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
 	{
@@ -392,7 +392,7 @@ static void rtgui_dc_client_draw_hline(struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) draw_x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->draw_hline(&(owner->gc.foreground), draw_x1, draw_x2, y);
+		hw_driver->ops->draw_hline(&(owner->gc.foreground), draw_x1, draw_x2, y);
 	}
 }
 
@@ -455,7 +455,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->draw_raw_hline(line_data, x1, x2, y);
+		hw_driver->ops->draw_raw_hline(line_data, x1, x2, y);
 	}
 	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
 	{
@@ -474,7 +474,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) draw_x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->draw_raw_hline(line_data + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
+		hw_driver->ops->draw_raw_hline(line_data + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
 	}
 }
 

@@ -140,7 +140,7 @@ void rtgui_mouse_init()
 
 	/* init cursor */
 	_rtgui_cursor->bpp = gd->byte_per_pixel;
-	_rtgui_cursor->framebuffer = gd->get_framebuffer();
+	_rtgui_cursor->framebuffer = rtgui_graphic_driver_get_framebuffer(gd);
 	_rtgui_cursor->screen_pitch = _rtgui_cursor->bpp * gd->width;
 
 #ifdef RTGUI_USING_MOUSE_CURSOR
@@ -430,7 +430,7 @@ static void rtgui_winrect_show()
 	void (*set_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
 
 	c = black;
-	set_pixel = rtgui_graphic_driver_get_default()->set_pixel;
+	set_pixel = rtgui_graphic_driver_get_default()->ops->set_pixel;
 
 	win_rect = _rtgui_cursor->win_rect;
 	win_rect_inner = win_rect;
@@ -470,7 +470,7 @@ static void rtgui_winrect_show()
 	}
 
 	/* update rect */
-	rtgui_graphic_driver_get_default()->screen_update(&win_rect);
+	rtgui_graphic_driver_screen_update(rtgui_graphic_driver_get_default(), &win_rect);
 }
 
 #define display_direct_memcpy(src, dest, src_pitch, dest_pitch, height, len)	\

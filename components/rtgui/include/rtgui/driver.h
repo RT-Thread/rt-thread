@@ -17,24 +17,40 @@
 #include <rtgui/list.h>
 #include <rtgui/color.h>
 
-struct rtgui_graphic_driver
+#define LCD_RECT_UPDATE	0
+#define LCD_ON			1
+#define LCD_OFF			2
+#define LCD_GET_INFO	3
+#define LCD_MODE_SET	4
+
+enum 
 {
-	/* driver name */
-	char* name;
+	PIXEL_FORMAT_MONO = 0,
+	PIXEL_FORMAT_GRAY4,
+	PIXEL_FORMAT_GRAY16,
+	PIXEL_FORMAT_RGB332,
+	PIXEL_FORMAT_RGB444,
+	PIXEL_FORMAT_RGB565,
+	PIXEL_FORMAT_RGB565P,
+	PIXEL_FORMAT_RGB666,
+	PIXEL_FORMAT_RGB888,
+	PIXEL_FORMAT_ARGB888
+};
+#define PIXEL_POSITION(x, y)	((x << 16) | y)
 
-	/* byte per pixel */
-	rt_uint16_t byte_per_pixel;
+struct rt_lcd_info 
+{
+	rt_uint8_t pixel_format;
+	rt_uint8_t byte_per_pixel;
 
-	/* screen width and height */
 	rt_uint16_t width;
 	rt_uint16_t height;
 
-	/* screen update */
-	void (*screen_update)(rtgui_rect_t* rect);
+	rt_uint8_t *framebuffer;
+};
 
-	/* get video frame buffer */
-	rt_uint8_t* (*get_framebuffer)(void);
-
+struct rtgui_graphic_driver_ops
+{
 	/* set and get pixel in (x, y) */
 	void (*set_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
 	void (*get_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
@@ -44,24 +60,40 @@ struct rtgui_graphic_driver
 
 	/* draw raw hline */
 	void (*draw_raw_hline)(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y);
-
-	/* the driver list */
-	rtgui_list_t list;
 };
 
-#ifdef RTGUI_USING_GRAPHIC_DRIVER_LIST
-void rtgui_graphic_driver_add(struct rtgui_graphic_driver* driver);
-void rtgui_graphic_driver_remove(struct rtgui_graphic_driver* driver);
+struct rtgui_graphic_driver
+{
+	/* pixel format and byte per pixel */
+	rt_uint8_t pixel_format;
+	rt_uint8_t byte_per_pixel;
+	rt_uint16_t pitch;
 
-struct rtgui_graphic_driver* rtgui_graphic_driver_find(char* name);
-#else
+	/* screen width and height */
+	rt_uint16_t width;
+	rt_uint16_t height;
+
+	/* framebuffer address and ops */
+	volatile rt_uint8_t *framebuffer;
+	rt_device_t device;
+	const struct rtgui_graphic_driver_ops *ops;
+};
+
 void rtgui_graphic_driver_add(const struct rtgui_graphic_driver* driver);
-#endif
 
-const struct rtgui_graphic_driver* rtgui_graphic_driver_get_default(void);
+struct rtgui_graphic_driver* rtgui_graphic_driver_get_default(void);
 
 void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rtgui_rect_t *rect);
-void rtgui_graphic_driver_get_default_rect(rtgui_rect_t *rect);
+void rtgui_graphic_driver_screen_update(struct rtgui_graphic_driver* driver, rtgui_rect_t *rect);
+rt_uint8_t* rtgui_graphic_driver_get_framebuffer(struct rtgui_graphic_driver* driver);
+
+rt_err_t rtgui_graphic_set_device(rt_device_t device);
+
+rt_inline struct rtgui_graphic_driver* rtgui_graphic_get_device()
+{
+	extern struct rtgui_graphic_driver _driver;
+	return &_driver;
+}
 
 #endif
 

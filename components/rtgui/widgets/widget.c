@@ -56,7 +56,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 #endif
 
 	/* set default event handler */
-	widget->event_handler = rtgui_widget_event_handler;
+	rtgui_widget_set_event_handler(widget,rtgui_widget_event_handler);
 
 	/* init user data private to 0 */
 	widget->user_data = 0;
@@ -130,6 +130,16 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 		/* update widget clip */
 		rtgui_widget_update_clip(widget->parent);
 	}
+}
+
+void rtgui_widget_set_rectangle(rtgui_widget_t* widget, int x, int y, int width, int height)
+{
+	rtgui_rect_t rect;
+
+	rect.x1 = x; rect.y1 = y;
+	rect.x2 = x + width; rect.y2 = y + height;
+
+	rtgui_widget_set_rect(widget, &rect);
 }
 
 void rtgui_widget_set_parent(rtgui_widget_t* widget, rtgui_widget_t* parent)

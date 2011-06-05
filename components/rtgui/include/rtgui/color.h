@@ -92,5 +92,23 @@ rt_inline rtgui_color_t rtgui_color_from_565p(rt_uint16_t pixel)
 	return color;
 }
 
+/* convert rtgui color to RGB */
+rt_inline rt_uint32_t rtgui_color_to_888(rtgui_color_t c)
+{
+	rt_uint32_t pixel;
+
+	pixel = RTGUI_RGB_R(c) << 16 | RTGUI_RGB_G(c) << 8 | RTGUI_RGB_B(c);
+	return pixel;
+}
+
+rt_inline rtgui_color_t rtgui_color_from_888(rt_uint32_t pixel)
+{
+	rtgui_color_t color;
+
+	color = RTGUI_RGB(((pixel >> 16) & 0xff), ((pixel >> 8) & 0xff), pixel & 0xff);
+
+	return color;
+}
+
 #endif
 

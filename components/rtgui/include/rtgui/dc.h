@@ -24,7 +24,6 @@ enum rtgui_dc_type
 	RTGUI_DC_HW,
 	RTGUI_DC_CLIENT,
 	RTGUI_DC_BUFFER,
-	RTGUI_DC_IMLIB2,
 };
 
 struct rtgui_dc_engine

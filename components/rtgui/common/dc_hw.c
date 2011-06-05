@@ -170,7 +170,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			self->hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(self->hw_driver, &(owner->extent));
 #else
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			/* show cursor */
@@ -178,7 +178,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 #endif
 
 			/* update screen */
-			self->hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(self->hw_driver, &(owner->extent));
 #endif
 		}
 	}
@@ -198,7 +198,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			rt_kprintf("show cursor\n");
 #endif
 			/* update screen */
-			self->hw_driver->screen_update(&(owner->extent));
+			rtgui_graphic_driver_screen_update(self->hw_driver, &(owner->extent));
 #else
 			/* send to server to end drawing */
 			struct rtgui_event_update_end eupdate;
@@ -230,7 +230,7 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	y = y + dc->owner->extent.y1;
 
 	/* draw this point */
-	dc->hw_driver->set_pixel(&(dc->owner->gc.foreground), x, y);
+	dc->hw_driver->ops->set_pixel(&(dc->owner->gc.foreground), x, y);
 }
 
 static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rtgui_color_t color)
@@ -244,7 +244,7 @@ static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* self, int x, int y, rt
 	y = y + dc->owner->extent.y1;
 
 	/* draw this point */
-	dc->hw_driver->set_pixel(&color, x, y);
+	dc->hw_driver->ops->set_pixel(&color, x, y);
 }
 
 /*
@@ -262,7 +262,7 @@ static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 	y2 = y2 + dc->owner->extent.y1;
 
 	/* draw vline */
-	dc->hw_driver->draw_vline(&(dc->owner->gc.foreground), x, y1, y2);
+	dc->hw_driver->ops->draw_vline(&(dc->owner->gc.foreground), x, y1, y2);
 }
 
 /*
@@ -281,7 +281,7 @@ static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 	y  = y + dc->owner->extent.y1;
 
 	/* draw hline */
-	dc->hw_driver->draw_hline(&(dc->owner->gc.foreground), x1, x2, y);
+	dc->hw_driver->ops->draw_hline(&(dc->owner->gc.foreground), x1, x2, y);
 }
 
 static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
@@ -302,7 +302,7 @@ static void rtgui_dc_hw_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rec
 	/* fill rect */
 	for (index = dc->owner->extent.y1 + rect->y1; index < dc->owner->extent.y1 + rect->y2; index ++)
 	{
-		dc->hw_driver->draw_hline(&color, x1, x2, index);
+		dc->hw_driver->ops->draw_hline(&color, x1, x2, index);
 	}
 }
 
@@ -318,7 +318,7 @@ static void rtgui_dc_hw_blit_line (struct rtgui_dc* self, int x1, int x2, int y,
 	x2 = x2 + dc->owner->extent.x1;
 	y  = y + dc->owner->extent.y1;
 
-	dc->hw_driver->draw_raw_hline(line_data, x1, x2, y);
+	dc->hw_driver->ops->draw_raw_hline(line_data, x1, x2, y);
 }
 
 static void rtgui_dc_hw_blit(struct rtgui_dc* dc, struct rtgui_point* dc_point, struct rtgui_dc* dest, rtgui_rect_t* rect)

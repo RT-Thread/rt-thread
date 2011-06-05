@@ -29,6 +29,8 @@ common/asc12font.c
 common/asc16font.c
 common/hz12font.c
 common/hz16font.c
+common/framebuffer_driver.c
+common/pixel_driver.c
 """)
 
 server_src = Split("""
@@ -47,6 +49,7 @@ widgets/container.c
 widgets/combobox.c
 widgets/iconbox.c
 widgets/label.c
+widgets/textview.c
 widgets/listctrl.c
 widgets/menu.c
 widgets/progressbar.c
