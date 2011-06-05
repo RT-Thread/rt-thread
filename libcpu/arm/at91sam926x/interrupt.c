@@ -178,7 +178,7 @@ void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_ha
 {
 	if(vector < MAX_HANDLERS)
 	{
-		if (*old_handler != RT_NULL) *old_handler = isr_table[vector];
+		if (old_handler != RT_NULL) *old_handler = isr_table[vector];
 		if (new_handler != RT_NULL) isr_table[vector] = new_handler;
 	}
 }
