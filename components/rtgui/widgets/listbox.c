@@ -41,10 +41,10 @@ DEFINE_CLASS_TYPE(listbox, "listbox",
 
 void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 {
-	struct rtgui_rect rect, item_rect;
 	struct rtgui_dc* dc;
 	rt_uint16_t page_index, index;
 	const struct rtgui_listbox_item* item;
+	struct rtgui_rect rect, item_rect, image_rect;
 
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(box));
 	if (dc == RT_NULL) return;
@@ -83,7 +83,10 @@ void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 
 		if (item->image != RT_NULL)
 		{
-			rtgui_image_blit(item->image, dc, &item_rect);
+			rtgui_image_get_rect(item->image, &image_rect);
+			rtgui_rect_moveto_align(&item_rect, &image_rect, RTGUI_ALIGN_CENTER_VERTICAL);
+
+			rtgui_image_blit(item->image, dc, &image_rect);
 			item_rect.x1 += item->image->w + 2;
 		}
         /* draw text */
@@ -104,7 +107,7 @@ static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t o
 {
 	struct rtgui_dc* dc;
 	const struct rtgui_listbox_item* item;
-	rtgui_rect_t rect, item_rect;
+	rtgui_rect_t rect, item_rect, image_rect;
 
 	if ((old_item == -1) || (old_item/box->page_items != box->current_item/box->page_items))
 	{
@@ -134,7 +137,10 @@ static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t o
 	item = &(box->items[old_item]);
 	if (item->image != RT_NULL)
 	{
-		rtgui_image_blit(item->image, dc, &item_rect);
+		rtgui_image_get_rect(item->image, &image_rect);
+		rtgui_rect_moveto_align(&item_rect, &image_rect, RTGUI_ALIGN_CENTER_VERTICAL);
+		
+		rtgui_image_blit(item->image, dc, &image_rect);
 		item_rect.x1 += item->image->w + 2;
 	}
 	rtgui_dc_draw_text(dc, item->name, &item_rect);
@@ -155,7 +161,10 @@ static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t o
 	item = &(box->items[box->current_item]);
 	if (item->image != RT_NULL)
 	{
-		rtgui_image_blit(item->image, dc, &item_rect);
+		rtgui_image_get_rect(item->image, &image_rect);
+		rtgui_rect_moveto_align(&item_rect, &image_rect, RTGUI_ALIGN_CENTER_VERTICAL);
+
+		rtgui_image_blit(item->image, dc, &image_rect);
         item_rect.x1 += (item->image->w + 2);
 	}
 	rtgui_dc_draw_text(dc, item->name, &item_rect);

@@ -66,6 +66,9 @@ struct rtgui_image* rtgui_image_create(const char* filename, rt_bool_t load);
 struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length, rt_bool_t load);
 void rtgui_image_destroy(struct rtgui_image* image);
 
+/* get image's rect */
+void rtgui_image_get_rect(struct rtgui_image* image, struct rtgui_rect* rect);
+
 /* register an image engine */
 void rtgui_image_register_engine(struct rtgui_image_engine* engine);
 
@@ -74,3 +77,4 @@ void rtgui_image_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtg
 struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors);
 
 #endif
+

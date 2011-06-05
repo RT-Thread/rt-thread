@@ -81,10 +81,18 @@ static void _rtgui_menu_onitem(struct rtgui_widget* widget, struct rtgui_event* 
 	}
 	else /* other menu item */
 	{
+		rt_ubase_t index;
+		
 		/* invoke action */
 		if (menu->items[menu->items_list->current_item].on_menuaction != RT_NULL)
 			menu->items[menu->items_list->current_item].on_menuaction(RTGUI_WIDGET(menu), RT_NULL);
 
+		/* hide all of sub-menu */
+		for (index = 0; index < menu->items_count; index ++)
+		{
+			if (menu->items[index].submenu != RT_NULL)
+				rtgui_menu_hiden(menu->items[index].submenu);
+		}
 		rtgui_menu_hiden(menu);
 	}
 }
@@ -138,7 +146,7 @@ static void _rtgui_menu_item_ondraw(struct rtgui_listctrl *list, struct rtgui_dc
 }
 
 DEFINE_CLASS_TYPE(menu, "menu", 
-	RTGUI_WIDGET_TYPE,
+	RTGUI_WIN_TYPE,
 	_rtgui_menu_constructor,
 	_rtgui_menu_destructor,
 	sizeof(struct rtgui_menu));
@@ -169,6 +177,9 @@ static rt_bool_t rtgui_menu_on_deactivate(rtgui_widget_t* widget, rtgui_event_t*
 	{
 		menu->on_menuhide(RTGUI_WIDGET(menu), RT_NULL);
 	}
+
+	/* un-select item */
+	menu->items_list->current_item = -1;
 
 	/* if it's a submenu, try to hide parent menu */
 	if (menu->parent_menu != RT_NULL &&
@@ -258,7 +269,10 @@ void rtgui_menu_pop(struct rtgui_menu* menu, int x, int y)
 void rtgui_menu_hiden(struct rtgui_menu* menu)
 {
 	rtgui_win_hiden(RTGUI_WIN(menu));
+	/* un-select item */
+	menu->items_list->current_item = -1;
 
 	if (menu->parent_menu != RT_NULL)
 		rtgui_menu_hiden(menu->parent_menu);
 }
+

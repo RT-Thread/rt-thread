@@ -66,11 +66,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
-#ifndef RTGUI_USING_SMALL_SIZE		
-		if (widget->on_draw != RT_NULL ) widget->on_draw(widget, event);
-		else
-#endif			
-			rtgui_theme_draw_button(btn);
+		rtgui_theme_draw_button(btn);
 		break;
 
 	case RTGUI_EVENT_KBD:

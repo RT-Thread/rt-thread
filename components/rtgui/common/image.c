@@ -295,3 +295,13 @@ struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors)
 
 	return palette;
 }
+
+void rtgui_image_get_rect(struct rtgui_image* image, struct rtgui_rect* rect)
+{
+	RT_ASSERT(image != RT_NULL);
+	RT_ASSERT(rect  != RT_NULL);
+
+	rect->x1 = 0; rect->y1 = 0;
+	rect->x2 = image->w; rect->y2 = image->h;
+}
+

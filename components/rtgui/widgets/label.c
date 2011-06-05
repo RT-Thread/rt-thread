@@ -95,6 +95,9 @@ void rtgui_label_set_text(rtgui_label_t* label, const char* text)
 
 	if (label->text != RT_NULL)
 	{
+		/* it's a same text string */
+		if (rt_strncmp(text, label->text, rt_strlen(text)) == 0) return;
+		
 		/* release old text memory */
 		rt_free(label->text);
 	}
@@ -105,3 +108,4 @@ void rtgui_label_set_text(rtgui_label_t* label, const char* text)
 	/* update widget */
 	rtgui_theme_draw_label(label);
 }
+
