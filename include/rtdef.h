@@ -566,6 +566,7 @@ enum rt_device_class_type
 	RT_Device_Class_CAN,							/**< CAN device 								*/
 	RT_Device_Class_RTC,							/**< RTC device 								*/
 	RT_Device_Class_Sound,							/**< Sound device 								*/
+	RT_Device_Class_Graphic,						/**< Graphic device                             */
 	RT_Device_Class_Unknown							/**< unknown device 							*/
 };
 
@@ -650,6 +651,58 @@ struct rt_device_blk_geometry
 	rt_uint32_t sector_count;						/**< count of sectors							*/
 	rt_uint32_t bytes_per_sector;					/**< number of bytes per sector 				*/
 	rt_uint32_t block_size;							/**< size to erase one block 					*/
+};
+
+/**
+ * graphic device control command 
+ */
+#define RTGRAPHIC_CTRL_RECT_UPDATE	0
+#define RTGRAPHIC_CTRL_POWERON		1
+#define RTGRAPHIC_CTRL_POWEROFF		2
+#define RTGRAPHIC_CTRL_GET_INFO		3
+#define RTGRAPHIC_CTRL_SET_MODE		4
+
+/* graphic deice */
+enum 
+{
+	RTGRAPHIC_PIXEL_FORMAT_MONO = 0,
+	RTGRAPHIC_PIXEL_FORMAT_GRAY4,
+	RTGRAPHIC_PIXEL_FORMAT_GRAY16,
+	RTGRAPHIC_PIXEL_FORMAT_RGB332,
+	RTGRAPHIC_PIXEL_FORMAT_RGB444,
+	RTGRAPHIC_PIXEL_FORMAT_RGB565,
+	RTGRAPHIC_PIXEL_FORMAT_RGB565P,
+	RTGRAPHIC_PIXEL_FORMAT_RGB666,
+	RTGRAPHIC_PIXEL_FORMAT_RGB888,
+	RTGRAPHIC_PIXEL_FORMAT_ARGB888
+};
+/**
+ * build a pixel position according to (x, y) coordinates.
+ */
+#define RTGRAPHIC_PIXEL_POSITION(x, y)	((x << 16) | y)
+
+/**
+ * graphic device information structure
+ */
+struct rt_device_graphic_info
+{
+	rt_uint8_t  pixel_format;		/**< graphic format 		*/
+	rt_uint8_t  bits_per_pixel;		/**< bits per pixel 		*/
+	rt_uint16_t reserved;			/**< reserved field			*/
+
+	rt_uint16_t width;				/**< width of graphic device  */
+	rt_uint16_t height;				/**< height of graphic device */
+
+	rt_uint8_t *framebuffer;		/**< frame buffer 			*/
+};
+
+/**
+ * rectangle information structure
+ */
+struct rt_device_rect_info
+{
+	rt_uint16_t x, y;				/**< x, y coordinate 		*/
+	rt_uint16_t width, height;		/**< width and height       */
 };
 /*@}*/
 
