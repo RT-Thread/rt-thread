@@ -341,8 +341,13 @@ static long _list_device(struct rt_list_node *list)
 		"Block Device",
 		"Network Interface",
 		"MTD Device",
-		"CAN",
+		"CAN Device",
 		"RTC",
+		"Sound Device",
+		"Graphic Device",
+		"I2C Device",
+		"USB Slave Device",
+		"USB Host Bus",
 		"Unknown"
 	};
 
