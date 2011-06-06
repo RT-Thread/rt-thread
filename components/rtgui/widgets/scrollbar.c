@@ -72,7 +72,7 @@ void rtgui_scrollbar_get_thumb_rect(rtgui_scrollbar_t *bar, rtgui_rect_t *rect)
 
 		/* vertical scroll bar */
 		rect->x1 = scrollbar_rect.x1;
-		rect->x2 = scrollbar_rect.x2 - 1;
+		rect->x2 = scrollbar_rect.x2;
 		rect->y1 = scrollbar_rect.y1 + btn_width + _rtgui_scrollbar_get_thumb_position(bar);
 		rect->y2 = rect->y1 + btn_width;
 	}
@@ -85,7 +85,7 @@ void rtgui_scrollbar_get_thumb_rect(rtgui_scrollbar_t *bar, rtgui_rect_t *rect)
 		rect->x2 = rect->x1 + btn_height;
 
 		rect->y1 = scrollbar_rect.y1;
-		rect->y2 = scrollbar_rect.y2 - 1;
+		rect->y2 = scrollbar_rect.y2;
 	}
 }
 

@@ -462,7 +462,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 
 		/* get pixel pointer */
 		ptr = bmp->pixels;
-		if (bmp->byte_per_pixel == hw_driver->byte_per_pixel)
+		if (bmp->byte_per_pixel == hw_driver->bits_per_pixel/8)
 		{
 			for (y = 0; y < h; y ++)
 			{
@@ -481,8 +481,8 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 			if (image->palette == RT_NULL)
 			{
 				rtgui_blit_line_func blit_line;
-				line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
-				blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
+				line_ptr = (rt_uint8_t*) rtgui_malloc((hw_driver->bits_per_pixel/8) * w);
+				blit_line = rtgui_blit_line_get(hw_driver->bits_per_pixel/8 , bmp->byte_per_pixel);
 				pitch = w * bmp->byte_per_pixel;
 				if (line_ptr != RT_NULL)
 				{
@@ -585,7 +585,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 		}
 		else
 		{
-			rt_uint8_t *line_ptr = (rt_uint8_t*) rtgui_malloc(hw_driver->byte_per_pixel * w);
+			rt_uint8_t *line_ptr = (rt_uint8_t*) rtgui_malloc((hw_driver->bits_per_pixel/8) * w);
 			if (line_ptr == RT_NULL) return;
 
 			/* draw each line */
@@ -607,7 +607,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
 				{
 					int pitch;
 					rtgui_blit_line_func blit_line;
-					blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel , bmp->byte_per_pixel);
+					blit_line = rtgui_blit_line_get(hw_driver->bits_per_pixel/8 , bmp->byte_per_pixel);
 					pitch = w * bmp->byte_per_pixel;
 					if (line_ptr != RT_NULL)
 					{

@@ -5,20 +5,20 @@ static void _pixeldevice_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
 	switch (rtgui_graphic_get_device()->pixel_format)
 	{
-	case PIXEL_FORMAT_RGB565:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB565:
 		{		
 		rt_uint16_t pixel;
 		pixel = rtgui_color_to_565(*c);
-		rt_device_write(rtgui_graphic_get_device()->device, PIXEL_POSITION(x, y), &pixel, 
+		rt_device_write(rtgui_graphic_get_device()->device, RTGRAPHIC_PIXEL_POSITION(x, y), &pixel, 
 			sizeof(pixel));
 		}
 		break;
 
-	case PIXEL_FORMAT_RGB888:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB888:
 		{
 		rt_uint32_t pixel;
 		pixel = rtgui_color_to_888(*c);
-		rt_device_write(rtgui_graphic_get_device()->device, PIXEL_POSITION(x, y), &pixel, 
+		rt_device_write(rtgui_graphic_get_device()->device, RTGRAPHIC_PIXEL_POSITION(x, y), &pixel, 
 			3);
 		}
 
@@ -30,20 +30,20 @@ static void _pixeldevice_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
 	switch (rtgui_graphic_get_device()->pixel_format)
 	{
-	case PIXEL_FORMAT_RGB565:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB565:
 		{
 		rt_uint16_t pixel;
-		rt_device_read(rtgui_graphic_get_device()->device, PIXEL_POSITION(x, y), &pixel, 
-			rtgui_graphic_get_device()->byte_per_pixel);
+		rt_device_read(rtgui_graphic_get_device()->device, RTGRAPHIC_PIXEL_POSITION(x, y), &pixel, 
+			(rtgui_graphic_get_device()->bits_per_pixel/8));
 		/* get pixel from color */
 		*c = rtgui_color_from_565(pixel);
 		}
 		break;
 
-	case PIXEL_FORMAT_RGB888:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB888:
 		{
 			rt_uint32_t pixel;
-			rt_device_read(rtgui_graphic_get_device()->device, PIXEL_POSITION(x, y), &pixel, 
+			rt_device_read(rtgui_graphic_get_device()->device, RTGRAPHIC_PIXEL_POSITION(x, y), &pixel, 
 				3);
 			/* get pixel from color */
 			*c = rtgui_color_from_888(pixel);
@@ -71,8 +71,8 @@ static void _pixeldevice_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_
 /* draw raw hline */
 static void _pixeldevice_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
 {
-	rt_device_write(rtgui_graphic_get_device()->device, PIXEL_POSITION(x1, y), pixels, 
-		(x2 - x1) * rtgui_graphic_get_device()->byte_per_pixel);
+	rt_device_write(rtgui_graphic_get_device()->device, RTGRAPHIC_PIXEL_POSITION(x1, y), pixels, 
+		(x2 - x1) * (rtgui_graphic_get_device()->bits_per_pixel/8));
 }
 
 /* pixel device */

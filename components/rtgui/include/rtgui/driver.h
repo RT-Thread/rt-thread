@@ -17,38 +17,6 @@
 #include <rtgui/list.h>
 #include <rtgui/color.h>
 
-#define LCD_RECT_UPDATE	0
-#define LCD_ON			1
-#define LCD_OFF			2
-#define LCD_GET_INFO	3
-#define LCD_MODE_SET	4
-
-enum 
-{
-	PIXEL_FORMAT_MONO = 0,
-	PIXEL_FORMAT_GRAY4,
-	PIXEL_FORMAT_GRAY16,
-	PIXEL_FORMAT_RGB332,
-	PIXEL_FORMAT_RGB444,
-	PIXEL_FORMAT_RGB565,
-	PIXEL_FORMAT_RGB565P,
-	PIXEL_FORMAT_RGB666,
-	PIXEL_FORMAT_RGB888,
-	PIXEL_FORMAT_ARGB888
-};
-#define PIXEL_POSITION(x, y)	((x << 16) | y)
-
-struct rt_lcd_info 
-{
-	rt_uint8_t pixel_format;
-	rt_uint8_t byte_per_pixel;
-
-	rt_uint16_t width;
-	rt_uint16_t height;
-
-	rt_uint8_t *framebuffer;
-};
-
 struct rtgui_graphic_driver_ops
 {
 	/* set and get pixel in (x, y) */
@@ -66,7 +34,7 @@ struct rtgui_graphic_driver
 {
 	/* pixel format and byte per pixel */
 	rt_uint8_t pixel_format;
-	rt_uint8_t byte_per_pixel;
+	rt_uint8_t bits_per_pixel;
 	rt_uint16_t pitch;
 
 	/* screen width and height */

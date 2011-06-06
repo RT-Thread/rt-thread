@@ -2,7 +2,7 @@
 #include <rtgui/driver.h>
 
 #define GET_PIXEL(dst, x, y, type)	\
-	(type *)((rt_uint8_t*)((dst)->framebuffer) + (y) * (dst)->pitch + (x) * (dst)->byte_per_pixel)
+	(type *)((rt_uint8_t*)((dst)->framebuffer) + (y) * (dst)->pitch + (x) * ((dst)->bits_per_pixel/8))
 
 static void _rgb565_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 {
@@ -108,7 +108,7 @@ static void framebuffer_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base
 	rt_uint8_t *dst;
 
 	dst = GET_PIXEL(rtgui_graphic_get_device(), x1, y, rt_uint8_t);
-	rt_memcpy(dst, pixels, (x2 - x1) * rtgui_graphic_get_device()->byte_per_pixel);
+	rt_memcpy(dst, pixels, (x2 - x1) * (rtgui_graphic_get_device()->bits_per_pixel/8));
 }
 
 const struct rtgui_graphic_driver_ops _framebuffer_rgb565_ops = 
@@ -208,15 +208,15 @@ const struct rtgui_graphic_driver_ops *rtgui_framebuffer_get_ops(int pixel_forma
 {
 	switch (pixel_format)
 	{
-	case PIXEL_FORMAT_MONO:
+	case RTGRAPHIC_PIXEL_FORMAT_MONO:
 		return &_framebuffer_mono_ops;
-	case PIXEL_FORMAT_GRAY4:
+	case RTGRAPHIC_PIXEL_FORMAT_GRAY4:
 		break;
-	case PIXEL_FORMAT_GRAY16:
+	case RTGRAPHIC_PIXEL_FORMAT_GRAY16:
 		break;
-	case PIXEL_FORMAT_RGB565:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB565:
 		return &_framebuffer_rgb565_ops;
-	case PIXEL_FORMAT_RGB565P:
+	case RTGRAPHIC_PIXEL_FORMAT_RGB565P:
 		return &_framebuffer_rgb565p_ops;
 	}
 

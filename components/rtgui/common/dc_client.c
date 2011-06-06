@@ -474,7 +474,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x2 < x2) draw_x2 = prect->x2;
 
 		/* draw hline */
-		hw_driver->ops->draw_raw_hline(line_data + (draw_x1 - x1) * hw_driver->byte_per_pixel, draw_x1, draw_x2, y);
+		hw_driver->ops->draw_raw_hline(line_data + (draw_x1 - x1) * hw_driver->bits_per_pixel/8, draw_x1, draw_x2, y);
 	}
 }
 

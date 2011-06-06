@@ -94,7 +94,7 @@ static rt_bool_t rtgui_image_hdc_load(struct rtgui_image* image, struct rtgui_fi
 	image->engine = &rtgui_image_hdc_engine;
 	image->data = hdc;
 	hdc->filerw = file;
-	hdc->byte_per_pixel = hdc->hw_driver->byte_per_pixel;
+	hdc->byte_per_pixel = hdc->hw_driver->bits_per_pixel/8;
 	hdc->pitch = image->w * hdc->byte_per_pixel;
 	hdc->pixel_offset = rtgui_filerw_tell(file);
 

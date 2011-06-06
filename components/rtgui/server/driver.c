@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-10-04     Bernard      first version
  */
+#include <rtthread.h>
 #include <rtgui/driver.h>
 
 struct rtgui_graphic_driver _driver;
@@ -37,10 +38,10 @@ void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rt
 rt_err_t rtgui_graphic_set_device(rt_device_t device)
 {
 	rt_err_t result;
-	struct rt_lcd_info info;
+	struct rt_device_graphic_info info;
 
 	/* get framebuffer address */
-	result = rt_device_control(device, LCD_GET_INFO, &info);
+	result = rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
 	if (result != RT_EOK)
 	{
 		/* get device information failed */
@@ -50,10 +51,10 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
 	/* initialize framebuffer driver */
 	_driver.device = device;
 	_driver.pixel_format = info.pixel_format;
-	_driver.byte_per_pixel = info.byte_per_pixel;
+	_driver.bits_per_pixel = info.bits_per_pixel;
 	_driver.width = info.width;
 	_driver.height = info.height;
-	_driver.pitch = _driver.width * _driver.byte_per_pixel;
+	_driver.pitch = _driver.width * _driver.bits_per_pixel/8;
 	_driver.framebuffer = info.framebuffer;
 
 	if (info.framebuffer != RT_NULL)
@@ -73,7 +74,12 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
 /* screen update */
 void rtgui_graphic_driver_screen_update(struct rtgui_graphic_driver* driver, rtgui_rect_t *rect)
 {
-	rt_device_control(driver->device, LCD_RECT_UPDATE, rect);
+	struct rt_device_rect_info rect_info;
+
+	rect_info.x = rect->x1; rect_info.y = rect->y1;
+	rect_info.width = rect->x2 - rect->x1; 
+	rect_info.height = rect->y2 - rect->y1;
+	rt_device_control(driver->device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 }
 
 /* get video frame buffer */

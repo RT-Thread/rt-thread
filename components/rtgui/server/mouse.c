@@ -139,7 +139,7 @@ void rtgui_mouse_init()
 #endif
 
 	/* init cursor */
-	_rtgui_cursor->bpp = gd->byte_per_pixel;
+	_rtgui_cursor->bpp = gd->bits_per_pixel/8;
 	_rtgui_cursor->framebuffer = rtgui_graphic_driver_get_framebuffer(gd);
 	_rtgui_cursor->screen_pitch = _rtgui_cursor->bpp * gd->width;
 

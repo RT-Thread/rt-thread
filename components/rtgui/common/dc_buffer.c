@@ -20,12 +20,21 @@
 
 #define hw_driver				(rtgui_graphic_driver_get_default())
 
+#define RTGUI_BLENDMODE_NONE	0x00
+#define RTGUI_BLENDMODE_BLEND	0x01
+#define RTGUI_BLENDMODE_ADD		0x02
+#define RTGUI_BLENDMODE_MOD		0x03
+
 struct rtgui_dc_buffer
 {
 	struct rtgui_dc parent;
 
 	/* graphic context */
 	rtgui_gc_t gc;
+
+	/* pixel format */
+	rt_uint8_t pixel_format;
+	rt_uint8_t blend_mode;
 
 	/* width and height */
 	rt_uint16_t width, height;
@@ -240,7 +249,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		/* prepare pixel line */
 		pixels = dc->pixel + dc_point->y * dc->pitch + dc_point->x * sizeof(rtgui_color_t);
 
-		if (hw_driver->byte_per_pixel == sizeof(rtgui_color_t))
+		if (hw_driver->bits_per_pixel == sizeof(rtgui_color_t) * 8)
 		{
 			/* it's the same byte per pixel, draw it directly */
 			for (index = rect->y1; index < rect->y1 + rect_height; index++)
@@ -252,11 +261,11 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc* self, struct rtgui_point* dc_p
 		else
 		{
 			/* get blit line function */
-			blit_line = rtgui_blit_line_get(hw_driver->byte_per_pixel, 4);
+			blit_line = rtgui_blit_line_get(hw_driver->bits_per_pixel/8, 4);
 			/* calculate pitch */
 			pitch = rect_width * sizeof(rtgui_color_t);
 			/* create line buffer */
-			line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * hw_driver->byte_per_pixel);
+			line_ptr = (rt_uint8_t*) rtgui_malloc(rect_width * hw_driver->bits_per_pixel/8);
 
 			/* draw each line */
 			for (index = rect->y1; index < rect->y1 + rect_height; index ++)
