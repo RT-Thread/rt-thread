@@ -72,7 +72,7 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
 }
 
 /* screen update */
-void rtgui_graphic_driver_screen_update(struct rtgui_graphic_driver* driver, rtgui_rect_t *rect)
+void rtgui_graphic_driver_screen_update(const struct rtgui_graphic_driver* driver, rtgui_rect_t *rect)
 {
 	struct rt_device_rect_info rect_info;
 
@@ -83,7 +83,7 @@ void rtgui_graphic_driver_screen_update(struct rtgui_graphic_driver* driver, rtg
 }
 
 /* get video frame buffer */
-rt_uint8_t* rtgui_graphic_driver_get_framebuffer(struct rtgui_graphic_driver* driver)
+rt_uint8_t* rtgui_graphic_driver_get_framebuffer(const struct rtgui_graphic_driver* driver)
 {
 	return (rt_uint8_t*)driver->framebuffer;
 }
