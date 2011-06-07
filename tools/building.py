@@ -244,7 +244,7 @@ class Win32Spawn:
             print data
         return 0
 
-def PrepareBuilding(env, root_directory):
+def PrepareBuilding(env, root_directory, has_libcpu=False):
     import SCons.cpp
     import rtconfig
 
@@ -273,7 +273,7 @@ def PrepareBuilding(env, root_directory):
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
 
-    if (GetDepend('RT_USING_NEWLIB') == False) and rtconfig.PLATFORM == 'gcc':
+    if (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
     # add target option
@@ -295,7 +295,8 @@ def PrepareBuilding(env, root_directory):
     # include kernel
     objs.append(SConscript('src/SConscript', variant_dir='build/src', duplicate=0))
     # include libcpu
-    objs.append(SConscript('libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+    if not has_libcpu:
+        objs.append(SConscript('libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
     # include components
     objs.append(SConscript('components/SConscript', variant_dir='build/components', duplicate=0))
 
