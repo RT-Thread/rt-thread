@@ -249,7 +249,12 @@ void eth_rx_thread_entry(void* parameter)
 				if (p != RT_NULL)
 				{
 					/* notify to upper layer */
-					tcpip_input(p, device->netif);
+					if( device->netif->input(p, device->netif) != ERR_OK )
+					{
+						LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: Input error\n"));
+       					pbuf_free(p);
+       					p = NULL;
+					}
 				}
 				else break;
 			}
