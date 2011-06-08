@@ -14,6 +14,7 @@
  
 #include <rtthread.h>
 #include <rtm.h>
+#include <string.h>
 
 #define MODULE_ROOT_DIR		"/module/lib"
 

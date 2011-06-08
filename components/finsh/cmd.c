@@ -387,6 +387,9 @@ int list_module(void)
 		rt_kprintf("%-16s ", module->parent.name);
 		rt_kprintf("%-04d \n", module->nref);
 	}
+
+	return 0;
+
 }
 
 FINSH_FUNCTION_EXPORT(list_module, list module in system)
@@ -395,7 +398,6 @@ int list_mod_detail(const char* name)
 {
 	int i;
 	struct rt_module *module;
-	struct rt_list_node *list, *node;
 	
 	/* find module */
 	if((module = rt_module_find(name)) != RT_NULL)
