@@ -415,7 +415,9 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args
 
 void rtgui_touch_hw_init(void)
 {
+	rt_err_t result = RT_FALSE;
 	rt_device_t device = RT_NULL;
+	struct rt_device_graphic_info info;
 
 	touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
 	if (touch == RT_NULL) return; /* no memory yet */
@@ -439,8 +441,16 @@ void rtgui_touch_hw_init(void)
 	device = rt_device_find("lcd");
 	if (device == RT_NULL) return; /* no this device */	
 
-	rt_device_control(device, RT_DEVICE_CTRL_LCD_GET_WIDTH, (void*)&touch->width);
-	rt_device_control(device, RT_DEVICE_CTRL_LCD_GET_HEIGHT, (void*)&touch->height);
+	/* get graphic device info */
+	result = rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
+	if (result != RT_EOK)
+	{
+		/* get device information failed */
+		return;
+	}
+
+	touch->width = info.width;
+	touch->height = info.height;
 	
 	/* create 1/8 second timer */
 	touch->poll_timer = rt_timer_create("touch", touch_timer_fire, RT_NULL,

@@ -112,22 +112,8 @@
 #define S3C2410_LCDINT_FRSYNC	(1<<1)
 
 static volatile rt_uint16_t _rt_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
-static volatile rt_uint16_t _rt_hw_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
-
-struct rtgui_lcd_device
-{
-	struct rt_device parent;
-
-	/* byte per pixel */
-	rt_uint16_t byte_per_pixel;
-
-	/* screen width and height */
-	rt_uint16_t width;
-	rt_uint16_t height;
-
-	void* hw_framebuffer;
-};
-static struct rtgui_lcd_device *lcd = RT_NULL;
+//static volatile rt_uint16_t _rt_hw_framebuffer[RT_HW_LCD_HEIGHT][RT_HW_LCD_WIDTH];
+static struct rt_device_graphic_info _lcd_info;
 
 static void lcd_power_enable(int invpwren, int pwren)
 {
@@ -179,119 +165,6 @@ static void LcdBkLtSet(rt_uint32_t HiRatio)
 	TCON = TCON & (~(0xf<<8)) | (0x0d<<8) ;
 }
 
-#ifdef RT_USING_RTGUI
-
-#include <rtgui/driver.h>
-#include <rtgui/color.h>
-
-static void rt_hw_lcd_update(rtgui_rect_t *rect)
-{
-	rt_uint32_t i, j;
-
-	for (i = rect->y1; i < rect->y2; i ++)
-	{
-		for(j = rect->x1; j < rect->x2; j++)
-			_rt_hw_framebuffer[i][j] = _rt_framebuffer[i][j];
-	}
-}
-
-static rt_uint8_t * rt_hw_lcd_get_framebuffer(void)
-{
-	return (rt_uint8_t *)_rt_framebuffer;
-}
-
-static void rt_hw_lcd_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
-{
-	if (x < RT_HW_LCD_WIDTH && y < RT_HW_LCD_HEIGHT)
-	{
-		_rt_framebuffer[(y)][(x)] = rtgui_color_to_565p(*c);
-	}
-}
-
-static void rt_hw_lcd_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
-{
-	if (x < RT_HW_LCD_WIDTH && y < RT_HW_LCD_HEIGHT)
-	{
-		*c = rtgui_color_from_565p(_rt_framebuffer[(y)][(x)]);
-	}
-}
-
-static void rt_hw_lcd_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
-{
-	rt_uint32_t idx;
-	rt_uint16_t color;
-
-	/* get color pixel */
-	color = rtgui_color_to_565p(*c);
-
-	for (idx = x1; idx < x2; idx ++)
-	{
-		_rt_framebuffer[y][idx] = color;
-	}
-}
-
-static void rt_hw_lcd_draw_vline(rtgui_color_t *c, rt_base_t x, rt_base_t y1, rt_base_t y2)
-{
-	rt_uint32_t idy;
-	rt_uint16_t color;
-
-	/* get color pixel */
-	color = rtgui_color_to_565p(*c);
-
-	for (idy = y1; idy < y2; idy ++)
-	{
-		_rt_framebuffer[idy][x] = color;
-	}
-}
-
-static void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
-{
-	rt_memcpy((void*)&_rt_framebuffer[y][x1], pixels, (x2 - x1) * 2);
-}
-
-struct rtgui_graphic_driver _rtgui_lcd_driver =
-{
-	"lcd",
-	2,
-	RT_HW_LCD_WIDTH,
-	RT_HW_LCD_HEIGHT,
-	rt_hw_lcd_update,
-	rt_hw_lcd_get_framebuffer,
-	rt_hw_lcd_set_pixel,
-	rt_hw_lcd_get_pixel,
-	rt_hw_lcd_draw_hline,
-	rt_hw_lcd_draw_vline,
-	rt_hw_lcd_draw_raw_hline
-};
-
-#include "finsh.h"
-void hline(rt_uint32_t c, int x1, int x2, int y)
-{
-	rtgui_color_t color = (rtgui_color_t)c;
-	rt_hw_lcd_draw_hline(&color, x1, x2, y);
-}
-FINSH_FUNCTION_EXPORT(hline, draw a hline);
-
-void vline(rt_uint32_t c, int x, int y1, int y2)
-{
-	rtgui_color_t color = (rtgui_color_t)c;
-	rt_hw_lcd_draw_vline(&color, x, y1, y2);
-}
-FINSH_FUNCTION_EXPORT(vline, draw a vline);
-
-void clear()
-{
-	int y;
-
-	for (y = 0; y < LCD_HEIGHT; y ++)
-	{
-		rt_hw_lcd_draw_hline((rtgui_color_t*)&white, 0, LCD_WIDTH, y);
-	}
-}
-FINSH_FUNCTION_EXPORT(clear, clear screen);
-
-#endif
-
 /* RT-Thread Device Interface */
 static rt_err_t rt_lcd_init (rt_device_t dev)
 {	
@@ -305,7 +178,7 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 	GPDCON = 0xaaaaaaaa;
 
 #define	M5D(n)	((n)&0x1fffff)
-#define LCD_ADDR ((rt_uint32_t)_rt_hw_framebuffer)
+#define LCD_ADDR ((rt_uint32_t)_rt_framebuffer)
 	LCDCON1 = (LCD_PIXCLOCK << 8) | (3 <<  5) | (12 << 1);
 	LCDCON2 = (LCD_UPPER_MARGIN << 24) | ((LCD_HEIGHT - 1) << 14) | (LCD_LOWER_MARGIN << 6) | (LCD_VSYNC_LEN << 0);
 	LCDCON3 = (LCD_RIGHT_MARGIN << 19) | ((LCD_WIDTH  - 1) <<  8) | (LCD_LEFT_MARGIN << 0);
@@ -334,21 +207,17 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	switch (cmd)
 	{
-	case RT_DEVICE_CTRL_LCD_GET_WIDTH:
-		*((rt_uint16_t*)args) = lcd->width;			
+	case RTGRAPHIC_CTRL_RECT_UPDATE:
 		break;
-
-	case RT_DEVICE_CTRL_LCD_GET_HEIGHT:
-		*((rt_uint16_t*)args) = lcd->height;			
+	case RTGRAPHIC_CTRL_POWERON:
 		break;
-
-	case RT_DEVICE_CTRL_LCD_GET_BPP:
-		*((rt_uint16_t*)args) = lcd->byte_per_pixel;			
+	case RTGRAPHIC_CTRL_POWEROFF:
 		break;
-		
-	case RT_DEVICE_CTRL_LCD_GET_FRAMEBUFFER:
-		*((rt_uint16_t*)args) = lcd->hw_framebuffer;			
-		break;		
+	case RTGRAPHIC_CTRL_GET_INFO:		
+		rt_memcpy(args, &_lcd_info, sizeof(_lcd_info));
+		break;
+	case RTGRAPHIC_CTRL_SET_MODE:
+		break;
 	}
 
 	return RT_EOK;
@@ -356,25 +225,24 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 
 void rt_hw_lcd_init(void)
 {
-	lcd = (struct rtgui_lcd_device*)rt_malloc(sizeof(struct rtgui_lcd_device));
+	rt_device_t lcd = rt_malloc(sizeof(struct rt_device));
 	if (lcd == RT_NULL) return; /* no memory yet */
 
-	/* init device structure */
-	lcd->parent.type = RT_Device_Class_Unknown;
-	lcd->parent.init = rt_lcd_init;
-	lcd->parent.control = rt_lcd_control;
-	lcd->parent.user_data = RT_NULL;
-	lcd->byte_per_pixel = 2;
-	lcd->width = LCD_WIDTH;
-	lcd->height = LCD_HEIGHT;
-	lcd->hw_framebuffer = (void*)_rt_hw_framebuffer;
-	
-	/* register touch device to RT-Thread */
-	rt_device_register(&(lcd->parent), "lcd", RT_DEVICE_FLAG_RDWR);
+	_lcd_info.bits_per_pixel = 16;
+	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
+	_lcd_info.framebuffer = (void*)_rt_framebuffer;
+	_lcd_info.width = LCD_WIDTH;
+	_lcd_info.height = LCD_HEIGHT;
 
-#ifdef RT_USING_RTGUI
-	/* add lcd driver into graphic driver */
-	rtgui_graphic_driver_add(&_rtgui_lcd_driver);
-#endif
+	/* init device structure */
+	lcd->type = RT_Device_Class_Unknown;
+	lcd->init = rt_lcd_init;
+	lcd->open = RT_NULL;
+	lcd->close = RT_NULL;
+	lcd->control = rt_lcd_control;
+	lcd->user_data = (void*)&_lcd_info;
+	
+	/* register lcd device to RT-Thread */
+	rt_device_register(lcd, "lcd", RT_DEVICE_FLAG_RDWR);
 }
 

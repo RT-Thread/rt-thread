@@ -114,8 +114,17 @@ void rt_init_thread_entry(void* parameter)
 		#endif
 #endif
 
+#if defined(RT_USING_DFS) && defined(RT_USING_LWIP) && defined(RT_USING_DFS_NFS)
+		/* NFSv3 Initialization */
+		nfs_init();
+
+		if (dfs_mount(RT_NULL, "/nfs", "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
+			rt_kprintf("NFSv3 File System initialized!\n");
+		else
+			rt_kprintf("NFSv3 File System initialzation failed!\n");
+#endif
+
 #if defined(RT_USING_DFS_UFFS)
-	{
 		/* init the uffs filesystem */
 		dfs_uffs_init();
 
@@ -124,13 +133,14 @@ void rt_init_thread_entry(void* parameter)
 			rt_kprintf("UFFS File System initialized!\n");
 		else
 			rt_kprintf("UFFS File System initialzation failed!\n");
-	}
 #endif
 	}
 #endif
 
 #ifdef RT_USING_RTGUI
 	{
+		rt_device_t *lcd;
+		
 		/* init lcd */
 		rt_hw_lcd_init();
 			
@@ -142,6 +152,12 @@ void rt_init_thread_entry(void* parameter)
 		
 		/* re-init device driver */
 		rt_device_init_all();
+
+		/* find lcd device */
+		lcd = rt_device_find("lcd");
+
+		/* set lcd device as rtgui graphic driver */		
+		rtgui_graphic_set_device(lcd);
 
 		/* startup rtgui */
 		rtgui_startup();
@@ -241,24 +257,5 @@ int rt_application_init()
 
 	return 0;
 }
-
-/* NFSv3 Initialization */
-#if defined(RT_USING_DFS) && defined(RT_USING_LWIP) && defined(RT_USING_DFS_NFS)
-#include <dfs_nfs.h>
-void nfs_start(void)
-{
-	nfs_init();
-
-	if (dfs_mount(RT_NULL, "/nfs", "nfs", 0, RT_NFS_HOST_EXPORT) == 0)
-	{
-		rt_kprintf("NFSv3 File System initialized!\n");
-	}
-	else
-		rt_kprintf("NFSv3 File System initialzation failed!\n");
-}
-
-#include "finsh.h"
-FINSH_FUNCTION_EXPORT(nfs_start, start net filesystem);
-#endif
 
 /*@}*/

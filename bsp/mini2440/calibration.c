@@ -176,7 +176,7 @@ void calibration_entry(void* parameter)
 
 	rtgui_thread_register(rt_thread_self(), mq);
 
-	rtgui_graphic_driver_get_default_rect(&rect);
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect);
 
 	/* set screen rect */
 	calibration_ptr->width = rect.x2;
