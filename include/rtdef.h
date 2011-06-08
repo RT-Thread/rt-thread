@@ -489,6 +489,8 @@ struct rt_mailbox
 
 	rt_uint16_t entry;									/**< index of messages in msg_pool. 				*/
 	rt_uint16_t in_offset, out_offset;					/**< in/output offset of the message buffer.		*/
+
+	rt_list_t suspend_sender_thread;					/**< sender thread suspended on this mb		*/
 };
 typedef struct rt_mailbox* rt_mailbox_t;
 #endif
