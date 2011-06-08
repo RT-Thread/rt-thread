@@ -1,11 +1,11 @@
 #include <rtthread.h>
 
-#include "lwip/debug.h"
 #include "lwip/sys.h"
 #include "lwip/opt.h"
 #include "lwip/stats.h"
 #include "lwip/err.h"
 #include "arch/sys_arch.h"
+#include "lwip/debug.h"
 
 #include <string.h>
 
@@ -269,7 +269,6 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 	{
 		struct rt_thread *thread;
 		thread = rt_thread_self();
-
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create mbox: %s \n",thread->name, tname));
 	}
 #endif
@@ -316,12 +315,12 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 		thread = rt_thread_self();
 
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n",thread->name,
-			(*mbo)x->parent.parent.name, (rt_uint32_t)msg));
+			(*mbox)->parent.parent.name, (rt_uint32_t)msg));
 	}
 #endif
 
-	if (rt_mb_send(*mbox, (rt_uint32_t)msg) != RT_EOK)
-		rt_kprintf("TODO: FIX THIS!! mbox overflow");
+	//rt_mb_send_wait(*mbox, (rt_uint32_t)msg,RT_WAITING_FOREVER);
+	rt_mb_send(*mbox, (rt_uint32_t)msg);
 	return;
 }
 
@@ -386,7 +385,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 		thread = rt_thread_self();
 
 		LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n",thread->name,
-			mbox->parent.parent.name, *(rt_uint32_t **)msg));
+			(*mbox)->parent.parent.name, *(rt_uint32_t **)msg));
 	}
 #endif
 

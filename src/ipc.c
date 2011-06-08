@@ -1197,6 +1197,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb, const char* name, void* msgpool, rt_size_t 
 	mb->in_offset 	= 0;
 	mb->out_offset 	= 0;
 
+	/* init an additional list of sender suspend thread */
 	rt_list_init(&(mb->suspend_sender_thread));
 
 	return RT_EOK;
@@ -1263,6 +1264,9 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag)
 	mb->in_offset 	= 0;
 	mb->out_offset 	= 0;
 
+	/* init an additional list of sender suspend thread */
+	rt_list_init(&(mb->suspend_sender_thread));
+
 	return mb;
 }
 
@@ -1274,12 +1278,13 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag)
  * @return the error code
  */
 rt_err_t rt_mb_delete (rt_mailbox_t mb)
-{
+{	
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
 	/* resume all suspended thread */
 	rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
+
 	/* also resume all mailbox private suspended thread */
 	rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
 
@@ -1575,6 +1580,9 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void* arg)
 
 		/* resume all waiting thread */
 		rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
+
+		/* also resume all mailbox private suspended thread */
+		rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
 
 		/* re-init mailbox */
 		mb->entry 	 	= 0;
