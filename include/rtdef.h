@@ -56,7 +56,7 @@ typedef rt_uint32_t						rt_tick_t;		/**< Type for tick count 		*/
 typedef rt_base_t						rt_flag_t;		/**< Type for flags 			*/
 typedef rt_ubase_t						rt_size_t;		/**< Type for size number		*/
 typedef rt_ubase_t						rt_dev_t;		/**< Type for device			*/
-typedef rt_uint32_t						rt_off_t;		/**< Type for offset			*/
+typedef rt_base_t						rt_off_t;		/**< Type for offset			*/
 
 /**
  * boolean type definitions
@@ -707,6 +707,21 @@ struct rt_device_rect_info
 	rt_uint16_t x, y;				/**< x, y coordinate 		*/
 	rt_uint16_t width, height;		/**< width and height       */
 };
+
+/**
+ * graphic operations
+ */
+struct rt_device_graphic_ops
+{
+	void (*set_pixel) (const char* pixel, int x, int y);
+	void (*get_pixel) (char* pixel, int x, int y);
+
+	void (*draw_hline)(const char* pixel, int x1, int x2, int y);
+	void (*draw_vline)(const char* pixel, int x, int y1, int y2);
+
+	void (*blit_line) (const char* pixel, int x, int y, rt_size_t size);
+};
+#define rt_graphix_ops(device)		(struct rt_device_graphic_ops*)(device->user_data)
 /*@}*/
 
 /**
