@@ -48,8 +48,6 @@ struct rt_dm9000_eth
 	enum DM9000_TYPE type;
 	enum DM9000_PHY_mode mode;
 
-	rt_uint8_t imr_all;
-
 	rt_uint8_t packet_cnt;				  /* packet I or II */
 	rt_uint16_t queue_packet_len;		   /* queued packet (packet II) */
 
@@ -157,13 +155,13 @@ void rt_dm9000_isr(int irqno)
 
 	eint_pend = EINTPEND;
 	/* EINT7 for DM9000 */
-	if((eint_pend & 0x80) == 0x80)
+	//if((eint_pend & 0x80) == 0x80)
 	{
 
 		last_io = DM9000_IO;
 
 		/* Disable all interrupts */
-		// dm9000_io_write(DM9000_IMR, IMR_PAR);
+		dm9000_io_write(DM9000_IMR, IMR_PAR);
 
 		/* Got DM9000 interrupt status */
 		int_status = dm9000_io_read(DM9000_ISR);			   /* Got ISR */
@@ -185,11 +183,6 @@ void rt_dm9000_isr(int irqno)
 		/* Received the coming packet */
 		if (int_status & ISR_PRS)
 		{
-			/* disable receive interrupt */
-			dm9000_io_write(DM9000_IMR, IMR_PAR);
-			dm9000_device.imr_all = IMR_PAR | IMR_PTM;
-			dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
-
 			/* a frame has been received */
 			eth_device_ready(&(dm9000_device.parent));
 		}
@@ -222,7 +215,7 @@ void rt_dm9000_isr(int irqno)
 		}
 
 		/* Re-enable interrupt mask */
-		// dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+		dm9000_io_write(DM9000_IMR, IMR_PAR | IMR_PTM | IMR_PRM);
 
 		DM9000_IO = last_io;
 	}
@@ -325,7 +318,8 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 	}
 	rt_kprintf("mode\n");
 
-	dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);	/* Enable TX/RX interrupt mask */
+	/* Enable TX/RX interrupt mask */
+	dm9000_io_write(DM9000_IMR,IMR_PAR | IMR_PTM | IMR_PRM);
 
 	return RT_EOK;
 }
@@ -446,7 +440,7 @@ rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
 	}
 
 	/* enable dm9000a interrupt */
-	dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+	dm9000_io_write(DM9000_IMR, IMR_PAR | IMR_PTM | IMR_PRM);
 
 	/* unlock DM9000 device */
 	rt_sem_release(&sem_lock);
@@ -569,8 +563,7 @@ __error_retry:
 		dm9000_io_write(DM9000_ISR, ISR_PTS);
 
 		/* restore receive interrupt */
-		dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
-		dm9000_io_write(DM9000_IMR, dm9000_device.imr_all);
+		dm9000_io_write(DM9000_IMR, IMR_PAR | IMR_PTM | IMR_PRM);
 	}
 
 	/* unlock DM9000 device */
@@ -614,7 +607,6 @@ void rt_hw_dm9000_init()
 	 * SRAM Tx/Rx pointer automatically return to start address,
 	 * Packet Transmitted, Packet Received
 	 */
-	dm9000_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
 
 	dm9000_device.dev_addr[0] = 0x01;
 	dm9000_device.dev_addr[1] = 0x60;
