@@ -179,7 +179,7 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 	         code to eth_init(). See include/lwip/netif.h line 97 */
 	eth_dev = dev;
 	if (netif_add(pnetif, IP_ADDR_ANY, IP_ADDR_BROADCAST, IP_ADDR_ANY, dev,
-		ethernetif_init, ethernet_input) == RT_NULL)
+		ethernetif_init, tcpip_input) == RT_NULL)
 	{
 		/* failed, unregister device and free netif */
 		rt_device_unregister(&(dev->parent));
@@ -249,7 +249,7 @@ void eth_rx_thread_entry(void* parameter)
 				if (p != RT_NULL)
 				{
 					/* notify to upper layer */
-					ethernet_input(p, device->netif);
+					tcpip_input(p, device->netif);
 				}
 				else break;
 			}

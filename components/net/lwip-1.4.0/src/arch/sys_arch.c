@@ -107,21 +107,29 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 	else
 	{
 		/* convirt msecond to os tick */
-		if (timeout < (1000/RT_TICK_PER_SECOND)) t = 1;
-		else t = timeout / (1000/RT_TICK_PER_SECOND);
+		if (timeout < (1000/RT_TICK_PER_SECOND))
+			t = 1;
+		else
+			t = timeout / (1000/RT_TICK_PER_SECOND);
 	}
 
 	ret = rt_sem_take(*sem, t);
 
-	if (ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
-	else if (ret == RT_EOK) ret = 1;
+	if (ret == -RT_ETIMEOUT)
+		return SYS_ARCH_TIMEOUT;
+	else
+	{
+		if (ret == RT_EOK)
+			ret = 1;
+	}
 
 	/* get elapse msecond */
 	tick = rt_tick_get() - tick;
 
 	/* convert tick to msecond */
 	tick = tick * (1000/RT_TICK_PER_SECOND);
-	if (tick == 0) tick = 1;
+	if (tick == 0)
+		tick = 1;
 
 	return tick;
 }
@@ -296,6 +304,10 @@ void sys_mbox_free(sys_mbox_t *mbox)
 	return;
 }
 
+/** Post a message to an mbox - may not fail
+ * -> blocks if full, only used from tasks not from ISR
+ * @param mbox mbox to posts the message
+ * @param msg message to post (ATTENTION: can be NULL) */
 void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 {
 #if SYS_DEBUG
@@ -308,8 +320,8 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 	}
 #endif
 
-	rt_mb_send(*mbox, (rt_uint32_t)msg);
-
+	if (rt_mb_send(*mbox, (rt_uint32_t)msg) != RT_EOK)
+		rt_kprintf("TODO: FIX THIS!! mbox overflow");
 	return;
 }
 
@@ -325,11 +337,19 @@ err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 	}
 #endif
 
-	if (rt_mb_send(*mbox, (rt_uint32_t)msg) == RT_EOK) return ERR_OK;
+	if (rt_mb_send(*mbox, (rt_uint32_t)msg) == RT_EOK)
+		return ERR_OK;
 
 	return ERR_MEM;
 }
 
+/** Wait for a new message to arrive in the mbox
+ * @param mbox mbox to get a message from
+ * @param msg pointer where the message is stored
+ * @param timeout maximum time (in milliseconds) to wait for a message
+ * @return time (in milliseconds) waited for a message, may be 0 if not waited
+           or SYS_ARCH_TIMEOUT on timeout
+ *         The returned time has to be accurate to prevent timer jitter! */
 u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 {
 	rt_err_t ret;
@@ -344,14 +364,21 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 	else
 	{
 		/* convirt msecond to os tick */
-		if (timeout < (1000/RT_TICK_PER_SECOND)) t = 1;
-		else t = timeout / (1000/RT_TICK_PER_SECOND);
+		if (timeout < (1000/RT_TICK_PER_SECOND))
+			t = 1;
+		else
+			t = timeout / (1000/RT_TICK_PER_SECOND);
 	}
 
 	ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, t);
 
-	if(ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
-	else if (ret == RT_EOK) ret = 1;
+	if(ret == -RT_ETIMEOUT)
+		return SYS_ARCH_TIMEOUT;
+	else
+	{
+		if (ret == RT_EOK)
+			ret = 1;
+	}
 
 #if SYS_DEBUG
 	{
@@ -368,19 +395,31 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 
 	/* convert tick to msecond */
 	tick = tick * (1000/RT_TICK_PER_SECOND);
-	if (tick == 0) tick = 1;
+	if (tick == 0)
+		tick = 1;
 
 	return tick;
 }
 
+/** Wait for a new message to arrive in the mbox
+ * @param mbox mbox to get a message from
+ * @param msg pointer where the message is stored
+ * @param timeout maximum time (in milliseconds) to wait for a message
+ * @return 0 (milliseconds) if a message has been received
+ *         or SYS_MBOX_EMPTY if the mailbox is empty */
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 {
 	int ret;
 
 	ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, 0);
 
-	if(ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
-	else if (ret == RT_EOK) ret = 1;
+	if(ret == -RT_ETIMEOUT)
+		return SYS_ARCH_TIMEOUT;
+	else
+	{
+		if (ret == RT_EOK) 
+			ret = 1;
+	}
 
 #if SYS_DEBUG
 	{
@@ -399,9 +438,6 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 /** Check if an mbox is valid/allocated: return 1 for valid, 0 for invalid */
 int sys_mbox_valid(sys_mbox_t *mbox)
 {
-	////////////////////
-	// to be implemented.
-	////////////////////
 	return (int)(*mbox);
 }
 #endif
@@ -409,9 +445,6 @@ int sys_mbox_valid(sys_mbox_t *mbox)
 /** Set an mbox invalid so that sys_mbox_valid returns 0 */
 void sys_mbox_set_invalid(sys_mbox_t *mbox)
 {
-	////////////////////
-	// to be implemented.
-	////////////////////
 	*mbox = RT_NULL;
 }
 #endif
