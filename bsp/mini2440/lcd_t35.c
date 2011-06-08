@@ -231,7 +231,7 @@ void rt_hw_lcd_init(void)
 	if (lcd == RT_NULL) return; /* no memory yet */
 
 	_lcd_info.bits_per_pixel = 16;
-	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
+	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
 	_lcd_info.framebuffer = (void*)_rt_framebuffer;
 	_lcd_info.width = LCD_WIDTH;
 	_lcd_info.height = LCD_HEIGHT;
