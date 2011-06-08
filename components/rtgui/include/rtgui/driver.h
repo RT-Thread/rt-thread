@@ -20,14 +20,14 @@
 struct rtgui_graphic_driver_ops
 {
 	/* set and get pixel in (x, y) */
-	void (*set_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
-	void (*get_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
+	void (*set_pixel) (rtgui_color_t *c, int x, int y);
+	void (*get_pixel) (rtgui_color_t *c, int x, int y);
 
-	void (*draw_hline)(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y);
-	void (*draw_vline)(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_base_t y2);
+	void (*draw_hline)(rtgui_color_t *c, int x1, int x2, int y);
+	void (*draw_vline)(rtgui_color_t *c, int x , int y1, int y2);
 
 	/* draw raw hline */
-	void (*draw_raw_hline)(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y);
+	void (*draw_raw_hline)(rt_uint8_t *pixels, int x1, int x2, int y);
 };
 
 struct rtgui_graphic_driver

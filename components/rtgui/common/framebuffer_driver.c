@@ -4,12 +4,12 @@
 #define GET_PIXEL(dst, x, y, type)	\
 	(type *)((rt_uint8_t*)((dst)->framebuffer) + (y) * (dst)->pitch + (x) * ((dst)->bits_per_pixel/8))
 
-static void _rgb565_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _rgb565_set_pixel(rtgui_color_t *c, int x, int y)
 {
 	*GET_PIXEL(rtgui_graphic_get_device(), x, y, rt_uint16_t) = rtgui_color_to_565(*c);
 }
 
-static void _rgb565_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _rgb565_get_pixel(rtgui_color_t *c, int x, int y)
 {
 	rt_uint16_t pixel;
 
@@ -19,7 +19,7 @@ static void _rgb565_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 	*c = rtgui_color_from_565(pixel);
 }
 
-static void _rgb565_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
+static void _rgb565_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
 	rt_ubase_t index;
 	rt_uint16_t pixel;
@@ -38,7 +38,7 @@ static void _rgb565_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_
 	}
 }
 
-static void _rgb565_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_base_t y2)
+static void _rgb565_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
 {
 	rt_uint8_t *dst;
 	rt_uint16_t pixel;
@@ -53,12 +53,12 @@ static void _rgb565_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_
 	}
 }
 
-static void _rgb565p_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _rgb565p_set_pixel(rtgui_color_t *c, int x, int y)
 {
 	*GET_PIXEL(rtgui_graphic_get_device(), x, y, rt_uint16_t) = rtgui_color_to_565p(*c);
 }
 
-static void _rgb565p_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _rgb565p_get_pixel(rtgui_color_t *c, int x, int y)
 {
 	rt_uint16_t pixel;
 
@@ -68,7 +68,7 @@ static void _rgb565p_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 	*c = rtgui_color_from_565p(pixel);
 }
 
-static void _rgb565p_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
+static void _rgb565p_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
 	rt_ubase_t index;
 	rt_uint16_t pixel;
@@ -87,7 +87,7 @@ static void _rgb565p_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt
 	}
 }
 
-static void _rgb565p_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_base_t y2)
+static void _rgb565p_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
 {
 	rt_uint8_t *dst;
 	rt_uint16_t pixel;
@@ -103,7 +103,7 @@ static void _rgb565p_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt
 }
 
 /* draw raw hline */
-static void framebuffer_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
+static void framebuffer_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
 {
 	rt_uint8_t *dst;
 
@@ -133,7 +133,7 @@ const struct rtgui_graphic_driver_ops _framebuffer_rgb565p_ops =
 #define MONO_PIXEL(framebuffer, x, y) \
 	((rt_uint8_t**)(framebuffer))[y/8][x]
 
-static void _mono_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _mono_set_pixel(rtgui_color_t *c, int x, int y)
 {
 	if (*c == white)
 		MONO_PIXEL(FRAMEBUFFER, x, y) &= ~(1 << (y%8));
@@ -141,7 +141,7 @@ static void _mono_set_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 		MONO_PIXEL(FRAMEBUFFER, x, y) |= (1 << (y%8));
 }
 
-static void _mono_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
+static void _mono_get_pixel(rtgui_color_t *c, int x, int y)
 {
 	if (MONO_PIXEL(FRAMEBUFFER, x, y) & (1 << (y%8)))
 		*c = black;
@@ -149,7 +149,7 @@ static void _mono_get_pixel(rtgui_color_t *c, rt_base_t x, rt_base_t y)
 		*c = white;
 }
 
-static void _mono_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_base_t y)
+static void _mono_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
 	rt_ubase_t index;
 	
@@ -165,7 +165,7 @@ static void _mono_draw_hline(rtgui_color_t *c, rt_base_t x1, rt_base_t x2, rt_ba
 		}
 }
 
-static void _mono_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_base_t y2)
+static void _mono_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
 {
 	rt_ubase_t index;
 	
@@ -182,7 +182,7 @@ static void _mono_draw_vline(rtgui_color_t *c, rt_base_t x , rt_base_t y1, rt_ba
 }
 
 /* draw raw hline */
-static void _mono_draw_raw_hline(rt_uint8_t *pixels, rt_base_t x1, rt_base_t x2, rt_base_t y)
+static void _mono_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
 {
 	rt_ubase_t index;
 
