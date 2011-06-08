@@ -248,6 +248,7 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete (rt_mailbox_t mb);
 
 rt_err_t rt_mb_send (rt_mailbox_t mb, rt_uint32_t value);
+rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout);
 rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void* arg);
 #endif

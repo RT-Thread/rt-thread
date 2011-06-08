@@ -21,6 +21,7 @@ semaphore_producer_consumer.c
 mutex_simple.c
 event_simple.c
 mbox_simple.c
+mbox_send_wait.c
 messageq_simple.c
 timer_static.c
 timer_dynamic.c
