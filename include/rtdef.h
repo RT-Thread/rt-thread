@@ -721,7 +721,7 @@ struct rt_device_graphic_ops
 
 	void (*blit_line) (const char* pixel, int x, int y, rt_size_t size);
 };
-#define rt_graphix_ops(device)		(struct rt_device_graphic_ops*)(device->user_data)
+#define rt_graphix_ops(device)		((struct rt_device_graphic_ops*)(device->user_data))
 /*@}*/
 
 /**
