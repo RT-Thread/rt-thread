@@ -428,7 +428,6 @@ void rt_show_version()
 	rt_kprintf(" 2006 - 2011 Copyright by rt-thread team\n");
 }
 
-#ifdef RT_USING_CONSOLE
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
@@ -905,6 +904,8 @@ rt_int32_t rt_sprintf(char *buf ,const char *format,...)
 	return n;
 }
 
+#ifdef RT_USING_CONSOLE
+
 #ifdef RT_USING_DEVICE
 /**
  * This function will set a device as console device.
@@ -948,7 +949,7 @@ void rt_hw_console_output(const char* str)
 __weak void rt_hw_console_output(const char* str)
 #elif defined(__IAR_SYSTEMS_ICC__)
 #if __VER__ > 540
-__weak 
+__weak
 #endif
 void rt_hw_console_output(const char* str)
 #endif
