@@ -1398,7 +1398,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	mb->msg_pool[mb->in_offset] = value;
 	/* increase input offset */
 	++ mb->in_offset;
-	mb->in_offset %= mb->size;
+	if (mb->in_offset > mb->size) mb->in_offset = 0;
 	/* increase message entry */
 	mb->entry ++;
 
@@ -1529,7 +1529,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 
 	/* increase output offset */
 	++mb->out_offset;
-	mb->out_offset %= mb->size;
+	if (mb->out_offset > mb->size) mb->out_offset = 0;
 	/* decrease message entry */
 	mb->entry --;
 
