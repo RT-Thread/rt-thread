@@ -40,7 +40,7 @@ extern void finsh_system_init(void);
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #endif
 
-#ifdef __GNUCC__
+#ifdef __GNUC__
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 #endif
@@ -79,7 +79,7 @@ void rtthread_startup(void)
 
 	/* init board */
 	rt_hw_board_init();
-	
+
 	rt_show_version();
 
 	/* init tick */
@@ -151,7 +151,7 @@ int main (void)
 {
 	/* invoke rtthread_startup */
 	rtthread_startup();
-	
+
 	return 0;
 }
 

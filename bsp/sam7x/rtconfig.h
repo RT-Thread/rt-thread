@@ -101,7 +101,7 @@
 #define RT_LWIP_ICMP
 
 /* Enable IGMP protocol*/
-#define RT_LWIP_IGMP
+//#define RT_LWIP_IGMP
 
 /* Enable UDP protocol*/
 #define RT_LWIP_UDP
