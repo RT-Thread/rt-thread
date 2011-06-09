@@ -68,10 +68,10 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/components/net/lwip-1.4.0/src', 
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/include', 
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/include/ipv4', 
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/arch/include', 
+path = [RTT_ROOT + '/components/net/lwip-1.4.0/src',
+    RTT_ROOT + '/components/net/lwip-1.4.0/src/include',
+    RTT_ROOT + '/components/net/lwip-1.4.0/src/include/ipv4',
+    RTT_ROOT + '/components/net/lwip-1.4.0/src/arch/include',
     RTT_ROOT + '/components/net/lwip-1.4.0/src/include/netif']
 
 if GetDepend(['RT_LWIP_SNMP']):
@@ -81,6 +81,6 @@ if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
     path += [RTT_ROOT + '/components/net/lwip-1.4.0/src/netif/ppp']
 
-group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
+group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP', 'RT_LWIP_VER140'], CPPPATH = path)
 
 Return('group')

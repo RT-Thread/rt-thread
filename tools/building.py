@@ -91,7 +91,7 @@ def IARProject(target, script):
     import xml.etree.ElementTree as etree
     project = file(target, "wb")
     project_path = os.path.dirname(os.path.abspath(target))
-    
+
     tree = etree.parse('template.ewp')
     tree.write('project.ewp')
 
@@ -262,7 +262,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
 
-    # add program path 
+    # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
     # parse rtconfig.h to get used component
@@ -275,6 +275,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
 
     if (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
+
+    if (GetDepend('RT_USING_LWIP') == True and GetDepend('RT_LWIP_VER140') == False):
+        AddDepend('RT_LWIP_VER130')
 
     # add target option
     AddOption('--target',
@@ -309,14 +312,14 @@ def GetDepend(depend):
             building = False
 
         return building
-    
-    # for list type depend 
+
+    # for list type depend
     for item in depend:
         if item != '':
             if not BuildOptions.has_key(item):
                 building = False
 
-    return building 
+    return building
 
 def AddDepend(option):
     BuildOptions[option] = 1
@@ -344,11 +347,11 @@ def DefineGroup(name, src, depend, **parameters):
     if group.has_key('LINKFLAGS'):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
 
-    objs = Env.Object(group['src'])    
+    objs = Env.Object(group['src'])
 
     if group.has_key('LIBRARY'):
         objs = Env.Library(name, objs)
-    
+
     return objs
 
 def EndBuilding(target):
