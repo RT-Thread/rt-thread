@@ -276,9 +276,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
     if (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
-    if (GetDepend('RT_USING_LWIP') == True and GetDepend('RT_LWIP_VER140') == False):
-        AddDepend('RT_LWIP_VER130')
-
     # add target option
     AddOption('--target',
                       dest='target',

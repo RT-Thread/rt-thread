@@ -80,6 +80,10 @@ if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
     path += [RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
-group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP', 'RT_LWIP_VER130'], CPPPATH = path)
+# For testing apps
+if GetDepend(['RT_USING_NETUTILS']):
+    src += Glob('./apps/*.c')
+
+group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 
 Return('group')

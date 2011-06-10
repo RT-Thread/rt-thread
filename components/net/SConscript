@@ -1,4 +1,4 @@
-# for libc component
+# for network related component
 import os
 Import('RTT_ROOT')
 

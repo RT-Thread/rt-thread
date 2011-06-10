@@ -1,0 +1,7 @@
+Import('RTT_ROOT')
+from building import *
+
+src   = Glob('*.c')
+group = DefineGroup('netutils', src, depend = ['RT_USING_NETUTILS'])
+
+Return('group')
