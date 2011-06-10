@@ -102,12 +102,14 @@ pll_loop:
 	
 #ifdef __FLASH_BUILD__
 	/* copy exception vectors into internal sram */
+    /*
 	mov r8, #RAM_BASE
 	ldr r9, =_start
 	ldmia r9!, {r0-r7}
 	stmia r8!, {r0-r7}
 	ldmia r9!, {r0-r6}
 	stmia r8!, {r0-r6}
+    */
 #endif
 	
 	/* setup stack for each mode */
@@ -135,18 +137,60 @@ pll_loop:
 	sub r0, r0, #IRQ_STACK_SIZE
 	
 	/* supervisor mode */
-	msr cpsr_c, #MODE_SVC
+	msr cpsr_c, #MODE_SVC|I_BIT|F_BIT
 	mov sp, r0
 	
 	/* remap SRAM to 0x0000 */
+	/* 
 	ldr r0, =0xFFFFFF00
 	mov r1, #0x01
 	str r1, [r0]
+	*/
 	
 	/* mask all IRQs */
 	ldr	r1, =0xFFFFF124
 	ldr	r0, =0XFFFFFFFF
 	str	r0, [r1]
+
+    /* copy .data to SRAM */
+    ldr     r1, =_sidata            /* .data start in image */
+    ldr     r2, =_edata             /* .data end in image   */
+    ldr     r3, =_sdata             /* sram data start      */
+data_loop:
+    ldr     r0, [r1, #0]
+    str     r0, [r3]
+
+    add     r1, r1, #4
+    add     r3, r3, #4
+
+    cmp     r3, r2                   /* check if data to clear */
+    blo     data_loop                /* loop until done        */
+
+    /* clear .bss */
+    mov     r0,#0                   /* get a zero */
+    ldr     r1,=__bss_start         /* bss start  */
+    ldr     r2,=__bss_end           /* bss end    */
+
+bss_loop:
+    cmp     r1,r2                   /* check if data to clear */
+    strlo   r0,[r1],#4              /* clear 4 bytes          */
+    blo     bss_loop                /* loop until done        */
+
+    /* call C++ constructors of global objects */
+    ldr     r0, =__ctors_start__
+    ldr     r1, =__ctors_end__
+
+ctor_loop:
+    cmp     r0, r1
+    beq     ctor_end
+    ldr     r2, [r0], #4
+    stmfd   sp!, {r0-r1}
+    mov     lr, pc
+    bx      r2
+    ldmfd   sp!, {r0-r1}
+    b       ctor_loop
+ctor_end:
+
 	
 	/* start RT-Thread Kernel */
 	ldr	pc, _rtthread_startup
