@@ -1278,7 +1278,7 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag)
  * @return the error code
  */
 rt_err_t rt_mb_delete (rt_mailbox_t mb)
-{	
+{
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
@@ -1398,7 +1398,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	mb->msg_pool[mb->in_offset] = value;
 	/* increase input offset */
 	++ mb->in_offset;
-	if (mb->in_offset > mb->size) mb->in_offset = 0;
+	if (mb->in_offset >= mb->size) mb->in_offset = 0;
 	/* increase message entry */
 	mb->entry ++;
 
@@ -1529,7 +1529,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 
 	/* increase output offset */
 	++mb->out_offset;
-	if (mb->out_offset > mb->size) mb->out_offset = 0;
+	if (mb->out_offset >= mb->size) mb->out_offset = 0;
 	/* decrease message entry */
 	mb->entry --;
 
