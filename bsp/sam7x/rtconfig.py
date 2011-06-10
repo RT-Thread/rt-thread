@@ -53,10 +53,10 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSS9'
-    CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
+    DEVICE = ' --device DARMATS'
+    CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-mini2440.map --ro-base 0x30000000 --entry Entry_Point --first Entry_Point'
+    LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list sam7x_rom_armcc.map --scatter sam7x_rom.sct'
 
     CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'
     LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/RV31/LIB"'
@@ -69,7 +69,7 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = 'fromelf --hex $TARGET --output rtthread-asm7x.hex \nfromelf -z $TARGET'
+    POST_ACTION = 'fromelf --i32 $TARGET --output rtthread-sam7x.hex \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
