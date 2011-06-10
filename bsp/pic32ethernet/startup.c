@@ -14,6 +14,10 @@
 
 // Adds support for PIC32 Peripheral library functions and macros
 #include <plib.h>
+#include <rtthread.h>
+
+extern int _ramfunc_end;
+#define PIC32_SRAM_END (0xA0000000+0x8000) //795F512L 512KB
 
 /**
  * This function will startup RT-Thread RTOS.
@@ -35,16 +39,10 @@ void rtthread_startup(void)
 	/* init timer system */
 	rt_system_timer_init();
 
-//#ifdef RT_USING_HEAP
-//	#ifdef __CC_ARM
-//		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)FM3_SRAM_END);
-//	#elif __ICCARM__
-//		rt_system_heap_init(__segment_end("HEAP"), (void*)FM3_SRAM_END);
-//	#else
-//		/* init memory system */
-//		rt_system_heap_init((void*)&__bss_end, (void*)FM3_SRAM_END);
-//	#endif
-//#endif
+#ifdef RT_USING_HEAP
+    /* init memory system */
+    rt_system_heap_init((void*)&_ramfunc_end, (void*)PIC32_SRAM_END);
+#endif
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
@@ -96,8 +94,8 @@ void rtthread_startup(void)
 
 int main(void)
 {
-//	/* disable interrupt first */
-//	rt_hw_interrupt_disable();
+	/* disable interrupt first */
+	rt_hw_interrupt_disable();
 
 	/* startup RT-Thread RTOS */
 	rtthread_startup();

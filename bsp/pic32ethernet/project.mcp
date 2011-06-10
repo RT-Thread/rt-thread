@@ -45,7 +45,8 @@ file_017=.
 file_018=pic32
 file_019=pic32
 file_020=.
-file_021=.
+file_021=pic32
+file_022=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -69,6 +70,7 @@ file_018=no
 file_019=no
 file_020=no
 file_021=no
+file_022=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -92,6 +94,7 @@ file_018=no
 file_019=no
 file_020=no
 file_021=no
+file_022=no
 [FILE_INFO]
 file_000=board.c
 file_001=application.c
@@ -114,12 +117,13 @@ file_017=startup.c
 file_018=..\..\libcpu\mips\pic32\context_gcc.S
 file_019=..\..\libcpu\mips\pic32\stack.c
 file_020=console.c
-file_021=rtconfig.h
+file_021=..\..\libcpu\mips\pic32\interrupt.c
+file_022=rtconfig.h
 [SUITE_INFO]
 suite_guid={14495C23-81F8-43F3-8A44-859C583D7760}
 suite_state=
 [TOOL_SETTINGS]
-TS{CB0AF4B8-4022-429D-8F99-8A56782B2C6D}=
+TS{CB0AF4B8-4022-429D-8F99-8A56782B2C6D}=--gdwarf-2
 TS{9C698E0A-CBC9-4EFF-AE7D-B569F93E7322}=-g -DPIC32_STARTER_KIT
 TS{77F59DA1-3C53-4677-AC5F-A03EB0125170}=-Map="$(BINDIR_)$(TARGETBASE).map" -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TS{0396C0A1-9052-4E4F-8B84-EF0162B1B4E9}=

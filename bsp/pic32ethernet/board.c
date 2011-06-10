@@ -14,6 +14,7 @@
 
 // Adds support for PIC32 Peripheral library functions and macros
 #include <plib.h>
+#include <rtthread.h>
 
 // Configuration Bits
 #pragma config FNOSC    = PRIPLL        // Oscillator Selection
@@ -35,7 +36,12 @@
 #pragma config DEBUG    = OFF           // Debugger Disabled for Starter Kit
 
 //  The following is used by the main application
-#define SYS_FREQ		(80000000)
+#define SYS_FREQ		(80000000UL)
+
+#define PB_DIV         		8
+#define PRESCALE       		256
+#define TOGGLES_PER_SEC		RT_TICK_PER_SECOND
+#define T1_TICK       		(SYS_FREQ/PB_DIV/PRESCALE/TOGGLES_PER_SEC)
 
 static void rt_hw_show_info(void)
 {
@@ -43,6 +49,17 @@ static void rt_hw_show_info(void)
     rt_kprintf("DEVICE_FAMILY:    PIC32\r\n");
     rt_kprintf("CPU_ARCHITECTURE: MIPS\r\n");
     rt_kprintf("CPU_FREQ:         %uMHz\r\n",SYS_FREQ/1000000UL);
+}
+
+static void rt_hw_timer_handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    rt_tick_increase();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**
@@ -59,5 +76,56 @@ void rt_hw_board_init()
    	rt_hw_console_init();
 
    	rt_hw_show_info();
+
+    // enable multi-vector interrupts
+    INTEnableSystemMultiVectoredInt();
+    rt_hw_interrupt_disable();
+
+//    // STEP 2. configure the core timer
+//    OpenCoreTimer(CORE_TICK_RATE);
+//
+//    // set up the core timer interrupt with a prioirty of 2 and zero sub-priority
+//    mConfigIntCoreTimer((CT_INT_ON | CT_INT_PRIOR_2 | CT_INT_SUB_PRIOR_0));
+
+    // STEP 2. configure Timer 1 using internal clock, 1:256 prescale
+    OpenTimer1(T1_ON | T1_SOURCE_INT | T1_PS_1_256, T1_TICK);
+    // set up the timer interrupt with a priority of 2
+    ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_2);
+
+    /* Setup the software interrupt. */
+	mConfigIntCoreSW0( CSW_INT_ON | CSW_INT_PRIOR_1 | CSW_INT_SUB_PRIOR_0 );
+
+    // configure PORTD.RD0 = output,Toggle in CoreSW0Handler.
+    mPORTDSetPinsDigitalOut(BIT_0);
 }
+
+void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)
+{
+    // clear the interrupt flag
+    mT1ClearIntFlag();
+
+    // .. things to do
+    rt_hw_timer_handler();
+
+//    // .. in this case, toggle the LED
+//    mPORTDToggleBits(BIT_1);
+}
+
+//void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
+//{
+//    // clear the interrupt flag
+//    mCTClearIntFlag();
+//
+//    // .. things to do
+//    rt_hw_timer_handler();
+//
+//    // update the period
+//    UpdateCoreTimer(CORE_TICK_RATE);
+//
+//	// .. Toggle the LED
+//    mPORTDToggleBits(BIT_1);
+//}
+
+
+void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl2) CoreSW0Handler(void);
 

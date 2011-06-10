@@ -36,6 +36,16 @@
 		<Unit filename="..\..\include\rthw.h" />
 		<Unit filename="..\..\include\rtm.h" />
 		<Unit filename="..\..\include\rtthread.h" />
+		<Unit filename="..\..\libcpu\mips\common\asm.h" />
+		<Unit filename="..\..\libcpu\mips\common\cache.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libcpu\mips\common\cache.h" />
+		<Unit filename="..\..\libcpu\mips\common\exception.h" />
+		<Unit filename="..\..\libcpu\mips\common\mips.inc" />
+		<Unit filename="..\..\libcpu\mips\common\mipscfg.h" />
+		<Unit filename="..\..\libcpu\mips\common\mipsregs.h" />
+		<Unit filename="..\..\libcpu\mips\common\stackframe.h" />
 		<Unit filename="..\..\libcpu\mips\pic32\context_gcc.S" />
 		<Unit filename="..\..\libcpu\mips\pic32\interrupt.c">
 			<Option compilerVar="CC" />

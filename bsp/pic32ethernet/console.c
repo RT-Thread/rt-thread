@@ -24,7 +24,7 @@
 void rt_hw_console_init(void)
 {
 	//Initialize the DB_UTILS IO channel
-	DBINIT();
+//	DBINIT();
 }
 
 /**
@@ -34,6 +34,6 @@ void rt_hw_console_init(void)
  */
 void rt_hw_console_output(const char* str)
 {
-    DBPRINTF(str);
+//    DBPRINTF(str);
 }
 
