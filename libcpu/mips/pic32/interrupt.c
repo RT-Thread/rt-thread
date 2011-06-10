@@ -14,3 +14,14 @@
 
 #include <rtthread.h>
 
+/**
+ * @addtogroup PIC32
+ */
+/*@{*/
+
+rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_uint32_t rt_thread_switch_interrput_flag;
+
+
+/*@}*/
+
