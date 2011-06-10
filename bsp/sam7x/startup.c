@@ -113,13 +113,6 @@ void rtthread_startup(void)
 	/* init hardware serial device */
 	rt_hw_serial_init();
 
-#ifdef RT_USING_LWIP
-	eth_system_device_init();
-
-	/* register AT91 EMAC device */
-	sam7xether_register("E0");
-#endif
-
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif
@@ -147,6 +140,7 @@ void rtthread_startup(void)
 	return ;
 }
 
+#ifdef __CC_ARM
 int main (void)
 {
 	/* invoke rtthread_startup */
@@ -154,5 +148,6 @@ int main (void)
 
 	return 0;
 }
+#endif
 
 /*@}*/

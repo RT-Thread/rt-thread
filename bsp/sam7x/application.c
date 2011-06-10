@@ -60,7 +60,12 @@ void rt_init_thread_entry(void *parameter)
 #ifdef RT_USING_LWIP
 	{
 		extern void lwip_sys_init(void);
-	
+
+		eth_system_device_init();
+
+		/* register AT91 EMAC device */
+		sam7xether_register("E0");
+
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");

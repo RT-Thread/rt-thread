@@ -32,7 +32,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.ld'
     CPATH = ''
     LPATH = ''
 
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-sam7x.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O ihex $TARGET rtthread-sam7x.hex\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
@@ -69,7 +69,7 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+    POST_ACTION = 'fromelf --hex $TARGET --output rtthread-asm7x.hex \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
