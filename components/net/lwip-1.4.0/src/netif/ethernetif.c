@@ -153,6 +153,9 @@ static err_t ethernetif_init(struct netif *netif)
 
 
 /* ethernetif APIs */
+/* WARNING: because netif_set_up() is not re-entrance ( it will pending on sem/mbox )
+ * you MUST NOT call it before scheduler starts.
+ */
 rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 {
 	struct netif* pnetif;
