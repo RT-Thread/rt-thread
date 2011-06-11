@@ -174,36 +174,7 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn));
 	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn));
 
-	if (btn->flag & RTGUI_BUTTON_TYPE_PUSH && btn->flag & RTGUI_BUTTON_FLAG_PRESS)
-	{
-		/* fill button rect with background color */
-		rtgui_dc_fill_rect(dc, &rect);
-
-		/* draw border */
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(64, 64, 64);
-		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
-		rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2);
-
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(128, 128, 128);
-		rtgui_dc_draw_hline(dc, rect.x1, rect.x2 - 1, rect.y1 + 1);
-		rtgui_dc_draw_vline(dc, rect.x1 + 1, rect.y1 + 1, rect.y2 - 2);
-
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(255, 255, 255);
-		rtgui_dc_draw_hline(dc, rect.x1, rect.x2 + 1, rect.y2 - 1);
-		rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1, rect.y2);
-
-		if (btn->pressed_image != RT_NULL)
-		{
-			rtgui_rect_t image_rect;
-			image_rect.x1 = 0; image_rect.y1 = 0;
-			image_rect.x2 = btn->unpressed_image->w;
-			image_rect.y2 = btn->unpressed_image->h;
-			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
-
-			rtgui_image_blit(btn->pressed_image, dc, &image_rect);
-		}
-	}
-	else if (btn->flag & RTGUI_BUTTON_FLAG_PRESS)
+	if (btn->flag & RTGUI_BUTTON_FLAG_PRESS)
 	{
 		if (btn->pressed_image != RT_NULL)
 		{
@@ -218,16 +189,8 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		else
 		{
 			/* fill button rect with background color */
-			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = RTGUI_RGB(0xff, 0xff, 0xff);
 			rtgui_dc_fill_rect(dc, &rect);
-
-			/* draw border */
-			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(0, 0, 0);
-			rtgui_dc_draw_rect(dc, &rect);
-
-			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(128, 128, 128);
-			rect.x1 += 1; rect.y1 += 1; rect.x2 -= 1; rect.y2 -= 1;
-			rtgui_dc_draw_rect(dc, &rect);
+			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
 		}
 	}
 	else
@@ -246,19 +209,7 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 		{
 			/* fill button rect with background color */
 			rtgui_dc_fill_rect(dc, &rect);
-
-			/* draw border */
-			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(255, 255, 255);
-			rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
-			rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2);
-
-			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(0, 0, 0);
-			rtgui_dc_draw_hline(dc, rect.x1, rect.x2 + 1, rect.y2);
-			rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2);
-
-			RTGUI_WIDGET(btn)->gc.foreground = RTGUI_RGB(128, 128, 128);
-			rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2, rect.y2 - 1);
-			rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1 + 1, rect.y2 - 1);
+			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_RAISE);
 		}
 	}
 
@@ -930,10 +881,9 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 	rtgui_widget_get_rect(&(bar->parent), &rect);
 
 	/* fill button rect with background color */
-	bar->parent.gc.background = RTGUI_RGB(212, 208, 200);
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(212, 208, 200);
 
     /* draw border */
-	rect.x2 --; rect.y2 --;
 	rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
 
 	/* Nothing to draw */
@@ -946,7 +896,8 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 	rect.x2 ++; rect.y2 ++;
     left = max - pos;
 	rtgui_rect_inflate(&rect, -2);
-    bar->parent.gc.background = RTGUI_RGB(0, 0, 255);
+    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(0, 0, 255);
+	rect.y2 --; rect.x2 --;
 
     if (bar->orient == RTGUI_VERTICAL)
     {

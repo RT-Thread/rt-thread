@@ -311,9 +311,9 @@ static void rtgui_filelist_view_menu_pop(rtgui_widget_t *parent)
 		listbox = rtgui_listbox_create(items, sizeof(items)/sizeof(items[0]), &rect);
 		rtgui_listbox_set_onitem(listbox, rtgui_filelist_view_on_folder_item);
 		rtgui_container_add_child(RTGUI_CONTAINER(menu), RTGUI_WIDGET(listbox));
-		rtgui_widget_focus(RTGUI_WIDGET(listbox));
-
 		rtgui_win_show(menu, RT_FALSE);
+		rtgui_widget_focus(RTGUI_WIDGET(listbox));
+		rtgui_listbox_set_current_item(listbox, 0);
 	}
 }
 

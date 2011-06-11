@@ -251,7 +251,6 @@ static void rtgui_dc_client_draw_point(struct rtgui_dc* self, int x, int y)
 	owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
 	if (!RTGUI_WIDGET_IS_DC_VISIBLE(owner)) return;
 
-
 	x = x + owner->extent.x1;
 	y = y + owner->extent.y1;
 

@@ -242,24 +242,24 @@ void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
     rtgui_dc_draw_hline(dc, rect->x1 + 1, rect->x2, rect->y1);
 
 	RTGUI_DC_FC(dc) = c2;
-    rtgui_dc_draw_vline(dc, rect->x2, rect->y1, rect->y2);
-    rtgui_dc_draw_hline(dc, rect->x1, rect->x2 + 1, rect->y2);
+    rtgui_dc_draw_vline(dc, rect->x2 - 1, rect->y1, rect->y2);
+    rtgui_dc_draw_hline(dc, rect->x1, rect->x2, rect->y2 - 1);
 }
 
 void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 {
 	int i;
 
-	for (i = rect->x1; i <= rect->x2; i += 2)
+	for (i = rect->x1; i < rect->x2; i += 2)
 	{
 		rtgui_dc_draw_point(dc, i, rect->y1);
-		rtgui_dc_draw_point(dc, i, rect->y2);
+		rtgui_dc_draw_point(dc, i, rect->y2 - 1);
 	}
 
-	for (i = rect->y1; i <= rect->y2; i += 2)
+	for (i = rect->y1; i < rect->y2; i += 2)
 	{
 		rtgui_dc_draw_point(dc, rect->x1, i);
-		rtgui_dc_draw_point(dc, rect->x2, i);
+		rtgui_dc_draw_point(dc, rect->x2 - 1, i);
 	}
 }
 

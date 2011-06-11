@@ -33,14 +33,7 @@ rt_bool_t rtgui_progressbar_event_handler(struct rtgui_widget* widget,
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
-#ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else
-#endif
-		{
-			rtgui_theme_draw_progressbar(bar);
-		}
-
+		rtgui_theme_draw_progressbar(bar);
 		break;
 	}
 

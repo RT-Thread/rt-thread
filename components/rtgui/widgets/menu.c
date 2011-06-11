@@ -81,17 +81,14 @@ static void _rtgui_menu_onitem(struct rtgui_widget* widget, struct rtgui_event* 
 	}
 	else /* other menu item */
 	{
-		rt_ubase_t index;
-		
 		/* invoke action */
 		if (menu->items[menu->items_list->current_item].on_menuaction != RT_NULL)
 			menu->items[menu->items_list->current_item].on_menuaction(RTGUI_WIDGET(menu), RT_NULL);
 
-		/* hide all of sub-menu */
-		for (index = 0; index < menu->items_count; index ++)
+		/* hide sub-menu */
+		if (menu->sub_menu != RT_NULL)
 		{
-			if (menu->items[index].submenu != RT_NULL)
-				rtgui_menu_hiden(menu->items[index].submenu);
+			rtgui_menu_hiden(menu->sub_menu);
 		}
 		rtgui_menu_hiden(menu);
 	}
