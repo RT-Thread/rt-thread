@@ -288,7 +288,7 @@
           <state>$PROJ_DIR$\</state>
           <state>$PROJ_DIR$\..\CMSIS</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\components\rtgui\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -529,7 +529,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state></state>
+          <state>$PROJ_DIR$\</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -677,7 +677,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\mb9bf506.icf</state>
+          <state>$PROJ_DIR$\mb9bf500r.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1747,78 +1747,6 @@
     </file>
   </group>
   <group>
-    <name>Finsh</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_compiler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_error.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_error.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_heap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_heap.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_node.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_node.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_ops.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_parser.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_parser.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_token.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_token.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_var.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_var.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_vm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_vm.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\symbol.c</name>
-    </file>
-  </group>
-  <group>
     <name>FM3</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\context_iar.S</name>
@@ -1854,9 +1782,6 @@
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
     </file>
     <file>
@@ -1864,9 +1789,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\module.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\module.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
@@ -1888,7 +1810,13 @@
     </file>
   </group>
   <group>
+    <name>Rtgui</name>
+  </group>
+  <group>
     <name>Startup</name>
+    <file>
+      <name>$PROJ_DIR$\adc.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\application.c</name>
     </file>
@@ -1896,13 +1824,19 @@
       <name>$PROJ_DIR$\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\console.c</name>
+      <name>$PROJ_DIR$\cpuusage.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\info.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\key.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\lcd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\led.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\serial.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\startup.c</name>
