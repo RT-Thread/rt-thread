@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_device>
+  <exe>$TOOLKIT_DIR$\config\flashloader\Fujitsu\FlashMB9BF500.out</exe>
+  <page>4</page>
+  <block>4 0x1000</block>
+  <block>1 0xC000</block>
+  <block>3 0x10000</block>
+  <flash_base>0x00000000</flash_base>
+  <macro>$TOOLKIT_DIR$\config\flashloader\Fujitsu\FlashMB9BF50x.mac</macro>
+  <aggregate>1</aggregate>
+  <args_doc>The "--protect" argument is used to program
+protection code 0x0001 in the security code area of the
+flash.
+Note: Writing the protection code disables JTAG access
+and debug is not possible. To release security, perform
+the chip erase operation using a serial writer because
+the security cannot be released through JTAG pins.</args_doc>
+</flash_device>

@@ -27,6 +27,7 @@
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
+#include <rtgui/driver.h>
 extern void rtgui_startup();
 #endif
 
@@ -35,6 +36,8 @@ static char msg_pool[2048];
 
 void rt_init_thread_entry(void *parameter)
 {
+    rt_device_t lcd;  
+    
     rt_hw_led_init();
 	rt_hw_key_init();
 	rt_hw_adc_init();
@@ -45,6 +48,12 @@ void rt_init_thread_entry(void *parameter)
 	rt_device_init_all();
 	
 #ifdef RT_USING_RTGUI
+	/* find lcd device */
+	lcd = rt_device_find("lcd");    
+    
+	/* set lcd device as rtgui graphic driver */		
+	rtgui_graphic_set_device(lcd);
+        
 	/* startup rtgui */
 	rtgui_startup();
 #else
