@@ -44,6 +44,8 @@ rt_err_t rt_get_errno(void)
 {
 	rt_thread_t tid;
 
+	RT_DEBUG_NOT_REENT
+
 	tid = rt_thread_self();
 	if (tid == RT_NULL) return errno;
 
@@ -58,6 +60,8 @@ rt_err_t rt_get_errno(void)
 void rt_set_errno(rt_err_t error)
 {
 	rt_thread_t tid;
+
+	RT_DEBUG_NOT_REENT
 
 	tid = rt_thread_self();
 	if (tid == RT_NULL) { errno = error; return; }

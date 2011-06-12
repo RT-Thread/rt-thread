@@ -56,7 +56,6 @@
 #include <rtthread.h>
 #include "kservice.h"
 
-/* #define RT_SLAB_DEBUG */
 #define RT_MEM_STATS
 
 #if defined (RT_USING_HEAP) && defined (RT_USING_SLAB)
@@ -338,6 +337,8 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 {
 	rt_uint32_t limsize, npages;
 
+	RT_DEBUG_NOT_REENT
+
 	/* align begin and end addr to page */
 	heap_start	= RT_ALIGN((rt_uint32_t)begin_addr, RT_MM_PAGE_SIZE);
 	heap_end	= RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
@@ -354,10 +355,8 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 	/* initialize heap semaphore */
 	rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
-#ifdef RT_SLAB_DEBUG
-	rt_kprintf("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n", heap_start, heap_end, 
-	limsize, npages);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_SLAB,
+		("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n", heap_start, heap_end, limsize, npages));
 
 	/* init pages */
 	rt_page_init((void*)heap_start, npages);
@@ -372,18 +371,17 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 
 	zone_page_cnt = zone_size / RT_MM_PAGE_SIZE;
 
-#ifdef RT_SLAB_DEBUG
-	rt_kprintf("zone size 0x%x, zone page count 0x%x\n", zone_size, zone_page_cnt);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_SLAB,
+		("zone size 0x%x, zone page count 0x%x\n", zone_size, zone_page_cnt));
 
 	/* allocate memusage array */
 	limsize = npages * sizeof(struct memusage);
 	limsize = RT_ALIGN(limsize, RT_MM_PAGE_SIZE);
 	memusage = rt_page_alloc(limsize/RT_MM_PAGE_SIZE);
 
-#ifdef RT_SLAB_DEBUG
-	rt_kprintf("memusage 0x%x, size 0x%x\n", (rt_uint32_t)memusage, limsize);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_SLAB,
+		("memusage 0x%x, size 0x%x\n", (rt_uint32_t)memusage, limsize));
+
 }
 
 /*
@@ -533,12 +531,11 @@ void *rt_malloc(rt_size_t size)
 		kup->type = PAGE_TYPE_LARGE;
 		kup->size = size >> RT_MM_PAGE_BITS;
 
-#ifdef RT_SLAB_DEBUG
-		rt_kprintf("malloc a large memory 0x%x, page cnt %d, kup %d\n",
+		RT_DEBUG_LOG(RT_DEBUG_SLAB,("malloc a large memory 0x%x, page cnt %d, kup %d\n",
 			size,
 			size >> RT_MM_PAGE_BITS,
-			((rt_uint32_t)chunk - heap_start) >> RT_MM_PAGE_BITS);
-#endif
+			((rt_uint32_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
+
 		/* lock heap */
 		rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
@@ -563,9 +560,8 @@ void *rt_malloc(rt_size_t size)
 	zi = zoneindex(&size);
 	RT_ASSERT(zi < NZONES);
 
-#ifdef RT_SLAB_DEBUG
-	rt_kprintf("try to malloc 0x%x on zone: %d\n", size, zi);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_SLAB,
+		("try to malloc 0x%x on zone: %d\n", size, zi));
 
 	if ((z = zone_array[zi]) != RT_NULL)
 	{
@@ -635,9 +631,7 @@ void *rt_malloc(rt_size_t size)
 			/* lock heap */
 			rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
-#ifdef RT_SLAB_DEBUG
-			rt_kprintf("alloc a new zone: 0x%x\n", (rt_uint32_t)z);
-#endif
+			RT_DEBUG_LOG(RT_DEBUG_SLAB,("alloc a new zone: 0x%x\n", (rt_uint32_t)z));
 
 			/* set message usage */
 			for (off = 0, kup = btokup(z); off < zone_page_cnt; off ++)
@@ -688,7 +682,7 @@ done:
 	rt_sem_release(&heap_sem);
 
 #ifdef RT_USING_HOOK
-	if (rt_malloc_hook != RT_NULL) rt_malloc_hook((char*)chunk, size);
+	RT_OBJECT_HOOK_CALL2(rt_malloc_hook,(char*)chunk, size);
 #endif
 
 	return chunk;
@@ -804,7 +798,7 @@ void rt_free(void *ptr)
 	if (ptr == RT_NULL) return ;
 
 #ifdef RT_USING_HOOK
-	if (rt_free_hook != RT_NULL) rt_free_hook(ptr);
+	RT_OBJECT_HOOK_CALL2(rt_free_hook,ptr);
 #endif
 
 #ifdef RT_USING_MODULE
@@ -816,13 +810,14 @@ void rt_free(void *ptr)
 #endif
 
 	/* get memory usage */
-#ifdef RT_SLAB_DEBUG
+#if RT_DEBUG_SLAB
 	{
 		rt_uint32_t addr = ((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
-		rt_kprintf("free a memory 0x%x and align to 0x%x, kup index %d\n",
+		RT_DEBUG_LOG(RT_DEBUG_SLAB,
+			("free a memory 0x%x and align to 0x%x, kup index %d\n",
 			(rt_uint32_t)ptr,
 			(rt_uint32_t)addr,
-			((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS);
+			((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
 	}
 #endif
 
@@ -843,9 +838,8 @@ void rt_free(void *ptr)
 #endif
 		rt_sem_release(&heap_sem);
 
-#ifdef RT_SLAB_DEBUG
-		rt_kprintf("free large memory block 0x%x, page count %d\n", (rt_uint32_t)ptr, size);
-#endif
+		RT_DEBUG_LOG(RT_DEBUG_SLAB,
+			("free large memory block 0x%x, page count %d\n", (rt_uint32_t)ptr, size));
 
 		/* free this page */
 		rt_page_free(ptr, size);
@@ -888,9 +882,8 @@ void rt_free(void *ptr)
 	{
 		slab_zone **pz;
 
-#ifdef RT_SLAB_DEBUG
-		rt_kprintf("free zone 0x%x\n", (rt_uint32_t)z, z->z_zoneindex);
-#endif
+		RT_DEBUG_LOG(RT_DEBUG_SLAB,
+			("free zone 0x%x\n", (rt_uint32_t)z, z->z_zoneindex));
 
 		/* remove zone from zone array list */
 		for (pz = &zone_array[z->z_zoneindex]; z != *pz; pz = &(*pz)->z_next) ;

@@ -24,8 +24,6 @@
 
 #include "kservice.h"
 
-/* #define RT_TIMER_DEBUG */
-
 /* hard timer list */
 static rt_list_t rt_timer_list;
 
@@ -213,7 +211,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) return -RT_ERROR;
 
 #ifdef RT_USING_HOOK
-	if (rt_object_take_hook != RT_NULL) rt_object_take_hook(&(timer->parent));
+	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(timer->parent));
 #endif
 
 	/* disable interrupt */
@@ -280,7 +278,7 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 	if(!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)) return -RT_ERROR;
 
 #ifdef RT_USING_HOOK
-	if (rt_object_put_hook != RT_NULL) rt_object_put_hook(&(timer->parent));
+	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(timer->parent));
 #endif
 
 	/* disable interrupt */
@@ -350,9 +348,7 @@ void rt_timer_check(void)
 	rt_tick_t current_tick;
 	register rt_base_t level;
 
-#ifdef RT_TIMER_DEBUG
-	rt_kprintf("timer check enter\n");
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_TIMER,("timer check enter\n"));
 
 	current_tick = rt_tick_get();
 
@@ -369,21 +365,25 @@ void rt_timer_check(void)
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{
 #ifdef RT_USING_HOOK
-			if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
+			RT_OBJECT_HOOK_CALL2(rt_timer_timeout_hook,t);
 #endif
 
 			/* remove timer from timer list firstly */
 			rt_list_remove(&(t->list));
 
+			/* Timeout function called while interrupt is disabled, reentant function
+			is a must */
+			RT_DEBUG_REENT_IN
+
 			/* call timeout function */
 			t->timeout_func(t->parameter);
+
+			RT_DEBUG_REENT_OUT
 
 			/* re-get tick */
 			current_tick = rt_tick_get();
 
-#ifdef RT_TIMER_DEBUG
-			rt_kprintf("current tick: %d\n", current_tick);
-#endif
+			RT_DEBUG_LOG(RT_DEBUG_TIMER,("current tick: %d\n", current_tick));
 
 			if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
 					(t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
@@ -409,9 +409,8 @@ void rt_timer_check(void)
 	rt_soft_timer_tick_increase ( );
 #endif
 
-#ifdef RT_TIMER_DEBUG
-	rt_kprintf("timer check leave\n");
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_TIMER,("timer check leave\n"));
+
 }
 
 #ifdef RT_USING_TIMER_SOFT
@@ -443,9 +442,7 @@ void rt_soft_timer_check()
 	rt_list_t *n;
 	struct rt_timer *t;
 
-#ifdef RT_TIMER_DEBUG
-	rt_kprintf("software timer check enter\n");
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_TIMER,("software timer check enter\n"));
 
 	current_tick = rt_tick_get();
 
@@ -459,7 +456,7 @@ void rt_soft_timer_check()
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{
 #ifdef RT_USING_HOOK
-			if (rt_timer_timeout_hook != RT_NULL) rt_timer_timeout_hook(t);
+			RT_OBJECT_HOOK_CALL2(rt_timer_timeout_hook,t);
 #endif
 			/* move node to the next */
 			n = n->next;
@@ -473,9 +470,7 @@ void rt_soft_timer_check()
 			/* re-get tick */
 			current_tick = rt_tick_get();
 
-#ifdef RT_TIMER_DEBUG
-			rt_kprintf("current tick: %d\n", current_tick);
-#endif
+			RT_DEBUG_LOG(RT_DEBUG_TIMER,("current tick: %d\n", current_tick));
 
 			if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
 					(t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
@@ -493,9 +488,8 @@ void rt_soft_timer_check()
 		else break; /* not check anymore */
 	}
 
-#ifdef RT_TIMER_DEBUG
-	rt_kprintf("software timer check leave\n");
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_TIMER,("software timer check leave\n"));
+
 }
 
 /* system timer thread entry */

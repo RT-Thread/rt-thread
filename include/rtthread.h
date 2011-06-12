@@ -21,6 +21,7 @@
 #define __RT_THREAD_H__
 
 #include <rtdef.h>
+#include <rtdebug.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,24 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object));
 void rt_object_trytake_sethook(void (*hook)(struct rt_object* object));
 void rt_object_take_sethook(void (*hook)(struct rt_object* object));
 void rt_object_put_sethook(void (*hook)(struct rt_object* object));
+#define RT_OBJECT_HOOK_CALL(hookfunc)\
+	do{\
+		register rt_base_t temp;\
+		temp = rt_hw_interrupt_disable();\
+		RT_DEBUG_REENT_IN\
+		if (hookfunc != RT_NULL) hookfunc();\
+		RT_DEBUG_REENT_OUT\
+		rt_hw_interrupt_enable(temp);\
+	}while(0)
+#define RT_OBJECT_HOOK_CALL2(hookfunc,...)\
+	do{\
+		register rt_base_t temp;\
+		temp = rt_hw_interrupt_disable();\
+		RT_DEBUG_REENT_IN\
+		if (hookfunc != RT_NULL) hookfunc(__VA_ARGS__);\
+		RT_DEBUG_REENT_OUT\
+		rt_hw_interrupt_enable(temp);\
+	}while(0)
 #endif
 
 /*@}*/

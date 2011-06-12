@@ -41,7 +41,7 @@ static void thread1_entry(void* parameter)
 static void thread2_entry(void* parameter)
 {
 	rt_uint8_t count;
-    unsigned char  *str;
+    char  *str;
 
 	count = 0;
 	while (1)

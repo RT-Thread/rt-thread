@@ -69,6 +69,8 @@ extern void finsh_system_init(void);
  */
 void rtthread_startup(void)
 {
+    RT_DEBUG_REENT_IN
+
 	/* enable cpu cache */
 	rt_hw_cpu_icache_enable();
 	rt_hw_cpu_dcache_enable();
@@ -81,7 +83,7 @@ void rtthread_startup(void)
 
 	/* show version */
 	rt_show_version();
-	
+
 	/* init tick */
 	rt_system_tick_init();
 
@@ -116,7 +118,7 @@ void rtthread_startup(void)
 	rt_hw_serial_register(&uart2_device, "uart2",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart2);
-	
+
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #ifdef RT_USING_DFS_UFFS
@@ -146,6 +148,8 @@ void rtthread_startup(void)
 
 	/* init idle thread */
 	rt_thread_idle_init();
+
+	RT_DEBUG_REENT_OUT
 
 	/* start scheduler */
 	rt_system_scheduler_start();

@@ -84,7 +84,15 @@ void (*rt_object_put_hook)(struct rt_object* object);
  */
 void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
 {
+	register rt_base_t temp;
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
+
 	rt_object_attach_hook = hook;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -95,7 +103,15 @@ void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
 {
+	register rt_base_t temp;
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
+
 	rt_object_detach_hook = hook;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -113,7 +129,15 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
 {
+	register rt_base_t temp;
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
+
 	rt_object_trytake_hook = hook;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -132,7 +156,15 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_take_sethook(void (*hook)(struct rt_object* object))
 {
+	register rt_base_t temp;
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
+
 	rt_object_take_hook = hook;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -143,7 +175,15 @@ void rt_object_take_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_put_sethook(void (*hook)(struct rt_object* object))
 {
+	register rt_base_t temp;
+
+	/* disable interrupt */
+	temp = rt_hw_interrupt_disable();
+
 	rt_object_put_hook = hook;
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(temp);
 }
 
 /*@}*/
@@ -199,10 +239,7 @@ void rt_object_init(struct rt_object* object, enum rt_object_class_type type, co
 	}
 
 #ifdef RT_USING_HOOK
-	if (rt_object_attach_hook != RT_NULL)
-	{
-		rt_object_attach_hook(object);
-	}
+	RT_OBJECT_HOOK_CALL2(rt_object_attach_hook,object);
 #endif
 
 	/* lock interrupt */
@@ -229,7 +266,7 @@ void rt_object_detach(rt_object_t object)
 	RT_ASSERT(object != RT_NULL);
 
 #ifdef RT_USING_HOOK
-	if (rt_object_detach_hook != RT_NULL) rt_object_detach_hook(object);
+	RT_OBJECT_HOOK_CALL2(rt_object_detach_hook,object);
 #endif
 
 	/* lock interrupt */
@@ -256,6 +293,8 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	struct rt_object* object;
 	register rt_base_t temp;
 	struct rt_object_information* information;
+
+	RT_DEBUG_NOT_REENT
 
 #ifdef RT_USING_MODULE
 	/* get module object information, module object should be managed by kernel object container */
@@ -296,7 +335,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	}
 
 #ifdef RT_USING_HOOK
-	if (rt_object_attach_hook != RT_NULL) rt_object_attach_hook(object);
+	RT_OBJECT_HOOK_CALL2(rt_object_attach_hook,object);
 #endif
 
 	/* lock interrupt */
@@ -326,7 +365,7 @@ void rt_object_delete(rt_object_t object)
 	RT_ASSERT(!(object->type & RT_Object_Class_Static));
 
 #ifdef RT_USING_HOOK
-	if (rt_object_detach_hook != RT_NULL) rt_object_detach_hook(object);
+	RT_OBJECT_HOOK_CALL2(rt_object_detach_hook,object);
 #endif
 
 	/* lock interrupt */

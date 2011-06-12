@@ -182,6 +182,8 @@ rt_mp_t rt_mp_create(const char* name, rt_size_t block_count, rt_size_t block_si
 	struct rt_mempool* mp;
 	register rt_base_t offset;
 
+	RT_DEBUG_NOT_REENT
+
 	/* allocate object */
 	mp = (struct rt_mempool*)rt_object_allocate(RT_Object_Class_MemPool, name);
 	if (mp == RT_NULL) return RT_NULL; /* allocate object failed */
@@ -234,6 +236,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 {
 	struct rt_thread* thread;
 	register rt_ubase_t temp;
+
+	RT_DEBUG_NOT_REENT
 
 	/* parameter check */
 	RT_ASSERT(mp != RT_NULL);
@@ -321,6 +325,8 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 		}
 		else
 		{
+			RT_DEBUG_NOT_REENT
+
 			/* get current thread */
 			thread = rt_thread_self();
 
@@ -363,7 +369,7 @@ void *rt_mp_alloc (rt_mp_t mp, rt_int32_t time)
 	rt_hw_interrupt_enable(level);
 
 #ifdef RT_USING_HOOK
-	if (rt_mp_alloc_hook != RT_NULL) rt_mp_alloc_hook(mp, (rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*)));
+	RT_OBJECT_HOOK_CALL2(rt_mp_alloc_hook,mp, (rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*)));
 #endif
 
 	return (rt_uint8_t*)(block_ptr + sizeof(rt_uint8_t*));
@@ -387,7 +393,7 @@ void rt_mp_free  (void *block)
 	mp = (struct rt_mempool*) *block_ptr;
 
 #ifdef RT_USING_HOOK
-	if (rt_mp_free_hook != RT_NULL) rt_mp_free_hook(mp, block);
+	RT_OBJECT_HOOK_CALL2(rt_mp_free_hook,mp, block);
 #endif
 
 	/* disable interrupt */

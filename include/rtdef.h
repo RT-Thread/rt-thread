@@ -149,12 +149,6 @@ typedef rt_base_t						rt_off_t;		/**< Type for offset			*/
 #define RT_EBUSY						7				/**< Busy								*/
 /*@}*/
 
-#ifdef RT_DEBUG
-#define RT_ASSERT(EX)					if (!(EX)) {volatile char dummy=0; rt_kprintf("(%s) assert failed at %s:%d \n", \
-										#EX, __FUNCTION__, __LINE__); while (dummy==0);}
-#else
-#define RT_ASSERT(EX)
-#endif
 
 /**
  * @ingroup BasicDef

@@ -26,7 +26,6 @@
 #include <rthw.h>
 #include "kservice.h"
 
-/*#define THREAD_DEBUG */
 
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread* rt_current_thread;
@@ -206,10 +205,8 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 	thread->number_mask = 1L << thread->current_priority; //1L means long int,fixed compile mistake with IAR EW M16C v3.401,fify 20100410
 #endif
 
-#ifdef THREAD_DEBUG
-	rt_kprintf("startup a thread:%s with priority:%d\n", thread->name, thread->init_priority);
-#endif
-
+	RT_DEBUG_LOG(RT_DEBUG_THREAD,\
+		("startup a thread:%s with priority:%d\n", thread->name, thread->init_priority));
 	/* change thread stat */
 	thread->stat = RT_THREAD_SUSPEND;
 	/* then resume it */
@@ -536,15 +533,13 @@ rt_err_t rt_thread_suspend (rt_thread_t thread)
 	/* thread check */
 	RT_ASSERT(thread != RT_NULL);
 
-#ifdef THREAD_DEBUG
-	rt_kprintf("thread suspend:  %s\n", thread->name);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
 	if (thread->stat != RT_THREAD_READY)
 	{
-#ifdef THREAD_DEBUG
-		rt_kprintf("thread suspend: thread disorder, %d\n", thread->stat);
-#endif
+		RT_DEBUG_LOG(RT_DEBUG_THREAD,\
+			("thread suspend: thread disorder, %d\n", thread->stat));
+		
 		return -RT_ERROR;
 	}
 
@@ -576,15 +571,13 @@ rt_err_t rt_thread_resume (rt_thread_t thread)
 	/* thread check */
 	RT_ASSERT(thread != RT_NULL);
 
-#ifdef THREAD_DEBUG
-	rt_kprintf("thread resume:  %s\n", thread->name);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
 
 	if (thread->stat != RT_THREAD_SUSPEND)
 	{
-#ifdef THREAD_DEBUG
-		rt_kprintf("thread resume: thread disorder, %d\n", thread->stat);
-#endif
+		RT_DEBUG_LOG(RT_DEBUG_THREAD, \
+			("thread resume: thread disorder, %d\n", thread->stat));
+
 		return -RT_ERROR;
 	}
 

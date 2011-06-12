@@ -37,9 +37,9 @@ void rt_interrupt_enter()
 {
 	rt_base_t level;
 
-#ifdef IRQ_DEBUG
-	rt_kprintf("irq comming..., irq nest:%d\n", rt_interrupt_nest);
-#endif
+	RT_DEBUG_REENT_IN
+
+	RT_DEBUG_LOG(RT_DEBUG_IRQ,("irq comming..., irq nest:%d\n", rt_interrupt_nest));
 
 	level = rt_hw_interrupt_disable();
 	rt_interrupt_nest ++;
@@ -57,13 +57,13 @@ void rt_interrupt_leave()
 {
 	rt_base_t level;
 
-#ifdef IRQ_DEBUG
-	rt_kprintf("irq leave, irq nest:%d\n", rt_interrupt_nest);
-#endif
+	RT_DEBUG_LOG(RT_DEBUG_IRQ,("irq leave, irq nest:%d\n", rt_interrupt_nest));
 
 	level = rt_hw_interrupt_disable();
 	rt_interrupt_nest --;
 	rt_hw_interrupt_enable(level);
+
+	RT_DEBUG_REENT_OUT
 }
 
 /*@}*/

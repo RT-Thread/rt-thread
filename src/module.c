@@ -14,13 +14,13 @@
  * 2010-10-23      yi.qiu	implement module memory allocator
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 #include <rtm.h>
 
 #include "string.h"
 #include "kservice.h"
 
-/* #define RT_MODULE_DEBUG */
 #ifdef RT_USING_MODULE
 #include "module.h"
 
@@ -137,9 +137,10 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 
 	case R_ARM_ABS32:
 		*where += (Elf32_Addr)sym_val;
-#ifdef RT_MODULE_DEBUG
-		rt_kprintf("R_ARM_ABS32: %x -> %x\n", where, *where);
-#endif
+
+		RT_DEBUG_LOG(RT_DEBUG_MODULE,
+			("R_ARM_ABS32: %x -> %x\n", where, *where));
+
 		break;
 
 	case R_ARM_PC24:
@@ -152,9 +153,9 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 		tmp = sym_val - (Elf32_Addr)where + (addend << 2);
 		tmp >>= 2;
 		*where = (*where & 0xff000000) | (tmp & 0x00ffffff);
-#ifdef RT_MODULE_DEBUG
-		rt_kprintf("R_ARM_PC24: %x -> %x\n", where, *where);
-#endif
+
+		RT_DEBUG_LOG(RT_DEBUG_MODULE,("R_ARM_PC24: %x -> %x\n", where, *where));
+
 		break;
 
 	case R_ARM_V4BX:
@@ -164,15 +165,17 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 	case R_ARM_GLOB_DAT:
 	case R_ARM_JUMP_SLOT:
 		*where = (Elf32_Addr)sym_val;
-#ifdef RT_MODULE_DEBUG
-		rt_kprintf("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val);
-#endif		
+
+		RT_DEBUG_LOG(RT_DEBUG_MODULE,
+			("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val));
+
 	break;
 	case R_ARM_RELATIVE:
 		*where += (Elf32_Addr)sym_val;
-#ifdef RT_MODULE_DEBUG
-		rt_kprintf("R_ARM_RELATIVE: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val);
-#endif		
+
+		RT_DEBUG_LOG(RT_DEBUG_MODULE,
+			("R_ARM_RELATIVE: 0x%x -> 0x%x 0x%x\n", where, *where, sym_val));
+
 		 break;
 	default:
 		return -1;
@@ -261,6 +264,8 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 	rt_bool_t linked = RT_FALSE;
 	rt_uint32_t index, module_size = 0;
 
+	RT_DEBUG_NOT_REENT
+
 	rt_kprintf("rt_module_load: %s ,", name);
 
 	/* check ELF header */
@@ -348,17 +353,19 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 			for (i = 0; i < nr_reloc; i ++)
 			{
 				Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
-#ifdef RT_MODULE_DEBUG
-				rt_kprintf("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx);
-#endif
+
+				RT_DEBUG_LOG(RT_DEBUG_MODULE,
+					("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx));
+
 				if((sym->st_shndx != SHT_NULL) || (ELF_ST_BIND(sym->st_info) == STB_LOCAL))	
 					rt_module_arm_relocate(module, rel,  (Elf32_Addr)(module->module_space + sym->st_value));
 				else if(!linked)
 				{
 					Elf32_Addr addr;
-#ifdef RT_MODULE_DEBUG
-					rt_kprintf("unresolved relocate symbol: %s\n", strtab + sym->st_name);
-#endif
+
+					RT_DEBUG_LOG(RT_DEBUG_MODULE,
+						("unresolved relocate symbol: %s\n", strtab + sym->st_name));
+
 					/* need to resolve symbol in kernel symbol table */
 					addr = rt_module_symbol_find((const char*)(strtab + sym->st_name));
 					if (addr == 0)
@@ -477,6 +484,8 @@ rt_module_t rt_module_open(const char* filename)
 	struct stat s;
 	char *buffer, *offset_ptr;;
 
+	RT_DEBUG_NOT_REENT
+
 	/* check parameters */
 	RT_ASSERT(filename != RT_NULL);
 
@@ -545,6 +554,8 @@ rt_err_t rt_module_unload(rt_module_t module)
 	int i;
 	struct rt_object* object;
 	struct rt_list_node *list;
+
+	RT_DEBUG_NOT_REENT
 
 	rt_kprintf("rt_module_unload: %s\n", module->parent.name);
 
@@ -763,6 +774,8 @@ rt_module_t rt_module_find(const char* name)
 
 	extern struct rt_object_information rt_object_container[];
 
+	RT_DEBUG_NOT_REENT
+
 	/* enter critical */
 	rt_enter_critical();
 
@@ -794,6 +807,8 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 	struct rt_mem_head *up;
 	struct rt_module_page *node;
 
+	RT_DEBUG_NOT_REENT
+
 	RT_ASSERT (nu != 0);
 
 	/* allocate pages from system heap */
@@ -824,7 +839,9 @@ void *rt_module_malloc(rt_size_t size)
 	struct rt_mem_head *b, *n;
 	struct rt_mem_head **prev;
 	rt_size_t nunits;
-	
+
+	RT_DEBUG_NOT_REENT
+
 	nunits = (size + sizeof(struct rt_mem_head) -1)/sizeof(struct rt_mem_head) + 1; 
 
 	RT_ASSERT(size != 0);
@@ -892,7 +909,9 @@ void rt_module_free(rt_module_t module, void *addr)
 {
 	struct rt_mem_head *b, *n;
 	struct rt_mem_head **prev;
-	
+
+	RT_DEBUG_NOT_REENT
+
 	RT_ASSERT(addr);
 	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
 
@@ -941,6 +960,8 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 {
 	struct rt_mem_head *b, *p, *prev, *tmpp;
 	rt_size_t nunits;
+
+	RT_DEBUG_NOT_REENT
 
 	if (!ptr) return rt_module_malloc(size);
 	if (size == 0)

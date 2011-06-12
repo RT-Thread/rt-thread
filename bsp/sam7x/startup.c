@@ -74,6 +74,8 @@ void led_flash()
  */
 void rtthread_startup(void)
 {
+	RT_DEBUG_REENT_IN
+
 	/* init hardware interrupt */
 	rt_hw_interrupt_init();
 
@@ -132,6 +134,8 @@ void rtthread_startup(void)
 
 	/* init idle thread */
 	rt_thread_idle_init();
+
+	RT_DEBUG_REENT_OUT
 
 	/* start scheduler */
 	rt_system_scheduler_start();
