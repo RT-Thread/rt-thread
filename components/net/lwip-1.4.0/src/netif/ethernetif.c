@@ -94,6 +94,8 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 	struct eth_tx_msg msg;
 	struct eth_device* enetif;
 
+	RT_DEBUG_NOT_REENT
+
 	enetif = (struct eth_device*)netif->state;
 
 	/* send a message to eth tx thread */
@@ -116,6 +118,8 @@ static struct eth_device* eth_dev;
 /* the interface provided to LwIP */
 static err_t ethernetif_init(struct netif *netif)
 {
+
+	RT_DEBUG_NOT_REENT
 
 	if( (eth_dev == RT_NULL) || (eth_dev->netif != netif) )
 		return ERR_MEM;
@@ -159,6 +163,9 @@ static err_t ethernetif_init(struct netif *netif)
 rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 {
 	struct netif* pnetif;
+
+	RT_DEBUG_NOT_REENT
+
 	/* allocate memory */
 	pnetif = (struct netif*) rt_malloc (sizeof(struct netif));
 	if (pnetif == RT_NULL)
