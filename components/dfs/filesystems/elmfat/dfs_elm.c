@@ -386,7 +386,7 @@ int dfs_elm_flush(struct dfs_fd* file)
 int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 {
 	FRESULT result;
-	if (file->type == DFS_DT_REG)
+	if (file->type == FT_REGULAR)
 	{
 		FIL* fd;
 
@@ -401,7 +401,7 @@ int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 			return fd->fptr;
 		}
 	}
-	else if (file->type == DFS_DT_DIR)
+	else if (file->type == FT_DIRECTORY)
 	{
 		/* which is a directory */
 		DIR* dir;
