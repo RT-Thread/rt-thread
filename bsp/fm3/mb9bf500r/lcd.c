@@ -22,38 +22,35 @@ const unsigned char BIT_MASK[8] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x0
 /* simple font: ' ', '0'~'9','a'~'z','A'~'Z' */
 extern const unsigned char  FONTTYPE8_8[][8];
 
-rt_uint32_t x;
-rt_uint32_t y;
-
-void Power_Delay(void)
+void power_delay(void)
 {
-    rt_uint32_t i=0x4ffff;
+    rt_uint32_t i = 0x4ffff;
     while(i--)
-        ;//asm("nop");
+        ;
 }
 
-void Delay(void)
+void delay(void)
 {
-    rt_uint8_t i=0x8;
+    rt_uint8_t i = 0x8;
     while(i--)
-        ;//asm("nop");
+        ;
 }
 
-void Reset_Delay(void)
+void reset_delay(void)
 {
-    rt_uint8_t i=0xff;
+    rt_uint8_t i = 0xff;
     while(i--)
-        ;//asm("nop");
+        ;
 }
 
-void LCD_WriteCmd(unsigned char command)
+void lcd_write_cmd(unsigned char command)
 {
     rt_uint8_t i;
 
     LCD_PS_LOW();
     LCD_CS_LOW();
     LCD_CD_LOW();
-    for(i=0; i<8; i++)
+    for (i=0; i<8; i++)
     {
         if (command & (0x80 >> i))
             LCD_DATA_HIGH();
@@ -61,21 +58,21 @@ void LCD_WriteCmd(unsigned char command)
             LCD_DATA_LOW();
             
         LCD_CLK_LOW();
-        Delay();
+        delay();
         LCD_CLK_HIGH();
-        Delay();
+        delay();
     }
     LCD_CS_HIGH();
 }
 
-void LCD_WriteData(unsigned char data)
+void lcd_write_data(unsigned char data)
 {
     rt_uint8_t i;
 
     LCD_PS_LOW();
     LCD_CS_LOW();
     LCD_CD_HIGH();
-    for(i=0; i<8; i++)
+    for (i=0; i<8; i++)
     {
         if (data & (0x80 >> i))
             LCD_DATA_HIGH();
@@ -83,9 +80,9 @@ void LCD_WriteData(unsigned char data)
             LCD_DATA_LOW();
         
         LCD_CLK_LOW();
-        Delay();
+        delay();
         LCD_CLK_HIGH();
-        Delay();
+        delay();
     }
     LCD_CS_HIGH();
 }
@@ -94,21 +91,21 @@ void LCD_WriteData(unsigned char data)
 #include <rtgui/driver.h>
 #include <rtgui/color.h>
 
-static void rt_hw_lcd_update(rtgui_rect_t *rect)
+static void rt_hw_lcd_update(struct rt_device_rect_info *rect_info)
 {
     rt_uint8_t i,j = GUI_LCM_XMAX;
     rt_uint8_t* p = (rt_uint8_t*)gui_disp_buf;  
     
     for (i=0; i<GUI_LCM_PAGE; i++)
     { 
-        LCD_WriteCmd(Set_Page_Addr_0|i);    
-        LCD_WriteCmd(Set_ColH_Addr_0);        
-        LCD_WriteCmd(Set_ColL_Addr_0);
+        lcd_write_cmd(SET_PAGE_ADDR_0|i);    
+        lcd_write_cmd(SET_COLH_ADDR_0);        
+        lcd_write_cmd(SET_COLL_ADDR_0);
         j = GUI_LCM_XMAX;
         while (j--)
         {
-            LCD_WriteData(*p++);
-            Delay();
+            lcd_write_data(*p++);
+            delay();
         }
     }
 }
@@ -181,14 +178,14 @@ static void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
         gui_disp_buf[page][i] |= 1<<(y%8);
         coll = i & 0x0f;
         colh = i >> 4;
-        LCD_WriteCmd(Set_Page_Addr_0 | page);
-        LCD_WriteCmd(Set_ColH_Addr_0 | colh);
-        LCD_WriteCmd(Set_ColL_Addr_0 | coll);
-        LCD_WriteData(gui_disp_buf[page][i]);
+        lcd_write_cmd(SET_PAGE_ADDR_0 | page);
+        lcd_write_cmd(SET_COLH_ADDR_0 | colh);
+        lcd_write_cmd(SET_COLL_ADDR_0 | coll);
+        lcd_write_data(gui_disp_buf[page][i]);
     }
 }
 
-const struct rtgui_graphic_driver_ops _lcd_driver =
+const struct rtgui_graphic_driver_ops _lcd_ops =
 {
     rt_hw_lcd_set_pixel,
     rt_hw_lcd_get_pixel,
@@ -229,57 +226,57 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 {
     lcd_io_init();
     
-    Power_Delay();
-    LCD_WriteCmd(Display_Off);
-    Reset_Delay();
+    power_delay();
+    lcd_write_cmd(DISPLAY_OFF);
+    reset_delay();
     // Resetting circuit
-    LCD_WriteCmd(Reset_LCD);
-    Reset_Delay();
+    lcd_write_cmd(RESET_LCD);
+    reset_delay();
     // LCD bias setting
-    LCD_WriteCmd(Set_LCD_Bias_9);
-    Reset_Delay();
+    lcd_write_cmd(SET_LCD_BIAS_9);
+    reset_delay();
     // ADC selection: display from left to right
-    LCD_WriteCmd(Set_ADC_Normal);        
-    Reset_Delay();
+    lcd_write_cmd(SET_ADC_NORMAL);        
+    reset_delay();
     // Common output state selection: display from up to down
-    LCD_WriteCmd(COM_Scan_Dir_Reverse);
-    Reset_Delay();
+    lcd_write_cmd(COM_SCAN_DIR_REVERSE);
+    reset_delay();
       
-    LCD_WriteCmd(Power_Booster_On);
-    Power_Delay(); // 50ms requried
-    LCD_WriteCmd(Power_Regulator_On);
-    Power_Delay(); // 50ms
-    LCD_WriteCmd(Power_Follower_On);
-    Power_Delay(); // 50ms
+    lcd_write_cmd(POWER_BOOSTER_ON);
+    power_delay(); // 50ms requried
+    lcd_write_cmd(POWER_REGULATOR_ON);
+    power_delay(); // 50ms
+    lcd_write_cmd(POWER_FOLLOWER_ON);
+    power_delay(); // 50ms
       
     // Setting the built-in resistance radio for regulation of the V0 voltage
     // Electronic volume control
     // Power control setting
-    LCD_WriteCmd(Set_ElecVol_Reg|0x05);
-    Delay();
-    LCD_WriteCmd(Set_ElecVol_Mode);
-    Delay();
-    LCD_WriteCmd(Set_ElecVol_Reg);
-    Delay();
+    lcd_write_cmd(SET_ELECVOL_REG|0x05);
+    delay();
+    lcd_write_cmd(SET_ELECVOL_MODE);
+    delay();
+    lcd_write_cmd(SET_ELECVOL_REG);
+    delay();
     //  LCD_Clear();
-    Delay();
-    LCD_WriteCmd(Set_Page_Addr_0);
-    Delay();
-    LCD_WriteCmd(Set_ColH_Addr_0);
-    Delay();
-    LCD_WriteCmd(Set_ColL_Addr_0);
-    Delay();
-    LCD_WriteCmd(Display_On);
-    Delay();
+    delay();
+    lcd_write_cmd(SET_PAGE_ADDR_0);
+    delay();
+    lcd_write_cmd(SET_COLH_ADDR_0);
+    delay();
+    lcd_write_cmd(SET_COLL_ADDR_0);
+    delay();
+    lcd_write_cmd(DISPLAY_ON);
+    delay();
       
-    LCD_WriteCmd(Display_All_On);
-    Delay();
-    LCD_WriteCmd(Display_Off);
-    Delay();
-    LCD_WriteCmd(Display_On);
-    Delay();
-    LCD_WriteCmd(Display_All_Normal);
-    Delay();
+    lcd_write_cmd(DISPLAY_ALL_ON);
+    delay();
+    lcd_write_cmd(DISPLAY_OFF);
+    delay();
+    lcd_write_cmd(DISPLAY_ON);
+    delay();
+    lcd_write_cmd(DISPLAY_ALL_NORMAL);
+    delay();
     
     return RT_EOK;
 }
@@ -298,14 +295,14 @@ void LCD_FillAll(unsigned char*	buffer)
 	
   for (i=0; i<GUI_LCM_PAGE; i++)
   { 
-    LCD_WriteCmd(Set_Page_Addr_0|i);	
-    LCD_WriteCmd(Set_ColH_Addr_0);		
-    LCD_WriteCmd(Set_ColL_Addr_0);
+    lcd_write_cmd(SET_PAGE_ADDR_0|i);	
+    lcd_write_cmd(SET_COLH_ADDR_0);		
+    lcd_write_cmd(SET_COLL_ADDR_0);
     j = GUI_LCM_XMAX;
     while (j--)
     {
-      LCD_WriteData(*p++);
-      Delay();
+      lcd_write_data(*p++);
+      delay();
     }
   }
 }
@@ -345,10 +342,10 @@ void  LCD_UpdatePoint(unsigned int x, unsigned int y)
   coll = x & 0x0f;
   colh = x >> 4;
 	
-  LCD_WriteCmd(Set_Page_Addr_0 | page);	        // page no.
-  LCD_WriteCmd(Set_ColH_Addr_0 | colh);		// fixed col first addr
-  LCD_WriteCmd(Set_ColL_Addr_0 | coll);
-  LCD_WriteData(gui_disp_buf[page][x]);
+  lcd_write_cmd(SET_PAGE_ADDR_0 | page);	        // page no.
+  lcd_write_cmd(SET_COLH_ADDR_0 | colh);		// fixed col first addr
+  lcd_write_cmd(SET_COLL_ADDR_0 | coll);
+  lcd_write_data(gui_disp_buf[page][x]);
 }
 
 /****************************************************************************
@@ -459,7 +456,7 @@ void rt_hw_lcd_init(void)
 	lcd->close = RT_NULL;
 	lcd->control = rt_lcd_control;
 #ifdef RT_USING_RTGUI
-	lcd->user_data = (void*)&_lcd_driver;
+	lcd->user_data = (void*)&_lcd_ops;
 #endif	
 	/* register lcd device to RT-Thread */
 	rt_device_register(lcd, "lcd", RT_DEVICE_FLAG_RDWR);
