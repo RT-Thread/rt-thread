@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-
-<flash_board>
-  <pass>
-    <loader>$TOOLKIT_DIR$\config\flashloader\Fujitsu\FlashMB9BF500.flash</loader>
-  </pass>
-</flash_board>
