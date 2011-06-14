@@ -17,6 +17,11 @@
 
 #include "board.h"
 
+#ifdef RT_USING_LWIP
+#include <lwip/sys.h>
+#include <netif/ethernetif.h>
+#endif
+
 /**
  * @addtogroup LM3S
  */
@@ -29,8 +34,9 @@ extern void finsh_system_init(void);
 extern void finsh_set_device(char* device);
 #endif
 
-extern int  rt_application_init(void);
+extern int rt_application_init(void);
 extern void rt_hw_sdcard_init(void);
+extern int rt_hw_luminaryif_init(void);
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;

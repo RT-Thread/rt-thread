@@ -125,6 +125,8 @@ void luminaryif_isr(void)
         /* a frame has been received */
         result = eth_device_ready((struct eth_device*)&(luminaryif_dev->parent));
 
+		if(result != RT_EOK) rt_set_errno(-RT_ERROR);
+
         //
         // Disable Ethernet RX Interrupt.
         //
@@ -481,7 +483,7 @@ int rt_hw_luminaryif_init(void)
 	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 
 	result = eth_device_init(&(luminaryif_dev->parent), "E0");
-
-	return RT_EOK;
+	
+	return result;
 }
 

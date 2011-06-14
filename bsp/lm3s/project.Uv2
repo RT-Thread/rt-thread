@@ -119,7 +119,7 @@ File 7,4,<.\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
 
 
 Options 1,0,0  // Target 'RT-Thread-lm3s'
- Device (LM3S6918)
+ Device (LM3S8962)
  Vendor (Luminary Micro)
  Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0-0x3FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
  FlashUt ()
@@ -200,7 +200,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDMC ( --keep __fsym_* --keep __vsym_*)
  ADSLDIF ()
  ADSLDDW ()
-  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S6918)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S6918)
+  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S8962)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S8962)
   OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\lmidk-agdi.dll)

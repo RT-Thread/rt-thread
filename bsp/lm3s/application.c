@@ -61,7 +61,7 @@ void rt_init_thread_entry(void *parameter)
 #ifdef RT_USING_LWIP
 	{
 		extern void lwip_sys_init(void);
-		
+				
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
