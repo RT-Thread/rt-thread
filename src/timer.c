@@ -210,9 +210,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	RT_ASSERT(timer != RT_NULL);
 	if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) return -RT_ERROR;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(timer->parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
@@ -277,9 +275,7 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 	RT_ASSERT(timer != RT_NULL);
 	if(!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)) return -RT_ERROR;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(timer->parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(timer->parent)));
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
@@ -364,21 +360,13 @@ void rt_timer_check(void)
 		 */
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{
-#ifdef RT_USING_HOOK
-			RT_OBJECT_HOOK_CALL2(rt_timer_timeout_hook,t);
-#endif
+			RT_OBJECT_HOOK_CALL(rt_timer_timeout_hook, (t));
 
 			/* remove timer from timer list firstly */
 			rt_list_remove(&(t->list));
 
-			/* Timeout function called while interrupt is disabled, reentant function
-			is a must */
-			RT_DEBUG_REENT_IN
-
 			/* call timeout function */
 			t->timeout_func(t->parameter);
-
-			RT_DEBUG_REENT_OUT
 
 			/* re-get tick */
 			current_tick = rt_tick_get();
@@ -455,9 +443,8 @@ void rt_soft_timer_check()
 		 */
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{
-#ifdef RT_USING_HOOK
-			RT_OBJECT_HOOK_CALL2(rt_timer_timeout_hook,t);
-#endif
+			RT_OBJECT_HOOK_CALL(rt_timer_timeout_hook, (t));
+
 			/* move node to the next */
 			n = n->next;
 

@@ -41,8 +41,6 @@
 
 #include "kservice.h"
 
-/* #define RT_IPC_DEBUG */
-
 #ifdef RT_USING_HOOK
 extern void (*rt_object_trytake_hook)(struct rt_object* object);
 extern void (*rt_object_take_hook)(struct rt_object* object);
@@ -251,7 +249,7 @@ rt_sem_t rt_sem_create (const char* name, rt_uint32_t value, rt_uint8_t flag)
 {
 	rt_sem_t sem;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate object */
 	sem = (rt_sem_t) rt_object_allocate(RT_Object_Class_Semaphore, name);
@@ -280,7 +278,7 @@ rt_sem_t rt_sem_create (const char* name, rt_uint32_t value, rt_uint8_t flag)
  */
 rt_err_t rt_sem_delete (rt_sem_t sem)
 {
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	RT_ASSERT(sem != RT_NULL);
 
@@ -310,9 +308,7 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 
 	RT_ASSERT(sem != RT_NULL);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_trytake_hook,&(sem->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -339,8 +335,8 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 		}
 		else
 		{
-			/* time = 0 is ok */
-			RT_DEBUG_NOT_REENT
+			/* current context checking */
+			RT_DEBUG_NOT_IN_INTERRUPT;
 
 			/* semaphore is unavailable, push to suspend list */
 			/* get current thread */
@@ -379,9 +375,7 @@ rt_err_t rt_sem_take (rt_sem_t sem, rt_int32_t time)
 		}
 	}
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(sem->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(sem->parent.parent)));
 
 	return RT_EOK;
 }
@@ -411,9 +405,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 	register rt_base_t temp;
 	register rt_bool_t need_schedule;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(sem->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(sem->parent.parent)));
 
 	need_schedule = RT_FALSE;
 
@@ -552,7 +544,7 @@ rt_mutex_t rt_mutex_create (const char* name, rt_uint8_t flag)
 {
 	struct rt_mutex *mutex;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate object */
 	mutex = (rt_mutex_t) rt_object_allocate(RT_Object_Class_Mutex, name);
@@ -583,7 +575,7 @@ rt_mutex_t rt_mutex_create (const char* name, rt_uint8_t flag)
  */
 rt_err_t rt_mutex_delete (rt_mutex_t mutex)
 {
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	RT_ASSERT(mutex != RT_NULL);
 
@@ -612,7 +604,7 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 	struct rt_thread* thread;
 
 	/* this function must not be used in interrupt even if time = 0 */
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	RT_ASSERT(mutex != RT_NULL);
 
@@ -622,9 +614,7 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 	/* get current thread */
 	thread = rt_thread_self();
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_trytake_hook,&(mutex->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
 	RT_DEBUG_LOG(RT_DEBUG_IPC,
 		("mutex_take: current thread %s, mutex value: %d, hold: %d\n",
@@ -719,9 +709,7 @@ rt_err_t rt_mutex_take (rt_mutex_t mutex, rt_int32_t time)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(mutex->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mutex->parent.parent)));
 
 	return RT_EOK;
 }
@@ -752,9 +740,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 		("mutex_release:current thread %s, mutex value: %d, hold: %d\n",
 		thread->name, mutex->value, mutex->hold));
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(mutex->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
 	/* mutex only can be released by owner */
 	if (thread != mutex->owner)
@@ -899,7 +885,7 @@ rt_event_t rt_event_create (const char* name, rt_uint8_t flag)
 {
 	rt_event_t event;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate object */
 	event = (rt_event_t) rt_object_allocate(RT_Object_Class_Event, name);
@@ -929,7 +915,7 @@ rt_err_t rt_event_delete (rt_event_t event)
 	/* parameter check */
 	RT_ASSERT(event != RT_NULL);
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* resume all suspended thread */
 	rt_ipc_list_resume_all(&(event->parent.suspend_thread));
@@ -963,9 +949,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 	if (set == 0) return -RT_ERROR;
 
 	need_schedule = RT_FALSE;
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(event->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
@@ -1051,7 +1035,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 	register rt_ubase_t level;
 	register rt_base_t status;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* parameter check */
 	RT_ASSERT(event != RT_NULL);
@@ -1064,9 +1048,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 	/* reset thread error */
 	thread->error = RT_EOK;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_trytake_hook,&(event->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(event->parent.parent)));
 
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
@@ -1134,9 +1116,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(event->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(event->parent.parent)));
 
 	return thread->error;
 }
@@ -1254,7 +1234,7 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag)
 {
 	rt_mailbox_t mb;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate object */
 	mb = (rt_mailbox_t) rt_object_allocate(RT_Object_Class_MailBox, name);
@@ -1295,7 +1275,7 @@ rt_mailbox_t rt_mb_create (const char* name, rt_size_t size, rt_uint8_t flag)
  */
 rt_err_t rt_mb_delete (rt_mailbox_t mb)
 {
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
@@ -1342,9 +1322,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(mb->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -1368,7 +1346,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
             return -RT_EFULL;
         }
 
-		RT_DEBUG_NOT_REENT
+		RT_DEBUG_NOT_IN_INTERRUPT;
 	
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mb->suspend_sender_thread),
@@ -1475,9 +1453,8 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	RT_ASSERT(mb != RT_NULL);
 
 	tick_delta = 0;
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_trytake_hook,&(mb->parent.parent));
-#endif
+
+	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mb->parent.parent)));
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -1501,7 +1478,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 			return -RT_ETIMEOUT;
 		}
 
-		RT_DEBUG_NOT_REENT
+		RT_DEBUG_NOT_IN_INTERRUPT;
 
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mb->parent.suspend_thread),
@@ -1563,9 +1540,8 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		/* enable interrupt */
 		rt_hw_interrupt_enable(temp);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(mb->parent.parent));
-#endif
+		RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
+
 		rt_schedule();
 
 		return RT_EOK;
@@ -1574,9 +1550,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(mb->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
 
 	return RT_EOK;
 }
@@ -1724,7 +1698,7 @@ rt_mq_t rt_mq_create (const char* name, rt_size_t msg_size, rt_size_t max_msgs, 
 	struct rt_mq_message* head;
 	register rt_base_t temp;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate object */
 	mq = (rt_mq_t) rt_object_allocate(RT_Object_Class_MessageQueue, name);
@@ -1779,7 +1753,7 @@ rt_mq_t rt_mq_create (const char* name, rt_size_t msg_size, rt_size_t max_msgs, 
  */
 rt_err_t rt_mq_delete (rt_mq_t mq)
 {
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* parameter check */
 	RT_ASSERT(mq != RT_NULL);
@@ -1822,9 +1796,7 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 	/* greater than one message size */
 	if (size > mq->msg_size) return -RT_ERROR;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(mq->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -1905,9 +1877,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 	/* greater than one message size */
 	if (size > mq->msg_size) return -RT_ERROR;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_put_hook,&(mq->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -1980,9 +1950,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 	struct rt_mq_message *msg;
 	rt_uint32_t tick_delta;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_trytake_hook,&(mq->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
 
 	tick_delta = 0;
 	/* get current thread */
@@ -2007,7 +1975,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 			return -RT_ETIMEOUT;
 		}
 
-		RT_DEBUG_NOT_REENT
+		RT_DEBUG_NOT_IN_INTERRUPT;
 
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mq->parent.suspend_thread),
@@ -2078,9 +2046,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_take_hook,&(mq->parent.parent));
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
 	return RT_EOK;
 }

@@ -60,8 +60,7 @@ void rt_thread_idle_sethook(void (*hook)())
  */
 void rt_thread_idle_excute(void)
 {
-
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* check the defunct thread list */
 	if (!rt_list_isempty(&rt_thread_defunct))
@@ -149,9 +148,10 @@ static void rt_thread_idle_entry(void* parameter)
 {
 	while (1)
 	{
-#ifdef RT_USING_HOOK
-		RT_OBJECT_HOOK_CALL(rt_thread_idle_hook);
-#endif
+		#ifdef RT_USING_HOOK
+		if (rt_thread_idle_hook != RT_NULL)
+			rt_thread_idle_hook();
+		#endif
 
 		rt_thread_idle_excute();
 	}

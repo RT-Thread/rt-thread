@@ -273,9 +273,7 @@ void rt_schedule()
                 (rt_module_t)rt_current_thread->module_id : RT_NULL);		
 #endif
 
-#ifdef RT_USING_HOOK
-			RT_OBJECT_HOOK_CALL2(rt_scheduler_hook,from_thread, to_thread);
-#endif
+			RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));
 
             /* switch to new thread */
             RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
@@ -328,13 +326,12 @@ void rt_schedule_insert_thread(struct rt_thread* thread)
                           &(thread->tlist));
 
     /* set priority mask */
-#if RT_DEBUG_SCHEDULER
 #if RT_THREAD_PRIORITY_MAX <= 32
-    rt_kprintf("insert thread[%s], the priority: %d\n", thread->name, thread->current_priority);
+    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%s], the priority: %d\n", 
+		thread->name, thread->current_priority));
 #else
-    rt_kprintf("insert thread[%s], the priority: %d 0x%x %d\n", thread->name, thread->number, thread->number_mask, thread->high_mask);
-#endif
-
+    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%s], the priority: %d 0x%x %d\n", 
+		thread->name, thread->number, thread->number_mask, thread->high_mask));
 #endif
 
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -362,14 +359,12 @@ void rt_schedule_remove_thread(struct rt_thread* thread)
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
-#if RT_DEBUG_SCHEDULER
 #if RT_THREAD_PRIORITY_MAX <= 32
-    rt_kprintf("remove thread[%s], the priority: %d\n", thread->name, thread->current_priority);
+    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("remove thread[%s], the priority: %d\n", 
+		thread->name, thread->current_priority));
 #else
-    rt_kprintf("remove thread[%s], the priority: %d 0x%x %d\n", thread->name, thread->number,
-               thread->number_mask, thread->high_mask);
-#endif
-
+    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("remove thread[%s], the priority: %d 0x%x %d\n", 
+		thread->name, thread->number, thread->number_mask, thread->high_mask));
 #endif
 
     /* remove thread from ready list */

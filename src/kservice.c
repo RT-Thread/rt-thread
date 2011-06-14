@@ -27,7 +27,7 @@
 
 #ifndef RT_USING_NEWLIB
 /* global errno in RT-Thread*/
-int errno;
+volatile int errno;
 #else
 #include <errno.h>
 #endif
@@ -44,7 +44,7 @@ rt_err_t rt_get_errno(void)
 {
 	rt_thread_t tid;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	tid = rt_thread_self();
 	if (tid == RT_NULL) return errno;
@@ -61,7 +61,7 @@ void rt_set_errno(rt_err_t error)
 {
 	rt_thread_t tid;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	tid = rt_thread_self();
 	if (tid == RT_NULL) { errno = error; return; }

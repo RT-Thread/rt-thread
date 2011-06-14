@@ -337,7 +337,7 @@ void rt_system_heap_init(void *begin_addr, void* end_addr)
 {
 	rt_uint32_t limsize, npages;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* align begin and end addr to page */
 	heap_start	= RT_ALIGN((rt_uint32_t)begin_addr, RT_MM_PAGE_SIZE);
@@ -681,9 +681,7 @@ void *rt_malloc(rt_size_t size)
 done:
 	rt_sem_release(&heap_sem);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_malloc_hook,(char*)chunk, size);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_malloc_hook, ((char*)chunk, size));
 
 	return chunk;
 
@@ -797,9 +795,7 @@ void rt_free(void *ptr)
 	/* free a RT_NULL pointer */
 	if (ptr == RT_NULL) return ;
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_free_hook,ptr);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
 
 #ifdef RT_USING_MODULE
 	if(rt_module_self() != RT_NULL)

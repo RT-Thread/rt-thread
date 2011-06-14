@@ -36,6 +36,7 @@ extern "C" {
  */
 
 void rt_system_object_init(void);
+struct rt_object_information *rt_object_get_information(enum rt_object_class_type type);
 void rt_object_init(struct rt_object* object, enum rt_object_class_type type, const char* name);
 void rt_object_detach(rt_object_t object);
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name);
@@ -49,24 +50,6 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object));
 void rt_object_trytake_sethook(void (*hook)(struct rt_object* object));
 void rt_object_take_sethook(void (*hook)(struct rt_object* object));
 void rt_object_put_sethook(void (*hook)(struct rt_object* object));
-#define RT_OBJECT_HOOK_CALL(hookfunc)\
-	do{\
-		register rt_base_t temp;\
-		temp = rt_hw_interrupt_disable();\
-		RT_DEBUG_REENT_IN\
-		if (hookfunc != RT_NULL) hookfunc();\
-		RT_DEBUG_REENT_OUT\
-		rt_hw_interrupt_enable(temp);\
-	}while(0)
-#define RT_OBJECT_HOOK_CALL2(hookfunc,...)\
-	do{\
-		register rt_base_t temp;\
-		temp = rt_hw_interrupt_disable();\
-		RT_DEBUG_REENT_IN\
-		if (hookfunc != RT_NULL) hookfunc(__VA_ARGS__);\
-		RT_DEBUG_REENT_OUT\
-		rt_hw_interrupt_enable(temp);\
-	}while(0)
 #endif
 
 /*@}*/
@@ -346,6 +329,10 @@ typedef void (*rt_isr_handler_t)(int vector);
  */
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
+/*
+ * the number of nested interrupts.
+ */
+rt_uint8_t rt_interrupt_get_nest(void);
 
 /**
  * @addtogroup KernelService

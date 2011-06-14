@@ -264,6 +264,17 @@ struct rt_object_information
 	rt_list_t object_list;								/**< object list 							*/
 	rt_size_t object_size;								/**< object size 							*/
 };
+
+/**
+ * The hook function call macro
+ */
+#ifdef RT_USING_HOOK
+#define RT_OBJECT_HOOK_CALL(func, argv)	\
+	do { if ((func) != RT_NULL) func argv; } while (0)
+#else
+#define RT_OBJECT_HOOK_CALL(func, argv)	
+#endif
+
 /*@}*/
 
 /**

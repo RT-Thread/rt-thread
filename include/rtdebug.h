@@ -39,9 +39,9 @@
 #define RT_DEBUG_IPC        0
 #endif
 
-/* Turn on this to enable reentrance check */
-#ifndef RT_DEBUG_REENT_CHK
-#define RT_DEBUG_REENT_CHK  1
+/* Turn on this to enable context check */
+#ifndef RT_DEBUG_CONTEXT_CHECK
+#define RT_DEBUG_CONTEXT_CHECK 1
 #endif
 
 #define RT_DEBUG_LOG(type,message)  do{ if(type) rt_kprintf message;}while(0)
@@ -50,39 +50,21 @@
                             rt_kprintf("(%s) assert failed at %s:%d \n", \
                             #EX, __FUNCTION__, __LINE__); while (dummy==0);}
 
-/* Reentrance check */
-/* counter */
-extern rt_uint8_t rt_debug_reent_cnt;
-
-#define RT_DEBUG_REENT_IN if(RT_DEBUG_REENT_CHK){\
+/* Macro to check current context */
+#if RT_DEBUG_CONTEXT_CHECK
+#define RT_DEBUG_NOT_IN_INTERRUPT do {\
         rt_base_t level;\
         level = rt_hw_interrupt_disable();\
-        rt_debug_reent_cnt++;\
-        rt_hw_interrupt_enable(level);}
-
-#define RT_DEBUG_REENT_OUT if(RT_DEBUG_REENT_CHK){\
-        rt_base_t level;\
-        level = rt_hw_interrupt_disable();\
-        rt_debug_reent_cnt--;\
-        rt_hw_interrupt_enable(level);}
-
-/* Mark those non-reentrant functions with this macro */
-#define RT_DEBUG_NOT_REENT if(RT_DEBUG_REENT_CHK){\
-        rt_base_t level;\
-        level = rt_hw_interrupt_disable();\
-        if(rt_debug_reent_cnt != 0){\
-            rt_kprintf("Non-reentrant function used in critical area!\n");\
+        if(rt_interrupt_get_nest() != 0){\
+            rt_kprintf("Function[%s] shall not used in ISR\n", __FUNCTION__);\
             RT_ASSERT(0)}\
-        rt_hw_interrupt_enable(level);}
-
-
+        rt_hw_interrupt_enable(level);} while (0)
+#endif
 #else /* RT_DEBUG */
 
 #define RT_ASSERT(EX)
 #define RT_DEBUG_LOG(type,message)
-#define RT_DEBUG_REENT_IN
-#define RT_DEBUG_REENT_OUT
-#define RT_DEBUG_NOT_REENT
+#define RT_DEBUG_NOT_IN_INTERRUPT
 
 #endif /* RT_DEBUG */
 

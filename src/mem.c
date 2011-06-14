@@ -140,8 +140,6 @@ static void plug_holes(struct heap_mem *mem)
 	struct heap_mem *nmem;
 	struct heap_mem *pmem;
 
-	RT_DEBUG_NOT_REENT
-
 	RT_ASSERT((rt_uint8_t *)mem >= heap_ptr);
 	RT_ASSERT((rt_uint8_t *)mem < (rt_uint8_t *)heap_end);
 	RT_ASSERT(mem->used == 0);
@@ -188,7 +186,7 @@ void rt_system_heap_init(void* begin_addr, void* end_addr)
 	rt_uint32_t begin_align = RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
 	rt_uint32_t end_align = RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_ALIGN_SIZE);
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* alignment addr */
 	if((end_align > (2 * SIZEOF_STRUCT_MEM) ) &&
@@ -245,16 +243,14 @@ void *rt_malloc(rt_size_t size)
 	rt_size_t ptr, ptr2;
 	struct heap_mem *mem, *mem2;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	if (size == 0) return RT_NULL;
 
-#if RT_DEBUG_MEM
 	if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
-		rt_kprintf("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE));
+		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE)));
 	else
-		rt_kprintf("malloc size %d\n", size);
-#endif
+		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d\n", size));
 
 	/* alignment size */
 	size = RT_ALIGN(size, RT_ALIGN_SIZE);
@@ -351,9 +347,7 @@ void *rt_malloc(rt_size_t size)
 				(rt_uint32_t)((rt_uint8_t*)mem + SIZEOF_STRUCT_MEM),
 				(rt_uint32_t)(mem->next - ((rt_uint8_t*)mem - heap_ptr))));
 
-#ifdef RT_USING_HOOK
-			RT_OBJECT_HOOK_CALL2(rt_malloc_hook,(rt_uint8_t *)mem + SIZEOF_STRUCT_MEM,size);
-#endif
+			RT_OBJECT_HOOK_CALL(rt_malloc_hook, (((void*)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM)), size));
 			/* return the memory data except mem struct */
 			return (rt_uint8_t *)mem + SIZEOF_STRUCT_MEM;
 		}
@@ -378,7 +372,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	struct heap_mem *mem, *mem2;
 	void* nmem;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* alignment size */
 	newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
@@ -467,7 +461,7 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 {
 	void *p;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* allocate 'count' objects of size 'size' */
 	p = rt_malloc(count * size);
@@ -488,16 +482,14 @@ void rt_free(void *rmem)
 {
 	struct heap_mem *mem;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	if (rmem == RT_NULL) return;
 	RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE-1)) == 0);
 	RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
 			  (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_free_hook,rmem);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
 
 	if ((rt_uint8_t *)rmem < (rt_uint8_t *)heap_ptr || (rt_uint8_t *)rmem >= (rt_uint8_t *)heap_end)
 	{

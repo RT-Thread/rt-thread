@@ -207,6 +207,17 @@ void rt_system_object_init(void)
 /*@{*/
 
 /**
+ * This function will return the specified type of object information.
+ * 
+ * @param type the type of object
+ * @return the object type information or RT_NULL
+ */
+struct rt_object_information *rt_object_get_information(enum rt_object_class_type type)
+{
+	return &rt_object_container[type];
+}
+
+/**
  * This function will initialize an object and add it to object system management.
  *
  * @param object the specified object to be initialized.
@@ -238,9 +249,7 @@ void rt_object_init(struct rt_object* object, enum rt_object_class_type type, co
 		object->name[temp] = name[temp];
 	}
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_attach_hook,object);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
 	/* lock interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -265,9 +274,7 @@ void rt_object_detach(rt_object_t object)
 	/* object check */
 	RT_ASSERT(object != RT_NULL);
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_detach_hook,object);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
 	/* lock interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -294,7 +301,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	register rt_base_t temp;
 	struct rt_object_information* information;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #ifdef RT_USING_MODULE
 	/* get module object information, module object should be managed by kernel object container */
@@ -334,9 +341,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 		object->name[temp] = name[temp];
 	}
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_attach_hook,object);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
 	/* lock interrupt */
 	temp = rt_hw_interrupt_disable();
@@ -364,9 +369,7 @@ void rt_object_delete(rt_object_t object)
 	RT_ASSERT(object != RT_NULL);
 	RT_ASSERT(!(object->type & RT_Object_Class_Static));
 
-#ifdef RT_USING_HOOK
-	RT_OBJECT_HOOK_CALL2(rt_object_detach_hook,object);
-#endif
+	RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
 	/* lock interrupt */
 	temp = rt_hw_interrupt_disable();

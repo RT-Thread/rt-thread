@@ -264,7 +264,7 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 	rt_bool_t linked = RT_FALSE;
 	rt_uint32_t index, module_size = 0;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	rt_kprintf("rt_module_load: %s ,", name);
 
@@ -484,7 +484,7 @@ rt_module_t rt_module_open(const char* filename)
 	struct stat s;
 	char *buffer, *offset_ptr;;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* check parameters */
 	RT_ASSERT(filename != RT_NULL);
@@ -555,7 +555,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 	struct rt_object* object;
 	struct rt_list_node *list;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	rt_kprintf("rt_module_unload: %s\n", module->parent.name);
 
@@ -774,7 +774,7 @@ rt_module_t rt_module_find(const char* name)
 
 	extern struct rt_object_information rt_object_container[];
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* enter critical */
 	rt_enter_critical();
@@ -807,7 +807,7 @@ static struct rt_mem_head *morepage(rt_size_t nu)
 	struct rt_mem_head *up;
 	struct rt_module_page *node;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	RT_ASSERT (nu != 0);
 
@@ -840,7 +840,7 @@ void *rt_module_malloc(rt_size_t size)
 	struct rt_mem_head **prev;
 	rt_size_t nunits;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	nunits = (size + sizeof(struct rt_mem_head) -1)/sizeof(struct rt_mem_head) + 1; 
 
@@ -910,7 +910,7 @@ void rt_module_free(rt_module_t module, void *addr)
 	struct rt_mem_head *b, *n;
 	struct rt_mem_head **prev;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	RT_ASSERT(addr);
 	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
@@ -961,7 +961,7 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 	struct rt_mem_head *b, *p, *prev, *tmpp;
 	rt_size_t nunits;
 
-	RT_DEBUG_NOT_REENT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	if (!ptr) return rt_module_malloc(size);
 	if (size == 0)
