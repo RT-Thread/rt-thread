@@ -257,7 +257,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
     Rtt_Root = root_directory
 
     # patch for win32 spawn
-    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc' and sys.version_info < (2, 6, 0):
+    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
