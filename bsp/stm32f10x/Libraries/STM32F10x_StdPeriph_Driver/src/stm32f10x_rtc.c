@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_rtc.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the RTC firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_rtc.h"
@@ -259,7 +260,7 @@ FlagStatus RTC_GetFlagStatus(uint16_t RTC_FLAG)
 }
 
 /**
-  * @brief  Clears the RTC’s pending flags.
+  * @brief  Clears the RTC's pending flags.
   * @param  RTC_FLAG: specifies the flag to clear.
   *   This parameter can be any combination of the following values:
   *     @arg RTC_FLAG_RSF: Registers Synchronized flag. This flag is cleared only after
@@ -274,12 +275,12 @@ void RTC_ClearFlag(uint16_t RTC_FLAG)
   /* Check the parameters */
   assert_param(IS_RTC_CLEAR_FLAG(RTC_FLAG)); 
     
-  /* Clear the coressponding RTC flag */
+  /* Clear the corresponding RTC flag */
   RTC->CRL &= (uint16_t)~RTC_FLAG;
 }
 
 /**
-  * @brief  Checks whether the specified RTC interrupt has occured or not.
+  * @brief  Checks whether the specified RTC interrupt has occurred or not.
   * @param  RTC_IT: specifies the RTC interrupts sources to check.
   *   This parameter can be one of the following values:
   *     @arg RTC_IT_OW: Overflow interrupt
@@ -306,7 +307,7 @@ ITStatus RTC_GetITStatus(uint16_t RTC_IT)
 }
 
 /**
-  * @brief  Clears the RTC’s interrupt pending bits.
+  * @brief  Clears the RTC's interrupt pending bits.
   * @param  RTC_IT: specifies the interrupt pending bit to clear.
   *   This parameter can be any combination of the following values:
   *     @arg RTC_IT_OW: Overflow interrupt
@@ -319,7 +320,7 @@ void RTC_ClearITPendingBit(uint16_t RTC_IT)
   /* Check the parameters */
   assert_param(IS_RTC_IT(RTC_IT));  
   
-  /* Clear the coressponding RTC pending bit */
+  /* Clear the corresponding RTC pending bit */
   RTC->CRL &= (uint16_t)~RTC_IT;
 }
 
@@ -335,4 +336,4 @@ void RTC_ClearITPendingBit(uint16_t RTC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

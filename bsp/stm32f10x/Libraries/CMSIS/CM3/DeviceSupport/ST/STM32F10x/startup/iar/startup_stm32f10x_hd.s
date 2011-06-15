@@ -1,9 +1,9 @@
-;/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+;******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 ;* File Name          : startup_stm32f10x_hd.s
 ;* Author             : MCD Application Team
-;* Version            : V3.4.0
-;* Date               : 10/15/2010
-;* Description        : STM32F10x High Density Devices vector table for EWARM5.x 
+;* Version            : V3.5.0
+;* Date               : 11-March-2011
+;* Description        : STM32F10x High Density Devices vector table for EWARM 
 ;*                      toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -21,7 +21,7 @@
 ;* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
 ;* CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
 ;* INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-;*******************************************************************************/
+;*******************************************************************************
 ;
 ;
 ; The modules in this file are included in the libraries, and may be replaced
@@ -493,4 +493,4 @@ DMA2_Channel4_5_IRQHandler
         
         END
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

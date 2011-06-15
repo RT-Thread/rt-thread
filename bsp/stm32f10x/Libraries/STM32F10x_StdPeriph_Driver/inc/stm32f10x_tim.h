@@ -2,12 +2,12 @@
   ******************************************************************************
   * @file    stm32f10x_tim.h
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file contains all the functions prototypes for the TIM firmware 
   *          library.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -16,8 +16,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F10x_TIM_H
@@ -44,7 +45,7 @@
 
 /** 
   * @brief  TIM Time Base Init structure definition
-  * @note   This sturcture is used with all TIMx except for TIM6 and TIM7.    
+  * @note   This structure is used with all TIMx except for TIM6 and TIM7.    
   */
 
 typedef struct
@@ -132,7 +133,7 @@ typedef struct
 
 /** 
   * @brief  BDTR structure definition 
-  * @note   This sturcture is used only with TIM1 and TIM8.    
+  * @note   This structure is used only with TIM1 and TIM8.    
   */
 
 typedef struct
@@ -669,42 +670,42 @@ typedef struct
   * @{
   */
 
-#define TIM_DMABurstLength_1Byte           ((uint16_t)0x0000)
-#define TIM_DMABurstLength_2Bytes          ((uint16_t)0x0100)
-#define TIM_DMABurstLength_3Bytes          ((uint16_t)0x0200)
-#define TIM_DMABurstLength_4Bytes          ((uint16_t)0x0300)
-#define TIM_DMABurstLength_5Bytes          ((uint16_t)0x0400)
-#define TIM_DMABurstLength_6Bytes          ((uint16_t)0x0500)
-#define TIM_DMABurstLength_7Bytes          ((uint16_t)0x0600)
-#define TIM_DMABurstLength_8Bytes          ((uint16_t)0x0700)
-#define TIM_DMABurstLength_9Bytes          ((uint16_t)0x0800)
-#define TIM_DMABurstLength_10Bytes         ((uint16_t)0x0900)
-#define TIM_DMABurstLength_11Bytes         ((uint16_t)0x0A00)
-#define TIM_DMABurstLength_12Bytes         ((uint16_t)0x0B00)
-#define TIM_DMABurstLength_13Bytes         ((uint16_t)0x0C00)
-#define TIM_DMABurstLength_14Bytes         ((uint16_t)0x0D00)
-#define TIM_DMABurstLength_15Bytes         ((uint16_t)0x0E00)
-#define TIM_DMABurstLength_16Bytes         ((uint16_t)0x0F00)
-#define TIM_DMABurstLength_17Bytes         ((uint16_t)0x1000)
-#define TIM_DMABurstLength_18Bytes         ((uint16_t)0x1100)
-#define IS_TIM_DMA_LENGTH(LENGTH) (((LENGTH) == TIM_DMABurstLength_1Byte) || \
-                                   ((LENGTH) == TIM_DMABurstLength_2Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_3Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_4Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_5Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_6Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_7Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_8Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_9Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_10Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_11Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_12Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_13Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_14Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_15Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_16Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_17Bytes) || \
-                                   ((LENGTH) == TIM_DMABurstLength_18Bytes))
+#define TIM_DMABurstLength_1Transfer           ((uint16_t)0x0000)
+#define TIM_DMABurstLength_2Transfers          ((uint16_t)0x0100)
+#define TIM_DMABurstLength_3Transfers          ((uint16_t)0x0200)
+#define TIM_DMABurstLength_4Transfers          ((uint16_t)0x0300)
+#define TIM_DMABurstLength_5Transfers          ((uint16_t)0x0400)
+#define TIM_DMABurstLength_6Transfers          ((uint16_t)0x0500)
+#define TIM_DMABurstLength_7Transfers          ((uint16_t)0x0600)
+#define TIM_DMABurstLength_8Transfers          ((uint16_t)0x0700)
+#define TIM_DMABurstLength_9Transfers          ((uint16_t)0x0800)
+#define TIM_DMABurstLength_10Transfers         ((uint16_t)0x0900)
+#define TIM_DMABurstLength_11Transfers         ((uint16_t)0x0A00)
+#define TIM_DMABurstLength_12Transfers         ((uint16_t)0x0B00)
+#define TIM_DMABurstLength_13Transfers         ((uint16_t)0x0C00)
+#define TIM_DMABurstLength_14Transfers         ((uint16_t)0x0D00)
+#define TIM_DMABurstLength_15Transfers         ((uint16_t)0x0E00)
+#define TIM_DMABurstLength_16Transfers         ((uint16_t)0x0F00)
+#define TIM_DMABurstLength_17Transfers         ((uint16_t)0x1000)
+#define TIM_DMABurstLength_18Transfers         ((uint16_t)0x1100)
+#define IS_TIM_DMA_LENGTH(LENGTH) (((LENGTH) == TIM_DMABurstLength_1Transfer) || \
+                                   ((LENGTH) == TIM_DMABurstLength_2Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_3Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_4Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_5Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_6Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_7Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_8Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_9Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_10Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_11Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_12Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_13Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_14Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_15Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_16Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_17Transfers) || \
+                                   ((LENGTH) == TIM_DMABurstLength_18Transfers))
 /**
   * @}
   */ 
@@ -866,7 +867,7 @@ typedef struct
   * @}
   */ 
 
-/** @defgroup TIM_Ouput_Compare_Preload_State 
+/** @defgroup TIM_Output_Compare_Preload_State 
   * @{
   */
 
@@ -878,7 +879,7 @@ typedef struct
   * @}
   */ 
 
-/** @defgroup TIM_Ouput_Compare_Fast_State 
+/** @defgroup TIM_Output_Compare_Fast_State 
   * @{
   */
 
@@ -891,7 +892,7 @@ typedef struct
   * @}
   */ 
 
-/** @defgroup TIM_Ouput_Compare_Clear_State 
+/** @defgroup TIM_Output_Compare_Clear_State 
   * @{
   */
 
@@ -1007,6 +1008,32 @@ typedef struct
 /**
   * @}
   */ 
+
+/** @defgroup TIM_Legacy 
+  * @{
+  */
+
+#define TIM_DMABurstLength_1Byte           TIM_DMABurstLength_1Transfer
+#define TIM_DMABurstLength_2Bytes          TIM_DMABurstLength_2Transfers
+#define TIM_DMABurstLength_3Bytes          TIM_DMABurstLength_3Transfers
+#define TIM_DMABurstLength_4Bytes          TIM_DMABurstLength_4Transfers
+#define TIM_DMABurstLength_5Bytes          TIM_DMABurstLength_5Transfers
+#define TIM_DMABurstLength_6Bytes          TIM_DMABurstLength_6Transfers
+#define TIM_DMABurstLength_7Bytes          TIM_DMABurstLength_7Transfers
+#define TIM_DMABurstLength_8Bytes          TIM_DMABurstLength_8Transfers
+#define TIM_DMABurstLength_9Bytes          TIM_DMABurstLength_9Transfers
+#define TIM_DMABurstLength_10Bytes         TIM_DMABurstLength_10Transfers
+#define TIM_DMABurstLength_11Bytes         TIM_DMABurstLength_11Transfers
+#define TIM_DMABurstLength_12Bytes         TIM_DMABurstLength_12Transfers
+#define TIM_DMABurstLength_13Bytes         TIM_DMABurstLength_13Transfers
+#define TIM_DMABurstLength_14Bytes         TIM_DMABurstLength_14Transfers
+#define TIM_DMABurstLength_15Bytes         TIM_DMABurstLength_15Transfers
+#define TIM_DMABurstLength_16Bytes         TIM_DMABurstLength_16Transfers
+#define TIM_DMABurstLength_17Bytes         TIM_DMABurstLength_17Transfers
+#define TIM_DMABurstLength_18Bytes         TIM_DMABurstLength_18Transfers
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -1134,4 +1161,4 @@ void TIM_ClearITPendingBit(TIM_TypeDef* TIMx, uint16_t TIM_IT);
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_fsmc.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the FSMC firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_fsmc.h"
@@ -89,7 +90,7 @@
 
 /**
   * @brief  Deinitializes the FSMC NOR/SRAM Banks registers to their default 
-  *   reset values.
+  *         reset values.
   * @param  FSMC_Bank: specifies the FSMC Bank to be used
   *   This parameter can be one of the following values:
   *     @arg FSMC_Bank1_NORSRAM1: FSMC Bank1 NOR/SRAM1  
@@ -166,10 +167,10 @@ void FSMC_PCCARDDeInit(void)
 
 /**
   * @brief  Initializes the FSMC NOR/SRAM Banks according to the specified
-  *   parameters in the FSMC_NORSRAMInitStruct.
+  *         parameters in the FSMC_NORSRAMInitStruct.
   * @param  FSMC_NORSRAMInitStruct : pointer to a FSMC_NORSRAMInitTypeDef
-  *   structure that contains the configuration information for 
-  *   the FSMC NOR/SRAM specified Banks.                       
+  *         structure that contains the configuration information for 
+  *        the FSMC NOR/SRAM specified Banks.                       
   * @retval None
   */
 void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
@@ -252,9 +253,10 @@ void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
 
 /**
   * @brief  Initializes the FSMC NAND Banks according to the specified 
-  *   parameters in the FSMC_NANDInitStruct.
+  *         parameters in the FSMC_NANDInitStruct.
   * @param  FSMC_NANDInitStruct : pointer to a FSMC_NANDInitTypeDef 
-  *   structure that contains the configuration information for the FSMC NAND specified Banks.                       
+  *         structure that contains the configuration information for the FSMC 
+  *         NAND specified Banks.                       
   * @retval None
   */
 void FSMC_NANDInit(FSMC_NANDInitTypeDef* FSMC_NANDInitStruct)
@@ -317,9 +319,10 @@ void FSMC_NANDInit(FSMC_NANDInitTypeDef* FSMC_NANDInitStruct)
 
 /**
   * @brief  Initializes the FSMC PCCARD Bank according to the specified 
-  *   parameters in the FSMC_PCCARDInitStruct.
+  *         parameters in the FSMC_PCCARDInitStruct.
   * @param  FSMC_PCCARDInitStruct : pointer to a FSMC_PCCARDInitTypeDef
-  *   structure that contains the configuration information for the FSMC PCCARD Bank.                       
+  *         structure that contains the configuration information for the FSMC 
+  *         PCCARD Bank.                       
   * @retval None
   */
 void FSMC_PCCARDInit(FSMC_PCCARDInitTypeDef* FSMC_PCCARDInitStruct)
@@ -371,7 +374,7 @@ void FSMC_PCCARDInit(FSMC_PCCARDInitTypeDef* FSMC_PCCARDInitStruct)
 /**
   * @brief  Fills each FSMC_NORSRAMInitStruct member with its default value.
   * @param  FSMC_NORSRAMInitStruct: pointer to a FSMC_NORSRAMInitTypeDef 
-  *   structure which will be initialized.
+  *         structure which will be initialized.
   * @retval None
   */
 void FSMC_NORSRAMStructInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
@@ -409,7 +412,7 @@ void FSMC_NORSRAMStructInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
 /**
   * @brief  Fills each FSMC_NANDInitStruct member with its default value.
   * @param  FSMC_NANDInitStruct: pointer to a FSMC_NANDInitTypeDef 
-  *   structure which will be initialized.
+  *         structure which will be initialized.
   * @retval None
   */
 void FSMC_NANDStructInit(FSMC_NANDInitTypeDef* FSMC_NANDInitStruct)
@@ -435,7 +438,7 @@ void FSMC_NANDStructInit(FSMC_NANDInitTypeDef* FSMC_NANDInitStruct)
 /**
   * @brief  Fills each FSMC_PCCARDInitStruct member with its default value.
   * @param  FSMC_PCCARDInitStruct: pointer to a FSMC_PCCARDInitTypeDef 
-  *   structure which will be initialized.
+  *         structure which will be initialized.
   * @retval None
   */
 void FSMC_PCCARDStructInit(FSMC_PCCARDInitTypeDef* FSMC_PCCARDInitStruct)
@@ -728,7 +731,7 @@ FlagStatus FSMC_GetFlagStatus(uint32_t FSMC_Bank, uint32_t FSMC_FLAG)
 }
 
 /**
-  * @brief  Clears the FSMC’s pending flags.
+  * @brief  Clears the FSMC's pending flags.
   * @param  FSMC_Bank: specifies the FSMC Bank to be used
   *   This parameter can be one of the following values:
   *     @arg FSMC_Bank2_NAND: FSMC Bank2 NAND 
@@ -814,7 +817,7 @@ ITStatus FSMC_GetITStatus(uint32_t FSMC_Bank, uint32_t FSMC_IT)
 }
 
 /**
-  * @brief  Clears the FSMC’s interrupt pending bits.
+  * @brief  Clears the FSMC's interrupt pending bits.
   * @param  FSMC_Bank: specifies the FSMC Bank to be used
   *   This parameter can be one of the following values:
   *     @arg FSMC_Bank2_NAND: FSMC Bank2 NAND 
@@ -860,4 +863,4 @@ void FSMC_ClearITPendingBit(uint32_t FSMC_Bank, uint32_t FSMC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_usart.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the USART firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_usart.h"
@@ -122,7 +123,8 @@
 /**
   * @brief  Deinitializes the USARTx peripheral registers to their default reset values.
   * @param  USARTx: Select the USART or the UART peripheral. 
-  *   This parameter can be one of the following values: USART1, USART2, USART3, UART4 or UART5.
+  *   This parameter can be one of the following values: 
+  *      USART1, USART2, USART3, UART4 or UART5.
   * @retval None
   */
 void USART_DeInit(USART_TypeDef* USARTx)
@@ -162,12 +164,13 @@ void USART_DeInit(USART_TypeDef* USARTx)
 
 /**
   * @brief  Initializes the USARTx peripheral according to the specified
-  *   parameters in the USART_InitStruct .
+  *         parameters in the USART_InitStruct .
   * @param  USARTx: Select the USART or the UART peripheral. 
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
   * @param  USART_InitStruct: pointer to a USART_InitTypeDef structure
-  *   that contains the configuration information for the specified USART peripheral.
+  *         that contains the configuration information for the specified USART 
+  *         peripheral.
   * @retval None
   */
 void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
@@ -272,7 +275,7 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
 /**
   * @brief  Fills each USART_InitStruct member with its default value.
   * @param  USART_InitStruct: pointer to a USART_InitTypeDef structure
-  *   which will be initialized.
+  *         which will be initialized.
   * @retval None
   */
 void USART_StructInit(USART_InitTypeDef* USART_InitStruct)
@@ -288,12 +291,12 @@ void USART_StructInit(USART_InitTypeDef* USART_InitStruct)
 
 /**
   * @brief  Initializes the USARTx peripheral Clock according to the 
-  *   specified parameters in the USART_ClockInitStruct .
+  *          specified parameters in the USART_ClockInitStruct .
   * @param  USARTx: where x can be 1, 2, 3 to select the USART peripheral.
   * @param  USART_ClockInitStruct: pointer to a USART_ClockInitTypeDef
-  *   structure that contains the configuration information for the specified 
-  *   USART peripheral.  
-  * @note The Smart Card mode is not available for UART4 and UART5.
+  *         structure that contains the configuration information for the specified 
+  *         USART peripheral.  
+  * @note The Smart Card and Synchronous modes are not available for UART4 and UART5.
   * @retval None
   */
 void USART_ClockInit(USART_TypeDef* USARTx, USART_ClockInitTypeDef* USART_ClockInitStruct)
@@ -324,7 +327,7 @@ void USART_ClockInit(USART_TypeDef* USARTx, USART_ClockInitTypeDef* USART_ClockI
 /**
   * @brief  Fills each USART_ClockInitStruct member with its default value.
   * @param  USART_ClockInitStruct: pointer to a USART_ClockInitTypeDef
-  *   structure which will be initialized.
+  *         structure which will be initialized.
   * @retval None
   */
 void USART_ClockStructInit(USART_ClockInitTypeDef* USART_ClockInitStruct)
@@ -339,10 +342,10 @@ void USART_ClockStructInit(USART_ClockInitTypeDef* USART_ClockInitStruct)
 /**
   * @brief  Enables or disables the specified USART peripheral.
   * @param  USARTx: Select the USART or the UART peripheral. 
-  *   This parameter can be one of the following values:
-  *   USART1, USART2, USART3, UART4 or UART5.
+  *         This parameter can be one of the following values:
+  *           USART1, USART2, USART3, UART4 or UART5.
   * @param  NewState: new state of the USARTx peripheral.
-  *   This parameter can be: ENABLE or DISABLE.
+  *         This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
 void USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
@@ -372,7 +375,7 @@ void USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
   *   This parameter can be one of the following values:
   *     @arg USART_IT_CTS:  CTS change interrupt (not available for UART4 and UART5)
   *     @arg USART_IT_LBD:  LIN Break detection interrupt
-  *     @arg USART_IT_TXE:  Tansmit Data Register empty interrupt
+  *     @arg USART_IT_TXE:  Transmit Data Register empty interrupt
   *     @arg USART_IT_TC:   Transmission complete interrupt
   *     @arg USART_IT_RXNE: Receive Data register not empty interrupt
   *     @arg USART_IT_IDLE: Idle line detection interrupt
@@ -749,7 +752,7 @@ void USART_HalfDuplexCmd(USART_TypeDef* USARTx, FunctionalState NewState)
   * @param  USARTx: Select the USART or the UART peripheral.
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
-  * @param  NewState: new state of the USART one bit sampling methode.
+  * @param  NewState: new state of the USART one bit sampling method.
   *   This parameter can be: ENABLE or DISABLE.
   * @note
   *     This function has to be called before calling USART_Init()
@@ -775,11 +778,11 @@ void USART_OverSampling8Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
 }
 
 /**
-  * @brief  Enables or disables the USART's one bit sampling methode.
+  * @brief  Enables or disables the USART's one bit sampling method.
   * @param  USARTx: Select the USART or the UART peripheral.
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
-  * @param  NewState: new state of the USART one bit sampling methode.
+  * @param  NewState: new state of the USART one bit sampling method.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -802,7 +805,7 @@ void USART_OneBitMethodCmd(USART_TypeDef* USARTx, FunctionalState NewState)
 }
 
 /**
-  * @brief  Configures the USART’s IrDA interface.
+  * @brief  Configures the USART's IrDA interface.
   * @param  USARTx: Select the USART or the UART peripheral. 
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
@@ -823,7 +826,7 @@ void USART_IrDAConfig(USART_TypeDef* USARTx, uint16_t USART_IrDAMode)
 }
 
 /**
-  * @brief  Enables or disables the USART’s IrDA interface.
+  * @brief  Enables or disables the USART's IrDA interface.
   * @param  USARTx: Select the USART or the UART peripheral. 
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
@@ -998,7 +1001,7 @@ ITStatus USART_GetITStatus(USART_TypeDef* USARTx, uint16_t USART_IT)
 }
 
 /**
-  * @brief  Clears the USARTx’s interrupt pending bits.
+  * @brief  Clears the USARTx's interrupt pending bits.
   * @param  USARTx: Select the USART or the UART peripheral. 
   *   This parameter can be one of the following values:
   *   USART1, USART2, USART3, UART4 or UART5.
@@ -1052,4 +1055,4 @@ void USART_ClearITPendingBit(USART_TypeDef* USARTx, uint16_t USART_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
