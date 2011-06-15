@@ -13,7 +13,6 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
 
 /**
  * @addtogroup LPC2148
@@ -76,6 +75,7 @@ void rt_init_thread_entry(void *parameter)
 #define LED2     (1<<17) //P1
 #define LED3     (1<<18) //P1
 #define LED4     (1<<19) //P1
+ALIGN(4)
 char thread_led1_stack[512];
 struct rt_thread thread_led1;
 void thread_led1_entry(void* parameter)
@@ -91,6 +91,7 @@ void thread_led1_entry(void* parameter)
     }
 }
 
+ALIGN(4)
 char thread_led2_stack[512];
 struct rt_thread thread_led2;
 void thread_led2_entry(void* parameter)
@@ -132,8 +133,6 @@ int rt_application_init()
                                        1024, 8, 5);
         rt_thread_startup(init_thread);
     }
-
-    rt_kprintf("\r\nenter list() to get function list!\r\n");
 
     return 0;
 }

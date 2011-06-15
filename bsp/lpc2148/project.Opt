@@ -10,10 +10,10 @@
  CppX (*.cpp)
  DaveTm { 0,0,0,0,0,0,0,0 }
 
-Target (RT-thread_LPC2148), 0x0004 // Tools: 'ARM-ADS'
+Target (rtthread-lpc2148), 0x0004 // Tools: 'ARM-ADS'
 GRPOPT 1,(Startup),0,0,0
 GRPOPT 2,(Kernel),0,0,0
-GRPOPT 3,(LPC214X),0,0,0
+GRPOPT 3,(LPC214X),1,0,0
 GRPOPT 4,(finsh),0,0,0
 
 OPTFFF 1,1,1,0,0,0,0,0,<.\application.c><application.c> 
@@ -34,33 +34,29 @@ OPTFFF 2,15,1,0,0,0,0,0,<..\..\src\scheduler.c><scheduler.c>
 OPTFFF 2,16,1,0,0,0,0,0,<..\..\src\slab.c><slab.c> 
 OPTFFF 2,17,1,0,0,0,0,0,<..\..\src\thread.c><thread.c> 
 OPTFFF 2,18,1,0,0,0,0,0,<..\..\src\timer.c><timer.c> 
-OPTFFF 3,19,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\cpu.c><cpu.c> 
-OPTFFF 3,20,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\interrupt.c><interrupt.c> 
-OPTFFF 3,21,1,486539264,0,339,343,0,<..\..\libcpu\arm\lpc214x\serial.c><serial.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,226,255,255,255,66,0,0,0,87,0,0,0,9,4,0,0,83,1,0,0 }
-OPTFFF 3,22,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\stack.c><stack.c> 
-OPTFFF 3,23,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\trap.c><trap.c> 
-OPTFFF 3,24,2,285212672,0,0,0,0,<..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S> 
-OPTFFF 3,25,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S> 
-OPTFFF 3,26,1,0,0,0,0,0,<..\..\libcpu\arm\common\backtrace.c><backtrace.c> 
-OPTFFF 3,27,1,0,0,0,0,0,<..\..\libcpu\arm\common\div0.c><div0.c> 
-OPTFFF 3,28,1,234881024,0,0,0,0,<..\..\libcpu\arm\common\showmem.c><showmem.c> 
-OPTFFF 4,29,1,0,0,0,0,0,<..\..\components\finsh\cmd.c><cmd.c> 
-OPTFFF 4,30,1,0,0,0,0,0,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c> 
-OPTFFF 4,31,1,0,0,0,0,0,<..\..\components\finsh\finsh_error.c><finsh_error.c> 
-OPTFFF 4,32,1,0,0,0,0,0,<..\..\components\finsh\finsh_heap.c><finsh_heap.c> 
-OPTFFF 4,33,1,0,0,0,0,0,<..\..\components\finsh\finsh_init.c><finsh_init.c> 
-OPTFFF 4,34,1,0,0,0,0,0,<..\..\components\finsh\finsh_node.c><finsh_node.c> 
-OPTFFF 4,35,1,0,0,0,0,0,<..\..\components\finsh\finsh_ops.c><finsh_ops.c> 
-OPTFFF 4,36,1,0,0,0,0,0,<..\..\components\finsh\finsh_parser.c><finsh_parser.c> 
-OPTFFF 4,37,1,0,0,0,0,0,<..\..\components\finsh\finsh_token.c><finsh_token.c> 
-OPTFFF 4,38,1,0,0,0,0,0,<..\..\components\finsh\finsh_var.c><finsh_var.c> 
-OPTFFF 4,39,1,0,0,0,0,0,<..\..\components\finsh\finsh_vm.c><finsh_vm.c> 
-OPTFFF 4,40,1,0,0,0,0,0,<..\..\components\finsh\shell.c><shell.c> 
-OPTFFF 4,41,1,0,0,0,0,0,<..\..\components\finsh\symbol.c><symbol.c> 
+OPTFFF 3,19,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\cpuport.c><cpuport.c> 
+OPTFFF 3,20,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\serial.c><serial.c> 
+OPTFFF 3,21,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S> 
+OPTFFF 3,22,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S> 
+OPTFFF 3,23,1,0,0,0,0,0,<..\..\libcpu\arm\common\backtrace.c><backtrace.c> 
+OPTFFF 3,24,1,0,0,0,0,0,<..\..\libcpu\arm\common\div0.c><div0.c> 
+OPTFFF 3,25,1,0,0,0,0,0,<..\..\libcpu\arm\common\showmem.c><showmem.c> 
+OPTFFF 4,26,1,0,0,0,0,0,<..\..\components\finsh\cmd.c><cmd.c> 
+OPTFFF 4,27,1,0,0,0,0,0,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c> 
+OPTFFF 4,28,1,0,0,0,0,0,<..\..\components\finsh\finsh_error.c><finsh_error.c> 
+OPTFFF 4,29,1,0,0,0,0,0,<..\..\components\finsh\finsh_heap.c><finsh_heap.c> 
+OPTFFF 4,30,1,0,0,0,0,0,<..\..\components\finsh\finsh_init.c><finsh_init.c> 
+OPTFFF 4,31,1,0,0,0,0,0,<..\..\components\finsh\finsh_node.c><finsh_node.c> 
+OPTFFF 4,32,1,0,0,0,0,0,<..\..\components\finsh\finsh_ops.c><finsh_ops.c> 
+OPTFFF 4,33,1,0,0,0,0,0,<..\..\components\finsh\finsh_parser.c><finsh_parser.c> 
+OPTFFF 4,34,1,0,0,0,0,0,<..\..\components\finsh\finsh_token.c><finsh_token.c> 
+OPTFFF 4,35,1,0,0,0,0,0,<..\..\components\finsh\finsh_var.c><finsh_var.c> 
+OPTFFF 4,36,1,0,0,0,0,0,<..\..\components\finsh\finsh_vm.c><finsh_vm.c> 
+OPTFFF 4,37,1,0,0,0,0,0,<..\..\components\finsh\shell.c><shell.c> 
+OPTFFF 4,38,1,0,0,0,0,0,<..\..\components\finsh\symbol.c><symbol.c> 
 
-ExtF <E:\work\mcu\rt-thread\rt-thread\trunk\components\finsh\shell.h> 43,43,0,{ 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,226,255,255,255,44,0,0,0,58,0,0,0,247,3,0,0,55,1,0,0 }
 
-TARGOPT 1, (RT-thread_LPC2148)
+TARGOPT 1, (rtthread-lpc2148)
  ADSCLK=12000000
   OPTTT 0,1,1,0
   OPTHX 1,65535,0,0,0
@@ -68,10 +64,12 @@ TARGOPT 1, (RT-thread_LPC2148)
   OPTOX 16
   OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
   OPTXL 1,1,1,1,1,1,1,0,0
-  OPTFL 1,0,1
+  OPTFL 0,0,1
   OPTAX 0
   OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)
   OPTDBG 48125,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
+  OPTKEY 0,(DLGDARM)((134=-1,-1,-1,-1,0)(135=-1,-1,-1,-1,0)(153=-1,-1,-1,-1,0)(154=-1,-1,-1,-1,0)(108=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(104=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(146=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(114=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(142=-1,-1,-1,-1,0)(143=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)(-T5F)
   OPTDF 0x90
   OPTLE <>
   OPTLC <>
