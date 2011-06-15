@@ -1,0 +1,40 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/CM3/CoreSupport/core_cm3.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c
+STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c
+STM32F10x_StdPeriph_Driver/src/misc.c
+""")
+
+path = [RTT_ROOT + '/bsp/stm3210/Libraries/STM32F10x_StdPeriph_Driver/inc', 
+    RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/CM3/CoreSupport',
+    RTT_ROOT + '/bsp/stm3210/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path)
+
+Return('group')
