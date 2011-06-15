@@ -138,6 +138,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     CAN2_RX1_IRQHandler        ; CAN2 RX1
                 DCD     CAN2_SCE_IRQHandler        ; CAN2 SCE
                 DCD     OTG_FS_IRQHandler          ; USB OTG FS
+				; for STM32F2xx
 
 __Vectors_End
 
