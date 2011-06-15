@@ -2,8 +2,8 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c', 'system_stm32f10x.c']
-src_drv = ['rtc.c', 'usart.c', 'led.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
+src_drv = ['rtc.c', 'usart.c', 'serial.c', 'led.c']
 
 if GetDepend('RT_USING_DFS'):
 	if rtconfig.STM32_TYPE == 'STM32F10X_HD':
@@ -18,8 +18,8 @@ if GetDepend('RT_USING_LWIP'):
 		src_drv += ['enc28j60.c']
 
 src = src_bsp + src_drv
-CPPPATH = [RTT_ROOT + '/bsp/stm3210']
-CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+CPPPATH = [RTT_ROOT + '/bsp/stm32f10x']
+CPPDEFINES = []
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')
