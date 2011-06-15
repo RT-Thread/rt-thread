@@ -84,15 +84,7 @@ void (*rt_object_put_hook)(struct rt_object* object);
  */
 void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_object_attach_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -103,15 +95,7 @@ void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_object_detach_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -129,15 +113,7 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_object_trytake_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -156,15 +132,7 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_take_sethook(void (*hook)(struct rt_object* object))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_object_take_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -175,15 +143,7 @@ void rt_object_take_sethook(void (*hook)(struct rt_object* object))
  */
 void rt_object_put_sethook(void (*hook)(struct rt_object* object))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_object_put_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /*@}*/

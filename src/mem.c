@@ -49,6 +49,7 @@
  *
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 
 /* #define RT_MEM_DEBUG */
@@ -72,15 +73,7 @@ static void (*rt_free_hook)(void *ptr);
  */
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_malloc_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /**
@@ -91,15 +84,7 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
  */
 void rt_free_sethook(void (*hook)(void *ptr))
 {
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
-
 	rt_free_hook = hook;
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
 }
 
 /*@}*/
