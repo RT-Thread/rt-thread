@@ -52,7 +52,7 @@
     IMPORT  rt_hw_pend_sv
     IMPORT  rt_hw_timer_handler
 #ifdef RT_USING_UART2   
-    IMPORT  rt_hw_uart2_rx_handler
+    IMPORT  MFS2RX_IRQHandler
 #endif
     PUBLIC  __low_level_init
 
@@ -113,7 +113,7 @@ __vector_table
         DCD     EXTI3_IRQHandler          ; EXTI Line 3
         DCD     EXTI4_IRQHandler          ; EXTI Line 4
 #ifdef RT_USING_UART2        
-        DCD     rt_hw_uart2_rx_handler
+        DCD     MFS2RX_IRQHandler
 #else
         DCD     DMA1_Channel1_IRQHandler  ; DMA1 Channel 1
 #endif

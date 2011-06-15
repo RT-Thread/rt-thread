@@ -1,3 +1,18 @@
+/*
+ * File      : serial.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2006-03-13     Bernard      first version
+ * 2011-05-15     lgnq         modified according bernard's implementaion.      	  	
+ */
+
 #ifndef __RT_HW_SERIAL_H__
 #define __RT_HW_SERIAL_H__
 
@@ -69,16 +84,16 @@ struct serial_int_tx
 struct serial_device
 {
 	FM3_MFS03_UART_TypeDef* uart_device;
-	
+	/* irq number */
+	IRQn_Type rx_irq, tx_irq;
+
 	/* rx structure */
 	struct serial_int_rx* int_rx;
-
 	/* tx structure */
 	struct serial_int_tx* int_tx;
 };
 
-rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t flag, struct serial_device *serial);
-
 void rt_hw_serial_isr(rt_device_t device);
+void rt_hw_serial_init(void);
 
 #endif

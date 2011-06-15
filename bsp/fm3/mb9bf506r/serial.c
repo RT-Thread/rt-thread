@@ -5,12 +5,12 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2009-04-20     yi.qiu      modified according bernard's stm32 version      	  	
+ * 2011-05-15     lgnq         modified according bernard's implementaion.      	  	
  */
 
 #include <rtthread.h>
@@ -32,7 +32,6 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 	{
-
 		if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 		{
 			rt_memset(uart->int_rx->rx_buffer, 0, 
@@ -79,20 +78,39 @@ static void rt_serial_savechar(struct serial_device* uart, char ch)
 }
 
 static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
-{	
-	RT_ASSERT(dev != RT_NULL);
+{
+	struct serial_device* uart;
 	
+	RT_ASSERT(dev != RT_NULL);
+	uart = (struct serial_device*) dev->user_data;
+
+	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
+	{
+		/* enable interrupt */
+		UART_ENABLE_IRQ(uart->rx_irq);
+	}
+
 	return RT_EOK;
 }
 
 static rt_err_t rt_serial_close(rt_device_t dev)
 {	
+	struct serial_device* uart;
+	
 	RT_ASSERT(dev != RT_NULL);
+	uart = (struct serial_device*) dev->user_data;
+
+	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
+	{
+		/* disable interrupt */
+		UART_DISABLE_IRQ(uart->rx_irq);
+	}
 
 	return RT_EOK;
 }
 
-static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, 
+                                 rt_size_t size)
 {
 	rt_uint8_t* ptr;
 	rt_err_t err_code;
@@ -150,7 +168,8 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, 
+                                  const void* buffer, rt_size_t size)
 {
 	rt_uint8_t* ptr;
 	rt_err_t err_code;
@@ -233,7 +252,8 @@ static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 /*
  * serial register
  */
-rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t flag, struct serial_device *serial)
+rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, 
+                               rt_uint32_t flag, struct serial_device *serial)
 {
 	RT_ASSERT(device != RT_NULL);
 
@@ -246,12 +266,12 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 	device->read 		= rt_serial_read;
 	device->write 		= rt_serial_write;
 	device->control 	= rt_serial_control;
-	device->user_data		= serial;
+	device->user_data	= serial;
 
 	/* register a character device */
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
 }
-	
+
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(rt_device_t device)
 {
@@ -278,6 +298,51 @@ void rt_hw_serial_isr(rt_device_t device)
 
 		device->rx_indicate(device, rx_length);
 	}	
+}
+
+#ifdef RT_USING_UART2
+/* UART2 device driver structure */
+#define UART2	FM3_MFS2_UART
+struct serial_int_rx uart2_int_rx;
+struct serial_device uart2 =
+{
+	UART2,
+	MFS2RX_IRQn,
+	MFS2TX_IRQn,
+	&uart2_int_rx,
+	RT_NULL
+};
+struct rt_device uart2_device;
+
+void MFS2RX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_serial_isr(&uart2_device);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+
+void rt_hw_serial_init(void)
+{	
+#ifdef RT_USING_UART2
+	/* initialize UART2 */
+    /* Set Uart Ch2 Port, SIN2_1, SOT2_1 */
+    FM3_GPIO->PFR2 = FM3_GPIO->PFR2 | 0x0030;
+    FM3_GPIO->EPFR07 = FM3_GPIO->EPFR07 | 0x000a0000;
+
+	uart2.uart_device->SMR = SMR_MD_UART | SMR_SOE;;
+	uart2.uart_device->BGR = (40000000UL + (BPS/2))/BPS - 1;
+	uart2.uart_device->ESCR = ESCR_DATABITS_8;
+	uart2.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
+
+	/* register UART2 device */
+	rt_hw_serial_register(&uart2_device, 
+		"uart2", 
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+		&uart2);
+#endif
 }
 
 /*@}*/
