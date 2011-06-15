@@ -22,6 +22,9 @@ const unsigned char BIT_MASK[8] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x0
 /* simple font: ' ', '0'~'9','a'~'z','A'~'Z' */
 extern const unsigned char  FONTTYPE8_8[][8];
 
+rt_uint32_t x;
+rt_uint32_t y;
+
 void power_delay(void)
 {
     rt_uint32_t i = 0x4ffff;
@@ -421,6 +424,7 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	switch (cmd)
 	{
+#ifdef RT_USING_RTGUI    
 	case RTGRAPHIC_CTRL_RECT_UPDATE:
         rt_hw_lcd_update(args);      
 		break;
@@ -433,6 +437,20 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 		break;
 	case RTGRAPHIC_CTRL_SET_MODE:
 		break;
+#else
+    case RT_DEVICE_CTRL_LCD_DISPLAY_ON:
+        lcd_write_cmd(DISPLAY_ON);
+        break;
+    case RT_DEVICE_CTRL_LCD_DISPLAY_OFF:
+        lcd_write_cmd(DISPLAY_OFF);
+        break;
+    case RT_DEVICE_CTRL_LCD_PUT_STRING:
+        LCD_PutString(x, y, (char*)args);
+        break;
+    case RT_DEVICE_CTRL_LCD_CLEAR_SCR:
+        LCD_ClearSCR();
+        break;
+#endif        
 	}
 
 	return RT_EOK;
