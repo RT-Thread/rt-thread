@@ -69,8 +69,6 @@ extern void finsh_system_init(void);
  */
 void rtthread_startup(void)
 {
-    RT_DEBUG_REENT_IN
-
 	/* enable cpu cache */
 	rt_hw_cpu_icache_enable();
 	rt_hw_cpu_dcache_enable();
@@ -148,8 +146,6 @@ void rtthread_startup(void)
 
 	/* init idle thread */
 	rt_thread_idle_init();
-
-	RT_DEBUG_REENT_OUT
 
 	/* start scheduler */
 	rt_system_scheduler_start();
