@@ -81,8 +81,8 @@ _reswitch
 ; r0 --> swith from thread stack
 ; r1 --> swith to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
-    EXPORT rt_hw_pend_sv
-rt_hw_pend_sv:
+    EXPORT PendSV_Handler
+PendSV_Handler:
 
     ; disable interrupt to protect context switch
     MRS     r2, PRIMASK
@@ -161,8 +161,8 @@ rt_hw_interrupt_thread_switch:
     BX      lr
 
     IMPORT rt_hw_hard_fault_exception
-    EXPORT rt_hw_hard_fault
-rt_hw_hard_fault:
+    EXPORT HardFault_Handler
+HardFault_Handler:
 
     ; get current context
     MRS     r0, psp                 ; get fault thread stack pointer

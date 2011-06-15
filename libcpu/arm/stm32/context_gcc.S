@@ -83,9 +83,9 @@ _reswitch:
  * r1 --> swith to thread stack
  * psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
  */
-.global rt_hw_pend_sv
-.type rt_hw_pend_sv, %function
-rt_hw_pend_sv:
+.global PendSV_Handler
+.type PendSV_Handler, %function
+PendSV_Handler:
     /* disable interrupt to protect context switch */
     MRS r2, PRIMASK
     CPSID   I
@@ -165,9 +165,9 @@ rt_hw_interrupt_thread_switch:
     BX  lr
     NOP
 
-.global rt_hw_hard_fault
-.type rt_hw_hard_fault, %function
-rt_hw_hard_fault:
+.global HardFault_Handler
+.type HardFault_Handler, %function
+HardFault_Handler:
     /* get current context */
     MRS     r0, psp                 /* get fault thread stack pointer */
     PUSH    {lr}
