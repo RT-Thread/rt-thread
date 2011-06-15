@@ -1,7 +1,7 @@
 	.extern main                               /* 引入外部C入口 */
 
 	.extern __bss_beg__
-	.extern __bss_end__
+	.extern __bss_end
 	.extern __stack_end__
 	.extern __data_beg__
 	.extern __data_end__
@@ -66,9 +66,9 @@
     .equ PLLCON_PLLE,   (1<<0)      /* PLL Enable */
     .equ PLLCON_PLLC,   (1<<1)      /* PLL Connect */
     .equ PLLSTAT_LOCK,  (1<<10)     /* PLL Lock Status */
-    .equ PLLCFG_MSEL,   ((PLL_MUL - 1) << 0)
+    //.equ PLLCFG_MSEL,   ((PLL_MUL - 1) << 0)
     .equ PLLCFG_PSEL,	(0x02 << 5)
-    .equ PLLCFG_Val,	(PLLCFG_MSEL|PLLCFG_PSEL)
+    //.equ PLLCFG_Val,	(PLLCFG_MSEL|PLLCFG_PSEL)
 
     .equ  MEMMAP,		0xE01FC040     /*Memory Mapping Control*/
 
@@ -208,7 +208,7 @@ endless_loop:
 	.LC1:
 	.word   __bss_beg__
 	.LC2:
-	.word   __bss_end__
+	.word   __bss_end
 	.LC3:
 	.word   __data_beg__
 	.LC4:
