@@ -70,7 +70,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
 	time_t tmp;
-	struct timezone tz;
+	struct timezone tz = {0};
 	gettimeofday(0, &tz);
 	timezone = tz.tz_minuteswest * 60L;
 	tmp = *t + timezone;
@@ -134,8 +134,9 @@ time_t timegm(struct tm * const t)
 	 This is not intuitive. Most mktime implementations do not support
 	 dates after 2059, anyway, so we might leave this out for it's
 	 bloat. */
-	if ((years -= 131) >= 0)
+	if (years >= 131)
 	{
+		years -= 131;
 		years /= 100;
 		day -= (years >> 2) * 3 + 1;
 		if ((years &= 3) == 3)
@@ -159,7 +160,7 @@ time_t timegm(struct tm * const t)
 time_t mktime(register struct tm* const t)
 {
 	time_t x = timegm(t);
-	struct timezone tz;
+	struct timezone tz = {0};
 	gettimeofday(0, &tz);
 	timezone = tz.tz_minuteswest * 60L;
 	x += timezone;
