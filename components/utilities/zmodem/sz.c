@@ -25,9 +25,9 @@ static rt_uint8_t ZF2_OP;		                  	 /* file transfer option */
 void zs_start(char *path);
 static void zsend_init(void);
 static rt_err_t zsend_files(struct zfile *zf);
-static rt_err_t zsend_file(struct zfile *zf,rt_uint8_t *buf, rt_uint16_t len);
+static rt_err_t zsend_file(struct zfile *zf, rt_uint8_t *buf, rt_uint16_t len);
 static rt_err_t zsend_file_data(struct zfile *zf);
-static rt_uint16_t zfill_buffer(struct zfile *zf,rt_uint8_t *buf,rt_uint16_t size);
+static rt_uint16_t zfill_buffer(struct zfile *zf, rt_uint8_t *buf, rt_uint16_t size);
 static rt_err_t zget_sync(void);
 static void zsay_bibi(void);
 
@@ -162,7 +162,7 @@ static rt_err_t zsend_files(struct zfile *zf)
 }
 
 /* send file name and related info */
-static rt_err_t zsend_file(struct zfile *zf,rt_uint8_t *buf, rt_uint16_t len)
+static rt_err_t zsend_file(struct zfile *zf, rt_uint8_t *buf, rt_uint16_t len)
 {
 	rt_uint8_t cnt;
 	rt_err_t res = -RT_ERROR;
@@ -262,7 +262,7 @@ get_syn1:
 }
 
 /* fill file data to buffer*/
-static rt_uint16_t zfill_buffer(struct zfile *zf,rt_uint8_t *buf,rt_uint16_t size)
+static rt_uint16_t zfill_buffer(struct zfile *zf, rt_uint8_t *buf, rt_uint16_t size)
 {
 	return (read(zf->fd,buf,size));
 }

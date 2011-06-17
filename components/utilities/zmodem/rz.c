@@ -19,13 +19,13 @@
 
 
 void zr_start(char *path);
-static rt_err_t zrec_init(rt_uint8_t *rxbuf,struct zfile *zf);
+static rt_err_t zrec_init(rt_uint8_t *rxbuf, struct zfile *zf);
 static rt_err_t zrec_files(struct zfile *zf);
-static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf);
-static rt_err_t zrec_file_data(rt_uint8_t *buf,struct zfile *zf);;
-static rt_err_t zrec_file(rt_uint8_t *rxbuf,struct zfile *zf);
-static rt_err_t zget_file_info(char *name,struct zfile *zf);
-static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf);
+static rt_err_t zwrite_file(rt_uint8_t *buf, rt_uint16_t size, struct zfile *zf);
+static rt_err_t zrec_file_data(rt_uint8_t *buf, struct zfile *zf);;
+static rt_err_t zrec_file(rt_uint8_t *rxbuf, struct zfile *zf);
+static rt_err_t zget_file_info(char *name, struct zfile *zf);
+static rt_err_t zwrite_file(rt_uint8_t *buf, rt_uint16_t size, struct zfile *zf);
 static void zrec_ack_bibi(void);
 
 
@@ -87,7 +87,7 @@ void zr_start(char *path)
 }
 
 /* receiver init, wait for ack */
-static rt_err_t zrec_init(rt_uint8_t *rxbuf,struct zfile *zf)
+static rt_err_t zrec_init(rt_uint8_t *rxbuf, struct zfile *zf)
 {
     rt_uint8_t err_cnt = 0;
 	rt_err_t res = -RT_ERROR;
@@ -183,7 +183,7 @@ static rt_err_t zrec_files(struct zfile *zf)
 	}
 }
 /* receive file */
-static rt_err_t zrec_file(rt_uint8_t *rxbuf,struct zfile *zf)
+static rt_err_t zrec_file(rt_uint8_t *rxbuf, struct zfile *zf)
 {
 	rt_err_t res = - RT_ERROR;
 	rt_uint16_t err_cnt = 0;
@@ -248,7 +248,7 @@ again:
 }
 
 /* proccess file infomation */
-static rt_err_t zget_file_info(char *name,struct zfile *zf)
+static rt_err_t zget_file_info(char *name, struct zfile *zf)
 {
 	char *p;
 	char *full_path,*ptr;
@@ -299,7 +299,7 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
     zf->fname = full_path;
 	p = strlen(name)+name+1;	   
 	sscanf((const char *)p, "%ld%lo%o", &zf->bytes_total,&zf->ctime,&zf->mode);
-#ifdef DFS_USING_WORKDIR
+#ifdef defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 	dfs_statfs(working_directory,&buf);
 	if (zf->bytes_total > (buf.f_blocks * buf.f_bfree))
 	{
@@ -324,7 +324,7 @@ static rt_err_t zget_file_info(char *name,struct zfile *zf)
 }
 
 /* receive file data,continously, no ack */
-static rt_err_t zrec_file_data(rt_uint8_t *buf,struct zfile *zf)
+static rt_err_t zrec_file_data(rt_uint8_t *buf, struct zfile *zf)
 {
     rt_err_t res = -RT_ERROR;
 
@@ -369,7 +369,7 @@ more_data:
 }
 
 /* write file */
-static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size,struct zfile *zf)
+static rt_err_t zwrite_file(rt_uint8_t *buf,rt_uint16_t size, struct zfile *zf)
 {
 	return (write(zf->fd,buf,size));
 }

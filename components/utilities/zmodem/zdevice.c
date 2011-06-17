@@ -34,7 +34,7 @@ rt_uint32_t get_sys_time(void)
 
 void zsend_byte(rt_uint16_t ch)
 {
-    rt_device_write(zmodem.device,0,&ch,1);  
+    rt_device_write(zmodem.device, 0, &ch,1);  
 
     return;
 }
@@ -44,7 +44,7 @@ void zsend_line(rt_uint16_t c)
     rt_uint16_t ch;
 
 	ch = (c & 0377);
-    rt_device_write(zmodem.device,0,&ch,1);   
+    rt_device_write(zmodem.device, 0, &ch, 1);   
 
     return;
 }

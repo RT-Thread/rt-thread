@@ -37,8 +37,8 @@ void zinit_parameter(void);
 void zsend_bin_header(rt_uint8_t type, rt_uint8_t *hdr);
 void zsend_hex_header(rt_uint8_t type, rt_uint8_t *hdr);
 void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend);
-static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len);
-static rt_int16_t zrec_data32(rt_uint8_t *buf,rt_int16_t len);
+static rt_int16_t zrec_data16(rt_uint8_t *buf, rt_uint16_t len);
+static rt_int16_t zrec_data32(rt_uint8_t *buf, rt_int16_t len);
 static rt_int16_t zrec_data32r(rt_uint8_t *buf, rt_int16_t len);
 rt_int16_t zget_data(rt_uint8_t *buf, rt_uint16_t len);
 rt_int16_t zget_header(rt_uint8_t *hdr);
@@ -271,17 +271,16 @@ void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend)
 }
 
 /* receive data,with 16bits CRC check */
-static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
+static rt_int16_t zrec_data16(rt_uint8_t *buf, rt_uint16_t len)
 {
 	rt_int16_t c,crc_cnt;
 	rt_uint16_t crc;
 	rt_err_t res = -RT_ERROR;
  	rt_uint8_t *p,flag = 0;
-	rt_uint8_t i =0, debug[20];
-	p = buf;
-	crc = 0L;  
+
+	p = buf;	
+	crc_cnt = 0;  crc = 0L;   
     Rxcount = 0; 
-	debug[0] = debug[4] = 0; 
 	while(buf <= p+len) 
 	{
 		if ((res = zread_byte()) & ~0377)
@@ -290,8 +289,6 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 			    res == GOTCRCQ || res == GOTCRCW)
 			{
 				  c = res;
-				  debug[i++] = res;
-				  c = debug[0];
 				  c = res;
 				  crc = updcrc16(res&0377, crc);
 				  flag = 1;	
@@ -308,7 +305,6 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 		   {
 		       crc = updcrc16(res, crc); 
 			   crc_cnt++;
-			   debug[i++] = res;
 			   if (crc_cnt < 2) continue;
 			   if ((crc & 0xffff))
 			   {
@@ -332,14 +328,14 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf,rt_uint16_t len)
 }
 
 /* receive data,with 32bits CRC check */
-static rt_int16_t zrec_data32(rt_uint8_t *buf,rt_int16_t len)
+static rt_int16_t zrec_data32(rt_uint8_t *buf, rt_int16_t len)
 {
-	rt_int16_t c,crc_cnt = 0;
+	rt_int16_t c,crc_cnt;
 	rt_uint32_t crc;
 	rt_err_t res = -RT_ERROR;
 	rt_uint8_t *p,flag = 0;
 
-	crc = 0xffffffffL;  
+	crc_cnt = 0;   crc = 0xffffffffL;  
 	Rxcount = 0;  
 	while (buf <= p+len) 
 	{
@@ -388,12 +384,12 @@ static rt_int16_t zrec_data32(rt_uint8_t *buf,rt_int16_t len)
 /* receive data,with RLE encoded,32bits CRC check */
 static rt_int16_t zrec_data32r(rt_uint8_t *buf, rt_int16_t len)
 {
-	rt_int16_t c,crc_cnt = 0;
+	rt_int16_t c,crc_cnt;
 	rt_uint32_t crc;
 	rt_err_t res = -RT_ERROR;
 	rt_uint8_t *p,flag = 0;
 
-	crc = 0xffffffffL;  
+	crc_cnt = 0; crc = 0xffffffffL;  
 	Rxcount = 0;  
 	p = buf;
 	while (buf <= p+len) 
@@ -640,7 +636,8 @@ static rt_int16_t zget_bin_fcs(rt_uint8_t *hdr)
 	if ((res = zread_byte()) & ~0377)
 		return res;
 	header_type = res;
-	crc = 0xFFFFFFFFL; crc = updcrc32(res, crc);
+	crc = 0xFFFFFFFFL; 
+	crc = updcrc32(res, crc);
 
 	for (i=0;i<4;i++)    /* 4headers */
 	{
@@ -860,7 +857,7 @@ rt_int16_t zxor_read(void)
 			return res;
 		}
 	}
-	/* NOTREACHED */
+
 }
 
 /* put file posistion into the header*/
