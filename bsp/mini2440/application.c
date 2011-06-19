@@ -139,7 +139,7 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-		rt_device_t *lcd;
+		rt_device_t lcd;
 		
 		/* init lcd */
 		rt_hw_lcd_init();
