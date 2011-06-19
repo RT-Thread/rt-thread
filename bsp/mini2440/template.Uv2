@@ -31,14 +31,14 @@ Options 1,0,0  // Target 'RT-Thread Mini2440'
  EnvReg (ÿSamsung\)
  OrgReg (ÿSamsung\)
  TgStat=16
- OutDir (.\)
+ OutDir (.\obj\)
  OutName (rtthread-mini2440)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\)
+ LstDir (.\obj)
  HexSel=1
  MG32K=0
  TGMORE=0
@@ -53,7 +53,7 @@ Options 1,0,0  // Target 'RT-Thread Mini2440'
  ADSFLGA { 242,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ACPUTYP (ARM920T)
  RVDEV ()
- ADSTFLGA { 0,8,0,0,96,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSTFLGA { 0,8,64,0,96,0,64,64,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSIRAM { 0,0,0,0,64,0,16,0,0 }
  OCMADSIROM { 0,0,0,0,0,0,0,0,0 }
