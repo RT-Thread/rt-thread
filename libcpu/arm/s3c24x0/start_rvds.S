@@ -1137,7 +1137,7 @@ rt_hw_context_switch_interrupt_do   PROC
                 MRS     r3,  spsr       ; get cpsr of interrupt thread
 
                 ; switch to SVC mode and no interrupt
-                MSR     cpsr_c, #I_Bit|F_Bit|Mode_SVC
+				MSR 	cpsr_c, #I_Bit:OR:F_Bit:OR:Mode_SVC
 
                 STMFD   sp!, {r2}       ; push old task's pc
                 STMFD   sp!, {r4-r12,lr}; push old task's lr,r12-r4

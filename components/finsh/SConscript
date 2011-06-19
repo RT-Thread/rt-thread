@@ -5,10 +5,10 @@ from building import *
 src	= Glob('*.c')
 CPPPATH = [RTT_ROOT + '/components/finsh']
 if rtconfig.CROSS_TOOL == 'keil':
-    LINKFLAGS = ' --keep __fsym_* --keep __vsym_*'
+    LINKFLAGS = ' --keep __fsym_* --keep __vsym_* '
 else:
-    LINKFLAGS = ''
+    LINKFLAGS = '' 
 
-group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, LIBRARY = '')
 
 Return('group')
