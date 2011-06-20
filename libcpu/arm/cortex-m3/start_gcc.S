@@ -51,7 +51,7 @@ g_pfnVectors:
   .word  Initial_spTop
   .word  Reset_Handler
   .word  NMI_Handler
-  .word  rt_hw_hard_fault
+  .word  HardFault_Handler
   .word  MemManage_Handler
   .word  BusFault_Handler
   .word  UsageFault_Handler
@@ -62,8 +62,8 @@ g_pfnVectors:
   .word  SVC_Handler
   .word  DebugMon_Handler
   .word  0
-  .word  rt_hw_pend_sv
-  .word  rt_hw_timer_handler
+  .word  PendSV_Handler
+  .word  SysTick_Handler
   /* External Interrupts */
   .word  DMA_IRQHandler				/* 0: DMA Interrupt (efm32_dma.c) */
   .word  GPIO_EVEN_IRQHandler		/* 1: GPIO_EVEN Interrupt */

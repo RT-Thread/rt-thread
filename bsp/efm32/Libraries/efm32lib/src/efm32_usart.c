@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,8 +37,8 @@
 
 /***************************************************************************//**
  * @addtogroup USART
- * @brief EFM32 universal synchronous/asynchronous receiver/transmitter
- *   utilities.
+ * @brief Universal Synchronous/Asynchronous Receiver/Transmitter
+ *   Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -57,11 +57,24 @@
 #elif (USART_COUNT == 3)
 #define USART_REF_VALID(ref)    (((ref) == USART0) || ((ref) == USART1) || \
                                  ((ref) == USART2))
+#elif (USART_COUNT == 4)
+#define USART_REF_VALID(ref)    (((ref) == USART0) || ((ref) == USART1) || \
+                                 ((ref) == USART2) || ((ref) == USART3))
 #else
 #error Undefined number of USARTs.
 #endif
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+#define USART_IRDA_VALID(ref)    ((ref) == USART0)
+
+#if defined(_EFM32_TINY_FAMILY)
+#define USART_I2S_VALID(ref)     ((ref) == USART1)
+#endif
+
+#if defined(_EFM32_GIANT_FAMILY)
+#define USART_I2S_VALID(ref)    (((ref) == USART1) || ((ref) == USART2))
+#endif
+
+/** @endcond */
 
 
 /*******************************************************************************
@@ -151,10 +164,15 @@ void USART_BaudrateAsyncSet(USART_TypeDef *usart,
     oversample = 6;
     break;
 
-  default:
+  case USART_CTRL_OVS_X4:
     EFM_ASSERT(baudrate <= (refFreq / 4));
     oversample = 4;
     break;
+
+  default:
+    /* Invalid input */
+    EFM_ASSERT(0);
+    return;
   }
 
   /* Calculate and set CLKDIV with fractional bits */
@@ -467,13 +485,10 @@ void USART_Enable(USART_TypeDef *usart, USART_Enable_TypeDef enable)
  *
  * @details
  *   This function will configure basic settings in order to operate in normal
- *   asynchronous mode. Consider using USART_Reset() prior to this function if
- *   state of configuration is not known, since only configuration settings
- *   specified by @p init are set.
+ *   asynchronous mode.
  *
- *   Special control setup not covered by this function may be done either
- *   before or after using this function (but normally before enabling)
- *   by direct modification of the CTRL register.
+ *   Special control setup not covered by this function must be done after
+ *   using this function by direct modification of the CTRL register.
  *
  *   Notice that pins used by the USART/UART module must be properly configured
  *   by the user explicitly, in order for the USART/UART to work as intended.
@@ -492,20 +507,22 @@ void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init)
   /* Make sure the module exists on the selected chip */
   EFM_ASSERT(USART_REF_VALID(usart));
 
-  /* Ensure disabled while doing config */
-  /* (Mastermode disabled just in case, master mode not used for async op.) */
-  usart->CMD = USART_CMD_RXDIS | USART_CMD_TXDIS | USART_CMD_MASTERDIS;
+  /* Init USART registers to HW reset state. */
+  USART_Reset(usart);
 
-  /* Make sure IrDA is disabled */
-  usart->IRCTRL &= ~USART_IRCTRL_IREN;
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  /* Disable majority vote if specified. */
+  if (init->mvdis)
+  {
+    usart->CTRL |= USART_CTRL_MVDIS;
+  }
 
-  /* Reset bits that should be reset for normal UART mode or reconfigured */
-  usart->CTRL &= ~(_USART_CTRL_SYNC_MASK |
-                   _USART_CTRL_CLKPOL_MASK |
-                   _USART_CTRL_CLKPHA_MASK |
-                   _USART_CTRL_CSMA_MASK |
-                   _USART_CTRL_SCMODE_MASK |
-                   _USART_CTRL_SCRETRANS_MASK);
+  /* Configure PRS input mode. */
+  if (init->prsRxEnable)
+  {
+    usart->INPUT = (uint32_t)init->prsRxCh | USART_INPUT_RXPRS;
+  }
+#endif
 
   /* Configure databits, stopbits and parity */
   usart->FRAME = (uint32_t)(init->databits) |
@@ -526,13 +543,10 @@ void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init)
  *
  * @details
  *   This function will configure basic settings in order to operate in
- *   synchronous mode. Consider using USART_Reset() prior to this function if
- *   state of configuration is not known, since only configuration settings
- *   specified by @p init are set.
+ *   synchronous mode.
  *
- *   Special control setup not covered by this function may be done either
- *   before or after using this function (but normally before enabling)
- *   by direct modification of the CTRL register.
+ *   Special control setup not covered by this function must be done after
+ *   using this function by direct modification of the CTRL register.
  *
  *   Notice that pins used by the USART module must be properly configured
  *   by the user explicitly, in order for the USART to work as intended.
@@ -552,30 +566,23 @@ void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init)
   /* Make sure the module exists on the selected chip */
   EFM_ASSERT(USART_REF_VALID(usart));
 
-  /* Ensure disabled while doing config */
-  usart->CMD = USART_CMD_RXDIS | USART_CMD_TXDIS | USART_CMD_MASTERDIS;
-
-  /* Reset bits that should be reset for synchronous mode or needs reconfig */
-  usart->CTRL &= ~(_USART_CTRL_CLKPOL_MASK |
-                   _USART_CTRL_CLKPHA_MASK |
-                   _USART_CTRL_MSBF_MASK |
-                   _USART_CTRL_SCMODE_MASK |
-                   _USART_CTRL_SCRETRANS_MASK);
+  /* Init USART registers to HW reset state. */
+  USART_Reset(usart);
 
   /* Set bits for synchronous mode */
-  usart->CTRL |= USART_CTRL_SYNC | (uint32_t)(init->clockMode);
-  if (init->msbf)
-  {
-    usart->CTRL |= USART_CTRL_MSBF;
-  }
+  usart->CTRL |= (USART_CTRL_SYNC) |
+                 ((uint32_t)init->clockMode) |
+                 (init->msbf ? USART_CTRL_MSBF : 0);
 
-  /* Make sure IrDA is disabled */
-  usart->IRCTRL &= ~USART_IRCTRL_IREN;
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  usart->CTRL |= (init->prsRxEnable ? USART_INPUT_RXPRS : 0) |
+                 (init->autoTx      ? USART_CTRL_AUTOTX : 0);
+#endif
 
   /* Configure databits, leave stopbits and parity at reset default (not used) */
-  usart->FRAME = (uint32_t)(init->databits) |
-                 USART_FRAME_STOPBITS_DEFAULT |
-                 USART_FRAME_PARITY_DEFAULT;
+  usart->FRAME = ((uint32_t)(init->databits)) |
+                 (USART_FRAME_STOPBITS_DEFAULT) |
+                 (USART_FRAME_PARITY_DEFAULT);
 
   /* Configure baudrate */
   USART_BaudrateSyncSet(usart, init->refFreq, init->baudrate);
@@ -596,13 +603,11 @@ void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init)
  *
  * @details
  *   This function will configure basic settings in order to operate in
- *   asynchronous IrDA mode. Consider using USART_Reset() prior to this function
- *   if state of configuration is not known, since only configuration settings
- *   specified by @p init are set.
+ *   asynchronous IrDA mode.
  *
- *   Special control setup not covered by this function may be done either
- *   before or after using this function (but normally before enabling)
- *   by direct modification of the CTRL register.
+ *   Special control setup not covered by this function must be done after
+ *   using this function by direct modification of the CTRL and IRCTRL
+ *   registers.
  *
  *   Notice that pins used by the USART/UART module must be properly configured
  *   by the user explicitly, in order for the USART/UART to work as intended.
@@ -631,20 +636,76 @@ void USART_InitIrDA(USART_InitIrDA_TypeDef *init)
   {
     USART0->CTRL |= USART_CTRL_RXINV;
   }
-  else
-  {
-    USART0->CTRL &= ~(USART_CTRL_RXINV);
-  }
 
   /* Configure IrDA */
   USART0->IRCTRL |= (uint32_t)init->irPw |
                     (uint32_t)init->irPrsSel |
-                   ((uint32_t)init->irFilt << _USART_IRCTRL_IRFILT_SHIFT) |
-                   ((uint32_t)init->irPrsEn << _USART_IRCTRL_IRPRSEN_SHIFT);
+                    ((uint32_t)init->irFilt << _USART_IRCTRL_IRFILT_SHIFT) |
+                    ((uint32_t)init->irPrsEn << _USART_IRCTRL_IRPRSEN_SHIFT);
 
   /* Enable IrDA */
   USART0->IRCTRL |= USART_IRCTRL_IREN;
 }
+
+
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Init USART for I2S mode.
+ *
+ * @details
+ *   This function will configure basic settings in order to operate in I2S
+ *   mode.
+ *
+ *   Special control setup not covered by this function must be done after
+ *   using this function by direct modification of the CTRL and I2SCTRL
+ *   registers.
+ *
+ *   Notice that pins used by the USART module must be properly configured
+ *   by the user explicitly, in order for the USART to work as intended.
+ *   (When configuring pins, one should remember to consider the sequence of
+ *   configuration, in order to avoid unintended pulses/glitches on output
+ *   pins.)
+ *
+ * @param[in] usart
+ *   Pointer to USART peripheral register block. (UART does not support this
+ *   mode.)
+ *
+ * @param[in] init
+ *   Pointer to initialization structure used to configure basic I2S setup.
+ *
+ * @note
+ *   This function does not apply to all USART's. Refer to chip manuals.
+ *
+ ******************************************************************************/
+void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init)
+{
+  USART_Enable_TypeDef enable;
+
+  /* Make sure the module exists on the selected chip */
+  EFM_ASSERT(USART_I2S_VALID(usart));
+
+  /* Override the enable setting. */
+  enable            = init->sync.enable;
+  init->sync.enable = usartDisable;
+
+  /* Init USART as a sync device. */
+  USART_InitSync(usart, &init->sync);
+
+  /* Configure and enable I2CCTRL register acording to selected mode. */
+  usart->I2SCTRL = ((uint32_t)init->format) |
+                   ((uint32_t)init->justify) |
+                   (init->delay    ? USART_I2SCTRL_DELAY    : 0) |
+                   (init->dmaSplit ? USART_I2SCTRL_DMASPLIT : 0) |
+                   (init->mono     ? USART_I2SCTRL_MONO     : 0) |
+                   (USART_I2SCTRL_EN);
+
+  if (enable != usartDisable)
+  {
+    USART_Enable(usart, enable);
+  }
+}
+#endif
 
 
 /***************************************************************************//**
@@ -672,7 +733,21 @@ void USART_Reset(USART_TypeDef *usart)
   usart->CLKDIV   = _USART_CLKDIV_RESETVALUE;
   usart->IEN      = _USART_IEN_RESETVALUE;
   usart->IFC      = _USART_IFC_MASK;
-  usart->IRCTRL   = _USART_IRCTRL_RESETVALUE;
+
+  if (USART_IRDA_VALID(usart))
+  {
+    usart->IRCTRL = _USART_IRCTRL_RESETVALUE;
+  }
+
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  usart->INPUT = _USART_INPUT_RESETVALUE;
+
+  if (USART_I2S_VALID(usart))
+  {
+    usart->I2SCTRL = _USART_I2SCTRL_RESETVALUE;
+  }
+#endif
+
   /* Do not reset route register, setting should be done independently */
 }
 
@@ -700,7 +775,8 @@ void USART_Reset(USART_TypeDef *usart)
  ******************************************************************************/
 uint8_t USART_Rx(USART_TypeDef *usart)
 {
-  while (!(usart->STATUS & USART_STATUS_RXDATAV)) ;
+  while (!(usart->STATUS & USART_STATUS_RXDATAV))
+    ;
 
   return (uint8_t)(usart->RXDATA);
 }
@@ -729,7 +805,8 @@ uint8_t USART_Rx(USART_TypeDef *usart)
  ******************************************************************************/
 uint16_t USART_RxDouble(USART_TypeDef *usart)
 {
-  while (!(usart->STATUS & USART_STATUS_RXFULL)) ;
+  while (!(usart->STATUS & USART_STATUS_RXFULL))
+    ;
 
   return (uint16_t)(usart->RXDOUBLE);
 }
@@ -758,7 +835,8 @@ uint16_t USART_RxDouble(USART_TypeDef *usart)
  ******************************************************************************/
 uint32_t USART_RxDoubleExt(USART_TypeDef *usart)
 {
-  while (!(usart->STATUS & USART_STATUS_RXFULL)) ;
+  while (!(usart->STATUS & USART_STATUS_RXFULL))
+    ;
 
   return usart->RXDOUBLEX;
 }
@@ -787,7 +865,8 @@ uint32_t USART_RxDoubleExt(USART_TypeDef *usart)
  ******************************************************************************/
 uint16_t USART_RxExt(USART_TypeDef *usart)
 {
-  while (!(usart->STATUS & USART_STATUS_RXDATAV)) ;
+  while (!(usart->STATUS & USART_STATUS_RXDATAV))
+    ;
 
   return (uint16_t)(usart->RXDATAX);
 }
@@ -819,8 +898,9 @@ uint16_t USART_RxExt(USART_TypeDef *usart)
 void USART_Tx(USART_TypeDef *usart, uint8_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(usart->STATUS & USART_STATUS_TXBL)) ;
-  usart->TXDATA = (uint32_t) data;
+  while (!(usart->STATUS & USART_STATUS_TXBL))
+    ;
+  usart->TXDATA = (uint32_t)data;
 }
 
 
@@ -854,8 +934,9 @@ void USART_Tx(USART_TypeDef *usart, uint8_t data)
 void USART_TxDouble(USART_TypeDef *usart, uint16_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(usart->STATUS & USART_STATUS_TXBL)) ;
-  usart->TXDOUBLE = (uint32_t) data;
+  while (!(usart->STATUS & USART_STATUS_TXBL))
+    ;
+  usart->TXDOUBLE = (uint32_t)data;
 }
 
 
@@ -889,7 +970,8 @@ void USART_TxDouble(USART_TypeDef *usart, uint16_t data)
 void USART_TxDoubleExt(USART_TypeDef *usart, uint32_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(usart->STATUS & USART_STATUS_TXBL)) ;
+  while (!(usart->STATUS & USART_STATUS_TXBL))
+    ;
   usart->TXDOUBLEX = data;
 }
 
@@ -916,8 +998,9 @@ void USART_TxDoubleExt(USART_TypeDef *usart, uint32_t data)
 void USART_TxExt(USART_TypeDef *usart, uint16_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(usart->STATUS & USART_STATUS_TXBL)) ;
-  usart->TXDATAX = (uint32_t) data;
+  while (!(usart->STATUS & USART_STATUS_TXBL))
+    ;
+  usart->TXDATAX = (uint32_t)data;
 }
 
 

@@ -2,7 +2,7 @@
  * @file
  * @brief General Purpose IO (GPIO) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -31,6 +31,7 @@
 #include <stdbool.h>
 #include "efm32.h"
 #include "efm32_bitband.h"
+#include "efm32_assert.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,6 +118,9 @@ typedef enum
  ******************************************************************************/
 
 void GPIO_DbgLocationSet(unsigned int location);
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+static __INLINE void GPIO_EM4SetPinRetention(bool enable);
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -132,7 +136,7 @@ void GPIO_DbgLocationSet(unsigned int location);
  ******************************************************************************/
 static __INLINE void GPIO_DbgSWDClkEnable(bool enable)
 {
-  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWCLKPEN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWCLKPEN_SHIFT, (unsigned int)enable);
 }
 
 
@@ -150,7 +154,7 @@ static __INLINE void GPIO_DbgSWDClkEnable(bool enable)
  ******************************************************************************/
 static __INLINE void GPIO_DbgSWDIOEnable(bool enable)
 {
-  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWDIOPEN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWDIOPEN_SHIFT, (unsigned int)enable);
 }
 
 
@@ -169,11 +173,97 @@ static __INLINE void GPIO_DbgSWDIOEnable(bool enable)
  ******************************************************************************/
 static __INLINE void GPIO_DbgSWOEnable(bool enable)
 {
-  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWOPEN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(&(GPIO->ROUTE), _GPIO_ROUTE_SWOPEN_SHIFT, (unsigned int)enable);
 }
 
 
 void GPIO_DriveModeSet(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef mode);
+
+
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+/**************************************************************************//**
+ * @brief
+ *   Disable GPIO pin wake-up from EM4.
+ *
+ * @param[in] pinmask
+ *   Bitmask containing the bitwise logic OR of which GPIO pin(s) to disable.
+ *   Refer to Reference Manuals for pinmask to GPIO port/pin mapping.
+ *****************************************************************************/
+static __INLINE void GPIO_EM4DisablePinWakeup(uint32_t pinmask)
+{
+  EFM_ASSERT((pinmask & ~_GPIO_EM4WUEN_MASK) == 0);
+
+  GPIO->EM4WUEN &= ~pinmask;
+}
+
+
+/**************************************************************************//**
+ * @brief
+ *   Enable GPIO pin wake-up from EM4. When the function exits,
+ *   EM4 mode can be safely entered.
+ *
+ * @note
+ *   It is assumed that the GPIO pin modes are set correctly.
+ *   Valid modes are @ref gpioModeInput and @ref gpioModeInputPull.
+ *
+ * @param[in] pinmask
+ *   Bitmask containing the bitwise logic OR of which GPIO pin(s) to enable.
+ *   Refer to Reference Manuals for pinmask to GPIO port/pin mapping.
+ * @param[in] polaritymask
+ *   Bitmask containing the bitwise logic OR of GPIO pin(s) wake-up polarity.
+ *   Refer to Reference Manuals for pinmask to GPIO port/pin mapping.
+ *****************************************************************************/
+static __INLINE void GPIO_EM4EnablePinWakeup(uint32_t pinmask,
+                                             uint32_t polaritymask)
+{
+  EFM_ASSERT((pinmask & ~_GPIO_EM4WUEN_MASK) == 0);
+  EFM_ASSERT((polaritymask & ~_GPIO_EM4WUPOL_MASK) == 0);
+
+  GPIO->EM4WUPOL &= ~pinmask;               /* Set wakeup polarity */
+  GPIO->EM4WUPOL |= pinmask & polaritymask;
+  GPIO->EM4WUEN  |= pinmask;                /* Enable wakeup */
+
+  GPIO_EM4SetPinRetention(true);            /* Enable pin retention */
+
+  GPIO->CMD = GPIO_CMD_EM4WUCLR;            /* Clear wake-up logic */
+}
+
+/**************************************************************************//**
+ * @brief
+ *   Check which GPIO pin(s) that caused a wake-up from EM4.
+ *
+ * @return
+ *   Bitmask containing the bitwise logic OR of which GPIO pin(s) caused the
+ *   wake-up. Refer to Reference Manuals for pinmask to GPIO port/pin mapping.
+ *****************************************************************************/
+static __INLINE uint32_t GPIO_EM4GetPinWakeupCause(void)
+{
+  return GPIO->EM4WUCAUSE & _GPIO_EM4WUCAUSE_MASK;
+}
+
+
+/**************************************************************************//**
+ * @brief
+ *   Enable GPIO pin retention of output enable, output value, pull enable and
+ *   pull direction in EM4.
+ *
+ * @param[in] enable
+ *   @li true - enable EM4 pin retention.
+ *   @li false - disable EM4 pin retention.
+ *****************************************************************************/
+static __INLINE void GPIO_EM4SetPinRetention(bool enable)
+{
+  if (enable)
+  {
+    GPIO->CTRL |= GPIO_CTRL_EM4RET;
+  }
+  else
+  {
+    GPIO->CTRL &= ~GPIO_CTRL_EM4RET;
+  }
+}
+#endif
+
 
 /***************************************************************************//**
  * @brief
@@ -183,12 +273,12 @@ void GPIO_DriveModeSet(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef mode);
  *   Disabling input sensing if not used, can save some energy consumption.
  *
  * @param[in] val
- *   Logical OR of one or more of:
+ *   Bitwise logic OR of one or more of:
  *   @li GPIO_INSENSE_INTSENSE - interrupt input sensing.
  *   @li GPIO_INSENSE_PRSSENSE - peripheral reflex system input sensing.
  *
  * @param[in] mask
- *   Mask containing logical OR of bits similar as for @p val used to indicate
+ *   Mask containing bitwise logic OR of bits similar as for @p val used to indicate
  *   which input sense options to disable/enable.
  ******************************************************************************/
 static __INLINE void GPIO_InputSenseSet(uint32_t val, uint32_t mask)
@@ -202,7 +292,7 @@ static __INLINE void GPIO_InputSenseSet(uint32_t val, uint32_t mask)
  *   Clear one or more pending GPIO interrupts.
  *
  * @param[in] flags
- *   GPIO interrupt sources to clear.
+ *   Bitwise logic OR of GPIO interrupt sources to clear.
  ******************************************************************************/
 static __INLINE void GPIO_IntClear(uint32_t flags)
 {
@@ -258,6 +348,34 @@ static __INLINE void GPIO_IntEnable(uint32_t flags)
 static __INLINE uint32_t GPIO_IntGet(void)
 {
   return(GPIO->IF);
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending GPIO interrupt flags.
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @note
+ *   Interrupt flags are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled GPIO interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in GPIO_IEN register
+ *     and
+ *   - the OR combination of valid interrupt flags in GPIO_IF register.
+ ******************************************************************************/
+static __INLINE uint32_t GPIO_IntGetEnabled(void)
+{
+  uint32_t tmp;
+
+  /* Store GPIO->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = GPIO->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return GPIO->IF & tmp;
 }
 
 

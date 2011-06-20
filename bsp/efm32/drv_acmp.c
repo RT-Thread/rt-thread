@@ -12,6 +12,7 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-02-21	onelife		Initial creation for EFM32
+ * 2011-06-17	onelife		Modify init and control function for efm32lib v2 upgrading
  *********************************************************************/
  
 /******************************************************************//**
@@ -23,9 +24,16 @@
 #include "board.h"
 #include "drv_acmp.h"
 
+#if (defined(RT_USING_ACMP0) || defined(RT_USING_ACMP1))
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_ACMP_DEBUG
+#define acmp_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define acmp_debug(format,args...)
+#endif
+
 /* Private variables ------------------------------------------------------------*/
 #ifdef RT_USING_ACMP0
 	static struct rt_device acmp0_device;
@@ -103,7 +111,7 @@ static rt_err_t rt_acmp_control(
 	case RT_DEVICE_CTRL_SUSPEND:
 		/* Suspend device */
 		dev->flag |= RT_DEVICE_FLAG_SUSPENDED;
-		ACMP_DisableNoReset(acmp->acmp_device);
+		ACMP_Disable(acmp->acmp_device);
 		break;
 
 	case RT_DEVICE_CTRL_RESUME:
@@ -115,15 +123,10 @@ static rt_err_t rt_acmp_control(
 	case RT_DEVICE_CTRL_ACMP_INIT:
 		{
 			rt_bool_t int_en = false;
-
-#ifdef RT_ACMP_DEBUG
-			rt_kprintf("ACMP: control -> init start\n");
-#endif
-
-			/* change device setting */
 			struct efm32_acmp_control_t *control;
 
 			control = (struct efm32_acmp_control_t *)args;
+			acmp_debug("ACMP: control -> init start\n");
 
 			/* Configure ACMPn */
 			if (control->init == RT_NULL) 
@@ -244,6 +247,86 @@ void rt_hw_acmp_isr(rt_device_t dev)
 
 /******************************************************************//**
 * @brief
+*	Initialize the specified ACMP unit 
+*
+* @details
+*
+* @note
+*
+* @param[in] device
+*	Pointer to device descriptor
+*
+* @param[in] unitNumber
+*	Unit number
+*
+* @return
+*	Pointer to ACMP device  
+*********************************************************************/
+static struct efm32_acmp_device_t *rt_hw_acmp_unit_init(
+	rt_device_t device,
+	rt_uint8_t 	unitNumber)
+{
+	struct efm32_acmp_device_t 		*acmp;
+	efm32_irq_hook_init_t			hook;
+	CMU_Clock_TypeDef				acmpClock;
+
+	do
+	{
+		/* Allocate device */
+		acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
+		if (acmp == RT_NULL)
+		{
+			acmp_debug("no memory for ACMP%d driver\n", unitNumber);
+			break;
+		}
+
+		/* Initialization */
+		if (unitNumber >= ACMP_COUNT)
+		{
+			break;
+		}
+		switch (unitNumber)
+		{
+		case 0:
+			acmp->acmp_device	= ACMP0;
+			acmpClock 			= (CMU_Clock_TypeDef)cmuClock_ACMP0;
+			break;
+			
+		case 1:
+			acmp->acmp_device	= ACMP1;
+			acmpClock 			= (CMU_Clock_TypeDef)cmuClock_ACMP1;
+			break;
+
+		default:
+			break;
+		}
+
+		/* Enable ACMP clock */
+		CMU_ClockEnable(acmpClock, true);
+
+		/* Reset */
+		ACMP_Reset(acmp->acmp_device);
+
+		/* Config interrupt and NVIC */
+		hook.type			= efm32_irq_type_acmp;
+		hook.unit			= unitNumber;
+		hook.cbFunc 		= rt_hw_acmp_isr;
+		hook.userPtr		= device;
+		efm32_irq_hook_register(&hook);
+
+		return acmp;
+	} while(0);
+
+	if (acmp)
+	{
+		rt_free(acmp);
+	}
+	rt_kprintf("ACMP: Init failed!\n");
+	return RT_NULL;
+}
+
+/******************************************************************//**
+* @brief
 *	Initialize all ACMP module related hardware and register ACMP device to kernel
 *
 * @details
@@ -254,58 +337,19 @@ void rt_hw_acmp_isr(rt_device_t dev)
 void rt_hw_acmp_init(void)
 {
 	struct efm32_acmp_device_t 	*acmp;
-	efm32_irq_hook_init_t		hook;
 
 #ifdef RT_USING_ACMP0
-	acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
-	if (acmp == RT_NULL)
+	if ((acmp = rt_hw_acmp_unit_init(&acmp0_device, 0)) != RT_NULL)
 	{
-#ifdef RT_ACMP_DEBUG
-		rt_kprintf("no memory for ACMP0 driver\n");
-#endif
-		return;
+		rt_hw_acmp_register(&acmp0_device, RT_ACMP0_NAME, EFM32_NO_DATA, acmp);	
 	}
-	acmp->acmp_device		= ACMP0;
-
-	/* Enable clock for ACMP0 module */
-	CMU_ClockEnable(cmuClock_ACMP0, true);
-
-	/* Reset */
-	 ACMP_Reset(ACMP0);
-
-	hook.type			= efm32_irq_type_acmp;
-	hook.unit			= 0;
-	hook.cbFunc 		= rt_hw_acmp_isr;
-	hook.userPtr		= &acmp0_device;
-	efm32_irq_hook_register(&hook);
-
-	rt_hw_acmp_register(&acmp0_device, RT_ACMP0_NAME, EFM32_NO_DATA, acmp);	
 #endif
 
 #ifdef RT_USING_ACMP1
-	acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
-	if (acmp == RT_NULL)
+	if ((acmp = rt_hw_acmp_unit_init(&acmp1_device, 1)) != RT_NULL)
 	{
-#ifdef RT_ACMP_DEBUG
-		rt_kprintf("no memory for ACMP1 driver\n");
-#endif
-		return;
+		rt_hw_acmp_register(&acmp1_device, RT_ACMP1_NAME, EFM32_NO_DATA, acmp);	
 	}
-	acmp->acmp_device		= ACMP1;
-
-	/* Enable clock for ACMP1 module */
-	CMU_ClockEnable(cmuClock_ACMP1, true);
-
-	/* Reset */
-	 ACMP_Reset(ACMP1);
-
-	hook.type			= efm32_irq_type_acmp;
-	hook.unit			= 0;
-	hook.cbFunc 		= rt_hw_acmp_isr;
-	hook.userPtr		= &acmp0_device;
-	efm32_irq_hook_register(&hook);
-
-	rt_hw_acmp_register(&acmp1_device, RT_ACMP1_NAME, EFM32_NO_DATA, acmp);	
 #endif
 
 }
@@ -369,6 +413,7 @@ ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq)
 	}
 }
 
+#endif
 /******************************************************************//**
  * @}
 *********************************************************************/

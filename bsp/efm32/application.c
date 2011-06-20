@@ -37,6 +37,10 @@
 #ifdef EFM32_USING_SFLASH
 #include "dev_sflash.h"
 #endif
+#ifdef EFM32_USING_SPISD
+#include "drv_sdcard.h"
+#endif
+
 
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
@@ -48,40 +52,65 @@ rt_uint32_t	rt_system_status = 0;
 /* Private functions ------------------------------------------------------------*/
 void rt_demo_thread_entry(void* parameter)
 {
+#if defined(RT_USING_DFS)
+	/* Filesystem Initialization */
+	dfs_init();
+
+#if defined(RT_USING_DFS_ELMFAT)
+	/* init the elm chan FatFs filesystam*/
+	elm_init();
+
+#if defined(EFM32_USING_SPISD)
+	/* mount sd card fat partition 1 as root directory */
+	if (dfs_mount(SPISD_DEVICE_NAME, "/", "elm", 0, 0) == 0)
+	{
+		rt_kprintf("FatFs init OK\n");
+	}
+	else
+	{
+		rt_kprintf("FatFs init failed!\n");
+	}
+#endif
+#endif
+#endif
+
 #ifdef EFM32_USING_SFLASH
+{
 	rt_uint8_t i;
 	rt_uint8_t test[] = "123456789ABCDEF";
 	rt_uint8_t buf[30], buf2[30];
 
-	efm_spiFash_cmd(sflash_inst_rdid_l, EFM32_NO_DATA, buf, sizeof(buf));
+	efm_spiFlash_cmd(sflash_inst_rdid_l, EFM32_NO_DATA, buf, sizeof(buf));
 	rt_kprintf("Manuf ID: %x\n", buf[0]);
 	rt_kprintf("Memory type: %x\n", buf[1]);
 	rt_kprintf("Memory capacity: %x\n", buf[2]);
 	rt_kprintf("CFD length: %x\n", buf[3]);
 	rt_kprintf("CFD: %x%x%x...%x%x\n", buf[4], buf[5], buf[6], buf[18], buf[19]);
 
-	efm_spiFash_cmd(sflash_inst_wren, EFM32_NO_DATA, EFM32_NO_POINTER, EFM32_NO_DATA);
+	efm_spiFlash_cmd(sflash_inst_wren, EFM32_NO_DATA, EFM32_NO_POINTER, EFM32_NO_DATA);
 	do
 	{
-		efm_spiFash_cmd(sflash_inst_rdsr, EFM32_NO_DATA, buf2, sizeof(buf2));
+		efm_spiFlash_cmd(sflash_inst_rdsr, EFM32_NO_DATA, buf2, sizeof(buf2));
 		rt_kprintf("Status: %x\n", buf2[0]);
 	} while (buf2[0] == 0xFF);
 	rt_kprintf("Status: %x\n", buf2[0]);
 
 	//efm_spiFash_cmd(sflash_inst_pp, 0x000003F8, test, sizeof(test) - 1);
 
-	efm_spiFash_cmd(sflash_inst_rdsr, EFM32_NO_DATA, buf2, sizeof(buf2));
+	efm_spiFlash_cmd(sflash_inst_rdsr, EFM32_NO_DATA, buf2, sizeof(buf2));
 	rt_kprintf("Status: %x\n", buf2[0]);
 	
-	efm_spiFash_cmd(sflash_inst_read, 0x00000300, buf, sizeof(buf));
+	efm_spiFlash_cmd(sflash_inst_read, 0x00000300, buf, sizeof(buf));
 	rt_kprintf("READ: \n");
 	for (i = 0; i < sizeof(buf); i++)
 	{
 		rt_kprintf("%c\n", buf[i]);
 	}
 
-	//efm_spiFash_deinit();
+	//efm_spiFlash_deinit();
+}
 #endif
+	rt_kprintf("Demo End\n");
 }
 
 void rt_led_thread_entry(void* parameter)
@@ -109,10 +138,12 @@ int rt_application_init()
 {
 	rt_thread_t demo_thread, led_thread;
 
-#if (defined(EFM32_G290_DK) && defined(EFM32_USING_SFLASH))
-	/* Enable SPI access to Flash */
-	DVK_writeRegister(BC_SPI_CFG, 0);
-	efm_spiFash_init();
+#if defined(EFM32_USING_SFLASH)
+	efm_spiFlash_init();
+#endif
+
+#if defined(EFM32_USING_SPISD)
+	efm_spiSd_init();
 #endif
 
 	/* Initialize all device drivers (dev_?.c) */
@@ -121,11 +152,13 @@ int rt_application_init()
 		rt_kprintf("*** Failed to initialize LED driver!");
 		while(1); //Or do something?
 	}
+#if defined(RT_USING_ADC0)
 	if (rt_hw_misc_init() != RT_EOK)
 	{
 		rt_kprintf("*** Failed to miscellaneous driver!");
 		while(1); //Or do something?
 	}
+#endif
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	demo_thread = rt_thread_create(

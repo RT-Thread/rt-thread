@@ -3,7 +3,7 @@
  * @brief Reset Management Unit (RMU) peripheral module peripheral API
  *   for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup RMU
- * @brief EFM32 reset management unit utilities.
+ * @brief Reset Management Unit (RMU) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -56,7 +56,7 @@
  ******************************************************************************/
 void RMU_LockupResetDisable(bool disable)
 {
-  BITBAND_Peripheral(&(RMU->CTRL), _RMU_CTRL_LOCKUPRDIS_SHIFT, (unsigned int) disable);
+  BITBAND_Peripheral(&(RMU->CTRL), _RMU_CTRL_LOCKUPRDIS_SHIFT, (unsigned int)disable);
 }
 
 

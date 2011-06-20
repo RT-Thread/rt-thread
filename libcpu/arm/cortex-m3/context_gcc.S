@@ -13,6 +13,7 @@
  * Date			Author		Notes
  * 2009-10-11 	Bernard 		first version
  * 2010-12-29	onelife		Modify for EFM32
+ * 2011-06-17	onelife		Merge all of the assembly source code into context_gcc.S
  *********************************************************************/
  
 /******************************************************************//**
@@ -87,9 +88,9 @@ _reswitch:
  * R1 --> swith to thread stack
  * psr, pc, LR, R12, R3, R2, R1, R0 are pushed into [from] stack
  */
-	.global rt_hw_pend_sv
-	.type rt_hw_pend_sv, %function
-rt_hw_pend_sv:
+	.global PendSV_Handler
+	.type PendSV_Handler, %function
+PendSV_Handler:
 	/* disable interrupt to protect context switch */
 	MRS		R2, PRIMASK
 	CPSID	I
@@ -168,6 +169,18 @@ rt_hw_context_switch_to:
 rt_hw_interrupt_thread_switch:
 	BX		LR
 	NOP
+
+	.global HardFault_Handler
+	.type HardFault_Handler, %function
+HardFault_Handler:
+    /* get current context */
+    MRS     r0, psp                 /* get fault thread stack pointer */
+    PUSH    {lr}
+    BL      rt_hw_hard_fault_exception
+    POP     {lr}
+
+    ORR     lr, lr, #0x04
+    BX      lr
 
 /******************************************************************//**
  * @}

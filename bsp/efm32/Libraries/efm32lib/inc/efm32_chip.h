@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Chip initialization, SW workarounds for chip errata issues
+ * @brief Chip Initialization API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -42,6 +42,7 @@ extern "C" {
 
 /***************************************************************************//**
  * @addtogroup CHIP
+ * @brief Chip Initialization API for EFM32
  * @{
  ******************************************************************************/
 
@@ -49,7 +50,7 @@ extern "C" {
  * @brief
  *   Chip initialization routine for revision errata workarounds
  *
- * This init function will configure the EFM32 device to a state where it is 
+ * This init function will configure the EFM32 device to a state where it is
  * as similar as later revisions as possible, to improve software compatibility
  * with newer parts. See the device specific errata for details.
  *****************************************************************************/
@@ -63,28 +64,28 @@ static __INLINE void CHIP_Init(void)
   /* Engineering Sample calibration setup */
   if ((rev >> 24) == 0)
   {
-    reg   = (volatile uint32_t *) 0x400CA00C;
+    reg   = (volatile uint32_t *)0x400CA00C;
     *reg &= ~(0x70UL);
     /* DREG */
-    reg   = (volatile uint32_t *) 0x400C6020;
+    reg   = (volatile uint32_t *)0x400C6020;
     *reg &= ~(0xE0000000UL);
     *reg |= ~(7UL << 25);
   }
   if ((rev >> 24) <= 3)
   {
     /* DREG */
-    reg   = (volatile uint32_t *) 0x400C6020;
+    reg   = (volatile uint32_t *)0x400C6020;
     *reg &= ~(0x00001F80UL);
     /* Update CMU reset values */
-    reg  = (volatile uint32_t *) 0x400C8040;
+    reg  = (volatile uint32_t *)0x400C8040;
     *reg = 0;
-    reg  = (volatile uint32_t *) 0x400C8044;
+    reg  = (volatile uint32_t *)0x400C8044;
     *reg = 0;
-    reg  = (volatile uint32_t *) 0x400C8058;
+    reg  = (volatile uint32_t *)0x400C8058;
     *reg = 0;
-    reg  = (volatile uint32_t *) 0x400C8060;
+    reg  = (volatile uint32_t *)0x400C8060;
     *reg = 0;
-    reg  = (volatile uint32_t *) 0x400C8078;
+    reg  = (volatile uint32_t *)0x400C8078;
     *reg = 0;
   }
 
@@ -95,7 +96,7 @@ static __INLINE void CHIP_Init(void)
     /* to work. This will be fixed in later chip revisions, so only do for rev A. */
     if (chipRev.minor == 00)
     {
-      reg   = (volatile uint32_t *) 0x400C8040;
+      reg   = (volatile uint32_t *)0x400C8040;
       *reg |= 0x2;
     }
 
@@ -104,19 +105,19 @@ static __INLINE void CHIP_Init(void)
     /* later chip revisions, so only do for rev A+B. */
     if (chipRev.minor <= 0x01)
     {
-      reg   = (volatile uint32_t *) 0x400C8044;
+      reg   = (volatile uint32_t *)0x400C8044;
       *reg |= 0x1;
     }
   }
   /* Ensure correct ADC/DAC calibration value */
-  rev = *(volatile uint32_t *) 0x0FE081F0;
-  if ( rev < 0x4C8ABA00 )
+  rev = *(volatile uint32_t *)0x0FE081F0;
+  if (rev < 0x4C8ABA00)
   {
     uint32_t cal;
 
     /* Enable ADC/DAC clocks */
-    reg = (volatile uint32_t *) 0x400C8044UL;
-    *reg |= (1<<14|1<<11);
+    reg   = (volatile uint32_t *)0x400C8044UL;
+    *reg |= (1 << 14 | 1 << 11);
 
     /* Retrive calibration values */
     cal = ((*(volatile uint32_t *)(0x0FE081B4UL) & 0x00007F00UL) >>
@@ -132,19 +133,18 @@ static __INLINE void CHIP_Init(void)
             0) << 0;
 
     /* ADC0->CAL = 1.25 reference */
-    reg = (volatile uint32_t *) 0x40002034UL;
+    reg  = (volatile uint32_t *)0x40002034UL;
     *reg = cal;
 
     /* DAC0->CAL = 1.25 reference */
-    reg = (volatile uint32_t *) (0x4000402CUL);
-    cal = *(volatile uint32_t *) 0x0FE081C8UL;
+    reg  = (volatile uint32_t *)(0x4000402CUL);
+    cal  = *(volatile uint32_t *)0x0FE081C8UL;
     *reg = cal;
 
     /* Turn off ADC/DAC clocks */
-    reg = (volatile uint32_t *) 0x400C8044UL;
-    *reg &= ~(1<<14|1<<11);
+    reg   = (volatile uint32_t *)0x400C8044UL;
+    *reg &= ~(1 << 14 | 1 << 11);
   }
-
 }
 
 /** @} (end addtogroup SYSTEM) */

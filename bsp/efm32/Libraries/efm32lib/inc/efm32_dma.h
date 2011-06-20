@@ -2,7 +2,7 @@
  * @file
  * @brief Direct memory access (DMA) API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -156,7 +156,7 @@ typedef struct
    * or alternate descriptor completion. Mainly useful for ping-pong DMA
    * cycles. Set this value to 0 prior to configuring callback handling.
    */
-  uint8_t primary;
+  uint8_t             primary;
 } DMA_CB_TypeDef;
 
 
@@ -168,7 +168,7 @@ typedef struct
    * with respect to arbitration. Within a priority group, lower numbered
    * channels have higher priority than higher numbered channels.
    */
-  bool highPri;
+  bool     highPri;
 
   /**
    * Select if interrupt shall be enabled for channel (triggering interrupt
@@ -176,7 +176,7 @@ typedef struct
    * enabled if using the callback feature for a channel, and disabled if
    * not using the callback feature.
    */
-  bool enableInt;
+  bool     enableInt;
 
   /**
    * Channel control specifying the source of DMA signals. If accessing
@@ -210,13 +210,13 @@ typedef struct
 typedef struct
 {
   /** Destination increment size for each DMA transfer */
-  DMA_DataInc_TypeDef  dstInc;
+  DMA_DataInc_TypeDef       dstInc;
 
   /** Source increment size for each DMA transfer */
-  DMA_DataInc_TypeDef  srcInc;
+  DMA_DataInc_TypeDef       srcInc;
 
   /** DMA transfer unit size. */
-  DMA_DataSize_TypeDef size;
+  DMA_DataSize_TypeDef      size;
 
   /**
    * Arbitration rate, ie number of DMA transfers done before rearbitration
@@ -241,19 +241,19 @@ typedef struct
 typedef struct
 {
   /** Pointer to location to transfer data from. */
-  void                 *src;
+  void                      *src;
 
   /** Pointer to location to transfer data to. */
-  void                 *dst;
+  void                      *dst;
 
   /** Destination increment size for each DMA transfer */
-  DMA_DataInc_TypeDef  dstInc;
+  DMA_DataInc_TypeDef       dstInc;
 
   /** Source increment size for each DMA transfer */
-  DMA_DataInc_TypeDef  srcInc;
+  DMA_DataInc_TypeDef       srcInc;
 
   /** DMA transfer unit size. */
-  DMA_DataSize_TypeDef size;
+  DMA_DataSize_TypeDef      size;
 
   /**
    * Arbitration rate, ie number of DMA transfers done before rearbitration
@@ -281,7 +281,7 @@ typedef struct
    *  @li true - this is a peripheral scatter-gather cycle
    *  @li false - this is a memory scatter-gather cycle
    */
-  bool peripheral;
+  bool    peripheral;
 } DMA_CfgDescrSGAlt_TypeDef;
 
 

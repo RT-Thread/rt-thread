@@ -12,7 +12,7 @@
  **********************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2010-05-06	onelife		Initial creation for using EFM32 USART module
+ * 2011-05-06	onelife		Initial creation for using EFM32 USART module
  *********************************************************************/
 #ifndef __DEV_SFLASH_H__
 #define __DEV_SFLASH_H__
@@ -48,6 +48,9 @@ enum sflash_inst_type_t
 
 /* Exported constants ---------------------------------------------------------*/
 /* Exported macro -------------------------------------------------------------*/
+#define SFLASH_SPI_COMMAND_SKIP 	(1)
+#define SFLASH_SPI_READ_SKIP 		(2)
+
 #define SFLASH_INST_CODE_WREN 		(0x06)
 #define SFLASH_INST_CODE_WRDI 		(0x04)
 #define SFLASH_INST_CODE_RDID_L 	(0x9F)
@@ -91,9 +94,9 @@ enum sflash_inst_type_t
 #define SFLASH_REPLY_LEN_RDP 		(0)
 
 /* Exported functions --------------------------------------------------------- */
-rt_err_t efm_spiFash_init(void);
-rt_err_t efm_spiFash_deinit(void);
-rt_uint32_t efm_spiFash_cmd(
+rt_err_t efm_spiFlash_init(void);
+rt_err_t efm_spiFlash_deinit(void);
+rt_uint32_t efm_spiFlash_cmd(
 	enum sflash_inst_type_t command, 
 	rt_uint32_t address,
 	rt_uint8_t *buffer, 

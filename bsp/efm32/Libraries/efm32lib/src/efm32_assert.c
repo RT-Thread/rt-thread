@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief EFM32 peripheral library "assert" implementation.
- *
+ * @brief Assert API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -55,10 +54,11 @@
  ******************************************************************************/
 void assertEFM(const char *file, int line)
 {
-  (void) file; /* Unused parameter */
-  (void) line; /* Unused parameter */
+  (void)file;  /* Unused parameter */
+  (void)line;  /* Unused parameter */
 
-  while (1) ;
+  while (1)
+    ;
 }
 
 #endif /* DEBUG_EFM */

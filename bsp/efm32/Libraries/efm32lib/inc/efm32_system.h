@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief System utilities API for EFM32.
+ * @brief System API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,7 @@
 #ifndef __EFM32_SYSTEM_H
 #define __EFM32_SYSTEM_H
 
+#include <stdbool.h>
 #include "efm32.h"
 
 #ifdef __cplusplus
@@ -60,7 +61,8 @@ typedef struct
  *****************************   PROTOTYPES   **********************************
  ******************************************************************************/
 
-void SYSTEM_ChipRevisionGet(SYSTEM_ChipRevision_TypeDef *rev);
+void     SYSTEM_ChipRevisionGet(SYSTEM_ChipRevision_TypeDef *rev);
+uint32_t SYSTEM_GetCalibrationValue(volatile uint32_t *regAddress);
 
 /** @} (end addtogroup SYSTEM) */
 /** @} (end addtogroup EFM32_Library) */

@@ -2,7 +2,7 @@
  * @file
  * @brief Analog to Digital Converter (ADC) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -261,13 +261,13 @@ typedef struct
    * is at least 1 us. See ADC_TimebaseCalcDefault() for a way to obtain
    * a suggested timebase of at least 1 us.
    */
-  uint8_t timebase;
+  uint8_t                timebase;
 
   /** Clock division factor N, ADC clock =  HFPERCLK / (N + 1). */
-  uint8_t prescale;
+  uint8_t                prescale;
 
   /** Enable/disable conversion tailgating. */
-  bool    tailgate;
+  bool                   tailgate;
 } ADC_Init_TypeDef;
 
 /** Default config for ADC init structure. */
@@ -297,10 +297,10 @@ typedef struct
    * Sample reference selection. Notice that for external references, the
    * ADC calibration register must be set explicitly.
    */
-  ADC_Ref_TypeDef reference;
+  ADC_Ref_TypeDef     reference;
 
   /** Sample resolution. */
-  ADC_Res_TypeDef resolution;
+  ADC_Res_TypeDef     resolution;
 
   /**
    * Input scan selection. If single ended (@p diff is false), use logical
@@ -308,19 +308,19 @@ typedef struct
    * (@p diff is true), use logical combination of ADC_SCANCTRL_INPUTMASK_CHxCHy
    * defines. (Notice underscore prefix for defines used.)
    */
-  uint32_t input;
+  uint32_t            input;
 
   /** Select if single ended or differential input. */
-  bool     diff;
+  bool                diff;
 
   /** Peripheral reflex system trigger enable. */
-  bool     prsEnable;
+  bool                prsEnable;
 
   /** Select if left adjustment should be done. */
-  bool     leftAdjust;
+  bool                leftAdjust;
 
   /** Select if continuous conversion until explicit stop. */
-  bool     rep;
+  bool                rep;
 } ADC_InitScan_TypeDef;
 
 /** Default config for ADC scan init structure. */
@@ -344,19 +344,19 @@ typedef struct
    * Peripheral reflex system trigger selection. Only applicable if @p prsEnable
    * is enabled.
    */
-  ADC_PRSSEL_TypeDef  prsSel;
+  ADC_PRSSEL_TypeDef      prsSel;
 
   /** Acquisition time (in ADC clock cycles). */
-  ADC_AcqTime_TypeDef acqTime;
+  ADC_AcqTime_TypeDef     acqTime;
 
   /**
    * Sample reference selection. Notice that for external references, the
    * ADC calibration register must be set explicitly.
    */
-  ADC_Ref_TypeDef reference;
+  ADC_Ref_TypeDef         reference;
 
   /** Sample resolution. */
-  ADC_Res_TypeDef resolution;
+  ADC_Res_TypeDef         resolution;
 
   /**
    * Sample input selection, use single ended or differential input according
@@ -442,8 +442,8 @@ void ADC_InitSingle(ADC_TypeDef *adc, const ADC_InitSingle_TypeDef *init);
  *   Pointer to ADC peripheral register block.
  *
  * @param[in] flags
- *   Pending ADC interrupt source to clear. Use a logical OR combination of
- *   valid interrupt flags for the ADC module (ADC_IF_nnn).
+ *   Pending ADC interrupt source to clear. Use a bitwise logic OR combination
+ *   of valid interrupt flags for the ADC module (ADC_IF_nnn).
  ******************************************************************************/
 static __INLINE void ADC_IntClear(ADC_TypeDef *adc, uint32_t flags)
 {
@@ -459,7 +459,7 @@ static __INLINE void ADC_IntClear(ADC_TypeDef *adc, uint32_t flags)
  *   Pointer to ADC peripheral register block.
  *
  * @param[in] flags
- *   ADC interrupt sources to disable. Use a logical OR combination of
+ *   ADC interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the ADC module (ADC_IF_nnn).
  ******************************************************************************/
 static __INLINE void ADC_IntDisable(ADC_TypeDef *adc, uint32_t flags)
@@ -481,7 +481,7 @@ static __INLINE void ADC_IntDisable(ADC_TypeDef *adc, uint32_t flags)
  *   Pointer to ADC peripheral register block.
  *
  * @param[in] flags
- *   ADC interrupt sources to enable. Use a logical OR combination of
+ *   ADC interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the ADC module (ADC_IF_nnn).
  ******************************************************************************/
 static __INLINE void ADC_IntEnable(ADC_TypeDef *adc, uint32_t flags)
@@ -501,7 +501,7 @@ static __INLINE void ADC_IntEnable(ADC_TypeDef *adc, uint32_t flags)
  *   Pointer to ADC peripheral register block.
  *
  * @return
- *   ADC interrupt sources pending. A logical OR combination of valid
+ *   ADC interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the ADC module (ADC_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t ADC_IntGet(ADC_TypeDef *adc)
@@ -518,8 +518,8 @@ static __INLINE uint32_t ADC_IntGet(ADC_TypeDef *adc)
  *   Pointer to ADC peripheral register block.
  *
  * @param[in] flags
- *   ADC interrupt sources to set to pending. Use a logical OR combination of
- *   valid interrupt flags for the ADC module (ADC_IF_nnn).
+ *   ADC interrupt sources to set to pending. Use a bitwise logic OR combination
+ *   of valid interrupt flags for the ADC module (ADC_IF_nnn).
  ******************************************************************************/
 static __INLINE void ADC_IntSet(ADC_TypeDef *adc, uint32_t flags)
 {
@@ -541,7 +541,7 @@ uint8_t ADC_PrescaleCalc(uint32_t adcFreq, uint32_t hfperFreq);
  ******************************************************************************/
 static __INLINE void ADC_Start(ADC_TypeDef *adc, ADC_Start_TypeDef cmd)
 {
-  adc->CMD = (uint32_t) cmd;
+  adc->CMD = (uint32_t)cmd;
 }
 
 void ADC_Reset(ADC_TypeDef *adc);

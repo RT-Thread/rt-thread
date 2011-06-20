@@ -53,33 +53,59 @@ extern rt_uint32_t rt_system_status;
 #define DEBUG_EFM
 #define DEBUG_EFM_USER
 
-#define EFM32_SFLASH_DEBUG
-
 #define EFM32_NO_DATA				(0)
 #define EFM32_NO_OFFSET				(-1)
 #define EFM32_NO_POINTER			(RT_NULL)
 
-#define EFM32_SRAM_END 				(RAM_MEM_BASE + SRAM_SIZE)
+/* SECTION: SPI Flash */
+#if defined(EFM32_USING_SFLASH)
+#define USART_0_AUTOCS 				(0)
+#define SFLASH_CS_PORT 				(gpioPortC)
+#define SFLASH_CS_PIN 				(8)
+#endif
 
+/* SECTION: Micro SD */
+#if defined(EFM32_USING_SPISD)
+#define USART_0_AUTOCS 				(1)
+#define SD_CS_PORT 					(gpioPortC)
+#define SD_CS_PIN 					(8)
+#endif
+
+/* SECTION: SYSTEM */
+#define EFM32_SRAM_END 				(RAM_MEM_BASE + SRAM_SIZE)
 #define EFM32_BASE_PRI_DEFAULT 		(0x0UL << 5)
 #define EFM32_IRQ_PRI_DEFAULT 		(0x4UL << 5)
-
 #if (defined(EFM32_G890_STK) || defined(EFM32_G290_DK))
 #define EFM32_HFXO_FREQUENCY 		(32000000)
 #else
 #define EFM32_HFXO_FREQUENCY		(00000000)
 #endif
 
-#define UART_BAUDRATE				(115200)
+/* SECTION: USART */
 #define USART_RX_BUFFER_SIZE		(64)
 
-/* Max SPI clock: HFPERCLK/2 for master, HFPERCLK/8 for slave */
+/* SUBSECTION: UART */
+#define UART_BAUDRATE				(115200)
+
+/* SUBSECTION: SPI */
 #define SPI_BAUDRATE				(4000000)
 
-/* Slave select PIN setting for unit 2, 1 and 0 */
-#define SPI_AUTOCS_ENABLE 			((0 << 2) | (0 << 1) | (1 << 0))
+#ifndef USART_0_AUTOCS
+#define USART_0_AUTOCS 				(0)
+#endif
+#ifndef USART_1_AUTOCS
+#define USART_1_AUTOCS 				(0)
+#endif
+#ifndef USART_2_AUTOCS
+#define USART_2_AUTOCS 				(0)
+#endif
+/* Auto Slave Select */
+#define SPI_AUTOCS_ENABLE 			((USART_2_AUTOCS << 2) | (USART_1_AUTOCS << 1) | (USART_0_AUTOCS << 0))
 
+/* SECTION: I2C */
 #define IIC_RX_BUFFER_SIZE			(32)
+
+/* SECTION: ADC */
 
 #define ADC_INIT_REF				adcRef2V5
 #define ADC_INIT_CH 				adcSingleInpCh5
@@ -95,10 +121,29 @@ extern rt_uint32_t rt_system_status;
 #define CONSOLE_DEVICE 				"no"
 #endif
 
-#if defined(EFM32_G290_DK)
-#define EFM32_USING_SFLASH
-#endif
-#define SFLASH_USING_DEVICE_NAME 	RT_USART0_NAME
+
+/* The following defines should be consistent with those in diskio.h */
+#define CTRL_SYNC						0
+#define GET_SECTOR_COUNT				1
+#define GET_SECTOR_SIZE					2
+#define GET_BLOCK_SIZE					3
+#define MMC_GET_TYPE					10
+#define MMC_GET_CSD						11
+#define MMC_GET_CID						12
+#define MMC_GET_OCR						13
+#define MMC_GET_SDSTAT					14
+/* The above defines should be consistent with those in diskio.h */
+
+/* I/O control options */
+#define RT_DEVICE_CTRL_SD_SYNC 			CTRL_SYNC
+#define RT_DEVICE_CTRL_SD_GET_SCOUNT 	GET_SECTOR_COUNT
+#define RT_DEVICE_CTRL_SD_GET_SSIZE		GET_SECTOR_SIZE
+#define RT_DEVICE_CTRL_SD_GET_BSIZE 	GET_BLOCK_SIZE
+#define RT_DEVICE_CTRL_SD_GET_TYPE 		MMC_GET_TYPE
+#define RT_DEVICE_CTRL_SD_GET_CSD		MMC_GET_CSD
+#define RT_DEVICE_CTRL_SD_GET_CID 		MMC_GET_CID
+#define RT_DEVICE_CTRL_SD_GET_OCR 		MMC_GET_OCR
+#define RT_DEVICE_CTRL_SD_GET_SDSTAT	MMC_GET_SDSTAT
 
 /*! fixme: move the following define to Rtdef.h */
 #define RT_DEVICE_CTRL_USART_RBUFFER	(0xF1)		/*!< set USART rx buffer */

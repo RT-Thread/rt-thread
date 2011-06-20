@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Inter-integrated circuit (I2C) peripheral module library
- *   implementation for EFM32.
+ * @brief Inter-integrated Circuit (I2C) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -26,7 +25,6 @@
  * arising from your use of this Software.
  *
  ******************************************************************************/
-
 #include "efm32.h"
 #include "efm32_i2c.h"
 #include "efm32_cmu.h"
@@ -40,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup I2C
- * @brief EFM32 inter-integrated circuit utilities.
+ * @brief Inter-integrated Circuit (I2C) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -51,7 +49,13 @@
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
 
 /** Validation of I2C register block pointer reference for assert statements. */
+#if defined(_EFM32_GECKO_FAMILY) || defined(_EFM32_TINY_FAMILY)
 #define I2C_REF_VALID(ref)    ((ref) == I2C0)
+#endif
+
+#if defined(_EFM32_GIANT_FAMILY)
+#define I2C_REF_VALID(ref)    ((ref == I2C0) || (ref == I2C1))
+#endif
 
 /** Error flags indicating I2C transfer has failed somehow. */
 /* Notice that I2C_IF_TXOF (transmit overflow) is not really possible with */
@@ -60,7 +64,7 @@
 /* RXDATA register. Thus, we ignore those types of fault. */
 #define I2C_IF_ERRORS    (I2C_IF_BUSERR | I2C_IF_ARBLOST)
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  ********************************   ENUMS   ************************************
@@ -83,7 +87,7 @@ typedef enum
   i2cStateDone                 /**< Transfer completed successfully. */
 } I2C_TransferState_TypeDef;
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  *******************************   STRUCTS   ***********************************
@@ -110,7 +114,7 @@ typedef struct
   I2C_TransferSeq_TypeDef    *seq;
 } I2C_Transfer_TypeDef;
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  *****************************   LOCAL DATA   *******^**************************
@@ -127,7 +131,7 @@ static const uint8_t i2cNSum[] = { 4 + 4, 6 + 3, 11 + 3, 4 + 4 };
 /** Transfer state info for ongoing master mode transfer */
 static I2C_Transfer_TypeDef i2cTransfer[I2C_COUNT];
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -257,7 +261,7 @@ void I2C_Enable(I2C_TypeDef *i2c, bool enable)
 {
   EFM_ASSERT(I2C_REF_VALID(i2c));
 
-  BITBAND_Peripheral(&(i2c->CTRL), _I2C_CTRL_EN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(&(i2c->CTRL), _I2C_CTRL_EN_SHIFT, (unsigned int)enable);
 }
 
 
@@ -375,7 +379,7 @@ I2C_TransferReturn_TypeDef I2C_Transfer(I2C_TypeDef *i2c)
   }
 
   seq = transfer->seq;
-  for (;;)
+  for (;; )
   {
     pending = i2c->IF;
 
@@ -721,7 +725,7 @@ I2C_TransferReturn_TypeDef I2C_TransferInit(I2C_TypeDef *i2c,
 #if (I2C_COUNT > 1)
   else if (i2c == I2C1)
   {
-    transfer = i2cTransfer;
+    transfer = i2cTransfer + 1;
   }
 #endif
   else

@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief EFM32 bitband utilities.
+ * @brief Bitband Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -41,7 +41,7 @@ extern "C" {
 
 /***************************************************************************//**
  * @addtogroup BITBAND
- * @brief EFM32 bit-band utilities.
+ * @brief BITBAND Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -61,12 +61,12 @@ extern "C" {
  * @param[in] val Value to set bit to, 0 or 1.
  ******************************************************************************/
 static __INLINE void BITBAND_Peripheral(volatile uint32_t *addr,
-                                                 uint32_t  bit,
-                                                 uint32_t  val)
+                                        uint32_t bit,
+                                        uint32_t val)
 {
-  uint32_t tmp = BITBAND_PER_BASE + (((uint32_t) addr - PER_MEM_BASE) * 32) + (bit * 4);
+  uint32_t tmp = BITBAND_PER_BASE + (((uint32_t)addr - PER_MEM_BASE) * 32) + (bit * 4);
 
-  *((volatile uint32_t *) tmp) = (uint32_t) val;
+  *((volatile uint32_t *)tmp) = (uint32_t)val;
 }
 
 
@@ -87,9 +87,9 @@ static __INLINE void BITBAND_Peripheral(volatile uint32_t *addr,
  ******************************************************************************/
 static __INLINE void BITBAND_SRAM(uint32_t *addr, uint32_t bit, uint32_t val)
 {
-  uint32_t tmp = BITBAND_RAM_BASE + (((uint32_t) addr - RAM_MEM_BASE) * 32) + (bit * 4);
+  uint32_t tmp = BITBAND_RAM_BASE + (((uint32_t)addr - RAM_MEM_BASE) * 32) + (bit * 4);
 
-  *((volatile uint32_t *) tmp) = (uint32_t) val;
+  *((volatile uint32_t *)tmp) = (uint32_t)val;
 }
 
 

@@ -2,7 +2,7 @@
  * @file
  * @brief Timer/counter (TIMER) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -207,6 +207,15 @@ typedef struct
   /** Clock selection. */
   TIMER_ClkSel_TypeDef      clkSel;
 
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  /** 2x Count mode, counter increments/decrements by 2, meant for PWN mode. */
+  bool                      count2x;
+
+  /** ATI (Always Track Inputs) makes CCPOL always track
+   * the polarity of the inputs. */
+  bool                      ati;
+#endif
+
   /** Action on falling input edge. */
   TIMER_InputAction_TypeDef fallAction;
 
@@ -230,6 +239,23 @@ typedef struct
 } TIMER_Init_TypeDef;
 
 /** Default config for TIMER init structure. */
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+#define TIMER_INIT_DEFAULT                                                              \
+  { true,                   /* Enable timer when init complete. */                      \
+    false,                  /* Stop counter during debug halt. */                       \
+    timerPrescale1,         /* No prescaling. */                                        \
+    timerClkSelHFPerClk,    /* Select HFPER clock. */                                   \
+    false,                  /* Not 2x count mode. */                                    \
+    false,                  /* No ATI. */                                               \
+    timerInputActionNone,   /* No action on falling input edge. */                      \
+    timerInputActionNone,   /* No action on rising input edge. */                       \
+    timerModeUp,            /* Up-counting. */                                          \
+    false,                  /* Do not clear DMA requests when DMA channel is active. */ \
+    false,                  /* Select X2 quadrature decode mode (if used). */           \
+    false,                  /* Disable one shot. */                                     \
+    false                   /* Not started/stopped/reloaded by other timers. */         \
+  }
+#else
 #define TIMER_INIT_DEFAULT                                                              \
   { true,                   /* Enable timer when init complete. */                      \
     false,                  /* Stop counter during debug halt. */                       \
@@ -243,16 +269,16 @@ typedef struct
     false,                  /* Disable one shot. */                                     \
     false                   /* Not started/stopped/reloaded by other timers. */         \
   }
-
+#endif
 
 /** TIMER compare/capture initialization structure. */
 typedef struct
 {
   /** Input capture event control. */
-  TIMER_Event_TypeDef eventCtrl;
+  TIMER_Event_TypeDef        eventCtrl;
 
   /** Input capture edge select. */
-  TIMER_Edge_TypeDef  edge;
+  TIMER_Edge_TypeDef         edge;
 
   /**
    * Peripheral reflex system trigger selection. Only applicable if @p prsInput
@@ -285,10 +311,10 @@ typedef struct
    * value for the compare/PWM output. If the bit is cleared, the output
    * will be cleared when the counter is disabled.
    */
-  bool coist;
+  bool                       coist;
 
   /** Invert output from compare/capture channel. */
-  bool outInvert;
+  bool                       outInvert;
 } TIMER_InitCC_TypeDef;
 
 /** Default config for TIMER compare/capture init structure. */
@@ -427,8 +453,8 @@ void TIMER_InitCC(TIMER_TypeDef *timer,
  *   Pointer to TIMER peripheral register block.
  *
  * @param[in] flags
- *   Pending TIMER interrupt source to clear. Use a logical OR combination
- *   of valid interrupt flags for the TIMER module (TIMER_IF_nnn).
+ *   Pending TIMER interrupt source(s) to clear. Use one or more valid
+ *   interrupt flags for the TIMER module (TIMER_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void TIMER_IntClear(TIMER_TypeDef *timer, uint32_t flags)
 {
@@ -444,8 +470,8 @@ static __INLINE void TIMER_IntClear(TIMER_TypeDef *timer, uint32_t flags)
  *   Pointer to TIMER peripheral register block.
  *
  * @param[in] flags
- *   TIMER interrupt sources to disable. Use a logical OR combination of
- *   valid interrupt flags for the TIMER module (TIMER_IF_nnn).
+ *   TIMER interrupt source(s) to disable. Use one or more valid
+ *   interrupt flags for the TIMER module (TIMER_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void TIMER_IntDisable(TIMER_TypeDef *timer, uint32_t flags)
 {
@@ -466,8 +492,8 @@ static __INLINE void TIMER_IntDisable(TIMER_TypeDef *timer, uint32_t flags)
  *   Pointer to TIMER peripheral register block.
  *
  * @param[in] flags
- *   TIMER interrupt sources to enable. Use a logical OR combination of
- *   valid interrupt flags for the TIMER module (TIMER_IF_nnn).
+ *   TIMER interrupt source(s) to enable. Use one or more valid
+ *   interrupt flags for the TIMER module (TIMER_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void TIMER_IntEnable(TIMER_TypeDef *timer, uint32_t flags)
 {
@@ -486,12 +512,44 @@ static __INLINE void TIMER_IntEnable(TIMER_TypeDef *timer, uint32_t flags)
  *   Pointer to TIMER peripheral register block.
  *
  * @return
- *   TIMER interrupt sources pending. A logical OR combination of valid
- *   interrupt flags for the TIMER module (TIMER_IF_nnn).
+ *   TIMER interrupt source(s) pending. Returns one or more valid
+ *   interrupt flags for the TIMER module (TIMER_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE uint32_t TIMER_IntGet(TIMER_TypeDef *timer)
 {
   return(timer->IF);
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending TIMER interrupt flags.
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @param[in] timer
+ *   Pointer to TIMER peripheral register block.
+ *
+ * @note
+ *   Interrupt flags are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled TIMER interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in TIMERx_IEN_nnn
+ *     register (TIMERx_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the TIMER module
+ *     (TIMERx_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t TIMER_IntGetEnabled(TIMER_TypeDef *timer)
+{
+  uint32_t tmp;
+
+  /* Store TIMER->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = timer->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return timer->IF & tmp;
 }
 
 
@@ -503,15 +561,18 @@ static __INLINE uint32_t TIMER_IntGet(TIMER_TypeDef *timer)
  *   Pointer to TIMER peripheral register block.
  *
  * @param[in] flags
- *   TIMER interrupt sources to set to pending. Use a logical OR combination
- *   of valid interrupt flags for the TIMER module (TIMER_IF_nnn).
+ *   TIMER interrupt source(s) to set to pending. Use one or more valid
+ *   interrupt flags for the TIMER module (TIMER_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void TIMER_IntSet(TIMER_TypeDef *timer, uint32_t flags)
 {
   timer->IFS = flags;
 }
 
+#ifdef TIMER_DTLOCK_LOCKKEY_LOCK
 void TIMER_Lock(TIMER_TypeDef *timer);
+#endif
+
 void TIMER_Reset(TIMER_TypeDef *timer);
 
 /***************************************************************************//**
@@ -566,8 +627,9 @@ static __INLINE void TIMER_TopSet(TIMER_TypeDef *timer, uint32_t val)
   timer->TOP = val;
 }
 
-
+#ifdef TIMER_DTLOCK_LOCKKEY_UNLOCK
 void TIMER_Unlock(TIMER_TypeDef *timer);
+#endif
 
 
 /** @} (end addtogroup TIMER) */

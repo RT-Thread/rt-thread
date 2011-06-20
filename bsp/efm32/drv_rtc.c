@@ -12,7 +12,8 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2009-01-05	Bernard		the first version
- * 2010-12-27	onelife		Modification for EFM32
+ * 2010-12-27	onelife		Modify for EFM32
+ * 2011-06-16	onelife		Modify init function for efm32lib v2 upgrading
  *********************************************************************/
  
 /******************************************************************//**
@@ -25,9 +26,16 @@
 #include "hdl_interrupt.h"
 #include "drv_rtc.h"
 
+#if defined(RT_USING_RTC)
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_RTC_DEBUG
+#define rtc_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define rtc_debug(format,args...)
+#endif
+
 /* Private variables ------------------------------------------------------------*/
 static struct rt_device rtc;
 static rt_uint32_t rtc_time;
@@ -83,15 +91,16 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
         *(rt_uint32_t *)args = rtc_time + RTC_CounterGet();
+		rtc_debug("RTC: get rtc_time %x + %x\n", rtc_time, RTC_CounterGet());
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
         rtc_time = *(rt_uint32_t *)args;
+		rtc_debug("RTC: set rtc_time %x\n", rtc_time);
 
 		/* Reset counter */
-		RTC_Enable(false);
-		RTC_Enable(true);
+		RTC_CounterReset();
     }
     break;
     }
@@ -193,6 +202,7 @@ void rt_hw_rtc_init(void)
 		startLfxoForRtc();
 		
 		/* Initialize and enable RTC */
+		RTC_Reset();
 		RTC_Init(&rtcInit);
 
 		hook.type		= efm32_irq_type_rtc;
@@ -292,6 +302,7 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     ti = RT_NULL;
     /* get current time */
     time(&now);
+	rtc_debug("RTC: Now %x\n", now);
 
     ti = localtime(&now);
     if (ti != RT_NULL)
@@ -300,8 +311,18 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
         ti->tm_min 	= minute;
         ti->tm_sec 	= second;
     }
+	rtc_debug("RTC: DST %d\n", ti->tm_isdst);
+	rtc_debug("RTC: Days in year %d\n", ti->tm_yday);
+	rtc_debug("RTC: Day of week %d\n", ti->tm_wday);
+	rtc_debug("RTC: Year %d\n", ti->tm_year);
+	rtc_debug("RTC: Month %d\n", ti->tm_mon);
+	rtc_debug("RTC: Day %d\n", ti->tm_mday);
+	rtc_debug("RTC: Hour %d\n", ti->tm_hour);
+	rtc_debug("RTC: Min %d\n", ti->tm_min);
+	rtc_debug("RTC: Sec %d\n", ti->tm_sec);
 
     now = mktime(ti);
+	rtc_debug("RTC: Now %x\n", now);
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
@@ -318,6 +339,8 @@ void list_date()
     rt_kprintf("%s\n", ctime(&now));
 }
 FINSH_FUNCTION_EXPORT(list_date, show date and time.)
+#endif
+
 #endif
 
 /******************************************************************//**

@@ -2,8 +2,8 @@
 ; * @file:    startup_efm32.s
 ; * @purpose: CMSIS Cortex-M3 Core Device Startup File 
 ; *           for the Energy Micro EFM32 device series
-; * @version 1.3.0
-; * @date:    7. September 2010
+; * @version 2.0.0
+; * @date:    January 2011
 ; *------- <<< Use Configuration Wizard in Context Menu >>> ------------------
 ; *
 ; * Copyright (C) 2008 ARM Limited. All rights reserved.
@@ -49,6 +49,8 @@ __heap_limit
 
                 AREA    RESET, DATA, READONLY
                 EXPORT  __Vectors
+                EXPORT  __Vectors_End
+                EXPORT  __Vectors_Size
 
 __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     Reset_Handler             ; Reset Handler
@@ -98,6 +100,10 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     LCD_IRQHandler        ; 27: LCD Interrupt
                 DCD     MSC_IRQHandler        ; 28: MSC Interrupt
                 DCD     AES_IRQHandler        ; 29: AES Interrupt
+
+__Vectors_End
+
+__Vectors_Size 	EQU 	__Vectors_End - __Vectors
 
                 AREA    |.text|, CODE, READONLY
 

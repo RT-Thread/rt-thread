@@ -3,7 +3,7 @@
  * @brief General Purpose IO (GPIO) peripheral API for EFM32
  *   devices.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup GPIO
- * @brief EFM32 general purpose input/output utilities.
+ * @brief General Purpose Input/Output (GPIO) API for EFM32
  * @{
  ******************************************************************************/
 
@@ -57,7 +57,7 @@
 /** Validation of port typically usable in assert statements. */
 #define GPIO_PORT_VALID(port)         ((port) <= gpioPortF)
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -164,16 +164,16 @@ void GPIO_IntConfig(GPIO_Port_TypeDef port,
   }
 
   /* Enable/disable rising edge */
-  BITBAND_Peripheral(&(GPIO->EXTIRISE), pin, (unsigned int) risingEdge);
+  BITBAND_Peripheral(&(GPIO->EXTIRISE), pin, (unsigned int)risingEdge);
 
   /* Enable/disable falling edge */
-  BITBAND_Peripheral(&(GPIO->EXTIFALL), pin, (unsigned int) fallingEdge);
+  BITBAND_Peripheral(&(GPIO->EXTIFALL), pin, (unsigned int)fallingEdge);
 
   /* Clear any pending interrupt */
   GPIO->IFC = 1 << pin;
 
   /* Finally enable/disable interrupt */
-  BITBAND_Peripheral(&(GPIO->IEN), pin, (unsigned int) enable);
+  BITBAND_Peripheral(&(GPIO->IEN), pin, (unsigned int)enable);
 }
 
 

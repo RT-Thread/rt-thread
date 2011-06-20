@@ -23,9 +23,16 @@
 #include "board.h"
 #include "drv_adc.h"
 
+#if defined(RT_USING_ADC0)
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_ADC_DEBUG
+#define adc_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define adc_debug(format,args...)
+#endif
+
 /* Private variables ------------------------------------------------------------*/
 #ifdef RT_USING_ADC0
 	static struct rt_device adc0_device;
@@ -64,10 +71,7 @@ rt_uint32_t efm32_adc_calibration(
 
 	temp = efm32_adc_calibration(adc->adc_device, ADC_INIT_REF, ADC_INIT_CH);
 
-#ifdef RT_ADC_DEBUG
-	rt_kprintf("adc->CAL = %x\n", temp);
-#endif
-
+	adc_debug("adc->CAL = %x\n", temp);
 	return RT_EOK;
 }
 
@@ -241,6 +245,82 @@ rt_err_t rt_hw_adc_register(
 
 /******************************************************************//**
 * @brief
+*	Initialize the specified ADC unit 
+*
+* @details
+*
+* @note
+*
+* @param[in] device
+*	Pointer to device descriptor
+*
+* @param[in] unitNumber
+*	Unit number
+*
+* @return
+*	Pointer to ADC device  
+*********************************************************************/
+static struct efm32_adc_device_t *rt_hw_adc_unit_init(
+	rt_device_t device,
+	rt_uint8_t 	unitNumber)
+{
+	struct efm32_adc_device_t 		*adc;
+	CMU_Clock_TypeDef				adcClock;
+	ADC_Init_TypeDef 				init = ADC_INIT_DEFAULT;
+
+	do
+	{
+		/* Allocate device */
+		adc = rt_malloc(sizeof(struct efm32_adc_device_t));
+		if (adc == RT_NULL)
+		{
+			adc_debug("no memory for ADC%d driver\n", unitNumber);
+			break;
+		}
+		adc->mode 				= ADC_MODE_SINGLE;
+
+		/* Initialization */
+		if (unitNumber >= ADC_COUNT)
+		{
+			break;
+		}
+		switch (unitNumber)
+		{
+		case 0:
+			adc->adc_device 	= ADC0;
+			adcClock 			= (CMU_Clock_TypeDef)cmuClock_ADC0;
+			break;
+			
+		default:
+			break;
+		}
+
+		/* Enable ADC clock */
+		CMU_ClockEnable(adcClock, true);
+		
+		/* Reset */
+		ADC_Reset(adc->adc_device);
+		
+		/* Configure ADC */
+		// TODO: Fixed oversampling rate?
+		init.ovsRateSel 		= adcOvsRateSel4096;
+		init.timebase			= ADC_TimebaseCalc(0);
+		init.prescale			= ADC_PrescaleCalc(ADC_CONVERT_FREQUENCY, 0);
+		ADC_Init(adc->adc_device, &init);
+
+		return adc;
+	} while(0);
+
+	if (adc)
+	{
+		rt_free(adc);
+	}
+	rt_kprintf("ADC: Init failed!\n");
+	return RT_NULL;
+}
+
+/******************************************************************//**
+* @brief
 *	Initialize all ADC module related hardware and register ADC device to kernel
 *
 * @details
@@ -251,36 +331,12 @@ rt_err_t rt_hw_adc_register(
 void rt_hw_adc_init(void)
 {
 	struct efm32_adc_device_t 	*adc;
-	ADC_Init_TypeDef 			init = ADC_INIT_DEFAULT;
 
-	// TODO: Fixed oversampling rate?
-	init.ovsRateSel	= adcOvsRateSel4096;
-	init.timebase 	= ADC_TimebaseCalc(0);
-	init.prescale 	= ADC_PrescaleCalc(ADC_CONVERT_FREQUENCY, 0);
-
-	
 #ifdef RT_USING_ADC0
-	adc = rt_malloc(sizeof(struct efm32_adc_device_t));
-	if (adc == RT_NULL)
+	if ((adc = rt_hw_adc_unit_init(&adc0_device, 0)) != RT_NULL)
 	{
-#ifdef RT_ADC_DEBUG
-		rt_kprintf("no memory for ADC driver\n");
-#endif
-		return;
+		rt_hw_adc_register(&adc0_device, RT_ADC0_NAME, EFM32_NO_DATA, adc);	
 	}
-	adc->adc_device	= ADC0;
-	adc->mode 		= ADC_MODE_SINGLE;
-
-	/* Enable clock for ADCn module */
-	CMU_ClockEnable(cmuClock_ADC0, true);
-
-	/* Reset */
-	 ADC_Reset(ADC0);
-
-	/* Configure ADC */
-	ADC_Init(adc->adc_device, &init);
-
-	rt_hw_adc_register(&adc0_device, RT_ADC0_NAME, EFM32_NO_DATA, adc);	
 #endif
 }
 
@@ -348,12 +404,10 @@ rt_uint32_t efm32_adc_calibration(
 		/* Midpoint is converted to 2's complement and written to both scan and */
 		/* single calibration registers */
 		cal = adc->CAL & ~(_ADC_CAL_SINGLEOFFSET_MASK | _ADC_CAL_SCANOFFSET_MASK);
-		tmp = mid < 0 ? (mid & 0x3F ^ 0x3F | 0x40) + 1 : mid;
+		tmp = mid < 0 ? (((mid & 0x3F) ^ 0x3F) | 0x40) + 1 : mid;
 		cal |= tmp << _ADC_CAL_SINGLEOFFSET_SHIFT;
 		cal |= tmp << _ADC_CAL_SCANOFFSET_SHIFT;
-#ifdef RT_ADC_DEBUG
-		rt_kprintf("adc->CAL = %x, cal = %x, tmp = %x\n", adc->CAL, cal, tmp);
-#endif			
+		adc_debug("adc->CAL = %x, cal = %x, tmp = %x\n", adc->CAL, cal, tmp);
 		adc->CAL = cal;
 
 		/* Do a conversion */
@@ -383,9 +437,7 @@ rt_uint32_t efm32_adc_calibration(
 			break;
 		}
 	}
-#ifdef RT_ADC_DEBUG
-	rt_kprintf("adc->CAL = %x\n", adc->CAL);
-#endif
+	adc_debug("adc->CAL = %x\n", adc->CAL);
 
 	/* Now do gain calibration, only input and diff settings needs to be changed */
 	adc->SINGLECTRL &= ~(_ADC_SINGLECTRL_INPUTSEL_MASK | _ADC_SINGLECTRL_DIFF_MASK);
@@ -407,9 +459,7 @@ rt_uint32_t efm32_adc_calibration(
 		cal      = adc->CAL & ~(_ADC_CAL_SINGLEGAIN_MASK | _ADC_CAL_SCANGAIN_MASK);
 		cal     |= mid << _ADC_CAL_SINGLEGAIN_SHIFT;
 		cal     |= mid << _ADC_CAL_SCANGAIN_SHIFT;
-#ifdef RT_ADC_DEBUG
-		rt_kprintf("adc->CAL = %x, cal = %x, mid = %x\n", adc->CAL, cal, mid);
-#endif		
+		adc_debug("adc->CAL = %x, cal = %x, mid = %x\n", adc->CAL, cal, mid);
 		adc->CAL = cal;
 
 		/* Do a conversion */
@@ -443,13 +493,12 @@ rt_uint32_t efm32_adc_calibration(
 		  break;
 		}
 	}
-#ifdef RT_ADC_DEBUG
-	rt_kprintf("adc->CAL = %x\n", adc->CAL);
-#endif
+	adc_debug("adc->CAL = %x\n", adc->CAL);
 
 	return adc->CAL;
 }
 
+#endif
 /******************************************************************//**
  * @}
 *********************************************************************/

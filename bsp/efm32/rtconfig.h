@@ -30,16 +30,23 @@
 
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
-#define RT_MEM_DEBUG
+//#define RT_MEM_DEBUG
 //#define THREAD_DEBUG
 //#define IRQ_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 
 //#define RT_IRQHDL_DEBUG
+#define RT_USART_DEBUG
+//#define RT_IIC_DEBUG
+//#define RT_MISC_DEBUG
 //#define RT_ADC_DEBUG
 //#define RT_ACMP_DEBUG
 //#define RT_TIMER_DEBUG
-#define RT_USART_DEBUG
+//#define RT_RTC_DEBUG
+
+#define EFM32_SFLASH_DEBUG
+//#define EFM32_SDCARD_DEBUG
+//#define DFS_DEBUG
 
 /* Using Hook */
 //#define RT_USING_HOOK
@@ -55,7 +62,7 @@
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
-//#define RT_USING_MUTEX
+#define RT_USING_MUTEX
 
 /* Using Event */
 //#define RT_USING_EVENT
@@ -82,41 +89,50 @@
 
 /* USART Device for Console */
 #if defined(EFM32_G290_DK)
-#define RT_USING_USART1			0x0UL
+#define RT_USING_USART1			(0x0UL)
 #define RT_USART1_NAME			"debug"
-#define RT_USART1_USING_DMA		0x0UL
+#define RT_USART1_USING_DMA		(0x0UL)
 #elif defined(EFM32_G890_STK)
-#define RT_USING_USART1			0x1UL
+#define RT_USING_USART1			(0x1UL)
 #define RT_USART1_NAME			"debug"
-#define RT_USART1_USING_DMA		0x0UL
+#define RT_USART1_USING_DMA		(0x0UL)
 #endif
 
 /* SECTION: SPI options */
 #if defined(EFM32_G290_DK)
-#define RT_USING_USART0			0x2UL
-#define RT_USART0_SYNC_MODE		0x1UL 	/* Master */
+#define RT_USING_USART0			(0x2UL)
+#define RT_USART0_SYNC_MODE		(0x1UL) 	/* Master */
 #define RT_USART0_NAME			"spi0"
-#define RT_USART0_USING_DMA		0x1UL
+#define RT_USART0_USING_DMA		(0x1UL)
 #elif defined(EFM32_G890_STK)
-//#define RT_USING_USART0			0x0UL
-//#define RT_USART0_SYNC_MODE		0x1UL 	/* Master */
+//#define RT_USING_USART0			(0x0UL)
+//#define RT_USART0_SYNC_MODE		(0x1UL) 		/* Master */
 //#define RT_USART0_NAME			"spi0"
-//#define RT_USART0_USING_DMA		0x1UL
+//#define RT_USART0_USING_DMA		(0x1UL)
 #endif
 
-/* SECTION: RTC options */
-#if (defined(EFM32_G290_DK) || defined(EFM32_G890_STK))
-#define RT_USING_RTC
-#endif
-#define RT_RTC_NAME 			"rtc"
+/* SECTION: IIC options */
+//#define RT_USING_IIC0			0x1UL
+#define RT_IIC0_NAME			"iic0"
 
-/* SECTION: ADC options */
-#define RT_USING_ACMP0
+/* SECTION: ACMP options */
+//#define RT_USING_ACMP0
 #define RT_ACMP0_NAME 			"acmp0"
 
 /* SECTION: ADC options */
-#define RT_USING_ADC0
+//#define RT_USING_ADC0
 #define RT_ADC0_NAME 			"adc"
+
+/* SECTION: TIMER options */
+//#define RT_USING_TIMER2			(0x00) 		/* Continuous mode */
+#define RT_TIMER2_NAME			"tmr2"
+
+/* SECTION: RTC options */
+#if (defined(EFM32_G290_DK) || defined(EFM32_G890_STK))
+//#define RT_USING_RTC
+#endif
+#define RT_RTC_NAME 			"rtc"
+
 
 /* SECTION: Serial options */
 #if defined(EFM32_G290_DK)
@@ -135,6 +151,30 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+
+/* SECTION: SPI Flash and MicroSD card */
+#if defined(EFM32_G290_DK)
+//#define EFM32_USING_SFLASH
+#define EFM32_USING_SPISD
+#endif
+#if defined(EFM32_USING_SFLASH)
+#define SFLASH_USING_DEVICE_NAME 	RT_USART0_NAME
+#endif
+#if defined(EFM32_USING_SPISD)
+#define SPISD_USING_DEVICE_NAME 	RT_USART0_NAME
+#define SPISD_DEVICE_NAME 			"spiSd"
+#endif
+
+/* SECTION: device filesystem */
+#define RT_USING_DFS
+#define RT_USING_DFS_ELMFAT
+#define DFS_ELMFAT_INTERFACE_EFM
+/* the max number of mounted filesystem */
+#define DFS_FILESYSTEMS_MAX			(2)
+/* the max number of opened files 		*/
+#define DFS_FD_MAX					(4)
+/* the max number of cached sector 		*/
+#define DFS_CACHE_MAX_NUM   		(4)
 
 /* Exported functions --------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
  * @file
  * @brief Voltage Comparator (VCMP) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -35,7 +35,7 @@
 
 /***************************************************************************//**
  * @addtogroup VCMP
- * @brief Voltage Comparator Peripheral API
+ * @brief Voltage Comparator (VCMP) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 

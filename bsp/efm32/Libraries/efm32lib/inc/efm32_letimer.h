@@ -2,7 +2,7 @@
  * @file
  * @brief Low Energy Timer (LETIMER) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -157,8 +157,9 @@ void LETIMER_Init(LETIMER_TypeDef *letimer, const LETIMER_Init_TypeDef *init);
  *   Pointer to LETIMER peripheral register block.
  *
  * @param[in] flags
- *   Pending LETIMER interrupt source to clear. Use a logical OR combination
- *   of valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
+ *   Pending LETIMER interrupt source to clear. Use a bitwise logic OR
+ *    combination of valid interrupt flags for the LETIMER module
+ *    (LETIMER_IF_nnn).
  ******************************************************************************/
 static __INLINE void LETIMER_IntClear(LETIMER_TypeDef *letimer, uint32_t flags)
 {
@@ -174,7 +175,7 @@ static __INLINE void LETIMER_IntClear(LETIMER_TypeDef *letimer, uint32_t flags)
  *   Pointer to LETIMER peripheral register block.
  *
  * @param[in] flags
- *   LETIMER interrupt sources to disable. Use a logical OR combination of
+ *   LETIMER interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
  ******************************************************************************/
 static __INLINE void LETIMER_IntDisable(LETIMER_TypeDef *letimer, uint32_t flags)
@@ -196,7 +197,7 @@ static __INLINE void LETIMER_IntDisable(LETIMER_TypeDef *letimer, uint32_t flags
  *   Pointer to LETIMER peripheral register block.
  *
  * @param[in] flags
- *   LETIMER interrupt sources to enable. Use a logical OR combination of
+ *   LETIMER interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
  ******************************************************************************/
 static __INLINE void LETIMER_IntEnable(LETIMER_TypeDef *letimer, uint32_t flags)
@@ -216,8 +217,8 @@ static __INLINE void LETIMER_IntEnable(LETIMER_TypeDef *letimer, uint32_t flags)
  *   Pointer to LETIMER peripheral register block.
  *
  * @return
- *   LETIMER interrupt sources pending. A logical OR combination of valid
- *   interrupt flags for the LETIMER module (LETIMER_IF_nnn).
+ *   LETIMER interrupt sources pending. A bitwise logic OR combination of
+ *    valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t LETIMER_IntGet(LETIMER_TypeDef *letimer)
 {
@@ -233,8 +234,8 @@ static __INLINE uint32_t LETIMER_IntGet(LETIMER_TypeDef *letimer)
  *   Pointer to LETIMER peripheral register block.
  *
  * @param[in] flags
- *   LETIMER interrupt sources to set to pending. Use a logical OR combination
- *   of valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
+ *   LETIMER interrupt sources to set to pending. Use a bitwise logic OR
+ *   combination of valid interrupt flags for the LETIMER module (LETIMER_IF_nnn).
  ******************************************************************************/
 static __INLINE void LETIMER_IntSet(LETIMER_TypeDef *letimer, uint32_t flags)
 {

@@ -2,10 +2,10 @@
  * @file
  * @brief Clock management unit (CMU) API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
- * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
+ * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
  *******************************************************************************
  *
  * This source code is the property of Energy Micro AS. The source and compiled
@@ -30,6 +30,7 @@
 
 #include <stdbool.h>
 #include "efm32.h"
+#include "efm32_bitband.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -82,7 +83,7 @@ extern "C" {
 #define CMU_EN_BIT_POS             12
 #define CMU_EN_BIT_MASK            0x1f
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  ********************************   ENUMS   ************************************
@@ -152,7 +153,7 @@ typedef enum
                    (_CMU_HFPERCLKDIV_HFPERCLKEN_SHIFT << CMU_EN_BIT_POS),
 
   /** Universal sync/async receiver/transmitter 0 clock. */
-#if defined(USART_COUNT) && (USART_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_USART0_MASK)
   cmuClock_USART0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -160,7 +161,7 @@ typedef enum
 #endif
 
   /** Universal sync/async receiver/transmitter 1 clock. */
-#if defined(USART_COUNT) && (USART_COUNT > 1)
+#if defined(_CMU_HFPERCLKEN0_USART1_MASK)
   cmuClock_USART1 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -168,7 +169,7 @@ typedef enum
 #endif
 
   /** Universal sync/async receiver/transmitter 2 clock. */
-#if defined(USART_COUNT) && (USART_COUNT > 2)
+#if defined(_CMU_HFPERCLKEN0_USART2_MASK)
   cmuClock_USART2 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -176,7 +177,7 @@ typedef enum
 #endif
 
   /** Universal async receiver/transmitter 0 clock. */
-#if defined(UART_COUNT) && (UART_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_UART0_MASK)
   cmuClock_UART0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -184,7 +185,7 @@ typedef enum
 #endif
 
   /** Timer 0 clock. */
-#if defined(TIMER_COUNT) && (TIMER_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_TIMER0_MASK)
   cmuClock_TIMER0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -192,7 +193,7 @@ typedef enum
 #endif
 
   /** Timer 1 clock. */
-#if defined(TIMER_COUNT) && (TIMER_COUNT > 1)
+#if defined(_CMU_HFPERCLKEN0_TIMER1_MASK)
   cmuClock_TIMER1 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -200,7 +201,7 @@ typedef enum
 #endif
 
   /** Timer 2 clock. */
-#if defined(TIMER_COUNT) && (TIMER_COUNT > 2)
+#if defined(_CMU_HFPERCLKEN0_TIMER2_MASK)
   cmuClock_TIMER2 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -208,7 +209,7 @@ typedef enum
 #endif
 
   /** Analog comparator 0 clock. */
-#if defined(ACMP_COUNT) && (ACMP_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_ACMP0_MASK)
   cmuClock_ACMP0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -216,7 +217,7 @@ typedef enum
 #endif
 
   /** Analog comparator 1 clock. */
-#if defined(ACMP_COUNT) && (ACMP_COUNT > 1)
+#if defined(_CMU_HFPERCLKEN0_ACMP1_MASK)
   cmuClock_ACMP1 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -232,7 +233,7 @@ typedef enum
 #endif
 
   /** Digital to analog converter 0 clock. */
-#if defined(DAC_COUNT) && (DAC_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_DAC0_MASK)
   cmuClock_DAC0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                   (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                   (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -256,7 +257,7 @@ typedef enum
 #endif
 
   /** Analog to digital converter 0 clock. */
-#if defined(ADC_COUNT) && (ADC_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_ADC0_MASK)
   cmuClock_ADC0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                   (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                   (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -264,7 +265,7 @@ typedef enum
 #endif
 
   /** I2C 0 clock. */
-#if defined(I2C_COUNT) && (I2C_COUNT > 0)
+#if defined(_CMU_HFPERCLKEN0_I2C0_MASK)
   cmuClock_I2C0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                   (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                   (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -329,7 +330,7 @@ typedef enum
 #endif
 
   /** Low energy timer 0 clock. */
-#if defined(LETIMER_COUNT) && (LETIMER_COUNT > 0)
+#if defined(_CMU_LFACLKEN0_LETIMER0_MASK)
   cmuClock_LETIMER0 = (CMU_LFAPRESC0_REG << CMU_DIV_REG_POS) |
                       (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                       (CMU_LFACLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -337,7 +338,7 @@ typedef enum
 #endif
 
   /** Liquid crystal display, pre FDIV clock. */
-#if defined(LCD_PRESENT)
+#if defined(_CMU_LFACLKEN0_LCD_MASK)
   cmuClock_LCDpre = (CMU_LFAPRESC0_REG << CMU_DIV_REG_POS) |
                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                     (CMU_NO_EN_REG << CMU_EN_REG_POS) |
@@ -352,7 +353,7 @@ typedef enum
 #endif
 
   /** Pulse counter 0 clock. */
-#if defined(PCNT_COUNT) && (PCNT_COUNT > 0)
+#if defined(_CMU_PCNTCTRL_PCNT0CLKEN_MASK)
   cmuClock_PCNT0 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_PCNT_EN_REG << CMU_EN_REG_POS) |
@@ -360,7 +361,7 @@ typedef enum
 #endif
 
   /** Pulse counter 1 clock. */
-#if defined(PCNT_COUNT) && (PCNT_COUNT > 1)
+#if defined(_CMU_PCNTCTRL_PCNT1CLKEN_MASK)
   cmuClock_PCNT1 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_PCNT_EN_REG << CMU_EN_REG_POS) |
@@ -368,11 +369,18 @@ typedef enum
 #endif
 
   /** Pulse counter 2 clock. */
-#if defined(PCNT_COUNT) && (PCNT_COUNT > 2)
+#if defined(_CMU_PCNTCTRL_PCNT2CLKEN_MASK)
   cmuClock_PCNT2 = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                    (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                    (CMU_PCNT_EN_REG << CMU_EN_REG_POS) |
                    (_CMU_PCNTCTRL_PCNT2CLKEN_SHIFT << CMU_EN_BIT_POS),
+#endif
+  /** LESENSE clock. */
+#if defined(_CMU_LFACLKEN0_LESENSE_MASK)
+  cmuClock_LESENSE = (CMU_LFAPRESC0_REG << CMU_DIV_REG_POS) |
+                     (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
+                     (CMU_LFACLKEN0_EN_REG << CMU_EN_REG_POS) |
+                     (_CMU_LFACLKEN0_LESENSE_SHIFT << CMU_EN_BIT_POS),
 #endif
 
   /***************/
@@ -386,7 +394,7 @@ typedef enum
                  (0 << CMU_EN_BIT_POS),
 
   /** Low energy universal asynchronous receiver/transmitter 0 clock. */
-#if defined(LEUART_COUNT) && (LEUART_COUNT > 0)
+#if defined(_CMU_LFBCLKEN0_LEUART0_MASK)
   cmuClock_LEUART0 = (CMU_LFBPRESC0_REG << CMU_DIV_REG_POS) |
                      (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                      (CMU_LFBCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -394,7 +402,7 @@ typedef enum
 #endif
 
   /** Low energy universal asynchronous receiver/transmitter 1 clock. */
-#if defined(LEUART_COUNT) && (LEUART_COUNT > 1)
+#if defined(_CMU_LFBCLKEN0_LEUART1_MASK)
   cmuClock_LEUART1 = (CMU_LFBPRESC0_REG << CMU_DIV_REG_POS) |
                      (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                      (CMU_LFBCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -406,24 +414,30 @@ typedef enum
 /** Oscillator types. */
 typedef enum
 {
-  cmuOsc_LFXO,      /**< Low frequency crystal oscillator. */
-  cmuOsc_LFRCO,     /**< Low frequency RC oscillator. */
-  cmuOsc_HFXO,      /**< High frequency crystal oscillator. */
-  cmuOsc_HFRCO,     /**< High frequency RC oscillator. */
-  cmuOsc_AUXHFRCO   /**< Auxiliary high frequency RC oscillator. */
+  cmuOsc_LFXO,     /**< Low frequency crystal oscillator. */
+  cmuOsc_LFRCO,    /**< Low frequency RC oscillator. */
+  cmuOsc_HFXO,     /**< High frequency crystal oscillator. */
+  cmuOsc_HFRCO,    /**< High frequency RC oscillator. */
+  cmuOsc_AUXHFRCO, /**< Auxiliary high frequency RC oscillator. */
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  cmuOsc_ULFRCO    /**< Ultra low frequency RC oscillator. */
+#endif
 } CMU_Osc_TypeDef;
 
 
 /** Selectable clock sources. */
 typedef enum
 {
-  cmuSelect_Error,     /**< Usage error. */
-  cmuSelect_Disabled,  /**< Clock selector disabled. */
-  cmuSelect_LFXO,      /**< Low frequency crystal oscillator. */
-  cmuSelect_LFRCO,     /**< Low frequency RC oscillator. */
-  cmuSelect_HFXO,      /**< High frequency crystal oscillator. */
-  cmuSelect_HFRCO,     /**< High frequency RC oscillator. */
-  cmuSelect_CORELEDIV2 /**< Core low energy clock divided by 2. */
+  cmuSelect_Error,      /**< Usage error. */
+  cmuSelect_Disabled,   /**< Clock selector disabled. */
+  cmuSelect_LFXO,       /**< Low frequency crystal oscillator. */
+  cmuSelect_LFRCO,      /**< Low frequency RC oscillator. */
+  cmuSelect_HFXO,       /**< High frequency crystal oscillator. */
+  cmuSelect_HFRCO,      /**< High frequency RC oscillator. */
+  cmuSelect_CORELEDIV2, /**< Core low energy clock divided by 2. */
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  cmuSelect_ULFRCO      /**< Ultra low frequency RC oscillator. */
+#endif
 } CMU_Select_TypeDef;
 
 
@@ -431,21 +445,32 @@ typedef enum
  *****************************   PROTOTYPES   **********************************
  ******************************************************************************/
 
-uint32_t CMU_Calibrate(uint32_t HFCycles, CMU_Osc_TypeDef reference);
-
-CMU_ClkDiv_TypeDef CMU_ClockDivGet(CMU_Clock_TypeDef clock);
-void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div);
 void CMU_ClockEnable(CMU_Clock_TypeDef clock, bool enable);
 uint32_t CMU_ClockFreqGet(CMU_Clock_TypeDef clock);
+CMU_ClkDiv_TypeDef CMU_ClockDivGet(CMU_Clock_TypeDef clock);
 CMU_Select_TypeDef CMU_ClockSelectGet(CMU_Clock_TypeDef clock);
+void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div);
 void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref);
-
-void CMU_FreezeEnable(bool enable);
 
 CMU_HFRCOBand_TypeDef CMU_HFRCOBandGet(void);
 void CMU_HFRCOBandSet(CMU_HFRCOBand_TypeDef band);
-uint32_t CMU_HFRCOStartupDelayGet(void);
 void CMU_HFRCOStartupDelaySet(uint32_t delay);
+uint32_t CMU_HFRCOStartupDelayGet(void);
+
+void CMU_OscillatorEnable(CMU_Osc_TypeDef osc, bool enable, bool wait);
+uint32_t CMU_OscillatorTuningGet(CMU_Osc_TypeDef osc);
+void CMU_OscillatorTuningSet(CMU_Osc_TypeDef osc, uint32_t val);
+
+bool CMU_PCNTClockExternalGet(unsigned int inst);
+void CMU_PCNTClockExternalSet(unsigned int inst, bool external);
+
+uint32_t CMU_LCDClkFDIVGet(void);
+void CMU_LCDClkFDIVSet(uint32_t div);
+
+void CMU_FreezeEnable(bool enable);
+uint32_t CMU_Calibrate(uint32_t HFCycles, CMU_Osc_TypeDef reference);
+void CMU_CalibrateConfig(uint32_t downCycles, CMU_Osc_TypeDef downSel,
+                         CMU_Osc_TypeDef upSel);
 
 /***************************************************************************//**
  * @brief
@@ -500,7 +525,39 @@ static __INLINE void CMU_IntEnable(uint32_t flags)
  ******************************************************************************/
 static __INLINE uint32_t CMU_IntGet(void)
 {
-  return(CMU->IF);
+  return CMU->IF;
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending CMU interrupt flags.
+ *
+ * @details
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @note
+ *   The event bits are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled CMU interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in CMU_IEN_nnn
+ *   register (CMU_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the CMU module
+ *   (CMU_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t CMU_IntGetEnabled(void)
+{
+  uint32_t tmp = 0U;
+
+
+  /* Store LESENSE->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = CMU->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return CMU->IF & tmp;
 }
 
 
@@ -516,8 +573,6 @@ static __INLINE void CMU_IntSet(uint32_t flags)
   CMU->IFS = flags;
 }
 
-uint32_t CMU_LCDClkFDIVGet(void);
-void CMU_LCDClkFDIVSet(uint32_t div);
 
 /***************************************************************************//**
  * @brief
@@ -537,11 +592,6 @@ static __INLINE void CMU_Lock(void)
   CMU->LOCK = CMU_LOCK_LOCKKEY_LOCK;
 }
 
-void CMU_OscillatorEnable(CMU_Osc_TypeDef osc, bool enable, bool wait);
-uint32_t CMU_OscillatorTuningGet(CMU_Osc_TypeDef osc);
-void CMU_OscillatorTuningSet(CMU_Osc_TypeDef osc, uint32_t val);
-bool CMU_PCNTClockExternalGet(unsigned int inst);
-void CMU_PCNTClockExternalSet(unsigned int inst, bool external);
 
 /***************************************************************************//**
  * @brief
@@ -552,6 +602,74 @@ static __INLINE void CMU_Unlock(void)
   CMU->LOCK = CMU_LOCK_LOCKKEY_UNLOCK;
 }
 
+
+/***************************************************************************//**
+ * @brief
+ *    Get calibration count register
+ * @note
+ *    If continuous calibrartion mode is active, calibration busy will allmost
+ *    always be on, and we just need to read the value, where the normal case
+ *    would be that this function call has been triggered by the CALRDY
+ *    interrupt flag.
+ * @return
+ *    Calibration count, the number of UPSEL clocks (see CMU_CalibrateConfig)
+ *    in the period of DOWNSEL oscillator clock cycles configured by a previous
+ *    write operation to CMU->CALCNT
+ ******************************************************************************/
+static __INLINE uint32_t CMU_CalibrateCountGet(void)
+{
+  /* Wait until calibration completes, UNLESS continuous calibration mode is  */
+  /* active */
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  if (!(CMU->CALCTRL & CMU_CALCTRL_CONT))
+  {
+    while (CMU->STATUS & CMU_STATUS_CALBSY)
+      ;
+  }
+#else
+  while (CMU->STATUS & CMU_STATUS_CALBSY)
+      ;
+#endif
+  return CMU->CALCNT;
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Starts calibration
+ * @note
+ *   This call is usually invoked after CMU_CalibrateConfig() and possibly
+ *   CMU_CalibrateCont()
+ ******************************************************************************/
+static __INLINE void CMU_CalibrateStart(void)
+{
+  CMU->CMD = CMU_CMD_CALSTART;
+}
+
+
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Stop the calibration counters
+ ******************************************************************************/
+static __INLINE void CMU_CalibrateStop(void)
+{
+  CMU->CMD = CMU_CMD_CALSTOP;
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Configures continuous calibration mode
+ * @param[in] enable
+ *   If true, enables continuous calibration, if false disables continuous
+ *   calibrartion
+ ******************************************************************************/
+static __INLINE void CMU_CalibrateCont(bool enable)
+{
+  BITBAND_Peripheral(&(CMU->CALCTRL), _CMU_CALCTRL_CONT_SHIFT, enable);
+}
+#endif
 
 /** @} (end addtogroup CMU) */
 /** @} (end addtogroup EFM32_Library) */

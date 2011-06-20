@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Peripheral Reflex System (PRS) peripheral module library
- *   implementation for EFM32.
+ * @brief Peripheral Reflex System (PRS) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup PRS
- * @brief EFM32 peripheral reflex system utilities.
+ * @brief Peripheral Reflex System (PRS) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -72,9 +71,52 @@ void PRS_SourceSignalSet(unsigned int ch,
 
   PRS->CH[ch].CTRL = (source & _PRS_CH_CTRL_SOURCESEL_MASK) |
                      (signal & _PRS_CH_CTRL_SIGSEL_MASK) |
-                     (uint32_t) edge;
+                     (uint32_t)edge;
 }
 
+#if ((defined _EFM32_TINY_FAMILY) || (defined _EFM32_GIANT_FAMILY))
+/***************************************************************************//**
+ * @brief
+ *   Set source and asynchronous signal to be used for a channel.
+ *
+ * @details
+ *   Asynchronous reflexes are not clocked on HFPERCLK, and can be used even in
+ *   EM2/EM3.
+ *   There is a limitation to reflexes operating in asynchronous mode: they can
+ *   only be used by a subset of the reflex consumers. Please refer to PRS
+ *   chapter in the reference manual for the complete list of supported
+ *   asynchronous signals and consumers.
+ *
+ * @note
+ *   This function is only supported on the following device families:
+ *   @li Tiny Gecko (EFM32TGxxxFxx)
+ *   @li Giant Gecko (EFM32GGxxxFxxx)
+ *   In asynchronous mode, the edge detector only works in EM0, hence it shall
+ *   not be used. The EDSEL parameter in PRS_CHx_CTRL register is set to 0 (OFF)
+ *   by default.
+ *
+ * @param[in] ch
+ *   Channel to define source and asynchronous signal for.
+ *
+ * @param[in] source
+ *   Source to select for channel. Use one of PRS_CH_CTRL_SOURCESEL_x defines.
+ *
+ * @param[in] signal
+ *   Asynchronous signal (for selected @p source) to use. Use one of the
+ *   PRS_CH_CTRL_SIGSEL_x defines that support asynchronous operation.
+ ******************************************************************************/
+void PRS_SourceAsyncSignalSet(unsigned int ch,
+                              uint32_t source,
+                              uint32_t signal)
+{
+  EFM_ASSERT(ch < 8);
+
+  PRS->CH[ch].CTRL = PRS_CH_CTRL_ASYNC |
+                     (source & _PRS_CH_CTRL_SOURCESEL_MASK) |
+                     (signal & _PRS_CH_CTRL_SIGSEL_MASK) |
+                     PRS_CH_CTRL_EDSEL_OFF;
+}
+#endif
 
 /** @} (end addtogroup PRS) */
 /** @} (end addtogroup EFM32_Library) */

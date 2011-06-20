@@ -3,7 +3,7 @@
  * @brief Analog Comparator (ACMP) peripheral module library implementation
  * for EFM32 devices.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,7 @@
  ******************************************************************************/
 #include <stdbool.h>
 #include "efm32_acmp.h"
+#include "efm32_bitband.h"
 #include "efm32_assert.h"
 
 /***************************************************************************//**
@@ -37,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup ACMP
- * @brief EFM32 analog comparator utilities.
+ * @brief Analog comparator (ACMP) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -58,7 +59,7 @@
 #error Undefined number of analog comparators (ACMP).
 #endif
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -94,15 +95,14 @@ void ACMP_CapsenseInit(ACMP_TypeDef *acmp, const ACMP_CapsenseInit_TypeDef *init
   EFM_ASSERT(init->vddLevel < 64);
 
   /* Make sure biasprog is within bounds */
-  EFM_ASSERT(init->biasProg < 8);
+  EFM_ASSERT(init->biasProg < 16);
 
   /* Set control register. No need to set interrupt modes */
   acmp->CTRL = (init->fullBias << _ACMP_CTRL_FULLBIAS_SHIFT)
                | (init->halfBias << _ACMP_CTRL_HALFBIAS_SHIFT)
                | (init->biasProg << _ACMP_CTRL_BIASPROG_SHIFT)
                | (init->warmTime << _ACMP_CTRL_WARMTIME_SHIFT)
-               | (init->hysteresisLevel << _ACMP_CTRL_HYSTSEL_SHIFT)
-               | ACMP_CTRL_EN;
+               | (init->hysteresisLevel << _ACMP_CTRL_HYSTSEL_SHIFT);
 
   /* Select capacative sensing mode by selecting a resistor and enabling it */
   acmp->INPUTSEL = (init->resistor << _ACMP_INPUTSEL_CSRESSEL_SHIFT)
@@ -110,6 +110,13 @@ void ACMP_CapsenseInit(ACMP_TypeDef *acmp, const ACMP_CapsenseInit_TypeDef *init
                    | (init->lowPowerReferenceEnabled << _ACMP_INPUTSEL_LPREF_SHIFT)
                    | (init->vddLevel << _ACMP_INPUTSEL_VDDLEVEL_SHIFT)
                    | ACMP_INPUTSEL_NEGSEL_CAPSENSE;
+
+  /* Enable ACMP if requested.
+   * Note: BITBAND_Peripheral() function is used for setting/clearing single
+   * bit peripheral register bitfields. */
+  BITBAND_Peripheral(&(acmp->CTRL),
+                     (uint32_t)_ACMP_CTRL_EN_SHIFT,
+                     (uint32_t)init->enable);
 }
 
 /***************************************************************************//**
@@ -145,19 +152,9 @@ void ACMP_CapsenseChannelSet(ACMP_TypeDef *acmp, ACMP_Channel_TypeDef channel)
  ******************************************************************************/
 void ACMP_Disable(ACMP_TypeDef *acmp)
 {
-  acmp->CTRL &= ~(_ACMP_CTRL_MASK);
-}
-/***************************************************************************//**
- * @brief
- *   Disables the ACMP without resetting settings.
- *
- * @param[in] acmp
- *   Pointer to ACMP peripheral register block.
- ******************************************************************************/
-void ACMP_DisableNoReset(ACMP_TypeDef *acmp)
-{
   acmp->CTRL &= ~ACMP_CTRL_EN;
 }
+
 /***************************************************************************//**
  * @brief
  *   Enables the ACMP.
@@ -198,7 +195,7 @@ void ACMP_Reset(ACMP_TypeDef *acmp)
  *
  * @note
  *    GPIO must be enabled in the CMU before this function call, i.e.
- * @verbatim CMU_ClockEnable(cmuClock_GPIO, true); @endverbatim 
+ * @verbatim CMU_ClockEnable(cmuClock_GPIO, true); @endverbatim
  *
  * @param[in] acmp
  *   Pointer to the ACMP peripheral register block.
@@ -269,7 +266,7 @@ void ACMP_Init(ACMP_TypeDef *acmp, const ACMP_Init_TypeDef *init)
   EFM_ASSERT(ACMP_REF_VALID(acmp));
 
   /* Make sure biasprog is within bounds */
-  EFM_ASSERT(init->biasProg < 8);
+  EFM_ASSERT(init->biasProg < 16);
 
   /* Set control register. No need to set interrupt modes */
   acmp->CTRL = (init->fullBias << _ACMP_CTRL_FULLBIAS_SHIFT)
@@ -279,11 +276,17 @@ void ACMP_Init(ACMP_TypeDef *acmp, const ACMP_Init_TypeDef *init)
                | (init->interruptOnRisingEdge << _ACMP_CTRL_IRISE_SHIFT)
                | (init->warmTime << _ACMP_CTRL_WARMTIME_SHIFT)
                | (init->hysteresisLevel << _ACMP_CTRL_HYSTSEL_SHIFT)
-               | (init->inactiveValue << _ACMP_CTRL_INACTVAL_SHIFT)
-               | ACMP_CTRL_EN;
+               | (init->inactiveValue << _ACMP_CTRL_INACTVAL_SHIFT);
 
   acmp->INPUTSEL = (init->lowPowerReferenceEnabled << _ACMP_INPUTSEL_LPREF_SHIFT)
                    | (init->vddLevel << _ACMP_INPUTSEL_VDDLEVEL_SHIFT);
+
+  /* Enable ACMP if requested.
+   * Note: BITBAND_Peripheral() function is used for setting/clearing single
+   * bit peripheral register bitfields. */
+  BITBAND_Peripheral(&(acmp->CTRL),
+                     (uint32_t)_ACMP_CTRL_EN_SHIFT,
+                     (uint32_t)init->enable);
 }
 
 

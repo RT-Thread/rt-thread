@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file
- * @brief CMSIS Compatible EFM32 startup file in Cfor IAR EWARM
+ * @brief CMSIS Compatible EFM32 startup file in C for IAR EWARM
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  ******************************************************************************
  * @section License
- * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
+ * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
  ******************************************************************************
  *
  * This source code is the property of Energy Micro AS. The source and compiled
@@ -238,7 +238,7 @@ __weak void AES_IRQHandler(void)
 }
 
 
-/* With IAR, the CSTACK is defined via project options settings */
+/* With IAR, the CSTACK size is defined via project options settings */
 #pragma location = ".intvec"
 const void * const __vector_table[]=  {
     &CSTACK$$Limit,

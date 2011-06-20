@@ -2,7 +2,7 @@
  * @file
  * @brief External Bus Iterface (EBI) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -166,25 +166,25 @@ typedef struct
 
 /** Default config for EBI init structures */
 #define EBI_INIT_DEFAULT                                 \
-  {   ebiModeD8A8,      /* 8 bit address, 8 bit data */  \
-      ebiActiveLow,     /* ARDY polarity */              \
-      ebiActiveLow,     /* ALE polarity */               \
-      ebiActiveLow,     /* WE polarity */                \
-      ebiActiveLow,     /* RE polarity */                \
-      ebiActiveLow,     /* CS polarity */                \
-      false,            /* enable ARDY */                \
-      false,            /* don't disable ARDY timeout */ \
-      EBI_BANK0,        /* enable bank 0 */              \
-      EBI_CS0,          /* enable chip select 0 */       \
-      0,                /* addr setup cycles */          \
-      1,                /* addr hold cycles */           \
-      0,                /* read setup cycles */          \
-      0,                /* read strobe cycles */         \
-      0,                /* read hold cycles */           \
-      0,                /* write setup cycles */         \
-      0,                /* write strobe cycles */        \
-      1,                /* write hold cycles */          \
-      true,             /* enable EBI */                 \
+  { ebiModeD8A8,        /* 8 bit address, 8 bit data */  \
+    ebiActiveLow,       /* ARDY polarity */              \
+    ebiActiveLow,       /* ALE polarity */               \
+    ebiActiveLow,       /* WE polarity */                \
+    ebiActiveLow,       /* RE polarity */                \
+    ebiActiveLow,       /* CS polarity */                \
+    false,              /* enable ARDY */                \
+    false,              /* don't disable ARDY timeout */ \
+    EBI_BANK0,          /* enable bank 0 */              \
+    EBI_CS0,            /* enable chip select 0 */       \
+    0,                  /* addr setup cycles */          \
+    1,                  /* addr hold cycles */           \
+    0,                  /* read setup cycles */          \
+    0,                  /* read strobe cycles */         \
+    0,                  /* read hold cycles */           \
+    0,                  /* write setup cycles */         \
+    0,                  /* write strobe cycles */        \
+    1,                  /* write hold cycles */          \
+    true,               /* enable EBI */                 \
   }
 
 /*******************************************************************************

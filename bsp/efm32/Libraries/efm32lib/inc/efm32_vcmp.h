@@ -2,7 +2,7 @@
  * @file
  * @brief Voltage Comparator (VCMP) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -133,6 +133,19 @@ void VCMP_Init(const VCMP_Init_TypeDef *vcmpInit);
 void VCMP_LowPowerRefSet(bool enable);
 void VCMP_TriggerSet(int level);
 
+static __INLINE void VCMP_Enable(void);
+static __INLINE void VCMP_Disable(void);
+static __INLINE uint32_t VCMP_VoltageToLevel(float v);
+static __INLINE bool VCMP_VDDLower(void);
+static __INLINE bool VCMP_VDDHigher(void);
+static __INLINE bool VCMP_Ready(void);
+static __INLINE void VCMP_IntClear(uint32_t flags);
+static __INLINE void VCMP_IntSet(uint32_t flags);
+static __INLINE void VCMP_IntDisable(uint32_t flags);
+static __INLINE void VCMP_IntEnable(uint32_t flags);
+static __INLINE uint32_t VCMP_IntGet(void);
+static __INLINE uint32_t VCMP_IntGetEnabled(void);
+
 /***************************************************************************//**
  * @brief
  *   Enable Voltage Comparator
@@ -165,7 +178,7 @@ static __INLINE void VCMP_Disable(void)
  ******************************************************************************/
 static __INLINE uint32_t VCMP_VoltageToLevel(float v)
 {
-  return (uint32_t)((v - (float) 1.667) / (float) 0.034);
+  return (uint32_t)((v - (float)1.667) / (float)0.034);
 }
 
 
@@ -227,8 +240,9 @@ static __INLINE bool VCMP_Ready(void)
  *   Clear one or more pending VCMP interrupts.
  *
  * @param[in] flags
- *   Pending VCMP interrupt source to clear. Use a logical OR combination
- *   of valid interrupt flags for the VCMP module (VCMP_IF_nnn).
+ *   VCMP interrupt sources to clear. Use a set of interrupt flags OR-ed
+ *   together to clear multiple interrupt sources for the VCMP module
+ *   (VCMP_IFS_nnn).
  ******************************************************************************/
 static __INLINE void VCMP_IntClear(uint32_t flags)
 {
@@ -241,8 +255,9 @@ static __INLINE void VCMP_IntClear(uint32_t flags)
  *   Set one or more pending VCMP interrupts from SW.
  *
  * @param[in] flags
- *   VCMP interrupt sources to set to pending. Use a logical OR combination of
- *   valid interrupt flags for the VCMP module (VCMP_IF_nnn).
+ *   VCMP interrupt sources to set to pending. Use a set of interrupt flags
+ *   OR-ed together to set multiple interrupt sources for the VCMP module
+ *   (VCMP_IFS_nnn).
  ******************************************************************************/
 static __INLINE void VCMP_IntSet(uint32_t flags)
 {
@@ -255,8 +270,9 @@ static __INLINE void VCMP_IntSet(uint32_t flags)
  *   Disable one or more VCMP interrupts
  *
  * @param[in] flags
- *   VCMP interrupt sources to disable. Use logical OR combination of valid
- *   interrupt flags for the VCMP module (VCMP_IF_nnn)
+ *   VCMP interrupt sources to enable. Use a set of interrupt flags OR-ed
+ *   together to set multiple interrupt sources for the VCMP module
+ *   (VCMP_IFS_nnn).
  ******************************************************************************/
 static __INLINE void VCMP_IntDisable(uint32_t flags)
 {
@@ -269,8 +285,9 @@ static __INLINE void VCMP_IntDisable(uint32_t flags)
  *   Enable one or more VCMP interrupts
  *
  * @param[in] flags
- *   VCMP interrupt sources to enable. Use logical OR combination of valid
- *   interrupt flags for the VCMP module (VCMP_IF_nnn)
+ *   VCMP interrupt sources to enable. Use a set of interrupt flags OR-ed
+ *   together to set multiple interrupt sources for the VCMP module
+ *   (VCMP_IFS_nnn).
  ******************************************************************************/
 static __INLINE void VCMP_IntEnable(uint32_t flags)
 {
@@ -286,14 +303,44 @@ static __INLINE void VCMP_IntEnable(uint32_t flags)
  *   The event bits are not cleared by the use of this function
  *
  * @return
- *   VCMP interrupt sources pending, a logical combination of valid VCMP
- *   interrupt flags, VCMP_IF_nnn
+ *   Pending VCMP interrupt sources. Returns a set of interrupt flags OR-ed
+ *   together for multiple interrupt sources in the VCMP module (VCMP_IFS_nnn).
  ******************************************************************************/
 static __INLINE uint32_t VCMP_IntGet(void)
 {
   return(VCMP->IF);
 }
 
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending VCMP interrupt flags.
+ *
+ * @details
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @note
+ *   The event bits are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled VCMP interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in VCMP_IEN_nnn
+ *   register (VCMP_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the VCMP module
+ *   (VCMP_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t VCMP_IntGetEnabled(void)
+{
+  uint32_t tmp = 0U;
+
+  /* Store VCMP->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = VCMP->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return VCMP->IF & tmp;
+}
 
 /** @} (end addtogroup VCMP) */
 /** @} (end addtogroup EFM32_Library) */

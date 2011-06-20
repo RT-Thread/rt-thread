@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Debug (DBG) utilities API for EFM32.
+ * @brief Debug (DBG) API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>

@@ -12,7 +12,7 @@
  **********************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2010-05-06	onelife		Initial creation for using EFM32 USART module
+ * 2011-05-06	onelife		Initial creation for using EFM32 USART module
  *********************************************************************/
 
 /******************************************************************//**
@@ -22,6 +22,7 @@
 
 /* Includes -------------------------------------------------------------------*/
 #include "board.h"
+#include "drv_usart.h"
 #include "dev_sflash.h"
 
 #if defined(EFM32_USING_SFLASH)
@@ -122,7 +123,8 @@ static rt_bool_t sflash_read_inst_tbl[] =
 };
 
 /* Private variables ------------------------------------------------------------*/
-static rt_device_t 	sflash 					= RT_NULL;
+static rt_device_t 	sFlash 					= RT_NULL;
+static rt_bool_t 	sFlashAutoCs 			= true;
 
 /* Private function prototypes ---------------------------------------------------*/
 /* Private functions ------------------------------------------------------------*/
@@ -137,23 +139,38 @@ static rt_device_t 	sflash 					= RT_NULL;
  * @return
  *	 Error code
  *********************************************************************/
-rt_err_t efm_spiFash_init(void)
+rt_err_t efm_spiFlash_init(void)
 {
-	/* Find SPI device */
-	sflash = rt_device_find(SFLASH_USING_DEVICE_NAME);
+	struct efm32_usart_device_t *usart;
+
+	usart = (struct efm32_usart_device_t *)(sFlash->user_data);
+
+#if defined(EFM32_G290_DK)
+	/* Enable SPI access to Flash */
+	DVK_writeRegister(BC_SPI_CFG, 0);
+#endif
 
 	do
 	{
-		if (sflash == RT_NULL)
+		/* Find SPI device */
+		sFlash = rt_device_find(SFLASH_USING_DEVICE_NAME);
+		if (sFlash == RT_NULL)
 		{
 			sflash_debug("SFLASH: Can't find device %s!\n", 
 				SFLASH_USING_DEVICE_NAME);
 			break;
 		}
 		sflash_debug("SFLASH: Find device %s\n", SFLASH_USING_DEVICE_NAME);
-	
+
+		/* Config chip slect pin */
+		if (!(usart->state & USART_STATE_AUTOCS))
+		{
+			GPIO_PinModeSet(SFLASH_CS_PORT, SFLASH_CS_PIN, gpioModePushPull, 1);
+			sFlashAutoCs = false;
+		}
+
 		/* Open SPI device */
-		if (sflash->open(sflash, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+		if (sFlash->open(sFlash, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
 		{
 			break;
 		}
@@ -176,22 +193,22 @@ rt_err_t efm_spiFash_init(void)
  * @return
  *	 Error code
  *********************************************************************/
-rt_err_t efm_spiFash_deinit(void)
+rt_err_t efm_spiFlash_deinit(void)
 {
 	do
 	{
-		if (sflash == RT_NULL)
+		if (sFlash == RT_NULL)
 		{
 			sflash_debug("SFLASH: Already deinit!\n");
 			break;
 		}
 	
 		/* Close SPI device */
-		if (sflash->close(sflash) != RT_EOK)
+		if (sFlash->close(sFlash) != RT_EOK)
 		{
 			break;
 		}
-		sflash = RT_NULL;
+		sFlash = RT_NULL;
 		sflash_debug("SFLASH: Close device %s\n", SFLASH_USING_DEVICE_NAME);
 
 		return RT_EOK;
@@ -201,6 +218,31 @@ rt_err_t efm_spiFash_deinit(void)
 	return -RT_ERROR;
 }
 
+/******************************************************************//**
+ * @brief
+ *   Set/Clear chip select
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] enable
+ *  Chip select pin status
+ *********************************************************************/
+static void efm_spiFlash_cs(rt_uint8_t enable)
+{
+	if (!sFlashAutoCs)
+	{
+		if (enable)
+		{
+			GPIO_PinOutClear(SFLASH_CS_PORT, SFLASH_CS_PIN);
+		}
+		else
+		{
+			GPIO_PinOutSet(SFLASH_CS_PORT, SFLASH_CS_PIN);
+		}
+	}
+}
 
 /******************************************************************//**
  * @brief
@@ -225,13 +267,13 @@ rt_err_t efm_spiFash_deinit(void)
  * @return
  *	 Number of read/written bytes
  *********************************************************************/
-rt_uint32_t efm_spiFash_cmd(
+rt_uint32_t efm_spiFlash_cmd(
 	enum sflash_inst_type_t command, 
 	rt_uint32_t address,
 	rt_uint8_t *buffer, 
 	rt_uint32_t size)
 {
-	RT_ASSERT(sflash != RT_NULL);
+	RT_ASSERT(sFlash != RT_NULL);
 
 	sflash_instruction *inst;
 	rt_uint8_t *inst_buf;
@@ -294,15 +336,27 @@ rt_uint32_t efm_spiFash_cmd(
 	/* Fill in data and send the buffer */
 	if (sflash_read_inst_tbl[command])
 	{
+		rt_off_t skip;
+		
 		inst_buf[0] = inst_len;
 		*(rt_uint8_t **)(inst_buf + head_len) = buffer;
-
-		if (sflash->read(sflash, EFM32_NO_DATA, inst_buf, \
+		if (command == sflash_inst_read)
+		{
+			skip = SFLASH_SPI_READ_SKIP;
+		}
+		else
+		{
+			skip = SFLASH_SPI_COMMAND_SKIP;
+		}
+		
+		efm_spiFlash_cs(1);
+		if (sFlash->read(sFlash, skip, inst_buf, \
 			(data_len == size)? data_len - 1 : data_len) == 0)
 		{
 			sflash_debug("SFLASH: Read failed!\n");
 			return 0x00;
 		}
+		efm_spiFlash_cs(0);
 		buffer[data_len] = 0x00;
 		sflash_debug("SFLASH: Read %d bytes data to 0x%x\n", data_len, buffer);
 	}
@@ -313,12 +367,14 @@ rt_uint32_t efm_spiFash_cmd(
 			rt_memcpy((inst_buf + head_len), buffer, data_len);
 		}
 
-		if (sflash->write(sflash, EFM32_NO_DATA, inst_buf, \
+		efm_spiFlash_cs(1);
+		if (sFlash->write(sFlash, EFM32_NO_DATA, inst_buf, \
 			head_len + data_len) == 0)
 		{
 			sflash_debug("SFLASH: Write failed!\n");
 			return 0x00;
 		}
+		efm_spiFlash_cs(0);
 		sflash_debug("SFLASH: Write %d/%d bytes data\n", data_len, \
 			head_len + data_len);
 	}
@@ -338,12 +394,13 @@ void list_sflash(void)
 {
 	rt_uint8_t buf[4];
 
-	efm_spiFash_cmd(sflash_inst_rdid_s, EFM32_NO_DATA, buf, sizeof(buf));
+	efm_spiFlash_cmd(sflash_inst_rdid_s, EFM32_NO_DATA, buf, sizeof(buf));
 	
-	rt_kprintf(" spi flash on %s\n", SFLASH_USING_DEVICE_NAME);
-	rt_kprintf(" manufacturer id: \t%x\n", buf[0]);
-	rt_kprintf(" memory type: \t\t%x\n", buf[1]);
-	rt_kprintf(" memory capacity: \t%x\n", buf[2]);
+	rt_kprintf("    spi flash on %s\n", SFLASH_USING_DEVICE_NAME);
+	rt_kprintf(" ------------------------------\n");
+	rt_kprintf(" Manufacturer ID:\t%x\n", buf[0]);
+	rt_kprintf(" Memory type:\t\t%x\n", buf[1]);
+	rt_kprintf(" Memory capacity:\t%x\n", buf[2]);
 }
 FINSH_FUNCTION_EXPORT(list_sflash, list the SPI Flash.)
 #endif

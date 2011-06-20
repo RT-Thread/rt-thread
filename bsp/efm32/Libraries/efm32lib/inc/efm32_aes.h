@@ -3,7 +3,7 @@
  * @brief Advanced encryption standard (AES) accelerator peripheral API for
  *   EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -130,7 +130,7 @@ void AES_ECB256(uint8_t *out,
  *   Clear one or more pending AES interrupts.
  *
  * @param[in] flags
- *   Pending AES interrupt source to clear. Use a logical OR combination of
+ *   Pending AES interrupt source to clear. Use a bitwise logic OR combination of
  *   valid interrupt flags for the AES module (AES_IF_nnn).
  ******************************************************************************/
 static __INLINE void AES_IntClear(uint32_t flags)
@@ -144,7 +144,7 @@ static __INLINE void AES_IntClear(uint32_t flags)
  *   Disable one or more AES interrupts.
  *
  * @param[in] flags
- *   AES interrupt sources to disable. Use a logical OR combination of
+ *   AES interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the AES module (AES_IF_nnn).
  ******************************************************************************/
 static __INLINE void AES_IntDisable(uint32_t flags)
@@ -163,7 +163,7 @@ static __INLINE void AES_IntDisable(uint32_t flags)
  *   if such a pending interrupt should be ignored.
  *
  * @param[in] flags
- *   AES interrupt sources to enable. Use a logical OR combination of
+ *   AES interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the AES module (AES_IF_nnn).
  ******************************************************************************/
 static __INLINE void AES_IntEnable(uint32_t flags)
@@ -180,7 +180,7 @@ static __INLINE void AES_IntEnable(uint32_t flags)
  *   The event bits are not cleared by the use of this function.
  *
  * @return
- *   AES interrupt sources pending. A logical OR combination of valid
+ *   AES interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the AES module (AES_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t AES_IntGet(void)
@@ -194,8 +194,8 @@ static __INLINE uint32_t AES_IntGet(void)
  *   Set one or more pending AES interrupts from SW.
  *
  * @param[in] flags
- *   AES interrupt sources to set to pending. Use a logical OR combination of
- *   valid interrupt flags for the AES module (AES_IF_nnn).
+ *   AES interrupt sources to set to pending. Use a bitwise logic OR combination
+ *   of valid interrupt flags for the AES module (AES_IF_nnn).
  ******************************************************************************/
 static __INLINE void AES_IntSet(uint32_t flags)
 {

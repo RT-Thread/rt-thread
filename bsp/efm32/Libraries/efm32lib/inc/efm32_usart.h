@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -43,6 +43,7 @@ extern "C" {
 
 /***************************************************************************//**
  * @addtogroup USART
+ * @brief Universal Synchronous/Asynchronous Receiver/Transmitter (USART) peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -162,6 +163,52 @@ typedef enum
   usartIrDAPrsCh7 = USART_IRCTRL_IRPRSSEL_PRSCH7  /**< PRS channel 7 */
 } USART_IrDAPrsSel_Typedef;
 
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+/** I2S format selection. */
+typedef enum
+{
+  usartI2sFormatW32D32  = USART_I2SCTRL_FORMAT_W32D32,   /**< 32-bit word, 32-bit data */
+  usartI2sFormatW32D24M = USART_I2SCTRL_FORMAT_W32D24M,  /**< 32-bit word, 32-bit data with 8 lsb masked */
+  usartI2sFormatW32D24  = USART_I2SCTRL_FORMAT_W32D24,   /**< 32-bit word, 24-bit data */
+  usartI2sFormatW32D16  = USART_I2SCTRL_FORMAT_W32D16,   /**< 32-bit word, 16-bit data */
+  usartI2sFormatW32D8   = USART_I2SCTRL_FORMAT_W32D8,    /**< 32-bit word, 8-bit data  */
+  usartI2sFormatW16D16  = USART_I2SCTRL_FORMAT_W16D16,   /**< 16-bit word, 16-bit data */
+  usartI2sFormatW16D8   = USART_I2SCTRL_FORMAT_W16D8,    /**< 16-bit word, 8-bit data  */
+  usartI2sFormatW8D8    = USART_I2SCTRL_FORMAT_W8D8      /**<  8-bit word, 8-bit data  */
+} USART_I2sFormat_TypeDef;
+
+/** I2S frame data justify. */
+typedef enum
+{
+  usartI2sJustifyLeft  = USART_I2SCTRL_JUSTIFY_LEFT,  /**< Data is left-justified within the frame  */
+  usartI2sJustifyRight = USART_I2SCTRL_JUSTIFY_RIGHT  /**< Data is right-justified within the frame */
+} USART_I2sJustify_TypeDef;
+
+/** USART Rx input PRS selection. */
+typedef enum
+{
+  usartPrsRxCh0  = _USART_INPUT_RXPRSSEL_PRSCH0,    /**< PRSCH0  selected as USART_INPUT */
+  usartPrsRxCh1  = _USART_INPUT_RXPRSSEL_PRSCH1,    /**< PRSCH1  selected as USART_INPUT */
+  usartPrsRxCh2  = _USART_INPUT_RXPRSSEL_PRSCH2,    /**< PRSCH2  selected as USART_INPUT */
+  usartPrsRxCh3  = _USART_INPUT_RXPRSSEL_PRSCH3,    /**< PRSCH3  selected as USART_INPUT */
+  usartPrsRxCh4  = _USART_INPUT_RXPRSSEL_PRSCH4,    /**< PRSCH4  selected as USART_INPUT */
+  usartPrsRxCh5  = _USART_INPUT_RXPRSSEL_PRSCH5,    /**< PRSCH5  selected as USART_INPUT */
+  usartPrsRxCh6  = _USART_INPUT_RXPRSSEL_PRSCH6,    /**< PRSCH6  selected as USART_INPUT */
+
+#if defined(_EFM32_TINY_FAMILY)
+  usartPrsRxCh7  = _USART_INPUT_RXPRSSEL_PRSCH7     /**< PRSCH7  selected as USART_INPUT */
+
+#elif defined(_EFM32_GIANT_FAMILY)
+  usartPrsRxCh7  = _USART_INPUT_RXPRSSEL_PRSCH7,    /**< PRSCH7  selected as USART_INPUT */
+  usartPrsRxCh8  = _USART_INPUT_RXPRSSEL_PRSCH8,    /**< PRSCH8  selected as USART_INPUT */
+  usartPrsRxCh9  = _USART_INPUT_RXPRSSEL_PRSCH9,    /**< PRSCH9  selected as USART_INPUT */
+  usartPrsRxCh10 = _USART_INPUT_RXPRSSEL_PRSCH10,   /**< PRSCH10 selected as USART_INPUT */
+  usartPrsRxCh11 = _USART_INPUT_RXPRSSEL_PRSCH11    /**< PRSCH11 selected as USART_INPUT */
+#else
+#error Unknown EFM32 family.
+#endif
+} USART_PrsRxCh_TypeDef;
+#endif
 
 /*******************************************************************************
  *******************************   STRUCTS   ***********************************
@@ -171,19 +218,19 @@ typedef enum
 typedef struct
 {
   /** Specifies whether TX and/or RX shall be enabled when init completed. */
-  USART_Enable_TypeDef enable;
+  USART_Enable_TypeDef   enable;
 
   /**
    * USART/UART reference clock assumed when configuring baudrate setup. Set
    * it to 0 if currently configurated reference clock shall be used.
    */
-  uint32_t          refFreq;
+  uint32_t               refFreq;
 
   /** Desired baudrate. */
-  uint32_t          baudrate;
+  uint32_t               baudrate;
 
   /** Oversampling used. */
-  USART_OVS_TypeDef oversampling;
+  USART_OVS_TypeDef      oversampling;
 
   /** Number of databits in frame. Notice that UART modules only support 8 or
    * 9 databits. */
@@ -194,9 +241,34 @@ typedef struct
 
   /** Number of stopbits to use. */
   USART_Stopbits_TypeDef stopbits;
+
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  /** Majority Vote Disable for 16x, 8x and 6x oversampling modes. */
+  bool                   mvdis;
+
+  /** Enable USART Rx via PRS. */
+  bool                   prsRxEnable;
+
+  /** Select PRS channel for USART Rx. (Only valid if prsRxEnable is true). */
+  USART_PrsRxCh_TypeDef  prsRxCh;
+#endif
 } USART_InitAsync_TypeDef;
 
 /** Default config for USART async init structure. */
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+#define USART_INITASYNC_DEFAULT                                                              \
+  { usartEnable,      /* Enable RX/TX when init completed. */                                \
+    0,                /* Use current configured reference clock for configuring baudrate. */ \
+    115200,           /* 115200 bits/s. */                                                   \
+    usartOVS16,       /* 16x oversampling. */                                                \
+    usartDatabits8,   /* 8 databits. */                                                      \
+    usartNoParity,    /* No parity. */                                                       \
+    usartStopbits1,   /* 1 stopbit. */                                                       \
+    false,            /* Do not disable majority vote. */                                    \
+    false,            /* Not USART PRS input mode. */                                        \
+    usartPrsRxCh0     /* PRS channel 0. */                                                   \
+  }
+#else
 #define USART_INITASYNC_DEFAULT                                                              \
   { usartEnable,      /* Enable RX/TX when init completed. */                                \
     0,                /* Use current configured reference clock for configuring baudrate. */ \
@@ -206,13 +278,13 @@ typedef struct
     usartNoParity,    /* No parity. */                                                       \
     usartStopbits1    /* 1 stopbit. */                                                       \
   }
-
+#endif
 
 /** Synchronous mode init structure. */
 typedef struct
 {
   /** Specifies whether TX and/or RX shall be enabled when init completed. */
-  USART_Enable_TypeDef enable;
+  USART_Enable_TypeDef    enable;
 
   /**
    * USART/UART reference clock assumed when configuring baudrate setup. Set
@@ -234,9 +306,35 @@ typedef struct
 
   /** Clock polarity/phase mode. */
   USART_ClockMode_TypeDef clockMode;
+
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  /** Enable USART Rx via PRS. */
+  bool                    prsRxEnable;
+
+  /** Select PRS channel for USART Rx. (Only valid if prsRxEnable is true). */
+  USART_PrsRxCh_TypeDef   prsRxCh;
+
+  /** Enable AUTOTX mode. Transmits as long as RX is not full.
+   *  If TX is empty, underflows are generated. */
+  bool                    autoTx;
+#endif
 } USART_InitSync_TypeDef;
 
 /** Default config for USART sync init structure. */
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+#define USART_INITSYNC_DEFAULT                                                                \
+  { usartEnable,       /* Enable RX/TX when init completed. */                                \
+    0,                 /* Use current configured reference clock for configuring baudrate. */ \
+    1000000,           /* 1 Mbits/s. */                                                       \
+    usartDatabits8,    /* 8 databits. */                                                      \
+    true,              /* Master mode. */                                                     \
+    false,             /* Send least significant bit first. */                                \
+    usartClockMode0,   /* Clock idle low, sample on rising edge. */                           \
+    false,             /* Not USART PRS input mode. */                                        \
+    usartPrsRxCh0,     /* PRS channel 0. */                                                   \
+    false              /* No AUTOTX mode. */                                                  \
+  }
+#else
 #define USART_INITSYNC_DEFAULT                                                                \
   { usartEnable,       /* Enable RX/TX when init completed. */                                \
     0,                 /* Use current configured reference clock for configuring baudrate. */ \
@@ -246,27 +344,28 @@ typedef struct
     false,             /* Send least significant bit first. */                                \
     usartClockMode0    /* Clock idle low, sample on rising edge. */                           \
   }
+#endif
 
 
 /** IrDA mode init structure. Inherited from asynchronous mode init structure */
 typedef struct
 {
   /** General Async initialization structure. */
-  USART_InitAsync_TypeDef async;
+  USART_InitAsync_TypeDef  async;
 
   /** Set to invert Rx signal before IrDA demodulator. */
-  bool                    irRxInv;
+  bool                     irRxInv;
 
   /** Set to enable filter on IrDA demodulator. */
-  bool                    irFilt;
+  bool                     irFilt;
 
   /** Configure the pulse width generated by the IrDA modulator as a fraction
    *  of the configured USART bit period. */
-  USART_IrDAPw_Typedef irPw;
+  USART_IrDAPw_Typedef     irPw;
 
   /** Enable the PRS channel selected by irPrsSel as input to IrDA module
    *  instead of TX. */
-  bool irPrsEn;
+  bool                     irPrsEn;
 
   /** A PRS can be used as input to the pulse modulator instead of TX.
    *  This value selects the channel to use. */
@@ -293,6 +392,51 @@ typedef struct
   }
 
 
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+/** I2S mode init structure. Inherited from synchronous mode init structure */
+typedef struct
+{
+  /** General Sync initialization structure. */
+  USART_InitSync_TypeDef   sync;
+
+  /** I2S mode. */
+  USART_I2sFormat_TypeDef  format;
+
+  /** Delay on I2S data. Set to add a one-cycle delay between a transition
+   *  on the word-clock and the start of the I2S word.
+   *  Should be set for standard I2S format. */
+  bool                     delay;
+
+  /** Separate DMA Request For Left/Right Data. */
+  bool                     dmaSplit;
+
+  /** Justification of I2S data within the frame */
+  USART_I2sJustify_TypeDef justify;
+
+  /** Stero or Mono, set to true for mono. */
+  bool                     mono;
+} USART_InitI2s_TypeDef;
+
+
+/** Default config for I2S mode init structure. */
+#define USART_INITI2S_DEFAULT                                                                    \
+  {                                                                                              \
+    { usartEnableTx,      /* Enable TX when init completed. */                                   \
+      0,                  /* Use current configured reference clock for configuring baudrate. */ \
+      1000000,            /* Baudrate 1M bits/s. */                                              \
+      usartDatabits16,    /* 16 databits. */                                                     \
+      true,               /* Operate as I2S master. */                                           \
+      true,               /* Most significant bit first. */                                      \
+      usartClockMode0     /* Clock idle low, sample on rising edge. */                           \
+    },                                                                                           \
+    usartI2sFormatW16D16, /* 16-bit word, 16-bit data */                                         \
+    true,                 /* Delay on I2S data. */                                               \
+    false,                /* No DMA split. */                                                    \
+    usartI2sJustifyLeft,  /* Data is left-justified within the frame */                          \
+    false                 /* Stereo mode. */                                                     \
+  }
+#endif
+
 /*******************************************************************************
  *****************************   PROTOTYPES   **********************************
  ******************************************************************************/
@@ -314,6 +458,10 @@ void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init);
 void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init);
 void USART_InitIrDA(USART_InitIrDA_TypeDef *init);
 
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init);
+#endif
+
 
 /***************************************************************************//**
  * @brief
@@ -323,8 +471,8 @@ void USART_InitIrDA(USART_InitIrDA_TypeDef *init);
  *   Pointer to USART/UART peripheral register block.
  *
  * @param[in] flags
- *   Pending USART/UART interrupt source to clear. Use a logical OR combination
- *   of valid interrupt flags for the USART module (USART_IF_nnn).
+ *   Pending USART/UART interrupt source(s) to clear. Use one or more valid
+ *   interrupt flags for the USART module (USART_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void USART_IntClear(USART_TypeDef *usart, uint32_t flags)
 {
@@ -340,8 +488,8 @@ static __INLINE void USART_IntClear(USART_TypeDef *usart, uint32_t flags)
  *   Pointer to USART/UART peripheral register block.
  *
  * @param[in] flags
- *   USART/UART interrupt sources to disable. Use a logical OR combination of
- *   valid interrupt flags for the USART module (USART_IF_nnn).
+ *   USART/UART interrupt source(s) to disable. Use one or more valid
+ *   interrupt flags for the USART module (USART_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void USART_IntDisable(USART_TypeDef *usart, uint32_t flags)
 {
@@ -362,8 +510,8 @@ static __INLINE void USART_IntDisable(USART_TypeDef *usart, uint32_t flags)
  *   Pointer to USART/UART peripheral register block.
  *
  * @param[in] flags
- *   USART/UART interrupt sources to enable. Use a logical OR combination of
- *   valid interrupt flags for the USART module (USART_IF_nnn).
+ *   USART/UART interrupt source(s) to enable. Use one or more valid
+ *   interrupt flags for the USART module (USART_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void USART_IntEnable(USART_TypeDef *usart, uint32_t flags)
 {
@@ -382,12 +530,44 @@ static __INLINE void USART_IntEnable(USART_TypeDef *usart, uint32_t flags)
  *   Pointer to USART/UART peripheral register block.
  *
  * @return
- *   USART/UART interrupt sources pending. A logical OR combination of valid
- *   interrupt flags for the USART module (USART_IF_nnn).
+ *   USART/UART interrupt source(s) pending. Returns one or more valid
+ *   interrupt flags for the USART module (USART_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE uint32_t USART_IntGet(USART_TypeDef *usart)
 {
   return usart->IF;
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending USART interrupt flags.
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @param[in] usart
+ *   Pointer to USART/UART peripheral register block.
+ *
+ * @note
+ *   Interrupt flags are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled USART interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in USARTx_IEN_nnn
+ *     register (USARTx_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the USART module
+ *     (USARTx_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t USART_IntGetEnabled(USART_TypeDef *usart)
+{
+  uint32_t tmp;
+
+  /* Store USARTx->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = usart->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return usart->IF & tmp;
 }
 
 
@@ -399,8 +579,8 @@ static __INLINE uint32_t USART_IntGet(USART_TypeDef *usart)
  *   Pointer to USART/UART peripheral register block.
  *
  * @param[in] flags
- *   USART/UART interrupt sources to set to pending. Use a logical OR combination
- *   of valid interrupt flags for the USART module (USART_IF_nnn).
+ *   USART/UART interrupt source(s) to set to pending. Use one or more valid
+ *   interrupt flags for the USART module (USART_IF_nnn) OR'ed together.
  ******************************************************************************/
 static __INLINE void USART_IntSet(USART_TypeDef *usart, uint32_t flags)
 {

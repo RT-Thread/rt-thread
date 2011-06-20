@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief System utilities peripheral API for EFM32.
+ * @brief System Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup SYSTEM
- * @brief EFM32 system utilities.
+ * @brief System Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -65,6 +65,42 @@ void SYSTEM_ChipRevisionGet(SYSTEM_ChipRevision_TypeDef *rev)
   rev->minor = tmp;
 }
 
+/***************************************************************************//**
+ * @brief
+ *    Get factory calibration value for a given peripheral register.
+ *
+ * @param[in] regAddress
+ *    Address of register to get a calibration value for.
+ *
+ * @return
+ *    Calibration value for the requested register.
+ ******************************************************************************/
+uint32_t SYSTEM_GetCalibrationValue(volatile uint32_t *regAddress)
+{
+  int               regCount;
+  CALIBRATE_TypeDef *p;
+
+  regCount = 1;
+  p        = CALIBRATE;
+
+  for (;; )
+  {
+    if ((regCount > CALIBRATE_MAX_REGISTERS) ||
+        (p->VALUE == 0xFFFFFFFF))
+    {
+      EFM_ASSERT(false);
+      return 0;                 /* End of device calibration table reached. */
+    }
+
+    if (p->ADDRESS == (uint32_t)regAddress)
+    {
+      return p->VALUE;          /* Calibration value found ! */
+    }
+
+    p++;
+    regCount++;
+  }
+}
 
 /** @} (end addtogroup SYSTEM) */
 /** @} (end addtogroup EFM32_Library) */

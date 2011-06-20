@@ -2,7 +2,7 @@
  * @file
  * @brief Peripheral Reflex System (PRS) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -106,6 +106,12 @@ void PRS_SourceSignalSet(unsigned int ch,
                          uint32_t source,
                          uint32_t signal,
                          PRS_Edge_TypeDef edge);
+
+#if ((defined _EFM32_TINY_FAMILY) || (defined _EFM32_GIANT_FAMILY))
+void PRS_SourceAsyncSignalSet(unsigned int ch,
+                              uint32_t source,
+                              uint32_t signal);
+#endif
 
 /** @} (end addtogroup PRS) */
 /** @} (end addtogroup EFM32_Library) */

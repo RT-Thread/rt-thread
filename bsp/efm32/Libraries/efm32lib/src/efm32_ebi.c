@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief External Bus Interface (EBI) peripheral API for EFM32
+ * @brief External Bus Interface (EBI) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup EBI
- * @brief EBI External Bus Interface Peripheral API
+ * @brief EBI External Bus Interface (EBI) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -130,7 +130,7 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
 void EBI_Disable(void)
 {
   /* Disable banks */
-  EBI->CTRL = _EBI_ROUTE_RESETVALUE;
+  EBI->CTRL = _EBI_CTRL_RESETVALUE;
   /* Disable pins */
   EBI->ROUTE = _EBI_ROUTE_RESETVALUE;
 }
@@ -248,23 +248,23 @@ void EBI_PolaritySet(EBI_Line_TypeDef line, EBI_Polarity_TypeDef polarity)
   {
   case ebiLineARDY:
     EBI->POLARITY = (EBI->POLARITY & ~(_EBI_POLARITY_ARDYPOL_MASK))
-                    | ((uint32_t) polarity << _EBI_POLARITY_ARDYPOL_SHIFT);
+                    | ((uint32_t)polarity << _EBI_POLARITY_ARDYPOL_SHIFT);
     break;
   case ebiLineALE:
     EBI->POLARITY = (EBI->POLARITY & ~(_EBI_POLARITY_ALEPOL_MASK))
-                    | ((uint32_t) polarity << _EBI_POLARITY_ALEPOL_SHIFT);
+                    | ((uint32_t)polarity << _EBI_POLARITY_ALEPOL_SHIFT);
     break;
   case ebiLineWE:
     EBI->POLARITY = (EBI->POLARITY & ~(_EBI_POLARITY_WEPOL_MASK))
-                    | ((uint32_t) polarity << _EBI_POLARITY_WEPOL_SHIFT);
+                    | ((uint32_t)polarity << _EBI_POLARITY_WEPOL_SHIFT);
     break;
   case ebiLineRE:
     EBI->POLARITY = (EBI->POLARITY & ~(_EBI_POLARITY_REPOL_MASK))
-                    | ((uint32_t) polarity << _EBI_POLARITY_REPOL_SHIFT);
+                    | ((uint32_t)polarity << _EBI_POLARITY_REPOL_SHIFT);
     break;
   case ebiLineCS:
     EBI->POLARITY = (EBI->POLARITY & ~(_EBI_POLARITY_CSPOL_MASK))
-                    | ((uint32_t) polarity << _EBI_POLARITY_CSPOL_SHIFT);
+                    | ((uint32_t)polarity << _EBI_POLARITY_CSPOL_SHIFT);
     break;
   default:
     break;

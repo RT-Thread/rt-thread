@@ -3,7 +3,7 @@
  * @brief Low Energy Universal Asynchronous Receiver/Transmitter (LEUART)
  *   peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -100,7 +100,7 @@ typedef enum
 typedef struct
 {
   /** Specifies whether TX and/or RX shall be enabled when init completed. */
-  LEUART_Enable_TypeDef enable;
+  LEUART_Enable_TypeDef   enable;
 
   /**
    * LEUART reference clock assumed when configuring baudrate setup. Set
@@ -154,8 +154,8 @@ void LEUART_Init(LEUART_TypeDef *leuart, LEUART_Init_TypeDef *init);
  *   Pointer to LEUART peripheral register block.
  *
  * @param[in] flags
- *   Pending LEUART interrupt source to clear. Use a logical OR combination
- *   of valid interrupt flags for the LEUART module (LEUART_IF_nnn).
+ *   Pending LEUART interrupt source to clear. Use a bitwise logic OR
+ *   combination of valid interrupt flags for the LEUART module (LEUART_IF_nnn).
  ******************************************************************************/
 static __INLINE void LEUART_IntClear(LEUART_TypeDef *leuart, uint32_t flags)
 {
@@ -171,7 +171,7 @@ static __INLINE void LEUART_IntClear(LEUART_TypeDef *leuart, uint32_t flags)
  *   Pointer to LEUART peripheral register block.
  *
  * @param[in] flags
- *   LEUART interrupt sources to disable. Use a logical OR combination of
+ *   LEUART interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the LEUART module (LEUART_IF_nnn).
  ******************************************************************************/
 static __INLINE void LEUART_IntDisable(LEUART_TypeDef *leuart, uint32_t flags)
@@ -193,7 +193,7 @@ static __INLINE void LEUART_IntDisable(LEUART_TypeDef *leuart, uint32_t flags)
  *   Pointer to LEUART peripheral register block.
  *
  * @param[in] flags
- *   LEUART interrupt sources to enable. Use a logical OR combination of
+ *   LEUART interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the LEUART module (LEUART_IF_nnn).
  ******************************************************************************/
 static __INLINE void LEUART_IntEnable(LEUART_TypeDef *leuart, uint32_t flags)
@@ -213,7 +213,7 @@ static __INLINE void LEUART_IntEnable(LEUART_TypeDef *leuart, uint32_t flags)
  *   Pointer to LEUART peripheral register block.
  *
  * @return
- *   LEUART interrupt sources pending. A logical OR combination of valid
+ *   LEUART interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the LEUART module (LEUART_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t LEUART_IntGet(LEUART_TypeDef *leuart)
@@ -230,8 +230,8 @@ static __INLINE uint32_t LEUART_IntGet(LEUART_TypeDef *leuart)
  *   Pointer to LEUART peripheral register block.
  *
  * @param[in] flags
- *   LEUART interrupt sources to set to pending. Use a logical OR combination
- *   of valid interrupt flags for the LEUART module (LEUART_IF_nnn).
+ *   LEUART interrupt sources to set to pending. Use a bitwise logic OR
+ *   combination of valid interrupt flags for the LEUART module (LEUART_IF_nnn).
  ******************************************************************************/
 static __INLINE void LEUART_IntSet(LEUART_TypeDef *leuart, uint32_t flags)
 {

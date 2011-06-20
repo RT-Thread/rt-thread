@@ -26,6 +26,12 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+#ifdef RT_IRQHDL_DEBUG
+#define hdl_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define hdl_debug(format,args...)
+#endif
+
 /* Private variables ---------------------------------------------------------*/
 efm32_irq_hook_t dmaCbTable[DMA_CHAN_COUNT * 2]	= {RT_NULL};
 efm32_irq_hook_t timerCbTable[TIMER_COUNT] 		= {RT_NULL};
@@ -48,9 +54,7 @@ efm32_irq_hook_t iicCbTable[I2C_COUNT] 			= {RT_NULL};
 *********************************************************************/
 void NMI_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[NMI_Handler: NOP]\n");
-#endif
+	hdl_debug("[NMI_Handler: NOP]\n");
 }
 
 /******************************************************************//**
@@ -63,9 +67,7 @@ void NMI_Handler(void)
 *********************************************************************/
 void MemManage_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[MemManage_Handler: infinite loop]\n");
-#endif
+	hdl_debug("[MemManage_Handler: infinite loop]\n");
 	while (1);
 }
 
@@ -79,9 +81,7 @@ void MemManage_Handler(void)
 *********************************************************************/
 void BusFault_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[BusFault_Handler: infinite loop]\n");
-#endif
+	hdl_debug("[BusFault_Handler: infinite loop]\n");
 	while (1);
 }
 
@@ -95,9 +95,7 @@ void BusFault_Handler(void)
 *********************************************************************/
 void UsageFault_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[UsageFault_Handler: infinite loop]\n");
-#endif
+	hdl_debug("[UsageFault_Handler: infinite loop]\n");
 	while (1);
 }
 
@@ -111,9 +109,7 @@ void UsageFault_Handler(void)
 *********************************************************************/
 void SVC_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[SVC_Handler: NOP]\n");
-#endif
+	hdl_debug("[SVC_Handler: NOP]\n");
 }
 
 /******************************************************************//**
@@ -126,9 +122,7 @@ void SVC_Handler(void)
 *********************************************************************/
 void DebugMon_Handler(void)
 {
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("[DebugMon_Handler: NOP]\n");
-#endif
+	hdl_debug("[DebugMon_Handler: NOP]\n");
 }
 
 /******************************************************************//**
@@ -140,7 +134,7 @@ void DebugMon_Handler(void)
  * @note
  *
  *********************************************************************/
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
@@ -605,10 +599,9 @@ void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 	default:
 		break;
 	}
-#ifdef RT_IRQHDL_DEBUG
-	rt_kprintf("Hook Registered: type: %s, unit: %x, cbFunc: %x, userPtr: %x\n", \
+
+	hdl_debug("Hook Registered: type: %s, unit: %x, cbFunc: %x, userPtr: %x\n", \
 		hook->type, hook->unit, hook->cbFunc, hook->userPtr);
-#endif
 }
 
 /******************************************************************//**

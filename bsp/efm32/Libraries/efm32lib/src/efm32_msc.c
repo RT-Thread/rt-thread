@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief On-board Flash controller module peripheral API for EFM32
- *   devices.
+ * @brief Flash controller (MSC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -36,7 +35,7 @@
 
 /***************************************************************************//**
  * @addtogroup MSC
- * @brief EFM32 Flash controllre utilities.
+ * @brief Flash controller (MSC) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -102,13 +101,13 @@ msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress)
   int timeOut = MSC_PROGRAM_TIMEOUT;
 
   /* Address must be aligned to pages */
-  EFM_ASSERT((((uint32_t) startAddress) & 0x1FF) == 0);
+  EFM_ASSERT((((uint32_t)startAddress) & 0x1FF) == 0);
 
   /* Enable writing to the MSC */
   MSC->WRITECTRL |= MSC_WRITECTRL_WREN;
 
   /* Load address */
-  MSC->ADDRB    = (uint32_t) startAddress;
+  MSC->ADDRB    = (uint32_t)startAddress;
   MSC->WRITECMD = MSC_WRITECMD_LADDRIM;
 
   /* Check for invalid address */
@@ -179,7 +178,7 @@ msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress)
 #ifdef __CC_ARM  /* MDK-ARM compiler */
 #pragma arm section code="ram_code"
 #endif /* __CC_ARM */
-msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void *data, int numBytes)
+msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes)
 {
   int timeOut;
   int wordCount;
@@ -236,7 +235,7 @@ msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void *data, int numBytes)
     }
 
     /* Load data into write data register */
-    MSC->WDATA = *(((uint32_t *) data) + wordCount);
+    MSC->WDATA = *(((uint32_t *)data) + wordCount);
 
     /* Trigger write once */
     MSC->WRITECMD = MSC_WRITECMD_WRITEONCE;

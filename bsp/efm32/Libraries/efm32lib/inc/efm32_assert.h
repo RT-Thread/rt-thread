@@ -2,7 +2,7 @@
  * @file
  * @brief EFM32 peripheral API "assert" implementation.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *
  * @details
  * By default, EFM32 library assert usage is not included in order to reduce
@@ -57,11 +57,11 @@ extern "C" {
 /* Due to footprint considerations, we only pass file name and line number, */
 /* not the assert expression (nor function name (C99)) */
 void assertEFM(const char *file, int line);
-#define EFM_ASSERT(expr)    ((expr) ? ((void) 0) : assertEFM(__FILE__, __LINE__))
+#define EFM_ASSERT(expr)    ((expr) ? ((void)0) : assertEFM(__FILE__, __LINE__))
 
 #else
 
-#define EFM_ASSERT(expr)    ((void) 0)
+#define EFM_ASSERT(expr)    ((void)0)
 
 #endif /* defined(DEBUG_EFM) || defined(DEBUG_EFM_USER) */
 

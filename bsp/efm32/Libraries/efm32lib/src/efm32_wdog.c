@@ -3,7 +3,7 @@
  * @brief Watchdog (WDOG) peripheral API for EFM32
  *   devices.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -36,7 +36,7 @@
 
 /***************************************************************************//**
  * @addtogroup WDOG
- * @brief EFM32 watchdog utilities.
+ * @brief Watchdog (WDOG) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -64,9 +64,10 @@ void WDOG_Enable(bool enable)
   {
     /* Wait for any pending previous write operation to have been completed in */
     /* low frequency domain */
-    while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL) ;
+    while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL)
+      ;
   }
-  BITBAND_Peripheral(&(WDOG->CTRL), _WDOG_CTRL_EN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(&(WDOG->CTRL), _WDOG_CTRL_EN_SHIFT, (unsigned int)enable);
 }
 
 
@@ -150,7 +151,8 @@ void WDOG_Init(const WDOG_Init_TypeDef *init)
 
   /* Wait for any pending previous write operation to have been completed in */
   /* low frequency domain */
-  while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL) ;
+  while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL)
+    ;
 
   WDOG->CTRL = setting;
 
@@ -191,7 +193,8 @@ void WDOG_Lock(void)
 {
   /* Wait for any pending previous write operation to have been completed in */
   /* low frequency domain */
-  while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL) ;
+  while (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL)
+    ;
 
   /* Disable writing to the control register */
   BITBAND_Peripheral(&(WDOG->CTRL), _WDOG_CTRL_LOCK_SHIFT, 1);

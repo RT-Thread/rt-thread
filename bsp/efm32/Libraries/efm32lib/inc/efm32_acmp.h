@@ -2,7 +2,7 @@
  * @file
  * @brief Analog Comparator (ACMP) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -135,24 +135,24 @@ typedef enum
 /** Capsense initialization structure. */
 typedef struct
 {
-  /** Full bias current. See section 23.3.2 in the reference manual
-   *  for details. */
-  bool fullBias;
+  /** Full bias current. See the ACMP chapter about bias and response time in
+   *  the reference manual for details. */
+  bool                          fullBias;
 
-  /** Half bias current. See section 23.3.2 in the reference manual
-   *  for details. */
-  bool halfBias;
+  /** Half bias current. See the ACMP chapter about bias and response time in
+   *  the reference manual for details. */
+  bool                          halfBias;
 
-  /** Bias current. See section 23.3.2 in the reference manual for
-   *  details. Valid values are in the range 0-7. */
-  uint32_t biasProg;
+  /** Bias current. See the ACMP chapter about bias and response time in the
+   *  reference manual for details. Valid values are in the range 0-7. */
+  uint32_t                      biasProg;
 
   /** Warmup time. This is measured in HFPERCLK cycles and should be
    *  about 10us in wall clock time. */
-  ACMP_WarmTime_TypeDef        warmTime;
+  ACMP_WarmTime_TypeDef         warmTime;
 
   /** Hysteresis level */
-  ACMP_HysteresisLevel_TypeDef hysteresisLevel;
+  ACMP_HysteresisLevel_TypeDef  hysteresisLevel;
 
   /** Resistor used in the capacative sensing circuit. For values see
    *  your device datasheet. */
@@ -160,45 +160,49 @@ typedef struct
 
   /** Low power reference enabled. This setting, if enabled, reduces the
    *  power used by the VDD and bandgap references. */
-  bool lowPowerReferenceEnabled;
+  bool                          lowPowerReferenceEnabled;
 
   /** Vdd reference value. VDD_SCALED = VDD × VDDLEVEL × 50mV/3.8V.
    *  Valid values are in the range 0-63. */
-  uint32_t vddLevel;
+  uint32_t                      vddLevel;
+
+  /** If true, ACMP is being enabled after configuration. */
+  bool                          enable;
 } ACMP_CapsenseInit_TypeDef;
 
-/** Default config for capacitive sense on the STK */
-#define ACMP_CAPSENSE_STK_DEFAULT                         \
+/** Default config for capacitive sense mode initialization. */
+#define ACMP_CAPSENSE_INIT_DEFAULT                        \
   { false,              /* fullBias */                    \
     false,              /* halfBias */                    \
-    0xF,                /* biasProg */                    \
+    0x7,                /* biasProg */                    \
     acmpWarmTime512,    /* 512 cycle warmup to be safe */ \
     acmpHysteresisLevel5,                                 \
     acmpResistor3,                                        \
     false,              /* low power reference */         \
-    0x3D                /* VDD level */                   \
+    0x3D,               /* VDD level */                   \
+    true                /* Enable after init. */          \
   }
 
 /** ACMP initialization structure. */
 typedef struct
 {
-  /** Full bias current. See section 23.3.2 in the reference manual
-   *  for details. */
-  bool fullBias;
+  /** Full bias current. See the ACMP chapter about bias and response time in
+   *  the reference manual for details. */
+  bool                         fullBias;
 
-  /** Half bias current. See section 23.3.2 in the reference manual
-   *  for details. */
-  bool halfBias;
+  /** Half bias current. See the ACMP chapter about bias and response time in
+   *  the reference manual for details. */
+  bool                         halfBias;
 
-  /** Bias current. See section 23.3.2 in the reference manual for
-   *  details. Valid values are in the range 0-7. */
-  uint32_t biasProg;
+  /** Bias current. See the ACMP chapter about bias and response time in the
+   *  reference manual for details. Valid values are in the range 0-7. */
+  uint32_t                     biasProg;
 
   /** Enable setting the interrupt flag on falling edge */
-  bool     interruptOnFallingEdge;
+  bool                         interruptOnFallingEdge;
 
   /** Enable setting the interrupt flag on rising edge */
-  bool     interruptOnRisingEdge;
+  bool                         interruptOnRisingEdge;
 
   /** Warmup time. This is measured in HFPERCLK cycles and should be
    *  about 10us in wall clock time. */
@@ -212,12 +216,31 @@ typedef struct
 
   /** Low power reference enabled. This setting, if enabled, reduces the
    *  power used by the VDD and bandgap references. */
-  bool lowPowerReferenceEnabled;
+  bool                         lowPowerReferenceEnabled;
 
   /** Vdd reference value. VDD_SCALED = VDD × VDDLEVEL × 50mV/3.8V.
    *  Valid values are in the range 0-63. */
-  uint32_t vddLevel;
+  uint32_t                     vddLevel;
+
+  /** If true, ACMP is being enabled after configuration. */
+  bool                         enable;
 } ACMP_Init_TypeDef;
+
+/** Default config for ACMP regular initialization. */
+#define ACMP_INIT_DEFAULT                                                     \
+  { false,              /* fullBias */                                        \
+    false,              /* halfBias */                                        \
+    0x7,                /* biasProg */                                        \
+    false,              /* No interrupt on falling edge. */                   \
+    false,              /* No interrupt on rising edge. */                    \
+    acmpWarmTime512,    /* 512 cycle warmup to be safe */                     \
+    acmpHysteresisLevel5,                                                     \
+    false,              /* Disabled emitting inactive value during warmup. */ \
+    false,              /* low power reference */                             \
+    0x3D,               /* VDD level */                                       \
+    true                /* Enable after init. */                              \
+  }
+
 
 /*******************************************************************************
  *****************************   PROTOTYPES   **********************************
@@ -227,7 +250,6 @@ void ACMP_CapsenseInit(ACMP_TypeDef *acmp, const ACMP_CapsenseInit_TypeDef *init
 void ACMP_CapsenseChannelSet(ACMP_TypeDef *acmp, ACMP_Channel_TypeDef channel);
 void ACMP_ChannelSet(ACMP_TypeDef *acmp, ACMP_Channel_TypeDef negSel, ACMP_Channel_TypeDef posSel);
 void ACMP_Disable(ACMP_TypeDef *acmp);
-void ACMP_DisableNoReset(ACMP_TypeDef *acmp);
 void ACMP_Enable(ACMP_TypeDef *acmp);
 void ACMP_GPIOSetup(ACMP_TypeDef *acmp, uint32_t location, bool enable, bool invert);
 void ACMP_Init(ACMP_TypeDef *acmp, const ACMP_Init_TypeDef *init);
@@ -241,7 +263,7 @@ void ACMP_Reset(ACMP_TypeDef *acmp);
  *   Pointer to ACMP peripheral register block.
  *
  * @param[in] flags
- *   Pending ACMP interrupt source to clear. Use a logical OR combination
+ *   Pending ACMP interrupt source to clear. Use a bitwise logic OR combination
  *   of valid interrupt flags for the ACMP module (ACMP_IF_nnn).
  ******************************************************************************/
 static __INLINE void ACMP_IntClear(ACMP_TypeDef *acmp, uint32_t flags)
@@ -258,7 +280,7 @@ static __INLINE void ACMP_IntClear(ACMP_TypeDef *acmp, uint32_t flags)
  *   Pointer to ACMP peripheral register block.
  *
  * @param[in] flags
- *   ACMP interrupt sources to disable. Use a logical OR combination of
+ *   ACMP interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the ACMP module (ACMP_IF_nnn).
  ******************************************************************************/
 static __INLINE void ACMP_IntDisable(ACMP_TypeDef *acmp, uint32_t flags)
@@ -280,7 +302,7 @@ static __INLINE void ACMP_IntDisable(ACMP_TypeDef *acmp, uint32_t flags)
  *   Pointer to ACMP peripheral register block.
  *
  * @param[in] flags
- *   ACMP interrupt sources to enable. Use a logical OR combination of
+ *   ACMP interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the ACMP module (ACMP_IF_nnn).
  ******************************************************************************/
 static __INLINE void ACMP_IntEnable(ACMP_TypeDef *acmp, uint32_t flags)
@@ -300,12 +322,44 @@ static __INLINE void ACMP_IntEnable(ACMP_TypeDef *acmp, uint32_t flags)
  *   Pointer to ACMP peripheral register block.
  *
  * @return
- *   ACMP interrupt sources pending. A logical OR combination of valid
+ *   ACMP interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the ACMP module (ACMP_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t ACMP_IntGet(ACMP_TypeDef *acmp)
 {
   return(acmp->IF);
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending ACMP interrupt flags.
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @param[in] usart
+ *   Pointer to ACMP peripheral register block.
+ *
+ * @note
+ *   Interrupt flags are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled ACMP interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in ACMPx_IEN_nnn
+ *     register (ACMPx_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the ACMP module
+ *     (ACMPx_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t ACMP_IntGetEnabled(ACMP_TypeDef *acmp)
+{
+  uint32_t tmp;
+
+  /* Store ACMPx->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = acmp->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return acmp->IF & tmp;
 }
 
 
@@ -317,8 +371,8 @@ static __INLINE uint32_t ACMP_IntGet(ACMP_TypeDef *acmp)
  *   Pointer to ACMP peripheral register block.
  *
  * @param[in] flags
- *   ACMP interrupt sources to set to pending. Use a logical OR combination
- *   of valid interrupt flags for the ACMP module (ACMP_IF_nnn).
+ *   ACMP interrupt sources to set to pending. Use a bitwise logic OR
+ *   combination of valid interrupt flags for the ACMP module (ACMP_IF_nnn).
  ******************************************************************************/
 static __INLINE void ACMP_IntSet(ACMP_TypeDef *acmp, uint32_t flags)
 {

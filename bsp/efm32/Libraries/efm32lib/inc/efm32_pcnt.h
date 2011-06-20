@@ -2,7 +2,7 @@
  * @file
  * @brief Pulse Counter (PCNT) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -46,18 +46,6 @@ extern "C" {
  ******************************************************************************/
 
 /*******************************************************************************
- *******************************   DEFINES   ***********************************
- ******************************************************************************/
-
-/** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
-
-/** PCNT counter width mask. */
-/* TBD: Remove use with efm32 include file defines when corrected */
-#define PCNT_WIDTH_MASK    0xff
-
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
-
-/*******************************************************************************
  ********************************   ENUMS   ************************************
  ******************************************************************************/
 
@@ -78,6 +66,49 @@ typedef enum
 } PCNT_Mode_TypeDef;
 
 
+#if (defined (_EFM32_TINY_FAMILY) || defined (_EFM32_GIANT_FAMILY))
+/** Counter event selection.
+ *  Note: unshifted values are being used for enumeration because multiple
+ *  configuration structure members use this type definition. */
+typedef enum
+{
+  /** Counts up on up-count and down on down-count events. */
+  pcntCntEventBoth = _PCNT_CTRL_CNTEV_BOTH,
+
+  /** Only counts up on up-count events. */
+  pcntCntEventUp   = _PCNT_CTRL_CNTEV_UP,
+
+  /** Only counts down on down-count events. */
+  pcntCntEventDown = _PCNT_CTRL_CNTEV_DOWN,
+
+  /** Never counts. */
+  pcntCntEventNone = _PCNT_CTRL_CNTEV_NONE
+} PCNT_CntEvent_TypeDef;
+
+
+/** PRS sources for @p s0PRS and @p s1PRS. */
+typedef enum
+{
+  pcntPRSCh0 = 0,     /**< PRS channel 0. */
+  pcntPRSCh1 = 1,     /**< PRS channel 1. */
+  pcntPRSCh2 = 2,     /**< PRS channel 2. */
+  pcntPRSCh3 = 3,     /**< PRS channel 3. */
+  pcntPRSCh4 = 4,     /**< PRS channel 4. */
+  pcntPRSCh5 = 5,     /**< PRS channel 5. */
+  pcntPRSCh6 = 6,     /**< PRS channel 6. */
+  pcntPRSCh7 = 7      /**< PRS channel 7. */
+} PCNT_PRSSel_TypeDef;
+
+
+/** PRS inputs of PCNT. */
+typedef enum
+{
+  pcntPRSInputS0 = 0, /** PRS input 0. */
+  pcntPRSInputS1 = 1  /** PRS input 1. */
+} PCNT_PRSInput_TypeDef;
+#endif
+
+
 /*******************************************************************************
  *******************************   STRUCTS   ***********************************
  ******************************************************************************/
@@ -86,52 +117,86 @@ typedef enum
 typedef struct
 {
   /** Mode to operate in. */
-  PCNT_Mode_TypeDef mode;
+  PCNT_Mode_TypeDef     mode;
 
-  /**
-   * Initial counter value (refer to reference manual for max value allowed).
+  /** Initial counter value (refer to reference manual for max value allowed).
    * Only used for #pcntModeOvsSingle (and possibly #pcntModeDisable) modes.
    * If using #pcntModeExtSingle or #pcntModeExtQuad modes, the counter
-   * value is reset to HW reset value.
-   */
-  uint32_t counter;
+   * value is reset to HW reset value. */
+  uint32_t              counter;
 
-  /**
-   * Initial top value (refer to reference manual for max value allowed).
+  /** Initial top value (refer to reference manual for max value allowed).
    * Only used for #pcntModeOvsSingle (and possibly #pcntModeDisable) modes.
    * If using #pcntModeExtSingle or #pcntModeExtQuad modes, the top
-   * value is reset to HW reset value.
-   */
-  uint32_t top;
+   * value is reset to HW reset value. */
+  uint32_t              top;
 
-  /**
-   * Polarity of incoming edge.
+  /** Polarity of incoming edge.
    * @li #pcntModeExtSingle mode - if false, positive edges are counted,
    *   otherwise negative edges.
-   * @li #pcntModeExtQuad mode - if true, counting direction is inverted.
-   */
-  bool negEdge;
+   * @li #pcntModeExtQuad mode - if true, counting direction is inverted. */
+  bool                  negEdge;
 
-  /**
-   * Counting direction, only applicable for #pcntModeOvsSingle and
-   * #pcntModeExtSingle modes.
-   */
-  bool countDown;
+  /** Counting direction, only applicable for #pcntModeOvsSingle and
+   * #pcntModeExtSingle modes. */
+  bool                  countDown;
 
   /** Enable filter, only available in #pcntModeOvsSingle mode. */
-  bool filter;
+  bool                  filter;
+
+#if (defined (_EFM32_TINY_FAMILY) || defined (_EFM32_GIANT_FAMILY))
+  /** Set to true to enable hysteresis. When its enabled, the PCNT will always
+   *  overflow and underflow to TOP/2. */
+  bool                  hyst;
+
+  /** Set to true to enable S1 to determine the direction of counting in
+   *  OVSSINGLE or EXTCLKSINGLE modes.
+   *  When S1 is high, the count direction is given by CNTDIR, and when S1 is
+   *  low, the count direction is the opposite. */
+  bool                  s1CntDir;
+
+  /** Selects whether the regular counter responds to up-count events,
+   *  down-count events, both or none. */
+  PCNT_CntEvent_TypeDef cntEvent;
+
+  /** Selects whether the auxiliary counter responds to up-count events,
+   *  down-count events, both or none. */
+  PCNT_CntEvent_TypeDef auxCntEvent;
+
+  /** Select PRS channel as input to S0IN in PCNTx_INPUT register. */
+  PCNT_PRSSel_TypeDef   s0PRS;
+
+  /** Select PRS channel as input to S1IN in PCNTx_INPUT register. */
+  PCNT_PRSSel_TypeDef   s1PRS;
+#endif
 } PCNT_Init_TypeDef;
 
 /** Default config for PCNT init structure. */
-/* TBD: Remove PCNT_WIDTH_MASK use when _PCNT_TOP_RESETVALUE corrected */
+#if defined (_EFM32_GECKO_FAMILY)
 #define PCNT_INIT_DEFAULT                                                           \
   { pcntModeDisable,                          /* Disabled by default. */            \
     _PCNT_CNT_RESETVALUE,                     /* Default counter HW reset value. */ \
-    _PCNT_TOP_RESETVALUE & PCNT_WIDTH_MASK,   /* Default counter HW reset value. */ \
+    _PCNT_TOP_RESETVALUE,                     /* Default counter HW reset value. */ \
     false,                                    /* Use positive edge. */              \
     false,                                    /* Up-counting. */                    \
     false                                     /* Filter disabled. */                \
   }
+#elif (defined (_EFM32_TINY_FAMILY) || defined (_EFM32_GIANT_FAMILY))
+#define PCNT_INIT_DEFAULT                                                                        \
+  { pcntModeDisable,                          /* Disabled by default. */                         \
+    _PCNT_CNT_RESETVALUE,                     /* Default counter HW reset value. */              \
+    _PCNT_TOP_RESETVALUE,                     /* Default counter HW reset value. */              \
+    false,                                    /* Use positive edge. */                           \
+    false,                                    /* Up-counting. */                                 \
+    false,                                    /* Filter disabled. */                             \
+    false,                                    /* Hysteresis disabled. */                         \
+    true,                                     /* Counter direction is given by CNTDIR. */        \
+    pcntCntEventUp,                           /* Regular counter counts up on upcount events. */ \
+    pcntCntEventNone,                         /* Auxiliary counter doesn't respond to events. */ \
+    pcntPRSCh0,                               /* PRS channel 0 selected as S0IN. */              \
+    pcntPRSCh0                                /* PRS channel 0 selected as S1IN. */              \
+  }
+#endif
 
 
 /*******************************************************************************
@@ -150,8 +215,27 @@ typedef struct
  ******************************************************************************/
 static __INLINE uint32_t PCNT_CounterGet(PCNT_TypeDef *pcnt)
 {
-  return(pcnt->CNT);
+  return pcnt->CNT;
 }
+
+
+#if (defined (_EFM32_TINY_FAMILY) || defined (_EFM32_GIANT_FAMILY))
+/***************************************************************************//**
+ * @brief
+ *   Get auxiliary counter value.
+ *
+ * @param[in] pcnt
+ *   Pointer to PCNT peripheral register block.
+ *
+ * @return
+ *   Current auxiliary counter value.
+ ******************************************************************************/
+static __INLINE uint32_t PCNT_AuxCounterGet(PCNT_TypeDef *pcnt)
+{
+  return pcnt->AUXCNT;
+}
+#endif
+
 
 void PCNT_CounterReset(PCNT_TypeDef *pcnt);
 void PCNT_CounterTopSet(PCNT_TypeDef *pcnt, uint32_t count, uint32_t top);
@@ -186,7 +270,13 @@ static __INLINE void PCNT_CounterSet(PCNT_TypeDef *pcnt, uint32_t count)
 
 void PCNT_Enable(PCNT_TypeDef *pcnt, PCNT_Mode_TypeDef mode);
 void PCNT_FreezeEnable(PCNT_TypeDef *pcnt, bool enable);
-void PCNT_Init(PCNT_TypeDef *pcnt, PCNT_Init_TypeDef *init);
+void PCNT_Init(PCNT_TypeDef *pcnt, const PCNT_Init_TypeDef *init);
+
+#if (defined (_EFM32_TINY_FAMILY) || defined (_EFM32_GIANT_FAMILY))
+void PCNT_PRSInputEnable(PCNT_TypeDef *pcnt,
+                         PCNT_PRSInput_TypeDef prsInput,
+                         bool enable);
+#endif
 
 
 /***************************************************************************//**
@@ -197,7 +287,7 @@ void PCNT_Init(PCNT_TypeDef *pcnt, PCNT_Init_TypeDef *init);
  *   Pointer to PCNT peripheral register block.
  *
  * @param[in] flags
- *   Pending PCNT interrupt source to clear. Use a logical OR combination
+ *   Pending PCNT interrupt source to clear. Use a bitwise logic OR combination
  *   of valid interrupt flags for the PCNT module (PCNT_IF_nnn).
  ******************************************************************************/
 static __INLINE void PCNT_IntClear(PCNT_TypeDef *pcnt, uint32_t flags)
@@ -214,7 +304,7 @@ static __INLINE void PCNT_IntClear(PCNT_TypeDef *pcnt, uint32_t flags)
  *   Pointer to PCNT peripheral register block.
  *
  * @param[in] flags
- *   PCNT interrupt sources to disable. Use a logical OR combination of
+ *   PCNT interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the PCNT module (PCNT_IF_nnn).
  ******************************************************************************/
 static __INLINE void PCNT_IntDisable(PCNT_TypeDef *pcnt, uint32_t flags)
@@ -236,7 +326,7 @@ static __INLINE void PCNT_IntDisable(PCNT_TypeDef *pcnt, uint32_t flags)
  *   Pointer to PCNT peripheral register block.
  *
  * @param[in] flags
- *   PCNT interrupt sources to enable. Use a logical OR combination of
+ *   PCNT interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the PCNT module (PCNT_IF_nnn).
  ******************************************************************************/
 static __INLINE void PCNT_IntEnable(PCNT_TypeDef *pcnt, uint32_t flags)
@@ -256,12 +346,47 @@ static __INLINE void PCNT_IntEnable(PCNT_TypeDef *pcnt, uint32_t flags)
  *   Pointer to PCNT peripheral register block.
  *
  * @return
- *   PCNT interrupt sources pending. A logical OR combination of valid
+ *   PCNT interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the PCNT module (PCNT_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t PCNT_IntGet(PCNT_TypeDef *pcnt)
 {
-  return(pcnt->IF);
+  return pcnt->IF;
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Get enabled and pending PCNT interrupt flags.
+ *
+ * @details
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @note
+ *   The event bits are not cleared by the use of this function.
+ *
+ * @param[in] pcnt
+ *   Pointer to PCNT peripheral register block.
+ *
+ * @return
+ *   Pending and enabled PCNT interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in PCNT_IEN_nnn
+ *   register (PCNT_IEN_nnn) and
+ *   - the OR combination of valid interrupt flags of the PCNT module
+ *   (PCNT_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t PCNT_IntGetEnabled(PCNT_TypeDef *pcnt)
+{
+  uint32_t tmp = 0U;
+
+
+  /* Store pcnt->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = pcnt->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return pcnt->IF & tmp;
 }
 
 
@@ -273,7 +398,7 @@ static __INLINE uint32_t PCNT_IntGet(PCNT_TypeDef *pcnt)
  *   Pointer to PCNT peripheral register block.
  *
  * @param[in] flags
- *   PCNT interrupt sources to set to pending. Use a logical OR combination
+ *   PCNT interrupt sources to set to pending. Use a bitwise logic OR combination
  *   of valid interrupt flags for the PCNT module (PCNT_IF_nnn).
  ******************************************************************************/
 static __INLINE void PCNT_IntSet(PCNT_TypeDef *pcnt, uint32_t flags)
@@ -296,7 +421,7 @@ void PCNT_Reset(PCNT_TypeDef *pcnt);
  ******************************************************************************/
 static __INLINE uint32_t PCNT_TopBufferGet(PCNT_TypeDef *pcnt)
 {
-  return(pcnt->TOPB);
+  return pcnt->TOPB;
 }
 
 void PCNT_TopBufferSet(PCNT_TypeDef *pcnt, uint32_t val);
@@ -313,7 +438,7 @@ void PCNT_TopBufferSet(PCNT_TypeDef *pcnt, uint32_t val);
  ******************************************************************************/
 static __INLINE uint32_t PCNT_TopGet(PCNT_TypeDef *pcnt)
 {
-  return(pcnt->TOP);
+  return pcnt->TOP;
 }
 
 void PCNT_TopSet(PCNT_TypeDef *pcnt, uint32_t val);

@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Low Energy Timer (LETIMER) peripheral module peripheral API
- *   for EFM32.
+ * @brief Low Energy Timer (LETIMER) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup LETIMER
- * @brief EFM32 low energy timer utilities.
+ * @brief Low Energy Timer (LETIMER) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -57,7 +56,7 @@
 /** Validation of valid repeat counter register for assert statements. */
 #define LETIMER_REP_REG_VALID(reg)     (((reg) <= 1))
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -66,9 +65,15 @@
 
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
 
+#if defined(_EFM32_GECKO_FAMILY)
 /***************************************************************************//**
  * @brief
  *   Wait for ongoing sync of register(s) to low frequency domain to complete.
+ *
+ * @note
+ *   This only applies to the Gecko Family, see the reference manual
+ *   chapter about Access to Low Energy Peripherals (Asynchronos Registers)
+ *   for details.
  *
  * @param[in] letimer
  *   Pointer to LETIMER peripheral register block
@@ -85,11 +90,13 @@ static __INLINE void LETIMER_Sync(LETIMER_TypeDef *letimer, uint32_t mask)
     return;
 
   /* Wait for any pending previous write operation to have been completed */
-  /* in low frequency domain */
-  while (letimer->SYNCBUSY & mask) ;
+  /* in low frequency domain, only required for Gecko Family of devices  */
+  while (letimer->SYNCBUSY & mask)
+    ;
 }
+#endif
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -143,7 +150,8 @@ uint32_t LETIMER_CompareGet(LETIMER_TypeDef *letimer, unsigned int comp)
  *   The setting of a compare register requires synchronization into the
  *   low frequency domain. If the same register is modified before a previous
  *   update has completed, this function will stall until the previous
- *   synchronization has completed.
+ *   synchronization has completed. This only applies to the Gecko Family, see
+ *   comment in the LETIMER_Sync() internal function call.
  *
  * @param[in] letimer
  *   Pointer to LETIMER peripheral register block
@@ -183,8 +191,10 @@ void LETIMER_CompareSet(LETIMER_TypeDef *letimer,
     return;
   }
 
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   LETIMER_Sync(letimer, syncbusy);
+#endif
 
   *compReg = value;
 }
@@ -199,7 +209,8 @@ void LETIMER_CompareSet(LETIMER_TypeDef *letimer,
  *   which requires synchronization into the low frequency domain. If this
  *   register is modified before a previous update to the same register has
  *   completed, this function will stall until the previous synchronization has
- *   completed.
+ *   completed. This only applies to the Gecko Family, see comment in the
+ *   LETIMER_Sync() internal function call.
  *
  * @param[in] letimer
  *   Pointer to LETIMER peripheral register block.
@@ -211,8 +222,10 @@ void LETIMER_Enable(LETIMER_TypeDef *letimer, bool enable)
 {
   EFM_ASSERT(LETIMER_REF_VALID(letimer));
 
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   LETIMER_Sync(letimer, LETIMER_SYNCBUSY_CMD);
+#endif
 
   if (enable)
   {
@@ -265,7 +278,8 @@ void LETIMER_FreezeEnable(LETIMER_TypeDef *letimer, bool enable)
      * since modifying a register while it is in sync progress should be
      * avoided.
      */
-    while (letimer->SYNCBUSY) ;
+    while (letimer->SYNCBUSY)
+      ;
 
     letimer->FREEZE = LETIMER_FREEZE_REGFREEZE;
   }
@@ -291,7 +305,8 @@ void LETIMER_FreezeEnable(LETIMER_TypeDef *letimer, bool enable)
  *   which require synchronization into the low frequency domain. If any of those
  *   registers are modified before a previous update to the same register has
  *   completed, this function will stall until the previous synchronization has
- *   completed.
+ *   completed. This only applies to the Gecko Family, see comment in the
+ *   LETIMER_Sync() internal function call.
  *
  * @param[in] letimer
  *   Pointer to LETIMER peripheral register block.
@@ -308,8 +323,10 @@ void LETIMER_Init(LETIMER_TypeDef *letimer, const LETIMER_Init_TypeDef *init)
   /* Stop timer if specified to be disabled and running */
   if (!(init->enable) && (letimer->STATUS & LETIMER_STATUS_RUNNING))
   {
+#if defined(_EFM32_GECKO_FAMILY)
     /* LF register about to be modified require sync. busy check */
     LETIMER_Sync(letimer, LETIMER_SYNCBUSY_CMD);
+#endif
     letimer->CMD = LETIMER_CMD_STOP;
   }
 
@@ -354,15 +371,19 @@ void LETIMER_Init(LETIMER_TypeDef *letimer, const LETIMER_Init_TypeDef *init)
   tmp |= init->ufoa1 << _LETIMER_CTRL_UFOA1_SHIFT;
   tmp |= init->repMode << _LETIMER_CTRL_REPMODE_SHIFT;
 
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   LETIMER_Sync(letimer, LETIMER_SYNCBUSY_CTRL);
+#endif
   letimer->CTRL = tmp;
 
   /* Start timer if specified to be enabled and not already running */
   if (init->enable && !(letimer->STATUS & LETIMER_STATUS_RUNNING))
   {
+#if defined(_EFM32_GECKO_FAMILY)
     /* LF register about to be modified require sync. busy check */
     LETIMER_Sync(letimer, LETIMER_SYNCBUSY_CMD);
+#endif
     letimer->CMD = LETIMER_CMD_START;
   }
 }
@@ -416,7 +437,8 @@ uint32_t LETIMER_RepeatGet(LETIMER_TypeDef *letimer, unsigned int rep)
  *   The setting of a repeat counter register requires synchronization into the
  *   low frequency domain. If the same register is modified before a previous
  *   update has completed, this function will stall until the previous
- *   synchronization has completed.
+ *   synchronization has completed. This only applies to the Gecko Family, see
+ *   comment in the LETIMER_Sync() internal function call.
  *
  * @param[in] letimer
  *   Pointer to LETIMER peripheral register block
@@ -432,8 +454,9 @@ void LETIMER_RepeatSet(LETIMER_TypeDef *letimer,
                        uint32_t value)
 {
   volatile uint32_t *repReg;
+#if defined(_EFM32_GECKO_FAMILY)
   uint32_t          syncbusy;
-
+#endif
   EFM_ASSERT(LETIMER_REF_VALID(letimer) &&
              LETIMER_REP_REG_VALID(rep) &&
              ((value & ~(_LETIMER_REP0_REP0_MASK >> _LETIMER_REP0_REP0_SHIFT)) == 0));
@@ -442,13 +465,17 @@ void LETIMER_RepeatSet(LETIMER_TypeDef *letimer,
   switch (rep)
   {
   case 0:
-    repReg   = &(letimer->REP0);
+    repReg = &(letimer->REP0);
+#if defined(_EFM32_GECKO_FAMILY)
     syncbusy = LETIMER_SYNCBUSY_REP0;
+#endif
     break;
 
   case 1:
-    repReg   = &(letimer->REP1);
+    repReg = &(letimer->REP1);
+#if defined(_EFM32_GECKO_FAMILY)
     syncbusy = LETIMER_SYNCBUSY_REP1;
+#endif
     break;
 
   default:
@@ -456,8 +483,10 @@ void LETIMER_RepeatSet(LETIMER_TypeDef *letimer,
     return;
   }
 
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   LETIMER_Sync(letimer, syncbusy);
+#endif
 
   *repReg = value;
 }

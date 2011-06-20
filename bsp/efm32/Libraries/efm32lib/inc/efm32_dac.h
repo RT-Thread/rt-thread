@@ -2,7 +2,7 @@
  * @file
  * @brief Digital to Analog Converter (DAC) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -45,6 +45,13 @@ extern "C" {
  * @{
  ******************************************************************************/
 
+/** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
+
+/** Validation of DAC register block pointer reference for assert statements. */
+#define DAC_REF_VALID(ref)    ((ref) == DAC0)
+
+/** @endcond */
+
 /*******************************************************************************
  ********************************   ENUMS   ************************************
  ******************************************************************************/
@@ -56,20 +63,6 @@ typedef enum
   dacConvModeSampleHold = _DAC_CTRL_CONVMODE_SAMPLEHOLD, /**< Sample/hold mode. */
   dacConvModeSampleOff  = _DAC_CTRL_CONVMODE_SAMPLEOFF   /**< Sample/shut off mode. */
 } DAC_ConvMode_TypeDef;
-
-
-/**
- * Low pass filter cut-off frequency. Refer to datasheet for filter
- * characteristics.
- */
-typedef enum
-{
-  dacLPFreq0 = _DAC_CTRL_LPFFREQ_FREQ0, /**< Cut-off frequency at FREQ0. */
-  dacLPFreq1 = _DAC_CTRL_LPFFREQ_FREQ1, /**< Cut-off frequency at FREQ1. */
-  dacLPFreq2 = _DAC_CTRL_LPFFREQ_FREQ2, /**< Cut-off frequency at FREQ2. */
-  dacLPFreq3 = _DAC_CTRL_LPFFREQ_FREQ3  /**< Cut-off frequency at FREQ3. */
-} DAC_LPFreq_TypeDef;
-
 
 /** Output mode. */
 typedef enum
@@ -124,9 +117,6 @@ typedef struct
   /** Refresh interval. Only used if REFREN bit set for a DAC channel. */
   DAC_Refresh_TypeDef  refresh;
 
-  /** Low pass cut-off frequency. Only applicable if @p lpEnable true. */
-  DAC_LPFreq_TypeDef   lpFreq;
-
   /** Reference voltage to use. */
   DAC_Ref_TypeDef      reference;
 
@@ -140,37 +130,36 @@ typedef struct
    * Prescaler used to get DAC clock. Derived as follows:
    * DACclk=HFPERclk/(2^prescale). The DAC clock should be <= 1MHz.
    */
-  uint8_t prescale;
+  uint8_t              prescale;
 
   /** Enable/disable use of low pass filter on output. */
-  bool    lpEnable;
+  bool                 lpEnable;
 
   /** Enable/disable reset of prescaler on ch0 start. */
-  bool    ch0ResetPre;
+  bool                 ch0ResetPre;
 
   /** Enable/disable output enable control by CH1 PRS signal. */
-  bool    outEnablePRS;
+  bool                 outEnablePRS;
 
   /** Enable/disable sine mode. */
-  bool    sineEnable;
+  bool                 sineEnable;
 
   /** Select if single ended or differential mode. */
-  bool    diff;
+  bool                 diff;
 } DAC_Init_TypeDef;
 
 /** Default config for DAC init structure. */
-#define DAC_INIT_DEFAULT                                                   \
-  { dacRefresh8,              /* Refresh every 8 prescaled cycles. */      \
-    dacLPFreq0,               /* Cut-off at freq0 (if cut-off enabled). */ \
-    dacRef1V25,               /* 1.25V internal reference. */              \
-    dacOutputPin,             /* Output to pin only. */                    \
-    dacConvModeContinuous,    /* Continuous mode. */                       \
-    0,                        /* No prescaling. */                         \
-    false,                    /* Do not enable low pass filter. */         \
-    false,                    /* Do not reset prescaler on ch0 start. */   \
-    false,                    /* DAC output enable always on. */           \
-    false,                    /* Disable sine mode. */                     \
-    false                     /* Single ended mode. */                     \
+#define DAC_INIT_DEFAULT                                                 \
+  { dacRefresh8,              /* Refresh every 8 prescaled cycles. */    \
+    dacRef1V25,               /* 1.25V internal reference. */            \
+    dacOutputPin,             /* Output to pin only. */                  \
+    dacConvModeContinuous,    /* Continuous mode. */                     \
+    0,                        /* No prescaling. */                       \
+    false,                    /* Do not enable low pass filter. */       \
+    false,                    /* Do not reset prescaler on ch0 start. */ \
+    false,                    /* DAC output enable always on. */         \
+    false,                    /* Disable sine mode. */                   \
+    false                     /* Single ended mode. */                   \
   }
 
 
@@ -178,19 +167,19 @@ typedef struct
 typedef struct
 {
   /** Enable channel. */
-  bool enable;
+  bool               enable;
 
   /**
    * Peripheral reflex system trigger enable. If false, channel is triggered
    * by writing to CHnDATA.
    */
-  bool prsEnable;
+  bool               prsEnable;
 
   /**
    * Enable/disable automatic refresh of channel. Refresh interval must be
    * defined in common control init, please see DAC_Init().
    */
-  bool refreshEnable;
+  bool               refreshEnable;
 
   /**
    * Peripheral reflex system trigger selection. Only applicable if @p prsEnable
@@ -226,7 +215,7 @@ void DAC_InitChannel(DAC_TypeDef *dac,
  *   Pointer to DAC peripheral register block.
  *
  * @param[in] flags
- *   Pending DAC interrupt source to clear. Use a logical OR combination of
+ *   Pending DAC interrupt source to clear. Use a bitwise logic OR combination of
  *   valid interrupt flags for the DAC module (DAC_IF_nnn).
  ******************************************************************************/
 static __INLINE void DAC_IntClear(DAC_TypeDef *dac, uint32_t flags)
@@ -243,7 +232,7 @@ static __INLINE void DAC_IntClear(DAC_TypeDef *dac, uint32_t flags)
  *   Pointer to DAC peripheral register block.
  *
  * @param[in] flags
- *   DAC interrupt sources to disable. Use a logical OR combination of
+ *   DAC interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the DAC module (DAC_IF_nnn).
  ******************************************************************************/
 static __INLINE void DAC_IntDisable(DAC_TypeDef *dac, uint32_t flags)
@@ -265,7 +254,7 @@ static __INLINE void DAC_IntDisable(DAC_TypeDef *dac, uint32_t flags)
  *   Pointer to DAC peripheral register block.
  *
  * @param[in] flags
- *   DAC interrupt sources to enable. Use a logical OR combination of
+ *   DAC interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the DAC module (DAC_IF_nnn).
  ******************************************************************************/
 static __INLINE void DAC_IntEnable(DAC_TypeDef *dac, uint32_t flags)
@@ -285,7 +274,7 @@ static __INLINE void DAC_IntEnable(DAC_TypeDef *dac, uint32_t flags)
  *   Pointer to DAC peripheral register block.
  *
  * @return
- *   DAC interrupt sources pending. A logical OR combination of valid
+ *   DAC interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the DAC module (DAC_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t DAC_IntGet(DAC_TypeDef *dac)
@@ -302,8 +291,8 @@ static __INLINE uint32_t DAC_IntGet(DAC_TypeDef *dac)
  *   Pointer to DAC peripheral register block.
  *
  * @param[in] flags
- *   DAC interrupt sources to set to pending. Use a logical OR combination of
- *   valid interrupt flags for the DAC module (DAC_IF_nnn).
+ *   DAC interrupt sources to set to pending. Use a bitwise logic OR combination
+ *   of valid interrupt flags for the DAC module (DAC_IF_nnn).
  ******************************************************************************/
 static __INLINE void DAC_IntSet(DAC_TypeDef *dac, uint32_t flags)
 {

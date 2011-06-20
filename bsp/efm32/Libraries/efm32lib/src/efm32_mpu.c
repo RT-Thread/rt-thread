@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Memory protection unit (MPU) peripheral API for EFM32.
+ * @brief Memory Protection Unit (MPU) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup MPU
- * @brief EFM32 memory protection unit (MPU) management unit utilities.
+ * @brief Memory Protection Unit (MPU) Peripheral API for EFM32
  * @details
  *  This module contains functions to enable, disable and setup the MPU.
  *  The MPU is used to control access attributes and permissions in the

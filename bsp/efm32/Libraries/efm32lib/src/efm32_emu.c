@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Energy management unit (EMU) peripheral module peripheral API
- *   for EFM32.
+ * @brief Energy Management Unit (EMU) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup EMU
- * @brief EFM32 energy management unit utilities.
+ * @brief Energy Management Unit (EMU) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -72,7 +71,7 @@
  * for oscillator control).
  */
 static uint16_t cmuStatus;
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -111,19 +110,22 @@ static void EMU_Restore(void)
   {
   case CMU_STATUS_LFRCOSEL:
     /* Wait for LFRCO to stabilize */
-    while (!(CMU->STATUS & CMU_STATUS_LFRCORDY)) ;
+    while (!(CMU->STATUS & CMU_STATUS_LFRCORDY))
+      ;
     CMU->CMD = CMU_CMD_HFCLKSEL_LFRCO;
     break;
 
   case CMU_STATUS_LFXOSEL:
     /* Wait for LFXO to stabilize */
-    while (!(CMU->STATUS & CMU_STATUS_LFXORDY)) ;
+    while (!(CMU->STATUS & CMU_STATUS_LFXORDY))
+      ;
     CMU->CMD = CMU_CMD_HFCLKSEL_LFXO;
     break;
 
   case CMU_STATUS_HFXOSEL:
     /* Wait for HFXO to stabilize */
-    while (!(CMU->STATUS & CMU_STATUS_HFXORDY)) ;
+    while (!(CMU->STATUS & CMU_STATUS_HFXORDY))
+      ;
     CMU->CMD = CMU_CMD_HFCLKSEL_HFXO;
     break;
 
@@ -140,7 +142,7 @@ static void EMU_Restore(void)
   }
 }
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -335,12 +337,12 @@ void EMU_EnterEM4(void)
  ******************************************************************************/
 void EMU_MemPwrDown(uint32_t blocks)
 {
-#if defined( _EMU_MEMCTRL_RESETVALUE )
+#if defined(_EMU_MEMCTRL_RESETVALUE)
   EFM_ASSERT(blocks <= _EMU_MEMCTRL_MASK);
 
   EMU->MEMCTRL = blocks;
 #else
-  (void) blocks;
+  (void)blocks;
 #endif
 }
 

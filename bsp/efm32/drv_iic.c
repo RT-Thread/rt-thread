@@ -12,6 +12,7 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-01-06	onelife		Initial creation for EFM32
+ * 2011-06-17	onelife		Modify init function for efm32lib v2 upgrading
  *********************************************************************/
 
 /******************************************************************//**
@@ -24,9 +25,16 @@
 #include "hdl_interrupt.h"
 #include "drv_iic.h"
 
+#if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_IIC_DEBUG
+#define iic_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define iic_debug(format,args...)
+#endif
+
 /* Private variables ------------------------------------------------------------*/
 #ifdef RT_USING_IIC0
 #if (RT_USING_IIC0 > 3)
@@ -100,10 +108,7 @@ static rt_err_t rt_iic_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_IIC_DEBUG
-	rt_kprintf("IIC: Open with flag %x\n", oflag);
-#endif
-
+	iic_debug("IIC: Open with flag %x\n", oflag);
 	return RT_EOK;
 }
 
@@ -200,22 +205,18 @@ static rt_size_t rt_iic_read (
 	
 		if (ret != i2cTransferDone)
 		{
-#ifdef RT_IIC_DEBUG
-			rt_kprintf("IIC0 read error: %x\n", ret);
-			rt_kprintf("IIC0 read address: %x\n", seq.addr);
-			rt_kprintf("IIC0 read data0: %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
-			rt_kprintf("IIC0 read len0: %x\n", seq.buf[0].len);
-			rt_kprintf("IIC0 read data1: %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
-			rt_kprintf("IIC0 read len1: %x\n", seq.buf[1].len);
-#endif
+			iic_debug("IIC0 read error: %x\n", ret);
+			iic_debug("IIC0 read address: %x\n", seq.addr);
+			iic_debug("IIC0 read data0: %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
+			iic_debug("IIC0 read len0: %x\n", seq.buf[0].len);
+			iic_debug("IIC0 read data1: %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
+			iic_debug("IIC0 read len1: %x\n", seq.buf[1].len);
 			err_code = (rt_err_t)ret;
 		}
 		else
 		{
 			read_size = size;
-#ifdef RT_IIC_DEBUG
-			rt_kprintf("IIC0 read size: %d\n", read_size);
-#endif
+			iic_debug("IIC0 read size: %d\n", read_size);
 		}
 	}
 	else
@@ -263,9 +264,7 @@ static rt_size_t rt_iic_read (
 		}
 
 		read_size = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-#ifdef RT_IIC_DEBUG
-		rt_kprintf("IIC0 slave read size: %d\n", read_size);
-#endif
+		iic_debug("IIC0 slave read size: %d\n", read_size);
 	}
 
 	/* set error code */
@@ -427,9 +426,7 @@ static rt_err_t rt_iic_control (
 					iic->rx_buffer = rt_malloc(sizeof(struct efm32_iic_int_mode_t));
 					if (iic->rx_buffer == RT_NULL)
 					{
-#ifdef RT_IIC_DEBUG
-						rt_kprintf("no memory for IIC RX structure\n");
-#endif
+						iic_debug("no memory for IIC RX structure\n");
 						return -RT_ENOMEM;
 					}
 
@@ -437,9 +434,7 @@ static rt_err_t rt_iic_control (
 					if ((iic->rx_buffer->data_ptr = \
 						rt_malloc(IIC_RX_BUFFER_SIZE)) == RT_NULL)
 					{
-#ifdef RT_IIC_DEBUG
-						rt_kprintf("no memory for IIC RX buffer\n");
-#endif
+						iic_debug("no memory for IIC RX buffer\n");
 						rt_free(iic->rx_buffer);
 						return -RT_ENOMEM;
 					}
@@ -520,7 +515,7 @@ rt_err_t rt_hw_iic_register(
 		RT_ASSERT(0);
 	}
 
-	device->type 		= RT_Device_Class_Char;
+	device->type 		= RT_Device_Class_I2C;
 	device->rx_indicate = RT_NULL;
 	device->tx_complete = RT_NULL;
 	device->init 		= rt_iic_init;
@@ -626,68 +621,97 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
 * @param[in] location
 *	Pin location number 
 *********************************************************************/
-static void rt_hw_iic_unit_init(
+static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 	rt_device_t device,
 	rt_uint8_t 	unitNumber, 
 	rt_uint8_t 	location)
 {
-	I2C_TypeDef				*iic;
-	CMU_Clock_TypeDef		iicClock;
-	I2C_Init_TypeDef		init = I2C_INIT_DEFAULT;
-	efm32_irq_hook_init_t	hook;
+	struct efm32_iic_device_t 	*iic;
+	CMU_Clock_TypeDef			iicClock;
+	I2C_Init_TypeDef			init = I2C_INIT_DEFAULT;
+	efm32_irq_hook_init_t		hook;
 
-	switch (unitNumber)
+	do
 	{
-	case 0:
-		iic 		= I2C0;
-		iicClock 	= (CMU_Clock_TypeDef)cmuClock_I2C0;	
-		hook.unit	= 0;
-		break;
+		/* Allocate device */
+		iic = rt_malloc(sizeof(struct efm32_iic_device_t));
+		if (iic == RT_NULL)
+		{
+			iic_debug("no memory for IIC%d driver\n", unitNumber);
+			break;
+		}
+		iic->state 			|= IIC_STATE_MASTER;
+		iic->master_address	= 0x0000;
+		iic->slave_address 	= 0x0000;
+		iic->rx_buffer 		= RT_NULL;
+
+		/* Initialization */
+		if (unitNumber >= I2C_COUNT)
+		{
+			break;
+		}
+		switch (unitNumber)
+		{
+		case 0:
+			iic->iic_device	= I2C0;
+			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;	
+			break;
+
 #if (I2C_COUNT > 1)
-	case 1:
-		iic		  	= I2C1;
-		iicClock  	= (CMU_Clock_TypeDef)cmuClock_I2C1; 
-		hook.unit	= 1;
-		break;
+		case 1:
+			iic->iic_device	= I2C1;
+			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1; 
+			break;
 #endif
-	default:
-		return;
+
+		default:
+			break;
+		}
+
+		/* Enabling clock */
+		CMU_ClockEnable(iicClock, true);  
+
+		/* Reset */
+		I2C_Reset(iic->iic_device);
+
+		/* Config GPIO */
+		GPIO_PinModeSet(
+			(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SCL(unitNumber), location),
+			AF_PIN(AF_I2C_SCL(unitNumber), location),
+			gpioModeWiredAndPullUpFilter,
+			1);
+		GPIO_PinModeSet(
+			(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SDA(unitNumber), location),
+			AF_PIN(AF_I2C_SDA(unitNumber), location),
+			gpioModeWiredAndPullUpFilter,
+			1);
+
+		hook.type		= efm32_irq_type_iic;
+		hook.unit		= unitNumber;
+		hook.cbFunc 	= rt_hw_iic_slave_isr;
+		hook.userPtr	= device;
+		efm32_irq_hook_register(&hook);
+
+		/* Enable SDZ and SCL pins and set location */
+		iic->iic_device->ROUTE = I2C_ROUTE_SDAPEN | I2C_ROUTE_SCLPEN | \
+					(location << _I2C_ROUTE_LOCATION_SHIFT);
+
+		/* Initializing IIC */
+		init.enable = false;
+		I2C_Init(iic->iic_device, &init);
+
+		/* Abort current TX data and clear TX buffers */
+		iic->iic_device->CMD = I2C_CMD_ABORT | I2C_CMD_CLEARPC | I2C_CMD_CLEARTX;
+
+		return iic;
+	} while(0);
+
+	if (iic)
+	{
+		rt_free(iic);
 	}
-
-	/* Enabling clock */
-	CMU_ClockEnable(iicClock, true);  
-
-	/* Reset */
-	I2C_Reset(iic);
-
-	/* Config GPIO */
-	GPIO_PinModeSet(
-		(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SCL(unitNumber), location),
-		AF_PIN(AF_I2C_SCL(unitNumber), location),
-		gpioModeWiredAndPullUpFilter,
-		1);
-	GPIO_PinModeSet(
-		(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SDA(unitNumber), location),
-		AF_PIN(AF_I2C_SDA(unitNumber), location),
-		gpioModeWiredAndPullUpFilter,
-		1);
-
-	/* Enable SDZ and SCL pins and set location */
-	iic->ROUTE = I2C_ROUTE_SDAPEN | I2C_ROUTE_SCLPEN | \
-				(location << _I2C_ROUTE_LOCATION_SHIFT);
-
-	
-	hook.type		= efm32_irq_type_iic;
-	hook.cbFunc 	= rt_hw_iic_slave_isr;
-	hook.userPtr	= device;
-	efm32_irq_hook_register(&hook);
-
-	/* Initializing IIC */
-	init.enable = false;
-	I2C_Init(iic, &init);
-
-	/* Abort current TX data and clear TX buffers */
-	iic->CMD = I2C_CMD_ABORT | I2C_CMD_CLEARPC | I2C_CMD_CLEARTX;
+	rt_kprintf("IIC: Init failed!\n");
+	return RT_NULL;
 }
 
 /******************************************************************//**
@@ -707,47 +731,22 @@ void rt_hw_iic_init(void)
 
 	/* register iic0 */
 #ifdef RT_USING_IIC0
-	iic = rt_malloc(sizeof(struct efm32_iic_device_t));
-	if (iic == RT_NULL)
+	if ((iic = rt_hw_iic_unit_init(&iic0_device, 0, RT_USING_IIC0)) != RT_NULL)
 	{
-#ifdef RT_IIC_DEBUG
-		rt_kprintf("no memory for IIC0 driver\n");
-#endif
-		return;
+		rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
 	}
-
-	iic->iic_device = I2C0;
-	iic->state |= IIC_STATE_MASTER;
-	iic->master_address = 0x0000;
-	iic->slave_address = 0x0000;
-	iic->rx_buffer = RT_NULL;
-	rt_hw_iic_unit_init(&iic0_device, 0, RT_USING_IIC0);
-
-	rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
 #endif
 
 	/* register iic1 */
 #ifdef RT_USING_IIC1
-	iic = rt_malloc(sizeof(struct efm32_iic_device_t));
-	if (iic == RT_NULL)
+	if ((iic = rt_hw_iic_unit_init(&iic1_device, 1, RT_USING_IIC1)) != RT_NULL)
 	{
-#ifdef RT_IIC_DEBUG
-		rt_kprintf("no memory for IIC1 driver\n");
-#endif
-		return;
+		rt_hw_iic_register(&iic1_device, RT_IIC1_NAME, flag, iic);
 	}
-
-	iic->iic_device = I2C1;
-	iic->state |= IIC_STATE_MASTER;
-	iic->master_address = 0x0000;
-	iic->slave_address = 0x0000;
-	iic->rx_buffer = RT_NULL;
-	rt_hw_iic_unit_init(&iic1_device, 1, RT_USING_IIC1);
-	
-	rt_hw_iic_register(&iic1_device, RT_IIC1_NAME, flag, iic);
 #endif
 }
 
+#endif
 /******************************************************************//**
  * @}
 *********************************************************************/

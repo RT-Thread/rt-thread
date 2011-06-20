@@ -2,7 +2,7 @@
  * @file
  * @brief Inter-intergrated circuit (I2C) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -176,17 +176,17 @@ typedef enum
 typedef struct
 {
   /** Enable I2C peripheral when init completed. */
-  bool enable;
+  bool                 enable;
 
   /** Set to master (true) or slave (false) mode */
-  bool master;
+  bool                 master;
 
   /**
    * I2C reference clock assumed when configuring bus frequency setup.
    * Set it to 0 if currently configurated reference clock shall be used
    * This parameter is only applicable if operating in master mode.
    */
-  uint32_t refFreq;
+  uint32_t             refFreq;
 
   /**
    * (Max) I2C bus frequency to use. This parameter is only applicable
@@ -245,7 +245,7 @@ typedef struct
   struct
   {
     /** Buffer used for data to transmit/receive, must be @p len long. */
-    uint8_t *data;
+    uint8_t  *data;
 
     /**
      * Number of bytes in @p data to send or receive. Notice that when
@@ -279,7 +279,7 @@ void I2C_Init(I2C_TypeDef *i2c, const I2C_Init_TypeDef *init);
  *   Pointer to I2C peripheral register block.
  *
  * @param[in] flags
- *   Pending I2C interrupt source to clear. Use a logical OR combination of
+ *   Pending I2C interrupt source to clear. Use a bitwse logic OR combination of
  *   valid interrupt flags for the I2C module (I2C_IF_nnn).
  ******************************************************************************/
 static __INLINE void I2C_IntClear(I2C_TypeDef *i2c, uint32_t flags)
@@ -296,7 +296,7 @@ static __INLINE void I2C_IntClear(I2C_TypeDef *i2c, uint32_t flags)
  *   Pointer to I2C peripheral register block.
  *
  * @param[in] flags
- *   I2C interrupt sources to disable. Use a logical OR combination of
+ *   I2C interrupt sources to disable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the I2C module (I2C_IF_nnn).
  ******************************************************************************/
 static __INLINE void I2C_IntDisable(I2C_TypeDef *i2c, uint32_t flags)
@@ -318,7 +318,7 @@ static __INLINE void I2C_IntDisable(I2C_TypeDef *i2c, uint32_t flags)
  *   Pointer to I2C peripheral register block.
  *
  * @param[in] flags
- *   I2C interrupt sources to enable. Use a logical OR combination of
+ *   I2C interrupt sources to enable. Use a bitwise logic OR combination of
  *   valid interrupt flags for the I2C module (I2C_IF_nnn).
  ******************************************************************************/
 static __INLINE void I2C_IntEnable(I2C_TypeDef *i2c, uint32_t flags)
@@ -338,7 +338,7 @@ static __INLINE void I2C_IntEnable(I2C_TypeDef *i2c, uint32_t flags)
  *   Pointer to I2C peripheral register block.
  *
  * @return
- *   I2C interrupt sources pending. A logical OR combination of valid
+ *   I2C interrupt sources pending. A bitwise logic OR combination of valid
  *   interrupt flags for the I2C module (I2C_IF_nnn).
  ******************************************************************************/
 static __INLINE uint32_t I2C_IntGet(I2C_TypeDef *i2c)
@@ -355,8 +355,8 @@ static __INLINE uint32_t I2C_IntGet(I2C_TypeDef *i2c)
  *   Pointer to I2C peripheral register block.
  *
  * @param[in] flags
- *   I2C interrupt sources to set to pending. Use a logical OR combination of
- *   valid interrupt flags for the I2C module (I2C_IF_nnn).
+ *   I2C interrupt sources to set to pending. Use a bitwise logic OR combination
+ *   of valid interrupt flags for the I2C module (I2C_IF_nnn).
  ******************************************************************************/
 static __INLINE void I2C_IntSet(I2C_TypeDef *i2c, uint32_t flags)
 {
@@ -407,7 +407,7 @@ static __INLINE uint8_t I2C_SlaveAddressGet(I2C_TypeDef *i2c)
  ******************************************************************************/
 static __INLINE void I2C_SlaveAddressSet(I2C_TypeDef *i2c, uint8_t addr)
 {
-  i2c->SADDR = (uint32_t) addr & 0xfe;
+  i2c->SADDR = (uint32_t)addr & 0xfe;
 }
 
 
@@ -465,7 +465,7 @@ static __INLINE uint8_t I2C_SlaveAddressMaskGet(I2C_TypeDef *i2c)
  ******************************************************************************/
 static __INLINE void I2C_SlaveAddressMaskSet(I2C_TypeDef *i2c, uint8_t mask)
 {
-  i2c->SADDRMASK = (uint32_t) mask & 0xfe;
+  i2c->SADDRMASK = (uint32_t)mask & 0xfe;
 }
 
 

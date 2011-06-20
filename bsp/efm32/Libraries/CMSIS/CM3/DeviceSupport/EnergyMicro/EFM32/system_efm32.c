@@ -2,10 +2,10 @@
  * @file
  * @brief CMSIS Cortex-M3 Peripheral Access Layer for EFM32 devices.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
- * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
+ * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
  *******************************************************************************
  *
  * This source code is the property of Energy Micro AS. The source and compiled
@@ -34,7 +34,8 @@
  ******************************************************************************/
 
 /** LFRCO frequency, tuned to below frequency during manufacturing. */
-#define EFM32_LFRCO_FREQ  (32768)
+#define EFM32_LFRCO_FREQ  (32768UL)
+#define EFM32_ULFRCO_FREQ (1000UL)
 
 /*******************************************************************************
  **************************   LOCAL VARIABLES   ********************************
@@ -49,7 +50,7 @@
 /* SW footprint. */
 
 #ifndef EFM32_HFXO_FREQ
-#define EFM32_HFXO_FREQ (32000000)
+#define EFM32_HFXO_FREQ (32000000UL)
 #endif
 /* Do not define variable if HF crystal oscillator not present */
 #if (EFM32_HFXO_FREQ > 0)
@@ -66,7 +67,7 @@ static uint32_t SystemHFXOClock = EFM32_HFXO_FREQ;
 #if (EFM32_LFXO_FREQ > 0)
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
 /** System LFXO clock. */ 
-static uint32_t SystemLFXOClock = 32768;
+static uint32_t SystemLFXOClock = EFM32_LFXO_FREQ;
 /** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
 #endif
 
@@ -286,6 +287,23 @@ uint32_t SystemLFRCOClockGet(void)
   /* manufacturing and is not changed after reset. If future requirements */
   /* for re-tuning by user, we can add support for that. */
   return EFM32_LFRCO_FREQ;
+}
+
+
+/**************************************************************************//**
+ * @brief
+ *   Get ultra low frequency RC oscillator clock frequency for target system.
+ *
+ * @note
+ *   This is an EFM32 proprietary function, not part of the CMSIS definition.
+ *
+ * @return
+ *   ULFRCO frequency in Hz.
+ *****************************************************************************/
+uint32_t SystemULFRCOClockGet(void)
+{
+  /* The ULFRCO frequency is not tuned, and can be very inaccurate */
+  return EFM32_ULFRCO_FREQ;
 }
 
 

@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     core_cm3.c
  * @brief    CMSIS Cortex-M3 Core Peripheral Access Layer Source File
- * @version  V1.30
- * @date     30. October 2009
+ * @version  V2.00
+ * @date     13. September 2010
  *
  * @note
- * Copyright (C) 2009 ARM Limited. All rights reserved.
+ * Copyright (C) 2009-2010 ARM Limited. All rights reserved.
  *
  * @par
  * ARM Limited (ARM) is supplying this software for use with Cortex-M 
@@ -43,740 +43,297 @@
 #endif
 
 
-/* ###################  Compiler specific Intrinsics  ########################### */
+/* ##########################  Core Instruction Access  ######################### */
 
-#if defined ( __CC_ARM   ) /*------------------RealView Compiler -----------------*/
-/* ARM armcc specific functions */
+#if defined ( __CC_ARM   ) /*------------------ RealView Compiler ----------------*/
 
-/**
- * @brief  Return the Process Stack Pointer
- *
- * @return ProcessStackPointer
- *
- * Return the actual process stack pointer
+/** \brief  Reverse byte order (16 bit)
+
+    This function reverses the byte order in two unsigned short values.
+
+    \param [in]    value  Value to reverse
+    \return               Reversed value
  */
-__ASM uint32_t __get_PSP(void)
-{
-  mrs r0, psp
-  bx lr
-}
-
-/**
- * @brief  Set the Process Stack Pointer
- *
- * @param  topOfProcStack  Process Stack Pointer
- *
- * Assign the value ProcessStackPointer to the MSP 
- * (process stack pointer) Cortex processor register
- */
-__ASM void __set_PSP(uint32_t topOfProcStack)
-{
-  msr psp, r0
-  bx lr
-}
-
-/**
- * @brief  Return the Main Stack Pointer
- *
- * @return Main Stack Pointer
- *
- * Return the current value of the MSP (main stack pointer)
- * Cortex processor register
- */
-__ASM uint32_t __get_MSP(void)
-{
-  mrs r0, msp
-  bx lr
-}
-
-/**
- * @brief  Set the Main Stack Pointer
- *
- * @param  topOfMainStack  Main Stack Pointer
- *
- * Assign the value mainStackPointer to the MSP 
- * (main stack pointer) Cortex processor register
- */
-__ASM void __set_MSP(uint32_t mainStackPointer)
-{
-  msr msp, r0
-  bx lr
-}
-
-/**
- * @brief  Reverse byte order in unsigned short value
- *
- * @param   value  value to reverse
- * @return         reversed value
- *
- * Reverse byte order in unsigned short value
- */
-__ASM uint32_t __REV16(uint16_t value)
+#if (__ARMCC_VERSION < 400677)
+__ASM uint32_t __REV16(uint32_t value)
 {
   rev16 r0, r0
   bx lr
 }
+#endif /* __ARMCC_VERSION  */ 
 
-/**
- * @brief  Reverse byte order in signed short value with sign extension to integer
- *
- * @param   value  value to reverse
- * @return         reversed value
- *
- * Reverse byte order in signed short value with sign extension to integer
+
+/** \brief  Reverse byte order in signed short value
+
+    This function reverses the byte order in a signed short value with sign extension to integer.
+
+    \param [in]    value  Value to reverse
+    \return               Reversed value
  */
-__ASM int32_t __REVSH(int16_t value)
+#if (__ARMCC_VERSION < 400677)
+__ASM int32_t __REVSH(int32_t value)
 {
   revsh r0, r0
   bx lr
 }
+#endif /* __ARMCC_VERSION  */ 
 
 
-#if (__ARMCC_VERSION < 400000)
+/** \brief  Remove the exclusive lock
 
-/**
- * @brief  Remove the exclusive lock created by ldrex
- *
- * Removes the exclusive lock which is created by ldrex.
+    This function removes the exclusive lock which is created by LDREX.
+
  */
+#if (__ARMCC_VERSION < 400000)
 __ASM void __CLREX(void)
 {
   clrex
 }
+#endif /* __ARMCC_VERSION  */ 
 
-/**
- * @brief  Return the Base Priority value
- *
- * @return BasePriority
- *
- * Return the content of the base priority register
- */
-__ASM uint32_t  __get_BASEPRI(void)
-{
-  mrs r0, basepri
-  bx lr
-}
 
-/**
- * @brief  Set the Base Priority value
- *
- * @param  basePri  BasePriority
- *
- * Set the base priority register
- */
-__ASM void __set_BASEPRI(uint32_t basePri)
-{
-  msr basepri, r0
-  bx lr
-}
+#elif (defined (__ICCARM__)) /*---------------- ICC Compiler ---------------------*/
+/* obsolete */
+#elif (defined (__GNUC__)) /*------------------ GNU Compiler ---------------------*/
+/* obsolete */
+#elif (defined (__TASKING__)) /*--------------- TASKING Compiler -----------------*/
+/* obsolete */
+#endif
 
-/**
- * @brief  Return the Priority Mask value
- *
- * @return PriMask
- *
- * Return state of the priority mask bit from the priority mask register
- */
-__ASM uint32_t __get_PRIMASK(void)
-{
-  mrs r0, primask
-  bx lr
-}
 
-/**
- * @brief  Set the Priority Mask value
- *
- * @param  priMask  PriMask
- *
- * Set the priority mask bit in the priority mask register
- */
-__ASM void __set_PRIMASK(uint32_t priMask)
-{
-  msr primask, r0
-  bx lr
-}
+/* ###########################  Core Function Access  ########################### */
 
-/**
- * @brief  Return the Fault Mask value
- *
- * @return FaultMask
- *
- * Return the content of the fault mask register
- */
-__ASM uint32_t  __get_FAULTMASK(void)
-{
-  mrs r0, faultmask
-  bx lr
-}
+#if defined ( __CC_ARM   ) /*------------------ RealView Compiler ----------------*/
 
-/**
- * @brief  Set the Fault Mask value
- *
- * @param  faultMask  faultMask value
- *
- * Set the fault mask register
- */
-__ASM void __set_FAULTMASK(uint32_t faultMask)
-{
-  msr faultmask, r0
-  bx lr
-}
+/** \brief  Get Control Register
 
-/**
- * @brief  Return the Control Register value
- * 
- * @return Control value
- *
- * Return the content of the control register
+    This function returns the content of the Control Register.
+
+    \return               Control Register value
  */
+#if       (__ARMCC_VERSION <  400000)
 __ASM uint32_t __get_CONTROL(void)
 {
   mrs r0, control
   bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Set the Control Register value
- *
- * @param  control  Control value
- *
- * Set the control register
+
+/** \brief  Set Control Register
+
+    This function writes the given value to the Control Register.
+
+    \param [in]    control  Control Register value to set
  */
+#if       (__ARMCC_VERSION <  400000)
 __ASM void __set_CONTROL(uint32_t control)
 {
   msr control, r0
   bx lr
 }
-
-#endif /* __ARMCC_VERSION  */ 
-
+#endif /*  __ARMCC_VERSION  */ 
 
 
-#elif (defined (__ICCARM__)) /*------------------ ICC Compiler -------------------*/
-/* IAR iccarm specific functions */
-#pragma diag_suppress=Pe940
+/** \brief  Get ISPR Register
 
-/**
- * @brief  Return the Process Stack Pointer
- *
- * @return ProcessStackPointer
- *
- * Return the actual process stack pointer
+    This function returns the content of the ISPR Register.
+
+    \return               ISPR Register value
  */
-uint32_t __get_PSP(void)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_IPSR(void)
 {
-  __ASM("mrs r0, psp");
-  __ASM("bx lr");
+  mrs r0, ipsr
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Set the Process Stack Pointer
- *
- * @param  topOfProcStack  Process Stack Pointer
- *
- * Assign the value ProcessStackPointer to the MSP 
- * (process stack pointer) Cortex processor register
+
+/** \brief  Get APSR Register
+
+    This function returns the content of the APSR Register.
+
+    \return               APSR Register value
  */
-void __set_PSP(uint32_t topOfProcStack)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_APSR(void)
 {
-  __ASM("msr psp, r0");
-  __ASM("bx lr");
+  mrs r0, apsr
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Return the Main Stack Pointer
- *
- * @return Main Stack Pointer
- *
- * Return the current value of the MSP (main stack pointer)
- * Cortex processor register
+
+/** \brief  Get xPSR Register
+
+    This function returns the content of the xPSR Register.
+
+    \return               xPSR Register value
  */
-uint32_t __get_MSP(void)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_xPSR(void)
 {
-  __ASM("mrs r0, msp");
-  __ASM("bx lr");
+  mrs r0, xpsr
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Set the Main Stack Pointer
- *
- * @param  topOfMainStack  Main Stack Pointer
- *
- * Assign the value mainStackPointer to the MSP 
- * (main stack pointer) Cortex processor register
+
+/** \brief  Get Process Stack Pointer
+
+    This function returns the current value of the Process Stack Pointer (PSP).
+
+    \return               PSP Register value
  */
-void __set_MSP(uint32_t topOfMainStack)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_PSP(void)
 {
-  __ASM("msr msp, r0");
-  __ASM("bx lr");
+  mrs r0, psp
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Reverse byte order in unsigned short value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse byte order in unsigned short value
+
+/** \brief  Set Process Stack Pointer
+
+    This function assigns the given value to the Process Stack Pointer (PSP).
+
+    \param [in]    topOfProcStack  Process Stack Pointer value to set
  */
-uint32_t __REV16(uint16_t value)
+#if       (__ARMCC_VERSION <  400000)
+__ASM void __set_PSP(uint32_t topOfProcStack)
 {
-  __ASM("rev16 r0, r0");
-  __ASM("bx lr");
+  msr psp, r0
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  Reverse bit order of value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse bit order of value
+
+/** \brief  Get Main Stack Pointer
+
+    This function returns the current value of the Main Stack Pointer (MSP).
+
+    \return               MSP Register value
  */
-uint32_t __RBIT(uint32_t value)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_MSP(void)
 {
-  __ASM("rbit r0, r0");
-  __ASM("bx lr");
+  mrs r0, msp
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  LDR Exclusive (8 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 8 bit values)
+
+/** \brief  Set Main Stack Pointer
+
+    This function assigns the given value to the Main Stack Pointer (MSP).
+
+    \param [in]    topOfMainStack  Main Stack Pointer value to set
  */
-uint8_t __LDREXB(uint8_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM void __set_MSP(uint32_t mainStackPointer)
 {
-  __ASM("ldrexb r0, [r0]");
-  __ASM("bx lr"); 
+  msr msp, r0
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  LDR Exclusive (16 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 16 bit values
+
+/** \brief  Get Base Priority
+
+    This function returns the current value of the Base Priority register.
+
+    \return               Base Priority register value
  */
-uint16_t __LDREXH(uint16_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t  __get_BASEPRI(void)
 {
-  __ASM("ldrexh r0, [r0]");
-  __ASM("bx lr");
+  mrs r0, basepri
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  LDR Exclusive (32 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 32 bit values
+
+/** \brief  Set Base Priority
+
+    This function assigns the given value to the Base Priority register.
+
+    \param [in]    basePri  Base Priority value to set
  */
-uint32_t __LDREXW(uint32_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM void __set_BASEPRI(uint32_t basePri)
 {
-  __ASM("ldrex r0, [r0]");
-  __ASM("bx lr");
+  msr basepri, r0
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
+ 
+/** \brief  Get Priority Mask
 
-/**
- * @brief  STR Exclusive (8 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 8 bit values
+    This function returns the current state of the priority mask bit from the Priority Mask Register.
+
+    \return               Priority Mask value
  */
-uint32_t __STREXB(uint8_t value, uint8_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t __get_PRIMASK(void)
 {
-  __ASM("strexb r0, r0, [r1]");
-  __ASM("bx lr");
+  mrs r0, primask
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-/**
- * @brief  STR Exclusive (16 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 16 bit values
+
+/** \brief  Set Priority Mask
+
+    This function assigns the given value to the Priority Mask Register.
+
+    \param [in]    priMask  Priority Mask
  */
-uint32_t __STREXH(uint16_t value, uint16_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM void __set_PRIMASK(uint32_t priMask)
 {
-  __ASM("strexh r0, r0, [r1]");
-  __ASM("bx lr");
+  msr primask, r0
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
+ 
 
-/**
- * @brief  STR Exclusive (32 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 32 bit values
+/** \brief  Get Fault Mask
+
+    This function returns the current value of the Fault Mask Register.
+
+    \return               Fault Mask value
  */
-uint32_t __STREXW(uint32_t value, uint32_t *addr)
+#if       (__ARMCC_VERSION <  400000)
+__ASM uint32_t  __get_FAULTMASK(void)
 {
-  __ASM("strex r0, r0, [r1]");
-  __ASM("bx lr");
+  mrs r0, faultmask
+  bx lr
 }
+#endif /*  __ARMCC_VERSION  */ 
 
-#pragma diag_default=Pe940
+
+/** \brief  Set the Fault Mask
+
+     This function assigns the given value to the Fault Mask Register.
+
+    \param [in]    faultMask  Fault Mask value value to set
+ */
+#if       (__ARMCC_VERSION <  400000)
+__ASM void __set_FAULTMASK(uint32_t faultMask)
+{
+  msr faultmask, r0
+  bx lr
+}
+#endif /*  __ARMCC_VERSION  */ 
 
 
+
+#elif (defined (__ICCARM__)) /*---------------- ICC Compiler ---------------------*/
+/* obsolete */
 #elif (defined (__GNUC__)) /*------------------ GNU Compiler ---------------------*/
-/* GNU gcc specific functions */
-
-/**
- * @brief  Return the Process Stack Pointer
- *
- * @return ProcessStackPointer
- *
- * Return the actual process stack pointer
- */
-uint32_t __get_PSP(void) __attribute__( ( naked ) );
-uint32_t __get_PSP(void)
-{
-  register uint32_t result __ASM ("r0") = 0;
- 
-  __ASM volatile ("MRS %0, psp\n" 
-                  "BX  lr     \n"  : "=r" (result) );
-  return(result);
-}
- 
-/**
- * @brief  Set the Process Stack Pointer
- *
- * @param  topOfProcStack  Process Stack Pointer
- *
- * Assign the value ProcessStackPointer to the MSP 
- * (process stack pointer) Cortex processor register
- */
-void __set_PSP(uint32_t topOfProcStack);
-void __set_PSP(uint32_t topOfProcStack)
-{
-  __ASM volatile ("MSR psp, %0\n"
-                  "BX  lr     \n" : : "r" (topOfProcStack) );
-}
-
-/**
- * @brief  Return the Main Stack Pointer
- *
- * @return Main Stack Pointer
- *
- * Return the current value of the MSP (main stack pointer)
- * Cortex processor register
- */
-uint32_t __get_MSP(void) __attribute__( ( naked ) );
-uint32_t __get_MSP(void)
-{
-  register uint32_t result __ASM ("r0") = 0;
- 
-  __ASM volatile ("MRS %0, msp\n" 
-                  "BX  lr     \n"  : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Main Stack Pointer
- *
- * @param  topOfMainStack  Main Stack Pointer
- *
- * Assign the value mainStackPointer to the MSP 
- * (main stack pointer) Cortex processor register
- */
-void __set_MSP(uint32_t topOfMainStack);
-void __set_MSP(uint32_t topOfMainStack)
-{
-  __ASM volatile ("MSR msp, %0\n"
-                  "BX  lr     \n" : : "r" (topOfMainStack) );
-}
-
-/**
- * @brief  Return the Base Priority value
- *
- * @return BasePriority
- *
- * Return the content of the base priority register
- */
-uint32_t __get_BASEPRI(void)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("MRS %0, basepri_max" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Base Priority value
- *
- * @param  basePri  BasePriority
- *
- * Set the base priority register
- */
-void __set_BASEPRI(uint32_t value)
-{
-  __ASM volatile ("MSR basepri, %0" : : "r" (value) );
-}
-
-/**
- * @brief  Return the Priority Mask value
- *
- * @return PriMask
- *
- * Return state of the priority mask bit from the priority mask register
- */
-uint32_t __get_PRIMASK(void)
-{
-  uint32_t result=0;
-
-  __ASM volatile ("MRS %0, primask" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Priority Mask value
- *
- * @param  priMask  PriMask
- *
- * Set the priority mask bit in the priority mask register
- */
-void __set_PRIMASK(uint32_t priMask)
-{
-  __ASM volatile ("MSR primask, %0" : : "r" (priMask) );
-}
-
-/**
- * @brief  Return the Fault Mask value
- *
- * @return FaultMask
- *
- * Return the content of the fault mask register
- */
-uint32_t __get_FAULTMASK(void)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("MRS %0, faultmask" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Fault Mask value
- *
- * @param  faultMask  faultMask value
- *
- * Set the fault mask register
- */
-void __set_FAULTMASK(uint32_t faultMask)
-{
-  __ASM volatile ("MSR faultmask, %0" : : "r" (faultMask) );
-}
-
-/**
- * @brief  Return the Control Register value
-* 
-*  @return Control value
- *
- * Return the content of the control register
- */
-uint32_t __get_CONTROL(void)
-{
-  uint32_t result=0;
-
-  __ASM volatile ("MRS %0, control" : "=r" (result) );
-  return(result);
-}
-
-/**
- * @brief  Set the Control Register value
- *
- * @param  control  Control value
- *
- * Set the control register
- */
-void __set_CONTROL(uint32_t control)
-{
-  __ASM volatile ("MSR control, %0" : : "r" (control) );
-}
-
-
-/**
- * @brief  Reverse byte order in integer value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse byte order in integer value
- */
-uint32_t __REV(uint32_t value)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("rev %0, %1" : "=r" (result) : "r" (value) );
-  return(result);
-}
-
-/**
- * @brief  Reverse byte order in unsigned short value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse byte order in unsigned short value
- */
-uint32_t __REV16(uint16_t value)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("rev16 %0, %1" : "=r" (result) : "r" (value) );
-  return(result);
-}
-
-/**
- * @brief  Reverse byte order in signed short value with sign extension to integer
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse byte order in signed short value with sign extension to integer
- */
-int32_t __REVSH(int16_t value)
-{
-  uint32_t result=0;
-  
-  __ASM volatile ("revsh %0, %1" : "=r" (result) : "r" (value) );
-  return(result);
-}
-
-/**
- * @brief  Reverse bit order of value
- *
- * @param  value  value to reverse
- * @return        reversed value
- *
- * Reverse bit order of value
- */
-uint32_t __RBIT(uint32_t value)
-{
-  uint32_t result=0;
-  
-   __ASM volatile ("rbit %0, %1" : "=r" (result) : "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (8 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 8 bit value
- */
-uint8_t __LDREXB(uint8_t *addr)
-{
-    uint8_t result=0;
-  
-   __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (16 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 16 bit values
- */
-uint16_t __LDREXH(uint16_t *addr)
-{
-    uint16_t result=0;
-  
-   __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  LDR Exclusive (32 bit)
- *
- * @param  *addr  address pointer
- * @return        value of (*address)
- *
- * Exclusive LDR command for 32 bit values
- */
-uint32_t __LDREXW(uint32_t *addr)
-{
-    uint32_t result=0;
-  
-   __ASM volatile ("ldrex %0, [%1]" : "=r" (result) : "r" (addr) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (8 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 8 bit values
- */
-uint32_t __STREXB(uint8_t value, uint8_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strexb %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (16 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 16 bit values
- */
-uint32_t __STREXH(uint16_t value, uint16_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strexh %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
-}
-
-/**
- * @brief  STR Exclusive (32 bit)
- *
- * @param  value  value to store
- * @param  *addr  address pointer
- * @return        successful / failed
- *
- * Exclusive STR command for 32 bit values
- */
-uint32_t __STREXW(uint32_t value, uint32_t *addr)
-{
-   uint32_t result=0;
-  
-   __ASM volatile ("strex %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
-   return(result);
-}
-
-
-#elif (defined (__TASKING__)) /*------------------ TASKING Compiler ---------------------*/
-/* TASKING carm specific functions */
-
-/*
- * The CMSIS functions have been implemented as intrinsics in the compiler.
- * Please use "carm -?i" to get an up to date list of all instrinsics,
- * Including the CMSIS ones.
- */
-
+/* obsolete */
+#elif (defined (__TASKING__)) /*--------------- TASKING Compiler -----------------*/
+/* obsolete */
 #endif

@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Debug (DBG) utilities peripheral API for EFM32.
+ * @brief Debug (DBG) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup DBG
- * @brief EFM32 debug utilities.
+ * @brief Debug (DBG) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -102,7 +102,7 @@ void DBG_SWOEnable(unsigned int location)
   GPIO_DbgSWOEnable(true);
 
   /* Configure SWO pin for output */
-  GPIO_PinModeSet((GPIO_Port_TypeDef) port, pin, gpioModePushPull, 0);
+  GPIO_PinModeSet((GPIO_Port_TypeDef)port, pin, gpioModePushPull, 0);
 }
 
 /** @} (end addtogroup DBG) */

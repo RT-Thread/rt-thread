@@ -34,11 +34,24 @@ efm32lib/src/efm32_vcmp.c
 efm32lib/src/efm32_wdog.c
 """)
 
+# starupt scripts for each EFM32 family
+#startup_scripts = {}
+#startup_scripts['Gecko'] = 'startup_efm32.s'
+#startup_scripts['TinyGecko'] = 'startup_efm32tg.s'
+
+# linker scripts for each EFM32 family
+#linker_scripts = {}
+#linker_scripts['Gecko'] = 'efm32g.ld'
+#linker_scripts['TinyGecko'] = 'efm32tg.ld'
+
+# add startup script 
+#src = src + ['CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + startup_scripts[rtconfig.EFM32_FAMILY]]
+    
 path = [RTT_ROOT + '/bsp/efm32/Libraries/efm32lib/inc', 
     RTT_ROOT + '/bsp/efm32/Libraries/CMSIS/CM3/CoreSupport',
     RTT_ROOT + '/bsp/efm32/Libraries/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.EFM32_TYPE]
-group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path)
+group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

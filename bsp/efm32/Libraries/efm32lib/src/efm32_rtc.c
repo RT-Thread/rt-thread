@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Real Time Counter (RTC) peripheral module peripheral API for
- *   EFM32 devices.
+ * @brief Real Time Counter (RTC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,7 +37,7 @@
 
 /***************************************************************************//**
  * @addtogroup RTC
- * @brief EFM32 real time counter utilities.
+ * @brief Real Time Counter (RTC) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -51,7 +50,7 @@
 /** Validation of valid comparator register for assert statements. */
 #define RTC_COMP_REG_VALID(reg)    (((reg) <= 1))
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -60,9 +59,17 @@
 
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
 
+#if defined(_EFM32_GECKO_FAMILY)
 /***************************************************************************//**
  * @brief
  *   Wait for ongoing sync of register(s) to low frequency domain to complete.
+ *
+ * @note
+ *   This only applies to the Gecko Family, see the reference manual
+ *   chapter about Access to Low Energy Peripherals (Asynchronos Registers)
+ *   for details. For Tiny Gecko and Giant Gecko, the RTC supports immediate
+ *   updates of registers, and will automatically hold the bus until the
+ *   register has been updated.
  *
  * @param[in] mask
  *   Bitmask corresponding to SYNCBUSY register defined bits, indicating
@@ -76,11 +83,13 @@ static __INLINE void RTC_Sync(uint32_t mask)
     return;
 
   /* Wait for any pending previous write operation to have been completed */
-  /* in low frequency domain */
-  while (RTC->SYNCBUSY & mask) ;
+  /* in low frequency domain. This is only required for the Gecko Family */
+  while (RTC->SYNCBUSY & mask)
+    ;
 }
+#endif
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -131,7 +140,8 @@ uint32_t RTC_CompareGet(unsigned int comp)
  *   The setting of a compare register requires synchronization into the
  *   low frequency domain. If the same register is modified before a previous
  *   update has completed, this function will stall until the previous
- *   synchronization has completed.
+ *   synchronization has completed. This only applies to the Gecko Family, see
+ *   comment in the RTC_Sync() internal function call.
  *
  * @param[in] comp
  *   Compare register to set, either 0 or 1
@@ -142,7 +152,9 @@ uint32_t RTC_CompareGet(unsigned int comp)
 void RTC_CompareSet(unsigned int comp, uint32_t value)
 {
   volatile uint32_t *compReg;
+#if defined(_EFM32_GECKO_FAMILY)
   uint32_t          syncbusy;
+#endif
 
   EFM_ASSERT(RTC_COMP_REG_VALID(comp) &&
              ((value & ~(_RTC_COMP0_COMP0_MASK >> _RTC_COMP0_COMP0_SHIFT)) == 0));
@@ -151,22 +163,27 @@ void RTC_CompareSet(unsigned int comp, uint32_t value)
   switch (comp)
   {
   case 0:
-    compReg  = &(RTC->COMP0);
+    compReg = &(RTC->COMP0);
+#if defined(_EFM32_GECKO_FAMILY)
     syncbusy = RTC_SYNCBUSY_COMP0;
+#endif
     break;
 
   case 1:
-    compReg  = &(RTC->COMP1);
+    compReg = &(RTC->COMP1);
+#if defined(_EFM32_GECKO_FAMILY)
     syncbusy = RTC_SYNCBUSY_COMP1;
+#endif
     break;
 
   default:
     /* Unknown compare register selected, abort */
     return;
   }
-
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   RTC_Sync(syncbusy);
+#endif
 
   *compReg = value;
 }
@@ -180,15 +197,19 @@ void RTC_CompareSet(unsigned int comp, uint32_t value)
  *   The enabling/disabling of the RTC modifies the RTC CTRL register which
  *   requires synchronization into the low frequency domain. If this register is
  *   modified before a previous update to the same register has completed, this
- *   function will stall until the previous synchronization has completed.
+ *   function will stall until the previous synchronization has completed. This
+ *   only applies to the Gecko Family, see comment in the RTC_Sync() internal
+ *   function call.
  *
  * @param[in] enable
  *   true to enable counting, false to disable.
  ******************************************************************************/
 void RTC_Enable(bool enable)
 {
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   RTC_Sync(RTC_SYNCBUSY_CTRL);
+#endif
 
   BITBAND_Peripheral(&(RTC->CTRL), _RTC_CTRL_EN_SHIFT, (unsigned int) enable);
 }
@@ -210,7 +231,9 @@ void RTC_Enable(bool enable)
  *   synchronization will not be in progress.) However for this reason, when
  *   using freeze mode, modifications of registers requiring LF synchronization
  *   should be done within one freeze enable/disable block to avoid unecessary
- *   stalling.
+ *   stalling. This only applies to the Gecko Family, see the reference manual
+ *   chapter about Access to Low Energy Peripherals (Asynchronos Registers)
+ *   for details.
  *
  * @param[in] enable
  *   @li true - enable freeze, modified registers are not propagated to the
@@ -222,17 +245,17 @@ void RTC_FreezeEnable(bool enable)
 {
   if (enable)
   {
-    /*
-     * Wait for any ongoing LF synchronization to complete. This is just to
-     * protect against the rare case when a user
-     * - modifies a register requiring LF sync
-     * - then enables freeze before LF sync completed
-     * - then modifies the same register again
-     * since modifying a register while it is in sync progress should be
-     * avoided.
-     */
-    while (RTC->SYNCBUSY) ;
-
+#if defined(_EFM32_GECKO_FAMILY)
+    /* Wait for any ongoing LF synchronization to complete. This is just to */
+    /* protect against the rare case when a user                            */
+    /* - modifies a register requiring LF sync                              */
+    /* - then enables freeze before LF sync completed                       */
+    /* - then modifies the same register again                              */
+    /* since modifying a register while it is in sync progress should be    */
+    /* avoided.                                                             */
+    while (RTC->SYNCBUSY)
+      ;
+#endif
     RTC->FREEZE = RTC_FREEZE_REGFREEZE;
   }
   else
@@ -255,7 +278,9 @@ void RTC_FreezeEnable(bool enable)
  *   The initialization of the RTC modifies the RTC CTRL register which requires
  *   synchronization into the low frequency domain. If this register is
  *   modified before a previous update to the same register has completed, this
- *   function will stall until the previous synchronization has completed.
+ *   function will stall until the previous synchronization has completed. This
+ *   only applies to the Gecko Family, see comment in the RTC_Sync() internal
+ *   function call.
  *
  * @param[in] init
  *   Pointer to RTC initialization structure.
@@ -287,10 +312,42 @@ void RTC_Init(const RTC_Init_TypeDef *init)
     tmp |= RTC_CTRL_COMP0TOP;
   }
 
+#if defined(_EFM32_GECKO_FAMILY)
   /* LF register about to be modified require sync. busy check */
   RTC_Sync(RTC_SYNCBUSY_CTRL);
+#endif
 
   RTC->CTRL = tmp;
+}
+
+
+
+/***************************************************************************//**
+ * @brief
+ *   Restore RTC to reset state
+ ******************************************************************************/
+void RTC_Reset(void)
+{
+  /* Restore all essential RTC register to default config */
+  RTC->FREEZE = _RTC_FREEZE_RESETVALUE;
+  RTC->CTRL   = _RTC_CTRL_RESETVALUE;
+  RTC->COMP0  = _RTC_COMP0_RESETVALUE;
+  RTC->COMP1  = _RTC_COMP1_RESETVALUE;
+  RTC->IEN    = _RTC_IEN_RESETVALUE;
+  RTC->IFC    = _RTC_IFC_RESETVALUE;
+}
+
+
+
+/***************************************************************************//**
+ * @brief
+ *   Restart RTC counter from zero
+ ******************************************************************************/
+void RTC_CounterReset(void)
+{
+  /* A disable/enable sequnce will start the counter at zero */
+  RTC_Enable(false);
+  RTC_Enable(true);
 }
 
 

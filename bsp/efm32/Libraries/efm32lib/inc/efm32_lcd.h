@@ -2,7 +2,7 @@
  * @file
  * @brief Liquid Crystal Display (LCD) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -62,18 +62,28 @@ typedef enum
   /** Triplex / 1/3 Duty cycle (segments can be multiplexed with LCD_COM[0:2]) */
   lcdMuxTriplex    = LCD_DISPCTRL_MUX_TRIPLEX,
   /** Quadruplex / 1/4 Duty cycle (segments can be multiplexed with LCD_COM[0:3]) */
-  lcdMuxQuadruplex = LCD_DISPCTRL_MUX_QUADRUPLEX
+  lcdMuxQuadruplex = LCD_DISPCTRL_MUX_QUADRUPLEX,
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  /** Sextaplex / 1/6 Duty cycle (segments can be multiplexed with LCD_COM[0:5]) */
+  lcdMuxSextaplex  = LCD_DISPCTRL_MUXE_MUXE | LCD_DISPCTRL_MUX_DUPLEX,
+  /** Octaplex / 1/6 Duty cycle (segments can be multiplexed with LCD_COM[0:5]) */
+  lcdMuxOctaplex   = LCD_DISPCTRL_MUXE_MUXE | LCD_DISPCTRL_MUX_QUADRUPLEX
+#endif
 } LCD_Mux_TypeDef;
 
 /** Bias setting */
 typedef enum
 {
   /** Static (2 levels) */
-  lcdBiasStatic   = LCD_DISPCTRL_BIAS_STATIC,
+  lcdBiasStatic    = LCD_DISPCTRL_BIAS_STATIC,
   /** 1/2 Bias (3 levels) */
-  lcdBiasOneHalf  = LCD_DISPCTRL_BIAS_ONEHALF,
+  lcdBiasOneHalf   = LCD_DISPCTRL_BIAS_ONEHALF,
   /** 1/3 Bias (4 levels) */
-  lcdBiasOneThird = LCD_DISPCTRL_BIAS_ONETHIRD
+  lcdBiasOneThird  = LCD_DISPCTRL_BIAS_ONETHIRD,
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  /** 1/4 Bias (5 levels) */
+  lcdBiasOneFourth = LCD_DISPCTRL_BIAS_ONEFOURTH,
+#endif
 } LCD_Bias_TypeDef;
 
 /** Wave type */
@@ -144,6 +154,11 @@ typedef enum
   lcdSegment16_19 = (1 << 4),
   /** Select segment lines 20 to 23 */
   lcdSegment20_23 = (1 << 5),
+#if defined(_EFM32_TINY_FAMILY)
+  /** Select all segment lines */
+  lcdSegmentAll   = (0x003f)
+#endif
+#if defined(_EFM32_GECKO_FAMILY) || defined(_EFM32_GIANT_FAMILY)
   /** Select segment lines 24 to 27 */
   lcdSegment24_27 = (1 << 6),
   /** Select segment lines 28 to 31 */
@@ -153,7 +168,8 @@ typedef enum
   /** Select segment lines 36 to 39 */
   lcdSegment36_39 = (1 << 9),
   /** Select all segment lines */
-  lcdSegmentAll   = (0x3ff)
+  lcdSegmentAll   = (0x03ff)
+#endif
 } LCD_SegmentRange_TypeDef;
 
 /** Update Data Control */
@@ -181,9 +197,9 @@ typedef enum
 /** Animation Logic Control, how AReg and BReg should be combined */
 typedef enum
 {
-  /** Use logical AND to mix animation register A (AREGA) and B (AREGB) */
+  /** Use bitwise logic AND to mix animation register A (AREGA) and B (AREGB) */
   lcdAnimLogicAnd = LCD_BACTRL_ALOGSEL_AND,
-  /** Use logical OR to mix animation register A (AREGA) and B (AREGB) */
+  /** Use bitwise logic OR to mix animation register A (AREGA) and B (AREGB) */
   lcdAnimLogicOr  = LCD_BACTRL_ALOGSEL_OR
 } LCD_AnimLogic_TypeDef;
 
@@ -260,10 +276,36 @@ void LCD_AnimInit(const LCD_AnimInit_TypeDef *animInit);
 void LCD_SegmentRangeEnable(LCD_SegmentRange_TypeDef segment, bool enable);
 void LCD_SegmentSet(int com, int bit, bool enable);
 void LCD_SegmentSetLow(int com, uint32_t mask, uint32_t bits);
+#if defined(_EFM32_GECKO_FAMILY) || defined(_EFM32_GIANT_FAMILY)
 void LCD_SegmentSetHigh(int com, uint32_t mask, uint32_t bits);
-
+#endif
 void LCD_ContrastSet(int level);
 void LCD_VBoostSet(LCD_VBoostLevel_TypeDef vboost);
+
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+void LCD_BiasSegmentSet(int segment, int biasLevel);
+void LCD_BiasComSet(int com, int biasLevel);
+#endif
+
+static __INLINE void LCD_Enable(bool enable);
+static __INLINE void LCD_AnimEnable(bool enable);
+static __INLINE void LCD_BlinkEnable(bool enable);
+static __INLINE void LCD_BlankEnable(bool enable);
+static __INLINE void LCD_FrameCountEnable(bool enable);
+static __INLINE int LCD_AnimState(void);
+static __INLINE int LCD_BlinkState(void);
+static __INLINE void LCD_FreezeEnable(bool enable);
+static __INLINE uint32_t LCD_SyncBusyGet(void);
+static __INLINE void LCD_SyncBusyDelay(uint32_t flags);
+static __INLINE uint32_t LCD_IntGet(void);
+static __INLINE uint32_t LCD_IntGetEnabled(void);
+static __INLINE void LCD_IntSet(uint32_t flags);
+static __INLINE void LCD_IntEnable(uint32_t flags);
+static __INLINE void LCD_IntDisable(uint32_t flags);
+static __INLINE void LCD_IntClear(uint32_t flags);
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+static __INLINE void LCD_DSCEnable(bool enable);
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -436,7 +478,8 @@ static __INLINE uint32_t LCD_SyncBusyGet(void)
  ******************************************************************************/
 static __INLINE void LCD_SyncBusyDelay(uint32_t flags)
 {
-  while (LCD->SYNCBUSY & flags) ;
+  while (LCD->SYNCBUSY & flags)
+    ;
 }
 
 
@@ -445,7 +488,8 @@ static __INLINE void LCD_SyncBusyDelay(uint32_t flags)
  *    Get pending LCD interrupt flags
  *
  * @return
- *    Pending LCD interrupts, which need to be cleared.
+ *   Pending LCD interrupt sources. Returns a set of interrupt flags OR-ed
+ *   together for multiple interrupt sources in the LCD module (LCD_IFS_nnn).
  ******************************************************************************/
 static __INLINE uint32_t LCD_IntGet(void)
 {
@@ -455,10 +499,43 @@ static __INLINE uint32_t LCD_IntGet(void)
 
 /***************************************************************************//**
  * @brief
+ *   Get enabled and pending LCD interrupt flags.
+ *
+ * @details
+ *   Useful for handling more interrupt sources in the same interrupt handler.
+ *
+ * @note
+ *   The event bits are not cleared by the use of this function.
+ *
+ * @return
+ *   Pending and enabled LCD interrupt sources.
+ *   The return value is the bitwise AND combination of
+ *   - the OR combination of enabled interrupt sources in LCD_IEN_nnn
+ *   register (LCD_IEN_nnn) and
+ *   - the bitwise OR combination of valid interrupt flags of the LCD module
+ *   (LCD_IF_nnn).
+ ******************************************************************************/
+static __INLINE uint32_t LCD_IntGetEnabled(void)
+{
+  uint32_t tmp = 0U;
+
+  /* Store LCD->IEN in temporary variable in order to define explicit order
+   * of volatile accesses. */
+  tmp = LCD->IEN;
+
+  /* Bitwise AND of pending and enabled interrupts */
+  return LCD->IF & tmp;
+}
+
+
+/***************************************************************************//**
+ * @brief
  *    Set one or more pending LCD interrupts from SW.
  *
  * @param[in] flags
- *    Bit field for interrupts to set
+ *   LCD interrupt sources to set to pending. Use a set of interrupt flags
+ *   OR-ed together to set multiple interrupt sources for the LCD module
+ *   (LCD_IFS_nnn).
  ******************************************************************************/
 static __INLINE void LCD_IntSet(uint32_t flags)
 {
@@ -468,10 +545,12 @@ static __INLINE void LCD_IntSet(uint32_t flags)
 
 /***************************************************************************//**
  * @brief
- *    Enable LCD (Frame Counter) interrupt
+ *    Enable LCD interrupts
  *
  * @param[in] flags
- *    LCD_IF_FC, which is the only supported interrupt for the LCD controller
+ *   LCD interrupt sources to enable. Use a set of interrupt flags OR-ed
+ *   together to set multiple interrupt sources for the LCD module
+ *   (LCD_IFS_nnn).
  ******************************************************************************/
 static __INLINE void LCD_IntEnable(uint32_t flags)
 {
@@ -481,10 +560,12 @@ static __INLINE void LCD_IntEnable(uint32_t flags)
 
 /***************************************************************************//**
  * @brief
- *   Disable LCD (Frame Counter) interrupt
+ *    Disable LCD interrupts
  *
  * @param[in] flags
- *    LCD_IF_FC, which is the only supported interrupt for the LCD controller
+ *   LCD interrupt sources to disable. Use a set of interrupt flags OR-ed
+ *   together to disable multiple interrupt sources for the LCD module
+ *   (LCD_IFS_nnn).
  ******************************************************************************/
 static __INLINE void LCD_IntDisable(uint32_t flags)
 {
@@ -497,12 +578,38 @@ static __INLINE void LCD_IntDisable(uint32_t flags)
  *   Clear one or more interrupt flags
  *
  * @param[in] flags
- *    LCD_IF_FC, which is the only supported interrupt for the LCD controller
+ *   LCD interrupt sources to clear. Use a set of interrupt flags OR-ed
+ *   together to clear multiple interrupt sources for the LCD module
+ *   (LCD_IFS_nnn).
  ******************************************************************************/
 static __INLINE void LCD_IntClear(uint32_t flags)
 {
   LCD->IFC = flags;
 }
+
+
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Enable or disable LCD Direct Segment Control
+ *
+ * @param[in] enable
+ *   If true, enables LCD controller Direct Segment Control
+ *   Segment and COM line bias levels needs to be set explicitly with the
+ *   LCD_BiasSegmentSet() and LCD_BiasComSet() function calls.
+ ******************************************************************************/
+static __INLINE void LCD_DSCEnable(bool enable)
+{
+  if (enable)
+  {
+    LCD->CTRL |= LCD_CTRL_DSC;
+  }
+  else
+  {
+    LCD->CTRL &= ~(LCD_CTRL_DSC);
+  }
+}
+#endif
 
 /** @} (end addtogroup LCD) */
 /** @} (end addtogroup EFM32_Library) */

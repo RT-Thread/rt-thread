@@ -26,6 +26,12 @@
 /* Private typedef -------------------------------------------------------------*/
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
+#ifdef RT_MISC_DEBUG
+#define misc_debug(format,args...) 			rt_kprintf(format, ##args)
+#else
+#define misc_debug(format,args...)
+#endif
+
 /* Private constants -----------------------------------------------------------*/
 static rt_device_t adc0;
 static struct efm32_adc_control_t control = {ADC_MODE_SINGLE};
@@ -112,21 +118,13 @@ rt_err_t rt_hw_misc_init(void)
 	adc0 = rt_device_find(RT_ADC0_NAME);
 	if (adc0 == RT_NULL)
 	{
-#ifdef RT_MISC_DEBUG
-		rt_kprintf("Batt err: Can't find device: %s!\n", RT_ADC0_NAME);
-#endif
-
+		misc_debug("Batt err: Can't find device: %s!\n", RT_ADC0_NAME);
 		goto MISC_INIT_ERROR;
 	}
-
 	return RT_EOK;
 
-
 MISC_INIT_ERROR:
-#ifdef RT_MISC_DEBUG
-	rt_kprintf("Misc err: Init failed!\n");
-#endif
-
+	misc_debug("Misc err: Init failed!\n");
 	return -RT_ERROR;
 
 }

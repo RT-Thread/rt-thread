@@ -34,7 +34,10 @@ struct efm32_timer_control_t
 
 /* Exported constants ---------------------------------------------------------*/
 /* Exported macro -------------------------------------------------------------*/
-#define TMR_CFG_PRESCALER	timerPrescale1024
+#define TMR_MODE_ONESHOT			(true)
+#define TMR_MODE_CONTINUOUS			(false)
+
+#define TMR_CFG_PRESCALER			timerPrescale1024
 
 /* Exported functions --------------------------------------------------------- */
 void rt_hw_timer_init(void);

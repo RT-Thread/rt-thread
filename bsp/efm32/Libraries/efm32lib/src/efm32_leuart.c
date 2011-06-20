@@ -3,7 +3,7 @@
  * @brief Low Energy Universal Asynchronous Receiver/Transmitter (LEUART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -38,8 +38,8 @@
 
 /***************************************************************************//**
  * @addtogroup LEUART
- * @brief EFM32 low energy universal asynchronous receiver/transmitter
- *   utilities.
+ * @brief Low Energy Universal Asynchronous Receiver/Transmitter (LEUART)
+ *   Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -60,7 +60,7 @@
 #error Undefined number of low energy UARTs (LEUART).
 #endif
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   LOCAL FUNCTIONS   ********************************
@@ -90,10 +90,11 @@ static __INLINE void LEUART_Sync(LEUART_TypeDef *leuart, uint32_t mask)
 
   /* Wait for any pending previous write operation to have been completed */
   /* in low frequency domain */
-  while (leuart->SYNCBUSY & mask) ;
+  while (leuart->SYNCBUSY & mask)
+    ;
 }
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -398,7 +399,8 @@ void LEUART_FreezeEnable(LEUART_TypeDef *leuart, bool enable)
      * since modifying a register while it is in sync progress should be
      * avoided.
      */
-    while (leuart->SYNCBUSY) ;
+    while (leuart->SYNCBUSY)
+      ;
 
     leuart->FREEZE = LEUART_FREEZE_REGFREEZE;
   }
@@ -458,6 +460,7 @@ void LEUART_Init(LEUART_TypeDef *leuart, LEUART_Init_TypeDef *init)
   leuart->CTRL = (leuart->CTRL & ~(_LEUART_CTRL_PARITY_MASK |
                                    _LEUART_CTRL_STOPBITS_MASK)) |
                  (uint32_t)(init->databits) |
+                 (uint32_t)(init->parity) |
                  (uint32_t)(init->stopbits);
 
   /* Configure baudrate */
@@ -530,7 +533,8 @@ void LEUART_Reset(LEUART_TypeDef *leuart)
  ******************************************************************************/
 uint8_t LEUART_Rx(LEUART_TypeDef *leuart)
 {
-  while (!(leuart->STATUS & LEUART_STATUS_RXDATAV)) ;
+  while (!(leuart->STATUS & LEUART_STATUS_RXDATAV))
+    ;
 
   return (uint8_t)(leuart->RXDATA);
 }
@@ -555,7 +559,8 @@ uint8_t LEUART_Rx(LEUART_TypeDef *leuart)
  ******************************************************************************/
 uint16_t LEUART_RxExt(LEUART_TypeDef *leuart)
 {
-  while (!(leuart->STATUS & LEUART_STATUS_RXDATAV)) ;
+  while (!(leuart->STATUS & LEUART_STATUS_RXDATAV))
+    ;
 
   return (uint16_t)(leuart->RXDATAX);
 }
@@ -587,12 +592,13 @@ uint16_t LEUART_RxExt(LEUART_TypeDef *leuart)
 void LEUART_Tx(LEUART_TypeDef *leuart, uint8_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(leuart->STATUS & LEUART_STATUS_TXBL)) ;
+  while (!(leuart->STATUS & LEUART_STATUS_TXBL))
+    ;
 
   /* LF register about to be modified require sync. busy check */
   LEUART_Sync(leuart, LEUART_SYNCBUSY_TXDATA);
 
-  leuart->TXDATA = (uint32_t) data;
+  leuart->TXDATA = (uint32_t)data;
 }
 
 
@@ -618,12 +624,13 @@ void LEUART_Tx(LEUART_TypeDef *leuart, uint8_t data)
 void LEUART_TxExt(LEUART_TypeDef *leuart, uint16_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(leuart->STATUS & LEUART_STATUS_TXBL)) ;
+  while (!(leuart->STATUS & LEUART_STATUS_TXBL))
+    ;
 
   /* LF register about to be modified require sync. busy check */
   LEUART_Sync(leuart, LEUART_SYNCBUSY_TXDATAX);
 
-  leuart->TXDATAX = (uint32_t) data;
+  leuart->TXDATAX = (uint32_t)data;
 }
 
 

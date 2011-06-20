@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file
- * @brief Advanced encryption standard (AES) accelerator peripheral API for
- *   EFM32.
+ * @brief Advanced Encryption Standard (AES) accelerator peripheral API
+ *   for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,7 +37,8 @@
 
 /***************************************************************************//**
  * @addtogroup AES
- * @brief EFM32 advanced encryption standard accelerator utilities.
+ * @brief Advanced Encryption Standard Accelerator (AES) Peripheral API for
+ *   EFM32
  * @details
  *   This API is intended for use on EFM32 target devices, and the following
  *   input/output notations should be noted:
@@ -81,7 +82,7 @@
 
 #define AES_BLOCKSIZE    16
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -155,10 +156,10 @@ void AES_CBC128(uint8_t *out,
                 bool encrypt)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
   /* Need to buffer one block when decrypting in case 'out' replaces 'in' */
   uint32_t       prev[4];
 
@@ -196,7 +197,8 @@ void AES_CBC128(uint8_t *out,
       _in += 4;
 
       /* Wait for completion */
-      while (AES->STATUS & AES_STATUS_RUNNING) ;
+      while (AES->STATUS & AES_STATUS_RUNNING)
+        ;
 
       /* Save encrypted data */
       for (i = 3; i >= 0; i--)
@@ -227,7 +229,8 @@ void AES_CBC128(uint8_t *out,
       }
 
       /* Wait for completion */
-      while (AES->STATUS & AES_STATUS_RUNNING) ;
+      while (AES->STATUS & AES_STATUS_RUNNING)
+        ;
 
       /* In order to avoid additional buffer, we use HW directly for XOR and buffer */
       /* (Writing to XORDATA will not trigger encoding, triggering enabled on DATA.) */
@@ -289,10 +292,10 @@ void AES_CBC256(uint8_t *out,
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
   /* Need to buffer one block when decrypting in case output replaces input */
   uint32_t       prev[4];
 
@@ -327,7 +330,8 @@ void AES_CBC256(uint8_t *out,
       _in += 4;
 
       /* Wait for completion */
-      while (AES->STATUS & AES_STATUS_RUNNING) ;
+      while (AES->STATUS & AES_STATUS_RUNNING)
+        ;
 
       /* Save encrypted data */
       for (i = 3; i >= 0; i--)
@@ -361,7 +365,8 @@ void AES_CBC256(uint8_t *out,
       }
 
       /* Wait for completion */
-      while (AES->STATUS & AES_STATUS_RUNNING) ;
+      while (AES->STATUS & AES_STATUS_RUNNING)
+        ;
 
       /* In order to avoid additional buffer, we use HW directly for XOR and buffer */
       for (i = 3; i >= 0; i--)
@@ -449,10 +454,10 @@ void AES_CFB128(uint8_t *out,
                 bool encrypt)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
   const uint32_t *data;
   uint32_t       tmp[4];
 
@@ -494,7 +499,8 @@ void AES_CFB128(uint8_t *out,
     }
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -544,10 +550,10 @@ void AES_CFB256(uint8_t *out,
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
   const uint32_t *data;
   uint32_t       tmp[4];
 
@@ -585,7 +591,8 @@ void AES_CFB256(uint8_t *out,
       data = tmp;
     }
 
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -663,10 +670,10 @@ void AES_CTR128(uint8_t *out,
                 AES_CtrFuncPtr_TypeDef ctrFunc)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  uint32_t       *_ctr = (uint32_t *) ctr;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  uint32_t       *_ctr = (uint32_t *)ctr;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
   EFM_ASSERT(ctrFunc);
@@ -693,7 +700,8 @@ void AES_CTR128(uint8_t *out,
     ctrFunc(ctr);
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -744,10 +752,10 @@ void AES_CTR256(uint8_t *out,
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  uint32_t       *_ctr = (uint32_t *) ctr;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  uint32_t       *_ctr = (uint32_t *)ctr;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
   EFM_ASSERT(ctrFunc);
@@ -771,7 +779,8 @@ void AES_CTR256(uint8_t *out,
     ctrFunc(ctr);
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -800,7 +809,7 @@ void AES_CTR256(uint8_t *out,
  ******************************************************************************/
 void AES_CTRUpdate32Bit(uint8_t *ctr)
 {
-  uint32_t *_ctr = (uint32_t *) ctr;
+  uint32_t *_ctr = (uint32_t *)ctr;
 
   _ctr[3] = __REV(__REV(_ctr[3]) + 1);
 }
@@ -824,8 +833,8 @@ void AES_CTRUpdate32Bit(uint8_t *ctr)
 void AES_DecryptKey128(uint8_t *out, const uint8_t *in)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
 
   /* Load key */
   for (i = 3; i >= 0; i--)
@@ -839,7 +848,8 @@ void AES_DecryptKey128(uint8_t *out, const uint8_t *in)
   AES->CMD = AES_CMD_START;
 
   /* Wait for completion */
-  while (AES->STATUS & AES_STATUS_RUNNING) ;
+  while (AES->STATUS & AES_STATUS_RUNNING)
+    ;
 
   /* Save decryption key */
   for (i = 3; i >= 0; i--)
@@ -868,8 +878,8 @@ void AES_DecryptKey256(uint8_t *out, const uint8_t *in)
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
 
   /* Load key */
   for (i = 3, j = 7; i >= 0; i--, j--)
@@ -883,7 +893,8 @@ void AES_DecryptKey256(uint8_t *out, const uint8_t *in)
   AES->CMD  = AES_CMD_START;
 
   /* Wait for completion */
-  while (AES->STATUS & AES_STATUS_RUNNING) ;
+  while (AES->STATUS & AES_STATUS_RUNNING)
+    ;
 
   /* Save decryption key */
   for (i = 3, j = 7; i >= 0; i--, j--)
@@ -952,9 +963,9 @@ void AES_ECB128(uint8_t *out,
                 bool encrypt)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
 
@@ -987,7 +998,8 @@ void AES_ECB128(uint8_t *out,
     _in += 4;
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -1034,9 +1046,9 @@ void AES_ECB256(uint8_t *out,
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
 
@@ -1066,7 +1078,8 @@ void AES_ECB256(uint8_t *out,
     _in += 4;
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -1142,10 +1155,10 @@ void AES_OFB128(uint8_t *out,
                 const uint8_t *iv)
 {
   int            i;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
 
@@ -1167,7 +1180,8 @@ void AES_OFB128(uint8_t *out,
     AES->CMD = AES_CMD_START;
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)
@@ -1213,10 +1227,10 @@ void AES_OFB256(uint8_t *out,
 {
   int            i;
   int            j;
-  uint32_t       *_out = (uint32_t *) out;
-  const uint32_t *_in  = (const uint32_t *) in;
-  const uint32_t *_key = (const uint32_t *) key;
-  const uint32_t *_iv  = (const uint32_t *) iv;
+  uint32_t       *_out = (uint32_t *)out;
+  const uint32_t *_in  = (const uint32_t *)in;
+  const uint32_t *_key = (const uint32_t *)key;
+  const uint32_t *_iv  = (const uint32_t *)iv;
 
   EFM_ASSERT(!(len % AES_BLOCKSIZE));
 
@@ -1243,7 +1257,8 @@ void AES_OFB256(uint8_t *out,
     AES->CMD = AES_CMD_START;
 
     /* Wait for completion */
-    while (AES->STATUS & AES_STATUS_RUNNING) ;
+    while (AES->STATUS & AES_STATUS_RUNNING)
+      ;
 
     /* Save encrypted/decrypted data */
     for (i = 3; i >= 0; i--)

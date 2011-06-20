@@ -12,6 +12,7 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-02-23	onelife		Initial creation for EFM32
+ * 2011-06-17	onelife		Modify for efm32lib v2 upgrading
  *********************************************************************/
 #ifndef __DRV_ACMP_H__
 #define __DRV_ACMP_H__
@@ -44,21 +45,6 @@ struct efm32_acmp_control_t
 
 /* Exported constants ---------------------------------------------------------*/
 /* Exported macro -------------------------------------------------------------*/
-/** Default config for ACMP init structure. */
-#define ACMP_INIT_DEFAULT 										\
-{ 																\
-	false, 					/* Full bias current*/ 					\
-	true, 					/* Half bias current */ 				\
-	0, 						/* Biasprog current configuration */ 		\
-	true, 					/* Enable interrupt for falling edge */ 	\
-	true, 					/* Enable interrupt for rising edge */ 	\
-	acmpWarmTime512, 		/* Warm-up time must be >10us */ 		\
-	acmpHysteresisLevel0,	/* Hysteresis configuration */ 			\
-	0, 						/* Inactive comparator output value */ 	\
-	false, 					/* Disable low power mode */ 			\
-	0 						/* Vdd reference scaling */ 			\
-}
-
 /* Exported functions --------------------------------------------------------- */
 void rt_hw_acmp_init(void);
 

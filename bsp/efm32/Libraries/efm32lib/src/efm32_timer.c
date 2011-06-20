@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Timer/counter (TIMER) peripheral API for EFM32
+ * @brief Timer/counter (TIMER) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -36,7 +36,7 @@
 
 /***************************************************************************//**
  * @addtogroup TIMER
- * @brief EFM32 timer/counter utilities.
+ * @brief Timer/Counter (TIMER) Peripheral API for EFM32
  * @details
  *   The timer module consists of three main parts:
  *   @li General timer config and enable control.
@@ -61,6 +61,11 @@
 #define TIMER_REF_VALID(ref)    (((ref) == TIMER0) || \
                                  ((ref) == TIMER1) || \
                                  ((ref) == TIMER2))
+#elif (TIMER_COUNT == 4)
+#define TIMER_REF_VALID(ref)    (((ref) == TIMER0) || \
+                                 ((ref) == TIMER1) || \
+                                 ((ref) == TIMER2) || \
+                                 ((ref) == TIMER3))
 #else
 #error Undefined number of timers.
 #endif
@@ -68,7 +73,7 @@
 /** Validation of TIMER compare/capture channel number */
 #define TIMER_CH_VALID(ch)    ((ch) < 3)
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -119,8 +124,6 @@ void TIMER_Enable(TIMER_TypeDef *timer, bool enable)
  ******************************************************************************/
 void TIMER_Init(TIMER_TypeDef *timer, const TIMER_Init_TypeDef *init)
 {
-  uint32_t tmp;
-
   EFM_ASSERT(TIMER_REF_VALID(timer));
 
   /* Stop timer if specified to be disabled (dosn't hurt if already stopped) */
@@ -129,40 +132,22 @@ void TIMER_Init(TIMER_TypeDef *timer, const TIMER_Init_TypeDef *init)
     timer->CMD = TIMER_CMD_STOP;
   }
 
-  tmp = ((uint32_t)(init->prescale) << _TIMER_CTRL_PRESC_SHIFT) |
-        ((uint32_t)(init->clkSel) << _TIMER_CTRL_CLKSEL_SHIFT) |
-        ((uint32_t)(init->fallAction) << _TIMER_CTRL_FALLA_SHIFT) |
-        ((uint32_t)(init->riseAction) << _TIMER_CTRL_RISEA_SHIFT) |
-        ((uint32_t)(init->mode) << _TIMER_CTRL_MODE_SHIFT);
+  timer->CTRL =
+    ((uint32_t)(init->prescale) << _TIMER_CTRL_PRESC_SHIFT) |
+    ((uint32_t)(init->clkSel) << _TIMER_CTRL_CLKSEL_SHIFT) |
+    ((uint32_t)(init->fallAction) << _TIMER_CTRL_FALLA_SHIFT) |
+    ((uint32_t)(init->riseAction) << _TIMER_CTRL_RISEA_SHIFT) |
+    ((uint32_t)(init->mode) << _TIMER_CTRL_MODE_SHIFT) |
+    (init->debugRun               ?   TIMER_CTRL_DEBUGRUN  : 0) |
+    (init->dmaClrAct              ?   TIMER_CTRL_DMACLRACT : 0) |
+    (init->quadModeX4             ?   TIMER_CTRL_QDM_X4    : 0) |
+    (init->oneShot                ?   TIMER_CTRL_OSMEN     : 0) |
 
-  /* Configure DEBUGRUN flag, sets whether or not counter should be
-   * updated when debugger is active */
-  if (init->debugRun)
-  {
-    tmp |= TIMER_CTRL_DEBUGRUN;
-  }
-
-  if (init->dmaClrAct)
-  {
-    tmp |= TIMER_CTRL_DMACLRACT;
-  }
-
-  if (init->quadModeX4)
-  {
-    tmp |= TIMER_CTRL_QDM_X4;
-  }
-
-  if (init->oneShot)
-  {
-    tmp |= TIMER_CTRL_OSMEN;
-  }
-
-  if (init->sync)
-  {
-    tmp |= TIMER_CTRL_SYNC;
-  }
-
-  timer->CTRL = tmp;
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+    (init->count2x                ?   TIMER_CTRL_X2CNT     : 0) |
+    (init->ati                    ?   TIMER_CTRL_ATI       : 0) |
+#endif
+    (init->sync                   ?   TIMER_CTRL_SYNC      : 0);
 
   /* Start timer if specified to be enabled (dosn't hurt if already started) */
   if (init->enable)
@@ -193,43 +178,24 @@ void TIMER_InitCC(TIMER_TypeDef *timer,
                   unsigned int ch,
                   const TIMER_InitCC_TypeDef *init)
 {
-  uint32_t tmp;
-
   EFM_ASSERT(TIMER_REF_VALID(timer));
   EFM_ASSERT(TIMER_CH_VALID(ch));
 
-  tmp = ((uint32_t)(init->eventCtrl) << _TIMER_CC_CTRL_ICEVCTRL_SHIFT) |
-        ((uint32_t)(init->edge) << _TIMER_CC_CTRL_ICEDGE_SHIFT) |
-        ((uint32_t)(init->prsSel) << _TIMER_CC_CTRL_PRSSEL_SHIFT) |
-        ((uint32_t)(init->cufoa) << _TIMER_CC_CTRL_CUFOA_SHIFT) |
-        ((uint32_t)(init->cofoa) << _TIMER_CC_CTRL_COFOA_SHIFT) |
-        ((uint32_t)(init->cmoa) << _TIMER_CC_CTRL_CMOA_SHIFT) |
-        ((uint32_t)(init->mode) << _TIMER_CC_CTRL_MODE_SHIFT);
-
-  if (init->filter)
-  {
-    tmp |= TIMER_CC_CTRL_FILT_ENABLE;
-  }
-
-  if (init->prsInput)
-  {
-    tmp |= TIMER_CC_CTRL_INSEL_PRS;
-  }
-
-  if (init->coist)
-  {
-    tmp |= TIMER_CC_CTRL_COIST;
-  }
-
-  if (init->outInvert)
-  {
-    tmp |= TIMER_CC_CTRL_OUTINV;
-  }
-
-  timer->CC[ch].CTRL = tmp;
+  timer->CC[ch].CTRL =
+    ((uint32_t)(init->eventCtrl) << _TIMER_CC_CTRL_ICEVCTRL_SHIFT) |
+    ((uint32_t)(init->edge) << _TIMER_CC_CTRL_ICEDGE_SHIFT) |
+    ((uint32_t)(init->prsSel) << _TIMER_CC_CTRL_PRSSEL_SHIFT) |
+    ((uint32_t)(init->cufoa) << _TIMER_CC_CTRL_CUFOA_SHIFT) |
+    ((uint32_t)(init->cofoa) << _TIMER_CC_CTRL_COFOA_SHIFT) |
+    ((uint32_t)(init->cmoa) << _TIMER_CC_CTRL_CMOA_SHIFT) |
+    ((uint32_t)(init->mode) << _TIMER_CC_CTRL_MODE_SHIFT) |
+    (init->filter                ?   TIMER_CC_CTRL_FILT_ENABLE : 0) |
+    (init->prsInput              ?   TIMER_CC_CTRL_INSEL_PRS   : 0) |
+    (init->coist                 ?   TIMER_CC_CTRL_COIST       : 0) |
+    (init->outInvert             ?   TIMER_CC_CTRL_OUTINV      : 0);
 }
 
-
+#ifdef TIMER_DTLOCK_LOCKKEY_LOCK
 /***************************************************************************//**
  * @brief
  *   Lock the TIMER in order to protect some of its registers against unintended
@@ -252,7 +218,7 @@ void TIMER_Lock(TIMER_TypeDef *timer)
 
   timer->DTLOCK = TIMER_DTLOCK_LOCKKEY_LOCK;
 }
-
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -292,6 +258,7 @@ void TIMER_Reset(TIMER_TypeDef *timer)
 
   /* Reset dead time insertion module, no effect on timers without DTI */
 
+#ifdef TIMER_DTLOCK_LOCKKEY_UNLOCK
   /* Unlock DTI registers first in case locked */
   timer->DTLOCK = TIMER_DTLOCK_LOCKKEY_UNLOCK;
 
@@ -300,9 +267,11 @@ void TIMER_Reset(TIMER_TypeDef *timer)
   timer->DTFC     = _TIMER_DTFC_RESETVALUE;
   timer->DTOGEN   = _TIMER_DTOGEN_RESETVALUE;
   timer->DTFAULTC = _TIMER_DTFAULTC_MASK;
+#endif
 }
 
 
+#ifdef TIMER_DTLOCK_LOCKKEY_UNLOCK
 /***************************************************************************//**
  * @brief
  *   Unlock the TIMER so that writing to locked registers again is possible.
@@ -316,6 +285,7 @@ void TIMER_Unlock(TIMER_TypeDef *timer)
 
   timer->DTLOCK = TIMER_DTLOCK_LOCKKEY_UNLOCK;
 }
+#endif
 
 
 /** @} (end addtogroup TIMER) */

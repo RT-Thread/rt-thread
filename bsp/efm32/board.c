@@ -232,21 +232,37 @@ void rt_hw_driver_init(void)
 	DVK_enablePeripheral(DVK_RS232A);
 	DVK_enablePeripheral(DVK_SPI);
 #endif
+#if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || defined(RT_USING_USART2))
 	rt_hw_usart_init();
+#endif
+
+	/* Setup console */
+	rt_console_set_device(CONSOLE_DEVICE);
 
 	/* Initialize Timer */
+#if (defined(RT_USING_TIMER0) || defined(RT_USING_TIMER1) || defined(RT_USING_TIMER2))
 	rt_hw_timer_init();
+#endif
 
 	/* Initialize ADC */
+#if defined(RT_USING_ADC0)
 	rt_hw_adc_init();
+#endif
 
 	/* Initialize ACMP */
+#if (defined(RT_USING_ACMP0) || defined(RT_USING_ACMP1))
 	rt_hw_acmp_init();
-	
-	/* Initialize IIC */
-	rt_hw_iic_init();
+#endif
 
-	rt_console_set_device(CONSOLE_DEVICE);
+	/* Initialize IIC */
+#if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
+	rt_hw_iic_init();
+#endif
+
+	/* Initialize RTC */
+#if defined(RT_USING_RTC)
+	rt_hw_rtc_init();
+#endif
 }
 
 /******************************************************************//**

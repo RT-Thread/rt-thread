@@ -1,5 +1,5 @@
 /******************************************************************//**
- * @file 		fault.c
+ * @file 		cpu.c
  * @brief 	This file is part of RT-Thread RTOS
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
@@ -13,6 +13,7 @@
  * Date			Author		Notes
  * 2009-01-05 	Bernard 		first version
  * 2011-02-14	onelife		Modify for EFM32
+ * 2011-06-17	onelife		Merge all of the C source code into cpuport.c
  *********************************************************************/
  
 /******************************************************************//**
@@ -39,12 +40,42 @@ struct stack_contex
 /* Private define --------------------------------------------------------------*/
 /* Private macro --------------------------------------------------------------*/
 /* Private variables ------------------------------------------------------------*/
-/* External function prototypes --------------------------------------------------*/
-extern void list_thread(void);
-extern rt_thread_t rt_current_thread;
+/* exception and interrupt handler table */
+rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_uint32_t rt_thread_switch_interrput_flag;
 
 /* Private function prototypes ---------------------------------------------------*/
 /* Private functions ------------------------------------------------------------*/
+rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
+	rt_uint8_t *stack_addr, void *texit)
+{
+	unsigned long *stk;
+
+	stk 	 = (unsigned long *)stack_addr;
+	*(stk)   = 0x01000000L;					/* PSR */
+	*(--stk) = (unsigned long)tentry;		/* entry point, pc */
+	*(--stk) = (unsigned long)texit;		/* lr */
+	*(--stk) = 0;							/* r12 */
+	*(--stk) = 0;							/* r3 */
+	*(--stk) = 0;							/* r2 */
+	*(--stk) = 0;							/* r1 */
+	*(--stk) = (unsigned long)parameter;	/* r0 : argument */
+
+	*(--stk) = 0;							/* r11 */
+	*(--stk) = 0;							/* r10 */
+	*(--stk) = 0;							/* r9 */
+	*(--stk) = 0;							/* r8 */
+	*(--stk) = 0;							/* r7 */
+	*(--stk) = 0;							/* r6 */
+	*(--stk) = 0;							/* r5 */
+	*(--stk) = 0;							/* r4 */
+
+	/* return task's current stack address */
+	return (rt_uint8_t *)stk;
+}
+
+extern void list_thread(void);
+extern rt_thread_t rt_current_thread;
 void rt_hw_hard_fault_exception(struct stack_contex* contex)
 {
 	rt_kprintf("psr: 0x%08x\n", contex->psr);
@@ -61,6 +92,13 @@ void rt_hw_hard_fault_exception(struct stack_contex* contex)
 	list_thread();
 #endif
 	while (1);
+}
+
+void rt_hw_cpu_shutdown()
+{
+	rt_kprintf("shutdown...\n");
+
+	RT_ASSERT(0);
 }
 
 /******************************************************************//**

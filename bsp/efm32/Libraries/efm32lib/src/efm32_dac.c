@@ -1,9 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief DAC device driver for EFM32
- *
+ * @brief Digital to Analog Coversion (DAC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -39,7 +38,7 @@
 
 /***************************************************************************//**
  * @addtogroup DAC
- * @brief EFM32 digital to analog converter utilities.
+ * @brief Digital to Analog Coversion (DAC) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -49,16 +48,13 @@
 
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
 
-/** Validation of DAC register block pointer reference for assert statements. */
-#define DAC_REF_VALID(ref)    ((ref) == DAC0)
-
 /** Validation of DAC channel for assert statements. */
-#define DAC_CH_VALID(ch)      ((ch) <= 1)
+#define DAC_CH_VALID(ch)    ((ch) <= 1)
 
 /** Max DAC clock */
 #define DAC_MAX_CLOCK    1000000
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -93,7 +89,7 @@ void DAC_Enable(DAC_TypeDef *dac, unsigned int ch, bool enable)
     reg = &(dac->CH1CTRL);
   }
 
-  BITBAND_Peripheral(reg, _DAC_CH0CTRL_EN_SHIFT, (unsigned int) enable);
+  BITBAND_Peripheral(reg, _DAC_CH0CTRL_EN_SHIFT, (unsigned int)enable);
 }
 
 
@@ -142,15 +138,9 @@ void DAC_Init(DAC_TypeDef *dac, const DAC_Init_TypeDef *init)
 
   tmp = ((uint32_t)(init->refresh) << _DAC_CTRL_REFRSEL_SHIFT) |
         (((uint32_t)(init->prescale) << _DAC_CTRL_PRESC_SHIFT) & _DAC_CTRL_PRESC_MASK) |
-        ((uint32_t)(init->lpFreq) << _DAC_CTRL_LPFFREQ_SHIFT) |
         ((uint32_t)(init->reference) << _DAC_CTRL_REFSEL_SHIFT) |
         ((uint32_t)(init->outMode) << _DAC_CTRL_OUTMODE_SHIFT) |
         ((uint32_t)(init->convMode) << _DAC_CTRL_CONVMODE_SHIFT);
-
-  if (init->lpEnable)
-  {
-    tmp |= DAC_CTRL_LPFEN;
-  }
 
   if (init->ch0ResetPre)
   {
@@ -268,7 +258,7 @@ uint8_t DAC_PrescaleCalc(uint32_t dacFreq, uint32_t hfperFreq)
       break;
   }
 
-  return((uint8_t) ret);
+  return((uint8_t)ret);
 }
 
 

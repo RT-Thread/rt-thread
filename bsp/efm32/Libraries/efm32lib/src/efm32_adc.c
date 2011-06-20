@@ -1,8 +1,8 @@
 /***************************************************************************//**
  * @file
- * @brief Analog to Digital Converter (ADC) peripheral API for EFM32
+ * @brief Analog to Digital Converter (ADC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 1.3.0
+ * @version 2.0.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -36,7 +36,7 @@
 
 /***************************************************************************//**
  * @addtogroup ADC
- * @brief EFM32 analog to digital converter utilities.
+ * @brief Analog to Digital Converter (ADC) Peripheral API for EFM32
  * @{
  ******************************************************************************/
 
@@ -55,7 +55,7 @@
 /** Min ADC clock */
 #define ADC_MIN_CLOCK    32000
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 
 /*******************************************************************************
@@ -220,7 +220,7 @@ static void ADC_CalibrateLoadSingle(ADC_TypeDef *adc, ADC_Ref_TypeDef ref)
   }
 }
 
-/** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
+/** @endcond */
 
 /*******************************************************************************
  **************************   GLOBAL FUNCTIONS   *******************************
@@ -300,7 +300,7 @@ void ADC_InitScan(ADC_TypeDef *adc, const ADC_InitScan_TypeDef *init)
   /* Load proper calibration data depending on selected reference */
   ADC_CalibrateLoadScan(adc, init->reference);
 
-  tmp = ((uint32_t)(init->prsSel) << _ADC_SCANCTRL_PRSEN_SHIFT) |
+  tmp = ((uint32_t)(init->prsSel) << _ADC_SCANCTRL_PRSSEL_SHIFT) |
         ((uint32_t)(init->acqTime) << _ADC_SCANCTRL_AT_SHIFT) |
         ((uint32_t)(init->reference) << _ADC_SCANCTRL_REF_SHIFT) |
         init->input |
@@ -435,7 +435,7 @@ uint8_t ADC_PrescaleCalc(uint32_t adcFreq, uint32_t hfperFreq)
     ret--;
   }
 
-  return (uint8_t) ret;
+  return (uint8_t)ret;
 }
 
 
