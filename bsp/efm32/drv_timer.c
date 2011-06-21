@@ -249,7 +249,7 @@ static struct efm32_timer_device_t *rt_hw_timer_unit_init(
 		timer = rt_malloc(sizeof(struct efm32_timer_device_t));
 		if (timer == RT_NULL)
 		{
-			timer_debug("no memory for TIMER%d driver\n"), unitNumber;
+			timer_debug("no memory for TIMER%d driver\n", unitNumber);
 			break;
 		}
 		
