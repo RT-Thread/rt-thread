@@ -191,7 +191,7 @@
 /  windows.h, ucos_ii.h and semphr.h, must be included prior to ff.h. */
 
 #ifdef RT_DFS_ELM_REENTRANT
-#define _FS_REENTRANT	RT_DFS_ELM_REENTRANT			/* 0 or 1 */
+#define _FS_REENTRANT	1		/* 0 or 1 */
 #else
 #define _FS_REENTRANT	0		/* 0:Disable or 1:Enable */
 #endif
