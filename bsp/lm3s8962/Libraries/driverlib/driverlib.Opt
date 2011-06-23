@@ -1,0 +1,59 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (driverlib), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(Source),1,0,0
+GRPOPT 2,(Documentation),1,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<.\adc.c><adc.c>
+OPTFFF 1,2,1,0,0,0,0,0,<.\can.c><can.c>
+OPTFFF 1,3,1,0,0,0,0,0,<.\comp.c><comp.c>
+OPTFFF 1,4,1,0,0,0,0,0,<.\cpu.c><cpu.c>
+OPTFFF 1,5,1,0,0,0,0,0,<.\epi.c><epi.c>
+OPTFFF 1,6,1,0,0,0,0,0,<.\ethernet.c><ethernet.c>
+OPTFFF 1,7,1,0,0,0,0,0,<.\flash.c><flash.c>
+OPTFFF 1,8,1,0,0,0,0,0,<.\gpio.c><gpio.c>
+OPTFFF 1,9,1,0,0,0,0,0,<.\hibernate.c><hibernate.c>
+OPTFFF 1,10,1,0,0,0,0,0,<.\i2c.c><i2c.c>
+OPTFFF 1,11,1,0,0,0,0,0,<.\i2s.c><i2s.c>
+OPTFFF 1,12,1,0,0,0,0,0,<.\interrupt.c><interrupt.c>
+OPTFFF 1,13,1,0,0,0,0,0,<.\mpu.c><mpu.c>
+OPTFFF 1,14,1,0,0,0,0,0,<.\pwm.c><pwm.c>
+OPTFFF 1,15,1,0,0,0,0,0,<.\qei.c><qei.c>
+OPTFFF 1,16,1,0,0,0,0,0,<.\ssi.c><ssi.c>
+OPTFFF 1,17,1,0,0,0,0,0,<.\sysctl.c><sysctl.c>
+OPTFFF 1,18,1,0,0,0,0,0,<.\systick.c><systick.c>
+OPTFFF 1,19,1,0,0,0,0,0,<.\timer.c><timer.c>
+OPTFFF 1,20,1,0,0,0,0,0,<.\uart.c><uart.c>
+OPTFFF 1,21,1,0,0,0,0,0,<.\udma.c><udma.c>
+OPTFFF 1,22,1,0,0,0,0,0,<.\usb.c><usb.c>
+OPTFFF 1,23,1,0,0,0,0,0,<.\watchdog.c><watchdog.c>
+OPTFFF 2,24,5,2,0,1,1,0,<.\readme.txt><readme.txt> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,217,2,0,0,44,1,0,0 }
+
+ExtF <.\readme.txt> 1,1,0,{ 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,217,2,0,0,44,1,0,0 }
+
+TARGOPT 1, (driverlib)
+ ADSCLK=20000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\rvmdk\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTBL 0,(Data Sheet)<DATASHTS\Luminary\LM3S101.PDF>
+  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S101)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S101)
+  OPTDBG 48125,1,()()()()()()()()()() (BIN\UL2CM3.DLL)()()()
+  OPTDF 0x40000002
+  OPTLE <>
+  OPTLC <>
+EndOpt
