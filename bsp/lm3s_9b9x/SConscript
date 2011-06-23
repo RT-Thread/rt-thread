@@ -1,0 +1,19 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c']
+
+src_drv = []
+if GetDepend('RT_USING_DFS'):
+	src_drv += ['sdcard.c']
+
+if GetDepend('RT_USING_LWIP'):
+
+	src_drv += ['luminaryif.c']
+
+src	= File(src_bsp + src_drv)
+CPPPATH = [RTT_ROOT + '/bsp/lm3s']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
