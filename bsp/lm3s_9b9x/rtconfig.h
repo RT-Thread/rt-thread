@@ -74,7 +74,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-#define RT_USING_DFS
+//#define RT_USING_DFS
 /* SECTION: DFS options */
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
@@ -88,7 +88,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-#define RT_USING_LWIP
+//#define RT_USING_LWIP
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */

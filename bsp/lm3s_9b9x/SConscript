@@ -13,7 +13,7 @@ if GetDepend('RT_USING_LWIP'):
 	src_drv += ['luminaryif.c']
 
 src	= File(src_bsp + src_drv)
-CPPPATH = [RTT_ROOT + '/bsp/lm3s']
+CPPPATH = [RTT_ROOT + '/bsp/lm3s_9b9x']
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -37,7 +37,7 @@ static void rt_hw_console_init(void);
 extern void rt_hw_interrupt_thread_switch(void);
 /**
  * This is the timer interrupt service routine.
- * 
+ *
  */
 void rt_hw_timer_handler(void)
 {
@@ -45,7 +45,7 @@ void rt_hw_timer_handler(void)
 	rt_interrupt_enter();
 
 	rt_tick_increase();
-	
+
 	/* leave interrupt */
 	rt_interrupt_leave();
 	rt_hw_interrupt_thread_switch();
@@ -53,7 +53,7 @@ void rt_hw_timer_handler(void)
 
 /**
  * This is the ethernet interrupt service routine.
- * 
+ *
  */
 void rt_hw_eth_handler(void)
 {
@@ -61,7 +61,7 @@ void rt_hw_eth_handler(void)
 		/* luminary ethernet interface */
 		extern void luminaryif_isr(void);
 		luminaryif_isr();
-#endif	
+#endif
 }
 
 /**
@@ -69,11 +69,8 @@ void rt_hw_eth_handler(void)
  */
 void rt_hw_board_init()
 {
-	/* set ldo */
-	SysCtlLDOSet(SYSCTL_LDO_2_50V);
-	/* set clock */
-	SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
-                   LM3S_XTAL_TYPE);
+	// set sysclock to 80M
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
 
 	/* init systick */
 	SysTickDisable();
@@ -82,8 +79,8 @@ void rt_hw_board_init()
 	SysTickEnable();
 
 	/* enable ssio */
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
-	
+	//SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
+
 	/* init console */
 	rt_hw_console_init();
 
