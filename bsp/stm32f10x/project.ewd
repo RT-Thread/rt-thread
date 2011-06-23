@@ -12,7 +12,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>22</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -81,7 +81,7 @@
         </option>
         <option>
           <name>OCProductVersion</name>
-          <state>5.30.0.51236</state>
+          <state>5.41.0.51757</state>
         </option>
         <option>
           <name>OCDynDriverList</name>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>5.50.5.51996</state>
+          <state>5.41.0.51757</state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>UseFlashLoader</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CLowLevel</name>
@@ -145,30 +145,6 @@
         </option>
         <option>
           <name>OverrideDefFlashBoard</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesOffset1</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesOffset2</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesOffset3</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesUse1</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesUse2</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesUse3</name>
           <state>0</state>
         </option>
       </data>
@@ -317,7 +293,7 @@
       <name>JLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>11</version>
+        <version>10</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -432,42 +408,6 @@
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchCORERESET</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchMMERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchNOCPERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchCHRERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchSTATERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchBUSERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchINTERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchHARDERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchDummy</name>
           <state>0</state>
         </option>
       </data>
@@ -723,10 +663,6 @@
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB5_Plugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
@@ -770,7 +706,7 @@
       <name>C-SPY</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>22</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -803,7 +739,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\iostm32f10xxb.ddf</state>
+          <state></state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -839,15 +775,15 @@
         </option>
         <option>
           <name>OCProductVersion</name>
-          <state>5.30.0.51236</state>
+          <state>5.41.0.51757</state>
         </option>
         <option>
           <name>OCDynDriverList</name>
-          <state>JLINK_ID</state>
+          <state>ARMSIM_ID</state>
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>5.30.0.51236</state>
+          <state></state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -903,30 +839,6 @@
         </option>
         <option>
           <name>OverrideDefFlashBoard</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesOffset1</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesOffset2</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesOffset3</name>
-          <state></state>
-        </option>
-        <option>
-          <name>OCImagesUse1</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesUse2</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>OCImagesUse3</name>
           <state>0</state>
         </option>
       </data>
@@ -1075,7 +987,7 @@
       <name>JLINK_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>11</version>
+        <version>10</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1177,7 +1089,7 @@
         </option>
         <option>
           <name>CCJLinkInterfaceRadio</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCJLinkAttachSlave</name>
@@ -1186,46 +1098,10 @@
         <option>
           <name>CCJLinkResetList</name>
           <version>2</version>
-          <state>7</state>
+          <state>5</state>
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchCORERESET</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchMMERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchNOCPERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchCHRERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchSTATERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchBUSERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchINTERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchHARDERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCCatchDummy</name>
           <state>0</state>
         </option>
       </data>
@@ -1478,10 +1354,6 @@
       </plugin>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\PowerPac\PowerPacRTOS.ewplugin</file>
-        <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB5_Plugin.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>

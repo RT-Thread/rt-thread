@@ -27,7 +27,7 @@
 #endif
 
 /*
- * DM9000 interrupt line is connected to PF7
+ * DM9000 interrupt line is connected to PE4
  */
 //--------------------------------------------------------
 
@@ -586,7 +586,7 @@ static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Enable the EXTI0 Interrupt */
+    /* Enable the EXTI4 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;

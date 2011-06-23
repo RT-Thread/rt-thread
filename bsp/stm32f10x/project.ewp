@@ -29,8 +29,8 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>17</version>
-          <state>37</state>
+          <version>13</version>
+          <state>36</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -60,7 +60,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>1</version>
+          <version>0</version>
           <state>0</state>
         </option>
         <option>
@@ -91,7 +91,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>5.50.5.51996</state>
+          <state>5.41.0.51757</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -141,7 +141,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>22</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -167,11 +167,11 @@
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -280,22 +280,18 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\CoreSupport</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\dfs</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\efsl\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\efsl\src\base\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\efsl\src\fs\vfat\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src\arch\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\ipv4</state>
+          <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$/../../include</state>
+          <state>$PROJ_DIR$/../../components\finsh</state>
+          <state>$PROJ_DIR$/../../components\dfs\include</state>
+          <state>$PROJ_DIR$/../../components\dfs\filesystems\elmfat</state>
+          <state>$PROJ_DIR$/../../components\net\lwip\src</state>
+          <state>$PROJ_DIR$/../../components\net\lwip\src\include</state>
+          <state>$PROJ_DIR$/../../components\net\lwip\src\include\ipv4</state>
+          <state>$PROJ_DIR$/../../components\net\lwip\src\arch\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -339,18 +335,6 @@
           <name>CompilerMisraRules04</name>
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
-        </option>
-        <option>
-          <name>CCPosIndRopi</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCPosIndRwpi</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCPosIndNoDynInit</name>
-          <state>0</state>
         </option>
       </data>
     </settings>
@@ -575,7 +559,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>9</version>
+        <version>8</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -628,7 +612,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -789,18 +773,6 @@
           <name>IlinkIElfToolPostProcess</name>
           <state>0</state>
         </option>
-        <option>
-          <name>IlinkLogAutoLibSelect</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>IlinkLogRedirSymbols</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>IlinkLogUnusedFragments</name>
-          <state>0</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -857,7 +829,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>17</version>
+          <version>13</version>
           <state>37</state>
         </option>
         <option>
@@ -888,7 +860,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>1</version>
+          <version>0</version>
           <state>0</state>
         </option>
         <option>
@@ -969,14 +941,12 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>22</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>USE_STDPERIPH_DRIVER</state>
-          <state>STM32F10X_HD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1016,7 +986,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state>Pa050</state>
+          <state></state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -1089,7 +1059,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>$FILE_BNAME$.o</state>
+          <state></state>
         </option>
         <option>
           <name>CCLangSelect</name>
@@ -1109,21 +1079,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Core\CM3</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\stm32</state>
-          <state>$PROJ_DIR$\..\..\finsh</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\base\include</state>
-          <state>$PROJ_DIR$\..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</state>
-          <state>$PROJ_DIR$\..\..\net\lwip\src</state>
-          <state>$PROJ_DIR$\..\..\net\lwip\src\include</state>
-          <state>$PROJ_DIR$\..\..\net\lwip\src\arch\include</state>
-          <state>$PROJ_DIR$\..\..\net\lwip\src\include\ipv4</state>
+          <state></state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1131,7 +1087,7 @@
         </option>
         <option>
           <name>CCStdIncludePath</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
+          <state>###Uninitialized###</state>
         </option>
         <option>
           <name>CCCodeSection</name>
@@ -1156,7 +1112,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>1</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1167,18 +1123,6 @@
           <name>CompilerMisraRules04</name>
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
-        </option>
-        <option>
-          <name>CCPosIndRopi</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCPosIndRwpi</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCPosIndNoDynInit</name>
-          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1403,7 +1347,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>9</version>
+        <version>8</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1420,7 +1364,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>project.out</state>
+          <state>###Unitialized###</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1456,7 +1400,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -1480,11 +1424,11 @@
         </option>
         <option>
           <name>IlinkIcfOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\stm32f10x_flash.icf</state>
+          <state>lnk0t.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1544,7 +1488,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state>__iar_program_start</state>
+          <state></state>
         </option>
         <option>
           <name>DoFill</name>
@@ -1617,18 +1561,6 @@
           <name>IlinkIElfToolPostProcess</name>
           <state>0</state>
         </option>
-        <option>
-          <name>IlinkLogAutoLibSelect</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>IlinkLogRedirSymbols</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>IlinkLogUnusedFragments</name>
-          <state>0</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -1658,15 +1590,6 @@
       <data/>
     </settings>
   </configuration>
-  <group>
-    <name>CMSIS</name>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\CoreSupport\core_cm3.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\system_stm32f10x.c</name>
-    </file>
-  </group>
   <group>
     <name>Filesystem</name>
     <file>
@@ -1970,6 +1893,9 @@
       <name>$PROJ_DIR$\sdcard.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\serial.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\startup.c</name>
     </file>
     <file>
@@ -1982,7 +1908,13 @@
   <group>
     <name>StdPeriph_Driver</name>
     <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\CoreSupport\core_cm3.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_hd.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</name>
@@ -2047,6 +1979,9 @@
     <file>
       <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</name>
+    </file>
   </group>
   <group>
     <name>STM32</name>
@@ -2054,25 +1989,7 @@
       <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\cpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\fault.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\fault_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\interrupt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\stack.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\start_iar.s</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\cpuport.c</name>
     </file>
   </group>
 </project>

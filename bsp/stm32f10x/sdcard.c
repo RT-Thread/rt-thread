@@ -3161,6 +3161,17 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
 void rt_hw_sdcard_init()
 {
+    /* SDIO POWER */
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+    GPIO_Init(GPIOC,&GPIO_InitStructure);
+    GPIO_ResetBits(GPIOC,GPIO_Pin_6); /* SD card power up */
+    // delay same time for SD card power up
+
     if (SD_Init() == SD_OK)
 	{
 		SD_Error status;
@@ -3223,4 +3234,5 @@ void rt_hw_sdcard_init()
 
 __return:
 	rt_kprintf("sdcard init failed\n");
+    GPIO_SetBits(GPIOC,GPIO_Pin_6); /* SD card power down */
 }

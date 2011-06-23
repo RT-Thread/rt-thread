@@ -73,8 +73,18 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem */
-#define RT_USING_DFS
+//#define RT_USING_DFS
+/* #define RT_USING_DFS_EFSL */
+/* byte alignment for EFSL */
+#define BYTE_ALIGNMENT
+
 #define RT_USING_DFS_ELMFAT
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_DRIVES			2
+//#define RT_DFS_ELM_USE_LFN
+#define RT_DFS_ELM_MAX_LFN			255
+#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
@@ -84,7 +94,7 @@
 #define DFS_CACHE_MAX_NUM   		4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-#define RT_USING_LWIP
+//#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -98,6 +108,9 @@
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
+
+/* Using DHCP */
+//#define RT_LWIP_DHCP
 
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192

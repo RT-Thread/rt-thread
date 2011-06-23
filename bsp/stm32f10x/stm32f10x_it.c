@@ -291,21 +291,21 @@ void EXTI0_IRQHandler(void)
 
 #if (STM32_ETH_IF == 1)
 /*******************************************************************************
-* Function Name  : EXTI9_5_IRQHandler
+* Function Name  : EXTI4_IRQHandler
 * Description    : This function handles External lines 9 to 5 interrupt request.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void EXTI9_5_IRQHandler(void)
+void EXTI4_IRQHandler(void)
 {
 	extern void rt_dm9000_isr(void);
 
 	/* enter interrupt */
 	rt_interrupt_enter();
 
-	/* Clear the Key Button EXTI line pending bit */
-	EXTI_ClearITPendingBit(EXTI_Line7);
+	/* Clear the DM9000A EXTI line pending bit */
+	EXTI_ClearITPendingBit(EXTI_Line4);
 
 	rt_dm9000_isr();
 

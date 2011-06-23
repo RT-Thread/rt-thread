@@ -44,7 +44,7 @@
 
 // <o> Ethernet Interface: <0=> Microchip ENC28J60 <1=> Davicom DM9000A
 // 	<i>Default: 0
-#define STM32_ETH_IF			0
+#define STM32_ETH_IF			1
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
