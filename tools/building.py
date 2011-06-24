@@ -1,6 +1,10 @@
 import os
 import sys
 import string
+
+import xml.etree.ElementTree as etree
+from xml.etree.ElementTree import SubElement
+
 from SCons.Script import *
 
 BuildOptions = {}
@@ -88,13 +92,119 @@ def _make_path_relative(origin, dest):
         return os.path.join(*segments)
 
 def IARProject(target, script):
-    import xml.etree.ElementTree as etree
     project = file(target, "wb")
     project_path = os.path.dirname(os.path.abspath(target))
 
     tree = etree.parse('template.ewp')
     tree.write('project.ewp')
 
+def xml_indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            xml_indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+def MDK4AddGroup(parent, name, files, project_path):
+    group = SubElement(parent, 'Group')
+    group_name = SubElement(group, 'GroupName')
+    group_name.text = name
+
+    for f in files:
+        fn = f.rfile()
+        name = fn.name
+        path = os.path.dirname(fn.abspath)
+
+        basename = os.path.basename(path)
+        path = _make_path_relative(project_path, path)
+        path = os.path.join(path, name)
+        
+        files = SubElement(group, 'Files')
+        file = SubElement(files, 'File')
+        file_name = SubElement(file, 'FileName')
+        file_name.text = os.path.basename(path)
+        file_type = SubElement(file, 'FileType')
+        file_type.text = '%d' % _get_filetype(name)
+        file_path = SubElement(file, 'FilePath')
+        
+        file_path.text = path
+
+def MDK4Project(target, script):
+    project_path = os.path.dirname(os.path.abspath(target))
+    
+    tree = etree.parse('template.uvproj')
+    root = tree.getroot()
+    
+    out = file(target, 'wb')
+    out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+    
+    CPPPATH = []
+    CPPDEFINES = []
+    LINKFLAGS = ''
+    CCFLAGS = ''
+    
+    # add group
+    groups = tree.find('Targets/Target/Groups')
+    if not groups:
+        groups = SubElement(tree.find('Targets/Target'), 'Groups')
+    for group in script:
+        group_xml = MDK4AddGroup(groups, group['name'], group['src'], project_path)
+        
+        # get each include path
+        if group.has_key('CPPPATH') and group['CPPPATH']:
+            if CPPPATH:
+                CPPPATH += group['CPPPATH']
+            else:
+                CPPPATH += group['CPPPATH']
+        
+        # get each group's definitions
+        if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
+            if CPPDEFINES:
+                CPPDEFINES += ';' + group['CPPDEFINES']
+            else:
+                CPPDEFINES += group['CPPDEFINES']
+        
+        # get each group's link flags
+        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+            if LINKFLAGS:
+                LINKFLAGS += ' ' + group['LINKFLAGS']
+            else:
+                LINKFLAGS += group['LINKFLAGS']
+    
+    # remove repeat path
+    paths = set()
+    for path in CPPPATH:
+        inc = _make_path_relative(project_path, os.path.normpath(path))
+        paths.add(inc) #.replace('\\', '/')
+    
+    paths = [i for i in paths]
+    CPPPATH = string.join(paths, ';')
+    
+    definitions = [i for i in set(CPPDEFINES)]
+    CPPDEFINES = string.join(definitions, ', ')
+    
+    # write include path, definitions and link flags
+    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+    IncludePath.text = CPPPATH
+    
+    Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
+    Define.text = CPPDEFINES
+
+    Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
+    Misc.text = LINKFLAGS
+    
+    xml_indent(root)
+    out.write(etree.tostring(root, encoding='utf-8'))
+    out.close()
+    
 def MDKProject(target, script):
     template = file('template.Uv2', "rb")
     lines = template.readlines()
@@ -257,7 +367,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
     Rtt_Root = root_directory
 
     # patch for win32 spawn
-    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
+    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc' and sys.version_info < (2, 6, 0):
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
@@ -360,3 +470,6 @@ def EndBuilding(target):
 
     if GetOption('target') == 'mdk':
         MDKProject('project.Uv2', Projects)
+
+    if GetOption('target') == 'mdk4':
+        MDK4Project('project.uvproj', Projects)
