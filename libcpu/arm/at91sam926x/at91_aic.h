@@ -19,6 +19,8 @@
 extern "C" {
 #endif
 
+#define AIC_IRQS	32
+
 #define AT91_AIC_SMR(n)		(AT91_AIC + ((n) * 4))	/* Source Mode Registers 0-31 */
 #define		AT91_AIC_PRIOR		(7 << 0)		/* Priority Level */
 #define		AT91_AIC_SRCTYPE	(3 << 5)		/* Interrupt Source Type */
