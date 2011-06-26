@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include "at91sam926x.h"
 
-#define MAX_HANDLERS	32
+#define MAX_HANDLERS	(AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
 
@@ -82,6 +82,39 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 	return RT_NULL;
 }
 
+rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector)
+{
+	rt_uint32_t isr, pio, irq_n;
+
+	if (vector == AT91SAM9260_ID_PIOA) 
+	{
+		pio = AT91_PIOA;
+		irq_n = AIC_IRQS;
+	}
+	else if (vector == AT91SAM9260_ID_PIOB) 
+	{
+		pio = AT91_PIOB;
+		irq_n = AIC_IRQS + 32;
+	}
+	else if (vector == AT91SAM9260_ID_PIOC) 
+	{
+		pio = AT91_PIOC;
+		irq_n = AIC_IRQS + 32*2;
+	}
+	else
+		return;
+	isr = at91_sys_read(pio+PIO_ISR) & at91_sys_read(pio+PIO_IMR);
+	while (isr) 
+	{
+		if (isr & 1) 
+		{
+			isr_table[irq_n](irq_n);
+		}
+		isr >>= 1;
+		irq_n++;
+	}
+}
+
 /*
  * Initialize the AIC interrupt controller.
  */
@@ -93,7 +126,7 @@ void at91_aic_init(rt_uint32_t *priority)
 	 * The IVR is used by macro get_irqnr_and_base to read and verify.
 	 * The irq number is NR_AIC_IRQS when a spurious interrupt has occurred.
 	 */
-	for (i = 0; i < MAX_HANDLERS; i++) {
+	for (i = 0; i < AIC_IRQS; i++) {
 		/* Put irq number in Source Vector Register: */
 		at91_sys_write(AT91_AIC_SVR(i), i);
 		/* Active Low interrupt, with the specified priority */
@@ -109,7 +142,7 @@ void at91_aic_init(rt_uint32_t *priority)
 	 * Spurious Interrupt ID in Spurious Vector Register is NR_AIC_IRQS
 	 * When there is no current interrupt, the IRQ Vector Register reads the value stored in AIC_SPU
 	 */
-	at91_sys_write(AT91_AIC_SPU, MAX_HANDLERS);
+	at91_sys_write(AT91_AIC_SPU, AIC_IRQS);
 
 	/* No debugging in AIC: Debug (Protect) Control Register */
 	at91_sys_write(AT91_AIC_DCR, 0);
@@ -117,6 +150,22 @@ void at91_aic_init(rt_uint32_t *priority)
 	/* Disable and clear all interrupts initially */
 	at91_sys_write(AT91_AIC_IDCR, 0xFFFFFFFF);
 	at91_sys_write(AT91_AIC_ICCR, 0xFFFFFFFF);
+}
+
+
+static void at91_gpio_irq_init()
+{
+	at91_sys_write(AT91_PIOA+PIO_IDR, 0xffffffff);
+	at91_sys_write(AT91_PIOB+PIO_IDR, 0xffffffff);
+	at91_sys_write(AT91_PIOC+PIO_IDR, 0xffffffff);
+
+	isr_table[AT91SAM9260_ID_PIOA] = (rt_isr_handler_t)at91_gpio_irq_handle;
+	isr_table[AT91SAM9260_ID_PIOB] = (rt_isr_handler_t)at91_gpio_irq_handle;
+	isr_table[AT91SAM9260_ID_PIOC] = (rt_isr_handler_t)at91_gpio_irq_handle;
+
+	rt_hw_interrupt_umask(AT91SAM9260_ID_PIOA);
+	rt_hw_interrupt_umask(AT91SAM9260_ID_PIOB);
+	rt_hw_interrupt_umask(AT91SAM9260_ID_PIOC);
 }
 
 
@@ -141,11 +190,37 @@ void rt_hw_interrupt_init(void)
 		isr_table[idx] = (rt_isr_handler_t)rt_hw_interrupt_handle;
 	}
 
+	at91_gpio_irq_init();
+
 	/* init interrupt nest, and context in thread sp */
 	rt_interrupt_nest = 0;
 	rt_interrupt_from_thread = 0;
 	rt_interrupt_to_thread = 0;
 	rt_thread_switch_interrput_flag = 0;
+}
+
+static void at91_gpio_irq_mask(int irq)
+{
+	rt_uint32_t pin, pio, bank;
+
+	bank = (irq - AIC_IRQS)>>5;
+
+	if (bank == 0) 
+	{
+		pio = AT91_PIOA;
+	}
+	else if (bank == 1) 
+	{
+		pio = AT91_PIOB;
+	}
+	else if (bank == 2) 
+	{
+		pio = AT91_PIOC;
+	}
+	else
+		return;
+	pin = 1 << ((irq - AIC_IRQS) & 31);
+	at91_sys_write(pio+PIO_IDR, pin);
 }
 
 /**
@@ -154,8 +229,39 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int irq)
 {
-	/* Disable interrupt on AIC */
-	at91_sys_write(AT91_AIC_IDCR, 1 << irq);
+	if (irq >= AIC_IRQS) 
+	{
+		at91_gpio_irq_mask(irq);
+	}
+	else
+	{
+		/* Disable interrupt on AIC */
+		at91_sys_write(AT91_AIC_IDCR, 1 << irq);
+	}
+}
+
+static void at91_gpio_irq_umask(int irq)
+{
+	rt_uint32_t pin, pio, bank;
+
+	bank = (irq - AIC_IRQS)>>5;
+
+	if (bank == 0) 
+	{
+		pio = AT91_PIOA;
+	}
+	else if (bank == 1) 
+	{
+		pio = AT91_PIOB;
+	}
+	else if (bank == 2) 
+	{
+		pio = AT91_PIOC;
+	}
+	else
+		return;
+	pin = 1 << ((irq - AIC_IRQS) & 31);
+	at91_sys_write(pio+PIO_IER, pin);
 }
 
 /**
@@ -164,8 +270,15 @@ void rt_hw_interrupt_mask(int irq)
  */
 void rt_hw_interrupt_umask(int irq)
 {
-	/* Enable interrupt on AIC */
-	at91_sys_write(AT91_AIC_IECR, 1 << irq);
+	if (irq >= AIC_IRQS) 
+	{
+		at91_gpio_irq_umask(irq);
+	}
+	else
+	{
+		/* Enable interrupt on AIC */
+		at91_sys_write(AT91_AIC_IECR, 1 << irq);
+	}
 }
 
 /**

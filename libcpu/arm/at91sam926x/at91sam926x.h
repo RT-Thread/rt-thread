@@ -29,8 +29,10 @@ extern "C" {
 #include "at91_pio.h"
 #include "at91_serial.h"
 #include "at91_tc.h"
+#include "at91_pdc.h"
 #include "io.h"
 #include "irq.h"
+#include "gpio.h"
 
 /*
  * Peripheral identifiers/interrupts.
