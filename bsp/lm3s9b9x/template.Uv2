@@ -60,7 +60,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
  OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,128,1,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
- ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCCFLG { 9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
@@ -90,7 +90,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S9B96)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S9B96)
   OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
- FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\lmidk-agdi.dll)
  FLASH3 ("" ())
  FLASH4 ()

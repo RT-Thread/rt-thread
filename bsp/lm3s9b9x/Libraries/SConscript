@@ -29,7 +29,7 @@ src = Split("""
 	driverlib/watchdog.c
 """)
 
-CPPPATH = [RTT_ROOT + '/bsp/lm3s/Libraries/inc', RTT_ROOT + '/bsp/lm3s/Libraries', RTT_ROOT + '/bsp/lm3s/Libraries/driverlib']
+CPPPATH = [RTT_ROOT + '/bsp/lm3s9b9x/Libraries/inc', RTT_ROOT + '/bsp/lm3s9b9x/Libraries', RTT_ROOT + '/bsp/lm3s9b9x/Libraries/driverlib']
 
 group = DefineGroup('library', src, depend = [''], CPPPATH = CPPPATH)
 

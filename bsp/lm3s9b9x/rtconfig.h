@@ -88,7 +88,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
@@ -115,6 +115,7 @@
 
 /* TCP sender buffer space*/
 #define RT_LWIP_TCP_SND_BUF	1024*8
+
 /* Enable SNMP protocol*/
 #define RT_LWIP_SNMP
 
