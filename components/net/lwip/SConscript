@@ -47,8 +47,6 @@ src/core/snmp/mib_structs.c
 src/core/snmp/msg_in.c
 src/core/snmp/msg_out.c
 """)
-if GetDepend(['RT_LWIP_PPP']):
-    src += ppp_src
 
 ppp_src = Split("""
 src/netif/ppp/auth.c
