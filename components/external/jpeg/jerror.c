@@ -32,6 +32,9 @@
 #define EXIT_FAILURE  1
 #endif
 
+/* sprintf wrapper for RT-Thread */
+#include <rtthread.h>
+#define sprintf	rt_sprintf
 
 /*
  * Create the message string table.

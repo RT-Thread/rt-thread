@@ -25,6 +25,10 @@ extern void * malloc JPP((size_t size));
 extern void free JPP((void *ptr));
 #endif
 
+/* memory wrapper for RT-Thread */
+#include <rtthread.h>
+#define malloc rt_malloc
+#define free rt_free
 
 /*
  * Memory allocation and freeing are controlled by the regular library
