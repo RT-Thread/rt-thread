@@ -502,15 +502,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
 def GetDepend(depend):
     building = True
     if type(depend) == type('str'):
-        if not BuildOptions.has_key(depend):
+        if not BuildOptions.has_key(depend) or BuildOptions[depend] == 0:
             building = False
-
+        elif BuildOptions[depend] != '':
+            return BuildOptions[depend]
+          
         return building
 
     # for list type depend
     for item in depend:
         if item != '':
-            if not BuildOptions.has_key(item):
+            if not BuildOptions.has_key(item) or BuildOptions[item] == 0:
                 building = False
 
     return building
