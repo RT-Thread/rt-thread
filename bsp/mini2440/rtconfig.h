@@ -16,7 +16,7 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
-#define RT_DEBUG
+/* #define RT_DEBUG */
 /* #define RT_THREAD_DEBUG */
 
 #define RT_USING_OVERFLOW_CHECK
@@ -140,10 +140,10 @@
 #define RT_LWIP_TCP_PCB_NUM	5
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	1024*10
+#define RT_LWIP_TCP_SND_BUF	1024*8
 
 /* TCP receive window. */
-#define RT_LWIP_TCP_WND	1024
+#define RT_LWIP_TCP_WND	1024*8
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */
@@ -219,7 +219,7 @@
 /* #define RTGUI_USING_MOUSE_CURSOR */
 /* RTGUI image options */
 #define RTGUI_IMAGE_XPM
-#define RTGUI_IMAGE_JPEG
+/* #define RTGUI_IMAGE_JPEG */
 #define RTGUI_IMAGE_PNG
 #define RTGUI_IMAGE_BMP
 
