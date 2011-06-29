@@ -63,7 +63,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-#define RT_USING_RTGUI
+/* #define RT_USING_RTGUI */
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
