@@ -90,9 +90,9 @@
 */
 
 
-#ifdef RT_DFS_ELM_USE_LFN
-#define _USE_LFN 1
-#define _MAX_LFN RT_DFS_ELM_MAX_LFN
+#if RT_DFS_ELM_USE_LFN
+#define _USE_LFN 	RT_DFS_ELM_USE_LFN
+#define _MAX_LFN 	RT_DFS_ELM_MAX_LFN
 #else
 #define	_USE_LFN	0		/* 0 to 3 */
 #define	_MAX_LFN	255		/* Maximum LFN length to handle (12 to 255) */
