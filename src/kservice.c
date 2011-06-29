@@ -44,7 +44,11 @@ rt_err_t rt_get_errno(void)
 {
 	rt_thread_t tid;
 
-	RT_DEBUG_NOT_IN_INTERRUPT;
+	if(rt_interrupt_get_nest() != 0)
+	{
+		/* it's in interrupt context */
+		return errno;
+	}
 
 	tid = rt_thread_self();
 	if (tid == RT_NULL) return errno;
@@ -61,7 +65,12 @@ void rt_set_errno(rt_err_t error)
 {
 	rt_thread_t tid;
 
-	RT_DEBUG_NOT_IN_INTERRUPT;
+	if(rt_interrupt_get_nest() != 0)
+	{
+		/* it's in interrupt context */
+		errno = error;
+		return;
+	}
 
 	tid = rt_thread_self();
 	if (tid == RT_NULL) { errno = error; return; }
