@@ -321,6 +321,25 @@ rt_bool_t rtgui_workbench_event_handler(rtgui_widget_t* widget, rtgui_event_t* e
 			struct rtgui_event_mouse* emouse = (struct rtgui_event_mouse*)event;
 			struct rtgui_toplevel* top = RTGUI_TOPLEVEL(emouse->wid);
 
+			/* check whether has widget which handled mouse event before */
+			if (RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench) != RT_NULL)
+			{
+				struct rtgui_event_mouse* emouse;
+
+				emouse = (struct rtgui_event_mouse*)event;
+
+				RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench)->event_handler(RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench), event);
+				if (rtgui_rect_contains_point(&(RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench)->extent), 
+					emouse->x, emouse->y) == RT_EOK)
+				{
+					RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench) = RT_NULL;
+					break; /* mouse event is inside of widget, do not handle it anymore */
+				}
+
+				/* clean last mouse event handled widget */
+				RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(workbench) = RT_NULL;
+			}
+
 			/* check the destination window */
 			if (top != RT_NULL && RTGUI_WIDGET(top)->event_handler != RT_NULL)
 			{

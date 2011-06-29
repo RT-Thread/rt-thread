@@ -459,6 +459,25 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
+		/* check whether has widget which handled mouse event before */
+		if (RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win) != RT_NULL)
+		{
+			struct rtgui_event_mouse* emouse;
+
+			emouse = (struct rtgui_event_mouse*)event;
+			
+			RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win)->event_handler(RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win), event);
+			if (rtgui_rect_contains_point(&(RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win)->extent), 
+				emouse->x, emouse->y) == RT_EOK)
+			{
+				RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win) = RT_NULL;
+				break; /* mouse event is inside of widget, do not handle it anymore */
+			}
+
+			/* clean last mouse event handled widget */
+			RTGUI_TOPLEVEL_LAST_MEVENT_WIDGET(win) = RT_NULL;
+		}
+
 		if (win->style & RTGUI_WIN_STYLE_UNDER_MODAL)
 		{
 			if (win->modal_widget != RT_NULL)

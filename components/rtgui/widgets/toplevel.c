@@ -31,6 +31,8 @@ static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 
 	/* set server as RT_NULL (no connected) */
 	toplevel->server = RT_NULL;
+	/* initialize last mouse event handled widget */
+	toplevel->last_mevent_widget = RT_NULL;
 }
 
 static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)

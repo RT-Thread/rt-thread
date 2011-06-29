@@ -12,8 +12,9 @@
  * 2009-10-16     Bernard      first version
  */
 #include <rtgui/dc.h>
-#include <rtgui/widgets/button.h>
 #include <rtgui/rtgui_theme.h>
+#include <rtgui/widgets/button.h>
+#include <rtgui/widgets/toplevel.h>
 
 static void _rtgui_button_constructor(rtgui_button_t *button)
 {
@@ -102,6 +103,17 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 		{
 			struct rtgui_event_mouse* emouse = (struct rtgui_event_mouse*)event;
 
+			/* it's not this widget event, clean status */
+			if (rtgui_rect_contains_point(&(RTGUI_WIDGET(btn)->extent), 
+				emouse->x, emouse->y) != RT_EOK)
+			{
+				btn->flag &= ~RTGUI_BUTTON_FLAG_PRESS;
+				/* draw button */
+				rtgui_theme_draw_button(btn);
+
+				break;
+			}
+
 			if (btn->flag & RTGUI_BUTTON_TYPE_PUSH)
 			{
 				/* it's a push button */
@@ -117,11 +129,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 					}
 
 					/* draw button */
-#ifndef RTGUI_USING_SMALL_SIZE
-					if (widget->on_draw != RT_NULL ) widget->on_draw(widget, event);
-					else 
-#endif
-						rtgui_theme_draw_button(btn);
+					rtgui_theme_draw_button(btn);
 
 					if (btn->on_button != RT_NULL)
 					{
@@ -141,6 +149,12 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 			{
 				if (emouse->button & RTGUI_MOUSE_BUTTON_LEFT)
 				{
+					/* set the last mouse event handled widget */
+					rtgui_toplevel_t* toplevel;
+
+					toplevel = RTGUI_TOPLEVEL(RTGUI_WIDGET(btn)->toplevel);
+					toplevel->last_mevent_widget = RTGUI_WIDGET(btn);
+
 					/* it's a normal button */
 					if (emouse->button & RTGUI_MOUSE_BUTTON_DOWN)
 					{
@@ -152,11 +166,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 					}
 
 					/* draw button */
-#ifndef RTGUI_USING_SMALL_SIZE					
-					if (widget->on_draw != RT_NULL ) widget->on_draw(widget, event);
-					else
-#endif
-						rtgui_theme_draw_button(btn);
+					rtgui_theme_draw_button(btn);
 
 #ifndef RTGUI_USING_SMALL_SIZE
 					/* invokes call back */
