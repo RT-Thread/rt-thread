@@ -548,6 +548,13 @@ def DefineGroup(name, src, depend, **parameters):
 
     return objs
 
+def GetCurrentDir():
+    conscript = File('SConscript')
+    fn = conscript.rfile()
+    name = fn.name
+    path = os.path.dirname(fn.abspath)
+    return path
+
 def EndBuilding(target):
     import rtconfig
     Env.AddPostAction(target, rtconfig.POST_ACTION)
