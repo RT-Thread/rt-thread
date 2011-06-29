@@ -15,9 +15,9 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/textview.h>
 
-rt_inline unsigned char* _get_line_text(rtgui_textview_t *textview, rt_uint16_t index)
+rt_inline char* _get_line_text(rtgui_textview_t *textview, rt_uint16_t index)
 {
-	unsigned char* line;
+	char* line;
 	if (index < textview->line_count)
 	{
 		line = textview->lines + (index * textview->line_width);
@@ -29,7 +29,7 @@ rt_inline unsigned char* _get_line_text(rtgui_textview_t *textview, rt_uint16_t 
 
 static void _calc_line(rtgui_textview_t *textview, const char* text)
 {
-	unsigned char* line;
+	char* line;
 	const unsigned char* ptr;
 	rt_ubase_t line_index, line_position;
 
