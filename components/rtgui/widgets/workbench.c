@@ -147,6 +147,7 @@ void rtgui_workbench_close(rtgui_workbench_t* workbench)
 
 		/* detach from panel */
 		edetach.panel = workbench->panel;
+		edetach.workbench = workbench;
 
 		/* send PANEL DETACH to server */
 		if (rtgui_thread_send_sync(RTGUI_TOPLEVEL(workbench)->server,

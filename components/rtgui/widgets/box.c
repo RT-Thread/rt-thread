@@ -75,6 +75,12 @@ void rtgui_box_append(struct rtgui_box* box, rtgui_widget_t* widget)
 	rtgui_container_add_child(RTGUI_CONTAINER(box), widget);
 }
 
+void rtgui_box_delete(struct rtgui_box* box, rtgui_widget_t* widget)
+{
+	/* remove from box's children list */
+	rtgui_container_remove_child(RTGUI_CONTAINER(box), widget);
+}
+
 static void rtgui_box_layout_vertical(rtgui_box_t* box)
 {
 	rtgui_list_t *node;

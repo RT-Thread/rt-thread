@@ -207,13 +207,11 @@ rt_bool_t rtgui_combobox_event_handler(struct rtgui_widget* widget, struct rtgui
 	case RTGUI_EVENT_FOCUSED:
 		{
 			/* item focused */
-			struct rtgui_item* item;
 			struct rtgui_event_focused* focused;
 
 			focused = (struct rtgui_event_focused*) event;
 
-			item = (struct rtgui_item*) (focused->widget);
-			if (item != RT_NULL)
+			if (focused->widget != RT_NULL)
 			{
 				/* hide pull down window */
 				rtgui_win_hiden(RTGUI_WIN(box->pd_win));
