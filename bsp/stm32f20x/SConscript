@@ -1,0 +1,13 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f20x_it.c']
+src_drv = ['usart.c', 'serial.c']
+
+src = src_bsp + src_drv
+CPPPATH = [str(Dir('#'))]
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
