@@ -3,15 +3,18 @@ ARCH='arm'
 CPU='stm32'
 CROSS_TOOL='keil'
 
+# cross_tool provides the cross compiler
+# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
+
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'D:/SourceryGCC/bin'
+	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
+	EXEC_PATH 	= 'E:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 5.4 Evaluation_0'	
+	IAR_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0'
 
 BUILD = 'debug'
 STM32_TYPE = 'STM32F10X_HD'

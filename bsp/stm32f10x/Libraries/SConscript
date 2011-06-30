@@ -2,6 +2,9 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
+# get current directory
+cwd = GetCurrentDir()
+
 # The set of source files associated with this SConscript file.
 src = Split("""
 CMSIS/CM3/CoreSupport/core_cm3.c
@@ -50,9 +53,9 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/iar/' + startup_scripts[rtconfig.STM32_TYPE]]
 
-path = [RTT_ROOT + '/bsp/stm32f10x/Libraries/STM32F10x_StdPeriph_Driver/inc', 
-    RTT_ROOT + '/bsp/stm32f10x/Libraries/CMSIS/CM3/CoreSupport',
-    RTT_ROOT + '/bsp/stm32f10x/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x']
+path = [cwd + '/STM32F10x_StdPeriph_Driver/inc', 
+    cwd + '/CMSIS/CM3/CoreSupport',
+    cwd + '/CMSIS/CM3/DeviceSupport/ST/STM32F10x']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
 group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

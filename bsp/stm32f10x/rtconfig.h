@@ -73,28 +73,26 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem */
-//#define RT_USING_DFS
-/* #define RT_USING_DFS_EFSL */
-/* byte alignment for EFSL */
-#define BYTE_ALIGNMENT
+/* #define RT_USING_DFS */
 
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
+/* Reentrancy (thread safe) of the FatFs module.  */
 #define RT_DFS_ELM_REENTRANT
+/* Number of volumes (logical drives) to be used. */
 #define RT_DFS_ELM_DRIVES			2
-//#define RT_DFS_ELM_USE_LFN
+/* #define RT_DFS_ELM_USE_LFN			1 */
 #define RT_DFS_ELM_MAX_LFN			255
+/* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					4
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -110,7 +108,7 @@
 #define RT_LWIP_TCP_PCB_NUM	5
 
 /* Using DHCP */
-//#define RT_LWIP_DHCP
+/* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
@@ -132,12 +130,12 @@
 
 /* tcp thread options */
 #define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE		10
 #define RT_LWIP_TCPTHREAD_STACKSIZE		1024
 
 /* ethernet if thread options */
 #define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
 #endif
