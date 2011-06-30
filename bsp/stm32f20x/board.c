@@ -66,7 +66,7 @@ void  SysTick_Configuration(void)
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
@@ -89,7 +89,9 @@ void rt_hw_board_init()
 	SysTick_Configuration();
 
 	rt_hw_usart_init();
+#ifdef RT_USING_CONSOLE
 	rt_console_set_device(CONSOLE_DEVICE);
+#endif
 }
 
 /*@}*/

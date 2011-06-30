@@ -22,8 +22,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f20x_it.h"
-#include <board.h>
-#include <rtthread.h>
 
 /** @addtogroup Template_Project
   * @{
@@ -47,19 +45,6 @@
   */
 void NMI_Handler(void)
 {
-}
-
-/**
-  * @brief  This function handles Hard Fault exception.
-  * @param  None
-  * @retval None
-  */
-void HardFault_Handler(void)
-{
-  /* Go to infinite loop when Hard Fault exception occurs */
-  while (1)
-  {
-  }
 }
 
 /**
