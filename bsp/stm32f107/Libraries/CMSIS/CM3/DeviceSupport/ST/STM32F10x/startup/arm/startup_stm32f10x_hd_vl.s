@@ -1,8 +1,8 @@
-;******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+;******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 ;* File Name          : startup_stm32f10x_hd_vl.s
 ;* Author             : MCD Application Team
-;* Version            : V3.4.0
-;* Date               : 10/15/2010
+;* Version            : V3.5.0
+;* Date               : 11-March-2011
 ;* Description        : STM32F10x High Density Value Line Devices vector table  
 ;*                      for MDK-ARM toolchain.  
 ;*                      This module performs:
@@ -126,7 +126,7 @@ __Vectors       DCD     __initial_sp                    ; Top of Stack
                 DCD     TIM14_IRQHandler                ; TIM14
                 DCD     0                               ; Reserved
                 DCD     0                               ; Reserved
-                DCD     FSMC_IRQHandler                 ; FSMC
+                DCD     0                               ; Reserved
                 DCD     0                               ; Reserved
                 DCD     TIM5_IRQHandler                 ; TIM5
                 DCD     SPI3_IRQHandler                 ; SPI3
@@ -244,7 +244,6 @@ Default_Handler PROC
                 EXPORT  TIM12_IRQHandler                 [WEAK]
                 EXPORT  TIM13_IRQHandler                 [WEAK]
                 EXPORT  TIM14_IRQHandler                 [WEAK]
-                EXPORT  FSMC_IRQHandler                  [WEAK]
                 EXPORT  TIM5_IRQHandler                  [WEAK]
                 EXPORT  SPI3_IRQHandler                  [WEAK]
                 EXPORT  UART4_IRQHandler                 [WEAK]
@@ -299,7 +298,6 @@ CEC_IRQHandler
 TIM12_IRQHandler
 TIM13_IRQHandler
 TIM14_IRQHandler
-FSMC_IRQHandler
 TIM5_IRQHandler
 SPI3_IRQHandler
 UART4_IRQHandler
@@ -345,4 +343,4 @@ __user_initial_stackheap
 
                  END
 
-;******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE*****
+;******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE*****

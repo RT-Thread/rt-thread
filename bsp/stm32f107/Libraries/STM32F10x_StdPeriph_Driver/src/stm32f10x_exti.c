@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_exti.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the EXTI firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_exti.h"
@@ -92,9 +93,9 @@ void EXTI_DeInit(void)
 
 /**
   * @brief  Initializes the EXTI peripheral according to the specified
-  *   parameters in the EXTI_InitStruct.
+  *         parameters in the EXTI_InitStruct.
   * @param  EXTI_InitStruct: pointer to a EXTI_InitTypeDef structure
-  *   that contains the configuration information for the EXTI peripheral.
+  *         that contains the configuration information for the EXTI peripheral.
   * @retval None
   */
 void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
@@ -150,7 +151,7 @@ void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
 /**
   * @brief  Fills each EXTI_InitStruct member with its reset value.
   * @param  EXTI_InitStruct: pointer to a EXTI_InitTypeDef structure which will
-  *   be initialized.
+  *         be initialized.
   * @retval None
   */
 void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)
@@ -200,7 +201,7 @@ FlagStatus EXTI_GetFlagStatus(uint32_t EXTI_Line)
 }
 
 /**
-  * @brief  Clears the EXTI’s line pending flags.
+  * @brief  Clears the EXTI's line pending flags.
   * @param  EXTI_Line: specifies the EXTI lines flags to clear.
   *   This parameter can be any combination of EXTI_Linex where x can be (0..19).
   * @retval None
@@ -240,7 +241,7 @@ ITStatus EXTI_GetITStatus(uint32_t EXTI_Line)
 }
 
 /**
-  * @brief  Clears the EXTI’s line pending bits.
+  * @brief  Clears the EXTI's line pending bits.
   * @param  EXTI_Line: specifies the EXTI lines to clear.
   *   This parameter can be any combination of EXTI_Linex where x can be (0..19).
   * @retval None
@@ -265,4 +266,4 @@ void EXTI_ClearITPendingBit(uint32_t EXTI_Line)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -2,7 +2,7 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c', 'system_stm32f10x.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
 src_drv = ['usart.c', 'serial.c']
 
 if GetDepend('RT_USING_DFS'):
@@ -12,8 +12,8 @@ if GetDepend('RT_USING_LWIP'):
 	src_drv += ['stm32_eth.c']
 
 src = src_bsp + src_drv
-CPPPATH = [str(Dir('#'))]
-CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+CPPPATH = [GetCurrentDir()]
+CPPDEFINES = []
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

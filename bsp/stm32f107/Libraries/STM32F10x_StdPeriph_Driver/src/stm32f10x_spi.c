@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_spi.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the SPI firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_spi.h"
@@ -111,7 +112,7 @@
 
 /**
   * @brief  Deinitializes the SPIx peripheral registers to their default
-  *   reset values (Affects also the I2Ss).
+  *         reset values (Affects also the I2Ss).
   * @param  SPIx: where x can be 1, 2 or 3 to select the SPI peripheral.
   * @retval None
   */
@@ -148,10 +149,10 @@ void SPI_I2S_DeInit(SPI_TypeDef* SPIx)
 
 /**
   * @brief  Initializes the SPIx peripheral according to the specified 
-  *   parameters in the SPI_InitStruct.
+  *         parameters in the SPI_InitStruct.
   * @param  SPIx: where x can be 1, 2 or 3 to select the SPI peripheral.
   * @param  SPI_InitStruct: pointer to a SPI_InitTypeDef structure that
-  *   contains the configuration information for the specified SPI peripheral.
+  *         contains the configuration information for the specified SPI peripheral.
   * @retval None
   */
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
@@ -202,12 +203,12 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
 
 /**
   * @brief  Initializes the SPIx peripheral according to the specified 
-  *   parameters in the I2S_InitStruct.
+  *         parameters in the I2S_InitStruct.
   * @param  SPIx: where x can be  2 or 3 to select the SPI peripheral
-  *   (configured in I2S mode).
+  *         (configured in I2S mode).
   * @param  I2S_InitStruct: pointer to an I2S_InitTypeDef structure that
-  *   contains the configuration information for the specified SPI peripheral
-  *   configured in I2S mode.
+  *         contains the configuration information for the specified SPI peripheral
+  *         configured in I2S mode.
   * @note
   *  The function calculates the optimal prescaler needed to obtain the most 
   *  accurate audio frequency (depending on the I2S clock source, the PLL values 
@@ -283,7 +284,7 @@ void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct)
       /* Get the value of the PLL3 multiplier */      
       if((tmp > 5) && (tmp < 15))
       {
-        /* Multplier is between 8 and 14 (value 15 is forbidden) */
+        /* Multiplier is between 8 and 14 (value 15 is forbidden) */
         tmp += 2;
       }
       else
@@ -316,7 +317,7 @@ void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct)
     sourceclock = RCC_Clocks.SYSCLK_Frequency;    
 #endif /* STM32F10X_CL */    
 
-    /* Compute the Real divider depending on the MCLK output state with a flaoting point */
+    /* Compute the Real divider depending on the MCLK output state with a floating point */
     if(I2S_InitStruct->I2S_MCLKOutput == I2S_MCLKOutput_Enable)
     {
       /* MCLK output is enabled */
@@ -328,7 +329,7 @@ void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct)
       tmp = (uint16_t)(((((sourceclock / (32 * packetlength)) *10 ) / I2S_InitStruct->I2S_AudioFreq)) + 5);
     }
     
-    /* Remove the flaoting point */
+    /* Remove the floating point */
     tmp = tmp / 10;  
       
     /* Check the parity of the divider */
@@ -653,7 +654,7 @@ void SPI_TransmitCRC(SPI_TypeDef* SPIx)
 }
 
 /**
-  * @brief  Enables or disables the CRC value calculation of the transfered bytes.
+  * @brief  Enables or disables the CRC value calculation of the transferred bytes.
   * @param  SPIx: where x can be 1, 2 or 3 to select the SPI peripheral.
   * @param  NewState: new state of the SPIx CRC value calculation.
   *   This parameter can be: ENABLE or DISABLE.
@@ -866,7 +867,7 @@ ITStatus SPI_I2S_GetITStatus(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT)
   * @param  SPIx: where x can be
   *   - 1, 2 or 3 in SPI mode 
   * @param  SPI_I2S_IT: specifies the SPI interrupt pending bit to clear.
-  *   This function clears only CRCERR intetrrupt pending bit.   
+  *   This function clears only CRCERR interrupt pending bit.   
   * @note
   *   - OVR (OverRun Error) interrupt pending bit is cleared by software 
   *     sequence: a read operation to SPI_DR register (SPI_I2S_ReceiveData()) 
@@ -904,4 +905,4 @@ void SPI_I2S_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

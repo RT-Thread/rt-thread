@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_rcc.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the RCC firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_rcc.h"
@@ -867,7 +868,7 @@ void RCC_LSICmd(FunctionalState NewState)
 
 /**
   * @brief  Configures the RTC clock (RTCCLK).
-  * @note   Once the RTC clock is selected it can’t be changed unless the Backup domain is reset.
+  * @note   Once the RTC clock is selected it can't be changed unless the Backup domain is reset.
   * @param  RCC_RTCCLKSource: specifies the RTC clock source.
   *   This parameter can be one of the following values:
   *     @arg RCC_RTCCLKSource_LSE: LSE selected as RTC clock
@@ -1419,7 +1420,7 @@ ITStatus RCC_GetITStatus(uint8_t RCC_IT)
 }
 
 /**
-  * @brief  Clears the RCC’s interrupt pending bits.
+  * @brief  Clears the RCC's interrupt pending bits.
   * @param  RCC_IT: specifies the interrupt pending bit to clear.
   *   
   *   For @b STM32_Connectivity_line_devices, this parameter can be any combination
@@ -1466,4 +1467,4 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

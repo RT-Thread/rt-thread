@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_dac.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the DAC firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_dac.h"
@@ -104,13 +105,13 @@ void DAC_DeInit(void)
 
 /**
   * @brief  Initializes the DAC peripheral according to the specified 
-  *   parameters in the DAC_InitStruct.
+  *         parameters in the DAC_InitStruct.
   * @param  DAC_Channel: the selected DAC channel. 
   *   This parameter can be one of the following values:
   *     @arg DAC_Channel_1: DAC Channel1 selected
   *     @arg DAC_Channel_2: DAC Channel2 selected
   * @param  DAC_InitStruct: pointer to a DAC_InitTypeDef structure that
-  *   contains the configuration information for the specified DAC channel.
+  *        contains the configuration information for the specified DAC channel.
   * @retval None
   */
 void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
@@ -126,8 +127,8 @@ void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
   tmpreg1 = DAC->CR;
   /* Clear BOFFx, TENx, TSELx, WAVEx and MAMPx bits */
   tmpreg1 &= ~(CR_CLEAR_MASK << DAC_Channel);
-  /* Configure for the selected DAC channel: buffer output, trigger, wave genration,
-     mask/amplitude for wave genration */
+  /* Configure for the selected DAC channel: buffer output, trigger, wave generation,
+     mask/amplitude for wave generation */
   /* Set TSELx and TENx bits according to DAC_Trigger value */
   /* Set WAVEx bits according to DAC_WaveGeneration value */
   /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */ 
@@ -143,7 +144,7 @@ void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
 /**
   * @brief  Fills each DAC_InitStruct member with its default value.
   * @param  DAC_InitStruct : pointer to a DAC_InitTypeDef structure which will
-  *   be initialized.
+  *         be initialized.
   * @retval None
   */
 void DAC_StructInit(DAC_InitTypeDef* DAC_InitStruct)
@@ -330,11 +331,11 @@ void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalSt
 
 /**
   * @brief  Set the specified data holding register value for DAC channel1.
-  * @param  DAC_Align: Specifies the data alignement for DAC channel1.
+  * @param  DAC_Align: Specifies the data alignment for DAC channel1.
   *   This parameter can be one of the following values:
-  *     @arg DAC_Align_8b_R: 8bit right data alignement selected
-  *     @arg DAC_Align_12b_L: 12bit left data alignement selected
-  *     @arg DAC_Align_12b_R: 12bit right data alignement selected
+  *     @arg DAC_Align_8b_R: 8bit right data alignment selected
+  *     @arg DAC_Align_12b_L: 12bit left data alignment selected
+  *     @arg DAC_Align_12b_R: 12bit right data alignment selected
   * @param  Data : Data to be loaded in the selected data holding register.
   * @retval None
   */
@@ -355,11 +356,11 @@ void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data)
 
 /**
   * @brief  Set the specified data holding register value for DAC channel2.
-  * @param  DAC_Align: Specifies the data alignement for DAC channel2.
+  * @param  DAC_Align: Specifies the data alignment for DAC channel2.
   *   This parameter can be one of the following values:
-  *     @arg DAC_Align_8b_R: 8bit right data alignement selected
-  *     @arg DAC_Align_12b_L: 12bit left data alignement selected
-  *     @arg DAC_Align_12b_R: 12bit right data alignement selected
+  *     @arg DAC_Align_8b_R: 8bit right data alignment selected
+  *     @arg DAC_Align_12b_L: 12bit left data alignment selected
+  *     @arg DAC_Align_12b_R: 12bit right data alignment selected
   * @param  Data : Data to be loaded in the selected data holding register.
   * @retval None
   */
@@ -381,11 +382,11 @@ void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data)
 /**
   * @brief  Set the specified data holding register value for dual channel
   *   DAC.
-  * @param  DAC_Align: Specifies the data alignement for dual channel DAC.
+  * @param  DAC_Align: Specifies the data alignment for dual channel DAC.
   *   This parameter can be one of the following values:
-  *     @arg DAC_Align_8b_R: 8bit right data alignement selected
-  *     @arg DAC_Align_12b_L: 12bit left data alignement selected
-  *     @arg DAC_Align_12b_R: 12bit right data alignement selected
+  *     @arg DAC_Align_8b_R: 8bit right data alignment selected
+  *     @arg DAC_Align_12b_L: 12bit left data alignment selected
+  *     @arg DAC_Align_12b_R: 12bit right data alignment selected
   * @param  Data2: Data for DAC Channel2 to be loaded in the selected data 
   *   holding register.
   * @param  Data1: Data for DAC Channel1 to be loaded in the selected data 
@@ -419,7 +420,7 @@ void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1)
 }
 
 /**
-  * @brief  Returns the last data output value of the selected DAC cahnnel.
+  * @brief  Returns the last data output value of the selected DAC channel.
   * @param  DAC_Channel: the selected DAC channel. 
   *   This parameter can be one of the following values:
   *     @arg DAC_Channel_1: DAC Channel1 selected
@@ -534,7 +535,7 @@ ITStatus DAC_GetITStatus(uint32_t DAC_Channel, uint32_t DAC_IT)
 }
 
 /**
-  * @brief  Clears the DAC channelx’s interrupt pending bits.
+  * @brief  Clears the DAC channelx's interrupt pending bits.
   * @param  DAC_Channel: the selected DAC channel. 
   *   This parameter can be one of the following values:
   *     @arg DAC_Channel_1: DAC Channel1 selected
@@ -567,4 +568,4 @@ void DAC_ClearITPendingBit(uint32_t DAC_Channel, uint32_t DAC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

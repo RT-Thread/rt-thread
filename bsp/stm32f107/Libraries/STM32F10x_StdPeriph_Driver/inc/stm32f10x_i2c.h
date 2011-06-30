@@ -2,12 +2,12 @@
   ******************************************************************************
   * @file    stm32f10x_i2c.h
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file contains all the functions prototypes for the I2C firmware 
   *          library.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -16,8 +16,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F10x_I2C_H
@@ -186,6 +187,18 @@ typedef struct
 #define I2C_PECPosition_Current         ((uint16_t)0xF7FF)
 #define IS_I2C_PEC_POSITION(POSITION) (((POSITION) == I2C_PECPosition_Next) || \
                                        ((POSITION) == I2C_PECPosition_Current))
+/**
+  * @}
+  */ 
+
+/** @defgroup I2C_NCAK_position 
+  * @{
+  */
+
+#define I2C_NACKPosition_Next           ((uint16_t)0x0800)
+#define I2C_NACKPosition_Current        ((uint16_t)0xF7FF)
+#define IS_I2C_NACK_POSITION(POSITION)  (((POSITION) == I2C_NACKPosition_Next) || \
+                                         ((POSITION) == I2C_NACKPosition_Current))
 /**
   * @}
   */ 
@@ -433,7 +446,7 @@ typedef struct
   *      the end of the byte transmission. The two events I2C_EVENT_SLAVE_BYTE_TRANSMITTED and
   *      I2C_EVENT_SLAVE_BYTE_TRANSMITTING are similar. The second one can optionally be 
   *      used when the user software doesn't guarantee the EV3 is managed before the
-  *      current byte end of tranfer.
+  *      current byte end of transfer.
   *    - EV3_2: When the master sends a NACK in order to tell slave that data transmission 
   *      shall end (before sending the STOP condition). In this case slave has to stop sending 
   *      data bytes and expect a Stop condition on the bus.
@@ -536,6 +549,7 @@ uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx);
 void I2C_Send7bitAddress(I2C_TypeDef* I2Cx, uint8_t Address, uint8_t I2C_Direction);
 uint16_t I2C_ReadRegister(I2C_TypeDef* I2Cx, uint8_t I2C_Register);
 void I2C_SoftwareResetCmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
+void I2C_NACKPositionConfig(I2C_TypeDef* I2Cx, uint16_t I2C_NACKPosition);
 void I2C_SMBusAlertConfig(I2C_TypeDef* I2Cx, uint16_t I2C_SMBusAlert);
 void I2C_TransmitPEC(I2C_TypeDef* I2Cx, FunctionalState NewState);
 void I2C_PECPositionConfig(I2C_TypeDef* I2Cx, uint16_t I2C_PECPosition);
@@ -577,10 +591,10 @@ void I2C_FastModeDutyCycleConfig(I2C_TypeDef* I2Cx, uint16_t I2C_DutyCycle);
  *        @note 
  *        For error management, it is advised to use the following functions:
  *          - I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
- *          - I2Cx_ER_IRQHandler() which is called when the error interurpt occurs.
+ *          - I2Cx_ER_IRQHandler() which is called when the error interrupt occurs.
  *            Where x is the peripheral instance (I2C1, I2C2 ...)
  *          - I2C_GetFlagStatus() or I2C_GetITStatus() to be called into I2Cx_ER_IRQHandler()
- *            in order to determine which error occured.
+ *            in order to determine which error occurred.
  *          - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd()
  *            and/or I2C_GenerateStop() in order to clear the error flag and source,
  *            and return to correct communication status.
@@ -667,4 +681,4 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT);
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

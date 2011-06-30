@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32f10x_flash.c
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the FLASH firmware functions.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,8 +15,9 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_flash.h"
@@ -413,7 +414,7 @@ void FLASH_LockBank2(void)
   * @note   This function can be used for all STM32F10x devices.
   * @param  Page_Address: The page address to be erased.
   * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
 {
@@ -486,7 +487,7 @@ FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
   * @note   This function can be used for all STM32F10x devices.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EraseAllPages(void)
 {
@@ -549,7 +550,7 @@ FLASH_Status FLASH_EraseAllPages(void)
   *           to FLASH_EraseAllPages function.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EraseAllBank1Pages(void)
 {
@@ -579,7 +580,7 @@ FLASH_Status FLASH_EraseAllBank1Pages(void)
   * @note   This function can be used only for STM32F10x_XL density devices.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EraseAllBank2Pages(void)
 {
@@ -610,7 +611,7 @@ FLASH_Status FLASH_EraseAllBank2Pages(void)
   * @note   This function can be used for all STM32F10x devices.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EraseOptionBytes(void)
 {
@@ -675,7 +676,7 @@ FLASH_Status FLASH_EraseOptionBytes(void)
   * @param  Address: specifies the address to be programmed.
   * @param  Data: specifies the data to be programmed.
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
   */
 FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
 {
@@ -852,7 +853,7 @@ FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
   * @param  Address: specifies the address to be programmed.
   * @param  Data: specifies the data to be programmed.
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
   */
 FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
 {
@@ -923,7 +924,7 @@ FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
   *   This parameter can be 0x1FFFF804 or 0x1FFFF806. 
   * @param  Data: specifies the data to be programmed.
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
   */
 FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
 {
@@ -969,7 +970,7 @@ FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
   *       FLASH_WRProt_Pages60to61 or FLASH_WRProt_Pages62to511
   *     @arg FLASH_WRProt_AllPages
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_EnableWriteProtection(uint32_t FLASH_Pages)
 {
@@ -1043,7 +1044,7 @@ FLASH_Status FLASH_EnableWriteProtection(uint32_t FLASH_Pages)
   * @param  Newstate: new state of the ReadOut Protection.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_ReadOutProtection(FunctionalState NewState)
 {
@@ -1112,7 +1113,7 @@ FLASH_Status FLASH_ReadOutProtection(FunctionalState NewState)
   *     @arg OB_STDBY_NoRST: No reset generated when entering in STANDBY
   *     @arg OB_STDBY_RST: Reset generated when entering in STANDBY
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG, 
-  * FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_UserOptionByteConfig(uint16_t OB_IWDG, uint16_t OB_STOP, uint16_t OB_STDBY)
 {
@@ -1166,7 +1167,7 @@ FLASH_Status FLASH_UserOptionByteConfig(uint16_t OB_IWDG, uint16_t OB_STOP, uint
   *        in the interrupt vector table).
   *        For more information, please refer to AN2606 from www.st.com.    
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG, 
-  * FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_BootConfig(uint16_t FLASH_BOOT)
 { 
@@ -1210,7 +1211,7 @@ FLASH_Status FLASH_BootConfig(uint16_t FLASH_BOOT)
   * @note   This function can be used for all STM32F10x devices.
   * @param  None
   * @retval The FLASH User Option Bytes values:IWDG_SW(Bit0), RST_STOP(Bit1)
-  *   and RST_STDBY(Bit2).
+  *         and RST_STDBY(Bit2).
   */
 uint32_t FLASH_GetUserOptionByte(void)
 {
@@ -1226,7 +1227,7 @@ uint32_t FLASH_GetUserOptionByte(void)
   */
 uint32_t FLASH_GetWriteProtectionOptionByte(void)
 {
-  /* Return the Falsh write protection Register value */
+  /* Return the Flash write protection Register value */
   return (uint32_t)(FLASH->WRPR);
 }
 
@@ -1428,7 +1429,7 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
 }
 
 /**
-  * @brief  Clears the FLASH’s pending flags.
+  * @brief  Clears the FLASH's pending flags.
   * @note   This function can be used for all STM32F10x devices.
   *         - For STM32F10X_XL devices, this function clears Bank1 or Bank2’s pending flags
   *         - For other devices, it clears Bank1’s pending flags.
@@ -1468,10 +1469,10 @@ void FLASH_ClearFlag(uint32_t FLASH_FLAG)
 /**
   * @brief  Returns the FLASH Status.
   * @note   This function can be used for all STM32F10x devices, it is equivalent
-  *    to FLASH_GetBank1Status function.
+  *         to FLASH_GetBank1Status function.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP or FLASH_COMPLETE
+  *         FLASH_ERROR_WRP or FLASH_COMPLETE
   */
 FLASH_Status FLASH_GetStatus(void)
 {
@@ -1506,10 +1507,10 @@ FLASH_Status FLASH_GetStatus(void)
 /**
   * @brief  Returns the FLASH Bank1 Status.
   * @note   This function can be used for all STM32F10x devices, it is equivalent
-  *   to FLASH_GetStatus function.
+  *         to FLASH_GetStatus function.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP or FLASH_COMPLETE
+  *         FLASH_ERROR_WRP or FLASH_COMPLETE
   */
 FLASH_Status FLASH_GetBank1Status(void)
 {
@@ -1547,7 +1548,7 @@ FLASH_Status FLASH_GetBank1Status(void)
   * @note   This function can be used for STM32F10x_XL density devices.
   * @param  None
   * @retval FLASH Status: The returned value can be: FLASH_BUSY, FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP or FLASH_COMPLETE
+  *        FLASH_ERROR_WRP or FLASH_COMPLETE
   */
 FLASH_Status FLASH_GetBank2Status(void)
 {
@@ -1587,9 +1588,9 @@ FLASH_Status FLASH_GetBank2Status(void)
   *           to complete or a TIMEOUT to occur.
   *         - For all other devices it waits for a Flash operation to complete 
   *           or a TIMEOUT to occur.
-  * @param  Timeout: FLASH progamming Timeout
+  * @param  Timeout: FLASH programming Timeout
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
 { 
@@ -1615,9 +1616,9 @@ FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
   * @brief  Waits for a Flash operation on Bank1 to complete or a TIMEOUT to occur.
   * @note   This function can be used for all STM32F10x devices, 
   *         it is equivalent to FLASH_WaitForLastOperation.
-  * @param  Timeout: FLASH progamming Timeout
+  * @param  Timeout: FLASH programming Timeout
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_WaitForLastBank1Operation(uint32_t Timeout)
 { 
@@ -1643,9 +1644,9 @@ FLASH_Status FLASH_WaitForLastBank1Operation(uint32_t Timeout)
 /**
   * @brief  Waits for a Flash operation on Bank2 to complete or a TIMEOUT to occur.
   * @note   This function can be used only for STM32F10x_XL density devices.
-  * @param  Timeout: FLASH progamming Timeout
+  * @param  Timeout: FLASH programming Timeout
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
-  *   FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
+  *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
 FLASH_Status FLASH_WaitForLastBank2Operation(uint32_t Timeout)
 { 
@@ -1680,4 +1681,4 @@ FLASH_Status FLASH_WaitForLastBank2Operation(uint32_t Timeout)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

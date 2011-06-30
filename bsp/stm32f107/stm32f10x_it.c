@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    Project/Template/stm32f10x_it.c 
+  * @file    Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c
   * @author  MCD Application Team
-  * @version V3.1.0
-  * @date    06/19/2009
+  * @version V3.5.0
+  * @date    08-April-2011
   * @brief   Main Interrupt Service Routines.
   *          This file provides template for all exceptions handler and 
   *          peripherals interrupt service routine.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -17,7 +17,8 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -47,19 +48,6 @@
   */
 void NMI_Handler(void)
 {
-}
-
-/**
-  * @brief  This function handles Hard Fault exception.
-  * @param  None
-  * @retval None
-  */
-void HardFault_Handler(void)
-{
-  /* Go to infinite loop when Hard Fault exception occurs */
-  while (1)
-  {
-  }
 }
 
 /**
@@ -117,6 +105,12 @@ void SVC_Handler(void)
   */
 void DebugMon_Handler(void)
 {
+}
+
+void SysTick_Handler(void)
+{
+    extern void rt_hw_timer_handler(void);
+    rt_hw_timer_handler();
 }
 
 /******************************************************************************/

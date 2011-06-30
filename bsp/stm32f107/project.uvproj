@@ -117,7 +117,7 @@
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -160,7 +160,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4098</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_CL, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\stm3210\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\components\net\lwip\src\arch\include;..\..\components\finsh;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;..\stm3210\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\stm3210\Libraries\CMSIS\CM3\CoreSupport;..\..\libcpu\arm\stm32;..\..\components\net\lwip\src\include\netif</IncludePath>
+              <IncludePath>Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\components\net\lwip\src\arch\include;..\..\components\finsh;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;Libraries\CMSIS\CM3\CoreSupport;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\libcpu\arm\stm32;..\..\components\net\lwip\src\include\netif;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -405,11 +405,6 @@
               <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\stm32f10x_it.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_stm32f10x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\system_stm32f10x.c</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>
@@ -520,11 +515,6 @@
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\stm32\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\stm32\start_rvds.S</FilePath>
             </File>
             <File>
               <FileName>backtrace.c</FileName>
@@ -802,6 +792,11 @@
               <FilePath>Libraries\CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
             </File>
             <File>
+              <FileName>system_stm32f10x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f10x_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c</FilePath>
@@ -915,6 +910,11 @@
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f10x_cl.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_cl.s</FilePath>
             </File>
           </Files>
         </Group>
