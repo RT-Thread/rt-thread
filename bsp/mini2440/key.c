@@ -58,7 +58,7 @@ static void rt_key_savechar(char ch)
 
 /* ISR for serial interrupt */
 static void rt_hw_key_isr(void)
-{	
+{
 	/* save on rx buffer */
 	rt_key_savechar(URXH1 & 0xff);
 
@@ -274,7 +274,7 @@ static void rt_keymap_init(void)
 	s_key_map[0x48] = RTGUIK_UP;
 }	
 
-static void rtgui_key_rx(rt_device_t dev, rt_size_t size)
+static rt_err_t rtgui_key_rx(rt_device_t dev, rt_size_t size)
 {
 	struct rtgui_event_kbd kbd_event;
 	char key_value;
@@ -303,6 +303,8 @@ static void rtgui_key_rx(rt_device_t dev, rt_size_t size)
 		/* post down event */
 		rtgui_server_post_event(&(kbd_event.parent), sizeof(kbd_event));
 	}
+	
+	return RT_EOK;
 }
 
 #endif
