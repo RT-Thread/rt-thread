@@ -1,12 +1,12 @@
 /*
- * linker script for STM32F10x with GNU ld
+ * linker script for STM32F107 (256kB Flash, 64kB SRAM ) with GNU ld
  * bernard.xiong 2009-10-14
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 0x00080000
+    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 0x00040000
     DATA (rw) : ORIGIN = 0x20000000, LENGTH = 0x00010000
 }
 ENTRY(Reset_Handler)
@@ -77,6 +77,7 @@ SECTIONS
         _sbss = .;
 
         *(.bss)
+        *(.bss.*)
         *(COMMON)
 
         . = ALIGN(4);
