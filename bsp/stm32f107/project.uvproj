@@ -163,7 +163,7 @@
             <DriverSelection>4099</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_CL, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\components\net\lwip\src\arch\include;..\..\components\finsh;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;Libraries\CMSIS\CM3\CoreSupport;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\libcpu\arm\stm32;..\..\components\net\lwip\src\include\netif;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</IncludePath>
+              <IncludePath>Libraries\STM32F10x_StdPeriph_Driver\inc;Libraries\CMSIS\CM3\CoreSupport;..\..\components\dfs;..\..\components\finsh;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\components\net\lwip\src\arch\include;..\..\components\dfs\include;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\libcpu\arm\stm32;..\..\components\net\lwip\src\include\netif;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -376,7 +376,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
+            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -420,6 +420,11 @@
               <FileName>stm32_eth.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\stm32_eth.c</FilePath>
+            </File>
+            <File>
+              <FileName>msd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\msd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -530,6 +535,41 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_elm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
             </File>
           </Files>
         </Group>
