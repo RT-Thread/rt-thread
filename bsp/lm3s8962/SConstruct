@@ -21,7 +21,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-objs = objs + SConscript(('bsp/lm3s/Libraries/SConscript'), variant_dir='build/bsp/Libraries', duplicate=0)
+objs = objs + SConscript(('bsp/lm3s8962/Libraries/SConscript'), variant_dir='build/bsp/Libraries', duplicate=0)
 
 env.Program(TARGET, objs)
 
