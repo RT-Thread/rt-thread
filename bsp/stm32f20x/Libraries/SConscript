@@ -40,7 +40,6 @@ STM32F2xx_StdPeriph_Driver/src/stm32f2xx_syscfg.c
 STM32F2xx_StdPeriph_Driver/src/stm32f2xx_tim.c
 STM32F2xx_StdPeriph_Driver/src/stm32f2xx_usart.c
 STM32F2xx_StdPeriph_Driver/src/stm32f2xx_wwdg.c
-STM32F2xx_StdPeriph_Driver/src/misc.c
 """)
 
 # starupt scripts for STM32F2xx
