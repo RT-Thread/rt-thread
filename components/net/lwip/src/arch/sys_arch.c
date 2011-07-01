@@ -9,6 +9,7 @@
 #include <string.h>
 
 #define LWIP_THREAD_MAGIC	0x1919
+#define LWIP_THREAD_NAME	(rt_thread_self()->name)
 struct lwip_thread
 {
 	rt_uint32_t magic;
@@ -31,14 +32,7 @@ sys_sem_t sys_sem_new(u8_t count)
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_SEM_NAME, counter);
 
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-
-		thread = rt_thread_self();
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create sem: %s \n",thread->name, tname));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Create sem: %s \n", LWIP_THREAD_NAME, tname));
 
 	counter++;
 
@@ -47,15 +41,8 @@ sys_sem_t sys_sem_new(u8_t count)
 
 void sys_sem_free(sys_sem_t sem)
 {
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete sem: %s \n",thread->name,
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete sem: %s \n", LWIP_THREAD_NAME,
 			sem->parent.parent.name));
-	}
-#endif
 
 	rt_sem_delete(sem);
 
@@ -64,15 +51,8 @@ void sys_sem_free(sys_sem_t sem)
 
 void sys_sem_signal(sys_sem_t sem)
 {
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Release signal: %s , %d\n",thread->name,
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Release signal: %s , %d\n", LWIP_THREAD_NAME,
 			sem->parent.parent.name, sem->value));
-	}
-#endif
 
 	rt_sem_release(sem);
 
@@ -87,15 +67,8 @@ u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 
 	/* get the begin tick */
 	tick = rt_tick_get();
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Wait sem: %s , %d\n",thread->name,
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Wait sem: %s , %d\n", LWIP_THREAD_NAME,
 			sem->parent.parent.name, sem->value));
-	}
-#endif
 
 	if(timeout == 0)
 		t = RT_WAITING_FOREVER;
@@ -127,15 +100,7 @@ sys_mbox_t sys_mbox_new(int size)
 	char tname[RT_NAME_MAX];
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MBOX_NAME, counter);
-
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Create mbox: %s \n",thread->name, tname));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Create mbox: %s \n", LWIP_THREAD_NAME, tname));
 
 	counter++;
 
@@ -144,15 +109,8 @@ sys_mbox_t sys_mbox_new(int size)
 
 void sys_mbox_free(sys_mbox_t mbox)
 {
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete mbox: %s\n",thread->name,
-			mbox->parent.parent.name));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Delete mbox: %s\n", LWIP_THREAD_NAME,
+		mbox->mb->parent.parent.name));
 
 	rt_mb_delete(mbox);
 
@@ -161,32 +119,18 @@ void sys_mbox_free(sys_mbox_t mbox)
 
 void sys_mbox_post(sys_mbox_t mbox, void *msg)
 {
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n", LWIP_THREAD_NAME,
+		mbox->mb->parent.parent.name, (rt_uint32_t)msg));
 
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n",thread->name,
-			mbox->parent.parent.name, (rt_uint32_t)msg));
-	}
-#endif
-
-	rt_mb_send(mbox, (rt_uint32_t)msg);
+	rt_mb_send_wait(mbox, (rt_uint32_t)msg, RT_WAITING_FOREVER);
 
 	return;
 }
 
 err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg)
 {
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Post mail: %s ,0x%x\n",thread->name,
-			mbox->parent.parent.name, (rt_uint32_t)msg));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Try post mail: %s ,0x%x\n", LWIP_THREAD_NAME,
+		mbox->mb->parent.parent.name, (rt_uint32_t)msg));
 
 	if (rt_mb_send(mbox, (rt_uint32_t)msg) == RT_EOK) return ERR_OK;
 
@@ -216,15 +160,8 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 	if(ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
 	else if (ret == RT_EOK) ret = 1;
 
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n",thread->name,
-			mbox->parent.parent.name, *(rt_uint32_t **)msg));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n", LWIP_THREAD_NAME,
+		mbox->mb->parent.parent.name, *(rt_uint32_t **)msg));
 
 	/* get elapse msecond */
 	tick = rt_tick_get() - tick;
@@ -245,15 +182,8 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg)
 	if(ret == -RT_ETIMEOUT) return SYS_ARCH_TIMEOUT;
 	else if (ret == RT_EOK) ret = 1;
 
-#if SYS_DEBUG
-	{
-		struct rt_thread *thread;
-		thread = rt_thread_self();
-
-		LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n",thread->name,
-			mbox->parent.parent.name, *(rt_uint32_t **)msg));
-	}
-#endif
+	LWIP_DEBUGF(SYS_DEBUG, ("%s, Fetch mail: %s , 0x%x\n", LWIP_THREAD_NAME,
+		mbox->mb->parent.parent.name, *(rt_uint32_t **)msg));
 
 	return ret;
 }

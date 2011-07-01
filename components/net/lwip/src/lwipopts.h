@@ -155,6 +155,8 @@
 #define ETH_PAD_SIZE				RT_LWIP_ETH_PAD_SIZE
 #endif
 
+#define LWIP_NETIF_LINK_CALLBACK	1
+
 /** SYS_LIGHTWEIGHT_PROT
  * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
  * for certain critical regions during buffer allocation, deallocation and memory

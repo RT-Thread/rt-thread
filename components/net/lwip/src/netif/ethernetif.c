@@ -352,7 +352,23 @@ FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
 
 void list_if()
 {
+	rt_ubase_t index;
+
 	rt_kprintf("Default network interface: %c%c\n", netif_default->name[0], netif_default->name[1]);
+	rt_kprintf("MTU: %d\n", netif_default->mtu);
+	rt_kprintf("MAC: ");
+	for (index = 0; index < netif_default->hwaddr_len; index ++)
+		rt_kprintf("%02x ", netif_default->hwaddr[index]);
+	rt_kprintf("\nFLAGS:");
+	if (netif_default->flags & NETIF_FLAG_UP) rt_kprintf(" UP");
+	else rt_kprintf(" DOWN");
+	if (netif_default->flags & NETIF_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
+	else rt_kprintf(" LINK_DOWN");
+	if (netif_default->flags & NETIF_FLAG_DHCP) rt_kprintf(" DHCP");
+	if (netif_default->flags & NETIF_FLAG_POINTTOPOINT) rt_kprintf(" PPP");
+	if (netif_default->flags & NETIF_FLAG_ETHARP) rt_kprintf(" ETHARP");
+	if (netif_default->flags & NETIF_FLAG_IGMP) rt_kprintf(" IGMP");
+	rt_kprintf("\n");
 	rt_kprintf("ip address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->ip_addr))));
 	rt_kprintf("gw address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->gw))));
 	rt_kprintf("net mask  : %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->netmask))));
