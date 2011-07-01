@@ -3,7 +3,7 @@ Import('rtconfig')
 from building import *
 
 src	= Glob('*.c')
-CPPPATH = [RTT_ROOT + '/components/finsh']
+CPPPATH = [GetCurrentDir()]
 if rtconfig.CROSS_TOOL == 'keil':
     LINKFLAGS = ' --keep __fsym_* --keep __vsym_* '
 else:
