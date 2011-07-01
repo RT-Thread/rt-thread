@@ -200,7 +200,7 @@ def IARProject(target, script):
     
     IARWorkspace(target)
     
-def MDK4AddGroup(parent, name, files, project_path):
+def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
     group = SubElement(parent, 'Group')
     group_name = SubElement(group, 'GroupName')
     group_name.text = name
@@ -217,7 +217,11 @@ def MDK4AddGroup(parent, name, files, project_path):
         files = SubElement(group, 'Files')
         file = SubElement(files, 'File')
         file_name = SubElement(file, 'FileName')
-        file_name.text = os.path.basename(path)
+        name = os.path.basename(path)
+        if ProjectFiles.count(name):
+            name = basename + '_' + name
+        ProjectFiles.append(name)
+        file_name.text = name
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
@@ -237,13 +241,14 @@ def MDK4Project(target, script):
     CPPDEFINES = []
     LINKFLAGS = ''
     CCFLAGS = ''
+    ProjectFiles = []
     
     # add group
     groups = tree.find('Targets/Target/Groups')
     if not groups:
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
     for group in script:
-        group_xml = MDK4AddGroup(groups, group['name'], group['src'], project_path)
+        group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
         
         # get each include path
         if group.has_key('CPPPATH') and group['CPPPATH']:
@@ -562,10 +567,19 @@ def EndBuilding(target):
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
     if GetOption('target') == 'mdk':
+        template = os.path.isfile('template.Uv2')
         if rtconfig.CROSS_TOOL != 'keil':
             print 'Please use Keil MDK compiler in rtconfig.h'
             return 
-        MDKProject('project.Uv2', Projects)
+
+        if template:
+            MDKProject('project.Uv2', Projects)
+        else:
+            template = os.path.isfile('template.uvproj')
+            if template:
+                MDK4Project('project.uvproj', Projects)
+            else:
+                print 'No template project file found.'
 
     if GetOption('target') == 'mdk4':
         if rtconfig.CROSS_TOOL != 'keil':
