@@ -8,7 +8,7 @@ src_drv = []
 
 
 src = src_bsp + src_drv
-CPPPATH = [RTT_ROOT + '/bsp/lpc2148']
+CPPPATH = [ GetCurrentDir() ]
 CPPDEFINES = []
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 

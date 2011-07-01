@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='lpc214x'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -16,6 +16,7 @@ if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -27,7 +28,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi-s -mthumb'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2148.map,-cref,-u,Reset_Handler -T lpc2148_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2148.map,-cref,-u,_start -T lpc2148_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -43,6 +44,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'    
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
