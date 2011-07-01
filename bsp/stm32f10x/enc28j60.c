@@ -19,8 +19,8 @@
 
 #define MAX_ADDR_LEN    6
 
-#define CSACTIVE 	GPIOB->BRR = GPIO_Pin_12;
-#define CSPASSIVE	GPIOB->BSRR = GPIO_Pin_12;
+#define CSACTIVE 	GPIOC->BRR = GPIO_Pin_12;
+#define CSPASSIVE	GPIOC->BSRR = GPIO_Pin_12;
 
 struct net_device
 {
@@ -56,27 +56,28 @@ rt_uint8_t spi_read_op(rt_uint8_t op, rt_uint8_t address)
 	int temp=0;
 	CSACTIVE;
 
-	SPI_I2S_SendData(SPI2, (op | (address & ADDR_MASK)));
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
-	SPI_I2S_ReceiveData(SPI2);
-	SPI_I2S_SendData(SPI2, 0x00);
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+	SPI_I2S_SendData(SPI1, (op | (address & ADDR_MASK)));
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
+	SPI_I2S_ReceiveData(SPI1);
+	SPI_I2S_SendData(SPI1, 0x00);
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
 	// do dummy read if needed (for mac and mii, see datasheet page 29)
 	if(address & 0x80)
 	{
-		SPI_I2S_ReceiveData(SPI2);
-		SPI_I2S_SendData(SPI2, 0x00);
-		while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+		SPI_I2S_ReceiveData(SPI1);
+		SPI_I2S_SendData(SPI1, 0x00);
+		while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 	}
 	// release CS
 
-	temp=SPI_I2S_ReceiveData(SPI2);
+	temp=SPI_I2S_ReceiveData(SPI1);
 	// for(t=0;t<20;t++);
 	CSPASSIVE;
 	return (temp);
 }
 
+// 参数: 命令,地址,数据
 void spi_write_op(rt_uint8_t op, rt_uint8_t address, rt_uint8_t data)
 {
 	rt_uint32_t level;
@@ -84,10 +85,10 @@ void spi_write_op(rt_uint8_t op, rt_uint8_t address, rt_uint8_t data)
 	level = rt_hw_interrupt_disable();
 
 	CSACTIVE;
-	SPI_I2S_SendData(SPI2, op | (address & ADDR_MASK));
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
-	SPI_I2S_SendData(SPI2,data);
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+	SPI_I2S_SendData(SPI1, op | (address & ADDR_MASK));
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
+	SPI_I2S_SendData(SPI1,data);
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 	CSPASSIVE;
 
 	rt_hw_interrupt_enable(level);
@@ -117,18 +118,18 @@ void spi_read_buffer(rt_uint8_t* data, rt_size_t len)
 {
 	CSACTIVE;
 
-	SPI_I2S_SendData(SPI2,ENC28J60_READ_BUF_MEM);
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+	SPI_I2S_SendData(SPI1,ENC28J60_READ_BUF_MEM);
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
-	SPI_I2S_ReceiveData(SPI2);
+	SPI_I2S_ReceiveData(SPI1);
 
 	while(len)
 	{
 	    len--;
-	    SPI_I2S_SendData(SPI2,0x00)	;
-	    while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+	    SPI_I2S_SendData(SPI1,0x00)	;
+	    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
-	    *data= SPI_I2S_ReceiveData(SPI2);
+	    *data= SPI_I2S_ReceiveData(SPI1);
 	    data++;
 	}
 
@@ -499,7 +500,7 @@ rt_err_t enc28j60_tx( rt_device_t dev, struct pbuf* p)
 	rt_uint8_t* ptr;
     rt_uint32_t level;
 
-	// rt_kprintf("tx pbuf: 0x%08x, total len %d\n", p, p->tot_len);
+	 //rt_kprintf("tx pbuf: 0x%08x, total len %d\n", p, p->tot_len);
 
     /* lock enc28j60 */
     rt_sem_take(&lock_sem, RT_WAITING_FOREVER);
@@ -520,15 +521,15 @@ rt_err_t enc28j60_tx( rt_device_t dev, struct pbuf* p)
 	{
         CSACTIVE;
 
-		SPI_I2S_SendData(SPI2, ENC28J60_WRITE_BUF_MEM);
-		while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+		SPI_I2S_SendData(SPI1, ENC28J60_WRITE_BUF_MEM);
+		while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
 		len = q->len;
 		ptr = q->payload;
         while(len)
         {
-			SPI_I2S_SendData(SPI2,*ptr) ;
-			while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);;
+			SPI_I2S_SendData(SPI1,*ptr) ;
+			while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);;
 				ptr++;
 
 			len--;
@@ -612,18 +613,18 @@ struct pbuf *enc28j60_rx(rt_device_t dev)
 
                     CSACTIVE;
 
-                    SPI_I2S_SendData(SPI2,ENC28J60_READ_BUF_MEM);
-                    while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+                    SPI_I2S_SendData(SPI1,ENC28J60_READ_BUF_MEM);
+                    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
-                    SPI_I2S_ReceiveData(SPI2);
+                    SPI_I2S_ReceiveData(SPI1);
 
                     while(len)
                     {
                         len--;
-                        SPI_I2S_SendData(SPI2,0x00)	;
-                        while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY)==SET);
+                        SPI_I2S_SendData(SPI1,0x00)	;
+                        while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY)==SET);
 
-                        *data= SPI_I2S_ReceiveData(SPI2);
+                        *data= SPI_I2S_ReceiveData(SPI1);
                         data++;
                     }
 
@@ -659,11 +660,13 @@ struct pbuf *enc28j60_rx(rt_device_t dev)
 
 static void RCC_Configuration(void)
 {
-    /* enable spi2 clock */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+   //RCC_PCLK2Config  ( uint32_t  RCC_HCLK   )
+    /* enable SPI1 clock */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
     /* enable gpiob port clock */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
+    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC , ENABLE);
 }
 
 static void NVIC_Configuration(void)
@@ -674,7 +677,7 @@ static void NVIC_Configuration(void)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
     /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -687,33 +690,33 @@ static void GPIO_Configuration()
     EXTI_InitTypeDef EXTI_InitStructure;
 
 	/* configure PB0 as external interrupt */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-    /* Configure SPI2 pins:  SCK, MISO and MOSI ----------------------------*/
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+    /* Configure SPI1 pins:  SCK, MISO and MOSI ----------------------------*/
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
     /* Connect ENC28J60 EXTI Line to GPIOB Pin 0 */
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource2);
 
     /* Configure ENC28J60 EXTI Line to generate an interrupt on falling edge */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line2;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
 
 	/* Clear the Key Button EXTI line pending bit */
-	EXTI_ClearITPendingBit(EXTI_Line0);
+	EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
 static void SetupSPI (void)
@@ -725,11 +728,11 @@ static void SetupSPI (void)
     SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
     SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
     SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;//SPI_BaudRatePrescaler_4;
     SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
     SPI_InitStructure.SPI_CRCPolynomial = 7;
-    SPI_Init(SPI2, &SPI_InitStructure);
-    SPI_Cmd(SPI2, ENABLE);
+    SPI_Init(SPI1, &SPI_InitStructure);
+    SPI_Cmd(SPI1, ENABLE);
 }
 
 void rt_hw_enc28j60_init()
@@ -762,3 +765,10 @@ void rt_hw_enc28j60_init()
 
 	eth_device_init(&(enc28j60_dev->parent), "e0");
 }
+
+#include <finsh.h>
+void show_reg(void)
+{
+    //
+}
+FINSH_FUNCTION_EXPORT(show_reg,show en28j60 regs)
