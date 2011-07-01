@@ -7,7 +7,7 @@ if GetDepend('RT_USING_NEWLIB'):
 
 src_drv = ['uart.c', 'lnn800x480.c']
 src	= File(src_bsp + src_drv)
-CPPPATH = [RTT_ROOT + '/bsp/dev3210']
+CPPPATH = [GetCurrentDir()]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
