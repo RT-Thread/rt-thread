@@ -1,5 +1,5 @@
 /*
- * File      : hwport.c
+ * File      : cpuport.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
  *
