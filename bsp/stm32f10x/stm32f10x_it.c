@@ -272,17 +272,17 @@ void ETH_IRQHandler(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void EXTI0_IRQHandler(void)
+void EXTI2_IRQHandler(void)
 {
     extern void enc28j60_isr(void);
 
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line0);
-
     enc28j60_isr();
+
+    /* Clear the Key Button EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line2);
 
     /* leave interrupt */
     rt_interrupt_leave();
