@@ -141,11 +141,7 @@ g_pfnVectors:
   .word  MFS0TX_IRQHandler
   .word  MFS1RX_IRQHandler
   .word  MFS1TX_IRQHandler
-#ifdef RT_USING_UART2        
-  .word  MFS2RX_IRQHandler         ; MultiFunction Serial ch.2
-#else
-  .word  NULL_IRQHandler
-#endif  
+  .word  MFS2RX_IRQHandler
   .word  MFS2TX_IRQHandler
   .word  MFS3RX_IRQHandler
   .word  MFS3TX_IRQHandler
@@ -242,8 +238,8 @@ g_pfnVectors:
   .weak  MFS1TX_IRQHandler
   .thumb_set MFS1TX_IRQHandler,Default_Handler
 
-  .weak  NULL_IRQHandler
-  .thumb_set NULL_IRQHandler,Default_Handler
+  .weak  MFS2RX_IRQHandler
+  .thumb_set MFS2RX_IRQHandler,Default_Handler
 
   .weak  MFS2TX_IRQHandler
   .thumb_set MFS2TX_IRQHandler,Default_Handler

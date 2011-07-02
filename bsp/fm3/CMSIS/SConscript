@@ -1,0 +1,10 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src	= Glob('*.c')
+CPPPATH = [GetCurrentDir()]
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, LIBRARY = '')
+
+Return('group')
