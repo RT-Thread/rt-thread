@@ -1,12 +1,5 @@
 	.extern main                               /* 引入外部C入口 */
 
-	.extern __bss_beg__
-	.extern __bss_end
-	.extern __stack_end__
-	.extern __data_beg__
-	.extern __data_end__
-	.extern __data+beg_src__
-
 	.extern rt_interrupt_enter
 	.extern rt_interrupt_leave
 	.extern rt_thread_switch_interrput_flag
@@ -18,19 +11,6 @@
 	.global endless_loop
     .global rt_hw_context_switch_interrupt_do
 
-/************* 目标配置 *************/
-    .set  UND_STACK_SIZE, 0x00000004
-    .set  ABT_STACK_SIZE, 0x00000004
-    .set  FIQ_STACK_SIZE, 0x00000004
-    .set  IRQ_STACK_SIZE, 0x00000400
-    .set  SVC_STACK_SIZE, 0x00000400
-
-    .set  UND_Stack_Size, 0x00000004
-    .set  ABT_Stack_Size, 0x00000004
-    .set  FIQ_Stack_Size, 0x00000004
-    .set  IRQ_Stack_Size, 0x00000400
-    .set  SVC_Stack_Size, 0x00000400
-
 	/* Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs */
     .set  MODE_USR, 0x10            /* User Mode */
     .set  MODE_FIQ, 0x11            /* FIQ Mode */
@@ -39,13 +19,6 @@
     .set  MODE_ABT, 0x17            /* Abort Mode */
     .set  MODE_UND, 0x1B            /* Undefined Mode */
     .set  MODE_SYS, 0x1F            /* System Mode */
-    .set  MODE_USR, 0x10            /* User Mode */
-    .set  Mode_FIQ, 0x11            /* FIQ Mode */
-    .set  Mode_IRQ, 0x12            /* IRQ Mode */
-    .set  Mode_SVC, 0x13            /* Supervisor Mode */
-    .set  Mode_ABT, 0x17            /* Abort Mode */
-    .set  Mode_UND, 0x1B            /* Undefined Mode */
-    .set  Mode_SYS, 0x1F            /* System Mode */
 
     .equ  I_BIT, 0x80               /* when I bit is set, IRQ is disabled */
     .equ  F_BIT, 0x40               /* when F bit is set, FIQ is disabled */
@@ -57,18 +30,17 @@
     .set  VPBDIV_VALUE,	0x00000000
 
     /* Phase Locked Loop (PLL) definitions*/
-    .equ  PLL_BASE, 	0xE01FC080
-    .equ  PLLCON_OFS, 	0x00
-    .equ  PLLCFG_OFS, 	0x04
-    .equ  PLLSTAT_OFS, 	0x08
-    .equ  PLLFEED_OFS, 	0x0C
-
-    .equ PLLCON_PLLE,   (1<<0)      /* PLL Enable */
-    .equ PLLCON_PLLC,   (1<<1)      /* PLL Connect */
-    .equ PLLSTAT_LOCK,  (1<<10)     /* PLL Lock Status */
-    //.equ PLLCFG_MSEL,   ((PLL_MUL - 1) << 0)
-    .equ PLLCFG_PSEL,	(0x02 << 5)
-    //.equ PLLCFG_Val,	(PLLCFG_MSEL|PLLCFG_PSEL)
+    .equ  PLL_BASE, 	 0xE01FC080  /* PLL Base Address */
+    .equ  PLLCON_OFS, 	 0x00        /* PLL Control Offset */
+    .equ  PLLCFG_OFS, 	 0x04        /* PLL Configuration Offset */
+    .equ  PLLSTAT_OFS, 	 0x08        /* PLL Status Offset */
+    .equ  PLLFEED_OFS,   0x0C        /* PLL Feed Offset */
+	.equ  PLLCON_PLLE,   (1<<0)      /* PLL Enable */
+	.equ  PLLCON_PLLC,   (1<<1)      /* PLL Connect */
+	.equ  PLLCFG_MSEL,   (0x1F<<0)   /* PLL Multiplier */
+	.equ  PLLCFG_PSEL,   (0x03<<5)   /* PLL Divider */
+	.equ  PLLSTAT_PLOCK, (1<<10)     /* PLL Lock Status */
+    .equ  PLLCFG_Val,	 0x00000024  /* <o1.0..4>   MSEL: PLL Multiplier Selection,<o1.5..6>   PSEL: PLL Divider Selection */
 
     .equ  MEMMAP,		0xE01FC040     /*Memory Mapping Control*/
 
@@ -87,19 +59,12 @@
 
 /* Setup the operating mode & stack.*/
 /* --------------------------------- */
-	.global _start, start, _reset, reset,
-	.func   _start,
-
-_start:
-start:
+	.global _reset
 _reset:
-reset:
 	.code 32
 	.align 0
 
 /************************* PLL_SETUP **********************************/
-#if (PLL_MUL>1)
-
 		ldr     r0, =PLL_BASE
 		mov		r1, #0xAA
 		mov		r2, #0x55
@@ -115,7 +80,7 @@ reset:
 /*  Wait until PLL Locked */
 PLL_Locked_loop:
 		ldr     r3, [r0, #PLLSTAT_OFS]
-		ands    r3, r3, #PLLSTAT_LOCK
+		ands    r3, r3, #PLLSTAT_PLOCK
 		beq     PLL_Locked_loop
 
 /*  Switch to PLL Clock */
@@ -123,8 +88,6 @@ PLL_Locked_loop:
 		str     r3, [r0, #PLLCON_OFS]
 		str     r1, [r0, #PLLFEED_OFS]
 		str     R2, [r0, #PLLFEED_OFS]
-
-#endif
 /************************* PLL_SETUP **********************************/
 
 /************************ Setup VPBDIV ********************************/
@@ -142,105 +105,104 @@ PLL_Locked_loop:
 /************** Setup MAM **************/
 
 /************************ setup stack *********************************/
-    ldr   r0, .LC6                      /* LC6:__stack_end__ */
+    ldr   r0, .undefined_stack_top
+	sub   r0, r0, #4
     msr   CPSR_c, #MODE_UND|I_BIT|F_BIT /* Undefined Instruction Mode */
     mov   sp, r0
-    sub   r0, r0, #UND_STACK_SIZE
+
+    ldr   r0, .abort_stack_top
+	sub   r0, r0, #4
     msr   CPSR_c, #MODE_ABT|I_BIT|F_BIT /* Abort Mode */
     mov   sp, r0
-    sub   r0, r0, #ABT_STACK_SIZE
+
+    ldr   r0, .fiq_stack_top
+	sub   r0, r0, #4
     msr   CPSR_c, #MODE_FIQ|I_BIT|F_BIT /* FIQ Mode */
     mov   sp, r0
-    sub   r0, r0, #FIQ_STACK_SIZE
+
+    ldr   r0, .irq_stack_top
+	sub   r0, r0, #4
     msr   CPSR_c, #MODE_IRQ|I_BIT|F_BIT /* IRQ Mode */
     mov   sp, r0
-    sub   r0, r0, #IRQ_STACK_SIZE
+
+    ldr   r0, .svc_stack_top
+	sub   r0, r0, #4
     msr   CPSR_c, #MODE_SVC|I_BIT|F_BIT  /* Supervisor Mode */
     mov   sp, r0
 /************************ setup stack ********************************/
 
-/************************  Clear BSS  ********************************/
-	/* Clear BSS. */
+    /* copy .data to SRAM */
+    ldr     r1, =_sidata            /* .data start in image */
+    ldr     r2, =_edata             /* .data end in image   */
+    ldr     r3, =_sdata             /* sram data start      */
+data_loop:
+    ldr     r0, [r1, #0]
+    str     r0, [r3]
 
-	mov     a2, #0			/* Fill value */
-	mov		fp, a2			/* Null frame pointer */
-	mov		r7, a2			/* Null frame pointer for Thumb */
+    add     r1, r1, #4
+    add     r3, r3, #4
 
-	ldr		r1, .LC1		/* Start of memory block */
-	ldr		r3, .LC2		/* End of memory block */
-	subs	r3, r3, r1      /* Length of block */
-	beq		.end_clear_loop
-	mov		r2, #0
+    cmp     r3, r2                   /* check if data to clear */
+    blo     data_loop                /* loop until done        */
+	
+    /* clear .bss */
+    mov     r0,#0                   /* get a zero */
+    ldr     r1,=__bss_start         /* bss start  */
+    ldr     r2,=__bss_end           /* bss end    */
 
-.clear_loop:
-	strb	r2, [r1], #1
-	subs	r3, r3, #1
-	bgt		.clear_loop
+bss_loop:
+    cmp     r1,r2                   /* check if data to clear */
+    strlo   r0,[r1],#4              /* clear 4 bytes          */
+    blo     bss_loop                /* loop until done        */
 
-.end_clear_loop:
 
-	/* Initialise data. */
+    /* call C++ constructors of global objects */
+    ldr     r0, =__ctors_start__
+    ldr     r1, =__ctors_end__
 
-	ldr		r1, .LC3		/* Start of memory block */
-	ldr		r2, .LC4		/* End of memory block */
-	ldr		r3, .LC5
-	subs	r3, r3, r1		/* Length of block */
-	beq		.end_set_loop
+ctor_loop:
+    cmp     r0, r1
+    beq     ctor_end
+    ldr     r2, [r0], #4
+    stmfd   sp!, {r0-r1}
+    mov     lr, pc
+    bx      r2
+    ldmfd   sp!, {r0-r1}
+    b       ctor_loop
+ctor_end:
 
-.set_loop:
-	ldrb	r4, [r2], #1
-	strb	r4, [r1], #1
-	subs	r3, r3, #1
-	bgt		.set_loop
-
-.end_set_loop:
-
-	mov		r0, #0          /* no arguments  */
-	mov		r1, #0          /* no argv either */
-
+	/* enter C code */
 	bl		main
 
-endless_loop:
-	b               endless_loop
-
 	.align 0
-
-	.LC1:
-	.word   __bss_beg__
-	.LC2:
-	.word   __bss_end
-	.LC3:
-	.word   __data_beg__
-	.LC4:
-	.word   __data_beg_src__
-	.LC5:
-	.word   __data_end__
-	.LC6:
-	.word   __stack_end__
+	.undefined_stack_top:
+	.word   _undefined_stack_top
+	.abort_stack_top:
+	.word   _abort_stack_top
+	.fiq_stack_top:
+	.word   _fiq_stack_top
+	.irq_stack_top:
+	.word   _irq_stack_top
+	.svc_stack_top:
+	.word   _svc_stack_top
 /*********************** END Clear BSS  ******************************/
 
-/******************** 跳转到 main() ********************/
-	LDR     R0, =main       /* 获得main()入口地址 */
-	BX      R0              /* 长跳转到main()     */
-/******************** 跳转到 main() ********************/
-
-
-/* 本段为.startup段 在链接脚本中被链接到程序最开头 */
-.section .startup,"ax"
-    .code 32
-	.align 0
+.section .init,"ax"
+.code 32
+.align 0
+.globl _start
+_start:
 
 	ldr   pc, __start					/* reset - _start			*/
 	ldr   pc, _undf						/* undefined - _undf		*/
 	ldr   pc, _swi			    		/* SWI - _swi				*/
 	ldr   pc, _pabt						/* program abort - _pabt	*/
 	ldr   pc, _dabt						/* data abort - _dabt		*/
-	//.word 0xB9205F80				    /* 默认		0xB9205F80		*/
-	.word 0xB8A06F58					/* 0xB8A06F58 全为          */
+	.word 0xB8A06F58					/* reserved                 */
 	ldr   pc, __IRQ_Handler				/* IRQ - read the VIC		*/
 	ldr   pc, _fiq						/* FIQ - _fiq				*/
 
-__start:.word _start
+__start:.word _reset
 _undf:  .word __undf                    /* undefined				*/
 _swi:   .word __swi                     /* SWI						*/
 _pabt:  .word __pabt                    /* program abort			*/
