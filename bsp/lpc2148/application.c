@@ -75,34 +75,55 @@ void rt_init_thread_entry(void *parameter)
 #define LED2     (1<<17) //P1
 #define LED3     (1<<18) //P1
 #define LED4     (1<<19) //P1
-ALIGN(4)
-char thread_led1_stack[512];
+
+ALIGN(4) char thread_led1_stack[512];
 struct rt_thread thread_led1;
 void thread_led1_entry(void* parameter)
 {
-    volatile unsigned int i;
+    unsigned int count=0;
+
     IO1DIR |= LED1;
     while(1)
     {
+        /* led1 on */
         IO1CLR = LED1;
+#ifndef RT_USING_FINSH
+        rt_kprintf("led1 on, count : %d\r\n",count);
+#endif
+        count++;
         rt_thread_delay( RT_TICK_PER_SECOND/3 ); /* delay 0.3s */
+
+        /* led1 off */
         IO1SET = LED1;
+#ifndef RT_USING_FINSH
+        rt_kprintf("led1 off\r\n");
+#endif
         rt_thread_delay( RT_TICK_PER_SECOND/3 );
     }
 }
 
-ALIGN(4)
-char thread_led2_stack[512];
+ALIGN(4) char thread_led2_stack[512];
 struct rt_thread thread_led2;
 void thread_led2_entry(void* parameter)
 {
-    volatile unsigned int i;
+    unsigned int count=0;
+
     IO1DIR |= LED2;
     while(1)
     {
+        /* led2 on */
         IO1CLR = LED2;
+#ifndef RT_USING_FINSH
+        rt_kprintf("led2 on, count : %d\r\n",count);
+#endif
+        count++;
         rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* delay 0.5s */
+
+        /* led2 off */
         IO1SET = LED2;
+#ifndef RT_USING_FINSH
+        rt_kprintf("led1 off\r\n");
+#endif
         rt_thread_delay( RT_TICK_PER_SECOND/2 );
     }
 }

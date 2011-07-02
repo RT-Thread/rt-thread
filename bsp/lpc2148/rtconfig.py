@@ -25,7 +25,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=arm7tdmi-s -mthumb'
+    DEVICE = ' -mcpu=arm7tdmi-s'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2148.map,-cref,-u,_start -T lpc2148_rom.ld'

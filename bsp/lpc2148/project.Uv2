@@ -127,13 +127,13 @@ Options 1,0,0  // Target 'rtthread-lpc2148'
  ADSLDSC ()
  ADSLDIB ()
  ADSLDIC ()
- ADSLDMC ( --keep __fsym_* --keep __vsym_*)
+ ADSLDMC ( --keep __fsym_* --keep __vsym_* )
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)
-  OPTDBG 48125,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
- FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
- FLASH2 ()
+  OPTDBG 48126,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\UL2ARM.DLL)
  FLASH3 ("LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1))
  FLASH4 ()
 EndOpt

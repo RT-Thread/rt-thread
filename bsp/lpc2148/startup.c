@@ -86,11 +86,6 @@ void rtthread_startup(void)
     /* init scheduler system */
     rt_system_scheduler_init();
 
-#ifdef RT_USING_HOOK /* if the hook is used */
-    /* set idle thread hook */
-    rt_thread_idle_sethook(0);
-#endif
-
 #ifdef RT_USING_DEVICE
 #ifdef RT_USING_DFS
     /* init sd card */
