@@ -15,7 +15,7 @@
  */
 
 #include "sdcard.h"
-#include <dfs_config.h>
+//#include <dfs_config.h>
 
 volatile rt_int32_t RCA;
 
