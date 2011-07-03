@@ -135,7 +135,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Comp 1
         DCD     IntDefaultHandler           ; Comp 2
         DCD     IntDefaultHandler           ; System Control
-        DCD     IntDefaultHandler           ; Flash Control
+        DCD     0x881           ; Flash Control
         DCD     IntDefaultHandler           ; GPIO Port F
         DCD     IntDefaultHandler           ; GPIO Port G
         DCD     IntDefaultHandler           ; GPIO Port H
