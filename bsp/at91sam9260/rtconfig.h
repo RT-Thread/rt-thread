@@ -118,6 +118,12 @@
 
 //#define RT_USING_LED
 
+#define RT_USING_DBGU
+/* #define RT_USING_UART0 */
+/* #define RT_USING_UART1 */
+/* #define RT_USING_UART2 */
+/* #define RT_USING_UART3 */
+
 /* SECTION: lwip, a lightweight TCP/IP protocol stack */
 /* Using lightweight TCP/IP protocol stack */
 #define RT_USING_LWIP

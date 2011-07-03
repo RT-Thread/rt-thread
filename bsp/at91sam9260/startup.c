@@ -105,10 +105,40 @@ void rtthread_startup(void)
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
-	/* register uart1 */
+#ifdef RT_USING_DBGU
+	/* register dbgu */
 	rt_hw_serial_register(&uart0_device, "uart0",
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
 		&uart0); 
+#endif
+
+#ifdef RT_USING_UART0
+	/* register uart0 */
+	rt_hw_serial_register(&uart1_device, "uart1",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
+		&uart1); 
+#endif
+
+#ifdef RT_USING_UART1
+	/* register uart1 */
+	rt_hw_serial_register(&uart2_device, "uart2",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
+		&uart2); 
+#endif
+
+#ifdef RT_USING_UART2
+	/* register uart2 */
+	rt_hw_serial_register(&uart3_device, "uart3",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
+		&uart3); 
+#endif
+
+#ifdef RT_USING_UART3
+	/* register uart3 */
+	rt_hw_serial_register(&uart4_device, "uart4",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
+		&uart4); 
+#endif
 
 #ifdef RT_USING_DFS
 	//rt_hw_sdcard_init();
@@ -134,7 +164,9 @@ void rtthread_startup(void)
 	/* initialize finsh */
 	finsh_system_init();
 #ifdef RT_USING_DEVICE
+#ifdef RT_USING_DBGU
 	finsh_set_device("uart0");
+#endif
 #endif
 #endif
 
