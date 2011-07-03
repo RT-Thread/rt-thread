@@ -22,14 +22,14 @@ void list_dir(const char* path)
 	dir = opendir(path);
 	if (dir != RT_NULL)
 	{
-		struct dfs_dirent* dirent;
-		struct dfs_stat s;
+		struct dirent* dirent;
+		struct stat s;
 
 		do
 		{
 			dirent = readdir(dir);
 			if (dirent == RT_NULL) break;
-			rt_memset(&s, 0, sizeof(struct dfs_stat));
+			rt_memset(&s, 0, sizeof(struct stat));
 
 			/* build full path for each file */
 			rt_sprintf(fullpath, "/%s", dirent->d_name);
