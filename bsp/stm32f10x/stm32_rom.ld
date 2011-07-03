@@ -10,7 +10,7 @@ MEMORY
     DATA (rw) : ORIGIN = 0x20000000, LENGTH =  64k /* 64K sram */
 }
 ENTRY(Reset_Handler)
-_system_tack_size = 0x100;
+_system_stack_size = 0x100;
 
 SECTIONS
 {
@@ -72,7 +72,7 @@ SECTIONS
 
 	.stack : 
 	{
-		. = . + _system_tack_size;
+		. = . + _system_stack_size;
 		. = ALIGN(4);
 		_estack = .;
 	} >DATA

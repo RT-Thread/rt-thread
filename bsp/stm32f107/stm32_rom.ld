@@ -10,7 +10,7 @@ MEMORY
     DATA (rw) : ORIGIN = 0x20000000, LENGTH = 0x00010000
 }
 ENTRY(Reset_Handler)
-_system_tack_size = 0x100;
+_system_stack_size = 0x100;
 
 SECTIONS
 {
@@ -70,6 +70,13 @@ SECTIONS
         _edata = . ;
     } >DATA
 
+	.stack : 
+	{
+		. = . + _system_stack_size;
+		. = ALIGN(4);
+		_estack = .;
+	} >DATA
+
     __bss_start = .;
     .bss :
     {
@@ -83,11 +90,7 @@ SECTIONS
 
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
-        _ebss = . ;
-	. = . + _system_tack_size;
-	. = ALIGN(4);
-        _estack = .;
-        
+        _ebss = . ;        
         *(.bss.init)
     } > DATA
     __bss_end = .;
