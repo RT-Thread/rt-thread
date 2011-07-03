@@ -132,7 +132,6 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        _estack = .;
     } > DATA
     __bss_end = .;
 

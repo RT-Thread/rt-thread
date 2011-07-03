@@ -6,10 +6,11 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 0x00080000
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH = 0x00010000
+    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 512k /* 512KB flash */
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  64k /* 64K sram */
 }
 ENTRY(Reset_Handler)
+_system_tack_size = 0x100;
 
 SECTIONS
 {
@@ -69,6 +70,13 @@ SECTIONS
         _edata = . ;
     } >DATA
 
+	.stack : 
+	{
+		. = . + _system_tack_size;
+		. = ALIGN(4);
+		_estack = .;
+	} >DATA
+
     __bss_start = .;
     .bss :
     {
@@ -83,7 +91,6 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        _estack = .;
         
         *(.bss.init)
     } > DATA

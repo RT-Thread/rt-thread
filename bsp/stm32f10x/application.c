@@ -38,8 +38,8 @@
 #include "led.h"
 
 ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
-static rt_uint32_t led_stack[512/4];
 static void led_thread_entry(void* parameter)
 {
     unsigned int count=0;
@@ -58,7 +58,7 @@ static void led_thread_entry(void* parameter)
 
         /* led1 off */
 #ifndef RT_USING_FINSH
-        rt_kprintf("led2 off\r\n");
+        rt_kprintf("led off\r\n");
 #endif
         rt_hw_led_off(0);
         rt_thread_delay( RT_TICK_PER_SECOND/2 );
