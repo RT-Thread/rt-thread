@@ -92,30 +92,41 @@ File 6,1,<..\..\components\net\lwip\src\core\ipv4\inet_chksum.c><inet_chksum.c>
 File 6,1,<..\..\components\net\lwip\src\core\ipv4\ip.c><ip.c>
 File 6,1,<..\..\components\net\lwip\src\core\ipv4\ip_addr.c><ip_addr.c>
 File 6,1,<..\..\components\net\lwip\src\core\ipv4\ip_frag.c><ip_frag.c>
+File 6,1,<..\..\components\net\lwip\src\netif\etharp.c><etharp.c>
+File 6,1,<..\..\components\net\lwip\src\netif\ethernetif.c><ethernetif.c>
+File 6,1,<..\..\components\net\lwip\src\netif\loopif.c><loopif.c>
+File 6,1,<..\..\components\net\lwip\src\netif\slipif.c><slipif.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\asn1_dec.c><asn1_dec.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\asn1_enc.c><asn1_enc.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\mib2.c><mib2.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\mib_structs.c><mib_structs.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\msg_in.c><msg_in.c>
 File 6,1,<..\..\components\net\lwip\src\core\snmp\msg_out.c><msg_out.c>
-File 6,1,<..\..\components\net\lwip\src\netif\etharp.c><etharp.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ethernetif.c><ethernetif.c>
-File 6,1,<..\..\components\net\lwip\src\netif\loopif.c><loopif.c>
-File 6,1,<..\..\components\net\lwip\src\netif\slipif.c><slipif.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\auth.c><auth.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\chap.c><chap.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\chpms.c><chpms.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\fsm.c><fsm.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\ipcp.c><ipcp.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\lcp.c><lcp.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\magic.c><magic.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\md5.c><md5.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\pap.c><pap.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\ppp.c><ppp.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\ppp_oe.c><ppp_oe.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\randm.c><randm.c>
-File 6,1,<..\..\components\net\lwip\src\netif\ppp\vj.c><vj.c>
-File 7,4,<.\Libraries\driverlib\rvmdk\driverlib.lib><driverlib.lib>
+File 7,1,<Libraries\driverlib\adc.c><adc.c>
+File 7,1,<Libraries\driverlib\can.c><can.c>
+File 7,1,<Libraries\driverlib\comp.c><comp.c>
+File 7,1,<Libraries\driverlib\cpu.c><driverlib_cpu.c>
+File 7,1,<Libraries\driverlib\epi.c><epi.c>
+File 7,1,<Libraries\driverlib\ethernet.c><ethernet.c>
+File 7,1,<Libraries\driverlib\flash.c><flash.c>
+File 7,1,<Libraries\driverlib\gpio.c><gpio.c>
+File 7,1,<Libraries\driverlib\hibernate.c><hibernate.c>
+File 7,1,<Libraries\driverlib\i2c.c><i2c.c>
+File 7,1,<Libraries\driverlib\i2s.c><i2s.c>
+File 7,1,<Libraries\driverlib\interrupt.c><driverlib_interrupt.c>
+File 7,1,<Libraries\driverlib\mpu.c><mpu.c>
+File 7,1,<Libraries\driverlib\pwm.c><pwm.c>
+File 7,1,<Libraries\driverlib\qei.c><qei.c>
+File 7,1,<Libraries\driverlib\ssi.c><ssi.c>
+File 7,1,<Libraries\driverlib\sysctl.c><sysctl.c>
+File 7,1,<Libraries\driverlib\systick.c><systick.c>
+File 7,1,<Libraries\driverlib\timer.c><driverlib_timer.c>
+File 7,1,<Libraries\driverlib\uart.c><uart.c>
+File 7,1,<Libraries\driverlib\udma.c><udma.c>
+File 7,1,<Libraries\driverlib\usb.c><usb.c>
+File 7,1,<Libraries\driverlib\watchdog.c><watchdog.c>
+
+
 
 
 Options 1,0,0  // Target 'RT-Thread-lm3s'
@@ -125,8 +136,8 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  FlashUt ()
  StupF ("STARTUP\Luminary\Startup.s" ("Luminary Startup Code"))
  FlashDR (UL2CM3(-UU0101L5E -O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0LM3S_256 -FS00 -FL040000))
- DevID (4722)
- Rgf (LM3Sxxxx.H)
+ DevID (4285)
+ Rgf (LM3Sxxx.H)
  Mem ()
  C ()
  A ()
@@ -140,17 +151,17 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  EnvBin ()
  EnvInc ()
  EnvLib ()
- EnvReg (ÿLuminary\)
- OrgReg (ÿLuminary\)
+ EnvReg (Luminary\)
+ OrgReg (Luminary\)
  TgStat=16
- OutDir (.\)
+ OutDir (.\objs\)
  OutName (rtthread-lm3s)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=1
- LstDir (.\)
+ LstDir (.\objs\)
  HexSel=1
  MG32K=0
  TGMORE=0
@@ -165,7 +176,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ACPUTYP ("Cortex-M3")
  RVDEV ()
- ADSTFLGA { 0,12,0,0,163,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSTFLGA { 0,12,0,0,160,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSIRAM { 0,0,0,0,32,0,0,1,0 }
  OCMADSIROM { 1,0,0,0,0,0,0,4,0 }
@@ -176,7 +187,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
- ADSCINCD (Libraries\inc;..\..\include;..\..\libcpu\arm\lm3s;..\..\components\net\lwip\src\include;Libraries\driverlib;.;..\..\components\net\lwip\src\include\ipv4;..\..\components\dfs;Libraries;..\..\components\net\lwip\src\arch\include;..\..\components\dfs\include;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\net\lwip\src\netif\ppp;..\..\components\finsh;..\..\components\net\lwip\src\include\netif)
+ ADSCINCD (Libraries\inc;..\..\include;..\..\libcpu\arm\lm3s;..\..\components\net\lwip\src\include;Libraries\driverlib;.;..\..\components\net\lwip\src\include\ipv4;..\..\components\dfs;Libraries;..\..\components\net\lwip\src\arch\include;..\..\components\dfs\include;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\net\lwip\src\include\netif)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()
@@ -197,14 +208,14 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDSC ()
  ADSLDIB ()
  ADSLDIC ()
- ADSLDMC ( --keep __fsym_* --keep __vsym_*)
+ ADSLDMC ( --keep __fsym_* --keep __vsym_* )
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S8962)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S8962)
   OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\lmidk-agdi.dll)
- FLASH3 ("" ())
+ FLASH3 ()
  FLASH4 ()
 EndOpt
 

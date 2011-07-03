@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='lm3s'
-CROSS_TOOL 	= 'gcc'
+CROSS_TOOL 	= 'keil'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
