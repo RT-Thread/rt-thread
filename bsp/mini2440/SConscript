@@ -29,7 +29,7 @@ if GetDepend('RT_USING_RTGUI') or GetDepend('RT_USING_FTK'):
 		src_drv += ['lcd_t35.c']
 
 src	= File(src_bsp + src_drv)
-CPPPATH = [RTT_ROOT + '/bsp/mini2440']
+CPPPATH = [GetCurrentDir()]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

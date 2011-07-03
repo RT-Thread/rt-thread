@@ -219,7 +219,7 @@
 /* #define RTGUI_USING_MOUSE_CURSOR */
 /* RTGUI image options */
 #define RTGUI_IMAGE_XPM
-/* #define RTGUI_IMAGE_JPEG */
+#define RTGUI_IMAGE_JPEG
 #define RTGUI_IMAGE_PNG
 #define RTGUI_IMAGE_BMP
 
