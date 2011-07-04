@@ -1286,7 +1286,7 @@ rt_err_t rt_mb_delete (rt_mailbox_t mb)
 	/* also resume all mailbox private suspended thread */
 	rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
 
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
 	/* the mb object belongs to an application module */
 	if(mb->parent.parent.flag & RT_OBJECT_FLAG_MODULE)
 		rt_module_free(mb->parent.parent.module_id, mb->msg_pool);
@@ -1761,7 +1761,7 @@ rt_err_t rt_mq_delete (rt_mq_t mq)
 	/* resume all suspended thread */
 	rt_ipc_list_resume_all(&(mq->parent.suspend_thread));
 
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
 	/* the mq object belongs to an application module */
 	if(mq->parent.parent.flag & RT_OBJECT_FLAG_MODULE)
 		rt_module_free(mq->parent.parent.module_id, mq->msg_pool);

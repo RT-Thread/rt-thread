@@ -23,6 +23,8 @@
 #ifdef RT_USING_MODULE
 #include <rtm.h>
 
+RTM_EXPORT(rt_object_get_information);
+
 /*
  * thread  interface symbol 
  */
@@ -147,13 +149,13 @@ RTM_EXPORT(rt_timer_control);
 /* 
  * kservice interface symbol
  */
-RTM_EXPORT(rt_memcpy)
-RTM_EXPORT(rt_memcmp)
-RTM_EXPORT(rt_memset)
-RTM_EXPORT(rt_kprintf)
-RTM_EXPORT(rt_sprintf)
-RTM_EXPORT(rt_strstr)
-RTM_EXPORT(rt_snprintf)
+RTM_EXPORT(rt_memcpy);
+RTM_EXPORT(rt_memcmp);
+RTM_EXPORT(rt_memset);
+RTM_EXPORT(rt_kprintf);
+RTM_EXPORT(rt_sprintf);
+RTM_EXPORT(rt_strstr);
+RTM_EXPORT(rt_snprintf);
 
 /* 
  * misc interface symbol
@@ -167,43 +169,43 @@ extern int __aeabi_uidivmod;
 extern int __aeabi_idivmod;
 extern int __aeabi_d2iz;
 
-RTM_EXPORT(__aeabi_ddiv)
-RTM_EXPORT(__aeabi_dmul)
-RTM_EXPORT(__aeabi_i2d)
-RTM_EXPORT(__aeabi_uidiv)
-RTM_EXPORT(__aeabi_idiv)
-RTM_EXPORT(__aeabi_idivmod)
-RTM_EXPORT(__aeabi_uidivmod)
-RTM_EXPORT(__aeabi_d2iz)
-RTM_EXPORT(strcmp)
-RTM_EXPORT(strcpy)
-RTM_EXPORT(strlen)
-RTM_EXPORT(rand)
-RTM_EXPORT(memset)
-RTM_EXPORT(memcpy)
+RTM_EXPORT(__aeabi_ddiv);
+RTM_EXPORT(__aeabi_dmul);
+RTM_EXPORT(__aeabi_i2d);
+RTM_EXPORT(__aeabi_uidiv);
+RTM_EXPORT(__aeabi_idiv);
+RTM_EXPORT(__aeabi_idivmod);
+RTM_EXPORT(__aeabi_uidivmod);
+RTM_EXPORT(__aeabi_d2iz);
+RTM_EXPORT(strcmp);
+RTM_EXPORT(strcpy);
+RTM_EXPORT(strlen);
+RTM_EXPORT(rand);
+RTM_EXPORT(memset);
+RTM_EXPORT(memcpy);
 
 #ifdef RT_USING_NEWLIB
 
 #include <unistd.h>
 
-RTM_EXPORT(snprintf)
-RTM_EXPORT(access)
-RTM_EXPORT(__assert_func)
+RTM_EXPORT(snprintf);
+RTM_EXPORT(access);
+RTM_EXPORT(__assert_func);
 
 #include <time.h>
-RTM_EXPORT(localtime)
-RTM_EXPORT(time)
+RTM_EXPORT(localtime);
+RTM_EXPORT(time);
 
 #endif
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 
-RTM_EXPORT(open)
-RTM_EXPORT(close)
-RTM_EXPORT(read)
-RTM_EXPORT(write)
-RTM_EXPORT(stat)
+RTM_EXPORT(open);
+RTM_EXPORT(close);
+RTM_EXPORT(read);
+RTM_EXPORT(write);
+RTM_EXPORT(stat);
 #endif
 
 #ifdef RT_USING_RTGUI
@@ -215,45 +217,52 @@ RTM_EXPORT(stat)
 #include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/button.h>
+#include <rtgui/widgets/label.h>
 #include <rtgui/widgets/list_view.h>
+#include <rtgui/widgets/listctrl.h>
 #include <rtgui/widgets/filelist_view.h>
 
-RTM_EXPORT(rtgui_view_show)
-RTM_EXPORT(rtgui_view_create)
-RTM_EXPORT(rtgui_view_destroy)
-RTM_EXPORT(rtgui_view_event_handler)
-RTM_EXPORT(rtgui_dc_draw_text)
-RTM_EXPORT(rtgui_dc_begin_drawing)
-RTM_EXPORT(rtgui_dc_end_drawing)
-RTM_EXPORT(rtgui_workbench_event_loop)
-RTM_EXPORT(rtgui_workbench_event_handler)
-RTM_EXPORT(rtgui_workbench_add_view)
-RTM_EXPORT(rtgui_workbench_create)
-RTM_EXPORT(rtgui_workbench_destroy)
-RTM_EXPORT(rtgui_workbench_close)
-RTM_EXPORT(rtgui_timer_start)
-RTM_EXPORT(rtgui_timer_create)
-RTM_EXPORT(rtgui_timer_destory)
-RTM_EXPORT(rtgui_timer_stop)
-RTM_EXPORT(rtgui_thread_register)
-RTM_EXPORT(rtgui_thread_deregister)
-RTM_EXPORT(rtgui_widget_focus)
-RTM_EXPORT(rtgui_widget_set_event_handler)
-RTM_EXPORT(rtgui_widget_rect_to_device)
-RTM_EXPORT(rtgui_widget_update)
-RTM_EXPORT(rtgui_widget_get_rect)
-RTM_EXPORT(rtgui_widget_set_rect)
-RTM_EXPORT(rtgui_widget_get_toplevel)
-RTM_EXPORT(rtgui_panel_register)
-RTM_EXPORT(rtgui_panel_set_default_focused)
-RTM_EXPORT(rtgui_button_create)
-RTM_EXPORT(rtgui_button_destroy)
-RTM_EXPORT(rtgui_button_set_onbutton)
-RTM_EXPORT(rtgui_container_add_child)
-RTM_EXPORT(rtgui_filelist_view_create)
-RTM_EXPORT(rtgui_filelist_view_get_fullpath)
-RTM_EXPORT(rtgui_list_view_create)
-RTM_EXPORT(rtgui_list_view_destroy)
+RTM_EXPORT(rtgui_label_create);
+RTM_EXPORT(rtgui_view_show);
+RTM_EXPORT(rtgui_view_create);
+RTM_EXPORT(rtgui_view_destroy);
+RTM_EXPORT(rtgui_view_event_handler);
+RTM_EXPORT(rtgui_dc_draw_text);
+RTM_EXPORT(rtgui_dc_begin_drawing);
+RTM_EXPORT(rtgui_dc_end_drawing);
+RTM_EXPORT(rtgui_workbench_event_loop);
+RTM_EXPORT(rtgui_workbench_event_handler);
+RTM_EXPORT(rtgui_workbench_add_view);
+RTM_EXPORT(rtgui_workbench_create);
+RTM_EXPORT(rtgui_workbench_destroy);
+RTM_EXPORT(rtgui_workbench_close);
+RTM_EXPORT(rtgui_timer_start);
+RTM_EXPORT(rtgui_timer_create);
+RTM_EXPORT(rtgui_timer_destory);
+RTM_EXPORT(rtgui_timer_stop);
+RTM_EXPORT(rtgui_thread_register);
+RTM_EXPORT(rtgui_thread_deregister);
+RTM_EXPORT(rtgui_widget_focus);
+RTM_EXPORT(rtgui_widget_set_event_handler);
+RTM_EXPORT(rtgui_widget_rect_to_device);
+RTM_EXPORT(rtgui_widget_update);
+RTM_EXPORT(rtgui_widget_get_rect);
+RTM_EXPORT(rtgui_widget_set_rect);
+RTM_EXPORT(rtgui_widget_get_toplevel);
+RTM_EXPORT(rtgui_panel_register);
+RTM_EXPORT(rtgui_panel_set_default_focused);
+RTM_EXPORT(rtgui_button_create);
+RTM_EXPORT(rtgui_button_destroy);
+RTM_EXPORT(rtgui_button_set_onbutton);
+RTM_EXPORT(rtgui_container_add_child);
+RTM_EXPORT(rtgui_filelist_view_create);
+RTM_EXPORT(rtgui_filelist_view_get_fullpath);
+RTM_EXPORT(rtgui_list_view_create);
+RTM_EXPORT(rtgui_list_view_destroy);
+RTM_EXPORT(rtgui_listctrl_set_onitem);
+RTM_EXPORT(rtgui_image_create_from_mem);
+RTM_EXPORT(rtgui_listctrl_create);
+
 #endif
 #endif
 

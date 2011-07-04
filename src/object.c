@@ -340,7 +340,7 @@ void rt_object_delete(rt_object_t object)
 	/* unlock interrupt */
 	rt_hw_interrupt_enable(temp);
 
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
 	if(object->flag & RT_OBJECT_FLAG_MODULE) 
 		rt_module_free((rt_module_t)object->module_id, object);
 	else

@@ -256,6 +256,12 @@ void *rt_page_alloc(rt_size_t npages)
 			break;
 		}
 	}
+
+#ifdef RT_MEM_STATS
+	used_mem += npages * RT_MM_PAGE_SIZE;
+	if (used_mem > max_mem) max_mem = used_mem;
+#endif
+
 	/* unlock heap */
 	rt_sem_release(&heap_sem);
 
@@ -275,6 +281,13 @@ void rt_page_free(void *addr, rt_size_t npages)
 
 	/* lock heap */
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+
+	/* update memory usage */
+#ifdef RT_MEM_STATS
+	if(rt_page_list != RT_NULL)
+		used_mem -= npages * RT_MM_PAGE_SIZE;
+#endif
+
 	for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
 	{
 		RT_ASSERT(b->page > 0);
@@ -442,52 +455,6 @@ rt_inline int zoneindex(rt_uint32_t *bytes)
  */
 
 /*@{*/
-
-/*
- * This function will allocate the numbers page with specified size
- * in page memory.
- *
- * @param size the size of memory to be allocated.
- * @note this function is used for RT-Thread Application Module
- */
-void *rt_malloc_page(rt_size_t npages)
-{
-	void* chunk;
-
-	chunk = rt_page_alloc(npages);
-	if (chunk == RT_NULL) return RT_NULL;
-
-	/* update memory usage */
-#ifdef RT_MEM_STATS
-	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-	used_mem += npages * RT_MM_PAGE_SIZE;
-	if (used_mem > max_mem) max_mem = used_mem;
-	rt_sem_release(&heap_sem);
-#endif
-
-	return chunk;
-}
-
-/*
- * This function will release the previously allocated memory page 
- * by rt_malloc_page.
- *
- * @param page_ptr the page address to be released.
- * @param npages the number of page shall be released.
- * 
- * @note this function is used for RT-Thread Application Module
- */
-void rt_free_page(void *page_ptr, rt_size_t npages)
-{
-	rt_page_free(page_ptr, npages);
-
-	/* update memory usage */
-#ifdef RT_MEM_STATS
-	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-	used_mem -= npages * RT_MM_PAGE_SIZE;
-	rt_sem_release(&heap_sem);
-#endif
-}
 
 /**
  * This function will allocate a block from system heap memory.

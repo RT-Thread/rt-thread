@@ -759,8 +759,8 @@ struct rt_module
 
 	/* module memory allocator */
 	void*		mem_list;							/**< module's free memory list					*/
-	rt_list_t	page_list;							/**< module's using page list	 				*/
-	rt_mp_t	mpool;									/**< module's memory pool 						*/
+	void*	    page_array;							/**< module's using pages 						*/
+	rt_uint32_t page_cnt;							/**< module's using pages count					*/
 
 	rt_uint32_t nsym;								/**< number of symbol in the module 			*/
 	struct rt_module_symtab *symtab;				/**< module symbol table 						*/

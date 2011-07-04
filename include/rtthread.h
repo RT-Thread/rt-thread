@@ -317,6 +317,12 @@ void rt_module_free(rt_module_t module, void *addr);
 rt_module_t rt_module_self (void);
 rt_err_t rt_module_set (rt_module_t module);
 rt_module_t rt_module_find(const char* name);
+
+#ifdef RT_USING_HOOK
+void rt_module_load_sethook(void (*hook)(rt_module_t module));
+void rt_module_unload_sethook(void (*hook)(rt_module_t module));
+#endif
+
 #endif
 /*@}*/
  
