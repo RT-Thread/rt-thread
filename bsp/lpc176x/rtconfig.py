@@ -9,6 +9,9 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
+elif CROSS_TOOL == 'iar':
+	PLATFORM 	= 'iar'
+	EXEC_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0/arm/bin'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
