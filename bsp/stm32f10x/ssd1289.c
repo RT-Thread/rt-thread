@@ -260,44 +260,6 @@ static void lcd_data_bus_test(void)
     }
 }
 
-static void lcd_gram_test(void)
-{
-    unsigned short temp;
-    unsigned int test_x;
-    unsigned int test_y;
-
-    printf(" LCD GRAM test....");
-
-    /* write */
-    temp=0;
-    write_reg(0x0011,0x6030 | (0<<3)); // AM=0 hline
-
-    lcd_SetCursor(0,0);
-    rw_data_prepare();
-    for(test_y=0; test_y<76800; test_y++)
-    {
-        write_data(temp);
-        temp++;
-    }/* write */
-
-    /* read */
-    temp=0;
-    {
-        for(test_y=0; test_y<320; test_y++)
-        {
-            for(test_x=0; test_x<240; test_x++)
-            {
-                if(  lcd_read_gram(test_x,test_y) != temp++)
-                {
-                    printf("  LCD GRAM ERR!!\r\n");
-                    return ;
-                }
-            }
-        }
-        printf("  TEST PASS!\r\n");
-    }/* read */
-}
-
 void ssd1289_init(void)
 {
     lcd_port_init();
@@ -510,7 +472,23 @@ static rt_err_t lcd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
 void rt_hw_lcd_init(void)
 {
-	extern struct rt_device_graphic_ops ssd1289_ops;
+    /* LCD RESET */
+    /* PF10 : LCD RESET */
+    {
+        GPIO_InitTypeDef GPIO_InitStructure;
+
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF, ENABLE);
+
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_Init(GPIOF,&GPIO_InitStructure);
+
+        GPIO_ResetBits(GPIOF,GPIO_Pin_10);
+        GPIO_SetBits(GPIOF,GPIO_Pin_10);
+        /* wait for lcd reset */
+        rt_thread_delay(1);
+    }
 
 	/* register lcd device */
 	_lcd_device.type  = RT_Device_Class_Graphic;
