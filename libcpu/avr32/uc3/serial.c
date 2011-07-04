@@ -19,7 +19,6 @@
 #include "serial.h"
 #include "compiler.h"
 #include "usart.h"
-#include "pdca.h"
 
 struct rt_device _rt_usart_device;
 struct avr32_serial_int_rx _rt_usart_rx;

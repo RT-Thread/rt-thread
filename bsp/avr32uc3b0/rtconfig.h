@@ -72,6 +72,7 @@
 
 /* SECTION: Console options */
 /* the buffer size of console*/
+#define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE	128
 
 /* SECTION: FinSH shell options */

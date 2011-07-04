@@ -1,4 +1,4 @@
-/* This file is part of the ATMEL AVR32-UC3-SoftwareFramework-1.6.0 Release */
+/* This file is part of the ATMEL AVR-UC3-SoftwareFramework-1.7.0 Release */
 
 /*This file is prepared for Doxygen automatic documentation generation.*/
 /*! \file *********************************************************************
@@ -195,39 +195,28 @@ _handle_Supervisor_Call:
 
   .irp    priority, 0, 1, 2, 3
 _int\priority:
+#if __AVR32_UC__
+  // R8-R12, LR, PC and SR are automatically pushed onto the system stack by the
+  // CPU upon interrupt entry. No other register is saved by hardware.
+#elif __AVR32_AP__
+  // PC and SR are automatically saved in respectively RAR_INTx and RSR_INTx by
+  // the CPU upon interrupt entry. No other register is saved by hardware.
+  pushm   r8-r12, lr
+#endif
   mov     r12, \priority  // Pass the int_level parameter to the _get_interrupt_handler function.
   call    _get_interrupt_handler
   cp.w    r12, 0          // Get the pointer to the interrupt handler returned by the function.
-  breq    _spint\priority // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
-  call    rt_interrupt_enter
-  icall   r12
-  call    rt_interrupt_leave
-  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
-  lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
-  ld.w    r11, r12[0]
-  cp.w    r11, 0
-  brne    _spint\priority
-  lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
-  ld.w    r11, r12[0]
-  cp.w    r11, 1
-  breq    rt_hw_context_switch_interrupt_do
-_spint\priority:
-  csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
+#if __AVR32_UC__
+  movne   pc, r12         // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
+#elif __AVR32_AP__
+  breq    spint\priority  // If this was a spurious interrupt (R12 == NULL), branch.
+  st.w    --sp, r12       // Push the pointer to the interrupt handler onto the system stack since no register may be altered.
+  popm    r8-r12, lr, pc  // Restore registers and jump to the handler.
+spint\priority:
+  popm    r8-r12, lr
+#endif
   rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
   .endr
-
-rt_hw_context_switch_interrupt_do:
-  mov     r11, 0
-  st.w    r12[0], r11					/* Clear rt_thread_switch_interrupt_flag */
-  stm     --sp, r0-r7					/* Push R0-R7 */
-  lda.w   r12, rt_interrupt_from_thread	/* Get old thread SP */
-  ld.w    r12, r12[0]
-  lda.w   r11, rt_interrupt_to_thread	/* Get new thread SP */
-  ld.w    r11, r11[0]
-  st.w    r12[0], sp					/* Store old thead SP */
-  ld.w    sp, r11[0]					/* Load new thread SP */
-  ldm     sp++, r0-r7					/* Pop R0-R7 (new thread) */
-  rete									/* RETE pops R8-R12, LR, PC, SR automatically */
 
 
 // Constant data area.
