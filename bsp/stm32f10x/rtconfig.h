@@ -138,4 +138,30 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
+/* SECTION: RT-Thread/GUI */
+#define RT_USING_RTGUI
+
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX		12
+/* support 16 weight font */
+#define RTGUI_USING_FONT16
+/* support Chinese font */
+#define RTGUI_USING_FONTHZ
+/* use DFS as file interface */
+#define RTGUI_USING_DFS_FILERW
+/* use font file as Chinese font */
+#define RTGUI_USING_HZ_FILE
+/* use Chinese bitmap font */
+#define RTGUI_USING_HZ_BMP
+/* use small size in RTGUI */
+#define RTGUI_USING_SMALL_SIZE
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+/* default font size in RTGUI */
+#define RTGUI_DEFAULT_FONT_SIZE	16
+
+/* image support */
+/* #define RTGUI_IMAGE_XPM */
+/* #define RTGUI_IMAGE_BMP */
+
 #endif

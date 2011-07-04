@@ -3,12 +3,16 @@ ARCH='arm'
 CPU='stm32'
 CROSS_TOOL='keil'
 
+# lcd panel options
+# 'FMT0371','ILI932X', 'SSD1289'
+RT_USING_LCD_TYPE = 'SSD1289'
+
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'D:/SourceryGCC/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'

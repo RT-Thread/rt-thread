@@ -115,6 +115,33 @@ void rt_init_thread_entry(void* parameter)
 		rt_kprintf("TCP/IP initialized!\n");
 	}
 #endif
+
+#ifdef RT_USING_RTGUI
+	{
+		rt_device_t lcd;
+
+		/* init lcd */
+		rt_hw_lcd_init();
+
+		/* init touch panel */
+		rtgui_touch_hw_init();
+
+		/* init keypad */
+		rt_hw_key_init();
+
+		/* re-init device driver */
+		rt_device_init_all();
+
+		/* find lcd device */
+		lcd = rt_device_find("lcd");
+
+		/* set lcd device as rtgui graphic driver */
+		rtgui_graphic_set_device(lcd);
+
+		/* startup rtgui */
+		rtgui_startup();
+	}
+#endif /* #ifdef RT_USING_RTGUI */
 }
 
 int rt_application_init()
