@@ -569,7 +569,7 @@ def EndBuilding(target):
     if GetOption('target') == 'mdk':
         template = os.path.isfile('template.Uv2')
         if rtconfig.CROSS_TOOL != 'keil':
-            print 'Please use Keil MDK compiler in rtconfig.h'
+            print 'Please use Keil MDK compiler in rtconfig.py'
             return 
 
         if template:
@@ -583,12 +583,12 @@ def EndBuilding(target):
 
     if GetOption('target') == 'mdk4':
         if rtconfig.CROSS_TOOL != 'keil':
-            print 'Please use Keil MDK compiler in rtconfig.h'
+            print 'Please use Keil MDK compiler in rtconfig.py'
             return 
         MDK4Project('project.uvproj', Projects)
     
     if GetOption('target') == 'iar':
         if rtconfig.CROSS_TOOL != 'iar':
-            print 'Please use IAR compiler in rtconfig.h'
+            print 'Please use IAR compiler in rtconfig.py'
             return 
         IARProject('project.ewp', Projects)
