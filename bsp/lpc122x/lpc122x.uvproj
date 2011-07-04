@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>1.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -29,6 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -414,11 +415,6 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>tc_comm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\tc_comm.c</FilePath>
             </File>
           </Files>
         </Group>
