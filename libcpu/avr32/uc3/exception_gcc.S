@@ -193,12 +193,11 @@ _handle_Supervisor_Call:
 
   .balign 4
 
-  .irp    priority, 0, 1, 2, 3
-_int\priority:
-  mov     r12, \priority  // Pass the int_level parameter to the _get_interrupt_handler function.
+_int0:
+  mov     r12, 0          // Pass the int_level parameter to the _get_interrupt_handler function.
   call    _get_interrupt_handler
   cp.w    r12, 0          // Get the pointer to the interrupt handler returned by the function.
-  breq    _spint\priority // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
+  breq    _spint0         // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
   call    rt_interrupt_enter
   icall   r12
   call    rt_interrupt_leave
@@ -206,15 +205,81 @@ _int\priority:
   lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
   ld.w    r11, r12[0]
   cp.w    r11, 0
-  brne    _spint\priority
+  brne    _spint0
   lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
   ld.w    r11, r12[0]
   cp.w    r11, 1
   breq    rt_hw_context_switch_interrupt_do
-_spint\priority:
+_spint0:
   csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
   rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
-  .endr
+
+
+_int1:
+  mov     r12, 1          // Pass the int_level parameter to the _get_interrupt_handler function.
+  call    _get_interrupt_handler
+  cp.w    r12, 0          // Get the pointer to the interrupt handler returned by the function.
+  breq    _spint1         // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
+  call    rt_interrupt_enter
+  icall   r12
+  call    rt_interrupt_leave
+  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
+  lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 0
+  brne    _spint1
+  lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 1
+  breq    rt_hw_context_switch_interrupt_do
+_spint1:
+  csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
+  rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
+
+
+_int2:
+  mov     r12, 2          // Pass the int_level parameter to the _get_interrupt_handler function.
+  call    _get_interrupt_handler
+  cp.w    r12, 0          // Get the pointer to the interrupt handler returned by the function.
+  breq    _spint2         // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
+  call    rt_interrupt_enter
+  icall   r12
+  call    rt_interrupt_leave
+  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
+  lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 0
+  brne    _spint2
+  lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 1
+  breq    rt_hw_context_switch_interrupt_do
+_spint2:
+  csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
+  rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
+
+
+_int3:
+  mov     r12, 3          // Pass the int_level parameter to the _get_interrupt_handler function.
+  call    _get_interrupt_handler
+  cp.w    r12, 0          // Get the pointer to the interrupt handler returned by the function.
+  breq    _spint3         // If this was not a spurious interrupt (R12 != NULL), jump to the handler.
+  call    rt_interrupt_enter
+  icall   r12
+  call    rt_interrupt_leave
+  ssrf    AVR32_SR_GM_OFFSET			/* Disable global interrupt */
+  lda.w   r12, rt_interrupt_nest		/* Is nested interrupt? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 0
+  brne    _spint3
+  lda.w   r12, rt_thread_switch_interrupt_flag	/* Is thread switch required? */
+  ld.w    r11, r12[0]
+  cp.w    r11, 1
+  breq    rt_hw_context_switch_interrupt_do
+_spint3:
+  csrf    AVR32_SR_GM_OFFSET			/* Enable global interrupt */
+  rete                    // If this was a spurious interrupt (R12 == NULL), return from event handler.
+
 
 rt_hw_context_switch_interrupt_do:
   mov     r11, 0
