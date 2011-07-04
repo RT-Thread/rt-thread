@@ -49,7 +49,7 @@ extern struct rt_device uart0_device;
 	rt_uint8_t _fiq_stack_start[1024];
 	rt_uint8_t _undefined_stack_start[512];
 	rt_uint8_t _abort_stack_start[512];
-	rt_uint8_t _svc_stack_start[1024] SECTION(".nobss");
+	rt_uint8_t _svc_stack_start[4096] SECTION(".nobss");
 	extern unsigned char __bss_start;
 	extern unsigned char __bss_end;
 #endif
