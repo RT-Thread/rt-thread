@@ -81,9 +81,9 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' --cpu DARMSTM --thumb'
+    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
 
-    CFLAGS = ''
+    CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
     CFLAGS += ' --no_cse' 
     CFLAGS += ' --no_unroll' 
@@ -97,9 +97,9 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M3' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/DLib_Config_Normal.h"'    
+    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
-    CFLAGS += ' -I"' + IAR_PATH + '/arm/inc"'
+    CFLAGS += ' --use_c++_inline'
         
     AFLAGS = ''
     AFLAGS += ' -s+' 
@@ -107,7 +107,6 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -r' 
     AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None' 
-    AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
 
     LFLAGS = ' --config stm32f10x_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
