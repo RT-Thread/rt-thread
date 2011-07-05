@@ -561,7 +561,7 @@ rt_module_t rt_module_open(const char* path)
 
 	if (stat(path, &s) !=0)
 	{
-		rt_kprintf("access file failed\n");
+		rt_kprintf("access %s failed\n", path);
 		return RT_NULL;
 	}
 	buffer = (char *)rt_malloc(s.st_size);
@@ -575,7 +575,7 @@ rt_module_t rt_module_open(const char* path)
 	fd = open(path, O_RDONLY, 0);
 	if (fd < 0)
 	{
-		rt_kprintf("open file failed\n");
+		rt_kprintf("open %s failed\n", path);
 		rt_free(buffer);
 		return RT_NULL;
 	}
@@ -975,7 +975,7 @@ void *rt_module_malloc(rt_size_t size)
 
 	rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
 
-	for (prev = &rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	
+	for (prev = (struct rt_mem_head **)&rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	
 	{
 		if (b->size > nunits)
 		{
@@ -1010,7 +1010,7 @@ void *rt_module_malloc(rt_size_t size)
 
 	up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 	
-	for (prev = &rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	 
+	for (prev = (struct rt_mem_head **)&rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	 
 	{
 		if (b > up + up->size) break;
 	}
@@ -1244,7 +1244,7 @@ void list_memlist(const char* name)
 	struct rt_mem_head *b;
 		
 	module = rt_module_find(name);
-	if(module == RT_NULL) return RT_NULL;
+	if(module == RT_NULL) return;
 
 	for (prev = (struct rt_mem_head **)&module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	
 	{
@@ -1260,7 +1260,7 @@ void list_mempage(const char* name)
 	int i;
 
 	module = rt_module_find(name);
-	if(module == RT_NULL) return RT_NULL;
+	if(module == RT_NULL) return;
 
 	page = (struct rt_page_info*)module->page_array;
 
