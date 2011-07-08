@@ -1,23 +1,24 @@
-/******************************************************************//**
- * @file 		drv_usart.h
+/***************************************************************************//**
+ * @file 	drv_usart.h
  * @brief 	USART driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
- *********************************************************************/
+ * 2011-06-27	onelife		Fix a bug when using compiler optimization
+ ******************************************************************************/
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__
 
-/* Includes -------------------------------------------------------------------*/
-/* Exported types -------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 struct efm32_usart_int_mode_t
 {
 	rt_uint8_t  *data_ptr;
@@ -40,7 +41,7 @@ struct efm32_usart_device_t
 	/* Unit number */
 	rt_uint8_t unit;
 	/* State */
-	rt_uint8_t state;
+	volatile rt_uint8_t state;
 	/*  Pointer to USART device structure */
 	USART_TypeDef* usart_device;
 	/* Pointer to RX structure */
@@ -49,8 +50,8 @@ struct efm32_usart_device_t
 	void *tx_mode;
 };
 
-/* Exported constants ---------------------------------------------------------*/
-/* Exported macro -------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
 #define USART_WAIT_TIME_TX		(RT_TICK_PER_SECOND / 100 * 3)
 
 #define USART_STATE_CONSOLE 	(1 << 0)
@@ -61,7 +62,7 @@ struct efm32_usart_device_t
 #define USART_STATE_RX_BUSY 	(1 << 5)
 
 
-/* Exported functions --------------------------------------------------------- */
+/* Exported functions ------------------------------------------------------- */
 void rt_hw_usart_init(void);
 
 #endif /* __DRV_USART_H__ */

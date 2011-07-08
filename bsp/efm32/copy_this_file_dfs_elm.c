@@ -780,7 +780,6 @@ DRESULT disk_ioctl (
 {
 	rt_device_t device = disk[drv];
 
-	/* Supports only single drive */
 	if (!device)
 	{
 		return RES_ERROR;

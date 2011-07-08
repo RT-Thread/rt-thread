@@ -1,47 +1,47 @@
-/******************************************************************//**
- * @file 		dev_misc.c
+/***************************************************************************//**
+ * @file 	dev_misc.c
  * @brief 	Miscellaneous drivers of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-02-22	onelife		Initial creation for EFM32
- *********************************************************************/
+ ******************************************************************************/
 
-/******************************************************************//**
+/***************************************************************************//**
  * @addtogroup efm32
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "drv_adc.h"
 
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_MISC_DEBUG
 #define misc_debug(format,args...) 			rt_kprintf(format, ##args)
 #else
 #define misc_debug(format,args...)
 #endif
 
-/* Private constants -----------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------*/
 static rt_device_t adc0;
 static struct efm32_adc_control_t control = {ADC_MODE_SINGLE};
 
-/* Private variables ------------------------------------------------------------*/
-/* Private function prototypes ---------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
 rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcSample);
 
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Get current temperature value in degree celsius
  *
@@ -52,14 +52,14 @@ rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcSample);
  * @return
  *   Temperature value (signed integer) in degree celsius times 100
  *
- *********************************************************************/
+ ******************************************************************************/
 rt_int32_t rt_hw_get_temp(void)
 {
 	ADC_InitSingle_TypeDef 	singleInit = ADC_INITSINGLE_DEFAULT;
 	rt_uint32_t 			temp;
 
-	/* Set input to temperature sensor. Acquisition time must be 256 cycles. Reference must 
-	    be 1.25V */
+	/* Set input to temperature sensor. Acquisition time must be 256 cycles. 
+	   Reference must be 1.25V */
 	singleInit.acqTime 		= adcAcqTime32;
 	singleInit.reference 	= adcRef1V25;
 	singleInit.input 		= adcSingleInpTemp;
@@ -72,7 +72,7 @@ rt_int32_t rt_hw_get_temp(void)
 	return efm32_misc_getCelsius(temp);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Get current VDD value in volt
  *
@@ -83,7 +83,7 @@ rt_int32_t rt_hw_get_temp(void)
  * @return
  *   VDD value (unsigned integer) in volt times 100
  *
- *********************************************************************/
+ ******************************************************************************/
 rt_uint32_t rt_hw_get_vdd(void)
 {
 	ADC_InitSingle_TypeDef 	singleInit = ADC_INITSINGLE_DEFAULT;
@@ -102,7 +102,7 @@ rt_uint32_t rt_hw_get_vdd(void)
 	return (vdd * 125 * 3) / 4096;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Initialize all the miscellaneous drivers
  *
@@ -112,7 +112,7 @@ rt_uint32_t rt_hw_get_vdd(void)
  *
  * @return
  *	 Error code
- *********************************************************************/
+ ******************************************************************************/
 rt_err_t rt_hw_misc_init(void)
 {
 	adc0 = rt_device_find(RT_ADC0_NAME);
@@ -129,7 +129,7 @@ MISC_INIT_ERROR:
 
 }
 
-/**************************************************************************//**
+/***************************************************************************//**
  * @brief 
  *   Convert ADC result to degree celsius.
  *
@@ -144,7 +144,7 @@ MISC_INIT_ERROR:
  * @return 
  *   The temperature value (signed integer) in degrees celsius times 100
  *
- *****************************************************************************/
+ ******************************************************************************/
 rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcResult)
 {
 	/* Factory calibration temperature from device information page. */
@@ -161,9 +161,9 @@ rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcResult)
 	return (cal_temp - (cal_value - (rt_int32_t)adcResult * 10000) / t_grad);
 }
 
-/*********************************************************************
-* 	Export to FINSH
-*********************************************************************/
+/***************************************************************************//**
+ * 	Export to FINSH
+ ******************************************************************************/
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
@@ -185,6 +185,6 @@ FINSH_FUNCTION_EXPORT(list_vdd, list current VDD value.)
 
 #endif
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

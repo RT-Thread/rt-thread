@@ -118,7 +118,7 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-	/* init all device */
+	/* init all devices */
 	rt_device_init_all();
 
 #ifdef RT_USING_FINSH

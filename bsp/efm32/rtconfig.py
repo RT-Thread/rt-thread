@@ -1,22 +1,23 @@
 # toolchains options
-ARCH     = 'arm'
-CPU      = 'cortex-m3'
-CROSS_TOOL 	= 'gcc'
+ARCH        = 'arm'
+CPU         = 'cortex-m3'
+CROSS_TOOL  = 'gcc'
 
 if CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
+    PLATFORM    = 'gcc'
+    EXEC_PATH   = 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
+    #EXEC_PATH  = 'C:\Program Files (x86)\yagarto\bin'
 
-BUILD = 'debug'
-# EFM32_BOARD 	=  'EFM32_G890_STK'
-EFM32_BOARD 	=  'EFM32_G290_DK'
+BUILD = 'run'
+# EFM32_BOARD   =  'EFM32_G890_STK'
+EFM32_BOARD     =  'EFM32_G290_DK'
 
 if EFM32_BOARD == 'EFM32_G890_STK':
-#	EFM32_FAMILY = 'Gecko'
-	EFM32_TYPE = 'EFM32G890F128'
+    EFM32_FAMILY = 'Gecko'
+    EFM32_TYPE = 'EFM32G890F128'
 elif EFM32_BOARD == 'EFM32_G290_DK':
-#	EFM32_FAMILY = 'Gecko'
-	EFM32_TYPE = 'EFM32G290F128'
+    EFM32_FAMILY = 'Gecko'
+    EFM32_TYPE = 'EFM32G290F128'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -30,10 +31,11 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m3 -mthumb'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
+    #CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,Reset_Handler -T efm32_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -T efm32_rom.ld'
 
     CPATH = ''
     LPATH = ''

@@ -1,30 +1,30 @@
-/******************************************************************//**
- * @file 		application.c
+/***************************************************************************//**
+ * @file 	application.c
  * @brief 	application tasks
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2009-01-05 	Bernard 		first version
+ * 2009-01-05 	Bernard 	first version
  * 2010-12-29	onelife		Modify for EFM32
  * 2011-05-06	onelife		Add SPI Flash DEMO
- *********************************************************************/
+ ******************************************************************************/
  
-/******************************************************************//**
-* @addtogroup cortex-m3
-* @{
-*********************************************************************/
+/***************************************************************************//**
+ * @addtogroup efm32
+ * @{
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include <board.h>
 
-#ifdef RT_USING_DFS
+#if defined(RT_USING_DFS)
 /* dfs init */
 #include <dfs_init.h>
 /* dfs filesystem:ELM filesystem init */
@@ -34,33 +34,35 @@
 #endif
 
 #include "dev_led.h"
-#ifdef EFM32_USING_SFLASH
+#if defined(EFM32_USING_SFLASH)
 #include "dev_sflash.h"
 #endif
-#ifdef EFM32_USING_SPISD
+#if defined(EFM32_USING_SPISD)
 #include "drv_sdcard.h"
 #endif
+#if defined(EFM32_USING_ETHERNET)
+#include "drv_ethernet.h"
+#endif
 
-
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
-/* Private variables ------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 rt_uint32_t	rt_system_status = 0;
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 void rt_demo_thread_entry(void* parameter)
 {
 #if defined(RT_USING_DFS)
 	/* Filesystem Initialization */
 	dfs_init();
 
-#if defined(RT_USING_DFS_ELMFAT)
+ #if defined(RT_USING_DFS_ELMFAT)
 	/* init the elm chan FatFs filesystam*/
 	elm_init();
 
-#if defined(EFM32_USING_SPISD)
+  #if defined(EFM32_USING_SPISD)
 	/* mount sd card fat partition 1 as root directory */
 	if (dfs_mount(SPISD_DEVICE_NAME, "/", "elm", 0, 0) == 0)
 	{
@@ -70,8 +72,8 @@ void rt_demo_thread_entry(void* parameter)
 	{
 		rt_kprintf("FatFs init failed!\n");
 	}
-#endif
-#endif
+  #endif
+ #endif
 #endif
 
 #ifdef EFM32_USING_SFLASH
@@ -110,6 +112,20 @@ void rt_demo_thread_entry(void* parameter)
 	//efm_spiFlash_deinit();
 }
 #endif
+
+#if defined(EFM32_USING_ETHERNET)
+	rt_device_t eth = RT_NULL;
+
+	eth = rt_device_find(ETH_DEVICE_NAME);
+	if (eth != RT_NULL)
+	{
+		eth->init(eth);
+	}
+	else
+	{
+		rt_kprintf("%s is not found\n"), ETH_DEVICE_NAME;
+	}
+#endif
 	rt_kprintf("Demo End\n");
 }
 
@@ -139,24 +155,57 @@ int rt_application_init()
 	rt_thread_t demo_thread, led_thread;
 
 #if defined(EFM32_USING_SFLASH)
-	efm_spiFlash_init();
+	if (efm_spiFlash_init() != RT_EOK)
+	{
+		rt_kprintf("*** Init SPI Flash driver failed!");
+		while(1); //Or do something?
+	}
 #endif
 
 #if defined(EFM32_USING_SPISD)
-	efm_spiSd_init();
+	if (efm_spiSd_init() != RT_EOK)
+	{
+		rt_kprintf("*** Init SD card driver failed!");
+		while(1); //Or do something?
+	}
 #endif
 
 	/* Initialize all device drivers (dev_?.c) */
 	if (rt_hw_led_init() != RT_EOK)
 	{
-		rt_kprintf("*** Failed to initialize LED driver!");
+		rt_kprintf("*** Init LED driver failed!");
 		while(1); //Or do something?
 	}
 #if defined(RT_USING_ADC0)
 	if (rt_hw_misc_init() != RT_EOK)
 	{
-		rt_kprintf("*** Failed to miscellaneous driver!");
+		rt_kprintf("*** Init miscellaneous driver failed!");
 		while(1); //Or do something?
+	}
+#endif
+
+#if defined(RT_USING_LWIP)
+	{
+		extern void lwip_sys_init(void);
+		extern void httpd_init(void);
+
+		/* Create Ethernet Threads */
+		if (eth_system_device_init() != RT_EOK)
+		{
+			rt_kprintf("*** Create Ethernet threads failed!");
+			while(1); //Or do something?
+		}
+ #if defined(EFM32_USING_ETHERNET)
+		if (efm_hw_eth_init() != RT_EOK)
+		{
+			rt_kprintf("*** Init Ethernet driver failed!");
+			while(1); //Or do something?
+		}
+ #endif
+		/* init lwip system */
+		lwip_sys_init();
+		httpd_init();
+		rt_kprintf("TCP/IP stack init OK!\n");
 	}
 #endif
 
@@ -165,7 +214,7 @@ int rt_application_init()
 		"demo",
 		rt_demo_thread_entry, 
 		RT_NULL,
-		2048, 
+		512, 
 		3, 
 		20);
 
@@ -193,6 +242,6 @@ int rt_application_init()
 	return 0;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

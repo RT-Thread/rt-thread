@@ -1,21 +1,22 @@
-/******************************************************************//**
+/***************************************************************************//**
  * @file 		efm32_rom.ld
  * @brief 	Linker script for EFM32 with GNU ld
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
- **********************************************************************
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2009-10-14 	Bernard 		first version
+ * 2009-10-14 	Bernard 	first version
  * 2010-12-22	onelife		Modify for EFM32
- *********************************************************************/
+ * 2011-07-06 	onelife 	Modify to make use the start code in libraries
+ ******************************************************************************/
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
-ENTRY(Reset_Handler)
+ENTRY(__cs3_reset)
 SEARCH_DIR(.)
 GROUP(-lgcc -lc -lcs3 -lcs3unhosted) 
 
@@ -24,20 +25,36 @@ MEMORY
 	CODE (rx) : ORIGIN = 0x00000000, LENGTH = 128K
 	DATA (rwx) : ORIGIN = 0x20000000, LENGTH = 16K
 }
+_system_stack_size = 0x200;
+
+/* These force the linker to search for particular symbols from
+ * the start of the link process and thus ensure the user's
+ * overrides are picked up
+ */
+
+EXTERN(__cs3_reset __cs3_reset_efm32)
+EXTERN(__cs3_start_asm _start)
+
+PROVIDE(__cs3_reset = __cs3_reset_efm32);
+PROVIDE(__cs3_start_asm = _start);
 
 SECTIONS
 {
 	.text :
 	{
 		. = ALIGN(4);
-		KEEP(*(.isr_vector))            /* Startup code */
+		KEEP(*(.cs3.interrupt_vector))  /* Startup code */
 		. = ALIGN(4);
+
+		*(.cs3.reset)
+		*(.cs3.init)
 		*(.text)						/* remaining code */
 		*(.text.*)						/* remaining code */
 		*(.rodata)						/* read-only data (constants) */
 		*(.rodata*)
 		*(.glue_7)
 		*(.glue_7t)
+		*(.gnu.linkonce.t*)
 
 		/* section information for finsh shell */
 		. = ALIGN(4);
@@ -52,13 +69,20 @@ SECTIONS
 
 		. = ALIGN(4);
 		_etext = .;
-
-		/* This is used by the startup in order to initialize the .data secion */
-		_sidata = _etext;
 	} > CODE = 0
 
-	/* .data section which is used for initialized data */
+	/* .ARM.exidx is sorted, so has to go in its own output section.  */
+	__exidx_start = .;
+	.ARM.exidx :
+	{
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
 
+		/* This is used by the startup in order to initialize the .data secion */
+		_sidata = .;
+	} > CODE
+	__exidx_end = .;
+
+	/* .data section which is used for initialized data */
 	.data : AT (_sidata)
 	{
 		. = ALIGN(4);
@@ -67,10 +91,18 @@ SECTIONS
 
 		*(.data)
 		*(.data.*)
+		*(.gnu.linkonce.d*)
 
 		. = ALIGN(4);
 		/* This is used by the startup in order to initialize the .data secion */
 		_edata = . ;
+	} >DATA
+
+	.stack : 
+	{
+		. = . + _system_stack_size;
+		. = ALIGN(4);
+		__cs3_stack = .;
 	} >DATA
 
 	__bss_start = .;
@@ -81,12 +113,12 @@ SECTIONS
 		_sbss = .;
 
 		*(.bss)
+		*(.bss.*)
 		*(COMMON)
 
 		. = ALIGN(4);
 		/* This is used by the startup in order to initialize the .bss secion */
 		_ebss = . ;
-		_estack = .;
 		
 		*(.bss.init)
 	} > DATA

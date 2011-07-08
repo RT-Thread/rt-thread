@@ -1,14 +1,14 @@
-/******************************************************************//**
- * @file 		drv_usart.c
+/***************************************************************************//**
+ * @file 	drv_usart.c
  * @brief 	USART driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
@@ -16,40 +16,42 @@
  * 2011-05-06	onelife		Add sync mode (SPI) support
  * 2011-06-14	onelife		Fix a bug of TX by DMA
  * 2011-06-16	onelife		Modify init function for efm32lib v2 upgrading
+ * 2011-07-07	onelife		Modify write function to avoid sleep in ISR
  *
  * @section Change Logs of serial.c
  * 2009-02-05	Bernard		first version
- * 2009-10-25	Bernard		fix rt_serial_read bug when there is no data in the buffer.
+ * 2009-10-25	Bernard		fix rt_serial_read bug when there is no data in the 
+ *  buffer.
  * 2010-03-29	Bernard		cleanup code.
- *********************************************************************/
+ ******************************************************************************/
 
-/******************************************************************//**
+/***************************************************************************//**
  * @addtogroup efm32
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "hdl_interrupt.h"
 #include "drv_usart.h"
 
 #if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || defined(RT_USING_USART2))
-/* Private typedef -------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
 union efm32_usart_init_t
 {
 	USART_InitAsync_TypeDef 	async;
 	USART_InitSync_TypeDef		sync;
 };
 
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_USART_DEBUG
 #define usart_debug(format,args...) 		rt_kprintf(format, ##args)
 #else
 #define usart_debug(format,args...)
 #endif
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_USART0
 #if (RT_USING_USART0 > 3)
 	#error "The location number range of usart is 0~3"
@@ -71,9 +73,9 @@ union efm32_usart_init_t
 	struct rt_device usart2_device;
 #endif
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Initialize USART device
  *
@@ -86,7 +88,7 @@ union efm32_usart_init_t
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_usart_init (rt_device_t dev)
 {
 	struct efm32_usart_device_t *usart;
@@ -122,7 +124,7 @@ static rt_err_t rt_usart_init (rt_device_t dev)
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Open USART device
  *
@@ -138,7 +140,7 @@ static rt_err_t rt_usart_init (rt_device_t dev)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -205,7 +207,7 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Close USART device
  *
@@ -218,7 +220,7 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_usart_close(rt_device_t dev)
 {
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
@@ -234,7 +236,7 @@ static rt_err_t rt_usart_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Read from USART device
  *
@@ -256,7 +258,7 @@ static rt_err_t rt_usart_close(rt_device_t dev)
  *
  * @return
  *   Number of read bytes
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_usart_read (
 	rt_device_t 	dev, 
 	rt_off_t 		pos, 
@@ -387,7 +389,7 @@ static rt_size_t rt_usart_read (
 	return read_len;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Write to USART device
  *
@@ -409,7 +411,7 @@ static rt_size_t rt_usart_read (
  *
  * @return
  *   Number of written bytes
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_usart_write (
 	rt_device_t 	dev, 
 	rt_off_t 		pos, 
@@ -424,7 +426,7 @@ static rt_size_t rt_usart_write (
 	write_size = 0;
 	usart = (struct efm32_usart_device_t*)(dev->user_data);
 
-	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 1))
+	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 2))
 	{	/* DMA mode Tx */
 		struct efm32_usart_dma_mode_t *dma_tx;
 	
@@ -453,18 +455,18 @@ static rt_size_t rt_usart_write (
 			(rt_uint32_t)(size - 1));
 
 		/* Wait, otherwise the TX buffer is overwrite */
-		if (usart->state & USART_STATE_CONSOLE)
-		{
+//		if (usart->state & USART_STATE_CONSOLE)
+//		{
 			while(usart->state & USART_STATE_TX_BUSY);
-		}
-		else
-		{
-			while(usart->state & USART_STATE_TX_BUSY)
-			{
-				rt_thread_sleep(USART_WAIT_TIME_TX);
-			}
-		}
-		
+//		}
+//		else
+//		{
+//			while(usart->state & USART_STATE_TX_BUSY)
+//			{
+//				rt_thread_sleep(USART_WAIT_TIME_TX);
+//			}
+//		}
+// TODO: This function blocks the process		
 		write_size = size;
 	}
 	else
@@ -506,7 +508,7 @@ static rt_size_t rt_usart_write (
 	return write_size;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Configure USART device
 *
@@ -525,7 +527,7 @@ static rt_size_t rt_usart_write (
 *
 * @return
 *	Error code
-*********************************************************************/
+******************************************************************************/
 static rt_err_t rt_usart_control (
 	rt_device_t 	dev, 
 	rt_uint8_t 		cmd, 
@@ -601,7 +603,7 @@ static rt_err_t rt_usart_control (
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *	USART RX data valid interrupt handler
  *
@@ -611,7 +613,7 @@ static rt_err_t rt_usart_control (
  *
  * @param[in] dev
  *	Pointer to device descriptor
- *********************************************************************/
+ ******************************************************************************/
 void rt_hw_usart_rx_isr(rt_device_t dev)
 {
 	struct efm32_usart_device_t 	*usart;
@@ -671,7 +673,7 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *	DMA for USART TX interrupt handler
  *
@@ -681,7 +683,7 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
  *
  * @param[in] dev
  *	Pointer to device descriptor
- *********************************************************************/
+ ******************************************************************************/
 void rt_hw_usart_dma_tx_isr(rt_device_t dev)
 {
 	/* DMA mode receive */
@@ -703,7 +705,7 @@ void rt_hw_usart_dma_tx_isr(rt_device_t dev)
 	usart->state &= ~(rt_uint32_t)USART_STATE_TX_BUSY;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Register USART device
 *
@@ -725,7 +727,7 @@ void rt_hw_usart_dma_tx_isr(rt_device_t dev)
 *
 * @return
 *	Error code
-*********************************************************************/
+******************************************************************************/
 rt_err_t rt_hw_usart_register(
 	rt_device_t		device, 
 	const char		*name, 
@@ -755,7 +757,7 @@ rt_err_t rt_hw_usart_register(
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Initialize the specified USART unit 
 *
@@ -783,7 +785,7 @@ rt_err_t rt_hw_usart_register(
 *
 * @return
 *	Pointer to USART device  
-*********************************************************************/
+******************************************************************************/
 static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	rt_device_t device,
 	rt_uint8_t 	unitNumber, 
@@ -1018,14 +1020,15 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	return RT_NULL;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
-*	Initialize all USART module related hardware and register USART device to kernel
+*   Initialize all USART module related hardware and register USART device to 
+* kernel
 *
 * @details
 *
 * @note
-*********************************************************************/
+******************************************************************************/
 void rt_hw_usart_init(void)
 {
 	struct efm32_usart_device_t	*usart;
@@ -1169,6 +1172,6 @@ void rt_hw_usart_init(void)
 }
 
 #endif
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

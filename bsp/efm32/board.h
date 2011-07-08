@@ -71,6 +71,13 @@ extern rt_uint32_t rt_system_status;
 #define SD_CS_PIN 					(8)
 #endif
 
+/* SECTION: Ethernet */
+#if defined(EFM32_USING_ETHERNET)
+#define USART_2_AUTOCS 				(0)
+#define ETH_CS_PORT 				(gpioPortB)
+#define ETH_CS_PIN 					(6)
+#endif
+
 /* SECTION: SYSTEM */
 #define EFM32_SRAM_END 				(RAM_MEM_BASE + SRAM_SIZE)
 #define EFM32_BASE_PRI_DEFAULT 		(0x0UL << 5)
@@ -107,8 +114,8 @@ extern rt_uint32_t rt_system_status;
 
 /* SECTION: ADC */
 
-#define ADC_INIT_REF				adcRef2V5
-#define ADC_INIT_CH 				adcSingleInpCh5
+#define ADC_CALI_REF				adcRef2V5
+#define ADC_CALI_CH 				adcSingleInpCh5
 #define ADC_CONVERT_FREQUENCY 		(7000000)
 
 #if (RT_CONSOLE_DEVICE == 0x0UL)

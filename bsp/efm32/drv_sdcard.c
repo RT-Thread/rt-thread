@@ -1,25 +1,27 @@
-/******************************************************************//**
- * @file 		drv_sdcard.c
- * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32 USART module
+/***************************************************************************//**
+ * @file 	drv_sdcard.c
+ * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32 
+ *  USART module
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-05-13	onelife		Initial creation for using EFM32 USART module
- *********************************************************************/
+ * 2011-07-07	onelife		Modify initialization function to return error code
+ ******************************************************************************/
 
-/******************************************************************//**
+/***************************************************************************//**
  * @addtogroup efm32_dk
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "drv_usart.h"
 #include "drv_sdcard.h"
@@ -27,17 +29,17 @@
 #if defined(EFM32_USING_SPISD)
 #include <dfs_fs.h>
 
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef EFM32_SDCARD_DEBUG
 #define sdcard_debug(format,args...) 		rt_kprintf(format, ##args)
 #else
 #define sdcard_debug(format,args...)
 #endif
 
-/* Private constants -----------------------------------------------------------*/
-/* Private variables ------------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 static struct rt_device 	sd_device;
 static struct dfs_partition	sdPart;
 static rt_device_t 			spi 			= RT_NULL;
@@ -46,9 +48,9 @@ static rt_bool_t 			sdAutoCs 		= true;
 static rt_timer_t 			sdTimer 		= RT_NULL;
 static rt_bool_t 			sdInTime 		= true;
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Memory device timeout interrupt handler
  *
@@ -58,13 +60,13 @@ static rt_bool_t 			sdInTime 		= true;
  *
  * @param[in] parameter
  *	Parameter
- *********************************************************************/
+ ******************************************************************************/
 static void efm_spiSd_timer(void* parameter)
 {
 	sdInTime = false;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Set/Clear chip select
  *
@@ -73,8 +75,8 @@ static void efm_spiSd_timer(void* parameter)
  * @note
  *
  * @param[in] enable
- *  Chip select pin status
- *********************************************************************/
+ *  Chip select pin setting
+ ******************************************************************************/
 static void efm_spiSd_cs(rt_uint8_t enable)
 {
 	if (!sdAutoCs)
@@ -90,7 +92,7 @@ static void efm_spiSd_cs(rt_uint8_t enable)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Set operation speed level 
  *
@@ -100,7 +102,7 @@ static void efm_spiSd_cs(rt_uint8_t enable)
  *
  * @param[in] level
  *  Set SD speed level 
- *********************************************************************/
+ ******************************************************************************/
 static void efm_spiSd_speed(rt_uint8_t level)
 {
 	RT_ASSERT(spi != RT_NULL);
@@ -120,7 +122,7 @@ static void efm_spiSd_speed(rt_uint8_t level)
 	USART_BaudrateSyncSet(usart->usart_device, 0, baudrate);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Read raw data from memory device
  *
@@ -136,7 +138,7 @@ static void efm_spiSd_speed(rt_uint8_t level)
  *
  * @return
  *   Number of read bytes
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t efm_spiSd_read(void *buffer, rt_size_t size)
 {
 	RT_ASSERT(spi != RT_NULL);
@@ -157,7 +159,7 @@ static rt_size_t efm_spiSd_read(void *buffer, rt_size_t size)
 	return ret;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Send command to memory device
  *
@@ -176,7 +178,7 @@ static rt_size_t efm_spiSd_read(void *buffer, rt_size_t size)
  *
  * @return
  *   Command response
- *********************************************************************/
+ ******************************************************************************/
 static rt_uint16_t efm_spiSd_cmd(
 	rt_uint8_t cmd, 
 	rt_uint32_t arg, 
@@ -320,10 +322,10 @@ static rt_uint16_t efm_spiSd_cmd(
 	return ret;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *   Read a block of data from memory device. This function is used to handle the responses of 
- *  specified commands (e.g. ACMD13, CMD17 and CMD18)
+ *   Read a block of data from memory device. This function is used to handle 
+ *  the responses of specified commands (e.g. ACMD13, CMD17 and CMD18)
  *
  * @details
  *
@@ -337,7 +339,7 @@ static rt_uint16_t efm_spiSd_cmd(
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t efm_spiSd_readBlock(void *buffer, rt_size_t size)
 {
 	RT_ASSERT(spi != RT_NULL);
@@ -419,10 +421,10 @@ static rt_err_t efm_spiSd_readBlock(void *buffer, rt_size_t size)
 	return -RT_ERROR;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *   Write a block of data to memory device. This function is used to send data and control 
- *  tokens for block write commands (e.g. CMD24 and CMD25) 
+ *   Write a block of data to memory device. This function is used to send data 
+ *  and control tokens for block write commands (e.g. CMD24 and CMD25) 
  *
  * @details
  *
@@ -436,7 +438,7 @@ static rt_err_t efm_spiSd_readBlock(void *buffer, rt_size_t size)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t efm_spiSd_writeBlock(void *buffer, rt_uint8_t token)
 {
 	RT_ASSERT(spi != RT_NULL);
@@ -539,7 +541,7 @@ static rt_err_t efm_spiSd_writeBlock(void *buffer, rt_uint8_t token)
 	return ret;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Wrapper function of send command to memory device
  *
@@ -558,7 +560,7 @@ static rt_err_t efm_spiSd_writeBlock(void *buffer, rt_uint8_t token)
  *
  * @return
  *   Command response
- *********************************************************************/
+ ******************************************************************************/
 rt_uint16_t efm_spiSd_sendCmd(
 	rt_uint8_t cmd, 
 	rt_uint32_t arg, 
@@ -580,7 +582,7 @@ rt_uint16_t efm_spiSd_sendCmd(
 	return efm_spiSd_cmd(cmd, arg, trail);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Initialize memory card device
  *
@@ -593,7 +595,7 @@ rt_uint16_t efm_spiSd_sendCmd(
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_spiSd_init(rt_device_t dev)
 {
 	RT_ASSERT(spi != RT_NULL);
@@ -606,7 +608,7 @@ static rt_err_t rt_spiSd_init(rt_device_t dev)
 
 	do
 	{
-		/* Setup timer */
+		/* Create and setup timer */
 		if ((sdTimer = rt_timer_create(
 			"sdTimer",
 			efm_spiSd_timer,
@@ -614,7 +616,7 @@ static rt_err_t rt_spiSd_init(rt_device_t dev)
 			SD_WAIT_PERIOD, 
 			RT_TIMER_FLAG_ONE_SHOT)) == RT_NULL)
 		{
-			sdcard_debug("SPISD: Creat timer failed!\n");
+			sdcard_debug("SPISD: Create timer failed!\n");
 			break;
 		}
 
@@ -732,7 +734,7 @@ static rt_err_t rt_spiSd_init(rt_device_t dev)
 	return -RT_ERROR;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Open memory card device
  *
@@ -748,14 +750,14 @@ static rt_err_t rt_spiSd_init(rt_device_t dev)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_spiSd_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	sdcard_debug("SPISD: Open, flag %x\n", sd_device.flag);
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Close memory card device
  *
@@ -768,14 +770,14 @@ static rt_err_t rt_spiSd_open(rt_device_t dev, rt_uint16_t oflag)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_spiSd_close(rt_device_t dev)
 {
 	sdcard_debug("SPISD: Close, flag %x\n", sd_device.flag);
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Read from memory card device
  *
@@ -797,7 +799,7 @@ static rt_err_t rt_spiSd_close(rt_device_t dev)
  *
  * @return
  *   Number of read sectors
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_spiSd_read(
 	rt_device_t 	dev, 
 	rt_off_t 		sector,
@@ -865,7 +867,7 @@ static rt_size_t rt_spiSd_read(
 	return (0);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Write to memory card device
  *
@@ -887,7 +889,7 @@ static rt_size_t rt_spiSd_read(
  *
  * @return
  *   Number of written sectors
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_spiSd_write (
 	rt_device_t 	dev, 
 	rt_off_t 		sector,
@@ -961,7 +963,7 @@ static rt_size_t rt_spiSd_write (
 	return (0);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *   Configure memory card device
 *
@@ -980,7 +982,7 @@ static rt_size_t rt_spiSd_write (
 *
 * @return
 *   Error code
-*********************************************************************/
+******************************************************************************/
 static rt_err_t rt_spiSd_control (
 	rt_device_t 	dev, 
 	rt_uint8_t 		ctrl, 
@@ -1171,15 +1173,19 @@ static rt_err_t rt_spiSd_control (
 	return ret;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
-*	Initialize all memory card related hardware and register the device to kernel
+*	Initialize all memory card related hardware and register the device to 
+*  kernel
 *
 * @details
 *
 * @note
-*********************************************************************/
-void efm_spiSd_init(void)
+*
+* @return
+*	Error code
+******************************************************************************/
+rt_err_t efm_spiSd_init(void)
 {
 	struct efm32_usart_device_t *usart;
 
@@ -1222,21 +1228,22 @@ void efm_spiSd_init(void)
 			RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
 
 		sdcard_debug("SPISD: HW init OK, card type %x\n", sdType);
-		return;
+		return RT_EOK;
 	} while (0);
 
 	/* Release buffer */
 	rt_kprintf("SPISD: HW init failed!\n");
+	return -RT_ERROR;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   De-initialize memory card device
  *
  * @details
  *
  * @note
- *********************************************************************/
+ ******************************************************************************/
 void efm_spiSd_deinit(void)
 {
 	/* Close SPI device */
@@ -1257,13 +1264,13 @@ void efm_spiSd_deinit(void)
 	sdcard_debug("SPISD: Deinit OK\n");
 }
 
-/*********************************************************************
+/***************************************************************************//**
 * 	Export to FINSH
-*********************************************************************/
+******************************************************************************/
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
-void list_sdcard(void)
+void list_sd(void)
 {
 	rt_uint8_t buf_res[16];
 	rt_uint32_t capacity, temp32;
@@ -1307,10 +1314,10 @@ void list_sdcard(void)
 	capacity >>= 4;
 	rt_kprintf(" Card capacity:\t\t%dMB\n", capacity);
 }
-FINSH_FUNCTION_EXPORT(list_sdcard, list the SD card.)
+FINSH_FUNCTION_EXPORT(list_sd, list the SD card.)
 #endif
 
 #endif /* defined(EFM32_USING_SPISD) */
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

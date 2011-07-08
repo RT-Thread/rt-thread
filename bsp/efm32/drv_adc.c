@@ -1,51 +1,51 @@
-/******************************************************************//**
- * @file 		drv_adc.c
+/***************************************************************************//**
+ * @file 	drv_adc.c
  * @brief 	ADC driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-02-21	onelife		Initial creation for EFM32
- *********************************************************************/
+ ******************************************************************************/
  
-/******************************************************************//**
-* @addtogroup efm32
-* @{
-*********************************************************************/
+/***************************************************************************//**
+ * @addtogroup efm32
+ * @{
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "drv_adc.h"
 
 #if defined(RT_USING_ADC0)
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_ADC_DEBUG
 #define adc_debug(format,args...) 			rt_kprintf(format, ##args)
 #else
 #define adc_debug(format,args...)
 #endif
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_ADC0
 	static struct rt_device adc0_device;
 #endif
 
-/* Private function prototypes ---------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
 rt_uint32_t efm32_adc_calibration(
 	ADC_TypeDef 			*adc, 
 	ADC_Ref_TypeDef			ref,
 	ADC_SingleInput_TypeDef	input);
 
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Initialize ADC device
  *
@@ -58,7 +58,7 @@ rt_uint32_t efm32_adc_calibration(
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
  static rt_err_t rt_adc_init(rt_device_t dev)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -69,13 +69,13 @@ rt_uint32_t efm32_adc_calibration(
 
 	adc = (struct efm32_adc_device_t *)(dev->user_data);
 
-	temp = efm32_adc_calibration(adc->adc_device, ADC_INIT_REF, ADC_INIT_CH);
+	temp = efm32_adc_calibration(adc->adc_device, ADC_CALI_REF, ADC_CALI_CH);
 
 	adc_debug("adc->CAL = %x\n", temp);
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Configure ADC device
 *
@@ -94,7 +94,7 @@ rt_uint32_t efm32_adc_calibration(
 *
 * @return
 *	Error code
-*********************************************************************/
+******************************************************************************/
 static rt_err_t rt_adc_control(
 	rt_device_t 	dev, 
 	rt_uint8_t 		cmd, 
@@ -197,7 +197,7 @@ static rt_err_t rt_adc_control(
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Register ADC device
 *
@@ -219,7 +219,7 @@ static rt_err_t rt_adc_control(
 *
 * @return
 *	Error code
-*********************************************************************/
+******************************************************************************/
 rt_err_t rt_hw_adc_register(
 	rt_device_t		device, 
 	const char		*name, 
@@ -243,7 +243,7 @@ rt_err_t rt_hw_adc_register(
 	return rt_device_register(device, name, flag);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Initialize the specified ADC unit 
 *
@@ -259,7 +259,7 @@ rt_err_t rt_hw_adc_register(
 *
 * @return
 *	Pointer to ADC device  
-*********************************************************************/
+******************************************************************************/
 static struct efm32_adc_device_t *rt_hw_adc_unit_init(
 	rt_device_t device,
 	rt_uint8_t 	unitNumber)
@@ -319,7 +319,7 @@ static struct efm32_adc_device_t *rt_hw_adc_unit_init(
 	return RT_NULL;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
 * @brief
 *	Initialize all ADC module related hardware and register ADC device to kernel
 *
@@ -327,7 +327,7 @@ static struct efm32_adc_device_t *rt_hw_adc_unit_init(
 *
 * @note
 *
-*********************************************************************/
+******************************************************************************/
 void rt_hw_adc_init(void)
 {
 	struct efm32_adc_device_t 	*adc;
@@ -499,6 +499,6 @@ rt_uint32_t efm32_adc_calibration(
 }
 
 #endif
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/ 

@@ -11,11 +11,12 @@ else:
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
 src_drv1 = ['drv_dma.c', 'drv_rtc.c', 'drv_adc.c', 'drv_acmp.c', 'drv_usart.c', 'drv_iic.c', 'drv_timer.c']
-src_drv2 = ['drv_sdcard.c']
+src_drv2 = ['drv_sdcard.c', 'drv_ethernet.c']
 src_dev = ['dev_misc.c', 'dev_led.c', 'dev_sflash.c']
 src_hdl = ['hdl_interrupt.c']
+src_app = ['httpd.c']
 
-src = src_kit + src_bsp + src_drv1 + src_drv2 + src_dev + src_hdl
+src = src_kit + src_bsp + src_drv1 + src_drv2 + src_dev + src_hdl + src_app
 CPPPATH.append(RTT_ROOT + '/bsp/efm32')
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.EFM32_BOARD, rtconfig.EFM32_TYPE]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)

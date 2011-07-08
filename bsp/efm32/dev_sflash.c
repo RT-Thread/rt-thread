@@ -1,7 +1,8 @@
 /******************************************************************//**
  * @file 		dev_sflash.c
  * @brief 	SPI Flash driver of RT-Thread RTOS for using EFM32 USART module.
- * 	This driver is tested by using the M25PX16 device on the EFM32 development kit.
+ * 	 This driver is tested by using the M25PX16 device on the EFM32 development 
+ *  kit.
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
@@ -227,7 +228,7 @@ rt_err_t efm_spiFlash_deinit(void)
  * @note
  *
  * @param[in] enable
- *  Chip select pin status
+ *  Chip select pin setting
  *********************************************************************/
 static void efm_spiFlash_cs(rt_uint8_t enable)
 {

@@ -1,25 +1,27 @@
-/******************************************************************//**
- * @file 		drv_sdcard.h
- * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32 USART module
+/***************************************************************************//**
+ * @file 	drv_sdcard.h
+ * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32 
+ *  USART module
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-05-13	onelife		Initial creation for using EFM32 USART module
- *********************************************************************/
+ * 2011-07-07	onelife		Modify initialization function to return error code
+ ******************************************************************************/
 #ifndef __DEV_SDCARD_H__
 #define __DEV_SDCARD_H__
 
-/* Includes -------------------------------------------------------------------*/
-/* Exported types -------------------------------------------------------------*/
-/* Exported constants ---------------------------------------------------------*/
-/* Exported macro -------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
 #define EFM32_SDCLK_LOW 		(100000)
 #define EFM32_SDCLK_HIGH		(EFM32_HFXO_FREQUENCY/2)
 
@@ -61,8 +63,8 @@
 #define CMD55 					(55) 		/* APP_CMD */
 #define CMD58 					(58) 		/* READ_OCR */
 
-/* Exported functions --------------------------------------------------------- */
-void efm_spiSd_init(void);
+/* Exported functions ------------------------------------------------------- */
+rt_err_t efm_spiSd_init(void);
 void efm_spiSd_deinit(void);
 
 #endif /* __DEV_SDCARD_H__ */
