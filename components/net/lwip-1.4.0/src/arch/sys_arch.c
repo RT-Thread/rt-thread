@@ -491,12 +491,22 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread, void *arg, 
 
 sys_prot_t sys_arch_protect(void)
 {
+	rt_base_t level;
+
 	/* disable interrupt */
-	return rt_hw_interrupt_disable();
+	level = rt_hw_interrupt_disable();
+
+	/* must also lock scheduler */
+	rt_enter_critical();
+
+	return level;
 }
 
 void sys_arch_unprotect(sys_prot_t pval)
 {
+	/* unlock scheduler */
+	rt_exit_critical();
+
 	/* enable interrupt */
 	rt_hw_interrupt_enable(pval);
 
