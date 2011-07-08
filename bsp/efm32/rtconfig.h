@@ -190,7 +190,7 @@
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #if defined(EFM32_USING_ETHERNET)
 #define RT_USING_LWIP
-#define RT_USING_NETUTILS
+//#define RT_USING_NETUTILS
 //#define RT_LWIP_DHCP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
