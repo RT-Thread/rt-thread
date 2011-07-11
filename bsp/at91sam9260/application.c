@@ -93,6 +93,18 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
+#ifdef RT_USING_LWIP
+	{
+		/* register ethernetif device */
+		eth_system_device_init();
+		rt_hw_macb_init();
+		/* re-init device driver */
+		rt_device_init_all();
+		/* init lwip system */
+		lwip_sys_init();
+		rt_kprintf("TCP/IP initialized!\n");
+	}
+#endif
 
 }
 
