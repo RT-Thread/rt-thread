@@ -30,7 +30,7 @@
 
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
-//#define RT_MEM_DEBUG 				(1)
+//#define RT_DEBUG_MEM 				(1)
 //#define RT_DEBUG_SCHEDULER 			(1)
 //#define THREAD_DEBUG
 //#define IRQ_DEBUG

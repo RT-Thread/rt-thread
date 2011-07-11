@@ -114,12 +114,16 @@ void rt_demo_thread_entry(void* parameter)
 #endif
 
 #if defined(EFM32_USING_ETHERNET)
+	extern void httpd_init(void);
+
 	rt_device_t eth = RT_NULL;
 
 	eth = rt_device_find(ETH_DEVICE_NAME);
 	if (eth != RT_NULL)
 	{
 		eth->init(eth);
+		httpd_init();
+		rt_kprintf("Http service init OK!\n");
 	}
 	else
 	{
@@ -187,7 +191,6 @@ int rt_application_init()
 #if defined(RT_USING_LWIP)
 	{
 		extern void lwip_sys_init(void);
-		extern void httpd_init(void);
 
 		/* Create Ethernet Threads */
 		if (eth_system_device_init() != RT_EOK)
@@ -204,7 +207,6 @@ int rt_application_init()
  #endif
 		/* init lwip system */
 		lwip_sys_init();
-		httpd_init();
 		rt_kprintf("TCP/IP stack init OK!\n");
 	}
 #endif
