@@ -1327,12 +1327,23 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
 
+	/* for non-blocking call */
+	if (mb->entry == mb->size && timeout == 0)
+	{
+		rt_hw_interrupt_enable(temp);
+		return -RT_EFULL;
+	}
+
+	tick_delta = 0;
+
 	/* get current thread */
 	thread = rt_thread_self();
 
 	/* mailbox is full */
 	while (mb->entry == mb->size)
 	{
+		RT_DEBUG_NOT_IN_INTERRUPT;
+
 		/* reset error number in thread */
 		thread->error = RT_EOK;
 
@@ -1345,8 +1356,6 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
             thread->error = -RT_EFULL;
             return -RT_EFULL;
         }
-
-		RT_DEBUG_NOT_IN_INTERRUPT;
 	
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mb->suspend_sender_thread),
@@ -1464,8 +1473,6 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		return -RT_ETIMEOUT;
 	}
 
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
 	tick_delta = 0;
 
 	/* get current thread */
@@ -1474,6 +1481,8 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	/* mailbox is empty */
 	while (mb->entry == 0)
 	{
+		RT_DEBUG_NOT_IN_INTERRUPT;
+
 		/* reset error number in thread */
 		thread->error = RT_EOK;
 
@@ -1969,8 +1978,6 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		return -RT_ETIMEOUT;
 	}
 
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
 	tick_delta = 0;
 
 	/* get current thread */
@@ -1979,6 +1986,8 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 	/* message queue is empty */
 	while (mq->entry == 0)
 	{
+		RT_DEBUG_NOT_IN_INTERRUPT;
+
 		/* reset error number in thread */
 		thread->error = RT_EOK;
 
