@@ -27,7 +27,7 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 	char tname[RT_NAME_MAX];
 	sys_sem_t tmpsem;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_SEM_NAME, counter);
 
@@ -55,7 +55,7 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 
 void sys_sem_free(sys_sem_t *sem)
 {
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #if SYS_DEBUG
 	{
@@ -94,7 +94,7 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 	s32_t t;
 	u32_t tick;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 	
 	/* get the begin tick */
 	tick = rt_tick_get();
@@ -167,7 +167,7 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
 	char tname[RT_NAME_MAX];
 	sys_mutex_t tmpmutex;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MUTEX_NAME, counter);
 
@@ -197,7 +197,7 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
 void sys_mutex_lock(sys_mutex_t *mutex)
 {
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #if SYS_DEBUG
 	{
@@ -236,7 +236,7 @@ void sys_mutex_unlock(sys_mutex_t *mutex)
  * @param mutex the mutex to delete */
 void sys_mutex_free(sys_mutex_t *mutex)
 {
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #if SYS_DEBUG
 	{
@@ -275,7 +275,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 	char tname[RT_NAME_MAX];
 	sys_mbox_t tmpmbox;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MBOX_NAME, counter);
 
@@ -302,7 +302,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 
 void sys_mbox_free(sys_mbox_t *mbox)
 {
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #if SYS_DEBUG
 	{
@@ -325,7 +325,7 @@ void sys_mbox_free(sys_mbox_t *mbox)
  * @param msg message to post (ATTENTION: can be NULL) */
 void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 {
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 #if SYS_DEBUG
 	{
@@ -373,7 +373,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 	s32_t t;
 	u32_t tick;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* get the begin tick */
 	tick = rt_tick_get();
@@ -395,8 +395,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 		return SYS_ARCH_TIMEOUT;
 	else
 	{
-		if (ret == RT_EOK)
-			ret = 1;
+		LWIP_ASSERT("rt_mb_recv returned with error!", ret == RT_EOK);
 	}
 
 #if SYS_DEBUG
@@ -477,7 +476,7 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread, void *arg, 
 {
 	rt_thread_t t;
 
-	RT_DEBUG_NOT_IN_INTERRUPT
+	RT_DEBUG_NOT_IN_INTERRUPT;
 
 	/* create thread */
 	t = rt_thread_create(name, thread, arg, stacksize, prio, 20);
