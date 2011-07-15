@@ -15,26 +15,25 @@ static void cpu_usage_idle_hook()
 
 	if (total_count == 0)
 	{
-		loop = 0;
-
 		/* get total count */
 		rt_enter_critical();
 		tick = rt_tick_get();
 		while(rt_tick_get() - tick < CPU_USAGE_CALC_TICK)
 		{
 			total_count ++;
+			loop = 0;
 			while (loop < CPU_USAGE_LOOP) loop ++;
 		}
 		rt_exit_critical();
 	}
 
 	count = 0;
-	loop  = 0;
 	/* get CPU usage */
 	tick = rt_tick_get();
 	while (rt_tick_get() - tick < CPU_USAGE_CALC_TICK)
 	{
 		count ++;
+		loop  = 0;
 		while (loop < CPU_USAGE_LOOP) loop ++;
 	}
 
