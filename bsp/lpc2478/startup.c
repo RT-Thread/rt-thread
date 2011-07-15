@@ -99,10 +99,8 @@ void rtthread_startup(void)
 #ifdef __CC_ARM
 int main(void)
 {
-	rt_uint32_t UNUSED level;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+	rt_hw_interrupt_disable();
 
 	/* invoke rtthread_startup */
 	rtthread_startup();
