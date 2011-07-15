@@ -1538,8 +1538,6 @@ rt_hw_context_switch_interrupt_do   PROC
                 LDMFD   r4!, {r0-r3}
                 STMFD   sp!, {r0-r3}    ; push old task's r3-r0
                 STMFD   sp!, {r5}       ; push old task's cpsr
-                MRS     r4,  spsr
-                STMFD   sp!, {r4}       ; push old task's spsr
 
                 LDR     r4,  =rt_interrupt_from_thread
                 LDR     r5,  [r4]
@@ -1548,13 +1546,13 @@ rt_hw_context_switch_interrupt_do   PROC
                 LDR     r6,  =rt_interrupt_to_thread
                 LDR     r6,  [r6]
                 LDR     sp,  [r6]       ; get new task's stack pointer
-            
-                LDMFD   sp!, {r4}       ; pop new task's spsr
-                MSR     spsr_cxsf, r4
-                LDMFD   sp!, {r4}       ; pop new task's psr
+
+                LDMFD   sp!, {r4}       ; pop new task's cpsr to spsr
+				MSR     spsr_cxsf, r4
+				BIC     r4, r4, #0x20   ; must be ARM mode
                 MSR     cpsr_cxsf, r4
 
-                LDMFD   sp!, {r0-r12,lr,pc} ; pop new task's r0-r12,lr & pc
+                LDMFD   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr
                 ENDP
 
                 IF      :DEF:__MICROLIB
