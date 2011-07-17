@@ -14,6 +14,9 @@
 #define TOUCH_WIN_UPDATE				1
 #define TOUCH_WIN_CLOSE					2
 
+#define CALIBRATION_WIDTH				15
+#define CALIBRATION_HEIGHT				15
+
 struct calibration_session
 {
 	rt_uint8_t step;
@@ -37,12 +40,12 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 			calibration_ptr->data.min_x = x;
 			calibration_ptr->data.min_y = y;
 			break;
-			
+
 		case CALIBRATION_STEP_RIGHTTOP:
 			calibration_ptr->data.max_x = x;
 			calibration_ptr->data.min_y = (calibration_ptr->data.min_y + y)/2;
 			break;
-			
+
 		case CALIBRATION_STEP_LEFTBOTTOM:
 			calibration_ptr->data.min_x = (calibration_ptr->data.min_x + x)/2;
 			calibration_ptr->data.max_y = y;
@@ -56,10 +59,54 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 		case CALIBRATION_STEP_CENTER:
 			/* calibration done */
 			{
+				rt_uint16_t w, h;
+
 				struct rtgui_event_command ecmd;
 				RTGUI_EVENT_COMMAND_INIT(&ecmd);
 				ecmd.command_id = TOUCH_WIN_CLOSE;
 
+				/* calculate calibrated data */
+				if (calibration_ptr->data.max_x > calibration_ptr->data.min_x)
+					w = calibration_ptr->data.max_x - calibration_ptr->data.min_x;
+				else
+					w = calibration_ptr->data.min_x - calibration_ptr->data.max_x;
+				w = (w/(calibration_ptr->width - 2 * CALIBRATION_WIDTH)) * CALIBRATION_WIDTH;
+
+				if (calibration_ptr->data.max_y > calibration_ptr->data.min_y)
+					h = calibration_ptr->data.max_y - calibration_ptr->data.min_y;
+				else
+					h = calibration_ptr->data.min_y - calibration_ptr->data.max_y;
+				h = (h/(calibration_ptr->height - 2 * CALIBRATION_HEIGHT)) * CALIBRATION_HEIGHT;
+
+				rt_kprintf("w: %d, h: %d\n", w, h);
+
+				if (calibration_ptr->data.max_x > calibration_ptr->data.min_x)
+				{
+					calibration_ptr->data.min_x -= w;
+					calibration_ptr->data.max_x += w;
+				}
+				else
+				{
+					calibration_ptr->data.min_x += w;
+					calibration_ptr->data.max_x -= w;
+				}
+
+				if (calibration_ptr->data.max_y > calibration_ptr->data.min_y)
+				{
+					calibration_ptr->data.min_y -= h;
+					calibration_ptr->data.max_y += h;
+				}
+				else
+				{
+					calibration_ptr->data.min_y += h;
+					calibration_ptr->data.max_y -= h;
+				}
+
+				rt_kprintf("calibration data: (%d, %d), (%d, %d)\n",
+					calibration_ptr->data.min_x,
+					calibration_ptr->data.max_x,
+					calibration_ptr->data.min_y,
+					calibration_ptr->data.max_y);
 				rtgui_thread_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
 			}
 			return;
@@ -104,36 +151,38 @@ rt_bool_t calibration_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 		switch (calibration_ptr->step)
 		{
 			case CALIBRATION_STEP_LEFTTOP:
-				rtgui_dc_draw_hline(dc, 1, 1 + 15, 1);
-				rtgui_dc_draw_vline(dc, 1, 1, 1 + 15);
+				rtgui_dc_draw_hline(dc, 0, 2 * CALIBRATION_WIDTH, CALIBRATION_HEIGHT);
+				rtgui_dc_draw_vline(dc, CALIBRATION_WIDTH, 0, 2 * CALIBRATION_HEIGHT);
 				RTGUI_WIDGET_FOREGROUND(widget) = red;
-				rtgui_dc_fill_circle(dc, 0, 0, 4);
+				rtgui_dc_fill_circle(dc, CALIBRATION_WIDTH, CALIBRATION_HEIGHT, 4);
 				break;
-				
+
 			case CALIBRATION_STEP_RIGHTTOP:
-				rtgui_dc_draw_hline(dc, calibration_ptr->width - 1 - 15, calibration_ptr->width - 1, 1);
-				rtgui_dc_draw_vline(dc, calibration_ptr->width - 1, 1, 1 + 15);
+				rtgui_dc_draw_hline(dc, calibration_ptr->width - 2 * CALIBRATION_WIDTH,
+					calibration_ptr->width, CALIBRATION_HEIGHT);
+				rtgui_dc_draw_vline(dc, calibration_ptr->width - CALIBRATION_WIDTH, 0, 2 * CALIBRATION_HEIGHT);
 				RTGUI_WIDGET_FOREGROUND(widget) = red;
-				rtgui_dc_fill_circle(dc, calibration_ptr->width - 1, 0, 4);
+				rtgui_dc_fill_circle(dc, calibration_ptr->width - CALIBRATION_WIDTH, CALIBRATION_HEIGHT, 4);
 				break;
-				
+
 			case CALIBRATION_STEP_LEFTBOTTOM:
-				rtgui_dc_draw_hline(dc, 1, 1 + 15, calibration_ptr->height - 1);
-				rtgui_dc_draw_vline(dc, 1, calibration_ptr->height - 1 - 15, calibration_ptr->height - 1);
+				rtgui_dc_draw_hline(dc, 0, 2 * CALIBRATION_WIDTH, calibration_ptr->height - CALIBRATION_HEIGHT);
+				rtgui_dc_draw_vline(dc, CALIBRATION_WIDTH, calibration_ptr->height - 2 * CALIBRATION_HEIGHT, calibration_ptr->height);
 				RTGUI_WIDGET_FOREGROUND(widget) = red;
-				rtgui_dc_fill_circle(dc, 0, calibration_ptr->height - 1, 4);
+				rtgui_dc_fill_circle(dc, CALIBRATION_WIDTH, calibration_ptr->height - CALIBRATION_HEIGHT, 4);
 				break;
-			
+
 			case CALIBRATION_STEP_RIGHTBOTTOM:
-				rtgui_dc_draw_hline(dc, calibration_ptr->width - 1 - 15, calibration_ptr->width - 1, calibration_ptr->height - 1);
-				rtgui_dc_draw_vline(dc, calibration_ptr->width - 1, calibration_ptr->height - 1 - 15, calibration_ptr->height - 1);
+				rtgui_dc_draw_hline(dc, calibration_ptr->width - 2 * CALIBRATION_WIDTH,
+					calibration_ptr->width, calibration_ptr->height - CALIBRATION_HEIGHT);
+				rtgui_dc_draw_vline(dc, calibration_ptr->width - CALIBRATION_WIDTH, calibration_ptr->height - 2 * CALIBRATION_HEIGHT, calibration_ptr->height);
 				RTGUI_WIDGET_FOREGROUND(widget) = red;
-				rtgui_dc_fill_circle(dc, calibration_ptr->width - 1, calibration_ptr->height - 1, 4);
+				rtgui_dc_fill_circle(dc, calibration_ptr->width - CALIBRATION_WIDTH, calibration_ptr->height - CALIBRATION_HEIGHT, 4);
 				break;
-			
+
 			case CALIBRATION_STEP_CENTER:
-				rtgui_dc_draw_hline(dc, calibration_ptr->width/2 - 15, calibration_ptr->width/2 + 15, calibration_ptr->height/2);
-				rtgui_dc_draw_vline(dc, calibration_ptr->width/2, calibration_ptr->height/2 - 15, calibration_ptr->height/2 + 15);
+				rtgui_dc_draw_hline(dc, calibration_ptr->width/2 - CALIBRATION_WIDTH, calibration_ptr->width/2 + CALIBRATION_WIDTH, calibration_ptr->height/2);
+				rtgui_dc_draw_vline(dc, calibration_ptr->width/2, calibration_ptr->height/2 - CALIBRATION_HEIGHT, calibration_ptr->height/2 + CALIBRATION_HEIGHT);
 				RTGUI_WIDGET_FOREGROUND(widget) = red;
 				rtgui_dc_fill_circle(dc, calibration_ptr->width/2, calibration_ptr->height/2, 4);
 				break;
@@ -145,7 +194,7 @@ rt_bool_t calibration_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 	case RTGUI_EVENT_COMMAND:
 		{
 			struct rtgui_event_command* ecmd = (struct rtgui_event_command*)event;
-			
+
 			switch (ecmd->command_id)
 			{
 			case TOUCH_WIN_UPDATE:
