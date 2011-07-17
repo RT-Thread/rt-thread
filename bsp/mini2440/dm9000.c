@@ -153,75 +153,66 @@ void rt_dm9000_isr(int irqno)
 	rt_uint16_t last_io;
 	rt_uint32_t eint_pend;
 
-	eint_pend = EINTPEND;
-	/* EINT7 for DM9000 */
-	//if((eint_pend & 0x80) == 0x80)
+	last_io = DM9000_IO;
+
+	/* Disable all interrupts */
+	dm9000_io_write(DM9000_IMR, IMR_PAR);
+
+	/* Got DM9000 interrupt status */
+	int_status = dm9000_io_read(DM9000_ISR);	/* Got ISR */
+	dm9000_io_write(DM9000_ISR, int_status);	/* Clear ISR status */
+
+	DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
+
+	/* receive overflow */
+	if (int_status & ISR_ROS)
 	{
-
-		last_io = DM9000_IO;
-
-		/* Disable all interrupts */
-		dm9000_io_write(DM9000_IMR, IMR_PAR);
-
-		/* Got DM9000 interrupt status */
-		int_status = dm9000_io_read(DM9000_ISR);			   /* Got ISR */
-		dm9000_io_write(DM9000_ISR, int_status);	/* Clear ISR status */
-
-		DM9000_TRACE("dm9000 isr: int status %04x\n", int_status);
-
-		/* receive overflow */
-		if (int_status & ISR_ROS)
-		{
-			rt_kprintf("overflow\n");
-		}
-
-		if (int_status & ISR_ROOS)
-		{
-			rt_kprintf("overflow counter overflow\n");
-		}
-
-		/* Received the coming packet */
-		if (int_status & ISR_PRS)
-		{
-			/* a frame has been received */
-			eth_device_ready(&(dm9000_device.parent));
-		}
-
-		/* Transmit Interrupt check */
-		if (int_status & ISR_PTS)
-		{
-			/* transmit done */
-			int tx_status = dm9000_io_read(DM9000_NSR);	/* Got TX status */
-
-			if (tx_status & (NSR_TX2END | NSR_TX1END))
-			{
-				dm9000_device.packet_cnt --;
-				if (dm9000_device.packet_cnt > 0)
-				{
-					DM9000_TRACE("dm9000 isr: tx second packet\n");
-
-					/* transmit packet II */
-					/* Set TX length to DM9000 */
-					dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
-					dm9000_io_write(DM9000_TXPLH, (dm9000_device.queue_packet_len >> 8) & 0xff);
-
-					/* Issue TX polling command */
-					dm9000_io_write(DM9000_TCR, TCR_TXREQ);	/* Cleared after TX complete */
-				}
-
-				/* One packet sent complete */
-				rt_sem_release(&sem_ack);
-			}
-		}
-
-		/* Re-enable interrupt mask */
-		dm9000_io_write(DM9000_IMR, IMR_PAR | IMR_PTM | IMR_PRM);
-
-		DM9000_IO = last_io;
+		rt_kprintf("overflow\n");
 	}
 
-	/* clear EINT pending bit */
-	EINTPEND = eint_pend;
+	if (int_status & ISR_ROOS)
+	{
+		rt_kprintf("overflow counter overflow\n");
+	}
+
+	/* Received the coming packet */
+	if (int_status & ISR_PRS)
+	{
+		/* a frame has been received */
+		eth_device_ready(&(dm9000_device.parent));
+	}
+
+	/* Transmit Interrupt check */
+	if (int_status & ISR_PTS)
+	{
+		/* transmit done */
+		int tx_status = dm9000_io_read(DM9000_NSR);	/* Got TX status */
+
+		if (tx_status & (NSR_TX2END | NSR_TX1END))
+		{
+			dm9000_device.packet_cnt --;
+			if (dm9000_device.packet_cnt > 0)
+			{
+				DM9000_TRACE("dm9000 isr: tx second packet\n");
+
+				/* transmit packet II */
+				/* Set TX length to DM9000 */
+				dm9000_io_write(DM9000_TXPLL, dm9000_device.queue_packet_len & 0xff);
+				dm9000_io_write(DM9000_TXPLH, (dm9000_device.queue_packet_len >> 8) & 0xff);
+
+				/* Issue TX polling command */
+				dm9000_io_write(DM9000_TCR, TCR_TXREQ);	/* Cleared after TX complete */
+			}
+
+			/* One packet sent complete */
+			rt_sem_release(&sem_ack);
+		}
+	}
+
+	/* Re-enable interrupt mask */
+	dm9000_io_write(DM9000_IMR, IMR_PAR | IMR_PTM | IMR_PRM);
+
+	DM9000_IO = last_io;
 }
 
 /* RT-Thread Device Interface */
@@ -282,12 +273,13 @@ static rt_err_t rt_dm9000_init(rt_device_t dev)
 
 	if (dm9000_device.mode == DM9000_AUTO)
 	{
+	    i = 0;
 		while (!(phy_read(1) & 0x20))
 		{
 			/* autonegation complete bit */
-			rt_thread_delay( 10 );
+			rt_thread_delay( RT_TICK_PER_SECOND/10 );
 			i++;
-			if (i > 20)
+			if (i > 30 ) /* wait 3s */
 			{
 				rt_kprintf("could not establish link\n");
 				return 0;
@@ -580,6 +572,22 @@ __error_retry:
 #define B4_Tacp				 0x0
 #define B4_PMC				  0x0
 
+void INTEINT4_7_handler(int irqno)
+{
+    rt_uint32_t eint_pend;
+
+    eint_pend = EINTPEND;
+
+    /* EINT7 : DM9000AEP */
+    if( eint_pend & (1<<7) )
+    {
+        rt_dm9000_isr(0);
+    }
+
+	/* clear EINT pending bit */
+	EINTPEND = eint_pend;
+}
+
 void rt_hw_dm9000_init()
 {
 	/* Set GPF7 as EINT7 */
@@ -608,7 +616,7 @@ void rt_hw_dm9000_init()
 	 * Packet Transmitted, Packet Received
 	 */
 
-	dm9000_device.dev_addr[0] = 0x01;
+	dm9000_device.dev_addr[0] = 0x00;
 	dm9000_device.dev_addr[1] = 0x60;
 	dm9000_device.dev_addr[2] = 0x6E;
 	dm9000_device.dev_addr[3] = 0x11;
@@ -617,9 +625,9 @@ void rt_hw_dm9000_init()
 
 	dm9000_device.parent.parent.init	   = rt_dm9000_init;
 	dm9000_device.parent.parent.open	   = rt_dm9000_open;
-	dm9000_device.parent.parent.close	  = rt_dm9000_close;
+	dm9000_device.parent.parent.close	   = rt_dm9000_close;
 	dm9000_device.parent.parent.read	   = rt_dm9000_read;
-	dm9000_device.parent.parent.write	  = rt_dm9000_write;
+	dm9000_device.parent.parent.write	   = rt_dm9000_write;
 	dm9000_device.parent.parent.control	= rt_dm9000_control;
 	dm9000_device.parent.parent.user_data  = RT_NULL;
 
@@ -629,26 +637,26 @@ void rt_hw_dm9000_init()
 	eth_device_init(&(dm9000_device.parent), "e0");
 
 	/* instal interrupt */
-	rt_hw_interrupt_install(INTEINT4_7, rt_dm9000_isr, RT_NULL);
+	rt_hw_interrupt_install(INTEINT4_7, INTEINT4_7_handler, RT_NULL);
 	rt_hw_interrupt_umask(INTEINT4_7);
 }
 
 void dm9000a(void)
 {
 	rt_kprintf("\n");
-	rt_kprintf("NCR   (0x00): %02x\n", dm9000_io_read(DM9000_NCR));
-	rt_kprintf("NSR   (0x01): %02x\n", dm9000_io_read(DM9000_NSR));
-	rt_kprintf("TCR   (0x02): %02x\n", dm9000_io_read(DM9000_TCR));
-	rt_kprintf("TSRI  (0x03): %02x\n", dm9000_io_read(DM9000_TSR1));
-	rt_kprintf("TSRII (0x04): %02x\n", dm9000_io_read(DM9000_TSR2));
-	rt_kprintf("RCR   (0x05): %02x\n", dm9000_io_read(DM9000_RCR));
-	rt_kprintf("RSR   (0x06): %02x\n", dm9000_io_read(DM9000_RSR));
-	rt_kprintf("ORCR  (0x07): %02x\n", dm9000_io_read(DM9000_ROCR));
-	rt_kprintf("CRR   (0x2C): %02x\n", dm9000_io_read(DM9000_CHIPR));
-	rt_kprintf("CSCR  (0x31): %02x\n", dm9000_io_read(DM9000_CSCR));
-	rt_kprintf("RCSSR (0x32): %02x\n", dm9000_io_read(DM9000_RCSSR));
-	rt_kprintf("ISR   (0xFE): %02x\n", dm9000_io_read(DM9000_ISR));
-	rt_kprintf("IMR   (0xFF): %02x\n", dm9000_io_read(DM9000_IMR));
+	rt_kprintf("NCR   (%02X): %02x\n", DM9000_NCR,   dm9000_io_read(DM9000_NCR));
+	rt_kprintf("NSR   (%02X): %02x\n", DM9000_NSR,   dm9000_io_read(DM9000_NSR));
+	rt_kprintf("TCR   (%02X): %02x\n", DM9000_TCR,   dm9000_io_read(DM9000_TCR));
+	rt_kprintf("TSRI  (%02X): %02x\n", DM9000_TSR1,  dm9000_io_read(DM9000_TSR1));
+	rt_kprintf("TSRII (%02X): %02x\n", DM9000_TSR2,  dm9000_io_read(DM9000_TSR2));
+	rt_kprintf("RCR   (%02X): %02x\n", DM9000_RCR,   dm9000_io_read(DM9000_RCR));
+	rt_kprintf("RSR   (%02X): %02x\n", DM9000_RSR,   dm9000_io_read(DM9000_RSR));
+	rt_kprintf("ORCR  (%02X): %02x\n", DM9000_ROCR,  dm9000_io_read(DM9000_ROCR));
+	rt_kprintf("CRR   (%02X): %02x\n", DM9000_CHIPR, dm9000_io_read(DM9000_CHIPR));
+	rt_kprintf("CSCR  (%02X): %02x\n", DM9000_CSCR,  dm9000_io_read(DM9000_CSCR));
+	rt_kprintf("RCSSR (%02X): %02x\n", DM9000_RCSSR, dm9000_io_read(DM9000_RCSSR));
+	rt_kprintf("ISR   (%02X): %02x\n", DM9000_ISR,   dm9000_io_read(DM9000_ISR));
+	rt_kprintf("IMR   (%02X): %02x\n", DM9000_IMR,   dm9000_io_read(DM9000_IMR));
 	rt_kprintf("\n");
 }
 
