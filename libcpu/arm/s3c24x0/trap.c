@@ -151,14 +151,15 @@ void rt_hw_trap_irq()
 
 	if (intstat == INTGLOBAL) return;
 
-	/* clear pending register */
-	ClearPending(1 << intstat);
-	
 	/* get interrupt service routine */
 	isr_func = isr_table[intstat];
 
 	/* turn to interrupt service routine */
 	isr_func(intstat);
+
+	/* clear pending register */
+	/* note: must be the last, if not, may repeat*/
+	ClearPending(1 << intstat);
 }
 
 void rt_hw_trap_fiq()
