@@ -174,7 +174,7 @@ int dfs_uffs_read(struct dfs_fd* fd, void* buf, rt_size_t count)
 	RT_ASSERT(fd != RT_NULL);
 
 	/* update position */
-	fp->pos  = fd->pos;
+	fd->pos  = fp->pos;
 
 	return uffs_ReadObject(fp, buf, count);  
 }      
