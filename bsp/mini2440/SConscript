@@ -27,6 +27,8 @@ if GetDepend('RT_USING_RTGUI') or GetDepend('RT_USING_FTK'):
 		src_drv += ['lcd_n35.c']
 	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_T35':
 		src_drv += ['lcd_t35.c']
+      elif rtconfig.RT_USING_LCD_TYPE == 'PNL_X35':
+                src_drv += ['lcd_x35.c']
 
 src	= File(src_bsp + src_drv)
 CPPPATH = [GetCurrentDir()]
