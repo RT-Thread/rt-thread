@@ -68,8 +68,8 @@
 
 #define X_MIN		74
 #define X_MAX		934
-#define Y_MIN		89
-#define Y_MAX		920
+#define Y_MIN		920
+#define Y_MAX		89
 
 struct s3c2410ts
 {
@@ -129,8 +129,23 @@ static void report_touch_input(int updown)
 		}
 		else
 		{	
+		    if (touch->max_x > touch->min_x)
+            {
 			touch->x = touch->width * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
-			touch->y = touch->height - (touch->height * (ts.yp-touch->min_y)/(touch->max_y-touch->min_y));
+            }
+            else
+            {
+                touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
+            }
+
+            if (touch->max_y > touch->min_y)
+            {
+			    touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
+            }
+            else
+            {
+			    touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
+            }
 		}
 
 		emouse.x = touch->x;
@@ -184,9 +199,24 @@ static void report_touch_input(int updown)
 			touch->y = ts.yp;
 		}
 		else
-		{	
-			touch->x = touch->width * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
-			touch->y = touch->height - (touch->height * (ts.yp-touch->min_y)/(touch->max_y-touch->min_y));
+		{
+		    if (touch->max_x > touch->min_x)
+            {
+			    touch->x = touch->width * ( ts.xp - touch->min_x ) / (touch->max_x-touch->min_x);
+            }
+            else
+            {
+                touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
+            }
+
+            if (touch->max_y > touch->min_y)
+            {
+			    touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
+            }
+            else
+            {
+			    touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
+            }
 		}
 
 		touch_event.x = touch->x;
@@ -391,8 +421,8 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args
 		/* update */
 		touch->min_x = data->min_x;
 		touch->max_x = data->max_x;
-		touch->min_y = data->max_y;
-		touch->max_y = data->min_y;
+		touch->min_y = data->min_y;
+		touch->max_y = data->max_y;
 
 		/*
 			rt_kprintf("min_x = %d, max_x = %d, min_y = %d, max_y = %d\n",
@@ -428,7 +458,7 @@ void rtgui_touch_hw_init(void)
 	touch->min_x = X_MIN;
 	touch->max_x = X_MAX;
 	touch->min_y = Y_MIN;
-	touch->max_y = X_MAX;
+	touch->max_y = Y_MAX;
 	touch->eventpost_func  = RT_NULL;
 	touch->eventpost_param = RT_NULL;
 
