@@ -195,6 +195,7 @@ static void rtgui_dc_buffer_draw_hline(struct rtgui_dc* self, int x1, int x2, in
 
 static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* self, struct rtgui_rect* rect)
 {
+	rtgui_color_t foreground;
 	rtgui_rect_t r;
 	struct rtgui_dc_buffer* dc;
 
@@ -204,6 +205,12 @@ static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* self, struct rtgui_rect*
 	if (r.x2 > dc->width) r.x2 = dc->width;
 	if (r.y1 > dc->height) r.y1 = dc->height;
 	if (r.y2 > dc->height) r.y2 = dc->height;
+	
+	/* save foreground color */
+	foreground = RTGUI_DC_FC(self);
+
+	/* set background color as foreground color */
+	RTGUI_DC_FC(self) = RTGUI_DC_BC(self);
 
 	/* fill first line */
 	rtgui_dc_buffer_draw_hline(&(dc->parent), r.x1, r.x2, r.y1);
@@ -219,6 +226,9 @@ static void rtgui_dc_buffer_fill_rect (struct rtgui_dc* self, struct rtgui_rect*
 				(r.x2 - r.x1) * sizeof(rtgui_color_t));
 		}
 	}
+
+	/* restore foreground color */
+	RTGUI_DC_FC(self) = foreground;
 }
 
 /* blit a dc to a hardware dc */
