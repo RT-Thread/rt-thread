@@ -443,7 +443,7 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 	if (rtgui_region_is_flat(&(owner->clip)) == RT_EOK)
 	{
 		rtgui_rect_t* prect;
-
+		int offset = 0;
 		prect = &(owner->clip.extents);
 
 		/* calculate vline intersect */
@@ -453,8 +453,13 @@ static void rtgui_dc_client_blit_line (struct rtgui_dc* self, int x1, int x2, in
 		if (prect->x1 > x1) x1 = prect->x1;
 		if (prect->x2 < x2) x2 = prect->x2;
 
+		/* patch note: 
+		 * We need to adjust the offset when update widget clip!
+		 * Of course at ordinary times for 0. General */
+		offset = owner->clip.extents.x1 - owner->extent.x1;
+		offset = offset * hw_driver->bits_per_pixel/8;
 		/* draw hline */
-		hw_driver->ops->draw_raw_hline(line_data, x1, x2, y);
+		hw_driver->ops->draw_raw_hline(line_data+offset, x1, x2, y);
 	}
 	else for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
 	{
