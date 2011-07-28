@@ -75,7 +75,7 @@ widgets/workbench.c
 src = common_src + server_src + widgets_src
 
 path = [RTT_ROOT + '/components/rtgui/include',
-	RTT_ROOT + '/components/rgtui/common', 
+	RTT_ROOT + '/components/rtgui/common', 
 	RTT_ROOT + '/components/rtgui/server', 
 	RTT_ROOT + '/components/rtgui/widgets']
 group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI'], CPPPATH = path)
