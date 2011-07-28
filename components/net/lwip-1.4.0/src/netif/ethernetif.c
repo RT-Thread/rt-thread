@@ -46,8 +46,8 @@
 
 #include <rtthread.h>
 
-#include "lwip/debug.h"
 #include "lwip/opt.h"
+#include "lwip/debug.h"
 #include "lwip/def.h"
 #include "lwip/mem.h"
 #include "lwip/pbuf.h"
@@ -59,190 +59,30 @@
 #include "netif/etharp.h"
 #include "netif/ethernetif.h"
 
-/* eth rx/tx thread */
+/* configurations */
+#ifndef RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_LWIP_ETHTHREAD_PRIORITY 0x90
+#endif
+
+#ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 48
+#endif
+
+#ifndef RT_LWIP_ETHTHREAD_STACKSIZE
+#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
+#endif
+
+
+/* eth rx thread */
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
-static char eth_rx_thread_mb_pool[48 * 4];
-static char eth_rx_thread_stack[1024];
-#else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+
 static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
-#endif
 
-struct eth_tx_msg
-{
-	struct netif 	*netif;
-	struct pbuf 	*buf;
-};
-static struct rt_mailbox eth_tx_thread_mb;
-static struct rt_thread eth_tx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
-static char eth_tx_thread_mb_pool[32 * 4];
-static char eth_tx_thread_stack[512];
-#else
-static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
-static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
-#endif
-
-/* ================================================================================== */
-
-static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
-{
-	struct eth_tx_msg msg;
-	struct eth_device* enetif;
-
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
-	enetif = (struct eth_device*)netif->state;
-
-	/* send a message to eth tx thread */
-	msg.netif = netif;
-	msg.buf   = p;
-	if (rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg) == RT_EOK)
-	{
-		/* waiting for ack */
-		rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
-	}
-
-	return ERR_OK;
-}
-
-
-/* Since "ethernetif_init" is called back from netif_add() and we are
-   unable to get the pointer to the dev which owns this netif, this
-   global var is used to solve this problem. */
-static struct eth_device* eth_dev;
-/* the interface provided to LwIP */
-static err_t ethernetif_init(struct netif *netif)
-{
-
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
-	if( (eth_dev == RT_NULL) || (eth_dev->netif != netif) )
-		return ERR_MEM;
-
-	/* set name */
-	netif->name[0] = eth_dev->parent.parent.name[0];
-	netif->name[1] = eth_dev->parent.parent.name[1];
-
-	/* set hw address to 6 */
-	netif->hwaddr_len	= 6;
-	/* maximum transfer unit */
-	netif->mtu			= ETHERNET_MTU;
-
-	/* NOTE: the NETIF_FLAG_UP and NETIF_FLAG_LINK_UP flag is not set here.
-	They should be set by netif_set_up() and netif_set_link_up() automatically */
-	netif->flags		= NETIF_FLAG_BROADCAST |
-						NETIF_FLAG_ETHARP;
-#ifdef LWIP_IGMP
-	netif->flags |= NETIF_FLAG_IGMP;
-#endif
-
-#ifdef LWIP_DHCP
-	netif->flags |= NETIF_FLAG_DHCP;
-#endif
-
-	/* get hardware address */
-	rt_device_control(&(eth_dev->parent), NIOCTL_GADDR, netif->hwaddr);
-
-	/* set output */
-	netif->output		= etharp_output;
-	netif->linkoutput	= ethernetif_linkoutput;
-	
-	return ERR_OK;
-}
-
-
-/* ethernetif APIs */
-/* WARNING: because netif_set_up() is not re-entrance ( it will pending on sem/mbox )
- * you MUST NOT call it before scheduler starts.
- */
-rt_err_t eth_device_init(struct eth_device* dev, const char* name)
-{
-	struct netif* pnetif;
-
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
-	/* allocate memory */
-	pnetif = (struct netif*) rt_malloc (sizeof(struct netif));
-	if (pnetif == RT_NULL)
-	{
-		rt_kprintf("malloc netif failed\n");
-		return -RT_ERROR;
-	}
-	rt_memset(pnetif, 0, sizeof(struct netif));
-
-
-	/* set netif */
-	dev->netif = pnetif;
-	/* register to rt-thread device manager */
-	rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
-	dev->parent.type = RT_Device_Class_NetIf;
-	rt_sem_init(&(dev->tx_ack), name, 0, RT_IPC_FLAG_FIFO);
-
-
-	/* add netif to lwip */
-	/* NOTE: eth_init will be called back by netif_add, we should put some initialization
-	         code to eth_init(). See include/lwip/netif.h line 97 */
-	eth_dev = dev;
-	if (netif_add(pnetif, IP_ADDR_ANY, IP_ADDR_BROADCAST, IP_ADDR_ANY, dev,
-		ethernetif_init, tcpip_input) == RT_NULL)
-	{
-		/* failed, unregister device and free netif */
-		rt_device_unregister(&(dev->parent));
-		rt_free(pnetif);
-		eth_dev = RT_NULL;
-		return -RT_ERROR;
-	}
-	eth_dev = RT_NULL;
-
-	netif_set_default(pnetif);
-
-	/* We bring up the netif here cause we still don't have a call back function
-	which indicates the ethernet interface status from the ethernet driver. */
-	netif_set_up(pnetif);
-	netif_set_link_up(pnetif);
-
-	return RT_EOK;
-}
-
-
-/* ================================================================================== */
-/* NOTE: Previous functions are interface for lwip, and below are for rt-thread */
-void eth_tx_thread_entry(void* parameter)
-{
-	struct eth_tx_msg* msg;
-
-	while (1)
-	{
-		if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
- 		{
-			struct eth_device* enetif;
-
-			RT_ASSERT(msg->netif != RT_NULL);
-			RT_ASSERT(msg->buf   != RT_NULL);
-
-			enetif = (struct eth_device*)msg->netif->state;
-			if (enetif != RT_NULL)
-			{
-				/* call driver's interface */
-				if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
-				{
-					rt_kprintf("transmit eth packet failed\n");
-				}
-			}
-
-			/* send ack */
-			rt_sem_release(&(enetif->tx_ack));
-		}
-	}
-}
 
 /* ethernet buffer */
-void eth_rx_thread_entry(void* parameter)
+static void eth_rx_thread_entry(void* parameter)
 {
 	struct eth_device* device;
 
@@ -269,21 +109,32 @@ void eth_rx_thread_entry(void* parameter)
 				else break;
 			}
 		}
+		else
+		{
+			LWIP_ASSERT("Should not happen!\n",0);
+		}
 	}
 }
 
-rt_err_t eth_device_ready(struct eth_device* dev)
+
+
+static err_t enetif_linkoutput(struct netif *pnetif, struct pbuf *p)
 {
-	/* post message to ethernet thread */
-	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+	struct eth_device *dev;
+
+	dev = (struct eth_device *)(pnetif->state);
+	return dev->eth_tx(&(dev->parent), p);
 }
 
-rt_err_t eth_system_device_init()
+
+static err_t enetif_init(struct netif *pnetif)
 {
 	rt_err_t result = RT_EOK;
+	struct eth_device *dev;
+	rt_uint32_t level;
 
-	/* init rx thread */
-	/* init mailbox and create ethernet thread */
+	/* init rx thread.
+	 * init mailbox and create ethernet thread */
 	result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
 		&eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
 		RT_IPC_FLAG_FIFO);
@@ -291,30 +142,122 @@ rt_err_t eth_system_device_init()
 
 	result = rt_thread_init(&eth_rx_thread, "erx", eth_rx_thread_entry, RT_NULL,
 		&eth_rx_thread_stack[0], sizeof(eth_rx_thread_stack),
-		RT_ETHERNETIF_THREAD_PREORITY, 16);
+		RT_LWIP_ETHTHREAD_PRIORITY, 16);
 	RT_ASSERT(result == RT_EOK);
 
 	result = rt_thread_startup(&eth_rx_thread);
 	RT_ASSERT(result == RT_EOK);
 
-	/* init tx thread */
-	/* init mailbox and create ethernet thread */
-	result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-		&eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
-		RT_IPC_FLAG_FIFO);
-	RT_ASSERT(result == RT_EOK);
 
-	result = rt_thread_init(&eth_tx_thread, "etx", eth_tx_thread_entry, RT_NULL,
-		&eth_tx_thread_stack[0], sizeof(eth_tx_thread_stack),
-		RT_ETHERNETIF_THREAD_PREORITY, 16);
-	RT_ASSERT(result == RT_EOK);
+	dev = (struct eth_device *)(pnetif->state);
 
-	result = rt_thread_startup(&eth_tx_thread);
-	RT_ASSERT(result == RT_EOK);
+	pnetif->name[0] = dev->parent.parent.name[0];
+	pnetif->name[1] = dev->parent.parent.name[1];
 
-	return result;
+	pnetif->hwaddr_len	= 6;
+	pnetif->mtu			= ETHERNET_MTU;
+	pnetif->flags		= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+
+#ifdef LWIP_IGMP
+	pnetif->flags |= NETIF_FLAG_IGMP;
+#endif
+
+#ifdef LWIP_DHCP
+	pnetif->flags |= NETIF_FLAG_DHCP;
+#endif
+
+	/* get hardware address */
+	rt_device_control(&(dev->parent), NIOCTL_GADDR, pnetif->hwaddr);
+
+	/* set output */
+	pnetif->output		= etharp_output;
+	pnetif->linkoutput	= enetif_linkoutput;
+
+	/* finally, we connect netif and device together.
+	 * We initialized eth_device first, but ethernetif is still not ready.
+	 * Although we checked if dev->netif is null but we still must avoid
+	 * concurrency problem here.*/
+	level = rt_hw_interrupt_disable();
+	dev->netif = pnetif;
+	rt_hw_interrupt_enable(level);
+
+	return ERR_OK;
 }
 
+rt_err_t eth_rx_ready(struct eth_device* dev)
+{
+	if (dev->netif)
+		/* post message to ethernet thread */
+		return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+	else
+		return ERR_OK; /* netif is not initialized yet, just return. */
+}
+
+/* Functions below shouldn't be here because they are application or usage related.
+ * I just give an example of a right power-on procedure here. */
+static struct netif ethernetif;
+extern struct eth_device * get_eth_dev(void);
+
+/* This function is called-back in tcpip thread, so we don't need to use msg api
+ * to call those netif_xxx functions. But if we use these anywhere else, we must
+ * use msg api to avoid concurrent problem.
+ */
+static void tcpip_init_done_callback(void *arg)
+{
+	ip_addr_t ipaddr, netmask, gw;
+
+	LWIP_ASSERT("invalid arg.\n",arg);
+
+#if LWIP_DHCP
+	IP4_ADDR(&gw, 0,0,0,0);
+	IP4_ADDR(&ipaddr, 0,0,0,0);
+	IP4_ADDR(&netmask, 0,0,0,0);
+#else
+	IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
+	IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
+	IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+#endif
+
+	netif_add(&ethernetif, &ipaddr, &netmask, &gw, 
+		get_eth_dev(), enetif_init, tcpip_input);
+
+	netif_set_default(&ethernetif);
+
+#if LWIP_DHCP
+	dhcp_start(&ethernetif);
+#else
+	netif_set_up(&ethernetif);
+#endif
+
+	netif_set_link_up(&ethernetif);
+	
+	sys_sem_signal((sys_sem_t*)(&arg));
+}
+
+
+/* Make sure the 'dev' has already been initialized before calling this function.
+ * This function will initialize the lwip tcpip stack as well as the ethernetif.
+ * It will assign the dev->netif and netif->state field to make a connection between
+ * eth driver and ethnetif.
+ */
+void lwip_enetif_init(void)
+{
+	sys_sem_t init_done_sem;
+
+	if(sys_sem_new(&init_done_sem, 0) != ERR_OK)
+	{
+    	LWIP_ASSERT("Failed to create semaphore", 0);
+		return;
+	}
+	tcpip_init(tcpip_init_done_callback,(void *)init_done_sem);
+
+	sys_sem_wait(&init_done_sem);
+	rt_kprintf("TCP/IP initialized.\n");
+
+	sys_sem_free(&init_done_sem);
+}
+
+#if 0
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include "ipv4/lwip/inet.h"
@@ -376,4 +319,5 @@ void list_if()
 #endif
 }
 FINSH_FUNCTION_EXPORT(list_if, list network interface information);
+#endif
 #endif
