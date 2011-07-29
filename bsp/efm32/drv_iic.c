@@ -715,14 +715,12 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		switch (unitNumber)
 		{
 		case 0:
-			iic->lock		= &iic0_lock;
 			iic->iic_device	= I2C0;
 			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;	
 			break;
 
 #if (I2C_COUNT > 1)
 		case 1:
-			iic->lock		= &iic1_lock;
 			iic->iic_device	= I2C1;
 			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1; 
 			break;
@@ -807,6 +805,7 @@ void rt_hw_iic_init(void)
 		}
 
 		/* Initialize lock for iic0 */
+		iic->lock = &iic0_lock;
 		if (rt_sem_init(iic->lock, RT_IIC0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;
@@ -825,6 +824,7 @@ void rt_hw_iic_init(void)
 		}
 
 		/* Initialize lock for iic1 */
+		iic->lock = &iic1_lock;
 		if (rt_sem_init(iic->lock, RT_IIC1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;

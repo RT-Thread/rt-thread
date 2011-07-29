@@ -499,7 +499,7 @@ static rt_size_t rt_usart_write (
 			true,
 			false,
 			(void *)&(usart->usart_device->TXDATA),
-			buffer,
+			(void *)buffer,
 			(rt_uint32_t)(size - 1));
 
 		/* Wait, otherwise the TX buffer is overwrite */
@@ -920,21 +920,18 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		switch (unitNumber)
 		{
 		case 0:
-			usart->lock			= &usart0_lock;
 			usart->usart_device	= USART0;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART0;
 			txDmaSelect			= DMAREQ_USART0_TXBL;
 			break;
 			
 		case 1:
-			usart->lock			= &usart1_lock;
 			usart->usart_device	= USART1;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART1;
 			txDmaSelect			= DMAREQ_USART1_TXBL;
 			break;
 			
 		case 2:
-			usart->lock			= &usart2_lock;
 			usart->usart_device	= USART2;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART2;
 			txDmaSelect			= DMAREQ_USART2_TXBL;
@@ -1161,6 +1158,7 @@ void rt_hw_usart_init(void)
 			break;
 		}
 		/* Initialize lock for usart0 */
+		usart->lock = &usart0_lock;
 		if (rt_sem_init(usart->lock, RT_USART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;
@@ -1215,6 +1213,7 @@ void rt_hw_usart_init(void)
 			break;
 		}
 		/* Initialize lock for usart1 */
+		usart->lock = &usart1_lock;
 		if (rt_sem_init(usart->lock, RT_USART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;
@@ -1270,6 +1269,7 @@ void rt_hw_usart_init(void)
 			break;
 		}
 		/* Initialize lock for usart2 */
+		usart->lock = &usart2_lock;
 		if (rt_sem_init(usart->lock, RT_USART2_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;

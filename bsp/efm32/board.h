@@ -122,7 +122,6 @@ extern volatile rt_uint32_t rt_system_status;
 #define IIC_RX_BUFFER_SIZE			(32)
 
 /* SECTION: ADC */
-
 #define ADC_CALI_REF				adcRef2V5
 #define ADC_CALI_CH 				adcSingleInpCh5
 #define ADC_CONVERT_FREQUENCY 		(7000000)
