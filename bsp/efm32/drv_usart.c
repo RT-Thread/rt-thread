@@ -17,6 +17,8 @@
  * 2011-06-14	onelife		Fix a bug of TX by DMA
  * 2011-06-16	onelife		Modify init function for efm32lib v2 upgrading
  * 2011-07-07	onelife		Modify write function to avoid sleep in ISR
+ * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously 
+ *  access
  *
  * @section Change Logs of serial.c
  * 2009-02-05	Bernard		first version
@@ -57,6 +59,7 @@ union efm32_usart_init_t
 	#error "The location number range of usart is 0~3"
 #endif
 	struct rt_device usart0_device;
+	static struct rt_semaphore usart0_lock;
 #endif
 
 #ifdef RT_USING_USART1
@@ -64,6 +67,7 @@ union efm32_usart_init_t
 	#error "The location number range of usart is 0~3"
 #endif
 	struct rt_device usart1_device;
+	static struct rt_semaphore usart1_lock;
 #endif
 
 #ifdef RT_USING_USART2
@@ -71,6 +75,7 @@ union efm32_usart_init_t
 	#error "The location number range of usart is 0~3"
 #endif
 	struct rt_device usart2_device;
+	static struct rt_semaphore usart2_lock;
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
@@ -203,6 +208,7 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 		NVIC_SetPriority(DMA_IRQn, EFM32_IRQ_PRI_DEFAULT);
 	}
 
+	usart->counter++;
 	usart_debug("USART%d: Open with flag %x\n", usart->unit, oflag);
 	return RT_EOK;
 }
@@ -223,16 +229,25 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
  ******************************************************************************/
 static rt_err_t rt_usart_close(rt_device_t dev)
 {
-	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
-	{
-		struct efm32_usart_int_mode_t *int_rx;
+	RT_ASSERT(dev != RT_NULL);
 
-		int_rx = (struct efm32_usart_int_mode_t *)\
-			(((struct efm32_usart_device_t *)(dev->user_data))->rx_mode);
-		
-		rt_free(int_rx->data_ptr);
-		int_rx->data_ptr = RT_NULL;
+	struct efm32_usart_device_t	*usart;
+
+	usart = (struct efm32_usart_device_t *)(dev->user_data);
+
+	if (--usart->counter == 0)
+	{
+		if (dev->flag & RT_DEVICE_FLAG_INT_RX)
+		{
+			struct efm32_usart_int_mode_t *int_rx;
+
+			int_rx = (struct efm32_usart_int_mode_t *)usart->rx_mode;
+
+			rt_free(int_rx->data_ptr);
+			int_rx->data_ptr = RT_NULL;
+		}
 	}
+
 	return RT_EOK;
 }
 
@@ -265,11 +280,27 @@ static rt_size_t rt_usart_read (
 	void 			*buffer, 
 	rt_size_t 		size)
 {
+	struct efm32_usart_device_t *usart;
 	rt_uint8_t 	*ptr;
 	rt_err_t 	err_code;
 	rt_size_t 	read_len;
+	
+	usart = (struct efm32_usart_device_t *)(dev->user_data);
 
-	err_code = RT_EOK;
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_FOREVER);
+	}
+	if (err_code != RT_EOK)
+	{
+		rt_set_errno(err_code);
+		return 0;
+	}
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -384,6 +415,9 @@ static rt_size_t rt_usart_read (
 		read_len = size;
 	}
 
+	/* Unlock device */
+	rt_sem_release(usart->lock);
+
 	/* set error code */
 	rt_set_errno(err_code);
 	return read_len;
@@ -422,9 +456,23 @@ static rt_size_t rt_usart_write (
 	rt_size_t 						write_size;
 	struct efm32_usart_device_t* 	usart;
 
-	err_code = RT_EOK;
 	write_size = 0;
 	usart = (struct efm32_usart_device_t*)(dev->user_data);
+
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_FOREVER);
+	}
+	if (err_code != RT_EOK)
+	{
+		rt_set_errno(err_code);
+		return 0;
+	}
 
 	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 2))
 	{	/* DMA mode Tx */
@@ -503,6 +551,9 @@ static rt_size_t rt_usart_write (
 		write_size = (rt_size_t)ptr - (rt_size_t)buffer;
 	}
 
+	/* Unlock device */
+	rt_sem_release(usart->lock);
+
 	/* set error code */
 	rt_set_errno(err_code);
 	return write_size;
@@ -535,10 +586,25 @@ static rt_err_t rt_usart_control (
 {
 	RT_ASSERT(dev != RT_NULL);
 
+	rt_err_t	err_code;
 	struct efm32_usart_device_t *usart;
 
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
-	
+
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		err_code = rt_sem_take(usart->lock, RT_WAITING_FOREVER);
+	}
+	if (err_code != RT_EOK)
+	{
+		return err_code;
+	}
+
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
@@ -577,7 +643,8 @@ static rt_err_t rt_usart_control (
 						== RT_NULL)
 					{
 						usart_debug("USART: no memory for RX buffer\n");
-						return -RT_ENOMEM;
+						err_code = -RT_ENOMEM;
+						break;
 					}
 					// TODO: Is the following line necessary?
 					//rt_memset(int_rx->data_ptr, 0, size); 
@@ -589,7 +656,8 @@ static rt_err_t rt_usart_control (
 				if ((int_rx->data_ptr = rt_malloc(size)) == RT_NULL)
 				{
 					usart_debug("USART: no memory for RX buffer\n");
-					return -RT_ENOMEM;
+					err_code = -RT_ENOMEM;
+					break;
 				}
 			}
 			int_rx->data_size = size;
@@ -600,7 +668,10 @@ static rt_err_t rt_usart_control (
 
 	}
 
-	return RT_EOK;
+	/* Unlock device */
+	rt_sem_release(usart->lock);
+
+	return err_code;
 }
 
 /***************************************************************************//**
@@ -811,6 +882,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			usart_debug("USART: no memory for USART%d device\n", unitNumber);
 			break;
 		}
+		usart->counter 	= 0;
 		usart->unit 	= unitNumber;
 		usart->state 	= config;
 		usart->tx_mode 	= RT_NULL;
@@ -848,18 +920,21 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		switch (unitNumber)
 		{
 		case 0:
+			usart->lock			= &usart0_lock;
 			usart->usart_device	= USART0;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART0;
 			txDmaSelect			= DMAREQ_USART0_TXBL;
 			break;
 			
 		case 1:
+			usart->lock			= &usart1_lock;
 			usart->usart_device	= USART1;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART1;
 			txDmaSelect			= DMAREQ_USART1_TXBL;
 			break;
 			
 		case 2:
+			usart->lock			= &usart2_lock;
 			usart->usart_device	= USART2;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART2;
 			txDmaSelect			= DMAREQ_USART2_TXBL;
@@ -1017,6 +1092,8 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	{
 		rt_free(usart);
 	}
+
+	usart_debug("USART: Unit %d init failed!\n", unitNumber);
 	return RT_NULL;
 }
 
@@ -1035,143 +1112,178 @@ void rt_hw_usart_init(void)
 	rt_uint32_t 				flag;
 	rt_uint8_t					config;
 
-	/* Register usart0 */
+	do
+	{
 #ifdef RT_USING_USART0
-	config = 0x00;
-	flag = RT_DEVICE_FLAG_RDWR;
+		config = 0x00;
+		flag = RT_DEVICE_FLAG_RDWR;
 
  #ifdef RT_USART0_SYNC_MODE
-	config |= USART_STATE_SYNC;
+		config |= USART_STATE_SYNC;
   #if (RT_USART0_SYNC_MODE != 0x0UL)
-	config |= USART_STATE_MASTER;
+		config |= USART_STATE_MASTER;
   #else
-	 flag |= RT_DEVICE_FLAG_INT_RX;
+		 flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else
-	 flag |= RT_DEVICE_FLAG_INT_RX;
+		 flag |= RT_DEVICE_FLAG_INT_RX;
  #endif
 
  #if (SPI_AUTOCS_ENABLE & (1 << 0))
-	config |= USART_STATE_AUTOCS;
+		config |= USART_STATE_AUTOCS;
  #endif
 
  #if (RT_CONSOLE_DEVICE == 0x0UL)
-	config |= USART_STATE_CONSOLE;
-	flag |= RT_DEVICE_FLAG_STREAM;
+		config |= USART_STATE_CONSOLE;
+		flag |= RT_DEVICE_FLAG_STREAM;
  #endif
 
  #ifdef RT_USART0_USING_DMA
- 	RT_ASSERT(RT_USART0_USING_DMA < DMA_CHAN_COUNT);
-	flag |= RT_DEVICE_FLAG_DMA_TX;
+	 	RT_ASSERT(RT_USART0_USING_DMA < DMA_CHAN_COUNT);
+		flag |= RT_DEVICE_FLAG_DMA_TX;
  #else
-   #define RT_USART0_USING_DMA EFM32_NO_DATA
+	   #define RT_USART0_USING_DMA EFM32_NO_DATA
  #endif
 
-	if ((usart = rt_hw_usart_unit_init(
-		&usart0_device, 
-		0, 
-		RT_USING_USART0, 
-		flag, 
-		RT_USART0_USING_DMA, 
-		config)) != RT_NULL)
-	{
-		rt_hw_usart_register(&usart0_device, RT_USART0_NAME, flag, usart);
-	}
+		/* Initialize and Register usart0 */
+		if ((usart = rt_hw_usart_unit_init(
+			&usart0_device, 
+			0, 
+			RT_USING_USART0, 
+			flag, 
+			RT_USART0_USING_DMA, 
+			config)) != RT_NULL)
+		{
+			rt_hw_usart_register(&usart0_device, RT_USART0_NAME, flag, usart);
+		}
+		else
+		{
+			break;
+		}
+		/* Initialize lock for usart0 */
+		if (rt_sem_init(usart->lock, RT_USART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
 #endif
 
-	/* Register usart1 */
 #ifdef RT_USING_USART1
-	config = 0x00;
-	flag = RT_DEVICE_FLAG_RDWR;
+		config = 0x00;
+		flag = RT_DEVICE_FLAG_RDWR;
 
  #ifdef RT_USART1_SYNC_MODE
-	config |= USART_STATE_SYNC;
+		config |= USART_STATE_SYNC;
   #if (RT_USART1_SYNC_MODE != 0x0UL)
-	config |= USART_STATE_MASTER;
+		config |= USART_STATE_MASTER;
   #else
-	 flag |= RT_DEVICE_FLAG_INT_RX;
+		 flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else
-	 flag |= RT_DEVICE_FLAG_INT_RX;
+		 flag |= RT_DEVICE_FLAG_INT_RX;
  #endif
 
  #if (SPI_AUTOCS_ENABLE & (1 << 1))
-	config |= USART_STATE_AUTOCS;
+		config |= USART_STATE_AUTOCS;
  #endif
 
  #if (RT_CONSOLE_DEVICE == 0x1UL)
-	config |= USART_STATE_CONSOLE;
-	flag |= RT_DEVICE_FLAG_STREAM;
+		config |= USART_STATE_CONSOLE;
+		flag |= RT_DEVICE_FLAG_STREAM;
  #endif
 
  #ifdef RT_USART1_USING_DMA
- 	RT_ASSERT(RT_USART1_USING_DMA < DMA_CHAN_COUNT);
-	flag |= RT_DEVICE_FLAG_DMA_TX;
+	 	RT_ASSERT(RT_USART1_USING_DMA < DMA_CHAN_COUNT);
+		flag |= RT_DEVICE_FLAG_DMA_TX;
  #else
-	
-   #define RT_USART1_USING_DMA EFM32_NO_DATA
+		
+	   #define RT_USART1_USING_DMA EFM32_NO_DATA
  #endif
-  
-	if ((usart = rt_hw_usart_unit_init(
-		&usart1_device, 
-		1, 
-		RT_USING_USART1, 
-		flag, 
-		RT_USART1_USING_DMA, 
-		config)) != RT_NULL)
-	{
-		rt_hw_usart_register(&usart1_device, RT_USART1_NAME, flag, usart);
-	}
+
+ 		/* Initialize and Register usart1 */
+		if ((usart = rt_hw_usart_unit_init(
+			&usart1_device, 
+			1, 
+			RT_USING_USART1, 
+			flag, 
+			RT_USART1_USING_DMA, 
+			config)) != RT_NULL)
+		{
+			rt_hw_usart_register(&usart1_device, RT_USART1_NAME, flag, usart);
+		}
+		else
+		{
+			break;
+		}
+		/* Initialize lock for usart1 */
+		if (rt_sem_init(usart->lock, RT_USART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
 #endif
 
-	/* Register usart2 */
 #ifdef RT_USING_USART2
-	config = 0x00;
-	flag = RT_DEVICE_FLAG_RDWR;
+		config = 0x00;
+		flag = RT_DEVICE_FLAG_RDWR;
 
  #ifdef RT_USART2_SYNC_MODE
-	config |= USART_STATE_SYNC;
+		config |= USART_STATE_SYNC;
   #if (RT_USART2_SYNC_MODE != 0x0UL)
-	config |= USART_STATE_MASTER;
+		config |= USART_STATE_MASTER;
   #else
-	flag |= RT_DEVICE_FLAG_INT_RX;
+		flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else
-	flag |= RT_DEVICE_FLAG_INT_RX;
+		flag |= RT_DEVICE_FLAG_INT_RX;
  #endif
 
 #if (SPI_AUTOCS_ENABLE & (1 << 2))
-	config |= USART_STATE_AUTOCS;
+		config |= USART_STATE_AUTOCS;
 #endif
 
 #if (RT_CONSOLE_DEVICE == 0x2UL)
-	config |= USART_STATE_CONSOLE;
-	flag |= RT_DEVICE_FLAG_STREAM;
+		config |= USART_STATE_CONSOLE;
+		flag |= RT_DEVICE_FLAG_STREAM;
 #endif
 
  #ifdef RT_USART2_USING_DMA
- 	RT_ASSERT(RT_USART2_USING_DMA < DMA_CHAN_COUNT);
-	flag |= RT_DEVICE_FLAG_DMA_TX;
+	 	RT_ASSERT(RT_USART2_USING_DMA < DMA_CHAN_COUNT);
+		flag |= RT_DEVICE_FLAG_DMA_TX;
 
  #else
-	
-   #define RT_USART2_USING_DMA EFM32_NO_DATA
+		
+	   #define RT_USART2_USING_DMA EFM32_NO_DATA
  #endif
 
-	if ((usart = rt_hw_usart_unit_init(
-		&usart2_device, 
-		2, 
-		RT_USING_USART2, 
-		flag, 
-		RT_USART2_USING_DMA, 
-		config)) != RT_NULL)
-	{
-		rt_hw_usart_register(&usart2_device, RT_USART2_NAME, flag, usart);
-	}
+		/* Initialize and Register usart2 */
+		if ((usart = rt_hw_usart_unit_init(
+			&usart2_device, 
+			2, 
+			RT_USING_USART2, 
+			flag, 
+			RT_USART2_USING_DMA, 
+			config)) != RT_NULL)
+		{
+			rt_hw_usart_register(&usart2_device, RT_USART2_NAME, flag, usart);
+		}
+		else
+		{
+			break;
+		}
+		/* Initialize lock for usart2 */
+		if (rt_sem_init(usart->lock, RT_USART2_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
 #endif
+
+		usart_debug("USART: H/W init OK!\n");
+		return;
+	} while (0);
+
+	rt_kprintf("USART: H/W init failed!\n");
 }
 
-#endif
+#endif /* (defined(RT_USING_USART0) || defined(RT_USING_USART1) || defined(RT_USING_USART2)) */
 /***************************************************************************//**
  * @}
  ******************************************************************************/

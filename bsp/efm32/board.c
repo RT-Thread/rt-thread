@@ -1,53 +1,54 @@
-/******************************************************************//**
- * @file 		board.c
- * @brief 	USART driver of RT-Thread RTOS for EFM32
+/***************************************************************************//**
+ * @file 	board.c
+ * @brief 	Board support of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-21	onelife		Initial creation for EFM32
  * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support
- *********************************************************************/
+ * 2011-07-12	onelife		Add SWO output enable function
+ ******************************************************************************/
  
-/******************************************************************//**
-* @addtogroup efm32
-* @{
-*********************************************************************/
+/***************************************************************************//**
+ * @addtogroup efm32
+ * @{
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
 #define IS_NVIC_VECTTAB(VECTTAB) 		(((VECTTAB) == RAM_MEM_BASE) || \
 										((VECTTAB) == FLASH_MEM_BASE))
 #define IS_NVIC_OFFSET(OFFSET) 			((OFFSET) < 0x000FFFFF)
 
-/******************************************************************//**
-* @addtogroup SysTick_clock_source
-* @{
-*********************************************************************/
+/***************************************************************************//**
+ * @addtogroup SysTick_clock_source
+ * @{
+ ******************************************************************************/
 #define SysTick_CLKSource_HCLK_Div8		((uint32_t)0xFFFFFFFB)
 #define SysTick_CLKSource_HCLK			((uint32_t)0x00000004)
 #define IS_SYSTICK_CLK_SOURCE(SOURCE)	(((SOURCE) == SysTick_CLKSource_HCLK) || \
 										((SOURCE) == SysTick_CLKSource_HCLK_Div8))
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/
 
-/* Private macro --------------------------------------------------------------*/
-/* Private variables ------------------------------------------------------------*/
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
- *	  Set the allocation and offset of the vector table 
+ *   Set the allocation and offset of the vector table 
  *
  * @details
  *
@@ -57,9 +58,11 @@
  *	 Indicate the vector table is allocated in RAM or ROM
  *
  * @param[in] Offset
- *	The vector table offset
- *********************************************************************/
-static void NVIC_SetVectorTable(rt_uint32_t NVIC_VectTab, rt_uint32_t Offset)
+ *   The vector table offset
+ ******************************************************************************/
+static void NVIC_SetVectorTable(
+	rt_uint32_t NVIC_VectTab, 
+	rt_uint32_t Offset)
 { 
 	/* Check the parameters */
 	RT_ASSERT(IS_NVIC_VECTTAB(NVIC_VectTab));
@@ -68,15 +71,15 @@ static void NVIC_SetVectorTable(rt_uint32_t NVIC_VectTab, rt_uint32_t Offset)
 	SCB->VTOR = NVIC_VectTab | (Offset & (rt_uint32_t)0x1FFFFF80);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Configure the address of vector table 
+ *   Configure the address of vector table 
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 static void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
@@ -87,23 +90,24 @@ static void NVIC_Configuration(void)
 	NVIC_SetVectorTable(FLASH_MEM_BASE, 0x0);
 #endif
 
-	/* Set NVIC Preemption Priority Bits: 0 bit for pre-emption, 4 bits for subpriority */
+	/* Set NVIC Preemption Priority Bits: 0 bit for pre-emption, 4 bits for 
+	   subpriority */
 	NVIC_SetPriorityGrouping(0x7UL);
 
 	/* Set Base Priority Mask Register */
 	__set_BASEPRI(EFM32_BASE_PRI_DEFAULT);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Enable high frequency crystal oscillator (HFXO), and set HFCLK domain to use HFXO as 
- * source.
+ *   Enable high frequency crystal oscillator (HFXO), and set HFCLK domain to 
+ * use HFXO as source.
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 static void switchToHFXO(void)
 {
   CMU_TypeDef *cmu = CMU;
@@ -122,9 +126,9 @@ static void switchToHFXO(void)
   cmu->OSCENCMD = CMU_OSCENCMD_HFRCODIS;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Configure the SysTick clock source
+ *   Configure the SysTick clock source
  *
  * @details
  *
@@ -138,7 +142,7 @@ static void switchToHFXO(void)
  *
  * @arg SysTick_CLKSource_HCLK
  *	 AHB clock selected as SysTick clock source.
- *********************************************************************/
+ ******************************************************************************/
 static void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
 {
   /* Check the parameters */
@@ -154,15 +158,15 @@ static void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
   }
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Configure the SysTick for OS tick.
+ *   Configure the SysTick for OS tick.
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 static void  SysTick_Configuration(void)
 {
 	rt_uint32_t 	core_clock;
@@ -176,15 +180,58 @@ static void  SysTick_Configuration(void)
 	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Initialize the board.
+ *   Enable SWO.
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
+void setupSWO(void)
+{
+	rt_uint32_t *dwt_ctrl = (rt_uint32_t *) 0xE0001000;
+	rt_uint32_t *tpiu_prescaler = (rt_uint32_t *) 0xE0040010;
+	rt_uint32_t *tpiu_protocol = (rt_uint32_t *) 0xE00400F0;
+
+	CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_GPIO;
+	/* Enable Serial wire output pin */
+	GPIO->ROUTE |= GPIO_ROUTE_SWOPEN;
+	/* Set location 1 */
+	GPIO->ROUTE = (GPIO->ROUTE & ~(_GPIO_ROUTE_SWLOCATION_MASK)) | GPIO_ROUTE_SWLOCATION_LOC1;
+	/* Enable output on pin */
+	GPIO->P[2].MODEH &= ~(_GPIO_P_MODEH_MODE15_MASK);
+	GPIO->P[2].MODEH |= GPIO_P_MODEH_MODE15_PUSHPULL;
+	/* Enable debug clock AUXHFRCO */
+	CMU->OSCENCMD = CMU_OSCENCMD_AUXHFRCOEN;
+
+	while(!(CMU->STATUS & CMU_STATUS_AUXHFRCORDY));
+
+	/* Enable trace in core debug */
+	CoreDebug->DHCSR |= 1;
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+
+	/* Enable PC and IRQ sampling output */
+	*dwt_ctrl = 0x400113FF;
+	/* Set TPIU prescaler to 16. */
+	*tpiu_prescaler = 0xf;
+	/* Set protocol to NRZ */
+	*tpiu_protocol = 2;
+	/* Unlock ITM and output data */
+	ITM->LAR = 0xC5ACCE55;
+	ITM->TCR = 0x10009;
+}
+
+/***************************************************************************//**
+ * @brief
+ *   Initialize the board.
+ *
+ * @details
+ *
+ * @note
+ *
+ ******************************************************************************/
 void rt_hw_board_init(void)
 {
 	/* Chip errata */
@@ -205,15 +252,15 @@ void rt_hw_board_init(void)
 	SysTick_Configuration();	
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	  Initialize the hardware drivers.
+ *   Initialize the hardware drivers.
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void rt_hw_driver_init(void)
 {
 	CMU_ClockEnable(cmuClock_HFPER, true);
@@ -223,6 +270,11 @@ void rt_hw_driver_init(void)
 
 	/* Enabling clock to the interface of the low energy modules */
 	CMU_ClockEnable(cmuClock_CORELE, true);
+
+#ifdef EFM32_SWO_ENABLE
+	/* Enable SWO */
+	setupSWO();
+#endif
 
 	/* Initialize DMA */
 	rt_hw_dma_init();
@@ -265,7 +317,6 @@ void rt_hw_driver_init(void)
 #endif
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
-
+ ******************************************************************************/

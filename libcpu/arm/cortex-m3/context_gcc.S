@@ -1,25 +1,27 @@
-/******************************************************************//**
- * @file 		context_gcc.S
+/***************************************************************************//**
+ * @file 	context_gcc.S
  * @brief 	Context switch functions
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2009-10-11 	Bernard 		first version
+ * 2009-10-11 	Bernard 	first version
  * 2010-12-29	onelife		Modify for EFM32
- * 2011-06-17	onelife		Merge all of the assembly source code into context_gcc.S
- *********************************************************************/
+ * 2011-06-17	onelife		Merge all of the assembly source code into 
+ *  context_gcc.S
+ * 2011-07-12	onelife		Add interrupt context check function
+ ******************************************************************************/
  
-/******************************************************************//**
+/***************************************************************************//**
 * @addtogroup cortex-m3
 * @{
-*********************************************************************/
+ ******************************************************************************/
 
 	.cpu 	cortex-m3
 	.fpu 	softvfp
@@ -174,14 +176,24 @@ rt_hw_interrupt_thread_switch:
 	.type HardFault_Handler, %function
 HardFault_Handler:
     /* get current context */
-    MRS     r0, psp                 /* get fault thread stack pointer */
-    PUSH    {lr}
+    MRS     R0, PSP                 /* get fault thread stack pointer */
+    PUSH    {LR}
     BL      rt_hw_hard_fault_exception
-    POP     {lr}
+    POP     {LR}
 
-    ORR     lr, lr, #0x04
-    BX      lr
+    ORR     LR, LR, #0x04
+    BX      LR
 
-/******************************************************************//**
+/*
+ * rt_uint32_t rt_hw_interrupt_check(void);
+ * R0 --> state
+ */
+	.global rt_hw_interrupt_check
+	.type rt_hw_interrupt_check, %function
+rt_hw_interrupt_check:
+	MRS     R0, IPSR
+	BX		LR
+
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

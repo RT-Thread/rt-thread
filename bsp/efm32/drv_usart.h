@@ -13,6 +13,8 @@
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
  * 2011-06-27	onelife		Fix a bug when using compiler optimization
+ * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously 
+ *  access
  ******************************************************************************/
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__
@@ -21,33 +23,37 @@
 /* Exported types ------------------------------------------------------------*/
 struct efm32_usart_int_mode_t
 {
-	rt_uint8_t  *data_ptr;
-	rt_uint8_t  data_size;
-	rt_uint32_t read_index, save_index;
+	rt_uint8_t  		*data_ptr;
+	rt_uint8_t  		data_size;
+	rt_uint32_t 		read_index, save_index;
 };
 
 struct efm32_usart_dma_mode_t
 {
 	/* DMA Channel */
-	rt_uint32_t dma_channel;
+	rt_uint32_t 		dma_channel;
 
 	/* buffer info */
-	rt_uint32_t *data_ptr;
-	rt_uint8_t  data_size;
+	rt_uint32_t 		*data_ptr;
+	rt_uint8_t  		data_size;
 };
 
 struct efm32_usart_device_t
 {
+	/* Counter */
+	rt_uint32_t 		counter;
+	/* Lock */
+	struct rt_semaphore	*lock;
 	/* Unit number */
-	rt_uint8_t unit;
+	rt_uint8_t 			unit;
 	/* State */
-	volatile rt_uint8_t state;
+	volatile rt_uint8_t	state;
 	/*  Pointer to USART device structure */
-	USART_TypeDef* usart_device;
+	USART_TypeDef 		*usart_device;
 	/* Pointer to RX structure */
-	void *rx_mode;
+	void 				*rx_mode;
 	/* Pointer to TX structure */
-	void *tx_mode;
+	void 				*tx_mode;
 };
 
 /* Exported constants --------------------------------------------------------*/

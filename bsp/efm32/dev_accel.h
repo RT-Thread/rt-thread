@@ -1,44 +1,40 @@
 /***************************************************************************//**
- * @file 	drv_ethernet.h
- * @brief 	Ethernet driver (SPI mode) of RT-Thread RTOS for using EFM32 USART 
- *  module
- * 	 This driver is tested by using the Microchip ENC28J60 stand-alone Ethernet 
- *  controller with SPI interface.
+ * @file 	dev_accel.h
+ * @brief 	Accelerometer driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 0.4 beta
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file 
- *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2011-06-22	onelife		Initial creation for using EFM32 USART module
+ * 2011-07-13	onelife		Initial creation for using EFM32 ADC module to 
+ *  interface the Freescale MMA7361L
  ******************************************************************************/
-#ifndef __DEV_ETHERNET_H__
-#define __DEV_ETHERNET_H__
+#ifndef __DEV_ACCEL_H__
+#define __DEV_ACCEL_H__
 
 /* Includes ------------------------------------------------------------------*/
-#include "enc28j60.h"
-
 /* Exported types ------------------------------------------------------------*/
+struct efm32_accel_result_t
+{
+	rt_uint32_t 			x;
+	rt_uint32_t 			y;
+	rt_uint32_t 			z;
+};
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define ETH_ADDR_LEN 			(6)
-#define ETH_CLK_MAX 			(10000000) 	/* Should be more than 8 Mz (Errata 1) */
-//#define ETH_HALF_DUPLEX
-
-#define ETH_PERIOD_WAIT_INIT 	(RT_TICK_PER_SECOND/100)
-#define ETH_PERIOD_WAIT_TX 		(RT_TICK_PER_SECOND/100)
-#define ETH_SPI_RX_SKIP 		(1)
-
-#define ETH_RESET_PORT 			(gpioPortB)
-#define ETH_RESET_PIN 			(9)
-#define ETH_INT_PORT 			(gpioPortB)
-#define ETH_INT_PIN 			(10)
+#define ACCEL_X_ADC_CH 		ADC_SCANCTRL_INPUTMASK_CH2
+#define ACCEL_Y_ADC_CH 		ADC_SCANCTRL_INPUTMASK_CH3
+#define ACCEL_Z_ADC_CH 		ADC_SCANCTRL_INPUTMASK_CH4
 
 /* Exported functions ------------------------------------------------------- */
-rt_err_t efm_hw_eth_init(void);
+rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data);
+rt_err_t efm_accel_auto_zero(rt_tick_t period);
+rt_err_t efm_accel_init(void);
 
-#endif /* __DEV_ETHERNET_H__ */
+#endif /*__DEV_ACCEL_H__ */

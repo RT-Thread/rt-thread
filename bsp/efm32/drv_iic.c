@@ -1,60 +1,62 @@
-/******************************************************************//**
- * @file 		drv_iic.c
+/***************************************************************************//**
+ * @file 	drv_iic.c
  * @brief 	Serial API of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-01-06	onelife		Initial creation for EFM32
  * 2011-06-17	onelife		Modify init function for efm32lib v2 upgrading
- *********************************************************************/
+ * 2011-07-11	onelife		Add lock (semaphore) to prevent simultaneously 
+ *  access
+ ******************************************************************************/
 
-/******************************************************************//**
+/***************************************************************************//**
  * @addtogroup efm32
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "hdl_interrupt.h"
 #include "drv_iic.h"
 
 #if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_IIC_DEBUG
 #define iic_debug(format,args...) 			rt_kprintf(format, ##args)
 #else
 #define iic_debug(format,args...)
 #endif
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_IIC0
 #if (RT_USING_IIC0 > 3)
 	#error "The location number range of IIC is 0~3"
 #endif
-	struct rt_device iic0_device;
-	static struct rt_device iic0_rx_index;
+	struct rt_device 			iic0_device;
+	static struct rt_semaphore	iic0_lock;
 #endif
 
 #ifdef RT_USING_IIC1
 #if (RT_USING_IIC1 > 3)
 	#error "The location number range of IIC is 0~3"
 #endif
-	struct rt_device 		iic1_device;
-	static struct rt_device iic1_rx_index;
+	struct rt_device 			iic1_device;
+	static struct rt_semaphore	iic1_lock;
 #endif
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Initialize IIC device
  *
@@ -67,7 +69,7 @@
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_iic_init (rt_device_t dev)
 {
 	struct efm32_iic_device_t* iic;
@@ -87,7 +89,7 @@ static rt_err_t rt_iic_init (rt_device_t dev)
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Open IIC device
  *
@@ -103,16 +105,21 @@ static rt_err_t rt_iic_init (rt_device_t dev)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_iic_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	RT_ASSERT(dev != RT_NULL);
+
+	struct efm32_iic_device_t	*iic;
+	
+	iic = (struct efm32_iic_device_t *)(dev->user_data);
+	iic->counter++;
 
 	iic_debug("IIC: Open with flag %x\n", oflag);
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Close IIC device
  *
@@ -125,21 +132,24 @@ static rt_err_t rt_iic_open(rt_device_t dev, rt_uint16_t oflag)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_iic_close(rt_device_t dev)
 {
+	RT_ASSERT(dev != RT_NULL);
+
 	struct efm32_iic_device_t	*iic;
 	
 	iic = (struct efm32_iic_device_t *)(dev->user_data);
-
-	rt_free(iic->rx_buffer->data_ptr);
-	rt_free(iic->rx_buffer);
-	iic->rx_buffer = RT_NULL;
-	
+	if (--iic->counter == 0)
+	{
+		rt_free(iic->rx_buffer->data_ptr);
+		rt_free(iic->rx_buffer);
+		iic->rx_buffer = RT_NULL;
+	}
 	return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Read from IIC device
  *
@@ -161,7 +171,7 @@ static rt_err_t rt_iic_close(rt_device_t dev)
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_iic_read (
 	rt_device_t 	dev, 
 	rt_off_t 		pos, 
@@ -184,6 +194,20 @@ static rt_size_t rt_iic_read (
 	read_size = 0;
 	iic = (struct efm32_iic_device_t*)dev->user_data;
 	data[0] = (rt_uint8_t)(pos & 0x000000FF);
+
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_FOREVER);
+	}
+	if (ret != RT_EOK)
+	{
+		return ret;
+	}
 
 	if (iic->state & IIC_STATE_MASTER)
 	{
@@ -267,12 +291,15 @@ static rt_size_t rt_iic_read (
 		iic_debug("IIC0 slave read size: %d\n", read_size);
 	}
 
+	/* Unlock device */
+	rt_sem_release(iic->lock);
+
 	/* set error code */
 	rt_set_errno(err_code);
 	return read_size;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *   Write to IIC device
  *
@@ -294,7 +321,7 @@ static rt_size_t rt_iic_read (
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_size_t rt_iic_write (
 	rt_device_t 	dev, 
 	rt_off_t 		pos, 
@@ -306,7 +333,6 @@ static rt_size_t rt_iic_write (
 	struct efm32_iic_device_t* 	iic;
 	I2C_TransferSeq_TypeDef 	seq;
 	I2C_TransferReturn_TypeDef 	ret;
-	//rt_uint8_t 					data[1];
 
 	if (!size)
 	{
@@ -316,7 +342,20 @@ static rt_size_t rt_iic_write (
 	err_code = RT_EOK;
 	write_size = 0;
 	iic = (struct efm32_iic_device_t*)dev->user_data;
-	//data[0] = (rt_uint8_t)(pos & 0x000000FF);
+
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_FOREVER);
+	}
+	if (ret != RT_EOK)
+	{
+		return ret;
+	}
 
 	if (iic->state & IIC_STATE_MASTER)
 	{
@@ -360,12 +399,15 @@ static rt_size_t rt_iic_write (
 		write_size = size;
 	}
 
+	/* Unlock device */
+    rt_sem_release(iic->lock);
+
 	/* set error code */
 	rt_set_errno(err_code);
 	return write_size;
 }
 
- /******************************************************************//**
+ /***************************************************************************//**
  * @brief
  *   Configure IIC device
  *
@@ -384,7 +426,7 @@ static rt_size_t rt_iic_write (
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
 static rt_err_t rt_iic_control (
 	rt_device_t 	dev, 
 	rt_uint8_t 		cmd, 
@@ -392,9 +434,25 @@ static rt_err_t rt_iic_control (
 {
 	 RT_ASSERT(dev != RT_NULL);
 
+	rt_err_t ret;
 	struct efm32_iic_device_t *iic;
 
 	iic = (struct efm32_iic_device_t*)dev->user_data;
+
+	/* Lock device */
+	if (rt_hw_interrupt_check())
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_NO);
+	}
+	else
+	{
+		ret = rt_sem_take(iic->lock, RT_WAITING_FOREVER);
+	}
+	if (ret != RT_EOK)
+	{
+		return ret;
+	}
+
 	switch (cmd)
 	{
 	case RT_DEVICE_CTRL_SUSPEND:
@@ -475,32 +533,35 @@ static rt_err_t rt_iic_control (
 		break;
 	}
 
+	/* Unlock device */
+	rt_sem_release(iic->lock);
+
 	return RT_EOK;
 }
 
-/******************************************************************//**
-* @brief
-*	Register IIC device
-*
-* @details
-*
-* @note
-*
-* @param[in] device
-*	Pointer to device descriptor
-*
-* @param[in] name
-*	Device name
-*
-* @param[in] flag
-*	Configuration flags
-*
-* @param[in] iic
-*	Pointer to IIC device descriptor 
-*
-* @return
-*	Error code
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Register IIC device
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] device
+ *	Pointer to device descriptor
+ *
+ * @param[in] name
+ *	Device name
+ *
+ * @param[in] flag
+ *	Configuration flags
+ *
+ * @param[in] iic
+ *	Pointer to IIC device descriptor 
+ *
+ * @return
+ *	Error code
+ ******************************************************************************/
 rt_err_t rt_hw_iic_register(
 	rt_device_t		device, 
 	const char		*name, 
@@ -530,7 +591,7 @@ rt_err_t rt_hw_iic_register(
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *	IIC slave mode RX data valid interrupt handler
  *
@@ -540,7 +601,7 @@ rt_err_t rt_hw_iic_register(
  *
  * @param[in] dev
  *	Pointer to device descriptor
- *********************************************************************/
+ ******************************************************************************/
 static void rt_hw_iic_slave_isr(rt_device_t dev)
 {
  	struct efm32_iic_device_t 	*iic;
@@ -607,20 +668,20 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
 	}
 }
 
-/******************************************************************//**
-* @brief
-*	Initialize the specified IIC unit 
-*
-* @details
-*
-* @note
-*
-* @param[in] unitNumber
-*	Unit number
-*
-* @param[in] location
-*	Pin location number 
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Initialize the specified IIC unit 
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] unitNumber
+ *	Unit number
+ *
+ * @param[in] location
+ *	Pin location number 
+ ******************************************************************************/
 static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 	rt_device_t device,
 	rt_uint8_t 	unitNumber, 
@@ -637,9 +698,10 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		iic = rt_malloc(sizeof(struct efm32_iic_device_t));
 		if (iic == RT_NULL)
 		{
-			iic_debug("no memory for IIC%d driver\n", unitNumber);
+			iic_debug("IIC: no memory for IIC%d driver\n", unitNumber);
 			break;
 		}
+		iic->counter 		= 0;
 		iic->state 			|= IIC_STATE_MASTER;
 		iic->master_address	= 0x0000;
 		iic->slave_address 	= 0x0000;
@@ -653,12 +715,14 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		switch (unitNumber)
 		{
 		case 0:
+			iic->lock		= &iic0_lock;
 			iic->iic_device	= I2C0;
 			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;	
 			break;
 
 #if (I2C_COUNT > 1)
 		case 1:
+			iic->lock		= &iic1_lock;
 			iic->iic_device	= I2C1;
 			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1; 
 			break;
@@ -710,43 +774,71 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 	{
 		rt_free(iic);
 	}
-	rt_kprintf("IIC: Init failed!\n");
+	
+	iic_debug("IIC: Unit %d init failed!\n", unitNumber);
 	return RT_NULL;
 }
 
-/******************************************************************//**
-* @brief
-*	Initialize all IIC module related hardware and register IIC device to kernel
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Initialize all IIC module related hardware and register IIC device to kernel
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void rt_hw_iic_init(void)
 {
 	struct efm32_iic_device_t *iic;
 	rt_uint32_t flag;
 
-	flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
-
-	/* register iic0 */
+	do
+	{
+		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 #ifdef RT_USING_IIC0
-	if ((iic = rt_hw_iic_unit_init(&iic0_device, 0, RT_USING_IIC0)) != RT_NULL)
-	{
-		rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
-	}
+		/* Initialize and register iic0 */
+		if ((iic = rt_hw_iic_unit_init(&iic0_device, 0, RT_USING_IIC0)) != RT_NULL)
+		{
+			rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
+		}
+		else
+		{
+			break;
+		}
+
+		/* Initialize lock for iic0 */
+		if (rt_sem_init(iic->lock, RT_IIC0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
 #endif
 
-	/* register iic1 */
 #ifdef RT_USING_IIC1
-	if ((iic = rt_hw_iic_unit_init(&iic1_device, 1, RT_USING_IIC1)) != RT_NULL)
-	{
-		rt_hw_iic_register(&iic1_device, RT_IIC1_NAME, flag, iic);
-	}
+		/* Initialize and register iic1 */
+		if ((iic = rt_hw_iic_unit_init(&iic1_device, 1, RT_USING_IIC1)) != RT_NULL)
+		{
+			rt_hw_iic_register(&iic1_device, RT_IIC1_NAME, flag, iic);
+		}
+		else
+		{
+			break;
+		}
+
+		/* Initialize lock for iic1 */
+		if (rt_sem_init(iic->lock, RT_IIC1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
 #endif
+
+		iic_debug("IIC: H/W init OK!\n");
+		return;
+	} while (0);
+
+	rt_kprintf("IIC: H/W init failed!\n");
 }
 
-#endif
-/******************************************************************//**
+#endif /* (defined(RT_USING_IIC0) || defined(RT_USING_IIC1)) */
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

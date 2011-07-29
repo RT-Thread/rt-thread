@@ -32,6 +32,7 @@
 #define RT_DEBUG
 //#define RT_DEBUG_MEM 				(1)
 //#define RT_DEBUG_SCHEDULER 			(1)
+//#define RT_DEBUG_IPC 				(1)
 //#define THREAD_DEBUG
 //#define IRQ_DEBUG
 #define RT_USING_OVERFLOW_CHECK
@@ -47,9 +48,11 @@
 //#define RT_TIMER_DEBUG
 //#define RT_RTC_DEBUG
 
+#define EFM32_DEBUG
+#define RT_ACCEL_DEBUG
 #define EFM32_SFLASH_DEBUG
 //#define EFM32_SDCARD_DEBUG
-#define EFM32_ETHERNET_DEBUG
+//#define EFM32_ETHERNET_DEBUG
 
 
 /* Using Hook */
@@ -94,7 +97,7 @@
 #elif defined(EFM32_G890_STK)
 #define RT_USING_USART1				(0x1UL)
 #define RT_USART1_NAME				"debug"
-#define RT_USART1_USING_DMA			(0x0UL)
+//#define RT_USART1_USING_DMA			(0x0UL)
 #endif
 
 /* SECTION: SPI options */
@@ -125,7 +128,10 @@
 
 /* SECTION: ADC options */
 #define RT_USING_ADC0
-#define RT_ADC0_NAME 				"adc"
+#define RT_ADC0_NAME 				"adc0"
+#if defined(RT_USING_ADC0)
+#define RT_USING_MISC
+#endif
 
 /* SECTION: TIMER options */
 //#define RT_USING_TIMER2				(0x00) 		/* Continuous mode */
@@ -155,11 +161,16 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-/* SECTION: SPI Flash, MicroSD card and Ethernet */
+/* SECTION: Peripheral devices */
 #if defined(EFM32_G290_DK)
-//#define EFM32_USING_SFLASH
-//#define EFM32_USING_SPISD
-#define EFM32_USING_ETHERNET
+//#define EFM32_USING_ACCEL 			/* Three axis accelerometer */
+//#define EFM32_USING_SFLASH 		/* SPI Flash */
+//#define EFM32_USING_SPISD 			/* MicroSD card */
+#define EFM32_USING_ETHERNET 		/* Ethernet controller */
+#endif
+#if defined(EFM32_USING_ACCEL)
+#define ACCEL_USING_DEVICE_NAME 	RT_ADC0_NAME
+#define ACCEL_USING_DMA				(0x3UL)
 #endif
 #if defined(EFM32_USING_SFLASH)
 #define SFLASH_USING_DEVICE_NAME 	RT_USART0_NAME
@@ -171,7 +182,7 @@
 #if defined(EFM32_USING_ETHERNET)
 #define ETH_USING_DEVICE_NAME 		RT_USART2_NAME
 #define ETH_DEVICE_NAME 			"spiEth"
-#define ETH_ADDR_DEFAULT 			{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}
+#define ETH_ADDR_DEFAULT 			{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
 #endif
 
 /* SECTION: device filesystem */
@@ -185,21 +196,29 @@
 #define DFS_FD_MAX					(4)
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM   		(4)
-#endif
+#endif /* defined(EFM32_USING_SPISD) */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #if defined(EFM32_USING_ETHERNET)
+#define EFM32_USING_ETH_HTTPD
+//#define EFM32_USING_ETH_UTILS
+//#define hostName 					"onelife.dyndns.org"
+//#define userPwdB64 					"dXNlcjpwYXNzd2Q="
+
 #define RT_USING_LWIP
 //#define RT_USING_NETUTILS
-//#define RT_LWIP_DHCP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
+/* Enable ICMP protocol*/
+//#define RT_LWIP_IGMP
 /* Enable UDP protocol*/
 #define RT_LWIP_UDP
 /* Enable TCP protocol*/
 #define RT_LWIP_TCP
+/* Enable DHCP */
+//#define RT_LWIP_DHCP
 /* Enable DNS */
 //#define RT_LWIP_DNS
 
@@ -227,13 +246,13 @@
 /* tcp thread options */
 #define RT_LWIP_TCPTHREAD_PRIORITY	(12)
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE	(4)
-#define RT_LWIP_TCPTHREAD_STACKSIZE	(512)
+#define RT_LWIP_TCPTHREAD_STACKSIZE	(1024)
 
 /* ethernet if thread options */
 #define RT_LWIP_ETHTHREAD_PRIORITY 	(15)
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE	(4)
 #define RT_LWIP_ETHTHREAD_STACKSIZE	(512)
-#endif
+#endif /* defined(EFM32_USING_ETHERNET) */
 
 /* Exported functions ------------------------------------------------------- */
 

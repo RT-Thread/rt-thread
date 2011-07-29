@@ -14,6 +14,8 @@
  * 2009-01-05 	Bernard 	first version
  * 2010-12-29	onelife		Modify for EFM32
  * 2011-05-06	onelife		Add SPI Flash DEMO
+ * 2011-07-15	onelife		Add accelerometer DEMO
+ * 2011-07-27	onelife		Modify Ethernet DEMO
  ******************************************************************************/
  
 /***************************************************************************//**
@@ -34,6 +36,9 @@
 #endif
 
 #include "dev_led.h"
+#if defined(EFM32_USING_ACCEL)
+#include "dev_accel.h"
+#endif
 #if defined(EFM32_USING_SFLASH)
 #include "dev_sflash.h"
 #endif
@@ -48,12 +53,28 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-rt_uint32_t	rt_system_status = 0;
+volatile rt_uint32_t	rt_system_status = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 void rt_demo_thread_entry(void* parameter)
 {
+#if 0 //defined(EFM32_USING_ACCEL)
+	struct efm32_accel_result_t result;
+
+	rt_kprintf(">>> waiting\n");
+	rt_thread_sleep(6000);
+	rt_kprintf(">>> start\n");
+	while(1)
+	{
+		efm_accel_get_data(&result);
+		rt_kprintf("Accel x: %x\n", result.x);
+		rt_kprintf("Accel y: %x\n", result.y);
+		rt_kprintf("Accel z: %x\n\n", result.z);
+		rt_thread_sleep(200);
+	}
+#endif
+
 #if defined(RT_USING_DFS)
 	/* Filesystem Initialization */
 	dfs_init();
@@ -114,23 +135,42 @@ void rt_demo_thread_entry(void* parameter)
 #endif
 
 #if defined(EFM32_USING_ETHERNET)
+	extern void lwip_sys_init(void);
+#if defined(EFM32_USING_ETH_HTTPD)
 	extern void httpd_init(void);
+#endif
 
 	rt_device_t eth = RT_NULL;
 
+	/* find Ethernet device */
 	eth = rt_device_find(ETH_DEVICE_NAME);
 	if (eth != RT_NULL)
 	{
+		/* init Ethernet device */
 		eth->init(eth);
+		rt_kprintf("Ethernet init OK!\n");
+
+		/* init lwip system */
+		lwip_sys_init();
+		rt_kprintf("TCP/IP stack init OK!\n");
+
+#if defined(EFM32_USING_ETH_HTTPD)
+		/* init http server */
 		httpd_init();
 		rt_kprintf("Http service init OK!\n");
+#endif
 	}
 	else
 	{
 		rt_kprintf("%s is not found\n"), ETH_DEVICE_NAME;
 	}
-#endif
+#endif /* defined(EFM32_USING_ETHERNET) */
 	rt_kprintf("Demo End\n");
+
+	while(1)
+	{
+		rt_thread_sleep(10);
+	}
 }
 
 void rt_led_thread_entry(void* parameter)
@@ -158,6 +198,14 @@ int rt_application_init()
 {
 	rt_thread_t demo_thread, led_thread;
 
+#if defined(EFM32_USING_ACCEL)
+	if (efm_accel_init() != RT_EOK)
+	{
+		rt_kprintf("*** Init accelerometer driver failed!");
+		while(1); //Or do something?
+	}
+#endif
+
 #if defined(EFM32_USING_SFLASH)
 	if (efm_spiFlash_init() != RT_EOK)
 	{
@@ -180,7 +228,7 @@ int rt_application_init()
 		rt_kprintf("*** Init LED driver failed!");
 		while(1); //Or do something?
 	}
-#if defined(RT_USING_ADC0)
+#if defined(RT_USING_MISC)
 	if (rt_hw_misc_init() != RT_EOK)
 	{
 		rt_kprintf("*** Init miscellaneous driver failed!");
@@ -190,8 +238,6 @@ int rt_application_init()
 
 #if defined(RT_USING_LWIP)
 	{
-		extern void lwip_sys_init(void);
-
 		/* Create Ethernet Threads */
 		if (eth_system_device_init() != RT_EOK)
 		{
@@ -205,9 +251,6 @@ int rt_application_init()
 			while(1); //Or do something?
 		}
  #endif
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP stack init OK!\n");
 	}
 #endif
 
@@ -216,7 +259,7 @@ int rt_application_init()
 		"demo",
 		rt_demo_thread_entry, 
 		RT_NULL,
-		512, 
+		1024, 
 		3, 
 		20);
 

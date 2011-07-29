@@ -15,6 +15,9 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-06-22	onelife		Initial creation for using EFM32 USART module
+ * 2011-07-25	onelife		Add lock (semaphore) to prevent simultaneously 
+ *  access
+ * 2011-07-28	onelife		Add get_ip() and update_ip() utilities
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -366,8 +369,8 @@ void efm_eth_isr(rt_device_t dev)
 	rt_uint8_t reg_eir, data;
 	volatile rt_uint8_t cnt;
 
-	/* Disable RX interrutp */
-	data = EIE_PKTIE;
+	/* Disable RX and other interrutps */
+	data = EIE_PKTIE | EIE_INTIE;
 	efm_eth_sendCmd(ENC28J60_BIT_FIELD_CLR, EIE, &data);
 
 	/* Get interrupt flag */
@@ -410,6 +413,10 @@ void efm_eth_isr(rt_device_t dev)
 	    /* Inform Ethernet thread */
 		eth_device_ready(&eth_dev);
 	}
+
+	/* Enable other interrupts */
+	data = EIE_INTIE;
+	efm_eth_sendCmd(ENC28J60_BIT_FIELD_SET, EIE, &data);
 }
 
 /***************************************************************************//**
@@ -470,8 +477,7 @@ static rt_err_t efm_eth_init(rt_device_t dev)
 	efm_eth_writeReg(EPMM1, 0x30);
 	efm_eth_writeReg(EPMCSL, 0xf9);
 	efm_eth_writeReg(EPMCSH, 0xf7); 
-	efm_eth_writeReg(ERXFCON, 
-		ERXFCON_UCEN | ERXFCON_CRCEN | ERXFCON_PMEN);
+	efm_eth_writeReg(ERXFCON, ERXFCON_UCEN | ERXFCON_CRCEN | ERXFCON_PMEN);
 	//efm_eth_writeReg(ERXFCON, ERXFCON_UCEN | ERXFCON_CRCEN | ERXFCON_BCEN);
 	/* Waiting For OST: The OST does not expire until 7500 OSC1 clock cycles (300 uS) 
 	    pass after Power-on Reset or wake-up from Power-Down mode occurs */
@@ -720,14 +726,14 @@ struct pbuf *efm_eth_rx(rt_device_t dev)
 	rt_uint16_t len_rx, sta_rx;
 	struct pbuf* p;
 
-    p = RT_NULL;
-
     /* Lock device */
     rt_sem_take(&ethLock, RT_WAITING_FOREVER);
+
     /* Disable interrupts */
 	data = EIE_INTIE;
 	efm_eth_sendCmd(ENC28J60_BIT_FIELD_CLR, EIE, &data);
 
+	p = RT_NULL;
 	reg_eie = 0;
     if (efm_eth_readReg(EPKTCNT))
     {
@@ -778,10 +784,11 @@ struct pbuf *efm_eth_rx(rt_device_t dev)
 						eth_debug("ETH: ***** read RX (q->len %x) *****\n", q->len);
 						for (i = 0; i < q->len; i += 8)
 						{
-							eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x (%d %d)\n",
+							eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x | %c %c %c %c %c %c %c %c\n",
 								temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
 								temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7], 
-								i, q->len);
+								temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
+								temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7]);
 						}
 					}
 #endif
@@ -820,6 +827,7 @@ struct pbuf *efm_eth_rx(rt_device_t dev)
     /* Enable interrupts */
 	reg_eie |= EIE_INTIE;
 	efm_eth_sendCmd(ENC28J60_BIT_FIELD_SET, EIE, &reg_eie);
+
 	/* Unlock device */
     rt_sem_release(&ethLock);
 
@@ -850,6 +858,7 @@ rt_err_t efm_eth_tx(rt_device_t dev, struct pbuf* p)
 
     /* Lock device */
     rt_sem_take(&ethLock, RT_WAITING_FOREVER);
+
     /* Disable interrupts */
 	data = EIE_INTIE;
 	efm_eth_sendCmd(ENC28J60_BIT_FIELD_CLR, EIE, &data);
@@ -880,10 +889,11 @@ rt_err_t efm_eth_tx(rt_device_t dev, struct pbuf* p)
 			eth_debug("ETH: ***** write TX (len %d) *****\n", p->len);
 			for (i = 0; i < q->len; i += 8)
 			{
-				eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x (%d %d)\n",
+				eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x | %c %c %c %c %c %c %c %c\n",
 					temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
 					temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7],
-					i, q->len);
+					temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
+					temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7]);
 			}
 		}
 #endif
@@ -902,9 +912,12 @@ rt_err_t efm_eth_tx(rt_device_t dev, struct pbuf* p)
 		efm_eth_sendCmd(ENC28J60_BIT_FIELD_SET, ECON1, &data);
 	}
 
+	/* Waiting for a while */
+	rt_thread_delay(ETH_PERIOD_WAIT_INIT);
     /* Enable interrupts */
 	data = EIE_INTIE;
 	efm_eth_sendCmd(ENC28J60_BIT_FIELD_SET, EIE, &data);
+
 	/* Unlock device */
     rt_sem_release(&ethLock);
 
@@ -983,7 +996,7 @@ rt_err_t efm_hw_eth_init(void)
 		USART_BaudrateSyncSet(usart->usart_device, 0, ETH_CLK_MAX);
 
 		/* Initialize semaphore */
-		rt_sem_init(&ethLock, "lck_eth", 1, RT_IPC_FLAG_FIFO);
+		rt_sem_init(&ethLock, ETH_DEVICE_NAME, 1, RT_IPC_FLAG_FIFO);
 
 		/* Register Ethernet device */
 		eth_dev.parent.init 	= efm_eth_init;
@@ -1011,6 +1024,7 @@ rt_err_t efm_hw_eth_init(void)
 /***************************************************************************//**
 * 	Export to FINSH
 ******************************************************************************/
+#if	defined(EFM32_USING_ETH_UTILS)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
@@ -1021,9 +1035,6 @@ void list_eth(void)
 
 	rt_kprintf("    ENC28J60 on %s\n", ETH_USING_DEVICE_NAME);
 	rt_kprintf(" ------------------------------\n");
-	rt_kprintf(" MAC address is %02x %02x %02x %02x %02x %02x\n", 
-		eth_addr[0], eth_addr[1], eth_addr[2], eth_addr[3], eth_addr[4],
-		eth_addr[5], eth_addr[6]);
 	reg_phy = efm_eth_readPhy(PHSTAT2);
 	if (reg_phy & PHSTAT2_PLRITY)
 	{
@@ -1075,7 +1086,243 @@ void list_eth(void)
 	}
 }
 FINSH_FUNCTION_EXPORT(list_eth, list the Ethernet device status.)
+
+#include "lwip\api.h"
+
+rt_err_t get_ip(char *ip)
+{
+	err_t ret;
+	struct ip_addr server_ip;
+	struct netconn *conn;
+	struct netbuf *buf;
+	char *rq, *rq2;
+	u16_t len;
+	const char query[] = "GET / HTTP/1.0\r\nHOST: checkip.dyndns.com\r\n\r\n";
+	const char find[] = "body";
+
+	do
+	{
+#if defined(RT_LWIP_DNS)
+		ret = netconn_gethostbyname("checkip.dyndns.com", &server_ip);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+#else
+		IP4_ADDR(&server_ip, 216,146,38,70);	// IP address of "checkip.dyndns.com"
 #endif
+
+		conn = netconn_new(NETCONN_TCP);
+		if (conn == NULL)
+		{
+			break;
+		}
+
+		ret = netconn_connect(conn, &server_ip, 80);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+
+		/* Send the query */
+		ret = netconn_write(conn, query, sizeof(query) - 1, 0);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+
+		buf = netconn_recv(conn);
+		if (buf != NULL)
+		{
+			/* Get the response */
+			ret = netbuf_data(buf, (void **)&rq, &len);
+			if (ret != ERR_OK)
+			{
+				break;
+			}
+
+			/* Find the IP address */
+			rq = rt_strstr(rq, find);
+			if (rq == RT_NULL)
+			{
+				break;
+			}
+			rq += 5;
+			rq2 = rq;
+			rq2 = rt_strstr(rq2, find);
+			if (rq2 == RT_NULL)
+			{
+				break;
+			}
+			rq2 -= 2;
+			*rq2 = 0x0;
+//			rt_kprintf("[%s]\n", rq);
+		}
+		else
+		{
+			break;
+		}
+
+		/* Copy the IP address to buffer */
+		if (ip != NULL)
+		{
+			while(*rq < '0' || *rq > '9')
+			{
+				rq++;
+			}
+			rt_memcpy(ip, rq, rq2 - rq + 1);
+		}
+		netconn_delete(conn);
+		netbuf_delete(buf);
+		return RT_EOK;
+	} while (0);
+
+	netconn_delete(conn);
+	netbuf_delete(buf);
+	return -RT_ERROR;
+}
+
+void list_myip(void)
+{
+	rt_uint8_t ip[20];
+
+	if (get_ip(ip) != RT_EOK)
+	{
+		rt_kprintf("Get IP failed!\n");
+		return;
+	}
+
+	rt_kprintf("Current IP: [%s]\n", ip);
+}
+FINSH_FUNCTION_EXPORT(list_myip, list the current IP address.)
+
+#if !defined(hostName) || !defined(userPwdB64)
+#error "The 'hostName' and 'userPwdB64' must be defined to use update_ip() function"
+#endif
+
+rt_err_t update_ip(char *ip)
+{
+	err_t ret;
+	struct ip_addr server_ip;
+	struct netconn *conn;
+	struct netbuf *buf;
+	char *rq;
+	u16_t len, len2;
+	char query[200] = "GET /nic/update?hostname=";
+	const char query2[] = "&myip=";
+	const char query3[] = " HTTP/1.0\r\nHost: members.dyndns.org\r\nAuthorization: Basic ";
+	const char query4[] = "\r\nUser-Agent: onelife - EFM32 - 0.4\r\n\r\n";
+	const char find[] = "good";
+
+	/* Make the query */
+	len = rt_strlen(query);
+	len2 = sizeof(hostName) - 1;
+	rt_memcpy(&query[len], hostName, len2);
+	len += len2;
+
+	len2 = sizeof(query2) - 1;
+	rt_memcpy(&query[len], query2, len2);
+	len += len2;
+
+	len2 = rt_strlen(ip);
+	rt_memcpy(&query[len], ip, len2);
+	len += len2;
+
+	len2 = sizeof(query3) - 1;
+	rt_memcpy(&query[len], query3, len2);
+	len += len2;
+
+	len2 = sizeof(userPwdB64) - 1;
+	rt_memcpy(&query[len], userPwdB64, len2);
+	len += len2;
+
+	len2 = sizeof(query4) - 1;
+	rt_memcpy(&query[len], query4, len2);
+	len += len2;
+
+	query[len] = 0x0;
+//	rt_kprintf("Query: %s\n", &query[100]);
+
+	do
+	{
+#if defined(RT_LWIP_DNS)
+		ret = netconn_gethostbyname("members.dyndns.org", &server_ip);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+#else
+		IP4_ADDR(&server_ip, 204,13,248,112);	// IP address of "members.dyndns.org"
+#endif
+
+		conn = netconn_new(NETCONN_TCP);
+		if (conn == NULL)
+		{
+			break;
+		}
+
+		ret = netconn_connect(conn, &server_ip, 80);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+
+		/* Send the query */
+		ret = netconn_write(conn, query, len, 0);
+		if (ret != ERR_OK)
+		{
+			break;
+		}
+
+		/* Get the response */
+		buf = netconn_recv(conn);
+		if (buf != NULL)
+		{
+			ret = netbuf_data(buf, (void **)&rq, &len);
+			if (ret != ERR_OK)
+			{
+				break;
+			}
+
+			/* Find the result */
+			rq = rt_strstr(rq, find);
+			if (rq == RT_NULL)
+			{
+				break;
+			}
+//			rt_kprintf("[%s]\n", rq);
+		}
+		else
+		{
+			break;
+		}
+
+		netconn_delete(conn);
+		netbuf_delete(buf);
+		return RT_EOK;
+	} while (0);
+
+	netconn_delete(conn);
+	netbuf_delete(buf);
+	return -RT_ERROR;
+}
+
+void update_myip(char *ip)
+{
+	rt_kprintf("Update host, \"%s\", to new IP address %s: ", hostName, ip);
+
+	if (update_ip(ip) != RT_EOK)
+	{
+		rt_kprintf("failed!\n");
+		return;
+	}
+
+	rt_kprintf("succeeded.\n", ip);
+}
+FINSH_FUNCTION_EXPORT(update_myip, update DDNS with specified IP address.)
+
+#endif /* RT_USING_FINSH */
+#endif /* defined(EFM32_USING_ETH_UTILS) */
 
 #endif /* defined(EFM32_USING_ETHERNET) */
 /******************************************************************//**

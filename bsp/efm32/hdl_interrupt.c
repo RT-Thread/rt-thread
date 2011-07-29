@@ -1,27 +1,28 @@
-/******************************************************************//**
+/***************************************************************************//**
  * @file 		hdl_interrupt.c
  * @brief 	USART driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
- **********************************************************************
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-29	onelife		Initial creation for EFM32
- *********************************************************************/
+ * 2011-07-12	onelife		Disable interrupts in GPIO handler
+ ******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "hdl_interrupt.h"
 
-/******************************************************************//**
+/***************************************************************************//**
  * @addtogroup efm32
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -44,88 +45,88 @@ efm32_irq_hook_t iicCbTable[I2C_COUNT] 			= {RT_NULL};
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-/******************************************************************//**
-* @brief
-*	NMI exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	NMI exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void NMI_Handler(void)
 {
 	hdl_debug("[NMI_Handler: NOP]\n");
 }
 
-/******************************************************************//**
-* @brief
-*	Memory manage exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Memory manage exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void MemManage_Handler(void)
 {
 	hdl_debug("[MemManage_Handler: infinite loop]\n");
 	while (1);
 }
 
-/******************************************************************//**
-* @brief
-*	Bus fault exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Bus fault exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void BusFault_Handler(void)
 {
 	hdl_debug("[BusFault_Handler: infinite loop]\n");
 	while (1);
 }
 
-/******************************************************************//**
-* @brief
-*	Usage fault exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Usage fault exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void UsageFault_Handler(void)
 {
 	hdl_debug("[UsageFault_Handler: infinite loop]\n");
 	while (1);
 }
 
-/******************************************************************//**
-* @brief
-*	Supervisor call exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Supervisor call exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void SVC_Handler(void)
 {
 	hdl_debug("[SVC_Handler: NOP]\n");
 }
 
-/******************************************************************//**
-* @brief
-*	 Debug monitor exception handler
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	 Debug monitor exception handler
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void DebugMon_Handler(void)
 {
 	hdl_debug("[DebugMon_Handler: NOP]\n");
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	System tick timer interrupt handler
  *
@@ -133,7 +134,7 @@ void DebugMon_Handler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void SysTick_Handler(void)
 {
 	/* enter interrupt */
@@ -145,14 +146,14 @@ void SysTick_Handler(void)
 	rt_interrupt_leave();
 }
 
-/**********************************************************************
+/*******************************************************************************
  *                 STM32F10x Peripherals Interrupt Handlers 
  *  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the 
  *  available peripheral interrupt handler's name please refer to the startup 
  *  file (startup_stm32f10x_xx.s). 
-/*********************************************************************/
+/******************************************************************************/
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common DMA interrupt handler
  *
@@ -160,7 +161,7 @@ void SysTick_Handler(void)
  * 	
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user)
 {
     /* enter interrupt */
@@ -176,7 +177,7 @@ void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common Timer1 interrupt handler
  *
@@ -185,7 +186,7 @@ void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void TIMER1_IRQHandler(void)
 {
 	if (TIMER1->IF & TIMER_IF_OF)
@@ -201,7 +202,7 @@ void TIMER1_IRQHandler(void)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common Timer2 interrupt handler
  *
@@ -210,7 +211,7 @@ void TIMER1_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void TIMER2_IRQHandler(void)
 {
 	if (TIMER2->IF & TIMER_IF_OF)
@@ -226,7 +227,7 @@ void TIMER2_IRQHandler(void)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common RTC interrupt handler
  *
@@ -235,7 +236,7 @@ void TIMER2_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void RTC_IRQHandler(void)
 {
     /* enter interrupt */
@@ -254,7 +255,7 @@ void RTC_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common even number GPIO interrupt handler
  *
@@ -262,12 +263,15 @@ void RTC_IRQHandler(void)
  * 	
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void GPIO_EVEN_IRQHandler(void)
 {
 	rt_uint16_t flag, n;
-	
-    /* enter interrupt */
+	rt_base_t level;
+
+	/* Disable interrupt */
+	level = rt_hw_interrupt_disable();
+    /* Enter ISR */
     rt_interrupt_enter();
 
 	 /* invoke callback function */
@@ -283,11 +287,13 @@ void GPIO_EVEN_IRQHandler(void)
 	/* clear interrupt */
 	GPIO->IFC = 0x5555UL;
 
-    /* leave interrupt */
-    rt_interrupt_leave();
+    /* Leave ISR */
+	rt_interrupt_leave();
+	/* Enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common odd number GPIO interrupt handler
  *
@@ -295,12 +301,15 @@ void GPIO_EVEN_IRQHandler(void)
  * 	
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void GPIO_ODD_IRQHandler(void)
 {
 	rt_uint16_t flag, n;
-	
-    /* enter interrupt */
+	rt_base_t level;
+
+	/* Disable interrupt */
+	level = rt_hw_interrupt_disable();
+	/* Enter ISR */
     rt_interrupt_enter();
 
 	 /* invoke callback function */
@@ -316,11 +325,13 @@ void GPIO_ODD_IRQHandler(void)
 	/* clear interrupt */
 	GPIO->IFC = 0xAAAAUL;
 
-    /* leave interrupt */
-    rt_interrupt_leave();
+    /* Leave ISR */
+	rt_interrupt_leave();
+	/* Enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common ACMP interrupt handler
  *
@@ -329,7 +340,7 @@ void GPIO_ODD_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void ACMP0_IRQHandler(void)
 {
     /* enter interrupt */
@@ -363,7 +374,7 @@ void ACMP0_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART0 TX interrupt handler
  *
@@ -372,7 +383,7 @@ void ACMP0_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART0_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -394,7 +405,7 @@ void USART0_TX_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART0 RX interrupt handler
  *
@@ -403,7 +414,7 @@ void USART0_TX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART0_RX_IRQHandler(void)
 {
 	if (USART0->IF & USART_IF_RXDATAV)
@@ -416,7 +427,7 @@ void USART0_RX_IRQHandler(void)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART1 TX interrupt handler
  *
@@ -425,7 +436,7 @@ void USART0_RX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART1_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -447,7 +458,7 @@ void USART1_TX_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART1 RX interrupt handler
  *
@@ -456,7 +467,7 @@ void USART1_TX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART1_RX_IRQHandler(void)
 {
 	if (USART1->IF & USART_IF_RXDATAV)
@@ -469,7 +480,7 @@ void USART1_RX_IRQHandler(void)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART2 TX interrupt handler
  *
@@ -478,7 +489,7 @@ void USART1_RX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART2_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -500,7 +511,7 @@ void USART2_TX_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common USART2 RX interrupt handler
  *
@@ -509,7 +520,7 @@ void USART2_TX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void USART2_RX_IRQHandler(void)
 {
 	if (USART2->IF & USART_IF_RXDATAV)
@@ -522,7 +533,7 @@ void USART2_RX_IRQHandler(void)
 	}
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	Common IIC0 interrupt handler
  *
@@ -531,7 +542,7 @@ void USART2_RX_IRQHandler(void)
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void I2C0_IRQHandler(void)
 {
 	if ((I2C0->IF & I2C_IF_ADDR) || \
@@ -548,7 +559,7 @@ void I2C0_IRQHandler(void)
 	I2C_IntClear(I2C0, I2C_IFC_ADDR | I2C_IFC_SSTOP);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  * 	EFM32 common interrupt handlers register function
  *
@@ -556,7 +567,7 @@ void I2C0_IRQHandler(void)
  * 	
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 {
 	switch (hook->type)
@@ -604,6 +615,6 @@ void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 		hook->type, hook->unit, hook->cbFunc, hook->userPtr);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

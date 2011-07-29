@@ -82,7 +82,7 @@
 #include "rtthread.h"
 #include "dev_misc.h"
 
-#if defined(RT_USING_LWIP)
+#if defined(RT_USING_LWIP) && defined(EFM32_USING_ETH_HTTPD)
 #include "lwip\tcp.h"
 #include "lwip\ip_addr.h"
 
@@ -230,8 +230,7 @@ void httpd_init(void)
   tcp_accept(pcb, http_accept);
 }
 
-#endif
-
+#endif /* defined(RT_USING_LWIP) && defined(EFM32_USING_ETH_HTTPD) */
 /***************************************************************************//**
  * @}
  ******************************************************************************/

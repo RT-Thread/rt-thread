@@ -1,19 +1,21 @@
-/******************************************************************//**
- * @file 		drv_dma.h
- * @brief 	USART driver of RT-Thread RTOS for EFM32
+/***************************************************************************//**
+ * @file 	board.h
+ * @brief 	Board support of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
- **********************************************************************
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file 
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-21	onelife		Initial creation for EFM32
  * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support
- *********************************************************************/
+ * 2011-07-12	onelife		Add prototype for SWO output enable and interrupt 
+ *  context check functions 
+ ******************************************************************************/
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
@@ -24,7 +26,7 @@
 #error Unknown MCU type 
 #endif
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include <efm32.h>
 #include <efm32_chip.h>
 #include <efm32_cmu.h>
@@ -44,18 +46,22 @@
 #include <dvk.h>
 #endif
 
-/* Exported types -------------------------------------------------------------*/
-/* Exported constants ---------------------------------------------------------*/
-/* Exported variables ----------------------------------------------------------*/
-extern rt_uint32_t rt_system_status;
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported variables --------------------------------------------------------*/
+extern volatile rt_uint32_t rt_system_status;
 
-/* Exported macro -------------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+#ifdef EFM32_DEBUG
 #define DEBUG_EFM
 #define DEBUG_EFM_USER
+#define EFM32_SWO_ENABLE
+#endif
 
 #define EFM32_NO_DATA				(0)
-#define EFM32_NO_OFFSET				(-1)
 #define EFM32_NO_POINTER			(RT_NULL)
+#define EFM32_NO_OFFSET				(-1)
+#define EFM32_NO_DMA				(-1)
 
 /* SECTION: SPI Flash */
 #if defined(EFM32_USING_SFLASH)
@@ -79,7 +85,7 @@ extern rt_uint32_t rt_system_status;
 #endif
 
 /* SECTION: SYSTEM */
-#define EFM32_SRAM_END 				(RAM_MEM_BASE + SRAM_SIZE)
+#define EFM32_SRAM_END 				(SRAM_BASE + SRAM_SIZE)
 #define EFM32_BASE_PRI_DEFAULT 		(0x0UL << 5)
 #define EFM32_IRQ_PRI_DEFAULT 		(0x4UL << 5)
 #if (defined(EFM32_G890_STK) || defined(EFM32_G290_DK))
@@ -95,6 +101,7 @@ extern rt_uint32_t rt_system_status;
 #define UART_BAUDRATE				(115200)
 
 /* SUBSECTION: SPI */
+/* Max SPI clock: HFPERCLK/2 for master, HFPERCLK/8 for slave */
 #define SPI_BAUDRATE				(4000000)
 
 #ifndef USART_0_AUTOCS
@@ -107,7 +114,9 @@ extern rt_uint32_t rt_system_status;
 #define USART_2_AUTOCS 				(0)
 #endif
 /* Auto Slave Select */
-#define SPI_AUTOCS_ENABLE 			((USART_2_AUTOCS << 2) | (USART_1_AUTOCS << 1) | (USART_0_AUTOCS << 0))
+#define SPI_AUTOCS_ENABLE 			((USART_2_AUTOCS << 2) | \
+									(USART_1_AUTOCS << 1) | \
+									(USART_0_AUTOCS << 0))
 
 /* SECTION: I2C */
 #define IIC_RX_BUFFER_SIZE			(32)
@@ -161,8 +170,9 @@ extern rt_uint32_t rt_system_status;
 #define RT_DEVICE_CTRL_ACMP_INIT		(0xF6)		/*!< Initialize ACMP */
 #define RT_DEVICE_CTRL_ACMP_OUTPUT		(0xF7)		/*!< get ACMP output */
 
-/* Exported functions --------------------------------------------------------- */
+/* Exported functions ------------------------------------------------------- */
 void rt_hw_board_init(void);
 void rt_hw_driver_init(void);
+rt_uint32_t rt_hw_interrupt_check(void);
 
 #endif /*__BOARD_H__ */

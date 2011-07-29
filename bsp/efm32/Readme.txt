@@ -14,4 +14,10 @@
       #define EFM32_USING_ETHERNET
       #define RT_USING_LWIP
       #RT_LWIP_*
-3. and then compile
+3. please also turn on the following define to use simple http server
+      #define EFM32_USING_ETH_HTTPD
+   or turn on the following defines to use EFM32 Ethernet utility functions (due to memory limitation, you may not turn on both)
+      #define EFM32_USING_ETH_UTILS
+      #define hostName 		"onelife.dyndns.org"	/* Please change to your own host name */
+      #define userPwdB64 	"dXNlcjpwYXNzd2Q="	/* Please change to your own user name and password (base 64 encoding) */
+4. and then compile
