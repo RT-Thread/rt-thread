@@ -38,7 +38,7 @@ static struct ftp_session* session_list = NULL;
 int ftp_process_request(struct ftp_session* session, char * buf);
 int ftp_get_filesize(char *filename);
 
-struct ftp_session* ftp_new_session()
+static struct ftp_session* ftp_new_session()
 {
 	struct ftp_session* session;
 
@@ -50,7 +50,7 @@ struct ftp_session* ftp_new_session()
 	return session;
 }
 
-void ftp_close_session(struct ftp_session* session)
+static void ftp_close_session(struct ftp_session* session)
 {
 	struct ftp_session* list;
 
@@ -71,7 +71,7 @@ void ftp_close_session(struct ftp_session* session)
 	rt_free(session);
 }
 
-int ftp_get_filesize(char * filename)
+static int ftp_get_filesize(char * filename)
 {
 	int pos;
 	int end;
@@ -88,7 +88,7 @@ int ftp_get_filesize(char * filename)
 	return end;
 }
 
-rt_bool_t is_absolute_path(char* path)
+static rt_bool_t is_absolute_path(char* path)
 {
 #ifdef _WIN32
 	if (path[0] == '\\' ||
@@ -101,7 +101,7 @@ rt_bool_t is_absolute_path(char* path)
 	return RT_FALSE;
 }
 
-int build_full_path(struct ftp_session* session, char* path, char* new_path, size_t size)
+static int build_full_path(struct ftp_session* session, char* path, char* new_path, size_t size)
 {
 	if (is_absolute_path(path) == RT_TRUE)
 		strcpy(new_path, path);
@@ -113,7 +113,7 @@ int build_full_path(struct ftp_session* session, char* path, char* new_path, siz
 	return 0;
 }
 
-void ftpd_thread_entry(void* parameter)
+static void ftpd_thread_entry(void* parameter)
 {
 	int numbytes;
 	int sockfd, maxfdp1;
@@ -223,7 +223,7 @@ void ftpd_thread_entry(void* parameter)
 	// rt_free(buffer);
 }
 
-int do_list(char* directory, int sockfd)
+static int do_list(char* directory, int sockfd)
 {
 	DIR* dirp;
 	struct dirent* entry;
@@ -272,7 +272,7 @@ int do_list(char* directory, int sockfd)
 	return 0;
 }
 
-int do_simple_list(char* directory, int sockfd)
+static int do_simple_list(char* directory, int sockfd)
 {
 	DIR* dirp;
 	struct dirent* entry;
@@ -299,7 +299,7 @@ int do_simple_list(char* directory, int sockfd)
 	return 0;
 }
 
-int str_begin_with(char* src, char* match)
+static int str_begin_with(char* src, char* match)
 {
 	while (*match)
 	{
@@ -313,7 +313,7 @@ int str_begin_with(char* src, char* match)
 	return 0;
 }
 
-int ftp_process_request(struct ftp_session* session, char *buf)
+static int ftp_process_request(struct ftp_session* session, char *buf)
 {
 	int  fd;
 	struct timeval tv;
