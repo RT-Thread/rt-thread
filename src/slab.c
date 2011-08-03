@@ -257,11 +257,6 @@ void *rt_page_alloc(rt_size_t npages)
 		}
 	}
 
-#ifdef RT_MEM_STATS
-	used_mem += npages * RT_MM_PAGE_SIZE;
-	if (used_mem > max_mem) max_mem = used_mem;
-#endif
-
 	/* unlock heap */
 	rt_sem_release(&heap_sem);
 
@@ -281,12 +276,6 @@ void rt_page_free(void *addr, rt_size_t npages)
 
 	/* lock heap */
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-
-	/* update memory usage */
-#ifdef RT_MEM_STATS
-	if(rt_page_list != RT_NULL)
-		used_mem -= npages * RT_MM_PAGE_SIZE;
-#endif
 
 	for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
 	{
