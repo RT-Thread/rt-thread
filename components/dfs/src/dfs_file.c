@@ -385,6 +385,7 @@ int dfs_file_rename(const char* oldpath, const char* newpath)
 	char *oldfullpath, *newfullpath;
 
 	result = DFS_STATUS_OK;
+	newfullpath = RT_NULL;
 
 	oldfullpath = dfs_normalize_path(RT_NULL, oldpath);
 	if ( oldfullpath == RT_NULL )

@@ -297,6 +297,8 @@ char* dfs_normalize_path(const char* directory, const char* filename)
 
 	src = fullpath;
 	dst = fullpath;
+	
+	dst0 = dst;
 	while (1)
 	{
 		char c = *src;
