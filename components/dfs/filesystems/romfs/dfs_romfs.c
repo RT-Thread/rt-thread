@@ -81,6 +81,8 @@ struct romfs_dirent* dfs_romfs_lookup(struct romfs_dirent* root_dirent, const ch
 				else 
 				{
 					/* return file dirent */
+					if (subpath != RT_NULL) break; /* not the end of path */
+					
 					return &dirent[index];
 				}
 			}
@@ -146,9 +148,18 @@ int dfs_romfs_open(struct dfs_fd* file)
 	dirent = dfs_romfs_lookup(root_dirent, file->path, &size);
 	if (dirent == RT_NULL) return -DFS_STATUS_ENOENT;
 
-	/* is a directory but not with O_DIRECTORY flag */
-	if ((dirent->type == ROMFS_DIRENT_DIR) && !(file->flags & DFS_O_DIRECTORY))
-		return -DFS_STATUS_ENOENT;
+	/* entry is a directory file type */
+	if (dirent->type == ROMFS_DIRENT_DIR)
+	{
+		if (!(file->flags & DFS_O_DIRECTORY) )
+			return -DFS_STATUS_ENOENT;
+	}
+	else
+	{
+		/* entry is a file, but open it as a directory */
+		if (file->flags & DFS_O_DIRECTORY)
+			return -DFS_STATUS_ENOENT;
+	}
 
 	file->data = dirent;
 	file->size = size;
