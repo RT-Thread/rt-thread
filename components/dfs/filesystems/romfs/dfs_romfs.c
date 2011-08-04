@@ -119,7 +119,7 @@ int dfs_romfs_read(struct dfs_fd* file, void *buf, rt_size_t count)
 
 int dfs_romfs_lseek(struct dfs_fd* file, rt_off_t offset)
 {
-	if (offset < file->size)
+	if (offset <= file->size)
 	{
 		file->pos = offset;
 		return file->pos;
