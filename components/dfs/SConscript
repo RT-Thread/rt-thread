@@ -19,8 +19,9 @@ filesystems/elmfat/ff.c
 # DFS-ROMFS options
 romfs = Split("""
 filesystems/romfs/dfs_romfs.c
-filesystems/romfs/romfs.c
 """)
+if not GetDepend('DFS_ROMFS_ROOT'):
+    romfs = romfs + 'filesystems/romfs/romfs.c'
 
 # DFS-DeviceFS options
 devfs = Split("""
