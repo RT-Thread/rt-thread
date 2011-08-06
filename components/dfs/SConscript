@@ -21,7 +21,7 @@ romfs = Split("""
 filesystems/romfs/dfs_romfs.c
 """)
 if not GetDepend('DFS_ROMFS_ROOT'):
-    romfs = romfs + 'filesystems/romfs/romfs.c'
+    romfs = romfs + Split('filesystems/romfs/romfs.c')
 
 # DFS-DeviceFS options
 devfs = Split("""
