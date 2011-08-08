@@ -1,0 +1,12 @@
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c']
+
+src_drv = ['uart.c']
+    
+src	= File(src_bsp + src_drv)
+CPPPATH = [GetCurrentDir()]
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
