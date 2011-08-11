@@ -87,55 +87,6 @@ static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 
-/* the interface provided to LwIP */
-err_t eth_init(struct netif *netif)
-{
-	return ERR_OK;
-}
-
-err_t eth_input(struct pbuf *p, struct netif *inp)
-{
-	struct eth_hdr *ethhdr;
-
-	if(p != RT_NULL)
-	{
-#ifdef LINK_STATS
-		LINK_STATS_INC(link.recv);
-#endif /* LINK_STATS */
-
-		ethhdr = p->payload;
-
-		switch(htons(ethhdr->type))
-		{
-		case ETHTYPE_IP:
-			etharp_ip_input(inp, p);
-			pbuf_header(p, -((rt_int16_t)sizeof(struct eth_hdr)));
-			if (tcpip_input(p, inp) != ERR_OK)
-			{
-				/* discard packet */
-				pbuf_free(p);
-			}
-			break;
-
-		case ETHTYPE_ARP:
-			etharp_arp_input(inp, (struct eth_addr *)inp->hwaddr, p);
-			break;
-
-		default:
-			pbuf_free(p);
-			p = RT_NULL;
-			break;
-		}
-	}
-
-	return ERR_OK;
-}
-
-err_t ethernetif_output(struct netif *netif, struct pbuf *p, struct ip_addr *ipaddr)
-{
-	return etharp_output(netif, p, ipaddr);
-}
-
 err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 	struct eth_tx_msg msg;
@@ -184,26 +135,14 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 	/* maximum transfer unit */
 	netif->mtu			= ETHERNET_MTU;
 	/* broadcast capability */
-	netif->flags		= NETIF_FLAG_BROADCAST;
+	netif->flags		= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
 	/* get hardware address */
 	rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
 
 	/* set output */
-	netif->output		= ethernetif_output;
+	netif->output		= etharp_output;
 	netif->linkoutput	= ethernetif_linkoutput;
-
-	/* add netif to lwip */
-	if (netif_add(netif, IP_ADDR_ANY, IP_ADDR_BROADCAST, IP_ADDR_ANY, dev,
-		eth_init, eth_input) == RT_NULL)
-	{
-		/* failed, unregister device and free netif */
-		rt_device_unregister(&(dev->parent));
-		rt_free(netif);
-		return -RT_ERROR;
-	}
-
-	netif_set_default(netif);
 
 	return RT_EOK;
 }
@@ -256,7 +195,12 @@ void eth_rx_thread_entry(void* parameter)
 				if (p != RT_NULL)
 				{
 					/* notify to upper layer */
-					eth_input(p, device->netif);
+					if( device->netif->input(p, device->netif) != ERR_OK )
+					{
+						LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: Input error\n"));
+       					pbuf_free(p);
+       					p = NULL;
+					}
 				}
 				else break;
 			}
@@ -264,10 +208,15 @@ void eth_rx_thread_entry(void* parameter)
 	}
 }
 
-rt_err_t eth_device_ready(struct eth_device* dev)
+rt_err_t eth_rx_ready(struct eth_device* dev)
 {
 	/* post message to ethernet thread */
 	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+}
+
+rt_err_t eth_device_ready(struct eth_device* dev)
+{
+	return eth_rx_ready(dev);
 }
 
 rt_err_t eth_system_device_init()

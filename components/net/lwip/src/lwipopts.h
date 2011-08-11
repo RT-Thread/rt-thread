@@ -326,5 +326,6 @@
 
 /* no read/write/close for socket */
 #define LWIP_POSIX_SOCKETS_IO_NAMES	0
+#define LWIP_NETIF_API	1
 
 #endif /* __LWIPOPTS_H__ */
