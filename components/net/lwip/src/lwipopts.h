@@ -178,13 +178,13 @@
 #define TCP_QUEUE_OOSEQ             1
 
 /* TCP Maximum segment size. */
-#define TCP_MSS                     1024
+#define TCP_MSS                     1460
 
 /* TCP sender buffer space (bytes). */
 #ifdef RT_LWIP_TCP_SND_BUF
 #define TCP_SND_BUF                 RT_LWIP_TCP_SND_BUF
 #else
-#define TCP_SND_BUF                 2048
+#define TCP_SND_BUF                 (TCP_MSS * 2)
 #endif
 
 /* TCP sender buffer space (pbufs). This must be at least = 2 *
@@ -198,9 +198,9 @@
 
 /* TCP receive window. */
 #ifdef RT_LWIP_TCP_WND
-#define TCP_WND                 RT_LWIP_TCP_WND
+#define TCP_WND                 	RT_LWIP_TCP_WND
 #else
-#define TCP_WND                 1500
+#define TCP_WND                 	(TCP_MSS * 2)
 #endif
 
 /* Maximum number of retransmissions of data segments. */

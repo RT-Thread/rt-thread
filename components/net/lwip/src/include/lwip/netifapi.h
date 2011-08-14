@@ -96,6 +96,9 @@ err_t netifapi_netif_common    ( struct netif *netif,
 #define netifapi_autoip_start(n)      netifapi_netif_common(n, NULL, autoip_start)
 #define netifapi_autoip_stop(n)       netifapi_netif_common(n, NULL, autoip_stop)
 
+#define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
+#define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
+
 #ifdef __cplusplus
 }
 #endif

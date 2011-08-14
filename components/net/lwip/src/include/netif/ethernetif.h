@@ -16,12 +16,17 @@ struct eth_device
 	struct netif *netif;
 	struct rt_semaphore tx_ack;
 
+	rt_uint16_t link_changed;
+	rt_uint16_t link_status;
+
 	/* eth device interface */
 	struct pbuf* (*eth_rx)(rt_device_t dev);
 	rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
 };
 
+rt_err_t eth_rx_ready(struct eth_device* dev);
 rt_err_t eth_device_ready(struct eth_device* dev);
+rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
 
 rt_err_t eth_device_init(struct eth_device* dev, const char* name);
 

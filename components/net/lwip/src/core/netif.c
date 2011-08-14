@@ -471,6 +471,9 @@ void netif_set_status_callback(struct netif *netif, void (* status_callback)(str
  */
 void netif_set_link_up(struct netif *netif )
 {
+  /* not notify link up anymore */
+  if (netif->flags & NETIF_FLAG_LINK_UP) return; 
+  
   netif->flags |= NETIF_FLAG_LINK_UP;
 
 #if LWIP_DHCP

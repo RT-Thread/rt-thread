@@ -188,6 +188,23 @@ void eth_rx_thread_entry(void* parameter)
  		{
 			struct pbuf *p;
 
+			/* check link status */
+			if (device->link_changed)
+			{
+				int status;
+				rt_uint32_t level;
+
+				level = rt_hw_interrupt_disable();
+				status = device->link_status;
+				device->link_changed = 0x00;
+				rt_hw_interrupt_enable(level);
+
+				if (status)
+					netifapi_netif_set_link_up(device->netif);
+				else
+					netifapi_netif_set_link_down(device->netif);
+			}
+
 			/* receive all of buffer */
 			while (1)
 			{
@@ -217,6 +234,24 @@ rt_err_t eth_rx_ready(struct eth_device* dev)
 rt_err_t eth_device_ready(struct eth_device* dev)
 {
 	return eth_rx_ready(dev);
+}
+
+rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
+{
+	rt_uint32_t level;
+	
+	RT_ASSERT(dev != RT_NULL);
+
+	level = rt_hw_interrupt_disable();
+	dev->link_changed = 0x01;
+	if (up == RT_TRUE)
+		dev->link_status = 0x01;
+	else
+		dev->link_status = 0x00;
+	rt_hw_interrupt_enable(level);
+
+	/* post message to ethernet thread */
+	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
 }
 
 rt_err_t eth_system_device_init()
