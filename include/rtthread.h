@@ -184,6 +184,11 @@ void rt_memory_info(rt_uint32_t *total,
 	rt_uint32_t *used,
 	rt_uint32_t *max_used);
 
+#ifdef RT_USING_SLAB
+void *rt_page_alloc(rt_size_t npages);
+void rt_page_free(void *addr, rt_size_t npages);
+#endif
+
 #ifdef RT_USING_HOOK
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
