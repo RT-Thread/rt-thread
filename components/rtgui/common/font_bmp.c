@@ -94,8 +94,7 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 		while ((rt_uint8_t)*(text + length) >= 0x80) length ++; /* it's not a ascii character */
 		if (length > 0)
 		{
-			if (hz_font != RT_NULL)
-				rtgui_font_draw(hz_font, dc, text, length, rect);
+			if (hz_font != RT_NULL) rtgui_font_draw(hz_font, dc, text, length, rect);
 			text += length;
 			len -= length;
 		}
@@ -119,7 +118,8 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 		}
 	}
 
-	rtgui_font_derefer(hz_font);
+	if (hz_font != RT_NULL) rtgui_font_derefer(hz_font);
+
 #else
 	while ((rect->x1 < rect->x2) && len)
 	{
