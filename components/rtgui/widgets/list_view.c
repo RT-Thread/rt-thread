@@ -456,6 +456,22 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
             {
 				rt_uint16_t old_item;
 
+				if (view->current_item == -1) 
+				{
+					/* set a initial item */
+					if ((view->items_count > 0) && 
+						(ekbd->key == RTGUIK_UP || ekbd->key == RTGUIK_DOWN))
+					{
+						view->current_item = 0;
+						if (view->flag == RTGUI_LIST_VIEW_LIST)
+							rtgui_list_view_update_list(view, -1);
+						else
+							rtgui_list_view_update_icon(view, -1);
+						break;
+					}
+					else return RT_FALSE;
+				}
+
 				old_item = view->current_item;
                 switch (ekbd->key)
                 {

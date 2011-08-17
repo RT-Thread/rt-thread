@@ -266,7 +266,18 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
             {
 				rt_int16_t old_item;
 
-				if (box->current_item == -1) return RT_FALSE;
+				if (box->current_item == -1) 
+				{
+					/* set a initial item */
+					if ((box->items_count > 0) && 
+						(ekbd->key == RTGUIK_UP || ekbd->key == RTGUIK_DOWN))
+					{
+						box->current_item = 0;
+						rtgui_listbox_update_current(box, -1);
+						break;
+					}
+					else return RT_FALSE;
+				}
 				old_item = box->current_item;
 
                 switch (ekbd->key)

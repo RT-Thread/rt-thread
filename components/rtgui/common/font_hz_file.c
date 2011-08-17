@@ -142,7 +142,7 @@ static void _rtgui_hz_file_font_draw_text(struct rtgui_hz_file_font* hz_file_fon
 			for (j=0; j < word_bytes; j++)
 				for (k=0; k < 8; k++)
 				{
-					if ( ((font_ptr[i*2 + j] >> (7-k)) & 0x01) != 0 &&
+					if ( ((font_ptr[i*word_bytes + j] >> (7-k)) & 0x01) != 0 &&
 						(rect->x1 + 8 * j + k < rect->x2))
 					{
 						rtgui_dc_draw_point(dc, rect->x1 + 8*j + k, rect->y1 + i);
