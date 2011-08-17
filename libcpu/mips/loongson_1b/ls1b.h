@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2011-08-08     lgnq         first version
  */
+
 #ifndef __LS1B_H__
 #define __LS1B_H__
 
@@ -113,16 +114,6 @@ struct ls1b_cop_regs
 #define GMAC0_DMA_BASE		0xBFE11000
 #define GMAC1_BASE			0xBFE20000
 #define GMAC1_DMA_BASE		0xBFE21000
-#define UART0_BASE			0xBFE40000
-#define UART0_1_BASE		0xBFE41000
-#define UART0_2_BASE		0xBFE42000
-#define UART0_3_BASE		0xBFE43000
-#define UART1_BASE			0xBFE44000
-#define UART1_1_BASE		0xBFE45000
-#define UART1_2_BASE		0xBFE46000
-#define UART1_3_BASE		0xBFE47000
-#define UART2_BASE			0xBFE48000
-#define UART3_BASE			0xBFE4C000
 #define I2C0_BASE			0xBFE58000
 #define PWM0_BASE			0xBFE5C000
 #define PWM1_BASE			0xBFE5C010
@@ -131,76 +122,17 @@ struct ls1b_cop_regs
 #define WDT_BASE			0xBFE5C060
 #define RTC_BASE			0xBFE64000
 #define I2C1_BASE			0xBFE68000
-#define UART4_BASE			0xBFE6C000
 #define I2C2_BASE			0xBFE70000
 #define AC97_BASE			0xBFE74000
 #define NAND_BASE			0xBFE78000
-#define UART5_BASE			0xBFE7C000
 #define SPI_BASE			0xBFE80000
 #define CAN1_BASE			0xBF004300
 #define CAN0_BASE			0xBF004400
-
-#define DC_BASE				0xBC301240  //Display Control
-
-/* UART registers */
-#define UART_DAT(base)		__REG8(base + 0x00)
-#define UART_IER(base)		__REG8(base + 0x01)
-#define UART_IIR(base)		__REG8(base + 0x02)
-#define UART_FCR(base)		__REG8(base + 0x02)
-#define UART_LCR(base)		__REG8(base + 0x03)
-#define UART_MCR(base)		__REG8(base + 0x04)
-#define UART_LSR(base)		__REG8(base + 0x05)
-#define UART_MSR(base)		__REG8(base + 0x06)
-
-#define UART_LSB(base)		__REG8(base + 0x00)
-#define UART_MSB(base)		__REG8(base + 0x01)
-
-/* UART0 registers */
-#define UART0_DAT			__REG8(UART0_BASE + 0x00)
-#define UART0_IER			__REG8(UART0_BASE + 0x01)
-#define UART0_IIR			__REG8(UART0_BASE + 0x02)
-#define UART0_FCR			__REG8(UART0_BASE + 0x02)
-#define UART0_LCR			__REG8(UART0_BASE + 0x03)
-#define UART0_MCR			__REG8(UART0_BASE + 0x04)
-#define UART0_LSR			__REG8(UART0_BASE + 0x05)
-#define UART0_MSR			__REG8(UART0_BASE + 0x06)
-
-#define UART0_LSB			__REG8(UART0_BASE + 0x00)
-#define UART0_MSB			__REG8(UART0_BASE + 0x01)
-
-/* UART1 registers */
-#define UART1_DAT			__REG8(UART1_BASE + 0x00)
-#define UART1_IER			__REG8(UART1_BASE + 0x01)
-#define UART1_IIR			__REG8(UART1_BASE + 0x02)
-#define UART1_FCR			__REG8(UART1_BASE + 0x02)
-#define UART1_LCR			__REG8(UART1_BASE + 0x03)
-#define UART1_MCR			__REG8(UART1_BASE + 0x04)
-#define UART1_LSR			__REG8(UART1_BASE + 0x05)
-#define UART1_MSR			__REG8(UART1_BASE + 0x06)
-
-#define UART1_LSB			__REG8(UART1_BASE + 0x00)
-#define UART1_MSB			__REG8(UART1_BASE + 0x01)
 
 /* Watch Dog registers */
 #define WDT_EN				__REG32(WDT_BASE + 0x00)
 #define WDT_SET				__REG32(WDT_BASE + 0x04)
 #define WDT_TIMER			__REG32(WDT_BASE + 0x08)
-
-/* Frame Buffer registers */
-#define DC_FB_CONFIG			__REG32(DC_BASE + 0x000)
-#define DC_FB_BUFFER_ADDR0		__REG32(DC_BASE + 0x020)
-#define DC_FB_BUFFER_STRIDE		__REG32(DC_BASE + 0x040)
-#define DC_FB_BUFFER_ORIGIN		__REG32(DC_BASE + 0x060)
-#define DC_DITHER_CONFIG		__REG32(DC_BASE + 0x120)
-#define DC_DITHER_TABLE_LOW		__REG32(DC_BASE + 0x140)
-#define DC_DITHER_TABLE_HIGH	__REG32(DC_BASE + 0x160)
-#define DC_PANEL_CONFIG			__REG32(DC_BASE + 0x180)
-#define DC_PANEL_TIMING			__REG32(DC_BASE + 0x1A0)
-#define DC_HDISPLAY				__REG32(DC_BASE + 0x1C0)
-#define DC_HSYNC				__REG32(DC_BASE + 0x1E0)
-#define DC_VDISPLAY				__REG32(DC_BASE + 0x240)
-#define DC_VSYNC				__REG32(DC_BASE + 0x260)
-#define DC_FB_BUFFER_ADDR1		__REG32(DC_BASE + 0x340)
 
 #define PLL_FREQ 				__REG32(0xbfe78030)
 #define PLL_DIV_PARAM 			__REG32(0xbfe78034)

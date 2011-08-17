@@ -5,6 +5,9 @@ src_bsp = ['application.c', 'startup.c', 'board.c']
 
 src_drv = ['uart.c']
     
+if GetDepend('RT_USING_RTGUI'):
+    src_drv += ['display_controller.c']
+        
 src	= File(src_bsp + src_drv)
 CPPPATH = [GetCurrentDir()]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)

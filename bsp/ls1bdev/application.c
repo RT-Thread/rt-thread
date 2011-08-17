@@ -16,8 +16,33 @@
 #include <rtthread.h>
 #include <ls1b.h>
 
+#ifdef RT_USING_RTGUI
+#include <rtgui/rtgui.h>
+extern void rt_hw_dc_init(void);
+#endif
+
 void rt_init_thread_entry(void* parameter)
 {
+#ifdef RT_USING_RTGUI
+	{
+		rt_device_t dc;
+
+		/* init Display Controller */
+		rt_hw_dc_init();
+			
+		/* re-init device driver */
+		rt_device_init_all();
+	
+		/* find Display Controller device */
+		dc = rt_device_find("dc");
+	
+		/* set Display Controller device as rtgui graphic driver */		
+		rtgui_graphic_set_device(dc);
+	
+		/* startup rtgui */
+		rtgui_startup();
+	}
+#endif
 }
 
 int rt_application_init()
