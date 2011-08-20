@@ -183,6 +183,7 @@ netio_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
           }
 
         } else if (ns->state == NETIO_STATE_RECV_DATA) {
+          int chunk_length;
 
           if(ns->cntr == 0){
             /* save the first byte of this new round of data
@@ -191,13 +192,18 @@ netio_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
              */
             ns->first_byte = *data_ptr;
           }
+          
+          if (ns->cntr + (data_cntr + 1) < ns->data_len) chunk_length = data_cntr + 1;
+          else chunk_length = (ns->data_len - ns->cntr);
+          
+          ns->buf_pos += chunk_length;
+          data_ptr += chunk_length;
+          ns->cntr += chunk_length;
+          data_cntr -= (chunk_length - 1);
 
-          ns->buf_ptr[ns->buf_pos++] = *data_ptr++;
-          ns->cntr++;
-
-          if (ns->buf_pos == NETIO_BUF_SIZE) {
+          if (ns->buf_pos >= NETIO_BUF_SIZE) {
             /* circularize the buffer */
-            ns->buf_pos = 0;
+            ns->buf_pos %= NETIO_BUF_SIZE;
           }
 
           if(ns->cntr == ns->data_len){
