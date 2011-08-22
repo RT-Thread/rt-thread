@@ -35,8 +35,8 @@ struct ftp_session
 };
 static struct ftp_session* session_list = NULL;
 
-int ftp_process_request(struct ftp_session* session, char * buf);
-int ftp_get_filesize(char *filename);
+static int ftp_process_request(struct ftp_session* session, char * buf);
+static int ftp_get_filesize(char *filename);
 
 static struct ftp_session* ftp_new_session()
 {
