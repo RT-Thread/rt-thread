@@ -227,7 +227,9 @@ static void rtgui_dc_hw_draw_point(struct rtgui_dc* self, int x, int y)
 	dc = (struct rtgui_dc_hw*) self;
 
 	x = x + dc->owner->extent.x1;
+	if(x < dc->owner->extent.x1 || x >= dc->owner->extent.x2) return;
 	y = y + dc->owner->extent.y1;
+	if(y < dc->owner->extent.y1 || y >= dc->owner->extent.y2) return;
 
 	/* draw this point */
 	dc->hw_driver->ops->set_pixel(&(dc->owner->gc.foreground), x, y);
