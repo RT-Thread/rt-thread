@@ -22,6 +22,7 @@ env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 if rtconfig.PLATFORM == 'iar':
 	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
 	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map project.map'])
+	env.Replace(ARFLAGS = '')
 
 Export('RTT_ROOT')
 Export('rtconfig')

@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='fm3'
-CROSS_TOOL='gcc'
+CROSS_TOOL='iar'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -14,7 +14,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
+	IAR_PATH 	= 'C:\Program Files\IAR Systems\Embedded Workbench 6.0 Evaluation'
 
 BUILD = 'debug'
 
@@ -80,8 +80,6 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' --cpu DARMSTM --thumb'
-
     CFLAGS = ''
     CFLAGS += ' --diag_suppress Pa050'
     CFLAGS += ' --no_cse' 
@@ -96,9 +94,9 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M3' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/DLib_Config_Normal.h"'    
+    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
-    CFLAGS += ' -I"' + IAR_PATH + '/arm/inc"'
+    CFLAGS += ' --use_c++_inline'    
         
     AFLAGS = ''
     AFLAGS += ' -s+' 
@@ -108,10 +106,9 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
 
-    LFLAGS = ' --config stm32f10x_flash.icf'
-    LFLAGS += ' --redirect _Printf=_PrintfTiny' 
-    LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
+    LFLAGS = ' --config mb9bf500r.icf'
+    LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 
     EXEC_PATH = IAR_PATH + '/arm/bin/'
-    POST_ACTION = ''
+    POST_ACTION = 'ielftool.exe --srec --verbose $TARGET rtthread.srec'
