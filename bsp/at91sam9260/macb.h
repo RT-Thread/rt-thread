@@ -330,6 +330,7 @@ struct dma_desc {
 #define MACB_TX_USED_OFFSET			31
 #define MACB_TX_USED_SIZE			1
 
+void rt_hw_macb_init();
 
 #endif /* _MACB_H */
 

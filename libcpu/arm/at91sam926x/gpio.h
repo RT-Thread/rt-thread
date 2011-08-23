@@ -1,6 +1,7 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
+#include <rtthread.h>
 #include <at91_aic.h>
 
 #define PIN_BASE		AIC_IRQS
@@ -111,7 +112,7 @@
 #define	AT91_PIN_PC31	(PIN_BASE + 0x40 + 31)
 
 
-static inline rt_uint32_t gpio_to_irq(rt_uint32_t gpio)
+rt_inline rt_uint32_t gpio_to_irq(rt_uint32_t gpio)
 {
 	return gpio;
 }

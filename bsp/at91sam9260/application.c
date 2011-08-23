@@ -32,6 +32,16 @@
 #endif
 #endif
 
+#if defined(RT_USING_DFS_DEVFS)
+#include <devfs.h>
+#endif
+
+#ifdef RT_USING_LWIP
+#include <netif/ethernetif.h>
+#include <arch/sys_arch_init.h>
+#include "macb.h"
+#endif
+
 #ifdef RT_USING_LED
 #include "led.h"
 #endif
@@ -90,6 +100,7 @@ void rt_init_thread_entry(void* parameter)
 			rt_kprintf("UFFS File System initialzation failed!\n");
 	}
 #endif
+
 	}
 #endif
 
@@ -98,8 +109,6 @@ void rt_init_thread_entry(void* parameter)
 		/* register ethernetif device */
 		eth_system_device_init();
 		rt_hw_macb_init();
-		/* re-init device driver */
-		rt_device_init_all();
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");

@@ -76,6 +76,9 @@ static rt_uint32_t at91sam9260_default_irq_priority[MAX_HANDLERS] = {
  */
 /*@{*/
 
+void rt_hw_interrupt_mask(int irq);
+void rt_hw_interrupt_umask(int irq);
+
 rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
@@ -102,7 +105,7 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector)
 		irq_n = AIC_IRQS + 32*2;
 	}
 	else
-		return;
+		return RT_NULL;
 	isr = at91_sys_read(pio+PIO_ISR) & at91_sys_read(pio+PIO_IMR);
 	while (isr) 
 	{
@@ -113,6 +116,8 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector)
 		isr >>= 1;
 		irq_n++;
 	}
+
+	return RT_NULL;
 }
 
 /*

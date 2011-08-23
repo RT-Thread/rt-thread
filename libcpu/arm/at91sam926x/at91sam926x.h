@@ -203,6 +203,10 @@ struct rt_hw_register
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+extern struct clk *clk_get(const char *id);
+extern rt_uint32_t clk_get_rate(struct clk *clk);
+extern void rt_hw_clock_init(void);
+
 #ifdef __cplusplus
 }
 #endif

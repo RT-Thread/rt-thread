@@ -68,7 +68,7 @@ struct rt_macb_eth
 	/* inherit from ethernet device */
 	struct eth_device parent;
 
-	void			*regs;
+	unsigned int		regs;
 
 	unsigned int		rx_tail;
 	unsigned int		tx_head;
@@ -213,9 +213,9 @@ static rt_uint16_t macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
 
 static void macb_phy_reset(rt_device_t dev)
 {
-	struct rt_macb_eth *macb = dev->user_data;;
 	int i;
 	rt_uint16_t status, adv;
+	struct rt_macb_eth *macb = dev->user_data;;
 
 	adv = ADVERTISE_CSMA | ADVERTISE_ALL;
 	macb_mdio_write(macb, MII_ADVERTISE, adv);
@@ -322,13 +322,15 @@ void macb_update_link(struct rt_macb_eth *macb)
 				 ? 100 : 10);
 			macb->duplex = (media & ADVERTISE_FULL) ? 1 : 0;
 			rt_kprintf("%s: link up (%dMbps/%s-duplex)\n",
-			       dev->parent.name, macb->speed,
-			       DUPLEX_FULL == macb->duplex ? "Full":"Half");
-			netif_set_link_up(macb->parent.netif);
+					dev->parent.name, macb->speed,
+					DUPLEX_FULL == macb->duplex ? "Full":"Half");
+			macb->parent.link_status = 1;
 		} else {
 			rt_kprintf("%s: link down\n", dev->parent.name);
-			netif_set_link_down(macb->parent.netif);
+					macb->parent.link_status = 0;
 		}
+
+		eth_device_linkchange(&macb->parent, RT_TRUE);
 	}
 
 }
@@ -458,13 +460,11 @@ static rt_err_t rt_macb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 /* transmit packet. */
 rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 {
-	struct rt_macb_eth *macb = dev->user_data;
 	struct pbuf* q;
-	rt_uint32_t len;
 	rt_uint8_t* bufptr, *buf = RT_NULL;
-	unsigned long paddr, ctrl;
+	unsigned long ctrl;
+	struct rt_macb_eth *macb = dev->user_data;
 	unsigned int tx_head = macb->tx_head;
-	int i;
 	
 	/* lock macb device */
 	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
@@ -500,7 +500,6 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 	/* wait ack */
 	rt_sem_take(&sem_ack, RT_WAITING_FOREVER);
 	rt_free(buf);
-	buf == RT_NULL;
 
 	return RT_EOK;
 }
@@ -555,7 +554,7 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 		}
 
 		if (status & RXBUF_FRAME_END) {
-			buffer = macb->rx_buffer + 128 * macb->rx_tail;
+			buffer = (void *)((unsigned int)macb->rx_buffer + 128 * macb->rx_tail);
 			len = status & RXBUF_FRMLEN_MASK;
 			p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
 			if (!p)
@@ -579,14 +578,14 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				taillen = len - headlen;
 				memcpy((void *)buf,
 				       buffer, headlen);
-				memcpy((void *)buf + headlen,
+				memcpy((void *)((unsigned int)buf + headlen),
 				       macb->rx_buffer, taillen);
 				buffer = (void *)buf;
 				for (q = p; q != RT_NULL; q= q->next)
 				{
 					/* read data from device */
 					memcpy((void *)q->payload, buffer, q->len);
-					buffer += q->len;
+					buffer = (void *)((unsigned int)buffer + q->len);
 				}
 				rt_free(buf);
 				buf = RT_NULL;
@@ -595,7 +594,7 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				{
 					/* read data from device */
 					memcpy((void *)q->payload, buffer, q->len);
-					buffer += q->len;
+					buffer = (void *)((unsigned int)buffer + q->len);
 				}
 			
 			}
@@ -643,7 +642,7 @@ void macb_initialize()
 	macb->rx_ring_dma = (unsigned long)macb->rx_ring;
 	macb->tx_ring_dma = (unsigned long)macb->tx_ring;
 
-	macb->regs = (void *)AT91SAM9260_BASE_EMAC;
+	macb->regs = AT91SAM9260_BASE_EMAC;
 	macb->phy_addr = 0x00;
 	
 	/*

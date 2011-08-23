@@ -26,34 +26,52 @@ struct clk {
 };
 
 static struct clk clk32k = {
-	.name = "clk32k",
-	.rate_hz = AT91_SLOW_CLOCK,
+	"clk32k",
+	AT91_SLOW_CLOCK,
+	RT_NULL,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk main_clk = {
-	.name = "main",
+	"main",
+	0,
+	RT_NULL,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk plla = {
-	.name = "plla",
+	"plla",
+	0,
+	RT_NULL,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk mck = {
-	.name = "mck",
+	"mck",
+	0,
+	RT_NULL,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk uhpck = {
-	.name = "uhpck",
+	"uhpck",
+	0,
+	RT_NULL,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk pllb = {
-	.name = "pllb",
-	.parent = &main_clk,
+	"pllb",
+	0,
+	&main_clk,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk udpck = {
-	.name = "udpck",
-	.parent = &pllb,
+	"udpck",
+	0,
+	&pllb,
+	{RT_NULL, RT_NULL},
 };
 
 static struct clk *const standard_pmc_clocks[] = {
@@ -75,7 +93,7 @@ struct clk *clk_get(const char *id)
 	for (list = (&clocks)->next; list != &clocks; list = list->next)
 	{
 		clk = (struct clk *)rt_list_entry(list, struct clk, node);
-		if (strcmp(id, clk->name) == 0)
+		if (rt_strcmp(id, clk->name) == 0)
 			return clk;
 	}
 

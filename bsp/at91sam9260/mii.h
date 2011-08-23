@@ -158,7 +158,7 @@
  * 100T4 this is fine.  If your phy places 100T4 elsewhere in the
  * priority order, you will need to roll your own function.
  */
-static inline unsigned int mii_nway_result (unsigned int negotiated)
+rt_inline unsigned int mii_nway_result (unsigned int negotiated)
 {
         unsigned int ret;
 

@@ -20,12 +20,17 @@
 #include <finsh.h>
 #endif
 
+#ifdef RT_USING_DEVICE
+#include <serial.h>
+#endif
+
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_board_init(void);
 extern void rt_serial_init(void);
 extern void rt_system_timer_init(void);
 extern void rt_system_scheduler_init(void);
 extern void rt_thread_idle_init(void);
+extern void mmu_invalidate_icache();
 extern void rt_hw_cpu_icache_enable(void);
 extern void rt_show_version(void);
 extern void rt_system_heap_init(void*, void*);
@@ -172,6 +177,14 @@ void rtthread_startup(void)
 
 	/* never reach here */
 	return ;
+}
+
+int main(void)
+{
+	/* startup RT-Thread RTOS */
+	rtthread_startup();
+
+	return 0;
 }
 
 /*@}*/
