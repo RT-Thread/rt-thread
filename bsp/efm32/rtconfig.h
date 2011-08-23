@@ -49,7 +49,7 @@
 //#define RT_RTC_DEBUG
 
 #define EFM32_DEBUG
-#define RT_ACCEL_DEBUG
+#define EFM32_ACCEL_DEBUG
 #define EFM32_SFLASH_DEBUG
 //#define EFM32_SDCARD_DEBUG
 //#define EFM32_ETHERNET_DEBUG
@@ -119,7 +119,7 @@
 #endif
 
 /* SECTION: IIC options */
-//#define RT_USING_IIC0				0x1UL
+#define RT_USING_IIC0				0x3UL
 #define RT_IIC0_NAME				"iic0"
 
 /* SECTION: ACMP options */
@@ -162,23 +162,34 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: Peripheral devices */
+#define EFM32_INTERFACE_ADC 		(0)
+#define EFM32_INTERFACE_IIC 		(1)
+#define EFM32_INTERFACE_SPI 		(2)
 #if defined(EFM32_G290_DK)
-//#define EFM32_USING_ACCEL 			/* Three axis accelerometer */
-//#define EFM32_USING_SFLASH 		/* SPI Flash */
-//#define EFM32_USING_SPISD 			/* MicroSD card */
-#define EFM32_USING_ETHERNET 		/* Ethernet controller */
+#define EFM32_USING_ACCEL 			EFM32_INTERFACE_IIC	/* Three axis accelerometer */
+//#define EFM32_USING_SFLASH 							/* SPI Flash */
+//#define EFM32_USING_SPISD 								/* MicroSD card */
+//#define EFM32_USING_ETHERNET 							/* Ethernet controller */
 #endif
+
 #if defined(EFM32_USING_ACCEL)
+#if (EFM32_USING_ACCEL == EFM32_INTERFACE_ADC)
 #define ACCEL_USING_DEVICE_NAME 	RT_ADC0_NAME
-#define ACCEL_USING_DMA				(0x3UL)
+#define ACCEL_USING_DMA				(0x3UL) 			/* For multiple channels scan mode */
+#elif (EFM32_USING_ACCEL == EFM32_INTERFACE_IIC)
+#define ACCEL_USING_DEVICE_NAME 	RT_IIC0_NAME
 #endif
+#endif
+
 #if defined(EFM32_USING_SFLASH)
 #define SFLASH_USING_DEVICE_NAME 	RT_USART0_NAME
 #endif
+
 #if defined(EFM32_USING_SPISD)
 #define SPISD_USING_DEVICE_NAME 	RT_USART0_NAME
 #define SPISD_DEVICE_NAME 			"spiSd"
 #endif
+
 #if defined(EFM32_USING_ETHERNET)
 #define ETH_USING_DEVICE_NAME 		RT_USART2_NAME
 #define ETH_DEVICE_NAME 			"spiEth"
@@ -205,7 +216,7 @@
 //#define hostName 					"onelife.dyndns.org"
 //#define userPwdB64 					"dXNlcjpwYXNzd2Q="
 
-#define RT_USING_LWIP
+///#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM

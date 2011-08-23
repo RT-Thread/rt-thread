@@ -15,6 +15,9 @@
  * 2011-06-17	onelife		Modify init function for efm32lib v2 upgrading
  * 2011-07-11	onelife		Add lock (semaphore) to prevent simultaneously 
  *  access
+ * 2011-08-04	onelife		Change the usage of the second parameter of Read 
+ *  and Write functions from (seldom used) "Offset" to "Slave address"
+ * 2011-08-04	onelife		Add a timer to prevent from forever waiting
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -29,6 +32,13 @@
 
 #if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
 /* Private typedef -----------------------------------------------------------*/
+struct efm32_iic_block
+{
+	struct rt_device 			device;
+	struct rt_semaphore			lock;
+	struct rt_timer 			timer;
+};
+
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 #ifdef RT_IIC_DEBUG
@@ -39,19 +49,17 @@
 
 /* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_IIC0
-#if (RT_USING_IIC0 > 3)
-	#error "The location number range of IIC is 0~3"
-#endif
-	struct rt_device 			iic0_device;
-	static struct rt_semaphore	iic0_lock;
+ #if (RT_USING_IIC0 > 3)
+ #error "The location number range of IIC is 0~3"
+ #endif
+static struct efm32_iic_block 	iic0;
 #endif
 
 #ifdef RT_USING_IIC1
-#if (RT_USING_IIC1 > 3)
-	#error "The location number range of IIC is 0~3"
-#endif
-	struct rt_device 			iic1_device;
-	static struct rt_semaphore	iic1_lock;
+ #if (RT_USING_IIC1 > 3)
+ #error "The location number range of IIC is 0~3"
+ #endif
+static struct efm32_iic_block 	iic1;
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
@@ -161,7 +169,7 @@ static rt_err_t rt_iic_close(rt_device_t dev)
  *   Pointer to device descriptor
  *
  * @param[in] pos
- *   Offset
+ *   Slave address
  *
  * @param[in] buffer
  *   Poniter to the buffer
@@ -183,7 +191,6 @@ static rt_size_t rt_iic_read (
 	struct efm32_iic_device_t* 	iic;
 	I2C_TransferSeq_TypeDef 	seq;
 	I2C_TransferReturn_TypeDef 	ret;
-	rt_uint8_t 					data[1];
 
 	if (!size)
 	{
@@ -193,7 +200,6 @@ static rt_size_t rt_iic_read (
 	err_code = RT_EOK;
 	read_size = 0;
 	iic = (struct efm32_iic_device_t*)dev->user_data;
-	data[0] = (rt_uint8_t)(pos & 0x000000FF);
 
 	/* Lock device */
 	if (rt_hw_interrupt_check())
@@ -211,36 +217,39 @@ static rt_size_t rt_iic_read (
 
 	if (iic->state & IIC_STATE_MASTER)
 	{
-		seq.addr = iic->slave_address;
+		seq.addr = (rt_uint16_t)pos << 1;
 		seq.flags = I2C_FLAG_WRITE_READ;
-		/* Select register to be read */
-		seq.buf[0].data = data;
+		/* Set register to be read */
+		seq.buf[0].data = (rt_uint8_t *)buffer;
 		seq.buf[0].len = 1;
-		/* Select location/length of data to be read */
+		/* Set read buffer pointer and size */
 		seq.buf[1].data = (rt_uint8_t *)buffer;
 		seq.buf[1].len = size;
 
 		/* Do a polled transfer */
+		iic->timeout = false;
+		rt_timer_stop(iic->timer);
+		rt_timer_start(iic->timer);
 		ret = I2C_TransferInit(iic->iic_device, &seq);
-		while (ret == i2cTransferInProgress)
+		while ((ret == i2cTransferInProgress) && !iic->timeout)
 		{
 		  ret = I2C_Transfer(iic->iic_device);
 		}
 	
 		if (ret != i2cTransferDone)
 		{
-			iic_debug("IIC0 read error: %x\n", ret);
-			iic_debug("IIC0 read address: %x\n", seq.addr);
-			iic_debug("IIC0 read data0: %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
-			iic_debug("IIC0 read len0: %x\n", seq.buf[0].len);
-			iic_debug("IIC0 read data1: %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
-			iic_debug("IIC0 read len1: %x\n", seq.buf[1].len);
+			iic_debug("IIC read error: %x\n", ret);
+			iic_debug("IIC read address: %x\n", seq.addr);
+			iic_debug("IIC read data0: %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
+			iic_debug("IIC read len0: %x\n", seq.buf[0].len);
+			iic_debug("IIC read data1: %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
+			iic_debug("IIC read len1: %x\n", seq.buf[1].len);
 			err_code = (rt_err_t)ret;
 		}
 		else
 		{
 			read_size = size;
-			iic_debug("IIC0 read size: %d\n", read_size);
+			iic_debug("IIC read size: %d\n", read_size);
 		}
 	}
 	else
@@ -288,7 +297,7 @@ static rt_size_t rt_iic_read (
 		}
 
 		read_size = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-		iic_debug("IIC0 slave read size: %d\n", read_size);
+		iic_debug("IIC slave read size: %d\n", read_size);
 	}
 
 	/* Unlock device */
@@ -311,7 +320,7 @@ static rt_size_t rt_iic_read (
  *   Pointer to device descriptor
  *
  * @param[in] pos
- *   Offset
+ *   Slave address
  *
  * @param[in] buffer
  *   Poniter to the buffer
@@ -359,24 +368,11 @@ static rt_size_t rt_iic_write (
 
 	if (iic->state & IIC_STATE_MASTER)
 	{
-		seq.addr = iic->slave_address;
-		if (pos != (rt_off_t)(-1))
-		{
-			seq.flags = I2C_FLAG_WRITE_WRITE;
-			/* Select register to be write */
-			seq.buf[0].data = (rt_uint8_t *)(pos & 0x000000FF);
-			seq.buf[0].len = 1;
-			/* Select location/length of data to be write */
-			seq.buf[1].data = (rt_uint8_t *)buffer;
-			seq.buf[1].len = size;
-		}
-		else
-		{
-			seq.flags = I2C_FLAG_WRITE;
-			/* Select location/length of data to be write */
-			seq.buf[0].data = (rt_uint8_t *)buffer;
-			seq.buf[0].len = size;
-		}
+		seq.addr = (rt_uint16_t)pos << 1;
+		seq.flags = I2C_FLAG_WRITE;
+		/* Set write buffer pointer and size */
+		seq.buf[0].data = (rt_uint8_t *)buffer;
+		seq.buf[0].len = size;
 	}
 	else
 	{
@@ -384,10 +380,13 @@ static rt_size_t rt_iic_write (
 	}
 
 	/* Do a polled transfer */
+	iic->timeout = false;
+	rt_timer_stop(iic->timer);
+	rt_timer_start(iic->timer);
 	ret = I2C_TransferInit(iic->iic_device, &seq);
-	while (ret == i2cTransferInProgress)
+	while ((ret == i2cTransferInProgress) && !iic->timeout)
 	{
-	  ret = I2C_Transfer(iic->iic_device);
+		ret = I2C_Transfer(iic->iic_device);
 	}
 	
 	if (ret != i2cTransferDone)
@@ -474,8 +473,7 @@ static rt_err_t rt_iic_control (
 
 			control = (struct efm32_iic_control_t *)args;
 			iic->state = control->config & (IIC_STATE_MASTER | IIC_STATE_BROADCAST);
-			iic->master_address = control->master_address << 1;
-			iic->slave_address = control->slave_address << 1;
+			iic->address = control->address << 1;
 
 			if (!(iic->state & IIC_STATE_MASTER))
 			{
@@ -503,7 +501,7 @@ static rt_err_t rt_iic_control (
 				}
 			
 				/* Enable slave mode */
-				I2C_SlaveAddressSet(iic->iic_device, iic->slave_address);
+				I2C_SlaveAddressSet(iic->iic_device, iic->address);
 				I2C_SlaveAddressMaskSet(iic->iic_device, 0xFF);
 				iic->iic_device->CTRL |= I2C_CTRL_SLAVE | I2C_CTRL_AUTOACK | I2C_CTRL_AUTOSN;
 
@@ -513,7 +511,7 @@ static rt_err_t rt_iic_control (
 				
 				/* Enable I2Cn interrupt vector in NVIC */
 #ifdef RT_USING_IIC0
-				if (dev == &iic0_device)
+				if (dev == &iic0.device)
 				{
 					NVIC_ClearPendingIRQ(I2C0_IRQn);
 					NVIC_SetPriority(I2C0_IRQn, EFM32_IRQ_PRI_DEFAULT);
@@ -521,7 +519,7 @@ static rt_err_t rt_iic_control (
 				}
 #endif
 #ifdef RT_USING_IIC1
-				if (dev == &iic1_device)
+				if (dev == &iic1.device)
 				{
 					NVIC_ClearPendingIRQ(I2C1_IRQn);
 					NVIC_SetPriority(I2C1_IRQn, EFM32_IRQ_PRI_DEFAULT);
@@ -537,6 +535,22 @@ static rt_err_t rt_iic_control (
 	rt_sem_release(iic->lock);
 
 	return RT_EOK;
+}
+
+/***************************************************************************//**
+ * @brief
+ *   IIC timeout interrupt handler
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] parameter
+ *	Parameter
+ ******************************************************************************/
+static void rt_iic_timer(void *timeout)
+{
+	*(rt_bool_t *)timeout = true;
 }
 
 /***************************************************************************//**
@@ -683,14 +697,15 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
  *	Pin location number 
  ******************************************************************************/
 static struct efm32_iic_device_t *rt_hw_iic_unit_init(
-	rt_device_t device,
-	rt_uint8_t 	unitNumber, 
-	rt_uint8_t 	location)
+	struct efm32_iic_block 	*block,
+	rt_uint8_t 				unitNumber, 
+	rt_uint8_t 				location)
 {
 	struct efm32_iic_device_t 	*iic;
 	CMU_Clock_TypeDef			iicClock;
 	I2C_Init_TypeDef			init = I2C_INIT_DEFAULT;
 	efm32_irq_hook_init_t		hook;
+	rt_uint8_t 					name[RT_NAME_MAX];
 
 	do
 	{
@@ -702,9 +717,10 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 			break;
 		}
 		iic->counter 		= 0;
+		iic->timer 			= &block->timer;
+		iic->timeout 		= false;
 		iic->state 			|= IIC_STATE_MASTER;
-		iic->master_address	= 0x0000;
-		iic->slave_address 	= 0x0000;
+		iic->address		= 0x0000;
 		iic->rx_buffer 		= RT_NULL;
 
 		/* Initialization */
@@ -729,6 +745,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		default:
 			break;
 		}
+		rt_sprintf(name, "iic%d", unitNumber);
 
 		/* Enabling clock */
 		CMU_ClockEnable(iicClock, true);  
@@ -751,7 +768,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		hook.type		= efm32_irq_type_iic;
 		hook.unit		= unitNumber;
 		hook.cbFunc 	= rt_hw_iic_slave_isr;
-		hook.userPtr	= device;
+		hook.userPtr	= (void *)&block->device;
 		efm32_irq_hook_register(&hook);
 
 		/* Enable SDZ and SCL pins and set location */
@@ -764,6 +781,17 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 
 		/* Abort current TX data and clear TX buffers */
 		iic->iic_device->CMD = I2C_CMD_ABORT | I2C_CMD_CLEARPC | I2C_CMD_CLEARTX;
+
+		/* Initialize lock */
+		iic->lock = &block->lock;
+		if (rt_sem_init(iic->lock, name, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+		{
+			break;
+		}
+
+		/* Initialize timer */
+		rt_timer_init(iic->timer, name, rt_iic_timer, &iic->timeout, 
+			IIC_TIMEOUT_PERIOD, RT_TIMER_FLAG_ONE_SHOT);
 
 		return iic;
 	} while(0);
@@ -795,18 +823,11 @@ void rt_hw_iic_init(void)
 		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 #ifdef RT_USING_IIC0
 		/* Initialize and register iic0 */
-		if ((iic = rt_hw_iic_unit_init(&iic0_device, 0, RT_USING_IIC0)) != RT_NULL)
+		if ((iic = rt_hw_iic_unit_init(&iic0, 0, RT_USING_IIC0)) != RT_NULL)
 		{
-			rt_hw_iic_register(&iic0_device, RT_IIC0_NAME, flag, iic);
+			rt_hw_iic_register(&iic0.device, RT_IIC0_NAME, flag, iic);
 		}
 		else
-		{
-			break;
-		}
-
-		/* Initialize lock for iic0 */
-		iic->lock = &iic0_lock;
-		if (rt_sem_init(iic->lock, RT_IIC0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;
 		}
@@ -814,18 +835,11 @@ void rt_hw_iic_init(void)
 
 #ifdef RT_USING_IIC1
 		/* Initialize and register iic1 */
-		if ((iic = rt_hw_iic_unit_init(&iic1_device, 1, RT_USING_IIC1)) != RT_NULL)
+		if ((iic = rt_hw_iic_unit_init(&iic1, 1, RT_USING_IIC1)) != RT_NULL)
 		{
-			rt_hw_iic_register(&iic1_device, RT_IIC1_NAME, flag, iic);
+			rt_hw_iic_register(&iic1.device, RT_IIC1_NAME, flag, iic);
 		}
 		else
-		{
-			break;
-		}
-
-		/* Initialize lock for iic1 */
-		iic->lock = &iic1_lock;
-		if (rt_sem_init(iic->lock, RT_IIC1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
 		{
 			break;
 		}
