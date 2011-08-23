@@ -119,7 +119,7 @@
 #endif
 
 /* SECTION: IIC options */
-#define RT_USING_IIC0				0x3UL
+//#define RT_USING_IIC0				0x3UL
 #define RT_IIC0_NAME				"iic0"
 
 /* SECTION: ACMP options */
@@ -166,10 +166,10 @@
 #define EFM32_INTERFACE_IIC 		(1)
 #define EFM32_INTERFACE_SPI 		(2)
 #if defined(EFM32_G290_DK)
-#define EFM32_USING_ACCEL 			EFM32_INTERFACE_IIC	/* Three axis accelerometer */
+//#define EFM32_USING_ACCEL 			EFM32_INTERFACE_IIC	/* Three axis accelerometer */
 //#define EFM32_USING_SFLASH 							/* SPI Flash */
 //#define EFM32_USING_SPISD 								/* MicroSD card */
-//#define EFM32_USING_ETHERNET 							/* Ethernet controller */
+#define EFM32_USING_ETHERNET 							/* Ethernet controller */
 #endif
 
 #if defined(EFM32_USING_ACCEL)
@@ -216,7 +216,7 @@
 //#define hostName 					"onelife.dyndns.org"
 //#define userPwdB64 					"dXNlcjpwYXNzd2Q="
 
-///#define RT_USING_LWIP
+#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM

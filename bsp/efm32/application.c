@@ -16,6 +16,8 @@
  * 2011-05-06	onelife		Add SPI Flash DEMO
  * 2011-07-15	onelife		Add accelerometer DEMO
  * 2011-07-27	onelife		Modify Ethernet DEMO
+ * 2011-08-23	onelife		Modify Ethernet DEMO according to the changes of 
+ *  lwIP API in reversion 1668 
  ******************************************************************************/
  
 /***************************************************************************//**
@@ -136,34 +138,16 @@ void rt_demo_thread_entry(void* parameter)
 
 #if defined(EFM32_USING_ETHERNET)
 	extern void lwip_sys_init(void);
-#if defined(EFM32_USING_ETH_HTTPD)
+	/* init lwip system */
+	lwip_sys_init();
+	rt_kprintf("TCP/IP stack init OK!\n");
+
+ #if defined(EFM32_USING_ETH_HTTPD)
 	extern void httpd_init(void);
-#endif
-
-	rt_device_t eth = RT_NULL;
-
-	/* find Ethernet device */
-	eth = rt_device_find(ETH_DEVICE_NAME);
-	if (eth != RT_NULL)
-	{
-		/* init Ethernet device */
-		eth->init(eth);
-		rt_kprintf("Ethernet init OK!\n");
-
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP stack init OK!\n");
-
-#if defined(EFM32_USING_ETH_HTTPD)
-		/* init http server */
-		httpd_init();
-		rt_kprintf("Http service init OK!\n");
-#endif
-	}
-	else
-	{
-		rt_kprintf("%s is not found\n"), ETH_DEVICE_NAME;
-	}
+	/* init http server */
+	httpd_init();
+	rt_kprintf("Http service init OK!\n");
+ #endif /* defined(EFM32_USING_ETH_HTTPD) */
 #endif /* defined(EFM32_USING_ETHERNET) */
 	rt_kprintf("Demo End\n");
 
