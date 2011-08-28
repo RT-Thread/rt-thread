@@ -365,6 +365,12 @@ void rt_kprintf(const char *fmt, ...);
 
 rt_err_t rt_get_errno(void);
 void rt_set_errno(rt_err_t no);
+int *_rt_errno(void);
+#ifndef RT_USING_NEWLIB
+#ifndef errno
+#define errno	*_rt_errno()
+#endif
+#endif
 
 void* rt_memset(void *src, int c, rt_ubase_t n);
 void* rt_memcpy(void *dest, const void *src, rt_ubase_t n);

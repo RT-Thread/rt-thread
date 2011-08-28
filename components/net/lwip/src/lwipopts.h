@@ -3,9 +3,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(RT_USING_MINILIBC)
 #define ERRNO						1
-#endif
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1

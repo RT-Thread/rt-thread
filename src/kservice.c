@@ -27,7 +27,7 @@
 
 #ifndef RT_USING_NEWLIB
 /* global errno in RT-Thread*/
-volatile int errno;
+static volatile int _errno;
 #else
 #include <errno.h>
 #endif
@@ -47,11 +47,11 @@ rt_err_t rt_get_errno(void)
 	if(rt_interrupt_get_nest() != 0)
 	{
 		/* it's in interrupt context */
-		return errno;
+		return _errno;
 	}
 
 	tid = rt_thread_self();
-	if (tid == RT_NULL) return errno;
+	if (tid == RT_NULL) return _errno;
 
 	return tid->error;
 }
@@ -68,14 +68,31 @@ void rt_set_errno(rt_err_t error)
 	if(rt_interrupt_get_nest() != 0)
 	{
 		/* it's in interrupt context */
-		errno = error;
+		_errno = error;
 		return;
 	}
 
 	tid = rt_thread_self();
-	if (tid == RT_NULL) { errno = error; return; }
+	if (tid == RT_NULL) { _errno = error; return; }
 
 	tid->error = error;
+}
+
+/**
+ * This function returns errno.
+ *
+ * @return the errno in the system
+ */
+int *_rt_errno(void)
+{
+	rt_thread_t tid;
+	
+	if (rt_interrupt_get_nest() != 0) return (int *)&_errno;
+
+	tid = rt_thread_self();
+	if (tid != RT_NULL) return (int *)&(tid->error);
+
+	return (int *)&_errno;
 }
 
 /**
