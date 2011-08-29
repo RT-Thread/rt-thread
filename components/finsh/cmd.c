@@ -490,7 +490,7 @@ int list_mod_detail(const char* name)
 FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
 #endif
 
-int list()
+long list(void)
 {
 	struct finsh_syscall_item* syscall_item;
 	struct finsh_sysvar_item*  sysvar_item;
