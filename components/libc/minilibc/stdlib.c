@@ -17,7 +17,6 @@
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC)
 #include "stdlib.h"
 
-int errno = 0;
 int atoi(const char* s)
 {
 	long int v=0;
