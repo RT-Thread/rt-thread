@@ -63,7 +63,7 @@ static void rt_hw_timer_handler(void)
 }
 
 /**
-* This function will initial FM3 Easy Kit board.
+* This function will initial board.
  */
 void rt_hw_board_init()
 {
@@ -73,7 +73,11 @@ void rt_hw_board_init()
     // The PBDIV value is already set via the pragma FPBDIV option above.
    	SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
 
-   	rt_hw_console_init();
+   	/* use DBPRINTF */
+   	/* rt_hw_console_init(); */
+
+	rt_hw_usart_init();
+	rt_console_set_device("uart1");
 
    	rt_hw_show_info();
 
@@ -94,9 +98,6 @@ void rt_hw_board_init()
 
     /* Setup the software interrupt. */
 	mConfigIntCoreSW0( CSW_INT_ON | CSW_INT_PRIOR_1 | CSW_INT_SUB_PRIOR_0 );
-
-    // configure PORTD.RD0 = output,Toggle in CoreSW0Handler.
-    mPORTDSetPinsDigitalOut(BIT_0);
 }
 
 void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)
@@ -106,9 +107,6 @@ void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)
 
     // .. things to do
     rt_hw_timer_handler();
-
-//    // .. in this case, toggle the LED
-//    mPORTDToggleBits(BIT_1);
 }
 
 //void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
@@ -121,9 +119,6 @@ void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)
 //
 //    // update the period
 //    UpdateCoreTimer(CORE_TICK_RATE);
-//
-//	// .. Toggle the LED
-//    mPORTDToggleBits(BIT_1);
 //}
 
 

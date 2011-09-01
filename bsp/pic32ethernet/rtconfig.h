@@ -70,17 +70,13 @@
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 
-#define RT_USING_NEWLIB
+//#define RT_USING_NEWLIB
 
 /* SECTION: finsh, a C-Express shell */
-//#define RT_USING_FINSH
+#define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define __fsymtab_start _alt_partition_FSymTab_start
-#define __fsymtab_end   _alt_partition_FSymTab_end
-#define __vsymtab_start _alt_partition_VSymTab_start
-#define __vsymtab_end   _alt_partition_VSymTab_end
 
 /* SECTION: device filesystem */
 //#define RT_USING_DFS

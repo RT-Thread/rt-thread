@@ -19,6 +19,11 @@
 extern int _ramfunc_end;
 #define PIC32_SRAM_END (0xA0000000+0x8000) //795F512L 512KB
 
+#ifdef RT_USING_FINSH
+extern void finsh_system_init(void);
+extern void finsh_set_device(const char* device);
+#endif
+
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -71,13 +76,13 @@ void rtthread_startup(void)
 	/* init application */
 	rt_application_init();
 
-//#ifdef RT_USING_FINSH
-//	/* init finsh */
-//	finsh_system_init();
-//#ifdef RT_USING_DEVICE
-//	finsh_set_device("uart2");
-//#endif
-//#endif
+#ifdef RT_USING_FINSH
+	/* init finsh */
+	finsh_system_init();
+#ifdef RT_USING_DEVICE
+	finsh_set_device("uart1");
+#endif
+#endif
 
     /* init timer thread */
     rt_system_timer_thread_init();
