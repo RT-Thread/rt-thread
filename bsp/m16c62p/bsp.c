@@ -9,11 +9,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2010-04-09     fify      the first version
+ * 2010-04-09     fify         the first version
  *
  * For       : Renesas M16C
  * Toolchain : IAR's EW for M16C v3.401
-*/
+ */
 
 #include "iom16c62p.h"
 #include "bsp.h"

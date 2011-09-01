@@ -8,10 +8,10 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date                Author       Notes
+ * Date           Author       Notes
  * 2010-03-08     Bernard      The first version for LPC17xx
- * 2010-04-10     fify             Modified for M16C
-*/
+ * 2010-04-10     fify         Modified for M16C
+ */
 
 #include <rthw.h>
 #include <rtthread.h>

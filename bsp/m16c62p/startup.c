@@ -20,6 +20,7 @@
 #include "board.h"
 #include "bsp.h"
 
+extern void rt_hw_interrupt_init(void);
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -37,6 +38,9 @@ extern void finsh_set_device(const char* device);
  */
 void rtthread_startup(void)
 {
+	/* init hardware interrupt */
+	rt_hw_interrupt_init();
+        
 	/* init board */
 	rt_hw_board_init();
 
@@ -54,7 +58,7 @@ void rtthread_startup(void)
     
 #ifdef RT_USING_HEAP
 #ifdef __ICCM16C__
-    rt_system_heap_init(__segment_begin("DATA16_HEAP"),__segment_end("DATA16_HEAP"));
+	rt_system_heap_init(__segment_begin("DATA16_HEAP"), __segment_end("DATA16_HEAP"));
 #endif
 #endif
 
@@ -75,8 +79,8 @@ void rtthread_startup(void)
 	finsh_set_device("uart0");
 #endif
 
-    /* init timer thread */
-    rt_system_timer_thread_init();
+	/* init timer thread */
+	rt_system_timer_thread_init();
     
 	/* init idle thread */
 	rt_thread_idle_init();
@@ -94,7 +98,7 @@ int main(void)
 	rt_hw_interrupt_disable();
 
 	/* init system setting */
-    system_init();
+	system_init();
     
 	/* startup RT-Thread RTOS */
 	rtthread_startup();

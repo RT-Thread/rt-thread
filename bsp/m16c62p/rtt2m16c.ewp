@@ -207,7 +207,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state></state>
+          <state>Pa050</state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -1945,10 +1945,7 @@
           <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\context_iar.asm</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\interrupt.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\stack.c</name>
+          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\cpuport.c</name>
         </file>
       </group>
     </group>

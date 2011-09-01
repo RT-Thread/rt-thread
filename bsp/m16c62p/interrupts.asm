@@ -9,11 +9,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2010-04-20     fify      the first version
+ * 2010-04-20     fify         the first version
  *
  * For       : Renesas M16C
  * Toolchain : IAR's EW for M16C v3.401
-*/
+ */
 
         PUBLIC  rt_hw_timer_handler
         PUBLIC  rt_hw_uart0_receive_handler

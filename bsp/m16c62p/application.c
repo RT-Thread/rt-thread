@@ -14,7 +14,7 @@
  *
  * For       : Renesas M16C
  * Toolchain : IAR's EW for M16C v3.401
-*/
+ */
 
 #include <rtthread.h>
 #include "bsp.h"
@@ -40,7 +40,7 @@ static void rt_thread_entry_led(void* parameter)
 int rt_application_init(void)
 {
     /* create led thread */
-	rt_thread_init(&led,
+    rt_thread_init(&led,
 		"led",
 		rt_thread_entry_led, RT_NULL,
 		&led_stack[0], sizeof(led_stack),

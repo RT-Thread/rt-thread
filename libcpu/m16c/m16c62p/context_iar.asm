@@ -15,7 +15,7 @@
  *
  * For       : Renesas M16C
  * Toolchain : IAR's EW for M16C v3.401
-*/
+ */
 
     RSEG        CSTACK
 
