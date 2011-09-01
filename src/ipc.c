@@ -1322,6 +1322,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
+	tick_delta = 0;
 	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
 	/* disable interrupt */

@@ -218,44 +218,36 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 static void rt_thread_exit()
 {
 	struct rt_thread* thread;
-	register rt_base_t temp;
-
-	/* disable interrupt */
-	temp = rt_hw_interrupt_disable();
+	register rt_base_t level;
 
 	/* get current thread */
 	thread = rt_current_thread;
 
+	/* disable interrupt */
+	level = rt_hw_interrupt_disable();
+
 	/* remove from schedule */
 	rt_schedule_remove_thread(thread);
-
 	/* change stat */
 	thread->stat = RT_THREAD_CLOSE;
 
-	/* release thread timer */
-	rt_timer_detach(&(thread->thread_timer));
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(temp);
+	/* remove it from timer list */
+	rt_list_remove(&(thread->thread_timer.list));
+	rt_object_detach((rt_object_t)&(thread->thread_timer));
 
 	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_EOK) &&
 		thread->cleanup == RT_NULL)
 	{
 		rt_object_detach((rt_object_t)thread);
 	}
-#ifdef RT_USING_HEAP
 	else
 	{
-		/* disable interrupt */
-		temp = rt_hw_interrupt_disable();
-
 		/* insert to defunct thread list */
 		rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
-
-		/* enable interrupt */
-		rt_hw_interrupt_enable(temp);
 	}
-#endif
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(level);
 
 	/* switch to next task */
 	rt_schedule();
