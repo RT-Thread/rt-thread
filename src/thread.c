@@ -20,6 +20,8 @@
  * 2008-02-16     Bernard      fix the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
+ * 2011-09-01     Bernard      fixed rt_thread_exit issue when the current thread preempted, 
+ *                             which reported by Jiaxing Lee.
  */
 
 #include <rtthread.h>
