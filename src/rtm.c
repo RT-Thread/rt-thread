@@ -13,7 +13,6 @@
  */
 
 #include <rtthread.h> 
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -187,6 +186,7 @@ RTM_EXPORT(memcpy);
 #ifdef RT_USING_NEWLIB
 
 #include <unistd.h>
+#include <assert.h>
 
 RTM_EXPORT(snprintf);
 RTM_EXPORT(access);
