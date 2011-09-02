@@ -23,15 +23,12 @@
 
     RSEG    CODE(1)
 
-    EXTERN  rt_thread_switch_interrput_flag
     EXTERN  rt_interrupt_from_thread
     EXTERN  rt_interrupt_to_thread
 
     PUBLIC  rt_hw_interrupt_disable
     PUBLIC  rt_hw_interrupt_enable
     PUBLIC  rt_hw_context_switch_to
-    PUBLIC  rt_hw_context_switch
-    PUBLIC  rt_hw_context_switch_interrupt
     PUBLIC  os_context_switch
 
 rt_hw_interrupt_disable:
@@ -65,20 +62,5 @@ rt_hw_context_switch_to:
     LDC     [A0], ISP
     POPM    R0,R1,R2,R3,A0,A1,SB,FB
     REIT
-
-rt_hw_context_switch:
-    MOV.W   R0, rt_interrupt_from_thread
-    MOV.W   R1, rt_interrupt_to_thread
-    INT     #0                                   ;software interrupt 0
-    RTS
-  
-rt_hw_context_switch_interrupt:
-    CMP.W   #1, rt_thread_switch_interrput_flag
-    JEQ     jump
-    MOV.W   #1, rt_thread_switch_interrput_flag
-    MOV.W   R0, rt_interrupt_from_thread
-jump
-    MOV.W   R1, rt_interrupt_to_thread
-    RTS
 
     END

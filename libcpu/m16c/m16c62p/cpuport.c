@@ -19,7 +19,7 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 /* switch flag on interrupt and thread pointer to save switch record */
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint8_t rt_thread_switch_interrput_flag;
 
 /**
  * This function will initialize hardware interrupt
@@ -70,4 +70,21 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 
     /* return task's current stack address */
     return (rt_uint8_t *)pstk16;
+}
+
+void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
+{
+    rt_interrupt_from_thread = from;
+    rt_interrupt_to_thread = to;
+    asm("INT #0");    
+}
+
+void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
+{
+    if (rt_thread_switch_interrput_flag != 1)
+    {
+        rt_thread_switch_interrput_flag = 1;
+        rt_interrupt_from_thread = from;        
+    }
+    rt_interrupt_to_thread = to;  
 }
