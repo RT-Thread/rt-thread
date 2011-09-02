@@ -435,13 +435,13 @@ void finsh_thread_entry(void* parameter)
 	}
 }
 
-void finsh_system_function_init(void* begin, void* end)
+void finsh_system_function_init(const void* begin, const void* end)
 {
 	_syscall_table_begin = (struct finsh_syscall*) begin;
 	_syscall_table_end = (struct finsh_syscall*) end;
 }
 
-void finsh_system_var_init(void* begin, void* end)
+void finsh_system_var_init(const void* begin, const void* end)
 {
 	_sysvar_table_begin = (struct finsh_sysvar*) begin;
 	_sysvar_table_end = (struct finsh_sysvar*) end;
@@ -465,10 +465,10 @@ void finsh_system_init(void)
 
 #ifdef FINSH_USING_SYMTAB
 #ifdef __CC_ARM                 /* ARM C Compiler */
-    extern int FSymTab$$Base;
-    extern int FSymTab$$Limit;
-    extern int VSymTab$$Base;
-    extern int VSymTab$$Limit;
+    extern const int FSymTab$$Base;
+    extern const int FSymTab$$Limit;
+    extern const int VSymTab$$Base;
+    extern const int VSymTab$$Limit;
 	finsh_system_function_init(&FSymTab$$Base, &FSymTab$$Limit);
 	finsh_system_var_init(&VSymTab$$Base, &VSymTab$$Limit);
 #elif defined (__ICCARM__)      /* for IAR Compiler */
@@ -477,10 +477,10 @@ void finsh_system_init(void)
     finsh_system_var_init(__section_begin("VSymTab"),
                           __section_end("VSymTab"));
 #elif defined (__GNUC__)        /* GNU GCC Compiler */
-	extern int __fsymtab_start;
-	extern int __fsymtab_end;
-	extern int __vsymtab_start;
-	extern int __vsymtab_end;
+	extern const int __fsymtab_start;
+	extern const int __fsymtab_end;
+	extern const int __vsymtab_start;
+	extern const int __vsymtab_end;
 	finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 	finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #endif
