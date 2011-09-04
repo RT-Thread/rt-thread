@@ -369,8 +369,12 @@ accept_function(void *arg, struct tcp_pcb *newpcb, err_t err)
 #endif /* API_MSG_DEBUG */
   conn = (struct netconn *)arg;
 
-  LWIP_ERROR("accept_function: invalid conn->acceptmbox",
-             conn->acceptmbox != SYS_MBOX_NULL, return ERR_VAL;);
+  /* check whether acceptmbox is valid */
+  if (conn->acceptmbox == SYS_MBOX_NULL)
+  {
+    LWIP_DEBUGF(API_MSG_DEBUG, ("accept_function: acceptmbox already deleted\n"));
+	return ERR_VAL;
+  }
 
   /* We have to set the callback here even though
    * the new socket is unknown. conn->socket is marked as -1. */
@@ -508,6 +512,7 @@ netconn_alloc(enum netconn_type t, netconn_callback callback)
     (DEFAULT_RAW_RECVMBOX_SIZE == DEFAULT_TCP_RECVMBOX_SIZE)
   size = DEFAULT_RAW_RECVMBOX_SIZE;
 #else
+  size = 0; /* skip warning */
   switch(NETCONNTYPE_GROUP(t)) {
 #if LWIP_RAW
   case NETCONN_RAW:

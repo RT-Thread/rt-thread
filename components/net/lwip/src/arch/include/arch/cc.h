@@ -89,9 +89,13 @@ typedef rt_uint32_t	mem_ptr_t;
 #endif
 
 void sys_arch_assert(const char* file, int line);
+#ifdef LWIP_DEBUG
 #define LWIP_PLATFORM_DIAG(x)	do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) { rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__); }
-
+#else
+#define LWIP_PLATFORM_DIAG(x)
+#define LWIP_PLATFORM_ASSERT(x)
+#endif
 
 #include "string.h"
 

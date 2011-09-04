@@ -118,6 +118,8 @@
 /* the number of simultaneously queued TCP */
 #ifdef RT_LWIP_TCP_SEG_NUM
 #define MEMP_NUM_TCP_SEG            RT_LWIP_TCP_SEG_NUM
+#else
+#define MEMP_NUM_TCP_SEG            TCP_SND_QUEUELEN
 #endif
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active

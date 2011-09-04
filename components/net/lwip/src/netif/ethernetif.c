@@ -367,4 +367,45 @@ void list_if()
 #endif
 }
 FINSH_FUNCTION_EXPORT(list_if, list network interface information);
+
+#include <lwip/tcp.h>
+void list_tcps()
+{
+  struct tcp_pcb *pcb;
+  extern struct tcp_pcb *tcp_active_pcbs;  
+  extern union tcp_listen_pcbs_t tcp_listen_pcbs;
+  extern struct tcp_pcb *tcp_tw_pcbs;
+  extern const char *tcp_state_str[];
+
+  rt_enter_critical();
+  rt_kprintf("Active PCB states:\n");
+  for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next)
+  {
+    rt_kprintf("%s:%d <==> %s:%d snd_nxt %d rcv_nxt %d ",
+                       inet_ntoa(*((struct in_addr*)&(pcb->local_ip))), pcb->local_port, 
+                       inet_ntoa(*((struct in_addr*)&(pcb->remote_ip))), pcb->remote_port,
+                       pcb->snd_nxt, pcb->rcv_nxt);
+    rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+  }
+
+  rt_kprintf("Listen PCB states:\n");
+  for(pcb = (struct tcp_pcb *)tcp_listen_pcbs.pcbs; pcb != NULL; pcb = pcb->next)
+  {
+    rt_kprintf("local port %d ", pcb->local_port);
+    rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+  }
+  
+  rt_kprintf("TIME-WAIT PCB states:\n");
+  for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next)
+  {
+    rt_kprintf("%s:%d <==> %s:%d snd_nxt %d rcv_nxt %d ",
+                       inet_ntoa(*((struct in_addr*)&(pcb->local_ip))), pcb->local_port, 
+                       inet_ntoa(*((struct in_addr*)&(pcb->remote_ip))), pcb->remote_port,
+                       pcb->snd_nxt, pcb->rcv_nxt);
+    rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+  }
+  rt_exit_critical();
+}
+FINSH_FUNCTION_EXPORT(list_tcps, list all of tcp pcb);
+
 #endif
