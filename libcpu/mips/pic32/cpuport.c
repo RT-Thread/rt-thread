@@ -1,7 +1,7 @@
 /*
- * File      : stack.c
+ * File      : cpuport.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,15 +9,19 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-05-23     aozima       first implementation for PIC32.
+ * 20011-05-23    aozima       the first version for PIC32.
+ * 20011-09-05    aozima       merge all of C source code into cpuport.c.
  */
-
 #include <rtthread.h>
 
 /**
  * @addtogroup PIC32
  */
 /*@{*/
+
+/* exception and interrupt handler table */
+rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_uint32_t rt_thread_switch_interrput_flag;
 
 rt_uint32_t __attribute__((nomips16)) _get_gp(void)
 {
@@ -88,5 +92,5 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	return (rt_uint8_t *)stk;
 }
 
-/*@}*/
 
+/*@}*/
