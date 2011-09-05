@@ -884,7 +884,7 @@ static struct finsh_node* make_sys_node(u_char type, struct finsh_node* node1, s
 
 	node = finsh_node_allocate(type);
 
-	if (node1 != NULL)
+	if ((node1 != NULL) && (node != NULL))
 	{
 		finsh_node_child(node) = node1;
 		finsh_node_sibling(node1) = node2;

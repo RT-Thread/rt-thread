@@ -164,7 +164,16 @@ static long _list_event(struct rt_list_node *list)
 	for (node = list->next; node != list; node = node->next)
 	{
 		e = (struct rt_event*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s  0x%08x %03d\n", e->parent.parent.name, e->set, rt_list_len(&e->parent.suspend_thread));
+		if( !rt_list_isempty(&e->parent.suspend_thread) )
+		{
+			rt_kprintf("%-8s  0x%08x %03d\n", e->parent.parent.name, e->set, rt_list_len(&e->parent.suspend_thread));
+			show_wait_queue(&(e->parent.suspend_thread));
+			rt_kprintf("\n");
+		}
+		else
+		{
+			rt_kprintf("%-8s  0x%08x 0\n", e->parent.parent.name, e->set);
+		}
 	}
 
 	return 0;
