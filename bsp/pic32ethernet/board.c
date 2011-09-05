@@ -122,5 +122,5 @@ void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)
 //}
 
 
-void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl2) CoreSW0Handler(void);
+void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl1) CoreSW0Handler(void);
 

@@ -18,6 +18,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="C:\Program Files\Microchip\MPLAB C32 Suite\pic32mx\include" />
 		</Compiler>
 		<Unit filename="application.c">
 			<Option compilerVar="CC" />
@@ -380,10 +381,10 @@
 		<Unit filename="..\..\libcpu\mips\common\mipsregs.h" />
 		<Unit filename="..\..\libcpu\mips\common\stackframe.h" />
 		<Unit filename="..\..\libcpu\mips\pic32\context_gcc.S" />
-		<Unit filename="..\..\libcpu\mips\pic32\interrupt.c">
+		<Unit filename="..\..\libcpu\mips\pic32\cpuport.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\libcpu\mips\pic32\stack.c">
+		<Unit filename="..\..\libcpu\mips\pic32\exceptions.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\src\clock.c">

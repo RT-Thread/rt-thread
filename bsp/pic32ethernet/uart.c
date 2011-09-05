@@ -155,25 +155,34 @@ void __ISR(_UART1_VECTOR, ipl2) IntUART1Handler(void)
     // Is this an RX interrupt?
     if(INTGetFlag(INT_SOURCE_UART_RX(uart_device->uart)))
     {
-        // Clear the RX interrupt Flag
-        INTClearFlag(INT_SOURCE_UART_RX(uart_device->uart));
-
-        /* Receive Data Available */
-        uart_device->rx_buffer[uart_device->save_index] = UARTGetDataByte(uart_device->uart);//UARTGetDataByte(UART1);
-        uart_device->save_index ++;
-        if (uart_device->save_index >= RT_UART_RX_BUFFER_SIZE)
-            uart_device->save_index = 0;
+        while( U1STAbits.URXDA )
+        {
+            /* Receive Data Available */
+            uart_device->rx_buffer[uart_device->save_index] = UARTGetDataByte(uart_device->uart);//UARTGetDataByte(UART1);
+            uart_device->save_index ++;
+            if (uart_device->save_index >= RT_UART_RX_BUFFER_SIZE)
+            {
+                uart_device->save_index = 0;
+            }
+        }
 
         /* invoke callback */
         if(uart_device->parent.rx_indicate != RT_NULL)
         {
             rt_size_t length;
             if (uart_device->read_index > uart_device->save_index)
+            {
                 length = RT_UART_RX_BUFFER_SIZE - uart_device->read_index + uart_device->save_index;
+            }
             else
+            {
                 length = uart_device->save_index - uart_device->read_index;
+            }
 
-            uart_device->parent.rx_indicate(&uart_device->parent, length);
+            if( length )
+            {
+                uart_device->parent.rx_indicate(&uart_device->parent, length);
+            }
         }
 
         // Clear the RX interrupt Flag
@@ -198,25 +207,34 @@ void __ISR(_UART2_VECTOR, ipl2) IntUART2Handler(void)
     // Is this an RX interrupt?
     if(INTGetFlag(INT_SOURCE_UART_RX(uart_device->uart)))
     {
-        // Clear the RX interrupt Flag
-        INTClearFlag(INT_SOURCE_UART_RX(uart_device->uart));
-
-        /* Receive Data Available */
-        uart_device->rx_buffer[uart_device->save_index] = UARTGetDataByte(uart_device->uart);//UARTGetDataByte(UART1);
-        uart_device->save_index ++;
-        if (uart_device->save_index >= RT_UART_RX_BUFFER_SIZE)
-            uart_device->save_index = 0;
+        while( U2STAbits.URXDA )
+        {
+            /* Receive Data Available */
+            uart_device->rx_buffer[uart_device->save_index] = UARTGetDataByte(uart_device->uart);//UARTGetDataByte(UART1);
+            uart_device->save_index ++;
+            if (uart_device->save_index >= RT_UART_RX_BUFFER_SIZE)
+            {
+                uart_device->save_index = 0;
+            }
+        }
 
         /* invoke callback */
         if(uart_device->parent.rx_indicate != RT_NULL)
         {
             rt_size_t length;
             if (uart_device->read_index > uart_device->save_index)
+            {
                 length = RT_UART_RX_BUFFER_SIZE - uart_device->read_index + uart_device->save_index;
+            }
             else
+            {
                 length = uart_device->save_index - uart_device->read_index;
+            }
 
-            uart_device->parent.rx_indicate(&uart_device->parent, length);
+            if( length )
+            {
+                uart_device->parent.rx_indicate(&uart_device->parent, length);
+            }
         }
 
         // Clear the RX interrupt Flag
