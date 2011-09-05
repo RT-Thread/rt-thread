@@ -93,17 +93,15 @@ _reswitch:
 
 	    .globl CoreSW0Handler
 CoreSW0Handler:
-			SAVE_ALL
+    SAVE_ALL
 
-			/* mCS0ClearIntFlag(); */
-			la      t0, IFS0CLR             /* t0 = IFS0CLR */
-			addiu   t1,zero,0x02            /* t1 = (1<<2) */
-			sw      t1, 0(t0)               /* IFS0CLR = t1 */
+	/* mCS0ClearIntFlag(); */
+	la      t0, IFS0CLR             /* t0 = IFS0CLR */
+	addiu   t1,zero,0x02            /* t1 = (1<<2) */
+	sw      t1, 0(t0)               /* IFS0CLR = t1 */
 
-			/* tol rd2 */
-			lui         v1,0xbf88
-			addiu       v0,zero,(1<<0)
-			sw          v0,24812(v1)
+    la      k0, rt_thread_switch_interrput_flag
+    sw      zero, 0(k0)                     /* clear flag */
 
     /*
      * switch to the new thread
