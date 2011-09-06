@@ -17,7 +17,7 @@
 #include <rtthread.h>
 
 extern int _ramfunc_end;
-#define PIC32_SRAM_END (0xA0000000+0x8000) //795F512L 512KB
+#define PIC32_SRAM_END (0xA0000000 + 1024UL*128) //795F512L 512K FLASH 128KB SRAM
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -51,27 +51,6 @@ void rtthread_startup(void)
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
-
-//#ifdef RT_USING_DEVICE
-//	/* register uart0 */
-//	rt_hw_serial_register(&uart0_device, "uart0",
-//		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-//		&uart0);
-//
-//	/* register uart2, used for RTI debug */
-//	rt_hw_serial_register(&uart2_device, "uart2",
-//		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-//		&uart2);
-//
-//#ifdef RT_USING_DFS
-//#ifdef RT_USING_DFS_UFFS
-//	rt_hw_nand_init();
-//#endif
-//#endif
-//
-//	/*init all registed devices */
-//	rt_device_init_all();
-//#endif
 
 	/* init application */
 	rt_application_init();
