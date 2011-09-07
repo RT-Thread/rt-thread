@@ -213,6 +213,8 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 	thread->stat = RT_THREAD_SUSPEND;
 	/* then resume it */
 	rt_thread_resume(thread);
+	/* do a scheduling */
+	rt_schedule();
 
 	return RT_EOK;
 }
