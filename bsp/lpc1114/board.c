@@ -20,6 +20,7 @@
 
 #include <CMSIS/LPC11xx.h>
 #include <CMSIS/core_cm0.h>
+#include <CMSIS/system_LPC11xx.h>
 
 /**
  * @addtogroup LPC1100
@@ -48,7 +49,7 @@ void rt_hw_board_init()
 	SystemInit();
 
 	/* init systick */
-	SysTick_Config(0x0007A11F);
+	SysTick_Config(SystemCoreClock);
 
 	/* set pend exception priority */
 	NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);

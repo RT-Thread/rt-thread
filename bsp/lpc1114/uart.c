@@ -246,6 +246,9 @@ void rt_hw_uart_init(void)
 	rt_memset(uart->rx_buffer, 0, sizeof(uart->rx_buffer));
 	uart->read_index = uart->save_index = 0;
 
+	uart->parent.rx_indicate = RT_NULL;
+	uart->parent.tx_complete = RT_NULL;
+
 	/* device interface */
 	uart->parent.init 	    = rt_uart_init;
 	uart->parent.open 	    = rt_uart_open;
