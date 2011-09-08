@@ -11,17 +11,18 @@
  * Date           Author       Notes
  * 2006-03-28     Bernard      first version
  * 2006-04-29     Bernard      implement thread timer
- * 2006-04-30     Bernard      add THREAD_DEBUG
- * 2006-05-27     Bernard      fix the rt_thread_yield bug
- * 2006-06-03     Bernard      fix the thread timer init bug
- * 2006-08-10     Bernard      fix the timer bug in thread_sleep
- * 2006-09-03     Bernard      change rt_timer_delete to rt_timer_detach
+ * 2006-04-30     Bernard      added THREAD_DEBUG
+ * 2006-05-27     Bernard      fixed the rt_thread_yield bug
+ * 2006-06-03     Bernard      fixed the thread timer init bug
+ * 2006-08-10     Bernard      fixed the timer bug in thread_sleep
+ * 2006-09-03     Bernard      changed rt_timer_delete to rt_timer_detach
  * 2006-09-03     Bernard      implement rt_thread_detach
- * 2008-02-16     Bernard      fix the rt_thread_timeout bug
+ * 2008-02-16     Bernard      fixed the rt_thread_timeout bug
  * 2010-03-21     Bernard      change the errno of rt_thread_delay/sleep to RT_EOK.
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  * 2011-09-01     Bernard      fixed rt_thread_exit issue when the current thread preempted, 
  *                             which reported by Jiaxing Lee.
+ * 2011-09-08     Bernard      fixed the scheduling issue in rt_thread_startup.
  */
 
 #include <rtthread.h>
@@ -213,8 +214,11 @@ rt_err_t rt_thread_startup (rt_thread_t thread)
 	thread->stat = RT_THREAD_SUSPEND;
 	/* then resume it */
 	rt_thread_resume(thread);
-	/* do a scheduling */
-	rt_schedule();
+	if (rt_thread_self() != RT_NULL)
+	{
+		/* do a scheduling */
+		rt_schedule();
+	}
 
 	return RT_EOK;
 }
