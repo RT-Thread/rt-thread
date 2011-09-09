@@ -128,7 +128,7 @@
       <name>ICCV850</name>
       <archiveVersion>4</archiveVersion>
       <data>
-        <version>15</version>
+        <version>16</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -173,7 +173,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state></state>
+          <state>Pa050</state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -262,19 +262,11 @@
           <state>1</state>
         </option>
         <option>
-          <name>CCRequirePrototypes</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>CCCharIs</name>
           <state>1</state>
         </option>
         <option>
           <name>CCExt</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCLangSelect</name>
           <state>0</state>
         </option>
         <option>
@@ -350,6 +342,18 @@
         <option>
           <name>CCAggressiveInlining</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCRequirePrototypes2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCppDialect</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -955,7 +959,7 @@
       <name>ICCV850</name>
       <archiveVersion>4</archiveVersion>
       <data>
-        <version>15</version>
+        <version>16</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1089,19 +1093,11 @@
           <state>1</state>
         </option>
         <option>
-          <name>CCRequirePrototypes</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>CCCharIs</name>
           <state>1</state>
         </option>
         <option>
           <name>CCExt</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCLangSelect</name>
           <state>0</state>
         </option>
         <option>
@@ -1174,6 +1170,18 @@
         <option>
           <name>CCAggressiveInlining</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCRequirePrototypes2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCppDialect</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1799,10 +1807,7 @@
       <name>$PROJ_DIR$\..\..\libcpu\v850\context.asm</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\v850\interrupt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\v850\stack.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\v850\cpuport.c</name>
     </file>
   </group>
   <file>

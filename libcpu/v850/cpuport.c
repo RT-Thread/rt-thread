@@ -1,7 +1,7 @@
 /*
- * File      : stack.c
+ * File      : cpuport.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,13 +9,29 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2010-06-29     lgnq         the first version
- *
- * For       : NEC V850E
- * Toolchain : IAR Embedded Workbench for V850 v3.71
-*/
+ * 2011-02-23     Bernard      the first version
+ */
 
 #include <rtthread.h>
+
+extern volatile rt_uint8_t rt_interrupt_nest;
+
+/* switch flag on interrupt and thread pointer to save switch record */
+rt_uint32_t rt_interrupt_from_thread;
+rt_uint32_t rt_interrupt_to_thread;
+rt_uint32_t rt_thread_switch_interrupt_flag;
+
+/**
+ * This function will initialize hardware interrupt
+ */
+void rt_hw_interrupt_init(void)
+{
+    /* init interrupt nest, and context in thread sp */
+    rt_interrupt_nest = 0;
+    rt_interrupt_from_thread = 0;
+    rt_interrupt_to_thread = 0;
+    rt_thread_switch_interrupt_flag = 0;
+}
 
 /**
  * This function will initialize thread stack
@@ -58,4 +74,21 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     *(--stk) = (rt_uint32_t) 0x02020202;         /* r2 */   
     *(--stk) = (rt_uint32_t) parameter;          /* r1 */   
     return ((rt_uint8_t *)stk); 
+}
+
+void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
+{
+    rt_interrupt_from_thread = from;
+    rt_interrupt_to_thread = to;
+    asm("trap 0x10");    
+}
+
+void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
+{
+    if (rt_thread_switch_interrupt_flag != 1)
+    {
+        rt_thread_switch_interrupt_flag = 1;
+        rt_interrupt_from_thread = from;        
+    }
+    rt_interrupt_to_thread = to;  
 }

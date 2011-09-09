@@ -40,8 +40,6 @@
     PUBLIC    rt_hw_interrupt_disable
     PUBLIC    rt_hw_interrupt_enable 
     PUBLIC    rt_hw_context_switch_to
-    PUBLIC    rt_hw_context_switch
-    PUBLIC    rt_hw_context_switch_interrupt
     PUBLIC    OSCtxSW
     PUBLIC    OS_Restore_CPU_Context    
 
@@ -121,14 +119,6 @@ rt_hw_context_switch_to:
 
 OSCtxSW:
     SAVE_CPU_CTX                    ;Save all CPU registers 
-        
-    mov rt_thread_switch_interrupt_flag, r1
-    ld.w 0[r1],r5
-    cmp    0, r5
-    be      exit 
-
-    mov    0, r5
-    st.b r5, 0[r1]
 
 	mov rt_interrupt_from_thread, r21 
 	ld.w 0[r21], r21 
@@ -138,44 +128,10 @@ OSCtxSW:
     ld.w 0[r1], r1
     ld.w 0[r1], sp 
 
-exit: 
     ;Restore all Processor registers from stack and return from interrupt 
 	jr OS_Restore_CPU_Context 
 
-;R1 -> rt_interrupt_from_thread
-;R5 -> rt_interrupt_to_thread
-rt_hw_context_switch:
-    mov rt_thread_switch_interrupt_flag, r8
-    ld.w 0[r8],r9
-    cmp    1, r9
-    be      jump1
-    ;mov rt_thread_switch_interrupt_flag, r1
-    mov    1, r9
-    st.b r9, 0[r8]
-    mov rt_interrupt_from_thread, r10
-    st.w r1, 0[r10]
-jump1
-    mov rt_interrupt_to_thread, r11
-    st.w r5, 0[r11]
-    trap 0x10
-    jmp [lp]    
-  
-rt_hw_context_switch_interrupt:
-    mov rt_thread_switch_interrupt_flag, r8
-    ld.w 0[r8],r9
-    cmp    1, r9
-    be      jump2
-    ;mov rt_thread_switch_interrupt_flag, r1
-    mov    1, r9
-    st.b r9, 0[r8]
-    mov rt_interrupt_from_thread, r10
-    st.w r1, 0[r10]
-jump2
-    mov rt_interrupt_to_thread, r11
-    st.w r5, 0[r11]  
-    jmp [lp] 
-
-rt_hw_context_switch_interrupt_do
+rt_hw_context_switch_interrupt_do:
     mov rt_thread_switch_interrupt_flag, r8
     mov    0, r9
     st.b r9, 0[r8]

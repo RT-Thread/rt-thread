@@ -25,7 +25,7 @@
         </option>
         <option>
           <name>DynDriver</name>
-          <state>MIC2V850</state>
+          <state>IECV850</state>
         </option>
         <option>
           <name>GoToEnable</name>
@@ -90,6 +90,105 @@
         <option>
           <name>OCImagesPath3</name>
           <state></state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>E1NWIV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>2</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>1</debug>
+        <option>
+          <name>E1NWIMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWISuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIEraseFlash</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIMINICUBESpeed</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>E1nwiDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1nwiLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>E1NWIE2RV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>0</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>1</debug>
+        <option>
+          <name>MICE2RMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RSuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>E1SERIALV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>0</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>1</debug>
+        <option>
+          <name>E1SERIALMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALSuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALEraseFlash</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
         </option>
       </data>
     </settings>
@@ -370,6 +469,10 @@
     <debuggerPlugins>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
@@ -490,6 +593,105 @@
       </data>
     </settings>
     <settings>
+      <name>E1NWIV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>2</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>E1NWIMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWISuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIEraseFlash</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIMINICUBESpeed</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>E1nwiDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1nwiLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>E1NWIE2RV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>0</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>MICE2RMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RSuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1NWIE2RLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>E1SERIALV850</name>
+      <archiveVersion>6</archiveVersion>
+      <data>
+        <version>0</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>E1SERIALMandatory</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALSuppressLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALVerifyLoad</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALEraseFlash</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALDoLogfile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>E1SERIALLogFile</name>
+          <state>$PROJ_DIR$\cspycomm.log</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
       <name>EMUV850</name>
       <archiveVersion>6</archiveVersion>
       <data>
@@ -766,6 +968,10 @@
     <debuggerPlugins>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
