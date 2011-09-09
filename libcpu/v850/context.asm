@@ -28,7 +28,7 @@
   
     RSEG        CODE(1)
 
-    EXTERN    rt_thread_switch_interrput_flag
+    EXTERN    rt_thread_switch_interrupt_flag
     EXTERN    rt_interrupt_from_thread
     EXTERN    rt_interrupt_to_thread
 
@@ -122,7 +122,7 @@ rt_hw_context_switch_to:
 OSCtxSW:
     SAVE_CPU_CTX                    ;Save all CPU registers 
         
-    mov rt_thread_switch_interrput_flag, r1
+    mov rt_thread_switch_interrupt_flag, r1
     ld.w 0[r1],r5
     cmp    0, r5
     be      exit 
@@ -145,11 +145,11 @@ exit:
 ;R1 -> rt_interrupt_from_thread
 ;R5 -> rt_interrupt_to_thread
 rt_hw_context_switch:
-    mov rt_thread_switch_interrput_flag, r8
+    mov rt_thread_switch_interrupt_flag, r8
     ld.w 0[r8],r9
     cmp    1, r9
     be      jump1
-    ;mov rt_thread_switch_interrput_flag, r1
+    ;mov rt_thread_switch_interrupt_flag, r1
     mov    1, r9
     st.b r9, 0[r8]
     mov rt_interrupt_from_thread, r10
@@ -161,11 +161,11 @@ jump1
     jmp [lp]    
   
 rt_hw_context_switch_interrupt:
-    mov rt_thread_switch_interrput_flag, r8
+    mov rt_thread_switch_interrupt_flag, r8
     ld.w 0[r8],r9
     cmp    1, r9
     be      jump2
-    ;mov rt_thread_switch_interrput_flag, r1
+    ;mov rt_thread_switch_interrupt_flag, r1
     mov    1, r9
     st.b r9, 0[r8]
     mov rt_interrupt_from_thread, r10
@@ -176,7 +176,7 @@ jump2
     jmp [lp] 
 
 rt_hw_context_switch_interrupt_do
-    mov rt_thread_switch_interrput_flag, r8
+    mov rt_thread_switch_interrupt_flag, r8
     mov    0, r9
     st.b r9, 0[r8]
     
@@ -195,7 +195,7 @@ OSTickIntr:
     jarl    rt_tick_increase,lp
     jarl    rt_interrupt_leave,lp
 
-    mov rt_thread_switch_interrput_flag, r8
+    mov rt_thread_switch_interrupt_flag, r8
     ld.w 0[r8],r9
     cmp    1, r9
     be      rt_hw_context_switch_interrupt_do
@@ -208,7 +208,7 @@ uarta1_int_r:
     jarl    uarta1_receive_handler,lp
     jarl    rt_interrupt_leave,lp
 
-    mov rt_thread_switch_interrput_flag, r8
+    mov rt_thread_switch_interrupt_flag, r8
     ld.w   0[r8],r9
     cmp    1, r9
     be     rt_hw_context_switch_interrupt_do

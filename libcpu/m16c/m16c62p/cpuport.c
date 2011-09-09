@@ -19,7 +19,7 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 /* switch flag on interrupt and thread pointer to save switch record */
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
-rt_uint8_t rt_thread_switch_interrput_flag;
+rt_uint8_t rt_thread_switch_interrupt_flag;
 
 /**
  * This function will initialize hardware interrupt
@@ -30,7 +30,7 @@ void rt_hw_interrupt_init(void)
     rt_interrupt_nest = 0;
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrput_flag = 0;
+    rt_thread_switch_interrupt_flag = 0;
 }
 
 /**
@@ -81,9 +81,9 @@ void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
 
 void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
 {
-    if (rt_thread_switch_interrput_flag != 1)
+    if (rt_thread_switch_interrupt_flag != 1)
     {
-        rt_thread_switch_interrput_flag = 1;
+        rt_thread_switch_interrupt_flag = 1;
         rt_interrupt_from_thread = from;        
     }
     rt_interrupt_to_thread = to;  

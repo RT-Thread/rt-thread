@@ -23,7 +23,7 @@
 
     RSEG    CODE(1)
 
-    EXTERN  rt_thread_switch_interrput_flag
+    EXTERN  rt_thread_switch_interrupt_flag
     EXTERN  rt_interrupt_from_thread
     EXTERN  rt_interrupt_to_thread
 
@@ -73,9 +73,9 @@ rt_hw_context_switch:
     RTS
   
 rt_hw_context_switch_interrupt:
-    CMP.W   #1, rt_thread_switch_interrput_flag
+    CMP.W   #1, rt_thread_switch_interrupt_flag
     JEQ     jump
-    MOV.W   #1, rt_thread_switch_interrput_flag
+    MOV.W   #1, rt_thread_switch_interrupt_flag
     MOV.W   R0, rt_interrupt_from_thread
 jump
     MOV.W   R1, rt_interrupt_to_thread
