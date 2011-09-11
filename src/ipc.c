@@ -1322,7 +1322,11 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
+	/* initialize delta tick */
 	tick_delta = 0;
+	/* get current thread */
+	thread = rt_thread_self();
+
 	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
 	/* disable interrupt */
@@ -1335,16 +1339,9 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 		return -RT_EFULL;
 	}
 
-	tick_delta = 0;
-
-	/* get current thread */
-	thread = rt_thread_self();
-
 	/* mailbox is full */
 	while (mb->entry == mb->size)
 	{
-		RT_DEBUG_NOT_IN_INTERRUPT;
-
 		/* reset error number in thread */
 		thread->error = RT_EOK;
 
@@ -1353,11 +1350,10 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 		{
             /* enable interrupt */
             rt_hw_interrupt_enable(temp);
-
-            thread->error = -RT_EFULL;
             return -RT_EFULL;
         }
 	
+		RT_DEBUG_NOT_IN_INTERRUPT;
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mb->suspend_sender_thread),
 				thread, mb->parent.parent.flag);
@@ -1392,7 +1388,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 		/* disable interrupt */
 		temp = rt_hw_interrupt_disable();
 
-		/* re-calculate timeout tick */
+		/* if it's not waiting forever and then re-calculate timeout tick */
 		if (timeout > 0)
 		{
 			tick_delta = rt_tick_get() - tick_delta;
@@ -1400,7 +1396,6 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 			if (timeout < 0) timeout = 0;
 		}
 	}
-
 
 	/* set ptr */
 	mb->msg_pool[mb->in_offset] = value;
@@ -1411,7 +1406,7 @@ rt_err_t rt_mb_send_wait (rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout
 	mb->entry ++;
 
 	/* resume suspended thread */
-	if( !rt_list_isempty(&mb->parent.suspend_thread) )
+	if (!rt_list_isempty(&mb->parent.suspend_thread))
 	{
 		rt_ipc_list_resume(&(mb->parent.suspend_thread));
 
@@ -1462,6 +1457,11 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	/* parameter check */
 	RT_ASSERT(mb != RT_NULL);
 
+	/* initialize delta tick */
+	tick_delta = 0;
+	/* get current thread */
+	thread = rt_thread_self();
+
 	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mb->parent.parent)));
 
 	/* disable interrupt */
@@ -1474,16 +1474,9 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		return -RT_ETIMEOUT;
 	}
 
-	tick_delta = 0;
-
-	/* get current thread */
-	thread = rt_thread_self();
-
 	/* mailbox is empty */
 	while (mb->entry == 0)
 	{
-		RT_DEBUG_NOT_IN_INTERRUPT;
-
 		/* reset error number in thread */
 		thread->error = RT_EOK;
 
@@ -1497,6 +1490,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 			return -RT_ETIMEOUT;
 		}
 
+		RT_DEBUG_NOT_IN_INTERRUPT;
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mb->parent.suspend_thread),
 				thread, mb->parent.parent.flag);
@@ -1531,7 +1525,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 		/* disable interrupt */
 		temp = rt_hw_interrupt_disable();
 
-		/* re-calculate timeout tick */
+		/* if it's not waiting forever and then re-calculate timeout tick */
 		if (timeout > 0)
 		{
 			tick_delta = rt_tick_get() - tick_delta;
@@ -1550,7 +1544,7 @@ rt_err_t rt_mb_recv (rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	mb->entry --;
 
 	/* resume suspended thread */
-	if( !rt_list_isempty(&(mb->suspend_sender_thread)) )
+	if (!rt_list_isempty(&(mb->suspend_sender_thread)))
 	{
 		rt_ipc_list_resume(&(mb->suspend_sender_thread));
 
@@ -1848,7 +1842,6 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 		((struct rt_mq_message*)mq->msg_queue_tail)->next = msg;
 	}
 
-
 	/* set new tail */
 	mq->msg_queue_tail = msg;
 	/* if the head is empty, set head */
@@ -1858,7 +1851,7 @@ rt_err_t rt_mq_send (rt_mq_t mq, void* buffer, rt_size_t size)
 	mq->entry ++;
 
 	/* resume suspended thread */
-	if( !rt_list_isempty(&mq->parent.suspend_thread) )
+	if (!rt_list_isempty(&mq->parent.suspend_thread))
 	{
 		rt_ipc_list_resume(&(mq->parent.suspend_thread));
 
@@ -1967,6 +1960,10 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 	struct rt_mq_message *msg;
 	rt_uint32_t tick_delta;
 
+	/* initialize delta tick */
+	tick_delta = 0;
+	/* get current thread */
+	thread = rt_thread_self();
 	RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
 
 	/* disable interrupt */
@@ -1978,11 +1975,6 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		rt_hw_interrupt_enable(temp);
 		return -RT_ETIMEOUT;
 	}
-
-	tick_delta = 0;
-
-	/* get current thread */
-	thread = rt_thread_self();
 
 	/* message queue is empty */
 	while (mq->entry == 0)
@@ -2001,7 +1993,6 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 			thread->error = -RT_ETIMEOUT;
 			return -RT_ETIMEOUT;
 		}
-
 
 		/* suspend current thread */
 		rt_ipc_list_suspend(&(mq->parent.suspend_thread),
@@ -2037,7 +2028,7 @@ rt_err_t rt_mq_recv (rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeou
 		/* disable interrupt */
 		temp = rt_hw_interrupt_disable();
 
-		/* re-calculate timeout tick */
+		/* if it's not waiting forever and then re-calculate timeout tick */
 		if (timeout > 0)
 		{
 			tick_delta = rt_tick_get() - tick_delta;
