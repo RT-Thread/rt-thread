@@ -40,7 +40,7 @@ static void thread_led2_entry(void* parameter)
     {
         // .. Toggle the LED
         mPORTDToggleBits(BIT_2);
-        rt_thread_delay( RT_TICK_PER_SECOND*5 ); /* delay 1s */
+        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* delay 0.5s */
     }
 }
 

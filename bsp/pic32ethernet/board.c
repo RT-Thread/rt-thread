@@ -38,7 +38,7 @@
 //  The following is used by the main application
 #define SYS_FREQ		(80000000UL)
 
-#define PB_DIV         		8
+#define PB_DIV         		(1 << ((OSCCON&_OSCCON_PBDIV0_MASK)>>_OSCCON_PBDIV0_POSITION) )
 #define PRESCALE       		256
 #define TOGGLES_PER_SEC		RT_TICK_PER_SECOND
 #define T1_TICK       		(SYS_FREQ/PB_DIV/PRESCALE/TOGGLES_PER_SEC)
