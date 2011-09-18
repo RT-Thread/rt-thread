@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f20x_it.h"
+#include <rtthread.h>
 
 /** @addtogroup Template_Project
   * @{
@@ -103,6 +104,30 @@ void SVC_Handler(void)
 void DebugMon_Handler(void)
 {
 }
+
+#if defined(RT_USING_DFS) && STM32_USE_SDIO
+/*******************************************************************************
+* Function Name  : SDIO_IRQHandler
+* Description    : This function handles SDIO global interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SDIO_IRQHandler(void)
+{
+    extern int SD_ProcessIRQSrc(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* Process All SDIO Interrupt Sources */
+    if( SD_ProcessIRQSrc() == 2)
+		rt_kprintf("SD Error\n");
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
 
 /**
   * @}

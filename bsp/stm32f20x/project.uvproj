@@ -416,6 +416,16 @@
               <FileType>1</FileType>
               <FilePath>.\serial.c</FilePath>
             </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdio_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sdio_sd.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
