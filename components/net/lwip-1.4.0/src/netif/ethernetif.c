@@ -81,6 +81,37 @@ static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 
 
+/* Ugly hacks for old drivers compatible */
+/* ===================================== */
+#if 1
+static struct eth_device * ptmpdev;
+struct eth_device * get_eth_dev(void)
+{
+	return ptmpdev;
+}
+int eth_device_init(struct eth_device * dev, char *name)
+{
+	ptmpdev = dev;
+	dev->parent.type = RT_Device_Class_NetIf;
+	rt_device_register(&(dev->parent), "eth0", RT_DEVICE_FLAG_RDWR);
+	return 0;
+}
+void lwip_sys_init(void)
+{
+	lwip_enetif_init();
+}
+void eth_system_device_init()
+{
+}
+rt_err_t eth_device_ready(struct eth_device* dev)
+{
+	return eth_rx_ready(dev);
+}
+#endif
+/* ===================================== */
+
+
+
 /* ethernet buffer */
 static void eth_rx_thread_entry(void* parameter)
 {
