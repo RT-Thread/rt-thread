@@ -20,7 +20,7 @@ extern rt_uint32_t rt_interrupt_nest;
 extern void rt_hw_idt_init(void);
 
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 
 /* exception and interrupt handler table */
 rt_isr_handler_t isr_table[MAX_HANDLERS];
@@ -61,7 +61,7 @@ void rt_hw_pic_init()
 	rt_interrupt_nest = 0;
 	rt_interrupt_from_thread = 0;
 	rt_interrupt_to_thread = 0;
-	rt_thread_switch_interrput_flag = 0;
+	rt_thread_switch_interrupt_flag = 0;
 }
 
 void rt_hw_interrupt_handle(int vector)

@@ -84,17 +84,17 @@ rt_hw_context_switch_to	PROC
 ;/*
 ; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
 ; */
-	IMPORT rt_thread_switch_interrput_flag
+	IMPORT rt_thread_switch_interrupt_flag
 	IMPORT rt_interrupt_from_thread
 	IMPORT rt_interrupt_to_thread
 
 rt_hw_context_switch_interrupt	PROC
 	EXPORT rt_hw_context_switch_interrupt
-	LDR r2, =rt_thread_switch_interrput_flag
+	LDR r2, =rt_thread_switch_interrupt_flag
 	LDR r3, [r2]
 	CMP r3, #1
 	BEQ _reswitch
-	MOV r3, #1							; set rt_thread_switch_interrput_flag to 1
+	MOV r3, #1							; set rt_thread_switch_interrupt_flag to 1
 	STR r3, [r2]
 	LDR r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
 	STR r0, [r2]

@@ -60,17 +60,17 @@ rt_hw_context_switch_to:
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to)/*
  */
-    .globl rt_thread_switch_interrput_flag
+    .globl rt_thread_switch_interrupt_flag
     .globl rt_interrupt_from_thread
     .globl rt_interrupt_to_thread
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-    la      t0, rt_thread_switch_interrput_flag
+    la      t0, rt_thread_switch_interrupt_flag
     lw      t1, 0(t0)
     nop
     bnez    t1, _reswitch
     nop
-    li      t1, 0x01                       /* set rt_thread_switch_interrput_flag to 1 */
+    li      t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
     sw      t1, 0(t0)
     la      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
     sw      a0, 0(t0)
@@ -110,10 +110,10 @@ mips_irq_handle:
     move    sp, k0
 
     /*
-     * if rt_thread_switch_interrput_flag set, jump to
+     * if rt_thread_switch_interrupt_flag set, jump to
      * rt_hw_context_switch_interrupt_do and don't return
      */
-    la      k0, rt_thread_switch_interrput_flag
+    la      k0, rt_thread_switch_interrupt_flag
     lw      k1, 0(k0)
     beqz    k1, spurious_interrupt
     nop

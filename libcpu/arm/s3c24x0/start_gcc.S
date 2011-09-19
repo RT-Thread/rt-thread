@@ -291,7 +291,7 @@ vector_resv:
 
 .globl 		rt_interrupt_enter
 .globl 		rt_interrupt_leave
-.globl 		rt_thread_switch_interrput_flag
+.globl 		rt_thread_switch_interrupt_flag
 .globl 		rt_interrupt_from_thread
 .globl 		rt_interrupt_to_thread
 vector_irq:
@@ -300,8 +300,8 @@ vector_irq:
 	bl		rt_hw_trap_irq
 	bl		rt_interrupt_leave
 
-	/* if rt_thread_switch_interrput_flag set, jump to _interrupt_thread_switch and don't return */
-	ldr		r0, =rt_thread_switch_interrput_flag
+	/* if rt_thread_switch_interrupt_flag set, jump to _interrupt_thread_switch and don't return */
+	ldr		r0, =rt_thread_switch_interrupt_flag
 	ldr		r1, [r0]
 	cmp		r1, #1
 	beq		_interrupt_thread_switch
@@ -317,7 +317,7 @@ vector_fiq:
 	subs	pc,lr,#4
 
 _interrupt_thread_switch:
-	mov		r1,  #0					/* clear rt_thread_switch_interrput_flag*/
+	mov		r1,  #0					/* clear rt_thread_switch_interrupt_flag*/
 	str		r1,  [r0]
 
 	ldmfd	sp!, {r0-r12,lr}		/* reload saved registers			*/

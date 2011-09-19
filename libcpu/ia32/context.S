@@ -87,7 +87,7 @@ rt_hw_context_switch_to:
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
  */
-.globl rt_thread_switch_interrput_flag
+.globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
@@ -97,12 +97,12 @@ rt_hw_context_switch_interrupt:
 	movl 0xc(%ebp), %eax
 	movl 0x8(%ebp), %ebx
 	
-	movl $rt_thread_switch_interrput_flag, %ecx
+	movl $rt_thread_switch_interrupt_flag, %ecx
 	movl (%ecx), %edx
 	cmp $0x1, %edx
 	jz _reswitch
 	
-	movl $0x1, %edx				/*set rt_thread_switch_interrput_flag to 1*/
+	movl $0x1, %edx				/*set rt_thread_switch_interrupt_flag to 1*/
 	movl %edx, (%ecx)
 	movl $rt_interrupt_from_thread, %edx	/*set rt_interrupt_from_thread*/
 	movl %ebx, (%edx)

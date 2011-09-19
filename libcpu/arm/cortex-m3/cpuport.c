@@ -42,7 +42,7 @@ struct stack_contex
 /* Private variables ------------------------------------------------------------*/
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 
 /* Private function prototypes ---------------------------------------------------*/
 /* Private functions ------------------------------------------------------------*/

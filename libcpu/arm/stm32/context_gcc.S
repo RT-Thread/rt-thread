@@ -59,8 +59,8 @@ rt_hw_interrupt_enable:
 
 rt_hw_context_switch_interrupt:
 rt_hw_context_switch:
-    /* set rt_thread_switch_interrput_flag to 1 */
-    LDR     r2, =rt_thread_switch_interrput_flag
+    /* set rt_thread_switch_interrupt_flag to 1 */
+    LDR     r2, =rt_thread_switch_interrupt_flag
     LDR     r3, [r2]
     CMP     r3, #1
     BEQ     _reswitch
@@ -91,11 +91,11 @@ PendSV_Handler:
     CPSID   I
 
     /* get rt_thread_switch_interrupt_flag */
-    LDR r0, =rt_thread_switch_interrput_flag
+    LDR r0, =rt_thread_switch_interrupt_flag
     LDR r1, [r0]
     CBZ r1, pendsv_exit         /* pendsv already handled */
 
-    /* clear rt_thread_switch_interrput_flag to 0 */
+    /* clear rt_thread_switch_interrupt_flag to 0 */
     MOV r1, #0x00
     STR r1, [r0]
 
@@ -139,7 +139,7 @@ rt_hw_context_switch_to:
     STR r0, [r1]
 
     /* set interrupt flag to 1 */
-    LDR     r1, =rt_thread_switch_interrput_flag
+    LDR     r1, =rt_thread_switch_interrupt_flag
     MOV     r0, #1
     STR     r0, [r1]
 

@@ -80,16 +80,16 @@ rt_hw_context_switch_to:
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
  */
-.globl rt_thread_switch_interrput_flag
+.globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-	ldr r2, =rt_thread_switch_interrput_flag
+	ldr r2, =rt_thread_switch_interrupt_flag
 	ldr r3, [r2]
 	cmp r3, #1
 	beq _reswitch
-	mov r3, #1				@ set rt_thread_switch_interrput_flag to 1
+	mov r3, #1				@ set rt_thread_switch_interrupt_flag to 1
 	str r3, [r2]
 	ldr r2, =rt_interrupt_from_thread	@ set rt_interrupt_from_thread
 	str r0, [r2]

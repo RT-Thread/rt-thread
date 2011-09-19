@@ -84,11 +84,11 @@ rt_hw_context_switch_to:
 
 rt_hw_context_switch_interrupt:
 	//EXPORT rt_hw_context_switch_interrupt
-	LDR r2, =rt_thread_switch_interrput_flag
+	LDR r2, =rt_thread_switch_interrupt_flag
 	LDR r3, [r2]						/* 载入中断中切换标致地址 */
 	CMP r3, #1							/* 等于 1 ？*/
 	BEQ _reswitch						/* 如果等于1，跳转到_reswitch*/
-	MOV r3, #1							/* set rt_thread_switch_interrput_flag to 1*/
+	MOV r3, #1							/* set rt_thread_switch_interrupt_flag to 1*/
 										/* 设置中断中切换标志位1 */
 	STR r3, [r2]						/* */
 	LDR r2, =rt_interrupt_from_thread	/* set rt_interrupt_from_thread*/

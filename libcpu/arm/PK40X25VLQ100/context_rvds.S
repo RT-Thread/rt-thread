@@ -29,7 +29,7 @@ NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV excep
 	REQUIRE8
 	PRESERVE8
 
-	IMPORT rt_thread_switch_interrput_flag
+	IMPORT rt_thread_switch_interrupt_flag
 	IMPORT rt_interrupt_from_thread
 	IMPORT rt_interrupt_to_thread
 
@@ -62,8 +62,8 @@ rt_hw_context_switch_interrupt
 rt_hw_context_switch    PROC
 	EXPORT rt_hw_context_switch
 
-	; set rt_thread_switch_interrput_flag to 1
-	LDR 	r2, =rt_thread_switch_interrput_flag
+	; set rt_thread_switch_interrupt_flag to 1
+	LDR 	r2, =rt_thread_switch_interrupt_flag
 	LDR 	r3, [r2]
 	CMP 	r3, #1
 	BEQ 	_reswitch
@@ -94,11 +94,11 @@ rt_hw_pend_sv	PROC
 	CPSID   I
 
 	; get rt_thread_switch_interrupt_flag
-	LDR		r0, =rt_thread_switch_interrput_flag
+	LDR		r0, =rt_thread_switch_interrupt_flag
 	LDR		r1, [r0]
 	CBZ		r1, pendsv_exit			; pendsv already handled
 
-	; clear rt_thread_switch_interrput_flag to 0
+	; clear rt_thread_switch_interrupt_flag to 0
 	MOV		r1, #0x00
 	STR		r1, [r0]
 
@@ -144,7 +144,7 @@ rt_hw_context_switch_to    PROC
 	STR		r0, [r1]
 
 	; set interrupt flag to 1
-	LDR 	r1, =rt_thread_switch_interrput_flag
+	LDR 	r1, =rt_thread_switch_interrupt_flag
 	MOV 	r0, #1
 	STR 	r0, [r1]
 

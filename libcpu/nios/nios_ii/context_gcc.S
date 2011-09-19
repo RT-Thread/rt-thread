@@ -85,9 +85,9 @@ rt_hw_context_switch_interrupt_do:
     /* *r4(from_thread->sp) = sp */
     stw sp, (r4)
 
-    /* clear rt_thread_switch_interrput_flag */
-    /* rt_thread_switch_interrput_flag = 0 */
-    stw zero,%gprel(rt_thread_switch_interrput_flag)(gp)
+    /* clear rt_thread_switch_interrupt_flag */
+    /* rt_thread_switch_interrupt_flag = 0 */
+    stw zero,%gprel(rt_thread_switch_interrupt_flag)(gp)
 
     /* load to thread sp */
     /* r4 = rt_interrupt_to_thread(&to_thread->sp) */
@@ -213,8 +213,8 @@ rt_hw_context_switch:
 .global rt_hw_context_switch_interrupt
 .type rt_hw_context_switch_interrupt, %function
 rt_hw_context_switch_interrupt:
-    /* if( rt_thread_switch_interrput_flag != 0 ) _from_thread_not_change */
-    ldw r2,%gprel(rt_thread_switch_interrput_flag)(gp)
+    /* if( rt_thread_switch_interrupt_flag != 0 ) _from_thread_not_change */
+    ldw r2,%gprel(rt_thread_switch_interrupt_flag)(gp)
     bne r2,zero,_from_thread_not_change
 
 _from_thread_change:
@@ -222,9 +222,9 @@ _from_thread_change:
     addi ea,ea,-4
     stw ea,%gprel(rt_current_thread_entry)(gp)
 
-    /* set rt_thread_switch_interrput_flag to 1 */
+    /* set rt_thread_switch_interrupt_flag to 1 */
     movi r2, 1
-    stw r2,%gprel(rt_thread_switch_interrput_flag)(gp)
+    stw r2,%gprel(rt_thread_switch_interrupt_flag)(gp)
 
     /* update rt_interrupt_from_thread */
     stw r4,%gprel(rt_interrupt_from_thread)(gp)

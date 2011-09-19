@@ -206,7 +206,7 @@ vector_resv : b vector_resv
 
 .globl rt_interrupt_enter
 .globl rt_interrupt_leave
-.globl rt_thread_switch_interrput_flag
+.globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
 vector_irq:
@@ -216,10 +216,10 @@ vector_irq:
 	bl	rt_interrupt_leave
 
 	/* 
-	 * if rt_thread_switch_interrput_flag set, jump to
+	 * if rt_thread_switch_interrupt_flag set, jump to
 	 * rt_hw_context_switch_interrupt_do and don't return
 	 */
-	ldr	r0, =rt_thread_switch_interrput_flag
+	ldr	r0, =rt_thread_switch_interrupt_flag
 	ldr	r1, [r0]
 	cmp	r1, #1
 	beq	rt_hw_context_switch_interrupt_do

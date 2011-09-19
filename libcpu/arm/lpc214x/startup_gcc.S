@@ -2,7 +2,7 @@
 
 	.extern rt_interrupt_enter
 	.extern rt_interrupt_leave
-	.extern rt_thread_switch_interrput_flag
+	.extern rt_thread_switch_interrupt_flag
 	.extern rt_interrupt_from_thread
 	.extern rt_interrupt_to_thread
 	.extern rt_hw_trap_irq
@@ -224,8 +224,8 @@ IRQ_Handler :
 		bl	rt_hw_trap_irq		 			   /* 相应中断服务例程处理  	    */
 		bl	rt_interrupt_leave		           /* ; 通知RT-Thread要离开中断模式 */
 
-		/* 如果设置了rt_thread_switch_interrput_flag，进行中断中的线程上下文处理 */
-		ldr	r0, =rt_thread_switch_interrput_flag
+		/* 如果设置了rt_thread_switch_interrupt_flag，进行中断中的线程上下文处理 */
+		ldr	r0, =rt_thread_switch_interrupt_flag
 		ldr	r1, [r0]
 		cmp	r1, #1
 		beq	rt_hw_context_switch_interrupt_do  /* 中断中切换发生 */

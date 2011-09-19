@@ -24,7 +24,7 @@ extern rt_uint32_t rt_interrupt_nest;
 /* exception and interrupt handler table */
 rt_isr_handler_t isr_table[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 
 unsigned char interrupt_bank0[256];
 unsigned char interrupt_bank1[256];
@@ -109,7 +109,7 @@ void rt_hw_interrupt_init()
 	rt_interrupt_nest = 0;
 	rt_interrupt_from_thread = 0;
 	rt_interrupt_to_thread = 0;
-	rt_thread_switch_interrput_flag = 0;
+	rt_thread_switch_interrupt_flag = 0;
 }
 
 /**

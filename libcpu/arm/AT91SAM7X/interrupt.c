@@ -20,7 +20,7 @@
 extern rt_uint32_t rt_interrupt_nest;
 
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 
 /**
  * @addtogroup AT91SAM7
@@ -48,7 +48,7 @@ void rt_hw_interrupt_init()
 	rt_interrupt_nest = 0;
 	rt_interrupt_from_thread = 0;
 	rt_interrupt_to_thread = 0;
-	rt_thread_switch_interrput_flag = 0;
+	rt_thread_switch_interrupt_flag = 0;
 }
 
 /**

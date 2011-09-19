@@ -65,7 +65,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrput_flag;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 
 void rt_hw_interrupt_handler(int vector)
 {
@@ -99,7 +99,7 @@ void rt_hw_interrupt_init()
 	rt_interrupt_nest = 0;
 	rt_interrupt_from_thread = 0;
 	rt_interrupt_to_thread = 0;
-	rt_thread_switch_interrput_flag = 0;
+	rt_thread_switch_interrupt_flag = 0;
 }
 
 /**

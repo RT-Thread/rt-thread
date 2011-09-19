@@ -222,7 +222,7 @@ Reset_Handler
 
                 IMPORT rt_interrupt_enter
                 IMPORT rt_interrupt_leave
-                IMPORT rt_thread_switch_interrput_flag
+                IMPORT rt_thread_switch_interrupt_flag
                 IMPORT rt_interrupt_from_thread
                 IMPORT rt_interrupt_to_thread
                 IMPORT rt_hw_trap_irq
@@ -234,9 +234,9 @@ IRQ_Handler     PROC
                 BL  rt_hw_trap_irq
                 BL  rt_interrupt_leave
 
-                ; if rt_thread_switch_interrput_flag set, jump to
+                ; if rt_thread_switch_interrupt_flag set, jump to
                 ; rt_hw_context_switch_interrupt_do and don't return
-                LDR r0, =rt_thread_switch_interrput_flag
+                LDR r0, =rt_thread_switch_interrupt_flag
                 LDR r1, [r0]
                 CMP r1, #1
                 BEQ rt_hw_context_switch_interrupt_do
