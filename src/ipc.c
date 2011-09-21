@@ -42,9 +42,9 @@
 #include "kservice.h"
 
 #ifdef RT_USING_HOOK
-extern void (*rt_object_trytake_hook)(struct rt_object* object);
-extern void (*rt_object_take_hook)(struct rt_object* object);
-extern void (*rt_object_put_hook)(struct rt_object* object);
+extern void (*rt_object_trytake_hook)(struct rt_object *object);
+extern void (*rt_object_take_hook)(struct rt_object *object);
+extern void (*rt_object_put_hook)(struct rt_object *object);
 #endif
 
 /**
@@ -90,8 +90,8 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t *list, struct rt_thread *thread
 
 	case RT_IPC_FLAG_PRIO:
 		{
-			struct rt_list_node* n;
-			struct rt_thread* sthread;
+			struct rt_list_node *n;
+			struct rt_thread *sthread;
 
 			/* find a suitable position */
 			for (n = list->next; n != list; n = n->next)
@@ -126,9 +126,9 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t *list, struct rt_thread *thread
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_inline rt_err_t rt_ipc_list_resume(rt_list_t* list)
+rt_inline rt_err_t rt_ipc_list_resume(rt_list_t *list)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 
 	/* get thread entry */
 	thread = rt_list_entry(list->next, struct rt_thread, tlist);
@@ -149,9 +149,9 @@ rt_inline rt_err_t rt_ipc_list_resume(rt_list_t* list)
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t* list)
+rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	register rt_ubase_t temp;
 
 	/* wakeup all suspend threads */
@@ -191,7 +191,7 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t* list)
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_err_t rt_sem_init(rt_sem_t sem, const char* name, rt_uint32_t value, rt_uint8_t flag)
+rt_err_t rt_sem_init(rt_sem_t sem, const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
 	RT_ASSERT(sem != RT_NULL);
 
@@ -244,7 +244,7 @@ rt_err_t rt_sem_detach(rt_sem_t sem)
  *
  * @see rt_sem_init
  */
-rt_sem_t rt_sem_create(const char* name, rt_uint32_t value, rt_uint8_t flag)
+rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
 	rt_sem_t sem;
 
@@ -303,7 +303,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 {
 	register rt_base_t temp;
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 
 	RT_ASSERT(sem != RT_NULL);
 
@@ -314,7 +314,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 
 	RT_DEBUG_LOG(RT_DEBUG_IPC,
 		("thread %s take sem:%s, which value is: %d\n", rt_thread_self()->name,
-		((struct rt_object*)sem)->name, sem->value));
+		((struct rt_object *)sem)->name, sem->value));
 
 	if (sem->value > 0)
 	{
@@ -344,8 +344,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 			/* reset thread error number */
 			thread->error = RT_EOK;
 
-			RT_DEBUG_LOG(RT_DEBUG_IPC,
-				("sem take: suspend thread - %s\n", thread->name));
+			RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n", thread->name));
 
 			/* suspend thread */
 			rt_ipc_list_suspend(&(sem->parent.suspend_thread),
@@ -413,7 +412,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 
 	RT_DEBUG_LOG(RT_DEBUG_IPC,
 		("thread %s releases sem:%s, which value is: %d\n", rt_thread_self()->name,
-		((struct rt_object*)sem)->name, sem->value));
+		((struct rt_object *)sem)->name, sem->value));
 
 
 	if (!rt_list_isempty(&sem->parent.suspend_thread))
@@ -442,7 +441,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
  *
  * @return the error code
  */
-rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void* arg)
+rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void *arg)
 {
 	rt_ubase_t level;
 	RT_ASSERT(sem != RT_NULL);
@@ -483,7 +482,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void* arg)
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_err_t rt_mutex_init(rt_mutex_t mutex, const char* name, rt_uint8_t flag)
+rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
 	RT_ASSERT(mutex != RT_NULL);
 
@@ -537,9 +536,9 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
  *
  * @see rt_mutex_init
  */
-rt_mutex_t rt_mutex_create(const char* name, rt_uint8_t flag)
+rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
-	struct rt_mutex* mutex;
+	struct rt_mutex *mutex;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -598,7 +597,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
 	register rt_base_t temp;
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 
 	/* this function must not be used in interrupt even if time = 0 */
 	RT_DEBUG_NOT_IN_INTERRUPT;
@@ -722,7 +721,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
 	register rt_base_t temp;
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	rt_bool_t need_schedule;
 
 	need_schedule = RT_FALSE;
@@ -768,8 +767,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 			/* get suspended thread */
 			thread = rt_list_entry(mutex->parent.suspend_thread.next, struct rt_thread, tlist);
 
-			RT_DEBUG_LOG(RT_DEBUG_IPC,
-				("mutex_release: resume thread: %s\n", thread->name));
+			RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_release: resume thread: %s\n", thread->name));
 
 			/* set new owner and priority */
 			mutex->owner = thread;
@@ -810,7 +808,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
  *
  * @return the error code
  */
-rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void* arg)
+rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void *arg)
 {
 	return -RT_ERROR;
 }
@@ -827,7 +825,7 @@ rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void* arg)
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_err_t rt_event_init(rt_event_t event, const char* name, rt_uint8_t flag)
+rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
 {
 	RT_ASSERT(event != RT_NULL);
 
@@ -876,7 +874,7 @@ rt_err_t rt_event_detach(rt_event_t event)
  *
  * @return the created event, RT_NULL on error happen
  */
-rt_event_t rt_event_create(const char* name, rt_uint8_t flag)
+rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
 {
 	rt_event_t event;
 
@@ -933,8 +931,8 @@ rt_err_t rt_event_delete(rt_event_t event)
  */
 rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 {
-	struct rt_list_node* n;
-	struct rt_thread* thread;
+	struct rt_list_node *n;
+	struct rt_thread *thread;
 	register rt_ubase_t level;
 	register rt_base_t status;
 	rt_bool_t need_schedule;
@@ -1023,9 +1021,9 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
  *
  * @return the error code
  */
-rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_int32_t timeout, rt_uint32_t* recved)
+rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_int32_t timeout, rt_uint32_t *recved)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	register rt_ubase_t level;
 	register rt_base_t status;
 
@@ -1077,8 +1075,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
 		thread->event_info = option;
 
 		/* put thread to suspended thread list */
-		rt_ipc_list_suspend(&(event->parent.suspend_thread),
-				thread, event->parent.parent.flag);
+		rt_ipc_list_suspend(&(event->parent.suspend_thread), thread, event->parent.parent.flag);
 
 		/* if there is a waiting timeout, active thread timer */
 		if (timeout > 0)
@@ -1124,7 +1121,7 @@ rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t option, rt_
  *
  * @return the error code
  */
-rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void* arg)
+rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg)
 {
 	rt_ubase_t level;
 	RT_ASSERT(event != RT_NULL);
@@ -1163,7 +1160,7 @@ rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void* arg)
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_err_t rt_mb_init(rt_mailbox_t mb, const char* name, void* msgpool, rt_size_t size, rt_uint8_t flag)
+rt_err_t rt_mb_init(rt_mailbox_t mb, const char *name, void *msgpool, rt_size_t size, rt_uint8_t flag)
 {
 	RT_ASSERT(mb != RT_NULL);
 
@@ -1177,11 +1174,11 @@ rt_err_t rt_mb_init(rt_mailbox_t mb, const char* name, void* msgpool, rt_size_t 
 	rt_ipc_object_init(&(mb->parent));
 
 	/* init mailbox */
-	mb->msg_pool = msgpool;
-	mb->size     = size;
-	mb->entry       = 0;
-	mb->in_offset   = 0;
-	mb->out_offset  = 0;
+	mb->msg_pool   = msgpool;
+	mb->size       = size;
+	mb->entry      = 0;
+	mb->in_offset  = 0;
+	mb->out_offset = 0;
 
 	/* init an additional list of sender suspend thread */
 	rt_list_init(&(mb->suspend_sender_thread));
@@ -1222,7 +1219,7 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb)
  *
  * @return the created mailbox, RT_NULL on error happen
  */
-rt_mailbox_t rt_mb_create(const char* name, rt_size_t size, rt_uint8_t flag)
+rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
 	rt_mailbox_t mb;
 
@@ -1307,7 +1304,7 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
  */
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	register rt_ubase_t temp;
 	rt_uint32_t tick_delta;
 
@@ -1347,8 +1344,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout)
 	
 		RT_DEBUG_NOT_IN_INTERRUPT;
 		/* suspend current thread */
-		rt_ipc_list_suspend(&(mb->suspend_sender_thread),
-				thread, mb->parent.parent.flag);
+		rt_ipc_list_suspend(&(mb->suspend_sender_thread), thread, mb->parent.parent.flag);
 
 		/* has waiting time, start thread timer */
 		if (timeout > 0)
@@ -1440,9 +1436,9 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value)
  *
  * @return the error code
  */
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	register rt_ubase_t temp;
 	rt_uint32_t tick_delta;
 
@@ -1484,8 +1480,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 
 		RT_DEBUG_NOT_IN_INTERRUPT;
 		/* suspend current thread */
-		rt_ipc_list_suspend(&(mb->parent.suspend_thread),
-				thread, mb->parent.parent.flag);
+		rt_ipc_list_suspend(&(mb->parent.suspend_thread), thread, mb->parent.parent.flag);
 
 		/* has waiting time, start thread timer */
 		if (timeout > 0)
@@ -1530,7 +1525,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
 	*value = mb->msg_pool[mb->out_offset];
 
 	/* increase output offset */
-	++mb->out_offset;
+	++ mb->out_offset;
 	if (mb->out_offset >= mb->size) mb->out_offset = 0;
 	/* decrease message entry */
 	mb->entry --;
@@ -1567,7 +1562,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t* value, rt_int32_t timeout)
  *
  * @return the error code
  */
-rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void* arg)
+rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
 {
 	rt_ubase_t level;
 	RT_ASSERT(mb != RT_NULL);
@@ -1601,7 +1596,7 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void* arg)
 #ifdef RT_USING_MESSAGEQUEUE
 struct rt_mq_message
 {
-	struct rt_mq_message* next;
+	struct rt_mq_message *next;
 };
 
 /**
@@ -1617,9 +1612,9 @@ struct rt_mq_message
  *
  * @return the operation status, RT_EOK on successful
  */
-rt_err_t rt_mq_init(rt_mq_t mq, const char* name, void *msgpool, rt_size_t msg_size, rt_size_t pool_size, rt_uint8_t flag)
+rt_err_t rt_mq_init(rt_mq_t mq, const char *name, void *msgpool, rt_size_t msg_size, rt_size_t pool_size, rt_uint8_t flag)
 {
-	struct rt_mq_message* head;
+	struct rt_mq_message *head;
 	register rt_base_t temp;
 
 	/* parameter check */
@@ -1649,7 +1644,7 @@ rt_err_t rt_mq_init(rt_mq_t mq, const char* name, void *msgpool, rt_size_t msg_s
 	mq->msg_queue_free = RT_NULL;
 	for (temp = 0; temp < mq->max_msgs; temp ++)
 	{
-		head = (struct rt_mq_message*)((rt_uint8_t*)mq->msg_pool +
+		head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
 			temp * (mq->msg_size + sizeof(struct rt_mq_message)));
 		head->next = mq->msg_queue_free;
 		mq->msg_queue_free = head;
@@ -1693,10 +1688,10 @@ rt_err_t rt_mq_detach(rt_mq_t mq)
  *
  * @return the created message queue, RT_NULL on error happen
  */
-rt_mq_t rt_mq_create(const char* name, rt_size_t msg_size, rt_size_t max_msgs, rt_uint8_t flag)
+rt_mq_t rt_mq_create(const char *name, rt_size_t msg_size, rt_size_t max_msgs, rt_uint8_t flag)
 {
-	struct rt_messagequeue* mq;
-	struct rt_mq_message* head;
+	struct rt_messagequeue *mq;
+	struct rt_mq_message *head;
 	register rt_base_t temp;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
@@ -1789,10 +1784,10 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
  *
  * @return the error code
  */
-rt_err_t rt_mq_send(rt_mq_t mq, void* buffer, rt_size_t size)
+rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 {
 	register rt_ubase_t temp;
-	struct rt_mq_message* msg;
+	struct rt_mq_message *msg;
 
 	/* greater than one message size */
 	if (size > mq->msg_size) return -RT_ERROR;
@@ -1829,7 +1824,7 @@ rt_err_t rt_mq_send(rt_mq_t mq, void* buffer, rt_size_t size)
 	if (mq->msg_queue_tail != RT_NULL)
 	{
 		/* if the tail exists, */
-		((struct rt_mq_message*)mq->msg_queue_tail)->next = msg;
+		((struct rt_mq_message *)mq->msg_queue_tail)->next = msg;
 	}
 
 	/* set new tail */
@@ -1869,10 +1864,10 @@ rt_err_t rt_mq_send(rt_mq_t mq, void* buffer, rt_size_t size)
  *
  * @return the error code
  */
-rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
+rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 {
 	register rt_ubase_t temp;
-	struct rt_mq_message* msg;
+	struct rt_mq_message *msg;
 
 	/* greater than one message size */
 	if (size > mq->msg_size) return -RT_ERROR;
@@ -1883,7 +1878,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
 	temp = rt_hw_interrupt_disable();
 
 	/* get a free list, there must be an empty item */
-	msg = (struct rt_mq_message*)mq->msg_queue_free;
+	msg = (struct rt_mq_message *)mq->msg_queue_free;
 	/* message queue is full */
 	if (msg == RT_NULL)
 	{
@@ -1943,11 +1938,11 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void* buffer, rt_size_t size)
  *
  * @return the error code
  */
-rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout)
+rt_err_t rt_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout)
 {
-	struct rt_thread* thread;
+	struct rt_thread *thread;
 	register rt_ubase_t temp;
-	struct rt_mq_message* msg;
+	struct rt_mq_message *msg;
 	rt_uint32_t tick_delta;
 
 	/* initialize delta tick */
@@ -1985,8 +1980,7 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout
 		}
 
 		/* suspend current thread */
-		rt_ipc_list_suspend(&(mq->parent.suspend_thread),
-				thread, mq->parent.parent.flag);
+		rt_ipc_list_suspend(&(mq->parent.suspend_thread), thread, mq->parent.parent.flag);
 
 		/* has waiting time, start thread timer */
 		if (timeout > 0)
@@ -1994,8 +1988,7 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout
 			/* get the start tick of timer */
 			tick_delta = rt_tick_get();
 
-			RT_DEBUG_LOG(RT_DEBUG_IPC,
-				("set thread:%s to timer list\n", thread->name));
+			RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n", thread->name));
 
 			/* reset the timeout of thread timer and start it */
 			rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &timeout);
@@ -2028,7 +2021,7 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout
 	}
 
 	/* get message from queue */
-	msg = (struct rt_mq_message*) mq->msg_queue_head;
+	msg = (struct rt_mq_message *)mq->msg_queue_head;
 
 	/* move message queue head */
 	mq->msg_queue_head = msg->next;
@@ -2042,13 +2035,12 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout
 	rt_hw_interrupt_enable(temp);
 
 	/* copy message */
-	rt_memcpy(buffer, msg + 1,
-		size > mq->msg_size? mq->msg_size : size);
+	rt_memcpy(buffer, msg + 1, size > mq->msg_size ? mq->msg_size : size);
 
 	/* disable interrupt */
 	temp = rt_hw_interrupt_disable();
 	/* put message to free list */
-	msg->next = (struct rt_mq_message*)mq->msg_queue_free;
+	msg->next = (struct rt_mq_message *)mq->msg_queue_free;
 	mq->msg_queue_free = msg;
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
@@ -2067,10 +2059,10 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void* buffer, rt_size_t size, rt_int32_t timeout
  *
  * @return the error code
  */
-rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void* arg)
+rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
 {
 	rt_ubase_t level;
-	struct rt_mq_message* msg;
+	struct rt_mq_message *msg;
 
 	RT_ASSERT(mq != RT_NULL);
 
@@ -2086,7 +2078,7 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void* arg)
 		while (mq->msg_queue_head != RT_NULL)
 		{
 			/* get message from queue */
-			msg = (struct rt_mq_message*) mq->msg_queue_head;
+			msg = (struct rt_mq_message *)mq->msg_queue_head;
 
 			/* move message queue head */
 			mq->msg_queue_head = msg->next;
@@ -2094,7 +2086,7 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void* arg)
 			if (mq->msg_queue_tail == msg) mq->msg_queue_tail = RT_NULL;
 
 			/* put message to free list */
-			msg->next = (struct rt_mq_message*)mq->msg_queue_free;
+			msg->next = (struct rt_mq_message *)mq->msg_queue_free;
 			mq->msg_queue_free = msg;
 		}
 

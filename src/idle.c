@@ -84,7 +84,7 @@ void rt_thread_idle_excute(void)
 
 			/* if the thread is module's main thread */
 			if (module != RT_NULL && module->module_thread == thread)
-			{	
+			{
 				/* detach module's main thread */
 				module->module_thread = RT_NULL;
 			}
@@ -134,8 +134,8 @@ void rt_thread_idle_excute(void)
 			if ((module->module_thread == RT_NULL) &&
 				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
 			{
-				module->nref--;
-			}	
+				module->nref --;
+			}
 		}
 
 		/* unload module */
@@ -144,7 +144,7 @@ void rt_thread_idle_excute(void)
 	}
 }
 
-static void rt_thread_idle_entry(void* parameter)
+static void rt_thread_idle_entry(void *parameter)
 {
 	while (1)
 	{

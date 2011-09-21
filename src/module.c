@@ -1,19 +1,19 @@
 /*
  * File      : module.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-01-09      Bernard	first version
- * 2010-04-09      yi.qiu	implement based on first version
- * 2010-10-23      yi.qiu	implement module memory allocator  
- * 2011-05-25      yi.qiu	implement module hook function
- * 2011-06-23      yi.qiu	rewrite module memory allocator
+ * Date           Author       Notes
+ * 2010-01-09     Bernard      first version
+ * 2010-04-09     yi.qiu       implement based on first version
+ * 2010-10-23     yi.qiu       implement module memory allocator
+ * 2011-05-25     yi.qiu       implement module hook function
+ * 2011-06-23     yi.qiu       rewrite module memory allocator
  */
 
 #include <rthw.h>
@@ -26,17 +26,17 @@
 #ifdef RT_USING_MODULE
 #include "module.h"
 
-#define elf_module 		((Elf32_Ehdr *)module_ptr)
-#define shdr				((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
-#define phdr				((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
+#define elf_module          ((Elf32_Ehdr *)module_ptr)
+#define shdr                ((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
+#define phdr                ((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
 
-#define IS_PROG(s)		(s.sh_type == SHT_PROGBITS)
-#define IS_NOPROG(s)		(s.sh_type == SHT_NOBITS)
-#define IS_REL(s)			(s.sh_type == SHT_REL)
-#define IS_RELA(s)		(s.sh_type == SHT_RELA)
-#define IS_ALLOC(s)		(s.sh_flags == SHF_ALLOC)
-#define IS_AX(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
-#define IS_AW(s)			((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
+#define IS_PROG(s)          (s.sh_type == SHT_PROGBITS)
+#define IS_NOPROG(s)        (s.sh_type == SHT_NOBITS)
+#define IS_REL(s)           (s.sh_type == SHT_REL)
+#define IS_RELA(s)          (s.sh_type == SHT_RELA)
+#define IS_ALLOC(s)         (s.sh_flags == SHF_ALLOC)
+#define IS_AX(s)            ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
+#define IS_AW(s)            ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
 
 #define PAGE_COUNT_MAX	256		
 
@@ -61,23 +61,23 @@ static struct rt_semaphore mod_sem;
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
 rt_list_t rt_module_symbol_list;
 
-static char* _strip_name(const char* string)
+static char *_strip_name(const char *string)
 {
 	int i = 0, p = 0, q = 0;
-	const char* str = string;
-	char* dest = RT_NULL;
+	const char *str = string;
+	char *dest = RT_NULL;
 	
-	while(*str != '\n' && *str != '\0')
+	while (*str != '\n' && *str != '\0')
 	{
-		if(*str =='/' ) p = i + 1;
-		if(*str == '.') q = i;	
+		if (*str =='/' ) p = i + 1;
+		if (*str == '.') q = i;	
 		str++; i++;
 	}
 
-	if(p < q)
+	if (p < q)
 	{
 		int len = q - p;
-		dest = (char*)rt_malloc(len + 1);
+		dest = (char *)rt_malloc(len + 1);
 		rt_strncpy(dest, &string[p], len);
 		dest[len] = '\0';
 	}
@@ -99,10 +99,10 @@ void rt_system_module_init(void)
 	
 	_rt_module_symtab_begin = (struct rt_module_symtab *)&__rtmsymtab_start;
 	_rt_module_symtab_end   = (struct rt_module_symtab *)&__rtmsymtab_end;
-#elif defined (__CC_ARM) 
+#elif defined (__CC_ARM)
 	extern int RTMSymTab$$Base;
 	extern int RTMSymTab$$Limit;
-								  
+
 	_rt_module_symtab_begin = (struct rt_module_symtab *)&RTMSymTab$$Base;
 	_rt_module_symtab_end   = (struct rt_module_symtab *)&RTMSymTab$$Limit;	
 #endif
@@ -116,10 +116,10 @@ void rt_system_module_init(void)
 	rt_current_module = RT_NULL;
 }
 
-static rt_uint32_t rt_module_symbol_find(const char* sym_str)
+static rt_uint32_t rt_module_symbol_find(const char *sym_str)
 {
 	/* find in kernel symbol table */
-	struct rt_module_symtab* index;
+	struct rt_module_symtab *index;
 	for (index = _rt_module_symtab_begin; index != _rt_module_symtab_end; index ++)
 	{
 		if (rt_strcmp(index->name, sym_str) == 0)
@@ -135,7 +135,7 @@ static rt_uint32_t rt_module_symbol_find(const char* sym_str)
  * @return the self module object
  *
  */
-rt_module_t rt_module_self (void)
+rt_module_t rt_module_self(void)
 {
 	/* return current module */
 	return rt_current_module;
@@ -146,7 +146,7 @@ rt_module_t rt_module_self (void)
  *
  * @return RT_EOK
  */
-rt_err_t rt_module_set (rt_module_t module)
+rt_err_t rt_module_set(rt_module_t module)
 {
 	/* set current module */
 	rt_current_module = module;
@@ -154,12 +154,12 @@ rt_err_t rt_module_set (rt_module_t module)
 	return RT_EOK;
 }
 
-static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf32_Addr sym_val)
+static int rt_module_arm_relocate(struct rt_module *module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
 	Elf32_Addr *where, tmp;
 	Elf32_Sword addend;
 
-	where = (Elf32_Addr *)((rt_uint8_t*)module->module_space + rel->r_offset);
+	where = (Elf32_Addr *)((rt_uint8_t *)module->module_space + rel->r_offset);
 	switch (ELF32_R_TYPE(rel->r_info))
 	{
 	case R_ARM_NONE:
@@ -168,8 +168,7 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 	case R_ARM_ABS32:
 		*where += (Elf32_Addr)sym_val;
 
-		RT_DEBUG_LOG(RT_DEBUG_MODULE,
-			("R_ARM_ABS32: %x -> %x\n", where, *where));
+		RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_ABS32: %x -> %x\n", where, *where));
 
 		break;
 
@@ -184,7 +183,7 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 		tmp >>= 2;
 		*where = (*where & 0xff000000) | (tmp & 0x00ffffff);
 
-		RT_DEBUG_LOG(RT_DEBUG_MODULE,("R_ARM_PC24: %x -> %x\n", where, *where));
+		RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_PC24: %x -> %x\n", where, *where));
 
 		break;
 
@@ -214,7 +213,7 @@ static int rt_module_arm_relocate(struct rt_module* module, Elf32_Rel *rel, Elf3
 	return 0;
 }
 
-static void rt_module_init_object_container(struct rt_module* module)
+static void rt_module_init_object_container(struct rt_module *module)
 {
 	RT_ASSERT(module != RT_NULL);
 
@@ -321,7 +320,7 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module))
  * @return the module object
  *
  */
-rt_module_t rt_module_load(const char* name, void* module_ptr)
+rt_module_t rt_module_load(const char *name, void *module_ptr)
 {
 	rt_uint8_t *ptr = RT_NULL;
 	rt_module_t module = RT_NULL;
@@ -358,7 +357,7 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 			module_size += phdr[index].p_memsz;
 	}	
 	
-	if (module_size == 0) 
+	if (module_size == 0)
 	{
 		rt_kprintf(" module size error\n");
 		return module;
@@ -384,9 +383,9 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 
 	for (index = 0; index < elf_module->e_phnum; index++)
 	{
-		if(phdr[index].p_type == PT_LOAD)
+		if (phdr[index].p_type == PT_LOAD)
 		{
-			rt_memcpy(ptr, (rt_uint8_t*)elf_module + phdr[index].p_offset, phdr[index].p_filesz);
+			rt_memcpy(ptr, (rt_uint8_t *)elf_module + phdr[index].p_offset, phdr[index].p_filesz);
 			ptr += phdr[index].p_memsz;
 		}		
 	}	
@@ -406,12 +405,12 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 			static rt_bool_t unsolved = RT_FALSE;
 
 			/* get relocate item */
-			rel = (Elf32_Rel *) ((rt_uint8_t*)module_ptr + shdr[index].sh_offset);
+			rel = (Elf32_Rel *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
 
 			/* locate .rel.plt and .rel.dyn section */
-			symtab =(Elf32_Sym *) ((rt_uint8_t*)module_ptr + shdr[shdr[index].sh_link].sh_offset);
-			strtab = (rt_uint8_t*) module_ptr + shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
- 			nr_reloc = (rt_uint32_t) (shdr[index].sh_size / sizeof(Elf32_Rel));
+			symtab =(Elf32_Sym *)((rt_uint8_t *)module_ptr + shdr[shdr[index].sh_link].sh_offset);
+			strtab = (rt_uint8_t*)module_ptr + shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
+ 			nr_reloc = (rt_uint32_t)(shdr[index].sh_size / sizeof(Elf32_Rel));
 
 			/* relocate every items */
 			for (i = 0; i < nr_reloc; i ++)
@@ -421,9 +420,9 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 				RT_DEBUG_LOG(RT_DEBUG_MODULE,
 					("relocate symbol %s shndx %d\n", strtab + sym->st_name, sym->st_shndx));
 
-				if((sym->st_shndx != SHT_NULL) || (ELF_ST_BIND(sym->st_info) == STB_LOCAL))	
-					rt_module_arm_relocate(module, rel,  (Elf32_Addr)(module->module_space + sym->st_value));
-				else if(!linked)
+				if ((sym->st_shndx != SHT_NULL) || (ELF_ST_BIND(sym->st_info) == STB_LOCAL))	
+					rt_module_arm_relocate(module, rel, (Elf32_Addr)(module->module_space + sym->st_value));
+				else if (!linked)
 				{
 					Elf32_Addr addr;
 
@@ -431,7 +430,7 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 						("unresolved relocate symbol: %s\n", strtab + sym->st_name));
 
 					/* need to resolve symbol in kernel symbol table */
-					addr = rt_module_symbol_find((const char*)(strtab + sym->st_name));
+					addr = rt_module_symbol_find((const char *)(strtab + sym->st_name));
 					if (addr == 0)
 					{
 						rt_kprintf("can't find %s in kernel symbol table\n", strtab + sym->st_name);
@@ -442,7 +441,7 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 				rel ++;
 			}
 
-			if(unsolved) 
+			if (unsolved)
 			{
 				rt_object_delete(&(module->parent));
 				rt_free(module);
@@ -455,39 +454,39 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 	for (index = 0; index < elf_module->e_shnum; index ++)
 	{	
 		/* find .dynsym section */
-		rt_uint8_t* shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
+		rt_uint8_t *shstrab = (rt_uint8_t *)module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
 		if (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_DYNSYM) == 0) break;
 	}
 
 	/* found .dynsym section */
-	if(index != elf_module->e_shnum)
+	if (index != elf_module->e_shnum)
 	{
 		int i, count = 0;
 		Elf32_Sym *symtab = RT_NULL;
-		rt_uint8_t *strtab  = RT_NULL;
+		rt_uint8_t *strtab = RT_NULL;
 
-		symtab =(Elf32_Sym *) ((rt_uint8_t*)module_ptr + shdr[index].sh_offset);
-		strtab = (rt_uint8_t*) module_ptr + shdr[shdr[index].sh_link].sh_offset;			
+		symtab =(Elf32_Sym *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
+		strtab = (rt_uint8_t *)module_ptr + shdr[shdr[index].sh_link].sh_offset;			
 
-		for(i=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+		for (i=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
 		{
-			if((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
-				count++;
+			if ((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
+				count ++;
 		}
 
-		module->symtab = (struct rt_module_symtab*)rt_malloc(count * sizeof(struct rt_module_symtab));
+		module->symtab = (struct rt_module_symtab *)rt_malloc(count * sizeof(struct rt_module_symtab));
 		module->nsym = count;
-		for(i=0, count=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+		for (i=0, count=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
 		{
-			if((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
+			if ((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) && (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
 			{
-				rt_size_t length = rt_strlen((const char*)(strtab + symtab[i].st_name)) + 1;
+				rt_size_t length = rt_strlen((const char *)(strtab + symtab[i].st_name)) + 1;
 
-				module->symtab[count].addr = (void*)(module->module_space + symtab[i].st_value); 
+				module->symtab[count].addr = (void *)(module->module_space + symtab[i].st_value);
 				module->symtab[count].name = rt_malloc(length);
-				rt_memset((void*)module->symtab[count].name, 0, length);
-				rt_memcpy((void*)module->symtab[count].name, strtab + symtab[i].st_name, length);
-				count++;
+				rt_memset((void *)module->symtab[count].name, 0, length);
+				rt_memcpy((void *)module->symtab[count].name, strtab + symtab[i].st_name, length);
+				count ++;
 			}	
 		}	
 	}	
@@ -495,10 +494,10 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 	/* init module object container */
 	rt_module_init_object_container(module);
 		
-	/* increase module reference count  */
-	module->nref++;
+	/* increase module reference count */
+	module->nref ++;
 
-	if(elf_module->e_entry != 0)
+	if (elf_module->e_entry != 0)
 	{	
 		/* init module memory allocator */
 		module->mem_list = RT_NULL;
@@ -528,7 +527,7 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
 	}	
 
 #ifdef RT_USING_HOOK
-	if(rt_module_load_hook != RT_NULL)
+	if (rt_module_load_hook != RT_NULL)
 	{
 		rt_module_load_hook(module);
 	}
@@ -547,10 +546,10 @@ rt_module_t rt_module_load(const char* name, void* module_ptr)
  * @return the module object
  *
  */
-rt_module_t rt_module_open(const char* path)
+rt_module_t rt_module_open(const char *path)
 {
 	int fd, length;
-	struct rt_module* module;
+	struct rt_module *module;
 	struct stat s;
 	char *buffer, *offset_ptr, *name;
 
@@ -614,7 +613,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from file);
 #endif
 
 /**
- * This function will unload a module from memory and release resources 
+ * This function will unload a module from memory and release resources
  *
  * @param module the module to be unloaded
  *
@@ -624,7 +623,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from file);
 rt_err_t rt_module_unload(rt_module_t module)
 {
 	int i;
-	struct rt_object* object;
+	struct rt_object *object;
 	struct rt_list_node *list;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
@@ -635,18 +634,18 @@ rt_err_t rt_module_unload(rt_module_t module)
 	rt_kprintf("rt_module_unload: %s\n", module->parent.name);
 	
 	/* module has entry point */
-	if((module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY) != RT_MODULE_FLAG_WITHOUTENTRY)
-	{	
+	if ((module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY) != RT_MODULE_FLAG_WITHOUTENTRY)
+	{
 		/* suspend module main thread */
-		if(module->module_thread != RT_NULL)
-		{	
+		if (module->module_thread != RT_NULL)
+		{
 			if (module->module_thread->stat == RT_THREAD_READY)
 				rt_thread_suspend(module->module_thread);
 		}
 		
 		/* delete threads */
-		list = &module->module_object[RT_Object_Class_Thread].object_list;	
-		while(list->next != list)
+		list = &module->module_object[RT_Object_Class_Thread].object_list;
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -655,16 +654,16 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_thread_detach((rt_thread_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_thread_delete((rt_thread_t)object);
-			}	
+			}
 		}
 		
 #ifdef RT_USING_SEMAPHORE
 		/* delete semaphores */
 		list = &module->module_object[RT_Object_Class_Thread].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -673,17 +672,17 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_sem_detach((rt_sem_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_sem_delete((rt_sem_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_MUTEX
 		/* delete mutexs*/
 		list = &module->module_object[RT_Object_Class_Mutex].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -692,17 +691,17 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_mutex_detach((rt_mutex_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_mutex_delete((rt_mutex_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_EVENT
 		/* delete mailboxs */
 		list = &module->module_object[RT_Object_Class_Event].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -711,17 +710,17 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_event_detach((rt_event_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_event_delete((rt_event_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_MAILBOX
 		/* delete mailboxs */
 		list = &module->module_object[RT_Object_Class_MailBox].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -730,17 +729,17 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_mb_detach((rt_mailbox_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_mb_delete((rt_mailbox_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
 		/* delete msgqueues */
-		list = &module->module_object[RT_Object_Class_MessageQueue].object_list;	
-		while(list->next != list)
+		list = &module->module_object[RT_Object_Class_MessageQueue].object_list;
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -749,17 +748,17 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_mq_detach((rt_mq_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_mq_delete((rt_mq_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_MEMPOOL
 		/* delete mempools */
 		list = &module->module_object[RT_Object_Class_MemPool].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -768,26 +767,26 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_mp_detach((rt_mp_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_mp_delete((rt_mp_t)object);
-			}	
+			}
 		}
 #endif
 
 #ifdef RT_USING_DEVICE
 		/* delete devices */
 		list = &module->module_object[RT_Object_Class_Device].object_list;	
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			rt_device_unregister((rt_device_t)object);
-		}	
+		}
 #endif
 
 		/* delete timers */
 		list = &module->module_object[RT_Object_Class_Timer].object_list;
-		while(list->next != list)
+		while (list->next != list)
 		{
 			object = rt_list_entry(list->next, struct rt_object, list);
 			if (rt_object_is_systemobject(object) == RT_EOK)
@@ -796,19 +795,19 @@ rt_err_t rt_module_unload(rt_module_t module)
 				rt_timer_detach((rt_timer_t)object);
 			}
 			else
-			{	
+			{
 				/* delete dynamic object */
 				rt_timer_delete((rt_timer_t)object);
-			}	
-		}		
+			}
+		}
 	}
 
-	if(module->page_cnt > 0)
+	if (module->page_cnt > 0)
 	{
 		int i;
-		struct rt_page_info* page = (struct rt_page_info*)module->page_array;
+		struct rt_page_info *page = (struct rt_page_info *)module->page_array;
 		
-		rt_kprintf("warning: some module memory still hasn't be freed\n");		
+		rt_kprintf("warning: some module memory still hasn't be freed\n");
 
 		//list_memlist("tetris");
 
@@ -817,19 +816,19 @@ rt_err_t rt_module_unload(rt_module_t module)
 			rt_module_free_page(page[i].page_ptr, page[i].npage);
 		}
 	}
-	
+
 	/* release module space memory */
 	rt_free(module->module_space);
 
 	/* release module symbol table */
-	for(i=0; i<module->nsym; i++) rt_free((void *)module->symtab[i].name);
-	if(module->symtab != RT_NULL) rt_free(module->symtab);
+	for (i=0; i<module->nsym; i++) rt_free((void *)module->symtab[i].name);
+	if (module->symtab != RT_NULL) rt_free(module->symtab);
 
 #ifdef RT_USING_HOOK
-		if(rt_module_unload_hook != RT_NULL)
-		{
-			rt_module_unload_hook(module);
-		}
+	if (rt_module_unload_hook != RT_NULL)
+	{
+		rt_module_unload_hook(module);
+	}
 #endif
 
 	rt_free(module->page_array);
@@ -847,11 +846,11 @@ rt_err_t rt_module_unload(rt_module_t module)
  *
  * @return the module
  */
-rt_module_t rt_module_find(const char* name)
+rt_module_t rt_module_find(const char *name)
 {
 	struct rt_object_information *information;
-	struct rt_object* object;
-	struct rt_list_node* node;
+	struct rt_object *object;
+	struct rt_list_node *node;
 
 	extern struct rt_object_information rt_object_container[];
 
@@ -891,24 +890,24 @@ rt_module_t rt_module_find(const char* name)
  */
 static void *rt_module_malloc_page(rt_size_t npages)
 {
-	void* chunk;
+	void *chunk;
 	struct rt_page_info *page;
 
 	chunk = rt_page_alloc(npages);
 	if (chunk == RT_NULL) return RT_NULL;
 
-	page = (struct rt_page_info*)rt_current_module->page_array;
+	page = (struct rt_page_info *)rt_current_module->page_array;
 	page[rt_current_module->page_cnt].page_ptr = chunk;
-	page[rt_current_module->page_cnt].npage = npages;	
-	rt_current_module->page_cnt++;	
+	page[rt_current_module->page_cnt].npage = npages;
+	rt_current_module->page_cnt ++;
 
 	RT_ASSERT(rt_current_module->page_cnt <= PAGE_COUNT_MAX);
-	
+
 	return chunk;
 }
 
 /*
- * This function will release the previously allocated memory page 
+ * This function will release the previously allocated memory page
  * by rt_malloc_page.
  *
  * @param page_ptr the page address to be released.
@@ -924,19 +923,19 @@ static void rt_module_free_page(void *page_ptr, rt_size_t npages)
 	//rt_kprintf("rt_module_free_page 0x%x %d\n", page_ptr, npages);
 	rt_page_free(page_ptr, npages);
 
-	page = (struct rt_page_info*)rt_current_module->page_array;
+	page = (struct rt_page_info *)rt_current_module->page_array;
 
-	for(i=0; i<rt_current_module->page_cnt; i++)
+	for (i=0; i<rt_current_module->page_cnt; i++)
 	{
-		if(page[i].page_ptr == page_ptr)
+		if (page[i].page_ptr == page_ptr)
 		{
-			if(page[i].npage == npages + 1)
+			if (page[i].npage == npages + 1)
 			{
 				page[i].page_ptr += npages * RT_MM_PAGE_SIZE / sizeof(rt_uint32_t);
 			}
-			else if(page[i].npage == npages)
-			{				
-				for(index=i; index<rt_current_module->page_cnt-1; index++)
+			else if (page[i].npage == npages)
+			{
+				for (index=i; index<rt_current_module->page_cnt-1; index++)
 				{
 					page[index].page_ptr = page[index + 1].page_ptr;
 					page[index].npage = page[index + 1].npage;
@@ -944,9 +943,9 @@ static void rt_module_free_page(void *page_ptr, rt_size_t npages)
 				page[rt_current_module->page_cnt - 1].page_ptr = RT_NULL;
 				page[rt_current_module->page_cnt - 1].npage = 0;
 			}
-			else RT_ASSERT(RT_FALSE);		
+			else RT_ASSERT(RT_FALSE);
 			
-			rt_current_module->page_cnt--;	
+			rt_current_module->page_cnt --;
 
 			return;
 		}
@@ -963,19 +962,19 @@ void *rt_module_malloc(rt_size_t size)
 {
 	struct rt_mem_head *b, *n, *up;
 	struct rt_mem_head **prev;
-	rt_uint32_t npage;	
+	rt_uint32_t npage;
 	rt_size_t nunits;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
-	nunits = (size + sizeof(struct rt_mem_head) -1)/sizeof(struct rt_mem_head) + 1; 
+	nunits = (size + sizeof(struct rt_mem_head) -1)/sizeof(struct rt_mem_head) + 1;
 
 	RT_ASSERT(size != 0);
 	RT_ASSERT(nunits != 0);
 
 	rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
 
-	for (prev = (struct rt_mem_head **)&rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	
+	for (prev = (struct rt_mem_head **)&rt_current_module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))
 	{
 		if (b->size > nunits)
 		{
@@ -998,7 +997,7 @@ void *rt_module_malloc(rt_size_t size)
 			*prev = b->next;
 
 			rt_kprintf("rt_module_malloc 0x%x, %d\n",b + 1, size);
-			//list_memlist("tetris");			
+			//list_memlist("tetris");
 			rt_sem_release(&mod_sem);
 			return (void *)(b + 1);
 		}
@@ -1006,7 +1005,7 @@ void *rt_module_malloc(rt_size_t size)
 
 	/* allocate pages from system heap */
 	npage = (size + sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1)/RT_MM_PAGE_SIZE;
-	if((up = (struct rt_mem_head*)rt_module_malloc_page(npage)) == RT_NULL) return RT_NULL;
+	if ((up = (struct rt_mem_head *)rt_module_malloc_page(npage)) == RT_NULL) return RT_NULL;
 
 	up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 	
@@ -1019,7 +1018,7 @@ void *rt_module_malloc(rt_size_t size)
 	*prev = up;
 
 	rt_sem_release(&mod_sem);
-		
+
 	return rt_module_malloc(size);
 }
 
@@ -1037,18 +1036,18 @@ void rt_module_free(rt_module_t module, void *addr)
 	RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
 
 	//rt_kprintf("rt_module_free 0x%x\n", addr);
-	
+
 	rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
-	
+
 	n = (struct rt_mem_head *)addr - 1;
 	prev = (struct rt_mem_head **)&module->mem_list;
 
 	while ((b = *prev) != RT_NULL)
-	{		
+	{
 		RT_ASSERT(b->size > 0);
 		RT_ASSERT(b > n || b + b->size <= n);
 
-		if (b + b->size == n  && ((rt_uint32_t)n % RT_MM_PAGE_SIZE != 0))
+		if (b + b->size == n && ((rt_uint32_t)n % RT_MM_PAGE_SIZE != 0))
 		{
 			if (b + (b->size + n->size) == b->next)
 			{
@@ -1057,12 +1056,12 @@ void rt_module_free(rt_module_t module, void *addr)
 			}
 			else b->size += n->size;
 
-			if((rt_uint32_t)b % RT_MM_PAGE_SIZE == 0)
+			if ((rt_uint32_t)b % RT_MM_PAGE_SIZE == 0)
 			{
 				int npage = b->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-				if(npage > 0)
+				if (npage > 0)
 				{
-					if((b->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
+					if ((b->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
 					{
 						rt_size_t nunits = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 						/* split memory */
@@ -1073,7 +1072,7 @@ void rt_module_free(rt_module_t module, void *addr)
 					}
 					else
 					{
-						*prev = b->next;	
+						*prev = b->next;
 					}
 					
 					rt_module_free_page(b, npage);
@@ -1083,7 +1082,7 @@ void rt_module_free(rt_module_t module, void *addr)
 			/* unlock */
 			rt_sem_release(&mod_sem);
 			////list_memlist("tetris");
-			
+
 			return;
 		}
 
@@ -1092,12 +1091,12 @@ void rt_module_free(rt_module_t module, void *addr)
 			n->size = b->size + n->size;
 			n->next = b->next;
 			
-			if((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
+			if ((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
 			{
 				int npage = n->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-				if(npage > 0)
+				if (npage > 0)
 				{
-					if((n->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
+					if ((n->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
 					{
 						rt_size_t nunits = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 						/* split memory */
@@ -1106,11 +1105,11 @@ void rt_module_free(rt_module_t module, void *addr)
 						r->size = n->size - nunits;
 						*prev = r;
 					}
-					else *prev = n->next;	
+					else *prev = n->next;
 					
 					rt_module_free_page(n, npage);
 				}
-			}	
+			}
 			else
 			{
 				*prev = n;
@@ -1127,13 +1126,13 @@ void rt_module_free(rt_module_t module, void *addr)
 		prev = &(b->next);
 	}
 
-	if((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
+	if ((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
 	{
 		int npage = n->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-		if(npage > 0)
+		if (npage > 0)
 		{
 			rt_module_free_page(n, npage);
-			if(n->size % RT_MM_PAGE_SIZE != 0)
+			if (n->size % RT_MM_PAGE_SIZE != 0)
 			{
 				rt_size_t nunits = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
 				/* split memory */
@@ -1148,14 +1147,14 @@ void rt_module_free(rt_module_t module, void *addr)
 			}	
 		}	
 	}
-	else 
-	{	
+	else
+	{
 		n->next = b;
 		*prev = n;
 	}
 
 	/* unlock */
-	rt_sem_release(&mod_sem);	
+	rt_sem_release(&mod_sem);
 	//list_memlist("tetris");
 }
 
@@ -1179,11 +1178,11 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 	nunits = (size + sizeof(struct rt_mem_head) - 1) / sizeof(struct rt_mem_head) + 1;
 	b = (struct rt_mem_head *)ptr - 1;
 
-	if (nunits <= b->size) 
-	{   
-		/* new size is smaller or equal then before */    
+	if (nunits <= b->size)
+	{
+		/* new size is smaller or equal then before */
 		if (nunits == b->size) return ptr;
-		else 
+		else
 		{
 			p = b + nunits;
 			p->size = b->size - nunits;
@@ -1192,8 +1191,8 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 			return (void *)(b + 1);
 		}
 	}
-	else 
-	{      
+	else
+	{
 		/* more space then required */
 		prev = (struct rt_mem_head *)rt_current_module->mem_list;
 		for (p = prev->next; p != (b->size + b) && p != RT_NULL; prev = p, p = p->next) break;
@@ -1210,26 +1209,26 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 			else  /* more space then required, split block*/
 			{
 				/* pointer to old header */
-				tmpp = p;  
+				tmpp = p;
 				p = b + nunits;
 
 				/* restoring old pointer */
 				p->next = tmpp->next;
 				
 				/* new size for p */
-				p->size = tmpp->size + b->size - nunits; 
+				p->size = tmpp->size + b->size - nunits;
 				b->size = nunits;
 				prev->next = p;
 			}
 			rt_current_module->mem_list = (void *)prev;
-			return (void *) (b + 1);
+			return (void *)(b + 1);
 		}
 		else /* allocate new memory and copy old data */
 		{
 			if ((p = rt_module_malloc(size)) == RT_NULL) return RT_NULL;
 			rt_memmove(p, (b+1), ((b->size) * sizeof(struct rt_mem_head)));
 			rt_module_free(rt_current_module, (void *)(b + 1));
-			return (void *) (p);
+			return (void *)(p);
 		}
 	}
 }
@@ -1244,30 +1243,30 @@ void list_memlist(const char* name)
 	struct rt_mem_head *b;
 		
 	module = rt_module_find(name);
-	if(module == RT_NULL) return;
+	if (module == RT_NULL) return;
 
-	for (prev = (struct rt_mem_head **)&module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))	
+	for (prev = (struct rt_mem_head **)&module->mem_list; (b = *prev) != RT_NULL; prev = &(b->next))
 	{
 		rt_kprintf("0x%x--%d\n", b, b->size * sizeof(struct rt_mem_head));
 	}
 }
 FINSH_FUNCTION_EXPORT(list_memlist, list module free memory information)
 
-void list_mempage(const char* name)
+void list_mempage(const char *name)
 {
 	rt_module_t module;
 	struct rt_page_info *page;
 	int i;
 
 	module = rt_module_find(name);
-	if(module == RT_NULL) return;
+	if (module == RT_NULL) return;
 
 	page = (struct rt_page_info*)module->page_array;
 
-	for(i=0; i<module->page_cnt; i++)
+	for (i=0; i<module->page_cnt; i++)
 	{
 		rt_kprintf("0x%x--%d\n", page[i].page_ptr, page[i].npage);
-	}	
+	}
 }
 FINSH_FUNCTION_EXPORT(list_mempage, list module using memory page information)
 #endif

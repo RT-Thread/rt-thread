@@ -1,7 +1,7 @@
 /*
  * File      : object.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -65,11 +65,11 @@ struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
 };
 
 #ifdef RT_USING_HOOK
-static void (*rt_object_attach_hook)(struct rt_object* object);
-static void (*rt_object_detach_hook)(struct rt_object* object);
-void (*rt_object_trytake_hook)(struct rt_object* object);
-void (*rt_object_take_hook)(struct rt_object* object);
-void (*rt_object_put_hook)(struct rt_object* object);
+static void (*rt_object_attach_hook)(struct rt_object *object);
+static void (*rt_object_detach_hook)(struct rt_object *object);
+void (*rt_object_trytake_hook)(struct rt_object *object);
+void (*rt_object_take_hook)(struct rt_object *object);
+void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
  * @addtogroup Hook
@@ -82,7 +82,7 @@ void (*rt_object_put_hook)(struct rt_object* object);
  *
  * @param hook the hook function
  */
-void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
+void rt_object_attach_sethook(void (*hook)(struct rt_object *object))
 {
 	rt_object_attach_hook = hook;
 }
@@ -93,7 +93,7 @@ void rt_object_attach_sethook(void (*hook)(struct rt_object* object))
  *
  * @param hook the hook function
  */
-void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
+void rt_object_detach_sethook(void (*hook)(struct rt_object *object))
 {
 	rt_object_detach_hook = hook;
 }
@@ -111,7 +111,7 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object* object))
  *
  * @param hook the hook function
  */
-void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
+void rt_object_trytake_sethook(void (*hook)(struct rt_object *object))
 {
 	rt_object_trytake_hook = hook;
 }
@@ -130,7 +130,7 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object* object))
  *
  * @param hook the hook function
  */
-void rt_object_take_sethook(void (*hook)(struct rt_object* object))
+void rt_object_take_sethook(void (*hook)(struct rt_object *object))
 {
 	rt_object_take_hook = hook;
 }
@@ -141,7 +141,7 @@ void rt_object_take_sethook(void (*hook)(struct rt_object* object))
  *
  * @param hook the hook function
  */
-void rt_object_put_sethook(void (*hook)(struct rt_object* object))
+void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 {
 	rt_object_put_hook = hook;
 }
@@ -184,7 +184,7 @@ struct rt_object_information *rt_object_get_information(enum rt_object_class_typ
  * @param type the object type.
  * @param name the object name. In system, the object's name must be unique.
  */
-void rt_object_init(struct rt_object* object, enum rt_object_class_type type, const char* name)
+void rt_object_init(struct rt_object *object, enum rt_object_class_type type, const char *name)
 {
 	register rt_base_t temp;
 	struct rt_object_information* information;
@@ -255,11 +255,11 @@ void rt_object_detach(rt_object_t object)
  *
  * @return object
  */
-rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
+rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
-	struct rt_object* object;
+	struct rt_object *object;
 	register rt_base_t temp;
-	struct rt_object_information* information;
+	struct rt_object_information *information;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -272,7 +272,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	information = &rt_object_container[type];
 #endif
 
-	object = (struct rt_object*)rt_malloc(information->object_size);
+	object = (struct rt_object *)rt_malloc(information->object_size);
 	if (object == RT_NULL)
 	{
 		/* no memory can be allocated */
@@ -288,11 +288,11 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char* name)
 	object->flag = 0;
 
 #ifdef RT_USING_MODULE
-	if(rt_module_self() != RT_NULL)
+	if (rt_module_self() != RT_NULL)
 	{
 		object->flag |= RT_OBJECT_FLAG_MODULE;
 	}
-	object->module_id = (void*)rt_module_self();
+	object->module_id = (void *)rt_module_self();
 #endif
 
 	/* copy name */
@@ -341,7 +341,7 @@ void rt_object_delete(rt_object_t object)
 	rt_hw_interrupt_enable(temp);
 
 #if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-	if(object->flag & RT_OBJECT_FLAG_MODULE) 
+	if (object->flag & RT_OBJECT_FLAG_MODULE) 
 		rt_module_free((rt_module_t)object->module_id, object);
 	else
 #endif
@@ -382,16 +382,15 @@ rt_err_t rt_object_is_systemobject(rt_object_t object)
  *
  * @note this function shall not be invoked in interrupt status.
  */
-rt_object_t rt_object_find(const char* name, rt_uint8_t type)
+rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-	struct rt_object* object;
-	struct rt_list_node* node;
+	struct rt_object *object;
+	struct rt_list_node *node;
 	struct rt_object_information *information;
 	extern volatile rt_uint8_t rt_interrupt_nest;
 
 	/* parameter check */
-	if ((name == RT_NULL) ||
-		(type > RT_Object_Class_Unknown))
+	if ((name == RT_NULL) || (type > RT_Object_Class_Unknown))
 		return RT_NULL;
 
 	/* which is invoke in interrupt status */

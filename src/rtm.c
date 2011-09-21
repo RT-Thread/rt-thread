@@ -1,18 +1,18 @@
 /*
  * File      : rtm.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-04-12      yi.qiu	first version
+ * Date           Author       Notes
+ * 2010-04-12     yi.qiu       first version
  */
 
-#include <rtthread.h> 
+#include <rtthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -25,7 +25,7 @@
 RTM_EXPORT(rt_object_get_information);
 
 /*
- * thread  interface symbol 
+ * thread  interface symbol
  */
  
 RTM_EXPORT(rt_thread_init);
@@ -79,7 +79,7 @@ RTM_EXPORT(rt_event_create);
 RTM_EXPORT(rt_event_delete);
 RTM_EXPORT(rt_event_send);
 RTM_EXPORT(rt_event_recv);
-RTM_EXPORT(rt_event_control); 
+RTM_EXPORT(rt_event_control);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -92,7 +92,7 @@ RTM_EXPORT(rt_mb_create);
 RTM_EXPORT(rt_mb_delete);
 RTM_EXPORT(rt_mb_send);
 RTM_EXPORT(rt_mb_recv);
-RTM_EXPORT(rt_mb_control); 
+RTM_EXPORT(rt_mb_control);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -105,8 +105,8 @@ RTM_EXPORT(rt_mq_create);
 RTM_EXPORT(rt_mq_delete);
 RTM_EXPORT(rt_mq_send);
 RTM_EXPORT(rt_mq_urgent);
-RTM_EXPORT(rt_mq_recv);  
-RTM_EXPORT(rt_mq_control);  
+RTM_EXPORT(rt_mq_recv);
+RTM_EXPORT(rt_mq_control);
 #endif
 
 #ifdef RT_USING_MEMPOOL
@@ -159,8 +159,8 @@ RTM_EXPORT(rt_snprintf);
 /* 
  * misc interface symbol
  */
-extern int __aeabi_idiv; 
-extern int __aeabi_ddiv; 
+extern int __aeabi_idiv;
+extern int __aeabi_ddiv;
 extern int __aeabi_dmul;
 extern int __aeabi_i2d;
 extern int __aeabi_uidiv;

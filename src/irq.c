@@ -1,7 +1,7 @@
 /*
  * File      : irq.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -33,11 +33,11 @@ volatile rt_uint8_t rt_interrupt_nest;
  *
  * @see rt_interrupt_leave
  */
-void rt_interrupt_enter()
+void rt_interrupt_enter(void)
 {
 	rt_base_t level;
 
-	RT_DEBUG_LOG(RT_DEBUG_IRQ,("irq comming..., irq nest:%d\n", rt_interrupt_nest));
+	RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq comming..., irq nest:%d\n", rt_interrupt_nest));
 
 	level = rt_hw_interrupt_disable();
 	rt_interrupt_nest ++;
@@ -51,11 +51,11 @@ void rt_interrupt_enter()
  *
  * @see rt_interrupt_enter
  */
-void rt_interrupt_leave()
+void rt_interrupt_leave(void)
 {
 	rt_base_t level;
 
-	RT_DEBUG_LOG(RT_DEBUG_IRQ,("irq leave, irq nest:%d\n", rt_interrupt_nest));
+	RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq leave, irq nest:%d\n", rt_interrupt_nest));
 
 	level = rt_hw_interrupt_disable();
 	rt_interrupt_nest --;
