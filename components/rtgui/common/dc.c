@@ -906,7 +906,7 @@ void rtgui_dc_draw_annulus(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_i
 	rt_int16_t temp_val = 0;
 
     /* Sanity check radius */
-	if ((r1 < 0) || (r1 < 0)) return ;
+	if ((r1 < 0) || (r2 < 0)) return ;
 	/* Special case for r=0 - draw a point */
 	if ((r1 == 0) && (r2 == 0))
 	{
