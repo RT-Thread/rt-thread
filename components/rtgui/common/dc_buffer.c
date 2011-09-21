@@ -134,6 +134,9 @@ static void rtgui_dc_buffer_draw_point(struct rtgui_dc* self, int x, int y)
 
 	dc = (struct rtgui_dc_buffer*)self;
 
+	/* does not draw point out of dc */
+	if ((x > dc->width) || (y > dc->height)) return ;
+	
 	/* note: there is no parameter check in this function */
 	ptr = (rtgui_color_t*)(dc->pixel + y * dc->pitch + x * sizeof(rtgui_color_t));
 
