@@ -1,11 +1,11 @@
 /*
  * File      : rthw.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE.
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,8 +32,7 @@ rt_base_t rt_hw_cpu_dcache_status(void);
 void rt_hw_cpu_reset(void);
 void rt_hw_cpu_shutdown(void);
 
-rt_uint8_t *rt_hw_stack_init(void *entry, void *parameter,
-	rt_uint8_t *stack_addr, void *exit);
+rt_uint8_t *rt_hw_stack_init(void *entry, void *parameter, rt_uint8_t *stack_addr, void *exit);
 
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
@@ -47,7 +46,7 @@ void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to);
 void rt_hw_context_switch_to(rt_uint32_t to);
 void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to);
 
-void rt_hw_console_output(const char* str);
+void rt_hw_console_output(const char *str);
 
 void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry);
 void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);

@@ -142,7 +142,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
  * @return the created thread object
  *
  */
-rt_thread_t rt_thread_create (const char *name,
+rt_thread_t rt_thread_create(const char *name,
 	void (*entry)(void *parameter), void *parameter,
 	rt_uint32_t stack_size,
 	rt_uint8_t priority,
@@ -151,7 +151,7 @@ rt_thread_t rt_thread_create (const char *name,
 	struct rt_thread *thread;
 	void *stack_start;
 
-	thread = (struct rt_thread *) rt_object_allocate(RT_Object_Class_Thread, name);
+	thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread, name);
 	if (thread == RT_NULL) return RT_NULL;
 
 	stack_start = (void *)rt_malloc(stack_size);
@@ -603,7 +603,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
 /**
  * This function is the timeout function for thread, normally which is invoked
- * when thread is timeout to wait some recourse.
+ * when thread is timeout to wait some resourse.
  *
  * @param parameter the parameter of thread timeout function
  *

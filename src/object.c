@@ -187,7 +187,7 @@ struct rt_object_information *rt_object_get_information(enum rt_object_class_typ
 void rt_object_init(struct rt_object *object, enum rt_object_class_type type, const char *name)
 {
 	register rt_base_t temp;
-	struct rt_object_information* information;
+	struct rt_object_information *information;
 
 #ifdef RT_USING_MODULE
 	/* get module object information */
