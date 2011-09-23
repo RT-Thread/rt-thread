@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc122x;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc122x;..\..\examples\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -535,6 +535,11 @@
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\lpc122x\start_rvds.S</FilePath>
+            </File>
+            <File>
+              <FileName>tc_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\kernel\tc_comm.c</FilePath>
             </File>
           </Files>
         </Group>

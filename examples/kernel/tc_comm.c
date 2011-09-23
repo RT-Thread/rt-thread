@@ -1,5 +1,7 @@
 #include "tc_comm.h"
+#ifdef RT_USING_FINSH
 #include <finsh.h>
+#endif
 
 #ifdef RT_USING_TC
 #define TC_PRIORITY		25
