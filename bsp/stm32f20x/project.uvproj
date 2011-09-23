@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\components\finsh;.;..\..\include;Libraries\CMSIS\CM3\CoreSupport;Libraries\STM32F2xx_StdPeriph_Driver\inc;..\..\libcpu\arm\common;..\..\libcpu\arm\stm32;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx</IncludePath>
+              <IncludePath>..\..\components\finsh;.;..\..\include;Libraries\CMSIS\CM3\CoreSupport;Libraries\STM32F2xx_StdPeriph_Driver\inc;..\..\libcpu\arm\common;..\..\libcpu\arm\stm32;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx;..\..\components\dfs\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -780,6 +780,31 @@
               <FileName>startup_stm32f2xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx\startup\arm\startup_stm32f2xx.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>dfs</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>

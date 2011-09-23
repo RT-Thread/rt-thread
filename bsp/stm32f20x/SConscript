@@ -3,7 +3,7 @@ Import('RTT_ROOT')
 from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f20x_it.c']
-src_drv = ['usart.c', 'serial.c']
+src_drv = ['usart.c', 'serial.c', 'rtc.c']
 
 src = src_bsp + src_drv
 CPPPATH = [GetCurrentDir()]

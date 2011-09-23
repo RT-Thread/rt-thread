@@ -181,7 +181,7 @@
       <Focus>0</Focus>
       <ColumnNumber>50</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>3</TopLine>
+      <TopLine>25</TopLine>
       <CurrentLine>26</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\application.c</PathWithFileName>
@@ -195,8 +195,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>102</TopLine>
+      <CurrentLine>108</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup.c</PathWithFileName>
       <FilenameWithoutPath>startup.c</FilenameWithoutPath>
@@ -223,7 +223,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>80</TopLine>
+      <TopLine>79</TopLine>
       <CurrentLine>80</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\stm32f20x_it.c</PathWithFileName>
@@ -277,10 +277,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>27</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>15</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\sdio_sd.c</PathWithFileName>
       <FilenameWithoutPath>sdio_sd.c</FilenameWithoutPath>
@@ -1253,18 +1253,81 @@
     </File>
   </Group>
 
+  <Group>
+    <GroupName>dfs</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <File>
+      <GroupNumber>0</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\components\dfs\src\dfs.c</PathWithFileName>
+      <FilenameWithoutPath>dfs.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>0</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\components\dfs\src\dfs_file.c</PathWithFileName>
+      <FilenameWithoutPath>dfs_file.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>0</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\components\dfs\src\dfs_fs.c</PathWithFileName>
+      <FilenameWithoutPath>dfs_fs.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>0</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\components\dfs\src\dfs_posix.c</PathWithFileName>
+      <FilenameWithoutPath>dfs_posix.c</FilenameWithoutPath>
+    </File>
+  </Group>
+
   <MDIGroups>
     <Orientation>1</Orientation>
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>2</ActiveTab>
+      <ActiveTab>3</ActiveTab>
       <Documents>
         <Doc>
-          <Name>.\stm32f20x_it.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>80</TopLine>
-          <CurrentLine>80</CurrentLine>
+          <Name>.\application.c</Name>
+          <ColumnNumber>50</ColumnNumber>
+          <TopLine>25</TopLine>
+          <CurrentLine>26</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\board.c</Name>
@@ -1273,10 +1336,22 @@
           <CurrentLine>65</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\application.c</Name>
-          <ColumnNumber>50</ColumnNumber>
-          <TopLine>3</TopLine>
-          <CurrentLine>26</CurrentLine>
+          <Name>.\stm32f20x_it.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>79</TopLine>
+          <CurrentLine>80</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\sdio_sd.c</Name>
+          <ColumnNumber>27</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>15</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\startup.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>102</TopLine>
+          <CurrentLine>108</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
