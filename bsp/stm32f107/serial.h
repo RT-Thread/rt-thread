@@ -21,7 +21,7 @@
 /* STM32F10x library definitions */
 #include <stm32f10x.h>
 
-#define UART_RX_BUFFER_SIZE		64
+#define UART_RX_BUFFER_SIZE		128
 #define UART_TX_DMA_NODE_SIZE	4
 
 /* data node for Tx Mode */

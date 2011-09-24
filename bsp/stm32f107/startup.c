@@ -39,7 +39,6 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
-#ifdef  DEBUG
 /*******************************************************************************
 * Function Name  : assert_failed
 * Description    : Reports the name of the source file and the source line number
@@ -57,7 +56,6 @@ void assert_failed(u8* file, u32 line)
 
 	while (1) ;
 }
-#endif
 
 /**
  * This function will startup RT-Thread RTOS.
@@ -93,11 +91,6 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DFS
-	/* init sdcard driver */
-	rt_hw_msd_init();
-#endif
-
 	/* init all device */
 	rt_device_init_all();
 
@@ -127,9 +120,6 @@ int main(void)
 {
 	/* disable interrupt first */
 	rt_hw_interrupt_disable();
-
-	/* init system setting */
-	SystemInit();
 
 	/* startup RT-Thread RTOS */
 	rtthread_startup();

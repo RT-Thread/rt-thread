@@ -6,7 +6,7 @@
 #define RT_NAME_MAX	8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
@@ -133,5 +133,18 @@
 #define RT_LWIP_ETHTHREAD_PRIORITY		15
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
+
+/* TCP sender buffer space */
+#define RT_LWIP_TCP_SND_BUF	8192
+/* TCP receive window. */
+#define RT_LWIP_TCP_WND		8192
+
+#define CHECKSUM_CHECK_TCP              0
+#define CHECKSUM_CHECK_IP               0
+#define CHECKSUM_CHECK_UDP              0
+
+#define CHECKSUM_GEN_TCP                0
+#define CHECKSUM_GEN_IP                 0
+#define CHECKSUM_GEN_UDP                0
 
 #endif
