@@ -1,3 +1,4 @@
+
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
@@ -33,6 +34,13 @@
 #include <lwip/sys.h>
 #include <lwip/api.h>
 #include <netif/ethernetif.h>
+#endif
+
+#ifdef RT_USING_RTGUI
+#include <rtgui/rtgui.h>
+#include <rtgui/rtgui_server.h>
+#include <rtgui/rtgui_system.h>
+#include <rtgui/driver.h>
 #endif
 
 #include "led.h"
@@ -118,6 +126,11 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
+	    extern void rtgui_startup();
+	    extern void rt_hw_lcd_init();
+	    extern void rtgui_touch_hw_init(void);
+	    extern void rt_hw_key_init(void);
+
 		rt_device_t lcd;
 
 		/* init lcd */
