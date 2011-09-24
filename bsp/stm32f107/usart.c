@@ -186,9 +186,6 @@ static void NVIC_Configuration(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* Configure the NVIC Preemption Priority Bits */
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
-
 #ifdef RT_USING_UART1
 	/* Enable the USART1 Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
