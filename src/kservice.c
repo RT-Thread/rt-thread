@@ -941,6 +941,16 @@ rt_int32_t rt_sprintf(char *buf, const char *format, ...)
 
 #ifdef RT_USING_DEVICE
 /**
+ * This function returns the device using in console.
+ *
+ * @return the device using in console or RT_NULL
+ */
+rt_device_t rt_console_get_device(void)
+{
+	return _console_device;
+}
+
+/**
  * This function will set a device as console device.
  * After set a device to console, all output of rt_kprintf will be
  * redirected to this new device.
