@@ -25,12 +25,9 @@
  */
 /*@{*/
 
-#ifndef RT_USING_NEWLIB
 /* global errno in RT-Thread */
 static volatile int _errno;
-#else
-#include <errno.h>
-#endif
+
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
 #endif
