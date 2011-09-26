@@ -13,6 +13,8 @@ static rt_uint8_t count;
 /* 定时器超时函数 */
 static void timeout1(void* parameter)
 {
+	rt_tick_t timeout = 50;
+	
 	rt_kprintf("periodic timer is timeout\n");
 
 	count ++;
@@ -20,7 +22,7 @@ static void timeout1(void* parameter)
 	if (count >= 8)
 	{
 		/* 控制定时器然后更改超时时间长度 */
-		rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, (void*)50);
+		rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, (void *)&timeout);
 		count = 0;
 	}
 }

@@ -49,6 +49,7 @@ int thread_priority_init()
 		thread1_entry, RT_NULL,
 		&thread1_stack[0], sizeof(thread1_stack),
 		THREAD_PRIORITY - 1, THREAD_TIMESLICE);
+	
 	if (result == RT_EOK)
 		rt_thread_startup(&thread1);
 	else
