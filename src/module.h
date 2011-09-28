@@ -56,6 +56,12 @@ typedef rt_uint16_t Elf32_Half;     /* Unsigned medium integer */
                       (ehdr).e_ident[EI_MAG2] == ELFMAG2 && \
                       (ehdr).e_ident[EI_MAG3] == ELFMAG3)
 
+#define ET_NONE         0               /* No file type */
+#define ET_REL          1               /* Relocatable file */
+#define ET_EXEC         2               /* Executable file */
+#define ET_DYN          3               /* Shared object file */
+#define ET_CORE         4               /* Core file */
+
 /* ELF Header */
 typedef struct elfhdr
 {
@@ -148,6 +154,7 @@ typedef struct elf32_sym
 #define	STT_LOPROC  13      /* processor specific range */
 #define	STT_HIPROC  15
     
+#define STN_UNDEF       0               /* undefined */
 
 #define	ELF_ST_BIND(info)           ((info) >> 4)
 #define	ELF_ST_TYPE(info)           ((info) & 0xf)
@@ -176,16 +183,20 @@ typedef struct
 /*
  * Relocation type for arm
  */
-#define	R_ARM_NONE      0
-#define	R_ARM_PC24      1
-#define	R_ARM_ABS32     2
-#define	R_ARM_GLOB_DAT  21
-#define	R_ARM_JUMP_SLOT 22
-#define	R_ARM_RELATIVE  23
-#define	R_ARM_PLT32     27
-#define	R_ARM_CALL      28
-#define	R_ARM_JUMP24    29
-#define	R_ARM_V4BX      40
+#define	R_ARM_NONE			0
+#define	R_ARM_PC24			1
+#define	R_ARM_ABS32			2
+#define	R_ARM_REL32			3
+#define R_ARM_THM_CALL		10
+#define	R_ARM_GLOB_DAT		21
+#define	R_ARM_JUMP_SLOT		22
+#define	R_ARM_RELATIVE		23
+#define	R_ARM_GOT_BREL		26
+#define	R_ARM_PLT32			27
+#define	R_ARM_CALL			28
+#define	R_ARM_JUMP24		29
+#define R_ARM_THM_JUMP24	30
+#define	R_ARM_V4BX			40
 
 /* Program Header */
 typedef struct

@@ -3,7 +3,7 @@
 
 typedef void (*func)(void);
 
-int rt_application_init(void)
+int main(void)
 {
 	func f1, f2, f3, f4, f5;
 		

@@ -194,7 +194,7 @@ static const struct rtgui_list_item function_list[] =
 	{"ÍË³öÓÎÏ·", RT_NULL, listitem_action_return, RT_NULL},
 };
 
-void rt_application_init(void* parameter)
+void main(void)
 {
 	rt_mq_t mq;
 	rtgui_rect_t rect;
