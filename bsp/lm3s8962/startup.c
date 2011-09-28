@@ -97,8 +97,13 @@ void rtthread_startup(void)
 #endif
 #endif
 
+#ifdef RT_USING_MODULE	
+	/* init module system */
+	rt_system_module_init();
+
 	/* init scheduler system */
 	rt_system_scheduler_init();
+#endif
 
 #ifdef RT_USING_LWIP
 	eth_system_device_init();
