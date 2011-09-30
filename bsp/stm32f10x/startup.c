@@ -39,7 +39,6 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
-#ifdef  DEBUG
 /*******************************************************************************
 * Function Name  : assert_failed
 * Description    : Reports the name of the source file and the source line number
@@ -57,7 +56,6 @@ void assert_failed(u8* file, u32 line)
 
 	while (1) ;
 }
-#endif
 
 /**
  * This function will startup RT-Thread RTOS.

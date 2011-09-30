@@ -138,6 +138,11 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
+/* TCP sender buffer space */
+#define RT_LWIP_TCP_SND_BUF	8192
+/* TCP receive window. */
+#define RT_LWIP_TCP_WND		8192
+
 /* SECTION: RT-Thread/GUI */
 /* #define RT_USING_RTGUI */
 

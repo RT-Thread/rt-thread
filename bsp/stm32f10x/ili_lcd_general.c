@@ -105,6 +105,10 @@ static void LCD_FSMCConfig(void)
     /* FSMC GPIO configure */
 
     /*-- FSMC Configuration -------------------------------------------------*/
+    FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &Timing_read;
+    FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &Timing_write;
+    FSMC_NORSRAMStructInit(&FSMC_NORSRAMInitStructure);
+
     Timing_read.FSMC_AddressSetupTime = 3;             /* 地址建立时间  */
     Timing_read.FSMC_DataSetupTime = 4;                /* 数据建立时间  */
     Timing_read.FSMC_AccessMode = FSMC_AccessMode_A;    /* FSMC 访问模式 */
@@ -134,8 +138,6 @@ static void LCD_FSMCConfig(void)
     FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
     FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Enable;
     FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
-    FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &Timing_read;
-    FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &Timing_write;
 
     FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
     FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM2, ENABLE);
