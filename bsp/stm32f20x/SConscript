@@ -5,6 +5,12 @@ from building import *
 src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f20x_it.c']
 src_drv = ['usart.c', 'serial.c', 'rtc.c']
 
+if GetDepend('RT_USING_DFS'):
+	src_drv += ['stm32f2xx_eth.c']
+
+if GetDepend('RT_USING_LWIP'):
+	src_drv += ['sdio_sd.c']
+
 src = src_bsp + src_drv
 CPPPATH = [GetCurrentDir()]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
