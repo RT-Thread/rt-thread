@@ -504,6 +504,21 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
 
     return objs
 
+def PrepareModuleBuilding(env, root_directory):
+    import SCons.cpp
+    import rtconfig
+
+    global BuildOptions
+    global Projects
+    global Env
+    global Rtt_Root
+
+    Env = env
+    Rtt_Root = root_directory
+
+    # add program path
+    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
 def GetDepend(depend):
     building = True
     if type(depend) == type('str'):
