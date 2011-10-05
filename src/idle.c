@@ -60,8 +60,6 @@ void rt_thread_idle_sethook(void (*hook)())
  */
 void rt_thread_idle_excute(void)
 {
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
 	/* check the defunct thread list */
 	if (!rt_list_isempty(&rt_thread_defunct))
 	{
@@ -70,6 +68,8 @@ void rt_thread_idle_excute(void)
 #ifdef RT_USING_MODULE
 		rt_module_t module = RT_NULL;
 #endif
+		RT_DEBUG_NOT_IN_INTERRUPT;
+
 		/* disable interrupt */
 		lock = rt_hw_interrupt_disable();
 
