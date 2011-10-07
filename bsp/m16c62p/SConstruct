@@ -12,11 +12,14 @@ env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
 	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS,
-	CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'],
-    LINKCOM = ['$LINK $SOURCES $LINKFLAGS -f lnkm30627fhp.xcl -l rtt2m16c.map -o rtt2m16c.d34 -Omotorola-s28=$TARGET'])
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
+if rtconfig.PLATFORM == 'iar':
+	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -f lnkm30627fhp.xcl -l rtt2m16c.map -o rtt2m16c.d34 -Omotorola-s28=$TARGET'])
+	env.Replace(ARFLAGS = '')
+	
 Export('RTT_ROOT')
 Export('rtconfig')
 
