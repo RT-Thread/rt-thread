@@ -31,7 +31,7 @@
     RSEG    CODE:CODE:NOROOT(2)
 
 rt_hw_context_switch_interrupt_do
-    MOV.W   #0, rt_thread_switch_interrupt_flag
+    MOV.B   #0, rt_thread_switch_interrupt_flag
     MOV.W   rt_interrupt_from_thread, A0
     STC     ISP, [A0]
     
@@ -47,7 +47,7 @@ rt_hw_timer_handler:
     JSR     rt_tick_increase
     JSR     rt_interrupt_leave
 
-    CMP.W   #1, rt_thread_switch_interrupt_flag
+    CMP.B   #1, rt_thread_switch_interrupt_flag
     JEQ     rt_hw_context_switch_interrupt_do
     
     POPM    R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
@@ -60,7 +60,7 @@ rt_hw_uart0_receive_handler:
     JSR     u0rec_handler
     JSR     rt_interrupt_leave
 
-    CMP.W   #1, rt_thread_switch_interrupt_flag
+    CMP.B   #1, rt_thread_switch_interrupt_flag
     JEQ     rt_hw_context_switch_interrupt_do
     
     POPM    R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
