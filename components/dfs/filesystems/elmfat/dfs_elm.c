@@ -1,3 +1,18 @@
+/*
+ * File      : dfs_elm.c
+ * This file is part of Device File System in RT-Thread RTOS
+ * COPYRIGHT (C) 2008-2011, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2008-02-22     QiuYi        The first version.
+ * 2011-10-08     Bernard      fixed the block size in statfs.
+ */
+ 
 #include <rtthread.h>
 #include "ffconf.h"
 #include "ff.h"
@@ -177,7 +192,11 @@ int dfs_elm_statfs(struct dfs_filesystem* fs, struct statfs *buf)
 
 	buf->f_bfree = fre_sect;
 	buf->f_blocks = tot_sect;
-	buf->f_bsize = 512;
+#if _MAX_SS != 512
+	buf->f_bsize = f->ssize;
+#else
+    buf->f_bsize = 512;
+#endif
 
 	return 0;
 }
