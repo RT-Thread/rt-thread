@@ -14,6 +14,30 @@
 
 #include <rtthread.h>
 
+/* calculate speed */
+static void calculate_speed_print(rt_uint32_t speed)
+{
+    rt_uint32_t k,m;
+
+    k = speed/1024UL;
+    if( k )
+    {
+        m = k/1024UL;
+        if( m )
+        {
+            rt_kprintf("%d.%dMbyte/s",m,k%1024UL*100/1024UL);
+        }
+        else
+        {
+            rt_kprintf("%d.%dKbyte/s",k,speed%1024UL*100/1024UL);
+        }
+    }
+    else
+    {
+        rt_kprintf("%dbyte/s",speed);
+    }
+}
+
 static rt_err_t _block_device_test(rt_device_t device)
 {
     rt_err_t result;
@@ -218,8 +242,9 @@ static rt_err_t _block_device_test(rt_device_t device)
                     device->read(device,i%10,read_buffer,1);
                 }
                 tick_end = rt_tick_get();
-                rt_kprintf("read 200 sector from %d to %d,",tick_start,tick_end);
-                rt_kprintf("%d byte/s\r\n",(geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("read 200 sector from %d to %d, ",tick_start,tick_end);
+                calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("\r\n");
 
                 // sign sector write
                 tick_start = rt_tick_get();
@@ -228,8 +253,9 @@ static rt_err_t _block_device_test(rt_device_t device)
                     device->write(device,i%10,read_buffer,1);
                 }
                 tick_end = rt_tick_get();
-                rt_kprintf("write 200 sector from %d to %d,",tick_start,tick_end);
-                rt_kprintf("%d byte/s\r\n",(geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("write 200 sector from %d to %d, ",tick_start,tick_end);
+                calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("\r\n");
             }
         }// step 4: speed test
 
