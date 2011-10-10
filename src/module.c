@@ -863,7 +863,7 @@ rt_module_t rt_module_open(const char *path)
 	}
 
 	//name = _strip_name(path);
-	name = path;
+	name = (char *)path;
 	module = rt_module_load(name, (void *)buffer);
 	rt_free(buffer);
 	//rt_free(name);
