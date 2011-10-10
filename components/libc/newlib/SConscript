@@ -1,8 +1,7 @@
 Import('rtconfig')
-
 from building import *
 
-if rtconfig.CROSS_TOOL != 'gcc':
+if GetDepend('RT_USING_NEWLIB') and rtconfig.CROSS_TOOL != 'gcc':
     print '================ERROR============================'
     print 'Please use GNU GCC compiler if using newlib'
     print '================================================='
