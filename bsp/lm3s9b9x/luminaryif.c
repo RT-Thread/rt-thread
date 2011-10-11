@@ -443,15 +443,12 @@ int rt_hw_luminaryif_init(void)
 	LED1        Bit 2   Output
 	*/
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-	GPIODirModeSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_DIR_MODE_HW);
-	GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3,
-	                 GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
     /* GPIODirModeSet and GPIOPadConfigSet */
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
     GPIOPinConfigure(GPIO_PF2_LED1);
     GPIOPinConfigure(GPIO_PF3_LED0);
 
-	FlashUserSet(0x12345678, 0x12345678);
+	FlashUserSet(0x00371200, 0x00563412); /* OUI:00-12-37 (hex) Texas Instruments, only for test */
 	/* Configure the hardware MAC address */
 	FlashUserGet(&ulUser0, &ulUser1);
 	if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
