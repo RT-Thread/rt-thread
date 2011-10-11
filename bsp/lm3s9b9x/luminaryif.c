@@ -99,7 +99,7 @@ rt_err_t luminaryif_init(rt_device_t dev)
     //
     EthernetIntEnable(ETH_BASE, ETH_INT_RX | ETH_INT_TX);
 
-    return RT_EOK;	
+    return RT_EOK;
 }
 
 void luminaryif_isr(void)
@@ -121,7 +121,7 @@ void luminaryif_isr(void)
         // Indicate that a packet has been received.
         //
         rt_err_t result;
-		
+
         /* a frame has been received */
         result = eth_device_ready((struct eth_device*)&(luminaryif_dev->parent));
 
@@ -137,7 +137,7 @@ void luminaryif_isr(void)
         /* A frame has been transmitted. */
         rt_sem_release(&tx_sem);
     }
-	
+
 }
 
 /* control the interface */
@@ -182,7 +182,7 @@ rt_size_t luminaryif_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt
 {
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
-}	
+}
 
 //****************************************************************************
 //
@@ -200,11 +200,11 @@ rt_err_t luminaryif_tx(rt_device_t dev, struct pbuf *p)
     int iGather;
     unsigned long ulGather;
     unsigned char *pucGather;
-    unsigned long ulTemp;	
+    unsigned long ulTemp;
 
     /* lock tx operation */
     rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
-	
+
     //
     // Wait for space available in the TX FIFO.
     //
@@ -275,7 +275,7 @@ rt_err_t luminaryif_tx(rt_device_t dev, struct pbuf *p)
                 ulTemp  = (pucBuf[iBuf++] <<  0);
                 ulTemp |= (pucBuf[iBuf++] <<  8);
                 ulTemp |= (pucBuf[iBuf++] << 16);
-                ulTemp |= (pucBuf[iBuf++] << 24);		
+                ulTemp |= (pucBuf[iBuf++] << 24);
                 HWREG(ETH_BASE + MAC_O_DATA) = ulTemp;
             }
         }
@@ -343,14 +343,14 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
 
     if(!EthernetPacketAvail(ETH_BASE))
     {
-        // 
-        // Enable Ethernet RX Interrupt. 
-        // 
-        EthernetIntEnable(ETH_BASE, ETH_INT_RX); 
+        //
+        // Enable Ethernet RX Interrupt.
+        //
+        EthernetIntEnable(ETH_BASE, ETH_INT_RX);
 
         return(NULL);
     }
-	
+
     //
     // Obtain the size of the packet and put it into the "len" variable.
     // Note:  The length returned in the FIFO length position includes the
@@ -424,7 +424,7 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
         lwip_stats.link.drop++;
 #endif
     }
-	
+
     return(p);
 }
 
@@ -437,7 +437,7 @@ int rt_hw_luminaryif_init(void)
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
 	SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
 
-	/* 	
+	/*
 	Enable Port F for Ethernet LEDs.
 	LED0        Bit 3   Output
 	LED1        Bit 2   Output
@@ -446,6 +446,10 @@ int rt_hw_luminaryif_init(void)
 	GPIODirModeSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_DIR_MODE_HW);
 	GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3,
 	                 GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
+    /* GPIODirModeSet and GPIOPadConfigSet */
+    GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
+    GPIOPinConfigure(GPIO_PF2_LED1);
+    GPIOPinConfigure(GPIO_PF3_LED0);
 
 	FlashUserSet(0x12345678, 0x12345678);
 	/* Configure the hardware MAC address */
@@ -464,11 +468,11 @@ int rt_hw_luminaryif_init(void)
 	luminaryif_dev_entry.parent.parent.control	= luminaryif_control;
 	luminaryif_dev_entry.parent.eth_rx		= luminaryif_rx;
 	luminaryif_dev_entry.parent.eth_tx			= luminaryif_tx;
-	
-	/* 
+
+	/*
 	Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
 	address needed to program the hardware registers, then program the MAC
-	address into the Ethernet Controller registers. 
+	address into the Ethernet Controller registers.
 	*/
 	luminaryif_dev_entry.dev_addr[0] = ((ulUser0 >>  0) & 0xff);
 	luminaryif_dev_entry.dev_addr[1] = ((ulUser0 >>  8) & 0xff);
@@ -478,12 +482,12 @@ int rt_hw_luminaryif_init(void)
 	luminaryif_dev_entry.dev_addr[5] = ((ulUser1 >> 16) & 0xff);
 
 	/* Program the hardware with it's MAC address (for filtering). */
-	EthernetMACAddrSet(ETH_BASE, luminaryif_dev_entry.dev_addr);	
-	
+	EthernetMACAddrSet(ETH_BASE, luminaryif_dev_entry.dev_addr);
+
 	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 
 	result = eth_device_init(&(luminaryif_dev->parent), "E0");
-	
+
 	return result;
 }
 
