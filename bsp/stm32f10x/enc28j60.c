@@ -332,6 +332,10 @@ void enc28j60_isr()
 		/* TX Error handler */
 		if ((eir & EIR_TXERIF) != 0)
 		{
+            enc28j60_set_bank(ECON1);
+            spi_write_op(ENC28J60_BIT_FIELD_SET, ECON1, ECON1_TXRST);
+            spi_write_op(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_TXRST);
+            enc28j60_set_bank(EIR);
 			spi_write_op(ENC28J60_BIT_FIELD_CLR, EIR, EIR_TXERIF);
 		}
 
@@ -673,9 +677,6 @@ static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Configure one bit for preemption priority */
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
     /* Enable the EXTI0 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -754,9 +755,11 @@ void rt_hw_enc28j60_init()
 	enc28j60_dev_entry.parent.eth_tx			= enc28j60_tx;
 
 	/* Update MAC address */
+	/* OUI 00-04-A3 Microchip Technology, Inc. */
 	enc28j60_dev_entry.dev_addr[0] = 0x00;
-	enc28j60_dev_entry.dev_addr[1] = 0x30;
-	enc28j60_dev_entry.dev_addr[2] = 0x6c;
+	enc28j60_dev_entry.dev_addr[1] = 0x04;
+	enc28j60_dev_entry.dev_addr[2] = 0xA3;
+	/* generate MAC addr (only for test) */
 	enc28j60_dev_entry.dev_addr[3] = 0x11;
 	enc28j60_dev_entry.dev_addr[4] = 0x22;
 	enc28j60_dev_entry.dev_addr[5] = 0x33;
