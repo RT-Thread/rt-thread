@@ -17,9 +17,21 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+/* whether use board external SRAM memory */
+// <e>Use external SRAM memory on the board
+// 	<i>Enable External SRAM memory
+#define LM3S_EXT_SRAM          0
+//	<o>Begin Address of External SRAM
+//		<i>Default: 0x60000000
+#define LM3S_EXT_SRAM_BEGIN    0x60000000 /* the begining address of external SRAM */
+//	<o>End Address of External SRAM
+//		<i>Default: 0x60000000
+#define LM3S_EXT_SRAM_END      0x607FFFFF /* the end address of external SRAM */
+// </e>
+
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //	<i>Default: 64
-#define LM3S_SRAM_SIZE         64
+#define LM3S_SRAM_SIZE         96
 #define LM3S_SRAM_END          (0x20000000 + LM3S_SRAM_SIZE * 1024)
 
 // For lm3s8962, it should be SYSCTL_XTAL_8MHZ

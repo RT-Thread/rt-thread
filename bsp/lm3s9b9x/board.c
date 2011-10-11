@@ -58,9 +58,16 @@ void rt_hw_timer_handler(void)
 void rt_hw_eth_handler(void)
 {
 #ifdef RT_USING_LWIP
-		/* luminary ethernet interface */
-		extern void luminaryif_isr(void);
-		luminaryif_isr();
+    extern void luminaryif_isr(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* luminary ethernet interface */
+    luminaryif_isr();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
 #endif
 }
 
@@ -81,6 +88,10 @@ void rt_hw_board_init()
 	/* enable ssio */
 	//SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
 
+#if LM3S_EXT_SRAM == 1
+	/* init SDRAM */
+	rt_hw_sdram_init();
+#endif
 	/* init console */
 	rt_hw_console_init();
 

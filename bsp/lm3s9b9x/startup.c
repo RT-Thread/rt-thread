@@ -56,7 +56,7 @@ extern int __bss_end;
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void assert_failed(u8* file, u32 line)
+void __error__(char* file, unsigned long line)
 {
 	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
 	rt_kprintf("       file  %s\r\n", file);
@@ -87,6 +87,10 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
+#if LM3S_EXT_SRAM == 1
+	/* init sdram */
+	rt_system_heap_init((void*)LM3S_EXT_SRAM_BEGIN, (void*)LM3S_EXT_SRAM_END);
+#else
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)LM3S_SRAM_END);
 #elif __ICCARM__
@@ -94,6 +98,7 @@ void rtthread_startup(void)
 #else
 	/* init memory system */
 	rt_system_heap_init((void*)&__bss_end, (void*)LM3S_SRAM_END);
+#endif
 #endif
 #endif
 
@@ -139,12 +144,11 @@ void rtthread_startup(void)
 
 int main(void)
 {
-	rt_uint32_t level UNUSED;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+    rt_hw_interrupt_disable();
+
 	rtthread_startup();
-	
+
 	return 0;
 }
 

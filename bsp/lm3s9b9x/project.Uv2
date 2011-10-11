@@ -13,6 +13,7 @@ Group (library)
 File 1,1,<.\application.c><application.c>
 File 1,1,<.\startup.c><startup.c>
 File 1,1,<.\board.c><board.c>
+File 1,1,<.\sdram.c><sdram.c>
 File 1,1,<.\luminaryif.c><luminaryif.c>
 File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\device.c><device.c>
@@ -202,7 +203,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S9B96)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S9B96)
-  OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
+  OPTDBG 49142,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\lmidk-agdi.dll)
  FLASH3 ("" ())

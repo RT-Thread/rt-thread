@@ -113,9 +113,6 @@
 /* Ethernet padding size */
 #define RT_LWIP_ETH_PAD_SIZE 2
 
-/* TCP sender buffer space*/
-#define RT_LWIP_TCP_SND_BUF	1024*8
-
 /* Enable SNMP protocol*/
 #define RT_LWIP_SNMP
 
@@ -143,12 +140,19 @@
 #define RT_LWIP_MSKADDR3	0
 
 /* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		22
+#define RT_LWIP_TCPTHREAD_PRIORITY		12
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
 #define RT_LWIP_TCPTHREAD_STACKSIZE		1024
 
 /* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		23
+#define RT_LWIP_ETHTHREAD_PRIORITY		15
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
+
+/* TCP sender buffer space */
+#define RT_LWIP_TCP_SND_BUF	8192
+/* TCP receive window. */
+#define RT_LWIP_TCP_WND		8192
+
+
 #endif

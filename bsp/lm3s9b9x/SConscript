@@ -2,7 +2,7 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c']
+src_bsp = ['application.c', 'startup.c', 'sdram.c', 'board.c']
 
 src_drv = []
 if GetDepend('RT_USING_DFS'):
