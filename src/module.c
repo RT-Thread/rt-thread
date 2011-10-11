@@ -815,7 +815,7 @@ rt_module_t rt_module_open(const char *path)
 	int fd, length;
 	struct rt_module *module;
 	struct stat s;
-	char *buffer, *offset_ptr, *name;
+	char *buffer, *offset_ptr;
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -862,11 +862,8 @@ rt_module_t rt_module_open(const char *path)
 		return RT_NULL;
 	}
 
-	//name = _strip_name(path);
-	name = (char *)path;
-	module = rt_module_load(name, (void *)buffer);
+	module = rt_module_load(path, (void *)buffer);
 	rt_free(buffer);
-	//rt_free(name);
 
 	return module;
 }
