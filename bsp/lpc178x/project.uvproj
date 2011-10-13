@@ -158,7 +158,7 @@
             <UseTargetDll>1</UseTargetDll>
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
-            <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
+            <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
             <DriverSelection>4099</DriverSelection>
           </Flash1>
@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;.;..\..\libcpu\arm\lpc17xx;..\..\include;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
+              <IncludePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;drivers;.;..\..\libcpu\arm\lpc17xx;..\..\include;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,60 +385,6 @@
       <Groups>
         <Group>
           <GroupName>Startup</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>2</IncludeInBuild>
-              <AlwaysBuild>2</AlwaysBuild>
-              <GenerateAssemblyFile>2</GenerateAssemblyFile>
-              <AssembleAssemblyFile>2</AssembleAssemblyFile>
-              <PublicsOnly>2</PublicsOnly>
-              <StopOnExitCode>11</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-            </CommonProperty>
-            <GroupArmAds>
-              <Cads>
-                <interw>2</interw>
-                <Optim>0</Optim>
-                <oTime>2</oTime>
-                <SplitLS>2</SplitLS>
-                <OneElfS>2</OneElfS>
-                <Strict>2</Strict>
-                <EnumInt>2</EnumInt>
-                <PlainCh>2</PlainCh>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <wLevel>0</wLevel>
-                <uThumb>2</uThumb>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath>.\drivers</IncludePath>
-                </VariousControls>
-              </Cads>
-              <Aads>
-                <interw>2</interw>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <thumb>2</thumb>
-                <SplitLS>2</SplitLS>
-                <SwStkChk>2</SwStkChk>
-                <NoWarn>2</NoWarn>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Aads>
-            </GroupArmAds>
-          </GroupOption>
           <Files>
             <File>
               <FileName>application.c</FileName>
@@ -521,34 +467,14 @@
           <GroupName>LPC17XX</GroupName>
           <Files>
             <File>
-              <FileName>cpu.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\cpu.c</FilePath>
-            </File>
-            <File>
-              <FileName>fault.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\fault.c</FilePath>
-            </File>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\interrupt.c</FilePath>
-            </File>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\stack.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc17xx\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\lpc17xx\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>fault_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\fault_rvds.S</FilePath>
             </File>
             <File>
               <FileName>backtrace.c</FileName>
@@ -653,37 +579,37 @@
             <File>
               <FileName>startup_LPC177x_8x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
+              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>driver</GroupName>
+          <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>lpc177x_8x_uart.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\lpc177x_8x_uart.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
               <FileName>lpc177x_8x_clkpwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\lpc177x_8x_clkpwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\uart.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
             </File>
             <File>
               <FileName>lpc177x_8x_pinsel.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\lpc177x_8x_pinsel.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
             </File>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>lpc177x_8x_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\board.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
         </Group>

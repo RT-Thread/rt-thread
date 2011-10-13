@@ -2,16 +2,9 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp   = ['application.c', 'startup.c', 'board.c']
-src_drv   = ['uart.c', 'led.c']
+src_bsp   = ['application.c', 'startup.c']
 
-if GetDepend('RT_USING_DFS'):
-    src_drv += ['sd.c', 'spi.c']
-
-if GetDepend('RT_USING_LWIP'):
-    src_drv += ['emac.c']
-
-src = File(src_bsp + src_drv)
+src = File(src_bsp)
 CPPPATH = [ GetCurrentDir() ]
 CPPDEFINES = []
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
