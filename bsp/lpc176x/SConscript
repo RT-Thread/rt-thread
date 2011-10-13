@@ -4,7 +4,6 @@ from building import *
 
 src_bsp   = ['application.c', 'startup.c', 'board.c']
 src_drv   = ['uart.c', 'led.c']
-src_cmsis = ['CMSIS/CM3/CoreSupport/core_cm3.c', 'CMSIS/CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
 
 if GetDepend('RT_USING_DFS'):
     src_drv += ['sd.c', 'spi.c']
@@ -12,8 +11,8 @@ if GetDepend('RT_USING_DFS'):
 if GetDepend('RT_USING_LWIP'):
     src_drv += ['emac.c']
 
-src = File(src_bsp + src_drv + src_cmsis)
-CPPPATH = [ RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/CoreSupport', RTT_ROOT + '/bsp/lpc176x/CMSIS/CM3/DeviceSupport/NXP/LPC17xx',RTT_ROOT + '/bsp/lpc176x']
+src = File(src_bsp + src_drv )
+CPPPATH = [ GetCurrentDir() ]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
