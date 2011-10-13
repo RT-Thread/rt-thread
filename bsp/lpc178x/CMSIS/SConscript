@@ -1,0 +1,12 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src	= Glob('*.c')
+src = ['CM3/CoreSupport/core_cm3.c', 'CM3/DeviceSupport/NXP/LPC177x_8x/system_LPC177x_8x.c']
+CPPPATH = [cwd + '/CM3/CoreSupport', cwd + '/CM3/DeviceSupport/NXP/LPC177x_8x/']
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
