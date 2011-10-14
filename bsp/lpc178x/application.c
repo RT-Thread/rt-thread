@@ -40,19 +40,19 @@
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-    unsigned int count=0;
-
-    while (1)
-    {
-        /* led1 on */
-        rt_kprintf("on count : %d\r\n",count);
-        count++;
-        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
-
-        /* led1 off */
-        rt_kprintf("led off\r\n");
-        rt_thread_delay( RT_TICK_PER_SECOND/2 );
-    }
+//    unsigned int count=0;
+//
+//    while (1)
+//    {
+//        /* led1 on */
+//        rt_kprintf("on count : %d\r\n",count);
+//        count++;
+//        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
+//
+//        /* led1 off */
+//        rt_kprintf("led off\r\n");
+//        rt_thread_delay( RT_TICK_PER_SECOND/2 );
+//    }
 
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
