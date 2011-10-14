@@ -1,9 +1,22 @@
+import copy
 Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
 src	= Glob('*.c')
+
+# remove no need file.
+if GetDepend('RT_USING_LWIP') == False:
+	src_need_remove = ['emac.c'] # need remove file list.
+	src_tmp = copy.copy(src)
+	count = 0
+	for i in range(0, len(src_tmp)):
+		s = str(src_tmp[i])
+		if s in src_need_remove:
+			src.pop(i-count)
+			count = count + 1
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
