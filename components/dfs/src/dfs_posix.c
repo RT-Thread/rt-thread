@@ -200,6 +200,11 @@ off_t lseek(int fd, off_t offset, int whence)
 		break;
 	}
 
+	if( offset < 0 )
+	{
+		rt_set_errno(EINVAL);
+		return -1;
+	}
 	result = dfs_file_lseek(d, offset);
 	if (result < 0)
 	{
