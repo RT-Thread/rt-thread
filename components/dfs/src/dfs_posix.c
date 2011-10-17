@@ -202,7 +202,7 @@ off_t lseek(int fd, off_t offset, int whence)
 
 	if( offset < 0 )
 	{
-		rt_set_errno(EINVAL);
+		rt_set_errno(DFS_STATUS_EINVAL);
 		return -1;
 	}
 	result = dfs_file_lseek(d, offset);
