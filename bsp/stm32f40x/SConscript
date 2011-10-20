@@ -1,0 +1,10 @@
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f4xx_it.c']
+src_drv = ['usart.c', 'serial.c']
+
+src = src_bsp + src_drv
+CPPPATH = [GetCurrentDir()]
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
