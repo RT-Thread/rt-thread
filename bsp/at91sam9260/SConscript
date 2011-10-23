@@ -8,8 +8,8 @@ src_drv = ['console.c']
 if GetDepend('RT_USING_LED'):
 	src_drv += ['led.c']
 
-#if GetDepend('RT_USING_DFS'):
-	#src_drv += ['sdcard.c']
+if GetDepend('RT_USING_MMCSD'):
+	src_drv += ['at91_mci.c']
 
 if GetDepend('RT_USING_LWIP'):
 	src_drv += ['macb.c']

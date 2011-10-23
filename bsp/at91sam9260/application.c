@@ -36,6 +36,11 @@
 #include <devfs.h>
 #endif
 
+#ifdef RT_USING_MMCSD
+#include <mmcsd_core.h>
+#include "at91_mci.h"
+#endif
+
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
 #include <arch/sys_arch_init.h>
@@ -101,6 +106,19 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
+#ifdef RT_USING_MMCSD
+	rt_mmcsd_core_init();
+	rt_mmcsd_blk_init();
+	at91_mci_init();
+	rt_thread_delay(RT_TICK_PER_SECOND*2);
+	/* mount sd card fat partition 1 as root directory */
+		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+		{
+			rt_kprintf("File System initialized!\n");
+		}
+		else
+			rt_kprintf("File System initialzation failed!\n");
+#endif
 	}
 #endif
 
@@ -109,6 +127,8 @@ void rt_init_thread_entry(void* parameter)
 		/* register ethernetif device */
 		eth_system_device_init();
 		rt_hw_macb_init();
+		/* re-init device driver */
+		//rt_device_init_all();
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");

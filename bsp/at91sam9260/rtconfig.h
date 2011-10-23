@@ -118,6 +118,8 @@
 
 //#define RT_USING_LED
 
+#define RT_USING_MMCSD
+
 #define RT_USING_DBGU
 /* #define RT_USING_UART0 */
 /* #define RT_USING_UART1 */

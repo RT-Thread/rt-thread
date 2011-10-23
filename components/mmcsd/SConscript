@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+from building import *
+
+src = Split("""
+block_dev.c
+mmcsd_core.c
+sd.c
+""")
+
+# The set of source files associated with this SConscript file.
+path = [RTT_ROOT + '/components/mmcsd']
+
+
+group = DefineGroup('MMCSD', src, depend = ['RT_USING_MMCSD'], CPPPATH = path)
+
+Return('group')
