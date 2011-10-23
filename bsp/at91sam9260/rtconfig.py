@@ -52,7 +52,7 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSS9'
+    DEVICE = ' --device DARMATS9'
     CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-at91sam9260.map --ro-base 0x20000000 --entry Entry_Point --first Entry_Point'
