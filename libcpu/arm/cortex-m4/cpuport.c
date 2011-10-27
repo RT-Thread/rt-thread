@@ -30,20 +30,55 @@ struct stack_contex
 	rt_uint32_t psr;
 };
 
+struct stack_contex_fpu
+{
+	rt_uint32_t r0;
+	rt_uint32_t r1;
+	rt_uint32_t r2;
+	rt_uint32_t r3;
+	rt_uint32_t r12;
+	rt_uint32_t lr;
+	rt_uint32_t pc;
+	rt_uint32_t psr;
+	/* FPU register */
+	rt_uint32_t S0;
+	rt_uint32_t S1;
+	rt_uint32_t S2;
+	rt_uint32_t S3;
+	rt_uint32_t S4;
+	rt_uint32_t S5;
+	rt_uint32_t S6;
+	rt_uint32_t S7;
+	rt_uint32_t S8;
+	rt_uint32_t S9;
+	rt_uint32_t S10;
+	rt_uint32_t S11;
+	rt_uint32_t S12;
+	rt_uint32_t S13;
+	rt_uint32_t S14;
+	rt_uint32_t S15;
+	rt_uint32_t FPSCR;
+	rt_uint32_t NO_NAME;
+};
+
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	rt_uint8_t *stack_addr, void *texit)
 {
 	unsigned long *stk;
+	struct stack_contex_fpu * stack_contex_fpu;
 
 	stk 	 = (unsigned long *)stack_addr;
-	*(stk)   = 0x01000000L;					/* PSR */
-	*(--stk) = (unsigned long)tentry;		/* entry point, pc */
-	*(--stk) = (unsigned long)texit;		/* lr */
-	*(--stk) = 0;							/* r12 */
-	*(--stk) = 0;							/* r3 */
-	*(--stk) = 0;							/* r2 */
-	*(--stk) = 0;							/* r1 */
-	*(--stk) = (unsigned long)parameter;	/* r0 : argument */
+
+	stk -= sizeof(struct stack_contex_fpu);
+	stack_contex_fpu = (struct stack_contex_fpu *)stk;
+	stack_contex_fpu->r0 = (unsigned long)parameter; /* r0 : argument */
+	stack_contex_fpu->r1 = 0;                        /* r1 */
+	stack_contex_fpu->r2 = 0;                        /* r2 */
+	stack_contex_fpu->r3 = 0;                        /* r3 */
+	stack_contex_fpu->r12 = 0;                       /* r12 */
+	stack_contex_fpu->lr = (unsigned long)texit;     /* lr */
+	stack_contex_fpu->pc = (unsigned long)tentry;    /* entry point, pc */
+	stack_contex_fpu->psr = 0x01000000L;             /* PSR */
 
 	*(--stk) = 0;							/* r11 */
 	*(--stk) = 0;							/* r10 */
