@@ -1,10 +1,14 @@
-from building import *
+# for module compiling
+import os
+Import('RTT_ROOT')
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f4xx_it.c']
-src_drv = ['usart.c', 'serial.c']
+cwd = str(Dir('#'))
+objs = []
+list = os.listdir(cwd)
 
-src = src_bsp + src_drv
-CPPPATH = [GetCurrentDir()]
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-Return('group')
+Return('objs')

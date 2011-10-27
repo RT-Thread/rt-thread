@@ -18,11 +18,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-/* STM32F10x library definitions */
-#include "stm32f4xx.h"
-//#include <stm32f10x.h>
+/* STM32F40x library definitions */
+#include <stm32f4xx.h>
 
-#define UART_RX_BUFFER_SIZE		128
+#define UART_RX_BUFFER_SIZE		64
 #define UART_TX_DMA_NODE_SIZE	4
 
 /* data node for Tx Mode */
@@ -35,7 +34,6 @@ struct stm32_serial_data_node
 struct stm32_serial_dma_tx
 {
 	/* DMA Channel */
-//	DMA_Channel_TypeDef* dma_channel;
 	DMA_Stream_TypeDef* dma_channel;
 
 	/* data list head and tail */

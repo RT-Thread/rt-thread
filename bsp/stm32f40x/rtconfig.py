@@ -3,17 +3,21 @@ ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='keil'
 
+# cross_tool provides the cross compiler
+# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/SourceryGCC/bin'
+	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 5.4 Evaluation_0'	
+	IAR_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0'
 
+#
 BUILD = 'debug'
+STM32_TYPE = 'STM32F4XX'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -77,7 +81,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D USE_STDPERIPH_DRIVER'
+    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
@@ -95,6 +99,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
+    CFLAGS += ' --use_c++_inline'
         
     AFLAGS = ''
     AFLAGS += ' -s+' 
@@ -103,8 +108,9 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None' 
 
-    LFLAGS = ' --config stm32_rom.icf'
-    LFLAGS += ' --semihosting' 
+    LFLAGS = ' --config stm32f10x_flash.icf'
+    LFLAGS += ' --redirect _Printf=_PrintfTiny' 
+    LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    
 
     EXEC_PATH = IAR_PATH + '/arm/bin/'

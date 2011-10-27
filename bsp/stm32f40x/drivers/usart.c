@@ -230,7 +230,6 @@ volatile USART_TypeDef * uart2_debug = USART2;
 void rt_hw_usart_init()
 {
 	USART_InitTypeDef USART_InitStructure;
-	USART_ClockInitTypeDef USART_ClockInitStructure;
 
 	RCC_Configuration();
 
@@ -248,12 +247,7 @@ void rt_hw_usart_init()
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_ClockInitStructure.USART_Clock = USART_Clock_Disable;
-	USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
-	USART_ClockInitStructure.USART_CPHA = USART_CPHA_2Edge;
-	USART_ClockInitStructure.USART_LastBit = USART_LastBit_Disable;
 	USART_Init(USART1, &USART_InitStructure);
-	USART_ClockInit(USART1, &USART_ClockInitStructure);
 
 	/* register uart1 */
 	rt_hw_serial_register(&uart1_device, "uart1",
@@ -271,12 +265,7 @@ void rt_hw_usart_init()
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_ClockInitStructure.USART_Clock = USART_Clock_Disable;
-	USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
-	USART_ClockInitStructure.USART_CPHA = USART_CPHA_2Edge;
-	USART_ClockInitStructure.USART_LastBit = USART_LastBit_Disable;
 	USART_Init(USART2, &USART_InitStructure);
-	USART_ClockInit(USART2, &USART_ClockInitStructure);
 
 	/* register uart2 */
 	rt_hw_serial_register(&uart2_device, "uart2",
@@ -294,12 +283,7 @@ void rt_hw_usart_init()
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_ClockInitStructure.USART_Clock = USART_Clock_Disable;
-	USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
-	USART_ClockInitStructure.USART_CPHA = USART_CPHA_2Edge;
-	USART_ClockInitStructure.USART_LastBit = USART_LastBit_Disable;
 	USART_Init(USART3, &USART_InitStructure);
-	USART_ClockInit(USART3, &USART_ClockInitStructure);
 
 	uart3_dma_tx.dma_channel= UART3_TX_DMA;
 

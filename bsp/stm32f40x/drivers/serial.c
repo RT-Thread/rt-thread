@@ -16,9 +16,8 @@
  */
 
 #include "serial.h"
-#include "stm32f4xx.h"
-//#include <stm32f10x_dma.h>
-//#include <stm32f10x_usart.h>
+#include <stm32f4xx_dma.h>
+#include <stm32f4xx_usart.h>
 
 static void rt_serial_enable_dma(DMA_Stream_TypeDef* dma_channel,
 	rt_uint32_t address, rt_uint32_t size);
@@ -146,9 +145,9 @@ static void rt_serial_enable_dma(DMA_Stream_TypeDef* dma_channel,
 	DMA_Cmd(dma_channel, DISABLE);
 
 	/* set buffer address */
-//	dma_channel->CMAR = address;
+	dma_channel->M0AR = address;
 	/* set size */
-//	dma_channel->CNDTR = size;
+	dma_channel->NDTR = size;
 
 	/* enable DMA */
 	DMA_Cmd(dma_channel, ENABLE);

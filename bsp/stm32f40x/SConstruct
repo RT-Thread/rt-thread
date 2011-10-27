@@ -3,10 +3,11 @@ import sys
 import rtconfig
 
 RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread-stm32.' + rtconfig.TARGET_EXT
+TARGET = 'rtthread-stm32f4xx.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
@@ -15,19 +16,11 @@ env = Environment(tools = ['mingw'],
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
-if rtconfig.PLATFORM == 'iar':
-	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
-	env.Replace(ARFLAGS = [''])
-	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map project.map'])
-
 Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT)
-
-# STM32 firemare library building script
-objs = objs + SConscript('Libraries/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # build program 
 env.Program(TARGET, objs)

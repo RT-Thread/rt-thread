@@ -16,6 +16,8 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <stm32f4xx.h>
+
 /* board configuration */
 // <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
 // 	<i>Default: 1
@@ -35,7 +37,7 @@
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //	<i>Default: 64
-#define STM32_SRAM_SIZE         64
+#define STM32_SRAM_SIZE         128
 #define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
 
 #define RT_USING_UART2
