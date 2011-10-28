@@ -1,5 +1,5 @@
 /******************************************************************//**
- * @file 		cpu.c
+ * @file 		cpuport.c
  * @brief 	This file is part of RT-Thread RTOS
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
@@ -11,7 +11,7 @@
  **********************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2009-01-05 	Bernard 		first version
+ * 2009-01-05 	Bernard 	first version
  * 2011-02-14	onelife		Modify for EFM32
  * 2011-06-17	onelife		Merge all of the C source code into cpuport.c
  *********************************************************************/
