@@ -11,6 +11,7 @@ BuildOptions = {}
 Projects = []
 Rtt_Root = ''
 Env = None
+fs_encoding = sys.getfilesystemencoding()
 
 def _get_filetype(fn):
     if fn.rfind('.c') != -1 or fn.rfind('.C') != -1 or fn.rfind('.cpp') != -1:
@@ -122,7 +123,7 @@ def IARAddGroup(parent, name, files, project_path):
         
         file = SubElement(group, 'file')
         file_name = SubElement(file, 'name')
-        file_name.text = '$PROJ_DIR$\\' + path
+        file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
 iar_workspace = '''<?xml version="1.0" encoding="iso-8859-1"?>
 
@@ -221,12 +222,12 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         if ProjectFiles.count(name):
             name = basename + '_' + name
         ProjectFiles.append(name)
-        file_name.text = name
+        file_name.text = name.decode(fs_encoding)
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
         
-        file_path.text = path
+        file_path.text = path.decode(fs_encoding)
 
 def MDK4Project(target, script):
     project_path = os.path.dirname(os.path.abspath(target))
