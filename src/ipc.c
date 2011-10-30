@@ -626,8 +626,8 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 	}
 	else
 	{
-		/* in initialization status, the value is 1. Therefore, if the
-		 * value is great than 1, which indicates the mutex is avaible.
+		/* The value of mutex is 1 in initial status. Therefore, if the
+		 * value is great than 0, it indicates the mutex is avaible.
 		 */
 		if (mutex->value > 0)
 		{
