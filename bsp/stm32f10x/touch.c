@@ -171,6 +171,17 @@ static void rtgui_touch_calculate()
             {
                 touch->y = (touch->min_y - touch->y) * Y_WIDTH /(touch->min_y - touch->max_y);
             }
+
+            // normalize the data
+            if (touch->x & 0x8000)
+                touch->x = 0;
+            else if (touch->x > X_WIDTH)
+                touch->x = X_WIDTH - 1;
+
+            if (touch->y & 0x8000)
+                touch->y = 0;
+            else if (touch->y > Y_WIDTH)
+                touch->y = Y_WIDTH - 1;
         }
     }
 }
