@@ -158,7 +158,7 @@ static void rtgui_touch_calculate()
             {
                 touch->x = (touch->x - touch->min_x) * X_WIDTH/(touch->max_x - touch->min_x);
             }
-            else
+            else if (touch->max_x < touch->min_x)
             {
                 touch->x = (touch->min_x - touch->x) * X_WIDTH/(touch->min_x - touch->max_x);
             }
@@ -167,7 +167,7 @@ static void rtgui_touch_calculate()
             {
                 touch->y = (touch->y - touch->min_y) * Y_WIDTH /(touch->max_y - touch->min_y);
             }
-            else
+            else if (touch->max_y < touch->min_y)
             {
                 touch->y = (touch->min_y - touch->y) * Y_WIDTH /(touch->min_y - touch->max_y);
             }
