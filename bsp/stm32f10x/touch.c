@@ -92,14 +92,22 @@ static void rtgui_touch_calculate()
             rt_uint16_t tmpy[10];
             unsigned int i;
 
+            /* From the datasheet:
+             * When the very first CLK after the control byte comes in, the
+             * DOUT of ADS7843 is not valid. So we could only get 7bits from
+             * the first SPI_WriteByte. And the got the following 5 bits from
+             * another SPI_WriteByte.(aligned MSB)
+             */
             for(i=0; i<10; i++)
             {
                 CS_0();
-                WriteDataTo7843(TOUCH_MSR_X);                                    /* read X */
-                tmpx[i] = SPI_WriteByte(0x00)<<4;                      /* read MSB bit[11:8] */
-                tmpx[i] |= ((SPI_WriteByte(TOUCH_MSR_Y)>>4)&0x0F );    /* read LSB bit[7:0] */
-                tmpy[i] = SPI_WriteByte(0x00)<<4;                      /* read MSB bit[11:8] */
-                tmpy[i] |= ((SPI_WriteByte(0x00)>>4)&0x0F );           /* read LSB bit[7:0] */
+                WriteDataTo7843(TOUCH_MSR_X);
+                tmpx[i] = (SPI_WriteByte(0x00) & 0x7F) << 5;
+                tmpx[i] |= (SPI_WriteByte(TOUCH_MSR_Y) >> 3) & 0x1F;
+
+                tmpy[i] = (SPI_WriteByte(0x00) & 0x7F) << 5;
+                tmpy[i] |= (SPI_WriteByte(0x00) >> 3) & 0x1F;
+
                 WriteDataTo7843( 1<<7 ); /* ´ò¿ªÖÐ¶Ï */
                 CS_1();
             }
