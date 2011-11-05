@@ -12,7 +12,7 @@ if GetDepend('RT_USING_LWIP') == False:
 	src_tmp = copy.copy(src)
 	count = 0
 	for i in range(0, len(src_tmp)):
-		s = str(src_tmp[i])
+		s = os.path.basename(str(src_tmp[i]))
 		if s in src_need_remove:
 			src.pop(i-count)
 			count = count + 1

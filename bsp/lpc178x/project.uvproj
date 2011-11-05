@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;drivers;.;..\..\libcpu\arm\lpc17xx;..\..\include;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
+              <IncludePath>drivers;.;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\include;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -464,17 +464,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>LPC17XX</GroupName>
+          <GroupName>CORTEX-M3</GroupName>
           <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\cpuport.c</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc17xx\context_rvds.S</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>backtrace.c</FileName>
@@ -597,6 +597,11 @@
               <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
             </File>
             <File>
+              <FileName>lpc177x_8x_emc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
+            </File>
+            <File>
               <FileName>lpc177x_8x_pinsel.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
@@ -605,6 +610,11 @@
               <FileName>lpc177x_8x_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc17xx_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
             </File>
             <File>
               <FileName>uart.c</FileName>

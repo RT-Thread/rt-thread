@@ -16,11 +16,13 @@
  */
 
 /**
- * @addtogroup LPC17
+ * @addtogroup LPC1700
  */
 /*@{*/
 
 #include <rtthread.h>
+
+#include <board.h>
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -40,19 +42,6 @@
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-//    unsigned int count=0;
-//
-//    while (1)
-//    {
-//        /* led1 on */
-//        rt_kprintf("on count : %d\r\n",count);
-//        count++;
-//        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
-//
-//        /* led1 off */
-//        rt_kprintf("led off\r\n");
-//        rt_thread_delay( RT_TICK_PER_SECOND/2 );
-//    }
 
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
@@ -91,9 +80,54 @@ void rt_init_thread_entry(void *parameter)
 #endif
 }
 
+// init led
+#define rt_hw_led_init()   LPC_GPIO2->DIR |= 1<<25;
+// trun on led n
+#define rt_hw_led_on(n)    LPC_GPIO2->CLR |= 1<<25;
+// trun off led n
+#define rt_hw_led_off(n)   LPC_GPIO2->SET |= 1<<25;
+
+ALIGN(RT_ALIGN_SIZE)
+static char thread_led_stack[1024];
+struct rt_thread thread_led;
+static void rt_thread_entry_led(void* parameter)
+{
+    unsigned int count=0;
+
+    rt_hw_led_init();
+
+    while (1)
+    {
+        /* led on */
+#ifndef RT_USING_FINSH
+        rt_kprintf("led on,count : %d\r\n",count);
+#endif
+        count++;
+        rt_hw_led_on(1);
+        /* sleep 0.5 second and switch to other thread */
+        rt_thread_delay(RT_TICK_PER_SECOND/2);
+
+        /* led off */
+#ifndef RT_USING_FINSH
+        rt_kprintf("led off\r\n");
+#endif
+        rt_hw_led_off(1);
+        rt_thread_delay(RT_TICK_PER_SECOND/2);
+    }
+}
+
 int rt_application_init()
 {
     rt_thread_t init_thread;
+
+    //------- init led thread
+    rt_thread_init(&thread_led,
+                   "led",
+                   rt_thread_entry_led,
+                   RT_NULL,
+                   &thread_led_stack[0],
+                   sizeof(thread_led_stack),11,5);
+    rt_thread_startup(&thread_led);
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
     init_thread = rt_thread_create("init",

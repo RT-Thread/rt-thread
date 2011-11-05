@@ -21,25 +21,6 @@
 #include "lpc177x_8x_uart.h"
 #include "lpc177x_8x_pinsel.h"
 
-#define IER_RBR		0x01
-#define IER_THRE	0x02
-#define IER_RLS		0x04
-
-#define IIR_PEND	0x01
-#define IIR_RLS		0x03
-#define IIR_RDA		0x02
-#define IIR_CTI		0x06
-#define IIR_THRE	0x01
-
-#define LSR_RDR		0x01
-#define LSR_OE		0x02
-#define LSR_PE		0x04
-#define LSR_FE		0x08
-#define LSR_BI		0x10
-#define LSR_THRE	0x20
-#define LSR_TEMT	0x40
-#define LSR_RXFE	0x80
-
 /**
  * @addtogroup LPC11xx
  */
@@ -65,6 +46,7 @@ struct rt_uart_lpc uart0_device;
 struct rt_uart_lpc uart1_device;
 #endif
 
+#ifdef RT_USING_UART0
 void UART0_IRQHandler(void)
 {
 	rt_ubase_t level, iir;
@@ -75,53 +57,6 @@ void UART0_IRQHandler(void)
 
     /* read IIR and clear it */
 	iir = uart->UART->IIR;
-
-	iir >>= 1;			    /* skip pending bit in IIR */
-	iir &= 0x07;			/* check bit 1~3, interrupt identification */
-
-	if (iir == IIR_RDA)	    /* Receive Data Available */
-	{
-		/* Receive Data Available */
-        uart->rx_buffer[uart->save_index] = uart->UART->RBR;
-
-        level = rt_hw_interrupt_disable();
-		uart->save_index ++;
-        if (uart->save_index >= RT_UART_RX_BUFFER_SIZE)
-            uart->save_index = 0;
-        rt_hw_interrupt_enable(level);
-
-		/* invoke callback */
-		if(uart->parent.rx_indicate != RT_NULL)
-		{
-		    rt_size_t length;
-		    if (uart->read_index > uart->save_index)
-                length = RT_UART_RX_BUFFER_SIZE - uart->read_index + uart->save_index;
-            else
-                length = uart->save_index - uart->read_index;
-
-            uart->parent.rx_indicate(&uart->parent, length);
-		}
-	}
-
-	/* leave interrupt */
-	rt_interrupt_leave();
-
-	return;
-}
-
-void UART1_IRQHandler(void)
-{
-	rt_ubase_t level, iir;
-    struct rt_uart_lpc* uart = &uart1_device;
-
-	/* enter interrupt */
-	rt_interrupt_enter();
-
-    /* read IIR and clear it */
-	iir = uart->UART->IIR;
-
-//	iir >>= 1;			    /* skip pending bit in IIR */
-//	iir &= 0x07;			/* check bit 1~3, interrupt identification */
 
 	if (iir == UART_IIR_INTID_RDA)	    /* Receive Data Available */
 	{
@@ -152,6 +87,50 @@ void UART1_IRQHandler(void)
 
 	return;
 }
+#endif
+
+#ifdef RT_USING_UART1
+void UART1_IRQHandler(void)
+{
+	rt_ubase_t level, iir;
+    struct rt_uart_lpc* uart = &uart1_device;
+
+	/* enter interrupt */
+	rt_interrupt_enter();
+
+    /* read IIR and clear it */
+	iir = uart->UART->IIR;
+
+	if (iir == UART_IIR_INTID_RDA)	    /* Receive Data Available */
+	{
+		/* Receive Data Available */
+        uart->rx_buffer[uart->save_index] = uart->UART->RBR;
+
+        level = rt_hw_interrupt_disable();
+		uart->save_index ++;
+        if (uart->save_index >= RT_UART_RX_BUFFER_SIZE)
+            uart->save_index = 0;
+        rt_hw_interrupt_enable(level);
+
+		/* invoke callback */
+		if(uart->parent.rx_indicate != RT_NULL)
+		{
+		    rt_size_t length;
+		    if (uart->read_index > uart->save_index)
+                length = RT_UART_RX_BUFFER_SIZE - uart->read_index + uart->save_index;
+            else
+                length = uart->save_index - uart->read_index;
+
+            uart->parent.rx_indicate(&uart->parent, length);
+		}
+	}
+
+	/* leave interrupt */
+	rt_interrupt_leave();
+
+	return;
+}
+#endif
 
 static rt_err_t rt_uart_init (rt_device_t dev)
 {
@@ -167,7 +146,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
          * P0.3: RXD
          */
         PINSEL_ConfigPin(0, 2, 1);
-        PINSEL_ConfigPin(0, 2, 1);
+        PINSEL_ConfigPin(0, 3, 1);
 
         UART_ConfigStruct.Baud_rate = 115200;
         UART_ConfigStruct.Databits = UART_DATABIT_8;
@@ -179,7 +158,8 @@ static rt_err_t rt_uart_init (rt_device_t dev)
         // Enable UART Transmit
         UART_TxCmd( uart->UART, ENABLE);
 
-        UART_IntConfig( uart->UART, UART_INTCFG_RLS, ENABLE);
+//        UART_IntConfig( uart->UART, UART_INTCFG_RLS, ENABLE);
+        UART_IntConfig( uart->UART, UART_INTCFG_RBR, ENABLE);
     }
 #endif
 
@@ -204,7 +184,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
         // Enable UART Transmit
         UART_TxCmd( uart->UART, ENABLE);
 
-        UART_IntConfig( uart->UART, UART_INTCFG_RLS, ENABLE);
+//        UART_IntConfig( uart->UART, UART_INTCFG_RLS, ENABLE);
         UART_IntConfig( uart->UART, UART_INTCFG_RBR, ENABLE);
     }
 #endif

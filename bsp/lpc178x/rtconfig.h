@@ -3,10 +3,10 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX             8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	        8
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
@@ -56,6 +56,9 @@
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
 
+/* Using SLAB Allocator */
+//#define RT_USING_SLAB
+
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
@@ -84,7 +87,7 @@
 #define DFS_CACHE_MAX_NUM   		4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 #define RT_LWIP_USING_RT_MEM
 
 /* Enable ICMP protocol*/
@@ -126,6 +129,11 @@
 #define RT_LWIP_ETHTHREAD_PRIORITY		15
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
+
+/* TCP sender buffer space */
+#define RT_LWIP_TCP_SND_BUF	8192
+/* TCP receive window. */
+#define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
 /* #define RT_USING_RTGUI */
