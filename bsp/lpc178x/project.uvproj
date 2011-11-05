@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>drivers;.;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\include;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\include;drivers;.;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;applications;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,17 +384,77 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Startup</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>core_cm3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_LPC177x_8x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_LPC177x_8x.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_clkpwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_emc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_pinsel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc17xx_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -560,66 +620,6 @@
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\symbol.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_LPC177x_8x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_LPC177x_8x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpc177x_8x_clkpwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpc177x_8x_emc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpc177x_8x_pinsel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpc177x_8x_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpc17xx_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
         </Group>
