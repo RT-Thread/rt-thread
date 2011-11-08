@@ -186,9 +186,9 @@ static void rtgui_touch_calculate()
     }
 }
 
-static unsigned int flag = 0;
 void touch_timeout(void* parameter)
 {
+    static unsigned int touched_down = 0;
     struct rtgui_event_mouse emouse;
     static struct _touch_previous
     {
@@ -210,7 +210,7 @@ void touch_timeout(void* parameter)
         /* stop timer */
         rt_timer_stop(touch->poll_timer);
         rt_kprintf("touch up: (%d, %d)\n", emouse.x, emouse.y);
-        flag = 0;
+        touched_down = 0;
 
         if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
         {
@@ -221,7 +221,7 @@ void touch_timeout(void* parameter)
     }
     else
     {
-        if(flag == 0)
+        if(touched_down == 0)
         {
             int tmer = RT_TICK_PER_SECOND/20 ;
             /* calculation */
@@ -241,7 +241,7 @@ void touch_timeout(void* parameter)
             emouse.button = (RTGUI_MOUSE_BUTTON_LEFT |RTGUI_MOUSE_BUTTON_DOWN);
 
 //            rt_kprintf("touch down: (%d, %d)\n", emouse.x, emouse.y);
-            flag = 1;
+            touched_down = 1;
             rt_timer_control(touch->poll_timer , RT_TIMER_CTRL_SET_TIME , &tmer);
         }
         else
