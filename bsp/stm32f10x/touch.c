@@ -196,6 +196,10 @@ void touch_timeout(void* parameter)
         rt_uint32_t y;
     } touch_previous;
 
+    /* touch time is too short and we lost the position already. */
+    if ((!touch_down) && GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) != 0)
+        return;
+
     if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) != 0)
     {
         int tmer = RT_TICK_PER_SECOND/8 ;
