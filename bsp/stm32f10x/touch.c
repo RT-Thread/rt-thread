@@ -197,7 +197,7 @@ void touch_timeout(void* parameter)
     } touch_previous;
 
     /* touch time is too short and we lost the position already. */
-    if ((!touch_down) && GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) != 0)
+    if ((!touched_down) && GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) != 0)
         return;
 
     if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) != 0)
