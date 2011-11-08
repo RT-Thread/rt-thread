@@ -45,6 +45,8 @@
 
 #include "led.h"
 
+extern rt_sem_t touch_screen_calibrated;
+
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
@@ -150,6 +152,17 @@ void rt_init_thread_entry(void* parameter)
 
 		/* set lcd device as rtgui graphic driver */
 		rtgui_graphic_set_device(lcd);
+
+		/* without calibration, the position we got from the touch screen is
+		 * useless raw value and the GUI is unusable. */
+		calibration_init();
+		if (touch_screen_calibrated != RT_NULL)
+		{
+			rt_sem_take(touch_screen_calibrated, RT_WAITING_FOREVER);
+			/* NOTE: no other thread use this semaphore, so we can delete it.
+			 * If this is not your case, comment this line. */
+			rt_sem_delete(touch_screen_calibrated);
+		}
 
 		/* startup rtgui */
 		rtgui_startup();

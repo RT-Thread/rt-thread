@@ -30,6 +30,9 @@ struct calibration_session
 };
 static struct calibration_session* calibration_ptr = RT_NULL;
 
+/* a semaphore that will become avaible when calibration finished. */
+rt_sem_t touch_screen_calibrated = RT_NULL;
+
 static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 {
 	if (calibration_ptr != RT_NULL)
@@ -254,6 +257,8 @@ void calibration_entry(void* parameter)
 	/* release memory */
 	rt_free(calibration_ptr);
 	calibration_ptr = RT_NULL;
+	/* tell other thread that we finished calibration */
+	rt_sem_release(touch_screen_calibrated);
 }
 
 void calibration_init()
@@ -261,7 +266,12 @@ void calibration_init()
 	rt_device_t device;
 
 	device = rt_device_find("touch");
-	if (device == RT_NULL) return; /* no this device */
+	if (device == RT_NULL)
+		return; /* no such device */
+
+	touch_screen_calibrated = rt_sem_create("tc_cali", 0, RT_IPC_FLAG_FIFO);
+	if (touch_screen_calibrated == RT_NULL)
+		return;
 
 	calibration_ptr = (struct calibration_session*)rt_malloc(sizeof(struct calibration_session));
 	rt_memset(calibration_ptr, 0, sizeof(struct calibration_data));
@@ -271,7 +281,8 @@ void calibration_init()
 
 	calibration_ptr->tid = rt_thread_create("cali", calibration_entry, RT_NULL,
 		2048, 20, 5);
-	if (calibration_ptr->tid != RT_NULL) rt_thread_startup(calibration_ptr->tid);
+	if (calibration_ptr->tid != RT_NULL)
+		rt_thread_startup(calibration_ptr->tid);
 }
 
 #ifdef RT_USING_FINSH
