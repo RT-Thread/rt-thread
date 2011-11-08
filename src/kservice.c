@@ -355,20 +355,31 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b)
 /**
  * This function will copy string no more than n bytes.
  *
- * @param dest the string to copy
+ * @param dst the string to copy
  * @param src the string to be copied
  * @param n the maximum copied length
  *
  * @return the result
  */
-char *rt_strncpy(char *dest, const char *src, rt_ubase_t n)
+char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 {
-	char *tmp = (char *)dest, *s = (char *)src;
+	if (n != 0)
+	{
+		char *d = dst;
+		const char *s = src;
 
-	while (n--)
-		*tmp++ = *s++;
-
-	return dest;
+		do
+		{
+			if ((*d++ = *s++) == 0)
+			{
+				/* NUL pad the remaining n-1 bytes */
+				while (--n != 0)
+						*d++ = 0;
+				break;
+			}
+		} while (--n != 0);
+	}
+	return (dst);
 }
 
 /**

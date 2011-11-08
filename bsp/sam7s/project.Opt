@@ -14,17 +14,17 @@ Target (RT-Thread/AT91SAM7S), 0x0004 // Tools: 'ARM-ADS'
 GRPOPT 1,(Startup),1,0,0
 GRPOPT 2,(Kernel),0,0,0
 GRPOPT 3,(AT91SAM7S),1,0,0
-GRPOPT 4,(finsh),1,0,0
+GRPOPT 4,(finsh),0,0,0
 
-OPTFFF 1,1,1,352321536,0,0,0,0,<.\application.c><application.c> 
-OPTFFF 1,2,1,402653184,0,0,0,0,<.\board.c><board.c> 
+OPTFFF 1,1,1,0,0,0,0,0,<.\application.c><application.c> 
+OPTFFF 1,2,1,0,0,0,0,0,<.\board.c><board.c> 
 OPTFFF 1,3,1,0,0,0,0,0,<.\startup.c><startup.c> 
-OPTFFF 1,4,5,0,0,0,0,0,<.\rtconfig.h><rtconfig.h> 
+OPTFFF 1,4,5,436207616,0,0,0,0,<.\rtconfig.h><rtconfig.h> 
 OPTFFF 2,5,1,0,0,0,0,0,<..\..\src\clock.c><clock.c> 
-OPTFFF 2,6,1,0,0,0,0,0,<..\..\src\idle.c><idle.c> 
-OPTFFF 2,7,1,0,0,0,0,0,<..\..\src\ipc.c><ipc.c> 
+OPTFFF 2,6,1,167772160,0,0,0,0,<..\..\src\idle.c><idle.c> 
+OPTFFF 2,7,1,436207616,0,0,0,0,<..\..\src\ipc.c><ipc.c> 
 OPTFFF 2,8,1,0,0,0,0,0,<..\..\src\irq.c><irq.c> 
-OPTFFF 2,9,1,0,0,0,0,0,<..\..\src\kservice.c><kservice.c> 
+OPTFFF 2,9,1,385875968,0,0,0,0,<..\..\src\kservice.c><kservice.c> 
 OPTFFF 2,10,1,0,0,0,0,0,<..\..\src\mem.c><mem.c> 
 OPTFFF 2,11,1,0,0,0,0,0,<..\..\src\mempool.c><mempool.c> 
 OPTFFF 2,12,1,0,0,0,0,0,<..\..\src\object.c><object.c> 
@@ -35,24 +35,24 @@ OPTFFF 2,16,1,0,0,0,0,0,<..\..\src\thread.c><thread.c>
 OPTFFF 2,17,1,0,0,0,0,0,<..\..\src\device.c><device.c> 
 OPTFFF 3,18,1,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\cpu.c><cpu.c> 
 OPTFFF 3,19,1,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\interrupt.c><interrupt.c> 
-OPTFFF 3,20,1,100663296,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\serial.c><serial.c> 
+OPTFFF 3,20,1,436207616,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\serial.c><serial.c> 
 OPTFFF 3,21,1,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\stack.c><stack.c> 
 OPTFFF 3,22,1,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\trap.c><trap.c> 
-OPTFFF 3,23,2,385875968,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\context_rvds.S><context_rvds.S> 
+OPTFFF 3,23,2,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\context_rvds.S><context_rvds.S> 
 OPTFFF 3,24,2,0,0,0,0,0,<..\..\libcpu\arm\AT91SAM7S\start_rvds.S><start_rvds.S> 
-OPTFFF 4,25,1,0,0,0,0,0,<..\..\finsh\cmd.c><cmd.c> 
-OPTFFF 4,26,1,0,0,0,0,0,<..\..\finsh\finsh_compiler.c><finsh_compiler.c> 
-OPTFFF 4,27,1,0,0,0,0,0,<..\..\finsh\finsh_error.c><finsh_error.c> 
-OPTFFF 4,28,1,0,0,0,0,0,<..\..\finsh\finsh_heap.c><finsh_heap.c> 
-OPTFFF 4,29,1,0,0,0,0,0,<..\..\finsh\finsh_init.c><finsh_init.c> 
-OPTFFF 4,30,1,0,0,0,0,0,<..\..\finsh\finsh_node.c><finsh_node.c> 
-OPTFFF 4,31,1,0,0,0,0,0,<..\..\finsh\finsh_ops.c><finsh_ops.c> 
-OPTFFF 4,32,1,0,0,0,0,0,<..\..\finsh\finsh_parser.c><finsh_parser.c> 
-OPTFFF 4,33,1,0,0,0,0,0,<..\..\finsh\finsh_token.c><finsh_token.c> 
-OPTFFF 4,34,1,0,0,0,0,0,<..\..\finsh\finsh_var.c><finsh_var.c> 
-OPTFFF 4,35,1,0,0,0,0,0,<..\..\finsh\finsh_vm.c><finsh_vm.c> 
-OPTFFF 4,36,1,0,0,0,0,0,<..\..\finsh\shell.c><shell.c> 
-OPTFFF 4,37,1,0,0,0,0,0,<..\..\finsh\symbol.c><symbol.c> 
+OPTFFF 4,25,1,0,0,0,0,0,<..\..\components\finsh\cmd.c><cmd.c> 
+OPTFFF 4,26,1,0,0,0,0,0,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c> 
+OPTFFF 4,27,1,0,0,0,0,0,<..\..\components\finsh\finsh_error.c><finsh_error.c> 
+OPTFFF 4,28,1,0,0,0,0,0,<..\..\components\finsh\finsh_heap.c><finsh_heap.c> 
+OPTFFF 4,29,1,0,0,0,0,0,<..\..\components\finsh\finsh_init.c><finsh_init.c> 
+OPTFFF 4,30,1,0,0,0,0,0,<..\..\components\finsh\finsh_node.c><finsh_node.c> 
+OPTFFF 4,31,1,0,0,0,0,0,<..\..\components\finsh\finsh_ops.c><finsh_ops.c> 
+OPTFFF 4,32,1,0,0,0,0,0,<..\..\components\finsh\finsh_parser.c><finsh_parser.c> 
+OPTFFF 4,33,1,0,0,0,0,0,<..\..\components\finsh\finsh_token.c><finsh_token.c> 
+OPTFFF 4,34,1,0,0,0,0,0,<..\..\components\finsh\finsh_var.c><finsh_var.c> 
+OPTFFF 4,35,1,0,0,0,0,0,<..\..\components\finsh\finsh_vm.c><finsh_vm.c> 
+OPTFFF 4,36,1,0,0,0,0,0,<..\..\components\finsh\shell.c><shell.c> 
+OPTFFF 4,37,1,0,0,0,0,0,<..\..\components\finsh\symbol.c><symbol.c> 
 
 
 TARGOPT 1, (RT-Thread/AT91SAM7S)

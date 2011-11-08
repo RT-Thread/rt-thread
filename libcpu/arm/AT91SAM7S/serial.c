@@ -136,8 +136,8 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 
 	RT_ASSERT(serial != RT_NULL);
 	/* must be US0 or US1 */
-	RT_ASSERT((serial->peripheral_id != AT91C_ID_US0) &&
-		(serial->peripheral_id != AT91C_ID_US1));
+	RT_ASSERT(((serial->peripheral_id == AT91C_ID_US0) ||
+		(serial->peripheral_id == AT91C_ID_US1)));
 
 	/* Enable Clock for USART */
 	AT91C_PMC_PCER = 1 << serial->peripheral_id;
