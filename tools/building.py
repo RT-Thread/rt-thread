@@ -476,17 +476,28 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
 
-    if (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) and rtconfig.PLATFORM == 'gcc':
-        AddDepend('RT_USING_MINILIBC')
-
     # add target option
     AddOption('--target',
                       dest='target',
                       type='string',
                       help='set target project: mdk')
 
-    if GetOption('target'):
+    #{target_name:(CROSS_TOOL, PLATFORM)}
+    tgt_dict = {'mdk':('keil', 'armcc'),
+                'mdk4':('keil', 'armcc'),
+                'iar':('iar', 'iar')}
+    tgt_name = GetOption('target')
+    if tgt_name:
         SetOption('no_exec', 1)
+        try:
+            rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
+        except KeyError:
+            print 'Unknow target: %s. Avaible targets: %s' % \
+                    (tgt_name, ', '.join(tgt_dict.keys()))
+            sys.exit(1)
+    elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
+	   and rtconfig.PLATFORM == 'gcc':
+        AddDepend('RT_USING_MINILIBC')
 
     #env['CCCOMSTR'] = "CC $TARGET"
     #env['ASCOMSTR'] = "AS $TARGET"
@@ -584,10 +595,6 @@ def EndBuilding(target):
 
     if GetOption('target') == 'mdk':
         template = os.path.isfile('template.Uv2')
-        if rtconfig.CROSS_TOOL != 'keil':
-            print 'Please use Keil MDK compiler in rtconfig.py'
-            return 
-
         if template:
             MDKProject('project.Uv2', Projects)
         else:
@@ -598,13 +605,7 @@ def EndBuilding(target):
                 print 'No template project file found.'
 
     if GetOption('target') == 'mdk4':
-        if rtconfig.CROSS_TOOL != 'keil':
-            print 'Please use Keil MDK compiler in rtconfig.py'
-            return 
         MDK4Project('project.uvproj', Projects)
-    
+
     if GetOption('target') == 'iar':
-        if rtconfig.CROSS_TOOL != 'iar':
-            print 'Please use IAR compiler in rtconfig.py'
-            return 
         IARProject('project.ewp', Projects)
