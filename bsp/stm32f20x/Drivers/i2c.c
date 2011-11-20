@@ -383,6 +383,7 @@ Status I2C_Free_Bus(I2C_TypeDef* I2Cx, u32 timeout )
 	I2Cx: I2C1 or I2C2 (Now it only support I2C1)
 	pBuffer: Buffer point
 	NumByteToRW: Number of bytes read/write
+    memAddr: 1-2 bytes memory address
 	SlaveAddress: device address
 	MemType: 1 = memory address size 1 bytes, 2 = memory address size 2 bytes	
 */

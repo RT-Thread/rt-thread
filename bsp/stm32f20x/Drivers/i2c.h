@@ -102,17 +102,27 @@
 								  
 #define I2C2_DMA_CHANNEL_TX           DMA1_Stream2
 #define I2C2_DMA_CHANNEL_RX           DMA1_Stream7
+#define I2C2_DMA_TX_IRQn	          DMA1_Stream2_IRQn
+#define I2C2_DMA_RX_IRQn              DMA1_Stream7_IRQn
 
 #define I2C1_DR_Address              0x40005410
 #define I2C2_DR_Address              0x40005810
 
-#define I2C1_SDA_PIN                  GPIO_Pin_9
-#define I2C1_SCL_PIN                  GPIO_Pin_8
-#define I2C1_SDA_SOURCE               GPIO_PinSource9
-#define I2C1_SCL_SOURCE               GPIO_PinSource8
+#define I2C1_SDA_PIN                  GPIO_Pin_7
+#define I2C1_SCL_PIN                  GPIO_Pin_6
+#define I2C1_SDA_SOURCE               GPIO_PinSource7
+#define I2C1_SCL_SOURCE               GPIO_PinSource6
 #define I2C1_GPIO_PORT          	  GPIOB 
 #define I2C1_GPIO_CLK          		  RCC_AHB1Periph_GPIOB
 #define I2C1_CLK                      RCC_APB1Periph_I2C1
+
+#define I2C2_SDA_PIN                  GPIO_Pin_11
+#define I2C2_SCL_PIN                  GPIO_Pin_10
+#define I2C2_SDA_SOURCE               GPIO_PinSource11
+#define I2C2_SCL_SOURCE               GPIO_PinSource10
+#define I2C2_GPIO_PORT          	  GPIOB 
+#define I2C2_GPIO_CLK          		  RCC_AHB1Periph_GPIOB
+#define I2C2_CLK                      RCC_APB1Periph_I2C1
 
 #define I2C_MEM_1Byte			      1
 #define I2C_MEM_2Bytes				  2
