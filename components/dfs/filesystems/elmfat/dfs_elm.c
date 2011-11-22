@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2008-02-22     QiuYi        The first version.
  * 2011-10-08     Bernard      fixed the block size in statfs.
+ * 2011-11-23     Bernard      fixed the rename issue.
  */
  
 #include <rtthread.h>
@@ -535,7 +536,8 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 	FRESULT result;
 
 #if _VOLUMES > 1
-	char *drivers_oldfn, *drivers_newfn;
+	char *drivers_oldfn;
+	const char *drivers_newfn;
 	int vol;
 	extern int elm_get_vol(FATFS *fat);
 
@@ -545,15 +547,9 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 
 	drivers_oldfn = rt_malloc(256);
 	if (drivers_oldfn == RT_NULL) return -DFS_STATUS_ENOMEM;
-	drivers_newfn = rt_malloc(256);
-	if (drivers_newfn == RT_NULL)
-	{
-		rt_free(drivers_oldfn);
-		return -DFS_STATUS_ENOMEM;
-	}
+	drivers_newfn = newpath;
 
 	rt_snprintf(drivers_oldfn, 256, "%d:%s", vol, oldpath);
-	rt_snprintf(drivers_newfn, 256, "%d:%s", vol, newpath);
 #else
 	const char *drivers_oldfn, *drivers_newfn;
 
@@ -564,7 +560,6 @@ int dfs_elm_rename(struct dfs_filesystem* fs, const char* oldpath, const char* n
 	result = f_rename(drivers_oldfn, drivers_newfn);
 #if _VOLUMES > 1
 	rt_free(drivers_oldfn);
-	rt_free(drivers_newfn);
 #endif
 	return elm_result_to_dfs(result);
 }
