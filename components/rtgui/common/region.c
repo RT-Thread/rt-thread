@@ -66,14 +66,14 @@ static rtgui_region_status_t rtgui_break(rtgui_region_t *pReg);
  * the y1 to y2 area spanned by the band), then the rectangle may be broken
  * down into two or more smaller rectangles stacked one atop the other.
  *
- *  -----------				                -----------
- *  |         |				                |         |		    band 0
- *  |         |  --------		            -----------  --------
- *  |         |  |      |  in y-x banded    |         |  |      |   band 1
- *  |         |  |      |  form is	        |         |  |      |
- *  -----------  |      |		            -----------  --------
- *               |      |				    |      |   band 2
- *               --------				    --------
+ *  -----------                              -----------
+ *  |         |                              |         |             band 0
+ *  |         |  --------                    -----------  --------
+ *  |         |  |      |  in y-x banded     |         |  |      |   band 1
+ *  |         |  |      |  form is           |         |  |      |
+ *  -----------  |      |                    -----------  --------
+ *               |      |                                 |      |   band 2
+ *               --------                                 --------
  *
  * An added constraint on the rectangles is that they must cover as much
  * horizontal area as possible: no two rectangles within a band are allowed
@@ -113,8 +113,7 @@ static rtgui_region_status_t rtgui_break(rtgui_region_t *pReg);
         ((r1)->x2 >= (r2)->x2) && \
         ((r1)->y1 <= (r2)->y1) && \
         ((r1)->y2 >= (r2)->y2) )
-
-/* true iff Box r1 and Box r2 constitute cross */
+/* true iff box r1 and box r2 constitute cross */
 #define CROSS(r1,r2) \
 	  ( ((r1)->x1 <= (r2)->x1) && \
         ((r1)->x2 >= (r2)->x2) && \
@@ -641,8 +640,9 @@ rtgui_op(
 		if (ybot > ytop)
 		{
 			curBand = newReg->data->numRects;
-			(* overlapFunc)(newReg, r1, r1BandEnd, r2, r2BandEnd, ytop, ybot,
-							pOverlap);
+			if ((* overlapFunc)(newReg, r1, r1BandEnd, r2, r2BandEnd, ytop, ybot,
+							pOverlap) == RTGUI_REGION_STATUS_FAILURE)
+				return RTGUI_REGION_STATUS_FAILURE;
 			Coalesce(newReg, prevBand, curBand);
 		}
 
@@ -886,6 +886,7 @@ rtgui_region_intersect(rtgui_region_t *newReg,
 		if (!rtgui_op(newReg, reg1, reg2, rtgui_region_intersectO, RTGUI_REGION_STATUS_FAILURE, RTGUI_REGION_STATUS_FAILURE,
 					   &overlap))
 			return RTGUI_REGION_STATUS_FAILURE;
+
 		rtgui_set_extents(newReg);
 	}
 
