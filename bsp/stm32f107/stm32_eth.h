@@ -1581,7 +1581,7 @@ typedef struct  {
   * @{
   */
 void ETH_DeInit(void);
-uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, u16 PHYAddress);
+uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct);
 void ETH_StructInit(ETH_InitTypeDef* ETH_InitStruct);
 void ETH_SoftwareReset(void);
 FlagStatus ETH_GetSoftwareResetStatus(void);

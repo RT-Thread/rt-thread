@@ -26,7 +26,6 @@
 #define CHECKSUM_BY_HARDWARE
 #define MII_MODE          /* MII mode for STM3210C-EVAL Board (MB784) (check jumpers setting) */
 //#define RMII_MODE       /* RMII mode for STM3210C-EVAL Board (MB784) (check jumpers setting) */
-#define PHY_ADDRESS       	0x01 /* Relative to STM3210C-EVAL Board */
 
 
 /** @addtogroup STM32_ETH_Driver
@@ -134,17 +133,17 @@ void ETH_DeInit(void)
   *   parameters in the ETH_InitStruct .
   * @param ETH_InitStruct: pointer to a ETH_InitTypeDef structure that contains
   *   the configuration information for the specified ETHERNET peripheral.
-  * @param PHYAddress: external PHY address
   * @retval ETH_ERROR: Ethernet initialization failed
   *         ETH_SUCCESS: Ethernet successfully initialized
   */
-uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress)
+uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct)
 {
-  uint32_t RegValue = 0, tmpreg = 0;
+  uint32_t tmpreg = 0;
   __IO uint32_t i = 0;
   RCC_ClocksTypeDef  rcc_clocks;
   uint32_t hclk = 60000000;
   __IO uint32_t timeout = 0;
+
   /* Check the parameters */
   /* MAC --------------------------*/
   assert_param(IS_ETH_AUTONEGOTIATION(ETH_InitStruct->ETH_AutoNegotiation));
@@ -193,6 +192,7 @@ uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress)
   assert_param(IS_ETH_TXDMA_BURST_LENGTH(ETH_InitStruct->ETH_TxDMABurstLength));
   assert_param(IS_ETH_DMA_DESC_SKIP_LENGTH(ETH_InitStruct->ETH_DescriptorSkipLength));
   assert_param(IS_ETH_DMA_ARBITRATION_ROUNDROBIN_RXTX(ETH_InitStruct->ETH_DMAArbitration));
+
   /*-------------------------------- MAC Config ------------------------------*/
   /*---------------------- ETHERNET MACMIIAR Configuration -------------------*/
   /* Get the ETHERNET MACMIIAR value */
@@ -220,94 +220,7 @@ uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress)
   }
   /* Write to ETHERNET MAC MIIAR: Configure the ETHERNET CSR Clock Range */
   ETH->MACMIIAR = (uint32_t)tmpreg;
-  /*-------------------- PHY initialization and configuration ----------------*/
-  /* Put the PHY in reset mode */
-  if(!(ETH_WritePHYRegister(PHYAddress, PHY_BCR, PHY_Reset)))
-  {
-    /* Return ERROR in case of write timeout */
-    return ETH_ERROR;
-  }
 
-  /* Delay to assure PHY reset */
-  for(i = PHY_ResetDelay; i != 0; i--)
-  {
-  }
-
-  if(ETH_InitStruct->ETH_AutoNegotiation != ETH_AutoNegotiation_Disable)
-  {
-    /* We wait for linked satus... */
-    do
-    {
-      timeout++;
-    } while (!(ETH_ReadPHYRegister(PHYAddress, PHY_BSR) & PHY_Linked_Status) && (timeout < PHY_READ_TO));
-    /* Return ERROR in case of timeout */
-    if(timeout == PHY_READ_TO)
-    {
-      return ETH_ERROR;
-    }
-    /* Reset Timeout counter */
-    timeout = 0;
-
-    /* Enable Auto-Negotiation */
-    if(!(ETH_WritePHYRegister(PHYAddress, PHY_BCR, PHY_AutoNegotiation)))
-    {
-      /* Return ERROR in case of write timeout */
-      return ETH_ERROR;
-    }
-
-    /* Wait until the autonegotiation will be completed */
-    do
-    {
-      timeout++;
-    } while (!(ETH_ReadPHYRegister(PHYAddress, PHY_BSR) & PHY_AutoNego_Complete) && (timeout < (uint32_t)PHY_READ_TO));
-    /* Return ERROR in case of timeout */
-    if(timeout == PHY_READ_TO)
-    {
-      return ETH_ERROR;
-    }
-    /* Reset Timeout counter */
-    timeout = 0;
-
-    /* Read the result of the autonegotiation */
-    RegValue = ETH_ReadPHYRegister(PHYAddress, PHY_SR);
-
-    /* Configure the MAC with the Duplex Mode fixed by the autonegotiation process */
-    if((RegValue & PHY_Duplex_Status) != (uint32_t)RESET)
-    {
-      /* Set Ethernet duplex mode to FullDuplex following the autonegotiation */
-      ETH_InitStruct->ETH_Mode = ETH_Mode_FullDuplex;
-
-    }
-    else
-    {
-      /* Set Ethernet duplex mode to HalfDuplex following the autonegotiation */
-      ETH_InitStruct->ETH_Mode = ETH_Mode_HalfDuplex;
-    }
-    /* Configure the MAC with the speed fixed by the autonegotiation process */
-    if(RegValue & PHY_Speed_Status)
-    {
-      /* Set Ethernet speed to 10M following the autonegotiation */
-      ETH_InitStruct->ETH_Speed = ETH_Speed_10M;
-    }
-    else
-    {
-      /* Set Ethernet speed to 100M following the autonegotiation */
-      ETH_InitStruct->ETH_Speed = ETH_Speed_100M;
-    }
-  }
-  else
-  {
-    if(!ETH_WritePHYRegister(PHYAddress, PHY_BCR, ((uint16_t)(ETH_InitStruct->ETH_Mode >> 3) |
-                                                   (uint16_t)(ETH_InitStruct->ETH_Speed >> 1))))
-    {
-      /* Return ERROR in case of write timeout */
-      return ETH_ERROR;
-    }
-    /* Delay to assure PHY configuration */
-    for(i = PHY_ConfigDelay; i != 0; i--)
-    {
-    }
-  }
   /*------------------------ ETHERNET MACCR Configuration --------------------*/
   /* Get the ETHERNET MACCR value */
   tmpreg = ETH->MACCR;
@@ -3139,77 +3052,6 @@ void ETH_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#define MICR 	0x11
-#define MISR	0x12
-
-void EXTI9_5_IRQHandler(void)
-{
-    volatile rt_uint16_t status;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    status = ETH_ReadPHYRegister(PHY_ADDRESS, MISR);
-    if (status & (1 << 13))
-    {
-        /* change of link */
-        status = ETH_ReadPHYRegister(PHY_ADDRESS, PHY_SR);
-        if (status & 0x01) /* link established */
-        {
-            netif_set_link_up(stm32_eth_device.parent.netif);
-        }
-        else
-        {
-            netif_set_link_down(stm32_eth_device.parent.netif);
-        }
-    }
-
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line5);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-void rt_eth_phy_init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-    EXTI_InitTypeDef EXTI_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    /* Configure PC5 as input for PHY interrupt */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-    /* Connect PHY Interrupt Line to GPIOC Pin 5 */
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource5);
-
-    /* Configure PHY Interrupt Line to generate an interrupt on falling edge */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line5;
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-    EXTI_Init(&EXTI_InitStructure);
-
-    /* set PHY interrupt */
-    ETH_WritePHYRegister(PHY_ADDRESS, MICR, 0x0003);
-    ETH_WritePHYRegister(PHY_ADDRESS, MISR, 0x0060);
-
-    /* Clear PHY Interrupt Line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line5);
-
-
-    /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-
-}
-
 /* RT-Thread Device Interface */
 
 /* initialize the interface */
@@ -3267,7 +3109,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
   ETH_InitStructure.ETH_DMAArbitration = ETH_DMAArbitration_RoundRobin_RxTx_2_1;
 
   /* Configure ETHERNET */
-  Value = ETH_Init(&ETH_InitStructure, PHY_ADDRESS);
+  Value = ETH_Init(&ETH_InitStructure);
 
   /* Enable DMA Receive interrupt (need to enable in this case Normal interrupt) */
   ETH_DMAITConfig(ETH_DMA_IT_NIS | ETH_DMA_IT_R | ETH_DMA_IT_T, ENABLE);
@@ -3673,22 +3515,4 @@ void rt_hw_stm32_eth_init()
     /* register eth device */
     eth_device_init(&(stm32_eth_device.parent), "e0");
 }
-
-#include <finsh.h>
-void phy(void)
-{
-	rt_uint16_t v;
-
-	v = ETH_ReadPHYRegister(PHY_ADDRESS, PHY_BCR);
-	rt_kprintf("PHY BCR: 0x%04x\n", v);
-	v = ETH_ReadPHYRegister(PHY_ADDRESS, PHY_BSR);
-	rt_kprintf("PHY BSR: 0x%04x\n", v);
-	v = ETH_ReadPHYRegister(PHY_ADDRESS, PHY_SR);
-	rt_kprintf("PHY  SR: 0x%04x\n", v);
-	v = ETH_ReadPHYRegister(PHY_ADDRESS, 0x11);
-	rt_kprintf("PHY MICR: 0x%04x\n", v);
-	v = ETH_ReadPHYRegister(PHY_ADDRESS, 0x12);
-	rt_kprintf("PHY MISR: 0x%04x\n", v);
-}
-FINSH_FUNCTION_EXPORT(phy, read phy);
 
