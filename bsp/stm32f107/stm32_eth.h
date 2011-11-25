@@ -487,7 +487,7 @@ typedef struct  {
   */
 #define PHY_Speed_Status            ((u16)0x0002)    /*!< Configured information of Speed: 10Mbps */
 #define PHY_Duplex_Status           ((u16)0x0004)    /*!< Configured information of Duplex: Full-duplex */
-#define IS_ETH_PHY_ADDRESS(ADDRESS) ((ADDRESS) <= 0x20)
+#define IS_ETH_PHY_ADDRESS(ADDRESS) ((ADDRESS) <= 0x1F)
 #define IS_ETH_PHY_REG(REG)         (REG <= 0x1F)
 
 /**--------------------------------------------------------------------------**/

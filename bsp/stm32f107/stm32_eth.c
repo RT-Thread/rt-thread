@@ -3062,12 +3062,11 @@ uint32_t ETH_HandlePTPRxPkt(uint8_t *ppkt, uint32_t *PTPRxTab)
 #include <lwip/icmp.h>
 #include "lwipopts.h"
 
-#define STM32_ETH_DEBUG
-//#define STM32_ETH_PHY_DUMP
-//#define STM32_ETH_RX_DUMP
-//#define STM32_ETH_TX_DUMP
+#define ETH_DEBUG
+//#define ETH_RX_DUMP
+//#define ETH_TX_DUMP
 
-#ifdef STM32_ETH_DEBUG
+#ifdef ETH_DEBUG
 #define STM32_ETH_TRACE	        rt_kprintf
 #else
 #define STM32_ETH_TRACE(...)
@@ -3360,7 +3359,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
         }
     }
 
-#ifdef STM32_ETH_TX_DUMP
+#ifdef ETH_TX_DUMP
     {
         rt_uint32_t i;
         rt_uint8_t *ptr = (rt_uint8_t*)(DMATxDescToSet->Buffer1Addr);
@@ -3416,7 +3415,6 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
         ETH->DMASR = ETH_DMASR_TBUS;
         /* Transmit Poll Demand to resume DMA transmission*/
         ETH->DMATPDR = 0;
-		STM32_ETH_TRACE("transmit poll demand\n");
     }
 
     /* Update the ETHERNET DMA global Tx descriptor with next Tx decriptor */
