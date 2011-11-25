@@ -405,7 +405,7 @@ int dfs_elm_flush(struct dfs_fd* file)
 
 int dfs_elm_lseek(struct dfs_fd* file, rt_off_t offset)
 {
-	FRESULT result;
+	FRESULT result = FR_OK;
 	if (file->type == FT_REGULAR)
 	{
 		FIL* fd;
