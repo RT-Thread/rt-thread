@@ -430,10 +430,10 @@ rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t
 	else
 		r = RT_EOK;
 
+__return:
 	/* fini ack mailbox */
 	rt_mb_detach(&ack_mb);
 
-__return:
 	return r;
 }
 
