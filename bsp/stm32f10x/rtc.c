@@ -9,11 +9,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
+ * 2009-01-05     Bernard      the first version.
+ * 2011-11-26     aozima       implementation time.
  */
 
 #include <rtthread.h>
 #include <stm32f10x.h>
+#include "rtc.h"
 
 static struct rt_device rtc;
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
@@ -154,16 +156,23 @@ void rt_hw_rtc_init(void)
 
     rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 
+#ifdef RT_USING_FINSH
+	list_date();
+#endif
+
     return;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 #include <time.h>
+#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000   /* for IAR 6.2 later Compiler */
+#pragma module_name = "?time"
+time_t (__time32)(time_t *t)                                 /* Only supports 32-bit timestamp */
+#else
 time_t time(time_t* t)
+#endif
 {
     rt_device_t device;
-    time_t time;
+    time_t time=0;
 
     device = rt_device_find("rtc");
     if (device != RT_NULL)
@@ -174,6 +183,9 @@ time_t time(time_t* t)
 
     return time;
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 
 void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
@@ -189,7 +201,7 @@ void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     if (ti != RT_NULL)
     {
         ti->tm_year = year - 1900;
-        ti->tm_mon 	= month - 1; /* ti->tm_mon 	= month; */
+        ti->tm_mon 	= month - 1; /* ti->tm_mon 	= month; 0~11 */
         ti->tm_mday = day;
     }
 
@@ -230,7 +242,7 @@ void set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 }
 FINSH_FUNCTION_EXPORT(set_time, set time. e.g: set_time(23,59,59))
 
-void list_date()
+void list_date(void)
 {
     time_t now;
 

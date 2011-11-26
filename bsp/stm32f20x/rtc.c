@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
+ * 2011-11-26     aozima       implementation time.
  */
 
 #include <rtthread.h>
@@ -249,16 +250,23 @@ void rt_hw_rtc_init(void)
 
     rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 
+#ifdef RT_USING_FINSH
+	list_date();
+#endif
+
     return;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 #include <time.h>
+#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000   /* for IAR 6.2 later Compiler */
+#pragma module_name = "?time"
+time_t (__time32)(time_t *t)                                 /* Only supports 32-bit timestamp */
+#else
 time_t time(time_t* t)
+#endif
 {
     rt_device_t device;
-    time_t time;
+    time_t time=0;
 
     device = rt_device_find("rtc");
     if (device != RT_NULL)
@@ -269,6 +277,9 @@ time_t time(time_t* t)
 
     return time;
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 
 void set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
