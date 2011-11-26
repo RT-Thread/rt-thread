@@ -13,12 +13,13 @@
  */
 
 #include <rtgui/rtgui.h>
-#include <rtgui/driver.h>
 #include <rtgui/image.h>
-#include <rtgui/rtgui_theme.h>
-#include <rtgui/rtgui_system.h>
+#include <rtgui/font.h>
+#include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+#include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/window.h>
+#include <rtgui/rtgui_theme.h>
 
 // #define RTGUI_EVENT_DEBUG
 
@@ -158,7 +159,7 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 				create->extent.x1,
 				create->extent.y1,
 				create->extent.x2,
-				create->extent.y2);
+				create->extent.y2;
 #endif
 		}
 		break;
@@ -258,7 +259,7 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 
 rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 {
-	rtgui_thread_t* thread = rtgui_malloc(sizeof(struct rtgui_thread));
+	rtgui_thread_t* thread = rtgui_malloc(sizeof(rtgui_thread_t));
 
 	if (thread != RT_NULL)
 	{
@@ -279,17 +280,17 @@ rtgui_thread_t* rtgui_thread_register(rt_thread_t tid, rt_mq_t mq)
 
 void rtgui_thread_deregister(rt_thread_t tid)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (tid->user_data);
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (tid->user_data);
 
 	if (thread != RT_NULL)
 	{
-		/* remove rtgui_thread */
+		/* remove rtgui_thread_t */
 		tid->user_data = 0;
 
-		/* free rtgui_thread */
+		/* free rtgui_thread_t */
 		rtgui_free(thread);
 	}
 }
@@ -297,19 +298,19 @@ void rtgui_thread_deregister(rt_thread_t tid)
 /* get current gui thread */
 rtgui_thread_t* rtgui_thread_self()
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 	rt_thread_t self;
 
 	/* get current thread */
 	self = rt_thread_self();
-	thread = (struct rtgui_thread*)(self->user_data);
+	thread = (rtgui_thread_t*)(self->user_data);
 
 	return thread;
 }
 
 void rtgui_thread_set_onidle(rtgui_idle_func onidle)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
 	thread = rtgui_thread_self();
 	RT_ASSERT(thread != RT_NULL);
@@ -319,7 +320,7 @@ void rtgui_thread_set_onidle(rtgui_idle_func onidle)
 
 rtgui_idle_func rtgui_thread_get_onidle()
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
 	thread = rtgui_thread_self();
 	RT_ASSERT(thread != RT_NULL);
@@ -333,22 +334,22 @@ rt_thread_t rtgui_thread_get_server()
 	return rt_thread_find("rtgui");
 }
 
-void rtgui_thread_set_widget(struct rtgui_widget* widget)
+void rtgui_thread_set_widget(rtgui_widget_t* widget)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
 	/* get rtgui_thread */
-	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	thread = (rtgui_thread_t*) (rt_thread_self()->user_data);
 
 	if (thread != RT_NULL) thread->widget = widget;
 }
 
-struct rtgui_widget* rtgui_thread_get_widget()
+rtgui_widget_t* rtgui_thread_get_widget()
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
-	/* get rtgui_thread */
-	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	/* get rtgui_thread_t */
+	thread = (rtgui_thread_t*) (rt_thread_self()->user_data);
 
 	return thread == RT_NULL? RT_NULL : thread->widget;
 }
@@ -356,14 +357,12 @@ struct rtgui_widget* rtgui_thread_get_widget()
 rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
 {
 	rt_err_t result;
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
 	rtgui_event_dump(tid, event);
-	/* if (event->type != RTGUI_EVENT_TIMER)
-		rt_kprintf("event size: %d\n", event_size); */
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (tid->user_data);
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (tid->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	result = rt_mq_send(thread->mq, event, event_size);
@@ -379,12 +378,12 @@ rt_err_t rtgui_thread_send(rt_thread_t tid, rtgui_event_t* event, rt_size_t even
 rt_err_t rtgui_thread_send_urgent(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
 {
 	rt_err_t result;
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
 	rtgui_event_dump(tid, event);
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (tid->user_data);
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (tid->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	result = rt_mq_urgent(thread->mq, event, event_size);
@@ -397,7 +396,7 @@ rt_err_t rtgui_thread_send_urgent(rt_thread_t tid, rtgui_event_t* event, rt_size
 rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t event_size)
 {
 	rt_err_t r;
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 	rt_int32_t ack_buffer, ack_status;
 	struct rt_mailbox ack_mb;
 
@@ -405,25 +404,31 @@ rt_err_t rtgui_thread_send_sync(rt_thread_t tid, rtgui_event_t* event, rt_size_t
 
 	/* init ack mailbox */
 	r = rt_mb_init(&ack_mb, "ack", &ack_buffer, 1, 0);
-	if ( r!= RT_EOK) goto __return;
+	if (r!= RT_EOK) goto __return;
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (tid->user_data);
-	if (thread == RT_NULL){ r = RT_ERROR; goto __return; }
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (tid->user_data);
+	if (thread == RT_NULL)
+	{
+		r = -RT_ERROR;
+		goto __return;
+	}
 
 	event->ack = &ack_mb;
 	r = rt_mq_send(thread->mq, event, event_size);
-	if (r != RT_EOK) 
+	if (r != RT_EOK)
 	{
 		rt_kprintf("send sync event failed\n");
 		goto __return;
 	}
 
 	r = rt_mb_recv(&ack_mb, (rt_uint32_t*)&ack_status, RT_WAITING_FOREVER);
-	if ( r!= RT_EOK) goto __return;
+	if (r!= RT_EOK) goto __return;
 
-	if (ack_status != RTGUI_STATUS_OK) r = -RT_ERROR;
-	else r = RT_EOK;
+	if (ack_status != RTGUI_STATUS_OK)
+		r = -RT_ERROR;
+	else
+		r = RT_EOK;
 
 	/* fini ack mailbox */
 	rt_mb_detach(&ack_mb);
@@ -445,11 +450,11 @@ rt_err_t rtgui_thread_ack(rtgui_event_t* event, rt_int32_t status)
 
 rt_err_t rtgui_thread_recv(rtgui_event_t* event, rt_size_t event_size)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 	rt_err_t r;
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (rt_thread_self()->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	r = rt_mq_recv(thread->mq, event, event_size, RT_WAITING_FOREVER);
@@ -459,11 +464,11 @@ rt_err_t rtgui_thread_recv(rtgui_event_t* event, rt_size_t event_size)
 
 rt_err_t rtgui_thread_recv_nosuspend(rtgui_event_t* event, rt_size_t event_size)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 	rt_err_t r;
 
 	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	thread = (rtgui_thread_t*) (rt_thread_self()->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	r = rt_mq_recv(thread->mq, event, event_size, 0);
@@ -473,10 +478,10 @@ rt_err_t rtgui_thread_recv_nosuspend(rtgui_event_t* event, rt_size_t event_size)
 
 rt_err_t rtgui_thread_recv_filter(rt_uint32_t type, rtgui_event_t* event, rt_size_t event_size)
 {
-	struct rtgui_thread* thread;
+	rtgui_thread_t* thread;
 
-	/* find rtgui_thread */
-	thread = (struct rtgui_thread*) (rt_thread_self()->user_data);
+	/* find rtgui_thread_t */
+	thread = (rtgui_thread_t*) (rt_thread_self()->user_data);
 	if (thread == RT_NULL) return -RT_ERROR;
 
 	while (rt_mq_recv(thread->mq, event, event_size, RT_WAITING_FOREVER) == RT_EOK)
@@ -505,7 +510,7 @@ rt_err_t rtgui_thread_recv_filter(rt_uint32_t type, rtgui_event_t* event, rt_siz
 static void rtgui_time_out(void* parameter)
 {
 	rtgui_timer_t* timer;
-	struct rtgui_event_timer event;
+	rtgui_event_timer_t event;
 	timer = (rtgui_timer_t*)parameter;
 
 	/*
@@ -517,14 +522,14 @@ static void rtgui_time_out(void* parameter)
 
 	event.timer = timer;
 
-	rtgui_thread_send(timer->tid, &(event.parent), sizeof(struct rtgui_event_timer));
+	rtgui_thread_send(timer->tid, &(event.parent), sizeof(rtgui_event_timer_t));
 }
 
-rtgui_timer_t* rtgui_timer_create(rt_int32_t time, rt_base_t flag, rtgui_timeout_func timeout, void* parameter)
+rtgui_timer_t* rtgui_timer_create(rt_int32_t time, rt_int32_t flag, rtgui_timeout_func timeout, void* parameter)
 {
 	rtgui_timer_t* timer;
 
-	timer = (rtgui_timer_t*) rtgui_malloc(sizeof(struct rtgui_timer));
+	timer = (rtgui_timer_t*) rtgui_malloc(sizeof(rtgui_timer_t));
 	timer->tid = rt_thread_self();
 	timer->timeout = timeout;
 	timer->user_data = parameter;
