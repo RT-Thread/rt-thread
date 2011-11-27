@@ -285,6 +285,8 @@ struct rtgui_event_timer
 
 	struct rtgui_timer *timer;
 };
+typedef struct rtgui_event_timer rtgui_event_timer_t;
+
 
 struct rtgui_event_clip_info
 {
