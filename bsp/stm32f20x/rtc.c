@@ -49,18 +49,18 @@ static time_t rt_mktime(struct tm *tm)
 {
 	long res;
 	int year;
-	year = tm->tm_year - 70; 
-	
-	res = YEAR * year + DAY * ((year + 1) / 4); 
-	res += month[tm->tm_mon]; 
+	year = tm->tm_year - 70;
+
+	res = YEAR * year + DAY * ((year + 1) / 4);
+	res += month[tm->tm_mon];
 
 	if (tm->tm_mon > 1 && ((year + 2) % 4))
 	res -= DAY;
-	res += DAY * (tm->tm_mday - 1); 
-	res += HOUR * tm->tm_hour; 
+	res += DAY * (tm->tm_mday - 1);
+	res += HOUR * tm->tm_hour;
 	res += MINUTE * tm->tm_min;
-	res += tm->tm_sec;  
-	return res;   
+	res += tm->tm_sec;
+	return res;
 }
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
@@ -109,7 +109,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
         /* Enable the PWR clock */
 	    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-	
+
 	    /* Allow access to RTC */
 	    PWR_BackupAccessCmd(ENABLE);
 
@@ -154,35 +154,35 @@ int RTC_Config(void)
 	u32 count=0x200000;
 	/* Enable the PWR clock */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-	
+
 	/* Allow access to RTC */
 	PWR_BackupAccessCmd(ENABLE);
-	
+
 	RCC_LSEConfig(RCC_LSE_ON);
-	
-	/* Wait till LSE is ready */  
+
+	/* Wait till LSE is ready */
 	while ( (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) && (--count) );
     if ( count == 0 )
     {
         return -1;
     }
-	
+
 	/* Select the RTC Clock Source */
 	RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
-	
+
 	SynchPrediv = 0xFF;
 	AsynchPrediv = 0x7F;
-	
+
 	/* Enable the RTC Clock */
 	RCC_RTCCLKCmd(ENABLE);
-	
+
 	/* Wait for RTC APB registers synchronisation */
 	RTC_WaitForSynchro();
-	
+
 	/* Enable The TimeStamp */
-	//RTC_TimeStampCmd(RTC_TimeStampEdge_Falling, ENABLE); 
-	
-	return 0;   
+	//RTC_TimeStampCmd(RTC_TimeStampEdge_Falling, ENABLE);
+
+	return 0;
 }
 
 int RTC_Configuration(void)
@@ -195,21 +195,21 @@ int RTC_Configuration(void)
 	RTC_TimeStructure.RTC_Hours   = 0;
 	RTC_TimeStructure.RTC_Minutes = 0;
 	RTC_TimeStructure.RTC_Seconds = 0;
-	
+
 	/* Set the Date */
 	RTC_DateStructure.RTC_Month = 1;
-	RTC_DateStructure.RTC_Date = 1;  
-	RTC_DateStructure.RTC_Year = 0; 
-	RTC_DateStructure.RTC_WeekDay = 4; 
-	
+	RTC_DateStructure.RTC_Date = 1;
+	RTC_DateStructure.RTC_Year = 0;
+	RTC_DateStructure.RTC_WeekDay = 4;
+
 	/* Calendar Configuration */
 	RTC_InitStructure.RTC_AsynchPrediv = AsynchPrediv;
 	RTC_InitStructure.RTC_SynchPrediv =  SynchPrediv;
 	RTC_InitStructure.RTC_HourFormat = RTC_HourFormat_24;
 	RTC_Init(&RTC_InitStructure);
-	
+
 	/* Set Current Time and Date */
-	RTC_SetTime(RTC_Format_BCD, &RTC_TimeStructure);  
+	RTC_SetTime(RTC_Format_BCD, &RTC_TimeStructure);
 	RTC_SetDate(RTC_Format_BCD, &RTC_DateStructure);
 	if (RTC_Init(&RTC_InitStructure) == ERROR)
 		return -1;
@@ -249,10 +249,6 @@ void rt_hw_rtc_init(void)
     rtc.user_data = RT_NULL;
 
     rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
-
-#ifdef RT_USING_FINSH
-	list_date();
-#endif
 
     return;
 }
