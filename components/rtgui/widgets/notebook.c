@@ -69,15 +69,14 @@ static void _rtgui_notebook_draw_bar(struct rtgui_notebook *notebook,
 static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 {
 	struct rtgui_dc* dc;
-	rtgui_rect_t rect;
 
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
 	if (dc == RT_NULL) return;
 
-	rtgui_widget_get_rect(RTGUI_WIDGET(notebook), &rect);
-
 	if (notebook->count == 0)
 	{
+		rtgui_rect_t rect;
+		rtgui_widget_get_rect(RTGUI_WIDGET(notebook), &rect);
 		rtgui_dc_fill_rect(dc, &rect);
 	}
 	else
@@ -124,7 +123,7 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 
 	/* handle on page */
 	if (notebook->childs[notebook->current].widget->event_handler != RT_NULL)
-		notebook->childs[notebook->current].widget->event_handler(notebook->childs[notebook->current].widget, 
+		notebook->childs[notebook->current].widget->event_handler(notebook->childs[notebook->current].widget,
 			&(emouse->parent));
 }
 
