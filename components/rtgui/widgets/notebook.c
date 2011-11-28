@@ -3,6 +3,8 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/notebook.h>
 
+#define RTGUI_NOTEBOOK_TAB_WIDTH     80
+
 static void _rtgui_notebook_get_bar_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect);
 static void _rtgui_notebook_get_page_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect);
 
@@ -55,7 +57,7 @@ static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 
 		_rtgui_notebook_get_bar_rect(notebook, &rect);
 		rtgui_dc_fill_rect(dc, &rect);
-		rect.x2 = rect.x1 + 80;
+		rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
 		/* draw tab bar */
 		for (index = 0; index < notebook->count; index ++)
 		{
@@ -63,8 +65,10 @@ static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 				rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
 			else
 				rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
+
 			rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
-			rect.x1 += 80; rect.x2 += 80;
+			rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
+			rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
 		}
 
 		/* draw current tab */
@@ -85,7 +89,7 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 		int index;
 		struct rtgui_dc* dc;
 
-		index = (emouse->x - rect.x1) / 80;
+		index = (emouse->x - rect.x1) / RTGUI_NOTEBOOK_TAB_WIDTH;
 		if (index < notebook->count)
 		{
 			/* update tab bar */
@@ -96,7 +100,7 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 
 			_rtgui_notebook_get_bar_rect(notebook, &rect);
 			rtgui_dc_fill_rect(dc, &rect);
-			rect.x2 = rect.x1 + 80;
+			rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
 			/* draw tab bar */
 			for (index = 0; index < notebook->count; index ++)
 			{
@@ -105,7 +109,8 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 				else
 					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
 				rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
-				rect.x1 += 80; rect.x2 += 80;
+				rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
+				rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
 			}
 
 			rtgui_dc_end_drawing(dc);
