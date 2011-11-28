@@ -35,11 +35,41 @@ static void _rtgui_notebook_destructor(rtgui_notebook_t *notebook)
 	}
 }
 
+/* Draw tab bars of @param notebook. @param dc should be initialized and
+ * finished outside this function. Don't pass @param notebook or @param dc as
+ * RT_NULL, it should be checked outside.
+ */
+static void _rtgui_notebook_draw_bar(struct rtgui_notebook *notebook,
+		struct rtgui_dc *dc)
+{
+	struct rtgui_rect rect;
+	int index;
+
+	RT_ASSERT((notebook != RT_NULL) && (dc != RT_NULL));
+
+	_rtgui_notebook_get_bar_rect(notebook, &rect);
+	rtgui_dc_fill_rect(dc, &rect);
+
+	rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
+	/* draw tab bar */
+	for (index = 0; index < notebook->count; index++)
+	{
+		if (notebook->current == index)
+			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
+		else
+			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
+
+		rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
+		rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
+		rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
+	}
+
+}
+
 static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 {
 	struct rtgui_dc* dc;
 	rtgui_rect_t rect;
-	int index;
 
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
 	if (dc == RT_NULL) return;
@@ -55,21 +85,7 @@ static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 		if (notebook->current == RTGUI_NOT_FOUND)
 			notebook->current = 0;
 
-		_rtgui_notebook_get_bar_rect(notebook, &rect);
-		rtgui_dc_fill_rect(dc, &rect);
-		rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
-		/* draw tab bar */
-		for (index = 0; index < notebook->count; index ++)
-		{
-			if (notebook->current == index)
-				rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
-			else
-				rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
-
-			rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
-			rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
-			rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
-		}
+		_rtgui_notebook_draw_bar(notebook, dc);
 
 		/* draw current tab */
 		rtgui_widget_update(notebook->childs[notebook->current].widget);
@@ -80,7 +96,7 @@ static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_event_mouse* emouse)
 {
 	rtgui_rect_t rect;
-	
+
 	/* handle notebook bar */
 	_rtgui_notebook_get_bar_rect(notebook, &rect);
 	rtgui_widget_rect_to_device(RTGUI_WIDGET(notebook), &rect);
@@ -98,20 +114,7 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 
 			rtgui_notebook_set_current_by_index(notebook, index);
 
-			_rtgui_notebook_get_bar_rect(notebook, &rect);
-			rtgui_dc_fill_rect(dc, &rect);
-			rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
-			/* draw tab bar */
-			for (index = 0; index < notebook->count; index ++)
-			{
-				if (notebook->current == index)
-					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
-				else
-					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
-				rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
-				rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
-				rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
-			}
+			_rtgui_notebook_draw_bar(notebook, dc);
 
 			rtgui_dc_end_drawing(dc);
 
