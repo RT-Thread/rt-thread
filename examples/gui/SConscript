@@ -22,6 +22,7 @@ demo_view_progressbar.c
 demo_view_radiobox.c
 demo_view_listbox.c
 demo_view_slider.c
+demo_view_notebook.c
 demo_view_combobox.c
 demo_view_listctrl.c
 demo_view_menu.c
