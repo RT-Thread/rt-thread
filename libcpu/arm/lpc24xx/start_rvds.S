@@ -49,10 +49,8 @@ Mode_SVC        EQU     0x13
 Mode_ABT        EQU     0x17
 Mode_UND        EQU     0x1B
 Mode_SYS        EQU     0x1F
-
 I_Bit           EQU     0x80            ; when I bit is set, IRQ is disabled
 F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
-
 
 ;----------------------- Memory Definitions ------------------------------------
 
@@ -1068,12 +1066,67 @@ DAbt_Addr       DCD     DAbt_Handler
 IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 
-Undef_Handler   B       Undef_Handler
-SWI_Handler     B       SWI_Handler
-PAbt_Handler    B       PAbt_Handler
-DAbt_Handler    B       DAbt_Handler
-FIQ_Handler     B       FIQ_Handler
 
+; Exception Handler
+        IMPORT rt_hw_trap_udef
+        IMPORT rt_hw_trap_swi
+        IMPORT rt_hw_trap_pabt
+        IMPORT rt_hw_trap_dabt
+        IMPORT rt_hw_trap_fiq
+
+; Prepare Fatal Context
+        MACRO
+		prepare_fatal
+		STMFD   sp!, {r0-r3}
+		MOV     r1, sp
+		ADD     sp, sp, #16
+		SUB     r2, lr, #4
+		MRS     r3, spsr
+
+		; switch to SVC mode and no interrupt
+		MSR     cpsr_c, #I_Bit :OR: F_Bit :OR: Mode_SVC
+
+		STMFD   sp!, {r0}       ; old r0
+		; get sp
+		ADD     r0, sp, #4
+		STMFD   sp!, {r3}       ; cpsr
+		STMFD   sp!, {r2}       ; pc
+		STMFD   sp!, {lr}       ; lr
+		STMFD   sp!, {r0}       ; sp
+		STMFD   sp!, {r4-r12}
+
+		MOV     r4, r1
+
+		LDMFD   r4!, {r0-r3}
+		STMFD   sp!, {r0-r3}
+
+		MOV     r0, sp
+		MEND
+
+Undef_Handler
+        prepare_fatal
+        BL      rt_hw_trap_irq
+        B       .
+
+SWI_Handler
+        prepare_fatal
+        BL      rt_hw_trap_swi
+        B       .
+
+PAbt_Handler
+		prepare_fatal
+        BL      rt_hw_trap_pabt
+        B       .
+
+DAbt_Handler
+        prepare_fatal
+        BL      rt_hw_trap_dabt
+        B       .
+
+FIQ_Handler
+        prepare_fatal
+        BL      rt_hw_trap_fiq
+        B       .
 
 ; Reset Handler
 
@@ -1529,7 +1582,7 @@ rt_hw_context_switch_interrupt_do   PROC
                 MRS     r3,  spsr       ; get cpsr of interrupt thread
 
                 ; switch to SVC mode and no interrupt
-                MSR     cpsr_c, #I_Bit|F_Bit|Mode_SVC
+                MSR     cpsr_c, #I_Bit :OR: F_Bit :OR: Mode_SVC
 
                 STMFD   sp!, {r2}       ; push old task's pc
                 STMFD   sp!, {r4-r12,lr}; push old task's lr,r12-r4

@@ -52,6 +52,8 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
     rt_kprintf("undefined instruction\n");
     rt_hw_show_register(regs);
+	if (rt_thread_self() != RT_NULL)
+		rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
     rt_hw_cpu_shutdown();
 }
 
@@ -68,6 +70,8 @@ void rt_hw_trap_swi(struct rt_hw_register *regs)
 {
     rt_kprintf("software interrupt\n");
     rt_hw_show_register(regs);
+	if (rt_thread_self() != RT_NULL)
+		rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
     rt_hw_cpu_shutdown();
 }
 
@@ -83,6 +87,8 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
 {
     rt_kprintf("prefetch abort\n");
     rt_hw_show_register(regs);
+	if (rt_thread_self() != RT_NULL)
+		rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
     rt_hw_cpu_shutdown();
 }
 
@@ -98,6 +104,8 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
 {	
     rt_kprintf("Data Abort ");
     rt_hw_show_register(regs);
+	if (rt_thread_self() != RT_NULL)
+		rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
     rt_hw_cpu_shutdown();
 }
 
@@ -112,6 +120,8 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 {
     rt_kprintf("not used\n");
     rt_hw_show_register(regs);
+	if (rt_thread_self() != RT_NULL)
+		rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
     rt_hw_cpu_shutdown();
 }
 
