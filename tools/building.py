@@ -608,4 +608,14 @@ def EndBuilding(target):
         MDK4Project('project.uvproj', Projects)
 
     if GetOption('target') == 'iar':
-        IARProject('project.ewp', Projects)
+        IARProject('project.ewp', Projects) 
+import copy
+def SrcRemove(src, remove):
+	src_tmp = copy.copy(src)
+	count = 0
+	for i in range(0, len(src_tmp)):
+		s = os.path.basename(str(src_tmp[i]))
+		if s in remove:
+			src.pop(i-count)
+			count = count + 1
+	return src
