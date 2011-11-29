@@ -2,7 +2,7 @@
  * @file
  * @brief DVK Board Support, master header file
  * @author Energy Micro AS
- * @version 1.6.0
+ * @version 1.7.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -30,6 +30,7 @@
 #define __DVK_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "dvk_boardcontrol.h"
 #include "dvk_bcregisters.h"
 
@@ -92,15 +93,19 @@
 #endif
 #endif
 
-/* EBI access */
-void DVK_EBI_init(void);
-void DVK_EBI_disable(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+/* EBI access */
+bool DVK_EBI_init(void);
+void DVK_EBI_disable(void);
+void DVK_EBI_configure(void);
 void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t data);
 uint16_t DVK_EBI_readRegister(volatile uint16_t *addr);
 
 /* SPI access */
-void DVK_SPI_init(void);
+bool DVK_SPI_init(void);
 void DVK_SPI_disable(void);
 
 void DVK_SPI_writeRegister(volatile uint16_t *addr, uint16_t data);
@@ -119,7 +124,12 @@ uint16_t DVK_SPI_readRegister(volatile uint16_t *addr);
 #endif
 
 /* General initialization routines */
-void DVK_init(void);
+bool DVK_init(void);
 void DVK_disable(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

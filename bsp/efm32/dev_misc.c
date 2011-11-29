@@ -130,10 +130,10 @@ rt_err_t rt_hw_misc_init(void)
 		adc0 = rt_device_find(RT_ADC0_NAME);
 		if (adc0 == RT_NULL)
 		{
-			misc_debug("Batt err: Can't find device: %s!\n", RT_ADC0_NAME);
+			misc_debug("Misc err: Can't find device: %s!\n", RT_ADC0_NAME);
 			break;
 		}
-		misc_debug("Batt: Find device %s\n", RT_ADC0_NAME);
+		misc_debug("Misc: Find device %s\n", RT_ADC0_NAME);
 		
 		return RT_EOK;
 	} while (0);

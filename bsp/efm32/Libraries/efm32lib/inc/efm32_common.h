@@ -2,7 +2,7 @@
  * @file
  * @brief EFM32 general purpose utilities.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -54,12 +54,48 @@ extern "C" {
 /** Macro for getting maximum value. */
 #define EFM32_MAX(a, b)    ((a) > (b) ? (a) : (b))
 
+/** Macros for handling packed structs. */
+#define STRINGIZE(X) #X
+#define EFM32_PACK_START(X) _Pragma( STRINGIZE( pack( ##X## ) ) )
+#define EFM32_PACK_END()    _Pragma( "pack()" )
+#define __attribute__(...)
+
+/** Macros for handling aligned structs. */
+#ifdef __CC_ARM
+#define EFM32_ALIGN(X) __align(X)
+#endif
+#ifdef __ICCARM__
+#define EFM32_ALIGN(X) _Pragma( STRINGIZE( data_alignment=##X## ) )
+#endif
+
 #else
 
 /** Macro for getting minimum value. No sideeffects, a and b are evaluated once only. */
-#define EFM32_MIN(a, b)    ({ typeof(a)_a = (a); typeof(b)_b = (b); _a < _b ? _a : _b; })
+#define EFM32_MIN(a, b)    ({ __typeof__(a) _a = (a); __typeof__(b) _b = (b); _a < _b ? _a : _b; })
 /** Macro for getting maximum value. No sideeffects, a and b are evaluated once only. */
-#define EFM32_MAX(a, b)    ({ typeof(a)_a = (a); typeof(b)_b = (b); _a > _b ? _a : _b; })
+#define EFM32_MAX(a, b)    ({ __typeof__(a) _a = (a); __typeof__(b) _b = (b); _a > _b ? _a : _b; })
+
+/** Macro for handling packed structs.
+ *  @n Use this macro before the struct definition.
+ *  @n X denotes the maximum alignment of struct members. X is not supported on
+ *  gcc, gcc always use 1 byte maximum alignment.
+ */
+#define EFM32_PACK_START( x )
+
+/** Macro for handling packed structs.
+ *  @n Use this macro after the struct definition.
+ *  @n On gcc add __attribute__ ((packed)) after the closing } of the struct
+ *  definition.
+ */
+#define EFM32_PACK_END()
+
+/** Macro for aligning a variable.
+ *  @n Use this macro before the variable definition.
+ *  @n X denotes the storage alignment value in bytes.
+ *  @n On gcc use __attribute__ ((aligned(X))) before the ; on normal variables.
+ *  Use __attribute__ ((aligned(X))) before the opening { on struct variables.
+ */
+#define EFM32_ALIGN(X)
 
 #endif
 

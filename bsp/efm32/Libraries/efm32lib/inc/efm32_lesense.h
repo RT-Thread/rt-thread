@@ -2,7 +2,7 @@
  * @file
  * @brief Low Energy Sensor (LESENSE) peripheral API for EFM32 TG/GG devices.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -364,10 +364,10 @@ typedef enum
 typedef enum
 {
   /** LFACLK (LF clock) is used. */
-  lesenseClkLF = LESENSE_CH_INTERACT_EXCLK_LFACLK,
+  lesenseClkLF = _LESENSE_CH_INTERACT_EXCLK_LFACLK,
 
   /** AUXHFRCO (HF clock) is used. */
-  lesenseClkHF = LESENSE_CH_INTERACT_EXCLK_AUXHFRCO
+  lesenseClkHF = _LESENSE_CH_INTERACT_EXCLK_AUXHFRCO
 } LESENSE_ChClk_TypeDef;
 
 
@@ -493,7 +493,7 @@ typedef struct
 #define LESENSE_CORECTRL_DESC_DEFAULT                                                                 \
   {                                                                                                   \
     lesenseScanStartPeriodic,  /* Start new scan each time the period counter overflows. */           \
-    lesensePRS0,               /* Default PRS channel is selected. */                                 \
+    lesensePRSCh0,             /* Default PRS channel is selected. */                                 \
     lesenseScanConfDirMap,     /* Direct mapping SCANCONF register usage strategy. */                 \
     false,                     /* Don't invert ACMP0 output. */                                       \
     false,                     /* Don't invert ACMP1 output. */                                       \
@@ -1058,7 +1058,6 @@ static __INLINE void LESENSE_DecoderStop(void)
  ******************************************************************************/
 static __INLINE void LESENSE_ResultBufferClear(void)
 {
-  /* Clear result pointer */
   LESENSE->CMD = LESENSE_CMD_CLEARBUF;
 }
 

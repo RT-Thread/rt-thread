@@ -2,7 +2,7 @@
  * @file
  * @brief Memory protection unit (MPU) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -188,7 +188,7 @@ typedef struct
  ******************************************************************************/
 
 
-void MPU_ConfigureRegion(MPU_RegionInit_TypeDef *init);
+void MPU_ConfigureRegion(const MPU_RegionInit_TypeDef *init);
 
 
 /***************************************************************************//**

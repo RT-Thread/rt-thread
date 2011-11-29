@@ -2,7 +2,7 @@
  * @file
  * @brief Interrupt enable/disable unit API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -60,7 +60,6 @@
 /** Interrupt lock level counter. Set to zero initially as we normally enter
  * main with interrupts enabled  */
 uint32_t INT_LockCnt = 0;
-
 
 
 /** @} (end addtogroup INT) */

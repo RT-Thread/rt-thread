@@ -2,7 +2,7 @@
  * @file
  * @brief Direct memory access (DMA) API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -237,6 +237,35 @@ typedef struct
 } DMA_CfgDescr_TypeDef;
 
 
+#if defined(_EFM32_GIANT_FAMILY)
+/**
+ * Configuration structure for loop mode
+ */
+typedef struct
+{
+  /** Enable repeated loop */
+  bool      enable;
+  /** Width of transfer, reload value for nMinus1 */
+  uint16_t  nMinus1;  
+} DMA_CfgLoop_TypeDef;
+
+
+/**
+ * Configuration structure for rectangular copy
+ */
+typedef struct
+{
+  /** DMA channel destination stride (width of destination image, distance between lines) */
+  uint16_t dstStride;
+  /** DMA channel source stride (width of source image, distance between lines) */
+  uint16_t srcStride;
+  /** 2D copy height */
+  uint16_t height;
+} DMA_CfgRect_TypeDef;
+#endif
+
+
+
 /** Configuration structure for alternate scatter-gather descriptor. */
 typedef struct
 {
@@ -347,6 +376,48 @@ void DMA_CfgChannel(unsigned int channel, DMA_CfgChannel_TypeDef *cfg);
 void DMA_CfgDescr(unsigned int channel,
                   bool primary,
                   DMA_CfgDescr_TypeDef *cfg);
+#if defined(_EFM32_GIANT_FAMILY)
+void DMA_CfgLoop(unsigned int channel, DMA_CfgLoop_TypeDef *cfg);
+void DMA_CfgRect(unsigned int channel, DMA_CfgRect_TypeDef *cfg);
+/***************************************************************************//**
+ * @brief
+ *   Clear Loop configuration for channel
+ *
+ * @param[in] channel
+ *   Channel to reset loop configuration for
+ ******************************************************************************/
+static __INLINE void DMA_ResetLoop(unsigned int channel)
+{
+  /* Clean loop copy operation */
+  switch(channel)
+  {
+  case 0:
+    DMA->LOOP0 = _DMA_LOOP0_RESETVALUE;
+    break;
+  case 1:
+    DMA->LOOP0 = _DMA_LOOP1_RESETVALUE;
+    break;
+  default:
+    break;
+  }
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Clear Rect/2D DMA configuration for channel
+ *
+ * @param[in] channel
+ *   Channel to reset loop configuration for
+ ******************************************************************************/
+static __INLINE void DMA_ResetRect(unsigned int channel)
+{
+  (void) channel;
+
+  /* Clear rect copy operation */
+  DMA->RECT0 = _DMA_RECT0_RESETVALUE;
+}
+#endif
 void DMA_CfgDescrScatterGather(DMA_DESCRIPTOR_TypeDef *descr,
                                unsigned int indx,
                                DMA_CfgDescrSGAlt_TypeDef *cfg);

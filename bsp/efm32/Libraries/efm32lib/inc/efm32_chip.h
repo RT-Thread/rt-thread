@@ -2,7 +2,7 @@
  * @file
  * @brief Chip Initialization API for EFM32
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -56,6 +56,8 @@ extern "C" {
  *****************************************************************************/
 static __INLINE void CHIP_Init(void)
 {
+  /* Currently only run time changes for Gecko devices */
+#if defined(_EFM32_GECKO_FAMILY)
   uint32_t                    rev;
   SYSTEM_ChipRevision_TypeDef chipRev;
   volatile uint32_t           *reg;
@@ -145,6 +147,7 @@ static __INLINE void CHIP_Init(void)
     reg   = (volatile uint32_t *)0x400C8044UL;
     *reg &= ~(1 << 14 | 1 << 11);
   }
+#endif
 }
 
 /** @} (end addtogroup SYSTEM) */

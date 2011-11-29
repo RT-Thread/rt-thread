@@ -2,7 +2,7 @@
  * @file
  * @brief Low Energy Sensor (LESENSE) Peripheral API for EFM32 TG/GG devices.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -528,8 +528,10 @@ void LESENSE_ChannelConfig(LESENSE_ChDesc_TypeDef const *confCh,
   /* Channel specific configuration of clocks, sample mode, excitation pin mode
    * alternate excitation usage and interrupt mode on scan channel chIdx in
    * LESENSE_CHchIdx_INTERACT. */
-  LESENSE->CH[chIdx].INTERACT = (uint32_t)confCh->exClk |
-                                (uint32_t)confCh->sampleClk |
+  LESENSE->CH[chIdx].INTERACT = ((uint32_t)confCh->exClk << 
+                                 _LESENSE_CH_INTERACT_EXCLK_SHIFT) |
+                                ((uint32_t)confCh->sampleClk <<
+                                 _LESENSE_CH_INTERACT_SAMPLECLK_SHIFT) |
                                 (uint32_t)confCh->sampleMode |
                                 (uint32_t)confCh->intMode |
                                 (uint32_t)confCh->chPinExMode |
@@ -550,8 +552,8 @@ void LESENSE_ChannelConfig(LESENSE_ChDesc_TypeDef const *confCh,
   /* Configure analog comparator (ACMP) threshold and decision threshold for
    * counter separately with the function provided for that. */
   LESENSE_ChannelThresSet(chIdx,
-                          (uint32_t)confCh->acmpThres,
-                          (uint32_t)confCh->cntThres);
+                         (uint32_t)confCh->acmpThres,
+                         (uint32_t)confCh->cntThres);
 
   /* Enable/disable interrupts on channel.
    * Note: BITBAND_Peripheral() function is used for setting/clearing single
@@ -793,6 +795,8 @@ void LESENSE_ChannelThresSet(uint8_t const chIdx,
 
   /* Sanity check for acmpThres only, cntThres is 16bit value. */
   EFM_ASSERT(acmpThres < 4096U);
+  /* Sanity check for LESENSE channel id. */
+  EFM_ASSERT(chIdx < 16);
 
   /* Save the INTERACT register value of channel chIdx to tmp.
    * Please be aware the effects of the non-atomic Read-Modify-Write cycle! */

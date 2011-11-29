@@ -2,7 +2,7 @@
  * @file
  * @brief Energy management unit (EMU) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -30,6 +30,7 @@
 
 #include <stdbool.h>
 #include "efm32.h"
+#include "efm32_bitband.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +65,11 @@ static __INLINE void EMU_EnterEM1(void)
 void EMU_EnterEM2(bool restore);
 void EMU_EnterEM3(bool restore);
 void EMU_EnterEM4(void);
+void EMU_MemPwrDown(uint32_t blocks);
+void EMU_UpdateOscConfig(void);
+
+static __INLINE void EMU_EM2Block(void);
+static __INLINE void EMU_EM2UnBlock(void);
 
 /***************************************************************************//**
  * @brief
@@ -81,7 +87,6 @@ static __INLINE void EMU_Lock(void)
   EMU->LOCK = EMU_LOCK_LOCKKEY_LOCK;
 }
 
-void EMU_MemPwrDown(uint32_t blocks);
 
 /***************************************************************************//**
  * @brief
@@ -92,7 +97,24 @@ static __INLINE void EMU_Unlock(void)
   EMU->LOCK = EMU_LOCK_LOCKKEY_UNLOCK;
 }
 
-void EMU_UpdateOscConfig(void);
+/***************************************************************************//**
+ * @brief
+ *   Block entering EM2 or higher number energy modes.
+ ******************************************************************************/
+static __INLINE void EMU_EM2Block(void)
+{
+  BITBAND_Peripheral(&(EMU->CTRL), _EMU_CTRL_EM2BLOCK_SHIFT, 1U);
+}
+
+/***************************************************************************//**
+ * @brief
+ *   Unblock entering EM2 or higher number energy modes.
+ ******************************************************************************/
+static __INLINE void EMU_EM2UnBlock(void)
+{
+  BITBAND_Peripheral(&(EMU->CTRL), _EMU_CTRL_EM2BLOCK_SHIFT, 0U);
+}
+
 
 /** @} (end addtogroup EMU) */
 /** @} (end addtogroup EFM32_Library) */

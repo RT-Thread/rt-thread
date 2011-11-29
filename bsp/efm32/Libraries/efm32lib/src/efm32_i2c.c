@@ -2,7 +2,7 @@
  * @file
  * @brief Inter-integrated Circuit (I2C) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -208,6 +208,9 @@ void I2C_BusFreqSet(I2C_TypeDef *i2c,
 {
   uint32_t n;
   uint32_t div;
+
+  /* Unused parameter */
+  (void)type;
 
   /* Avoid divide by 0 */
   EFM_ASSERT(freq);
@@ -678,6 +681,11 @@ I2C_TransferReturn_TypeDef I2C_Transfer(I2C_TypeDef *i2c)
       transfer->result = i2cTransferDone;
     }
   }
+  /* Until transfer is done keep returning i2cTransferInProgress */
+  else
+  {
+    return(i2cTransferInProgress);
+  }
 
   return transfer->result;
 }
@@ -712,7 +720,6 @@ I2C_TransferReturn_TypeDef I2C_TransferInit(I2C_TypeDef *i2c,
                                             I2C_TransferSeq_TypeDef *seq)
 {
   I2C_Transfer_TypeDef *transfer;
-  volatile uint32_t    tmp;
 
   EFM_ASSERT(I2C_REF_VALID(i2c));
   EFM_ASSERT(seq);
@@ -762,7 +769,7 @@ I2C_TransferReturn_TypeDef I2C_TransferInit(I2C_TypeDef *i2c,
   i2c->CMD = I2C_CMD_CLEARPC | I2C_CMD_CLEARTX;
   if (i2c->IF & I2C_IF_RXDATAV)
   {
-    tmp = i2c->RXDATA;
+    i2c->RXDATA;
   }
 
   /* Clear all pending interrupts prior to starting transfer. */

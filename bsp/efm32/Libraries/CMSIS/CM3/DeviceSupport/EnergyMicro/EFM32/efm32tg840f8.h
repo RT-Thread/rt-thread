@@ -3,7 +3,7 @@
  * @brief CMSIS Cortex-M3 Peripheral Access Layer Header File
  *        for EFM EFM32TG840F8
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -86,8 +86,8 @@ typedef enum IRQn
 
 /**************************************************************************//**
  * @defgroup EFM32TG840F8_Core EFM32TG840F8 Core
- * @brief Processor and Core Peripheral Section
  * @{
+ * @brief Processor and Core Peripheral Section
  *****************************************************************************/
 #define __MPU_PRESENT             0 /**< MPU not present */
 #define __NVIC_PRIO_BITS          3 /**< NVIC interrupt priority bits */
@@ -112,30 +112,30 @@ typedef enum IRQn
 #define PART_NUMBER          "EFM32TG840F8" /**< Part Number */
 
 /** Memory Base addresses and limits */
-#define AES_MEM_BASE         ((uint32_t)0x400E0000UL) /**< AES base address  */
-#define AES_MEM_SIZE         ((uint32_t)0x400UL)      /**< AES available address space  */
-#define AES_MEM_END          ((uint32_t)0x400E03FFUL) /**< AES end address  */
-#define AES_MEM_BITS         ((uint32_t)0x10UL)       /**< AES used bits  */
-#define PER_MEM_BASE         ((uint32_t)0x40000000UL) /**< PER base address  */
-#define PER_MEM_SIZE         ((uint32_t)0xE0000UL)    /**< PER available address space  */
-#define PER_MEM_END          ((uint32_t)0x400DFFFFUL) /**< PER end address  */
-#define PER_MEM_BITS         ((uint32_t)0x20UL)       /**< PER used bits  */
-#define RAM_MEM_BASE         ((uint32_t)0x20000000UL) /**< RAM base address  */
-#define RAM_MEM_SIZE         ((uint32_t)0x40000UL)    /**< RAM available address space  */
-#define RAM_MEM_END          ((uint32_t)0x2003FFFFUL) /**< RAM end address  */
-#define RAM_MEM_BITS         ((uint32_t)0x18UL)       /**< RAM used bits  */
-#define RAM_CODE_MEM_BASE    ((uint32_t)0x10000000UL) /**< RAM_CODE base address  */
-#define RAM_CODE_MEM_SIZE    ((uint32_t)0x4000UL)     /**< RAM_CODE available address space  */
-#define RAM_CODE_MEM_END     ((uint32_t)0x10003FFFUL) /**< RAM_CODE end address  */
-#define RAM_CODE_MEM_BITS    ((uint32_t)0x14UL)       /**< RAM_CODE used bits  */
-#define FLASH_MEM_BASE       ((uint32_t)0x0UL)        /**< FLASH base address  */
-#define FLASH_MEM_SIZE       ((uint32_t)0x10000000UL) /**< FLASH available address space  */
-#define FLASH_MEM_END        ((uint32_t)0xFFFFFFFUL)  /**< FLASH end address  */
-#define FLASH_MEM_BITS       ((uint32_t)0x28UL)       /**< FLASH used bits  */
+#define AES_MEM_BASE         ((uint32_t) 0x400E0000UL) /**< AES base address  */
+#define AES_MEM_SIZE         ((uint32_t) 0x400UL)      /**< AES available address space  */
+#define AES_MEM_END          ((uint32_t) 0x400E03FFUL) /**< AES end address  */
+#define AES_MEM_BITS         ((uint32_t) 0x10UL)       /**< AES used bits  */
+#define PER_MEM_BASE         ((uint32_t) 0x40000000UL) /**< PER base address  */
+#define PER_MEM_SIZE         ((uint32_t) 0xE0000UL)    /**< PER available address space  */
+#define PER_MEM_END          ((uint32_t) 0x400DFFFFUL) /**< PER end address  */
+#define PER_MEM_BITS         ((uint32_t) 0x20UL)       /**< PER used bits  */
+#define RAM_MEM_BASE         ((uint32_t) 0x20000000UL) /**< RAM base address  */
+#define RAM_MEM_SIZE         ((uint32_t) 0x40000UL)    /**< RAM available address space  */
+#define RAM_MEM_END          ((uint32_t) 0x2003FFFFUL) /**< RAM end address  */
+#define RAM_MEM_BITS         ((uint32_t) 0x18UL)       /**< RAM used bits  */
+#define RAM_CODE_MEM_BASE    ((uint32_t) 0x10000000UL) /**< RAM_CODE base address  */
+#define RAM_CODE_MEM_SIZE    ((uint32_t) 0x4000UL)     /**< RAM_CODE available address space  */
+#define RAM_CODE_MEM_END     ((uint32_t) 0x10003FFFUL) /**< RAM_CODE end address  */
+#define RAM_CODE_MEM_BITS    ((uint32_t) 0x14UL)       /**< RAM_CODE used bits  */
+#define FLASH_MEM_BASE       ((uint32_t) 0x0UL)        /**< FLASH base address  */
+#define FLASH_MEM_SIZE       ((uint32_t) 0x10000000UL) /**< FLASH available address space  */
+#define FLASH_MEM_END        ((uint32_t) 0xFFFFFFFUL)  /**< FLASH end address  */
+#define FLASH_MEM_BITS       ((uint32_t) 0x28UL)       /**< FLASH used bits  */
 
 /** Bit banding area */
-#define BITBAND_PER_BASE     ((uint32_t)0x42000000UL) /**< Peripheral Address Space bit-band area */
-#define BITBAND_RAM_BASE     ((uint32_t)0x22000000UL) /**< SRAM Address Space bit-band area */
+#define BITBAND_PER_BASE     ((uint32_t) 0x42000000UL) /**< Peripheral Address Space bit-band area */
+#define BITBAND_RAM_BASE     ((uint32_t) 0x22000000UL) /**< SRAM Address Space bit-band area */
 
 /** Flash and SRAM limits for EFM32TG840F8 */
 #define FLASH_BASE           (0x00000000UL) /**< Flash Base Address */
@@ -210,8 +210,8 @@ typedef enum IRQn
 
 /**************************************************************************//**
  * @defgroup EFM32TG840F8_Peripheral_TypeDefs EFM32TG840F8 Peripheral TypeDefs
- * @brief Device Specific Peripheral Register Structures
  * @{
+ * @brief Device Specific Peripheral Register Structures
  *****************************************************************************/
 
 /**************************************************************************//**
@@ -959,34 +959,34 @@ typedef struct
  * @{
  *****************************************************************************/
 
-#define MSC          ((MSC_TypeDef *)MSC_BASE)             /**< MSC base pointer */
-#define EMU          ((EMU_TypeDef *)EMU_BASE)             /**< EMU base pointer */
-#define RMU          ((RMU_TypeDef *)RMU_BASE)             /**< RMU base pointer */
-#define CMU          ((CMU_TypeDef *)CMU_BASE)             /**< CMU base pointer */
-#define AES          ((AES_TypeDef *)AES_BASE)             /**< AES base pointer */
-#define LESENSE      ((LESENSE_TypeDef *)LESENSE_BASE)     /**< LESENSE base pointer */
-#define GPIO         ((GPIO_TypeDef *)GPIO_BASE)           /**< GPIO base pointer */
-#define PRS          ((PRS_TypeDef *)PRS_BASE)             /**< PRS base pointer */
-#define DMA          ((DMA_TypeDef *)DMA_BASE)             /**< DMA base pointer */
-#define TIMER0       ((TIMER_TypeDef *)TIMER0_BASE)        /**< TIMER0 base pointer */
-#define TIMER1       ((TIMER_TypeDef *)TIMER1_BASE)        /**< TIMER1 base pointer */
-#define USART0       ((USART_TypeDef *)USART0_BASE)        /**< USART0 base pointer */
-#define USART1       ((USART_TypeDef *)USART1_BASE)        /**< USART1 base pointer */
-#define LEUART0      ((LEUART_TypeDef *)LEUART0_BASE)      /**< LEUART0 base pointer */
-#define LETIMER0     ((LETIMER_TypeDef *)LETIMER0_BASE)    /**< LETIMER0 base pointer */
-#define PCNT0        ((PCNT_TypeDef *)PCNT0_BASE)          /**< PCNT0 base pointer */
-#define I2C0         ((I2C_TypeDef *)I2C0_BASE)            /**< I2C0 base pointer */
-#define ADC0         ((ADC_TypeDef *)ADC0_BASE)            /**< ADC0 base pointer */
-#define DAC0         ((DAC_TypeDef *)DAC0_BASE)            /**< DAC0 base pointer */
-#define ACMP0        ((ACMP_TypeDef *)ACMP0_BASE)          /**< ACMP0 base pointer */
-#define ACMP1        ((ACMP_TypeDef *)ACMP1_BASE)          /**< ACMP1 base pointer */
-#define VCMP         ((VCMP_TypeDef *)VCMP_BASE)           /**< VCMP base pointer */
-#define LCD          ((LCD_TypeDef *)LCD_BASE)             /**< LCD base pointer */
-#define RTC          ((RTC_TypeDef *)RTC_BASE)             /**< RTC base pointer */
-#define WDOG         ((WDOG_TypeDef *)WDOG_BASE)           /**< WDOG base pointer */
-#define CALIBRATE    ((CALIBRATE_TypeDef *)CALIBRATE_BASE) /**< CALIBRATE base pointer */
-#define DEVINFO      ((DEVINFO_TypeDef *)DEVINFO_BASE)     /**< DEVINFO base pointer */
-#define ROMTABLE     ((ROMTABLE_TypeDef *)ROMTABLE_BASE)   /**< ROMTABLE base pointer */
+#define MSC          ((MSC_TypeDef *) MSC_BASE)             /**< MSC base pointer */
+#define EMU          ((EMU_TypeDef *) EMU_BASE)             /**< EMU base pointer */
+#define RMU          ((RMU_TypeDef *) RMU_BASE)             /**< RMU base pointer */
+#define CMU          ((CMU_TypeDef *) CMU_BASE)             /**< CMU base pointer */
+#define AES          ((AES_TypeDef *) AES_BASE)             /**< AES base pointer */
+#define LESENSE      ((LESENSE_TypeDef *) LESENSE_BASE)     /**< LESENSE base pointer */
+#define GPIO         ((GPIO_TypeDef *) GPIO_BASE)           /**< GPIO base pointer */
+#define PRS          ((PRS_TypeDef *) PRS_BASE)             /**< PRS base pointer */
+#define DMA          ((DMA_TypeDef *) DMA_BASE)             /**< DMA base pointer */
+#define TIMER0       ((TIMER_TypeDef *) TIMER0_BASE)        /**< TIMER0 base pointer */
+#define TIMER1       ((TIMER_TypeDef *) TIMER1_BASE)        /**< TIMER1 base pointer */
+#define USART0       ((USART_TypeDef *) USART0_BASE)        /**< USART0 base pointer */
+#define USART1       ((USART_TypeDef *) USART1_BASE)        /**< USART1 base pointer */
+#define LEUART0      ((LEUART_TypeDef *) LEUART0_BASE)      /**< LEUART0 base pointer */
+#define LETIMER0     ((LETIMER_TypeDef *) LETIMER0_BASE)    /**< LETIMER0 base pointer */
+#define PCNT0        ((PCNT_TypeDef *) PCNT0_BASE)          /**< PCNT0 base pointer */
+#define I2C0         ((I2C_TypeDef *) I2C0_BASE)            /**< I2C0 base pointer */
+#define ADC0         ((ADC_TypeDef *) ADC0_BASE)            /**< ADC0 base pointer */
+#define DAC0         ((DAC_TypeDef *) DAC0_BASE)            /**< DAC0 base pointer */
+#define ACMP0        ((ACMP_TypeDef *) ACMP0_BASE)          /**< ACMP0 base pointer */
+#define ACMP1        ((ACMP_TypeDef *) ACMP1_BASE)          /**< ACMP1 base pointer */
+#define VCMP         ((VCMP_TypeDef *) VCMP_BASE)           /**< VCMP base pointer */
+#define LCD          ((LCD_TypeDef *) LCD_BASE)             /**< LCD base pointer */
+#define RTC          ((RTC_TypeDef *) RTC_BASE)             /**< RTC base pointer */
+#define WDOG         ((WDOG_TypeDef *) WDOG_BASE)           /**< WDOG base pointer */
+#define CALIBRATE    ((CALIBRATE_TypeDef *) CALIBRATE_BASE) /**< CALIBRATE base pointer */
+#define DEVINFO      ((DEVINFO_TypeDef *) DEVINFO_BASE)     /**< DEVINFO base pointer */
+#define ROMTABLE     ((ROMTABLE_TypeDef *) ROMTABLE_BASE)   /**< ROMTABLE base pointer */
 
 /** @} End of group EFM32TG840F8_Peripheral_Declaration */
 
@@ -996,7 +996,7 @@ typedef struct
  *****************************************************************************/
 
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_PRS EFM32TG840F8 PRS
+ * @addtogroup EFM32TG840F8_PRS
  * @{
  * @brief PRS Signal names
  *****************************************************************************/
@@ -1011,7 +1011,6 @@ typedef struct
 #define PRS_USART0_IRTX          ((16 << 16) + 0) /**< PRS USART 0 IRDA out */
 #define PRS_USART0_TXC           ((16 << 16) + 1) /**< PRS USART 0 TX complete */
 #define PRS_USART0_RXDATAV       ((16 << 16) + 2) /**< PRS USART 0 RX Data Valid */
-#define PRS_USART1_IRTX          ((17 << 16) + 0) /**< PRS USART 1 IRDA out */
 #define PRS_USART1_TXC           ((17 << 16) + 1) /**< PRS USART 1 TX complete */
 #define PRS_USART1_RXDATAV       ((17 << 16) + 2) /**< PRS USART 1 RX Data Valid */
 #define PRS_TIMER0_UF            ((28 << 16) + 0) /**< PRS Timer 0 Underflow */
@@ -4839,12 +4838,16 @@ typedef struct
 #define _I2C_ROUTE_LOCATION_LOC0          0x00000000UL                       /**< Mode LOC0 for I2C_ROUTE */
 #define _I2C_ROUTE_LOCATION_LOC1          0x00000001UL                       /**< Mode LOC1 for I2C_ROUTE */
 #define _I2C_ROUTE_LOCATION_LOC2          0x00000002UL                       /**< Mode LOC2 for I2C_ROUTE */
-#define _I2C_ROUTE_LOCATION_LOC3          0x00000003UL                       /**< Mode LOC3 for I2C_ROUTE */
+#define _I2C_ROUTE_LOCATION_LOC4          0x00000004UL                       /**< Mode LOC4 for I2C_ROUTE */
+#define _I2C_ROUTE_LOCATION_LOC5          0x00000005UL                       /**< Mode LOC5 for I2C_ROUTE */
+#define _I2C_ROUTE_LOCATION_LOC6          0x00000006UL                       /**< Mode LOC6 for I2C_ROUTE */
 #define I2C_ROUTE_LOCATION_DEFAULT        (_I2C_ROUTE_LOCATION_DEFAULT << 8) /**< Shifted mode DEFAULT for I2C_ROUTE */
 #define I2C_ROUTE_LOCATION_LOC0           (_I2C_ROUTE_LOCATION_LOC0 << 8)    /**< Shifted mode LOC0 for I2C_ROUTE */
 #define I2C_ROUTE_LOCATION_LOC1           (_I2C_ROUTE_LOCATION_LOC1 << 8)    /**< Shifted mode LOC1 for I2C_ROUTE */
 #define I2C_ROUTE_LOCATION_LOC2           (_I2C_ROUTE_LOCATION_LOC2 << 8)    /**< Shifted mode LOC2 for I2C_ROUTE */
-#define I2C_ROUTE_LOCATION_LOC3           (_I2C_ROUTE_LOCATION_LOC3 << 8)    /**< Shifted mode LOC3 for I2C_ROUTE */
+#define I2C_ROUTE_LOCATION_LOC4           (_I2C_ROUTE_LOCATION_LOC4 << 8)    /**< Shifted mode LOC4 for I2C_ROUTE */
+#define I2C_ROUTE_LOCATION_LOC5           (_I2C_ROUTE_LOCATION_LOC5 << 8)    /**< Shifted mode LOC5 for I2C_ROUTE */
+#define I2C_ROUTE_LOCATION_LOC6           (_I2C_ROUTE_LOCATION_LOC6 << 8)    /**< Shifted mode LOC6 for I2C_ROUTE */
 
 /** @} End of group EFM32TG840F8_I2C */
 
@@ -5867,13 +5870,13 @@ typedef struct
 #define _DAC_OPA0MUX_POSSEL_DISABLE           0x00000000UL                         /**< Mode DISABLE for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_POSSEL_DAC               0x00000001UL                         /**< Mode DAC for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_POSSEL_POSPAD            0x00000002UL                         /**< Mode POSPAD for DAC_OPA0MUX */
-#define _DAC_OPA0MUX_POSSEL_OPA0IN            0x00000003UL                         /**< Mode OPA0IN for DAC_OPA0MUX */
+#define _DAC_OPA0MUX_POSSEL_OPA0INP           0x00000003UL                         /**< Mode OPA0INP for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_POSSEL_OPATAP            0x00000004UL                         /**< Mode OPATAP for DAC_OPA0MUX */
 #define DAC_OPA0MUX_POSSEL_DEFAULT            (_DAC_OPA0MUX_POSSEL_DEFAULT << 0)   /**< Shifted mode DEFAULT for DAC_OPA0MUX */
 #define DAC_OPA0MUX_POSSEL_DISABLE            (_DAC_OPA0MUX_POSSEL_DISABLE << 0)   /**< Shifted mode DISABLE for DAC_OPA0MUX */
 #define DAC_OPA0MUX_POSSEL_DAC                (_DAC_OPA0MUX_POSSEL_DAC << 0)       /**< Shifted mode DAC for DAC_OPA0MUX */
 #define DAC_OPA0MUX_POSSEL_POSPAD             (_DAC_OPA0MUX_POSSEL_POSPAD << 0)    /**< Shifted mode POSPAD for DAC_OPA0MUX */
-#define DAC_OPA0MUX_POSSEL_OPA0IN             (_DAC_OPA0MUX_POSSEL_OPA0IN << 0)    /**< Shifted mode OPA0IN for DAC_OPA0MUX */
+#define DAC_OPA0MUX_POSSEL_OPA0INP            (_DAC_OPA0MUX_POSSEL_OPA0INP << 0)   /**< Shifted mode OPA0INP for DAC_OPA0MUX */
 #define DAC_OPA0MUX_POSSEL_OPATAP             (_DAC_OPA0MUX_POSSEL_OPATAP << 0)    /**< Shifted mode OPATAP for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_NEGSEL_SHIFT             4                                    /**< Shift value for DAC_NEGSEL */
 #define _DAC_OPA0MUX_NEGSEL_MASK              0x30UL                               /**< Bit mask for DAC_NEGSEL */
@@ -5891,13 +5894,13 @@ typedef struct
 #define _DAC_OPA0MUX_RESINMUX_MASK            0x700UL                              /**< Bit mask for DAC_RESINMUX */
 #define _DAC_OPA0MUX_RESINMUX_DEFAULT         0x00000000UL                         /**< Mode DEFAULT for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_RESINMUX_DISABLE         0x00000000UL                         /**< Mode DISABLE for DAC_OPA0MUX */
-#define _DAC_OPA0MUX_RESINMUX_OPA2INP         0x00000001UL                         /**< Mode OPA2INP for DAC_OPA0MUX */
+#define _DAC_OPA0MUX_RESINMUX_OPA0INP         0x00000001UL                         /**< Mode OPA0INP for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_RESINMUX_NEGPAD          0x00000002UL                         /**< Mode NEGPAD for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_RESINMUX_POSPAD          0x00000003UL                         /**< Mode POSPAD for DAC_OPA0MUX */
 #define _DAC_OPA0MUX_RESINMUX_VSS             0x00000004UL                         /**< Mode VSS for DAC_OPA0MUX */
 #define DAC_OPA0MUX_RESINMUX_DEFAULT          (_DAC_OPA0MUX_RESINMUX_DEFAULT << 8) /**< Shifted mode DEFAULT for DAC_OPA0MUX */
 #define DAC_OPA0MUX_RESINMUX_DISABLE          (_DAC_OPA0MUX_RESINMUX_DISABLE << 8) /**< Shifted mode DISABLE for DAC_OPA0MUX */
-#define DAC_OPA0MUX_RESINMUX_OPA2INP          (_DAC_OPA0MUX_RESINMUX_OPA2INP << 8) /**< Shifted mode OPA2INP for DAC_OPA0MUX */
+#define DAC_OPA0MUX_RESINMUX_OPA0INP          (_DAC_OPA0MUX_RESINMUX_OPA0INP << 8) /**< Shifted mode OPA0INP for DAC_OPA0MUX */
 #define DAC_OPA0MUX_RESINMUX_NEGPAD           (_DAC_OPA0MUX_RESINMUX_NEGPAD << 8)  /**< Shifted mode NEGPAD for DAC_OPA0MUX */
 #define DAC_OPA0MUX_RESINMUX_POSPAD           (_DAC_OPA0MUX_RESINMUX_POSPAD << 8)  /**< Shifted mode POSPAD for DAC_OPA0MUX */
 #define DAC_OPA0MUX_RESINMUX_VSS              (_DAC_OPA0MUX_RESINMUX_VSS << 8)     /**< Shifted mode VSS for DAC_OPA0MUX */
@@ -5972,13 +5975,13 @@ typedef struct
 #define _DAC_OPA1MUX_POSSEL_DISABLE           0x00000000UL                         /**< Mode DISABLE for DAC_OPA1MUX */
 #define _DAC_OPA1MUX_POSSEL_DAC               0x00000001UL                         /**< Mode DAC for DAC_OPA1MUX */
 #define _DAC_OPA1MUX_POSSEL_POSPAD            0x00000002UL                         /**< Mode POSPAD for DAC_OPA1MUX */
-#define _DAC_OPA1MUX_POSSEL_OPA0IN            0x00000003UL                         /**< Mode OPA0IN for DAC_OPA1MUX */
+#define _DAC_OPA1MUX_POSSEL_OPA0INP           0x00000003UL                         /**< Mode OPA0INP for DAC_OPA1MUX */
 #define _DAC_OPA1MUX_POSSEL_OPATAP            0x00000004UL                         /**< Mode OPATAP for DAC_OPA1MUX */
 #define DAC_OPA1MUX_POSSEL_DEFAULT            (_DAC_OPA1MUX_POSSEL_DEFAULT << 0)   /**< Shifted mode DEFAULT for DAC_OPA1MUX */
 #define DAC_OPA1MUX_POSSEL_DISABLE            (_DAC_OPA1MUX_POSSEL_DISABLE << 0)   /**< Shifted mode DISABLE for DAC_OPA1MUX */
 #define DAC_OPA1MUX_POSSEL_DAC                (_DAC_OPA1MUX_POSSEL_DAC << 0)       /**< Shifted mode DAC for DAC_OPA1MUX */
 #define DAC_OPA1MUX_POSSEL_POSPAD             (_DAC_OPA1MUX_POSSEL_POSPAD << 0)    /**< Shifted mode POSPAD for DAC_OPA1MUX */
-#define DAC_OPA1MUX_POSSEL_OPA0IN             (_DAC_OPA1MUX_POSSEL_OPA0IN << 0)    /**< Shifted mode OPA0IN for DAC_OPA1MUX */
+#define DAC_OPA1MUX_POSSEL_OPA0INP            (_DAC_OPA1MUX_POSSEL_OPA0INP << 0)   /**< Shifted mode OPA0INP for DAC_OPA1MUX */
 #define DAC_OPA1MUX_POSSEL_OPATAP             (_DAC_OPA1MUX_POSSEL_OPATAP << 0)    /**< Shifted mode OPATAP for DAC_OPA1MUX */
 #define _DAC_OPA1MUX_NEGSEL_SHIFT             4                                    /**< Shift value for DAC_NEGSEL */
 #define _DAC_OPA1MUX_NEGSEL_MASK              0x30UL                               /**< Bit mask for DAC_NEGSEL */
@@ -6076,12 +6079,12 @@ typedef struct
 #define _DAC_OPA2MUX_POSSEL_DEFAULT           0x00000000UL                         /**< Mode DEFAULT for DAC_OPA2MUX */
 #define _DAC_OPA2MUX_POSSEL_DISABLE           0x00000000UL                         /**< Mode DISABLE for DAC_OPA2MUX */
 #define _DAC_OPA2MUX_POSSEL_POSPAD            0x00000002UL                         /**< Mode POSPAD for DAC_OPA2MUX */
-#define _DAC_OPA2MUX_POSSEL_OPA1IN            0x00000003UL                         /**< Mode OPA1IN for DAC_OPA2MUX */
+#define _DAC_OPA2MUX_POSSEL_OPA1INP           0x00000003UL                         /**< Mode OPA1INP for DAC_OPA2MUX */
 #define _DAC_OPA2MUX_POSSEL_OPATAP            0x00000004UL                         /**< Mode OPATAP for DAC_OPA2MUX */
 #define DAC_OPA2MUX_POSSEL_DEFAULT            (_DAC_OPA2MUX_POSSEL_DEFAULT << 0)   /**< Shifted mode DEFAULT for DAC_OPA2MUX */
 #define DAC_OPA2MUX_POSSEL_DISABLE            (_DAC_OPA2MUX_POSSEL_DISABLE << 0)   /**< Shifted mode DISABLE for DAC_OPA2MUX */
 #define DAC_OPA2MUX_POSSEL_POSPAD             (_DAC_OPA2MUX_POSSEL_POSPAD << 0)    /**< Shifted mode POSPAD for DAC_OPA2MUX */
-#define DAC_OPA2MUX_POSSEL_OPA1IN             (_DAC_OPA2MUX_POSSEL_OPA1IN << 0)    /**< Shifted mode OPA1IN for DAC_OPA2MUX */
+#define DAC_OPA2MUX_POSSEL_OPA1INP            (_DAC_OPA2MUX_POSSEL_OPA1INP << 0)   /**< Shifted mode OPA1INP for DAC_OPA2MUX */
 #define DAC_OPA2MUX_POSSEL_OPATAP             (_DAC_OPA2MUX_POSSEL_OPATAP << 0)    /**< Shifted mode OPATAP for DAC_OPA2MUX */
 #define _DAC_OPA2MUX_NEGSEL_SHIFT             4                                    /**< Shift value for DAC_NEGSEL */
 #define _DAC_OPA2MUX_NEGSEL_MASK              0x30UL                               /**< Bit mask for DAC_NEGSEL */
@@ -6132,7 +6135,7 @@ typedef struct
 #define _DAC_OPA2MUX_OUTMODE_MASK             0x400000UL                           /**< Bit mask for DAC_OUTMODE */
 #define _DAC_OPA2MUX_OUTMODE_DEFAULT          0x00000000UL                         /**< Mode DEFAULT for DAC_OPA2MUX */
 #define DAC_OPA2MUX_OUTMODE_DEFAULT           (_DAC_OPA2MUX_OUTMODE_DEFAULT << 22) /**< Shifted mode DEFAULT for DAC_OPA2MUX */
-#define DAC_OPA2MUX_NEXTOUT                   (0x1UL << 26)                        /**< OPA1 Next Enable */
+#define DAC_OPA2MUX_NEXTOUT                   (0x1UL << 26)                        /**< OPA2 Next Enable */
 #define _DAC_OPA2MUX_NEXTOUT_SHIFT            26                                   /**< Shift value for DAC_NEXTOUT */
 #define _DAC_OPA2MUX_NEXTOUT_MASK             0x4000000UL                          /**< Bit mask for DAC_NEXTOUT */
 #define _DAC_OPA2MUX_NEXTOUT_DEFAULT          0x00000000UL                         /**< Mode DEFAULT for DAC_OPA2MUX */
@@ -7896,9 +7899,11 @@ typedef struct
 #define _CMU_ROUTE_LOCATION_DEFAULT                0x00000000UL                         /**< Mode DEFAULT for CMU_ROUTE */
 #define _CMU_ROUTE_LOCATION_LOC0                   0x00000000UL                         /**< Mode LOC0 for CMU_ROUTE */
 #define _CMU_ROUTE_LOCATION_LOC1                   0x00000001UL                         /**< Mode LOC1 for CMU_ROUTE */
+#define _CMU_ROUTE_LOCATION_LOC2                   0x00000002UL                         /**< Mode LOC2 for CMU_ROUTE */
 #define CMU_ROUTE_LOCATION_DEFAULT                 (_CMU_ROUTE_LOCATION_DEFAULT << 2)   /**< Shifted mode DEFAULT for CMU_ROUTE */
 #define CMU_ROUTE_LOCATION_LOC0                    (_CMU_ROUTE_LOCATION_LOC0 << 2)      /**< Shifted mode LOC0 for CMU_ROUTE */
 #define CMU_ROUTE_LOCATION_LOC1                    (_CMU_ROUTE_LOCATION_LOC1 << 2)      /**< Shifted mode LOC1 for CMU_ROUTE */
+#define CMU_ROUTE_LOCATION_LOC2                    (_CMU_ROUTE_LOCATION_LOC2 << 2)      /**< Shifted mode LOC2 for CMU_ROUTE */
 
 /* Bit fields for CMU LOCK */
 #define _CMU_LOCK_RESETVALUE                       0x00000000UL                      /**< Default value for CMU_LOCK */
@@ -13276,31 +13281,31 @@ typedef struct
  * Unlock codes
  *****************************************************************************/
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_MSC_BitFields EFM32TG840F8_MSC Bit Fields
+ * @addtogroup EFM32TG840F8_MSC_BitFields
  * @{
  *****************************************************************************/
 #define MSC_UNLOCK_CODE      0x1B71 /**< MSC unlock code */
 /** @} End of group EFM32TG840F8_MSC */
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_EMU_BitFields EFM32TG840F8_EMU Bit Fields
+ * @addtogroup EFM32TG840F8_EMU_BitFields
  * @{
  *****************************************************************************/
 #define EMU_UNLOCK_CODE      0xADE8 /**< EMU unlock code */
 /** @} End of group EFM32TG840F8_EMU */
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_CMU_BitFields EFM32TG840F8_CMU Bit Fields
+ * @addtogroup EFM32TG840F8_CMU_BitFields
  * @{
  *****************************************************************************/
 #define CMU_UNLOCK_CODE      0x580E /**< CMU unlock code */
 /** @} End of group EFM32TG840F8_CMU */
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_GPIO_BitFields EFM32TG840F8_GPIO Bit Fields
+ * @addtogroup EFM32TG840F8_GPIO_BitFields
  * @{
  *****************************************************************************/
 #define GPIO_UNLOCK_CODE     0xA534 /**< GPIO unlock code */
 /** @} End of group EFM32TG840F8_GPIO */
 /**************************************************************************//**
- * @defgroup EFM32TG840F8_TIMER_BitFields EFM32TG840F8_TIMER Bit Fields
+ * @addtogroup EFM32TG840F8_TIMER_BitFields
  * @{
  *****************************************************************************/
 #define TIMER_UNLOCK_CODE    0xCE80 /**< TIMER unlock code */
@@ -13635,206 +13640,6 @@ typedef struct
 
 /** @} End of group EFM32TG840F8_AF_Pins */
 
-/** Grouped by channel c, function f */
-#define AF_PORT(c, f)    (                    \
-    (c) == 0 ? AF_CMU_CLK0_PORT((f)) :        \
-    (c) == 1 ? AF_CMU_CLK1_PORT((f)) :        \
-    (c) == 2 ? AF_LESENSE_CH0_PORT((f)) :     \
-    (c) == 3 ? AF_LESENSE_CH1_PORT((f)) :     \
-    (c) == 4 ? AF_LESENSE_CH2_PORT((f)) :     \
-    (c) == 5 ? AF_LESENSE_CH3_PORT((f)) :     \
-    (c) == 6 ? AF_LESENSE_CH4_PORT((f)) :     \
-    (c) == 7 ? AF_LESENSE_CH5_PORT((f)) :     \
-    (c) == 8 ? AF_LESENSE_CH6_PORT((f)) :     \
-    (c) == 9 ? AF_LESENSE_CH7_PORT((f)) :     \
-    (c) == 10 ? AF_LESENSE_CH8_PORT((f)) :    \
-    (c) == 11 ? AF_LESENSE_CH9_PORT((f)) :    \
-    (c) == 12 ? AF_LESENSE_CH10_PORT((f)) :   \
-    (c) == 13 ? AF_LESENSE_CH11_PORT((f)) :   \
-    (c) == 14 ? AF_LESENSE_CH12_PORT((f)) :   \
-    (c) == 15 ? AF_LESENSE_CH13_PORT((f)) :   \
-    (c) == 16 ? AF_LESENSE_CH14_PORT((f)) :   \
-    (c) == 17 ? AF_LESENSE_CH15_PORT((f)) :   \
-    (c) == 18 ? AF_LESENSE_ALTEX0_PORT((f)) : \
-    (c) == 19 ? AF_LESENSE_ALTEX1_PORT((f)) : \
-    (c) == 20 ? AF_LESENSE_ALTEX2_PORT((f)) : \
-    (c) == 21 ? AF_LESENSE_ALTEX3_PORT((f)) : \
-    (c) == 22 ? AF_LESENSE_ALTEX4_PORT((f)) : \
-    (c) == 23 ? AF_LESENSE_ALTEX5_PORT((f)) : \
-    (c) == 24 ? AF_LESENSE_ALTEX6_PORT((f)) : \
-    (c) == 25 ? AF_LESENSE_ALTEX7_PORT((f)) : \
-    (c) == 26 ? AF_PRS_CH0_PORT((f)) :        \
-    (c) == 27 ? AF_PRS_CH1_PORT((f)) :        \
-    (c) == 28 ? AF_PRS_CH2_PORT((f)) :        \
-    (c) == 29 ? AF_PRS_CH3_PORT((f)) :        \
-    (c) == 30 ? AF_TIMER0_CC0_PORT((f)) :     \
-    (c) == 31 ? AF_TIMER0_CC1_PORT((f)) :     \
-    (c) == 32 ? AF_TIMER0_CC2_PORT((f)) :     \
-    (c) == 33 ? AF_TIMER0_CDTI0_PORT((f)) :   \
-    (c) == 34 ? AF_TIMER0_CDTI1_PORT((f)) :   \
-    (c) == 35 ? AF_TIMER0_CDTI2_PORT((f)) :   \
-    (c) == 36 ? AF_TIMER1_CC0_PORT((f)) :     \
-    (c) == 37 ? AF_TIMER1_CC1_PORT((f)) :     \
-    (c) == 38 ? AF_TIMER1_CC2_PORT((f)) :     \
-    (c) == 39 ? AF_TIMER1_CDTI0_PORT((f)) :   \
-    (c) == 40 ? AF_TIMER1_CDTI1_PORT((f)) :   \
-    (c) == 41 ? AF_TIMER1_CDTI2_PORT((f)) :   \
-    (c) == 42 ? AF_USART0_TX_PORT((f)) :      \
-    (c) == 43 ? AF_USART0_RX_PORT((f)) :      \
-    (c) == 44 ? AF_USART0_CLK_PORT((f)) :     \
-    (c) == 45 ? AF_USART0_CS_PORT((f)) :      \
-    (c) == 46 ? AF_USART1_TX_PORT((f)) :      \
-    (c) == 47 ? AF_USART1_RX_PORT((f)) :      \
-    (c) == 48 ? AF_USART1_CLK_PORT((f)) :     \
-    (c) == 49 ? AF_USART1_CS_PORT((f)) :      \
-    (c) == 50 ? AF_LEUART0_TX_PORT((f)) :     \
-    (c) == 51 ? AF_LEUART0_RX_PORT((f)) :     \
-    (c) == 52 ? AF_LETIMER0_OUT0_PORT((f)) :  \
-    (c) == 53 ? AF_LETIMER0_OUT1_PORT((f)) :  \
-    (c) == 54 ? AF_PCNT0_S0IN_PORT((f)) :     \
-    (c) == 55 ? AF_PCNT0_S1IN_PORT((f)) :     \
-    (c) == 56 ? AF_I2C0_SDA_PORT((f)) :       \
-    (c) == 57 ? AF_I2C0_SCL_PORT((f)) :       \
-    (c) == 58 ? AF_ACMP0_OUT_PORT((f)) :      \
-    (c) == 59 ? AF_ACMP1_OUT_PORT((f)) :      \
-    (c) == 60 ? AF_DBG_SWO_PORT((f)) :        \
-    (c) == 61 ? AF_DBG_SWDIO_PORT((f)) :      \
-    (c) == 62 ? AF_DBG_SWCLK_PORT((f)) :      \
-    -1)
-
-#define AF_PIN(c, f)     (                   \
-    (c) == 0 ? AF_CMU_CLK0_PIN((f)) :        \
-    (c) == 1 ? AF_CMU_CLK1_PIN((f)) :        \
-    (c) == 2 ? AF_LESENSE_CH0_PIN((f)) :     \
-    (c) == 3 ? AF_LESENSE_CH1_PIN((f)) :     \
-    (c) == 4 ? AF_LESENSE_CH2_PIN((f)) :     \
-    (c) == 5 ? AF_LESENSE_CH3_PIN((f)) :     \
-    (c) == 6 ? AF_LESENSE_CH4_PIN((f)) :     \
-    (c) == 7 ? AF_LESENSE_CH5_PIN((f)) :     \
-    (c) == 8 ? AF_LESENSE_CH6_PIN((f)) :     \
-    (c) == 9 ? AF_LESENSE_CH7_PIN((f)) :     \
-    (c) == 10 ? AF_LESENSE_CH8_PIN((f)) :    \
-    (c) == 11 ? AF_LESENSE_CH9_PIN((f)) :    \
-    (c) == 12 ? AF_LESENSE_CH10_PIN((f)) :   \
-    (c) == 13 ? AF_LESENSE_CH11_PIN((f)) :   \
-    (c) == 14 ? AF_LESENSE_CH12_PIN((f)) :   \
-    (c) == 15 ? AF_LESENSE_CH13_PIN((f)) :   \
-    (c) == 16 ? AF_LESENSE_CH14_PIN((f)) :   \
-    (c) == 17 ? AF_LESENSE_CH15_PIN((f)) :   \
-    (c) == 18 ? AF_LESENSE_ALTEX0_PIN((f)) : \
-    (c) == 19 ? AF_LESENSE_ALTEX1_PIN((f)) : \
-    (c) == 20 ? AF_LESENSE_ALTEX2_PIN((f)) : \
-    (c) == 21 ? AF_LESENSE_ALTEX3_PIN((f)) : \
-    (c) == 22 ? AF_LESENSE_ALTEX4_PIN((f)) : \
-    (c) == 23 ? AF_LESENSE_ALTEX5_PIN((f)) : \
-    (c) == 24 ? AF_LESENSE_ALTEX6_PIN((f)) : \
-    (c) == 25 ? AF_LESENSE_ALTEX7_PIN((f)) : \
-    (c) == 26 ? AF_PRS_CH0_PIN((f)) :        \
-    (c) == 27 ? AF_PRS_CH1_PIN((f)) :        \
-    (c) == 28 ? AF_PRS_CH2_PIN((f)) :        \
-    (c) == 29 ? AF_PRS_CH3_PIN((f)) :        \
-    (c) == 30 ? AF_TIMER0_CC0_PIN((f)) :     \
-    (c) == 31 ? AF_TIMER0_CC1_PIN((f)) :     \
-    (c) == 32 ? AF_TIMER0_CC2_PIN((f)) :     \
-    (c) == 33 ? AF_TIMER0_CDTI0_PIN((f)) :   \
-    (c) == 34 ? AF_TIMER0_CDTI1_PIN((f)) :   \
-    (c) == 35 ? AF_TIMER0_CDTI2_PIN((f)) :   \
-    (c) == 36 ? AF_TIMER1_CC0_PIN((f)) :     \
-    (c) == 37 ? AF_TIMER1_CC1_PIN((f)) :     \
-    (c) == 38 ? AF_TIMER1_CC2_PIN((f)) :     \
-    (c) == 39 ? AF_TIMER1_CDTI0_PIN((f)) :   \
-    (c) == 40 ? AF_TIMER1_CDTI1_PIN((f)) :   \
-    (c) == 41 ? AF_TIMER1_CDTI2_PIN((f)) :   \
-    (c) == 42 ? AF_USART0_TX_PIN((f)) :      \
-    (c) == 43 ? AF_USART0_RX_PIN((f)) :      \
-    (c) == 44 ? AF_USART0_CLK_PIN((f)) :     \
-    (c) == 45 ? AF_USART0_CS_PIN((f)) :      \
-    (c) == 46 ? AF_USART1_TX_PIN((f)) :      \
-    (c) == 47 ? AF_USART1_RX_PIN((f)) :      \
-    (c) == 48 ? AF_USART1_CLK_PIN((f)) :     \
-    (c) == 49 ? AF_USART1_CS_PIN((f)) :      \
-    (c) == 50 ? AF_LEUART0_TX_PIN((f)) :     \
-    (c) == 51 ? AF_LEUART0_RX_PIN((f)) :     \
-    (c) == 52 ? AF_LETIMER0_OUT0_PIN((f)) :  \
-    (c) == 53 ? AF_LETIMER0_OUT1_PIN((f)) :  \
-    (c) == 54 ? AF_PCNT0_S0IN_PIN((f)) :     \
-    (c) == 55 ? AF_PCNT0_S1IN_PIN((f)) :     \
-    (c) == 56 ? AF_I2C0_SDA_PIN((f)) :       \
-    (c) == 57 ? AF_I2C0_SCL_PIN((f)) :       \
-    (c) == 58 ? AF_ACMP0_OUT_PIN((f)) :      \
-    (c) == 59 ? AF_ACMP1_OUT_PIN((f)) :      \
-    (c) == 60 ? AF_DBG_SWO_PIN((f)) :        \
-    (c) == 61 ? AF_DBG_SWDIO_PIN((f)) :      \
-    (c) == 62 ? AF_DBG_SWCLK_PIN((f)) :      \
-    -1)
-
-/** AF channel output count for channel c */
-#define AF_COUNT(c)      ( \
-    (c) == 0 ? 3 :         \
-    (c) == 1 ? 3 :         \
-    (c) == 2 ? 1 :         \
-    (c) == 3 ? 1 :         \
-    (c) == 4 ? 1 :         \
-    (c) == 5 ? 1 :         \
-    (c) == 6 ? 1 :         \
-    (c) == 7 ? 1 :         \
-    (c) == 8 ? 1 :         \
-    (c) == 9 ? 1 :         \
-    (c) == 10 ? 1 :        \
-    (c) == 11 ? 1 :        \
-    (c) == 12 ? 1 :        \
-    (c) == 13 ? 1 :        \
-    (c) == 14 ? 1 :        \
-    (c) == 15 ? 1 :        \
-    (c) == 16 ? 1 :        \
-    (c) == 17 ? 1 :        \
-    (c) == 18 ? 1 :        \
-    (c) == 19 ? 1 :        \
-    (c) == 20 ? 1 :        \
-    (c) == 21 ? 1 :        \
-    (c) == 22 ? 1 :        \
-    (c) == 23 ? 1 :        \
-    (c) == 24 ? 1 :        \
-    (c) == 25 ? 1 :        \
-    (c) == 26 ? 2 :        \
-    (c) == 27 ? 2 :        \
-    (c) == 28 ? 2 :        \
-    (c) == 29 ? 2 :        \
-    (c) == 30 ? 6 :        \
-    (c) == 31 ? 6 :        \
-    (c) == 32 ? 6 :        \
-    (c) == 33 ? 0 :        \
-    (c) == 34 ? 0 :        \
-    (c) == 35 ? 0 :        \
-    (c) == 36 ? 5 :        \
-    (c) == 37 ? 5 :        \
-    (c) == 38 ? 5 :        \
-    (c) == 39 ? 0 :        \
-    (c) == 40 ? 0 :        \
-    (c) == 41 ? 0 :        \
-    (c) == 42 ? 6 :        \
-    (c) == 43 ? 6 :        \
-    (c) == 44 ? 6 :        \
-    (c) == 45 ? 6 :        \
-    (c) == 46 ? 3 :        \
-    (c) == 47 ? 3 :        \
-    (c) == 48 ? 3 :        \
-    (c) == 49 ? 3 :        \
-    (c) == 50 ? 5 :        \
-    (c) == 51 ? 5 :        \
-    (c) == 52 ? 4 :        \
-    (c) == 53 ? 4 :        \
-    (c) == 54 ? 4 :        \
-    (c) == 55 ? 4 :        \
-    (c) == 56 ? 7 :        \
-    (c) == 57 ? 7 :        \
-    (c) == 58 ? 3 :        \
-    (c) == 59 ? 3 :        \
-    (c) == 60 ? 2 :        \
-    (c) == 61 ? 2 :        \
-    (c) == 62 ? 2 :        \
-    -1)
-
 /** @} End of group EFM32TG840F8_Alternate_Function */
 
 /**************************************************************************//**
@@ -13851,7 +13656,7 @@ typedef struct
  *       0 (zero) means LSB.
  *****************************************************************************/
 #define SET_BIT_FIELD(REG, MASK, VALUE, OFFSET) \
-  REG = ((REG)&~(MASK)) | (((VALUE) << (OFFSET)) & (MASK));
+  REG = ((REG) &~(MASK)) | (((VALUE) << (OFFSET)) & (MASK));
 
 /** @} End of group EFM32TG840F8  */
 

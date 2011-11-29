@@ -3,7 +3,7 @@
  * @brief CMSIS Cortex-M3 Peripheral Access Layer Header File
  *        for EFM EFM32G230F128
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -90,8 +90,8 @@ typedef enum IRQn
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_Core EFM32G230F128 Core
- * @brief Processor and Core Peripheral Section
  * @{
+ * @brief Processor and Core Peripheral Section
  *****************************************************************************/
 #define __MPU_PRESENT             1 /**< Presence of MPU  */
 #define __NVIC_PRIO_BITS          3 /**< NVIC interrupt priority bits */
@@ -116,34 +116,34 @@ typedef enum IRQn
 #define PART_NUMBER          "EFM32G230F128" /**< Part Number */
 
 /** Memory Base addresses and limits */
-#define EBI_MEM_BASE         ((uint32_t)0x80000000UL) /**< EBI base address  */
-#define EBI_MEM_SIZE         ((uint32_t)0x10000000UL) /**< EBI available address space  */
-#define EBI_MEM_END          ((uint32_t)0x8FFFFFFFUL) /**< EBI end address  */
-#define EBI_MEM_BITS         ((uint32_t)0x28UL)       /**< EBI used bits  */
-#define AES_MEM_BASE         ((uint32_t)0x400E0000UL) /**< AES base address  */
-#define AES_MEM_SIZE         ((uint32_t)0x400UL)      /**< AES available address space  */
-#define AES_MEM_END          ((uint32_t)0x400E03FFUL) /**< AES end address  */
-#define AES_MEM_BITS         ((uint32_t)0x10UL)       /**< AES used bits  */
-#define PER_MEM_BASE         ((uint32_t)0x40000000UL) /**< PER base address  */
-#define PER_MEM_SIZE         ((uint32_t)0xE0000UL)    /**< PER available address space  */
-#define PER_MEM_END          ((uint32_t)0x400DFFFFUL) /**< PER end address  */
-#define PER_MEM_BITS         ((uint32_t)0x20UL)       /**< PER used bits  */
-#define RAM_MEM_BASE         ((uint32_t)0x20000000UL) /**< RAM base address  */
-#define RAM_MEM_SIZE         ((uint32_t)0x8000UL)     /**< RAM available address space  */
-#define RAM_MEM_END          ((uint32_t)0x20007FFFUL) /**< RAM end address  */
-#define RAM_MEM_BITS         ((uint32_t)0x15UL)       /**< RAM used bits  */
-#define RAM_CODE_MEM_BASE    ((uint32_t)0x10000000UL) /**< RAM_CODE base address  */
-#define RAM_CODE_MEM_SIZE    ((uint32_t)0x4000UL)     /**< RAM_CODE available address space  */
-#define RAM_CODE_MEM_END     ((uint32_t)0x10003FFFUL) /**< RAM_CODE end address  */
-#define RAM_CODE_MEM_BITS    ((uint32_t)0x14UL)       /**< RAM_CODE used bits  */
-#define FLASH_MEM_BASE       ((uint32_t)0x0UL)        /**< FLASH base address  */
-#define FLASH_MEM_SIZE       ((uint32_t)0x10000000UL) /**< FLASH available address space  */
-#define FLASH_MEM_END        ((uint32_t)0xFFFFFFFUL)  /**< FLASH end address  */
-#define FLASH_MEM_BITS       ((uint32_t)0x28UL)       /**< FLASH used bits  */
+#define EBI_MEM_BASE         ((uint32_t) 0x80000000UL) /**< EBI base address  */
+#define EBI_MEM_SIZE         ((uint32_t) 0x10000000UL) /**< EBI available address space  */
+#define EBI_MEM_END          ((uint32_t) 0x8FFFFFFFUL) /**< EBI end address  */
+#define EBI_MEM_BITS         ((uint32_t) 0x28UL)       /**< EBI used bits  */
+#define AES_MEM_BASE         ((uint32_t) 0x400E0000UL) /**< AES base address  */
+#define AES_MEM_SIZE         ((uint32_t) 0x400UL)      /**< AES available address space  */
+#define AES_MEM_END          ((uint32_t) 0x400E03FFUL) /**< AES end address  */
+#define AES_MEM_BITS         ((uint32_t) 0x10UL)       /**< AES used bits  */
+#define PER_MEM_BASE         ((uint32_t) 0x40000000UL) /**< PER base address  */
+#define PER_MEM_SIZE         ((uint32_t) 0xE0000UL)    /**< PER available address space  */
+#define PER_MEM_END          ((uint32_t) 0x400DFFFFUL) /**< PER end address  */
+#define PER_MEM_BITS         ((uint32_t) 0x20UL)       /**< PER used bits  */
+#define RAM_MEM_BASE         ((uint32_t) 0x20000000UL) /**< RAM base address  */
+#define RAM_MEM_SIZE         ((uint32_t) 0x8000UL)     /**< RAM available address space  */
+#define RAM_MEM_END          ((uint32_t) 0x20007FFFUL) /**< RAM end address  */
+#define RAM_MEM_BITS         ((uint32_t) 0x15UL)       /**< RAM used bits  */
+#define RAM_CODE_MEM_BASE    ((uint32_t) 0x10000000UL) /**< RAM_CODE base address  */
+#define RAM_CODE_MEM_SIZE    ((uint32_t) 0x4000UL)     /**< RAM_CODE available address space  */
+#define RAM_CODE_MEM_END     ((uint32_t) 0x10003FFFUL) /**< RAM_CODE end address  */
+#define RAM_CODE_MEM_BITS    ((uint32_t) 0x14UL)       /**< RAM_CODE used bits  */
+#define FLASH_MEM_BASE       ((uint32_t) 0x0UL)        /**< FLASH base address  */
+#define FLASH_MEM_SIZE       ((uint32_t) 0x10000000UL) /**< FLASH available address space  */
+#define FLASH_MEM_END        ((uint32_t) 0xFFFFFFFUL)  /**< FLASH end address  */
+#define FLASH_MEM_BITS       ((uint32_t) 0x28UL)       /**< FLASH used bits  */
 
 /** Bit banding area */
-#define BITBAND_PER_BASE     ((uint32_t)0x42000000UL) /**< Peripheral Address Space bit-band area */
-#define BITBAND_RAM_BASE     ((uint32_t)0x22000000UL) /**< SRAM Address Space bit-band area */
+#define BITBAND_PER_BASE     ((uint32_t) 0x42000000UL) /**< Peripheral Address Space bit-band area */
+#define BITBAND_RAM_BASE     ((uint32_t) 0x22000000UL) /**< SRAM Address Space bit-band area */
 
 /** Flash and SRAM limits for EFM32G230F128 */
 #define FLASH_BASE           (0x00000000UL) /**< Flash Base Address */
@@ -212,14 +212,14 @@ typedef enum IRQn
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_Peripheral_TypeDefs EFM32G230F128 Peripheral TypeDefs
- * @brief Device Specific Peripheral Register Structures
  * @{
+ * @brief Device Specific Peripheral Register Structures
  *****************************************************************************/
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_MSC EFM32G230F128 MSC
- * @brief EFM32G230F128_MSC Register Declaration
  * @{
+ * @brief EFM32G230F128_MSC Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -243,8 +243,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_EMU EFM32G230F128 EMU
- * @brief EFM32G230F128_EMU Register Declaration
  * @{
+ * @brief EFM32G230F128_EMU Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -258,8 +258,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_RMU EFM32G230F128 RMU
- * @brief EFM32G230F128_RMU Register Declaration
  * @{
+ * @brief EFM32G230F128_RMU Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -270,8 +270,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_CMU EFM32G230F128 CMU
- * @brief EFM32G230F128_CMU Register Declaration
  * @{
+ * @brief EFM32G230F128_CMU Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -313,8 +313,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_AES EFM32G230F128 AES
- * @brief EFM32G230F128_AES Register Declaration
  * @{
+ * @brief EFM32G230F128_AES Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -356,8 +356,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_GPIO EFM32G230F128 GPIO
- * @brief EFM32G230F128_GPIO Register Declaration
  * @{
+ * @brief EFM32G230F128_GPIO Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -388,8 +388,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_PRS EFM32G230F128 PRS
- * @brief EFM32G230F128_PRS Register Declaration
  * @{
+ * @brief EFM32G230F128_PRS Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -411,8 +411,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_DMA EFM32G230F128 DMA
- * @brief EFM32G230F128_DMA Register Declaration
  * @{
+ * @brief EFM32G230F128_DMA Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -463,8 +463,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_TIMER EFM32G230F128 TIMER
- * @brief EFM32G230F128_TIMER Register Declaration
  * @{
+ * @brief EFM32G230F128_TIMER Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -496,8 +496,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_USART EFM32G230F128 USART
- * @brief EFM32G230F128_USART Register Declaration
  * @{
+ * @brief EFM32G230F128_USART Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -527,8 +527,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_LEUART EFM32G230F128 LEUART
- * @brief EFM32G230F128_LEUART Register Declaration
  * @{
+ * @brief EFM32G230F128_LEUART Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -558,8 +558,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_LETIMER EFM32G230F128 LETIMER
- * @brief EFM32G230F128_LETIMER Register Declaration
  * @{
+ * @brief EFM32G230F128_LETIMER Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -585,8 +585,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_PCNT EFM32G230F128 PCNT
- * @brief EFM32G230F128_PCNT Register Declaration
  * @{
+ * @brief EFM32G230F128_PCNT Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -608,8 +608,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_I2C EFM32G230F128 I2C
- * @brief EFM32G230F128_I2C Register Declaration
  * @{
+ * @brief EFM32G230F128_I2C Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -632,8 +632,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_ADC EFM32G230F128 ADC
- * @brief EFM32G230F128_ADC Register Declaration
  * @{
+ * @brief EFM32G230F128_ADC Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -658,8 +658,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_DAC EFM32G230F128 DAC
- * @brief EFM32G230F128_DAC Register Declaration
  * @{
+ * @brief EFM32G230F128_DAC Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -680,8 +680,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_ACMP EFM32G230F128 ACMP
- * @brief EFM32G230F128_ACMP Register Declaration
  * @{
+ * @brief EFM32G230F128_ACMP Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -697,8 +697,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_VCMP EFM32G230F128 VCMP
- * @brief EFM32G230F128_VCMP Register Declaration
  * @{
+ * @brief EFM32G230F128_VCMP Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -713,8 +713,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_RTC EFM32G230F128 RTC
- * @brief EFM32G230F128_RTC Register Declaration
  * @{
+ * @brief EFM32G230F128_RTC Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -733,8 +733,8 @@ typedef struct
 
 /**************************************************************************//**
  * @defgroup EFM32G230F128_WDOG EFM32G230F128 WDOG
- * @brief EFM32G230F128_WDOG Register Declaration
  * @{
+ * @brief EFM32G230F128_WDOG Register Declaration
  *****************************************************************************/
 typedef struct
 {
@@ -844,37 +844,37 @@ typedef struct
  * @{
  *****************************************************************************/
 
-#define MSC          ((MSC_TypeDef *)MSC_BASE)             /**< MSC base pointer */
-#define EMU          ((EMU_TypeDef *)EMU_BASE)             /**< EMU base pointer */
-#define RMU          ((RMU_TypeDef *)RMU_BASE)             /**< RMU base pointer */
-#define CMU          ((CMU_TypeDef *)CMU_BASE)             /**< CMU base pointer */
-#define AES          ((AES_TypeDef *)AES_BASE)             /**< AES base pointer */
-#define GPIO         ((GPIO_TypeDef *)GPIO_BASE)           /**< GPIO base pointer */
-#define PRS          ((PRS_TypeDef *)PRS_BASE)             /**< PRS base pointer */
-#define DMA          ((DMA_TypeDef *)DMA_BASE)             /**< DMA base pointer */
-#define TIMER0       ((TIMER_TypeDef *)TIMER0_BASE)        /**< TIMER0 base pointer */
-#define TIMER1       ((TIMER_TypeDef *)TIMER1_BASE)        /**< TIMER1 base pointer */
-#define TIMER2       ((TIMER_TypeDef *)TIMER2_BASE)        /**< TIMER2 base pointer */
-#define USART0       ((USART_TypeDef *)USART0_BASE)        /**< USART0 base pointer */
-#define USART1       ((USART_TypeDef *)USART1_BASE)        /**< USART1 base pointer */
-#define USART2       ((USART_TypeDef *)USART2_BASE)        /**< USART2 base pointer */
-#define LEUART0      ((LEUART_TypeDef *)LEUART0_BASE)      /**< LEUART0 base pointer */
-#define LEUART1      ((LEUART_TypeDef *)LEUART1_BASE)      /**< LEUART1 base pointer */
-#define LETIMER0     ((LETIMER_TypeDef *)LETIMER0_BASE)    /**< LETIMER0 base pointer */
-#define PCNT0        ((PCNT_TypeDef *)PCNT0_BASE)          /**< PCNT0 base pointer */
-#define PCNT1        ((PCNT_TypeDef *)PCNT1_BASE)          /**< PCNT1 base pointer */
-#define PCNT2        ((PCNT_TypeDef *)PCNT2_BASE)          /**< PCNT2 base pointer */
-#define I2C0         ((I2C_TypeDef *)I2C0_BASE)            /**< I2C0 base pointer */
-#define ADC0         ((ADC_TypeDef *)ADC0_BASE)            /**< ADC0 base pointer */
-#define DAC0         ((DAC_TypeDef *)DAC0_BASE)            /**< DAC0 base pointer */
-#define ACMP0        ((ACMP_TypeDef *)ACMP0_BASE)          /**< ACMP0 base pointer */
-#define ACMP1        ((ACMP_TypeDef *)ACMP1_BASE)          /**< ACMP1 base pointer */
-#define VCMP         ((VCMP_TypeDef *)VCMP_BASE)           /**< VCMP base pointer */
-#define RTC          ((RTC_TypeDef *)RTC_BASE)             /**< RTC base pointer */
-#define WDOG         ((WDOG_TypeDef *)WDOG_BASE)           /**< WDOG base pointer */
-#define CALIBRATE    ((CALIBRATE_TypeDef *)CALIBRATE_BASE) /**< CALIBRATE base pointer */
-#define DEVINFO      ((DEVINFO_TypeDef *)DEVINFO_BASE)     /**< DEVINFO base pointer */
-#define ROMTABLE     ((ROMTABLE_TypeDef *)ROMTABLE_BASE)   /**< ROMTABLE base pointer */
+#define MSC          ((MSC_TypeDef *) MSC_BASE)             /**< MSC base pointer */
+#define EMU          ((EMU_TypeDef *) EMU_BASE)             /**< EMU base pointer */
+#define RMU          ((RMU_TypeDef *) RMU_BASE)             /**< RMU base pointer */
+#define CMU          ((CMU_TypeDef *) CMU_BASE)             /**< CMU base pointer */
+#define AES          ((AES_TypeDef *) AES_BASE)             /**< AES base pointer */
+#define GPIO         ((GPIO_TypeDef *) GPIO_BASE)           /**< GPIO base pointer */
+#define PRS          ((PRS_TypeDef *) PRS_BASE)             /**< PRS base pointer */
+#define DMA          ((DMA_TypeDef *) DMA_BASE)             /**< DMA base pointer */
+#define TIMER0       ((TIMER_TypeDef *) TIMER0_BASE)        /**< TIMER0 base pointer */
+#define TIMER1       ((TIMER_TypeDef *) TIMER1_BASE)        /**< TIMER1 base pointer */
+#define TIMER2       ((TIMER_TypeDef *) TIMER2_BASE)        /**< TIMER2 base pointer */
+#define USART0       ((USART_TypeDef *) USART0_BASE)        /**< USART0 base pointer */
+#define USART1       ((USART_TypeDef *) USART1_BASE)        /**< USART1 base pointer */
+#define USART2       ((USART_TypeDef *) USART2_BASE)        /**< USART2 base pointer */
+#define LEUART0      ((LEUART_TypeDef *) LEUART0_BASE)      /**< LEUART0 base pointer */
+#define LEUART1      ((LEUART_TypeDef *) LEUART1_BASE)      /**< LEUART1 base pointer */
+#define LETIMER0     ((LETIMER_TypeDef *) LETIMER0_BASE)    /**< LETIMER0 base pointer */
+#define PCNT0        ((PCNT_TypeDef *) PCNT0_BASE)          /**< PCNT0 base pointer */
+#define PCNT1        ((PCNT_TypeDef *) PCNT1_BASE)          /**< PCNT1 base pointer */
+#define PCNT2        ((PCNT_TypeDef *) PCNT2_BASE)          /**< PCNT2 base pointer */
+#define I2C0         ((I2C_TypeDef *) I2C0_BASE)            /**< I2C0 base pointer */
+#define ADC0         ((ADC_TypeDef *) ADC0_BASE)            /**< ADC0 base pointer */
+#define DAC0         ((DAC_TypeDef *) DAC0_BASE)            /**< DAC0 base pointer */
+#define ACMP0        ((ACMP_TypeDef *) ACMP0_BASE)          /**< ACMP0 base pointer */
+#define ACMP1        ((ACMP_TypeDef *) ACMP1_BASE)          /**< ACMP1 base pointer */
+#define VCMP         ((VCMP_TypeDef *) VCMP_BASE)           /**< VCMP base pointer */
+#define RTC          ((RTC_TypeDef *) RTC_BASE)             /**< RTC base pointer */
+#define WDOG         ((WDOG_TypeDef *) WDOG_BASE)           /**< WDOG base pointer */
+#define CALIBRATE    ((CALIBRATE_TypeDef *) CALIBRATE_BASE) /**< CALIBRATE base pointer */
+#define DEVINFO      ((DEVINFO_TypeDef *) DEVINFO_BASE)     /**< DEVINFO base pointer */
+#define ROMTABLE     ((ROMTABLE_TypeDef *) ROMTABLE_BASE)   /**< ROMTABLE base pointer */
 
 /** @} End of group EFM32G230F128_Peripheral_Declaration */
 
@@ -884,7 +884,7 @@ typedef struct
  *****************************************************************************/
 
 /**************************************************************************//**
- * @defgroup EFM32G230F128_PRS EFM32G230F128 PRS
+ * @addtogroup EFM32G230F128_PRS
  * @{
  * @brief PRS Signal names
  *****************************************************************************/
@@ -6142,7 +6142,7 @@ typedef struct
 
 /* Bit fields for EMU CTRL */
 #define _EMU_CTRL_RESETVALUE              0x00000000UL                      /**< Default value for EMU_CTRL */
-#define _EMU_CTRL_MASK                    0x000001BFUL                      /**< Mask for EMU_CTRL */
+#define _EMU_CTRL_MASK                    0x0000000FUL                      /**< Mask for EMU_CTRL */
 #define EMU_CTRL_EMVREG                   (0x1UL << 0)                      /**< Energy Mode Voltage Regulator Control */
 #define _EMU_CTRL_EMVREG_SHIFT            0                                 /**< Shift value for EMU_EMVREG */
 #define _EMU_CTRL_EMVREG_MASK             0x1UL                             /**< Bit mask for EMU_EMVREG */
@@ -10131,31 +10131,31 @@ typedef struct
  * Unlock codes
  *****************************************************************************/
 /**************************************************************************//**
- * @defgroup EFM32G230F128_MSC_BitFields EFM32G230F128_MSC Bit Fields
+ * @addtogroup EFM32G230F128_MSC_BitFields
  * @{
  *****************************************************************************/
 #define MSC_UNLOCK_CODE      0x1B71 /**< MSC unlock code */
 /** @} End of group EFM32G230F128_MSC */
 /**************************************************************************//**
- * @defgroup EFM32G230F128_EMU_BitFields EFM32G230F128_EMU Bit Fields
+ * @addtogroup EFM32G230F128_EMU_BitFields
  * @{
  *****************************************************************************/
 #define EMU_UNLOCK_CODE      0xADE8 /**< EMU unlock code */
 /** @} End of group EFM32G230F128_EMU */
 /**************************************************************************//**
- * @defgroup EFM32G230F128_CMU_BitFields EFM32G230F128_CMU Bit Fields
+ * @addtogroup EFM32G230F128_CMU_BitFields
  * @{
  *****************************************************************************/
 #define CMU_UNLOCK_CODE      0x580E /**< CMU unlock code */
 /** @} End of group EFM32G230F128_CMU */
 /**************************************************************************//**
- * @defgroup EFM32G230F128_GPIO_BitFields EFM32G230F128_GPIO Bit Fields
+ * @addtogroup EFM32G230F128_GPIO_BitFields
  * @{
  *****************************************************************************/
 #define GPIO_UNLOCK_CODE     0xA534 /**< GPIO unlock code */
 /** @} End of group EFM32G230F128_GPIO */
 /**************************************************************************//**
- * @defgroup EFM32G230F128_TIMER_BitFields EFM32G230F128_TIMER Bit Fields
+ * @addtogroup EFM32G230F128_TIMER_BitFields
  * @{
  *****************************************************************************/
 #define TIMER_UNLOCK_CODE    0xCE80 /**< TIMER unlock code */
@@ -10522,254 +10522,6 @@ typedef struct
 
 /** @} End of group EFM32G230F128_AF_Pins */
 
-/** Grouped by channel c, function f */
-#define AF_PORT(c, f)    (                   \
-    (c) == 0 ? AF_CMU_CLK0_PORT((f)) :       \
-    (c) == 1 ? AF_CMU_CLK1_PORT((f)) :       \
-    (c) == 2 ? AF_EBI_AD00_PORT((f)) :       \
-    (c) == 3 ? AF_EBI_AD01_PORT((f)) :       \
-    (c) == 4 ? AF_EBI_AD02_PORT((f)) :       \
-    (c) == 5 ? AF_EBI_AD03_PORT((f)) :       \
-    (c) == 6 ? AF_EBI_AD04_PORT((f)) :       \
-    (c) == 7 ? AF_EBI_AD05_PORT((f)) :       \
-    (c) == 8 ? AF_EBI_AD06_PORT((f)) :       \
-    (c) == 9 ? AF_EBI_AD07_PORT((f)) :       \
-    (c) == 10 ? AF_EBI_AD08_PORT((f)) :      \
-    (c) == 11 ? AF_EBI_AD09_PORT((f)) :      \
-    (c) == 12 ? AF_EBI_AD10_PORT((f)) :      \
-    (c) == 13 ? AF_EBI_AD11_PORT((f)) :      \
-    (c) == 14 ? AF_EBI_AD12_PORT((f)) :      \
-    (c) == 15 ? AF_EBI_AD13_PORT((f)) :      \
-    (c) == 16 ? AF_EBI_AD14_PORT((f)) :      \
-    (c) == 17 ? AF_EBI_AD15_PORT((f)) :      \
-    (c) == 18 ? AF_EBI_CS0_PORT((f)) :       \
-    (c) == 19 ? AF_EBI_CS1_PORT((f)) :       \
-    (c) == 20 ? AF_EBI_CS2_PORT((f)) :       \
-    (c) == 21 ? AF_EBI_CS3_PORT((f)) :       \
-    (c) == 22 ? AF_EBI_WEn_PORT((f)) :       \
-    (c) == 23 ? AF_EBI_REn_PORT((f)) :       \
-    (c) == 24 ? AF_EBI_ARDY_PORT((f)) :      \
-    (c) == 25 ? AF_EBI_ALE_PORT((f)) :       \
-    (c) == 26 ? AF_TIMER0_CC0_PORT((f)) :    \
-    (c) == 27 ? AF_TIMER0_CC1_PORT((f)) :    \
-    (c) == 28 ? AF_TIMER0_CC2_PORT((f)) :    \
-    (c) == 29 ? AF_TIMER0_CDTI0_PORT((f)) :  \
-    (c) == 30 ? AF_TIMER0_CDTI1_PORT((f)) :  \
-    (c) == 31 ? AF_TIMER0_CDTI2_PORT((f)) :  \
-    (c) == 32 ? AF_TIMER1_CC0_PORT((f)) :    \
-    (c) == 33 ? AF_TIMER1_CC1_PORT((f)) :    \
-    (c) == 34 ? AF_TIMER1_CC2_PORT((f)) :    \
-    (c) == 35 ? AF_TIMER1_CDTI0_PORT((f)) :  \
-    (c) == 36 ? AF_TIMER1_CDTI1_PORT((f)) :  \
-    (c) == 37 ? AF_TIMER1_CDTI2_PORT((f)) :  \
-    (c) == 38 ? AF_TIMER2_CC0_PORT((f)) :    \
-    (c) == 39 ? AF_TIMER2_CC1_PORT((f)) :    \
-    (c) == 40 ? AF_TIMER2_CC2_PORT((f)) :    \
-    (c) == 41 ? AF_TIMER2_CDTI0_PORT((f)) :  \
-    (c) == 42 ? AF_TIMER2_CDTI1_PORT((f)) :  \
-    (c) == 43 ? AF_TIMER2_CDTI2_PORT((f)) :  \
-    (c) == 44 ? AF_USART0_TX_PORT((f)) :     \
-    (c) == 45 ? AF_USART0_RX_PORT((f)) :     \
-    (c) == 46 ? AF_USART0_CLK_PORT((f)) :    \
-    (c) == 47 ? AF_USART0_CS_PORT((f)) :     \
-    (c) == 48 ? AF_USART1_TX_PORT((f)) :     \
-    (c) == 49 ? AF_USART1_RX_PORT((f)) :     \
-    (c) == 50 ? AF_USART1_CLK_PORT((f)) :    \
-    (c) == 51 ? AF_USART1_CS_PORT((f)) :     \
-    (c) == 52 ? AF_USART2_TX_PORT((f)) :     \
-    (c) == 53 ? AF_USART2_RX_PORT((f)) :     \
-    (c) == 54 ? AF_USART2_CLK_PORT((f)) :    \
-    (c) == 55 ? AF_USART2_CS_PORT((f)) :     \
-    (c) == 56 ? AF_UART0_TX_PORT((f)) :      \
-    (c) == 57 ? AF_UART0_RX_PORT((f)) :      \
-    (c) == 58 ? AF_UART0_CLK_PORT((f)) :     \
-    (c) == 59 ? AF_UART0_CS_PORT((f)) :      \
-    (c) == 60 ? AF_LEUART0_TX_PORT((f)) :    \
-    (c) == 61 ? AF_LEUART0_RX_PORT((f)) :    \
-    (c) == 62 ? AF_LEUART1_TX_PORT((f)) :    \
-    (c) == 63 ? AF_LEUART1_RX_PORT((f)) :    \
-    (c) == 64 ? AF_LETIMER0_OUT0_PORT((f)) : \
-    (c) == 65 ? AF_LETIMER0_OUT1_PORT((f)) : \
-    (c) == 66 ? AF_PCNT0_S0IN_PORT((f)) :    \
-    (c) == 67 ? AF_PCNT0_S1IN_PORT((f)) :    \
-    (c) == 68 ? AF_PCNT1_S0IN_PORT((f)) :    \
-    (c) == 69 ? AF_PCNT1_S1IN_PORT((f)) :    \
-    (c) == 70 ? AF_PCNT2_S0IN_PORT((f)) :    \
-    (c) == 71 ? AF_PCNT2_S1IN_PORT((f)) :    \
-    (c) == 72 ? AF_I2C0_SDA_PORT((f)) :      \
-    (c) == 73 ? AF_I2C0_SCL_PORT((f)) :      \
-    (c) == 74 ? AF_ACMP0_OUT_PORT((f)) :     \
-    (c) == 75 ? AF_ACMP1_OUT_PORT((f)) :     \
-    (c) == 76 ? AF_DBG_SWO_PORT((f)) :       \
-    (c) == 77 ? AF_DBG_SWDIO_PORT((f)) :     \
-    (c) == 78 ? AF_DBG_SWCLK_PORT((f)) :     \
-    -1)
-
-#define AF_PIN(c, f)     (                  \
-    (c) == 0 ? AF_CMU_CLK0_PIN((f)) :       \
-    (c) == 1 ? AF_CMU_CLK1_PIN((f)) :       \
-    (c) == 2 ? AF_EBI_AD00_PIN((f)) :       \
-    (c) == 3 ? AF_EBI_AD01_PIN((f)) :       \
-    (c) == 4 ? AF_EBI_AD02_PIN((f)) :       \
-    (c) == 5 ? AF_EBI_AD03_PIN((f)) :       \
-    (c) == 6 ? AF_EBI_AD04_PIN((f)) :       \
-    (c) == 7 ? AF_EBI_AD05_PIN((f)) :       \
-    (c) == 8 ? AF_EBI_AD06_PIN((f)) :       \
-    (c) == 9 ? AF_EBI_AD07_PIN((f)) :       \
-    (c) == 10 ? AF_EBI_AD08_PIN((f)) :      \
-    (c) == 11 ? AF_EBI_AD09_PIN((f)) :      \
-    (c) == 12 ? AF_EBI_AD10_PIN((f)) :      \
-    (c) == 13 ? AF_EBI_AD11_PIN((f)) :      \
-    (c) == 14 ? AF_EBI_AD12_PIN((f)) :      \
-    (c) == 15 ? AF_EBI_AD13_PIN((f)) :      \
-    (c) == 16 ? AF_EBI_AD14_PIN((f)) :      \
-    (c) == 17 ? AF_EBI_AD15_PIN((f)) :      \
-    (c) == 18 ? AF_EBI_CS0_PIN((f)) :       \
-    (c) == 19 ? AF_EBI_CS1_PIN((f)) :       \
-    (c) == 20 ? AF_EBI_CS2_PIN((f)) :       \
-    (c) == 21 ? AF_EBI_CS3_PIN((f)) :       \
-    (c) == 22 ? AF_EBI_WEn_PIN((f)) :       \
-    (c) == 23 ? AF_EBI_REn_PIN((f)) :       \
-    (c) == 24 ? AF_EBI_ARDY_PIN((f)) :      \
-    (c) == 25 ? AF_EBI_ALE_PIN((f)) :       \
-    (c) == 26 ? AF_TIMER0_CC0_PIN((f)) :    \
-    (c) == 27 ? AF_TIMER0_CC1_PIN((f)) :    \
-    (c) == 28 ? AF_TIMER0_CC2_PIN((f)) :    \
-    (c) == 29 ? AF_TIMER0_CDTI0_PIN((f)) :  \
-    (c) == 30 ? AF_TIMER0_CDTI1_PIN((f)) :  \
-    (c) == 31 ? AF_TIMER0_CDTI2_PIN((f)) :  \
-    (c) == 32 ? AF_TIMER1_CC0_PIN((f)) :    \
-    (c) == 33 ? AF_TIMER1_CC1_PIN((f)) :    \
-    (c) == 34 ? AF_TIMER1_CC2_PIN((f)) :    \
-    (c) == 35 ? AF_TIMER1_CDTI0_PIN((f)) :  \
-    (c) == 36 ? AF_TIMER1_CDTI1_PIN((f)) :  \
-    (c) == 37 ? AF_TIMER1_CDTI2_PIN((f)) :  \
-    (c) == 38 ? AF_TIMER2_CC0_PIN((f)) :    \
-    (c) == 39 ? AF_TIMER2_CC1_PIN((f)) :    \
-    (c) == 40 ? AF_TIMER2_CC2_PIN((f)) :    \
-    (c) == 41 ? AF_TIMER2_CDTI0_PIN((f)) :  \
-    (c) == 42 ? AF_TIMER2_CDTI1_PIN((f)) :  \
-    (c) == 43 ? AF_TIMER2_CDTI2_PIN((f)) :  \
-    (c) == 44 ? AF_USART0_TX_PIN((f)) :     \
-    (c) == 45 ? AF_USART0_RX_PIN((f)) :     \
-    (c) == 46 ? AF_USART0_CLK_PIN((f)) :    \
-    (c) == 47 ? AF_USART0_CS_PIN((f)) :     \
-    (c) == 48 ? AF_USART1_TX_PIN((f)) :     \
-    (c) == 49 ? AF_USART1_RX_PIN((f)) :     \
-    (c) == 50 ? AF_USART1_CLK_PIN((f)) :    \
-    (c) == 51 ? AF_USART1_CS_PIN((f)) :     \
-    (c) == 52 ? AF_USART2_TX_PIN((f)) :     \
-    (c) == 53 ? AF_USART2_RX_PIN((f)) :     \
-    (c) == 54 ? AF_USART2_CLK_PIN((f)) :    \
-    (c) == 55 ? AF_USART2_CS_PIN((f)) :     \
-    (c) == 56 ? AF_UART0_TX_PIN((f)) :      \
-    (c) == 57 ? AF_UART0_RX_PIN((f)) :      \
-    (c) == 58 ? AF_UART0_CLK_PIN((f)) :     \
-    (c) == 59 ? AF_UART0_CS_PIN((f)) :      \
-    (c) == 60 ? AF_LEUART0_TX_PIN((f)) :    \
-    (c) == 61 ? AF_LEUART0_RX_PIN((f)) :    \
-    (c) == 62 ? AF_LEUART1_TX_PIN((f)) :    \
-    (c) == 63 ? AF_LEUART1_RX_PIN((f)) :    \
-    (c) == 64 ? AF_LETIMER0_OUT0_PIN((f)) : \
-    (c) == 65 ? AF_LETIMER0_OUT1_PIN((f)) : \
-    (c) == 66 ? AF_PCNT0_S0IN_PIN((f)) :    \
-    (c) == 67 ? AF_PCNT0_S1IN_PIN((f)) :    \
-    (c) == 68 ? AF_PCNT1_S0IN_PIN((f)) :    \
-    (c) == 69 ? AF_PCNT1_S1IN_PIN((f)) :    \
-    (c) == 70 ? AF_PCNT2_S0IN_PIN((f)) :    \
-    (c) == 71 ? AF_PCNT2_S1IN_PIN((f)) :    \
-    (c) == 72 ? AF_I2C0_SDA_PIN((f)) :      \
-    (c) == 73 ? AF_I2C0_SCL_PIN((f)) :      \
-    (c) == 74 ? AF_ACMP0_OUT_PIN((f)) :     \
-    (c) == 75 ? AF_ACMP1_OUT_PIN((f)) :     \
-    (c) == 76 ? AF_DBG_SWO_PIN((f)) :       \
-    (c) == 77 ? AF_DBG_SWDIO_PIN((f)) :     \
-    (c) == 78 ? AF_DBG_SWCLK_PIN((f)) :     \
-    -1)
-
-/** AF channel output count for channel c */
-#define AF_COUNT(c)      ( \
-    (c) == 0 ? 2 :         \
-    (c) == 1 ? 2 :         \
-    (c) == 2 ? 1 :         \
-    (c) == 3 ? 1 :         \
-    (c) == 4 ? 1 :         \
-    (c) == 5 ? 1 :         \
-    (c) == 6 ? 1 :         \
-    (c) == 7 ? 1 :         \
-    (c) == 8 ? 1 :         \
-    (c) == 9 ? 1 :         \
-    (c) == 10 ? 1 :        \
-    (c) == 11 ? 1 :        \
-    (c) == 12 ? 1 :        \
-    (c) == 13 ? 1 :        \
-    (c) == 14 ? 1 :        \
-    (c) == 15 ? 1 :        \
-    (c) == 16 ? 1 :        \
-    (c) == 17 ? 1 :        \
-    (c) == 18 ? 1 :        \
-    (c) == 19 ? 1 :        \
-    (c) == 20 ? 1 :        \
-    (c) == 21 ? 1 :        \
-    (c) == 22 ? 1 :        \
-    (c) == 23 ? 1 :        \
-    (c) == 24 ? 1 :        \
-    (c) == 25 ? 1 :        \
-    (c) == 26 ? 4 :        \
-    (c) == 27 ? 4 :        \
-    (c) == 28 ? 4 :        \
-    (c) == 29 ? 4 :        \
-    (c) == 30 ? 4 :        \
-    (c) == 31 ? 4 :        \
-    (c) == 32 ? 3 :        \
-    (c) == 33 ? 3 :        \
-    (c) == 34 ? 3 :        \
-    (c) == 35 ? 0 :        \
-    (c) == 36 ? 0 :        \
-    (c) == 37 ? 0 :        \
-    (c) == 38 ? 3 :        \
-    (c) == 39 ? 3 :        \
-    (c) == 40 ? 3 :        \
-    (c) == 41 ? 0 :        \
-    (c) == 42 ? 0 :        \
-    (c) == 43 ? 0 :        \
-    (c) == 44 ? 3 :        \
-    (c) == 45 ? 3 :        \
-    (c) == 46 ? 3 :        \
-    (c) == 47 ? 3 :        \
-    (c) == 48 ? 2 :        \
-    (c) == 49 ? 2 :        \
-    (c) == 50 ? 2 :        \
-    (c) == 51 ? 2 :        \
-    (c) == 52 ? 2 :        \
-    (c) == 53 ? 2 :        \
-    (c) == 54 ? 2 :        \
-    (c) == 55 ? 2 :        \
-    (c) == 56 ? 4 :        \
-    (c) == 57 ? 4 :        \
-    (c) == 58 ? 0 :        \
-    (c) == 59 ? 0 :        \
-    (c) == 60 ? 3 :        \
-    (c) == 61 ? 3 :        \
-    (c) == 62 ? 2 :        \
-    (c) == 63 ? 2 :        \
-    (c) == 64 ? 4 :        \
-    (c) == 65 ? 4 :        \
-    (c) == 66 ? 3 :        \
-    (c) == 67 ? 3 :        \
-    (c) == 68 ? 2 :        \
-    (c) == 69 ? 2 :        \
-    (c) == 70 ? 2 :        \
-    (c) == 71 ? 2 :        \
-    (c) == 72 ? 4 :        \
-    (c) == 73 ? 4 :        \
-    (c) == 74 ? 2 :        \
-    (c) == 75 ? 2 :        \
-    (c) == 76 ? 2 :        \
-    (c) == 77 ? 2 :        \
-    (c) == 78 ? 2 :        \
-    -1)
-
 /** @} End of group EFM32G230F128_Alternate_Function */
 
 /**************************************************************************//**
@@ -10786,7 +10538,7 @@ typedef struct
  *       0 (zero) means LSB.
  *****************************************************************************/
 #define SET_BIT_FIELD(REG, MASK, VALUE, OFFSET) \
-  REG = ((REG)&~(MASK)) | (((VALUE) << (OFFSET)) & (MASK));
+  REG = ((REG) &~(MASK)) | (((VALUE) << (OFFSET)) & (MASK));
 
 /** @} End of group EFM32G230F128  */
 

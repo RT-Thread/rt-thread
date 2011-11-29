@@ -2,7 +2,7 @@
  * @file
  * @brief Energy Management Unit (EMU) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -133,6 +133,13 @@ static void EMU_Restore(void)
     /* If core clock was HFRCO core clock, it is automatically restored to */
     /* state prior to entering energy mode. No need for further action. */
     break;
+  }
+
+  /* If HFRCO was disabled before entering Energy Mode, turn it off again */
+  /* as it is automatically enabled by wake up */
+  if ( ! (cmuStatus & CMU_STATUS_HFRCOENS) )
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_HFRCODIS;
   }
 
   /* Restore CMU register locking */

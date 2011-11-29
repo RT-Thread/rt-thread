@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -52,8 +52,10 @@
 /** Validation of USART register block pointer reference for assert statements. */
 #if (USART_COUNT == 1)
 #define USART_REF_VALID(ref)    ((ref) == USART0)
+
 #elif (USART_COUNT == 2)
 #define USART_REF_VALID(ref)    (((ref) == USART0) || ((ref) == USART1))
+
 #elif (USART_COUNT == 3)
 #define USART_REF_VALID(ref)    (((ref) == USART0) || ((ref) == USART1) || \
                                  ((ref) == USART2))
@@ -72,6 +74,14 @@
 
 #if defined(_EFM32_GIANT_FAMILY)
 #define USART_I2S_VALID(ref)    (((ref) == USART1) || ((ref) == USART2))
+#endif
+
+#if (UART_COUNT == 1)
+#define UART_REF_VALID(ref)     ((ref)==UART0) 
+#elif (UART_COUNT == 2)
+#define UART_REF_VALID(ref)     (((ref)==UART0) || ((ref)==UART1))
+#else
+#define UART_REF_VALID(ref)     (0)
 #endif
 
 /** @endcond */
@@ -467,7 +477,7 @@ void USART_Enable(USART_TypeDef *usart, USART_Enable_TypeDef enable)
   uint32_t tmp;
 
   /* Make sure the module exists on the selected chip */
-  EFM_ASSERT(USART_REF_VALID(usart));
+  EFM_ASSERT(USART_REF_VALID(usart)||(UART_REF_VALID(usart)));
 
   /* Disable as specified */
   tmp        = ~((uint32_t)(enable));
@@ -502,10 +512,10 @@ void USART_Enable(USART_TypeDef *usart, USART_Enable_TypeDef enable)
  * @param[in] init
  *   Pointer to initialization structure used to configure basic async setup.
  ******************************************************************************/
-void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init)
+void USART_InitAsync(USART_TypeDef *usart, const USART_InitAsync_TypeDef *init)
 {
   /* Make sure the module exists on the selected chip */
-  EFM_ASSERT(USART_REF_VALID(usart));
+  EFM_ASSERT(USART_REF_VALID(usart)||UART_REF_VALID(usart));
 
   /* Init USART registers to HW reset state. */
   USART_Reset(usart);
@@ -561,7 +571,7 @@ void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init)
  * @param[in] init
  *   Pointer to initialization structure used to configure basic async setup.
  ******************************************************************************/
-void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init)
+void USART_InitSync(USART_TypeDef *usart, const USART_InitSync_TypeDef *init)
 {
   /* Make sure the module exists on the selected chip */
   EFM_ASSERT(USART_REF_VALID(usart));
@@ -623,7 +633,7 @@ void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init)
  *   USART modules.
  *
  ******************************************************************************/
-void USART_InitIrDA(USART_InitIrDA_TypeDef *init)
+void USART_InitIrDA(const USART_InitIrDA_TypeDef *init)
 {
   /* Init USART0 as async device */
   USART_InitAsync(USART0, &(init->async));
@@ -712,17 +722,13 @@ void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init)
  * @brief
  *   Reset USART/UART to same state as after a HW reset.
  *
- * @note
- *   The ROUTE register is NOT reset by this function, in order to allow for
- *   centralized setup of this feature.
- *
  * @param[in] usart
  *   Pointer to USART/UART peripheral register block.
  ******************************************************************************/
 void USART_Reset(USART_TypeDef *usart)
 {
   /* Make sure the module exists on the selected chip */
-  EFM_ASSERT(USART_REF_VALID(usart));
+  EFM_ASSERT(USART_REF_VALID(usart)||UART_REF_VALID(usart));
 
   /* Make sure disabled first, before resetting other registers */
   usart->CMD = USART_CMD_RXDIS | USART_CMD_TXDIS | USART_CMD_MASTERDIS |
@@ -733,6 +739,7 @@ void USART_Reset(USART_TypeDef *usart)
   usart->CLKDIV   = _USART_CLKDIV_RESETVALUE;
   usart->IEN      = _USART_IEN_RESETVALUE;
   usart->IFC      = _USART_IFC_MASK;
+  usart->ROUTE    = _USART_ROUTE_RESETVALUE;
 
   if (USART_IRDA_VALID(usart))
   {
@@ -898,8 +905,7 @@ uint16_t USART_RxExt(USART_TypeDef *usart)
 void USART_Tx(USART_TypeDef *usart, uint8_t data)
 {
   /* Check that transmit buffer is empty */
-  while (!(usart->STATUS & USART_STATUS_TXBL))
-    ;
+  while (!(usart->STATUS & USART_STATUS_TXBL));
   usart->TXDATA = (uint32_t)data;
 }
 

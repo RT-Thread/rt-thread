@@ -4,7 +4,7 @@
  *        This implementation use the USART2 SPI interface to control board
  *        control registers. It works
  * @author Energy Micro AS
- * @version 1.6.0
+ * @version 1.7.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -27,7 +27,6 @@
  * arising from your use of this Software.
  *
  *****************************************************************************/
-
 #include <stdio.h>
 #include "efm32.h"
 #include "efm32_usart.h"
@@ -36,6 +35,26 @@
 #include "dvk.h"
 #include "dvk_bcregisters.h"
 
+#ifdef _EFM32_TINY_FAMILY
+
+/* USART used for SPI access */
+#define USART_USED                USART0
+#define USART_CLK                 cmuClock_USART0
+
+/* GPIO pins used, please refer to DVK user guide. */
+#define PIN_SPIBUS_CONNECT        13
+#define PORT_SPIBUS_CONNECT       gpioPortC
+#define PIN_SPI_TX                10
+#define PORT_SPI_TX               gpioPortE
+#define PIN_SPI_RX                11
+#define PORT_SPI_RX               gpioPortE
+#define PIN_SPI_CLK               12
+#define PORT_SPI_CLK              gpioPortE
+#define PIN_SPI_CS                13
+#define PORT_SPI_CS               gpioPortE
+
+#else
+
 /* USART used for SPI access */
 #define USART_USED                USART2
 #define USART_CLK                 cmuClock_USART2
@@ -43,6 +62,8 @@
 /* GPIO pins used, please refer to DVK user guide. */
 #define PIN_SPIBUS_CONNECT        13
 #define PORT_SPIBUS_CONNECT       gpioPortC
+#define PIN_EBIBUS_CONNECT        12
+#define PORT_EBIBUS_CONNECT       gpioPortC
 #define PIN_SPI_TX                2
 #define PORT_SPI_TX               gpioPortC
 #define PIN_SPI_RX                3
@@ -51,6 +72,8 @@
 #define PORT_SPI_CLK              gpioPortC
 #define PIN_SPI_CS                5
 #define PORT_SPI_CS               gpioPortC
+
+#endif
 
 static volatile uint16_t *lastAddr = NULL;
 
@@ -67,9 +90,10 @@ static void spiInit(void)
   CMU_ClockEnable(cmuClock_HFPER, true);
   CMU_ClockEnable(USART_CLK, true);
 
-  /* Configure SPI bus connect pins, DOUT set to 0 */
+  /* Configure SPI bus connect pins, DOUT set to 0, disable EBI */
   GPIO_PinModeSet(PORT_SPIBUS_CONNECT, PIN_SPIBUS_CONNECT, gpioModePushPull, 0);
-
+  GPIO_PinModeSet(PORT_EBIBUS_CONNECT, PIN_EBIBUS_CONNECT, gpioModePushPull, 1);
+  
   /* Configure SPI pins */
   GPIO_PinModeSet(PORT_SPI_TX, PIN_SPI_TX, gpioModePushPull, 0);
   GPIO_PinModeSet(PORT_SPI_RX, PIN_SPI_RX, gpioModePushPull, 0);
@@ -77,18 +101,15 @@ static void spiInit(void)
   /* Keep CS high to not activate slave */
   GPIO_PinModeSet(PORT_SPI_CS, PIN_SPI_CS, gpioModePushPull, 1);
 
-  /* Enable pins at default location */
-  USART_USED->ROUTE = USART_ROUTE_TXPEN | USART_ROUTE_RXPEN | USART_ROUTE_CLKPEN;
-
-  /* Reset USART just in case */
-  USART_Reset(USART_USED);
-
   /* Configure to use SPI master with manual CS */
   /* For now, configure SPI for worst case 32MHz clock in order to work for all */
   /* configurations. */
   init.refFreq = 32000000;
   init.baudrate = 7000000;
   USART_InitSync(USART_USED, &init);
+
+  /* Enable pins at default location */
+  USART_USED->ROUTE = USART_ROUTE_TXPEN | USART_ROUTE_RXPEN | USART_ROUTE_CLKPEN;
 }
 
 /**************************************************************************//**
@@ -98,11 +119,12 @@ static void spiDisable(void)
 {
   USART_Reset(USART_USED);
 
-  /* Route setup must be reset separately */
-  USART_USED->ROUTE = _USART_ROUTE_RESETVALUE;
+  /* Disable LCD_SELECT */
+  GPIO_PinModeSet(gpioPortD, 13, gpioModeDisabled, 0);
 
   /* Disable SPI pins */
-  GPIO_PinModeSet(PORT_SPIBUS_CONNECT, PIN_SPIBUS_CONNECT, gpioModeDisabled, 0);
+  GPIO_PinModeSet(PORT_SPIBUS_CONNECT, 13, gpioModeDisabled, 0);
+  GPIO_PinModeSet(PORT_SPIBUS_CONNECT, 12, gpioModeDisabled, 0);
   GPIO_PinModeSet(PORT_SPI_TX, PIN_SPI_TX, gpioModeDisabled, 0);
   GPIO_PinModeSet(PORT_SPI_RX, PIN_SPI_RX, gpioModeDisabled, 0);
   GPIO_PinModeSet(PORT_SPI_CLK, PIN_SPI_CLK, gpioModeDisabled, 0);
@@ -164,8 +186,9 @@ static uint16_t spiRead(uint8_t spiadr, uint16_t spidata)
 
 /**************************************************************************//**
  * @brief  Initializes DVK register access
+*  @return true on success, false on failure
  *****************************************************************************/
-void DVK_SPI_init(void)
+bool DVK_SPI_init(void)
 {
   uint16_t spiMagic;
 
@@ -174,12 +197,13 @@ void DVK_SPI_init(void)
   /*  if not FPGA is configured to be in EBI mode  */
 
   spiMagic = DVK_SPI_readRegister(BC_MAGIC);
-  if (spiMagic != BC_MAGIC_VALUE)
+  if(spiMagic != BC_MAGIC_VALUE)
   {
-    /* Development Kit is configured to use EBI mode, restart of kit required */
-    /* to use SPI for configuration */
-    spiDisable();
-    while (1) ;
+    return false;
+  } 
+  else
+  {
+    return true;
   }
 }
 

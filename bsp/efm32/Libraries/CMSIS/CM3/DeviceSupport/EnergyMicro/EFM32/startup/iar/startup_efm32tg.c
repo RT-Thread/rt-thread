@@ -2,7 +2,7 @@
  * @file
  * @brief CMSIS Compatible EFM32 startup file in Cfor IAR EWARM
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

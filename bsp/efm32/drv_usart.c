@@ -15,10 +15,13 @@
  * 2011-01-17	onelife		Merge with serial.c
  * 2011-05-06	onelife		Add sync mode (SPI) support
  * 2011-06-14	onelife		Fix a bug of TX by DMA
- * 2011-06-16	onelife		Modify init function for efm32lib v2 upgrading
+ * 2011-06-16	onelife		Modify init function for EFM32 library v2.0.0 
+ *  upgrading
  * 2011-07-07	onelife		Modify write function to avoid sleep in ISR
  * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously 
  *  access
+ * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2 
+ *  upgrading
  *
  * @section Change Logs of serial.c
  * 2009-02-05	Bernard		first version
@@ -870,6 +873,8 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	DMA_CB_TypeDef					*callback;
 	CMU_Clock_TypeDef				usartClock;
 	rt_uint32_t						txDmaSelect;
+	GPIO_Port_TypeDef 				port_tx, port_rx, port_clk, port_cs;
+	rt_uint32_t 					pin_tx, pin_rx, pin_clk, pin_cs;
 	union efm32_usart_init_t 		init;
 	efm32_irq_hook_init_t			hook;
 
@@ -923,18 +928,42 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			usart->usart_device	= USART0;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART0;
 			txDmaSelect			= DMAREQ_USART0_TXBL;
+			port_tx				= AF_USART0_TX_PORT(location);
+			pin_tx 				= AF_USART0_TX_PIN(location);
+			port_rx				= AF_USART0_RX_PORT(location);
+			pin_rx 				= AF_USART0_RX_PIN(location);
+			port_clk			= AF_USART0_CLK_PORT(location);
+			pin_clk				= AF_USART0_CLK_PIN(location);
+			port_cs				= AF_USART0_CS_PORT(location);
+			pin_cs 				= AF_USART0_CS_PIN(location);
 			break;
 			
 		case 1:
 			usart->usart_device	= USART1;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART1;
 			txDmaSelect			= DMAREQ_USART1_TXBL;
+			port_tx				= AF_USART1_TX_PORT(location);
+			pin_tx 				= AF_USART1_TX_PIN(location);
+			port_rx				= AF_USART1_RX_PORT(location);
+			pin_rx 				= AF_USART1_RX_PIN(location);
+			port_clk			= AF_USART1_CLK_PORT(location);
+			pin_clk				= AF_USART1_CLK_PIN(location);
+			port_cs				= AF_USART1_CS_PORT(location);
+			pin_cs 				= AF_USART1_CS_PIN(location);
 			break;
 			
 		case 2:
 			usart->usart_device	= USART2;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART2;
 			txDmaSelect			= DMAREQ_USART2_TXBL;
+			port_tx				= AF_USART2_TX_PORT(location);
+			pin_tx 				= AF_USART2_TX_PIN(location);
+			port_rx				= AF_USART2_RX_PORT(location);
+			pin_rx 				= AF_USART2_RX_PIN(location);
+			port_clk			= AF_USART2_CLK_PORT(location);
+			pin_clk				= AF_USART2_CLK_PIN(location);
+			port_cs				= AF_USART2_CS_PORT(location);
+			pin_cs 				= AF_USART2_CS_PIN(location);
 			break;
 
 		default:
@@ -946,28 +975,28 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 
 		/* Config GPIO */
 		GPIO_PinModeSet(
-			(GPIO_Port_TypeDef)AF_PORT(AF_USART_TX(unitNumber), location),
-			AF_PIN(AF_USART_TX(unitNumber), location),
+			port_tx,
+			pin_tx,
 			gpioModePushPull,
 			0);
 		GPIO_PinModeSet(
-			(GPIO_Port_TypeDef)AF_PORT(AF_USART_RX(unitNumber), location),
-			AF_PIN(AF_USART_RX(unitNumber), location),
+			port_rx,
+			pin_rx,
 			gpioModeInputPull,
 			1);
 		if (config & USART_STATE_SYNC)
 		{
 			GPIO_PinModeSet(
-				(GPIO_Port_TypeDef)AF_PORT(AF_USART_CLK(unitNumber), location),
-				AF_PIN(AF_USART_CLK(unitNumber), location),
+				port_clk,
+				pin_clk,
 				gpioModePushPull,
 				0);
 		}
 		if (config & USART_STATE_AUTOCS)
 		{
 			GPIO_PinModeSet(
-				(GPIO_Port_TypeDef)AF_PORT(AF_USART_CS(unitNumber), location),
-				AF_PIN(AF_USART_CS(unitNumber), location),
+				port_cs,
+				pin_cs,
 				gpioModePushPull,
 				1);
 		}

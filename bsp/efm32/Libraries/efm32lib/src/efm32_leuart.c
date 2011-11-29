@@ -3,7 +3,7 @@
  * @brief Low Energy Universal Asynchronous Receiver/Transmitter (LEUART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -478,10 +478,6 @@ void LEUART_Init(LEUART_TypeDef *leuart, LEUART_Init_TypeDef *init)
  * @brief
  *   Reset LEUART to same state as after a HW reset.
  *
- * @note
- *   The ROUTE register is NOT reset by this function, in order to allow for
- *   centralized setup of this feature.
- *
  * @param[in] leuart
  *   Pointer to LEUART peripheral register block.
  ******************************************************************************/
@@ -503,6 +499,7 @@ void LEUART_Reset(LEUART_TypeDef *leuart)
   leuart->IEN        = _LEUART_IEN_RESETVALUE;
   leuart->IFC        = _LEUART_IFC_MASK;
   leuart->PULSECTRL  = _LEUART_PULSECTRL_RESETVALUE;
+  leuart->ROUTE      = _LEUART_ROUTE_RESETVALUE;
   /* Do not reset route register, setting should be done independently */
 
   /* Unfreeze registers, pass new settings on to LEUART */

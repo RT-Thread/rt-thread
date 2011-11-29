@@ -4,7 +4,7 @@
  *        This implementation works for devices w/o LCD display on the
  *        MCU module, specifically the EFM32_G2xx_DK development board
  * @author Energy Micro AS
- * @version 1.6.0
+ * @version 1.7.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -34,7 +34,7 @@
 #include "dvk.h"
 #include "dvk_bcregisters.h"
 
-
+#if defined(EBI_PRESENT)
 /**************************************************************************//**
  * @brief Configure EBI (external bus interface) for Board Control register
  * access
@@ -64,7 +64,8 @@ void DVK_EBI_configure(void)
   CMU_ClockEnable(cmuClock_EBI, true);
   CMU_ClockEnable(cmuClock_GPIO, true);
 
-  /* Configure bus connect PC bit 12 active low */
+  /* Configure mode - disable SPI, enable EBI */
+  GPIO_PinModeSet(gpioPortC, 13, gpioModePushPull, 1);
   GPIO_PinModeSet(gpioPortC, 12, gpioModePushPull, 0);
 
   /* Configure GPIO pins as push pull */
@@ -135,11 +136,12 @@ void DVK_EBI_configure(void)
 /**************************************************************************//**
  * @brief Initialize EBI
  * access
+*  @return true on success, false on failure
  *****************************************************************************/
-void DVK_EBI_init(void)
+bool DVK_EBI_init(void)
 {
   uint16_t     ebiMagic;
-  int          ctr;
+  int          retry = 10;
 
   /* Disable all GPIO pins and register  */
   DVK_EBI_disable();
@@ -148,28 +150,29 @@ void DVK_EBI_init(void)
   /* Verify that EBI access is working, if not kit is in SPI mode and needs to
    * be configured for EBI access */
   ebiMagic = DVK_EBI_readRegister(BC_MAGIC);
-  if (ebiMagic != BC_MAGIC_VALUE)
-  {
-    /* Disable EBI */
+  while ((ebiMagic != BC_MAGIC_VALUE) && retry)
+  {    
     DVK_EBI_disable();
     /* Enable SPI interface */
     DVK_SPI_init();
     /* Set EBI mode - after this SPI access will no longer be available */
+    ebiMagic = DVK_SPI_readRegister(BC_MAGIC);
     DVK_SPI_writeRegister(BC_CFG, BC_CFG_EBI);
     /* Disable SPI */
     DVK_SPI_disable();
+ 
     /* Now setup EBI again */
     DVK_EBI_configure();
     /* Wait until ready */
-    ctr = 0;
-    do
-    {
-      /* Check if FPGA responds */
-      ebiMagic = DVK_EBI_readRegister(BC_MAGIC);
-      ctr++;
-      DVK_EBI_writeRegister(BC_LED, ctr);
-    } while (ebiMagic != BC_MAGIC_VALUE);
+    ebiMagic = DVK_EBI_readRegister(BC_MAGIC);
+    if (ebiMagic == BC_MAGIC_VALUE) break;
+    
+    retry--;
   }
+  if ( ! retry ) return false;
+
+  DVK_EBI_writeRegister(BC_LED, retry);
+  return true;
 }
 
 /**************************************************************************//**
@@ -177,14 +180,9 @@ void DVK_EBI_init(void)
  *****************************************************************************/
 void DVK_EBI_disable(void)
 {
-  /* Disable EBI controller */
-  EBI_Disable();
-
-  /* Disable EBI clock in CMU */
-  CMU_ClockEnable(cmuClock_EBI, false);
-
-  /* Disable EBI _BC_BUS_CONNECT */
+  /* Disable EBI and SPI _BC_BUS_CONNECT */
   GPIO_PinModeSet(gpioPortC, 12, gpioModeDisabled, 0);
+  GPIO_PinModeSet(gpioPortC, 13, gpioModeDisabled, 0);
 
   /* Configure GPIO pins as disabled */
   GPIO_PinModeSet(gpioPortA, 0, gpioModeDisabled, 0);
@@ -215,6 +213,14 @@ void DVK_EBI_disable(void)
   GPIO_PinModeSet(gpioPortF, 3, gpioModeDisabled, 0);
   GPIO_PinModeSet(gpioPortF, 4, gpioModeDisabled, 0);
   GPIO_PinModeSet(gpioPortF, 5, gpioModeDisabled, 0);
+
+  /* Disable EBI controller */
+#if 0
+  EBI_Disable();
+#endif
+  /* Disable EBI clock in CMU */
+  CMU_ClockEnable(cmuClock_EBI, false);
+
 }
 
 /**************************************************************************//**
@@ -235,3 +241,4 @@ uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
 {
   return *addr;
 }
+#endif

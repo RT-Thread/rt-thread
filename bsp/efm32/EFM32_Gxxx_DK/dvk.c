@@ -2,7 +2,7 @@
  * @file
  * @brief DVK board support package, initialization
  * @author Energy Micro AS
- * @version 1.6.0
+ * @version 1.7.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -32,16 +32,23 @@
 /**************************************************************************//**
  * @brief  Initializes DVK, configures board control access
  *****************************************************************************/
-void DVK_init(void)
+bool DVK_init(void)
 {
+  bool ret;
 #ifdef DVK_EBI_CONTROL
-  DVK_EBI_init();
+  ret = DVK_EBI_init();
 #endif
 #ifdef DVK_SPI_CONTROL
-  DVK_SPI_init();
-#endif
+  ret = DVK_SPI_init();
+#endif  
+  if ( ret == false )
+  {
+    /* Board is configured in wrong mode, please restart KIT! */
+    while(1);
+  }
   /* Inform AEM application that we are in Energy Mode 0 by default */
   DVK_setEnergyMode(0);
+  return ret;
 }
 
 /**************************************************************************//**

@@ -2,7 +2,7 @@
  * @file
  * @brief CMSIS Cortex-M3 Peripheral Access Layer for EFM32 devices.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -50,7 +50,11 @@
 /* SW footprint. */
 
 #ifndef EFM32_HFXO_FREQ
+#ifdef _EFM32_GIANT_FAMILY
+#define EFM32_HFXO_FREQ (48000000UL)
+#else
 #define EFM32_HFXO_FREQ (32000000UL)
+#endif
 #endif
 /* Do not define variable if HF crystal oscillator not present */
 #if (EFM32_HFXO_FREQ > 0)

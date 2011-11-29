@@ -2,7 +2,7 @@
  * @file
  * @brief Clock management unit (CMU) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -50,6 +50,8 @@
 
 /** Maximum allowed core frequency when using 0 wait states on flash access. */
 #define CMU_MAX_FREQ_0WS    16000000
+/** Maximum allowed core frequency when using 1 wait states on flash access */
+#define CMU_MAX_FREQ_1WS    32000000
 
 /** Low frequency A group identifier */
 #define CMU_LFA             0
@@ -67,6 +69,42 @@
 
 /***************************************************************************//**
  * @brief
+ *   Configure flash access wait states to most conservative setting for 
+ *   this target. Retain SCBTP setting.
+ ******************************************************************************/
+static void CMU_FlashWaitStateMax(void)
+{
+  uint32_t cfg;
+
+  cfg = MSC->READCTRL;
+
+  switch(cfg & _MSC_READCTRL_MODE_MASK)
+  {
+  case MSC_READCTRL_MODE_WS1:
+  case MSC_READCTRL_MODE_WS0:
+#if defined(_EFM32_GIANT_FAMILY)
+  case MSC_READCTRL_MODE_WS2:
+    cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS2;
+#else
+    cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS1;
+#endif
+    break;
+  case MSC_READCTRL_MODE_WS1SCBTP:
+  case MSC_READCTRL_MODE_WS0SCBTP:
+#if defined(_EFM32_GIANT_FAMILY)
+  case MSC_READCTRL_MODE_WS2SCBTP:
+    cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS2SCBTP;
+#else
+    cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS1SCBTP;   
+#endif
+    break;
+  }
+  MSC->READCTRL = cfg;
+}
+
+
+/***************************************************************************//**
+ * @brief
  *   Configure flash access wait states in order to support given HFCORECLK
  *   frequency.
  *
@@ -77,36 +115,59 @@ static void CMU_FlashWaitStateControl(uint32_t hfcoreclk)
 {
   uint32_t cfg;
 
-  if (hfcoreclk > CMU_MAX_FREQ_0WS)
+  cfg = MSC->READCTRL;
+
+#if defined(_EFM32_GIANT_FAMILY)
+  if (hfcoreclk > CMU_MAX_FREQ_1WS)
   {
-    switch (MSC->READCTRL & _MSC_READCTRL_MODE_MASK)
+    switch(cfg & _MSC_READCTRL_MODE_MASK)
     {
-    case MSC_READCTRL_MODE_WS0:
-      cfg = MSC_READCTRL_MODE_WS1;
-      break;
-
     case MSC_READCTRL_MODE_WS0SCBTP:
-      cfg = MSC_READCTRL_MODE_WS1SCBTP;
+    case MSC_READCTRL_MODE_WS1SCBTP:
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS2SCBTP;
       break;
-
+    case MSC_READCTRL_MODE_WS0:
+    case MSC_READCTRL_MODE_WS1:
     default:
-      return;
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS2;
+      break;
     }
   }
-  else
-  {
-    switch (MSC->READCTRL & _MSC_READCTRL_MODE_MASK)
-    {
-    case MSC_READCTRL_MODE_WS1:
-      cfg = MSC_READCTRL_MODE_WS0;
-      break;
+#endif
 
+  if ((hfcoreclk > CMU_MAX_FREQ_0WS) && (hfcoreclk <= CMU_MAX_FREQ_1WS))
+  {
+    switch (cfg & _MSC_READCTRL_MODE_MASK)
+    {
+#if defined(_EFM32_GIANT_FAMILY)      
+    case MSC_READCTRL_MODE_WS2SCBTP:
+#endif
+    case MSC_READCTRL_MODE_WS0SCBTP:
     case MSC_READCTRL_MODE_WS1SCBTP:
-      cfg = MSC_READCTRL_MODE_WS0SCBTP;
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS1SCBTP;
       break;
 
     default:
-      return;
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS1;      
+      break;
+    }
+  }
+
+  if (hfcoreclk <= CMU_MAX_FREQ_0WS)
+  {
+    switch (cfg & _MSC_READCTRL_MODE_MASK)
+    {
+#if defined(_EFM32_GIANT_FAMILY)      
+    case MSC_READCTRL_MODE_WS2SCBTP:
+#endif
+    case MSC_READCTRL_MODE_WS1SCBTP:
+    case MSC_READCTRL_MODE_WS0SCBTP:
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS0SCBTP;
+      break;
+
+    default:
+      cfg = (cfg & ~_MSC_READCTRL_MODE_MASK) | MSC_READCTRL_MODE_WS0;
+      break;
     }
   }
 
@@ -506,7 +567,7 @@ void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div)
     EFM_ASSERT(div <= cmuClkDiv_512);
 
     /* Configure worst case wait states for flash access before setting divisor */
-    CMU_FlashWaitStateControl(CMU_MAX_FREQ_0WS + 1);
+    CMU_FlashWaitStateMax();
 
     CMU->HFCORECLKDIV = (CMU->HFCORECLKDIV & ~_CMU_HFCORECLKDIV_HFCORECLKDIV_MASK) |
                         (div << _CMU_HFCORECLKDIV_HFCORECLKDIV_SHIFT);
@@ -532,7 +593,7 @@ void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div)
                        (div << _CMU_LFAPRESC0_RTC_SHIFT);
       break;
 
-#if defined(_CMU_LFAPRES0_LETIMER0_MASK)
+#if defined(_CMU_LFAPRESC0_LETIMER0_MASK)
     case cmuClock_LETIMER0:
       EFM_ASSERT(div <= cmuClkDiv_32768);
 
@@ -546,6 +607,7 @@ void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div)
 
 #if defined(LCD_PRESENT)
     case cmuClock_LCDpre:
+#if 1
       EFM_ASSERT((div >= cmuClkDiv_16) && (div <= cmuClkDiv_128));
 
       /* LF register about to be modified require sync. busy check */
@@ -554,6 +616,7 @@ void CMU_ClockDivSet(CMU_Clock_TypeDef clock, CMU_ClkDiv_TypeDef div)
       CMU->LFAPRESC0 = (CMU->LFAPRESC0 & ~_CMU_LFAPRESC0_LCD_MASK) |
                        ((div - cmuClkDiv_16) << _CMU_LFAPRESC0_LCD_SHIFT);
       break;
+#endif
 #endif /* defined(LCD_PRESENT) */
 
 #if defined(LESENSE_PRESENT)
@@ -709,162 +772,112 @@ uint32_t CMU_ClockFreqGet(CMU_Clock_TypeDef clock)
 {
   uint32_t ret;
 
-  switch (clock)
+  switch(clock & (CMU_CLK_BRANCH_MASK << CMU_CLK_BRANCH_POS))
   {
-  case cmuClock_HF:
-    ret = SystemHFClockGet();
-    break;
-
-  case cmuClock_HFPER:
-#if defined(_CMU_HFPERCLKEN0_USART0_MASK)
-  case cmuClock_USART0:
+    case (CMU_HF_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret = SystemHFClockGet();
+    } break;
+#if defined(_CMU_HFPERCLKEN0_USART0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_USART1_MASK) || \
+    defined(_CMU_HFPERCLKEN0_USART2_MASK) || \
+    defined(_CMU_HFPERCLKEN0_UART0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_TIMER0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_TIMER1_MASK) || \
+    defined(_CMU_HFPERCLKEN0_TIMER2_MASK) || \
+    defined(_CMU_HFPERCLKEN0_ACMP0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_ACMP1_MASK) || \
+    defined(PRS_PRESENT) || \
+    defined(_CMU_HFPERCLKEN0_DAC0_MASK) || \
+    defined(GPIO_PRESENT) || \
+    defined(VCMP_PRESENT) || \
+    defined(_CMU_HFPERCLKEN0_ADC0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_I2C0_MASK) || \
+    defined(_CMU_HFPERCLKEN0_I2C1_MASK)
+    case (CMU_HFPER_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = SystemHFClockGet();
+      ret >>= (CMU->HFPERCLKDIV & _CMU_HFPERCLKDIV_HFPERCLKDIV_MASK) >>
+              _CMU_HFPERCLKDIV_HFPERCLKDIV_SHIFT;
+    } break;
 #endif
-#if defined(_CMU_HFPERCLKEN0_USART1_MASK)
-  case cmuClock_USART1:
+#if defined(AES_PRESENT) || \
+    defined(DMA_PRESENT) || \
+    defined(EBI_PRESENT)
+    case (CMU_HFCORE_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret = SystemCoreClockGet();
+    } break;
 #endif
-#if defined(_CMU_HFPERCLKEN0_USART2_MASK)
-  case cmuClock_USART2:
-#endif
-#if defined(_CMU_HFPERCLKEN0_UART0_MASK)
-  case cmuClock_UART0:
-#endif
-#if defined(_CMU_HFPERCLKEN0_TIMER0_MASK)
-  case cmuClock_TIMER0:
-#endif
-#if defined(_CMU_HFPERCLKEN0_TIMER1_MASK)
-  case cmuClock_TIMER1:
-#endif
-#if defined(_CMU_HFPERCLKEN0_TIMER2_MASK)
-  case cmuClock_TIMER2:
-#endif
-#if defined(_CMU_HFPERCLKEN0_ACMP0_MASK)
-  case cmuClock_ACMP0:
-#endif
-#if defined(_CMU_HFPERCLKEN0_ACMP1_MASK)
-  case cmuClock_ACMP1:
-#endif
-#if defined(PRS_PRESENT)
-  case cmuClock_PRS:
-#endif
-#if defined(_CMU_HFPERCLKEN0_DAC0_MASK)
-  case cmuClock_DAC0:
-#endif
-#if defined(GPIO_PRESENT)
-  case cmuClock_GPIO:
-#endif
-#if defined(VCMP_PRESENT)
-  case cmuClock_VCMP:
-#endif
-#if defined(_CMU_HFPERCLKEN0_ADC0_MASK)
-  case cmuClock_ADC0:
-#endif
-#if defined(_CMU_HFPERCLKEN0_I2C0_MASK)
-  case cmuClock_I2C0:
-#endif
-    ret   = SystemHFClockGet();
-    ret >>= (CMU->HFPERCLKDIV & _CMU_HFPERCLKDIV_HFPERCLKDIV_MASK) >>
-            _CMU_HFPERCLKDIV_HFPERCLKDIV_SHIFT;
-    break;
-  case cmuClock_CORE:
-#if defined(AES_PRESENT)
-  case cmuClock_AES:
-#endif
-#if defined(DMA_PRESENT)
-  case cmuClock_DMA:
-#endif
-  case cmuClock_CORELE:
-#if defined(EBI_PRESENT)
-  case cmuClock_EBI:
-#endif
-    ret = SystemCoreClockGet();
-    break;
-
-  case cmuClock_LFA:
-    ret = CMU_LFClkGet(CMU_LFA);
-    break;
+    case (CMU_LFA_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret = CMU_LFClkGet(CMU_LFA);
+    } break;
 #if defined(_CMU_LFACLKEN0_RTC_MASK)
-  case cmuClock_RTC:
-    ret   = CMU_LFClkGet(CMU_LFA);
-    ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_RTC_MASK) >>
-            _CMU_LFAPRESC0_RTC_SHIFT;
-    break;
+    case (CMU_RTC_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFA);
+      ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_RTC_MASK) >>
+              _CMU_LFAPRESC0_RTC_SHIFT;
+    } break;
 #endif
-
 #if defined(_CMU_LFACLKEN0_LETIMER0_MASK)
-  case cmuClock_LETIMER0:
-    ret   = CMU_LFClkGet(CMU_LFA);
-    ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LETIMER0_MASK) >>
-            _CMU_LFAPRESC0_LETIMER0_SHIFT;
-    break;
+    case (CMU_LETIMER_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFA);
+      ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LETIMER0_MASK) >>
+              _CMU_LFAPRESC0_LETIMER0_SHIFT;
+    } break;
 #endif
-
 #if defined(_CMU_LFACLKEN0_LCD_MASK)
-  case cmuClock_LCDpre:
-    ret   = CMU_LFClkGet(CMU_LFA);
-    ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LCD_MASK) >>
-            _CMU_LFAPRESC0_LCD_SHIFT;
-    break;
-
-  case cmuClock_LCD:
-    ret   = CMU_LFClkGet(CMU_LFA);
-    ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LCD_MASK) >>
-            _CMU_LFAPRESC0_LCD_SHIFT;
-    ret /= (1 + ((CMU->LCDCTRL & _CMU_LCDCTRL_FDIV_MASK) >>
-                 _CMU_LCDCTRL_FDIV_SHIFT));
-    break;
+    case (CMU_LCDPRE_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFA);
+      ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LCD_MASK) >>
+              _CMU_LFAPRESC0_LCD_SHIFT;
+    } break;
+    case (CMU_LCD_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFA);
+      ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LCD_MASK) >>
+              _CMU_LFAPRESC0_LCD_SHIFT;
+      ret /= (1 + ((CMU->LCDCTRL & _CMU_LCDCTRL_FDIV_MASK) >>
+                   _CMU_LCDCTRL_FDIV_SHIFT));
+    } break;
 #endif
-
 #if defined(_CMU_LFACLKEN0_LESENSE_MASK)
-  case cmuClock_LESENSE:
-    ret   = CMU_LFClkGet(CMU_LFA);
-    ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LESENSE_MASK) >>
-            _CMU_LFAPRESC0_LESENSE_SHIFT;
-    break;
+    case (CMU_LESENSE_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFA);
+      ret >>= (CMU->LFAPRESC0 & _CMU_LFAPRESC0_LESENSE_MASK) >>
+              _CMU_LFAPRESC0_LESENSE_SHIFT;
+    } break;
 #endif
-
-#if defined(_CMU_PCNTCTRL_PCNT0CLKEN_MASK)
-  case cmuClock_PCNT0:
-#endif
-#if defined(_CMU_PCNTCTRL_PCNT1CLKEN_MASK)
-  case cmuClock_PCNT1:
-#endif
-#if defined(_CMU_PCNTCTRL_PCNT2CLKEN_MASK)
-  case cmuClock_PCNT2:
-#endif
-#if (PCNT_COUNT > 3)
-#error Add support for more PCNT instances
-#endif
-    ret = CMU_LFClkGet(CMU_LFA);
-    break;
-
-  case cmuClock_LFB:
-    ret = CMU_LFClkGet(CMU_LFB);
-    break;
-
+    case (CMU_LFB_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret = CMU_LFClkGet(CMU_LFB);
+    } break;
 #if defined(_CMU_LFBCLKEN0_LEUART0_MASK)
-  case cmuClock_LEUART0:
-    ret   = CMU_LFClkGet(CMU_LFB);
-    ret >>= (CMU->LFBPRESC0 & _CMU_LFBPRESC0_LEUART0_MASK) >>
-            _CMU_LFBPRESC0_LEUART0_SHIFT;
-    break;
+    case (CMU_LEUART0_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFB);
+      ret >>= (CMU->LFBPRESC0 & _CMU_LFBPRESC0_LEUART0_MASK) >>
+              _CMU_LFBPRESC0_LEUART0_SHIFT;
+    } break;
 #endif
-
 #if defined(_CMU_LFBCLKEN0_LEUART1_MASK)
-  case cmuClock_LEUART1:
-    ret   = CMU_LFClkGet(CMU_LFB);
-    ret >>= (CMU->LFBPRESC0 & _CMU_LFBPRESC0_LEUART1_MASK) >>
-            _CMU_LFBPRESC0_LEUART1_SHIFT;
-    break;
-#endif /* LEUART_COUNT > 1) */
-
-#if (LEUART_COUNT > 2)
-#error Add support for more LEUART instances
+    case (CMU_LEUART1_CLK_BRANCH << CMU_CLK_BRANCH_POS):
+    {
+      ret   = CMU_LFClkGet(CMU_LFB);
+      ret >>= (CMU->LFBPRESC0 & _CMU_LFBPRESC0_LEUART0_MASK) >>
+              _CMU_LFBPRESC0_LEUART0_SHIFT;
+    } break;
 #endif
-
-  default:
-    EFM_ASSERT(0);
-    ret = 0;
-    break;
+    default:
+    {
+      EFM_ASSERT(0);
+      ret = 0;
+    } break;
   }
   return ret;
 }
@@ -1047,7 +1060,7 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
     CMU_OscillatorEnable(osc, true, true);
 
     /* Configure worst case wait states for flash access before selecting */
-    CMU_FlashWaitStateControl(CMU_MAX_FREQ_0WS + 1);
+    CMU_FlashWaitStateMax();
 
     /* Switch to selected oscillator */
     CMU->CMD = select;
@@ -1255,7 +1268,7 @@ void CMU_HFRCOBandSet(CMU_HFRCOBand_TypeDef band)
   if (osc == cmuSelect_HFRCO)
   {
     /* Configure worst case wait states for flash access before setting divider */
-    CMU_FlashWaitStateControl(CMU_MAX_FREQ_0WS + 1);
+    CMU_FlashWaitStateMax();
   }
 
   /* Set band/tuning */

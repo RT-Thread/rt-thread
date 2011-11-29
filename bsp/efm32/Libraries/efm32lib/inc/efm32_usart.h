@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -427,7 +427,10 @@ typedef struct
       usartDatabits16,    /* 16 databits. */                                                     \
       true,               /* Operate as I2S master. */                                           \
       true,               /* Most significant bit first. */                                      \
-      usartClockMode0     /* Clock idle low, sample on rising edge. */                           \
+      usartClockMode0,    /* Clock idle low, sample on rising edge. */                           \
+      false,              /* Don't enable USARTRx via PRS. */                                    \
+      usartPrsRxCh0,      /* PRS channel selection (dummy). */                                   \
+      false               /* Disable AUTOTX mode. */                                             \
     },                                                                                           \
     usartI2sFormatW16D16, /* 16-bit word, 16-bit data */                                         \
     true,                 /* Delay on I2S data. */                                               \
@@ -454,9 +457,10 @@ void USART_BaudrateSyncSet(USART_TypeDef *usart,
                            uint32_t refFreq,
                            uint32_t baudrate);
 void USART_Enable(USART_TypeDef *usart, USART_Enable_TypeDef enable);
-void USART_InitAsync(USART_TypeDef *usart, USART_InitAsync_TypeDef *init);
-void USART_InitSync(USART_TypeDef *usart, USART_InitSync_TypeDef *init);
-void USART_InitIrDA(USART_InitIrDA_TypeDef *init);
+
+void USART_InitAsync(USART_TypeDef *usart, const USART_InitAsync_TypeDef *init);
+void USART_InitSync(USART_TypeDef *usart, const USART_InitSync_TypeDef *init);
+void USART_InitIrDA(const USART_InitIrDA_TypeDef *init);
 
 #if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
 void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init);

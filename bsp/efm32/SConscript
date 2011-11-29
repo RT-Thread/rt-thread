@@ -10,6 +10,8 @@ else:
   CPPPATH = []
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
+if rtconfig.PLATFORM == 'gcc':
+    src_bsp.append('start_gcc.S')
 src_drv1 = ['drv_dma.c', 'drv_rtc.c', 'drv_adc.c', 'drv_acmp.c', 'drv_usart.c', 'drv_iic.c', 'drv_timer.c']
 src_drv2 = ['drv_sdcard.c', 'drv_ethernet.c']
 src_dev = ['dev_misc.c', 'dev_led.c', 'dev_accel.c', 'dev_sflash.c']
@@ -18,7 +20,7 @@ src_app = ['httpd.c']
 
 src = src_kit + src_bsp + src_drv1 + src_drv2 + src_dev + src_hdl + src_app
 CPPPATH.append(RTT_ROOT + '/bsp/efm32')
-CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.EFM32_BOARD, rtconfig.EFM32_TYPE]
+CPPDEFINES = [rtconfig.EFM32_BOARD, rtconfig.EFM32_TYPE]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

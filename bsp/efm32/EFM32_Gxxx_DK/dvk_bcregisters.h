@@ -2,7 +2,7 @@
  * @file
  * @brief Board Control register definitions
  * @author Energy Micro AS
- * @version 1.6.0
+ * @version 1.7.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>

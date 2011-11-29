@@ -2,10 +2,10 @@
  * @file
  * @brief Analog Comparator (ACMP) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
- * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
+ * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
  *******************************************************************************
  *
  * This source code is the property of Energy Micro AS. The source and compiled
@@ -125,7 +125,13 @@ typedef enum
   /** 2.5V internal reference */
   acmpChannel2V5  = _ACMP_INPUTSEL_NEGSEL_2V5,
   /** Scaled VDD reference */
-  acmpChannelVDD  = _ACMP_INPUTSEL_NEGSEL_VDD
+  acmpChannelVDD  = _ACMP_INPUTSEL_NEGSEL_VDD,
+#if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
+  /** DAC0 channel 0 */
+  acmpChannelDAC0Ch0 = _ACMP_INPUTSEL_NEGSEL_DAC0CH0,
+  /** DAC0 channel 1 */
+  acmpChannelDAC0Ch1 = _ACMP_INPUTSEL_NEGSEL_DAC0CH1,
+#endif
 } ACMP_Channel_TypeDef;
 
 /*******************************************************************************

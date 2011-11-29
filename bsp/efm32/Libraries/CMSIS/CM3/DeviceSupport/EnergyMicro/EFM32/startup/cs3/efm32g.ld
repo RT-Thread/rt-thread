@@ -22,8 +22,8 @@ GROUP(-lgcc -lc -lcs3 -lcs3unhosted)
 
 MEMORY
 {
-  rom (rx) : ORIGIN = 0x00000000, LENGTH = 128K
-  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 16K
+  rom (rx) : ORIGIN = 0x00000000, LENGTH = 131072
+  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 16384
 }
 
 /* These force the linker to search for particular symbols from
@@ -193,8 +193,8 @@ SECTIONS
     *(.got.plt) *(.got)
     *(.shdata)
     *(.data .data.* .gnu.linkonce.d.*)
-    . = ALIGN (8);
     *(.ram)
+    . = ALIGN (8);
     _edata = .;
   } >ram AT>rom
   .bss :

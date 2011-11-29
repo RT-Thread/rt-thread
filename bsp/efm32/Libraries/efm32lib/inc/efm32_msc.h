@@ -2,7 +2,7 @@
  * @file
  * @brief Flash controller module (MSC) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -166,7 +166,7 @@ static __INLINE void MSC_IntSet(uint32_t flags)
 }
 
 
-#if _EFM32_TINY_FAMILY == 1
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
 /***************************************************************************//**
  * @brief
  *   Starts measuring cache hit ratio.

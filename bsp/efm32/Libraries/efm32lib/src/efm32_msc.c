@@ -2,7 +2,7 @@
  * @file
  * @brief Flash controller (MSC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -185,7 +185,7 @@ msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numByt
   int numWords;
 
   /* Check alignment (Must be aligned to words) */
-  EFM_ASSERT(((uint32_t)address & 0x3) == 0);
+  EFM_ASSERT(((uint32_t) address & 0x3) == 0);
 
   /* Check number of bytes. Must be divisable by four */
   EFM_ASSERT((numBytes & 0x3) == 0);

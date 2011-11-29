@@ -12,12 +12,15 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-01-06	onelife		Initial creation for EFM32
- * 2011-06-17	onelife		Modify init function for efm32lib v2 upgrading
+ * 2011-06-17	onelife		Modify init function for EFM32 library v2.0.0 
+ *  upgrading
  * 2011-07-11	onelife		Add lock (semaphore) to prevent simultaneously 
  *  access
  * 2011-08-04	onelife		Change the usage of the second parameter of Read 
  *  and Write functions from (seldom used) "Offset" to "Slave address"
  * 2011-08-04	onelife		Add a timer to prevent from forever waiting
+ * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2 
+ *  upgrading
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -703,6 +706,8 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 {
 	struct efm32_iic_device_t 	*iic;
 	CMU_Clock_TypeDef			iicClock;
+	GPIO_Port_TypeDef 			port_scl, port_sda;
+	rt_uint32_t 				pin_scl, pin_sda;
 	I2C_Init_TypeDef			init = I2C_INIT_DEFAULT;
 	efm32_irq_hook_init_t		hook;
 	rt_uint8_t 					name[RT_NAME_MAX];
@@ -733,12 +738,20 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		case 0:
 			iic->iic_device	= I2C0;
 			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;	
+			port_scl			= AF_I2C0_SCL_PORT(location);
+			pin_scl				= AF_I2C0_SCL_PIN(location);
+			port_sda			= AF_I2C0_SDA_PORT(location);
+			pin_sda 			= AF_I2C0_SDA_PIN(location);
 			break;
 
 #if (I2C_COUNT > 1)
 		case 1:
 			iic->iic_device	= I2C1;
 			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1; 
+			port_scl			= AF_I2C1_SCL_PORT(location);
+			pin_scl				= AF_I2C1_SCL_PIN(location);
+			port_sda			= AF_I2C1_SDA_PORT(location);
+			pin_sda 			= AF_I2C1_SDA_PIN(location);
 			break;
 #endif
 
@@ -755,13 +768,13 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 
 		/* Config GPIO */
 		GPIO_PinModeSet(
-			(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SCL(unitNumber), location),
-			AF_PIN(AF_I2C_SCL(unitNumber), location),
+			port_scl,
+			pin_scl,
 			gpioModeWiredAndPullUpFilter,
 			1);
 		GPIO_PinModeSet(
-			(GPIO_Port_TypeDef)AF_PORT(AF_I2C_SDA(unitNumber), location),
-			AF_PIN(AF_I2C_SDA(unitNumber), location),
+			port_sda,
+			pin_sda,
 			gpioModeWiredAndPullUpFilter,
 			1);
 

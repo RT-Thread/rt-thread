@@ -276,7 +276,7 @@ static struct efm32_acmp_device_t *rt_hw_acmp_unit_init(
 		acmp = rt_malloc(sizeof(struct efm32_acmp_device_t));
 		if (acmp == RT_NULL)
 		{
-			acmp_debug("no memory for ACMP%d driver\n", unitNumber);
+			acmp_debug("ACMP err: no mem for ACMP%d\n", unitNumber);
 			break;
 		}
 

@@ -2,7 +2,7 @@
  * @file
  * @brief Direct memory access (DMA) module peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -794,6 +794,64 @@ void DMA_CfgDescr(unsigned int channel,
 }
 
 
+#if defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief Configure DMA channel for Loop mode or 2D transfer.
+ *
+ * @details
+ *   For 2D transfer, set cfg->enable to "false", and only configure nMinus1
+ *   to same width as channel descriptor.
+ *
+ * @param[in] channel
+ *   DMA channel to configure for.
+ *
+ * @param[in] cfg
+ *   Configuration to use.
+ ******************************************************************************/
+void DMA_CfgLoop(unsigned int channel, DMA_CfgLoop_TypeDef *cfg)
+{
+  EFM_ASSERT(channel <= 1);
+  EFM_ASSERT(cfg->nMinus1 <= 1023);
+
+  /* Configure LOOP setting */
+  switch( channel )
+  {
+  case 0:
+    DMA->LOOP0 = (cfg->enable << _DMA_LOOP0_EN_SHIFT|
+                  cfg->nMinus1 << _DMA_LOOP0_WIDTH_SHIFT);
+    break;
+  case 1:
+    DMA->LOOP1 = (cfg->enable << _DMA_LOOP1_EN_SHIFT|
+                  cfg->nMinus1 << _DMA_LOOP1_WIDTH_SHIFT);
+    break;
+  }
+}
+
+
+/***************************************************************************//**
+ * @brief Configure DMA channel 2D transfer properties.
+ *
+ * @param[in] channel
+ *   DMA channel to configure for.
+ *
+ * @param[in] cfg
+ *   Configuration to use.
+ ******************************************************************************/
+void DMA_CfgRect(unsigned int channel, DMA_CfgRect_TypeDef *cfg)
+{
+  EFM_ASSERT(channel == 0);
+  EFM_ASSERT(cfg->dstStride <= 2047);
+  EFM_ASSERT(cfg->srcStride <= 2047);
+  EFM_ASSERT(cfg->height <= 1023);
+
+  /* Configure rectangular/2D copy */
+  DMA->RECT0 = (cfg->dstStride << _DMA_RECT0_DSTSTRIDE_SHIFT|
+                cfg->srcStride << _DMA_RECT0_SRCSTRIDE_SHIFT|
+                cfg->height << _DMA_RECT0_HEIGHT_SHIFT);
+}
+#endif
+
+
 /***************************************************************************//**
  * @brief
  *   Configure an alternate DMA descriptor for use with scatter-gather DMA
@@ -923,7 +981,7 @@ void DMA_Init(DMA_Init_TypeDef *init)
   EFM_ASSERT(init);
 
   /* Make sure control block is properly aligned */
-  EFM_ASSERT(!((uint32_t)(init->controlBlock) & ((16 * DMA_CHAN_COUNT * 2) - 1)));
+  EFM_ASSERT(!((uint32_t)(init->controlBlock) & (256 - 1)));
 
   /* Make sure DMA clock is enabled prior to accessing DMA module */
   CMU_ClockEnable(cmuClock_DMA, true);

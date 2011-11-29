@@ -187,8 +187,8 @@ SECTIONS
     *(.got.plt) *(.got)
     *(.shdata)
     *(.data .data.* .gnu.linkonce.d.*)
-    . = ALIGN (8);
     *(.ram)
+    . = ALIGN (8);
     _edata = .;
   } >ram AT>rom
   .bss :

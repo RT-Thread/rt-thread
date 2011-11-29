@@ -2,7 +2,7 @@
  * @file
  * @brief Operational Amplifier (OPAMP) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -83,7 +83,7 @@ typedef enum
   opaPosSelDisable    = DAC_OPA0MUX_POSSEL_DISABLE,   /**< Input disabled.          */
   opaPosSelDac        = DAC_OPA0MUX_POSSEL_DAC,       /**< DAC as input (not OPA2). */
   opaPosSelPosPad     = DAC_OPA0MUX_POSSEL_POSPAD,    /**< Positive pad as input.   */
-  opaPosSelOpaIn      = DAC_OPA0MUX_POSSEL_OPA1IN,    /**< Input from OPAx.         */
+  opaPosSelOpaIn      = DAC_OPA0MUX_POSSEL_OPA0INP,   /**< Input from OPAx.         */
   opaPosSelResTapOpa0 = DAC_OPA0MUX_POSSEL_OPATAP     /**< Feedback resistor ladder tap from OPA0. */
 } OPAMP_PosSel_TypeDef;
 
@@ -114,7 +114,7 @@ typedef enum
 typedef enum
 {
   opaResInMuxDisable = DAC_OPA0MUX_RESINMUX_DISABLE,   /**< Resistor ladder disabled. */
-  opaResInMuxOpaIn   = DAC_OPA0MUX_RESINMUX_OPA2INP,   /**< Input from OPAx.          */
+  opaResInMuxOpaIn   = DAC_OPA0MUX_RESINMUX_OPA0INP,   /**< Input from OPAx.          */
   opaResInMuxNegPad  = DAC_OPA0MUX_RESINMUX_NEGPAD,    /**< Input from negative pad.  */
   opaResInMuxPosPad  = DAC_OPA0MUX_RESINMUX_POSPAD,    /**< Input from positive pad.  */
   opaResInMuxVss     = DAC_OPA0MUX_RESINMUX_VSS        /**< Input connected to Vss.   */
@@ -525,7 +525,7 @@ typedef struct
  ******************************************************************************/
 
 void      OPAMP_Disable(DAC_TypeDef *dac, OPAMP_TypeDef opa);
-void      OPAMP_Enable(DAC_TypeDef *dac, OPAMP_TypeDef opa, OPAMP_Init_TypeDef *init);
+void      OPAMP_Enable(DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef *init);
 
 /** @} (end addtogroup OPAMP) */
 /** @} (end addtogroup EFM32_Library) */

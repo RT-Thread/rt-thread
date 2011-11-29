@@ -2,7 +2,7 @@
  * @file
  * @brief Operational Amplifier (OPAMP) peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -235,7 +235,7 @@ void OPAMP_Disable( DAC_TypeDef *dac, OPAMP_TypeDef opa )
  * @param[in] init
  *   Pointer to a structure containing OPAMP init information.
  ******************************************************************************/
-void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, OPAMP_Init_TypeDef *init )
+void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, const OPAMP_Init_TypeDef *init )
 {
   uint32_t offset;
   
@@ -344,7 +344,7 @@ void OPAMP_Enable( DAC_TypeDef *dac, OPAMP_TypeDef opa, OPAMP_Init_TypeDef *init
   {
     EFM_ASSERT( ( init->posSel == DAC_OPA2MUX_POSSEL_DISABLE ) ||
                 ( init->posSel == DAC_OPA2MUX_POSSEL_POSPAD  ) ||
-                ( init->posSel == DAC_OPA2MUX_POSSEL_OPA1IN  ) ||
+                ( init->posSel == DAC_OPA2MUX_POSSEL_OPA1INP ) ||
                 ( init->posSel == DAC_OPA2MUX_POSSEL_OPATAP  )    );
 
     EFM_ASSERT( ( init->outMode & ~DAC_OPA2MUX_OUTMODE ) == 0 );

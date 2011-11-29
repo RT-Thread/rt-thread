@@ -2,7 +2,7 @@
  * @file
  * @brief Memory Protection Unit (MPU) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.0.0
+ * @version 2.2.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -76,11 +76,13 @@
  * @details
  *   Writes to MPU RBAR and RASR registers.
  *   Refer to Cortex-M3 Reference Manual, MPU chapter for further details.
+ *   To disable a region it is only required to set init->regionNo to the
+ *   desired value and init->regionEnable = false.
  *
  * @param[in] init
  *   Pointer to a structure containing MPU region init information.
  ******************************************************************************/
-void MPU_ConfigureRegion(MPU_RegionInit_TypeDef *init)
+void MPU_ConfigureRegion(const MPU_RegionInit_TypeDef *init)
 {
   EFM_ASSERT(init->regionNo < ((MPU->TYPE & MPU_TYPE_DREGION_Msk) >>
                                 MPU_TYPE_DREGION_Pos));
@@ -89,7 +91,7 @@ void MPU_ConfigureRegion(MPU_RegionInit_TypeDef *init)
 
   if (init->regionEnable)
   {
-    EFM_ASSERT(!(init->baseAddress & MPU_RBAR_ADDR_Msk));
+    EFM_ASSERT(!(init->baseAddress & ~MPU_RBAR_ADDR_Msk));
     EFM_ASSERT(init->tex <= 0x7);
 
     MPU->RBAR = init->baseAddress;
