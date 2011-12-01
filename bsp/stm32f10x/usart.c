@@ -243,7 +243,7 @@ static void DMA_Configuration(void)
 	DMA_InitStructure.DMA_BufferSize = 0;
 	DMA_Init(UART3_TX_DMA, &DMA_InitStructure);
 	DMA_ITConfig(UART3_TX_DMA, DMA_IT_TC | DMA_IT_TE, ENABLE);
-	DMA_ClearFlag(DMA1_FLAG_TC5);
+	DMA_ClearFlag(DMA1_FLAG_TC2);
 #endif
 }
 
