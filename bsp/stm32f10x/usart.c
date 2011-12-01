@@ -239,8 +239,12 @@ static void DMA_Configuration(void)
 	DMA_DeInit(UART3_TX_DMA);
 	DMA_InitStructure.DMA_PeripheralBaseAddr = USART3_DR_Base;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+	/* As we will set them before DMA actually enabled, the DMA_MemoryBaseAddr
+	 * and DMA_BufferSize are meaningless. So just set them to proper values
+	 * which could make DMA_Init happy.
+	 */
 	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)0;
-	DMA_InitStructure.DMA_BufferSize = 0;
+	DMA_InitStructure.DMA_BufferSize = 1;
 	DMA_Init(UART3_TX_DMA, &DMA_InitStructure);
 	DMA_ITConfig(UART3_TX_DMA, DMA_IT_TC | DMA_IT_TE, ENABLE);
 	DMA_ClearFlag(DMA1_FLAG_TC2);
