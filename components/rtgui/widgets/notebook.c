@@ -105,7 +105,7 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 		struct rtgui_dc* dc;
 
 		index = (emouse->x - rect.x1) / RTGUI_NOTEBOOK_TAB_WIDTH;
-		if (index < notebook->count)
+		if (index < notebook->count && index != notebook->current)
 		{
 			/* update tab bar */
 			dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
