@@ -116,15 +116,16 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 			_rtgui_notebook_draw_bar(notebook, dc);
 
 			rtgui_dc_end_drawing(dc);
-
-			return;
 		}
 	}
-
+	else
+	{
 	/* handle on page */
-	if (notebook->childs[notebook->current].widget->event_handler != RT_NULL)
-		notebook->childs[notebook->current].widget->event_handler(notebook->childs[notebook->current].widget,
-			&(emouse->parent));
+		if (notebook->childs[notebook->current].widget->event_handler != RT_NULL)
+			notebook->childs[notebook->current].widget->event_handler(
+					notebook->childs[notebook->current].widget,
+					&(emouse->parent));
+	}
 }
 
 static void _rtgui_notebook_get_page_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect)
