@@ -36,7 +36,7 @@ C语言头文件为了避免多次重复包含，需要定义一个符号。这�
 
 4.文件头注释
 
-在每个源文件文件头上，应该包括相应的版权信息，CHANGELOG 记录：
+在每个源文件文件头上，应该包括相应的版权信息，Change Log 记录：
 
 	/*
 	 * File      : rtthread.h
@@ -151,7 +151,7 @@ case 语句与前面的 switch 语句对齐，后续的语句则采用缩进的�
 		/* others */
 	}
 
-建议在括号前留出一个空格（涉及的包括if、for、while、swtich语句），而运算表达式
+建议在括号前留出一个空格(涉及的包括 if、for、while、swtich 语句)，而运算表达式
 中，运算符与字符串间留一个空格。另外，不要在括号的表达式两侧留空格，例如：
 
 	if ( x <= y )
@@ -194,7 +194,7 @@ RT-Thread 内核采用了 C 语言对象化技术，命名表现形式是：对�
 	};
 	typedef struct rt_timer* rt_timer_t;
 
-结构体定义rt_timer代表了timer对象的类定义；
+结构体定义 rt_timer 代表了 timer 对象的类定义；
 
 	rt_timer_t rt_timer_create(const char* name,
 		void (*timeout)(void* parameter), void* parameter,
