@@ -518,7 +518,8 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_widget* widget, struct rtgui_even
 			if (win->modal_widget != RT_NULL)
 				return win->modal_widget->event_handler(win->modal_widget, event);
 		}
-		else if (RTGUI_CONTAINER(win)->focused != widget)
+		else if (RTGUI_CONTAINER(win)->focused != widget &&
+				 RTGUI_CONTAINER(win)->focused != RT_NULL)
 		{
 			RTGUI_CONTAINER(win)->focused->event_handler(RTGUI_CONTAINER(win)->focused, event);
 		}
