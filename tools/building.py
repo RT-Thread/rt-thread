@@ -17,7 +17,7 @@ def _get_filetype(fn):
     if fn.rfind('.c') != -1 or fn.rfind('.C') != -1 or fn.rfind('.cpp') != -1:
         return 1
 
-    # assimble file type
+    # assemble file type
     if fn.rfind('.s') != -1 or fn.rfind('.S') != -1:
         return 2
 
@@ -279,6 +279,7 @@ def MDK4Project(target, script):
         paths.add(inc) #.replace('\\', '/')
     
     paths = [i for i in paths]
+    paths.sort()
     CPPPATH = string.join(paths, ';')
     
     definitions = [i for i in set(CPPDEFINES)]
@@ -552,6 +553,34 @@ def GetDepend(depend):
 def AddDepend(option):
     BuildOptions[option] = 1
 
+def MergeGroup(src_group, group):
+    src_group['src'] = src_group['src'] + group['src']
+    if group.has_key('CCFLAGS'):
+        if src_group.has_key('CCFLAGS'):
+            src_group['CCFLAGS'] = src_group['CCFLAGS'] + group['CCFLAGS']
+        else:
+            src_group['CCFLAGS'] = group['CCFLAGS']
+    if group.has_key('CPPPATH'):
+        if src_group.has_key('CPPPATH'):
+            src_group['CPPPATH'] = src_group['CPPPATH'] + group['CPPPATH']
+        else:
+            src_group['CPPPATH'] = group['CPPPATH']
+    if group.has_key('CPPDEFINES'):
+        if src_group.has_key('CPPDEFINES'):
+            src_group['CPPDEFINES'] = src_group['CPPDEFINES'] + group['CPPDEFINES']
+        else:
+            src_group['CPPDEFINES'] = group['CPPDEFINES']
+    if group.has_key('LINKFLAGS'):
+        if src_group.has_key('LINKFLAGS'):
+            src_group['LINKFLAGS'] = src_group['LINKFLAGS'] + group['LINKFLAGS']
+        else:
+            src_group['LINKFLAGS'] = group['LINKFLAGS']
+    if group.has_key('LIBRARY'):
+        if src_group['LIBRARY'].has_key('LIBRARY'):
+            src_group['LIBRARY'] = src_group['LIBRARY'] + group['LIBRARY']
+        else:
+            src_group['LIBRARY'] = group['LIBRARY']
+
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
@@ -563,8 +592,6 @@ def DefineGroup(name, src, depend, **parameters):
         group['src'] = File(src)
     else:
         group['src'] = src
-
-    Projects.append(group)
 
     if group.has_key('CCFLAGS'):
         Env.Append(CCFLAGS = group['CCFLAGS'])
@@ -579,6 +606,16 @@ def DefineGroup(name, src, depend, **parameters):
 
     if group.has_key('LIBRARY'):
         objs = Env.Library(name, objs)
+
+    # merge group 
+    for g in Projects:
+        if g['name'] == name:
+            # merge to this group
+            MergeGroup(g, group)
+            return objs
+
+    # add a new group 
+    Projects.append(group)
 
     return objs
 
