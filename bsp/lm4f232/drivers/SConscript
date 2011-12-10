@@ -9,12 +9,10 @@ CPPPATH = [cwd]
 
 # remove no need file.
 if GetDepend('RT_USING_LWIP') == False:
-    src_need_remove = ['luminaryif.c'] # need remove file list.
-    src = SrcRemove(src, src_need_remove)
+    SrcRemove(src, ['luminaryif.c']) # need remove file list.
 
 if GetDepend('RT_USING_DFS') == False:
-    src_need_remove = ['sdcard.c'] # need remove file list.
-    src = SrcRemove(src, src_need_remove)
+    SrcRemove(src, ['sdcard.c']) # need remove file list.
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
