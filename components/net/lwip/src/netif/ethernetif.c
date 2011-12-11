@@ -293,30 +293,44 @@ rt_err_t eth_system_device_init()
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-void set_if(char* ip_addr, char* gw_addr, char* nm_addr)
+void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
-	struct ip_addr *ip;
-	struct in_addr addr;
+    struct ip_addr *ip;
+    struct in_addr addr;
+    struct netif * netif = netif_list;
 
-	ip = (struct ip_addr *)&addr;
+    while(netif != RT_NULL)
+    {
+        if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+            break;
 
-	/* set ip address */
-	if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
-	{
-		netif_set_ipaddr(netif_default, ip);
-	}
+        netif = netif->next;
+        if( netif == netif_list )
+        {
+            rt_kprintf("network interface: %c%c not found!\r\n", netif->name[0], netif->name[1]);
+            return;
+        }
+    }
 
-	/* set gateway address */
-	if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
-	{
-		netif_set_gw(netif_default, ip);
-	}
+    ip = (struct ip_addr *)&addr;
 
-	/* set netmask address */
-	if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
-	{
-		netif_set_netmask(netif_default, ip);
-	}
+    /* set ip address */
+    if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
+    {
+        netif_set_ipaddr(netif, ip);
+    }
+
+    /* set gateway address */
+    if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
+    {
+        netif_set_gw(netif, ip);
+    }
+
+    /* set netmask address */
+    if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
+    {
+        netif_set_netmask(netif, ip);
+    }
 }
 FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 
@@ -334,37 +348,53 @@ void set_dns(char* dns_server)
 FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);
 #endif
 
-void list_if()
+void list_if(void)
 {
-	rt_ubase_t index;
+    rt_ubase_t index;
+    struct netif * netif;
 
-	rt_kprintf("Default network interface: %c%c\n", netif_default->name[0], netif_default->name[1]);
-	rt_kprintf("MTU: %d\n", netif_default->mtu);
-	rt_kprintf("MAC: ");
-	for (index = 0; index < netif_default->hwaddr_len; index ++)
-		rt_kprintf("%02x ", netif_default->hwaddr[index]);
-	rt_kprintf("\nFLAGS:");
-	if (netif_default->flags & NETIF_FLAG_UP) rt_kprintf(" UP");
-	else rt_kprintf(" DOWN");
-	if (netif_default->flags & NETIF_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
-	else rt_kprintf(" LINK_DOWN");
-	if (netif_default->flags & NETIF_FLAG_DHCP) rt_kprintf(" DHCP");
-	if (netif_default->flags & NETIF_FLAG_POINTTOPOINT) rt_kprintf(" PPP");
-	if (netif_default->flags & NETIF_FLAG_ETHARP) rt_kprintf(" ETHARP");
-	if (netif_default->flags & NETIF_FLAG_IGMP) rt_kprintf(" IGMP");
-	rt_kprintf("\n");
-	rt_kprintf("ip address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->ip_addr))));
-	rt_kprintf("gw address: %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->gw))));
-	rt_kprintf("net mask  : %s\n", inet_ntoa(*((struct in_addr*)&(netif_default->netmask))));
+    netif = netif_list;
+
+    while( netif != RT_NULL )
+    {
+        rt_kprintf("network interface: %c%c%s\n", netif->name[0], netif->name[1], (netif == netif_default)?" (Default)":"");
+        rt_kprintf("MTU: %d\n", netif->mtu);
+        rt_kprintf("MAC: ");
+        for (index = 0; index < netif->hwaddr_len; index ++)
+            rt_kprintf("%02x ", netif->hwaddr[index]);
+        rt_kprintf("\nFLAGS:");
+        if (netif->flags & NETIF_FLAG_UP) rt_kprintf(" UP");
+        else rt_kprintf(" DOWN");
+        if (netif->flags & NETIF_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
+        else rt_kprintf(" LINK_DOWN");
+        if (netif->flags & NETIF_FLAG_DHCP) rt_kprintf(" DHCP");
+        if (netif->flags & NETIF_FLAG_POINTTOPOINT) rt_kprintf(" PPP");
+        if (netif->flags & NETIF_FLAG_ETHARP) rt_kprintf(" ETHARP");
+        if (netif->flags & NETIF_FLAG_IGMP) rt_kprintf(" IGMP");
+        rt_kprintf("\n");
+        rt_kprintf("ip address: %s\n", inet_ntoa(*((struct in_addr*)&(netif->ip_addr))));
+        rt_kprintf("gw address: %s\n", inet_ntoa(*((struct in_addr*)&(netif->gw))));
+        rt_kprintf("net mask  : %s\n", inet_ntoa(*((struct in_addr*)&(netif->netmask))));
+        rt_kprintf("\r\n");
+
+        netif = netif->next;
+        if( netif == netif_list )
+        {
+            break;
+        }
+    }
 
 #if LWIP_DNS
-	{
-		struct ip_addr ip_addr;
+    {
+        struct ip_addr ip_addr;
 
-		ip_addr = dns_getserver(0);
-		rt_kprintf("dns server: %s\n", inet_ntoa(*((struct in_addr*)&(ip_addr))));
-	}
-#endif
+        for(index=0; index<DNS_MAX_SERVERS; index++)
+        {
+            ip_addr = dns_getserver(index);
+            rt_kprintf("dns server #%d: %s\n", index, inet_ntoa(*((struct in_addr*)&(ip_addr))));
+        }
+    }
+#endif /**< #if LWIP_DNS */
 }
 FINSH_FUNCTION_EXPORT(list_if, list network interface information);
 
