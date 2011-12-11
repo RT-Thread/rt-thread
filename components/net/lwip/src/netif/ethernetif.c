@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-07-07     Bernard      fix send mail to mailbox issue.
+ * 2011-12-11     aozima       list_if and set_if support multiple interface.
  */
 
 /*
@@ -299,15 +300,21 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
     struct in_addr addr;
     struct netif * netif = netif_list;
 
+    if(strlen(netif_name) > sizeof(netif->name))
+    {
+        rt_kprintf("network interface name too long!\r\n");
+        return;
+    }
+
     while(netif != RT_NULL)
     {
         if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
             break;
 
         netif = netif->next;
-        if( netif == netif_list )
+        if( netif == RT_NULL )
         {
-            rt_kprintf("network interface: %c%c not found!\r\n", netif->name[0], netif->name[1]);
+            rt_kprintf("network interface: %s not found!\r\n", netif_name);
             return;
         }
     }
@@ -378,10 +385,6 @@ void list_if(void)
         rt_kprintf("\r\n");
 
         netif = netif->next;
-        if( netif == netif_list )
-        {
-            break;
-        }
     }
 
 #if LWIP_DNS
