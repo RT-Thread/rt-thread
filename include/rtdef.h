@@ -148,8 +148,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
 #define RT_ENOMEM                       5               /**< No memory               */
 #define RT_ENOSYS                       6               /**< No system               */
 #define RT_EBUSY                        7               /**< Busy                    */
+#define RT_EIO							8 				/**< IO error 				 */
 /*@}*/
-
 
 /**
  * @ingroup BasicDef
@@ -578,6 +578,9 @@ enum rt_device_class_type
 	RT_Device_Class_I2C,                            /**< I2C device                                 */
 	RT_Device_Class_USBDevice,                      /**< USB slave device                           */
 	RT_Device_Class_USBHost,                        /**< USB host bus                               */
+	RT_Device_Class_SPIBUS, 						/**< SPI bus device                             */
+	RT_Device_Class_SPIDevice,                      /**< SPI device                                 */
+	RT_Device_Class_SDIO, 							/**< SDIO bus device                            */
 	RT_Device_Class_Unknown                         /**< unknown device                             */
 };
 
