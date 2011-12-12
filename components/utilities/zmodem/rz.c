@@ -5,6 +5,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-03-29     itspy       
+ * 2011-12-12     aozima       fixed syntax error.       
  */
 
 #include <rtthread.h>
@@ -299,7 +300,7 @@ static rt_err_t zget_file_info(char *name, struct zfile *zf)
     zf->fname = full_path;
 	p = strlen(name)+name+1;	   
 	sscanf((const char *)p, "%ld%lo%o", &zf->bytes_total,&zf->ctime,&zf->mode);
-#ifdef defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 	dfs_statfs(working_directory,&buf);
 	if (zf->bytes_total > (buf.f_blocks * buf.f_bfree))
 	{
