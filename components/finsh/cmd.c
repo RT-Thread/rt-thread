@@ -357,6 +357,9 @@ static long _list_device(struct rt_list_node *list)
 		"I2C Device",
 		"USB Slave Device",
 		"USB Host Bus",
+		"SPI Bus",
+		"SPI Device",
+		"SDIO Bus",
 		"Unknown"
 	};
 
@@ -365,7 +368,8 @@ static long _list_device(struct rt_list_node *list)
 	for (node = list->next; node != list; node = node->next)
 	{
 		device = (struct rt_device*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s %-8s \n", device->parent.name, device_type_str[device->type]);
+		rt_kprintf("%-8s %-8s \n", device->parent.name,
+             (device->type <= RT_Device_Class_Unknown)?device_type_str[device->type]:device_type_str[RT_Device_Class_Unknown]);
 	}
 
 	return 0;
