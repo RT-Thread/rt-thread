@@ -1,18 +1,19 @@
-/******************************************************************//**
- * @file 		hdl_interrupt.h
- * @brief 	USART driver of RT-Thread RTOS for EFM32
+/***************************************************************************//**
+ * @file    hdl_interrupt.h
+ * @brief   Interrupt handler of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @author  onelife
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2010-12-29	onelife		Initial creation for EFM32
- *********************************************************************/
+ * Date         Author      Notes
+ * 2010-12-29   onelife     Initial creation for EFM32
+ * 2011-12-09   onelife     Add LEUART module support
+ ******************************************************************************/
 #ifndef __HDL_INTERRUPT_H__
 #define __HDL_INTERRUPT_H__
 
@@ -26,12 +27,13 @@ enum efm32_irq_hook_type_t
 	efm32_irq_type_gpio,
 	efm32_irq_type_acmp,
 	efm32_irq_type_usart,
+	efm32_irq_type_leuart,
 	efm32_irq_type_iic
 };
 
 typedef void (*efm32_irq_callback_t)(rt_device_t device);
 
-typedef struct 
+typedef struct
 {
 	enum efm32_irq_hook_type_t type;
 	rt_uint8_t unit;
@@ -39,7 +41,7 @@ typedef struct
 	void *userPtr;
 } efm32_irq_hook_init_t;
 
-typedef struct 
+typedef struct
 {
 	efm32_irq_callback_t cbFunc;
 	void *userPtr;
@@ -58,4 +60,3 @@ void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user);
 void efm32_irq_hook_register(efm32_irq_hook_init_t *hook);
 
 #endif /* __HDL_INTERRUPT_H__ */
-

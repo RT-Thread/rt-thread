@@ -3,7 +3,7 @@
  * @brief Analog Comparator (ACMP) peripheral module library implementation
  * for EFM32 devices.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>

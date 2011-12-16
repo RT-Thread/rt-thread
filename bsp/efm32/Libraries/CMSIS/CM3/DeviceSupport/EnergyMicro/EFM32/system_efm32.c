@@ -2,7 +2,7 @@
  * @file
  * @brief CMSIS Cortex-M3 Peripheral Access Layer for EFM32 devices.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -115,6 +115,10 @@ uint32_t SystemCoreClockGet(void)
   uint32_t ret;
   
   ret = SystemHFClockGet();
+#if defined (_EFM32_GIANT_FAMILY)
+  /* Leopard/Giant Gecko has an additional divider */
+  ret =  ret / (1 + ((CMU->CTRL & _CMU_CTRL_HFCLKDIV_MASK)>>_CMU_CTRL_HFCLKDIV_SHIFT));
+#endif
   ret >>= (CMU->HFCORECLKDIV & _CMU_HFCORECLKDIV_HFCORECLKDIV_MASK) >> 
           _CMU_HFCORECLKDIV_HFCORECLKDIV_SHIFT;
 

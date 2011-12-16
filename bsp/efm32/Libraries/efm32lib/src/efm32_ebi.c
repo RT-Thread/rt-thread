@@ -2,7 +2,7 @@
  * @file
  * @brief External Bus Interface (EBI) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -318,6 +318,29 @@ void EBI_BankEnable(uint32_t banks, bool enable)
  ******************************************************************************/
 uint32_t EBI_BankAddress(uint32_t bank)
 {
+#if defined (_EFM32_GIANT_FAMILY)
+  if(EBI->CTRL & EBI_CTRL_ALTMAP)
+  {
+    switch (bank)
+    {
+    case EBI_BANK0:
+      return(EBI_MEM_BASE);
+
+    case EBI_BANK1:
+      return(EBI_MEM_BASE + 0x10000000UL);
+
+    case EBI_BANK2:
+      return(EBI_MEM_BASE + 0x20000000UL);
+
+    case EBI_BANK3:
+      return(EBI_MEM_BASE + 0x30000000UL);
+
+    default:
+      EFM_ASSERT(0);
+      break;
+    }
+  }
+#endif
   switch (bank)
   {
   case EBI_BANK0:

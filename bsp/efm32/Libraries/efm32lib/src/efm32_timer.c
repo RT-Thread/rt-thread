@@ -2,7 +2,7 @@
  * @file
  * @brief Timer/counter (TIMER) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -131,6 +131,9 @@ void TIMER_Init(TIMER_TypeDef *timer, const TIMER_Init_TypeDef *init)
   {
     timer->CMD = TIMER_CMD_STOP;
   }
+  
+  /* Reset counter */
+  timer->CNT = _TIMER_CNT_RESETVALUE;
 
   timer->CTRL =
     ((uint32_t)(init->prescale) << _TIMER_CTRL_PRESC_SHIFT) |

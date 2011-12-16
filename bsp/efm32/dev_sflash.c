@@ -1,14 +1,14 @@
 /******************************************************************//**
  * @file 		dev_sflash.c
  * @brief 	SPI Flash driver of RT-Thread RTOS for using EFM32 USART module.
- * 	 This driver is tested by using the M25PX16 device on the EFM32 development 
+ * 	 This driver is tested by using the M25PX16 device on the EFM32 development
  *  kit.
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 	0.4 beta
  **********************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
+ * The license and distribution terms for this file may be found in the file LICENSE in this
  * distribution or at http://www.rt-thread.org/license/LICENSE
  **********************************************************************
  * @section Change Logs
@@ -44,7 +44,7 @@ typedef struct
 #endif
 
 /* Private constants -----------------------------------------------------------*/
-static rt_uint8_t sflash_inst_code_tbl[] = 
+static rt_uint8_t sflash_inst_code_tbl[] =
 {
 	/* Instruction only */
 	SFLASH_INST_CODE_WREN,
@@ -70,7 +70,7 @@ static rt_uint8_t sflash_inst_code_tbl[] =
 	SFLASH_INST_CODE_DOFR,
 	SFLASH_INST_CODE_ROTP
 };
-static rt_uint16_t sflash_data_len_tbl[] = 
+static rt_uint16_t sflash_data_len_tbl[] =
 {
 	/* Instruction only */
 	SFLASH_REPLY_LEN_WREN,
@@ -96,7 +96,7 @@ static rt_uint16_t sflash_data_len_tbl[] =
 	SFLASH_REPLY_LEN_DOFR,
 	SFLASH_REPLY_LEN_ROTP
 };
-static rt_bool_t sflash_read_inst_tbl[] = 
+static rt_bool_t sflash_read_inst_tbl[] =
 {
 	/* Instruction only */
 	false,
@@ -146,7 +146,7 @@ rt_err_t efm_spiFlash_init(void)
 
 	usart = (struct efm32_usart_device_t *)(sFlash->user_data);
 
-#if defined(EFM32_G290_DK)
+#if defined(EFM32_GXXX_DK)
 	/* Enable SPI access to Flash */
 	DVK_writeRegister(BC_SPI_CFG, 0);
 #endif
@@ -157,7 +157,7 @@ rt_err_t efm_spiFlash_init(void)
 		sFlash = rt_device_find(SFLASH_USING_DEVICE_NAME);
 		if (sFlash == RT_NULL)
 		{
-			sflash_debug("SFLASH: Can't find device %s!\n", 
+			sflash_debug("SFLASH: Can't find device %s!\n",
 				SFLASH_USING_DEVICE_NAME);
 			break;
 		}
@@ -203,7 +203,7 @@ rt_err_t efm_spiFlash_deinit(void)
 			sflash_debug("SFLASH: Already deinit!\n");
 			break;
 		}
-	
+
 		/* Close SPI device */
 		if (sFlash->close(sFlash) != RT_EOK)
 		{
@@ -269,9 +269,9 @@ static void efm_spiFlash_cs(rt_uint8_t enable)
  *	 Number of read/written bytes
  *********************************************************************/
 rt_uint32_t efm_spiFlash_cmd(
-	enum sflash_inst_type_t command, 
+	enum sflash_inst_type_t command,
 	rt_uint32_t address,
-	rt_uint8_t *buffer, 
+	rt_uint8_t *buffer,
 	rt_uint32_t size)
 {
 	RT_ASSERT(sFlash != RT_NULL);
@@ -338,7 +338,7 @@ rt_uint32_t efm_spiFlash_cmd(
 	if (sflash_read_inst_tbl[command])
 	{
 		rt_off_t skip;
-		
+
 		inst_buf[0] = inst_len;
 		*(rt_uint8_t **)(inst_buf + head_len) = buffer;
 		if (command == sflash_inst_read)
@@ -349,7 +349,7 @@ rt_uint32_t efm_spiFlash_cmd(
 		{
 			skip = SFLASH_SPI_COMMAND_SKIP;
 		}
-		
+
 		efm_spiFlash_cs(1);
 		if (sFlash->read(sFlash, skip, inst_buf, \
 			(data_len == size)? data_len - 1 : data_len) == 0)
@@ -396,7 +396,7 @@ void list_sflash(void)
 	rt_uint8_t buf[4];
 
 	efm_spiFlash_cmd(sflash_inst_rdid_s, EFM32_NO_DATA, buf, sizeof(buf));
-	
+
 	rt_kprintf("    spi flash on %s\n", SFLASH_USING_DEVICE_NAME);
 	rt_kprintf(" ------------------------------\n");
 	rt_kprintf(" Manufacturer ID:\t%x\n", buf[0]);

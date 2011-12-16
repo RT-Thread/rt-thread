@@ -1,13 +1,13 @@
 /***************************************************************************//**
  * @file 	drv_sdcard.h
- * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32 
+ * @brief 	Memory card driver (SPI mode) of RT-Thread RTOS for using EFM32
  *  USART module
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
@@ -22,8 +22,16 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define EFM32_SDCLK_LOW 		(100000)
-#define EFM32_SDCLK_HIGH		(EFM32_HFXO_FREQUENCY/2)
+#define EFM32_SDCLK_LOW         (100000)
+#if defined(EFM32_GXXX_DK)
+#define EFM32_SDCLK_HIGH        (16000000)
+#elif defined(EFM32GG_DK3750)
+#define EFM32_SDCLK_HIGH        (19000000)
+#endif
+
+#if (EFM32_SDCLK_HIGH > (EFM32_HFXO_FREQUENCY/2))
+#error "EFM32 SPI clock should not be more than (EFM32_HFXO_FREQUENCY/2)"
+#endif
 
 #define SD_SPEED_LOW 			(0)
 #define SD_SPEED_HIGH 			(1)

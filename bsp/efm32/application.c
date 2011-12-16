@@ -6,7 +6,7 @@
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
@@ -16,10 +16,10 @@
  * 2011-05-06	onelife		Add SPI Flash DEMO
  * 2011-07-15	onelife		Add accelerometer DEMO
  * 2011-07-27	onelife		Modify Ethernet DEMO
- * 2011-08-23	onelife		Modify Ethernet DEMO according to the changes of 
- *  lwIP API in reversion 1668 
+ * 2011-08-23	onelife		Modify Ethernet DEMO according to the changes of
+ *  lwIP API in reversion 1668
  ******************************************************************************/
- 
+
 /***************************************************************************//**
  * @addtogroup efm32
  * @{
@@ -124,7 +124,7 @@ void rt_demo_thread_entry(void* parameter)
 
 	efm_spiFlash_cmd(sflash_inst_rdsr, EFM32_NO_DATA, buf2, sizeof(buf2));
 	rt_kprintf("Status: %x\n", buf2[0]);
-	
+
 	efm_spiFlash_cmd(sflash_inst_read, 0x00000300, buf, sizeof(buf));
 	rt_kprintf("READ: \n");
 	for (i = 0; i < sizeof(buf); i++)
@@ -241,18 +241,18 @@ int rt_application_init()
 #if (RT_THREAD_PRIORITY_MAX == 32)
 	demo_thread = rt_thread_create(
 		"demo",
-		rt_demo_thread_entry, 
+		rt_demo_thread_entry,
 		RT_NULL,
-		1024, 
-		3, 
+		1024,
+		5,
 		20);
 
 	led_thread = rt_thread_create(
 		"led",
-		rt_led_thread_entry, 
+		rt_led_thread_entry,
 		RT_NULL,
 		256,
-		3, 
+		5,
 		20);
 #else
 #endif

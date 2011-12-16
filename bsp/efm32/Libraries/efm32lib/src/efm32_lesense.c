@@ -2,7 +2,7 @@
  * @file
  * @brief Low Energy Sensor (LESENSE) Peripheral API for EFM32 TG/GG devices.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

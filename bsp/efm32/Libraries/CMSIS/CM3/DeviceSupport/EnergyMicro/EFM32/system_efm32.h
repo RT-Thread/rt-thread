@@ -2,7 +2,7 @@
  * @file
  * @brief CMSIS Cortex-M3 Peripheral Access Layer for EFM32 devices.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

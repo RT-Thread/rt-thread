@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -714,6 +714,48 @@ void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init)
   {
     USART_Enable(usart, enable);
   }
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Initialize automatic transmissions using PRS channel as trigger
+ * @note
+ *   Initialize USART with USART_Init() before setting up PRS configuration 
+ * 
+ * @param[in] usart Pointer to USART to configure
+ * @param[in] init Pointer to initialization structure
+ ******************************************************************************/
+void USART_InitPrsTrigger(USART_TypeDef *usart, const USART_PrsTriggerInit_TypeDef *init)
+{
+  uint32_t trigctrl;
+
+  /* Clear values that will be reconfigured  */
+  trigctrl = usart->TRIGCTRL & ~(_USART_TRIGCTRL_RXTEN_MASK|
+                                 _USART_TRIGCTRL_TXTEN_MASK|
+#if defined(_EFM32_GIANT_FAMILY)
+                                 _USART_TRIGCTRL_AUTOTXTEN_MASK|
+#endif
+                                 _USART_TRIGCTRL_TSEL_MASK);
+
+#if defined(_EFM32_GIANT_FAMILY)
+  if(init->autoTxTriggerEnable)
+  {
+    trigctrl |= USART_TRIGCTRL_AUTOTXTEN;
+  }
+#endif
+  if(init->txTriggerEnable)
+  {
+    trigctrl |= USART_TRIGCTRL_TXTEN;
+  }
+  if(init->rxTriggerEnable)
+  {
+    trigctrl |= USART_TRIGCTRL_RXTEN;
+  }
+  trigctrl |= init->prsTriggerChannel;
+
+  /* Enable new configuration */
+  usart->TRIGCTRL = trigctrl;
 }
 #endif
 

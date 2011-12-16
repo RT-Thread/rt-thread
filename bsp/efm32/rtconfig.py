@@ -9,15 +9,19 @@ if CROSS_TOOL == 'gcc':
     #EXEC_PATH  = 'C:\Program Files (x86)\yagarto\bin'
 
 BUILD = 'run'
-# EFM32_BOARD   =  'EFM32_G890_STK'
-EFM32_BOARD     =  'EFM32_G290_DK'
+# EFM32_BOARD		=  'EFM32_G8XX_STK'
+# EFM32_BOARD		=  'EFM32_GXXX_DK'
+EFM32_BOARD		=  'EFM32GG_DK3750'
 
-if EFM32_BOARD == 'EFM32_G890_STK':
+if EFM32_BOARD == 'EFM32_G8XX_STK':
     EFM32_FAMILY = 'Gecko'
     EFM32_TYPE = 'EFM32G890F128'
-elif EFM32_BOARD == 'EFM32_G290_DK':
+elif EFM32_BOARD == 'EFM32_GXXX_DK':
     EFM32_FAMILY = 'Gecko'
     EFM32_TYPE = 'EFM32G290F128'
+elif EFM32_BOARD == 'EFM32GG_DK3750':
+    EFM32_FAMILY = 'Giant Gecko'
+    EFM32_TYPE = 'EFM32GG990F1024'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -35,7 +39,11 @@ if PLATFORM == 'gcc':
     #CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -T efm32_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -T'
+    if EFM32_BOARD == 'EFM32_G8XX_STK' or EFM32_BOARD == 'EFM32_GXXX_DK':
+        LFLAGS += ' efm32g_rom.ld'
+    elif EFM32_BOARD == 'EFM32GG_DK3750':
+        LFLAGS += ' efm32gg_rom.ld'
 
     CPATH = ''
     LPATH = ''

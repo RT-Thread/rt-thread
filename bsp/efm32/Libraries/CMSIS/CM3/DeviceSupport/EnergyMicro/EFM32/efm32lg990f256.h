@@ -3,7 +3,7 @@
  * @brief CMSIS Cortex-M3 Peripheral Access Layer Header File
  *        for EFM EFM32LG990F256
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -21276,6 +21276,11 @@ typedef struct
 #define _DEVINFO_PART_PROD_REV_SHIFT               24           /**< Bit position for production revision */
 #define _DEVINFO_PART_DEVICE_FAMILY_MASK           0x00FF0000UL /**< Device Family, 0x47 for Gecko */
 #define _DEVINFO_PART_DEVICE_FAMILY_SHIFT          16           /**< Bit position for device family */
+#define _DEVINFO_PART_DEVICE_FAMILY_G              71           /**< Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_GG             72           /**< Giant Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_TG             73           /**< Tiny Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_LG             74           /**< Leopard Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_ZG             75           /**< Zero Gecko Device Family */
 #define _DEVINFO_PART_DEVICE_NUMBER_MASK           0x0000FFFFUL /**< Device number */
 #define _DEVINFO_PART_DEVICE_NUMBER_SHIFT          0            /**< Bit position for device number */
 

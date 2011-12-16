@@ -1,12 +1,12 @@
 /***************************************************************************//**
- * @file 		efm32_rom.ld
- * @brief 	Linker script for EFM32 with GNU ld
+ * @file 		efm32_rom_g.ld
+ * @brief 	Linker script for EFM32 gecko with GNU ld
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	Bernard, onelife
  * @version 	0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
@@ -18,7 +18,7 @@
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 ENTRY(__cs3_reset)
 SEARCH_DIR(.)
-GROUP(-lgcc -lc -lcs3 -lcs3unhosted) 
+GROUP(-lgcc -lc -lcs3 -lcs3unhosted)
 
 MEMORY
 {
@@ -98,7 +98,7 @@ SECTIONS
 		_edata = . ;
 	} >DATA
 
-	.stack : 
+	.stack :
 	{
 		. = . + _system_stack_size;
 		. = ALIGN(4);
@@ -119,7 +119,7 @@ SECTIONS
 		. = ALIGN(4);
 		/* This is used by the startup in order to initialize the .bss secion */
 		_ebss = . ;
-		
+
 		*(.bss.init)
 	} > DATA
 	__bss_end = .;
@@ -133,7 +133,7 @@ SECTIONS
 	.stab.index    0 : { *(.stab.index) }
 	.stab.indexstr 0 : { *(.stab.indexstr) }
 	.comment       0 : { *(.comment) }
-	
+
 	/* DWARF debug sections.
 	* Symbols in the DWARF debugging sections are relative to
 	* the beginning of the section so we begin them at 0.

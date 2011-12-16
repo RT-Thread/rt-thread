@@ -2,7 +2,7 @@
  * @file
  * @brief Liquid Crystal Display (LCD) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -223,6 +223,10 @@ typedef struct
   LCD_AnimShift_TypeDef BShift;
   /** A and B Logical Operation to use for mixing and outputting resulting segments */
   LCD_AnimLogic_TypeDef animLogic;
+#if defined(_EFM32_GIANT_FAMILY)
+  /** Number of first segment to animate. Options are 0 or 8 for Giant/Leopard. End is startSeg+7 */
+  int                   startSeg;
+#endif
 } LCD_AnimInit_TypeDef;
 
 /** LCD Frame Control Initialization */
@@ -253,7 +257,7 @@ typedef struct
   LCD_ConConf_TypeDef contrast;
 } LCD_Init_TypeDef;
 
-/** Default config for LCD init structure, enables all 160 segments  */
+/** Default config for LCD init structure, enables 160 segments  */
 #define LCD_INIT_DEFAULT \
   { true,                \
     lcdMuxQuadruplex,    \

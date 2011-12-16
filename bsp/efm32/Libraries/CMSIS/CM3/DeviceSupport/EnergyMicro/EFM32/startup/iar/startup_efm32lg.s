@@ -2,7 +2,7 @@
 ; * @file:    startup_efm32.s
 ; * @purpose: CMSIS Cortex-M3 Core Device Startup File 
 ; *           for the Energy Micro 'EFM32G' Device Series 
-; * @version 2.2.2
+; * @version 2.3.0
 ; * @date:    January 2011
 ; *----------------------------------------------------------------------------
 ; *
@@ -114,6 +114,7 @@ __vector_table_0x1c
         DCD MSC_IRQHandler  ; 35: MSC Interrupt 
         DCD AES_IRQHandler  ; 36: AES Interrupt 
         DCD EBI_IRQHandler  ; 37: EBI Interrupt 
+        DCD EMU_IRQHandler  ; 38: EMU Interrupt 
 
 
 
@@ -371,6 +372,11 @@ AES_IRQHandler
         SECTION .text:CODE:REORDER(1)
 EBI_IRQHandler
         B EBI_IRQHandler
+ 
+        PUBWEAK EMU_IRQHandler
+        SECTION .text:CODE:REORDER(1)
+EMU_IRQHandler
+        B EMU_IRQHandler
  
 
         END

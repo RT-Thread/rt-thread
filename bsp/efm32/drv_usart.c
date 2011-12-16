@@ -6,28 +6,31 @@
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
+ * @section Change Logs of serial.c
+ * Date			Author		Notes
+ * 2009-02-05	Bernard		first version
+ * 2009-10-25	Bernard		fix rt_serial_read bug when there is no data in the
+ *  buffer.
+ * 2010-03-29	Bernard		cleanup code.
+ *
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
  * 2011-01-17	onelife		Merge with serial.c
  * 2011-05-06	onelife		Add sync mode (SPI) support
  * 2011-06-14	onelife		Fix a bug of TX by DMA
- * 2011-06-16	onelife		Modify init function for EFM32 library v2.0.0 
+ * 2011-06-16	onelife		Modify init function for EFM32 library v2.0.0
  *  upgrading
  * 2011-07-07	onelife		Modify write function to avoid sleep in ISR
- * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously 
+ * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously
  *  access
- * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2 
+ * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2
  *  upgrading
- *
- * @section Change Logs of serial.c
- * 2009-02-05	Bernard		first version
- * 2009-10-25	Bernard		fix rt_serial_read bug when there is no data in the 
- *  buffer.
- * 2010-03-29	Bernard		cleanup code.
+ * 2011-12-09	onelife		Add giant gecko support
+ * 2011-12-09   onelife     Add UART module support
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -40,14 +43,10 @@
 #include "hdl_interrupt.h"
 #include "drv_usart.h"
 
-#if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || defined(RT_USING_USART2))
+#if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || \
+    defined(RT_USING_USART2) || defined(RT_USING_UART0) || \
+    defined(RT_USING_UART1))
 /* Private typedef -----------------------------------------------------------*/
-union efm32_usart_init_t
-{
-	USART_InitAsync_TypeDef 	async;
-	USART_InitSync_TypeDef		sync;
-};
-
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 #ifdef RT_USART_DEBUG
@@ -58,28 +57,45 @@ union efm32_usart_init_t
 
 /* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_USART0
-#if (RT_USING_USART0 > 3)
-	#error "The location number range of usart is 0~3"
+#if (RT_USING_USART0 >= EFM32_USART_LOCATION_COUNT)
+	#error "Wrong location number"
 #endif
 	struct rt_device usart0_device;
 	static struct rt_semaphore usart0_lock;
 #endif
 
 #ifdef RT_USING_USART1
-#if (RT_USING_USART1 > 3)
-	#error "The location number range of usart is 0~3"
+#if (RT_USING_USART1 >= EFM32_USART_LOCATION_COUNT)
+	#error "Wrong location number"
 #endif
 	struct rt_device usart1_device;
 	static struct rt_semaphore usart1_lock;
 #endif
 
 #ifdef RT_USING_USART2
-#if (RT_USING_USART2 > 3)
-	#error "The location number range of usart is 0~3"
+#if (RT_USING_USART2 >= EFM32_USART_LOCATION_COUNT)
+	#error "Wrong location number"
 #endif
 	struct rt_device usart2_device;
 	static struct rt_semaphore usart2_lock;
 #endif
+
+#ifdef RT_USING_UART0
+#if (RT_USING_UART0 >= EFM32_UART_LOCATION_COUNT)
+	#error "Wrong location number"
+#endif
+	struct rt_device uart0_device;
+	static struct rt_semaphore uart0_lock;
+#endif
+
+#ifdef RT_USING_UART1
+#if (RT_USING_UART1 >= EFM32_UART_LOCATION_COUNT)
+	#error "Wrong location number"
+#endif
+	struct rt_device uart1_device;
+	static struct rt_semaphore uart1_lock;
+#endif
+
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -100,7 +116,7 @@ union efm32_usart_init_t
 static rt_err_t rt_usart_init (rt_device_t dev)
 {
 	struct efm32_usart_device_t *usart;
-	
+
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
@@ -117,9 +133,9 @@ static rt_err_t rt_usart_init (rt_device_t dev)
 		if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 		{
 			struct efm32_usart_int_mode_t *int_rx;
-			
+
 			int_rx = (struct efm32_usart_int_mode_t *)(usart->rx_mode);
-			
+
 			int_rx->data_ptr = RT_NULL;
 		}
 
@@ -156,20 +172,20 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 	struct efm32_usart_device_t	*usart;
 
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
-	
+
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
 		IRQn_Type 					rxIrq;
-		
+
 		//if (usart->state & USART_STATE_CONSOLE)
 		{	/* Allocate new RX buffer */
 			struct efm32_usart_int_mode_t	*int_mode;
-			
+
 			int_mode = (struct efm32_usart_int_mode_t *)(usart->rx_mode);
 
 			if ((int_mode->data_ptr = rt_malloc(USART_RX_BUFFER_SIZE)) == RT_NULL)
 			{
-				usart_debug("USART: no memory for RX buffer\n");
+				usart_debug("USART%d err: no mem for RX BUF\n", usart->unit);
 				return -RT_ENOMEM;
 			}
 			rt_memset(int_mode->data_ptr, 0, USART_RX_BUFFER_SIZE);
@@ -177,25 +193,46 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 			int_mode->read_index = 0;
 			int_mode->save_index = 0;
 		}
-		
-		/* Enable TX/RX interrupt */	
+
+		/* Enable RX interrupt */
+        if (usart->state & USART_STATE_ASYNC_ONLY)
+        {
+            usart->usart_device->IEN 	= UART_IEN_RXDATAV;
+        }
+        else
+        {
+            usart->usart_device->IEN    = USART_IEN_RXDATAV;
+        }
+
+		/* Enable IRQ */
 		switch (usart->unit)
 		{
 		case 0:
-			rxIrq 		= USART0_RX_IRQn;
+            if (usart->state & USART_STATE_ASYNC_ONLY)
+            {
+    			rxIrq   = UART0_RX_IRQn;
+            }
+            else
+            {
+    			rxIrq   = USART0_RX_IRQn;
+            }
 			break;
 		case 1:
-			rxIrq		= USART1_RX_IRQn;
+#if defined(EFM32_GIANT_FAMILY)
+            if (usart->state & USART_STATE_ASYNC_ONLY)
+            {
+    			rxIrq   = UART1_RX_IRQn;
+            }
+            else
+#endif
+            {
+    			rxIrq   = USART1_RX_IRQn;
+            }
 			break;
 		case 2:
 			rxIrq		= USART2_RX_IRQn;
 			break;
 		}
-
-		/* Enable RX interrupts */
-		usart->usart_device->IEN 	= USART_IEN_RXDATAV;
-
-		/* Enable IRQ */
 		if (oflag != RT_DEVICE_OFLAG_WRONLY)
 		{
 			NVIC_ClearPendingIRQ(rxIrq);
@@ -203,8 +240,17 @@ static rt_err_t rt_usart_open(rt_device_t dev, rt_uint16_t oflag)
 			NVIC_EnableIRQ(rxIrq);
 		}
 	}
-	usart->usart_device->IFC 	= _USART_IFC_MASK;
-	
+
+    /* Clear Flag */
+    if (usart->state & USART_STATE_ASYNC_ONLY)
+    {
+        usart->usart_device->IFC    = _UART_IFC_MASK;
+    }
+    else
+    {
+    	usart->usart_device->IFC    = _USART_IFC_MASK;
+    }
+
 	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (oflag != RT_DEVICE_OFLAG_RDONLY))
 	{
 		/* DMA IRQ is enabled by DMA_Init() */
@@ -278,16 +324,16 @@ static rt_err_t rt_usart_close(rt_device_t dev)
  *   Number of read bytes
  ******************************************************************************/
 static rt_size_t rt_usart_read (
-	rt_device_t 	dev, 
-	rt_off_t 		pos, 
-	void 			*buffer, 
+	rt_device_t 	dev,
+	rt_off_t 		pos,
+	void 			*buffer,
 	rt_size_t 		size)
 {
 	struct efm32_usart_device_t *usart;
 	rt_uint8_t 	*ptr;
 	rt_err_t 	err_code;
 	rt_size_t 	read_len;
-	
+
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
 
 	/* Lock device */
@@ -402,12 +448,22 @@ static rt_size_t rt_usart_read (
 		}
 		else
 		{
+		    rt_uint32_t flag;
+
+            if (usart->state & USART_STATE_ASYNC_ONLY)
+            {
+                flag = UART_STATUS_RXDATAV;
+            }
+            else
+            {
+                flag = USART_STATUS_RXDATAV;
+            }
 			ptr = buffer;
 
 			/* polling mode */
 			while ((rt_uint32_t)ptr - (rt_uint32_t)buffer < size)
 			{
-				while (usart_device->STATUS & USART_STATUS_RXDATAV)
+				while (usart_device->STATUS & flag)
 				{
 					*ptr = usart_device->RXDATA & 0xff;
 					ptr ++;
@@ -450,9 +506,9 @@ static rt_size_t rt_usart_read (
  *   Number of written bytes
  ******************************************************************************/
 static rt_size_t rt_usart_write (
-	rt_device_t 	dev, 
-	rt_off_t 		pos, 
-	const void* 	buffer, 
+	rt_device_t 	dev,
+	rt_off_t 		pos,
+	const void* 	buffer,
 	rt_size_t 		size)
 {
 	rt_err_t 						err_code;
@@ -480,7 +536,7 @@ static rt_size_t rt_usart_write (
 	if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 2))
 	{	/* DMA mode Tx */
 		struct efm32_usart_dma_mode_t *dma_tx;
-	
+
 		if (dev->flag & RT_DEVICE_FLAG_STREAM)
 		{
 			if (*((rt_uint8_t *)buffer + size - 1) == '\n')
@@ -517,13 +573,13 @@ static rt_size_t rt_usart_write (
 //				rt_thread_sleep(USART_WAIT_TIME_TX);
 //			}
 //		}
-// TODO: This function blocks the process		
+// TODO: This function blocks the process
 		write_size = size;
 	}
 	else
-	{	/* polling mode */	
+	{	/* polling mode */
 		rt_uint8_t *ptr = (rt_uint8_t *)buffer;
-	
+
 		if (dev->flag & RT_DEVICE_FLAG_STREAM)
 		{
 			/* stream mode */
@@ -542,10 +598,21 @@ static rt_size_t rt_usart_write (
 		}
 		else
 		{
+		    rt_uint32_t flag;
+
+            if (usart->state & USART_STATE_ASYNC_ONLY)
+            {
+                flag = UART_STATUS_TXBL;
+            }
+            else
+            {
+                flag = USART_STATUS_TXBL;
+            }
+
 			/* write data directly */
 			while (size)
 			{
-				while (!(usart->usart_device->STATUS & USART_STATUS_TXBL));
+				while (!(usart->usart_device->STATUS & flag));
 				usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
 				++ptr; --size;
 			}
@@ -583,8 +650,8 @@ static rt_size_t rt_usart_write (
 *	Error code
 ******************************************************************************/
 static rt_err_t rt_usart_control (
-	rt_device_t 	dev, 
-	rt_uint8_t 		cmd, 
+	rt_device_t 	dev,
+	rt_uint8_t 		cmd,
 	void 			*args)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -645,27 +712,27 @@ static rt_err_t rt_usart_control (
 					if ((int_rx->data_ptr = rt_realloc(int_rx->data_ptr, size)) \
 						== RT_NULL)
 					{
-						usart_debug("USART: no memory for RX buffer\n");
+						usart_debug("USART%d err: no mem for RX BUF\n", usart->unit);
 						err_code = -RT_ENOMEM;
 						break;
 					}
 					// TODO: Is the following line necessary?
-					//rt_memset(int_rx->data_ptr, 0, size); 
+					//rt_memset(int_rx->data_ptr, 0, size);
 				}
-			}	
+			}
 			else
 			{
 				/* Allocate new RX buffer */
 				if ((int_rx->data_ptr = rt_malloc(size)) == RT_NULL)
 				{
-					usart_debug("USART: no memory for RX buffer\n");
+					usart_debug("USART%d err: no mem for RX BUF\n", usart->unit);
 					err_code = -RT_ENOMEM;
 					break;
 				}
 			}
 			int_rx->data_size = size;
 			int_rx->read_index = 0;
-			int_rx->save_index = 0; 
+			int_rx->save_index = 0;
 		}
 		break;
 
@@ -692,10 +759,11 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
 {
 	struct efm32_usart_device_t 	*usart;
 	struct efm32_usart_int_mode_t 	*int_rx;
+    rt_uint32_t                     flag;
 
 	/* interrupt mode receive */
 	RT_ASSERT(dev->flag & RT_DEVICE_FLAG_INT_RX);
-	
+
 	usart = (struct efm32_usart_device_t *)(dev->user_data);
 	int_rx = (struct efm32_usart_int_mode_t *)(usart->rx_mode);
 
@@ -703,9 +771,17 @@ void rt_hw_usart_rx_isr(rt_device_t dev)
 
 	/* Set status */
 	usart->state |= USART_STATE_RX_BUSY;
-	
-	/* save on rx buffer */
-	while (usart->usart_device->STATUS & USART_STATUS_RXDATAV)
+
+    /* save into rx buffer */
+    if (usart->state & USART_STATE_ASYNC_ONLY)
+    {
+        flag = UART_STATUS_RXDATAV;
+    }
+    else
+    {
+        flag = USART_STATUS_RXDATAV;
+    }
+	while (usart->usart_device->STATUS & flag)
 	{
 		rt_base_t level;
 
@@ -797,15 +873,15 @@ void rt_hw_usart_dma_tx_isr(rt_device_t dev)
 *	Configuration flags
 *
 * @param[in] usart
-*	Pointer to USART device descriptor 
+*	Pointer to USART device descriptor
 *
 * @return
 *	Error code
 ******************************************************************************/
 rt_err_t rt_hw_usart_register(
-	rt_device_t		device, 
-	const char		*name, 
-	rt_uint32_t		flag, 
+	rt_device_t		device,
+	const char		*name,
+	rt_uint32_t		flag,
 	struct efm32_usart_device_t *usart)
 {
 	RT_ASSERT(device != RT_NULL);
@@ -816,16 +892,23 @@ rt_err_t rt_hw_usart_register(
 		RT_ASSERT(0);
 	}
 
-	device->type 		= RT_Device_Class_Char;
+    if (usart->state & USART_STATE_SYNC)
+    {
+        device->type    = RT_Device_Class_SPIBUS;
+    }
+    else
+    {
+        device->type    = RT_Device_Class_Char;
+    }
 	device->rx_indicate = RT_NULL;
 	device->tx_complete = RT_NULL;
-	device->init 		= rt_usart_init;
-	device->open		= rt_usart_open;
-	device->close		= rt_usart_close;
-	device->read 		= rt_usart_read;
-	device->write 		= rt_usart_write;
-	device->control 	= rt_usart_control;
-	device->user_data	= usart;
+	device->init        = rt_usart_init;
+	device->open        = rt_usart_open;
+	device->close       = rt_usart_close;
+	device->read        = rt_usart_read;
+	device->write       = rt_usart_write;
+	device->control     = rt_usart_control;
+	device->user_data   = usart;
 
 	/* register a character device */
 	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
@@ -833,7 +916,7 @@ rt_err_t rt_hw_usart_register(
 
 /***************************************************************************//**
 * @brief
-*	Initialize the specified USART unit 
+*	Initialize the specified USART unit
 *
 * @details
 *
@@ -846,7 +929,7 @@ rt_err_t rt_hw_usart_register(
 *	Unit number
 *
 * @param[in] location
-*	Pin location number 
+*	Pin location number
 *
 * @param[in] flag
 *	Configuration flag
@@ -855,14 +938,14 @@ rt_err_t rt_hw_usart_register(
 *	DMA channel number for TX
 *
 * @param[in] console
-*	Indicate if using as console 
+*	Indicate if using as console
 *
 * @return
-*	Pointer to USART device  
+*	Pointer to USART device
 ******************************************************************************/
 static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	rt_device_t device,
-	rt_uint8_t 	unitNumber, 
+	rt_uint8_t 	unitNumber,
 	rt_uint8_t 	location,
 	rt_uint32_t flag,
 	rt_uint32_t	dmaChannel,
@@ -875,7 +958,6 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 	rt_uint32_t						txDmaSelect;
 	GPIO_Port_TypeDef 				port_tx, port_rx, port_clk, port_cs;
 	rt_uint32_t 					pin_tx, pin_rx, pin_clk, pin_cs;
-	union efm32_usart_init_t 		init;
 	efm32_irq_hook_init_t			hook;
 
 	do
@@ -884,7 +966,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		usart = rt_malloc(sizeof(struct efm32_usart_device_t));
 		if (usart == RT_NULL)
 		{
-			usart_debug("USART: no memory for USART%d device\n", unitNumber);
+			usart_debug("USART%d err: no mem\n", usart->unit);
 			break;
 		}
 		usart->counter 	= 0;
@@ -900,7 +982,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			usart->tx_mode = dma_mode = rt_malloc(sizeof(struct efm32_usart_dma_mode_t));
 			if (dma_mode == RT_NULL)
 			{
-				usart_debug("USART: no memory for DMA TX\n");
+				usart_debug("USART%d err: no mem for DMA TX\n", usart->unit);
 				break;
 			}
 			dma_mode->dma_channel = dmaChannel;
@@ -912,46 +994,75 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			usart->rx_mode = rt_malloc(sizeof(struct efm32_usart_int_mode_t));
 			if (usart->rx_mode == RT_NULL)
 			{
-				usart_debug("USART: no memory for interrupt RX\n");
+				usart_debug("USART%d err: no mem for INT RX\n", usart->unit);
 				break;
 			}
 		}
 
 		/* Initialization */
-		if (unitNumber >= USART_COUNT)
+		if ((!(config & USART_STATE_ASYNC_ONLY) && (unitNumber >= USART_COUNT)) || \
+            ((config & USART_STATE_ASYNC_ONLY) && (unitNumber >= UART_COUNT)))
 		{
 			break;
 		}
 		switch (unitNumber)
 		{
 		case 0:
-			usart->usart_device	= USART0;
-			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART0;
-			txDmaSelect			= DMAREQ_USART0_TXBL;
-			port_tx				= AF_USART0_TX_PORT(location);
-			pin_tx 				= AF_USART0_TX_PIN(location);
-			port_rx				= AF_USART0_RX_PORT(location);
-			pin_rx 				= AF_USART0_RX_PIN(location);
-			port_clk			= AF_USART0_CLK_PORT(location);
-			pin_clk				= AF_USART0_CLK_PIN(location);
-			port_cs				= AF_USART0_CS_PORT(location);
-			pin_cs 				= AF_USART0_CS_PIN(location);
+            if (config & USART_STATE_ASYNC_ONLY)
+            {
+    			usart->usart_device	= UART0;
+    			usartClock 			= (CMU_Clock_TypeDef)cmuClock_UART0;
+    			txDmaSelect			= DMAREQ_UART0_TXBL;
+    			port_tx				= AF_UART0_TX_PORT(location);
+    			pin_tx 				= AF_UART0_TX_PIN(location);
+    			port_rx				= AF_UART0_RX_PORT(location);
+    			pin_rx 				= AF_UART0_RX_PIN(location);
+            }
+            else
+            {
+    			usart->usart_device	= USART0;
+    			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART0;
+    			txDmaSelect			= DMAREQ_USART0_TXBL;
+    			port_tx				= AF_USART0_TX_PORT(location);
+    			pin_tx 				= AF_USART0_TX_PIN(location);
+    			port_rx				= AF_USART0_RX_PORT(location);
+    			pin_rx 				= AF_USART0_RX_PIN(location);
+    			port_clk			= AF_USART0_CLK_PORT(location);
+    			pin_clk				= AF_USART0_CLK_PIN(location);
+    			port_cs				= AF_USART0_CS_PORT(location);
+    			pin_cs 				= AF_USART0_CS_PIN(location);
+            }
 			break;
-			
+
 		case 1:
-			usart->usart_device	= USART1;
-			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART1;
-			txDmaSelect			= DMAREQ_USART1_TXBL;
-			port_tx				= AF_USART1_TX_PORT(location);
-			pin_tx 				= AF_USART1_TX_PIN(location);
-			port_rx				= AF_USART1_RX_PORT(location);
-			pin_rx 				= AF_USART1_RX_PIN(location);
-			port_clk			= AF_USART1_CLK_PORT(location);
-			pin_clk				= AF_USART1_CLK_PIN(location);
-			port_cs				= AF_USART1_CS_PORT(location);
-			pin_cs 				= AF_USART1_CS_PIN(location);
+#if defined(EFM32_GIANT_FAMILY)
+            if (config & USART_STATE_ASYNC_ONLY)
+            {
+    			usart->usart_device	= UART1;
+    			usartClock 			= (CMU_Clock_TypeDef)cmuClock_UART1;
+    			txDmaSelect			= DMAREQ_UART1_TXBL;
+    			port_tx				= AF_UART1_TX_PORT(location);
+    			pin_tx 				= AF_UART1_TX_PIN(location);
+    			port_rx				= AF_UART1_RX_PORT(location);
+    			pin_rx 				= AF_UART1_RX_PIN(location);
+            }
+            else
+#endif
+            {
+    			usart->usart_device	= USART1;
+    			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART1;
+    			txDmaSelect			= DMAREQ_USART1_TXBL;
+    			port_tx				= AF_USART1_TX_PORT(location);
+    			pin_tx 				= AF_USART1_TX_PIN(location);
+    			port_rx				= AF_USART1_RX_PORT(location);
+    			pin_rx 				= AF_USART1_RX_PIN(location);
+    			port_clk			= AF_USART1_CLK_PORT(location);
+    			pin_clk				= AF_USART1_CLK_PIN(location);
+    			port_cs				= AF_USART1_CS_PORT(location);
+    			pin_cs 				= AF_USART1_CS_PIN(location);
+            }
 			break;
-			
+
 		case 2:
 			usart->usart_device	= USART2;
 			usartClock 			= (CMU_Clock_TypeDef)cmuClock_USART2;
@@ -1003,9 +1114,13 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 
 		/* Config interrupt and NVIC */
 		if (flag & RT_DEVICE_FLAG_INT_RX)
-		{	
+		{
 			hook.type		= efm32_irq_type_usart;
 			hook.unit		= unitNumber * 2 + 1;
+            if (config & USART_STATE_ASYNC_ONLY)
+            {
+                hook.unit += USART_COUNT * 2;
+            }
 			hook.cbFunc 	= rt_hw_usart_rx_isr;
 			hook.userPtr	= device;
 			efm32_irq_hook_register(&hook);
@@ -1026,7 +1141,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			callback = (DMA_CB_TypeDef *)rt_malloc(sizeof(DMA_CB_TypeDef));
 			if (callback == RT_NULL)
 			{
-				usart_debug("USART: no memory for callback\n");
+				usart_debug("USART%d err: no mem for callback\n", usart->unit);
 				break;
 			}
 			callback->cbFunc	= DMA_IRQHandler_All;
@@ -1036,7 +1151,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			/* Setting up DMA channel */
 			chnlCfg.highPri		= false;	/* Can't use with peripherals */
 			chnlCfg.enableInt 	= true;		/* Interrupt for callback function */
-			chnlCfg.select 		= txDmaSelect;		
+			chnlCfg.select 		= txDmaSelect;
 			chnlCfg.cb			= callback;
 			DMA_CfgChannel(dmaChannel, &chnlCfg);
 
@@ -1046,38 +1161,42 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 			descrCfg.size 		= dmaDataSize1;
 			descrCfg.arbRate 	= dmaArbitrate1;
 			descrCfg.hprot 		= 0;
-			DMA_CfgDescr(dmaChannel, true, &descrCfg);			
+			DMA_CfgDescr(dmaChannel, true, &descrCfg);
 		}
 
 		/* Init specified USART unit */
 		if (config & USART_STATE_SYNC)
 		{
-			init.sync.enable 		= usartEnable;
-			init.sync.refFreq		= 0;
-			init.sync.baudrate		= SPI_BAUDRATE;
-			init.sync.databits 		= usartDatabits8;
+		    USART_InitSync_TypeDef init_sync = USART_INITSYNC_DEFAULT;
+
+			init_sync.enable 		= usartEnable;
+			init_sync.refFreq		= 0;
+			init_sync.baudrate		= SPI_BAUDRATE;
+			init_sync.databits 		= usartDatabits8;
 			if (config & USART_STATE_MASTER)
 			{
-				init.sync.master 	= true;
+				init_sync.master 	= true;
 			}
 			else
 			{
-				init.sync.master	= false;
+				init_sync.master	= false;
 			}
-			init.sync.msbf 			= true;
-			init.sync.clockMode 	= usartClockMode0; /* Clock idle low, sample on rising edge. */  
-			USART_InitSync(usart->usart_device, &init.sync);
+			init_sync.msbf 			= true;
+			init_sync.clockMode 	= usartClockMode0; /* Clock idle low, sample on rising edge. */
+			USART_InitSync(usart->usart_device, &init_sync);
 		}
 		else
 		{
-			init.async.enable 		= usartEnable;
-			init.async.refFreq		= 0;
-			init.async.baudrate		= UART_BAUDRATE;
-			init.async.oversampling	= USART_CTRL_OVS_X4;
-			init.async.databits		= USART_FRAME_DATABITS_EIGHT;
-			init.async.parity 		= USART_FRAME_PARITY_NONE;
-			init.async.stopbits		= USART_FRAME_STOPBITS_ONE;
-			USART_InitAsync(usart->usart_device, &init.async);
+		    USART_InitAsync_TypeDef init_async = USART_INITASYNC_DEFAULT;
+
+			init_async.enable 		= usartEnable;
+			init_async.refFreq		= 0;
+			init_async.baudrate		= UART_BAUDRATE;
+			init_async.oversampling	= USART_CTRL_OVS_X4;
+			init_async.databits		= USART_FRAME_DATABITS_EIGHT;
+			init_async.parity 		= USART_FRAME_PARITY_NONE;
+			init_async.stopbits		= USART_FRAME_STOPBITS_ONE;
+			USART_InitAsync(usart->usart_device, &init_async);
 		}
 
 		/* Enable RX and TX pins and set location */
@@ -1119,13 +1238,20 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
 		rt_free(usart);
 	}
 
-	usart_debug("USART: Unit %d init failed!\n", unitNumber);
+    if (config & USART_STATE_ASYNC_ONLY)
+    {
+        usart_debug("UART%d err: init failed!\n", unitNumber);
+    }
+    else
+    {
+        usart_debug("USART%d err: init failed!\n", unitNumber);
+    }
 	return RT_NULL;
 }
 
 /***************************************************************************//**
 * @brief
-*   Initialize all USART module related hardware and register USART device to 
+*   Initialize all USART module related hardware and register USART device to
 * kernel
 *
 * @details
@@ -1159,7 +1285,7 @@ void rt_hw_usart_init(void)
 		config |= USART_STATE_AUTOCS;
  #endif
 
- #if (RT_CONSOLE_DEVICE == 0x0UL)
+ #if (RT_CONSOLE_DEVICE == EFM_USART0)
 		config |= USART_STATE_CONSOLE;
 		flag |= RT_DEVICE_FLAG_STREAM;
  #endif
@@ -1168,16 +1294,16 @@ void rt_hw_usart_init(void)
 	 	RT_ASSERT(RT_USART0_USING_DMA < DMA_CHAN_COUNT);
 		flag |= RT_DEVICE_FLAG_DMA_TX;
  #else
-	   #define RT_USART0_USING_DMA EFM32_NO_DATA
+	   #define RT_USART0_USING_DMA EFM32_NO_DMA
  #endif
 
 		/* Initialize and Register usart0 */
 		if ((usart = rt_hw_usart_unit_init(
-			&usart0_device, 
-			0, 
-			RT_USING_USART0, 
-			flag, 
-			RT_USART0_USING_DMA, 
+			&usart0_device,
+			0,
+			RT_USING_USART0,
+			flag,
+			RT_USART0_USING_DMA,
 			config)) != RT_NULL)
 		{
 			rt_hw_usart_register(&usart0_device, RT_USART0_NAME, flag, usart);
@@ -1213,7 +1339,7 @@ void rt_hw_usart_init(void)
 		config |= USART_STATE_AUTOCS;
  #endif
 
- #if (RT_CONSOLE_DEVICE == 0x1UL)
+ #if (RT_CONSOLE_DEVICE == EFM_USART1)
 		config |= USART_STATE_CONSOLE;
 		flag |= RT_DEVICE_FLAG_STREAM;
  #endif
@@ -1222,17 +1348,17 @@ void rt_hw_usart_init(void)
 	 	RT_ASSERT(RT_USART1_USING_DMA < DMA_CHAN_COUNT);
 		flag |= RT_DEVICE_FLAG_DMA_TX;
  #else
-		
-	   #define RT_USART1_USING_DMA EFM32_NO_DATA
+
+	   #define RT_USART1_USING_DMA EFM32_NO_DMA
  #endif
 
  		/* Initialize and Register usart1 */
 		if ((usart = rt_hw_usart_unit_init(
-			&usart1_device, 
-			1, 
-			RT_USING_USART1, 
-			flag, 
-			RT_USART1_USING_DMA, 
+			&usart1_device,
+			1,
+			RT_USING_USART1,
+			flag,
+			RT_USART1_USING_DMA,
 			config)) != RT_NULL)
 		{
 			rt_hw_usart_register(&usart1_device, RT_USART1_NAME, flag, usart);
@@ -1268,7 +1394,7 @@ void rt_hw_usart_init(void)
 		config |= USART_STATE_AUTOCS;
 #endif
 
-#if (RT_CONSOLE_DEVICE == 0x2UL)
+#if (RT_CONSOLE_DEVICE == EFM_USART2)
 		config |= USART_STATE_CONSOLE;
 		flag |= RT_DEVICE_FLAG_STREAM;
 #endif
@@ -1278,17 +1404,17 @@ void rt_hw_usart_init(void)
 		flag |= RT_DEVICE_FLAG_DMA_TX;
 
  #else
-		
-	   #define RT_USART2_USING_DMA EFM32_NO_DATA
+
+	   #define RT_USART2_USING_DMA EFM32_NO_DMA
  #endif
 
 		/* Initialize and Register usart2 */
 		if ((usart = rt_hw_usart_unit_init(
-			&usart2_device, 
-			2, 
-			RT_USING_USART2, 
-			flag, 
-			RT_USART2_USING_DMA, 
+			&usart2_device,
+			2,
+			RT_USING_USART2,
+			flag,
+			RT_USART2_USING_DMA,
 			config)) != RT_NULL)
 		{
 			rt_hw_usart_register(&usart2_device, RT_USART2_NAME, flag, usart);
@@ -1305,6 +1431,84 @@ void rt_hw_usart_init(void)
 		}
 #endif
 
+#ifdef RT_USING_UART0
+        config = USART_STATE_ASYNC_ONLY;
+        flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+
+ #if (RT_CONSOLE_DEVICE == EFM_UART0)
+        config |= USART_STATE_CONSOLE;
+        flag |= RT_DEVICE_FLAG_STREAM;
+ #endif
+
+ #ifdef RT_UART0_USING_DMA
+        RT_ASSERT(RT_UART0_USING_DMA < DMA_CHAN_COUNT);
+        flag |= RT_DEVICE_FLAG_DMA_TX;
+ #else
+       #define RT_UART0_USING_DMA EFM32_NO_DMA
+ #endif
+
+        /* Initialize and Register uart0 */
+        if ((usart = rt_hw_usart_unit_init(
+            &uart0_device,
+            0,
+            RT_USING_UART0,
+            flag,
+            RT_UART0_USING_DMA,
+            config)) != RT_NULL)
+        {
+            rt_hw_usart_register(&uart0_device, RT_UART0_NAME, flag, usart);
+        }
+        else
+        {
+            break;
+        }
+        /* Initialize lock for uart0 */
+        usart->lock = &uart0_lock;
+        if (rt_sem_init(usart->lock, RT_UART0_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        {
+            break;
+        }
+#endif
+
+#ifdef RT_USING_UART1
+        config = USART_STATE_ASYNC_ONLY;
+        flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+
+ #if (RT_CONSOLE_DEVICE == EFM_UART1)
+        config |= USART_STATE_CONSOLE;
+        flag |= RT_DEVICE_FLAG_STREAM;
+ #endif
+
+ #ifdef RT_UART1_USING_DMA
+        RT_ASSERT(RT_UART1_USING_DMA < DMA_CHAN_COUNT);
+        flag |= RT_DEVICE_FLAG_DMA_TX;
+ #else
+       #define RT_UART1_USING_DMA EFM32_NO_DMA
+ #endif
+
+        /* Initialize and Register uart1 */
+        if ((usart = rt_hw_usart_unit_init(
+            &uart1_device,
+            1,
+            RT_USING_UART1,
+            flag,
+            RT_UART1_USING_DMA,
+            config)) != RT_NULL)
+        {
+            rt_hw_usart_register(&uart1_device, RT_UART1_NAME, flag, usart);
+        }
+        else
+        {
+            break;
+        }
+        /* Initialize lock for uart1 */
+        usart->lock = &uart1_lock;
+        if (rt_sem_init(usart->lock, RT_UART1_NAME, 1, RT_IPC_FLAG_FIFO) != RT_EOK)
+        {
+            break;
+        }
+#endif
+
 		usart_debug("USART: H/W init OK!\n");
 		return;
 	} while (0);
@@ -1312,7 +1516,9 @@ void rt_hw_usart_init(void)
 	rt_kprintf("USART: H/W init failed!\n");
 }
 
-#endif /* (defined(RT_USING_USART0) || defined(RT_USING_USART1) || defined(RT_USING_USART2)) */
+#endif /* (defined(RT_USING_USART0) || defined(RT_USING_USART1) || \
+    defined(RT_USING_USART2) || defined(RT_USING_UART0) || \
+    defined(RT_USING_UART1)) */
 /***************************************************************************//**
  * @}
  ******************************************************************************/

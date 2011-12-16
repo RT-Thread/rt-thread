@@ -1,12 +1,12 @@
 /***************************************************************************//**
- * @file 	rtconfig.h
- * @brief 	RT-Thread config file
+ * @file    rtconfig.h
+ * @brief   RT-Thread config file
  * 	COPYRIGHT (C) 2009, RT-Thread Development Team
- * @author 	
+ * @author
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  ******************************************************************************/
 #ifndef __RTTHREAD_CFG_H__
@@ -41,6 +41,7 @@
 
 //#define RT_IRQHDL_DEBUG
 //#define RT_USART_DEBUG
+//#define RT_LEUART_DEBUG
 //#define RT_IIC_DEBUG
 //#define RT_MISC_DEBUG
 //#define RT_ADC_DEBUG
@@ -66,13 +67,13 @@
 
 /* SECTION: IPC */
 /* Using Semaphore*/
-#define RT_USING_SEMAPHORE 					/* Using by DFS and lwIP */
+#define RT_USING_SEMAPHORE                  /* Using by DFS and lwIP */
 /* Using Mutex */
-//#define RT_USING_MUTEX 						/* Using by DFS */
+#define RT_USING_MUTEX                      /* Using by DFS */
 /* Using Event */
 //#define RT_USING_EVENT
 /* Using MailBox */
-#define RT_USING_MAILBOX 					/* Using by lwIP */
+#define RT_USING_MAILBOX                    /* Using by lwIP */
 /* Using Message Queue */
 //#define RT_USING_MESSAGEQUEUE
 /* SECTION: Memory Management */
@@ -89,33 +90,56 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 
-/* USART Device for Console */
-#if defined(EFM32_G290_DK)
-#define RT_USING_USART1				(0x0UL)
-#define RT_USART1_NAME				"debug"
-//#define RT_USART1_USING_DMA			(0x0UL)
-#elif defined(EFM32_G890_STK)
-#define RT_USING_USART1				(0x1UL)
-#define RT_USART1_NAME				"debug"
-//#define RT_USART1_USING_DMA			(0x0UL)
+/* USART/UART/LEUART Device for Console */
+#if defined(EFM32_G8XX_STK)
+#define RT_USING_USART1             (0x1UL)
+#define RT_USART1_NAME              "debug"
+//#define RT_USART1_USING_DMA           (0x0UL)
+#elif defined(EFM32_GXXX_DK)
+#define RT_USING_USART1             (0x0UL)
+#define RT_USART1_NAME              "debug"
+//#define RT_USART1_USING_DMA           (0x0UL)
+#elif defined(EFM32GG_DK3750)
+#define EFM32GG_DK3750_USING_LEUART1
+ #if defined(EFM32GG_DK3750_USING_LEUART1)
+ #define RT_USING_LEUART1           (0x0UL)
+ #define RT_LEUART1_NAME            "debug0"
+ //#define RT_LEUART1_USING_DMA       (0x0UL)
+ #else
+ #define RT_USING_UART1              (0x2UL)
+ #define RT_UART1_NAME               "debug"
+ //#define RT_UART1_USING_DMA          (0x0UL)
+ #endif
 #endif
 
 /* SECTION: SPI options */
-#if defined(EFM32_G290_DK)
-#define RT_USING_USART0				(0x2UL)
-#define RT_USART0_SYNC_MODE			(0x1UL) 	/* Master */
-#define RT_USART0_NAME				"spi0"
-#define RT_USART0_USING_DMA			(0x1UL)
-
-#define RT_USING_USART2				(0x1UL)
-#define RT_USART2_SYNC_MODE			(0x1UL) 	/* Master */
-#define RT_USART2_NAME				"spi2"
-#define RT_USART2_USING_DMA			(0x2UL)
-#elif defined(EFM32_G890_STK)
+#if defined(EFM32_G8XX_STK)
 //#define RT_USING_USART0				(0x0UL)
 //#define RT_USART0_SYNC_MODE			(0x1UL) 		/* Master */
 //#define RT_USART0_NAME				"spi0"
 //#define RT_USART0_USING_DMA			(0x1UL)
+#elif defined(EFM32_GXXX_DK)
+#define RT_USING_USART0             (0x2UL)
+#define RT_USART0_SYNC_MODE         (0x1UL) 	/* Master */
+#define RT_USART0_NAME              "spi0"
+#define RT_USART0_USING_DMA         (0x1UL)
+
+#define RT_USING_USART2             (0x1UL)
+#define RT_USART2_SYNC_MODE         (0x1UL) 	/* Master */
+#define RT_USART2_NAME              "spi2"
+#define RT_USART2_USING_DMA         (0x2UL)
+
+#elif defined(EFM32GG_DK3750)
+#define RT_USING_USART0             (0x1UL)
+#define RT_USART0_SYNC_MODE         (0x1UL)     /* Master */
+#define RT_USART0_NAME              "spi0"
+#define RT_USART0_USING_DMA         (0x1UL)
+
+#define RT_USING_USART1             (0x1UL)
+#define RT_USART1_SYNC_MODE         (0x1UL)     /* Master */
+#define RT_USART1_NAME              "spi1"
+#define RT_USART1_USING_DMA         (0x2UL)
+
 #endif
 
 /* SECTION: IIC options */
@@ -138,16 +162,30 @@
 #define RT_TIMER2_NAME				"tmr2"
 
 /* SECTION: RTC options */
-#if (defined(EFM32_G290_DK) || defined(EFM32_G890_STK))
-//#define RT_USING_RTC
+#if (defined(EFM32_G8XX_STK) || defined(EFM32_GXXX_DK) || defined(EFM32GG_DK3750))
+#define RT_USING_RTC
 #define RT_RTC_NAME 				"rtc"
 #endif
 
 /* SECTION: Serial options */
-#if defined(EFM32_G290_DK)
-#define RT_CONSOLE_DEVICE			(0x1UL)
-#elif defined(EFM32_G890_STK)
-#define RT_CONSOLE_DEVICE			(0x1UL)
+#define EFM_USART0                  (0x00UL)
+#define EFM_USART1                  (0x01UL)
+#define EFM_USART2                  (0x02UL)
+#define EFM_UART0                   (0x10UL)
+#define EFM_UART1                   (0x11UL)
+#define EFM_LEUART0                 (0x20UL)
+#define EFM_LEUART1                 (0x21UL)
+
+#if defined(EFM32_G8XX_STK)
+#define RT_CONSOLE_DEVICE			(EFM_USART1)
+#elif defined(EFM32_GXXX_DK)
+#define RT_CONSOLE_DEVICE			(EFM_USART1)
+#elif defined(EFM32GG_DK3750)
+ #if defined(EFM32GG_DK3750_USING_LEUART1)
+ #define RT_CONSOLE_DEVICE          (EFM_LEUART1)
+ #else
+ #define RT_CONSOLE_DEVICE          (EFM_UART1)
+ #endif
 #endif
 
 /* SECTION: Console options */
@@ -165,11 +203,11 @@
 #define EFM32_INTERFACE_ADC 		(0)
 #define EFM32_INTERFACE_IIC 		(1)
 #define EFM32_INTERFACE_SPI 		(2)
-#if defined(EFM32_G290_DK)
+#if (defined(EFM32_GXXX_DK) || defined(EFM32GG_DK3750))
 //#define EFM32_USING_ACCEL 			EFM32_INTERFACE_IIC	/* Three axis accelerometer */
 //#define EFM32_USING_SFLASH 							/* SPI Flash */
-//#define EFM32_USING_SPISD 								/* MicroSD card */
-#define EFM32_USING_ETHERNET 							/* Ethernet controller */
+#define EFM32_USING_SPISD                       /* MicroSD card */
+//#define EFM32_USING_ETHERNET                    /* Ethernet controller */
 #endif
 
 #if defined(EFM32_USING_ACCEL)
@@ -191,22 +229,26 @@
 #endif
 
 #if defined(EFM32_USING_ETHERNET)
-#define ETH_USING_DEVICE_NAME 		RT_USART2_NAME
+ #if defined(EFM32_GXXX_DK)
+ #define ETH_USING_DEVICE_NAME 		RT_USART2_NAME
+ #elif defined(EFM32GG_DK3750)
+ #define ETH_USING_DEVICE_NAME 		RT_USART1_NAME
+ #endif
 #define ETH_DEVICE_NAME 			"spiEth"
 #define ETH_ADDR_DEFAULT 			{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
 #endif
 
 /* SECTION: device filesystem */
 #if defined(EFM32_USING_SPISD)
-//#define RT_USING_DFS
-//#define RT_USING_DFS_ELMFAT
+#define RT_USING_DFS
+#define RT_USING_DFS_ELMFAT
 #define DFS_ELMFAT_INTERFACE_EFM
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			(2)
+#define DFS_FILESYSTEMS_MAX         (2)
 /* the max number of opened files 		*/
-#define DFS_FD_MAX					(4)
+#define DFS_FD_MAX                  (4)
 /* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		(4)
+#define DFS_CACHE_MAX_NUM           (4)
 #endif /* defined(EFM32_USING_SPISD) */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
@@ -216,7 +258,7 @@
 //#define hostName 					"onelife.dyndns.org"
 //#define userPwdB64 					"dXNlcjpwYXNzd2Q="
 
-#define RT_USING_LWIP
+//#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM

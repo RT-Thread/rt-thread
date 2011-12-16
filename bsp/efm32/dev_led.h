@@ -6,7 +6,7 @@
  * @version 	0.4 beta
  **********************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
+ * The license and distribution terms for this file may be found in the file LICENSE in this
  * distribution or at http://www.rt-thread.org/license/LICENSE
  **********************************************************************
  * @section Change Logs
@@ -14,6 +14,7 @@
  * 2009-01-05	Bernard		the first version
  * 2010-12-27	onelife		Modify for EFM32
  * 2011-05-06	onelife		Add EFM32 development kit support
+ * 2011-12-08	onelife		Add giant gecko development kit support
  *********************************************************************/
 #ifndef __DEV_LED_H__
 #define __DEV_LED_H__
@@ -22,7 +23,7 @@
 /* Exported types -------------------------------------------------------------*/
 /* Exported constants ---------------------------------------------------------*/
 /* Exported macro -------------------------------------------------------------*/
-#if defined(EFM32_G890_STK)
+#if defined(EFM32_G8XX_STK)
 #define LEDS_MAX_NUMBER 		(4)
 	/* Configure GPIO port C 0-3 for LEDs */
 #define LEDS_PIN_PORT_0 		gpioPortC
@@ -33,7 +34,7 @@
 #define LEDS_PIN_NUMBER_2 		(2)
 #define LEDS_PIN_PORT_3 		gpioPortC
 #define LEDS_PIN_NUMBER_3 		(3)
-#elif defined(EFM32_G290_DK)
+#elif (defined(EFM32_GXXX_DK) || defined(EFM32GG_DK3750))
 #define LEDS_MAX_NUMBER 		(16)
 #endif
 

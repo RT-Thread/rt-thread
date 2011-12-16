@@ -6,15 +6,20 @@
  * @version 	0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-21	onelife		Initial creation for EFM32
  * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support
- * 2011-07-12	onelife		Add prototype for SWO output enable and interrupt 
- *  context check functions 
+ * 2011-07-12	onelife		Add prototype for SWO output enable and interrupt
+ *  context check functions
+ * 2011-12-08	onelife		Add giant gecko development kit support
+ * 2011-12-09	onelife		Add giant gecko support
+ * 2011-12-09   onelife     Add LEUART module support
+ * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
+ *  function
  ******************************************************************************/
 #ifndef __BOARD_H__
 #define __BOARD_H__
@@ -22,8 +27,9 @@
 #if defined(EFM32G890F128)
 #elif defined(EFM32G290F128)
 #elif defined(EFM32G230F128)
+#elif defined(EFM32GG990F1024)
 #else
-#error Unknown MCU type 
+#error Unknown MCU type
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -38,11 +44,12 @@
 #include <efm32_acmp.h>
 #include <efm32_adc.h>
 #include <efm32_usart.h>
+#include <efm32_leuart.h>
 #include <efm32_i2c.h>
 
 #include <rtthread.h>
 
-#if defined(EFM32_G290_DK)
+#if (defined(EFM32_GXXX_DK) || defined(EFM32GG_DK3750))
 #include <dvk.h>
 #endif
 
@@ -72,30 +79,61 @@ extern volatile rt_uint32_t rt_system_status;
 
 /* SECTION: Micro SD */
 #if defined(EFM32_USING_SPISD)
-#define USART_0_AUTOCS 				(1)
-#define SD_CS_PORT 					(gpioPortC)
-#define SD_CS_PIN 					(8)
+ #if defined(EFM32_GXXX_DK)
+ #define USART_0_AUTOCS             (1)
+ #define SD_CS_PORT                 (gpioPortC)
+ #define SD_CS_PIN                  (8)
+ #elif defined(EFM32GG_DK3750)
+ #define USART_0_AUTOCS             (1)
+ #define SD_CS_PORT                 (gpioPortE)
+ #define SD_CS_PIN                  (4)
+ #endif
 #endif
 
 /* SECTION: Ethernet */
 #if defined(EFM32_USING_ETHERNET)
-#define USART_2_AUTOCS 				(0)
-#define ETH_CS_PORT 				(gpioPortB)
-#define ETH_CS_PIN 					(6)
+ #if defined(EFM32_GXXX_DK)
+ #define USART_2_AUTOCS             (0)
+ #define ETH_CS_PORT                (gpioPortB)
+ #define ETH_CS_PIN                 (6)
+ #elif defined(EFM32GG_DK3750)
+ #define USART_1_AUTOCS             (0)
+ #define ETH_CS_PORT                (gpioPortD)
+ #define ETH_CS_PIN                 (3)
+ #endif
 #endif
 
 /* SECTION: SYSTEM */
 #define EFM32_SRAM_END 				(SRAM_BASE + SRAM_SIZE)
 #define EFM32_BASE_PRI_DEFAULT 		(0x0UL << 5)
 #define EFM32_IRQ_PRI_DEFAULT 		(0x4UL << 5)
-#if (defined(EFM32_G890_STK) || defined(EFM32_G290_DK))
-#define EFM32_HFXO_FREQUENCY 		(32000000)
-#else
-#define EFM32_HFXO_FREQUENCY		(00000000)
+
+/* SECTION: CLOCK */
+#define EFM32_USING_HFXO
+#define EFM32_USING_LFXO
+#if defined(EFM32_USING_HFXO)
+ #if (defined(EFM32_G8XX_STK) || defined(EFM32_GXXX_DK))
+ #define EFM32_HFXO_FREQUENCY       (32000000)
+ #elif defined(EFM32GG_DK3750)
+ #define EFM32_HFXO_FREQUENCY 		(48000000)
+ #else
+ #define EFM32_HFXO_FREQUENCY		(00000000)
+ #endif
 #endif
 
 /* SECTION: USART */
 #define USART_RX_BUFFER_SIZE		(64)
+#define LEUART_RX_BUFFER_SIZE		(64)
+/* Location count (start from 0) */
+#if defined(EFM32_GXXX_DK)
+#define EFM32_USART_LOCATION_COUNT  (3)
+#define EFM32_UART_LOCATION_COUNT   (4)
+#define EFM32_LEUART_LOCATION_COUNT (3)
+#elif defined(EFM32GG_DK3750)
+#define EFM32_USART_LOCATION_COUNT  (6)
+#define EFM32_UART_LOCATION_COUNT   (4)
+#define EFM32_LEUART_LOCATION_COUNT (5)
+#endif
 
 /* SUBSECTION: UART */
 #define UART_BAUDRATE				(115200)
@@ -120,20 +158,33 @@ extern volatile rt_uint32_t rt_system_status;
 
 /* SECTION: I2C */
 #define IIC_RX_BUFFER_SIZE			(32)
+#if defined(EFM32_GXXX_DK)
+#define EFM32_IIC_LOCATION_COUNT    (4)
+#elif defined(EFM32GG_DK3750)
+#define EFM32_IIC_LOCATION_COUNT    (7)
+#endif
 
 /* SECTION: ADC */
 #define ADC_CALI_REF				adcRef2V5
 #define ADC_CALI_CH 				adcSingleInpCh5
 #define ADC_CONVERT_FREQUENCY 		(7000000)
 
-#if (RT_CONSOLE_DEVICE == 0x0UL)
+#if (RT_CONSOLE_DEVICE == EFM_USART0)
 #define CONSOLE_DEVICE 				RT_USART0_NAME
-#elif (RT_CONSOLE_DEVICE == 0x1UL)
+#elif (RT_CONSOLE_DEVICE == EFM_USART1)
 #define CONSOLE_DEVICE 				RT_USART1_NAME
-#elif (RT_CONSOLE_DEVICE == 0x2UL)
+#elif (RT_CONSOLE_DEVICE == EFM_USART2)
 #define CONSOLE_DEVICE 				RT_USART2_NAME
+#elif (RT_CONSOLE_DEVICE == EFM_UART0)
+#define CONSOLE_DEVICE 				RT_UART0_NAME
+#elif (RT_CONSOLE_DEVICE == EFM_UART1)
+#define CONSOLE_DEVICE 				RT_UART1_NAME
+#elif (RT_CONSOLE_DEVICE == EFM_LEUART0)
+#define CONSOLE_DEVICE 				RT_LEUART0_NAME
+#elif (RT_CONSOLE_DEVICE == EFM_LEUART1)
+#define CONSOLE_DEVICE 				RT_LEUART1_NAME
 #else
-#define CONSOLE_DEVICE 				"no"
+#define CONSOLE_DEVICE 				"NONE"
 #endif
 
 
@@ -161,13 +212,14 @@ extern volatile rt_uint32_t rt_system_status;
 #define RT_DEVICE_CTRL_SD_GET_SDSTAT	MMC_GET_SDSTAT
 
 /*! fixme: move the following define to Rtdef.h */
-#define RT_DEVICE_CTRL_USART_RBUFFER	(0xF1)		/*!< set USART rx buffer */
-#define RT_DEVICE_CTRL_IIC_SETTING		(0xF2)		/*!< change IIC setting */
-#define RT_DEVICE_CTRL_TIMER_PERIOD		(0xF3)		/*!< set Timer timeout period */
-#define RT_DEVICE_CTRL_ADC_MODE			(0xF4)		/*!< change ADC mode */
-#define RT_DEVICE_CTRL_ADC_RESULT		(0xF5)		/*!< get ADC result */
-#define RT_DEVICE_CTRL_ACMP_INIT		(0xF6)		/*!< Initialize ACMP */
-#define RT_DEVICE_CTRL_ACMP_OUTPUT		(0xF7)		/*!< get ACMP output */
+#define RT_DEVICE_CTRL_USART_RBUFFER	(0xF1)		/*!< set USART/UART rx buffer */
+#define RT_DEVICE_CTRL_LEUART_RBUFFER	(0xF2)		/*!< set LEUART rx buffer */
+#define RT_DEVICE_CTRL_IIC_SETTING		(0xF3)		/*!< change IIC setting */
+#define RT_DEVICE_CTRL_TIMER_PERIOD		(0xF4)		/*!< set Timer timeout period */
+#define RT_DEVICE_CTRL_ADC_MODE			(0xF5)		/*!< change ADC mode */
+#define RT_DEVICE_CTRL_ADC_RESULT		(0xF6)		/*!< get ADC result */
+#define RT_DEVICE_CTRL_ACMP_INIT		(0xF7)		/*!< Initialize ACMP */
+#define RT_DEVICE_CTRL_ACMP_OUTPUT		(0xF8)		/*!< get ACMP output */
 
 /* Exported functions ------------------------------------------------------- */
 void rt_hw_board_init(void);

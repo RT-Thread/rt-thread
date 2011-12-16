@@ -2,7 +2,7 @@
 ; * @file:    startup_efm32.s
 ; * @purpose: CMSIS Cortex-M3 Core Device Startup File 
 ; *           for the Energy Micro EFM32 device series
-; * @version 2.2.2
+; * @version 2.3.0
 ; * @date:    January 2011
 ; *------- <<< Use Configuration Wizard in Context Menu >>> ------------------
 ; *
@@ -108,6 +108,7 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     MSC_IRQHandler        ; 35: MSC Interrupt
                 DCD     AES_IRQHandler        ; 36: AES Interrupt
                 DCD     EBI_IRQHandler        ; 37: EBI Interrupt
+                DCD     EMU_IRQHandler        ; 38: EMU Interrupt
 
 __Vectors_End
 
@@ -211,6 +212,7 @@ Default_Handler PROC
                 EXPORT  MSC_IRQHandler        [WEAK]
                 EXPORT  AES_IRQHandler        [WEAK]
                 EXPORT  EBI_IRQHandler        [WEAK]
+                EXPORT  EMU_IRQHandler        [WEAK]
 
 
 DMA_IRQHandler
@@ -251,6 +253,7 @@ LCD_IRQHandler
 MSC_IRQHandler
 AES_IRQHandler
 EBI_IRQHandler
+EMU_IRQHandler
 
                 B       .
 

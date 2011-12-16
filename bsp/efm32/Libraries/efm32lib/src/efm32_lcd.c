@@ -2,7 +2,7 @@
  * @file
  * @brief Liquid Crystal Display (LCD) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -57,6 +57,8 @@
 void LCD_Init(const LCD_Init_TypeDef *lcdInit)
 {
   uint32_t dispCtrl = LCD->DISPCTRL;
+
+  EFM_ASSERT(lcdInit != (void *) 0);
 
   /* Disable controller before reconfiguration */
   LCD_Enable(false);
@@ -143,6 +145,8 @@ void LCD_FrameCountInit(const LCD_FrameCountInit_TypeDef *fcInit)
 {
   uint32_t bactrl = LCD->BACTRL;
 
+  EFM_ASSERT(fcInit != (void *) 0);
+
   /* Verify FC Top Counter to be within limits */
   EFM_ASSERT(fcInit->top < 64);
 
@@ -170,6 +174,8 @@ void LCD_AnimInit(const LCD_AnimInit_TypeDef *animInit)
 {
   uint32_t bactrl = LCD->BACTRL;
 
+  EFM_ASSERT(animInit != (void *) 0);
+
   /* Set Animation Register Values */
   LCD->AREGA = animInit->AReg;
   LCD->AREGB = animInit->BReg;
@@ -182,6 +188,17 @@ void LCD_AnimInit(const LCD_AnimInit_TypeDef *animInit)
   bactrl |= (animInit->AShift << _LCD_BACTRL_AREGASC_SHIFT);
   bactrl |= (animInit->BShift << _LCD_BACTRL_AREGBSC_SHIFT);
   bactrl |= animInit->animLogic;
+
+#if defined(_EFM32_GIANT_FAMILY)
+  if(animInit->startSeg == 0)
+  {
+    bactrl |= LCD_BACTRL_ALOC_SEG0TO7;
+  }
+  else if(animInit->startSeg == 8)
+  {
+    bactrl |= LCD_BACTRL_ALOC_SEG8TO15;
+  }
+#endif
 
   /* Reconfigure */
   LCD->BACTRL = bactrl;

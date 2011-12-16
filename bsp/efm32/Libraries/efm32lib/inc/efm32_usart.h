@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -187,27 +187,42 @@ typedef enum
 /** USART Rx input PRS selection. */
 typedef enum
 {
-  usartPrsRxCh0  = _USART_INPUT_RXPRSSEL_PRSCH0,    /**< PRSCH0  selected as USART_INPUT */
-  usartPrsRxCh1  = _USART_INPUT_RXPRSSEL_PRSCH1,    /**< PRSCH1  selected as USART_INPUT */
-  usartPrsRxCh2  = _USART_INPUT_RXPRSSEL_PRSCH2,    /**< PRSCH2  selected as USART_INPUT */
-  usartPrsRxCh3  = _USART_INPUT_RXPRSSEL_PRSCH3,    /**< PRSCH3  selected as USART_INPUT */
-  usartPrsRxCh4  = _USART_INPUT_RXPRSSEL_PRSCH4,    /**< PRSCH4  selected as USART_INPUT */
-  usartPrsRxCh5  = _USART_INPUT_RXPRSSEL_PRSCH5,    /**< PRSCH5  selected as USART_INPUT */
-  usartPrsRxCh6  = _USART_INPUT_RXPRSSEL_PRSCH6,    /**< PRSCH6  selected as USART_INPUT */
+  usartPrsRxCh0  = USART_INPUT_RXPRSSEL_PRSCH0,    /**< PRSCH0  selected as USART_INPUT */
+  usartPrsRxCh1  = USART_INPUT_RXPRSSEL_PRSCH1,    /**< PRSCH1  selected as USART_INPUT */
+  usartPrsRxCh2  = USART_INPUT_RXPRSSEL_PRSCH2,    /**< PRSCH2  selected as USART_INPUT */
+  usartPrsRxCh3  = USART_INPUT_RXPRSSEL_PRSCH3,    /**< PRSCH3  selected as USART_INPUT */
+  usartPrsRxCh4  = USART_INPUT_RXPRSSEL_PRSCH4,    /**< PRSCH4  selected as USART_INPUT */
+  usartPrsRxCh5  = USART_INPUT_RXPRSSEL_PRSCH5,    /**< PRSCH5  selected as USART_INPUT */
+  usartPrsRxCh6  = USART_INPUT_RXPRSSEL_PRSCH6,    /**< PRSCH6  selected as USART_INPUT */
 
 #if defined(_EFM32_TINY_FAMILY)
-  usartPrsRxCh7  = _USART_INPUT_RXPRSSEL_PRSCH7     /**< PRSCH7  selected as USART_INPUT */
+  usartPrsRxCh7  = USART_INPUT_RXPRSSEL_PRSCH7     /**< PRSCH7  selected as USART_INPUT */
 
 #elif defined(_EFM32_GIANT_FAMILY)
-  usartPrsRxCh7  = _USART_INPUT_RXPRSSEL_PRSCH7,    /**< PRSCH7  selected as USART_INPUT */
-  usartPrsRxCh8  = _USART_INPUT_RXPRSSEL_PRSCH8,    /**< PRSCH8  selected as USART_INPUT */
-  usartPrsRxCh9  = _USART_INPUT_RXPRSSEL_PRSCH9,    /**< PRSCH9  selected as USART_INPUT */
-  usartPrsRxCh10 = _USART_INPUT_RXPRSSEL_PRSCH10,   /**< PRSCH10 selected as USART_INPUT */
-  usartPrsRxCh11 = _USART_INPUT_RXPRSSEL_PRSCH11    /**< PRSCH11 selected as USART_INPUT */
+  usartPrsRxCh7  = USART_INPUT_RXPRSSEL_PRSCH7,    /**< PRSCH7  selected as USART_INPUT */
+  usartPrsRxCh8  = USART_INPUT_RXPRSSEL_PRSCH8,    /**< PRSCH8  selected as USART_INPUT */
+  usartPrsRxCh9  = USART_INPUT_RXPRSSEL_PRSCH9,    /**< PRSCH9  selected as USART_INPUT */
+  usartPrsRxCh10 = USART_INPUT_RXPRSSEL_PRSCH10,   /**< PRSCH10 selected as USART_INPUT */
+  usartPrsRxCh11 = USART_INPUT_RXPRSSEL_PRSCH11    /**< PRSCH11 selected as USART_INPUT */
 #else
 #error Unknown EFM32 family.
 #endif
 } USART_PrsRxCh_TypeDef;
+#endif
+
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+/** USART PRS Transmit Trigger Channels */
+typedef enum
+{
+  usartPrsTriggerCh0 = USART_TRIGCTRL_TSEL_PRSCH0, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh1 = USART_TRIGCTRL_TSEL_PRSCH1, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh2 = USART_TRIGCTRL_TSEL_PRSCH2, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh3 = USART_TRIGCTRL_TSEL_PRSCH3, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh4 = USART_TRIGCTRL_TSEL_PRSCH4, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh5 = USART_TRIGCTRL_TSEL_PRSCH5, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh6 = USART_TRIGCTRL_TSEL_PRSCH6, /**< PRSCH0 selected as USART Trigger */
+  usartPrsTriggerCh7 = USART_TRIGCTRL_TSEL_PRSCH7, /**< PRSCH0 selected as USART Trigger */
+} USART_PrsTriggerCh_TypeDef;
 #endif
 
 /*******************************************************************************
@@ -253,6 +268,23 @@ typedef struct
   USART_PrsRxCh_TypeDef  prsRxCh;
 #endif
 } USART_InitAsync_TypeDef;
+
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+/** USART PRS trigger enable */
+typedef struct 
+{
+#if defined(_EFM32_GIANT_FAMILY)
+  /** Enable AUTOTX */
+  bool autoTxTriggerEnable;
+#endif
+  /** Trigger receive via PRS channel */
+  bool rxTriggerEnable;
+  /** Trigger transmit via PRS channel */
+  bool txTriggerEnable;
+  /** PRS channel to be used to trigger auto transmission */
+  USART_PrsTriggerCh_TypeDef prsTriggerChannel;
+} USART_PrsTriggerInit_TypeDef;
+#endif
 
 /** Default config for USART async init structure. */
 #if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
@@ -464,6 +496,7 @@ void USART_InitIrDA(const USART_InitIrDA_TypeDef *init);
 
 #if defined(_EFM32_GIANT_FAMILY) || defined(_EFM32_TINY_FAMILY)
 void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init);
+void USART_InitPrsTrigger(USART_TypeDef *usart, const USART_PrsTriggerInit_TypeDef *init);
 #endif
 
 

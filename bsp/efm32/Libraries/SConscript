@@ -38,18 +38,20 @@ efm32lib/src/efm32_wdog.c
 
 # starupt scripts for each EFM32 family
 startup_scripts = {}
-startup_scripts['Gecko'] = 'startup_efm32.s'
 startup_scripts['TinyGecko'] = 'startup_efm32tg.s'
+startup_scripts['Gecko'] = 'startup_efm32.s'
+startup_scripts['Giant Gecko'] = 'startup_efm32gg.s'
 
 # linker scripts for each EFM32 family
 #linker_scripts = {}
-#linker_scripts['Gecko'] = 'efm32g.ld'
 #linker_scripts['TinyGecko'] = 'efm32tg.ld'
+#linker_scripts['Gecko'] = 'efm32g.ld'
+#linker_scripts['Giant Gecko'] = 'efm32gg.ld'
 
-# add startup script 
+# add startup script
 src = src + ['CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + startup_scripts[rtconfig.EFM32_FAMILY]]
-    
-path = [cwd + '/efm32lib/inc', 
+
+path = [cwd + '/efm32lib/inc',
     cwd + '/CMSIS/CM3/CoreSupport',
     cwd + '/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32']
 

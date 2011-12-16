@@ -3,7 +3,7 @@
  * @brief CMSIS Cortex-M3 Peripheral Access Layer Header File
  *        for EFM EFM32TG840F16
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -2803,11 +2803,15 @@ typedef struct
 #define _USART_ROUTE_LOCATION_LOC1            0x00000001UL                         /**< Mode LOC1 for USART_ROUTE */
 #define _USART_ROUTE_LOCATION_LOC2            0x00000002UL                         /**< Mode LOC2 for USART_ROUTE */
 #define _USART_ROUTE_LOCATION_LOC3            0x00000003UL                         /**< Mode LOC3 for USART_ROUTE */
+#define _USART_ROUTE_LOCATION_LOC4            0x00000004UL                         /**< Mode LOC4 for USART_ROUTE */
+#define _USART_ROUTE_LOCATION_LOC5            0x00000005UL                         /**< Mode LOC5 for USART_ROUTE */
 #define USART_ROUTE_LOCATION_DEFAULT          (_USART_ROUTE_LOCATION_DEFAULT << 8) /**< Shifted mode DEFAULT for USART_ROUTE */
 #define USART_ROUTE_LOCATION_LOC0             (_USART_ROUTE_LOCATION_LOC0 << 8)    /**< Shifted mode LOC0 for USART_ROUTE */
 #define USART_ROUTE_LOCATION_LOC1             (_USART_ROUTE_LOCATION_LOC1 << 8)    /**< Shifted mode LOC1 for USART_ROUTE */
 #define USART_ROUTE_LOCATION_LOC2             (_USART_ROUTE_LOCATION_LOC2 << 8)    /**< Shifted mode LOC2 for USART_ROUTE */
 #define USART_ROUTE_LOCATION_LOC3             (_USART_ROUTE_LOCATION_LOC3 << 8)    /**< Shifted mode LOC3 for USART_ROUTE */
+#define USART_ROUTE_LOCATION_LOC4             (_USART_ROUTE_LOCATION_LOC4 << 8)    /**< Shifted mode LOC4 for USART_ROUTE */
+#define USART_ROUTE_LOCATION_LOC5             (_USART_ROUTE_LOCATION_LOC5 << 8)    /**< Shifted mode LOC5 for USART_ROUTE */
 
 /* Bit fields for USART INPUT */
 #define _USART_INPUT_RESETVALUE               0x00000000UL                         /**< Default value for USART_INPUT */
@@ -3480,11 +3484,13 @@ typedef struct
 #define _LEUART_ROUTE_LOCATION_LOC1              0x00000001UL                          /**< Mode LOC1 for LEUART_ROUTE */
 #define _LEUART_ROUTE_LOCATION_LOC2              0x00000002UL                          /**< Mode LOC2 for LEUART_ROUTE */
 #define _LEUART_ROUTE_LOCATION_LOC3              0x00000003UL                          /**< Mode LOC3 for LEUART_ROUTE */
+#define _LEUART_ROUTE_LOCATION_LOC4              0x00000004UL                          /**< Mode LOC4 for LEUART_ROUTE */
 #define LEUART_ROUTE_LOCATION_DEFAULT            (_LEUART_ROUTE_LOCATION_DEFAULT << 8) /**< Shifted mode DEFAULT for LEUART_ROUTE */
 #define LEUART_ROUTE_LOCATION_LOC0               (_LEUART_ROUTE_LOCATION_LOC0 << 8)    /**< Shifted mode LOC0 for LEUART_ROUTE */
 #define LEUART_ROUTE_LOCATION_LOC1               (_LEUART_ROUTE_LOCATION_LOC1 << 8)    /**< Shifted mode LOC1 for LEUART_ROUTE */
 #define LEUART_ROUTE_LOCATION_LOC2               (_LEUART_ROUTE_LOCATION_LOC2 << 8)    /**< Shifted mode LOC2 for LEUART_ROUTE */
 #define LEUART_ROUTE_LOCATION_LOC3               (_LEUART_ROUTE_LOCATION_LOC3 << 8)    /**< Shifted mode LOC3 for LEUART_ROUTE */
+#define LEUART_ROUTE_LOCATION_LOC4               (_LEUART_ROUTE_LOCATION_LOC4 << 8)    /**< Shifted mode LOC4 for LEUART_ROUTE */
 
 /* Bit fields for LEUART INPUT */
 #define _LEUART_INPUT_RESETVALUE                 0x00000000UL                          /**< Default value for LEUART_INPUT */
@@ -13254,6 +13260,11 @@ typedef struct
 #define _DEVINFO_PART_PROD_REV_SHIFT               24           /**< Bit position for production revision */
 #define _DEVINFO_PART_DEVICE_FAMILY_MASK           0x00FF0000UL /**< Device Family, 0x47 for Gecko */
 #define _DEVINFO_PART_DEVICE_FAMILY_SHIFT          16           /**< Bit position for device family */
+#define _DEVINFO_PART_DEVICE_FAMILY_G              71           /**< Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_GG             72           /**< Giant Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_TG             73           /**< Tiny Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_LG             74           /**< Leopard Gecko Device Family */
+#define _DEVINFO_PART_DEVICE_FAMILY_ZG             75           /**< Zero Gecko Device Family */
 #define _DEVINFO_PART_DEVICE_NUMBER_MASK           0x0000FFFFUL /**< Device number */
 #define _DEVINFO_PART_DEVICE_NUMBER_SHIFT          0            /**< Bit position for device number */
 

@@ -6,14 +6,14 @@
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2011-07-13	onelife		Initial creation for using EFM32 ADC module to 
+ * 2011-07-13	onelife		Initial creation for using EFM32 ADC module to
  *  interface the Freescale MMA7361L
- * 2011-08-02	onelife		Add digital interface support of using EFM32 IIC 
+ * 2011-08-02	onelife		Add digital interface support of using EFM32 IIC
  *  module for the Freescale MMA7455L
  ******************************************************************************/
 
@@ -76,7 +76,7 @@ static rt_uint32_t 						accelConfig = 0;
  * @return
  *	 Error code
  ******************************************************************************/
-rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data, 
+rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data,
 	rt_bool_t lowResolution)
 {
 	RT_ASSERT(accel != RT_NULL);
@@ -89,7 +89,7 @@ rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data,
 	}
 
 	ret = RT_EOK;
-	do 
+	do
 	{
 		/* --------- ADC interface --------- */
 #if (EFM32_USING_ACCEL == EFM32_INTERFACE_ADC)
@@ -97,7 +97,7 @@ rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data,
 
 		result.mode = control.mode;
 		result.buffer = (void *)data;
-		if ((ret = accel->control(accel, RT_DEVICE_CTRL_RESUME, 
+		if ((ret = accel->control(accel, RT_DEVICE_CTRL_RESUME,
 			(void *)&result)) != RT_EOK)
 		{
 			break;
@@ -311,7 +311,7 @@ rt_err_t efm_accel_config(rt_uint32_t config,
 	{
 		mctl_reg |= MCTL_PIN_INT1;
 	}
-	
+
 	/* Modify CTL1 */
 	if (config & ACCEL_INTPIN_INVERSE)
 	{
@@ -346,7 +346,7 @@ rt_err_t efm_accel_config(rt_uint32_t config,
 		break;
 	default:
 		break;
-	}	
+	}
 
 	if (config & ACCEL_THRESHOLD_INTEGER)
 	{
@@ -485,16 +485,16 @@ rt_err_t efm_accel_config(rt_uint32_t config,
 			BITBAND_Peripheral(&(GPIO->IFC), ACCEL_INT2_PIN, 0x1UL);
 			/* Set raising edge interrupt and clear/enable it */
 			GPIO_IntConfig(
-				ACCEL_INT1_PORT, 
-				ACCEL_INT1_PIN, 
-				true, 
-				false, 
+				ACCEL_INT1_PORT,
+				ACCEL_INT1_PIN,
+				true,
+				false,
 				true);
 			GPIO_IntConfig(
-				ACCEL_INT2_PORT, 
-				ACCEL_INT2_PIN, 
-				true, 
-				false, 
+				ACCEL_INT2_PORT,
+				ACCEL_INT2_PIN,
+				true,
+				false,
 				true);
 			if (((rt_uint8_t)ACCEL_INT1_PORT % 2) || \
 				((rt_uint8_t)ACCEL_INT2_PORT % 2))
@@ -602,7 +602,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			if ((temp.x == 0) && (temp.y == 0) && \
 				(temp.z == 0))
 			{
-				accel_debug("Accel: Offset %+d %+d %+d\n", 
+				accel_debug("Accel: Offset %+d %+d %+d\n",
 					accelOffset.x, accelOffset.y, accelOffset.z);
 				break;
 			}
@@ -620,7 +620,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			{
 				break;
 			}
-			
+
 			/* Set offset drift registers */
 			max.x -= temp.x;
 			max.y -= temp.y;
@@ -645,7 +645,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			"cal_tmr",
 			efm_accel_timer,
 			RT_NULL,
-			period, 
+			period,
 			RT_TIMER_FLAG_ONE_SHOT)) == RT_NULL)
 		{
 			accel_debug("Accel err: Create timer failed!\n");
@@ -704,7 +704,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			rt_thread_sleep(1);
 		} while (accelInTime);
 
-		accel_debug("Accel: Min %+d %+d %+d, max %+d %+d %+d\n", 
+		accel_debug("Accel: Min %+d %+d %+d, max %+d %+d %+d\n",
 			min.x, min.y, min.z, max.x, max.y, max.z);
 
 #if (EFM32_USING_ACCEL == EFM32_INTERFACE_ADC)
@@ -712,7 +712,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 		accelOffset.y = -((min.y + max.y) >> 1);
 		accelOffset.z = -((min.z + max.z) >> 1);
 
-	accel_debug("Accel: Offset %+d %+d %+d\n", 
+	accel_debug("Accel: Offset %+d %+d %+d\n",
 		accelOffset.x, accelOffset.y, accelOffset.z);
 
 #elif (EFM32_USING_ACCEL == EFM32_INTERFACE_IIC)
@@ -725,7 +725,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			return -RT_ERROR;
 		}
 
-	accel_debug("Accel: Offset %+d %+d %+d\n", 
+	accel_debug("Accel: Offset %+d %+d %+d\n",
 		*(rt_int16_t *)&cmd[1], *(rt_int16_t *)&cmd[3], *(rt_int16_t *)&cmd[5]);
 #endif
 
@@ -767,7 +767,7 @@ rt_err_t efm_accel_init(void)
 #if (EFM32_USING_ACCEL == EFM32_INTERFACE_ADC)
 		ADC_InitScan_TypeDef scanInit = ADC_INITSCAN_DEFAULT;
 
- #if defined(EFM32_G290_DK)
+ #if defined(EFM32_GXXX_DK)
 		/* Enable accelerometer */
 		DVK_enablePeripheral(DVK_ACCEL);
 			/* Select g-range */
@@ -802,11 +802,11 @@ rt_err_t efm_accel_init(void)
 		}
 
 		if (efm_accel_config(
-			ACCEL_MODE_MEASUREMENT | ACCEL_RANGE_2G, 
-			EFM32_NO_DATA, 
-			EFM32_NO_DATA, 
-			EFM32_NO_DATA, 
-			EFM32_NO_DATA, 
+			ACCEL_MODE_MEASUREMENT | ACCEL_RANGE_2G,
+			EFM32_NO_DATA,
+			EFM32_NO_DATA,
+			EFM32_NO_DATA,
+			EFM32_NO_DATA,
 			EFM32_NO_DATA) != RT_EOK)
 		{
 			break;
@@ -859,11 +859,11 @@ void test_accel(rt_uint8_t mode)
 	{
 		if (efm_accel_config(
 			ACCEL_MODE_LEVEL | ACCEL_RANGE_8G | ACCEL_INT_LEVEL_PULSE | \
-			ACCEL_SOURCE_LEVEL_X | ACCEL_SOURCE_LEVEL_Y, 
-			0x1f, 
-			EFM32_NO_DATA, 
-			EFM32_NO_DATA, 
-			EFM32_NO_DATA, 
+			ACCEL_SOURCE_LEVEL_X | ACCEL_SOURCE_LEVEL_Y,
+			0x1f,
+			EFM32_NO_DATA,
+			EFM32_NO_DATA,
+			EFM32_NO_DATA,
 			EFM32_NO_DATA) != RT_EOK)
 		{
 			rt_kprintf("efm_accel_config(): error\n");
@@ -874,11 +874,11 @@ void test_accel(rt_uint8_t mode)
 	{
 		if (efm_accel_config(
 			ACCEL_MODE_PULSE | ACCEL_RANGE_8G | ACCEL_INT_SINGLE_DOUBLE | \
-			ACCEL_SOURCE_PULSE_X | ACCEL_SOURCE_PULSE_Y, 
-			0x1f, 
-			0x1f, 
-			200, 
-			255, 
+			ACCEL_SOURCE_PULSE_X | ACCEL_SOURCE_PULSE_Y,
+			0x1f,
+			0x1f,
+			200,
+			255,
 			255) != RT_EOK)
 		{
 			rt_kprintf("efm_accel_config(): error\n");

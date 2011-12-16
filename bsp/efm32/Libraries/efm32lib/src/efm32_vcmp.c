@@ -2,7 +2,7 @@
  * @file
  * @brief Voltage Comparator (VCMP) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -50,7 +50,7 @@ void VCMP_Init(const VCMP_Init_TypeDef *vcmpInit)
 {
   /* Verify input */
   EFM_ASSERT((vcmpInit->inactive == 0) || (vcmpInit->inactive == 1));
-  EFM_ASSERT((vcmpInit->biasProg > 0) && (vcmpInit->biasProg < 16));
+  EFM_ASSERT((vcmpInit->biasProg >= 0) && (vcmpInit->biasProg < 16));
 
   /* Configure Half Bias setting */
   if (vcmpInit->halfBias)
@@ -106,8 +106,7 @@ void VCMP_Init(const VCMP_Init_TypeDef *vcmpInit)
   /* Configure inactive output value */
   VCMP->CTRL |= (vcmpInit->inactive << _VCMP_CTRL_INACTVAL_SHIFT);
 
-  /* Configure input selection values, low power and trigger level */
-  VCMP_LowPowerRefSet(vcmpInit->lowPowerRef);
+  /* Configure trigger level */
   VCMP_TriggerSet(vcmpInit->triggerLevel);
 
   /* Enable or disable VCMP */
@@ -120,6 +119,16 @@ void VCMP_Init(const VCMP_Init_TypeDef *vcmpInit)
     VCMP->CTRL &= ~(VCMP_CTRL_EN);
   }
 
+  /* If Low Power Reference is enabled, wait until VCMP is ready */
+  /* before enabling it, see reference manual for deatils        */
+  /* Configuring Low Power Ref without enable has no effect      */
+  if(vcmpInit->lowPowerRef && vcmpInit->enable)
+  {
+    /* Poll for VCMP ready */
+    while(!VCMP_Ready());
+    VCMP_LowPowerRefSet(vcmpInit->lowPowerRef);
+  }
+  
   /* Clear edge interrupt */
   VCMP_IntClear(VCMP_IF_EDGE);
 }

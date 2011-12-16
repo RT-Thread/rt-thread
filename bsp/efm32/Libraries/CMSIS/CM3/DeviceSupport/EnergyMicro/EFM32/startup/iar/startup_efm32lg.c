@@ -2,7 +2,7 @@
  * @file
  * @brief CMSIS Compatible EFM32 startup file in Cfor IAR EWARM
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -277,6 +277,11 @@ __weak void EBI_IRQHandler(void)
   while(1);
 }
 
+__weak void EMU_IRQHandler(void)
+{
+  while(1);
+}
+
 
 /* With IAR, the CSTACK is defined via project options settings */
 #pragma location = ".intvec"
@@ -335,5 +340,6 @@ const void * const __vector_table[]=  {
     (void *) MSC_IRQHandler,  /* 35 - MSC */
     (void *) AES_IRQHandler,  /* 36 - AES */
     (void *) EBI_IRQHandler,  /* 37 - EBI */
+    (void *) EMU_IRQHandler,  /* 38 - EMU */
 
 };

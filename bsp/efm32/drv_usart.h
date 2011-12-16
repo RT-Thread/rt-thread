@@ -6,15 +6,17 @@
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2010-12-22	onelife		Initial creation for EFM32
  * 2011-06-27	onelife		Fix a bug when using compiler optimization
- * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously 
+ * 2011-07-26	onelife		Add lock (semaphore) to prevent simultaneously
  *  access
+ * 2011-12-09	onelife		Add giant gecko support
+ * 2011-12-09   onelife     Add UART module support
  ******************************************************************************/
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__
@@ -61,11 +63,12 @@ struct efm32_usart_device_t
 #define USART_WAIT_TIME_TX		(RT_TICK_PER_SECOND / 100 * 3)
 
 #define USART_STATE_CONSOLE 	(1 << 0)
-#define USART_STATE_SYNC		(1 << 1)
-#define USART_STATE_MASTER		(1 << 2)
-#define USART_STATE_AUTOCS 		(1 << 3)
-#define USART_STATE_TX_BUSY 	(1 << 4)
-#define USART_STATE_RX_BUSY 	(1 << 5)
+#define USART_STATE_ASYNC_ONLY 	(1 << 1)
+#define USART_STATE_SYNC		(1 << 2)
+#define USART_STATE_MASTER		(1 << 3)
+#define USART_STATE_AUTOCS 		(1 << 4)
+#define USART_STATE_TX_BUSY 	(1 << 5)
+#define USART_STATE_RX_BUSY 	(1 << 6)
 
 
 /* Exported functions ------------------------------------------------------- */

@@ -2,7 +2,7 @@
  * @file
  * @brief Clock management unit (CMU) API for EFM32.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -53,6 +53,10 @@ extern "C" {
 #define CMU_HFCLKSEL_REG           1
 #define CMU_LFACLKSEL_REG          2
 #define CMU_LFBCLKSEL_REG          3
+#define CMU_DBGCLKSEL_REG          4
+#if defined (_EFM32_GIANT_FAMILY)
+#define CMU_USBCCLKSEL_REG         5
+#endif
 
 #define CMU_SEL_REG_POS            0
 #define CMU_SEL_REG_MASK           0xf
@@ -63,7 +67,9 @@ extern "C" {
 #define CMU_HFCORECLKDIV_REG       2
 #define CMU_LFAPRESC0_REG          3
 #define CMU_LFBPRESC0_REG          4
-
+#if defined (_EFM32_GIANT_FAMILY)
+#define CMU_HFCLKDIV_REG           5
+#endif
 #define CMU_DIV_REG_POS            4
 #define CMU_DIV_REG_MASK           0xf
 
@@ -96,6 +102,9 @@ extern "C" {
 #define CMU_LFB_CLK_BRANCH         9
 #define CMU_LEUART0_CLK_BRANCH     10
 #define CMU_LEUART1_CLK_BRANCH     11
+#define CMU_DBG_CLK_BRANCH         12
+#define CMU_AUX_CLK_BRANCH         13
+#define CMU_USBC_CLK_BRANCH        14
 
 #define CMU_CLK_BRANCH_POS         17
 #define CMU_CLK_BRANCH_MASK        0x1f
@@ -106,27 +115,26 @@ extern "C" {
  ********************************   ENUMS   ************************************
  ******************************************************************************/
 
-/** Clock divisors. */
-typedef enum
-{
-  cmuClkDiv_1     = 0,  /**< Divide clock by 1. */
-  cmuClkDiv_2     = 1,  /**< Divide clock by 2. */
-  cmuClkDiv_4     = 2,  /**< Divide clock by 4. */
-  cmuClkDiv_8     = 3,  /**< Divide clock by 8. */
-  cmuClkDiv_16    = 4,  /**< Divide clock by 16. */
-  cmuClkDiv_32    = 5,  /**< Divide clock by 32. */
-  cmuClkDiv_64    = 6,  /**< Divide clock by 64. */
-  cmuClkDiv_128   = 7,  /**< Divide clock by 128. */
-  cmuClkDiv_256   = 8,  /**< Divide clock by 256. */
-  cmuClkDiv_512   = 9,  /**< Divide clock by 512. */
-  cmuClkDiv_1024  = 10, /**< Divide clock by 1024. */
-  cmuClkDiv_2048  = 11, /**< Divide clock by 2048. */
-  cmuClkDiv_4096  = 12, /**< Divide clock by 4096. */
-  cmuClkDiv_8192  = 13, /**< Divide clock by 8192. */
-  cmuClkDiv_16384 = 14, /**< Divide clock by 16384. */
-  cmuClkDiv_32768 = 15  /**< Divide clock by 32768. */
-} CMU_ClkDiv_TypeDef;
+/** Clock divisors. These values are valid for prescalers. */
+#define cmuClkDiv_1     1     /**< Divide clock by 1. */
+#define cmuClkDiv_2     2     /**< Divide clock by 2. */
+#define cmuClkDiv_4     4     /**< Divide clock by 4. */
+#define cmuClkDiv_8     8     /**< Divide clock by 8. */
+#define cmuClkDiv_16    16    /**< Divide clock by 16. */
+#define cmuClkDiv_32    32    /**< Divide clock by 32. */
+#define cmuClkDiv_64    64    /**< Divide clock by 64. */
+#define cmuClkDiv_128   128   /**< Divide clock by 128. */
+#define cmuClkDiv_256   256   /**< Divide clock by 256. */
+#define cmuClkDiv_512   512   /**< Divide clock by 512. */
+#define cmuClkDiv_1024  1024  /**< Divide clock by 1024. */
+#define cmuClkDiv_2048  2048  /**< Divide clock by 2048. */
+#define cmuClkDiv_4096  4096  /**< Divide clock by 4096. */
+#define cmuClkDiv_8192  8192  /**< Divide clock by 8192. */
+#define cmuClkDiv_16384 16384 /**< Divide clock by 16384. */
+#define cmuClkDiv_32768 32768 /**< Divide clock by 32768. */
 
+/** Clock divider configuration */
+typedef uint32_t CMU_ClkDiv_TypeDef;
 
 /** High frequency RC bands. */
 typedef enum
@@ -146,6 +154,25 @@ typedef enum
 } CMU_HFRCOBand_TypeDef;
 
 
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+/** AUX High frequency RC bands. */
+typedef enum
+{
+  /** 1MHz RC band. */
+  cmuAUXHFRCOBand_1MHz  = _CMU_AUXHFRCOCTRL_BAND_1MHZ,
+  /** 7MHz RC band. */
+  cmuAUXHFRCOBand_7MHz  = _CMU_AUXHFRCOCTRL_BAND_7MHZ,
+  /** 11MHz RC band. */
+  cmuAUXHFRCOBand_11MHz = _CMU_AUXHFRCOCTRL_BAND_11MHZ,
+  /** 14MHz RC band. */
+  cmuAUXHFRCOBand_14MHz = _CMU_AUXHFRCOCTRL_BAND_14MHZ,
+  /** 21MHz RC band. */
+  cmuAUXHFRCOBand_21MHz = _CMU_AUXHFRCOCTRL_BAND_21MHZ,
+  /** 28MHz RC band. */
+  cmuAUXHFRCOBand_28MHz = _CMU_AUXHFRCOCTRL_BAND_28MHZ
+} CMU_AUXHFRCOBand_TypeDef;
+#endif
+
 /** Clock points in CMU. Please refer to CMU overview in reference manual. */
 typedef enum
 {
@@ -154,11 +181,33 @@ typedef enum
   /*******************/
 
   /** High frequency clock */
+#if defined(_EFM32_GIANT_FAMILY)
+  cmuClock_HF = (CMU_HFCLKDIV_REG << CMU_DIV_REG_POS) |
+                (CMU_HFCLKSEL_REG << CMU_SEL_REG_POS) |
+                (CMU_NO_EN_REG << CMU_EN_REG_POS) |
+                (0 << CMU_EN_BIT_POS) |
+                (CMU_HF_CLK_BRANCH << CMU_CLK_BRANCH_POS),
+#else
   cmuClock_HF = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                 (CMU_HFCLKSEL_REG << CMU_SEL_REG_POS) |
                 (CMU_NO_EN_REG << CMU_EN_REG_POS) |
                 (0 << CMU_EN_BIT_POS) |
                 (CMU_HF_CLK_BRANCH << CMU_CLK_BRANCH_POS),
+#endif
+
+  /** Debug clock */
+  cmuClock_DBG = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
+                 (CMU_DBGCLKSEL_REG << CMU_SEL_REG_POS) |
+                 (CMU_NO_EN_REG << CMU_EN_REG_POS) |
+                 (0 << CMU_EN_BIT_POS) |
+                 (CMU_DBG_CLK_BRANCH << CMU_CLK_BRANCH_POS),
+
+  /** AUX clock */
+  cmuClock_AUX = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
+                 (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
+                 (CMU_NO_EN_REG << CMU_EN_REG_POS) |
+                 (0 << CMU_EN_BIT_POS) |
+                 (CMU_AUX_CLK_BRANCH << CMU_CLK_BRANCH_POS),
 
   /**********************************/
   /* HF peripheral clock sub-branch */
@@ -262,7 +311,7 @@ typedef enum
 #endif
 
   /** Peripheral reflex system clock. */
-#if defined(PRS_PRESENT)
+#if defined(_CMU_HFPERCLKEN0_PRS_MASK)
   cmuClock_PRS = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                  (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                  (CMU_HFPERCLKEN0_EN_REG << CMU_EN_REG_POS) |
@@ -365,6 +414,20 @@ typedef enum
                  (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                  (CMU_HFCORECLKEN0_EN_REG << CMU_EN_REG_POS) |
                  (_CMU_HFCORECLKEN0_EBI_SHIFT << CMU_EN_BIT_POS) |
+                 (CMU_HFCORE_CLK_BRANCH << CMU_CLK_BRANCH_POS),
+#endif
+
+#if defined(USB_PRESENT)
+  cmuClock_USBC = (CMU_NODIV_REG << CMU_DIV_REG_POS) | 
+                  (CMU_USBCCLKSEL_REG << CMU_SEL_REG_POS) |
+                  (CMU_HFCORECLKEN0_EN_REG << CMU_EN_REG_POS) |
+                  (_CMU_HFCORECLKEN0_USBC_SHIFT << CMU_EN_BIT_POS) |
+                  (CMU_USBC_CLK_BRANCH << CMU_CLK_BRANCH_POS),
+
+  cmuClock_USB = (CMU_NODIV_REG << CMU_DIV_REG_POS) | 
+                 (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
+                 (CMU_HFCORECLKEN0_EN_REG << CMU_EN_REG_POS) |
+                 (_CMU_HFCORECLKEN0_USB_SHIFT << CMU_EN_BIT_POS) |
                  (CMU_HFCORE_CLK_BRANCH << CMU_CLK_BRANCH_POS),
 #endif
 
@@ -504,8 +567,10 @@ typedef enum
   cmuSelect_HFXO,       /**< High frequency crystal oscillator. */
   cmuSelect_HFRCO,      /**< High frequency RC oscillator. */
   cmuSelect_CORELEDIV2, /**< Core low energy clock divided by 2. */
+  cmuSelect_AUXHFRCO,   /**< Auxilliary clock source can be used for debug clock */
+  cmuSelect_HFCLK,      /**< Divided HFCLK on Giant for debug clock, undivided on Tiny Gecko and for USBC (not used on Gecko) */
 #if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
-  cmuSelect_ULFRCO      /**< Ultra low frequency RC oscillator. */
+  cmuSelect_ULFRCO,     /**< Ultra low frequency RC oscillator. */
 #endif
 } CMU_Select_TypeDef;
 
@@ -523,6 +588,10 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref);
 
 CMU_HFRCOBand_TypeDef CMU_HFRCOBandGet(void);
 void CMU_HFRCOBandSet(CMU_HFRCOBand_TypeDef band);
+#if defined(_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+CMU_AUXHFRCOBand_TypeDef CMU_AUXHFRCOBandGet(void);
+void CMU_AUXHFRCOBandSet(CMU_AUXHFRCOBand_TypeDef band);
+#endif
 void CMU_HFRCOStartupDelaySet(uint32_t delay);
 uint32_t CMU_HFRCOStartupDelayGet(void);
 

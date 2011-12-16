@@ -6,20 +6,20 @@
  * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-01-06	onelife		Initial creation for EFM32
- * 2011-06-17	onelife		Modify init function for EFM32 library v2.0.0 
+ * 2011-06-17	onelife		Modify init function for EFM32 library v2.0.0
  *  upgrading
- * 2011-07-11	onelife		Add lock (semaphore) to prevent simultaneously 
+ * 2011-07-11	onelife		Add lock (semaphore) to prevent simultaneously
  *  access
- * 2011-08-04	onelife		Change the usage of the second parameter of Read 
+ * 2011-08-04	onelife		Change the usage of the second parameter of Read
  *  and Write functions from (seldom used) "Offset" to "Slave address"
  * 2011-08-04	onelife		Add a timer to prevent from forever waiting
- * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2 
+ * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2
  *  upgrading
  ******************************************************************************/
 
@@ -52,15 +52,15 @@ struct efm32_iic_block
 
 /* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_IIC0
- #if (RT_USING_IIC0 > 3)
- #error "The location number range of IIC is 0~3"
+ #if (RT_USING_IIC0 > EFM32_IIC_LOCATION_COUNT)
+ #error "Wrong location number"
  #endif
 static struct efm32_iic_block 	iic0;
 #endif
 
 #ifdef RT_USING_IIC1
- #if (RT_USING_IIC1 > 3)
- #error "The location number range of IIC is 0~3"
+ #if (RT_USING_IIC1 > EFM32_IIC_LOCATION_COUNT)
+ #error "Wrong location number"
  #endif
 static struct efm32_iic_block 	iic1;
 #endif
@@ -122,7 +122,7 @@ static rt_err_t rt_iic_open(rt_device_t dev, rt_uint16_t oflag)
 	RT_ASSERT(dev != RT_NULL);
 
 	struct efm32_iic_device_t	*iic;
-	
+
 	iic = (struct efm32_iic_device_t *)(dev->user_data);
 	iic->counter++;
 
@@ -149,7 +149,7 @@ static rt_err_t rt_iic_close(rt_device_t dev)
 	RT_ASSERT(dev != RT_NULL);
 
 	struct efm32_iic_device_t	*iic;
-	
+
 	iic = (struct efm32_iic_device_t *)(dev->user_data);
 	if (--iic->counter == 0)
 	{
@@ -184,9 +184,9 @@ static rt_err_t rt_iic_close(rt_device_t dev)
  *   Error code
  ******************************************************************************/
 static rt_size_t rt_iic_read (
-	rt_device_t 	dev, 
-	rt_off_t 		pos, 
-	void* 			buffer, 
+	rt_device_t 	dev,
+	rt_off_t 		pos,
+	void* 			buffer,
 	rt_size_t 		size)
 {
 	rt_err_t 					err_code;
@@ -238,7 +238,7 @@ static rt_size_t rt_iic_read (
 		{
 		  ret = I2C_Transfer(iic->iic_device);
 		}
-	
+
 		if (ret != i2cTransferDone)
 		{
 			iic_debug("IIC read error: %x\n", ret);
@@ -335,9 +335,9 @@ static rt_size_t rt_iic_read (
  *   Error code
  ******************************************************************************/
 static rt_size_t rt_iic_write (
-	rt_device_t 	dev, 
-	rt_off_t 		pos, 
-	const void* 	buffer, 
+	rt_device_t 	dev,
+	rt_off_t 		pos,
+	const void* 	buffer,
 	rt_size_t 		size)
 {
 	rt_err_t 					err_code;
@@ -391,7 +391,7 @@ static rt_size_t rt_iic_write (
 	{
 		ret = I2C_Transfer(iic->iic_device);
 	}
-	
+
 	if (ret != i2cTransferDone)
 	{
 		err_code = (rt_err_t)ret;
@@ -430,8 +430,8 @@ static rt_size_t rt_iic_write (
  *   Error code
  ******************************************************************************/
 static rt_err_t rt_iic_control (
-	rt_device_t 	dev, 
-	rt_uint8_t 		cmd, 
+	rt_device_t 	dev,
+	rt_uint8_t 		cmd,
 	void 			*args)
 {
 	 RT_ASSERT(dev != RT_NULL);
@@ -502,7 +502,7 @@ static rt_err_t rt_iic_control (
 					iic->rx_buffer->read_index = 0;
 					iic->rx_buffer->save_index = 0;
 				}
-			
+
 				/* Enable slave mode */
 				I2C_SlaveAddressSet(iic->iic_device, iic->address);
 				I2C_SlaveAddressMaskSet(iic->iic_device, 0xFF);
@@ -511,7 +511,7 @@ static rt_err_t rt_iic_control (
 				/* Enable interrupts */
 				I2C_IntEnable(iic->iic_device, I2C_IEN_ADDR | I2C_IEN_RXDATAV | I2C_IEN_SSTOP);
 				I2C_IntClear(iic->iic_device, _I2C_IFC_MASK);
-				
+
 				/* Enable I2Cn interrupt vector in NVIC */
 #ifdef RT_USING_IIC0
 				if (dev == &iic0.device)
@@ -574,20 +574,20 @@ static void rt_iic_timer(void *timeout)
  *	Configuration flags
  *
  * @param[in] iic
- *	Pointer to IIC device descriptor 
+ *	Pointer to IIC device descriptor
  *
  * @return
  *	Error code
  ******************************************************************************/
 rt_err_t rt_hw_iic_register(
-	rt_device_t		device, 
-	const char		*name, 
-	rt_uint32_t		flag, 
+	rt_device_t		device,
+	const char		*name,
+	rt_uint32_t		flag,
 	struct efm32_iic_device_t *iic)
 {
 	RT_ASSERT(device != RT_NULL);
 
-	if ((flag & RT_DEVICE_FLAG_DMA_TX) || (flag & RT_DEVICE_FLAG_DMA_RX) || 
+	if ((flag & RT_DEVICE_FLAG_DMA_TX) || (flag & RT_DEVICE_FLAG_DMA_RX) ||
 		(flag & RT_DEVICE_FLAG_INT_TX))
 	{
 		RT_ASSERT(0);
@@ -635,20 +635,20 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
 
 	if (status & I2C_IF_ADDR)
 	{
-		/* Address Match */ 
+		/* Address Match */
 		/* Indicating that reception is started */
 		temp = iic->iic_device->RXDATA & 0xFFUL;
 		if ((temp != 0x00) || (iic->state & IIC_STATE_BROADCAST))
 		{
 			iic->state |= IIC_STATE_RX_BUSY;
 		}
-	} 
+	}
 	else if (status & I2C_IF_RXDATAV)
 	{
 		if (iic->state & IIC_STATE_RX_BUSY)
 		{
 			rt_base_t level;
-			
+
 			/* disable interrupt */
 			level = rt_hw_interrupt_disable();
 
@@ -687,7 +687,7 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
 
 /***************************************************************************//**
  * @brief
- *	Initialize the specified IIC unit 
+ *	Initialize the specified IIC unit
  *
  * @details
  *
@@ -697,11 +697,11 @@ static void rt_hw_iic_slave_isr(rt_device_t dev)
  *	Unit number
  *
  * @param[in] location
- *	Pin location number 
+ *	Pin location number
  ******************************************************************************/
 static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 	struct efm32_iic_block 	*block,
-	rt_uint8_t 				unitNumber, 
+	rt_uint8_t 				unitNumber,
 	rt_uint8_t 				location)
 {
 	struct efm32_iic_device_t 	*iic;
@@ -737,7 +737,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		{
 		case 0:
 			iic->iic_device	= I2C0;
-			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;	
+			iicClock 		= (CMU_Clock_TypeDef)cmuClock_I2C0;
 			port_scl			= AF_I2C0_SCL_PORT(location);
 			pin_scl				= AF_I2C0_SCL_PIN(location);
 			port_sda			= AF_I2C0_SDA_PORT(location);
@@ -747,7 +747,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 #if (I2C_COUNT > 1)
 		case 1:
 			iic->iic_device	= I2C1;
-			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1; 
+			iicClock  		= (CMU_Clock_TypeDef)cmuClock_I2C1;
 			port_scl			= AF_I2C1_SCL_PORT(location);
 			pin_scl				= AF_I2C1_SCL_PIN(location);
 			port_sda			= AF_I2C1_SDA_PORT(location);
@@ -761,7 +761,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		rt_sprintf(name, "iic%d", unitNumber);
 
 		/* Enabling clock */
-		CMU_ClockEnable(iicClock, true);  
+		CMU_ClockEnable(iicClock, true);
 
 		/* Reset */
 		I2C_Reset(iic->iic_device);
@@ -803,7 +803,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		}
 
 		/* Initialize timer */
-		rt_timer_init(iic->timer, name, rt_iic_timer, &iic->timeout, 
+		rt_timer_init(iic->timer, name, rt_iic_timer, &iic->timeout,
 			IIC_TIMEOUT_PERIOD, RT_TIMER_FLAG_ONE_SHOT);
 
 		return iic;
@@ -813,7 +813,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 	{
 		rt_free(iic);
 	}
-	
+
 	iic_debug("IIC: Unit %d init failed!\n", unitNumber);
 	return RT_NULL;
 }

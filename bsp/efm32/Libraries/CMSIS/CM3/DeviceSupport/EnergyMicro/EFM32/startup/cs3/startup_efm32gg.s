@@ -16,7 +16,7 @@
  * they apply.
  *
  * Energy Micro release version
- * @version 2.2.2
+ * @version 2.3.0
  */
         .section ".cs3.interrupt_vector", "ax"
         .globl  __cs3_interrupt_vector_efm32g

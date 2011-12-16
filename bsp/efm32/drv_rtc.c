@@ -1,49 +1,49 @@
-/******************************************************************//**
- * @file 		drv_rtc.c
- * @brief 	RTC driver of RT-Thread RTOS for EFM32
+/***************************************************************************//**
+ * @file    drv_rtc.c
+ * @brief   RTC driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	Bernard, onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @author  Bernard, onelife
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file
+ *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2009-01-05	Bernard		the first version
- * 2010-12-27	onelife		Modify for EFM32
- * 2011-06-16	onelife		Modify init function for efm32lib v2 upgrading
- *********************************************************************/
- 
-/******************************************************************//**
+ * 2009-01-05   Bernard     the first version
+ * 2010-12-27   onelife     Modify for EFM32
+ * 2011-06-16   onelife     Modify init function for efm32lib v2 upgrading
+ * 2011-12-14   onelife     Move LFXO enabling routine to driver initialization
+ *  function (board.c)
+ ******************************************************************************/
+
+/***************************************************************************//**
  * @addtogroup efm32
  * @{
-*********************************************************************/
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "hdl_interrupt.h"
 #include "drv_rtc.h"
 
 #if defined(RT_USING_RTC)
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_RTC_DEBUG
 #define rtc_debug(format,args...) 			rt_kprintf(format, ##args)
 #else
 #define rtc_debug(format,args...)
 #endif
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 static struct rt_device rtc;
 static rt_uint32_t rtc_time;
 
-/* Private function prototypes ---------------------------------------------------*/
-static void startLfxoForRtc(void);
-
-/* Private functions ------------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
     if (dev->rx_indicate != RT_NULL)
@@ -55,34 +55,34 @@ static rt_err_t rt_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 }
 
 static rt_size_t rt_rtc_read(
-	rt_device_t 	dev, 
-	rt_off_t 		pos, 
-	void* 			buffer, 
+	rt_device_t 	dev,
+	rt_off_t 		pos,
+	void* 			buffer,
 	rt_size_t 		size)
 {
     return 0;
 }
 
-/******************************************************************//**
-* @brief
-*	Configure RTC device
-*
-* @details
-*
-* @note
-*
-* @param[in] dev
-*	Pointer to device descriptor
-*
-* @param[in] cmd
-*	RTC control command
-*
-* @param[in] args
-*	Arguments
-*
-* @return
-*	Error code
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *  Configure RTC device
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] dev
+ *  Pointer to device descriptor
+ *
+ * @param[in] cmd
+ *  RTC control command
+ *
+ * @param[in] args
+ *  Arguments
+ *
+ * @return
+ *  Error code
+ ******************************************************************************/
 static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
@@ -108,14 +108,14 @@ static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- *	 RTC counter overflow interrupt handler
+ *  RTC counter overflow interrupt handler
  *
  * @details
  *
  * @note
- *********************************************************************/
+ ******************************************************************************/
 void rt_hw_rtc_isr(rt_device_t device)
 {
 	if (RTC->IF & RTC_IFC_OF)
@@ -126,29 +126,29 @@ void rt_hw_rtc_isr(rt_device_t device)
 	RTC->IFC = _RTC_IFC_MASK;
 }
 
-/******************************************************************//**
-* @brief
-*	Register RTC device
-*
-* @details
-*
-* @note
-*
-* @param[in] device
-*	Pointer to device descriptor
-*
-* @param[in] name
-*	Device name
-*
-* @param[in] flag
-*	Configuration flags
-*
-* @return
-*	Error code
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *  Register RTC device
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] device
+ *  Pointer to device descriptor
+ *
+ * @param[in] name
+ *  Device name
+ *
+ * @param[in] flag
+ *  Configuration flags
+ *
+ * @return
+ *  Error code
+ ******************************************************************************/
 rt_err_t rt_hw_rtc_register(
-	rt_device_t		device, 
-	const char		*name, 
+	rt_device_t		device,
+	const char		*name,
 	rt_uint32_t		flag)
 {
 	RT_ASSERT(device != RT_NULL);
@@ -169,18 +169,18 @@ rt_err_t rt_hw_rtc_register(
 }
 
 
-/******************************************************************//**
-* @brief
-*	Initialize all RTC module related hardware and register RTC device to kernel
-*
-* @details
-*
-* @note
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *  Initialize all RTC module related hardware and register RTC device to kernel
+ *
+ * @details
+ *
+ * @note
+ ******************************************************************************/
 void rt_hw_rtc_init(void)
 {
 	rt_uint32_t reset;
-	
+
 	reset = RMU_ResetCauseGet();
 
 	// TODO: What is the current reset mode?
@@ -198,9 +198,10 @@ void rt_hw_rtc_init(void)
         rt_kprintf("rtc is not configured\n");
         rt_kprintf("please configure with set_date and set_time\n");
 
-		/* Configuring clocks in the Clock Management Unit (CMU) */
-		startLfxoForRtc();
-		
+		/* Configuring clock */
+        CMU_ClockDivSet(cmuClock_RTC,cmuClkDiv_32768);
+        CMU_ClockEnable(cmuClock_RTC, true);
+
 		/* Initialize and enable RTC */
 		RTC_Reset();
 		RTC_Init(&rtcInit);
@@ -224,29 +225,9 @@ void rt_hw_rtc_init(void)
 	rt_hw_rtc_register(&rtc, RT_RTC_NAME, EFM32_NO_DATA);
 }
 
-/******************************************************************//**
-* @brief
-*	Start LFXO for RTC
-*
-* @details
-*    Starts the LFXO and routes it to the RTC. RTC clock is prescaled to save energy.
-*
-* @note
-*********************************************************************/
-static void startLfxoForRtc(void)
-{
-	/* Starting LFXO and waiting until it is stable */
-	CMU_OscillatorEnable(cmuOsc_LFXO, true, true);
-
-	/* Routing the LFXO clock to the RTC */
-	CMU_ClockDivSet(cmuClock_RTC,cmuClkDiv_32768);
-	CMU_ClockSelectSet(cmuClock_LFA,cmuSelect_LFXO);
-	CMU_ClockEnable(cmuClock_RTC, true);
-}
-
-/*********************************************************************
-* 	Export to FINSH
-*********************************************************************/
+/***************************************************************************//**
+ *  Export to FINSH
+ ******************************************************************************/
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include <time.h>
@@ -343,6 +324,6 @@ FINSH_FUNCTION_EXPORT(list_date, show date and time.)
 
 #endif
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

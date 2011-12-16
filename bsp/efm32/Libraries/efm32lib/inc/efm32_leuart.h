@@ -3,7 +3,7 @@
  * @brief Low Energy Universal Asynchronous Receiver/Transmitter (LEUART)
  *   peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.2.2
+ * @version 2.3.0
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>

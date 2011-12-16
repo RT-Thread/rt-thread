@@ -1,18 +1,21 @@
 /***************************************************************************//**
- * @file 		hdl_interrupt.c
- * @brief 	USART driver of RT-Thread RTOS for EFM32
+ * @file    hdl_interrupt.c
+ * @brief   Interrupt handler of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	onelife
- * @version 	0.4 beta
+ * @author  onelife
+ * @version 0.4 beta
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2010-12-29	onelife		Initial creation for EFM32
- * 2011-07-12	onelife		Disable interrupts in GPIO handler
+ * Date         Author      Notes
+ * 2010-12-29   onelife     Initial creation for EFM32
+ * 2011-07-12   onelife     Disable interrupts in GPIO handler
+ * 2011-12-09	onelife		Add giant gecko support
+ * 2011-12-09   onelife     Add UART module support
+ * 2011-12-09   onelife     Add LEUART module support
  ******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
@@ -39,7 +42,8 @@ efm32_irq_hook_t timerCbTable[TIMER_COUNT] 		= {RT_NULL};
 efm32_irq_hook_t rtcCbTable[RTC_COUNT] 			= {RT_NULL};
 efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
 efm32_irq_hook_t acmpCbTable[ACMP_COUNT] 		= {RT_NULL};
-efm32_irq_hook_t usartCbTable[USART_COUNT * 2] 	= {RT_NULL};
+efm32_irq_hook_t usartCbTable[USART_COUNT * 2 + UART_COUNT * 2] = {RT_NULL};
+efm32_irq_hook_t leuartCbTable[LEUART_COUNT]    = {RT_NULL};
 efm32_irq_hook_t iicCbTable[I2C_COUNT] 			= {RT_NULL};
 
 /* Private function prototypes -----------------------------------------------*/
@@ -147,10 +151,10 @@ void SysTick_Handler(void)
 }
 
 /*******************************************************************************
- *                 STM32F10x Peripherals Interrupt Handlers 
- *  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the 
- *  available peripheral interrupt handler's name please refer to the startup 
- *  file (startup_stm32f10x_xx.s). 
+ *                 STM32F10x Peripherals Interrupt Handlers
+ *  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the
+ *  available peripheral interrupt handler's name please refer to the startup
+ *  file (startup_stm32f10x_xx.s).
 /******************************************************************************/
 
 /***************************************************************************//**
@@ -158,7 +162,7 @@ void SysTick_Handler(void)
  * 	Common DMA interrupt handler
  *
  * @details
- * 	
+ *
  * @note
  *
  ******************************************************************************/
@@ -250,7 +254,7 @@ void RTC_IRQHandler(void)
 			(rtcCbTable[0].cbFunc)(rtcCbTable[0].userPtr);
 		}
 	}
-	
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -260,7 +264,7 @@ void RTC_IRQHandler(void)
  * 	Common even number GPIO interrupt handler
  *
  * @details
- * 	
+ *
  * @note
  *
  ******************************************************************************/
@@ -298,7 +302,7 @@ void GPIO_EVEN_IRQHandler(void)
  * 	Common odd number GPIO interrupt handler
  *
  * @details
- * 	
+ *
  * @note
  *
  ******************************************************************************/
@@ -535,6 +539,158 @@ void USART2_RX_IRQHandler(void)
 
 /***************************************************************************//**
  * @brief
+ * 	Common UART0 TX interrupt handler
+ *
+ * @details
+ * 	This function handles UART0 TX complete interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void UART0_TX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+	if (UART0->IF & UART_IF_TXC)
+	{
+		/* invoke callback function */
+		if (usartCbTable[USART_COUNT * 2].cbFunc != RT_NULL)
+		{
+			(usartCbTable[USART_COUNT * 2].cbFunc)(usartCbTable[USART_COUNT * 2].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(UART0->IFC), _UART_IF_TXC_SHIFT, 0x1UL);
+	}
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+/***************************************************************************//**
+ * @brief
+ * 	Common UART0 RX interrupt handler
+ *
+ * @details
+ * 	This function handles UART0 RX data valid interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void UART0_RX_IRQHandler(void)
+{
+	if (UART0->IF & UART_IF_RXDATAV)
+	{
+		/* invoke callback function */
+		if (usartCbTable[USART_COUNT * 2 + 1].cbFunc != RT_NULL)
+		{
+			(usartCbTable[USART_COUNT * 2 + 1].cbFunc)(usartCbTable[USART_COUNT * 2 + 1].userPtr);
+		}
+	}
+}
+
+#if defined(EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ * 	Common UART1 TX interrupt handler
+ *
+ * @details
+ * 	This function handles UART1 TX complete interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void UART1_TX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+	if (UART1->IF & UART_IF_TXC)
+	{
+		/* invoke callback function */
+		if (usartCbTable[USART_COUNT * 2 + 2].cbFunc != RT_NULL)
+		{
+			(usartCbTable[USART_COUNT * 2 + 2].cbFunc)(usartCbTable[USART_COUNT * 2 + 2].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(UART1->IFC), _UART_IF_TXC_SHIFT, 0x1UL);
+	}
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+/***************************************************************************//**
+ * @brief
+ * 	Common UART1 RX interrupt handler
+ *
+ * @details
+ * 	This function handles UART1 RX data valid interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void UART1_RX_IRQHandler(void)
+{
+	if (UART1->IF & UART_IF_RXDATAV)
+	{
+		/* invoke callback function */
+		if (usartCbTable[USART_COUNT * 2 + 3].cbFunc != RT_NULL)
+		{
+			(usartCbTable[USART_COUNT * 2 + 3].cbFunc)(usartCbTable[USART_COUNT * 2 + 3].userPtr);
+		}
+	}
+}
+#endif
+
+/***************************************************************************//**
+ * @brief
+ * 	Common LEUART0 interrupt handler
+ *
+ * @details
+ * 	This function handles LEUART0 interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void LEUART0_IRQHandler(void)
+{
+	if (LEUART0->IF & LEUART_IF_RXDATAV)
+	{
+		/* invoke callback function */
+		if (leuartCbTable[0].cbFunc != RT_NULL)
+		{
+			(leuartCbTable[0].cbFunc)(leuartCbTable[0].userPtr);
+		}
+	}
+}
+
+/***************************************************************************//**
+ * @brief
+ * 	Common LEUART1 interrupt handler
+ *
+ * @details
+ * 	This function handles LEUART1 interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void LEUART1_IRQHandler(void)
+{
+	if (LEUART1->IF & LEUART_IF_RXDATAV)
+	{
+		/* invoke callback function */
+		if (leuartCbTable[1].cbFunc != RT_NULL)
+		{
+			(leuartCbTable[1].cbFunc)(leuartCbTable[1].userPtr);
+		}
+	}
+}
+
+/***************************************************************************//**
+ * @brief
  * 	Common IIC0 interrupt handler
  *
  * @details
@@ -564,7 +720,7 @@ void I2C0_IRQHandler(void)
  * 	EFM32 common interrupt handlers register function
  *
  * @details
- * 	
+ *
  * @note
  *
  ******************************************************************************/
@@ -601,6 +757,11 @@ void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 		usartCbTable[hook->unit].cbFunc = hook->cbFunc;
 		usartCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
+
+    case efm32_irq_type_leuart:
+        leuartCbTable[hook->unit].cbFunc = hook->cbFunc;
+        leuartCbTable[hook->unit].userPtr = hook->userPtr;
+        break;
 
 	case efm32_irq_type_iic:
 		iicCbTable[hook->unit].cbFunc = hook->cbFunc;
