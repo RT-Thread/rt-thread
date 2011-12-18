@@ -16,7 +16,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-//#include <AT91SAM7S.h>
 #include "board.h"
 
 #ifdef RT_USING_FINSH
@@ -25,7 +24,6 @@ extern void finsh_system_init(void);
 #endif
 
 extern void rt_hw_led_flash(void);
-
 
 /*@{*/
 #ifdef __CC_ARM
@@ -38,7 +36,7 @@ extern unsigned char __bss_end;
 #endif
 
 extern void rt_hw_interrupt_init(void);
-extern int  rt_application_init(void);
+extern int rt_application_init(void);
 #ifdef RT_USING_DEVICE
 extern rt_err_t rt_hw_serial_init(void);
 #endif
@@ -48,73 +46,73 @@ extern rt_err_t rt_hw_serial_init(void);
  */
 void rtthread_startup(void)
 {
-	/* init hardware interrupt */
-	rt_hw_interrupt_init();
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* init board */
-	rt_hw_board_init();
-	
-	rt_show_version();
+    /* init board */
+    rt_hw_board_init();
 
-	/* init tick */
-	rt_system_tick_init();
+    rt_show_version();
 
-	/* init kernel object */
-	rt_system_object_init();
+    /* init tick */
+    rt_system_tick_init();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init kernel object */
+    rt_system_object_init();
+
+    /* init timer system */
+    rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x204000);
+    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x204000);
 #elif __ICCARM__
     rt_system_heap_init(__segment_end("HEAP"), (void*)0x204000);
 #else
-	rt_system_heap_init((void*)&__bss_end, (void*)(&__bss_end+0x4000));
+    rt_system_heap_init((void*) &__bss_end, (void*) (&__bss_end + 0x4000));
 #endif
 #endif
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
 #ifdef RT_USING_HOOK /* if the hook is used */
-	/* set idle thread hook */
-	rt_thread_idle_sethook(rt_hw_led_flash);
+    /* set idle thread hook */
+    rt_thread_idle_sethook(rt_hw_led_flash);
 #endif
 
-//#ifdef RT_USING_DEVICE
-	/* init hardware serial device */
-	rt_hw_serial_init();
-	/* init all device */
-	rt_device_init_all();
-//#endif
+#ifdef RT_USING_DEVICE
+    /* init hardware serial device */
+    rt_hw_serial_init();
+    /* init all device */
+    rt_device_init_all();
+#endif
 
-	/* init application */
-	rt_application_init();
+    /* init application */
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("uart1");
+    /* init finsh */
+    finsh_system_init();
+    finsh_set_device("uart1");
 #endif
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return;
 }
 
-int main (void)
+int main(void)
 {
-	/* invoke rtthread_startup */
-	rtthread_startup();
-	
-	return 0;
+    /* invoke rtthread_startup */
+    rtthread_startup();
+
+    return 0;
 }
 
 /*@}*/

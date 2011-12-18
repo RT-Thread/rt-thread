@@ -13,7 +13,7 @@
  *
  */
 
-#include "microbalze.inc"
+#include "microblaze.inc"
 
 	.text
     .globl		rt_interrupt_enter

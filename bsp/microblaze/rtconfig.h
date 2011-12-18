@@ -16,7 +16,6 @@
 /* Tick per Second*/
 #define RT_TICK_PER_SECOND	100
 
-
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
 /* #define RT_THREAD_DEBUG */
@@ -88,7 +87,6 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 8192
 #define RT_USING_TC
-
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library*/
