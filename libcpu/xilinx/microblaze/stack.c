@@ -48,7 +48,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     *stk-- = 0; /* r19 */
     *stk-- = 0; /* r18 */
     *stk-- = 0; /* r17 */
-    *stk-- = (unsigned long) texit; /* r15 = task return address*/
+    *stk-- = (unsigned long) texit - 8; /* r15 = task return address*/
     *stk-- = (unsigned long) tentry; /* r14 = entry address*/
     *stk-- = (unsigned long) &_SDA_BASE_; /* r13 */
     *stk-- = 0; /* r12 */
