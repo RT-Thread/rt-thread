@@ -67,6 +67,7 @@ void tc_thread_entry(void* parameter)
 		}
 	}
 
+	rt_kprintf("RT-Thread TestCase Running Done!\n");
 	/* detach tc semaphore */
 	rt_sem_detach(&_tc_sem);
 }

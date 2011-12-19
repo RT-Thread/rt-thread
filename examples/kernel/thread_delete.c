@@ -20,8 +20,19 @@ static void thread1_entry(void* parameter)
 	while (1)
 	{
 		/* 线程1采用低优先级运行，一直打印计数值 */
-		rt_kprintf("thread count: %d\n", count ++);
+		// rt_kprintf("thread count: %d\n", count ++);
+		count ++;
 	}
+}
+static void thread1_cleanup(struct rt_thread *tid)
+{
+	if (tid != tid1)
+	{
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
+		return ;
+	}
+	rt_kprintf("thread1 end\n");
+	tid1 = RT_NULL;
 }
 
 /* 线程2的入口函数 */
@@ -37,19 +48,29 @@ static void thread2_entry(void* parameter)
 	 * 队列
 	 */
 	rt_thread_delete(tid1);
-	tid1 = RT_NULL;
 
 	/*
 	 * 线程2继续休眠10个OS Tick然后退出，线程2休眠后应切换到idle线程
 	 * idle线程将执行真正的线程1控制块和线程栈的删除
 	 */
 	rt_thread_delay(10);
+}
 
+static void thread2_cleanup(struct rt_thread *tid)
+{
 	/*
-	 * 线程2运行结束后也将自动被删除(线程控制块和线程栈依然在idle线
+	 * 线程2运行结束后也将自动被删除(线程控制块和线程栈在idle线
 	 * 程中释放)
 	 */
+
+	if (tid != tid2)
+	{
+		tc_stat(TC_STAT_END | TC_STAT_FAILED);
+		return ;
+	}
+	rt_kprintf("thread2 end\n");
 	tid2 = RT_NULL;
+	tc_done(TC_STAT_PASSED);
 }
 
 /* 线程删除示例的初始化 */
@@ -60,7 +81,10 @@ int thread_delete_init()
 		thread1_entry, RT_NULL,   /* 入口是thread1_entry，参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid1 != RT_NULL) /* 如果获得线程控制块，启动这个线程 */
+	{
+		tid1->cleanup = thread1_cleanup;
 		rt_thread_startup(tid1);
+	}
 	else
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
@@ -69,7 +93,10 @@ int thread_delete_init()
 		thread2_entry, RT_NULL,   /* 入口是thread2_entry，参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
 	if (tid2 != RT_NULL) /* 如果获得线程控制块，启动这个线程 */
+	{
+		tid2->cleanup = thread2_cleanup;
 		rt_thread_startup(tid2);
+	}
 	else
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
@@ -83,10 +110,16 @@ static void _tc_cleanup()
 	rt_enter_critical();
 
 	/* delete thread */
-	if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
+	if (tid1 != RT_NULL)
+	{
+		rt_kprintf("tid1 is bad\n");
 		tc_stat(TC_STAT_FAILED);
-	if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
+	}
+	if (tid2 != RT_NULL)
+	{
+		rt_kprintf("tid2 is bad\n");
 		tc_stat(TC_STAT_FAILED);
+	}
 
 	/* unlock scheduler */
 	rt_exit_critical();
@@ -98,7 +131,7 @@ int _tc_thread_delete()
 	tc_cleanup(_tc_cleanup);
 	thread_delete_init();
 
-	return 100;
+	return 25;
 }
 FINSH_FUNCTION_EXPORT(_tc_thread_delete, a thread delete example);
 #else

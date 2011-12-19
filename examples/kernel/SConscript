@@ -31,9 +31,9 @@ timer_timeout.c
 heap_malloc.c
 heap_realloc.c
 memp_simple.c
+tc_sample.c
 """)
-CPPDEFINES = ['RT_USING_TC']
 
-group = DefineGroup('examples', src, depend = [''], CPPDEFINES = CPPDEFINES)
+group = DefineGroup('examples', src, depend = ['RT_USING_TC'])
 
 Return('group')

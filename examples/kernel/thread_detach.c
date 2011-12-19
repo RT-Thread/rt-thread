@@ -91,6 +91,9 @@ static void _tc_cleanup()
 
 	/* 调度器解锁 */
 	rt_exit_critical();
+
+	/* 设置TestCase状态 */
+	tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_detach()
@@ -100,7 +103,7 @@ int _tc_thread_detach()
 	thread_detach_init();
 
 	/* 返回TestCase运行的最长时间 */
-	return 100;
+	return 25;
 }
 /* 输出函数命令到finsh shell中 */
 FINSH_FUNCTION_EXPORT(_tc_thread_detach, a static thread example);

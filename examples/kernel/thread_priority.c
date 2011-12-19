@@ -28,7 +28,7 @@ static void thread2_entry(void* parameter)
 	tick = rt_tick_get();
 	while (1)
 	{
-		if (rt_tick_get() - tick >= 100)
+		if (rt_tick_get() - tick >= 50)
 		{
 			if (count == 0)
 				tc_done(TC_STAT_FAILED);

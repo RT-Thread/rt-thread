@@ -86,7 +86,7 @@ int _tc_thread_yield()
 	thread_yield_init();
 
 	/* 返回TestCase运行的最长时间 */
-	return 100;
+	return 30;
 }
 /* 输出函数命令到finsh shell中 */
 FINSH_FUNCTION_EXPORT(_tc_thread_yield, a thread yield example);

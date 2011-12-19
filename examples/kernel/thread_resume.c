@@ -25,6 +25,17 @@ static void thread1_entry(void* parameter)
 	/* 当线程1被唤醒时 */
 	rt_kprintf("thread1 resumed\n");
 }
+static void thread_cleanup(rt_thread_t tid)
+{
+	if (tid == tid1)
+	{
+		tid1 = RT_NULL;
+	}
+	if (tid == tid2)
+	{
+		tid = RT_NULL;
+	}
+}
 
 /* 线程2入口 */
 static void thread2_entry(void* parameter)
@@ -34,6 +45,7 @@ static void thread2_entry(void* parameter)
 
 	/* 唤醒线程1 */
 	rt_thread_resume(tid1);
+	rt_kprintf("thread2: to resume thread1\n");
 
 	/* 延时10个OS Tick */
 	rt_thread_delay(10);
@@ -48,7 +60,10 @@ int thread_resume_init()
 		thread1_entry, RT_NULL, /* 线程入口是thread1_entry, 入口参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
 	if (tid1 != RT_NULL)
+	{
+		tid1->cleanup = thread_cleanup;
 		rt_thread_startup(tid1);
+	}
 	else
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
@@ -57,7 +72,10 @@ int thread_resume_init()
 		thread2_entry, RT_NULL, /* 线程入口是thread2_entry, 入口参数是RT_NULL */
 		THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
 	if (tid2 != RT_NULL)
+	{
+		tid2->cleanup = thread_cleanup;
 		rt_thread_startup(tid2);
+	}
 	else
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
@@ -90,7 +108,7 @@ int _tc_thread_resume()
 	thread_resume_init();
 
 	/* 返回TestCase运行的最长时间 */
-	return 100;
+	return 25;
 }
 /* 输出函数命令到finsh shell中 */
 FINSH_FUNCTION_EXPORT(_tc_thread_resume, a thread resume example);

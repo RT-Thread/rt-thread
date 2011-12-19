@@ -34,6 +34,7 @@ static void thread2_entry(void* parameter)
 	rt_thread_delay(10);
 
 	/* 线程2自动退出 */
+	tid2 = RT_NULL;
 }
 
 int thread_suspend_init()
