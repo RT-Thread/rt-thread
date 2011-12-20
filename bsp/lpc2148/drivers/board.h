@@ -19,6 +19,11 @@
 #define CCLK	60000000	/* Fosc = 12MHz, M = 5 */
 #define PCLK	15000000	/* CCLK/4, use default */
 
+/* RT_USING_UART */
+#define RT_USING_UART1
+#define RT_USING_UART2
+#define RT_UART_RX_BUFFER_SIZE	64
+
 void rt_hw_board_init(void);
 
 #ifdef RT_USING_FINSH

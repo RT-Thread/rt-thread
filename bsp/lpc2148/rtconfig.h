@@ -15,10 +15,13 @@
 #define RT_TICK_PER_SECOND	100
 
 /* SECTION: RT_DEBUG */
-/* Thread Debug*/
+/* Thread Debug */
+#define RT_DEBUG
 /* #define RT_THREAD_DEBUG */
 
-/* Using Hook*/
+#define RT_USING_OVERFLOW_CHECK
+
+/* Using Hook */
 #define RT_USING_HOOK
 
 /* SECTION: IPC */

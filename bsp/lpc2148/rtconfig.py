@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='lpc214x'
-CROSS_TOOL='gcc'
+CROSS_TOOL='keil'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -28,7 +28,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi-s'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2148.map,-cref,-u,_start -T lpc2148_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc214x.map,-cref,-u,_start -T lpc2148_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -76,11 +76,12 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' --cpu DARMSTM --thumb'
+    DEVICE = ' --cpu DARMP1 --thumb'
 
     CFLAGS = ''
     AFLAGS = ''
     LFLAGS = ' --config lpc214x_flash.icf'
 
     EXEC_PATH += '/arm/bin/'
+    RT_USING_MINILIBC = False
     POST_ACTION = ''

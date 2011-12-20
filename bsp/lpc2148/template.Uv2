@@ -31,14 +31,14 @@ Options 1,0,0  // Target 'rtthread-lpc2148'
  EnvReg (Philips\)
  OrgReg (Philips\)
  TgStat=16
- OutDir (.\obj\)
+ OutDir (.\build\)
  OutName (rtthread-lpc2148)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=1
- LstDir (.\obj\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0
