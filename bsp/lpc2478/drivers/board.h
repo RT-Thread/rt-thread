@@ -15,6 +15,10 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+/* RT_USING_UART */
+#define RT_USING_UART1
+#define RT_USING_UART2
+#define RT_UART_RX_BUFFER_SIZE	64
 void rt_hw_board_init(void);
 void rt_hw_led_set(rt_uint32_t led);
 void rt_hw_led_flash(void);

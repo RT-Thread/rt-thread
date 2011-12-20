@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='lpc24xx'
-CROSS_TOOL='gcc'
+CROSS_TOOL='keil'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -9,12 +9,16 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
+elif CROSS_TOOL == 'iar':
+	PLATFORM 	= 'iar'
+	EXEC_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0/arm/bin'
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -23,8 +27,8 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=arm7tdmi'
-    CFLAGS = DEVICE
+    DEVICE = ' -mcpu=arm7tdmi-s'
+    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -T lpc2478_rom.lds'
 
@@ -42,6 +46,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'    
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
