@@ -10,6 +10,7 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2009-01-20     Bernard      first version
+; * 2011-07-22     Bernard      added thumb mode porting
 ; */
 
 NOINT	EQU		0xc0	; disable interrupt in psr
