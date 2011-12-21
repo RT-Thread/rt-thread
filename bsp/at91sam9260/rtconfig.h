@@ -95,7 +95,8 @@
 #define RT_USING_DFS
 #define RT_USING_DFS_ELMFAT
 /* use long file name feature 			*/
-#define RT_DFS_ELM_USE_LFN			1
+#define RT_DFS_ELM_USE_LFN			2
+#define RT_DFS_ELM_REENTRANT
 /* the max number of file length 		*/
 #define RT_DFS_ELM_MAX_LFN			128
 /* #define RT_USING_DFS_YAFFS2 */
@@ -155,7 +156,7 @@
 #define RT_LWIP_TCP_SND_BUF	1024*10
 
 /* TCP receive window. */
-#define RT_LWIP_TCP_WND	1024
+#define RT_LWIP_TCP_WND	1024*8
 
 /* Enable SNMP protocol */
 /* #define RT_LWIP_SNMP */
