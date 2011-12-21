@@ -24,7 +24,6 @@
 static rt_tick_t rt_tick;
 
 extern void rt_timer_check(void);
-extern void rt_timer_switch(void);
 
 /**
  * This function will init system tick and set it to zero.
