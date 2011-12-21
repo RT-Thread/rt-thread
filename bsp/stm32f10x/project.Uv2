@@ -32,8 +32,8 @@ File 2,1,<..\..\src\scheduler.c><scheduler.c>
 File 2,1,<..\..\src\slab.c><slab.c>
 File 2,1,<..\..\src\thread.c><thread.c>
 File 2,1,<..\..\src\timer.c><timer.c>
-File 3,1,<..\..\libcpu\arm\stm32\cpuport.c><cpuport.c>
-File 3,2,<..\..\libcpu\arm\stm32\context_rvds.S><context_rvds.S>
+File 3,1,<..\..\libcpu\arm\cortex-m3\cpuport.c><cpuport.c>
+File 3,2,<..\..\libcpu\arm\cortex-m3\context_rvds.S><context_rvds.S>
 File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 3,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>

@@ -14,7 +14,7 @@
 ; */
 
 ;/**
-; * @addtogroup STM32
+; * @addtogroup cortex-m3
 ; */
 ;/*@{*/
 

@@ -511,34 +511,6 @@
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>24</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\libcpu\arm\stm32\cpuport.c</PathWithFileName>
-      <FilenameWithoutPath>cpuport.c</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>25</FileNumber>
-      <FileType>2</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\libcpu\arm\stm32\context_rvds.S</PathWithFileName>
-      <FilenameWithoutPath>context_rvds.S</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
       <FileNumber>26</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -578,6 +550,34 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\common\showmem.c</PathWithFileName>
       <FilenameWithoutPath>showmem.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>2</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\libcpu\arm\cortex-m3\context_rvds.S</PathWithFileName>
+      <FilenameWithoutPath>context_rvds.S</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\libcpu\arm\cortex-m3\cpuport.c</PathWithFileName>
+      <FilenameWithoutPath>cpuport.c</FilenameWithoutPath>
     </File>
   </Group>
 
@@ -1259,8 +1259,8 @@
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
-      <GroupNumber>0</GroupNumber>
-      <FileNumber>0</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>76</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -1273,8 +1273,8 @@
       <FilenameWithoutPath>dfs.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>0</GroupNumber>
-      <FileNumber>0</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>77</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -1287,8 +1287,8 @@
       <FilenameWithoutPath>dfs_file.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>0</GroupNumber>
-      <FileNumber>0</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>78</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -1301,8 +1301,8 @@
       <FilenameWithoutPath>dfs_fs.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>0</GroupNumber>
-      <FileNumber>0</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>79</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -1315,46 +1315,5 @@
       <FilenameWithoutPath>dfs_posix.c</FilenameWithoutPath>
     </File>
   </Group>
-
-  <MDIGroups>
-    <Orientation>1</Orientation>
-    <ActiveMDIGroup>0</ActiveMDIGroup>
-    <MDIGroup>
-      <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
-      <Documents>
-        <Doc>
-          <Name>.\application.c</Name>
-          <ColumnNumber>50</ColumnNumber>
-          <TopLine>25</TopLine>
-          <CurrentLine>26</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\board.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>65</TopLine>
-          <CurrentLine>65</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\stm32f20x_it.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>79</TopLine>
-          <CurrentLine>80</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\sdio_sd.c</Name>
-          <ColumnNumber>27</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>15</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\startup.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>102</TopLine>
-          <CurrentLine>108</CurrentLine>
-        </Doc>
-      </Documents>
-    </MDIGroup>
-  </MDIGroups>
 
 </ProjectOpt>

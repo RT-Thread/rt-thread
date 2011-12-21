@@ -1872,10 +1872,10 @@
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\stm32\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
