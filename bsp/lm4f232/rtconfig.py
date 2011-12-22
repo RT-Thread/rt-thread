@@ -54,10 +54,10 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
+    DEVICE = ' --device DLM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+    LFLAGS = DEVICE + ' --ro-base 0x00000000 --entry 0x00000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --info sizes --info totals --info unused --info veneers --list rtthread-lm4f.map  '
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
