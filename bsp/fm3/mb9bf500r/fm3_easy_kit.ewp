@@ -30,7 +30,7 @@
         <option>
           <name>Variant</name>
           <version>18</version>
-          <state>0</state>
+          <state>37</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state>MB9BF500R	Fujitsu MB9BF500R</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
         <option>
           <name>GFPUCoreSlave</name>
           <version>18</version>
-          <state>0</state>
+          <state>37</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
@@ -196,7 +196,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state></state>
+          <state>Pa050</state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -1743,6 +1743,9 @@
       <name>$PROJ_DIR$\..\CMSIS\core_cm3.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\CMSIS\start_iar.S</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\CMSIS\system_mb9bf50x.c</name>
     </file>
   </group>
@@ -1753,9 +1756,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\CMSIS\start_iar.S</name>
     </file>
   </group>
   <group>
