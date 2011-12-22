@@ -23,9 +23,6 @@
 	SECTION	CSTACK:DATA:NOROOT(3)
 	SECTION	.icode:CODE:NOROOT(2)
 
-	IMPORT	rt_hw_hard_fault
-	IMPORT	rt_hw_pend_sv
-	IMPORT	rt_hw_timer_handler
 #ifdef RT_USING_UART2   
 	IMPORT	MFS2RX_IRQHandler
 #endif
@@ -60,7 +57,7 @@ __vector_table
 	DCD     __iar_program_start
 	
 	DCD     NMI_Handler               ; NMI Handler
-	DCD     rt_hw_hard_fault          ; Hard Fault Handler
+	DCD     HardFault_Handler         ; Hard Fault Handler
 	DCD     MemManage_Handler         ; MPU Fault Handler
 	DCD     BusFault_Handler          ; Bus Fault Handler
 	DCD     UsageFault_Handler        ; Usage Fault Handler
@@ -71,8 +68,8 @@ __vector_table
 	DCD     SVC_Handler               ; SVCall Handler
 	DCD     DebugMon_Handler          ; Debug Monitor Handler
 	DCD     0                         ; Reserved
-	DCD     rt_hw_pend_sv             ; PendSV Handler
-	DCD     rt_hw_timer_handler       ; SysTick Handler
+	DCD     PendSV_Handler            ; PendSV Handler
+	DCD     SysTick_Handler           ; SysTick Handler
 	
 	; External Interrupts
 	DCD     CSV_IRQHandler            ; Clock Super Visor
@@ -138,6 +135,10 @@ __vector_table
 	SECTION .text:CODE:REORDER(1)
 NMI_Handler
 	B NMI_Handler
+	PUBWEAK HardFault_Handler
+	SECTION .text:CODE:REORDER(1)
+HardFault_Handler
+	B HardFault_Handler
 	PUBWEAK MemManage_Handler
 	SECTION .text:CODE:REORDER(1)
 MemManage_Handler
@@ -158,6 +159,14 @@ SVC_Handler
 	SECTION .text:CODE:REORDER(1)
 DebugMon_Handler
 	B DebugMon_Handler
+	PUBWEAK PendSV_Handler
+	SECTION .text:CODE:REORDER(1)
+PendSV_Handler
+	B PendSV_Handler
+	PUBWEAK SysTick_Handler
+	SECTION .text:CODE:REORDER(1)
+SysTick_Handler
+	B SysTick_Handler
 	PUBWEAK CSV_IRQHandler
 	SECTION .text:CODE:REORDER(1)
 CSV_IRQHandler

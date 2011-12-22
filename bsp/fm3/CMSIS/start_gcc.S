@@ -116,7 +116,7 @@ g_pfnVectors:
   .word  Initial_spTop
   .word  Reset_Handler
   .word  NMI_Handler
-  .word  rt_hw_hard_fault
+  .word  HardFault_Handler
   .word  MemManage_Handler
   .word  BusFault_Handler
   .word  UsageFault_Handler
@@ -127,8 +127,8 @@ g_pfnVectors:
   .word  SVC_Handler
   .word  DebugMon_Handler
   .word  0
-  .word  rt_hw_pend_sv
-  .word  rt_hw_timer_handler
+  .word  PendSV_Handler
+  .word  SysTick_Handler
   
   .word  CSV_IRQHandler
   .word  SWDT_IRQHandler
@@ -189,7 +189,10 @@ g_pfnVectors:
     
   .weak  NMI_Handler
   .thumb_set NMI_Handler,Default_Handler
-  
+
+  .weak  HardFault_Handler
+  .thumb_set HardFault_Handler,Default_Handler
+    
   .weak  MemManage_Handler
   .thumb_set MemManage_Handler,Default_Handler
   
@@ -205,6 +208,12 @@ g_pfnVectors:
   .weak  DebugMon_Handler
   .thumb_set DebugMon_Handler,Default_Handler
 
+  .weak  PendSV_Handler
+  .thumb_set PendSV_Handler,Default_Handler
+  
+  .weak  SysTick_Handler
+  .thumb_set SysTick_Handler,Default_Handler
+    
   .weak  CSV_IRQHandler
   .thumb_set CSV_IRQHandler,Default_Handler
 

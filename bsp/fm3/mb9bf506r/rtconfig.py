@@ -1,6 +1,6 @@
 # toolchains options
 ARCH='arm'
-CPU='fm3'
+CPU='cortex-m3'
 CROSS_TOOL='gcc'
 
 # cross_tool provides the cross compiler

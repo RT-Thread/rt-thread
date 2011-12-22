@@ -30,7 +30,7 @@
         <option>
           <name>Variant</name>
           <version>18</version>
-          <state>37</state>
+          <state>0</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>MB9BF500R	Fujitsu MB9BF500R</state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
         <option>
           <name>GFPUCoreSlave</name>
           <version>18</version>
-          <state>37</state>
+          <state>0</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
@@ -1749,16 +1749,13 @@
   <group>
     <name>FM3</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\fault_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\start_iar.S</name>
+      <name>$PROJ_DIR$\..\CMSIS\start_iar.S</name>
     </file>
   </group>
   <group>

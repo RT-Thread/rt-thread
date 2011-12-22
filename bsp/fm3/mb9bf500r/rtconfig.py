@@ -1,6 +1,6 @@
 # toolchains options
 ARCH='arm'
-CPU='fm3'
+CPU='cortex-m3'
 CROSS_TOOL='iar'
 
 # cross_tool provides the cross compiler
@@ -57,7 +57,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-fm3.map --scatter fm3_rom.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'

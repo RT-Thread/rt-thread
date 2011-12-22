@@ -1745,6 +1745,9 @@
       <name>$PROJ_DIR$\..\CMSIS\core_cm3.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\CMSIS\start_iar.S</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\CMSIS\system_mb9bf50x.c</name>
     </file>
   </group>
@@ -1814,16 +1817,10 @@
   <group>
     <name>FM3</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\fault_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\fm3\start_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
     </file>
   </group>
   <group>

@@ -31,7 +31,7 @@ extern const uint32_t SystemFrequency;
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
