@@ -1,7 +1,7 @@
 <!--
 Configuration file for Code Red project inc
 
-Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
+Copyright (c) 2008-2011 Texas Instruments Incorporated.  All rights reserved.
 Software License Agreement
 
 Texas Instruments (TI) is supplying this software for use solely and
@@ -17,10 +17,11 @@ A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, FOR ANY REASON WHATSOEVER.
 
-This is part of revision 6459 of the Stellaris Firmware Development Package.
+This is part of revision 8264 of the Stellaris Firmware Development Package.
 -->
 
 <project>
   <import src=".">
+    <exclude>{.*\.(ewd|ewp|eww|icf|Opt|sct|sgxx|Uv2|uvopt|uvproj|cmd)}</exclude>
   </import>
 </project>

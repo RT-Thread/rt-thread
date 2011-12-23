@@ -3,6 +3,9 @@ ARCH='arm'
 CPU='cortex-m3'
 CROSS_TOOL 	= 'keil'
 
+#device options
+PART_TYPE = 'PART_LM3S9B96'
+
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'

@@ -2,7 +2,7 @@
 //
 // i2c.h - Prototypes for the I2C Driver.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -65,6 +65,8 @@ extern "C"
                                 0x00000001
 #define I2C_MASTER_CMD_BURST_SEND_FINISH                                      \
                                 0x00000005
+#define I2C_MASTER_CMD_BURST_SEND_STOP                                        \
+                                0x00000004
 #define I2C_MASTER_CMD_BURST_SEND_ERROR_STOP                                  \
                                 0x00000004
 #define I2C_MASTER_CMD_BURST_RECEIVE_START                                    \
@@ -75,6 +77,8 @@ extern "C"
                                 0x00000005
 #define I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP                               \
                                 0x00000004
+#define I2C_MASTER_CMD_QUICK_COMMAND                                          \
+                                0x00000027
 
 //*****************************************************************************
 //
@@ -95,6 +99,9 @@ extern "C"
 #define I2C_SLAVE_ACT_RREQ      0x00000001  // Master has sent data
 #define I2C_SLAVE_ACT_TREQ      0x00000002  // Master has requested data
 #define I2C_SLAVE_ACT_RREQ_FBR  0x00000005  // Master has sent first byte
+#define I2C_SLAVE_ACT_OWN2SEL   0x00000008  // Master requested secondary slave
+#define I2C_SLAVE_ACT_QCMD      0x00000010  // Master has sent a Quick Command
+#define I2C_SLAVE_ACT_QCMD_DATA 0x00000020  // Master Quick Command value
 
 //*****************************************************************************
 //
@@ -102,6 +109,14 @@ extern "C"
 //
 //*****************************************************************************
 #define I2C_MASTER_MAX_RETRIES  1000        // Number of retries
+
+//*****************************************************************************
+//
+// I2C Master interrupts.
+//
+//*****************************************************************************
+#define I2C_MASTER_INT_TIMEOUT   0x00000002  // Clock Timeout Interrupt.
+#define I2C_MASTER_INT_DATA      0x00000001  // Data Interrupt.
 
 //*****************************************************************************
 //
@@ -133,6 +148,18 @@ extern void I2CMasterIntClear(unsigned long ulBase);
 extern void I2CMasterIntDisable(unsigned long ulBase);
 extern void I2CMasterIntEnable(unsigned long ulBase);
 extern tBoolean I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked);
+extern void I2CMasterIntEnableEx(unsigned long ulBase,
+                                 unsigned long ulIntFlags);
+extern void I2CMasterIntDisableEx(unsigned long ulBase,
+                                  unsigned long ulIntFlags);
+extern unsigned long I2CMasterIntStatusEx(unsigned long ulBase,
+                                          tBoolean bMasked);
+extern void I2CMasterIntClearEx(unsigned long ulBase,
+                                unsigned long ulIntFlags);
+extern void I2CMasterTimeoutSet(unsigned long ulBase, unsigned long ulValue);
+extern void I2CSlaveACKOverride(unsigned long ulBase, tBoolean bEnable);
+extern void I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK);
+extern unsigned long I2CMasterLineStateGet(unsigned long ulBase);
 extern void I2CMasterSlaveAddrSet(unsigned long ulBase,
                                   unsigned char ucSlaveAddr,
                                   tBoolean bReceive);
@@ -141,6 +168,8 @@ extern void I2CSlaveDataPut(unsigned long ulBase, unsigned char ucData);
 extern void I2CSlaveDisable(unsigned long ulBase);
 extern void I2CSlaveEnable(unsigned long ulBase);
 extern void I2CSlaveInit(unsigned long ulBase, unsigned char ucSlaveAddr);
+extern void I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
+                               unsigned char ucSlaveAddr);
 extern void I2CSlaveIntClear(unsigned long ulBase);
 extern void I2CSlaveIntDisable(unsigned long ulBase);
 extern void I2CSlaveIntEnable(unsigned long ulBase);

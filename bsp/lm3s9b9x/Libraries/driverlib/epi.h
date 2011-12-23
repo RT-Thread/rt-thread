@@ -2,7 +2,7 @@
 //
 // epi.h - Prototypes and macros for the EPI module.
 //
-// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,6 +44,7 @@ extern "C"
 #define EPI_MODE_GENERAL                0x00000010
 #define EPI_MODE_SDRAM                  0x00000011
 #define EPI_MODE_HB8                    0x00000012
+#define EPI_MODE_HB16                   0x00000013
 #define EPI_MODE_DISABLE                0x00000000
 
 //*****************************************************************************
@@ -114,6 +115,37 @@ extern "C"
 #define EPI_HB8_CSBAUD_DUAL             0x00000800
 
 #define EPI_HB8_CSCFG_MASK              0x00000600
+
+//*****************************************************************************
+//
+// Values that can be passed to EPIConfigHB16ModeSet()
+//
+//*****************************************************************************
+#define EPI_HB16_USE_TXEMPTY            0x00800000
+#define EPI_HB16_USE_RXFULL             0x00400000
+#define EPI_HB16_WRHIGH                 0x00200000
+#define EPI_HB16_RDHIGH                 0x00100000
+#define EPI_HB16_WRWAIT_0               0x00000000
+#define EPI_HB16_WRWAIT_1               0x00000040
+#define EPI_HB16_WRWAIT_2               0x00000080
+#define EPI_HB16_WRWAIT_3               0x000000C0
+#define EPI_HB16_RDWAIT_0               0x00000000
+#define EPI_HB16_RDWAIT_1               0x00000010
+#define EPI_HB16_RDWAIT_2               0x00000020
+#define EPI_HB16_RDWAIT_3               0x00000030
+#define EPI_HB16_MODE_ADMUX             0x00000000
+#define EPI_HB16_MODE_ADDEMUX           0x00000001
+#define EPI_HB16_MODE_SRAM              0x00000002
+#define EPI_HB16_MODE_FIFO              0x00000003
+#define EPI_HB16_BSEL                   0x00000004
+#define EPI_HB16_WORD_ACCESS            0x00000100
+#define EPI_HB16_CSCFG_ALE              0x00000000
+#define EPI_HB16_CSCFG_CS               0x00000200
+#define EPI_HB16_CSCFG_DUAL_CS          0x00000400
+#define EPI_HB16_CSCFG_ALE_DUAL_CS      0x00000600
+#define EPI_HB16_CSBAUD_DUAL            0x00000800
+
+#define EPI_HB16_CSCFG_MASK             0x00000600
 
 //*****************************************************************************
 //
@@ -196,6 +228,8 @@ extern void EPIConfigGPModeSet(unsigned long ulBase, unsigned long ulConfig,
                                unsigned long ulMaxWait);
 extern void EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
                             unsigned long ulMaxWait);
+extern void EPIConfigHB16Set(unsigned long ulBase, unsigned long ulConfig,
+                             unsigned long ulMaxWait);
 extern void EPIAddressMapSet(unsigned long ulBase, unsigned long ulMap);
 extern void EPINonBlockingReadConfigure(unsigned long ulBase,
                                         unsigned long ulChannel,

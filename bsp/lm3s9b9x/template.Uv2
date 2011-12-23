@@ -91,7 +91,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S9B96)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S9B96)
   OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (BIN\lmidk-agdi.dll)
+ FLASH2 (BIN\UL2CM3.DLL)
  FLASH3 ("" ())
  FLASH4 ()
 EndOpt

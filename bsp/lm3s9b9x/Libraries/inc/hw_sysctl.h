@@ -2,7 +2,7 @@
 //
 // hw_sysctl.h - Macros used when accessing the system control hardware.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -54,7 +54,6 @@
 #define SYSCTL_RESC             0x400FE05C  // Reset Cause
 #define SYSCTL_RCC              0x400FE060  // Run-Mode Clock Configuration
 #define SYSCTL_PLLCFG           0x400FE064  // XTAL to PLL Translation
-#define SYSCTL_GPIOHSCTL        0x400FE06C  // GPIO High-Speed Control
 #define SYSCTL_GPIOHBCTL        0x400FE06C  // GPIO High-Performance Bus
                                             // Control
 #define SYSCTL_RCC2             0x400FE070  // Run-Mode Clock Configuration 2
@@ -78,17 +77,280 @@
 #define SYSCTL_DCGC2            0x400FE128  // Deep Sleep Mode Clock Gating
                                             // Control Register 2
 #define SYSCTL_DSLPCLKCFG       0x400FE144  // Deep Sleep Clock Configuration
-#define SYSCTL_CLKVCLR          0x400FE150  // Clock Verification Clear
+#define SYSCTL_SYSPROP          0x400FE14C  // System Properties
 #define SYSCTL_PIOSCCAL         0x400FE150  // Precision Internal Oscillator
                                             // Calibration
+#define SYSCTL_CLKVCLR          0x400FE150  // Clock Verification Clear
 #define SYSCTL_PIOSCSTAT        0x400FE154  // Precision Internal Oscillator
                                             // Statistics
 #define SYSCTL_LDOARST          0x400FE160  // Allow Unregulated LDO to Reset
                                             // the Part
+#define SYSCTL_PLLFREQ0         0x400FE160  // PLL Frequency 0
+#define SYSCTL_PLLFREQ1         0x400FE164  // PLL Frequency
+#define SYSCTL_PLLSTAT          0x400FE168  // PLL Status
 #define SYSCTL_I2SMCLKCFG       0x400FE170  // I2S MCLK Configuration
 #define SYSCTL_DC9              0x400FE190  // Device Capabilities 9 ADC
                                             // Digital Comparators
 #define SYSCTL_NVMSTAT          0x400FE1A0  // Non-Volatile Memory Information
+#define SYSCTL_PPWD             0x400FE300  // Watchdog Timer Peripheral
+                                            // Present
+#define SYSCTL_PPTIMER          0x400FE304  // Timer Peripheral Present
+#define SYSCTL_PPGPIO           0x400FE308  // General-Purpose Input/Output
+                                            // Peripheral Present
+#define SYSCTL_PPDMA            0x400FE30C  // Micro Direct Memory Access
+                                            // Peripheral Present
+#define SYSCTL_PPHIB            0x400FE314  // Hibernation Peripheral Present
+#define SYSCTL_PPUART           0x400FE318  // Universal Asynchronous
+                                            // Receiver/Transmitter Peripheral
+                                            // Present
+#define SYSCTL_PPSSI            0x400FE31C  // Synchronous Serial Interface
+                                            // Peripheral Present
+#define SYSCTL_PPI2C            0x400FE320  // Inter-Integrated Circuit
+                                            // Peripheral Present
+#define SYSCTL_PPUSB            0x400FE328  // Universal Serial Bus Peripheral
+                                            // Present
+#define SYSCTL_PPCAN            0x400FE334  // Controller Area Network
+                                            // Peripheral Present
+#define SYSCTL_PPADC            0x400FE338  // Analog-to-Digital Converter
+                                            // Peripheral Present
+#define SYSCTL_PPACMP           0x400FE33C  // Analog Comparator Peripheral
+                                            // Present
+#define SYSCTL_PPPWM            0x400FE340  // Pulse Width Modulator Peripheral
+                                            // Present
+#define SYSCTL_PPQEI            0x400FE344  // Quadrature Encoder Interface
+                                            // Peripheral Present
+#define SYSCTL_PPLPC            0x400FE348  // Low Pin Count Interface
+                                            // Peripheral Present
+#define SYSCTL_PPPECI           0x400FE350  // Platform Environment Control
+                                            // Interface Peripheral Present
+#define SYSCTL_PPFAN            0x400FE354  // FAN Peripheral Present
+#define SYSCTL_PPEEPROM         0x400FE358  // EEPROM Peripheral Present
+#define SYSCTL_PPWTIMER         0x400FE35C  // Wide Timer Peripheral Present
+#define SYSCTL_SRWD             0x400FE500  // Watchdog Timer Software Reset
+#define SYSCTL_SRTIMER          0x400FE504  // Timer Software Reset
+#define SYSCTL_SRGPIO           0x400FE508  // General-Purpose Input/Output
+                                            // Software Reset
+#define SYSCTL_SRDMA            0x400FE50C  // Micro Direct Memory Access
+                                            // Software Reset
+#define SYSCTL_SRHIB            0x400FE514  // Hibernation Software Reset
+#define SYSCTL_SRUART           0x400FE518  // Universal Asynchronous
+                                            // Receiver/Transmitter Software
+                                            // Reset
+#define SYSCTL_SRSSI            0x400FE51C  // Synchronous Serial Interface
+                                            // Software Reset
+#define SYSCTL_SRI2C            0x400FE520  // Inter-Integrated Circuit
+                                            // Software Reset
+#define SYSCTL_SRUSB            0x400FE528  // Universal Serial Bus Software
+                                            // Reset
+#define SYSCTL_SRCAN            0x400FE534  // Controller Area Network Software
+                                            // Reset
+#define SYSCTL_SRADC            0x400FE538  // Analog-to-Digital Converter
+                                            // Software Reset
+#define SYSCTL_SRACMP           0x400FE53C  // Analog Comparator Software Reset
+#define SYSCTL_SRPWM            0x400FE540  // Pulse Width Modulator Software
+                                            // Reset
+#define SYSCTL_SRQEI            0x400FE544  // Quadrature Encoder Interface
+                                            // Software Reset
+#define SYSCTL_SRLPC            0x400FE548  // Low Pin Count Interface Software
+                                            // Reset
+#define SYSCTL_SRPECI           0x400FE550  // Platform Environment Control
+                                            // Interface Software Reset
+#define SYSCTL_SRFAN            0x400FE554  // FAN Software Reset
+#define SYSCTL_SREEPROM         0x400FE558  // EEPROM Software Reset
+#define SYSCTL_SRWTIMER         0x400FE55C  // Wide Timer Software Reset
+#define SYSCTL_RCGCWD           0x400FE600  // Watchdog Timer Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCTIMER        0x400FE604  // Timer Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCGPIO         0x400FE608  // General-Purpose Input/Output Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCDMA          0x400FE60C  // Micro Direct Memory Access Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCHIB          0x400FE614  // Hibernation Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART         0x400FE618  // Universal Asynchronous
+                                            // Receiver/Transmitter Run Mode
+                                            // Clock Gating Control
+#define SYSCTL_RCGCSSI          0x400FE61C  // Synchronous Serial Interface Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCI2C          0x400FE620  // Inter-Integrated Circuit Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCUSB          0x400FE628  // Universal Serial Bus Run Mode
+                                            // Clock Gating Control
+#define SYSCTL_RCGCCAN          0x400FE634  // Controller Area Network Run Mode
+                                            // Clock Gating Control
+#define SYSCTL_RCGCADC          0x400FE638  // Analog-to-Digital Converter Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCACMP         0x400FE63C  // Analog Comparator Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCPWM          0x400FE640  // Pulse Width Modulator Run Mode
+                                            // Clock Gating Control
+#define SYSCTL_RCGCQEI          0x400FE644  // Quadrature Encoder Interface Run
+                                            // Mode Clock Gating Control
+#define SYSCTL_RCGCLPC          0x400FE648  // Low Pin Count Interface Run Mode
+                                            // Clock Gating Control
+#define SYSCTL_RCGCPECI         0x400FE650  // Platform Environment Control
+                                            // Interface Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCFAN          0x400FE654  // FAN Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCEEPROM       0x400FE658  // EEPROM Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCWTIMER       0x400FE65C  // Wide Timer Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCWD           0x400FE700  // Watchdog Timer Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCTIMER        0x400FE704  // Timer Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCGPIO         0x400FE708  // General-Purpose Input/Output
+                                            // Sleep Mode Clock Gating Control
+#define SYSCTL_SCGCDMA          0x400FE70C  // Micro Direct Memory Access Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_SCGCHIB          0x400FE714  // Hibernation Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART         0x400FE718  // Universal Asynchronous
+                                            // Receiver/Transmitter Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_SCGCSSI          0x400FE71C  // Synchronous Serial Interface
+                                            // Sleep Mode Clock Gating Control
+#define SYSCTL_SCGCI2C          0x400FE720  // Inter-Integrated Circuit Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_SCGCUSB          0x400FE728  // Universal Serial Bus Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_SCGCCAN          0x400FE734  // Controller Area Network Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_SCGCADC          0x400FE738  // Analog-to-Digital Converter
+                                            // Sleep Mode Clock Gating Control
+#define SYSCTL_SCGCACMP         0x400FE73C  // Analog Comparator Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_SCGCPWM          0x400FE740  // Pulse Width Modulator Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_SCGCQEI          0x400FE744  // Quadrature Encoder Interface
+                                            // Sleep Mode Clock Gating Control
+#define SYSCTL_SCGCLPC          0x400FE748  // Low Pin Count Interface Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_SCGCPECI         0x400FE750  // Platform Environment Control
+                                            // Interface Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCFAN          0x400FE754  // FAN Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCEEPROM       0x400FE758  // EEPROM Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCWTIMER       0x400FE75C  // Wide Timer Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCWD           0x400FE800  // Watchdog Timer Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCTIMER        0x400FE804  // Timer Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCGPIO         0x400FE808  // General-Purpose Input/Output
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCDMA          0x400FE80C  // Micro Direct Memory Access
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCHIB          0x400FE814  // Hibernation Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART         0x400FE818  // Universal Asynchronous
+                                            // Receiver/Transmitter Deep-Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_DCGCSSI          0x400FE81C  // Synchronous Serial Interface
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCI2C          0x400FE820  // Inter-Integrated Circuit
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCUSB          0x400FE828  // Universal Serial Bus Deep-Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_DCGCCAN          0x400FE834  // Controller Area Network
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCADC          0x400FE838  // Analog-to-Digital Converter
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCACMP         0x400FE83C  // Analog Comparator Deep-Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_DCGCPWM          0x400FE840  // Pulse Width Modulator Deep-Sleep
+                                            // Mode Clock Gating Control
+#define SYSCTL_DCGCQEI          0x400FE844  // Quadrature Encoder Interface
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCLPC          0x400FE848  // Low Pin Count Interface
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCPECI         0x400FE850  // Platform Environment Control
+                                            // Interface Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCFAN          0x400FE854  // FAN Deep-Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_DCGCEEPROM       0x400FE858  // EEPROM Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCWTIMER       0x400FE85C  // Wide Timer Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_PCWD             0x400FE900  // Watchdog Timer Power Control
+#define SYSCTL_PCTIMER          0x400FE904  // Timer Power Control
+#define SYSCTL_PCGPIO           0x400FE908  // General-Purpose Input/Output
+                                            // Power Control
+#define SYSCTL_PCDMA            0x400FE90C  // Micro Direct Memory Access Power
+                                            // Control
+#define SYSCTL_PCHIB            0x400FE914  // Hibernation Power Control
+#define SYSCTL_PCUART           0x400FE918  // Universal Asynchronous
+                                            // Receiver/Transmitter Power
+                                            // Control
+#define SYSCTL_PCSSI            0x400FE91C  // Synchronous Serial Interface
+                                            // Power Control
+#define SYSCTL_PCI2C            0x400FE920  // Inter-Integrated Circuit Power
+                                            // Control
+#define SYSCTL_PCUSB            0x400FE928  // Universal Serial Bus Power
+                                            // Control
+#define SYSCTL_PCCAN            0x400FE934  // Controller Area Network Power
+                                            // Control
+#define SYSCTL_PCADC            0x400FE938  // Analog-to-Digital Converter
+                                            // Power Control
+#define SYSCTL_PCACMP           0x400FE93C  // Analog Comparator Power Control
+#define SYSCTL_PCPWM            0x400FE940  // Pulse Width Modulator Power
+                                            // Control
+#define SYSCTL_PCQEI            0x400FE944  // Quadrature Encoder Interface
+                                            // Power Control
+#define SYSCTL_PCLPC            0x400FE948  // Low Pin Count Interface Power
+                                            // Control
+#define SYSCTL_PCPECI           0x400FE950  // Platform Environment Control
+                                            // Interface Power Control
+#define SYSCTL_PCFAN            0x400FE954  // Fan Power Control
+#define SYSCTL_PCEEPROM         0x400FE958  // EEPROM Power Control
+#define SYSCTL_PCWTIMER         0x400FE95C  // Wide Timer Power Control
+#define SYSCTL_PRWD             0x400FEA00  // Watchdog Timer Peripheral Ready
+#define SYSCTL_PRTIMER          0x400FEA04  // Timer Peripheral Ready
+#define SYSCTL_PRGPIO           0x400FEA08  // General-Purpose Input/Output
+                                            // Peripheral Ready
+#define SYSCTL_PRDMA            0x400FEA0C  // Micro Direct Memory Access
+                                            // Peripheral Ready
+#define SYSCTL_PRHIB            0x400FEA14  // Hibernation Peripheral Ready
+#define SYSCTL_PRUART           0x400FEA18  // Universal Asynchronous
+                                            // Receiver/Transmitter Peripheral
+                                            // Ready
+#define SYSCTL_PRSSI            0x400FEA1C  // Synchronous Serial Interface
+                                            // Peripheral Ready
+#define SYSCTL_PRI2C            0x400FEA20  // Inter-Integrated Circuit
+                                            // Peripheral Ready
+#define SYSCTL_PRUSB            0x400FEA28  // Universal Serial Bus Peripheral
+                                            // Ready
+#define SYSCTL_PRCAN            0x400FEA34  // Controller Area Network
+                                            // Peripheral Ready
+#define SYSCTL_PRADC            0x400FEA38  // Analog-to-Digital Converter
+                                            // Peripheral Ready
+#define SYSCTL_PRACMP           0x400FEA3C  // Analog Comparator Peripheral
+                                            // Ready
+#define SYSCTL_PRPWM            0x400FEA40  // Pulse Width Modulator Peripheral
+                                            // Ready
+#define SYSCTL_PRQEI            0x400FEA44  // Quadrature Encoder Interface
+                                            // Peripheral Ready
+#define SYSCTL_PRLPC            0x400FEA48  // Low Pin Count Interface
+                                            // Peripheral Ready
+#define SYSCTL_PRPECI           0x400FEA50  // Platform Environment Control
+                                            // Interface Peripheral Ready
+#define SYSCTL_PRFAN            0x400FEA54  // FAN Peripheral Ready
+#define SYSCTL_PREEPROM         0x400FEA58  // EEPROM Peripheral Ready
+#define SYSCTL_PRWTIMER         0x400FEA5C  // Wide Timer Peripheral Ready
 
 //*****************************************************************************
 //
@@ -110,6 +372,12 @@
                                             // devices
 #define SYSCTL_DID0_CLASS_TEMPEST \
                                 0x00040000  // Stellaris(R) Tempest-class
+                                            // microcontrollers
+#define SYSCTL_DID0_CLASS_BLIZZARD \
+                                0x00050000  // Stellaris(R) Blizzard-class
+                                            // microcontrollers
+#define SYSCTL_DID0_CLASS_FIRESTORM \
+                                0x00060000  // Stellaris(R) Firestorm-class
                                             // microcontrollers
 #define SYSCTL_DID0_MAJ_M       0x0000FF00  // Major Revision
 #define SYSCTL_DID0_MAJ_REVA    0x00000000  // Revision A (initial device)
@@ -180,6 +448,7 @@
 #define SYSCTL_DID1_PRTNO_1150  0x00C10000  // LM3S1150
 #define SYSCTL_DID1_PRTNO_1162  0x00C40000  // LM3S1162
 #define SYSCTL_DID1_PRTNO_1165  0x00C20000  // LM3S1165
+#define SYSCTL_DID1_PRTNO_1166  0x00EC0000  // LM3S1166
 #define SYSCTL_DID1_PRTNO_1332  0x00C60000  // LM3S1332
 #define SYSCTL_DID1_PRTNO_1435  0x00BC0000  // LM3S1435
 #define SYSCTL_DID1_PRTNO_1439  0x00BA0000  // LM3S1439
@@ -189,10 +458,12 @@
 #define SYSCTL_DID1_PRTNO_1607  0x00060000  // LM3S1607
 #define SYSCTL_DID1_PRTNO_1608  0x00DA0000  // LM3S1608
 #define SYSCTL_DID1_PRTNO_1620  0x00C00000  // LM3S1620
+#define SYSCTL_DID1_PRTNO_1621  0x00CD0000  // LM3S1621
 #define SYSCTL_DID1_PRTNO_1625  0x00030000  // LM3S1625
 #define SYSCTL_DID1_PRTNO_1626  0x00040000  // LM3S1626
 #define SYSCTL_DID1_PRTNO_1627  0x00050000  // LM3S1627
 #define SYSCTL_DID1_PRTNO_1635  0x00B30000  // LM3S1635
+#define SYSCTL_DID1_PRTNO_1636  0x00EB0000  // LM3S1636
 #define SYSCTL_DID1_PRTNO_1637  0x00BD0000  // LM3S1637
 #define SYSCTL_DID1_PRTNO_1651  0x00B10000  // LM3S1651
 #define SYSCTL_DID1_PRTNO_1751  0x00B90000  // LM3S1751
@@ -206,14 +477,29 @@
 #define SYSCTL_DID1_PRTNO_1958  0x00BE0000  // LM3S1958
 #define SYSCTL_DID1_PRTNO_1960  0x00B50000  // LM3S1960
 #define SYSCTL_DID1_PRTNO_1968  0x00B80000  // LM3S1968
+#define SYSCTL_DID1_PRTNO_1969  0x00EA0000  // LM3S1969
+#define SYSCTL_DID1_PRTNO_1B21  0x00CE0000  // LM3S1B21
+#define SYSCTL_DID1_PRTNO_1C21  0x00CA0000  // LM3S1C21
+#define SYSCTL_DID1_PRTNO_1C26  0x00CB0000  // LM3S1C26
+#define SYSCTL_DID1_PRTNO_1C58  0x00980000  // LM3S1C58
+#define SYSCTL_DID1_PRTNO_1D21  0x00B00000  // LM3S1D21
+#define SYSCTL_DID1_PRTNO_1D26  0x00CC0000  // LM3S1D26
+#define SYSCTL_DID1_PRTNO_1F11  0x001D0000  // LM3S1F11
+#define SYSCTL_DID1_PRTNO_1F16  0x001B0000  // LM3S1F16
+#define SYSCTL_DID1_PRTNO_1G21  0x00AF0000  // LM3S1G21
+#define SYSCTL_DID1_PRTNO_1G58  0x00950000  // LM3S1G58
+#define SYSCTL_DID1_PRTNO_1H11  0x001E0000  // LM3S1H11
+#define SYSCTL_DID1_PRTNO_1H16  0x001C0000  // LM3S1H16
 #define SYSCTL_DID1_PRTNO_1J11  0x000F0000  // LM3S1J11
 #define SYSCTL_DID1_PRTNO_1J16  0x003C0000  // LM3S1J16
 #define SYSCTL_DID1_PRTNO_1N11  0x000E0000  // LM3S1N11
 #define SYSCTL_DID1_PRTNO_1N16  0x003B0000  // LM3S1N16
 #define SYSCTL_DID1_PRTNO_1P51  0x00B20000  // LM3S1P51
 #define SYSCTL_DID1_PRTNO_1R21  0x009E0000  // LM3S1R21
+#define SYSCTL_DID1_PRTNO_1R26  0x00C90000  // LM3S1R26
 #define SYSCTL_DID1_PRTNO_1W16  0x00300000  // LM3S1W16
 #define SYSCTL_DID1_PRTNO_1Z16  0x002F0000  // LM3S1Z16
+#define SYSCTL_DID1_PRTNO_2016  0x00D40000  // LM3S2016
 #define SYSCTL_DID1_PRTNO_2110  0x00510000  // LM3S2110
 #define SYSCTL_DID1_PRTNO_2139  0x00840000  // LM3S2139
 #define SYSCTL_DID1_PRTNO_2276  0x00390000  // LM3S2276
@@ -235,13 +521,17 @@
 #define SYSCTL_DID1_PRTNO_2793  0x006D0000  // LM3S2793
 #define SYSCTL_DID1_PRTNO_2911  0x00E30000  // LM3S2911
 #define SYSCTL_DID1_PRTNO_2918  0x00E20000  // LM3S2918
+#define SYSCTL_DID1_PRTNO_2919  0x00ED0000  // LM3S2919
 #define SYSCTL_DID1_PRTNO_2939  0x00540000  // LM3S2939
 #define SYSCTL_DID1_PRTNO_2948  0x008F0000  // LM3S2948
 #define SYSCTL_DID1_PRTNO_2950  0x00580000  // LM3S2950
 #define SYSCTL_DID1_PRTNO_2965  0x00550000  // LM3S2965
 #define SYSCTL_DID1_PRTNO_2B93  0x006C0000  // LM3S2B93
+#define SYSCTL_DID1_PRTNO_2D93  0x00940000  // LM3S2D93
+#define SYSCTL_DID1_PRTNO_2U93  0x00930000  // LM3S2U93
 #define SYSCTL_DID1_PRTNO_3634  0x00080000  // LM3S3634
 #define SYSCTL_DID1_PRTNO_3651  0x00430000  // LM3S3651
+#define SYSCTL_DID1_PRTNO_3654  0x00C80000  // LM3S3654
 #define SYSCTL_DID1_PRTNO_3739  0x00440000  // LM3S3739
 #define SYSCTL_DID1_PRTNO_3748  0x00490000  // LM3S3748
 #define SYSCTL_DID1_PRTNO_3749  0x00450000  // LM3S3749
@@ -266,15 +556,28 @@
 #define SYSCTL_DID1_PRTNO_5951  0x000B0000  // LM3S5951
 #define SYSCTL_DID1_PRTNO_5956  0x004E0000  // LM3S5956
 #define SYSCTL_DID1_PRTNO_5B91  0x00680000  // LM3S5B91
+#define SYSCTL_DID1_PRTNO_5C31  0x002E0000  // LM3S5C31
+#define SYSCTL_DID1_PRTNO_5C36  0x002C0000  // LM3S5C36
+#define SYSCTL_DID1_PRTNO_5C51  0x005E0000  // LM3S5C51
+#define SYSCTL_DID1_PRTNO_5C56  0x005B0000  // LM3S5C56
+#define SYSCTL_DID1_PRTNO_5D51  0x005F0000  // LM3S5D51
+#define SYSCTL_DID1_PRTNO_5D56  0x005C0000  // LM3S5D56
+#define SYSCTL_DID1_PRTNO_5D91  0x00870000  // LM3S5D91
+#define SYSCTL_DID1_PRTNO_5G31  0x002D0000  // LM3S5G31
+#define SYSCTL_DID1_PRTNO_5G36  0x001F0000  // LM3S5G36
+#define SYSCTL_DID1_PRTNO_5G51  0x005D0000  // LM3S5G51
+#define SYSCTL_DID1_PRTNO_5G56  0x004F0000  // LM3S5G56
 #define SYSCTL_DID1_PRTNO_5K31  0x00090000  // LM3S5K31
 #define SYSCTL_DID1_PRTNO_5K36  0x004A0000  // LM3S5K36
 #define SYSCTL_DID1_PRTNO_5P31  0x000A0000  // LM3S5P31
 #define SYSCTL_DID1_PRTNO_5P36  0x00480000  // LM3S5P36
+#define SYSCTL_DID1_PRTNO_5P3B  0x00B60000  // LM3S5P3B
 #define SYSCTL_DID1_PRTNO_5P51  0x000D0000  // LM3S5P51
 #define SYSCTL_DID1_PRTNO_5P56  0x004C0000  // LM3S5P56
 #define SYSCTL_DID1_PRTNO_5R31  0x00070000  // LM3S5R31
 #define SYSCTL_DID1_PRTNO_5R36  0x004B0000  // LM3S5R36
 #define SYSCTL_DID1_PRTNO_5T36  0x00470000  // LM3S5T36
+#define SYSCTL_DID1_PRTNO_5U91  0x007F0000  // LM3S5U91
 #define SYSCTL_DID1_PRTNO_5Y36  0x00460000  // LM3S5Y36
 #define SYSCTL_DID1_PRTNO_6100  0x00A10000  // LM3S6100
 #define SYSCTL_DID1_PRTNO_6110  0x00740000  // LM3S6110
@@ -289,12 +592,18 @@
 #define SYSCTL_DID1_PRTNO_6637  0x008B0000  // LM3S6637
 #define SYSCTL_DID1_PRTNO_6730  0x00A30000  // LM3S6730
 #define SYSCTL_DID1_PRTNO_6753  0x00770000  // LM3S6753
+#define SYSCTL_DID1_PRTNO_6816  0x00D10000  // LM3S6816
 #define SYSCTL_DID1_PRTNO_6911  0x00E90000  // LM3S6911
+#define SYSCTL_DID1_PRTNO_6916  0x00D30000  // LM3S6916
 #define SYSCTL_DID1_PRTNO_6918  0x00E80000  // LM3S6918
 #define SYSCTL_DID1_PRTNO_6938  0x00890000  // LM3S6938
 #define SYSCTL_DID1_PRTNO_6950  0x00720000  // LM3S6950
 #define SYSCTL_DID1_PRTNO_6952  0x00780000  // LM3S6952
 #define SYSCTL_DID1_PRTNO_6965  0x00730000  // LM3S6965
+#define SYSCTL_DID1_PRTNO_6C11  0x00AA0000  // LM3S6C11
+#define SYSCTL_DID1_PRTNO_6C65  0x00AC0000  // LM3S6C65
+#define SYSCTL_DID1_PRTNO_6G11  0x009F0000  // LM3S6G11
+#define SYSCTL_DID1_PRTNO_6G65  0x00AB0000  // LM3S6G65
 #define SYSCTL_DID1_PRTNO_8530  0x00640000  // LM3S8530
 #define SYSCTL_DID1_PRTNO_8538  0x008E0000  // LM3S8538
 #define SYSCTL_DID1_PRTNO_8630  0x00610000  // LM3S8630
@@ -307,19 +616,136 @@
 #define SYSCTL_DID1_PRTNO_8962  0x00A60000  // LM3S8962
 #define SYSCTL_DID1_PRTNO_8970  0x00620000  // LM3S8970
 #define SYSCTL_DID1_PRTNO_8971  0x00D70000  // LM3S8971
+#define SYSCTL_DID1_PRTNO_8C62  0x00AE0000  // LM3S8C62
+#define SYSCTL_DID1_PRTNO_8G62  0x00AD0000  // LM3S8G62
+#define SYSCTL_DID1_PRTNO_9781  0x00CF0000  // LM3S9781
 #define SYSCTL_DID1_PRTNO_9790  0x00670000  // LM3S9790
 #define SYSCTL_DID1_PRTNO_9792  0x006B0000  // LM3S9792
+#define SYSCTL_DID1_PRTNO_9971  0x002D0000  // LM3S9971
 #define SYSCTL_DID1_PRTNO_9997  0x00200000  // LM3S9997
+#define SYSCTL_DID1_PRTNO_9B81  0x00D00000  // LM3S9B81
 #define SYSCTL_DID1_PRTNO_9B90  0x00660000  // LM3S9B90
 #define SYSCTL_DID1_PRTNO_9B92  0x006A0000  // LM3S9B92
 #define SYSCTL_DID1_PRTNO_9B95  0x006E0000  // LM3S9B95
 #define SYSCTL_DID1_PRTNO_9B96  0x006F0000  // LM3S9B96
+#define SYSCTL_DID1_PRTNO_9BN2  0x001D0000  // LM3S9BN2
+#define SYSCTL_DID1_PRTNO_9BN5  0x001E0000  // LM3S9BN5
+#define SYSCTL_DID1_PRTNO_9BN6  0x001F0000  // LM3S9BN6
+#define SYSCTL_DID1_PRTNO_9C97  0x00700000  // LM3S9C97
+#define SYSCTL_DID1_PRTNO_9CN5  0x007A0000  // LM3S9CN5
+#define SYSCTL_DID1_PRTNO_9D81  0x00A90000  // LM3S9D81
+#define SYSCTL_DID1_PRTNO_9D90  0x007E0000  // LM3S9D90
+#define SYSCTL_DID1_PRTNO_9D92  0x00920000  // LM3S9D92
+#define SYSCTL_DID1_PRTNO_9D95  0x00C80000  // LM3S9D95
+#define SYSCTL_DID1_PRTNO_9D96  0x009D0000  // LM3S9D96
+#define SYSCTL_DID1_PRTNO_9DN5  0x007B0000  // LM3S9DN5
+#define SYSCTL_DID1_PRTNO_9DN6  0x007C0000  // LM3S9DN6
+#define SYSCTL_DID1_PRTNO_9G97  0x00600000  // LM3S9G97
+#define SYSCTL_DID1_PRTNO_9GN5  0x00790000  // LM3S9GN5
+#define SYSCTL_DID1_PRTNO_9L71  0x001B0000  // LM3S9L71
 #define SYSCTL_DID1_PRTNO_9L97  0x00180000  // LM3S9L97
+#define SYSCTL_DID1_PRTNO_9U81  0x00A80000  // LM3S9U81
+#define SYSCTL_DID1_PRTNO_9U90  0x007D0000  // LM3S9U90
+#define SYSCTL_DID1_PRTNO_9U92  0x00900000  // LM3S9U92
+#define SYSCTL_DID1_PRTNO_9U95  0x00B70000  // LM3S9U95
+#define SYSCTL_DID1_PRTNO_9U96  0x009B0000  // LM3S9U96
+#define SYSCTL_DID1_PRTNO_LM4F110B2QR \
+                                0x00180000  // LM4F110B2QR
+#define SYSCTL_DID1_PRTNO_LM4F110C4QR \
+                                0x00190000  // LM4F110C4QR
+#define SYSCTL_DID1_PRTNO_LM4F110E5QR \
+                                0x00100000  // LM4F110E5QR
+#define SYSCTL_DID1_PRTNO_LM4F110H5QR \
+                                0x00110000  // LM4F110H5QR
+#define SYSCTL_DID1_PRTNO_LM4F111B2QR \
+                                0x00220000  // LM4F111B2QR
+#define SYSCTL_DID1_PRTNO_LM4F111C4QR \
+                                0x00230000  // LM4F111C4QR
+#define SYSCTL_DID1_PRTNO_LM4F111E5QR \
+                                0x00200000  // LM4F111E5QR
+#define SYSCTL_DID1_PRTNO_LM4F111H5QR \
+                                0x00210000  // LM4F111H5QR
+#define SYSCTL_DID1_PRTNO_LM4F112C4QC \
+                                0x00360000  // LM4F112C4QC
+#define SYSCTL_DID1_PRTNO_LM4F112E5QC \
+                                0x00300000  // LM4F112E5QC
+#define SYSCTL_DID1_PRTNO_LM4F112H5QC \
+                                0x00310000  // LM4F112H5QC
+#define SYSCTL_DID1_PRTNO_LM4F112H5QD \
+                                0x00350000  // LM4F112H5QD
+#define SYSCTL_DID1_PRTNO_LM4F120B2QR \
+                                0x00010000  // LM4F120B2QR
+#define SYSCTL_DID1_PRTNO_LM4F120C4QR \
+                                0x00020000  // LM4F120C4QR
+#define SYSCTL_DID1_PRTNO_LM4F120E5QR \
+                                0x00030000  // LM4F120E5QR
+#define SYSCTL_DID1_PRTNO_LM4F120H5QR \
+                                0x00040000  // LM4F120H5QR
+#define SYSCTL_DID1_PRTNO_LM4F121B2QR \
+                                0x00080000  // LM4F121B2QR
+#define SYSCTL_DID1_PRTNO_LM4F121C4QR \
+                                0x00090000  // LM4F121C4QR
+#define SYSCTL_DID1_PRTNO_LM4F121E5QR \
+                                0x000A0000  // LM4F121E5QR
+#define SYSCTL_DID1_PRTNO_LM4F121H5QR \
+                                0x000B0000  // LM4F121H5QR
+#define SYSCTL_DID1_PRTNO_LM4F122C4QC \
+                                0x00D00000  // LM4F122C4QC
+#define SYSCTL_DID1_PRTNO_LM4F122E5QC \
+                                0x00D10000  // LM4F122E5QC
+#define SYSCTL_DID1_PRTNO_LM4F122H5QC \
+                                0x00D20000  // LM4F122H5QC
+#define SYSCTL_DID1_PRTNO_LM4F122H5QD \
+                                0x00D60000  // LM4F122H5QD
+#define SYSCTL_DID1_PRTNO_LM4F130C4QR \
+                                0x00480000  // LM4F130C4QR
+#define SYSCTL_DID1_PRTNO_LM4F130E5QR \
+                                0x00400000  // LM4F130E5QR
+#define SYSCTL_DID1_PRTNO_LM4F130H5QR \
+                                0x00410000  // LM4F130H5QR
+#define SYSCTL_DID1_PRTNO_LM4F131C4QR \
+                                0x00520000  // LM4F131C4QR
+#define SYSCTL_DID1_PRTNO_LM4F131E5QR \
+                                0x00500000  // LM4F131E5QR
+#define SYSCTL_DID1_PRTNO_LM4F131H5QR \
+                                0x00510000  // LM4F131H5QR
+#define SYSCTL_DID1_PRTNO_LM4F132C4QC \
+                                0x00660000  // LM4F132C4QC
+#define SYSCTL_DID1_PRTNO_LM4F132E5QC \
+                                0x00600000  // LM4F132E5QC
+#define SYSCTL_DID1_PRTNO_LM4F132H5QC \
+                                0x00610000  // LM4F132H5QC
+#define SYSCTL_DID1_PRTNO_LM4F132H5QD \
+                                0x00650000  // LM4F132H5QD
+#define SYSCTL_DID1_PRTNO_LM4F230E5QR \
+                                0x00A00000  // LM4F230E5QR
+#define SYSCTL_DID1_PRTNO_LM4F230H5QR \
+                                0x00A10000  // LM4F230H5QR
+#define SYSCTL_DID1_PRTNO_LM4F231E5QR \
+                                0x00B00000  // LM4F231E5QR
+#define SYSCTL_DID1_PRTNO_LM4F231H5QR \
+                                0x00B10000  // LM4F231H5QR
+#define SYSCTL_DID1_PRTNO_LM4F232E5QC \
+                                0x00C00000  // LM4F232E5QC
+#define SYSCTL_DID1_PRTNO_LM4F232H5BB \
+                                0x00E30000  // LM4F232H5BB
+#define SYSCTL_DID1_PRTNO_LM4F232H5QC \
+                                0x00C10000  // LM4F232H5QC
+#define SYSCTL_DID1_PRTNO_LM4F232H5QD \
+                                0x00C50000  // LM4F232H5QD
+#define SYSCTL_DID1_PRTNO_LM4FS1AH5BB \
+                                0x00E50000  // LM4FS1AH5BB
+#define SYSCTL_DID1_PRTNO_LM4FS99H5BB \
+                                0x00E40000  // LM4FS99H5BB
+#define SYSCTL_DID1_PRTNO_LM4FSXAH5BB \
+                                0x00E00000  // LM4FSXAH5BB
 #define SYSCTL_DID1_PINCNT_M    0x0000E000  // Package Pin Count
 #define SYSCTL_DID1_PINCNT_28   0x00000000  // 28 pin package
-#define SYSCTL_DID1_PINCNT_48   0x00002000  // 48 pin package
+#define SYSCTL_DID1_PINCNT_48   0x00002000  // 48-pin package
 #define SYSCTL_DID1_PINCNT_100  0x00004000  // 100-pin package
 #define SYSCTL_DID1_PINCNT_64   0x00006000  // 64-pin package
+#define SYSCTL_DID1_PINCNT_144  0x00008000  // 144-pin package
+#define SYSCTL_DID1_PINCNT_157  0x0000A000  // 157-pin package
 #define SYSCTL_DID1_TEMP_M      0x000000E0  // Temperature Range
 #define SYSCTL_DID1_TEMP_C      0x00000000  // Commercial temperature range (0C
                                             // to 70C)
@@ -364,7 +790,10 @@
 #define SYSCTL_DC0_FLASHSZ_64KB 0x0000001F  // 64 KB of Flash
 #define SYSCTL_DC0_FLASHSZ_96KB 0x0000002F  // 96 KB of Flash
 #define SYSCTL_DC0_FLASHSZ_128K 0x0000003F  // 128 KB of Flash
+#define SYSCTL_DC0_FLASHSZ_192K 0x0000005F  // 192 KB of Flash
 #define SYSCTL_DC0_FLASHSZ_256K 0x0000007F  // 256 KB of Flash
+#define SYSCTL_DC0_FLASHSZ_384K 0x000000BF  // 384 KB of Flash
+#define SYSCTL_DC0_FLASHSZ_512K 0x000000FF  // 512 KB of Flash
 #define SYSCTL_DC0_SRAMSZ_S     16          // SRAM size shift
 #define SYSCTL_DC0_FLASHSZ_S    0           // Flash size shift
 
@@ -377,7 +806,8 @@
 #define SYSCTL_DC1_CAN2         0x04000000  // CAN Module 2 Present
 #define SYSCTL_DC1_CAN1         0x02000000  // CAN Module 1 Present
 #define SYSCTL_DC1_CAN0         0x01000000  // CAN Module 0 Present
-#define SYSCTL_DC1_PWM          0x00100000  // PWM Module Present
+#define SYSCTL_DC1_PWM1         0x00200000  // PWM Module 1 Present
+#define SYSCTL_DC1_PWM0         0x00100000  // PWM Module 0 Present
 #define SYSCTL_DC1_ADC1         0x00020000  // ADC Module 1 Present
 #define SYSCTL_DC1_ADC0         0x00010000  // ADC Module 0 Present
 #define SYSCTL_DC1_MINSYSDIV_M  0x0000F000  // System Clock Divider
@@ -387,18 +817,21 @@
                                             // 6 minimum
 #define SYSCTL_DC1_MINSYSDIV_50 0x00003000  // Specifies a 50-MHz CPU clock
                                             // with a PLL divider of 4
+#define SYSCTL_DC1_MINSYSDIV_40 0x00004000  // Specifies a 40-MHz CPU clock
+                                            // with a PLL divider of 5
 #define SYSCTL_DC1_MINSYSDIV_25 0x00007000  // Specifies a 25-MHz clock with a
                                             // PLL divider of 8
 #define SYSCTL_DC1_MINSYSDIV_20 0x00009000  // Specifies a 20-MHz clock with a
                                             // PLL divider of 10
-#define SYSCTL_DC1_ADCSPD_M     0x00000F00  // Max ADC Speed
-#define SYSCTL_DC1_ADCSPD_125K  0x00000000  // 125Ksps ADC
-#define SYSCTL_DC1_ADCSPD_250K  0x00000100  // 250K samples/second
-#define SYSCTL_DC1_ADCSPD_500K  0x00000200  // 500K samples/second
-#define SYSCTL_DC1_ADCSPD_1M    0x00000300  // 1M samples/second
 #define SYSCTL_DC1_ADC1SPD_M    0x00000C00  // Max ADC1 Speed
+#define SYSCTL_DC1_ADC1SPD_125K 0x00000000  // 125K samples/second
+#define SYSCTL_DC1_ADC1SPD_250K 0x00000400  // 250K samples/second
+#define SYSCTL_DC1_ADC1SPD_500K 0x00000800  // 500K samples/second
 #define SYSCTL_DC1_ADC1SPD_1M   0x00000C00  // 1M samples/second
 #define SYSCTL_DC1_ADC0SPD_M    0x00000300  // Max ADC0 Speed
+#define SYSCTL_DC1_ADC0SPD_125K 0x00000000  // 125K samples/second
+#define SYSCTL_DC1_ADC0SPD_250K 0x00000100  // 250K samples/second
+#define SYSCTL_DC1_ADC0SPD_500K 0x00000200  // 500K samples/second
 #define SYSCTL_DC1_ADC0SPD_1M   0x00000300  // 1M samples/second
 #define SYSCTL_DC1_MPU          0x00000080  // MPU Present
 #define SYSCTL_DC1_HIB          0x00000040  // Hibernation Module Present
@@ -423,7 +856,9 @@
 #define SYSCTL_DC2_TIMER2       0x00040000  // Timer Module 2 Present
 #define SYSCTL_DC2_TIMER1       0x00020000  // Timer Module 1 Present
 #define SYSCTL_DC2_TIMER0       0x00010000  // Timer Module 0 Present
+#define SYSCTL_DC2_I2C1HS       0x00008000  // I2C Module 1 Speed
 #define SYSCTL_DC2_I2C1         0x00004000  // I2C Module 1 Present
+#define SYSCTL_DC2_I2C0HS       0x00002000  // I2C Module 0 Speed
 #define SYSCTL_DC2_I2C0         0x00001000  // I2C Module 0 Present
 #define SYSCTL_DC2_QEI1         0x00000200  // QEI Module 1 Present
 #define SYSCTL_DC2_QEI0         0x00000100  // QEI Module 0 Present
@@ -652,7 +1087,7 @@
 #define SYSCTL_SRCR0_CAN2       0x04000000  // CAN2 Reset Control
 #define SYSCTL_SRCR0_CAN1       0x02000000  // CAN1 Reset Control
 #define SYSCTL_SRCR0_CAN0       0x01000000  // CAN0 Reset Control
-#define SYSCTL_SRCR0_PWM        0x00100000  // PWM Reset Control
+#define SYSCTL_SRCR0_PWM0       0x00100000  // PWM Reset Control
 #define SYSCTL_SRCR0_ADC1       0x00020000  // ADC1 Reset Control
 #define SYSCTL_SRCR0_ADC0       0x00010000  // ADC0 Reset Control
 #define SYSCTL_SRCR0_HIB        0x00000040  // HIB Reset Control
@@ -833,6 +1268,10 @@
 #define SYSCTL_RCC_XTAL_14_3MHZ 0x00000500  // 14.31818 MHz
 #define SYSCTL_RCC_XTAL_16MHZ   0x00000540  // 16 MHz
 #define SYSCTL_RCC_XTAL_16_3MHZ 0x00000580  // 16.384 MHz
+#define SYSCTL_RCC_XTAL_18MHZ   0x000005C0  // 18.0 MHz
+#define SYSCTL_RCC_XTAL_20MHZ   0x00000600  // 20.0 MHz
+#define SYSCTL_RCC_XTAL_24MHZ   0x00000640  // 24.0 MHz
+#define SYSCTL_RCC_XTAL_25MHZ   0x00000680  // 25.0 MHz
 #define SYSCTL_RCC_PLLVER       0x00000400  // PLL Verification
 #define SYSCTL_RCC_OSCSRC_M     0x00000030  // Oscillator Source
 #define SYSCTL_RCC_OSCSRC_MAIN  0x00000000  // MOSC
@@ -863,21 +1302,6 @@
 #define SYSCTL_PLLCFG_R_M       0x0000001F  // PLL R Value
 #define SYSCTL_PLLCFG_F_S       5
 #define SYSCTL_PLLCFG_R_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_GPIOHSCTL
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_GPIOHSCTL_PORTH  0x00000080  // Port H High-Speed
-#define SYSCTL_GPIOHSCTL_PORTG  0x00000040  // Port G High-Speed
-#define SYSCTL_GPIOHSCTL_PORTF  0x00000020  // Port F High-Speed
-#define SYSCTL_GPIOHSCTL_PORTE  0x00000010  // Port E High-Speed
-#define SYSCTL_GPIOHSCTL_PORTD  0x00000008  // Port D High-Speed
-#define SYSCTL_GPIOHSCTL_PORTC  0x00000004  // Port C High-Speed
-#define SYSCTL_GPIOHSCTL_PORTB  0x00000002  // Port B High-Speed
-#define SYSCTL_GPIOHSCTL_PORTA  0x00000001  // Port A High-Speed
 
 //*****************************************************************************
 //
@@ -994,6 +1418,8 @@
 // The following are defines for the bit fields in the SYSCTL_MOSCCTL register.
 //
 //*****************************************************************************
+#define SYSCTL_MOSCCTL_NOXTAL   0x00000004  // No Crystal Connected
+#define SYSCTL_MOSCCTL_MOSCIM   0x00000002  // MOSC Failure Action
 #define SYSCTL_MOSCCTL_CVAL     0x00000001  // Clock Validation for MOSC
 
 //*****************************************************************************
@@ -1005,7 +1431,7 @@
 #define SYSCTL_RCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
 #define SYSCTL_RCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
 #define SYSCTL_RCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
-#define SYSCTL_RCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_RCGC0_PWM0       0x00100000  // PWM Clock Gating Control
 #define SYSCTL_RCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
 #define SYSCTL_RCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_RCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed
@@ -1084,7 +1510,7 @@
 #define SYSCTL_SCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
 #define SYSCTL_SCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
 #define SYSCTL_SCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
-#define SYSCTL_SCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_SCGC0_PWM0       0x00100000  // PWM Clock Gating Control
 #define SYSCTL_SCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
 #define SYSCTL_SCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_SCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed
@@ -1163,7 +1589,7 @@
 #define SYSCTL_DCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
 #define SYSCTL_DCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
 #define SYSCTL_DCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
-#define SYSCTL_DCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_DCGC0_PWM0       0x00100000  // PWM Clock Gating Control
 #define SYSCTL_DCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
 #define SYSCTL_DCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_DCGC0_HIB        0x00000040  // HIB Clock Gating Control
@@ -1288,15 +1714,17 @@
 #define SYSCTL_DSLPCLKCFG_O_IO  0x00000010  // PIOSC
 #define SYSCTL_DSLPCLKCFG_O_30  0x00000030  // 30 kHz
 #define SYSCTL_DSLPCLKCFG_O_32  0x00000070  // 32.768 kHz
+#define SYSCTL_DSLPCLKCFG_PIOSCPD \
+                                0x00000002  // PIOSC Power Down Request
 #define SYSCTL_DSLPCLKCFG_IOSC  0x00000001  // IOSC Clock Source
 #define SYSCTL_DSLPCLKCFG_D_S   23
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_CLKVCLR register.
+// The following are defines for the bit fields in the SYSCTL_SYSPROP register.
 //
 //*****************************************************************************
-#define SYSCTL_CLKVCLR_VERCLR   0x00000001  // Clock Verification Clear
+#define SYSCTL_SYSPROP_FPU      0x00000001  // FPU Present
 
 //*****************************************************************************
 //
@@ -1309,6 +1737,13 @@
 #define SYSCTL_PIOSCCAL_UPDATE  0x00000100  // Update Trim
 #define SYSCTL_PIOSCCAL_UT_M    0x0000007F  // User Trim Value
 #define SYSCTL_PIOSCCAL_UT_S    0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_CLKVCLR register.
+//
+//*****************************************************************************
+#define SYSCTL_CLKVCLR_VERCLR   0x00000001  // Clock Verification Clear
 
 //*****************************************************************************
 //
@@ -1334,6 +1769,35 @@
 //
 //*****************************************************************************
 #define SYSCTL_LDOARST_LDOARST  0x00000001  // LDO Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PLLFREQ0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PLLFREQ0_MFRAC_M 0x000FFC00  // PLL M Fractional Value
+#define SYSCTL_PLLFREQ0_MINT_M  0x000003FF  // PLL M Integer Value
+#define SYSCTL_PLLFREQ0_MFRAC_S 10
+#define SYSCTL_PLLFREQ0_MINT_S  0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PLLFREQ1
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PLLFREQ1_Q_M     0x00001F00  // PLL Q Value
+#define SYSCTL_PLLFREQ1_N_M     0x0000001F  // PLL N Value
+#define SYSCTL_PLLFREQ1_Q_S     8
+#define SYSCTL_PLLFREQ1_N_S     0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PLLSTAT register.
+//
+//*****************************************************************************
+#define SYSCTL_PLLSTAT_LOCK     0x00000001  // PLL Lock
 
 //*****************************************************************************
 //
@@ -1385,6 +1849,1470 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the SYSCTL_PPWD register.
+//
+//*****************************************************************************
+#define SYSCTL_PPWD_P1          0x00000002  // Watchdog Timer 1 Present
+#define SYSCTL_PPWD_P0          0x00000001  // Watchdog Timer 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPTIMER register.
+//
+//*****************************************************************************
+#define SYSCTL_PPTIMER_P5       0x00000020  // Timer 5 Present
+#define SYSCTL_PPTIMER_P4       0x00000010  // Timer 4 Present
+#define SYSCTL_PPTIMER_P3       0x00000008  // Timer 3 Present
+#define SYSCTL_PPTIMER_P2       0x00000004  // Timer 2 Present
+#define SYSCTL_PPTIMER_P1       0x00000002  // Timer 1 Present
+#define SYSCTL_PPTIMER_P0       0x00000001  // Timer 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPGPIO register.
+//
+//*****************************************************************************
+#define SYSCTL_PPGPIO_P14       0x00004000  // GPIO Port Q Present
+#define SYSCTL_PPGPIO_P13       0x00002000  // GPIO Port P Present
+#define SYSCTL_PPGPIO_P12       0x00001000  // GPIO Port N Present
+#define SYSCTL_PPGPIO_P11       0x00000800  // GPIO Port M Present
+#define SYSCTL_PPGPIO_P10       0x00000400  // GPIO Port L Present
+#define SYSCTL_PPGPIO_P9        0x00000200  // GPIO Port K Present
+#define SYSCTL_PPGPIO_P8        0x00000100  // GPIO Port J Present
+#define SYSCTL_PPGPIO_P7        0x00000080  // GPIO Port H Present
+#define SYSCTL_PPGPIO_P6        0x00000040  // GPIO Port G Present
+#define SYSCTL_PPGPIO_P5        0x00000020  // GPIO Port F Present
+#define SYSCTL_PPGPIO_P4        0x00000010  // GPIO Port E Present
+#define SYSCTL_PPGPIO_P3        0x00000008  // GPIO Port D Present
+#define SYSCTL_PPGPIO_P2        0x00000004  // GPIO Port C Present
+#define SYSCTL_PPGPIO_P1        0x00000002  // GPIO Port B Present
+#define SYSCTL_PPGPIO_P0        0x00000001  // GPIO Port A Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_PPDMA_P0         0x00000001  // uDMA Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_PPHIB_P0         0x00000001  // Hibernation Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPUART register.
+//
+//*****************************************************************************
+#define SYSCTL_PPUART_P7        0x00000080  // UART Module 7 Present
+#define SYSCTL_PPUART_P6        0x00000040  // UART Module 6 Present
+#define SYSCTL_PPUART_P5        0x00000020  // UART Module 5 Present
+#define SYSCTL_PPUART_P4        0x00000010  // UART Module 4 Present
+#define SYSCTL_PPUART_P3        0x00000008  // UART Module 3 Present
+#define SYSCTL_PPUART_P2        0x00000004  // UART Module 2 Present
+#define SYSCTL_PPUART_P1        0x00000002  // UART Module 1 Present
+#define SYSCTL_PPUART_P0        0x00000001  // UART Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_PPSSI_P3         0x00000008  // SSI Module 3 Present
+#define SYSCTL_PPSSI_P2         0x00000004  // SSI Module 2 Present
+#define SYSCTL_PPSSI_P1         0x00000002  // SSI Module 1 Present
+#define SYSCTL_PPSSI_P0         0x00000001  // SSI Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_PPI2C_P5         0x00000020  // I2C Module 5 Present
+#define SYSCTL_PPI2C_P4         0x00000010  // I2C Module 4 Present
+#define SYSCTL_PPI2C_P3         0x00000008  // I2C Module 3 Present
+#define SYSCTL_PPI2C_P2         0x00000004  // I2C Module 2 Present
+#define SYSCTL_PPI2C_P1         0x00000002  // I2C Module 1 Present
+#define SYSCTL_PPI2C_P0         0x00000001  // I2C Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_PPUSB_P0         0x00000001  // USB Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PPCAN_P1         0x00000002  // CAN Module 1 Present
+#define SYSCTL_PPCAN_P0         0x00000001  // CAN Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPADC register.
+//
+//*****************************************************************************
+#define SYSCTL_PPADC_P1         0x00000002  // ADC Module 1 Present
+#define SYSCTL_PPADC_P0         0x00000001  // ADC Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPACMP register.
+//
+//*****************************************************************************
+#define SYSCTL_PPACMP_P0        0x00000001  // Analog Comparator Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_PPPWM_P1         0x00000002  // PWM Module 1 Present
+#define SYSCTL_PPPWM_P0         0x00000001  // PWM Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_PPQEI_P1         0x00000002  // QEI Module 1 Present
+#define SYSCTL_PPQEI_P0         0x00000001  // QEI Module 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_PPLPC_P0         0x00000001  // LPC Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPPECI register.
+//
+//*****************************************************************************
+#define SYSCTL_PPPECI_P0        0x00000001  // PECI Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PPFAN_P0         0x00000001  // FAN Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPEEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PPEEPROM_P0      0x00000001  // EEPROM Module Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PPWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PPWTIMER_P5      0x00000020  // Wide Timer 5 Present
+#define SYSCTL_PPWTIMER_P4      0x00000010  // Wide Timer 4 Present
+#define SYSCTL_PPWTIMER_P3      0x00000008  // Wide Timer 3 Present
+#define SYSCTL_PPWTIMER_P2      0x00000004  // Wide Timer 2 Present
+#define SYSCTL_PPWTIMER_P1      0x00000002  // Wide Timer 1 Present
+#define SYSCTL_PPWTIMER_P0      0x00000001  // Wide Timer 0 Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRWD register.
+//
+//*****************************************************************************
+#define SYSCTL_SRWD_R1          0x00000002  // Watchdog Timer 1 Software Reset
+#define SYSCTL_SRWD_R0          0x00000001  // Watchdog Timer 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRTIMER register.
+//
+//*****************************************************************************
+#define SYSCTL_SRTIMER_R5       0x00000020  // Timer 5 Software Reset
+#define SYSCTL_SRTIMER_R4       0x00000010  // Timer 4 Software Reset
+#define SYSCTL_SRTIMER_R3       0x00000008  // Timer 3 Software Reset
+#define SYSCTL_SRTIMER_R2       0x00000004  // Timer 2 Software Reset
+#define SYSCTL_SRTIMER_R1       0x00000002  // Timer 1 Software Reset
+#define SYSCTL_SRTIMER_R0       0x00000001  // Timer 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRGPIO register.
+//
+//*****************************************************************************
+#define SYSCTL_SRGPIO_R14       0x00004000  // GPIO Port Q Software Reset
+#define SYSCTL_SRGPIO_R13       0x00002000  // GPIO Port P Software Reset
+#define SYSCTL_SRGPIO_R12       0x00001000  // GPIO Port N Software Reset
+#define SYSCTL_SRGPIO_R11       0x00000800  // GPIO Port M Software Reset
+#define SYSCTL_SRGPIO_R10       0x00000400  // GPIO Port L Software Reset
+#define SYSCTL_SRGPIO_R9        0x00000200  // GPIO Port K Software Reset
+#define SYSCTL_SRGPIO_R8        0x00000100  // GPIO Port J Software Reset
+#define SYSCTL_SRGPIO_R7        0x00000080  // GPIO Port H Software Reset
+#define SYSCTL_SRGPIO_R6        0x00000040  // GPIO Port G Software Reset
+#define SYSCTL_SRGPIO_R5        0x00000020  // GPIO Port F Software Reset
+#define SYSCTL_SRGPIO_R4        0x00000010  // GPIO Port E Software Reset
+#define SYSCTL_SRGPIO_R3        0x00000008  // GPIO Port D Software Reset
+#define SYSCTL_SRGPIO_R2        0x00000004  // GPIO Port C Software Reset
+#define SYSCTL_SRGPIO_R1        0x00000002  // GPIO Port B Software Reset
+#define SYSCTL_SRGPIO_R0        0x00000001  // GPIO Port A Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_SRDMA_R0         0x00000001  // uDMA Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_SRHIB_R0         0x00000001  // Hibernation Module Software
+                                            // Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRUART register.
+//
+//*****************************************************************************
+#define SYSCTL_SRUART_R7        0x00000080  // UART Module 7 Software Reset
+#define SYSCTL_SRUART_R6        0x00000040  // UART Module 6 Software Reset
+#define SYSCTL_SRUART_R5        0x00000020  // UART Module 5 Software Reset
+#define SYSCTL_SRUART_R4        0x00000010  // UART Module 4 Software Reset
+#define SYSCTL_SRUART_R3        0x00000008  // UART Module 3 Software Reset
+#define SYSCTL_SRUART_R2        0x00000004  // UART Module 2 Software Reset
+#define SYSCTL_SRUART_R1        0x00000002  // UART Module 1 Software Reset
+#define SYSCTL_SRUART_R0        0x00000001  // UART Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_SRSSI_R3         0x00000008  // SSI Module 3 Software Reset
+#define SYSCTL_SRSSI_R2         0x00000004  // SSI Module 2 Software Reset
+#define SYSCTL_SRSSI_R1         0x00000002  // SSI Module 1 Software Reset
+#define SYSCTL_SRSSI_R0         0x00000001  // SSI Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_SRI2C_R5         0x00000020  // I2C Module 5 Software Reset
+#define SYSCTL_SRI2C_R4         0x00000010  // I2C Module 4 Software Reset
+#define SYSCTL_SRI2C_R3         0x00000008  // I2C Module 3 Software Reset
+#define SYSCTL_SRI2C_R2         0x00000004  // I2C Module 2 Software Reset
+#define SYSCTL_SRI2C_R1         0x00000002  // I2C Module 1 Software Reset
+#define SYSCTL_SRI2C_R0         0x00000001  // I2C Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_SRUSB_R0         0x00000001  // USB Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_SRCAN_R1         0x00000002  // CAN Module 1 Software Reset
+#define SYSCTL_SRCAN_R0         0x00000001  // CAN Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRADC register.
+//
+//*****************************************************************************
+#define SYSCTL_SRADC_R1         0x00000002  // ADC Module 1 Software Reset
+#define SYSCTL_SRADC_R0         0x00000001  // ADC Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRACMP register.
+//
+//*****************************************************************************
+#define SYSCTL_SRACMP_R0        0x00000001  // Analog Comparator Module
+                                            // Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_SRPWM_R1         0x00000002  // PWM Module 1 Software Reset
+#define SYSCTL_SRPWM_R0         0x00000001  // PWM Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_SRQEI_R1         0x00000002  // QEI Module 1 Software Reset
+#define SYSCTL_SRQEI_R0         0x00000001  // QEI Module 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_SRLPC_R0         0x00000001  // LPC Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRPECI register.
+//
+//*****************************************************************************
+#define SYSCTL_SRPECI_R0        0x00000001  // PECI Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_SRFAN_R0         0x00000001  // FAN Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SREEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SREEPROM_R0      0x00000001  // EEPROM Module Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SRWTIMER_R5      0x00000020  // Wide Timer 5 Software Reset
+#define SYSCTL_SRWTIMER_R4      0x00000010  // Wide Timer 4 Software Reset
+#define SYSCTL_SRWTIMER_R3      0x00000008  // Wide Timer 3 Software Reset
+#define SYSCTL_SRWTIMER_R2      0x00000004  // Wide Timer 2 Software Reset
+#define SYSCTL_SRWTIMER_R1      0x00000002  // Wide Timer 1 Software Reset
+#define SYSCTL_SRWTIMER_R0      0x00000001  // Wide Timer 0 Software Reset
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCWD register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCWD_R1        0x00000002  // Watchdog Timer 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWD_R0        0x00000001  // Watchdog Timer 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCTIMER_R5     0x00000020  // Timer 5 Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCTIMER_R4     0x00000010  // Timer 4 Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCTIMER_R3     0x00000008  // Timer 3 Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCTIMER_R2     0x00000004  // Timer 2 Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCTIMER_R1     0x00000002  // Timer 1 Run Mode Clock Gating
+                                            // Control
+#define SYSCTL_RCGCTIMER_R0     0x00000001  // Timer 0 Run Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCGPIO
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCGPIO_R14     0x00004000  // GPIO Port Q Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R13     0x00002000  // GPIO Port P Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R12     0x00001000  // GPIO Port N Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R11     0x00000800  // GPIO Port M Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R10     0x00000400  // GPIO Port L Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R9      0x00000200  // GPIO Port K Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R8      0x00000100  // GPIO Port J Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R7      0x00000080  // GPIO Port H Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R6      0x00000040  // GPIO Port G Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R5      0x00000020  // GPIO Port F Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R4      0x00000010  // GPIO Port E Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R3      0x00000008  // GPIO Port D Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R2      0x00000004  // GPIO Port C Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R1      0x00000002  // GPIO Port B Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCGPIO_R0      0x00000001  // GPIO Port A Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCDMA_R0       0x00000001  // uDMA Module Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCHIB_R0       0x00000001  // Hibernation Module Run Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCUART
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCUART_R7      0x00000080  // UART Module 7 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R6      0x00000040  // UART Module 6 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R5      0x00000020  // UART Module 5 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R4      0x00000010  // UART Module 4 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R3      0x00000008  // UART Module 3 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R2      0x00000004  // UART Module 2 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R1      0x00000002  // UART Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCUART_R0      0x00000001  // UART Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCSSI_R3       0x00000008  // SSI Module 3 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCSSI_R2       0x00000004  // SSI Module 2 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCSSI_R1       0x00000002  // SSI Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCSSI_R0       0x00000001  // SSI Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCI2C_R5       0x00000020  // I2C Module 5 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCI2C_R4       0x00000010  // I2C Module 4 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCI2C_R3       0x00000008  // I2C Module 3 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCI2C_R2       0x00000004  // I2C Module 2 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCUSB_R0       0x00000001  // USB Module Run Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCCAN_R1       0x00000002  // CAN Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCCAN_R0       0x00000001  // CAN Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCADC register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCADC_R1       0x00000002  // ADC Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCADC_R0       0x00000001  // ADC Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCACMP
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCACMP_R0      0x00000001  // Analog Comparator Module Run
+                                            // Mode Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCPWM_R1       0x00000002  // PWM Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCPWM_R0       0x00000001  // PWM Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCQEI_R1       0x00000002  // QEI Module 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCQEI_R0       0x00000001  // QEI Module 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCLPC_R0       0x00000001  // LPC Module Run Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCPECI
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCPECI_R0      0x00000001  // PECI Module Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCFAN_R0       0x00000001  // FAN Module Run Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCEEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCEEPROM_R0    0x00000001  // EEPROM Module Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCWTIMER_R5    0x00000020  // Wide Timer 5 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWTIMER_R4    0x00000010  // Wide Timer 4 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWTIMER_R3    0x00000008  // Wide Timer 3 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWTIMER_R2    0x00000004  // Wide Timer 2 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWTIMER_R1    0x00000002  // Wide Timer 1 Run Mode Clock
+                                            // Gating Control
+#define SYSCTL_RCGCWTIMER_R0    0x00000001  // Wide Timer 0 Run Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCWD register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCWD_S1        0x00000002  // Watchdog Timer 1 Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_SCGCWD_S0        0x00000001  // Watchdog Timer 0 Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCTIMER_S5     0x00000020  // Timer 5 Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCTIMER_S4     0x00000010  // Timer 4 Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCTIMER_S3     0x00000008  // Timer 3 Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCTIMER_S2     0x00000004  // Timer 2 Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCTIMER_S1     0x00000002  // Timer 1 Sleep Mode Clock Gating
+                                            // Control
+#define SYSCTL_SCGCTIMER_S0     0x00000001  // Timer 0 Sleep Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCGPIO
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCGPIO_S14     0x00004000  // GPIO Port Q Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S13     0x00002000  // GPIO Port P Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S12     0x00001000  // GPIO Port N Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S11     0x00000800  // GPIO Port M Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S10     0x00000400  // GPIO Port L Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S9      0x00000200  // GPIO Port K Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S8      0x00000100  // GPIO Port J Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S7      0x00000080  // GPIO Port H Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S6      0x00000040  // GPIO Port G Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S5      0x00000020  // GPIO Port F Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S4      0x00000010  // GPIO Port E Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S3      0x00000008  // GPIO Port D Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S2      0x00000004  // GPIO Port C Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S1      0x00000002  // GPIO Port B Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCGPIO_S0      0x00000001  // GPIO Port A Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCDMA_S0       0x00000001  // uDMA Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCHIB_S0       0x00000001  // Hibernation Module Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCUART
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCUART_S7      0x00000080  // UART Module 7 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S6      0x00000040  // UART Module 6 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S5      0x00000020  // UART Module 5 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S4      0x00000010  // UART Module 4 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S3      0x00000008  // UART Module 3 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S2      0x00000004  // UART Module 2 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S1      0x00000002  // UART Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCUART_S0      0x00000001  // UART Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCSSI_S3       0x00000008  // SSI Module 3 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCSSI_S2       0x00000004  // SSI Module 2 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCSSI_S1       0x00000002  // SSI Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCSSI_S0       0x00000001  // SSI Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCI2C_S5       0x00000020  // I2C Module 5 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCI2C_S4       0x00000010  // I2C Module 4 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCI2C_S3       0x00000008  // I2C Module 3 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCI2C_S2       0x00000004  // I2C Module 2 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCI2C_S1       0x00000002  // I2C Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCI2C_S0       0x00000001  // I2C Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCUSB_S0       0x00000001  // USB Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCCAN_S1       0x00000002  // CAN Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCCAN_S0       0x00000001  // CAN Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCADC register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCADC_S1       0x00000002  // ADC Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCADC_S0       0x00000001  // ADC Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCACMP
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCACMP_S0      0x00000001  // Analog Comparator Module Sleep
+                                            // Mode Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCPWM_S1       0x00000002  // PWM Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCPWM_S0       0x00000001  // PWM Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCQEI_S1       0x00000002  // QEI Module 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCQEI_S0       0x00000001  // QEI Module 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCLPC_S0       0x00000001  // LPC Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCPECI
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCPECI_S0      0x00000001  // PECI Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCFAN_S0       0x00000001  // FAN Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCEEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCEEPROM_S0    0x00000001  // EEPROM Module Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGCWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGCWTIMER_S5    0x00000020  // Wide Timer 5 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCWTIMER_S4    0x00000010  // Wide Timer 4 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCWTIMER_S3    0x00000008  // Wide Timer 3 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCWTIMER_S2    0x00000004  // Wide Timer 2 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCWTIMER_S1    0x00000002  // Wide Timer 1 Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_SCGCWTIMER_S0    0x00000001  // Wide Timer 0 Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCWD register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCWD_D1        0x00000002  // Watchdog Timer 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWD_D0        0x00000001  // Watchdog Timer 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCTIMER_D5     0x00000020  // Timer 5 Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCTIMER_D4     0x00000010  // Timer 4 Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCTIMER_D3     0x00000008  // Timer 3 Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCTIMER_D2     0x00000004  // Timer 2 Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCTIMER_D1     0x00000002  // Timer 1 Deep-Sleep Mode Clock
+                                            // Gating Control
+#define SYSCTL_DCGCTIMER_D0     0x00000001  // Timer 0 Deep-Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCGPIO
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCGPIO_D14     0x00004000  // GPIO Port Q Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D13     0x00002000  // GPIO Port P Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D12     0x00001000  // GPIO Port N Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D11     0x00000800  // GPIO Port M Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D10     0x00000400  // GPIO Port L Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D9      0x00000200  // GPIO Port K Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D8      0x00000100  // GPIO Port J Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D7      0x00000080  // 0Mode Clock Gating Control
+#define SYSCTL_DCGCGPIO_D6      0x00000040  // GPIO Port G Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D5      0x00000020  // GPIO Port F Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D4      0x00000010  // GPIO Port E Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D3      0x00000008  // GPIO Port D Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D2      0x00000004  // GPIO Port C Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D1      0x00000002  // GPIO Port B Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCGPIO_D0      0x00000001  // GPIO Port A Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCDMA_D0       0x00000001  // uDMA Module Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCHIB_D0       0x00000001  // Hibernation Module Deep-Sleep
+                                            // Mode Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCUART
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCUART_D7      0x00000080  // UART Module 7 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D6      0x00000040  // UART Module 6 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D5      0x00000020  // UART Module 5 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D4      0x00000010  // UART Module 4 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D3      0x00000008  // UART Module 3 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D2      0x00000004  // UART Module 2 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D1      0x00000002  // UART Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCUART_D0      0x00000001  // UART Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCSSI_D3       0x00000008  // SSI Module 3 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCSSI_D2       0x00000004  // SSI Module 2 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCSSI_D1       0x00000002  // SSI Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCSSI_D0       0x00000001  // SSI Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCI2C_D5       0x00000020  // I2C Module 5 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCI2C_D4       0x00000010  // I2C Module 4 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCI2C_D3       0x00000008  // I2C Module 3 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCI2C_D2       0x00000004  // I2C Module 2 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCI2C_D1       0x00000002  // I2C Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCI2C_D0       0x00000001  // I2C Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCUSB_D0       0x00000001  // USB Module Deep-Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCCAN_D1       0x00000002  // CAN Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCCAN_D0       0x00000001  // CAN Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCADC register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCADC_D1       0x00000002  // ADC Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCADC_D0       0x00000001  // ADC Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCACMP
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCACMP_D0      0x00000001  // Analog Comparator Module
+                                            // Deep-Sleep Mode Clock Gating
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCPWM_D1       0x00000002  // PWM Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCPWM_D0       0x00000001  // PWM Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCQEI_D1       0x00000002  // QEI Module 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCQEI_D0       0x00000001  // QEI Module 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCLPC_D0       0x00000001  // LPC Module Deep-Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCPECI
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCPECI_D0      0x00000001  // PECI Module Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCFAN_D0       0x00000001  // FAN Module Deep-Sleep Mode Clock
+                                            // Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCEEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCEEPROM_D0    0x00000001  // EEPROM Module Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGCWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGCWTIMER_D5    0x00000020  // Wide Timer 5 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWTIMER_D4    0x00000010  // Wide Timer 4 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWTIMER_D3    0x00000008  // Wide Timer 3 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWTIMER_D2    0x00000004  // Wide Timer 2 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWTIMER_D1    0x00000002  // Wide Timer 1 Deep-Sleep Mode
+                                            // Clock Gating Control
+#define SYSCTL_DCGCWTIMER_D0    0x00000001  // Wide Timer 0 Deep-Sleep Mode
+                                            // Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCWD register.
+//
+//*****************************************************************************
+#define SYSCTL_PCWD_P1          0x00000002  // Watchdog Timer 1 Power Control
+#define SYSCTL_PCWD_P0          0x00000001  // Watchdog Timer 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCTIMER register.
+//
+//*****************************************************************************
+#define SYSCTL_PCTIMER_P5       0x00000020  // Timer 5 Power Control
+#define SYSCTL_PCTIMER_P4       0x00000010  // Timer 4 Power Control
+#define SYSCTL_PCTIMER_P3       0x00000008  // Timer 3 Power Control
+#define SYSCTL_PCTIMER_P2       0x00000004  // Timer 2 Power Control
+#define SYSCTL_PCTIMER_P1       0x00000002  // Timer 1 Power Control
+#define SYSCTL_PCTIMER_P0       0x00000001  // Timer 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCGPIO register.
+//
+//*****************************************************************************
+#define SYSCTL_PCGPIO_P14       0x00004000  // GPIO Port Q Power Control
+#define SYSCTL_PCGPIO_P13       0x00002000  // GPIO Port P Power Control
+#define SYSCTL_PCGPIO_P12       0x00001000  // GPIO Port N Power Control
+#define SYSCTL_PCGPIO_P11       0x00000800  // GPIO Port M Power Control
+#define SYSCTL_PCGPIO_P10       0x00000400  // GPIO Port L Power Control
+#define SYSCTL_PCGPIO_P9        0x00000200  // GPIO Port K Power Control
+#define SYSCTL_PCGPIO_P8        0x00000100  // GPIO Port J Power Control
+#define SYSCTL_PCGPIO_P7        0x00000080  // GPIO Port H Power Control
+#define SYSCTL_PCGPIO_P6        0x00000040  // GPIO Port G Power Control
+#define SYSCTL_PCGPIO_P5        0x00000020  // GPIO Port F Power Control
+#define SYSCTL_PCGPIO_P4        0x00000010  // GPIO Port E Power Control
+#define SYSCTL_PCGPIO_P3        0x00000008  // GPIO Port D Power Control
+#define SYSCTL_PCGPIO_P2        0x00000004  // GPIO Port C Power Control
+#define SYSCTL_PCGPIO_P1        0x00000002  // GPIO Port B Power Control
+#define SYSCTL_PCGPIO_P0        0x00000001  // GPIO Port A Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_PCDMA_P0         0x00000001  // uDMA Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_PCHIB_P0         0x00000001  // Hibernation Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCUART register.
+//
+//*****************************************************************************
+#define SYSCTL_PCUART_P7        0x00000080  // UART Module 7 Power Control
+#define SYSCTL_PCUART_P6        0x00000040  // UART Module 6 Power Control
+#define SYSCTL_PCUART_P5        0x00000020  // UART Module 5 Power Control
+#define SYSCTL_PCUART_P4        0x00000010  // UART Module 4 Power Control
+#define SYSCTL_PCUART_P3        0x00000008  // UART Module 3 Power Control
+#define SYSCTL_PCUART_P2        0x00000004  // UART Module 2 Power Control
+#define SYSCTL_PCUART_P1        0x00000002  // UART Module 1 Power Control
+#define SYSCTL_PCUART_P0        0x00000001  // UART Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_PCSSI_P3         0x00000008  // SSI Module 3 Power Control
+#define SYSCTL_PCSSI_P2         0x00000004  // SSI Module 2 Power Control
+#define SYSCTL_PCSSI_P1         0x00000002  // SSI Module 1 Power Control
+#define SYSCTL_PCSSI_P0         0x00000001  // SSI Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_PCI2C_P5         0x00000020  // I2C Module 5 Power Control
+#define SYSCTL_PCI2C_P4         0x00000010  // I2C Module 4 Power Control
+#define SYSCTL_PCI2C_P3         0x00000008  // I2C Module 3 Power Control
+#define SYSCTL_PCI2C_P2         0x00000004  // I2C Module 2 Power Control
+#define SYSCTL_PCI2C_P1         0x00000002  // I2C Module 1 Power Control
+#define SYSCTL_PCI2C_P0         0x00000001  // I2C Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_PCUSB_P0         0x00000001  // USB Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PCCAN_P1         0x00000002  // CAN Module 1 Power Control
+#define SYSCTL_PCCAN_P0         0x00000001  // CAN Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCADC register.
+//
+//*****************************************************************************
+#define SYSCTL_PCADC_P1         0x00000002  // ADC Module 1 Power Control
+#define SYSCTL_PCADC_P0         0x00000001  // ADC Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCACMP register.
+//
+//*****************************************************************************
+#define SYSCTL_PCACMP_P0        0x00000001  // Analog Comparator Module 0 Power
+                                            // Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_PCPWM_P1         0x00000002  // PWM Module 1 Power Control
+#define SYSCTL_PCPWM_P0         0x00000001  // PWM Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_PCQEI_P1         0x00000002  // QEI Module 1 Power Control
+#define SYSCTL_PCQEI_P0         0x00000001  // QEI Module 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_PCLPC_P0         0x00000001  // LPC Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCPECI register.
+//
+//*****************************************************************************
+#define SYSCTL_PCPECI_P0        0x00000001  // PECI Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PCFAN_P0         0x00000001  // FAN Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCEEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PCEEPROM_P0      0x00000001  // EEPROM Module Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PCWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PCWTIMER_P5      0x00000020  // Wide Timer 5 Power Control
+#define SYSCTL_PCWTIMER_P4      0x00000010  // Wide Timer 4 Power Control
+#define SYSCTL_PCWTIMER_P3      0x00000008  // Wide Timer 3 Power Control
+#define SYSCTL_PCWTIMER_P2      0x00000004  // Wide Timer 2 Power Control
+#define SYSCTL_PCWTIMER_P1      0x00000002  // Wide Timer 1 Power Control
+#define SYSCTL_PCWTIMER_P0      0x00000001  // Wide Timer 0 Power Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRWD register.
+//
+//*****************************************************************************
+#define SYSCTL_PRWD_R1          0x00000002  // Watchdog Timer 1 Peripheral
+                                            // Ready
+#define SYSCTL_PRWD_R0          0x00000001  // Watchdog Timer 0 Peripheral
+                                            // Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRTIMER register.
+//
+//*****************************************************************************
+#define SYSCTL_PRTIMER_R5       0x00000020  // Timer 5 Peripheral Ready
+#define SYSCTL_PRTIMER_R4       0x00000010  // Timer 4 Peripheral Ready
+#define SYSCTL_PRTIMER_R3       0x00000008  // Timer 3 Peripheral Ready
+#define SYSCTL_PRTIMER_R2       0x00000004  // Timer 2 Peripheral Ready
+#define SYSCTL_PRTIMER_R1       0x00000002  // Timer 1 Peripheral Ready
+#define SYSCTL_PRTIMER_R0       0x00000001  // Timer 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRGPIO register.
+//
+//*****************************************************************************
+#define SYSCTL_PRGPIO_R14       0x00004000  // GPIO Port Q Peripheral Ready
+#define SYSCTL_PRGPIO_R13       0x00002000  // GPIO Port P Peripheral Ready
+#define SYSCTL_PRGPIO_R12       0x00001000  // GPIO Port N Peripheral Ready
+#define SYSCTL_PRGPIO_R11       0x00000800  // GPIO Port M Peripheral Ready
+#define SYSCTL_PRGPIO_R10       0x00000400  // GPIO Port L Peripheral Ready
+#define SYSCTL_PRGPIO_R9        0x00000200  // GPIO Port K Peripheral Ready
+#define SYSCTL_PRGPIO_R8        0x00000100  // GPIO Port J Peripheral Ready
+#define SYSCTL_PRGPIO_R7        0x00000080  // GPIO Port H Peripheral Ready
+#define SYSCTL_PRGPIO_R6        0x00000040  // GPIO Port G Peripheral Ready
+#define SYSCTL_PRGPIO_R5        0x00000020  // GPIO Port F Peripheral Ready
+#define SYSCTL_PRGPIO_R4        0x00000010  // GPIO Port E Peripheral Ready
+#define SYSCTL_PRGPIO_R3        0x00000008  // GPIO Port D Peripheral Ready
+#define SYSCTL_PRGPIO_R2        0x00000004  // GPIO Port C Peripheral Ready
+#define SYSCTL_PRGPIO_R1        0x00000002  // GPIO Port B Peripheral Ready
+#define SYSCTL_PRGPIO_R0        0x00000001  // GPIO Port A Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRDMA register.
+//
+//*****************************************************************************
+#define SYSCTL_PRDMA_R0         0x00000001  // uDMA Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRHIB register.
+//
+//*****************************************************************************
+#define SYSCTL_PRHIB_R0         0x00000001  // Hibernation Module Peripheral
+                                            // Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRUART register.
+//
+//*****************************************************************************
+#define SYSCTL_PRUART_R7        0x00000080  // UART Module 7 Peripheral Ready
+#define SYSCTL_PRUART_R6        0x00000040  // UART Module 6 Peripheral Ready
+#define SYSCTL_PRUART_R5        0x00000020  // UART Module 5 Peripheral Ready
+#define SYSCTL_PRUART_R4        0x00000010  // UART Module 4 Peripheral Ready
+#define SYSCTL_PRUART_R3        0x00000008  // UART Module 3 Peripheral Ready
+#define SYSCTL_PRUART_R2        0x00000004  // UART Module 2 Peripheral Ready
+#define SYSCTL_PRUART_R1        0x00000002  // UART Module 1 Peripheral Ready
+#define SYSCTL_PRUART_R0        0x00000001  // UART Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRSSI register.
+//
+//*****************************************************************************
+#define SYSCTL_PRSSI_R3         0x00000008  // SSI Module 3 Peripheral Ready
+#define SYSCTL_PRSSI_R2         0x00000004  // SSI Module 2 Peripheral Ready
+#define SYSCTL_PRSSI_R1         0x00000002  // SSI Module 1 Peripheral Ready
+#define SYSCTL_PRSSI_R0         0x00000001  // SSI Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRI2C register.
+//
+//*****************************************************************************
+#define SYSCTL_PRI2C_R5         0x00000020  // I2C Module 5 Peripheral Ready
+#define SYSCTL_PRI2C_R4         0x00000010  // I2C Module 4 Peripheral Ready
+#define SYSCTL_PRI2C_R3         0x00000008  // I2C Module 3 Peripheral Ready
+#define SYSCTL_PRI2C_R2         0x00000004  // I2C Module 2 Peripheral Ready
+#define SYSCTL_PRI2C_R1         0x00000002  // I2C Module 1 Peripheral Ready
+#define SYSCTL_PRI2C_R0         0x00000001  // I2C Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRUSB register.
+//
+//*****************************************************************************
+#define SYSCTL_PRUSB_R0         0x00000001  // USB Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRCAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PRCAN_R1         0x00000002  // CAN Module 1 Peripheral Ready
+#define SYSCTL_PRCAN_R0         0x00000001  // CAN Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRADC register.
+//
+//*****************************************************************************
+#define SYSCTL_PRADC_R1         0x00000002  // ADC Module 1 Peripheral Ready
+#define SYSCTL_PRADC_R0         0x00000001  // ADC Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRACMP register.
+//
+//*****************************************************************************
+#define SYSCTL_PRACMP_R0        0x00000001  // Analog Comparator Module
+                                            // Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRPWM register.
+//
+//*****************************************************************************
+#define SYSCTL_PRPWM_R1         0x00000002  // PWM Module 1 Peripheral Ready
+#define SYSCTL_PRPWM_R0         0x00000001  // PWM Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRQEI register.
+//
+//*****************************************************************************
+#define SYSCTL_PRQEI_R1         0x00000002  // QEI Module 1 Peripheral Ready
+#define SYSCTL_PRQEI_R0         0x00000001  // QEI Module 0 Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRLPC register.
+//
+//*****************************************************************************
+#define SYSCTL_PRLPC_R0         0x00000001  // LPC Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRPECI register.
+//
+//*****************************************************************************
+#define SYSCTL_PRPECI_R0        0x00000001  // PECI Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRFAN register.
+//
+//*****************************************************************************
+#define SYSCTL_PRFAN_R0         0x00000001  // FAN Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PREEPROM
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PREEPROM_R0      0x00000001  // EEPROM Module Peripheral Ready
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_PRWTIMER
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PRWTIMER_R5      0x00000020  // Wide Timer 5 Peripheral Ready
+#define SYSCTL_PRWTIMER_R4      0x00000010  // Wide Timer 4 Peripheral Ready
+#define SYSCTL_PRWTIMER_R3      0x00000008  // Wide Timer 3 Peripheral Ready
+#define SYSCTL_PRWTIMER_R2      0x00000004  // Wide Timer 2 Peripheral Ready
+#define SYSCTL_PRWTIMER_R1      0x00000002  // Wide Timer 1 Peripheral Ready
+#define SYSCTL_PRWTIMER_R0      0x00000001  // Wide Timer 0 Peripheral Ready
+
+//*****************************************************************************
+//
 // The following definitions are deprecated.
 //
 //*****************************************************************************
@@ -1396,6 +3324,7 @@
 // addresses.
 //
 //*****************************************************************************
+#define SYSCTL_GPIOHSCTL        0x400FE06C  // GPIO High-Speed Control
 #define SYSCTL_USER0            0x400FE1E0  // NV User Register 0
 #define SYSCTL_USER1            0x400FE1E4  // NV User Register 1
 
@@ -1446,9 +3375,15 @@
 // register.
 //
 //*****************************************************************************
+#define SYSCTL_DC1_PWM          0x00100000  // PWM Module Present
 #define SYSCTL_DC1_ADC          0x00010000  // ADC Module Present
 #define SYSCTL_DC1_SYSDIV_MASK  0x0000F000  // Minimum system divider mask
 #define SYSCTL_DC1_ADCSPD_MASK  0x00000F00  // ADC speed mask
+#define SYSCTL_DC1_ADCSPD_M     0x00000F00  // Max ADC Speed
+#define SYSCTL_DC1_ADCSPD_125K  0x00000000  // 125Ksps ADC
+#define SYSCTL_DC1_ADCSPD_250K  0x00000100  // 250K samples/second
+#define SYSCTL_DC1_ADCSPD_500K  0x00000200  // 500K samples/second
+#define SYSCTL_DC1_ADCSPD_1M    0x00000300  // 1M samples/second
 #define SYSCTL_DC1_WDOG         0x00000008  // Watchdog present
 #define SYSCTL_DC1_WDT          0x00000008  // Watchdog Timer Present
 
@@ -1501,6 +3436,7 @@
 // register.
 //
 //*****************************************************************************
+#define SYSCTL_SRCR0_PWM        0x00100000  // PWM Reset Control
 #define SYSCTL_SRCR0_ADC        0x00010000  // ADC0 Reset Control
 #define SYSCTL_SRCR0_WDT        0x00000008  // WDT Reset Control
 
@@ -1547,6 +3483,21 @@
 
 //*****************************************************************************
 //
+// The following are deprecated defines for the bit fields in the
+// SYSCTL_GPIOHSCTL register.
+//
+//*****************************************************************************
+#define SYSCTL_GPIOHSCTL_PORTA  0x00000001  // Port A High-Speed
+#define SYSCTL_GPIOHSCTL_PORTB  0x00000002  // Port B High-Speed
+#define SYSCTL_GPIOHSCTL_PORTC  0x00000004  // Port C High-Speed
+#define SYSCTL_GPIOHSCTL_PORTD  0x00000008  // Port D High-Speed
+#define SYSCTL_GPIOHSCTL_PORTE  0x00000010  // Port E High-Speed
+#define SYSCTL_GPIOHSCTL_PORTF  0x00000020  // Port F High-Speed
+#define SYSCTL_GPIOHSCTL_PORTG  0x00000040  // Port G High-Speed
+#define SYSCTL_GPIOHSCTL_PORTH  0x00000080  // Port H High-Speed
+
+//*****************************************************************************
+//
 // The following are deprecated defines for the bit fields in the SYSCTL_RCC2
 // register.
 //
@@ -1562,6 +3513,7 @@
 // register.
 //
 //*****************************************************************************
+#define SYSCTL_RCGC0_PWM        0x00100000  // PWM Clock Gating Control
 #define SYSCTL_RCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_RCGC0_WDT        0x00000008  // WDT Clock Gating Control
 
@@ -1571,6 +3523,7 @@
 // register.
 //
 //*****************************************************************************
+#define SYSCTL_SCGC0_PWM        0x00100000  // PWM Clock Gating Control
 #define SYSCTL_SCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_SCGC0_WDT        0x00000008  // WDT Clock Gating Control
 
@@ -1580,6 +3533,7 @@
 // register.
 //
 //*****************************************************************************
+#define SYSCTL_DCGC0_PWM        0x00100000  // PWM Clock Gating Control
 #define SYSCTL_DCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
 #define SYSCTL_DCGC0_WDT        0x00000008  // WDT Clock Gating Control
 

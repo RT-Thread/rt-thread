@@ -2,7 +2,7 @@ This project will build the Stellaris Peripheral Driver Library.
 
 -------------------------------------------------------------------------------
 
-Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
+Copyright (c) 2006-2011 Texas Instruments Incorporated.  All rights reserved.
 Software License Agreement
 
 Texas Instruments (TI) is supplying this software for use solely and
@@ -18,4 +18,4 @@ A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, FOR ANY REASON WHATSOEVER.
 
-This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+This is part of revision 8264 of the Stellaris Peripheral Driver Library.

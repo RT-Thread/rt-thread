@@ -2,7 +2,7 @@
 //
 // hw_i2c.h - Macros used when accessing the I2C master and slave hardware.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -47,7 +47,13 @@
 #define I2C_O_MMIS              0x00000018  // I2C Master Masked Interrupt
                                             // Status
 #define I2C_O_MICR              0x0000001C  // I2C Master Interrupt Clear
+#define I2C_O_SOAR2             0x0000001C  // I2C Slave Own Address 2
 #define I2C_O_MCR               0x00000020  // I2C Master Configuration
+#define I2C_O_SACKCTL           0x00000020  // I2C ACK Control
+#define I2C_O_MCLKOCNT          0x00000024  // I2C Master Clock Low Timeout
+                                            // Count
+#define I2C_O_MBMON             0x0000002C  // I2C Master Bus Monitor
+#define I2C_O_PP                0x00000FC0  // I2C Peripheral Properties
 
 //*****************************************************************************
 //
@@ -71,6 +77,9 @@
 // The following are defines for the bit fields in the I2C_O_SCSR register.
 //
 //*****************************************************************************
+#define I2C_SCSR_QCMDRW         0x00000020  // Quick Command Read / Write
+#define I2C_SCSR_QCMDST         0x00000010  // Quick Command Status
+#define I2C_SCSR_OAR2SEL        0x00000008  // OAR2 Address Matched
 #define I2C_SCSR_FBR            0x00000004  // First Byte Received
 #define I2C_SCSR_TREQ           0x00000002  // Transmit Request
 #define I2C_SCSR_DA             0x00000001  // Device Active
@@ -81,9 +90,12 @@
 // The following are defines for the bit fields in the I2C_O_MCS register.
 //
 //*****************************************************************************
+#define I2C_MCS_CLKTO           0x00000080  // Clock Timeout Error
 #define I2C_MCS_BUSBSY          0x00000040  // Bus Busy
 #define I2C_MCS_IDLE            0x00000020  // I2C Idle
+#define I2C_MCS_QCMD            0x00000020  // Quick Command
 #define I2C_MCS_ARBLST          0x00000010  // Arbitration Lost
+#define I2C_MCS_HS              0x00000010  // High-Speed Enable
 #define I2C_MCS_ACK             0x00000008  // Data Acknowledge Enable
 #define I2C_MCS_DATACK          0x00000008  // Acknowledge Data
 #define I2C_MCS_ADRACK          0x00000004  // Acknowledge Address
@@ -142,6 +154,7 @@
 // The following are defines for the bit fields in the I2C_O_MIMR register.
 //
 //*****************************************************************************
+#define I2C_MIMR_CLKIM          0x00000002  // Clock Timeout Interrupt Mask
 #define I2C_MIMR_IM             0x00000001  // Interrupt Mask
 
 //*****************************************************************************
@@ -149,6 +162,8 @@
 // The following are defines for the bit fields in the I2C_O_MRIS register.
 //
 //*****************************************************************************
+#define I2C_MRIS_CLKRIS         0x00000002  // Clock Timeout Raw Interrupt
+                                            // Status
 #define I2C_MRIS_RIS            0x00000001  // Raw Interrupt Status
 
 //*****************************************************************************
@@ -176,6 +191,8 @@
 // The following are defines for the bit fields in the I2C_O_MMIS register.
 //
 //*****************************************************************************
+#define I2C_MMIS_CLKMIS         0x00000002  // Clock Timeout Masked Interrupt
+                                            // Status
 #define I2C_MMIS_MIS            0x00000001  // Masked Interrupt Status
 
 //*****************************************************************************
@@ -183,7 +200,17 @@
 // The following are defines for the bit fields in the I2C_O_MICR register.
 //
 //*****************************************************************************
+#define I2C_MICR_CLKIC          0x00000002  // Clock Timeout Interrupt Clear
 #define I2C_MICR_IC             0x00000001  // Interrupt Clear
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the I2C_O_SOAR2 register.
+//
+//*****************************************************************************
+#define I2C_SOAR2_OAR2EN        0x00000080  // I2C Slave Own Address 2 Enable
+#define I2C_SOAR2_OAR2_M        0x0000007F  // I2C Slave Own Address 2
+#define I2C_SOAR2_OAR2_S        0
 
 //*****************************************************************************
 //
@@ -193,6 +220,37 @@
 #define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
 #define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
 #define I2C_MCR_LPBK            0x00000001  // I2C Loopback
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the I2C_O_SACKCTL register.
+//
+//*****************************************************************************
+#define I2C_SACKCTL_ACKOVAL     0x00000002  // I2C Slave ACK Override Value
+#define I2C_SACKCTL_ACKOEN      0x00000001  // I2C Slave ACK Override Enable
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the I2C_O_MCLKOCNT register.
+//
+//*****************************************************************************
+#define I2C_MCLKOCNT_CNTL_M     0x000000FF  // I2C Master Count
+#define I2C_MCLKOCNT_CNTL_S     0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the I2C_O_MBMON register.
+//
+//*****************************************************************************
+#define I2C_MBMON_SDA           0x00000002  // I2C SDA Status
+#define I2C_MBMON_SCL           0x00000001  // I2C SCL Status
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the I2C_O_PP register.
+//
+//*****************************************************************************
+#define I2C_PP_HS               0x00000001  // High-Speed Capable
 
 //*****************************************************************************
 //

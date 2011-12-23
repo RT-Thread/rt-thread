@@ -2,7 +2,7 @@
 //
 // hw_epi.h - Macros for use in accessing the EPI registers.
 //
-// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -206,6 +206,18 @@
 #define EPI_HB8CFG2_CSCFG_CS    0x01000000  // CSn Configuration
 #define EPI_HB8CFG2_CSCFG_DCS   0x02000000  // Dual CSn Configuration
 #define EPI_HB8CFG2_CSCFG_ADCS  0x03000000  // ALE with Dual CSn Configuration
+#define EPI_HB8CFG2_WRHIGH      0x00200000  // CS1n WRITE Strobe Polarity
+#define EPI_HB8CFG2_RDHIGH      0x00100000  // CS1n READ Strobe Polarity
+#define EPI_HB8CFG2_WRWS_M      0x000000C0  // CS1n Write Wait States
+#define EPI_HB8CFG2_WRWS_0      0x00000000  // No wait states
+#define EPI_HB8CFG2_WRWS_1      0x00000040  // 1 wait state
+#define EPI_HB8CFG2_WRWS_2      0x00000080  // 2 wait states
+#define EPI_HB8CFG2_WRWS_3      0x000000C0  // 3 wait states
+#define EPI_HB8CFG2_RDWS_M      0x00000030  // CS1n Read Wait States
+#define EPI_HB8CFG2_RDWS_0      0x00000000  // No wait states
+#define EPI_HB8CFG2_RDWS_1      0x00000010  // 1 wait state
+#define EPI_HB8CFG2_RDWS_2      0x00000020  // 2 wait states
+#define EPI_HB8CFG2_RDWS_3      0x00000030  // 3 wait states
 
 //*****************************************************************************
 //
@@ -219,6 +231,18 @@
 #define EPI_HB16CFG2_CSCFG_CS   0x01000000  // CSn Configuration
 #define EPI_HB16CFG2_CSCFG_DCS  0x02000000  // Dual CSn Configuration
 #define EPI_HB16CFG2_CSCFG_ADCS 0x03000000  // ALE with Dual CSn Configuration
+#define EPI_HB16CFG2_WRHIGH     0x00200000  // CS1n WRITE Strobe Polarity
+#define EPI_HB16CFG2_RDHIGH     0x00100000  // CS1n READ Strobe Polarity
+#define EPI_HB16CFG2_WRWS_M     0x000000C0  // CS1n Write Wait States
+#define EPI_HB16CFG2_WRWS_0     0x00000000  // No wait states
+#define EPI_HB16CFG2_WRWS_1     0x00000040  // 1 wait state
+#define EPI_HB16CFG2_WRWS_2     0x00000080  // 2 wait states
+#define EPI_HB16CFG2_WRWS_3     0x000000C0  // 3 wait states
+#define EPI_HB16CFG2_RDWS_M     0x00000030  // CS1n Read Wait States
+#define EPI_HB16CFG2_RDWS_0     0x00000000  // No wait states
+#define EPI_HB16CFG2_RDWS_1     0x00000010  // 1 wait state
+#define EPI_HB16CFG2_RDWS_2     0x00000020  // 2 wait states
+#define EPI_HB16CFG2_RDWS_3     0x00000030  // 3 wait states
 
 //*****************************************************************************
 //

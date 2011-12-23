@@ -2,7 +2,7 @@
 //
 // hw_usb.h - Macros for use in accessing the USB registers.
 //
-// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -629,6 +629,7 @@
 #define USB_O_IDVISC            0x0000044C  // USB ID Valid Detect Interrupt
                                             // Status and Clear
 #define USB_O_DMASEL            0x00000450  // USB DMA Select
+#define USB_O_PP                0x00000FC0  // USB Peripheral Properties
 
 //*****************************************************************************
 //
@@ -4569,10 +4570,28 @@
 #define USB_DMASEL_DMABRX_M     0x00000F00  // DMA B RX Select
 #define USB_DMASEL_DMAATX_M     0x000000F0  // DMA A TX Select
 #define USB_DMASEL_DMAARX_M     0x0000000F  // DMA A RX Select
+#define USB_DMASEL_DMACTX_S     20
+#define USB_DMASEL_DMACRX_S     16
 #define USB_DMASEL_DMABTX_S     12
 #define USB_DMASEL_DMABRX_S     8
 #define USB_DMASEL_DMAATX_S     4
 #define USB_DMASEL_DMAARX_S     0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the USB_O_PP register.
+//
+//*****************************************************************************
+#define USB_PP_ECNT_M           0x0000FF00  // Endpoint Count
+#define USB_PP_USB_M            0x000000C0  // USB Capability
+#define USB_PP_USB_DEVICE       0x00000040  // DEVICE
+#define USB_PP_USB_HOSTDEVICE   0x00000080  // HOST
+#define USB_PP_USB_OTG          0x000000C0  // OTG
+#define USB_PP_PHY              0x00000010  // PHY Present
+#define USB_PP_TYPE_M           0x0000000F  // Controller Type
+#define USB_PP_TYPE_0           0x00000000  // The first-generation USB
+                                            // controller
+#define USB_PP_ECNT_S           8
 
 //*****************************************************************************
 //

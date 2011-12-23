@@ -2,7 +2,7 @@
 //
 // watchdog.c - Driver for the Watchdog Timer Module.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -43,9 +43,9 @@
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! This will check to see if the watchdog timer is enabled.
+//! This function checks to see if the watchdog timer is enabled.
 //!
-//! \return Returns \b true if the watchdog timer is enabled, and \b false
+//! \return Returns \b true if the watchdog timer is enabled and \b false
 //! if it is not.
 //
 //*****************************************************************************
@@ -69,10 +69,9 @@ WatchdogRunning(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! This will enable the watchdog timer counter and interrupt.
+//! This function enables the watchdog timer counter and interrupt.
 //!
-//! \note This function will have no effect if the watchdog timer has
-//! been locked.
+//! \note This function has no effect if the watchdog timer has been locked.
 //!
 //! \sa WatchdogLock(), WatchdogUnlock()
 //!
@@ -99,12 +98,11 @@ WatchdogEnable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Enables the capability of the watchdog timer to issue a reset to the
-//! processor upon a second timeout condition.
+//! This function enables the capability of the watchdog timer to issue a reset 
+//! to the processor after a second timeout condition.
 //!
-//! \note This function will have no effect if the watchdog timer has
-//! been locked.
-//!
+//! \note This function has no effect if the watchdog timer has been locked.
+//! 
 //! \sa WatchdogLock(), WatchdogUnlock()
 //!
 //! \return None.
@@ -130,11 +128,10 @@ WatchdogResetEnable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Disables the capability of the watchdog timer to issue a reset to the
-//! processor upon a second timeout condition.
+//! This function disables the capability of the watchdog timer to issue a
+//! reset to the processor after a second timeout condition.
 //!
-//! \note This function will have no effect if the watchdog timer has
-//! been locked.
+//! \note This function has no effect if the watchdog timer has been locked.
 //!
 //! \sa WatchdogLock(), WatchdogUnlock()
 //!
@@ -161,7 +158,8 @@ WatchdogResetDisable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Locks out write access to the watchdog timer configuration registers.
+//! This function locks out write access to the watchdog timer configuration
+//! registers.
 //!
 //! \return None.
 //
@@ -187,7 +185,8 @@ WatchdogLock(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Enables write access to the watchdog timer configuration registers.
+//! This function enables write access to the watchdog timer configuration 
+//! registers.
 //!
 //! \return None.
 //
@@ -212,7 +211,7 @@ WatchdogUnlock(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Returns the lock state of the watchdog timer registers.
+//! This function returns the lock state of the watchdog timer registers.
 //!
 //! \return Returns \b true if the watchdog timer registers are locked, and
 //! \b false if they are not locked.
@@ -239,14 +238,13 @@ WatchdogLockState(unsigned long ulBase)
 //! \param ulBase is the base address of the watchdog timer module.
 //! \param ulLoadVal is the load value for the watchdog timer.
 //!
-//! This function sets the value to load into the watchdog timer when the count
-//! reaches zero for the first time; if the watchdog timer is running when this
-//! function is called, then the value will be immediately loaded into the
-//! watchdog timer counter.  If the \e ulLoadVal parameter is 0, then an
+//! This function configures the value to load into the watchdog timer when the 
+//! count reaches zero for the first time; if the watchdog timer is running 
+//! when this function is called, then the value is immediately loaded into the 
+//! watchdog timer counter.  If the \e ulLoadVal parameter is 0, then an 
 //! interrupt is immediately generated.
 //!
-//! \note This function will have no effect if the watchdog timer has
-//! been locked.
+//! \note This function has no effect if the watchdog timer has been locked.
 //!
 //! \sa WatchdogLock(), WatchdogUnlock(), WatchdogReloadGet()
 //!
@@ -322,20 +320,26 @@ WatchdogValueGet(unsigned long ulBase)
 
 //*****************************************************************************
 //
-//! Registers an interrupt handler for watchdog timer interrupt.
+//! Registers an interrupt handler for the watchdog timer interrupt.
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //! \param pfnHandler is a pointer to the function to be called when the
 //! watchdog timer interrupt occurs.
 //!
 //! This function does the actual registering of the interrupt handler.  This
-//! will enable the global interrupt in the interrupt controller; the watchdog
-//! timer interrupt must be enabled via WatchdogEnable().  It is the interrupt
-//! handler's responsibility to clear the interrupt source via
+//! function also enables the global interrupt in the interrupt controller; the 
+//! watchdog timer interrupt must be enabled via WatchdogEnable().  It is the 
+//! interrupt handler's responsibility to clear the interrupt source via
 //! WatchdogIntClear().
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
+//!
+//! \note For parts with a watchdog timer module that has the ability to
+//! generate an NMI instead of a standard interrupt, this function registers
+//! the standard watchdog interrupt handler.  To register the NMI watchdog 
+//! handler, use IntRegister() to register the handler for the
+//! \b FAULT_NMI interrupt.
 //!
 //! \return None.
 //
@@ -366,12 +370,18 @@ WatchdogIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //! \param ulBase is the base address of the watchdog timer module.
 //!
 //! This function does the actual unregistering of the interrupt handler.  This
-//! function will clear the handler to be called when a watchdog timer
-//! interrupt occurs.  This will also mask off the interrupt in the interrupt
+//! function clears the handler to be called when a watchdog timer interrupt
+//! occurs.  This function also masks off the interrupt in the interrupt
 //! controller so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
+//!
+//! \note For parts with a watchdog timer module that has the ability to
+//! generate an NMI instead of a standard interrupt, this function unregisters
+//! the standard watchdog interrupt handler.  To unregister the NMI watchdog
+//! handler, use IntUnregister() to unregister the handler for the
+//! \b FAULT_NMI interrupt.
 //!
 //! \return None.
 //
@@ -401,10 +411,9 @@ WatchdogIntUnregister(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! Enables the watchdog timer interrupt.
+//! This function enables the watchdog timer interrupt.
 //!
-//! \note This function will have no effect if the watchdog timer has
-//! been locked.
+//! \note This function has no effect if the watchdog timer has been locked.
 //!
 //! \sa WatchdogLock(), WatchdogUnlock(), WatchdogEnable()
 //!
@@ -433,9 +442,9 @@ WatchdogIntEnable(unsigned long ulBase)
 //! \param bMasked is \b false if the raw interrupt status is required and
 //! \b true if the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the watchdog timer module.  Either
-//! the raw interrupt status or the status of interrupt that is allowed to
-//! reflect to the processor can be returned.
+//! This function returns the interrupt status for the watchdog timer module.  
+//! Either the raw interrupt status or the status of interrupt that is allowed 
+//! to reflect to the processor can be returned.
 //!
 //! \return Returns the current interrupt status, where a 1 indicates that the
 //! watchdog interrupt is active, and a 0 indicates that it is not active.
@@ -472,14 +481,14 @@ WatchdogIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! The watchdog timer interrupt source is cleared, so that it no longer
 //! asserts.
 //!
-//! \note Since there is a write buffer in the Cortex-M3 processor, it may take
-//! several clock cycles before the interrupt source is actually cleared.
+//! \note Because there is a write buffer in the Cortex-M processor, it may
+//! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
 //! returning from the interrupt handler before the interrupt source is
 //! actually cleared.  Failure to do so may result in the interrupt handler
-//! being immediately reentered (since NVIC still sees the interrupt source
-//! asserted).
+//! being immediately reentered (because the interrupt controller still sees
+//! the interrupt source asserted).
 //!
 //! \return None.
 //
@@ -500,6 +509,46 @@ WatchdogIntClear(unsigned long ulBase)
 
 //*****************************************************************************
 //
+//! Sets the type of interrupt generated by the watchdog.
+//!
+//! \param ulBase is the base address of the watchdog timer module.
+//! \param ulType is the type of interrupt to generate.
+//!
+//! This function sets the type of interrupt that is generated if the watchdog
+//! timer expires.  \e ulType can be either \b WATCHDOG_INT_TYPE_INT to
+//! generate a standard interrupt (the default) or \b WATCHDOG_INT_TYPE_NMI to
+//! generate a non-maskable interrupt (NMI).
+//!
+//! When configured to generate an NMI, the watchdog interrupt must still be
+//! enabled with WatchdogIntEnable(), and it must still be cleared inside the
+//! NMI handler with WatchdogIntClear().
+//!
+//! \note The ability to select an NMI interrupt varies with the Stellaris part
+//! in use.  Please consult the datasheet for the part you are using to
+//! determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+WatchdogIntTypeSet(unsigned long ulBase, unsigned long ulType)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
+    ASSERT((ulType == WATCHDOG_INT_TYPE_INT) ||
+           (ulType == WATCHDOG_INT_TYPE_NMI));
+
+    //
+    // Set the interrupt type.
+    //
+    HWREG(ulBase + WDT_O_CTL) =
+        (HWREG(ulBase + WDT_O_CTL) & ~WDT_CTL_INTTYPE) | ulType;
+}
+
+//*****************************************************************************
+//
 //! Enables stalling of the watchdog timer during debug events.
 //!
 //! \param ulBase is the base address of the watchdog timer module.
@@ -507,9 +556,9 @@ WatchdogIntClear(unsigned long ulBase)
 //! This function allows the watchdog timer to stop counting when the processor
 //! is stopped by the debugger.  By doing so, the watchdog is prevented from
 //! expiring (typically almost immediately from a human time perspective) and
-//! resetting the system (if reset is enabled).  The watchdog will instead
-//! expired after the appropriate number of processor cycles have been executed
-//! while debugging (or at the appropriate time after the processor has been
+//! resetting the system (if reset is enabled).  The watchdog instead expires
+//! after the appropriate number of processor cycles have been executed while
+//! debugging (or at the appropriate time after the processor has been
 //! restarted).
 //!
 //! \return None.

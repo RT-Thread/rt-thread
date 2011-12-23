@@ -21,19 +21,24 @@ File 3,1,<Libraries\driverlib\adc.c><adc.c>
 File 3,1,<Libraries\driverlib\can.c><can.c>
 File 3,1,<Libraries\driverlib\comp.c><comp.c>
 File 3,1,<Libraries\driverlib\cpu.c><cpu.c>
+File 3,1,<Libraries\driverlib\eeprom.c><eeprom.c>
 File 3,1,<Libraries\driverlib\epi.c><epi.c>
 File 3,1,<Libraries\driverlib\ethernet.c><ethernet.c>
+File 3,1,<Libraries\driverlib\fan.c><fan.c>
 File 3,1,<Libraries\driverlib\flash.c><flash.c>
 File 3,1,<Libraries\driverlib\gpio.c><gpio.c>
 File 3,1,<Libraries\driverlib\hibernate.c><hibernate.c>
 File 3,1,<Libraries\driverlib\i2c.c><i2c.c>
 File 3,1,<Libraries\driverlib\i2s.c><i2s.c>
 File 3,1,<Libraries\driverlib\interrupt.c><interrupt.c>
+File 3,1,<Libraries\driverlib\lpc.c><lpc.c>
 File 3,1,<Libraries\driverlib\mpu.c><mpu.c>
+File 3,1,<Libraries\driverlib\peci.c><peci.c>
 File 3,1,<Libraries\driverlib\pwm.c><pwm.c>
 File 3,1,<Libraries\driverlib\qei.c><qei.c>
 File 3,1,<Libraries\driverlib\ssi.c><ssi.c>
 File 3,1,<Libraries\driverlib\sysctl.c><sysctl.c>
+File 3,1,<Libraries\driverlib\sysexc.c><sysexc.c>
 File 3,1,<Libraries\driverlib\systick.c><systick.c>
 File 3,1,<Libraries\driverlib\timer.c><timer.c>
 File 3,1,<Libraries\driverlib\uart.c><uart.c>
@@ -146,7 +151,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  GenHex=0
  Debug=1
  Browse=1
- LstDir (.\objs\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0
@@ -170,7 +175,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  RV_STAVEC ()
  ADSCCFLG { 13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
- ADSCDEFN ()
+ ADSCDEFN (PART_LM3S9B96)
  ADSCUDEF ()
  ADSCINCD (..\..\components\net\lwip\src\include\ipv4;..\..\include;drivers;..\..\components\net\lwip\src\include;.;Libraries;applications;..\..\components\net\lwip\src\arch\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\net\lwip\src\include\netif)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
@@ -197,9 +202,9 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S9B96)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S9B96)
-  OPTDBG 49142,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+  OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (BIN\lmidk-agdi.dll)
+ FLASH2 (BIN\UL2CM3.DLL)
  FLASH3 ("" ())
  FLASH4 ()
 EndOpt

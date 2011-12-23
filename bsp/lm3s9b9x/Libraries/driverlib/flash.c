@@ -2,7 +2,7 @@
 //
 // flash.c - Driver for programming the on-chip flash.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -70,7 +70,8 @@ static const unsigned long g_pulFMPRERegs[] =
 //! Gets the number of processor clocks per micro-second.
 //!
 //! This function returns the number of clocks per micro-second, as presently
-//! known by the flash controller.
+//! known by the flash controller. This function is only valid on Sandstorm-
+//! and Fury-class devices.
 //!
 //! \return Returns the number of processor clocks per micro-second.
 //
@@ -93,7 +94,7 @@ FlashUsecGet(void)
 //! This function is used to tell the flash controller the number of processor
 //! clocks per micro-second.  This value must be programmed correctly or the
 //! flash most likely will not program correctly; it has no affect on reading
-//! flash.
+//! flash. This function is only valid on Sandstorm- and Fury-class devices.
 //!
 //! \return None.
 //
@@ -113,11 +114,11 @@ FlashUsecSet(unsigned long ulClocks)
 //!
 //! \param ulAddress is the start address of the flash block to be erased.
 //!
-//! This function will erase a 1 kB block of the on-chip flash.  After erasing,
-//! the block will be filled with 0xFF bytes.  Read-only and execute-only
-//! blocks cannot be erased.
+//! This function erases a 1-kB block of the on-chip flash.  After erasing,
+//! the block is filled with 0xFF bytes.  Read-only and execute-only blocks
+//! cannot be erased.
 //!
-//! This function will not return until the block has been erased.
+//! This function does not return until the block has been erased.
 //!
 //! \return Returns 0 on success, or -1 if an invalid block address was
 //! specified or the block is write-protected.
@@ -132,9 +133,10 @@ FlashErase(unsigned long ulAddress)
     ASSERT(!(ulAddress & (FLASH_ERASE_SIZE - 1)));
 
     //
-    // Clear the flash access interrupt.
+    // Clear the flash access and error interrupts.
     //
-    HWREG(FLASH_FCMISC) = FLASH_FCMISC_AMISC;
+    HWREG(FLASH_FCMISC) = (FLASH_FCMISC_AMISC | FLASH_FCMISC_VOLTMISC |
+                           FLASH_FCMISC_ERMISC);
 
     //
     // Erase the block.
@@ -150,9 +152,10 @@ FlashErase(unsigned long ulAddress)
     }
 
     //
-    // Return an error if an access violation occurred.
+    // Return an error if an access violation or erase error occurred.
     //
-    if(HWREG(FLASH_FCRIS) & FLASH_FCRIS_ARIS)
+    if(HWREG(FLASH_FCRIS) & (FLASH_FCRIS_ARIS | FLASH_FCRIS_VOLTRIS |
+                             FLASH_FCRIS_ERRIS))
     {
         return(-1);
     }
@@ -173,19 +176,16 @@ FlashErase(unsigned long ulAddress)
 //! \param ulCount is the number of bytes to be programmed.  Must be a multiple
 //! of four.
 //!
-//! This function will program a sequence of words into the on-chip flash.
-//! Programming each location consists of the result of an AND operation
-//! of the new data and the existing data; in other words bits that contain
-//! 1 can remain 1 or be changed to 0, but bits that are 0 cannot be changed
-//! to 1.  Therefore, a word can be programmed multiple times as long as these
-//! rules are followed; if a program operation attempts to change a 0 bit to
-//! a 1 bit, that bit will not have its value changed.
+//! This function programs a sequence of words into the on-chip flash.
+//! Each word in a page of flash can only be programmed one time between an
+//! erase of that page; programming a word multiple times results in an
+//! unpredictable value in that word of flash.
 //!
-//! Since the flash is programmed one word at a time, the starting address and
-//! byte count must both be multiples of four.  It is up to the caller to
+//! Because the flash is programmed one word at a time, the starting address 
+//! and byte count must both be multiples of four.  It is up to the caller to
 //! verify the programmed contents, if such verification is required.
 //!
-//! This function will not return until the data has been programmed.
+//! This function does not return until the data has been programmed.
 //!
 //! \return Returns 0 on success, or -1 if a programming error is encountered.
 //
@@ -201,9 +201,10 @@ FlashProgram(unsigned long *pulData, unsigned long ulAddress,
     ASSERT(!(ulCount & 3));
 
     //
-    // Clear the flash access interrupt.
+    // Clear the flash access and error interrupts.
     //
-    HWREG(FLASH_FCMISC) = FLASH_FCMISC_AMISC;
+    HWREG(FLASH_FCMISC) = (FLASH_FCMISC_AMISC | FLASH_FCMISC_VOLTMISC |
+                           FLASH_FCMISC_INVDMISC | FLASH_FCMISC_PROGMISC);
 
     //
     // See if this device has a write buffer.
@@ -280,7 +281,8 @@ FlashProgram(unsigned long *pulData, unsigned long ulAddress,
     //
     // Return an error if an access violation occurred.
     //
-    if(HWREG(FLASH_FCRIS) & FLASH_FCRIS_ARIS)
+    if(HWREG(FLASH_FCRIS) & (FLASH_FCRIS_ARIS | FLASH_FCRIS_VOLTRIS |
+                             FLASH_FCRIS_INVDRIS | FLASH_FCRIS_PROGRIS))
     {
         return(-1);
     }
@@ -297,7 +299,7 @@ FlashProgram(unsigned long *pulData, unsigned long ulAddress,
 //!
 //! \param ulAddress is the start address of the flash block to be queried.
 //!
-//! This function will get the current protection for the specified 2 kB block
+//! This function gets the current protection for the specified 2-kB block
 //! of flash.  Each block can be read/write, read-only, or execute-only.
 //! Read/write blocks can be read, executed, erased, and programmed.  Read-only
 //! blocks can be read and executed.  Execute-only blocks can only be executed;
@@ -390,17 +392,17 @@ FlashProtectGet(unsigned long ulAddress)
 //! \param eProtect is the protection to be applied to the block.  Can be one
 //! of \b FlashReadWrite, \b FlashReadOnly, or \b FlashExecuteOnly.
 //!
-//! This function will set the protection for the specified 2 kB block of
-//! flash.  Blocks which are read/write can be made read-only or execute-only.
-//! Blocks which are read-only can be made execute-only.  Blocks which are
+//! This function sets the protection for the specified 2-kB block of
+//! flash.  Blocks that are read/write can be made read-only or execute-only.
+//! Blocks that are read-only can be made execute-only.  Blocks that are
 //! execute-only cannot have their protection modified.  Attempts to make the
-//! block protection less stringent (that is, read-only to read/write) will
-//! result in a failure (and be prevented by the hardware).
+//! block protection less stringent (that is, read-only to read/write) 
+//! result in a failure (and are prevented by the hardware).
 //!
 //! Changes to the flash protection are maintained only until the next reset.
-//! This allows the application to be executed in the desired flash protection
-//! environment to check for inappropriate flash access (via the flash
-//! interrupt).  To make the flash protection permanent, use the
+//! This protocol allows the application to be executed in the desired flash 
+//! protection environment to check for inappropriate flash access (via the 
+//! flash interrupt).  To make the flash protection permanent, use the
 //! FlashProtectSave() function.
 //!
 //! \return Returns 0 on success, or -1 if an invalid address or an invalid
@@ -536,7 +538,7 @@ FlashProtectSet(unsigned long ulAddress, tFlashProtection eProtect)
     {
         ulProtectRE &= ~(FLASH_FMP_BLOCK_31 | FLASH_FMP_BLOCK_30);
         ulProtectRE |= (HWREG(g_pulFMPRERegs[ulBank]) &
-                (FLASH_FMP_BLOCK_31 | FLASH_FMP_BLOCK_30));
+                        (FLASH_FMP_BLOCK_31 | FLASH_FMP_BLOCK_30));
     }
 
     //
@@ -555,11 +557,11 @@ FlashProtectSet(unsigned long ulAddress, tFlashProtection eProtect)
 //
 //! Saves the flash protection settings.
 //!
-//! This function will make the currently programmed flash protection settings
-//! permanent.  This is a non-reversible operation; a chip reset or power cycle
-//! will not change the flash protection.
+//! This function makes the currently programmed flash protection settings
+//! permanent.  On some devices, this operation is non-reversible; a chip reset 
+//! or power cycle does not change the flash protection.
 //!
-//! This function will not return until the protection has been saved.
+//! This function does not return until the protection has been saved.
 //!
 //! \return Returns 0 on success, or -1 if a hardware error is encountered.
 //
@@ -567,7 +569,7 @@ FlashProtectSet(unsigned long ulAddress, tFlashProtection eProtect)
 long
 FlashProtectSave(void)
 {
-    int ulTemp, ulLimit;
+    unsigned long ulTemp, ulLimit;
 
     //
     // If running on a Sandstorm-class device, only trigger a save of the first
@@ -604,8 +606,8 @@ FlashProtectSave(void)
 //! \param pulUser0 is a pointer to the location to store USER Register 0.
 //! \param pulUser1 is a pointer to the location to store USER Register 1.
 //!
-//! This function will read the contents of user registers (0 and 1), and
-//! store them in the specified locations.
+//! This function reads the contents of user registers (0 and 1), and
+//! stores them in the specified locations.
 //!
 //! \return Returns 0 on success, or -1 if a hardware error is encountered.
 //
@@ -646,7 +648,7 @@ FlashUserGet(unsigned long *pulUser0, unsigned long *pulUser1)
 //! \param ulUser0 is the value to store in USER Register 0.
 //! \param ulUser1 is the value to store in USER Register 1.
 //!
-//! This function will set the contents of the user registers (0 and 1) to
+//! This function sets the contents of the user registers (0 and 1) to
 //! the specified values.
 //!
 //! \return Returns 0 on success, or -1 if a hardware error is encountered.
@@ -679,11 +681,11 @@ FlashUserSet(unsigned long ulUser0, unsigned long ulUser1)
 //
 //! Saves the user registers.
 //!
-//! This function will make the currently programmed user register settings
-//! permanent.  This is a non-reversible operation; a chip reset or power cycle
-//! will not change this setting.
+//! This function makes the currently programmed user register settings
+//! permanent.  On some devices, this operation is non-reversible; a chip reset 
+//! or power cycle does not change this setting.
 //!
-//! This function will not return until the protection has been saved.
+//! This function does not return until the protection has been saved.
 //!
 //! \return Returns 0 on success, or -1 if a hardware error is encountered.
 //
@@ -739,12 +741,12 @@ FlashUserSave(void)
 //! \param pfnHandler is a pointer to the function to be called when the flash
 //! interrupt occurs.
 //!
-//! This sets the handler to be called when the flash interrupt occurs.  The
-//! flash controller can generate an interrupt when an invalid flash access
+//! This function sets the handler to be called when the flash interrupt occurs.  
+//! The flash controller can generate an interrupt when an invalid flash access
 //! occurs, such as trying to program or erase a read-only block, or trying to
 //! read from an execute-only block.  It can also generate an interrupt when a
-//! program or erase operation has completed.  The interrupt will be
-//! automatically enabled when the handler is registered.
+//! program or erase operation has completed.  The interrupt is automatically
+//! enabled when the handler is registered.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -770,9 +772,9 @@ FlashIntRegister(void (*pfnHandler)(void))
 //
 //! Unregisters the interrupt handler for the flash interrupt.
 //!
-//! This function will clear the handler to be called when the flash interrupt
-//! occurs.  This will also mask off the interrupt in the interrupt controller
-//! so that the interrupt handler is no longer called.
+//! This function clears the handler to be called when the flash interrupt
+//! occurs.  This function also masks off the interrupt in the interrupt 
+//! controller so that the interrupt handler is no longer called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -801,9 +803,9 @@ FlashIntUnregister(void)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
 //! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_ACCESS values.
 //!
-//! Enables the indicated flash controller interrupt sources.  Only the sources
-//! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
+//! This function enables the indicated flash controller interrupt sources. 
+//! Only the sources that are enabled can be reflected to the processor 
+//! interrupt; disabled sources have no effect on the processor.
 //!
 //! \return None.
 //
@@ -824,9 +826,9 @@ FlashIntEnable(unsigned long ulIntFlags)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be disabled.
 //! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_ACCESS values.
 //!
-//! Disables the indicated flash controller interrupt sources.  Only the
-//! sources that are enabled can be reflected to the processor interrupt;
-//! disabled sources have no effect on the processor.
+//! This function disables the indicated flash controller interrupt sources.
+//! Only the sources that are enabled can be reflected to the processor 
+//! interrupt; disabled sources have no effect on the processor.
 //!
 //! \return None.
 //
@@ -847,9 +849,9 @@ FlashIntDisable(unsigned long ulIntFlags)
 //! \param bMasked is false if the raw interrupt status is required and true if
 //! the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the flash controller.  Either the raw
-//! interrupt status or the status of interrupts that are allowed to reflect to
-//! the processor can be returned.
+//! This function returns the interrupt status for the flash controller.  
+//! Either the raw interrupt status or the status of interrupts that are 
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, enumerated as a bit field of
 //! \b FLASH_INT_PROGRAM and \b FLASH_INT_ACCESS.
@@ -880,17 +882,17 @@ FlashIntStatus(tBoolean bMasked)
 //! Can be any of the \b FLASH_INT_PROGRAM or \b FLASH_INT_AMISC values.
 //!
 //! The specified flash controller interrupt sources are cleared, so that they
-//! no longer assert.  This must be done in the interrupt handler to keep it
-//! from being called again immediately upon exit.
+//! no longer assert.  This function must be called in the interrupt handler 
+//! to keep the interrupt from being triggered again immediately upon exit.
 //!
-//! \note Since there is a write buffer in the Cortex-M3 processor, it may take
-//! several clock cycles before the interrupt source is actually cleared.
+//! \note Because there is a write buffer in the Cortex-M processor, it may
+//! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
 //! returning from the interrupt handler before the interrupt source is
 //! actually cleared.  Failure to do so may result in the interrupt handler
-//! being immediately reentered (since NVIC still sees the interrupt source
-//! asserted).
+//! being immediately reentered (because the interrupt controller still sees
+//! the interrupt source asserted).
 //!
 //! \return None.
 //

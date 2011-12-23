@@ -2,7 +2,7 @@
 //
 // epi.c - Driver for the EPI module.
 //
-// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2008-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -50,9 +50,10 @@
 //! - \b EPI_MODE_GENERAL - use for general-purpose mode operation
 //! - \b EPI_MODE_SDRAM - use with SDRAM device
 //! - \b EPI_MODE_HB8 - use with host-bus 8-bit interface
+//! - \b EPI_MODE_HB16 - use with host-bus 16-bit interface
 //! - \b EPI_MODE_DISABLE - disable the EPI module
 //!
-//! Selection of any of the above modes will enable the EPI module, except
+//! Selection of any of the above modes enables the EPI module, except
 //! for \b EPI_MODE_DISABLE which should be used to disable the module.
 //!
 //! \return None.
@@ -68,6 +69,7 @@ EPIModeSet(unsigned long ulBase, unsigned long ulMode)
     ASSERT((ulMode == EPI_MODE_GENERAL) ||
            (ulMode == EPI_MODE_SDRAM) ||
            (ulMode == EPI_MODE_HB8) ||
+           (ulMode == EPI_MODE_HB16) ||
            (ulMode == EPI_MODE_DISABLE));
 
     //
@@ -84,15 +86,15 @@ EPIModeSet(unsigned long ulBase, unsigned long ulMode)
 //! \param ulDivider is the value of the clock divider to be applied to
 //! the external interface (0-65535).
 //!
-//! This functions sets the clock divider(s) that will be used to determine the
+//! This function sets the clock divider(s) that is used to determine the
 //! clock rate of the external interface.  The \e ulDivider value is used to
-//! derive the EPI clock rate from the system clock based upon the following
+//! derive the EPI clock rate from the system clock based on the following
 //! formula.
 //!
 //! EPIClock = (Divider == 0) ? SysClk : (SysClk / (((Divider / 2) + 1) * 2))
 //!
 //! For example, a divider value of 1 results in an EPI clock rate of half
-//! the system clock, value of 2 or 3 yield one quarter of the system clock and
+//! the system clock, value of 2 or 3 yields one quarter of the system clock and
 //! a value of 4 results in one sixth of the system clock rate.
 //!
 //! In cases where a dual chip select mode is in use and different clock rates
@@ -213,16 +215,15 @@ EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
 //! rate resulting from the divider in the lower 16 bits of the parameter passed
 //! to EPIDividerSet().
 //! - one of \b EPI_HB8_CSCFG_CS, \b EPI_HB8_CSCFG_ALE,
-//! \b EPI_HB8_CSCFG_DUAL_CS or \b EPI_HB8_CSCFG_ALE_DUAL. \b EPI_HB8_CSCFG_CS
-//! sets EPI30 to operate as a Chip Select (CSn) signal.  When using this mode,
-//! \b EPI_HB8_MODE_ADMUX must not be specified. \b EPI_HB8_CSCFG_ALE sets
-//! EPI30 to operate as an address latch (ALE). \b EPI_HB8_CSCFG_DUAL_CS sets
-//! EPI30 to operate as CS0n and EPI27 as CS1n with the asserted chip select
-//! determined from the most significant address bit for the respective external
-//! address map. \b EPI_HB8_CSCFG_DUAL_ALE sets EPI30 as an address latch (ALE),
-//! EPI27 as CS0n and EPI26 as CS1n with the asserted chip select determined
-//! from the most significant address bit for the respective external address
-//! map.
+//! \b EPI_HB8_CSCFG_DUAL_CS or \b EPI_HB8_CSCFG_ALE_DUAL_CS.
+//! \b EPI_HB8_CSCFG_CS sets EPI30 to operate as a Chip Select (CSn) signal.
+//! \b EPI_HB8_CSCFG_ALE sets EPI30 to operate as an address latch (ALE).
+//! \b EPI_HB8_CSCFG_DUAL_CS sets EPI30 to operate as CS0n and EPI27 as CS1n
+//! with the asserted chip select determined from the most significant address
+//! bit for the respective external address map.  \b EPI_HB8_CSCFG_ALE_DUAL_CS
+//! sets EPI30 as an address latch (ALE), EPI27 as CS0n and EPI26 as CS1n with
+//! the asserted chip select determined from the most significant address bit
+//! for the respective external address map.
 //!
 //! The parameter \e ulMaxWait is used if the FIFO mode is chosen.  If a
 //! FIFO is used along with RXFULL or TXEMPTY ready signals, then this
@@ -248,7 +249,9 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
     //
     HWREG(ulBase + EPI_O_HB8CFG2) = (((ulConfig & EPI_HB8_WORD_ACCESS) ?
                                        EPI_HB8CFG2_WORD : 0) |
-                                     ((ulConfig & EPI_HB8_CSBAUD_DUAL) ?                                       EPI_HB8CFG2_CSBAUD : 0) |                                      ((ulConfig & EPI_HB8_CSCFG_MASK) << 15));
+                                     ((ulConfig & EPI_HB8_CSBAUD_DUAL) ?
+                                       EPI_HB8CFG2_CSBAUD : 0) |
+                                      ((ulConfig & EPI_HB8_CSCFG_MASK) << 15));
     //
     // Fill in the max wait field of the configuration word.
     //
@@ -259,6 +262,96 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
     // Write the main HostBus8 configuration register.
     //
     HWREG(ulBase + EPI_O_HB8CFG)  = ulConfig;
+}
+
+//*****************************************************************************
+//
+//! Configures the interface for Host-bus 16 operation.
+//!
+//! \param ulBase is the EPI module base address.
+//! \param ulConfig is the interface configuration.
+//! \param ulMaxWait is the maximum number of external clocks to wait
+//! if a FIFO ready signal is holding off the transaction.
+//!
+//! This function is used to configure the interface when used in Host-bus 16
+//! operation as chosen with the function EPIModeSet().  The parameter
+//! \e ulConfig is the logical OR of any of the following:
+//!
+//! - one of \b EPI_HB16_MODE_ADMUX, \b EPI_HB16_MODE_ADDEMUX,
+//! \b EPI_HB16_MODE_SRAM, or \b EPI_HB16_MODE_FIFO to select the HB16 mode
+//! - \b EPI_HB16_USE_TXEMPTY - enable TXEMPTY signal with FIFO
+//! - \b EPI_HB16_USE_RXFULL - enable RXFULL signal with FIFO
+//! - \b EPI_HB16_WRHIGH - use active high write strobe, otherwise it is
+//! active low
+//! - \b EPI_HB16_RDHIGH - use active high read strobe, otherwise it is
+//! active low
+//! - one of \b EPI_HB16_WRWAIT_0, \b EPI_HB16_WRWAIT_1, \b EPI_HB16_WRWAIT_2,
+//! or \b EPI_HB16_WRWAIT_3 to select the number of write wait states (default
+//! is 0 wait states)
+//! - one of \b EPI_HB16_RDWAIT_0, \b EPI_HB16_RDWAIT_1, \b EPI_HB16_RDWAIT_2,
+//! or \b EPI_HB16_RDWAIT_3 to select the number of read wait states (default
+//! is 0 wait states)
+//! - \b EPI_HB16_WORD_ACCESS - use Word Access mode to route bytes to the
+//! correct byte lanes allowing data to be stored in bits [31:16].  If absent,
+//! all data transfers use bits [15:0].
+//! - \b EPI_HB16_BSEL - enables byte selects.  In this mode, two EPI signals
+//! operate as byte selects allowing 8-bit transfers.  If this flag is not
+//! specified, data must be read and written using only 16-bit transfers.
+//! - \b EPI_HB16_CSBAUD_DUAL - use different baud rates when accessing devices
+//! on each CSn. CS0n uses the baud rate specified by the lower 16 bits of the
+//! divider passed to EPIDividerSet() and CS1n uses the divider passed in the
+//! upper 16 bits.  If this option is absent, both chip selects use the baud
+//! rate resulting from the divider in the lower 16 bits of the parameter passed
+//! to EPIDividerSet().
+//! - one of \b EPI_HB16_CSCFG_CS, \b EPI_HB16_CSCFG_ALE,
+//! \b EPI_HB16_CSCFG_DUAL_CS or \b EPI_HB16_CSCFG_ALE_DUAL_CS.
+//! \b EPI_HB16_CSCFG_CS sets EPI30 to operate as a Chip Select (CSn) signal.
+//! \b EPI_HB16_CSCFG_ALE sets EPI30 to operate as an address latch (ALE).
+//! \b EPI_HB16_CSCFG_DUAL_CS sets EPI30 to operate as CS0n and EPI27 as CS1n
+//! with the asserted chip select determined from the most significant address
+//! bit for the respective external address map.  \b EPI_HB16_CSCFG_ALE_DUAL_CS
+//! sets EPI30 as an address latch (ALE), EPI27 as CS0n and EPI26 as CS1n with
+//! the asserted chip select determined from the most significant address bit
+//! for the respective external address map.
+//!
+//! The parameter \e ulMaxWait is used if the FIFO mode is chosen.  If a
+//! FIFO is used along with RXFULL or TXEMPTY ready signals, then this
+//! parameter determines the maximum number of clocks to wait when the
+//! transaction is being held off by by the FIFO using one of these ready
+//! signals.  A value of 0 means to wait forever.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EPIConfigHB16Set(unsigned long ulBase, unsigned long ulConfig,
+                unsigned long ulMaxWait)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == EPI0_BASE);
+    ASSERT(ulMaxWait < 256);
+
+    //
+    // Determine the CS and word access modes.
+    //
+    HWREG(ulBase + EPI_O_HB16CFG2) = (((ulConfig & EPI_HB16_WORD_ACCESS) ?
+                                       EPI_HB16CFG2_WORD : 0) |
+                                     ((ulConfig & EPI_HB16_CSBAUD_DUAL) ?
+                                       EPI_HB16CFG2_CSBAUD : 0) |
+                                      ((ulConfig & EPI_HB16_CSCFG_MASK) << 15));
+
+    //
+    // Fill in the max wait field of the configuration word.
+    //
+    ulConfig &= ~EPI_HB16CFG_MAXWAIT_M;
+    ulConfig |= ulMaxWait << EPI_HB16CFG_MAXWAIT_S;
+
+    //
+    // Write the main HostBus16 configuration register.
+    //
+    HWREG(ulBase + EPI_O_HB16CFG)  = ulConfig;
 }
 
 //*****************************************************************************
@@ -274,9 +367,8 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //!
 //! This function is used to configure the interface when used in
 //! general-purpose operation as chosen with the function EPIModeSet().  The
-//! parameter
-//! \e ulConfig is the logical OR of any of the following:
-//!
+//! parameter \e ulConfig is the logical OR of any of the following:
+//! 
 //! - \b EPI_GPMODE_CLKPIN - interface clock is output on a pin
 //! - \b EPI_GPMODE_CLKGATE - clock is stopped when there is no transaction,
 //! otherwise it is free-running
@@ -288,13 +380,13 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //! - \b EPI_GPMODE_FRAME50 - framing signal is 50/50 duty cycle, otherwise it
 //! is a pulse
 //! - \b EPI_GPMODE_READWRITE - read and write strobes are emitted on pins
-//! - \b EPI_GPMODE_WRITE2CYCLE - a two cycle write is used, otherwise a
+//! - \b EPI_GPMODE_WRITE2CYCLE - a two-cycle write is used, otherwise a
 //! single-cycle write is used
-//! - \b EPI_GPMODE_READ2CYCLE - a two cycle read is used, otherwise a
+//! - \b EPI_GPMODE_READ2CYCLE - a two-cycle read is used, otherwise a
 //! single-cycle read is used
 //! - \b EPI_GPMODE_ASIZE_NONE, \b EPI_GPMODE_ASIZE_4,
 //! \b EPI_GPMODE_ASIZE_12, or \b EPI_GPMODE_ASIZE_20 to choose no address
-//! bus, or and address bus size of 4, 12, or 20 bits
+//! bus or an address bus size of 4, 12, or 20 bits
 //! - \b EPI_GPMODE_DSIZE_8, \b EPI_GPMODE_DSIZE_16,
 //! \b EPI_GPMODE_DSIZE_24, or \b EPI_GPMODE_DSIZE_32 to select a data bus
 //! size of 8, 16, 24, or 32 bits
@@ -313,7 +405,7 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //! external clock enable is used, this parameter determines the maximum
 //! number of clocks to wait when the external clock enable signal is holding
 //! off a transaction.  A value of 0 means to wait forever.  If a non-zero
-//! value is used and exceeded, an interrupt will occur and the transaction
+//! value is used and exceeded, an interrupt occurs and the transaction
 //! aborted.
 //!
 //! \return None.
@@ -422,7 +514,7 @@ EPIAddressMapSet(unsigned long ulBase, unsigned long ulMap)
 //! Once configured, the non-blocking read is started by calling
 //! EPINonBlockingReadStart().  If the addresses to be read from the device
 //! are in a sequence, it is not necessary to call this function multiple
-//! times.  Until it is changed, the EPI module will remember the last address
+//! times.  Until it is changed, the EPI module stores the last address
 //! that was used for a non-blocking read (per channel).
 //!
 //! \return None.
@@ -468,9 +560,9 @@ EPINonBlockingReadConfigure(unsigned long ulBase, unsigned long ulChannel,
 //!
 //! This function starts a non-blocking read that was previously configured
 //! with the function EPINonBlockingReadConfigure().  Once this function is
-//! called, the EPI module will begin reading data from the external device
-//! into the read FIFO.  The EPI will stop reading when the FIFO fills up
-//! and resume reading when the application drains the FIFO, until the
+//! called, the EPI module begins reading data from the external device
+//! into the read FIFO.  The EPI stops reading when the FIFO fills up
+//! and resumes reading when the application drains the FIFO, until the
 //! total specified count of data items has been read.
 //!
 //! Once a read transaction is completed and the FIFO drained, another
@@ -534,7 +626,7 @@ EPINonBlockingReadStop(unsigned long ulBase, unsigned long ulChannel)
     ulOffset = ulChannel * (EPI_O_RPSTD1 - EPI_O_RPSTD0);
 
     //
-    // Write a 0 to the read count register, which will cancel the transaction.
+    // Write a 0 to the read count register, which cancels the transaction.
     //
     HWREG(ulBase + EPI_O_RPSTD0 + ulOffset) = 0;
 }
@@ -612,10 +704,10 @@ EPINonBlockingReadAvail(unsigned long ulBase)
 //! be stored.
 //!
 //! This function reads 32-bit data items from the read FIFO and stores
-//! the values in a caller supplied buffer.  The function will read and store
+//! the values in a caller-supplied buffer.  The function reads and stores
 //! data from the FIFO until there is no more data in the FIFO or the maximum
 //! count is reached as specified in the parameter \e ulCount.  The actual
-//! count of items will be returned.
+//! count of items is returned.
 //!
 //! \return The number of items read from the FIFO.
 //
@@ -634,8 +726,8 @@ EPINonBlockingReadGet32(unsigned long ulBase, unsigned long ulCount,
     ASSERT(pulBuf);
 
     //
-    // Read from the FIFO while there are any items to read, and
-    // the callers specified count is not exceeded.
+    // Read from the FIFO while there are any items to read and
+    // the caller's specified count is not exceeded.
     //
     while(HWREG(ulBase + EPI_O_RFIFOCNT) && ulCount--)
     {
@@ -663,14 +755,14 @@ EPINonBlockingReadGet32(unsigned long ulBase, unsigned long ulCount,
 //!
 //! \param ulBase is the EPI module base address.
 //! \param ulCount is the maximum count of items to read.
-//! \param pusBuf is the caller supplied buffer where the read data should
+//! \param pusBuf is the caller-supplied buffer where the read data should
 //! be stored.
 //!
 //! This function reads 16-bit data items from the read FIFO and stores
-//! the values in a caller supplied buffer.  The function will read and store
+//! the values in a caller-supplied buffer.  The function reads and stores
 //! data from the FIFO until there is no more data in the FIFO or the maximum
 //! count is reached as specified in the parameter \e ulCount.  The actual
-//! count of items will be returned.
+//! count of items is returned.
 //!
 //! \return The number of items read from the FIFO.
 //
@@ -690,12 +782,12 @@ EPINonBlockingReadGet16(unsigned long ulBase, unsigned long ulCount,
 
     //
     // Read from the FIFO while there are any items to read, and
-    // the callers specified count is not exceeded.
+    // the caller's specified count is not exceeded.
     //
     while(HWREG(ulBase + EPI_O_RFIFOCNT) && ulCount--)
     {
         //
-        // Read from the FIFO and store in the caller supplied buffer.
+        // Read from the FIFO and store in the caller-supplied buffer.
         //
         *pusBuf = (unsigned short)HWREG(ulBase + EPI_O_READFIFO);
 
@@ -718,14 +810,14 @@ EPINonBlockingReadGet16(unsigned long ulBase, unsigned long ulCount,
 //!
 //! \param ulBase is the EPI module base address.
 //! \param ulCount is the maximum count of items to read.
-//! \param pucBuf is the caller supplied buffer where the read data should
+//! \param pucBuf is the caller-supplied buffer where the read data should
 //! be stored.
 //!
 //! This function reads 8-bit data items from the read FIFO and stores
-//! the values in a caller supplied buffer.  The function will read and store
+//! the values in a caller-supplied buffer.  The function reads and stores
 //! data from the FIFO until there is no more data in the FIFO or the maximum
 //! count is reached as specified in the parameter \e ulCount.  The actual
-//! count of items will be returned.
+//! count of items is returned.
 //!
 //! \return The number of items read from the FIFO.
 //
@@ -745,7 +837,7 @@ EPINonBlockingReadGet8(unsigned long ulBase, unsigned long ulCount,
 
     //
     // Read from the FIFO while there are any items to read, and
-    // the callers specified count is not exceeded.
+    // the caller's specified count is not exceeded.
     //
     while(HWREG(ulBase + EPI_O_RFIFOCNT) && ulCount--)
     {
@@ -1047,7 +1139,7 @@ EPIIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //!
 //! \param ulBase is the EPI module base address.
 //!
-//! This function will disable and clear the handler to be called when the
+//! This function disables and clears the handler to be called when the
 //! EPI interrupt occurs.
 //!
 //! \sa IntRegister() for important information about registering interrupt

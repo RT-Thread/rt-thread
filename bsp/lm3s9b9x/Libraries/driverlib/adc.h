@@ -2,7 +2,7 @@
 //
 // adc.h - ADC headers for using the ADC driver functions.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -80,6 +80,14 @@ extern "C"
 #define ADC_CTL_CH13            0x0000000D  // Input channel 13
 #define ADC_CTL_CH14            0x0000000E  // Input channel 14
 #define ADC_CTL_CH15            0x0000000F  // Input channel 15
+#define ADC_CTL_CH16            0x00000100  // Input channel 16
+#define ADC_CTL_CH17            0x00000101  // Input channel 17
+#define ADC_CTL_CH18            0x00000102  // Input channel 18
+#define ADC_CTL_CH19            0x00000103  // Input channel 19
+#define ADC_CTL_CH20            0x00000104  // Input channel 20
+#define ADC_CTL_CH21            0x00000105  // Input channel 21
+#define ADC_CTL_CH22            0x00000106  // Input channel 22
+#define ADC_CTL_CH23            0x00000107  // Input channel 23
 #define ADC_CTL_CMP0            0x00080000  // Select Comparator 0
 #define ADC_CTL_CMP1            0x00090000  // Select Comparator 1
 #define ADC_CTL_CMP2            0x000A0000  // Select Comparator 2
@@ -173,6 +181,15 @@ extern "C"
 //*****************************************************************************
 #define ADC_REF_INT             0x00000000  // Internal reference
 #define ADC_REF_EXT_3V          0x00000001  // External 3V reference
+#define ADC_REF_EXT_1V          0x00000003  // External 1V reference
+
+//*****************************************************************************
+//
+// Values that can be passed to ADCResolutionSet as the ulResolution parameter.
+//
+//*****************************************************************************
+#define ADC_RES_10BIT           0x00000000  // 10-bit resolution
+#define ADC_RES_12BIT           0x00000010  // 12-bit resolution
 
 //*****************************************************************************
 //
@@ -243,6 +260,8 @@ extern void ADCComparatorIntClear(unsigned long ulBase,
                                   unsigned long ulStatus);
 extern void ADCReferenceSet(unsigned long ulBase, unsigned long ulRef);
 extern unsigned long ADCReferenceGet(unsigned long ulBase);
+extern void ADCResolutionSet(unsigned long ulBase, unsigned long ulResolution);
+extern unsigned long ADCResolutionGet(unsigned long ulBase);
 extern void ADCPhaseDelaySet(unsigned long ulBase, unsigned long ulPhase);
 extern unsigned long ADCPhaseDelayGet(unsigned long ulBase);
 

@@ -2,7 +2,7 @@
 //
 // sysctl.h - Prototypes for the system control driver.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -55,7 +55,10 @@ extern "C"
 #endif
 #define SYSCTL_PERIPH_ADC0      0x00100001  // ADC0
 #define SYSCTL_PERIPH_ADC1      0x00100002  // ADC1
+#ifndef DEPRECATED
 #define SYSCTL_PERIPH_PWM       0x00100010  // PWM
+#endif
+#define SYSCTL_PERIPH_PWM0      0x00100010  // PWM
 #define SYSCTL_PERIPH_CAN0      0x00100100  // CAN 0
 #define SYSCTL_PERIPH_CAN1      0x00100200  // CAN 1
 #define SYSCTL_PERIPH_CAN2      0x00100400  // CAN 2
@@ -103,6 +106,72 @@ extern "C"
 #define SYSCTL_PERIPH_PLL       0x30000010  // PLL
 #define SYSCTL_PERIPH_TEMP      0x30000020  // Temperature sensor
 #define SYSCTL_PERIPH_MPU       0x30000080  // Cortex M3 MPU
+#define SYSCTL_PERIPH2_ADC0     0xf0003800  // ADC 0
+#define SYSCTL_PERIPH2_ADC1     0xf0003801  // ADC 1
+#define SYSCTL_PERIPH2_CAN0     0xf0003400  // CAN 0
+#define SYSCTL_PERIPH2_CAN1     0xf0003401  // CAN 1
+#define SYSCTL_PERIPH2_CAN2     0xf0003402  // CAN 2
+#define SYSCTL_PERIPH2_COMP0    0xf0003c00  // Analog comparator 0
+#define SYSCTL_PERIPH_EEPROM0   0xf0005800  // EEPROM 0
+#define SYSCTL_PERIPH_FAN0      0xf0005400  // FAN 0
+#define SYSCTL_PERIPH2_GPIOA    0xf0000800  // GPIO A
+#define SYSCTL_PERIPH2_GPIOB    0xf0000801  // GPIO B
+#define SYSCTL_PERIPH2_GPIOC    0xf0000802  // GPIO C
+#define SYSCTL_PERIPH2_GPIOD    0xf0000803  // GPIO D
+#define SYSCTL_PERIPH2_GPIOE    0xf0000804  // GPIO E
+#define SYSCTL_PERIPH2_GPIOF    0xf0000805  // GPIO F
+#define SYSCTL_PERIPH2_GPIOG    0xf0000806  // GPIO G
+#define SYSCTL_PERIPH2_GPIOH    0xf0000807  // GPIO H
+#define SYSCTL_PERIPH2_GPIOJ    0xf0000808  // GPIO J
+#define SYSCTL_PERIPH_GPIOK     0xf0000809  // GPIO K
+#define SYSCTL_PERIPH_GPIOL     0xf000080a  // GPIO L
+#define SYSCTL_PERIPH_GPIOM     0xf000080b  // GPIO M
+#define SYSCTL_PERIPH_GPION     0xf000080c  // GPIO N
+#define SYSCTL_PERIPH_GPIOP     0xf000080d  // GPIO P
+#define SYSCTL_PERIPH_GPIOQ     0xf000080e  // GPIO Q
+#define SYSCTL_PERIPH_GPIOR     0xf000080f  // GPIO R
+#define SYSCTL_PERIPH_GPIOS     0xf0000810  // GPIO S
+#define SYSCTL_PERIPH2_HIB      0xf0001400  // Hibernation module
+#define SYSCTL_PERIPH2_I2C0     0xf0002000  // I2C 0
+#define SYSCTL_PERIPH2_I2C1     0xf0002001  // I2C 1
+#define SYSCTL_PERIPH_I2C2      0xf0002002  // I2C 2
+#define SYSCTL_PERIPH_I2C3      0xf0002003  // I2C 3
+#define SYSCTL_PERIPH_I2C4      0xf0002004  // I2C 4
+#define SYSCTL_PERIPH_I2C5      0xf0002005  // I2C 5
+#define SYSCTL_PERIPH_LPC0      0xf0004800  // LPC 0
+#define SYSCTL_PERIPH_PECI0     0xf0005000  // PECI 0
+#define SYSCTL_PERIPH2_PWM0     0xf0004000  // PWM 0
+#define SYSCTL_PERIPH_PWM1      0xf0004001  // PWM 1
+#define SYSCTL_PERIPH2_QEI0     0xf0004400  // QEI 0
+#define SYSCTL_PERIPH2_QEI1     0xf0004401  // QEI 1
+#define SYSCTL_PERIPH2_SSI0     0xf0001c00  // SSI 0
+#define SYSCTL_PERIPH2_SSI1     0xf0001c01  // SSI 1
+#define SYSCTL_PERIPH_SSI2      0xf0001c02  // SSI 2
+#define SYSCTL_PERIPH_SSI3      0xf0001c03  // SSI 3
+#define SYSCTL_PERIPH2_TIMER0   0xf0000400  // Timer 0
+#define SYSCTL_PERIPH2_TIMER1   0xf0000401  // Timer 1
+#define SYSCTL_PERIPH2_TIMER2   0xf0000402  // Timer 2
+#define SYSCTL_PERIPH2_TIMER3   0xf0000403  // Timer 3
+#define SYSCTL_PERIPH_TIMER4    0xf0000404  // Timer 4
+#define SYSCTL_PERIPH_TIMER5    0xf0000405  // Timer 5
+#define SYSCTL_PERIPH_WTIMER0   0xf0005c00  // Wide Timer 0
+#define SYSCTL_PERIPH_WTIMER1   0xf0005c01  // Wide Timer 1
+#define SYSCTL_PERIPH_WTIMER2   0xf0005c02  // Wide Timer 2
+#define SYSCTL_PERIPH_WTIMER3   0xf0005c03  // Wide Timer 3
+#define SYSCTL_PERIPH_WTIMER4   0xf0005c04  // Wide Timer 4
+#define SYSCTL_PERIPH_WTIMER5   0xf0005c05  // Wide Timer 5
+#define SYSCTL_PERIPH2_UART0    0xf0001800  // UART 0
+#define SYSCTL_PERIPH2_UART1    0xf0001801  // UART 1
+#define SYSCTL_PERIPH2_UART2    0xf0001802  // UART 2
+#define SYSCTL_PERIPH_UART3     0xf0001803  // UART 3
+#define SYSCTL_PERIPH_UART4     0xf0001804  // UART 4
+#define SYSCTL_PERIPH_UART5     0xf0001805  // UART 5
+#define SYSCTL_PERIPH_UART6     0xf0001806  // UART 6
+#define SYSCTL_PERIPH_UART7     0xf0001807  // UART 7
+#define SYSCTL_PERIPH2_UDMA     0xf0000c00  // uDMA
+#define SYSCTL_PERIPH2_USB0     0xf0002800  // USB 0
+#define SYSCTL_PERIPH2_WDOG0    0xf0000000  // Watchdog 0
+#define SYSCTL_PERIPH2_WDOG1    0xf0000001  // Watchdog 1
 
 //*****************************************************************************
 //
@@ -194,6 +263,7 @@ extern "C"
 //
 //*****************************************************************************
 #define SYSCTL_CAUSE_LDO        0x00000020  // LDO power not OK reset
+#define SYSCTL_CAUSE_WDOG1      0x00000020  // Watchdog1 reset
 #define SYSCTL_CAUSE_SW         0x00000010  // Software reset
 #define SYSCTL_CAUSE_WDOG       0x00000008  // Watchdog reset
 #define SYSCTL_CAUSE_BOR        0x00000004  // Brown-out reset
@@ -393,15 +463,114 @@ extern "C"
 #define SYSCTL_XTAL_14_3MHZ     0x00000500  // External crystal is 14.31818 MHz
 #define SYSCTL_XTAL_16MHZ       0x00000540  // External crystal is 16 MHz
 #define SYSCTL_XTAL_16_3MHZ     0x00000580  // External crystal is 16.384 MHz
+#define SYSCTL_XTAL_18MHZ       0x000005C0  // External crystal is 18.0 MHz
+#define SYSCTL_XTAL_20MHZ       0x00000600  // External crystal is 20.0 MHz
+#define SYSCTL_XTAL_24MHZ       0x00000640  // External crystal is 24.0 MHz
+#define SYSCTL_XTAL_25MHZ       0x00000680  // External crystal is 25.0 MHz
 #define SYSCTL_OSC_MAIN         0x00000000  // Osc source is main osc
 #define SYSCTL_OSC_INT          0x00000010  // Osc source is int. osc
 #define SYSCTL_OSC_INT4         0x00000020  // Osc source is int. osc /4
 #define SYSCTL_OSC_INT30        0x00000030  // Osc source is int. 30 KHz
 #define SYSCTL_OSC_EXT4_19      0x80000028  // Osc source is ext. 4.19 MHz
 #define SYSCTL_OSC_EXT32        0x80000038  // Osc source is ext. 32 KHz
-#define SYSCTL_INT_PIOSC_DIS    0x00000004  // Disable interal precision osc.
 #define SYSCTL_INT_OSC_DIS      0x00000002  // Disable internal oscillator
 #define SYSCTL_MAIN_OSC_DIS     0x00000001  // Disable main oscillator
+
+//*****************************************************************************
+//
+// The following are values that can be passed to the SysCtlDeepSleepClockSet()
+// API as the ulConfig parameter.
+//
+//*****************************************************************************
+#define SYSCTL_DSLP_DIV_1       0x00000000  // Deep-sleep clock is osc /1
+#define SYSCTL_DSLP_DIV_2       0x00800000  // Deep-sleep clock is osc /2
+#define SYSCTL_DSLP_DIV_3       0x01000000  // Deep-sleep clock is osc /3
+#define SYSCTL_DSLP_DIV_4       0x01800000  // Deep-sleep clock is osc /4
+#define SYSCTL_DSLP_DIV_5       0x02000000  // Deep-sleep clock is osc /5
+#define SYSCTL_DSLP_DIV_6       0x02800000  // Deep-sleep clock is osc /6
+#define SYSCTL_DSLP_DIV_7       0x03000000  // Deep-sleep clock is osc /7
+#define SYSCTL_DSLP_DIV_8       0x03800000  // Deep-sleep clock is osc /8
+#define SYSCTL_DSLP_DIV_9       0x04000000  // Deep-sleep clock is osc /9
+#define SYSCTL_DSLP_DIV_10      0x04800000  // Deep-sleep clock is osc /10
+#define SYSCTL_DSLP_DIV_11      0x05000000  // Deep-sleep clock is osc /11
+#define SYSCTL_DSLP_DIV_12      0x05800000  // Deep-sleep clock is osc /12
+#define SYSCTL_DSLP_DIV_13      0x06000000  // Deep-sleep clock is osc /13
+#define SYSCTL_DSLP_DIV_14      0x06800000  // Deep-sleep clock is osc /14
+#define SYSCTL_DSLP_DIV_15      0x07000000  // Deep-sleep clock is osc /15
+#define SYSCTL_DSLP_DIV_16      0x07800000  // Deep-sleep clock is osc /16
+#define SYSCTL_DSLP_DIV_17      0x08000000  // Deep-sleep clock is osc /17
+#define SYSCTL_DSLP_DIV_18      0x08800000  // Deep-sleep clock is osc /18
+#define SYSCTL_DSLP_DIV_19      0x09000000  // Deep-sleep clock is osc /19
+#define SYSCTL_DSLP_DIV_20      0x09800000  // Deep-sleep clock is osc /20
+#define SYSCTL_DSLP_DIV_21      0x0A000000  // Deep-sleep clock is osc /21
+#define SYSCTL_DSLP_DIV_22      0x0A800000  // Deep-sleep clock is osc /22
+#define SYSCTL_DSLP_DIV_23      0x0B000000  // Deep-sleep clock is osc /23
+#define SYSCTL_DSLP_DIV_24      0x0B800000  // Deep-sleep clock is osc /24
+#define SYSCTL_DSLP_DIV_25      0x0C000000  // Deep-sleep clock is osc /25
+#define SYSCTL_DSLP_DIV_26      0x0C800000  // Deep-sleep clock is osc /26
+#define SYSCTL_DSLP_DIV_27      0x0D000000  // Deep-sleep clock is osc /27
+#define SYSCTL_DSLP_DIV_28      0x0D800000  // Deep-sleep clock is osc /28
+#define SYSCTL_DSLP_DIV_29      0x0E000000  // Deep-sleep clock is osc /29
+#define SYSCTL_DSLP_DIV_30      0x0E800000  // Deep-sleep clock is osc /30
+#define SYSCTL_DSLP_DIV_31      0x0F000000  // Deep-sleep clock is osc /31
+#define SYSCTL_DSLP_DIV_32      0x0F800000  // Deep-sleep clock is osc /32
+#define SYSCTL_DSLP_DIV_33      0x10000000  // Deep-sleep clock is osc /33
+#define SYSCTL_DSLP_DIV_34      0x10800000  // Deep-sleep clock is osc /34
+#define SYSCTL_DSLP_DIV_35      0x11000000  // Deep-sleep clock is osc /35
+#define SYSCTL_DSLP_DIV_36      0x11800000  // Deep-sleep clock is osc /36
+#define SYSCTL_DSLP_DIV_37      0x12000000  // Deep-sleep clock is osc /37
+#define SYSCTL_DSLP_DIV_38      0x12800000  // Deep-sleep clock is osc /38
+#define SYSCTL_DSLP_DIV_39      0x13000000  // Deep-sleep clock is osc /39
+#define SYSCTL_DSLP_DIV_40      0x13800000  // Deep-sleep clock is osc /40
+#define SYSCTL_DSLP_DIV_41      0x14000000  // Deep-sleep clock is osc /41
+#define SYSCTL_DSLP_DIV_42      0x14800000  // Deep-sleep clock is osc /42
+#define SYSCTL_DSLP_DIV_43      0x15000000  // Deep-sleep clock is osc /43
+#define SYSCTL_DSLP_DIV_44      0x15800000  // Deep-sleep clock is osc /44
+#define SYSCTL_DSLP_DIV_45      0x16000000  // Deep-sleep clock is osc /45
+#define SYSCTL_DSLP_DIV_46      0x16800000  // Deep-sleep clock is osc /46
+#define SYSCTL_DSLP_DIV_47      0x17000000  // Deep-sleep clock is osc /47
+#define SYSCTL_DSLP_DIV_48      0x17800000  // Deep-sleep clock is osc /48
+#define SYSCTL_DSLP_DIV_49      0x18000000  // Deep-sleep clock is osc /49
+#define SYSCTL_DSLP_DIV_50      0x18800000  // Deep-sleep clock is osc /50
+#define SYSCTL_DSLP_DIV_51      0x19000000  // Deep-sleep clock is osc /51
+#define SYSCTL_DSLP_DIV_52      0x19800000  // Deep-sleep clock is osc /52
+#define SYSCTL_DSLP_DIV_53      0x1A000000  // Deep-sleep clock is osc /53
+#define SYSCTL_DSLP_DIV_54      0x1A800000  // Deep-sleep clock is osc /54
+#define SYSCTL_DSLP_DIV_55      0x1B000000  // Deep-sleep clock is osc /55
+#define SYSCTL_DSLP_DIV_56      0x1B800000  // Deep-sleep clock is osc /56
+#define SYSCTL_DSLP_DIV_57      0x1C000000  // Deep-sleep clock is osc /57
+#define SYSCTL_DSLP_DIV_58      0x1C800000  // Deep-sleep clock is osc /58
+#define SYSCTL_DSLP_DIV_59      0x1D000000  // Deep-sleep clock is osc /59
+#define SYSCTL_DSLP_DIV_60      0x1D800000  // Deep-sleep clock is osc /60
+#define SYSCTL_DSLP_DIV_61      0x1E000000  // Deep-sleep clock is osc /61
+#define SYSCTL_DSLP_DIV_62      0x1E800000  // Deep-sleep clock is osc /62
+#define SYSCTL_DSLP_DIV_63      0x1F000000  // Deep-sleep clock is osc /63
+#define SYSCTL_DSLP_DIV_64      0x1F800000  // Deep-sleep clock is osc /64
+#define SYSCTL_DSLP_OSC_MAIN    0x00000000  // Osc source is main osc
+#define SYSCTL_DSLP_OSC_INT     0x00000010  // Osc source is int. osc
+#define SYSCTL_DSLP_OSC_INT30   0x00000030  // Osc source is int. 30 KHz
+#define SYSCTL_DSLP_OSC_EXT32   0x00000070  // Osc source is ext. 32 KHz
+#define SYSCTL_DSLP_PIOSC_PD    0x00000002  // Power down PIOSC in deep-sleep
+
+//*****************************************************************************
+//
+// The following are values that can be passed to the SysCtlPIOSCCalibrate()
+// API as the ulType parameter.
+//
+//*****************************************************************************
+#define SYSCTL_PIOSC_CAL_AUTO   0x00000200  // Automatic calibration
+#define SYSCTL_PIOSC_CAL_FACT   0x00000100  // Factory calibration
+#define SYSCTL_PIOSC_CAL_USER   0x80000100  // User-supplied calibration
+
+//*****************************************************************************
+//
+// The following are values that can be passed to the SysCtlMOSCConfigSet() API
+// as the ulConfig parameter.
+//
+//*****************************************************************************
+#define SYSCTL_MOSC_VALIDATE    0x00000001  // Enable MOSC validation
+#define SYSCTL_MOSC_INTERRUPT   0x00000002  // Generate interrupt on MOSC fail
+#define SYSCTL_MOSC_NO_XTAL     0x00000004  // No crystal is attached to MOSC
 
 //*****************************************************************************
 //
@@ -412,6 +581,9 @@ extern unsigned long SysCtlSRAMSizeGet(void);
 extern unsigned long SysCtlFlashSizeGet(void);
 extern tBoolean SysCtlPinPresent(unsigned long ulPin);
 extern tBoolean SysCtlPeripheralPresent(unsigned long ulPeripheral);
+extern tBoolean SysCtlPeripheralReady(unsigned long ulPeripheral);
+extern void SysCtlPeripheralPowerOn(unsigned long ulPeripheral);
+extern void SysCtlPeripheralPowerOff(unsigned long ulPeripheral);
 extern void SysCtlPeripheralReset(unsigned long ulPeripheral);
 extern void SysCtlPeripheralEnable(unsigned long ulPeripheral);
 extern void SysCtlPeripheralDisable(unsigned long ulPeripheral);
@@ -437,8 +609,11 @@ extern void SysCtlResetCauseClear(unsigned long ulCauses);
 extern void SysCtlBrownOutConfigSet(unsigned long ulConfig,
                                     unsigned long ulDelay);
 extern void SysCtlDelay(unsigned long ulCount);
+extern void SysCtlMOSCConfigSet(unsigned long ulConfig);
+extern unsigned long SysCtlPIOSCCalibrate(unsigned long ulType);
 extern void SysCtlClockSet(unsigned long ulConfig);
 extern unsigned long SysCtlClockGet(void);
+extern void SysCtlDeepSleepClockSet(unsigned long ulConfig);
 extern void SysCtlPWMClockSet(unsigned long ulConfig);
 extern unsigned long SysCtlPWMClockGet(void);
 extern void SysCtlADCSpeedSet(unsigned long ulSpeed);

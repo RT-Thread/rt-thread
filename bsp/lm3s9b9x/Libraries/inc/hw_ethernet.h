@@ -2,7 +2,7 @@
 //
 // hw_ethernet.h - Macros used when accessing the Ethernet hardware.
 //
-// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2006-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -45,6 +45,7 @@
 #define MAC_O_THR               0x0000001C  // Ethernet MAC Threshold
 #define MAC_O_MCTL              0x00000020  // Ethernet MAC Management Control
 #define MAC_O_MDV               0x00000024  // Ethernet MAC Management Divider
+#define MAC_O_MADD              0x00000028  // Ethernet MAC Management Address
 #define MAC_O_MTXD              0x0000002C  // Ethernet MAC Management Transmit
                                             // Data
 #define MAC_O_MRXD              0x00000030  // Ethernet MAC Management Receive
@@ -175,6 +176,14 @@
 //*****************************************************************************
 #define MAC_MDV_DIV_M           0x000000FF  // Clock Divider
 #define MAC_MDV_DIV_S           0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the MAC_O_MADD register.
+//
+//*****************************************************************************
+#define MAC_MADD_PHYADR_M       0x0000001F  // PHY Address
+#define MAC_MADD_PHYADR_S       0
 
 //*****************************************************************************
 //

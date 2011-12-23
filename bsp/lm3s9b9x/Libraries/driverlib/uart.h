@@ -2,7 +2,7 @@
 //
 // uart.h - Defines and Macros for the UART.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -42,6 +42,7 @@ extern "C"
 // as the ulIntFlags parameter, and returned from UARTIntStatus.
 //
 //*****************************************************************************
+#define UART_INT_9BIT           0x1000      // 9-bit address match interrupt
 #define UART_INT_OE             0x400       // Overrun Error Interrupt Mask
 #define UART_INT_BE             0x200       // Break Error Interrupt Mask
 #define UART_INT_PE             0x100       // Parity Error Interrupt Mask
@@ -161,6 +162,15 @@ extern "C"
 
 //*****************************************************************************
 //
+// Values that can be passed to UARTClockSourceSet() or returned from
+// UARTClockSourceGet().
+//
+//*****************************************************************************
+#define UART_CLOCK_SYSTEM       0x00000000
+#define UART_CLOCK_PIOSC        0x00000001
+
+//*****************************************************************************
+//
 // API Function prototypes
 //
 //*****************************************************************************
@@ -212,6 +222,13 @@ extern void UARTFlowControlSet(unsigned long ulBase, unsigned long ulMode);
 extern unsigned long UARTFlowControlGet(unsigned long ulBase);
 extern void UARTTxIntModeSet(unsigned long ulBase, unsigned long ulMode);
 extern unsigned long UARTTxIntModeGet(unsigned long ulBase);
+extern void UARTClockSourceSet(unsigned long ulBase, unsigned long ulSource);
+extern unsigned long UARTClockSourceGet(unsigned long ulBase);
+extern void UART9BitEnable(unsigned long ulBase);
+extern void UART9BitDisable(unsigned long ulBase);
+extern void UART9BitAddrSet(unsigned long ulBase, unsigned char ucAddr,
+                            unsigned char ucMask);
+extern void UART9BitAddrSend(unsigned long ulBase, unsigned char ucAddr);
 
 //*****************************************************************************
 //
