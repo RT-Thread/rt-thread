@@ -9,13 +9,7 @@ src	= Glob('*.c')
 # remove no need file.
 if GetDepend('RT_USING_LWIP') == False:
 	src_need_remove = ['emac.c'] # need remove file list.
-	src_tmp = copy.copy(src)
-	count = 0
-	for i in range(0, len(src_tmp)):
-		s = os.path.basename(str(src_tmp[i]))
-		if s in src_need_remove:
-			src.pop(i-count)
-			count = count + 1
+	SrcRemove(src, src_need_remove)
 
 CPPPATH = [cwd]
 
