@@ -101,7 +101,7 @@ g_pfnVectors:
   .word  Initial_spTop
   .word  Reset_Handler
   .word  Default_Handler                     //NMI_Handler
-  .word  rt_hw_hard_fault
+  .word  HardFault_Handler
   .word  Default_Handler                     //MemManage_Handler
   .word  Default_Handler                     //BusFault_Handler
   .word  Default_Handler                     //UsageFault_Handler
@@ -112,7 +112,7 @@ g_pfnVectors:
   .word  Default_Handler                     //SVC_Handler
   .word  Default_Handler                     //DebugMon_Handler
   .word  0
-  .word  rt_hw_pend_sv
+  .word  PendSV_Handler
   .word  rt_hw_timer_handler
   .word  Default_Handler                     // GPIO Port A              
   .word  Default_Handler                     // GPIO Port B              
