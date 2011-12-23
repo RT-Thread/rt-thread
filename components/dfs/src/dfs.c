@@ -1,7 +1,7 @@
 /*
  * File      : dfs.c
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -10,7 +10,6 @@
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
- * 2010-07-16
  */
 
 #include <dfs.h>
@@ -20,7 +19,7 @@
 #define NO_WORKING_DIR	"system does not support working dir\n"
 
 /* Global variables */
-const struct dfs_filesystem_operation* filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
+const struct dfs_filesystem_operation *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
 struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
 
 /* device filesystem lock */
@@ -44,7 +43,7 @@ struct dfs_fd fd_table[DFS_FD_MAX];
 /**
  * this function will initialize device file system.
  */
-void dfs_init()
+void dfs_init(void)
 {
 	/* clear filesystem operations table */
 	rt_memset(filesystem_operation_table, 0, sizeof(filesystem_operation_table));
@@ -68,7 +67,7 @@ void dfs_init()
  *
  * @note please don't invoke it on ISR.
  */
-void dfs_lock()
+void dfs_lock(void)
 {
 	rt_err_t result;
 
@@ -84,7 +83,7 @@ void dfs_lock()
  *
  * @note please don't invoke it on ISR.
  */
-void dfs_unlock()
+void dfs_unlock(void)
 {
 	rt_mutex_release(&fslock);
 }
@@ -97,7 +96,7 @@ void dfs_unlock()
  */
 int fd_new(void)
 {
-	struct dfs_fd* d;
+	struct dfs_fd *d;
 	int idx;
 
 	/* lock filesystem */
@@ -138,14 +137,16 @@ __result:
  * @return NULL on on this file descriptor or the file descriptor structure
  * pointer.
  */
-struct dfs_fd* fd_get(int fd)
+struct dfs_fd *fd_get(int fd)
 {
-	struct dfs_fd* d;
+	struct dfs_fd *d;
 
 #ifdef DFS_USING_STDIO
-	if ( fd < 3 || fd > DFS_FD_MAX + 3) return RT_NULL;
+	if (fd < 3 || fd > DFS_FD_MAX + 3) 
+		return RT_NULL;
 #else
-	if ( fd < 0 || fd > DFS_FD_MAX ) return RT_NULL;
+	if (fd < 0 || fd > DFS_FD_MAX) 
+		return RT_NULL;
 #endif
 
 	dfs_lock();
@@ -163,13 +164,13 @@ struct dfs_fd* fd_get(int fd)
  *
  * This function will put the file descriptor.
  */
-void fd_put(struct dfs_fd* fd)
+void fd_put(struct dfs_fd *fd)
 {
 	dfs_lock();
 	fd->ref_count --;
 
 	/* clear this fd entry */
-	if ( fd->ref_count == 0 )
+	if (fd->ref_count == 0)
 	{
 		rt_memset(fd, 0, sizeof(struct dfs_fd));
 	}
@@ -185,12 +186,12 @@ void fd_put(struct dfs_fd* fd)
  *
  * @return 0 on file has been open successfully, -1 on open failed.
  */
-int fd_is_open(const char* pathname)
+int fd_is_open(const char *pathname)
 {
 	char *fullpath;
 	unsigned int index;
-	struct dfs_filesystem* fs;
-	struct dfs_fd* fd;
+	struct dfs_filesystem *fs;
+	struct dfs_fd *fd;
 
 	fullpath = dfs_normalize_path(RT_NULL, pathname);
 	if (fullpath != RT_NULL)
@@ -207,16 +208,17 @@ int fd_is_open(const char* pathname)
 		/* get file path name under mounted file system */
 		if (fs->path[0] == '/' && fs->path[1] == '\0')
 			mountpath = fullpath;
-		else mountpath = fullpath + strlen(fs->path);
+		else 
+			mountpath = fullpath + strlen(fs->path);
 
 		dfs_lock();
 		for (index = 0; index < DFS_FD_MAX; index++)
 		{
 			fd = &(fd_table[index]);
-			if (fd->fs == RT_NULL) continue;
+			if (fd->fs == RT_NULL) 
+				continue;
 
-			if (fd->fs == fs &&
-				strcmp(fd->path, mountpath) == 0)
+			if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
 			{
 				/* found file in file descriptor table */
 				rt_free(fullpath);
@@ -240,9 +242,9 @@ int fd_is_open(const char* pathname)
  *
  * @return the subdir pointer in filename
  */
-const char* dfs_subdir(const char* directory, const char* filename)
+const char *dfs_subdir(const char *directory, const char *filename)
 {
-	const char* dir;
+	const char *dir;
 
 	if (strlen(directory) == strlen(filename)) /* it's a same path */
 		return RT_NULL;
@@ -263,7 +265,7 @@ const char* dfs_subdir(const char* directory, const char* filename)
  *
  * @return the built full file path (absoluted path)
  */
-char* dfs_normalize_path(const char* directory, const char* filename)
+char *dfs_normalize_path(const char *directory, const char *filename)
 {
 	char *fullpath;
 	char *dst0, *dst, *src;
@@ -311,7 +313,8 @@ char* dfs_normalize_path(const char* directory, const char* filename)
 				 /* './' case */
 				 src += 2;
 
-				 while ((*src == '/') && (*src != '\0')) src ++;
+				 while ((*src == '/') && (*src != '\0')) 
+				 	src ++;
 				 continue;
 			 }
 			 else if (src[1] == '.')
@@ -327,37 +330,47 @@ char* dfs_normalize_path(const char* directory, const char* filename)
 					/* '../' case */
 					 src += 3;
 
-					 while ((*src == '/') && (*src != '\0')) src ++;
+					 while ((*src == '/') && (*src != '\0')) 
+					 	src ++;
 					 goto up_one;
 				 }
 			 }
 		 }
 
 		 /* copy up the next '/' and erase all '/' */
-		 while ((c = *src++) != '\0' && c != '/') *dst ++ = c;
+		 while ((c = *src++) != '\0' && c != '/') 
+		 	*dst ++ = c;
 
 		 if (c == '/')
 		 {
 			 *dst ++ = '/';
-			 while (c == '/') c = *src++;
+			 while (c == '/') 
+			 	c = *src++;
 
 			 src --;
 		 }
-		 else if (!c) break;
+		 else if (!c) 
+		 	break;
 
 		 continue;
 
 up_one:
 		dst --;
-		if (dst < dst0) { rt_free(fullpath); return NULL;}
-		while (dst0 < dst && dst[-1] != '/') dst --;
+		if (dst < dst0)
+		{
+			rt_free(fullpath); 
+			return NULL;
+		}
+		while (dst0 < dst && dst[-1] != '/')
+			dst --;
 	}
 
 	*dst = '\0';
 
 	/* remove '/' in the end of path if exist */
 	dst --;
-	if ((dst != fullpath) && (*dst == '/')) *dst = '\0';
+	if ((dst != fullpath) && (*dst == '/'))
+		*dst = '\0';
 
 	return fullpath;
 }

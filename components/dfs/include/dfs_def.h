@@ -1,7 +1,7 @@
 /*
  * File      : dfs_def.h
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -13,6 +13,7 @@
  * 2004-10-14     Beranard     Clean up the code.
  * 2005-01-22     Beranard     Clean up the code, port to MinGW
  */
+ 
 #ifndef __DFS_DEF_H__
 #define __DFS_DEF_H__
 
@@ -277,11 +278,11 @@ struct dirent
 /* file descriptor */
 struct dfs_fd
 {
-    char* path;					/* Name (below mount point) */
+    char *path;					/* Name (below mount point) */
     int type;					/* Type (regular or socket) */
     int ref_count;				/* Descriptor reference count */
 
-    struct dfs_filesystem* fs;	/* Resident file system */
+    struct dfs_filesystem *fs;	/* Resident file system */
 
     rt_uint32_t flags;			/* Descriptor flags */
     rt_size_t 	size;			/* Size in bytes */

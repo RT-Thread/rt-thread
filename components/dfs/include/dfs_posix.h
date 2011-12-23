@@ -1,7 +1,7 @@
 /*
  * File      : dfs_def.h
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -13,6 +13,7 @@
  * 2010-07-18     Bernard      add stat and statfs structure definitions. 
  * 2011-05-16     Yi.qiu       Change parameter name of rename, "new" is C++ key word.
  */
+ 
 #ifndef __DFS_POSIX_H__
 #define __DFS_POSIX_H__
 
@@ -82,9 +83,9 @@ typedef struct
 } DIR;
 
 /* directory api*/
-int mkdir (const char *path, mode_t mode);
-DIR* opendir(const char* name);
-struct dirent* readdir(DIR *d);
+int mkdir(const char *path, mode_t mode);
+DIR *opendir(const char *name);
+struct dirent *readdir(DIR *d);
 long telldir(DIR *d);
 void seekdir(DIR *d, off_t offset);
 void rewinddir(DIR *d);
