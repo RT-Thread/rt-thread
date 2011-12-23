@@ -32,6 +32,11 @@ static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
 
+/* RT-Thread interface */
+static void HardFault_Handler(void);
+static void PendSV_Handler(void);
+static void rt_hw_timer_handler(void);
+
 //*****************************************************************************
 //
 // The entry point for the application.
@@ -59,7 +64,7 @@ void (* const g_pfnVectors[])(void) =
                                             // The initial stack pointer
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
-    FaultISR,                               // The hard fault handler
+    HardFault_Handler,                      // The hard fault handler
     IntDefaultHandler,                      // The MPU fault handler
     IntDefaultHandler,                      // The bus fault handler
     IntDefaultHandler,                      // The usage fault handler
@@ -70,8 +75,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // SVCall handler
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
-    IntDefaultHandler,                      // The PendSV handler
-    IntDefaultHandler,                      // The SysTick handler
+    PendSV_Handler,                         // The PendSV handler
+    rt_hw_timer_handler,                    // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
