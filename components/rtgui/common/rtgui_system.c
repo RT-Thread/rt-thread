@@ -159,7 +159,7 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 				create->extent.x1,
 				create->extent.y1,
 				create->extent.x2,
-				create->extent.y2;
+				create->extent.y2);
 #endif
 		}
 		break;
