@@ -6,9 +6,13 @@ from building import *
 cwd     = GetCurrentDir()
 src = Glob('driverlib/*.c')
 
+# cortex-m3 no FPU.
+if rtconfig.PART_TYPE.startswith('PART_LM4F') != True:
+	 SrcRemove(src, 'fpu.c')
+
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-	src += ['startup/gcc/startup_LPC17xx.s']
+	src += ['startup/gcc/start_gcc.s']
 elif rtconfig.CROSS_TOOL == 'keil':
 	src += ['startup/arm/start_rvds.S']
 elif rtconfig.CROSS_TOOL == 'iar':
@@ -16,6 +20,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 CPPPATH = [cwd]
 
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = [rtconfig.PART_TYPE]
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

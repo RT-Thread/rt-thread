@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -268,7 +268,7 @@ SysCtlPeripheralValid(unsigned long ulPeripheral)
 //*****************************************************************************
 //
 // A map of old peripheral defines to new peripheral defines.  Note that the
-// new peripheral defines will not work on old parts.
+// new peripheral defines will not work on parts that precede Blizzard class.
 //
 //*****************************************************************************
 static const unsigned long g_ppulPeripheralMap[][2] =
@@ -389,10 +389,10 @@ SysCtlFlashSizeGet(void)
 //!
 //! \param ulPin is the pin in question.
 //!
-//! Determines if a particular pin is present in the device.  The PWM, analog
-//! comparators, ADC, and timers have a varying number of pins across members
-//! of the Stellaris family; this will determine which are present on this
-//! device.
+//! This function determines if a particular pin is present in the device.  The
+//! PWM, analog comparators, ADC, and timers have a varying number of pins
+//! across members of the Stellaris family; this function determines which pins
+//! are present on this device.
 //!
 //! The \e ulPin argument must be only one of the following values:
 //! \b SYSCTL_PIN_PWM0, \b SYSCTL_PIN_PWM1, \b SYSCTL_PIN_PWM2,
@@ -468,9 +468,9 @@ SysCtlPinPresent(unsigned long ulPin)
 //!
 //! \param ulPeripheral is the peripheral in question.
 //!
-//! Determines if a particular peripheral is present in the device.  Each
-//! member of the Stellaris family has a different peripheral set; this will
-//! determine which are present on this device.
+//! This function determines if a particular peripheral is present in the 
+//! device.  Each member of the Stellaris family has a different peripheral 
+//! set; this function determines which peripherals are present on this device.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
 //! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
@@ -526,7 +526,7 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
     else if(ulPeripheral == SYSCTL_PERIPH_USB0)
     {
         //
-        // USB is a special case since the DC bit is missing for USB0.
+        // USB is a special case because the DC bit is missing for USB0.
         //
         if(HWREG(SYSCTL_DC6) & SYSCTL_DC6_USB0_M)
         {
@@ -554,10 +554,10 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
 //!
 //! \param ulPeripheral is the peripheral in question.
 //!
-//! Determines if a particular peripheral is ready to be accessed.  The
-//! peripheral may be in a non-ready state if it is not enabled, is being held
-//! in reset, or is in the process of becoming ready after be enabled or taken
-//! out of reset.
+//! This function determines if a particular peripheral is ready to be 
+//! accessed.  The peripheral may be in a non-ready state if it is not enabled,
+//! is being held in reset, or is in the process of becoming ready after being 
+//! enabled or taken out of reset.
 //!
 //! The \e ulPeripheral paramter must be only one of the following values:
 //! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
@@ -586,7 +586,7 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
 //! \b SYSCTL_PERIPH_WTIMER4, or \b SYSCTL_PERIPH_WTIMER5.
 //!
 //! \note The ability to check for a peripheral being ready varies based on the
-//! Stellaris part in use.  Please consult the datasheet for the part you are
+//! Stellaris part in use.  Please consult the data sheet for the part you are
 //! using to determine if this feature is available.
 //!
 //! \return Returns \b true if the specified peripheral is ready and \b false
@@ -620,8 +620,8 @@ SysCtlPeripheralReady(unsigned long ulPeripheral)
 //!
 //! \param ulPeripheral is the peripheral to be powered on.
 //!
-//! This function turns on the power to a peripheral.  It will continue to
-//! receive power even when its clock is not enabled.
+//! This function turns on the power to a peripheral.  The peripheral continues 
+//! to receive power even when its clock is not enabled.
 //!
 //! The \e ulPeripheral paramter must be only one of the following values:
 //! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
@@ -650,7 +650,7 @@ SysCtlPeripheralReady(unsigned long ulPeripheral)
 //! \b SYSCTL_PERIPH_WTIMER4, or \b SYSCTL_PERIPH_WTIMER5.
 //!
 //! \note The ability to power off a peripheral varies based on the Stellaris
-//! part in use.  Please consult the datasheet for the part you are using to
+//! part in use.  Please consult the data sheet for the part you are using to
 //! determine if this feature is available.
 //!
 //! \return None.
@@ -684,8 +684,8 @@ SysCtlPeripheralPowerOn(unsigned long ulPeripheral)
 //! \param ulPeripheral is the peripheral to be powered off.
 //!
 //! This function allows the power to a peripheral to be turned off.  The
-//! peripheral will continue to receive power when its clock is enabled, but
-//! the power will be removed when its clock is disabled.
+//! peripheral continues to receive power when its clock is enabled, but
+//! the power is removed when its clock is disabled.
 //!
 //! The \e ulPeripheral paramter must be only one of the following values:
 //! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
@@ -714,7 +714,7 @@ SysCtlPeripheralPowerOn(unsigned long ulPeripheral)
 //! \b SYSCTL_PERIPH_WTIMER4, or \b SYSCTL_PERIPH_WTIMER5.
 //!
 //! \note The ability to power off a peripheral varies based on the Stellaris
-//! part in use.  Please consult the datasheet for the part you are using to
+//! part in use.  Please consult the data sheet for the part you are using to
 //! determine if this feature is available.
 //!
 //! \return None.
@@ -793,7 +793,7 @@ SysCtlPeripheralReset(unsigned long ulPeripheral)
 
     //
     // See if the peripheral index is 15, indicating a peripheral that is
-    // accessed via the SSYCTL_SRperiph registers.
+    // accessed via the SYSCTL_SRperiph registers.
     //
     if((ulPeripheral & 0xf0000000) == 0xf0000000)
     {
@@ -845,7 +845,7 @@ SysCtlPeripheralReset(unsigned long ulPeripheral)
 //!
 //! \param ulPeripheral is the peripheral to enable.
 //!
-//! Peripherals are enabled with this function.  At power-up, all peripherals
+//! This function enables peripherals.  At power-up, all peripherals
 //! are disabled; they must be enabled in order to operate or respond to
 //! register reads/writes.
 //!
@@ -877,7 +877,7 @@ SysCtlPeripheralReset(unsigned long ulPeripheral)
 //!
 //! \note It takes five clock cycles after the write to enable a peripheral
 //! before the the peripheral is actually enabled.  During this time, attempts
-//! to access the peripheral will result in a bus fault.  Care should be taken
+//! to access the peripheral result in a bus fault.  Care should be taken
 //! to ensure that the peripheral is not accessed during this brief time
 //! period.
 //!
@@ -920,8 +920,8 @@ SysCtlPeripheralEnable(unsigned long ulPeripheral)
 //!
 //! \param ulPeripheral is the peripheral to disable.
 //!
-//! Peripherals are disabled with this function.  Once disabled, they will not
-//! operate or respond to register reads/writes.
+//! This function disables peripherals are disabled with this function.  Once 
+//! disabled, they do not operate or respond to register reads/writes.
 //!
 //! The \e ulPeripheral parameter must be only one of the following values:
 //! \b SYSCTL_PERIPH_ADC0, \b SYSCTL_PERIPH_ADC1, \b SYSCTL_PERIPH_CAN0,
@@ -989,9 +989,9 @@ SysCtlPeripheralDisable(unsigned long ulPeripheral)
 //! \param ulPeripheral is the peripheral to enable in sleep mode.
 //!
 //! This function allows a peripheral to continue operating when the processor
-//! goes into sleep mode.  Since the clocking configuration of the device does
-//! not change, any peripheral can safely continue operating while the
-//! processor is in sleep mode, and can therefore wake the processor from sleep
+//! goes into sleep mode.  Because the clocking configuration of the device 
+//! does not change, any peripheral can safely continue operating while the
+//! processor is in sleep mode and can therefore wake the processor from sleep
 //! mode.
 //!
 //! Sleep mode clocking of peripherals must be enabled via
@@ -1066,7 +1066,7 @@ SysCtlPeripheralSleepEnable(unsigned long ulPeripheral)
 //! This function causes a peripheral to stop operating when the processor goes
 //! into sleep mode.  Disabling peripherals while in sleep mode helps to lower
 //! the current draw of the device.  If enabled (via SysCtlPeripheralEnable()),
-//! the peripheral will automatically resume operation when the processor
+//! the peripheral automatically resumes operation when the processor
 //! leaves sleep mode, maintaining its entire state from before sleep mode was
 //! entered.
 //!
@@ -1140,11 +1140,11 @@ SysCtlPeripheralSleepDisable(unsigned long ulPeripheral)
 //! \param ulPeripheral is the peripheral to enable in deep-sleep mode.
 //!
 //! This function allows a peripheral to continue operating when the processor
-//! goes into deep-sleep mode.  Since the clocking configuration of the device
-//! may change, not all peripherals can safely continue operating while the
-//! processor is in sleep mode.  Those that must run at a particular frequency
-//! (such as a UART) will not work as expected if the clock changes.  It is the
-//! responsibility of the caller to make sensible choices.
+//! goes into deep-sleep mode.  Because the clocking configuration of the 
+//! device may change, not all peripherals can safely continue operating while 
+//! the processor is in sleep mode.  Those that must run at a particular 
+//! frequency (such as a UART) do not work as expected if the clock changes.  
+//! It is the responsibility of the caller to make sensible choices.
 //!
 //! Deep-sleep mode clocking of peripherals must be enabled via
 //! SysCtlPeripheralClockGating(); if disabled, the peripheral deep-sleep mode
@@ -1221,7 +1221,7 @@ SysCtlPeripheralDeepSleepEnable(unsigned long ulPeripheral)
 //! to lower the current draw of the device, and can keep peripherals that
 //! require a particular clock frequency from operating when the clock changes
 //! as a result of entering deep-sleep mode.  If enabled (via
-//! SysCtlPeripheralEnable()), the peripheral will automatically resume
+//! SysCtlPeripheralEnable()), the peripheral automatically resumes
 //! operation when the processor leaves deep-sleep mode, maintaining its entire
 //! state from before deep-sleep mode was entered.
 //!
@@ -1298,10 +1298,10 @@ SysCtlPeripheralDeepSleepDisable(unsigned long ulPeripheral)
 //!
 //! This function controls how peripherals are clocked when the processor goes
 //! into sleep or deep-sleep mode.  By default, the peripherals are clocked the
-//! same as in run mode; if peripheral clock gating is enabled they are clocked
-//! according to the configuration set by SysCtlPeripheralSleepEnable(),
-//! SysCtlPeripheralSleepDisable(), SysCtlPeripheralDeepSleepEnable(), and
-//! SysCtlPeripheralDeepSleepDisable().
+//! same as in run mode; if peripheral clock gating is enabled, they are 
+//! clocked according to the configuration set by 
+//! SysCtlPeripheralSleepEnable(), SysCtlPeripheralSleepDisable(), 
+//! SysCtlPeripheralDeepSleepEnable(), and SysCtlPeripheralDeepSleepDisable().
 //!
 //! \return None.
 //
@@ -1329,19 +1329,23 @@ SysCtlPeripheralClockGating(tBoolean bEnable)
 //! \param pfnHandler is a pointer to the function to be called when the system
 //! control interrupt occurs.
 //!
-//! This sets the handler to be called when a system control interrupt occurs.
-//! This will enable the global interrupt in the interrupt controller; specific
-//! system control interrupts must be enabled via SysCtlIntEnable().  It is the
-//! interrupt handler's responsibility to clear the interrupt source via
-//! SysCtlIntClear().
+//! This function registers the handler to be called when a system control 
+//! interrupt occurs. This function enables the global interrupt in the 
+//! interrupt controller; specific system control interrupts must be enabled 
+//! via SysCtlIntEnable().  It is the interrupt handler's responsibility to 
+//! clear the interrupt source via SysCtlIntClear().
 //!
 //! System control can generate interrupts when the PLL achieves lock, if the
 //! internal LDO current limit is exceeded, if the internal oscillator fails,
 //! if the main oscillator fails, if the internal LDO output voltage droops too
-//! much, if the external voltage droops too much, or if the PLL fails.
+//! much, if the external voltage droops too much, or if the PLL fails. 
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
+//!
+//! \note The events that cause system control interrupts vary based on the 
+//! Stellaris part in use.  Please consult the data sheet for the part you are 
+//! using to determine which interrupt sources are available.
 //!
 //! \return None.
 //
@@ -1364,9 +1368,9 @@ SysCtlIntRegister(void (*pfnHandler)(void))
 //
 //! Unregisters the interrupt handler for the system control interrupt.
 //!
-//! This function will clear the handler to be called when a system control
-//! interrupt occurs.  This will also mask off the interrupt in the interrupt
-//! controller so that the interrupt handler no longer is called.
+//! This function unregisters the handler to be called when a system control
+//! interrupt occurs.  This function also masks off the interrupt in the 
+//! interrupt controller so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -1397,9 +1401,13 @@ SysCtlIntUnregister(void)
 //! \b SYSCTL_INT_IOSC_FAIL, \b SYSCTL_INT_MOSC_FAIL, \b SYSCTL_INT_POR,
 //! \b SYSCTL_INT_BOR, and/or \b SYSCTL_INT_PLL_FAIL.
 //!
-//! Enables the indicated system control interrupt sources.  Only the sources
-//! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
+//! This function enables the indicated system control interrupt sources.  Only 
+//! the sources that are enabled can be reflected to the processor interrupt; 
+//! disabled sources have no effect on the processor.
+//!
+//! \note The interrupt sources vary based on the Stellaris part in use.  
+//! Please consult the data sheet for the part you are using to determine
+//! which interrupt sources are available.
 //!
 //! \return None.
 //
@@ -1422,9 +1430,13 @@ SysCtlIntEnable(unsigned long ulInts)
 //! \b SYSCTL_INT_IOSC_FAIL, \b SYSCTL_INT_MOSC_FAIL, \b SYSCTL_INT_POR,
 //! \b SYSCTL_INT_BOR, and/or \b SYSCTL_INT_PLL_FAIL.
 //!
-//! Disables the indicated system control interrupt sources.  Only the sources
-//! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
+//! This function disables the indicated system control interrupt sources.  
+//! Only the sources that are enabled can be reflected to the processor 
+//! interrupt; disabled sources have no effect on the processor.
+//!
+//! \note The interrupt sources vary based on the Stellaris part in use.  
+//! Please consult the data sheet for the part you are using to determine
+//! which interrupt sources are available.
 //!
 //! \return None.
 //
@@ -1448,10 +1460,10 @@ SysCtlIntDisable(unsigned long ulInts)
 //! \b SYSCTL_INT_BOR, and/or \b SYSCTL_INT_PLL_FAIL.
 //!
 //! The specified system control interrupt sources are cleared, so that they no
-//! longer assert.  This must be done in the interrupt handler to keep it from
-//! being called again immediately upon exit.
+//! longer assert.  This function must be called in the interrupt handler to 
+//! keep it from being called again immediately upon exit.
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -1459,6 +1471,10 @@ SysCtlIntDisable(unsigned long ulInts)
 //! actually cleared.  Failure to do so may result in the interrupt handler
 //! being immediately reentered (because the interrupt controller still sees
 //! the interrupt source asserted).
+//!
+//! \note The interrupt sources vary based on the Stellaris part in use.  
+//! Please consult the data sheet for the part you are using to determine
+//! which interrupt sources are available.
 //!
 //! \return None.
 //
@@ -1479,14 +1495,18 @@ SysCtlIntClear(unsigned long ulInts)
 //! \param bMasked is false if the raw interrupt status is required and true if
 //! the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the system controller.  Either the
-//! raw interrupt status or the status of interrupts that are allowed to
-//! reflect to the processor can be returned.
+//! This function returns the interrupt status for the system controller.  
+//! Either the raw interrupt status or the status of interrupts that are
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, enumerated as a bit field of
 //! \b SYSCTL_INT_PLL_LOCK, \b SYSCTL_INT_CUR_LIMIT, \b SYSCTL_INT_IOSC_FAIL,
 //! \b SYSCTL_INT_MOSC_FAIL, \b SYSCTL_INT_POR, \b SYSCTL_INT_BOR, and
 //! \b SYSCTL_INT_PLL_FAIL.
+//!
+//! \note The interrupt sources vary based on the Stellaris part in use.  
+//! Please consult the data sheet for the part you are using to determine
+//! which interrupt sources are available.
 //
 //*****************************************************************************
 unsigned long
@@ -1606,10 +1626,10 @@ SysCtlLDOConfigSet(unsigned long ulConfig)
 //
 //! Resets the device.
 //!
-//! This function will perform a software reset of the entire device.  The
-//! processor and all peripherals are reset and all device registers will
-//! return to their default values (with the exception of the reset cause
-//! register, which will maintain its current value but have the software reset
+//! This function performs a software reset of the entire device.  The
+//! processor and all peripherals are reset and all device registers are
+//! returned to their default values (with the exception of the reset cause
+//! register, which maintains its current value but has the software reset
 //! bit set as well).
 //!
 //! \return This function does not return.
@@ -1619,8 +1639,8 @@ void
 SysCtlReset(void)
 {
     //
-    // Perform a software reset request.  This will cause the device to reset,
-    // no further code is executed.
+    // Perform a software reset request.  This request causes the device to 
+    // reset, no further code is executed.
     //
     HWREG(NVIC_APINT) = NVIC_APINT_VECTKEY | NVIC_APINT_SYSRESETREQ;
 
@@ -1637,7 +1657,7 @@ SysCtlReset(void)
 //
 //! Puts the processor into sleep mode.
 //!
-//! This function places the processor into sleep mode; it will not return
+//! This function places the processor into sleep mode; it does not return
 //! until the processor returns to run mode.  The peripherals that are enabled
 //! via SysCtlPeripheralSleepEnable() continue to operate and can wake up the
 //! processor (if automatic clock gating is enabled with
@@ -1660,7 +1680,7 @@ SysCtlSleep(void)
 //
 //! Puts the processor into deep-sleep mode.
 //!
-//! This function places the processor into deep-sleep mode; it will not return
+//! This function places the processor into deep-sleep mode; it does not return
 //! until the processor returns to run mode.  The peripherals that are enabled
 //! via SysCtlPeripheralDeepSleepEnable() continue to operate and can wake up
 //! the processor (if automatic clock gating is enabled with
@@ -1693,8 +1713,9 @@ SysCtlDeepSleep(void)
 //
 //! Gets the reason for a reset.
 //!
-//! This function will return the reason(s) for a reset.  Since the reset
-//! reasons are sticky until either cleared by software or an external reset,
+//! This function returns the reason(s) for a reset.  Because the reset
+//! reasons are sticky until either cleared by software or an external reset 
+//! (for Sandstorm-class devices) or a power-on reset (for all other classes),
 //! multiple reset reasons may be returned if multiple resets have occurred.
 //! The reset reason is a logical OR of \b SYSCTL_CAUSE_LDO,
 //! \b SYSCTL_CAUSE_SW, \b SYSCTL_CAUSE_WDOG, \b SYSCTL_CAUSE_BOR,
@@ -1754,6 +1775,10 @@ SysCtlResetCauseClear(unsigned long ulCauses)
 //! to be active for two consecutive samples separated by a configurable time.
 //! When it detects a brown-out condition, it can either reset the device or
 //! generate a processor interrupt.
+//!
+//! \note The availability of the resample feature is only available on 
+//! Sandstorm-class devices. Please consult the datasheet for the part you
+//! are using to determine whether this feature is available.
 //!
 //! \return None.
 //
@@ -1848,11 +1873,9 @@ SysCtlDelay(unsigned long ulCount)
 //!   the OSC0/OSC1 pins, allowing power consumption to be reduced.
 //!
 //! \note The availability of MOSC control varies based on the Stellaris part
-//! in use.  Please consult the datasheet for the part you are using to
-//! determine whether this support is available.
-//!
-//! \note The capability of MOSC control varies based on the Stellaris part in
-//! use.
+//! in use.  Please consult the data sheet for the part you are using to
+//! determine whether this support is available. In addition, the capability 
+//! of MOSC control varies based on the Stellaris part in use.
 //!
 //! \return None.
 //
@@ -1877,9 +1900,9 @@ SysCtlMOSCConfigSet(unsigned long ulConfig)
 //! \e ulType is one of:
 //!
 //! - \b SYSCTL_PIOSC_CAL_AUTO to perform automatic calibration using the
-//!   32 kHz clock from the hibernate module as a reference.  This is only
-//!   possible on parts that have a hibernate module and then only if it is
-//!   enabled and the hibernate module's RTC is also enabled.
+//!   32-kHz clock from the hibernate module as a reference.  This type is 
+//!   only possible on parts that have a hibernate module, and then only if 
+//!   it is enabled and the hibernate module's RTC is also enabled.
 //!
 //! - \b SYSCTL_PIOSC_CAL_FACT to reset the PIOSC calibration to the factory
 //!   provided calibration.
@@ -1887,8 +1910,8 @@ SysCtlMOSCConfigSet(unsigned long ulConfig)
 //! - \b SYSCTL_PIOSC_CAL_USER to set the PIOSC calibration to a user-supplied
 //!   value.  The value to be used is ORed into the lower 7-bits of this value,
 //!   with 0x40 being the ``nominal'' value (in other words, if everything were
-//!   perfect, this would provide exactly 16 MHz).  Values larger than 0x40
-//!   will slow down PIOSC, and values smaller than 0x40 will speed up PIOSC.
+//!   perfect, 0x40 provides exactly 16 MHz).  Values larger than 0x40
+//!   slow down PIOSC, and values smaller than 0x40 speed up PIOSC.
 //!
 //! \return None.
 //
@@ -1954,7 +1977,9 @@ SysCtlPIOSCCalibrate(unsigned long ulType)
 //! The system clock divider is chosen with one of the following values:
 //! \b SYSCTL_SYSDIV_1, \b SYSCTL_SYSDIV_2, \b SYSCTL_SYSDIV_3, ...
 //! \b SYSCTL_SYSDIV_64.  Only \b SYSCTL_SYSDIV_1 through \b SYSCTL_SYSDIV_16
-//! are valid on Sandstorm-class devices.
+//! are valid on Sandstorm-class devices. Half-dividers, such as 
+//! \b SYSCTL_SYSDIV_2_5 and \b SYSCTL_SYSDIV_3_5. are available on Tempest-,
+//! Firestorm-, and Blizzard-class devices.
 //!
 //! The use of the PLL is chosen with either \b SYSCTL_USE_PLL or
 //! \b SYSCTL_USE_OSC.
@@ -1967,10 +1992,16 @@ SysCtlPIOSCCalibrate(unsigned long ulType)
 //! \b SYSCTL_XTAL_6_14MHZ, \b SYSCTL_XTAL_7_37MHZ, \b SYSCTL_XTAL_8MHZ,
 //! \b SYSCTL_XTAL_8_19MHZ, \b SYSCTL_XTAL_10MHZ, \b SYSCTL_XTAL_12MHZ,
 //! \b SYSCTL_XTAL_12_2MHZ, \b SYSCTL_XTAL_13_5MHZ, \b SYSCTL_XTAL_14_3MHZ,
-//! \b SYSCTL_XTAL_16MHZ, or \b SYSCTL_XTAL_16_3MHZ.  Values below
-//! \b SYSCTL_XTAL_3_57MHZ are not valid when the PLL is in operation.  On
-//! Sandstorm- and Fury-class devices, values above \b SYSCTL_XTAL_8_19MHZ are
-//! not valid.
+//! \b SYSCTL_XTAL_16MHZ, \b SYSCTL_XTAL_16_3MHZ, \b SYSCTL_XTAL_18MHZ, 
+//! \b SYSCTL_XTAL_20MHZ, \b SYSCTL_XTAL_24MHZ, or \b SYSCTL_XTAL_25MHz.  
+//! Values below \b SYSCTL_XTAL_3_57MHZ are not valid when the PLL is in 
+//! operation on Sandstorm-, Fury-, Dustdevil-, Tempest-, and Firestorm-class.  
+//! devices. Values below \b SYSCTL_XTAL_5MHZ are not valid when the PLL is in
+//! operation on Blizzard-class devices.  Values below \b SYSCTL_XTAL_4MHZ
+//! are never valid on Blizzard-class devices. On  Sandstorm- and Fury-class 
+//! devices, values above \b SYSCTL_XTAL_8_19MHZ are not valid. On Dustdevil-,
+//! Tempest-, and Firestorm-class devices, values above \b SYSCTL_XTAL_16_3MHZ
+//! are not valid.
 //!
 //! The oscillator source is chosen with one of the following values:
 //! \b SYSCTL_OSC_MAIN, \b SYSCTL_OSC_INT, \b SYSCTL_OSC_INT4,
@@ -1993,10 +2024,10 @@ SysCtlPIOSCCalibrate(unsigned long ulType)
 //! crystal with one of the \b SYSCTL_XTAL_xxx values.
 //!
 //! \note If selecting the PLL as the system clock source (that is, via
-//! \b SYSCTL_USE_PLL), this function will poll the PLL lock interrupt to
+//! \b SYSCTL_USE_PLL), this function polls the PLL lock interrupt to
 //! determine when the PLL has locked.  If an interrupt handler for the
 //! system control interrupt is in place, and it responds to and clears the
-//! PLL lock interrupt, this function will delay until its timeout has occurred
+//! PLL lock interrupt, this function delays until its timeout has occurred
 //! instead of completing as soon as PLL lock is achieved.
 //!
 //! \return None.
@@ -2014,7 +2045,7 @@ SysCtlClockSet(unsigned long ulConfig)
     if(CLASS_IS_SANDSTORM && (ulConfig & SYSCTL_RCC2_USERCC2))
     {
         //
-        // Return without changing the clocking since the requested
+        // Return without changing the clocking because the requested
         // configuration can not be achieved.
         //
         return;
@@ -2022,8 +2053,8 @@ SysCtlClockSet(unsigned long ulConfig)
 
     //
     // Get the current value of the RCC and RCC2 registers.  If using a
-    // Sandstorm-class device, the RCC2 register will read back as zero and the
-    // writes to it from within this function is ignored.
+    // Sandstorm-class device, the RCC2 register reads back as zero and the
+    // writes to it from within this function are ignored.
     //
     ulRCC = HWREG(SYSCTL_RCC);
     ulRCC2 = HWREG(SYSCTL_RCC2);
@@ -2086,7 +2117,7 @@ SysCtlClockSet(unsigned long ulConfig)
     }
 
     //
-    // Set the new crystal value and oscillator source.  Since the OSCSRC2
+    // Set the new crystal value and oscillator source.  Because the OSCSRC2
     // field in RCC2 overlaps the XTAL field in RCC, the OSCSRC field has a
     // special encoding within ulConfig to avoid the overlap.
     //
@@ -2137,7 +2168,7 @@ SysCtlClockSet(unsigned long ulConfig)
 
     //
     // Set the requested system divider and disable the appropriate
-    // oscillators.  This will not get written immediately.
+    // oscillators.  This value is not written immediately.
     //
     ulRCC &= ~(SYSCTL_RCC_SYSDIV_M | SYSCTL_RCC_USESYSDIV |
                SYSCTL_RCC_IOSCDIS | SYSCTL_RCC_MOSCDIS);
@@ -2195,14 +2226,15 @@ SysCtlClockSet(unsigned long ulConfig)
 //
 //! Gets the processor clock rate.
 //!
-//! This function determines the clock rate of the processor clock.  This is
-//! also the clock rate of all the peripheral modules (with the exception of
-//! PWM, which has its own clock divider).
+//! This function determines the clock rate of the processor clock, which is
+//! also the clock rate of the peripheral modules (with the exception of
+//! PWM, which has its own clock divider; other peripherals may have different
+//! clocking, see the device data sheet for details).
 //!
-//! \note This will not return accurate results if SysCtlClockSet() has not
+//! \note This cannot return accurate results if SysCtlClockSet() has not
 //! been called to configure the clocking of the device, or if the device is
 //! directly clocked from a crystal (or a clock source) that is not one of the
-//! supported crystal frequencies.  In the later case, this function should be
+//! supported crystal frequencies.  In the latter case, this function should be
 //! modified to directly return the correct system clock rate.
 //!
 //! \return The processor clock rate.
@@ -2216,8 +2248,8 @@ SysCtlClockGet(void)
 
     //
     // Read RCC and RCC2.  For Sandstorm-class devices (which do not have
-    // RCC2), the RCC2 read will return 0, which indicates that RCC2 is
-    // disabled (since the SYSCTL_RCC2_USERCC2 bit is clear).
+    // RCC2), the RCC2 read returns 0, indicating that RCC2 is
+    // disabled (because the SYSCTL_RCC2_USERCC2 bit is clear).
     //
     ulRCC = HWREG(SYSCTL_RCC);
     ulRCC2 = HWREG(SYSCTL_RCC2);
@@ -2261,7 +2293,7 @@ SysCtlClockGet(void)
             {
                 //
                 // The internal oscillator on a rev A2 Fury-class device and a
-                // rev A0 Dustdevil-class device is 12 MHz +/- 30%.
+                // Dustdevil-class device is 12 MHz +/- 30%.
                 //
                 ulClk = 12000000;
             }
@@ -2296,7 +2328,7 @@ SysCtlClockGet(void)
             {
                 //
                 // The internal oscillator on a rev A2 Fury-class device and a
-                // rev A0 Dustdevil-class device is 12 MHz +/- 30%.
+                // Dustdevil-class device is 12 MHz +/- 30%.
                 //
                 ulClk = 12000000 / 4;
             }
@@ -2311,19 +2343,19 @@ SysCtlClockGet(void)
         }
 
         //
-        // The internal 30 KHz oscillator is the source clock.
+        // The internal 30-KHz oscillator is the source clock.
         //
         case SYSCTL_RCC_OSCSRC_30:
         {
             //
-            // The internal 30 KHz oscillator has an accuracy of +/- 30%.
+            // The internal 30-KHz oscillator has an accuracy of +/- 30%.
             //
             ulClk = 30000;
             break;
         }
 
         //
-        // The 4.19 MHz clock from the hibernate module is the clock source.
+        // The 4.194304-MHz clock from the hibernate module is the clock source.
         //
         case SYSCTL_RCC2_OSCSRC2_419:
         {
@@ -2332,7 +2364,7 @@ SysCtlClockGet(void)
         }
 
         //
-        // The 32 KHz clock from the hibernate module is the source clock.
+        // The 32.768-KHz clock from the hibernate module is the source clock.
         //
         case SYSCTL_RCC2_OSCSRC2_32:
         {
@@ -2363,7 +2395,7 @@ SysCtlClockGet(void)
         {
             //
             // Read the two PLL frequency registers.  The formula for a
-            // Garnet-class device is "(xtal * m) / ((q + 1) * (n + 1))".
+            // Blizzard-class device is "(xtal * m) / ((q + 1) * (n + 1))".
             //
             ulPLL = HWREG(SYSCTL_PLLFREQ0);
             ulPLL1 = HWREG(SYSCTL_PLLFREQ1);
@@ -2443,7 +2475,7 @@ SysCtlClockGet(void)
 
         //
         // Force the system divider to be enabled.  It is always used when
-        // using the PLL, but in some cases it will not read as being enabled.
+        // using the PLL, but in some cases it does not read as being enabled.
         //
         ulRCC |= SYSCTL_RCC_USESYSDIV;
     }
@@ -2541,8 +2573,8 @@ SysCtlDeepSleepClockSet(unsigned long ulConfig)
 //! \b SYSCTL_PWMDIV_8, \b SYSCTL_PWMDIV_16, \b SYSCTL_PWMDIV_32, or
 //! \b SYSCTL_PWMDIV_64.
 //!
-//! This function sets the rate of the clock provided to the PWM module as a
-//! ratio of the processor clock.  This clock is used by the PWM module to
+//! This function configures the rate of the clock provided to the PWM module
+//! as a ratio of the processor clock.  This clock is used by the PWM module to
 //! generate PWM signals; its rate forms the basis for all PWM signals.
 //!
 //! \note The clocking of the PWM is dependent upon the system clock rate as
@@ -2628,10 +2660,10 @@ SysCtlPWMClockGet(void)
 //! \b SYSCTL_ADCSPEED_1MSPS, \b SYSCTL_ADCSPEED_500KSPS,
 //! \b SYSCTL_ADCSPEED_250KSPS, or \b SYSCTL_ADCSPEED_125KSPS.
 //!
-//! This function sets the rate at which the ADC samples are captured by the
-//! ADC block.  The sampling speed may be limited by the hardware, so the
+//! This function configures the rate at which the ADC samples are captured by 
+//! the ADC block.  The sampling speed may be limited by the hardware, so the
 //! sample rate may end up being slower than requested.  SysCtlADCSpeedGet()
-//! will return the actual speed in use.
+//! returns the actual speed in use.
 //!
 //! \return None.
 //
@@ -2653,7 +2685,7 @@ SysCtlADCSpeedSet(unsigned long ulSpeed)
     ASSERT(HWREG(SYSCTL_DC1) & SYSCTL_DC1_ADC0);
 
     //
-    // Set the ADC speed in run, sleep, and deep-sleep mode.
+    // Set the ADC speed in run and sleep mode.
     //
     HWREG(SYSCTL_RCGC0) = ((HWREG(SYSCTL_RCGC0) & ~(SYSCTL_RCGC0_ADCSPD_M)) |
                            ulSpeed);
@@ -2701,7 +2733,7 @@ SysCtlADCSpeedGet(void)
 //! Sandstorm-class devices.
 //!
 //! \note Both oscillators (main and internal) must be enabled for this
-//! verification timer to operate as the main oscillator will verify the
+//! verification timer to operate as the main oscillator verifies the
 //! internal oscillator.
 //!
 //! \return None.
@@ -2739,7 +2771,7 @@ SysCtlIOSCVerificationSet(tBoolean bEnable)
 //! Sandstorm-class devices.
 //!
 //! \note Both oscillators (main and internal) must be enabled for this
-//! verification timer to operate as the internal oscillator will verify the
+//! verification timer to operate as the internal oscillator verifies the
 //! main oscillator.
 //!
 //! \return None.
@@ -2840,7 +2872,7 @@ SysCtlClkVerificationClear(void)
 //! The \e ulGPIOPeripheral argument must be only one of the following values:
 //! \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC,
 //! \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF,
-//! \b SYSCTL_PERIPH_GPIOG, or \b SYSCTL_PERIPH_GPIOH.
+//! \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH, or \b SYSCTL_PERIPH_GPIOJ.
 //!
 //! \return None.
 //
@@ -2875,12 +2907,12 @@ SysCtlGPIOAHBEnable(unsigned long ulGPIOPeripheral)
 //!
 //! This function disables the specified GPIO peripheral for access from the
 //! Advanced Host Bus (AHB).  Once disabled, the GPIO peripheral is accessed
-//! from the legacy Advanced Peripheral Bus (AHB).
+//! from the legacy Advanced Peripheral Bus (APB).
 //!
 //! The \b ulGPIOPeripheral argument must be only one of the following values:
 //! \b SYSCTL_PERIPH_GPIOA, \b SYSCTL_PERIPH_GPIOB, \b SYSCTL_PERIPH_GPIOC,
 //! \b SYSCTL_PERIPH_GPIOD, \b SYSCTL_PERIPH_GPIOE, \b SYSCTL_PERIPH_GPIOF,
-//! \b SYSCTL_PERIPH_GPIOG, or \b SYSCTL_PERIPH_GPIOH.
+//! \b SYSCTL_PERIPH_GPIOG, \b SYSCTL_PERIPH_GPIOH, or \b SYSCTL_PERIPH_GPIOJ.
 //!
 //! \return None.
 //
@@ -2911,7 +2943,7 @@ SysCtlGPIOAHBDisable(unsigned long ulGPIOPeripheral)
 //
 //! Powers up the USB PLL.
 //!
-//! This function will enable the USB controller's PLL which is used by it's
+//! This function enables the USB controller's PLL, which is used by it's
 //! physical layer.  This call is necessary before connecting to any external
 //! devices.
 //!
@@ -2931,9 +2963,9 @@ SysCtlUSBPLLEnable(void)
 //
 //! Powers down the USB PLL.
 //!
-//! This function will disable the USB controller's PLL which is used by it's
+//! This function disables the USB controller's PLL, which is used by it's
 //! physical layer.  The USB registers are still accessible, but the physical
-//! layer will no longer function.
+//! layer no longer functions.
 //!
 //! \return None.
 //
@@ -2942,7 +2974,7 @@ void
 SysCtlUSBPLLDisable(void)
 {
     //
-    // Turn of USB PLL.
+    // Turn off the USB PLL.
     //
     HWREG(SYSCTL_RCC2) |= SYSCTL_RCC2_USBPWRDN;
 }
@@ -2951,20 +2983,20 @@ SysCtlUSBPLLDisable(void)
 //
 //! Sets the MCLK frequency provided to the I2S module.
 //!
-//! \param ulInputClock is the input clock to the MCLK divider.  If this is
-//! zero, the value is computed from the current PLL configuration.
-//! \param ulMClk is the desired MCLK frequency.  If this is zero, MCLK output
-//! is disabled.
+//! \param ulInputClock is the input clock to the MCLK divider.  If this value 
+//! is zero, the value is computed from the current PLL configuration.
+//! \param ulMClk is the desired MCLK frequency.  If this value is zero, MCLK 
+//! output is disabled.
 //!
-//! This function sets the dividers to provide MCLK to the I2S module.  A MCLK
-//! divider is chosen that produces the MCLK frequency that is the closest
+//! This function confgiures the dividers to provide MCLK to the I2S module.  A 
+//! MCLK divider is chosen that produces the MCLK frequency that is the closest
 //! possible to the requested frequency, which may be above or below the
 //! requested frequency.
 //!
 //! The actual MCLK frequency is returned.  It is the responsibility of the
 //! application to determine if the selected MCLK is acceptable; in general the
 //! human ear can not discern the frequency difference if it is within 0.3% of
-//! the desired frequency (though there is a very small percentage of the
+//! the desired frequency (although there is a very small percentage of the
 //! population that can discern lower frequency deviations).
 //!
 //! \return Returns the actual MCLK frequency.

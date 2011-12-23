@@ -2,7 +2,7 @@
 //
 // flash.h - Prototypes for the flash driver.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -56,8 +56,13 @@ tFlashProtection;
 // returned from FlashIntStatus().
 //
 //*****************************************************************************
-#define FLASH_INT_PROGRAM       0x00000002  // Programming Interrupt Mask
-#define FLASH_INT_ACCESS        0x00000001  // Access Interrupt Mask
+#define FLASH_INT_PROGRAM     0x00000002 // Programming Interrupt Mask
+#define FLASH_INT_ACCESS      0x00000001 // Access Interrupt Mask
+#define FLASH_INT_EEPROM      0x00000004 // EEPROM Interrupt Mask
+#define FLASH_INT_VOLTAGE_ERR 0x00000200 // Voltage Error Interrupt Mask
+#define FLASH_INT_DATA_ERR    0x00000400 // Invalid Data Interrupt Mask
+#define FLASH_INT_ERASE_ERR   0x00000800 // Erase Error Interrupt Mask
+#define FLASH_INT_PROGRAM_ERR 0x00002000 // Program Verify Error Interrupt Mask
 
 //*****************************************************************************
 //

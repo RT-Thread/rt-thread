@@ -2,7 +2,7 @@
 //
 // hw_hibernate.h - Defines and Macros for the Hibernation module.
 //
-// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -41,6 +41,7 @@
                                             // Status
 #define HIB_IC                  0x400FC020  // Hibernation Interrupt Clear
 #define HIB_RTCT                0x400FC024  // Hibernation RTC Trim
+#define HIB_RTCSS               0x400FC028  // Hibernation RTC Sub Seconds
 #define HIB_DATA                0x400FC030  // Hibernation Data
 
 //*****************************************************************************
@@ -81,6 +82,17 @@
 //
 //*****************************************************************************
 #define HIB_CTL_WRC             0x80000000  // Write Complete/Capable
+#define HIB_CTL_OSCHYS          0x00040000  // 32
+#define HIB_CTL_OSCDRV          0x00020000  // Oscillator Drive Capability
+#define HIB_CTL_OSCBYP          0x00010000  // Oscillator Bypass
+#define HIB_CTL_VBATSEL_M       0x00006000  // Select for Low-Battery
+                                            // Comparator
+#define HIB_CTL_VBATSEL_1_9V    0x00000000  // 1.9 Volts
+#define HIB_CTL_VBATSEL_2_1V    0x00002000  // 2.1 Volts (default)
+#define HIB_CTL_VBATSEL_2_3V    0x00004000  // 2.3 Volts
+#define HIB_CTL_VBATSEL_2_5V    0x00006000  // 2.5 Volts
+#define HIB_CTL_BATCHK          0x00000400  // Check Battery Status
+#define HIB_CTL_BATWKEN         0x00000200  // Wake on Low Battery
 #define HIB_CTL_VDD3ON          0x00000100  // VDD Powered
 #define HIB_CTL_VABORT          0x00000080  // Power Cut Abort Enable
 #define HIB_CTL_CLK32EN         0x00000040  // Clocking Enable
@@ -96,6 +108,8 @@
 // The following are defines for the bit fields in the HIB_IM register.
 //
 //*****************************************************************************
+#define HIB_IM_WC               0x00000010  // External Write Complete/Capable
+                                            // Interrupt Mask
 #define HIB_IM_EXTW             0x00000008  // External Wake-Up Interrupt Mask
 #define HIB_IM_LOWBAT           0x00000004  // Low Battery Voltage Interrupt
                                             // Mask
@@ -107,6 +121,8 @@
 // The following are defines for the bit fields in the HIB_RIS register.
 //
 //*****************************************************************************
+#define HIB_RIS_WC              0x00000010  // Write Complete/Capable Raw
+                                            // Interrupt Status
 #define HIB_RIS_EXTW            0x00000008  // External Wake-Up Raw Interrupt
                                             // Status
 #define HIB_RIS_LOWBAT          0x00000004  // Low Battery Voltage Raw
@@ -119,6 +135,8 @@
 // The following are defines for the bit fields in the HIB_MIS register.
 //
 //*****************************************************************************
+#define HIB_MIS_WC              0x00000010  // Write Complete/Capable Masked
+                                            // Interrupt Status
 #define HIB_MIS_EXTW            0x00000008  // External Wake-Up Masked
                                             // Interrupt Status
 #define HIB_MIS_LOWBAT          0x00000004  // Low Battery Voltage Masked
@@ -133,6 +151,8 @@
 // The following are defines for the bit fields in the HIB_IC register.
 //
 //*****************************************************************************
+#define HIB_IC_WC               0x00000010  // Write Complete/Capable Masked
+                                            // Interrupt Clear
 #define HIB_IC_EXTW             0x00000008  // External Wake-Up Masked
                                             // Interrupt Clear
 #define HIB_IC_LOWBAT           0x00000004  // Low Battery Voltage Masked
@@ -149,6 +169,16 @@
 //*****************************************************************************
 #define HIB_RTCT_TRIM_M         0x0000FFFF  // RTC Trim Value
 #define HIB_RTCT_TRIM_S         0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the HIB_RTCSS register.
+//
+//*****************************************************************************
+#define HIB_RTCSS_RTCSSM_M      0x7FFF0000  // RTC Sub Seconds Match
+#define HIB_RTCSS_RTCSSC_M      0x00007FFF  // RTC Sub Seconds Count
+#define HIB_RTCSS_RTCSSM_S      16
+#define HIB_RTCSS_RTCSSC_S      0
 
 //*****************************************************************************
 //

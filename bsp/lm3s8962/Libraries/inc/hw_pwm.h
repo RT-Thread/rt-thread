@@ -2,7 +2,7 @@
 //
 // hw_pwm.h - Defines and Macros for Pulse Width Modulation (PWM) ports.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -125,6 +125,8 @@
 #define PWM_O_3_FLTSEN          0x00000980  // PWM3 Fault Pin Logic Sense
 #define PWM_O_3_FLTSTAT0        0x00000984  // PWM3 Fault Status 0
 #define PWM_O_3_FLTSTAT1        0x00000988  // PWM3 Fault Status 1
+#define PWM_O_PP                0x00000FC0  // PWM Peripheral Properties
+#define PWM_O_PC                0x00000FC4  // PWM Peripheral Configuration
 
 //*****************************************************************************
 //
@@ -593,6 +595,33 @@
 #define PWM_X_FLTSTAT1_DCMP2    0x00000004  // Digital Comparator 2 Trigger
 #define PWM_X_FLTSTAT1_DCMP1    0x00000002  // Digital Comparator 1 Trigger
 #define PWM_X_FLTSTAT1_DCMP0    0x00000001  // Digital Comparator 0 Trigger
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the PWM_O_PP register.
+//
+//*****************************************************************************
+#define PWM_PP_GCNT_M           0x0000000F  // Generators
+#define PWM_PP_FCNT_M           0x000000F0  // Fault Inputs
+#define PWM_PP_ESYNC            0x00000100  // Extended Synchronization
+#define PWM_PP_EFAULT           0x00000200  // Extended Fault
+#define PWM_PP_ONE              0x00000400  // One-Shot Mode
+#define PWM_PP_GCNT_S           0
+#define PWM_PP_FCNT_S           4
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the PWM_O_PC register.
+//
+//*****************************************************************************
+#define PWM_PC_PWMDIV_M         0x000000FF  // PWM Clock Divisor
+#define PWM_PC_PWMDIV_2         0x00000000  // /2
+#define PWM_PC_PWMDIV_4         0x00000001  // /4
+#define PWM_PC_PWMDIV_8         0x00000002  // /8
+#define PWM_PC_PWMDIV_16        0x00000003  // /16
+#define PWM_PC_PWMDIV_32        0x00000004  // /32
+#define PWM_PC_PWMDIV_64        0x00000007  // /64 (default)
+#define PWM_PC_USEOPWMDIV       0x00000100  // Enable PWM Clock Divisor
 
 //*****************************************************************************
 //

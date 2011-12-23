@@ -2,7 +2,7 @@
 //
 // hw_ssi.h - Macros used when accessing the SSI hardware.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -40,6 +40,7 @@
 #define SSI_O_MIS               0x0000001C  // SSI Masked Interrupt Status
 #define SSI_O_ICR               0x00000020  // SSI Interrupt Clear
 #define SSI_O_DMACTL            0x00000024  // SSI DMA Control
+#define SSI_O_CC                0x00000FC8  // SSI Clock Configuration
 
 //*****************************************************************************
 //
@@ -166,6 +167,17 @@
 //*****************************************************************************
 #define SSI_DMACTL_TXDMAE       0x00000002  // Transmit DMA Enable
 #define SSI_DMACTL_RXDMAE       0x00000001  // Receive DMA Enable
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SSI_O_CC register.
+//
+//*****************************************************************************
+#define SSI_CC_CS_M             0x0000000F  // SSI Baud Clock Source
+#define SSI_CC_CS_SYSPLL        0x00000000  // Either the system clock (if the
+                                            // PLL bypass is in effect) or the
+                                            // PLL output (default)
+#define SSI_CC_CS_PIOSC         0x00000001  // PIOSC
 
 //*****************************************************************************
 //

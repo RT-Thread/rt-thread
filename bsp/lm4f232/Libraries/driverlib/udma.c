@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -60,7 +60,7 @@ uDMAEnable(void)
 //! Disables the uDMA controller for use.
 //!
 //! This function disables the uDMA controller.  Once disabled, the uDMA
-//! controller will not operate until re-enabled with uDMAEnable().
+//! controller cannot operate until re-enabled with uDMAEnable().
 //!
 //! \return None.
 //
@@ -98,8 +98,9 @@ uDMAErrorStatusGet(void)
 //
 //! Clears the uDMA error interrupt.
 //!
-//! This function clears a pending uDMA error interrupt.  It should be called
-//! from within the uDMA error interrupt handler to clear the interrupt.
+//! This function clears a pending uDMA error interrupt.  This function should 
+//! be called from within the uDMA error interrupt handler to clear the 
+//! interrupt.
 //!
 //! \return None.
 //
@@ -151,7 +152,7 @@ uDMAChannelEnable(unsigned long ulChannelNum)
 //! \param ulChannelNum is the channel number to disable.
 //!
 //! This function disables a specific uDMA channel.  Once disabled, a channel
-//! will not respond to uDMA transfer requests until re-enabled via
+//! cannot respond to uDMA transfer requests until re-enabled via
 //! uDMAChannelEnable().
 //!
 //! \return None.
@@ -178,8 +179,8 @@ uDMAChannelDisable(unsigned long ulChannelNum)
 //! \param ulChannelNum is the channel number to check.
 //!
 //! This function checks to see if a specific uDMA channel is enabled.  This
-//! can be used to check the status of a transfer, since the channel will
-//! be automatically disabled at the end of a transfer.
+//! function can be used to check the status of a transfer, as the channel is
+//! automatically disabled at the end of a transfer.
 //!
 //! \return Returns \b true if the channel is enabled, \b false if disabled.
 //
@@ -193,7 +194,7 @@ uDMAChannelIsEnabled(unsigned long ulChannelNum)
     ASSERT((ulChannelNum & 0xffff) < 32);
 
     //
-    // AND the specified channel bit with the enable register, and return the
+    // AND the specified channel bit with the enable register and return the
     // result.
     //
     return((HWREG(UDMA_ENASET) & (1 << (ulChannelNum & 0x1f))) ? true : false);
@@ -203,16 +204,16 @@ uDMAChannelIsEnabled(unsigned long ulChannelNum)
 //
 //! Sets the base address for the channel control table.
 //!
-//! \param pControlTable is a pointer to the 1024 byte aligned base address
+//! \param pControlTable is a pointer to the 1024-byte-aligned base address
 //! of the uDMA channel control table.
 //!
-//! This function sets the base address of the channel control table.  This
-//! table resides in system memory and holds control information for each uDMA
-//! channel.  The table must be aligned on a 1024 byte boundary.  The base
-//! address must be set before any of the channel functions can be used.
+//! This function configures the base address of the channel control table.  
+//! This table resides in system memory and holds control information for each 
+//! uDMA channel.  The table must be aligned on a 1024-byte boundary.  The base
+//! address must be configured before any of the channel functions can be used.
 //!
 //! The size of the channel control table depends on the number of uDMA
-//! channels, and which transfer modes are used.  Refer to the introductory
+//! channels and the transfer modes that are used.  Refer to the introductory
 //! text and the microcontroller datasheet for more information about the
 //! channel control table.
 //!
@@ -250,7 +251,7 @@ void *
 uDMAControlBaseGet(void)
 {
     //
-    // Read the current value of the control base register, and return it to
+    // Read the current value of the control base register and return it to
     // the caller.
     //
     return((void *)HWREG(UDMA_CTLBASE));
@@ -271,7 +272,7 @@ void *
 uDMAControlAlternateBaseGet(void)
 {
     //
-    // Read the current value of the control base register, and return it to
+    // Read the current value of the control base register and return it to
     // the caller.
     //
     return((void *)HWREG(UDMA_ALTBASE));
@@ -285,9 +286,9 @@ uDMAControlAlternateBaseGet(void)
 //! transfer.
 //!
 //! This function allows software to request a uDMA channel to begin a
-//! transfer.  This could be used for performing a memory to memory transfer,
-//! or if for some reason a transfer needs to be initiated by software instead
-//! of the peripheral associated with that channel.
+//! transfer.  This function could be used for performing a memory-to-memory 
+//! transfer or if for some reason, a transfer needs to be initiated by software 
+//! instead of the peripheral associated with that channel.
 //!
 //! \note If the channel is \b UDMA_CHANNEL_SW and interrupts are used, then
 //! the completion is signaled on the uDMA dedicated interrupt.  If a
@@ -322,7 +323,7 @@ uDMAChannelRequest(unsigned long ulChannelNum)
 //!
 //! The \e ulAttr parameter is the logical OR of any of the following:
 //!
-//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only a burst
+//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only burst
 //!   mode.
 //! - \b UDMA_ATTR_ALTSELECT is used to select the alternate control structure
 //!   for this channel (it is very unlikely that this flag should be used).
@@ -395,7 +396,7 @@ uDMAChannelAttributeEnable(unsigned long ulChannelNum, unsigned long ulAttr)
 //!
 //! The \e ulAttr parameter is the logical OR of any of the following:
 //!
-//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only a burst
+//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only burst
 //!   mode.
 //! - \b UDMA_ATTR_ALTSELECT is used to select the alternate control structure
 //!   for this channel.
@@ -468,7 +469,7 @@ uDMAChannelAttributeDisable(unsigned long ulChannelNum, unsigned long ulAttr)
 //!
 //! \return Returns the logical OR of the attributes of the uDMA channel, which
 //! can be any of the following:
-//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only a burst
+//! - \b UDMA_ATTR_USEBURST is used to restrict transfers to use only burst
 //!   mode.
 //! - \b UDMA_ATTR_ALTSELECT is used to select the alternate control structure
 //!   for this channel.
@@ -542,7 +543,7 @@ uDMAChannelAttributeGet(unsigned long ulChannelNum)
 //! parameters for the channel.
 //!
 //! This function is used to set control parameters for a uDMA transfer.  These
-//! are typically parameters that are not changed often.
+//! parameters are typically not changed often.
 //!
 //! The \e ulChannelStructIndex parameter should be the logical OR of the
 //! channel number with one of \b UDMA_PRI_SELECT or \b UDMA_ALT_SELECT to
@@ -630,8 +631,8 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! \param pvDstAddr is the destination address for the transfer.
 //! \param ulTransferSize is the number of data items to transfer.
 //!
-//! This function is used to set the parameters for a uDMA transfer.  These are
-//! typically parameters that are changed often.  The function
+//! This function is used to configure the parameters for a uDMA transfer.  
+//! These parameters are typically changed often.  The function
 //! uDMAChannelControlSet() MUST be called at least once for this channel prior
 //! to calling this function.
 //!
@@ -644,11 +645,11 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! - \b UDMA_MODE_STOP stops the uDMA transfer.  The controller sets the mode
 //!   to this value at the end of a transfer.
 //! - \b UDMA_MODE_BASIC to perform a basic transfer based on request.
-//! - \b UDMA_MODE_AUTO to perform a transfer that will always complete once
-//!   started even if request is removed.
+//! - \b UDMA_MODE_AUTO to perform a transfer that always completes once
+//!   started even if the request is removed.
 //! - \b UDMA_MODE_PINGPONG to set up a transfer that switches between the
-//!   primary and alternate control structures for the channel.  This allows
-//!   use of ping-pong buffering for uDMA transfers.
+//!   primary and alternate control structures for the channel.  This mode 
+//!   allows use of ping-pong buffering for uDMA transfers.
 //! - \b UDMA_MODE_MEM_SCATTER_GATHER to set up a memory scatter-gather
 //!   transfer.
 //! - \b UDMA_MODE_PER_SCATTER_GATHER to set up a peripheral scatter-gather
@@ -656,24 +657,24 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //!
 //! The \e pvSrcAddr and \e pvDstAddr parameters are pointers to the first
 //! location of the data to be transferred.  These addresses should be aligned
-//! according to the item size.  The compiler will take care of this if the
-//! pointers are pointing to storage of the appropriate data type.
+//! according to the item size.  The compiler takes care of this alignment if 
+//! the pointers are pointing to storage of the appropriate data type.
 //!
 //! The \e ulTransferSize parameter is the number of data items, not the number
 //! of bytes.
 //!
-//! The two scatter/gather modes, memory and peripheral, are actually different
+//! The two scatter-gather modes, memory and peripheral, are actually different
 //! depending on whether the primary or alternate control structure is
-//! selected.  This function will look for the \b UDMA_PRI_SELECT and
-//! \b UDMA_ALT_SELECT flag along with the channel number and will set the
-//! scatter/gather mode as appropriate for the primary or alternate control
+//! selected.  This function looks for the \b UDMA_PRI_SELECT and
+//! \b UDMA_ALT_SELECT flag along with the channel number and sets the
+//! scatter-gather mode as appropriate for the primary or alternate control
 //! structure.
 //!
 //! The channel must also be enabled using uDMAChannelEnable() after calling
-//! this function.  The transfer will not begin until the channel has been set
-//! up and enabled.  Note that the channel is automatically disabled after the
-//! transfer is completed, meaning that uDMAChannelEnable() must be called
-//! again after setting up the next transfer.
+//! this function.  The transfer does not begin until the channel has been 
+//! configured and enabled.  Note that the channel is automatically disabled 
+//! after the transfer is completed, meaning that uDMAChannelEnable() must be 
+//! called again after setting up the next transfer.
 //!
 //! \note Great care must be taken to not modify a channel control structure
 //! that is in use or else the results are unpredictable, including the
@@ -682,7 +683,7 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! disabled, or the uDMAChannelModeGet() returns \b UDMA_MODE_STOP.  For
 //! PINGPONG or one of the SCATTER_GATHER modes, it is safe to modify the
 //! primary or alternate control structure only when the other is being used.
-//! The uDMAChannelModeGet() function will return \b UDMA_MODE_STOP when a
+//! The uDMAChannelModeGet() function returns \b UDMA_MODE_STOP when a
 //! channel control structure is inactive and safe to modify.
 //!
 //! \return None.
@@ -782,7 +783,7 @@ uDMAChannelTransferSet(unsigned long ulChannelStructIndex,
     {
         //
         // There is a special case if this is setting up a scatter-gather
-        // transfer.  The destination pointer needs to point to the end of
+        // transfer.  The destination pointer must point to the end of
         // the alternate structure for this channel instead of calculating
         // the end of the buffer in the normal way.
         //
@@ -827,12 +828,12 @@ uDMAChannelTransferSet(unsigned long ulChannelStructIndex,
 //! transfer (else it is memory scatter-gather transfer)
 //!
 //! This function is used to configure a channel for scatter-gather mode.
-//! The caller must have already set up a task list, and pass a pointer to
+//! The caller must have already set up a task list and must pass a pointer to
 //! the start of the task list as the \e pvTaskList parameter.  The
 //! \e ulTaskCount parameter is the count of tasks in the task list, not the
 //! size of the task list.  The flag \e bIsPeriphSG should be used to indicate
-//! if the scatter-gather should be configured for a peripheral or memory
-//! scatter-gather operation.
+//! if scatter-gather should be configured for peripheral or memory
+//! operation.
 //!
 //! \sa uDMATaskStructEntry
 //!
@@ -873,15 +874,15 @@ uDMAChannelScatterGatherSet(unsigned long ulChannelNum, unsigned ulTaskCount,
     pTaskTable = (tDMAControlTable *)pvTaskList;
 
     //
-    // Compute the ending address for the source pointer.  This is the last
-    // element of the last task in the task table
+    // Compute the ending address for the source pointer.  This address is the 
+    // last element of the last task in the task table
     //
     pControlTable[ulChannelNum].pvSrcEndAddr =
         &pTaskTable[ulTaskCount - 1].ulSpare;
 
     //
-    // Compute the ending address for the destination pointer.  This is the end
-    // of the alternate structure for this channel.
+    // Compute the ending address for the destination pointer.  This address 
+    // is the end of the alternate structure for this channel.
     //
     pControlTable[ulChannelNum].pvDstEndAddr =
         &pControlTable[ulChannelNum | UDMA_ALT_SELECT].ulSpare;
@@ -977,9 +978,9 @@ uDMAChannelSizeGet(unsigned long ulChannelStructIndex)
 //! \param ulChannelStructIndex is the logical OR of the uDMA channel number
 //! with either \b UDMA_PRI_SELECT or \b UDMA_ALT_SELECT.
 //!
-//! This function is used to get the transfer mode for the uDMA channel.  It
-//! can be used to query the status of a transfer on a channel.  When the
-//! transfer is complete the mode is \b UDMA_MODE_STOP.
+//! This function is used to get the transfer mode for the uDMA channel and
+//! to query the status of a transfer on a channel.  When the transfer is
+//! complete the mode is \b UDMA_MODE_STOP.
 //!
 //! \return Returns the transfer mode of the specified channel and control
 //! structure, which is one of the following values: \b UDMA_MODE_STOP,
@@ -1036,7 +1037,7 @@ uDMAChannelModeGet(unsigned long ulChannelStructIndex)
 //
 //! Selects the secondary peripheral for a set of uDMA channels.
 //!
-//! \param ulSecPeriphs is the logical or of the uDMA channels for which to use
+//! \param ulSecPeriphs is the logical OR of the uDMA channels for which to use
 //! the secondary peripheral, instead of the default peripheral.
 //!
 //! This function is used to select the secondary peripheral assignment for a
@@ -1095,7 +1096,7 @@ uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
 //
 //! Selects the default peripheral for a set of uDMA channels.
 //!
-//! \param ulDefPeriphs is the logical or of the uDMA channels for which to use
+//! \param ulDefPeriphs is the logical OR of the uDMA channels for which to use
 //! the default peripheral, instead of the secondary peripheral.
 //!
 //! This function is used to select the default peripheral assignment for a set
@@ -1156,9 +1157,9 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! interrupt is activated.
 //!
-//! This sets and enables the handler to be called when the uDMA controller
-//! generates an interrupt.  The \e ulIntChannel parameter should be one of the
-//! following:
+//! This function registers and enables the handler to be called when the uDMA 
+//! controller generates an interrupt.  The \e ulIntChannel parameter should be 
+//! one of the following:
 //!
 //! - \b UDMA_INT_SW to register an interrupt handler to process interrupts
 //!   from the uDMA software channel (UDMA_CHANNEL_SW)
@@ -1168,8 +1169,8 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
 //!
-//! \note The interrupt handler for uDMA is for transfer completion when the
-//! channel UDMA_CHANNEL_SW is used, and for error interrupts.  The
+//! \note The interrupt handler for the uDMA is for transfer completion when 
+//! the channel UDMA_CHANNEL_SW is used and for error interrupts.  The
 //! interrupts for each peripheral channel are handled through the individual
 //! peripheral interrupt handlers.
 //!
@@ -1202,7 +1203,7 @@ uDMAIntRegister(unsigned long ulIntChannel, void (*pfnHandler)(void))
 //!
 //! \param ulIntChannel identifies which uDMA interrupt to unregister.
 //!
-//! This function will disable and clear the handler to be called for the
+//! This function disables and unregisters the handler to be called for the
 //! specified uDMA interrupt.  The \e ulIntChannel parameter should be one of
 //! \b UDMA_INT_SW or \b UDMA_INT_ERR as documented for the function
 //! uDMAIntRegister().
@@ -1242,7 +1243,7 @@ uDMAIntUnregister(unsigned long ulIntChannel)
 //! your part.
 //!
 //! \return Returns a 32-bit mask which indicates requesting uDMA channels.
-//! There is a bit for each channel, and a 1 in a bit indicates that channel
+//! There is a bit for each channel and a 1 indicates that the channel
 //! is requesting an interrupt.  Multiple bits can be set.
 //
 //*****************************************************************************
@@ -1269,10 +1270,10 @@ uDMAIntStatus(void)
 //!
 //! \param ulChanMask is a 32-bit mask with one bit for each uDMA channel.
 //!
-//! Clears bits in the uDMA interrupt status register according to which bits
-//! are set in \e ulChanMask. There is one bit for each channel. If a a bit is
-//! set in \e ulChanMask, then that corresponding channel's interrupt status is
-//! cleared (if it was set).
+//! This function clears bits in the uDMA interrupt status register according
+//! to which bits are set in \e ulChanMask. There is one bit for each channel. 
+//! If a a bit is set in \e ulChanMask, then that corresponding channel's 
+//! interrupt status is cleared (if it was set).
 //!
 //! \note This function is only available on devices that have the DMA Channel
 //! Interrupt Status Register (DMACHIS).  Please consult the data sheet for
@@ -1303,7 +1304,7 @@ uDMAIntClear(unsigned long ulChanMask)
 //! Assigns a peripheral mapping for a uDMA channel.
 //!
 //! \param ulMapping is a macro specifying the peripheral assignment for
-//! a channel
+//! a channel.
 //!
 //! This function assigns a peripheral mapping to a uDMA channel.  It is
 //! used to select which peripheral is used for a uDMA channel.  The parameter

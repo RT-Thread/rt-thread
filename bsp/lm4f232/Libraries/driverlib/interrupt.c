@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -166,14 +166,14 @@ void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void) __attribute__ ((aligned(1024)));
 //
 //! Enables the processor interrupt.
 //!
-//! Allows the processor to respond to interrupts.  This does not affect the
-//! set of interrupts enabled in the interrupt controller; it just gates the
-//! single interrupt from the controller to the processor.
+//! This function allows the processor to respond to interrupts.  This function
+//! does not affect the set of interrupts enabled in the interrupt controller; 
+//! it just gates the single interrupt from the controller to the processor.
 //!
 //! \note Previously, this function had no return value.  As such, it was
 //! possible to include <tt>interrupt.h</tt> and call this function without
 //! having included <tt>hw_types.h</tt>.  Now that the return is a
-//! <tt>tBoolean</tt>, a compiler error will occur in this case.  The solution
+//! <tt>tBoolean</tt>, a compiler error occurs in this case.  The solution
 //! is to include <tt>hw_types.h</tt> before including <tt>interrupt.h</tt>.
 //!
 //! \return Returns \b true if interrupts were disabled when the function was
@@ -193,14 +193,15 @@ IntMasterEnable(void)
 //
 //! Disables the processor interrupt.
 //!
-//! Prevents the processor from receiving interrupts.  This does not affect the
-//! set of interrupts enabled in the interrupt controller; it just gates the
-//! single interrupt from the controller to the processor.
+//! This function prevents the processor from receiving interrupts.  This 
+//! function does not affect the set of interrupts enabled in the interrupt 
+//! controller; it just gates the single interrupt from the controller to the 
+//! processor.
 //!
 //! \note Previously, this function had no return value.  As such, it was
 //! possible to include <tt>interrupt.h</tt> and call this function without
 //! having included <tt>hw_types.h</tt>.  Now that the return is a
-//! <tt>tBoolean</tt>, a compiler error will occur in this case.  The solution
+//! <tt>tBoolean</tt>, a compiler error occurs in this case.  The solution
 //! is to include <tt>hw_types.h</tt> before including <tt>interrupt.h</tt>.
 //!
 //! \return Returns \b true if interrupts were already disabled when the
@@ -226,15 +227,15 @@ IntMasterDisable(void)
 //! This function is used to specify the handler function to be called when the
 //! given interrupt is asserted to the processor.  When the interrupt occurs,
 //! if it is enabled (via IntEnable()), the handler function is called in
-//! interrupt context.  Since the handler function can preempt other code, care
-//! must be taken to protect memory or peripherals that are accessed by the
-//! handler and other non-handler code.
+//! interrupt context.  Because the handler function can preempt other code, 
+//! care must be taken to protect memory or peripherals that are accessed by 
+//! the handler and other non-handler code.
 //!
 //! \note The use of this function (directly or indirectly via a peripheral
 //! driver interrupt register function) moves the interrupt vector table from
 //! flash to SRAM.  Therefore, care must be taken when linking the application
 //! to ensure that the SRAM vector table is located at the beginning of SRAM;
-//! otherwise NVIC will not look in the correct portion of memory for the
+//! otherwise the NVIC does not look in the correct portion of memory for the
 //! vector table (it requires the vector table be on a 1 kB memory alignment).
 //! Normally, the SRAM vector table is so placed via the use of linker scripts.
 //! See the discussion of compile-time versus run-time interrupt handler
@@ -275,7 +276,7 @@ IntRegister(unsigned long ulInterrupt, void (*pfnHandler)(void))
         }
 
         //
-        // Point NVIC at the RAM vector table.
+        // Point the NVIC at the RAM vector table.
         //
         HWREG(NVIC_VTABLE) = (unsigned long)g_pfnRAMVectors;
     }
@@ -399,7 +400,7 @@ IntPriorityGroupingGet(void)
 //! correspond to higher interrupt priorities; priority 0 is the highest
 //! interrupt priority.
 //!
-//! The hardware priority mechanism will only look at the upper N bits of the
+//! The hardware priority mechanism only looks at the upper N bits of the
 //! priority level (where N is 3 for the Stellaris family), so any
 //! prioritization must be performed in those bits.  The remaining bits can be
 //! used to sub-prioritize the interrupt sources, and may be used by the
@@ -587,13 +588,13 @@ IntDisable(unsigned long ulInterrupt)
 //!
 //! \param ulInterrupt specifies the interrupt to be pended.
 //!
-//! The specified interrupt is pended in the interrupt controller.  This will
-//! cause the interrupt controller to execute the corresponding interrupt
-//! handler at the next available time, based on the current interrupt state
-//! priorities.  For example, if called by a higher priority interrupt handler,
-//! the specified interrupt handler will not be called until after the current
-//! interrupt handler has completed execution.  The interrupt must have been
-//! enabled for it to be called.
+//! The specified interrupt is pended in the interrupt controller.  Pending an 
+//! interrupt causes the interrupt controller to execute the corresponding 
+//! interrupt handler at the next available time, based on the current 
+//! interrupt state priorities. For example, if called by a higher priority 
+//! interrupt handler, the specified interrupt handler is not called until 
+//! after the current interrupt handler has completed execution.  The interrupt
+//! must have been enabled for it to be called.
 //!
 //! \return None.
 //
@@ -646,10 +647,10 @@ IntPendSet(unsigned long ulInterrupt)
 //!
 //! \param ulInterrupt specifies the interrupt to be unpended.
 //!
-//! The specified interrupt is unpended in the interrupt controller.  This will
-//! cause any previously generated interrupts that have not been handled yet
-//! (due to higher priority interrupts or the interrupt no having been enabled
-//! yet) to be discarded.
+//! The specified interrupt is unpended in the interrupt controller.  Unpending
+//! an interrupt causes any previously generated interrupts that have not been 
+//! handled yet (due to higher priority interrupts or the interrupt not having 
+//! been enabled yet) to be discarded.
 //!
 //! \return None.
 //
@@ -696,16 +697,16 @@ IntPendClear(unsigned long ulInterrupt)
 //! \param ulPriorityMask is the priority level that is masked.
 //!
 //! This function sets the interrupt priority masking level so that all
-//! interrupts at the specified or lesser priority level is masked.  This
-//! can be used to globally disable a set of interrupts with priority below
-//! a predetermined threshold.  A value of 0 disables priority
+//! interrupts at the specified or lesser priority level are masked.  Masking
+//! interrupts can be used to globally disable a set of interrupts with 
+//! priority below a predetermined threshold.  A value of 0 disables priority
 //! masking.
 //!
 //! Smaller numbers correspond to higher interrupt priorities.  So for example
-//! a priority level mask of 4 will allow interrupts of priority level 0-3,
-//! and interrupts with a numerical priority of 4 and greater is blocked.
+//! a priority level mask of 4 allows interrupts of priority level 0-3,
+//! and interrupts with a numerical priority of 4 and greater are blocked.
 //!
-//! The hardware priority mechanism will only look at the upper N bits of the
+//! The hardware priority mechanism only looks at the upper N bits of the
 //! priority level (where N is 3 for the Stellaris family), so any
 //! prioritization must be performed in those bits.
 //!
@@ -728,10 +729,10 @@ IntPriorityMaskSet(unsigned long ulPriorityMask)
 //! masking is disabled.
 //!
 //! Smaller numbers correspond to higher interrupt priorities.  So for example
-//! a priority level mask of 4 will allow interrupts of priority level 0-3,
-//! and interrupts with a numerical priority of 4 and greater is blocked.
+//! a priority level mask of 4 allows interrupts of priority level 0-3,
+//! and interrupts with a numerical priority of 4 and greater are blocked.
 //!
-//! The hardware priority mechanism will only look at the upper N bits of the
+//! The hardware priority mechanism only looks at the upper N bits of the
 //! priority level (where N is 3 for the Stellaris family), so any
 //! prioritization must be performed in those bits.
 //!

@@ -22,19 +22,24 @@ File 3,1,<Libraries\driverlib\adc.c><adc.c>
 File 3,1,<Libraries\driverlib\can.c><can.c>
 File 3,1,<Libraries\driverlib\comp.c><comp.c>
 File 3,1,<Libraries\driverlib\cpu.c><cpu.c>
+File 3,1,<Libraries\driverlib\eeprom.c><eeprom.c>
 File 3,1,<Libraries\driverlib\epi.c><epi.c>
 File 3,1,<Libraries\driverlib\ethernet.c><ethernet.c>
+File 3,1,<Libraries\driverlib\fan.c><fan.c>
 File 3,1,<Libraries\driverlib\flash.c><flash.c>
 File 3,1,<Libraries\driverlib\gpio.c><gpio.c>
 File 3,1,<Libraries\driverlib\hibernate.c><hibernate.c>
 File 3,1,<Libraries\driverlib\i2c.c><i2c.c>
 File 3,1,<Libraries\driverlib\i2s.c><i2s.c>
 File 3,1,<Libraries\driverlib\interrupt.c><interrupt.c>
+File 3,1,<Libraries\driverlib\lpc.c><lpc.c>
 File 3,1,<Libraries\driverlib\mpu.c><mpu.c>
+File 3,1,<Libraries\driverlib\peci.c><peci.c>
 File 3,1,<Libraries\driverlib\pwm.c><pwm.c>
 File 3,1,<Libraries\driverlib\qei.c><qei.c>
 File 3,1,<Libraries\driverlib\ssi.c><ssi.c>
 File 3,1,<Libraries\driverlib\sysctl.c><sysctl.c>
+File 3,1,<Libraries\driverlib\sysexc.c><sysexc.c>
 File 3,1,<Libraries\driverlib\systick.c><systick.c>
 File 3,1,<Libraries\driverlib\timer.c><timer.c>
 File 3,1,<Libraries\driverlib\uart.c><uart.c>
@@ -177,7 +182,7 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
- ADSCDEFN ()
+ ADSCDEFN (PART_LM3S8962)
  ADSCUDEF ()
  ADSCINCD (..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\components\net\lwip\src\include;drivers;..\..\components\dfs;.;Libraries;applications;..\..\components\net\lwip\src\arch\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\net\lwip\src\include\netif;..\..\components\dfs\include)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }

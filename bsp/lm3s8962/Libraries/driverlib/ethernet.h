@@ -2,7 +2,7 @@
 //
 // ethernet.h - Defines and Macros for the ethernet module.
 //
-// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2006-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -136,10 +136,13 @@ extern void EthernetIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
 extern void EthernetIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
 extern unsigned long EthernetIntStatus(unsigned long ulBase, tBoolean bMasked);
 extern void EthernetIntClear(unsigned long ulBase, unsigned long ulIntFlags);
+extern void EthernetPHYAddrSet(unsigned long ulBase, unsigned char ucAddr);
 extern void EthernetPHYWrite(unsigned long ulBase, unsigned char ucRegAddr,
                              unsigned long ulData);
 extern unsigned long EthernetPHYRead(unsigned long ulBase,
                                      unsigned char ucRegAddr);
+extern void EthernetPHYPowerOff(unsigned long ulBase);
+extern void EthernetPHYPowerOn(unsigned long ulBase);
 
 //*****************************************************************************
 //

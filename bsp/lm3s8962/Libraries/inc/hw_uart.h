@@ -2,7 +2,7 @@
 //
 // hw_uart.h - Macros and defines used when accessing the UART hardware.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -49,6 +49,10 @@
 #define UART_O_LCTL             0x00000090  // UART LIN Control
 #define UART_O_LSS              0x00000094  // UART LIN Snap Shot
 #define UART_O_LTIM             0x00000098  // UART LIN Timer
+#define UART_O_9BITADDR         0x000000A4  // UART 9-Bit Self Address
+#define UART_O_9BITAMASK        0x000000A8  // UART 9-Bit Self Address Mask
+#define UART_O_PP               0x00000FC0  // UART Peripheral Properties
+#define UART_O_CC               0x00000FC8  // UART Clock Configuration
 
 //*****************************************************************************
 //
@@ -185,6 +189,7 @@
 #define UART_IM_LME1IM          0x00004000  // LIN Mode Edge 1 Interrupt Mask
 #define UART_IM_LMSBIM          0x00002000  // LIN Mode Sync Break Interrupt
                                             // Mask
+#define UART_IM_9BITIM          0x00001000  // 9-Bit Mode Interrupt Mask
 #define UART_IM_OEIM            0x00000400  // UART Overrun Error Interrupt
                                             // Mask
 #define UART_IM_BEIM            0x00000200  // UART Break Error Interrupt Mask
@@ -215,6 +220,7 @@
                                             // Status
 #define UART_RIS_LMSBRIS        0x00002000  // LIN Mode Sync Break Raw
                                             // Interrupt Status
+#define UART_RIS_9BITRIS        0x00001000  // 9-Bit Mode Raw Interrupt Status
 #define UART_RIS_OERIS          0x00000400  // UART Overrun Error Raw Interrupt
                                             // Status
 #define UART_RIS_BERIS          0x00000200  // UART Break Error Raw Interrupt
@@ -249,6 +255,8 @@
                                             // Status
 #define UART_MIS_LMSBMIS        0x00002000  // LIN Mode Sync Break Masked
                                             // Interrupt Status
+#define UART_MIS_9BITMIS        0x00001000  // 9-Bit Mode Masked Interrupt
+                                            // Status
 #define UART_MIS_OEMIS          0x00000400  // UART Overrun Error Masked
                                             // Interrupt Status
 #define UART_MIS_BEMIS          0x00000200  // UART Break Error Masked
@@ -277,10 +285,11 @@
 // The following are defines for the bit fields in the UART_O_ICR register.
 //
 //*****************************************************************************
-#define UART_ICR_LME5MIC        0x00008000  // LIN Mode Edge 5 Interrupt Clear
-#define UART_ICR_LME1MIC        0x00004000  // LIN Mode Edge 1 Interrupt Clear
-#define UART_ICR_LMSBMIC        0x00002000  // LIN Mode Sync Break Interrupt
+#define UART_ICR_LME5IC         0x00008000  // LIN Mode Edge 5 Interrupt Clear
+#define UART_ICR_LME1IC         0x00004000  // LIN Mode Edge 1 Interrupt Clear
+#define UART_ICR_LMSBIC         0x00002000  // LIN Mode Sync Break Interrupt
                                             // Clear
+#define UART_ICR_9BITIC         0x00001000  // 9-Bit Mode Interrupt Clear
 #define UART_ICR_OEIC           0x00000400  // Overrun Error Interrupt Clear
 #define UART_ICR_BEIC           0x00000200  // Break Error Interrupt Clear
 #define UART_ICR_PEIC           0x00000100  // Parity Error Interrupt Clear
@@ -334,6 +343,45 @@
 //*****************************************************************************
 #define UART_LTIM_TIMER_M       0x0000FFFF  // Timer Value
 #define UART_LTIM_TIMER_S       0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the UART_O_9BITADDR
+// register.
+//
+//*****************************************************************************
+#define UART_9BITADDR_9BITEN    0x00008000  // Enable 9-Bit Mode
+#define UART_9BITADDR_ADDR_M    0x000000FF  // Self Address for 9-Bit Mode
+#define UART_9BITADDR_ADDR_S    0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the UART_O_9BITAMASK
+// register.
+//
+//*****************************************************************************
+#define UART_9BITAMASK_RANGE_M  0x0000FF00  // Self Address Range for 9-Bit
+                                            // Mode
+#define UART_9BITAMASK_MASK_M   0x000000FF  // Self Address Mask for 9-Bit Mode
+#define UART_9BITAMASK_RANGE_S  8
+#define UART_9BITAMASK_MASK_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the UART_O_PP register.
+//
+//*****************************************************************************
+#define UART_PP_NB              0x00000002  // 9-Bit Support
+#define UART_PP_SC              0x00000001  // Smart Card Support
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the UART_O_CC register.
+//
+//*****************************************************************************
+#define UART_CC_CS_M            0x0000000F  // UART Baud Clock Source
+#define UART_CC_CS_SYSCLK       0x00000000  // The system clock (default)
+#define UART_CC_CS_PIOSC        0x00000001  // PIOSC
 
 //*****************************************************************************
 //
@@ -418,6 +466,10 @@
 // register.
 //
 //*****************************************************************************
+#define UART_ICR_LME5MIC        0x00008000  // LIN Mode Edge 5 Interrupt Clear
+#define UART_ICR_LME1MIC        0x00004000  // LIN Mode Edge 1 Interrupt Clear
+#define UART_ICR_LMSBMIC        0x00002000  // LIN Mode Sync Break Interrupt
+                                            // Clear
 #define UART_RSR_ANY            (UART_RSR_OE | UART_RSR_BE | UART_RSR_PE | \
                                  UART_RSR_FE)
 

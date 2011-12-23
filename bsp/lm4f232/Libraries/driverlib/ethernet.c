@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,11 +44,11 @@
 //! \param ulBase is the base address of the controller.
 //! \param ulEthClk is the rate of the clock supplied to the Ethernet module.
 //!
-//! This function will prepare the Ethernet controller for first time use in
+//! This function prepares the Ethernet controller for first-time use in
 //! a given hardware/software configuration.  This function should be called
 //! before any other Ethernet API functions are called.
 //!
-//! The peripheral clock is the same as the processor clock.  This is the value
+//! The peripheral clock is the same as the processor clock.  This value is
 //! returned by SysCtlClockGet(), or it can be explicitly hard-coded if it is
 //! constant and known (to save the code/execution overhead of a call to
 //! SysCtlClockGet()).
@@ -112,14 +112,16 @@ EthernetInitExpClk(unsigned long ulBase, unsigned long ulEthClk)
 //!
 //! The Ethernet controller provides three control registers that are used
 //! to configure the controller's operation.  The transmit control register
-//! provides settings to enable full duplex operation, to auto-generate the
+//! provides settings to enable full-duplex operation, to auto-generate the
 //! frame check sequence, and to pad the transmit packets to the minimum
 //! length as required by the IEEE standard.  The receive control register
 //! provides settings to enable reception of packets with bad frame check
 //! sequence values and to enable multi-cast or promiscuous modes.  The
 //! timestamp control register provides settings that enable support logic in
 //! the controller that allow the use of the General Purpose Timer 3 to capture
-//! timestamps for the transmitted and received packets.
+//! timestamps for the transmitted and received packets. Note that not all
+//! devices support this functionality; see the data sheet to determine if
+//! this feature is supported.
 //!
 //! The \e ulConfig parameter is the logical OR of the following values:
 //!
@@ -183,11 +185,11 @@ EthernetConfigSet(unsigned long ulBase, unsigned long ulConfig)
 //!
 //! \param ulBase is the base address of the controller.
 //!
-//! This function will query the control registers of the Ethernet controller
-//! and return a bit-mapped configuration value.
+//! This function queries the control registers of the Ethernet controller
+//! and returns a bit-mapped configuration value.
 //!
 //! \sa The description of the EthernetConfigSet() function provides detailed
-//! information for the bit-mapped configuration values that is returned.
+//! information for the bit-mapped configuration values that are returned.
 //!
 //! \return Returns the bit-mapped Ethernet controller configuration value.
 //
@@ -219,7 +221,7 @@ EthernetConfigGet(unsigned long ulBase)
 //! \param ulBase is the base address of the controller.
 //! \param pucMACAddr is the pointer to the array of MAC-48 address octets.
 //!
-//! This function will program the IEEE-defined MAC-48 address specified in
+//! This function programs the IEEE-defined MAC-48 address specified in
 //! \e pucMACAddr into the Ethernet controller.  This address is used by the
 //! Ethernet controller for hardware-level filtering of incoming Ethernet
 //! packets (when promiscuous mode is not enabled).
@@ -282,7 +284,7 @@ EthernetMACAddrSet(unsigned long ulBase, unsigned char *pucMACAddr)
 //! \param pucMACAddr is the pointer to the location in which to store the
 //! array of MAC-48 address octets.
 //!
-//! This function will read the currently programmed MAC address into the
+//! This function reads the currently programmed MAC address into the
 //! \e pucMACAddr buffer.
 //!
 //! \sa Refer to EthernetMACAddrSet() API description for more details about
@@ -329,8 +331,8 @@ EthernetMACAddrGet(unsigned long ulBase, unsigned char *pucMACAddr)
 //! the EthernetMACAddrSet() function, this API function can be called to
 //! enable the controller for normal operation.
 //!
-//! This function will enable the controller's transmitter and receiver, and
-//! will reset the receive FIFO.
+//! This function enables the controller's transmitter and receiver, and
+//! resets the receive FIFO.
 //!
 //! \return None.
 //
@@ -371,8 +373,8 @@ EthernetEnable(unsigned long ulBase)
 //! \param ulBase is the base address of the controller.
 //!
 //! When terminating operations on the Ethernet interface, this function should
-//! be called.  This function will disable the transmitter and receiver, and
-//! will clear out the receive FIFO.
+//! be called.  This function disables the transmitter and receiver, and
+//! clears out the receive FIFO.
 //!
 //! \return None.
 //
@@ -447,7 +449,7 @@ EthernetPacketAvail(unsigned long ulBase)
 //! packet at a time.  After the packet has been written into the FIFO, the
 //! transmit request bit must be set to enable the transmission of the packet.
 //! Only after the packet has been transmitted can a new packet be written
-//! into the FIFO.  This function will simply check to see if a packet is
+//! into the FIFO.  This function simply checks to see if a packet is
 //! in progress.  If so, there is no space available in the transmit FIFO.
 //!
 //! \return Returns \b true if a space is available in the transmit FIFO, and
@@ -608,20 +610,20 @@ EthernetPacketGetInternal(unsigned long ulBase, unsigned char *pucBuf,
 //! \param lBufLen is the maximum number of bytes to be read into the buffer.
 //!
 //! This function reads a packet from the receive FIFO of the controller and
-//! places it into \e pucBuf.  If no packet is available the function will
-//! return immediately.  Otherwise, the function will read the entire packet
-//! from the receive FIFO.  If there are more bytes in the packet than will fit
-//! into \e pucBuf (as specified by \e lBufLen), the function will return the
-//! negated length of the packet and the buffer will contain \e lBufLen bytes
-//! of the packet.  Otherwise, the function will return the length of the
-//! packet that was read and \e pucBuf will contain the entire packet
+//! places it into \e pucBuf.  If no packet is available the function
+//! returns immediately.  Otherwise, the function reads the entire packet
+//! from the receive FIFO.  If there are more bytes in the packet than can fit
+//! into \e pucBuf (as specified by \e lBufLen), the function returns the
+//! negated length of the packet and the buffer contains \e lBufLen bytes
+//! of the packet.  Otherwise, the function returns the length of the
+//! packet that was read and \e pucBuf contains the entire packet
 //! (excluding the frame check sequence bytes).
 //!
 //! This function replaces the original EthernetPacketNonBlockingGet() API and
 //! performs the same actions.  A macro is provided in <tt>ethernet.h</tt> to
 //! map the original API to this API.
 //!
-//! \note This function will return immediately if no packet is available.
+//! \note This function returns immediately if no packet is available.
 //!
 //! \return Returns \b 0 if no packet is available, the negated packet length
 //! \b -n if the packet is too large for \e pucBuf, and the packet length \b n
@@ -662,16 +664,16 @@ EthernetPacketGetNonBlocking(unsigned long ulBase, unsigned char *pucBuf,
 //! \param lBufLen is the maximum number of bytes to be read into the buffer.
 //!
 //! This function reads a packet from the receive FIFO of the controller and
-//! places it into \e pucBuf.  The function will wait until a packet is
-//! available in the FIFO.  Then the function will read the entire packet
-//! from the receive FIFO.  If there are more bytes in the packet than will
-//! fit into \e pucBuf (as specified by \e lBufLen), the function will return
-//! the negated length of the packet and the buffer will contain \e lBufLen
-//! bytes of the packet.  Otherwise, the function will return the length of
-//! the packet that was read and \e pucBuf will contain the entire packet
+//! places it into \e pucBuf.  The function waits until a packet is
+//! available in the FIFO.  Then the function reads the entire packet
+//! from the receive FIFO.  If there are more bytes in the packet than can
+//! fit into \e pucBuf (as specified by \e lBufLen), the function returns
+//! the negated length of the packet and the buffer contains \e lBufLen
+//! bytes of the packet.  Otherwise, the function returns the length of
+//! the packet that was read and \e pucBuf contains the entire packet
 //! (excluding the frame check sequence bytes).
 //!
-//! \note This function is blocking and will not return until a packet arrives.
+//! \note This function is blocking and does not return until a packet arrives.
 //!
 //! \return Returns the negated packet length \b -n if the packet is too large
 //! for \e pucBuf, and returns the packet length \b n otherwise.
@@ -831,10 +833,10 @@ EthernetPacketPutInternal(unsigned long ulBase, unsigned char *pucBuf,
 //! This function writes \e lBufLen bytes of the packet contained in \e pucBuf
 //! into the transmit FIFO of the controller and then activates the
 //! transmitter for this packet.  If no space is available in the FIFO, the
-//! function will return immediately.  If space is available, the
-//! function will return once \e lBufLen bytes of the packet have been placed
-//! into the FIFO and the transmitter has been started.  The function will not
-//! wait for the transmission to complete.  The function will return the
+//! function returns immediately.  If space is available, the
+//! function returns once \e lBufLen bytes of the packet have been placed
+//! into the FIFO and the transmitter has been started.  The function does not
+//! wait for the transmission to complete.  The function returns the
 //! negated \e lBufLen if the length is larger than the space available in
 //! the transmit FIFO.
 //!
@@ -842,7 +844,7 @@ EthernetPacketPutInternal(unsigned long ulBase, unsigned char *pucBuf,
 //! performs the same actions.  A macro is provided in <tt>ethernet.h</tt> to
 //! map the original API to this API.
 //!
-//! \note This function does not block and will return immediately if no space
+//! \note This function does not block and returns immediately if no space
 //! is available for the transmit packet.
 //!
 //! \return Returns \b 0 if no space is available in the transmit FIFO, the
@@ -885,14 +887,14 @@ EthernetPacketPutNonBlocking(unsigned long ulBase, unsigned char *pucBuf,
 //!
 //! This function writes \e lBufLen bytes of the packet contained in \e pucBuf
 //! into the transmit FIFO of the controller and then activates the transmitter
-//! for this packet.  This function will wait until the transmit FIFO is empty.
-//! Once space is available, the function will return once \e lBufLen bytes of
+//! for this packet.  This function waits until the transmit FIFO is empty.
+//! Once space is available, the function returns once \e lBufLen bytes of
 //! the packet have been placed into the FIFO and the transmitter has been
-//! started.  The function will not wait for the transmission to complete.  The
-//! function will return the negated \e lBufLen if the length is larger than
+//! started.  The function does not wait for the transmission to complete.  The
+//! function returns the negated \e lBufLen if the length is larger than
 //! the space available in the transmit FIFO.
 //!
-//! \note This function blocks and will wait until space is available for the
+//! \note This function blocks and waits until space is available for the
 //! transmit packet before returning.
 //!
 //! \return Returns the negated packet length \b -lBufLen if the packet is too
@@ -932,9 +934,10 @@ EthernetPacketPut(unsigned long ulBase, unsigned char *pucBuf,
 //! enabled Ethernet interrupts occur.
 //!
 //! This function sets the handler to be called when the Ethernet interrupt
-//! occurs.  This will enable the global interrupt in the interrupt controller;
-//! specific Ethernet interrupts must be enabled via EthernetIntEnable().  It
-//! is the interrupt handler's responsibility to clear the interrupt source.
+//! occurs.  This function enables the global interrupt in the interrupt
+//! controller; specific Ethernet interrupts must be enabled via
+//! EthernetIntEnable().  It is the interrupt handler's responsibility to clear
+//! the interrupt source.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -968,9 +971,9 @@ EthernetIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //!
 //! \param ulBase is the base address of the controller.
 //!
-//! This function unregisters the interrupt handler.  This will disable the
-//! global interrupt in the interrupt controller so that the interrupt handler
-//! no longer is called.
+//! This function unregisters the interrupt handler.  This function disables
+//! the global interrupt in the interrupt controller so that the interrupt
+//! handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -1004,16 +1007,17 @@ EthernetIntUnregister(unsigned long ulBase)
 //! \param ulBase is the base address of the controller.
 //! \param ulIntFlags is the bit mask of the interrupt sources to be enabled.
 //!
-//! Enables the indicated Ethernet interrupt sources.  Only the sources that
-//! are enabled can be reflected to the processor interrupt; disabled sources
-//! have no effect on the processor.
+//! This function enables the indicated Ethernet interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
+//! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter is the logical OR of any of the following:
 //!
 //! - \b ETH_INT_PHY - An interrupt from the PHY has occurred.  The integrated
-//! PHY supports a number of interrupt conditions.  The PHY register, PHY_MR17,
-//! must be read to determine which PHY interrupt has occurred.  This register
-//! can be read using the EthernetPHYRead() API function.
+//! PHY supports a number of interrupt conditions.  The appropriate PHY
+//! register, PHY_MR17 or PHY_MR29 depending on the device class, must be read
+//! to determine which PHY interrupt has occurred.  This register can be read
+//! using the EthernetPHYRead() API function.
 //! - \b ETH_INT_MDIO - This interrupt indicates that a transaction on the
 //! management interface has completed successfully.
 //! - \b ETH_INT_RXER - This interrupt indicates that an error has occurred
@@ -1092,9 +1096,9 @@ EthernetIntDisable(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param bMasked is false if the raw interrupt status is required and true
 //! if the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the Ethernet controller.  Either the
-//! raw interrupt status or the status of interrupts that are allowed to
-//! reflect to the processor can be returned.
+//! This function returns the interrupt status for the Ethernet controller.
+//! Either the raw interrupt status or the status of interrupts that are
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return Returns the current interrupt status, enumerated as a bit field of
 //! values described in EthernetIntEnable().
@@ -1137,13 +1141,13 @@ EthernetIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified Ethernet interrupt sources are cleared so that they no longer
-//! assert.  This must be done in the interrupt handler to keep it from being
-//! called again immediately upon exit.
+//! assert.  This function must be called in the interrupt handler to keep the
+//! interrupt from being triggered again immediately upon exit.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to EthernetIntEnable().
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -1180,9 +1184,9 @@ EthernetIntClear(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param ucAddr is the address of the PHY.
 //!
 //! This function sets the address of the PHY that is accessed via
-//! EthernetPHYRead() and EthernePHYWrite().  This is only needed when
-//! connecting to an external PHY via MII, and should not be used on devices
-//! that have integrated PHYs.
+//! EthernetPHYRead() and EthernePHYWrite().  This configuration is only needed
+//! when connecting to an external PHY via MII, and should not be used on
+//! devices that have integrated PHYs.
 //!
 //! \return None.
 //
@@ -1216,7 +1220,7 @@ EthernetPHYAddrSet(unsigned long ulBase, unsigned char ucAddr)
 //! \param ucRegAddr is the address of the PHY register to be accessed.
 //! \param ulData is the data to be written to the PHY register.
 //!
-//! This function will write the \e ulData to the PHY register specified by
+//! This function writes the \e ulData to the PHY register specified by
 //! \e ucRegAddr.
 //!
 //! \return None.
@@ -1264,7 +1268,7 @@ EthernetPHYWrite(unsigned long ulBase, unsigned char ucRegAddr,
 //! \param ulBase is the base address of the controller.
 //! \param ucRegAddr is the address of the PHY register to be accessed.
 //!
-//! This function will return the contents of the PHY register specified by
+//! This function returns the contents of the PHY register specified by
 //! \e ucRegAddr.
 //!
 //! \return Returns the 16-bit value read from the PHY.
@@ -1310,8 +1314,8 @@ EthernetPHYRead(unsigned long ulBase, unsigned char ucRegAddr)
 //!
 //! \param ulBase is the base address of the controller.
 //!
-//! This function will power off the Ethernet PHY, reducing the current
-//! consuption of the device.  While in the powered off state, the Ethernet
+//! This function powers off the Ethernet PHY, reducing the current
+//! consumption of the device.  While in the powered off state, the Ethernet
 //! controller is unable to connect to the Ethernet.
 //!
 //! \return None.
@@ -1335,9 +1339,9 @@ EthernetPHYPowerOff(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the controller.
 //!
-//! This function will power on the Ethernet PHY, enabling it return to normal
-//! operation.  By default, the PHY is powered on, so this function only needs
-//! to be called if EthernetPHYPowerOff() has previously been called.
+//! This function powers on the Ethernet PHY, enabling it return to normal
+//! operation.  By default, the PHY is powered on, so this function is only
+//! called if EthernetPHYPowerOff() has previously been called.
 //!
 //! \return None.
 //

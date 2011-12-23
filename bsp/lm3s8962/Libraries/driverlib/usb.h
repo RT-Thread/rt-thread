@@ -2,7 +2,7 @@
 //
 // usb.h - Prototypes for the USB Interface Driver.
 //
-// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -152,6 +152,7 @@ extern "C"
 // USB_DEV_* values are used when the USB controller is in device mode.
 //
 //*****************************************************************************
+#define USB_HOST_IN_STATUS      0xFFFF0000  // Mask of all host IN interrupts
 #define USB_HOST_IN_PID_ERROR   0x01000000  // Stall on this endpoint received
 #define USB_HOST_IN_NOT_COMP    0x00100000  // Device failed to respond
 #define USB_HOST_IN_STALL       0x00400000  // Stall on this endpoint received
@@ -163,6 +164,7 @@ extern "C"
                                             // device
 #define USB_HOST_IN_FIFO_FULL   0x00020000  // RX FIFO full
 #define USB_HOST_IN_PKTRDY      0x00010000  // Data packet ready
+#define USB_HOST_OUT_STATUS     0x0000FFFF  // Mask of all host OUT interrupts
 #define USB_HOST_OUT_NAK_TO     0x00000080  // NAK received for more than the
                                             // specified timeout period
 #define USB_HOST_OUT_NOT_COMP   0x00000080  // No response from device
@@ -474,6 +476,8 @@ extern void USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags);
 extern void USBHostPwrFaultDisable(unsigned long ulBase);
 extern void USBHostPwrFaultEnable(unsigned long ulBase);
 extern void USBHostRequestIN(unsigned long ulBase, unsigned long ulEndpoint);
+extern void USBHostRequestINClear(unsigned long ulBase,
+                                  unsigned long ulEndpoint);
 extern void USBHostRequestStatus(unsigned long ulBase);
 extern void USBHostReset(unsigned long ulBase, tBoolean bStart);
 extern void USBHostResume(unsigned long ulBase, tBoolean bStart);
@@ -497,8 +501,10 @@ extern void USBEndpointDMAChannel(unsigned long ulBase,
                                   unsigned long ulEndpoint,
                                   unsigned long ulChannel);
 extern void USBHostMode(unsigned long ulBase);
-extern void USBHostMode(unsigned long ulBase);
 extern void USBDevMode(unsigned long ulBase);
+extern void USBOTGMode(unsigned long ulBase);
+extern void USBPHYPowerOff(unsigned long ulBase);
+extern void USBPHYPowerOn(unsigned long ulBase);
 
 //*****************************************************************************
 //

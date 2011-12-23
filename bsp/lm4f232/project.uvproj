@@ -43,7 +43,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\obj\</OutputDirectory>
+          <OutputDirectory>.\build\</OutputDirectory>
           <OutputName>project</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -344,9 +344,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>PART_LM4F232H5QD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\include;drivers;.;Libraries;applications;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\finsh</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;Libraries;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -572,24 +572,24 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+            <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
             </File>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>src_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
             <File>
               <FileName>irq.c</FileName>
@@ -602,14 +602,9 @@
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
@@ -617,19 +612,24 @@
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>src_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

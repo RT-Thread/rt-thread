@@ -2,7 +2,7 @@
 //
 // ssi.h - Prototypes for the Synchronous Serial Interface Driver.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -73,6 +73,15 @@ extern "C"
 
 //*****************************************************************************
 //
+// Values that can be passed to SSIClockSourceSet() or returned from
+// SSIClockSourceGet().
+//
+//*****************************************************************************
+#define SSI_CLOCK_SYSTEM        0x00000000
+#define SSI_CLOCK_PIOSC         0x00000001
+
+//*****************************************************************************
+//
 // Prototypes for the APIs.
 //
 //*****************************************************************************
@@ -96,6 +105,8 @@ extern void SSIIntUnregister(unsigned long ulBase);
 extern void SSIDMAEnable(unsigned long ulBase, unsigned long ulDMAFlags);
 extern void SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags);
 extern tBoolean SSIBusy(unsigned long ulBase);
+extern void SSIClockSourceSet(unsigned long ulBase, unsigned long ulSource);
+extern unsigned long SSIClockSourceGet(unsigned long ulBase);
 
 //*****************************************************************************
 //

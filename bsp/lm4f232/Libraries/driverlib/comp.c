@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -212,7 +212,7 @@ ComparatorValueGet(unsigned long ulBase, unsigned long ulComp)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! comparator interrupt occurs.
 //!
-//! This sets the handler to be called when the comparator interrupt occurs
+//! This function sets the handler to be called when the comparator interrupt occurs
 //! and enables the interrupt in the interrupt controller.  It is the interrupt
 //! handler's responsibility to clear the interrupt source via
 //! ComparatorIntClear().
@@ -257,7 +257,7 @@ ComparatorIntRegister(unsigned long ulBase, unsigned long ulComp,
 //! \param ulComp is the index of the comparator.
 //!
 //! This function clears the handler to be called when a comparator interrupt
-//! occurs.  This will also mask off the interrupt in the interrupt controller
+//! occurs.  This function also masks off the interrupt in the interrupt controller
 //! so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -299,7 +299,7 @@ ComparatorIntUnregister(unsigned long ulBase, unsigned long ulComp)
 //! \param ulComp is the index of the comparator.
 //!
 //! This function enables generation of an interrupt from the specified
-//! comparator.  Only comparators whose interrupts are enabled can be reflected
+//! comparator.  Only enabled comparator interrupts can be reflected
 //! to the processor.
 //!
 //! \return None.
@@ -328,7 +328,7 @@ ComparatorIntEnable(unsigned long ulBase, unsigned long ulComp)
 //! \param ulComp is the index of the comparator.
 //!
 //! This function disables generation of an interrupt from the specified
-//! comparator.  Only comparators whose interrupts are enabled can be reflected
+//! comparator.  Only enabled comparator interrupts can be reflected
 //! to the processor.
 //!
 //! \return None.
@@ -358,7 +358,7 @@ ComparatorIntDisable(unsigned long ulBase, unsigned long ulComp)
 //! \param bMasked is \b false if the raw interrupt status is required and
 //! \b true if the masked interrupt status is required.
 //!
-//! This returns the interrupt status for the comparator.  Either the raw or
+//! This function returns the interrupt status for the comparator.  Either the raw or
 //! the masked interrupt status can be returned.
 //!
 //! \return \b true if the interrupt is asserted and \b false if it is not
@@ -401,7 +401,7 @@ ComparatorIntStatus(unsigned long ulBase, unsigned long ulComp,
 //! being called again immediately upon exit.  Note that for a level-triggered
 //! interrupt, the interrupt cannot be cleared until it stops asserting.
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid

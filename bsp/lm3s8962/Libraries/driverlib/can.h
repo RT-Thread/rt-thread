@@ -2,7 +2,7 @@
 //
 // can.h - Defines and Macros for the CAN controller.
 //
-// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2006-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -179,25 +179,25 @@ typedef struct
     //! Buffer 1 segments, measured in time quanta.  The valid values for this
     //! setting range from 2 to 16.
     //
-    unsigned int uSyncPropPhase1Seg;
+    unsigned long ulSyncPropPhase1Seg;
 
     //
     //! This value holds the Phase Buffer 2 segment in time quanta.  The valid
     //! values for this setting range from 1 to 8.
     //
-    unsigned int uPhase2Seg;
+    unsigned long ulPhase2Seg;
 
     //
     //! This value holds the Resynchronization Jump Width in time quanta.  The
     //! valid values for this setting range from 1 to 4.
     //
-    unsigned int uSJW;
+    unsigned long ulSJW;
 
     //
     //! This value holds the CAN_CLK divider used to determine time quanta.
     //! The valid values for this setting range from 1 to 1023.
     //
-    unsigned int uQuantumPrescaler;
+    unsigned long ulQuantumPrescaler;
 }
 tCANBitClkParms;
 

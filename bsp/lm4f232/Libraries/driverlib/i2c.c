@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the Stellaris Peripheral Driver Library.
+// This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -106,9 +106,10 @@ I2CSlaveBaseValid(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! Given a I2C base address, returns the corresponding interrupt number.
+//! Given a I2C base address, this function returns the corresponding 
+//! interrupt number.
 //!
-//! \return Returns a I2C interrupt number, or -1 if \e ulBase is invalid.
+//! \return Returns an I2C interrupt number, or -1 if \e ulBase is invalid.
 //
 //*****************************************************************************
 static long
@@ -149,15 +150,14 @@ I2CIntNumberGet(unsigned long ulBase)
 //! \param ulI2CClk is the rate of the clock supplied to the I2C module.
 //! \param bFast set up for fast data transfers
 //!
-//! This function initializes operation of the I2C Master block.  Upon
-//! successful initialization of the I2C block, this function will have set the
-//! bus speed for the master, and will have enabled the I2C Master block.
+//! This function initializes operation of the I2C Master block by configuring 
+//! the bus speed for the master and enabling the I2C Master block.
 //!
 //! If the parameter \e bFast is \b true, then the master block is set up to
 //! transfer data at 400 kbps; otherwise, it is set up to transfer data at
 //! 100 kbps.
 //!
-//! The peripheral clock is the same as the processor clock.  This is the value
+//! The peripheral clock is the same as the processor clock.  This value is
 //! returned by SysCtlClockGet(), or it can be explicitly hard coded if it is
 //! constant and known (to save the code/execution overhead of a call to
 //! SysCtlClockGet()).
@@ -215,9 +215,8 @@ I2CMasterInitExpClk(unsigned long ulBase, unsigned long ulI2CClk,
 //! \param ulBase is the base address of the I2C Slave module.
 //! \param ucSlaveAddr 7-bit slave address
 //!
-//! This function initializes operation of the I2C Slave block.  Upon
-//! successful initialization of the I2C blocks, this function will have set
-//! the slave address and have enabled the I2C Slave block.
+//! This function initializes operation of the I2C Slave block by configuring
+//! the slave address and enabling the I2C Slave block.
 //!
 //! The parameter \e ucSlaveAddr is the value that is compared against the
 //! slave address sent by an I2C master.
@@ -255,7 +254,10 @@ I2CSlaveInit(unsigned long ulBase, unsigned char ucSlaveAddr)
 //!
 //! This function writes the specified slave address.  The \e ulAddrNum field
 //! dictates which slave address is configured.  For example, a value of 0
-//! configures the primary address and a value of 1 the secondary.
+//! configures the primary address and a value of 1, the secondary.
+//!
+//! \note Not all Stellaris devices support a secondary address. Please consult  
+//! the device data sheet to know if this feature is supported.
 //!
 //! \return None.
 //
@@ -302,7 +304,7 @@ I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! This will enable operation of the I2C Master block.
+//! This function enables operation of the I2C Master block.
 //!
 //! \return None.
 //
@@ -327,7 +329,7 @@ I2CMasterEnable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the I2C Slave module.
 //!
-//! This will enable operation of the I2C Slave block.
+//! This fucntion enables operation of the I2C Slave block.
 //!
 //! \return None.
 //
@@ -358,7 +360,7 @@ I2CSlaveEnable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! This will disable operation of the I2C master block.
+//! This function disables operation of the I2C master block.
 //!
 //! \return None.
 //
@@ -383,7 +385,7 @@ I2CMasterDisable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the I2C Slave module.
 //!
-//! This will disable operation of the I2C slave block.
+//! This function disables operation of the I2C slave block.
 //!
 //! \return None.
 //
@@ -416,9 +418,9 @@ I2CSlaveDisable(unsigned long ulBase)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! I2C interrupt occurs.
 //!
-//! This sets the handler to be called when an I2C interrupt occurs.  This will
-//! enable the global interrupt in the interrupt controller; specific I2C
-//! interrupts must be enabled via I2CMasterIntEnable() and
+//! This function sets the handler to be called when an I2C interrupt occurs.  
+//! This function enables the global interrupt in the interrupt controller; 
+//! specific I2C interrupts must be enabled via I2CMasterIntEnable() and
 //! I2CSlaveIntEnable().  If necessary, it is the interrupt handler's
 //! responsibility to clear the interrupt source via I2CMasterIntClear() and
 //! I2CSlaveIntClear().
@@ -461,9 +463,9 @@ I2CIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! This function will clear the handler to be called when an I2C interrupt
-//! occurs.  This will also mask off the interrupt in the interrupt controller
-//! so that the interrupt handler no longer is called.
+//! This function clears the handler to be called when an I2C interrupt
+//! occurs.  This function also masks off the interrupt in the interrupt r
+//! controlle so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -503,7 +505,7 @@ I2CIntUnregister(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! Enables the I2C Master interrupt source.
+//! This function enables the I2C Master interrupt source.
 //!
 //! \return None.
 //
@@ -529,14 +531,18 @@ I2CMasterIntEnable(unsigned long ulBase)
 //! \param ulBase is the base address of the I2C Master module.
 //! \param ulIntFlags is the bit mask of the interrupt sources to be enabled.
 //!
-//! Enables the indicated I2C Master interrupt sources.  Only the sources that
-//! are enabled can be reflected to the processor interrupt; disabled sources
-//! have no effect on the processor.
+//! This function enables the indicated I2C Master interrupt sources.  Only the 
+//! sources that are enabled can be reflected to the processor interrupt; 
+//! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter is the logical OR of any of the following:
 //!
 //! - \b I2C_MASTER_INT_TIMEOUT - Clock Timeout interrupt
 //! - \b I2C_MASTER_INT_DATA - Data interrupt
+//!
+//! \note Not all Stellaris devices support the Clock Timeout interrupt.
+//! Please consult the device data sheet to know if this feature is 
+//! supported.
 //!
 //! \return None.
 //
@@ -561,7 +567,7 @@ I2CMasterIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //!
 //! \param ulBase is the base address of the I2C Slave module.
 //!
-//! Enables the I2C Slave interrupt source.
+//! This function enables the I2C Slave interrupt source.
 //!
 //! \return None.
 //
@@ -587,15 +593,19 @@ I2CSlaveIntEnable(unsigned long ulBase)
 //! \param ulBase is the base address of the I2C Slave module.
 //! \param ulIntFlags is the bit mask of the interrupt sources to be enabled.
 //!
-//! Enables the indicated I2C Slave interrupt sources.  Only the sources that
-//! are enabled can be reflected to the processor interrupt; disabled sources
-//! have no effect on the processor.
+//! This function enables the indicated I2C Slave interrupt sources.  Only the 
+//! sources that are enabled can be reflected to the processor interrupt; 
+//! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter is the logical OR of any of the following:
 //!
 //! - \b I2C_SLAVE_INT_STOP - Stop condition detected interrupt
 //! - \b I2C_SLAVE_INT_START - Start condition detected interrupt
 //! - \b I2C_SLAVE_INT_DATA - Data interrupt
+//!
+//! \note Not all Stellaris devices support the Stop and Start condition 
+//! interrupts. Please consult the device data sheet to know if these features  
+//! are supported.
 //!
 //! \return None.
 //
@@ -620,7 +630,7 @@ I2CSlaveIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //!
-//! Disables the I2C Master interrupt source.
+//! This function disables the I2C Master interrupt source.
 //!
 //! \return None.
 //
@@ -646,9 +656,9 @@ I2CMasterIntDisable(unsigned long ulBase)
 //! \param ulBase is the base address of the I2C Master module.
 //! \param ulIntFlags is the bit mask of the interrupt sources to be disabled.
 //!
-//! Disables the indicated I2C Master interrupt sources.  Only the sources that
-//! are enabled can be reflected to the processor interrupt; disabled sources
-//! have no effect on the processor.
+//! This function disables the indicated I2C Master interrupt sources.  Only 
+//! the sources that are enabled can be reflected to the processor interrupt;
+//! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to I2CMasterIntEnableEx().
@@ -676,7 +686,7 @@ I2CMasterIntDisableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //!
 //! \param ulBase is the base address of the I2C Slave module.
 //!
-//! Disables the I2C Slave interrupt source.
+//! This function disables the I2C Slave interrupt source.
 //!
 //! \return None.
 //
@@ -702,9 +712,9 @@ I2CSlaveIntDisable(unsigned long ulBase)
 //! \param ulBase is the base address of the I2C Slave module.
 //! \param ulIntFlags is the bit mask of the interrupt sources to be disabled.
 //!
-//! Disables the indicated I2C Slave interrupt sources.  Only the sources that
-//! are enabled can be reflected to the processor interrupt; disabled sources
-//! have no effect on the processor.
+//! This function disables the indicated I2C Slave interrupt sources.  Only
+//! the sources that are enabled can be reflected to the processor interrupt; 
+//! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to I2CSlaveIntEnableEx().
@@ -734,8 +744,8 @@ I2CSlaveIntDisableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
-//! This returns the interrupt status for the I2C Master module.  Either the
-//! raw interrupt status or the status of interrupts that are allowed to
+//! This function returns the interrupt status for the I2C Master module.  
+//! Either the raw interrupt status or the status of interrupts that are allowed to
 //! reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, returned as \b true if active
@@ -772,9 +782,9 @@ I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
-//! This returns the interrupt status for the I2C Master module.  Either the
-//! raw interrupt status or the status of interrupts that are allowed to
-//! reflect to the processor can be returned.
+//! This function returns the interrupt status for the I2C Master module.  
+//! Either the raw interrupt status or the status of interrupts that are 
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return Returns the current interrupt status, enumerated as a bit field of
 //! values described in I2CMasterIntEnableEx().
@@ -810,9 +820,9 @@ I2CMasterIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
-//! This returns the interrupt status for the I2C Slave module.  Either the raw
-//! interrupt status or the status of interrupts that are allowed to reflect to
-//! the processor can be returned.
+//! This function returns the interrupt status for the I2C Slave module.  
+//! Either the raw interrupt status or the status of interrupts that are 
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, returned as \b true if active
 //! or \b false if not active.
@@ -848,9 +858,9 @@ I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
-//! This returns the interrupt status for the I2C Slave module.  Either the raw
-//! interrupt status or the status of interrupts that are allowed to reflect to
-//! the processor can be returned.
+//! This function returns the interrupt status for the I2C Slave module. 
+//! Either the raw interrupt status or the status of interrupts that are 
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return Returns the current interrupt status, enumerated as a bit field of
 //! values described in I2CSlaveIntEnableEx().
@@ -899,10 +909,10 @@ I2CSlaveIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase is the base address of the I2C Master module.
 //!
 //! The I2C Master interrupt source is cleared, so that it no longer asserts.
-//! This must be done in the interrupt handler to keep it from being called
-//! again immediately upon exit.
+//! This function must be called in the interrupt handler to keep the interrupt 
+//! from being triggered again immediately upon exit.
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -943,13 +953,13 @@ I2CMasterIntClear(unsigned long ulBase)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified I2C Master interrupt sources are cleared, so that they no
-//! longer assert.  This must be done in the interrupt handler to keep it from
-//! being called again immediately upon exit.
+//! longer assert.  This function must be called in the interrupt handler to 
+//! keep the interrupt from being triggered again immediately upon exit.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to I2CMasterIntEnableEx().
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -982,10 +992,10 @@ I2CMasterIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param ulBase is the base address of the I2C Slave module.
 //!
 //! The I2C Slave interrupt source is cleared, so that it no longer asserts.
-//! This must be done in the interrupt handler to keep it from being called
-//! again immediately upon exit.
+//! This function must be called in the interrupt handler to keep the interrupt 
+//! from being triggered again immediately upon exit.
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -1019,13 +1029,13 @@ I2CSlaveIntClear(unsigned long ulBase)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified I2C Slave interrupt sources are cleared, so that they no
-//! longer assert.  This must be done in the interrupt handler to keep it from
-//! being called again immediately upon exit.
+//! longer assert.  This function must be called in the interrupt handler to 
+//! keep the interrupt from being triggered again immediately upon exit.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
 //! parameter to I2CSlaveIntEnableEx().
 //!
-//! \note Because there is a write buffer in the Cortex-M3 processor, it may
+//! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
 //! Therefore, it is recommended that the interrupt source be cleared early in
 //! the interrupt handler (as opposed to the very last action) to avoid
@@ -1053,16 +1063,16 @@ I2CSlaveIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
 
 //*****************************************************************************
 //
-//! Sets the address that the I2C Master will place on the bus.
+//! Sets the address that the I2C Master places on the bus.
 //!
 //! \param ulBase is the base address of the I2C Master module.
 //! \param ucSlaveAddr 7-bit slave address
 //! \param bReceive flag indicating the type of communication with the slave
 //!
-//! This function will set the address that the I2C Master will place on the
+//! This function configures the address that the I2C Master places on the
 //! bus when initiating a transaction.  When the \e bReceive parameter is set
-//! to \b true, the address will indicate that the I2C Master is initiating a
-//! read from the slave; otherwise the address will indicate that the I2C
+//! to \b true, the address indicates that the I2C Master is initiating a
+//! read from the slave; otherwise the address indicates that the I2C
 //! Master is initiating a write to the slave.
 //!
 //! \return None.
@@ -1093,6 +1103,9 @@ I2CMasterSlaveAddrSet(unsigned long ulBase, unsigned char ucSlaveAddr,
 //! This function returns the state of the I2C bus by providing the real time
 //! values of the SDA and SCL pins.
 //!
+//! \note Not all Stellaris devices support this function. Please consult the 
+//! device data sheet to know if this feature is supported.
+//! 
 //! \return Returns the state of the bus with SDA in bit position 1 and SCL in
 //! bit position 0.
 //
@@ -1185,7 +1198,7 @@ I2CMasterBusBusy(unsigned long ulBase)
 //! Controls the state of the I2C Master module.
 //!
 //! \param ulBase is the base address of the I2C Master module.
-//! \param ulCmd command to be issued to the I2C Master module
+//! \param ulCmd command to be issued to the I2C Master module.
 //!
 //! This function is used to control the state of the Master module send and
 //! receive operations.  The \e ucCmd parameter can be one of the following
@@ -1285,9 +1298,9 @@ I2CMasterErr(unsigned long ulBase)
 //! Transmits a byte from the I2C Master.
 //!
 //! \param ulBase is the base address of the I2C Master module.
-//! \param ucData data to be transmitted from the I2C Master
+//! \param ucData data to be transmitted from the I2C Master.
 //!
-//! This function will place the supplied data into I2C Master Data Register.
+//! This function places the supplied data into I2C Master Data Register.
 //!
 //! \return None.
 //
@@ -1344,6 +1357,9 @@ I2CMasterDataGet(unsigned long ulBase)
 //! upper 8-bits being programmable.  For example, to program a timeout of 20ms
 //! with a 100kHz SCL frequency, \e ulValue would be 0x7d.
 //!
+//! \note Not all Stellaris devices support this function. Please consult the 
+//! device data sheet to know if this feature is supported.
+//!
 //! \return None.
 //
 //*****************************************************************************
@@ -1370,6 +1386,9 @@ I2CMasterTimeoutSet(unsigned long ulBase, unsigned long ulValue)
 //!
 //! This function enables or disables ACK override, allowing the user
 //! application to drive the value on SDA during the ACK cycle.
+//!
+//! \note Not all Stellaris devices support this function. Please consult the 
+//! device data sheet to know if this feature is supported.
 //!
 //! \return None.
 //
@@ -1436,7 +1455,7 @@ I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
 //!
 //! \param ulBase is the base address of the I2C Slave module.
 //!
-//! This function will return the action requested from a master, if any.
+//! This function returns the action requested from a master, if any.
 //! Possible values are:
 //!
 //! - \b I2C_SLAVE_ACT_NONE
@@ -1457,6 +1476,10 @@ I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
 //! slave address was matched, \b I2C_SLAVE_ACT_QCMD to indicate that a quick
 //! command was received, and \b I2C_SLAVE_ACT_QCMD_DATA to indicate that the
 //! data bit was set when the quick command was received.
+//!
+//! \note Not all Stellaris devices support the second I2C slave's own address
+//! or the quick command function.  Please consult the device data sheet to
+//! know if these features are supported.
 //
 //*****************************************************************************
 unsigned long
@@ -1480,7 +1503,7 @@ I2CSlaveStatus(unsigned long ulBase)
 //! \param ulBase is the base address of the I2C Slave module.
 //! \param ucData data to be transmitted from the I2C Slave
 //!
-//! This function will place the supplied data into I2C Slave Data Register.
+//! This function places the supplied data into I2C Slave Data Register.
 //!
 //! \return None.
 //

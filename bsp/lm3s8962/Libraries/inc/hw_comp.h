@@ -2,7 +2,7 @@
 //
 // hw_comp.h - Macros used when accessing the comparator hardware.
 //
-// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 6459 of the Stellaris Firmware Development Package.
+// This is part of revision 8264 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -44,6 +44,8 @@
 #define COMP_O_ACCTL1           0x00000044  // Analog Comparator Control 1
 #define COMP_O_ACSTAT2          0x00000060  // Analog Comparator Status 2
 #define COMP_O_ACCTL2           0x00000064  // Analog Comparator Control 2
+#define COMP_O_PP               0x00000FC0  // Analog Comparator Peripheral
+                                            // Properties
 
 //*****************************************************************************
 //
@@ -181,6 +183,18 @@
 #define COMP_ACCTL2_ISEN_RISE   0x00000008  // Rising edge
 #define COMP_ACCTL2_ISEN_BOTH   0x0000000C  // Either edge
 #define COMP_ACCTL2_CINV        0x00000002  // Comparator Output Invert
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the COMP_O_PP register.
+//
+//*****************************************************************************
+#define COMP_PP_C2O             0x00040000  // Comparator Output 2 Present
+#define COMP_PP_C1O             0x00020000  // Comparator Output 1 Present
+#define COMP_PP_C0O             0x00010000  // Comparator Output 0 Present
+#define COMP_PP_CMP2            0x00000004  // Comparator 2 Present
+#define COMP_PP_CMP1            0x00000002  // Comparator 1 Present
+#define COMP_PP_CMP0            0x00000001  // Comparator 0 Present
 
 //*****************************************************************************
 //

@@ -3,6 +3,9 @@ ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='keil'
 
+#device options
+PART_TYPE = 'PART_LM4F232H5QD'
+
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
