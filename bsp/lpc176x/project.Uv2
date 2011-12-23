@@ -5,7 +5,7 @@ Target (RT-Thread LPC17xx), 0x0004 // Tools: 'ARM-ADS'
 
 Group (Startup)
 Group (Kernel)
-Group (LPC17XX)
+Group (CORTEX-M3)
 Group (finsh)
 Group (LwIP)
 Group (CMSIS)
@@ -16,20 +16,20 @@ File 1,1,<.\board.c><board.c>
 File 1,1,<.\uart.c><uart.c>
 File 1,1,<.\led.c><led.c>
 File 1,1,<.\emac.c><emac.c>
+File 2,1,<..\..\src\clock.c><clock.c>
 File 2,1,<..\..\src\device.c><device.c>
-File 2,1,<..\..\src\thread.c><thread.c>
-File 2,1,<..\..\src\scheduler.c><scheduler.c>
-File 2,1,<..\..\src\timer.c><timer.c>
+File 2,1,<..\..\src\idle.c><idle.c>
+File 2,1,<..\..\src\ipc.c><ipc.c>
 File 2,1,<..\..\src\irq.c><irq.c>
 File 2,1,<..\..\src\kservice.c><kservice.c>
-File 2,1,<..\..\src\clock.c><clock.c>
-File 2,1,<..\..\src\object.c><object.c>
-File 2,1,<..\..\src\mempool.c><mempool.c>
-File 2,1,<..\..\src\ipc.c><ipc.c>
-File 2,1,<..\..\src\idle.c><idle.c>
 File 2,1,<..\..\src\mem.c><mem.c>
-File 3,1,<..\..\libcpu\arm\lpc17xx\cpuport.c><cpuport.c>
-File 3,2,<..\..\libcpu\arm\lpc17xx\context_rvds.S><context_rvds.S>
+File 2,1,<..\..\src\mempool.c><mempool.c>
+File 2,1,<..\..\src\object.c><object.c>
+File 2,1,<..\..\src\scheduler.c><scheduler.c>
+File 2,1,<..\..\src\thread.c><thread.c>
+File 2,1,<..\..\src\timer.c><timer.c>
+File 3,1,<..\..\libcpu\arm\cortex-m3\cpuport.c><cpuport.c>
+File 3,2,<..\..\libcpu\arm\cortex-m3\context_rvds.S><context_rvds.S>
 File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 3,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>
@@ -144,7 +144,7 @@ Options 1,0,0  // Target 'RT-Thread LPC17xx'
  ADSCMISC ()
  ADSCDEFN ()
  ADSCUDEF ()
- ADSCINCD (..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\arch\include;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;..\..\components\net\lwip\src\include;.;..\..\libcpu\arm\lpc17xx;..\..\include;..\..\components\net\lwip\src;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh;..\..\components\net\lwip\src\include\netif)
+ ADSCINCD (..\..\components\net\lwip\src\arch\include;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh;..\..\components\net\lwip\src\include\netif)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

@@ -58,10 +58,17 @@ void rt_hw_timer_handler(void)
 void rt_hw_eth_handler(void)
 {
 #ifdef RT_USING_LWIP
-		/* luminary ethernet interface */
-		extern void luminaryif_isr(void);
-		luminaryif_isr();
-#endif	
+    extern void luminaryif_isr(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* luminary ethernet interface */
+    luminaryif_isr();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+#endif
 }
 
 /**

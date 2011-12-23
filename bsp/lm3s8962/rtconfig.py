@@ -1,6 +1,6 @@
 # toolchains options
 ARCH='arm'
-CPU='lm3s'
+CPU='cortex-m3'
 CROSS_TOOL 	= 'keil'
 
 if  CROSS_TOOL == 'gcc':

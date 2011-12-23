@@ -23,7 +23,7 @@
 #include <driverlib/sysctl.h>
 #include <driverlib/interrupt.h>
 
-#include <uart.h>
+#include <driverlib/uart.h>
 #include "board.h"
 
 extern void rt_hw_interrupt_thread_switch(void);

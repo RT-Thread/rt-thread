@@ -31,14 +31,14 @@ Options 1,0,0  // Target 'RT-Thread-lm3s'
  EnvReg (Luminary\)
  OrgReg (Luminary\)
  TgStat=16
- OutDir (.\objs\)
+ OutDir (.\build\)
  OutName (rtthread-lm3s)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=1
- LstDir (.\objs\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0

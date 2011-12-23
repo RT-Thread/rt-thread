@@ -3,34 +3,19 @@ Import('rtconfig')
 from building import *
 
 # The set of source files associated with this SConscript file.
-src = Split("""
-	driverlib/adc.c
-	driverlib/can.c
-	driverlib/comp.c
-	driverlib/cpu.c
-	driverlib/epi.c
-	driverlib/ethernet.c
-	driverlib/flash.c
-	driverlib/gpio.c
-	driverlib/hibernate.c
-	driverlib/i2c.c
-	driverlib/i2s.c
-	driverlib/interrupt.c
-	driverlib/mpu.c
-	driverlib/pwm.c
-	driverlib/qei.c
-	driverlib/ssi.c
-	driverlib/sysctl.c
-	driverlib/systick.c
-	driverlib/timer.c
-	driverlib/uart.c
-	driverlib/udma.c
-	driverlib/usb.c
-	driverlib/watchdog.c
-""")
+cwd     = GetCurrentDir()
+src = Glob('driverlib/*.c')
 
-CPPPATH = [RTT_ROOT + '/bsp/lm3s8962/Libraries/inc', RTT_ROOT + '/bsp/lm3s8962/Libraries', RTT_ROOT + '/bsp/lm3s8962/Libraries/driverlib']
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+	src += ['startup/gcc/startup_LPC17xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+	src += ['startup/arm/start_rvds.S']
+elif rtconfig.CROSS_TOOL == 'iar':
+	src += ['startup/iar/start_iar.S']
 
-group = DefineGroup('library', src, depend = [''], CPPPATH = CPPPATH)
+CPPPATH = [cwd]
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
