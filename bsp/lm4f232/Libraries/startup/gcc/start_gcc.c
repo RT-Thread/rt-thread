@@ -18,9 +18,12 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 8049 of the EK-LM4F232 Firmware Package.
+// This is part of revision 8264 of the EK-LM4F232 Firmware Package.
 //
 //*****************************************************************************
+
+#include "inc/hw_nvic.h"
+#include "inc/hw_types.h"
 
 //*****************************************************************************
 //
@@ -32,11 +35,16 @@ static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
 
+//*****************************************************************************
+//
+// External declaration for the interrupt handler used by the application.
+//
+//*****************************************************************************
 /* RT-Thread interface */
 static void HardFault_Handler(void);
 static void PendSV_Handler(void);
 static void rt_hw_timer_handler(void);
-
+static void rt_hw_uart_isr_1(void);
 //*****************************************************************************
 //
 // The entry point for the application.
@@ -64,7 +72,7 @@ void (* const g_pfnVectors[])(void) =
                                             // The initial stack pointer
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
-    HardFault_Handler,                      // The hard fault handler
+    HardFault_Handler,                               // The hard fault handler
     IntDefaultHandler,                      // The MPU fault handler
     IntDefaultHandler,                      // The bus fault handler
     IntDefaultHandler,                      // The usage fault handler
@@ -75,14 +83,14 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // SVCall handler
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
-    PendSV_Handler,                         // The PendSV handler
-    rt_hw_timer_handler,                    // The SysTick handler
+    PendSV_Handler,                      // The PendSV handler
+    rt_hw_timer_handler,                      // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    IntDefaultHandler,                      // UART0 Rx and Tx
+    rt_hw_uart_isr_1,                         // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
@@ -267,6 +275,20 @@ ResetISR(void)
           "        it      lt\n"
           "        strlt   r2, [r0], #4\n"
           "        blt     zero_loop");
+
+    //
+    // Enable the floating-point unit.  This must be done here to handle the
+    // case where main() uses floating-point and the function prologue saves
+    // floating-point registers (which will fault if floating-point is not
+    // enabled).  Any configuration of the floating-point unit using DriverLib
+    // APIs must be done here prior to the floating-point unit being enabled.
+    //
+    // Note that this does not use DriverLib since it might not be included in
+    // this project.
+    //
+    HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) &
+                         ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) |
+                        NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);
 
     //
     // Call the application's entry point.

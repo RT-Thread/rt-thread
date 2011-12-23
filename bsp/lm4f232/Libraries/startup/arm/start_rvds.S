@@ -19,7 +19,7 @@
 ; CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 ; DAMAGES, FOR ANY REASON WHATSOEVER.
 ; 
-; This is part of revision 8049 of the EK-LM4F232 Firmware Package.
+; This is part of revision 8264 of the EK-LM4F232 Firmware Package.
 ;
 ;******************************************************************************
 
@@ -89,7 +89,7 @@ __Vectors
         DCD     StackMem + Stack            ; Top of Stack
         DCD     Reset_Handler               ; Reset Handler
         DCD     NmiSR                       ; NMI Handler
-        DCD     HardFault_Handler           ; Hard Fault Handler
+        DCD     HardFault_Handler                    ; Hard Fault Handler
         DCD     IntDefaultHandler           ; The MPU fault handler
         DCD     IntDefaultHandler           ; The bus fault handler
         DCD     IntDefaultHandler           ; The usage fault handler
@@ -144,7 +144,7 @@ __Vectors
         DCD     IntDefaultHandler           ; CAN0
         DCD     IntDefaultHandler           ; CAN1
         DCD     IntDefaultHandler           ; CAN2
-        DCD     rt_hw_eth_handler           ; Ethernet
+        DCD     IntDefaultHandler           ; Ethernet
         DCD     IntDefaultHandler           ; Hibernate
         DCD     IntDefaultHandler           ; USB0
         DCD     IntDefaultHandler           ; PWM Generator 3
@@ -250,6 +250,23 @@ __Vectors
 ;******************************************************************************
         EXPORT  Reset_Handler
 Reset_Handler
+        ;
+        ; Enable the floating-point unit.  This must be done here to handle the
+        ; case where main() uses floating-point and the function prologue saves
+        ; floating-point registers (which will fault if floating-point is not
+        ; enabled).  Any configuration of the floating-point unit using
+        ; DriverLib APIs must be done here prior to the floating-point unit
+        ; being enabled.
+        ;
+        ; Note that this does not use DriverLib since it might not be included
+        ; in this project.
+        ;
+        MOVW    R0, #0xED88
+        MOVT    R0, #0xE000
+        LDR     R1, [R0]
+        ORR     R1, #0x00F00000
+        STR     R1, [R0]
+
         ;
         ; Call the C library enty point that handles startup.  This will copy
         ; the .data section initializers from flash to SRAM and zero fill the
