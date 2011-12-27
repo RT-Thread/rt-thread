@@ -505,7 +505,7 @@ static rt_size_t rt_usart_read (
                 while (!(usart_device->STATUS & rx_flag));
                 *((rt_uint32_t *)0x00) = usart_device->RXDATA;
             }
-
+            /* Read data */
             while (((rt_uint32_t)ptr - (rt_uint32_t)rx_buf) < size)
             {
                 /* dummy write */
@@ -573,11 +573,9 @@ static rt_size_t rt_usart_write (
     rt_size_t       size)
 {
     rt_err_t err_code;
-    rt_size_t write_size    = 0;
+    rt_size_t write_size = 0;
     struct efm32_usart_device_t* usart = (struct efm32_usart_device_t*)(dev->user_data);
-    rt_uint8_t inst_len     = *((rt_uint8_t *)buffer);
-    rt_uint8_t *inst_ptr    = (rt_uint8_t *)(buffer + 1);
-    rt_uint8_t *tx_buf      = *((rt_uint8_t **)(buffer + inst_len + 1));
+    rt_uint8_t *tx_buf;
     rt_uint32_t tx_flag, b8_flag;
 
 #if defined(UART_PRESENT)
@@ -608,6 +606,75 @@ static rt_size_t rt_usart_write (
         return 0;
     }
 
+    if (usart->state & USART_STATE_SYNC)
+    {   /* SPI write */
+        rt_uint8_t inst_len     = *((rt_uint8_t *)buffer);
+        rt_uint8_t *inst_ptr    = (rt_uint8_t *)(buffer + 1);
+        tx_buf = *((rt_uint8_t **)(buffer + inst_len + 1));
+
+        /* Write instructions */
+        if (inst_len)
+        {
+            if (usart->state & USART_STATE_9BIT)
+            {
+                usart->usart_device->CTRL &= ~b8_flag;
+            }
+            if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (inst_len > 2))
+            {   /* DMA mode Tx */
+                struct efm32_usart_dma_mode_t *dma_tx;
+
+                usart_debug("USART: DMA TX INS (%d)\n", inst_len);
+                dma_tx = (struct efm32_usart_dma_mode_t *)(usart->tx_mode);
+                dma_tx->data_ptr = (rt_uint32_t *)inst_ptr;
+                dma_tx->data_size = inst_len;
+
+                usart->state |= USART_STATE_TX_BUSY;
+                DMA_ActivateBasic(
+                    dma_tx->dma_channel,
+                    true,
+                    false,
+                    (void *)&(usart->usart_device->TXDATA),
+                    (void *)inst_ptr,
+                    (rt_uint32_t)(inst_len - 1));
+                /* Wait, otherwise the TX buffer is overwrite */
+                // TODO: This function blocks the process => goto low power mode?
+        //      if (usart->state & USART_STATE_CONSOLE)
+        //      {
+                    while(usart->state & USART_STATE_TX_BUSY);
+        //      }
+        //      else
+        //      {
+        //          while(usart->state & USART_STATE_TX_BUSY)
+        //          {
+        //              rt_thread_sleep(USART_WAIT_TIME_TX);
+        //          }
+        //      }
+            }
+            else
+            {   /* polling mode */
+                rt_uint8_t *ptr = (rt_uint8_t *)inst_ptr;
+                rt_size_t len = inst_len;
+
+                usart_debug("USART: Polling TX INS (%d)\n", inst_len);
+                while (len)
+                {
+                    while (!(usart->usart_device->STATUS & tx_flag));
+                    usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
+                    ++ptr; --len;
+                }
+            }
+            if (usart->state & USART_STATE_9BIT)
+            {
+                usart->usart_device->CTRL |= b8_flag;
+            }
+        }
+    }
+    else
+    {
+        tx_buf = (rt_uint8_t *)buffer;
+    }
+
+    /* Write data */
     if (dev->flag & RT_DEVICE_FLAG_STREAM)
     {
         if (*(tx_buf + size - 1) == '\n')
@@ -617,65 +684,6 @@ static rt_size_t rt_usart_write (
             *(tx_buf + size) = 0;
         }
     }
-
-    /* Write instructions */
-    if (inst_len)
-    {
-        if (usart->state & USART_STATE_9BIT)
-        {
-            usart->usart_device->CTRL &= ~b8_flag;
-        }
-        if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (inst_len > 2))
-        {   /* DMA mode Tx */
-            struct efm32_usart_dma_mode_t *dma_tx;
-
-            usart_debug("USART: DMA TX INS (%d)\n", inst_len);
-            dma_tx = (struct efm32_usart_dma_mode_t *)(usart->tx_mode);
-            dma_tx->data_ptr = (rt_uint32_t *)inst_ptr;
-            dma_tx->data_size = inst_len;
-
-            usart->state |= USART_STATE_TX_BUSY;
-            DMA_ActivateBasic(
-                dma_tx->dma_channel,
-                true,
-                false,
-                (void *)&(usart->usart_device->TXDATA),
-                (void *)inst_ptr,
-                (rt_uint32_t)(inst_len - 1));
-            /* Wait, otherwise the TX buffer is overwrite */
-            // TODO: This function blocks the process => goto low power mode?
-    //      if (usart->state & USART_STATE_CONSOLE)
-    //      {
-                while(usart->state & USART_STATE_TX_BUSY);
-    //      }
-    //      else
-    //      {
-    //          while(usart->state & USART_STATE_TX_BUSY)
-    //          {
-    //              rt_thread_sleep(USART_WAIT_TIME_TX);
-    //          }
-    //      }
-        }
-        else
-        {   /* polling mode */
-            rt_uint8_t *ptr = (rt_uint8_t *)inst_ptr;
-            rt_size_t len = inst_len;
-
-            usart_debug("USART: Polling TX INS (%d)\n", inst_len);
-            while (len)
-            {
-                while (!(usart->usart_device->STATUS & tx_flag));
-                usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
-                ++ptr; --len;
-            }
-        }
-        if (usart->state & USART_STATE_9BIT)
-        {
-            usart->usart_device->CTRL |= b8_flag;
-        }
-    }
-
-    /* Write data */
     if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 2))
     {   /* DMA mode Tx */
         struct efm32_usart_dma_mode_t *dma_tx;
