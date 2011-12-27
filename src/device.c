@@ -146,26 +146,29 @@ rt_device_t rt_device_find(const char *name)
  */
 rt_err_t rt_device_init(rt_device_t dev)
 {
-	rt_err_t result;
+	rt_err_t result = RT_EOK;
 	rt_err_t (*init)(rt_device_t dev);
 	
 	RT_ASSERT(dev != RT_NULL);
 
 	/* get device init handler */
 	init = dev->init;
-	if (init != RT_NULL && !(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
-	{
-		result = init(dev);
-		if (result != RT_EOK)
-		{
-			rt_kprintf("To initialize device:%s failed. The error code is %d\n",
-				dev->parent.name, result);
-		}
-		else
-		{
-			dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
-		}
-	}
+    if (init != RT_NULL)
+    {
+        if(!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+        {
+            result = init(dev);
+            if (result != RT_EOK)
+            {
+                rt_kprintf("To initialize device:%s failed. The error code is %d\n",
+                dev->parent.name, result);
+            }
+            else
+            {
+                dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+            }
+        }
+    }
 	else result = -RT_ENOSYS;
 
 	return result;

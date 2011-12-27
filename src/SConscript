@@ -2,19 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-src = Split('''
-device.c
-thread.c
-scheduler.c
-timer.c
-irq.c
-kservice.c
-clock.c
-object.c
-mempool.c
-ipc.c
-idle.c
-''')
+src	= Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
 if rtconfig.CROSS_TOOL == 'keil' and GetDepend('RT_USING_MODULE') == True:
@@ -22,14 +10,14 @@ if rtconfig.CROSS_TOOL == 'keil' and GetDepend('RT_USING_MODULE') == True:
 else:
     LINKFLAGS = '' 
 
-if GetDepend('RT_USING_MODULE'):
-    src += Split('rtm.c')
-    src += Split('module.c')
+if GetDepend('RT_USING_MODULE') == False:
+    SrcRemove(src, ['rtm.c', 'module.c'])
 
-if GetDepend('RT_USING_SLAB'):
-    src += Split('slab.c')
-else:
-    src += Split('mem.c')
+if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == False:
+    SrcRemove(src, ['mem.c'])
+
+if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SLAB') == False:
+    SrcRemove(src, ['slab.c'])
 
 group   = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
 
