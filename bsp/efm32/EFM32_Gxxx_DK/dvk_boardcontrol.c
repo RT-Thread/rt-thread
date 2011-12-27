@@ -2,7 +2,7 @@
  * @file
  * @brief DVK Peripheral Board Control API implementation
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -25,6 +25,11 @@
  * arising from your use of this Software.
  *
  *****************************************************************************/
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 #include "efm32.h"
 #include "dvk.h"
@@ -246,3 +251,5 @@ uint16_t DVK_getInterruptFlags(void)
 {
   return DVK_readRegister(BC_INTFLAG);
 }
+
+/** @} (end group BSP) */

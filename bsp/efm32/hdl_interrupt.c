@@ -16,6 +16,7 @@
  * 2011-12-09	onelife		Add giant gecko support
  * 2011-12-09   onelife     Add UART module support
  * 2011-12-09   onelife     Add LEUART module support
+ * 2011-12-27	onelife		Utilize "XXX_PRESENT" and "XXX_COUNT"
  ******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
@@ -42,9 +43,19 @@ efm32_irq_hook_t timerCbTable[TIMER_COUNT] 		= {RT_NULL};
 efm32_irq_hook_t rtcCbTable[RTC_COUNT] 			= {RT_NULL};
 efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
 efm32_irq_hook_t acmpCbTable[ACMP_COUNT] 		= {RT_NULL};
+#if defined(USART_PRESENT)
+ #if defined(UART_PRESENT)
 efm32_irq_hook_t usartCbTable[USART_COUNT * 2 + UART_COUNT * 2] = {RT_NULL};
+ #else
+efm32_irq_hook_t usartCbTable[USART_COUNT * 2]  = {RT_NULL};
+ #endif
+#endif
+#if defined(LEUART_PRESENT)
 efm32_irq_hook_t leuartCbTable[LEUART_COUNT]    = {RT_NULL};
+#endif
+#if defined(I2C_PRESENT)
 efm32_irq_hook_t iicCbTable[I2C_COUNT] 			= {RT_NULL};
+#endif
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -166,7 +177,7 @@ void SysTick_Handler(void)
  * @note
  *
  ******************************************************************************/
-void DMA_IRQHandler_All(unsigned int channel, bool primary, void *user)
+void DMA_IRQHandler_All(rt_uint32_t channel, rt_bool_t primary, void *user)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -378,6 +389,7 @@ void ACMP0_IRQHandler(void)
     rt_interrupt_leave();
 }
 
+#if defined(USART_PRESENT)
 /***************************************************************************//**
  * @brief
  * 	Common USART0 TX interrupt handler
@@ -430,7 +442,9 @@ void USART0_RX_IRQHandler(void)
 		}
 	}
 }
+#endif
 
+#if (defined(USART_PRESENT) && (USART_COUNT > 1))
 /***************************************************************************//**
  * @brief
  * 	Common USART1 TX interrupt handler
@@ -483,7 +497,9 @@ void USART1_RX_IRQHandler(void)
 		}
 	}
 }
+#endif
 
+#if (defined(USART_PRESENT) && (USART_COUNT > 2))
 /***************************************************************************//**
  * @brief
  * 	Common USART2 TX interrupt handler
@@ -536,7 +552,9 @@ void USART2_RX_IRQHandler(void)
 		}
 	}
 }
+#endif
 
+#if defined(UART_PRESENT)
 /***************************************************************************//**
  * @brief
  * 	Common UART0 TX interrupt handler
@@ -589,8 +607,9 @@ void UART0_RX_IRQHandler(void)
 		}
 	}
 }
+#endif
 
-#if defined(EFM32_GIANT_FAMILY)
+#if (defined(UART_PRESENT) && (UART_COUNT > 1))
 /***************************************************************************//**
  * @brief
  * 	Common UART1 TX interrupt handler
@@ -645,6 +664,7 @@ void UART1_RX_IRQHandler(void)
 }
 #endif
 
+#if defined(LEUART_PRESENT)
 /***************************************************************************//**
  * @brief
  * 	Common LEUART0 interrupt handler
@@ -666,7 +686,9 @@ void LEUART0_IRQHandler(void)
 		}
 	}
 }
+#endif
 
+#if (defined(LEUART_PRESENT) && (LEUART_COUNT > 1))
 /***************************************************************************//**
  * @brief
  * 	Common LEUART1 interrupt handler
@@ -688,7 +710,9 @@ void LEUART1_IRQHandler(void)
 		}
 	}
 }
+#endif
 
+#if defined(I2C_PRESENT)
 /***************************************************************************//**
  * @brief
  * 	Common IIC0 interrupt handler
@@ -714,6 +738,7 @@ void I2C0_IRQHandler(void)
 
 	I2C_IntClear(I2C0, I2C_IFC_ADDR | I2C_IFC_SSTOP);
 }
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -752,22 +777,24 @@ void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 		acmpCbTable[hook->unit].cbFunc = hook->cbFunc;
 		acmpCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-
+#if defined(USART_PRESENT)
 	case efm32_irq_type_usart:
 		usartCbTable[hook->unit].cbFunc = hook->cbFunc;
 		usartCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-
+#endif
+#if defined(LEUART_PRESENT)
     case efm32_irq_type_leuart:
         leuartCbTable[hook->unit].cbFunc = hook->cbFunc;
         leuartCbTable[hook->unit].userPtr = hook->userPtr;
         break;
-
+#endif
+#if defined(I2C_PRESENT)
 	case efm32_irq_type_iic:
 		iicCbTable[hook->unit].cbFunc = hook->cbFunc;
 		iicCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
-
+#endif
 	default:
 		break;
 	}

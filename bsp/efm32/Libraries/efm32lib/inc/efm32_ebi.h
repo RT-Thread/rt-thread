@@ -2,7 +2,7 @@
  * @file
  * @brief External Bus Iterface (EBI) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -68,15 +68,15 @@ extern "C" {
  *******************************   DEFINES   ***********************************
  ******************************************************************************/
 
-#define EBI_BANK0    (1 << 1) /**< EBI address bank 0 */
-#define EBI_BANK1    (1 << 2) /**< EBI address bank 1 */
-#define EBI_BANK2    (1 << 3) /**< EBI address bank 2 */
-#define EBI_BANK3    (1 << 4) /**< EBI address bank 3 */
+#define EBI_BANK0    (uint32_t)(1 << 1) /**< EBI address bank 0 */
+#define EBI_BANK1    (uint32_t)(1 << 2) /**< EBI address bank 1 */
+#define EBI_BANK2    (uint32_t)(1 << 3) /**< EBI address bank 2 */
+#define EBI_BANK3    (uint32_t)(1 << 4) /**< EBI address bank 3 */
 
-#define EBI_CS0      (1 << 1) /**< EBI chip select line 0 */
-#define EBI_CS1      (1 << 2) /**< EBI chip select line 1 */
-#define EBI_CS2      (1 << 3) /**< EBI chip select line 2 */
-#define EBI_CS3      (1 << 4) /**< EBI chip select line 3 */
+#define EBI_CS0      (uint32_t)(1 << 1) /**< EBI chip select line 0 */
+#define EBI_CS1      (uint32_t)(1 << 2) /**< EBI chip select line 1 */
+#define EBI_CS2      (uint32_t)(1 << 3) /**< EBI chip select line 2 */
+#define EBI_CS3      (uint32_t)(1 << 4) /**< EBI chip select line 3 */
 
 /*******************************************************************************
  ********************************   ENUMS   ************************************

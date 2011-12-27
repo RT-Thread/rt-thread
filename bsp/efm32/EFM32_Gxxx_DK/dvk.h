@@ -2,7 +2,7 @@
  * @file
  * @brief DVK Board Support, master header file
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,11 @@
 
 #ifndef __DVK_H
 #define __DVK_H
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -131,5 +136,6 @@ void DVK_disable(void);
 }
 #endif
 
+/** @} (end group BSP) */
 
 #endif

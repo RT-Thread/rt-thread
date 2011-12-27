@@ -2,7 +2,7 @@
  * @file
  * @brief Board Control register definitions
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,11 @@
 
 #ifndef __DVK_BCREGISTERS_H
 #define __DVK_BCREGISTERS_H
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 #include <stdint.h>
 
@@ -172,3 +177,5 @@
 #define BC_INTFLAG_AEM                       (1 << 3) /**< AEM interrupt triggered */
 
 #endif
+
+/** @} (end group BSP) */

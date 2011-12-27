@@ -2,7 +2,7 @@
  * @file
  * @brief DVK board support package, initialization
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,11 @@
 
 #include "efm32.h"
 #include "dvk.h"
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 /**************************************************************************//**
  * @brief  Initializes DVK, configures board control access
@@ -67,3 +72,5 @@ void DVK_disable(void)
   DVK_SPI_disable();
 #endif
 }
+
+/** @} (end group BSP) */

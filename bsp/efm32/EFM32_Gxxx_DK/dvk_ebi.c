@@ -4,7 +4,7 @@
  *        This implementation works for devices w/o LCD display on the
  *        MCU module, specifically the EFM32_G2xx_DK development board
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -33,6 +33,11 @@
 #include "efm32_gpio.h"
 #include "dvk.h"
 #include "dvk_bcregisters.h"
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 #if defined(EBI_PRESENT)
 /**************************************************************************//**
@@ -242,3 +247,5 @@ uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
   return *addr;
 }
 #endif
+
+/** @} (end group BSP) */

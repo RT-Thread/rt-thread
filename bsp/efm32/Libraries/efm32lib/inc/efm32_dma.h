@@ -2,7 +2,7 @@
  * @file
  * @brief Direct memory access (DMA) API for EFM32.
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -265,7 +265,6 @@ typedef struct
 #endif
 
 
-
 /** Configuration structure for alternate scatter-gather descriptor. */
 typedef struct
 {
@@ -330,8 +329,22 @@ typedef struct
   /**
    * Pointer to the controlblock in memory holding descriptors (channel
    * control data structures). This memory must be properly aligned
-   * according to requirements. Please refer to the reference manual,
-   * DMA chapter for details.
+   * according to requirements.
+   * 
+   * Alignment requirements are
+   *   a) 5 bits base requirement, bits [4:0]
+   *   b) Add the number of bits needed to represent the wanted number
+   *      of channels
+   *   c) Align structure with this number of bits set to zero
+   *  
+   * Examples: 4 channels, 5 + 2 (channels 0 to 3) = 7 bits
+   *           7 bit alignment, 64 byte address alignment
+   *           8 channels, 5 + 3 (channels 0 to 7) = 8 bits
+   *           8 bit alignment, 256 byte address alignment
+   *           12 channels, 5 + 4 (channels 0 to 11) = 9 bits
+   *           9 bit alignment, 512 byte address alignment
+   * 
+   * Please refer to the reference manual, DMA chapter for more details.
    *
    * It is possible to provide a smaller memory block, only covering
    * those channels actually used, if not all available channels are used.
@@ -379,6 +392,7 @@ void DMA_CfgDescr(unsigned int channel,
 #if defined(_EFM32_GIANT_FAMILY)
 void DMA_CfgLoop(unsigned int channel, DMA_CfgLoop_TypeDef *cfg);
 void DMA_CfgRect(unsigned int channel, DMA_CfgRect_TypeDef *cfg);
+
 /***************************************************************************//**
  * @brief
  *   Clear Loop configuration for channel
@@ -395,7 +409,7 @@ static __INLINE void DMA_ResetLoop(unsigned int channel)
     DMA->LOOP0 = _DMA_LOOP0_RESETVALUE;
     break;
   case 1:
-    DMA->LOOP0 = _DMA_LOOP1_RESETVALUE;
+    DMA->LOOP1 = _DMA_LOOP1_RESETVALUE;
     break;
   default:
     break;

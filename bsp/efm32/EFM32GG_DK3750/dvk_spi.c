@@ -2,7 +2,7 @@
  * @file
  * @brief EFM32GG_DK3750 board support package SPI API implementation
  * @author Energy Micro AS
- * @version 1.2.1
+ * @version 1.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -74,12 +74,11 @@ static void SPI_BC_Init(void)
   GPIO_PinModeSet(PORT_SPI_CS, PIN_SPI_CS, gpioModePushPull, 1);
 
   /* Configure to use SPI master with manual CS */
-  /* For now, configure SPI for worst case 32MHz clock in order to work for all */
+  /* For now, configure SPI for worst case 48MHz clock in order to work for all */
   /* configurations. */
   bcinit.refFreq  = 48000000;
   bcinit.baudrate = 7000000;
 
-  USART_Reset(USART_USED);
   /* Initialize USART */
   USART_InitSync(USART_USED, &bcinit);
 
@@ -93,6 +92,7 @@ static void SPI_BC_Init(void)
  *****************************************************************************/
 static void SPI_BC_Disable(void)
 {
+  /* Restore and disable USART */
   USART_Reset(USART_USED);
 
   GPIO_PinModeSet(PORT_SPI_TX, PIN_SPI_TX, gpioModeDisabled, 0);
@@ -155,12 +155,11 @@ static void SPI_BC_Write(uint8_t addr, uint16_t data)
 /**************************************************************************//**
  * @brief  Performs SPI read from FPGA register
  * @param  addr Address of register
- * @param  data Dummy data
  * @return 16-bit value of board controller register
  *****************************************************************************/
-static uint16_t SPI_BC_Read(uint8_t addr, uint16_t data)
+static uint16_t SPI_BC_Read(uint8_t addr)
 {
-  return SPI_BC_Access(addr, 1, data);
+  return SPI_BC_Access(addr, 1, 0);
 }
 
 
@@ -182,7 +181,6 @@ bool DVK_SPI_init(void)
   SPI_BC_Init();
   /* Read "board control Magic" register to verify SPI is up and running */
   /*  if not FPGA is configured to be in EBI mode  */
-
   bcMagic = DVK_SPI_readRegister(&BC_REGISTER->MAGIC);
   if (bcMagic != BC_MAGIC_VALUE)
   {
@@ -219,9 +217,10 @@ uint16_t DVK_SPI_readRegister(volatile uint16_t *addr)
     SPI_BC_Write(0x01, 0xFF & ((uint32_t) addr >> 16));         /*MSBs of address*/
     SPI_BC_Write(0x02, (0x0C000000 & (uint32_t) addr) >> 26);   /*Chip select*/
   }
-  /* Read twice */
-  data     = SPI_BC_Read(0x03, 0);
-  data     = SPI_BC_Read(0x03, 0);
+  /* Read twice; when register address has changed we need two SPI transfer
+   * to clock out valid data through board controller FIFOs */
+  data     = SPI_BC_Read(0x03);
+  data     = SPI_BC_Read(0x03);
   lastAddr = addr;
   return data;
 }

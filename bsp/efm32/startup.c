@@ -1,33 +1,34 @@
-/******************************************************************//**
- * @file 		interrupt.c
- * @brief 	This file is part of RT-Thread RTOS
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	Bernard, onelife
- * @version 	0.4 beta
- **********************************************************************
+/***************************************************************************//**
+ * @file    interrupt.c
+ * @brief   This file is part of RT-Thread RTOS
+ *  COPYRIGHT (C) 2011, RT-Thread Development Team
+ * @author  Bernard, onelife
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2006-08-31 	Bernard 		first implementation
- * 2010-12-29	onelife		Modify for EFM32
- *********************************************************************/
- 
-/******************************************************************//**
-* @addtogroup efm32
-* @{
-*********************************************************************/
+ * 2006-08-31   Bernard     first implementation
+ * 2010-12-29   onelife     Modify for EFM32
+ * 2011-12-20   onelife     Add RTGUI initialization routine
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/***************************************************************************//**
+ * @addtogroup efm32
+ * @{
+ ******************************************************************************/
+
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include <rtthread.h>
 
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
-/* External variables -----------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
@@ -36,136 +37,141 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
-/* Private variables ------------------------------------------------------------*/
-/* External function prototypes --------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* External function prototypes ----------------------------------------------*/
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 #ifdef  DEBUG
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- * 	Reports the name of the source file and the source line number where the assert error 
- * has occurred.
+ *  Reports the name of the source file and the source line number where the
+ *  assert error has occurred.
  *
  * @details
  *
  * @note
  *
  * @param[in] file
- * 	Pointer to the source file name
+ *  Pointer to the source file name
  *
  * @param[in] line
- * 	Assert error line source number
- *********************************************************************/
+ *  Assert error line source number
+ ******************************************************************************/
 void assert_failed(u8* file, u32 line)
 {
-	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
-	rt_kprintf("       file  %s\r\n", file);
-	rt_kprintf("       line  %d\r\n", line);
+    rt_kprintf("\n\r Wrong parameter value detected on\r\n");
+    rt_kprintf("       file  %s\r\n", file);
+    rt_kprintf("       line  %d\r\n", line);
 
-	while (1) ;
+    while (1) ;
 }
 #endif
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- * 	Startup RT-Thread 
+ *  Startup RT-Thread
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 void rtthread_startup(void)
 {
-	/* init board */
-	rt_hw_board_init();
+    /* init board */
+    rt_hw_board_init();
 
 #ifdef RT_USING_HEAP
-	#ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)EFM32_SRAM_END);
-	#elif __ICCARM__
+    #ifdef __CC_ARM
+    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)EFM32_SRAM_END);
+    #elif __ICCARM__
     rt_system_heap_init(__segment_end("HEAP"), (void*)EFM32_SRAM_END);
-	#else
-	/* init memory system */
-	rt_system_heap_init((void*)&__bss_end, (void*)EFM32_SRAM_END);
-	#endif
+    #else
+    /* init memory system */
+    rt_system_heap_init((void*)&__bss_end, (void*)EFM32_SRAM_END);
+    #endif
 #endif
 
-	/* enable interrupt */
-	rt_hw_interrupt_enable(0x0UL);
+    /* enable interrupt */
+    rt_hw_interrupt_enable(0x0UL);
 
-	/* init drivers */
-	rt_hw_driver_init();
+    /* init drivers */
+    rt_hw_driver_init();
 
-	/* show version */
-	rt_show_version();
-	
-	/* init tick */
-	rt_system_tick_init();
+    /* show version */
+    rt_show_version();
 
-	/* init kernel object */
-	rt_system_object_init();
+    /* init tick */
+    rt_system_tick_init();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init kernel object */
+    rt_system_object_init();
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init timer system */
+    rt_system_timer_init();
 
-	/* init all devices */
-	rt_device_init_all();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
+    /* init all devices */
+    rt_device_init_all();
+
+    /* init finsh */
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device(CONSOLE_DEVICE);
+    finsh_system_init();
+    finsh_set_device(CONSOLE_DEVICE);
+#endif
+
+    /* Initialize gui server */
+#ifdef RT_USING_RTGUI
+    rtgui_system_server_init();
 #endif
 
     /* init timer thread */
     rt_system_timer_thread_init();
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* init application */
-	rt_application_init();	
+    /* init application */
+    rt_application_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
- * 	Program entry point
+ *  Program entry point
  *
  * @details
  *
  * @note
  *
- *********************************************************************/
+ ******************************************************************************/
 int main(void)
 {
-	/* disable interrupt first */
-	rt_hw_interrupt_disable();
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
 
-	/* init system setting */
-	SystemInit();
+    /* init system setting */
+    SystemInit();
 
-	/* startup RT-Thread RTOS */
-	rtthread_startup();
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
 
-	return 0;
+    return 0;
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

@@ -1,4 +1,4 @@
-/* Vector table for efm32g
+/* Vector table for efm32tg
  *
  * Version: Sourcery G++ 4.4-180
  * Support: https://support.codesourcery.com/GNUToolchain/
@@ -16,7 +16,7 @@
  * they apply.
  *
  * Energy Micro release version
- * @version 2.3.0
+ * @version 2.3.2
  */
         .section ".cs3.interrupt_vector", "ax"
         .globl  __cs3_interrupt_vector_efm32g

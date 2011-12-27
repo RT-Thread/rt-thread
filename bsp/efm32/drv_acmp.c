@@ -1,40 +1,41 @@
-/******************************************************************//**
- * @file 		drv_acmp.c
- * @brief 	ACMP (analog comparator) driver of RT-Thread RTOS for EFM32
+/***************************************************************************//**
+ * @file    drv_acmp.c
+ * @brief   ACMP (analog comparator) driver of RT-Thread RTOS for EFM32
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+ * @author  onelife
+ * @version 0.4 beta
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2011-02-21	onelife		Initial creation for EFM32
- * 2011-06-17	onelife		Modify init and control function for efm32lib v2 upgrading
- *********************************************************************/
- 
-/******************************************************************//**
-* @addtogroup efm32
-* @{
-*********************************************************************/
+ * Date         Author      Notes
+ * 2011-02-21   onelife     Initial creation for EFM32
+ * 2011-06-17   onelife     Modify init and control function for efm32lib v2
+ *  upgrading
+ ******************************************************************************/
 
-/* Includes -------------------------------------------------------------------*/
+/***************************************************************************//**
+ * @addtogroup efm32
+ * @{
+ ******************************************************************************/
+
+/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "drv_acmp.h"
 
 #if (defined(RT_USING_ACMP0) || defined(RT_USING_ACMP1))
-/* Private typedef -------------------------------------------------------------*/
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 #ifdef RT_ACMP_DEBUG
 #define acmp_debug(format,args...) 			rt_kprintf(format, ##args)
 #else
 #define acmp_debug(format,args...)
 #endif
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 #ifdef RT_USING_ACMP0
 	static struct rt_device acmp0_device;
 #endif
@@ -43,11 +44,11 @@
 	static struct rt_device acmp1_device;
 #endif
 
-/* Private function prototypes ---------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
 ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq);
 
-/* Private functions ------------------------------------------------------------*/
-/******************************************************************//**
+/* Private functions ---------------------------------------------------------*/
+/***************************************************************************//**
  * @brief
  *   Initialize ACMP device
  *
@@ -60,7 +61,7 @@ ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq);
  *
  * @return
  *   Error code
- *********************************************************************/
+ ******************************************************************************/
  static rt_err_t rt_acmp_init(rt_device_t dev)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -75,29 +76,29 @@ ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq);
 	return RT_EOK;
 }
 
-/******************************************************************//**
-* @brief
-*	Configure ACMP device
-*
-* @details
-*
-* @note
-*
-* @param[in] dev
-*	Pointer to device descriptor
-*
-* @param[in] cmd
-*	ACMP control command
-*
-* @param[in] args
-*	Arguments
-*
-* @return
-*	Error code
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Configure ACMP device
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] dev
+ *	Pointer to device descriptor
+ *
+ * @param[in] cmd
+ *	ACMP control command
+ *
+ * @param[in] args
+ *	Arguments
+ *
+ * @return
+ *	Error code
+ ******************************************************************************/
 static rt_err_t rt_acmp_control(
-	rt_device_t 	dev, 
-	rt_uint8_t 		cmd, 
+	rt_device_t 	dev,
+	rt_uint8_t 		cmd,
 	void 			*args)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -129,7 +130,7 @@ static rt_err_t rt_acmp_control(
 			acmp_debug("ACMP: control -> init start\n");
 
 			/* Configure ACMPn */
-			if (control->init == RT_NULL) 
+			if (control->init == RT_NULL)
 			{
 				return -RT_ERROR;
 			}
@@ -138,9 +139,9 @@ static rt_err_t rt_acmp_control(
 			if (control->output != RT_NULL)
 			{
 				ACMP_GPIOSetup(
-					acmp->acmp_device, 
-					control->output->location, 
-					control->output->enable, 
+					acmp->acmp_device,
+					control->output->location,
+					control->output->enable,
 					control->output->invert);
 				int_en = true;
 			}
@@ -156,7 +157,7 @@ static rt_err_t rt_acmp_control(
 				/* Enable edge interrupt */
 				ACMP_IntEnable(acmp->acmp_device, ACMP_IEN_EDGE);
 				ACMP_IntClear(acmp->acmp_device, ACMP_IFC_EDGE);
-				
+
 				/* Enable ACMP0/1 interrupt vector in NVIC */
 				NVIC_ClearPendingIRQ(ACMP0_IRQn);
 				NVIC_SetPriority(ACMP0_IRQn, EFM32_IRQ_PRI_DEFAULT);
@@ -169,7 +170,7 @@ static rt_err_t rt_acmp_control(
 		*((rt_bool_t *)args) = \
 			(acmp->acmp_device->STATUS & ACMP_STATUS_ACMPOUT) ? true : false;
 		break;
-		
+
 		default:
 			return -RT_ERROR;
 	}
@@ -177,33 +178,33 @@ static rt_err_t rt_acmp_control(
 	return RT_EOK;
 }
 
-/******************************************************************//**
-* @brief
-*	Register ACMP device
-*
-* @details
-*
-* @note
-*
-* @param[in] device
-*	Pointer to device descriptor
-*
-* @param[in] name
-*	Device name
-*
-* @param[in] flag
-*	Configuration flags
-*
-* @param[in] acmp
-*	Pointer to ACMP device descriptor 
-*
-* @return
-*	Error code
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Register ACMP device
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] device
+ *	Pointer to device descriptor
+ *
+ * @param[in] name
+ *	Device name
+ *
+ * @param[in] flag
+ *	Configuration flags
+ *
+ * @param[in] acmp
+ *	Pointer to ACMP device descriptor
+ *
+ * @return
+ *	Error code
+ ******************************************************************************/
 rt_err_t rt_hw_acmp_register(
-	rt_device_t		device, 
-	const char		*name, 
-	rt_uint32_t		flag, 
+	rt_device_t		device,
+	const char		*name,
+	rt_uint32_t		flag,
 	struct efm32_acmp_device_t *acmp)
 {
 	RT_ASSERT(device != RT_NULL);
@@ -223,14 +224,14 @@ rt_err_t rt_hw_acmp_register(
 	return rt_device_register(device, name, flag);
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *	ACMP edge trigger interrupt handler
  *
  * @details
  *
  * @note
- *********************************************************************/
+ ******************************************************************************/
 void rt_hw_acmp_isr(rt_device_t dev)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -245,23 +246,23 @@ void rt_hw_acmp_isr(rt_device_t dev)
 	}
 }
 
-/******************************************************************//**
-* @brief
-*	Initialize the specified ACMP unit 
-*
-* @details
-*
-* @note
-*
-* @param[in] device
-*	Pointer to device descriptor
-*
-* @param[in] unitNumber
-*	Unit number
-*
-* @return
-*	Pointer to ACMP device  
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *	Initialize the specified ACMP unit
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] device
+ *	Pointer to device descriptor
+ *
+ * @param[in] unitNumber
+ *	Unit number
+ *
+ * @return
+ *	Pointer to ACMP device
+ ******************************************************************************/
 static struct efm32_acmp_device_t *rt_hw_acmp_unit_init(
 	rt_device_t device,
 	rt_uint8_t 	unitNumber)
@@ -291,7 +292,7 @@ static struct efm32_acmp_device_t *rt_hw_acmp_unit_init(
 			acmp->acmp_device	= ACMP0;
 			acmpClock 			= (CMU_Clock_TypeDef)cmuClock_ACMP0;
 			break;
-			
+
 		case 1:
 			acmp->acmp_device	= ACMP1;
 			acmpClock 			= (CMU_Clock_TypeDef)cmuClock_ACMP1;
@@ -325,15 +326,16 @@ static struct efm32_acmp_device_t *rt_hw_acmp_unit_init(
 	return RT_NULL;
 }
 
-/******************************************************************//**
-* @brief
-*	Initialize all ACMP module related hardware and register ACMP device to kernel
-*
-* @details
-*
-* @note
-*
-*********************************************************************/
+/***************************************************************************//**
+ * @brief
+ *  Initialize all ACMP module related hardware and register ACMP device to
+ *  kernel
+ *
+ * @details
+ *
+ * @note
+ *
+ ******************************************************************************/
 void rt_hw_acmp_init(void)
 {
 	struct efm32_acmp_device_t 	*acmp;
@@ -341,30 +343,30 @@ void rt_hw_acmp_init(void)
 #ifdef RT_USING_ACMP0
 	if ((acmp = rt_hw_acmp_unit_init(&acmp0_device, 0)) != RT_NULL)
 	{
-		rt_hw_acmp_register(&acmp0_device, RT_ACMP0_NAME, EFM32_NO_DATA, acmp);	
+		rt_hw_acmp_register(&acmp0_device, RT_ACMP0_NAME, EFM32_NO_DATA, acmp);
 	}
 #endif
 
 #ifdef RT_USING_ACMP1
 	if ((acmp = rt_hw_acmp_unit_init(&acmp1_device, 1)) != RT_NULL)
 	{
-		rt_hw_acmp_register(&acmp1_device, RT_ACMP1_NAME, EFM32_NO_DATA, acmp);	
+		rt_hw_acmp_register(&acmp1_device, RT_ACMP1_NAME, EFM32_NO_DATA, acmp);
 	}
 #endif
 
 }
 
-/******************************************************************//**
+/***************************************************************************//**
  * @brief
  *    Calculate the warm-up time value providing at least 10us
  *
- * @param[in] hfperFreq 
- *    Frequency in Hz of reference HFPER clock. Set to 0 to use currently defined HFPER clock 
- *    setting
+ * @param[in] hfperFreq
+ *  Frequency in Hz of reference HFPER clock. Set to 0 to use currently defined
+ *  HFPER clock setting
  *
  * @return
- *   Warm-up time  value to use for ACMP in order to achieve at least 10us
- *********************************************************************/
+ *  Warm-up time value to use for ACMP in order to achieve at least 10us
+ ******************************************************************************/
 ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq)
 {
 	if (!hfperFreq)
@@ -414,6 +416,6 @@ ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq)
 }
 
 #endif
-/******************************************************************//**
+/***************************************************************************//**
  * @}
-*********************************************************************/
+ ******************************************************************************/

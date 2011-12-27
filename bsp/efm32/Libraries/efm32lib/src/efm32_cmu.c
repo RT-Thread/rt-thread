@@ -2,7 +2,7 @@
  * @file
  * @brief Clock management unit (CMU) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
@@ -356,8 +356,9 @@ static uint32_t CMU_LFClkGet(unsigned int lfClkBranch)
 
   case _CMU_LFCLKSEL_LFA_HFCORECLKLEDIV2:
 #if defined (_EFM32_GIANT_FAMILY)
-    /* Giant Gecko can use a /4 divider (and must >32MHz) */
-    if((CMU->HFCORECLKDIV & _CMU_HFCORECLKDIV_HFCORECLKLEDIV_MASK) == CMU_HFCORECLKDIV_HFCORECLKLEDIV_DIV4)
+    /* Giant Gecko can use a /4 divider (and must if >32MHz) or HFLE is set */
+    if(((CMU->HFCORECLKDIV & _CMU_HFCORECLKDIV_HFCORECLKLEDIV_MASK) == CMU_HFCORECLKDIV_HFCORECLKLEDIV_DIV4)||
+       (CMU->CTRL & CMU_CTRL_HFLE))
     {
       ret = SystemCoreClockGet() / 4;
     }
@@ -1359,10 +1360,11 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
       select = CMU_CMD_HFCLKSEL_HFXO;
       osc    = cmuOsc_HFXO;
 #if defined(_EFM32_GIANT_FAMILY)
-      /* Adjust HFXO buffer current for high frequencies */
+      /* Adjust HFXO buffer current for high frequencies, enable HFLE for */
+      /* frequencies above 32MHz */
       if(SystemHFXOClockGet() > 32000000)
       {
-        CMU->CTRL = (CMU->CTRL |  _CMU_CTRL_HFXOBUFCUR_MASK);
+        CMU->CTRL |= (_CMU_CTRL_HFXOBUFCUR_MASK|CMU_CTRL_HFLE);
       }
 #endif
       break;
@@ -1449,7 +1451,7 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
       if(freq > CMU_MAX_FREQ_1WS)
       {
         /* Enable CMU HFLE */
-        CMU->CTRL |= CMU_CTRL_HFLE;
+        BITBAND_Peripheral(&(CMU->CTRL), _CMU_CTRL_HFLE_SHIFT, 1);
 
         /* Enable DIV4 factor for peripheral clock */
         CMU->HFCORECLKDIV = (CMU->HFCORECLKDIV & ~(_CMU_HFCORECLKDIV_HFCORECLKLEDIV_MASK))|

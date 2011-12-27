@@ -2,7 +2,7 @@
  * @file
  * @brief DVK Peripheral Board Control, prototypes and definitions
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -28,6 +28,11 @@
 
 #ifndef __DVK_BOARDCONTROL_H
 #define __DVK_BOARDCONTROL_H
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
 
 #include <stdint.h>
 #include "dvk_bcregisters.h"
@@ -78,4 +83,7 @@ void DVK_disableInterrupt(uint16_t flags);
 uint16_t DVK_getInterruptFlags(void);
 void DVK_clearInterruptFlags(uint16_t flags);
 
+/** @} (end group BSP) */
+
 #endif
+

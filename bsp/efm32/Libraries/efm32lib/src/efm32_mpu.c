@@ -2,7 +2,7 @@
  * @file
  * @brief Memory Protection Unit (MPU) Peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>

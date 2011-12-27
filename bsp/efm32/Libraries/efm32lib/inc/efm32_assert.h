@@ -2,7 +2,7 @@
  * @file
  * @brief EFM32 peripheral API "assert" implementation.
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *
  * @details
  * By default, EFM32 library assert usage is not included in order to reduce

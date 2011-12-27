@@ -21,6 +21,7 @@
  *  function
  * 2011-12-15   onelife     Add MicroSD enabling routine in driver
  *  initialization function
+ * 2011-12-20   onelife     Add LCD driver initialization routine
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -363,6 +364,11 @@ void rt_hw_driver_init(void)
     /* Enable SPI access to Ethernet */
 #if defined(EFM32_USING_ETHERNET)
     DVK_enablePeripheral(DVK_ETH);
+#endif
+
+    /* Initialize LCD */
+#if defined(EFM32_USING_LCD)
+    efm32_spiLcd_init();
 #endif
 }
 

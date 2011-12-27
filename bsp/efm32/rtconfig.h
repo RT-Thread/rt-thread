@@ -53,7 +53,8 @@
 #define EFM32_ACCEL_DEBUG
 #define EFM32_SFLASH_DEBUG
 //#define EFM32_SDCARD_DEBUG
-//#define EFM32_ETHERNET_DEBUG
+#define EFM32_ETHERNET_DEBUG
+#define EFM32_LCD_DEBUG
 
 
 /* Using Hook */
@@ -67,15 +68,15 @@
 
 /* SECTION: IPC */
 /* Using Semaphore*/
-#define RT_USING_SEMAPHORE                  /* Using by DFS and lwIP */
+#define RT_USING_SEMAPHORE                  /* Required by DFS and lwIP */
 /* Using Mutex */
-#define RT_USING_MUTEX                      /* Using by DFS */
+#define RT_USING_MUTEX                      /* Required by DFS */
 /* Using Event */
 //#define RT_USING_EVENT
 /* Using MailBox */
-#define RT_USING_MAILBOX                    /* Using by lwIP */
+#define RT_USING_MAILBOX                    /* Required by lwIP */
 /* Using Message Queue */
-//#define RT_USING_MESSAGEQUEUE
+#define RT_USING_MESSAGEQUEUE               /* Required by RTGUI */
 /* SECTION: Memory Management */
 /* Using Memory Pool Management*/
 //#define RT_USING_MEMPOOL
@@ -90,6 +91,7 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 
+/* SECTION: UART options */
 /* USART/UART/LEUART Device for Console */
 #if defined(EFM32_G8XX_STK)
 #define RT_USING_USART1             (0x1UL)
@@ -104,7 +106,7 @@
  #if defined(EFM32GG_DK3750_USING_LEUART1)
  #define RT_USING_LEUART1           (0x0UL)
  #define RT_LEUART1_NAME            "debug0"
- //#define RT_LEUART1_USING_DMA       (0x0UL)
+ #define RT_LEUART1_USING_DMA       (0x0UL)
  #else
  #define RT_USING_UART1              (0x2UL)
  #define RT_UART1_NAME               "debug"
@@ -113,33 +115,46 @@
 #endif
 
 /* SECTION: SPI options */
+#define EFM32_SPI_MASTER            (1 << 0)    /* Master mode */
+#define EFM32_SPI_AUTOCS            (1 << 1)    /* Auto chip select */
+#define EFM32_SPI_9BIT              (1 << 2)    /* 9-bit data */
+/*
+    0: Clock idle low, sample on rising edge
+    1: Clock idle low, sample on falling edge
+    2: Clock idle high, sample on falling edge
+    3: Clock idle high, sample on rising edge.
+*/
+#define EFM32_SPI_CLK_MODE(mode)    (mode << 3) /* clock mode */
+
 #if defined(EFM32_G8XX_STK)
 //#define RT_USING_USART0				(0x0UL)
-//#define RT_USART0_SYNC_MODE			(0x1UL) 		/* Master */
+//#define RT_USART0_SYNC_MODE			(EFM32_SPI_MASTER)
 //#define RT_USART0_NAME				"spi0"
 //#define RT_USART0_USING_DMA			(0x1UL)
 #elif defined(EFM32_GXXX_DK)
 #define RT_USING_USART0             (0x2UL)
-#define RT_USART0_SYNC_MODE         (0x1UL) 	/* Master */
+#define RT_USART0_SYNC_MODE         (EFM32_SPI_MASTER | EFM32_SPI_AUTOCS | \
+                                    EFM32_SPI_CLK_MODE(0))
 #define RT_USART0_NAME              "spi0"
 #define RT_USART0_USING_DMA         (0x1UL)
 
 #define RT_USING_USART2             (0x1UL)
-#define RT_USART2_SYNC_MODE         (0x1UL) 	/* Master */
+#define RT_USART2_SYNC_MODE         (EFM32_SPI_MASTER | EFM32_SPI_CLK_MODE(0))
 #define RT_USART2_NAME              "spi2"
 #define RT_USART2_USING_DMA         (0x2UL)
 
 #elif defined(EFM32GG_DK3750)
 #define RT_USING_USART0             (0x1UL)
-#define RT_USART0_SYNC_MODE         (0x1UL)     /* Master */
+#define RT_USART0_SYNC_MODE         (EFM32_SPI_MASTER | EFM32_SPI_AUTOCS | \
+                                    EFM32_SPI_CLK_MODE(0))
 #define RT_USART0_NAME              "spi0"
 #define RT_USART0_USING_DMA         (0x1UL)
 
 #define RT_USING_USART1             (0x1UL)
-#define RT_USART1_SYNC_MODE         (0x1UL)     /* Master */
+#define RT_USART1_SYNC_MODE         (EFM32_SPI_MASTER | EFM32_SPI_AUTOCS | \
+                                    EFM32_SPI_9BIT | EFM32_SPI_CLK_MODE(3))
 #define RT_USART1_NAME              "spi1"
 #define RT_USART1_USING_DMA         (0x2UL)
-
 #endif
 
 /* SECTION: IIC options */
@@ -188,6 +203,10 @@
  #endif
 #endif
 
+/* SECTION: Runtime library */
+// #define RT_USING_NOLIBC
+// #define RT_USING_NEWLIB
+
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
@@ -208,6 +227,7 @@
 //#define EFM32_USING_SFLASH 							/* SPI Flash */
 #define EFM32_USING_SPISD                       /* MicroSD card */
 //#define EFM32_USING_ETHERNET                    /* Ethernet controller */
+#define EFM32_USING_LCD                         /* TFT LCD */
 #endif
 
 #if defined(EFM32_USING_ACCEL)
@@ -239,17 +259,22 @@
 #endif
 
 /* SECTION: device filesystem */
-#if defined(EFM32_USING_SPISD)
+#if (defined(RT_USING_NEWLIB) || defined(EFM32_USING_SPISD))
 #define RT_USING_DFS
-#define RT_USING_DFS_ELMFAT
-#define DFS_ELMFAT_INTERFACE_EFM
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX         (2)
 /* the max number of opened files 		*/
 #define DFS_FD_MAX                  (4)
 /* the max number of cached sector 		*/
 #define DFS_CACHE_MAX_NUM           (4)
+#endif /* defined(RT_USING_NEWLIB) || defined(EFM32_USING_SPISD) */
+#if defined(EFM32_USING_SPISD)
+#define RT_USING_DFS_ELMFAT
+#define DFS_ELMFAT_INTERFACE_EFM
 #endif /* defined(EFM32_USING_SPISD) */
+#if defined(RT_USING_NEWLIB)
+#define RT_USING_DFS_DEVFS
+#endif /* defined(RT_USING_DFS_DEVFS) */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #if defined(EFM32_USING_ETHERNET)
@@ -260,6 +285,7 @@
 
 //#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
+//#define RT_LWIP_DHCP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -283,13 +309,11 @@
 #define RT_LWIP_IPADDR1				(168)
 #define RT_LWIP_IPADDR2				(1)
 #define RT_LWIP_IPADDR3				(118)
-
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0				(192)
 #define RT_LWIP_GWADDR1				(168)
 #define RT_LWIP_GWADDR2				(1)
 #define RT_LWIP_GWADDR3				(1)
-
 /* mask address of target*/
 #define RT_LWIP_MSKADDR0 			(255)
 #define RT_LWIP_MSKADDR1 			(255)
@@ -300,12 +324,43 @@
 #define RT_LWIP_TCPTHREAD_PRIORITY	(12)
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE	(4)
 #define RT_LWIP_TCPTHREAD_STACKSIZE	(1024)
-
 /* ethernet if thread options */
 #define RT_LWIP_ETHTHREAD_PRIORITY 	(15)
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE	(4)
 #define RT_LWIP_ETHTHREAD_STACKSIZE	(512)
 #endif /* defined(EFM32_USING_ETHERNET) */
+
+/* SECTION: RTGUI support */
+#if defined(EFM32_USING_LCD)
+#define LCD_USING_DEVICE_NAME 	    RT_USART1_NAME
+#define LCD_DEVICE_NAME             "spiLcd"
+/* using RTGUI support */
+#define RT_USING_RTGUI
+
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX              (16)
+/* support 16 weight font */
+#define RTGUI_USING_FONT16
+/* support 12 weight font */
+#define RTGUI_USING_FONT12
+/* support Chinese font */
+#define RTGUI_USING_FONTHZ
+/* use DFS as file interface */
+#define RTGUI_USING_DFS_FILERW
+/* use font file as Chinese font */
+/* #define RTGUI_USING_HZ_FILE */
+/* use Chinese bitmap font */
+#define RTGUI_USING_HZ_BMP
+/* use small size in RTGUI */
+/* #define RTGUI_USING_SMALL_SIZE */
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+/* RTGUI image options */
+#define RTGUI_IMAGE_XPM
+//#define RTGUI_IMAGE_JPEG
+//#define RTGUI_IMAGE_PNG
+#define RTGUI_IMAGE_BMP
+#endif /* defined(EFM32_USING_LCD) */
 
 /* Exported functions ------------------------------------------------------- */
 

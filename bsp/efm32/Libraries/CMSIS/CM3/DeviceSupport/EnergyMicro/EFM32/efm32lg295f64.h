@@ -3,7 +3,7 @@
  * @brief CMSIS Cortex-M3 Peripheral Access Layer Header File
  *        for EFM EFM32LG295F64
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

@@ -43,19 +43,21 @@ startup_scripts['Gecko'] = 'startup_efm32.s'
 startup_scripts['Giant Gecko'] = 'startup_efm32gg.s'
 
 # linker scripts for each EFM32 family
-#linker_scripts = {}
-#linker_scripts['TinyGecko'] = 'efm32tg.ld'
-#linker_scripts['Gecko'] = 'efm32g.ld'
-#linker_scripts['Giant Gecko'] = 'efm32gg.ld'
+linker_scripts = {}
+linker_scripts['TinyGecko'] = 'efm32tg.ld'
+linker_scripts['Gecko'] = 'efm32g.ld'
+linker_scripts['Giant Gecko'] = 'efm32gg.ld'
 
-# add startup script
-src = src + ['CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + startup_scripts[rtconfig.EFM32_FAMILY]]
+startup_scripts[rtconfig.EFM32_FAMILY] = 'CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + startup_scripts[rtconfig.EFM32_FAMILY]
+linker_scripts[rtconfig.EFM32_FAMILY] = cwd + '/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + linker_scripts[rtconfig.EFM32_FAMILY]
+src = src + [startup_scripts[rtconfig.EFM32_FAMILY]]
 
 path = [cwd + '/efm32lib/inc',
     cwd + '/CMSIS/CM3/CoreSupport',
     cwd + '/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32']
 
 CPPDEFINES = [rtconfig.EFM32_TYPE]
+#group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES, LINKFLAGS = linker_scripts[rtconfig.EFM32_FAMILY])
 group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -12,6 +12,7 @@
  * @section Change Logs
  * Date			Author		Notes
  * 2011-12-09	onelife		Initial creation for EFM32
+ * 2011-12-27	onelife		Utilize "LEUART_PRESENT" and "LEUART_COUNT"
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -25,6 +26,9 @@
 #include "drv_leuart.h"
 
 #if (defined(RT_USING_LEUART0) || defined(RT_USING_LEUART1))
+ #if !defined(LEUART_PRESENT)
+ #error "LEUART module is not available"
+ #endif
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -35,18 +39,21 @@
 #endif
 
 /* Private variables ---------------------------------------------------------*/
-#ifdef RT_USING_LEUART0
-#if (RT_USING_LEUART0 >= EFM32_LEUART_LOCATION_COUNT)
-	#error "Wrong location number"
-#endif
+#if defined(RT_USING_LEUART0)
+ #if (RT_USING_LEUART0 >= EFM32_LEUART_LOCATION_COUNT)
+ 	#error "Wrong location number"
+ #endif
 	struct rt_device leuart0_device;
 	static struct rt_semaphore leuart0_lock;
 #endif
 
-#ifdef RT_USING_LEUART1
-#if (RT_USING_LEUART1 >= EFM32_LEUART_LOCATION_COUNT)
-	#error "Wrong location number"
-#endif
+#if defined(RT_USING_LEUART1)
+ #if (LEUART_COUNT <= 1)
+ #error "Wrong unit number"
+ #endif
+ #if (RT_USING_LEUART1 >= EFM32_LEUART_LOCATION_COUNT)
+ 	#error "Wrong location number"
+ #endif
 	struct rt_device leuart1_device;
 	static struct rt_semaphore leuart1_lock;
 #endif
@@ -157,10 +164,12 @@ static rt_err_t rt_leuart_open(rt_device_t dev, rt_uint16_t oflag)
 		case 0:
             rxIrq   = LEUART0_IRQn;
 			break;
+#if (LEUART_COUNT > 1)
 		case 1:
             rxIrq   = LEUART1_IRQn;
 			break;
-		}
+#endif
+        }
 		if (oflag != RT_DEVICE_OFLAG_WRONLY)
 		{
 			NVIC_ClearPendingIRQ(rxIrq);
@@ -854,7 +863,7 @@ static struct efm32_leuart_device_t *rt_hw_leuart_unit_init(
 			port_rx                 = AF_LEUART0_RX_PORT(location);
 			pin_rx                  = AF_LEUART0_RX_PIN(location);
 			break;
-
+#if (LEUART_COUNT > 1)
 		case 1:
 			leuart->leuart_device    = LEUART1;
 			leuartClock             = (CMU_Clock_TypeDef)cmuClock_LEUART1;
@@ -864,7 +873,7 @@ static struct efm32_leuart_device_t *rt_hw_leuart_unit_init(
 			port_rx                 = AF_LEUART1_RX_PORT(location);
 			pin_rx                  = AF_LEUART1_RX_PIN(location);
 			break;
-
+#endif
 		default:
 			break;
 		}
@@ -1025,7 +1034,7 @@ void rt_hw_leuart_init(void)
         }
 #endif
 
-#ifdef RT_USING_LEUART1
+#if ((LEUART_COUNT > 1) && defined(RT_USING_LEUART1))
         config = 0;
         flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 

@@ -22,6 +22,8 @@ elif EFM32_BOARD == 'EFM32_GXXX_DK':
 elif EFM32_BOARD == 'EFM32GG_DK3750':
     EFM32_FAMILY = 'Giant Gecko'
     EFM32_TYPE = 'EFM32GG990F1024'
+    EFM32_LCD =  'Mapped'
+#    EFM32_LCD =  'Direct'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -36,7 +38,6 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
-    #CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -T'

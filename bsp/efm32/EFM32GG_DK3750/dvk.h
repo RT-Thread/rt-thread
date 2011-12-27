@@ -2,7 +2,7 @@
  * @file
  * @brief EFM32GG_DK3750 board support package API
  * @author Energy Micro AS
- * @version 1.2.1
+ * @version 1.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

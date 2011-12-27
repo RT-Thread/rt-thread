@@ -2,7 +2,7 @@
  * @file
  * @brief API for enabling SWO or ETM trace on DK3750 board
  * @author Energy Micro AS
- * @version 1.2.1
+ * @version 1.2.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

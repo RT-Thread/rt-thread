@@ -20,6 +20,7 @@
  * 2011-12-09   onelife     Add LEUART module support
  * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
  *  function
+ * 2011-12-20   onelife     Move SPI Auto-CS setting to "rtconfig.h"
  ******************************************************************************/
 #ifndef __BOARD_H__
 #define __BOARD_H__
@@ -72,7 +73,6 @@ extern volatile rt_uint32_t rt_system_status;
 
 /* SECTION: SPI Flash */
 #if defined(EFM32_USING_SFLASH)
-#define USART_0_AUTOCS 				(0)
 #define SFLASH_CS_PORT 				(gpioPortC)
 #define SFLASH_CS_PIN 				(8)
 #endif
@@ -80,11 +80,9 @@ extern volatile rt_uint32_t rt_system_status;
 /* SECTION: Micro SD */
 #if defined(EFM32_USING_SPISD)
  #if defined(EFM32_GXXX_DK)
- #define USART_0_AUTOCS             (1)
  #define SD_CS_PORT                 (gpioPortC)
  #define SD_CS_PIN                  (8)
  #elif defined(EFM32GG_DK3750)
- #define USART_0_AUTOCS             (1)
  #define SD_CS_PORT                 (gpioPortE)
  #define SD_CS_PIN                  (4)
  #endif
@@ -93,13 +91,19 @@ extern volatile rt_uint32_t rt_system_status;
 /* SECTION: Ethernet */
 #if defined(EFM32_USING_ETHERNET)
  #if defined(EFM32_GXXX_DK)
- #define USART_2_AUTOCS             (0)
  #define ETH_CS_PORT                (gpioPortB)
  #define ETH_CS_PIN                 (6)
  #elif defined(EFM32GG_DK3750)
- #define USART_1_AUTOCS             (0)
  #define ETH_CS_PORT                (gpioPortD)
  #define ETH_CS_PIN                 (3)
+ #endif
+#endif
+
+/* SECTION: LCD */
+#if defined(EFM32_USING_LCD)
+ #if defined(EFM32GG_DK3750)
+ #define LCD_CS_PORT                 (gpioPortD)
+ #define LCD_CS_PIN                  (3)
  #endif
 #endif
 
@@ -125,11 +129,11 @@ extern volatile rt_uint32_t rt_system_status;
 #define USART_RX_BUFFER_SIZE		(64)
 #define LEUART_RX_BUFFER_SIZE		(64)
 /* Location count (start from 0) */
-#if defined(EFM32_GXXX_DK)
+#if defined(_EFM32_GECKO_FAMILY)
 #define EFM32_USART_LOCATION_COUNT  (3)
 #define EFM32_UART_LOCATION_COUNT   (4)
 #define EFM32_LEUART_LOCATION_COUNT (3)
-#elif defined(EFM32GG_DK3750)
+#elif defined(_EFM32_GIANT_FAMILY)
 #define EFM32_USART_LOCATION_COUNT  (6)
 #define EFM32_UART_LOCATION_COUNT   (4)
 #define EFM32_LEUART_LOCATION_COUNT (5)
@@ -142,25 +146,11 @@ extern volatile rt_uint32_t rt_system_status;
 /* Max SPI clock: HFPERCLK/2 for master, HFPERCLK/8 for slave */
 #define SPI_BAUDRATE				(4000000)
 
-#ifndef USART_0_AUTOCS
-#define USART_0_AUTOCS 				(0)
-#endif
-#ifndef USART_1_AUTOCS
-#define USART_1_AUTOCS 				(0)
-#endif
-#ifndef USART_2_AUTOCS
-#define USART_2_AUTOCS 				(0)
-#endif
-/* Auto Slave Select */
-#define SPI_AUTOCS_ENABLE 			((USART_2_AUTOCS << 2) | \
-									(USART_1_AUTOCS << 1) | \
-									(USART_0_AUTOCS << 0))
-
 /* SECTION: I2C */
 #define IIC_RX_BUFFER_SIZE			(32)
-#if defined(EFM32_GXXX_DK)
+#if defined(_EFM32_GECKO_FAMILY)
 #define EFM32_IIC_LOCATION_COUNT    (4)
-#elif defined(EFM32GG_DK3750)
+#elif defined(_EFM32_GIANT_FAMILY)
 #define EFM32_IIC_LOCATION_COUNT    (7)
 #endif
 

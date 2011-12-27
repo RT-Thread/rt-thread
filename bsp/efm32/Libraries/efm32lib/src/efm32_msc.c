@@ -2,7 +2,7 @@
  * @file
  * @brief Flash controller (MSC) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -26,6 +26,9 @@
  *
  ******************************************************************************/
 #include "efm32_msc.h"
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+#include "efm32_cmu.h"
+#endif
 #include "efm32_assert.h"
 
 /***************************************************************************//**
@@ -46,15 +49,51 @@
 /***************************************************************************//**
  * @brief
  *   Enables the flash controller for writing.
+ * @note
+ *   IMPORTANT: This function must be called before flash operations when 
+ *   AUXHFRCO clock has been changed from default 14MHz band.
  ******************************************************************************/
 void MSC_Init(void)
 {
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  uint32_t freq, cycles;
+#endif
   /* Enable writing to the MSC */
   MSC->WRITECTRL |= MSC_WRITECTRL_WREN;
   /* Unlock the MSC */
   MSC->LOCK = MSC_UNLOCK_CODE;
   /* Disable writing to the MSC */
   MSC->WRITECTRL &= ~MSC_WRITECTRL_WREN;
+
+#if defined (_EFM32_TINY_FAMILY) || defined(_EFM32_GIANT_FAMILY)
+  /* Configure MSC->TIMEBASE according to selected frequency */
+  freq = CMU_ClockFreqGet(cmuClock_AUX);
+
+  if( freq > 7000000)
+  {
+    /* Calculate number of clock cycles for 1us as base period */
+    freq = (freq * 11) / 10;
+    cycles = (freq / 1000000) + 1;
+
+    /* Configure clock cycles for flash timing */
+    MSC->TIMEBASE = (MSC->TIMEBASE & ~(_MSC_TIMEBASE_BASE_MASK|
+                                       _MSC_TIMEBASE_PERIOD_MASK))|
+                     MSC_TIMEBASE_PERIOD_1US|
+                     (cycles << _MSC_TIMEBASE_BASE_SHIFT);
+  }
+  else
+  {
+    /* Calculate number of clock cycles for 5us as base period */
+    freq = (freq * 5 * 11) / 10;
+    cycles = (freq / 1000000) + 1;
+
+    /* Configure clock cycles for flash timing */
+    MSC->TIMEBASE = (MSC->TIMEBASE & ~(_MSC_TIMEBASE_BASE_MASK|
+                                       _MSC_TIMEBASE_PERIOD_MASK))|
+                     MSC_TIMEBASE_PERIOD_5US|
+                     (cycles << _MSC_TIMEBASE_BASE_SHIFT);
+  }
+#endif
 }
 
 /***************************************************************************//**
@@ -96,6 +135,13 @@ void MSC_Deinit(void)
 #ifdef __CC_ARM  /* MDK-ARM compiler */
 #pragma arm section code="ram_code"
 #endif /* __CC_ARM */
+#if defined( __ICCARM__ )
+/* Suppress warnings originating from use of EFM_ASSERT():              */
+/* "Call to a non __ramfunc function from within a __ramfunc function"  */
+/* "Possible rom access from within a __ramfunc function"               */
+#pragma diag_suppress=Ta022
+#pragma diag_suppress=Ta023
+#endif
 msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress)
 {
   int timeOut = MSC_PROGRAM_TIMEOUT;
@@ -146,6 +192,10 @@ msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress)
   MSC->WRITECTRL &= ~MSC_WRITECTRL_WREN;
   return mscReturnOk;
 }
+#if defined( __ICCARM__ )
+#pragma diag_default=Ta022
+#pragma diag_default=Ta023
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -178,6 +228,13 @@ msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress)
 #ifdef __CC_ARM  /* MDK-ARM compiler */
 #pragma arm section code="ram_code"
 #endif /* __CC_ARM */
+#if defined( __ICCARM__ )
+/* Suppress warnings originating from use of EFM_ASSERT():              */
+/* "Call to a non __ramfunc function from within a __ramfunc function"  */
+/* "Possible rom access from within a __ramfunc function"               */
+#pragma diag_suppress=Ta022
+#pragma diag_suppress=Ta023
+#endif
 msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes)
 {
   int timeOut;
@@ -219,7 +276,7 @@ msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numByt
     }
 
     /* Wait for the MSC to be ready for a new data word */
-    /* Due to the timing of this function, the MSC should allready by ready */
+    /* Due to the timing of this function, the MSC should already by ready */
     timeOut = MSC_PROGRAM_TIMEOUT;
     while (((MSC->STATUS & MSC_STATUS_WDATAREADY) == 0) && (timeOut != 0))
     {
@@ -259,6 +316,54 @@ msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numByt
   MSC->WRITECTRL &= ~MSC_WRITECTRL_WREN;
   return mscReturnOk;
 }
+#if defined( __ICCARM__ )
+#pragma diag_default=Ta022
+#pragma diag_default=Ta023
+#endif
+
+
+#if defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Erase entire flash in one operation
+ * @note
+ *   This command will erase the entire contents of the device.
+ *   Use with care, both a debug session and all contents of the flash will be
+ *   lost. The lock bit, MLW will prevent this operation from executing and
+ *   might prevent successful mass erase.
+ ******************************************************************************/
+#ifdef __CC_ARM  /* MDK-ARM compiler */
+#pragma arm section code="ram_code"
+#endif /* __CC_ARM */
+msc_Return_TypeDef MSC_MassErase(void)
+{
+  /* Enable writing to the MSC */
+  MSC->WRITECTRL |= MSC_WRITECTRL_WREN;
+
+  /* Unlock device mass erase */
+  MSC->MASSLOCK = MSC_MASSLOCK_LOCKKEY_UNLOCK;
+
+  /* Erase first 512K block */
+  MSC->WRITECMD = MSC_WRITECMD_ERASEMAIN0;
+
+  /* Waiting for erase to complete */
+  while ((MSC->STATUS & MSC_STATUS_BUSY)){}
+
+#if FLASH_SIZE >= (512*1024)
+  /* Erase second 512K block */
+  MSC->WRITECMD = MSC_WRITECMD_ERASEMAIN1;
+
+  /* Waiting for erase to complete */
+  while ((MSC->STATUS & MSC_STATUS_BUSY)){}
+#endif
+
+  /* Restore mass erase lock */
+  MSC->MASSLOCK = MSC_MASSLOCK_LOCKKEY_LOCK;
+
+  /* This will only successfully return if calling function is also in SRAM */
+  return mscReturnOk;
+}
+#endif
 
 /** @} (end addtogroup MSC) */
 /** @} (end addtogroup EFM32_Library) */

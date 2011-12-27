@@ -2,7 +2,7 @@
  * @file
  * @brief Energy Management Unit (EMU) Peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -46,13 +46,13 @@
 #if (CMU_STATUS_AUXHFRCOENS != CMU_OSCENCMD_AUXHFRCOEN)
 #error Conflict in AUXHFRCOENS and AUXHFRCOEN bitpositions
 #endif
-#if (CMU_STATUS_HFXCOENS != CMU_OSCENCMD_HFXCOEN)
+#if (CMU_STATUS_HFXOENS != CMU_OSCENCMD_HFXOEN)
 #error Conflict in HFXOENS and HFXOEN bitpositions
 #endif
 #if (CMU_STATUS_LFRCOENS != CMU_OSCENCMD_LFRCOEN)
 #error Conflict in LFRCOENS and LFRCOEN bitpositions
 #endif
-#if (CMU_STATUS_LFXCOENS != CMU_OSCENCMD_LFXCOEN)
+#if (CMU_STATUS_LFXOENS != CMU_OSCENCMD_LFXOEN)
 #error Conflict in LFXOENS and LFXOEN bitpositions
 #endif
 
@@ -378,6 +378,121 @@ void EMU_UpdateOscConfig(void)
   /* Fetch current configuration */
   cmuStatus = (uint16_t)(CMU->STATUS);
 }
+
+
+#if defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Update EMU module with Energy Mode 4 configuration
+ *
+ * @param[in] em4init
+ *    Energy Mode 4 configuration structure
+ ******************************************************************************/
+void EMU_EM4Init(EMU_EM4Init_TypeDef *em4init)
+{
+  uint32_t em4conf = EMU->EM4CONF;
+
+  /* Clear fields that will be reconfigured */
+  em4conf &= ~(
+    _EMU_EM4CONF_LOCKCONF_MASK|
+    _EMU_EM4CONF_OSC_MASK|
+    _EMU_EM4CONF_BURTCWU_MASK|
+    _EMU_EM4CONF_VREGEN_MASK);
+  
+  /* Configure new settings */
+  em4conf |= (
+    (em4init->lockConfig << _EMU_EM4CONF_LOCKCONF_SHIFT)|
+    (em4init->osc)|
+    (em4init->buRtcWakeup << _EMU_EM4CONF_BURTCWU_SHIFT)|
+    (em4init->vreg << _EMU_EM4CONF_VREGEN_SHIFT));
+  
+  /* Apply configuration. Note that lock can be set after this stage. */
+  EMU->EM4CONF = em4conf;    
+}
+
+
+/***************************************************************************//**
+ * @brief
+ *   Configure BackUp Power Domain settings
+ *
+ * @note
+ *   stig note to self: Touches RMU->CTRL BUPD?
+ *
+ * @param[in] bupdInit
+ *   Backup power domain initialization structure
+ ******************************************************************************/
+void EMU_BUPDInit(EMU_BUPDInit_TypeDef *bupdInit)
+{
+  uint32_t reg;
+
+  EFM_ASSERT(bupdInit->inactiveThresRange < 4);
+  EFM_ASSERT(bupdInit->inactiveThreshold < 4);
+  EFM_ASSERT(bupdInit->activeThresRange < 4);
+  EFM_ASSERT(bupdInit->activeThreshold < 4);
+
+  /* Set power connection configuration */
+  reg = EMU->PWRCONF & ~(
+    _EMU_PWRCONF_PWRRES_MASK|
+    _EMU_PWRCONF_VOUTSTRONG_MASK|
+    _EMU_PWRCONF_VOUTMED_MASK|
+    _EMU_PWRCONF_VOUTWEAK_MASK);
+  
+  reg |= (bupdInit->resistor|
+         (bupdInit->voutStrong << _EMU_PWRCONF_VOUTSTRONG_SHIFT)|
+         (bupdInit->voutMed    << _EMU_PWRCONF_VOUTMED_SHIFT)|
+         (bupdInit->voutWeak   << _EMU_PWRCONF_VOUTWEAK_SHIFT)); 
+  
+  EMU->PWRCONF = reg;
+
+  /* Set backup domain inactive mode configuration */ 
+  reg = EMU->BUINACT & ~(
+    _EMU_BUINACT_PWRCON_MASK|
+    _EMU_BUINACT_BUENRANGE_MASK|
+    _EMU_BUINACT_BUENTHRES_MASK);
+
+  reg |= (bupdInit->inactivePower|
+         (bupdInit->inactiveThresRange << _EMU_BUINACT_BUENRANGE_SHIFT)|
+         (bupdInit->inactiveThreshold  << _EMU_BUINACT_BUENTHRES_SHIFT));
+
+  EMU->BUINACT = reg;
+
+  /* Set backup domain active mode configuration */
+  reg = EMU->BUACT & ~(
+    _EMU_BUACT_PWRCON_MASK|
+    _EMU_BUACT_BUEXRANGE_MASK|
+    _EMU_BUACT_BUEXTHRES_MASK);
+
+  reg |= (bupdInit->activePower|
+         (bupdInit->activeThresRange << _EMU_BUACT_BUEXRANGE_SHIFT)|
+         (bupdInit->activeThreshold  << _EMU_BUACT_BUEXTHRES_SHIFT));
+
+  EMU->BUACT = reg;
+
+  /* Set power control configuration */
+  reg = EMU->BUCTRL & ~(
+    _EMU_BUCTRL_PROBE_MASK|
+    _EMU_BUCTRL_BODCAL_MASK|
+    _EMU_BUCTRL_STATEN_MASK|
+    _EMU_BUCTRL_EN_MASK);
+             
+  /* Note use of ->enable to both enable BUPD, use BU_VIN pin input and 
+     release reset */
+  reg |= (bupdInit->probe|
+         (bupdInit->bodCal          << _EMU_BUCTRL_BODCAL_SHIFT)|
+         (bupdInit->statusPinEnable << _EMU_BUCTRL_STATEN_SHIFT)|
+         (bupdInit->enable          << _EMU_BUCTRL_EN_SHIFT));
+  
+  /* Enable configuration */
+  EMU->BUCTRL = reg;
+
+  /* If enable is true, enable BU_VIN input power pin, if not disable it  */
+  EMU_BUPinEnable(bupdInit->enable);
+
+  /* If enable is true, release BU reset, if not keep reset asserted */
+  BITBAND_Peripheral(&(RMU->CTRL), _RMU_CTRL_BURSTEN_SHIFT, !bupdInit->enable);
+}
+
+#endif
 
 
 /** @} (end addtogroup EMU) */

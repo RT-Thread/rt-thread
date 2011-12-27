@@ -3,7 +3,7 @@
  * @brief Universal synchronous/asynchronous receiver/transmitter (USART/UART)
  *   peripheral module peripheral API for EFM32.
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -186,7 +186,7 @@ void USART_BaudrateAsyncSet(USART_TypeDef *usart,
   }
 
   /* Calculate and set CLKDIV with fractional bits */
-  clkdiv  = 4 * refFreq;
+  clkdiv  = 4 * refFreq + (oversample * baudrate) / 2;
   clkdiv /= (oversample * baudrate);
   clkdiv -= 4;
   clkdiv *= 64;
@@ -451,7 +451,7 @@ void USART_BaudrateSyncSet(USART_TypeDef *usart, uint32_t refFreq, uint32_t baud
   /* up (and thus reducing baudrate, not increasing baudrate above */
   /* specified value). */
   clkdiv       += 0xc0;
-  clkdiv       &= ~0xff;
+  clkdiv       &= 0xffffff00;
   clkdiv       &= _USART_CLKDIV_DIV_MASK;
   usart->CLKDIV = clkdiv;
 }

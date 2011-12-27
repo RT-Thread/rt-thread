@@ -21,6 +21,7 @@
  * 2011-08-04	onelife		Add a timer to prevent from forever waiting
  * 2011-11-29	onelife		Modify init function for EFM32 library v2.2.2
  *  upgrading
+ * 2011-12-27	onelife		Utilize "I2C_PRESENT" and "I2C_COUNT"
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -34,6 +35,9 @@
 #include "drv_iic.h"
 
 #if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
+ #if !defined(I2C_PRESENT)
+ #error "IIC module is not available"
+ #endif
 /* Private typedef -----------------------------------------------------------*/
 struct efm32_iic_block
 {
@@ -59,6 +63,9 @@ static struct efm32_iic_block 	iic0;
 #endif
 
 #ifdef RT_USING_IIC1
+ #if (I2C_COUNT <= 1)
+ #error "Wrong unit number"
+ #endif
  #if (RT_USING_IIC1 > EFM32_IIC_LOCATION_COUNT)
  #error "Wrong location number"
  #endif
@@ -241,18 +248,18 @@ static rt_size_t rt_iic_read (
 
 		if (ret != i2cTransferDone)
 		{
-			iic_debug("IIC read error: %x\n", ret);
-			iic_debug("IIC read address: %x\n", seq.addr);
-			iic_debug("IIC read data0: %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
-			iic_debug("IIC read len0: %x\n", seq.buf[0].len);
-			iic_debug("IIC read data1: %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
-			iic_debug("IIC read len1: %x\n", seq.buf[1].len);
+			iic_debug("IIC: read error %x\n", ret);
+			iic_debug("IIC: read address %x\n", seq.addr);
+			iic_debug("IIC: read data0 %x -> %x\n", seq.buf[0].data, *seq.buf[0].data);
+			iic_debug("IIC: read len0 %x\n", seq.buf[0].len);
+			iic_debug("IIC: read data1 %x -> %x\n", seq.buf[1].data, *seq.buf[1].data);
+			iic_debug("IIC: read len1 %x\n", seq.buf[1].len);
 			err_code = (rt_err_t)ret;
 		}
 		else
 		{
 			read_size = size;
-			iic_debug("IIC read size: %d\n", read_size);
+			iic_debug("IIC: read size %d\n", read_size);
 		}
 	}
 	else
@@ -300,7 +307,7 @@ static rt_size_t rt_iic_read (
 		}
 
 		read_size = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-		iic_debug("IIC slave read size: %d\n", read_size);
+		iic_debug("IIC: slave read size %d\n", read_size);
 	}
 
 	/* Unlock device */
@@ -485,7 +492,7 @@ static rt_err_t rt_iic_control (
 					iic->rx_buffer = rt_malloc(sizeof(struct efm32_iic_int_mode_t));
 					if (iic->rx_buffer == RT_NULL)
 					{
-						iic_debug("no memory for IIC RX structure\n");
+						iic_debug("IIC err: no MEM for IIC RX structure\n");
 						return -RT_ENOMEM;
 					}
 
@@ -493,7 +500,7 @@ static rt_err_t rt_iic_control (
 					if ((iic->rx_buffer->data_ptr = \
 						rt_malloc(IIC_RX_BUFFER_SIZE)) == RT_NULL)
 					{
-						iic_debug("no memory for IIC RX buffer\n");
+						iic_debug("IIC err: no MEM for IIC RX buffer\n");
 						rt_free(iic->rx_buffer);
 						return -RT_ENOMEM;
 					}
@@ -513,15 +520,13 @@ static rt_err_t rt_iic_control (
 				I2C_IntClear(iic->iic_device, _I2C_IFC_MASK);
 
 				/* Enable I2Cn interrupt vector in NVIC */
-#ifdef RT_USING_IIC0
 				if (dev == &iic0.device)
 				{
 					NVIC_ClearPendingIRQ(I2C0_IRQn);
 					NVIC_SetPriority(I2C0_IRQn, EFM32_IRQ_PRI_DEFAULT);
 					NVIC_EnableIRQ(I2C0_IRQn);
 				}
-#endif
-#ifdef RT_USING_IIC1
+#if (I2C_COUNT > 1)
 				if (dev == &iic1.device)
 				{
 					NVIC_ClearPendingIRQ(I2C1_IRQn);
@@ -718,7 +723,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		iic = rt_malloc(sizeof(struct efm32_iic_device_t));
 		if (iic == RT_NULL)
 		{
-			iic_debug("IIC: no memory for IIC%d driver\n", unitNumber);
+			iic_debug("IIC err: no MEM for IIC%d driver\n", unitNumber);
 			break;
 		}
 		iic->counter 		= 0;
@@ -743,7 +748,6 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 			port_sda			= AF_I2C0_SDA_PORT(location);
 			pin_sda 			= AF_I2C0_SDA_PIN(location);
 			break;
-
 #if (I2C_COUNT > 1)
 		case 1:
 			iic->iic_device	= I2C1;
@@ -754,7 +758,6 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 			pin_sda 			= AF_I2C1_SDA_PIN(location);
 			break;
 #endif
-
 		default:
 			break;
 		}
@@ -814,7 +817,7 @@ static struct efm32_iic_device_t *rt_hw_iic_unit_init(
 		rt_free(iic);
 	}
 
-	iic_debug("IIC: Unit %d init failed!\n", unitNumber);
+	iic_debug("IIC err: Unit %d init failed!\n", unitNumber);
 	return RT_NULL;
 }
 
@@ -834,7 +837,6 @@ void rt_hw_iic_init(void)
 	do
 	{
 		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
-#ifdef RT_USING_IIC0
 		/* Initialize and register iic0 */
 		if ((iic = rt_hw_iic_unit_init(&iic0, 0, RT_USING_IIC0)) != RT_NULL)
 		{
@@ -844,9 +846,8 @@ void rt_hw_iic_init(void)
 		{
 			break;
 		}
-#endif
 
-#ifdef RT_USING_IIC1
+#if (I2C_COUNT > 1)
 		/* Initialize and register iic1 */
 		if ((iic = rt_hw_iic_unit_init(&iic1, 1, RT_USING_IIC1)) != RT_NULL)
 		{

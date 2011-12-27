@@ -2,7 +2,7 @@
  * @file
  * @brief Flash controller module (MSC) peripheral API for EFM32
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  *******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -37,7 +37,6 @@ extern "C" {
 
 #include "efm32.h"
 #include "efm32_bitband.h"
-
 
 
 /***************************************************************************//**
@@ -81,6 +80,16 @@ typedef enum
   mscReturnUnaligned   = -4  /**< Unaligned access to flash. */
 } msc_Return_TypeDef;
 
+
+#if defined (_EFM32_GIANT_FAMILY)
+/** Strategy for prioritized bus access */
+typedef enum { 
+  mscBusStrategyCPU = MSC_READCTRL_BUSSTRATEGY_CPU, /**< Prioritize CPU bus accesses */
+  mscBusStrategyDMA = MSC_READCTRL_BUSSTRATEGY_DMA, /**< Prioritize DMA bus accesses */
+  mscBusStrategyDMAEM2 = MSC_READCTRL_BUSSTRATEGY_DMAEM2, /**< Prioritize DMAEM2 for bus accesses */
+  mscBusStrategyNone = MSC_READCTRL_BUSSTRATEGY_NONE /**< No unit has bus priority */
+} mscBusStrategy_Typedef;
+#endif
 
 /*******************************************************************************
  *************************   PROTOTYPES   **************************************
@@ -301,23 +310,50 @@ static __INLINE void MSC_EnableAutoCacheFlush(bool enable)
 }
 #endif
 
+
+#if defined(_EFM32_GIANT_FAMILY)
+/***************************************************************************//**
+ * @brief
+ *   Configure which unit should get priority on system bus.
+ * @param[in] mode
+ *   Unit to prioritize bus accesses for.
+ ******************************************************************************/
+static __INLINE void MSC_BusStrategy(mscBusStrategy_Typedef mode)
+{
+  MSC->READCTRL = (MSC->READCTRL & ~(_MSC_READCTRL_BUSSTRATEGY_MASK))|mode;
+}
+#endif
+
 #ifdef __CC_ARM  /* MDK-ARM compiler */
 msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes);
 msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress);
+#if defined (_EFM32_GIANT_FAMILY)
+msc_Return_TypeDef MSC_MassErase(void);
+#endif
 #endif /* __CC_ARM */
 
 #ifdef __ICCARM__ /* IAR compiler */
 __ramfunc msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes);
 __ramfunc msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress);
+#if defined (_EFM32_GIANT_FAMILY)
+__ramfunc msc_Return_TypeDef MSC_MassErase(void);
+#endif
 #endif /* __ICCARM__ */
 
 #ifdef __GNUC__  /* GCC based compilers */
 #ifdef __CROSSWORKS_ARM  /* Rowley Crossworks */
 msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes) __attribute__ ((section(".fast")));
 msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress) __attribute__ ((section(".fast")));
+#if defined (_EFM32_GIANT_FAMILY)
+msc_Return_TypeDef MSC_MassErase(void) __attribute__ ((section(".fast")));
+#endif
 #else /* Sourcery G++ */
 msc_Return_TypeDef MSC_WriteWord(uint32_t *address, void const *data, int numBytes) __attribute__ ((section(".ram")));
 msc_Return_TypeDef MSC_ErasePage(uint32_t *startAddress) __attribute__ ((section(".ram")));
+#if defined (_EFM32_GIANT_FAMILY)
+msc_Return_TypeDef MSC_MassErase(void) __attribute__ ((section(".ram")));
+#endif
+
 #endif /* __GNUC__ */
 #endif /* __CROSSWORKS_ARM */
 

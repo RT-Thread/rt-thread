@@ -9,7 +9,7 @@
  *          Add "#include "efm32.h" to your source files
  * @endverbatim
  * @author Energy Micro AS
- * @version 2.3.0
+ * @version 2.3.2
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>

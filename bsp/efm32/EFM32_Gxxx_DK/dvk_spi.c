@@ -4,7 +4,7 @@
  *        This implementation use the USART2 SPI interface to control board
  *        control registers. It works
  * @author Energy Micro AS
- * @version 1.7.2
+ * @version 1.7.3
  ******************************************************************************
  * @section License
  * <b>(C) Copyright 2010 Energy Micro AS, http://www.energymicro.com</b>
@@ -27,6 +27,12 @@
  * arising from your use of this Software.
  *
  *****************************************************************************/
+
+/***************************************************************************//**
+ * @addtogroup BSP
+ * @{
+ ******************************************************************************/
+
 #include <stdio.h>
 #include "efm32.h"
 #include "efm32_usart.h"
@@ -252,3 +258,5 @@ void DVK_SPI_writeRegister(volatile uint16_t *addr, uint16_t data)
   spiWrite(0x03, data);                                     /*Data*/
   lastAddr = addr;
 }
+
+/** @} (end group BSP) */

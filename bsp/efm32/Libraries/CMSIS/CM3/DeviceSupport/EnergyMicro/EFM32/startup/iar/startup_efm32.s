@@ -1,8 +1,8 @@
 ;/*************************************************************************//**
-; * @file:    startup_efm32.s
+; * @file:    
 ; * @purpose: CMSIS Cortex-M3 Core Device Startup File 
 ; *           for the Energy Micro 'EFM32G' Device Series 
-; * @version 2.3.0
+; * @version 2.3.2
 ; * @date:    January 2011
 ; *----------------------------------------------------------------------------
 ; *
@@ -43,7 +43,7 @@
         ;; Forward declaration of sections.
         SECTION CSTACK:DATA:NOROOT(3)
 
-        SECTION .intvec:CODE:NOROOT(2)
+        SECTION .intvec:CODE:NOROOT(8)
         
         EXTERN  __iar_program_start
         EXTERN  SystemInit
