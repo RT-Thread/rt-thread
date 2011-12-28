@@ -153,22 +153,22 @@ rt_err_t rt_device_init(rt_device_t dev)
 
 	/* get device init handler */
 	init = dev->init;
-    if (init != RT_NULL)
-    {
-        if(!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
-        {
-            result = init(dev);
-            if (result != RT_EOK)
-            {
-                rt_kprintf("To initialize device:%s failed. The error code is %d\n",
-                dev->parent.name, result);
-            }
-            else
-            {
-                dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
-            }
-        }
-    }
+	if (init != RT_NULL)
+	{
+		if(!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+		{
+			result = init(dev);
+			if (result != RT_EOK)
+			{
+				rt_kprintf("To initialize device:%s failed. The error code is %d\n",
+					dev->parent.name, result);
+			}
+			else
+			{
+				dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+			}
+		}
+	}
 	else result = -RT_ENOSYS;
 
 	return result;
