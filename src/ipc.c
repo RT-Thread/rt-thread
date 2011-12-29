@@ -34,6 +34,7 @@
  * 2010-04-20     Bernard      move memcpy outside interrupt disable in mq
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete and rt_mq_delete
  * 2010-11-10     Bernard      add IPC reset command implementation.
+ * 2011-12-18     Bernard      add more parameter checking in message queue
  */
 
 #include <rtthread.h>
@@ -1804,6 +1805,10 @@ rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 	register rt_ubase_t temp;
 	struct rt_mq_message *msg;
 
+	RT_ASSERT(mq != RT_NULL);
+	RT_ASSERT(buffer != RT_NULL);
+	RT_ASSERT(size != 0);
+
 	/* greater than one message size */
 	if (size > mq->msg_size)
 		return -RT_ERROR;
@@ -1885,6 +1890,10 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 	register rt_ubase_t temp;
 	struct rt_mq_message *msg;
 
+	RT_ASSERT(mq != RT_NULL);
+	RT_ASSERT(buffer != RT_NULL);
+	RT_ASSERT(size != 0);
+
 	/* greater than one message size */
 	if (size > mq->msg_size)
 		return -RT_ERROR;
@@ -1962,6 +1971,10 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout
 	register rt_ubase_t temp;
 	struct rt_mq_message *msg;
 	rt_uint32_t tick_delta;
+
+	RT_ASSERT(mq != RT_NULL);
+	RT_ASSERT(buffer != RT_NULL);
+	RT_ASSERT(size != 0);
 
 	/* initialize delta tick */
 	tick_delta = 0;
