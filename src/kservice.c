@@ -374,7 +374,7 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 			{
 				/* NUL pad the remaining n-1 bytes */
 				while (--n != 0)
-						*d++ = 0;
+					*d++ = 0;
 				break;
 			}
 		} while (--n != 0);
