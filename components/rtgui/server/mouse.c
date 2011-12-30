@@ -145,7 +145,10 @@ void rtgui_mouse_init()
 
 #ifdef RTGUI_USING_MOUSE_CURSOR
 	/* init cursor image */
-	_rtgui_cursor->cursor_image = rtgui_image_create_from_mem("xpm", cursor_xpm, sizeof(cursor_xpm));
+	_rtgui_cursor->cursor_image = rtgui_image_create_from_mem("xpm",
+															  (rt_uint8_t*)cursor_xpm,
+															  sizeof(cursor_xpm),
+															  RT_TRUE);
 	if (_rtgui_cursor->cursor_image == RT_NULL)
 	{
 		rtgui_free(_rtgui_cursor);
@@ -347,13 +350,15 @@ static void rtgui_cursor_save()
 
 static void rtgui_cursor_show()
 {
-	rt_uint16_t x, y;
+	// FIXME: the prototype of set_pixel is using int so we have to use int
+	// as well. Might be uniformed with others in the future
+	int x, y;
 	rtgui_color_t* ptr;
 	rtgui_rect_t rect;
-	void (*set_pixel) (rtgui_color_t *c, rt_uint16_t x, rt_uint16_t y);
+	void (*set_pixel) (rtgui_color_t *c, int x, int y);
 
 	ptr = (rtgui_color_t*) _rtgui_cursor->cursor_image->data;
-	set_pixel = rtgui_graphic_driver_get_default()->set_pixel;
+	set_pixel = rtgui_graphic_driver_get_default()->ops->set_pixel;
 
 	rtgui_mouse_get_cursor_rect(&rect);
 	rtgui_rect_moveto(&rect, _rtgui_cursor->cx, _rtgui_cursor->cy);
@@ -375,7 +380,7 @@ static void rtgui_cursor_show()
 	}
 
 	/* update rect */
-	rtgui_graphic_driver_get_default()->screen_update(&rect);
+	rtgui_graphic_driver_screen_update(rtgui_graphic_driver_get_default(), &rect);
 }
 #endif
 
