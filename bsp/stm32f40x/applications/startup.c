@@ -32,12 +32,14 @@ extern void finsh_set_device(const char* device);
 #endif
 
 #ifdef __CC_ARM
-//extern int Image$$RW_IRAM1$$ZI$$Limit;
-extern int Image$$ER_ZI$$ZI$$Limit;
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define STM32_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
+#define STM32_SRAM_BEGIN    (__segment_end("HEAP"))
 #else
 extern int __bss_end;
+#define STM32_SRAM_BEGIN    (&__bss_end)
 #endif
 
 /*******************************************************************************
@@ -78,16 +80,7 @@ void rtthread_startup(void)
 	/* init timer system */
 	rt_system_timer_init();
 
-#ifdef RT_USING_HEAP
-	#ifdef __CC_ARM
-		rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)STM32_SRAM_END);
-	#elif __ICCARM__
-	    rt_system_heap_init(__segment_end("HEAP"), (void*)STM32_SRAM_END);
-	#else
-		/* init memory system */
-		rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
-	#endif
-#endif
+    rt_system_heap_init((void*)STM32_SRAM_BEGIN, (void*)STM32_SRAM_END);
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
