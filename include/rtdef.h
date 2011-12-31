@@ -67,7 +67,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
 #define RT_FALSE                        0   /**< boolean fails */
 /*@}*/
 
-/* maximun value of base type */
+/* maximum value of base type */
 #define RT_UINT8_MAX                    0xff            /* Maxium number of UINT8   */
 #define RT_UINT16_MAX                   0xffff          /* Maxium number of UINT16  */
 #define RT_UINT32_MAX                   0xffffffff      /* Maxium number of UINT32  */
