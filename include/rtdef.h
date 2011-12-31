@@ -33,8 +33,9 @@ extern "C" {
 /**
  * RT-Thread version information
  */
-#define RT_VERSION                      4L      /**< major version number */
+#define RT_VERSION                      1L      /**< major version number */
 #define RT_SUBVERSION                   0L      /**< minor version number */
+#define RT_REVISION                   	0L      /**< revise version number */
 
 /**
  * RT-Thread basic data type definitions
