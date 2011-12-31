@@ -8,39 +8,9 @@ cwd = GetCurrentDir()
 # The set of source files associated with this SConscript file.
 src = Split("""
 CMSIS/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-CMSIS/ST/STM32F4xx/Source/Templates/arm/startup_stm32f4xx.s
-STM32F4xx_StdPeriph_Driver/src/misc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_adc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_can.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_crc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_cryp.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_cryp_aes.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_cryp_des.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_cryp_tdes.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_dac.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_dbgmcu.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_dcmi.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_dma.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_flash.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_fsmc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_hash.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_hash_md5.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_hash_sha1.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_iwdg.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_pwr.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rng.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rtc.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_sdio.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_spi.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_usart.c
-STM32F4xx_StdPeriph_Driver/src/stm32f4xx_wwdg.c
 """)
+
+src += Glob('STM32F4xx_StdPeriph_Driver/src/*.c')
 
 # starupt scripts for each STM32 kind
 # startup_scripts = {}
@@ -54,18 +24,20 @@ STM32F4xx_StdPeriph_Driver/src/stm32f4xx_wwdg.c
 # startup_scripts['STM32F10X_XL']	    = 'startup_stm32f10x_xl.s'
 
 #add for startup script 
-# if rtconfig.CROSS_TOOL == 'gcc':
-    # src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/' + startup_scripts[rtconfig.STM32_TYPE]]
-# elif rtconfig.CROSS_TOOL == 'keil':
-    # src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/arm/' + startup_scripts[rtconfig.STM32_TYPE]]
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['CMSIS/ST/STM32F4xx/Source/Templates/gcc_ride7/startup_stm32f4xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['CMSIS/ST/STM32F4xx/Source/Templates/arm/startup_stm32f4xx.s']
 # elif rtconfig.CROSS_TOOL == 'iar':
     # src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/iar/' + startup_scripts[rtconfig.STM32_TYPE]]
 
 path = [cwd + '/STM32F4xx_StdPeriph_Driver/inc', 
     cwd + '/CMSIS/ST/STM32F4xx/Include',
+    cwd + '/CMSIS/Include',
     cwd + '/CMSIS/CM3/DeviceSupport/ST/STM32F10x']
 
-CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+#CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
