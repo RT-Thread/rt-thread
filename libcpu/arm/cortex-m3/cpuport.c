@@ -1,31 +1,23 @@
-/******************************************************************//**
- * @file 		cpuport.c
- * @brief 	This file is part of RT-Thread RTOS
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	Bernard, onelife
- * @version 	0.4 beta
- **********************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
- * @section Change Logs
+/*
+ * File      : cpuport.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2011, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
  * Date			Author		Notes
  * 2009-01-05 	Bernard 	first version
  * 2011-02-14	onelife		Modify for EFM32
  * 2011-06-17	onelife		Merge all of the C source code into cpuport.c
- *********************************************************************/
- 
-/******************************************************************//**
-* @addtogroup cortex-m3
-* @{
-*********************************************************************/
+ */
 
-/* Includes -------------------------------------------------------------------*/
 #include <rtthread.h>
 
-/* Private typedef -------------------------------------------------------------*/
-struct stack_contex
+/* stack context */
+struct stack_context
 {
 	rt_uint32_t r0;
 	rt_uint32_t r1;
@@ -37,15 +29,13 @@ struct stack_contex
 	rt_uint32_t psr;
 };
 
-/* Private define --------------------------------------------------------------*/
-/* Private macro --------------------------------------------------------------*/
-/* Private variables ------------------------------------------------------------*/
-/* exception and interrupt handler table */
+/* flag in interrupt handling */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
-/* Private function prototypes ---------------------------------------------------*/
-/* Private functions ------------------------------------------------------------*/
+/**
+ * initializes stack of thread
+ */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	rt_uint8_t *stack_addr, void *texit)
 {
@@ -76,7 +66,10 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 
 extern void list_thread(void);
 extern rt_thread_t rt_current_thread;
-void rt_hw_hard_fault_exception(struct stack_contex* contex)
+/**
+ * fault exception handling
+ */
+void rt_hw_hard_fault_exception(struct stack_context* contex)
 {
 	rt_kprintf("psr: 0x%08x\n", contex->psr);
 	rt_kprintf(" pc: 0x%08x\n", contex->pc);
@@ -94,13 +87,12 @@ void rt_hw_hard_fault_exception(struct stack_contex* contex)
 	while (1);
 }
 
+/**
+ * shutdown CPU
+ */
 void rt_hw_cpu_shutdown()
 {
 	rt_kprintf("shutdown...\n");
 
 	RT_ASSERT(0);
 }
-
-/******************************************************************//**
- * @}
-*********************************************************************/

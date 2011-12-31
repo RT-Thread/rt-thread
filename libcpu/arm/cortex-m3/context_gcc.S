@@ -1,28 +1,20 @@
-/***************************************************************************//**
- * @file 	context_gcc.S
- * @brief 	Context switch functions
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	Bernard, onelife
- * @version 0.4 beta
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file 
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
- * Date			Author		Notes
- * 2009-10-11 	Bernard 	first version
- * 2010-12-29	onelife		Modify for EFM32
- * 2011-06-17	onelife		Merge all of the assembly source code into 
- *  context_gcc.S
- * 2011-07-12	onelife		Add interrupt context check function
- ******************************************************************************/
+/*
+ * File      : context_gcc.S
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date         Author    Notes
+ * 2009-10-11   Bernard   First version
+ * 2010-12-29	onelife	  Modify for EFM32
+ * 2011-06-17	onelife	  Merge all of the assembly source code into context_gcc.S
+ * 2011-07-12	onelife	  Add interrupt context check function
+ */
  
-/***************************************************************************//**
-* @addtogroup cortex-m3
-* @{
- ******************************************************************************/
-
 	.cpu 	cortex-m3
 	.fpu 	softvfp
 	.syntax	unified
@@ -34,7 +26,6 @@
 	
 	.equ	SHPR3, 0xE000ED20 				/* system priority register (3) */
 	.equ	PENDSV_PRI_LOWEST, 0x00FF0000 	/* PendSV priority value (lowest) */
-
 
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -193,7 +184,3 @@ HardFault_Handler:
 rt_hw_interrupt_check:
 	MRS     R0, IPSR
 	BX		LR
-
-/***************************************************************************//**
- * @}
- ******************************************************************************/
