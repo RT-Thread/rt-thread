@@ -30,16 +30,12 @@ extern "C" {
  */
 /*@{*/
 
-/**
- * RT-Thread version information
- */
+/* RT-Thread version information */
 #define RT_VERSION                      1L      /**< major version number */
 #define RT_SUBVERSION                   0L      /**< minor version number */
 #define RT_REVISION                   	0L      /**< revise version number */
 
-/**
- * RT-Thread basic data type definitions
- */
+/* RT-Thread basic data type definitions */
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
 typedef signed   long                   rt_int32_t;     /**< 32bit integer type */
@@ -60,9 +56,7 @@ typedef rt_ubase_t                      rt_size_t;      /**< Type for size numbe
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device            */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset            */
 
-/**
- * boolean type definitions
- */
+/* boolean type definitions */
 #define RT_TRUE                         1   /**< boolean true  */
 #define RT_FALSE                        0   /**< boolean fails */
 /*@}*/
@@ -140,7 +134,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
  * @addtogroup Error
  */
 /*@{*/
-/** RT-Thread error code definitions */
+/* RT-Thread error code definitions */
 #define RT_EOK                          0               /**< There is no error       */
 #define RT_ERROR                        1               /**< A generic error happens */
 #define RT_ETIMEOUT                     2               /**< Timed out               */
@@ -395,11 +389,11 @@ struct rt_thread
 	rt_ubase_t  init_tick;                              /**< thread's initialized tick              */
 	rt_ubase_t  remaining_tick;                         /**< remaining tick                         */
 
-	struct rt_timer thread_timer;                       /**< thread timer                           */
+	struct rt_timer thread_timer;                       /**< built-in thread timer                   */
 
 	void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit      */
 
-	rt_uint32_t user_data;                              /**< user data                              */
+	rt_uint32_t user_data;                              /**< private user data beyond this thread  */
 };
 /*@}*/
 
@@ -409,7 +403,7 @@ struct rt_thread
 /*@{*/
 
 /**
- * IPC flags and control command defitions
+ * IPC flags and control command definitions
  */
 #define RT_IPC_FLAG_FIFO                0x00            /**< FIFOed IPC. @ref IPC.                  */
 #define RT_IPC_FLAG_PRIO                0x01            /**< PRIOed IPC. @ref IPC.                  */
@@ -497,7 +491,7 @@ struct rt_mailbox
 	rt_uint16_t entry;                                  /**< index of messages in msg_pool          */
 	rt_uint16_t in_offset, out_offset;                  /**< in/output offset of the message buffer */
 
-	rt_list_t suspend_sender_thread;                    /**< sender thread suspended on this mb     */
+	rt_list_t suspend_sender_thread;                    /**< sender thread suspended on this mailbox */
 };
 typedef struct rt_mailbox *rt_mailbox_t;
 #endif
