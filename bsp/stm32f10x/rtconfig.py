@@ -3,6 +3,14 @@ ARCH='arm'
 CPU='cortex-m3'
 CROSS_TOOL='keil'
 
+#device options
+# STM32_TYPE = 
+# 'STM32F10X_LD','STM32F10X_LD_VL',
+# 'STM32F10X_MD','STM32F10X_MD_VL',
+# 'STM32F10X_HD','STM32F10X_HD_VL',
+# 'STM32F10X_XL','STM32F10X_CL'
+STM32_TYPE = 'STM32F10X_HD'
+
 # lcd panel options
 # 'FMT0371','ILI932X', 'SSD1289'
 RT_USING_LCD_TYPE = 'SSD1289'
@@ -21,7 +29,6 @@ elif CROSS_TOOL == 'iar':
 	IAR_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0'
 
 BUILD = 'debug'
-STM32_TYPE = 'STM32F10X_HD'
 
 if PLATFORM == 'gcc':
     # toolchains
