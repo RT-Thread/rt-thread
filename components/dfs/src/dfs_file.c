@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
+ * 2011-12-08     Bernard      Merges rename patch from iamcacy.
  */
 
 #include <dfs.h>
@@ -24,7 +25,7 @@
  * this function will open a file which specified by path with specified flags.
  *
  * @param fd the file descriptor pointer to return the corresponding result.
- * @param path the spaciefied file path.
+ * @param path the specified file path.
  * @param flags the flags for open operator.
  *
  * @return 0 on successful, -1 on failed.
@@ -70,7 +71,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 	else
 		fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
 	rt_free(fullpath);
-	dfs_log(DFS_DEBUG_INFO, ("actul file path: %s\n", fd->path));
+	dfs_log(DFS_DEBUG_INFO, ("Actual file path: %s\n", fd->path));
 
 	/* specific file system open routine */
 	if (fs->ops->open == RT_NULL)
@@ -181,9 +182,9 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, rt_size_t len)
 /**
  * this function will fetch directory entries from a directory descriptor.
  *
- * @param fd the directory decriptor.
+ * @param fd the directory descriptor.
  * @param dirp the dirent buffer to save result.
- * @param nbytes the aviable room in the buffer.
+ * @param nbytes the available room in the buffer.
  *
  * @return the read dirent, others on failed.
  */
@@ -388,7 +389,7 @@ int dfs_file_stat(const char *path, struct stat *buf)
 }
 
 /**
- * this funciton will rename an old path name to a new path name.
+ * this function will rename an old path name to a new path name.
  *
  * @param oldpath the old path name.
  * @param newpath the new path name.
@@ -438,7 +439,9 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
 			goto __exit;
 		}
 
-		result = oldfs->ops->rename(oldfs, oldfullpath, newfullpath);
+		/* use sub directory to rename in file system */
+		result = oldfs->ops->rename(oldfs, dfs_subdir(oldfs->path, oldfullpath),
+				dfs_subdir(newfs->path, newfullpath));
 		goto __exit;
 	}
 

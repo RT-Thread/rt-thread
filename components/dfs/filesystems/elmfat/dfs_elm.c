@@ -588,7 +588,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 	FILINFO file_info;
 	FRESULT result;
 
-
 #if _VOLUMES > 1
 	int vol;
 	char *drivers_fn;
@@ -679,7 +678,7 @@ int elm_init(void)
  */
 #include "diskio.h"
 
-/* Inidialize a Drive */
+/* Initialize a Drive */
 DSTATUS disk_initialize(BYTE drv)
 {
 	return 0;

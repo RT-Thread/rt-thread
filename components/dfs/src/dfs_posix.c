@@ -129,7 +129,7 @@ int read(int fd, void *buf, size_t len)
 }
 
 /**
- * this function is a POSIX compliant version, which will write pecified data buffer
+ * this function is a POSIX compliant version, which will write specified data buffer
  * length for an open file descriptor.
  *
  * @param fd the file descriptor

@@ -263,7 +263,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
  * @param directory the parent path
  * @param filename the file name
  *
- * @return the built full file path (absoluted path)
+ * @return the built full file path (absolute path)
  */
 char *dfs_normalize_path(const char *directory, const char *filename)
 {
