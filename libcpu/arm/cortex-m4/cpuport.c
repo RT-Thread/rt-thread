@@ -67,7 +67,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	unsigned long *stk;
 	struct stack_contex_fpu * stack_contex_fpu;
 
-	stk 	 = (unsigned long *)stack_addr;
+	stk 	 = (unsigned long *)stack_addr + sizeof(rt_uint32_t);
 
 	stk -= sizeof(struct stack_contex_fpu);
 	stack_contex_fpu = (struct stack_contex_fpu *)stk;
