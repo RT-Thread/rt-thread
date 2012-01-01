@@ -328,7 +328,8 @@ int dfs_uffs_rename(struct dfs_filesystem* fs, const char* oldpath, const char* 
 
 struct dfs_filesystem_operation _uffs =    
 {           
-	"uffs",           
+	"uffs",
+	DFS_FS_FLAG_DEFAULT,	
 	dfs_uffs_mount,           
 	dfs_uffs_unmount,           
 	dfs_uffs_mkfs,           

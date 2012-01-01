@@ -55,6 +55,7 @@ int dfs_skt_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count
 static const struct dfs_filesystem_operation _skt_fs = 
 {
 	"skt",
+	DFS_FS_FLAG_DEFAULT,
 	dfs_skt_mount,
 	dfs_skt_unmount,
 	RT_NULL,

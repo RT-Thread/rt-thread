@@ -1056,7 +1056,8 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
 
 static const struct dfs_filesystem_operation _nfs = 
 {
-	"nfs", 
+	"nfs",
+	DFS_FS_FLAG_DEFAULT,	
 	nfs_mount,
 	nfs_unmount,
 	RT_NULL, /* mkfs */

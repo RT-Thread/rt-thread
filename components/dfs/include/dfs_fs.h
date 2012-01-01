@@ -17,6 +17,9 @@
 
 #include <dfs_def.h>
 
+#define DFS_FS_FLAG_DEFAULT		0x00	/* default flag */
+#define DFS_FS_FLAG_FULLPATH	0x01	/* set full path to underlaying file system */
+
 /* Pre-declaration */
 struct dfs_filesystem;
 struct dfs_fd;
@@ -25,6 +28,7 @@ struct dfs_fd;
 struct dfs_filesystem_operation
 {
 	char *name;
+	rt_uint32_t flags;		/* flags for file system operations */
 
 	/* mount and unmount file system */
 	int (*mount)	(struct dfs_filesystem *fs, unsigned long rwflag, const void *data);

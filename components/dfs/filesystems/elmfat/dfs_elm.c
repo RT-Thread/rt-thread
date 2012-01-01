@@ -647,6 +647,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 static const struct dfs_filesystem_operation dfs_elm =
 {
 	"elm",
+	DFS_FS_FLAG_DEFAULT,
 	dfs_elm_mount,
 	dfs_elm_unmount,
 	dfs_elm_mkfs,

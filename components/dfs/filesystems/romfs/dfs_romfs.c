@@ -264,6 +264,7 @@ int dfs_romfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t cou
 static const struct dfs_filesystem_operation _romfs = 
 {
 	"rom",
+	DFS_FS_FLAG_DEFAULT,
 	dfs_romfs_mount,
 	dfs_romfs_unmount,
 	RT_NULL,

@@ -66,13 +66,20 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 	fd->size = 0;
 	fd->pos = 0;
 
-	if (dfs_subdir(fs->path, fullpath) == RT_NULL)
-		fd->path = rt_strdup("/");
+	if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
+	{
+		if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+			fd->path = rt_strdup("/");
+		else
+			fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
+		rt_free(fullpath);
+		dfs_log(DFS_DEBUG_INFO, ("Actual file path: %s\n", fd->path));
+	}
 	else
-		fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
-	rt_free(fullpath);
-	dfs_log(DFS_DEBUG_INFO, ("Actual file path: %s\n", fd->path));
-
+	{
+		fd->path = fullpath;	
+	}
+	
 	/* specific file system open routine */
 	if (fs->ops->open == RT_NULL)
 	{
@@ -241,10 +248,15 @@ int dfs_file_unlink(const char *path)
 
 	if (fs->ops->unlink != RT_NULL)
 	{
-		if (dfs_subdir(fs->path, fullpath) == RT_NULL)
-			result = fs->ops->unlink(fs, "/");
+		if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
+		{
+			if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+				result = fs->ops->unlink(fs, "/");
+			else
+				result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
+		}
 		else
-			result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
+			result = fs->ops->unlink(fs, fullpath);				
 	}
 	else result = -DFS_STATUS_ENOSYS;
 
@@ -380,7 +392,11 @@ int dfs_file_stat(const char *path, struct stat *buf)
 		}
 
 		/* get the real file path and get file stat */
-		result = fs->ops->stat(fs, dfs_subdir(fs->path, fullpath), buf);
+		if (fs->ops->flags & DFS_FS_FLAG_FULLPATH)
+			result = fs->ops->stat(fs, fullpath, buf);	 
+		else
+			result = fs->ops->stat(fs, dfs_subdir(fs->path, fullpath), buf);
+			
 	}
 
 	rt_free(fullpath);

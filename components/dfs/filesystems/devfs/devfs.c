@@ -248,6 +248,7 @@ int dfs_device_fs_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t
 static const struct dfs_filesystem_operation _device_fs = 
 {
 	"devfs",
+	DFS_FS_FLAG_DEFAULT,
 	dfs_device_fs_mount,
 	RT_NULL,
 	RT_NULL,
