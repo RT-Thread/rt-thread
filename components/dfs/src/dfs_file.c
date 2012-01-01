@@ -420,6 +420,7 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
 
 	result = DFS_STATUS_OK;
 	newfullpath = RT_NULL;
+	oldfullpath = RT_NULL;
 
 	oldfullpath = dfs_normalize_path(RT_NULL, oldpath);
 	if (oldfullpath == RT_NULL)
@@ -435,33 +436,29 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
 		goto __exit;
 	}
 
-	if ((oldfs = dfs_filesystem_lookup(oldfullpath)) == RT_NULL)
-	{
-		result = -DFS_STATUS_ENOENT;
-		goto __exit;
-	}
-
-	if ((newfs = dfs_filesystem_lookup(newfullpath)) == RT_NULL)
-	{
-		result = -DFS_STATUS_ENOENT;
-		goto __exit;
-	}
+	oldfs = dfs_filesystem_lookup(oldfullpath);
+	newfs = dfs_filesystem_lookup(newfullpath);
 
 	if (oldfs == newfs)
 	{
 		if (oldfs->ops->rename == RT_NULL)
 		{
 			result = -DFS_STATUS_ENOSYS;
-			goto __exit;
 		}
-
-		/* use sub directory to rename in file system */
-		result = oldfs->ops->rename(oldfs, dfs_subdir(oldfs->path, oldfullpath),
-				dfs_subdir(newfs->path, newfullpath));
-		goto __exit;
+		else
+		{
+			if (oldfs->ops->flags & DFS_FS_FLAG_FULLPATH)
+				result = oldfs->ops->rename(oldfs, oldfullpath, newfullpath);
+			else
+				/* use sub directory to rename in file system */
+				result = oldfs->ops->rename(oldfs, dfs_subdir(oldfs->path, oldfullpath),
+					dfs_subdir(newfs->path, newfullpath));
+		}
 	}
-
-	result = -DFS_STATUS_EXDEV;
+	else
+	{
+		result = -DFS_STATUS_EXDEV;
+	}
 
 __exit:
 	rt_free(oldfullpath);
