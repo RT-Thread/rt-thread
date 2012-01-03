@@ -471,6 +471,7 @@ void rtgui_touch_hw_init(void)
     rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
 }
 
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 
 void touch_t( rt_uint16_t x , rt_uint16_t y )
@@ -490,5 +491,5 @@ void touch_t( rt_uint16_t x , rt_uint16_t y )
     rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
 }
 
-
 FINSH_FUNCTION_EXPORT(touch_t, x & y ) ;
+#endif

@@ -170,6 +170,7 @@ void rt_hw_rtc_init(void)
 	rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 }
 
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 void list_date()
 {
@@ -185,3 +186,4 @@ void list_date()
 	}
 }
 FINSH_FUNCTION_EXPORT(list_date, list date);
+#endif

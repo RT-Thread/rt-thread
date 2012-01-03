@@ -4,7 +4,9 @@
 #include <sep4020.h>
 #include <board.h>
 #include <serial.h>
+#ifdef RT_USING_FINSH
 #include <finsh.h>
+#endif
 
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>

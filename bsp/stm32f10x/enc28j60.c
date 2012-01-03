@@ -769,9 +769,11 @@ void rt_hw_enc28j60_init()
 	eth_device_init(&(enc28j60_dev->parent), "e0");
 }
 
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 void show_reg(void)
 {
     //
 }
 FINSH_FUNCTION_EXPORT(show_reg,show en28j60 regs)
+#endif

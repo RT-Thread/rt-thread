@@ -541,6 +541,7 @@ void stm3210c_rtgui_init()
 	today_init();
 }
 
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 
 void hline(rt_base_t x1, rt_base_t x2, rt_base_t y, rt_uint32_t pixel)
@@ -563,3 +564,4 @@ void cls(rt_uint32_t c)
 		rt_hw_lcd_draw_hline(&c, 0, 320, index);
 }
 FINSH_FUNCTION_EXPORT(cls, clear screen);
+#endif
