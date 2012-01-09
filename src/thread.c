@@ -34,8 +34,43 @@ extern struct rt_thread *rt_current_thread;
 extern rt_uint8_t rt_current_priority;
 extern rt_list_t rt_thread_defunct;
 
-static void rt_thread_exit(void);
-void rt_thread_timeout(void *parameter);
+static void rt_thread_exit(void)
+{
+	struct rt_thread *thread;
+	register rt_base_t level;
+
+	/* get current thread */
+	thread = rt_current_thread;
+
+	/* disable interrupt */
+	level = rt_hw_interrupt_disable();
+
+	/* remove from schedule */
+	rt_schedule_remove_thread(thread);
+	/* change stat */
+	thread->stat = RT_THREAD_CLOSE;
+
+	/* remove it from timer list */
+	rt_list_remove(&(thread->thread_timer.list));
+	rt_object_detach((rt_object_t)&(thread->thread_timer));
+
+	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_EOK) &&
+		thread->cleanup == RT_NULL)
+	{
+		rt_object_detach((rt_object_t)thread);
+	}
+	else
+	{
+		/* insert to defunct thread list */
+		rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+	}
+
+	/* enable interrupt */
+	rt_hw_interrupt_enable(level);
+
+	/* switch to next task */
+	rt_schedule();
+}
 
 static rt_err_t _rt_thread_init(struct rt_thread *thread,
 	const char *name,
@@ -127,49 +162,6 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
 		priority, tick);
 }
 
-#ifdef RT_USING_HEAP
-/**
- * This function will create a thread object and allocate thread object memory
- * and stack.
- *
- * @param name the name of thread, which shall be unique
- * @param entry the entry function of thread
- * @param parameter the parameter of thread enter function
- * @param stack_size the size of thread stack
- * @param priority the priority of thread
- * @param tick the time slice if there are same priority thread
- *
- * @return the created thread object
- *
- */
-rt_thread_t rt_thread_create(const char *name,
-	void (*entry)(void *parameter), void *parameter,
-	rt_uint32_t stack_size,
-	rt_uint8_t priority,
-	rt_uint32_t tick)
-{
-	struct rt_thread *thread;
-	void *stack_start;
-
-	thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread, name);
-	if (thread == RT_NULL) return RT_NULL;
-
-	stack_start = (void *)rt_malloc(stack_size);
-	if (stack_start == RT_NULL)
-	{
-		/* allocate stack failure */
-		rt_object_delete((rt_object_t)thread);
-		return RT_NULL; 
-	}
-
-	_rt_thread_init(thread, name, entry, parameter,
-		stack_start, stack_size,
-		priority, tick);
-
-	return thread;
-}
-#endif
-
 /**
  * This function will return self thread object
  *
@@ -222,44 +214,6 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 	return RT_EOK;
 }
 
-static void rt_thread_exit(void)
-{
-	struct rt_thread *thread;
-	register rt_base_t level;
-
-	/* get current thread */
-	thread = rt_current_thread;
-
-	/* disable interrupt */
-	level = rt_hw_interrupt_disable();
-
-	/* remove from schedule */
-	rt_schedule_remove_thread(thread);
-	/* change stat */
-	thread->stat = RT_THREAD_CLOSE;
-
-	/* remove it from timer list */
-	rt_list_remove(&(thread->thread_timer.list));
-	rt_object_detach((rt_object_t)&(thread->thread_timer));
-
-	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_EOK) &&
-		thread->cleanup == RT_NULL)
-	{
-		rt_object_detach((rt_object_t)thread);
-	}
-	else
-	{
-		/* insert to defunct thread list */
-		rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
-	}
-
-	/* enable interrupt */
-	rt_hw_interrupt_enable(level);
-
-	/* switch to next task */
-	rt_schedule();
-}
-
 /**
  * This function will detach a thread. The thread object will be removed from
  * thread queue and detached/deleted from system object management.
@@ -304,6 +258,47 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
 }
 
 #ifdef RT_USING_HEAP
+/**
+ * This function will create a thread object and allocate thread object memory
+ * and stack.
+ *
+ * @param name the name of thread, which shall be unique
+ * @param entry the entry function of thread
+ * @param parameter the parameter of thread enter function
+ * @param stack_size the size of thread stack
+ * @param priority the priority of thread
+ * @param tick the time slice if there are same priority thread
+ *
+ * @return the created thread object
+ *
+ */
+rt_thread_t rt_thread_create(const char *name,
+	void (*entry)(void *parameter), void *parameter,
+	rt_uint32_t stack_size,
+	rt_uint8_t priority,
+	rt_uint32_t tick)
+{
+	struct rt_thread *thread;
+	void *stack_start;
+
+	thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread, name);
+	if (thread == RT_NULL) return RT_NULL;
+
+	stack_start = (void *)rt_malloc(stack_size);
+	if (stack_start == RT_NULL)
+	{
+		/* allocate stack failure */
+		rt_object_delete((rt_object_t)thread);
+		return RT_NULL; 
+	}
+
+	_rt_thread_init(thread, name, entry, parameter,
+		stack_start, stack_size,
+		priority, tick);
+
+	return thread;
+}
+
 /**
  * This function will delete a thread. The thread object will be removed from
  * thread queue and detached/deleted from system object management.
