@@ -1,6 +1,8 @@
 Import('RTT_ROOT')
 from building import *
 
+cwd     = GetCurrentDir()
+
 src = Split("""
 block_dev.c
 mmcsd_core.c
@@ -8,9 +10,8 @@ sd.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/components/mmcsd']
+path = [cwd]
 
-
-group = DefineGroup('MMCSD', src, depend = ['RT_USING_MMCSD'], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = ['RT_USING_MMCSD'], CPPPATH = path)
 
 Return('group')
