@@ -55,7 +55,7 @@ void readspeed(const char* filename, int block_size)
 	rt_free(buff_ptr);
 
     /* calculate read speed */
-    rt_kprintf("File read speed: %d byte/s\n", total_length*RT_TICK_PER_SECOND/tick);
+    rt_kprintf("File read speed: %d byte/s\n", total_length /tick * RT_TICK_PER_SECOND);
 }
 
 #ifdef RT_USING_FINSH
