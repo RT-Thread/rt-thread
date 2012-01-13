@@ -218,7 +218,7 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 	switch (lpc17xx_emac_device.phy_mode)
 	{
 	case EMAC_PHY_AUTO:
-		/* Use autonegotiation about the link speed. */
+		/* Use auto negotiation about the link speed. */
 		write_PHY (PHY_REG_BMCR, PHY_AUTO_NEG);
 		/* Wait to complete Auto_Negotiation. */
 		for (tout = 0; tout < 0x100000; tout++)
@@ -226,7 +226,7 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 			regv = read_PHY (PHY_REG_BMSR);
 			if (regv & 0x0020)
 			{
-				/* Autonegotiation Complete. */
+				/* Auto negotiation Complete. */
 				break;
 			}
 		}
@@ -463,7 +463,7 @@ void lpc17xx_emac_hw_init(void)
 	rt_event_init(&tx_event, "tx_event", RT_IPC_FLAG_FIFO);
 	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
-	/* set autonegotiation mode */
+	/* set auto negotiation mode */
 	lpc17xx_emac_device.phy_mode = EMAC_PHY_AUTO;
 
 	// OUI 00-60-37 NXP Semiconductors
