@@ -1,0 +1,27 @@
+See the main site http://www.gzip.org/zlib/ for places to download the 
+complete sources.  Currently based on zlib-1.2.3
+
+Note that these are not the complete zlib sources - the following
+directories have been deleted since they are irrelevant for the
+eCos support:
+
+amiga/
+as400/
+contrib/
+msdos/
+old/ 
+projects/
+qnx/ 
+win32/
+
+Additionally, local changes has been made to the remaining files. Code
+changes are marked by __ECOS__ (comments or definitions). Finally, the
+headers zlib.h and zconf.h have been moved out of the directory into
+../include.
+
+crc32.c + crc32.h has also been removed as it is provided by services/crc/.
+
+Note: zconf.h always defines __ECOS__.  This is necessary to support
+programs built outside of the eCos tree which may wish to use this
+library (so those programs needn't worry about defining __ECOS__)
+
