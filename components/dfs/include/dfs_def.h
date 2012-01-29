@@ -160,7 +160,7 @@
 #define DFS_STATUS_EIO		 	5		/* I/O error */
 #define DFS_STATUS_ENXIO		6		/* No such device or address */
 #define DFS_STATUS_EBADF		9		/* Bad file number */
-#define DFS_STATUS_EAGIAN		11		/* Try again */
+#define DFS_STATUS_EAGAIN		11		/* Try again */
 #define DFS_STATUS_ENOMEM		12		/* no memory */
 #define DFS_STATUS_EBUSY		16		/* Device or resource busy */
 #define DFS_STATUS_EEXIST		17		/* File exists */
