@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef __JFFS2_OS_ECOS_H__
-#define __JFFS2_OS_ECOS_H__
+#ifndef __JFFS2_OS_RTTHREAD_H__
+#define __JFFS2_OS_RTTHREAD_H__
 
 #include <rtthread.h>
 #define printf rt_kprintf

@@ -94,54 +94,41 @@ filesystems/uffs/flash/nand_ids.c
 '''
 
 jffs2 = Split('''
-jffs2/dfs_jffs2.c
-jffs2/porting.c
-
-jffs2/cyg/compress/src/adler32.c
-jffs2/cyg/compress/src/compress.c
-jffs2/cyg/compress/src/deflate.c
-jffs2/cyg/compress/src/infback.c
-jffs2/cyg/compress/src/infblock.c
-jffs2/cyg/compress/src/inffast.c
-jffs2/cyg/compress/src/inflate.c
-jffs2/cyg/compress/src/inftrees.c
-jffs2/cyg/compress/src/maketree.c
-jffs2/cyg/compress/src/trees.c
-jffs2/cyg/compress/src/uncompr.c
-jffs2/cyg/compress/src/zutil.c
-
-jffs2/cyg/crc/crc16.c
-jffs2/cyg/crc/crc32.c
-jffs2/cyg/crc/posix_crc.c
-jffs2/kernel/rbtree.c
-jffs2/src/build.c
-jffs2/src/compr.c
-jffs2/src/compr_rtime.c
-jffs2/src/compr_rubin.c
-jffs2/src/compr_zlib.c
-jffs2/src/debug.c
-jffs2/src/dir-ecos.c
-jffs2/src/erase.c
-jffs2/src/flashio.c
-jffs2/src/fs-ecos.c
-jffs2/src/gc.c
-jffs2/src/gcthread.c
-jffs2/src/malloc-ecos.c
-jffs2/src/nodelist.c
-jffs2/src/nodemgmt.c
-jffs2/src/read.c
-jffs2/src/readinode.c
-jffs2/src/scan.c
-jffs2/src/write.c
+filesystems/jffs2/dfs_jffs2.c
+filesystems/jffs2/porting.c
+filesystems/jffs2/cyg/crc/crc16.c
+filesystems/jffs2/cyg/crc/crc32.c
+filesystems/jffs2/cyg/crc/posix_crc.c
+filesystems/jffs2/kernel/rbtree.c
+filesystems/jffs2/src/build.c
+filesystems/jffs2/src/compr.c
+filesystems/jffs2/src/compr_rtime.c
+filesystems/jffs2/src/compr_rubin.c
+filesystems/jffs2/src/debug.c
+filesystems/jffs2/src/dir-ecos.c
+filesystems/jffs2/src/erase.c
+filesystems/jffs2/src/flashio.c
+filesystems/jffs2/src/fs-ecos.c
+filesystems/jffs2/src/gc.c
+filesystems/jffs2/src/malloc-ecos.c
+filesystems/jffs2/src/nodelist.c
+filesystems/jffs2/src/nodemgmt.c
+filesystems/jffs2/src/read.c
+filesystems/jffs2/src/readinode.c
+filesystems/jffs2/src/scan.c
+filesystems/jffs2/src/write.c
 ''')
 
 src_local = dfs
+CPPDEFINES = []
+
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
 
 if GetDepend('RT_USING_DFS_YAFFS2'):
     src_local = src_local + yaffs2_main + yaffs2_comm
-    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', \
+        RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
 
 if GetDepend('RT_USING_DFS_ELMFAT'):
     if GetDepend('RT_DFS_ELM_USE_LFN'):
@@ -162,12 +149,18 @@ if GetDepend('RT_USING_DFS_DEVFS'):
 
 if GetDepend('RT_USING_DFS_UFFS'):
     src_local = src_local + uffs
-    path = path + [RTT_ROOT + '/components/dfs/filesystems/uffs/src/inc', RTT_ROOT + '/components/dfs/filesystems/uffs', RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/uffs/src/inc', \
+        RTT_ROOT + '/components/dfs/filesystems/uffs', \
+        RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
 
 if GetDepend('RT_USING_DFS_JFFS2'):
     src_local = src_local + jffs2
-    path = path + [RTT_ROOT + '/components/dfs/filesystems/jffs2/src', RTT_ROOT + '/components/dfs/filesystems/jffs2/kernel', RTT_ROOT + '/components/dfs/filesystems/jffs2/include', RTT_ROOT + '/components/dfs/filesystems/jffs2', RTT_ROOT + '/components/dfs/filesystems/jffs2/cyg/compress']
-	
-group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path)
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/jffs2/src', \
+        RTT_ROOT + '/components/dfs/filesystems/jffs2/kernel', \
+        RTT_ROOT + '/components/dfs/filesystems/jffs2/include', \
+        RTT_ROOT + '/components/dfs/filesystems/jffs2']
+    CPPDEFINES = CPPDEFINES + ['__ECOS']
+
+group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

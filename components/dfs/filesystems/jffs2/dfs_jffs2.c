@@ -21,7 +21,7 @@
 #include <dfs_fs.h>
 #include <dfs_def.h>
 
-#include <dfs_jffs2.h>
+#include "dfs_jffs2.h"
 #include "porting.h"
 
 #define FILE_PATH_MAX   256 /* the longest file path */
@@ -165,7 +165,7 @@ static int dfs_jffs2_mount(struct dfs_filesystem* fs,
 	 * s_dev in struct super_block, and mte->data will be
 	 * filled with jffs2_sb(see the source of jffs2_mount.
 	 */
-	mte->data = fs->dev_id;
+	mte->data = (CYG_ADDRWORD)fs->dev_id;
 
 	device_partition[index].dev = fs->dev_id;	
 	/* after jffs2_mount, mte->data will not be dev_id any more */
