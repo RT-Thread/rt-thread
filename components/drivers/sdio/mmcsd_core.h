@@ -39,6 +39,12 @@ struct rt_mmcsd_data {
 #define DATA_DIR_WRITE	(1 << 0)
 #define DATA_DIR_READ	(1 << 1)
 #define DATA_STREAM	(1 << 2)
+
+	unsigned int		bytes_xfered;
+
+	struct rt_mmcsd_cmd	*stop;		/* stop command */
+	struct rt_mmcsd_req	*mrq;		/* associated request */
+
 	rt_uint32_t  timeout_ns;
 	rt_uint32_t  timeout_clks;
 };
@@ -89,9 +95,11 @@ struct rt_mmcsd_cmd {
  */
 #define cmd_type(cmd)	((cmd)->flags & CMD_MASK)
 	
+	rt_int32_t  retries;	/* max number of retries */
 	rt_int32_t  err;
 
 	struct rt_mmcsd_data *data;
+	struct rt_mmcsd_req	*mrq;		/* associated request */
 };
 
 struct rt_mmcsd_req {
@@ -190,7 +198,7 @@ rt_inline rt_uint32_t fls(rt_uint32_t val)
 	return bit;
 }
 
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) || defined(__CC_ARM)
 rt_inline rt_uint32_t ffs(rt_uint32_t x)
 {
         int r = 1;

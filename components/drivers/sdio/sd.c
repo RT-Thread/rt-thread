@@ -281,7 +281,7 @@ err1:
 static rt_err_t mmcsd_app_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_card *card)
 {
 	rt_err_t err;
-	struct rt_mmcsd_cmd cmd;
+	struct rt_mmcsd_cmd cmd = {0};
 
 	cmd.cmd_code = APP_CMD;
 

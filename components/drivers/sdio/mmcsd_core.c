@@ -48,7 +48,20 @@ void mmcsd_req_complete(struct rt_mmcsd_host *host)
 
 void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-	req->cmd->data = req->data;
+    req->cmd->err = 0;
+	req->cmd->mrq = req;
+	if (req->data)
+    {   
+        req->cmd->data = req->data;
+        req->data->err = 0;
+    	req->data->mrq = req;
+		if (req->stop)
+		{
+			req->data->stop = req->stop;
+			req->stop->err = 0;
+			req->stop->mrq = req;
+		}    	
+   }
 	host->ops->request(host, req);
 	rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
 }
