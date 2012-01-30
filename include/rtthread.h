@@ -179,6 +179,8 @@ void *rt_malloc(rt_size_t nbytes);
 void rt_free(void *ptr);
 void *rt_realloc(void *ptr, rt_size_t nbytes);
 void *rt_calloc(rt_size_t count, rt_size_t size);
+void* rt_malloc_align(rt_size_t size, rt_size_t align);
+void rt_free_align(void* ptr);
 
 void rt_memory_info(rt_uint32_t *total, rt_uint32_t *used, rt_uint32_t *max_used);
 

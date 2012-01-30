@@ -32,7 +32,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      1L      /**< major version number */
-#define RT_SUBVERSION                   0L      /**< minor version number */
+#define RT_SUBVERSION                   1L      /**< minor version number */
 #define RT_REVISION                   	0L      /**< revise version number */
 
 /* RT-Thread basic data type definitions */
@@ -334,7 +334,7 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * thread control command definitions
  */
-#define RT_THREAD_CTRL_STARTUP          0x00                /**< Starup thread.                     */
+#define RT_THREAD_CTRL_STARTUP          0x00                /**< Startup thread.                     */
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread.                      */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority.            */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information.            */
