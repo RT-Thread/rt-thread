@@ -598,7 +598,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
 /**
  * This function is the timeout function for thread, normally which is invoked
- * when thread is timeout to wait some resourse.
+ * when thread is timeout to wait some resource.
  *
  * @param parameter the parameter of thread timeout function
  *
