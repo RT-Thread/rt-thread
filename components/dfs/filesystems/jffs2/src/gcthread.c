@@ -14,6 +14,8 @@
 #include "nodelist.h"
 //#include <cyg/kernel/kapi.h> prife
 
+#if defined(CYGOPT_FS_JFFS2_GCTHREAD)
+
 #define GC_THREAD_FLAG_TRIG 1
 #define GC_THREAD_FLAG_STOP 2
 #define GC_THREAD_FLAG_HAS_EXIT 4
@@ -133,10 +135,6 @@ rt_uint32_t cyg_current_time(void)
 static void
 jffs2_garbage_collect_thread(unsigned long data);
 
-#define CYGNUM_JFFS2_GC_THREAD_PRIORITY  20 
-#define CYGNUM_JFFS2_GS_THREAD_TICKS  20
-#define CYGNUM_JFFS2_GC_THREAD_TICKS  20
-
 void jffs2_garbage_collect_trigger(struct jffs2_sb_info *c)
 {
      struct super_block *sb=OFNI_BS_2SFFJ(c);
@@ -251,3 +249,4 @@ jffs2_garbage_collect_thread(unsigned long data)
      D1(printk("jffs2_garbage_collect_thread EXIT\n"));
      rt_event_send(&sb->s_gc_thread_flags,GC_THREAD_FLAG_HAS_EXIT);	 
 }
+#endif

@@ -35,7 +35,7 @@ int jffs2_read_dnode(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 	if (!ri)
 		return -ENOMEM;
 
-	ret = jffs2_flash_read(c, ref_offset(fd->raw), sizeof(*ri), &readlen, (char *)ri);
+	ret = jffs2_flash_read(c, ref_offset(fd->raw), sizeof(*ri), &readlen, (unsigned char *)ri);
 	if (ret) {
 		jffs2_free_raw_inode(ri);
 		printk(KERN_WARNING "Error reading node from 0x%08x: %d\n", ref_offset(fd->raw), ret);

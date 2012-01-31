@@ -2,6 +2,7 @@
 #define __LINUX_KERNEL_H__
 //#include <cyg/infra/diag.h>
 //#include <stdio.h>  //mod by prife @ 2011/11/20
+#include "jffs2_config.h"
 
 #define jiffies 100
 

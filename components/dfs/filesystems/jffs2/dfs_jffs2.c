@@ -23,6 +23,7 @@
 
 #include "dfs_jffs2.h"
 #include "porting.h"
+#include <string.h>
 
 #define FILE_PATH_MAX   256 /* the longest file path */
 
@@ -31,10 +32,6 @@
 #if DEVICE_PART_MAX > 1
 	#error "support only one jffs2 partition on a flash device!"
 #endif
-
-extern cyg_fileops jffs2_fileops;
-extern cyg_fileops jffs2_dirops;
-extern struct cyg_fstab_entry jffs2_fste;
 			
 /* make sure the following struct var had been initilased to 0! */ //fixme
 struct device_part 
@@ -204,7 +201,6 @@ static int dfs_jffs2_unmount(struct dfs_filesystem* fs)
 	{
 		if (device_partition[index].dev == fs->dev_id)
 		{
-			struct cyg_mtab_entry * mte;
 			result = jffs2_umount(device_partition[index].mte);
 			if (result)
 				return jffs2_result_to_dfs(result);	
@@ -237,7 +233,7 @@ static int dfs_jffs2_statfs(struct dfs_filesystem* fs,
 		
 	RT_ASSERT(mte->data != NULL);
 
-	jffs2_get_info_from_sb(mte->data, &info);
+	jffs2_get_info_from_sb((void *)mte->data, &info);
 	buf->f_bsize = info.sector_size; 
 	buf->f_blocks = info.nr_blocks;
 	buf->f_bfree = info.free_size; //fixme need test!
@@ -325,8 +321,8 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 	file->data = jffs2_file;
 	file->pos = jffs2_file->f_offset; 
 	file->size = 0;
-	jffs2_file_lseek(jffs2_file, &(file->size), SEEK_END);
-	jffs2_file->f_offset = file->pos;
+	jffs2_file_lseek(jffs2_file, (off_t *)(&(file->size)), SEEK_END);
+	jffs2_file->f_offset = (off_t)file->pos;
 	
 	if (oflag & DFS_O_APPEND)
 	{
@@ -334,7 +330,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
  		jffs2_file->f_offset = file->size;
 	}	
 	return 0; 
-}
+}				   
 
 static int dfs_jffs2_close(struct dfs_fd* file)
 {
@@ -407,7 +403,7 @@ static int dfs_jffs2_write(struct dfs_fd* file,
 	RT_ASSERT(file->data != NULL);
 	jffs2_file = (cyg_file *)(file->data);	
     uio_s.uio_iov = &iovec;
-    uio_s.uio_iov->iov_base = buf;
+    uio_s.uio_iov->iov_base = (void *)buf;
     uio_s.uio_iov->iov_len = len;
     uio_s.uio_iovcnt = 1; //must be 1
     //uio_s.uio_offset //not used...
@@ -525,7 +521,7 @@ static int dfs_jffs2_unlink(struct dfs_filesystem* fs, const char* path)
 		path++;
 	
 	/* judge file type, dir is to be delete by rmdir, others by unlink */
-	result = jffs2_ops_stat(mte, mte->root, path, &s);
+	result = jffs2_porting_stat(mte, mte->root, path, (void *)&s);
 	if (result)
 		return jffs2_result_to_dfs(result);
 		
@@ -584,7 +580,9 @@ static int dfs_jffs2_stat(struct dfs_filesystem* fs, const char *path, struct st
 	if (result) 
 		return -DFS_STATUS_ENOENT;
 
-	result = jffs2_ops_stat(mte, mte->root, path, &s);	
+//	result = jffs2_ops_stat(mte, mte->root, path, &s);	
+	result = jffs2_porting_stat(mte, mte->root, path, (void *)&s);
+
 	if (result)
 		return jffs2_result_to_dfs(result);
 	/* convert to dfs stat structure */

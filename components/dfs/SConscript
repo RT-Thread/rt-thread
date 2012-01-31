@@ -96,6 +96,18 @@ filesystems/uffs/flash/nand_ids.c
 jffs2 = Split('''
 filesystems/jffs2/dfs_jffs2.c
 filesystems/jffs2/porting.c
+
+filesystems/jffs2/cyg/compress/src/adler32.c
+filesystems/jffs2/cyg/compress/src/compress.c
+filesystems/jffs2/cyg/compress/src/deflate.c
+filesystems/jffs2/cyg/compress/src/infback.c
+filesystems/jffs2/cyg/compress/src/inffast.c
+filesystems/jffs2/cyg/compress/src/inflate.c
+filesystems/jffs2/cyg/compress/src/inftrees.c
+filesystems/jffs2/cyg/compress/src/trees.c
+filesystems/jffs2/cyg/compress/src/uncompr.c
+filesystems/jffs2/cyg/compress/src/zutil.c
+
 filesystems/jffs2/cyg/crc/crc16.c
 filesystems/jffs2/cyg/crc/crc32.c
 filesystems/jffs2/cyg/crc/posix_crc.c
@@ -104,12 +116,14 @@ filesystems/jffs2/src/build.c
 filesystems/jffs2/src/compr.c
 filesystems/jffs2/src/compr_rtime.c
 filesystems/jffs2/src/compr_rubin.c
+filesystems/jffs2/src/compr_zlib.c
 filesystems/jffs2/src/debug.c
 filesystems/jffs2/src/dir-ecos.c
 filesystems/jffs2/src/erase.c
 filesystems/jffs2/src/flashio.c
 filesystems/jffs2/src/fs-ecos.c
 filesystems/jffs2/src/gc.c
+filesystems/jffs2/src/gcthread.c
 filesystems/jffs2/src/malloc-ecos.c
 filesystems/jffs2/src/nodelist.c
 filesystems/jffs2/src/nodemgmt.c
@@ -158,8 +172,9 @@ if GetDepend('RT_USING_DFS_JFFS2'):
     path = path + [RTT_ROOT + '/components/dfs/filesystems/jffs2/src', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2/kernel', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2/include', \
-        RTT_ROOT + '/components/dfs/filesystems/jffs2']
-    CPPDEFINES = CPPDEFINES + ['__ECOS']
+        RTT_ROOT + '/components/dfs/filesystems/jffs2', \
+        RTT_ROOT + '/components/dfs/filesystems/jffs2/cyg/compress']
+    #CPPDEFINES = CPPDEFINES + ['__ECOS', 'CYGOPT_FS_JFFS2_WRITE', 'CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE']
 
 group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

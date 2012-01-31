@@ -491,6 +491,10 @@ static int jffs2_read_super(struct super_block *sb)
 	struct rt_device_blk_geometry geometry; //fixme need a new struct type!
 	
 	c = JFFS2_SB_INFO(sb);
+
+//init some block
+	init_MUTEX(&c->alloc_sem);
+	init_MUTEX(&c->erase_free_sem);
 	
 	rt_memset(&geometry, 0, sizeof(geometry));
 	rt_device_control(sb->s_dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
@@ -552,7 +556,7 @@ int jffs2_mount(cyg_fstab_entry * fste, cyg_mtab_entry * mte)
 //		}
 //	}
     jffs2_sb = NULL;
-	t = mte->data; //get from dfs_jffs2;
+	t = (cyg_io_handle_t)mte->data; //get from dfs_jffs2;
 	if (jffs2_sb == NULL) {
 		jffs2_sb = malloc(sizeof (struct super_block));
 
@@ -1637,8 +1641,6 @@ static int jffs2_fo_getinfo(struct CYG_FILE_TAG *fp, int key, void *buf,
 		err = EINVAL;
 	}
 	return err;
-
-	return ENOERR;
 }
 
 // -------------------------------------------------------------------------

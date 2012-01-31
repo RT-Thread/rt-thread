@@ -10,7 +10,7 @@
  * $Id: compr_zlib.c,v 1.31 2005/05/20 19:30:06 gleixner Exp $
  *
  */
-
+#include "jffs2_config.h"
 #if !defined(__KERNEL__) && !defined(__ECOS)
 #error "The userspace support got too messy and was removed. Update your mkfs.jffs2"
 #endif

@@ -333,7 +333,7 @@ static int jffs2_block_check_erase(struct jffs2_sb_info *c, struct jffs2_erasebl
 		}
 		for (i=0; i<readlen; i += sizeof(unsigned long)) {
 			/* It's OK. We know it's properly aligned */
-			unsigned long *datum = (char *)ebuf + i;
+			unsigned long *datum = (unsigned long *)((char *)ebuf + i);
 			if (*datum + 1) {
 				*bad_offset += i;
 				printk(KERN_WARNING "Newly-erased block contained word 0x%lx at offset 0x%08x\n", *datum, *bad_offset);

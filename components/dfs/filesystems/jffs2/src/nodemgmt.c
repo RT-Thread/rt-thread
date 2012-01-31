@@ -541,7 +541,7 @@ void jffs2_mark_node_obsolete(struct jffs2_sb_info *c, struct jffs2_raw_node_ref
 	   by jffs2_free_all_node_refs() in erase.c. Which is nice. */
 
 	D1(printk(KERN_DEBUG "obliterating obsoleted node at 0x%08x\n", ref_offset(ref)));
-	ret = jffs2_flash_read(c, ref_offset(ref), sizeof(n), &retlen, (char *)&n);
+	ret = jffs2_flash_read(c, ref_offset(ref), sizeof(n), &retlen, (unsigned char *)&n);
 	if (ret) {
 		printk(KERN_WARNING "Read error reading from obsoleted node at 0x%08x: %d\n", ref_offset(ref), ret);
 		goto out_erase_sem;
@@ -560,7 +560,7 @@ void jffs2_mark_node_obsolete(struct jffs2_sb_info *c, struct jffs2_raw_node_ref
 	}
 	/* XXX FIXME: This is ugly now */
 	n.nodetype = cpu_to_je16(je16_to_cpu(n.nodetype) & ~JFFS2_NODE_ACCURATE);
-	ret = jffs2_flash_write(c, ref_offset(ref), sizeof(n), &retlen, (char *)&n);
+	ret = jffs2_flash_write(c, ref_offset(ref), sizeof(n), &retlen, (unsigned char *)&n);
 	if (ret) {
 		printk(KERN_WARNING "Write error in obliterating obsoleted node at 0x%08x: %d\n", ref_offset(ref), ret);
 		goto out_erase_sem;

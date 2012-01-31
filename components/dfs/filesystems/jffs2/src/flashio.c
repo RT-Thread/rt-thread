@@ -128,7 +128,7 @@ jffs2_flash_direct_writev(struct jffs2_sb_info *c, const struct iovec *vecs,
 				}
 				ret =
 				    jffs2_flash_write(c, to, sizetomalloc,
-						      &thislen, cbuf);
+						      &thislen, (unsigned char *)cbuf);
 				if (thislen > totvecsize)	// in case it was aligned up
 					thislen = totvecsize;
 				totlen += thislen;
@@ -147,7 +147,7 @@ jffs2_flash_direct_writev(struct jffs2_sb_info *c, const struct iovec *vecs,
 
 				ret =
 				    jffs2_flash_write(c, to, lentowrite,
-						      &thislen, (char *) &buf);
+						      &thislen, (unsigned char *) &buf);
 				if (thislen > vecs[i].iov_len)
 					thislen = vecs[i].iov_len;
 			}	// else
@@ -180,7 +180,7 @@ cyg_bool jffs2_flash_erase(struct jffs2_sb_info * c,
 	// err = cyg_io_get_config(sb->s_dev, CYG_IO_GET_CONFIG_FLASH_ERASE,
 				// &e, &len);
 				
-	res = rt_device_control(sb->s_dev, RT_DEVICE_CTRL_BLK_ERASE, jeb->offset);
+	res = rt_device_control(sb->s_dev, RT_DEVICE_CTRL_BLK_ERASE, (void *)(jeb->offset));
 	return ((res == RT_EOK) ? ENOERR : -EIO);
 	
     //这里 jeb数据结构

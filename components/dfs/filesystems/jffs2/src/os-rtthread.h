@@ -13,8 +13,10 @@
 
 #ifndef __JFFS2_OS_RTTHREAD_H__
 #define __JFFS2_OS_RTTHREAD_H__
-
+#include "jffs2_config.h"
 #include <rtthread.h>
+#define free rt_free
+#define printf rt_kprintf
 #define printf rt_kprintf
 
 //#include <pkgconf/fs_jffs2.h>
@@ -56,8 +58,6 @@ struct dirent
 	char        d_name[NAME_MAX+1];
 };
 
-
-#include <stdlib.h>
 #include <string.h>
 
 #include <cyg/fileio/fileio.h>  //prife

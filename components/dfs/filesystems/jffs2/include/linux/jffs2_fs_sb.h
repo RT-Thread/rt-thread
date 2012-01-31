@@ -3,6 +3,7 @@
 #ifndef _JFFS2_FS_SB
 #define _JFFS2_FS_SB
 
+#include "jffs2_config.h"
 #include <linux/types.h>
 #include <linux/spinlock.h>
 #include <linux/workqueue.h>

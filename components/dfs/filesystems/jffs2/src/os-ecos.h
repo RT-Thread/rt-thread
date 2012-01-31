@@ -13,8 +13,10 @@
 
 #ifndef __JFFS2_OS_ECOS_H__
 #define __JFFS2_OS_ECOS_H__
-
+#include "jffs2_config.h"
 #include <rtthread.h>
+#define malloc rt_malloc
+#define free rt_free
 #define printf rt_kprintf
 
 //#include <pkgconf/fs_jffs2.h>
@@ -43,7 +45,7 @@
 //#include <errno.h> //fixme
 
 //#include <dirent.h>
-#define  CYGPKG_FILEIO_DIRENT_DTYPE
+
 struct dirent
 {
 #ifdef CYGPKG_FILEIO_DIRENT_DTYPE
@@ -57,7 +59,7 @@ struct dirent
 };
 
 
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <string.h>
 
 #include <cyg/fileio/fileio.h>  //prife

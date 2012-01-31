@@ -26,7 +26,7 @@ struct pushpull {
 
 static inline void init_pushpull(struct pushpull *pp, char *buf, unsigned buflen, unsigned ofs, unsigned reserve)
 {
-	pp->buf = buf;
+	pp->buf = (unsigned char *)buf;
 	pp->buflen = buflen;
 	pp->ofs = ofs;
 	pp->reserve = reserve;

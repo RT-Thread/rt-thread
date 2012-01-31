@@ -477,7 +477,7 @@ static int jffs2_get_inode_nodes(struct jffs2_sb_info *c, struct jffs2_inode_inf
 				goto free_out;
 			}
 
-			err = read_direntry(c, ref, &node.d, retlen, &ret_fd, latest_mctime, mctime_ver);
+			err = read_direntry(c, ref, &node.d, retlen, &ret_fd, (int32_t *)latest_mctime, mctime_ver);
 			if (err == 1) {
 				jffs2_mark_node_obsolete(c, ref);
 				break;
@@ -498,7 +498,7 @@ static int jffs2_get_inode_nodes(struct jffs2_sb_info *c, struct jffs2_inode_inf
 				goto free_out;
 			}
 
-			err = read_dnode(c, ref, &node.i, retlen, &ret_tn, latest_mctime, mctime_ver);
+			err = read_dnode(c, ref, &node.i, retlen, &ret_tn, (int32_t *)latest_mctime, mctime_ver);
 			if (err == 1) {
 				jffs2_mark_node_obsolete(c, ref);
 				break;

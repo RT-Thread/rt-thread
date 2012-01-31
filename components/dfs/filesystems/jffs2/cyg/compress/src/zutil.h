@@ -28,7 +28,7 @@
 #    include <stddef.h>
 #  endif
 #  include <string.h>
-#  include <stdlib.h>
+//#  include <stdlib.h>	//remove by prife @ 2012/1/30
 #endif
 #ifdef NO_ERRNO_H
 #   ifdef _WIN32_WCE

@@ -195,7 +195,7 @@ static int rubin_do_compress(int bit_divider, int *bits, unsigned char *data_in,
 	int pos=0;
 	struct rubin_state rs;
 
-	init_pushpull(&rs.pp, cpage_out, *dstlen * 8, 0, 32);
+	init_pushpull(&rs.pp, (char *)cpage_out, *dstlen * 8, 0, 32);
 
 	init_rubin(&rs, bit_divider, bits);
 	
@@ -299,7 +299,7 @@ static void rubin_do_decompress(int bit_divider, int *bits, unsigned char *cdata
 	int outpos = 0;
 	struct rubin_state rs;
 	
-	init_pushpull(&rs.pp, cdata_in, srclen, 0, 0);
+	init_pushpull(&rs.pp, (char *)cdata_in, srclen, 0, 0);
 	init_decode(&rs, bit_divider, bits);
 	
 	while (outpos < destlen) {

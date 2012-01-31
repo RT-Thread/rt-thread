@@ -28,7 +28,7 @@ void jffs2_add_fd_to_list(struct jffs2_sb_info *c, struct jffs2_full_dirent *new
 	JFFS2_DBG_DENTLIST("add dirent \"%s\", ino #%u\n", new->name, new->ino);
 
 	while ((*prev) && (*prev)->nhash <= new->nhash) {
-		if ((*prev)->nhash == new->nhash && !strcmp((*prev)->name, new->name)) {
+		if ((*prev)->nhash == new->nhash && !strcmp((const char *)((*prev)->name), (const char *)new->name)) {
 			/* Duplicate. Free one */
 			if (new->version < (*prev)->version) {
 				JFFS2_DBG_DENTLIST("Eep! Marking new dirent node is obsolete, old is \"%s\", ino #%u\n",

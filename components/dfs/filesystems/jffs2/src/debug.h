@@ -12,9 +12,9 @@
  */
 #ifndef _JFFS2_DEBUG_H_
 #define _JFFS2_DEBUG_H_
-
+#include "jffs2_config.h"
 #include <linux/config.h>
-#include <linux/slab.h> //prife
+
 #ifndef CONFIG_JFFS2_FS_DEBUG
 #define CONFIG_JFFS2_FS_DEBUG 0
 #endif

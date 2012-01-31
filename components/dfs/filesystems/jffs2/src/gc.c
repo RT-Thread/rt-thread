@@ -126,8 +126,8 @@ int jffs2_garbage_collect_pass(struct jffs2_sb_info *c)
 	struct jffs2_raw_node_ref *raw;
 	int ret = 0, inum, nlink;
 
-//	if (down_interruptible(&c->alloc_sem))  //fixme prife !!
-//		return -EINTR;
+	if (down_interruptible(&c->alloc_sem))
+		return -EINTR;
 
 	for (;;) {
 		spin_lock(&c->erase_completion_lock);
@@ -527,7 +527,7 @@ static int jffs2_garbage_collect_pristine(struct jffs2_sb_info *c,
 	if (!node)
                return -ENOMEM;
 
-	ret = jffs2_flash_read(c, ref_offset(raw), rawlen, &retlen, (char *)node);
+	ret = jffs2_flash_read(c, ref_offset(raw), rawlen, &retlen, (unsigned char *)node);
 	if (!ret && retlen != rawlen)
 		ret = -EIO;
 	if (ret)
@@ -594,7 +594,7 @@ static int jffs2_garbage_collect_pristine(struct jffs2_sb_info *c,
 	nraw->__totlen = rawlen;
 	nraw->next_phys = NULL;
 
-	ret = jffs2_flash_write(c, phys_ofs, rawlen, &retlen, (char *)node);
+	ret = jffs2_flash_write(c, phys_ofs, rawlen, &retlen, (unsigned char *)node);
 
 	if (ret || (retlen != rawlen)) {
 		printk(KERN_NOTICE "Write of %d bytes at 0x%08x failed. returned %d, retlen %zd\n",
@@ -691,7 +691,7 @@ static int jffs2_garbage_collect_metadata(struct jffs2_sb_info *c, struct jffs2_
 			printk(KERN_WARNING "kmalloc of mdata failed in jffs2_garbage_collect_metadata()\n");
 			return -ENOMEM;
 		}
-		ret = jffs2_read_dnode(c, f, fn, mdata, 0, mdatalen);
+		ret = jffs2_read_dnode(c, f, fn, (unsigned char *)mdata, 0, mdatalen);
 		if (ret) {
 			printk(KERN_WARNING "read of old metadata failed in jffs2_garbage_collect_metadata(): %d\n", ret);
 			kfree(mdata);
@@ -738,7 +738,7 @@ static int jffs2_garbage_collect_metadata(struct jffs2_sb_info *c, struct jffs2_
 	ri.node_crc = cpu_to_je32(crc32(0, &ri, sizeof(ri)-8));
 	ri.data_crc = cpu_to_je32(crc32(0, mdata, mdatalen));
 
-	new_fn = jffs2_write_dnode(c, f, &ri, mdata, mdatalen, phys_ofs, ALLOC_GC);
+	new_fn = jffs2_write_dnode(c, f, &ri, (const unsigned char *)mdata, mdatalen, phys_ofs, ALLOC_GC);
 
 	if (IS_ERR(new_fn)) {
 		printk(KERN_WARNING "Error writing new dnode: %ld\n", PTR_ERR(new_fn));
@@ -764,7 +764,7 @@ static int jffs2_garbage_collect_dirent(struct jffs2_sb_info *c, struct jffs2_er
 
 	rd.magic = cpu_to_je16(JFFS2_MAGIC_BITMASK);
 	rd.nodetype = cpu_to_je16(JFFS2_NODETYPE_DIRENT);
-	rd.nsize = strlen(fd->name);
+	rd.nsize = strlen((const char *)fd->name);
 	rd.totlen = cpu_to_je32(sizeof(rd) + rd.nsize);
 	rd.hdr_crc = cpu_to_je32(crc32(0, &rd, sizeof(struct jffs2_unknown_node)-4));
 
@@ -808,7 +808,7 @@ static int jffs2_garbage_collect_deletion_dirent(struct jffs2_sb_info *c, struct
 		struct jffs2_raw_node_ref *raw;
 		int ret;
 		size_t retlen;
-		int name_len = strlen(fd->name);
+		int name_len = strlen((const char *)fd->name);
 		uint32_t name_crc = crc32(0, fd->name, name_len);
 		uint32_t rawlen = ref_totlen(c, jeb, fd->raw);
 
@@ -840,7 +840,7 @@ static int jffs2_garbage_collect_deletion_dirent(struct jffs2_sb_info *c, struct
 
 			/* This is an obsolete node belonging to the same directory, and it's of the right
 			   length. We need to take a closer look...*/
-			ret = jffs2_flash_read(c, ref_offset(raw), rawlen, &retlen, (char *)rd);
+			ret = jffs2_flash_read(c, ref_offset(raw), rawlen, &retlen, (unsigned char *)rd);
 			if (ret) {
 				printk(KERN_WARNING "jffs2_g_c_deletion_dirent(): Read error (%d) reading obsolete node at %08x\n", ret, ref_offset(raw));
 				/* If we can't read it, we don't need to continue to obsolete it. Continue */
@@ -920,7 +920,7 @@ static int jffs2_garbage_collect_hole(struct jffs2_sb_info *c, struct jffs2_eras
 		uint32_t crc;
 		/* It's partially obsoleted by a later write. So we have to
 		   write it out again with the _same_ version as before */
-		ret = jffs2_flash_read(c, ref_offset(fn->raw), sizeof(ri), &readlen, (char *)&ri);
+		ret = jffs2_flash_read(c, ref_offset(fn->raw), sizeof(ri), &readlen, (unsigned char *)&ri);
 		if (readlen != sizeof(ri) || ret) {
 			printk(KERN_WARNING "Node read failed in jffs2_garbage_collect_hole. Ret %d, retlen %zd. Data will be lost by writing new hole node\n", ret, readlen);
 			goto fill;

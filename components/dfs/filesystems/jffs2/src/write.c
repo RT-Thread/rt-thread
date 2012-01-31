@@ -249,7 +249,7 @@ struct jffs2_full_dirent *jffs2_write_dirent(struct jffs2_sb_info *c, struct jff
 
 	fd->version = je32_to_cpu(rd->version);
 	fd->ino = je32_to_cpu(rd->ino);
-	fd->nhash = full_name_hash(name, strlen(name));
+	fd->nhash = full_name_hash(name, strlen((const char *)name));
 	fd->type = rd->type;
 	memcpy(fd->name, name, namelen);
 	fd->name[namelen]=0;
@@ -509,7 +509,7 @@ int jffs2_do_create(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f, str
 	rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));
 	rd->name_crc = cpu_to_je32(crc32(0, name, namelen));
 
-	fd = jffs2_write_dirent(c, dir_f, rd, name, namelen, phys_ofs, ALLOC_NORMAL);
+	fd = jffs2_write_dirent(c, dir_f, rd, (const unsigned char *)name, namelen, phys_ofs, ALLOC_NORMAL);
 
 	jffs2_free_raw_dirent(rd);
 	
@@ -571,7 +571,7 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
 		rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));
 		rd->name_crc = cpu_to_je32(crc32(0, name, namelen));
 
-		fd = jffs2_write_dirent(c, dir_f, rd, name, namelen, phys_ofs, ALLOC_DELETION);
+		fd = jffs2_write_dirent(c, dir_f, rd, (const unsigned char *)name, namelen, phys_ofs, ALLOC_DELETION);
 		
 		jffs2_free_raw_dirent(rd);
 
@@ -586,7 +586,7 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
 		up(&dir_f->sem);
 	} else {
 		struct jffs2_full_dirent **prev = &dir_f->dents;
-		uint32_t nhash = full_name_hash(name, namelen);
+		uint32_t nhash = full_name_hash((const unsigned char *)name, namelen);
 
 		down(&dir_f->sem);
 
@@ -682,7 +682,7 @@ int jffs2_do_link (struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f, uint
 	rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));
 	rd->name_crc = cpu_to_je32(crc32(0, name, namelen));
 
-	fd = jffs2_write_dirent(c, dir_f, rd, name, namelen, phys_ofs, ALLOC_NORMAL);
+	fd = jffs2_write_dirent(c, dir_f, rd, (const unsigned char *)name, namelen, phys_ofs, ALLOC_NORMAL);
 	
 	jffs2_free_raw_dirent(rd);
 

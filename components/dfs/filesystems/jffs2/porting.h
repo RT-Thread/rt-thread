@@ -25,8 +25,10 @@ struct jffs2_stat {
     long  st_mtime;    /* Last data modification time */
     long  st_ctime;    /* Last file status change time */
 };
-
+#ifndef NAME_MAX
 #define	NAME_MAX		14
+#endif
+
 struct jffs2_dirent
 {
 	unsigned long  d_type; // Only supported with FATFS, RAMFS, ROMFS,
@@ -35,4 +37,13 @@ struct jffs2_dirent
 	// should be used with caution.
 	char        d_name[NAME_MAX+1];
 };
+
+extern cyg_fileops jffs2_fileops;
+extern cyg_fileops jffs2_dirops;
+extern struct cyg_fstab_entry jffs2_fste;
+
+extern void jffs2_get_info_from_sb(void * data, struct jffs2_fs_info * info);
+extern int jffs2_porting_stat(cyg_mtab_entry * mte, cyg_dir dir, const char *name,
+		      void * stat_buf);
+
 #endif
