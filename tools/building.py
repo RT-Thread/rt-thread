@@ -261,7 +261,7 @@ def MDK4Project(target, script):
         # get each group's definitions
         if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
             if CPPDEFINES:
-                CPPDEFINES += ';' + group['CPPDEFINES']
+                CPPDEFINES += group['CPPDEFINES']
             else:
                 CPPDEFINES += group['CPPDEFINES']
         
