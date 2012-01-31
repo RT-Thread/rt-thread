@@ -33,13 +33,19 @@
 #define LWIP_DNS					0
 #endif
 
-#define LWIP_HAVE_LOOPIF            1
+#define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
 /* Enable SO_RCVTIMEO processing.   */
 #define LWIP_SO_RCVTIMEO 			1
+
+#ifdef RT_USING_NEWLIB
+/* use timeval structure in newlib */
+#define LWIP_TIMEVAL_PRIVATE 0
+#include <sys/time.h>
+#endif
 
 /* #define RT_LWIP_DEBUG */
 
@@ -110,7 +116,7 @@
 #define MEMP_NUM_UDP_PCB            RT_LWIP_UDP_PCB_NUM
 #endif
 
-/* the number of simulatenously active TCP connections. */
+/* the number of simultaneously active TCP connections. */
 #ifdef RT_LWIP_TCP_PCB_NUM
 #define MEMP_NUM_TCP_PCB            RT_LWIP_TCP_PCB_NUM
 #endif
@@ -122,7 +128,7 @@
 #define MEMP_NUM_TCP_SEG            TCP_SND_QUEUELEN
 #endif
 
-/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
+/* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active
    timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT        8
 
@@ -235,10 +241,10 @@
 
 /* IP reassembly and segmentation.These are orthogonal even
  * if they both deal with IP fragments */
-#define IP_REASSEMBLY               1
+#define IP_REASSEMBLY               0
 #define IP_REASS_MAX_PBUFS          10
 #define MEMP_NUM_REASSDATA          10
-#define IP_FRAG                     1
+#define IP_FRAG                     0
 
 /* ---------- ICMP options ---------- */
 #define ICMP_TTL                    255
@@ -267,7 +273,7 @@
 #define LWIP_UDP                    0
 #endif
 
-#define LWIP_UDPLITE                1
+#define LWIP_UDPLITE                0
 #define UDP_TTL                     255
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
 
