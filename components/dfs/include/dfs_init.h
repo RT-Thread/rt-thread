@@ -19,10 +19,10 @@
 extern "C" {
 #endif
 
-/* initilization of dfs */
+/* Initialization of dfs */
 void dfs_init(void);
 
-/* initilization of dfs with filesystem server */
+/* Initialization of dfs with filesystem server */
 void dfs_server_init(void);
 
 #ifdef __cplusplus

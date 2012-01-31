@@ -277,7 +277,7 @@ int dfs_mount(const char *device_name, const char *path,
 		}
 	}
 
-	/* find out en empty filesystem table entry */
+	/* find out an empty filesystem table entry */
 	for (index = 0; index < DFS_FILESYSTEMS_MAX && filesystem_table[index].ops != RT_NULL;
 		index++) ;
 	if (index == DFS_FILESYSTEMS_MAX)	/* can't find en empty filesystem table entry */
