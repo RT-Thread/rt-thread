@@ -1,14 +1,14 @@
-Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
+cwd = GetCurrentDir()
 src	= Glob('*.c')
-CPPPATH = [GetCurrentDir()]
+CPPPATH = [cwd]
 if rtconfig.CROSS_TOOL == 'keil':
     LINKFLAGS = ' --keep __fsym_* --keep __vsym_* '
 else:
     LINKFLAGS = '' 
 
-group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, LIBRARY = '')
+group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
 
 Return('group')
