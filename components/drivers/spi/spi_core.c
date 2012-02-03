@@ -3,7 +3,7 @@
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus* bus, const char* name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device* dev, const char* name);
 
-rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, struct rt_spi_ops* ops)
+rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, const struct rt_spi_ops* ops)
 {
 	rt_err_t result;
 

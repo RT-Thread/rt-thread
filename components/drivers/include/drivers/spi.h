@@ -3,10 +3,26 @@
 
 #include <rtthread.h>
 
-#define RT_SPI_CPHA		(1<<0)                             /* bit[0]:CPHA */
-#define RT_SPI_CPOL		(1<<1)                             /* bit[1]:CPOL */
+
+#define RT_SPI_CPHA		(1<<0)                             /* bit[0]:CPHA, clock phase */
+#define RT_SPI_CPOL		(1<<1)                             /* bit[1]:CPOL, clock polarity */
+/**
+ * At CPOL=0 the base value of the clock is zero
+ *  - For CPHA=0, data are captured on the clock's rising edge (low¡úhigh transition)
+ *    and data are propagated on a falling edge (high¡úlow clock transition).
+ *  - For CPHA=1, data are captured on the clock's falling edge and data are
+ *    propagated on a rising edge.
+ * At CPOL=1 the base value of the clock is one (inversion of CPOL=0)
+ *  - For CPHA=0, data are captured on clock's falling edge and data are propagated
+ *    on a rising edge.
+ *  - For CPHA=1, data are captured on clock's rising edge and data are propagated
+ *    on a falling edge.
+ */
 #define RT_SPI_LSB		(0<<2)                             /* bit[2]: 0-LSB */
 #define RT_SPI_MSB		(1<<2)                             /* bit[2]: 1-MSB */
+
+#define RT_SPI_MASTER	(0<<3)							   /* SPI master device */
+#define RT_SPI_SLAVE	(1<<3)							   /* SPI slave device */
 
 #define RT_SPI_MODE_0		(0 | 0)					       /* CPOL = 0, CPHA = 0 */
 #define RT_SPI_MODE_1		(0 | RT_SPI_CPHA)			   /* CPOL = 0, CPHA = 1 */
@@ -44,7 +60,7 @@ struct rt_spi_ops;
 struct rt_spi_bus
 {
 	struct rt_device parent;
-	struct rt_spi_ops *ops;
+	const struct rt_spi_ops *ops;
 
 	struct rt_mutex lock;
 	struct rt_spi_device* owner;
@@ -72,7 +88,7 @@ struct rt_spi_device
 #define SPI_DEVICE(dev)	((struct rt_spi_device*)(dev))
 
 /* register a SPI bus */
-rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, struct rt_spi_ops* ops);
+rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, const struct rt_spi_ops* ops);
 /* attach a device on SPI bus */
 rt_err_t rt_spi_bus_attach_device(struct rt_spi_device* device, const char* name, const char* bus_name, void* user_data);
 /* set configuration on SPI device */
