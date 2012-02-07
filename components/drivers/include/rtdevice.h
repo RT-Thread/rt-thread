@@ -3,6 +3,8 @@
 
 #include <rtthread.h>
 
+#define RT_DEVICE(device)	((rt_device_t)device)
+
 #ifdef RT_USING_SPI
 #include "drivers/spi.h"
 #endif
