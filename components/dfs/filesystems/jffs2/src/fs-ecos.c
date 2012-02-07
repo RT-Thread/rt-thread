@@ -18,18 +18,12 @@
 #include <linux/pagemap.h>
 #include <linux/crc32.h>
 #include "compr.h"
-//#include <errno.h> //prife
 #include <string.h>
-//#include <cyg/io/config_keys.h> //prife
 
-#if (__GNUC__ == 3) && (__GNUC_MINOR__ == 2) && \
-    (defined (__arm__) || defined (_mips))
-#error This compiler is known to be broken. Please see:
-#error "http://ecos.sourceware.org/ml/ecos-patches/2003-08/msg00006.html"
-#endif
+#include <rtdevice.h>
 
 //--------------------------------------------
-cyg_mtab_entry *cyg_cdir_mtab_entry = NULL;  // prife add
+cyg_mtab_entry *cyg_cdir_mtab_entry = NULL;
 cyg_dir cyg_cdir_dir = CYG_DIR_NULL;
 //==========================================================================
 // Default functions
@@ -219,7 +213,7 @@ static void icache_evict(struct _inode *root_i, struct _inode *i)
 				this->i_cache_prev->i_cache_next = this->i_cache_next;
 			jffs2_clear_inode(this);
 			memset(this, 0x5a, sizeof(*this));
-			free(this);
+			rt_free(this);
 			if (parent && parent != this) {
 				parent->i_count--;
 				this = root_i;
@@ -453,59 +447,24 @@ static int jffs2_pathconf(struct _inode *node, struct cyg_pathconf_info *info)
 // filesystem.
 static int jffs2_read_super(struct super_block *sb)
 {
-//	struct jffs2_sb_info *c;
-//	Cyg_ErrNo err;
-//	cyg_uint32 len;
-//	cyg_io_flash_getconfig_devsize_t ds;
-//	cyg_io_flash_getconfig_blocksize_t bs;
-//
-//	D1(printk(KERN_DEBUG "jffs2: read_super\n"));
-//
-//	c = JFFS2_SB_INFO(sb);
-//
-//	len = sizeof (ds);
-//	err = cyg_io_get_config(sb->s_dev,
-//				CYG_IO_GET_CONFIG_FLASH_DEVSIZE, &ds, &len);
-//	if (err != ENOERR) {
-//		D1(printf
-//		   ("jffs2: cyg_io_get_config failed to get dev size: %d\n",
-//		    err));
-//		return err;
-//	}
-//	len = sizeof (bs);
-//	bs.offset = 0;
-//	err = cyg_io_get_config(sb->s_dev,
-//				CYG_IO_GET_CONFIG_FLASH_BLOCKSIZE, &bs, &len);
-//	if (err != ENOERR) {
-//		D1(printf
-//		   ("jffs2: cyg_io_get_config failed to get block size: %d\n",
-//		    err));
-//		return err;
-//	}
-//
-//	c->sector_size = bs.block_size;
-//	c->flash_size = ds.dev_size;
-//	c->cleanmarker_size = sizeof(struct jffs2_unknown_node);
 	Cyg_ErrNo err;
 	struct jffs2_sb_info *c;
-	struct rt_device_blk_geometry geometry; //fixme need a new struct type!
+	struct rt_mtd_device *device;
 	
 	c = JFFS2_SB_INFO(sb);
+	device = RT_MTD_DEVICE(sb->s_dev);
 
-//init some block
+	/* initialize mutex lock */
 	init_MUTEX(&c->alloc_sem);
 	init_MUTEX(&c->erase_free_sem);
-	
-	rt_memset(&geometry, 0, sizeof(geometry));
-	rt_device_control(sb->s_dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-	
-	c->sector_size = geometry.block_size; 
-	c->flash_size = (geometry.sector_count) * (geometry.bytes_per_sector);
+
+	/* sector size is the erase block size */
+	c->sector_size = device->block_size;
+	c->flash_size  = (device->block_end - device->block_start) * device->block_size;
 	c->cleanmarker_size = sizeof(struct jffs2_unknown_node);
 
 	err = jffs2_do_mount_fs(c);
-	if (err)
-		return -err;
+	if (err) return -err;
 
 	D1(printk(KERN_DEBUG "jffs2_read_super(): Getting root inode\n"));
 	sb->s_root = jffs2_iget(sb, 1);
@@ -520,7 +479,7 @@ static int jffs2_read_super(struct super_block *sb)
 out_nodes:
 	jffs2_free_ino_caches(c);
 	jffs2_free_raw_node_refs(c);
-	free(c->blocks);
+	rt_free(c->blocks);
 
 	return err;
 }
@@ -558,7 +517,7 @@ int jffs2_mount(cyg_fstab_entry * fste, cyg_mtab_entry * mte)
     jffs2_sb = NULL;
 	t = (cyg_io_handle_t)mte->data; //get from dfs_jffs2;
 	if (jffs2_sb == NULL) {
-		jffs2_sb = malloc(sizeof (struct super_block));
+		jffs2_sb = rt_malloc(sizeof (struct super_block));
 
 		if (jffs2_sb == NULL)
 			return ENOMEM;
@@ -567,9 +526,9 @@ int jffs2_mount(cyg_fstab_entry * fste, cyg_mtab_entry * mte)
 		memset(jffs2_sb, 0, sizeof (struct super_block));
 		jffs2_sb->s_dev = t;
 
-		c->inocache_list = malloc(sizeof(struct jffs2_inode_cache *) * INOCACHE_HASHSIZE);
+		c->inocache_list = rt_malloc(sizeof(struct jffs2_inode_cache *) * INOCACHE_HASHSIZE);
 		if (!c->inocache_list) {
-			free(jffs2_sb);
+			rt_free(jffs2_sb);
 			return ENOMEM;
 		}
 		memset(c->inocache_list, 0, sizeof(struct jffs2_inode_cache *) * INOCACHE_HASHSIZE);
@@ -586,8 +545,8 @@ int jffs2_mount(cyg_fstab_entry * fste, cyg_mtab_entry * mte)
 				jffs2_compressors_exit();
 			}
 
-			free(jffs2_sb);
-			free(c->inocache_list);
+			rt_free(jffs2_sb);
+			rt_free(c->inocache_list);
 			return err;
 		}
 
@@ -677,16 +636,16 @@ static int jffs2_umount(cyg_mtab_entry * mte)
 		  jffs2_free_full_dirent(fd);
 		}
 
-		free(root);
+		rt_free(root);
 		//Clear root inode
 		//root_i = NULL;
 
 		// Clean up the super block and root inode
 		jffs2_free_ino_caches(c);
 		jffs2_free_raw_node_refs(c);
-		free(c->blocks);
-		free(c->inocache_list);
-		free(jffs2_sb);
+		rt_free(c->blocks);
+		rt_free(c->inocache_list);
+		rt_free(jffs2_sb);
 		// Clear superblock & root pointer
 		mte->root = CYG_DIR_NULL;
                 mte->data = 0;
@@ -986,7 +945,7 @@ static int jffs2_ops_rename(cyg_mtab_entry * mte, cyg_dir dir1,
 	if (!err)
 		ds1.dir->i_ctime =
 		    ds1.dir->i_mtime =
-		    ds2.dir->i_ctime = ds2.dir->i_mtime = cyg_timestamp();
+		    ds2.dir->i_ctime = ds2.dir->i_mtime = jffs2_get_timestamp();
  out:
 	jffs2_iput(ds1.dir);
 	if (S_ISDIR(ds1.node->i_mode)) {
@@ -1066,7 +1025,7 @@ static int jffs2_ops_link(cyg_mtab_entry * mte, cyg_dir dir1, const char *name1,
 
 	if (err == 0)
 		ds1.node->i_ctime =
-		    ds2.dir->i_ctime = ds2.dir->i_mtime = cyg_timestamp();
+		    ds2.dir->i_ctime = ds2.dir->i_mtime = jffs2_get_timestamp();
 
 	jffs2_iput(ds1.dir);
 	jffs2_iput(ds1.node);
@@ -1294,7 +1253,7 @@ int jffs2_fo_read(struct CYG_FILE_TAG *fp, struct CYG_UIO_TAG *uio)
 	// We successfully read some data, update the node's access time
 	// and update the file offset and transfer residue.
 
-	inode->i_atime = cyg_timestamp();
+	inode->i_atime = jffs2_get_timestamp();
 
 	uio->uio_resid = resid;
 	fp->f_offset = pos;
@@ -1403,7 +1362,7 @@ static int jffs2_truncate_file (struct _inode *inode)
      ri->mode = cpu_to_jemode(inode->i_mode);
      ri->isize = cpu_to_je32(0);
      ri->atime = cpu_to_je32(inode->i_atime);
-     ri->mtime = cpu_to_je32(cyg_timestamp());
+     ri->mtime = cpu_to_je32(jffs2_get_timestamp());
      ri->offset = cpu_to_je32(0);
      ri->csize = ri->dsize = cpu_to_je32(0);
      ri->compr = JFFS2_COMPR_NONE;
@@ -1419,7 +1378,7 @@ static int jffs2_truncate_file (struct _inode *inode)
      }
 
      /* It worked. Update the inode */
-     inode->i_mtime = cyg_timestamp();
+     inode->i_mtime = jffs2_get_timestamp();
      inode->i_size = 0;
      old_metadata = f->metadata;
      jffs2_truncate_fragtree (c, &f->fragtree, 0);
@@ -1460,7 +1419,7 @@ static int jffs2_fo_write(struct CYG_FILE_TAG *fp, struct CYG_UIO_TAG *uio)
 	ri.mode = cpu_to_jemode(inode->i_mode);
 	ri.uid = cpu_to_je16(inode->i_uid);
 	ri.gid = cpu_to_je16(inode->i_gid);
-	ri.atime = ri.ctime = ri.mtime = cpu_to_je32(cyg_timestamp());
+	ri.atime = ri.ctime = ri.mtime = cpu_to_je32(jffs2_get_timestamp());
 
 	if (pos > inode->i_size) {
 		int err;
@@ -1682,7 +1641,6 @@ static int jffs2_fo_dirread(struct CYG_FILE_TAG *fp, struct CYG_UIO_TAG *uio)
 	int nlen = sizeof (ent->d_name) - 1;
 	off_t len = uio->uio_iov[0].iov_len;
 	struct jffs2_inode_info *f;
-	struct jffs2_sb_info *c;
 	struct _inode *inode = d_inode;
 	struct jffs2_full_dirent *fd;
 	unsigned long offset, curofs;
@@ -1695,7 +1653,6 @@ static int jffs2_fo_dirread(struct CYG_FILE_TAG *fp, struct CYG_UIO_TAG *uio)
 	   (KERN_DEBUG "jffs2_readdir() for dir_i #%lu\n", d_inode->i_ino));
 
 	f = JFFS2_INODE_INFO(inode);
-	c = JFFS2_SB_INFO(inode->i_sb);
 
 	offset = fp->f_offset;
 
@@ -1823,19 +1780,14 @@ void jffs2_gc_release_page(struct jffs2_sb_info *c,
 
 static struct _inode *new_inode(struct super_block *sb)
 {
-
-	// Only called in write.c jffs2_new_inode
-	// Always adds itself to inode cache
-
 	struct _inode *inode;
 	struct _inode *cached_inode;
 
-	inode = malloc(sizeof (struct _inode));
+	inode = rt_malloc(sizeof (struct _inode));
 	if (inode == NULL)
 		return 0;
 
-	D2(printf
-	   ("malloc new_inode %x ####################################\n",
+	D2(printf("malloc new_inode %x ####################################\n",
 	    inode));
 
 	memset(inode, 0, sizeof (struct _inode));
@@ -1945,7 +1897,7 @@ void jffs2_iput(struct _inode *i)
 		parent = i->i_parent;
 		jffs2_clear_inode(i);
 		memset(i, 0x5a, sizeof(*i));
-		free(i);
+		rt_free(i);
 
 		if (parent && parent != i) {
 			i = parent;
@@ -2021,7 +1973,7 @@ struct _inode *jffs2_new_inode (struct _inode *dir_i, int mode, struct jffs2_raw
                 up(&(f->sem));
                 jffs2_clear_inode(inode);
                 memset(inode, 0x6a, sizeof(*inode));
-                free(inode);
+                rt_free(inode);
                 return ERR_PTR(ret);
 	}
 	inode->i_nlink = 1;
@@ -2029,7 +1981,7 @@ struct _inode *jffs2_new_inode (struct _inode *dir_i, int mode, struct jffs2_raw
 	inode->i_mode = jemode_to_cpu(ri->mode);
 	inode->i_gid = je16_to_cpu(ri->gid);
 	inode->i_uid = je16_to_cpu(ri->uid);
-	inode->i_atime = inode->i_ctime = inode->i_mtime = cyg_timestamp();
+	inode->i_atime = inode->i_ctime = inode->i_mtime = jffs2_get_timestamp();
 	ri->atime = ri->mtime = ri->ctime = cpu_to_je32(inode->i_mtime);
 
 	inode->i_size = 0;

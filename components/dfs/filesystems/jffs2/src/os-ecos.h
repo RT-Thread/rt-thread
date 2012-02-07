@@ -15,8 +15,6 @@
 #define __JFFS2_OS_ECOS_H__
 #include "jffs2_config.h"
 #include <rtthread.h>
-#define malloc rt_malloc
-#define free rt_free
 #define printf rt_kprintf
 
 //#include <pkgconf/fs_jffs2.h>
@@ -117,7 +115,7 @@ static inline unsigned int full_name_hash(const unsigned char * name, unsigned i
 #define JFFS2_F_I_RDEV_MIN(f) ((OFNI_EDONI_2SFFJ(f)->i_rdev)&0xff)
 #define JFFS2_F_I_RDEV_MAJ(f) ((OFNI_EDONI_2SFFJ(f)->i_rdev)>>8)
 
-#define get_seconds cyg_timestamp
+#define get_seconds jffs2_get_timestamp
 
 struct _inode {
 	cyg_uint32		i_ino;
@@ -215,13 +213,13 @@ uint32_t jffs2_to_os_mode (uint32_t jmode);
 
 
 /* flashio.c */
-cyg_bool jffs2_flash_read(struct jffs2_sb_info *c, cyg_uint32 read_buffer_offset,
+int jffs2_flash_read(struct jffs2_sb_info *c, cyg_uint32 read_buffer_offset,
 			  const size_t size, size_t * return_size, unsigned char * write_buffer);
-cyg_bool jffs2_flash_write(struct jffs2_sb_info *c, cyg_uint32 write_buffer_offset,
+int jffs2_flash_write(struct jffs2_sb_info *c, cyg_uint32 write_buffer_offset,
 			   const size_t size, size_t * return_size, unsigned char * read_buffer);
 int jffs2_flash_direct_writev(struct jffs2_sb_info *c, const struct iovec *vecs,
 			      unsigned long count, loff_t to, size_t *retlen);
-cyg_bool jffs2_flash_erase(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb);
+int jffs2_flash_erase(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb);
 
 // dir-ecos.c
 struct _inode *jffs2_lookup(struct _inode *dir_i, const unsigned char *name, int namelen);

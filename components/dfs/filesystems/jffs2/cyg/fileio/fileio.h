@@ -438,7 +438,7 @@ __externC void cyg_selwakeup( struct CYG_SELINFO_TAG *sip );
 // Provides the current time as a time_t timestamp for use in filesystem
 // data strucures.
 
-__externC time_t cyg_timestamp(void);
+__externC time_t jffs2_get_timestamp(void);
 
 //=============================================================================
 // Miscellaneous functions.

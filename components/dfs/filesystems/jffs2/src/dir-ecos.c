@@ -21,7 +21,6 @@
 struct _inode *jffs2_lookup(struct _inode *dir_i, const unsigned char *d_name, int namelen)
 {
 	struct jffs2_inode_info *dir_f;
-	struct jffs2_sb_info *c;
 	struct jffs2_full_dirent *fd = NULL, *fd_list;
 	uint32_t ino = 0;
 	uint32_t hash = full_name_hash(d_name, namelen);
@@ -30,7 +29,6 @@ struct _inode *jffs2_lookup(struct _inode *dir_i, const unsigned char *d_name, i
 	D1(printk("jffs2_lookup()\n"));
 
 	dir_f = JFFS2_INODE_INFO(dir_i);
-	c = JFFS2_SB_INFO(dir_i->i_sb);
 
 	down(&dir_f->sem);
 
@@ -242,7 +240,7 @@ int jffs2_mkdir (struct _inode *dir_i, const unsigned char *d_name, int mode)
 	rd->pino = cpu_to_je32(dir_i->i_ino);
 	rd->version = cpu_to_je32(++dir_f->highest_version);
 	rd->ino = cpu_to_je32(inode->i_ino);
-	rd->mctime = cpu_to_je32(cyg_timestamp());
+	rd->mctime = cpu_to_je32(jffs2_get_timestamp());
 	rd->nsize = namelen;
 	rd->type = DT_DIR;
 	rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));

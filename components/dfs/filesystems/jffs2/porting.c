@@ -3,7 +3,7 @@
 
 #include "porting.h"
 
-time_t cyg_timestamp(void)
+time_t jffs2_get_timestamp(void)
 {
     return 0;
 }

@@ -42,8 +42,9 @@ extern cyg_fileops jffs2_fileops;
 extern cyg_fileops jffs2_dirops;
 extern struct cyg_fstab_entry jffs2_fste;
 
-extern void jffs2_get_info_from_sb(void * data, struct jffs2_fs_info * info);
-extern int jffs2_porting_stat(cyg_mtab_entry * mte, cyg_dir dir, const char *name,
+time_t jffs2_get_timestamp(void);
+void jffs2_get_info_from_sb(void * data, struct jffs2_fs_info * info);
+int jffs2_porting_stat(cyg_mtab_entry * mte, cyg_dir dir, const char *name,
 		      void * stat_buf);
 
 #endif

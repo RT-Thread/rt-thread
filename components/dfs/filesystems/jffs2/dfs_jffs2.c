@@ -12,6 +12,7 @@
  * 2012-1-7       prife        the first version
 */
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #include "cyg/infra/cyg_type.h"
 #include "cyg/fileio/fileio.h"
@@ -22,12 +23,9 @@
 #include <dfs_def.h>
 
 #include "dfs_jffs2.h"
+#include "jffs2_config.h"
 #include "porting.h"
 #include <string.h>
-
-#define FILE_PATH_MAX   256 /* the longest file path */
-
-#define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 
 #if DEVICE_PART_MAX > 1
 	#error "support only one jffs2 partition on a flash device!"
@@ -36,7 +34,7 @@
 /* make sure the following struct var had been initilased to 0! */ //fixme
 struct device_part 
 {
-	rt_device_t dev;
+	struct rt_mtd_device *dev;
 	struct cyg_mtab_entry * mte;				
 };
 static struct device_part device_partition[DEVICE_PART_MAX] = {0}; 
@@ -132,7 +130,6 @@ static int jffs2_result_to_dfs(int result)
 /*
  * RT-Thread DFS Interface for jffs2
  */
-
 static int dfs_jffs2_mount(struct dfs_filesystem* fs, 
                     unsigned long rwflag, 
 				    const void* data)
@@ -164,7 +161,7 @@ static int dfs_jffs2_mount(struct dfs_filesystem* fs,
 	 */
 	mte->data = (CYG_ADDRWORD)fs->dev_id;
 
-	device_partition[index].dev = fs->dev_id;	
+	device_partition[index].dev = RT_MTD_DEVICE(fs->dev_id);
 	/* after jffs2_mount, mte->data will not be dev_id any more */
 	result = jffs2_mount(NULL, mte);
 	if (result != 0)
@@ -182,7 +179,7 @@ static int _find_fs(struct cyg_mtab_entry ** mte, rt_device_t dev_id)
 	/* find device index */
 	for (index = 0; index < DEVICE_PART_MAX; index++)
 	{
-		if (device_partition[index].dev == dev_id)
+		if (device_partition[index].dev == RT_MTD_DEVICE(dev_id))
 		{
 			*mte = device_partition[index].mte;
 			return 0;
@@ -199,7 +196,7 @@ static int dfs_jffs2_unmount(struct dfs_filesystem* fs)
 	/* find device index, then umount it */
 	for (index = 0; index < DEVICE_PART_MAX; index++)
 	{
-		if (device_partition[index].dev == fs->dev_id)
+		if (device_partition[index].dev == RT_MTD_DEVICE(fs->dev_id))
 		{
 			result = jffs2_umount(device_partition[index].mte);
 			if (result)

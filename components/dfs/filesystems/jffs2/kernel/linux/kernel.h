@@ -10,7 +10,7 @@
 #define PTR_ERR(err) ((unsigned long)(err))
 #define IS_ERR(err) ((unsigned long)err > (unsigned long)-1000L)
 
-#define CURRENT_TIME cyg_timestamp()
+#define CURRENT_TIME jffs2_get_timestamp()
 
 #define	KERN_EMERG              "<0>" // system is unusable
 #define	KERN_ALERT              "<1>" // action must be taken immediately
