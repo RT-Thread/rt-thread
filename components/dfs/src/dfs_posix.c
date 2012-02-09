@@ -1,7 +1,7 @@
 /*
  * File      : dfs_posix.c
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -44,11 +44,11 @@ int open(const char *file, int flags, int mode)
 	result = dfs_file_open(d, file, flags);
 	if (result < 0)
 	{
-		rt_set_errno(result);
-
 		/* release the ref-count of fd */
 		fd_put(d);
 		fd_put(d);
+		
+		rt_set_errno(result);
 
 		return -1;
 	}
@@ -117,8 +117,8 @@ int read(int fd, void *buf, size_t len)
 	result = dfs_file_read(d, buf, len);
 	if (result < 0)
 	{
-		rt_set_errno(result);
 		fd_put(d);
+		rt_set_errno(result);
 
 		return -1;
 	}
@@ -154,8 +154,8 @@ int write(int fd, const void *buf, size_t len)
 	result = dfs_file_write(d, buf, len);
 	if (result < 0)
 	{
-		rt_set_errno(result);
 		fd_put(d);
+		rt_set_errno(result);
 
 		return -1;
 	}
@@ -180,7 +180,7 @@ off_t lseek(int fd, off_t offset, int whence)
 	int result;
 	struct dfs_fd *d;
 
-	d  = fd_get(fd);
+	d = fd_get(fd);
 	if (d == RT_NULL)
 	{
 		rt_set_errno(-RT_ERROR);
@@ -201,7 +201,7 @@ off_t lseek(int fd, off_t offset, int whence)
 		break;
 	}
 
-	if(offset < 0)
+	if (offset < 0)
 	{
 		rt_set_errno(DFS_STATUS_EINVAL);
 		return -1;
@@ -209,8 +209,8 @@ off_t lseek(int fd, off_t offset, int whence)
 	result = dfs_file_lseek(d, offset);
 	if (result < 0)
 	{
-		rt_set_errno(result);
 		fd_put(d);
+		rt_set_errno(result);
 		return -1;
 	}
 
@@ -296,7 +296,7 @@ int fstat(int fildes, struct stat *buf)
 	struct dfs_fd *d;
 
 	/* get the fd */
-	d  = fd_get(fildes);
+	d = fd_get(fildes);
 	if (d == RT_NULL)
 	{
 		rt_set_errno(-RT_ERROR);
@@ -354,7 +354,7 @@ int statfs(const char *path, struct statfs *buf)
  *
  * @return 0 on successful, others on failed.
  */
-int mkdir (const char *path, mode_t mode)
+int mkdir(const char *path, mode_t mode)
 {
 	int fd;
 	struct dfs_fd *d;
@@ -373,8 +373,8 @@ int mkdir (const char *path, mode_t mode)
 
 	if (result < 0)
 	{
-		rt_set_errno(result);
 		fd_put(d);
+		rt_set_errno(result);
 		return -1;
 	}
 
@@ -430,13 +430,13 @@ DIR *opendir(const char *name)
 		rt_kprintf("no fd\n");
 		return RT_NULL;
 	}
-	d  = fd_get(fd);
+	d = fd_get(fd);
 
 	result = dfs_file_open(d, name, DFS_O_RDONLY | DFS_O_DIRECTORY);
 	if (result >= 0)
 	{
 		/* open successfully */
-		t = (DIR *) rt_malloc (sizeof(DIR));
+		t = (DIR *) rt_malloc(sizeof(DIR));
 		if (t == RT_NULL)
 		{
 			dfs_file_close(d);
@@ -486,8 +486,8 @@ struct dirent *readdir(DIR *d)
 		result = dfs_file_getdents(fd, (struct dirent*)d->buf, sizeof(d->buf) - 1);
 		if (result <= 0)
 		{
-			rt_set_errno(result);
 			fd_put(fd);
+			rt_set_errno(result);
 
 			return RT_NULL;
 		}
