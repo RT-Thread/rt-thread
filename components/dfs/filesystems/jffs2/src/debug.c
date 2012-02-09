@@ -15,6 +15,7 @@
 #include <linux/pagemap.h>
 #include <linux/crc32.h>
 #include <linux/jffs2.h>
+#include <linux/slab.h>
 #include "nodelist.h"
 #include "debug.h"
 

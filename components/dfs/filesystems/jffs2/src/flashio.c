@@ -23,13 +23,15 @@ int jffs2_flash_read(struct jffs2_sb_info * c, cyg_uint32 offset,
 		size_t * return_size,
 		unsigned char *buffer)
 {
+	cyg_uint32 len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	*return_size = rt_mtd_read(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
-
+	len = rt_mtd_read(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
+	if (len != size)
+		return -EIO;
 	//rt_kprintf("fread: offset %d, size %d, ret size %d\n",
 	//		offset, size, *return_size);
-
+	* return_size = len;
 	return ENOERR;
 }
 
@@ -37,13 +39,16 @@ int jffs2_flash_write(struct jffs2_sb_info * c,
 		cyg_uint32 offset, const size_t size,
 		size_t * return_size, unsigned char *buffer)
 {
+	cyg_uint32 len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	*return_size = rt_mtd_write(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
+	len = rt_mtd_write(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
+	if (len != size)
+		return -EIO;
 
-	rt_kprintf("fwrite: offset %d, size %d, ret size %d\n",
-			offset, size, *return_size);
-
+	//rt_kprintf("fwrite: offset %d, size %d, ret size %d\n",
+	//		offset, size, *return_size);
+	* return_size = len;
 	return ENOERR;
 }
 
@@ -53,7 +58,7 @@ int jffs2_flash_erase(struct jffs2_sb_info * c,
 	rt_err_t result;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	rt_kprintf("erase: offset %d\n", jeb->offset);
+	//rt_kprintf("erase: offset %d\n", jeb->offset);
 
 	result = rt_mtd_erase_block(RT_MTD_DEVICE(sb->s_dev), jeb->offset);
 	if (result != RT_EOK)
@@ -107,7 +112,7 @@ int jffs2_flash_direct_writev(struct jffs2_sb_info *c,
 					memcpy(cbufptr, vecs[j].iov_base, vecs[j].iov_len);
 					cbufptr += vecs[j].iov_len;
 				}
-				rt_kprintf("direct_write: offset %d, size %d\n", to, sizetomalloc);
+				//rt_kprintf("direct_write: offset %d, size %d\n", to, sizetomalloc);
 				ret = jffs2_flash_write(c, to, sizetomalloc, &thislen,
 						(unsigned char *) cbuf);
 				if (thislen > totvecsize) // in case it was aligned up
@@ -128,7 +133,7 @@ int jffs2_flash_direct_writev(struct jffs2_sb_info *c,
 				lentowrite &= ~(sizeof(int) - 1);
 				memcpy(buf, vecs[i].iov_base, lentowrite);
 
-				rt_kprintf("direct_write: offset %d, size %d\n", to, lentowrite);
+				//rt_kprintf("direct_write: offset %d, size %d\n", to, lentowrite);
 				ret = jffs2_flash_write(c, to, lentowrite, &thislen,
 						(unsigned char *) &buf);
 				if (thislen > vecs[i].iov_len)
@@ -137,7 +142,7 @@ int jffs2_flash_direct_writev(struct jffs2_sb_info *c,
 		}
 		else
 		{
-			rt_kprintf("direct_writev: offset %d, size %d\n", to, vecs[i].iov_len);
+			//rt_kprintf("direct_writev: offset %d, size %d\n", to, vecs[i].iov_len);
 			ret = jffs2_flash_write(c, to, vecs[i].iov_len, &thislen,
 					vecs[i].iov_base);
 		}
