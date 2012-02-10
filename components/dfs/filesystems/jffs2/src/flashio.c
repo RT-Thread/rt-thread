@@ -16,38 +16,33 @@
 #include "nodelist.h"
 #include <rtdevice.h>
 
-#define PAGE_SIZE	1024
-
-int jffs2_flash_read(struct jffs2_sb_info * c, cyg_uint32 offset,
+int jffs2_flash_read(struct jffs2_sb_info * c, uint32_t offset,
 		const size_t size,
 		size_t * return_size,
 		unsigned char *buffer)
 {
-	cyg_uint32 len;
+	uint32_t len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
 	len = rt_mtd_read(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
 	if (len != size)
 		return -EIO;
-	//rt_kprintf("fread: offset %d, size %d, ret size %d\n",
-	//		offset, size, *return_size);
+
 	* return_size = len;
 	return ENOERR;
 }
 
 int jffs2_flash_write(struct jffs2_sb_info * c,
-		cyg_uint32 offset, const size_t size,
+		uint32_t offset, const size_t size,
 		size_t * return_size, unsigned char *buffer)
 {
-	cyg_uint32 len;
+	uint32_t len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
 	len = rt_mtd_write(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
 	if (len != size)
 		return -EIO;
 
-	//rt_kprintf("fwrite: offset %d, size %d, ret size %d\n",
-	//		offset, size, *return_size);
 	* return_size = len;
 	return ENOERR;
 }
@@ -57,8 +52,6 @@ int jffs2_flash_erase(struct jffs2_sb_info * c,
 {
 	rt_err_t result;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
-
-	//rt_kprintf("erase: offset %d\n", jeb->offset);
 
 	result = rt_mtd_erase_block(RT_MTD_DEVICE(sb->s_dev), jeb->offset);
 	if (result != RT_EOK)
