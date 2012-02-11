@@ -9,7 +9,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-01-01     aozima       the first version
+ * 2011-01-01     aozima       the first version.
+ * 2012-02-11     aozima       add multiple sector speed test.
  */
 
 #include <rtthread.h>
@@ -88,60 +89,43 @@ static rt_err_t _block_device_test(rt_device_t device)
             goto __return;
         }
 
-        //step 3: I/O R/W test
+        /* step 3:  R/W test */
         {
             rt_uint32_t i,err_count,sector_no;
             rt_uint8_t * data_point;
 
-            // the first sector
+            i = device->read(device, 0, read_buffer, 1);
+            if(i != 1)
+            {
+                rt_kprintf("read device :%s ",device->parent.name);
+                rt_kprintf("the first sector failed.\r\n");
+                goto __return;
+            }
+
+            data_point = write_buffer;
+            for(i=0; i<geometry.bytes_per_sector; i++)
+            {
+                *data_point++ = (rt_uint8_t)i;
+            }
+
+            /* write first sector */
             sector_no = 0;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            for(i=1; i<geometry.bytes_per_sector; i++)
-            {
-                *data_point++ = (rt_uint8_t)i;
-            }
-            i = device->write(device,sector_no,write_buffer,1);
+            i = device->write(device, sector_no, write_buffer,1);
             if( i != 1 )
             {
-                rt_kprintf("write device :%s ",device->parent.name);
+                rt_kprintf("read the first sector success!\r\n");
+                rt_kprintf("but write device :%s ", device->parent.name);
                 rt_kprintf("the first sector failed.\r\n");
+                rt_kprintf("maybe readonly!\r\n");
                 goto __return;
             }
-            i = device->read(device,sector_no,read_buffer,1);
-            if( i != 1 )
-            {
-                rt_kprintf("read device :%s ",device->parent.name);
-                rt_kprintf("the first sector failed.\r\n");
-                goto __return;
-            }
-            err_count = 0;
-            data_point = read_buffer;
-            if( (*data_point++) != (rt_uint8_t)sector_no)
-            {
-                err_count++;
-            }
-            for(i=1; i<geometry.bytes_per_sector; i++)
-            {
-                if( (*data_point++) != (rt_uint8_t)i )
-                {
-                    err_count++;
-                }
-            }
-            if( err_count > 0 )
-            {
-                rt_kprintf("verify device :%s ",device->parent.name);
-                rt_kprintf("the first sector failed.\r\n");
-                goto __return;
-            }
-            // the second sector
+
+            /* write the second sector */
             sector_no = 1;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            for(i=1; i<geometry.bytes_per_sector; i++)
-            {
-                *data_point++ = (rt_uint8_t)i;
-            }
             i = device->write(device,sector_no,write_buffer,1);
             if( i != 1 )
             {
@@ -149,40 +133,11 @@ static rt_err_t _block_device_test(rt_device_t device)
                 rt_kprintf("the second sector failed.\r\n");
                 goto __return;
             }
-            i = device->read(device,sector_no,read_buffer,1);
-            if( i != 1 )
-            {
-                rt_kprintf("read device :%s ",device->parent.name);
-                rt_kprintf("the second sector failed.\r\n");
-                goto __return;
-            }
-            err_count = 0;
-            data_point = read_buffer;
-            if( (*data_point++) != (rt_uint8_t)sector_no)
-            {
-                err_count++;
-            }
-            for(i=1; i<geometry.bytes_per_sector; i++)
-            {
-                if( (*data_point++) != (rt_uint8_t)i )
-                {
-                    err_count++;
-                }
-            }
-            if( err_count > 0 )
-            {
-                rt_kprintf("verify device :%s ",device->parent.name);
-                rt_kprintf("the second sector failed.\r\n");
-                goto __return;
-            }
-            // the end sector
+
+            /* write the end sector */
             sector_no = geometry.sector_count-1;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            for(i=1; i<geometry.bytes_per_sector; i++)
-            {
-                *data_point++ = (rt_uint8_t)i;
-            }
             i = device->write(device,sector_no,write_buffer,1);
             if( i != 1 )
             {
@@ -190,6 +145,67 @@ static rt_err_t _block_device_test(rt_device_t device)
                 rt_kprintf("the end sector failed.\r\n");
                 goto __return;
             }
+
+            /* verify first sector */
+            sector_no = 0;
+            i = device->read(device,sector_no,read_buffer,1);
+            if( i != 1 )
+            {
+                rt_kprintf("read device :%s ",device->parent.name);
+                rt_kprintf("the first sector failed.\r\n");
+                goto __return;
+            }
+            err_count = 0;
+            data_point = read_buffer;
+            if( (*data_point++) != (rt_uint8_t)sector_no)
+            {
+                err_count++;
+            }
+            for(i=1; i<geometry.bytes_per_sector; i++)
+            {
+                if( (*data_point++) != (rt_uint8_t)i )
+                {
+                    err_count++;
+                }
+            }
+            if( err_count > 0 )
+            {
+                rt_kprintf("verify device :%s ",device->parent.name);
+                rt_kprintf("the first sector failed.\r\n");
+                goto __return;
+            }
+
+            /* verify sector sector */
+            sector_no = 1;
+            i = device->read(device,sector_no,read_buffer,1);
+            if( i != 1 )
+            {
+                rt_kprintf("read device :%s ",device->parent.name);
+                rt_kprintf("the second sector failed.\r\n");
+                goto __return;
+            }
+            err_count = 0;
+            data_point = read_buffer;
+            if( (*data_point++) != (rt_uint8_t)sector_no)
+            {
+                err_count++;
+            }
+            for(i=1; i<geometry.bytes_per_sector; i++)
+            {
+                if( (*data_point++) != (rt_uint8_t)i )
+                {
+                    err_count++;
+                }
+            }
+            if( err_count > 0 )
+            {
+                rt_kprintf("verify device :%s ",device->parent.name);
+                rt_kprintf("the second sector failed.\r\n");
+                goto __return;
+            }
+
+            /* verify the end sector */
+            sector_no = geometry.sector_count-1;
             i = device->read(device,sector_no,read_buffer,1);
             if( i != 1 )
             {
@@ -216,48 +232,223 @@ static rt_err_t _block_device_test(rt_device_t device)
                 rt_kprintf("the end sector failed.\r\n");
                 goto __return;
             }
-            rt_kprintf("device I/O R/W test pass!\r\n");
+            rt_kprintf("device R/W test pass!\r\n");
 
-        }//step 3: I/O R/W test
+        } /* step 3: I/O R/W test */
 
-        // step 4: speed test
+        rt_kprintf("\r\nRT_TICK_PER_SECOND:%d\r\n", RT_TICK_PER_SECOND);
+
+        // step 4: continuous single sector speed test
         {
             rt_uint32_t tick_start,tick_end;
             rt_uint32_t i;
 
-            rt_kprintf("\r\n");
-            rt_kprintf("device I/O speed test.\r\n");
-            rt_kprintf("RT_TICK_PER_SECOND:%d\r\n",RT_TICK_PER_SECOND);
+            rt_kprintf("\r\ncontinuous single sector speed test:\r\n");
 
             if( geometry.sector_count < 10 )
             {
-                rt_kprintf("device sector_count < 10,speed test abort!\r\n");
+                rt_kprintf("device sector_count < 10, speed test abort!\r\n");
             }
             else
             {
-                // sign sector read
+                unsigned int sector;
+
+                // sign sector write
+                rt_kprintf("write: ");
+                sector = 0;
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    device->read(device,i%10,read_buffer,1);
+                    sector += device->write(device, i, read_buffer, 1);
+                    if((i != 0) && ((i%4) == 0) )
+                    {
+                        if(sector < 4)
+                        {
+                            rt_kprintf("#");
+                        }
+                        else
+                        {
+                            rt_kprintf("<");
+                        }
+                        sector = 0;
+                    }
                 }
                 tick_end = rt_tick_get();
-                rt_kprintf("read 200 sector from %d to %d, ",tick_start,tick_end);
+                rt_kprintf("\r\nwrite 200 sector from %d to %d, ",tick_start,tick_end);
                 calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
                 rt_kprintf("\r\n");
 
-                // sign sector write
+                // sign sector read
+                rt_kprintf("read : ");
+                sector = 0;
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    device->write(device,i%10,read_buffer,1);
+                    sector += device->read(device, i, read_buffer, 1);
+                    if((i != 0) && ((i%4) == 0) )
+                    {
+                        if(sector < 4)
+                        {
+                            rt_kprintf("#");
+                        }
+                        else
+                        {
+                            rt_kprintf(">");
+                        }
+                        sector = 0;
+                    }
                 }
                 tick_end = rt_tick_get();
-                rt_kprintf("write 200 sector from %d to %d, ",tick_start,tick_end);
+                rt_kprintf("\r\nread 200 sector from %d to %d, ",tick_start,tick_end);
                 calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
                 rt_kprintf("\r\n");
             }
         }// step 4: speed test
+
+        // step 5: random single sector speed test
+        {
+            rt_uint32_t tick_start,tick_end;
+            rt_uint32_t i;
+
+            rt_kprintf("\r\nrandom single sector speed test:\r\n");
+
+            if( geometry.sector_count < 10 )
+            {
+                rt_kprintf("device sector_count < 10, speed test abort!\r\n");
+            }
+            else
+            {
+                unsigned int sector;
+
+                // sign sector write
+                rt_kprintf("write: ");
+                sector = 0;
+                tick_start = rt_tick_get();
+                for(i=0; i<200; i++)
+                {
+                    sector += device->write(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
+                    if((i != 0) && ((i%4) == 0) )
+                    {
+                        if(sector < 4)
+                        {
+                            rt_kprintf("#");
+                        }
+                        else
+                        {
+                            rt_kprintf("<");
+                        }
+                        sector = 0;
+                    }
+                }
+                tick_end = rt_tick_get();
+                rt_kprintf("\r\nwrite 200 sector from %d to %d, ",tick_start,tick_end);
+                calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("\r\n");
+
+                // sign sector read
+                rt_kprintf("read : ");
+                sector = 0;
+                tick_start = rt_tick_get();
+                for(i=0; i<200; i++)
+                {
+                    sector += device->read(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
+                    if((i != 0) && ((i%4) == 0) )
+                    {
+                        if(sector < 4)
+                        {
+                            rt_kprintf("#");
+                        }
+                        else
+                        {
+                            rt_kprintf(">");
+                        }
+                        sector = 0;
+                    }
+                }
+                tick_end = rt_tick_get();
+                rt_kprintf("\r\nread 200 sector from %d to %d, ",tick_start,tick_end);
+                calculate_speed_print( (geometry.bytes_per_sector*200UL*RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("\r\n");
+            }
+        }// step 4: speed test
+
+        /* step 6: multiple sector speed test */
+        {
+            rt_uint8_t * multiple_buffer;
+            rt_uint8_t * ptr;
+            rt_uint32_t tick_start,tick_end;
+            rt_uint32_t sector,i;
+
+            rt_kprintf("\r\nmultiple sector speed test\r\n");
+
+            for(sector=2; sector<256; sector=sector*2)
+            {
+                multiple_buffer = rt_malloc(geometry.bytes_per_sector * sector);
+
+                if(multiple_buffer == RT_NULL)
+                {
+                    rt_kprintf("no memory for %d sector! multiple sector speed test abort!\r\n", sector);
+                    break;
+                }
+
+                rt_memset(multiple_buffer, sector, geometry.bytes_per_sector * sector);
+                rt_kprintf("write: ");
+                tick_start = rt_tick_get();
+                for(i=0; i<10; i++)
+                {
+                    rt_size_t n;
+                    n = device->write(device, 50, multiple_buffer, sector);
+                    if(n == sector)
+                    {
+                        rt_kprintf("<");
+                    }
+                    else
+                    {
+                        rt_kprintf("#");
+                    }
+                }
+                tick_end = rt_tick_get();
+                rt_kprintf("\r\n");
+                rt_kprintf("multiple write %d sector speed : ", sector);
+                calculate_speed_print( (geometry.bytes_per_sector * sector * 10 * RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+                rt_kprintf("\r\n");
+
+                rt_memset(multiple_buffer, ~sector, geometry.bytes_per_sector * sector);
+                rt_kprintf("read : ");
+                tick_start = rt_tick_get();
+                for(i=0; i<10; i++)
+                {
+                    rt_size_t n;
+                    n = device->read(device, 50, multiple_buffer, sector);
+                    if(n == sector)
+                    {
+                        rt_kprintf(">");
+                    }
+                    else
+                    {
+                        rt_kprintf("#");
+                    }
+                }
+                tick_end = rt_tick_get();
+                rt_kprintf("\r\n");
+                rt_kprintf("multiple read %d sector speed : ", sector);
+                calculate_speed_print( (geometry.bytes_per_sector * sector * 10 * RT_TICK_PER_SECOND)/(tick_end-tick_start) );
+
+                ptr = multiple_buffer;
+                for(i=0; i<geometry.bytes_per_sector * sector; i++)
+                {
+                    if(*ptr != sector)
+                    {
+                        rt_kprintf(" but data verify fail!");
+                        break;
+                    }
+                    ptr++;
+                }
+                rt_kprintf("\r\n\r\n");
+
+                rt_free(multiple_buffer);
+            }
+        } /* step 5: multiple sector speed test */
 
         return RT_EOK;
     }// device can read and write.
@@ -322,6 +513,6 @@ int device_test(const char * device_name)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(device_test, e.g:device_test("sd0"));
+FINSH_FUNCTION_EXPORT(device_test, e.g: device_test("sd0"));
 #endif
 
