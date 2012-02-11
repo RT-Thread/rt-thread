@@ -7,6 +7,18 @@
 
 #define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 
+
+/* jffs2 support relative dir, command "ls" will get
+ * +-------------------------------+
+ * |   finsh>>ls("/")              |
+ * |   Directory /:              |
+ * |   .                   <DIR>   |
+ * |   ..                  <DIR>   |
+ * |   dir1                <DIR>   |
+ * +-------------------------------+
+ */
+#define CONFIG_JFFS2_NO_RELATIVEDIR
+
 #define CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE /* should be enabled */
 #if defined(CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
 	#define CYGPKG_FILEIO_DIRENT_DTYPE

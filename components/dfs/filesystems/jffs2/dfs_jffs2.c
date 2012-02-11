@@ -287,8 +287,12 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 		/* open dir */
 		result = jffs2_opendir(mte, mte->root, name, jffs2_file);
 		if (result)
+		{
 			return jffs2_result_to_dfs(result);			
-		
+		}
+#ifdef  CONFIG_JFFS2_NO_RELATIVEDIR
+		jffs2_file->f_offset = 2;
+#endif
 		/* save this pointer, it will be used by dfs_jffs2_getdents*/
 		file->data = jffs2_file;
 		return 0;
