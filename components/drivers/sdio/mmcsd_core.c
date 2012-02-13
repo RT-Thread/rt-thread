@@ -175,7 +175,7 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
 		return 0;
 	}
 
-	buf = rt_malloc(16);
+	buf = rt_malloc_align(16, 32);
 	if (!buf) 
 	{
 		rt_kprintf("malloc mem failed\n");
@@ -214,13 +214,13 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
 
 	if (cmd.err || data.err)
 	{
-		rt_free(buf);
+		rt_free_align(buf);
 		return -RT_ERROR;
 	}
 
 	for (i = 0;i < 4;i++)
 		cid[i] = buf[i];
-	rt_free(buf);
+	rt_free_align(buf);
 
 	return 0;
 }
@@ -248,7 +248,7 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
 		return 0;
 	}
 
-	buf = rt_malloc(16);
+	buf = rt_malloc_align(16, 32);
 	if (!buf) 
 	{
 		rt_kprintf("malloc mem failed\n");
@@ -288,13 +288,13 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
 
 	if (cmd.err || data.err)
 	{
-		rt_free(buf);
+		rt_free_align(buf);
 		return -RT_ERROR;
 	}
 
 	for (i = 0;i < 4;i++)
 		csd[i] = buf[i];
-	rt_free(buf);
+	rt_free_align(buf);
 
 	return 0;
 }

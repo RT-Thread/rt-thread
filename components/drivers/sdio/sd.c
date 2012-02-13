@@ -179,7 +179,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 	struct rt_mmcsd_data data;
 	rt_uint8_t *buf;
 
-	buf = rt_malloc(64);
+	buf = rt_malloc_align(64, 32);
 	if (!buf) 
 	{
 		rt_kprintf("alloc memory failed\n");
@@ -258,7 +258,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 	card->flags |= CARD_MODE_HIGHSPEED;
 
 err:
-	rt_free(buf);
+	rt_free_align(buf);
 	return 0;
 
 err1:
@@ -272,7 +272,7 @@ err1:
 		err = data.err;
 	}
 
-        return err;
+	return err;
 }
 
 
