@@ -199,11 +199,16 @@ off_t lseek(int fd, off_t offset, int whence)
 	case DFS_SEEK_END:
 		offset += d->size;
 		break;
+
+	default:
+		rt_set_errno(-DFS_STATUS_EINVAL);
+		return -1;
+
 	}
 
 	if (offset < 0)
 	{
-		rt_set_errno(DFS_STATUS_EINVAL);
+		rt_set_errno(-DFS_STATUS_EINVAL);
 		return -1;
 	}
 	result = dfs_file_lseek(d, offset);

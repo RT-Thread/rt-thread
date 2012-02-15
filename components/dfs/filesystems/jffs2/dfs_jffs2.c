@@ -438,10 +438,12 @@ static int dfs_jffs2_lseek(struct dfs_fd* file,
 	jffs2_file = (cyg_file *)(file->data);		
 	
 	/* set offset as current offset */
-	jffs2_file_lseek(jffs2_file, &offset, SEEK_SET);
+	result = jffs2_file_lseek(jffs2_file, &offset, SEEK_SET);
 	if (result)
 		return jffs2_result_to_dfs(result);
-	return 0;
+	/* update file position */
+	file->pos = offset;
+	return offset;
 }
 
 /* return the size of  struct dirent*/
