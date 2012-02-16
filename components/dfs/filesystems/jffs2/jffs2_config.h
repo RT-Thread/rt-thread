@@ -7,11 +7,14 @@
 
 #define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 
+/* memory page size in kernel/asm/page.h, it is correspond with flash read/write
+ * option, so this size has a great impact on reading/writing speed */
+#define CONFIG_JFFS2_PAGE_SHIFT  12  /* (1<<12) 4096bytes*/
 
 /* jffs2 support relative dir, command "ls" will get
  * +-------------------------------+
  * |   finsh>>ls("/")              |
- * |   Directory /:              |
+ * |   Directory /:                |
  * |   .                   <DIR>   |
  * |   ..                  <DIR>   |
  * |   dir1                <DIR>   |
