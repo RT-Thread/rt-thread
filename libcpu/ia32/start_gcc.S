@@ -1,21 +1,25 @@
 /*
  * File      : start.S
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-09-15     QiuYi        The first version
+ * 2006-09-15     QiuYi        The first version.
+ * 2012-02-15     aozima       update.
  */
 
-#define __ASM__
-#include <grub.h>
+/* the magic number for the multiboot header.  */
+#define MULTIBOOT_HEADER_MAGIC		0x1BADB002
 
-#define CONFIG_STACKSIZE 8192
+/* the flags for the multiboot header.  */
+#define MULTIBOOT_HEADER_FLAGS		0x00000003
+
+#define CONFIG_STACKSIZE            8192
 
 /**
  * @addtogroup I386
@@ -23,16 +27,15 @@
 /*@{*/
 
 .section .init, "ax"
-.text
-	
+
 /* the system entry */
 .globl _start
 _start:
 	jmp	multiboot_entry
-	
+
 	/* Align 32 bits boundary.  */
 	.align	4
-	
+
 	/* multiboot header.  */
 multiboot_header:
 	/* magic */
@@ -41,32 +44,32 @@ multiboot_header:
 	.long	MULTIBOOT_HEADER_FLAGS
 	/* checksum */
 	.long	-(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
-	
+
 multiboot_entry:
 	movl	$(_end + 0x1000),%esp
-	
+
 	/* reset eflags.  */
 	pushl	$0
 	popf
-	
+
 	/*rebuild globe describe table*/
 	lgdt	mygdtdesc
-	
+
 	movl	$0x10,%eax
 	movw	%ax,%ds
 	movw	%ax,%es
 	movw	%ax,%ss
 	ljmp	$0x08, $relocated
-	
+
 relocated:
 	/* push the pointer to the multiboot information structure.  */
 	pushl	%ebx
-	
+
 	/* push the magic value.  */
 	pushl	%eax
-	
+
 	call	rtthread_startup
-	
+
 	/* never get here */
 spin:
 	hlt
@@ -88,7 +91,7 @@ mygdt:
 	.word	0x00C0
 
 mygdtdesc:
-	.word	0x17		
+	.word	0x17
 	.long	mygdt
 
 /*@}*/
