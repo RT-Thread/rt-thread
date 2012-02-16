@@ -17,8 +17,4 @@
 
 void rt_hw_board_init(void);
 
-#ifdef RT_USING_FINSH
-void rt_hw_finsh_init(void);
-#endif
-
 #endif
