@@ -8,7 +8,11 @@
 int
 _close_r(struct _reent *ptr, int fd)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	return close(fd);
+#endif
 }
 
 int
@@ -78,46 +82,66 @@ _link_r(struct _reent *ptr, const char *old, const char *new)
 _off_t
 _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
+#ifndef RT_USING_DfS
+	return 0;
+#else
 	_off_t rc;
 
 	rc = lseek(fd, pos, whence);
 	return rc;
+#endif
 }
 
 int
 _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	int rc;
 
 	rc = mkdir(name, mode);
 	return rc;
+#endif
 }
 
 int
 _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	int rc;
 
 	rc = open(file, flags, mode);
 	return rc;
+#endif
 }
 
 _ssize_t 
 _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	_ssize_t rc;
 
 	rc = read(fd, buf, nbytes);
 	return rc;
+#endif
 }
 
 int
 _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	int rc;
 
 	rc = rename(old, new);
 	return rc;
+#endif
 }
 
 void *
@@ -130,10 +154,14 @@ _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 int
 _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	int rc;
 
 	rc = stat(file, pstat);
 	return rc;
+#endif
 }
 
 _CLOCK_T_
@@ -147,10 +175,14 @@ _times_r(struct _reent *ptr, struct tms *ptms)
 int
 _unlink_r(struct _reent *ptr, const char *file)
 {
+#ifndef RT_USING_DFS
+	return 0;
+#else
 	int rc;
 
 	rc = unlink(file);
 	return rc;
+#endif
 }
 
 int
@@ -164,10 +196,23 @@ _wait_r(struct _reent *ptr, int *status)
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
+#ifndef RT_USING_DFS
+	if (fd < 3)
+	{
+		rt_device_t console_device;
+		extern rt_device_t rt_console_get_device(void);
+
+		console_device = rt_console_get_device();
+		if (console_device != 0) rt_device_write(console_device, 0, buf, nbytes);
+		return nbytes;
+	}
+	return 0;
+#else
 	_ssize_t rc;
 
 	rc = write(fd, buf, nbytes);
 	return rc;
+#endif
 }
 
 #ifndef RT_USING_PTHREADS
@@ -332,4 +377,6 @@ _exit (int status)
 {
 	rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
     RT_ASSERT(0);
+
+    while (1);
 }
