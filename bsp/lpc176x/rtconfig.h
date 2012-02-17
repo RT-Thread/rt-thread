@@ -120,13 +120,13 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-#define RT_USING_LWIP
+// #define RT_USING_LWIP
 // <bool name="RT_LWIP_USING_RT_MEM" description="Using RT-Thread memory management for LwIP" default="true" />
 #define RT_LWIP_USING_RT_MEM
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
-#define RT_LWIP_IGMP
+// #define RT_LWIP_IGMP
 // <bool name="RT_LWIP_UDP" description="Enable UDP protocol" default="true" />
 #define RT_LWIP_UDP
 // <bool name="RT_LWIP_TCP" description="Enable TCP protocol" default="true" />

@@ -10,14 +10,14 @@ MEMORY
     DATA (rw) : ORIGIN = 0x10000000, LENGTH = 0x00008000
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x100;
+_system_stack_size = 0x200;
 
 SECTIONS
 {
     .text :
     {
         . = ALIGN(4);
-        KEEP(*(.isr_vector))            /* Startup code */
+        KEEP(*(.interrupt_vector))      /* Startup code */
         . = ALIGN(4);
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */

@@ -15,11 +15,6 @@
  * 2010-05-24     Bernard      add filesystem initialization and move led function to led.c
  */
 
-/**
- * @addtogroup LPC17
- */
-/*@{*/
-
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
@@ -65,7 +60,7 @@ void rt_init_thread_entry(void *parameter)
 
         eth_system_device_init();
 
-        /* register ethernetif device */
+        /* register Ethernet interface device */
         lpc17xx_emac_hw_init();
         /* init all device */
         rt_device_init_all();
@@ -79,20 +74,12 @@ void rt_init_thread_entry(void *parameter)
 
 int rt_application_init()
 {
-    rt_thread_t init_thread;
+    rt_thread_t tid;
 
-#if (RT_THREAD_PRIORITY_MAX == 32)
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
-    if (init_thread != RT_NULL) rt_thread_startup(init_thread);
+    tid = rt_thread_create("init",
+    		rt_init_thread_entry, RT_NULL,
+    		2048, RT_THREAD_PRIORITY_MAX/3, 20);
+    if (tid != RT_NULL) rt_thread_startup(tid);
 
     return 0;
 }
-
-/*@}*/
