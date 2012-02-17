@@ -435,13 +435,14 @@ class Win32Spawn:
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
-        # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False)
         data, err = proc.communicate()
         rv = proc.wait()
-        if rv:
+        if err:
             print err
+        if rv:
             return rv
 
         if data:
