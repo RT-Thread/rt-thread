@@ -436,17 +436,21 @@ class Win32Spawn:
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        penv = {}
+        for key, value in env.iteritems():
+            penv[key] = str(value)
+
         proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False)
+            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False, env=penv)
         data, err = proc.communicate()
         rv = proc.wait()
-        if err:
-            print err
-        if rv:
-            return rv
-
         if data:
             print data
+        if err:
+            print err
+
+        if rv:
+            return rv
         return 0
 
 def PrepareBuilding(env, root_directory, has_libcpu=False):
@@ -498,7 +502,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
                     (tgt_name, ', '.join(tgt_dict.keys()))
             sys.exit(1)
     elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
-	   and rtconfig.PLATFORM == 'gcc':
+        and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
     #env['CCCOMSTR'] = "CC $TARGET"
@@ -649,12 +653,12 @@ def EndBuilding(target):
         IARProject('project.ewp', Projects) 
 
 def SrcRemove(src, remove):
-	if type(src[0]) == type('str'):
-		for item in src:
-			if os.path.basename(item) in remove:
-				src.remove(item)
-		return
+    if type(src[0]) == type('str'):
+        for item in src:
+            if os.path.basename(item) in remove:
+                src.remove(item)
+        return
 
-	for item in src:
-		if os.path.basename(item.rstr()) in remove:
-			src.remove(item)
+    for item in src:
+        if os.path.basename(item.rstr()) in remove:
+            src.remove(item)
