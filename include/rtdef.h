@@ -35,6 +35,10 @@ extern "C" {
 #define RT_SUBVERSION                   1L      /**< minor version number */
 #define RT_REVISION                   	0L      /**< revise version number */
 
+/* RT-Thread version */
+#define RTTHREAD_VERSION				((RT_VERSION * 10000) + \
+	(RT_SUBVERSION * 100) + RT_REVISION)
+
 /* RT-Thread basic data type definitions */
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
@@ -620,7 +624,6 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10        /**< format a MTD device                        */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10        /**< get time                                   */
 #define RT_DEVICE_CTRL_RTC_SET_TIME     0x11        /**< set time                                   */
-#define RT_DEVICE_CTRL_BLK_ERASE        0x12        /**< erase                                      */
 
 typedef struct rt_device *rt_device_t;
 /**
