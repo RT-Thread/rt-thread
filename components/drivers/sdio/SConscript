@@ -1,8 +1,7 @@
 Import('RTT_ROOT')
 from building import *
 
-cwd     = GetCurrentDir()
-
+cwd = GetCurrentDir()
 src = Split("""
 block_dev.c
 mmcsd_core.c

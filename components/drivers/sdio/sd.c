@@ -275,9 +275,6 @@ err1:
 	return err;
 }
 
-
-
-
 static rt_err_t mmcsd_app_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_card *card)
 {
 	rt_err_t err;
