@@ -28,6 +28,13 @@ static void rt_timer_handler(int vector)
 	rt_tick_increase();
 }
 
+#ifdef RT_USING_HOOK
+static void idle_hook(void)
+{
+	asm volatile("sti; hlt": : :"memory");
+}
+#endif
+
 /**
  * This function will init QEMU
  *
@@ -42,6 +49,10 @@ void rt_hw_board_init(void)
 	/* install interrupt handler */
 	rt_hw_interrupt_install(INTTIMER0, rt_timer_handler, RT_NULL);
 	rt_hw_interrupt_umask(INTTIMER0);
+
+#ifdef RT_USING_HOOK
+	rt_thread_idle_sethook(idle_hook);
+#endif
 }
 
 void restart(void)

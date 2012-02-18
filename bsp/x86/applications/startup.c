@@ -93,11 +93,6 @@ void rtthread_startup()
 	finsh_set_device("console");
 #endif
 
-#ifdef RT_USING_HOOK
-	/* set idle thread hook */
-	rt_thread_idle_sethook(RT_NULL);
-#endif
-
 	/* init idle thread */
 	rt_thread_idle_init();
 
