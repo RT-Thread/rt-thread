@@ -2,15 +2,15 @@
   ******************************************************************************
   * @file    stm32f4xx_pwr.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Power Controller (PWR) peripheral:           
   *           - Backup Domain Access
   *           - PVD configuration
   *           - WakeUp pin configuration
-  *           - Backup Regulator configuration
-  *           - Performance Mode and FLASH Power Down configuration functions
+  *           - Main and Backup Regulators configuration
+  *           - FLASH Power Down configuration
   *           - Low Power modes configuration
   *           - Flags management
   *               
@@ -249,12 +249,12 @@ void PWR_WakeUpPinCmd(FunctionalState NewState)
   * @}
   */
 
-/** @defgroup PWR_Group4 Backup Regulator configuration functions
- *  @brief   Backup Regulator configuration functions 
+/** @defgroup PWR_Group4 Main and Backup Regulators configuration functions
+ *  @brief   Main and Backup Regulators configuration functions 
  *
 @verbatim   
  ===============================================================================
-                    Backup Regulator configuration functions
+                    Main and Backup Regulators configuration functions
  ===============================================================================  
 
  - The backup domain includes 4 Kbytes of backup SRAM accessible only from the 
@@ -275,6 +275,16 @@ void PWR_WakeUpPinCmd(FunctionalState NewState)
    a protection level change from level 1 to level 0 is requested. 
    Refer to the description of Read protection (RDP) in the Flash programming manual.
 
+ - The main internal regulator can be configured to have a tradeoff between performance
+   and power consumption when the device does not operate at the maximum frequency. 
+   This is done through PWR_MainRegulatorModeConfig() function which configure VOS bit
+   in PWR_CR register: 
+      - When this bit is set (Regulator voltage output Scale 1 mode selected) the System
+        frequency can go up to 168 MHz. 
+      - When this bit is reset (Regulator voltage output Scale 2 mode selected) the System
+        frequency can go up to 144 MHz. 
+   Refer to the datasheets for more details.
+           
 @endverbatim
   * @{
   */
@@ -294,22 +304,43 @@ void PWR_BackupRegulatorCmd(FunctionalState NewState)
 }
 
 /**
+  * @brief  Configures the main internal regulator output voltage.
+  * @param  PWR_Regulator_Voltage: specifies the regulator output voltage to achieve
+  *         a tradeoff between performance and power consumption when the device does
+  *         not operate at the maximum frequency (refer to the datasheets for more details).
+  *          This parameter can be one of the following values:
+  *            @arg PWR_Regulator_Voltage_Scale1: Regulator voltage output Scale 1 mode, 
+  *                                                System frequency up to 168 MHz. 
+  *            @arg PWR_Regulator_Voltage_Scale2: Regulator voltage output Scale 2 mode, 
+  *                                                System frequency up to 144 MHz.    
+  * @retval None
+  */
+void PWR_MainRegulatorModeConfig(uint32_t PWR_Regulator_Voltage)
+{
+  /* Check the parameters */
+  assert_param(IS_PWR_REGULATOR_VOLTAGE(PWR_Regulator_Voltage));
+
+  if (PWR_Regulator_Voltage == PWR_Regulator_Voltage_Scale2)
+  {
+    PWR->CR &= ~PWR_Regulator_Voltage_Scale1;
+  }
+  else
+  {    
+    PWR->CR |= PWR_Regulator_Voltage_Scale1;
+  }
+}
+
+/**
   * @}
   */
 
-/** @defgroup PWR_Group5 Performance Mode and FLASH Power Down configuration functions
- *  @brief   Performance Mode and FLASH Power Down configuration functions 
+/** @defgroup PWR_Group5 FLASH Power Down configuration functions
+ *  @brief   FLASH Power Down configuration functions 
  *
 @verbatim   
  ===============================================================================
-           Performance Mode and FLASH Power Down configuration functions
+           FLASH Power Down configuration functions
  ===============================================================================  
-
- - By setting the PMODE bit in the PWR_CR register by using the PWR_HighPerformanceModeCmd()
-   function, the high performance mode is selected and the high voltage regulator 
-   minimum value should be around 1.2V.
-   When reset, the low performance mode is selected and the low voltage regulator 
-   minimum value should be around 1.08V.
 
  - By setting the FPDS bit in the PWR_CR register by using the PWR_FlashPowerDownCmd()
    function, the Flash memory also enters power down mode when the device enters 
@@ -319,20 +350,6 @@ void PWR_BackupRegulatorCmd(FunctionalState NewState)
 @endverbatim
   * @{
   */
-
-/**
-  * @brief  Enables or disables the high performance mode.
-  * @param  NewState: new state of the performance mode.
-  *          This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
-void PWR_HighPerformanceModeCmd(FunctionalState NewState)
-{
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-
-  *(__IO uint32_t *) CR_PMODE_BB = (uint32_t)NewState;
-}
 
 /**
   * @brief  Enables or disables the Flash Power Down in STOP mode.
@@ -581,7 +598,8 @@ void PWR_EnterSTANDBYMode(void)
   *            @arg PWR_FLAG_BRR: Backup regulator ready flag. This bit is not reset 
   *                  when the device wakes up from Standby mode or by a system reset 
   *                  or power reset.  
-  *            @arg PWR_FLAG_REGRDY: Main regulator ready flag. 
+  *            @arg PWR_FLAG_VOSRDY: This flag indicates that the Regulator voltage 
+  *                 scaling output selection is ready. 
   * @retval The new state of PWR_FLAG (SET or RESET).
   */
 FlagStatus PWR_GetFlagStatus(uint32_t PWR_FLAG)

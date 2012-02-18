@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_rtc.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Real-Time Clock (RTC) peripheral:
   *           - Initialization
@@ -1039,7 +1039,7 @@ void RTC_GetDate(uint32_t RTC_Format, RTC_DateTypeDef* RTC_DateStruct)
   RTC_DateStruct->RTC_Year = (uint8_t)((tmpreg & (RTC_DR_YT | RTC_DR_YU)) >> 16);
   RTC_DateStruct->RTC_Month = (uint8_t)((tmpreg & (RTC_DR_MT | RTC_DR_MU)) >> 8);
   RTC_DateStruct->RTC_Date = (uint8_t)(tmpreg & (RTC_DR_DT | RTC_DR_DU));
-  RTC_DateStruct->RTC_WeekDay = (uint8_t)((tmpreg & (RTC_DR_WDU)) >> 13);  
+  RTC_DateStruct->RTC_WeekDay = (uint8_t)((tmpreg & (RTC_DR_WDU)) >> 13);
 
   /* Check the input parameters format */
   if (RTC_Format == RTC_Format_BIN)
@@ -1048,7 +1048,6 @@ void RTC_GetDate(uint32_t RTC_Format, RTC_DateTypeDef* RTC_DateStruct)
     RTC_DateStruct->RTC_Year = (uint8_t)RTC_Bcd2ToByte(RTC_DateStruct->RTC_Year);
     RTC_DateStruct->RTC_Month = (uint8_t)RTC_Bcd2ToByte(RTC_DateStruct->RTC_Month);
     RTC_DateStruct->RTC_Date = (uint8_t)RTC_Bcd2ToByte(RTC_DateStruct->RTC_Date);
-    RTC_DateStruct->RTC_WeekDay = (uint8_t)(RTC_DateStruct->RTC_WeekDay);   
   }
 }
 

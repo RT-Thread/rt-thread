@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_flash.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the FLASH peripheral:
   *            - FLASH Interface configuration
@@ -119,13 +119,13 @@
  |---------------|----------------|----------------|-----------------|-----------------| 
  |3WS(4CPU cycle)|90 < HCLK <= 120|72 < HCLK <= 96 |54 < HCLK <= 72  |48 < HCLK <= 64  |
  |---------------|----------------|----------------|-----------------|-----------------| 
- |4WS(5CPU cycle)|      NA        |96 < HCLK <= 120|72 < HCLK <= 90  |64 < HCLK <= 80  |
+ |4WS(5CPU cycle)|120< HCLK <= 150|96 < HCLK <= 120|72 < HCLK <= 90  |64 < HCLK <= 80  |
  |---------------|----------------|----------------|-----------------|-----------------| 
- |5WS(6CPU cycle)|      NA        |      NA        |90 < HCLK <= 108 |80 < HCLK <= 96  | 
+ |5WS(6CPU cycle)|120< HCLK <= 168|120< HCLK <= 144|90 < HCLK <= 108 |80 < HCLK <= 96  | 
  |---------------|----------------|----------------|-----------------|-----------------| 
- |6WS(7CPU cycle)|      NA        |      NA        |108 < HCLK <= 120|96 < HCLK <= 112 | 
+ |6WS(7CPU cycle)|      NA        |144< HCLK <= 168|108 < HCLK <= 120|96 < HCLK <= 112 | 
  |---------------|----------------|----------------|-----------------|-----------------| 
- |7WS(8CPU cycle)|      NA        |      NA        |     NA          |112 < HCLK <= 120| 
+ |7WS(8CPU cycle)|      NA        |      NA        |120 < HCLK <= 138|112 < HCLK <= 120| 
  |***************|****************|****************|*****************|*****************|*****************************+
  |               | voltage range  | voltage range  | voltage range   | voltage range   | voltage range 2.7 V - 3.6 V |
  |               | 2.7 V - 3.6 V  | 2.4 V - 2.7 V  | 2.1 V - 2.4 V   | 1.8 V - 2.1 V   | with External Vpp = 9V      |
@@ -134,7 +134,9 @@
  |---------------|----------------|----------------|-----------------|-----------------|-----------------------------|   
  |PSIZE[1:0]     |      10        |               01                 |       00        |           11                |
  +-------------------------------------------------------------------------------------------------------------------+  
-    
+   @note When VOS bit (in PWR_CR register) is reset to '0’, the maximum value of HCLK is 144 MHz.
+         You can use PWR_MainRegulatorModeConfig() function to set or reset this bit.
+             
     - void FLASH_PrefetchBufferCmd(FunctionalState NewState)
     - void FLASH_InstructionCacheCmd(FunctionalState NewState)
     - void FLASH_DataCacheCmd(FunctionalState NewState)

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_pwr.h
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file contains all the functions prototypes for the PWR firmware 
   *          library.
   ******************************************************************************
@@ -87,6 +87,14 @@
 #define PWR_STOPEntry_WFI               ((uint8_t)0x01)
 #define PWR_STOPEntry_WFE               ((uint8_t)0x02)
 #define IS_PWR_STOP_ENTRY(ENTRY) (((ENTRY) == PWR_STOPEntry_WFI) || ((ENTRY) == PWR_STOPEntry_WFE))
+
+/** @defgroup PWR_Regulator_Voltage_Scale 
+  * @{
+  */
+
+#define PWR_Regulator_Voltage_Scale1    ((uint32_t)0x00004000)
+#define PWR_Regulator_Voltage_Scale2    ((uint32_t)0x00000000)
+#define IS_PWR_REGULATOR_VOLTAGE(VOLTAGE) (((VOLTAGE) == PWR_Regulator_Voltage_Scale1) || ((VOLTAGE) == PWR_Regulator_Voltage_Scale2))
  
 /**
   * @}
@@ -100,11 +108,19 @@
 #define PWR_FLAG_SB                     PWR_CSR_SBF
 #define PWR_FLAG_PVDO                   PWR_CSR_PVDO
 #define PWR_FLAG_BRR                    PWR_CSR_BRR
-#define PWR_FLAG_REGRDY                 PWR_CSR_REGRDY
+#define PWR_FLAG_VOSRDY                 PWR_CSR_VOSRDY
+
+/** @defgroup PWR_Flag_Legacy 
+  * @{
+  */
+#define PWR_FLAG_REGRDY                  PWR_FLAG_VOSRDY               
+/**
+  * @}
+  */
 
 #define IS_PWR_GET_FLAG(FLAG) (((FLAG) == PWR_FLAG_WU) || ((FLAG) == PWR_FLAG_SB) || \
                                ((FLAG) == PWR_FLAG_PVDO) || ((FLAG) == PWR_FLAG_BRR) || \
-                               ((FLAG) == PWR_FLAG_REGRDY))
+                               ((FLAG) == PWR_FLAG_VOSRDY))
 
 #define IS_PWR_CLEAR_FLAG(FLAG) (((FLAG) == PWR_FLAG_WU) || ((FLAG) == PWR_FLAG_SB))
 /**
@@ -131,11 +147,11 @@ void PWR_PVDCmd(FunctionalState NewState);
 /* WakeUp pins configuration functions ****************************************/ 
 void PWR_WakeUpPinCmd(FunctionalState NewState);
 
-/* Backup Regulator configuration functions ***********************************/ 
+/* Main and Backup Regulators configuration functions *************************/ 
 void PWR_BackupRegulatorCmd(FunctionalState NewState);
+void PWR_MainRegulatorModeConfig(uint32_t PWR_Regulator_Voltage);
 
-/* Performance Mode and FLASH Power Down configuration functions **************/ 
-void PWR_HighPerformanceModeCmd(FunctionalState NewState);
+/* FLASH Power Down configuration functions ***********************************/ 
 void PWR_FlashPowerDownCmd(FunctionalState NewState);
 
 /* Low Power modes configuration functions ************************************/ 

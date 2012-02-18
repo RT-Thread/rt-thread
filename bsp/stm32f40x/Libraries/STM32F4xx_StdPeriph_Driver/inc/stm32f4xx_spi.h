@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_spi.h
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file contains all the functions prototypes for the SPI 
   *          firmware library.
   ******************************************************************************
@@ -129,7 +129,7 @@ typedef struct
                                        ((PERIPH) == I2S3ext))
 
 #define IS_I2S_EXT_PERIPH(PERIPH)  (((PERIPH) == I2S2ext) || \
-                                    ((PERIPH) == I2S2ext))
+                                    ((PERIPH) == I2S3ext))
 
 
 /** @defgroup SPI_data_direction 

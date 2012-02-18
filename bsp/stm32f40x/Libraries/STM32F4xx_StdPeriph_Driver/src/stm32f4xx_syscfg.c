@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_syscfg.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the SYSCFG peripheral.
   *
   *  @verbatim
@@ -97,13 +97,6 @@ void SYSCFG_DeInit(void)
   *            @arg SYSCFG_MemoryRemap_SystemFlash: System Flash memory mapped at 0x00000000
   *            @arg SYSCFG_MemoryRemap_FSMC:        FSMC (Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000
   *            @arg SYSCFG_MemoryRemap_SRAM:        Embedded SRAM (112kB) mapped at 0x00000000
-  *  
-  * @note   In remap mode, the FSMC addressing is fixed to the remap address area only
-  *        (Bank1 NOR/PSRAM 1 and NOR/PSRAM 2) and FSMC control registers are not
-  *         accessible. The FSMC remap function must be disabled to allows addressing
-  *         other memory devices through the FSMC and/or to access FSMC control
-  *         registers. 
-  *        
   * @retval None
   */
 void SYSCFG_MemoryRemapConfig(uint8_t SYSCFG_MemoryRemap)

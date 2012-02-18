@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_cryp.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the  Cryptographic processor (CRYP) peripheral:           
   *           - Initialization and Configuration functions

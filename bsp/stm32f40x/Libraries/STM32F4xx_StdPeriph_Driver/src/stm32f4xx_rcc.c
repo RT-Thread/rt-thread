@@ -2,10 +2,10 @@
   ******************************************************************************
   * @file    stm32f4xx_rcc.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the Reset and clock control (RCC) peripheral:           
+  *          functionalities of the Reset and clock control (RCC) peripheral:
   *           - Internal/external clocks, PLL, CSS and MCO configuration
   *           - System, AHB and APB busses clocks configuration
   *           - Peripheral clocks configuration
@@ -156,7 +156,7 @@ static __I uint8_t APBAHBPrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6
   4. LSE (low-speed external), 32 KHz oscillator used as RTC clock source.   
 
   5. PLL (clocked by HSI or HSE), featuring two different output clocks:
-      - The first output is used to generate the high speed system clock (up to 120 MHz)
+      - The first output is used to generate the high speed system clock (up to 168 MHz)
       - The second output is used to generate the clock for the USB OTG FS (48 MHz),
         the random analog generator (<=48 MHz) and the SDIO (<= 48 MHz).
 
@@ -421,7 +421,7 @@ void RCC_LSICmd(FunctionalState NewState)
   *   
   * @param  PLLP: specifies the division factor for main system clock (SYSCLK)
   *          This parameter must be a number in the range {2, 4, 6, or 8}.
-  * @note   You have to set the PLLP parameter correctly to not exceed 120 MHz on
+  * @note   You have to set the PLLP parameter correctly to not exceed 168 MHz on
   *         the System clock frequency.
   *  
   * @param  PLLQ: specifies the division factor for OTG FS, SDIO and RNG clocks
@@ -465,8 +465,7 @@ void RCC_PLLCmd(FunctionalState NewState)
 
 /**
   * @brief  Configures the PLLI2S clock multiplication and division factors.
-  *   
-  * @note   PLLI2S is available only in Silicon RevisionB and RevisionY.    
+  *  
   * @note   This function must be used only when the PLLI2S is disabled.
   * @note   PLLI2S clock source is common with the main PLL (configured in 
   *         RCC_PLLConfig function )  
@@ -493,8 +492,7 @@ void RCC_PLLI2SConfig(uint32_t PLLI2SN, uint32_t PLLI2SR)
 }
 
 /**
-  * @brief  Enables or disables the PLLI2S.
-  * @note   PLLI2S is available only in RevisionB and RevisionY 
+  * @brief  Enables or disables the PLLI2S. 
   * @note   The PLLI2S is disabled by hardware when entering STOP and STANDBY modes.  
   * @param  NewState: new state of the PLLI2S. This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -635,7 +633,7 @@ void RCC_MCO2Config(uint32_t RCC_MCO2Source, uint32_t RCC_MCO2Div)
           to 48. This clock is derived of the main PLL through PLLQ divider.
        - IWDG clock which is always the LSI clock.
        
-  2. The maximum frequency of the SYSCLK and HCLK is 120 MHz, PCLK2 60 MHz and PCLK1 30 MHz.
+  2. The maximum frequency of the SYSCLK and HCLK is 168 MHz, PCLK2 82 MHz and PCLK1 42 MHz.
      Depending on the device voltage range, the maximum frequency should be 
      adapted accordingly:
  +-------------------------------------------------------------------------------------+     
@@ -652,15 +650,16 @@ void RCC_MCO2Config(uint32_t RCC_MCO2Source, uint32_t RCC_MCO2Div)
  |---------------|----------------|----------------|-----------------|-----------------| 
  |3WS(4CPU cycle)|90 < HCLK <= 120|72 < HCLK <= 96 |54 < HCLK <= 72  |48 < HCLK <= 64  |
  |---------------|----------------|----------------|-----------------|-----------------| 
- |4WS(5CPU cycle)|      NA        |96 < HCLK <= 120|72 < HCLK <= 90  |64 < HCLK <= 80  |
+ |4WS(5CPU cycle)|120< HCLK <= 150|96 < HCLK <= 120|72 < HCLK <= 90  |64 < HCLK <= 80  |
  |---------------|----------------|----------------|-----------------|-----------------| 
- |5WS(6CPU cycle)|      NA        |      NA        |90 < HCLK <= 108 |80 < HCLK <= 96  | 
+ |5WS(6CPU cycle)|120< HCLK <= 168|120< HCLK <= 144|90 < HCLK <= 108 |80 < HCLK <= 96  | 
  |---------------|----------------|----------------|-----------------|-----------------| 
- |6WS(7CPU cycle)|      NA        |      NA        |108 < HCLK <= 120|96 < HCLK <= 112 | 
+ |6WS(7CPU cycle)|      NA        |144< HCLK <= 168|108 < HCLK <= 120|96 < HCLK <= 112 | 
  |---------------|----------------|----------------|-----------------|-----------------| 
- |7WS(8CPU cycle)|      NA        |     NA         |     NA          |112 < HCLK <= 120| 
+ |7WS(8CPU cycle)|      NA        |      NA        |120 < HCLK <= 138|112 < HCLK <= 120| 
  +-------------------------------------------------------------------------------------+    
-
+   @note When VOS bit (in PWR_CR register) is reset to '0’, the maximum value of HCLK is 144 MHz.
+         You can use PWR_MainRegulatorModeConfig() function to set or reset this bit.
 
 @endverbatim
   * @{
@@ -1036,10 +1035,7 @@ void RCC_BackupResetCmd(FunctionalState NewState)
 
 /**
   * @brief  Configures the I2S clock source (I2SCLK).
-  *
   * @note   This function must be called before enabling the I2S APB clock.
-  * @note   This function applies only to Silicon RevisionB and RevisionY.
-  *
   * @param  RCC_I2SCLKSource: specifies the I2S clock source.
   *          This parameter can be one of the following values:
   *            @arg RCC_I2S2CLKSource_PLLI2S: PLLI2S clock used as I2S clock source
@@ -1073,6 +1069,7 @@ void RCC_I2SCLKConfig(uint32_t RCC_I2SCLKSource)
   *            @arg RCC_AHB1Periph_GPIOI:       GPIOI clock
   *            @arg RCC_AHB1Periph_CRC:         CRC clock
   *            @arg RCC_AHB1Periph_BKPSRAM:     BKPSRAM interface clock
+  *            @arg RCC_AHB1Periph_CCMDATARAMEN CCM data RAM interface clock
   *            @arg RCC_AHB1Periph_DMA1:        DMA1 clock
   *            @arg RCC_AHB1Periph_DMA2:        DMA2 clock
   *            @arg RCC_AHB1Periph_ETH_MAC:     Ethernet MAC clock

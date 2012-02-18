@@ -14,7 +14,9 @@
         .weak   __get_argcv
         .extern __argcvbuf
         .weak   __argcvbuf
-        .extern  SystemInit
+        ;;.extern __init_hardware
+
+		.extern  SystemInit
         
     .if @defined('__PROF_ENABLE__')
         .extern __prof_init
@@ -38,12 +40,6 @@ _Next:
         ;; initialize the stack pointer
         ldr     r1,=_lc_ub_stack        ; TODO: make this part of the vector table
         mov     sp,r1
-
-        ;FPU settings
-	    ldr     r0, =0xE000ED88           ; Enable CP10,CP11
-        ldr     r1,[r0]
-        orr     r1,r1,#(0xF << 20)
-        str     r1,[r0]
 	
 	; Call the clock system intitialization function.
 		bl  SystemInit
@@ -84,6 +80,7 @@ clear:
         
 done:   
 
+ 
       .if @defined('__POSIX__')
         
         ;; posix stack buffer for system upbringing

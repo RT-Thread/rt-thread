@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_rcc.h
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file contains all the functions prototypes for the RCC firmware library.
   ******************************************************************************
   * @attention
@@ -263,6 +263,7 @@ typedef struct
 #define RCC_AHB1Periph_SRAM1             ((uint32_t)0x00010000)
 #define RCC_AHB1Periph_SRAM2             ((uint32_t)0x00020000)
 #define RCC_AHB1Periph_BKPSRAM           ((uint32_t)0x00040000)
+#define RCC_AHB1Periph_CCMDATARAMEN      ((uint32_t)0x00100000)
 #define RCC_AHB1Periph_DMA1              ((uint32_t)0x00200000)
 #define RCC_AHB1Periph_DMA2              ((uint32_t)0x00400000)
 #define RCC_AHB1Periph_ETH_MAC           ((uint32_t)0x02000000)
@@ -271,7 +272,7 @@ typedef struct
 #define RCC_AHB1Periph_ETH_MAC_PTP       ((uint32_t)0x10000000)
 #define RCC_AHB1Periph_OTG_HS            ((uint32_t)0x20000000)
 #define RCC_AHB1Periph_OTG_HS_ULPI       ((uint32_t)0x40000000)
-#define IS_RCC_AHB1_CLOCK_PERIPH(PERIPH) ((((PERIPH) & 0x819BEE00) == 0x00) && ((PERIPH) != 0x00))
+#define IS_RCC_AHB1_CLOCK_PERIPH(PERIPH) ((((PERIPH) & 0x818BEE00) == 0x00) && ((PERIPH) != 0x00))
 #define IS_RCC_AHB1_RESET_PERIPH(PERIPH) ((((PERIPH) & 0xDD9FEE00) == 0x00) && ((PERIPH) != 0x00))
 #define IS_RCC_AHB1_LPMODE_PERIPH(PERIPH) ((((PERIPH) & 0x81986E00) == 0x00) && ((PERIPH) != 0x00))
 /**

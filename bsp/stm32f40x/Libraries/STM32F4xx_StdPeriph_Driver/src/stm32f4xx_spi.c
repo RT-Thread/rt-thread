@@ -2,10 +2,10 @@
   ******************************************************************************
   * @file    stm32f4xx_spi.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the Serial peripheral interface (SPI):           
+  *          functionalities of the Serial peripheral interface (SPI):
   *           - Initialization and Configuration
   *           - Data transfers functions
   *           - Hardware CRC Calculation
@@ -17,7 +17,7 @@
   *                    
   *          ===================================================================
   *                                 How to use this driver
-  *          ===================================================================        
+  *          ===================================================================
   *    
   *          1. Enable peripheral clock using the following functions 
   *             RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE) for SPI1
@@ -124,10 +124,6 @@
   *          rxdata[i] = SPI_I2S_ReceiveData(I2S3ext);
   *          ...          
   *              
-  *       
-  *    
-  * @note    This driver supports only the I2S clock scheme available in Silicon
-  *          RevisionB and RevisionY.
   *     
   * @note    In I2S mode: if an external clock is used as source clock for the I2S,  
   *          then the define I2S_EXTERNAL_CLOCK_VAL in file stm32f4xx_conf.h should 
@@ -368,7 +364,7 @@ void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct)
       packetlength = 2;
     }
 
-    /* Get I2S source Clock frequency (only in Silicon RevisionB and RevisionY) */
+    /* Get I2S source Clock frequency  ****************************************/
       
     /* If an external I2S clock has to be used, this define should be set  
        in the project configuration or in the stm32f4xx_conf.h file */

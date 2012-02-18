@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_usart.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Universal synchronous asynchronous receiver
   *          transmitter (USART):           
@@ -1345,7 +1345,8 @@ void USART_ClearFlag(USART_TypeDef* USARTx, uint16_t USART_FLAG)
   *            @arg USART_IT_TC:   Transmission complete interrupt
   *            @arg USART_IT_RXNE: Receive Data register not empty interrupt
   *            @arg USART_IT_IDLE: Idle line detection interrupt
-  *            @arg USART_IT_ORE:  OverRun Error interrupt
+  *            @arg USART_IT_ORE_RX : OverRun Error interrupt if the RXNEIE bit is set
+  *            @arg USART_IT_ORE_ER : OverRun Error interrupt if the EIE bit is set  
   *            @arg USART_IT_NE:   Noise Error interrupt
   *            @arg USART_IT_FE:   Framing Error interrupt
   *            @arg USART_IT_PE:   Parity Error interrupt

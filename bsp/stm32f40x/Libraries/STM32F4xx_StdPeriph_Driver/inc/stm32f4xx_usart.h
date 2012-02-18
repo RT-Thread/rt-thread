@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_usart.h
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file contains all the functions prototypes for the USART 
   *          firmware library.
   ******************************************************************************
@@ -238,13 +238,23 @@ typedef struct
 #define USART_IT_TXE                         ((uint16_t)0x0727)
 #define USART_IT_TC                          ((uint16_t)0x0626)
 #define USART_IT_RXNE                        ((uint16_t)0x0525)
+#define USART_IT_ORE_RX                      ((uint16_t)0x0325) /* In case interrupt is generated if the RXNEIE bit is set */
 #define USART_IT_IDLE                        ((uint16_t)0x0424)
 #define USART_IT_LBD                         ((uint16_t)0x0846)
 #define USART_IT_CTS                         ((uint16_t)0x096A)
 #define USART_IT_ERR                         ((uint16_t)0x0060)
-#define USART_IT_ORE                         ((uint16_t)0x0360)
+#define USART_IT_ORE_ER                      ((uint16_t)0x0360) /* In case interrupt is generated if the EIE bit is set */
 #define USART_IT_NE                          ((uint16_t)0x0260)
 #define USART_IT_FE                          ((uint16_t)0x0160)
+
+/** @defgroup USART_Legacy 
+  * @{
+  */
+#define USART_IT_ORE                          USART_IT_ORE_ER               
+/**
+  * @}
+  */
+
 #define IS_USART_CONFIG_IT(IT) (((IT) == USART_IT_PE) || ((IT) == USART_IT_TXE) || \
                                 ((IT) == USART_IT_TC) || ((IT) == USART_IT_RXNE) || \
                                 ((IT) == USART_IT_IDLE) || ((IT) == USART_IT_LBD) || \
@@ -253,6 +263,7 @@ typedef struct
                              ((IT) == USART_IT_TC) || ((IT) == USART_IT_RXNE) || \
                              ((IT) == USART_IT_IDLE) || ((IT) == USART_IT_LBD) || \
                              ((IT) == USART_IT_CTS) || ((IT) == USART_IT_ORE) || \
+                             ((IT) == USART_IT_ORE_RX) || ((IT) == USART_IT_ORE_ER) || \
                              ((IT) == USART_IT_NE) || ((IT) == USART_IT_FE))
 #define IS_USART_CLEAR_IT(IT) (((IT) == USART_IT_TC) || ((IT) == USART_IT_RXNE) || \
                                ((IT) == USART_IT_LBD) || ((IT) == USART_IT_CTS))

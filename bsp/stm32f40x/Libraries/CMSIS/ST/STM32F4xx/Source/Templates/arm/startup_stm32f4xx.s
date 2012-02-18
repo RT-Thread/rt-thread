@@ -1,13 +1,16 @@
 ;******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 ;* File Name          : startup_stm32f4xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.0.0RC1
-;* Date               : 25-August-2011
+;* Version            : V1.0.0
+;* Date               : 30-September-2011
 ;* Description        : STM32F4xx devices vector table for MDK-ARM toolchain. 
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == Reset_Handler
 ;*                      - Set the vector table entries with the exceptions ISR address
+;*                      - Configure the system clock and the external SRAM mounted on 
+;*                        STM324xG-EVAL board to be used as data memory (optional, 
+;*                        to be enabled by user)
 ;*                      - Branches to __main in the C library (which eventually
 ;*                        calls main()).
 ;*                      After Reset the CortexM4 processor is in Thread mode,
@@ -168,12 +171,6 @@ Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
         IMPORT  SystemInit
         IMPORT  __main
-
-                 ;FPU settings
-                 LDR     R0, =0xE000ED88           ; Enable CP10,CP11
-                 LDR     R1,[R0]
-                 ORR     R1,R1,#(0xF << 20)
-                 STR     R1,[R0]
 
                  LDR     R0, =SystemInit
                  BLX     R0

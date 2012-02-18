@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f4xx_wwdg.c
   * @author  MCD Application Team
-  * @version V1.0.0RC1
-  * @date    25-August-2011
+  * @version V1.0.0
+  * @date    30-September-2011
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Window watchdog (WWDG) peripheral:           
   *           - Prescaler, Refresh window and Counter configuration
@@ -35,7 +35,7 @@
   *          WWDG counter clock = PCLK1 / Prescaler
   *          WWDG timeout = (WWDG counter clock) * (counter value)
   *                      
-  *          Min-max timeout value @30 MHz(PCLK1): ~136.5 us / ~69.9 ms
+  *          Min-max timeout value @42 MHz(PCLK1): ~97.5 us / ~49.9 ms
   *                            
   *          ===================================================================
   *                                 How to use this driver
