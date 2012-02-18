@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
  * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
+ * 2012-02-08     aozima       update for F4.
  */
 
 #include "stm32f4xx.h"
@@ -68,53 +69,64 @@ struct stm32_serial_device uart3 =
 struct rt_device uart3_device;
 #endif
 
-#define USART1_DR_Base  0x40013804
-#define USART2_DR_Base  0x40004404
-#define USART3_DR_Base  0x40004804
+//#define USART1_DR_Base  0x40013804
+//#define USART2_DR_Base  0x40004404
+//#define USART3_DR_Base  0x40004804
 
 /* USART1_REMAP = 0 */
 #define UART1_GPIO_TX		GPIO_Pin_9
+#define UART1_TX_PIN_SOURCE GPIO_PinSource9
 #define UART1_GPIO_RX		GPIO_Pin_10
+#define UART1_RX_PIN_SOURCE GPIO_PinSource10
 #define UART1_GPIO			GPIOA
+#define UART1_GPIO_RCC      RCC_AHB1Periph_GPIOA
 #define RCC_APBPeriph_UART1	RCC_APB2Periph_USART1
 #define UART1_TX_DMA		DMA1_Channel4
 #define UART1_RX_DMA		DMA1_Channel5
 
 #define UART2_GPIO_TX	    GPIO_Pin_2
+#define UART2_TX_PIN_SOURCE GPIO_PinSource2
 #define UART2_GPIO_RX	    GPIO_Pin_3
+#define UART2_RX_PIN_SOURCE GPIO_PinSource3
 #define UART2_GPIO	    	GPIOA
+#define UART2_GPIO_RCC   	RCC_AHB1Periph_GPIOA
 #define RCC_APBPeriph_UART2	RCC_APB1Periph_USART2
 
 /* USART3_REMAP[1:0] = 00 */
-#define UART3_GPIO_RX		GPIO_Pin_11
 #define UART3_GPIO_TX		GPIO_Pin_10
+#define UART3_TX_PIN_SOURCE GPIO_PinSource10
+#define UART3_GPIO_RX		GPIO_Pin_11
+#define UART3_RX_PIN_SOURCE GPIO_PinSource11
 #define UART3_GPIO			GPIOB
+#define UART3_GPIO_RCC   	RCC_AHB1Periph_GPIOB
 #define RCC_APBPeriph_UART3	RCC_APB1Periph_USART3
-#define UART3_TX_DMA		DMA1_Channel2
-#define UART3_RX_DMA		DMA1_Channel3
+#define UART3_TX_DMA		DMA1_Stream1
+#define UART3_RX_DMA		DMA1_Stream3
 
 static void RCC_Configuration(void)
 {
 #ifdef RT_USING_UART1
-	/* Enable USART1 and GPIOA clocks */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+	/* Enable USART2 GPIO clocks */
+	RCC_AHB1PeriphClockCmd(UART1_GPIO_RCC, ENABLE);
+	/* Enable USART2 clock */
+	RCC_APB1PeriphClockCmd(RCC_APBPeriph_UART1, ENABLE);
 #endif
 
 #ifdef RT_USING_UART2
-	/* Enable USART2 and GPIOA clocks */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	/* Enable USART2 GPIO clocks */
+	RCC_AHB1PeriphClockCmd(UART2_GPIO_RCC, ENABLE);
 	/* Enable USART2 clock */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APBPeriph_UART2, ENABLE);
 #endif
 
 #ifdef RT_USING_UART3
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	/* Enable USART3 GPIO clocks */
+	RCC_AHB1PeriphClockCmd(UART3_GPIO_RCC, ENABLE);
 	/* Enable USART3 clock */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APBPeriph_UART3, ENABLE);
 
 	/* DMA clock enable */
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
 #endif
 }
 
@@ -128,35 +140,33 @@ static void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
 #ifdef RT_USING_UART1
-	/* Configure USART1 Rx (PA.10) as input floating */
-	GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX;
+	/* Configure USART1 Rx/tx PIN */
+	GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX | UART1_GPIO_TX;
 	GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
 
-	/* Configure USART1 Tx (PA.09) as alternate function push-pull */
-	GPIO_InitStructure.GPIO_Pin = UART1_GPIO_TX;
-	GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
+    /* Connect alternate function */
+    GPIO_PinAFConfig(UART1_GPIO, UART1_TX_PIN_SOURCE, GPIO_AF_USART1);
+    GPIO_PinAFConfig(UART1_GPIO, UART1_RX_PIN_SOURCE, GPIO_AF_USART1);
 #endif
 
 #ifdef RT_USING_UART2
-	GPIO_InitStructure.GPIO_Pin = UART2_GPIO_TX|UART2_GPIO_RX;
+	/* Configure USART2 Rx/tx PIN */
+	GPIO_InitStructure.GPIO_Pin = UART2_GPIO_TX | UART2_GPIO_RX;
 	GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 
     /* Connect alternate function */
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
+    GPIO_PinAFConfig(UART2_GPIO, UART2_TX_PIN_SOURCE, GPIO_AF_USART2);
+    GPIO_PinAFConfig(UART2_GPIO, UART2_RX_PIN_SOURCE, GPIO_AF_USART2);
 #endif
 
 #ifdef RT_USING_UART3
-	/* Configure USART3 Rx as input floating */
-	GPIO_InitStructure.GPIO_Pin = UART3_GPIO_RX;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	/* Configure USART3 Rx/tx PIN */
+	GPIO_InitStructure.GPIO_Pin = UART3_GPIO_RX | UART3_GPIO_RX;
 	GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
 
-	/* Configure USART3 Tx as alternate function push-pull */
-	GPIO_InitStructure.GPIO_Pin = UART3_GPIO_TX;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
+    /* Connect alternate function */
+    GPIO_PinAFConfig(UART2_GPIO, UART3_TX_PIN_SOURCE, GPIO_AF_USART3);
+    GPIO_PinAFConfig(UART2_GPIO, UART3_RX_PIN_SOURCE, GPIO_AF_USART3);
 #endif
 }
 
@@ -189,7 +199,7 @@ static void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* Enable the DMA1 Channel2 Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Stream1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -201,24 +211,62 @@ static void DMA_Configuration(void)
 #if defined (RT_USING_UART3)
 	DMA_InitTypeDef DMA_InitStructure;
 
-	/* fill init structure */
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+//  /* Configure DMA Stream */
+//  DMA_InitStructure.DMA_Channel = DMA_CHANNEL;
+//  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)SRC_Const_Buffer;
+//  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DST_Buffer;
+//  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToMemory;
+//  DMA_InitStructure.DMA_BufferSize = (uint32_t)BUFFER_SIZE;
+//  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Enable;
+//  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+//  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
+//  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
+//  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+//  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+//  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+//  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+//  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+//  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+//  DMA_Init(DMA_STREAM, &DMA_InitStructure);
 
-	/* DMA1 Channel5 (triggered by USART3 Tx event) Config */
-	DMA_DeInit(UART3_TX_DMA);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = USART3_DR_Base;
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)0;
-	DMA_InitStructure.DMA_BufferSize = 0;
-	DMA_Init(UART3_TX_DMA, &DMA_InitStructure);
+  /* Configure DMA Stream */
+  DMA_InitStructure.DMA_Channel = DMA_Channel_0;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&USART3->DR);
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)0;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+  DMA_InitStructure.DMA_BufferSize = (uint32_t)0;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+
+  DMA_DeInit(UART3_TX_DMA);
+  DMA_Init(UART3_TX_DMA, &DMA_InitStructure);
+
+//	/* fill init structure */
+//	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+//	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+//	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+//	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+//	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+//	DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+//	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+//
+//	/* DMA1 Channel5 (triggered by USART3 Tx event) Config */
+//	DMA_DeInit(UART3_TX_DMA);
+//	DMA_InitStructure.DMA_PeripheralBaseAddr = USART3_DR_Base;
+//	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+//	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)0;
+//	DMA_InitStructure.DMA_BufferSize = 0;
+//	DMA_Init(UART3_TX_DMA, &DMA_InitStructure);
 	DMA_ITConfig(UART3_TX_DMA, DMA_IT_TC | DMA_IT_TE, ENABLE);
-	DMA_ClearFlag(DMA1_FLAG_TC5);
+//	DMA_ClearFlag(DMA1_FLAG_TC5);
 #endif
 }
 
@@ -285,7 +333,7 @@ void rt_hw_usart_init()
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART3, &USART_InitStructure);
 
-	uart3_dma_tx.dma_channel= UART3_TX_DMA;
+//	uart3_dma_tx.dma_channel= UART3_TX_DMA;
 
 	/* register uart3 */
 	rt_hw_serial_register(&uart3_device, "uart3",
