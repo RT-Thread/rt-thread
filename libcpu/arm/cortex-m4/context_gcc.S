@@ -19,7 +19,6 @@
 /*@{*/
 
 .cpu cortex-m4
-.fpu vfpv4
 .syntax unified
 .thumb
 .text
@@ -105,7 +104,11 @@ PendSV_Handler:
     CBZ r1, swtich_to_thread    /* skip register save at the first time */
 
     MRS r1, psp                 /* get from thread stack pointer */
-    VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
+    
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+	VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
+#endif
+	
     STMFD   r1!, {r4 - r11}     /* push r4 - r11 register */
     LDR r0, [r0]
     STR r1, [r0]                /* update from thread stack pointer */
@@ -116,7 +119,11 @@ swtich_to_thread:
     LDR r1, [r1]                /* load thread stack pointer */
 
     LDMFD   r1!, {r4 - r11}     /* pop r4 - r11 register */
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
     VLDMIA  r1!, {d8 - d15}     /* pop FPU register s16~s31 */
+#endif
+
     MSR psp, r1                 /* update stack pointer */
 
 pendsv_exit:

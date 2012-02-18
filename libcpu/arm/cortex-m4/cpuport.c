@@ -16,7 +16,9 @@
 */
 #include <rtthread.h>
 
-#define _CPACR (*(rt_uint32_t *)0xE000ED88) /* Coprocessor Access Control Register */
+#define USE_FPU   /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP )) \
+                  /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ )) \
+                  /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
 
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
@@ -32,19 +34,8 @@ struct exception_stack_frame
     rt_uint32_t lr;
     rt_uint32_t pc;
     rt_uint32_t psr;
-};
 
-struct exception_stack_frame_fpu
-{
-    rt_uint32_t r0;
-    rt_uint32_t r1;
-    rt_uint32_t r2;
-    rt_uint32_t r3;
-    rt_uint32_t r12;
-    rt_uint32_t lr;
-    rt_uint32_t pc;
-    rt_uint32_t psr;
-
+#if USE_FPU
     /* FPU register */
     rt_uint32_t S0;
     rt_uint32_t S1;
@@ -64,6 +55,7 @@ struct exception_stack_frame_fpu
     rt_uint32_t S15;
     rt_uint32_t FPSCR;
     rt_uint32_t NO_NAME;
+#endif
 };
 
 struct stack_frame
@@ -78,21 +70,7 @@ struct stack_frame
     rt_uint32_t r10;
     rt_uint32_t r11;
 
-    struct exception_stack_frame exception_stack_frame;
-};
-
-struct stack_frame_fpu
-{
-    /* r4 ~ r11 register */
-    rt_uint32_t r4;
-    rt_uint32_t r5;
-    rt_uint32_t r6;
-    rt_uint32_t r7;
-    rt_uint32_t r8;
-    rt_uint32_t r9;
-    rt_uint32_t r10;
-    rt_uint32_t r11;
-
+#if USE_FPU
     /* FPU register s16 ~ s31 */
     rt_uint32_t s16;
     rt_uint32_t s17;
@@ -110,65 +88,37 @@ struct stack_frame_fpu
     rt_uint32_t s29;
     rt_uint32_t s30;
     rt_uint32_t s31;
+#endif
 
-    struct exception_stack_frame_fpu exception_stack_frame;
+    struct exception_stack_frame exception_stack_frame;
 };
 
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
+    struct stack_frame * stack_frame;
     rt_uint8_t * stk;
     unsigned long i;
 
     stk = stack_addr + sizeof(rt_uint32_t);
 
-    /* check FPU enable ? */
-    if((_CPACR & (0xF << 20)) == (0xF << 20))
+    stk -= sizeof(struct stack_frame);
+    stack_frame = (struct stack_frame *)stk;
+
+    /* init all register */
+    for(i=0; i<sizeof(struct stack_frame)/sizeof(rt_uint32_t); i++)
     {
-        /* FPU is enable */
-        struct stack_frame_fpu * stack_frame_fpu;
-
-        stk -= sizeof(struct stack_frame_fpu);
-        stack_frame_fpu = (struct stack_frame_fpu *)stk;
-
-        /* init all register */
-        for(i=0; i<sizeof(struct stack_frame_fpu)/sizeof(rt_uint32_t); i++)
-        {
-            ((rt_uint32_t*)stack_frame_fpu)[i] = 0xdeadbeef;
-        }
-
-        stack_frame_fpu->exception_stack_frame.r0 = (unsigned long)parameter; /* r0 : argument */
-        stack_frame_fpu->exception_stack_frame.r1 = 0;                        /* r1 */
-        stack_frame_fpu->exception_stack_frame.r2 = 0;                        /* r2 */
-        stack_frame_fpu->exception_stack_frame.r3 = 0;                        /* r3 */
-        stack_frame_fpu->exception_stack_frame.r12 = 0;                       /* r12 */
-        stack_frame_fpu->exception_stack_frame.lr = (unsigned long)texit;     /* lr */
-        stack_frame_fpu->exception_stack_frame.pc = (unsigned long)tentry;    /* entry point, pc */
-        stack_frame_fpu->exception_stack_frame.psr = 0x01000000L;             /* PSR */
+        ((rt_uint32_t*)stack_frame)[i] = 0xdeadbeef;
     }
-    else
-    {
-        /* FPU is disable */
-        struct stack_frame * stack_frame;
 
-        stk -= sizeof(struct stack_frame);
-        stack_frame = (struct stack_frame *)stk;
-
-        /* init all register */
-        for(i=0; i<sizeof(struct stack_frame)/sizeof(rt_uint32_t); i++)
-        {
-            ((rt_uint32_t*)stack_frame)[i] = 0xdeadbeef;
-        }
-
-        stack_frame->exception_stack_frame.r0 = (unsigned long)parameter; /* r0 : argument */
-        stack_frame->exception_stack_frame.r1 = 0;                        /* r1 */
-        stack_frame->exception_stack_frame.r2 = 0;                        /* r2 */
-        stack_frame->exception_stack_frame.r3 = 0;                        /* r3 */
-        stack_frame->exception_stack_frame.r12 = 0;                       /* r12 */
-        stack_frame->exception_stack_frame.lr = (unsigned long)texit;     /* lr */
-        stack_frame->exception_stack_frame.pc = (unsigned long)tentry;    /* entry point, pc */
-        stack_frame->exception_stack_frame.psr = 0x01000000L;             /* PSR */
-    }
+    stack_frame->exception_stack_frame.r0 = (unsigned long)parameter; /* r0 : argument */
+    stack_frame->exception_stack_frame.r1 = 0;                        /* r1 */
+    stack_frame->exception_stack_frame.r2 = 0;                        /* r2 */
+    stack_frame->exception_stack_frame.r3 = 0;                        /* r3 */
+    stack_frame->exception_stack_frame.r12 = 0;                       /* r12 */
+    stack_frame->exception_stack_frame.lr = (unsigned long)texit;     /* lr */
+    stack_frame->exception_stack_frame.pc = (unsigned long)tentry;    /* entry point, pc */
+    stack_frame->exception_stack_frame.psr = 0x01000000L;             /* PSR */
 
     /* return task's current stack address */
     return stk;
