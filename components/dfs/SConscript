@@ -174,8 +174,7 @@ if GetDepend('RT_USING_DFS_JFFS2'):
         RTT_ROOT + '/components/dfs/filesystems/jffs2/include', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2/cyg/compress']
-    #CPPDEFINES = CPPDEFINES + ['__ECOS', 'CYGOPT_FS_JFFS2_WRITE', 'CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE']
 
-group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path, CPPDEFINES = CPPDEFINES, LIBRARY=True)
 
 Return('group')

@@ -11,6 +11,6 @@ sd.c
 # The set of source files associated with this SConscript file.
 path = [cwd]
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_MMCSD'], CPPPATH = path)
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
 
 Return('group')
