@@ -83,8 +83,8 @@
 #include "dev_misc.h"
 
 #if defined(RT_USING_LWIP) && defined(EFM32_USING_ETH_HTTPD)
-#include "lwip\tcp.h"
-#include "lwip\ip_addr.h"
+#include "lwip/tcp.h"
+#include "lwip/ip_addr.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

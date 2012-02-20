@@ -11,11 +11,13 @@
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2011-12-16   onelife     Initial creation for EFM32
+ * 2011-12-16   onelife     Initial creation of address mapped method (pixel
+ *  drive) for EFM32GG_DK3750 board
+ * 2011-12-29   onelife     Add direct drive method (frame buffer) support
  ******************************************************************************/
 
 /***************************************************************************//**
- * @addtogroup efm32
+ * @addtogroup EFM32GG_DK3750
  * @{
  ******************************************************************************/
 
@@ -25,6 +27,9 @@
 #include "dev_lcd.h"
 
 #if defined(EFM32_USING_LCD)
+ #if (!defined(LCD_MAPPED) && !defined(LCD_DIRECT))
+  #error "Unknown LCD access mode"
+ #endif
 #include <rtgui/rtgui.h>
 #include <rtgui/driver.h>
 
@@ -40,16 +45,20 @@
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
+#if defined(LCD_MAPPED)
 static void efm32_spiLcd_setPixel(rtgui_color_t *c, int x, int y);
 static void efm32_spiLcd_getPixel(rtgui_color_t *c, int x, int y);
 static void efm32_spiLcd_drawRawHLine(rt_uint8_t *pixels, int x1, int x2, int y);
 static void efm32_spiLcd_drawHLine(rtgui_color_t *c, int x1, int x2, int y);
 static void efm32_spiLcd_drawVLine(rtgui_color_t *c, int x1, int x2, int y);
+#endif
 
 /* Private variables ---------------------------------------------------------*/
 static rt_device_t lcd;
 static struct rt_device lcd_device;
+static rt_bool_t lcdAutoCs = true;
 static struct rt_device_graphic_info lcd_info;
+#if defined(LCD_MAPPED)
 static const struct rtgui_graphic_driver_ops lcd_ops =
     {
         efm32_spiLcd_setPixel,
@@ -58,35 +67,8 @@ static const struct rtgui_graphic_driver_ops lcd_ops =
         efm32_spiLcd_drawVLine,
         efm32_spiLcd_drawRawHLine
     };
-static rt_bool_t lcdAutoCs = true;
 
 /* Private functions ---------------------------------------------------------*/
-/***************************************************************************//**
- * @brief
- *   Set/Clear chip select
- *
- * @details
- *
- * @note
- *
- * @param[in] enable
- *  Chip select pin setting
- ******************************************************************************/
-static void efm32_spiLcd_cs(rt_uint8_t enable)
-{
-    if (!lcdAutoCs)
-    {
-        if (enable)
-        {
-            GPIO_PinOutClear(LCD_CS_PORT, LCD_CS_PIN);
-        }
-        else
-        {
-            GPIO_PinOutSet(LCD_CS_PORT, LCD_CS_PIN);
-        }
-    }
-}
-
 /***************************************************************************//**
  * @brief
  *   Draw a pixel with specified color
@@ -129,8 +111,7 @@ static void efm32_spiLcd_setPixel(rtgui_color_t *c, int x, int y)
         return;
     } while(0);
 
-    lcd_debug("LCD err: Set pixel at (%d,%d: %x) failed (%x)!\n",
-        x, y, *c, ret);
+//    lcd_debug("LCD err: Set pixel at (%d,%d: %x) failed (%x)!\n", x, y, *c, ret);
 }
 
 /***************************************************************************//**
@@ -273,8 +254,7 @@ static void efm32_spiLcd_drawHLine(rtgui_color_t *c, int x1, int x2, int y)
         return;
     } while(0);
 
-    lcd_debug("LCD err: Draw hline at (%d-%d,%d: %x) failed (%x)!\n",
-        x1, x2, y, *c, ret);
+//    lcd_debug("LCD err: Draw hline at (%d-%d,%d: %x) failed (%x)!\n", x1, x2, y, *c, ret);
 }
 
 /***************************************************************************//**
@@ -360,9 +340,9 @@ static void efm32_spiLcd_drawVLine(rtgui_color_t *c, int x , int y1, int y2)
         return;
     } while(0);
 
-    lcd_debug("LCD err: Draw vline at (%d,%d-%d: %x) failed (%x)!\n",
-        x, y1, y2, *c, ret);
+//    lcd_debug("LCD err: Draw vline at (%d,%d-%d: %x) failed (%x)!\n", x, y1, y2, *c, ret);
 }
+#endif
 
 /***************************************************************************//**
 * @brief
@@ -406,6 +386,32 @@ static rt_err_t efm32_spiLcd_control (rt_device_t dev, rt_uint8_t cmd, void *arg
 
 /***************************************************************************//**
  * @brief
+ *   Set/Clear chip select
+ *
+ * @details
+ *
+ * @note
+ *
+ * @param[in] enable
+ *  Chip select pin setting
+ ******************************************************************************/
+static void efm32_spiLcd_cs(rt_uint8_t enable)
+{
+    if (!lcdAutoCs)
+    {
+        if (enable)
+        {
+            GPIO_PinOutClear(LCD_CS_PORT, LCD_CS_PIN);
+        }
+        else
+        {
+            GPIO_PinOutSet(LCD_CS_PORT, LCD_CS_PIN);
+        }
+    }
+}
+
+/***************************************************************************//**
+ * @brief
  *  Write data to SSD2119 controller
  *
  * @param[in] reg
@@ -417,7 +423,7 @@ static rt_err_t efm32_spiLcd_control (rt_device_t dev, rt_uint8_t cmd, void *arg
  * @note
  *  It's not possible to read back register value through SSD2119 SPI interface
  ******************************************************************************/
-rt_err_t efm32_spiLed_writeRegister(rt_uint8_t reg, rt_uint16_t data)
+rt_err_t efm32_spiLcd_writeRegister(rt_uint8_t reg, rt_uint16_t data)
 {
     struct efm32_usart_device_t *usart;
     rt_uint8_t buf_ins[3];
@@ -518,20 +524,16 @@ void efm32_spiLcd_init(void)
 		}
 		lcd_debug("LCD: Find device %s\n", LCD_USING_DEVICE_NAME);
 
-        /* Reconfig speed */
-        usart = (struct efm32_usart_device_t *)(lcd->user_data);
-        USART_BaudrateSyncSet(usart->usart_device, 0, EFM32_LCD_SPICLK);
-
         /* Config CS pin */
+        usart = (struct efm32_usart_device_t *)(lcd->user_data);
         if (!(usart->state & USART_STATE_AUTOCS))
         {
             GPIO_PinModeSet(LCD_CS_PORT, LCD_CS_PIN, gpioModePushPull, 1);
             lcdAutoCs = false;
         }
 
-        // TODO: add another method
-        /* TFT initialize or reinitialize to Address Mapped Mode
-           Assumes EBI has been configured correctly in DVK_init(DVK_Init_EBI) */
+        /* TFT initialize or reinitialize. Assumes EBI has been configured
+           correctly in DVK_init(DVK_Init_EBI) */
         rt_uint32_t freq = SystemCoreClockGet();
         rt_uint32_t i;
         rt_bool_t warning = RT_FALSE;
@@ -561,7 +563,8 @@ void efm32_spiLcd_init(void)
             {
                 __NOP();
             }
-            /* Configure display for Direct Drive + SPI mode */
+#if defined(LCD_MAPPED)
+            /* Configure display for address mapped method + 3-wire SPI mode */
             DVK_displayControl(DVK_Display_Mode8080);
             DVK_displayControl(DVK_Display_PowerEnable);
             DVK_displayControl(DVK_Display_ResetRelease);
@@ -578,6 +581,61 @@ void efm32_spiLcd_init(void)
                 lcd_debug("LCD err: driver init failed %x\n", ret);
                 break;
             }
+#elif defined(LCD_DIRECT)
+            /* Configure TFT direct drive method from EBI BANK2 */
+            const EBI_TFTInit_TypeDef tftInit =
+            {
+                ebiTFTBank2,                  /* Select EBI Bank 2 */
+                ebiTFTWidthHalfWord,          /* Select 2-byte (16-bit RGB565) increments */
+                ebiTFTColorSrcMem,            /* Use memory as source for mask/blending */
+                ebiTFTInterleaveUnlimited,    /* Unlimited interleaved accesses */
+                ebiTFTFrameBufTriggerVSync,   /* VSYNC as frame buffer update trigger */
+                false,                        /* Drive DCLK from negative edge of internal clock */
+                ebiTFTMBDisabled,             /* No masking and alpha blending enabled */
+                ebiTFTDDModeExternal,         /* Drive from external memory */
+                ebiActiveLow,                 /* CS Active Low polarity */
+                ebiActiveHigh,                /* DCLK Active High polarity */
+                ebiActiveLow,                 /* DATAEN Active Low polarity */
+                ebiActiveLow,                 /* HSYNC Active Low polarity */
+                ebiActiveLow,                 /* VSYNC Active Low polarity */
+                320,                          /* Horizontal size in pixels */
+                1,                            /* Horizontal Front Porch */
+                30,                           /* Horizontal Back Porch */
+                2,                            /* Horizontal Synchronization Pulse Width */
+                240,                          /* Vertical size in pixels */
+                1,                            /* Vertical Front Porch */
+                4,                            /* Vertical Back Porch */
+                2,                            /* Vertical Synchronization Pulse Width */
+                0x0000,                       /* Frame Address pointer offset to EBI memory base */
+                4,                            /* DCLK Period */
+                0,                            /* DCLK Start cycles */
+                0,                            /* DCLK Setup cycles */
+                0,                            /* DCLK Hold cycles */
+            };
+
+            DVK_enablePeripheral(DVK_TFT);
+
+            /* Configure display for Direct Drive + 3-wire SPI mode */
+            DVK_displayControl(DVK_Display_ModeGeneric);
+            DVK_displayControl(DVK_Display_PowerEnable);
+            DVK_displayControl(DVK_Display_ResetRelease);
+
+            /* Configure GPIO for EBI and TFT */
+            /* EBI TFT DCLK/Dot Clock */
+            GPIO_PinModeSet(gpioPortA, 8, gpioModePushPull, 0);
+            /* EBI TFT DATAEN */
+            GPIO_PinModeSet(gpioPortA, 9, gpioModePushPull, 0);
+            /* EBI TFT VSYNC  */
+            GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
+            /* EBI TFT HSYNC */
+            GPIO_PinModeSet(gpioPortA, 11, gpioModePushPull, 0);
+
+            /* Initialize display */
+            DMD_init(0, (rt_uint32_t)EBI_BankAddress(EBI_BANK2));
+
+            /* Configure EBI TFT direct drive */
+            EBI_TFTInit(&tftInit);
+#endif
         }
 
         /* Get LCD geometry */
@@ -589,14 +647,18 @@ void efm32_spiLcd_init(void)
         }
 
         /* Init LCD info */
+		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_TX;
         lcd_info.pixel_format       = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
         lcd_info.bits_per_pixel     = 16;
-        lcd_info.width              = geometry->xSize - 1;
-        lcd_info.height             = geometry->ySize - 1;
+        lcd_info.width              = geometry->xSize;
+        lcd_info.height             = geometry->ySize;
+#if defined(LCD_MAPPED)
         lcd_info.framebuffer        = RT_NULL;
-
-		flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_TX;
         efm32_spiLcd_register(&lcd_device, LCD_DEVICE_NAME, flag, (void *)&lcd_ops);
+#elif defined(LCD_DIRECT)
+        lcd_info.framebuffer        = (rt_uint8_t *)EBI_BankAddress(EBI_BANK2);
+        efm32_spiLcd_register(&lcd_device, LCD_DEVICE_NAME, flag, RT_NULL);
+#endif
 
         /* Set clipping area */
         ret = DMD_setClippingArea(0, 0, geometry->xSize, geometry->ySize);
@@ -607,12 +669,13 @@ void efm32_spiLcd_init(void)
         }
         /* Read device code */
         rt_uint16_t code = 0xFFFF;
+#if defined(LCD_MAPPED)
         code = DMDIF_readDeviceCode();
-
+#endif
         /* Set as rtgui graphic driver */
         rtgui_graphic_set_device(&lcd_device);
 
-		lcd_debug("LCD: H/W (%x) init OK!\n", code);
+        lcd_debug("LCD: H/W init OK!\n");
         return;
     } while(0);
 

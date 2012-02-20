@@ -372,10 +372,10 @@ static rt_size_t rt_usart_read (
     void            *buffer,
     rt_size_t       size)
 {
-    struct efm32_usart_device_t *usart;
-    rt_uint8_t  *ptr;
     rt_err_t    err_code;
-    rt_size_t   read_len;
+    struct efm32_usart_device_t *usart;
+    rt_size_t   read_len, len;
+    rt_uint8_t  *ptr;
     rt_uint32_t rx_flag, tx_flag, b8_flag;
 
     usart = (struct efm32_usart_device_t *)(dev->user_data);
@@ -411,9 +411,8 @@ static rt_size_t rt_usart_read (
 
     if (dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
-        rt_size_t len = size;
+        len = size;
         ptr = buffer;
-
         /* interrupt mode Rx */
         while (len)
         {
@@ -457,13 +456,6 @@ static rt_size_t rt_usart_read (
     }
     else
     {
-        struct efm32_usart_device_t *usart;
-        USART_TypeDef *usart_device;
-        rt_size_t len;
-
-        usart = (struct efm32_usart_device_t *)(dev->user_data);
-        usart_device = ((struct efm32_usart_device_t *)(dev->user_data))->usart_device;
-
         if (usart->state & USART_STATE_SYNC)
         {
             /* SPI read */
@@ -472,67 +464,70 @@ static rt_size_t rt_usart_read (
             rt_uint8_t *rx_buf = *((rt_uint8_t **)(buffer + inst_len + 1));
             rt_off_t i;
 
-            ptr = rx_buf;
+            ptr = inst_ptr;
             len = inst_len;
-
             /* Write instructions */
             if (len)
             {
                 if (usart->state & USART_STATE_9BIT)
                 {
-                    usart_device->CTRL &= ~b8_flag;
+                    usart->usart_device->CTRL &= ~b8_flag;
                 }
                 while (len)
                 {
                     while (!(usart->usart_device->STATUS & tx_flag));
-                    usart->usart_device->TXDATA = (rt_uint32_t)*inst_ptr;
-                    ++inst_ptr; --len;
+                    usart->usart_device->TXDATA = (rt_uint32_t)*(ptr++);
+                    len--;
                 }
                 if (usart->state & USART_STATE_9BIT)
                 {
-                    usart_device->CTRL |= b8_flag;
+                    usart->usart_device->CTRL |= b8_flag;
                 }
             }
+
             /* Flushing RX */
-            usart_device->CMD = USART_CMD_CLEARRX;
+            usart->usart_device->CMD = USART_CMD_CLEARRX;
             /* Skip some bytes if necessary */
             for (i = 0; i < pos; i++)
             {
                 /* dummy write */
-                while (!(usart_device->STATUS & tx_flag));
-                usart_device->TXDATA = (rt_uint32_t)0xff;
+                while (!(usart->usart_device->STATUS & tx_flag));
+                usart->usart_device->TXDATA = (rt_uint32_t)0xff;
                 /* dummy read */
-                while (!(usart_device->STATUS & rx_flag));
-                *((rt_uint32_t *)0x00) = usart_device->RXDATA;
+                while (!(usart->usart_device->STATUS & rx_flag));
+                *((rt_uint32_t *)0x00) = usart->usart_device->RXDATA;
             }
+
+            ptr = rx_buf;
+            len = size;
             /* Read data */
-            while (((rt_uint32_t)ptr - (rt_uint32_t)rx_buf) < size)
+            while (len)
             {
                 /* dummy write */
-                while (!(usart_device->STATUS & tx_flag));
-                usart_device->TXDATA = (rt_uint32_t)0xff;
+                while (!(usart->usart_device->STATUS & tx_flag));
+                usart->usart_device->TXDATA = (rt_uint32_t)0xff;
                 /* read a byte of data */
-                while (!(usart_device->STATUS & rx_flag));
-                *ptr = usart_device->RXDATA & 0xff;
-                ptr ++;
+                while (!(usart->usart_device->STATUS & rx_flag));
+                *(ptr++) = usart->usart_device->RXDATA & 0xff;
+                len--;
             }
         }
         else
         {
             ptr = buffer;
-
+            len = size;
             /* polling mode */
-            while ((rt_uint32_t)ptr - (rt_uint32_t)buffer < size)
+            while (len)
             {
-                while (usart_device->STATUS & rx_flag)
+                while (usart->usart_device->STATUS & rx_flag)
                 {
-                    *ptr = usart_device->RXDATA & 0xff;
-                    ptr ++;
+                    *(ptr++) = usart->usart_device->RXDATA & 0xff;
                 }
             }
+            len--;
         }
 
-        read_len = size;
+        read_len = size - len;
     }
 
     /* Unlock device */
@@ -540,6 +535,7 @@ static rt_size_t rt_usart_read (
 
     /* set error code */
     rt_set_errno(err_code);
+
     return read_len;
 }
 
@@ -573,9 +569,10 @@ static rt_size_t rt_usart_write (
     rt_size_t       size)
 {
     rt_err_t err_code;
-    rt_size_t write_size = 0;
     struct efm32_usart_device_t* usart = (struct efm32_usart_device_t*)(dev->user_data);
-    rt_uint8_t *tx_buf;
+    rt_size_t   read_len, len;
+    rt_uint8_t  *ptr;
+    rt_size_t   write_size = 0;
     rt_uint32_t tx_flag, b8_flag;
 
 #if defined(UART_PRESENT)
@@ -610,23 +607,25 @@ static rt_size_t rt_usart_write (
     {   /* SPI write */
         rt_uint8_t inst_len     = *((rt_uint8_t *)buffer);
         rt_uint8_t *inst_ptr    = (rt_uint8_t *)(buffer + 1);
-        tx_buf = *((rt_uint8_t **)(buffer + inst_len + 1));
+        rt_uint8_t *tx_buf      = *((rt_uint8_t **)(buffer + inst_len + 1));
 
+        ptr = inst_ptr;
+        len = inst_len;
         /* Write instructions */
-        if (inst_len)
+        if (len)
         {
             if (usart->state & USART_STATE_9BIT)
             {
                 usart->usart_device->CTRL &= ~b8_flag;
             }
-            if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (inst_len > 2))
+            if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (len > 2))
             {   /* DMA mode Tx */
                 struct efm32_usart_dma_mode_t *dma_tx;
 
-                usart_debug("USART: DMA TX INS (%d)\n", inst_len);
+                usart_debug("USART: DMA TX INS (%d)\n", len);
                 dma_tx = (struct efm32_usart_dma_mode_t *)(usart->tx_mode);
-                dma_tx->data_ptr = (rt_uint32_t *)inst_ptr;
-                dma_tx->data_size = inst_len;
+                dma_tx->data_ptr = (rt_uint32_t *)ptr;
+                dma_tx->data_size = len;
 
                 usart->state |= USART_STATE_TX_BUSY;
                 DMA_ActivateBasic(
@@ -634,8 +633,8 @@ static rt_size_t rt_usart_write (
                     true,
                     false,
                     (void *)&(usart->usart_device->TXDATA),
-                    (void *)inst_ptr,
-                    (rt_uint32_t)(inst_len - 1));
+                    (void *)ptr,
+                    (rt_uint32_t)(len - 1));
                 /* Wait, otherwise the TX buffer is overwrite */
                 // TODO: This function blocks the process => goto low power mode?
         //      if (usart->state & USART_STATE_CONSOLE)
@@ -652,15 +651,12 @@ static rt_size_t rt_usart_write (
             }
             else
             {   /* polling mode */
-                rt_uint8_t *ptr = (rt_uint8_t *)inst_ptr;
-                rt_size_t len = inst_len;
-
-                usart_debug("USART: Polling TX INS (%d)\n", inst_len);
+                usart_debug("USART: Polling TX INS (%d)\n", len);
                 while (len)
                 {
                     while (!(usart->usart_device->STATUS & tx_flag));
-                    usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
-                    ++ptr; --len;
+                    usart->usart_device->TXDATA = (rt_uint32_t)*(ptr++);
+                    len--;
                 }
             }
             if (usart->state & USART_STATE_9BIT)
@@ -668,30 +664,33 @@ static rt_size_t rt_usart_write (
                 usart->usart_device->CTRL |= b8_flag;
             }
         }
+
+        ptr = tx_buf;
     }
     else
     {
-        tx_buf = (rt_uint8_t *)buffer;
+        ptr = (rt_uint8_t *)buffer;
     }
 
+    len = size;
     /* Write data */
     if (dev->flag & RT_DEVICE_FLAG_STREAM)
     {
-        if (*(tx_buf + size - 1) == '\n')
+        if (*(ptr + len - 1) == '\n')
         {
-            *(tx_buf + size - 1) = '\r';
-            *(tx_buf + size++) = '\n';
-            *(tx_buf + size) = 0;
+            *(ptr + len - 1) = '\r';
+            *(ptr + len++) = '\n';
+            *(ptr + len) = 0;
         }
     }
-    if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (size > 2))
+    if ((dev->flag & RT_DEVICE_FLAG_DMA_TX) && (len > 2))
     {   /* DMA mode Tx */
         struct efm32_usart_dma_mode_t *dma_tx;
 
-        usart_debug("USART: DMA TX data (%d)\n", size);
+        usart_debug("USART: DMA TX data (%d)\n", len);
         dma_tx = (struct efm32_usart_dma_mode_t *)(usart->tx_mode);
-        dma_tx->data_ptr = (rt_uint32_t *)tx_buf;
-        dma_tx->data_size = size;
+        dma_tx->data_ptr = (rt_uint32_t *)ptr;
+        dma_tx->data_size = len;
 
         usart->state |= USART_STATE_TX_BUSY;
         DMA_ActivateBasic(
@@ -699,8 +698,8 @@ static rt_size_t rt_usart_write (
             true,
             false,
             (void *)&(usart->usart_device->TXDATA),
-            (void *)tx_buf,
-            (rt_uint32_t)(size - 1));
+            (void *)ptr,
+            (rt_uint32_t)(len - 1));
 
         /* Wait, otherwise the TX buffer is overwrite */
         // TODO: This function blocks the process => goto low power mode?
@@ -719,18 +718,15 @@ static rt_size_t rt_usart_write (
     }
     else
     {   /* polling mode */
-        rt_uint8_t *ptr = (rt_uint8_t *)tx_buf;
-        rt_size_t len = size;
-
-        usart_debug("USART: Polling TX data (%d)\n", size);
+        usart_debug("USART: Polling TX data (%d)\n", len);
         while (len)
         {
             while (!(usart->usart_device->STATUS & tx_flag));
-            usart->usart_device->TXDATA = (rt_uint32_t)*ptr;
-            ++ptr; --len;
+            usart->usart_device->TXDATA = (rt_uint32_t)*(ptr++);
+            len--;
         }
 
-        write_size = (rt_size_t)ptr - (rt_size_t)tx_buf;
+        write_size = size - len;
     }
 
     /* Unlock device */
@@ -738,6 +734,7 @@ static rt_size_t rt_usart_write (
 
     /* set error code */
     rt_set_errno(err_code);
+
     return write_size;
 }
 
@@ -1396,7 +1393,7 @@ static struct efm32_usart_device_t *rt_hw_usart_unit_init(
     }
     if (callback)
     {
-        rt_free(usart);
+        rt_free(callback);
     }
 
 #if defined(UART_PRESENT)
@@ -1436,7 +1433,7 @@ void rt_hw_usart_init(void)
  #ifdef RT_USART0_SYNC_MODE
         config |= USART_STATE_SYNC;
         config |= (RT_USART0_SYNC_MODE & SYNC_SETTING_MASK) << SYNC_SETTING_SHIFT;
-  #if (!(RT_USART0_SYNC_MODE & EFM32_SPI_MASTER))
+  #if (!((RT_USART0_SYNC_MODE << SYNC_SETTING_SHIFT) & USART_STATE_MASTER))
          flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else
@@ -1485,7 +1482,7 @@ void rt_hw_usart_init(void)
  #ifdef RT_USART1_SYNC_MODE
          config |= USART_STATE_SYNC;
          config |= (RT_USART1_SYNC_MODE & SYNC_SETTING_MASK) << SYNC_SETTING_SHIFT;
-  #if (!(RT_USART1_SYNC_MODE & EFM32_SPI_MASTER))
+  #if (!((RT_USART1_SYNC_MODE << SYNC_SETTING_SHIFT) & USART_STATE_MASTER))
          flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else
@@ -1535,7 +1532,7 @@ void rt_hw_usart_init(void)
  #ifdef RT_USART2_SYNC_MODE
          config |= USART_STATE_SYNC;
          config |= (RT_USART1_SYNC_MODE & SYNC_SETTING_MASK) << SYNC_SETTING_SHIFT;
-  #if (!(RT_USART2_SYNC_MODE & EFM32_SPI_MASTER))
+  #if (!((RT_USART2_SYNC_MODE << SYNC_SETTING_SHIFT) & USART_STATE_MASTER))
         flag |= RT_DEVICE_FLAG_INT_RX;
   #endif
  #else

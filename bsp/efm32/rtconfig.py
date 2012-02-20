@@ -8,7 +8,7 @@ if CROSS_TOOL == 'gcc':
     EXEC_PATH   = 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
     #EXEC_PATH  = 'C:\Program Files (x86)\yagarto\bin'
 
-BUILD = 'run'
+BUILD = 'debug'
 # EFM32_BOARD		=  'EFM32_G8XX_STK'
 # EFM32_BOARD		=  'EFM32_GXXX_DK'
 EFM32_BOARD		=  'EFM32GG_DK3750'
@@ -22,8 +22,8 @@ elif EFM32_BOARD == 'EFM32_GXXX_DK':
 elif EFM32_BOARD == 'EFM32GG_DK3750':
     EFM32_FAMILY = 'Giant Gecko'
     EFM32_TYPE = 'EFM32GG990F1024'
-    EFM32_LCD =  'Mapped'
-#    EFM32_LCD =  'Direct'
+#    EFM32_LCD =  'LCD_MAPPED'
+    EFM32_LCD =  'LCD_DIRECT'
 
 if PLATFORM == 'gcc':
     # toolchains

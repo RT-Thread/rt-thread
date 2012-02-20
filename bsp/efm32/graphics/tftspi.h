@@ -1,6 +1,6 @@
 /***************************************************************************//**
- * @file 	dev_lcd.h
- * @brief 	LCD driver of RT-Thread RTOS for EFM32
+ * @file 	tftspi.h
+ * @brief 	Stub functions of EFM32 LCD driver
  * 	COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author 	onelife
  * @version 0.4 beta
@@ -11,17 +11,19 @@
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2011-12-16   onelife     Initial creation of address mapped method (pixel
- *  drive) for EFM32GG_DK3750 board
+ * 2011-12-20   onelife     Initial creation for EFM32
  ******************************************************************************/
-#ifndef __DEV_LCD_H__
-#define __DEV_LCD_H__
+#ifndef __TFTSPI_H__
+#define __TFTSPI_H__
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void efm32_spiLcd_init(void);
+#define SPI_TFT_Init()
+#define SPI_TFT_WriteRegister(reg, data)    efm32_spiLcd_writeRegister(reg, data)
 
-#endif /* __DEV_LCD_H__ */
+/* Exported functions ------------------------------------------------------- */
+extern rt_err_t efm32_spiLcd_writeRegister(rt_uint8_t reg, rt_uint16_t data);
+
+#endif /* __TFTSPI_H__ */

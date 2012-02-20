@@ -1,6 +1,6 @@
 /***************************************************************************//**
  * @file    application.c
- * @brief   application tasks
+ * @brief   Demo application
  *  COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author  Bernard, onelife
  * @version 0.4 beta
@@ -19,6 +19,7 @@
  * 2011-08-23   onelife     Modify Ethernet DEMO according to the changes of
  *  lwIP API in reversion 1668
  * 2011-12-20   onelife     Add LCD DEMO
+ * 2012-02-16   onelife     Add photo frame DEMO
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -62,168 +63,34 @@
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/box.h>
+#include <rtgui/image.h>
 
+ #if defined(RTGUI_USING_DFS_FILERW)
+ #include <dfs_posix.h>
+ #define PATH_SEPARATOR     '/'
+ #endif
+
+#define APP_PHOTO_FRAME
 #endif
 
 
 /* Private typedef -----------------------------------------------------------*/
+struct photo_event
+{
+	struct rtgui_event parent;
+    rt_uint32_t cmd;
+	rt_uint8_t* path;
+	rt_uint8_t* format;
+};
+
 /* Private define ------------------------------------------------------------*/
+#define APP_CMD_PHOTO_FRAME 0x00000001
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 volatile rt_uint32_t    rt_system_status = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static rt_uint8_t index = 0 ;
-static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
-{
-	if (event->type == RTGUI_EVENT_PAINT)
-	{
-		struct rtgui_dc* dc;
-		struct rtgui_rect rect;
-
-		dc = rtgui_dc_begin_drawing(widget);
-		if (dc == RT_NULL)
-            return RT_FALSE;
-		rtgui_widget_get_rect(widget, &rect);
-
-		rtgui_dc_fill_rect(dc, &rect);
-		rect.x2 -= 1; rect.y2 -= 1;
-		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
-		rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2);
-
-		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y2);
-		rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2 + 1);
-
-        /* shrink border */
-		rtgui_rect_inflate(&rect, -1);
-
-		/* draw text */
-        rtgui_widget_get_rect(widget, &rect);
-        rect.y1 += 25;
-        rtgui_dc_draw_text(dc, "  EFM3 EFM32GG_DK3750 Kit", &rect);
-        rect.y1 += 10;
-        rtgui_dc_draw_text(dc, "  RT-Thread & RTGUI", &rect);
-        rect.y1 += 10;
-        rtgui_dc_draw_text(dc, "  中文也行!", &rect);
-
-		rtgui_dc_end_drawing(dc);
-
-		return RT_FALSE;
-	}
-    else if (event->type == RTGUI_EVENT_KBD)
-    {
-        struct rtgui_dc* dc;
-        struct rtgui_rect rect;
-        struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-        if (ekbd->type == RTGUI_KEYDOWN)
-        {
-            char key_str[16];
-            switch (ekbd->key)
-            {
-                case RTGUIK_LEFT:
-                rt_sprintf(key_str, "%s", "L");
-                break;
-                case RTGUIK_RIGHT:
-                rt_sprintf(key_str, "%s", "R");
-                break;
-                case RTGUIK_DOWN:
-                rt_sprintf(key_str, "%s", "D");
-                break;
-                case RTGUIK_UP:
-                rt_sprintf(key_str, "%s", "U");
-                break;
-                default:
-                rt_sprintf(key_str, "%s", "S");
-                break;
-            }
-            dc = rtgui_dc_begin_drawing(widget);
-            if (dc == RT_NULL)
-                return RT_FALSE;
-            rect.x1 = 118;
-            rect.y1 = 1;
-            rect.x2 = 127;
-            rect.y2 = 10;
-            rtgui_dc_fill_rect(dc, &rect);
-            rtgui_dc_draw_text(dc, key_str, &rect);
-            rtgui_dc_end_drawing(dc);
-        }
-        else if (ekbd->type == RTGUI_KEYUP)
-        {
-            dc = rtgui_dc_begin_drawing(widget);
-            if (dc == RT_NULL)
-                return RT_FALSE;
-            rect.x1 = 118;
-            rect.y1 = 1;
-            rect.x2 = 127;
-            rect.y2 = 10;
-            rtgui_dc_fill_rect(dc, &rect);
-            //rtgui_dc_draw_text(dc, key_str, &rect);
-            rtgui_dc_end_drawing(dc);
-        }
-    }
-    else if (event->type == RTGUI_EVENT_COMMAND)
-    {
-        char str[16];
-        struct rtgui_dc* dc;
-        struct rtgui_rect rect;
-        struct rtgui_event_command* ecmd;
-        rt_uint8_t major,minor;
-        dc = rtgui_dc_begin_drawing(widget);
-        if (dc == RT_NULL)
-            return RT_FALSE;
-
-        ecmd = (struct rtgui_event_command*)event;
-        switch (ecmd->command_id)
-        {
-            default:
-                rect.x1 = 1;
-                rect.y1 = 1;
-                rect.x2 = 117;
-                rect.y2 = 10;
-                rtgui_dc_fill_rect(dc, &rect);
-			    rt_sprintf(str, "ADC = %d mv", 123);
-			    rtgui_dc_draw_text(dc, str, &rect);
-            break;
- /*           case ADC_UPDATE:
-                rect.x1 = 1;
-                rect.y1 = 1;
-                rect.x2 = 117;
-                rect.y2 = 10;
-                rtgui_dc_fill_rect(dc, &rect);
-			    rt_sprintf(str, "ADC = %d mv", adc_value);
-			    rtgui_dc_draw_text(dc, str, &rect);
-            break;
-            case CPU_UPDATE:
-                cpu_usage_get(&major, &minor);
-                rect.x1 = 1;
-                rect.y1 = 12;
-                rect.x2 = 127;
-                rect.y2 = 22;
-                rtgui_dc_fill_rect(dc, &rect);
-			    rt_sprintf(str, "CPU : %d.%d%", major, minor);
-			    rtgui_dc_draw_text(dc, str, &rect);
-
-                rect.y1 = 23;
-                rect.y2 = 63;
-                index++;
-                if (index == 127)
-                {
-                    index = 1;
-                    rtgui_dc_fill_rect(dc, &rect);
-                }
-                if (major>40)
-                    rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
-                else
-                    rtgui_dc_draw_vline(dc, index, rect.y2-major, rect.y2);
-                break;
-*/        }
-        rtgui_dc_end_drawing(dc);
-    }
-
-	return rtgui_view_event_handler(widget, event);
-}
-
 static void wb_info(void* parameter)
 {
 	rt_mq_t mq;
@@ -258,7 +125,7 @@ static void wb_info(void* parameter)
 //	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), view_event_handler);
 
 	/* Create a lable */
-	rtgui_label_t *label = rtgui_label_create("R-Thread & RTGUI");
+	rtgui_label_t *label = rtgui_label_create("RT-Thread & RTGUI");
 	if(label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
@@ -293,6 +160,65 @@ static void wb_info(void* parameter)
 	rt_mq_delete(mq);
 }
 
+static rt_bool_t pic_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+{
+	rt_bool_t result;
+    rt_bool_t load = RT_FALSE;
+
+	result = rtgui_view_event_handler(widget, event);
+
+    switch(event->type)
+    {
+    case RTGUI_EVENT_PAINT:
+        load = RT_TRUE;
+        break;
+
+    case RTGUI_EVENT_MOUSE_BUTTON:
+        {
+			struct rtgui_event_mouse *mouse = (struct rtgui_event_mouse *)event;
+
+			if (mouse->button == RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP)
+			{
+                rt_kprintf("APP: left click (%x)\n", mouse->button);
+			}
+        }
+        break;
+    }
+
+    if (load)
+	{
+		struct rtgui_dc* dc;
+		rtgui_rect_t rect;
+        rtgui_image_t* image;
+
+    //    image = rtgui_image_create_from_file("jpg", "/test9.jpg", RT_FALSE);
+        image = rtgui_image_create_from_file("bmp", "/test_565.bmp", RT_FALSE);
+
+		dc = rtgui_dc_begin_drawing(widget);
+		if (dc == RT_NULL)
+        {
+            return result;
+        }
+
+        rtgui_widget_get_rect(widget, &rect);
+        rtgui_widget_rect_to_device(widget, &rect);
+        rect.y1 +=20; rect.y2 +=20;
+
+		if (image != RT_NULL)
+        {
+			rtgui_image_blit(image, dc, &rect);
+            rtgui_image_destroy(image);
+        }
+        else
+        {
+            rt_kprintf("APP err: no image found!\n");
+        }
+
+		rtgui_dc_end_drawing(dc);
+	}
+
+	return result;
+}
 
 static void wb_main(void* parameter)
 {
@@ -317,7 +243,7 @@ static void wb_main(void* parameter)
         return;
     }
     /* Create a view */
-    view = rtgui_view_create("view_2");
+    view = rtgui_view_create("pic_view");
 	if(view == RT_NULL)
     {
         rt_kprintf("Create view failed!\n");
@@ -325,7 +251,7 @@ static void wb_main(void* parameter)
     }
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(view)) = red;
-//	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), view_event_handler);
+    rtgui_widget_set_event_handler(RTGUI_WIDGET(view), pic_view_event_handler);
 
 	/* Create a lable */
 	rtgui_label_t* label = rtgui_label_create("EFM32GG_DK3750 Kit");
@@ -420,6 +346,128 @@ static void win_hello(void* parameter)
 
     /* Window loop */
 	rtgui_win_event_loop(win);
+
+    /* Prepare for exit */
+	rtgui_thread_deregister(rt_thread_self());
+	rt_mq_delete(mq);
+}
+
+static rt_bool_t photo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+{
+	rt_bool_t result = RT_FALSE;
+    struct photo_event *photo_event = (struct photo_event *)event;
+
+	result = rtgui_view_event_handler(widget, event);
+    rt_kprintf("view event %x\n", event->type);
+
+    if ((event->type == RTGUI_EVENT_COMMAND) && \
+        (photo_event->cmd == APP_CMD_PHOTO_FRAME))
+	{
+        rtgui_rect_t rect;
+        rtgui_image_t* image;
+        struct rtgui_dc* dc;
+
+        rtgui_widget_get_rect(widget, &rect);
+        rtgui_widget_rect_to_device(widget, &rect);
+        rect.y1 +=20; rect.y2 +=20;
+
+        dc = rtgui_dc_begin_drawing(widget);
+        if (dc == RT_NULL)
+        {
+            return result;
+        }
+
+        image = rtgui_image_create_from_file(photo_event->format,
+            photo_event->path, RT_TRUE);
+        if (image != RT_NULL)
+        {
+            rtgui_image_blit(image, dc, &rect);
+            rtgui_image_destroy(image);
+            return result;
+        }
+
+        return RT_TRUE;
+    }
+
+	return result;
+}
+
+static rt_bool_t photo_lable_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+{
+	rt_bool_t result = RT_FALSE;
+
+    rt_kprintf("lable event %x\n", event->type);
+
+    if (event->type == RTGUI_EVENT_COMMAND)
+	{
+        struct photo_event *photo = (struct photo_event *)event;
+
+        rtgui_label_set_text((rtgui_label_t *)widget, photo->path);
+    }
+
+	return result;
+}
+
+static void wb_photo(void* parameter)
+{
+	rt_mq_t mq;
+	rtgui_view_t *view;
+	rtgui_workbench_t *workbench;
+
+    /* Create message queue for self */
+	mq = rt_mq_create("photo", 256, 4, RT_IPC_FLAG_FIFO);
+	if(mq == RT_NULL)
+    {
+        rt_kprintf("Create mq failed!\n");
+        return;
+    }
+	rtgui_thread_register(rt_thread_self(), mq);
+
+    /* Create workbench */
+	workbench = rtgui_workbench_create("main", "photo");
+	if(workbench == RT_NULL)
+    {
+        rt_kprintf("Create wb failed!\n");
+        return;
+    }
+    /* Create a view */
+    view = rtgui_view_create("view");
+	if(view == RT_NULL)
+    {
+        rt_kprintf("Create view failed!\n");
+        return;
+    }
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
+    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(view)) = blue;
+    rtgui_widget_set_event_handler(RTGUI_WIDGET(view), photo_view_event_handler);
+//    rtgui_widget_set_oncommand(RTGUI_WIDGET(view), photo_view_event_handler);
+
+	/* Create a lable */
+	rtgui_label_t* label = rtgui_label_create("Photo Frame Demo");
+	if(label == RT_NULL)
+    {
+        rt_kprintf("Create lable failed!\n");
+        return;
+    }
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
+    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
+
+    /* Set lable position */
+    rtgui_rect_t rect;
+	rect.x1 = 0; rect.y1 = 2;
+	rect.x2 = 300; rect.y2 = 20;
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
+    rtgui_widget_set_event_handler(RTGUI_WIDGET(label), photo_lable_event_handler);
+	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+
+    /* Add view to workbench */
+	rtgui_workbench_add_view(workbench, view);
+
+    /* Show view */
+	rtgui_view_show(view, RT_FALSE);
+
+    /* Workbench loop */
+	rtgui_workbench_event_loop(workbench);
 
     /* Prepare for exit */
 	rtgui_thread_deregister(rt_thread_self());
@@ -530,7 +578,7 @@ void rt_demo_thread_entry(void* parameter)
 }
 #endif /* defined(EFM32_USING_ETHERNET) */
 
-#if defined(EFM32_USING_LCD)
+#if (defined(EFM32_USING_LCD) && !defined(APP_PHOTO_FRAME))
 {
     rt_kprintf("LCD DEMO start...\n");
 
@@ -613,6 +661,109 @@ void rt_demo_thread_entry(void* parameter)
     rt_kprintf("LCD DEMO end.\n");
 }
 #endif
+
+#if defined(APP_PHOTO_FRAME)
+{
+    rt_kprintf("Photo frame DEMO start...\n");
+
+    /* find lcd device */
+    rt_device_t lcd = rt_device_find(LCD_DEVICE_NAME);
+    if (lcd == RT_NULL)
+    {
+        rt_kprintf("Can't find LCD\n");
+    }
+
+    /* read LCD info */
+    struct rt_device_graphic_info lcd_info;
+    lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
+    rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
+
+    /* register panels */
+    rtgui_rect_t rect;
+    rect.x1 = 0;
+    rect.y1 = 0;
+    rect.x2 = lcd_info.width;
+    rect.y2 = lcd_info.height;
+    rtgui_panel_register("main", &rect);
+    rtgui_panel_set_default_focused("main");
+
+    /* Creat thread */
+    rt_thread_t photo = rt_thread_create(
+        "photo",
+        wb_photo,
+        RT_NULL,
+        2048,
+        25,
+        10);
+    if (photo != RT_NULL)
+    {
+        rt_thread_startup(photo);
+    }
+    else
+    {
+        rt_kprintf("Create workbench \"photo\" failed!\n");
+    }
+
+    /* start display photos */
+    DIR* dir = opendir("/photo");
+    struct photo_event event;
+    struct dirent* dirent;
+    rt_uint8_t path[100];
+    const rt_uint8_t bmp[] = "bmp";
+    const rt_uint8_t jpeg[] = "jpeg";
+
+    event.parent.type = RTGUI_EVENT_COMMAND;
+    event.parent.user = sizeof(struct photo_event);
+    event.parent.sender = RT_NULL;
+    event.parent.ack = RT_NULL;
+    event.cmd = APP_CMD_PHOTO_FRAME;
+    event.path = path;
+
+    rt_thread_sleep(100);
+    do
+    {
+        /* get a photo */
+        dirent = readdir(dir);
+        if (dirent == RT_NULL)
+        {
+            break;
+        }
+        if ((strcmp(dirent->d_name, ".") == 0) || \
+            (strcmp(dirent->d_name, "..") == 0))
+        {
+            continue;
+        }
+        rt_sprintf(path, "%s%c%s", "/photo", PATH_SEPARATOR, dirent->d_name);
+
+        /* display it */
+        if ((rt_strstr(path, ".bmp") != RT_NULL) || \
+            (rt_strstr(path, ".BMP") != RT_NULL))
+        {
+            event.format = &bmp[0];
+            rt_kprintf("bmp: %s\n", path);
+        }
+        else if ((rt_strstr(path, ".jpg") != RT_NULL) || \
+            (rt_strstr(path, ".JPG") != RT_NULL))
+        {
+            event.format = &jpeg[0];
+            rt_kprintf("jpeg: %s\n", path);
+        }
+        else
+        {
+            rt_kprintf("skip: %s\n", path);
+            continue;
+        }
+
+        rtgui_server_post_event((&event.parent), sizeof(event));
+        rt_thread_sleep(1000);
+    } while (dirent != RT_NULL);
+    closedir(dir);
+
+    rt_kprintf("Photo frame end.\n");
+}
+
+#endif
+
     rt_kprintf("All Demo end.\n");
 
     while(1)

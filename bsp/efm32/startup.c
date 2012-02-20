@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file    interrupt.c
+ * @file    startup.c
  * @brief   This file is part of RT-Thread RTOS
  *  COPYRIGHT (C) 2011, RT-Thread Development Team
  * @author  Bernard, onelife
@@ -23,7 +23,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "board.h"
-#include <rtthread.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -39,15 +38,9 @@ extern int __bss_end;
 
 /* Private variables ---------------------------------------------------------*/
 /* External function prototypes ----------------------------------------------*/
-extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
-
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-#ifdef  DEBUG
+#ifdef RT_DEBUG
 /***************************************************************************//**
  * @brief
  *  Reports the name of the source file and the source line number where the
@@ -63,7 +56,7 @@ extern void finsh_set_device(const char* device);
  * @param[in] line
  *  Assert error line source number
  ******************************************************************************/
-void assert_failed(u8* file, u32 line)
+void assert_failed(uint8_t * file, uint32_t line)
 {
     rt_kprintf("\n\r Wrong parameter value detected on\r\n");
     rt_kprintf("       file  %s\r\n", file);

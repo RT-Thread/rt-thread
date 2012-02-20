@@ -19,9 +19,11 @@
  * 2011-12-09   onelife     Add LEUART module support
  * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
  *  function
- * 2011-12-15   onelife     Add MicroSD enabling routine in driver
+ * 2011-12-15   onelife     Add MicroSD initialization routine in driver
  *  initialization function
- * 2011-12-20   onelife     Add LCD driver initialization routine
+ * 2011-12-29   onelife     Add keys and joystick initialization routine in
+ *  driver initialization function
+ * 2012-02-15   onelife     Modify SWO setup function to support giant gecko
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -203,32 +205,41 @@ void efm_swo_setup(void)
 	rt_uint32_t *tpiu_prescaler = (rt_uint32_t *) 0xE0040010;
 	rt_uint32_t *tpiu_protocol = (rt_uint32_t *) 0xE00400F0;
 
-	CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_GPIO;
-	/* Enable Serial wire output pin */
-	GPIO->ROUTE |= GPIO_ROUTE_SWOPEN;
-	/* Set location 1 */
-	GPIO->ROUTE = (GPIO->ROUTE & ~(_GPIO_ROUTE_SWLOCATION_MASK)) | GPIO_ROUTE_SWLOCATION_LOC1;
-	/* Enable output on pin */
-	GPIO->P[2].MODEH &= ~(_GPIO_P_MODEH_MODE15_MASK);
-	GPIO->P[2].MODEH |= GPIO_P_MODEH_MODE15_PUSHPULL;
-	/* Enable debug clock AUXHFRCO */
-	CMU->OSCENCMD = CMU_OSCENCMD_AUXHFRCOEN;
+    CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_GPIO;
+    /* Enable Serial wire output pin */
+    GPIO->ROUTE |= GPIO_ROUTE_SWOPEN;
+#if defined(_EFM32_GIANT_FAMILY)
+    /* Set location 0 */
+    GPIO->ROUTE = (GPIO->ROUTE & ~(_GPIO_ROUTE_SWLOCATION_MASK)) | GPIO_ROUTE_SWLOCATION_LOC0;
 
-	while(!(CMU->STATUS & CMU_STATUS_AUXHFRCORDY));
+    /* Enable output on pin - GPIO Port F, Pin 2 */
+    GPIO->P[5].MODEL &= ~(_GPIO_P_MODEL_MODE2_MASK);
+    GPIO->P[5].MODEL |= GPIO_P_MODEL_MODE2_PUSHPULL;
+    #else
+    /* Set location 1 */
+    GPIO->ROUTE = (GPIO->ROUTE & ~(_GPIO_ROUTE_SWLOCATION_MASK)) | GPIO_ROUTE_SWLOCATION_LOC1;
+    /* Enable output on pin */
+    GPIO->P[2].MODEH &= ~(_GPIO_P_MODEH_MODE15_MASK);
+    GPIO->P[2].MODEH |= GPIO_P_MODEH_MODE15_PUSHPULL;
+#endif
+    /* Enable debug clock AUXHFRCO */
+    CMU->OSCENCMD = CMU_OSCENCMD_AUXHFRCOEN;
 
-	/* Enable trace in core debug */
-	CoreDebug->DHCSR |= 1;
-	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    while(!(CMU->STATUS & CMU_STATUS_AUXHFRCORDY));
 
-	/* Enable PC and IRQ sampling output */
-	*dwt_ctrl = 0x400113FF;
-	/* Set TPIU prescaler to 16. */
-	*tpiu_prescaler = 0xf;
-	/* Set protocol to NRZ */
-	*tpiu_protocol = 2;
-	/* Unlock ITM and output data */
-	ITM->LAR = 0xC5ACCE55;
-	ITM->TCR = 0x10009;
+    /* Enable trace in core debug */
+    CoreDebug->DHCSR |= 1;
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+
+    /* Enable PC and IRQ sampling output */
+    *dwt_ctrl = 0x400113FF;
+    /* Set TPIU prescaler to 16. */
+    *tpiu_prescaler = 0xf;
+    /* Set protocol to NRZ */
+    *tpiu_protocol = 2;
+    /* Unlock ITM and output data */
+    ITM->LAR = 0xC5ACCE55;
+    ITM->TCR = 0x10009;
 }
 
 /***************************************************************************//**
@@ -250,6 +261,10 @@ void rt_hw_board_init(void)
 	DVK_init();
 #elif defined(EFM32GG_DK3750)
     DVK_init(DVK_Init_EBI);
+
+    /* Disable all DVK interrupts */
+    DVK_disableInterrupt(BC_INTEN_MASK);
+    DVK_clearInterruptFlags(BC_INTFLAG_MASK);
 #endif
 
 	/* NVIC Configuration */
@@ -370,6 +385,14 @@ void rt_hw_driver_init(void)
 #if defined(EFM32_USING_LCD)
     efm32_spiLcd_init();
 #endif
+
+    /* Initialize Keys */
+#if defined(EFM32_USING_KEYS)
+ #if defined(EFM32GG_DK3750)
+    efm32_hw_keys_init();
+ #endif
+#endif
+
 }
 
 /***************************************************************************//**

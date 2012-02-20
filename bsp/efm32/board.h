@@ -39,6 +39,7 @@
 #include <efm32_cmu.h>
 #include <efm32_rmu.h>
 #include <efm32_dma.h>
+#include <efm32_ebi.h>
 #include <efm32_rtc.h>
 #include <efm32_timer.h>
 #include <efm32_gpio.h>
@@ -155,8 +156,8 @@ extern volatile rt_uint32_t rt_system_status;
 #endif
 
 /* SECTION: ADC */
-#define ADC_CALI_REF				adcRef2V5
-#define ADC_CALI_CH 				adcSingleInpCh5
+#define ADC_CALI_REF				(adcRef2V5)
+#define ADC_CALI_CH 				(adcSingleInpCh5)
 #define ADC_CONVERT_FREQUENCY 		(7000000)
 
 #if (RT_CONSOLE_DEVICE == EFM_USART0)
