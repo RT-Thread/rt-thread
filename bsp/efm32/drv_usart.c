@@ -523,8 +523,8 @@ static rt_size_t rt_usart_read (
                 {
                     *(ptr++) = usart->usart_device->RXDATA & 0xff;
                 }
+                len--;
             }
-            len--;
         }
 
         read_len = size - len;
