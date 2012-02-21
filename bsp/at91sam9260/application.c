@@ -36,7 +36,7 @@
 #include <devfs.h>
 #endif
 
-#ifdef RT_USING_MMCSD
+#ifdef RT_USING_SDIO
 #include <mmcsd_core.h>
 #include "at91_mci.h"
 #endif
@@ -106,7 +106,7 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
-#ifdef RT_USING_MMCSD
+#ifdef RT_USING_SDIO
 	rt_mmcsd_core_init();
 	rt_mmcsd_blk_init();
 	at91_mci_init();

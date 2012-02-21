@@ -8,7 +8,7 @@ src_drv = ['console.c']
 if GetDepend('RT_USING_LED'):
 	src_drv += ['led.c']
 
-if GetDepend('RT_USING_MMCSD'):
+if GetDepend('RT_USING_SDIO'):
 	src_drv += ['at91_mci.c']
 
 if GetDepend('RT_USING_LWIP'):
