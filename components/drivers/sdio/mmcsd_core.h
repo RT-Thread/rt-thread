@@ -66,6 +66,7 @@ struct rt_mmcsd_cmd {
 #define RESP_R4		(5 << 0)
 #define RESP_R6		(6 << 0)
 #define RESP_R7		(7 << 0)
+#define RESP_R5		(8 << 0)	/*SDIO command response type*/
 /*command types 
  *bits:4~5
  */
@@ -154,6 +155,17 @@ struct rt_mmcsd_req {
 #define R2_SPI_CSD_OVERWRITE	R2_SPI_OUT_OF_RANGE
 
 #define CARD_BUSY	0x80000000	/* Card Power up status bit */
+
+/* R5 response bits */
+#define R5_COM_CRC_ERROR	(1 << 15)
+#define R5_ILLEGAL_COMMAND	(1 << 14)
+#define R5_ERROR			(1 << 11)
+#define R5_FUNCTION_NUMBER	(1 << 9)
+#define R5_OUT_OF_RANGE		(1 << 8)
+#define R5_STATUS(x)		(x & 0xCB00)
+#define R5_IO_CURRENT_STATE(x)	((x & 0x3000) >> 12)
+
+
 
 /**
  * fls - find last (most-significant) bit set

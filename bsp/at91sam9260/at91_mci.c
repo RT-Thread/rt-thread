@@ -681,10 +681,10 @@ static void at91_mci_irq(int irq)
 		}
 
 		/*if (int_status & AT91_MCI_SDIOIRQA)
-			rt_mmcsd_signal_sdio_irq(host->mmc);
+			rt_mmcsd_signal_sdio_irq(host->mmc);*/
 
 		if (int_status & AT91_MCI_SDIOIRQB)
-			rt_mmcsd_signal_sdio_irq(host->mmc);*/
+			sdio_irq_wakeup(at_mci->host);
 
 		if (int_status & AT91_MCI_TXRDY)
 			mci_dbg("Ready to transmit\n");
@@ -778,10 +778,17 @@ static void at91_mci_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cf
 }
 
 
+static void at91_mci_enable_sdio_irq(struct rt_mmcsd_host *host, rt_int32_t enable)
+{
+	at91_mci_write(enable ? AT91_MCI_IER : AT91_MCI_IDR, AT91_MCI_SDIOIRQB);
+}
+
+
 static const struct rt_mmcsd_host_ops ops = {
 	at91_mci_request,
 	at91_mci_set_iocfg,
         RT_NULL,
+	at91_mci_enable_sdio_irq,
 };
 
 void at91_mci_detect(int irq)
@@ -834,6 +841,10 @@ rt_int32_t at91_mci_init(void)
 	host->freq_max = 25000000;
 	host->valid_ocr = VDD_32_33 | VDD_33_34;
 	host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE;
+	host->max_seg_size = 65535;
+	host->max_dma_segs = 2;
+	host->max_blk_size = 512;
+	host->max_blk_count = 4096;
 
 	at_mci->host = host;
 

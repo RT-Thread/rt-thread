@@ -16,6 +16,7 @@
 #define __MMCSD_CARD_H__
 
 #include "mmcsd_host.h"
+#include "sdio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,6 +62,28 @@ struct rt_sd_scr {
 	rt_uint8_t		sd_bus_widths;
 };
 
+struct rt_sdio_cccr {
+	rt_uint8_t		sdio_version;
+	rt_uint8_t		sd_version;
+	rt_uint8_t		multi_block:1,
+				low_speed:1,
+				wide_bus:1,
+				high_power:1,
+				high_speed:1,
+				disable_cd:1;
+};
+
+struct rt_sdio_cis {
+	rt_uint16_t		manufacturer;
+	rt_uint16_t		product;
+	rt_uint16_t		func0_blk_size;
+	rt_uint32_t		max_tran_speed;
+};
+
+#define SDIO_MAX_FUNCTIONS		7
+
+
+
 struct rt_mmcsd_card {
 	struct rt_mmcsd_host *host;
 	rt_uint32_t	rca;		/* card addr */
@@ -73,16 +96,29 @@ struct rt_mmcsd_card {
 	rt_uint32_t	max_data_rate;	/* max data transfer rate */
 	rt_uint32_t	card_capacity;	/* card capacity, unit:KB */
 	rt_uint32_t	card_blksize;	/* card block size */
-	rt_uint32_t	card_type;
-#define CARD_TYPE_MMC		(1 << 0)	/* MMC card */
-#define CARD_TYPE_SD		(1 << 1)	/* SD card */
-#define CARD_TYPE_SDIO		(1 << 2)	/* SDIO card */
-#define CARD_TYPE_SDHC		(1 << 3)	/* SDHC card */
+	rt_uint16_t	card_type;
+#define CARD_TYPE_MMC                   0 /* MMC card */
+#define CARD_TYPE_SD                    1 /* SD card */
+#define CARD_TYPE_SDIO                  2 /* SDIO card */
+#define CARD_TYPE_SDIO_COMBO            3 /* SD combo (IO+mem) card */
+
+	rt_uint16_t flags;
+#define CARD_FLAG_HIGHSPEED  (1 << 0)   /* SDIO bus speed 50MHz */
+#define CARD_FLAG_SDHC       (1 << 1)   /* SDHC card */
+#define CARD_FLAG_SDXC       (1 << 2)   /* SDXC card */
+
 	struct rt_sd_scr	scr;
 	struct rt_mmcsd_csd	csd;
-	rt_uint32_t	hs_max_data_rate;	/* max data transfer rate in high speed mode */
-	rt_uint32_t	flags;
-#define CARD_MODE_HIGHSPEED	(1 << 0)
+	rt_uint32_t     hs_max_data_rate;  /* max data transfer rate in high speed mode */
+
+	rt_uint8_t      sdio_function_num;	/* totol number of SDIO functions */
+	struct rt_sdio_cccr    cccr;  /* common card info */
+	struct rt_sdio_cis     cis;  /* common tuple info */
+	struct rt_sdio_function *sdio_func0;
+	struct rt_sdio_function	*sdio_function[SDIO_MAX_FUNCTIONS]; /* SDIO functions (devices) */
+
+	//struct rt_sdio_function_tuple    *tuples;  /* tuples */
+
 };
 
 #ifdef __cplusplus

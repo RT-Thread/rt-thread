@@ -6,6 +6,7 @@ src = Split("""
 block_dev.c
 mmcsd_core.c
 sd.c
+sdio.c
 """)
 
 # The set of source files associated with this SConscript file.

@@ -413,7 +413,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_ca
 {
 	rt_uint32_t mult;
 
-	if (card->card_type & CARD_TYPE_SDIO) 
+	if (card->card_type == CARD_TYPE_SDIO) 
 	{
 		data->timeout_ns = 1000000000;	/* SDIO card 1s */
 		data->timeout_clks = 0;
@@ -423,7 +423,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_ca
 	/*
 	 * SD cards use a 100 multiplier rather than 10
 	 */
-	mult = (card->card_type & CARD_TYPE_SD) ? 100 : 10;
+	mult = (card->card_type == CARD_TYPE_SD) ? 100 : 10;
 
 	/*
 	 * Scale up the multiplier (and therefore the timeout) by
@@ -438,7 +438,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_ca
 	/*
 	 * SD cards also have an upper limit on the timeout.
 	 */
-	if (card->card_type & CARD_TYPE_SD) 
+	if (card->card_type == CARD_TYPE_SD) 
 	{
 		rt_uint32_t timeout_us, limit_us;
 
@@ -458,7 +458,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_ca
 		/*
 		 * SDHC cards always use these fixed values.
 		 */
-		if (timeout_us > limit_us || card->card_type & CARD_TYPE_SDHC) 
+		if (timeout_us > limit_us || card->flags & CARD_FLAG_SDHC) 
 		{
 			data->timeout_ns = limit_us * 1000;	/* SDHC card fixed 250ms */
 			data->timeout_clks = 0;
@@ -576,24 +576,35 @@ void mmcsd_detect(void *param)
 	{
 		if (rt_mb_recv(&mmcsd_detect_mb, (rt_uint32_t*)&host, RT_WAITING_FOREVER) == RT_EOK)
 		{
-			mmcsd_host_lock(host);
-			mmcsd_power_up(host);
-			mmcsd_go_idle(host);
-
-			mmcsd_send_if_cond(host, host->valid_ocr);
-
-			/*
-			 * detect SD card
-			 */
-			err = mmcsd_send_app_op_cond(host, 0, &ocr);
-			if (!err) 
+			if (host->card == RT_NULL)
 			{
-				if (init_sd(host, ocr))
-					mmcsd_power_off(host);
+				mmcsd_host_lock(host);
+				mmcsd_power_up(host);
+				mmcsd_go_idle(host);
+
+				mmcsd_send_if_cond(host, host->valid_ocr);
+
+				err = sdio_io_send_op_cond(host, 0, &ocr);
+				if (!err) {
+					if (init_sdio(host, ocr))
+						mmcsd_power_off(host);
+					mmcsd_host_unlock(host);
+					continue;
+				}
+
+				/*
+				 * detect SD card
+				 */
+				err = mmcsd_send_app_op_cond(host, 0, &ocr);
+				if (!err) 
+				{
+					if (init_sd(host, ocr))
+						mmcsd_power_off(host);
+					mmcsd_host_unlock(host);
+					continue;
+				}
 				mmcsd_host_unlock(host);
-				continue;
 			}
-			mmcsd_host_unlock(host);
 		}
 	}
 }
@@ -641,4 +652,6 @@ void rt_mmcsd_core_init(void)
 	{
 		rt_thread_startup(&mmcsd_detect_thread);
 	}
+
+	rt_sdio_init();
 }

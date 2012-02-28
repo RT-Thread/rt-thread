@@ -93,6 +93,39 @@ extern "C" {
 #define SCR_SPEC_VER_1		1	/* Implements system specification 1.10 */
 #define SCR_SPEC_VER_2		2	/* Implements system specification 2.00 */
 
+
+/* SDIO commands                                          type  argument     response */
+#define SD_IO_SEND_OP_COND          5 /* bcr  [23:0] OCR         R4  */
+#define SD_IO_RW_DIRECT            52 /* ac   [31:0] See below   R5  */
+#define SD_IO_RW_EXTENDED          53 /* adtc [31:0] See below   R5  */
+
+
+/* CMD52 arguments */
+#define SDIO_ARG_CMD52_READ             (0<<31)
+#define SDIO_ARG_CMD52_WRITE            (1u<<31)
+#define SDIO_ARG_CMD52_FUNC_SHIFT       28
+#define SDIO_ARG_CMD52_FUNC_MASK        0x7
+#define SDIO_ARG_CMD52_RAW_FLAG         (1u<<27)
+#define SDIO_ARG_CMD52_REG_SHIFT        9
+#define SDIO_ARG_CMD52_REG_MASK         0x1ffff
+#define SDIO_ARG_CMD52_DATA_SHIFT       0
+#define SDIO_ARG_CMD52_DATA_MASK        0xff
+#define SDIO_R5_DATA(resp)            ((resp)[0] & 0xff)
+
+/* CMD53 arguments */
+#define SDIO_ARG_CMD53_READ             (0<<31)
+#define SDIO_ARG_CMD53_WRITE            (1u<<31)
+#define SDIO_ARG_CMD53_FUNC_SHIFT       28
+#define SDIO_ARG_CMD53_FUNC_MASK        0x7
+#define SDIO_ARG_CMD53_BLOCK_MODE       (1u<<27)
+#define SDIO_ARG_CMD53_INCREMENT        (1u<<26)
+#define SDIO_ARG_CMD53_REG_SHIFT        9
+#define SDIO_ARG_CMD53_REG_MASK         0x1ffff
+#define SDIO_ARG_CMD53_LENGTH_SHIFT     0
+#define SDIO_ARG_CMD53_LENGTH_MASK      0x1ff
+#define SDIO_ARG_CMD53_LENGTH_MAX       511
+
+
 #ifdef __cplusplus
 }
 #endif

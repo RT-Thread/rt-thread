@@ -102,7 +102,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
 	#endif
 		break;
 	case 1:
-		card->card_type |= CARD_TYPE_SDHC;
+		card->flags |= CARD_FLAG_SDHC;
 
 		/*This field is fixed to 0Eh, which indicates 1 ms. 
 		  The host should not use TAAC, NSAC, and R2W_FACTOR
@@ -187,7 +187,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 	}
 
 	
-	if (!(card->card_type & CARD_TYPE_SD))
+	if (card->card_type != CARD_TYPE_SD)
 		goto err;
 	if (card->scr.sd_version < SCR_SPEC_VER_1)
 		goto err;
@@ -255,7 +255,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 		goto err;
 	}
 
-	card->flags |= CARD_MODE_HIGHSPEED;
+	card->flags |= CARD_FLAG_HIGHSPEED;
 
 err:
 	rt_free_align(buf);
@@ -629,7 +629,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr
 	/* set bus speed */
 	max_data_rate = (unsigned int)-1;
 
-	if (card->flags & CARD_MODE_HIGHSPEED) 
+	if (card->flags & CARD_FLAG_HIGHSPEED) 
 	{
 		if (max_data_rate > card->hs_max_data_rate)
 			max_data_rate = card->hs_max_data_rate;

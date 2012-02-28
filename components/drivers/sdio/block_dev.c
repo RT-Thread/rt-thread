@@ -114,7 +114,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card, rt_uint32_t sector,
 	req.data = &data;
 	
 	cmd.arg = sector;
-	if (!(card->card_type & CARD_TYPE_SDHC)) 
+	if (!(card->flags & CARD_FLAG_SDHC)) 
 	{
 		cmd.arg <<= 9;
 	}
@@ -307,7 +307,7 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
 	int err;
 
 	/* Block-addressed cards ignore MMC_SET_BLOCKLEN. */
-	if (card->card_type & CARD_TYPE_SDHC)
+	if (card->flags & CARD_FLAG_SDHC)
 		return 0;
 
 	mmcsd_host_lock(card->host);
@@ -412,7 +412,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
 					blk_dev->geometry.bytes_per_sector = 1<<9;
 					blk_dev->geometry.block_size = card->card_blksize;
-					if (card->card_type | CARD_TYPE_SDHC) 
+					if (card->flags & CARD_FLAG_SDHC) 
 					{
 						blk_dev->geometry.sector_count = (card->csd.c_size + 1) * 1024;
 					}
