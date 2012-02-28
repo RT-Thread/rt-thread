@@ -109,7 +109,7 @@ static void RCC_Configuration(void)
 	/* Enable USART2 GPIO clocks */
 	RCC_AHB1PeriphClockCmd(UART1_GPIO_RCC, ENABLE);
 	/* Enable USART2 clock */
-	RCC_APB1PeriphClockCmd(RCC_APBPeriph_UART1, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APBPeriph_UART1, ENABLE);
 #endif
 
 #ifdef RT_USING_UART2
