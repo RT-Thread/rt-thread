@@ -397,7 +397,9 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 	if (data & SDIO_CCCR_CAP_LSC)
 		card->cccr.low_speed = 1;
 	if (data & SDIO_CCCR_CAP_4BLS)
-		card->cccr.wide_bus = 1;
+		card->cccr.low_speed_4 = 1;
+	if (data & SDIO_CCCR_CAP_4BLS)
+		card->cccr.bus_width = 1;
 
 	if (cccr_version >= SDIO_CCCR_REV_1_10) 
 	{
@@ -406,7 +408,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 			goto out;
 
 		if (data & SDIO_POWER_SMPC)
-			card->cccr.high_power = 1;
+			card->cccr.power_ctrl = 1;
 	}
 
 	if (cccr_version >= SDIO_CCCR_REV_1_20) 
@@ -707,7 +709,7 @@ static rt_int32_t sdio_set_bus_wide(struct rt_mmcsd_card *card)
 	if (!(card->host->flags & MMCSD_BUSWIDTH_4))
 		return 0;
 
-	if (card->cccr.low_speed && !card->cccr.wide_bus)
+	if (card->cccr.low_speed && !card->cccr.bus_width)
 		return 0;
 
 	busif = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_BUS_IF, &ret);

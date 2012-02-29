@@ -65,12 +65,27 @@ struct rt_sd_scr {
 struct rt_sdio_cccr {
 	rt_uint8_t		sdio_version;
 	rt_uint8_t		sd_version;
-	rt_uint8_t		multi_block:1,
-				low_speed:1,
-				wide_bus:1,
-				high_power:1,
-				high_speed:1,
-				disable_cd:1;
+	rt_uint8_t		direct_cmd:1,     /*  Card Supports Direct Commands during data transfer
+	                                               only SD mode, not used for SPI mode */
+				multi_block:1,    /*  Card Supports Multi-Block */
+				read_wait:1,      /*  Card Supports Read Wait
+				                       only SD mode, not used for SPI mode */
+				suspend_resume:1, /*  Card supports Suspend/Resume
+				                       only SD mode, not used for SPI mode */
+				s4mi:1,            /* generate interrupts during a 4-bit 
+				                      multi-block data transfer */
+				e4mi:1,            /*  Enable the multi-block IRQ during 
+				                       4-bit transfer for the SDIO card */
+				low_speed:1,      /*  Card  is  a  Low-Speed  card */
+				low_speed_4:1;    /*  4-bit support for Low-Speed cards */
+
+	rt_uint8_t		bus_width:1,     /* Support SDIO bus width, 1:4bit, 0:1bit */
+				cd_disable:1,    /*  Connect[0]/Disconnect[1] the 10K-90K ohm pull-up 
+				                     resistor on CD/DAT[3] (pin 1) of the card */
+				power_ctrl:1,    /* Support Master Power Control */
+				high_speed:1;    /* Support High-Speed  */
+				
+				
 };
 
 struct rt_sdio_cis {
