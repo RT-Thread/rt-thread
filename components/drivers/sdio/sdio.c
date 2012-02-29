@@ -317,19 +317,54 @@ rt_int32_t sdio_io_writew(struct rt_sdio_function *func, rt_uint16_t data, rt_ui
 	return sdio_io_rw_extended_block(func, 1, addr, 1, (rt_uint8_t *)&dmabuf, 2);
 }
 
-rt_int32_t sdio_io_read_multi_fifo_1(struct rt_sdio_function *func, 
+rt_uint32_t sdio_io_readl(struct rt_sdio_function *func, rt_uint32_t addr, rt_int32_t *err)
+{
+	rt_int32_t ret;
+	rt_uint32_t dmabuf;
+
+	if (err)
+		*err = 0;
+
+	ret = sdio_io_rw_extended_block(func, 0, addr, 1, (rt_uint8_t *)&dmabuf, 4);
+	if (ret) 
+	{
+		if (err)
+			*err = ret;
+	}
+
+	return dmabuf;
+}
+
+rt_int32_t sdio_io_writel(struct rt_sdio_function *func, rt_uint32_t data, rt_uint32_t addr)
+{
+	rt_uint32_t dmabuf = data;
+
+	return sdio_io_rw_extended_block(func, 1, addr, 1, (rt_uint8_t *)&dmabuf, 4);
+}
+
+rt_int32_t sdio_io_read_multi_fifo_b(struct rt_sdio_function *func, 
 				     rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len)
 {
 	return sdio_io_rw_extended_block(func, 0, addr, 0, buf, len);
 }
 
-rt_int32_t sdio_io_write_multi_fifo_1(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_write_multi_fifo_b(struct rt_sdio_function *func, 
 				      rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len)
 {
 	return sdio_io_rw_extended_block(func, 1, addr, 0, buf, len);
 }
 
+rt_int32_t sdio_io_read_multi_incr_b(struct rt_sdio_function *func, 
+				     rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len)
+{
+	return sdio_io_rw_extended_block(func, 0, addr, 1, buf, len);
+}
 
+rt_int32_t sdio_io_write_multi_incr_b(struct rt_sdio_function *func, 
+				      rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len)
+{
+	return sdio_io_rw_extended_block(func, 1, addr, 1, buf, len);
+}
 
 static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 {

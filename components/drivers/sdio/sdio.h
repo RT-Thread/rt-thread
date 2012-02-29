@@ -203,9 +203,15 @@ rt_int32_t sdio_io_writeb(struct rt_sdio_function *func,
 			  rt_uint32_t reg, rt_uint8_t data);
 rt_uint16_t sdio_io_readw(struct rt_sdio_function *func, rt_uint32_t addr, rt_int32_t *err);
 rt_int32_t sdio_io_writew(struct rt_sdio_function *func, rt_uint16_t data, rt_uint32_t addr);
-rt_int32_t sdio_io_read_multi_fifo_1(struct rt_sdio_function *func, 
+rt_uint32_t sdio_io_readl(struct rt_sdio_function *func, rt_uint32_t addr, rt_int32_t *err);
+rt_int32_t sdio_io_writel(struct rt_sdio_function *func, rt_uint32_t data, rt_uint32_t addr);
+rt_int32_t sdio_io_read_multi_fifo_b(struct rt_sdio_function *func, 
 				     rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len);
-rt_int32_t sdio_io_write_multi_fifo_1(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_write_multi_fifo_b(struct rt_sdio_function *func, 
+				      rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len);
+rt_int32_t sdio_io_read_multi_incr_b(struct rt_sdio_function *func, 
+				     rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len);
+rt_int32_t sdio_io_write_multi_incr_b(struct rt_sdio_function *func, 
 				      rt_uint32_t addr, rt_uint8_t *buf, rt_uint32_t len);
 rt_int32_t init_sdio(struct rt_mmcsd_host *host, rt_uint32_t ocr);
 rt_int32_t sdio_attach_irq(struct rt_sdio_function *func, rt_sdio_irq_handler_t *handler);
