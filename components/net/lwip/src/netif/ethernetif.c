@@ -137,6 +137,11 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 	netif->mtu			= ETHERNET_MTU;
 	/* broadcast capability */
 	netif->flags		= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+	
+#if LWIP_IGMP
+	/* igmp support */
+	netif->flags |= NETIF_FLAG_IGMP;
+#endif
 
 	/* get hardware address */
 	rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
