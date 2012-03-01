@@ -80,9 +80,10 @@ rt_err_t luminaryif_init(rt_device_t dev)
     // - Enable TX Duplex Mode
     // - Enable TX Padding
     // - Enable TX CRC Generation
+    // - Enable reception of multicast packets
     //
     EthernetConfigSet(ETH_BASE, (ETH_CFG_TX_DPLXEN |
-                                 ETH_CFG_TX_CRCEN | ETH_CFG_TX_PADEN));
+                                 ETH_CFG_TX_CRCEN | ETH_CFG_TX_PADEN | ETH_CFG_RX_AMULEN));
 
     //
     // Enable the Ethernet Controller transmitter and receiver.
