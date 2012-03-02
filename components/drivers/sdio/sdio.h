@@ -184,8 +184,8 @@ struct rt_sdio_device_id {
 
 struct rt_sdio_driver {
 	char *name;
-	rt_int32_t (*probe)(struct rt_sdio_function *func);
-	rt_int32_t (*remove)(struct rt_sdio_function *func);
+	rt_int32_t (*probe)(struct rt_mmcsd_card *card);
+	rt_int32_t (*remove)(struct rt_mmcsd_card *card);
 	struct rt_sdio_device_id *id;
 };
 
