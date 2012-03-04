@@ -129,10 +129,7 @@ struct rt_mmcsd_card {
 	rt_uint8_t      sdio_function_num;	/* totol number of SDIO functions */
 	struct rt_sdio_cccr    cccr;  /* common card info */
 	struct rt_sdio_cis     cis;  /* common tuple info */
-	struct rt_sdio_function *sdio_func0;
-	struct rt_sdio_function	*sdio_function[SDIO_MAX_FUNCTIONS]; /* SDIO functions (devices) */
-
-	//struct rt_sdio_function_tuple    *tuples;  /* tuples */
+	struct rt_sdio_function	*sdio_function[SDIO_MAX_FUNCTIONS + 1]; /* SDIO functions (devices) */
 
 };
 

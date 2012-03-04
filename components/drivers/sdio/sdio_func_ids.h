@@ -34,8 +34,8 @@ extern "C" {
 
 /* manufacturer id, product io */
 
-#define SDIO_MANUFACTURER_ID_MARVELL			0x02df
-#define SDIO_PRODUCT_ID_MARVELL_LIBERTAS		0x9103
+#define SDIO_MANUFACTURER_ID_MARVELL        0x02df
+#define SDIO_PRODUCT_ID_MARVELL_88W8686     0x9103
 
 #ifdef __cplusplus
 }

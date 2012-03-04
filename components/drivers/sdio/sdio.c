@@ -374,7 +374,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
 	rt_memset(&card->cccr, 0, sizeof(struct rt_sdio_cccr));
 
-	data = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_CCCR_REV, &ret);
+	data = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_CCCR_REV, &ret);
 	if (ret)
 		goto out;
 
@@ -388,7 +388,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
 	card->cccr.sdio_version = (data & 0xf0) >> 4;
 
-	data = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_CARD_CAPS, &ret);
+	data = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_CARD_CAPS, &ret);
 	if (ret)
 		goto out;
 
@@ -403,7 +403,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
 	if (cccr_version >= SDIO_CCCR_REV_1_10) 
 	{
-		data = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_POWER_CTRL, &ret);
+		data = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_POWER_CTRL, &ret);
 		if (ret)
 			goto out;
 
@@ -413,7 +413,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
 	if (cccr_version >= SDIO_CCCR_REV_1_20) 
 	{
-		data = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_SPEED, &ret);
+		data = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_SPEED, &ret);
 		if (ret)
 			goto out;
 
@@ -474,7 +474,7 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
 	rt_uint8_t tpl_code, tpl_link;
 
 	struct rt_mmcsd_card *card = func->card;
-	struct rt_sdio_function *func0 = card->sdio_func0;
+	struct rt_sdio_function *func0 = card->sdio_function[0];
 
 	RT_ASSERT(func0 != RT_NULL);
 
@@ -532,16 +532,16 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
 			if (func->num != 0)
 			{
 				func->manufacturer = curr->data[0];
-				func->manufacturer = curr->data[1] << 8;
+				func->manufacturer |= curr->data[1] << 8;
 				func->product = curr->data[2];
-				func->product = curr->data[3] << 8;
+				func->product |= curr->data[3] << 8;
 			}
 			else
 			{
 				card->cis.manufacturer = curr->data[0];
-				card->cis.manufacturer = curr->data[1] << 8;
+				card->cis.manufacturer |= curr->data[1] << 8;
 				card->cis.product = curr->data[2];
-				card->cis.product = curr->data[3] << 8;
+				card->cis.product |= curr->data[3] << 8;
 			}
 			break;
 		case CISTPL_FUNCE:
@@ -596,7 +596,7 @@ void sdio_free_cis(struct rt_sdio_function *func)
 
 	tuple = func->tuples;
 
-	while (tuple && ((tuple != card->sdio_func0->tuples) || (!func->num))) 
+	while (tuple && ((tuple != card->sdio_function[0]->tuples) || (!func->num))) 
 	{
 		tmp = tuple;
 		tuple = tuple->next;
@@ -612,8 +612,9 @@ static rt_int32_t sdio_read_fbr(struct rt_sdio_function *func)
 {
 	rt_int32_t ret;
 	rt_uint8_t data;
+	struct rt_sdio_function *func0 = func->card->sdio_function[0];
 
-	data = sdio_io_readb(func->card->sdio_func0, 
+	data = sdio_io_readb(func0, 
 		SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_STD_FUNC_IF, &ret);
 	if (ret)
 		goto err;
@@ -622,7 +623,7 @@ static rt_int32_t sdio_read_fbr(struct rt_sdio_function *func)
 
 	if (data == 0x0f) 
 	{
-		data = sdio_io_readb(func->card->sdio_func0, 
+		data = sdio_io_readb(func0, 
 			SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_STD_IF_EXT, &ret);
 		if (ret)
 			goto err;
@@ -662,14 +663,14 @@ static rt_int32_t sdio_initialize_function(struct rt_mmcsd_card *card, rt_uint32
 	if (ret)
 		goto err1;
 
-	card->sdio_function[func_num - 1] = func;
+	card->sdio_function[func_num] = func;
 
 	return 0;
 
 err1:
 	sdio_free_cis(func);
 	rt_free(func);
-	card->sdio_function[func_num - 1] = RT_NULL;
+	card->sdio_function[func_num] = RT_NULL;
 err:
 	return ret;
 }
@@ -686,13 +687,13 @@ static rt_int32_t sdio_set_highspeed(struct rt_mmcsd_card *card)
 	if (!card->cccr.high_speed)
 		return 0;
 
-	speed = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_SPEED, &ret);
+	speed = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_SPEED, &ret);
 	if (ret)
 		return ret;
 
 	speed |= SDIO_SPEED_EHS;
 
-	ret = sdio_io_writeb(card->sdio_func0, SDIO_REG_CCCR_SPEED, speed);
+	ret = sdio_io_writeb(card->sdio_function[0], SDIO_REG_CCCR_SPEED, speed);
 	if (ret)
 		return ret;
 
@@ -712,13 +713,13 @@ static rt_int32_t sdio_set_bus_wide(struct rt_mmcsd_card *card)
 	if (card->cccr.low_speed && !card->cccr.bus_width)
 		return 0;
 
-	busif = sdio_io_readb(card->sdio_func0, SDIO_REG_CCCR_BUS_IF, &ret);
+	busif = sdio_io_readb(card->sdio_function[0], SDIO_REG_CCCR_BUS_IF, &ret);
 	if (ret)
 		return ret;
 
 	busif |= SDIO_BUS_WIDTH_4BIT;
 
-	ret = sdio_io_writeb(card->sdio_func0, SDIO_REG_CCCR_BUS_IF, busif);
+	ret = sdio_io_writeb(card->sdio_function[0], SDIO_REG_CCCR_BUS_IF, busif);
 	if (ret)
 		return ret;
 
@@ -795,16 +796,16 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 	card->host = host;
 	host->card = card;
 
-	card->sdio_func0 = rt_malloc(sizeof(struct rt_sdio_function));
-	if (!card->sdio_func0)
+	card->sdio_function[0] = rt_malloc(sizeof(struct rt_sdio_function));
+	if (!card->sdio_function[0])
 	{
 		rt_kprintf("malloc sdio_func0 failed\n");
 		err = -RT_ENOMEM;
 		goto err1;
 	}
-	rt_memset(card->sdio_func0, 0, sizeof(struct rt_sdio_function));
-	card->sdio_func0->card = card;
-	card->sdio_func0->num = 0;
+	rt_memset(card->sdio_function[0], 0, sizeof(struct rt_sdio_function));
+	card->sdio_function[0]->card = card;
+	card->sdio_function[0]->num = 0;
 
 	if (!controller_is_spi(host)) 
 	{
@@ -826,7 +827,7 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 	if (err)
 		goto err2;
 
-	err = sdio_read_cis(card->sdio_func0);
+	err = sdio_read_cis(card->sdio_function[0]);
 	if (err)
 		goto err2;
 
@@ -847,9 +848,9 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 	if (err)
 		goto err2;
 
-	for (i = 0; i < function_num; i++) 
+	for (i = 1; i < function_num + 1; i++) 
 	{
-		err = sdio_initialize_function(card, i + 1);
+		err = sdio_initialize_function(card, i);
 		if (err)
 			goto err3;
 	}
@@ -867,7 +868,7 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 err3:
 	if (host->card)
 	{
-		for (i = 0; i < host->card->sdio_function_num; i++)
+		for (i = 1; i < host->card->sdio_function_num + 1; i++)
 		{
 			if (host->card->sdio_function[i])
 			{
@@ -881,11 +882,11 @@ err3:
 		}
 	}
 err2:
-	if (host->card && host->card->sdio_func0)
+	if (host->card && host->card->sdio_function[0])
 	{
-		sdio_free_cis(host->card->sdio_func0);
-		rt_free(host->card->sdio_func0);
-		host->card->sdio_func0 = RT_NULL;
+		sdio_free_cis(host->card->sdio_function[0]);
+		rt_free(host->card->sdio_function[0]);
+		host->card->sdio_function[0] = RT_NULL;
 	}
 err1:
 	if (host->card)
@@ -962,7 +963,7 @@ static void sdio_irq_thread(void *param)
 		if (rt_sem_take(host->sdio_irq_sem, RT_WAITING_FOREVER) == RT_EOK)
 		{
 			mmcsd_host_lock(host);
-			pending = sdio_io_readb(host->card->sdio_func0, 
+			pending = sdio_io_readb(host->card->sdio_function[0], 
 						SDIO_REG_CCCR_INT_PEND, &ret);
 			if (ret) 
 			{
@@ -974,7 +975,7 @@ static void sdio_irq_thread(void *param)
 			{
 				if (pending & (1 << i)) 
 				{
-					struct rt_sdio_function *func = card->sdio_function[i - 1];
+					struct rt_sdio_function *func = card->sdio_function[i];
 					if (!func) 
 					{
 						mmcsd_dbg("pending IRQ for "
@@ -1049,9 +1050,12 @@ rt_int32_t sdio_attach_irq(struct rt_sdio_function *func, rt_sdio_irq_handler_t 
 {
 	rt_int32_t ret;
 	rt_uint8_t reg;
+	struct rt_sdio_function *func0;
 
 	RT_ASSERT(func != RT_NULL);
 	RT_ASSERT(func->card != RT_NULL);
+
+	func0 = func->card->sdio_function[0];
 
 	mmcsd_dbg("SDIO: enabling IRQ for function %d\n", func->num);
 
@@ -1061,7 +1065,7 @@ rt_int32_t sdio_attach_irq(struct rt_sdio_function *func, rt_sdio_irq_handler_t 
 		return -RT_EBUSY;
 	}
 
-	reg = sdio_io_readb(func, SDIO_REG_CCCR_INT_EN, &ret);
+	reg = sdio_io_readb(func0, SDIO_REG_CCCR_INT_EN, &ret);
 	if (ret)
 		return ret;
 
@@ -1069,7 +1073,7 @@ rt_int32_t sdio_attach_irq(struct rt_sdio_function *func, rt_sdio_irq_handler_t 
 
 	reg |= 1; /* Master interrupt enable */
 
-	ret = sdio_io_writeb(func, SDIO_REG_CCCR_INT_EN, reg);
+	ret = sdio_io_writeb(func0, SDIO_REG_CCCR_INT_EN, reg);
 	if (ret)
 		return ret;
 
@@ -1086,9 +1090,12 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func)
 {
 	rt_int32_t ret;
 	rt_uint8_t reg;
+	struct rt_sdio_function *func0;
 
 	RT_ASSERT(func != RT_NULL);
 	RT_ASSERT(func->card != RT_NULL);
+
+	func0 = func->card->sdio_function[0];
 
 	mmcsd_dbg("SDIO: disabling IRQ for function %d\n", func->num);
 
@@ -1098,7 +1105,7 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func)
 		sdio_irq_thread_delete(func->card);
 	}
 
-	reg = sdio_io_readb(func, SDIO_REG_CCCR_INT_EN, &ret);
+	reg = sdio_io_readb(func0, SDIO_REG_CCCR_INT_EN, &ret);
 	if (ret)
 		return ret;
 
@@ -1108,7 +1115,7 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func)
 	if (!(reg & 0xFE))
 		reg = 0;
 
-	ret = sdio_io_writeb(func, SDIO_REG_CCCR_INT_EN, reg);
+	ret = sdio_io_writeb(func0, SDIO_REG_CCCR_INT_EN, reg);
 	if (ret)
 		return ret;
 
@@ -1127,19 +1134,22 @@ rt_int32_t sdio_enable_func(struct rt_sdio_function *func)
 	rt_int32_t ret;
 	rt_uint8_t reg;
 	rt_uint32_t timeout;
+	struct rt_sdio_function *func0;
 
 	RT_ASSERT(func != RT_NULL);
 	RT_ASSERT(func->card != RT_NULL);
 
+	func0 = func->card->sdio_function[0];
+
 	mmcsd_dbg("SDIO: enabling function %d\n", func->num);
 
-	reg = sdio_io_readb(func, SDIO_REG_CCCR_IO_EN, &ret);
+	reg = sdio_io_readb(func0, SDIO_REG_CCCR_IO_EN, &ret);
 	if (ret)
 		goto err;
 
 	reg |= 1 << func->num;
 
-	ret = sdio_io_writeb(func, SDIO_REG_CCCR_IO_EN, reg);
+	ret = sdio_io_writeb(func0, SDIO_REG_CCCR_IO_EN, reg);
 	if (ret)
 		goto err;
 
@@ -1147,7 +1157,7 @@ rt_int32_t sdio_enable_func(struct rt_sdio_function *func)
 
 	while (1) 
 	{
-		reg = sdio_io_readb(func, SDIO_REG_CCCR_IO_RDY, &ret);
+		reg = sdio_io_readb(func0, SDIO_REG_CCCR_IO_RDY, &ret);
 		if (ret)
 			goto err;
 		if (reg & (1 << func->num))
@@ -1171,19 +1181,22 @@ rt_int32_t sdio_disable_func(struct rt_sdio_function *func)
 {
 	rt_int32_t ret;
 	rt_uint8_t reg;
+	struct rt_sdio_function *func0;
 
 	RT_ASSERT(func != RT_NULL);
 	RT_ASSERT(func->card != RT_NULL);
 
+	func0 = func->card->sdio_function[0];
+
 	mmcsd_dbg("SDIO: disabling function %d\n", func->num);
 
-	reg =  sdio_io_readb(func, SDIO_REG_CCCR_IO_EN, &ret);
+	reg =  sdio_io_readb(func0, SDIO_REG_CCCR_IO_EN, &ret);
 	if (ret)
 		goto err;
 
 	reg &= ~(1 << func->num);
 
-	ret = sdio_io_writeb(func, SDIO_REG_CCCR_IO_EN, reg);
+	ret = sdio_io_writeb(func0, SDIO_REG_CCCR_IO_EN, reg);
 	if (ret)
 		goto err;
 
@@ -1199,6 +1212,7 @@ err:
 rt_int32_t sdio_set_block_size(struct rt_sdio_function *func, rt_uint32_t blksize)
 {
 	rt_int32_t ret;
+	struct rt_sdio_function *func0 = func->card->sdio_function[0];
 
 	if (blksize > func->card->host->max_blk_size)
 		return -RT_ERROR;
@@ -1209,11 +1223,11 @@ rt_int32_t sdio_set_block_size(struct rt_sdio_function *func, rt_uint32_t blksiz
 		blksize = MIN(blksize, 512u);
 	}
 
-	ret = sdio_io_writeb(func, SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_BLKSIZE, 
+	ret = sdio_io_writeb(func0, SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_BLKSIZE, 
 			     blksize & 0xff);
 	if (ret)
 		return ret;
-	ret = sdio_io_writeb(func, SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_BLKSIZE + 1, 
+	ret = sdio_io_writeb(func0, SDIO_REG_FBR_BASE(func->num) + SDIO_REG_FBR_BLKSIZE + 1, 
 			     (blksize >> 8) & 0xff);
 	if (ret)
 		return ret;
