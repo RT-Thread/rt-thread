@@ -741,6 +741,8 @@ static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
 		rt_kprintf("malloc sdio card failed\n");
 		return -RT_ENOMEM;
 	}
+
+	sc->card = card;
 	list_insert_after(&sdio_cards, &sc->list);
 
 	if (list_isempty(&sdio_drivers))
