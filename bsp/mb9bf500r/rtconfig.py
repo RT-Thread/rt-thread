@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='arm'
 CPU='cortex-m3'
-CROSS_TOOL='iar'
+CROSS_TOOL='gcc'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -14,7 +14,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:\Program Files\IAR Systems\Embedded Workbench 6.0 Evaluation'
+	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
 
 BUILD = 'debug'
 

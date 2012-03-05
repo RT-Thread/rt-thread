@@ -5,7 +5,7 @@ import rtconfig
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
@@ -30,7 +30,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-objs = objs + SConscript('../CMSIS/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
+objs = objs + SConscript('CMSIS/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
 
 # build program 
 env.Program(TARGET, objs)

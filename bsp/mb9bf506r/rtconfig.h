@@ -3,7 +3,7 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX		4
+#define RT_NAME_MAX		8
 
 /* RT_ALIGN_SIZE*/
 #define RT_ALIGN_SIZE	4
@@ -16,7 +16,7 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
-/* #define RT_DEBUG */
+#define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
@@ -52,37 +52,39 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 /* RT_USING_UART */
-#define RT_USING_UART0
+#define RT_USING_UART2
 #define RT_UART_RX_BUFFER_SIZE	64
 
 /* SECTION: Console options */
-#define RT_TINY_SIZE
+/* #define RT_TINY_SIZE */
 #define RT_USING_CONSOLE
 /* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
 
-/* SECTION: RTGUI support */
-/* using RTGUI support */
-/* #define RT_USING_RTGUI */
+/* SECTION: finsh, a C-Express shell */
+/* Using FinSH as Shell*/
+#define RT_USING_FINSH
+/* Using symbol table */
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_STACK_SIZE 1024
 
-/* name length of RTGUI object */
-#define RTGUI_NAME_MAX		16
-/* support 16 weight font */
-//#define RTGUI_USING_FONT16
-/* support 12 weight font */
-#define RTGUI_USING_FONT12
-/* support Chinese font */
-//#define RTGUI_USING_FONTHZ
-/* use DFS as file interface */
-//#define RTGUI_USING_DFS_FILERW
-/* use font file as Chinese font */
-/* #define RTGUI_USING_HZ_FILE */
-/* use Chinese bitmap font */
-//#define RTGUI_USING_HZ_BMP
-/* use small size in RTGUI */
-//#define RTGUI_USING_SMALL_SIZE
-/* use mouse cursor */
-/* #define RTGUI_USING_MOUSE_CURSOR */
-#define RTGUI_DEFAULT_FONT_SIZE 12
+/* SECTION: Device filesystem support */
+/* using DFS support */
+#define RT_USING_DFS
+#define RT_USING_DFS_ELMFAT
+/* use long file name feature 			*/
+/* #define RT_DFS_ELM_USE_LFN */
+/* the max number of file length 		*/
+#define RT_DFS_ELM_MAX_LFN			32
+/* #define RT_USING_DFS_UFFS */
+/* #define RT_USING_DFS_DEVFS */
+
+/* the max number of mounted filesystem */
+#define DFS_FILESYSTEMS_MAX			2
+/* the max number of opened files 		*/
+#define DFS_FD_MAX					8
+/* using working directory */
+#define DFS_USING_WORKDIR
 
 #endif

@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;.;..\..\..\libcpu\arm\fm3;..\..\..\include;..\..\..\components\rtgui\include</IncludePath>
+              <IncludePath>CMSIS;.;..\..\include;..\..\components\rtgui\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -439,12 +439,12 @@
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -454,17 +454,17 @@
             <File>
               <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\CMSIS\core_cm3.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_mb9bf50x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CMSIS\system_mb9bf50x.c</FilePath>
+              <FilePath>.\CMSIS\core_cm3.c</FilePath>
             </File>
             <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\CMSIS\start_rvds.S</FilePath>
+              <FilePath>.\CMSIS\start_rvds.S</FilePath>
+            </File>
+            <File>
+              <FileName>system_mb9bf50x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CMSIS\system_mb9bf50x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -474,77 +474,77 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
             <File>
               <FileName>module.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\module.c</FilePath>
+              <FilePath>..\..\src\module.c</FilePath>
             </File>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
               <FileName>rtm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\rtm.c</FilePath>
+              <FilePath>..\..\src\rtm.c</FilePath>
             </File>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
             <File>
               <FileName>slab.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\slab.c</FilePath>
+              <FilePath>..\..\src\slab.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
