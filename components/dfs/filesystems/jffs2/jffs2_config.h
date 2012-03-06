@@ -3,7 +3,7 @@
 
 #define __ECOS  /* must be defined */
 
-#define FILE_PATH_MAX   256 /* the longest file path */
+#define FILE_PATH_MAX    128 /* the longest file path */
 
 #define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 
@@ -22,7 +22,7 @@
  */
 #define CONFIG_JFFS2_NO_RELATIVEDIR
 
-#define CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE /* should be enabled */
+//#define CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE
 #if defined(CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
 	#define CYGPKG_FILEIO_DIRENT_DTYPE
 #endif
@@ -34,9 +34,9 @@
 
 /* jffs2 gc thread section */
 //#define CYGOPT_FS_JFFS2_GCTHREAD
-#define CYGNUM_JFFS2_GC_THREAD_PRIORITY  20 
-#define CYGNUM_JFFS2_GS_THREAD_TICKS  20
-#define CYGNUM_JFFS2_GC_THREAD_TICKS  20
+#define CYGNUM_JFFS2_GC_THREAD_PRIORITY  (RT_THREAD_PRIORITY_MAX-2) /* GC thread's priority */
+#define CYGNUM_JFFS2_GS_THREAD_TICKS  20  /* event timeout ticks */
+#define CYGNUM_JFFS2_GC_THREAD_TICKS  20  /* GC thread's running ticks */
 
 //#define CONFIG_JFFS2_FS_WRITEBUFFER /* should not be enabled */
 

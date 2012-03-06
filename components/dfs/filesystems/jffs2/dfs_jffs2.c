@@ -31,18 +31,18 @@
 	#error "support only one jffs2 partition on a flash device!"
 #endif
 			
-/* make sure the following struct var had been initilased to 0! */ //fixme
+/* make sure the following struct var had been initilased to 0! */
 struct device_part 
 {
+	struct cyg_mtab_entry * mte;
 	struct rt_mtd_device *dev;
-	struct cyg_mtab_entry * mte;				
 };
 static struct device_part device_partition[DEVICE_PART_MAX] = {0}; 
 
 #define jffs2_mount   jffs2_fste.mount
 #define jffs2_umount  jffs2_fste.umount
 #define jffs2_open    jffs2_fste.open
-#define jffs2_unlink  jffs2_fste.unlink
+#define jffs2_file_unlink  jffs2_fste.unlink
 #define jffs2_mkdir   jffs2_fste.mkdir
 #define jffs2_rmdir   jffs2_fste.rmdir
 #define jffs2_rename  jffs2_fste.rename
@@ -84,6 +84,9 @@ static int jffs2_result_to_dfs(int result)
 {
 	int status = -1;
 
+	if (result < 0)
+		result = -result;
+
 	switch (result)
 	{
 	case ENOERR:/** no error */
@@ -99,6 +102,7 @@ static int jffs2_result_to_dfs(int result)
 		status = -DFS_STATUS_EINVAL;
 		break;
 	case EMFILE: /** No more file handles available(too many open files)  */
+		rt_kprintf("dfs_jffs2.c error: no more file handles available\r\n");
 		status = -1;
 		break;//fixme
 	case ENOENT: /** file or path not found */
@@ -119,7 +123,12 @@ static int jffs2_result_to_dfs(int result)
 	case EISDIR: /** Is a directory */
 		status = -DFS_STATUS_EISDIR;
 		break;
+	case ENOSPC: /**//* No space left on device */
+		status = -DFS_STATUS_ENOSPC;
+		break;
+
 	default:
+		rt_kprintf("dfs_jffs2.c error: %d\r\n", result);
 		status = -1;
 		break; /* unknown error! */
 	}
@@ -281,13 +290,17 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 			/* fixme, should test file->path can end with '/' */
 			result = jffs2_mkdir(mte, mte->root, name);
 			if (result)
+			{
+				rt_free(jffs2_file);
 				return jffs2_result_to_dfs(result);
+			}
 		}	
 
 		/* open dir */
 		result = jffs2_opendir(mte, mte->root, name, jffs2_file);
 		if (result)
 		{
+			rt_free(jffs2_file);
 			return jffs2_result_to_dfs(result);			
 		}
 #ifdef  CONFIG_JFFS2_NO_RELATIVEDIR
@@ -346,6 +359,8 @@ static int dfs_jffs2_close(struct dfs_fd* file)
 		result = jffs2_dir_colse(jffs2_file);
 		if (result)
 			return jffs2_result_to_dfs(result);	
+
+		rt_free(jffs2_file);
 		return 0;
 	}
 	/* regular file operations */
@@ -457,6 +472,11 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 	struct jffs2_dirent jffs2_d;
 	struct dirent * d;
 	rt_uint32_t index;
+#if !defined (CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
+	struct jffs2_stat s;
+	cyg_mtab_entry * mte;
+	char * fullname;
+#endif
 	int result;
 	
 	RT_ASSERT(file->data != RT_NULL);	
@@ -471,6 +491,13 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 	uio_s.uio_iovcnt = 1; //must be 1
 	uio_s.uio_offset = 0;//not used...
 	uio_s.uio_resid = uio_s.uio_iov->iov_len; //seem no use in jffs2;	
+
+#if !defined (CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
+
+	result = _find_fs(&mte, file->fs->dev_id);
+	if (result)
+		return -DFS_STATUS_ENOENT;
+#endif
 
 	/* make integer count, usually count is 1 */
 	count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
@@ -488,14 +515,44 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 		if (result || jffs2_d.d_name[0] == 0)
 			break;
 
+#if defined (CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
 		switch(jffs2_d.d_type & JFFS2_S_IFMT) 
 		{ 
 		case JFFS2_S_IFREG: d->d_type = DFS_DT_REG; break; 		
 		case JFFS2_S_IFDIR: d->d_type = DFS_DT_DIR; break; 
 		default: d->d_type = DFS_DT_UNKNOWN; break; 
 		} 	
+#else
+		fullname = rt_malloc(FILE_PATH_MAX);
+		if(fullname == RT_NULL)
+				return -DFS_STATUS_ENOMEM;
 
-		/* write the rest feilds of struct dirent* dirp  */
+		/* make a right entry */
+		if ((file->path[0] == '/') )
+		{
+			if (file->path[1] == 0)
+				strcpy(fullname, jffs2_d.d_name);
+			else
+				rt_sprintf(fullname, "%s/%s", file->path+1, jffs2_d.d_name);
+		}
+		else
+			rt_sprintf(fullname, "%s/%s", file->path, jffs2_d.d_name);
+
+		result = jffs2_porting_stat(mte, mte->root, fullname, (void *)&s);
+
+		if (result)
+			return jffs2_result_to_dfs(result);
+
+		rt_free(fullname);
+		/* convert to dfs stat structure */
+		switch(s.st_mode & JFFS2_S_IFMT)
+		{
+		case JFFS2_S_IFREG: d->d_type = DFS_DT_REG; break;
+		case JFFS2_S_IFDIR: d->d_type = DFS_DT_DIR; break;
+		default: d->d_type = DFS_DT_UNKNOWN; break;
+		}
+#endif
+		/* write the rest fields of struct dirent* dirp  */
 		d->d_namlen = rt_strlen(jffs2_d.d_name);
 		d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
 		rt_strncpy(d->d_name, jffs2_d.d_name, d->d_namlen + 1);
@@ -531,7 +588,7 @@ static int dfs_jffs2_unlink(struct dfs_filesystem* fs, const char* path)
 	switch(s.st_mode & JFFS2_S_IFMT)
 	{
 	case JFFS2_S_IFREG:
-		result = jffs2_unlink(mte, mte->root, path);
+		result = jffs2_file_unlink(mte, mte->root, path);
 		break;
 	case JFFS2_S_IFDIR:
 		result = jffs2_rmdir(mte, mte->root, path);

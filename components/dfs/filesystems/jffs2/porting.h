@@ -1,6 +1,7 @@
 #ifndef _PORTING_H 
 #define _PORTING_H
 
+#include "jffs2_config.h"
 /* the following should be same with os_sys_stat.h */
 #define JFFS2_S_IFMT	 0x000003FF
 #define JFFS2_S_IFDIR	 (1<<0)
@@ -31,10 +32,13 @@ struct jffs2_stat {
 
 struct jffs2_dirent
 {
+#ifdef CYGPKG_FILEIO_DIRENT_DTYPE
+
 	unsigned long  d_type; // Only supported with FATFS, RAMFS, ROMFS,
 	// and JFFS2.
 	// d_type is not part of POSIX so
 	// should be used with caution.
+#endif
 	char        d_name[NAME_MAX+1];
 };
 
