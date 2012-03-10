@@ -1,23 +1,23 @@
 #ifndef __ASM_SEMAPHORE_H__
 #define __ASM_SEMAPHORE_H__
 
-#define CONFIG_JFFS2_SEMAPHORE  1 // no mutex, 1 use static, 2 use dynamic
+#define CONFIG_JFFS2_SEMAPHORE  0 // no mutex, 1 use static, 2 use dynamic
 #if CONFIG_JFFS2_SEMAPHORE == 0
-#include <cyg/hal/drv_api.h>
+//#include <cyg/hal/drv_api.h>
 
 struct semaphore {
-	cyg_drv_mutex_t x;
+	int x;
 };
 
-#define DECLARE_MUTEX(x) //struct semaphore x = { { 0 } };
-#define DECLARE_MUTEX_LOCKED(x) //struct semaphore x = { { 1 } };
+#define DECLARE_MUTEX(x)
+#define DECLARE_MUTEX_LOCKED(x)
 
-#define init_MUTEX(struct semaphore * sem)  //cyg_drv_mutex_init((cyg_drv_mutex_t *)sem)
-#define init_MUTEX_LOCKED(struct semaphore * sem)  //do { cyg_drv_mutex_init((cyg_drv_mutex_t *)sem); cyg_drv_mutex_lock((cyg_drv_mutex_t *)sem); } while(0)
-#define down(struct semaphore * sem)  //cyg_drv_mutex_lock((cyg_drv_mutex_t *)sem)
-#define down_interruptible(struct semaphore * sem)  0//({ cyg_drv_mutex_lock((cyg_drv_mutex_t *)sem), 0; })
-#define down_trylock(struct semaphore * sem)  //cyg_drv_mutex_trylock((cyg_drv_mutex_t *)sem)
-#define up(struct semaphore * sem)  //cyg_drv_mutex_unlock((cyg_drv_mutex_t *)sem)
+#define init_MUTEX(sem)
+#define init_MUTEX_LOCKED(sem)
+#define down(sem)
+#define down_interruptible(sem)  0
+#define down_trylock(sem)
+#define up(sem)
 
 #elif CONFIG_JFFS2_SEMAPHORE == 1
 #include <rtthread.h>
@@ -42,36 +42,21 @@ rt_inline void init_MUTEX(struct semaphore * sem)
 
 rt_inline void init_MUTEX_LOCKED(struct semaphore * sem)
 {
+   rt_enter_critical();
    if (rt_mutex_init((rt_mutex_t)sem, "mutex", RT_IPC_FLAG_FIFO) == RT_EOK)
    {
 	   /* detach the object from system object container */
 	   rt_object_detach(&(((rt_mutex_t)sem)->parent.parent));
+	   rt_exit_critical();
 	   rt_mutex_take((rt_mutex_t)sem, RT_WAITING_FOREVER);
 	   return;
    }
+   rt_exit_critical();
+
    rt_kprintf("get an error at %s:%d \n",  __FUNCTION__, __LINE__);
    RT_ASSERT(0);
 }
-/*
-rt_inline void init_MUTEX(struct semaphore * sem)
-{
-	if (rt_mutex_init((rt_mutex_t)sem, "mutex", RT_IPC_FLAG_FIFO) == RT_EOK)
-		return;
-	rt_kprintf("get an error at %s:%d \n",  __FUNCTION__, __LINE__);
-	RT_ASSERT(0);
-}
 
-rt_inline init_MUTEX_LOCKED(struct semaphore * sem)
-{
-	if (rt_mutex_init((rt_mutex_t)sem, "mutex", RT_IPC_FLAG_FIFO) == RT_EOK)
-	{
-		rt_mutex_take((rt_mutex_t)sem, RT_WAITING_FOREVER);
-		return;
-	}
-	rt_kprintf("get an error at %s:%d \n",  __FUNCTION__, __LINE__);
-	RT_ASSERT(0);
-}
-*/
 rt_inline down(struct semaphore * sem)
 {
 	rt_mutex_take((rt_mutex_t)sem, RT_WAITING_FOREVER);

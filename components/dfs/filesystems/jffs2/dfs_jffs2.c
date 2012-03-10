@@ -37,7 +37,9 @@ struct device_part
 	struct cyg_mtab_entry * mte;
 	struct rt_mtd_device *dev;
 };
-static struct device_part device_partition[DEVICE_PART_MAX] = {0}; 
+static struct device_part device_partition[DEVICE_PART_MAX] = {0};
+
+static struct rt_mutex jffs2_lock;
 
 #define jffs2_mount   jffs2_fste.mount
 #define jffs2_umount  jffs2_fste.umount
@@ -285,19 +287,21 @@ static int dfs_jffs2_open(struct dfs_fd* file)
  	
 	if (oflag & DFS_O_DIRECTORY) /* operations about dir */
 	{	
+		rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 		if (oflag & DFS_O_CREAT) /* create a dir*/
 		{	
 			/* fixme, should test file->path can end with '/' */
 			result = jffs2_mkdir(mte, mte->root, name);
 			if (result)
 			{
+				rt_mutex_release(&jffs2_lock);
 				rt_free(jffs2_file);
 				return jffs2_result_to_dfs(result);
 			}
 		}	
-
 		/* open dir */
 		result = jffs2_opendir(mte, mte->root, name, jffs2_file);
+		rt_mutex_release(&jffs2_lock);
 		if (result)
 		{
 			rt_free(jffs2_file);
@@ -322,10 +326,11 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 	/* Creates a new file. The function fails if the file is already existing. */
 	if (oflag & DFS_O_EXCL) mode |= JFFS2_O_EXCL;
 //	if (oflag & DFS_O_APPEND) mode |= JFFS2_O_APPEND;
-
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
     result = jffs2_open(mte, 0, name, mode, jffs2_file);
     if (result != 0)
     {
+    	rt_mutex_release(&jffs2_lock);
 		rt_free(jffs2_file);
 		return jffs2_result_to_dfs(result);
     }
@@ -337,6 +342,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 	file->size = 0;
 	jffs2_file_lseek(jffs2_file, (off_t *)(&(file->size)), SEEK_END);
 	jffs2_file->f_offset = (off_t)file->pos;
+	rt_mutex_release(&jffs2_lock);
 	
 	if (oflag & DFS_O_APPEND)
 	{
@@ -356,7 +362,9 @@ static int dfs_jffs2_close(struct dfs_fd* file)
 	
 	if (file->flags & DFS_O_DIRECTORY) /* operations about dir */
 	{
+		rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 		result = jffs2_dir_colse(jffs2_file);
+		rt_mutex_release(&jffs2_lock);
 		if (result)
 			return jffs2_result_to_dfs(result);	
 
@@ -364,7 +372,9 @@ static int dfs_jffs2_close(struct dfs_fd* file)
 		return 0;
 	}
 	/* regular file operations */
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_file_colse(jffs2_file);
+	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);	
 	
@@ -396,7 +406,9 @@ static int dfs_jffs2_read(struct dfs_fd* file, void* buf, rt_size_t len)
     uio_s.uio_resid = uio_s.uio_iov->iov_len; //seem no use in jffs2;
 	
 	char_read = jffs2_file->f_offset; /* the current offset */	
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_file_read(jffs2_file, &uio_s);	
+	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);	
 	
@@ -426,7 +438,9 @@ static int dfs_jffs2_write(struct dfs_fd* file,
     uio_s.uio_resid = uio_s.uio_iov->iov_len; //seem no use in jffs2;
 	
 	char_write = jffs2_file->f_offset;
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_file_write(jffs2_file, &uio_s);
+	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);
 	
@@ -453,7 +467,9 @@ static int dfs_jffs2_lseek(struct dfs_fd* file,
 	jffs2_file = (cyg_file *)(file->data);		
 	
 	/* set offset as current offset */
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_file_lseek(jffs2_file, &offset, SEEK_SET);
+	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);
 	/* update file position */
@@ -509,8 +525,9 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 	while (1)
 	{
 		d = dirp + index;
-
+		rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 		result = jffs2_dir_read(jffs2_file, &uio_s); 
+		rt_mutex_release(&jffs2_lock);
 		/* if met a error or all entry are read over, break while*/
 		if (result || jffs2_d.d_name[0] == 0)
 			break;
@@ -537,9 +554,9 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 		}
 		else
 			rt_sprintf(fullname, "%s/%s", file->path, jffs2_d.d_name);
-
+		rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 		result = jffs2_porting_stat(mte, mte->root, fullname, (void *)&s);
-
+		rt_mutex_release(&jffs2_lock);
 		if (result)
 			return jffs2_result_to_dfs(result);
 
@@ -581,10 +598,14 @@ static int dfs_jffs2_unlink(struct dfs_filesystem* fs, const char* path)
 		path++;
 	
 	/* judge file type, dir is to be delete by rmdir, others by unlink */
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_porting_stat(mte, mte->root, path, (void *)&s);
 	if (result)
+	{
+		rt_mutex_release(&jffs2_lock);
 		return jffs2_result_to_dfs(result);
-		
+	}
+
 	switch(s.st_mode & JFFS2_S_IFMT)
 	{
 	case JFFS2_S_IFREG:
@@ -595,8 +616,10 @@ static int dfs_jffs2_unlink(struct dfs_filesystem* fs, const char* path)
 		break;
 	default:
 		/* unknown file type */
+		rt_mutex_release(&jffs2_lock);
 		return -1;
 	}
+	rt_mutex_release(&jffs2_lock);
 	if (result) 
 		return jffs2_result_to_dfs(result);
 	return 0;			
@@ -617,8 +640,9 @@ static int dfs_jffs2_rename(struct dfs_filesystem* fs,
 		oldpath += 1;
 	if (*newpath == '/')
 		newpath += 1;
-
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_rename(mte, mte->root, oldpath, mte->root, newpath);
+	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);
 	return 0;
@@ -640,8 +664,9 @@ static int dfs_jffs2_stat(struct dfs_filesystem* fs, const char *path, struct st
 	if (result) 
 		return -DFS_STATUS_ENOENT;
 
-//	result = jffs2_ops_stat(mte, mte->root, path, &s);	
+	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
 	result = jffs2_porting_stat(mte, mte->root, path, (void *)&s);
+	rt_mutex_release(&jffs2_lock);
 
 	if (result)
 		return jffs2_result_to_dfs(result);
@@ -673,7 +698,9 @@ static int dfs_jffs2_stat(struct dfs_filesystem* fs, const char *path, struct st
 static const struct dfs_filesystem_operation dfs_jffs2_ops = 
 {
 	"jffs2", /* file system type: jffs2 */
+#if RTTHREAD_VERSION >= 10100
 	DFS_FS_FLAG_DEFAULT, /* use Relative Path */
+#endif
 	dfs_jffs2_mount,
 	dfs_jffs2_unmount,
 	dfs_jffs2_mkfs,
@@ -696,6 +723,11 @@ int dfs_jffs2_init(void)
 {
     /* register fatfs file system */
     dfs_register(&dfs_jffs2_ops);
-
+    /* initialize mutex */
+	if (rt_mutex_init(&jffs2_lock, "jffs2lock", RT_IPC_FLAG_FIFO) != RT_EOK)
+	{
+		rt_kprintf("init jffs2 lock mutex failed\n");
+	}
+	rt_kprintf("init jffs2 lock mutex okay\n");
 	return 0;
 }
