@@ -154,25 +154,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card, rt_uint32_t sector,
 	}
 
 	mmcsd_set_data_timeout(&data, card);
-
-	if (((rt_uint32_t)buf & (32 - 1)) != 0) /* the buf address is not aligned to 32 */
-	{
-		aligned_buf = rt_malloc_align(data.blks * data.blksize, 32);
-
-		if (aligned_buf == RT_NULL)
-		{
-			rt_kprintf("allocate memory failed\n");
-			return -RT_ENOMEM;
-		}
-	
-		if (dir)//write
-			rt_memcpy(aligned_buf, buf, data.blks*data.blksize);
-		
-		data.buf = aligned_buf;
-	}
-	else
-		data.buf = buf;
-
+	data.buf = buf;
 	mmcsd_send_request(host, &req);
 
 	if (!controller_is_spi(card->host) && dir != 0) 
@@ -206,17 +188,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card, rt_uint32_t sector,
 		rt_kprintf("mmcsd request blocks error\n");
 		rt_kprintf("%d,%d,%d, 0x%08x,0x%08x\n", cmd.err, data.err, stop.err, data.flags, sector);
 
-		if (((rt_uint32_t)buf & (32 - 1)) != 0)
-			rt_free_align(aligned_buf);
-
 		return -RT_ERROR;
-	}
-
-	if (((rt_uint32_t)buf & (32 - 1)) != 0)
-	{
-		if (!dir)//read
-			rt_memcpy(buf, data.buf, data.blks*data.blksize);
-		rt_free_align(aligned_buf);
 	}
 
 	return RT_EOK;
@@ -257,7 +229,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
 	struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
 	struct dfs_partition *part = &blk_dev->part;
 
-	if ( dev == RT_NULL )
+	if (dev == RT_NULL)
 	{
 		rt_set_errno(-DFS_STATUS_EINVAL);
 		return 0;
@@ -342,7 +314,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 	}
 
 	/* get the first sector to read partition table */
-	sector = (rt_uint8_t *)rt_malloc_align(SECTOR_SIZE, 32);
+	sector = (rt_uint8_t *) rt_malloc(SECTOR_SIZE);
 	if (sector == RT_NULL)
 	{
 		rt_kprintf("allocate partition sector buffer failed\n");
@@ -444,7 +416,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 	}
 	
 	/* release sector buffer */
-	rt_free_align(sector);
+	rt_free(sector);
 	
 	return err;
 }
