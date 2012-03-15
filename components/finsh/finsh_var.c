@@ -108,7 +108,7 @@ void finsh_sysvar_append(const char* name, u_char type, void* var_addr)
 		else
 		{
 			item->next = global_sysvar_list;
-			global_sysvar_list->next = item;
+			global_sysvar_list = item;
 		}
 	}
 }
