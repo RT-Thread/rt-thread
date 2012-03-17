@@ -1,7 +1,7 @@
 /*
  * File      : mempool.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -33,6 +33,7 @@ static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
 /**
  * @addtogroup Hook
  */
+
 /*@{*/
 
 /**
@@ -77,7 +78,6 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
  * @param block_size the size for each block
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_mp_init(struct rt_mempool *mp, const char *name, void *start, rt_size_t size, rt_size_t block_size)
 {
@@ -174,7 +174,6 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
  * @param block_size the size for each block
  *
  * @return the created mempool object
- *
  */
 rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_size)
 {
@@ -186,7 +185,8 @@ rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_si
 
 	/* allocate object */
 	mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
-	if (mp == RT_NULL) return RT_NULL; /* allocate object failed */
+	if (mp == RT_NULL)
+		return RT_NULL; /* allocate object failed */
 
 	/* init memory pool */
 	mp->block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
@@ -230,7 +230,6 @@ rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_si
  * @param mp the memory pool object
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_mp_delete(rt_mp_t mp)
 {
@@ -291,7 +290,6 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
  * @param time the waiting time
  *
  * @return the allocated memory block or RT_NULL on allocated failed
- *
  */
 void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 {
@@ -348,7 +346,8 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 			/* do a schedule */
 			rt_schedule();
 
-			if (thread->error != RT_EOK) return RT_NULL;
+			if (thread->error != RT_EOK)
+				return RT_NULL;
 
 			/* disable interrupt */
 			level = rt_hw_interrupt_disable();
@@ -377,7 +376,6 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
  * This function will release a memory block
  *
  * @param block the address of memory block to be released
- *
  */
 void rt_mp_free(void *block)
 {
@@ -429,7 +427,7 @@ void rt_mp_free(void *block)
 	rt_hw_interrupt_enable(level);
 }
 
-#endif
-
 /*@}*/
+
+#endif
 

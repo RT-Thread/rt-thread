@@ -1,7 +1,7 @@
 /*
  * File      : object.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -74,6 +74,7 @@ void (*rt_object_put_hook)(struct rt_object *object);
 /**
  * @addtogroup Hook
  */
+
 /*@{*/
 
 /**
@@ -164,6 +165,7 @@ void rt_system_object_init(void)
 /**
  * @addtogroup KernelObject
  */
+
 /*@{*/
 
 /**
@@ -359,7 +361,8 @@ rt_err_t rt_object_is_systemobject(rt_object_t object)
 	/* object check */
 	RT_ASSERT(object != RT_NULL);
 
-	if (object->type & RT_Object_Class_Static) return RT_EOK;
+	if (object->type & RT_Object_Class_Static)
+		return RT_EOK;
 
 	return -RT_ERROR;
 }
@@ -413,4 +416,5 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
 	return RT_NULL;
 }
+
 /*@}*/

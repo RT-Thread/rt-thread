@@ -1,7 +1,7 @@
 /*
  * File      : thread.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -142,7 +142,6 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
  * @param tick the time slice if there are same priority thread
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
 	const char *name,
@@ -166,7 +165,6 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
  * This function will return self thread object
  *
  * @return the self thread object
- *
  */
 rt_thread_t rt_thread_self(void)
 {
@@ -179,7 +177,6 @@ rt_thread_t rt_thread_self(void)
  * @param thread the thread to be started
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_thread_startup(rt_thread_t thread)
 {
@@ -221,7 +218,6 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
  * @param thread the thread to be deleted
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
@@ -270,7 +266,6 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
  * @param tick the time slice if there are same priority thread
  *
  * @return the created thread object
- *
  */
 rt_thread_t rt_thread_create(const char *name,
 	void (*entry)(void *parameter), void *parameter,
@@ -282,13 +277,15 @@ rt_thread_t rt_thread_create(const char *name,
 	void *stack_start;
 
 	thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread, name);
-	if (thread == RT_NULL) return RT_NULL;
+	if (thread == RT_NULL)
+		return RT_NULL;
 
 	stack_start = (void *)rt_malloc(stack_size);
 	if (stack_start == RT_NULL)
 	{
 		/* allocate stack failure */
 		rt_object_delete((rt_object_t)thread);
+
 		return RT_NULL; 
 	}
 
@@ -306,7 +303,6 @@ rt_thread_t rt_thread_create(const char *name,
  * @param thread the thread to be deleted
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_thread_delete(rt_thread_t thread)
 {
@@ -343,7 +339,6 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
  * is still in READY state.
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_thread_yield(void)
 {
@@ -386,7 +381,6 @@ rt_err_t rt_thread_yield(void)
  * @param tick the sleep ticks
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
@@ -424,7 +418,6 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
  * @param tick the delay ticks
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_thread_delay(rt_tick_t tick)
 {
@@ -556,7 +549,6 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
  * @param thread the thread to be resumed
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_thread_resume(rt_thread_t thread)
 {
@@ -601,7 +593,6 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
  * when thread is timeout to wait some resource.
  *
  * @param parameter the parameter of thread timeout function
- *
  */
 void rt_thread_timeout(void *parameter)
 {

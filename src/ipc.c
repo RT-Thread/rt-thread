@@ -1,7 +1,7 @@
 /*
  * File      : ipc.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -333,6 +333,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 		if (time == 0 )
 		{
 			rt_hw_interrupt_enable(temp);
+
 			return -RT_ETIMEOUT;
 		}
 		else
@@ -423,7 +424,8 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 		rt_ipc_list_resume(&(sem->parent.suspend_thread));
 		need_schedule = RT_TRUE;
 	}
-	else sem->value ++; /* increase value */
+	else
+		sem->value ++; /* increase value */
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(temp);
@@ -1337,6 +1339,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout)
 	if (mb->entry == mb->size && timeout == 0)
 	{
 		rt_hw_interrupt_enable(temp);
+
 		return -RT_EFULL;
 	}
 
@@ -1351,6 +1354,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout)
 		{
 			/* enable interrupt */
 			rt_hw_interrupt_enable(temp);
+
 			return -RT_EFULL;
 		}
 
@@ -1416,6 +1420,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout)
 		rt_hw_interrupt_enable(temp);
 
 		rt_schedule();
+
 		return RT_EOK;
 	}
 
@@ -1473,6 +1478,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout)
 	if (mb->entry == 0 && timeout == 0)
 	{
 		rt_hw_interrupt_enable(temp);
+		
 		return -RT_ETIMEOUT;
 	}
 
@@ -1489,6 +1495,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout)
 			rt_hw_interrupt_enable(temp);
 
 			thread->error = -RT_ETIMEOUT;
+			
 			return -RT_ETIMEOUT;
 		}
 
@@ -1734,6 +1741,7 @@ rt_mq_t rt_mq_create(const char *name, rt_size_t msg_size, rt_size_t max_msgs, r
 	if (mq->msg_pool == RT_NULL)
 	{
 		rt_mq_delete(mq);
+		
 		return RT_NULL;
 	}
 
@@ -1852,7 +1860,8 @@ rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 	/* set new tail */
 	mq->msg_queue_tail = msg;
 	/* if the head is empty, set head */
-	if (mq->msg_queue_head == RT_NULL)mq->msg_queue_head = msg;
+	if (mq->msg_queue_head == RT_NULL)
+		mq->msg_queue_head = msg;
 
 	/* increase message entry */
 	mq->entry ++;
@@ -1866,6 +1875,7 @@ rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 		rt_hw_interrupt_enable(temp);
 
 		rt_schedule();
+
 		return RT_EOK;
 	}
 
@@ -1946,6 +1956,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 		rt_hw_interrupt_enable(temp);
 
 		rt_schedule();
+
 		return RT_EOK;
 	}
 
@@ -1990,6 +2001,7 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout
 	if (mq->entry == 0 && timeout == 0)
 	{
 		rt_hw_interrupt_enable(temp);
+
 		return -RT_ETIMEOUT;
 	}
 
@@ -2008,6 +2020,7 @@ rt_err_t rt_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout
 			rt_hw_interrupt_enable(temp);
 
 			thread->error = -RT_ETIMEOUT;
+
 			return -RT_ETIMEOUT;
 		}
 
@@ -2137,4 +2150,5 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
 	return -RT_ERROR;
 }
 #endif /* end of RT_USING_MESSAGEQUEUE */
+
 /*@}*/

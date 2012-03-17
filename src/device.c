@@ -1,7 +1,7 @@
 /*
  * File      : device.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -29,7 +29,8 @@
  */
 rt_err_t rt_device_register(rt_device_t dev, const char *name, rt_uint16_t flags)
 {
-	if (dev == RT_NULL) return -RT_ERROR;
+	if (dev == RT_NULL)
+		return -RT_ERROR;
 
 	rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
 	dev->flag = flags;
@@ -155,7 +156,7 @@ rt_err_t rt_device_init(rt_device_t dev)
 	init = dev->init;
 	if (init != RT_NULL)
 	{
-		if(!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+		if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 		{
 			result = init(dev);
 			if (result != RT_EOK)
@@ -169,7 +170,8 @@ rt_err_t rt_device_init(rt_device_t dev)
 			}
 		}
 	}
-	else result = -RT_ENOSYS;
+	else
+		result = -RT_ENOSYS;
 
 	return result;
 }
@@ -199,6 +201,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 		{
 			rt_kprintf("To initialize device:%s failed. The error code is %d\n",
 				dev->parent.name, result);
+
 			return result;
 		}
 		else
@@ -290,6 +293,7 @@ rt_size_t rt_device_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t 
 
 	/* set error code */
 	rt_set_errno(-RT_ENOSYS);
+
 	return 0;
 }
 
@@ -320,6 +324,7 @@ rt_size_t rt_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_
 
 	/* set error code */
 	rt_set_errno(-RT_ENOSYS);
+
 	return 0;
 }
 
@@ -362,6 +367,7 @@ rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind)(rt_device
 	RT_ASSERT(dev != RT_NULL);
 
 	dev->rx_indicate = rx_ind;
+
 	return RT_EOK;
 }
 
@@ -379,6 +385,7 @@ rt_err_t rt_device_set_tx_complete(rt_device_t dev, rt_err_t (*tx_done)(rt_devic
 	RT_ASSERT(dev != RT_NULL);
 
 	dev->tx_complete = tx_done;
+
 	return RT_EOK;
 }
 

@@ -1,7 +1,7 @@
 /*
  * File      : timer.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -40,6 +40,7 @@ static void (*rt_timer_timeout_hook)(struct rt_timer *timer);
 /**
  * @addtogroup Hook
  */
+
 /*@{*/
 
 /**
@@ -79,6 +80,7 @@ static void _rt_timer_init(rt_timer_t timer,
 /**
  * @addtogroup Clock
  */
+
 /*@{*/
 
 /**
@@ -168,7 +170,6 @@ rt_timer_t rt_timer_create(const char *name, void (*timeout)(void *parameter), v
  * @param timer the timer to be deleted
  *
  * @return the operation status, RT_EOK on OK; RT_ERROR on error
- *
  */
 rt_err_t rt_timer_delete(rt_timer_t timer)
 {
@@ -198,7 +199,6 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
  * @param timer the timer to be started
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_timer_start(rt_timer_t timer)
 {
@@ -208,7 +208,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
 	/* timer check */
 	RT_ASSERT(timer != RT_NULL);
-	if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) return -RT_ERROR;
+	if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+		return -RT_ERROR;
 
 	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
@@ -265,7 +266,6 @@ rt_err_t rt_timer_start(rt_timer_t timer)
  * @param timer the timer to be stopped
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
- *
  */
 rt_err_t rt_timer_stop(rt_timer_t timer)
 {
@@ -273,7 +273,8 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 
 	/* timer check */
 	RT_ASSERT(timer != RT_NULL);
-	if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)) return -RT_ERROR;
+	if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+		return -RT_ERROR;
 
 	RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(timer->parent)));
 
@@ -300,7 +301,6 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
  * @param arg the argument
  *
  * @return RT_EOK
- *
  */
 rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg)
 {
@@ -386,7 +386,8 @@ void rt_timer_check(void)
 				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 			}
 		}
-		else break;
+		else
+			break;
 	}
 
 	/* enable interrupt */
@@ -421,7 +422,6 @@ void rt_soft_timer_tick_increase(void)
 /**
  * This function will check timer list, if a timeout event happens, the
  * corresponding timeout function will be invoked.
- *
  */
 void rt_soft_timer_check(void)
 {
@@ -471,7 +471,8 @@ void rt_soft_timer_check(void)
 				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 			}
 		}
-		else break; /* not check anymore */
+		else
+			break; /* not check anymore */
 	}
 
 	RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
@@ -501,7 +502,6 @@ static void rt_thread_timer_entry(void *parameter)
  * @ingroup SystemInit
  *
  * This function will initialize system timer
- *
  */
 void rt_system_timer_init(void)
 {
@@ -517,7 +517,6 @@ void rt_system_timer_init(void)
  * @ingroup SystemInit
  *
  * This function will initialize system timer thread
- *
  */
 void rt_system_timer_thread_init(void)
 {

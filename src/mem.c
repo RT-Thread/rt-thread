@@ -1,7 +1,7 @@
 /*
  * File      : mem.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -63,6 +63,7 @@ static void (*rt_free_hook)(void *ptr);
 /**
  * @addtogroup Hook
  */
+
 /*@{*/
 
 /**
@@ -163,7 +164,6 @@ static void plug_holes(struct heap_mem *mem)
  *
  * @param begin_addr the beginning address of system page
  * @param end_addr the end address of system page
- *
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
@@ -183,6 +183,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 	else
 	{
 		rt_kprintf("mem init, error begin address 0x%x, and end address 0x%x\n", (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+		
 		return;
 	}
 
@@ -232,7 +233,8 @@ void *rt_malloc(rt_size_t size)
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
-	if (size == 0) return RT_NULL;
+	if (size == 0)
+		return RT_NULL;
 
 	if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
 		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE)));
@@ -250,7 +252,8 @@ void *rt_malloc(rt_size_t size)
 	}
 
 	/* every data block must be at least MIN_SIZE_ALIGNED long */
-	if (size < MIN_SIZE_ALIGNED) size = MIN_SIZE_ALIGNED;
+	if (size < MIN_SIZE_ALIGNED)
+		size = MIN_SIZE_ALIGNED;
 
 	/* take memory semaphore */
 	rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
@@ -295,7 +298,8 @@ void *rt_malloc(rt_size_t size)
 				}
 #ifdef RT_MEM_STATS
 				used_mem += (size + SIZEOF_STRUCT_MEM);
-				if (max_mem < used_mem) max_mem = used_mem;
+				if (max_mem < used_mem)
+					max_mem = used_mem;
 #endif
 			}
 			else
@@ -310,7 +314,8 @@ void *rt_malloc(rt_size_t size)
 				mem->used = 1;
 #ifdef RT_MEM_STATS
 				used_mem += mem->next - ((rt_uint8_t*)mem - heap_ptr);
-				if (max_mem < used_mem) max_mem = used_mem;
+				if (max_mem < used_mem)
+					max_mem = used_mem;
 #endif
 			}
 			/* set memory block magic */
@@ -319,7 +324,8 @@ void *rt_malloc(rt_size_t size)
 			if (mem == lfree)
 			{
 				/* Find next free block after mem and update lowest free pointer */
-				while (lfree->used && lfree != heap_end) lfree = (struct heap_mem *)&heap_ptr[lfree->next];
+				while (lfree->used && lfree != heap_end)
+					lfree = (struct heap_mem *)&heap_ptr[lfree->next];
 
 				RT_ASSERT(((lfree == heap_end) || (!lfree->used)));
 			}
@@ -334,12 +340,14 @@ void *rt_malloc(rt_size_t size)
 				(rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
 			RT_OBJECT_HOOK_CALL(rt_malloc_hook, (((void*)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM)), size));
+			
 			/* return the memory data except mem struct */
 			return (rt_uint8_t *)mem + SIZEOF_STRUCT_MEM;
 		}
 	}
 
 	rt_sem_release(&heap_sem);
+	
 	return RT_NULL;
 }
 
@@ -380,6 +388,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	{
 		/* illegal memory */
 		rt_sem_release(&heap_sem);
+
 		return rmem;
 	}
 
@@ -391,6 +400,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 	{
 		/* the size is the same as */
 		rt_sem_release(&heap_sem);
+
 		return rmem;
 	}
 
@@ -416,6 +426,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 		plug_holes(mem2);
 
 		rt_sem_release(&heap_sem);
+
 		return rmem;
 	}
 	rt_sem_release(&heap_sem);
@@ -453,7 +464,8 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 	p = rt_malloc(count * size);
 
 	/* zero the memory */
-	if (p) rt_memset(p, 0, count * size);
+	if (p)
+		rt_memset(p, 0, count * size);
 
 	return p;
 }
@@ -470,7 +482,8 @@ void rt_free(void *rmem)
 
 	RT_DEBUG_NOT_IN_INTERRUPT;
 
-	if (rmem == RT_NULL) return;
+	if (rmem == RT_NULL)
+		return;
 	RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE-1)) == 0);
 	RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
 			  (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);

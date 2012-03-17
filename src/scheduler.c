@@ -1,7 +1,7 @@
 /*
  * File      : scheduler.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -76,6 +76,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 /**
  * @addtogroup Hook
  */
+
 /*@{*/
 
 /**
@@ -123,7 +124,6 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 /**
  * @ingroup SystemInit
  * This function will initialize the system scheduler
- *
  */
 void rt_system_scheduler_init(void)
 {
@@ -208,6 +208,7 @@ void rt_system_scheduler_start(void)
 /**
  * @addtogroup Thread
  */
+
 /*@{*/
 
 /**

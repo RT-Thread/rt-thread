@@ -1,7 +1,7 @@
 /*
  * File      : rtdef.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -28,15 +28,16 @@ extern "C" {
 /**
  * @addtogroup BasicDef
  */
+
 /*@{*/
 
 /* RT-Thread version information */
 #define RT_VERSION                      1L      /**< major version number */
 #define RT_SUBVERSION                   1L      /**< minor version number */
-#define RT_REVISION                   	0L      /**< revise version number */
+#define RT_REVISION                     0L      /**< revise version number */
 
 /* RT-Thread version */
-#define RTTHREAD_VERSION				((RT_VERSION * 10000) + \
+#define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
 	(RT_SUBVERSION * 100) + RT_REVISION)
 
 /* RT-Thread basic data type definitions */
@@ -63,6 +64,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
 /* boolean type definitions */
 #define RT_TRUE                         1   /**< boolean true  */
 #define RT_FALSE                        0   /**< boolean fails */
+
 /*@}*/
 
 /* maximum value of base type */
@@ -137,7 +139,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
 /**
  * @addtogroup Error
  */
+
 /*@{*/
+
 /* RT-Thread error code definitions */
 #define RT_EOK                          0               /**< There is no error       */
 #define RT_ERROR                        1               /**< A generic error happens */
@@ -148,6 +152,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
 #define RT_ENOSYS                       6               /**< No system               */
 #define RT_EBUSY                        7               /**< Busy                    */
 #define RT_EIO							8 				/**< IO error 				 */
+
 /*@}*/
 
 /**
@@ -158,6 +163,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
  * would return 16.
  */
 #define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
+
 /**
  * @ingroup BasicDef
  *
@@ -185,6 +191,7 @@ typedef struct rt_list_node rt_list_t;                  /* Type for lists.     *
 /**
  * @addtogroup KernelObject
  */
+
 /*@{*/
 
 /*
@@ -280,6 +287,7 @@ struct rt_object_information
 /**
  * @addtogroup Clock
  */
+
 /*@{*/
 
 /**
@@ -314,11 +322,13 @@ struct rt_timer
 	rt_tick_t timeout_tick;                             /**< timeout tick                           */
 };
 typedef struct rt_timer *rt_timer_t;
+
 /*@}*/
 
 /**
  * @addtogroup Thread
  */
+
 /*@{*/
 
 /*
@@ -338,16 +348,13 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * thread control command definitions
  */
-#define RT_THREAD_CTRL_STARTUP          0x00                /**< Startup thread.                     */
+#define RT_THREAD_CTRL_STARTUP          0x00                /**< Startup thread.                    */
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread.                      */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority.            */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information.            */
 
-typedef struct rt_thread *rt_thread_t;
-
 /**
  * Thread structure
- *
  */
 struct rt_thread
 {
@@ -399,11 +406,14 @@ struct rt_thread
 
 	rt_uint32_t user_data;                              /**< private user data beyond this thread  */
 };
+typedef struct rt_thread *rt_thread_t;
+
 /*@}*/
 
 /**
  * @addtogroup IPC
  */
+
 /*@{*/
 
 /**
@@ -521,17 +531,21 @@ struct rt_messagequeue
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif
+
 /*@}*/
 
+#ifdef RT_USING_MEMPOOL
 /**
  * @addtogroup MM
  */
+
 /*@{*/
+
 /*
  * memory management
  * heap & partition
  */
-#ifdef RT_USING_MEMPOOL
+
 /**
  * Base structure of Memory pool object
  */
@@ -552,13 +566,15 @@ struct rt_mempool
 	rt_size_t   suspend_thread_count;               /**< numbers of thread pended on this resource  */
 };
 typedef struct rt_mempool *rt_mp_t;
-#endif
+
 /*@}*/
+#endif
 
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
  */
+
 /*@{*/
 
 /**
@@ -689,6 +705,7 @@ enum
 	RTGRAPHIC_PIXEL_FORMAT_RGB888,
 	RTGRAPHIC_PIXEL_FORMAT_ARGB888
 };
+
 /**
  * build a pixel position according to (x, y) coordinates.
  */
@@ -732,13 +749,17 @@ struct rt_device_graphic_ops
 	void (*blit_line) (const char *pixel, int x, int y, rt_size_t size);
 };
 #define rt_graphix_ops(device)    ((struct rt_device_graphic_ops *)(device->user_data))
-/*@}*/
 
+/*@}*/
+#endif
+
+#ifdef RT_USING_MODULE
 /**
  * @addtogroup Module
  */
+
 /*@{*/
-#ifdef RT_USING_MODULE
+
 /*
  * module system
  */
@@ -774,7 +795,6 @@ struct rt_module
 	struct rt_object_information module_object[RT_Object_Class_Unknown];
 };
 typedef struct rt_module *rt_module_t;
-#endif
 
 /*@}*/
 #endif
