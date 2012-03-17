@@ -370,6 +370,9 @@ int dfs_unmount(const char *specialfile)
 	if (fs->dev_id != RT_NULL)
 		rt_device_close(fs->dev_id);
 
+	if (fs->path != RT_NULL)
+		rt_free(fs->path);
+
 	/* clear this filesystem table entry */
 	rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
