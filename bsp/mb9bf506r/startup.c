@@ -1,7 +1,7 @@
 /*
  * File      : startup.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -88,7 +88,7 @@ void rtthread_startup(void)
 	/* init finsh */
 	finsh_system_init();
 #ifdef RT_USING_DEVICE
-	finsh_set_device("uart2");
+	finsh_set_device(FINSH_DEVICE_NAME);
 #endif
 #endif
 

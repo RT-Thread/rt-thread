@@ -20,15 +20,17 @@
 /**
  * @addtogroup FM3 MB9B500
  */
+ 
 /*@{*/
 
 /* RT-Thread Device Interface */
+
 /**
  * This function initializes serial
  */
-static rt_err_t rt_serial_init (rt_device_t dev)
+static rt_err_t rt_serial_init(rt_device_t dev)
 {
-	struct serial_device* uart = (struct serial_device*) dev->user_data;
+	struct serial_device *uart = (struct serial_device*)dev->user_data;
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 	{
@@ -53,7 +55,7 @@ static rt_err_t rt_serial_init (rt_device_t dev)
 }
 
 /* save a char to serial buffer */
-static void rt_serial_savechar(struct serial_device* uart, char ch)
+static void rt_serial_savechar(struct serial_device *uart, char ch)
 {
 	rt_base_t level;
 	
@@ -79,10 +81,10 @@ static void rt_serial_savechar(struct serial_device* uart, char ch)
 
 static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	struct serial_device* uart;
+	struct serial_device *uart;
 	
 	RT_ASSERT(dev != RT_NULL);
-	uart = (struct serial_device*) dev->user_data;
+	uart = (struct serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -95,10 +97,10 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 
 static rt_err_t rt_serial_close(rt_device_t dev)
 {	
-	struct serial_device* uart;
+	struct serial_device *uart;
 	
 	RT_ASSERT(dev != RT_NULL);
-	uart = (struct serial_device*) dev->user_data;
+	uart = (struct serial_device*)dev->user_data;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -109,12 +111,12 @@ static rt_err_t rt_serial_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, 
+static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void *buffer, 
                                  rt_size_t size)
 {
-	rt_uint8_t* ptr;
+	rt_uint8_t *ptr;
 	rt_err_t err_code;
-	struct serial_device* uart;
+	struct serial_device *uart;
 	
 	ptr = buffer;
 	err_code = RT_EOK;
@@ -165,15 +167,16 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer,
 
 	/* set error code */
 	rt_set_errno(err_code);
+	
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, 
-                                  const void* buffer, rt_size_t size)
+static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, 
+                                 const void *buffer, rt_size_t size)
 {
-	rt_uint8_t* ptr;
+	rt_uint8_t *ptr;
 	rt_err_t err_code;
-	struct serial_device* uart;
+	struct serial_device *uart;
 	
 	err_code = RT_EOK;
 	ptr = (rt_uint8_t*)buffer;
@@ -219,7 +222,8 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos,
 			while (!(uart->uart_device->SSR & SSR_TDRE));
 			uart->uart_device->TDR = (*ptr & 0x1FF);
 
-			++ptr; --size;
+			++ptr;
+			--size;
 		}
 	}	
 
@@ -229,7 +233,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos,
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_serial_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	RT_ASSERT(dev != RT_NULL);
 
@@ -252,7 +256,7 @@ static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 /*
  * serial register
  */
-rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, 
+rt_err_t rt_hw_serial_register(rt_device_t device, const char *name, 
                                rt_uint32_t flag, struct serial_device *serial)
 {
 	RT_ASSERT(device != RT_NULL);
@@ -275,7 +279,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name,
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(rt_device_t device)
 {
-	struct serial_device* uart = (struct serial_device*) device->user_data;
+	struct serial_device *uart = (struct serial_device*)device->user_data;
 	
 	/* interrupt mode receive */	
 	RT_ASSERT(device->flag & RT_DEVICE_FLAG_INT_RX);
@@ -299,6 +303,30 @@ void rt_hw_serial_isr(rt_device_t device)
 		device->rx_indicate(device, rx_length);
 	}	
 }
+
+#ifdef RT_USING_UART0
+/* UART0 device driver structure */
+#define UART0	FM3_MFS0_UART
+struct serial_int_rx uart0_int_rx;
+struct serial_device uart0 =
+{
+	UART0,
+	MFS0RX_IRQn,
+	MFS0TX_IRQn,
+	&uart0_int_rx,
+	RT_NULL
+};
+struct rt_device uart0_device;
+
+void MFS0RX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_serial_isr(&uart0_device);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
 
 #ifdef RT_USING_UART2
 /* UART2 device driver structure */
@@ -326,6 +354,24 @@ void MFS2RX_IRQHandler(void)
 
 void rt_hw_serial_init(void)
 {	
+#ifdef RT_USING_UART0
+	/* initialize UART0 */
+    /* Set Uart Ch0 Port, SIN0_0, SOT0_0 */
+    FM3_GPIO->PFR2 = FM3_GPIO->PFR2 | 0x0006;
+    FM3_GPIO->EPFR07 = FM3_GPIO->EPFR07 | 0x00000040;	
+
+	uart0.uart_device->SMR	= SMR_MD_UART | SMR_SOE;;
+	uart0.uart_device->BGR	= (40000000UL + (BPS/2))/BPS - 1;
+	uart0.uart_device->ESCR	= ESCR_DATABITS_8;
+	uart0.uart_device->SCR	= SCR_RXE | SCR_TXE | SCR_RIE;
+
+	/* register UART2 device */
+	rt_hw_serial_register(&uart0_device, 
+		"uart0", 
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+		&uart0);
+#endif
+
 #ifdef RT_USING_UART2
 	/* initialize UART2 */
     /* Set Uart Ch2 Port, SIN2_1, SOT2_1 */

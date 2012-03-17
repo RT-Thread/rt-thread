@@ -1,7 +1,7 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011 RT-Thread Develop Team
+ * COPYRIGHT (C) 2009 - 2012 RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -31,7 +31,6 @@ extern const uint32_t SystemFrequency;
 
 /**
  * This is the timer interrupt service routine.
- *
  */
 void SysTick_Handler(void)
 {
@@ -45,7 +44,7 @@ void SysTick_Handler(void)
 }
 
 /**
-* This function will initial FM3 Easy Kit board.
+ * This function will initial FM3 Easy Kit board.
  */
 void rt_hw_board_init(void)
 {
@@ -55,7 +54,7 @@ void rt_hw_board_init(void)
 	/* initialize UART device */
 	rt_hw_serial_init();
 	/* set console as UART device */
-	rt_console_set_device("uart2");
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 	
 	/* initialize nand flash device */
 	rt_hw_nand_init();

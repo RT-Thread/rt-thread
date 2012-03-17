@@ -15,12 +15,12 @@
 
 #define RT_CONSOLE_FOREPIXEL	(0x001f)
 
-extern struct serial_device uart2;
+extern struct serial_device uart0;
 
 struct rt_console
 {
-	rt_uint8_t* video_ptr;
-	rt_uint8_t* font_ptr;
+	rt_uint8_t *video_ptr;
+	rt_uint8_t *font_ptr;
 
 	/* bpp and pixel of width */
 	rt_uint8_t bpp;
@@ -32,12 +32,12 @@ struct rt_console
 };
 struct rt_console console;
 
-void rt_hw_console_init(rt_uint8_t* video_ptr, rt_uint8_t* font_ptr, rt_uint8_t bpp);
+void rt_hw_console_init(rt_uint8_t *video_ptr, rt_uint8_t *font_ptr, rt_uint8_t bpp);
 void rt_hw_console_newline(void);
 void rt_hw_console_putc(char c);
 void rt_hw_console_clear(void);
 
-void rt_hw_console_init(rt_uint8_t* video_ptr, rt_uint8_t* font_ptr, rt_uint8_t bpp)
+void rt_hw_console_init(rt_uint8_t *video_ptr, rt_uint8_t *font_ptr, rt_uint8_t bpp)
 {
 	rt_memset(&console, 0, sizeof(struct rt_console));
 
@@ -53,74 +53,75 @@ void rt_hw_console_putc(char c)
 {
 	switch (c)
 	{
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-			/* to next line */
-            rt_hw_console_newline();
-            console.current_col = 0;
-            break;
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+		/* to next line */
+        rt_hw_console_newline();
+        console.current_col = 0;
+        break;
 
-        case 9:
-            console.current_col += RT_CONSOLE_TAB;
-            break;
+    case 9:
+        console.current_col += RT_CONSOLE_TAB;
+        break;
 
-        default:
+    default:
+		{
+			rt_uint8_t *font_ptr;
+			register rt_uint32_t cursor;
+			register rt_uint32_t i, j;
+
+			if (console.current_col == RT_CONSOLE_COL)
 			{
-				rt_uint8_t* font_ptr;
-				register rt_uint32_t cursor;
-				register rt_uint32_t i, j;
+				rt_hw_console_newline();
+				console.current_col = 0;
 
-				if (console.current_col == RT_CONSOLE_COL)
+				rt_hw_console_putc(c);
+				
+				return;
+			}
+
+			font_ptr = console.font_ptr + c * RT_CONSOLE_FONT_HEIGHT;
+			cursor = (console.current_row * RT_CONSOLE_FONT_HEIGHT) * console.pitch
+				+ console.current_col * RT_CONSOLE_FONT_WIDTH * console.bpp;
+
+			for (i = 0; i < RT_CONSOLE_FONT_HEIGHT; i ++ )
+			{
+				for (j = 0; j < RT_CONSOLE_FONT_WIDTH; j ++)
 				{
-					rt_hw_console_newline();
-					console.current_col = 0;
-
-					rt_hw_console_putc(c);
-					return;
-				}
-
-				font_ptr = console.font_ptr + c * RT_CONSOLE_FONT_HEIGHT;
-				cursor = (console.current_row * RT_CONSOLE_FONT_HEIGHT) * console.pitch
-					+ console.current_col * RT_CONSOLE_FONT_WIDTH * console.bpp;
-
-				for (i = 0; i < RT_CONSOLE_FONT_HEIGHT; i ++ )
-				{
-					for (j = 0; j < RT_CONSOLE_FONT_WIDTH; j ++)
+					if (((font_ptr[i] >> (7-j)) & 0x01) != 0)
 					{
-						if ( ((font_ptr[i] >> (7-j)) & 0x01) != 0 )
+						/* draw a pixel */
+						rt_uint8_t *ptr = &(console.video_ptr[cursor + i * console.pitch + j * console.bpp]);
+						switch (console.bpp)
 						{
-							/* draw a pixel */
-							rt_uint8_t *ptr = &(console.video_ptr[cursor + i * console.pitch + j * console.bpp]);
-							switch(console.bpp)
-							{
-							case 1:
-								*ptr = RT_CONSOLE_FOREPIXEL;
-								break;
-							case 2:
-								*(rt_uint16_t*)ptr = RT_CONSOLE_FOREPIXEL;
-								break;
-							case 3:
-								ptr[0] = RT_CONSOLE_FOREPIXEL & 0xff;
-								ptr[1] = (RT_CONSOLE_FOREPIXEL >> 8) & 0xff;
-								ptr[2] = (RT_CONSOLE_FOREPIXEL >> 16) & 0xff;
-								break;
-							case 4:
-								*(rt_uint32_t*)ptr = RT_CONSOLE_FOREPIXEL;
-								break;
-							}
+						case 1:
+							*ptr = RT_CONSOLE_FOREPIXEL;
+							break;
+						case 2:
+							*(rt_uint16_t*)ptr = RT_CONSOLE_FOREPIXEL;
+							break;
+						case 3:
+							ptr[0] = RT_CONSOLE_FOREPIXEL & 0xff;
+							ptr[1] = (RT_CONSOLE_FOREPIXEL >> 8) & 0xff;
+							ptr[2] = (RT_CONSOLE_FOREPIXEL >> 16) & 0xff;
+							break;
+						case 4:
+							*(rt_uint32_t*)ptr = RT_CONSOLE_FOREPIXEL;
+							break;
 						}
 					}
 				}
-
-				console.current_col ++;
 			}
-			break;
+
+			console.current_col ++;
+		}
+		break;
 	}
 }
 
-void rt_hw_console_newline()
+void rt_hw_console_newline(void)
 {
 	console.current_row ++;
 	if (console.current_row >= RT_CONSOLE_ROW)
@@ -144,7 +145,7 @@ void rt_hw_console_newline()
 	}
 }
 
-void rt_hw_console_clear()
+void rt_hw_console_clear(void)
 {
 	console.current_col = 0;
 	console.current_row = 0;
@@ -159,10 +160,12 @@ void rt_hw_serial_putc(const char c)
 		to be polite with serial console add a line feed
 		to the carriage return character
 	*/
-	if (c=='\n')rt_hw_serial_putc('\r');
+	if (c=='\n')
+		rt_hw_serial_putc('\r');
 
-	while (!(uart2.uart_device->SSR & SSR_TDRE));
-	uart2.uart_device->TDR = (c & 0x1FF);
+	while (!(uart0.uart_device->SSR & SSR_TDRE))
+		;
+	uart0.uart_device->TDR = (c & 0x1FF);
 }
 
 /**
@@ -170,7 +173,7 @@ void rt_hw_serial_putc(const char c)
  *
  * @param str the displayed string
  */
-void rt_hw_console_output(const char* str)
+void rt_hw_console_output(const char *str)
 {
 	while (*str)
 	{
