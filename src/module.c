@@ -911,7 +911,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 	rt_kprintf("rt_module_unload: %s\n", module->parent.name);
 
 	/* module has entry point */
-	if ((module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY) != RT_MODULE_FLAG_WITHOUTENTRY)
+	if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
 	{
 		/* suspend module main thread */
 		if (module->module_thread != RT_NULL)
@@ -1109,7 +1109,10 @@ rt_err_t rt_module_unload(rt_module_t module)
 	}
 #endif
 
-	rt_free(module->page_array);
+#ifdef RT_USING_SLAB
+	if(module->page_array != RT_NULL) 
+		rt_free(module->page_array);
+#endif
 
 	/* delete module object */
 	rt_object_delete((rt_object_t)module);
