@@ -374,15 +374,15 @@ static struct rt_module* _load_shared_object(const char *name, void *module_ptr)
 	if (module_size == 0)
 	{
 		rt_kprintf(" module size error\n");
-
-		return module;
+		return RT_NULL;
 	}	
 
 	/* allocate module */
 	module = (struct rt_module *)rt_object_allocate(RT_Object_Class_Module, name);
-	if (!module)
-		return RT_NULL;
+	if (!module) return RT_NULL;
 
+	module->nref = 0;
+	
 	/* allocate module space */
 	module->module_space = rt_malloc(module_size);
 	if (module->module_space == RT_NULL)
@@ -774,10 +774,10 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
 	if (elf_module->e_entry != 0)
 	{	
+#ifdef RT_USING_SLAB
 		/* init module memory allocator */
 		module->mem_list = RT_NULL;
 
-#ifdef RT_USING_SLAB
 		/* create page array */
 		module->page_array = (void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
 		module->page_cnt = 0;
@@ -1527,7 +1527,6 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
 		}
 	}
 }
-#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -1566,6 +1565,8 @@ void list_mempage(const char *name)
 	}
 }
 FINSH_FUNCTION_EXPORT(list_mempage, list module using memory page information)
+#endif
+
 #endif
 
 #endif

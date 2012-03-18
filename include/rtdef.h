@@ -781,10 +781,12 @@ struct rt_module
 	rt_uint32_t stack_size;                         /**< priority of module's thread                */
 	rt_uint32_t thread_priority;
 
+#ifdef RT_USING_SLAB
 	/* module memory allocator */
 	void        *mem_list;                          /**< module's free memory list                  */
 	void        *page_array;                        /**< module's using pages                       */
 	rt_uint32_t page_cnt;                           /**< module's using pages count                 */
+#endif
 
 	rt_uint32_t nsym;                               /**< number of symbol in the module             */
 	struct rt_module_symtab *symtab;                /**< module symbol table                        */
