@@ -372,7 +372,6 @@ rt_uint8_t rt_interrupt_get_nest(void);
  * general kernel service
  */
 void rt_kprintf(const char *fmt, ...);
-rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
