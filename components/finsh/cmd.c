@@ -81,7 +81,7 @@ static long _list_thread(struct rt_list_node* list)
 	for (node = list->next; node != list; node = node->next)
 	{
 		thread = rt_list_entry(node, struct rt_thread, list);
-		rt_kprintf("%-8s 0x%02x", thread->name, thread->current_priority);
+		rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
 
 		if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
 		else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
