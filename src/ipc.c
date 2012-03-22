@@ -469,6 +469,8 @@ rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void *arg)
 		/* enable interrupt */
 		rt_hw_interrupt_enable(level);
 
+		rt_schedule();
+
 		return RT_EOK;
 	}
 
@@ -1153,6 +1155,8 @@ rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg)
 		/* enable interrupt */
 		rt_hw_interrupt_enable(level);
 
+		rt_schedule();
+
 		return RT_EOK;
 	}
 
@@ -1597,7 +1601,6 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
 
 		/* resume all waiting thread */
 		rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
-
 		/* also resume all mailbox private suspended thread */
 		rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
 
@@ -1608,6 +1611,8 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
 
 		/* enable interrupt */
 		rt_hw_interrupt_enable(level);
+
+		rt_schedule();
 
 		return RT_EOK;
 	}
@@ -2143,6 +2148,8 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
 
 		/* enable interrupt */
 		rt_hw_interrupt_enable(level);
+
+		rt_schedule();
 
 		return RT_EOK;
 	}

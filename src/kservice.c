@@ -20,6 +20,9 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+/* use precision */
+#define RT_PRINTF_PRECISION
+
 /**
  * @addtogroup KernelService
  */
@@ -754,11 +757,11 @@ static rt_int32_t vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list 
 #endif
 		/* get the conversion qualifier */
 		qualifier = 0;
-		if (*fmt == 'h' || *fmt == 'l'
 #ifdef RT_PRINTF_LONGLONG
-				|| *fmt == 'L'
+		if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
+#else
+		if (*fmt == 'h' || *fmt == 'l')
 #endif
-		   )
 		{
 			qualifier = *fmt;
 			++ fmt;
