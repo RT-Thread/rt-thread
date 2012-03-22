@@ -22,8 +22,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "kservice.h"
-
 #ifdef RT_USING_MEMPOOL
 
 #ifdef RT_USING_HOOK

@@ -40,8 +40,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "kservice.h"
-
 #ifdef RT_USING_HOOK
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);

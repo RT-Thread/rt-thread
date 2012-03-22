@@ -14,7 +14,6 @@
  */
 
 #include <rtthread.h>
-#include "kservice.h"
 
 #ifdef RT_USING_DEVICE
 

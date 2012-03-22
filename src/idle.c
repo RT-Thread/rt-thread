@@ -15,7 +15,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "kservice.h"
 
 #ifndef IDLE_THREAD_STACK_SIZE
 #if defined (RT_USING_HOOK) || defined(RT_USING_HEAP)

@@ -21,7 +21,6 @@
 #include <rtm.h>
 
 #include "string.h"
-#include "kservice.h"
 
 #ifdef RT_USING_MODULE
 #include "module.h"

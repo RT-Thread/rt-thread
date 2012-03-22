@@ -54,7 +54,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "kservice.h"
 
 #define RT_MEM_STATS
 

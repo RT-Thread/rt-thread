@@ -22,8 +22,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "kservice.h"
-
 /* hard timer list */
 static rt_list_t rt_timer_list;
 

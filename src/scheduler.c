@@ -29,8 +29,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "kservice.h"
-
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
 

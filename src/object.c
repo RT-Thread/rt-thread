@@ -20,8 +20,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "kservice.h"
-
 #define _OBJ_CONTAINER_LIST_INIT(c) 	\
 	{&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
 struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
