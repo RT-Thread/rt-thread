@@ -13,7 +13,6 @@
  */
 
 #include <rtthread.h>
-#include "rt_list.h"
 #include "at91sam926x.h"
 
 static rt_list_t clocks;
