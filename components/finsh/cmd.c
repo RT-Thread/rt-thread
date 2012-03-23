@@ -30,13 +30,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-// Copy from kservice.h because we can not use it out of the kernel.
-// Ugly. Should let kservice.h available for applications?
-rt_inline int rt_list_isempty(const rt_list_t *l)
-{
-	return l->next == l;
-}
-
 rt_inline unsigned int rt_list_len(const rt_list_t *l)
 {
 	unsigned int len = 0;
