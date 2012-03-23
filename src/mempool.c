@@ -17,6 +17,7 @@
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete
  * 2011-01-24     Bernard      add object allocation check.
+ * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
  */
 
 #include <rthw.h>
@@ -85,24 +86,26 @@ rt_err_t rt_mp_init(struct rt_mempool *mp, const char *name, void *start, rt_siz
 	/* parameter check */
 	RT_ASSERT(mp != RT_NULL);
 
-	/* init object */
+	/* initialize object */
 	rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
 
-	/* init memory pool */
+	/* initialize memory pool */
 	mp->start_address = start;
 	mp->size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
+	/* align the block size */
+	block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
 	mp->block_size = block_size;
 
 	/* align to align size byte */
 	mp->block_total_count = mp->size / (mp->block_size + sizeof(rt_uint8_t *));
 	mp->block_free_count = mp->block_total_count;
 
-	/* init suspended thread list */
+	/* initialize suspended thread list */
 	rt_list_init(&(mp->suspend_thread));
 	mp->suspend_thread_count = 0;
 
-	/* init free block list */
+	/* initialize free block list */
 	block_ptr = (rt_uint8_t *)mp->start_address;
 	for (offset = 0; offset < mp->block_total_count; offset ++)
 	{
@@ -132,7 +135,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 	/* parameter check */
 	RT_ASSERT(mp != RT_NULL);
 
-	/* wakeup all suspended threads */
+	/* wake up all suspended threads */
 	while (!rt_list_isempty(&(mp->suspend_thread)))
 	{
 		/* disable interrupt */
@@ -186,8 +189,9 @@ rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_si
 	if (mp == RT_NULL)
 		return RT_NULL; /* allocate object failed */
 
-	/* init memory pool */
-	mp->block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+	/* initialize memory pool */
+	block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+	mp->block_size = block_size;
 	mp->size = (block_size + sizeof(rt_uint8_t *)) * block_count;
 
 	/* allocate memory */
@@ -203,11 +207,11 @@ rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_si
 	mp->block_total_count = block_count;
 	mp->block_free_count = mp->block_total_count;
 
-	/* init suspended thread list */
+	/* initialize suspended thread list */
 	rt_list_init(&(mp->suspend_thread));
 	mp->suspend_thread_count = 0;
 
-	/* init free block list */
+	/* initialize free block list */
 	block_ptr = (rt_uint8_t *)mp->start_address;
 	for (offset = 0; offset < mp->block_total_count; offset ++)
 	{
@@ -239,7 +243,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 	/* parameter check */
 	RT_ASSERT(mp != RT_NULL);
 
-	/* wakeup all suspended threads */
+	/* wake up all suspended threads */
 	while (!rt_list_isempty(&(mp->suspend_thread)))
 	{
 		/* disable interrupt */
