@@ -84,8 +84,6 @@ if GetDepend(['RT_LWIP_PPP']):
 if GetDepend(['RT_USING_NETUTILS']):
     src += Glob('./apps/*.c')
 
-# group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
-# Switch to this branch after lwip1.4 is stable enough.
-group = DefineGroup('LwIP', src, depend = ['NOT_USED'], CPPPATH = path)
+group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 
 Return('group')
