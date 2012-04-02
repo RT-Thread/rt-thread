@@ -13,6 +13,10 @@
 #include "drivers/mtd.h"
 #endif
 
+#ifdef RT_USING_MTD_NAND
+#include "drivers/mtd_nand.h"
+#endif
+
 #ifdef RT_USING_USB_DEVICE
 #include "drivers/usb_device.h"
 #endif

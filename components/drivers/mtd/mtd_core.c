@@ -75,5 +75,4 @@ rt_err_t rt_mtd_register_device(const char* name, struct rt_mtd_device* device)
 	/* register to RT-Thread device system */
 	return rt_device_register(dev, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 }
-
 #endif

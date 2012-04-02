@@ -90,4 +90,6 @@ rt_inline rt_err_t rt_mtd_erase_block(struct rt_mtd_device* device, rt_uint32_t 
 	return device->ops->erase_block(device, block);
 }
 
+
+
 #endif
