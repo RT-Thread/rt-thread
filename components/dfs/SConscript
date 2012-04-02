@@ -30,22 +30,29 @@ filesystems/devfs/console.c
 """)
 
 # DFS-YAFFS2 options
-yaffs2_main = Split("""
-filesystems/yaffs2/direct/yaffscfg.c
-filesystems/yaffs2/direct/yaffs_fileem.c
-filesystems/yaffs2/direct/yaffsfs.c
-filesystems/yaffs2/direct/dfs_yaffs2.c
-""")
+yaffs2_src = Split("""
+filesystems/yaffs2/dfs_yaffs2.c
+filesystems/yaffs2/yaffs_nand_config.c
+filesystems/yaffs2/yaffs_osglue.c
 
-yaffs2_comm = Split("""
-filesystems/yaffs2/yaffs_ecc.c
-filesystems/yaffs2/yaffs_guts.c
-filesystems/yaffs2/yaffs_packedtags1.c
-filesystems/yaffs2/yaffs_tagscompat.c
-filesystems/yaffs2/yaffs_packedtags2.c
-filesystems/yaffs2/yaffs_tagsvalidity.c
-filesystems/yaffs2/yaffs_nand.c
+filesystems/yaffs2/yaffs_allocator.c
+filesystems/yaffs2/yaffs_bitmap.c
 filesystems/yaffs2/yaffs_checkptrw.c
+filesystems/yaffs2/yaffs_ecc.c  
+filesystems/yaffs2/yaffs_guts.c
+filesystems/yaffs2/yaffs_nameval.c
+filesystems/yaffs2/yaffs_nand.c
+filesystems/yaffs2/yaffs_packedtags1.c
+filesystems/yaffs2/yaffs_packedtags2.c
+filesystems/yaffs2/yaffs_summary.c
+filesystems/yaffs2/yaffs_tagscompat.c
+filesystems/yaffs2/yaffs_verify.c
+filesystems/yaffs2/yaffs_yaffs1.c
+filesystems/yaffs2/yaffs_yaffs2.c
+filesystems/yaffs2/yaffs_attribs.c
+filesystems/yaffs2/yaffsfs.c
+filesystems/yaffs2/yaffs_hweight.c
+filesystems/yaffs2/yaffs_nandif.c
 filesystems/yaffs2/yaffs_qsort.c
 """)
 
@@ -71,6 +78,7 @@ filesystems/uffs/src/uffs/uffs_buf.c
 filesystems/uffs/src/uffs/uffs_debug.c
 filesystems/uffs/src/uffs/uffs_device.c
 filesystems/uffs/src/uffs/uffs_ecc.c
+filesystems/uffs/src/uffs/uffs_crc.c
 filesystems/uffs/src/uffs/uffs_fd.c
 filesystems/uffs/src/uffs/uffs_find.c
 filesystems/uffs/src/uffs/uffs_flash.c
@@ -83,15 +91,11 @@ filesystems/uffs/src/uffs/uffs_public.c
 filesystems/uffs/src/uffs/uffs_tree.c
 filesystems/uffs/src/uffs/uffs_utils.c
 filesystems/uffs/src/uffs/uffs_version.c
-filesystems/uffs/dfs_uffs.c
-''')
 
-others = '''
-filesystems/uffs/dfs_nand_if.c
-filesystems/uffs/uffs_ext.c
-filesystems/uffs/flash/k9f2g08.c
-filesystems/uffs/flash/nand_ids.c
-'''
+filesystems/uffs/dfs_uffs.c
+filesystems/uffs/uffs_nandif.c
+filesystems/uffs/uffs_rtthread.c
+''')
 
 jffs2 = Split('''
 filesystems/jffs2/dfs_jffs2.c
@@ -139,10 +143,9 @@ CPPDEFINES = []
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
 
-if GetDepend('RT_USING_DFS_YAFFS2'):
-    src_local = src_local + yaffs2_main + yaffs2_comm
-    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2', \
-        RTT_ROOT + '/components/dfs/filesystems/yaffs2/direct']
+#if GetDepend('RT_USING_DFS_YAFFS2'):
+#    src_local = src_local + yaffs2_src
+#    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2']
 
 if GetDepend('RT_USING_DFS_ELMFAT'):
     if GetDepend('RT_DFS_ELM_USE_LFN'):
@@ -164,8 +167,8 @@ if GetDepend('RT_USING_DFS_DEVFS'):
 if GetDepend('RT_USING_DFS_UFFS'):
     src_local = src_local + uffs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/uffs/src/inc', \
-        RTT_ROOT + '/components/dfs/filesystems/uffs', \
-        RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
+        RTT_ROOT + '/components/dfs/filesystems/uffs'] #, \
+        # RTT_ROOT + '/components/dfs/filesystems/uffs/flash']
 
 if GetDepend('RT_USING_DFS_JFFS2'):
     src_local = src_local + jffs2
