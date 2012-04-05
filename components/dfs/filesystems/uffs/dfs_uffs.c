@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2011-10-22     prife        the first version
  * 2012-03-28     prife        use mtd device interface
+ * 2012-04-05     prife        update uffs with official repo and use uffs_UnMount/Mount
 */
 #include <rtthread.h>
 
@@ -24,9 +25,6 @@
 #include "uffs/uffs_mem.h"
 #include "uffs/uffs_utils.h"
 
-static URET uffs_mount_device(struct uffs_MountTableEntrySt *work);
-static URET uffs_unmount_device(struct uffs_MountTableEntrySt *work);
-static URET uffs_UnRegisterMountTable(uffs_MountTable *mtab);
 /*
  * RT-Thread DFS Interface for uffs
  */
@@ -139,7 +137,7 @@ static int init_uffs_fs(
 		uffs_RegisterMountTable(mtb);
 	}
 	/* mount uffs partion on nand device */
-	return uffs_mount_device(mtb) == U_SUCC ? 0 : -1;
+	return uffs_Mount(nand_part->mount_path) == U_SUCC ? 0 : -1;
 }
 
 static int dfs_uffs_mount(
@@ -197,7 +195,7 @@ static int dfs_uffs_unmount(struct dfs_filesystem* fs)
 		if (nand_part[index].dev == RT_MTD_NAND_DEVICE(fs->dev_id))
 		{
 			nand_part[index].dev = RT_NULL;
-			result = uffs_unmount_device(& nand_part[index].mount_table);
+			result = uffs_UnMount(nand_part[index].mount_path);
 			if (result != U_SUCC)
 				break;
 
@@ -230,7 +228,7 @@ static int dfs_uffs_mkfs(const char* device_name)
 	}
 
 	/*2. then unmount the partition */
-	uffs_mount_device(&nand_part[index].mount_table);
+	uffs_Mount(nand_part[index].mount_path);
 	mtd = nand_part[index].dev;
 
 	/*3. erase all blocks on the partition */
@@ -662,72 +660,4 @@ int dfs_uffs_init(void)
 		}
 	}
 	return -RT_ERROR;
-}
-
-/* */
-#include "uffs/uffs_public.h"
-
-static URET uffs_mount_device(struct uffs_MountTableEntrySt *work)
-{
-	int dev_num = 0;
-
-	work->dev->par.start = work->start_block;
-	if (work->end_block < 0) {
-		work->dev->par.end =
-			work->dev->attr->total_blocks + work->end_block;
-	}
-	else {
-		work->dev->par.end = work->end_block;
-	}
-
-	if (work->dev->Init(work->dev) == U_FAIL) {
-		return U_FAIL;
-	}
-
-	if (uffs_InitDevice(work->dev) != U_SUCC) {
-		return U_FAIL;
-	}
-	work->dev->dev_num = dev_num++;
-
-	return U_SUCC;
-}
-
-static URET uffs_unmount_device(struct uffs_MountTableEntrySt *work)
-{
-	int result;
-
-	result = uffs_ReleaseDevice(work->dev);
-	work->dev->Release(work->dev);
-	return result;
-#if 0
-	if (uffs_ReleaseObjectBuf() == U_SUCC) {
-		if (uffs_DirEntryBufRelease() == U_SUCC) {
-			uffs_ReleaseGlobalFsLock();
-			return U_SUCC;
-		}
-	}
-
-	return U_FAIL;
-#endif
-}
-
-static URET uffs_UnRegisterMountTable(uffs_MountTable *mtab)
-{
-	struct uffs_MountTableEntrySt *tbl = uffs_GetMountTable();
-
-	if (tbl == NULL || mtab == NULL)
-		return U_FAIL;
-
-	while (tbl)
-	{
-		if (tbl == mtab)
-		{
-			tbl = mtab->next;
-			mtab->next = NULL;
-			return U_SUCC;
-		}
-		tbl = tbl->next;
-	}
-
-	return U_FAIL;
 }
