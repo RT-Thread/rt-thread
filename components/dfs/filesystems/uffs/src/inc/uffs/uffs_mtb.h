@@ -49,24 +49,31 @@ extern "C"{
 
 
 typedef struct uffs_MountTableEntrySt {
-	uffs_Device *dev;
-	int start_block;
-	int end_block;
-	const char *mount;
+	uffs_Device *dev;		// UFFS 'device' - core internal data structure for partition
+	int start_block;		// partition start block
+	int end_block;			// partition end block ( if < 0, reserve space form the end of storage)
+	const char *mount;		// mount point
+	struct uffs_MountTableEntrySt *prev;
 	struct uffs_MountTableEntrySt *next;
 } uffs_MountTable;
 
-/** initialize registered mount table */
-URET uffs_InitMountTable(void);									
+/** Register mount entry, will be put at 'unmounted' list */
+int uffs_RegisterMountTable(uffs_MountTable *mtb);
 
-/** release registered mount table */
-URET uffs_ReleaseMountTable(void);								
+/** Remove mount entry from the list */
+int uffs_UnRegisterMountTable(uffs_MountTable *mtb);
 
-/** get registered mount table */
-uffs_MountTable * uffs_GetMountTable(void);						
+/** mount partition */
+int uffs_Mount(const char *mount);
 
-/** register mount table */
-int uffs_RegisterMountTable(uffs_MountTable *mtab);				
+/** unmount parttion */
+int uffs_UnMount(const char *mount);
+
+/** get mounted entry list */
+uffs_MountTable * uffs_MtbGetMounted(void);
+
+/** get unmounted entry list */
+uffs_MountTable * uffs_MtbGetUnMounted(void);
 
 /** get matched mount point from absolute path */
 int uffs_GetMatchedMountPointSize(const char *path);			

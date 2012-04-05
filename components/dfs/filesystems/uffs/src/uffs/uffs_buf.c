@@ -212,8 +212,10 @@ URET uffs_BufReleaseAll(uffs_Device *dev)
 		return U_FAIL;
 	}
 
-	if (dev->mem.free)
+	if (dev->mem.free) {
 		dev->mem.free(dev, dev->buf.pool);
+		dev->mem.pagebuf_pool_size = 0;
+	}
 
 	dev->buf.pool = NULL;
 	dev->buf.head = dev->buf.tail = NULL;

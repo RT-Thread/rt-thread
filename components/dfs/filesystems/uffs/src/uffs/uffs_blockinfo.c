@@ -160,6 +160,7 @@ URET uffs_BlockInfoReleaseCache(uffs_Device *dev)
 		}
 		if (dev->mem.free) {
 			dev->mem.free(dev, dev->bc.mem_pool);
+			dev->mem.blockinfo_pool_size = 0;
 		}
 	}
 

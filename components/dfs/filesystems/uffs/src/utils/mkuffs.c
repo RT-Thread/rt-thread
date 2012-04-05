@@ -138,11 +138,13 @@ static int init_uffs_fs(void)
 		0,			// bc_caches - default
 		0,			// page_buffers - default
 		0,			// dirty_pages - default
-		0,			// dirty_groups - force 1
+		0,			// dirty_groups - default
 		0,			// reserved_free_blocks - default
 	};
 
-	if(bIsFileSystemInited) return -4;
+	if (bIsFileSystemInited)
+		return -4;
+
 	bIsFileSystemInited = 1;
 
 	while (mtbl->dev) {
@@ -157,13 +159,26 @@ static int init_uffs_fs(void)
 		mtbl++;
 	}
 
-	return uffs_InitMountTable() == U_SUCC ? 0 : -1;
+	// mount partitions
+	for (mtbl = &(conf_mounts[0]); mtbl->mount != NULL; mtbl++) {
+		uffs_Mount(mtbl->mount);
+	}
+
+	return uffs_InitFileSystemObjects() == U_SUCC ? 0 : -1;
 }
 
 static int release_uffs_fs(void)
 {
-	int ret;
-	ret = uffs_ReleaseMountTable();
+	int ret = 0;
+	uffs_MountTable *mtb;
+
+	for (mtb = &(conf_mounts[0]); ret == 0 && mtb->mount != NULL; mtb++) {
+		uffs_UnMount(mtb->mount);
+	}
+
+	if (ret == 0)
+		ret = (uffs_ReleaseFileSystemObjects() == U_SUCC ? 0 : -1);
+
 	return ret;
 }
 
@@ -357,6 +372,7 @@ static int parse_options(int argc, char *argv[])
     }
 
 	if (m_idx == 0) {
+		// if not given mount information, use default ('/' for whole partition)
 		parse_mount_point("/,0,-1", 0);
 	}
 

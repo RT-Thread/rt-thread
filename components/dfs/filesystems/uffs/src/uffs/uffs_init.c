@@ -42,6 +42,7 @@
 #include "uffs/uffs_tree.h"
 #include "uffs/uffs_fs.h"
 #include "uffs/uffs_badblock.h"
+#include "uffs/uffs_utils.h"
 #include <string.h>
 
 #define PFX "init: "
@@ -178,3 +179,26 @@ ext:
 
 }
 
+URET uffs_InitFileSystemObjects(void)
+{
+	if (uffs_InitObjectBuf() == U_SUCC) {
+		if (uffs_DirEntryBufInit() == U_SUCC) {
+			uffs_InitGlobalFsLock();
+			return U_SUCC;
+		}
+	}
+
+	return U_FAIL;
+}
+
+URET uffs_ReleaseFileSystemObjects(void)
+{
+	if (uffs_ReleaseObjectBuf() == U_SUCC) {
+		if (uffs_DirEntryBufRelease() == U_SUCC) {
+			uffs_ReleaseGlobalFsLock();
+			return U_SUCC;
+		}
+	}
+
+	return U_FAIL;
+}

@@ -325,9 +325,8 @@ int uffs_DirEntryBufPutAll(uffs_Device *dev);
 URET uffs_InitDevice(uffs_Device *dev);
 URET uffs_ReleaseDevice(uffs_Device *dev);
 
-
-URET uffs_InitFlashClass(uffs_Device *dev);
-
+URET uffs_InitFileSystemObjects(void);
+URET uffs_ReleaseFileSystemObjects(void);
 
 
 #ifdef __cplusplus

@@ -124,12 +124,17 @@ static int init_uffs_fs(void)
 	/* register mount table */
 	uffs_RegisterMountTable(mtbl);
 
-	return uffs_InitMountTable() == U_SUCC ? 0 : -1;
+	/* mount it */
+	uffs_Mount("/");
+
+	return uffs_InitFileSystemObjects() == U_SUCC ? 0 : -1;
 }
 
 static int release_uffs_fs(void)
 {
-	return uffs_ReleaseMountTable();
+	uffs_UnMount("/");
+
+	return uffs_ReleaseFileSystemObjects();
 }
 
 int main(int argc, char *argv[])

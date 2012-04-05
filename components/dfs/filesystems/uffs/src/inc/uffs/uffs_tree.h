@@ -68,7 +68,7 @@ struct BlockListSt {	/* 12 bytes */
 	union {
 		u16 serial;    /* for suspended block list */
 		u8 need_check; /* for erased block list */
-	}u;
+	} u;
 };
 
 struct DirhSt {		/* 8 bytes */

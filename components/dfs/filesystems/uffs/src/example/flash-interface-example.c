@@ -387,8 +387,30 @@ static int my_init_filesystem(void)
 		uffs_RegisterMountTable(mtbl);
 		mtbl++;
 	}
-	
-	return uffs_InitMountTable() == U_SUCC ? 0 : -1;
+
+	// mount partitions
+	for (mtbl = &(demo_mount_table[0]); mtbl->mount != NULL; mtbl++) {
+		uffs_Mount(mtbl->mount);
+	}
+
+	return uffs_InitFileSystemObjects() == U_SUCC ? 0 : -1;
+}
+
+static int my_release_filesystem(void)
+{
+	uffs_MountTable *mtb;
+	int ret = 0;
+
+	// unmount parttions
+	for (mtb = &(demo_mount_table[0]); ret == 0 && mtb->mount != NULL; mtb++) {
+		ret = uffs_UnMount(mtb->mount);
+	}
+
+	// release objects
+	if (ret == 0)
+		ret = (uffs_ReleaseFileSystemObjects() == U_SUCC ? 0 : -1);
+
+	return ret;
 }
 
 /* application entry */
@@ -401,7 +423,7 @@ int main()
 	// ... my application codes ....
 	// read/write/create/delete files ...
 
-	uffs_ReleaseMountTable();
+	my_release_filesystem();
 
 	return 0;
 }

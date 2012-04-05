@@ -106,6 +106,7 @@ URET uffs_GetObjectInfo(uffs_Object *obj, uffs_ObjectInfo *info, int *err)
 			// this is ROOT. UFFS does not physically has root, just fake it ...
 			memset(info, 0, sizeof(uffs_ObjectInfo));
 			info->serial = obj->serial;
+			info->info.attr |= (FILE_ATTR_DIR | FILE_ATTR_WRITE);
 			if (err)
 				*err = UENOERR;
 			ret = U_SUCC;

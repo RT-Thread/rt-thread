@@ -47,110 +47,222 @@
 
 #define PFX "mtb : "
 
-static struct uffs_MountTableEntrySt *g_mtb_head = NULL;
+static struct uffs_MountTableEntrySt *m_head = NULL;		// list of mounted entries
+static struct uffs_MountTableEntrySt *m_free_head = NULL;	// list of unmounted entries
 
-uffs_MountTable * uffs_GetMountTable(void)
+/** Return mounted entries header */
+uffs_MountTable * uffs_MtbGetMounted(void)
 {
-	return g_mtb_head;
+	return m_head;
 }
 
-int uffs_RegisterMountTable(uffs_MountTable *mtab)
+/** Return unmounted entries header */
+uffs_MountTable * uffs_MtbGetUnMounted(void)
 {
-	uffs_MountTable *work = g_mtb_head;
+	return m_free_head;
+}
 
-	if (mtab == NULL) 
+/**
+ * \brief Register mount table
+ * \param mtb mount table entry
+ * \return 0 succ
+ *         -1 failed (e.g. already registered and mounted)
+ */
+int uffs_RegisterMountTable(uffs_MountTable *mtb)
+{
+	uffs_MountTable *work = NULL;
+	static int dev_num = 0;
+
+	if (mtb == NULL) 
 		return -1;
 
-	if (work == NULL) {
-		g_mtb_head = mtab;
-		return 0;
+	for (work = m_head; work; work = work->next) {
+		if (work == mtb)
+			return -1; // already mounted ?
 	}
 
-	while (work) {
-		if (mtab == work) {
-			/* already registered */
-			return 0;
-		}
-		if (work->next == NULL) {
-			work->next = mtab;
-			mtab->next = NULL;
-			return 0;
-		}
-		work = work->next;
+	for (work = m_free_head; work; work = work->next) {
+		if (work == mtb)
+			return 0; // already registered.
 	}
 
-	return -1;
+	/* replace the free head */
+	if (m_free_head)
+		m_free_head->prev = mtb;
+	mtb->prev = NULL;
+	mtb->next = m_free_head;
+	m_free_head = mtb;
+	
+	mtb->dev->dev_num = ++dev_num;
+
+	return 0;
 }
 
-
-URET uffs_InitMountTable(void)
+/**
+ * \brief Remove mount entry from the table
+ * \param mtb mount table entry
+ * \return 0 removed succ
+ *         -1 entry in used or not in the 'unmounted' list
+ */
+int uffs_UnRegisterMountTable(uffs_MountTable *mtb)
 {
-	struct uffs_MountTableEntrySt *tbl = uffs_GetMountTable();
-	struct uffs_MountTableEntrySt *work;
-	int dev_num = 0;
+	uffs_MountTable *work = NULL;
 
-	for (work = tbl; work; work = work->next) {
-		uffs_Perror(UFFS_MSG_NOISY,
-					"init device for mount point %s ...",
-					work->mount);
+	if (mtb == NULL)
+		return -1;
 
-		work->dev->par.start = work->start_block;
-		if (work->end_block < 0) {
-			work->dev->par.end = 
-				work->dev->attr->total_blocks + work->end_block;
-		}
-		else {
-			work->dev->par.end = work->end_block;
-		}
-
-		if (work->dev->Init(work->dev) == U_FAIL) {
-			uffs_Perror(UFFS_MSG_SERIOUS,
-						"init device for mount point %s fail",
-						work->mount);
-			return U_FAIL;
-		}
-
-		uffs_Perror(UFFS_MSG_NOISY, "mount partiton: %d,%d",
-			work->dev->par.start, work->dev->par.end);
-
-		if (uffs_InitDevice(work->dev) != U_SUCC) {
-			uffs_Perror(UFFS_MSG_SERIOUS, "init device fail !");
-			return U_FAIL;
-		}
-		work->dev->dev_num = dev_num++;
+	for (work = m_head; work; work = work->next) {
+		if (work == mtb)
+			return -1;	// in the mounted list ? busy, return
 	}
 
-	if (uffs_InitObjectBuf() == U_SUCC) {
-		if (uffs_DirEntryBufInit() == U_SUCC) {
-			uffs_InitGlobalFsLock();
-			return U_SUCC;
+	for (work = m_free_head; work; work = work->next) {
+		if (work == mtb) {
+			// found, remove it from the list
+			if (work->next)
+				work->next->prev = work->prev;
+			if (work->prev)
+				work->prev->next = work->next;
+			if (work == m_free_head)
+				m_free_head = work->next;
+
+			break;
 		}
 	}
 
-	return U_FAIL;
+	return work ? 0 : -1;
 }
 
-URET uffs_ReleaseMountTable(void)
+static uffs_MountTable * uffs_GetMountTableByMountPoint(const char *mount, uffs_MountTable *head)
 {
-	struct uffs_MountTableEntrySt *tbl = uffs_GetMountTable();
-	struct uffs_MountTableEntrySt *work;
+	uffs_MountTable *work = NULL;
 
-	for (work = tbl; work; work = work->next) {
-		uffs_ReleaseDevice(work->dev);
-		work->dev->Release(work->dev);
-	}
-
-	if (uffs_ReleaseObjectBuf() == U_SUCC) {
-		if (uffs_DirEntryBufRelease() == U_SUCC) {
-			uffs_ReleaseGlobalFsLock();
-			return U_SUCC;
-		}
-	}
-
-	return U_FAIL;
+	for (work = head; work; work = work->next) {
+		if (strcmp(work->mount, mount) == 0)
+			break;
+	}	
+	return work;
 }
 
+/**
+ * \brief mount partition
+ * \param[in] mount partition mount point
+ * \return 0 succ
+ *         <0 fail
+ *
+ * \note use uffs_RegisterMountTable() register mount entry before you can mount it.
+ *       mount point should ended with '/', e.g. '/sys/'
+ */
+int uffs_Mount(const char *mount)
+{
+	uffs_MountTable *mtb;
 
+	if (uffs_GetMountTableByMountPoint(mount, m_head) != NULL) {
+		uffs_Perror(UFFS_MSG_NOISY,	"'%s' already mounted", mount);
+		return -1; // already mounted ?
+	}
+	
+	mtb = uffs_GetMountTableByMountPoint(mount, m_free_head);
+	if (mtb == NULL) {
+		uffs_Perror(UFFS_MSG_NOISY,	"'%s' not registered", mount);
+		return -1;	// not registered ?
+	}
+
+	uffs_Perror(UFFS_MSG_NOISY,
+				"init device for mount point %s ...",
+				mtb->mount);
+
+	mtb->dev->par.start = mtb->start_block;
+	if (mtb->end_block < 0) {
+		mtb->dev->par.end = 
+			mtb->dev->attr->total_blocks + mtb->end_block;
+	}
+	else {
+		mtb->dev->par.end = mtb->end_block;
+	}
+
+	if (mtb->dev->Init(mtb->dev) == U_FAIL) {
+		uffs_Perror(UFFS_MSG_SERIOUS,
+					"init device for mount point %s fail",
+					mtb->mount);
+		return -1;
+	}
+
+	uffs_Perror(UFFS_MSG_NOISY, "mount partiton: %d,%d",
+		mtb->dev->par.start, mtb->dev->par.end);
+
+	if (uffs_InitDevice(mtb->dev) != U_SUCC) {
+		uffs_Perror(UFFS_MSG_SERIOUS, "init device fail !");
+		return -1;
+	}
+
+	/* now break it from unmounted list */
+	if (mtb->prev)
+		mtb->prev->next = mtb->next;
+	if (mtb->next)
+		mtb->next->prev = mtb->prev;
+	if (m_free_head == mtb)
+		m_free_head = mtb->next;
+
+	/* link to mounted list */
+	mtb->prev = NULL;
+	mtb->next = m_head;
+	if (m_head)
+		m_head->prev = mtb;
+	m_head = mtb;
+
+	return 0;
+}
+
+/**
+ * \brief unmount parttion
+ * \param[in] mount partition mount point
+ * \return 0 succ
+ *         <0 fail
+ */
+int uffs_UnMount(const char *mount)
+{
+	uffs_MountTable *mtb = uffs_GetMountTableByMountPoint(mount, m_head);
+
+	if (mtb == NULL) {
+		uffs_Perror(UFFS_MSG_NOISY,	"'%s' not mounted ?", mount);
+		return -1;  // not mounted ?
+	}
+
+	if (uffs_GetMountTableByMountPoint(mount, m_free_head) != NULL) {
+		uffs_Perror(UFFS_MSG_NOISY,	"'%s' already unmounted ?", mount);
+		return -1;  // already unmounted ?
+	}
+
+	if (mtb->dev->ref_count != 0) {
+		uffs_Perror(UFFS_MSG_NORMAL, "Can't unmount '%s' - busy", mount);
+		return -1;
+	}
+
+	if (uffs_ReleaseDevice(mtb->dev) == U_FAIL) {
+		uffs_Perror(UFFS_MSG_NORMAL, "Can't release device for mount point '%s'", mount);
+		return -1;
+	}
+
+	mtb->dev->Release(mtb->dev);
+
+	// break from mounted list
+	if (mtb->prev)
+		mtb->prev->next = mtb->next;
+	if (mtb->next)
+		mtb->next->prev = mtb->prev;
+	if (mtb == m_head)
+		m_head = mtb->next;
+
+	// put to unmounted list
+	mtb->prev = NULL;
+	mtb->next = m_free_head;
+	if (m_free_head)
+		m_free_head->prev = mtb;
+	m_free_head = mtb;
+
+	return 0;
+}
 
 /**
  * find the matched mount point from a given full absolute path.
@@ -193,14 +305,11 @@ int uffs_GetMatchedMountPointSize(const char *path)
  */
 uffs_Device * uffs_GetDeviceFromMountPoint(const char *mount)
 {
-	struct uffs_MountTableEntrySt *devTab = uffs_GetMountTable();
+	uffs_MountTable *mtb = uffs_GetMountTableByMountPoint(mount, m_head);
 
-	while (devTab) {
-		if (strcmp(mount, devTab->mount) == 0) {
-			devTab->dev->ref_count++;
-			return devTab->dev;
-		}
-		devTab = devTab->next;
+	if (mtb) {
+		mtb->dev->ref_count++;
+		return mtb->dev;
 	}
 
 	return NULL;
@@ -215,15 +324,14 @@ uffs_Device * uffs_GetDeviceFromMountPoint(const char *mount)
  */
 uffs_Device * uffs_GetDeviceFromMountPointEx(const char *mount, int len)
 {
-	struct uffs_MountTableEntrySt *devTab = uffs_GetMountTable();
+	uffs_MountTable *work = NULL;
 
-	while (devTab) {
-		if (strlen(devTab->mount) == len &&
-				strncmp(mount, devTab->mount, len) == 0) {
-			devTab->dev->ref_count++;
-			return devTab->dev;
+	for (work = m_head; work; work = work->next) {
+		if (strlen(work->mount) == len &&
+				strncmp(mount, work->mount, len) == 0) {
+			work->dev->ref_count++;
+			return work->dev;
 		}
-		devTab = devTab->next;
 	}
 
 	return NULL;
@@ -239,13 +347,12 @@ uffs_Device * uffs_GetDeviceFromMountPointEx(const char *mount, int len)
  */
 const char * uffs_GetDeviceMountPoint(uffs_Device *dev)
 {
-	struct uffs_MountTableEntrySt * devTab = uffs_GetMountTable();
+	uffs_MountTable *work = NULL;
 
-	while (devTab) {
-		if (devTab->dev == dev) {
-			return devTab->mount;
+	for (work = m_head; work; work = work->next) {
+		if (work->dev == dev) {
+			return work->mount;
 		}
-		devTab = devTab->next;
 	}
 
 	return NULL;	

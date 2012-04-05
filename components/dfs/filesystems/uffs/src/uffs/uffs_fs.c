@@ -966,8 +966,20 @@ static int do_WriteObject(uffs_Object *obj, const void *data, int len)
 			size = do_WriteNewBlock(obj, data ? (u8 *)data + len - remain : NULL,
 										remain, fnode->u.file.serial, fdn);
 
-			// Flush immediately, so that the new data node will be
+			//
+			// Flush the new block buffers immediately, so that the new data node will be
 			// created and put in the tree.
+			//
+			// But before do that, we need to make sure the previous
+			// data block (if exist) been flushed first.
+			//
+			if (fdn > 1) {
+				uffs_BufFlushGroup(dev, fnode->u.file.serial, fdn - 1);
+			}
+			else {
+				uffs_BufFlushGroup(dev, fnode->u.file.parent, fnode->u.file.serial);
+			}
+			// Now flush the new block.
 			uffs_BufFlushGroup(dev, fnode->u.file.serial, fdn);
 
 			if (size == 0) 
