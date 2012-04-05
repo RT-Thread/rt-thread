@@ -533,16 +533,52 @@ fail:
 	return ret;
 }
 
-/** show mount table
- *		mount
+/** mount partition or show mounted partitions
+ *		mount [<mount>]
  */
 static int cmd_mount(int argc, char *argv[])
 {
-	uffs_MountTable *tab = uffs_GetMountTable();
+	uffs_MountTable *tab;
+	const char *mount = NULL;
 
-	while (tab) {
-		MSGLN(" %s : (%d) ~ (%d)", tab->mount, tab->start_block, tab->end_block);
-		tab = tab->next;
+	if (argc == 1) {
+		tab = uffs_MtbGetMounted();
+		while (tab) {
+			MSG(" %s : (%d) ~ (%d)\n", tab->mount, tab->start_block, tab->end_block);
+			tab = tab->next;
+		}
+	}
+	else {
+		mount = argv[1];
+		if (uffs_Mount(mount) < 0) {
+			MSGLN("Can't mount %s", mount);
+			return -1;
+		}
+	}
+	return 0;
+}
+
+/** unmount parition or show unmounted partitions
+ *		umount [<mount>]
+ */
+static int cmd_unmount(int argc, char *argv[])
+{
+	uffs_MountTable *tab;
+	const char *mount = NULL;
+
+	if (argc == 1) {
+		tab = uffs_MtbGetUnMounted();
+		while (tab) {
+			MSG(" %s : (%d) ~ (%d)\n", tab->mount, tab->start_block, tab->end_block);
+			tab = tab->next;
+		}
+	}
+	else {
+		mount = argv[1];
+		if (uffs_UnMount(mount) < 0) {
+			MSGLN("Can't unmount %s", mount);
+			return -1;
+		}
 	}
 
 	return 0;
@@ -640,7 +676,8 @@ static const struct cli_command helper_cmds[] =
     { cmd_cat,		"cat",			"<name>",			"show file content" },
     { cmd_pwd,		"pwd",			NULL,				"show current dir" },
     { cmd_cd,		"cd",			"<path>",			"change current dir" },
-    { cmd_mount,	"mount",		NULL,				"list mounted file systems" },
+    { cmd_mount,	"mount",		"[<mount>]",		"mount partition or list mounted partitions" },
+    { cmd_unmount,	"umount",		"[<mount>]",		"unmount partition" },
 	{ cmd_dump,		"dump",			"[<mount>]",		"dump file system", },
 	{ cmd_wl,		"wl",			"[<mount>]",		"show block wear-leveling info", },
 	{ cmd_inspb,	"inspb",		"[<mount>]",		"inspect buffer", },
