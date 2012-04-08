@@ -43,7 +43,7 @@
 
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
-#include <arch/sys_arch_init.h>
+//#include <arch/sys_arch_init.h>
 #include "macb.h"
 #endif
 
@@ -128,10 +128,9 @@ void rt_init_thread_entry(void* parameter)
 		eth_system_device_init();
 		rt_hw_macb_init();
 		/* re-init device driver */
-		//rt_device_init_all();
+		rt_device_init_all();
 		/* init lwip system */
 		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
 	}
 #endif
 

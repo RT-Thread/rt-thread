@@ -324,13 +324,15 @@ void macb_update_link(struct rt_macb_eth *macb)
 			rt_kprintf("%s: link up (%dMbps/%s-duplex)\n",
 					dev->parent.name, macb->speed,
 					DUPLEX_FULL == macb->duplex ? "Full":"Half");
-			macb->parent.link_status = 1;
+			//macb->parent.link_status = 1;
+			//netif_set_link_up(macb->parent.netif);
 		} else {
 			rt_kprintf("%s: link down\n", dev->parent.name);
-					macb->parent.link_status = 0;
+					//macb->parent.link_status = 0;
+			//netif_set_link_down(macb->parent.netif);
 		}
 
-		eth_device_linkchange(&macb->parent, RT_TRUE);
+		//eth_device_linkchange(&macb->parent, RT_TRUE);
 	}
 
 }
