@@ -67,18 +67,18 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/components/net/lwip-1.4.0/src',
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/include',
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/include/ipv4',
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/arch/include',
-    RTT_ROOT + '/components/net/lwip-1.4.0/src/include/netif']
+path = [RTT_ROOT + '/components/net/lwip/src',
+    RTT_ROOT + '/components/net/lwip/src/include',
+    RTT_ROOT + '/components/net/lwip/src/include/ipv4',
+    RTT_ROOT + '/components/net/lwip/src/arch/include',
+    RTT_ROOT + '/components/net/lwip/src/include/netif']
 
 if GetDepend(['RT_LWIP_SNMP']):
     src += snmp_src
 
 if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
-    path += [RTT_ROOT + '/components/net/lwip-1.4.0/src/netif/ppp']
+    path += [RTT_ROOT + '/components/net/lwip/src/netif/ppp']
 
 # For testing apps
 if GetDepend(['RT_USING_NETUTILS']):
