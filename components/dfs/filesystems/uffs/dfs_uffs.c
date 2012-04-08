@@ -48,6 +48,7 @@ static int uffs_result_to_dfs(int result)
 {
 	int status = -1;
 
+	result = result < 0 ? -result : result;
 	switch (result)
 	{
 	case UENOERR:/** no error */
@@ -270,7 +271,7 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
 	
 	buf->f_bsize = mtd->page_size;
 	buf->f_blocks = (mtd->block_size)/(mtd->page_size)*
-	                (mtd->block_start - mtd->block_end + 1);
+	                (mtd->block_end - mtd->block_start + 1);
 	buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev) / mtd->page_size;
 	
 	return 0;
