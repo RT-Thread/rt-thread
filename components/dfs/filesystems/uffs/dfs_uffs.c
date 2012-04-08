@@ -76,7 +76,7 @@ static int uffs_result_to_dfs(int result)
 		status = -DFS_STATUS_EBADF;
 		break;
 	case UENOMEM:/** no enough memory */
-		status = -DFS_STATUS_ENOMEM;
+		status = -DFS_STATUS_ENOSPC;
 		break;
 	case UEIOERR: /** I/O error from lower level flash operation */
 		status = -DFS_STATUS_EIO;
