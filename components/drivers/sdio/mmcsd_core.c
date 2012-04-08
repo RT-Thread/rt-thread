@@ -622,6 +622,11 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
 
 	rt_memset(host, 0, sizeof(struct rt_mmcsd_host));
 
+	host->max_seg_size = 65535;
+	host->max_dma_segs = 1;
+	host->max_blk_size = 512;
+	host->max_blk_count = 4096;
+
 	rt_sem_init(&host->bus_lock, "sd_bus_lock", 1, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
 
