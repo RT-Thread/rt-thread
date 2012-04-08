@@ -276,17 +276,10 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
 	return 0;
 }
 
-struct _uffs_data
-{
-	int fd; /* the handle of an open file/entry */
-	char * path; /* the path of the file/entry */
-};
-
 static int dfs_uffs_open(struct dfs_fd* file)
 {
 	int fd;
 	int oflag, mode;
-	struct _uffs_data * uffs_data;
 	char * file_path;
 
 	oflag = file->flags;
@@ -344,18 +337,10 @@ static int dfs_uffs_open(struct dfs_fd* file)
 		return uffs_result_to_dfs(uffs_get_error());
 	}
 
-	uffs_data = rt_malloc(sizeof(struct _uffs_data));
-	if (uffs_data == RT_NULL)
-		return -DFS_STATUS_ENOMEM;
-
-	/* save file info */
-	uffs_data->fd = fd;
-	uffs_data->path = file->path;
-
 	/* save this pointer, it will be used when calling read()£¬write(),
 	 * flush(), seek(), and will be free when calling close()*/
 
-	file->data = uffs_data;
+	file->data = (void *)fd;
 	file->pos  = uffs_seek(fd, 0, USEEK_CUR);
 	file->size = uffs_seek(fd, 0, USEEK_END);
 	uffs_seek(fd, file->pos, USEEK_SET);
@@ -370,7 +355,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 static int dfs_uffs_close(struct dfs_fd* file)
 {
 	int oflag;
-	struct _uffs_data * uffs_data;
+	int fd;
 
 	oflag = file->flags;
 	if (oflag & DFS_O_DIRECTORY)
@@ -382,15 +367,10 @@ static int dfs_uffs_close(struct dfs_fd* file)
 		return 0;
 	}
 	/* regular file operations */
-	uffs_data = (struct _uffs_data *)(file->data);
-	RT_ASSERT(uffs_data != RT_NULL);
+	fd = (int)(file->data);
 
-	if (uffs_close(uffs_data->fd) == 0)
-	{
-		/* release memory */
-		rt_free(uffs_data);
+	if (uffs_close(fd) == 0)
 		return 0;
-	}
 
 	return uffs_result_to_dfs(uffs_get_error());
 }
@@ -403,13 +383,9 @@ static int dfs_uffs_ioctl(struct dfs_fd * file, int cmd, void* args)
 static int dfs_uffs_read(struct dfs_fd * file, void* buf, rt_size_t len)
 {
 	int fd;
-	struct _uffs_data * uffs_data;
 	int char_read;
 
-	uffs_data = (struct _uffs_data *)(file->data);
-	RT_ASSERT(uffs_data != RT_NULL);
-
-	fd = uffs_data->fd;
+	fd = (int)(file->data);
 	char_read = uffs_read(fd, buf, len);
 	if (char_read < 0)
 		return uffs_result_to_dfs(uffs_get_error());
@@ -424,12 +400,9 @@ static int dfs_uffs_write(struct dfs_fd* file,
                    rt_size_t len)
 {
 	int fd;
-	struct _uffs_data * uffs_data;
 	int char_write;
 
-	uffs_data = (struct _uffs_data *)(file->data);
-	RT_ASSERT(uffs_data != RT_NULL);
-	fd = uffs_data->fd;
+	fd = (int)(file->data);
 
 	char_write = uffs_write(fd, buf, len);
 	if (char_write < 0)
@@ -444,11 +417,8 @@ static int dfs_uffs_flush(struct dfs_fd* file)
 {
 	int fd;
 	int result;
-	struct _uffs_data * uffs_data;
 
-	uffs_data = (struct _uffs_data *)(file->data);
-	RT_ASSERT(uffs_data != RT_NULL);
-	fd = uffs_data->fd;
+	fd = (int)(file->data);
 
 	result = uffs_flush(fd);
 	if (result < 0 )
@@ -460,12 +430,9 @@ static int dfs_uffs_seek(struct dfs_fd* file,
                   rt_off_t offset)
 {
 	int fd;
-	struct _uffs_data * uffs_data;
 	int result;
 
-	uffs_data = (struct _uffs_data *)(file->data);
-	RT_ASSERT(uffs_data != RT_NULL);
-	fd = uffs_data->fd;
+	fd = (int)(file->data);
 
 	/* set offset as current offset */
 	result = uffs_seek(fd, offset, USEEK_SET);
