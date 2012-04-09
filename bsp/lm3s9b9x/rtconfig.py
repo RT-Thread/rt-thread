@@ -1,7 +1,12 @@
+import os
+
 # toolchains options
 ARCH='arm'
 CPU='cortex-m3'
 CROSS_TOOL 	= 'keil'
+
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
 
 #device options
 PART_TYPE = 'PART_LM3S9B96'
@@ -12,6 +17,15 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
+elif CROSS_TOOL == 'iar':	
+    print '================ERROR============================'
+    print 'Not support iar yet!'
+    print '================================================='
+    exit(0)
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':

@@ -1,8 +1,13 @@
+import os
+
 # toolchains options
 ARCH     = 'arm'
 CPU      = 'sep4020'
 
 CROSS_TOOL 	= 'keil'
+
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
@@ -10,6 +15,15 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'c:/Keil'
+elif CROSS_TOOL == 'iar':
+    print '================ERROR============================'
+    print 'Not support iar yet!'
+    print '================================================='
+    exit(0)
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -65,14 +79,3 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-
-    CFLAGS = ''
-    AFLAGS = ''
-    LFLAGS = ''

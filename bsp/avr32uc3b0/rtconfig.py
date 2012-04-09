@@ -1,3 +1,4 @@
+import os
 
 # toolchains options
 ARCH     = 'avr32'
@@ -7,9 +8,26 @@ BOARD    = 'USERBOARD'
 
 CROSS_TOOL 	= 'gcc'
 
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
+
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'C:/Program Files/Atmel/AVR Tools/AVR Toolchain/bin'
+elif CROSS_TOOL == 'keil':
+    print '================ERROR============================'
+    print 'Not support keil yet!'
+    print '================================================='
+    exit(0)
+elif CROSS_TOOL == 'iar':
+    print '================ERROR============================'
+    print 'Not support iar yet!'
+    print '================================================='
+    exit(0)
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
 #BUILD = 'debug'
 BUILD = 'release'
 
