@@ -74,7 +74,7 @@ void rt_console_init(const char* device_name)
 		console->parent.close   = console_close;
 		console->parent.read 	= console_read;
 		console->parent.write   = console_write;
-		console->parent.control	= RT_NULL;
+		console->parent.control	= console_control;
 		console->parent.user_data = RT_NULL;
 
 		console->device = device;
