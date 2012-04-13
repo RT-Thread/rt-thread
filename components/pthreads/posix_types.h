@@ -14,6 +14,8 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#define ESHUTDOWN 180
+
 #else
 
 /* ARM compiler and IAR compiler */
