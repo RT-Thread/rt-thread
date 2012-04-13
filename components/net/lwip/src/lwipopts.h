@@ -3,9 +3,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(RT_USING_MINILIBC)
-#define ERRNO						1
-#endif
+#define ERRNO                       1
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
@@ -32,16 +30,16 @@
 #ifdef RT_LWIP_DNS
 #define LWIP_DNS                    1
 #else
-#define LWIP_DNS					0
+#define LWIP_DNS                    0
 #endif
 
-#define LWIP_HAVE_LOOPIF            1
+#define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
 /* Enable SO_RCVTIMEO processing.   */
-#define LWIP_SO_RCVTIMEO 			1
+#define LWIP_SO_RCVTIMEO            1
 
 /* #define RT_LWIP_DEBUG */
 
@@ -52,7 +50,7 @@
 /* ---------- Debug options ---------- */
 #ifdef LWIP_DEBUG
 #define SYS_DEBUG                   LWIP_DBG_OFF
-#define ETHARP_DEBUG				LWIP_DBG_OFF
+#define ETHARP_DEBUG                LWIP_DBG_OFF
 #define PPP_DEBUG                   LWIP_DBG_OFF
 #define MEM_DEBUG                   LWIP_DBG_OFF
 #define MEMP_DEBUG                  LWIP_DBG_OFF
@@ -92,15 +90,15 @@
 #define mem_calloc                  rt_calloc
 
 #ifdef RT_LWIP_USING_RT_MEM
-#define MEMP_MEM_MALLOC				1
+#define MEMP_MEM_MALLOC             1
 #else
-#define MEMP_MEM_MALLOC				0
+#define MEMP_MEM_MALLOC             0
 #endif
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
-#define MEMP_NUM_PBUF               32
+#define MEMP_NUM_PBUF               16
 
 /* the number of UDP protocol control blocks. One per active RAW "connection". */
 #ifdef RT_LWIP_RAW_PCB_NUM
@@ -124,14 +122,14 @@
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
    timeouts. */
-#define MEMP_NUM_SYS_TIMEOUT        8
+#define MEMP_NUM_SYS_TIMEOUT        3
 
 /* The following four are used only with the sequential API and can be
    set to 0 if the application only will use the raw API. */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
 #define MEMP_NUM_NETBUF             2
 /* MEMP_NUM_NETCONN: the number of struct netconns. */
-#define MEMP_NUM_NETCONN            10
+#define MEMP_NUM_NETCONN            4
 /* MEMP_NUM_TCPIP_MSG_*: the number of struct tcpip_msg, which is used
    for sequential API communication and incoming packets. Used in
    src/api/tcpip.c. */
@@ -152,7 +150,7 @@
 #define PBUF_LINK_HLEN              16
 
 #ifdef RT_LWIP_ETH_PAD_SIZE
-#define ETH_PAD_SIZE				RT_LWIP_ETH_PAD_SIZE
+#define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
 
 /** SYS_LIGHTWEIGHT_PROT
@@ -176,13 +174,13 @@
 #define TCP_QUEUE_OOSEQ             1
 
 /* TCP Maximum segment size. */
-#define TCP_MSS                     1024
+#define TCP_MSS                     1460
 
 /* TCP sender buffer space (bytes). */
 #ifdef RT_LWIP_TCP_SND_BUF
 #define TCP_SND_BUF                 RT_LWIP_TCP_SND_BUF
 #else
-#define TCP_SND_BUF                 2048
+#define TCP_SND_BUF                 (TCP_MSS * 2)
 #endif
 
 /* TCP sender buffer space (pbufs). This must be at least = 2 *
@@ -196,9 +194,9 @@
 
 /* TCP receive window. */
 #ifdef RT_LWIP_TCP_WND
-#define TCP_WND                 RT_LWIP_TCP_WND
+#define TCP_WND                     RT_LWIP_TCP_WND
 #else
-#define TCP_WND                 1500
+#define TCP_WND                     (TCP_MSS * 2)
 #endif
 
 /* Maximum number of retransmissions of data segments. */
@@ -233,10 +231,10 @@
 
 /* IP reassembly and segmentation.These are orthogonal even
  * if they both deal with IP fragments */
-#define IP_REASSEMBLY               1
+#define IP_REASSEMBLY               0
 #define IP_REASS_MAX_PBUFS          10
 #define MEMP_NUM_REASSDATA          10
-#define IP_FRAG                     1
+#define IP_FRAG                     0
 
 /* ---------- ICMP options ---------- */
 #define ICMP_TTL                    255
@@ -265,7 +263,7 @@
 #define LWIP_UDP                    0
 #endif
 
-#define LWIP_UDPLITE                1
+#define LWIP_UDPLITE                0
 #define UDP_TTL                     255
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
 
@@ -323,7 +321,7 @@
 #endif /* PPP_SUPPORT */
 
 /* no read/write/close for socket */
-#define LWIP_POSIX_SOCKETS_IO_NAMES	0
-
+#define LWIP_POSIX_SOCKETS_IO_NAMES 0
+#define LWIP_NETIF_API  1
 
 #endif /* __LWIPOPTS_H__ */
