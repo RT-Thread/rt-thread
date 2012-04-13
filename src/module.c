@@ -468,19 +468,6 @@ static struct rt_module* _load_shared_object(const char *name, void *module_ptr)
 		}
 	}
 
-#if 0
-	for (index = 0; index < elf_module->e_shnum; index ++)
-	{
-		/* find .dynsym section */
-		rt_uint8_t* shstrab = (rt_uint8_t*) module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
-		if (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_GOT) == 0)
-		{
-			rt_hw_set_got_base(module->module_space + shdr[index].sh_offset);
-			break;
-		}
-	}
-#endif
-
 	/* construct module symbol table */
 	for (index = 0; index < elf_module->e_shnum; index ++)
 	{	
@@ -664,13 +651,13 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("rodata\n"));
 							rt_module_arm_relocate(module, rel,(Elf32_Addr)(rodata_addr + sym->st_value));
 						}
-						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
+						else if(rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
 						{
 							/* relocate bss section */
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("bss\n"));
 							rt_module_arm_relocate(module, rel, (Elf32_Addr)bss_addr + sym->st_value);
 						}
-						else if(strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_DATA, 6) == 0)
+						else if(rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_DATA, 6) == 0)
 						{
 							/* relocate data section */
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("data\n"));
@@ -703,7 +690,8 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
 					}
 					else
 					{
-						rt_module_arm_relocate(module, rel, addr);
+						rt_module_arm_relocate(module, rel,
+							(Elf32_Addr)((rt_uint8_t*)module->module_space - module_addr + sym->st_value));
 					}
 				}
 				rel ++;
