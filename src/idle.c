@@ -169,7 +169,7 @@ static void rt_thread_idle_entry(void *parameter)
  */
 void rt_thread_idle_init(void)
 {
-	/* init thread */
+	/* initialize thread */
 	rt_thread_init(&idle,
 		"tidle",
 		rt_thread_idle_entry, RT_NULL,
