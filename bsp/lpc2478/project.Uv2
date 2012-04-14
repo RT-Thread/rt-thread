@@ -13,18 +13,19 @@ File 1,1,<applications\application.c><application.c>
 File 1,1,<applications\startup.c><startup.c>
 File 2,1,<drivers\board.c><board.c>
 File 2,1,<drivers\serial.c><serial.c>
+File 3,1,<..\..\src\clock.c><clock.c>
 File 3,1,<..\..\src\device.c><device.c>
-File 3,1,<..\..\src\thread.c><thread.c>
-File 3,1,<..\..\src\scheduler.c><scheduler.c>
-File 3,1,<..\..\src\timer.c><timer.c>
+File 3,1,<..\..\src\idle.c><idle.c>
+File 3,1,<..\..\src\ipc.c><ipc.c>
 File 3,1,<..\..\src\irq.c><irq.c>
 File 3,1,<..\..\src\kservice.c><kservice.c>
-File 3,1,<..\..\src\clock.c><clock.c>
-File 3,1,<..\..\src\object.c><object.c>
-File 3,1,<..\..\src\mempool.c><mempool.c>
-File 3,1,<..\..\src\ipc.c><ipc.c>
-File 3,1,<..\..\src\idle.c><idle.c>
 File 3,1,<..\..\src\mem.c><mem.c>
+File 3,1,<..\..\src\memheap.c><memheap.c>
+File 3,1,<..\..\src\mempool.c><mempool.c>
+File 3,1,<..\..\src\object.c><object.c>
+File 3,1,<..\..\src\scheduler.c><scheduler.c>
+File 3,1,<..\..\src\thread.c><thread.c>
+File 3,1,<..\..\src\timer.c><timer.c>
 File 4,1,<..\..\libcpu\arm\lpc24xx\cpu.c><cpu.c>
 File 4,1,<..\..\libcpu\arm\lpc24xx\interrupt.c><interrupt.c>
 File 4,1,<..\..\libcpu\arm\lpc24xx\stack.c><stack.c>
@@ -47,6 +48,8 @@ File 5,1,<..\..\components\finsh\finsh_var.c><finsh_var.c>
 File 5,1,<..\..\components\finsh\finsh_vm.c><finsh_vm.c>
 File 5,1,<..\..\components\finsh\shell.c><shell.c>
 File 5,1,<..\..\components\finsh\symbol.c><symbol.c>
+
+
 
 
 Options 1,0,0  // Target 'RT-Thread LPC2478'

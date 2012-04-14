@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
-
   <SchemaVersion>1.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rtthread-fm3</TargetName>
@@ -15,25 +12,25 @@
           <Device>MB9BF506N</Device>
           <Vendor>Fujitsu Semiconductors</Vendor>
           <Cpu>IRAM(0x20000000-0x20007FFF) IRAM2(0x1FFF8000-0x1FFFFFFF) IROM(0x00000000-0x0007FFFF) CLOCK(4000000) CPUTYPE("Cortex-M3")</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
+          <FlashUtilSpec />
           <StartupFile>"Startup\Fujitsu\MB9B500\startup_MB9BF50x.s" ("Fujitsu MB9BF50x Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0MB9BFx06_512 -FS00 -FL080000)</FlashDriverDll>
           <DeviceId>5215</DeviceId>
           <RegisterFile>MB9BF506N.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>SFD\Fujitsu\MB9B500\MB9BF506N.SFR</SFDFile>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
           <RegisterFilePath>Fujitsu\MB9B500\</RegisterFilePath>
           <DBRegisterFilePath>Fujitsu\MB9B500\</DBRegisterFilePath>
           <TargetStatus>
@@ -57,29 +54,29 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -93,8 +90,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
@@ -128,7 +125,7 @@
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -138,18 +135,18 @@
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>7</TargetSelection>
           <SimDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <CpuDll />
+            <CpuDllArguments />
+            <PeripheralDll />
+            <PeripheralDllArguments />
+            <InitializationFile />
           </SimDlls>
           <TargetDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <CpuDll />
+            <CpuDllArguments />
+            <PeripheralDll />
+            <PeripheralDllArguments />
+            <InitializationFile />
             <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -164,7 +161,7 @@
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
+          <Flash4 />
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -196,7 +193,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M3"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -327,7 +324,7 @@
                 <Size>0x8000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -343,9 +340,9 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
+              <MiscControls />
+              <Define />
+              <Undefine />
               <IncludePath>.;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS</IncludePath>
             </VariousControls>
           </Cads>
@@ -358,10 +355,10 @@
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -373,12 +370,12 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <ScatterFile></ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
+            <ScatterFile />
+            <IncludeLibs />
+            <IncludeLibsPath />
             <Misc> --keep __fsym_* --keep __vsym_* </Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -391,31 +388,43 @@
               <FileType>1</FileType>
               <FilePath>.\application.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\startup.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\led.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>console.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\console.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>nand.c</FileName>
               <FileType>1</FileType>
@@ -431,56 +440,85 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -496,21 +534,29 @@
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
@@ -526,26 +572,36 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
@@ -561,61 +617,85 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
@@ -631,11 +711,15 @@
               <FileType>1</FileType>
               <FilePath>CMSIS\core_cm3.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_mb9bf50x.c</FileName>
               <FileType>1</FileType>
               <FilePath>CMSIS\system_mb9bf50x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
@@ -646,5 +730,4 @@
       </Groups>
     </Target>
   </Targets>
-
 </Project>
