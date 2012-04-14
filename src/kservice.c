@@ -279,7 +279,7 @@ void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
 		s += n;
 
 		while (n--)
-			*tmp-- = *s--;
+			*(--tmp) = *(--s);
 	}
 	else
 	{
