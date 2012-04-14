@@ -26,6 +26,11 @@ extern "C" {
 /*@{*/
 
 /**
+ * @brief initialize a list object
+ */
+#define RT_LIST_OBJECT_INIT(object) { &(object), &(object) }
+
+/**
  * @brief initialize a list
  *
  * @param l list to be initialized

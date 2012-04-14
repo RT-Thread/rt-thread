@@ -46,6 +46,10 @@ struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
 	/* initialize object container - message queue */
 	{RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MessageQueue), sizeof(struct rt_messagequeue)},
 #endif
+#ifdef RT_USING_MEMHEAP
+	/* initialize object container - memory heap */
+	{RT_Object_Class_MemHeap, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemHeap), sizeof(struct rt_memheap)},
+#endif
 #ifdef RT_USING_MEMPOOL
 	/* initialize object container - memory pool */
 	{RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemPool), sizeof(struct rt_mempool)},

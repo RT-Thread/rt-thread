@@ -21,6 +21,10 @@
 #define RT_DEBUG_MEM        0
 #endif
 
+#ifndef RT_DEBUG_MEMHEAP
+#define RT_DEBUG_MEMHEAP	0
+#endif
+
 #ifndef RT_DEBUG_MODULE
 #define RT_DEBUG_MODULE     0
 #endif

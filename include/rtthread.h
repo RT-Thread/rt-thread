@@ -207,6 +207,18 @@ void rt_free_sethook(void (*hook)(void *ptr));
 
 #endif
 
+#ifdef RT_USING_MEMHEAP
+/**
+ * memory heap object interface
+ */
+rt_err_t rt_memheap_init(struct rt_memheap* memheap, const char* name,
+	void *start_addr, rt_uint32_t size);
+rt_err_t rt_memheap_detach(struct rt_memheap* heap);
+void* rt_memheap_alloc(struct rt_memheap *heap, 	rt_uint32_t size);
+void rt_memheap_free(void* ptr);
+
+#endif
+
 /*@}*/
 
 /**
