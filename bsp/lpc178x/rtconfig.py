@@ -15,8 +15,10 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
-	EXEC_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0/arm/bin'
+    print '================ERROR============================'
+    print 'Not support iar yet!'
+    print '================================================='
+    exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -76,21 +78,3 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = ' --cpu DARMP1 --thumb'
-
-    CFLAGS = ''
-    AFLAGS = ''
-    LFLAGS = ' --config lpc17xx_flash.icf'
-
-    EXEC_PATH += '/arm/bin/'
-    RT_USING_MINILIBC = False
-    POST_ACTION = ''

@@ -16,7 +16,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'E:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	EXEC_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0/arm/bin'
+	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -85,12 +85,37 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' --cpu DARMP1 --thumb'
+    DEVICE = ' --thumb'
 
-    CFLAGS = ''
+    CFLAGS = DEVICE
+    CFLAGS += ' --diag_suppress Pa050'
+    CFLAGS += ' --no_cse' 
+    CFLAGS += ' --no_unroll' 
+    CFLAGS += ' --no_inline' 
+    CFLAGS += ' --no_code_motion' 
+    CFLAGS += ' --no_tbaa' 
+    CFLAGS += ' --no_clustering' 
+    CFLAGS += ' --no_scheduling' 
+    CFLAGS += ' --debug' 
+    CFLAGS += ' --endian=little' 
+    CFLAGS += ' --cpu=Cortex-M3' 
+    CFLAGS += ' -e' 
+    CFLAGS += ' --fpu=None'
+    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' -Ol'    
+    CFLAGS += ' --use_c++_inline'
+        
     AFLAGS = ''
-    LFLAGS = ' --config lpc17xx_flash.icf'
+    AFLAGS += ' -s+' 
+    AFLAGS += ' -w+' 
+    AFLAGS += ' -r' 
+    AFLAGS += ' --cpu Cortex-M3' 
+    AFLAGS += ' --fpu None'
 
-    EXEC_PATH += '/arm/bin/'
+    LFLAGS = ' --config lpc17xx_flash.icf'
+    LFLAGS += ' --semihosting' 
+    LFLAGS += ' --entry __iar_program_start'    
+
+    EXEC_PATH = IAR_PATH + '/arm/bin/'
     RT_USING_MINILIBC = False
     POST_ACTION = ''

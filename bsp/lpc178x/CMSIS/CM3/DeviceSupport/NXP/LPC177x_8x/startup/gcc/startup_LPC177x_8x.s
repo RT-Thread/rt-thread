@@ -129,7 +129,7 @@ __cs3_interrupt_vector_cortex_m:
     .type   __cs3_reset_cortex_m, %function
 __cs3_reset_cortex_m:
     .fnstart
-.if (RAM_MODE)
+#if (RAM_MODE)
 /* Clear .bss section (Zero init) */
 	MOV     R0, #0
 	LDR     R1, =__bss_start__
@@ -147,12 +147,12 @@ BSSIsEmpty:
     BLX     R0
     LDR     R0,=main
     BX      R0
-.else
+#else
     LDR     R0, =SystemInit
     BLX     R0
 	LDR     R0,=_start
     BX      R0
-.endif
+#endif
     .pool
     .cantunwind
     .fnend

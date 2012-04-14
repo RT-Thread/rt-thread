@@ -17,8 +17,10 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'E:/Program Files/IAR Systems/Embedded Workbench 6.0'
+    print '================ERROR============================'
+    print 'Not support iar yet!'
+    print '================================================='
+    exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
