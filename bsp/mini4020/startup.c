@@ -15,9 +15,10 @@
 
 #define SDRAM_BASE	0x30000000
 
-
 #ifdef __CC_ARM
 extern int Image$$RW_RAM1$$ZI$$Limit;
+#elif (defined (__GNUC__))
+	extern unsigned char __bss_end;
 #endif
 
 extern void rt_application_init(void);
