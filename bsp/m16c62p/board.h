@@ -16,6 +16,9 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#define M16C62P_SRAM_SIZE         31L
+#define M16C62P_SRAM_END          (0x400 + M16C62P_SRAM_SIZE * 1024 - 1)
+
 void rt_hw_board_init(void);
 
 #endif

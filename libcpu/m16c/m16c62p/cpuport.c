@@ -88,3 +88,23 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
     }
     rt_interrupt_to_thread = to;  
 }
+
+#if defined(__GNUC__)
+rt_base_t rt_hw_interrupt_disable(void)
+{
+	register rt_uint16_t temp;
+	
+	asm("STC  FLG, %0":"=r" (temp));
+	asm("FCLR I");
+	
+	return (rt_base_t)temp;
+}
+
+void rt_hw_interrupt_enable(rt_base_t level)
+{
+	register rt_uint16_t temp;
+	
+	temp = level & 0xffff;	
+	asm("LDC %0, FLG": :"r" (temp));	
+}
+#endif

@@ -30,16 +30,16 @@ struct rt_uart_m16c
 	rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 }uart_device;
 
-void  u0rec_handler(void)
+void u0rec_handler(void)
 {
 	rt_ubase_t level;
-	rt_uint8_t	 c;
+	rt_uint8_t c;
 
-    struct rt_uart_m16c* uart = &uart_device;
+	struct rt_uart_m16c *uart = &uart_device;
 
-	while(ri_u0c1 == 0)
+	while (U0C1.BIT.RI == 0)
 		;
-	c = (char) u0rb;
+	c = U0RB.BYTE.U0RBL;
 
 	/* Receive Data Available */
     uart->rx_buffer[uart->save_index] = c;
@@ -51,7 +51,7 @@ void  u0rec_handler(void)
     rt_hw_interrupt_enable(level);
 
 	/* invoke callback */
-	if(uart->parent.rx_indicate != RT_NULL)
+	if (uart->parent.rx_indicate != RT_NULL)
 	{
 	    rt_size_t length;
 	    if (uart->read_index > uart->save_index)
@@ -70,10 +70,10 @@ static rt_err_t rt_uart_init (rt_device_t dev)
           bit rate = ((BRG count source / 16)/baud rate) - 1
           Baud rate is based on main crystal or PLL not CPU core clock */
 	//pclk1 = 1;   /// seleck F1SIO
-    u0brg = (unsigned char)(((CPU_CLK_FREQ/16)/BAUD_RATE)-1);   //(N+1)
+    U0BRG = (unsigned char)(((CPU_CLK_FREQ/16)/BAUD_RATE)-1);   //(N+1)
 
     /* UART Transmit/Receive Control Register 2 */
-    ucon = 0x00;
+    UCON.BYTE = 0x00;
          /*   00000000
           b0    U0IRS       UART0 transmit irq cause select bit, 0 = transmit buffer empty
           b1    U1IRS       UART1 transmit irq cause select bit, 0 = transmit buffer empty
@@ -86,7 +86,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 
     /* UART0 transmit/receive control register 0 */
     /* f1 count source, CTS/RTS disabled, CMOS output */
-    u0c0 = 0x10;
+    U0C0.BYTE = 0x10;
          /* 00010000
           b1:b0 CLK01:CLK0  BRG count source select bits                        //01         F8SIO
           b2    CRS         CTS/RTS function select bit
@@ -98,7 +98,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 
     /* UART0 transmit/receive control register 1 */
     /*  disable transmit and receive, no error output pin, data not inverted */
-    u0c1 = 0x00;
+    U0C1.BYTE = 0x00;
          /*  00000000
           b0    TE          Transmit enable bit
           b1    TI          Transmit buffer empty flag
@@ -110,7 +110,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 
     /* UART0 transmit/receive mode register */
     /* 8-bit data,asynch mode, internal clock, 1 stop bit, no parity */
-    u0mr = 0x05;
+    U0MR.BYTE = 0x05;
          /*  00000101
           b2:b0 SMD12:SMD1  Serial I/O Mode select bits
           b3    CKDIR       Internal/External clock select bit, CKDIR
@@ -120,20 +120,20 @@ static rt_err_t rt_uart_init (rt_device_t dev)
           b7    IOPOL       TxD, RxD I/O polarity reverse bit */
 
     /* clear UART0 receive buffer by reading */
-    u0tb = u0rb;
+    U0TB.WORD = U0RB.WORD;
     /* clear UART0 transmit buffer */
-    u0tb = 0;
+    U0TB.WORD = 0;
 
     /* disable irqs before setting irq registers */
     level = rt_hw_interrupt_disable();
     /* Enable UART0 receive interrupt, priority level 4 */
-    s0ric = 0x04;
+    S0RIC.BYTE = 0x04;
     /* Enable all interrupts */
     rt_hw_interrupt_enable(level);
 
     /* UART0 transmit/receive control register 1 */
     /* enable transmit and receive */
-    u0c1 = 0x05;
+    U0C1.BYTE = 0x05;
         /*  00000101    enable transmit and receive
         b0      TE          Transmit enable bit
         b1      TI          Transmit buffer empty flag
@@ -170,12 +170,12 @@ static rt_err_t rt_uart_close(rt_device_t dev)
 
 static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_uint8_t* ptr;
-	struct rt_uart_m16c *uart = (struct rt_uart_m16c*)dev;
+	rt_uint8_t *ptr;
+	struct rt_uart_m16c *uart = (struct rt_uart_m16c *)dev;
 	RT_ASSERT(uart != RT_NULL);
 
 	/* point to buffer */
-	ptr = (rt_uint8_t*) buffer;
+	ptr = (rt_uint8_t *)buffer;
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
 		while (size)
@@ -215,10 +215,10 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
 	return 0;
 }
 
-static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
 	char *ptr;
-	ptr = (char*)buffer;
+	ptr = (char *)buffer;
 
 	if (dev->flag & RT_DEVICE_FLAG_STREAM)
 	{
@@ -227,15 +227,15 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
 		{
 			if (*ptr == '\n')
 			{
-			  while(ti_u0c1 == 0)
-			    ;
-			  u0tb = '\r';
+				while (U0C1.BIT.TI == 0)
+					;
+				U0TB.BYTE.U0TBL = '\r';
 			}
 
 			/* THRE status, contain valid data */
-			  while(ti_u0c1 == 0)
-			    ;
-			  u0tb = *ptr;
+			while (U0C1.BIT.TI == 0)
+				;
+			U0TB.BYTE.U0TBL = *ptr;
   
 			ptr ++;
 			size --;
@@ -243,24 +243,24 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
 	}
 	else
 	{
-		while ( size != 0 )
+		while (size != 0)
 		{
 			/* THRE status, contain valid data */
-		  while(ti_u0c1 == 0)
-		    ;
-		  u0tb = *ptr;
+			while (U0C1.BIT.TI == 0)
+				;
+			U0TB.BYTE.U0TBL = *ptr;
 	
-			ptr++;
-			size--;
+			ptr ++;
+			size --;
 		}
 	}
 
-	return (rt_size_t) ptr - (rt_size_t) buffer;
+	return (rt_size_t)ptr - (rt_size_t)buffer;
 }
 
 void rt_hw_uart_init(void)
 {
-	struct rt_uart_m16c* uart;
+	struct rt_uart_m16c *uart;
 
 	/* get uart device */
 	uart = &uart_device;

@@ -24,7 +24,7 @@
 /**
  * This function will initial m16c board.
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 #ifdef RT_USING_UART0
 	rt_hw_uart_init();
