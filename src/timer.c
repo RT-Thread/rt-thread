@@ -23,7 +23,7 @@
 #include <rthw.h>
 
 /* hard timer list */
-static rt_list_t rt_timer_list;
+static rt_list_t rt_timer_list = RT_LIST_OBJECT_INIT(rt_timer_list);
 
 #ifdef RT_USING_TIMER_SOFT
 /* soft timer list */
@@ -500,15 +500,12 @@ static void rt_thread_timer_entry(void *parameter)
  * @ingroup SystemInit
  *
  * This function will initialize system timer
+ *
+ * @deprecated since 1.1.0, this function does not need to be invoked
+ * in the system initialization.
  */
 void rt_system_timer_init(void)
 {
-	rt_list_init(&rt_timer_list);
-
-#ifdef RT_USING_TIMER_SOFT
-	rt_list_init(&rt_soft_timer_list);
-	rt_sem_init(&timer_sem, "timer", 0, RT_IPC_FLAG_FIFO);
-#endif
 }
 
 /**
@@ -519,6 +516,9 @@ void rt_system_timer_init(void)
 void rt_system_timer_thread_init(void)
 {
 #ifdef RT_USING_TIMER_SOFT
+	rt_list_init(&rt_soft_timer_list);
+	rt_sem_init(&timer_sem, "timer", 0, RT_IPC_FLAG_FIFO);
+
 	/* start software timer thread */
 	rt_thread_init(&timer_thread,
 				   "timer",

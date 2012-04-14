@@ -38,11 +38,11 @@ struct rt_thread *rt_current_thread;
 rt_uint8_t rt_current_priority;
 
 #if RT_THREAD_PRIORITY_MAX > 32
-/* maximun priority level, 256 */
+/* Maximum priority level, 256 */
 rt_uint32_t rt_thread_ready_priority_group;
 rt_uint8_t rt_thread_ready_table[32];
 #else
-/* maximun priority level, 32 */
+/* Maximum priority level, 32 */
 rt_uint32_t rt_thread_ready_priority_group;
 #endif
 
@@ -140,15 +140,15 @@ void rt_system_scheduler_init(void)
 	rt_current_priority = RT_THREAD_PRIORITY_MAX - 1;
 	rt_current_thread = RT_NULL;
 
-	/* init ready priority group */
+	/* initialize ready priority group */
 	rt_thread_ready_priority_group = 0;
 
 #if RT_THREAD_PRIORITY_MAX > 32
-	/* init ready table */
+	/* initialize ready table */
 	rt_memset(rt_thread_ready_table, 0, sizeof(rt_thread_ready_table));
 #endif
 
-	/* init thread defunct */
+	/* initialize thread defunct */
 	rt_list_init(&rt_thread_defunct);
 }
 
