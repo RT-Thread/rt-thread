@@ -120,10 +120,6 @@
 #define MEMP_NUM_TCP_SEG            RT_LWIP_TCP_SEG_NUM
 #endif
 
-/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
-   timeouts. */
-#define MEMP_NUM_SYS_TIMEOUT        3
-
 /* The following four are used only with the sequential API and can be
    set to 0 if the application only will use the raw API. */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
@@ -323,5 +319,12 @@
 /* no read/write/close for socket */
 #define LWIP_POSIX_SOCKETS_IO_NAMES 0
 #define LWIP_NETIF_API  1
+
+/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
+#ifdef LWIP_IGMP
+#include <stdlib.h>
+#define LWIP_RAND                  rand
+#endif
 
 #endif /* __LWIPOPTS_H__ */
