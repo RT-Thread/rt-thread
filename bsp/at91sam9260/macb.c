@@ -294,8 +294,9 @@ static int macb_phy_init(rt_device_t dev)
 	}
 }
 
-void macb_update_link(struct rt_macb_eth *macb)
+void macb_update_link(void *param)
 {
+	struct rt_macb_eth *macb = (struct rt_macb_eth *)param;
 	rt_device_t dev = &macb->parent.parent;
 	rt_uint32_t status, status_change = 0;
 	rt_uint32_t link;
@@ -407,7 +408,7 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 
 	rt_timer_init(&macb->timer, "link_timer", 
 		macb_update_link, 
-		macb, 
+		(void *)macb, 
 		RT_TICK_PER_SECOND, 
 		RT_TIMER_FLAG_PERIODIC);
 
