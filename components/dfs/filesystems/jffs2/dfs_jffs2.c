@@ -244,14 +244,8 @@ static int dfs_jffs2_statfs(struct dfs_filesystem* fs,
 	jffs2_get_info_from_sb((void *)mte->data, &info);
 	buf->f_bsize = info.sector_size; 
 	buf->f_blocks = info.nr_blocks;
-	buf->f_bfree = info.free_size; //fixme need test!
+	buf->f_bfree = info.free_size / info.sector_size;
 	
-//	jffs2_sb = (struct super_block)(mte->data);
-//	c = JFFS2_SB_INFO(jffs2_sb);
-//	
-//	buf->f_bsize = c->sector_size; 
-//	buf->f_blocks = c->nr_blocks;
-//	buf->f_bfree = c->free_size; //fixme need test!
 	return 0;
 }
 
