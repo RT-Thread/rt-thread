@@ -1,10 +1,15 @@
 #include <rtthread.h>
 #include "components_init.h"
 
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#include <shell.h>
+#endif
+
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
-#include <lwip/api.h>
 #include <netif/ethernetif.h>
+extern void lwip_system_init(void);
 #endif
 
 #ifdef RT_USING_DFS
@@ -60,7 +65,7 @@ void rt_components_init(void)
     eth_system_device_init();
 
     /* initialize lwip system */
-    lwip_sys_init();
+    lwip_system_init();
     rt_kprintf("TCP/IP initialized!\n");
 #endif
 
