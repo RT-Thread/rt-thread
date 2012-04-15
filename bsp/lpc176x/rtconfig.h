@@ -71,8 +71,12 @@
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
+// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
+#define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
+#define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
@@ -120,7 +124,7 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-// #define RT_USING_LWIP
+#define RT_USING_LWIP
 // <bool name="RT_LWIP_USING_RT_MEM" description="Using RT-Thread memory management for LwIP" default="true" />
 #define RT_LWIP_USING_RT_MEM
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
@@ -136,25 +140,25 @@
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
 #define RT_LWIP_TCP_PCB_NUM	5
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF	8192
+#define RT_LWIP_TCP_SND_BUF	2048
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
-#define RT_LWIP_TCP_WND	8192
+#define RT_LWIP_TCP_WND	2048
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="8" />
-#define RT_LWIP_TCP_SEG_NUM	40
+#define RT_LWIP_TCP_SEG_NUM	8
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY	12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	32
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
 // <integer name="RT_LWIP_TCPTHREAD_STACKSIZE" description="the thread stack size of TCP thread" default="4096" />
 #define RT_LWIP_TCPTHREAD_STACKSIZE	4096
 // <integer name="RT_LWIP_ETHTHREAD_PRIORITY" description="the thread priority of ethnetif thread" default="144" />
 #define RT_LWIP_ETHTHREAD_PRIORITY	14
 // <integer name="RT_LWIP_ETHTHREAD_MBOX_SIZE" description="the mail box size of ethnetif thread to wait for" default="8" />
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	32
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
 #define RT_LWIP_ETHTHREAD_STACKSIZE	512
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />

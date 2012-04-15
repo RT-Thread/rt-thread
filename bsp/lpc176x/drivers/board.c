@@ -62,14 +62,14 @@ void rt_hw_board_init()
 	SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
 #endif
 
-	/* init systick */
+	/* initialize systick */
 	SysTick_Config( SystemCoreClock/RT_TICK_PER_SECOND);
 	/* set pend exception priority */
 	NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 
 #ifdef RT_USING_UART0
 	rt_hw_uart_init();
-	rt_console_set_device("uart0");
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 

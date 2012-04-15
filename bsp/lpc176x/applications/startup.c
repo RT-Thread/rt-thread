@@ -30,10 +30,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -68,56 +64,41 @@ void assert_failed(u8* file, u32 line)
  */
 void rtthread_startup(void)
 {
-	/* init board */
+	/* initialize board */
 	rt_hw_board_init();
 
 	/* show version */
 	rt_show_version();
 
-	/* init tick */
-	rt_system_tick_init();
-
-	/* init kernel object */
-	rt_system_object_init();
-
-	/* init timer system */
-	rt_system_timer_init();
-
 #ifdef RT_USING_HEAP
+	/* initialize memory system */
 	#ifdef __CC_ARM
 		rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x10008000);
 	#elif __ICCARM__
 	    rt_system_heap_init(__segment_end("HEAP"), (void*)0x10008000);
 	#else
-		/* init memory system */
 		rt_system_heap_init((void*)&__bss_end, (void*)0x10008000);
 	#endif
 #endif
 
-	/* init scheduler system */
+	/* initialize scheduler system */
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif
-	/* init all device */
+	/* initialize all device */
 	rt_device_init_all();
 #endif
 
-	/* init application */
+	/* initialize application */
 	rt_application_init();
 
-#ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("uart0");
-#endif
-
-    /* init timer thread */
+    /* initialize timer thread */
     rt_system_timer_thread_init();
 
-	/* init idle thread */
+	/* initialize idle thread */
 	rt_thread_idle_init();
 
 	/* start scheduler */
