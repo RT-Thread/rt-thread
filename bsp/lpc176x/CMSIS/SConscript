@@ -1,17 +1,16 @@
-Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd     = GetCurrentDir()
-src	= Glob('*.c')
+cwd = GetCurrentDir()
+src = Glob('*.c')
 src = ['CM3/CoreSupport/core_cm3.c', 'CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-	src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/gcc/startup_LPC17xx.s']
+    src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/gcc/startup_LPC17xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-	src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/arm/startup_LPC17xx.s']
+    src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/arm/startup_LPC17xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-	src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/iar/startup_LPC17xx.s']
+    src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/iar/startup_LPC17xx.s']
 
 CPPPATH = [cwd + '/CM3/CoreSupport', cwd + '/CM3/DeviceSupport/NXP/LPC17xx/']
 

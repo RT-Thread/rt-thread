@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'C:/Program Files (x86)/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'E:/Keil'
@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc17xx.map,-cref,-u,Reset_Handler -T lpc17xx_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc17xx.map,-cref,-u,Reset_Handler -T rtthread-lpc17xx.ld'
 
     CPATH = ''
     LPATH = ''
@@ -62,7 +62,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMP1'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc17xx.map --scatter lpc17xx_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc17xx.map --scatter rtthread-lpc17xx.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -112,7 +112,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config lpc17xx_flash.icf'
+    LFLAGS = ' --config rtthread-lpc17xx.icf'
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 
