@@ -1,0 +1,398 @@
+diff --git a/dfs_yaffs2.c b/dfs_yaffs2.c
+index 4b056ae..e63d5d4 100644
+--- a/dfs_yaffs2.c
++++ b/dfs_yaffs2.c
+@@ -39,7 +39,6 @@ static int dfs_yaffs_mount(struct dfs_filesystem* fs,
+ 				    const void* data)
+ {
+ 	unsigned index;
+-	ynandif_Geometry *g;
+ 
+ 	/*1. find a empty entry in partition table */
+ 	for (index = 0; index < NAND_DEVICE_PART_MAX ; index ++)
+diff --git a/yaffs/direct/yaffsfs.c b/yaffs/direct/yaffsfs.c
+index 17fc502..1f47ea7 100644
+--- a/yaffs/direct/yaffsfs.c
++++ b/yaffs/direct/yaffsfs.c
+@@ -1367,7 +1367,7 @@ off_t yaffs_lseek(int handle, off_t offset, int whence)
+ 			if(offset >= 0)
+ 				pos = offset;
+ 		} else if(whence == SEEK_CUR) {
+-			if( (fd->position + offset) >= 0)
++			if( ((int)fd->position + offset) >= 0)
+ 				pos = (fd->position + offset);
+ 		} else if(whence == SEEK_END) {
+ 			fSize = yaffs_get_obj_length(obj);
+diff --git a/yaffs/direct/yportenv.h b/yaffs/direct/yportenv.h
+index f693c16..ac0a737 100644
+--- a/yaffs/direct/yportenv.h
++++ b/yaffs/direct/yportenv.h
+@@ -45,7 +45,7 @@
+ 	#endif
+ 	
+ 	#ifndef loff_t
+-	typedef unsigned long loff_t;
++	typedef long loff_t;
+ 	#endif
+ 	
+ 	#ifndef dev_t
+@@ -66,7 +66,7 @@
+ #elif defined (__GNUC__) && !defined(__CC_ARM)
+ 
+ 	#ifndef loff_t
+-	typedef unsigned long loff_t;
++	typedef long loff_t;
+ 	#endif
+ 
+ 	#ifndef dev_t
+diff --git a/yaffs/yaffs_guts.c b/yaffs/yaffs_guts.c
+index d72aa5b..08db8c8 100644
+--- a/yaffs/yaffs_guts.c
++++ b/yaffs/yaffs_guts.c
+@@ -280,7 +280,7 @@ static void yaffs_handle_chunk_wr_error(struct yaffs_dev *dev, int nand_chunk,
+ 
+ static inline int yaffs_hash_fn(int n)
+ {
+-	n = abs(n);
++	n = n > 0 ? n : -n;
+ 	return n % YAFFS_NOBJECT_BUCKETS;
+ }
+ 
+@@ -319,9 +319,9 @@ static int yaffs_check_chunk_erased(struct yaffs_dev *dev, int nand_chunk)
+ 	int retval = YAFFS_OK;
+ 	u8 *data = yaffs_get_temp_buffer(dev);
+ 	struct yaffs_ext_tags tags;
+-	int result;
+ 
+-	result = yaffs_rd_chunk_tags_nand(dev, nand_chunk, data, &tags);
++
++	yaffs_rd_chunk_tags_nand(dev, nand_chunk, data, &tags);
+ 
+ 	if (tags.ecc_result > YAFFS_ECC_RESULT_NO_ERROR)
+ 		retval = YAFFS_FAIL;
+@@ -347,9 +347,9 @@ static int yaffs_verify_chunk_written(struct yaffs_dev *dev,
+ 	int retval = YAFFS_OK;
+ 	struct yaffs_ext_tags temp_tags;
+ 	u8 *buffer = yaffs_get_temp_buffer(dev);
+-	int result;
+ 
+-	result = yaffs_rd_chunk_tags_nand(dev, nand_chunk, buffer, &temp_tags);
++
++	yaffs_rd_chunk_tags_nand(dev, nand_chunk, buffer, &temp_tags);
+ 	if (memcmp(buffer, data, dev->data_bytes_per_chunk) ||
+ 	    temp_tags.obj_id != tags->obj_id ||
+ 	    temp_tags.chunk_id != tags->chunk_id ||
+@@ -1478,7 +1478,7 @@ static struct yaffs_cache *yaffs_grab_chunk_cache(struct yaffs_dev *dev)
+ 	struct yaffs_obj *the_obj;
+ 	int usage;
+ 	int i;
+-	int pushout;
++	/* int pushout; */
+ 
+ 	if (dev->param.n_caches < 1)
+ 		return NULL;
+@@ -1499,7 +1499,7 @@ static struct yaffs_cache *yaffs_grab_chunk_cache(struct yaffs_dev *dev)
+ 		the_obj = dev->cache[0].object;
+ 		usage = -1;
+ 		cache = NULL;
+-		pushout = -1;
++		/* pushout = -1; */
+ 
+ 		for (i = 0; i < dev->param.n_caches; i++) {
+ 			if (dev->cache[i].object &&
+@@ -1509,7 +1509,7 @@ static struct yaffs_cache *yaffs_grab_chunk_cache(struct yaffs_dev *dev)
+ 				usage = dev->cache[i].last_use;
+ 				the_obj = dev->cache[i].object;
+ 				cache = &dev->cache[i];
+-				pushout = i;
++				/* pushout = i; */
+ 			}
+ 		}
+ 
+@@ -3167,7 +3167,7 @@ static void yaffs_check_obj_details_loaded(struct yaffs_obj *in)
+ 	struct yaffs_obj_hdr *oh;
+ 	struct yaffs_dev *dev;
+ 	struct yaffs_ext_tags tags;
+-	int result;
++
+ 	int alloc_failed = 0;
+ 
+ 	if (!in || !in->lazy_loaded || in->hdr_chunk < 1)
+@@ -3177,7 +3177,7 @@ static void yaffs_check_obj_details_loaded(struct yaffs_obj *in)
+ 	in->lazy_loaded = 0;
+ 	buf = yaffs_get_temp_buffer(dev);
+ 
+-	result = yaffs_rd_chunk_tags_nand(dev, in->hdr_chunk, buf, &tags);
++	yaffs_rd_chunk_tags_nand(dev, in->hdr_chunk, buf, &tags);
+ 	oh = (struct yaffs_obj_hdr *)buf;
+ 
+ 	in->yst_mode = oh->yst_mode;
+@@ -3189,6 +3189,7 @@ static void yaffs_check_obj_details_loaded(struct yaffs_obj *in)
+ 		    yaffs_clone_str(oh->alias);
+ 		if (!in->variant.symlink_variant.alias)
+ 			alloc_failed = 1;	/* Not returned */
++		alloc_failed = alloc_failed;
+ 	}
+ 	yaffs_release_temp_buffer(dev, buf);
+ }
+@@ -3274,7 +3275,7 @@ int yaffs_update_oh(struct yaffs_obj *in, const YCHAR *name, int force,
+ 	struct yaffs_dev *dev = in->my_dev;
+ 	int prev_chunk_id;
+ 	int ret_val = 0;
+-	int result = 0;
++
+ 	int new_chunk_id;
+ 	struct yaffs_ext_tags new_tags;
+ 	struct yaffs_ext_tags old_tags;
+@@ -3297,7 +3298,7 @@ int yaffs_update_oh(struct yaffs_obj *in, const YCHAR *name, int force,
+ 	prev_chunk_id = in->hdr_chunk;
+ 
+ 	if (prev_chunk_id > 0) {
+-		result = yaffs_rd_chunk_tags_nand(dev, prev_chunk_id,
++		yaffs_rd_chunk_tags_nand(dev, prev_chunk_id,
+ 						  buffer, &old_tags);
+ 
+ 		yaffs_verify_oh(in, oh, &old_tags, 0);
+@@ -3921,7 +3922,7 @@ int yaffs_del_obj(struct yaffs_obj *obj)
+ 			list_del_init(&obj->variant.dir_variant.dirty);
+ 		}
+ 		return yaffs_del_dir(obj);
+-		break;
++		//break;
+ 	case YAFFS_OBJECT_TYPE_SYMLINK:
+ 		ret_val = yaffs_del_symlink(obj);
+ 		break;
+@@ -3993,17 +3994,17 @@ static int yaffs_unlink_worker(struct yaffs_obj *obj)
+ 		switch (obj->variant_type) {
+ 		case YAFFS_OBJECT_TYPE_FILE:
+ 			return yaffs_del_file(obj);
+-			break;
++			//break;
+ 		case YAFFS_OBJECT_TYPE_DIRECTORY:
+ 			list_del_init(&obj->variant.dir_variant.dirty);
+ 			return yaffs_del_dir(obj);
+-			break;
++			//break;
+ 		case YAFFS_OBJECT_TYPE_SYMLINK:
+ 			return yaffs_del_symlink(obj);
+-			break;
++			//break;
+ 		case YAFFS_OBJECT_TYPE_SPECIAL:
+ 			return yaffs_generic_obj_del(obj);
+-			break;
++			//break;
+ 		case YAFFS_OBJECT_TYPE_HARDLINK:
+ 		case YAFFS_OBJECT_TYPE_UNKNOWN:
+ 		default:
+@@ -4421,7 +4422,7 @@ int yaffs_get_obj_name(struct yaffs_obj *obj, YCHAR *name, int buffer_size)
+ 	} else if (obj->short_name[0]) {
+ 		strcpy(name, obj->short_name);
+ 	} else if (obj->hdr_chunk > 0) {
+-		int result;
++
+ 		u8 *buffer = yaffs_get_temp_buffer(obj->my_dev);
+ 
+ 		struct yaffs_obj_hdr *oh = (struct yaffs_obj_hdr *)buffer;
+@@ -4429,7 +4430,7 @@ int yaffs_get_obj_name(struct yaffs_obj *obj, YCHAR *name, int buffer_size)
+ 		memset(buffer, 0, obj->my_dev->data_bytes_per_chunk);
+ 
+ 		if (obj->hdr_chunk > 0) {
+-			result = yaffs_rd_chunk_tags_nand(obj->my_dev,
++			yaffs_rd_chunk_tags_nand(obj->my_dev,
+ 							  obj->hdr_chunk,
+ 							  buffer, NULL);
+ 		}
+@@ -4490,16 +4491,16 @@ unsigned yaffs_get_obj_type(struct yaffs_obj *obj)
+ 	switch (obj->variant_type) {
+ 	case YAFFS_OBJECT_TYPE_FILE:
+ 		return DT_REG;
+-		break;
++		//break;
+ 	case YAFFS_OBJECT_TYPE_DIRECTORY:
+ 		return DT_DIR;
+-		break;
++		//break;
+ 	case YAFFS_OBJECT_TYPE_SYMLINK:
+ 		return DT_LNK;
+-		break;
++		//break;
+ 	case YAFFS_OBJECT_TYPE_HARDLINK:
+ 		return DT_REG;
+-		break;
++		//break;
+ 	case YAFFS_OBJECT_TYPE_SPECIAL:
+ 		if (S_ISFIFO(obj->yst_mode))
+ 			return DT_FIFO;
+@@ -4510,10 +4511,10 @@ unsigned yaffs_get_obj_type(struct yaffs_obj *obj)
+ 		if (S_ISSOCK(obj->yst_mode))
+ 			return DT_SOCK;
+ 		return DT_REG;
+-		break;
++		//break;
+ 	default:
+ 		return DT_REG;
+-		break;
++		//break;
+ 	}
+ }
+ 
+@@ -4837,7 +4838,7 @@ int yaffs_guts_initialise(struct yaffs_dev *dev)
+ 				dev->n_erased_blocks = 0;
+ 				dev->n_free_chunks = 0;
+ 				dev->alloc_block = -1;
+-				dev->alloc_page = -1;
++				dev->alloc_page = (u32)(-1);
+ 				dev->n_deleted_files = 0;
+ 				dev->n_unlinked_files = 0;
+ 				dev->n_bg_deletions = 0;
+diff --git a/yaffs/yaffs_packedtags2.c b/yaffs/yaffs_packedtags2.c
+index 820bc41..9306623 100644
+--- a/yaffs/yaffs_packedtags2.c
++++ b/yaffs/yaffs_packedtags2.c
+@@ -35,7 +35,7 @@
+ 
+ /* Also, the top 4 bits of the object Id are set to the object type. */
+ #define EXTRA_OBJECT_TYPE_SHIFT (28)
+-#define EXTRA_OBJECT_TYPE_MASK  ((0x0f) << EXTRA_OBJECT_TYPE_SHIFT)
++#define EXTRA_OBJECT_TYPE_MASK  ((0x0fUL) << EXTRA_OBJECT_TYPE_SHIFT)
+ 
+ static void yaffs_dump_packed_tags2_tags_only(
+ 				const struct yaffs_packed_tags2_tags_only *ptt)
+@@ -129,7 +129,7 @@ void yaffs_unpack_tags2_tags_only(struct yaffs_ext_tags *t,
+ 		t->extra_parent_id = ptt->chunk_id & (~(ALL_EXTRA_FLAGS));
+ 		t->extra_is_shrink = ptt->chunk_id & EXTRA_SHRINK_FLAG ? 1 : 0;
+ 		t->extra_shadows = ptt->chunk_id & EXTRA_SHADOWS_FLAG ? 1 : 0;
+-		t->extra_obj_type = ptt->obj_id >> EXTRA_OBJECT_TYPE_SHIFT;
++		t->extra_obj_type = (enum yaffs_obj_type)(ptt->obj_id >> EXTRA_OBJECT_TYPE_SHIFT);
+ 		t->obj_id &= ~EXTRA_OBJECT_TYPE_MASK;
+ 
+ 		if (t->extra_obj_type == YAFFS_OBJECT_TYPE_HARDLINK)
+diff --git a/yaffs/yaffs_verify.c b/yaffs/yaffs_verify.c
+index b3e540d..1758125 100644
+--- a/yaffs/yaffs_verify.c
++++ b/yaffs/yaffs_verify.c
+@@ -223,7 +223,7 @@ void yaffs_verify_oh(struct yaffs_obj *obj, struct yaffs_obj_hdr *oh,
+ void yaffs_verify_file(struct yaffs_obj *obj)
+ {
+ 	int required_depth;
+-	int actual_depth;
++	//int actual_depth;
+ 	u32 last_chunk;
+ 	u32 the_chunk;
+ 	u32 x;
+@@ -252,7 +252,7 @@ void yaffs_verify_file(struct yaffs_obj *obj)
+ 		required_depth++;
+ 	}
+ 
+-	actual_depth = obj->variant.file_variant.top_level;
++	//actual_depth = obj->variant.file_variant.top_level;
+ 
+ 	/* Check that the chunks in the tnode tree are all correct.
+ 	 * We do this by scanning through the tnode tree and
+diff --git a/yaffs/yaffs_yaffs1.c b/yaffs/yaffs_yaffs1.c
+index da6a40f..8e7f4b2 100644
+--- a/yaffs/yaffs_yaffs1.c
++++ b/yaffs/yaffs_yaffs1.c
+@@ -23,7 +23,7 @@ int yaffs1_scan(struct yaffs_dev *dev)
+ {
+ 	struct yaffs_ext_tags tags;
+ 	int blk;
+-	int result;
++	//int result;
+ 	int chunk;
+ 	int c;
+ 	int deleted;
+@@ -84,7 +84,7 @@ int yaffs1_scan(struct yaffs_dev *dev)
+ 		cond_resched();
+ 
+ 		bi = yaffs_get_block_info(dev, blk);
+-		state = bi->block_state;
++		state = (enum yaffs_block_state)(bi->block_state);
+ 
+ 		deleted = 0;
+ 
+@@ -95,7 +95,7 @@ int yaffs1_scan(struct yaffs_dev *dev)
+ 			/* Read the tags and decide what to do */
+ 			chunk = blk * dev->param.chunks_per_block + c;
+ 
+-			result = yaffs_rd_chunk_tags_nand(dev, chunk, NULL,
++			yaffs_rd_chunk_tags_nand(dev, chunk, NULL,
+ 							  &tags);
+ 
+ 			/* Let's have a good look at this chunk... */
+@@ -181,7 +181,7 @@ int yaffs1_scan(struct yaffs_dev *dev)
+ 				yaffs_set_chunk_bit(dev, blk, c);
+ 				bi->pages_in_use++;
+ 
+-				result = yaffs_rd_chunk_tags_nand(dev, chunk,
++				yaffs_rd_chunk_tags_nand(dev, chunk,
+ 								  chunk_data,
+ 								  NULL);
+ 
+diff --git a/yaffs/yaffs_yaffs2.c b/yaffs/yaffs_yaffs2.c
+index 5761e96..69acd20 100644
+--- a/yaffs/yaffs_yaffs2.c
++++ b/yaffs/yaffs_yaffs2.c
+@@ -946,7 +946,7 @@ static inline int yaffs2_scan_chunk(struct yaffs_dev *dev,
+ 	int is_shrink;
+ 	int is_unlinked;
+ 	struct yaffs_ext_tags tags;
+-	int result;
++	//int result;
+ 	int alloc_failed = 0;
+ 	int chunk = blk * dev->param.chunks_per_block + chunk_in_block;
+ 	struct yaffs_file_var *file_var;
+@@ -954,12 +954,12 @@ static inline int yaffs2_scan_chunk(struct yaffs_dev *dev,
+ 	struct yaffs_symlink_var *sl_var;
+ 
+ 	if (summary_available) {
+-		result = yaffs_summary_fetch(dev, &tags, chunk_in_block);
++		yaffs_summary_fetch(dev, &tags, chunk_in_block);
+ 		tags.seq_number = bi->seq_number;
+ 	}
+ 
+ 	if (!summary_available || tags.obj_id == 0) {
+-		result = yaffs_rd_chunk_tags_nand(dev, chunk, NULL, &tags);
++		yaffs_rd_chunk_tags_nand(dev, chunk, NULL, &tags);
+ 		dev->tags_used++;
+ 	} else {
+ 		dev->summary_used++;
+@@ -1114,7 +1114,7 @@ static inline int yaffs2_scan_chunk(struct yaffs_dev *dev,
+ 			 * invalid data until needed.
+ 			 */
+ 
+-			result = yaffs_rd_chunk_tags_nand(dev,
++			yaffs_rd_chunk_tags_nand(dev,
+ 						  chunk,
+ 						  chunk_data,
+ 						  NULL);
+@@ -1349,7 +1349,7 @@ int yaffs2_scan_backwards(struct yaffs_dev *dev)
+ 	int n_to_scan = 0;
+ 	enum yaffs_block_state state;
+ 	int c;
+-	int deleted;
++	//int deleted;
+ 	LIST_HEAD(hard_list);
+ 	struct yaffs_block_info *bi;
+ 	u32 seq_number;
+@@ -1467,7 +1467,7 @@ int yaffs2_scan_backwards(struct yaffs_dev *dev)
+ 		/* get the block to scan in the correct order */
+ 		blk = block_index[block_iter].block;
+ 		bi = yaffs_get_block_info(dev, blk);
+-		deleted = 0;
++		//deleted = 0;
+ 
+ 		summary_available = yaffs_summary_read(dev, dev->sum_tags, blk);
+ 
+diff --git a/yaffs_osglue.c b/yaffs_osglue.c
+index 2c34f99..4f2e5db 100644
+--- a/yaffs_osglue.c
++++ b/yaffs_osglue.c
+@@ -58,7 +58,6 @@ void yaffsfs_LockInit(void)
+ #else
+ 
+ static rt_mutex_t mutex = RT_NULL;
+-static rt_sem_t sem = RT_NULL;
+ void yaffsfs_Lock(void)
+ {
+ 	rt_mutex_take(mutex, RT_WAITING_FOREVER);

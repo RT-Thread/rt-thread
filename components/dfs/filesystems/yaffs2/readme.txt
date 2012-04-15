@@ -17,6 +17,7 @@ There are three steps.
          F:\Project\svn\rt-thread\components\dfs\filesystems\yaffs2>
        then type command 
          patch -p1 < yaffs.diff
+
        you will get some log information as followings 
          F:\Project\svn\rt-thread\components\dfs\filesystems\yaffs2>patch -p1 < yaffs.diff
          patching file `dfs_yaffs2.c'
@@ -28,6 +29,10 @@ There are three steps.
          patching file `yaffs_osglue.c'
 
        now you can delete yaffs.diff
+       there is another patch file, as the name shows, it is to fix compile
+       warning, so it is not necessary. If you want, you can use the
+       following command.
+         patch -p1 < fixwarning.diff
 
     (2) on linux
        Help yourself. Since you have use linux as your os, I believe in you. 
