@@ -13,19 +13,37 @@
  * 2010-03-04     Magicoe      for LPC1766 version
  * 2010-05-02     Aozima       add led function
  * 2010-05-24     Bernard      add filesystem initialization and move led function to led.c
+ * 2012-04-15     Bernard      enable components_init.
  */
 
 #include <rtthread.h>
+#include "platform.h"
+
+#ifdef RT_USING_COMPONENTS_INIT
 #include <components_init.h>
+#endif
+#ifdef RT_USING_LWIP
+#include <emac.h>
+#endif
+#ifdef RT_USING_DFS
+#include <dfs_fs.h>
+#endif
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
+	/* initialize platform */
+	platform_init();
+
+#ifdef RT_USING_LWIP
     /* register Ethernet interface device */
     lpc17xx_emac_hw_init();
+#endif
 
+#ifdef RT_USING_COMPONENTS_INIT
     /* initialization RT-Thread Components */
     rt_components_init();
+#endif
 
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS

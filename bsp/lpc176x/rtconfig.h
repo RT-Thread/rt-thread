@@ -51,6 +51,8 @@
 // <section name="MM" description="Memory Management" default="always" >
 // <bool name="RT_USING_MEMPOOL" description="Using Memory Pool Management in the system" default="true" />
 #define RT_USING_MEMPOOL
+// <bool name="RT_USING_MEMHEAP" description="Using Memory Heap Object in the system" default="true" />
+#define RT_USING_MEMHEAP
 // <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
 #define RT_USING_HEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
@@ -110,7 +112,7 @@
 // </integer>
 #define RT_DFS_ELM_USE_LFN	1
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN	256
+#define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
@@ -125,8 +127,6 @@
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
 #define RT_USING_LWIP
-// <bool name="RT_LWIP_USING_RT_MEM" description="Using RT-Thread memory management for LwIP" default="true" />
-#define RT_LWIP_USING_RT_MEM
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
@@ -137,8 +137,10 @@
 #define RT_LWIP_TCP
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
+// <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
+#define RT_LWIP_PBUF_NUM	4
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM	3
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
 #define RT_LWIP_TCP_SND_BUF	2048
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
@@ -147,8 +149,8 @@
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
-// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="8" />
-#define RT_LWIP_TCP_SEG_NUM	8
+// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
+#define RT_LWIP_TCP_SEG_NUM	4
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY	12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />

@@ -376,7 +376,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
+            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -390,6 +390,11 @@
               <FileName>application.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
+            </File>
+            <File>
+              <FileName>platform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\platform.c</FilePath>
             </File>
             <File>
               <FileName>startup.c</FileName>
@@ -619,7 +624,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ComponentsInit</GroupName>
+          <GroupName>Components</GroupName>
           <Files>
             <File>
               <FileName>components_init.c</FileName>
