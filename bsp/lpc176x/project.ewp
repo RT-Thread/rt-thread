@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.10.3.52260</state>
+          <state>5.41.0.51757</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -196,7 +196,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state>Pa050</state>
+          <state></state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -286,12 +286,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
+          <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\src\arch\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -1164,12 +1167,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
+          <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\src\arch\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -1759,6 +1765,15 @@
     </settings>
   </configuration>
   <group>
+    <name>Applications</name>
+    <file>
+      <name>$PROJ_DIR$\applications\application.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\applications\startup.c</name>
+    </file>
+  </group>
+  <group>
     <name>CMSIS</name>
     <file>
       <name>$PROJ_DIR$\CMSIS\CM3\CoreSupport\core_cm3.c</name>
@@ -1768,6 +1783,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx\system_LPC17xx.c</name>
+    </file>
+  </group>
+  <group>
+    <name>ComponentsInit</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\init\components_init.c</name>
     </file>
   </group>
   <group>
@@ -1786,6 +1807,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\emac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\led.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\uart.c</name>
     </file>
   </group>
   <group>
@@ -1852,6 +1891,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\mempool.c</name>
@@ -1975,27 +2017,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\udp.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Startup</name>
-    <file>
-      <name>$PROJ_DIR$\.\application.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\.\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\.\emac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\.\led.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\.\startup.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\.\uart.c</name>
     </file>
   </group>
 </project>

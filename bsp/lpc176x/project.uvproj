@@ -160,7 +160,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4102</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\components\net\lwip\src\arch\include;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;..\..\components\net\lwip\src\include;.;..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;CMSIS\CM3\CoreSupport;..\..\components\finsh;..\..\components\net\lwip\src\include\netif</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\components\init;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,37 +384,67 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Startup</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>core_cm3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_LPC17xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC17xx\system_LPC17xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_LPC17xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC17xx\startup\arm\startup_LPC17xx.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\led.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
               <FileName>emac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\emac.c</FilePath>
+              <FilePath>drivers\emac.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -455,6 +485,11 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
@@ -584,6 +619,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>ComponentsInit</GroupName>
+          <Files>
+            <File>
+              <FileName>components_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\init\components_init.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>LwIP</GroupName>
           <Files>
             <File>
@@ -630,6 +675,11 @@
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\arch\sys_arch.c</FilePath>
+            </File>
+            <File>
+              <FileName>def.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\core\def.c</FilePath>
             </File>
             <File>
               <FileName>dhcp.c</FileName>
@@ -692,6 +742,11 @@
               <FilePath>..\..\components\net\lwip\src\core\tcp_out.c</FilePath>
             </File>
             <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\core\timers.c</FilePath>
+            </File>
+            <File>
               <FileName>udp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\udp.c</FilePath>
@@ -750,36 +805,6 @@
               <FileName>slipif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\netif\slipif.c</FilePath>
-            </File>
-            <File>
-              <FileName>def.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\def.c</FilePath>
-            </File>
-            <File>
-              <FileName>timers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\timers.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_LPC17xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC17xx\system_LPC17xx.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_LPC17xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC17xx\startup\arm\startup_LPC17xx.s</FilePath>
             </File>
           </Files>
         </Group>
