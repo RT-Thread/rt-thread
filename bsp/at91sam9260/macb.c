@@ -471,7 +471,7 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 	buf = rt_malloc(p->tot_len);
 	if (!buf) {
 		rt_kprintf("%s:alloc buf failed\n", __func__);
-		return NULL;
+		return -RT_ENOMEM;
 	}
 	bufptr = buf;
 
