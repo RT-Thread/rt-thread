@@ -735,12 +735,97 @@ index 939cd3a..f693c16 100644
  #endif
 diff --git a/yaffs_nandcfg.c b/yaffs_nandcfg.c
 new file mode 100644
-index 0000000..4720aa2
+index 0000000..099fa38
 --- /dev/null
 +++ b/yaffs_nandcfg.c
-@@ -0,0 +1,64 @@
-+#include <rtthread.h>#include <rtdevice.h>#include <dfs_fs.h>#include <dfs_def.h>
-+#include "yaffsfs.h"#include "yaffs_nandif.h"#include "yaffs_trace.h"/* * RT-Thread Device Interface for yaffs */static int nand_init(struct yaffs_dev *dev){	return YAFFS_OK;}static int nand_deinit(struct yaffs_dev *dev){	return YAFFS_OK;}/* if block is good, return YAFFS_OK, else return YAFFS_FAIL */static int nand_checkblock(struct yaffs_dev *dev, unsigned block){	rt_err_t res;	res = rt_mtd_nand_check_block(RT_MTD_NAND_DEVICE(dev->os_context), block);	return res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;}static int nand_markbadblk(struct yaffs_dev *dev, unsigned block){	rt_err_t res;	res = rt_mtd_nand_mark_badblock(RT_MTD_NAND_DEVICE(dev->os_context), block);	return res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;}static int nand_eraseblock(struct yaffs_dev *dev, unsigned block){	int res;	res = rt_mtd_nand_erase_block(RT_MTD_NAND_DEVICE(dev->os_context), block);	return 	res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;}static int nand_readpage(	struct yaffs_dev *dev,    unsigned page,    unsigned char *data, unsigned data_len, /* page data */    unsigned char *spare, unsigned spare_len,/* page spare */    int *ecc_status){	int res;	unsigned char spare_buf[64];	res = rt_mtd_nand_read(RT_MTD_NAND_DEVICE(dev->os_context),	                   	   page, data, data_len, spare_buf, spare_len + 5);	rt_memcpy(spare, spare_buf + 5, spare_len);	if (res == 0)		*ecc_status = 0;	else if (res == -1)		*ecc_status = 1;	else		*ecc_status = -1;	return YAFFS_OK;}static int nand_writepage(	struct yaffs_dev *dev,	unsigned page,	const unsigned char *data, unsigned data_len, /* page data */    const unsigned char *spare, unsigned spare_len) /* page spare */{	int res;	unsigned char spare_buf[64]; //not use malloc, this can be faster	rt_memset(spare_buf, 0xFF, sizeof(spare_buf));	rt_memcpy(spare_buf+5, spare, spare_len);	res = rt_mtd_nand_write(RT_MTD_NAND_DEVICE(dev->os_context),						   page, data, data_len, spare_buf, spare_len + 5);	if (res != RT_EOK)		goto __error;	return YAFFS_OK;__error:	return YAFFS_FAIL;}
+@@ -0,0 +1,149 @@
++#include <rtthread.h>
++#include <rtdevice.h>
++#include <dfs_fs.h>
++#include <dfs_def.h>
++
++#include "yaffsfs.h"
++#include "yaffs_nandif.h"
++#include "yaffs_trace.h"
++
++/*
++ * RT-Thread Device Interface for yaffs
++ */
++static int nand_init(struct yaffs_dev *dev)
++{
++	return YAFFS_OK;
++}
++
++static int nand_deinit(struct yaffs_dev *dev)
++{
++	return YAFFS_OK;
++}
++
++/* if block is good, return YAFFS_OK, else return YAFFS_FAIL */
++static int nand_checkblock(struct yaffs_dev *dev, unsigned block)
++{
++	rt_err_t res;
++	res = rt_mtd_nand_check_block(RT_MTD_NAND_DEVICE(dev->os_context), block);
++	return res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;
++}
++static int nand_markbadblk(struct yaffs_dev *dev, unsigned block)
++{
++	rt_err_t res;
++	res = rt_mtd_nand_mark_badblock(RT_MTD_NAND_DEVICE(dev->os_context), block);
++	return res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;
++}
++
++static int nand_eraseblock(struct yaffs_dev *dev, unsigned block)
++{
++	int res;
++	res = rt_mtd_nand_erase_block(RT_MTD_NAND_DEVICE(dev->os_context), block);
++	return 	res == RT_EOK ? YAFFS_OK : YAFFS_FAIL;
++}
++
++static int nand_readpage(
++	struct yaffs_dev *dev,
++    unsigned page,
++    unsigned char *data, unsigned data_len, /* page data */
++    unsigned char *spare, unsigned spare_len,/* page spare */
++    int *ecc_status)
++{
++	int res;
++	unsigned char spare_buf[64];
++
++	res = rt_mtd_nand_read(RT_MTD_NAND_DEVICE(dev->os_context),
++	                   	   page, data, data_len, spare_buf, spare_len + 5);
++	rt_memcpy(spare, spare_buf + 5, spare_len);
++	if (res == 0)
++		*ecc_status = 0;
++	else if (res == -1)
++		*ecc_status = 1;
++	else
++		*ecc_status = -1;
++
++	return YAFFS_OK;
++}
++
++static int nand_writepage(
++	struct yaffs_dev *dev,
++	unsigned page,
++	const unsigned char *data, unsigned data_len, /* page data */
++    const unsigned char *spare, unsigned spare_len) /* page spare */
++{
++	int res;
++	unsigned char spare_buf[64]; //not use malloc, this can be faster
++	rt_memset(spare_buf, 0xFF, sizeof(spare_buf));
++	rt_memcpy(spare_buf+5, spare, spare_len);
++
++	res = rt_mtd_nand_write(RT_MTD_NAND_DEVICE(dev->os_context),
++						   page, data, data_len, spare_buf, spare_len + 5);
++	if (res != RT_EOK)
++		goto __error;
++
++	return YAFFS_OK;
++
++__error:
++	return YAFFS_FAIL;
++}
 +
 +
 +/*
