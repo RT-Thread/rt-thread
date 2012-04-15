@@ -32,28 +32,30 @@ filesystems/devfs/console.c
 # DFS-YAFFS2 options
 yaffs2_src = Split("""
 filesystems/yaffs2/dfs_yaffs2.c
-filesystems/yaffs2/yaffs_nand_config.c
 filesystems/yaffs2/yaffs_osglue.c
+filesystems/yaffs2/yaffs_nandcfg.c
 
-filesystems/yaffs2/yaffs_allocator.c
-filesystems/yaffs2/yaffs_bitmap.c
-filesystems/yaffs2/yaffs_checkptrw.c
-filesystems/yaffs2/yaffs_ecc.c  
-filesystems/yaffs2/yaffs_guts.c
-filesystems/yaffs2/yaffs_nameval.c
-filesystems/yaffs2/yaffs_nand.c
-filesystems/yaffs2/yaffs_packedtags1.c
-filesystems/yaffs2/yaffs_packedtags2.c
-filesystems/yaffs2/yaffs_summary.c
-filesystems/yaffs2/yaffs_tagscompat.c
-filesystems/yaffs2/yaffs_verify.c
-filesystems/yaffs2/yaffs_yaffs1.c
-filesystems/yaffs2/yaffs_yaffs2.c
-filesystems/yaffs2/yaffs_attribs.c
-filesystems/yaffs2/yaffsfs.c
-filesystems/yaffs2/yaffs_hweight.c
-filesystems/yaffs2/yaffs_nandif.c
-filesystems/yaffs2/yaffs_qsort.c
+filesystems/yaffs2/yaffs/yaffs_allocator.c
+filesystems/yaffs2/yaffs/yaffs_bitmap.c
+filesystems/yaffs2/yaffs/yaffs_checkptrw.c
+filesystems/yaffs2/yaffs/yaffs_ecc.c  
+filesystems/yaffs2/yaffs/yaffs_guts.c
+filesystems/yaffs2/yaffs/yaffs_nameval.c
+filesystems/yaffs2/yaffs/yaffs_nand.c
+filesystems/yaffs2/yaffs/yaffs_packedtags1.c
+filesystems/yaffs2/yaffs/yaffs_packedtags2.c
+filesystems/yaffs2/yaffs/yaffs_summary.c
+filesystems/yaffs2/yaffs/yaffs_tagscompat.c
+filesystems/yaffs2/yaffs/yaffs_verify.c
+filesystems/yaffs2/yaffs/yaffs_yaffs1.c
+filesystems/yaffs2/yaffs/yaffs_yaffs2.c
+
+filesystems/yaffs2/yaffs/direct/yaffs_attribs.c
+filesystems/yaffs2/yaffs/direct/yaffs_hweight.c
+filesystems/yaffs2/yaffs/direct/yaffs_nandif.c
+filesystems/yaffs2/yaffs/direct/yaffs_qsort.c
+filesystems/yaffs2/yaffs/direct/yaffsfs.c
+
 """)
 
 nfs = Split('''
@@ -143,9 +145,10 @@ CPPDEFINES = []
 # The set of source files associated with this SConscript file.
 path = [RTT_ROOT + '/components/dfs', RTT_ROOT + '/components/dfs/include']
 
-#if GetDepend('RT_USING_DFS_YAFFS2'):
-#    src_local = src_local + yaffs2_src
-#    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2']
+if GetDepend('RT_USING_DFS_YAFFS2'):
+    src_local = src_local + yaffs2_src
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/yaffs2/yaffs', \
+                   RTT_ROOT + '/components/dfs/filesystems/yaffs2/yaffs/direct' ]
 
 if GetDepend('RT_USING_DFS_ELMFAT'):
     if GetDepend('RT_DFS_ELM_USE_LFN'):
