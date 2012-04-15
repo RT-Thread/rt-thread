@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>1.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
   <Targets>
     <Target>
-      <TargetName>RT-Thread/AT91SAM7X</TargetName>
+      <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -29,6 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -43,13 +44,13 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\objs\</OutputDirectory>
-          <OutputName>rtthread-sam7x</OutputName>
+          <OutputName>project</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\objs\</ListingPath>
+          <ListingPath>.\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -127,7 +128,7 @@
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -157,7 +158,7 @@
             <UseTargetDll>1</UseTargetDll>
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
-            <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
+            <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
             <DriverSelection>4098</DriverSelection>
           </Flash1>
@@ -179,7 +180,7 @@
             <ldmm>1</ldmm>
             <ldXref>1</ldXref>
             <BigEnd>0</BigEnd>
-            <AdsALst>0</AdsALst>
+            <AdsALst>1</AdsALst>
             <AdsACrf>1</AdsACrf>
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
@@ -211,7 +212,7 @@
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <RoSelD>3</RoSelD>
-            <RwSelD>5</RwSelD>
+            <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -339,13 +340,13 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>RT_DEBUG</Define>
+              <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\sam7x;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include\ipv4;;..\..\filesystem\dfs;..\..\filesystem\dfs\include;..\..\filesystem\dfs\filesystems\efsl\src\include;..\..\filesystem\dfs\filesystems\efsl\src\base\include;..\..\filesystem\dfs\filesystems\efsl\src\fs\vfat\include</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\AT91SAM7X;..\..\libcpu\arm\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -375,7 +376,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
+            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -386,19 +387,9 @@
           <GroupName>Startup</GroupName>
           <Files>
             <File>
-              <FileName>rtconfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\rtconfig.h</FilePath>
-            </File>
-            <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\application.c</FilePath>
-            </File>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\board.c</FilePath>
             </File>
             <File>
               <FileName>startup.c</FileName>
@@ -406,9 +397,9 @@
               <FilePath>.\startup.c</FilePath>
             </File>
             <File>
-              <FileName>sd.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sd.c</FilePath>
+              <FilePath>.\board.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
@@ -429,6 +420,11 @@
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
@@ -456,6 +452,11 @@
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
             <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+            <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
@@ -466,19 +467,9 @@
               <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-            <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>slab.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\slab.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>
@@ -486,15 +477,20 @@
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
             <File>
-              <FileName>device.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>AT91SAM7X</GroupName>
           <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\AT91SAM7X\cpu.c</FilePath>
+            </File>
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
@@ -511,9 +507,9 @@
               <FilePath>..\..\libcpu\arm\AT91SAM7X\trap.c</FilePath>
             </File>
             <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\AT91SAM7X\cpu.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\AT91SAM7X\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>start_rvds.S</FileName>
@@ -521,9 +517,19 @@
               <FilePath>..\..\libcpu\arm\AT91SAM7X\start_rvds.S</FilePath>
             </File>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\AT91SAM7X\context_rvds.S</FilePath>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -601,6 +607,56 @@
           <GroupName>LwIP</GroupName>
           <Files>
             <File>
+              <FileName>api_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\api_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>api_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\api_msg.c</FilePath>
+            </File>
+            <File>
+              <FileName>err.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\err.c</FilePath>
+            </File>
+            <File>
+              <FileName>netbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\netbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\netdb.c</FilePath>
+            </File>
+            <File>
+              <FileName>netifapi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\netifapi.c</FilePath>
+            </File>
+            <File>
+              <FileName>sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\sockets.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcpip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\api\tcpip.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\arch\sys_arch.c</FilePath>
+            </File>
+            <File>
+              <FileName>def.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\core\def.c</FilePath>
+            </File>
+            <File>
               <FileName>dhcp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\dhcp.c</FilePath>
@@ -614,6 +670,11 @@
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\init.c</FilePath>
+            </File>
+            <File>
+              <FileName>memp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\core\memp.c</FilePath>
             </File>
             <File>
               <FileName>netif.c</FileName>
@@ -654,6 +715,11 @@
               <FileName>tcp_out.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\tcp_out.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\src\core\timers.c</FilePath>
             </File>
             <File>
               <FileName>udp.c</FileName>
@@ -701,71 +767,6 @@
               <FilePath>..\..\components\net\lwip\src\core\ipv4\ip_frag.c</FilePath>
             </File>
             <File>
-              <FileName>asn1_dec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\asn1_dec.c</FilePath>
-            </File>
-            <File>
-              <FileName>asn1_enc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\asn1_enc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mib2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\mib2.c</FilePath>
-            </File>
-            <File>
-              <FileName>mib_structs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\mib_structs.c</FilePath>
-            </File>
-            <File>
-              <FileName>msg_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\msg_in.c</FilePath>
-            </File>
-            <File>
-              <FileName>msg_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\snmp\msg_out.c</FilePath>
-            </File>
-            <File>
-              <FileName>api_lib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\api_lib.c</FilePath>
-            </File>
-            <File>
-              <FileName>api_msg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\api_msg.c</FilePath>
-            </File>
-            <File>
-              <FileName>err.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\err.c</FilePath>
-            </File>
-            <File>
-              <FileName>netbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\netbuf.c</FilePath>
-            </File>
-            <File>
-              <FileName>netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\netdb.c</FilePath>
-            </File>
-            <File>
-              <FileName>netifapi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\netifapi.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcpip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\tcpip.c</FilePath>
-            </File>
-            <File>
               <FileName>etharp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\netif\etharp.c</FilePath>
@@ -776,54 +777,9 @@
               <FilePath>..\..\components\net\lwip\src\netif\ethernetif.c</FilePath>
             </File>
             <File>
-              <FileName>loopif.c</FileName>
+              <FileName>slipif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\netif\loopif.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys_arch_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\arch\sys_arch_init.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\arch\sys_arch.c</FilePath>
-            </File>
-            <File>
-              <FileName>sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\api\sockets.c</FilePath>
-            </File>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\src\core\memp.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+              <FilePath>..\..\components\net\lwip\src\netif\slipif.c</FilePath>
             </File>
           </Files>
         </Group>
