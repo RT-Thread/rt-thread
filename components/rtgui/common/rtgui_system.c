@@ -21,7 +21,7 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/rtgui_theme.h>
 
-// #define RTGUI_EVENT_DEBUG
+#define RTGUI_EVENT_DEBUG
 
 #ifdef _WIN32
 #define RTGUI_EVENT_DEBUG
