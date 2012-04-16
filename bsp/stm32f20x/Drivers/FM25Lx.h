@@ -15,7 +15,7 @@
 
 #ifdef FM25CL64B
 #define FM25_MAXSIZE 8192
-#elif define(FM25LC256)
+#elif defined(FM25LC256)
 #define FM25_MAXSIZE 32768
 #endif
 
