@@ -57,6 +57,11 @@ path = [cwd + '/STM32F2xx_StdPeriph_Driver/inc',
     cwd + '/CMSIS/CM3/CoreSupport',
     cwd + '/CMSIS/CM3/DeviceSupport/ST/STM32F2xx']
 
+if GetDepend('RT_USING_LWIP') == True:
+	src = src + ['STM32F2x7_ETH_Driver/src/stm32f2x7_eth.c']
+	path = path + [cwd + '/STM32F2x7_ETH_Driver/inc']
+	
+
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
