@@ -9,10 +9,10 @@
 #include <rtgui/widgets/filelist_view.h>
 #include <string.h>
 
-// static rtgui_image_t* image = RT_NULL;
-// static rtgui_view_t* _view = RT_NULL;
-
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+static rtgui_image_t* image = RT_NULL;
+static rtgui_view_t* _view = RT_NULL;
+
 /* 打开按钮的回调函数 */
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
