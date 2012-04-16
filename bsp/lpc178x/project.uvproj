@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+
   <SchemaVersion>1.1</SchemaVersion>
+
   <Header>### uVision Project, (C) Keil Software</Header>
+
   <Targets>
     <Target>
       <TargetName>RT-Thread LPC17xx</TargetName>
@@ -12,25 +15,25 @@
           <Device>LPC1788</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
           <Cpu>IRAM(0x10000000-0x1000FFFF) IRAM2(0x20000000-0x20007FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE("Cortex-M3")</Cpu>
-          <FlashUtilSpec />
+          <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"STARTUP\NXP\LPC177x_8x\startup_LPC177x_8x.s" ("NXP LPC177x_8x Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O463 -S0 -C0 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512 -FS00 -FL080000)</FlashDriverDll>
           <DeviceId>5325</DeviceId>
           <RegisterFile>LPC177x_8x.H</RegisterFile>
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
-          <SFDFile />
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
           <RegisterFilePath>NXP\LPC177x_8x\</RegisterFilePath>
           <DBRegisterFilePath>NXP\LPC177x_8x\</DBRegisterFilePath>
           <TargetStatus>
@@ -54,29 +57,29 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -90,8 +93,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
@@ -135,18 +138,18 @@
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>7</TargetSelection>
           <SimDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
           </SimDlls>
           <TargetDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
             <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -161,7 +164,7 @@
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4 />
+          <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -193,7 +196,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M3"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -324,7 +327,7 @@
                 <Size>0x8000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -340,10 +343,10 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath>.;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;applications;drivers</IncludePath>
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath>.;..\..\components\finsh;..\..\components\rtgui\common;..\..\components\rtgui\include;..\..\components\rtgui\server;..\..\components\rtgui\widgets;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -355,10 +358,10 @@
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -370,12 +373,12 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
-            <ScatterFile />
-            <IncludeLibs />
-            <IncludeLibsPath />
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
             <Misc> --keep __fsym_* --keep __vsym_* </Misc>
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -388,8 +391,6 @@
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
@@ -405,15 +406,11 @@
               <FileType>1</FileType>
               <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>system_LPC177x_8x.c</FileName>
               <FileType>1</FileType>
               <FilePath>CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup_LPC177x_8x.s</FileName>
               <FileType>2</FileType>
@@ -429,43 +426,46 @@
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>drv_glcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_glcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\key.c</FilePath>
+            </File>
             <File>
               <FileName>lpc177x_8x_clkpwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>lpc177x_8x_emc.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>lpc177x_8x_pinsel.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>lpc177x_8x_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>lpc17xx_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc17xx_lcd.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\sdram.c</FilePath>
+            </File>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
@@ -481,85 +481,61 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\memheap.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -575,29 +551,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
@@ -613,85 +581,61 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
@@ -699,7 +643,483 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>RTGUI</GroupName>
+          <Files>
+            <File>
+              <FileName>blit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\blit.c</FilePath>
+            </File>
+            <File>
+              <FileName>color.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\color.c</FilePath>
+            </File>
+            <File>
+              <FileName>region.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\region.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_object.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_theme.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_theme.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_xml.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_xml.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_hw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\dc_hw.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\dc_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\dc_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>filerw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\filerw.c</FilePath>
+            </File>
+            <File>
+              <FileName>image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_xpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_xpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_hdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_hdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_png.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_png.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_jpg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_jpg.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\image_container.c</FilePath>
+            </File>
+            <File>
+              <FileName>font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\font.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\font_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\font_hz_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\font_hz_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\asc12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\asc16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\hz12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\hz16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>framebuffer_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\framebuffer_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>pixel_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\pixel_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>panel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\panel.c</FilePath>
+            </File>
+            <File>
+              <FileName>server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\server.c</FilePath>
+            </File>
+            <File>
+              <FileName>topwin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\topwin.c</FilePath>
+            </File>
+            <File>
+              <FileName>box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\box.c</FilePath>
+            </File>
+            <File>
+              <FileName>button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\button.c</FilePath>
+            </File>
+            <File>
+              <FileName>checkbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\checkbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\container.c</FilePath>
+            </File>
+            <File>
+              <FileName>combobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\combobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>iconbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\iconbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>label.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\label.c</FilePath>
+            </File>
+            <File>
+              <FileName>textview.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\textview.c</FilePath>
+            </File>
+            <File>
+              <FileName>listctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\listctrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>progressbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\progressbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>radiobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\radiobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>slider.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\slider.c</FilePath>
+            </File>
+            <File>
+              <FileName>scrollbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\scrollbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>staticline.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\staticline.c</FilePath>
+            </File>
+            <File>
+              <FileName>textbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\textbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>listbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\listbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>title.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\title.c</FilePath>
+            </File>
+            <File>
+              <FileName>toplevel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\toplevel.c</FilePath>
+            </File>
+            <File>
+              <FileName>notebook.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\notebook.c</FilePath>
+            </File>
+            <File>
+              <FileName>view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\view.c</FilePath>
+            </File>
+            <File>
+              <FileName>list_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\list_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>about_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\about_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>filelist_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\filelist_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>widget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\widget.c</FilePath>
+            </File>
+            <File>
+              <FileName>window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\window.c</FilePath>
+            </File>
+            <File>
+              <FileName>workbench.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\workbench.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>gui_examples</GroupName>
+          <Files>
+            <File>
+              <FileName>demo_view_dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_dc_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_instrument_panel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_instrument_panel.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_fnview.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_fnview.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_listview.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_listview.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_listview_icon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_listview_icon.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_panel_single.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_panel_single.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_animation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_animation.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_buffer_animation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_buffer_animation.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_box.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_button.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_checkbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_checkbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_image.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_module.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_module.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_label.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_label.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_mywidget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_mywidget.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_progressbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_progressbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_radiobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_radiobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_listbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_listbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_slider.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_slider.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_notebook.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_notebook.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_combobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_combobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_listctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_listctrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_scrollbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_scrollbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_textbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_textbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_window.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_benchmark.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_benchmark.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_workbench.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_workbench.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\gui_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>mywidget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\mywidget.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
+
 </Project>

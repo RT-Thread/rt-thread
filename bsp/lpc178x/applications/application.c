@@ -91,7 +91,7 @@ void rt_init_thread_entry(void *parameter)
 			rtgui_graphic_set_device(lcd);
 
 			/* startup rtgui in demo of RT-Thread/GUI examples */
-			// rtgui_startup();
+			rtgui_startup();
 		}
     }
 #endif
