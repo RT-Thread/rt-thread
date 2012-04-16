@@ -18,27 +18,28 @@
 
 #include "LPC177x_8x.h"
 
-/* whether use board external SDRAM memory */
-// <e>Use external SDRAM memory on the board
-// 	<i>Enable External SDRAM memory
-#define LPC_EXT_SDRAM          0
-//	<o>Begin Address of External SDRAM
-//		<i>Default: 0x60000000
-#define LPC_EXT_SDRAM_BEGIN    0xA0000000 /* the begining address of external SDRAM */
-//	<o>End Address of External SDRAM
-//		<i>Default: 0x60000000
-#define LPC_EXT_SDRAM_END      0xA4000000 /* the end address of external SDRAM */
-// </e>
+// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 
-/* RT_USING_UART */
-#define RT_UART_RX_BUFFER_SIZE	64
+// <integer name="LPC_EXT_SDRAM" description="Enable External SDRAM memory" default="0" />
+#define LPC_EXT_SDRAM          1
+// <integer name="LPC_EXT_SDRAM" description="Begin Address of External SDRAM" default="0xA0000000" />
+#define LPC_EXT_SDRAM_BEGIN    0xA0000000
+// <integer name="LPC_EXT_SDRAM_END" description="End Address of External SDRAM" default="0xA4000000" />
+#define LPC_EXT_SDRAM_END      0xA4000000
+
+// <bool name="RT_USING_UART0" description="Using UART0" default="true" />
 #define RT_USING_UART0
+// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
 //#define RT_USING_UART1
+// <bool name="RT_USING_UART2" description="Using UART2" default="true" />
 //#define RT_USING_UART2
 
-#define CONSOLE_DEVICE      "uart0"
-#define FINSH_DEVICE_NAME   CONSOLE_DEVICE
+// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
+#define RT_CONSOLE_DEVICE_NAME	"uart0"
 
+// </RDTConfigurator>
+
+#define FINSH_DEVICE_NAME   RT_CONSOLE_DEVICE_NAME
 void rt_hw_board_init(void);
 
 #endif

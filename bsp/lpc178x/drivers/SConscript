@@ -1,15 +1,11 @@
-import copy
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
-cwd     = GetCurrentDir()
-src	= Glob('*.c')
+cwd = GetCurrentDir()
+src = Glob('*.c')
 
 # remove no need file.
 if GetDepend('RT_USING_LWIP') == False:
-	src_need_remove = ['emac.c'] # need remove file list.
-	SrcRemove(src, src_need_remove)
+	SrcRemove(src, 'emac.c')
 
 CPPPATH = [cwd]
 

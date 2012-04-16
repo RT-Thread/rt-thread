@@ -171,7 +171,7 @@ REF_CLK   P1_15
 static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 {
 	/* Initialize the EMAC ethernet controller. */
-	rt_uint32_t regv, tout, id1, id2;
+	rt_uint32_t regv, tout;
 
 	/* Power Up the EMAC controller. */
 	LPC_SC->PCONP |= (1UL<<30);

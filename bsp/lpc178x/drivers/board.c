@@ -21,6 +21,7 @@
 #include "board.h"
 #include "LPC177x_8x.h"
 #include "system_LPC177x_8x.h"
+#include "sdram.h"
 
 /**
  * @addtogroup LPC17xx
@@ -69,16 +70,13 @@ void rt_hw_board_init()
     NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 
     rt_hw_uart_init();
-    rt_console_set_device( CONSOLE_DEVICE );
-
-    rt_kprintf("\r\n\r\nSystemInit......\r\n");
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
 #if LPC_EXT_SDRAM == 1
     {
         SDRAM_Init();
     }
 #endif
-
 }
 
 /*@}*/

@@ -9,16 +9,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
- * 2010-03-04     Magicoe      for LPC1766 version
  * 2010-05-02     Aozima       add led function
- * 2010-05-24     Bernard      add filesystem initialization and move led function to led.c
  */
-
-/**
- * @addtogroup LPC1700
- */
-/*@{*/
 
 #include <rtthread.h>
 
@@ -39,10 +31,13 @@
 #include <netif/ethernetif.h>
 #endif
 
+#ifdef RT_USING_RTGUI
+#include <rtgui/driver.h>
+#endif
+
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
     {
@@ -76,6 +71,28 @@ void rt_init_thread_entry(void *parameter)
         /* init lwip system */
         lwip_sys_init();
         rt_kprintf("TCP/IP initialized!\n");
+    }
+#endif
+
+#ifdef RT_USING_RTGUI
+    {
+		rt_device_t lcd;
+
+		/* init lcd */
+		rt_hw_lcd_init();
+		/* re-init device driver */
+		rt_device_init_all();
+
+		/* find lcd device */
+		lcd = rt_device_find("lcd");
+		if (lcd != RT_NULL)
+		{
+			/* set lcd device as rtgui graphic driver */
+			rtgui_graphic_set_device(lcd);
+
+			/* startup rtgui in demo of RT-Thread/GUI examples */
+			// rtgui_startup();
+		}
     }
 #endif
 }
@@ -118,29 +135,47 @@ static void rt_thread_entry_led(void* parameter)
 
 int rt_application_init()
 {
-    rt_thread_t init_thread;
+	rt_thread_t tid;
 
-    //------- init led thread
-    rt_thread_init(&thread_led,
-                   "led",
-                   rt_thread_entry_led,
-                   RT_NULL,
-                   &thread_led_stack[0],
-                   sizeof(thread_led_stack),11,5);
-    rt_thread_startup(&thread_led);
+	rt_thread_init(&thread_led,
+			"led",
+			rt_thread_entry_led,
+			RT_NULL,
+			&thread_led_stack[0],
+			sizeof(thread_led_stack),11,5);
+	rt_thread_startup(&thread_led);
 
-#if (RT_THREAD_PRIORITY_MAX == 32)
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
-    if (init_thread != RT_NULL) rt_thread_startup(init_thread);
+	tid = rt_thread_create("init",
+			rt_init_thread_entry, RT_NULL,
+			2048, RT_THREAD_PRIORITY_MAX/3, 20);
+	if (tid != RT_NULL) rt_thread_startup(tid);
 
-    return 0;
+	return 0;
 }
 
-/*@}*/
+#if defined(RT_USING_RTGUI) && defined(RT_USING_FINSH)
+#include <rtgui/rtgui_server.h>
+#include <rtgui/event.h>
+#include <rtgui/kbddef.h>
+
+#include <finsh.h>
+
+void key(rt_uint32_t key)
+{
+	struct rtgui_event_kbd ekbd;
+
+	RTGUI_EVENT_KBD_INIT(&ekbd);
+	ekbd.mod  = RTGUI_KMOD_NONE;
+	ekbd.unicode = 0;
+	ekbd.key = key;
+
+	ekbd.type = RTGUI_KEYDOWN;
+	rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
+
+	rt_thread_delay(2);
+
+	ekbd.type = RTGUI_KEYUP;
+	rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
+}
+FINSH_FUNCTION_EXPORT(key, send a key to gui server);
+#endif
