@@ -29,7 +29,7 @@ static const rtgui_menu_item_t items[] =
 };
 static rtgui_menu_t* menu;
 
-static _onmenu(struct rtgui_widget* widget, struct rtgui_event* event)
+static void _onmenu(struct rtgui_widget* widget, struct rtgui_event* event)
 {
 	rtgui_rect_t rect;
 

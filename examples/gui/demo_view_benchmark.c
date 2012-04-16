@@ -4,7 +4,7 @@
 #include <rtgui/widgets/view.h>
 #include "demo_view.h"
 
-#if RT_VERSION == 4
+#if RTTHREAD_VERSION >= 10000
 #define RAND(x1, x2) ((rand() % (x2 - x1)) + x1)
 
 static rtgui_view_t* view = RT_NULL;

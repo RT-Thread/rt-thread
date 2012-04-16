@@ -15,7 +15,7 @@ static rtgui_list_view_t* _view = RT_NULL;
 // static rtgui_image_t* return_image = RT_NULL;
 
 /* 列表项的动作函数 */
-#if RT_VERSION == 4
+#if RTTHREAD_VERSION >= 10000
 static void listitem_action(rtgui_widget_t *widget, void* parameter)
 #else
 static void listitem_action(void* parameter)
@@ -50,7 +50,7 @@ static void listitem_action(void* parameter)
 }
 
 /* 返回功能的动作函数 */
-#if RT_VERSION == 4
+#if RTTHREAD_VERSION >= 10000
 static void return_action(rtgui_widget_t* widget, void* parameter)
 #else
 static void return_action(void* parameter)

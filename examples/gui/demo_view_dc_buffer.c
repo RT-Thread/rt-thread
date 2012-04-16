@@ -10,7 +10,7 @@
 #include <rtgui/widgets/slider.h>
 #include <rtgui/image.h>
 
-static rtgui_image_t *background;
+// static rtgui_image_t *background;
 static struct rtgui_dc *dc_buffer;
 
 /*

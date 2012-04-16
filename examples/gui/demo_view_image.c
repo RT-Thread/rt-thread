@@ -9,8 +9,8 @@
 #include <rtgui/widgets/filelist_view.h>
 #include <string.h>
 
-static rtgui_image_t* image = RT_NULL;
-static rtgui_view_t* _view = RT_NULL;
+// static rtgui_image_t* image = RT_NULL;
+// static rtgui_view_t* _view = RT_NULL;
 
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 /* 打开按钮的回调函数 */

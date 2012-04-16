@@ -6,7 +6,7 @@
 
 static rt_bool_t demo_workbench_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
 {
-	/* æˆ‘ä»¬ç›®å‰åªå¯¹æŒ‰é”®äº‹ä»¶æ„Ÿå…´è¶£ã€‚å¦‚æœå½“å‰workbenchå¤„äºæ¨¡å¼æ˜¾ç¤ºçŠ¶æ€ï¼Œå¿½ç•¥å®ƒ  */
+	/* ÎÒÃÇÄ¿Ç°Ö»¶Ô°´¼üÊÂ¼ş¸ĞĞËÈ¤¡£Èç¹ûµ±Ç°workbench´¦ÓÚÄ£Ê½ÏÔÊ¾×´Ì¬£¬ºöÂÔËü  */
 	if ((event->type == RTGUI_EVENT_KBD) && !RTGUI_WORKBENCH_IS_MODAL_MODE(RTGUI_WORKBENCH(widget)))
 	{
 		struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
@@ -26,7 +26,7 @@ static rt_bool_t demo_workbench_event_handler(struct rtgui_widget* widget, struc
 		}
 	}
 
-	/* å¦‚æœä¸æ˜¯ç»˜åˆ¶äº‹ä»¶ï¼Œä½¿ç”¨viewåŸæ¥çš„äº‹ä»¶å¤„ç†å‡½æ•°å¤„ç† */
+	/* Èç¹û²»ÊÇ»æÖÆÊÂ¼ş£¬Ê¹ÓÃviewÔ­À´µÄÊÂ¼ş´¦Àíº¯Êı´¦Àí */
 	return rtgui_workbench_event_handler(widget, event);
 }
 
@@ -35,28 +35,28 @@ static void workbench_entry(void* parameter)
 	rt_mq_t mq;
 	struct rtgui_workbench* workbench;
 
-	/* åˆ›å»ºGUIåº”ç”¨éœ€è¦çš„æ¶ˆæ¯é˜Ÿåˆ— */
+	/* ´´½¨GUIÓ¦ÓÃĞèÒªµÄÏûÏ¢¶ÓÁĞ */
 #ifdef RTGUI_USING_SMALL_SIZE
 	mq = rt_mq_create("workbench", 32, 32, RT_IPC_FLAG_FIFO);
 #else
 	mq = rt_mq_create("workbench", 256, 32, RT_IPC_FLAG_FIFO);
 #endif
-	/* æ³¨å†Œå½“å‰çº¿ç¨‹ä¸ºGUIçº¿ç¨‹ */
+	/* ×¢²áµ±Ç°Ïß³ÌÎªGUIÏß³Ì */
 	rtgui_thread_register(rt_thread_self(), mq);
 
-	/* åˆ›å»ºä¸€ä¸ªå·¥ä½œå° */
+	/* ´´½¨Ò»¸ö¹¤×÷Ì¨ */
 	workbench = rtgui_workbench_create("main", "workbench");
 	if (workbench == RT_NULL) return;
 
 	rtgui_widget_set_event_handler(RTGUI_WIDGET(workbench), demo_workbench_event_handler);
 
-	/* åˆå§‹åŒ–å„ä¸ªä¾‹å­çš„è§†å›¾ */
-#if RT_VERSION == 4
+	/* ³õÊ¼»¯¸÷¸öÀı×ÓµÄÊÓÍ¼ */
+#if RTTHREAD_VERSION >= 10000
 	demo_view_benchmark(workbench);
 #endif
 
 	demo_view_dc(workbench);
-#if RT_VERSION == 4
+#if RTTHREAD_VERSION >= 10000
 #ifdef RTGUI_USING_TTF
 	demo_view_ttf(workbench);
 #endif
@@ -68,7 +68,7 @@ static void workbench_entry(void* parameter)
 	demo_view_animation(workbench);
 #ifndef RTGUI_USING_SMALL_SIZE
 	demo_view_buffer_animation(workbench);
-	// demo_view_instrument_panel(workbench);
+	demo_view_instrument_panel(workbench);
 #endif
 	demo_view_window(workbench);
 	demo_view_label(workbench);
@@ -83,7 +83,7 @@ static void workbench_entry(void* parameter)
 	demo_view_listctrl(workbench);
 	demo_view_combobox(workbench);
 	demo_view_slider(workbench);
-	demo_view_notebook(workbench);
+	// demo_view_notebook(workbench);
 	demo_view_mywidget(workbench);
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 	demo_view_image(workbench);
@@ -99,13 +99,13 @@ static void workbench_entry(void* parameter)
 	demo_fn_view(workbench);
 #endif
 
-	/* æ˜¾ç¤ºè§†å›¾ */
+	/* ÏÔÊ¾ÊÓÍ¼ */
 	demo_view_show();
 
-	/* æ‰§è¡Œå·¥ä½œå°äº‹ä»¶å¾ªç¯ */
+	/* Ö´ĞĞ¹¤×÷Ì¨ÊÂ¼şÑ­»· */
 	rtgui_workbench_event_loop(workbench);
 
-	/* å»æ³¨å†ŒGUIçº¿ç¨‹ */
+	/* È¥×¢²áGUIÏß³Ì */
 	rtgui_thread_deregister(rt_thread_self());
 	rt_mq_delete(mq);
 }
@@ -114,7 +114,7 @@ void workbench_init()
 {
 	static rt_bool_t inited = RT_FALSE;
 
-	if (inited == RT_FALSE) /* é¿å…é‡å¤åˆå§‹åŒ–è€Œåšçš„ä¿æŠ¤ */
+	if (inited == RT_FALSE) /* ±ÜÃâÖØ¸´³õÊ¼»¯¶ø×öµÄ±£»¤ */
 	{
 		rt_thread_t tid;
 
@@ -134,6 +134,6 @@ void workbench()
 {
 	workbench_init();
 }
-/* finshçš„å‘½ä»¤è¾“å‡ºï¼Œå¯ä»¥ç›´æ¥æ‰§è¡Œworkbench()å‡½æ•°ä»¥æ‰§è¡Œä¸Šé¢çš„å‡½æ•° */
+/* finshµÄÃüÁîÊä³ö£¬¿ÉÒÔÖ±½ÓÖ´ĞĞworkbench()º¯ÊıÒÔÖ´ĞĞÉÏÃæµÄº¯Êı */
 FINSH_FUNCTION_EXPORT(workbench, workbench demo)
 #endif
