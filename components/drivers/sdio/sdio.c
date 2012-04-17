@@ -14,7 +14,6 @@
 
 #include "mmcsd_core.h"
 #include "mmcsd_cmd.h"
-#include "list.h"
 
 #ifndef RT_SDIO_STACK_SIZE
 #define RT_SDIO_STACK_SIZE 512
@@ -743,16 +742,16 @@ static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
 	}
 
 	sc->card = card;
-	list_insert_after(&sdio_cards, &sc->list);
+	rt_list_insert_after(&sdio_cards, &sc->list);
 
-	if (list_isempty(&sdio_drivers))
+	if (rt_list_isempty(&sdio_drivers))
 	{
 		goto out;
 	}
 
 	for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
 	{
-		sd = (struct sdio_driver *)list_entry(l, struct sdio_driver, list);
+		sd = (struct sdio_driver *)rt_list_entry(l, struct sdio_driver, list);
 		if (sdio_match_card(card, sd->drv->id))
 		{
 			sd->drv->probe(card);
@@ -1260,7 +1259,7 @@ static struct rt_mmcsd_card *sdio_match_driver(struct rt_sdio_device_id *id)
 
 	for (l = (&sdio_cards)->next; l != &sdio_cards; l = l->next)
 	{
-		sc = (struct sdio_card *)list_entry(l, struct sdio_card, list);
+		sc = (struct sdio_card *)rt_list_entry(l, struct sdio_card, list);
 		card = sc->card;
 
 		if (sdio_match_card(card, id))
@@ -1284,9 +1283,9 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
 		return -RT_ENOMEM;
 	}
 
-	list_insert_after(&sdio_drivers, &sd->list);
+	rt_list_insert_after(&sdio_drivers, &sd->list);
 
-	if (!list_isempty(&sdio_cards))
+	if (!rt_list_isempty(&sdio_cards))
 	{
 		card = sdio_match_driver(driver->id);
 		if (card != RT_NULL)
@@ -1305,11 +1304,11 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 	struct rt_mmcsd_card *card;
 
 
-	list_insert_after(&sdio_drivers, &sd->list);
+	rt_list_insert_after(&sdio_drivers, &sd->list);
 
 	for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
 	{
-		sd = (struct sdio_driver *)list_entry(l, struct sdio_driver, list);
+		sd = (struct sdio_driver *)rt_list_entry(l, struct sdio_driver, list);
 		if (sd->drv != driver)
 		{
 			sd = RT_NULL;
@@ -1322,13 +1321,13 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 		return -RT_ERROR;
 	}
 
-	if (!list_isempty(&sdio_cards))
+	if (!rt_list_isempty(&sdio_cards))
 	{
 		card = sdio_match_driver(driver->id);
 		if (card != RT_NULL)
 		{
 			driver->remove(card);
-			list_remove(&sd->list);
+			rt_list_remove(&sd->list);
 			rt_free(sd);
 		}
 	}
@@ -1339,7 +1338,7 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 
 void rt_sdio_init(void)
 {
-	list_init(&sdio_cards);
-	list_init(&sdio_drivers);
+	rt_list_init(&sdio_cards);
+	rt_list_init(&sdio_drivers);
 }
 

@@ -14,7 +14,6 @@
 
 #include <rtthread.h>
 #include <dfs_fs.h>
-#include "list.h"
 
 #include "mmcsd_core.h"
 #include "mmcsd_cmd.h"
@@ -359,7 +358,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 	
 				rt_device_register(&blk_dev->dev, dname,
 					RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
-				list_insert_after(&blk_devices, &blk_dev->list);
+				rt_list_insert_after(&blk_devices, &blk_dev->list);
 			}
 			else
 			{
@@ -396,7 +395,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 	
 					rt_device_register(&blk_dev->dev, "sd0",
 						RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
-					list_insert_after(&blk_devices, &blk_dev->list);
+					rt_list_insert_after(&blk_devices, &blk_dev->list);
 	
 					break;
 				}
@@ -428,11 +427,11 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
 	
 	for (l = (&blk_devices)->next; l != &blk_devices; l = l->next)
 	{
-		blk_dev = (struct mmcsd_blk_device *)list_entry(l, struct mmcsd_blk_device, list);
+		blk_dev = (struct mmcsd_blk_device *)rt_list_entry(l, struct mmcsd_blk_device, list);
 		if (blk_dev->card == card) 
 		{
 			rt_device_unregister(&blk_dev->dev);
-			list_remove(&blk_dev->list);
+			rt_list_remove(&blk_dev->list);
 			rt_free(blk_dev);
 		}
 	}
@@ -440,5 +439,5 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
 
 void rt_mmcsd_blk_init(void)
 {
-	list_init(&blk_devices);
+	rt_list_init(&blk_devices);
 }
