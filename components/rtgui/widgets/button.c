@@ -14,13 +14,13 @@
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_theme.h>
 #include <rtgui/widgets/button.h>
-#include <rtgui/widgets/toplevel.h>
+#include <rtgui/widgets/window.h>
 
 static void _rtgui_button_constructor(rtgui_button_t *button)
 {
 	/* init widget and set event handler */
 	RTGUI_WIDGET(button)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(button), rtgui_button_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(button), rtgui_button_event_handler);
 
 	/* un-press button */
 	button->flag = 0;
@@ -57,13 +57,16 @@ DEFINE_CLASS_TYPE(button, "button",
 	_rtgui_button_destructor,
 	sizeof(struct rtgui_button));
 
-rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_button* btn;
+	struct rtgui_widget *widget;
+	struct rtgui_button *btn;
 
 	RT_ASSERT(widget != RT_NULL);
+	RT_ASSERT(event != RT_NULL);
 
-	btn = (struct rtgui_button*) widget;
+	widget = RTGUI_WIDGET(object);
+	btn = RTGUI_BUTTON(widget);
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
@@ -150,10 +153,10 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_e
 				if (emouse->button & RTGUI_MOUSE_BUTTON_LEFT)
 				{
 					/* set the last mouse event handled widget */
-					rtgui_toplevel_t* toplevel;
+					struct rtgui_win* win;
 
-					toplevel = RTGUI_TOPLEVEL(RTGUI_WIDGET(btn)->toplevel);
-					toplevel->last_mevent_widget = RTGUI_WIDGET(btn);
+					win = RTGUI_WIN(RTGUI_WIDGET(btn)->toplevel);
+					win->last_mevent_widget = RTGUI_WIDGET(btn);
 
 					/* it's a normal button */
 					if (emouse->button & RTGUI_MOUSE_BUTTON_DOWN)

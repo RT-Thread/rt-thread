@@ -177,7 +177,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 	while (length > 0)
 	{
 		len = 0;
-		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len)) len ++;
+		while (((rt_uint8_t)*(text + len)) < 0x80 && *(text + len) && len < length) len ++;
 		/* draw text with English font */
 		if (len > 0)
 		{
@@ -188,7 +188,7 @@ static void rtgui_hz_file_font_draw_text(struct rtgui_font* font, struct rtgui_d
 		}
 
 		len = 0;
-		while (((rt_uint8_t)*(text + len)) >= 0x80) len ++;
+		while (((rt_uint8_t)*(text + len)) >= 0x80 && len < length) len ++;
 		if (len > 0)
 		{
 			_rtgui_hz_file_font_draw_text(hz_file_font, dc, text, len, rect);

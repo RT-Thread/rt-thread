@@ -432,7 +432,7 @@ static void rtgui_winrect_show()
 	rt_uint16_t x, y;
 	rtgui_color_t c;
 	rtgui_rect_t screen_rect, win_rect, win_rect_inner;
-	void (*set_pixel) (rtgui_color_t *c, rt_base_t x, rt_base_t y);
+	void (*set_pixel) (rtgui_color_t *c, int x, int y);
 
 	c = black;
 	set_pixel = rtgui_graphic_driver_get_default()->ops->set_pixel;

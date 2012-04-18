@@ -10,7 +10,7 @@ DECLARE_CLASS_TYPE(checkbox);
 /** Gets the type of a checkbox */
 #define RTGUI_CHECKBOX_TYPE       (RTGUI_TYPE(checkbox))
 /** Casts the object to an rtgui_button */
-#define RTGUI_CHECKBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_CHECKBOX_TYPE, rtgui_checkbox))
+#define RTGUI_CHECKBOX(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_CHECKBOX_TYPE, struct rtgui_checkbox))
 /** Checks if the object is an rtgui_button */
 #define RTGUI_IS_CHECKBOX(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_CHECKBOX_TYPE))
 
@@ -38,6 +38,6 @@ rt_bool_t rtgui_checkbox_get_checked(rtgui_checkbox_t* checkbox);
 
 void rtgui_checkbox_set_onbutton(rtgui_checkbox_t* checkbox, rtgui_onbutton_func_t func);
 
-rt_bool_t rtgui_checkbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_checkbox_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 #endif

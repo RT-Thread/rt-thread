@@ -34,9 +34,9 @@ common/pixel_driver.c
 """)
 
 server_src = Split("""
+server/rtgui_application.c
 server/driver.c
 server/mouse.c
-server/panel.c
 server/server.c
 server/topwin.c
 """)
@@ -45,7 +45,6 @@ widgets_src = Split("""
 widgets/box.c
 widgets/button.c
 widgets/checkbox.c
-widgets/container.c
 widgets/combobox.c
 widgets/iconbox.c
 widgets/label.c
@@ -62,13 +61,12 @@ widgets/listbox.c
 widgets/title.c
 widgets/toplevel.c
 widgets/notebook.c
-widgets/view.c
+widgets/container.c
 widgets/list_view.c
 widgets/about_view.c
 widgets/filelist_view.c
 widgets/widget.c
 widgets/window.c
-widgets/workbench.c
 """)
 
 # The set of source files associated with this SConscript file.

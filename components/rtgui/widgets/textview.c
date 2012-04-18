@@ -222,7 +222,7 @@ static void _draw_textview(rtgui_textview_t *textview)
 static void _rtgui_textview_constructor(rtgui_textview_t *textview)
 {
 	/* init widget and set event handler */
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(textview), rtgui_textview_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(textview), rtgui_textview_event_handler);
 	RTGUI_WIDGET(textview)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
 	/* set field */
@@ -240,25 +240,24 @@ static void _rtgui_textview_destructor(rtgui_textview_t *textview)
 	textview->lines = RT_NULL;
 }
 
-DEFINE_CLASS_TYPE(textview, "textview", 
+DEFINE_CLASS_TYPE(textview, "textview",
 	RTGUI_WIDGET_TYPE,
 	_rtgui_textview_constructor,
 	_rtgui_textview_destructor,
 	sizeof(struct rtgui_textview));
 
-rt_bool_t rtgui_textview_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_textview_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_textview* textview;
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
-	RT_ASSERT(widget != RT_NULL);
-
-	textview = (struct rtgui_textview*) widget;
+	textview = RTGUI_TEXTVIEW(object);
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
 		_draw_textview(textview);
 		break;
-	
+
 	case RTGUI_EVENT_KBD:
 		{
 		struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;

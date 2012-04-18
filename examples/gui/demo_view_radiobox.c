@@ -1,7 +1,7 @@
 /*
  * 程序清单：radiobox控件演示
  *
- * 这个例子会在创建出的view上添加两个不同方向的radiobox控件
+ * 这个例子会在创建出的container上添加两个不同方向的radiobox控件
  */
 
 #include "demo_view.h"
@@ -24,17 +24,17 @@ static char* radio_item_h[3] =
 	};
 
 /* 创建用于演示radiobox控件的视图 */
-rtgui_view_t* demo_view_radiobox(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_radiobox(void)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t* view;
+	rtgui_container_t* container;
 	rtgui_radiobox_t* radiobox;
 
 	/* 先创建一个演示用的视图 */
-	view = demo_view(workbench, "RadioBox View");
+	container = demo_view("RadioBox View");
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5;
@@ -45,12 +45,12 @@ rtgui_view_t* demo_view_radiobox(rtgui_workbench_t* workbench)
 	/* 设置当前选择的数组是第0项 */
 	rtgui_radiobox_set_selection(radiobox, 0);
 	/* 添加radiobox控件到视图中 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(radiobox));
+	rtgui_container_add_child(container, RTGUI_WIDGET(radiobox));
 	/* 设置radiobox控件的位置信息 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5 + 5 * 25;
@@ -61,9 +61,9 @@ rtgui_view_t* demo_view_radiobox(rtgui_workbench_t* workbench)
 	/* 设置当前选择的数组是第0项 */
 	rtgui_radiobox_set_selection(radiobox, 0);
 	/* 添加radiobox控件到视图中 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(radiobox));
+	rtgui_container_add_child(container, RTGUI_WIDGET(radiobox));
 	/* 设置radiobox控件的位置信息 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 
-	return view;
+	return container;
 }

@@ -18,23 +18,23 @@
 static void _rtgui_box_constructor(rtgui_box_t *box)
 {
 	/* init widget and set event handler */
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(box), rtgui_box_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(box), rtgui_box_event_handler);
 
 	RTGUI_WIDGET(box)->flag |= RTGUI_WIDGET_FLAG_TRANSPARENT;
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(box), rtgui_box_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(box), rtgui_box_event_handler);
 
 	/* set proper of control */
 	box->orient = RTGUI_HORIZONTAL;
 	box->border_size = RTGUI_BORDER_DEFAULT_WIDTH;
 }
 
-DEFINE_CLASS_TYPE(box, "box", 
+DEFINE_CLASS_TYPE(box, "box",
 	RTGUI_CONTAINER_TYPE,
 	_rtgui_box_constructor,
 	RT_NULL,
 	sizeof(struct rtgui_box));
 
-rt_bool_t rtgui_box_event_handler(rtgui_widget_t* widget, rtgui_event_t* event)
+rt_bool_t rtgui_box_event_handler(struct rtgui_object *widget, rtgui_event_t *event)
 {
 	struct rtgui_box* box = (struct rtgui_box*)widget;
 
@@ -48,7 +48,7 @@ rt_bool_t rtgui_box_event_handler(rtgui_widget_t* widget, rtgui_event_t* event)
 		break;
 
 	default:
-		return rtgui_container_event_handler(RTGUI_WIDGET(box), event);
+		return rtgui_container_event_handler(RTGUI_OBJECT(box), event);
 	}
 
 	return RT_FALSE;
@@ -166,7 +166,8 @@ static void rtgui_box_layout_vertical(rtgui_box_t* box)
 		size_event.y = rect->y1;
 		size_event.w = rect->x2 - rect->x1;
 		size_event.h = rect->y2 - rect->y1;
-		widget->event_handler(widget, &size_event.parent);
+		RTGUI_OBJECT(widget)->event_handler(RTGUI_OBJECT(widget),
+											&size_event.parent);
 
 		/* point to next height */
 		next_y = rect->y2;
@@ -258,7 +259,8 @@ static void rtgui_box_layout_horizontal(rtgui_box_t* box)
 		size_event.y = rect->y1;
 		size_event.w = rect->x2 - rect->x1;
 		size_event.h = rect->y2 - rect->y1;
-		widget->event_handler(widget, &size_event.parent);
+		RTGUI_OBJECT(widget)->event_handler(RTGUI_OBJECT(widget),
+											&size_event.parent);
 
 		/* point to next width */
 		next_x = rect->x2;

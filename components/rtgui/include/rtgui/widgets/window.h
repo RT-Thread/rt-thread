@@ -29,20 +29,46 @@ DECLARE_CLASS_TYPE(win);
 /** Checks if the object is an rtgui_win */
 #define RTGUI_IS_WIN(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_WIN_TYPE))
 
-#define RTGUI_WIN_STYLE_MODAL		0x001	/* modal mode window			*/
-#define RTGUI_WIN_STYLE_CLOSED		0x002	/* window is closed				*/
-#define RTGUI_WIN_STYLE_ACTIVATE	0x004	/* window is activated			*/
-#define RTGUI_WIN_STYLE_NO_FOCUS	0x008	/* non-focused window			*/
+#define RTGUI_WIN_STYLE_NO_FOCUS	        0x001	/* non-focused window			*/
 
-#define RTGUI_WIN_STYLE_NO_TITLE	0x010	/* no title window				*/
-#define RTGUI_WIN_STYLE_NO_BORDER	0x020	/* no border window				*/
-#define RTGUI_WIN_STYLE_CLOSEBOX	0x040	/* window has the close button	*/
-#define RTGUI_WIN_STYLE_MINIBOX		0x080	/* window has the mini button	*/
+#define RTGUI_WIN_STYLE_NO_TITLE	        0x002	/* no title window				*/
+#define RTGUI_WIN_STYLE_NO_BORDER	        0x004	/* no border window				*/
+#define RTGUI_WIN_STYLE_CLOSEBOX	        0x008	/* window has the close button	*/
+#define RTGUI_WIN_STYLE_MINIBOX		        0x010	/* window has the mini button	*/
 
-#define RTGUI_WIN_STYLE_UNDER_MODAL	0x100    /* window is under modal show (show 
-											 * sub-win as modal window) */
+#define RTGUI_WIN_STYLE_DESTROY_ON_CLOSE	0x020   /* window is destroyed when closed */
+#ifdef RTGUI_USING_DESKTOP_WINDOW
+/* A desktop window is a full screen window which will beneath all other windows.
+ * There will be only one desktop window in a system. And this window should be
+ * created _before_ any other windows.
+ */
+#define RTGUI_WIN_STYLE_DESKTOP		        0x8000
+#define RTGUI_WIN_STYLE_DESKTOP_DEFAULT     RTGUI_WIN_STYLE_DESKTOP |\
+                                            RTGUI_WIN_STYLE_NO_BORDER |\
+                                            RTGUI_WIN_STYLE_NO_TITLE
+#endif
 
 #define RTGUI_WIN_STYLE_DEFAULT		(RTGUI_WIN_STYLE_CLOSEBOX | RTGUI_WIN_STYLE_MINIBOX)
+
+enum rtgui_win_flag
+{
+	RTGUI_WIN_FLAG_INIT        = 0x00,  /* init state              */
+	RTGUI_WIN_FLAG_MODAL	   = 0x01,	/* modal mode window	   */
+	RTGUI_WIN_FLAG_CLOSED	   = 0x02,	/* window is closed		   */
+	RTGUI_WIN_FLAG_ACTIVATE	   = 0x04,	/* window is activated	   */
+	RTGUI_WIN_FLAG_UNDER_MODAL = 0x08,  /* window is under modal
+										   show(modaled by other)  */
+	RTGUI_WIN_FLAG_CONNECTED   = 0x10,  /* connected to server */
+	/* window is event_key dispatcher(dispatch it to the focused widget in
+	 * current window) _and_ a key handler(it should be able to handle keys
+	 * such as ESC). Both of dispatching and handling are in the same
+	 * function(rtgui_win_event_handler). So we have to distinguish between the
+	 * two modes.
+	 *
+	 * If this flag is set, we are in key-handling mode.
+	 */
+	RTGUI_WIN_FLAG_HANDLE_KEY  = 0x20
+};
 
 struct rtgui_win_title;
 struct rtgui_win_area;
@@ -52,33 +78,59 @@ struct rtgui_win
 	/* inherit from toplevel */
 	struct rtgui_toplevel parent;
 
-	/* parent toplevel */
-	rtgui_toplevel_t* parent_toplevel;
+    /* parent window. RT_NULL if the window is a top level window */
+	struct rtgui_win *parent_window;
+
+	/* the widget that will grab the focus in current window */
+	struct rtgui_widget *focused_widget;
 
 	/* top window style */
 	rt_uint16_t style;
 
+	/* window state flag */
+	enum rtgui_win_flag flag;
+
 	rtgui_modal_code_t modal_code;
-	rtgui_widget_t* modal_widget;
+
+	/* last mouse event handled widget */
+	rtgui_widget_t* last_mevent_widget;
 
 	/* window title */
 	char* title;
 
 	/* call back */
-	rt_bool_t (*on_activate)	(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_deactivate)	(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_close)		(struct rtgui_widget* widget, struct rtgui_event* event);
+	rt_bool_t (*on_activate)	(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_deactivate)	(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_close)		(struct rtgui_object* widget, struct rtgui_event* event);
+	/* the key is sent to the focused widget by default. If the focused widget
+	 * and all of it's parents didn't handle the key event, it will be handled
+	 * by @func on_key
+	 *
+	 * If you want to handle key event on your own, it's better to overload
+	 * this function other than handle EVENT_KBD in event_handler.
+	 */
+	rt_bool_t (*on_key)		    (struct rtgui_object* widget, struct rtgui_event* event);
 
 	/* reserved user data */
 	rt_uint32_t user_data;
 };
 
-rtgui_win_t* rtgui_win_create(rtgui_toplevel_t* parent_toplevel, const char* title, 
-	rtgui_rect_t *rect, rt_uint8_t flag);
+rtgui_win_t* rtgui_win_create(struct rtgui_win *parent_window, const char* title,
+							  rtgui_rect_t *rect, rt_uint16_t style);
 void rtgui_win_destroy(rtgui_win_t* win);
-void rtgui_win_close(struct rtgui_win* win);
 
-rtgui_modal_code_t rtgui_win_show(rtgui_win_t* win, rt_bool_t is_modal);
+/** Close window.
+ *
+ * @param win the window you want to close
+ *
+ * @return RT_TRUE if the window is closed. RT_FALSE if not. If the onclose
+ * callback returns RT_FALSE, the window won't be closed.
+ *
+ * \sa rtgui_win_set_onclose .
+ */
+rt_bool_t rtgui_win_close(struct rtgui_win* win);
+
+rt_base_t rtgui_win_show(struct rtgui_win *win, rt_bool_t is_modal);
 void rtgui_win_hiden(rtgui_win_t* win);
 void rtgui_win_end_modal(rtgui_win_t* win, rtgui_modal_code_t modal_code);
 
@@ -96,8 +148,9 @@ void rtgui_win_set_box(rtgui_win_t* win, rtgui_box_t* box);
 void rtgui_win_set_onactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 void rtgui_win_set_ondeactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 void rtgui_win_set_onclose(rtgui_win_t* win, rtgui_event_handler_ptr handler);
+void rtgui_win_set_onkey(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 
-rt_bool_t rtgui_win_event_handler(rtgui_widget_t* win, struct rtgui_event* event);
+rt_bool_t rtgui_win_event_handler(struct rtgui_object* win, struct rtgui_event* event);
 
 void rtgui_win_event_loop(rtgui_win_t* wnd);
 

@@ -11,7 +11,7 @@
 
 #ifdef RT_USING_MODULE
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
-static rtgui_view_t* _view = RT_NULL;
+static rtgui_container_t* _view = RT_NULL;
 
 /* 打开按钮的回调函数 */
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
@@ -31,7 +31,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
 #endif
 	/* 模态显示一个文件列表视图，以提供给用户选择图像文件 */
-	if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
+	if (rtgui_container_show(RTGUI_CONTAINER(view), RT_TRUE) == RTGUI_MODAL_OK)
 	{
 		char path[32], name[8];
 
@@ -48,12 +48,12 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	}
 
 	/* 删除 文件列表 视图 */
-	rtgui_view_destroy(RTGUI_VIEW(view));
-	rtgui_view_show(_view, RT_FALSE);
+	rtgui_container_destroy(RTGUI_CONTAINER(view));
+	rtgui_container_show(_view, RT_FALSE);
 }
 
 /* 创建用于显示应用模块的演示视图 */
-rtgui_view_t* demo_view_module(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_module(rtgui_workbench_t* workbench)
 {
 	rtgui_rect_t rect;
 	rtgui_button_t* open_btn;

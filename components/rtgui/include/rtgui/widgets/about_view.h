@@ -18,7 +18,7 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/image.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/widgets/view.h>
+#include <rtgui/widgets/container.h>
 
 DECLARE_CLASS_TYPE(aboutview);
 /** Gets the type of a about view */
@@ -30,7 +30,7 @@ DECLARE_CLASS_TYPE(aboutview);
 
 struct rtgui_about_view
 {
-	struct rtgui_view parent;
+	struct rtgui_container parent;
 
 	/* widget private data */
 	rtgui_image_t* logo;
@@ -38,9 +38,7 @@ struct rtgui_about_view
 };
 typedef struct rtgui_about_view rtgui_about_view_t;
 
-rtgui_type_t *rtgui_about_view_type_get(void);
-
 rtgui_about_view_t* rtgui_about_view_create(rtgui_image_t *logo, const char* description);
-rt_bool_t rtgui_about_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_about_view_event_handler(struct rtgui_object* widget, struct rtgui_event* event);
 
 #endif

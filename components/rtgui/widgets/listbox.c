@@ -20,7 +20,7 @@
 static void _rtgui_listbox_constructor(struct rtgui_listbox *box)
 {
 	/* set default widget rect and set event handler */
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(box),rtgui_listbox_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(box), rtgui_listbox_event_handler);
 
 	RTGUI_WIDGET(box)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
@@ -172,11 +172,12 @@ static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t o
 	rtgui_dc_end_drawing(dc);
 }
 
-rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_listbox* box = RT_NULL;
+	struct rtgui_listbox* box;
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
-	box = RTGUI_LISTBOX(widget);
+	box = RTGUI_LISTBOX(object);
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:
@@ -250,7 +251,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 						/* up event */
 						if (box->on_item != RT_NULL)
 						{
-							box->on_item(RTGUI_WIDGET(box), RT_NULL);
+							box->on_item(RTGUI_OBJECT(box), RT_NULL);
 						}
 					}
 				}
@@ -309,7 +310,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 				case RTGUIK_RETURN:
                     if (box->on_item != RT_NULL)
 					{
-						box->on_item(RTGUI_WIDGET(box), RT_NULL);
+						box->on_item(RTGUI_OBJECT(box), RT_NULL);
 					}
 					return RT_FALSE;
 
@@ -322,7 +323,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_widget* widget, struct rtgui_
 	}
 
     /* use box event handler */
-    return rtgui_widget_event_handler(widget, event);
+    return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
 }
 
 rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt_uint16_t count, rtgui_rect_t *rect)
@@ -349,7 +350,7 @@ void rtgui_listbox_destroy(rtgui_listbox_t* box)
 	rtgui_widget_destroy(RTGUI_WIDGET(box));
 }
 
-void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_onitem_func_t func)
+void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_event_handler_ptr func)
 {
 	RT_ASSERT(box != RT_NULL);
 
@@ -359,7 +360,7 @@ void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_onitem_func_t func)
 void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* items, rt_uint16_t count)
 {
 	rtgui_rect_t rect;
-	
+
 	box->items = items;
 	box->items_count = count;
 	box->current_item = -1;

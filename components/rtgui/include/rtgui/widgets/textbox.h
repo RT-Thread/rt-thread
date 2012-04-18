@@ -65,7 +65,7 @@ typedef struct rtgui_textbox rtgui_textbox_t;
 struct rtgui_textbox* rtgui_textbox_create(const char* text, rt_uint8_t flag);
 void rtgui_textbox_destroy(struct rtgui_textbox* box);
 
-rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_textbox_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 void rtgui_textbox_set_value(struct rtgui_textbox* box, const char* text);
 const char* rtgui_textbox_get_value(struct rtgui_textbox* box);

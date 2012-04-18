@@ -1,7 +1,7 @@
 /*
  * 程序清单：DC上显示图像演示
  *
- * 这个例子会在创建出的view上显示图像
+ * 这个例子会在创建出的container上显示图像
  */
 
 #include "demo_view.h"
@@ -9,35 +9,30 @@
 #include <rtgui/widgets/filelist_view.h>
 #include <string.h>
 
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 static rtgui_image_t* image = RT_NULL;
-static rtgui_view_t* _view = RT_NULL;
+static rtgui_container_t* _container = RT_NULL;
 
+#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 /* 打开按钮的回调函数 */
 static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 {
-	rtgui_filelist_view_t *view;
-	rtgui_workbench_t *workbench;
-	rtgui_rect_t rect;
-
-	/* 获得顶层的workbench */
-	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
-	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
+	rtgui_filelist_view_t *filelist;
+	struct rtgui_rect rect = {0, 100, 240, 280};
 
 	/* WIN32平台上和真实设备上的初始路径处理 */
 #ifdef _WIN32
-	view = rtgui_filelist_view_create(workbench, "d:\\", "*.*", &rect);
+	filelist = rtgui_filelist_view_create("e:\\", "*.*", &rect);
 #else
-	view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
+	filelist = rtgui_filelist_view_create("/", "*.*", &rect);
 #endif
 	/* 模态显示一个文件列表视图，以提供给用户选择图像文件 */
-	if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
+	if (rtgui_container_show(RTGUI_CONTAINER(filelist), RT_TRUE) == RTGUI_MODAL_OK)
 	{
 		char path[32], image_type[8];
 
 		/* 设置文件路径的标签 */
-		rtgui_filelist_view_get_fullpath(view, path, sizeof(path));
-		if (image != RT_NULL) 
+		rtgui_filelist_view_get_fullpath(filelist, path, sizeof(path));
+		if (image != RT_NULL)
 		{
 			rtgui_image_destroy(image);
 			image = RT_NULL;
@@ -65,8 +60,8 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	}
 
 	/* 删除 文件列表 视图 */
-	rtgui_view_destroy(RTGUI_VIEW(view));
-	rtgui_view_show(_view, RT_FALSE);
+	rtgui_container_destroy(RTGUI_CONTAINER(filelist));
+	rtgui_container_show(_container, RT_FALSE);
 }
 
 /* 演示视图的事件处理函数 */
@@ -75,7 +70,7 @@ static rt_bool_t demo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 	rt_bool_t result;
 
 	/* 先调用默认的事件处理函数(这里只关心PAINT事件，但演示视图还有本身的一些控件) */
-	result = rtgui_view_event_handler(widget, event);
+	result = rtgui_container_event_handler(widget, event);
 
 	if (event->type == RTGUI_EVENT_PAINT)
 	{
@@ -88,8 +83,8 @@ static rt_bool_t demo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 			/* 如果不能正常获得DC，返回(如果控件或父控件是隐藏状态，DC是获取不成功的) */
 			return RT_FALSE;
 
-		/* 获得demo view允许绘图的区域 */
-		demo_view_get_rect(RTGUI_VIEW(widget), &rect);
+		/* 获得demo container允许绘图的区域 */
+		demo_view_get_rect(RTGUI_CONTAINER(widget), &rect);
 
 		/* 获得图像显示区域 */
 		rect.x1 += 5; rect.x2 -= 5;
@@ -106,26 +101,26 @@ static rt_bool_t demo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *
 }
 
 /* 创建用于显示图像的演示视图 */
-rtgui_view_t* demo_view_image(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_image(void)
 {
 	rtgui_rect_t rect;
 	rtgui_button_t* open_btn;
 
 	/* 先创建一个演示视图 */
-	_view = demo_view(workbench, "图像演示");
-	if (_view != RT_NULL)
+	_container = demo_view("图像演示");
+	if (_container != RT_NULL)
 		/* 设置默认的事件处理函数到demo_view_event_handler函数 */
-		rtgui_widget_set_event_handler(RTGUI_WIDGET(_view), demo_view_event_handler);
+		rtgui_object_set_event_handler(RTGUI_WIDGET(_container), demo_view_event_handler);
 
 	/* 添加一个按钮 */
-	demo_view_get_rect(_view, &rect);
+	demo_view_get_rect(_container, &rect);
 	rect.x1 += 5; rect.x2 = rect.x1 + 120;
 	rect.y2 = rect.y1 + 20;
 	open_btn = rtgui_button_create("打开图像文件");
-	rtgui_container_add_child(RTGUI_CONTAINER(_view), RTGUI_WIDGET(open_btn));
+	rtgui_container_add_child(RTGUI_CONTAINER(_container), RTGUI_WIDGET(open_btn));
 	rtgui_widget_set_rect(RTGUI_WIDGET(open_btn), &rect);
 	rtgui_button_set_onbutton(open_btn, open_btn_onbutton);
 
-	return _view;
+	return _container;
 }
 #endif

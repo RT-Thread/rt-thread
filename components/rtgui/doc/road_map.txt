@@ -1,0 +1,70 @@
+RTGUI for 1.1 路线图(排名不分先后)
+1, 把 rtgui_thread 给去掉，变成 rtgui_application ，消除原来的 rtgui_thread +
+mq 的模式。rtgui_application 记录当前依附的 panel，和 panel 的 extent。(Done)
+   1.1, rtgui_application_run 运行主事件循环(Done)
+   1.2, rtgui_application 作为事件的接收者_和_事件派发者。(Done)
+
+2, workbench，window并成一个，其事件主循环并合并到rtgui_application中。
+   2.1, window 作为有标题栏的 workbench(Done)
+   2.2, 将其事件主循环移至 application 中。(Done)
+   2.3, 将 window 的父类 toplevel 合并进 window 中。所有直接与服务器打交道的从
+   window 继承。(或者将 toplevel 合并进 application 中，因为只有 application 才
+   会和服务器打交道。)
+   2.4 在创建 window 的时候需要指定 parent，如果为 RT_NULL，则此 window 为 root
+   窗口，parent 为当前 rtgui_application。每一个 application 必须有且只有一个根
+   窗口。(Done)
+   2.5 添加一个 FULL_PANEL 的 STYLE。指定此 STYLE 之后会自动填满整个 panel。其
+   与 NO_TITLE 之类的合用可以达到之前 workbench 的效果。(Deprecated)
+   2.6 event_loop 可以设定顶层控件，只会把事件传递给顶层控件。这样可以方便的实
+   现模态窗口。event_loop 靠 object 的一个标志位来判断是否要退出当前循环。(Done)
+
+3, 将 view 合并进 container，所有容器类继承 container。[note1](Done)
+
+4, 事件循环完成后不主动销毁控件，销毁任务交由用户完成。但是有些自动销毁是必要的
+，比如 container 自动销毁其包含的控件(Done)
+   4.1 对于 window 的 onclose事件，保证在其回调函数中可以(但不是必须)安全销毁窗
+   口。这个功能不保证能够实现。(onclose 是在将要关闭窗口的时候触发的，调用它之
+   后 RTGUI 还要进行其他的设置和清理工作，所以不能在 onclose 里销毁窗口)(Cannot
+   Implement)
+   4.2 对 window 添加 RTGUI_WIN_STYLE_DESTROY_ON_CLOSE 。使得其在被关闭时自动销
+   毁。注意：对同一 window 销毁两次会引起 segfault。同时，如果在创建时设置了
+   RTGUI_WIN_STYLE_DESTROY_ON_CLOSE，close 窗口之后不要再去销毁窗口。
+
+5, API 清理。更详细的文档。
+
+6, 使 panel 退化为无窗口标题的 window，这样 server 就只记录 window 一种东西的位
+置。(Done, 删除了 panel，使得整体以 window 为主)
+
+7, 指定名称的时候不再自己拷贝一份。(我觉得 90% 的情况下名称都是静态的字符串，这
+时用 strdup其实并没有必要。)(Deprecated)
+
+8, 添加一些工业控制当中用到的波形、仪表之类的控件。
+
+9, 在 window 中记录焦点控件，键盘事件由 window 直接投送。各个控件不记录焦点控件
+。(Done)
+
+10, 在 widget 中添加 on_show 和 on_hide 事件回调函数。(Done)
+
+11, 添加 EVENT_WIN_MODAL_ENTER 和 EVENT_WIN_MODAL_EXIT 事件，用来通知窗口管理器
+(topwin)一个窗口进入模态。窗口管理器根据这个进行相应的设置。
+
+12, rtgui_filelist_view 不必继承自 container。
+
+13, 添加 desktop window 支持。(Done)
+    概念与名词：
+		13.1 desktop window：最底层的桌面窗口。它会在所有窗口下面显示，并且不会被它
+			上面的窗口模态掉。它的子窗口是 root window。(继承关系由 RTGUI 管理，不
+			用用户管理)它只有在启用 RTGUI_USING_DESKTOP_WINDOW 时才有此特性。
+		13.2 root window：创建时父窗口为 RT_NULL 的窗口。是用户空间窗口继承树的根。
+		13.3 normal window：创建时父窗口不为 RT_NULL 的窗口。它始终会在父窗口之上显
+			示(它会 clip 父窗口)。normal windows 和 root window 组成一个窗口树。
+		13.4 模态：当一个 normal window 模态显示时会会模态自己所在树的同级窗口
+			和所有父级窗口，但不会影响别的窗口树。被模态的窗口不会接受到用户事
+			件(按键，触摸等)
+
+----
+[note1] 我们至少需要一种容器控件来盛放其他的控件，并且能把上层事件传递给被包含
+的控件。实现这样的功能有一个就好，container 可以担当这个责任。其他需要放多个控
+件的控件则可以继承/包含这个控件。然后多个容器控件轮换的，notebook 可以来做。
+notebook可以是有标签和无标签的，有标签的对应一般的 tab 控件，无标签的对应 rtgui
+for RTT 1.0 的 workbench+view。

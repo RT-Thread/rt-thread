@@ -15,9 +15,11 @@
 #include <rtgui/dc_hw.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/widgets/view.h>
+#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_server.h>
+
+#include <rtgui/widgets/container.h>
 #include <rtgui/widgets/window.h>
-#include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/title.h>
 
 static void rtgui_dc_hw_draw_point(struct rtgui_dc* dc, int x, int y);
@@ -81,7 +83,7 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 		if (RTGUI_WIDGET_IS_HIDE(widget))
 		{
 			RTGUI_WIDGET_DC_SET_UNVISIBLE(owner);
-			break;
+			return RT_NULL;
 		}
 
 		widget = widget->parent;
@@ -104,7 +106,7 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 		if (top->drawing == 1)
 		{
 #ifdef RTGUI_USING_MOUSE_CURSOR
-#ifdef __WIN32__
+#ifdef _WIN32
 			rt_mutex_take(&cursor_mutex, RT_WAITING_FOREVER);
 			rt_kprintf("hide cursor\n");
 			rtgui_mouse_hide_cursor();
@@ -115,7 +117,7 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 #endif
 		}
 	}
-	else if (RTGUI_IS_WORKBENCH(owner->toplevel) ||
+	else if (RTGUI_IS_APPLICATION(owner->toplevel) ||
 		RTGUI_IS_WIN(owner->toplevel))
 	{
 		rtgui_toplevel_t* top = RTGUI_TOPLEVEL(owner->toplevel);
@@ -123,7 +125,7 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 
 		if (top->drawing == 1)
 		{
-#ifdef __WIN32__
+#ifdef _WIN32
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			rt_mutex_take(&cursor_mutex, RT_WAITING_FOREVER);
 			rt_kprintf("hide cursor\n");
@@ -135,7 +137,7 @@ struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner)
 			RTGUI_EVENT_UPDATE_BEGIN_INIT(&(eupdate));
 			eupdate.rect = RTGUI_WIDGET(top)->extent;
 
-			rtgui_thread_send(top->server, (struct rtgui_event*)&eupdate, sizeof(eupdate));
+			rtgui_server_post_event((struct rtgui_event*)&eupdate, sizeof(eupdate));
 #endif
 		}
 	}
@@ -162,7 +164,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 		top->drawing --;
 		if ((top->drawing == 0) && RTGUI_WIDGET_IS_DC_VISIBLE(owner))
 		{
-#ifdef __WIN32__
+#ifdef _WIN32
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			rt_mutex_release(&cursor_mutex);
 			/* show cursor */
@@ -182,7 +184,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 #endif
 		}
 	}
-	else if (RTGUI_IS_WORKBENCH(owner->toplevel) ||
+	else if (RTGUI_IS_APPLICATION(owner->toplevel) ||
 		RTGUI_IS_WIN(owner->toplevel))
 	{
 		rtgui_toplevel_t* top = RTGUI_TOPLEVEL(owner->toplevel);
@@ -190,7 +192,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 
 		if ((top->drawing == 0) && RTGUI_WIDGET_IS_DC_VISIBLE(owner))
 		{
-#ifdef __WIN32__
+#ifdef _WIN32
 #ifdef RTGUI_USING_MOUSE_CURSOR
 			rt_mutex_release(&cursor_mutex);
 			/* show cursor */
@@ -205,7 +207,7 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc* dc)
 			RTGUI_EVENT_UPDATE_END_INIT(&(eupdate));
 			eupdate.rect = owner->extent;
 
-			rtgui_thread_send(top->server, (struct rtgui_event*)&eupdate, sizeof(eupdate));
+			rtgui_server_post_event((struct rtgui_event*)&eupdate, sizeof(eupdate));
 #endif
 		}
 	}

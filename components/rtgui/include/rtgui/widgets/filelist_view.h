@@ -1,7 +1,7 @@
 #ifndef __RTGUI_FILELIST_VIEW_H__
 #define __RTGUI_FILELIST_VIEW_H__
 
-#include <rtgui/widgets/view.h>
+#include <rtgui/widgets/container.h>
 
 #if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
 #define RTGUI_FITEM_FILE      0x0
@@ -24,7 +24,7 @@ DECLARE_CLASS_TYPE(filelist);
 
 struct rtgui_filelist_view
 {
-	struct rtgui_view parent;
+	struct rtgui_container parent;
 
 	/* widget private data */
 
@@ -44,8 +44,9 @@ struct rtgui_filelist_view
 };
 typedef struct rtgui_filelist_view rtgui_filelist_view_t;
 
-rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench, 
-	const char* directory, const char* pattern, const rtgui_rect_t* rect);
+rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,
+												  const char* pattern,
+												  const rtgui_rect_t* rect);
 void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view);
 
 rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);

@@ -29,7 +29,7 @@ typedef struct rtgui_progressbar rtgui_progressbar_t;
 struct rtgui_progressbar* rtgui_progressbar_create(int orientation, int range, rtgui_rect_t* r);
 void rtgui_progressbar_destroy(struct rtgui_progressbar* p_bar);
 
-rt_bool_t rtgui_progressbar_event_handler(struct rtgui_widget* widget,
+rt_bool_t rtgui_progressbar_event_handler(struct rtgui_object* object,
                                             struct rtgui_event* event);
 
 void rtgui_progressbar_set_value(struct rtgui_progressbar *p_bar, int value);

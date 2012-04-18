@@ -55,7 +55,7 @@ typedef struct rtgui_textview rtgui_textview_t;
 rtgui_textview_t* rtgui_textview_create(const char* text, const rtgui_rect_t *rect);
 void rtgui_textview_destroy(rtgui_textview_t* textview);
 
-rt_bool_t rtgui_textview_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_textview_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 void rtgui_textview_set_text(rtgui_textview_t* textview, const char* text);
 
 /** @} */

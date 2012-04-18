@@ -23,7 +23,7 @@ static void _rtgui_list_view_constructor(struct rtgui_list_view *view)
 	struct rtgui_rect rect = {0, 0, 200, 200};
 
 	/* set default widget rect and set event handler */
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(view),rtgui_list_view_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(view),rtgui_list_view_event_handler);
 	rtgui_widget_set_rect(RTGUI_WIDGET(view), &rect);
 
 	RTGUI_WIDGET(view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
@@ -38,7 +38,7 @@ static void _rtgui_list_view_constructor(struct rtgui_list_view *view)
 }
 
 DEFINE_CLASS_TYPE(listview, "listview", 
-	RTGUI_VIEW_TYPE,
+	RTGUI_CONTAINER_TYPE,
 	_rtgui_list_view_constructor,
 	RT_NULL,
 	sizeof(struct rtgui_list_view));
@@ -96,7 +96,7 @@ static void rtgui_list_view_onicondraw(struct rtgui_list_view* view, struct rtgu
 	}
 }
 
-static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_int16_t old_item)
+static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_uint16_t old_item)
 {
 	struct rtgui_rect rect, item_rect, drawing_rect;
 	rt_ubase_t c, r; /* col and row index */
@@ -230,7 +230,7 @@ static void rtgui_list_view_onlistdraw(struct rtgui_list_view* view, struct rtgu
 	}
 }
 
-void rtgui_list_view_update_list(struct rtgui_list_view* view, rt_int16_t old_item)
+void rtgui_list_view_update_list(struct rtgui_list_view* view, rt_uint16_t old_item)
 {
 	struct rtgui_dc* dc;
 	const struct rtgui_list_item* item;
@@ -419,7 +419,7 @@ static rt_bool_t rtgui_list_view_onmouse(struct rtgui_list_view* view, struct rt
 	return RT_FALSE;
 }
 
-rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_list_view_event_handler(struct rtgui_object* widget, struct rtgui_event* event)
 {
 	struct rtgui_list_view* view = RT_NULL;
 
@@ -562,7 +562,7 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgu
 	}
 
     /* use view event handler */
-    return rtgui_view_event_handler(widget, event);
+    return rtgui_container_event_handler(widget, event);
 }
 
 static void rtgui_list_view_calc(struct rtgui_list_view* view)

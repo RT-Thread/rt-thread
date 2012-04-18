@@ -59,12 +59,10 @@ struct rtgui_menu
 	struct rtgui_listctrl *items_list;
 
 	/* pop event handle */
-	rt_bool_t (*on_menupop)(rtgui_widget_t* widget, rtgui_event_t* event);
-	rt_bool_t (*on_menuhide)(rtgui_widget_t* widget, rtgui_event_t* event);
+	rtgui_event_handler_ptr on_menupop;
+	rtgui_event_handler_ptr on_menuhide;
 };
 typedef struct rtgui_menu rtgui_menu_t;
-
-rtgui_type_t *rtgui_menu_type_get(void);
 
 struct rtgui_menu* rtgui_menu_create(const char* title, struct rtgui_menu* parent_menu,
 	const struct rtgui_menu_item* items, rt_uint16_t count);

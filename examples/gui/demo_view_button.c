@@ -1,25 +1,25 @@
 /*
  * 程序清单：button控件演示
  *
- * 这个例子会在创建出的view上添加几个不同类型的button控件
+ * 这个例子会在创建出的container上添加几个不同类型的button控件
  */
 
 #include "demo_view.h"
 #include <rtgui/widgets/button.h>
 
 /* 创建用于演示button控件的视图 */
-rtgui_view_t* demo_view_button(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_button(void)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t* view;
+	rtgui_container_t* container;
 	rtgui_button_t* button;
 	rtgui_font_t* font;
 
 	/* 先创建一个演示用的视图 */
-	view = demo_view(workbench, "Button View");
+	container = demo_view("Button View");
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 = rect.x1 + 100;
 	rect.y1 += 5;
@@ -30,11 +30,10 @@ rtgui_view_t* demo_view_button(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(button)) = red;
 	/* 设置button的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
-	/* view是一个container控件，调用add_child方法添加这个button控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(button));
+	rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25;
@@ -45,11 +44,10 @@ rtgui_view_t* demo_view_button(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(button)) = blue;
 	/* 设置button的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
-	/* view是一个container控件，调用add_child方法添加这个button控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(button));
+	rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25 + 25;
@@ -61,11 +59,10 @@ rtgui_view_t* demo_view_button(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(button)) = font;
 	/* 设置button的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
-	/* view是一个container控件，调用add_child方法添加这个button控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(button));
+	rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 = rect.x1 + 100;
 	rect.y1 += 5 + 25 + 25 + 25;
@@ -77,8 +74,7 @@ rtgui_view_t* demo_view_button(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(button)) = font;
 	/* 设置button的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
-	/* view是一个container控件，调用add_child方法添加这个button控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(button));
+	rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
-	return view;
+	return container;
 }

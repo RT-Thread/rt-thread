@@ -76,8 +76,10 @@ struct rtgui_widget
    /* inherit from rtgui_object */
 	struct rtgui_object object;
 
-	/* the parent and root widget */
-	struct rtgui_widget *parent, *toplevel;
+	/* the widget that contains this widget */
+	struct rtgui_widget *parent;
+	/* the window that contains this widget */
+	struct rtgui_win *toplevel;
 	/* the widget children and sibling */
 	rtgui_list_t sibling;
 
@@ -106,18 +108,25 @@ struct rtgui_widget
 	/* the rect clip */
 	rtgui_region_t clip;
 
-	/* the event handler */
-	rt_bool_t (*event_handler)	(struct rtgui_widget* widget, struct rtgui_event* event);
-
 	/* call back */
-	rt_bool_t (*on_focus_in)	(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_focus_out)	(struct rtgui_widget* widget, struct rtgui_event* event);
+	rt_bool_t (*on_focus_in)	(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_focus_out)	(struct rtgui_object* widget, struct rtgui_event* event);
+	/* will be called just before the widget is shown. You can setup your
+	 * widget in this call back. It's return value is ignored. The @param event
+	 * will always be RT_NULL
+	 */
+	rt_bool_t (*on_show)        (struct rtgui_object* widget, struct rtgui_event* event);
+	/* will be called just before the widget is hiden. You can setup your
+	 * widget in this call back. It's return value is ignored. The @param event
+	 * will always be RT_NULL
+	 */
+	rt_bool_t (*on_hide)        (struct rtgui_object* widget, struct rtgui_event* event);
 #ifndef RTGUI_USING_SMALL_SIZE
-	rt_bool_t (*on_draw)		(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_mouseclick)	(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_key)			(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_size)		(struct rtgui_widget* widget, struct rtgui_event* event);
-	rt_bool_t (*on_command)		(struct rtgui_widget* widget, struct rtgui_event* event);
+	rt_bool_t (*on_draw)		(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_mouseclick)	(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_key)			(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_size)		(struct rtgui_object* widget, struct rtgui_event* event);
+	rt_bool_t (*on_command)		(struct rtgui_object* widget, struct rtgui_event* event);
 #endif
 
 	/* user private data */
@@ -125,14 +134,10 @@ struct rtgui_widget
 };
 typedef struct rtgui_widget rtgui_widget_t;
 
-rtgui_type_t *rtgui_widget_type_get(void);
 rtgui_widget_t *rtgui_widget_create(rtgui_type_t *widget_type);
 void rtgui_widget_destroy(rtgui_widget_t* widget);
 
-/* set the event handler of widget */
-void rtgui_widget_set_event_handler(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
-/* widget default event handler */
-rt_bool_t rtgui_widget_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
+rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t* event);
 
 /* focus and unfocus */
 void rtgui_widget_focus(rtgui_widget_t * widget);
@@ -141,6 +146,8 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget);
 /* event handler for each command */
 void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
+void rtgui_widget_set_onshow(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
+void rtgui_widget_set_onhide(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
@@ -179,7 +186,7 @@ void rtgui_widget_move_to_logic(rtgui_widget_t* widget, int dx, int dy);
 void rtgui_widget_update_clip(rtgui_widget_t* widget);
 
 /* get the toplevel widget of widget */
-rtgui_widget_t* rtgui_widget_get_toplevel(rtgui_widget_t* widget);
+struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget);
 
 void rtgui_widget_show(rtgui_widget_t* widget);
 void rtgui_widget_hide(rtgui_widget_t* widget);

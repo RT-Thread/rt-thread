@@ -20,7 +20,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	rtgui_rect_t rect;
 
 	/* 获得顶层的workbench对象 */
-	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
+	workbench = RTGUI_APPLICATION(rtgui_widget_get_toplevel(widget));
 	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 
 	/* 针对Win32平台和其他平台做的不同的其实目录位置 */
@@ -31,7 +31,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 #endif
 
 	/* 采用模式形式显示文件列表视图 */
-	if (rtgui_view_show(RTGUI_VIEW(view), RT_TRUE) == RTGUI_MODAL_OK)
+	if (rtgui_container_show(RTGUI_CONTAINER(view), RT_TRUE) == RTGUI_MODAL_OK)
 	{
 		char path[32];
 
@@ -43,14 +43,14 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	}
 
 	/* 删除 文件列表 视图 */
-	rtgui_view_destroy(RTGUI_VIEW(view));
+	rtgui_container_destroy(RTGUI_CONTAINER(view));
 }
 
 /* 创建用于演示文件列表视图的视图 */
-rtgui_view_t* demo_fn_view(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_fn_view(rtgui_workbench_t* workbench)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t* view;
+	rtgui_container_t* view;
 	rtgui_button_t* open_btn;
 	rtgui_font_t* font;
 

@@ -62,7 +62,7 @@ struct rtgui_scrollbar
 	/* position 1:1 width of scrollbar */
 	rt_int16_t min_position, max_position;
 
-	rt_bool_t (*on_scroll) (struct rtgui_widget* widget, struct rtgui_event* event);
+	rtgui_event_handler_ptr on_scroll;
 };
 typedef struct rtgui_scrollbar rtgui_scrollbar_t;
 
@@ -80,7 +80,7 @@ void rtgui_scrollbar_set_orientation(struct rtgui_scrollbar* bar, int orientatio
 void rtgui_scrollbar_set_page_step(struct rtgui_scrollbar* bar, int step);
 void rtgui_scrollbar_set_line_step(struct rtgui_scrollbar* bar, int step);
 
-rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 #ifdef __cplusplus
 }

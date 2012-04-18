@@ -10,7 +10,7 @@
 static void workbench_entry(void* parameter)
 {
 	rt_mq_t mq;
-	rtgui_view_t* view;
+	rtgui_container_t* view;
 	rtgui_label_t* label;
 	struct rtgui_workbench* workbench;
 	rtgui_rect_t rect;
@@ -22,7 +22,7 @@ static void workbench_entry(void* parameter)
 	workbench = rtgui_workbench_create("main", "workbench #1");
 	if (workbench == RT_NULL) return;
 
-	view = rtgui_view_create("view");
+	view = rtgui_container_create("view");
 	if (view == RT_NULL) return;
 	/* 指定视图的背景色 */
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
@@ -38,7 +38,7 @@ static void workbench_entry(void* parameter)
 	/* 添加到父workbench中 */
 	rtgui_workbench_add_view(workbench, view);
 	/* 非模式方式显示视图 */
-	rtgui_view_show(view, RT_FALSE);
+	rtgui_container_show(view, RT_FALSE);
 
 	/* 执行工作台事件循环 */
 	rtgui_workbench_event_loop(workbench);

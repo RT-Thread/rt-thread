@@ -15,11 +15,11 @@
 #include <rtgui/rtgui_object.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_theme.h>
+#include <rtgui/rtgui_application.h>
 
 #include <rtgui/list.h>
 #include <rtgui/image.h>
-#include <rtgui/widgets/view.h>
-#include <rtgui/widgets/workbench.h>
+#include <rtgui/widgets/container.h>
 #include <rtgui/widgets/filelist_view.h>
 #include <rtgui/widgets/listbox.h>
 #include <rtgui/widgets/window.h>
@@ -221,12 +221,12 @@ const static char * folder_xpm[] = {
 
 /* image for file and folder */
 static rtgui_image_t *file_image, *folder_image;
-static struct rtgui_listbox_item items[] = 
+static struct rtgui_listbox_item items[] =
 {
 #ifdef RTGUI_USING_FONTHZ
-	{"打开文件夹", RT_NULL},
-	{"选择文件夹", RT_NULL},
-	{"退出", RT_NULL}
+	{"湖羲恅璃標", RT_NULL},
+	{"恁寁恅璃標", RT_NULL},
+	{"豖堤", RT_NULL}
 #else
 	{"Open folder", RT_NULL},
 	{"Select folder", RT_NULL},
@@ -266,10 +266,6 @@ static void rtgui_filelist_view_on_folder_item(rtgui_widget_t* widget, struct rt
 	case 1:
 		/* destroy menu window */
 		rtgui_win_destroy(menu);
-		if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
-		{
-			rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
-		}
 		break;
 
 	default:
@@ -299,8 +295,8 @@ static void rtgui_filelist_view_menu_pop(rtgui_widget_t *parent)
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &screen);
 	rtgui_rect_moveto_align(&screen, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
-	menu = rtgui_win_create(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(parent)), 
-		"Folder Menu", &rect, RTGUI_WIN_STYLE_DEFAULT);
+	menu = rtgui_win_create(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(parent)),
+							"Folder Menu", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (menu != RT_NULL)
 	{
 		/* set user data on menu window */
@@ -323,7 +319,7 @@ static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 	struct rtgui_rect rect = {0, 0, 200, 200};
 
 	/* set default widget rect and set event handler */
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), rtgui_filelist_view_event_handler);
+	rtgui_object_set_event_handler(RTGUI_WIDGET(view), rtgui_filelist_view_event_handler);
 	rtgui_widget_set_rect(RTGUI_WIDGET(view), &rect);
 
 	RTGUI_WIDGET(view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
@@ -356,8 +352,8 @@ static void _rtgui_filelist_view_destructor(struct rtgui_filelist_view *view)
 	rtgui_image_destroy(folder_image);
 }
 
-DEFINE_CLASS_TYPE(filelist, "filelist", 
-	RTGUI_VIEW_TYPE,
+DEFINE_CLASS_TYPE(filelist, "filelist",
+	RTGUI_CONTAINER_TYPE,
 	_rtgui_filelist_view_constructor,
 	_rtgui_filelist_view_destructor,
 	sizeof(struct rtgui_filelist_view));
@@ -377,7 +373,7 @@ void rtgui_filelist_view_ondraw(struct rtgui_filelist_view* view)
 
 	/* get item base rect */
 	item_rect = rect;
-	item_rect.y1 += 1;	
+	item_rect.y1 += 1;
 	item_rect.y2 = item_rect.y1 + (1 + rtgui_theme_get_selected_height());
 
 	/* get image base rect */
@@ -402,9 +398,8 @@ void rtgui_filelist_view_ondraw(struct rtgui_filelist_view* view)
 			/* draw background */
 			rtgui_dc_fill_rect(dc, &item_rect);
 		}
-		
+
 		/* draw item */
-		
 		if (item->type == RTGUI_FITEM_FILE)
 			rtgui_image_blit(file_image, dc, &image_rect);
 		else
@@ -446,7 +441,7 @@ void rtgui_filelist_view_update_current(struct rtgui_filelist_view* view, rt_uin
 
 	/* get old item rect */
 	item_rect = rect;
-	item_rect.y1 += 1;	
+	item_rect.y1 += 1;
 	item_rect.y1 += (old_item % view->page_items) * (1 + rtgui_theme_get_selected_height());
 	item_rect.y2 = item_rect.y1 + (1 + rtgui_theme_get_selected_height());
 
@@ -454,7 +449,7 @@ void rtgui_filelist_view_update_current(struct rtgui_filelist_view* view, rt_uin
 	image_rect.x1 = RTGUI_FILELIST_MARGIN; image_rect.y1 = 0;
 	image_rect.x2 = RTGUI_FILELIST_MARGIN + file_image->w; image_rect.y2 = file_image->h;
 	rtgui_rect_moveto_align(&item_rect, &image_rect, RTGUI_ALIGN_CENTER_VERTICAL);
-	
+
 	/* draw old item */
 	rtgui_dc_fill_rect(dc, &item_rect);
 
@@ -517,21 +512,15 @@ static void rtgui_filelist_view_onenturn(struct rtgui_filelist_view* view)
 				new_path[ptr - view->current_directory] = '\0';
 			}
 		}
-		else if (view->current_item == 0 && 
+		else if (view->current_item == 0 &&
 #ifdef _WIN32
-			(view->current_directory[1] == ':') && (view->current_directory[2] == '\\'))
+			(view->current_directory[1] == ':') && (view->current_directory[2] == '\\')
 #else
-			(view->current_directory[0] == '/') && (view->current_directory[1] == '\0'))
+			(view->current_directory[0] == '/') && (view->current_directory[1] == '\0')
 #endif
+			)
 		{
-			if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
-			{
-				rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_CANCEL);
-			}
-			else
-			{
-				rtgui_filelist_view_destroy(view);
-			}
+			rtgui_filelist_view_destroy(view);
 
 			return ;
 		}
@@ -541,13 +530,6 @@ static void rtgui_filelist_view_onenturn(struct rtgui_filelist_view* view)
 			return ;
 		}
 		rtgui_filelist_view_set_directory(view, new_path);
-	}
-	else
-	{
-		if (RTGUI_VIEW(view)->modal_show == RT_TRUE)
-		{
-			rtgui_view_end_modal(RTGUI_VIEW(view), RTGUI_MODAL_OK);
-		}
 	}
 }
 
@@ -596,7 +578,7 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 				rt_uint16_t old_item;
 
 				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
-				
+
 				/* get current page */
 				current_page = view->current_item/view->page_items;
 				old_item = view->current_item;
@@ -668,11 +650,12 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 	}
 
     /* use view event handler */
-    return rtgui_view_event_handler(widget, event);
+    return rtgui_container_event_handler(widget, event);
 }
 
-rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench, 
-	const char* directory, const char* pattern, const rtgui_rect_t* rect)
+rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,
+												  const char* pattern,
+												  const rtgui_rect_t* rect)
 {
 	struct rtgui_filelist_view* view = RT_NULL;
 
@@ -684,8 +667,6 @@ rtgui_filelist_view_t* rtgui_filelist_view_create(rtgui_workbench_t* workbench,
 		view->pattern = rt_strdup(pattern);
 		view->page_items = rtgui_rect_height(*rect) / (1 + rtgui_theme_get_selected_height());
 		rtgui_filelist_view_set_directory(view, directory);
-		
-		rtgui_workbench_add_view(workbench, RTGUI_VIEW(view));
 	}
 
 	return view;
@@ -744,14 +725,14 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 		if (view->current_directory != RT_NULL) rt_free(view->current_directory);
 		view->current_directory = rt_strdup(directory);
 
-		do 
+		do
 		{
 			dirent = readdir(dir);
 			if (dirent == RT_NULL) break;
 
 			if (strcmp(dirent->d_name, ".") == 0) continue;
 			if (strcmp(dirent->d_name, "..") == 0) continue;
-			
+
 			view->items_count ++;
 		} while (dirent != RT_NULL);
 		closedir(dir);
@@ -770,7 +751,7 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 			item->name = rt_strdup("..");
 			item->type = RTGUI_FITEM_DIR;
 			item->size = 0;
-			
+
 			index ++;
 		}
 		else
@@ -778,10 +759,10 @@ void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* 
 			item = &(view->items[0]);
 
 			/* add .. directory */
-			item->name = rt_strdup("退出文件浏览");
+			item->name = rt_strdup("豖堤恅璃銡擬");
 			item->type = RTGUI_FITEM_DIR;
 			item->size = 0;
-			
+
 			index ++;
 		}
 
@@ -840,7 +821,7 @@ void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, r
 		rt_snprintf(path, len, "%s%c%s",view->current_directory, PATH_SEPARATOR,
 			view->items[view->current_item].name);
 	else
-		rt_snprintf(path, len, "%s%s",view->current_directory, 
+		rt_snprintf(path, len, "%s%s",view->current_directory,
 			view->items[view->current_item].name);
 }
 #endif

@@ -5,21 +5,27 @@
 
 #define RTGUI_NOTEBOOK_TAB_WIDTH     80
 
-static void _rtgui_notebook_get_bar_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect);
-static void _rtgui_notebook_get_page_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect);
-
-static void _rtgui_notebook_constructor(rtgui_notebook_t *notebook)
+struct rtgui_notebook_tab
 {
-	notebook->flag = 0;
-	notebook->childs = RT_NULL;
-	notebook->count = 0;
-	notebook->current = RTGUI_NOT_FOUND;
+	struct rtgui_widget *widget;
+	char *title;
+};
+
+static void _rtgui_notebook_get_bar_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect);
+static void _rtgui_notebook_get_page_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect);
+
+static void _rtgui_notebook_constructor(struct rtgui_notebook *notebook)
+{
+	notebook->flag    = 0;
+	notebook->childs  = RT_NULL;
+	notebook->count   = 0;
+	notebook->current = 0;
 
 	RTGUI_WIDGET(notebook)->gc.textalign = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(notebook), rtgui_notebook_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(notebook), rtgui_notebook_event_handler);
 }
 
-static void _rtgui_notebook_destructor(rtgui_notebook_t *notebook)
+static void _rtgui_notebook_destructor(struct rtgui_notebook *notebook)
 {
 	int index;
 
@@ -35,6 +41,12 @@ static void _rtgui_notebook_destructor(rtgui_notebook_t *notebook)
 	}
 }
 
+DEFINE_CLASS_TYPE(notebook, "notebook",
+	RTGUI_WIDGET_TYPE,
+	_rtgui_notebook_constructor,
+	_rtgui_notebook_destructor,
+	sizeof(struct rtgui_notebook));
+
 /* Draw tab bars of @param notebook. @param dc should be initialized and
  * finished outside this function. Don't pass @param notebook or @param dc as
  * RT_NULL, it should be checked outside.
@@ -46,6 +58,9 @@ static void _rtgui_notebook_draw_bar(struct rtgui_notebook *notebook,
 	int index;
 
 	RT_ASSERT((notebook != RT_NULL) && (dc != RT_NULL));
+
+	if (notebook->flag & RTGUI_NOTEBOOK_NOTAB)
+		return;
 
 	_rtgui_notebook_get_bar_rect(notebook, &rect);
 	rtgui_dc_fill_rect(dc, &rect);
@@ -66,7 +81,7 @@ static void _rtgui_notebook_draw_bar(struct rtgui_notebook *notebook,
 
 }
 
-static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
+static void _rtgui_notebook_ondraw(struct rtgui_notebook *notebook)
 {
 	struct rtgui_dc* dc;
 
@@ -92,7 +107,7 @@ static void _rtgui_notebook_ondraw(rtgui_notebook_t *notebook)
 	rtgui_dc_end_drawing(dc);
 }
 
-static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_event_mouse* emouse)
+static void _rtgui_notebook_onmouse(struct rtgui_notebook *notebook, struct rtgui_event_mouse* emouse)
 {
 	rtgui_rect_t rect;
 
@@ -120,82 +135,76 @@ static void _rtgui_notebook_onmouse(rtgui_notebook_t *notebook, struct rtgui_eve
 	}
 	else
 	{
-	/* handle on page */
-		if (notebook->childs[notebook->current].widget->event_handler != RT_NULL)
-			notebook->childs[notebook->current].widget->event_handler(
-					notebook->childs[notebook->current].widget,
+		/* handle on page */
+		if (RTGUI_OBJECT(notebook->childs[notebook->current].widget)->event_handler != RT_NULL)
+			RTGUI_OBJECT(notebook->childs[notebook->current].widget)->event_handler(
+					RTGUI_OBJECT(notebook->childs[notebook->current].widget),
 					&(emouse->parent));
 	}
 }
 
-static void _rtgui_notebook_get_page_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect)
+static void _rtgui_notebook_get_page_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect)
 {
 	RT_ASSERT(notebook != RT_NULL);
 	RT_ASSERT(rect != RT_NULL);
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(notebook), rect);
 
-	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB) return;
+	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB)
+		return;
 	else if (notebook->flag == RTGUI_NOTEBOOK_TOP)
 		rect->y1 = rect->y1 + 25;
 	else if (notebook->flag == RTGUI_NOTEBOOK_BOTTOM)
 		rect->y2 = rect->y2 - 25;
 }
 
-static void _rtgui_notebook_get_bar_rect(rtgui_notebook_t *notebook, struct rtgui_rect* rect)
+static void _rtgui_notebook_get_bar_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect)
 {
 	RT_ASSERT(notebook != RT_NULL);
 	RT_ASSERT(rect != RT_NULL);
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(notebook), rect);
-	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB) return;
+	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB)
+	{
+		rect->x1 = rect->y1 = rect->x2 = rect->y2 = 0;
+	}
 	else if (notebook->flag == RTGUI_NOTEBOOK_TOP)
 		rect->y2 = rect->y1 + 25;
 	else if (notebook->flag == RTGUI_NOTEBOOK_BOTTOM)
 		rect->y1 = rect->y2 - 25;
 }
 
-DEFINE_CLASS_TYPE(notebook, "notebook", 
-	RTGUI_CONTAINER_TYPE,
-	_rtgui_notebook_constructor,
-	_rtgui_notebook_destructor,
-	sizeof(struct rtgui_notebook));
-
-rtgui_notebook_tab_t *tabs;
-struct rtgui_notebook *_notebook;
-rtgui_notebook_t* rtgui_notebook_create(const rtgui_rect_t* rect, rt_uint8_t style)
+struct rtgui_notebook* rtgui_notebook_create(const rtgui_rect_t* rect, rt_uint8_t style)
 {
     struct rtgui_notebook* notebook;
 
-    notebook = (struct rtgui_notebook*) rtgui_widget_create (RTGUI_NOTEBOOK_TYPE);
+    notebook = (struct rtgui_notebook*) rtgui_widget_create(RTGUI_NOTEBOOK_TYPE);
     if (notebook != RT_NULL)
     {
 		notebook->flag = style;
 		rtgui_widget_set_rect(RTGUI_WIDGET(notebook), rect);
     }
 
-	_notebook = notebook;
     return notebook;
 }
 
-void rtgui_notebook_destroy(rtgui_notebook_t* notebook)
+void rtgui_notebook_destroy(struct rtgui_notebook* notebook)
 {
 	rtgui_widget_destroy(RTGUI_WIDGET(notebook));
 }
 
-void rtgui_notebook_add(rtgui_notebook_t* notebook, const char* label, rtgui_widget_t* child)
+void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, struct rtgui_widget* child)
 {
 	rtgui_rect_t rect;
 	RT_ASSERT(notebook != RT_NULL);
 
 	notebook->count += 1;
-	notebook->childs = (struct rtgui_notebook_tab*) rtgui_realloc(notebook->childs, 
-		sizeof(struct rtgui_notebook_tab) * notebook->count);
+	notebook->childs = (struct rtgui_notebook_tab*)
+						rtgui_realloc(notebook->childs,
+									  sizeof(struct rtgui_notebook_tab) * notebook->count);
 
 	notebook->childs[notebook->count - 1].title = rt_strdup(label);
 	notebook->childs[notebook->count - 1].widget = child;
-
-	tabs = notebook->childs;
 
 	/* set parent */
 	rtgui_widget_set_parent(child, RTGUI_WIDGET(notebook));
@@ -203,9 +212,12 @@ void rtgui_notebook_add(rtgui_notebook_t* notebook, const char* label, rtgui_wid
 	_rtgui_notebook_get_page_rect(notebook, &rect);
 	rtgui_widget_rect_to_device(RTGUI_WIDGET(notebook), &rect);
 	rtgui_widget_set_rect(child, &rect);
+
+    if (notebook->count - 1 != notebook->current)
+        rtgui_widget_hide(child);
 }
 
-void rtgui_notebook_remove(rtgui_notebook_t* notebook, rt_uint16_t index)
+void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 {
 	struct rtgui_notebook_tab tab;
 	RT_ASSERT(notebook != RT_NULL);
@@ -232,6 +244,7 @@ void rtgui_notebook_remove(rtgui_notebook_t* notebook, rt_uint16_t index)
 				sizeof(struct rtgui_notebook_tab) * notebook->count);
 		}
 
+		// FIXME: do we really want to destroy it?
 		rtgui_widget_destroy(tab.widget);
 		rtgui_free(tab.title);
 
@@ -245,12 +258,13 @@ void rtgui_notebook_remove(rtgui_notebook_t* notebook, rt_uint16_t index)
 	}
 }
 
-int rtgui_notebook_get_count(rtgui_notebook_t* notebook)
+int rtgui_notebook_get_count(struct rtgui_notebook* notebook)
 {
+	RT_ASSERT(notebook != RT_NULL);
 	return notebook->count;
 }
 
-rtgui_widget_t* rtgui_notebook_get_current(rtgui_notebook_t* notebook)
+struct rtgui_widget* rtgui_notebook_get_current(struct rtgui_notebook* notebook)
 {
 	RT_ASSERT(notebook != RT_NULL);
 	if (notebook->current != RTGUI_NOT_FOUND)
@@ -258,7 +272,14 @@ rtgui_widget_t* rtgui_notebook_get_current(rtgui_notebook_t* notebook)
 
 	return RT_NULL;
 }
-void rtgui_notebook_set_current(rtgui_notebook_t* notebook, rtgui_widget_t* widget)
+
+rt_int16_t rtgui_notebook_get_current_index(struct rtgui_notebook* notebook)
+{
+	RT_ASSERT(notebook != RT_NULL);
+	return notebook->current;
+}
+
+void rtgui_notebook_set_current(struct rtgui_notebook* notebook, struct rtgui_widget* widget)
 {
 	rt_int16_t index;
 
@@ -274,7 +295,7 @@ void rtgui_notebook_set_current(rtgui_notebook_t* notebook, rtgui_widget_t* widg
 	}
 }
 
-void rtgui_notebook_set_current_by_index(rtgui_notebook_t* notebook, rt_uint16_t index)
+void rtgui_notebook_set_current_by_index(struct rtgui_notebook* notebook, rt_uint16_t index)
 {
 	RT_ASSERT(notebook != RT_NULL);
 
@@ -289,7 +310,7 @@ void rtgui_notebook_set_current_by_index(rtgui_notebook_t* notebook, rt_uint16_t
 	}
 }
 
-rtgui_widget_t* rtgui_notebook_get_index(rtgui_notebook_t* notebook, rt_uint16_t index)
+struct rtgui_widget* rtgui_notebook_get_widget_at(struct rtgui_notebook* notebook, rt_uint16_t index)
 {
 	RT_ASSERT(notebook != RT_NULL);
 	if (index < notebook->count)
@@ -298,32 +319,37 @@ rtgui_widget_t* rtgui_notebook_get_index(rtgui_notebook_t* notebook, rt_uint16_t
 	return RT_NULL;
 }
 
-rt_bool_t rtgui_notebook_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_notebook_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_notebook* notebook;
 
-	notebook = RTGUI_NOTEBOOK(widget);
-	if (event->type == RTGUI_EVENT_PAINT)
+	RT_ASSERT(object != RT_NULL);
+	RT_ASSERT(event != RT_NULL);
+
+	notebook = RTGUI_NOTEBOOK(object);
+
+	switch (event->type)
 	{
+	case RTGUI_EVENT_PAINT:
 		_rtgui_notebook_ondraw(notebook);
-	}
-	else if (event->type == RTGUI_EVENT_MOUSE_BUTTON)
-	{
+		break;
+	case RTGUI_EVENT_MOUSE_BUTTON:
 		_rtgui_notebook_onmouse(notebook, (struct rtgui_event_mouse*)event);
-	}
-	else if (event->type == RTGUI_EVENT_KBD)
-	{
+		break;
+	case RTGUI_EVENT_KBD:
 		if (notebook->current != RTGUI_NOT_FOUND)
 		{
-			if (notebook->childs[notebook->current].widget->event_handler != RT_NULL)
-				return notebook->childs[notebook->current].widget->event_handler(notebook->childs[notebook->current].widget,
-					event);
+			if (RTGUI_OBJECT(notebook->childs[notebook->current].widget
+						)->event_handler != RT_NULL)
+				return RTGUI_OBJECT(notebook->childs[notebook->current].widget
+						)->event_handler(
+							RTGUI_OBJECT(notebook->childs[notebook->current].widget),
+							event);
 		}
-	}
-	else
-	{
+		break;
+	default:
 		/* use parent event handler */
-		return rtgui_widget_event_handler(widget, event);
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

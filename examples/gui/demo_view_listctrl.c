@@ -1,7 +1,7 @@
 /*
  * 程序清单：label控件演示
  *
- * 这个例子会在创建出的view上添加几个不同类型的label控件
+ * 这个例子会在创建出的container上添加几个不同类型的label控件
  */
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
@@ -139,7 +139,7 @@ static struct list_item
 	const char* gender;
 	int age;
 	rtgui_image_t* image;
-} items[] = 
+} items[] =
 {
 	{"index0", "00", 30, RT_NULL},
 	{"index1", "m1", 30, RT_NULL},
@@ -163,7 +163,10 @@ static struct list_item
 	{"index19", "m19", 30, RT_NULL},
 };
 
-void _rtgui_listctrl_item_draw(struct rtgui_listctrl *list, struct rtgui_dc* dc, rtgui_rect_t* rect, rt_uint16_t index)
+void _rtgui_listctrl_item_draw(struct rtgui_listctrl *list,
+							   struct rtgui_dc* dc,
+							   rtgui_rect_t* rect,
+							   rt_uint16_t index)
 {
 	char age_str[8];
 	rtgui_rect_t item_rect;
@@ -212,15 +215,15 @@ static void on_items(rtgui_widget_t* widget, struct rtgui_event* event)
 }
 
 /* 创建用于演示label控件的视图 */
-rtgui_view_t* demo_view_listctrl(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_listctrl(void)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t* view;
+	rtgui_container_t* container;
 	rtgui_label_t* label;
 	rtgui_listctrl_t* box;
 
 	/* 先创建一个演示用的视图 */
-	view = demo_view(workbench, "List Control Demo");
+	container = demo_view("List Control Demo");
 
 	if (item_icon == RT_NULL)
 		item_icon = rtgui_image_create_from_mem("xpm",
@@ -228,7 +231,7 @@ rtgui_view_t* demo_view_listctrl(rtgui_workbench_t* workbench)
 	items[1].image = item_icon;
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5;
@@ -237,16 +240,16 @@ rtgui_view_t* demo_view_listctrl(rtgui_workbench_t* workbench)
 	label = rtgui_label_create("List Control: ");
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 	rect.y1 = rect.y2 + 3;
 	rect.y2 = 250;
 	box = rtgui_listctrl_create((rt_uint32_t)items, sizeof(items)/sizeof(items[0]), &rect,
 		_rtgui_listctrl_item_draw);
 	rtgui_listctrl_set_onitem(box, on_items);
-	/* view是一个container控件，调用add_child方法添加这个listctrl控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(box));
+	/* container是一个container控件，调用add_child方法添加这个listctrl控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(box));
 
-	return view;
+	return container;
 }

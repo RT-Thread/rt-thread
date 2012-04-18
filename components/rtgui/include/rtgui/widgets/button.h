@@ -70,7 +70,7 @@ void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 
 void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func);
 
-rt_bool_t rtgui_button_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 /** @} */
 

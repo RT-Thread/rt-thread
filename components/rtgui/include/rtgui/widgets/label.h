@@ -41,7 +41,7 @@ typedef struct rtgui_label rtgui_label_t;
 rtgui_label_t* rtgui_label_create(const char* text);
 void rtgui_label_destroy(rtgui_label_t* label);
 
-rt_bool_t rtgui_label_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_label_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 void rtgui_label_set_text(rtgui_label_t* label, const char* text);
 char* rtgui_label_get_text(rtgui_label_t* label);

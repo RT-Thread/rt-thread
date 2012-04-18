@@ -1,24 +1,24 @@
 /*
  * 程序清单：label控件演示
  *
- * 这个例子会在创建出的view上添加几个不同类型的label控件
+ * 这个例子会在创建出的container上添加几个不同类型的label控件
  */
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
 
 /* 创建用于演示label控件的视图 */
-rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_view_label(void)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t* view;
+	rtgui_container_t* container;
 	rtgui_label_t* label;
 	rtgui_font_t* font;
 
 	/* 先创建一个演示用的视图 */
-	view = demo_view(workbench, "Label View");
+	container = demo_view("Label View");
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5;
@@ -31,11 +31,11 @@ rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = red;
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5 + 25;
@@ -48,11 +48,11 @@ rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5 + 25 + 25;
@@ -65,11 +65,11 @@ rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_CENTER_HORIZONTAL;
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.x2 -= 5;
 	rect.y1 += 5 + 25 + 25 + 25;
@@ -81,11 +81,11 @@ rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(label)) = font;
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 	/* 获得视图的位置信息 */
-	demo_view_get_rect(view, &rect);
+	demo_view_get_rect(container, &rect);
 	rect.x1 += 5;
 	rect.y1 += 5 + 25 + 25 + 25 + 25;
 	rect.y2 = rect.y1 + 20;
@@ -96,9 +96,9 @@ rtgui_view_t* demo_view_label(rtgui_workbench_t* workbench)
 	RTGUI_WIDGET_FONT(RTGUI_WIDGET(label)) = font;
 	/* 设置label的位置 */
 	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	/* view是一个container控件，调用add_child方法添加这个label控件 */
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	/* container是一个container控件，调用add_child方法添加这个label控件 */
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-	return view;
+	return container;
 }
 

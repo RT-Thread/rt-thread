@@ -37,7 +37,7 @@ void rtgui_radiobox_destroy(struct rtgui_radiobox* radiobox);
 void rtgui_radiobox_set_selection(struct rtgui_radiobox* radiobox, int selection);
 int rtgui_radiobox_get_selection(struct rtgui_radiobox* radiobox);
 
-rt_bool_t rtgui_radiobox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_radiobox_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 void rtgui_radiobox_set_orientation(struct rtgui_radiobox* radiobox, int orientation);
 

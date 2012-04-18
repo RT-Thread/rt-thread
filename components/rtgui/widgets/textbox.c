@@ -25,13 +25,13 @@
 #define RTGUI_TEXTBOX_MARGIN		3
 
 static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kbd* event);
-static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui_event* event);
-static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtgui_event* event);
+static rt_bool_t rtgui_textbox_onfocus(struct rtgui_object* object, struct rtgui_event* event);
+static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_object* object, struct rtgui_event* event);
 
 static void _rtgui_textbox_caret_timeout(struct rtgui_timer* timer, void* parameter)
 {
 	rtgui_textbox_t* box;
-	
+
 	box = (rtgui_textbox_t*)parameter;
 	/* set caret flag */
 	if (box->flag & RTGUI_TEXTBOX_CARET_SHOW)
@@ -51,7 +51,7 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 	rtgui_widget_set_rect(RTGUI_WIDGET(box), &rect);
 
 	RTGUI_WIDGET(box)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(box), rtgui_textbox_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(box), rtgui_textbox_event_handler);
 	rtgui_widget_set_onfocus(RTGUI_WIDGET(box), rtgui_textbox_onfocus);
 	rtgui_widget_set_onunfocus(RTGUI_WIDGET(box), rtgui_textbox_onunfocus);
 
@@ -226,10 +226,12 @@ static void rtgui_textbox_onkey(struct rtgui_textbox* box, struct rtgui_event_kb
 	rtgui_theme_draw_textbox(box);
 }
 
-static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui_event* event)
+static rt_bool_t rtgui_textbox_onfocus(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
+	struct rtgui_textbox* box;
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
+	box = RTGUI_TEXTBOX(object);
 	/* set caret to show */
 	box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
 	/* start caret timer */
@@ -238,10 +240,12 @@ static rt_bool_t rtgui_textbox_onfocus(struct rtgui_widget* widget, struct rtgui
 	return RT_TRUE;
 }
 
-static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtgui_event* event)
+static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
+	struct rtgui_textbox* box;
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
+	box = RTGUI_TEXTBOX(object);
 	/* stop caret timer */
 	rtgui_timer_stop(box->caret_timer);
 	/* set caret to hide */
@@ -250,10 +254,12 @@ static rt_bool_t rtgui_textbox_onunfocus(struct rtgui_widget* widget, struct rtg
 	return RT_TRUE;
 }
 
-rt_bool_t rtgui_textbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_textbox_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_textbox* box = (struct rtgui_textbox*)widget;
+	struct rtgui_textbox* box;
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
+	box = RTGUI_TEXTBOX(object);
 	switch (event->type)
 	{
 	case RTGUI_EVENT_PAINT:

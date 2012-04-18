@@ -19,7 +19,7 @@
 #include <rtgui/image.h>
 #include <rtgui/rtgui_system.h>
 
-#include <rtgui/widgets/view.h>
+#include <rtgui/widgets/container.h>
 
 typedef void (*item_action)(struct rtgui_widget* widget, void* parameter);
 struct rtgui_list_item
@@ -45,7 +45,7 @@ DECLARE_CLASS_TYPE(listview);
 
 struct rtgui_list_view
 {
-	struct rtgui_view parent;
+	struct rtgui_container parent;
 
 	/* widget private data */
 	/* list item */
@@ -59,20 +59,18 @@ struct rtgui_list_view
     /* the number of item in a page */
     rt_uint16_t page_items;
 	/* current item */
-    rt_int16_t current_item;
+    rt_uint16_t current_item;
 
 	/* icon layout */
 	rt_uint8_t row_items, col_items;
 };
 typedef struct rtgui_list_view rtgui_list_view_t;
 
-rtgui_type_t *rtgui_list_view_type_get(void);
-
 rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, rt_uint16_t count,
     rtgui_rect_t *rect, rt_uint16_t flag);
 void rtgui_list_view_destroy(rtgui_list_view_t* view);
 
-rt_bool_t rtgui_list_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_list_view_event_handler(struct rtgui_object* widget, struct rtgui_event* event);
 
 #endif
 

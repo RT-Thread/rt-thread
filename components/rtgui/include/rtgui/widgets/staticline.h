@@ -28,7 +28,7 @@ typedef struct rtgui_staticline rtgui_staticline_t;
 rtgui_staticline_t *rtgui_staticline_create(int orientation);
 void rtgui_staticline_destroy(rtgui_staticline_t* staticline);
 
-rt_bool_t rtgui_staticline_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_staticline_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 void rtgui_staticline_set_orientation(rtgui_staticline_t* staticline, int orientation);
 
 #endif

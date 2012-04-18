@@ -48,7 +48,7 @@ typedef struct rtgui_iconbox rtgui_iconbox_t;
 struct rtgui_iconbox* rtgui_iconbox_create(struct rtgui_image* image, const char* text, int position);
 void rtgui_iconbox_destroy(struct rtgui_iconbox* iconbox);
 
-rt_bool_t rtgui_iconbox_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_iconbox_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 void rtgui_iconbox_set_text_position(struct rtgui_iconbox* iconbox, int position);
 

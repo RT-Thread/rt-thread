@@ -10,15 +10,11 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/list_view.h>
 
-static rtgui_workbench_t* workbench = RT_NULL;
+static struct rtgui_application *application = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
 
 /* 列表项的动作函数 */
-#if RTTHREAD_VERSION >= 10000
 static void listitem_action(rtgui_widget_t* widget, void* parameter)
-#else
-static void listitem_action(void* parameter)
-#endif
 {
 	char label_text[32];
 	rtgui_win_t *win;
@@ -29,7 +25,7 @@ static void listitem_action(void* parameter)
 	rtgui_rect_moveto(&rect, 20, 50);
 
 	/* 显示消息窗口 */
-	win = rtgui_win_create(RTGUI_TOPLEVEL(workbench),
+	win = rtgui_win_create(RTGUI_TOPLEVEL(application),
 		"窗口", &rect, RTGUI_WIN_STYLE_DEFAULT);
 
 	rect.x1 += 20;
@@ -49,14 +45,14 @@ static void listitem_action(void* parameter)
 }
 
 /* 返回功能的动作函数 */
-#if RTTHREAD_VERSION >= 10000
+#if RT_VERSION == 4
 static void return_action(rtgui_widget_t* widget, void* parameter)
 #else
 static void return_action(void* parameter)
 #endif
 {
 	/* 退出模态显示 */
-	rtgui_view_end_modal(RTGUI_VIEW(_view), RTGUI_MODAL_OK);
+	rtgui_container_end_modal(RTGUI_CONTAINER(_view), RTGUI_MODAL_OK);
 }
 
 /* 列表项 */
@@ -286,9 +282,9 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	rtgui_rect_t rect;
 	rt_uint32_t index;
 
-	/* 获得顶层的workbench */
-	workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
-	rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
+	/* 获得顶层的application */
+	application = RTGUI_APPLICATION(rtgui_widget_get_toplevel(widget));
+	rtgui_widget_get_rect(RTGUI_WIDGET(application), &rect);
 
 	/* 初始化图标列表 */
 	if (items == RT_NULL)
@@ -313,24 +309,24 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 
 	/* 创建一个列表视图， 项指定为items */
 	_view = rtgui_list_view_create(items, ITEM_MAX + 1, &rect, RTGUI_LIST_VIEW_ICON);
-	/* 在workbench中添加相应的视图 */
-	rtgui_workbench_add_view(workbench, RTGUI_VIEW(_view));
+	/* 在application中添加相应的视图 */
+	rtgui_application_add_container(application, RTGUI_CONTAINER(_view));
 
 	/* 模式显示视图 */
-	rtgui_view_show(RTGUI_VIEW(_view), RT_TRUE);
-	rtgui_view_destroy(RTGUI_VIEW(_view));
+	rtgui_container_show(RTGUI_CONTAINER(_view), RT_TRUE);
+	rtgui_container_destroy(RTGUI_CONTAINER(_view));
 
 	_view = RT_NULL;
 }
 
 /* 创建用于演示列表视图的视图 */
-rtgui_view_t* demo_listview_icon_view(rtgui_workbench_t* workbench)
+rtgui_container_t* demo_listview_icon_view(struct rtgui_application *app)
 {
 	rtgui_rect_t rect;
-	rtgui_view_t *view;
+	rtgui_container_t *view;
 	rtgui_button_t* open_btn;
 
-	view = demo_view(workbench, "图标视图演示");
+	view = demo_view(app, "图标视图演示");
 
 	if (item_icon == RT_NULL)
 		item_icon = rtgui_image_create_from_mem("xpm",
