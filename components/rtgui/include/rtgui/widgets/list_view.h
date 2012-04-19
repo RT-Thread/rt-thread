@@ -59,7 +59,7 @@ struct rtgui_list_view
     /* the number of item in a page */
     rt_uint16_t page_items;
 	/* current item */
-    rt_uint16_t current_item;
+    rt_int16_t current_item;
 
 	/* icon layout */
 	rt_uint8_t row_items, col_items;

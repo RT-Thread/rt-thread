@@ -96,7 +96,7 @@ static void rtgui_list_view_onicondraw(struct rtgui_list_view* view, struct rtgu
 	}
 }
 
-static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_uint16_t old_item)
+static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_int16_t old_item)
 {
 	struct rtgui_rect rect, item_rect, drawing_rect;
 	rt_ubase_t c, r; /* col and row index */
@@ -230,7 +230,7 @@ static void rtgui_list_view_onlistdraw(struct rtgui_list_view* view, struct rtgu
 	}
 }
 
-void rtgui_list_view_update_list(struct rtgui_list_view* view, rt_uint16_t old_item)
+void rtgui_list_view_update_list(struct rtgui_list_view* view, rt_int16_t old_item)
 {
 	struct rtgui_dc* dc;
 	const struct rtgui_list_item* item;
