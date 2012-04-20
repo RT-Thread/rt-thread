@@ -95,7 +95,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_e
 				if ((btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
 				{
 					/* call on button handler */
-					btn->on_button(widget, event);
+					btn->on_button(RTGUI_OBJECT(widget), event);
 				}
 			}
 		}
@@ -137,14 +137,14 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_e
 					if (btn->on_button != RT_NULL)
 					{
 						/* call on button handler */
-						btn->on_button(widget, event);
+						btn->on_button(RTGUI_OBJECT(widget), event);
 					}
 
 #ifndef RTGUI_USING_SMALL_SIZE
 					/* invokes call back */
 					if (widget->on_mouseclick != RT_NULL &&
 						emouse->button & RTGUI_MOUSE_BUTTON_UP)
-						return widget->on_mouseclick(widget, event);
+						return widget->on_mouseclick(RTGUI_OBJECT(widget), event);
 #endif
 				}
 			}
@@ -175,13 +175,13 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_e
 					/* invokes call back */
 					if (widget->on_mouseclick != RT_NULL &&
 						emouse->button & RTGUI_MOUSE_BUTTON_UP)
-						return widget->on_mouseclick(widget, event);
+						return widget->on_mouseclick(RTGUI_OBJECT(widget), event);
 #endif
 
 					if (!(btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
 					{
 						/* call on button handler */
-						btn->on_button(widget, event);
+						btn->on_button(RTGUI_OBJECT(widget), event);
 					}
 				}
 

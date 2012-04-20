@@ -194,9 +194,7 @@ static rt_bool_t rtgui_combobox_onmouse_button(struct rtgui_combobox* box, struc
 rt_bool_t rtgui_combobox_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_combobox *box;
-
-	RT_ASSERT(object != RT_NULL);
-	RT_ASSERT(event != RT_NULL);
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
 	box = RTGUI_COMBOBOX(object);
 
@@ -204,7 +202,8 @@ rt_bool_t rtgui_combobox_event_handler(struct rtgui_object* object, struct rtgui
 	{
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+		if (widget->on_draw != RT_NULL)
+			widget->on_draw(RTGUI_OBJECT(widget), event);
 		else
 #endif
 			rtgui_combobox_ondraw(box);

@@ -86,7 +86,8 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_object* object, struct rtgui
 	{
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+		if (widget->on_draw != RT_NULL)
+			widget->on_draw(RTGUI_OBJECT(widget), event);
 		else
 #endif
 		{
@@ -99,7 +100,8 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_object* object, struct rtgui
 		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(radiobox))) return RT_FALSE;
 
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
+		if (widget->on_key != RT_NULL)
+			widget->on_key(RTGUI_OBJECT(widget), event);
 		else
 #endif
 		{
@@ -140,7 +142,8 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_object* object, struct rtgui
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_mouseclick != RT_NULL) widget->on_mouseclick(widget, event);
+		if (widget->on_mouseclick != RT_NULL)
+			widget->on_mouseclick(RTGUI_OBJECT(widget), event);
 		else
 #endif
 		{

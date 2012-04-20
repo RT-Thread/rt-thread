@@ -264,8 +264,9 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_object* object, struct rtgui_
 	{
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
-		else 
+		if (widget->on_draw != RT_NULL)
+			widget->on_draw(RTGUI_OBJECT(widget), event);
+		else
 #endif
 			rtgui_theme_draw_textbox(box);
 		break;
@@ -274,8 +275,9 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_object* object, struct rtgui_
 		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
 
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_mouseclick != RT_NULL) widget->on_mouseclick(widget, event);
-		else 
+		if (widget->on_mouseclick != RT_NULL)
+			widget->on_mouseclick(RTGUI_OBJECT(widget), event);
+		else
 #endif
 			rtgui_textbox_onmouse(box, (struct rtgui_event_mouse*)event);
 		return RT_TRUE;
@@ -284,7 +286,8 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_object* object, struct rtgui_
 		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
 
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_key != RT_NULL) widget->on_key(widget, event);
+		if (widget->on_key != RT_NULL)
+			widget->on_key(RTGUI_OBJECT(widget), event);
 		else 
 #endif
 			rtgui_textbox_onkey(box, (struct rtgui_event_kbd*)event);

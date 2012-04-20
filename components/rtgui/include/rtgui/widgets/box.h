@@ -43,7 +43,7 @@ typedef struct rtgui_box rtgui_box_t;
 struct rtgui_box* rtgui_box_create(int orientation, rtgui_rect_t* rect);
 void rtgui_box_destroy(struct rtgui_box* box);
 
-rt_bool_t rtgui_box_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
+rt_bool_t rtgui_box_event_handler(struct rtgui_object* object, rtgui_event_t* event);
 
 void rtgui_box_append(rtgui_box_t* box, rtgui_widget_t* widget);
 void rtgui_box_layout(rtgui_box_t* box);

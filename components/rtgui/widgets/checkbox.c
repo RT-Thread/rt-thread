@@ -46,7 +46,7 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_object* object, struct rtgui
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_draw != RT_NULL)
 		{
-			return widget->on_draw(widget, event);
+			return widget->on_draw(RTGUI_OBJECT(widget), event);
 		}
 		else
 #endif
@@ -83,12 +83,12 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_object* object, struct rtgui
 				/* call user callback */
 				if (widget->on_mouseclick != RT_NULL)
 				{
-					return widget->on_mouseclick(widget, event);
+					return widget->on_mouseclick(RTGUI_OBJECT(widget), event);
 				}
 #endif
 				if (box->on_button != RT_NULL)
 				{
-					box->on_button(widget, event);
+					box->on_button(RTGUI_OBJECT(widget), event);
 					return RT_TRUE;
 				}
 			}

@@ -77,5 +77,5 @@
 //#define RTGUI_USING_DESKTOP_WINDOW
 
 #define  RTGUI_EVENT_DEBUG
-
+#undef RTGUI_USING_SMALL_SIZE
 #endif

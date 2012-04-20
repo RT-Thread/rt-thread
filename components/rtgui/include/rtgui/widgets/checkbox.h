@@ -26,7 +26,7 @@ struct rtgui_checkbox
 	rt_uint8_t status_down;
 
 	/* click button event handler */
-	void (*on_button)(struct rtgui_widget* widget, rtgui_event_t *event);
+	rtgui_onbutton_func_t on_button;
 };
 typedef struct rtgui_checkbox rtgui_checkbox_t;
 

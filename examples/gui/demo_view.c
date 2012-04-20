@@ -130,6 +130,7 @@ void demo_view_get_logic_rect(rtgui_container_t* container, rtgui_rect_t *rect)
 
 /* 当是标准版本时，这个函数用于返回自动布局引擎box控件 */
 #ifndef RTGUI_USING_SMALL_SIZE
+#include <rtgui/widgets/box.h>
 struct rtgui_box* demo_view_create_box(struct rtgui_container *container, int orient)
 {
 	rtgui_rect_t rect;

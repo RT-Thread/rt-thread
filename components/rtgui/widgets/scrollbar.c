@@ -274,7 +274,8 @@ rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_object *object,
 	{
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+		if (widget->on_draw != RT_NULL)
+			widget->on_draw(RTGUI_OBJECT(widget), event);
 		else
 #endif
 		{
@@ -289,7 +290,7 @@ rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_object *object,
 #ifndef RTGUI_USING_SMALL_SIZE
 			if (widget->on_mouseclick != RT_NULL)
 			{
-				widget->on_mouseclick(widget, event);
+				widget->on_mouseclick(RTGUI_OBJECT(widget), event);
 			}
 			else
 #endif

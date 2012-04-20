@@ -49,9 +49,7 @@ DEFINE_CLASS_TYPE(iconbox, "iconbox",
 rt_bool_t rtgui_iconbox_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_iconbox* iconbox;
-
-	RT_ASSERT(object != RT_NULL);
-	RT_ASSERT(event != RT_NULL);
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
 	iconbox = RTGUI_ICONBOX(object);
 
@@ -59,7 +57,8 @@ rt_bool_t rtgui_iconbox_event_handler(struct rtgui_object* object, struct rtgui_
 	{
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
-		if (widget->on_draw != RT_NULL) widget->on_draw(widget, event);
+		if (widget->on_draw != RT_NULL)
+			widget->on_draw(RTGUI_OBJECT(widget), event);
 		else
 #endif
 		{
