@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>17</version>
+        <version>20</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -27,8 +27,8 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>13</version>
-          <state>36</state>
+          <version>18</version>
+          <state>37</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -58,7 +58,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>0</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -80,16 +80,12 @@
           <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
-          <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\INC\DLib_Config_Normal.h</state>
-        </option>
-        <option>
           <name>OGProductVersion</name>
-          <state>5.41.0.51757</state>
+          <state>6.10.3.52260</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>5.41.0.51757</state>
+          <state>6.10.3.52260</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -133,13 +129,27 @@
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
+        <option>
+          <name>RTConfigPath2</name>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
+        </option>
+        <option>
+          <name>GFPUCoreSlave</name>
+          <version>18</version>
+          <state>37</state>
+        </option>
+        <option>
+          <name>GBECoreSlave</name>
+          <version>18</version>
+          <state>37</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>21</version>
+        <version>26</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -184,7 +194,7 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state />
+          <state>Pa050</state>
         </option>
         <option>
           <name>CCDiagRemark</name>
@@ -257,11 +267,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state />
-        </option>
-        <option>
-          <name>CCLangSelect</name>
-          <state>0</state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -299,10 +305,6 @@
           <state>0</state>
         </option>
         <option>
-          <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
-        </option>
-        <option>
           <name>CCCodeSection</name>
           <state>.text</state>
         </option>
@@ -337,13 +339,61 @@
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
+        <option>
+          <name>CCPosIndRopi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndRwpi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndNoDynInit</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccAllowVLA</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccExceptions</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccRTTI</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccStaticDestr</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccRelaxedFpPrecision</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppInlineSemantics</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>7</version>
+        <version>8</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -469,7 +519,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state />
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -486,10 +536,6 @@
         <option>
           <name>AIgnoreStdInclude</name>
           <state>0</state>
-        </option>
-        <option>
-          <name>AStdIncludes</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
         </option>
         <option>
           <name>AUserIncludes</name>
@@ -523,7 +569,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state />
+          <state>project.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -560,7 +606,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>8</version>
+        <version>11</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -577,7 +623,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>template.out</state>
+          <state>project.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -637,11 +683,11 @@
         </option>
         <option>
           <name>IlinkIcfOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\generic_cortex.icf</state>
+          <state>$PROJ_DIR$\rtthread-lpc17xx.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -774,6 +820,38 @@
           <name>IlinkIElfToolPostProcess</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkLogAutoLibSelect</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogRedirSymbols</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogUnusedFragments</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcReverseByteOrder</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcUseAsInput</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptInline</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsAllow</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsForce</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -813,7 +891,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>17</version>
+        <version>20</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -830,7 +908,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>13</version>
+          <version>18</version>
           <state>0</state>
         </option>
         <option>
@@ -861,7 +939,7 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>0</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -883,12 +961,8 @@
           <state />
         </option>
         <option>
-          <name>RTConfigPath</name>
-          <state>dl-stnl0.a</state>
-        </option>
-        <option>
           <name>OGProductVersion</name>
-          <state>5.41.0.51757</state>
+          <state>6.10.3.52260</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
@@ -936,13 +1010,27 @@
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
+        <option>
+          <name>RTConfigPath2</name>
+          <state />
+        </option>
+        <option>
+          <name>GFPUCoreSlave</name>
+          <version>18</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>GBECoreSlave</name>
+          <version>18</version>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>21</version>
+        <version>26</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1063,10 +1151,6 @@
           <state />
         </option>
         <option>
-          <name>CCLangSelect</name>
-          <state>0</state>
-        </option>
-        <option>
           <name>CCLibConfigHeader</name>
           <state>1</state>
         </option>
@@ -1100,10 +1184,6 @@
         <option>
           <name>CCStdIncCheck</name>
           <state>0</state>
-        </option>
-        <option>
-          <name>CCStdIncludePath</name>
-          <state>###Uninitialized###</state>
         </option>
         <option>
           <name>CCCodeSection</name>
@@ -1140,13 +1220,61 @@
           <version>0</version>
           <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
+        <option>
+          <name>CCPosIndRopi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndRwpi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndNoDynInit</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccAllowVLA</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccExceptions</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccRTTI</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccStaticDestr</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccRelaxedFpPrecision</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppInlineSemantics</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>7</version>
+        <version>8</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1291,10 +1419,6 @@
           <state>0</state>
         </option>
         <option>
-          <name>AStdIncludes</name>
-          <state>$TOOLKIT_DIR$\INC\</state>
-        </option>
-        <option>
           <name>AUserIncludes</name>
           <state />
         </option>
@@ -1363,7 +1487,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>8</version>
+        <version>11</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1575,6 +1699,38 @@
         </option>
         <option>
           <name>IlinkIElfToolPostProcess</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogAutoLibSelect</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogRedirSymbols</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogUnusedFragments</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcReverseByteOrder</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcUseAsInput</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptInline</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsAllow</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsForce</name>
           <state>0</state>
         </option>
       </data>
