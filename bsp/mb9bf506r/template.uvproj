@@ -12,14 +12,14 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MB9BF506N</Device>
+          <Device>MB9BF506R</Device>
           <Vendor>Fujitsu Semiconductors</Vendor>
           <Cpu>IRAM(0x20000000-0x20007FFF) IRAM2(0x1FFF8000-0x1FFFFFFF) IROM(0x00000000-0x0007FFFF) CLOCK(4000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"Startup\Fujitsu\MB9B500\startup_MB9BF50x.s" ("Fujitsu MB9BF50x Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0MB9BFx06_512 -FS00 -FL080000)</FlashDriverDll>
-          <DeviceId>5215</DeviceId>
-          <RegisterFile>MB9BF506N.h</RegisterFile>
+          <DeviceId>5216</DeviceId>
+          <RegisterFile>MB9BF506R.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -29,7 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\Fujitsu\MB9B500\MB9BF506N.SFR</SFDFile>
+          <SFDFile>SFD\Fujitsu\MB9B500\MB9BF506R.SFR</SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>

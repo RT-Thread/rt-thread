@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m3'
-CROSS_TOOL='gcc'
+CROSS_TOOL='iar'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-fm3.map,-cref,-u,Reset_Handler -T fm3_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-fm3.map,-cref,-u,Reset_Handler -T rtthread-mb9bf506.ld'
 
     CPATH = ''
     LPATH = ''
@@ -64,7 +64,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-fm3.map --scatter fm3_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-fm3.map --scatter rtthread-mb9bf506.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -113,7 +113,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
 
-    LFLAGS = ' --config mb9bf506.icf'
+    LFLAGS = ' --config rtthread-mb9bf506.icf'
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 

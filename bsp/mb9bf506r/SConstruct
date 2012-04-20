@@ -30,8 +30,6 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-objs = objs + SConscript('CMSIS/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
-
 # build program 
 env.Program(TARGET, objs)
 

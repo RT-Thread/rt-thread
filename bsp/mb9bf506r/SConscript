@@ -1,16 +1,12 @@
-import rtconfig
-Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'led.c', 'console.c']
-src_drv = ['serial.c', 'nand.c']
+cwd  = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
 
-if GetDepend('RT_USING_RTGUI'):
-	src_drv += ['info.c']
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-src = src_bsp + src_drv
-CPPPATH = [GetCurrentDir()]
-CPPDEFINES = []
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
-
-Return('group')
+Return('objs')

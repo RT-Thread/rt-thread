@@ -26,6 +26,7 @@ do not initialize  { section .noinit };
 
 keep { section FSymTab };
 keep { section VSymTab };
+
 place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
 
 place in ROM_region   { readonly };
