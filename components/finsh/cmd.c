@@ -65,33 +65,34 @@ extern struct rt_object_information rt_object_container[];
 
 static long _list_thread(struct rt_list_node* list)
 {
-	struct rt_thread *thread;
-	struct rt_list_node *node;
-	rt_uint8_t* ptr;
+    struct rt_thread *thread;
+    struct rt_list_node *node;
+    rt_uint8_t* ptr;
 
-	rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
-	rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-	for (node = list->next; node != list; node = node->next)
-	{
-		thread = rt_list_entry(node, struct rt_thread, list);
-		rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
+    rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
+    rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+    for (node = list->next; node != list; node = node->next)
+    {
+        thread = rt_list_entry(node, struct rt_thread, list);
+        rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
 
-		if (thread->stat == RT_THREAD_READY)		rt_kprintf(" ready  ");
-		else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-		else if (thread->stat == RT_THREAD_INIT)	rt_kprintf(" init   ");
+        if (thread->stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
+        else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+        else if (thread->stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
+        else if (thread->stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
-		ptr = (rt_uint8_t*)thread->stack_addr;
-		while (*ptr == '#')ptr ++;
+        ptr = (rt_uint8_t*)thread->stack_addr;
+        while (*ptr == '#')ptr ++;
 
-		rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-			thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-			thread->stack_size,
-			thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-			thread->remaining_tick,
-			thread->error);
+        rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
+            thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+            thread->stack_size,
+            thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+            thread->remaining_tick,
+            thread->error);
 
-	}
-	return 0;
+    }
+    return 0;
 }
 
 long list_thread(void)
@@ -126,13 +127,15 @@ static long _list_sem(struct rt_list_node *list)
 		sem = (struct rt_semaphore*)(rt_list_entry(node, struct rt_object, list));
 		if( !rt_list_isempty(&sem->parent.suspend_thread) )
 		{
-			rt_kprintf("%-8s  %03d %d:", sem->parent.parent.name, sem->value, rt_list_len(&sem->parent.suspend_thread) );
+			rt_kprintf("%-8.*s  %03d %d:", RT_NAME_MAX, sem->parent.parent.name, sem->value,
+					rt_list_len(&sem->parent.suspend_thread) );
 			show_wait_queue(&(sem->parent.suspend_thread));
 			rt_kprintf("\n");
 		}
 		else
 		{
-			rt_kprintf("%-8s  %03d %d\n", sem->parent.parent.name, sem->value, rt_list_len(&sem->parent.suspend_thread));
+			rt_kprintf("%-8.*s  %03d %d\n", RT_NAME_MAX, sem->parent.parent.name, sem->value,
+					rt_list_len(&sem->parent.suspend_thread));
 		}
 	}
 
@@ -159,7 +162,7 @@ static long _list_event(struct rt_list_node *list)
 		e = (struct rt_event*)(rt_list_entry(node, struct rt_object, list));
 		if( !rt_list_isempty(&e->parent.suspend_thread) )
 		{
-			rt_kprintf("%-8s  0x%08x %03d\n", e->parent.parent.name, e->set, rt_list_len(&e->parent.suspend_thread));
+			rt_kprintf("%-8s  0x%08x %03d:", e->parent.parent.name, e->set, rt_list_len(&e->parent.suspend_thread));
 			show_wait_queue(&(e->parent.suspend_thread));
 			rt_kprintf("\n");
 		}
@@ -190,7 +193,8 @@ static long _list_mutex(struct rt_list_node *list)
 	for (node = list->next; node != list; node = node->next)
 	{
 		m = (struct rt_mutex*)(rt_list_entry(node, struct rt_object, list));
-		rt_kprintf("%-8s %-8s %04d %d\n", m->parent.parent.name, m->owner->name, m->hold, rt_list_len(&m->parent.suspend_thread));
+		rt_kprintf("%-8.*s %-8.*s %04d %d\n", RT_NAME_MAX, m->parent.parent.name,
+				RT_NAME_MAX, m->owner->name, m->hold, rt_list_len(&m->parent.suspend_thread));
 	}
 
 	return 0;
