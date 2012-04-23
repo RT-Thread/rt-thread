@@ -61,6 +61,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -346,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS;applications;drivers</IncludePath>
+              <IncludePath>.;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;applications;drivers;libraries\CMSIS\Include;libraries\CMSIS\RTOS;libraries\Device\FUJISTU\MB9BF50x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -376,7 +378,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
+            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -395,26 +397,6 @@
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\core_cm3.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_mb9bf50x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\system_mb9bf50x.c</FilePath>
-            </File>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -445,6 +427,21 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\serial.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>system_mb9bf50x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\system_mb9bf50x.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_mb9bf50x.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\ARM\startup_mb9bf50x.S</FilePath>
             </File>
           </Files>
         </Group>

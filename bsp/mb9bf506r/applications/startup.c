@@ -16,7 +16,7 @@
 #include <rtthread.h>
 
 #include "board.h"
-#include "mb9bf506r.h"
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #endif
@@ -109,9 +109,6 @@ int main(void)
 {
 	/* disable interrupt first */
 	rt_hw_interrupt_disable();
-
-	/* init system setting */
-	SystemInit();
     
 	/* startup RT-Thread RTOS */
 	rtthread_startup();

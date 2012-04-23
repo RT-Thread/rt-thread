@@ -32,8 +32,8 @@
 /************************************************************************/
 /*                                                                      */
 /*  Header File for Device MB9BF506R                                    */
-/*  Version V1.00                                                       */
-/*  Date    2011-01-21                                                  */
+/*  Version V1.03                                                       */
+/*  Date    2011-05-16                                                  */
 /*                                                                      */
 /************************************************************************/
 
@@ -65,57 +65,57 @@ typedef enum IRQn
     UsageFault_IRQn   = -10, /*  6 Usage Fault       */
     SVC_IRQn          = -5,  /* 11 SV Call           */
     DebugMonitor_IRQn = -4,  /* 12 Debug Monitor     */
-    PendSVC_IRQn      = -2,  /* 14 Pend SV           */
+    PendSV_IRQn       = -2,  /* 14 Pend SV           */
     SysTick_IRQn      = -1,  /* 15 System Tick       */
 
-    CSV_IRQn          = 0,   /* Clock Super Visor                        */
-    SWDT_IRQn         = 1,   /* Software Watchdog Timer                  */
-    LVD_IRQn          = 2,   /* Low Voltage Detector                     */
-    WFG_IRQn          = 3,   /* Wave Form Generator                      */
-    EXINT0_7_IRQn     = 4,   /* External Interrupt Request ch.0 to ch.7  */
-    EXINT8_15_IRQn    = 5,   /* External Interrupt Request ch.8 to ch.15 */
-    DTIM_QDU_IRQn     = 6,   /* Dual Timer / Quad Decoder                */
-    MFS0RX_IRQn       = 7,   /* MultiFunction Serial ch.0                */
-    MFS0TX_IRQn       = 8,   /* MultiFunction Serial ch.0                */
-    MFS1RX_IRQn       = 9,   /* MultiFunction Serial ch.1                */
-    MFS1TX_IRQn       = 10,  /* MultiFunction Serial ch.1                */
-    MFS2RX_IRQn       = 11,  /* MultiFunction Serial ch.2                */
-    MFS2TX_IRQn       = 12,  /* MultiFunction Serial ch.2                */
-    MFS3RX_IRQn       = 13,  /* MultiFunction Serial ch.3                */
-    MFS3TX_IRQn       = 14,  /* MultiFunction Serial ch.3                */
-    MFS4RX_IRQn       = 15,  /* MultiFunction Serial ch.4                */
-    MFS4TX_IRQn       = 16,  /* MultiFunction Serial ch.4                */
-    MFS5RX_IRQn       = 17,  /* MultiFunction Serial ch.5                */
-    MFS5TX_IRQn       = 18,  /* MultiFunction Serial ch.5                */
-    MFS6RX_IRQn       = 19,  /* MultiFunction Serial ch.6                */
-    MFS6TX_IRQn       = 20,  /* MultiFunction Serial ch.6                */
-    MFS7RX_IRQn       = 21,  /* MultiFunction Serial ch.7                */
-    MFS7TX_IRQn       = 22,  /* MultiFunction Serial ch.7                */
-    PPG_IRQn          = 23,  /* PPG                                      */
-    OSC_PLL_WC_IRQn   = 24,  /* OSC / PLL / Watch Counter                */
-    ADC0_IRQn         = 25,  /* ADC0                                     */
-    ADC1_IRQn         = 26,  /* ADC1                                     */
-    ADC2_IRQn         = 27,  /* ADC2                                     */
-    FRTIM_IRQn        = 28,  /* Free-run Timer                           */
-    INCAP_IRQn        = 29,  /* Input Capture                            */
-    OUTCOMP_IRQn      = 30,  /* Output Compare                           */
-    BTIM_IRQn         = 31,  /* Base Timer ch.0 to ch.7                  */
-    CAN0_IRQn         = 32,  /* CAN ch.0                                 */
-    CAN1_IRQn         = 33,  /* CAN ch.1                                 */
-    USBF_IRQn         = 34,  /* USB Function                             */
-    USBF_USBH_IRQn    = 35,  /* USB Function / USB HOST                  */
-    /* Reserved       = 36,                                              */
-    /* Reserved       = 37,                                              */
-    DMAC0_IRQn        = 38,  /* DMAC ch.0                                */
-    DMAC1_IRQn        = 39,  /* DMAC ch.1                                */
-    DMAC2_IRQn        = 40,  /* DMAC ch.2                                */
-    DMAC3_IRQn        = 41,  /* DMAC ch.3                                */
-    DMAC4_IRQn        = 42,  /* DMAC ch.4                                */
-    DMAC5_IRQn        = 43,  /* DMAC ch.5                                */
-    DMAC6_IRQn        = 44,  /* DMAC ch.6                                */
-    DMAC7_IRQn        = 45,  /* DMAC ch.7                                */
-    /* Reserved       = 46,                                              */
-    /* Reserved       = 47,                                              */
+    CSV_IRQn          =  0, /* Clock Super Visor                             */
+    SWDT_IRQn         =  1, /* Software Watchdog Timer                       */
+    LVD_IRQn          =  2, /* Low Voltage Detector                          */
+    WFG_IRQn          =  3, /* Wave Form Generator                           */
+    EXINT0_7_IRQn     =  4, /* External Interrupt Request ch.0 to ch.7       */
+    EXINT8_15_IRQn    =  5, /* External Interrupt Request ch.8 to ch.15      */
+    DTIM_QDU_IRQn     =  6, /* Dual Timer / Quad Decoder                     */
+    MFS0RX_IRQn       =  7, /* MultiFunction Serial Reception ch.0           */
+    MFS0TX_IRQn       =  8, /* MultiFunction Serial Transmission ch.0        */
+    MFS1RX_IRQn       =  9, /* MultiFunction Serial Reception ch.1           */
+    MFS1TX_IRQn       = 10, /* MultiFunction Serial Transmission ch.1        */
+    MFS2RX_IRQn       = 11, /* MultiFunction Serial Reception ch.2           */
+    MFS2TX_IRQn       = 12, /* MultiFunction Serial Transmission ch.2        */
+    MFS3RX_IRQn       = 13, /* MultiFunction Serial Reception ch.3           */
+    MFS3TX_IRQn       = 14, /* MultiFunction Serial Transmission ch.3        */
+    MFS4RX_IRQn       = 15, /* MultiFunction Serial Reception ch.4           */
+    MFS4TX_IRQn       = 16, /* MultiFunction Serial Transmission ch.4        */
+    MFS5RX_IRQn       = 17, /* MultiFunction Serial Reception ch.5           */
+    MFS5TX_IRQn       = 18, /* MultiFunction Serial Transmission ch.5        */
+    MFS6RX_IRQn       = 19, /* MultiFunction Serial Reception ch.6           */
+    MFS6TX_IRQn       = 20, /* MultiFunction Serial Transmission ch.6        */
+    MFS7RX_IRQn       = 21, /* MultiFunction Serial Reception ch.7           */
+    MFS7TX_IRQn       = 22, /* MultiFunction Serial Transmission ch.7        */
+    PPG_IRQn          = 23, /* PPG                                           */
+    OSC_PLL_WC_IRQn   = 24, /* OSC / PLL / Watch Counter                     */
+    ADC0_IRQn         = 25, /* ADC0                                          */
+    ADC1_IRQn         = 26, /* ADC1                                          */
+    ADC2_IRQn         = 27, /* ADC2                                          */
+    FRTIM_IRQn        = 28, /* Free-run Timer                                */
+    INCAP_IRQn        = 29, /* Input Capture                                 */
+    OUTCOMP_IRQn      = 30, /* Output Compare                                */
+    BTIM_IRQn         = 31, /* Base Timer ch.0 to ch.7                       */
+    CAN0_IRQn         = 32, /* CAN ch.0                                      */
+    CAN1_IRQn         = 33, /* CAN ch.1                                      */
+    USBF_IRQn         = 34, /* USB Function                                  */
+    USBF_USBH_IRQn    = 35, /* USB Function / USB HOST                       */
+    /* Reserved       = 36                                                   */
+    /* Reserved       = 37                                                   */
+    DMAC0_IRQn        = 38, /* DMAC ch.0                                     */
+    DMAC1_IRQn        = 39, /* DMAC ch.1                                     */
+    DMAC2_IRQn        = 40, /* DMAC ch.2                                     */
+    DMAC3_IRQn        = 41, /* DMAC ch.3                                     */
+    DMAC4_IRQn        = 42, /* DMAC ch.4                                     */
+    DMAC5_IRQn        = 43, /* DMAC ch.5                                     */
+    DMAC6_IRQn        = 44, /* DMAC ch.6                                     */
+    DMAC7_IRQn        = 45  /* DMAC ch.7                                     */
+    /* Reserved       = 46                                                   */
+    /* Reserved       = 47                                                   */
 } IRQn_Type;
 
 
@@ -140,19 +140,6391 @@ typedef enum IRQn
 #endif
 
 /******************************************************************************
+ * Peripheral register bit fields
+ ******************************************************************************/
+
+/******************************************************************************
+ * Flash_IF_MODULE
+ ******************************************************************************/
+/* Flash_IF_MODULE register bit fields */
+typedef struct stc_flash_if_faszr_field
+{
+  __IO uint32_t ASZ0       : 1;
+  __IO uint32_t ASZ1       : 1;
+} stc_flash_if_faszr_field_t;
+
+typedef struct stc_flash_if_frwtr_field
+{
+  __IO uint32_t RWT0       : 1;
+  __IO uint32_t RWT1       : 1;
+} stc_flash_if_frwtr_field_t;
+
+typedef struct stc_flash_if_fstr_field
+{
+  __IO uint32_t RDY        : 1;
+  __IO uint32_t HNG        : 1;
+  __IO uint32_t EER        : 1;
+} stc_flash_if_fstr_field_t;
+
+typedef struct stc_flash_if_fsyndn_field
+{
+  __IO uint32_t SD0        : 1;
+  __IO uint32_t SD1        : 1;
+  __IO uint32_t SD2        : 1;
+} stc_flash_if_fsyndn_field_t;
+
+typedef struct stc_flash_if_crtrmm_field
+{
+  __IO uint32_t TRMM0      : 1;
+  __IO uint32_t TRMM1      : 1;
+  __IO uint32_t TRMM2      : 1;
+  __IO uint32_t TRMM3      : 1;
+  __IO uint32_t TRMM4      : 1;
+  __IO uint32_t TRMM5      : 1;
+  __IO uint32_t TRMM6      : 1;
+  __IO uint32_t TRMM7      : 1;
+  __IO uint32_t TRMM8      : 1;
+  __IO uint32_t TRMM9      : 1;
+} stc_flash_if_crtrmm_field_t;
+
+/******************************************************************************
+ * Clock_Reset_MODULE
+ ******************************************************************************/
+/* Clock_Reset_MODULE register bit fields */
+typedef struct stc_crg_scm_ctl_field
+{
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t MOSCE      : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t SOSCE      : 1;
+  __IO  uint8_t PLLE       : 1;
+  __IO  uint8_t RCS0       : 1;
+  __IO  uint8_t RCS1       : 1;
+  __IO  uint8_t RCS2       : 1;
+} stc_crg_scm_ctl_field_t;
+
+typedef struct stc_crg_scm_str_field
+{
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t MORDY      : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t SORDY      : 1;
+  __IO  uint8_t PLRDY      : 1;
+  __IO  uint8_t RCM0       : 1;
+  __IO  uint8_t RCM1       : 1;
+  __IO  uint8_t RCM2       : 1;
+} stc_crg_scm_str_field_t;
+
+typedef struct stc_crg_rst_str_field
+{
+  __IO uint16_t PONR       : 1;
+  __IO uint16_t INITX      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SWDT       : 1;
+  __IO uint16_t HWDT       : 1;
+  __IO uint16_t CSVR       : 1;
+  __IO uint16_t FCSR       : 1;
+  __IO uint16_t SRST       : 1;
+} stc_crg_rst_str_field_t;
+
+typedef struct stc_crg_bsc_psr_field
+{
+  __IO  uint8_t BSR0       : 1;
+  __IO  uint8_t BSR1       : 1;
+  __IO  uint8_t BSR2       : 1;
+} stc_crg_bsc_psr_field_t;
+
+typedef struct stc_crg_apbc0_psr_field
+{
+  __IO  uint8_t APBC00     : 1;
+  __IO  uint8_t APBC01     : 1;
+} stc_crg_apbc0_psr_field_t;
+
+typedef struct stc_crg_apbc1_psr_field
+{
+  __IO  uint8_t APBC10     : 1;
+  __IO  uint8_t APBC11     : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t APBC1RST   : 1;
+        uint8_t RESERVED2  : 2;
+  __IO  uint8_t APBC1EN    : 1;
+} stc_crg_apbc1_psr_field_t;
+
+typedef struct stc_crg_apbc2_psr_field
+{
+  __IO  uint8_t APBC20     : 1;
+  __IO  uint8_t APBC21     : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t APBC2RST   : 1;
+        uint8_t RESERVED2  : 2;
+  __IO  uint8_t APBC2EN    : 1;
+} stc_crg_apbc2_psr_field_t;
+
+typedef struct stc_crg_swc_psr_field
+{
+  __IO  uint8_t SWDS0      : 1;
+  __IO  uint8_t SWDS1      : 1;
+        uint8_t RESERVED1  : 5;
+  __IO  uint8_t TESTB      : 1;
+} stc_crg_swc_psr_field_t;
+
+typedef struct stc_crg_ttc_psr_field
+{
+  __IO  uint8_t TTC        : 1;
+} stc_crg_ttc_psr_field_t;
+
+typedef struct stc_crg_csw_tmr_field
+{
+  __IO  uint8_t MOWT0      : 1;
+  __IO  uint8_t MOWT1      : 1;
+  __IO  uint8_t MOWT2      : 1;
+  __IO  uint8_t MOWT3      : 1;
+  __IO  uint8_t SOWT0      : 1;
+  __IO  uint8_t SOWT1      : 1;
+  __IO  uint8_t SOWT2      : 1;
+} stc_crg_csw_tmr_field_t;
+
+typedef struct stc_crg_psw_tmr_field
+{
+  __IO  uint8_t POWT0      : 1;
+  __IO  uint8_t POWT1      : 1;
+  __IO  uint8_t POWT2      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t PINC       : 1;
+} stc_crg_psw_tmr_field_t;
+
+typedef struct stc_crg_pll_ctl1_field
+{
+  __IO  uint8_t PLLM0      : 1;
+  __IO  uint8_t PLLM1      : 1;
+  __IO  uint8_t PLLM2      : 1;
+  __IO  uint8_t PLLM3      : 1;
+  __IO  uint8_t PLLK0      : 1;
+  __IO  uint8_t PLLK1      : 1;
+  __IO  uint8_t PLLK2      : 1;
+  __IO  uint8_t PLLK3      : 1;
+} stc_crg_pll_ctl1_field_t;
+
+typedef struct stc_crg_pll_ctl2_field
+{
+  __IO  uint8_t PLLN0      : 1;
+  __IO  uint8_t PLLN1      : 1;
+  __IO  uint8_t PLLN2      : 1;
+  __IO  uint8_t PLLN3      : 1;
+  __IO  uint8_t PLLN4      : 1;
+  __IO  uint8_t PLLN5      : 1;
+} stc_crg_pll_ctl2_field_t;
+
+typedef struct stc_crg_csv_ctl_field
+{
+  __IO uint16_t MCSVE      : 1;
+  __IO uint16_t SCSVE      : 1;
+       uint16_t RESERVED1  : 6;
+  __IO uint16_t FCSDE      : 1;
+  __IO uint16_t FCSRE      : 1;
+       uint16_t RESERVED2  : 2;
+  __IO uint16_t FCD0       : 1;
+  __IO uint16_t FCD1       : 1;
+  __IO uint16_t FCD2       : 1;
+} stc_crg_csv_ctl_field_t;
+
+typedef struct stc_crg_csv_str_field
+{
+  __IO  uint8_t MCMF       : 1;
+  __IO  uint8_t SCMF       : 1;
+} stc_crg_csv_str_field_t;
+
+typedef struct stc_crg_dbwdt_ctl_field
+{
+        uint8_t RESERVED1  : 5;
+  __IO  uint8_t DPSWBE     : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t DPHWBE     : 1;
+} stc_crg_dbwdt_ctl_field_t;
+
+typedef struct stc_crg_int_enr_field
+{
+  __IO  uint8_t MCSE       : 1;
+  __IO  uint8_t SCSE       : 1;
+  __IO  uint8_t PCSE       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t FCSE       : 1;
+} stc_crg_int_enr_field_t;
+
+typedef struct stc_crg_int_str_field
+{
+  __IO  uint8_t MCSI       : 1;
+  __IO  uint8_t SCSI       : 1;
+  __IO  uint8_t PCSI       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t FCSI       : 1;
+} stc_crg_int_str_field_t;
+
+typedef struct stc_crg_int_clr_field
+{
+  __IO  uint8_t MCSC       : 1;
+  __IO  uint8_t SCSC       : 1;
+  __IO  uint8_t PCSC       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t FCSC       : 1;
+} stc_crg_int_clr_field_t;
+
+/******************************************************************************
+ * HWWDT_MODULE
+ ******************************************************************************/
+/* HWWDT_MODULE register bit fields */
+typedef struct stc_hwwdt_wdg_ctl_field
+{
+  __IO  uint8_t INTEN      : 1;
+  __IO  uint8_t RESEN      : 1;
+} stc_hwwdt_wdg_ctl_field_t;
+
+typedef struct stc_hwwdt_wdg_ris_field
+{
+  __IO  uint8_t RIS        : 1;
+} stc_hwwdt_wdg_ris_field_t;
+
+/******************************************************************************
+ * SWWDT_MODULE
+ ******************************************************************************/
+/* SWWDT_MODULE register bit fields */
+typedef struct stc_swwdt_wdogcontrol_field
+{
+  __IO  uint8_t INTEN      : 1;
+  __IO  uint8_t RESEN      : 1;
+} stc_swwdt_wdogcontrol_field_t;
+
+typedef struct stc_swwdt_wdogris_field
+{
+  __IO  uint8_t RIS        : 1;
+} stc_swwdt_wdogris_field_t;
+
+/******************************************************************************
+ * DTIM_MODULE
+ ******************************************************************************/
+/* DTIM_MODULE register bit fields */
+typedef struct stc_dtim_timer1control_field
+{
+  __IO uint32_t ONESHOT    : 1;
+  __IO uint32_t TIMERSIZE  : 1;
+  __IO uint32_t TIMERPRE0  : 1;
+  __IO uint32_t TIMERPRE1  : 1;
+       uint32_t RESERVED1  : 1;
+  __IO uint32_t INTENABLE  : 1;
+  __IO uint32_t TIMERMODE  : 1;
+  __IO uint32_t TIMEREN    : 1;
+} stc_dtim_timer1control_field_t;
+
+typedef struct stc_dtim_timer1ris_field
+{
+  __IO uint32_t TIMERXRIS  : 1;
+} stc_dtim_timer1ris_field_t;
+
+typedef struct stc_dtim_timer1mis_field
+{
+  __IO uint32_t TIMERXRIS  : 1;
+} stc_dtim_timer1mis_field_t;
+
+typedef struct stc_dtim_timer2control_field
+{
+  __IO uint32_t ONESHOT    : 1;
+  __IO uint32_t TIMERSIZE  : 1;
+  __IO uint32_t TIMERPRE0  : 1;
+  __IO uint32_t TIMERPRE1  : 1;
+       uint32_t RESERVED1  : 1;
+  __IO uint32_t INTENABLE  : 1;
+  __IO uint32_t TIMERMODE  : 1;
+  __IO uint32_t TIMEREN    : 1;
+} stc_dtim_timer2control_field_t;
+
+typedef struct stc_dtim_timer2ris_field
+{
+  __IO uint32_t TIMERXRIS  : 1;
+} stc_dtim_timer2ris_field_t;
+
+typedef struct stc_dtim_timer2mis_field
+{
+  __IO uint32_t TIMERXRIS  : 1;
+} stc_dtim_timer2mis_field_t;
+
+/******************************************************************************
+ * MFT_FRT_MODULE
+ ******************************************************************************/
+/* MFT_FRT_MODULE register bit fields */
+typedef struct stc_mft_frt_tcsa0_field
+{
+  __IO uint16_t CLK0       : 1;
+  __IO uint16_t CLK1       : 1;
+  __IO uint16_t CLK2       : 1;
+  __IO uint16_t CLK3       : 1;
+  __IO uint16_t SCLR       : 1;
+  __IO uint16_t MODE       : 1;
+  __IO uint16_t STOP       : 1;
+  __IO uint16_t BFE        : 1;
+  __IO uint16_t ICRE       : 1;
+  __IO uint16_t ICLR       : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t IRQZE      : 1;
+  __IO uint16_t IRQZF      : 1;
+  __IO uint16_t ECKE       : 1;
+} stc_mft_frt_tcsa0_field_t;
+
+typedef struct stc_mft_frt_tcsb0_field
+{
+  __IO uint16_t AD0E       : 1;
+  __IO uint16_t AD1E       : 1;
+  __IO uint16_t AD2E       : 1;
+} stc_mft_frt_tcsb0_field_t;
+
+typedef struct stc_mft_frt_tcsa1_field
+{
+  __IO uint16_t CLK0       : 1;
+  __IO uint16_t CLK1       : 1;
+  __IO uint16_t CLK2       : 1;
+  __IO uint16_t CLK3       : 1;
+  __IO uint16_t SCLR       : 1;
+  __IO uint16_t MODE       : 1;
+  __IO uint16_t STOP       : 1;
+  __IO uint16_t BFE        : 1;
+  __IO uint16_t ICRE       : 1;
+  __IO uint16_t ICLR       : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t IRQZE      : 1;
+  __IO uint16_t IRQZF      : 1;
+  __IO uint16_t ECKE       : 1;
+} stc_mft_frt_tcsa1_field_t;
+
+typedef struct stc_mft_frt_tcsb1_field
+{
+  __IO uint16_t AD0E       : 1;
+  __IO uint16_t AD1E       : 1;
+  __IO uint16_t AD2E       : 1;
+} stc_mft_frt_tcsb1_field_t;
+
+typedef struct stc_mft_frt_tcsa2_field
+{
+  __IO uint16_t CLK0       : 1;
+  __IO uint16_t CLK1       : 1;
+  __IO uint16_t CLK2       : 1;
+  __IO uint16_t CLK3       : 1;
+  __IO uint16_t SCLR       : 1;
+  __IO uint16_t MODE       : 1;
+  __IO uint16_t STOP       : 1;
+  __IO uint16_t BFE        : 1;
+  __IO uint16_t ICRE       : 1;
+  __IO uint16_t ICLR       : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t IRQZE      : 1;
+  __IO uint16_t IRQZF      : 1;
+  __IO uint16_t ECKE       : 1;
+} stc_mft_frt_tcsa2_field_t;
+
+typedef struct stc_mft_frt_tcsb2_field
+{
+  __IO uint16_t AD0E       : 1;
+  __IO uint16_t AD1E       : 1;
+  __IO uint16_t AD2E       : 1;
+} stc_mft_frt_tcsb2_field_t;
+
+/******************************************************************************
+ * MFT_OCU_MODULE
+ ******************************************************************************/
+/* MFT_OCU_MODULE register bit fields */
+typedef struct stc_mft_ocu_ocsa10_field
+{
+  __IO  uint8_t CST0       : 1;
+  __IO  uint8_t CST1       : 1;
+  __IO  uint8_t BDIS0      : 1;
+  __IO  uint8_t BDIS1      : 1;
+  __IO  uint8_t IOE0       : 1;
+  __IO  uint8_t IOE1       : 1;
+  __IO  uint8_t IOP0       : 1;
+  __IO  uint8_t IOP1       : 1;
+} stc_mft_ocu_ocsa10_field_t;
+
+typedef struct stc_mft_ocu_ocsb10_field
+{
+  __IO  uint8_t OTD0       : 1;
+  __IO  uint8_t OTD1       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t CMOD       : 1;
+  __IO  uint8_t BTS0       : 1;
+  __IO  uint8_t BTS1       : 1;
+} stc_mft_ocu_ocsb10_field_t;
+
+typedef struct stc_mft_ocu_ocsa32_field
+{
+  __IO  uint8_t CST2       : 1;
+  __IO  uint8_t CST3       : 1;
+  __IO  uint8_t BDIS2      : 1;
+  __IO  uint8_t BDIS3      : 1;
+  __IO  uint8_t IOE2       : 1;
+  __IO  uint8_t IOE3       : 1;
+  __IO  uint8_t IOP2       : 1;
+  __IO  uint8_t IOP3       : 1;
+} stc_mft_ocu_ocsa32_field_t;
+
+typedef struct stc_mft_ocu_ocsb32_field
+{
+  __IO  uint8_t OTD2       : 1;
+  __IO  uint8_t OTD3       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t CMOD       : 1;
+  __IO  uint8_t BTS2       : 1;
+  __IO  uint8_t BTS3       : 1;
+} stc_mft_ocu_ocsb32_field_t;
+
+typedef struct stc_mft_ocu_ocsa54_field
+{
+  __IO  uint8_t CST4       : 1;
+  __IO  uint8_t CST5       : 1;
+  __IO  uint8_t BDIS4      : 1;
+  __IO  uint8_t BDIS5      : 1;
+  __IO  uint8_t IOE4       : 1;
+  __IO  uint8_t IOE5       : 1;
+  __IO  uint8_t IOP4       : 1;
+  __IO  uint8_t IOP5       : 1;
+} stc_mft_ocu_ocsa54_field_t;
+
+typedef struct stc_mft_ocu_ocsb54_field
+{
+  __IO  uint8_t OTD4       : 1;
+  __IO  uint8_t OTD5       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t CMOD       : 1;
+  __IO  uint8_t BTS4       : 1;
+  __IO  uint8_t BTS5       : 1;
+} stc_mft_ocu_ocsb54_field_t;
+
+typedef struct stc_mft_ocu_ocsc_field
+{
+  __IO  uint8_t MOD0       : 1;
+  __IO  uint8_t MOD1       : 1;
+  __IO  uint8_t MOD2       : 1;
+  __IO  uint8_t MOD3       : 1;
+  __IO  uint8_t MOD4       : 1;
+  __IO  uint8_t MOD5       : 1;
+} stc_mft_ocu_ocsc_field_t;
+
+typedef struct stc_mft_ocu_ocfs10_field
+{
+  __IO  uint8_t FSO00      : 1;
+  __IO  uint8_t FSO01      : 1;
+  __IO  uint8_t FSO02      : 1;
+  __IO  uint8_t FSO03      : 1;
+  __IO  uint8_t FSO10      : 1;
+  __IO  uint8_t FSO11      : 1;
+  __IO  uint8_t FSO12      : 1;
+  __IO  uint8_t FSO13      : 1;
+} stc_mft_ocu_ocfs10_field_t;
+
+typedef struct stc_mft_ocu_ocfs32_field
+{
+  __IO  uint8_t FSO20      : 1;
+  __IO  uint8_t FSO21      : 1;
+  __IO  uint8_t FSO22      : 1;
+  __IO  uint8_t FSO23      : 1;
+  __IO  uint8_t FSO30      : 1;
+  __IO  uint8_t FSO31      : 1;
+  __IO  uint8_t FSO32      : 1;
+  __IO  uint8_t FSO33      : 1;
+} stc_mft_ocu_ocfs32_field_t;
+
+typedef struct stc_mft_ocu_ocfs54_field
+{
+  __IO  uint8_t FSO40      : 1;
+  __IO  uint8_t FSO41      : 1;
+  __IO  uint8_t FSO42      : 1;
+  __IO  uint8_t FSO43      : 1;
+  __IO  uint8_t FSO50      : 1;
+  __IO  uint8_t FSO51      : 1;
+  __IO  uint8_t FSO52      : 1;
+  __IO  uint8_t FSO53      : 1;
+} stc_mft_ocu_ocfs54_field_t;
+
+/******************************************************************************
+ * MFT_WFG_MODULE
+ ******************************************************************************/
+/* MFT_WFG_MODULE register bit fields */
+typedef struct stc_mft_wfg_wfsa10_field
+{
+  __IO uint16_t DCK0       : 1;
+  __IO uint16_t DCK1       : 1;
+  __IO uint16_t DCK2       : 1;
+  __IO uint16_t TMD0       : 1;
+  __IO uint16_t TMD1       : 1;
+  __IO uint16_t TMD2       : 1;
+  __IO uint16_t GTEN0      : 1;
+  __IO uint16_t GTEN1      : 1;
+  __IO uint16_t PSEL0      : 1;
+  __IO uint16_t PSEL1      : 1;
+  __IO uint16_t PGEN0      : 1;
+  __IO uint16_t PGEN1      : 1;
+  __IO uint16_t DMOD       : 1;
+} stc_mft_wfg_wfsa10_field_t;
+
+typedef struct stc_mft_wfg_wfsa32_field
+{
+  __IO uint16_t DCK0       : 1;
+  __IO uint16_t DCK1       : 1;
+  __IO uint16_t DCK2       : 1;
+  __IO uint16_t TMD0       : 1;
+  __IO uint16_t TMD1       : 1;
+  __IO uint16_t TMD2       : 1;
+  __IO uint16_t GTEN0      : 1;
+  __IO uint16_t GTEN1      : 1;
+  __IO uint16_t PSEL0      : 1;
+  __IO uint16_t PSEL1      : 1;
+  __IO uint16_t PGEN0      : 1;
+  __IO uint16_t PGEN1      : 1;
+  __IO uint16_t DMOD       : 1;
+} stc_mft_wfg_wfsa32_field_t;
+
+typedef struct stc_mft_wfg_wfsa54_field
+{
+  __IO uint16_t DCK0       : 1;
+  __IO uint16_t DCK1       : 1;
+  __IO uint16_t DCK2       : 1;
+  __IO uint16_t TMD0       : 1;
+  __IO uint16_t TMD1       : 1;
+  __IO uint16_t TMD2       : 1;
+  __IO uint16_t GTEN0      : 1;
+  __IO uint16_t GTEN1      : 1;
+  __IO uint16_t PSEL0      : 1;
+  __IO uint16_t PSEL1      : 1;
+  __IO uint16_t PGEN0      : 1;
+  __IO uint16_t PGEN1      : 1;
+  __IO uint16_t DMOD       : 1;
+} stc_mft_wfg_wfsa54_field_t;
+
+typedef struct stc_mft_wfg_wfir_field
+{
+  __IO uint16_t DTIF       : 1;
+  __IO uint16_t DTIC       : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t TMIF10     : 1;
+  __IO uint16_t TMIC10     : 1;
+  __IO uint16_t TMIE10     : 1;
+  __IO uint16_t TMIS10     : 1;
+  __IO uint16_t TMIF32     : 1;
+  __IO uint16_t TMIC32     : 1;
+  __IO uint16_t TMIE32     : 1;
+  __IO uint16_t TMIS32     : 1;
+  __IO uint16_t TMIF54     : 1;
+  __IO uint16_t TMIC54     : 1;
+  __IO uint16_t TMIE54     : 1;
+  __IO uint16_t TMIS54     : 1;
+} stc_mft_wfg_wfir_field_t;
+
+typedef struct stc_mft_wfg_nzcl_field
+{
+  __IO uint16_t DTIE       : 1;
+  __IO uint16_t NWS0       : 1;
+  __IO uint16_t NWS1       : 1;
+  __IO uint16_t NWS2       : 1;
+  __IO uint16_t SDTI       : 1;
+} stc_mft_wfg_nzcl_field_t;
+
+/******************************************************************************
+ * MFT_ICU_MODULE
+ ******************************************************************************/
+/* MFT_ICU_MODULE register bit fields */
+typedef struct stc_mft_icu_icfs10_field
+{
+  __IO  uint8_t FSI00      : 1;
+  __IO  uint8_t FSI01      : 1;
+  __IO  uint8_t FSI02      : 1;
+  __IO  uint8_t FSI03      : 1;
+  __IO  uint8_t FSI10      : 1;
+  __IO  uint8_t FSI11      : 1;
+  __IO  uint8_t FSI12      : 1;
+  __IO  uint8_t FSI13      : 1;
+} stc_mft_icu_icfs10_field_t;
+
+typedef struct stc_mft_icu_icfs32_field
+{
+  __IO  uint8_t FSI20      : 1;
+  __IO  uint8_t FSI21      : 1;
+  __IO  uint8_t FSI22      : 1;
+  __IO  uint8_t FSI23      : 1;
+  __IO  uint8_t FSI30      : 1;
+  __IO  uint8_t FSI31      : 1;
+  __IO  uint8_t FSI32      : 1;
+  __IO  uint8_t FSI33      : 1;
+} stc_mft_icu_icfs32_field_t;
+
+typedef struct stc_mft_icu_icsa10_field
+{
+  __IO  uint8_t EG00       : 1;
+  __IO  uint8_t EG01       : 1;
+  __IO  uint8_t EG10       : 1;
+  __IO  uint8_t EG11       : 1;
+  __IO  uint8_t ICE0       : 1;
+  __IO  uint8_t ICE1       : 1;
+  __IO  uint8_t ICP0       : 1;
+  __IO  uint8_t ICP1       : 1;
+} stc_mft_icu_icsa10_field_t;
+
+typedef struct stc_mft_icu_icsb10_field
+{
+  __IO  uint8_t IEI0       : 1;
+  __IO  uint8_t IEI1       : 1;
+} stc_mft_icu_icsb10_field_t;
+
+typedef struct stc_mft_icu_icsa32_field
+{
+  __IO  uint8_t EG20       : 1;
+  __IO  uint8_t EG21       : 1;
+  __IO  uint8_t EG30       : 1;
+  __IO  uint8_t EG31       : 1;
+  __IO  uint8_t ICE2       : 1;
+  __IO  uint8_t ICE3       : 1;
+  __IO  uint8_t ICP2       : 1;
+  __IO  uint8_t ICP3       : 1;
+} stc_mft_icu_icsa32_field_t;
+
+typedef struct stc_mft_icu_icsb32_field
+{
+  __IO  uint8_t IEI2       : 1;
+  __IO  uint8_t IEI3       : 1;
+} stc_mft_icu_icsb32_field_t;
+
+/******************************************************************************
+ * MFT_ADCMP_MODULE
+ ******************************************************************************/
+/* MFT_ADCMP_MODULE register bit fields */
+typedef struct stc_mft_adcmp_acsb_field
+{
+  __IO  uint8_t BDIS0      : 1;
+  __IO  uint8_t BDIS1      : 1;
+  __IO  uint8_t BDIS2      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t BTS0       : 1;
+  __IO  uint8_t BTS1       : 1;
+  __IO  uint8_t BTS2       : 1;
+} stc_mft_adcmp_acsb_field_t;
+
+typedef struct stc_mft_adcmp_acsa_field
+{
+  __IO uint16_t CE00       : 1;
+  __IO uint16_t CE01       : 1;
+  __IO uint16_t CE10       : 1;
+  __IO uint16_t CE11       : 1;
+  __IO uint16_t CE20       : 1;
+  __IO uint16_t CE21       : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SEL00      : 1;
+  __IO uint16_t SEL01      : 1;
+  __IO uint16_t SEL10      : 1;
+  __IO uint16_t SEL11      : 1;
+  __IO uint16_t SEL20      : 1;
+  __IO uint16_t SEL21      : 1;
+} stc_mft_adcmp_acsa_field_t;
+
+typedef struct stc_mft_adcmp_atsa_field
+{
+  __IO uint16_t AD0S0      : 1;
+  __IO uint16_t AD0S1      : 1;
+  __IO uint16_t AD1S0      : 1;
+  __IO uint16_t AD1S1      : 1;
+  __IO uint16_t AD2S0      : 1;
+  __IO uint16_t AD2S1      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t AD0P0      : 1;
+  __IO uint16_t AD0P1      : 1;
+  __IO uint16_t AD1P0      : 1;
+  __IO uint16_t AD1P1      : 1;
+  __IO uint16_t AD2P0      : 1;
+  __IO uint16_t AD2P1      : 1;
+} stc_mft_adcmp_atsa_field_t;
+
+/******************************************************************************
+ * MFT_PPG_MODULE
+ ******************************************************************************/
+/* MFT_PPG_MODULE register bit fields */
+typedef struct stc_mft_ppg_ttcr0_field
+{
+  __IO  uint8_t STR0       : 1;
+  __IO  uint8_t MONI0      : 1;
+  __IO  uint8_t CS00       : 1;
+  __IO  uint8_t CS01       : 1;
+  __IO  uint8_t TRG0O      : 1;
+  __IO  uint8_t TRG2O      : 1;
+  __IO  uint8_t TRG4O      : 1;
+  __IO  uint8_t TRG6O      : 1;
+} stc_mft_ppg_ttcr0_field_t;
+
+typedef struct stc_mft_ppg_ttcr1_field
+{
+  __IO  uint8_t STR1       : 1;
+  __IO  uint8_t MONI1      : 1;
+  __IO  uint8_t CS10       : 1;
+  __IO  uint8_t CS11       : 1;
+  __IO  uint8_t TRG1O      : 1;
+  __IO  uint8_t TRG3O      : 1;
+  __IO  uint8_t TRG5O      : 1;
+  __IO  uint8_t TRG7O      : 1;
+} stc_mft_ppg_ttcr1_field_t;
+
+typedef struct stc_mft_ppg_trg_field
+{
+  __IO uint16_t PEN00      : 1;
+  __IO uint16_t PEN01      : 1;
+  __IO uint16_t PEN02      : 1;
+  __IO uint16_t PEN03      : 1;
+  __IO uint16_t PEN04      : 1;
+  __IO uint16_t PEN05      : 1;
+  __IO uint16_t PEN06      : 1;
+  __IO uint16_t PEN07      : 1;
+  __IO uint16_t PEN08      : 1;
+  __IO uint16_t PEN09      : 1;
+  __IO uint16_t PEN10      : 1;
+  __IO uint16_t PEN11      : 1;
+  __IO uint16_t PEN12      : 1;
+  __IO uint16_t PEN13      : 1;
+  __IO uint16_t PEN14      : 1;
+  __IO uint16_t PEN15      : 1;
+} stc_mft_ppg_trg_field_t;
+
+typedef struct stc_mft_ppg_revc_field
+{
+  __IO uint16_t REV00      : 1;
+  __IO uint16_t REV01      : 1;
+  __IO uint16_t REV02      : 1;
+  __IO uint16_t REV03      : 1;
+  __IO uint16_t REV04      : 1;
+  __IO uint16_t REV05      : 1;
+  __IO uint16_t REV06      : 1;
+  __IO uint16_t REV07      : 1;
+  __IO uint16_t REV08      : 1;
+  __IO uint16_t REV09      : 1;
+  __IO uint16_t REV10      : 1;
+  __IO uint16_t REV11      : 1;
+  __IO uint16_t REV12      : 1;
+  __IO uint16_t REV13      : 1;
+  __IO uint16_t REV14      : 1;
+  __IO uint16_t REV15      : 1;
+} stc_mft_ppg_revc_field_t;
+
+typedef struct stc_mft_ppg_ppgc1_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc1_field_t;
+
+typedef struct stc_mft_ppg_ppgc0_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc0_field_t;
+
+typedef struct stc_mft_ppg_ppgc3_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc3_field_t;
+
+typedef struct stc_mft_ppg_ppgc2_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc2_field_t;
+
+typedef struct stc_mft_ppg_gatec0_field
+{
+  __IO  uint8_t EDGE0      : 1;
+  __IO  uint8_t STRG0      : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t EDGE2      : 1;
+  __IO  uint8_t STRG2      : 1;
+} stc_mft_ppg_gatec0_field_t;
+
+typedef struct stc_mft_ppg_ppgc5_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc5_field_t;
+
+typedef struct stc_mft_ppg_ppgc4_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc4_field_t;
+
+typedef struct stc_mft_ppg_ppgc7_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc7_field_t;
+
+typedef struct stc_mft_ppg_ppgc6_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc6_field_t;
+
+typedef struct stc_mft_ppg_gatec4_field
+{
+  __IO  uint8_t EDGE4      : 1;
+  __IO  uint8_t STRG4      : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t EDGE6      : 1;
+  __IO  uint8_t STRG6      : 1;
+} stc_mft_ppg_gatec4_field_t;
+
+typedef struct stc_mft_ppg_ppgc9_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc9_field_t;
+
+typedef struct stc_mft_ppg_ppgc8_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc8_field_t;
+
+typedef struct stc_mft_ppg_ppgc11_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc11_field_t;
+
+typedef struct stc_mft_ppg_ppgc10_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc10_field_t;
+
+typedef struct stc_mft_ppg_gatec8_field
+{
+  __IO  uint8_t EDGE8      : 1;
+  __IO  uint8_t STRG8      : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t EDGE10     : 1;
+  __IO  uint8_t STRG10     : 1;
+} stc_mft_ppg_gatec8_field_t;
+
+typedef struct stc_mft_ppg_ppgc13_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc13_field_t;
+
+typedef struct stc_mft_ppg_ppgc12_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc12_field_t;
+
+typedef struct stc_mft_ppg_ppgc15_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc15_field_t;
+
+typedef struct stc_mft_ppg_ppgc14_field
+{
+  __IO  uint8_t TTRG       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t PCS0       : 1;
+  __IO  uint8_t PCS1       : 1;
+  __IO  uint8_t INTM       : 1;
+  __IO  uint8_t PUF        : 1;
+  __IO  uint8_t PIE        : 1;
+} stc_mft_ppg_ppgc14_field_t;
+
+typedef struct stc_mft_ppg_gatec12_field
+{
+  __IO  uint8_t EDGE12     : 1;
+  __IO  uint8_t STRG12     : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t EDGE14     : 1;
+  __IO  uint8_t STRG14     : 1;
+} stc_mft_ppg_gatec12_field_t;
+
+/******************************************************************************
+ * BT_PPG_MODULE
+ ******************************************************************************/
+/* BT_PPG_MODULE register bit fields */
+typedef struct stc_bt_ppg_tmcr_field
+{
+  __IO uint16_t STRG       : 1;
+  __IO uint16_t CTEN       : 1;
+  __IO uint16_t MDSE       : 1;
+  __IO uint16_t OSEL       : 1;
+  __IO uint16_t FMD0       : 1;
+  __IO uint16_t FMD1       : 1;
+  __IO uint16_t FMD2       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t EGS0       : 1;
+  __IO uint16_t EGS1       : 1;
+  __IO uint16_t PMSK       : 1;
+  __IO uint16_t RTGEN      : 1;
+  __IO uint16_t CKS0       : 1;
+  __IO uint16_t CKS1       : 1;
+  __IO uint16_t CKS2       : 1;
+} stc_bt_ppg_tmcr_field_t;
+
+typedef struct stc_bt_ppg_stc_field
+{
+  __IO  uint8_t UDIR       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t TGIR       : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t UDIE       : 1;
+        uint8_t RESERVED3  : 1;
+  __IO  uint8_t TGIE       : 1;
+} stc_bt_ppg_stc_field_t;
+
+typedef struct stc_bt_ppg_tmcr2_field
+{
+  __IO  uint8_t CKS3       : 1;
+} stc_bt_ppg_tmcr2_field_t;
+
+/******************************************************************************
+ * BT_PWM_MODULE
+ ******************************************************************************/
+/* BT_PWM_MODULE register bit fields */
+typedef struct stc_bt_pwm_tmcr_field
+{
+  __IO uint16_t STRG       : 1;
+  __IO uint16_t CTEN       : 1;
+  __IO uint16_t MDSE       : 1;
+  __IO uint16_t OSEL       : 1;
+  __IO uint16_t FMD0       : 1;
+  __IO uint16_t FMD1       : 1;
+  __IO uint16_t FMD2       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t EGS0       : 1;
+  __IO uint16_t EGS1       : 1;
+  __IO uint16_t PMSK       : 1;
+  __IO uint16_t RTGEN      : 1;
+  __IO uint16_t CKS0       : 1;
+  __IO uint16_t CKS1       : 1;
+  __IO uint16_t CKS2       : 1;
+} stc_bt_pwm_tmcr_field_t;
+
+typedef struct stc_bt_pwm_stc_field
+{
+  __IO  uint8_t UDIR       : 1;
+  __IO  uint8_t DTIR       : 1;
+  __IO  uint8_t TGIR       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t UDIE       : 1;
+  __IO  uint8_t DTIE       : 1;
+  __IO  uint8_t TGIE       : 1;
+} stc_bt_pwm_stc_field_t;
+
+typedef struct stc_bt_pwm_tmcr2_field
+{
+  __IO  uint8_t CKS3       : 1;
+} stc_bt_pwm_tmcr2_field_t;
+
+/******************************************************************************
+ * BT_RT_MODULE
+ ******************************************************************************/
+/* BT_RT_MODULE register bit fields */
+typedef struct stc_bt_rt_tmcr_field
+{
+  __IO uint16_t STRG       : 1;
+  __IO uint16_t CTEN       : 1;
+  __IO uint16_t MDSE       : 1;
+  __IO uint16_t OSEL       : 1;
+  __IO uint16_t FMD0       : 1;
+  __IO uint16_t FMD1       : 1;
+  __IO uint16_t FMD2       : 1;
+  __IO uint16_t T32        : 1;
+  __IO uint16_t EGS0       : 1;
+  __IO uint16_t EGS1       : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t CKS0       : 1;
+  __IO uint16_t CKS1       : 1;
+  __IO uint16_t CKS2       : 1;
+} stc_bt_rt_tmcr_field_t;
+
+typedef struct stc_bt_rt_stc_field
+{
+  __IO  uint8_t UDIR       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t TGIR       : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t UDIE       : 1;
+        uint8_t RESERVED3  : 1;
+  __IO  uint8_t TGIE       : 1;
+} stc_bt_rt_stc_field_t;
+
+typedef struct stc_bt_rt_tmcr2_field
+{
+  __IO  uint8_t CKS3       : 1;
+} stc_bt_rt_tmcr2_field_t;
+
+/******************************************************************************
+ * BT_PWC_MODULE
+ ******************************************************************************/
+/* BT_PWC_MODULE register bit fields */
+typedef struct stc_bt_pwc_tmcr_field
+{
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t CTEN       : 1;
+  __IO uint16_t MDSE       : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t FMD0       : 1;
+  __IO uint16_t FMD1       : 1;
+  __IO uint16_t FMD2       : 1;
+  __IO uint16_t T32        : 1;
+  __IO uint16_t EGS0       : 1;
+  __IO uint16_t EGS1       : 1;
+  __IO uint16_t EGS2       : 1;
+       uint16_t RESERVED3  : 1;
+  __IO uint16_t CKS0       : 1;
+  __IO uint16_t CKS1       : 1;
+  __IO uint16_t CKS2       : 1;
+} stc_bt_pwc_tmcr_field_t;
+
+typedef struct stc_bt_pwc_stc_field
+{
+  __IO  uint8_t OVIR       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t EDIR       : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t OVIE       : 1;
+        uint8_t RESERVED3  : 1;
+  __IO  uint8_t EDIE       : 1;
+  __IO  uint8_t ERR        : 1;
+} stc_bt_pwc_stc_field_t;
+
+typedef struct stc_bt_pwc_tmcr2_field
+{
+  __IO  uint8_t CKS3       : 1;
+} stc_bt_pwc_tmcr2_field_t;
+
+/******************************************************************************
+ * BTIOSEL03_MODULE
+ ******************************************************************************/
+/* BTIOSEL03_MODULE register bit fields */
+typedef struct stc_btiosel03_btsel0123_field
+{
+  __IO  uint8_t SEL01_0    : 1;
+  __IO  uint8_t SEL01_1    : 1;
+  __IO  uint8_t SEL01_2    : 1;
+  __IO  uint8_t SEL01_3    : 1;
+  __IO  uint8_t SEL23_0    : 1;
+  __IO  uint8_t SEL23_1    : 1;
+  __IO  uint8_t SEL23_2    : 1;
+  __IO  uint8_t SEL23_3    : 1;
+} stc_btiosel03_btsel0123_field_t;
+
+/******************************************************************************
+ * BTIOSEL47_MODULE
+ ******************************************************************************/
+/* BTIOSEL47_MODULE register bit fields */
+typedef struct stc_btiosel47_btsel4567_field
+{
+  __IO  uint8_t SEL45_0    : 1;
+  __IO  uint8_t SEL45_1    : 1;
+  __IO  uint8_t SEL45_2    : 1;
+  __IO  uint8_t SEL45_3    : 1;
+  __IO  uint8_t SEL67_0    : 1;
+  __IO  uint8_t SEL67_1    : 1;
+  __IO  uint8_t SEL67_2    : 1;
+  __IO  uint8_t SEL67_3    : 1;
+} stc_btiosel47_btsel4567_field_t;
+
+/******************************************************************************
+ * SBSSR_MODULE
+ ******************************************************************************/
+/* SBSSR_MODULE register bit fields */
+typedef struct stc_sbssr_btsssr_field
+{
+  __IO uint16_t SSR0       : 1;
+  __IO uint16_t SSR1       : 1;
+  __IO uint16_t SSR2       : 1;
+  __IO uint16_t SSR3       : 1;
+  __IO uint16_t SSR4       : 1;
+  __IO uint16_t SSR5       : 1;
+  __IO uint16_t SSR6       : 1;
+  __IO uint16_t SSR7       : 1;
+  __IO uint16_t SSR8       : 1;
+  __IO uint16_t SSR9       : 1;
+  __IO uint16_t SSR10      : 1;
+  __IO uint16_t SSR11      : 1;
+  __IO uint16_t SSR12      : 1;
+  __IO uint16_t SSR13      : 1;
+  __IO uint16_t SSR14      : 1;
+  __IO uint16_t SSR15      : 1;
+} stc_sbssr_btsssr_field_t;
+
+/******************************************************************************
+ * QPRC_MODULE
+ ******************************************************************************/
+/* QPRC_MODULE register bit fields */
+typedef struct stc_qprc_qicr_field
+{
+  __IO uint16_t QPCMIE     : 1;
+  __IO uint16_t QPCMF      : 1;
+  __IO uint16_t QPRCMIE    : 1;
+  __IO uint16_t QPRCMF     : 1;
+  __IO uint16_t OUZIE      : 1;
+  __IO uint16_t UFDF       : 1;
+  __IO uint16_t OFDF       : 1;
+  __IO uint16_t ZIIF       : 1;
+  __IO uint16_t CDCIE      : 1;
+  __IO uint16_t CDCF       : 1;
+  __IO uint16_t DIRPC      : 1;
+  __IO uint16_t DIROU      : 1;
+  __IO uint16_t QPCNRCMIE  : 1;
+  __IO uint16_t QPCNRCMF   : 1;
+} stc_qprc_qicr_field_t;
+
+typedef struct stc_qprc_qicrl_field
+{
+  __IO  uint8_t QPCMIE     : 1;
+  __IO  uint8_t QPCMF      : 1;
+  __IO  uint8_t QPRCMIE    : 1;
+  __IO  uint8_t QPRCMF     : 1;
+  __IO  uint8_t OUZIE      : 1;
+  __IO  uint8_t UFDF       : 1;
+  __IO  uint8_t OFDF       : 1;
+  __IO  uint8_t ZIIF       : 1;
+} stc_qprc_qicrl_field_t;
+
+typedef struct stc_qprc_qicrh_field
+{
+  __IO  uint8_t CDCIE      : 1;
+  __IO  uint8_t CDCF       : 1;
+  __IO  uint8_t DIRPC      : 1;
+  __IO  uint8_t DIROU      : 1;
+  __IO  uint8_t QPCNRCMIE  : 1;
+  __IO  uint8_t QPCNRCMF   : 1;
+} stc_qprc_qicrh_field_t;
+
+typedef struct stc_qprc_qcr_field
+{
+  __IO uint16_t PCM0       : 1;
+  __IO uint16_t PCM1       : 1;
+  __IO uint16_t RCM0       : 1;
+  __IO uint16_t RCM1       : 1;
+  __IO uint16_t PSTP       : 1;
+  __IO uint16_t CGSC       : 1;
+  __IO uint16_t RSEL       : 1;
+  __IO uint16_t SWAP       : 1;
+  __IO uint16_t PCRM0      : 1;
+  __IO uint16_t PCRM1      : 1;
+  __IO uint16_t AES0       : 1;
+  __IO uint16_t AES1       : 1;
+  __IO uint16_t BES0       : 1;
+  __IO uint16_t BES1       : 1;
+  __IO uint16_t CGE0       : 1;
+  __IO uint16_t CGE1       : 1;
+} stc_qprc_qcr_field_t;
+
+typedef struct stc_qprc_qcrl_field
+{
+  __IO  uint8_t PCM0       : 1;
+  __IO  uint8_t PCM1       : 1;
+  __IO  uint8_t RCM0       : 1;
+  __IO  uint8_t RCM1       : 1;
+  __IO  uint8_t PSTP       : 1;
+  __IO  uint8_t CGSC       : 1;
+  __IO  uint8_t RSEL       : 1;
+  __IO  uint8_t SWAP       : 1;
+} stc_qprc_qcrl_field_t;
+
+typedef struct stc_qprc_qcrh_field
+{
+  __IO  uint8_t PCRM0      : 1;
+  __IO  uint8_t PCRM1      : 1;
+  __IO  uint8_t AES0       : 1;
+  __IO  uint8_t AES1       : 1;
+  __IO  uint8_t BES0       : 1;
+  __IO  uint8_t BES1       : 1;
+  __IO  uint8_t CGE0       : 1;
+  __IO  uint8_t CGE1       : 1;
+} stc_qprc_qcrh_field_t;
+
+typedef struct stc_qprc_qecr_field
+{
+  __IO uint16_t ORNGMD     : 1;
+  __IO uint16_t ORNGF      : 1;
+  __IO uint16_t ORNGIE     : 1;
+} stc_qprc_qecr_field_t;
+
+/******************************************************************************
+ * ADC12_MODULE
+ ******************************************************************************/
+/* ADC12_MODULE register bit fields */
+typedef struct stc_adc_adsr_field
+{
+  __IO  uint8_t SCS        : 1;
+  __IO  uint8_t PCS        : 1;
+  __IO  uint8_t PCNS       : 1;
+        uint8_t RESERVED1  : 3;
+  __IO  uint8_t FDAS       : 1;
+  __IO  uint8_t ADSTP      : 1;
+} stc_adc_adsr_field_t;
+
+typedef struct stc_adc_adcr_field
+{
+  __IO  uint8_t OVRIE      : 1;
+  __IO  uint8_t CMPIE      : 1;
+  __IO  uint8_t PCIE       : 1;
+  __IO  uint8_t SCIE       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t CMPIF      : 1;
+  __IO  uint8_t PCIF       : 1;
+  __IO  uint8_t SCIF       : 1;
+} stc_adc_adcr_field_t;
+
+typedef struct stc_adc_sfns_field
+{
+  __IO  uint8_t SFS0       : 1;
+  __IO  uint8_t SFS1       : 1;
+  __IO  uint8_t SFS2       : 1;
+  __IO  uint8_t SFS3       : 1;
+} stc_adc_sfns_field_t;
+
+typedef struct stc_adc_sccr_field
+{
+  __IO  uint8_t SSTR       : 1;
+  __IO  uint8_t SHEN       : 1;
+  __IO  uint8_t RPT        : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t SFCLR      : 1;
+  __IO  uint8_t SOVR       : 1;
+  __IO  uint8_t SFUL       : 1;
+  __IO  uint8_t SEMP       : 1;
+} stc_adc_sccr_field_t;
+
+typedef struct stc_adc_scfd_field
+{
+  __IO uint32_t SC0        : 1;
+  __IO uint32_t SC1        : 1;
+  __IO uint32_t SC2        : 1;
+  __IO uint32_t SC3        : 1;
+  __IO uint32_t SC4        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t RS0        : 1;
+  __IO uint32_t RS1        : 1;
+       uint32_t RESERVED2  : 2;
+  __IO uint32_t INVL       : 1;
+       uint32_t RESERVED3  : 7;
+  __IO uint32_t SD0        : 1;
+  __IO uint32_t SD1        : 1;
+  __IO uint32_t SD2        : 1;
+  __IO uint32_t SD3        : 1;
+  __IO uint32_t SD4        : 1;
+  __IO uint32_t SD5        : 1;
+  __IO uint32_t SD6        : 1;
+  __IO uint32_t SD7        : 1;
+  __IO uint32_t SD8        : 1;
+  __IO uint32_t SD9        : 1;
+  __IO uint32_t SD10       : 1;
+  __IO uint32_t SD11       : 1;
+} stc_adc_scfd_field_t;
+
+typedef struct stc_adc_scfdl_field
+{
+  __IO uint16_t SC0        : 1;
+  __IO uint16_t SC1        : 1;
+  __IO uint16_t SC2        : 1;
+  __IO uint16_t SC3        : 1;
+  __IO uint16_t SC4        : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t RS0        : 1;
+  __IO uint16_t RS1        : 1;
+       uint16_t RESERVED2  : 2;
+  __IO uint16_t INVL       : 1;
+} stc_adc_scfdl_field_t;
+
+typedef struct stc_adc_scfdh_field
+{
+       uint16_t RESERVED1  : 4;
+  __IO uint16_t SD0        : 1;
+  __IO uint16_t SD1        : 1;
+  __IO uint16_t SD2        : 1;
+  __IO uint16_t SD3        : 1;
+  __IO uint16_t SD4        : 1;
+  __IO uint16_t SD5        : 1;
+  __IO uint16_t SD6        : 1;
+  __IO uint16_t SD7        : 1;
+  __IO uint16_t SD8        : 1;
+  __IO uint16_t SD9        : 1;
+  __IO uint16_t SD10       : 1;
+  __IO uint16_t SD11       : 1;
+} stc_adc_scfdh_field_t;
+
+typedef struct stc_adc_scis23_field
+{
+  __IO uint16_t AN16       : 1;
+  __IO uint16_t AN17       : 1;
+  __IO uint16_t AN18       : 1;
+  __IO uint16_t AN19       : 1;
+  __IO uint16_t AN20       : 1;
+  __IO uint16_t AN21       : 1;
+  __IO uint16_t AN22       : 1;
+  __IO uint16_t AN23       : 1;
+  __IO uint16_t AN24       : 1;
+  __IO uint16_t AN25       : 1;
+  __IO uint16_t AN26       : 1;
+  __IO uint16_t AN27       : 1;
+  __IO uint16_t AN28       : 1;
+  __IO uint16_t AN29       : 1;
+  __IO uint16_t AN30       : 1;
+  __IO uint16_t AN31       : 1;
+} stc_adc_scis23_field_t;
+
+typedef struct stc_adc_scis2_field
+{
+  __IO  uint8_t AN16       : 1;
+  __IO  uint8_t AN17       : 1;
+  __IO  uint8_t AN18       : 1;
+  __IO  uint8_t AN19       : 1;
+  __IO  uint8_t AN20       : 1;
+  __IO  uint8_t AN21       : 1;
+  __IO  uint8_t AN22       : 1;
+  __IO  uint8_t AN23       : 1;
+} stc_adc_scis2_field_t;
+
+typedef struct stc_adc_scis3_field
+{
+  __IO  uint8_t AN24       : 1;
+  __IO  uint8_t AN25       : 1;
+  __IO  uint8_t AN26       : 1;
+  __IO  uint8_t AN27       : 1;
+  __IO  uint8_t AN28       : 1;
+  __IO  uint8_t AN29       : 1;
+  __IO  uint8_t AN30       : 1;
+  __IO  uint8_t AN31       : 1;
+} stc_adc_scis3_field_t;
+
+typedef struct stc_adc_scis01_field
+{
+  __IO uint16_t AN0        : 1;
+  __IO uint16_t AN1        : 1;
+  __IO uint16_t AN2        : 1;
+  __IO uint16_t AN3        : 1;
+  __IO uint16_t AN4        : 1;
+  __IO uint16_t AN5        : 1;
+  __IO uint16_t AN6        : 1;
+  __IO uint16_t AN7        : 1;
+  __IO uint16_t AN8        : 1;
+  __IO uint16_t AN9        : 1;
+  __IO uint16_t AN10       : 1;
+  __IO uint16_t AN11       : 1;
+  __IO uint16_t AN12       : 1;
+  __IO uint16_t AN13       : 1;
+  __IO uint16_t AN14       : 1;
+  __IO uint16_t AN15       : 1;
+} stc_adc_scis01_field_t;
+
+typedef struct stc_adc_scis0_field
+{
+  __IO  uint8_t AN0        : 1;
+  __IO  uint8_t AN1        : 1;
+  __IO  uint8_t AN2        : 1;
+  __IO  uint8_t AN3        : 1;
+  __IO  uint8_t AN4        : 1;
+  __IO  uint8_t AN5        : 1;
+  __IO  uint8_t AN6        : 1;
+  __IO  uint8_t AN7        : 1;
+} stc_adc_scis0_field_t;
+
+typedef struct stc_adc_scis1_field
+{
+  __IO  uint8_t AN8        : 1;
+  __IO  uint8_t AN9        : 1;
+  __IO  uint8_t AN10       : 1;
+  __IO  uint8_t AN11       : 1;
+  __IO  uint8_t AN12       : 1;
+  __IO  uint8_t AN13       : 1;
+  __IO  uint8_t AN14       : 1;
+  __IO  uint8_t AN15       : 1;
+} stc_adc_scis1_field_t;
+
+typedef struct stc_adc_pfns_field
+{
+  __IO  uint8_t PFS0       : 1;
+  __IO  uint8_t PFS1       : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t TEST0      : 1;
+  __IO  uint8_t TEST1      : 1;
+} stc_adc_pfns_field_t;
+
+typedef struct stc_adc_pccr_field
+{
+  __IO  uint8_t PSTR       : 1;
+  __IO  uint8_t PHEN       : 1;
+  __IO  uint8_t PEEN       : 1;
+  __IO  uint8_t ESCE       : 1;
+  __IO  uint8_t PFCLR      : 1;
+  __IO  uint8_t POVR       : 1;
+  __IO  uint8_t PFUL       : 1;
+  __IO  uint8_t PEMP       : 1;
+} stc_adc_pccr_field_t;
+
+typedef struct stc_adc_pcfd_field
+{
+  __IO uint32_t PC0        : 1;
+  __IO uint32_t PC1        : 1;
+  __IO uint32_t PC2        : 1;
+  __IO uint32_t PC3        : 1;
+  __IO uint32_t PC4        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t RS0        : 1;
+  __IO uint32_t RS1        : 1;
+  __IO uint32_t RS2        : 1;
+       uint32_t RESERVED2  : 1;
+  __IO uint32_t INVL       : 1;
+       uint32_t RESERVED3  : 7;
+  __IO uint32_t PD0        : 1;
+  __IO uint32_t PD1        : 1;
+  __IO uint32_t PD2        : 1;
+  __IO uint32_t PD3        : 1;
+  __IO uint32_t PD4        : 1;
+  __IO uint32_t PD5        : 1;
+  __IO uint32_t PD6        : 1;
+  __IO uint32_t PD7        : 1;
+  __IO uint32_t PD8        : 1;
+  __IO uint32_t PD9        : 1;
+  __IO uint32_t PD10       : 1;
+  __IO uint32_t PD11       : 1;
+} stc_adc_pcfd_field_t;
+
+typedef struct stc_adc_pcfdl_field
+{
+  __IO uint16_t PC0        : 1;
+  __IO uint16_t PC1        : 1;
+  __IO uint16_t PC2        : 1;
+  __IO uint16_t PC3        : 1;
+  __IO uint16_t PC4        : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t RS0        : 1;
+  __IO uint16_t RS1        : 1;
+  __IO uint16_t RS2        : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t INVL       : 1;
+} stc_adc_pcfdl_field_t;
+
+typedef struct stc_adc_pcfdh_field
+{
+       uint16_t RESERVED1  : 4;
+  __IO uint16_t PD0        : 1;
+  __IO uint16_t PD1        : 1;
+  __IO uint16_t PD2        : 1;
+  __IO uint16_t PD3        : 1;
+  __IO uint16_t PD4        : 1;
+  __IO uint16_t PD5        : 1;
+  __IO uint16_t PD6        : 1;
+  __IO uint16_t PD7        : 1;
+  __IO uint16_t PD8        : 1;
+  __IO uint16_t PD9        : 1;
+  __IO uint16_t PD10       : 1;
+  __IO uint16_t PD11       : 1;
+} stc_adc_pcfdh_field_t;
+
+typedef struct stc_adc_pcis_field
+{
+  __IO  uint8_t P1A0       : 1;
+  __IO  uint8_t P1A1       : 1;
+  __IO  uint8_t P1A2       : 1;
+  __IO  uint8_t P2A0       : 1;
+  __IO  uint8_t P2A1       : 1;
+  __IO  uint8_t P2A2       : 1;
+  __IO  uint8_t P2A3       : 1;
+  __IO  uint8_t P2A4       : 1;
+} stc_adc_pcis_field_t;
+
+typedef struct stc_adc_cmpcr_field
+{
+  __IO  uint8_t CCH0       : 1;
+  __IO  uint8_t CCH1       : 1;
+  __IO  uint8_t CCH2       : 1;
+  __IO  uint8_t CCH3       : 1;
+  __IO  uint8_t CCH4       : 1;
+  __IO  uint8_t CMD0       : 1;
+  __IO  uint8_t CMD1       : 1;
+  __IO  uint8_t CMPEN      : 1;
+} stc_adc_cmpcr_field_t;
+
+typedef struct stc_adc_cmpd_field
+{
+       uint16_t RESERVED1  : 6;
+  __IO uint16_t CMAD2      : 1;
+  __IO uint16_t CMAD3      : 1;
+  __IO uint16_t CMAD4      : 1;
+  __IO uint16_t CMAD5      : 1;
+  __IO uint16_t CMAD6      : 1;
+  __IO uint16_t CMAD7      : 1;
+  __IO uint16_t CMAD8      : 1;
+  __IO uint16_t CMAD9      : 1;
+  __IO uint16_t CMAD10     : 1;
+  __IO uint16_t CMAD11     : 1;
+} stc_adc_cmpd_field_t;
+
+typedef struct stc_adc_adss23_field
+{
+  __IO uint16_t TS16       : 1;
+  __IO uint16_t TS17       : 1;
+  __IO uint16_t TS18       : 1;
+  __IO uint16_t TS19       : 1;
+  __IO uint16_t TS20       : 1;
+  __IO uint16_t TS21       : 1;
+  __IO uint16_t TS22       : 1;
+  __IO uint16_t TS23       : 1;
+  __IO uint16_t TS24       : 1;
+  __IO uint16_t TS25       : 1;
+  __IO uint16_t TS26       : 1;
+  __IO uint16_t TS27       : 1;
+  __IO uint16_t TS28       : 1;
+  __IO uint16_t TS29       : 1;
+  __IO uint16_t TS30       : 1;
+  __IO uint16_t TS31       : 1;
+} stc_adc_adss23_field_t;
+
+typedef struct stc_adc_adss2_field
+{
+  __IO  uint8_t TS16       : 1;
+  __IO  uint8_t TS17       : 1;
+  __IO  uint8_t TS18       : 1;
+  __IO  uint8_t TS19       : 1;
+  __IO  uint8_t TS20       : 1;
+  __IO  uint8_t TS21       : 1;
+  __IO  uint8_t TS22       : 1;
+  __IO  uint8_t TS23       : 1;
+} stc_adc_adss2_field_t;
+
+typedef struct stc_adc_adss3_field
+{
+  __IO  uint8_t TS24       : 1;
+  __IO  uint8_t TS25       : 1;
+  __IO  uint8_t TS26       : 1;
+  __IO  uint8_t TS27       : 1;
+  __IO  uint8_t TS28       : 1;
+  __IO  uint8_t TS29       : 1;
+  __IO  uint8_t TS30       : 1;
+  __IO  uint8_t TS31       : 1;
+} stc_adc_adss3_field_t;
+
+typedef struct stc_adc_adss01_field
+{
+  __IO uint16_t TS0        : 1;
+  __IO uint16_t TS1        : 1;
+  __IO uint16_t TS2        : 1;
+  __IO uint16_t TS3        : 1;
+  __IO uint16_t TS4        : 1;
+  __IO uint16_t TS5        : 1;
+  __IO uint16_t TS6        : 1;
+  __IO uint16_t TS7        : 1;
+  __IO uint16_t TS8        : 1;
+  __IO uint16_t TS9        : 1;
+  __IO uint16_t TS10       : 1;
+  __IO uint16_t TS11       : 1;
+  __IO uint16_t TS12       : 1;
+  __IO uint16_t TS13       : 1;
+  __IO uint16_t TS14       : 1;
+  __IO uint16_t TS15       : 1;
+} stc_adc_adss01_field_t;
+
+typedef struct stc_adc_adss0_field
+{
+  __IO  uint8_t TS0        : 1;
+  __IO  uint8_t TS1        : 1;
+  __IO  uint8_t TS2        : 1;
+  __IO  uint8_t TS3        : 1;
+  __IO  uint8_t TS4        : 1;
+  __IO  uint8_t TS5        : 1;
+  __IO  uint8_t TS6        : 1;
+  __IO  uint8_t TS7        : 1;
+} stc_adc_adss0_field_t;
+
+typedef struct stc_adc_adss1_field
+{
+  __IO  uint8_t TS8        : 1;
+  __IO  uint8_t TS9        : 1;
+  __IO  uint8_t TS10       : 1;
+  __IO  uint8_t TS11       : 1;
+  __IO  uint8_t TS12       : 1;
+  __IO  uint8_t TS13       : 1;
+  __IO  uint8_t TS14       : 1;
+  __IO  uint8_t TS15       : 1;
+} stc_adc_adss1_field_t;
+
+typedef struct stc_adc_adst01_field
+{
+  __IO uint16_t ST10       : 1;
+  __IO uint16_t ST11       : 1;
+  __IO uint16_t ST12       : 1;
+  __IO uint16_t ST13       : 1;
+  __IO uint16_t ST14       : 1;
+  __IO uint16_t STX10      : 1;
+  __IO uint16_t STX11      : 1;
+  __IO uint16_t STX12      : 1;
+  __IO uint16_t ST00       : 1;
+  __IO uint16_t ST01       : 1;
+  __IO uint16_t ST02       : 1;
+  __IO uint16_t ST03       : 1;
+  __IO uint16_t ST04       : 1;
+  __IO uint16_t STX00      : 1;
+  __IO uint16_t STX01      : 1;
+  __IO uint16_t STX02      : 1;
+} stc_adc_adst01_field_t;
+
+typedef struct stc_adc_adst1_field
+{
+  __IO  uint8_t ST10       : 1;
+  __IO  uint8_t ST11       : 1;
+  __IO  uint8_t ST12       : 1;
+  __IO  uint8_t ST13       : 1;
+  __IO  uint8_t ST14       : 1;
+  __IO  uint8_t STX10      : 1;
+  __IO  uint8_t STX11      : 1;
+  __IO  uint8_t STX12      : 1;
+} stc_adc_adst1_field_t;
+
+typedef struct stc_adc_adst0_field
+{
+  __IO  uint8_t ST00       : 1;
+  __IO  uint8_t ST01       : 1;
+  __IO  uint8_t ST02       : 1;
+  __IO  uint8_t ST03       : 1;
+  __IO  uint8_t ST04       : 1;
+  __IO  uint8_t STX00      : 1;
+  __IO  uint8_t STX01      : 1;
+  __IO  uint8_t STX02      : 1;
+} stc_adc_adst0_field_t;
+
+typedef struct stc_adc_adct_field
+{
+  __IO  uint8_t CT0        : 1;
+  __IO  uint8_t CT1        : 1;
+  __IO  uint8_t CT2        : 1;
+  __IO  uint8_t CT3        : 1;
+  __IO  uint8_t CT4        : 1;
+  __IO  uint8_t CT5        : 1;
+  __IO  uint8_t CT6        : 1;
+  __IO  uint8_t CT7        : 1;
+} stc_adc_adct_field_t;
+
+typedef struct stc_adc_prtsl_field
+{
+  __IO  uint8_t PRTSL0     : 1;
+  __IO  uint8_t PRTSL1     : 1;
+  __IO  uint8_t PRTSL2     : 1;
+  __IO  uint8_t PRTSL3     : 1;
+} stc_adc_prtsl_field_t;
+
+typedef struct stc_adc_sctsl_field
+{
+  __IO  uint8_t SCTSL0     : 1;
+  __IO  uint8_t SCTSL1     : 1;
+  __IO  uint8_t SCTSL2     : 1;
+  __IO  uint8_t SCTSL3     : 1;
+} stc_adc_sctsl_field_t;
+
+typedef struct stc_adc_adcen_field
+{
+  __IO  uint8_t ENBL       : 1;
+  __IO  uint8_t READY      : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t CYCLSL0    : 1;
+  __IO  uint8_t CYCLSL1    : 1;
+} stc_adc_adcen_field_t;
+
+/******************************************************************************
+ * CRTRIM_MODULE
+ ******************************************************************************/
+/* CRTRIM_MODULE register bit fields */
+typedef struct stc_crtrim_mcr_psr_field
+{
+  __IO  uint8_t CSR0       : 1;
+  __IO  uint8_t CSR1       : 1;
+} stc_crtrim_mcr_psr_field_t;
+
+typedef struct stc_crtrim_mcr_ftrm_field
+{
+  __IO uint16_t TRD0       : 1;
+  __IO uint16_t TRD1       : 1;
+  __IO uint16_t TRD2       : 1;
+  __IO uint16_t TRD3       : 1;
+  __IO uint16_t TRD4       : 1;
+  __IO uint16_t TRD5       : 1;
+  __IO uint16_t TRD6       : 1;
+  __IO uint16_t TRD7       : 1;
+  __IO uint16_t TRD8       : 1;
+  __IO uint16_t TRD9       : 1;
+} stc_crtrim_mcr_ftrm_field_t;
+
+/******************************************************************************
+ * EXTI_MODULE
+ ******************************************************************************/
+/* EXTI_MODULE register bit fields */
+typedef struct stc_exti_enir_field
+{
+  __IO uint16_t EN0        : 1;
+  __IO uint16_t EN1        : 1;
+  __IO uint16_t EN2        : 1;
+  __IO uint16_t EN3        : 1;
+  __IO uint16_t EN4        : 1;
+  __IO uint16_t EN5        : 1;
+  __IO uint16_t EN6        : 1;
+  __IO uint16_t EN7        : 1;
+  __IO uint16_t EN8        : 1;
+  __IO uint16_t EN9        : 1;
+  __IO uint16_t EN10       : 1;
+  __IO uint16_t EN11       : 1;
+  __IO uint16_t EN12       : 1;
+  __IO uint16_t EN13       : 1;
+  __IO uint16_t EN14       : 1;
+  __IO uint16_t EN15       : 1;
+} stc_exti_enir_field_t;
+
+typedef struct stc_exti_eirr_field
+{
+  __IO uint16_t ER0        : 1;
+  __IO uint16_t ER1        : 1;
+  __IO uint16_t ER2        : 1;
+  __IO uint16_t ER3        : 1;
+  __IO uint16_t ER4        : 1;
+  __IO uint16_t ER5        : 1;
+  __IO uint16_t ER6        : 1;
+  __IO uint16_t ER7        : 1;
+  __IO uint16_t ER8        : 1;
+  __IO uint16_t ER9        : 1;
+  __IO uint16_t ER10       : 1;
+  __IO uint16_t ER11       : 1;
+  __IO uint16_t ER12       : 1;
+  __IO uint16_t ER13       : 1;
+  __IO uint16_t ER14       : 1;
+  __IO uint16_t ER15       : 1;
+} stc_exti_eirr_field_t;
+
+typedef struct stc_exti_eicl_field
+{
+  __IO uint16_t ECL0       : 1;
+  __IO uint16_t ECL1       : 1;
+  __IO uint16_t ECL2       : 1;
+  __IO uint16_t ECL3       : 1;
+  __IO uint16_t ECL4       : 1;
+  __IO uint16_t ECL5       : 1;
+  __IO uint16_t ECL6       : 1;
+  __IO uint16_t ECL7       : 1;
+  __IO uint16_t ECL8       : 1;
+  __IO uint16_t ECL9       : 1;
+  __IO uint16_t ECL10      : 1;
+  __IO uint16_t ECL11      : 1;
+  __IO uint16_t ECL12      : 1;
+  __IO uint16_t ECL13      : 1;
+  __IO uint16_t ECL14      : 1;
+  __IO uint16_t ECL15      : 1;
+} stc_exti_eicl_field_t;
+
+typedef struct stc_exti_elvr_field
+{
+  __IO uint32_t LA0        : 1;
+  __IO uint32_t LB0        : 1;
+  __IO uint32_t LA1        : 1;
+  __IO uint32_t LB1        : 1;
+  __IO uint32_t LA2        : 1;
+  __IO uint32_t LB2        : 1;
+  __IO uint32_t LA3        : 1;
+  __IO uint32_t LB3        : 1;
+  __IO uint32_t LA4        : 1;
+  __IO uint32_t LB4        : 1;
+  __IO uint32_t LA5        : 1;
+  __IO uint32_t LB5        : 1;
+  __IO uint32_t LA6        : 1;
+  __IO uint32_t LB6        : 1;
+  __IO uint32_t LA7        : 1;
+  __IO uint32_t LB7        : 1;
+  __IO uint32_t LA8        : 1;
+  __IO uint32_t LB8        : 1;
+  __IO uint32_t LA9        : 1;
+  __IO uint32_t LB9        : 1;
+  __IO uint32_t LA10       : 1;
+  __IO uint32_t LB10       : 1;
+  __IO uint32_t LA11       : 1;
+  __IO uint32_t LB11       : 1;
+  __IO uint32_t LA12       : 1;
+  __IO uint32_t LB12       : 1;
+  __IO uint32_t LA13       : 1;
+  __IO uint32_t LB13       : 1;
+  __IO uint32_t LA14       : 1;
+  __IO uint32_t LB14       : 1;
+  __IO uint32_t LA15       : 1;
+  __IO uint32_t LB15       : 1;
+} stc_exti_elvr_field_t;
+
+typedef struct stc_exti_nmirr_field
+{
+  __IO  uint8_t NR0        : 1;
+} stc_exti_nmirr_field_t;
+
+typedef struct stc_exti_nmicl_field
+{
+  __IO  uint8_t NCL0       : 1;
+} stc_exti_nmicl_field_t;
+
+/******************************************************************************
+ * INTREQ_MODULE
+ ******************************************************************************/
+/* INTREQ_MODULE register bit fields */
+typedef struct stc_intreq_drqsel_field
+{
+  __IO uint32_t DRQSEL0    : 1;
+  __IO uint32_t DRQSEL1    : 1;
+  __IO uint32_t DRQSEL2    : 1;
+  __IO uint32_t DRQSEL3    : 1;
+  __IO uint32_t DRQSEL4    : 1;
+  __IO uint32_t DRQSEL5    : 1;
+  __IO uint32_t DRQSEL6    : 1;
+  __IO uint32_t DRQSEL7    : 1;
+  __IO uint32_t DRQSEL8    : 1;
+  __IO uint32_t DRQSEL9    : 1;
+  __IO uint32_t DRQSEL10   : 1;
+  __IO uint32_t DRQSEL11   : 1;
+  __IO uint32_t DRQSEL12   : 1;
+  __IO uint32_t DRQSEL13   : 1;
+  __IO uint32_t DRQSEL14   : 1;
+  __IO uint32_t DRQSEL15   : 1;
+  __IO uint32_t DRQSEL16   : 1;
+  __IO uint32_t DRQSEL17   : 1;
+  __IO uint32_t DRQSEL18   : 1;
+  __IO uint32_t DRQSEL19   : 1;
+  __IO uint32_t DRQSEL20   : 1;
+  __IO uint32_t DRQSEL21   : 1;
+  __IO uint32_t DRQSEL22   : 1;
+  __IO uint32_t DRQSEL23   : 1;
+  __IO uint32_t DRQSEL24   : 1;
+  __IO uint32_t DRQSEL25   : 1;
+  __IO uint32_t DRQSEL26   : 1;
+  __IO uint32_t DRQSEL27   : 1;
+  __IO uint32_t DRQSEL28   : 1;
+  __IO uint32_t DRQSEL29   : 1;
+  __IO uint32_t DRQSEL30   : 1;
+  __IO uint32_t DRQSEL31   : 1;
+} stc_intreq_drqsel_field_t;
+
+typedef struct stc_intreq_exc02mon_field
+{
+  __IO uint32_t NMI        : 1;
+  __IO uint32_t HWINT      : 1;
+} stc_intreq_exc02mon_field_t;
+
+typedef struct stc_intreq_irq00mon_field
+{
+  __IO uint32_t FCSINT     : 1;
+} stc_intreq_irq00mon_field_t;
+
+typedef struct stc_intreq_irq01mon_field
+{
+  __IO uint32_t SWWDTINT   : 1;
+} stc_intreq_irq01mon_field_t;
+
+typedef struct stc_intreq_irq02mon_field
+{
+  __IO uint32_t LVDINT     : 1;
+} stc_intreq_irq02mon_field_t;
+
+typedef struct stc_intreq_irq03mon_field
+{
+  __IO uint32_t WAVE0INT0  : 1;
+  __IO uint32_t WAVE0INT1  : 1;
+  __IO uint32_t WAVE0INT2  : 1;
+  __IO uint32_t WAVE0INT3  : 1;
+  __IO uint32_t WAVE1INT0  : 1;
+  __IO uint32_t WAVE1INT1  : 1;
+  __IO uint32_t WAVE1INT2  : 1;
+  __IO uint32_t WAVE1INT3  : 1;
+} stc_intreq_irq03mon_field_t;
+
+typedef struct stc_intreq_irq04mon_field
+{
+  __IO uint32_t EXTINT0    : 1;
+  __IO uint32_t EXTINT1    : 1;
+  __IO uint32_t EXTINT2    : 1;
+  __IO uint32_t EXTINT3    : 1;
+  __IO uint32_t EXTINT4    : 1;
+  __IO uint32_t EXTINT5    : 1;
+  __IO uint32_t EXTINT6    : 1;
+  __IO uint32_t EXTINT7    : 1;
+} stc_intreq_irq04mon_field_t;
+
+typedef struct stc_intreq_irq05mon_field
+{
+  __IO uint32_t EXTINT0    : 1;
+  __IO uint32_t EXTINT1    : 1;
+  __IO uint32_t EXTINT2    : 1;
+  __IO uint32_t EXTINT3    : 1;
+  __IO uint32_t EXTINT4    : 1;
+  __IO uint32_t EXTINT5    : 1;
+  __IO uint32_t EXTINT6    : 1;
+  __IO uint32_t EXTINT7    : 1;
+} stc_intreq_irq05mon_field_t;
+
+typedef struct stc_intreq_irq06mon_field
+{
+  __IO uint32_t TIMINT0    : 1;
+  __IO uint32_t TIMINT1    : 1;
+  __IO uint32_t QUD0INT0   : 1;
+  __IO uint32_t QUD0INT1   : 1;
+  __IO uint32_t QUD0INT2   : 1;
+  __IO uint32_t QUD0INT3   : 1;
+  __IO uint32_t QUD0INT4   : 1;
+  __IO uint32_t QUD0INT5   : 1;
+  __IO uint32_t QUD1INT0   : 1;
+  __IO uint32_t QUD1INT1   : 1;
+  __IO uint32_t QUD1INT2   : 1;
+  __IO uint32_t QUD1INT3   : 1;
+  __IO uint32_t QUD1INT4   : 1;
+  __IO uint32_t QUD1INT5   : 1;
+} stc_intreq_irq06mon_field_t;
+
+typedef struct stc_intreq_irq07mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq07mon_field_t;
+
+typedef struct stc_intreq_irq08mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq08mon_field_t;
+
+typedef struct stc_intreq_irq09mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq09mon_field_t;
+
+typedef struct stc_intreq_irq10mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq10mon_field_t;
+
+typedef struct stc_intreq_irq11mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq11mon_field_t;
+
+typedef struct stc_intreq_irq12mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq12mon_field_t;
+
+typedef struct stc_intreq_irq13mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq13mon_field_t;
+
+typedef struct stc_intreq_irq14mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq14mon_field_t;
+
+typedef struct stc_intreq_irq15mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq15mon_field_t;
+
+typedef struct stc_intreq_irq16mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq16mon_field_t;
+
+typedef struct stc_intreq_irq17mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq17mon_field_t;
+
+typedef struct stc_intreq_irq18mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq18mon_field_t;
+
+typedef struct stc_intreq_irq19mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq19mon_field_t;
+
+typedef struct stc_intreq_irq20mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq20mon_field_t;
+
+typedef struct stc_intreq_irq21mon_field
+{
+  __IO uint32_t FMSINT     : 1;
+} stc_intreq_irq21mon_field_t;
+
+typedef struct stc_intreq_irq22mon_field
+{
+  __IO uint32_t MFSINT0    : 1;
+  __IO uint32_t MFSINT1    : 1;
+} stc_intreq_irq22mon_field_t;
+
+typedef struct stc_intreq_irq23mon_field
+{
+  __IO uint32_t PPGINT0    : 1;
+  __IO uint32_t PPGINT1    : 1;
+  __IO uint32_t PPGINT2    : 1;
+  __IO uint32_t PPGINT3    : 1;
+  __IO uint32_t PPGINT4    : 1;
+  __IO uint32_t PPGINT5    : 1;
+} stc_intreq_irq23mon_field_t;
+
+typedef struct stc_intreq_irq24mon_field
+{
+  __IO uint32_t MOSCINT    : 1;
+  __IO uint32_t SOSCINT    : 1;
+  __IO uint32_t MPLLINT    : 1;
+  __IO uint32_t UPLLINT    : 1;
+  __IO uint32_t WCINT      : 1;
+} stc_intreq_irq24mon_field_t;
+
+typedef struct stc_intreq_irq25mon_field
+{
+  __IO uint32_t ADCINT0    : 1;
+  __IO uint32_t ADCINT1    : 1;
+  __IO uint32_t ADCINT2    : 1;
+  __IO uint32_t ADCINT3    : 1;
+} stc_intreq_irq25mon_field_t;
+
+typedef struct stc_intreq_irq26mon_field
+{
+  __IO uint32_t ADCINT0    : 1;
+  __IO uint32_t ADCINT1    : 1;
+  __IO uint32_t ADCINT2    : 1;
+  __IO uint32_t ADCINT3    : 1;
+} stc_intreq_irq26mon_field_t;
+
+typedef struct stc_intreq_irq27mon_field
+{
+  __IO uint32_t ADCINT0    : 1;
+  __IO uint32_t ADCINT1    : 1;
+  __IO uint32_t ADCINT2    : 1;
+  __IO uint32_t ADCINT3    : 1;
+} stc_intreq_irq27mon_field_t;
+
+typedef struct stc_intreq_irq28mon_field
+{
+  __IO uint32_t FRT0INT0   : 1;
+  __IO uint32_t FRT0INT1   : 1;
+  __IO uint32_t FRT0INT2   : 1;
+  __IO uint32_t FRT0INT3   : 1;
+  __IO uint32_t FRT0INT4   : 1;
+  __IO uint32_t FRT0INT5   : 1;
+  __IO uint32_t FRT1INT0   : 1;
+  __IO uint32_t FRT1INT1   : 1;
+  __IO uint32_t FRT1INT2   : 1;
+  __IO uint32_t FRT1INT3   : 1;
+  __IO uint32_t FRT1INT4   : 1;
+  __IO uint32_t FRT1INT5   : 1;
+} stc_intreq_irq28mon_field_t;
+
+typedef struct stc_intreq_irq29mon_field
+{
+  __IO uint32_t ICU0INT0   : 1;
+  __IO uint32_t ICU0INT1   : 1;
+  __IO uint32_t ICU0INT2   : 1;
+  __IO uint32_t ICU0INT3   : 1;
+  __IO uint32_t ICU1INT0   : 1;
+  __IO uint32_t ICU1INT1   : 1;
+  __IO uint32_t ICU1INT2   : 1;
+  __IO uint32_t ICU1INT3   : 1;
+} stc_intreq_irq29mon_field_t;
+
+typedef struct stc_intreq_irq30mon_field
+{
+  __IO uint32_t OCU0INT0   : 1;
+  __IO uint32_t OCU0INT1   : 1;
+  __IO uint32_t OCU0INT2   : 1;
+  __IO uint32_t OCU0INT3   : 1;
+  __IO uint32_t OCU0INT4   : 1;
+  __IO uint32_t OCU0INT5   : 1;
+  __IO uint32_t OCU1INT0   : 1;
+  __IO uint32_t OCU1INT1   : 1;
+  __IO uint32_t OCU1INT2   : 1;
+  __IO uint32_t OCU1INT3   : 1;
+  __IO uint32_t OCU1INT4   : 1;
+  __IO uint32_t OCU1INT5   : 1;
+} stc_intreq_irq30mon_field_t;
+
+typedef struct stc_intreq_irq31mon_field
+{
+  __IO uint32_t BTINT0     : 1;
+  __IO uint32_t BTINT1     : 1;
+  __IO uint32_t BTINT2     : 1;
+  __IO uint32_t BTINT3     : 1;
+  __IO uint32_t BTINT4     : 1;
+  __IO uint32_t BTINT5     : 1;
+  __IO uint32_t BTINT6     : 1;
+  __IO uint32_t BTINT7     : 1;
+  __IO uint32_t BTINT8     : 1;
+  __IO uint32_t BTINT9     : 1;
+  __IO uint32_t BTINT10    : 1;
+  __IO uint32_t BTINT11    : 1;
+  __IO uint32_t BTINT12    : 1;
+  __IO uint32_t BTINT13    : 1;
+  __IO uint32_t BTINT14    : 1;
+  __IO uint32_t BTINT15    : 1;
+} stc_intreq_irq31mon_field_t;
+
+typedef struct stc_intreq_irq32mon_field
+{
+  __IO uint32_t CANINT     : 1;
+} stc_intreq_irq32mon_field_t;
+
+typedef struct stc_intreq_irq33mon_field
+{
+  __IO uint32_t CANINT     : 1;
+} stc_intreq_irq33mon_field_t;
+
+typedef struct stc_intreq_irq34mon_field
+{
+  __IO uint32_t USB0INT0   : 1;
+  __IO uint32_t USB0INT1   : 1;
+  __IO uint32_t USB0INT2   : 1;
+  __IO uint32_t USB0INT3   : 1;
+  __IO uint32_t USB0INT4   : 1;
+} stc_intreq_irq34mon_field_t;
+
+typedef struct stc_intreq_irq35mon_field
+{
+  __IO uint32_t USB0INT0   : 1;
+  __IO uint32_t USB0INT1   : 1;
+  __IO uint32_t USB0INT2   : 1;
+  __IO uint32_t USB0INT3   : 1;
+  __IO uint32_t USB0INT4   : 1;
+  __IO uint32_t USB0INT5   : 1;
+} stc_intreq_irq35mon_field_t;
+
+typedef struct stc_intreq_irq38mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq38mon_field_t;
+
+typedef struct stc_intreq_irq39mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq39mon_field_t;
+
+typedef struct stc_intreq_irq40mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq40mon_field_t;
+
+typedef struct stc_intreq_irq41mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq41mon_field_t;
+
+typedef struct stc_intreq_irq42mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq42mon_field_t;
+
+typedef struct stc_intreq_irq43mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq43mon_field_t;
+
+typedef struct stc_intreq_irq44mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq44mon_field_t;
+
+typedef struct stc_intreq_irq45mon_field
+{
+  __IO uint32_t DMAINT     : 1;
+} stc_intreq_irq45mon_field_t;
+
+/******************************************************************************
+ * GPIO_MODULE
+ ******************************************************************************/
+/* GPIO_MODULE register bit fields */
+typedef struct stc_gpio_pfr0_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pfr0_field_t;
+
+typedef struct stc_gpio_pfr1_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pfr1_field_t;
+
+typedef struct stc_gpio_pfr2_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pfr2_field_t;
+
+typedef struct stc_gpio_pfr3_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pfr3_field_t;
+
+typedef struct stc_gpio_pfr4_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+} stc_gpio_pfr4_field_t;
+
+typedef struct stc_gpio_pfr5_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+} stc_gpio_pfr5_field_t;
+
+typedef struct stc_gpio_pfr6_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pfr6_field_t;
+
+typedef struct stc_gpio_pfr7_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+} stc_gpio_pfr7_field_t;
+
+typedef struct stc_gpio_pfr8_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+} stc_gpio_pfr8_field_t;
+
+typedef struct stc_gpio_pcr0_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pcr0_field_t;
+
+typedef struct stc_gpio_pcr1_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pcr1_field_t;
+
+typedef struct stc_gpio_pcr2_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pcr2_field_t;
+
+typedef struct stc_gpio_pcr3_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pcr3_field_t;
+
+typedef struct stc_gpio_pcr4_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+} stc_gpio_pcr4_field_t;
+
+typedef struct stc_gpio_pcr5_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+} stc_gpio_pcr5_field_t;
+
+typedef struct stc_gpio_pcr6_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pcr6_field_t;
+
+typedef struct stc_gpio_pcr7_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+} stc_gpio_pcr7_field_t;
+
+typedef struct stc_gpio_ddr0_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_ddr0_field_t;
+
+typedef struct stc_gpio_ddr1_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_ddr1_field_t;
+
+typedef struct stc_gpio_ddr2_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_ddr2_field_t;
+
+typedef struct stc_gpio_ddr3_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_ddr3_field_t;
+
+typedef struct stc_gpio_ddr4_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+} stc_gpio_ddr4_field_t;
+
+typedef struct stc_gpio_ddr5_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+} stc_gpio_ddr5_field_t;
+
+typedef struct stc_gpio_ddr6_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_ddr6_field_t;
+
+typedef struct stc_gpio_ddr7_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+} stc_gpio_ddr7_field_t;
+
+typedef struct stc_gpio_ddr8_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+} stc_gpio_ddr8_field_t;
+
+typedef struct stc_gpio_pdir0_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdir0_field_t;
+
+typedef struct stc_gpio_pdir1_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdir1_field_t;
+
+typedef struct stc_gpio_pdir2_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pdir2_field_t;
+
+typedef struct stc_gpio_pdir3_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdir3_field_t;
+
+typedef struct stc_gpio_pdir4_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+} stc_gpio_pdir4_field_t;
+
+typedef struct stc_gpio_pdir5_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+} stc_gpio_pdir5_field_t;
+
+typedef struct stc_gpio_pdir6_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pdir6_field_t;
+
+typedef struct stc_gpio_pdir7_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+} stc_gpio_pdir7_field_t;
+
+typedef struct stc_gpio_pdir8_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+} stc_gpio_pdir8_field_t;
+
+typedef struct stc_gpio_pdor0_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdor0_field_t;
+
+typedef struct stc_gpio_pdor1_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdor1_field_t;
+
+typedef struct stc_gpio_pdor2_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pdor2_field_t;
+
+typedef struct stc_gpio_pdor3_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+  __IO uint32_t PF         : 1;
+} stc_gpio_pdor3_field_t;
+
+typedef struct stc_gpio_pdor4_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t PC         : 1;
+  __IO uint32_t PD         : 1;
+  __IO uint32_t PE         : 1;
+} stc_gpio_pdor4_field_t;
+
+typedef struct stc_gpio_pdor5_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+  __IO uint32_t P9         : 1;
+  __IO uint32_t PA         : 1;
+  __IO uint32_t PB         : 1;
+} stc_gpio_pdor5_field_t;
+
+typedef struct stc_gpio_pdor6_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+  __IO uint32_t P5         : 1;
+  __IO uint32_t P6         : 1;
+  __IO uint32_t P7         : 1;
+  __IO uint32_t P8         : 1;
+} stc_gpio_pdor6_field_t;
+
+typedef struct stc_gpio_pdor7_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+  __IO uint32_t P2         : 1;
+  __IO uint32_t P3         : 1;
+  __IO uint32_t P4         : 1;
+} stc_gpio_pdor7_field_t;
+
+typedef struct stc_gpio_pdor8_field
+{
+  __IO uint32_t P0         : 1;
+  __IO uint32_t P1         : 1;
+} stc_gpio_pdor8_field_t;
+
+typedef struct stc_gpio_ade_field
+{
+  __IO uint32_t AN0        : 1;
+  __IO uint32_t AN1        : 1;
+  __IO uint32_t AN2        : 1;
+  __IO uint32_t AN3        : 1;
+  __IO uint32_t AN4        : 1;
+  __IO uint32_t AN5        : 1;
+  __IO uint32_t AN6        : 1;
+  __IO uint32_t AN7        : 1;
+  __IO uint32_t AN8        : 1;
+  __IO uint32_t AN9        : 1;
+  __IO uint32_t ANA        : 1;
+  __IO uint32_t ANB        : 1;
+  __IO uint32_t ANC        : 1;
+  __IO uint32_t AND        : 1;
+  __IO uint32_t ANE        : 1;
+  __IO uint32_t ANF        : 1;
+} stc_gpio_ade_field_t;
+
+typedef struct stc_gpio_spsr_field
+{
+  __IO uint32_t SUBXC      : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t USB0C      : 1;
+} stc_gpio_spsr_field_t;
+
+typedef struct stc_gpio_epfr00_field
+{
+  __IO uint32_t NMIS       : 1;
+  __IO uint32_t CROUTE     : 1;
+       uint32_t RESERVED1  : 7;
+  __IO uint32_t USB0PE     : 1;
+       uint32_t RESERVED2  : 6;
+  __IO uint32_t JTAGEN0B   : 1;
+  __IO uint32_t JTAGEN1S   : 1;
+       uint32_t RESERVED3  : 6;
+  __IO uint32_t TRC0E      : 1;
+  __IO uint32_t TRC1E      : 1;
+} stc_gpio_epfr00_field_t;
+
+typedef struct stc_gpio_epfr01_field
+{
+  __IO uint32_t RTO00E0    : 1;
+  __IO uint32_t RTO00E1    : 1;
+  __IO uint32_t RTO01E0    : 1;
+  __IO uint32_t RTO01E1    : 1;
+  __IO uint32_t RTO02E0    : 1;
+  __IO uint32_t RTO02E1    : 1;
+  __IO uint32_t RTO03E0    : 1;
+  __IO uint32_t RTO03E1    : 1;
+  __IO uint32_t RTO04E0    : 1;
+  __IO uint32_t RTO04E1    : 1;
+  __IO uint32_t RTO05E0    : 1;
+  __IO uint32_t RTO05E1    : 1;
+  __IO uint32_t DTTI0C     : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t DTTI0S0    : 1;
+  __IO uint32_t DTTI0S1    : 1;
+  __IO uint32_t FRCK0S0    : 1;
+  __IO uint32_t FRCK0S1    : 1;
+  __IO uint32_t IC00S0     : 1;
+  __IO uint32_t IC00S1     : 1;
+  __IO uint32_t IC00S2     : 1;
+  __IO uint32_t IC01S0     : 1;
+  __IO uint32_t IC01S1     : 1;
+  __IO uint32_t IC01S2     : 1;
+  __IO uint32_t IC02S0     : 1;
+  __IO uint32_t IC02S1     : 1;
+  __IO uint32_t IC02S2     : 1;
+  __IO uint32_t IC03S0     : 1;
+  __IO uint32_t IC03S1     : 1;
+  __IO uint32_t IC03S2     : 1;
+} stc_gpio_epfr01_field_t;
+
+typedef struct stc_gpio_epfr02_field
+{
+  __IO uint32_t RTO10E0    : 1;
+  __IO uint32_t RTO10E1    : 1;
+  __IO uint32_t RTO11E0    : 1;
+  __IO uint32_t RTO11E1    : 1;
+  __IO uint32_t RTO12E0    : 1;
+  __IO uint32_t RTO12E1    : 1;
+  __IO uint32_t RTO13E0    : 1;
+  __IO uint32_t RTO13E1    : 1;
+  __IO uint32_t RTO14E0    : 1;
+  __IO uint32_t RTO14E1    : 1;
+  __IO uint32_t RTO15E0    : 1;
+  __IO uint32_t RTO15E1    : 1;
+  __IO uint32_t DTTI1C     : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t DTTI1S0    : 1;
+  __IO uint32_t DTTI1S1    : 1;
+  __IO uint32_t FRCK1S0    : 1;
+  __IO uint32_t FRCK1S1    : 1;
+  __IO uint32_t IC10S0     : 1;
+  __IO uint32_t IC10S1     : 1;
+  __IO uint32_t IC10S2     : 1;
+  __IO uint32_t IC11S0     : 1;
+  __IO uint32_t IC11S1     : 1;
+  __IO uint32_t IC11S2     : 1;
+  __IO uint32_t IC12S0     : 1;
+  __IO uint32_t IC12S1     : 1;
+  __IO uint32_t IC12S2     : 1;
+  __IO uint32_t IC13S0     : 1;
+  __IO uint32_t IC13S1     : 1;
+  __IO uint32_t IC13S2     : 1;
+} stc_gpio_epfr02_field_t;
+
+typedef struct stc_gpio_epfr04_field
+{
+       uint32_t RESERVED1  : 2;
+  __IO uint32_t TIOA0E0    : 1;
+  __IO uint32_t TIOA0E1    : 1;
+  __IO uint32_t TIOB0S0    : 1;
+  __IO uint32_t TIOB0S1    : 1;
+       uint32_t RESERVED2  : 2;
+  __IO uint32_t TIOA1S0    : 1;
+  __IO uint32_t TIOA1S1    : 1;
+  __IO uint32_t TIOA1E0    : 1;
+  __IO uint32_t TIOA1E1    : 1;
+  __IO uint32_t TIOB1S0    : 1;
+  __IO uint32_t TIOB1S1    : 1;
+       uint32_t RESERVED3  : 4;
+  __IO uint32_t TIOA2E0    : 1;
+  __IO uint32_t TIOA2E1    : 1;
+  __IO uint32_t TIOB2S0    : 1;
+  __IO uint32_t TIOB2S1    : 1;
+       uint32_t RESERVED4  : 2;
+  __IO uint32_t TIOA3S0    : 1;
+  __IO uint32_t TIOA3S1    : 1;
+  __IO uint32_t TIOA3E0    : 1;
+  __IO uint32_t TIOA3E1    : 1;
+  __IO uint32_t TIOB3S0    : 1;
+  __IO uint32_t TIOB3S1    : 1;
+} stc_gpio_epfr04_field_t;
+
+typedef struct stc_gpio_epfr05_field
+{
+       uint32_t RESERVED1  : 2;
+  __IO uint32_t TIOA4E0    : 1;
+  __IO uint32_t TIOA4E1    : 1;
+  __IO uint32_t TIOB4S0    : 1;
+  __IO uint32_t TIOB4S1    : 1;
+       uint32_t RESERVED2  : 2;
+  __IO uint32_t TIOA5S0    : 1;
+  __IO uint32_t TIOA5S1    : 1;
+  __IO uint32_t TIOA5E0    : 1;
+  __IO uint32_t TIOA5E1    : 1;
+  __IO uint32_t TIOB5S0    : 1;
+  __IO uint32_t TIOB5S1    : 1;
+       uint32_t RESERVED3  : 4;
+  __IO uint32_t TIOA6E0    : 1;
+  __IO uint32_t TIOA6E1    : 1;
+  __IO uint32_t TIOB6S0    : 1;
+  __IO uint32_t TIOB6S1    : 1;
+       uint32_t RESERVED4  : 2;
+  __IO uint32_t TIOA7S0    : 1;
+  __IO uint32_t TIOA7S1    : 1;
+  __IO uint32_t TIOA7E0    : 1;
+  __IO uint32_t TIOA7E1    : 1;
+  __IO uint32_t TIOB7S0    : 1;
+  __IO uint32_t TIOB7S1    : 1;
+} stc_gpio_epfr05_field_t;
+
+typedef struct stc_gpio_epfr06_field
+{
+  __IO uint32_t EINT00S0   : 1;
+  __IO uint32_t EINT00S1   : 1;
+  __IO uint32_t EINT01S0   : 1;
+  __IO uint32_t EINT01S1   : 1;
+  __IO uint32_t EINT02S0   : 1;
+  __IO uint32_t EINT02S1   : 1;
+  __IO uint32_t EINT03S0   : 1;
+  __IO uint32_t EINT03S1   : 1;
+  __IO uint32_t EINT04S0   : 1;
+  __IO uint32_t EINT04S1   : 1;
+  __IO uint32_t EINT05S0   : 1;
+  __IO uint32_t EINT05S1   : 1;
+  __IO uint32_t EINT06S0   : 1;
+  __IO uint32_t EINT06S1   : 1;
+  __IO uint32_t EINT07S0   : 1;
+  __IO uint32_t EINT07S1   : 1;
+  __IO uint32_t EINT08S0   : 1;
+  __IO uint32_t EINT08S1   : 1;
+  __IO uint32_t EINT09S0   : 1;
+  __IO uint32_t EINT09S1   : 1;
+  __IO uint32_t EINT10S0   : 1;
+  __IO uint32_t EINT10S1   : 1;
+  __IO uint32_t EINT11S0   : 1;
+  __IO uint32_t EINT11S1   : 1;
+  __IO uint32_t EINT12S0   : 1;
+  __IO uint32_t EINT12S1   : 1;
+  __IO uint32_t EINT13S0   : 1;
+  __IO uint32_t EINT13S1   : 1;
+  __IO uint32_t EINT14S0   : 1;
+  __IO uint32_t EINT14S1   : 1;
+  __IO uint32_t EINT15S0   : 1;
+  __IO uint32_t EINT15S1   : 1;
+} stc_gpio_epfr06_field_t;
+
+typedef struct stc_gpio_epfr07_field
+{
+       uint32_t RESERVED1  : 4;
+  __IO uint32_t SIN0S0     : 1;
+  __IO uint32_t SIN0S1     : 1;
+  __IO uint32_t SOT0B0     : 1;
+  __IO uint32_t SOT0B1     : 1;
+  __IO uint32_t SCK0B0     : 1;
+  __IO uint32_t SCK0B1     : 1;
+  __IO uint32_t SIN1S0     : 1;
+  __IO uint32_t SIN1S1     : 1;
+  __IO uint32_t SOT1B0     : 1;
+  __IO uint32_t SOT1B1     : 1;
+  __IO uint32_t SCK1B0     : 1;
+  __IO uint32_t SCK1B1     : 1;
+  __IO uint32_t SIN2S0     : 1;
+  __IO uint32_t SIN2S1     : 1;
+  __IO uint32_t SOT2B0     : 1;
+  __IO uint32_t SOT2B1     : 1;
+  __IO uint32_t SCK2B0     : 1;
+  __IO uint32_t SCK2B1     : 1;
+  __IO uint32_t SIN3S0     : 1;
+  __IO uint32_t SIN3S1     : 1;
+  __IO uint32_t SOT3B0     : 1;
+  __IO uint32_t SOT3B1     : 1;
+  __IO uint32_t SCK3B0     : 1;
+  __IO uint32_t SCK3B1     : 1;
+} stc_gpio_epfr07_field_t;
+
+typedef struct stc_gpio_epfr08_field
+{
+  __IO uint32_t RTS4E0     : 1;
+  __IO uint32_t RTS4E1     : 1;
+  __IO uint32_t CTS4S0     : 1;
+  __IO uint32_t CTS4S1     : 1;
+  __IO uint32_t SIN4S0     : 1;
+  __IO uint32_t SIN4S1     : 1;
+  __IO uint32_t SOT4B0     : 1;
+  __IO uint32_t SOT4B1     : 1;
+  __IO uint32_t SCK4B0     : 1;
+  __IO uint32_t SCK4B1     : 1;
+  __IO uint32_t SIN5S0     : 1;
+  __IO uint32_t SIN5S1     : 1;
+  __IO uint32_t SOT5B0     : 1;
+  __IO uint32_t SOT5B1     : 1;
+  __IO uint32_t SCK5B0     : 1;
+  __IO uint32_t SCK5B1     : 1;
+  __IO uint32_t SIN6S0     : 1;
+  __IO uint32_t SIN6S1     : 1;
+  __IO uint32_t SOT6B0     : 1;
+  __IO uint32_t SOT6B1     : 1;
+  __IO uint32_t SCK6B0     : 1;
+  __IO uint32_t SCK6B1     : 1;
+  __IO uint32_t SIN7S0     : 1;
+  __IO uint32_t SIN7S1     : 1;
+  __IO uint32_t SOT7B0     : 1;
+  __IO uint32_t SOT7B1     : 1;
+  __IO uint32_t SCK7B0     : 1;
+  __IO uint32_t SCK7B1     : 1;
+} stc_gpio_epfr08_field_t;
+
+typedef struct stc_gpio_epfr09_field
+{
+  __IO uint32_t QAIN0S0    : 1;
+  __IO uint32_t QAIN0S1    : 1;
+  __IO uint32_t QBIN0S0    : 1;
+  __IO uint32_t QBIN0S1    : 1;
+  __IO uint32_t QZIN0S0    : 1;
+  __IO uint32_t QZIN0S1    : 1;
+  __IO uint32_t QAIN1S0    : 1;
+  __IO uint32_t QAIN1S1    : 1;
+  __IO uint32_t QBIN1S0    : 1;
+  __IO uint32_t QBIN1S1    : 1;
+  __IO uint32_t QZIN1S0    : 1;
+  __IO uint32_t QZIN1S1    : 1;
+  __IO uint32_t ADTRG0S0   : 1;
+  __IO uint32_t ADTRG0S1   : 1;
+  __IO uint32_t ADTRG0S2   : 1;
+  __IO uint32_t ADTRG0S3   : 1;
+  __IO uint32_t ADTRG1S0   : 1;
+  __IO uint32_t ADTRG1S1   : 1;
+  __IO uint32_t ADTRG1S2   : 1;
+  __IO uint32_t ADTRG1S3   : 1;
+  __IO uint32_t ADTRG2S0   : 1;
+  __IO uint32_t ADTRG2S1   : 1;
+  __IO uint32_t ADTRG2S2   : 1;
+  __IO uint32_t ADTRG2S3   : 1;
+  __IO uint32_t CRX0S0     : 1;
+  __IO uint32_t CRX0S1     : 1;
+  __IO uint32_t CTX0E0     : 1;
+  __IO uint32_t CTX0E1     : 1;
+  __IO uint32_t CRX1S0     : 1;
+  __IO uint32_t CRX1S1     : 1;
+  __IO uint32_t CTX1E0     : 1;
+  __IO uint32_t CTX1E1     : 1;
+} stc_gpio_epfr09_field_t;
+
+typedef struct stc_gpio_epfr10_field
+{
+  __IO uint32_t UEDEFB     : 1;
+  __IO uint32_t UEDTHB     : 1;
+  __IO uint32_t TESTB      : 1;
+  __IO uint32_t UEWEXE     : 1;
+  __IO uint32_t UEDQME     : 1;
+  __IO uint32_t UEOEXE     : 1;
+  __IO uint32_t UEFLSE     : 1;
+  __IO uint32_t UECS1E     : 1;
+  __IO uint32_t UECS2E     : 1;
+  __IO uint32_t UECS3E     : 1;
+  __IO uint32_t UECS4E     : 1;
+  __IO uint32_t UECS5E     : 1;
+  __IO uint32_t UECS6E     : 1;
+  __IO uint32_t UECS7E     : 1;
+  __IO uint32_t UEAOOE     : 1;
+  __IO uint32_t UEA08E     : 1;
+  __IO uint32_t UEA09E     : 1;
+  __IO uint32_t UEA10E     : 1;
+  __IO uint32_t UEA11E     : 1;
+  __IO uint32_t UEA12E     : 1;
+  __IO uint32_t UEA13E     : 1;
+  __IO uint32_t UEA14E     : 1;
+  __IO uint32_t UEA15E     : 1;
+  __IO uint32_t UEA16E     : 1;
+  __IO uint32_t UEA17E     : 1;
+  __IO uint32_t UEA18E     : 1;
+  __IO uint32_t UEA19E     : 1;
+  __IO uint32_t UEA20E     : 1;
+  __IO uint32_t UEA21E     : 1;
+  __IO uint32_t UEA22E     : 1;
+  __IO uint32_t UEA23E     : 1;
+  __IO uint32_t UEA24E     : 1;
+} stc_gpio_epfr10_field_t;
+
+/******************************************************************************
+ * LVD_MODULE
+ ******************************************************************************/
+/* LVD_MODULE register bit fields */
+typedef struct stc_lvd_lvd_ctl_field
+{
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t SVHI0      : 1;
+  __IO  uint8_t SVHI1      : 1;
+  __IO  uint8_t SVHI2      : 1;
+  __IO  uint8_t SVHI3      : 1;
+        uint8_t RESERVED2  : 1;
+  __IO  uint8_t LVDIE      : 1;
+} stc_lvd_lvd_ctl_field_t;
+
+typedef struct stc_lvd_lvd_str_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t LVDIR      : 1;
+} stc_lvd_lvd_str_field_t;
+
+typedef struct stc_lvd_lvd_clr_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t LVDCL      : 1;
+} stc_lvd_lvd_clr_field_t;
+
+typedef struct stc_lvd_lvd_str2_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t LVDIRDY    : 1;
+} stc_lvd_lvd_str2_field_t;
+
+/******************************************************************************
+ * USBCLK
+ ******************************************************************************/
+/* USBCLK register bit fields */
+typedef struct stc_usbclk_uccr_field
+{
+  __IO  uint8_t UCEN       : 1;
+  __IO  uint8_t UCSEL      : 1;
+} stc_usbclk_uccr_field_t;
+
+typedef struct stc_usbclk_upcr1_field
+{
+  __IO  uint8_t UPLLEN     : 1;
+  __IO  uint8_t UPINC      : 1;
+} stc_usbclk_upcr1_field_t;
+
+typedef struct stc_usbclk_upcr2_field
+{
+  __IO  uint8_t UPOWT0     : 1;
+  __IO  uint8_t UPOWT1     : 1;
+  __IO  uint8_t UPOWT2     : 1;
+} stc_usbclk_upcr2_field_t;
+
+typedef struct stc_usbclk_upcr3_field
+{
+  __IO  uint8_t UPLLK0     : 1;
+  __IO  uint8_t UPLLK1     : 1;
+  __IO  uint8_t UPLLK2     : 1;
+  __IO  uint8_t UPLLK3     : 1;
+  __IO  uint8_t UPLLK4     : 1;
+} stc_usbclk_upcr3_field_t;
+
+typedef struct stc_usbclk_upcr4_field
+{
+  __IO  uint8_t UPLLN0     : 1;
+  __IO  uint8_t UPLLN1     : 1;
+  __IO  uint8_t UPLLN2     : 1;
+  __IO  uint8_t UPLLN3     : 1;
+  __IO  uint8_t UPLLN4     : 1;
+} stc_usbclk_upcr4_field_t;
+
+typedef struct stc_usbclk_up_str_field
+{
+  __IO  uint8_t UPRDY      : 1;
+} stc_usbclk_up_str_field_t;
+
+typedef struct stc_usbclk_upint_enr_field
+{
+  __IO  uint8_t UPCSE      : 1;
+} stc_usbclk_upint_enr_field_t;
+
+typedef struct stc_usbclk_upint_clr_field
+{
+  __IO  uint8_t UPCSC      : 1;
+} stc_usbclk_upint_clr_field_t;
+
+typedef struct stc_usbclk_upint_str_field
+{
+  __IO  uint8_t UPCSI      : 1;
+} stc_usbclk_upint_str_field_t;
+
+typedef struct stc_usbclk_usben_field
+{
+  __IO  uint8_t USBEN      : 1;
+} stc_usbclk_usben_field_t;
+
+/******************************************************************************
+ * CANPRE_MODULE
+ ******************************************************************************/
+/* CANPRE_MODULE register bit fields */
+typedef struct stc_canpre_canpre_field
+{
+  __IO  uint8_t CANPRE0    : 1;
+  __IO  uint8_t CANPRE1    : 1;
+  __IO  uint8_t CANPRE2    : 1;
+  __IO  uint8_t CANPRE3    : 1;
+} stc_canpre_canpre_field_t;
+
+/******************************************************************************
+ * MFS03_UART_MODULE
+ ******************************************************************************/
+/* MFS03_UART_MODULE register bit fields */
+typedef struct stc_mfs03_uart_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t BDS        : 1;
+  __IO  uint8_t SBL        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs03_uart_smr_field_t;
+
+typedef struct stc_mfs03_uart_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs03_uart_scr_field_t;
+
+typedef struct stc_mfs03_uart_escr_field
+{
+  __IO  uint8_t L0         : 1;
+  __IO  uint8_t L1         : 1;
+  __IO  uint8_t L2         : 1;
+  __IO  uint8_t P          : 1;
+  __IO  uint8_t PEN        : 1;
+  __IO  uint8_t INV        : 1;
+  __IO  uint8_t ESBL       : 1;
+  __IO  uint8_t FLWEN      : 1;
+} stc_mfs03_uart_escr_field_t;
+
+typedef struct stc_mfs03_uart_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t FRE        : 1;
+  __IO  uint8_t PE         : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs03_uart_ssr_field_t;
+
+typedef struct stc_mfs03_uart_rdr_field
+{
+       uint16_t RESERVED1  : 8;
+  __IO uint16_t AD         : 1;
+} stc_mfs03_uart_rdr_field_t;
+
+typedef struct stc_mfs03_uart_tdr_field
+{
+       uint16_t RESERVED1  : 8;
+  __IO uint16_t AD         : 1;
+} stc_mfs03_uart_tdr_field_t;
+
+typedef struct stc_mfs03_uart_bgr_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t EXT        : 1;
+} stc_mfs03_uart_bgr_field_t;
+
+typedef struct stc_mfs03_uart_bgr1_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t EXT        : 1;
+} stc_mfs03_uart_bgr1_field_t;
+
+/******************************************************************************
+ * MFS03_CSIO_MODULE
+ ******************************************************************************/
+/* MFS03_CSIO_MODULE register bit fields */
+typedef struct stc_mfs03_csio_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+  __IO  uint8_t SCKE       : 1;
+  __IO  uint8_t BDS        : 1;
+  __IO  uint8_t SCINV      : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs03_csio_smr_field_t;
+
+typedef struct stc_mfs03_csio_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t SPI        : 1;
+  __IO  uint8_t MS         : 1;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs03_csio_scr_field_t;
+
+typedef struct stc_mfs03_csio_escr_field
+{
+  __IO  uint8_t L0         : 1;
+  __IO  uint8_t L1         : 1;
+  __IO  uint8_t L2         : 1;
+  __IO  uint8_t WT0        : 1;
+  __IO  uint8_t WT1        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t SOP        : 1;
+} stc_mfs03_csio_escr_field_t;
+
+typedef struct stc_mfs03_csio_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+        uint8_t RESERVED1  : 3;
+  __IO  uint8_t REC        : 1;
+} stc_mfs03_csio_ssr_field_t;
+
+/******************************************************************************
+ * MFS03_LIN_MODULE
+ ******************************************************************************/
+/* MFS03_LIN_MODULE register bit fields */
+typedef struct stc_mfs03_lin_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t SBL        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs03_lin_smr_field_t;
+
+typedef struct stc_mfs03_lin_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t LBR        : 1;
+  __IO  uint8_t MS         : 1;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs03_lin_scr_field_t;
+
+typedef struct stc_mfs03_lin_escr_field
+{
+  __IO  uint8_t DEL0       : 1;
+  __IO  uint8_t DEL1       : 1;
+  __IO  uint8_t LBL0       : 1;
+  __IO  uint8_t LBL1       : 1;
+  __IO  uint8_t LBIE       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t ESBL       : 1;
+} stc_mfs03_lin_escr_field_t;
+
+typedef struct stc_mfs03_lin_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t FRE        : 1;
+  __IO  uint8_t LBD        : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs03_lin_ssr_field_t;
+
+typedef struct stc_mfs03_lin_bgr_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t EXT        : 1;
+} stc_mfs03_lin_bgr_field_t;
+
+typedef struct stc_mfs03_lin_bgr1_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t EXT        : 1;
+} stc_mfs03_lin_bgr1_field_t;
+
+/******************************************************************************
+ * MFS03_I2C_MODULE
+ ******************************************************************************/
+/* MFS03_I2C_MODULE register bit fields */
+typedef struct stc_mfs03_i2c_smr_field
+{
+  __IO  uint8_t ITST0      : 1;
+  __IO  uint8_t ITST1      : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs03_i2c_smr_field_t;
+
+typedef struct stc_mfs03_i2c_ibcr_field
+{
+  __IO  uint8_t INT        : 1;
+  __IO  uint8_t BER        : 1;
+  __IO  uint8_t INTE       : 1;
+  __IO  uint8_t CNDE       : 1;
+  __IO  uint8_t WSEL       : 1;
+  __IO  uint8_t ACKE       : 1;
+  __IO  uint8_t SCC        : 1;
+  __IO  uint8_t MSS        : 1;
+} stc_mfs03_i2c_ibcr_field_t;
+
+typedef struct stc_mfs03_i2c_ibsr_field
+{
+  __IO  uint8_t BB         : 1;
+  __IO  uint8_t SPC        : 1;
+  __IO  uint8_t RSC        : 1;
+  __IO  uint8_t AL         : 1;
+  __IO  uint8_t TRX        : 1;
+  __IO  uint8_t RSA        : 1;
+  __IO  uint8_t RACK       : 1;
+  __IO  uint8_t FBT        : 1;
+} stc_mfs03_i2c_ibsr_field_t;
+
+typedef struct stc_mfs03_i2c_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t DMA        : 1;
+  __IO  uint8_t TSET       : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs03_i2c_ssr_field_t;
+
+typedef struct stc_mfs03_i2c_isba_field
+{
+  __IO  uint8_t SA0        : 1;
+  __IO  uint8_t SA1        : 1;
+  __IO  uint8_t SA2        : 1;
+  __IO  uint8_t SA3        : 1;
+  __IO  uint8_t SA4        : 1;
+  __IO  uint8_t SA5        : 1;
+  __IO  uint8_t SA6        : 1;
+  __IO  uint8_t SAEN       : 1;
+} stc_mfs03_i2c_isba_field_t;
+
+typedef struct stc_mfs03_i2c_ismk_field
+{
+  __IO  uint8_t SM0        : 1;
+  __IO  uint8_t SM1        : 1;
+  __IO  uint8_t SM2        : 1;
+  __IO  uint8_t SM3        : 1;
+  __IO  uint8_t SM4        : 1;
+  __IO  uint8_t SM5        : 1;
+  __IO  uint8_t SM6        : 1;
+  __IO  uint8_t EN         : 1;
+} stc_mfs03_i2c_ismk_field_t;
+
+/******************************************************************************
+ * MFS47_UART_MODULE
+ ******************************************************************************/
+/* MFS47_UART_MODULE register bit fields */
+typedef struct stc_mfs47_uart_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t BDS        : 1;
+  __IO  uint8_t SBL        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs47_uart_smr_field_t;
+
+typedef struct stc_mfs47_uart_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs47_uart_scr_field_t;
+
+typedef struct stc_mfs47_uart_escr_field
+{
+  __IO  uint8_t L0         : 1;
+  __IO  uint8_t L1         : 1;
+  __IO  uint8_t L2         : 1;
+  __IO  uint8_t P          : 1;
+  __IO  uint8_t PEN        : 1;
+  __IO  uint8_t INV        : 1;
+  __IO  uint8_t ESBL       : 1;
+  __IO  uint8_t FLWEN      : 1;
+} stc_mfs47_uart_escr_field_t;
+
+typedef struct stc_mfs47_uart_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t FRE        : 1;
+  __IO  uint8_t PE         : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs47_uart_ssr_field_t;
+
+typedef struct stc_mfs47_uart_rdr_field
+{
+       uint16_t RESERVED1  : 8;
+  __IO uint16_t AD         : 1;
+} stc_mfs47_uart_rdr_field_t;
+
+typedef struct stc_mfs47_uart_tdr_field
+{
+       uint16_t RESERVED1  : 8;
+  __IO uint16_t AD         : 1;
+} stc_mfs47_uart_tdr_field_t;
+
+typedef struct stc_mfs47_uart_bgr_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t EXT        : 1;
+} stc_mfs47_uart_bgr_field_t;
+
+typedef struct stc_mfs47_uart_bgr1_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t EXT        : 1;
+} stc_mfs47_uart_bgr1_field_t;
+
+typedef struct stc_mfs47_uart_fcr_field
+{
+  __IO uint16_t FE1        : 1;
+  __IO uint16_t FE2        : 1;
+  __IO uint16_t FCL1       : 1;
+  __IO uint16_t FCL2       : 1;
+  __IO uint16_t FSET       : 1;
+  __IO uint16_t FLD        : 1;
+  __IO uint16_t FLST       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t FSEL       : 1;
+  __IO uint16_t FTIE       : 1;
+  __IO uint16_t FDRQ       : 1;
+  __IO uint16_t FRIE       : 1;
+  __IO uint16_t FLSTE      : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t FTST0      : 1;
+  __IO uint16_t FTST1      : 1;
+} stc_mfs47_uart_fcr_field_t;
+
+typedef struct stc_mfs47_uart_fcr0_field
+{
+  __IO  uint8_t FE1        : 1;
+  __IO  uint8_t FE2        : 1;
+  __IO  uint8_t FCL1       : 1;
+  __IO  uint8_t FCL2       : 1;
+  __IO  uint8_t FSET       : 1;
+  __IO  uint8_t FLD        : 1;
+  __IO  uint8_t FLST       : 1;
+} stc_mfs47_uart_fcr0_field_t;
+
+typedef struct stc_mfs47_uart_fcr1_field
+{
+  __IO  uint8_t FSEL       : 1;
+  __IO  uint8_t FTIE       : 1;
+  __IO  uint8_t FDRQ       : 1;
+  __IO  uint8_t FRIE       : 1;
+  __IO  uint8_t FLSTE      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t FTST0      : 1;
+  __IO  uint8_t FTST1      : 1;
+} stc_mfs47_uart_fcr1_field_t;
+
+typedef struct stc_mfs47_uart_fbyte_field
+{
+  __IO uint16_t FD0        : 1;
+  __IO uint16_t FD1        : 1;
+  __IO uint16_t FD2        : 1;
+  __IO uint16_t FD3        : 1;
+  __IO uint16_t FD4        : 1;
+  __IO uint16_t FD5        : 1;
+  __IO uint16_t FD6        : 1;
+  __IO uint16_t FD7        : 1;
+  __IO uint16_t FD8        : 1;
+  __IO uint16_t FD9        : 1;
+  __IO uint16_t FD10       : 1;
+  __IO uint16_t FD11       : 1;
+  __IO uint16_t FD12       : 1;
+  __IO uint16_t FD13       : 1;
+  __IO uint16_t FD14       : 1;
+  __IO uint16_t FD15       : 1;
+} stc_mfs47_uart_fbyte_field_t;
+
+typedef struct stc_mfs47_uart_fbyte1_field
+{
+  __IO  uint8_t FD0        : 1;
+  __IO  uint8_t FD1        : 1;
+  __IO  uint8_t FD2        : 1;
+  __IO  uint8_t FD3        : 1;
+  __IO  uint8_t FD4        : 1;
+  __IO  uint8_t FD5        : 1;
+  __IO  uint8_t FD6        : 1;
+  __IO  uint8_t FD7        : 1;
+} stc_mfs47_uart_fbyte1_field_t;
+
+typedef struct stc_mfs47_uart_fbyte2_field
+{
+  __IO  uint8_t FD8        : 1;
+  __IO  uint8_t FD9        : 1;
+  __IO  uint8_t FD10       : 1;
+  __IO  uint8_t FD11       : 1;
+  __IO  uint8_t FD12       : 1;
+  __IO  uint8_t FD13       : 1;
+  __IO  uint8_t FD14       : 1;
+  __IO  uint8_t FD15       : 1;
+} stc_mfs47_uart_fbyte2_field_t;
+
+/******************************************************************************
+ * MFS47_CSIO_MODULE
+ ******************************************************************************/
+/* MFS47_CSIO_MODULE register bit fields */
+typedef struct stc_mfs47_csio_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+  __IO  uint8_t SCKE       : 1;
+  __IO  uint8_t BDS        : 1;
+  __IO  uint8_t SCINV      : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs47_csio_smr_field_t;
+
+typedef struct stc_mfs47_csio_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t SPI        : 1;
+  __IO  uint8_t MS         : 1;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs47_csio_scr_field_t;
+
+typedef struct stc_mfs47_csio_escr_field
+{
+  __IO  uint8_t L0         : 1;
+  __IO  uint8_t L1         : 1;
+  __IO  uint8_t L2         : 1;
+  __IO  uint8_t WT0        : 1;
+  __IO  uint8_t WT1        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t SOP        : 1;
+} stc_mfs47_csio_escr_field_t;
+
+typedef struct stc_mfs47_csio_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+        uint8_t RESERVED1  : 3;
+  __IO  uint8_t REC        : 1;
+} stc_mfs47_csio_ssr_field_t;
+
+typedef struct stc_mfs47_csio_fcr_field
+{
+  __IO uint16_t FE1        : 1;
+  __IO uint16_t FE2        : 1;
+  __IO uint16_t FCL1       : 1;
+  __IO uint16_t FCL2       : 1;
+  __IO uint16_t FSET       : 1;
+  __IO uint16_t FLD        : 1;
+  __IO uint16_t FLST       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t FSEL       : 1;
+  __IO uint16_t FTIE       : 1;
+  __IO uint16_t FDRQ       : 1;
+  __IO uint16_t FRIE       : 1;
+  __IO uint16_t FLSTE      : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t FTST0      : 1;
+  __IO uint16_t FTST1      : 1;
+} stc_mfs47_csio_fcr_field_t;
+
+typedef struct stc_mfs47_csio_fcr0_field
+{
+  __IO  uint8_t FE1        : 1;
+  __IO  uint8_t FE2        : 1;
+  __IO  uint8_t FCL1       : 1;
+  __IO  uint8_t FCL2       : 1;
+  __IO  uint8_t FSET       : 1;
+  __IO  uint8_t FLD        : 1;
+  __IO  uint8_t FLST       : 1;
+} stc_mfs47_csio_fcr0_field_t;
+
+typedef struct stc_mfs47_csio_fcr1_field
+{
+  __IO  uint8_t FSEL       : 1;
+  __IO  uint8_t FTIE       : 1;
+  __IO  uint8_t FDRQ       : 1;
+  __IO  uint8_t FRIE       : 1;
+  __IO  uint8_t FLSTE      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t FTST0      : 1;
+  __IO  uint8_t FTST1      : 1;
+} stc_mfs47_csio_fcr1_field_t;
+
+typedef struct stc_mfs47_csio_fbyte_field
+{
+  __IO uint16_t FD0        : 1;
+  __IO uint16_t FD1        : 1;
+  __IO uint16_t FD2        : 1;
+  __IO uint16_t FD3        : 1;
+  __IO uint16_t FD4        : 1;
+  __IO uint16_t FD5        : 1;
+  __IO uint16_t FD6        : 1;
+  __IO uint16_t FD7        : 1;
+  __IO uint16_t FD8        : 1;
+  __IO uint16_t FD9        : 1;
+  __IO uint16_t FD10       : 1;
+  __IO uint16_t FD11       : 1;
+  __IO uint16_t FD12       : 1;
+  __IO uint16_t FD13       : 1;
+  __IO uint16_t FD14       : 1;
+  __IO uint16_t FD15       : 1;
+} stc_mfs47_csio_fbyte_field_t;
+
+typedef struct stc_mfs47_csio_fbyte1_field
+{
+  __IO  uint8_t FD0        : 1;
+  __IO  uint8_t FD1        : 1;
+  __IO  uint8_t FD2        : 1;
+  __IO  uint8_t FD3        : 1;
+  __IO  uint8_t FD4        : 1;
+  __IO  uint8_t FD5        : 1;
+  __IO  uint8_t FD6        : 1;
+  __IO  uint8_t FD7        : 1;
+} stc_mfs47_csio_fbyte1_field_t;
+
+typedef struct stc_mfs47_csio_fbyte2_field
+{
+  __IO  uint8_t FD8        : 1;
+  __IO  uint8_t FD9        : 1;
+  __IO  uint8_t FD10       : 1;
+  __IO  uint8_t FD11       : 1;
+  __IO  uint8_t FD12       : 1;
+  __IO  uint8_t FD13       : 1;
+  __IO  uint8_t FD14       : 1;
+  __IO  uint8_t FD15       : 1;
+} stc_mfs47_csio_fbyte2_field_t;
+
+/******************************************************************************
+ * MFS47_LIN_MODULE
+ ******************************************************************************/
+/* MFS47_LIN_MODULE register bit fields */
+typedef struct stc_mfs47_lin_smr_field
+{
+  __IO  uint8_t SOE        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t SBL        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs47_lin_smr_field_t;
+
+typedef struct stc_mfs47_lin_scr_field
+{
+  __IO  uint8_t TXE        : 1;
+  __IO  uint8_t RXE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t LBR        : 1;
+  __IO  uint8_t MS         : 1;
+  __IO  uint8_t UPCL       : 1;
+} stc_mfs47_lin_scr_field_t;
+
+typedef struct stc_mfs47_lin_escr_field
+{
+  __IO  uint8_t DEL0       : 1;
+  __IO  uint8_t DEL1       : 1;
+  __IO  uint8_t LBL0       : 1;
+  __IO  uint8_t LBL1       : 1;
+  __IO  uint8_t LBIE       : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t ESBL       : 1;
+} stc_mfs47_lin_escr_field_t;
+
+typedef struct stc_mfs47_lin_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t FRE        : 1;
+  __IO  uint8_t LBD        : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs47_lin_ssr_field_t;
+
+typedef struct stc_mfs47_lin_bgr_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t EXT        : 1;
+} stc_mfs47_lin_bgr_field_t;
+
+typedef struct stc_mfs47_lin_bgr1_field
+{
+        uint8_t RESERVED1  : 7;
+  __IO  uint8_t EXT        : 1;
+} stc_mfs47_lin_bgr1_field_t;
+
+typedef struct stc_mfs47_lin_fcr_field
+{
+  __IO uint16_t FE1        : 1;
+  __IO uint16_t FE2        : 1;
+  __IO uint16_t FCL1       : 1;
+  __IO uint16_t FCL2       : 1;
+  __IO uint16_t FSET       : 1;
+  __IO uint16_t FLD        : 1;
+  __IO uint16_t FLST       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t FSEL       : 1;
+  __IO uint16_t FTIE       : 1;
+  __IO uint16_t FDRQ       : 1;
+  __IO uint16_t FRIE       : 1;
+  __IO uint16_t FLSTE      : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t FTST0      : 1;
+  __IO uint16_t FTST1      : 1;
+} stc_mfs47_lin_fcr_field_t;
+
+typedef struct stc_mfs47_lin_fcr0_field
+{
+  __IO  uint8_t FE1        : 1;
+  __IO  uint8_t FE2        : 1;
+  __IO  uint8_t FCL1       : 1;
+  __IO  uint8_t FCL2       : 1;
+  __IO  uint8_t FSET       : 1;
+  __IO  uint8_t FLD        : 1;
+  __IO  uint8_t FLST       : 1;
+} stc_mfs47_lin_fcr0_field_t;
+
+typedef struct stc_mfs47_lin_fcr1_field
+{
+  __IO  uint8_t FSEL       : 1;
+  __IO  uint8_t FTIE       : 1;
+  __IO  uint8_t FDRQ       : 1;
+  __IO  uint8_t FRIE       : 1;
+  __IO  uint8_t FLSTE      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t FTST0      : 1;
+  __IO  uint8_t FTST1      : 1;
+} stc_mfs47_lin_fcr1_field_t;
+
+typedef struct stc_mfs47_lin_fbyte_field
+{
+  __IO uint16_t FD0        : 1;
+  __IO uint16_t FD1        : 1;
+  __IO uint16_t FD2        : 1;
+  __IO uint16_t FD3        : 1;
+  __IO uint16_t FD4        : 1;
+  __IO uint16_t FD5        : 1;
+  __IO uint16_t FD6        : 1;
+  __IO uint16_t FD7        : 1;
+  __IO uint16_t FD8        : 1;
+  __IO uint16_t FD9        : 1;
+  __IO uint16_t FD10       : 1;
+  __IO uint16_t FD11       : 1;
+  __IO uint16_t FD12       : 1;
+  __IO uint16_t FD13       : 1;
+  __IO uint16_t FD14       : 1;
+  __IO uint16_t FD15       : 1;
+} stc_mfs47_lin_fbyte_field_t;
+
+typedef struct stc_mfs47_lin_fbyte1_field
+{
+  __IO  uint8_t FD0        : 1;
+  __IO  uint8_t FD1        : 1;
+  __IO  uint8_t FD2        : 1;
+  __IO  uint8_t FD3        : 1;
+  __IO  uint8_t FD4        : 1;
+  __IO  uint8_t FD5        : 1;
+  __IO  uint8_t FD6        : 1;
+  __IO  uint8_t FD7        : 1;
+} stc_mfs47_lin_fbyte1_field_t;
+
+typedef struct stc_mfs47_lin_fbyte2_field
+{
+  __IO  uint8_t FD8        : 1;
+  __IO  uint8_t FD9        : 1;
+  __IO  uint8_t FD10       : 1;
+  __IO  uint8_t FD11       : 1;
+  __IO  uint8_t FD12       : 1;
+  __IO  uint8_t FD13       : 1;
+  __IO  uint8_t FD14       : 1;
+  __IO  uint8_t FD15       : 1;
+} stc_mfs47_lin_fbyte2_field_t;
+
+/******************************************************************************
+ * MFS47_I2C_MODULE
+ ******************************************************************************/
+/* MFS47_I2C_MODULE register bit fields */
+typedef struct stc_mfs47_i2c_smr_field
+{
+  __IO  uint8_t ITST0      : 1;
+  __IO  uint8_t ITST1      : 1;
+  __IO  uint8_t TIE        : 1;
+  __IO  uint8_t RIE        : 1;
+  __IO  uint8_t WUCR       : 1;
+  __IO  uint8_t MD0        : 1;
+  __IO  uint8_t MD1        : 1;
+  __IO  uint8_t MD2        : 1;
+} stc_mfs47_i2c_smr_field_t;
+
+typedef struct stc_mfs47_i2c_ibcr_field
+{
+  __IO  uint8_t INT        : 1;
+  __IO  uint8_t BER        : 1;
+  __IO  uint8_t INTE       : 1;
+  __IO  uint8_t CNDE       : 1;
+  __IO  uint8_t WSEL       : 1;
+  __IO  uint8_t ACKE       : 1;
+  __IO  uint8_t SCC        : 1;
+  __IO  uint8_t MSS        : 1;
+} stc_mfs47_i2c_ibcr_field_t;
+
+typedef struct stc_mfs47_i2c_ibsr_field
+{
+  __IO  uint8_t BB         : 1;
+  __IO  uint8_t SPC        : 1;
+  __IO  uint8_t RSC        : 1;
+  __IO  uint8_t AL         : 1;
+  __IO  uint8_t TRX        : 1;
+  __IO  uint8_t RSA        : 1;
+  __IO  uint8_t RACK       : 1;
+  __IO  uint8_t FBT        : 1;
+} stc_mfs47_i2c_ibsr_field_t;
+
+typedef struct stc_mfs47_i2c_ssr_field
+{
+  __IO  uint8_t TBI        : 1;
+  __IO  uint8_t TDRE       : 1;
+  __IO  uint8_t RDRF       : 1;
+  __IO  uint8_t ORE        : 1;
+  __IO  uint8_t TBIE       : 1;
+  __IO  uint8_t DMA        : 1;
+  __IO  uint8_t TSET       : 1;
+  __IO  uint8_t REC        : 1;
+} stc_mfs47_i2c_ssr_field_t;
+
+typedef struct stc_mfs47_i2c_isba_field
+{
+  __IO  uint8_t SA0        : 1;
+  __IO  uint8_t SA1        : 1;
+  __IO  uint8_t SA2        : 1;
+  __IO  uint8_t SA3        : 1;
+  __IO  uint8_t SA4        : 1;
+  __IO  uint8_t SA5        : 1;
+  __IO  uint8_t SA6        : 1;
+  __IO  uint8_t SAEN       : 1;
+} stc_mfs47_i2c_isba_field_t;
+
+typedef struct stc_mfs47_i2c_ismk_field
+{
+  __IO  uint8_t SM0        : 1;
+  __IO  uint8_t SM1        : 1;
+  __IO  uint8_t SM2        : 1;
+  __IO  uint8_t SM3        : 1;
+  __IO  uint8_t SM4        : 1;
+  __IO  uint8_t SM5        : 1;
+  __IO  uint8_t SM6        : 1;
+  __IO  uint8_t EN         : 1;
+} stc_mfs47_i2c_ismk_field_t;
+
+typedef struct stc_mfs47_i2c_fcr_field
+{
+  __IO uint16_t FE1        : 1;
+  __IO uint16_t FE2        : 1;
+  __IO uint16_t FCL1       : 1;
+  __IO uint16_t FCL2       : 1;
+  __IO uint16_t FSET       : 1;
+  __IO uint16_t FLD        : 1;
+  __IO uint16_t FLST       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t FSEL       : 1;
+  __IO uint16_t FTIE       : 1;
+  __IO uint16_t FDRQ       : 1;
+  __IO uint16_t FRIE       : 1;
+  __IO uint16_t FLSTE      : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t FTST0      : 1;
+  __IO uint16_t FTST1      : 1;
+} stc_mfs47_i2c_fcr_field_t;
+
+typedef struct stc_mfs47_i2c_fcr0_field
+{
+  __IO  uint8_t FE1        : 1;
+  __IO  uint8_t FE2        : 1;
+  __IO  uint8_t FCL1       : 1;
+  __IO  uint8_t FCL2       : 1;
+  __IO  uint8_t FSET       : 1;
+  __IO  uint8_t FLD        : 1;
+  __IO  uint8_t FLST       : 1;
+} stc_mfs47_i2c_fcr0_field_t;
+
+typedef struct stc_mfs47_i2c_fcr1_field
+{
+  __IO  uint8_t FSEL       : 1;
+  __IO  uint8_t FTIE       : 1;
+  __IO  uint8_t FDRQ       : 1;
+  __IO  uint8_t FRIE       : 1;
+  __IO  uint8_t FLSTE      : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t FTST0      : 1;
+  __IO  uint8_t FTST1      : 1;
+} stc_mfs47_i2c_fcr1_field_t;
+
+typedef struct stc_mfs47_i2c_fbyte_field
+{
+  __IO uint16_t FD0        : 1;
+  __IO uint16_t FD1        : 1;
+  __IO uint16_t FD2        : 1;
+  __IO uint16_t FD3        : 1;
+  __IO uint16_t FD4        : 1;
+  __IO uint16_t FD5        : 1;
+  __IO uint16_t FD6        : 1;
+  __IO uint16_t FD7        : 1;
+  __IO uint16_t FD8        : 1;
+  __IO uint16_t FD9        : 1;
+  __IO uint16_t FD10       : 1;
+  __IO uint16_t FD11       : 1;
+  __IO uint16_t FD12       : 1;
+  __IO uint16_t FD13       : 1;
+  __IO uint16_t FD14       : 1;
+  __IO uint16_t FD15       : 1;
+} stc_mfs47_i2c_fbyte_field_t;
+
+typedef struct stc_mfs47_i2c_fbyte1_field
+{
+  __IO  uint8_t FD0        : 1;
+  __IO  uint8_t FD1        : 1;
+  __IO  uint8_t FD2        : 1;
+  __IO  uint8_t FD3        : 1;
+  __IO  uint8_t FD4        : 1;
+  __IO  uint8_t FD5        : 1;
+  __IO  uint8_t FD6        : 1;
+  __IO  uint8_t FD7        : 1;
+} stc_mfs47_i2c_fbyte1_field_t;
+
+typedef struct stc_mfs47_i2c_fbyte2_field
+{
+  __IO  uint8_t FD8        : 1;
+  __IO  uint8_t FD9        : 1;
+  __IO  uint8_t FD10       : 1;
+  __IO  uint8_t FD11       : 1;
+  __IO  uint8_t FD12       : 1;
+  __IO  uint8_t FD13       : 1;
+  __IO  uint8_t FD14       : 1;
+  __IO  uint8_t FD15       : 1;
+} stc_mfs47_i2c_fbyte2_field_t;
+
+/******************************************************************************
+ * CRC_MODULE
+ ******************************************************************************/
+/* CRC_MODULE register bit fields */
+typedef struct stc_crc_crccr_field
+{
+  __IO  uint8_t INIT       : 1;
+  __IO  uint8_t CRC32      : 1;
+  __IO  uint8_t LTLEND     : 1;
+  __IO  uint8_t LSBFST     : 1;
+  __IO  uint8_t CRCLTE     : 1;
+  __IO  uint8_t CRCLSF     : 1;
+  __IO  uint8_t FXOR       : 1;
+} stc_crc_crccr_field_t;
+
+/******************************************************************************
+ * WC_MODULE
+ ******************************************************************************/
+/* WC_MODULE register bit fields */
+typedef struct stc_wc_wcrd_field
+{
+  __IO  uint8_t CTR0       : 1;
+  __IO  uint8_t CTR1       : 1;
+  __IO  uint8_t CTR2       : 1;
+  __IO  uint8_t CTR3       : 1;
+  __IO  uint8_t CTR4       : 1;
+  __IO  uint8_t CTR5       : 1;
+} stc_wc_wcrd_field_t;
+
+typedef struct stc_wc_wcrl_field
+{
+  __IO  uint8_t RLC0       : 1;
+  __IO  uint8_t RLC1       : 1;
+  __IO  uint8_t RLC2       : 1;
+  __IO  uint8_t RLC3       : 1;
+  __IO  uint8_t RLC4       : 1;
+  __IO  uint8_t RLC5       : 1;
+} stc_wc_wcrl_field_t;
+
+typedef struct stc_wc_wccr_field
+{
+  __IO  uint8_t WCIF       : 1;
+  __IO  uint8_t WCIE       : 1;
+  __IO  uint8_t CS0        : 1;
+  __IO  uint8_t CS1        : 1;
+        uint8_t RESERVED1  : 2;
+  __IO  uint8_t WCOP       : 1;
+  __IO  uint8_t WCEN       : 1;
+} stc_wc_wccr_field_t;
+
+typedef struct stc_wc_clk_sel_field
+{
+  __IO uint16_t SEL_IN     : 1;
+       uint16_t RESERVED1  : 7;
+  __IO uint16_t SEL_OUT    : 1;
+} stc_wc_clk_sel_field_t;
+
+typedef struct stc_wc_clk_en_field
+{
+  __IO  uint8_t CLK_EN     : 1;
+  __IO  uint8_t CLK_EN_R   : 1;
+} stc_wc_clk_en_field_t;
+
+/******************************************************************************
+ * EXBUS_MODULE
+ ******************************************************************************/
+/* EXBUS_MODULE register bit fields */
+typedef struct stc_exbus_mode0_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode0_field_t;
+
+typedef struct stc_exbus_mode1_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode1_field_t;
+
+typedef struct stc_exbus_mode2_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode2_field_t;
+
+typedef struct stc_exbus_mode3_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode3_field_t;
+
+typedef struct stc_exbus_mode4_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode4_field_t;
+
+typedef struct stc_exbus_mode5_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode5_field_t;
+
+typedef struct stc_exbus_mode6_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode6_field_t;
+
+typedef struct stc_exbus_mode7_field
+{
+  __IO uint32_t WDTH0      : 1;
+  __IO uint32_t WDTH1      : 1;
+  __IO uint32_t RBMON      : 1;
+  __IO uint32_t WEOFF      : 1;
+  __IO uint32_t NAND       : 1;
+  __IO uint32_t PAGE       : 1;
+  __IO uint32_t TEST       : 1;
+} stc_exbus_mode7_field_t;
+
+typedef struct stc_exbus_tim0_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim0_field_t;
+
+typedef struct stc_exbus_tim1_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim1_field_t;
+
+typedef struct stc_exbus_tim2_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim2_field_t;
+
+typedef struct stc_exbus_tim3_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim3_field_t;
+
+typedef struct stc_exbus_tim4_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim4_field_t;
+
+typedef struct stc_exbus_tim5_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim5_field_t;
+
+typedef struct stc_exbus_tim6_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim6_field_t;
+
+typedef struct stc_exbus_tim7_field
+{
+  __IO uint32_t RACC0      : 1;
+  __IO uint32_t RACC1      : 1;
+  __IO uint32_t RACC2      : 1;
+  __IO uint32_t RACC3      : 1;
+  __IO uint32_t RADC0      : 1;
+  __IO uint32_t RADC1      : 1;
+  __IO uint32_t RADC2      : 1;
+  __IO uint32_t RADC3      : 1;
+  __IO uint32_t FRADC0     : 1;
+  __IO uint32_t FRADC1     : 1;
+  __IO uint32_t FRADC2     : 1;
+  __IO uint32_t FRADC3     : 1;
+  __IO uint32_t RIDLC0     : 1;
+  __IO uint32_t RIDLC1     : 1;
+  __IO uint32_t RIDLC2     : 1;
+  __IO uint32_t RIDLC3     : 1;
+  __IO uint32_t WACC0      : 1;
+  __IO uint32_t WACC1      : 1;
+  __IO uint32_t WACC2      : 1;
+  __IO uint32_t WACC3      : 1;
+  __IO uint32_t WADC0      : 1;
+  __IO uint32_t WADC1      : 1;
+  __IO uint32_t WADC2      : 1;
+  __IO uint32_t WADC3      : 1;
+  __IO uint32_t WWEC0      : 1;
+  __IO uint32_t WWEC1      : 1;
+  __IO uint32_t WWEC2      : 1;
+  __IO uint32_t WWEC3      : 1;
+  __IO uint32_t WIDLC0     : 1;
+  __IO uint32_t WIDLC1     : 1;
+  __IO uint32_t WIDLC2     : 1;
+  __IO uint32_t WIDLC3     : 1;
+} stc_exbus_tim7_field_t;
+
+typedef struct stc_exbus_area0_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area0_field_t;
+
+typedef struct stc_exbus_area1_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area1_field_t;
+
+typedef struct stc_exbus_area2_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area2_field_t;
+
+typedef struct stc_exbus_area3_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area3_field_t;
+
+typedef struct stc_exbus_area4_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area4_field_t;
+
+typedef struct stc_exbus_area5_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area5_field_t;
+
+typedef struct stc_exbus_area6_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area6_field_t;
+
+typedef struct stc_exbus_area7_field
+{
+  __IO uint32_t ADDR0      : 1;
+  __IO uint32_t ADDR1      : 1;
+  __IO uint32_t ADDR2      : 1;
+  __IO uint32_t ADDR3      : 1;
+  __IO uint32_t ADDR4      : 1;
+  __IO uint32_t ADDR5      : 1;
+  __IO uint32_t ADDR6      : 1;
+  __IO uint32_t ADDR7      : 1;
+       uint32_t RESERVED1  : 8;
+  __IO uint32_t MASK0      : 1;
+  __IO uint32_t MASK1      : 1;
+  __IO uint32_t MASK2      : 1;
+  __IO uint32_t MASK3      : 1;
+  __IO uint32_t MASK4      : 1;
+  __IO uint32_t MASK5      : 1;
+  __IO uint32_t MASK6      : 1;
+} stc_exbus_area7_field_t;
+
+/******************************************************************************
+ * USB_MODULE
+ ******************************************************************************/
+/* USB_MODULE register bit fields */
+typedef struct stc_usb_hcnt_field
+{
+  __IO uint16_t HOST       : 1;
+  __IO uint16_t URST       : 1;
+  __IO uint16_t SOFIRE     : 1;
+  __IO uint16_t DIRE       : 1;
+  __IO uint16_t CNNIRE     : 1;
+  __IO uint16_t CMPIRE     : 1;
+  __IO uint16_t URIRE      : 1;
+  __IO uint16_t RWKIRE     : 1;
+  __IO uint16_t RETRY      : 1;
+  __IO uint16_t CANCEL     : 1;
+  __IO uint16_t SOFSTEP    : 1;
+} stc_usb_hcnt_field_t;
+
+typedef struct stc_usb_hcnt0_field
+{
+  __IO  uint8_t HOST       : 1;
+  __IO  uint8_t URST       : 1;
+  __IO  uint8_t SOFIRE     : 1;
+  __IO  uint8_t DIRE       : 1;
+  __IO  uint8_t CNNIRE     : 1;
+  __IO  uint8_t CMPIRE     : 1;
+  __IO  uint8_t URIRE      : 1;
+  __IO  uint8_t RWKIRE     : 1;
+} stc_usb_hcnt0_field_t;
+
+typedef struct stc_usb_hcnt1_field
+{
+  __IO  uint8_t RETRY      : 1;
+  __IO  uint8_t CANCEL     : 1;
+  __IO  uint8_t SOFSTEP    : 1;
+} stc_usb_hcnt1_field_t;
+
+typedef struct stc_usb_hirq_field
+{
+  __IO  uint8_t SOFIRQ     : 1;
+  __IO  uint8_t DIRQ       : 1;
+  __IO  uint8_t CNNIRQ     : 1;
+  __IO  uint8_t CMPIRQ     : 1;
+  __IO  uint8_t URIRQ      : 1;
+  __IO  uint8_t RWKIRQ     : 1;
+        uint8_t RESERVED1  : 1;
+  __IO  uint8_t TCAN       : 1;
+} stc_usb_hirq_field_t;
+
+typedef struct stc_usb_herr_field
+{
+  __IO  uint8_t HS0        : 1;
+  __IO  uint8_t HS1        : 1;
+  __IO  uint8_t STUFF      : 1;
+  __IO  uint8_t TGERR      : 1;
+  __IO  uint8_t CRC        : 1;
+  __IO  uint8_t TOUT       : 1;
+  __IO  uint8_t RERR       : 1;
+  __IO  uint8_t LSTOF      : 1;
+} stc_usb_herr_field_t;
+
+typedef struct stc_usb_hstate_field
+{
+  __IO  uint8_t CSTAT      : 1;
+  __IO  uint8_t TMODE      : 1;
+  __IO  uint8_t SUSP       : 1;
+  __IO  uint8_t SOFBUSY    : 1;
+  __IO  uint8_t CLKSEL     : 1;
+  __IO  uint8_t ALIVE      : 1;
+} stc_usb_hstate_field_t;
+
+typedef struct stc_usb_hfcomp_field
+{
+  __IO  uint8_t FRAMECOMP0 : 1;
+  __IO  uint8_t FRAMECOMP1 : 1;
+  __IO  uint8_t FRAMECOMP2 : 1;
+  __IO  uint8_t FRAMECOMP3 : 1;
+  __IO  uint8_t FRAMECOMP4 : 1;
+  __IO  uint8_t FRAMECOMP5 : 1;
+  __IO  uint8_t FRAMECOMP6 : 1;
+  __IO  uint8_t FRAMECOMP7 : 1;
+} stc_usb_hfcomp_field_t;
+
+typedef struct stc_usb_hrtimer_field
+{
+  __IO uint16_t RTIMER0    : 1;
+  __IO uint16_t RTIMER1    : 1;
+  __IO uint16_t RTIMER2    : 1;
+  __IO uint16_t RTIMER3    : 1;
+  __IO uint16_t RTIMER4    : 1;
+  __IO uint16_t RTIMER5    : 1;
+  __IO uint16_t RTIMER6    : 1;
+  __IO uint16_t RTIMER7    : 1;
+  __IO uint16_t RTIMER8    : 1;
+  __IO uint16_t RTIMER9    : 1;
+  __IO uint16_t RTIMER10   : 1;
+  __IO uint16_t RTIMER11   : 1;
+  __IO uint16_t RTIMER12   : 1;
+  __IO uint16_t RTIMER13   : 1;
+  __IO uint16_t RTIMER14   : 1;
+  __IO uint16_t RTIMER15   : 1;
+} stc_usb_hrtimer_field_t;
+
+typedef struct stc_usb_hrtimer0_field
+{
+  __IO  uint8_t RTIMER00   : 1;
+  __IO  uint8_t RTIMER01   : 1;
+  __IO  uint8_t RTIMER02   : 1;
+  __IO  uint8_t RTIMER03   : 1;
+  __IO  uint8_t RTIMER04   : 1;
+  __IO  uint8_t RTIMER05   : 1;
+  __IO  uint8_t RTIMER06   : 1;
+  __IO  uint8_t RTIMER07   : 1;
+} stc_usb_hrtimer0_field_t;
+
+typedef struct stc_usb_hrtimer1_field
+{
+  __IO  uint8_t RTIMER10   : 1;
+  __IO  uint8_t RTIMER11   : 1;
+  __IO  uint8_t RTIMER12   : 1;
+  __IO  uint8_t RTIMER13   : 1;
+  __IO  uint8_t RTIMER14   : 1;
+  __IO  uint8_t RTIMER15   : 1;
+  __IO  uint8_t RTIMER16   : 1;
+  __IO  uint8_t RTIMER17   : 1;
+} stc_usb_hrtimer1_field_t;
+
+typedef struct stc_usb_hrtimer2_field
+{
+  __IO  uint8_t RTIMER20   : 1;
+  __IO  uint8_t RTIMER21   : 1;
+  __IO  uint8_t RTIMER22   : 1;
+} stc_usb_hrtimer2_field_t;
+
+typedef struct stc_usb_hadr_field
+{
+  __IO  uint8_t ADDRESS0   : 1;
+  __IO  uint8_t ADDRESS1   : 1;
+  __IO  uint8_t ADDRESS2   : 1;
+  __IO  uint8_t ADDRESS3   : 1;
+  __IO  uint8_t ADDRESS4   : 1;
+  __IO  uint8_t ADDRESS5   : 1;
+  __IO  uint8_t ADDRESS6   : 1;
+} stc_usb_hadr_field_t;
+
+typedef struct stc_usb_heof_field
+{
+  __IO uint16_t EOF0       : 1;
+  __IO uint16_t EOF1       : 1;
+  __IO uint16_t EOF2       : 1;
+  __IO uint16_t EOF3       : 1;
+  __IO uint16_t EOF4       : 1;
+  __IO uint16_t EOF5       : 1;
+  __IO uint16_t EOF6       : 1;
+  __IO uint16_t EOF7       : 1;
+  __IO uint16_t EOF8       : 1;
+  __IO uint16_t EOF9       : 1;
+  __IO uint16_t EOF10      : 1;
+  __IO uint16_t EOF11      : 1;
+  __IO uint16_t EOF12      : 1;
+  __IO uint16_t EOF13      : 1;
+  __IO uint16_t EOF14      : 1;
+  __IO uint16_t EOF15      : 1;
+} stc_usb_heof_field_t;
+
+typedef struct stc_usb_heof0_field
+{
+  __IO  uint8_t EOF00      : 1;
+  __IO  uint8_t EOF01      : 1;
+  __IO  uint8_t EOF02      : 1;
+  __IO  uint8_t EOF03      : 1;
+  __IO  uint8_t EOF04      : 1;
+  __IO  uint8_t EOF05      : 1;
+  __IO  uint8_t EOF06      : 1;
+  __IO  uint8_t EOF07      : 1;
+} stc_usb_heof0_field_t;
+
+typedef struct stc_usb_heof1_field
+{
+  __IO  uint8_t EOF10      : 1;
+  __IO  uint8_t EOF11      : 1;
+  __IO  uint8_t EOF12      : 1;
+  __IO  uint8_t EOF13      : 1;
+  __IO  uint8_t EOF14      : 1;
+  __IO  uint8_t EOF15      : 1;
+} stc_usb_heof1_field_t;
+
+typedef struct stc_usb_hframe_field
+{
+  __IO uint16_t FRAME0     : 1;
+  __IO uint16_t FRAME1     : 1;
+  __IO uint16_t FRAME2     : 1;
+  __IO uint16_t FRAME3     : 1;
+  __IO uint16_t FRAME4     : 1;
+  __IO uint16_t FRAME5     : 1;
+  __IO uint16_t FRAME6     : 1;
+  __IO uint16_t FRAME7     : 1;
+  __IO uint16_t FRAME8     : 1;
+  __IO uint16_t FRAME9     : 1;
+  __IO uint16_t FRAME10    : 1;
+} stc_usb_hframe_field_t;
+
+typedef struct stc_usb_hframe0_field
+{
+  __IO  uint8_t FRAME00    : 1;
+  __IO  uint8_t FRAME01    : 1;
+  __IO  uint8_t FRAME02    : 1;
+  __IO  uint8_t FRAME03    : 1;
+  __IO  uint8_t FRAME04    : 1;
+  __IO  uint8_t FRAME05    : 1;
+  __IO  uint8_t FRAME06    : 1;
+  __IO  uint8_t FRAME07    : 1;
+} stc_usb_hframe0_field_t;
+
+typedef struct stc_usb_hframe1_field
+{
+  __IO  uint8_t FRAME10    : 1;
+  __IO  uint8_t FRAME11    : 1;
+  __IO  uint8_t FRAME12    : 1;
+  __IO  uint8_t FRAME13    : 1;
+} stc_usb_hframe1_field_t;
+
+typedef struct stc_usb_htoken_field
+{
+  __IO  uint8_t ENDPT0     : 1;
+  __IO  uint8_t ENDPT1     : 1;
+  __IO  uint8_t ENDPT2     : 1;
+  __IO  uint8_t ENDPT3     : 1;
+  __IO  uint8_t TKNEN0     : 1;
+  __IO  uint8_t TKNEN1     : 1;
+  __IO  uint8_t TKNEN2     : 1;
+  __IO  uint8_t TGGL       : 1;
+} stc_usb_htoken_field_t;
+
+typedef struct stc_usb_udcc_field
+{
+  __IO uint16_t PWC        : 1;
+  __IO uint16_t RFBK       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t STALCLREN  : 1;
+  __IO uint16_t USTP       : 1;
+  __IO uint16_t HCONX      : 1;
+  __IO uint16_t RESUM      : 1;
+  __IO uint16_t RST        : 1;
+} stc_usb_udcc_field_t;
+
+typedef struct stc_usb_ep0c_field
+{
+  __IO uint16_t PKS00      : 1;
+  __IO uint16_t PKS01      : 1;
+  __IO uint16_t PKS02      : 1;
+  __IO uint16_t PKS03      : 1;
+  __IO uint16_t PKS04      : 1;
+  __IO uint16_t PKS05      : 1;
+  __IO uint16_t PKS06      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t STAL       : 1;
+} stc_usb_ep0c_field_t;
+
+typedef struct stc_usb_ep1c_field
+{
+  __IO uint16_t PKS10      : 1;
+  __IO uint16_t PKS11      : 1;
+  __IO uint16_t PKS12      : 1;
+  __IO uint16_t PKS13      : 1;
+  __IO uint16_t PKS14      : 1;
+  __IO uint16_t PKS15      : 1;
+  __IO uint16_t PKS16      : 1;
+  __IO uint16_t PKS17      : 1;
+  __IO uint16_t PKS18      : 1;
+  __IO uint16_t STAL       : 1;
+  __IO uint16_t NULE       : 1;
+  __IO uint16_t DMAE       : 1;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t TYPE0      : 1;
+  __IO uint16_t TYPE1      : 1;
+  __IO uint16_t EPEN       : 1;
+} stc_usb_ep1c_field_t;
+
+typedef struct stc_usb_ep2c_field
+{
+  __IO uint16_t PKS20      : 1;
+  __IO uint16_t PKS21      : 1;
+  __IO uint16_t PKS22      : 1;
+  __IO uint16_t PKS23      : 1;
+  __IO uint16_t PKS24      : 1;
+  __IO uint16_t PKS25      : 1;
+  __IO uint16_t PKS26      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t STAL       : 1;
+  __IO uint16_t NULE       : 1;
+  __IO uint16_t DMAE       : 1;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t TYPE0      : 1;
+  __IO uint16_t TYPE1      : 1;
+  __IO uint16_t EPEN       : 1;
+} stc_usb_ep2c_field_t;
+
+typedef struct stc_usb_ep3c_field
+{
+  __IO uint16_t PKS30      : 1;
+  __IO uint16_t PKS31      : 1;
+  __IO uint16_t PKS32      : 1;
+  __IO uint16_t PKS33      : 1;
+  __IO uint16_t PKS34      : 1;
+  __IO uint16_t PKS35      : 1;
+  __IO uint16_t PKS36      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t STAL       : 1;
+  __IO uint16_t NULE       : 1;
+  __IO uint16_t DMAE       : 1;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t TYPE0      : 1;
+  __IO uint16_t TYPE1      : 1;
+  __IO uint16_t EPEN       : 1;
+} stc_usb_ep3c_field_t;
+
+typedef struct stc_usb_ep4c_field
+{
+  __IO uint16_t PKS40      : 1;
+  __IO uint16_t PKS41      : 1;
+  __IO uint16_t PKS42      : 1;
+  __IO uint16_t PKS43      : 1;
+  __IO uint16_t PKS44      : 1;
+  __IO uint16_t PKS45      : 1;
+  __IO uint16_t PKS46      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t STAL       : 1;
+  __IO uint16_t NULE       : 1;
+  __IO uint16_t DMAE       : 1;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t TYPE0      : 1;
+  __IO uint16_t TYPE1      : 1;
+  __IO uint16_t EPEN       : 1;
+} stc_usb_ep4c_field_t;
+
+typedef struct stc_usb_ep5c_field
+{
+  __IO uint16_t PKS50      : 1;
+  __IO uint16_t PKS51      : 1;
+  __IO uint16_t PKS52      : 1;
+  __IO uint16_t PKS53      : 1;
+  __IO uint16_t PKS54      : 1;
+  __IO uint16_t PKS55      : 1;
+  __IO uint16_t PKS56      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t STAL       : 1;
+  __IO uint16_t NULE       : 1;
+  __IO uint16_t DMAE       : 1;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t TYPE0      : 1;
+  __IO uint16_t TYPE1      : 1;
+  __IO uint16_t EPEN       : 1;
+} stc_usb_ep5c_field_t;
+
+typedef struct stc_usb_tmsp_field
+{
+  __IO uint16_t TMSP0      : 1;
+  __IO uint16_t TMSP1      : 1;
+  __IO uint16_t TMSP2      : 1;
+  __IO uint16_t TMSP3      : 1;
+  __IO uint16_t TMSP4      : 1;
+  __IO uint16_t TMSP5      : 1;
+  __IO uint16_t TMSP6      : 1;
+  __IO uint16_t TMSP7      : 1;
+  __IO uint16_t TMSP8      : 1;
+  __IO uint16_t TMSP9      : 1;
+  __IO uint16_t TMSP10     : 1;
+} stc_usb_tmsp_field_t;
+
+typedef struct stc_usb_udcs_field
+{
+  __IO  uint8_t CONF       : 1;
+  __IO  uint8_t SETP       : 1;
+  __IO  uint8_t WKUP       : 1;
+  __IO  uint8_t BRST       : 1;
+  __IO  uint8_t SOF        : 1;
+  __IO  uint8_t SUSP       : 1;
+} stc_usb_udcs_field_t;
+
+typedef struct stc_usb_udcie_field
+{
+  __IO  uint8_t CONFIE     : 1;
+  __IO  uint8_t CONFN      : 1;
+  __IO  uint8_t WKUPIE     : 1;
+  __IO  uint8_t BRSTIE     : 1;
+  __IO  uint8_t SOFIE      : 1;
+  __IO  uint8_t SUSPIE     : 1;
+} stc_usb_udcie_field_t;
+
+typedef struct stc_usb_ep0is_field
+{
+       uint16_t RESERVED1  : 10;
+  __IO uint16_t DRQI       : 1;
+       uint16_t RESERVED2  : 3;
+  __IO uint16_t DRQIIE     : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep0is_field_t;
+
+typedef struct stc_usb_ep0os_field
+{
+  __IO uint16_t SIZE0      : 1;
+  __IO uint16_t SIZE1      : 1;
+  __IO uint16_t SIZE2      : 1;
+  __IO uint16_t SIZE3      : 1;
+  __IO uint16_t SIZE4      : 1;
+  __IO uint16_t SIZE5      : 1;
+  __IO uint16_t SIZE6      : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SPK        : 1;
+  __IO uint16_t DRQO       : 1;
+       uint16_t RESERVED2  : 2;
+  __IO uint16_t SPKIE      : 1;
+  __IO uint16_t DRQOIE     : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep0os_field_t;
+
+typedef struct stc_usb_ep1s_field
+{
+  __IO uint16_t SIZE10     : 1;
+  __IO uint16_t SIZE11     : 1;
+  __IO uint16_t SIZE12     : 1;
+  __IO uint16_t SIZE13     : 1;
+  __IO uint16_t SIZE14     : 1;
+  __IO uint16_t SIZE15     : 1;
+  __IO uint16_t SIZE16     : 1;
+  __IO uint16_t SIZE17     : 1;
+  __IO uint16_t SIZE18     : 1;
+  __IO uint16_t SPK        : 1;
+  __IO uint16_t DRQ        : 1;
+  __IO uint16_t BUSY       : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t SPKIE      : 1;
+  __IO uint16_t DRQIE      : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep1s_field_t;
+
+typedef struct stc_usb_ep2s_field
+{
+  __IO uint16_t SIZE20     : 1;
+  __IO uint16_t SIZE21     : 1;
+  __IO uint16_t SIZE22     : 1;
+  __IO uint16_t SIZE23     : 1;
+  __IO uint16_t SIZE24     : 1;
+  __IO uint16_t SIZE25     : 1;
+  __IO uint16_t SIZE26     : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SPK        : 1;
+  __IO uint16_t DRQ        : 1;
+  __IO uint16_t BUSY       : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t SPKIE      : 1;
+  __IO uint16_t DRQIE      : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep2s_field_t;
+
+typedef struct stc_usb_ep4s_field
+{
+  __IO uint16_t SIZE40     : 1;
+  __IO uint16_t SIZE41     : 1;
+  __IO uint16_t SIZE42     : 1;
+  __IO uint16_t SIZE43     : 1;
+  __IO uint16_t SIZE44     : 1;
+  __IO uint16_t SIZE45     : 1;
+  __IO uint16_t SIZE46     : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SPK        : 1;
+  __IO uint16_t DRQ        : 1;
+  __IO uint16_t BUSY       : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t SPKIE      : 1;
+  __IO uint16_t DRQIE      : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep4s_field_t;
+
+typedef struct stc_usb_ep5s_field
+{
+  __IO uint16_t SIZE50     : 1;
+  __IO uint16_t SIZE51     : 1;
+  __IO uint16_t SIZE52     : 1;
+  __IO uint16_t SIZE53     : 1;
+  __IO uint16_t SIZE54     : 1;
+  __IO uint16_t SIZE55     : 1;
+  __IO uint16_t SIZE56     : 1;
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t SPK        : 1;
+  __IO uint16_t DRQ        : 1;
+  __IO uint16_t BUSY       : 1;
+       uint16_t RESERVED2  : 1;
+  __IO uint16_t SPKIE      : 1;
+  __IO uint16_t DRQIE      : 1;
+  __IO uint16_t BFINI      : 1;
+} stc_usb_ep5s_field_t;
+
+/******************************************************************************
+ * DMAC_MODULE
+ ******************************************************************************/
+/* DMAC_MODULE register bit fields */
+typedef struct stc_dmac_dmacr_field
+{
+       uint32_t RESERVED1  : 24;
+  __IO uint32_t DH0        : 1;
+  __IO uint32_t DH1        : 1;
+  __IO uint32_t DH2        : 1;
+  __IO uint32_t DH3        : 1;
+  __IO uint32_t PR         : 1;
+       uint32_t RESERVED2  : 1;
+  __IO uint32_t DS         : 1;
+  __IO uint32_t DE         : 1;
+} stc_dmac_dmacr_field_t;
+
+typedef struct stc_dmac_dmaca0_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca0_field_t;
+
+typedef struct stc_dmac_dmacb0_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb0_field_t;
+
+typedef struct stc_dmac_dmaca1_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca1_field_t;
+
+typedef struct stc_dmac_dmacb1_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb1_field_t;
+
+typedef struct stc_dmac_dmaca2_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca2_field_t;
+
+typedef struct stc_dmac_dmacb2_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb2_field_t;
+
+typedef struct stc_dmac_dmaca3_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca3_field_t;
+
+typedef struct stc_dmac_dmacb3_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb3_field_t;
+
+typedef struct stc_dmac_dmaca4_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca4_field_t;
+
+typedef struct stc_dmac_dmacb4_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb4_field_t;
+
+typedef struct stc_dmac_dmaca5_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca5_field_t;
+
+typedef struct stc_dmac_dmacb5_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb5_field_t;
+
+typedef struct stc_dmac_dmaca6_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca6_field_t;
+
+typedef struct stc_dmac_dmacb6_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb6_field_t;
+
+typedef struct stc_dmac_dmaca7_field
+{
+  __IO uint32_t TC0        : 1;
+  __IO uint32_t TC1        : 1;
+  __IO uint32_t TC2        : 1;
+  __IO uint32_t TC3        : 1;
+  __IO uint32_t TC4        : 1;
+  __IO uint32_t TC5        : 1;
+  __IO uint32_t TC6        : 1;
+  __IO uint32_t TC7        : 1;
+  __IO uint32_t TC8        : 1;
+  __IO uint32_t TC9        : 1;
+  __IO uint32_t TC10       : 1;
+  __IO uint32_t TC11       : 1;
+  __IO uint32_t TC12       : 1;
+  __IO uint32_t TC13       : 1;
+  __IO uint32_t TC14       : 1;
+  __IO uint32_t TC15       : 1;
+  __IO uint32_t BC0        : 1;
+  __IO uint32_t BC1        : 1;
+  __IO uint32_t BC2        : 1;
+  __IO uint32_t BC3        : 1;
+       uint32_t RESERVED1  : 3;
+  __IO uint32_t IS0        : 1;
+  __IO uint32_t IS1        : 1;
+  __IO uint32_t IS2        : 1;
+  __IO uint32_t IS3        : 1;
+  __IO uint32_t IS4        : 1;
+  __IO uint32_t IS5        : 1;
+  __IO uint32_t ST         : 1;
+  __IO uint32_t PB         : 1;
+  __IO uint32_t EB         : 1;
+} stc_dmac_dmaca7_field_t;
+
+typedef struct stc_dmac_dmacb7_field
+{
+  __IO uint32_t EM         : 1;
+       uint32_t RESERVED1  : 15;
+  __IO uint32_t SS0        : 1;
+  __IO uint32_t SS1        : 1;
+  __IO uint32_t SS2        : 1;
+  __IO uint32_t CI         : 1;
+  __IO uint32_t EI         : 1;
+  __IO uint32_t RD         : 1;
+  __IO uint32_t RS         : 1;
+  __IO uint32_t RC         : 1;
+  __IO uint32_t FD         : 1;
+  __IO uint32_t FS         : 1;
+  __IO uint32_t TW0        : 1;
+  __IO uint32_t TW1        : 1;
+  __IO uint32_t MS0        : 1;
+  __IO uint32_t MS1        : 1;
+} stc_dmac_dmacb7_field_t;
+
+/******************************************************************************
+ * CAN_MODULE
+ ******************************************************************************/
+/* CAN_MODULE register bit fields */
+typedef struct stc_can_ctrlr_field
+{
+  __IO uint16_t INIT       : 1;
+  __IO uint16_t IE         : 1;
+  __IO uint16_t SIE        : 1;
+  __IO uint16_t EIE        : 1;
+       uint16_t RESERVED1  : 1;
+  __IO uint16_t DAR        : 1;
+  __IO uint16_t CCE        : 1;
+  __IO uint16_t TEST       : 1;
+} stc_can_ctrlr_field_t;
+
+typedef struct stc_can_statr_field
+{
+  __IO uint16_t LEC0       : 1;
+  __IO uint16_t LEC1       : 1;
+  __IO uint16_t LEC2       : 1;
+  __IO uint16_t TXOK       : 1;
+  __IO uint16_t RXOK       : 1;
+  __IO uint16_t EPASS      : 1;
+  __IO uint16_t EWARM      : 1;
+  __IO uint16_t BOFF       : 1;
+} stc_can_statr_field_t;
+
+typedef struct stc_can_errcnt_field
+{
+  __IO uint16_t TEC0       : 1;
+  __IO uint16_t TEC1       : 1;
+  __IO uint16_t TEC2       : 1;
+  __IO uint16_t TEC3       : 1;
+  __IO uint16_t TEC4       : 1;
+  __IO uint16_t TEC5       : 1;
+  __IO uint16_t TEC6       : 1;
+  __IO uint16_t TEC7       : 1;
+  __IO uint16_t REC0       : 1;
+  __IO uint16_t REC1       : 1;
+  __IO uint16_t REC2       : 1;
+  __IO uint16_t REC3       : 1;
+  __IO uint16_t REC4       : 1;
+  __IO uint16_t REC5       : 1;
+  __IO uint16_t REC6       : 1;
+  __IO uint16_t RP         : 1;
+} stc_can_errcnt_field_t;
+
+typedef struct stc_can_btr_field
+{
+  __IO uint16_t BRP0       : 1;
+  __IO uint16_t BRP1       : 1;
+  __IO uint16_t BRP2       : 1;
+  __IO uint16_t BRP3       : 1;
+  __IO uint16_t BRP4       : 1;
+  __IO uint16_t BRP5       : 1;
+  __IO uint16_t SJW0       : 1;
+  __IO uint16_t SJW1       : 1;
+  __IO uint16_t TSEG10     : 1;
+  __IO uint16_t TSEG11     : 1;
+  __IO uint16_t TSEG12     : 1;
+  __IO uint16_t TSEG13     : 1;
+  __IO uint16_t TSEG20     : 1;
+  __IO uint16_t TSEG21     : 1;
+  __IO uint16_t TSEG22     : 1;
+} stc_can_btr_field_t;
+
+typedef struct stc_can_intr_field
+{
+  __IO uint16_t INTID0     : 1;
+  __IO uint16_t INTID1     : 1;
+  __IO uint16_t INTID2     : 1;
+  __IO uint16_t INTID3     : 1;
+  __IO uint16_t INTID4     : 1;
+  __IO uint16_t INTID5     : 1;
+  __IO uint16_t INTID6     : 1;
+  __IO uint16_t INTID7     : 1;
+  __IO uint16_t INTID8     : 1;
+  __IO uint16_t INTID9     : 1;
+  __IO uint16_t INTID10    : 1;
+  __IO uint16_t INTID11    : 1;
+  __IO uint16_t INTID12    : 1;
+  __IO uint16_t INTID13    : 1;
+  __IO uint16_t INTID14    : 1;
+  __IO uint16_t INTID15    : 1;
+} stc_can_intr_field_t;
+
+typedef struct stc_can_testr_field
+{
+       uint16_t RESERVED1  : 2;
+  __IO uint16_t BASIC      : 1;
+  __IO uint16_t SILENT     : 1;
+  __IO uint16_t LBACK      : 1;
+  __IO uint16_t TX0        : 1;
+  __IO uint16_t TX1        : 1;
+  __IO uint16_t RX         : 1;
+} stc_can_testr_field_t;
+
+typedef struct stc_can_brper_field
+{
+  __IO uint16_t BRPE0      : 1;
+  __IO uint16_t BRPE1      : 1;
+  __IO uint16_t BRPE2      : 1;
+  __IO uint16_t BRPE3      : 1;
+} stc_can_brper_field_t;
+
+typedef struct stc_can_if1creq_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t BUSY       : 1;
+} stc_can_if1creq_field_t;
+
+typedef struct stc_can_if1cmsk_field
+{
+  __IO uint16_t DATAB      : 1;
+  __IO uint16_t DATAA      : 1;
+  __IO uint16_t NEWDAT     : 1;
+  __IO uint16_t CIP        : 1;
+  __IO uint16_t CONTROL    : 1;
+  __IO uint16_t ARB        : 1;
+  __IO uint16_t MASK       : 1;
+  __IO uint16_t WRRD       : 1;
+} stc_can_if1cmsk_field_t;
+
+typedef struct stc_can_if1msk_field
+{
+       uint32_t RESERVED1  : 30;
+  __IO uint32_t MDIR       : 1;
+  __IO uint32_t MXTD       : 1;
+} stc_can_if1msk_field_t;
+
+typedef struct stc_can_if1msk2_field
+{
+       uint16_t RESERVED1  : 14;
+  __IO uint16_t MDIR       : 1;
+  __IO uint16_t MXTD       : 1;
+} stc_can_if1msk2_field_t;
+
+typedef struct stc_can_if1arb_field
+{
+       uint32_t RESERVED1  : 29;
+  __IO uint32_t DIR        : 1;
+  __IO uint32_t XTD        : 1;
+  __IO uint32_t MSGVAL     : 1;
+} stc_can_if1arb_field_t;
+
+typedef struct stc_can_if1arb2_field
+{
+       uint16_t RESERVED1  : 13;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t XTD        : 1;
+  __IO uint16_t MSGVAL     : 1;
+} stc_can_if1arb2_field_t;
+
+typedef struct stc_can_if1mctr_field
+{
+  __IO uint16_t DLC0       : 1;
+  __IO uint16_t DLC1       : 1;
+  __IO uint16_t DLC2       : 1;
+  __IO uint16_t DLC3       : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t EOB        : 1;
+  __IO uint16_t TXRQST     : 1;
+  __IO uint16_t RMTEN      : 1;
+  __IO uint16_t RXIE       : 1;
+  __IO uint16_t TXIE       : 1;
+  __IO uint16_t UMASK      : 1;
+  __IO uint16_t INTPND     : 1;
+  __IO uint16_t MSGLST     : 1;
+  __IO uint16_t NEWDAT     : 1;
+} stc_can_if1mctr_field_t;
+
+typedef struct stc_can_if2creq_field
+{
+       uint16_t RESERVED1  : 15;
+  __IO uint16_t BUSY       : 1;
+} stc_can_if2creq_field_t;
+
+typedef struct stc_can_if2cmsk_field
+{
+  __IO uint16_t DATAB      : 1;
+  __IO uint16_t DATAA      : 1;
+  __IO uint16_t NEWDAT     : 1;
+  __IO uint16_t CIP        : 1;
+  __IO uint16_t CONTROL    : 1;
+  __IO uint16_t ARB        : 1;
+  __IO uint16_t MASK       : 1;
+  __IO uint16_t WRRD       : 1;
+} stc_can_if2cmsk_field_t;
+
+typedef struct stc_can_if2msk_field
+{
+       uint32_t RESERVED1  : 30;
+  __IO uint32_t MDIR       : 1;
+  __IO uint32_t MXTD       : 1;
+} stc_can_if2msk_field_t;
+
+typedef struct stc_can_if2msk2_field
+{
+       uint16_t RESERVED1  : 14;
+  __IO uint16_t MDIR       : 1;
+  __IO uint16_t MXTD       : 1;
+} stc_can_if2msk2_field_t;
+
+typedef struct stc_can_if2arb2_field
+{
+       uint16_t RESERVED1  : 13;
+  __IO uint16_t DIR        : 1;
+  __IO uint16_t XTD        : 1;
+  __IO uint16_t MSGVAL     : 1;
+} stc_can_if2arb2_field_t;
+
+typedef struct stc_can_if2mctr_field
+{
+  __IO uint16_t DLC0       : 1;
+  __IO uint16_t DLC1       : 1;
+  __IO uint16_t DLC2       : 1;
+  __IO uint16_t DLC3       : 1;
+       uint16_t RESERVED1  : 3;
+  __IO uint16_t EOB        : 1;
+  __IO uint16_t TXRQST     : 1;
+  __IO uint16_t RMTEN      : 1;
+  __IO uint16_t RXIE       : 1;
+  __IO uint16_t TXIE       : 1;
+  __IO uint16_t UMASK      : 1;
+  __IO uint16_t INTPND     : 1;
+  __IO uint16_t MSGLST     : 1;
+  __IO uint16_t NEWDAT     : 1;
+} stc_can_if2mctr_field_t;
+
+typedef struct stc_can_treqr_field
+{
+  __IO uint32_t TXRQST1    : 1;
+  __IO uint32_t TXRQST2    : 1;
+  __IO uint32_t TXRQST3    : 1;
+  __IO uint32_t TXRQST4    : 1;
+  __IO uint32_t TXRQST5    : 1;
+  __IO uint32_t TXRQST6    : 1;
+  __IO uint32_t TXRQST7    : 1;
+  __IO uint32_t TXRQST8    : 1;
+  __IO uint32_t TXRQST9    : 1;
+  __IO uint32_t TXRQST10   : 1;
+  __IO uint32_t TXRQST11   : 1;
+  __IO uint32_t TXRQST12   : 1;
+  __IO uint32_t TXRQST13   : 1;
+  __IO uint32_t TXRQST14   : 1;
+  __IO uint32_t TXRQST15   : 1;
+  __IO uint32_t TXRQST16   : 1;
+  __IO uint32_t TXRQST17   : 1;
+  __IO uint32_t TXRQST18   : 1;
+  __IO uint32_t TXRQST19   : 1;
+  __IO uint32_t TXRQST20   : 1;
+  __IO uint32_t TXRQST21   : 1;
+  __IO uint32_t TXRQST22   : 1;
+  __IO uint32_t TXRQST23   : 1;
+  __IO uint32_t TXRQST24   : 1;
+  __IO uint32_t TXRQST25   : 1;
+  __IO uint32_t TXRQST26   : 1;
+  __IO uint32_t TXRQST27   : 1;
+  __IO uint32_t TXRQST28   : 1;
+  __IO uint32_t TXRQST29   : 1;
+  __IO uint32_t TXRQST30   : 1;
+  __IO uint32_t TXRQST31   : 1;
+  __IO uint32_t TXRQST32   : 1;
+} stc_can_treqr_field_t;
+
+typedef struct stc_can_treqr1_field
+{
+  __IO uint16_t TXRQST1    : 1;
+  __IO uint16_t TXRQST2    : 1;
+  __IO uint16_t TXRQST3    : 1;
+  __IO uint16_t TXRQST4    : 1;
+  __IO uint16_t TXRQST5    : 1;
+  __IO uint16_t TXRQST6    : 1;
+  __IO uint16_t TXRQST7    : 1;
+  __IO uint16_t TXRQST8    : 1;
+  __IO uint16_t TXRQST9    : 1;
+  __IO uint16_t TXRQST10   : 1;
+  __IO uint16_t TXRQST11   : 1;
+  __IO uint16_t TXRQST12   : 1;
+  __IO uint16_t TXRQST13   : 1;
+  __IO uint16_t TXRQST14   : 1;
+  __IO uint16_t TXRQST15   : 1;
+  __IO uint16_t TXRQST16   : 1;
+} stc_can_treqr1_field_t;
+
+typedef struct stc_can_treqr2_field
+{
+  __IO uint16_t TXRQST17   : 1;
+  __IO uint16_t TXRQST18   : 1;
+  __IO uint16_t TXRQST19   : 1;
+  __IO uint16_t TXRQST20   : 1;
+  __IO uint16_t TXRQST21   : 1;
+  __IO uint16_t TXRQST22   : 1;
+  __IO uint16_t TXRQST23   : 1;
+  __IO uint16_t TXRQST24   : 1;
+  __IO uint16_t TXRQST25   : 1;
+  __IO uint16_t TXRQST26   : 1;
+  __IO uint16_t TXRQST27   : 1;
+  __IO uint16_t TXRQST28   : 1;
+  __IO uint16_t TXRQST29   : 1;
+  __IO uint16_t TXRQST30   : 1;
+  __IO uint16_t TXRQST31   : 1;
+  __IO uint16_t TXRQST32   : 1;
+} stc_can_treqr2_field_t;
+
+typedef struct stc_can_newdt_field
+{
+  __IO uint32_t NEWDAT1    : 1;
+  __IO uint32_t NEWDAT2    : 1;
+  __IO uint32_t NEWDAT3    : 1;
+  __IO uint32_t NEWDAT4    : 1;
+  __IO uint32_t NEWDAT5    : 1;
+  __IO uint32_t NEWDAT6    : 1;
+  __IO uint32_t NEWDAT7    : 1;
+  __IO uint32_t NEWDAT8    : 1;
+  __IO uint32_t NEWDAT9    : 1;
+  __IO uint32_t NEWDAT10   : 1;
+  __IO uint32_t NEWDAT11   : 1;
+  __IO uint32_t NEWDAT12   : 1;
+  __IO uint32_t NEWDAT13   : 1;
+  __IO uint32_t NEWDAT14   : 1;
+  __IO uint32_t NEWDAT15   : 1;
+  __IO uint32_t NEWDAT16   : 1;
+  __IO uint32_t NEWDAT17   : 1;
+  __IO uint32_t NEWDAT18   : 1;
+  __IO uint32_t NEWDAT19   : 1;
+  __IO uint32_t NEWDAT20   : 1;
+  __IO uint32_t NEWDAT21   : 1;
+  __IO uint32_t NEWDAT22   : 1;
+  __IO uint32_t NEWDAT23   : 1;
+  __IO uint32_t NEWDAT24   : 1;
+  __IO uint32_t NEWDAT25   : 1;
+  __IO uint32_t NEWDAT26   : 1;
+  __IO uint32_t NEWDAT27   : 1;
+  __IO uint32_t NEWDAT28   : 1;
+  __IO uint32_t NEWDAT29   : 1;
+  __IO uint32_t NEWDAT30   : 1;
+  __IO uint32_t NEWDAT31   : 1;
+  __IO uint32_t NEWDAT32   : 1;
+} stc_can_newdt_field_t;
+
+typedef struct stc_can_newdt1_field
+{
+  __IO uint16_t NEWDAT1    : 1;
+  __IO uint16_t NEWDAT2    : 1;
+  __IO uint16_t NEWDAT3    : 1;
+  __IO uint16_t NEWDAT4    : 1;
+  __IO uint16_t NEWDAT5    : 1;
+  __IO uint16_t NEWDAT6    : 1;
+  __IO uint16_t NEWDAT7    : 1;
+  __IO uint16_t NEWDAT8    : 1;
+  __IO uint16_t NEWDAT9    : 1;
+  __IO uint16_t NEWDAT10   : 1;
+  __IO uint16_t NEWDAT11   : 1;
+  __IO uint16_t NEWDAT12   : 1;
+  __IO uint16_t NEWDAT13   : 1;
+  __IO uint16_t NEWDAT14   : 1;
+  __IO uint16_t NEWDAT15   : 1;
+  __IO uint16_t NEWDAT16   : 1;
+} stc_can_newdt1_field_t;
+
+typedef struct stc_can_intpnd_field
+{
+  __IO uint32_t INTPND1    : 1;
+  __IO uint32_t INTPND2    : 1;
+  __IO uint32_t INTPND3    : 1;
+  __IO uint32_t INTPND4    : 1;
+  __IO uint32_t INTPND5    : 1;
+  __IO uint32_t INTPND6    : 1;
+  __IO uint32_t INTPND7    : 1;
+  __IO uint32_t INTPND8    : 1;
+  __IO uint32_t INTPND9    : 1;
+  __IO uint32_t INTPND10   : 1;
+  __IO uint32_t INTPND11   : 1;
+  __IO uint32_t INTPND12   : 1;
+  __IO uint32_t INTPND13   : 1;
+  __IO uint32_t INTPND14   : 1;
+  __IO uint32_t INTPND15   : 1;
+  __IO uint32_t INTPND16   : 1;
+  __IO uint32_t INTPND17   : 1;
+  __IO uint32_t INTPND18   : 1;
+  __IO uint32_t INTPND19   : 1;
+  __IO uint32_t INTPND20   : 1;
+  __IO uint32_t INTPND21   : 1;
+  __IO uint32_t INTPND22   : 1;
+  __IO uint32_t INTPND23   : 1;
+  __IO uint32_t INTPND24   : 1;
+  __IO uint32_t INTPND25   : 1;
+  __IO uint32_t INTPND26   : 1;
+  __IO uint32_t INTPND27   : 1;
+  __IO uint32_t INTPND28   : 1;
+  __IO uint32_t INTPND29   : 1;
+  __IO uint32_t INTPND30   : 1;
+  __IO uint32_t INTPND31   : 1;
+  __IO uint32_t INTPND32   : 1;
+} stc_can_intpnd_field_t;
+
+typedef struct stc_can_intpnd1_field
+{
+  __IO uint16_t INTPND1    : 1;
+  __IO uint16_t INTPND2    : 1;
+  __IO uint16_t INTPND3    : 1;
+  __IO uint16_t INTPND4    : 1;
+  __IO uint16_t INTPND5    : 1;
+  __IO uint16_t INTPND6    : 1;
+  __IO uint16_t INTPND7    : 1;
+  __IO uint16_t INTPND8    : 1;
+  __IO uint16_t INTPND9    : 1;
+  __IO uint16_t INTPND10   : 1;
+  __IO uint16_t INTPND11   : 1;
+  __IO uint16_t INTPND12   : 1;
+  __IO uint16_t INTPND13   : 1;
+  __IO uint16_t INTPND14   : 1;
+  __IO uint16_t INTPND15   : 1;
+  __IO uint16_t INTPND16   : 1;
+} stc_can_intpnd1_field_t;
+
+typedef struct stc_can_intpnd2_field
+{
+  __IO uint16_t INTPND17   : 1;
+  __IO uint16_t INTPND18   : 1;
+  __IO uint16_t INTPND19   : 1;
+  __IO uint16_t INTPND20   : 1;
+  __IO uint16_t INTPND21   : 1;
+  __IO uint16_t INTPND22   : 1;
+  __IO uint16_t INTPND23   : 1;
+  __IO uint16_t INTPND24   : 1;
+  __IO uint16_t INTPND25   : 1;
+  __IO uint16_t INTPND26   : 1;
+  __IO uint16_t INTPND27   : 1;
+  __IO uint16_t INTPND28   : 1;
+  __IO uint16_t INTPND29   : 1;
+  __IO uint16_t INTPND30   : 1;
+  __IO uint16_t INTPND31   : 1;
+  __IO uint16_t INTPND32   : 1;
+} stc_can_intpnd2_field_t;
+
+typedef struct stc_can_msgval_field
+{
+  __IO uint32_t MSGVAL1    : 1;
+  __IO uint32_t MSGVAL2    : 1;
+  __IO uint32_t MSGVAL3    : 1;
+  __IO uint32_t MSGVAL4    : 1;
+  __IO uint32_t MSGVAL5    : 1;
+  __IO uint32_t MSGVAL6    : 1;
+  __IO uint32_t MSGVAL7    : 1;
+  __IO uint32_t MSGVAL8    : 1;
+  __IO uint32_t MSGVAL9    : 1;
+  __IO uint32_t MSGVAL10   : 1;
+  __IO uint32_t MSGVAL11   : 1;
+  __IO uint32_t MSGVAL12   : 1;
+  __IO uint32_t MSGVAL13   : 1;
+  __IO uint32_t MSGVAL14   : 1;
+  __IO uint32_t MSGVAL15   : 1;
+  __IO uint32_t MSGVAL16   : 1;
+  __IO uint32_t MSGVAL17   : 1;
+  __IO uint32_t MSGVAL18   : 1;
+  __IO uint32_t MSGVAL19   : 1;
+  __IO uint32_t MSGVAL20   : 1;
+  __IO uint32_t MSGVAL21   : 1;
+  __IO uint32_t MSGVAL22   : 1;
+  __IO uint32_t MSGVAL23   : 1;
+  __IO uint32_t MSGVAL24   : 1;
+  __IO uint32_t MSGVAL25   : 1;
+  __IO uint32_t MSGVAL26   : 1;
+  __IO uint32_t MSGVAL27   : 1;
+  __IO uint32_t MSGVAL28   : 1;
+  __IO uint32_t MSGVAL29   : 1;
+  __IO uint32_t MSGVAL30   : 1;
+  __IO uint32_t MSGVAL31   : 1;
+  __IO uint32_t MSGVAL32   : 1;
+} stc_can_msgval_field_t;
+
+typedef struct stc_can_msgval1_field
+{
+  __IO uint16_t MSGVAL1    : 1;
+  __IO uint16_t MSGVAL2    : 1;
+  __IO uint16_t MSGVAL3    : 1;
+  __IO uint16_t MSGVAL4    : 1;
+  __IO uint16_t MSGVAL5    : 1;
+  __IO uint16_t MSGVAL6    : 1;
+  __IO uint16_t MSGVAL7    : 1;
+  __IO uint16_t MSGVAL8    : 1;
+  __IO uint16_t MSGVAL9    : 1;
+  __IO uint16_t MSGVAL10   : 1;
+  __IO uint16_t MSGVAL11   : 1;
+  __IO uint16_t MSGVAL12   : 1;
+  __IO uint16_t MSGVAL13   : 1;
+  __IO uint16_t MSGVAL14   : 1;
+  __IO uint16_t MSGVAL15   : 1;
+  __IO uint16_t MSGVAL16   : 1;
+} stc_can_msgval1_field_t;
+
+typedef struct stc_can_msgval2_field
+{
+  __IO uint16_t MSGVAL17   : 1;
+  __IO uint16_t MSGVAL18   : 1;
+  __IO uint16_t MSGVAL19   : 1;
+  __IO uint16_t MSGVAL20   : 1;
+  __IO uint16_t MSGVAL21   : 1;
+  __IO uint16_t MSGVAL22   : 1;
+  __IO uint16_t MSGVAL23   : 1;
+  __IO uint16_t MSGVAL24   : 1;
+  __IO uint16_t MSGVAL25   : 1;
+  __IO uint16_t MSGVAL26   : 1;
+  __IO uint16_t MSGVAL27   : 1;
+  __IO uint16_t MSGVAL28   : 1;
+  __IO uint16_t MSGVAL29   : 1;
+  __IO uint16_t MSGVAL30   : 1;
+  __IO uint16_t MSGVAL31   : 1;
+  __IO uint16_t MSGVAL32   : 1;
+} stc_can_msgval2_field_t;
+
+
+/******************************************************************************
+ * Peripheral register structures
+ ******************************************************************************/
+
+/******************************************************************************
  * Flash_IF_MODULE
  ******************************************************************************/
 /* Flash interface registers */
 typedef struct
 {
-  __IO uint32_t FASZR;
-  __IO uint32_t FRWTR;
-  __IO uint32_t FSTR;
+  union {
+    __IO uint32_t FASZR;
+    stc_flash_if_faszr_field_t FASZR_f;
+  };
+  union {
+    __IO uint32_t FRWTR;
+    stc_flash_if_frwtr_field_t FRWTR_f;
+  };
+  union {
+    __IO uint32_t FSTR;
+    stc_flash_if_fstr_field_t FSTR_f;
+  };
         uint8_t RESERVED0[4];
-  __IO uint32_t FSYNDN;
+  union {
+    __IO uint32_t FSYNDN;
+    stc_flash_if_fsyndn_field_t FSYNDN_f;
+  };
         uint8_t RESERVED1[236];
-  __IO uint32_t CRTRMM;
-}FM3_FIF_TypeDef;
+  union {
+    __IO uint32_t CRTRMM;
+    stc_flash_if_crtrmm_field_t CRTRMM_f;
+  };
+}FM3_FLASH_IF_TypeDef;
 
 /******************************************************************************
  * Clock_Reset_MODULE
@@ -160,36 +6532,81 @@ typedef struct
 /* Clock and reset registers */
 typedef struct
 {
-  __IO  uint8_t SCM_CTL;
+  union {
+    __IO  uint8_t SCM_CTL;
+    stc_crg_scm_ctl_field_t SCM_CTL_f;
+  };
         uint8_t RESERVED0[3];
-  __IO  uint8_t SCM_STR;
+  union {
+    __IO  uint8_t SCM_STR;
+    stc_crg_scm_str_field_t SCM_STR_f;
+  };
         uint8_t RESERVED1[3];
   __IO uint32_t STB_CTL;
-  __IO uint16_t RST_STR;
+  union {
+    __IO uint16_t RST_STR;
+    stc_crg_rst_str_field_t RST_STR_f;
+  };
         uint8_t RESERVED2[2];
-  __IO  uint8_t BSC_PSR;
+  union {
+    __IO  uint8_t BSC_PSR;
+    stc_crg_bsc_psr_field_t BSC_PSR_f;
+  };
         uint8_t RESERVED3[3];
-  __IO  uint8_t APBC0_PSR;
+  union {
+    __IO  uint8_t APBC0_PSR;
+    stc_crg_apbc0_psr_field_t APBC0_PSR_f;
+  };
         uint8_t RESERVED4[3];
-  __IO  uint8_t APBC1_PSR;
+  union {
+    __IO  uint8_t APBC1_PSR;
+    stc_crg_apbc1_psr_field_t APBC1_PSR_f;
+  };
         uint8_t RESERVED5[3];
-  __IO  uint8_t APBC2_PSR;
+  union {
+    __IO  uint8_t APBC2_PSR;
+    stc_crg_apbc2_psr_field_t APBC2_PSR_f;
+  };
         uint8_t RESERVED6[3];
-  __IO  uint8_t SWC_PSR;
+  union {
+    __IO  uint8_t SWC_PSR;
+    stc_crg_swc_psr_field_t SWC_PSR_f;
+  };
         uint8_t RESERVED7[7];
-  __IO  uint8_t TTC_PSR;
+  union {
+    __IO  uint8_t TTC_PSR;
+    stc_crg_ttc_psr_field_t TTC_PSR_f;
+  };
         uint8_t RESERVED8[7];
-  __IO  uint8_t CSW_TMR;
+  union {
+    __IO  uint8_t CSW_TMR;
+    stc_crg_csw_tmr_field_t CSW_TMR_f;
+  };
         uint8_t RESERVED9[3];
-  __IO  uint8_t PSW_TMR;
+  union {
+    __IO  uint8_t PSW_TMR;
+    stc_crg_psw_tmr_field_t PSW_TMR_f;
+  };
         uint8_t RESERVED10[3];
-  __IO  uint8_t PLL_CTL1;
+  union {
+    __IO  uint8_t PLL_CTL1;
+    stc_crg_pll_ctl1_field_t PLL_CTL1_f;
+  };
         uint8_t RESERVED11[3];
-  __IO  uint8_t PLL_CTL2;
+  union {
+    __IO  uint8_t PLL_CTL2;
+    stc_crg_pll_ctl2_field_t PLL_CTL2_f;
+  };
         uint8_t RESERVED12[3];
-  __IO uint16_t CSV_CTL;
+  union {
+    __IO uint16_t CSV_CTL;
+    stc_crg_csv_ctl_field_t CSV_CTL_f;
+  };
         uint8_t RESERVED13[2];
-  __IO  uint8_t CSV_STR;
+  union {
+    __IO  uint8_t CSV_STR;
+    stc_crg_csv_str_field_t CSV_STR_f;
+  };
         uint8_t RESERVED14[3];
   __IO uint16_t FCSWH_CTL;
         uint8_t RESERVED15[2];
@@ -197,13 +6614,25 @@ typedef struct
         uint8_t RESERVED16[2];
   __IO uint16_t FCSWD_CTL;
         uint8_t RESERVED17[2];
-  __IO  uint8_t DBWDT_CTL;
+  union {
+    __IO  uint8_t DBWDT_CTL;
+    stc_crg_dbwdt_ctl_field_t DBWDT_CTL_f;
+  };
         uint8_t RESERVED18[11];
-  __IO  uint8_t INT_ENR;
+  union {
+    __IO  uint8_t INT_ENR;
+    stc_crg_int_enr_field_t INT_ENR_f;
+  };
         uint8_t RESERVED19[3];
-  __IO  uint8_t INT_STR;
+  union {
+    __IO  uint8_t INT_STR;
+    stc_crg_int_str_field_t INT_STR_f;
+  };
         uint8_t RESERVED20[3];
-  __IO  uint8_t INT_CLR;
+  union {
+    __IO  uint8_t INT_CLR;
+    stc_crg_int_clr_field_t INT_CLR_f;
+  };
 }FM3_CRG_TypeDef;
 
 /******************************************************************************
@@ -214,11 +6643,17 @@ typedef struct
 {
   __IO uint32_t WDG_LDR;
   __IO uint32_t WDG_VLR;
-  __IO  uint8_t WDG_CTL;
+  union {
+    __IO  uint8_t WDG_CTL;
+    stc_hwwdt_wdg_ctl_field_t WDG_CTL_f;
+  };
         uint8_t RESERVED0[3];
   __IO  uint8_t WDG_ICL;
         uint8_t RESERVED1[3];
-  __IO  uint8_t WDG_RIS;
+  union {
+    __IO  uint8_t WDG_RIS;
+    stc_hwwdt_wdg_ris_field_t WDG_RIS_f;
+  };
         uint8_t RESERVED2[3055];
   __IO uint32_t WDG_LCK;
 }FM3_HWWDT_TypeDef;
@@ -231,10 +6666,16 @@ typedef struct
 {
   __IO uint32_t WDOGLOAD;
   __IO uint32_t WDOGVALUE;
-  __IO  uint8_t WDOGCONTROL;
+  union {
+    __IO  uint8_t WDOGCONTROL;
+    stc_swwdt_wdogcontrol_field_t WDOGCONTROL_f;
+  };
         uint8_t RESERVED0[3];
   __IO uint32_t WDOGINTCLR;
-  __IO  uint8_t WDOGRIS;
+  union {
+    __IO  uint8_t WDOGRIS;
+    stc_swwdt_wdogris_field_t WDOGRIS_f;
+  };
         uint8_t RESERVED1[3055];
   __IO uint32_t WDOGLOCK;
 }FM3_SWWDT_TypeDef;
@@ -247,18 +6688,36 @@ typedef struct
 {
   __IO uint32_t TIMER1LOAD;
   __IO uint32_t TIMER1VALUE;
-  __IO uint32_t TIMER1CONTROL;
+  union {
+    __IO uint32_t TIMER1CONTROL;
+    stc_dtim_timer1control_field_t TIMER1CONTROL_f;
+  };
   __IO uint32_t TIMER1INTCLR;
-  __IO uint32_t TIMER1RIS;
-  __IO uint32_t TIMER1MIS;
+  union {
+    __IO uint32_t TIMER1RIS;
+    stc_dtim_timer1ris_field_t TIMER1RIS_f;
+  };
+  union {
+    __IO uint32_t TIMER1MIS;
+    stc_dtim_timer1mis_field_t TIMER1MIS_f;
+  };
   __IO uint32_t TIMER1BGLOAD;
         uint8_t RESERVED0[4];
   __IO uint32_t TIMER2LOAD;
   __IO uint32_t TIMER2VALUE;
-  __IO uint32_t TIMER2CONTROL;
+  union {
+    __IO uint32_t TIMER2CONTROL;
+    stc_dtim_timer2control_field_t TIMER2CONTROL_f;
+  };
   __IO uint32_t TIMER2INTCLR;
-  __IO uint32_t TIMER2RIS;
-  __IO uint32_t TIMER2MIS;
+  union {
+    __IO uint32_t TIMER2RIS;
+    stc_dtim_timer2ris_field_t TIMER2RIS_f;
+  };
+  union {
+    __IO uint32_t TIMER2MIS;
+    stc_dtim_timer2mis_field_t TIMER2MIS_f;
+  };
   __IO uint32_t TIMER2BGLOAD;
 }FM3_DTIM_TypeDef;
 
@@ -273,25 +6732,43 @@ typedef struct
         uint8_t RESERVED1[2];
   __IO uint16_t TCDT0;
         uint8_t RESERVED2[2];
-  __IO uint16_t TCSA0;
+  union {
+    __IO uint16_t TCSA0;
+    stc_mft_frt_tcsa0_field_t TCSA0_f;
+  };
         uint8_t RESERVED3[2];
-  __IO uint16_t TCSB0;
+  union {
+    __IO uint16_t TCSB0;
+    stc_mft_frt_tcsb0_field_t TCSB0_f;
+  };
         uint8_t RESERVED4[2];
   __IO uint16_t TCCP1;
         uint8_t RESERVED5[2];
   __IO uint16_t TCDT1;
         uint8_t RESERVED6[2];
-  __IO uint16_t TCSA1;
+  union {
+    __IO uint16_t TCSA1;
+    stc_mft_frt_tcsa1_field_t TCSA1_f;
+  };
         uint8_t RESERVED7[2];
-  __IO uint16_t TCSB1;
+  union {
+    __IO uint16_t TCSB1;
+    stc_mft_frt_tcsb1_field_t TCSB1_f;
+  };
         uint8_t RESERVED8[2];
   __IO uint16_t TCCP2;
         uint8_t RESERVED9[2];
   __IO uint16_t TCDT2;
         uint8_t RESERVED10[2];
-  __IO uint16_t TCSA2;
+  union {
+    __IO uint16_t TCSA2;
+    stc_mft_frt_tcsa2_field_t TCSA2_f;
+  };
         uint8_t RESERVED11[2];
-  __IO uint16_t TCSB2;
+  union {
+    __IO uint16_t TCSB2;
+    stc_mft_frt_tcsb2_field_t TCSB2_f;
+  };
 }FM3_MFT_FRT_TypeDef;
 
 /******************************************************************************
@@ -312,21 +6789,51 @@ typedef struct
         uint8_t RESERVED4[2];
   __IO uint16_t OCCP5;
         uint8_t RESERVED5[2];
-  __IO  uint8_t OCSA10;
-  __IO  uint8_t OCSB10;
+  union {
+    __IO  uint8_t OCSA10;
+    stc_mft_ocu_ocsa10_field_t OCSA10_f;
+  };
+  union {
+    __IO  uint8_t OCSB10;
+    stc_mft_ocu_ocsb10_field_t OCSB10_f;
+  };
         uint8_t RESERVED6[2];
-  __IO  uint8_t OCSA32;
-  __IO  uint8_t OCSB32;
+  union {
+    __IO  uint8_t OCSA32;
+    stc_mft_ocu_ocsa32_field_t OCSA32_f;
+  };
+  union {
+    __IO  uint8_t OCSB32;
+    stc_mft_ocu_ocsb32_field_t OCSB32_f;
+  };
         uint8_t RESERVED7[2];
-  __IO  uint8_t OCSA54;
-  __IO  uint8_t OCSB54;
+  union {
+    __IO  uint8_t OCSA54;
+    stc_mft_ocu_ocsa54_field_t OCSA54_f;
+  };
+  union {
+    __IO  uint8_t OCSB54;
+    stc_mft_ocu_ocsb54_field_t OCSB54_f;
+  };
         uint8_t RESERVED8[3];
-  __IO  uint8_t OCSC;
+  union {
+    __IO  uint8_t OCSC;
+    stc_mft_ocu_ocsc_field_t OCSC_f;
+  };
         uint8_t RESERVED9[50];
-  __IO  uint8_t OCFS10;
-  __IO  uint8_t OCFS32;
+  union {
+    __IO  uint8_t OCFS10;
+    stc_mft_ocu_ocfs10_field_t OCFS10_f;
+  };
+  union {
+    __IO  uint8_t OCFS32;
+    stc_mft_ocu_ocfs32_field_t OCFS32_f;
+  };
         uint8_t RESERVED10[2];
-  __IO  uint8_t OCFS54;
+  union {
+    __IO  uint8_t OCFS54;
+    stc_mft_ocu_ocfs54_field_t OCFS54_f;
+  };
 }FM3_MFT_OCU_TypeDef;
 
 /******************************************************************************
@@ -342,15 +6849,30 @@ typedef struct
         uint8_t RESERVED2[2];
   __IO uint16_t WFTM54;
         uint8_t RESERVED3[2];
-  __IO uint16_t WFSA10;
+  union {
+    __IO uint16_t WFSA10;
+    stc_mft_wfg_wfsa10_field_t WFSA10_f;
+  };
         uint8_t RESERVED4[2];
-  __IO uint16_t WFSA32;
+  union {
+    __IO uint16_t WFSA32;
+    stc_mft_wfg_wfsa32_field_t WFSA32_f;
+  };
         uint8_t RESERVED5[2];
-  __IO uint16_t WFSA54;
+  union {
+    __IO uint16_t WFSA54;
+    stc_mft_wfg_wfsa54_field_t WFSA54_f;
+  };
         uint8_t RESERVED6[2];
-  __IO uint16_t WFIR;
+  union {
+    __IO uint16_t WFIR;
+    stc_mft_wfg_wfir_field_t WFIR_f;
+  };
         uint8_t RESERVED7[2];
-  __IO uint16_t NZCL;
+  union {
+    __IO uint16_t NZCL;
+    stc_mft_wfg_nzcl_field_t NZCL_f;
+  };
 }FM3_MFT_WFG_TypeDef;
 
 /******************************************************************************
@@ -360,8 +6882,14 @@ typedef struct
 typedef struct
 {
         uint8_t RESERVED0[96];
-  __IO  uint8_t ICFS10;
-  __IO  uint8_t ICFS32;
+  union {
+    __IO  uint8_t ICFS10;
+    stc_mft_icu_icfs10_field_t ICFS10_f;
+  };
+  union {
+    __IO  uint8_t ICFS32;
+    stc_mft_icu_icfs32_field_t ICFS32_f;
+  };
         uint8_t RESERVED1[6];
   __IO uint16_t ICCP0;
         uint8_t RESERVED2[2];
@@ -371,11 +6899,23 @@ typedef struct
         uint8_t RESERVED4[2];
   __IO uint16_t ICCP3;
         uint8_t RESERVED5[2];
-  __IO  uint8_t ICSA10;
-  __IO  uint8_t ICSB10;
+  union {
+    __IO  uint8_t ICSA10;
+    stc_mft_icu_icsa10_field_t ICSA10_f;
+  };
+  union {
+    __IO  uint8_t ICSB10;
+    stc_mft_icu_icsb10_field_t ICSB10_f;
+  };
         uint8_t RESERVED6[2];
-  __IO  uint8_t ICSA32;
-  __IO  uint8_t ICSB32;
+  union {
+    __IO  uint8_t ICSA32;
+    stc_mft_icu_icsa32_field_t ICSA32_f;
+  };
+  union {
+    __IO  uint8_t ICSB32;
+    stc_mft_icu_icsb32_field_t ICSB32_f;
+  };
 }FM3_MFT_ICU_TypeDef;
 
 /******************************************************************************
@@ -397,11 +6937,20 @@ typedef struct
         uint8_t RESERVED5[2];
   __IO uint16_t ACCPDN2;
         uint8_t RESERVED6[2];
-  __IO  uint8_t ACSB;
+  union {
+    __IO  uint8_t ACSB;
+    stc_mft_adcmp_acsb_field_t ACSB_f;
+  };
         uint8_t RESERVED7[3];
-  __IO uint16_t ACSA;
+  union {
+    __IO uint16_t ACSA;
+    stc_mft_adcmp_acsa_field_t ACSA_f;
+  };
         uint8_t RESERVED8[2];
-  __IO uint16_t ATSA;
+  union {
+    __IO uint16_t ATSA;
+    stc_mft_adcmp_atsa_field_t ATSA_f;
+  };
 }FM3_MFT_ADCMP_TypeDef;
 
 /******************************************************************************
@@ -411,7 +6960,10 @@ typedef struct
 typedef struct
 {
         uint8_t RESERVED0;
-  __IO  uint8_t TTCR0;
+  union {
+    __IO  uint8_t TTCR0;
+    stc_mft_ppg_ttcr0_field_t TTCR0_f;
+  };
         uint8_t RESERVED1[7];
   __IO  uint8_t COMP0;
         uint8_t RESERVED2[2];
@@ -421,7 +6973,10 @@ typedef struct
         uint8_t RESERVED4[2];
   __IO  uint8_t COMP6;
         uint8_t RESERVED5[12];
-  __IO  uint8_t TTCR1;
+  union {
+    __IO  uint8_t TTCR1;
+    stc_mft_ppg_ttcr1_field_t TTCR1_f;
+  };
         uint8_t RESERVED6[7];
   __IO  uint8_t COMP1;
         uint8_t RESERVED7[2];
@@ -431,15 +6986,33 @@ typedef struct
         uint8_t RESERVED9[2];
   __IO  uint8_t COMP7;
         uint8_t RESERVED10[203];
-  __IO uint16_t TRG;
+  union {
+    __IO uint16_t TRG;
+    stc_mft_ppg_trg_field_t TRG_f;
+  };
         uint8_t RESERVED11[2];
-  __IO uint16_t REVC;
+  union {
+    __IO uint16_t REVC;
+    stc_mft_ppg_revc_field_t REVC_f;
+  };
         uint8_t RESERVED12[250];
-  __IO  uint8_t PPGC1;
-  __IO  uint8_t PPGC0;
+  union {
+    __IO  uint8_t PPGC1;
+    stc_mft_ppg_ppgc1_field_t PPGC1_f;
+  };
+  union {
+    __IO  uint8_t PPGC0;
+    stc_mft_ppg_ppgc0_field_t PPGC0_f;
+  };
         uint8_t RESERVED13[2];
-  __IO  uint8_t PPGC3;
-  __IO  uint8_t PPGC2;
+  union {
+    __IO  uint8_t PPGC3;
+    stc_mft_ppg_ppgc3_field_t PPGC3_f;
+  };
+  union {
+    __IO  uint8_t PPGC2;
+    stc_mft_ppg_ppgc2_field_t PPGC2_f;
+  };
         uint8_t RESERVED14[2];
   union {
     __IO uint16_t PRL0;
@@ -473,13 +7046,28 @@ typedef struct
     };
   };
         uint8_t RESERVED18[2];
-  __IO  uint8_t GATEC0;
+  union {
+    __IO  uint8_t GATEC0;
+    stc_mft_ppg_gatec0_field_t GATEC0_f;
+  };
         uint8_t RESERVED19[39];
-  __IO  uint8_t PPGC5;
-  __IO  uint8_t PPGC4;
+  union {
+    __IO  uint8_t PPGC5;
+    stc_mft_ppg_ppgc5_field_t PPGC5_f;
+  };
+  union {
+    __IO  uint8_t PPGC4;
+    stc_mft_ppg_ppgc4_field_t PPGC4_f;
+  };
         uint8_t RESERVED20[2];
-  __IO  uint8_t PPGC7;
-  __IO  uint8_t PPGC6;
+  union {
+    __IO  uint8_t PPGC7;
+    stc_mft_ppg_ppgc7_field_t PPGC7_f;
+  };
+  union {
+    __IO  uint8_t PPGC6;
+    stc_mft_ppg_ppgc6_field_t PPGC6_f;
+  };
         uint8_t RESERVED21[2];
   union {
     __IO uint16_t PRL4;
@@ -513,13 +7101,28 @@ typedef struct
     };
   };
         uint8_t RESERVED25[2];
-  __IO  uint8_t GATEC4;
+  union {
+    __IO  uint8_t GATEC4;
+    stc_mft_ppg_gatec4_field_t GATEC4_f;
+  };
         uint8_t RESERVED26[39];
-  __IO  uint8_t PPGC9;
-  __IO  uint8_t PPGC8;
+  union {
+    __IO  uint8_t PPGC9;
+    stc_mft_ppg_ppgc9_field_t PPGC9_f;
+  };
+  union {
+    __IO  uint8_t PPGC8;
+    stc_mft_ppg_ppgc8_field_t PPGC8_f;
+  };
         uint8_t RESERVED27[2];
-  __IO  uint8_t PPGC11;
-  __IO  uint8_t PPGC10;
+  union {
+    __IO  uint8_t PPGC11;
+    stc_mft_ppg_ppgc11_field_t PPGC11_f;
+  };
+  union {
+    __IO  uint8_t PPGC10;
+    stc_mft_ppg_ppgc10_field_t PPGC10_f;
+  };
         uint8_t RESERVED28[2];
   union {
     __IO uint16_t PRL8;
@@ -553,13 +7156,28 @@ typedef struct
     };
   };
         uint8_t RESERVED32[2];
-  __IO  uint8_t GATEC8;
+  union {
+    __IO  uint8_t GATEC8;
+    stc_mft_ppg_gatec8_field_t GATEC8_f;
+  };
         uint8_t RESERVED33[39];
-  __IO  uint8_t PPGC13;
-  __IO  uint8_t PPGC12;
+  union {
+    __IO  uint8_t PPGC13;
+    stc_mft_ppg_ppgc13_field_t PPGC13_f;
+  };
+  union {
+    __IO  uint8_t PPGC12;
+    stc_mft_ppg_ppgc12_field_t PPGC12_f;
+  };
         uint8_t RESERVED34[2];
-  __IO  uint8_t PPGC15;
-  __IO  uint8_t PPGC14;
+  union {
+    __IO  uint8_t PPGC15;
+    stc_mft_ppg_ppgc15_field_t PPGC15_f;
+  };
+  union {
+    __IO  uint8_t PPGC14;
+    stc_mft_ppg_ppgc14_field_t PPGC14_f;
+  };
         uint8_t RESERVED35[2];
   union {
     __IO uint16_t PRL12;
@@ -593,7 +7211,10 @@ typedef struct
     };
   };
         uint8_t RESERVED39[2];
-  __IO  uint8_t GATEC12;
+  union {
+    __IO  uint8_t GATEC12;
+    stc_mft_ppg_gatec12_field_t GATEC12_f;
+  };
 }FM3_MFT_PPG_TypeDef;
 
 /******************************************************************************
@@ -608,10 +7229,19 @@ typedef struct
         uint8_t RESERVED1[2];
   __IO uint16_t TMR;
         uint8_t RESERVED2[2];
-  __IO uint16_t TMCR;
+  union {
+    __IO uint16_t TMCR;
+    stc_bt_ppg_tmcr_field_t TMCR_f;
+  };
         uint8_t RESERVED3[2];
-  __IO  uint8_t STC;
-  __IO  uint8_t TMCR2;
+  union {
+    __IO  uint8_t STC;
+    stc_bt_ppg_stc_field_t STC_f;
+  };
+  union {
+    __IO  uint8_t TMCR2;
+    stc_bt_ppg_tmcr2_field_t TMCR2_f;
+  };
 }FM3_BT_PPG_TypeDef;
 
 /******************************************************************************
@@ -626,10 +7256,19 @@ typedef struct
         uint8_t RESERVED1[2];
   __IO uint16_t TMR;
         uint8_t RESERVED2[2];
-  __IO uint16_t TMCR;
+  union {
+    __IO uint16_t TMCR;
+    stc_bt_pwm_tmcr_field_t TMCR_f;
+  };
         uint8_t RESERVED3[2];
-  __IO  uint8_t STC;
-  __IO  uint8_t TMCR2;
+  union {
+    __IO  uint8_t STC;
+    stc_bt_pwm_stc_field_t STC_f;
+  };
+  union {
+    __IO  uint8_t TMCR2;
+    stc_bt_pwm_tmcr2_field_t TMCR2_f;
+  };
 }FM3_BT_PWM_TypeDef;
 
 /******************************************************************************
@@ -642,10 +7281,19 @@ typedef struct
         uint8_t RESERVED0[6];
   __IO uint16_t TMR;
         uint8_t RESERVED1[2];
-  __IO uint16_t TMCR;
+  union {
+    __IO uint16_t TMCR;
+    stc_bt_rt_tmcr_field_t TMCR_f;
+  };
         uint8_t RESERVED2[2];
-  __IO  uint8_t STC;
-  __IO  uint8_t TMCR2;
+  union {
+    __IO  uint8_t STC;
+    stc_bt_rt_stc_field_t STC_f;
+  };
+  union {
+    __IO  uint8_t TMCR2;
+    stc_bt_rt_tmcr2_field_t TMCR2_f;
+  };
 }FM3_BT_RT_TypeDef;
 
 /******************************************************************************
@@ -657,10 +7305,19 @@ typedef struct
         uint8_t RESERVED0[4];
   __IO uint16_t DTBF;
         uint8_t RESERVED1[6];
-  __IO uint16_t TMCR;
+  union {
+    __IO uint16_t TMCR;
+    stc_bt_pwc_tmcr_field_t TMCR_f;
+  };
         uint8_t RESERVED2[2];
-  __IO  uint8_t STC;
-  __IO  uint8_t TMCR2;
+  union {
+    __IO  uint8_t STC;
+    stc_bt_pwc_stc_field_t STC_f;
+  };
+  union {
+    __IO  uint8_t TMCR2;
+    stc_bt_pwc_tmcr2_field_t TMCR2_f;
+  };
 }FM3_BT_PWC_TypeDef;
 
 /******************************************************************************
@@ -670,7 +7327,10 @@ typedef struct
 typedef struct
 {
         uint8_t RESERVED0;
-  __IO  uint8_t BTSEL0123;
+  union {
+    __IO  uint8_t BTSEL0123;
+    stc_btiosel03_btsel0123_field_t BTSEL0123_f;
+  };
 }FM3_BTIOSEL03_TypeDef;
 
 /******************************************************************************
@@ -680,7 +7340,10 @@ typedef struct
 typedef struct
 {
         uint8_t RESERVED0;
-  __IO  uint8_t BTSEL4567;
+  union {
+    __IO  uint8_t BTSEL4567;
+    stc_btiosel47_btsel4567_field_t BTSEL4567_f;
+  };
 }FM3_BTIOSEL47_TypeDef;
 
 /******************************************************************************
@@ -689,7 +7352,10 @@ typedef struct
 /* Software based Simulation Startup (Base Timer) register */
 typedef struct
 {
-  __IO uint16_t BTSSSR;
+  union {
+    __IO uint16_t BTSSSR;
+    stc_sbssr_btsssr_field_t BTSSSR_f;
+  };
 }FM3_SBSSR_TypeDef;
 
 /******************************************************************************
@@ -709,22 +7375,43 @@ typedef struct
   __IO uint16_t QMPR;
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t QICR;
+    union {
+      __IO uint16_t QICR;
+      stc_qprc_qicr_field_t QICR_f;
+    };
     struct {
-      __IO  uint8_t QICRL;
-      __IO  uint8_t QICRH;
+      union {
+        __IO  uint8_t QICRL;
+        stc_qprc_qicrl_field_t QICRL_f;
+      };
+      union {
+        __IO  uint8_t QICRH;
+        stc_qprc_qicrh_field_t QICRH_f;
+      };
     };
   };
         uint8_t RESERVED5[2];
   union {
-    __IO uint16_t QCR;
+    union {
+      __IO uint16_t QCR;
+      stc_qprc_qcr_field_t QCR_f;
+    };
     struct {
-      __IO  uint8_t QCRL;
-      __IO  uint8_t QCRH;
+      union {
+        __IO  uint8_t QCRL;
+        stc_qprc_qcrl_field_t QCRL_f;
+      };
+      union {
+        __IO  uint8_t QCRH;
+        stc_qprc_qcrh_field_t QCRH_f;
+      };
     };
   };
         uint8_t RESERVED6[2];
-  __IO uint16_t QECR;
+  union {
+    __IO uint16_t QECR;
+    stc_qprc_qecr_field_t QECR_f;
+  };
 }FM3_QPRC_TypeDef;
 
 /******************************************************************************
@@ -733,80 +7420,182 @@ typedef struct
 /* 12-bit ADC unit 0 registers */
 typedef struct
 {
-  __IO  uint8_t ADSR;
-  __IO  uint8_t ADCR;
+  union {
+    __IO  uint8_t ADSR;
+    stc_adc_adsr_field_t ADSR_f;
+  };
+  union {
+    __IO  uint8_t ADCR;
+    stc_adc_adcr_field_t ADCR_f;
+  };
         uint8_t RESERVED0[6];
-  __IO  uint8_t SFNS;
-  __IO  uint8_t SCCR;
+  union {
+    __IO  uint8_t SFNS;
+    stc_adc_sfns_field_t SFNS_f;
+  };
+  union {
+    __IO  uint8_t SCCR;
+    stc_adc_sccr_field_t SCCR_f;
+  };
         uint8_t RESERVED1[2];
   union {
-    __IO uint32_t SCFD;
+    union {
+      __IO uint32_t SCFD;
+      stc_adc_scfd_field_t SCFD_f;
+    };
     struct {
-      __IO uint16_t SCFDL;
-      __IO uint16_t SCFDH;
+      union {
+        __IO uint16_t SCFDL;
+        stc_adc_scfdl_field_t SCFDL_f;
+      };
+      union {
+        __IO uint16_t SCFDH;
+        stc_adc_scfdh_field_t SCFDH_f;
+      };
     };
   };
   union {
-    __IO uint16_t SCIS23;
+    union {
+      __IO uint16_t SCIS23;
+      stc_adc_scis23_field_t SCIS23_f;
+    };
     struct {
-      __IO  uint8_t SCIS2;
-      __IO  uint8_t SCIS3;
+      union {
+        __IO  uint8_t SCIS2;
+        stc_adc_scis2_field_t SCIS2_f;
+      };
+      union {
+        __IO  uint8_t SCIS3;
+        stc_adc_scis3_field_t SCIS3_f;
+      };
     };
   };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t SCIS01;
+    union {
+      __IO uint16_t SCIS01;
+      stc_adc_scis01_field_t SCIS01_f;
+    };
     struct {
-      __IO  uint8_t SCIS0;
-      __IO  uint8_t SCIS1;
+      union {
+        __IO  uint8_t SCIS0;
+        stc_adc_scis0_field_t SCIS0_f;
+      };
+      union {
+        __IO  uint8_t SCIS1;
+        stc_adc_scis1_field_t SCIS1_f;
+      };
     };
   };
         uint8_t RESERVED3[2];
-  __IO  uint8_t PFNS;
-  __IO  uint8_t PCCR;
+  union {
+    __IO  uint8_t PFNS;
+    stc_adc_pfns_field_t PFNS_f;
+  };
+  union {
+    __IO  uint8_t PCCR;
+    stc_adc_pccr_field_t PCCR_f;
+  };
         uint8_t RESERVED4[2];
   union {
-    __IO uint32_t PCFD;
+    union {
+      __IO uint32_t PCFD;
+      stc_adc_pcfd_field_t PCFD_f;
+    };
     struct {
-      __IO uint16_t PCFDL;
-      __IO uint16_t PCFDH;
+      union {
+        __IO uint16_t PCFDL;
+        stc_adc_pcfdl_field_t PCFDL_f;
+      };
+      union {
+        __IO uint16_t PCFDH;
+        stc_adc_pcfdh_field_t PCFDH_f;
+      };
     };
   };
-  __IO  uint8_t PCIS;
-        uint8_t RESERVED5[3];
-  __IO  uint8_t CMPCR;
-        uint8_t RESERVED6;
-  __IO uint16_t CMPD;
   union {
-    __IO uint16_t ADSS23;
+    __IO  uint8_t PCIS;
+    stc_adc_pcis_field_t PCIS_f;
+  };
+        uint8_t RESERVED5[3];
+  union {
+    __IO  uint8_t CMPCR;
+    stc_adc_cmpcr_field_t CMPCR_f;
+  };
+        uint8_t RESERVED6;
+  union {
+    __IO uint16_t CMPD;
+    stc_adc_cmpd_field_t CMPD_f;
+  };
+  union {
+    union {
+      __IO uint16_t ADSS23;
+      stc_adc_adss23_field_t ADSS23_f;
+    };
     struct {
-      __IO  uint8_t ADSS2;
-      __IO  uint8_t ADSS3;
+      union {
+        __IO  uint8_t ADSS2;
+        stc_adc_adss2_field_t ADSS2_f;
+      };
+      union {
+        __IO  uint8_t ADSS3;
+        stc_adc_adss3_field_t ADSS3_f;
+      };
     };
   };
         uint8_t RESERVED7[2];
   union {
-    __IO uint16_t ADSS01;
+    union {
+      __IO uint16_t ADSS01;
+      stc_adc_adss01_field_t ADSS01_f;
+    };
     struct {
-      __IO  uint8_t ADSS0;
-      __IO  uint8_t ADSS1;
+      union {
+        __IO  uint8_t ADSS0;
+        stc_adc_adss0_field_t ADSS0_f;
+      };
+      union {
+        __IO  uint8_t ADSS1;
+        stc_adc_adss1_field_t ADSS1_f;
+      };
     };
   };
         uint8_t RESERVED8[2];
   union {
-    __IO uint16_t ADST01;
+    union {
+      __IO uint16_t ADST01;
+      stc_adc_adst01_field_t ADST01_f;
+    };
     struct {
-      __IO  uint8_t ADST1;
-      __IO  uint8_t ADST0;
+      union {
+        __IO  uint8_t ADST1;
+        stc_adc_adst1_field_t ADST1_f;
+      };
+      union {
+        __IO  uint8_t ADST0;
+        stc_adc_adst0_field_t ADST0_f;
+      };
     };
   };
         uint8_t RESERVED9[2];
-  __IO  uint8_t ADCT;
+  union {
+    __IO  uint8_t ADCT;
+    stc_adc_adct_field_t ADCT_f;
+  };
         uint8_t RESERVED10[3];
-  __IO  uint8_t PRTSL;
-  __IO  uint8_t SCTSL;
+  union {
+    __IO  uint8_t PRTSL;
+    stc_adc_prtsl_field_t PRTSL_f;
+  };
+  union {
+    __IO  uint8_t SCTSL;
+    stc_adc_sctsl_field_t SCTSL_f;
+  };
         uint8_t RESERVED11[2];
-  __IO  uint8_t ADCEN;
+  union {
+    __IO  uint8_t ADCEN;
+    stc_adc_adcen_field_t ADCEN_f;
+  };
 }FM3_ADC_TypeDef;
 
 /******************************************************************************
@@ -815,9 +7604,15 @@ typedef struct
 /* CR trimming registers */
 typedef struct
 {
-  __IO  uint8_t MCR_PSR;
+  union {
+    __IO  uint8_t MCR_PSR;
+    stc_crtrim_mcr_psr_field_t MCR_PSR_f;
+  };
         uint8_t RESERVED0[3];
-  __IO uint16_t MCR_FTRM;
+  union {
+    __IO uint16_t MCR_FTRM;
+    stc_crtrim_mcr_ftrm_field_t MCR_FTRM_f;
+  };
         uint8_t RESERVED1[6];
   __IO uint32_t MCR_RLR;
 }FM3_CRTRIM_TypeDef;
@@ -828,17 +7623,35 @@ typedef struct
 /* External interrupt registers */
 typedef struct
 {
-  __IO uint16_t ENIR;
+  union {
+    __IO uint16_t ENIR;
+    stc_exti_enir_field_t ENIR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO uint16_t EIRR;
+  union {
+    __IO uint16_t EIRR;
+    stc_exti_eirr_field_t EIRR_f;
+  };
         uint8_t RESERVED1[2];
-  __IO uint16_t EICL;
+  union {
+    __IO uint16_t EICL;
+    stc_exti_eicl_field_t EICL_f;
+  };
         uint8_t RESERVED2[2];
-  __IO uint32_t ELVR;
+  union {
+    __IO uint32_t ELVR;
+    stc_exti_elvr_field_t ELVR_f;
+  };
         uint8_t RESERVED3[4];
-  __IO  uint8_t NMIRR;
+  union {
+    __IO  uint8_t NMIRR;
+    stc_exti_nmirr_field_t NMIRR_f;
+  };
         uint8_t RESERVED4[3];
-  __IO  uint8_t NMICL;
+  union {
+    __IO  uint8_t NMICL;
+    stc_exti_nmicl_field_t NMICL_f;
+  };
 }FM3_EXTI_TypeDef;
 
 /******************************************************************************
@@ -847,55 +7660,193 @@ typedef struct
 /* Interrupt request read registers */
 typedef struct
 {
-  __IO uint32_t DRQSEL;
+  union {
+    __IO uint32_t DRQSEL;
+    stc_intreq_drqsel_field_t DRQSEL_f;
+  };
         uint8_t RESERVED0[12];
-  __IO uint32_t EXC02MON;
-  __IO uint32_t IRQ00MON;
-  __IO uint32_t IRQ01MON;
-  __IO uint32_t IRQ02MON;
-  __IO uint32_t IRQ03MON;
-  __IO uint32_t IRQ04MON;
-  __IO uint32_t IRQ05MON;
-  __IO uint32_t IRQ06MON;
-  __IO uint32_t IRQ07MON;
-  __IO uint32_t IRQ08MON;
-  __IO uint32_t IRQ09MON;
-  __IO uint32_t IRQ10MON;
-  __IO uint32_t IRQ11MON;
-  __IO uint32_t IRQ12MON;
-  __IO uint32_t IRQ13MON;
-  __IO uint32_t IRQ14MON;
-  __IO uint32_t IRQ15MON;
-  __IO uint32_t IRQ16MON;
-  __IO uint32_t IRQ17MON;
-  __IO uint32_t IRQ18MON;
-  __IO uint32_t IRQ19MON;
-  __IO uint32_t IRQ20MON;
-  __IO uint32_t IRQ21MON;
-  __IO uint32_t IRQ22MON;
-  __IO uint32_t IRQ23MON;
-  __IO uint32_t IRQ24MON;
-  __IO uint32_t IRQ25MON;
-  __IO uint32_t IRQ26MON;
-  __IO uint32_t IRQ27MON;
-  __IO uint32_t IRQ28MON;
-  __IO uint32_t IRQ29MON;
-  __IO uint32_t IRQ30MON;
-  __IO uint32_t IRQ31MON;
-  __IO uint32_t IRQ32MON;
-  __IO uint32_t IRQ33MON;
-  __IO uint32_t IRQ34MON;
-  __IO uint32_t IRQ35MON;
+  union {
+    __IO uint32_t EXC02MON;
+    stc_intreq_exc02mon_field_t EXC02MON_f;
+  };
+  union {
+    __IO uint32_t IRQ00MON;
+    stc_intreq_irq00mon_field_t IRQ00MON_f;
+  };
+  union {
+    __IO uint32_t IRQ01MON;
+    stc_intreq_irq01mon_field_t IRQ01MON_f;
+  };
+  union {
+    __IO uint32_t IRQ02MON;
+    stc_intreq_irq02mon_field_t IRQ02MON_f;
+  };
+  union {
+    __IO uint32_t IRQ03MON;
+    stc_intreq_irq03mon_field_t IRQ03MON_f;
+  };
+  union {
+    __IO uint32_t IRQ04MON;
+    stc_intreq_irq04mon_field_t IRQ04MON_f;
+  };
+  union {
+    __IO uint32_t IRQ05MON;
+    stc_intreq_irq05mon_field_t IRQ05MON_f;
+  };
+  union {
+    __IO uint32_t IRQ06MON;
+    stc_intreq_irq06mon_field_t IRQ06MON_f;
+  };
+  union {
+    __IO uint32_t IRQ07MON;
+    stc_intreq_irq07mon_field_t IRQ07MON_f;
+  };
+  union {
+    __IO uint32_t IRQ08MON;
+    stc_intreq_irq08mon_field_t IRQ08MON_f;
+  };
+  union {
+    __IO uint32_t IRQ09MON;
+    stc_intreq_irq09mon_field_t IRQ09MON_f;
+  };
+  union {
+    __IO uint32_t IRQ10MON;
+    stc_intreq_irq10mon_field_t IRQ10MON_f;
+  };
+  union {
+    __IO uint32_t IRQ11MON;
+    stc_intreq_irq11mon_field_t IRQ11MON_f;
+  };
+  union {
+    __IO uint32_t IRQ12MON;
+    stc_intreq_irq12mon_field_t IRQ12MON_f;
+  };
+  union {
+    __IO uint32_t IRQ13MON;
+    stc_intreq_irq13mon_field_t IRQ13MON_f;
+  };
+  union {
+    __IO uint32_t IRQ14MON;
+    stc_intreq_irq14mon_field_t IRQ14MON_f;
+  };
+  union {
+    __IO uint32_t IRQ15MON;
+    stc_intreq_irq15mon_field_t IRQ15MON_f;
+  };
+  union {
+    __IO uint32_t IRQ16MON;
+    stc_intreq_irq16mon_field_t IRQ16MON_f;
+  };
+  union {
+    __IO uint32_t IRQ17MON;
+    stc_intreq_irq17mon_field_t IRQ17MON_f;
+  };
+  union {
+    __IO uint32_t IRQ18MON;
+    stc_intreq_irq18mon_field_t IRQ18MON_f;
+  };
+  union {
+    __IO uint32_t IRQ19MON;
+    stc_intreq_irq19mon_field_t IRQ19MON_f;
+  };
+  union {
+    __IO uint32_t IRQ20MON;
+    stc_intreq_irq20mon_field_t IRQ20MON_f;
+  };
+  union {
+    __IO uint32_t IRQ21MON;
+    stc_intreq_irq21mon_field_t IRQ21MON_f;
+  };
+  union {
+    __IO uint32_t IRQ22MON;
+    stc_intreq_irq22mon_field_t IRQ22MON_f;
+  };
+  union {
+    __IO uint32_t IRQ23MON;
+    stc_intreq_irq23mon_field_t IRQ23MON_f;
+  };
+  union {
+    __IO uint32_t IRQ24MON;
+    stc_intreq_irq24mon_field_t IRQ24MON_f;
+  };
+  union {
+    __IO uint32_t IRQ25MON;
+    stc_intreq_irq25mon_field_t IRQ25MON_f;
+  };
+  union {
+    __IO uint32_t IRQ26MON;
+    stc_intreq_irq26mon_field_t IRQ26MON_f;
+  };
+  union {
+    __IO uint32_t IRQ27MON;
+    stc_intreq_irq27mon_field_t IRQ27MON_f;
+  };
+  union {
+    __IO uint32_t IRQ28MON;
+    stc_intreq_irq28mon_field_t IRQ28MON_f;
+  };
+  union {
+    __IO uint32_t IRQ29MON;
+    stc_intreq_irq29mon_field_t IRQ29MON_f;
+  };
+  union {
+    __IO uint32_t IRQ30MON;
+    stc_intreq_irq30mon_field_t IRQ30MON_f;
+  };
+  union {
+    __IO uint32_t IRQ31MON;
+    stc_intreq_irq31mon_field_t IRQ31MON_f;
+  };
+  union {
+    __IO uint32_t IRQ32MON;
+    stc_intreq_irq32mon_field_t IRQ32MON_f;
+  };
+  union {
+    __IO uint32_t IRQ33MON;
+    stc_intreq_irq33mon_field_t IRQ33MON_f;
+  };
+  union {
+    __IO uint32_t IRQ34MON;
+    stc_intreq_irq34mon_field_t IRQ34MON_f;
+  };
+  union {
+    __IO uint32_t IRQ35MON;
+    stc_intreq_irq35mon_field_t IRQ35MON_f;
+  };
   __IO uint32_t IRQ36MON;
   __IO uint32_t IRQ37MON;
-  __IO uint32_t IRQ38MON;
-  __IO uint32_t IRQ39MON;
-  __IO uint32_t IRQ40MON;
-  __IO uint32_t IRQ41MON;
-  __IO uint32_t IRQ42MON;
-  __IO uint32_t IRQ43MON;
-  __IO uint32_t IRQ44MON;
-  __IO uint32_t IRQ45MON;
+  union {
+    __IO uint32_t IRQ38MON;
+    stc_intreq_irq38mon_field_t IRQ38MON_f;
+  };
+  union {
+    __IO uint32_t IRQ39MON;
+    stc_intreq_irq39mon_field_t IRQ39MON_f;
+  };
+  union {
+    __IO uint32_t IRQ40MON;
+    stc_intreq_irq40mon_field_t IRQ40MON_f;
+  };
+  union {
+    __IO uint32_t IRQ41MON;
+    stc_intreq_irq41mon_field_t IRQ41MON_f;
+  };
+  union {
+    __IO uint32_t IRQ42MON;
+    stc_intreq_irq42mon_field_t IRQ42MON_f;
+  };
+  union {
+    __IO uint32_t IRQ43MON;
+    stc_intreq_irq43mon_field_t IRQ43MON_f;
+  };
+  union {
+    __IO uint32_t IRQ44MON;
+    stc_intreq_irq44mon_field_t IRQ44MON_f;
+  };
+  union {
+    __IO uint32_t IRQ45MON;
+    stc_intreq_irq45mon_field_t IRQ45MON_f;
+  };
   __IO uint32_t IRQ46MON;
   __IO uint32_t IRQ47MON;
 }FM3_INTREQ_TypeDef;
@@ -906,70 +7857,238 @@ typedef struct
 /* General purpose I/O registers */
 typedef struct
 {
-  __IO uint32_t PFR0;
-  __IO uint32_t PFR1;
-  __IO uint32_t PFR2;
-  __IO uint32_t PFR3;
-  __IO uint32_t PFR4;
-  __IO uint32_t PFR5;
-  __IO uint32_t PFR6;
-  __IO uint32_t PFR7;
-  __IO uint32_t PFR8;
+  union {
+    __IO uint32_t PFR0;
+    stc_gpio_pfr0_field_t PFR0_f;
+  };
+  union {
+    __IO uint32_t PFR1;
+    stc_gpio_pfr1_field_t PFR1_f;
+  };
+  union {
+    __IO uint32_t PFR2;
+    stc_gpio_pfr2_field_t PFR2_f;
+  };
+  union {
+    __IO uint32_t PFR3;
+    stc_gpio_pfr3_field_t PFR3_f;
+  };
+  union {
+    __IO uint32_t PFR4;
+    stc_gpio_pfr4_field_t PFR4_f;
+  };
+  union {
+    __IO uint32_t PFR5;
+    stc_gpio_pfr5_field_t PFR5_f;
+  };
+  union {
+    __IO uint32_t PFR6;
+    stc_gpio_pfr6_field_t PFR6_f;
+  };
+  union {
+    __IO uint32_t PFR7;
+    stc_gpio_pfr7_field_t PFR7_f;
+  };
+  union {
+    __IO uint32_t PFR8;
+    stc_gpio_pfr8_field_t PFR8_f;
+  };
         uint8_t RESERVED0[220];
-  __IO uint32_t PCR0;
-  __IO uint32_t PCR1;
-  __IO uint32_t PCR2;
-  __IO uint32_t PCR3;
-  __IO uint32_t PCR4;
-  __IO uint32_t PCR5;
-  __IO uint32_t PCR6;
-  __IO uint32_t PCR7;
+  union {
+    __IO uint32_t PCR0;
+    stc_gpio_pcr0_field_t PCR0_f;
+  };
+  union {
+    __IO uint32_t PCR1;
+    stc_gpio_pcr1_field_t PCR1_f;
+  };
+  union {
+    __IO uint32_t PCR2;
+    stc_gpio_pcr2_field_t PCR2_f;
+  };
+  union {
+    __IO uint32_t PCR3;
+    stc_gpio_pcr3_field_t PCR3_f;
+  };
+  union {
+    __IO uint32_t PCR4;
+    stc_gpio_pcr4_field_t PCR4_f;
+  };
+  union {
+    __IO uint32_t PCR5;
+    stc_gpio_pcr5_field_t PCR5_f;
+  };
+  union {
+    __IO uint32_t PCR6;
+    stc_gpio_pcr6_field_t PCR6_f;
+  };
+  union {
+    __IO uint32_t PCR7;
+    stc_gpio_pcr7_field_t PCR7_f;
+  };
         uint8_t RESERVED1[224];
-  __IO uint32_t DDR0;
-  __IO uint32_t DDR1;
-  __IO uint32_t DDR2;
-  __IO uint32_t DDR3;
-  __IO uint32_t DDR4;
-  __IO uint32_t DDR5;
-  __IO uint32_t DDR6;
-  __IO uint32_t DDR7;
-  __IO uint32_t DDR8;
+  union {
+    __IO uint32_t DDR0;
+    stc_gpio_ddr0_field_t DDR0_f;
+  };
+  union {
+    __IO uint32_t DDR1;
+    stc_gpio_ddr1_field_t DDR1_f;
+  };
+  union {
+    __IO uint32_t DDR2;
+    stc_gpio_ddr2_field_t DDR2_f;
+  };
+  union {
+    __IO uint32_t DDR3;
+    stc_gpio_ddr3_field_t DDR3_f;
+  };
+  union {
+    __IO uint32_t DDR4;
+    stc_gpio_ddr4_field_t DDR4_f;
+  };
+  union {
+    __IO uint32_t DDR5;
+    stc_gpio_ddr5_field_t DDR5_f;
+  };
+  union {
+    __IO uint32_t DDR6;
+    stc_gpio_ddr6_field_t DDR6_f;
+  };
+  union {
+    __IO uint32_t DDR7;
+    stc_gpio_ddr7_field_t DDR7_f;
+  };
+  union {
+    __IO uint32_t DDR8;
+    stc_gpio_ddr8_field_t DDR8_f;
+  };
         uint8_t RESERVED2[220];
-  __IO uint32_t PDIR0;
-  __IO uint32_t PDIR1;
-  __IO uint32_t PDIR2;
-  __IO uint32_t PDIR3;
-  __IO uint32_t PDIR4;
-  __IO uint32_t PDIR5;
-  __IO uint32_t PDIR6;
-  __IO uint32_t PDIR7;
-  __IO uint32_t PDIR8;
+  union {
+    __IO uint32_t PDIR0;
+    stc_gpio_pdir0_field_t PDIR0_f;
+  };
+  union {
+    __IO uint32_t PDIR1;
+    stc_gpio_pdir1_field_t PDIR1_f;
+  };
+  union {
+    __IO uint32_t PDIR2;
+    stc_gpio_pdir2_field_t PDIR2_f;
+  };
+  union {
+    __IO uint32_t PDIR3;
+    stc_gpio_pdir3_field_t PDIR3_f;
+  };
+  union {
+    __IO uint32_t PDIR4;
+    stc_gpio_pdir4_field_t PDIR4_f;
+  };
+  union {
+    __IO uint32_t PDIR5;
+    stc_gpio_pdir5_field_t PDIR5_f;
+  };
+  union {
+    __IO uint32_t PDIR6;
+    stc_gpio_pdir6_field_t PDIR6_f;
+  };
+  union {
+    __IO uint32_t PDIR7;
+    stc_gpio_pdir7_field_t PDIR7_f;
+  };
+  union {
+    __IO uint32_t PDIR8;
+    stc_gpio_pdir8_field_t PDIR8_f;
+  };
         uint8_t RESERVED3[220];
-  __IO uint32_t PDOR0;
-  __IO uint32_t PDOR1;
-  __IO uint32_t PDOR2;
-  __IO uint32_t PDOR3;
-  __IO uint32_t PDOR4;
-  __IO uint32_t PDOR5;
-  __IO uint32_t PDOR6;
-  __IO uint32_t PDOR7;
-  __IO uint32_t PDOR8;
+  union {
+    __IO uint32_t PDOR0;
+    stc_gpio_pdor0_field_t PDOR0_f;
+  };
+  union {
+    __IO uint32_t PDOR1;
+    stc_gpio_pdor1_field_t PDOR1_f;
+  };
+  union {
+    __IO uint32_t PDOR2;
+    stc_gpio_pdor2_field_t PDOR2_f;
+  };
+  union {
+    __IO uint32_t PDOR3;
+    stc_gpio_pdor3_field_t PDOR3_f;
+  };
+  union {
+    __IO uint32_t PDOR4;
+    stc_gpio_pdor4_field_t PDOR4_f;
+  };
+  union {
+    __IO uint32_t PDOR5;
+    stc_gpio_pdor5_field_t PDOR5_f;
+  };
+  union {
+    __IO uint32_t PDOR6;
+    stc_gpio_pdor6_field_t PDOR6_f;
+  };
+  union {
+    __IO uint32_t PDOR7;
+    stc_gpio_pdor7_field_t PDOR7_f;
+  };
+  union {
+    __IO uint32_t PDOR8;
+    stc_gpio_pdor8_field_t PDOR8_f;
+  };
         uint8_t RESERVED4[220];
-  __IO uint32_t ADE;
+  union {
+    __IO uint32_t ADE;
+    stc_gpio_ade_field_t ADE_f;
+  };
         uint8_t RESERVED5[124];
-  __IO uint32_t SPSR;
+  union {
+    __IO uint32_t SPSR;
+    stc_gpio_spsr_field_t SPSR_f;
+  };
         uint8_t RESERVED6[124];
-  __IO uint32_t EPFR00;
-  __IO uint32_t EPFR01;
-  __IO uint32_t EPFR02;
+  union {
+    __IO uint32_t EPFR00;
+    stc_gpio_epfr00_field_t EPFR00_f;
+  };
+  union {
+    __IO uint32_t EPFR01;
+    stc_gpio_epfr01_field_t EPFR01_f;
+  };
+  union {
+    __IO uint32_t EPFR02;
+    stc_gpio_epfr02_field_t EPFR02_f;
+  };
         uint8_t RESERVED7[4];
-  __IO uint32_t EPFR04;
-  __IO uint32_t EPFR05;
-  __IO uint32_t EPFR06;
-  __IO uint32_t EPFR07;
-  __IO uint32_t EPFR08;
-  __IO uint32_t EPFR09;
-  __IO uint32_t EPFR10;
+  union {
+    __IO uint32_t EPFR04;
+    stc_gpio_epfr04_field_t EPFR04_f;
+  };
+  union {
+    __IO uint32_t EPFR05;
+    stc_gpio_epfr05_field_t EPFR05_f;
+  };
+  union {
+    __IO uint32_t EPFR06;
+    stc_gpio_epfr06_field_t EPFR06_f;
+  };
+  union {
+    __IO uint32_t EPFR07;
+    stc_gpio_epfr07_field_t EPFR07_f;
+  };
+  union {
+    __IO uint32_t EPFR08;
+    stc_gpio_epfr08_field_t EPFR08_f;
+  };
+  union {
+    __IO uint32_t EPFR09;
+    stc_gpio_epfr09_field_t EPFR09_f;
+  };
+  union {
+    __IO uint32_t EPFR10;
+    stc_gpio_epfr10_field_t EPFR10_f;
+  };
 }FM3_GPIO_TypeDef;
 
 /******************************************************************************
@@ -978,14 +8097,26 @@ typedef struct
 /* Low voltage detection registers */
 typedef struct
 {
-  __IO  uint8_t LVD_CTL;
+  union {
+    __IO  uint8_t LVD_CTL;
+    stc_lvd_lvd_ctl_field_t LVD_CTL_f;
+  };
         uint8_t RESERVED0[3];
-  __IO  uint8_t LVD_STR;
+  union {
+    __IO  uint8_t LVD_STR;
+    stc_lvd_lvd_str_field_t LVD_STR_f;
+  };
         uint8_t RESERVED1[3];
-  __IO  uint8_t LVD_CLR;
+  union {
+    __IO  uint8_t LVD_CLR;
+    stc_lvd_lvd_clr_field_t LVD_CLR_f;
+  };
         uint8_t RESERVED2[3];
   __IO uint32_t LVD_RLR;
-  __IO  uint8_t LVD_STR2;
+  union {
+    __IO  uint8_t LVD_STR2;
+    stc_lvd_lvd_str2_field_t LVD_STR2_f;
+  };
 }FM3_LVD_TypeDef;
 
 /******************************************************************************
@@ -994,25 +8125,55 @@ typedef struct
 /* USB clock registers */
 typedef struct
 {
-  __IO  uint8_t UCCR;
+  union {
+    __IO  uint8_t UCCR;
+    stc_usbclk_uccr_field_t UCCR_f;
+  };
         uint8_t RESERVED0[3];
-  __IO  uint8_t UPCR1;
+  union {
+    __IO  uint8_t UPCR1;
+    stc_usbclk_upcr1_field_t UPCR1_f;
+  };
         uint8_t RESERVED1[3];
-  __IO  uint8_t UPCR2;
+  union {
+    __IO  uint8_t UPCR2;
+    stc_usbclk_upcr2_field_t UPCR2_f;
+  };
         uint8_t RESERVED2[3];
-  __IO  uint8_t UPCR3;
+  union {
+    __IO  uint8_t UPCR3;
+    stc_usbclk_upcr3_field_t UPCR3_f;
+  };
         uint8_t RESERVED3[3];
-  __IO  uint8_t UPCR4;
+  union {
+    __IO  uint8_t UPCR4;
+    stc_usbclk_upcr4_field_t UPCR4_f;
+  };
         uint8_t RESERVED4[3];
-  __IO  uint8_t UP_STR;
+  union {
+    __IO  uint8_t UP_STR;
+    stc_usbclk_up_str_field_t UP_STR_f;
+  };
         uint8_t RESERVED5[3];
-  __IO  uint8_t UPINT_ENR;
+  union {
+    __IO  uint8_t UPINT_ENR;
+    stc_usbclk_upint_enr_field_t UPINT_ENR_f;
+  };
         uint8_t RESERVED6[3];
-  __IO  uint8_t UPINT_CLR;
+  union {
+    __IO  uint8_t UPINT_CLR;
+    stc_usbclk_upint_clr_field_t UPINT_CLR_f;
+  };
         uint8_t RESERVED7[3];
-  __IO  uint8_t UPINT_STR;
+  union {
+    __IO  uint8_t UPINT_STR;
+    stc_usbclk_upint_str_field_t UPINT_STR_f;
+  };
         uint8_t RESERVED8[15];
-  __IO  uint8_t USBEN;
+  union {
+    __IO  uint8_t USBEN;
+    stc_usbclk_usben_field_t USBEN_f;
+  };
 }FM3_USBCLK_TypeDef;
 
 /******************************************************************************
@@ -1021,7 +8182,10 @@ typedef struct
 /* CAN prescaler register */
 typedef struct
 {
-  __IO  uint8_t CANPRE;
+  union {
+    __IO  uint8_t CANPRE;
+    stc_canpre_canpre_field_t CANPRE_f;
+  };
 }FM3_CANPRE_TypeDef;
 
 /******************************************************************************
@@ -1030,22 +8194,46 @@ typedef struct
 /* UART asynchronous channel 0 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs03_uart_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs03_uart_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs03_uart_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs03_uart_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
-    __IO uint16_t RDR;
-    __IO uint16_t TDR;
+    union {
+      __IO uint16_t RDR;
+      stc_mfs03_uart_rdr_field_t RDR_f;
+    };
+    union {
+      __IO uint16_t TDR;
+      stc_mfs03_uart_tdr_field_t TDR_f;
+    };
   };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t BGR;
+    union {
+      __IO uint16_t BGR;
+      stc_mfs03_uart_bgr_field_t BGR_f;
+    };
     struct {
       __IO  uint8_t BGR0;
-      __IO  uint8_t BGR1;
+      union {
+        __IO  uint8_t BGR1;
+        stc_mfs03_uart_bgr1_field_t BGR1_f;
+      };
     };
   };
 }FM3_MFS03_UART_TypeDef;
@@ -1056,11 +8244,23 @@ typedef struct
 /* UART synchronous channel 0 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs03_csio_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs03_csio_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs03_csio_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs03_csio_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1082,11 +8282,23 @@ typedef struct
 /* UART LIN channel 0 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs03_lin_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs03_lin_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs03_lin_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs03_lin_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1094,10 +8306,16 @@ typedef struct
   };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t BGR;
+    union {
+      __IO uint16_t BGR;
+      stc_mfs03_lin_bgr_field_t BGR_f;
+    };
     struct {
       __IO  uint8_t BGR0;
-      __IO  uint8_t BGR1;
+      union {
+        __IO  uint8_t BGR1;
+        stc_mfs03_lin_bgr1_field_t BGR1_f;
+      };
     };
   };
 }FM3_MFS03_LIN_TypeDef;
@@ -1108,11 +8326,23 @@ typedef struct
 /* I2C channel 0 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t IBCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs03_i2c_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t IBCR;
+    stc_mfs03_i2c_ibcr_field_t IBCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t IBSR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t IBSR;
+    stc_mfs03_i2c_ibsr_field_t IBSR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs03_i2c_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1127,8 +8357,14 @@ typedef struct
     };
   };
         uint8_t RESERVED3[2];
-  __IO  uint8_t ISBA;
-  __IO  uint8_t ISMK;
+  union {
+    __IO  uint8_t ISBA;
+    stc_mfs03_i2c_isba_field_t ISBA_f;
+  };
+  union {
+    __IO  uint8_t ISMK;
+    stc_mfs03_i2c_ismk_field_t ISMK_f;
+  };
 }FM3_MFS03_I2C_TypeDef;
 
 /******************************************************************************
@@ -1137,38 +8373,80 @@ typedef struct
 /* UART asynchronous channel 4 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs47_uart_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs47_uart_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs47_uart_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs47_uart_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
-    __IO uint16_t RDR;
-    __IO uint16_t TDR;
+    union {
+      __IO uint16_t RDR;
+      stc_mfs47_uart_rdr_field_t RDR_f;
+    };
+    union {
+      __IO uint16_t TDR;
+      stc_mfs47_uart_tdr_field_t TDR_f;
+    };
   };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t BGR;
+    union {
+      __IO uint16_t BGR;
+      stc_mfs47_uart_bgr_field_t BGR_f;
+    };
     struct {
       __IO  uint8_t BGR0;
-      __IO  uint8_t BGR1;
+      union {
+        __IO  uint8_t BGR1;
+        stc_mfs47_uart_bgr1_field_t BGR1_f;
+      };
     };
   };
         uint8_t RESERVED3[6];
   union {
-    __IO uint16_t FCR;
+    union {
+      __IO uint16_t FCR;
+      stc_mfs47_uart_fcr_field_t FCR_f;
+    };
     struct {
-      __IO  uint8_t FCR0;
-      __IO  uint8_t FCR1;
+      union {
+        __IO  uint8_t FCR0;
+        stc_mfs47_uart_fcr0_field_t FCR0_f;
+      };
+      union {
+        __IO  uint8_t FCR1;
+        stc_mfs47_uart_fcr1_field_t FCR1_f;
+      };
     };
   };
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t FBYTE;
+    union {
+      __IO uint16_t FBYTE;
+      stc_mfs47_uart_fbyte_field_t FBYTE_f;
+    };
     struct {
-      __IO  uint8_t FBYTE1;
-      __IO  uint8_t FBYTE2;
+      union {
+        __IO  uint8_t FBYTE1;
+        stc_mfs47_uart_fbyte1_field_t FBYTE1_f;
+      };
+      union {
+        __IO  uint8_t FBYTE2;
+        stc_mfs47_uart_fbyte2_field_t FBYTE2_f;
+      };
     };
   };
 }FM3_MFS47_UART_TypeDef;
@@ -1179,11 +8457,23 @@ typedef struct
 /* UART synchronous channel 4 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs47_csio_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs47_csio_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs47_csio_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs47_csio_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1199,18 +8489,36 @@ typedef struct
   };
         uint8_t RESERVED3[6];
   union {
-    __IO uint16_t FCR;
+    union {
+      __IO uint16_t FCR;
+      stc_mfs47_csio_fcr_field_t FCR_f;
+    };
     struct {
-      __IO  uint8_t FCR0;
-      __IO  uint8_t FCR1;
+      union {
+        __IO  uint8_t FCR0;
+        stc_mfs47_csio_fcr0_field_t FCR0_f;
+      };
+      union {
+        __IO  uint8_t FCR1;
+        stc_mfs47_csio_fcr1_field_t FCR1_f;
+      };
     };
   };
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t FBYTE;
+    union {
+      __IO uint16_t FBYTE;
+      stc_mfs47_csio_fbyte_field_t FBYTE_f;
+    };
     struct {
-      __IO  uint8_t FBYTE1;
-      __IO  uint8_t FBYTE2;
+      union {
+        __IO  uint8_t FBYTE1;
+        stc_mfs47_csio_fbyte1_field_t FBYTE1_f;
+      };
+      union {
+        __IO  uint8_t FBYTE2;
+        stc_mfs47_csio_fbyte2_field_t FBYTE2_f;
+      };
     };
   };
 }FM3_MFS47_CSIO_TypeDef;
@@ -1221,11 +8529,23 @@ typedef struct
 /* UART LIN channel 4 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t SCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs47_lin_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t SCR;
+    stc_mfs47_lin_scr_field_t SCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t ESCR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t ESCR;
+    stc_mfs47_lin_escr_field_t ESCR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs47_lin_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1233,26 +8553,50 @@ typedef struct
   };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t BGR;
+    union {
+      __IO uint16_t BGR;
+      stc_mfs47_lin_bgr_field_t BGR_f;
+    };
     struct {
       __IO  uint8_t BGR0;
-      __IO  uint8_t BGR1;
+      union {
+        __IO  uint8_t BGR1;
+        stc_mfs47_lin_bgr1_field_t BGR1_f;
+      };
     };
   };
         uint8_t RESERVED3[6];
   union {
-    __IO uint16_t FCR;
+    union {
+      __IO uint16_t FCR;
+      stc_mfs47_lin_fcr_field_t FCR_f;
+    };
     struct {
-      __IO  uint8_t FCR0;
-      __IO  uint8_t FCR1;
+      union {
+        __IO  uint8_t FCR0;
+        stc_mfs47_lin_fcr0_field_t FCR0_f;
+      };
+      union {
+        __IO  uint8_t FCR1;
+        stc_mfs47_lin_fcr1_field_t FCR1_f;
+      };
     };
   };
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t FBYTE;
+    union {
+      __IO uint16_t FBYTE;
+      stc_mfs47_lin_fbyte_field_t FBYTE_f;
+    };
     struct {
-      __IO  uint8_t FBYTE1;
-      __IO  uint8_t FBYTE2;
+      union {
+        __IO  uint8_t FBYTE1;
+        stc_mfs47_lin_fbyte1_field_t FBYTE1_f;
+      };
+      union {
+        __IO  uint8_t FBYTE2;
+        stc_mfs47_lin_fbyte2_field_t FBYTE2_f;
+      };
     };
   };
 }FM3_MFS47_LIN_TypeDef;
@@ -1263,11 +8607,23 @@ typedef struct
 /* I2C channel 4 registers */
 typedef struct
 {
-  __IO  uint8_t SMR;
-  __IO  uint8_t IBCR;
+  union {
+    __IO  uint8_t SMR;
+    stc_mfs47_i2c_smr_field_t SMR_f;
+  };
+  union {
+    __IO  uint8_t IBCR;
+    stc_mfs47_i2c_ibcr_field_t IBCR_f;
+  };
         uint8_t RESERVED0[2];
-  __IO  uint8_t IBSR;
-  __IO  uint8_t SSR;
+  union {
+    __IO  uint8_t IBSR;
+    stc_mfs47_i2c_ibsr_field_t IBSR_f;
+  };
+  union {
+    __IO  uint8_t SSR;
+    stc_mfs47_i2c_ssr_field_t SSR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint16_t RDR;
@@ -1282,22 +8638,46 @@ typedef struct
     };
   };
         uint8_t RESERVED3[2];
-  __IO  uint8_t ISBA;
-  __IO  uint8_t ISMK;
+  union {
+    __IO  uint8_t ISBA;
+    stc_mfs47_i2c_isba_field_t ISBA_f;
+  };
+  union {
+    __IO  uint8_t ISMK;
+    stc_mfs47_i2c_ismk_field_t ISMK_f;
+  };
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t FCR;
+    union {
+      __IO uint16_t FCR;
+      stc_mfs47_i2c_fcr_field_t FCR_f;
+    };
     struct {
-      __IO  uint8_t FCR0;
-      __IO  uint8_t FCR1;
+      union {
+        __IO  uint8_t FCR0;
+        stc_mfs47_i2c_fcr0_field_t FCR0_f;
+      };
+      union {
+        __IO  uint8_t FCR1;
+        stc_mfs47_i2c_fcr1_field_t FCR1_f;
+      };
     };
   };
         uint8_t RESERVED5[2];
   union {
-    __IO uint16_t FBYTE;
+    union {
+      __IO uint16_t FBYTE;
+      stc_mfs47_i2c_fbyte_field_t FBYTE_f;
+    };
     struct {
-      __IO  uint8_t FBYTE1;
-      __IO  uint8_t FBYTE2;
+      union {
+        __IO  uint8_t FBYTE1;
+        stc_mfs47_i2c_fbyte1_field_t FBYTE1_f;
+      };
+      union {
+        __IO  uint8_t FBYTE2;
+        stc_mfs47_i2c_fbyte2_field_t FBYTE2_f;
+      };
     };
   };
 }FM3_MFS47_I2C_TypeDef;
@@ -1308,7 +8688,10 @@ typedef struct
 /* CRC registers */
 typedef struct
 {
-  __IO  uint8_t CRCCR;
+  union {
+    __IO  uint8_t CRCCR;
+    stc_crc_crccr_field_t CRCCR_f;
+  };
         uint8_t RESERVED0[3];
   __IO uint32_t CRCINIT;
   union {
@@ -1339,13 +8722,28 @@ typedef struct
 /* Watch counter registers */
 typedef struct
 {
-  __IO  uint8_t WCRD;
-  __IO  uint8_t WCRL;
-  __IO  uint8_t WCCR;
+  union {
+    __IO  uint8_t WCRD;
+    stc_wc_wcrd_field_t WCRD_f;
+  };
+  union {
+    __IO  uint8_t WCRL;
+    stc_wc_wcrl_field_t WCRL_f;
+  };
+  union {
+    __IO  uint8_t WCCR;
+    stc_wc_wccr_field_t WCCR_f;
+  };
         uint8_t RESERVED0[13];
-  __IO uint16_t CLK_SEL;
+  union {
+    __IO uint16_t CLK_SEL;
+    stc_wc_clk_sel_field_t CLK_SEL_f;
+  };
         uint8_t RESERVED1[2];
-  __IO  uint8_t CLK_EN;
+  union {
+    __IO  uint8_t CLK_EN;
+    stc_wc_clk_en_field_t CLK_EN_f;
+  };
 }FM3_WC_TypeDef;
 
 /******************************************************************************
@@ -1354,30 +8752,102 @@ typedef struct
 /* External bus interface registers */
 typedef struct
 {
-  __IO uint32_t MODE0;
-  __IO uint32_t MODE1;
-  __IO uint32_t MODE2;
-  __IO uint32_t MODE3;
-  __IO uint32_t MODE4;
-  __IO uint32_t MODE5;
-  __IO uint32_t MODE6;
-  __IO uint32_t MODE7;
-  __IO uint32_t TIM0;
-  __IO uint32_t TIM1;
-  __IO uint32_t TIM2;
-  __IO uint32_t TIM3;
-  __IO uint32_t TIM4;
-  __IO uint32_t TIM5;
-  __IO uint32_t TIM6;
-  __IO uint32_t TIM7;
-  __IO uint32_t AREA0;
-  __IO uint32_t AREA1;
-  __IO uint32_t AREA2;
-  __IO uint32_t AREA3;
-  __IO uint32_t AREA4;
-  __IO uint32_t AREA5;
-  __IO uint32_t AREA6;
-  __IO uint32_t AREA7;
+  union {
+    __IO uint32_t MODE0;
+    stc_exbus_mode0_field_t MODE0_f;
+  };
+  union {
+    __IO uint32_t MODE1;
+    stc_exbus_mode1_field_t MODE1_f;
+  };
+  union {
+    __IO uint32_t MODE2;
+    stc_exbus_mode2_field_t MODE2_f;
+  };
+  union {
+    __IO uint32_t MODE3;
+    stc_exbus_mode3_field_t MODE3_f;
+  };
+  union {
+    __IO uint32_t MODE4;
+    stc_exbus_mode4_field_t MODE4_f;
+  };
+  union {
+    __IO uint32_t MODE5;
+    stc_exbus_mode5_field_t MODE5_f;
+  };
+  union {
+    __IO uint32_t MODE6;
+    stc_exbus_mode6_field_t MODE6_f;
+  };
+  union {
+    __IO uint32_t MODE7;
+    stc_exbus_mode7_field_t MODE7_f;
+  };
+  union {
+    __IO uint32_t TIM0;
+    stc_exbus_tim0_field_t TIM0_f;
+  };
+  union {
+    __IO uint32_t TIM1;
+    stc_exbus_tim1_field_t TIM1_f;
+  };
+  union {
+    __IO uint32_t TIM2;
+    stc_exbus_tim2_field_t TIM2_f;
+  };
+  union {
+    __IO uint32_t TIM3;
+    stc_exbus_tim3_field_t TIM3_f;
+  };
+  union {
+    __IO uint32_t TIM4;
+    stc_exbus_tim4_field_t TIM4_f;
+  };
+  union {
+    __IO uint32_t TIM5;
+    stc_exbus_tim5_field_t TIM5_f;
+  };
+  union {
+    __IO uint32_t TIM6;
+    stc_exbus_tim6_field_t TIM6_f;
+  };
+  union {
+    __IO uint32_t TIM7;
+    stc_exbus_tim7_field_t TIM7_f;
+  };
+  union {
+    __IO uint32_t AREA0;
+    stc_exbus_area0_field_t AREA0_f;
+  };
+  union {
+    __IO uint32_t AREA1;
+    stc_exbus_area1_field_t AREA1_f;
+  };
+  union {
+    __IO uint32_t AREA2;
+    stc_exbus_area2_field_t AREA2_f;
+  };
+  union {
+    __IO uint32_t AREA3;
+    stc_exbus_area3_field_t AREA3_f;
+  };
+  union {
+    __IO uint32_t AREA4;
+    stc_exbus_area4_field_t AREA4_f;
+  };
+  union {
+    __IO uint32_t AREA5;
+    stc_exbus_area5_field_t AREA5_f;
+  };
+  union {
+    __IO uint32_t AREA6;
+    stc_exbus_area6_field_t AREA6_f;
+  };
+  union {
+    __IO uint32_t AREA7;
+    stc_exbus_area7_field_t AREA7_f;
+  };
 }FM3_EXBUS_TypeDef;
 
 /******************************************************************************
@@ -1387,80 +8857,185 @@ typedef struct
 typedef struct
 {
   union {
-    __IO uint16_t HCNT;
+    union {
+      __IO uint16_t HCNT;
+      stc_usb_hcnt_field_t HCNT_f;
+    };
     struct {
-      __IO  uint8_t HCNT0;
-      __IO  uint8_t HCNT1;
+      union {
+        __IO  uint8_t HCNT0;
+        stc_usb_hcnt0_field_t HCNT0_f;
+      };
+      union {
+        __IO  uint8_t HCNT1;
+        stc_usb_hcnt1_field_t HCNT1_f;
+      };
     };
   };
         uint8_t RESERVED0[2];
-  __IO  uint8_t HIRQ;
-  __IO  uint8_t HERR;
+  union {
+    __IO  uint8_t HIRQ;
+    stc_usb_hirq_field_t HIRQ_f;
+  };
+  union {
+    __IO  uint8_t HERR;
+    stc_usb_herr_field_t HERR_f;
+  };
         uint8_t RESERVED1[2];
-  __IO  uint8_t HSTATE;
-  __IO  uint8_t HFCOMP;
+  union {
+    __IO  uint8_t HSTATE;
+    stc_usb_hstate_field_t HSTATE_f;
+  };
+  union {
+    __IO  uint8_t HFCOMP;
+    stc_usb_hfcomp_field_t HFCOMP_f;
+  };
         uint8_t RESERVED2[2];
   union {
-    __IO uint16_t HRTIMER;
+    union {
+      __IO uint16_t HRTIMER;
+      stc_usb_hrtimer_field_t HRTIMER_f;
+    };
     struct {
-      __IO  uint8_t HRTIMER0;
-      __IO  uint8_t HRTIMER1;
+      union {
+        __IO  uint8_t HRTIMER0;
+        stc_usb_hrtimer0_field_t HRTIMER0_f;
+      };
+      union {
+        __IO  uint8_t HRTIMER1;
+        stc_usb_hrtimer1_field_t HRTIMER1_f;
+      };
     };
   };
         uint8_t RESERVED3[2];
-  __IO  uint8_t HRTIMER2;
-  __IO  uint8_t HADR;
+  union {
+    __IO  uint8_t HRTIMER2;
+    stc_usb_hrtimer2_field_t HRTIMER2_f;
+  };
+  union {
+    __IO  uint8_t HADR;
+    stc_usb_hadr_field_t HADR_f;
+  };
         uint8_t RESERVED4[2];
   union {
-    __IO uint16_t HEOF;
+    union {
+      __IO uint16_t HEOF;
+      stc_usb_heof_field_t HEOF_f;
+    };
     struct {
-      __IO  uint8_t HEOF0;
-      __IO  uint8_t HEOF1;
+      union {
+        __IO  uint8_t HEOF0;
+        stc_usb_heof0_field_t HEOF0_f;
+      };
+      union {
+        __IO  uint8_t HEOF1;
+        stc_usb_heof1_field_t HEOF1_f;
+      };
     };
   };
         uint8_t RESERVED5[2];
   union {
-    __IO uint16_t HFRAME;
+    union {
+      __IO uint16_t HFRAME;
+      stc_usb_hframe_field_t HFRAME_f;
+    };
     struct {
-      __IO  uint8_t HFRAME0;
-      __IO  uint8_t HFRAME1;
+      union {
+        __IO  uint8_t HFRAME0;
+        stc_usb_hframe0_field_t HFRAME0_f;
+      };
+      union {
+        __IO  uint8_t HFRAME1;
+        stc_usb_hframe1_field_t HFRAME1_f;
+      };
     };
   };
         uint8_t RESERVED6[2];
-  __IO  uint8_t HTOKEN;
+  union {
+    __IO  uint8_t HTOKEN;
+    stc_usb_htoken_field_t HTOKEN_f;
+  };
         uint8_t RESERVED7[3];
-  __IO uint16_t UDCC;
+  union {
+    __IO uint16_t UDCC;
+    stc_usb_udcc_field_t UDCC_f;
+  };
         uint8_t RESERVED8[2];
-  __IO uint16_t EP0C;
+  union {
+    __IO uint16_t EP0C;
+    stc_usb_ep0c_field_t EP0C_f;
+  };
         uint8_t RESERVED9[2];
-  __IO uint16_t EP1C;
+  union {
+    __IO uint16_t EP1C;
+    stc_usb_ep1c_field_t EP1C_f;
+  };
         uint8_t RESERVED10[2];
-  __IO uint16_t EP2C;
+  union {
+    __IO uint16_t EP2C;
+    stc_usb_ep2c_field_t EP2C_f;
+  };
         uint8_t RESERVED11[2];
-  __IO uint16_t EP3C;
+  union {
+    __IO uint16_t EP3C;
+    stc_usb_ep3c_field_t EP3C_f;
+  };
         uint8_t RESERVED12[2];
-  __IO uint16_t EP4C;
+  union {
+    __IO uint16_t EP4C;
+    stc_usb_ep4c_field_t EP4C_f;
+  };
         uint8_t RESERVED13[2];
-  __IO uint16_t EP5C;
+  union {
+    __IO uint16_t EP5C;
+    stc_usb_ep5c_field_t EP5C_f;
+  };
         uint8_t RESERVED14[2];
-  __IO uint16_t TMSP;
+  union {
+    __IO uint16_t TMSP;
+    stc_usb_tmsp_field_t TMSP_f;
+  };
         uint8_t RESERVED15[2];
-  __IO  uint8_t UDCS;
-  __IO  uint8_t UDCIE;
+  union {
+    __IO  uint8_t UDCS;
+    stc_usb_udcs_field_t UDCS_f;
+  };
+  union {
+    __IO  uint8_t UDCIE;
+    stc_usb_udcie_field_t UDCIE_f;
+  };
         uint8_t RESERVED16[2];
-  __IO uint16_t EP0IS;
+  union {
+    __IO uint16_t EP0IS;
+    stc_usb_ep0is_field_t EP0IS_f;
+  };
         uint8_t RESERVED17[2];
-  __IO uint16_t EP0OS;
+  union {
+    __IO uint16_t EP0OS;
+    stc_usb_ep0os_field_t EP0OS_f;
+  };
         uint8_t RESERVED18[2];
-  __IO uint16_t EP1S;
+  union {
+    __IO uint16_t EP1S;
+    stc_usb_ep1s_field_t EP1S_f;
+  };
         uint8_t RESERVED19[2];
-  __IO uint16_t EP2S;
+  union {
+    __IO uint16_t EP2S;
+    stc_usb_ep2s_field_t EP2S_f;
+  };
         uint8_t RESERVED20[2];
   __IO uint16_t EP3S;
         uint8_t RESERVED21[2];
-  __IO uint16_t EP4S;
+  union {
+    __IO uint16_t EP4S;
+    stc_usb_ep4s_field_t EP4S_f;
+  };
         uint8_t RESERVED22[2];
-  __IO uint16_t EP5S;
+  union {
+    __IO uint16_t EP5S;
+    stc_usb_ep5s_field_t EP5S_f;
+  };
         uint8_t RESERVED23[2];
   union {
     __IO uint16_t EP0DT;
@@ -1517,38 +9092,89 @@ typedef struct
 /* DMA controller */
 typedef struct
 {
-  __IO uint32_t DMACR;
+  union {
+    __IO uint32_t DMACR;
+    stc_dmac_dmacr_field_t DMACR_f;
+  };
         uint8_t RESERVED0[12];
-  __IO uint32_t DMACA0;
-  __IO uint32_t DMACB0;
+  union {
+    __IO uint32_t DMACA0;
+    stc_dmac_dmaca0_field_t DMACA0_f;
+  };
+  union {
+    __IO uint32_t DMACB0;
+    stc_dmac_dmacb0_field_t DMACB0_f;
+  };
   __IO uint32_t DMACSA0;
   __IO uint32_t DMACDA0;
-  __IO uint32_t DMACA1;
-  __IO uint32_t DMACB1;
+  union {
+    __IO uint32_t DMACA1;
+    stc_dmac_dmaca1_field_t DMACA1_f;
+  };
+  union {
+    __IO uint32_t DMACB1;
+    stc_dmac_dmacb1_field_t DMACB1_f;
+  };
   __IO uint32_t DMACSA1;
   __IO uint32_t DMACDA1;
-  __IO uint32_t DMACA2;
-  __IO uint32_t DMACB2;
+  union {
+    __IO uint32_t DMACA2;
+    stc_dmac_dmaca2_field_t DMACA2_f;
+  };
+  union {
+    __IO uint32_t DMACB2;
+    stc_dmac_dmacb2_field_t DMACB2_f;
+  };
   __IO uint32_t DMACSA2;
   __IO uint32_t DMACDA2;
-  __IO uint32_t DMACA3;
-  __IO uint32_t DMACB3;
+  union {
+    __IO uint32_t DMACA3;
+    stc_dmac_dmaca3_field_t DMACA3_f;
+  };
+  union {
+    __IO uint32_t DMACB3;
+    stc_dmac_dmacb3_field_t DMACB3_f;
+  };
   __IO uint32_t DMACSA3;
   __IO uint32_t DMACDA3;
-  __IO uint32_t DMACA4;
-  __IO uint32_t DMACB4;
+  union {
+    __IO uint32_t DMACA4;
+    stc_dmac_dmaca4_field_t DMACA4_f;
+  };
+  union {
+    __IO uint32_t DMACB4;
+    stc_dmac_dmacb4_field_t DMACB4_f;
+  };
   __IO uint32_t DMACSA4;
   __IO uint32_t DMACDA4;
-  __IO uint32_t DMACA5;
-  __IO uint32_t DMACB5;
+  union {
+    __IO uint32_t DMACA5;
+    stc_dmac_dmaca5_field_t DMACA5_f;
+  };
+  union {
+    __IO uint32_t DMACB5;
+    stc_dmac_dmacb5_field_t DMACB5_f;
+  };
   __IO uint32_t DMACSA5;
   __IO uint32_t DMACDA5;
-  __IO uint32_t DMACA6;
-  __IO uint32_t DMACB6;
+  union {
+    __IO uint32_t DMACA6;
+    stc_dmac_dmaca6_field_t DMACA6_f;
+  };
+  union {
+    __IO uint32_t DMACB6;
+    stc_dmac_dmacb6_field_t DMACB6_f;
+  };
   __IO uint32_t DMACSA6;
   __IO uint32_t DMACDA6;
-  __IO uint32_t DMACA7;
-  __IO uint32_t DMACB7;
+  union {
+    __IO uint32_t DMACA7;
+    stc_dmac_dmaca7_field_t DMACA7_f;
+  };
+  union {
+    __IO uint32_t DMACB7;
+    stc_dmac_dmacb7_field_t DMACB7_f;
+  };
   __IO uint32_t DMACSA7;
   __IO uint32_t DMACDA7;
 }FM3_DMAC_TypeDef;
@@ -1559,31 +9185,73 @@ typedef struct
 /* CAN channel 0 registers */
 typedef struct
 {
-  __IO uint16_t CTRLR;
-  __IO uint16_t STATR;
-  __IO uint16_t ERRCNT;
-  __IO uint16_t BTR;
-  __IO uint16_t INTR;
-  __IO uint16_t TESTR;
-  __IO uint16_t BRPER;
-        uint8_t RESERVED0[2];
-  __IO uint16_t IF1CREQ;
-  __IO uint16_t IF1CMSK;
   union {
-    __IO uint32_t IF1MSK;
+    __IO uint16_t CTRLR;
+    stc_can_ctrlr_field_t CTRLR_f;
+  };
+  union {
+    __IO uint16_t STATR;
+    stc_can_statr_field_t STATR_f;
+  };
+  union {
+    __IO uint16_t ERRCNT;
+    stc_can_errcnt_field_t ERRCNT_f;
+  };
+  union {
+    __IO uint16_t BTR;
+    stc_can_btr_field_t BTR_f;
+  };
+  union {
+    __IO uint16_t INTR;
+    stc_can_intr_field_t INTR_f;
+  };
+  union {
+    __IO uint16_t TESTR;
+    stc_can_testr_field_t TESTR_f;
+  };
+  union {
+    __IO uint16_t BRPER;
+    stc_can_brper_field_t BRPER_f;
+  };
+        uint8_t RESERVED0[2];
+  union {
+    __IO uint16_t IF1CREQ;
+    stc_can_if1creq_field_t IF1CREQ_f;
+  };
+  union {
+    __IO uint16_t IF1CMSK;
+    stc_can_if1cmsk_field_t IF1CMSK_f;
+  };
+  union {
+    union {
+      __IO uint32_t IF1MSK;
+      stc_can_if1msk_field_t IF1MSK_f;
+    };
     struct {
       __IO uint16_t IF1MSK1;
-      __IO uint16_t IF1MSK2;
+      union {
+        __IO uint16_t IF1MSK2;
+        stc_can_if1msk2_field_t IF1MSK2_f;
+      };
     };
   };
   union {
-    __IO uint32_t IF1ARB;
+    union {
+      __IO uint32_t IF1ARB;
+      stc_can_if1arb_field_t IF1ARB_f;
+    };
     struct {
       __IO uint16_t IF1ARB1;
-      __IO uint16_t IF1ARB2;
+      union {
+        __IO uint16_t IF1ARB2;
+        stc_can_if1arb2_field_t IF1ARB2_f;
+      };
     };
   };
-  __IO uint16_t IF1MCTR;
+  union {
+    __IO uint16_t IF1MCTR;
+    stc_can_if1mctr_field_t IF1MCTR_f;
+  };
         uint8_t RESERVED1[2];
   union {
     __IO uint32_t IF1DTA_L;
@@ -1615,23 +9283,41 @@ typedef struct
     };
   };
         uint8_t RESERVED3[8];
-  __IO uint16_t IF2CREQ;
-  __IO uint16_t IF2CMSK;
   union {
-    __IO uint32_t IF2MSK;
+    __IO uint16_t IF2CREQ;
+    stc_can_if2creq_field_t IF2CREQ_f;
+  };
+  union {
+    __IO uint16_t IF2CMSK;
+    stc_can_if2cmsk_field_t IF2CMSK_f;
+  };
+  union {
+    union {
+      __IO uint32_t IF2MSK;
+      stc_can_if2msk_field_t IF2MSK_f;
+    };
     struct {
       __IO uint16_t IF2MSK1;
-      __IO uint16_t IF2MSK2;
+      union {
+        __IO uint16_t IF2MSK2;
+        stc_can_if2msk2_field_t IF2MSK2_f;
+      };
     };
   };
   union {
     __IO uint32_t IF2ARB;
     struct {
       __IO uint16_t IF2ARB1;
-      __IO uint16_t IF2ARB2;
+      union {
+        __IO uint16_t IF2ARB2;
+        stc_can_if2arb2_field_t IF2ARB2_f;
+      };
     };
   };
-  __IO uint16_t IF2MCTR;
+  union {
+    __IO uint16_t IF2MCTR;
+    stc_can_if2mctr_field_t IF2MCTR_f;
+  };
         uint8_t RESERVED4[2];
   union {
     __IO uint32_t IF2DTA_L;
@@ -1664,34 +9350,67 @@ typedef struct
   };
         uint8_t RESERVED6[24];
   union {
-    __IO uint32_t TREQR;
+    union {
+      __IO uint32_t TREQR;
+      stc_can_treqr_field_t TREQR_f;
+    };
     struct {
-      __IO uint16_t TREQR1;
-      __IO uint16_t TREQR2;
+      union {
+        __IO uint16_t TREQR1;
+        stc_can_treqr1_field_t TREQR1_f;
+      };
+      union {
+        __IO uint16_t TREQR2;
+        stc_can_treqr2_field_t TREQR2_f;
+      };
     };
   };
         uint8_t RESERVED7[12];
   union {
-    __IO uint32_t NEWDT;
+    union {
+      __IO uint32_t NEWDT;
+      stc_can_newdt_field_t NEWDT_f;
+    };
     struct {
-      __IO uint16_t NEWDT1;
+      union {
+        __IO uint16_t NEWDT1;
+        stc_can_newdt1_field_t NEWDT1_f;
+      };
       __IO uint16_t NEWDT2;
     };
   };
         uint8_t RESERVED8[12];
   union {
-    __IO uint32_t INTPND;
+    union {
+      __IO uint32_t INTPND;
+      stc_can_intpnd_field_t INTPND_f;
+    };
     struct {
-      __IO uint16_t INTPND1;
-      __IO uint16_t INTPND2;
+      union {
+        __IO uint16_t INTPND1;
+        stc_can_intpnd1_field_t INTPND1_f;
+      };
+      union {
+        __IO uint16_t INTPND2;
+        stc_can_intpnd2_field_t INTPND2_f;
+      };
     };
   };
         uint8_t RESERVED9[12];
   union {
-    __IO uint32_t MSGVAL;
+    union {
+      __IO uint32_t MSGVAL;
+      stc_can_msgval_field_t MSGVAL_f;
+    };
     struct {
-      __IO uint16_t MSGVAL1;
-      __IO uint16_t MSGVAL2;
+      union {
+        __IO uint16_t MSGVAL1;
+        stc_can_msgval1_field_t MSGVAL1_f;
+      };
+      union {
+        __IO uint16_t MSGVAL2;
+        stc_can_msgval2_field_t MSGVAL2_f;
+      };
     };
   };
 }FM3_CAN_TypeDef;
@@ -1810,7 +9529,7 @@ typedef struct
 /******************************************************************************
  * Peripheral declaration
  ******************************************************************************/
-#define FM3_FLASH_IF    ((FM3_FIF_TypeDef *)FM3_FLASH_IF_BASE)
+#define FM3_FLASH_IF    ((FM3_FLASH_IF_TypeDef *)FM3_FLASH_IF_BASE)
 #define FM3_CRG         ((FM3_CRG_TypeDef *)FM3_CRG_BASE)
 #define FM3_HWWDT       ((FM3_HWWDT_TypeDef *)FM3_HWWDT_BASE)
 #define FM3_SWWDT       ((FM3_SWWDT_TypeDef *)FM3_SWWDT_BASE)
@@ -1924,6 +9643,7 @@ typedef struct
 #define bFM3_FLASH_IF_FRWTR_RWT1               *((volatile unsigned int*)(0x42000084UL))
 #define bFM3_FLASH_IF_FSTR_RDY                 *((volatile unsigned int*)(0x42000100UL))
 #define bFM3_FLASH_IF_FSTR_HNG                 *((volatile unsigned int*)(0x42000104UL))
+#define bFM3_FLASH_IF_FSTR_EER                 *((volatile unsigned int*)(0x42000108UL))
 #define bFM3_FLASH_IF_FSYNDN_SD0               *((volatile unsigned int*)(0x42000200UL))
 #define bFM3_FLASH_IF_FSYNDN_SD1               *((volatile unsigned int*)(0x42000204UL))
 #define bFM3_FLASH_IF_FSYNDN_SD2               *((volatile unsigned int*)(0x42000208UL))
@@ -1999,6 +9719,7 @@ typedef struct
 #define bFM3_CRG_PLL_CTL2_PLLN2                *((volatile unsigned int*)(0x42200788UL))
 #define bFM3_CRG_PLL_CTL2_PLLN3                *((volatile unsigned int*)(0x4220078CUL))
 #define bFM3_CRG_PLL_CTL2_PLLN4                *((volatile unsigned int*)(0x42200790UL))
+#define bFM3_CRG_PLL_CTL2_PLLN5                *((volatile unsigned int*)(0x42200794UL))
 #define bFM3_CRG_CSV_CTL_MCSVE                 *((volatile unsigned int*)(0x42200800UL))
 #define bFM3_CRG_CSV_CTL_SCSVE                 *((volatile unsigned int*)(0x42200804UL))
 #define bFM3_CRG_CSV_CTL_FCSDE                 *((volatile unsigned int*)(0x42200820UL))
@@ -2257,8 +9978,8 @@ typedef struct
 #define bFM3_MFT0_ICU_ICSA10_EG11              *((volatile unsigned int*)(0x42400F0CUL))
 #define bFM3_MFT0_ICU_ICSA10_ICE0              *((volatile unsigned int*)(0x42400F10UL))
 #define bFM3_MFT0_ICU_ICSA10_ICE1              *((volatile unsigned int*)(0x42400F14UL))
-#define bFM3_MFT0_ICU_ICSA10_IPC0              *((volatile unsigned int*)(0x42400F18UL))
-#define bFM3_MFT0_ICU_ICSA10_IPC1              *((volatile unsigned int*)(0x42400F1CUL))
+#define bFM3_MFT0_ICU_ICSA10_ICP0              *((volatile unsigned int*)(0x42400F18UL))
+#define bFM3_MFT0_ICU_ICSA10_ICP1              *((volatile unsigned int*)(0x42400F1CUL))
 #define bFM3_MFT0_ICU_ICSB10_IEI0              *((volatile unsigned int*)(0x42400F20UL))
 #define bFM3_MFT0_ICU_ICSB10_IEI1              *((volatile unsigned int*)(0x42400F24UL))
 #define bFM3_MFT0_ICU_ICSA32_EG20              *((volatile unsigned int*)(0x42400F80UL))
@@ -2267,8 +9988,8 @@ typedef struct
 #define bFM3_MFT0_ICU_ICSA32_EG31              *((volatile unsigned int*)(0x42400F8CUL))
 #define bFM3_MFT0_ICU_ICSA32_ICE2              *((volatile unsigned int*)(0x42400F90UL))
 #define bFM3_MFT0_ICU_ICSA32_ICE3              *((volatile unsigned int*)(0x42400F94UL))
-#define bFM3_MFT0_ICU_ICSA32_IPC2              *((volatile unsigned int*)(0x42400F98UL))
-#define bFM3_MFT0_ICU_ICSA32_IPC3              *((volatile unsigned int*)(0x42400F9CUL))
+#define bFM3_MFT0_ICU_ICSA32_ICP2              *((volatile unsigned int*)(0x42400F98UL))
+#define bFM3_MFT0_ICU_ICSA32_ICP3              *((volatile unsigned int*)(0x42400F9CUL))
 #define bFM3_MFT0_ICU_ICSB32_IEI2              *((volatile unsigned int*)(0x42400FA0UL))
 #define bFM3_MFT0_ICU_ICSB32_IEI3              *((volatile unsigned int*)(0x42400FA4UL))
 
@@ -2508,8 +10229,8 @@ typedef struct
 #define bFM3_MFT1_ICU_ICSA10_EG11              *((volatile unsigned int*)(0x42420F0CUL))
 #define bFM3_MFT1_ICU_ICSA10_ICE0              *((volatile unsigned int*)(0x42420F10UL))
 #define bFM3_MFT1_ICU_ICSA10_ICE1              *((volatile unsigned int*)(0x42420F14UL))
-#define bFM3_MFT1_ICU_ICSA10_IPC0              *((volatile unsigned int*)(0x42420F18UL))
-#define bFM3_MFT1_ICU_ICSA10_IPC1              *((volatile unsigned int*)(0x42420F1CUL))
+#define bFM3_MFT1_ICU_ICSA10_ICP0              *((volatile unsigned int*)(0x42420F18UL))
+#define bFM3_MFT1_ICU_ICSA10_ICP1              *((volatile unsigned int*)(0x42420F1CUL))
 #define bFM3_MFT1_ICU_ICSB10_IEI0              *((volatile unsigned int*)(0x42420F20UL))
 #define bFM3_MFT1_ICU_ICSB10_IEI1              *((volatile unsigned int*)(0x42420F24UL))
 #define bFM3_MFT1_ICU_ICSA32_EG20              *((volatile unsigned int*)(0x42420F80UL))
@@ -2518,8 +10239,8 @@ typedef struct
 #define bFM3_MFT1_ICU_ICSA32_EG31              *((volatile unsigned int*)(0x42420F8CUL))
 #define bFM3_MFT1_ICU_ICSA32_ICE2              *((volatile unsigned int*)(0x42420F90UL))
 #define bFM3_MFT1_ICU_ICSA32_ICE3              *((volatile unsigned int*)(0x42420F94UL))
-#define bFM3_MFT1_ICU_ICSA32_IPC2              *((volatile unsigned int*)(0x42420F98UL))
-#define bFM3_MFT1_ICU_ICSA32_IPC3              *((volatile unsigned int*)(0x42420F9CUL))
+#define bFM3_MFT1_ICU_ICSA32_ICP2              *((volatile unsigned int*)(0x42420F98UL))
+#define bFM3_MFT1_ICU_ICSA32_ICP3              *((volatile unsigned int*)(0x42420F9CUL))
 #define bFM3_MFT1_ICU_ICSB32_IEI2              *((volatile unsigned int*)(0x42420FA0UL))
 #define bFM3_MFT1_ICU_ICSB32_IEI3              *((volatile unsigned int*)(0x42420FA4UL))
 
@@ -3896,6 +11617,11 @@ typedef struct
 #define bFM3_ADC0_ADCT_CT0                     *((volatile unsigned int*)(0x424E0680UL))
 #define bFM3_ADC0_ADCT_CT1                     *((volatile unsigned int*)(0x424E0684UL))
 #define bFM3_ADC0_ADCT_CT2                     *((volatile unsigned int*)(0x424E0688UL))
+#define bFM3_ADC0_ADCT_CT3                     *((volatile unsigned int*)(0x424E068CUL))
+#define bFM3_ADC0_ADCT_CT4                     *((volatile unsigned int*)(0x424E0690UL))
+#define bFM3_ADC0_ADCT_CT5                     *((volatile unsigned int*)(0x424E0694UL))
+#define bFM3_ADC0_ADCT_CT6                     *((volatile unsigned int*)(0x424E0698UL))
+#define bFM3_ADC0_ADCT_CT7                     *((volatile unsigned int*)(0x424E069CUL))
 #define bFM3_ADC0_PRTSL_PRTSL0                 *((volatile unsigned int*)(0x424E0700UL))
 #define bFM3_ADC0_PRTSL_PRTSL1                 *((volatile unsigned int*)(0x424E0704UL))
 #define bFM3_ADC0_PRTSL_PRTSL2                 *((volatile unsigned int*)(0x424E0708UL))
@@ -3906,6 +11632,8 @@ typedef struct
 #define bFM3_ADC0_SCTSL_SCTSL3                 *((volatile unsigned int*)(0x424E072CUL))
 #define bFM3_ADC0_ADCEN_ENBL                   *((volatile unsigned int*)(0x424E0780UL))
 #define bFM3_ADC0_ADCEN_READY                  *((volatile unsigned int*)(0x424E0784UL))
+#define bFM3_ADC0_ADCEN_CYCLSL0                *((volatile unsigned int*)(0x424E0790UL))
+#define bFM3_ADC0_ADCEN_CYCLSL1                *((volatile unsigned int*)(0x424E0794UL))
 
 /* 12-bit ADC unit 1 registers */
 #define bFM3_ADC1_ADSR_SCS                     *((volatile unsigned int*)(0x424E2000UL))
@@ -4214,6 +11942,11 @@ typedef struct
 #define bFM3_ADC1_ADCT_CT0                     *((volatile unsigned int*)(0x424E2680UL))
 #define bFM3_ADC1_ADCT_CT1                     *((volatile unsigned int*)(0x424E2684UL))
 #define bFM3_ADC1_ADCT_CT2                     *((volatile unsigned int*)(0x424E2688UL))
+#define bFM3_ADC1_ADCT_CT3                     *((volatile unsigned int*)(0x424E268CUL))
+#define bFM3_ADC1_ADCT_CT4                     *((volatile unsigned int*)(0x424E2690UL))
+#define bFM3_ADC1_ADCT_CT5                     *((volatile unsigned int*)(0x424E2694UL))
+#define bFM3_ADC1_ADCT_CT6                     *((volatile unsigned int*)(0x424E2698UL))
+#define bFM3_ADC1_ADCT_CT7                     *((volatile unsigned int*)(0x424E269CUL))
 #define bFM3_ADC1_PRTSL_PRTSL0                 *((volatile unsigned int*)(0x424E2700UL))
 #define bFM3_ADC1_PRTSL_PRTSL1                 *((volatile unsigned int*)(0x424E2704UL))
 #define bFM3_ADC1_PRTSL_PRTSL2                 *((volatile unsigned int*)(0x424E2708UL))
@@ -4224,6 +11957,8 @@ typedef struct
 #define bFM3_ADC1_SCTSL_SCTSL3                 *((volatile unsigned int*)(0x424E272CUL))
 #define bFM3_ADC1_ADCEN_ENBL                   *((volatile unsigned int*)(0x424E2780UL))
 #define bFM3_ADC1_ADCEN_READY                  *((volatile unsigned int*)(0x424E2784UL))
+#define bFM3_ADC1_ADCEN_CYCLSL0                *((volatile unsigned int*)(0x424E2790UL))
+#define bFM3_ADC1_ADCEN_CYCLSL1                *((volatile unsigned int*)(0x424E2794UL))
 
 /* 12-bit ADC unit 2 registers */
 #define bFM3_ADC2_ADSR_SCS                     *((volatile unsigned int*)(0x424E4000UL))
@@ -4532,6 +12267,11 @@ typedef struct
 #define bFM3_ADC2_ADCT_CT0                     *((volatile unsigned int*)(0x424E4680UL))
 #define bFM3_ADC2_ADCT_CT1                     *((volatile unsigned int*)(0x424E4684UL))
 #define bFM3_ADC2_ADCT_CT2                     *((volatile unsigned int*)(0x424E4688UL))
+#define bFM3_ADC2_ADCT_CT3                     *((volatile unsigned int*)(0x424E468CUL))
+#define bFM3_ADC2_ADCT_CT4                     *((volatile unsigned int*)(0x424E4690UL))
+#define bFM3_ADC2_ADCT_CT5                     *((volatile unsigned int*)(0x424E4694UL))
+#define bFM3_ADC2_ADCT_CT6                     *((volatile unsigned int*)(0x424E4698UL))
+#define bFM3_ADC2_ADCT_CT7                     *((volatile unsigned int*)(0x424E469CUL))
 #define bFM3_ADC2_PRTSL_PRTSL0                 *((volatile unsigned int*)(0x424E4700UL))
 #define bFM3_ADC2_PRTSL_PRTSL1                 *((volatile unsigned int*)(0x424E4704UL))
 #define bFM3_ADC2_PRTSL_PRTSL2                 *((volatile unsigned int*)(0x424E4708UL))
@@ -4542,6 +12282,8 @@ typedef struct
 #define bFM3_ADC2_SCTSL_SCTSL3                 *((volatile unsigned int*)(0x424E472CUL))
 #define bFM3_ADC2_ADCEN_ENBL                   *((volatile unsigned int*)(0x424E4780UL))
 #define bFM3_ADC2_ADCEN_READY                  *((volatile unsigned int*)(0x424E4784UL))
+#define bFM3_ADC2_ADCEN_CYCLSL0                *((volatile unsigned int*)(0x424E4790UL))
+#define bFM3_ADC2_ADCEN_CYCLSL1                *((volatile unsigned int*)(0x424E4794UL))
 
 /* CR trimming registers */
 #define bFM3_CRTRIM_MCR_PSR_CSR0               *((volatile unsigned int*)(0x425C0000UL))
@@ -4824,6 +12566,7 @@ typedef struct
 #define bFM3_INTREQ_IRQ35MON_USB0INT2          *((volatile unsigned int*)(0x42621408UL))
 #define bFM3_INTREQ_IRQ35MON_USB0INT3          *((volatile unsigned int*)(0x4262140CUL))
 #define bFM3_INTREQ_IRQ35MON_USB0INT4          *((volatile unsigned int*)(0x42621410UL))
+#define bFM3_INTREQ_IRQ35MON_USB0INT5          *((volatile unsigned int*)(0x42621414UL))
 #define bFM3_INTREQ_IRQ38MON_DMAINT            *((volatile unsigned int*)(0x42621580UL))
 #define bFM3_INTREQ_IRQ39MON_DMAINT            *((volatile unsigned int*)(0x42621600UL))
 #define bFM3_INTREQ_IRQ40MON_DMAINT            *((volatile unsigned int*)(0x42621680UL))
@@ -6398,14 +14141,14 @@ typedef struct
 #define bFM3_MFS4_CSIO_FBYTE1_FD5              *((volatile unsigned int*)(0x42708314UL))
 #define bFM3_MFS4_CSIO_FBYTE1_FD6              *((volatile unsigned int*)(0x42708318UL))
 #define bFM3_MFS4_CSIO_FBYTE1_FD7              *((volatile unsigned int*)(0x4270831CUL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x42708340UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x42708344UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x42708348UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270834CUL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x42708350UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x42708354UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x42708358UL))
-#define bFM3_MFS4_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270835CUL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x42708320UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x42708324UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x42708328UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270832CUL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x42708330UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x42708334UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x42708338UL))
+#define bFM3_MFS4_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270833CUL))
 
 /* UART LIN channel 4 registers */
 #define bFM3_MFS4_LIN_SMR_SOE                  *((volatile unsigned int*)(0x42708000UL))
@@ -6489,14 +14232,14 @@ typedef struct
 #define bFM3_MFS4_LIN_FBYTE1_FD5               *((volatile unsigned int*)(0x42708314UL))
 #define bFM3_MFS4_LIN_FBYTE1_FD6               *((volatile unsigned int*)(0x42708318UL))
 #define bFM3_MFS4_LIN_FBYTE1_FD7               *((volatile unsigned int*)(0x4270831CUL))
-#define bFM3_MFS4_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x42708340UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x42708344UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x42708348UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270834CUL))
-#define bFM3_MFS4_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x42708350UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x42708354UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x42708358UL))
-#define bFM3_MFS4_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270835CUL))
+#define bFM3_MFS4_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x42708320UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x42708324UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x42708328UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270832CUL))
+#define bFM3_MFS4_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x42708330UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x42708334UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x42708338UL))
+#define bFM3_MFS4_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270833CUL))
 
 /* I2C channel 4 registers */
 #define bFM3_MFS4_I2C_SMR_ITST0                *((volatile unsigned int*)(0x42708000UL))
@@ -6600,14 +14343,14 @@ typedef struct
 #define bFM3_MFS4_I2C_FBYTE1_FD5               *((volatile unsigned int*)(0x42708314UL))
 #define bFM3_MFS4_I2C_FBYTE1_FD6               *((volatile unsigned int*)(0x42708318UL))
 #define bFM3_MFS4_I2C_FBYTE1_FD7               *((volatile unsigned int*)(0x4270831CUL))
-#define bFM3_MFS4_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x42708340UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x42708344UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x42708348UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270834CUL))
-#define bFM3_MFS4_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x42708350UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x42708354UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x42708358UL))
-#define bFM3_MFS4_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270835CUL))
+#define bFM3_MFS4_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x42708320UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x42708324UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x42708328UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270832CUL))
+#define bFM3_MFS4_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x42708330UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x42708334UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x42708338UL))
+#define bFM3_MFS4_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270833CUL))
 
 /* UART asynchronous channel 5 registers */
 #define bFM3_MFS5_UART_SMR_SOE                 *((volatile unsigned int*)(0x4270A000UL))
@@ -6783,14 +14526,14 @@ typedef struct
 #define bFM3_MFS5_CSIO_FBYTE1_FD5              *((volatile unsigned int*)(0x4270A314UL))
 #define bFM3_MFS5_CSIO_FBYTE1_FD6              *((volatile unsigned int*)(0x4270A318UL))
 #define bFM3_MFS5_CSIO_FBYTE1_FD7              *((volatile unsigned int*)(0x4270A31CUL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270A340UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270A344UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270A348UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270A34CUL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270A350UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270A354UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270A358UL))
-#define bFM3_MFS5_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270A35CUL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270A320UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270A324UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270A328UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270A32CUL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270A330UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270A334UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270A338UL))
+#define bFM3_MFS5_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270A33CUL))
 
 /* UART LIN channel 5 registers */
 #define bFM3_MFS5_LIN_SMR_SOE                  *((volatile unsigned int*)(0x4270A000UL))
@@ -6874,14 +14617,14 @@ typedef struct
 #define bFM3_MFS5_LIN_FBYTE1_FD5               *((volatile unsigned int*)(0x4270A314UL))
 #define bFM3_MFS5_LIN_FBYTE1_FD6               *((volatile unsigned int*)(0x4270A318UL))
 #define bFM3_MFS5_LIN_FBYTE1_FD7               *((volatile unsigned int*)(0x4270A31CUL))
-#define bFM3_MFS5_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270A340UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270A344UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270A348UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270A34CUL))
-#define bFM3_MFS5_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270A350UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270A354UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270A358UL))
-#define bFM3_MFS5_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270A35CUL))
+#define bFM3_MFS5_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270A320UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270A324UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270A328UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270A32CUL))
+#define bFM3_MFS5_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270A330UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270A334UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270A338UL))
+#define bFM3_MFS5_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270A33CUL))
 
 /* I2C channel 5 registers */
 #define bFM3_MFS5_I2C_SMR_ITST0                *((volatile unsigned int*)(0x4270A000UL))
@@ -6985,14 +14728,14 @@ typedef struct
 #define bFM3_MFS5_I2C_FBYTE1_FD5               *((volatile unsigned int*)(0x4270A314UL))
 #define bFM3_MFS5_I2C_FBYTE1_FD6               *((volatile unsigned int*)(0x4270A318UL))
 #define bFM3_MFS5_I2C_FBYTE1_FD7               *((volatile unsigned int*)(0x4270A31CUL))
-#define bFM3_MFS5_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270A340UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270A344UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270A348UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270A34CUL))
-#define bFM3_MFS5_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270A350UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270A354UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270A358UL))
-#define bFM3_MFS5_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270A35CUL))
+#define bFM3_MFS5_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270A320UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270A324UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270A328UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270A32CUL))
+#define bFM3_MFS5_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270A330UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270A334UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270A338UL))
+#define bFM3_MFS5_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270A33CUL))
 
 /* UART asynchronous channel 6 registers */
 #define bFM3_MFS6_UART_SMR_SOE                 *((volatile unsigned int*)(0x4270C000UL))
@@ -7168,14 +14911,14 @@ typedef struct
 #define bFM3_MFS6_CSIO_FBYTE1_FD5              *((volatile unsigned int*)(0x4270C314UL))
 #define bFM3_MFS6_CSIO_FBYTE1_FD6              *((volatile unsigned int*)(0x4270C318UL))
 #define bFM3_MFS6_CSIO_FBYTE1_FD7              *((volatile unsigned int*)(0x4270C31CUL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270C340UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270C344UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270C348UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270C34CUL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270C350UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270C354UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270C358UL))
-#define bFM3_MFS6_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270C35CUL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270C320UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270C324UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270C328UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270C32CUL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270C330UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270C334UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270C338UL))
+#define bFM3_MFS6_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270C33CUL))
 
 /* UART LIN channel 6 registers */
 #define bFM3_MFS6_LIN_SMR_SOE                  *((volatile unsigned int*)(0x4270C000UL))
@@ -7259,14 +15002,14 @@ typedef struct
 #define bFM3_MFS6_LIN_FBYTE1_FD5               *((volatile unsigned int*)(0x4270C314UL))
 #define bFM3_MFS6_LIN_FBYTE1_FD6               *((volatile unsigned int*)(0x4270C318UL))
 #define bFM3_MFS6_LIN_FBYTE1_FD7               *((volatile unsigned int*)(0x4270C31CUL))
-#define bFM3_MFS6_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270C340UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270C344UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270C348UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270C34CUL))
-#define bFM3_MFS6_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270C350UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270C354UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270C358UL))
-#define bFM3_MFS6_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270C35CUL))
+#define bFM3_MFS6_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270C320UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270C324UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270C328UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270C32CUL))
+#define bFM3_MFS6_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270C330UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270C334UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270C338UL))
+#define bFM3_MFS6_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270C33CUL))
 
 /* I2C channel 6 registers */
 #define bFM3_MFS6_I2C_SMR_ITST0                *((volatile unsigned int*)(0x4270C000UL))
@@ -7370,14 +15113,14 @@ typedef struct
 #define bFM3_MFS6_I2C_FBYTE1_FD5               *((volatile unsigned int*)(0x4270C314UL))
 #define bFM3_MFS6_I2C_FBYTE1_FD6               *((volatile unsigned int*)(0x4270C318UL))
 #define bFM3_MFS6_I2C_FBYTE1_FD7               *((volatile unsigned int*)(0x4270C31CUL))
-#define bFM3_MFS6_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270C340UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270C344UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270C348UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270C34CUL))
-#define bFM3_MFS6_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270C350UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270C354UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270C358UL))
-#define bFM3_MFS6_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270C35CUL))
+#define bFM3_MFS6_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270C320UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270C324UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270C328UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270C32CUL))
+#define bFM3_MFS6_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270C330UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270C334UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270C338UL))
+#define bFM3_MFS6_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270C33CUL))
 
 /* UART asynchronous channel 7 registers */
 #define bFM3_MFS7_UART_SMR_SOE                 *((volatile unsigned int*)(0x4270E000UL))
@@ -7553,14 +15296,14 @@ typedef struct
 #define bFM3_MFS7_CSIO_FBYTE1_FD5              *((volatile unsigned int*)(0x4270E314UL))
 #define bFM3_MFS7_CSIO_FBYTE1_FD6              *((volatile unsigned int*)(0x4270E318UL))
 #define bFM3_MFS7_CSIO_FBYTE1_FD7              *((volatile unsigned int*)(0x4270E31CUL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270E340UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270E344UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270E348UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270E34CUL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270E350UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270E354UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270E358UL))
-#define bFM3_MFS7_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270E35CUL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD8              *((volatile unsigned int*)(0x4270E320UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD9              *((volatile unsigned int*)(0x4270E324UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD10             *((volatile unsigned int*)(0x4270E328UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD11             *((volatile unsigned int*)(0x4270E32CUL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD12             *((volatile unsigned int*)(0x4270E330UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD13             *((volatile unsigned int*)(0x4270E334UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD14             *((volatile unsigned int*)(0x4270E338UL))
+#define bFM3_MFS7_CSIO_FBYTE2_FD15             *((volatile unsigned int*)(0x4270E33CUL))
 
 /* UART LIN channel 7 registers */
 #define bFM3_MFS7_LIN_SMR_SOE                  *((volatile unsigned int*)(0x4270E000UL))
@@ -7644,14 +15387,14 @@ typedef struct
 #define bFM3_MFS7_LIN_FBYTE1_FD5               *((volatile unsigned int*)(0x4270E314UL))
 #define bFM3_MFS7_LIN_FBYTE1_FD6               *((volatile unsigned int*)(0x4270E318UL))
 #define bFM3_MFS7_LIN_FBYTE1_FD7               *((volatile unsigned int*)(0x4270E31CUL))
-#define bFM3_MFS7_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270E340UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270E344UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270E348UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270E34CUL))
-#define bFM3_MFS7_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270E350UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270E354UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270E358UL))
-#define bFM3_MFS7_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270E35CUL))
+#define bFM3_MFS7_LIN_FBYTE2_FD8               *((volatile unsigned int*)(0x4270E320UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD9               *((volatile unsigned int*)(0x4270E324UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD10              *((volatile unsigned int*)(0x4270E328UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD11              *((volatile unsigned int*)(0x4270E32CUL))
+#define bFM3_MFS7_LIN_FBYTE2_FD12              *((volatile unsigned int*)(0x4270E330UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD13              *((volatile unsigned int*)(0x4270E334UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD14              *((volatile unsigned int*)(0x4270E338UL))
+#define bFM3_MFS7_LIN_FBYTE2_FD15              *((volatile unsigned int*)(0x4270E33CUL))
 
 /* I2C channel 7 registers */
 #define bFM3_MFS7_I2C_SMR_ITST0                *((volatile unsigned int*)(0x4270E000UL))
@@ -7755,14 +15498,14 @@ typedef struct
 #define bFM3_MFS7_I2C_FBYTE1_FD5               *((volatile unsigned int*)(0x4270E314UL))
 #define bFM3_MFS7_I2C_FBYTE1_FD6               *((volatile unsigned int*)(0x4270E318UL))
 #define bFM3_MFS7_I2C_FBYTE1_FD7               *((volatile unsigned int*)(0x4270E31CUL))
-#define bFM3_MFS7_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270E340UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270E344UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270E348UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270E34CUL))
-#define bFM3_MFS7_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270E350UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270E354UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270E358UL))
-#define bFM3_MFS7_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270E35CUL))
+#define bFM3_MFS7_I2C_FBYTE2_FD8               *((volatile unsigned int*)(0x4270E320UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD9               *((volatile unsigned int*)(0x4270E324UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD10              *((volatile unsigned int*)(0x4270E328UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD11              *((volatile unsigned int*)(0x4270E32CUL))
+#define bFM3_MFS7_I2C_FBYTE2_FD12              *((volatile unsigned int*)(0x4270E330UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD13              *((volatile unsigned int*)(0x4270E334UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD14              *((volatile unsigned int*)(0x4270E338UL))
+#define bFM3_MFS7_I2C_FBYTE2_FD15              *((volatile unsigned int*)(0x4270E33CUL))
 
 /* CRC registers */
 #define bFM3_CRC_CRCCR_INIT                    *((volatile unsigned int*)(0x42720000UL))
@@ -8409,7 +16152,7 @@ typedef struct
 #define bFM3_USB0_EP1C_PKS15                   *((volatile unsigned int*)(0x42842514UL))
 #define bFM3_USB0_EP1C_PKS16                   *((volatile unsigned int*)(0x42842518UL))
 #define bFM3_USB0_EP1C_PKS17                   *((volatile unsigned int*)(0x4284251CUL))
-#define bFM3_USB0_EP1C_PSK18                   *((volatile unsigned int*)(0x42842520UL))
+#define bFM3_USB0_EP1C_PKS18                   *((volatile unsigned int*)(0x42842520UL))
 #define bFM3_USB0_EP1C_STAL                    *((volatile unsigned int*)(0x42842524UL))
 #define bFM3_USB0_EP1C_NULE                    *((volatile unsigned int*)(0x42842528UL))
 #define bFM3_USB0_EP1C_DMAE                    *((volatile unsigned int*)(0x4284252CUL))
@@ -8519,6 +16262,7 @@ typedef struct
 #define bFM3_USB0_EP1S_SIZE15                  *((volatile unsigned int*)(0x42842994UL))
 #define bFM3_USB0_EP1S_SIZE16                  *((volatile unsigned int*)(0x42842998UL))
 #define bFM3_USB0_EP1S_SIZE17                  *((volatile unsigned int*)(0x4284299CUL))
+#define bFM3_USB0_EP1S_SIZE18                  *((volatile unsigned int*)(0x428429A0UL))
 #define bFM3_USB0_EP1S_SPK                     *((volatile unsigned int*)(0x428429A4UL))
 #define bFM3_USB0_EP1S_DRQ                     *((volatile unsigned int*)(0x428429A8UL))
 #define bFM3_USB0_EP1S_BUSY                    *((volatile unsigned int*)(0x428429ACUL))

@@ -30,42 +30,33 @@
 /*                                                                      */
 /* (V1.5)                                                               */
 /************************************************************************/
-
-#ifndef _SYSTEM_MB9BF50X_H_
-#define _SYSTEM_MB9BF50X_H_
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
-#include <stdint.h>
-
-extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
-   
 /**
- * Initialize the system
- *
- * @param  none
- * @return none
- *
- * @brief  Setup the microcontroller system.
- *         Initialize the System and update the SystemCoreClock variable.
- */
-extern void SystemInit (void);
+ ******************************************************************************
+ ** \file   mcu.h
+ **
+ ** Header File for device dependent includes
+ **
+ ** History:
+ ** 2011-05-19 V1.00 MWi first version
+ **
+ ******************************************************************************/
 
 /**
- * Update SystemCoreClock variable
- *
- * @param  none
- * @return none
- *
- * @brief  Updates the SystemCoreClock with current core Clock 
- *         retrieved from cpu registers.
- */
-extern void SystemCoreClockUpdate (void);
-
-#ifdef __cplusplus
-}
+ ******************************************************************************
+ ** \brief MCU header file include
+ **
+ ******************************************************************************/ 
+#ifndef _MB9BF506R_H_
+  #include "mb9bf506r.h"
 #endif
 
-#endif /* __SYSTEM_MB9BF50X_H */
+/**
+ ******************************************************************************
+ ** \brief MCU system start-up header file include
+ **
+ ******************************************************************************/ 
+#ifndef _SYSTEM_MB9BF50X_H_
+  #include "system_mb9bf50x.h"
+#endif
+
+

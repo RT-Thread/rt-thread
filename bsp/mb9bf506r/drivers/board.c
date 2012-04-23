@@ -16,12 +16,10 @@
 #include <rtthread.h>
 
 #include "board.h"
-#include "mb9bf506r.h"
+#include "mcu.h"
 
 #include "serial.h"
 #include "nand.h"
-
-extern const uint32_t SystemFrequency;
 
 /**
  * @addtogroup FM3
@@ -48,8 +46,8 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init(void)
 {
-    /* init systick */
-    SysTick_Config(SystemFrequency/RT_TICK_PER_SECOND);
+	/* init systick */
+	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     
 	/* initialize UART device */
 	rt_hw_serial_init();
