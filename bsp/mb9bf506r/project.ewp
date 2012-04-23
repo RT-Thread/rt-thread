@@ -294,16 +294,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\dfs</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\libraries\Device\FUJISTU\MB9BF50x\Include</state>
         </option>
@@ -1212,16 +1211,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\dfs</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\libraries\Device\FUJISTU\MB9BF50x\Include</state>
         </option>
@@ -1857,6 +1855,12 @@
     </file>
   </group>
   <group>
+    <name>Components</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\init\components_init.c</name>
+    </file>
+  </group>
+  <group>
     <name>CORTEX-M3</name>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
@@ -1890,27 +1894,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\serial.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Filesystem</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
     </file>
   </group>
   <group>

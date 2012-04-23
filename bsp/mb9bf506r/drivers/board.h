@@ -16,8 +16,6 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include "serial.h"
-
 //Internal SRAM memory size[Kbytes] <8-64>
 //MB9BF500 : 32
 //MB9BF504 : 32

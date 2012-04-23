@@ -348,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;applications;drivers;libraries\CMSIS\Include;libraries\CMSIS\RTOS;libraries\Device\FUJISTU\MB9BF50x\Include</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\components\init;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;applications;drivers;libraries\CMSIS\Include;libraries\CMSIS\RTOS;libraries\Device\FUJISTU\MB9BF50x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -546,41 +546,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>finsh</GroupName>
           <Files>
             <File>
@@ -647,6 +612,16 @@
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\symbol.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components</GroupName>
+          <Files>
+            <File>
+              <FileName>components_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\init\components_init.c</FilePath>
             </File>
           </Files>
         </Group>

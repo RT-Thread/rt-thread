@@ -17,25 +17,13 @@
 
 #include "board.h"
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#endif
-
 /**
  * @addtogroup FM3
  */
 
-extern struct serial_device uart0;
-extern struct rt_device uart0_device;
-extern struct serial_device uart2;
-extern struct rt_device uart2_device;
-
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-#endif
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -50,16 +38,11 @@ extern int __bss_end;
  */
 void rtthread_startup(void)
 {
-	/* init board */
+	/* initialize board */
 	rt_hw_board_init();
 
 	/* show version */
 	rt_show_version();
-
-	/* init tick */
-	rt_system_tick_init();
-	/* init timer system */
-	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
 	#ifdef __CC_ARM
@@ -75,27 +58,23 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
+#ifdef RT_USING_DEVICE
 #ifdef RT_USING_DFS
 #ifdef RT_USING_DFS_UFFS
 	rt_hw_nand_init();
 #endif
 #endif
+	/* initialize all device */
+	rt_device_init_all();
+#endif
 
-	/* init application */
+	/* initialize application */
 	rt_application_init();
 
-#ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-#ifdef RT_USING_DEVICE
-	finsh_set_device(FINSH_DEVICE_NAME);
-#endif
-#endif
+	/* initialize timer thread */
+	rt_system_timer_thread_init();
 
-    /* init timer thread */
-    rt_system_timer_thread_init();
-
-	/* init idle thread */
+	/* initialize idle thread */
 	rt_thread_idle_init();
 
 	/* start scheduler */
