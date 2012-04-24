@@ -150,4 +150,8 @@
 #define RT_LWIP_ETHTHREAD_PRIORITY		23
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
+
+/* the size of each pbuf in the pbuf pool. */
+#define RT_LWIP_PBUF_POOL_BUFSIZE		1500
+
 #endif
