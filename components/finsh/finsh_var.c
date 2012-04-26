@@ -10,6 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
+ * 2012-04-27     Bernard      fixed finsh_var_delete issue which
+ *                             is found by Grissiom.
  */
 #include <finsh.h>
 #include "finsh_var.h"
@@ -58,7 +60,7 @@ int finsh_var_delete(const char* name)
 
 	for (i = 0; i < FINSH_VARIABLE_MAX; i ++)
 	{
-		if (strncpy(global_variable[i].name, name, FINSH_NAME_MAX) == 0)
+		if (strncmp(global_variable[i].name, name, FINSH_NAME_MAX) == 0)
 			break;
 	}
 
