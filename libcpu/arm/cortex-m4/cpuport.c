@@ -125,7 +125,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 }
 
 extern void rt_hw_interrupt_thread_switch(void);
-extern void list_thread(void);
+extern long list_thread(void);
 extern rt_thread_t rt_current_thread;
 void rt_hw_hard_fault_exception(struct exception_stack_frame * exception_stack)
 {

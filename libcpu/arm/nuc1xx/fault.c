@@ -26,7 +26,7 @@ struct stack_contex
 };
 
 extern void rt_hw_interrupt_thread_switch(void);
-extern void list_thread(void);
+extern long list_thread(void);
 extern rt_thread_t rt_current_thread;
 void rt_hw_hard_fault_exception(struct stack_contex* contex)
 {

@@ -64,7 +64,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	return (rt_uint8_t *)stk;
 }
 
-extern void list_thread(void);
+extern long list_thread(void);
 extern rt_thread_t rt_current_thread;
 /**
  * fault exception handling
