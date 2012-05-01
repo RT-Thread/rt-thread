@@ -42,6 +42,9 @@ rt_err_t rt_completion_wait(struct rt_completion* completion, rt_int32_t timeout
 		}
 		else
 		{
+			/* reset thread error number */
+			thread->error = RT_EOK;
+			
 			/* suspend thread */
 			rt_thread_suspend(thread);
 			/* add to suspended list */
@@ -92,7 +95,7 @@ void rt_completion_done(struct rt_completion* completion)
 
 		/* get thread entry */
 		thread = rt_list_entry(completion->suspended_list.next, struct rt_thread, tlist);
-
+		
 		/* resume it */
 		rt_thread_resume(thread);
 		rt_hw_interrupt_enable(level);
