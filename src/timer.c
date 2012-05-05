@@ -28,6 +28,9 @@ static rt_list_t rt_timer_list = RT_LIST_OBJECT_INIT(rt_timer_list);
 #ifdef RT_USING_TIMER_SOFT
 /* soft timer list */
 static rt_list_t rt_soft_timer_list;
+static struct rt_thread timer_thread;
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif
 
 #ifdef RT_USING_HOOK
@@ -73,6 +76,15 @@ static void _rt_timer_init(rt_timer_t timer,
 
 	/* initialize timer list */
 	rt_list_init(&(timer->list));
+}
+
+static rt_tick_t rt_timer_list_next_timeout(rt_list_t* timer_list)
+{
+	struct rt_timer* timer;
+	if (rt_list_isempty(timer_list)) return RT_TICK_MAX;
+	
+	timer = rt_list_entry(timer_list->next, struct rt_timer, list);
+	return timer->timeout_tick;
 }
 
 /**
@@ -211,12 +223,12 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
 	RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
-	/* disable interrupt */
-	level = rt_hw_interrupt_disable();
-
 	/* get timeout tick, the max timeout tick shall not great than RT_TICK_MAX/2 */
 	RT_ASSERT(timer->init_tick < RT_TICK_MAX/2);
 	timer->timeout_tick = rt_tick_get() + timer->init_tick;
+
+	/* disable interrupt */
+	level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_TIMER_SOFT
 	if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
@@ -249,11 +261,24 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 	{
 		rt_list_insert_before(n, &(timer->list));
 	}
-		
+
 	timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
+
+#ifdef RT_USING_TIMER_SOFT
+	if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
+	{
+		/* check whether timer thread is ready */
+		if (timer_thread.stat != RT_THREAD_READY)
+		{
+			/* resume timer thread to check soft timer */
+			rt_thread_resume(&timer_thread);
+			rt_schedule();
+		}
+	}
+#endif
 
 	return -RT_EOK;
 }
@@ -279,14 +304,14 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 	/* disable interrupt */
 	level = rt_hw_interrupt_disable();
 
-	/* change stat */
-	timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-
 	/* remove it from timer list */
 	rt_list_remove(&(timer->list));
 
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
+
+	/* change stat */
+	timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
 	return RT_EOK;
 }
@@ -333,9 +358,6 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg)
  *
  * @note this function shall be invoked in operating system timer interrupt.
  */
-#ifdef RT_USING_TIMER_SOFT
-void rt_soft_timer_tick_increase(void);
-#endif
 void rt_timer_check(void)
 {
 	struct rt_timer *t;
@@ -391,32 +413,20 @@ void rt_timer_check(void)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
-	/* increase soft timer tick */
-#ifdef RT_USING_TIMER_SOFT
-	rt_soft_timer_tick_increase();
-#endif
-
 	RT_DEBUG_LOG(RT_DEBUG_TIMER, ("timer check leave\n"));
 }
 
-#ifdef RT_USING_TIMER_SOFT
-static struct rt_thread timer_thread;
-ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
-static struct rt_semaphore timer_sem;
-
-static rt_uint16_t timer_ex_cnt;
-
-void rt_soft_timer_tick_increase(void)
+/**
+ * This function will return the next timeout tick in the system.
+ *
+ * @return the next timeout tick in the system
+ */
+rt_tick_t rt_timer_next_timeout_tick(void)
 {
-	timer_ex_cnt ++;
-	if (timer_ex_cnt >= (RT_TICK_PER_SECOND / RT_TIMER_TICK_PER_SECOND))
-	{
-		timer_ex_cnt = 0;
-		rt_sem_release(&timer_sem);
-	}
+	return rt_timer_list_next_timeout(&rt_timer_list);
 }
 
+#ifdef RT_USING_TIMER_SOFT
 /**
  * This function will check timer list, if a timeout event happens, the
  * corresponding timeout function will be invoked.
@@ -469,8 +479,7 @@ void rt_soft_timer_check(void)
 				t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 			}
 		}
-		else
-			break; /* not check anymore */
+		else break; /* not check anymore */
 	}
 
 	RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
@@ -479,17 +488,25 @@ void rt_soft_timer_check(void)
 /* system timer thread entry */
 static void rt_thread_timer_entry(void *parameter)
 {
+	rt_tick_t next_timeout;
+	
 	while (1)
 	{
-		/* take software timer semaphore */
-		rt_sem_take(&timer_sem, RT_WAITING_FOREVER);
+		next_timeout = rt_timer_list_next_timeout(&rt_soft_timer_list);
+		if (next_timeout == RT_TICK_MAX)
+		{
+			rt_thread_suspend(rt_thread_self());
+			rt_schedule();
+		}
+		else
+		{
+			rt_thread_delay(next_timeout);
+		}
 
 		/* lock scheduler */
 		rt_enter_critical();
-
 		/* check software timer */
 		rt_soft_timer_check();
-
 		/* unlock scheduler */
 		rt_exit_critical();
 	}
@@ -517,7 +534,6 @@ void rt_system_timer_thread_init(void)
 {
 #ifdef RT_USING_TIMER_SOFT
 	rt_list_init(&rt_soft_timer_list);
-	rt_sem_init(&timer_sem, "timer", 0, RT_IPC_FLAG_FIFO);
 
 	/* start software timer thread */
 	rt_thread_init(&timer_thread,

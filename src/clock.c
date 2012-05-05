@@ -59,10 +59,9 @@ rt_tick_t rt_tick_get(void)
 void rt_tick_set(rt_tick_t tick)
 {
 	rt_base_t level;
-	level = rt_hw_interrupt_disable();
 
+	level = rt_hw_interrupt_disable();
 	rt_tick = tick;
-	
 	rt_hw_interrupt_enable(level);
 }
 
