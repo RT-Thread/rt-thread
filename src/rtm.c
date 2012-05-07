@@ -110,6 +110,16 @@ RTM_EXPORT(rt_mq_recv);
 RTM_EXPORT(rt_mq_control);  
 #endif
 
+#ifdef RT_USING_MEMHEAP
+/*
+ * memory heap interface symbol
+ */
+RTM_EXPORT(rt_memheap_init);
+RTM_EXPORT(rt_memheap_detach);
+RTM_EXPORT(rt_memheap_alloc);
+RTM_EXPORT(rt_memheap_free);
+#endif
+
 #ifdef RT_USING_MEMPOOL
 /*
  * memory pool interface symbol

@@ -224,9 +224,11 @@ typedef struct rt_object *rt_object_t;                  /* Type for kernel objec
  *  - Event
  *  - MailBox
  *  - MessageQueue
+ *  - MemHeap
  *  - MemPool
  *  - Device
  *  - Timer
+ *  - Module
  *  - Unknown
  *  - Static
  */

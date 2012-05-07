@@ -293,6 +293,13 @@ static void rt_module_init_object_container(struct rt_module *module)
 	module->module_object[RT_Object_Class_MessageQueue].type = RT_Object_Class_MessageQueue;
 #endif
 
+#ifdef RT_USING_MEMHEAP
+	/* initialize object container - memory heap */
+	rt_list_init(&(module->module_object[RT_Object_Class_MemHeap].object_list));
+	module->module_object[RT_Object_Class_MemHeap].object_size = sizeof(struct rt_memheap);
+	module->module_object[RT_Object_Class_MemHeap].type = RT_Object_Class_MemHeap;
+#endif
+
 #ifdef RT_USING_MEMPOOL
 	/* initialize object container - memory pool */
 	rt_list_init(&(module->module_object[RT_Object_Class_MemPool].object_list));
