@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2011-05-15     lgnq         modified according bernard's implementaion.      	  	
+ * 2011-05-15     lgnq         modified according bernard's implementation.
  */
 
 #include <rtthread.h>
@@ -20,7 +20,7 @@
 /**
  * @addtogroup FM3 MB9B500
  */
- 
+
 /*@{*/
 
 /* RT-Thread Device Interface */
@@ -273,7 +273,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char *name,
 	device->user_data	= serial;
 
 	/* register a character device */
-	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
+	return rt_device_register(device, name, flag);
 }
 
 /* ISR for serial interrupt */
@@ -304,13 +304,12 @@ void rt_hw_serial_isr(rt_device_t device)
 	}	
 }
 
-#ifdef RT_USING_UART0
+#if (defined(RT_USING_UART0_0) || defined(RT_USING_UART0_1))
 /* UART0 device driver structure */
-#define UART0	FM3_MFS0_UART
 struct serial_int_rx uart0_int_rx;
 struct serial_device uart0 =
 {
-	UART0,
+	FM3_MFS0_UART,
 	MFS0RX_IRQn,
 	MFS0TX_IRQn,
 	&uart0_int_rx,
@@ -320,21 +319,43 @@ struct rt_device uart0_device;
 
 void MFS0RX_IRQHandler(void)
 {
-    /* enter interrupt */
-    rt_interrupt_enter();
-    rt_hw_serial_isr(&uart0_device);
-    /* leave interrupt */
-    rt_interrupt_leave();
+	/* enter interrupt */
+	rt_interrupt_enter();
+	rt_hw_serial_isr(&uart0_device);
+	/* leave interrupt */
+	rt_interrupt_leave();
 }
 #endif
 
-#ifdef RT_USING_UART2
+#if (defined(RT_USING_UART1_0) || defined(RT_USING_UART1_1))
+/* UART1 device driver structure */
+struct serial_int_rx uart1_int_rx;
+struct serial_device uart1 =
+{
+	FM3_MFS1_UART,
+	MFS1RX_IRQn,
+	MFS1TX_IRQn,
+	&uart1_int_rx,
+	RT_NULL
+};
+struct rt_device uart1_device;
+
+void MFS1RX_IRQHandler(void)
+{
+	/* enter interrupt */
+	rt_interrupt_enter();
+	rt_hw_serial_isr(&uart1_device);
+	/* leave interrupt */
+	rt_interrupt_leave();
+}
+#endif
+
+#if (defined(RT_USING_UART2_0) || defined(RT_USING_UART2_1) || defined(RT_USING_UART2_2))
 /* UART2 device driver structure */
-#define UART2	FM3_MFS2_UART
 struct serial_int_rx uart2_int_rx;
 struct serial_device uart2 =
 {
-	UART2,
+	FM3_MFS2_UART,
 	MFS2RX_IRQn,
 	MFS2TX_IRQn,
 	&uart2_int_rx,
@@ -344,41 +365,269 @@ struct rt_device uart2_device;
 
 void MFS2RX_IRQHandler(void)
 {
-    /* enter interrupt */
-    rt_interrupt_enter();
-    rt_hw_serial_isr(&uart2_device);
-    /* leave interrupt */
-    rt_interrupt_leave();
+	/* enter interrupt */
+	rt_interrupt_enter();
+	rt_hw_serial_isr(&uart2_device);
+	/* leave interrupt */
+	rt_interrupt_leave();
 }
 #endif
 
-void rt_hw_serial_init(void)
-{	
-#ifdef RT_USING_UART0
-	/* initialize UART0 */
-    /* Set Uart Ch0 Port, SIN0_0, SOT0_0 */
-    FM3_GPIO->PFR2 = FM3_GPIO->PFR2 | 0x0006;
-    FM3_GPIO->EPFR07 = FM3_GPIO->EPFR07 | 0x00000040;	
+#if (defined(RT_USING_UART3_0) || defined(RT_USING_UART3_1) || defined(RT_USING_UART3_2))
+/* UART3 device driver structure */
+struct serial_int_rx uart3_int_rx;
+struct serial_device uart3 =
+{
+	FM3_MFS3_UART,
+	MFS3RX_IRQn,
+	MFS3TX_IRQn,
+	&uart3_int_rx,
+	RT_NULL
+};
+struct rt_device uart3_device;
 
-	uart0.uart_device->SMR	= SMR_MD_UART | SMR_SOE;;
+void MFS3RX_IRQHandler(void)
+{
+	/* enter interrupt */
+	rt_interrupt_enter();
+	rt_hw_serial_isr(&uart3_device);
+	/* leave interrupt */
+	rt_interrupt_leave();
+}
+#endif
+
+void uart_pin_setup(void)
+{
+#if defined(RT_USING_UART0_0)
+	/* Set UART Ch0 Port, SIN0_0(P21), SOT0_0(P22) */
+	FM3_GPIO->PFR2_f.P1 = 1;
+	FM3_GPIO->PFR2_f.P2 = 1;
+	FM3_GPIO->EPFR07_f.SIN0S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN0S1 = 0;
+	FM3_GPIO->EPFR07_f.SOT0B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT0B1 = 0;
+#elif defined(RT_USING_UART0_1)
+	/* Set UART Ch0 Port, SIN0_1(P14), SOT0_1(P15) */
+	FM3_GPIO->PFR1_f.P4 = 1;
+	FM3_GPIO->PFR1_f.P5 = 1;
+	FM3_GPIO->EPFR07_f.SIN0S0 = 0;
+	FM3_GPIO->EPFR07_f.SIN0S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT0B0 = 0;
+	FM3_GPIO->EPFR07_f.SOT0B1 = 1;
+#endif
+
+#if defined(RT_USING_UART1_0)
+	/* Set UART Ch1 Port, SIN1_0(P56), SOT1_0(P57) */
+	FM3_GPIO->PFR5_f.P6 = 1;
+	FM3_GPIO->PFR5_f.P7 = 1;
+	FM3_GPIO->EPFR07_f.SIN1S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN1S1 = 0;
+	FM3_GPIO->EPFR07_f.SOT1B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT1B1 = 0;
+#elif defined(RT_USING_UART1_1)
+	/* Set UART Ch1 Port, SIN1_1(P11), SOT1_1(P12) */
+	FM3_GPIO->PFR1_f.P1 = 1;
+	FM3_GPIO->PFR1_f.P2 = 1;
+	FM3_GPIO->EPFR07_f.SIN1S0 = 0;
+	FM3_GPIO->EPFR07_f.SIN1S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT1B0 = 0;
+	FM3_GPIO->EPFR07_f.SOT1B1 = 1;
+#endif
+
+#if defined(RT_USING_UART2_0)
+	/* Set UART Ch2 Port, SIN2_0(P72), SOT2_0(P73) */
+	FM3_GPIO->PFR7_f.P2 = 1;
+	FM3_GPIO->PFR7_f.P3 = 1;
+	FM3_GPIO->EPFR07_f.SIN2S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN2S1 = 0;
+	FM3_GPIO->EPFR07_f.SOT2B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT2B1 = 0;
+#elif defined(RT_USING_UART2_1)
+	/* Set UART Ch2 Port, SIN2_1(P24), SOT2_1(P25) */
+	FM3_GPIO->PFR2_f.P4 = 1;
+	FM3_GPIO->PFR2_f.P5 = 1;
+	FM3_GPIO->EPFR07_f.SIN2S0 = 0;
+	FM3_GPIO->EPFR07_f.SIN2S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT2B0 = 0;
+	FM3_GPIO->EPFR07_f.SOT2B1 = 1;
+#elif defined(RT_USING_UART2_2)
+	/* Set UART Ch2 Port, SIN2_2(P17), SOT2_2(P18) */
+	FM3_GPIO->PFR1_f.P7 = 1;
+	FM3_GPIO->PFR1_f.P8 = 1;
+	FM3_GPIO->EPFR07_f.SIN2S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN2S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT2B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT2B1 = 1;
+#endif
+
+#if defined(RT_USING_UART3_0)
+	/* Set UART Ch3 Port, SIN3_0(P66), SOT3_0(P67) */
+	FM3_GPIO->PFR6_f.P6 = 1;
+	FM3_GPIO->PFR6_f.P7 = 1;
+	FM3_GPIO->EPFR07_f.SIN3S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN3S1 = 0;
+	FM3_GPIO->EPFR07_f.SOT3B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT3B1 = 0;
+#elif defined(RT_USING_UART3_1)
+	/* Set UART Ch3 Port, SIN3_1(P50), SOT3_1(P51) */
+	FM3_GPIO->PFR5_f.P0 = 1;
+	FM3_GPIO->PFR5_f.P1 = 1;
+	FM3_GPIO->EPFR07_f.SIN3S0 = 0;
+	FM3_GPIO->EPFR07_f.SIN3S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT3B0 = 0;
+	FM3_GPIO->EPFR07_f.SOT3B1 = 1;
+#elif defined(RT_USING_UART3_2)
+	/* Set UART Ch3 Port, SIN3_2(P48), SOT3_2(P49) */
+	FM3_GPIO->PFR4_f.P8 = 1;
+	FM3_GPIO->PFR4_f.P9 = 1;
+	FM3_GPIO->EPFR07_f.SIN3S0 = 1;
+	FM3_GPIO->EPFR07_f.SIN3S1 = 1;
+	FM3_GPIO->EPFR07_f.SOT3B0 = 1;
+	FM3_GPIO->EPFR07_f.SOT3B1 = 1;
+#endif
+
+#if defined(RT_USING_UART4_0)
+	/* Set UART Ch4 Port, SIN4_0(P0A), SOT4_0(P0B), CTS4_0(P0E), RTS4_0(P0D) */
+	FM3_GPIO->PFR0_f.PA = 1;
+	FM3_GPIO->PFR0_f.PB = 1;
+	FM3_GPIO->PFR0_f.PD = 1;
+	FM3_GPIO->PFR0_f.PE = 1;
+	FM3_GPIO->EPFR08_f.SIN4S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN4S1 = 0;
+	FM3_GPIO->EPFR08_f.SOT4B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT4B1 = 0;
+	FM3_GPIO->EPFR08_f.CTS4S0 = 1;
+	FM3_GPIO->EPFR08_f.CTS4S1 = 0;
+	FM3_GPIO->EPFR08_f.RTS4E0 = 1;
+	FM3_GPIO->EPFR08_f.RTS4E1 = 0;
+#elif defined(RT_USING_UART4_1)
+	/* Set UART Ch4 Port, SIN4_1(P1A), SOT4_1(P1B), CTS4_1(P1D), RTS4_1(P1E) */
+	FM3_GPIO->PFR1_f.PA = 1;
+	FM3_GPIO->PFR1_f.PB = 1;
+	FM3_GPIO->PFR1_f.PD = 1;
+	FM3_GPIO->PFR1_f.PE = 1;
+	FM3_GPIO->EPFR08_f.SIN4S0 = 0;
+	FM3_GPIO->EPFR08_f.SIN4S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT4B0 = 0;
+	FM3_GPIO->EPFR08_f.SOT4B1 = 1;
+	FM3_GPIO->EPFR08_f.CTS4S0 = 0;
+	FM3_GPIO->EPFR08_f.CTS4S1 = 1;
+	FM3_GPIO->EPFR08_f.RTS4E0 = 0;
+	FM3_GPIO->EPFR08_f.RTS4E1 = 1;
+#elif defined(RT_USING_UART4_2)
+	/* Set UART Ch4 Port, SIN4_2(P05), SOT4_2(P06), CTS4_2(P08), RTS4_2(P09)*/
+	FM3_GPIO->PFR0_f.P5 = 1;
+	FM3_GPIO->PFR0_f.P6 = 1;
+	FM3_GPIO->PFR0_f.P8 = 1;
+	FM3_GPIO->PFR0_f.P9 = 1;
+	FM3_GPIO->EPFR08_f.SIN4S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN4S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT4B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT4B1 = 1;
+	FM3_GPIO->EPFR08_f.CTS4S0 = 1;
+	FM3_GPIO->EPFR08_f.CTS4S1 = 1;
+	FM3_GPIO->EPFR08_f.RTS4E0 = 1;
+	FM3_GPIO->EPFR08_f.RTS4E1 = 1;
+#endif
+
+#if defined(RT_USING_UART5_0)
+	/* Set UART Ch5 Port, SIN5_0(P60), SOT5_0(P61) */
+	FM3_GPIO->PFR6_f.P0 = 1;
+	FM3_GPIO->PFR6_f.P1 = 1;
+	FM3_GPIO->EPFR08_f.SIN5S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN5S1 = 0;
+	FM3_GPIO->EPFR08_f.SOT5B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT5B1 = 0;
+#elif defined(RT_USING_UART5_1)
+	/* Set UART Ch5 Port, SIN5_1(P63), SOT5_1(P64) */
+	FM3_GPIO->PFR6_f.P3 = 1;
+	FM3_GPIO->PFR6_f.P4 = 1;
+	FM3_GPIO->EPFR08_f.SIN5S0 = 0;
+	FM3_GPIO->EPFR08_f.SIN5S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT5B0 = 0;
+	FM3_GPIO->EPFR08_f.SOT5B1 = 1;
+#elif defined(RT_USING_UART5_2)
+	/* Set UART Ch5 Port, SIN5_2(P36), SOT5_2(P37) */
+	FM3_GPIO->PFR3_f.P6 = 1;
+	FM3_GPIO->PFR3_f.P7 = 1;
+	FM3_GPIO->EPFR08_f.SIN5S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN5S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT5B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT5B1 = 1;
+#endif
+
+#if defined(RT_USING_UART6_0)
+	/* Set UART Ch6 Port, SIN6_0(P53), SOT6_0(P54) */
+	FM3_GPIO->PFR5_f.P3 = 1;
+	FM3_GPIO->PFR5_f.P4 = 1;
+	FM3_GPIO->EPFR08_f.SIN6S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN6S1 = 0;
+	FM3_GPIO->EPFR08_f.SOT6B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT6B1 = 0;
+#elif defined(RT_USING_UART6_1)
+	/* Set UART Ch6 Port, SIN6_1(P33), SOT6_1(P32) */
+	FM3_GPIO->PFR3_f.P2 = 1;
+	FM3_GPIO->PFR3_f.P3 = 1;
+	FM3_GPIO->EPFR08_f.SIN6S0 = 0;
+	FM3_GPIO->EPFR08_f.SIN6S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT6B0 = 0;
+	FM3_GPIO->EPFR08_f.SOT6B1 = 1;
+#endif
+
+#if defined(RT_USING_UART7_0)
+	/* Set UART Ch7 Port, SIN7_0(P59), SOT7_0(P5A) */
+	FM3_GPIO->PFR5_f.P9 = 1;
+	FM3_GPIO->PFR5_f.PA = 1;
+	FM3_GPIO->EPFR08_f.SIN7S0 = 1;
+	FM3_GPIO->EPFR08_f.SIN7S1 = 0;
+	FM3_GPIO->EPFR08_f.SOT7B0 = 1;
+	FM3_GPIO->EPFR08_f.SOT7B1 = 0;
+#elif defined(RT_USING_UART7_1)
+	/* Set UART Ch7 Port, SIN7_1(P4E), SOT7_1(P4D) */
+	FM3_GPIO->PFR4_f.PD = 1;
+	FM3_GPIO->PFR4_f.PE = 1;
+	FM3_GPIO->EPFR08_f.SIN7S0 = 0;
+	FM3_GPIO->EPFR08_f.SIN7S1 = 1;
+	FM3_GPIO->EPFR08_f.SOT7B0 = 0;
+	FM3_GPIO->EPFR08_f.SOT7B1 = 1;
+#endif
+}
+
+void rt_hw_serial_init(void)
+{
+	uart_pin_setup();
+
+#if (defined(RT_USING_UART0_0) || defined(RT_USING_UART0_1))
+	/* initialize UART0 */
+	uart0.uart_device->SMR	= SMR_MD_UART | SMR_SOE;
 	uart0.uart_device->BGR	= (40000000UL + (BPS/2))/BPS - 1;
 	uart0.uart_device->ESCR	= ESCR_DATABITS_8;
 	uart0.uart_device->SCR	= SCR_RXE | SCR_TXE | SCR_RIE;
 
-	/* register UART2 device */
+	/* register UART0 device */
 	rt_hw_serial_register(&uart0_device, 
 		"uart0", 
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart0);
 #endif
 
-#ifdef RT_USING_UART2
-	/* initialize UART2 */
-    /* Set Uart Ch2 Port, SIN2_1, SOT2_1 */
-    FM3_GPIO->PFR2 = FM3_GPIO->PFR2 | 0x0030;
-    FM3_GPIO->EPFR07 = FM3_GPIO->EPFR07 | 0x000a0000;
+#if (defined(RT_USING_UART1_0) || defined(RT_USING_UART1_1))
+	/* initialize UART1 */
+	uart1.uart_device->SMR	= SMR_MD_UART | SMR_SOE;
+	uart1.uart_device->BGR	= (40000000UL + (BPS/2))/BPS - 1;
+	uart1.uart_device->ESCR	= ESCR_DATABITS_8;
+	uart1.uart_device->SCR	= SCR_RXE | SCR_TXE | SCR_RIE;
 
-	uart2.uart_device->SMR = SMR_MD_UART | SMR_SOE;;
+	/* register UART1 device */
+	rt_hw_serial_register(&uart1_device,
+		"uart1",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+		&uart1);
+#endif
+
+#if (defined(RT_USING_UART2_0) || defined(RT_USING_UART2_1) || defined(RT_USING_UART2_2))
+	/* initialize UART2 */
+	uart2.uart_device->SMR = SMR_MD_UART | SMR_SOE;
 	uart2.uart_device->BGR = (40000000UL + (BPS/2))/BPS - 1;
 	uart2.uart_device->ESCR = ESCR_DATABITS_8;
 	uart2.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
@@ -388,6 +637,20 @@ void rt_hw_serial_init(void)
 		"uart2", 
 		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
 		&uart2);
+#endif
+
+#if (defined(RT_USING_UART3_0) || defined(RT_USING_UART3_1) || defined(RT_USING_UART3_2))
+	/* initialize UART3 */
+	uart3.uart_device->SMR = SMR_MD_UART | SMR_SOE;
+	uart3.uart_device->BGR = (40000000UL + (BPS/2))/BPS - 1;
+	uart3.uart_device->ESCR = ESCR_DATABITS_8;
+	uart3.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
+
+	/* register UART3 device */
+	rt_hw_serial_register(&uart3_device,
+		"uart3",
+		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+		&uart3);
 #endif
 }
 

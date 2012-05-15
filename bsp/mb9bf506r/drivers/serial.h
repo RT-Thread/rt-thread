@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2011-05-15     lgnq         modified according bernard's implementaion.      	  	
+ * 2011-05-15     lgnq         modified according bernard's implementaion.
  */
 
 #ifndef __RT_HW_SERIAL_H__
@@ -83,14 +83,14 @@ struct serial_int_tx
 
 struct serial_device
 {
-	FM3_MFS03_UART_TypeDef* uart_device;
+	FM3_MFS03_UART_TypeDef *uart_device;
 	/* irq number */
 	IRQn_Type rx_irq, tx_irq;
 
 	/* rx structure */
-	struct serial_int_rx* int_rx;
+	struct serial_int_rx *int_rx;
 	/* tx structure */
-	struct serial_int_tx* int_tx;
+	struct serial_int_tx *int_tx;
 };
 
 void rt_hw_serial_isr(rt_device_t device);
