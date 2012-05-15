@@ -96,7 +96,7 @@ used throughout the whole project.
 #ifndef _CMSIS_OS_H
 #define _CMSIS_OS_H
 
-#include "rtthread.h"
+#include <rtthread.h>
 
 /// \note MUST REMAIN UNCHANGED: \b osCMSIS identifies the CMSIS-RTOS API version
 #define osCMSIS           0x00003      ///< API version (main [31:16] .sub [15:0])
@@ -214,103 +214,60 @@ typedef struct rt_mailbox *osMailQId;
 /// Thread Definition structure contains startup information of a thread.
 /// \note CAN BE CHANGED: \b os_thread_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_thread_def  {
-    /* rt object */
-    char        name[RT_NAME_MAX];                      /**< the name of thread                     */
-    rt_uint8_t  type;                                   /**< type of object                         */
-    rt_uint8_t  flags;                                  /**< thread's flags                         */
-    
-#ifdef RT_USING_MODULE
-    void        *module_id;                             /**< id of application module               */
-#endif
-
-    rt_list_t   list;                                   /**< the object list                        */
-    rt_list_t   tlist;                                  /**< the thread list                        */
-
-    /* stack point and entry */
-    void        *sp;                                    /**< stack point                            */
-    void        *entry;                                 /**< entry                                  */
-    void        *parameter;                             /**< parameter                              */
-    void        *stack_addr;                            /**< stack address                          */
-    rt_uint16_t stack_size;                             /**< stack size                             */
-
-    /* error code */
-    rt_err_t    error;                                  /**< error code                             */
-
-    rt_uint8_t  stat;                                   /**< thread stat                            */
-
-    /* priority */
-    osPriority  current_priority;                       /**< current priority                       */
-    osPriority  init_priority;                          /**< initialized priority                   */
-#if RT_THREAD_PRIORITY_MAX > 32
-    rt_uint8_t  number;
-    rt_uint8_t  high_mask;
-#endif
-    rt_uint32_t number_mask;
-
-#if defined(RT_USING_EVENT)
-    /* thread event */
-    rt_uint32_t event_set;
-    rt_uint8_t  event_info;
-#endif
-
-    rt_ubase_t  init_tick;                              /**< thread's initialized tick              */
-    rt_ubase_t  remaining_tick;                         /**< remaining tick                         */
-
-    struct rt_timer thread_timer;                       /**< built-in thread timer                   */
-
-    void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit      */
-
-    rt_uint32_t user_data;                              /**< private user data beyond this thread  */
+	const char *name;
+	void (*entry)(void *parameter);
+	rt_uint32_t stack_size;
+	rt_uint8_t priority;
+	rt_uint32_t tick;
 } osThreadDef_t;
 
 /// Timer Definition structure contains timer parameters.
 /// \note CAN BE CHANGED: \b os_timer_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_timer_def  {
-    struct rt_object parent;                            /**< inherit from rt_object                 */
-
-    rt_list_t list;                                     /**< the node of timer list                 */
-
-    void (*timeout_func)(void *parameter);              /**< timeout function                       */
-    void *parameter;                                    /**< timeout function's parameter           */
-
-    rt_tick_t init_tick;                                /**< timer timeout tick                     */
-    rt_tick_t timeout_tick;                             /**< timeout tick                           */
+	const char *name;
+	void (*timeout)(void *parameter);
+	void *parameter;
+	rt_tick_t time;
+	rt_uint8_t flag;
 } osTimerDef_t;
 
 /// Mutex Definition structure contains setup information for a mutex.
 /// \note CAN BE CHANGED: \b os_mutex_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_mutex_def  {
-  uint32_t                   dummy;    ///< dummy value.
+	const char *name;
+	rt_uint8_t flag;	
 } osMutexDef_t;
 
 /// Semaphore Definition structure contains setup information for a semaphore.
 /// \note CAN BE CHANGED: \b os_semaphore_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_semaphore_def  {
-  uint32_t                   dummy;    ///< dummy value.
+	const char *name;
+	rt_uint8_t flag;
 } osSemaphoreDef_t;
 
 /// Definition structure for memory block allocation
 /// \note CAN BE CHANGED: \b os_pool_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_pool_def  {
-  uint32_t                 pool_sz;    ///< number of items (elements) in the pool
-  uint32_t                 item_sz;    ///< size of an item 
-  void                       *pool;    ///< pointer to memory for pool
+	const char *name;
+	rt_size_t block_count;
+	rt_size_t block_size;
 } osPoolDef_t;
 
 /// Definition structure for message queue
 /// \note CAN BE CHANGED: \b os_messageQ_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_messageQ_def  {
-  uint32_t                queue_sz;    ///< number of elements in the queue
-  uint32_t                 item_sz;    ///< size of an item 
-  void                       *pool;    ///< memory array for messages
+	const char *name;
+	rt_size_t msg_size;
+	rt_size_t max_msgs;
+	rt_uint8_t flag;
 } osMessageQDef_t;
 
 /// Definition structure for mail queue
 /// \note CAN BE CHANGED: \b os_mailQ_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_mailQ_def  {
-  uint32_t                queue_sz;    ///< number of elements in the queue
-  uint32_t                 item_sz;    ///< size of an item 
-  void                       *pool;    ///< memory array for mail
+	const char *name;
+	rt_size_t size;
+	rt_uint8_t flag;
 } osMailQDef_t;
 
 /// Event structure contains detailed information about an event. 
@@ -360,7 +317,7 @@ extern osThreadDef_t os_thread_def_##name
 #else                            // define the object
 #define osThreadDef(name, priority, instances, stacksz)  \
 osThreadDef_t os_thread_def_##name = \
-{ (name), (priority), (instances), (stacksz)  }
+{("cmsis"), (name), (stacksz), ((rt_uint8_t)(priority - osPriorityIdle) + 1), 50}
 #endif
 
 /// Access a Thread defintion.
@@ -439,7 +396,7 @@ extern osTimerDef_t os_timer_def_##name
 #else                            // define the object
 #define osTimerDef(name, function)  \
 osTimerDef_t os_timer_def_##name = \
-{ (function) }
+{("timer"), (function), (RT_NULL) }
 #endif
 
 /// Access a Timer definition.

@@ -3,7 +3,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Glob('*.c')
-src = ['Device/FUJISTU/MB9BF50x/Source/system_mb9bf50x.c']
+src = ['Device/FUJISTU/MB9BF50x/Source/system_mb9bf50x.c', 'CMSIS/RTOS/rtt_cmsis.c']
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':

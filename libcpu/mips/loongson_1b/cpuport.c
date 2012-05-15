@@ -12,19 +12,21 @@
  * 2010-07-09     Bernard      first version
  * 2010-09-11     Bernard      add CPU reset implementation
  */
+
 #include <rtthread.h>
 #include "ls1b.h"
 
 /**
- * @addtogroup Loogonson LS1B
+ * @addtogroup Loongson LS1B
  */
+
 /*@{*/
 
 /**
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+void rt_hw_cpu_reset(void)
 {
 	/* open the watch-dog */
 	WDT_EN = 0x01; 		/* watch dog enable */
@@ -39,7 +41,7 @@ void rt_hw_cpu_reset()
  * this function will shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
 	rt_kprintf("shutdown...\n");
 

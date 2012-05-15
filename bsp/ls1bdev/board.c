@@ -23,12 +23,13 @@
 /**
  * @addtogroup Loongson LS1B
  */
+ 
 /*@{*/
 
 /**
  * This is the timer interrupt service routine.
  */
-void rt_hw_timer_handler()
+void rt_hw_timer_handler(void)
 {
     unsigned int count;
 
@@ -43,7 +44,7 @@ void rt_hw_timer_handler()
 /**
  * This function will initial OS timer
  */
-void rt_hw_timer_init()
+void rt_hw_timer_init(void)
 {
     write_c0_compare(CPU_HZ/2/RT_TICK_PER_SECOND);
     write_c0_count(0);
@@ -52,7 +53,7 @@ void rt_hw_timer_init()
 /**
  * This function will initial sam7s64 board.
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 #ifdef RT_USING_UART
 	/* init hardware UART device */

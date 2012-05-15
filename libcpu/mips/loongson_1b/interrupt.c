@@ -12,13 +12,15 @@
  * 2010-10-15     Bernard      first version
  * 2010-10-15     lgnq         modified for LS1B
  */
+
 #include <rtthread.h>
 #include "ls1b.h"
 
 #define MAX_INTR 32
 
 extern rt_uint32_t rt_interrupt_nest;
-rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_uint32_t rt_interrupt_from_thread;
+rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
 static rt_isr_handler_t irq_handle_table[MAX_INTR];
@@ -29,8 +31,9 @@ static struct ls1b_intc_regs volatile *ls1b_hw0_icregs
 	= (struct ls1b_intc_regs volatile *)(LS1B_INTREG_BASE);
 
 /**
- * @addtogroup Loogonson LS1B
+ * @addtogroup Loongson LS1B
  */
+
 /*@{*/
 
 void rt_hw_interrupt_handler(int vector)
@@ -41,7 +44,7 @@ void rt_hw_interrupt_handler(int vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	rt_int32_t index;
 

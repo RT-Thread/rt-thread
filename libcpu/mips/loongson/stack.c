@@ -12,11 +12,13 @@
  * 2010-05-17     swkyer       first version
  * 2010-07-07     Bernard      porting to Jz47xx
  */
+ 
 #include <rtthread.h>
 
 /**
- * @addtogroup Loogonson SoC3210
+ * @addtogroup Loongson SoC3210
  */
+
 /*@{*/
 
 extern rt_uint32_t cp0_get_cause(void);

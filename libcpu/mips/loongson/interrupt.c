@@ -25,8 +25,9 @@ void rt_interrupt_dispatch(void *ptreg);
 void rt_hw_timer_handler();
 
 /**
- * @addtogroup Loogonson SoC3210
+ * @addtogroup Loongson SoC3210
  */
+ 
 /*@{*/
 
 void rt_hw_interrupt_handler(int vector)
@@ -37,7 +38,7 @@ void rt_hw_interrupt_handler(int vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	rt_int32_t index;
 

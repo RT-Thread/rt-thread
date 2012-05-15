@@ -12,6 +12,7 @@
  * 2010-07-09     Bernard      first version
  * 2011-08-08     lgnq         modified for LS1B
  */
+ 
 #include "../common/mipsregs.h"
 
 #define K0BASE			0x80000000
@@ -43,10 +44,9 @@ typedef struct cacheop_t
 static cacheop_t cacheop, *pcacheop;
 static cacheinfo_t cacheinfo, *pcacheinfo;
 
-int identify_cpu (void)
+int identify_cpu(void)
 {
     unsigned int cpu_id;
-    void invalidate_cache (void);
 
     pcacheop = &cacheop;
     pcacheinfo = &cacheinfo;
@@ -112,8 +112,7 @@ void invalidate_writeback_dcache_all(void)
 	unsigned int start = K0BASE;
 	unsigned int end = (start + pcacheinfo->dcache_size);
 
-	start = K0BASE;
-	while(start < end) 
+	while (start < end) 
 	{
 		Writeback_Invalidate_Dcache(start);  //hit writeback invalidate 
 		start += pcacheinfo->dcacheline_size;
@@ -127,7 +126,7 @@ void invalidate_writeback_dcache(unsigned long addr, int size)
 	start = (addr +pcacheinfo->dcacheline_size -1) & (- pcacheinfo->dcacheline_size);
 	end = (end + size + pcacheinfo->dcacheline_size -1) & ( -pcacheinfo->dcacheline_size);
 	
-	while(start <end)
+	while (start <end)
 	{
 		Writeback_Invalidate_Dcache(start);
 		start += pcacheinfo->dcacheline_size;
@@ -139,18 +138,18 @@ void invalidate_icache_all(void)
 	unsigned int start = K0BASE;
 	unsigned int end = (start + pcacheinfo->icache_size);
 
-	while(start < end) 
+	while (start < end) 
 	{
 		pcacheop->Invalidate_Icache(start); 
 		start += pcacheinfo->icacheline_size;
 	}
 }
 
-void invalidate_dcache_all()
+void invalidate_dcache_all(void)
 { 
 	unsigned int start = K0BASE;
 	unsigned int end  = (start + pcacheinfo->dcache_size);
-	while(start <end)
+	while (start <end)
 	{
 		Invalidate_Dcache_Fill_Gc3210I(start);
 		start += pcacheinfo->icacheline_size;
@@ -163,7 +162,7 @@ void init_dcache(void)
 	unsigned int start = K0BASE;
 	unsigned int end = (start + pcacheinfo->dcache_size);
 
-	while(start < end)
+	while (start < end)
 	{
 		pcacheop->Invalidate_Dcache_ClearTag(start);
 		start += pcacheinfo->dcacheline_size;
@@ -190,7 +189,7 @@ void rt_hw_cache_init(void)
 	/*
      *	3. invalidate instruction cache;
      */
-    while(start < end) 
+    while (start < end) 
     {
 		pcacheop->Invalidate_Icache(start); //index invalidate icache 
 		start += pcacheinfo->icacheline_size;
