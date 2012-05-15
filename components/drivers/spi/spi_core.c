@@ -8,7 +8,8 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, const str
 	rt_err_t result;
 
 	result = rt_spi_bus_device_init(bus, name);
-	if (result != RT_EOK) return result;
+	if (result != RT_EOK)
+		return result;
 
 	/* initialize mutex lock */
 	rt_mutex_init(&(bus->lock), name, RT_IPC_FLAG_FIFO);
@@ -22,6 +23,7 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus* bus, const char* name, const str
 
 rt_err_t rt_spi_bus_attach_device(struct rt_spi_device* device, const char* name, const char* bus_name, void* user_data)
 {
+	rt_err_t result;
 	rt_device_t bus;
 
 	/* get physical spi bus */
@@ -31,9 +33,14 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device* device, const char* name
 		device->bus = (struct rt_spi_bus*)bus;
 
 		/* initialize spidev device */
-		rt_spidev_device_init(device, name);
+		result = rt_spidev_device_init(device, name);
+		if (result != RT_EOK)
+			return result;
+
 		rt_memset(&device->config, 0, sizeof(device->config));
 		device->parent.user_data = user_data;
+
+		return RT_EOK;
 	}
 
 	/* not found the host bus */

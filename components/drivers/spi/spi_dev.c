@@ -70,9 +70,7 @@ rt_err_t rt_spi_bus_device_init(struct rt_spi_bus* bus, const char* name)
 	device->control = _spi_bus_device_control;
 
 	/* register to device manager */
-	rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
-
-	return RT_EOK;
+	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
 }
 
 /* SPI Dev device interface, compatible with RT-Thread 0.3.x/1.0.x */
@@ -143,7 +141,5 @@ rt_err_t rt_spidev_device_init(struct rt_spi_device* dev, const char* name)
 	device->control = _spidev_device_control;
 	
 	/* register to device manager */
-	rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
-
-	return RT_EOK;
+	return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
 }
