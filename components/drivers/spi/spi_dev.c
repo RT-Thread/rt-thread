@@ -127,7 +127,7 @@ static rt_err_t _spidev_device_control(rt_device_t dev, rt_uint8_t cmd, void *ar
 rt_err_t rt_spidev_device_init(struct rt_spi_device* dev, const char* name)
 {
 	struct rt_device* device;
-	RT_ASSERT(device != RT_NULL);
+	RT_ASSERT(dev != RT_NULL);
 	
 	device = &(dev->parent);
 	
