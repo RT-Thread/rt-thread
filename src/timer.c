@@ -94,8 +94,8 @@ static rt_tick_t rt_timer_list_next_timeout(rt_list_t* timer_list)
 /*@{*/
 
 /**
- * This function will initialize a timer, normally this function is used to initialize
- * a static timer object.
+ * This function will initialize a timer, normally this function is used to
+ * initialize a static timer object.
  *
  * @param timer the static timer object
  * @param name the name of timer
@@ -158,7 +158,8 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
  *
  * @return the created timer object
  */
-rt_timer_t rt_timer_create(const char *name, void (*timeout)(void *parameter), void *parameter, rt_tick_t time, rt_uint8_t flag)
+rt_timer_t rt_timer_create(const char *name, void (*timeout)(void *parameter),
+		void *parameter, rt_tick_t time, rt_uint8_t flag)
 {
 	struct rt_timer *timer;
 
@@ -248,7 +249,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 		t = rt_list_entry(n, struct rt_timer, list);
 		
 		/*
-		 * It supposes that the new tick shall less than the half duration of tick max.
+		 * It supposes that the new tick shall less than the half duration of
+		 * tick max.
 		 */
 		if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX/2)
 		{
@@ -376,7 +378,8 @@ void rt_timer_check(void)
 		t = rt_list_entry(rt_timer_list.next, struct rt_timer, list);
 
 		/*
-		 * It supposes that the new tick shall less than the half duration of tick max.
+		 * It supposes that the new tick shall less than the half duration of
+		 * tick max.
 		 */
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{
@@ -446,7 +449,8 @@ void rt_soft_timer_check(void)
 		t = rt_list_entry(n, struct rt_timer, list);
 
 		/*
-		 * It supposes that the new tick shall less than the half duration of tick max.
+		 * It supposes that the new tick shall less than the half duration of
+		 * tick max.
 		 */
 		if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
 		{

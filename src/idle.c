@@ -138,11 +138,11 @@ void rt_thread_idle_excute(void)
 			{
 				module->nref --;
 			}
-		}
 
-		/* unload module */
-		if (module->nref == 0)
-			rt_module_unload(module);
+			/* unload module */
+			if (module->nref == 0)
+				rt_module_unload(module);
+		}
 #endif
 	}
 }
