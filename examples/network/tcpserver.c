@@ -76,7 +76,7 @@ void tcpserv(void* parameter)
 
            /* 从connected socket中接收数据，接收buffer是1024大小，但并不一定能够收到1024大小的数据 */
            bytes_received = recv(connected,recv_data, 1024, 0);
-           if (bytes_received < 0)
+           if (bytes_received <= 0)
            {
                /* 接收失败，关闭这个connected socket */
                lwip_close(connected);
