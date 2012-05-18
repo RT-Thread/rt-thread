@@ -111,6 +111,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device* device, const void *send_bu
 		message.length = send_length1;
 		message.cs_take = 1;
 		message.cs_release = 0;
+		message.next = RT_NULL;
 
 		result = device->bus->ops->xfer(device, &message);
 		if (result == 0)
@@ -125,6 +126,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device* device, const void *send_bu
 		message.length = send_length2;
 		message.cs_take = 0;
 		message.cs_release = 1;
+		message.next = RT_NULL;
 
 		result = device->bus->ops->xfer(device, &message);
 		if (result == 0)
@@ -180,6 +182,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device* device, const void *send_bu
 		message.length = send_length;
 		message.cs_take = 1;
 		message.cs_release = 0;
+		message.next = RT_NULL;
 
 		result = device->bus->ops->xfer(device, &message);
 		if (result == 0)
@@ -194,6 +197,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device* device, const void *send_bu
 		message.length = recv_length;
 		message.cs_take = 0;
 		message.cs_release = 1;
+		message.next = RT_NULL;
 
 		result = device->bus->ops->xfer(device, &message);
 		if (result == 0)
@@ -249,6 +253,7 @@ rt_size_t rt_spi_transfer(struct rt_spi_device* device, const void *send_buf,
 		message.recv_buf = recv_buf;
 		message.length = length;
 		message.cs_take = message.cs_release = 1;
+		message.next = RT_NULL;
 
 		/* transfer message */
 		result = device->bus->ops->xfer(device, &message);
@@ -266,5 +271,149 @@ rt_size_t rt_spi_transfer(struct rt_spi_device* device, const void *send_buf,
 
 __exit:
 	rt_mutex_release(&(device->bus->lock));
+	return result;
+}
+
+struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device* device,
+		struct rt_spi_message *message)
+{
+	rt_err_t result;
+	struct rt_spi_message* index;
+
+	RT_ASSERT(device != RT_NULL);
+
+	/* get first message */
+	index = message;
+	if (index == RT_NULL) return index;
+
+	result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+	if (result != RT_EOK)
+	{
+		rt_set_errno(-RT_EBUSY);
+		return index;
+	}
+
+	/* reset errno */
+	rt_set_errno(RT_EOK);
+
+	/* configure SPI bus */
+	if (device->bus->owner != device)
+	{
+		/* not the same owner as current, re-configure SPI bus */
+		result = device->bus->ops->configure(device, &device->config);
+		if (result == RT_EOK)
+		{
+			/* set SPI bus owner */
+			device->bus->owner = device;
+		}
+		else
+		{
+			/* configure SPI bus failed */
+			rt_set_errno(-RT_EIO);
+			result = 0;
+			goto __exit;
+		}
+	}
+
+	/* transmit each SPI message */
+	while (index != RT_NULL)
+	{
+		/* transmit SPI message */
+		result = device->bus->ops->xfer(device, index);
+		if (result == 0)
+		{
+			rt_set_errno(-RT_EIO);
+			break;
+		}
+
+		index = index->next;
+	}
+
+__exit:
+	/* release bus lock */
+	rt_mutex_release(&(device->bus->lock));
+	return index;
+}
+
+rt_err_t rt_spi_take_bus(struct rt_spi_device* device)
+{
+	rt_err_t result = RT_EOK;
+
+	RT_ASSERT(device != RT_NULL);
+	RT_ASSERT(device->bus != RT_NULL);
+
+	result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+	if (result != RT_EOK)
+	{
+		rt_set_errno(-RT_EBUSY);
+		return -RT_EBUSY;
+	}
+
+	/* reset errno */
+	rt_set_errno(RT_EOK);
+
+	/* configure SPI bus */
+	if (device->bus->owner != device)
+	{
+		/* not the same owner as current, re-configure SPI bus */
+		result = device->bus->ops->configure(device, &device->config);
+		if (result == RT_EOK)
+		{
+			/* set SPI bus owner */
+			device->bus->owner = device;
+		}
+		else
+		{
+			/* configure SPI bus failed */
+			rt_set_errno(-RT_EIO);
+			/* release lock */
+			rt_mutex_release(&(device->bus->lock));
+
+			return -RT_EIO;
+		}
+	}
+
+	return result;
+}
+
+rt_err_t rt_spi_release_bus(struct rt_spi_device* device)
+{
+	RT_ASSERT(device != RT_NULL);
+	RT_ASSERT(device->bus != RT_NULL);
+	RT_ASSERT(device->bus->owner != device);
+
+	/* release lock */
+	rt_mutex_release(&(device->bus->lock));
+
+	return RT_EOK;
+}
+
+rt_err_t rt_spi_take(struct rt_spi_device* device)
+{
+	rt_err_t result;
+	struct rt_spi_message message;
+
+	RT_ASSERT(device != RT_NULL);
+	RT_ASSERT(device->bus != RT_NULL);
+
+	rt_memset(&message, 0, sizeof(message));
+	message.cs_take = 1;
+
+	result = device->bus->ops->xfer(device, &message);
+	return result;
+}
+
+rt_err_t rt_spi_release(struct rt_spi_device* device)
+{
+	rt_err_t result;
+	struct rt_spi_message message;
+
+	RT_ASSERT(device != RT_NULL);
+	RT_ASSERT(device->bus != RT_NULL);
+
+	rt_memset(&message, 0, sizeof(message));
+	message.cs_release = 1;
+
+	result = device->bus->ops->xfer(device, &message);
 	return result;
 }
