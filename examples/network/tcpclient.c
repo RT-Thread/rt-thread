@@ -53,7 +53,7 @@ void tcpclient(const char* url, int port)
    {
        /* 从sock连接中接收最大1024字节数据 */
        bytes_received = recv(sock, recv_data, 1024, 0);
-       if (bytes_received < 0)
+       if (bytes_received <= 0)
        {
            /* 接收失败，关闭这个连接 */
            lwip_close(sock);
