@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file    hdl_interrupt.c
  * @brief   Interrupt handler of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author  onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -40,6 +40,9 @@
 /* Private variables ---------------------------------------------------------*/
 efm32_irq_hook_t dmaCbTable[DMA_CHAN_COUNT * 2]	= {RT_NULL};
 efm32_irq_hook_t timerCbTable[TIMER_COUNT] 		= {RT_NULL};
+#if defined(LETIMER_PRESENT)
+efm32_irq_hook_t letimerCbTable[LETIMER_COUNT]  = {RT_NULL};
+#endif
 efm32_irq_hook_t rtcCbTable[RTC_COUNT] 			= {RT_NULL};
 efm32_irq_hook_t gpioCbTable[16] 				= {RT_NULL};
 efm32_irq_hook_t acmpCbTable[ACMP_COUNT] 		= {RT_NULL};
@@ -194,6 +197,32 @@ void DMA_IRQHandler_All(rt_uint32_t channel, rt_bool_t primary, void *user)
 
 /***************************************************************************//**
  * @brief
+ * 	Common Timer0 interrupt handler
+ *
+ * @details
+ * 	This function handles Timer0 counter overflow interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void TIMER0_IRQHandler(void)
+{
+	if (TIMER0->IF & TIMER_IF_OF)
+	{
+		/* invoke callback function */
+		if (timerCbTable[0].cbFunc != RT_NULL)
+		{
+			(timerCbTable[0].cbFunc)(timerCbTable[0].userPtr);
+		}
+
+		/* clear interrupt */
+		BITBAND_Peripheral(&(TIMER0->IFC), _TIMER_IF_OF_SHIFT, 0x1UL);
+	}
+}
+
+
+/***************************************************************************//**
+ * @brief
  * 	Common Timer1 interrupt handler
  *
  * @details
@@ -241,6 +270,41 @@ void TIMER2_IRQHandler(void)
 		BITBAND_Peripheral(&(TIMER2->IFC), _TIMER_IF_OF_SHIFT, 0x1UL);
 	}
 }
+
+#if defined(LETIMER_PRESENT)
+/***************************************************************************//**
+ * @brief
+ * 	Common Low Energy Timer0 interrupt handler
+ *
+ * @details
+ * 	This function handles Timer0 counter overflow interrupt request
+ *
+ * @note
+ *
+ ******************************************************************************/
+void LETIMER0_IRQHandler(void)
+{
+	if (LETIMER0->IF & LETIMER_IF_UF)
+	{
+        /* enter interrupt */
+        rt_interrupt_enter();
+
+        rt_tick_increase();
+
+        /* leave interrupt */
+        rt_interrupt_leave();
+
+		/* invoke callback function */
+/*		if (letimerCbTable[0].cbFunc != RT_NULL)
+		{
+			(letimerCbTable[0].cbFunc)(letimerCbTable[0].userPtr);
+		}
+*/
+		/* clear interrupt */
+		BITBAND_Peripheral(&(LETIMER0->IFC), _LETIMER_IF_UF_SHIFT, 0x1UL);
+	}
+}
+#endif
 
 /***************************************************************************//**
  * @brief
@@ -766,6 +830,11 @@ void efm32_irq_hook_register(efm32_irq_hook_init_t *hook)
 	case efm32_irq_type_timer:
 		timerCbTable[hook->unit].cbFunc = hook->cbFunc;
 		timerCbTable[hook->unit].userPtr = hook->userPtr;
+		break;
+
+	case efm32_irq_type_letimer:
+		letimerCbTable[hook->unit].cbFunc = hook->cbFunc;
+		letimerCbTable[hook->unit].userPtr = hook->userPtr;
 		break;
 
 	case efm32_irq_type_gpio:

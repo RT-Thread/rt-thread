@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file    application.c
  * @brief   Demo application
- *  COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author  Bernard, onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -20,6 +20,9 @@
  *  lwIP API in reversion 1668
  * 2011-12-20   onelife     Add LCD DEMO
  * 2012-02-16   onelife     Add photo frame DEMO
+ * 2012-xx-xx   onelife     Add low energy test code
+ * 2012-05-17   onelife     Modify photo frame DEMO according to new version of
+ *  RTGUI
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -57,9 +60,8 @@
 
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/widgets/workbench.h>
+#include <rtgui/rtgui_application.h>
 #include <rtgui/widgets/widget.h>
-#include <rtgui/widgets/view.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/box.h>
@@ -69,103 +71,36 @@
  #include <dfs_posix.h>
  #define PATH_SEPARATOR     '/'
  #endif
-
-#define APP_PHOTO_FRAME
 #endif
 
-
 /* Private typedef -----------------------------------------------------------*/
+#if defined(RT_USING_RTGUI)
 struct photo_event
 {
-	struct rtgui_event parent;
+    struct rtgui_event_win win;
     rt_uint32_t cmd;
 	rt_uint8_t* path;
 	rt_uint8_t* format;
 };
 
-/* Private define ------------------------------------------------------------*/
+/* Private defines -----------------------------------------------------------*/
 #define APP_CMD_PHOTO_FRAME 0x00000001
+#define APP_PHOTO_FRAME
+#endif
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 volatile rt_uint32_t    rt_system_status = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static void wb_info(void* parameter)
-{
-	rt_mq_t mq;
-	rtgui_view_t *view;
-	rtgui_workbench_t *workbench;
-
-    /* Create message queue for self */
-	mq = rt_mq_create("mq_wb1", 256, 4, RT_IPC_FLAG_FIFO);
-	if(mq == RT_NULL)
-    {
-        rt_kprintf("Create mq failed!\n");
-        return;
-    }
-	rtgui_thread_register(rt_thread_self(), mq);
-
-    /* Create workbench */
-	workbench = rtgui_workbench_create("info", "wb_1");
-	if(workbench == RT_NULL)
-    {
-        rt_kprintf("Create wb failed!\n");
-        return;
-    }
-    /* Create a view */
-    view = rtgui_view_create("view_1");
-	if(view == RT_NULL)
-    {
-        rt_kprintf("Create view failed!\n");
-        return;
-    }
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = red;
-    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(view)) = white;
-//	rtgui_widget_set_event_handler(RTGUI_WIDGET(view), view_event_handler);
-
-	/* Create a lable */
-	rtgui_label_t *label = rtgui_label_create("RT-Thread & RTGUI");
-	if(label == RT_NULL)
-    {
-        rt_kprintf("Create lable failed!\n");
-        return;
-    }
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = red;
-    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = white;
-
-    /* Set lable position */
-    rtgui_rect_t rect;
-	rect.x1 = 10; rect.y1 = 2;
-	rect.x2 = 230; rect.y2 = 22;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
-
-    /* Add view to workbench */
-	rtgui_workbench_add_view(workbench, view);
-
-    /* this view can be focused */
-//    RTGUI_WIDGET(view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
-    /* set widget focus */
-//    rtgui_widget_focus(RTGUI_WIDGET(view));
-
-    /* Show view */
-	rtgui_view_show(view, RT_FALSE);
-
-    /* Workbench loop */
-	rtgui_workbench_event_loop(workbench);
-
-    /* Prepare for exit */
-	rtgui_thread_deregister(rt_thread_self());
-	rt_mq_delete(mq);
-}
-
-static rt_bool_t pic_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+#if defined(RT_USING_RTGUI)
+static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
 	rt_bool_t result;
     rt_bool_t load = RT_FALSE;
 
-	result = rtgui_view_event_handler(widget, event);
+	result = rtgui_container_event_handler(object, event);
 
     switch(event->type)
     {
@@ -191,18 +126,19 @@ static rt_bool_t pic_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *e
 		rtgui_rect_t rect;
         rtgui_image_t* image;
 
-    //    image = rtgui_image_create_from_file("jpg", "/test9.jpg", RT_FALSE);
-        image = rtgui_image_create_from_file("bmp", "/test_565.bmp", RT_FALSE);
+        image = rtgui_image_create_from_file("jpg", "/test9.jpg", RT_FALSE);
+//        image = rtgui_image_create_from_file("bmp", "/test_565.bmp", RT_FALSE);
 
-		dc = rtgui_dc_begin_drawing(widget);
+		dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(object));
 		if (dc == RT_NULL)
         {
             return result;
         }
 
-        rtgui_widget_get_rect(widget, &rect);
-        rtgui_widget_rect_to_device(widget, &rect);
-        rect.y1 +=20; rect.y2 +=20;
+        rtgui_widget_get_rect(RTGUI_WIDGET(object), &rect);
+ //       rtgui_widget_rect_to_device(widget, &rect);
+        rect.x1 +=10;
+        rect.y1 +=10;
 
 		if (image != RT_NULL)
         {
@@ -220,113 +156,150 @@ static rt_bool_t pic_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *e
 	return result;
 }
 
-static void wb_main(void* parameter)
+static void app_main(void *parameter)
 {
-	rt_mq_t mq;
-	rtgui_view_t *view;
-	rtgui_workbench_t *workbench;
-
-    /* Create message queue for self */
-	mq = rt_mq_create("mq_wb2", 256, 4, RT_IPC_FLAG_FIFO);
-	if(mq == RT_NULL)
+    /* find lcd device */
+    rt_device_t lcd = rt_device_find(LCD_DEVICE_NAME);
+    if (lcd == RT_NULL)
     {
-        rt_kprintf("Create mq failed!\n");
+        rt_kprintf("Can't find LCD\n");
         return;
     }
-	rtgui_thread_register(rt_thread_self(), mq);
 
-    /* Create workbench */
-	workbench = rtgui_workbench_create("main", "wb_2");
-	if(workbench == RT_NULL)
+    /* read LCD info */
+    struct rt_device_graphic_info lcd_info;
+    lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
+    rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
+
+	/* create application */
+	struct rtgui_application *app;
+	app = rtgui_application_create(rt_thread_self(), "gui_app");
+	if (app == RT_NULL)
     {
-        rt_kprintf("Create wb failed!\n");
+        rt_kprintf("Create application \"gui_app\" failed!\n");
         return;
     }
-    /* Create a view */
-    view = rtgui_view_create("pic_view");
-	if(view == RT_NULL)
-    {
-        rt_kprintf("Create view failed!\n");
-        return;
-    }
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
-    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(view)) = red;
-    rtgui_widget_set_event_handler(RTGUI_WIDGET(view), pic_view_event_handler);
 
-	/* Create a lable */
-	rtgui_label_t* label = rtgui_label_create("EFM32GG_DK3750 Kit");
-	if(label == RT_NULL)
+	struct rtgui_rect rect1, rect2, rect3;
+    struct rtgui_win *win_info, *win_main, *win_hello;
+	struct rtgui_container *container;
+    struct rtgui_label* label;
+
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
+    rect2.x1 = rect1.x1;
+    rect2.y1 = 25;
+    rect2.x2 = rect1.x2;
+    rect2.y2 = rect1.y2;
+    rect1.y2 = 25;
+
+    /* create info window */
+	win_info = rtgui_win_create(RT_NULL, "info",
+                    &rect1,
+                    RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
+	if (win_info == RT_NULL)
+	{
+        rt_kprintf("Create window \"info\" failed!\n");
+		rtgui_application_destroy(app);
+        return;
+	}
+
+    /* create container in info window */
+	container = rtgui_container_create();
+	if (container == RT_NULL)
+	{
+        rt_kprintf("Create container failed!\n");
+		return;
+	}
+	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
+    rtgui_container_add_child(RTGUI_CONTAINER(win_info), RTGUI_WIDGET(container));
+
+    /* create lable in info window */
+	label = rtgui_label_create("RT-Thread & RTGUI");
+    if (label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
+
+	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
+	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = red;
+    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = white;
+
+	rect3.x1 = rect1.x1 + 5;
+	rect3.y1 = rect1.y1 + 5;
+	rect3.x2 = rect1.x2 - 5;
+	rect3.y2 = rect1.y2 - 5;
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
+
+
+    /* create main window */
+	win_main = rtgui_win_create(RT_NULL, "main",
+                    &rect2,
+                    RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
+	if (win_main == RT_NULL)
+	{
+        rt_kprintf("Create window \"main\" failed!\n");
+		rtgui_application_destroy(app);
+        return;
+	}
+
+    /* create container in main window */
+	container = rtgui_container_create();
+	if (container == RT_NULL)
+	{
+        rt_kprintf("Create container failed!\n");
+		return;
+	}
+
+	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect2);
+    rtgui_object_set_event_handler(RTGUI_OBJECT(container), pic_view_event_handler);
+    rtgui_container_add_child(RTGUI_CONTAINER(win_main), RTGUI_WIDGET(container));
+
+    /* create lable in main window */
+	label = rtgui_label_create("EFM32GG_DK3750 Kit");
+    if (label == RT_NULL)
+    {
+        rt_kprintf("Create lable failed!\n");
+        return;
+    }
+	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
-    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = red;
+    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
 
-    /* Set lable position */
-    rtgui_rect_t rect;
-	rect.x1 = 10; rect.y1 = 50;
-	rect.x2 = 230; rect.y2 = 70;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+	rect3.x1 = rect2.x1 + 5;
+	rect3.y1 = rect2.y1 + 5;
+	rect3.x2 = rect2.x2 - 5;
+	rect3.y2 = rect2.y1 + 20;
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* Add view to workbench */
-	rtgui_workbench_add_view(workbench, view);
 
-    /* this view can be focused */
-//    RTGUI_WIDGET(view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
-    /* set widget focus */
-//    rtgui_widget_focus(RTGUI_WIDGET(view));
-
-    /* Show view */
-	rtgui_view_show(view, RT_FALSE);
-
-    /* Workbench loop */
-	rtgui_workbench_event_loop(workbench);
-
-    /* Prepare for exit */
-	rtgui_thread_deregister(rt_thread_self());
-	rt_mq_delete(mq);
-}
-
-static void win_hello(void* parameter)
-{
-	rt_mq_t mq;
-	struct rtgui_view* view;
-	rtgui_win_t *win;
-
-    /* Create message queue for self */
-	mq = rt_mq_create("mq_win", 256, 4, RT_IPC_FLAG_FIFO);
-	if(mq == RT_NULL)
-    {
-        rt_kprintf("Create mq failed!\n");
+    /* create hello window */
+	rect3.x1 = 80;
+	rect3.y1 = 50;
+	rect3.x2 = 320 - 80;
+	rect3.y2 = 240 - 50;
+	win_hello = rtgui_win_create(RT_NULL, "hello",
+                    &rect3,
+                    RTGUI_WIN_STYLE_DEFAULT);
+	if (win_hello == RT_NULL)
+	{
+        rt_kprintf("Create window \"hello\" failed!\n");
+		rtgui_application_destroy(app);
         return;
-    }
-	rtgui_thread_register(rt_thread_self(), mq);
+	}
 
-    /* Window position */
-    rtgui_rect_t rect;
-	rect.x1 = 50; rect.y1 = 50;
-	rect.x2 = 180; rect.y2 = 180;
-
-    /* Create window */
-    win = rtgui_win_create(RT_NULL, "Hello", &rect, RTGUI_WIN_STYLE_DEFAULT);
-	if(win == RT_NULL)
-    {
-        rt_kprintf("Create win failed!\n");
-        return;
-    }
-
-    /* Create a box */
+    /* create a box */
     rtgui_box_t *box = rtgui_box_create(RTGUI_VERTICAL, RT_NULL);
 	if(box == RT_NULL)
     {
         rt_kprintf("Create box failed!\n");
         return;
     }
-    rtgui_win_set_box(win, box);
+    rtgui_win_set_box(win_hello, box);
 
-    rtgui_label_t *label = rtgui_label_create("¹þÂÞ,íïÅÖ!");
+    label = rtgui_label_create("¹þÂÞ,íïÅÖ!");
 	if(label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
@@ -337,28 +310,28 @@ static void win_hello(void* parameter)
     RTGUI_WIDGET(label)->align = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
     rtgui_widget_set_miniwidth(RTGUI_WIDGET(label),130);
     rtgui_box_append(box, RTGUI_WIDGET(label));
-
     /* Auto layout */
     rtgui_box_layout(box);
 
-    /* Show window */
-    rtgui_win_show(win, RT_FALSE);
 
-    /* Window loop */
-	rtgui_win_event_loop(win);
+    rtgui_win_show(win_info, RT_FALSE);
+    rtgui_win_show(win_main, RT_FALSE);
+    rtgui_win_show(win_hello, RT_FALSE);
 
-    /* Prepare for exit */
-	rtgui_thread_deregister(rt_thread_self());
-	rt_mq_delete(mq);
+    rtgui_application_run(app);
+    rtgui_application_destroy(app);
 }
 
-static rt_bool_t photo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+static rt_bool_t photo_view_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
 	rt_bool_t result = RT_FALSE;
     struct photo_event *photo_event = (struct photo_event *)event;
 
-	result = rtgui_view_event_handler(widget, event);
-    rt_kprintf("view event %x\n", event->type);
+	result = rtgui_container_event_handler(object, event);
+    rt_kprintf("container event %x\n", event->type);
+
+	struct rtgui_event_win* wevent = (struct rtgui_event_win*)event;
+    rt_kprintf("wevent->wid %x\n", wevent->wid);
 
     if ((event->type == RTGUI_EVENT_COMMAND) && \
         (photo_event->cmd == APP_CMD_PHOTO_FRAME))
@@ -367,11 +340,12 @@ static rt_bool_t photo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t 
         rtgui_image_t* image;
         struct rtgui_dc* dc;
 
-        rtgui_widget_get_rect(widget, &rect);
-        rtgui_widget_rect_to_device(widget, &rect);
-        rect.y1 +=20; rect.y2 +=20;
+        rtgui_widget_get_rect(RTGUI_WIDGET(object), &rect);
+        rt_kprintf(" (%d, %d) (%d, %d)\n", rect.x1, rect.y1, rect.x2, rect.y2);
+//        rtgui_widget_rect_to_device(RTGUI_WIDGET(object), &rect);
+        rect.y1 +=15;
 
-        dc = rtgui_dc_begin_drawing(widget);
+        dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(object));
         if (dc == RT_NULL)
         {
             return result;
@@ -392,90 +366,111 @@ static rt_bool_t photo_view_event_handler(rtgui_widget_t* widget, rtgui_event_t 
 	return result;
 }
 
-static rt_bool_t photo_lable_event_handler(rtgui_widget_t* widget, rtgui_event_t *event)
+static rt_bool_t photo_lable_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
 	rt_bool_t result = RT_FALSE;
 
+	result = rtgui_label_event_handler(object, event);
     rt_kprintf("lable event %x\n", event->type);
 
     if (event->type == RTGUI_EVENT_COMMAND)
 	{
         struct photo_event *photo = (struct photo_event *)event;
 
-        rtgui_label_set_text((rtgui_label_t *)widget, photo->path);
+        rtgui_label_set_text((rtgui_label_t *)object, photo->path);
+        rt_kprintf("path %s\n", photo->path);
     }
 
 	return result;
 }
 
-static void wb_photo(void* parameter)
+static void app_photo(void *parameter)
 {
-	rt_mq_t mq;
-	rtgui_view_t *view;
-	rtgui_workbench_t *workbench;
+    struct photo_event *event = (struct photo_event *)parameter;
 
-    /* Create message queue for self */
-	mq = rt_mq_create("photo", 256, 4, RT_IPC_FLAG_FIFO);
-	if(mq == RT_NULL)
+    /* find lcd device */
+    rt_device_t lcd = rt_device_find(LCD_DEVICE_NAME);
+    if (lcd == RT_NULL)
     {
-        rt_kprintf("Create mq failed!\n");
+        rt_kprintf("Can't find LCD\n");
         return;
     }
-	rtgui_thread_register(rt_thread_self(), mq);
 
-    /* Create workbench */
-	workbench = rtgui_workbench_create("main", "photo");
-	if(workbench == RT_NULL)
+    /* read LCD info */
+    struct rt_device_graphic_info lcd_info;
+    lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
+    rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
+
+	/* create application */
+	struct rtgui_application *app;
+	app = rtgui_application_create(rt_thread_self(), "pho_app");
+	if (app == RT_NULL)
     {
-        rt_kprintf("Create wb failed!\n");
+        rt_kprintf("Create application \"pho_app\" failed!\n");
         return;
     }
-    /* Create a view */
-    view = rtgui_view_create("view");
-	if(view == RT_NULL)
-    {
-        rt_kprintf("Create view failed!\n");
-        return;
-    }
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
-    RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(view)) = blue;
-    rtgui_widget_set_event_handler(RTGUI_WIDGET(view), photo_view_event_handler);
-//    rtgui_widget_set_oncommand(RTGUI_WIDGET(view), photo_view_event_handler);
 
-	/* Create a lable */
-	rtgui_label_t* label = rtgui_label_create("Photo Frame Demo");
-	if(label == RT_NULL)
+	struct rtgui_rect rect1, rect2;
+    struct rtgui_win *window;
+	struct rtgui_container *container;
+    struct rtgui_label* label;
+
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
+
+    /* create window */
+	window = rtgui_win_create(RT_NULL, "photo",
+                    &rect1,
+                    RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
+	if (window == RT_NULL)
+	{
+        rt_kprintf("Create window \"photo\" failed!\n");
+		rtgui_application_destroy(app);
+        return;
+	}
+    event->win.wid = window;
+
+    /* create container */
+	container = rtgui_container_create();
+	if (container == RT_NULL)
+	{
+        rt_kprintf("Create container failed!\n");
+		return;
+	}
+	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
+    rtgui_object_set_event_handler(RTGUI_OBJECT(container), photo_view_event_handler);
+    rtgui_container_add_child(RTGUI_CONTAINER(window), RTGUI_WIDGET(container));
+
+    /* create lable in info window */
+	label = rtgui_label_create("Photo Frame Demo");
+    if (label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
+
+	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
 	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
 
-    /* Set lable position */
-    rtgui_rect_t rect;
-	rect.x1 = 0; rect.y1 = 2;
-	rect.x2 = 300; rect.y2 = 20;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    rtgui_widget_set_event_handler(RTGUI_WIDGET(label), photo_lable_event_handler);
-	rtgui_container_add_child(RTGUI_CONTAINER(view), RTGUI_WIDGET(label));
+    rect2.x1 = rect1.x1;
+    rect2.y1 = rect1.y1;
+    rect2.x2 = rect1.x2;
+    rect2.y2 = 15;
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect2);
+    rtgui_object_set_event_handler(RTGUI_OBJECT(label), photo_lable_event_handler);
+	rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* Add view to workbench */
-	rtgui_workbench_add_view(workbench, view);
+    rtgui_win_show(window, RT_FALSE);
 
-    /* Show view */
-	rtgui_view_show(view, RT_FALSE);
-
-    /* Workbench loop */
-	rtgui_workbench_event_loop(workbench);
-
-    /* Prepare for exit */
-	rtgui_thread_deregister(rt_thread_self());
-	rt_mq_delete(mq);
+    rtgui_application_run(app);
+    rtgui_application_destroy(app);
 }
+#endif
 
 void rt_demo_thread_entry(void* parameter)
 {
+    emu_all_disable();
+
 #if 0 //defined(EFM32_USING_ACCEL)
 {
     struct efm32_accel_result_t result;
@@ -582,80 +577,22 @@ void rt_demo_thread_entry(void* parameter)
 {
     rt_kprintf("LCD DEMO start...\n");
 
-    /* find lcd device */
-    rt_device_t lcd = rt_device_find(LCD_DEVICE_NAME);
-    if (lcd == RT_NULL)
-    {
-        rt_kprintf("Can't find LCD\n");
-    }
-
-    /* read LCD info */
-    struct rt_device_graphic_info lcd_info;
-    lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
-    rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
-
-    /* register panels */
-    rtgui_rect_t rect;
-    rect.x1 = 0;
-    rect.y1 = 0;
-    rect.x2 = lcd_info.width;
-    rect.y2 = 25;
-    rtgui_panel_register("info", &rect);
-    rect.x1 = 0;
-    rect.y1 = 25;
-    rect.x2 = lcd_info.width;
-    rect.y2 = lcd_info.height;
-    rtgui_panel_register("main", &rect);
-    rtgui_panel_set_default_focused("main");
-
-    /* Create workbenc threads */
-    rt_thread_t wb_tid;
-    wb_tid = rt_thread_create(
-        "wb_main",
-        wb_main,
+    /* Create RTGUI application thread */
+    rt_thread_t gui_app;
+    gui_app = rt_thread_create(
+        "gui_thd",
+        app_main,
         RT_NULL,
         2048,
         25,
         10);
-    if (wb_tid != RT_NULL)
+    if (gui_app != RT_NULL)
     {
-        rt_thread_startup(wb_tid);
+        rt_thread_startup(gui_app);
     }
     else
     {
-        rt_kprintf("Create workbench \"main\" failed!\n");
-    }
-
-    wb_tid = rt_thread_create(
-        "wb_info",
-        wb_info,
-        RT_NULL,
-        2048,
-        25,
-        10);
-    if (wb_tid != RT_NULL)
-    {
-        rt_thread_startup(wb_tid);
-    }
-    else
-    {
-        rt_kprintf("Create workbench \"info\" failed!\n");
-    }
-
-    wb_tid = rt_thread_create(
-        "win",
-        win_hello,
-        RT_NULL,
-        2048,
-        25,
-        10);
-    if (wb_tid != RT_NULL)
-    {
-        rt_thread_startup(wb_tid);
-    }
-    else
-    {
-        rt_kprintf("Create window \"win\" failed!\n");
+        rt_kprintf("Create gui_app thread failed!\n");
     }
 
     rt_kprintf("LCD DEMO end.\n");
@@ -666,6 +603,17 @@ void rt_demo_thread_entry(void* parameter)
 {
     rt_kprintf("Photo frame DEMO start...\n");
 
+    DIR* dir = opendir("/photo");
+    struct photo_event event;
+    struct dirent* dirent;
+    rt_uint8_t path[100];
+    const rt_uint8_t bmp[] = "bmp";
+    const rt_uint8_t jpeg[] = "jpeg";
+
+    RTGUI_EVENT_COMMAND_INIT(&event.win);
+    event.cmd = APP_CMD_PHOTO_FRAME;
+    event.path = path;
+
     /* find lcd device */
     rt_device_t lcd = rt_device_find(LCD_DEVICE_NAME);
     if (lcd == RT_NULL)
@@ -678,47 +626,25 @@ void rt_demo_thread_entry(void* parameter)
     lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
     rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
 
-    /* register panels */
-    rtgui_rect_t rect;
-    rect.x1 = 0;
-    rect.y1 = 0;
-    rect.x2 = lcd_info.width;
-    rect.y2 = lcd_info.height;
-    rtgui_panel_register("main", &rect);
-    rtgui_panel_set_default_focused("main");
-
-    /* Creat thread */
-    rt_thread_t photo = rt_thread_create(
-        "photo",
-        wb_photo,
-        RT_NULL,
+    /* Create photo frame thread */
+    rt_thread_t photo_app;
+    photo_app = rt_thread_create(
+        "pho_thd",
+        app_photo,
+        (void *)&event,
         2048,
         25,
         10);
-    if (photo != RT_NULL)
+    if (photo_app != RT_NULL)
     {
-        rt_thread_startup(photo);
+        rt_thread_startup(photo_app);
     }
     else
     {
-        rt_kprintf("Create workbench \"photo\" failed!\n");
+        rt_kprintf("Create photo frame thread failed!\n");
     }
 
     /* start display photos */
-    DIR* dir = opendir("/photo");
-    struct photo_event event;
-    struct dirent* dirent;
-    rt_uint8_t path[100];
-    const rt_uint8_t bmp[] = "bmp";
-    const rt_uint8_t jpeg[] = "jpeg";
-
-    event.parent.type = RTGUI_EVENT_COMMAND;
-    event.parent.user = sizeof(struct photo_event);
-    event.parent.sender = RT_NULL;
-    event.parent.ack = RT_NULL;
-    event.cmd = APP_CMD_PHOTO_FRAME;
-    event.path = path;
-
     rt_thread_sleep(100);
     do
     {
@@ -754,8 +680,8 @@ void rt_demo_thread_entry(void* parameter)
             continue;
         }
 
-        rtgui_server_post_event((&event.parent), sizeof(event));
-        rt_thread_sleep(1000);
+        rtgui_application_send(photo_app, &event.win.parent, sizeof(event));
+        rt_thread_sleep(2000);
     } while (dirent != RT_NULL);
     closedir(dir);
 
@@ -766,6 +692,7 @@ void rt_demo_thread_entry(void* parameter)
 
     rt_kprintf("All Demo end.\n");
 
+    emu_em2_enable();
     while(1)
     {
         rt_thread_sleep(10);

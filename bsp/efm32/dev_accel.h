@@ -1,19 +1,19 @@
 /***************************************************************************//**
  * @file 	dev_accel.h
  * @brief 	Accelerometer driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
- * 2011-07-13	onelife		Initial creation for using EFM32 ADC module to 
+ * 2011-07-13	onelife		Initial creation for using EFM32 ADC module to
  *  interface the Freescale MMA7361L
- * 2011-08-02	onelife		Add digital interface support of using EFM32 IIC 
+ * 2011-08-02	onelife		Add digital interface support of using EFM32 IIC
  *  module for the Freescale MMA7455L
  ******************************************************************************/
 #ifndef __DEV_ACCEL_H__
@@ -34,7 +34,7 @@ struct efm32_accel_result_t
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-/* 	MMA7361LC 
+/* 	MMA7361LC
  	g-Select 	g-Range 	Sensitivity
  	0 			1.5 g 		800 mV/g
  	1 			6 g 		206 mV/g
@@ -108,7 +108,7 @@ struct efm32_accel_result_t
 #endif
 
 /* Exported functions ------------------------------------------------------- */
-rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data, 
+rt_err_t efm_accel_get_data(struct efm32_accel_result_t *data,
 	rt_bool_t lowResolution);
 rt_err_t efm_accel_config(rt_uint32_t config,
 	rt_uint8_t level_threshold,

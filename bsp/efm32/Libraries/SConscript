@@ -4,57 +4,71 @@ from building import *
 # get current directory
 cwd = GetCurrentDir()
 
+if rtconfig.CROSS_TOOL == 'gcc':
+    compiler = 'GCC'
+
 # The set of source files associated with this SConscript file.
 src = Split("""
-CMSIS/CM3/CoreSupport/core_cm3.c
-CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/system_efm32.c
-efm32lib/src/efm32_acmp.c
-efm32lib/src/efm32_adc.c
-efm32lib/src/efm32_aes.c
-efm32lib/src/efm32_assert.c
-efm32lib/src/efm32_cmu.c
-efm32lib/src/efm32_dac.c
-efm32lib/src/efm32_dbg.c
-efm32lib/src/efm32_dma.c
-efm32lib/src/efm32_ebi.c
-efm32lib/src/efm32_emu.c
-efm32lib/src/efm32_gpio.c
-efm32lib/src/efm32_i2c.c
-efm32lib/src/efm32_lcd.c
-efm32lib/src/efm32_letimer.c
-efm32lib/src/efm32_leuart.c
-efm32lib/src/efm32_mpu.c
-efm32lib/src/efm32_msc.c
-efm32lib/src/efm32_pcnt.c
-efm32lib/src/efm32_prs.c
-efm32lib/src/efm32_rmu.c
-efm32lib/src/efm32_rtc.c
-efm32lib/src/efm32_system.c
-efm32lib/src/efm32_timer.c
-efm32lib/src/efm32_usart.c
-efm32lib/src/efm32_vcmp.c
-efm32lib/src/efm32_wdog.c
+emlib/src/em_acmp.c
+emlib/src/em_adc.c
+emlib/src/em_aes.c
+emlib/src/em_assert.c
+emlib/src/em_cmu.c
+emlib/src/em_dac.c
+emlib/src/em_dbg.c
+emlib/src/em_dma.c
+emlib/src/em_ebi.c
+emlib/src/em_emu.c
+emlib/src/em_gpio.c
+emlib/src/em_i2c.c
+emlib/src/em_lcd.c
+emlib/src/em_letimer.c
+emlib/src/em_leuart.c
+emlib/src/em_mpu.c
+emlib/src/em_msc.c
+emlib/src/em_pcnt.c
+emlib/src/em_prs.c
+emlib/src/em_rmu.c
+emlib/src/em_rtc.c
+emlib/src/em_system.c
+emlib/src/em_timer.c
+emlib/src/em_usart.c
+emlib/src/em_vcmp.c
+emlib/src/em_wdog.c
 """)
+
+# system code for each EFM32 family
+system_codes = {}
+system_codes['TinyGecko'] = 'EFM32TG/Source/system_efm32tg.c'
+system_codes['Gecko'] = 'EFM32G/Source/system_efm32g.c'
+system_codes['Giant Gecko'] = 'EFM32GG/Source/system_efm32gg.c'
+
+# path of header files for each EFM32 family
+header_path = {}
+header_path['TinyGecko'] = 'EFM32TG'
+header_path['Gecko'] = 'EFM32G'
+header_path['Giant Gecko'] = 'EFM32GG'
 
 # starupt scripts for each EFM32 family
 startup_scripts = {}
-startup_scripts['TinyGecko'] = 'startup_efm32tg.s'
-startup_scripts['Gecko'] = 'startup_efm32.s'
-startup_scripts['Giant Gecko'] = 'startup_efm32gg.s'
+startup_scripts['TinyGecko'] = 'EFM32TG/Source/' + compiler + '/startup_efm32tg.s'
+startup_scripts['Gecko'] = 'EFM32G/Source/' + compiler + '/startup_efm32g.s'
+startup_scripts['Giant Gecko'] = 'EFM32GG/Source/' + compiler + '/startup_efm32gg.s'
 
 # linker scripts for each EFM32 family
 linker_scripts = {}
-linker_scripts['TinyGecko'] = 'efm32tg.ld'
-linker_scripts['Gecko'] = 'efm32g.ld'
-linker_scripts['Giant Gecko'] = 'efm32gg.ld'
+linker_scripts['TinyGecko'] = 'EFM32TG/Source/' + compiler + '/efm32tg.ld'
+linker_scripts['Gecko'] = 'EFM32G/Source/' + compiler + '/efm32g.ld'
+linker_scripts['Giant Gecko'] = 'EFM32GG/Source/' + compiler + '/efm32gg.ld'
 
-startup_scripts[rtconfig.EFM32_FAMILY] = 'CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + startup_scripts[rtconfig.EFM32_FAMILY]
-linker_scripts[rtconfig.EFM32_FAMILY] = cwd + '/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32/startup/cs3/' + linker_scripts[rtconfig.EFM32_FAMILY]
-src = src + [startup_scripts[rtconfig.EFM32_FAMILY]]
+system_codes[rtconfig.EFM32_FAMILY] = 'Device/EnergyMicro/' + system_codes[rtconfig.EFM32_FAMILY]
+startup_scripts[rtconfig.EFM32_FAMILY] = 'Device/EnergyMicro/' + startup_scripts[rtconfig.EFM32_FAMILY]
+linker_scripts[rtconfig.EFM32_FAMILY] = cwd + '/Device/EnergyMicro/' + linker_scripts[rtconfig.EFM32_FAMILY]
+src = src + [system_codes[rtconfig.EFM32_FAMILY]] + [startup_scripts[rtconfig.EFM32_FAMILY]]
 
-path = [cwd + '/efm32lib/inc',
-    cwd + '/CMSIS/CM3/CoreSupport',
-    cwd + '/CMSIS/CM3/DeviceSupport/EnergyMicro/EFM32']
+path = [cwd + '/emlib/inc',
+    cwd + '/CMSIS/Include',
+    cwd + '/Device/EnergyMicro/' + header_path[rtconfig.EFM32_FAMILY] + '/Include']
 
 CPPDEFINES = [rtconfig.EFM32_TYPE]
 #group = DefineGroup('EFM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES, LINKFLAGS = linker_scripts[rtconfig.EFM32_FAMILY])

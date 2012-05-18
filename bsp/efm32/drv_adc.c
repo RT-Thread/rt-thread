@@ -1,12 +1,12 @@
 /***************************************************************************//**
  * @file 	drv_adc.c
  * @brief 	ADC driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
@@ -14,7 +14,7 @@
  * 2011-02-21	onelife		Initial creation for EFM32
  * 2011-07-14	onelife		Add multiple channels support for scan mode
  ******************************************************************************/
- 
+
 /***************************************************************************//**
  * @addtogroup efm32
  * @{
@@ -71,7 +71,7 @@ static rt_uint32_t adcErrataShift = 0;
  *   No need to load the calibration values after the function returns.
  ******************************************************************************/
 rt_uint32_t efm32_adc_calibration(
-	ADC_TypeDef 			*adc, 
+	ADC_TypeDef 			*adc,
 	ADC_Ref_TypeDef			ref,
 	ADC_SingleInput_TypeDef	input)
 {
@@ -218,7 +218,7 @@ rt_uint32_t efm32_adc_calibration(
  ******************************************************************************/
 void efm32_adc_cfg_dma(
 		ADC_TypeDef 			*adc_device,
-		rt_uint8_t 				mode, 
+		rt_uint8_t 				mode,
 		rt_uint8_t 				channel)
 {
 	DMA_CfgChannel_TypeDef	chnlCfg;
@@ -239,7 +239,7 @@ void efm32_adc_cfg_dma(
 		case ADC_MODE_SINGLE:
 			chnlCfg.select = DMAREQ_ADC0_SINGLE;
 			break;
-		
+
 		case ADC_MODE_SCAN:
 			chnlCfg.select = DMAREQ_ADC0_SCAN;
 			break;
@@ -262,7 +262,7 @@ void efm32_adc_cfg_dma(
 	descrCfg.size		= dmaDataSize4;
 	descrCfg.arbRate	= dmaArbitrate1;
 	descrCfg.hprot		= 0;
-	DMA_CfgDescr((rt_uint32_t)channel, true, &descrCfg); 		
+	DMA_CfgDescr((rt_uint32_t)channel, true, &descrCfg);
 }
 
 /***************************************************************************//**
@@ -307,7 +307,7 @@ void efm32_adc_on_dma(
 			(void *)&(adc_device->SINGLEDATA),
 			count - 1);
 		break;
-	
+
 	case ADC_MODE_SCAN:
 		DMA_ActivateBasic(
 			(rt_uint32_t)channel,
@@ -317,7 +317,7 @@ void efm32_adc_on_dma(
 			(void *)&(adc_device->SCANDATA),
 			count - 1);
 		break;
-	
+
 	default:
 		return;
 	}
@@ -342,7 +342,7 @@ void efm32_adc_on_dma(
 	RT_ASSERT(dev != RT_NULL);
 
 	rt_uint32_t temp;
-	
+
 	struct efm32_adc_device_t *adc;
 
 	adc = (struct efm32_adc_device_t *)(dev->user_data);
@@ -374,8 +374,8 @@ void efm32_adc_on_dma(
  *	Error code
  ******************************************************************************/
 static rt_err_t rt_adc_control(
-	rt_device_t 	dev, 
-	rt_uint8_t 		cmd, 
+	rt_device_t 	dev,
+	rt_uint8_t 		cmd,
 	void 			*args)
 {
 	RT_ASSERT(dev != RT_NULL);
@@ -406,10 +406,10 @@ static rt_err_t rt_adc_control(
 				if (adc->singleDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 				{
 					efm32_adc_on_dma(
-						adc->adc_device, 
-						control->mode, 
-						adc->singleCount, 
-						adc->singleDmaChannel, 
+						adc->adc_device,
+						control->mode,
+						adc->singleCount,
+						adc->singleDmaChannel,
 						control->buffer);
 				}
 				ADC_Start(adc->adc_device, adcStartSingle);
@@ -419,10 +419,10 @@ static rt_err_t rt_adc_control(
 				if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 				{
 					efm32_adc_on_dma(
-						adc->adc_device, 
-						control->mode, 
-						adc->scanCount, 
-						adc->scanDmaChannel, 
+						adc->adc_device,
+						control->mode,
+						adc->scanCount,
+						adc->scanDmaChannel,
 						control->buffer);
 				}
 				ADC_Start(adc->adc_device, adcStartScan);
@@ -435,20 +435,20 @@ static rt_err_t rt_adc_control(
 					if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 					{
 						efm32_adc_on_dma(
-							adc->adc_device, 
-							control->mode, 
-							adc->scanCount, 
-							adc->scanDmaChannel, 
+							adc->adc_device,
+							control->mode,
+							adc->scanCount,
+							adc->scanDmaChannel,
 							index);
 						index += adc->scanCount;
 					}
 					if (adc->singleDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 					{
 						efm32_adc_on_dma(
-							adc->adc_device, 
-							control->mode, 
-							adc->singleCount, 
-							adc->singleDmaChannel, 
+							adc->adc_device,
+							control->mode,
+							adc->singleCount,
+							adc->singleDmaChannel,
 							index);
 						index += adc->singleCount;
 					}
@@ -456,7 +456,7 @@ static rt_err_t rt_adc_control(
 				}
 
 				break;
-			
+
 			default:
 				return -RT_ERROR;
 			}
@@ -521,7 +521,7 @@ static rt_err_t rt_adc_control(
 			}
 		}
 		break;
-		
+
 	case RT_DEVICE_CTRL_ADC_RESULT:
 		{
 			struct efm32_adc_result_t *control = \
@@ -537,10 +537,10 @@ static rt_err_t rt_adc_control(
 						if (!(DMA->IF & (1 << adc->singleDmaChannel)))
 						{
 							efm32_adc_on_dma(
-								adc->adc_device, 
-								control->mode, 
-								adc->singleCount, 
-								adc->singleDmaChannel, 
+								adc->adc_device,
+								control->mode,
+								adc->singleCount,
+								adc->singleDmaChannel,
 								control->buffer);
 						}
 						while (!(DMA->IF & (1 << adc->singleDmaChannel)));
@@ -559,17 +559,17 @@ static rt_err_t rt_adc_control(
 				break;
 
 			case ADC_MODE_SCAN:
-				if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)				
+				if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 				{
 					if (adc->mode & ADC_OP_SCAN_REPEAT)
 					{
 						if (!(DMA->IF & (1 << adc->scanDmaChannel)))
 						{
 							efm32_adc_on_dma(
-								adc->adc_device, 
-								control->mode, 
-								adc->scanCount, 
-								adc->scanDmaChannel, 
+								adc->adc_device,
+								control->mode,
+								adc->scanCount,
+								adc->scanDmaChannel,
 								control->buffer);
 						}
 						while (!(DMA->IF & (1 << adc->scanDmaChannel)));
@@ -590,7 +590,7 @@ static rt_err_t rt_adc_control(
 			case ADC_MODE_TAILGATE:
 				{
 					void *index = control->buffer;
-					
+
 					if ((adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA) && \
 						!(adc->mode & ADC_OP_SCAN_REPEAT))
 					{
@@ -602,17 +602,17 @@ static rt_err_t rt_adc_control(
 						index += adc->singleCount;
 					}
 
-					if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)				
+					if (adc->scanDmaChannel != (rt_uint8_t)EFM32_NO_DMA)
 					{
 						if (adc->mode & ADC_OP_SCAN_REPEAT)
 						{
 							if (!(DMA->IF & (1 << adc->scanDmaChannel)))
 							{
 								efm32_adc_on_dma(
-									adc->adc_device, 
-									control->mode, 
-									adc->scanCount, 
-									adc->scanDmaChannel, 
+									adc->adc_device,
+									control->mode,
+									adc->scanCount,
+									adc->scanDmaChannel,
 									index);
 								index += adc->scanCount;
 							}
@@ -636,10 +636,10 @@ static rt_err_t rt_adc_control(
 							if (!(DMA->IF & (1 << adc->singleDmaChannel)))
 							{
 								efm32_adc_on_dma(
-									adc->adc_device, 
-									control->mode, 
-									adc->singleCount, 
-									adc->singleDmaChannel, 
+									adc->adc_device,
+									control->mode,
+									adc->singleCount,
+									adc->singleDmaChannel,
 									index);
 								index += adc->singleCount;
 							}
@@ -690,15 +690,15 @@ static rt_err_t rt_adc_control(
  *	Configuration flags
  *
  * @param[in] adc
- *	Pointer to ADC device descriptor 
+ *	Pointer to ADC device descriptor
  *
  * @return
  *	Error code
  ******************************************************************************/
 rt_err_t rt_hw_adc_register(
-	rt_device_t		device, 
-	const char		*name, 
-	rt_uint32_t		flag, 
+	rt_device_t		device,
+	const char		*name,
+	rt_uint32_t		flag,
 	struct efm32_adc_device_t *adc)
 {
 	RT_ASSERT(device != RT_NULL);
@@ -720,7 +720,7 @@ rt_err_t rt_hw_adc_register(
 
 /***************************************************************************//**
  * @brief
- *	Initialize the specified ADC unit 
+ *	Initialize the specified ADC unit
  *
  * @details
  *
@@ -733,7 +733,7 @@ rt_err_t rt_hw_adc_register(
  *	Unit number
  *
  * @return
- *	Pointer to ADC device  
+ *	Pointer to ADC device
  ******************************************************************************/
 static struct efm32_adc_device_t *rt_hw_adc_unit_init(
 	rt_device_t device,
@@ -769,17 +769,17 @@ static struct efm32_adc_device_t *rt_hw_adc_unit_init(
 			adc->adc_device 	= ADC0;
 			adcClock 			= (CMU_Clock_TypeDef)cmuClock_ADC0;
 			break;
-			
+
 		default:
 			break;
 		}
 
 		/* Enable ADC clock */
 		CMU_ClockEnable(adcClock, true);
-		
+
 		/* Reset */
 		ADC_Reset(adc->adc_device);
-		
+
 		/* Configure ADC */
 		// TODO: Fixed oversampling rate?
 		init.ovsRateSel 		= adcOvsRateSel4096;
@@ -815,7 +815,7 @@ void rt_hw_adc_init(void)
 #ifdef RT_USING_ADC0
 	if ((adc = rt_hw_adc_unit_init(&adc0_device, 0)) != RT_NULL)
 	{
-		rt_hw_adc_register(&adc0_device, RT_ADC0_NAME, EFM32_NO_DATA, adc);	
+		rt_hw_adc_register(&adc0_device, RT_ADC0_NAME, EFM32_NO_DATA, adc);
 	}
 #endif
 
@@ -831,4 +831,4 @@ void rt_hw_adc_init(void)
 #endif
 /***************************************************************************//**
  * @}
- ******************************************************************************/ 
+ ******************************************************************************/

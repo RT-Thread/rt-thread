@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file 	tftspi.h
  * @brief 	Stub functions of EFM32 LCD driver
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file

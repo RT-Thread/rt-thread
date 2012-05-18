@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file 	board.c
  * @brief 	Board support of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -24,6 +24,7 @@
  * 2011-12-29   onelife     Add keys and joystick initialization routine in
  *  driver initialization function
  * 2012-02-15   onelife     Modify SWO setup function to support giant gecko
+ * 2012-xx-xx   onelife     Modify system clock and ticket related code
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -44,10 +45,11 @@
  * @addtogroup SysTick_clock_source
  * @{
  ******************************************************************************/
-#define SysTick_CLKSource_HCLK_Div8		((uint32_t)0xFFFFFFFB)
-#define SysTick_CLKSource_HCLK			((uint32_t)0x00000004)
-#define IS_SYSTICK_CLK_SOURCE(SOURCE)	(((SOURCE) == SysTick_CLKSource_HCLK) || \
-										((SOURCE) == SysTick_CLKSource_HCLK_Div8))
+#define SysTick_CLKSource_MASK          ((rt_uint32_t)0x00000004)
+#define SysTick_CLKSource_RTC		    ((rt_uint32_t)0x00000000)
+#define SysTick_CLKSource_HFCORECLK		((rt_uint32_t)0x00000004)
+#define IS_SYSTICK_CLK_SOURCE(SOURCE)	(((SOURCE) == SysTick_CLKSource_RTC) || \
+										((SOURCE) == SysTick_CLKSource_HFCORECLK))
 /***************************************************************************//**
  * @}
  ******************************************************************************/
@@ -110,34 +112,6 @@ static void NVIC_Configuration(void)
 
 /***************************************************************************//**
  * @brief
- *   Enable high frequency crystal oscillator (HFXO), and set HFCLK domain to
- * use HFXO as source.
- *
- * @details
- *
- * @note
- *
- ******************************************************************************/
-static void efm_hfxo_switch(void)
-{
-  CMU_TypeDef *cmu = CMU;
-
-  /* Turning on HFXO to increase frequency accuracy. */
-  /* Waiting until oscillator is stable */
-  cmu->OSCENCMD = CMU_OSCENCMD_HFXOEN;
-  while (!(cmu->STATUS && CMU_STATUS_HFXORDY)) ;
-
-  /* Switching the CPU clock source to HFXO */
-  cmu->CMD = CMU_CMD_HFCLKSEL_HFXO;
-
-  /* Turning off the high frequency RC Oscillator (HFRCO) */
-  /* GENERATL WARNING! Make sure not to disable the current
-   * source of the HFCLK. */
-  cmu->OSCENCMD = CMU_OSCENCMD_HFRCODIS;
-}
-
-/***************************************************************************//**
- * @brief
  *   Configure the SysTick clock source
  *
  * @details
@@ -153,19 +127,17 @@ static void efm_hfxo_switch(void)
  * @arg SysTick_CLKSource_HCLK
  *	 AHB clock selected as SysTick clock source.
  ******************************************************************************/
-static void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
+static void SysTick_CLKSourceConfig(rt_uint32_t SysTick_CLKSource)
 {
-  /* Check the parameters */
-  RT_ASSERT(IS_SYSTICK_CLK_SOURCE(SysTick_CLKSource));
+    /* Check the parameters */
+    RT_ASSERT(IS_SYSTICK_CLK_SOURCE(SysTick_CLKSource));
 
-  if (SysTick_CLKSource == SysTick_CLKSource_HCLK)
-  {
-    SysTick->CTRL |= SysTick_CLKSource_HCLK;
-  }
-  else
-  {
-    SysTick->CTRL &= SysTick_CLKSource_HCLK_Div8;
-  }
+    rt_uint32_t ctrl = SysTick->CTRL;
+
+    ctrl &= ~SysTick_CLKSource_MASK;
+    ctrl |= SysTick_CLKSource;
+
+    SysTick->CTRL = ctrl;
 }
 
 /***************************************************************************//**
@@ -179,15 +151,48 @@ static void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
  ******************************************************************************/
 static void  SysTick_Configuration(void)
 {
-	rt_uint32_t 	core_clock;
+#if defined(EFM32_USING_LFXO)
+    /* LETIMER0 configurations */
+    const LETIMER_Init_TypeDef letimerInit =
+    {
+        .enable         = true,                 /* Start counting when init completed. */
+        .debugRun       = false,                /* Counter shall not keep running during debug halt. */
+        .rtcComp0Enable = false,                /* Don't start counting on RTC COMP0 match. */
+        .rtcComp1Enable = false,                /* Don't start counting on RTC COMP1 match. */
+        .comp0Top       = true,                 /* Load COMP0 register into CNT when counter underflows. COMP is used as TOP */
+        .bufTop         = false,                /* Don't load COMP1 into COMP0 when REP0 reaches 0. */
+        .out0Pol        = 0,                    /* Idle value for output 0. */
+        .out1Pol        = 0,                    /* Idle value for output 1. */
+        .ufoa0          = letimerUFOANone,      /* No output on output 0. */
+        .ufoa1          = letimerUFOANone,      /* No output on output 1. */
+        .repMode        = letimerRepeatFree     /* Count until stopped by SW. */
+    };
+
+    CMU_ClockDivSet(cmuClock_LETIMER0, cmuClkDiv_8);
+    CMU_ClockEnable(cmuClock_LETIMER0, true);
+    LETIMER_CompareSet(LETIMER0, 0,
+        EFM32_LETIMER_TOP_100HZ * RT_TICK_PER_SECOND / 100);
+
+    /* Enable underflow interrupt */
+    LETIMER_IntClear(LETIMER0, LETIMER_IF_UF);
+    LETIMER_IntEnable(LETIMER0, LETIMER_IF_UF);
+    /* Enable LETIMER0 interrupt vector in NVIC */
+    NVIC_ClearPendingIRQ(LETIMER0_IRQn);
+    NVIC_SetPriority(LETIMER0_IRQn, EFM32_IRQ_PRI_DEFAULT);
+    NVIC_EnableIRQ(LETIMER0_IRQn);
+
+    /* Start LETIMER0 */
+    LETIMER_Init(LETIMER0, &letimerInit);
+#else
+	rt_uint32_t 	coreClk;
 	rt_uint32_t 	cnts;
 
-	efm_hfxo_switch();
-	core_clock = SystemCoreClockGet();
-	cnts = core_clock / RT_TICK_PER_SECOND;
+	coreClk = SystemCoreClockGet();
+	cnts = coreClk / RT_TICK_PER_SECOND;
 
 	SysTick_Config(cnts);
-	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
+	SysTick_CLKSourceConfig(SysTick_CLKSource_HFCORECLK);
+#endif
 }
 
 /***************************************************************************//**
@@ -199,7 +204,7 @@ static void  SysTick_Configuration(void)
  * @note
  *
  ******************************************************************************/
-void efm_swo_setup(void)
+void Swo_Configuration(void)
 {
 	rt_uint32_t *dwt_ctrl = (rt_uint32_t *) 0xE0001000;
 	rt_uint32_t *tpiu_prescaler = (rt_uint32_t *) 0xE0040010;
@@ -267,14 +272,39 @@ void rt_hw_board_init(void)
     DVK_clearInterruptFlags(BC_INTFLAG_MASK);
 #endif
 
-	/* NVIC Configuration */
+	/* config NVIC Configuration */
 	NVIC_Configuration();
 
+#if defined(EFM32_USING_HFXO)
 	/* Configure external oscillator */
 	SystemHFXOClockSet(EFM32_HFXO_FREQUENCY);
 
-	/* Configure the SysTick */
-	SysTick_Configuration();
+    /* Switching the CPU clock source to HFXO */
+    CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFXO);
+
+    /* Turning off the high frequency RC Oscillator (HFRCO) */
+    CMU_OscillatorEnable(cmuOsc_HFRCO, false, false);
+#endif
+
+#if defined(EFM32_USING_LFXO)
+    CMU_ClockSelectSet(cmuClock_LFA,cmuSelect_LFXO);
+    CMU_ClockSelectSet(cmuClock_LFB, cmuSelect_LFXO);
+#endif
+
+#if defined(EFM32_SWO_ENABLE)
+    /* Enable SWO */
+	Swo_Configuration();
+#endif
+
+	/* Enable high frequency peripheral clock */
+	CMU_ClockEnable(cmuClock_HFPER, true);
+	/* Enabling clock to the interface of the low energy modules */
+	CMU_ClockEnable(cmuClock_CORELE, true);
+    /* Enable GPIO clock */
+	CMU_ClockEnable(cmuClock_GPIO, true);
+
+    /* Configure the SysTick */
+    SysTick_Configuration();
 }
 
 /***************************************************************************//**
@@ -288,34 +318,18 @@ void rt_hw_board_init(void)
  ******************************************************************************/
 void rt_hw_driver_init(void)
 {
-	CMU_ClockEnable(cmuClock_HFPER, true);
-
-	/* Enable GPIO */
-	CMU_ClockEnable(cmuClock_GPIO, true);
-
-	/* Enabling clock to the interface of the low energy modules */
-	CMU_ClockEnable(cmuClock_CORELE, true);
-
-    /* Starting LFXO and waiting until it is stable */
-#if defined(EFM32_USING_LFXO)
-    CMU_OscillatorEnable(cmuOsc_LFXO, true, true);
-
-    /* Select LFXO for specified module (and wait for it to stabilize) */
- #if (defined(RT_USING_LEUART0) || defined(RT_USING_LEUART1))
-    CMU_ClockSelectSet(cmuClock_LFB, cmuSelect_LFXO);
- #endif
- #if defined(RT_USING_RTC)
-    CMU_ClockSelectSet(cmuClock_LFA,cmuSelect_LFXO);
- #endif
-#endif
-
-    /* Enable SWO */
-#if defined(EFM32_SWO_ENABLE)
-	efm_swo_setup();
-#endif
-
 	/* Initialize DMA */
 	rt_hw_dma_init();
+
+    /* Select LFXO for specified module (and wait for it to stabilize) */
+#if (!defined(EFM32_USING_LFXO) && defined(RT_USING_RTC))
+#error "Low frequency clock source is needed for using RTC"
+#endif
+
+#if (!defined(EFM32_USING_LFXO )&& \
+    (defined(RT_USING_LEUART0) || defined(RT_USING_LEUART1)))
+#error "Low frequency clock source is needed for using LEUART"
+#endif
 
 	/* Initialize USART */
 #if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || \
@@ -378,7 +392,9 @@ void rt_hw_driver_init(void)
 
     /* Enable SPI access to Ethernet */
 #if defined(EFM32_USING_ETHERNET)
+ #if defined(EFM32GG_DK3750)
     DVK_enablePeripheral(DVK_ETH);
+ #endif
 #endif
 
     /* Initialize LCD */

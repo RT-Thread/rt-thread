@@ -2,16 +2,23 @@
  * @file
  * @brief EFM32GG_DK3750 board support package API
  * @author Energy Micro AS
- * @version 1.2.2
+ * @version 2.0.1
  ******************************************************************************
  * @section License
- * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
- ******************************************************************************
+ * <b>(C) Copyright 2012 Energy Micro AS, http://www.energymicro.com</b>
+ *******************************************************************************
  *
- * This source code is the property of Energy Micro AS. The source and compiled
- * code may only be used on Energy Micro "EFM32" microcontrollers.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- * This copyright notice may not be removed from the source code nor changed.
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ * 4. The source and compiled code may only be used on Energy Micro "EFM32"
+ *    microcontrollers and "EFR4" radios.
  *
  * DISCLAIMER OF WARRANTY/LIMITATION OF REMEDIES: Energy Micro AS has no
  * obligation to support this Software. Energy Micro AS is providing the
@@ -84,6 +91,7 @@ typedef enum
   DVK_SPI_Audio,    /**< Configure switchable SPI interface to Audio I2S */
   DVK_SPI_Ethernet, /**< Configure switchable SPI interface to Ethernet */
   DVK_SPI_Display,  /**< Configure switchable SPI interface to SSD2119 */
+  DVK_SPI_OFF,      /**< Disable SPI interface */
 } DVK_SpiControl_TypeDef;
 
 
@@ -137,8 +145,8 @@ void DVK_clearInterruptFlags(uint16_t flags);
 bool DVK_EBI_init(void);
 void DVK_EBI_disable(void);
 void DVK_EBI_extendedAddressRange(bool enable);
-static __INLINE void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t data);
-static __INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr);
+__STATIC_INLINE void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t data);
+__STATIC_INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr);
 
 /* SPI access */
 bool DVK_SPI_init(void);
@@ -165,7 +173,7 @@ int  DVK_BRD3600A_usbVBUSGetOCFlagState(void);
  * @param addr Address of board controller register
  * @param data Data to write into register
  *****************************************************************************/
-static __INLINE void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t data)
+__STATIC_INLINE void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t data)
 {
   *addr = data;
 }
@@ -176,7 +184,7 @@ static __INLINE void DVK_EBI_writeRegister(volatile uint16_t *addr, uint16_t dat
  * @param addr Register to read from
  * @return Value of board controller register
  *****************************************************************************/
-static __INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
+__STATIC_INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
 {
   return *addr;
 }
@@ -187,7 +195,7 @@ static __INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
  * @param addr Register to read
  * @return Value of board controller register 
  *****************************************************************************/
-static __INLINE uint16_t DVK_readRegister(volatile uint16_t *addr)
+__STATIC_INLINE uint16_t DVK_readRegister(volatile uint16_t *addr)
 {
   if (dvkOperationMode == DVK_Init_EBI)
   {
@@ -205,7 +213,7 @@ static __INLINE uint16_t DVK_readRegister(volatile uint16_t *addr)
  * @param addr Address to board control register
  * @param data Data to write into register
  *****************************************************************************/
-static __INLINE void DVK_writeRegister(volatile uint16_t *addr, uint16_t data)
+__STATIC_INLINE void DVK_writeRegister(volatile uint16_t *addr, uint16_t data)
 {
   if (dvkOperationMode == DVK_Init_EBI)
   {

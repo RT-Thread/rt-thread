@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file 	dev_keys.c
  * @brief 	Keys driver of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -25,7 +25,9 @@
 #include "dev_keys.h"
 
 #if defined(EFM32_USING_KEYS)
+#if defined(RT_USING_RTGUI)
 #include <rtgui/event.h>
+#endif
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

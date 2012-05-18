@@ -1,25 +1,23 @@
-/******************************************************************//**
- * @file 		dev_sflash.h
- * @brief 	SPI Flash driver of RT-Thread RTOS for using EFM32 USART module
- * 	 This driver is tested by using the M25PX16 device on the EFM32 development 
- *  kit.
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
- * @author 	onelife
- * @version 	0.4 beta
- **********************************************************************
+/***************************************************************************//**
+ * @file    dev_sflash.h
+ * @brief   SPI Flash driver of RT-Thread RTOS for EFM32 by using USART module
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
+ * @author  onelife
+ * @version 1.0
+ *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file LICENSE in this 
- * distribution or at http://www.rt-thread.org/license/LICENSE
- **********************************************************************
+ * The license and distribution terms for this file may be found in the file
+ * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
+ *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2011-05-06	onelife		Initial creation for using EFM32 USART module
- *********************************************************************/
+ * Date         Author      Notes
+ * 2011-05-06   onelife     Initial creation by using USART module
+ ******************************************************************************/
 #ifndef __DEV_SFLASH_H__
 #define __DEV_SFLASH_H__
 
-/* Includes -------------------------------------------------------------------*/
-/* Exported types -------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 enum sflash_inst_type_t
 {
 	/* Instruction only */
@@ -47,8 +45,8 @@ enum sflash_inst_type_t
 	sflash_inst_rotp
 };
 
-/* Exported constants ---------------------------------------------------------*/
-/* Exported macro -------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
 #define SFLASH_SPI_COMMAND_SKIP 	(1)
 #define SFLASH_SPI_READ_SKIP 		(2)
 
@@ -94,13 +92,13 @@ enum sflash_inst_type_t
 #define SFLASH_REPLY_LEN_DP 		(0)
 #define SFLASH_REPLY_LEN_RDP 		(0)
 
-/* Exported functions --------------------------------------------------------- */
+/* Exported functions ------------------------------------------------------- */
 rt_err_t efm_spiFlash_init(void);
 rt_err_t efm_spiFlash_deinit(void);
 rt_uint32_t efm_spiFlash_cmd(
-	enum sflash_inst_type_t command, 
+	enum sflash_inst_type_t command,
 	rt_uint32_t address,
-	rt_uint8_t *buffer, 
+	rt_uint8_t *buffer,
 	rt_uint32_t size);
 
 #endif /* __DEV_SFLASH_H__ */

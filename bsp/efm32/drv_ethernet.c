@@ -1,21 +1,21 @@
 /***************************************************************************//**
  * @file 	drv_ethernet.c
- * @brief 	Ethernet driver (SPI mode) of RT-Thread RTOS for using EFM32 USART 
+ * @brief 	Ethernet driver (SPI mode) of RT-Thread RTOS for using EFM32 USART
  *  module
- * 	 This driver is tested by using the Microchip ENC28J60 stand-alone Ethernet 
+ * 	 This driver is tested by using the Microchip ENC28J60 stand-alone Ethernet
  *  controller with SPI interface.
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
  * Date			Author		Notes
  * 2011-06-22	onelife		Initial creation for using EFM32 USART module
- * 2011-07-25	onelife		Add lock (semaphore) to prevent simultaneously 
+ * 2011-07-25	onelife		Add lock (semaphore) to prevent simultaneously
  *  access
  * 2011-07-28	onelife		Add get_ip() and update_ip() utilities
  ******************************************************************************/
@@ -103,7 +103,7 @@ static void efm_eth_cs(rt_uint8_t enable)
  *   Error code
  ******************************************************************************/
 static rt_err_t efm_eth_cmd(
-	rt_uint8_t cmd, 
+	rt_uint8_t cmd,
 	rt_uint8_t addr,
 	rt_uint8_t *data)
 {
@@ -162,15 +162,15 @@ static rt_err_t efm_eth_cmd(
 			}
 			*data = buf_res[len_res - 1];
 //			eth_debug("ETH: read RX %x %x (%d)\n", buf_res[0], buf_res[1], len_res);
-//			eth_debug("ETH: ** read RX %x %x (%d)\n", 
-//				buf_res[0], buf_res[1], buf_res[2], buf_res[3], buf_res[4], 
-//				buf_res[5], buf_res[6], buf_res[7], buf_res[8], buf_res[9], 
+//			eth_debug("ETH: ** read RX %x %x (%d)\n",
+//				buf_res[0], buf_res[1], buf_res[2], buf_res[3], buf_res[4],
+//				buf_res[5], buf_res[6], buf_res[7], buf_res[8], buf_res[9],
 //				len_res);
 		}
 		else
 		{
 //			eth_debug("ETH: ** write TX %x %x %x %x %x %x (%d) \n", buf_ins[0],
-//				buf_ins[1], buf_ins[2], buf_ins[3], buf_ins[4], buf_ins[5], 
+//				buf_ins[1], buf_ins[2], buf_ins[3], buf_ins[4], buf_ins[5],
 //				len_ins);
 			/* Send command and get response */
 			efm_eth_cs(1);
@@ -213,7 +213,7 @@ static rt_err_t efm_eth_cmd(
  *   Error code
  ******************************************************************************/
 static rt_err_t efm_eth_sendCmd(
-	rt_uint8_t cmd, 
+	rt_uint8_t cmd,
 	rt_uint8_t addr,
 	rt_uint8_t *data)
 {
@@ -476,10 +476,10 @@ static rt_err_t efm_eth_init(rt_device_t dev)
 	efm_eth_writeReg(EPMM0, 0x3f);
 	efm_eth_writeReg(EPMM1, 0x30);
 	efm_eth_writeReg(EPMCSL, 0xf9);
-	efm_eth_writeReg(EPMCSH, 0xf7); 
+	efm_eth_writeReg(EPMCSH, 0xf7);
 	efm_eth_writeReg(ERXFCON, ERXFCON_UCEN | ERXFCON_CRCEN | ERXFCON_PMEN);
 	//efm_eth_writeReg(ERXFCON, ERXFCON_UCEN | ERXFCON_CRCEN | ERXFCON_BCEN);
-	/* Waiting For OST: The OST does not expire until 7500 OSC1 clock cycles (300 uS) 
+	/* Waiting For OST: The OST does not expire until 7500 OSC1 clock cycles (300 uS)
 	    pass after Power-on Reset or wake-up from Power-Down mode occurs */
 
 	/* Init MAC */
@@ -502,7 +502,7 @@ static rt_err_t efm_eth_init(rt_device_t dev)
 #else
 	efm_eth_writeReg(MABBIPG, 0x15);
 #endif
-	/* Set inter-packet gap (non-back-to-back). 
+	/* Set inter-packet gap (non-back-to-back).
 	    Full-Duplex: 0x0012, Half-Duplex: 0x0C12 */
 	efm_eth_writeReg(MAIPGL, 0x12);
 #if defined(ETH_HALF_DUPLEX)
@@ -528,7 +528,7 @@ static rt_err_t efm_eth_init(rt_device_t dev)
 	reg_phy = efm_eth_readPhy(PHCON1);
 	efm_eth_writePhy(PHCON1, reg_phy | PHCON1_PDPXMD);
 #endif
-	/* LEDA: Display link status; 
+	/* LEDA: Display link status;
 	   LEDB: Display transmit and receive activity */
 	reg_phy = efm_eth_readPhy(PHLCON);
 	efm_eth_writePhy(PHLCON, (reg_phy & 0xF00F) | 0x0470);
@@ -617,7 +617,7 @@ static rt_err_t efm_eth_close(rt_device_t dev)
  *   Number of read bytes
  ******************************************************************************/
 static rt_size_t efm_eth_read(
-	rt_device_t 	dev, 
+	rt_device_t 	dev,
 	rt_off_t 		pos,
 	void 			*buffer,
 	rt_size_t 		size)
@@ -650,7 +650,7 @@ static rt_size_t efm_eth_read(
  *   Number of written bytes
  ******************************************************************************/
 static rt_size_t efm_eth_write (
-	rt_device_t 	dev, 
+	rt_device_t 	dev,
 	rt_off_t 		pos,
 	const void 		*buffer,
 	rt_size_t 		size)
@@ -680,18 +680,18 @@ static rt_size_t efm_eth_write (
 *   Error code
 ******************************************************************************/
 static rt_err_t efm_eth_control (
-	rt_device_t 	dev, 
-	rt_uint8_t 		cmd, 
+	rt_device_t 	dev,
+	rt_uint8_t 		cmd,
 	void 			*args)
 {
 	rt_err_t ret;
-	
+
 	ret = -RT_ERROR;
 	switch(cmd)
 	{
 	case NIOCTL_GADDR:
 		/* Get MAC address */
-		if(args) 
+		if(args)
 		{
 			rt_memcpy(args, eth_addr, sizeof(eth_addr));
 			ret = RT_EOK;
@@ -755,7 +755,7 @@ struct pbuf *efm_eth_rx(rt_device_t dev)
 		ethNxtPkt = buf_read[0] | (buf_read[1] << 8);
 		len_rx = buf_read[2] | (buf_read[3] << 8);
 		sta_rx = buf_read[4] | (buf_read[5] << 8);
-		eth_debug("ETH: RX header ethNxtPkt %x, len_rx %x, sta_rx %x\n", 
+		eth_debug("ETH: RX header ethNxtPkt %x, len_rx %x, sta_rx %x\n",
 			ethNxtPkt, len_rx, sta_rx);
 		/* Check if OK */
         if (sta_rx & 0x80)
@@ -785,9 +785,9 @@ struct pbuf *efm_eth_rx(rt_device_t dev)
 						for (i = 0; i < q->len; i += 8)
 						{
 							eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x | %c %c %c %c %c %c %c %c\n",
-								temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
-								temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7], 
-								temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
+								temp[i], temp[i + 1], temp[i + 2], temp[i + 3],
+								temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7],
+								temp[i], temp[i + 1], temp[i + 2], temp[i + 3],
 								temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7]);
 						}
 					}
@@ -890,9 +890,9 @@ rt_err_t efm_eth_tx(rt_device_t dev, struct pbuf* p)
 			for (i = 0; i < q->len; i += 8)
 			{
 				eth_debug("%02x %02x %02x %02x %02x %02x %02x %02x | %c %c %c %c %c %c %c %c\n",
-					temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
+					temp[i], temp[i + 1], temp[i + 2], temp[i + 3],
 					temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7],
-					temp[i], temp[i + 1], temp[i + 2], temp[i + 3], 
+					temp[i], temp[i + 1], temp[i + 2], temp[i + 3],
 					temp[i + 4], temp[i + 5], temp[i + 6], temp[i + 7]);
 			}
 		}
@@ -946,7 +946,7 @@ rt_err_t efm_hw_eth_init(void)
 		spi = rt_device_find(ETH_USING_DEVICE_NAME);
 		if (spi == RT_NULL)
 		{
-			eth_debug("ETH: Can't find device %s!\n", 
+			eth_debug("ETH: Can't find device %s!\n",
 				ETH_USING_DEVICE_NAME);
 			break;
 		}
@@ -974,10 +974,10 @@ rt_err_t efm_hw_eth_init(void)
 		BITBAND_Peripheral(&(GPIO->IFC), ETH_INT_PIN, 0x1UL);
 		/* Set falling edge interrupt and clear/enable it */
 		GPIO_IntConfig(
-			ETH_INT_PORT, 
-			ETH_INT_PIN, 
-			false, 
-			true, 
+			ETH_INT_PORT,
+			ETH_INT_PIN,
+			false,
+			true,
 			true);
 		if ((rt_uint8_t)ETH_INT_PIN % 2)
 		{

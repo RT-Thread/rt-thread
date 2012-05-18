@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file    drv_usart.c
  * @brief   USART driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author  onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -36,6 +36,7 @@
  * 2011-12-20   onelife     Change USART status format
  * 2011-12-27	onelife		Utilize "USART_PRESENT", "USART_COUNT",
  *  "UART_PRESENT" and "UART_COUNT"
+ * 2012-05-16	onelife		Fix a bug in rt_hw_usart_init()
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -1531,7 +1532,7 @@ void rt_hw_usart_init(void)
 
  #ifdef RT_USART2_SYNC_MODE
          config |= USART_STATE_SYNC;
-         config |= (RT_USART1_SYNC_MODE & SYNC_SETTING_MASK) << SYNC_SETTING_SHIFT;
+         config |= (RT_USART2_SYNC_MODE & SYNC_SETTING_MASK) << SYNC_SETTING_SHIFT;
   #if (!((RT_USART2_SYNC_MODE << SYNC_SETTING_SHIFT) & USART_STATE_MASTER))
         flag |= RT_DEVICE_FLAG_INT_RX;
   #endif

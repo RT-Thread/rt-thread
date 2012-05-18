@@ -1,15 +1,15 @@
 /***************************************************************************//**
  * @file 	drv_ethernet.h
- * @brief 	Ethernet driver (SPI mode) of RT-Thread RTOS for using EFM32 USART 
+ * @brief 	Ethernet driver (SPI mode) of RT-Thread RTOS for using EFM32 USART
  *  module
- * 	 This driver is tested by using the Microchip ENC28J60 stand-alone Ethernet 
+ * 	 This driver is tested by using the Microchip ENC28J60 stand-alone Ethernet
  *  controller with SPI interface.
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author 	onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
- * The license and distribution terms for this file may be found in the file 
+ * The license and distribution terms for this file may be found in the file
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs

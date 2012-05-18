@@ -1,14 +1,23 @@
-/**
- * @section LICENSE
+ /*************************************************************************//**
+ * @file dmd_ssd2119.h
+ * @brief Dot matrix display driver for LCD controller SSD2119
+ * @author Energy Micro AS
  ******************************************************************************
- *           <b>(C) Copyright 2009 Energy Micro AS, www.energymicro.com</b>
+ * @section License
+ * <b>(C) Copyright 2012 Energy Micro AS, http://www.energymicro.com</b>
  ******************************************************************************
  *
- * This source code is the property of Energy Micro AS. The source/compiled
- * code may not be used, redistributed or modified without a written consent
- * from Energy Micro AS.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- * This copyright notice may not be removed from the source code nor changed.
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ * 4. The source and compiled code may only be used on Energy Micro "EFM32"
+ *    microcontrollers and "EFR4" radios.
  *
  * DISCLAIMER OF WARRANTY/LIMITATION OF REMEDIES: Energy Micro AS has no
  * obligation to support this Software. Energy Micro AS is providing the
@@ -21,12 +30,7 @@
  * special damages, or any other relief, or for any claim by any third party,
  * arising from your use of this Software.
  *
- ******************************************************************************
- * @file dmd_ssd2119.h
- * @brief Dot matrix display driver for LCD controller SSD2119
- * @author Energy Micro AS
- ******************************************************************************
- */
+ *****************************************************************************/
 
 #ifndef __DMD_SSD2119_H
 #define __DMD_SSD2119_H
@@ -123,9 +127,9 @@ EMSTATUS DMD_setClippingArea(uint16_t xStart, uint16_t yStart,
                              uint16_t width, uint16_t height);
 EMSTATUS DMD_writeData(uint16_t x, uint16_t y,
                        const uint8_t data[], uint32_t numPixels);
-EMSTATUS DMD_writeDataRLE(uint16_t x, uint16_t y, uint16_t xlen, uint16_t ylen,
+EMSTATUS DMD_writeDataRLE(uint16_t x, uint16_t y, uint16_t xlen, uint16_t ylen, 
                           const uint8_t *data);
-EMSTATUS DMD_writeDataRLEFade(uint16_t x, uint16_t y, uint16_t xlen, uint16_t ylen,
+EMSTATUS DMD_writeDataRLEFade(uint16_t x, uint16_t y, uint16_t xlen, uint16_t ylen, 
 			      const uint8_t *data,
 			      int red, int green, int blue, int weight);
 EMSTATUS DMD_readData(uint16_t x, uint16_t y,

@@ -2,16 +2,23 @@
  * @file
  * @brief API for enabling SWO or ETM trace on DK3750 board
  * @author Energy Micro AS
- * @version 1.2.2
+ * @version 2.0.1
  ******************************************************************************
  * @section License
- * <b>(C) Copyright 2011 Energy Micro AS, http://www.energymicro.com</b>
- ******************************************************************************
+ * <b>(C) Copyright 2012 Energy Micro AS, http://www.energymicro.com</b>
+ *******************************************************************************
  *
- * This source code is the property of Energy Micro AS. The source and compiled
- * code may only be used on Energy Micro "EFM32" microcontrollers.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- * This copyright notice may not be removed from the source code nor changed.
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ * 4. The source and compiled code may only be used on Energy Micro "EFM32"
+ *    microcontrollers and "EFR4" radios.
  *
  * DISCLAIMER OF WARRANTY/LIMITATION OF REMEDIES: Energy Micro AS has no
  * obligation to support this Software. Energy Micro AS is providing the
@@ -30,10 +37,11 @@
  * @addtogroup BSP
  * @{
  ******************************************************************************/
-
+#include <stdbool.h>
 #include "efm32.h"
-#include "efm32_gpio.h"
-#include "efm32_cmu.h"
+#include "em_gpio.h"
+#include "em_cmu.h"
+#include "trace.h"
 
 /**************************************************************************//**
  * @brief Configure EFM32GG990F1024 for DK3750 ETM trace output
@@ -66,7 +74,9 @@ void TRACE_ETMSetup(void)
 
 
 /**************************************************************************//**
- * @brief Configure EFM32GG990F1024 for DK3750 SWO trace output
+ * @brief Configure trace output for energyAware Profiler
+ * @note Kit needs to be initialized with SPI-mode;
+ *       @verbatim DVK_init(DVK_Init_SPI); @endverbatim
  *****************************************************************************/
 void TRACE_SWOSetup(void)
 {
@@ -95,7 +105,6 @@ void TRACE_SWOSetup(void)
   while(!(CMU->STATUS & CMU_STATUS_AUXHFRCORDY));
 
   /* Enable trace in core debug */
-  CoreDebug->DHCSR |= 1;
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
   /* Enable PC and IRQ sampling output */
@@ -110,6 +119,29 @@ void TRACE_SWOSetup(void)
   /* Unlock ITM and output data */
   ITM->LAR = 0xC5ACCE55;
   ITM->TCR = 0x10009;
+}
+
+
+/**************************************************************************//**
+ * @brief Profiler configuration for EFM32GG990F11024/EFM32GG-DK3750
+ * @return true if energyAware Profiler/SWO is enabled, false if not
+ * @note If first word of the user page is zero, this will not 
+ *       enable SWO profiler output
+ *****************************************************************************/
+bool TRACE_ProfilerSetup(void)
+{
+  volatile uint32_t *userData = (uint32_t *) USER_PAGE;
+
+  /* Check magic "trace" word in user page */
+  if(*userData == 0x00000000UL)
+  {
+    return false;
+  }
+  else
+  {
+    TRACE_SWOSetup();
+    return true;
+  }  
 }
 
 /** @} (end group BSP) */

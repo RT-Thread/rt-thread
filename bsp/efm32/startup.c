@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file    startup.c
  * @brief   This file is part of RT-Thread RTOS
- *  COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author  Bernard, onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -14,6 +14,8 @@
  * 2006-08-31   Bernard     first implementation
  * 2010-12-29   onelife     Modify for EFM32
  * 2011-12-20   onelife     Add RTGUI initialization routine
+ * 2012-02-21   onelife     Add energy management initialization routine
+ * 2012-05-15	onelife		Modified to compatible with CMSIS v3
  ******************************************************************************/
 
 /***************************************************************************//**
@@ -33,7 +35,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
 #pragma section="HEAP"
 #else
-extern int __bss_end;
+extern int __bss_end__;
 #endif
 
 /* Private variables ---------------------------------------------------------*/
@@ -87,7 +89,7 @@ void rtthread_startup(void)
     rt_system_heap_init(__segment_end("HEAP"), (void*)EFM32_SRAM_END);
     #else
     /* init memory system */
-    rt_system_heap_init((void*)&__bss_end, (void*)EFM32_SRAM_END);
+    rt_system_heap_init((void*)&__bss_end__, (void*)EFM32_SRAM_END);
     #endif
 #endif
 
@@ -131,6 +133,9 @@ void rtthread_startup(void)
 
     /* init idle thread */
     rt_thread_idle_init();
+
+    /* init energy mode thread */
+    efm32_emu_init();
 
     /* init application */
     rt_application_init();

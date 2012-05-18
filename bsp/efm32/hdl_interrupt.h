@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file    hdl_interrupt.h
  * @brief   Interrupt handler of RT-Thread RTOS for EFM32
- * 	COPYRIGHT (C) 2011, RT-Thread Development Team
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
  * @author  onelife
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -24,6 +24,7 @@ enum efm32_irq_hook_type_t
 	efm32_irq_type_dma = 0,
 	efm32_irq_type_rtc,
 	efm32_irq_type_timer,
+    efm32_irq_type_letimer,
 	efm32_irq_type_gpio,
 	efm32_irq_type_acmp,
 	efm32_irq_type_usart,

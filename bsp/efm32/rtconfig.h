@@ -3,7 +3,7 @@
  * @brief   RT-Thread config file
  * 	COPYRIGHT (C) 2009, RT-Thread Development Team
  * @author
- * @version 0.4 beta
+ * @version 1.0
  *******************************************************************************
  * @section License
  * The license and distribution terms for this file may be found in the file
@@ -50,12 +50,13 @@
 //#define RT_RTC_DEBUG
 
 #define EFM32_DEBUG
+#define EFM32_EMU_DEBUG
 #define EFM32_ACCEL_DEBUG
 #define EFM32_SFLASH_DEBUG
 //#define EFM32_SDCARD_DEBUG
 #define EFM32_ETHERNET_DEBUG
 #define EFM32_LCD_DEBUG
-//#define EFM32_KEYS_DEBUG
+#define EFM32_KEYS_DEBUG
 
 /* Using Hook */
 //#define RT_USING_HOOK
@@ -275,7 +276,7 @@
 #endif /* defined(EFM32_USING_SPISD) */
 #if defined(RT_USING_NEWLIB)
 #define RT_USING_DFS_DEVFS
-#endif /* defined(RT_USING_DFS_DEVFS) */
+#endif /* defined(RT_USING_NEWLIB) */
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #if defined(EFM32_USING_ETHERNET)
