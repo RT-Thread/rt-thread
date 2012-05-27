@@ -83,7 +83,8 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
 		struct rtgui_widget* w;
 		w = rtgui_list_entry(node, struct rtgui_widget, sibling);
 
-		if (RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE)
+		if (RTGUI_OBJECT(w)->event_handler &&
+			RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE)
 			return RT_TRUE;
 	}
 
@@ -107,7 +108,8 @@ rt_bool_t rtgui_container_dispatch_mouse_event(rtgui_container_t *container, str
 		{
 			if ((old_focus != w) && RTGUI_WIDGET_IS_FOCUSABLE(w))
 				rtgui_widget_focus(w);
-			if (RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w),
+			if (RTGUI_OBJECT(w)->event_handler &&
+				RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w),
 											   (rtgui_event_t*)event) == RT_TRUE)
 				return RT_TRUE;
 		}
@@ -152,7 +154,8 @@ rt_bool_t rtgui_container_event_handler(struct rtgui_object* object, struct rtgu
 	case RTGUI_EVENT_KBD:
 		/* let parent to handle keyboard event */
 		if (widget->parent != RT_NULL &&
-			widget->parent != RTGUI_WIDGET(widget->toplevel))
+			widget->parent != RTGUI_WIDGET(widget->toplevel) &&
+			RTGUI_OBJECT(widget->parent)->event_handler)
 		{
 			return RTGUI_OBJECT(widget->parent)->event_handler(
 					RTGUI_OBJECT(widget->parent),
@@ -244,7 +247,8 @@ void rtgui_container_destroy_children(rtgui_container_t *container)
 {
 	struct rtgui_list_node* node;
 
-	if (container == RT_NULL) return;
+	if (container == RT_NULL)
+		return;
 
 	node = container->children.next;
 	while (node != RT_NULL)
@@ -282,6 +286,8 @@ rtgui_widget_t* rtgui_container_get_first_child(rtgui_container_t* container)
 {
 	rtgui_widget_t* child = RT_NULL;
 
+	RT_ASSERT(container != RT_NULL);
+
 	if (container->children.next != RT_NULL)
 	{
 		child = rtgui_list_entry(container->children.next, rtgui_widget_t, sibling);
@@ -303,7 +309,8 @@ void rtgui_container_set_box(rtgui_container_t* container, struct rtgui_box* box
 
 void rtgui_container_hide(rtgui_container_t* container)
 {
-	if (container == RT_NULL) return;
+	if (container == RT_NULL)
+		return;
 
 	if (RTGUI_WIDGET(container)->parent == RT_NULL)
 	{

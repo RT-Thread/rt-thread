@@ -16,7 +16,7 @@ static void _rtgui_checkbox_constructor(rtgui_checkbox_t *box)
 	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-DEFINE_CLASS_TYPE(checkbox, "checkbox", 
+DEFINE_CLASS_TYPE(checkbox, "checkbox",
 	RTGUI_LABEL_TYPE,
 	_rtgui_checkbox_constructor,
 	RT_NULL,
@@ -31,13 +31,10 @@ void rtgui_checkbox_set_onbutton(rtgui_checkbox_t* checkbox, rtgui_onbutton_func
 
 rt_bool_t rtgui_checkbox_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
-	struct rtgui_widget *widget;
-	struct rtgui_checkbox *box = (struct rtgui_checkbox*)widget;
+	struct rtgui_checkbox *box;
 
-	RT_ASSERT(widget != RT_NULL);
-	RT_ASSERT(event != RT_NULL);
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
-	widget = RTGUI_WIDGET(object);
 	box = RTGUI_CHECKBOX(object);
 
 	switch (event->type)
