@@ -82,9 +82,9 @@ const rtgui_type_t *rtgui_object_object_type_get(rtgui_object_t *object);
 #define RTGUI_OBJECT_CHECK_TYPE(_obj, _type) \
 	(rtgui_type_inherits_from(((rtgui_object_t *)(_obj))->type, (_type)))
 
-DECLARE_CLASS_TYPE(type);
+DECLARE_CLASS_TYPE(object);
 /** Gets the type of an object */
-#define RTGUI_OBJECT_TYPE       RTGUI_TYPE(type)
+#define RTGUI_OBJECT_TYPE       RTGUI_TYPE(object)
 /** Casts the object to an rtgui_object_t */
 #define RTGUI_OBJECT(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_OBJECT_TYPE, struct rtgui_object))
 /** Checks if the object is an rtgui_Object */
