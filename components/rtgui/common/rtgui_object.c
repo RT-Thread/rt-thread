@@ -29,7 +29,7 @@ static void _rtgui_object_destructor(rtgui_object_t *object)
 	/* nothing */
 }
 
-DEFINE_CLASS_TYPE(type, "object",
+DEFINE_CLASS_TYPE(object, "object",
 	RT_NULL,
 	_rtgui_object_constructor,
 	_rtgui_object_destructor,
