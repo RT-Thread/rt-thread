@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2011-01-01     aozima       the first version.
  * 2012-02-11     aozima       add multiple sector speed test.
+ * 2012-05-27     aozima       use rt_deice API.
  */
 
 #include <rtthread.h>
@@ -52,28 +53,26 @@ static rt_err_t _block_device_test(rt_device_t device)
     {
         // device can read and write.
         // step 1: open device
-        result = device->open(device,RT_DEVICE_FLAG_RDWR);
-        if( result == RT_EOK )
-        {
-            device->open_flag |= RT_DEVICE_OFLAG_RDWR | RT_DEVICE_OFLAG_OPEN;
-        }
-        else
+        result = rt_device_open(device,RT_DEVICE_FLAG_RDWR);
+        if( result != RT_EOK )
         {
             return result;
         }
 
         // step 2: get device info
         rt_memset(&geometry, 0, sizeof(geometry));
-        result = rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
+        result = rt_device_control(device,
+                                   RT_DEVICE_CTRL_BLK_GETGEOME,
+                                   &geometry);
         if( result != RT_EOK )
         {
             rt_kprintf("device : %s cmd RT_DEVICE_CTRL_BLK_GETGEOME failed.\r\n");
             return result;
         }
         rt_kprintf("device info:\r\n");
-        rt_kprintf("sector  size : %d byte\r\n",geometry.bytes_per_sector);
-        rt_kprintf("sector count : %d \r\n",geometry.sector_count);
-        rt_kprintf("block   size : %d byte\r\n",geometry.block_size);
+        rt_kprintf("sector  size : %d byte\r\n", geometry.bytes_per_sector);
+        rt_kprintf("sector count : %d \r\n", geometry.sector_count);
+        rt_kprintf("block   size : %d byte\r\n", geometry.block_size);
 
         rt_kprintf("\r\n");
         read_buffer = rt_malloc(geometry.bytes_per_sector);
@@ -91,13 +90,13 @@ static rt_err_t _block_device_test(rt_device_t device)
 
         /* step 3:  R/W test */
         {
-            rt_uint32_t i,err_count,sector_no;
+            rt_uint32_t i,err_count, sector_no;
             rt_uint8_t * data_point;
 
-            i = device->read(device, 0, read_buffer, 1);
+            i = rt_device_read(device, 0, read_buffer, 1);
             if(i != 1)
             {
-                rt_kprintf("read device :%s ",device->parent.name);
+                rt_kprintf("read device :%s ", device->parent.name);
                 rt_kprintf("the first sector failed.\r\n");
                 goto __return;
             }
@@ -112,7 +111,7 @@ static rt_err_t _block_device_test(rt_device_t device)
             sector_no = 0;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            i = device->write(device, sector_no, write_buffer,1);
+            i = rt_device_write(device, sector_no, write_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("read the first sector success!\r\n");
@@ -126,7 +125,7 @@ static rt_err_t _block_device_test(rt_device_t device)
             sector_no = 1;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            i = device->write(device,sector_no,write_buffer,1);
+            i = rt_device_write(device,sector_no,write_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("write device :%s ",device->parent.name);
@@ -138,7 +137,7 @@ static rt_err_t _block_device_test(rt_device_t device)
             sector_no = geometry.sector_count-1;
             data_point = write_buffer;
             *data_point++ = (rt_uint8_t)sector_no;
-            i = device->write(device,sector_no,write_buffer,1);
+            i = rt_device_write(device,sector_no,write_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("write device :%s ",device->parent.name);
@@ -148,7 +147,7 @@ static rt_err_t _block_device_test(rt_device_t device)
 
             /* verify first sector */
             sector_no = 0;
-            i = device->read(device,sector_no,read_buffer,1);
+            i = rt_device_read(device,sector_no,read_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("read device :%s ",device->parent.name);
@@ -177,7 +176,7 @@ static rt_err_t _block_device_test(rt_device_t device)
 
             /* verify sector sector */
             sector_no = 1;
-            i = device->read(device,sector_no,read_buffer,1);
+            i = rt_device_read(device,sector_no,read_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("read device :%s ",device->parent.name);
@@ -206,7 +205,7 @@ static rt_err_t _block_device_test(rt_device_t device)
 
             /* verify the end sector */
             sector_no = geometry.sector_count-1;
-            i = device->read(device,sector_no,read_buffer,1);
+            i = rt_device_read(device,sector_no,read_buffer,1);
             if( i != 1 )
             {
                 rt_kprintf("read device :%s ",device->parent.name);
@@ -259,7 +258,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    sector += device->write(device, i, read_buffer, 1);
+                    sector += rt_device_write(device, i, read_buffer, 1);
                     if((i != 0) && ((i%4) == 0) )
                     {
                         if(sector < 4)
@@ -284,7 +283,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    sector += device->read(device, i, read_buffer, 1);
+                    sector += rt_device_read(device, i, read_buffer, 1);
                     if((i != 0) && ((i%4) == 0) )
                     {
                         if(sector < 4)
@@ -326,7 +325,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    sector += device->write(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
+                    sector += rt_device_write(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
                     if((i != 0) && ((i%4) == 0) )
                     {
                         if(sector < 4)
@@ -351,7 +350,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 tick_start = rt_tick_get();
                 for(i=0; i<200; i++)
                 {
-                    sector += device->read(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
+                    sector += rt_device_read(device, (geometry.sector_count / 10) * (i%10) + (i%10), read_buffer, 1);
                     if((i != 0) && ((i%4) == 0) )
                     {
                         if(sector < 4)
@@ -397,7 +396,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 for(i=0; i<10; i++)
                 {
                     rt_size_t n;
-                    n = device->write(device, 50, multiple_buffer, sector);
+                    n = rt_device_write(device, 50, multiple_buffer, sector);
                     if(n == sector)
                     {
                         rt_kprintf("<");
@@ -419,7 +418,7 @@ static rt_err_t _block_device_test(rt_device_t device)
                 for(i=0; i<10; i++)
                 {
                     rt_size_t n;
-                    n = device->read(device, 50, multiple_buffer, sector);
+                    n = rt_device_read(device, 50, multiple_buffer, sector);
                     if(n == sector)
                     {
                         rt_kprintf(">");
@@ -486,7 +485,7 @@ int device_test(const char * device_name)
     if (!(device->flag & RT_DEVICE_FLAG_ACTIVATED))
     {
         rt_err_t result;
-        result = device->init(device);
+        result = rt_device_init(device);
         if (result != RT_EOK)
         {
             rt_kprintf("To initialize device:%s failed. The error code is %d\r\n",
