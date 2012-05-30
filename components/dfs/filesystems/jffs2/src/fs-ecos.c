@@ -449,10 +449,10 @@ static int jffs2_read_super(struct super_block *sb)
 {
 	Cyg_ErrNo err;
 	struct jffs2_sb_info *c;
-	struct rt_mtd_device *device;
+	struct rt_mtd_nor_device *device;
 	
 	c = JFFS2_SB_INFO(sb);
-	device = RT_MTD_DEVICE(sb->s_dev);
+	device = RT_MTD_NOR_DEVICE(sb->s_dev);
 
 	/* initialize mutex lock */
 	init_MUTEX(&c->alloc_sem);

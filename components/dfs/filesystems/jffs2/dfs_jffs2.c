@@ -35,7 +35,7 @@
 struct device_part 
 {
 	struct cyg_mtab_entry * mte;
-	struct rt_mtd_device *dev;
+	struct rt_mtd_nor_device *dev;
 };
 static struct device_part device_partition[DEVICE_PART_MAX] = {0};
 
@@ -172,7 +172,7 @@ static int dfs_jffs2_mount(struct dfs_filesystem* fs,
 	 */
 	mte->data = (CYG_ADDRWORD)fs->dev_id;
 
-	device_partition[index].dev = RT_MTD_DEVICE(fs->dev_id);
+	device_partition[index].dev = RT_MTD_NOR_DEVICE(fs->dev_id);
 	/* after jffs2_mount, mte->data will not be dev_id any more */
 	result = jffs2_mount(NULL, mte);
 	if (result != 0)
@@ -190,7 +190,7 @@ static int _find_fs(struct cyg_mtab_entry ** mte, rt_device_t dev_id)
 	/* find device index */
 	for (index = 0; index < DEVICE_PART_MAX; index++)
 	{
-		if (device_partition[index].dev == RT_MTD_DEVICE(dev_id))
+		if (device_partition[index].dev == RT_MTD_NOR_DEVICE(dev_id))
 		{
 			*mte = device_partition[index].mte;
 			return 0;
@@ -207,7 +207,7 @@ static int dfs_jffs2_unmount(struct dfs_filesystem* fs)
 	/* find device index, then umount it */
 	for (index = 0; index < DEVICE_PART_MAX; index++)
 	{
-		if (device_partition[index].dev == RT_MTD_DEVICE(fs->dev_id))
+		if (device_partition[index].dev == RT_MTD_NOR_DEVICE(fs->dev_id))
 		{
 			result = jffs2_umount(device_partition[index].mte);
 			if (result)

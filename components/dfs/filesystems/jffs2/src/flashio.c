@@ -24,7 +24,7 @@ int jffs2_flash_read(struct jffs2_sb_info * c, uint32_t offset,
 	uint32_t len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	len = rt_mtd_read(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
+	len = rt_mtd_nor_read(RT_MTD_NOR_DEVICE(sb->s_dev), offset, buffer, size);
 	if (len != size)
 		return -EIO;
 
@@ -39,7 +39,7 @@ int jffs2_flash_write(struct jffs2_sb_info * c,
 	uint32_t len;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	len = rt_mtd_write(RT_MTD_DEVICE(sb->s_dev), offset, buffer, size);
+	len = rt_mtd_nor_write(RT_MTD_NOR_DEVICE(sb->s_dev), offset, buffer, size);
 	if (len != size)
 		return -EIO;
 
@@ -53,7 +53,7 @@ int jffs2_flash_erase(struct jffs2_sb_info * c,
 	rt_err_t result;
 	struct super_block *sb = OFNI_BS_2SFFJ(c);
 
-	result = rt_mtd_erase_block(RT_MTD_DEVICE(sb->s_dev), jeb->offset);
+	result = rt_mtd_nor_erase_block(RT_MTD_NOR_DEVICE(sb->s_dev), jeb->offset, c->sector_size);
 	if (result != RT_EOK)
 		return -EIO;
 
