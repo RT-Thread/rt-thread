@@ -1,7 +1,7 @@
 /*
- * File      : mtd_core.c
+ * File      : mtd_nor.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2012, Shanghai Real-Thread Technology Co., Ltd
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,16 +9,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-12-05     Bernard      the first version
+ * 2012-5-30     Bernard      the first version
  */
 
-/*
- * COPYRIGHT (C) 2012, Shanghai Real Thread
- */
+#include <drivers/mtd_nor.h>
 
-#include <drivers/mtd_nand.h>
-
-#ifdef RT_USING_MTD_NAND
+#ifdef RT_USING_MTD_NOR
 
 /*
  * RT-Thread Generic Device Interface
@@ -53,7 +49,7 @@ static rt_err_t _mtd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
-rt_err_t rt_mtd_nand_register_device(const char* name, struct rt_mtd_nand_device* device)
+rt_err_t rt_mtd_nor_register_device(const char* name, struct rt_mtd_nor_device* device)
 {
 	rt_device_t dev;
 

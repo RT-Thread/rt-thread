@@ -47,8 +47,8 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 #include "drivers/spi.h"
 #endif
 
-#ifdef RT_USING_MTD
-#include "drivers/mtd.h"
+#ifdef RT_USING_MTD_NOR
+#include "drivers/mtd_nor.h"
 #endif
 
 #ifdef RT_USING_MTD_NAND
