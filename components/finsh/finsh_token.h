@@ -36,6 +36,7 @@ enum finsh_token_type
 	finsh_token_type_bitwise,			/* ~		*/
 	finsh_token_type_shl,				/* <<		*/
 	finsh_token_type_shr,				/* >>		*/
+	finsh_token_type_comments, 			/* //       */
 	/*-- data type --*/
 	finsh_token_type_void,				/* void		*/
 	finsh_token_type_char, 				/* char		*/

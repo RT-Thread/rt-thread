@@ -357,6 +357,7 @@ static long _list_device(struct rt_list_node *list)
         "RTC",
         "Sound Device",
         "Graphic Device",
+		"I2C Bus",
         "I2C Device",
         "USB Slave Device",
         "USB Host Bus",
@@ -401,12 +402,10 @@ int list_module(void)
     for (node = list->next; node != list; node = node->next)
     {
         module = (struct rt_module*)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-16s ", module->parent.name);
-        rt_kprintf("%-04d \n", module->nref);
+        rt_kprintf("%-16.*s %-04d\n", RT_NAME_MAX, module->parent.name, module->nref);
     }
 
     return 0;
-
 }
 
 FINSH_FUNCTION_EXPORT(list_module, list module in system)
