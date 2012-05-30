@@ -126,6 +126,13 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset    
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static __inline
     #define RTT_API
+#elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
+    #include <stdarg.h>
+    #define SECTION(x)                  __attribute__((section(x)))
+    #define UNUSED                      __attribute__((unused))
+    #define ALIGN(n)                    __attribute__((aligned(n)))
+    #define rt_inline                   static inline
+    #define RTT_API	
 #endif
 
 /* event length */

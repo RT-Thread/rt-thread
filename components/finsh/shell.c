@@ -53,7 +53,7 @@ char *strdup(const char *s)
 }
 #endif
 
-#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__) && !defined(__ADSPBLACKFIN__)
 int isalpha( int ch )
 {
 	return (unsigned int)((ch | 0x20) - 'a') < 26u;
@@ -452,6 +452,13 @@ void finsh_system_var_init(const void* begin, const void* end)
     #pragma section="FSymTab"
     #pragma section="VSymTab"
   #endif
+#elif defined(__ADSPBLACKFIN__) /* for VisaulDSP++ Compiler*/
+  #ifdef FINSH_USING_SYMTAB
+    extern "asm" int __fsymtab_start;
+    extern "asm" int __fsymtab_end;
+    extern "asm" int __vsymtab_start;
+    extern "asm" int __vsymtab_end;
+  #endif
 #endif
 
 /*
@@ -483,6 +490,9 @@ void finsh_system_init(void)
 	extern const int __vsymtab_end;
 	finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 	finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
+#elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
+    finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
+    finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #endif
 #endif
 

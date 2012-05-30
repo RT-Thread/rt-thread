@@ -376,6 +376,11 @@ void rt_interrupt_leave(void);
 rt_uint8_t rt_interrupt_get_nest(void);
 
 /**
+ * application module
+ */
+void rt_system_module_init(void);
+
+/**
  * @addtogroup KernelService
  */
 

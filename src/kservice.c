@@ -1022,7 +1022,7 @@ rt_device_t rt_console_set_device(const char *name)
 }
 #endif
 
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__ADSPBLACKFIN__)
 void rt_hw_console_output(const char *str) __attribute__((weak));
 void rt_hw_console_output(const char *str)
 #elif defined(__CC_ARM)
