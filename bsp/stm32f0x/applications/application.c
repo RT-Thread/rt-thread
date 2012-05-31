@@ -46,7 +46,7 @@ static void rt_hw_led_init(void)
 }
 
 ALIGN(RT_ALIGN_SIZE)
-static char led_stack[1024];
+static char led_stack[384];
 static struct rt_thread led_thread;
 
 static void led_thread_entry(void* parameter)

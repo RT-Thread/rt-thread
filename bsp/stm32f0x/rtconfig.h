@@ -16,13 +16,11 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
- #define RT_DEBUG
+/* #define RT_DEBUG */
 /* #define RT_USING_OVERFLOW_CHECK */
 
 /* Using Hook */
 /* #define RT_USING_HOOK */
-
-#define IDLE_THREAD_STACK_SIZE     512
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
@@ -59,7 +57,7 @@
 
 /* SECTION: Device System */
 /* Using Device System */
-#define RT_USING_DEVICE
+/* #define RT_USING_DEVICE */
 
 /* SECTION: Console options */
 //#define RT_USING_CONSOLE
