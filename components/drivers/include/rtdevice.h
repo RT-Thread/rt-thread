@@ -63,4 +63,8 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 #include "drivers/usb_host.h"
 #endif
 
+#ifdef RT_USING_SERIAL
+#include "drivers/serial.h"
+#endif
+
 #endif

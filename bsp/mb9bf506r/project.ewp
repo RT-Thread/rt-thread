@@ -301,6 +301,7 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1218,6 +1219,7 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1848,6 +1850,9 @@
   <group>
     <name>CMSIS</name>
     <file>
+      <name>$PROJ_DIR$\libraries\CMSIS\RTOS\rtt_cmsis.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\libraries\Device\FUJISTU\MB9BF50x\Source\IAR\startup_mb9bf50x.S</name>
     </file>
     <file>
@@ -1879,21 +1884,24 @@
     </file>
   </group>
   <group>
+    <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+    </file>
+  </group>
+  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\console.c</name>
+      <name>$PROJ_DIR$\drivers\fm3_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\nand.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\serial.c</name>
     </file>
   </group>
   <group>

@@ -1,0 +1,107 @@
+/*
+ * File      : serial.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-05-15     lgnq         first version.
+ * 2012-05-28     bernard      chage interfaces
+ */
+
+#ifndef __SERIAL_H__
+#define __SERIAL_H__
+
+#include <rtthread.h>
+
+#define BAUD_RATE_9600		9600
+#define BAUD_RATE_115200	115200
+
+#define DATA_BITS_5			5
+#define DATA_BITS_6			6
+#define DATA_BITS_7			7
+#define DATA_BITS_8			8
+#define DATA_BITS_9			9
+
+#define STOP_BITS_1			1
+#define STOP_BITS_2			2
+#define STOP_BITS_3			3
+#define STOP_BITS_4			4
+
+#define PARITY_NONE			0
+#define PARITY_ODD			1
+#define PARITY_EVEN			2
+
+#define BIT_ORDER_LSB		0
+#define BIT_ORDER_MSB		1
+
+#define NRZ_NORMAL			0		/* Non Return to Zero : normal mode */
+#define NRZ_INVERTED		1		/* Non Return to Zero : inverted mode */
+
+#define UART_RX_BUFFER_SIZE	64
+#define UART_TX_BUFFER_SIZE	64
+#define SERIAL_RBUFFER_SIZE 64
+
+#define RT_DEVICE_CTRL_CONFIG           0x03        /* configure device */
+#define RT_DEVICE_CTRL_SET_INT			0x10        /* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT			0x11        /* disable receive irq */
+#define RT_DEVICE_CTRL_GET_INT			0x12
+
+#define RT_SERIAL_RX_INT				0x01
+#define RT_SERIAL_TX_INT				0x02
+
+#define RT_SERIAL_ERR_OVERRUN           0x01
+#define RT_SERIAL_ERR_FRAMING           0x02
+#define RT_SERIAL_ERR_PARITY            0x03
+
+struct serial_ringbuffer
+{
+	rt_uint8_t buffer[SERIAL_RBUFFER_SIZE];
+	rt_uint16_t put_index, get_index;
+};
+
+struct serial_configure
+{
+	rt_uint32_t baud_rate;
+	rt_uint32_t data_bits	:4;
+	rt_uint32_t stop_bits	:2;
+	rt_uint32_t parity		:2;
+	rt_uint32_t bit_order	:1;
+	rt_uint32_t invert		:1;
+	rt_uint32_t reserved	:20;
+};
+
+struct rt_serial_device
+{
+	struct rt_device parent;
+
+	const struct rt_uart_ops *ops;
+	struct serial_configure config;
+
+	/* rx structure */
+	struct serial_ringbuffer *int_rx;
+	/* tx structure */
+	struct serial_ringbuffer *int_tx;
+};
+typedef struct rt_serial_device rt_serial_t;
+
+/**
+ * uart operators
+ */
+struct rt_uart_ops
+{
+	rt_err_t (*configure)(struct rt_serial_device *serial, struct serial_configure *cfg);
+	rt_err_t (*control)(struct rt_serial_device *serial, int cmd, void *arg);
+
+	int (*putc)(struct rt_serial_device *serial, char c);
+    int (*getc)(struct rt_serial_device *serial);
+};
+
+void rt_hw_serial_isr(struct rt_serial_device *serial);
+rt_err_t rt_hw_serial_register(struct rt_serial_device *serial, const char *name, rt_uint32_t flag, void *data);
+
+#endif

@@ -1,5 +1,5 @@
 /*
- * File      : serial.h
+ * File      : fm3_uart.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006, RT-Thread Development Team
  *
@@ -13,12 +13,10 @@
  * 2011-05-15     lgnq         modified according bernard's implementaion.
  */
 
-#ifndef __RT_HW_SERIAL_H__
-#define __RT_HW_SERIAL_H__
+#ifndef __FM3_UART_H__
+#define __FM3_UART_H__
 
-#include <rthw.h>
 #include <rtthread.h>
-
 #include "mb9bf506r.h"
 
 #define SMR_SOE          0x01U
@@ -57,22 +55,7 @@
 #define ESCR_DATABITS_7  0x03U
 #define ESCR_DATABITS_9  0x04U
 
-#define BPS					115200	/* serial baudrate */
-
-#define UART_RX_BUFFER_SIZE		64
-#define UART_TX_BUFFER_SIZE		64
-
-struct serial_int_rx
-{
-	rt_uint8_t  rx_buffer[UART_RX_BUFFER_SIZE];
-	rt_uint32_t read_index, save_index;
-};
-
-struct serial_int_tx
-{
-	rt_uint8_t  tx_buffer[UART_TX_BUFFER_SIZE];
-	rt_uint32_t write_index, save_index;
-};
+#define FIFO_SIZE		16
 
 /*
  *  Enable/DISABLE Interrupt Controller
@@ -81,19 +64,23 @@ struct serial_int_tx
 #define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
 #define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
 
-struct serial_device
+struct uart03_device
 {
-	FM3_MFS03_UART_TypeDef *uart_device;
+	FM3_MFS03_UART_TypeDef *uart_regs;
 	/* irq number */
-	IRQn_Type rx_irq, tx_irq;
-
-	/* rx structure */
-	struct serial_int_rx *int_rx;
-	/* tx structure */
-	struct serial_int_tx *int_tx;
+	IRQn_Type rx_irq;
+	IRQn_Type tx_irq;
 };
 
-void rt_hw_serial_isr(rt_device_t device);
+struct uart47_device
+{
+	FM3_MFS47_UART_TypeDef *uart_regs;
+	/* irq number */
+	IRQn_Type rx_irq;
+	IRQn_Type tx_irq;
+	rt_uint8_t fifo_size;	
+};
+
 void rt_hw_serial_init(void);
 
 #endif

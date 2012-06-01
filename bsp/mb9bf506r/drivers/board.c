@@ -18,7 +18,7 @@
 #include "board.h"
 #include "mcu.h"
 
-#include "serial.h"
+#include "fm3_uart.h"
 #include "nand.h"
 
 /**

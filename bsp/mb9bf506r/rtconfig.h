@@ -62,6 +62,8 @@
 
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
+// <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
+#define RT_USING_SERIAL
 // <bool name="RT_USING_UART0_0" description="Using UART0_0" default="true" />
 #define RT_USING_UART0_0
 // <bool name="RT_USING_UART0_1" description="Using UART0_1" default="false" />
@@ -87,7 +89,7 @@
 // <bool name="RT_USING_UART4_1" description="Using UART4_1" default="false" />
 // #define RT_USING_UART4_1
 // <bool name="RT_USING_UART4_2" description="Using UART4_2" default="false" />
-// #define RT_USING_UART4_2
+#define RT_USING_UART4_2
 // <bool name="RT_USING_UART5_0" description="Using UART5_0" default="false" />
 // #define RT_USING_UART5_0
 // <bool name="RT_USING_UART5_1" description="Using UART5_1" default="false" />
@@ -99,7 +101,7 @@
 // <bool name="RT_USING_UART6_1" description="Using UART6_1" default="false" />
 // #define RT_USING_UART6_1
 // <bool name="RT_USING_UART7_0" description="Using UART7_0" default="false" />
-// #define RT_USING_UART7_0
+#define RT_USING_UART7_0
 // <bool name="RT_USING_UART7_1" description="Using UART7_1" default="false" />
 // #define RT_USING_UART7_1
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
