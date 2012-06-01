@@ -43,7 +43,7 @@ osStatus osThreadTerminate(osThreadId thread_id)
 {
 	rt_err_t result;
 
-	result = rt_thread_suspend(thread_id);
+	result = rt_thread_delete(thread_id);
 
 	if (result == RT_EOK)
 		return osOK;
@@ -67,22 +67,27 @@ osStatus osThreadYield(void)
 /// Change prority of an active thread
 osStatus osThreadSetPriority(osThreadId thread_id, osPriority priority)
 {
+	rt_err_t result;
+	
 	if (thread_id == RT_NULL)
 		return osErrorOS;
 
 	if (priority < osPriorityIdle || priority > osPriorityRealtime)
-		return osErrorOS;
-	
-	thread_id->current_priority = priority;
+		return osErrorPriority;
 
-	return osOK;
+	result = rt_thread_control(thread_id, RT_THREAD_CTRL_CHANGE_PRIORITY, &priority);	
+	
+	if (result == RT_EOK)
+		return osOK;
+	else
+		return osErrorOS;
 }
 
 /// Get current prority of an active thread
 osPriority osThreadGetPriority(osThreadId thread_id)
 {
 	if (thread_id == RT_NULL)
-		return osPriorityError;
+		return osErrorOS;
 
 	if (thread_id->current_priority < osPriorityIdle || thread_id->current_priority > osPriorityRealtime)
 		return osPriorityError;
@@ -110,6 +115,17 @@ osStatus osDelay(uint32_t millisec)
 /// Wait for Signal, Message, Mail, or Timeout
 osEvent osWait(uint32_t millisec)
 {
+	rt_err_t result;
+	rt_tick_t ticks;
+
+	ticks = rt_tick_from_millisecond(millisec);
+	result = rt_thread_delay(ticks);
+/*
+	if (result == RT_EOK)
+		return osOK;
+	else
+		return osErrorOS;
+*/
 }
 
 // Timer Management Public API
@@ -193,8 +209,13 @@ int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec)
 {
 	rt_tick_t ticks;
 
+	if (semaphore_id == RT_NULL)
+		return -1;
+
 	ticks = rt_tick_from_millisecond(millisec);
 	rt_sem_take(semaphore_id, ticks);
+
+	return semaphore_id->value;
 }
 
 /// Release a Semaphore

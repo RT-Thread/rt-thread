@@ -1,9 +1,11 @@
+Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
-src = ['CM3/CoreSupport/core_cm3.c', 'CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
+
+src = ['CM3/DeviceSupport/NXP/LPC17xx/system_LPC17xx.c']
+
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
     src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/gcc/startup_LPC17xx.s']
@@ -12,7 +14,13 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
     src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/iar/startup_LPC17xx.s']
 
-CPPPATH = [cwd + '/CM3/CoreSupport', cwd + '/CM3/DeviceSupport/NXP/LPC17xx/']
+CPPPATH = [cwd + '/CM3/DeviceSupport/NXP/LPC17xx/']
+
+if GetDepend(['RT_USING_BSP_CMSIS']):
+    CPPPATH += [cwd + '/CM3/CoreSupport']
+    src += ['CM3/CoreSupport/core_cm3.c']
+elif GetDepend(['RT_USING_RTT_CMSIS']):
+    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
 
