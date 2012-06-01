@@ -348,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\drivers\include;..\..\components\finsh;..\..\components\init;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;applications;drivers;libraries\CMSIS\Include;libraries\CMSIS\RTOS;libraries\Device\FUJISTU\MB9BF50x\Include</IncludePath>
+              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\init;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;applications;drivers;libraries\Device\FUJISTU\MB9BF50x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -432,11 +432,6 @@
               <FileName>system_mb9bf50x.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\Device\FUJISTU\MB9BF50x\Source\system_mb9bf50x.c</FilePath>
-            </File>
-            <File>
-              <FileName>rtt_cmsis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\CMSIS\RTOS\rtt_cmsis.c</FilePath>
             </File>
             <File>
               <FileName>startup_mb9bf50x.S</FileName>

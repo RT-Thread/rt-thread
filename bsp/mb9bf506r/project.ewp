@@ -294,12 +294,11 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -1212,12 +1211,11 @@
         <option>
           <name>CCIncludePath2</name>
           <state></state>
-          <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\libraries\CMSIS\RTOS</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -1849,9 +1847,6 @@
   </group>
   <group>
     <name>CMSIS</name>
-    <file>
-      <name>$PROJ_DIR$\libraries\CMSIS\RTOS\rtt_cmsis.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\libraries\Device\FUJISTU\MB9BF50x\Source\IAR\startup_mb9bf50x.S</name>
     </file>
