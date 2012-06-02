@@ -78,12 +78,15 @@ static void _rt_timer_init(rt_timer_t timer,
 	rt_list_init(&(timer->list));
 }
 
-static rt_tick_t rt_timer_list_next_timeout(rt_list_t* timer_list)
+static rt_tick_t rt_timer_list_next_timeout(rt_list_t *timer_list)
 {
-	struct rt_timer* timer;
-	if (rt_list_isempty(timer_list)) return RT_TICK_MAX;
+	struct rt_timer *timer;
+
+	if (rt_list_isempty(timer_list))
+		return RT_TICK_MAX;
 	
 	timer = rt_list_entry(timer_list->next, struct rt_timer, list);
+
 	return timer->timeout_tick;
 }
 
