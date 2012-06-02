@@ -52,6 +52,8 @@
 // <section name="MM" description="Memory Management" default="always" >
 // <bool name="RT_USING_MEMPOOL" description="Using Memory Pool Management in the system" default="true" />
 #define RT_USING_MEMPOOL
+// <bool name="RT_USING_MEMHEAP" description="Using Memory Heap Management in the system" default="true" />
+#define RT_USING_MEMHEAP
 // <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
 #define RT_USING_HEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />

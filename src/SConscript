@@ -19,6 +19,15 @@ if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == Fal
 if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SLAB') == False:
     SrcRemove(src, ['slab.c'])
 
+if GetDepend('RT_USING_MEMPOOL') == False:
+    SrcRemove(src, ['mempool.c'])
+
+if GetDepend('RT_USING_MEMHEAP') == False:
+    SrcRemove(src, ['memheap.c'])
+
+if GetDepend('RT_USING_DEVICE') == False:
+    SrcRemove(src, ['device.c'])
+
 group   = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
 
 Return('group')
