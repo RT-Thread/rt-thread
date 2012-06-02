@@ -53,7 +53,7 @@ static void rt_thread_exit(void)
 	rt_list_remove(&(thread->thread_timer.list));
 	rt_object_detach((rt_object_t)&(thread->thread_timer));
 
-	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_EOK) &&
+	if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
 		thread->cleanup == RT_NULL)
 	{
 		rt_object_detach((rt_object_t)thread);

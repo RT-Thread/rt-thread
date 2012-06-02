@@ -356,17 +356,17 @@ void rt_object_delete(rt_object_t object)
  *
  * @param object the specified object to be judged.
  *
- * @return RT_EOK if a system object, RT_ERROR for others.
+ * @return RT_TRUE if a system object, RT_FALSE for others.
  */
-rt_err_t rt_object_is_systemobject(rt_object_t object)
+rt_bool_t rt_object_is_systemobject(rt_object_t object)
 {
 	/* object check */
 	RT_ASSERT(object != RT_NULL);
 
 	if (object->type & RT_Object_Class_Static)
-		return RT_EOK;
+		return RT_TRUE;
 
-	return -RT_ERROR;
+	return RT_FALSE;
 }
 
 /**

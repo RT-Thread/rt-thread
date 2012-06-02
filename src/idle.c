@@ -97,7 +97,7 @@ void rt_thread_idle_excute(void)
 				thread->cleanup(thread);
 
 			/* if it's a system object, not delete it */
-			if (rt_object_is_systemobject((rt_object_t)thread) == RT_EOK)
+			if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
 			{
 				/* enable interrupt */
 				rt_hw_interrupt_enable(lock);
