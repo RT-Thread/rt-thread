@@ -26,6 +26,7 @@
  * 2009-05-30     Bernard      add list_device
  * 2010-04-21     yi.qiu       add list_module
  * 2012-04-29     goprife      improve the command line auto-complete feature.
+ * 2012-06-02     lgnq         add list_memheap
  */
 
 #include <rtthread.h>
@@ -35,10 +36,10 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 {
     unsigned int len = 0;
     const rt_list_t *p = l;
-    while( p->next != l )
+    while (p->next != l)
     {
         p = p->next;
-        len++;
+        len ++;
     }
     return len;
 }
@@ -60,15 +61,13 @@ long version(void)
 }
 FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
 
-#define rt_list_entry(node, type, member) \
-    ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
 extern struct rt_object_information rt_object_container[];
 
-static long _list_thread(struct rt_list_node* list)
+static long _list_thread(struct rt_list_node *list)
 {
     struct rt_thread *thread;
     struct rt_list_node *node;
-    rt_uint8_t* ptr;
+    rt_uint8_t *ptr;
 
     rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
     rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
@@ -91,8 +90,8 @@ static long _list_thread(struct rt_list_node* list)
             thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
             thread->remaining_tick,
             thread->error);
-
     }
+	
     return 0;
 }
 
@@ -102,7 +101,7 @@ long list_thread(void)
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
 
-static void show_wait_queue(struct rt_list_node* list)
+static void show_wait_queue(struct rt_list_node *list)
 {
     struct rt_thread *thread;
     struct rt_list_node *node;
@@ -111,7 +110,9 @@ static void show_wait_queue(struct rt_list_node* list)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
         rt_kprintf("%s", thread->name);
-        if (node->next != list) rt_kprintf("/");
+		
+        if (node->next != list)
+			rt_kprintf("/");
     }
 }
 
@@ -125,7 +126,7 @@ static long _list_sem(struct rt_list_node *list)
     rt_kprintf("--------  --- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        sem = (struct rt_semaphore*)(rt_list_entry(node, struct rt_object, list));
+        sem = (struct rt_semaphore *)(rt_list_entry(node, struct rt_object, list));
         if( !rt_list_isempty(&sem->parent.suspend_thread) )
         {
             rt_kprintf("%-8.*s  %03d %d:", RT_NAME_MAX, sem->parent.parent.name, sem->value,
@@ -160,8 +161,8 @@ static long _list_event(struct rt_list_node *list)
     rt_kprintf("-------- ---------- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        e = (struct rt_event*)(rt_list_entry(node, struct rt_object, list));
-        if( !rt_list_isempty(&e->parent.suspend_thread) )
+        e = (struct rt_event *)(rt_list_entry(node, struct rt_object, list));
+        if (!rt_list_isempty(&e->parent.suspend_thread))
         {
             rt_kprintf("%-8.*s  0x%08x %03d:", RT_NAME_MAX, e->parent.parent.name, 
                 e->set, rt_list_len(&e->parent.suspend_thread));
@@ -194,7 +195,7 @@ static long _list_mutex(struct rt_list_node *list)
     rt_kprintf("-------- -------- ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        m = (struct rt_mutex*)(rt_list_entry(node, struct rt_object, list));
+        m = (struct rt_mutex *)(rt_list_entry(node, struct rt_object, list));
         rt_kprintf("%-8.*s %-8.*s %04d %d\n", RT_NAME_MAX, m->parent.parent.name,
                 RT_NAME_MAX, m->owner->name, m->hold, rt_list_len(&m->parent.suspend_thread));
     }
@@ -219,8 +220,8 @@ static long _list_mailbox(struct rt_list_node *list)
     rt_kprintf("-------- ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        m = (struct rt_mailbox*)(rt_list_entry(node, struct rt_object, list));
-        if( !rt_list_isempty(&m->parent.suspend_thread) )
+        m = (struct rt_mailbox *)(rt_list_entry(node, struct rt_object, list));
+        if (!rt_list_isempty(&m->parent.suspend_thread))
         {
             rt_kprintf("%-8.*s %04d  %04d %d:", RT_NAME_MAX, m->parent.parent.name, 
                 m->entry, m->size, rt_list_len(&m->parent.suspend_thread));
@@ -254,8 +255,8 @@ static long _list_msgqueue(struct rt_list_node *list)
     rt_kprintf("-------- ----  --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        m = (struct rt_messagequeue*)(rt_list_entry(node, struct rt_object, list));
-        if( !rt_list_isempty(&m->parent.suspend_thread) )
+        m = (struct rt_messagequeue *)(rt_list_entry(node, struct rt_object, list));
+        if (!rt_list_isempty(&m->parent.suspend_thread))
         {
             rt_kprintf("%-8.*s %04d  %d:", RT_NAME_MAX, m->parent.parent.name, 
                 m->entry, rt_list_len(&m->parent.suspend_thread));
@@ -279,6 +280,32 @@ long list_msgqueue(void)
 FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
 #endif
 
+#ifdef RT_USING_MEMHEAP
+static long _list_memheap(struct rt_list_node *list)
+{
+    struct rt_memheap *mh;
+    struct rt_list_node *node;
+
+    rt_kprintf("memheap  pool size available size\n");
+    rt_kprintf("-------- --------- --------------\n");
+    for (node = list->next; node != list; node = node->next)
+    {
+        mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
+
+        rt_kprintf("%-8.*s %04d  %04d\n", RT_NAME_MAX, mh->parent.name,
+                mh->pool_size, mh->available_size);
+    }
+
+    return 0;
+}
+
+long list_memheap(void)
+{
+    return _list_memheap(&rt_object_container[RT_Object_Class_MemHeap].object_list);
+}
+FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system)
+#endif
+
 #ifdef RT_USING_MEMPOOL
 static long _list_mempool(struct rt_list_node *list)
 {
@@ -289,7 +316,7 @@ static long _list_mempool(struct rt_list_node *list)
     rt_kprintf("-------- ----  ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        mp = (struct rt_mempool*)rt_list_entry(node, struct rt_object, list);
+        mp = (struct rt_mempool *)rt_list_entry(node, struct rt_object, list);
         if (mp->suspend_thread_count > 0)
         {
             rt_kprintf("%-8.*s %04d  %04d  %04d %d:", RT_NAME_MAX, mp->parent.name,
@@ -325,10 +352,12 @@ static long _list_timer(struct rt_list_node *list)
     rt_kprintf("-------- ---------- ---------- -----------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        timer = (struct rt_timer*)(rt_list_entry(node, struct rt_object, list));
+        timer = (struct rt_timer *)(rt_list_entry(node, struct rt_object, list));
         rt_kprintf("%-8.*s 0x%08x 0x%08x ", RT_NAME_MAX, timer->parent.name, timer->init_tick, timer->timeout_tick);
-        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) rt_kprintf("activated\n");
-        else rt_kprintf("deactivated\n");
+        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+			rt_kprintf("activated\n");
+        else
+			rt_kprintf("deactivated\n");
     }
 
     rt_kprintf("current tick:0x%08x\n", rt_tick_get());
@@ -371,7 +400,7 @@ static long _list_device(struct rt_list_node *list)
     rt_kprintf("-------- ---------- \n");
     for (node = list->next; node != list; node = node->next)
     {
-        device = (struct rt_device*)(rt_list_entry(node, struct rt_object, list));
+        device = (struct rt_device *)(rt_list_entry(node, struct rt_object, list));
         rt_kprintf("%-8.*s %-8s \n", RT_NAME_MAX, device->parent.name,
             (device->type <= RT_Device_Class_Unknown)?
             device_type_str[device->type]:device_type_str[RT_Device_Class_Unknown]);
@@ -401,7 +430,7 @@ int list_module(void)
     rt_kprintf("------------ --------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        module = (struct rt_module*)(rt_list_entry(node, struct rt_object, list));
+        module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
         rt_kprintf("%-16.*s %-04d\n", RT_NAME_MAX, module->parent.name, module->nref);
     }
 
@@ -410,23 +439,23 @@ int list_module(void)
 
 FINSH_FUNCTION_EXPORT(list_module, list module in system)
 
-int list_mod_detail(const char* name)
+int list_mod_detail(const char *name)
 {
     int i;
     struct rt_module *module;
     
     /* find module */
-    if((module = rt_module_find(name)) != RT_NULL)
+    if ((module = rt_module_find(name)) != RT_NULL)
     {
         /* module has entry point */
-        if(!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
+        if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
         {   
             struct rt_thread *thread;
             struct rt_list_node *tlist;
-            rt_uint8_t* ptr;
+            rt_uint8_t *ptr;
 
             /* list main thread in module */
-            if(module->module_thread != RT_NULL)
+            if (module->module_thread != RT_NULL)
             {   
                 rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
                 rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
@@ -450,52 +479,57 @@ int list_mod_detail(const char* name)
 
             /* list sub thread in module */
             tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-            if(!rt_list_isempty(tlist)) _list_thread(tlist);
+            if (!rt_list_isempty(tlist)) _list_thread(tlist);
 #ifdef RT_USING_SEMAPHORE
             /* list semaphored in module */
             tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
-            if(!rt_list_isempty(tlist)) _list_sem(tlist);
+            if (!rt_list_isempty(tlist)) _list_sem(tlist);
 #endif
 #ifdef RT_USING_MUTEX
             /* list mutex in module */
             tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
-            if(!rt_list_isempty(tlist)) _list_mutex(tlist);
+            if (!rt_list_isempty(tlist)) _list_mutex(tlist);
 #endif
 #ifdef RT_USING_EVENT
             /* list event in module */
             tlist = &module->module_object[RT_Object_Class_Event].object_list;
-            if(!rt_list_isempty(tlist)) _list_event(tlist);
+            if (!rt_list_isempty(tlist)) _list_event(tlist);
 #endif
 #ifdef RT_USING_MAILBOX
             /* list mailbox in module */
             tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
-            if(!rt_list_isempty(tlist)) _list_mailbox(tlist);
+            if (!rt_list_isempty(tlist)) _list_mailbox(tlist);
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
             /* list message queue in module */
             tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
-            if(!rt_list_isempty(tlist)) _list_msgqueue(tlist);
+            if (!rt_list_isempty(tlist)) _list_msgqueue(tlist);
+#endif
+#ifdef RT_USING_MEMHEAP
+            /* list memory heap in module */
+            tlist = &module->module_object[RT_Object_Class_MemHeap].object_list;
+            if (!rt_list_isempty(tlist)) _list_memheap(tlist);
 #endif
 #ifdef RT_USING_MEMPOOL
             /* list memory pool in module */
             tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
-            if(!rt_list_isempty(tlist)) _list_mempool(tlist);
+            if (!rt_list_isempty(tlist)) _list_mempool(tlist);
 #endif
 #ifdef RT_USING_DEVICE
             /* list device in module */
             tlist = &module->module_object[RT_Object_Class_Device].object_list;
-            if(!rt_list_isempty(tlist)) _list_device(tlist);
+            if (!rt_list_isempty(tlist)) _list_device(tlist);
 #endif
             /* list timer in module */
             tlist = &module->module_object[RT_Object_Class_Timer].object_list;
-            if(!rt_list_isempty(tlist)) _list_timer(tlist);
+            if (!rt_list_isempty(tlist)) _list_timer(tlist);
         }
 
         rt_kprintf("symbol    address   \n");
         rt_kprintf("-------- ----------\n");
     
         /* list module export symbols */
-        for(i=0; i<module->nsym; i++)
+        for (i=0; i<module->nsym; i++)
         {
             rt_kprintf("%s 0x%x\n", module->symtab[i].name, module->symtab[i].addr);
         }   
@@ -508,12 +542,12 @@ FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
 
 long list(void)
 {
-    struct finsh_syscall_item* syscall_item;
-    struct finsh_sysvar_item*  sysvar_item;
+    struct finsh_syscall_item *syscall_item;
+    struct finsh_sysvar_item *sysvar_item;
 
     rt_kprintf("--Function List:\n");
     {
-        struct finsh_syscall* index;
+        struct finsh_syscall *index;
         for (index = _syscall_table_begin; index < _syscall_table_end; index ++)
         {
 #ifdef FINSH_USING_DESCRIPTION
@@ -534,7 +568,7 @@ long list(void)
 
     rt_kprintf("--Variable List:\n");
     {
-        struct finsh_sysvar* index;
+        struct finsh_sysvar *index;
         for (index = _sysvar_table_begin; index < _sysvar_table_end; index ++)
         {
 #ifdef FINSH_USING_DESCRIPTION
@@ -556,7 +590,7 @@ long list(void)
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
 
-static int str_is_prefix(const char* prefix, const char* str)
+static int str_is_prefix(const char *prefix, const char *str)
 {
     while ((*prefix) && (*prefix == *str))
     {
@@ -564,15 +598,17 @@ static int str_is_prefix(const char* prefix, const char* str)
         str ++;
     }
 
-    if (*prefix == 0) return 0;
+    if (*prefix == 0)
+		return 0;
+	
     return -1;
 }
 
-static int str_common(const char * str1, const char * str2)
+static int str_common(const char *str1, const char *str2)
 {
-    const char * str = str1;
+    const char *str = str1;
 
-    while( *str !=0 && *str2 !=0  && (*str == *str2))
+    while ((*str != 0) && (*str2 != 0) && (*str == *str2))
     {
         str ++;
         str2 ++;
@@ -581,13 +617,13 @@ static int str_common(const char * str1, const char * str2)
     return (str - str1);
 }
 
-void list_prefix(char* prefix)
+void list_prefix(char *prefix)
 {
-    struct finsh_syscall_item* syscall_item;
-    struct finsh_sysvar_item*  sysvar_item;
+    struct finsh_syscall_item *syscall_item;
+    struct finsh_sysvar_item *sysvar_item;
     rt_uint16_t func_cnt, var_cnt;
     int length, min_length;
-    const char* name_ptr;
+    const char *name_ptr;
 
     func_cnt = 0;
     var_cnt  = 0;
