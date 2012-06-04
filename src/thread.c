@@ -30,7 +30,6 @@
 
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread *rt_current_thread;
-extern rt_uint8_t rt_current_priority;
 extern rt_list_t rt_thread_defunct;
 
 static void rt_thread_exit(void)
