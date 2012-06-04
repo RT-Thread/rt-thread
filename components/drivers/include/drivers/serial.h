@@ -27,10 +27,10 @@
 #define DATA_BITS_8			8
 #define DATA_BITS_9			9
 
-#define STOP_BITS_1			1
-#define STOP_BITS_2			2
-#define STOP_BITS_3			3
-#define STOP_BITS_4			4
+#define STOP_BITS_1			0
+#define STOP_BITS_2			1
+#define STOP_BITS_3			2
+#define STOP_BITS_4			3
 
 #define PARITY_NONE			0
 #define PARITY_ODD			1
