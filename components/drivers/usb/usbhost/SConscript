@@ -1,0 +1,34 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+core/core.c
+core/driver.c
+core/usbhost.c
+core/hub.c
+""")
+
+if GetDepend('RT_USB_CLASS_ADK'):
+	src += Glob('class/adk.c')
+	src += Glob('udev/adkapp.c')
+
+if GetDepend('RT_USB_CLASS_MASS_STORAGE'):
+	src += Glob('class/mass.c')
+	src += Glob('udev/udisk.c')
+
+if GetDepend('RT_USING_CLASS_HID'):
+	src += Glob('class/hid.c')
+
+if GetDepend('RT_USING_HID_MOUSE'):
+	src += Glob('udev/umouse.c')
+
+if GetDepend('RT_USB_HID_KEYBOARD'):
+	src += Glob('udev/ukbd.c')
+
+CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
+	cwd + '/include', cwd + '../../../include']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
+
+Return('group')
