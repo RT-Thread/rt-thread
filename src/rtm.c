@@ -228,8 +228,6 @@ RTM_EXPORT(stat);
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/widgets/view.h>
-#include <rtgui/widgets/workbench.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/label.h>
@@ -238,34 +236,19 @@ RTM_EXPORT(stat);
 #include <rtgui/widgets/filelist_view.h>
 
 RTM_EXPORT(rtgui_label_create);
-RTM_EXPORT(rtgui_view_show);
-RTM_EXPORT(rtgui_view_create);
-RTM_EXPORT(rtgui_view_destroy);
-RTM_EXPORT(rtgui_view_event_handler);
 RTM_EXPORT(rtgui_dc_draw_text);
 RTM_EXPORT(rtgui_dc_begin_drawing);
 RTM_EXPORT(rtgui_dc_end_drawing);
-RTM_EXPORT(rtgui_workbench_event_loop);
-RTM_EXPORT(rtgui_workbench_event_handler);
-RTM_EXPORT(rtgui_workbench_add_view);
-RTM_EXPORT(rtgui_workbench_create);
-RTM_EXPORT(rtgui_workbench_destroy);
-RTM_EXPORT(rtgui_workbench_close);
 RTM_EXPORT(rtgui_timer_start);
 RTM_EXPORT(rtgui_timer_create);
 RTM_EXPORT(rtgui_timer_destory);
 RTM_EXPORT(rtgui_timer_stop);
-RTM_EXPORT(rtgui_thread_register);
-RTM_EXPORT(rtgui_thread_deregister);
 RTM_EXPORT(rtgui_widget_focus);
-RTM_EXPORT(rtgui_widget_set_event_handler);
 RTM_EXPORT(rtgui_widget_rect_to_device);
 RTM_EXPORT(rtgui_widget_update);
 RTM_EXPORT(rtgui_widget_get_rect);
 RTM_EXPORT(rtgui_widget_set_rect);
 RTM_EXPORT(rtgui_widget_get_toplevel);
-RTM_EXPORT(rtgui_panel_register);
-RTM_EXPORT(rtgui_panel_set_default_focused);
 RTM_EXPORT(rtgui_button_create);
 RTM_EXPORT(rtgui_button_destroy);
 RTM_EXPORT(rtgui_button_set_onbutton);

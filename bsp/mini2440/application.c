@@ -16,6 +16,7 @@
 /**
  * @addtogroup mini2440
  */
+ 
 /*@{*/
 
 #include <rtthread.h>
@@ -60,9 +61,9 @@ extern void rt_hw_touch_init(void);
 static int argc = 1;
 static char* argv[] = {"ftk", NULL};
 
-void rt_ftk_thread_entry(void* parameter)
+void rt_ftk_thread_entry(void *parameter)
 {
-	int FTK_MAIN(int argc, char* argv[]);
+	int FTK_MAIN(int argc, char *argv[]);
 
 	FTK_MAIN(argc, argv);
 
@@ -71,7 +72,7 @@ void rt_ftk_thread_entry(void* parameter)
 
 #endif
 
-void rt_init_thread_entry(void* parameter)
+void rt_init_thread_entry(void *parameter)
 {
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
@@ -129,7 +130,7 @@ void rt_init_thread_entry(void* parameter)
 		dfs_uffs_init();
 
 		/* mount flash device as flash directory */
-		if(dfs_mount("nand0", "/nand0", "uffs", 0, 0) == 0)
+		if (dfs_mount("nand0", "/nand0", "uffs", 0, 0) == 0)
 			rt_kprintf("UFFS File System initialized!\n");
 		else
 			rt_kprintf("UFFS File System initialzation failed!\n");
@@ -159,8 +160,8 @@ void rt_init_thread_entry(void* parameter)
 		/* set lcd device as rtgui graphic driver */		
 		rtgui_graphic_set_device(lcd);
 
-		/* startup rtgui */
-		rtgui_startup();
+		/* initalize rtgui system server */
+		rtgui_system_server_init();
 	}
 #endif
 
@@ -204,15 +205,15 @@ void rt_init_thread_entry(void* parameter)
 									10 * 1024, 8, 20);	
 
 		/* startup ftk thread */
-		if(ftk_thread != RT_NULL)
+		if (ftk_thread != RT_NULL)
 			rt_thread_startup(ftk_thread);		
 	}
 #endif
 }
 
-void rt_led_thread_entry(void* parameter)
+void rt_led_thread_entry(void *parameter)
 {
-	while(1)
+	while (1)
 	{
 		/* light on leds for one second */
 		rt_hw_led_on(LED2|LED3);
@@ -226,7 +227,7 @@ void rt_led_thread_entry(void* parameter)
 	}
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
 	rt_thread_t init_thread;
 	rt_thread_t led_thread;
@@ -252,7 +253,7 @@ int rt_application_init()
 	if (init_thread != RT_NULL)
 		rt_thread_startup(init_thread);
 
-	if(led_thread != RT_NULL)
+	if (led_thread != RT_NULL)
 		rt_thread_startup(led_thread);
 
 	return 0;

@@ -295,7 +295,7 @@ static void rtgui_filelist_view_menu_pop(rtgui_widget_t *parent)
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &screen);
 	rtgui_rect_moveto_align(&screen, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
-	menu = rtgui_win_create(RTGUI_TOPLEVEL(rtgui_widget_get_toplevel(parent)),
+	menu = rtgui_win_create(rtgui_widget_get_toplevel(parent),
 							"Folder Menu", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (menu != RT_NULL)
 	{
@@ -319,7 +319,7 @@ static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 	struct rtgui_rect rect = {0, 0, 200, 200};
 
 	/* set default widget rect and set event handler */
-	rtgui_object_set_event_handler(RTGUI_WIDGET(view), rtgui_filelist_view_event_handler);
+	rtgui_object_set_event_handler(RTGUI_OBJECT(view), rtgui_filelist_view_event_handler);
 	rtgui_widget_set_rect(RTGUI_WIDGET(view), &rect);
 
 	RTGUI_WIDGET(view)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
@@ -650,7 +650,7 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 	}
 
     /* use view event handler */
-    return rtgui_container_event_handler(widget, event);
+    return rtgui_container_event_handler(RTGUI_OBJECT(widget), event);
 }
 
 rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,

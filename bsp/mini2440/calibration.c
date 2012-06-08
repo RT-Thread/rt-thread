@@ -2,6 +2,7 @@
 #include <rtgui/dc.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/window.h>
+#include <rtgui/rtgui_application.h>
 
 #include "touch.h"
 
@@ -107,7 +108,7 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 					calibration_ptr->data.max_x,
 					calibration_ptr->data.min_y,
 					calibration_ptr->data.max_y);
-				rtgui_thread_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
+				rtgui_application_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
 			}
 			return;
 		}
@@ -120,7 +121,7 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 			RTGUI_EVENT_COMMAND_INIT(&ecmd);
 			ecmd.command_id = TOUCH_WIN_UPDATE;
 
-			rtgui_thread_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
+			rtgui_application_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
 		}
 	}
 }
@@ -208,7 +209,7 @@ rt_bool_t calibration_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 		return RT_TRUE;
 
 	default:
-		rtgui_win_event_handler(widget, event);
+		rtgui_win_event_handler(RTGUI_OBJECT(widget), event);
 	}
 
 	return RT_FALSE;
@@ -216,14 +217,13 @@ rt_bool_t calibration_event_handler(struct rtgui_widget* widget, struct rtgui_ev
 
 void calibration_entry(void* parameter)
 {
-	rt_mq_t mq;
+	struct rtgui_application *app;
 	rtgui_win_t* win;
 	struct rtgui_rect rect;
 
-	mq = rt_mq_create("cali", 40, 8, RT_IPC_FLAG_FIFO);
-	if (mq == RT_NULL) return;
-
-	rtgui_thread_register(rt_thread_self(), mq);
+	app = rtgui_application_create(rt_thread_self(), "cali");
+	if (app == RT_NULL)
+		return;
 
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect);
 
@@ -234,16 +234,21 @@ void calibration_entry(void* parameter)
 	/* create calibration window */
 	win = rtgui_win_create(RT_NULL,
 		"calibration", &rect, RTGUI_WIN_STYLE_NO_TITLE | RTGUI_WIN_STYLE_NO_BORDER);
-	rtgui_widget_set_event_handler(RTGUI_WIDGET(win), calibration_event_handler);
+	if (win == RT_NULL)
+	{
+		rtgui_application_destroy(app);
+		return;
+	}
+
+	rtgui_win_set_onkey(win, calibration_event_handler);
 	if (win != RT_NULL)
 	{
 		rtgui_win_show(win, RT_FALSE);
-		// rtgui_widget_update(RTGUI_WIDGET(win));
-		rtgui_win_event_loop(win);
+		rtgui_widget_update(RTGUI_WIDGET(win));
+		rtgui_application_run(app);
 	}
 
-	rtgui_thread_deregister(rt_thread_self());
-	rt_mq_delete(mq);
+	rtgui_application_destroy(app);
 
 	/* set calibration data */
 	rt_device_control(calibration_ptr->device, RT_TOUCH_CALIBRATION_DATA, &calibration_ptr->data);
@@ -256,7 +261,7 @@ void calibration_entry(void* parameter)
 	calibration_ptr = RT_NULL;
 }
 
-void calibration_init()
+void calibration_init(void)
 {
 	rt_device_t device;
 
