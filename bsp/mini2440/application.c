@@ -44,7 +44,6 @@
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
-extern void rt_hw_touch_init(void);
 #endif
 
 #ifdef RT_USING_FTK
