@@ -87,6 +87,9 @@ rt_err_t rt_timer_start(rt_timer_t timer);
 rt_err_t rt_timer_stop(rt_timer_t timer);
 rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg);
 
+rt_tick_t rt_timer_next_timeout_tick(void);
+void rt_timer_check(void);
+
 #ifdef RT_USING_HOOK
 void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer));
 #endif
