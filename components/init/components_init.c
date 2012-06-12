@@ -114,6 +114,7 @@ void rt_components_init(void)
 #endif
 
 #ifdef RT_USING_RTGUI
+	rtgui_system_server_init();
 #endif
 
 	return;
