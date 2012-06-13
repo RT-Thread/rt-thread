@@ -18,6 +18,7 @@
 /*@{*/
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #ifdef RT_USING_DFS
 /* dfs init */
@@ -55,14 +56,6 @@
 
 #ifdef RT_USING_DFS_ROMFS
 #include <dfs_romfs.h>
-#endif
-
-#ifdef RT_USING_I2C
-#include <i2c.h>
-
-static struct rt_i2c_hardware_info hw_info[] = {
-	{ RT_I2C_HARDWARE_INFO("pcf8563", 0, 0xA2 >> 1, 0), },
-};
 #endif
 
 void rt_init_thread_entry(void* parameter)
@@ -145,7 +138,6 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_I2C
 	{
 		rt_i2c_core_init();
-		rt_i2c_hw_info_register(hw_info, 1);
 		at91_i2c_init();
 	}
 #endif

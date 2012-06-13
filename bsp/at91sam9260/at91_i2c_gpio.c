@@ -12,10 +12,8 @@
  * 2012-04-25     weety		first version
  */
 
-#include <rtthread.h>
+#include <rtdevice.h>
 #include <rthw.h>
-#include <i2c.h>
-#include <i2c-bit-ops.h>
 #include <at91sam926x.h>
 
 
@@ -98,25 +96,22 @@ static const struct rt_i2c_bit_ops bit_ops = {
 
 rt_err_t at91_i2c_init(void)
 {
-	struct rt_i2c_bus *bus;
+	struct rt_i2c_bus_device *bus;
 
-	bus = rt_malloc(sizeof(struct rt_i2c_bus));
+	bus = rt_malloc(sizeof(struct rt_i2c_bus_device));
 	if (bus == RT_NULL)
 	{
 		rt_kprintf("rt_malloc failed\n");
 		return -RT_ENOMEM;
 	}
 	
-	rt_memset((void *)bus, 0, sizeof(struct rt_i2c_bus));
-	bus->id = 0;
-
-	rt_snprintf(bus->name, sizeof(bus->name), "i2c-gpio%d", bus->id);
+	rt_memset((void *)bus, 0, sizeof(struct rt_i2c_bus_device));
 
 	bus->priv = (void *)&bit_ops;
 
 	at91_i2c_gpio_init();
 
-	rt_i2c_bit_add_bus(bus);
+	rt_i2c_bit_add_bus(bus, "i2c0");
 
 	return RT_EOK;
 }
