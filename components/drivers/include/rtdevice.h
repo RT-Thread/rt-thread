@@ -67,4 +67,13 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 #include "drivers/serial.h"
 #endif
 
+#ifdef RT_USING_I2C
+#include "drivers/i2c.h"
+#include "drivers/i2c_dev.h"
+#endif
+
+#ifdef RT_USING_I2C_BITOPS
+#include "drivers/i2c-bit-ops.h"
+#endif
+
 #endif

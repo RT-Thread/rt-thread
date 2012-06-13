@@ -12,8 +12,7 @@
  * 2012-04-25     weety		first version
  */
 
-#include <i2c.h>
-#include <i2c-bit-ops.h>
+#include <rtdevice.h>
 
 #ifdef RT_I2C_BIT_DEBUG
 #define bit_dbg(fmt, ...)	rt_kprintf(fmt, ##__VA_ARGS__)
@@ -126,7 +125,7 @@ rt_inline rt_bool_t i2c_waitack(struct rt_i2c_bit_ops *ops)
 		return -RT_ETIMEOUT;
 	}
 
-	ack = !GET_SDA(ops);    /* ack : sda pin is pulled low */
+	ack = !GET_SDA(ops);    /* ACK : SDA pin is pulled low */
 	bit_dbg("%s\n", ack ? "ACK" : "NACK");
 
 	SCL_L(ops);
@@ -135,7 +134,7 @@ rt_inline rt_bool_t i2c_waitack(struct rt_i2c_bit_ops *ops)
 }
 
 
-static rt_int32_t i2c_writeb(struct rt_i2c_bus *bus, rt_uint8_t data)
+static rt_int32_t i2c_writeb(struct rt_i2c_bus_device *bus, rt_uint8_t data)
 {
 	rt_int32_t i;
 	rt_uint8_t bit;
@@ -151,7 +150,7 @@ static rt_int32_t i2c_writeb(struct rt_i2c_bus *bus, rt_uint8_t data)
 		if (SCL_H(ops) < 0) 
 		{
 			bit_dbg("i2c_writeb: 0x%02x, "
-				"wait scl pin high timeout at bit #%d\n", 
+				"wait scl pin high timeout at bit %d\n", 
 				data, i);
 			return -RT_ETIMEOUT;
 		}
@@ -164,7 +163,7 @@ static rt_int32_t i2c_writeb(struct rt_i2c_bus *bus, rt_uint8_t data)
 }
 
 
-static rt_int32_t i2c_readb(struct rt_i2c_bus *bus)
+static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
 {
 	rt_uint8_t i;
 	rt_uint8_t data = 0;
@@ -179,7 +178,7 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus *bus)
 		if (SCL_H(ops) < 0) 
 		{
 			bit_dbg("i2c_readb: wait scl pin high "
-				"timeout at bit #%d\n", 7 - i);
+				"timeout at bit %d\n", 7 - i);
 			return -RT_ETIMEOUT;
 		}
 		
@@ -193,7 +192,7 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus *bus)
 }
 
 
-static rt_size_t i2c_send_bytes(struct rt_i2c_bus *bus, struct rt_i2c_msg *msg)
+static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
 {
 	rt_int32_t ret;
 	rt_size_t bytes = 0;
@@ -225,7 +224,7 @@ static rt_size_t i2c_send_bytes(struct rt_i2c_bus *bus, struct rt_i2c_msg *msg)
 	return bytes;
 }
 
-static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus *bus, int ack)
+static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus_device *bus, int ack)
 {
 	struct rt_i2c_bit_ops *ops = bus->priv;
 
@@ -241,7 +240,7 @@ static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus *bus, int ack)
 	return RT_EOK;
 }
 
-static rt_size_t i2c_recv_bytes(struct rt_i2c_bus *bus, struct rt_i2c_msg *msg)
+static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
 {
 	rt_int32_t val;
 	rt_int32_t bytes = 0;	/* actual bytes */
@@ -279,7 +278,7 @@ static rt_size_t i2c_recv_bytes(struct rt_i2c_bus *bus, struct rt_i2c_msg *msg)
 	return bytes;
 }
 
-static rt_int32_t i2c_send_address(struct rt_i2c_bus *bus,
+static rt_int32_t i2c_send_address(struct rt_i2c_bus_device *bus,
 		       rt_uint8_t addr, rt_int32_t retries)
 {
 	struct rt_i2c_bit_ops *ops = bus->priv;
@@ -301,7 +300,7 @@ static rt_int32_t i2c_send_address(struct rt_i2c_bus *bus,
 	return ret;
 }
 
-static rt_err_t i2c_bit_send_address(struct rt_i2c_bus *bus, struct rt_i2c_msg *msg)
+static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
 {
 	rt_uint16_t flags = msg->flags;
 	rt_uint16_t ignore_nack = msg->flags & RT_I2C_IGNORE_NACK;
@@ -360,7 +359,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus *bus, struct rt_i2c_msg *
 }
 
 
-static rt_size_t i2c_bit_xfer(struct rt_i2c_bus *bus,
+static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
 		    struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
 	struct rt_i2c_msg *msg;
@@ -383,7 +382,7 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus *bus,
 			ret = i2c_bit_send_address(bus, msg);
 			if ((ret != RT_EOK) && !ignore_nack)
 			{
-				bit_dbg("receive NACK from device addr 0x%02x msg #%d\n",
+				bit_dbg("receive NACK from device addr 0x%02x msg %d\n",
 					msgs[i].addr, i);
 				goto out;
 			}
@@ -425,14 +424,14 @@ out:
 }
 
 
-static const struct rt_i2c_bus_ops i2c_bit_bus_ops = {
+static const struct rt_i2c_bus_device_ops i2c_bit_bus_ops = {
 	i2c_bit_xfer,
 	RT_NULL,
 	RT_NULL
 };
 
 
-rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus *bus)
+rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus_device *bus, const char *bus_name)
 {
 	rt_err_t err;
 
@@ -441,5 +440,5 @@ rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus *bus)
 
 	bus->ops = &i2c_bit_bus_ops;
 
-	return rt_i2c_bus_register(bus);
+	return rt_i2c_bus_device_register(bus, bus_name);
 }
