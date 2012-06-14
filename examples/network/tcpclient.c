@@ -2,6 +2,8 @@
 #include <lwip/netdb.h> /* 为了解析主机名，需要包含netdb.h头文件 */
 #include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
 
+#define BUFSZ	1024
+
 static const char send_data[] = "This is TCP Client from RT-Thread."; /* 发送用到的数据 */
 void tcpclient(const char* url, int port)
 {
@@ -14,7 +16,7 @@ void tcpclient(const char* url, int port)
    host = gethostbyname(url);
 
    /* 分配用于存放接收数据的缓冲 */
-   recv_data = rt_malloc(1024);
+   recv_data = rt_malloc(BUFSZ);
    if (recv_data == RT_NULL)
    {
        rt_kprintf("No memory\n");
@@ -51,8 +53,8 @@ void tcpclient(const char* url, int port)
 
    while(1)
    {
-       /* 从sock连接中接收最大1024字节数据 */
-       bytes_received = recv(sock, recv_data, 1024, 0);
+       /* 从sock连接中接收最大BUFSZ - 1字节数据 */
+       bytes_received = recv(sock, recv_data, BUFSZ - 1, 0);
        if (bytes_received <= 0)
        {
            /* 接收失败，关闭这个连接 */

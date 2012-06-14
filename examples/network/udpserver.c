@@ -1,6 +1,8 @@
 #include <rtthread.h>
 #include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
 
+#define BUFSZ	1024
+
 void udpserv(void* paramemter)
 {
    int sock;
@@ -10,7 +12,7 @@ void udpserv(void* paramemter)
    struct sockaddr_in server_addr, client_addr;
 
    /* 分配接收用的数据缓冲 */
-   recv_data = rt_malloc(1024);
+   recv_data = rt_malloc(BUFSZ);
    if (recv_data == RT_NULL)
    {
        /* 分配内存失败，返回 */
@@ -51,8 +53,8 @@ void udpserv(void* paramemter)
 
    while (1)
    {
-       /* 从sock中收取最大1024字节数据 */
-       bytes_read = recvfrom(sock, recv_data, 1024, 0,
+       /* 从sock中收取最大BUFSZ - 1字节数据 */
+       bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
                              (struct sockaddr *)&client_addr, &addr_len);
        /* UDP不同于TCP，它基本不会出现收取的数据失败的情况，除非设置了超时等待 */
 
