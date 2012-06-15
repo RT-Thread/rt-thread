@@ -253,8 +253,8 @@ void calibration_entry(void *parameter)
 
 	rtgui_object_set_event_handler(RTGUI_OBJECT(win), calibration_event_handler);
 
-	rtgui_win_show(win, RT_FALSE);
-	rtgui_application_run(app);
+	rtgui_win_show(win, RT_TRUE);
+	rtgui_win_destroy(win);
 
 	rtgui_application_destroy(app);
 
