@@ -147,6 +147,7 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 	case RTGUI_EVENT_WIN_DEACTIVATE:
 	case RTGUI_EVENT_WIN_SHOW:
 	case RTGUI_EVENT_WIN_MODAL_ENTER:
+	case RTGUI_EVENT_WIN_HIDE:
 		{
 			struct rtgui_event_win *win = (struct rtgui_event_win *)event;
 
@@ -211,6 +212,9 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t* event)
 					monitor->rect.x2, monitor->rect.y2);
 			}
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -603,13 +607,13 @@ rt_bool_t rtgui_application_event_handler(struct rtgui_object* object, rtgui_eve
 		}
 		break;
 
-        case RTGUI_EVENT_COMMAND:
-                {
-                        struct rtgui_event_command *ecmd = (struct rtgui_event_command*)event;
+	case RTGUI_EVENT_COMMAND:
+		{
+			struct rtgui_event_command *ecmd = (struct rtgui_event_command *)event;
 
-                        if (ecmd->wid != RT_NULL)
-                                return _rtgui_application_dest_handle(app, event);
-                }
+			if (ecmd->wid != RT_NULL)
+				return _rtgui_application_dest_handle(app, event);
+		}
 
 	default:
 		return rtgui_object_event_handler(object, event);
