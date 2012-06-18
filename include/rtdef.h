@@ -504,7 +504,6 @@ typedef struct rt_event *rt_event_t;
 #ifdef RT_USING_MAILBOX
 /**
  * mailbox structure
- *
  */
 struct rt_mailbox
 {

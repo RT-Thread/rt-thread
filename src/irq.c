@@ -37,7 +37,7 @@ void rt_interrupt_enter(void)
 {
 	rt_base_t level;
 
-	RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq comming..., irq nest:%d\n", rt_interrupt_nest));
+	RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n", rt_interrupt_nest));
 
 	level = rt_hw_interrupt_disable();
 	rt_interrupt_nest ++;
@@ -65,7 +65,7 @@ void rt_interrupt_leave(void)
 /**
  * This function will return the nest of interrupt.
  * 
- * User application can invoke this function to get whenther current 
+ * User application can invoke this function to get whether current
  * context is interrupt context.
  * 
  * @return the number of nested interrupts.
