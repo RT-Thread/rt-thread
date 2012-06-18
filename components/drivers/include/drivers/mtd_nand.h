@@ -1,5 +1,5 @@
 /*
- * File      : mtd.h
+ * File      : mtd_nand.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
@@ -100,4 +100,5 @@ rt_inline rt_err_t rt_mtd_nand_mark_badblock(struct rt_mtd_nand_device* device, 
 {
 	return device->ops->mark_badblock(device, block);
 }
+
 #endif /* MTD_NAND_H_ */
