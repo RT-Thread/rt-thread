@@ -609,7 +609,7 @@ rt_err_t rt_hw_iic_register(
         RT_ASSERT(0);
     }
 
-    device->type        = RT_Device_Class_I2C;
+    device->type        = RT_Device_Class_Unknown;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
     device->init        = rt_iic_init;
