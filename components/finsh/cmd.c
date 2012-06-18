@@ -387,12 +387,12 @@ static long _list_device(struct rt_list_node *list)
         "Sound Device",
         "Graphic Device",
         "I2C Bus",
-        "I2C Device",
         "USB Slave Device",
         "USB Host Bus",
         "SPI Bus",
         "SPI Device",
         "SDIO Bus",
+		"PM Pseudo Device",
         "Unknown"
     };
 

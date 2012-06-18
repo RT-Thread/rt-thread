@@ -636,12 +636,12 @@ enum rt_device_class_type
     RT_Device_Class_Sound,                          /**< Sound device                               */
     RT_Device_Class_Graphic,                        /**< Graphic device                             */
     RT_Device_Class_I2CBUS,                         /**< I2C bus device                                 */
-    RT_Device_Class_I2CDevice,                      /**< I2C device                                 */
     RT_Device_Class_USBDevice,                      /**< USB slave device                           */
     RT_Device_Class_USBHost,                        /**< USB host bus                               */
     RT_Device_Class_SPIBUS,                         /**< SPI bus device                             */
     RT_Device_Class_SPIDevice,                      /**< SPI device                                 */
     RT_Device_Class_SDIO,                           /**< SDIO bus device                            */
+	RT_Device_Class_PM,								/**< PM pseudo device                           */
     RT_Device_Class_Unknown                         /**< unknown device                             */
 };
 

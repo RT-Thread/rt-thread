@@ -85,4 +85,8 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 
 #endif /* RT_USING_I2C */
 
+#ifdef RT_USING_PM
+#include "drivers/pm.h"
+#endif
+
 #endif /* __RT_DEVICE_H__ */
