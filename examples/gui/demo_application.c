@@ -117,7 +117,7 @@ static void application_entry(void* parameter)
 	rtgui_application_destroy(app);
 }
 
-void application_init()
+void application_init(void)
 {
 	static rt_bool_t inited = RT_FALSE;
 
@@ -138,7 +138,7 @@ void application_init()
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-void application()
+void application(void)
 {
 	application_init();
 }

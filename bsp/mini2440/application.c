@@ -139,6 +139,8 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_RTGUI
 	{
+		extern void rtgui_system_server_init(void);
+
 		rt_device_t lcd;
 		
 		/* init lcd */

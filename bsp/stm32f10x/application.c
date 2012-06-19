@@ -126,7 +126,7 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
 	{
-	    extern void rtgui_startup();
+	    extern void rtgui_system_server_init(void);
 	    extern void rt_hw_lcd_init();
 	    extern void rtgui_touch_hw_init(void);
 
@@ -147,8 +147,8 @@ void rt_init_thread_entry(void* parameter)
 		/* set lcd device as rtgui graphic driver */
 		rtgui_graphic_set_device(lcd);
 
-		/* startup rtgui */
-		rtgui_startup();
+		/* init rtgui system server */
+		rtgui_system_server_init();
 	}
 #endif /* #ifdef RT_USING_RTGUI */
 }

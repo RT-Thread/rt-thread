@@ -61,6 +61,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -432,11 +434,6 @@
               <FilePath>drivers\drv_glcd.c</FilePath>
             </File>
             <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\key.c</FilePath>
-            </File>
-            <File>
               <FileName>lpc177x_8x_clkpwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
@@ -792,6 +789,11 @@
               <FilePath>..\..\components\rtgui\common\pixel_driver.c</FilePath>
             </File>
             <File>
+              <FileName>rtgui_application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\server\rtgui_application.c</FilePath>
+            </File>
+            <File>
               <FileName>driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\server\driver.c</FilePath>
@@ -800,11 +802,6 @@
               <FileName>mouse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\server\mouse.c</FilePath>
-            </File>
-            <File>
-              <FileName>panel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\server\panel.c</FilePath>
             </File>
             <File>
               <FileName>server.c</FileName>
@@ -830,11 +827,6 @@
               <FileName>checkbox.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\checkbox.c</FilePath>
-            </File>
-            <File>
-              <FileName>container.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\container.c</FilePath>
             </File>
             <File>
               <FileName>combobox.c</FileName>
@@ -917,9 +909,9 @@
               <FilePath>..\..\components\rtgui\widgets\notebook.c</FilePath>
             </File>
             <File>
-              <FileName>view.c</FileName>
+              <FileName>container.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\view.c</FilePath>
+              <FilePath>..\..\components\rtgui\widgets\container.c</FilePath>
             </File>
             <File>
               <FileName>list_view.c</FileName>
@@ -946,50 +938,40 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\window.c</FilePath>
             </File>
-            <File>
-              <FileName>workbench.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\workbench.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>gui_examples</GroupName>
           <Files>
             <File>
-              <FileName>demo_view_dc_buffer.c</FileName>
+              <FileName>demo_application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_dc_buffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_instrument_panel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_instrument_panel.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_fnview.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_fnview.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_listview.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_listview.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_listview_icon.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_listview_icon.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_panel_single.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_panel_single.c</FilePath>
+              <FilePath>..\..\examples\gui\demo_application.c</FilePath>
             </File>
             <File>
               <FileName>demo_view.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_benchmark.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_benchmark.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_ttf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_ttf.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_dc_buffer.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_animation.c</FileName>
@@ -1002,9 +984,19 @@
               <FilePath>..\..\examples\gui\demo_view_buffer_animation.c</FilePath>
             </File>
             <File>
-              <FileName>demo_view_box.c</FileName>
+              <FileName>demo_view_instrument_panel.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_box.c</FilePath>
+              <FilePath>..\..\examples\gui\demo_view_instrument_panel.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_window.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_label.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_label.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_button.c</FileName>
@@ -1017,34 +1009,14 @@
               <FilePath>..\..\examples\gui\demo_view_checkbox.c</FilePath>
             </File>
             <File>
-              <FileName>demo_view_dc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_dc.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_image.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_image.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_module.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_module.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_label.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_label.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_mywidget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_mywidget.c</FilePath>
-            </File>
-            <File>
               <FileName>demo_view_progressbar.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view_progressbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_scrollbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_scrollbar.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_radiobox.c</FileName>
@@ -1052,9 +1024,29 @@
               <FilePath>..\..\examples\gui\demo_view_radiobox.c</FilePath>
             </File>
             <File>
+              <FileName>demo_view_textbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_textbox.c</FilePath>
+            </File>
+            <File>
               <FileName>demo_view_listbox.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view_listbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_listctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_listctrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_combobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_combobox.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_slider.c</FileName>
@@ -1067,49 +1059,9 @@
               <FilePath>..\..\examples\gui\demo_view_notebook.c</FilePath>
             </File>
             <File>
-              <FileName>demo_view_combobox.c</FileName>
+              <FileName>demo_view_mywidget.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_combobox.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_listctrl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_listctrl.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_menu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_menu.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_scrollbar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_scrollbar.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_textbox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_textbox.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_window.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_window.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_view_benchmark.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_view_benchmark.c</FilePath>
-            </File>
-            <File>
-              <FileName>demo_workbench.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\demo_workbench.c</FilePath>
-            </File>
-            <File>
-              <FileName>gui_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\examples\gui\gui_init.c</FilePath>
+              <FilePath>..\..\examples\gui\demo_view_mywidget.c</FilePath>
             </File>
             <File>
               <FileName>mywidget.c</FileName>

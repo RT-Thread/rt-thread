@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -15,6 +15,7 @@
 /**
  * @addtogroup FM3
  */
+ 
 /*@{*/
 
 #include <rtthread.h>
@@ -48,12 +49,17 @@ void rt_init_thread_entry(void *parameter)
 	rt_device_init_all();
 	
 #ifdef RT_USING_RTGUI
+	extern void rtgui_system_server_init(void);
+
 	/* find lcd device */
 	lcd = rt_device_find("lcd");    
     
 	/* set lcd device as rtgui graphic driver */		
 	rtgui_graphic_set_device(lcd);
-        
+
+	/* init rtgui system server */
+	rtgui_system_server_init();
+   
 	/* startup rtgui */
 	rtgui_startup();
 #else
@@ -127,7 +133,7 @@ void rt_init_thread_entry(void *parameter)
 #endif
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
     rt_thread_t init_thread;
 

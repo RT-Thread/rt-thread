@@ -76,6 +76,9 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_RTGUI
     {
+    	extern void rtgui_system_server_init(void);
+		extern void application_init(void);
+		
 		rt_device_t lcd;
 
 		/* init lcd */
@@ -90,8 +93,11 @@ void rt_init_thread_entry(void *parameter)
 			/* set lcd device as rtgui graphic driver */
 			rtgui_graphic_set_device(lcd);
 
+			/* init rtgui system server */
+			rtgui_system_server_init();
+
 			/* startup rtgui in demo of RT-Thread/GUI examples */
-			rtgui_startup();
+			application_init();
 		}
     }
 #endif
@@ -133,7 +139,7 @@ static void rt_thread_entry_led(void* parameter)
     }
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
 	rt_thread_t tid;
 

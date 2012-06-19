@@ -26,7 +26,7 @@
 #define RTGUI_MEM_TRACE
 #endif
 
-void rtgui_system_server_init()
+void rtgui_system_server_init(void)
 {
 	/* init image */
 	rtgui_system_image_init();
