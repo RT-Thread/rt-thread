@@ -216,3 +216,16 @@ rt_timer + verb phrase stands for the method that could be used on timer object.
 
 When creating a new object, think twice on memory allocations: whether a static
 object could be created or it could only created dynamically on heap.
+
+14. Use astyle to format the code automatically
+parameters: --style=allman
+			--indent=spaces=4
+			--pad-oper
+			--pad-header
+			--unpad-paren
+			--suffix=none
+			--align-pointer=name
+			--lineend=linux
+			--convert-tabs
+			--verbose
+

@@ -207,3 +207,16 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 
 在创建一个新的对象时，应该思考好，对象的内存操作处理：是否允许一个静态对象存在
 ，或仅仅支持从堆中动态分配的对象。
+
+14. 用 astyle 自动格式化代码
+参数：--style=allman
+      --indent=spaces=4
+      --pad-oper
+      --pad-header
+      --unpad-paren
+      --suffix=none
+      --align-pointer=name
+      --lineend=linux
+      --convert-tabs
+      --verbose
+
