@@ -11,7 +11,7 @@ if GetDepend('RT_USING_I2C_BITOPS'):
     src = src + ['i2c-bit-ops.c']
 
 # The set of source files associated with this SConscript file.
-path = [cwd]
+path = [cwd + '/../include']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_I2C'], CPPPATH = path)
 
