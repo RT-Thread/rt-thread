@@ -62,30 +62,6 @@ static struct rt_semaphore mod_sem;
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL, *_rt_module_symtab_end = RT_NULL;
 rt_list_t rt_module_symbol_list;
 
-static char *_strip_name(const char *string)
-{
-	int i = 0, p = 0, q = 0;
-	const char *str = string;
-	char *dest = RT_NULL;
-
-	while (*str != '\n' && *str != '\0')
-	{
-		if (*str =='/' ) p = i + 1;
-		if (*str == '.') q = i;
-		str++; i++;
-	}
-
-	if (p < q)
-	{
-		int len = q - p;
-		dest = (char *)rt_malloc(len + 1);
-		rt_strncpy(dest, &string[p], len);
-		dest[len] = '\0';
-	}
-
-	return dest;
-}
-
 /**
  * @ingroup SystemInit
  *
@@ -526,13 +502,6 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
 	rt_uint32_t module_addr = 0, module_size = 0;
 	struct rt_module *module = RT_NULL;
 	rt_uint8_t *ptr, *strtab, *shstrab;
-	rt_bool_t linked = RT_FALSE;
-
-	if(rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) == 0)
-	{
-		/* rtmlinker finished */
-		linked = RT_TRUE;
-	}
 
 	/* get the ELF image size */
 	for (index = 0; index < elf_module->e_shnum; index++)
@@ -652,19 +621,19 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
 					if((ELF_ST_TYPE(sym->st_info) == STT_SECTION)
 						|| (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
 					{
-						if (rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_RODATA, 8) == 0)
+						if (rt_strncmp((const char*)(shstrab + shdr[sym->st_shndx].sh_name), ELF_RODATA, 8) == 0)
 						{
 							/* relocate rodata section */
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("rodata\n"));
 							rt_module_arm_relocate(module, rel,(Elf32_Addr)(rodata_addr + sym->st_value));
 						}
-						else if(rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_BSS, 5) == 0)
+						else if(rt_strncmp((const char*)(shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
 						{
 							/* relocate bss section */
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("bss\n"));
 							rt_module_arm_relocate(module, rel, (Elf32_Addr)bss_addr + sym->st_value);
 						}
-						else if(rt_strncmp(shstrab + shdr[sym->st_shndx].sh_name, ELF_DATA, 6) == 0)
+						else if(rt_strncmp((const char*)(shstrab + shdr[sym->st_shndx].sh_name), ELF_DATA, 6) == 0)
 						{
 							/* relocate data section */
 							RT_DEBUG_LOG(RT_DEBUG_MODULE,("data\n"));
@@ -686,7 +655,7 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
 					{
 						RT_DEBUG_LOG(RT_DEBUG_MODULE,("relocate symbol: %s\n", strtab + sym->st_name));
 						/* need to resolve symbol in kernel symbol table */
-						addr = rt_module_symbol_find(strtab + sym->st_name);
+						addr = rt_module_symbol_find((const char*)(strtab + sym->st_name));
 						if (addr != (Elf32_Addr)RT_NULL)
 						{
 							rt_module_arm_relocate(module, rel, addr);
@@ -781,7 +750,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 		module->stack_size = 2048;
 		module->thread_priority = 25;
 		module->module_thread = rt_thread_create(name,
-			module->module_entry, RT_NULL,
+			(void(*)(void *))module->module_entry, RT_NULL,
 			module->stack_size,
 			module->thread_priority, 10);
 		
