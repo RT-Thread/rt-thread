@@ -121,6 +121,9 @@
 
 #define RT_USING_SDIO
 
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+
 #define RT_USING_DBGU
 /* #define RT_USING_UART0 */
 /* #define RT_USING_UART1 */

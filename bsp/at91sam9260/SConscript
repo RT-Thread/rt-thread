@@ -14,6 +14,8 @@ if GetDepend('RT_USING_SDIO'):
 if GetDepend('RT_USING_LWIP'):
 	src_drv += ['macb.c']
 
+if GetDepend('RT_USING_I2C') and GetDepend('RT_USING_I2C_BITOPS'):
+	src_drv += ['at91_i2c_gpio.c']
 
 src	= File(src_bsp + src_drv)
 CPPPATH = [RTT_ROOT + '/bsp/at91sam9260']
