@@ -94,7 +94,7 @@
         </option>
         <option>
           <name>GData16HeapSize</name>
-          <state>0x1000</state>
+          <state>0x400</state>
         </option>
         <option>
           <name>GFarHeapSize</name>
@@ -136,7 +136,7 @@
         </option>
         <option>
           <name>GeneralWordAlignFunc</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGChipSelectMenu</name>
@@ -331,9 +331,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state>$PROJ_DIR$\</state>
-          <state>$PROJ_DIR$\..\..\include\</state>
-          <state>$PROJ_DIR$\..\..\components\finsh\</state>
+          <state></state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -594,12 +592,12 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>rtt2m16c.d34</state>
+          <state>project.d34</state>
         </option>
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>12</state>
+          <state>27</state>
         </option>
         <option>
           <name>FormatVariant</name>
@@ -764,7 +762,7 @@
         </option>
         <option>
           <name>ExtraOutputFile</name>
-          <state>rtt2m16c.mot</state>
+          <state>project.mot</state>
         </option>
         <option>
           <name>ExtraOutputFormat</name>
@@ -1027,7 +1025,7 @@
         </option>
         <option>
           <name>OGChipSelectMenu</name>
-          <state>m16cgen	Generic M16C</state>
+          <state></state>
         </option>
         <option>
           <name>GeneralMisraRules98</name>
@@ -1478,7 +1476,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>rtt2m16c.dbg</state>
+          <state></state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1773,183 +1771,6 @@
       <data/>
     </settings>
   </configuration>
-  <group>
-    <name>bsp</name>
-    <group>
-      <name>m16c62p</name>
-      <file>
-        <name>$PROJ_DIR$\application.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\board.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\bsp.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\cstartup.asm</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\interrupts.asm</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\lnkm30627fhp.xcl</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\rtconfig.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\startup.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\uart.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\vectors.asm</name>
-      </file>
-    </group>
-  </group>
-  <group>
-    <name>finsh</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-    </file>
-  </group>
-  <group>
-    <name>include</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\include\rtdef.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\include\rthw.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\include\rtthread.h</name>
-    </file>
-  </group>
-  <group>
-    <name>kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\slab.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>libcpu</name>
-    <group>
-      <name>m16c</name>
-      <group>
-        <name>m16c62p</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\context_iar.asm</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\libcpu\m16c\m16c62p\cpuport.c</name>
-        </file>
-      </group>
-    </group>
-  </group>
 </project>
 
 

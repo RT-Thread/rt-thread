@@ -1,7 +1,7 @@
 /*
  * File      : readme.txt
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -43,31 +43,36 @@ Directory Hierarchy:
 /rt-thread
     /bsp
         /m16c62p
-            /application.c          - init led task
-            /board.c                - hardware init, init uart0
-            /board.h                
-            /bsp.c                  - include led_init(), mcu_init(), timer0_init()
-            /bsp.h
-            /cstartup.asm           - assembly start
-            /interrupts.asm         - include time0 interrupt handler, uart0 interrupt handler
+            /applications
+                /application.c          - init led task
+                /startup.c              - rt-thread start, include main()
+            /drivers
+                /board.c                - hardware init, init uart0
+                /board.h                
+                /bsp.c                  - include led_init(), mcu_init(), timer0_init()
+                /bsp.h
+                /uart.c                 - implement uart0 device 
+                /uart.h
+                /start_iar.asm          - assembly start of iar
+                /interrupts_iar.asm     - include time0 interrupt handler, uart0 interrupt handler
+                /vectors_iar.asm        - relocatable exception vector table
+                /start_gcc.asm          - assembly start of gcc
+                /interrupts_gcc.asm     - include time0 interrupt handler, uart0 interrupt handler
+                /vectors_gcc.asm        - relocatable exception vector table
             /lnkm30627fhp.xcl       - IAR link file for m16c62p(m30627fhp)
+            /m16c62p.ld             - GCC link file for m16c62p(m30627fhp)
             /rtconfig.h             - rt-thread config file
             /rtconfig.py            - SCONS config file
-            /rtt2m16c.dep           - IAR project file
-            /rtt2m16c.ewd           - IAR project file
-            /rtt2m16c.ewp           - IAR project file
-            /rtt2m16c.eww           - IAR project file
+            /project.ewp            - IAR project file
+            /project.eww            - IAR project file
             /SConsscript            - SCONS script file
             /SConstruct             - SCONS struct file
-            /startup.c              - rt-thread start, include main()
-            /uart.c                 - implement uart0 device 
-            /uart.h
-            /vectors.asm            - relocatable exception vector table
     /libcpu
         /m16c
             /m16c62p
                 /context_iar.asm    - rt-thread context switch, used by IAR project
-                /context_iar.S      - rt-thread context switch, used by SCONS
+                /context_iar.S      - rt-thread context switch, used by SCONS + iar
+                /context_gcc.S      - rt-thread context switch, used by SCONS + gcc
                 /interrupt.c
                 /stack.c            - rt-thread stack initlization
                 
@@ -85,3 +90,8 @@ there are two ways to build the renesase M16C project:
     #set PATH=C:\Python27\Scripts;%PATH%
     #scons -c
     #scons -j 2
+
+3,  crate IAR project with template project
+    #set PATH=C:\Python27\Scripts;%PATH%
+    #scons --target=iar -s
+    add the context_iar.asm to M16C62P, and remove the context_iar.S
