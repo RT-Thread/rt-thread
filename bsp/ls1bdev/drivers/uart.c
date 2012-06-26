@@ -41,7 +41,7 @@ static void rt_uart_irqhandler(int irqno)
 {
 	rt_ubase_t level;
 	rt_uint8_t isr;
-	struct rt_uart_ls1b* uart = &uart_device;
+	struct rt_uart_ls1b *uart = &uart_device;
 
 	/* read interrupt status and clear it */
 	isr = UART_IIR(uart->hw_base);
