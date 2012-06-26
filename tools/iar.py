@@ -88,7 +88,7 @@ def IARProject(target, script):
         # print option.text
         name = option.find('name')
         
-        if name.text == 'CCIncludePath2':
+        if name.text == 'CCIncludePath2' or name.text == 'newCCIncludePaths':
             for path in paths:
                 state = SubElement(option, 'state')
                 state.text = '$PROJ_DIR$\\' + path
