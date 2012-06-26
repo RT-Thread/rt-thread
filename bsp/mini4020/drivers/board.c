@@ -1,7 +1,7 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009 RT-Thread Develop Team
+ * COPYRIGHT (C) 2006 - 2012 RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -12,6 +12,7 @@
  * 2009-05-16     Bernard      first implementation
  * 2010-10-5      Wangmeng     sep4020 implementation
  */
+
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -30,7 +31,6 @@ struct serial_device uart0 =
 	RT_NULL
 };
 
-
 /**
  * This function will handle rtos timer
  */
@@ -41,7 +41,7 @@ void rt_timer_handler(int vector)
 
 	/*Clear timer interrupt*/
 	clear_int = *(RP)TIMER_T1ISCR; 
-    *(RP)TIMER_T1ISCR=clear_int;
+	*(RP)TIMER_T1ISCR=clear_int;
 }
 
 /**
@@ -50,15 +50,13 @@ void rt_timer_handler(int vector)
 void rt_serial_handler(int vector)
 {
 	//rt_kprintf("in rt_serial_handler\n");
-    rt_int32_t stat = *(RP)UART0_IIR ;
+	rt_int32_t stat = *(RP)UART0_IIR ;
 	UNUSED char c;
 
 	/*Received data*/
-	if(((stat & 0x0E) >> 1) == 0x02)
+	if (((stat & 0x0E) >> 1) == 0x02)
 	{
-	  
-	  rt_hw_serial_isr(&uart0_device);
-			
+		rt_hw_serial_isr(&uart0_device);
 	}
 	else
 	{
@@ -67,6 +65,7 @@ void rt_serial_handler(int vector)
 			c = uart0.uart_device->dlbl_fifo.rxfifo;	
 	}
 }
+
 /** 
  * This function will init led on the board
  */
@@ -82,10 +81,10 @@ static void rt_hw_board_led_init(void)
 /**
  * This function will init timer4 for system ticks
  */
- void rt_hw_timer_init()
- {
- 	/*Set timer1*/
- 	*(RP)TIMER_T1LCR = 880000;
+ void rt_hw_timer_init(void)
+{
+	/*Set timer1*/
+	*(RP)TIMER_T1LCR = 880000;
 	*(RP)TIMER_T1CR = 0x06;
 
 	rt_hw_interrupt_install(INTSRC_TIMER1, rt_timer_handler, RT_NULL);
@@ -93,7 +92,7 @@ static void rt_hw_board_led_init(void)
 
 	/*Enable timer1*/
 	*(RP)TIMER_T1CR |= 0x01;
- }
+}
 
 /**
  * This function will handle init uart
@@ -128,9 +127,9 @@ void rt_hw_uart_init(void)
 		&uart0);
 }
 
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
-   	/* initialize uart */
+	/* initialize uart */
 	rt_hw_uart_init();
 //	rt_hw_board_led_init();
 	rt_hw_timer_init();
@@ -143,9 +142,11 @@ void rt_hw_serial_putc(const char c)
 		to be polite with serial console add a line feed
 		to the carriage return character
 	*/
-	if (c=='\n')rt_hw_serial_putc('\r');
+	if (c=='\n')
+		rt_hw_serial_putc('\r');
 
 	while (!((*(RP)UART0_LSR) & 0x40));
+
 	*(RP)(UART0_BASE) = c;
 }
 
@@ -154,7 +155,7 @@ void rt_hw_serial_putc(const char c)
  *
  * @param str the displayed string
  */
-void rt_hw_console_output(const char* str)
+void rt_hw_console_output(const char *str)
 {
 	while (*str)
 	{

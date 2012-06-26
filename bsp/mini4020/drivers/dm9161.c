@@ -1,3 +1,16 @@
+/*
+ * File      : dm9161.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rtthread.h>
 #include <netif/ethernetif.h>
 
@@ -73,16 +86,18 @@ void rt_dm9161_isr(int irqno);
 static void udelay(unsigned long ns)
 {
 	unsigned long i;
-	while(ns--)
+
+	while (ns--)
 	{
 		i = 100;
-		while(i--);
+		while (i--);
 	}
 }
 
 static __inline unsigned long sep_emac_read(unsigned int reg)
 {
-	void __iomem *emac_base = (void __iomem *)reg; 
+	void __iomem *emac_base = (void __iomem *)reg;
+
 	return read_reg(emac_base);
 }
  
@@ -106,9 +121,10 @@ static __inline void sep_emac_write(unsigned int reg, unsigned long value)
 static void enable_mdi(void)           //need think more
 {
 	unsigned long ctl;
-  
+
 	ctl = sep_emac_read(MAC_CTRL);
 	sep_emac_write(MAC_CTRL, ctl&(~0x3));    /* enable management port */
+
 	return;
 }
 
@@ -121,6 +137,7 @@ static void disable_mdi(void)
   
 	ctl = sep_emac_read(MAC_CTRL);
 	sep_emac_write(MAC_CTRL, ctl|(0x3));    /* disable management port */
+
 	return;
 }
 
@@ -140,6 +157,7 @@ static __inline void sep_phy_wait(void)
 			break;
 		}		
 	}
+
 	return;
 }
  
@@ -158,6 +176,7 @@ static void write_phy(unsigned char phy_addr, unsigned char address, unsigned in
 	udelay(40);
 
 	sep_phy_wait();
+
 	return;	
 }
  
@@ -177,37 +196,35 @@ static void read_phy(unsigned char phy_addr, unsigned char address, unsigned int
 		
 	mii_rxdata = sep_emac_read(MAC_MII_RXDATA);
 	*value =  mii_rxdata;
+
 	return;
-}  
-
-
-
+}
 
 /* interrupt service routine */
 void rt_dm9161_isr(int irqno)
 {
-	  unsigned long intstatus;
-	  rt_uint32_t address;
+	unsigned long intstatus;
+	rt_uint32_t address;
 
- 	  mask_irq(INTSRC_MAC);
-	  intstatus = sep_emac_read(MAC_INTSRC);
+ 	mask_irq(INTSRC_MAC);
+	intstatus = sep_emac_read(MAC_INTSRC);
 
-	  sep_emac_write(MAC_INTSRC,intstatus);
-	  
-	  /*Receive complete*/
-	  if(intstatus & 0x04)
-	  {
-	  	eth_device_ready(&(dm9161_device.parent));
-	  }	
-	  /*Receive error*/
-	  else if(intstatus & 0x08)
-	  {
-	  	rt_kprintf("Receive error\n");
-	  }
-	  /*Transmit complete*/
-	  else if(intstatus & 0x03)
-	  {
-	  	  	if(dm9161_device.tx_index == 0)
+	sep_emac_write(MAC_INTSRC,intstatus);
+	
+	/*Receive complete*/
+	if(intstatus & 0x04)
+	{
+		eth_device_ready(&(dm9161_device.parent));
+	}
+	/*Receive error*/
+	else if(intstatus & 0x08)
+	{
+		rt_kprintf("Receive error\n");
+	}
+	/*Transmit complete*/
+	else if(intstatus & 0x03)
+	{
+			if(dm9161_device.tx_index == 0)
 				address = (MAC_TX_BD +(MAX_TX_DESCR-2)*8);
 			else if(dm9161_device.tx_index == 1) 
 				address = (MAC_TX_BD +(MAX_TX_DESCR-1)*8);
@@ -215,12 +232,11 @@ void rt_dm9161_isr(int irqno)
 				address = (MAC_TX_BD + dm9161_device.tx_index*8-16);
 			//printk("free tx skb 0x%x in inter!!\n",lp->txBuffIndex);	
 			sep_emac_write(address,0x0);
-	  }
-	  else if (intstatus & 0x10)
-	  {
-	  	rt_kprintf("ROVER ERROR\n");
-
-	  }
+	}
+	else if (intstatus & 0x10)
+	{
+		rt_kprintf("ROVER ERROR\n");
+	}
 
 	while(intstatus)
 	{
@@ -229,7 +245,6 @@ void rt_dm9161_isr(int irqno)
 	}
 
 	unmask_irq(INTSRC_MAC);
-
 }
 
 static rt_err_t update_mac_address()
@@ -249,15 +264,15 @@ static rt_err_t update_mac_address()
 	return RT_EOK;
 }
 
-static int mii_link_ok (unsigned long phy_id)
+static int mii_link_ok(unsigned long phy_id)
 {
 	/* first, a dummy read, needed to latch some MII phys */
-
 	unsigned int value;
 
 	read_phy(phy_id, MII_BMSR,&value);
 	if (value & BMSR_LSTATUS)
 		return 1;
+
 	return 0;
 }
 
@@ -266,7 +281,7 @@ static void update_link_speed(unsigned short phy_addr)
 	unsigned int bmsr, bmcr, lpa, mac_cfg;
 	unsigned int speed, duplex;
 
-	if(!mii_link_ok(phy_addr))
+	if (!mii_link_ok(phy_addr))
 	{
 		EOUT("Link Down\n");
 		//goto result;
@@ -296,9 +311,9 @@ static void update_link_speed(unsigned short phy_addr)
 	{
 		speed = (bmcr & BMCR_SPEED100) ? SPEED_100 : SPEED_10;
 		duplex = (bmcr & BMCR_FULLDPLX) ? DUPLEX_FULL : DUPLEX_HALF;
-	 }
+	}
  
-    /* Update the MAC */
+	/* Update the MAC */
 	mac_cfg = sep_emac_read(MAC_CTRL);
 	if (speed == SPEED_100) 
 	{
@@ -326,6 +341,7 @@ static void update_link_speed(unsigned short phy_addr)
 result:
 	mac_cfg = sep_emac_read(MAC_CTRL);
 	DBOUT("After mac_cfg=%d\n",mac_cfg);
+	
 	return;
 }
 
@@ -380,58 +396,55 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	rt_dm9161_open(dev,0);
 
-    return RT_EOK;
+	return RT_EOK;
 }
-
-
 
 /* ................................ MAC ................................ */
 
 /*
  * Initialize and start the Receiver and Transmit subsystems
  */
-static void sepether_start()
+static void sepether_start(void)
 {
 	int i;
 	unsigned int tempaddr;
-		 
-    sep_emac_write(MAC_TXBD_NUM,MAX_TX_DESCR);
-   
-	 //初始化发送和接收描述符
+ 
+	sep_emac_write(MAC_TXBD_NUM,MAX_TX_DESCR);
+
+	//初始化发送和接收描述符
 	for (i = 0; i < MAX_TX_DESCR; i++)
 	{
 		tempaddr=(MAC_TX_BD+i*8);
-        sep_emac_write(tempaddr,0);
-        tempaddr=(MAC_TX_BD+i*8+4);
-        sep_emac_write(tempaddr,0);
+		sep_emac_write(tempaddr,0);
+		tempaddr=(MAC_TX_BD+i*8+4);
+		sep_emac_write(tempaddr,0);
 	}
 	for (i = 0; i < MAX_RX_DESCR; i++)
 	{
-        tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8);
-        sep_emac_write(tempaddr,0);
-        tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8+4);
-        sep_emac_write(tempaddr,0);
+		tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8);
+		sep_emac_write(tempaddr,0);
+		tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8+4);
+		sep_emac_write(tempaddr,0);
 	}
-    
+
 	for (i = 0; i < MAX_RX_DESCR; i++) 
 	{
 		tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8);
-        sep_emac_write(tempaddr,0xc000);
-        tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8+4);
+		sep_emac_write(tempaddr,0xc000);
+		tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8+4);
 		sep_emac_write(tempaddr,ESRAM_BASE+ MAX_TX_DESCR*0x600+i*0x600);
 	}
 
 	/* Set the Wrap bit on the last descriptor */
 	tempaddr=(MAC_TX_BD + MAX_TX_DESCR*8+i*8-8);
 	sep_emac_write(tempaddr,0xe000);
-  
 
 	for (i = 0; i < MAX_TX_DESCR; i++) 
 	{
-        tempaddr=(MAC_TX_BD+i*8);
-        sep_emac_write(tempaddr,0x0);
-        tempaddr=(MAC_TX_BD+i*8+4);
-        sep_emac_write(tempaddr,ESRAM_BASE+i*0x600);
+		tempaddr=(MAC_TX_BD+i*8);
+		sep_emac_write(tempaddr,0x0);
+		tempaddr=(MAC_TX_BD+i*8+4);
+		sep_emac_write(tempaddr,ESRAM_BASE+i*0x600);
 	}
 	
 	return;
@@ -440,13 +453,13 @@ static void sepether_start()
 static rt_err_t rt_dm9161_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	unsigned int dsintr;
-	enable_mdi();
-  	mask_irq(28);
- 	
-  	sep_emac_write(MAC_INTMASK,0x0);  //首先屏蔽中断
-  
 
- 	sepether_start();
+	enable_mdi();
+	mask_irq(28);
+
+	sep_emac_write(MAC_INTMASK,0x0);  //首先屏蔽中断
+
+	sepether_start();
 
 	/* Enable PHY interrupt */
 	*(volatile unsigned long*)GPIO_PORTA_DIR |= 0x0080 ;          //1 stands for in
@@ -470,12 +483,13 @@ static rt_err_t rt_dm9161_open(rt_device_t dev, rt_uint16_t oflag)
 	/************************************************************************************/
 	/* Enable MAC interrupts */
 	sep_emac_write(MAC_INTMASK,0xff);  //open中断
-  	sep_emac_write(MAC_INTSRC,0xff);   //clear all mac irq
+	sep_emac_write(MAC_INTSRC,0xff);   //clear all mac irq
 	unmask_irq(28);
 	disable_mdi();
 	
 	rt_kprintf("SEP4020 ethernet interface open!\n\r");
-    return RT_EOK;
+
+	return RT_EOK;
 }
 
 static rt_err_t rt_dm9161_close(rt_device_t dev)
@@ -493,28 +507,28 @@ static rt_err_t rt_dm9161_close(rt_device_t dev)
 	/* Disable MAC interrupts */
 	sep_emac_write(MAC_INTMASK,0);  //屏蔽中断
 
-	
 //	INT_DISABLE(28);
 	
-    return RT_EOK;
+	return RT_EOK;
 }
 
 static rt_size_t rt_dm9161_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    rt_set_errno(-RT_ENOSYS);
-    return 0;
+	rt_set_errno(-RT_ENOSYS);
+
+	return 0;
 }
 
 static rt_size_t rt_dm9161_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    rt_set_errno(-RT_ENOSYS);
-    return 0;
+	rt_set_errno(-RT_ENOSYS);
+
+	return 0;
 }
 
 static rt_err_t rt_dm9161_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-
-    return RT_EOK;
+	return RT_EOK;
 }
 
 /* ethernet device interface */
@@ -527,26 +541,26 @@ rt_err_t rt_dm9161_tx( rt_device_t dev, struct pbuf* p)
 	unsigned long  address;
 	unsigned long tmp_tx_bd;
 
-    /* lock DM9000 device */
-//    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+	/* lock DM9000 device */
+//	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
-    /* disable dm9000a interrupt */
-    #warning SHOULD DISABLE INTEERUPT?
+	/* disable dm9000a interrupt */
+	#warning SHOULD DISABLE INTEERUPT?
 
 	/*Search for available BD*/
-	for(i = 0;i<MAX_TX_DESCR;)
+	for (i = 0;i<MAX_TX_DESCR;)
 	{
 		address	= MAC_TX_BD + i*8;
 		tmp_tx_bd = sep_emac_read(address);
-		if(!(tmp_tx_bd & 0x8000))
+		if (!(tmp_tx_bd & 0x8000))
 		{
-			if(i == (MAX_TX_DESCR-1)) 
+			if (i == (MAX_TX_DESCR-1)) 
 				i = 0;
 			else 
 				i = i+1;
 			break;
 		}
-		if(i == MAX_TX_DESCR-1) 
+		if (i == MAX_TX_DESCR-1) 
 			i = 0;
 		else 
 			i++;
@@ -564,7 +578,7 @@ rt_err_t rt_dm9161_tx( rt_device_t dev, struct pbuf* p)
 
 	length = length << 16;
 
-	if(i == MAX_TX_DESCR - 1)
+	if (i == MAX_TX_DESCR - 1)
 		length |= 0xb800;
 	else 
 		length |= 0x9800;
@@ -579,10 +593,10 @@ rt_err_t rt_dm9161_tx( rt_device_t dev, struct pbuf* p)
 	/* unlock DM9000 device */
 //    rt_sem_release(&sem_lock);
 
-    /* wait ack */
+	/* wait ack */
 //    rt_sem_take(&sem_ack, RT_WAITING_FOREVER);
 
-    return RT_EOK;
+	return RT_EOK;
 }
 
 /* reception packet. */
@@ -595,36 +609,36 @@ struct pbuf *rt_dm9161_rx(rt_device_t dev)
 	struct pbuf* p = RT_NULL;
 
 	/* lock DM9000 device */
-    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
-	while(1)
+	while (1)
 	{
 	
 		address = MAC_TX_BD +  (MAX_TX_DESCR + i) * 8;
 		temp_rx_bd = sep_emac_read(address);
 	
-		if(!(temp_rx_bd & 0x8000))
+		if (!(temp_rx_bd & 0x8000))
 		{
 			length = temp_rx_bd;
 			length = length >> 16;
-	
-			p_recv = (unsigned char*)(ESRAM_BASE + (MAX_TX_DESCR + i) * 0x600);
+
+			p_recv = (unsigned char *)(ESRAM_BASE + (MAX_TX_DESCR + i) * 0x600);
 			p = pbuf_alloc(PBUF_LINK,length,PBUF_RAM);
-			if(p != RT_NULL)
+			if (p != RT_NULL)
 			{
-				struct pbuf* q;
+				struct pbuf *q;
 				rt_int32_t len;
-	
-				for(q = p;q != RT_NULL;q = q->next)
+
+				for (q = p; q != RT_NULL; q = q->next)
 				{
-					rt_memcpy((rt_uint8_t*)(q->payload),p_recv,q->len);
+					rt_memcpy((rt_uint8_t *)(q->payload),p_recv,q->len);
 				}
 			}
 			else
 			{
 				 rt_kprintf("Droping %d packet \n",length);
 			}
-	
+
 			if(i == (MAX_RX_DESCR-1))
 			{
 				sep_emac_write(address,0xe000);
@@ -640,51 +654,49 @@ struct pbuf *rt_dm9161_rx(rt_device_t dev)
 			break;
 	}
 
-	 rt_sem_release(&sem_lock);
+	rt_sem_release(&sem_lock);
 
-	
 	return p;
 }
-
 
 void rt_hw_dm9161_init()
 {
 	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
-    dm9161_device.type  = TYPE_DM9161;
+	dm9161_device.type  = TYPE_DM9161;
 	dm9161_device.mode	= DM9161_AUTO;
 	dm9161_device.packet_cnt = 0;
 	dm9161_device.queue_packet_len = 0;
 
-    /*
-     * SRAM Tx/Rx pointer automatically return to start address,
-     * Packet Transmitted, Packet Received
-     */
+	/*
+	 * SRAM Tx/Rx pointer automatically return to start address,
+	 * Packet Transmitted, Packet Received
+	 */
 	#warning NOTICE:
-    //dm9161_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
+	//dm9161_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
 
-    dm9161_device.dev_addr[0] = 0x01;
-    dm9161_device.dev_addr[1] = 0x60;
-    dm9161_device.dev_addr[2] = 0x6E;
-    dm9161_device.dev_addr[3] = 0x11;
-    dm9161_device.dev_addr[4] = 0x02;
-    dm9161_device.dev_addr[5] = 0x0F;
+	dm9161_device.dev_addr[0] = 0x01;
+	dm9161_device.dev_addr[1] = 0x60;
+	dm9161_device.dev_addr[2] = 0x6E;
+	dm9161_device.dev_addr[3] = 0x11;
+	dm9161_device.dev_addr[4] = 0x02;
+	dm9161_device.dev_addr[5] = 0x0F;
 
-    dm9161_device.parent.parent.init       = rt_dm9161_init;
-    dm9161_device.parent.parent.open       = rt_dm9161_open;
-    dm9161_device.parent.parent.close      = rt_dm9161_close;
-    dm9161_device.parent.parent.read       = rt_dm9161_read;
-    dm9161_device.parent.parent.write      = rt_dm9161_write;
-    dm9161_device.parent.parent.control    = rt_dm9161_control;
-    dm9161_device.parent.parent.user_data  = RT_NULL;
+	dm9161_device.parent.parent.init       = rt_dm9161_init;
+	dm9161_device.parent.parent.open       = rt_dm9161_open;
+	dm9161_device.parent.parent.close      = rt_dm9161_close;
+	dm9161_device.parent.parent.read       = rt_dm9161_read;
+	dm9161_device.parent.parent.write      = rt_dm9161_write;
+	dm9161_device.parent.parent.control    = rt_dm9161_control;
+	dm9161_device.parent.parent.user_data  = RT_NULL;
 
-    dm9161_device.parent.eth_rx     = rt_dm9161_rx;
-    dm9161_device.parent.eth_tx     = rt_dm9161_tx;
+	dm9161_device.parent.eth_rx     = rt_dm9161_rx;
+	dm9161_device.parent.eth_tx     = rt_dm9161_tx;
 
-    eth_device_init(&(dm9161_device.parent), "e0");
+	eth_device_init(&(dm9161_device.parent), "e0");
 
-    /* instal interrupt */
+	/* instal interrupt */
 	#warning TODO
 	//rt_hw_interrupt_install(INTEINT4_7, rt_dm9161_isr, RT_NULL);
 	//rt_hw_interrupt_umask(INTEINT4_7);

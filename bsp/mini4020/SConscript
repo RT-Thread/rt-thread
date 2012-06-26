@@ -1,9 +1,12 @@
-import rtconfig
-Import('RTT_ROOT')
 from building import *
 
-src	= Glob('*.c')
-CPPPATH = [RTT_ROOT + '/bsp/mini4020']
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+cwd  = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
 
-Return('group')
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')

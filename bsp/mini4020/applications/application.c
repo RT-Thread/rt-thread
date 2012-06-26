@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -14,8 +14,9 @@
  */
 
 /**
- * @addtogroup mini2440
+ * @addtogroup mini4020
  */
+ 
 /*@{*/
 
 #include <board.h>
@@ -27,13 +28,15 @@
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 #endif
+
 #ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
 extern void radio_rtgui_init(void);
 #endif
+
 #define RT_INIT_THREAD_STACK_SIZE (2*1024)
 
-void rt_init_thread_entry(void* parameter)
+void rt_init_thread_entry(void *parameter)
 {
 	int fd;
 	rt_uint32_t sz;
@@ -57,21 +60,21 @@ void rt_init_thread_entry(void* parameter)
 
 		sz = write(fd,"Hello RT-Thread!",sizeof("Hello RT-Thread!"));
 
-		if(sz!=0)
+		if (sz != 0)
 		{
 			rt_kprintf("written %d\n",sz);
 		}
 		else
 			rt_kprintf("haven't written\n");
 
-		lseek(fd,0,SEEK_SET);
+		lseek(fd, 0, SEEK_SET);
 		
-		sz = read(fd,buffer,sizeof(buffer));
+		sz = read(fd, buffer, sizeof(buffer));
 
-		if(sz!=0)
+		if (sz != 0)
 		{
 			rt_kprintf("READ %d:",sz);
-			while(sz--)
+			while (sz--)
 				rt_kprintf("%c",buffer[sz]);//opposite
 			rt_kprintf("\n");
 		}
@@ -86,9 +89,9 @@ void rt_init_thread_entry(void* parameter)
 #endif
 }
 
-void rt_led_thread_entry(void* parameter)
+void rt_led_thread_entry(void *parameter)
 {
- /*
+/*
     while (1)
     {
         count++;
@@ -103,11 +106,10 @@ void rt_led_thread_entry(void* parameter)
 }
 
 
-int rt_application_init()
+int rt_application_init(void)
 {
 	rt_thread_t init_thread;
 	rt_thread_t led_thread;
-
 
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
@@ -121,6 +123,7 @@ int rt_application_init()
 
 	if (led_thread != RT_NULL)
 		rt_thread_startup(led_thread);
+	
 	return 0;
 }
 

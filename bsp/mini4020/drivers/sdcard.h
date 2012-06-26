@@ -1,3 +1,15 @@
+/*
+ * File      : sdcard.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 
 #ifndef __SDCARD_H
 #define __SDCARD_H
@@ -15,8 +27,8 @@
 /*struct of the SDC*/
 struct 	sd_c
 {
- 	__IO rt_uint32_t	clk_ctl;  		 
- 	__IO rt_uint32_t	soft_rst;
+	__IO rt_uint32_t	clk_ctl;
+	__IO rt_uint32_t	soft_rst;
 	__IO rt_uint32_t	arg;
 	__IO rt_uint32_t	cmd;
 	__IO rt_uint32_t	blk_sz;
@@ -43,8 +55,6 @@ struct	sd_device
 	rt_uint32_t		part_num;	/*partiont numbers*/
 	rt_uint32_t		buf_size;	/*buffer size*/
 };
-
-
 
 #endif
 #endif
