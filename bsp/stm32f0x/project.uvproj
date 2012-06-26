@@ -348,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\drivers\include;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;Libraries\CMSIS\Include;Libraries\CMSIS\ST\STM32F0xx\Include;Libraries\STM32F0xx_StdPeriph_Driver\inc;applications;drivers</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;Libraries\CMSIS\Include;Libraries\CMSIS\ST\STM32F0xx\Include;Libraries\STM32F0xx_StdPeriph_Driver\inc;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -544,11 +544,6 @@
               <FilePath>..\..\src\clock.c</FilePath>
             </File>
             <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
@@ -567,16 +562,6 @@
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
-            </File>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
             <File>
               <FileName>object.c</FileName>
@@ -629,9 +614,6 @@
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>DeviceDrivers</GroupName>
         </Group>
       </Groups>
     </Target>
