@@ -248,18 +248,22 @@ void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
 
 void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 {
-	int i;
+	int x,y;
 
-	for (i = rect->x1; i < rect->x2; i += 2)
+	for (x=rect->x1; x<rect->x2-1; x++)
 	{
-		rtgui_dc_draw_point(dc, i, rect->y1);
-		rtgui_dc_draw_point(dc, i, rect->y2 - 1);
+		if ((x+rect->y1)&0x01)
+			rtgui_dc_draw_point(dc, x, rect->y1);
+		if ((x+rect->y2-1)&0x01)
+			rtgui_dc_draw_point(dc, x, rect->y2-1);
 	}
 
-	for (i = rect->y1; i < rect->y2; i += 2)
+	for (y=rect->y1; y<rect->y2; y++)
 	{
-		rtgui_dc_draw_point(dc, rect->x1, i);
-		rtgui_dc_draw_point(dc, rect->x2 - 1, i);
+		if ((rect->x1+y)&0x01)
+			rtgui_dc_draw_point(dc, rect->x1, y);
+		if ((rect->x2-1+y)&0x01)
+			rtgui_dc_draw_point(dc, rect->x2-1, y);
 	}
 }
 
