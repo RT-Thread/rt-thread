@@ -1,21 +1,17 @@
 import os
 
-# panel options
-# 'PNL_A70','PNL_N35', 'PNL_T35'
-RT_USING_LCD_TYPE = 'PNL_T35'
-
 # toolchains options
-ARCH     = 'arm'
-CPU      = 'AT91SAM7X'
+ARCH = 'arm'
+CPU  = 'AT91SAM7X'
 
-CROSS_TOOL 	= 'gcc'
+CROSS_TOOL = 'gcc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 
-if  CROSS_TOOL == 'gcc':
+if CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'

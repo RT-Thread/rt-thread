@@ -4,9 +4,6 @@
 //#define DM9161
 #define RTL8201 
 
-
-
-
 #ifdef 	 DM9161
    #define AT91C_PHY_ADDR	31
 #else
@@ -93,7 +90,6 @@
 #define DM9161_RESTART_AUTONEG   (1 << 9)  // 1 = Restart auto-negotiation 0 = Normal operation
 #define DM9161_DUPLEX_MODE       (1 << 8)  // 1 = Full duplex operation 0 = Normal operation
 #define DM9161_COLLISION_TEST    (1 << 7)  // 1 = Collision test enabled 0 = Normal operation
-
 
 #define DM9161_NP               (1 << 15) // Next page Indication
 #define DM9161_ACK              (1 << 14) // Acknowledge

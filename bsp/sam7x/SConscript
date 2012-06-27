@@ -1,19 +1,12 @@
-import rtconfig
-Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c']
-src_drv = ['serial.c']
+cwd  = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
 
-if GetDepend('RT_USING_DFS'):
-	src_drv += ['sd.c']
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-if GetDepend('RT_USING_LWIP'):
-	src_drv += ['sam7x_emac.c']
-
-
-src	= File(src_bsp + src_drv)
-CPPPATH = [RTT_ROOT + '/bsp/sam7x']
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
-
-Return('group')
+Return('objs')

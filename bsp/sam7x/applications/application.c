@@ -31,6 +31,8 @@
 
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
+#include <netif/ethernetif.h>
+#include "sam7x_emac.h"
 #endif
 
 #ifdef RT_USING_RTGUI

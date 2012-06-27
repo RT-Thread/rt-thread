@@ -61,6 +61,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -346,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\finsh;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\AT91SAM7X;..\..\libcpu\arm\common</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\AT91SAM7X;..\..\libcpu\arm\common;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,32 +386,37 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Startup</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\serial.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
               <FileName>sam7x_emac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sam7x_emac.c</FilePath>
+              <FilePath>drivers\sam7x_emac.c</FilePath>
+            </File>
+            <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -450,11 +457,6 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
