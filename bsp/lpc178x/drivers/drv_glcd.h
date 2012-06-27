@@ -23,6 +23,10 @@
 #ifndef __GLCD_DRV_H
 #define __GLCD_DRV_H
 
+#ifndef EOF
+#define EOF (-1)
+#endif
+
 typedef unsigned long U32;
 typedef unsigned char U8;
 typedef unsigned long Boolean;
