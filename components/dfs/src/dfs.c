@@ -142,10 +142,10 @@ struct dfs_fd *fd_get(int fd)
 	struct dfs_fd *d;
 
 #ifdef DFS_USING_STDIO
-	if (fd < 3 || fd > DFS_FD_MAX + 3) 
+	if (fd < 3 || fd >= DFS_FD_MAX + 3)
 		return RT_NULL;
 #else
-	if (fd < 0 || fd > DFS_FD_MAX) 
+	if (fd < 0 || fd >= DFS_FD_MAX)
 		return RT_NULL;
 #endif
 
@@ -166,6 +166,8 @@ struct dfs_fd *fd_get(int fd)
  */
 void fd_put(struct dfs_fd *fd)
 {
+	RT_ASSERT(fd != RT_NULL);
+
 	dfs_lock();
 	fd->ref_count --;
 

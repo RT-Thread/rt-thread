@@ -38,7 +38,10 @@ int open(const char *file, int flags, int mode)
 	/* allocate a fd */
 	fd = fd_new();
 	if (fd < 0)
+	{
+		rt_set_errno(-DFS_STATUS_ENOMEM);
 		return -1;
+	}
 	d  = fd_get(fd);
 
 	result = dfs_file_open(d, file, flags);
@@ -74,7 +77,7 @@ int close(int fd)
 	d = fd_get(fd);
 	if (d == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -110,7 +113,7 @@ int read(int fd, void *buf, size_t len)
 	d  = fd_get(fd);
 	if (d == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -147,7 +150,7 @@ int write(int fd, const void *buf, size_t len)
 	d  = fd_get(fd);
 	if (d == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -183,7 +186,7 @@ off_t lseek(int fd, off_t offset, int whence)
 	d = fd_get(fd);
 	if (d == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -304,7 +307,7 @@ int fstat(int fildes, struct stat *buf)
 	d = fd_get(fildes);
 	if (d == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -368,7 +371,7 @@ int mkdir(const char *path, mode_t mode)
 	fd = fd_new();
 	if (fd == -1)
 	{
-		rt_kprintf("no fd\n");
+		rt_set_errno(-DFS_STATUS_ENOMEM);
 		return -1;
 	}
 
@@ -432,7 +435,7 @@ DIR *opendir(const char *name)
 	fd = fd_new();
 	if (fd == -1)
 	{
-		rt_kprintf("no fd\n");
+		rt_set_errno(-DFS_STATUS_ENOMEM);
 		return RT_NULL;
 	}
 	d = fd_get(fd);
@@ -481,7 +484,7 @@ struct dirent *readdir(DIR *d)
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return RT_NULL;
 	}
 
@@ -521,7 +524,7 @@ long telldir(DIR *d)
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return 0;
 	}
 
@@ -545,7 +548,7 @@ void seekdir(DIR *d, off_t offset)
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return ;
 	}
 
@@ -567,7 +570,7 @@ void rewinddir(DIR *d)
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return ;
 	}
 
@@ -593,7 +596,7 @@ int closedir(DIR *d)
 	fd = fd_get(d->fd);
 	if (fd == RT_NULL)
 	{
-		rt_set_errno(-RT_ERROR);
+		rt_set_errno(-DFS_STATUS_EBADF);
 		return -1;
 	}
 
@@ -633,11 +636,17 @@ int chdir(const char *path)
 	}
 
 	if (rt_strlen(path) > DFS_PATH_MAX)
+	{
+		rt_set_errno(-DFS_STATUS_ENOTDIR);
 		return -1;
+	}
 
 	fullpath = dfs_normalize_path(NULL, path);
 	if (fullpath == RT_NULL)
+	{
+		rt_set_errno(-DFS_STATUS_ENOTDIR);
 		return -1; /* build path failed */
+	}
 
 	dfs_lock();
 	d = opendir(fullpath);

@@ -60,7 +60,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 	dfs_log(DFS_DEBUG_INFO, ("open in filesystem:%s", fs->ops->name));
 	fd->fs = fs;
 
-	/* initilize the fd item */
+	/* initialize the fd item */
 	fd->type = FT_REGULAR;
 	fd->flags = flags;
 	fd->size = 0;
