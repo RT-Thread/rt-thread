@@ -12,10 +12,10 @@ if os.getenv('RTT_CC'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'E:/Keil'
+	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'
@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m0 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
@@ -103,7 +103,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_scheduling' 
     CFLAGS += ' --debug' 
     CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M4' 
+    CFLAGS += ' --cpu=Cortex-M0' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
@@ -114,10 +114,10 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M4' 
+    AFLAGS += ' --cpu Cortex-M0' 
     AFLAGS += ' --fpu None' 
 
-    LFLAGS = ' --config stm32f10x_flash.icf'
+    LFLAGS = ' --config stm32f0xx_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    

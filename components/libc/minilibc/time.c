@@ -205,6 +205,7 @@ char *ctime(const time_t *timep)
 	return asctime(localtime(timep));
 }
 
+#ifdef RT_USING_DEVICE
 int gettimeofday(struct timeval *tp, void *ignore)
 {
 	time_t time;
@@ -225,3 +226,4 @@ int gettimeofday(struct timeval *tp, void *ignore)
 
 	return 0;
 }
+#endif

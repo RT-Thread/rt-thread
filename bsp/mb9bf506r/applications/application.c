@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -62,7 +62,8 @@ int rt_application_init(void)
 	tid = rt_thread_create("init",
 			rt_init_thread_entry, RT_NULL,
 			2048, RT_THREAD_PRIORITY_MAX/3, 20);
-	if (tid != RT_NULL) rt_thread_startup(tid);
+	if (tid != RT_NULL)
+		rt_thread_startup(tid);
 
 	return 0;
 }

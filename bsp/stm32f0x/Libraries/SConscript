@@ -12,17 +12,6 @@ CMSIS/ST/STM32F0xx/Source/Templates/system_stm32f0xx.c
 
 src += Glob('STM32F0xx_StdPeriph_Driver/src/*.c')
 
-# starupt scripts for each STM32 kind
-# startup_scripts = {}
-# startup_scripts['STM32F10X_CL']     = 'startup_stm32f10x_cl.s'
-# startup_scripts['STM32F10X_HD']     = 'startup_stm32f10x_hd.s'
-# startup_scripts['STM32F10X_HD_VL']  = 'startup_stm32f10x_hd_vl.s'
-# startup_scripts['STM32F10X_LD']     = 'startup_stm32f10x_ld.s'
-# startup_scripts['STM32F10X_LD_VL']  = 'startup_stm32f10x_ld_vl.s'
-# startup_scripts['STM32F10X_MD']     = 'startup_stm32f10x_md.s'
-# startup_scripts['STM32F10X_MD_VL']  = 'startup_stm32f10x_md_vl.s'
-# startup_scripts['STM32F10X_XL']	    = 'startup_stm32f10x_xl.s'
-
 #add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
      src = src + ['CMSIS/ST/STM32F0xx/Source/Templates/gcc_ride7/startup_stm32f0xx.s']

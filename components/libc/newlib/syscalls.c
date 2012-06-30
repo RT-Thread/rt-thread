@@ -193,6 +193,7 @@ _wait_r(struct _reent *ptr, int *status)
 	return -1;
 }
 
+#ifdef RT_USING_DEVICE
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
@@ -214,6 +215,7 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 	return rc;
 #endif
 }
+#endif
 
 #ifndef RT_USING_PTHREADS
 
@@ -235,26 +237,28 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 
 
 struct timeval _timevalue = {0};
-static void libc_system_time_init()
+#ifdef RT_USING_DEVICE
+static void libc_system_time_init(void)
 {
-    time_t time;
-    rt_tick_t tick;
-    rt_device_t device;
+	time_t time;
+	rt_tick_t tick;
+	rt_device_t device;
 
-    time = 0;
-    device = rt_device_find("rtc");
-    if (device != RT_NULL)
-    {
+	time = 0;
+	device = rt_device_find("rtc");
+	if (device != RT_NULL)
+	{
 		/* get realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
-    }
+		rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+	}
 
 	/* get tick */
-    tick = rt_tick_get();
+	tick = rt_tick_get();
 
-    _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
-    _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+	_timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+	_timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
 }
+#endif
 
 int libc_get_time(struct timespec *time)
 {
@@ -376,7 +380,7 @@ void
 _exit (int status)
 {
 	rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
-    RT_ASSERT(0);
+	RT_ASSERT(0);
 
-    while (1);
+	while (1);
 }
