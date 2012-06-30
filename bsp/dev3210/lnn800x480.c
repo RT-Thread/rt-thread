@@ -1,7 +1,7 @@
 /*
- * File      : lcd_800480.c
+ * File      : lnn800x480.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Develop Team
+ * COPYRIGHT (C) 2010 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -77,10 +77,11 @@ static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
-void rt_hw_lcd_init()
+void rt_hw_lcd_init(void)
 {
 	rt_device_t lcd = rt_malloc(sizeof(struct rt_device));
-	if (lcd == RT_NULL) return; /* no memory yet */
+	if (lcd == RT_NULL)
+		return; /* no memory yet */
 
 	_lcd_info.bits_per_pixel = 16;
 	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;

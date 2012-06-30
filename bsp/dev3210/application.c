@@ -1,7 +1,7 @@
 /*
- * File      : app.c
+ * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -32,7 +32,7 @@
 #include <rtgui/rtgui_server.h>
 #endif
 
-void rt_init_thread_entry(void* parameter)
+void rt_init_thread_entry(void *parameter)
 {
 	/* Filesystem Initialization */
 #ifdef RT_USING_DFS
@@ -89,30 +89,31 @@ void rt_init_thread_entry(void* parameter)
 		rect.y1 = 0;
 		rect.x2 = 400;
 		rect.y2 = 480;
-		rtgui_panel_register("panel", &rect);
+//		rtgui_panel_register("panel", &rect);
 
 		/* register main panel */
 		rect.x1 = 400;
 		rect.y1 = 0;
 		rect.x2 = 800;
 		rect.y2 = 480;
-		rtgui_panel_register("main", &rect);
-		rtgui_panel_set_default_focused("main");
+//		rtgui_panel_register("main", &rect);
+//		rtgui_panel_set_default_focused("main");
 
 		rt_hw_lcd_init();
 	}
 #endif
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
 	rt_thread_t tid;
 
 	/* create initialization thread */
 	tid = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								4096, 8, 20);
-	if (tid != RT_NULL) rt_thread_startup(tid);
+							rt_init_thread_entry, RT_NULL,
+							4096, 8, 20);
+	if (tid != RT_NULL)
+		rt_thread_startup(tid);
 
 	return 0;
 }

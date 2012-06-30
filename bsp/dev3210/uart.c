@@ -1,3 +1,16 @@
+/*
+ * File      : uart.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -50,9 +63,9 @@ static void rt_uart_irqhandler(int irqno)
 {
 	rt_ubase_t level;
 	rt_uint8_t isr;
-    struct rt_uart_soc3210* uart = &uart_device;
+	struct rt_uart_soc3210* uart = &uart_device;
 
-    /* read interrupt status and clear it */
+	/* read interrupt status and clear it */
 	isr = UART_IIR(uart->hw_base);
 	isr = (isr >> 1) & 0x3;
 
@@ -71,7 +84,7 @@ static void rt_uart_irqhandler(int irqno)
 		}
 
 		/* invoke callback */
-		if(uart->parent.rx_indicate != RT_NULL)
+		if (uart->parent.rx_indicate != RT_NULL)
 		{
 			rt_size_t length;
 			if (uart->read_index > uart->save_index)
@@ -149,10 +162,10 @@ static rt_err_t rt_uart_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-	rt_uint8_t* ptr;
-	struct rt_uart_soc3210 *uart = (struct rt_uart_soc3210*)dev;
+	rt_uint8_t *ptr;
+	struct rt_uart_soc3210 *uart = (struct rt_uart_soc3210 *)dev;
 
 	RT_ASSERT(uart != RT_NULL);
 
@@ -197,14 +210,14 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
 	return 0;
 }
 
-static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
 	char *ptr;
-	struct rt_uart_soc3210 *uart = (struct rt_uart_soc3210*)dev;
+	struct rt_uart_soc3210 *uart = (struct rt_uart_soc3210 *)dev;
 
 	RT_ASSERT(uart != RT_NULL);
 
-	ptr = (char*)buffer;
+	ptr = (char *)buffer;
 
 	if (dev->flag & RT_DEVICE_FLAG_STREAM)
 	{
@@ -230,7 +243,7 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
 	}
 	else
 	{
-		while ( size != 0 )
+		while (size != 0)
 		{
 			/* FIFO status, contain valid data */
 			while (!(UART_LSR(uart->hw_base) & (UARTLSR_TE | UARTLSR_TFE)));
@@ -248,7 +261,7 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
 
 void rt_hw_uart_init(void)
 {
-	struct rt_uart_soc3210* uart;
+	struct rt_uart_soc3210 *uart;
 
 	/* get uart device */
 	uart = &uart_device;
