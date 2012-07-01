@@ -3033,8 +3033,20 @@ FRESULT f_seekdir(
 	int offset		/* the seek offset */
 )
 {
-	return dir_sdi(dj, offset);				/* seek directory index to offset */
+	int i = 0;
+
+	if (dir_sdi(dj, 0) != FR_OK || offset < 0)
+		return FR_INT_ERR;
+
+	while(i < offset)
+	{
+		if(dir_read(dj) != FR_OK || dir_next(dj, 0) != FR_OK)
+			return FR_INT_ERR;
+		i++;
+	} 
+	return FR_OK;
 }
+
 
 
 #if _FS_MINIMIZE == 0
