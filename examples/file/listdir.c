@@ -32,7 +32,7 @@ void list_dir(const char* path)
 			rt_memset(&s, 0, sizeof(struct stat));
 
 			/* build full path for each file */
-			rt_sprintf(fullpath, "/%s", dirent->d_name);
+			rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
 
 			stat(fullpath, &s);
 			if ( s.st_mode & DFS_S_IFDIR )
