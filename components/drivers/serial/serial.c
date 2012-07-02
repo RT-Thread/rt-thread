@@ -16,7 +16,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <drivers/serial.h>
+#include <rtdevice.h>
 
 rt_inline void serial_ringbuffer_init(struct serial_ringbuffer* rbuffer)
 {

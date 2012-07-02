@@ -48,6 +48,7 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer* rb,
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer* rb,
                             rt_uint8_t *ptr,
                             rt_uint16_t length);
+rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer* rb, rt_uint8_t *ch);
 rt_size_t rt_ringbuffer_available_size(struct rt_ringbuffer* rb);
 rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 

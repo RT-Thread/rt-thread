@@ -1,5 +1,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <string.h>
 
 void rt_ringbuffer_init(struct rt_ringbuffer* rb, rt_uint8_t *pool, rt_uint16_t size)
 {
@@ -10,47 +11,45 @@ void rt_ringbuffer_init(struct rt_ringbuffer* rb, rt_uint8_t *pool, rt_uint16_t 
 
 	/* set buffer pool and size */
 	rb->buffer_ptr = pool;
-	rb->buffer_size = size;
+	rb->buffer_size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 }
 
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer* rb, const rt_uint8_t *ptr, rt_uint16_t length)
 {
-	rt_size_t size;
+	rt_uint16_t size;
+	rt_uint16_t mask;
 
 	RT_ASSERT(rb != RT_NULL);
 
+	mask = rb->buffer_size - 1;
 	/* whether has enough space */
-	if (rb->read_index > rb->write_index)
-		size = rb->read_index - rb->write_index;
-	else
-		size = rb->buffer_size - rb->write_index + rb->read_index;
+	size = rb->buffer_size - ((rb->write_index - rb->read_index) & mask);
 
 	/* no space */
 	if (size == 0) return 0;
-
 	/* drop some data */
 	if (size < length) length = size;
 
 	if (rb->read_index > rb->write_index)
 	{
 		/* read_index - write_index = empty space */
-		rt_memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
+		memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
 		rb->write_index += length;
 	}
 	else
 	{
-		if (rb->buffer_size - rb->write_index > length)
+		if (rb->buffer_size - rb->write_index >= length)
 		{
 			/* there is enough space after write_index */
-			rt_memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
-			rb->write_index += length;
+			memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
+			rb->write_index = (rb->write_index + length) & mask;
 		}
 		else
 		{
-			rt_memcpy(&rb->buffer_ptr[rb->write_index], ptr,
-				   rb->buffer_size - rb->write_index);
-			rt_memcpy(&rb->buffer_ptr[0], &ptr[rb->buffer_size - rb->write_index],
-				   length - (rb->buffer_size - rb->write_index));
+			memcpy(&rb->buffer_ptr[rb->write_index], ptr,
+					rb->buffer_size - rb->write_index);
+			memcpy(&rb->buffer_ptr[0], &ptr[rb->buffer_size - rb->write_index],
+					length - (rb->buffer_size - rb->write_index));
 			rb->write_index = length - (rb->buffer_size - rb->write_index);
 		}
 	}
@@ -64,11 +63,12 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer* rb, const rt_uint8_t *ptr, rt_
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer* rb, const rt_uint8_t ch)
 {
 	rt_uint16_t next;
+	rt_uint16_t mask;
 
 	RT_ASSERT(rb != RT_NULL);
 	/* whether has enough space */
-	next = rb->write_index + 1;
-	if (next >= rb->buffer_size) next = 0;
+	mask = rb->buffer_size - 1;
+	next = (rb->write_index + 1) & mask;
 
 	if (next == rb->read_index) return 0;
 
@@ -85,45 +85,64 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer* rb, const rt_uint8_t ch)
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer* rb, rt_uint8_t *ptr, rt_uint16_t length)
 {
 	rt_size_t size;
+	rt_uint16_t mask;
 
 	RT_ASSERT(rb != RT_NULL);
 	/* whether has enough data  */
-	if (rb->read_index > rb->write_index)
-		size = rb->buffer_size - rb->read_index + rb->write_index;
-	else
-		size = rb->write_index - rb->read_index;
+	mask = rb->buffer_size - 1;
+	size = (rb->write_index - rb->read_index) & mask;
 
 	/* no data */
 	if (size == 0) return 0;
-
 	/* less data */
 	if (size < length) length = size;
 
 	if (rb->read_index > rb->write_index)
 	{
-		if (rb->buffer_size - rb->read_index > length)
+		if (rb->buffer_size - rb->read_index >= length)
 		{
 			/* copy directly */
-			rt_memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
-			rb->read_index += length;
+			memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
+			rb->read_index = (rb->read_index + length) & mask;
 		}
 		else
 		{
 			/* copy first and second */
-			rt_memcpy(ptr, &rb->buffer_ptr[rb->read_index],
+			memcpy(ptr, &rb->buffer_ptr[rb->read_index],
 				   rb->buffer_size - rb->read_index);
-			rt_memcpy(&ptr[rb->buffer_size - rb->read_index], &rb->buffer_ptr[0],
+			memcpy(&ptr[rb->buffer_size - rb->read_index], &rb->buffer_ptr[0],
 				   length - rb->buffer_size + rb->read_index);
 			rb->read_index = length - rb->buffer_size + rb->read_index;
 		}
 	}
 	else
 	{
-		rt_memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
+		memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
 		rb->read_index += length;
 	}
 
 	return length;
+}
+
+rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer* rb, rt_uint8_t *ch)
+{
+	rt_uint16_t next;
+	rt_uint16_t mask;
+
+	RT_ASSERT(rb != RT_NULL);
+	
+	/* ringbuffer is empty */
+	if (rb->read_index == rb->write_index) return 0;
+
+	/* whether has data */
+	mask = rb->buffer_size - 1;
+	next = (rb->read_index + 1) & mask;
+
+	/* put character */
+	*ch = rb->buffer_ptr[rb->read_index];
+	rb->read_index = next;
+
+	return 1;
 }
 
 /**
@@ -132,12 +151,12 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer* rb, rt_uint8_t *ptr, rt_uint16
 rt_size_t rt_ringbuffer_available_size(struct rt_ringbuffer* rb)
 {
 	rt_size_t size;
+	rt_uint16_t mask;
 
 	RT_ASSERT(rb != RT_NULL);
-	if (rb->read_index > rb->write_index)
-		size = rb->buffer_size - rb->read_index + rb->write_index;
-	else
-		size = rb->write_index - rb->read_index;
+
+	mask = rb->buffer_size - 1;
+	size = (rb->write_index - rb->read_index) & mask;
 
 	/* return the available size */
 	return size;
