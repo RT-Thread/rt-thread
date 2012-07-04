@@ -16,7 +16,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "lpc17xx.h"
+#include "LPC17xx.h"
 #include "board.h"
 
 #ifdef RT_USING_DFS
