@@ -190,6 +190,10 @@ typedef rt_uint16_t mode_t;
 #endif
 
 #elif defined (__GNUC__)        			/* GNU GCC Compiler, with minilibc */
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 #endif
 
 #endif
