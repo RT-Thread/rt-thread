@@ -13,9 +13,7 @@
  */
 
 #include <rtthread.h>
-#include "core.h"
-#include "hcd.h"
-#include "hub.h"
+#include <drivers/usb_host.h>
 
 #define USB_THREAD_STACK_SIZE	2048
 
@@ -589,12 +587,12 @@ rt_err_t rt_usb_post_event(struct umsg* msg, rt_size_t size)
 }
 
 /**
- * This function will initialize usb system.
+ * This function will initialize usb hub thread.
  *
  * @return none.
  * 
  */
-void rt_usb_system_init(void)
+void rt_usb_hub_thread(void)
 {
 	rt_thread_t thread;
 	

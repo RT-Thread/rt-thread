@@ -13,10 +13,7 @@
  */
 
 #include <rtthread.h>
-#include <rtdevice.h>
-#include "driver.h"
-#include "core.h"
-#include "hcd.h"
+#include <drivers/usb_host.h>
 #include "adk.h"
 
 #ifdef RT_USB_CLASS_ADK

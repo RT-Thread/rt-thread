@@ -13,11 +13,7 @@
  */
 
 #include <rtthread.h>
-#include "usbhost.h"
-#include "core.h"
-#include "driver.h"
-#include "hcd.h"
-#include "hub.h"
+#include <drivers/usb_host.h>
 
 static struct uinstance uinst[USB_MAX_DEVICE];
 

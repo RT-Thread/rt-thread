@@ -12,9 +12,7 @@
  * 2011-3-12     Yi Qiu      first version
  */
 #include <rtthread.h>
-#include "usbhost.h"
-#include "core.h"
-#include "hub.h"
+#include <drivers/usb_host.h>
 
 #if defined(RT_USB_HID_KEYBOARD) || defined(RT_USB_HID_MOUSE)
 #include <hid.h>
@@ -26,16 +24,15 @@
  * 
  * @return none.
  */
-void rt_usbhost_init(void)
+void rt_usb_host_init(void)
 {
 	ucd_t drv;
-	rt_device_t dev;
 #ifdef RT_USB_CLASS_HID
 	uprotocal_t protocal;
 #endif
 
-	/* initialize usb hub */
-	rt_usb_system_init();
+	/* initialize usb hub thread */
+	rt_usb_hub_thread();
 
 	/* initialize class driver */
 	rt_usb_class_driver_init();
@@ -65,35 +62,13 @@ void rt_usbhost_init(void)
 #endif
 
 #ifdef RT_USB_CLASS_ADK
-		/* register adk class driver */
-		drv = rt_usb_class_driver_adk();
-		rt_usb_class_driver_register(drv);
+	/* register adk class driver */
+	drv = rt_usb_class_driver_adk();
+	rt_usb_class_driver_register(drv);
 #endif
 
 	/* register hub class driver */
 	drv = rt_usb_class_driver_hub();
 	rt_usb_class_driver_register(drv);
-
-#ifdef RT_USB_HCD_MUSB
-	/* register musb host controller driver */
-	dev = rt_usb_hcd_musb();
-	rt_device_register(dev, "musb", 0);
-	rt_device_init(dev);
-#endif
-	
-#ifdef RT_USB_HCD_OHCI
-	/* register ohci host controller driver */
-	dev = rt_usb_hcd_ohci();
-	rt_device_register(dev, "ohci", 0);
-	rt_device_init(dev);	
-#endif
-
-#ifdef RT_USB_HCD_STM32
-	/* register ohci host controller driver */
-	dev = rt_usb_hcd_susb();
-	rt_device_register(dev, "susb", 0);
-	rt_device_init(dev);	
-#endif
-
 }
 
