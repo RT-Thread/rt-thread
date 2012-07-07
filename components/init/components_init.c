@@ -85,19 +85,19 @@ void rt_components_init(void)
 #endif
 
 #ifdef RT_USING_DFS_YAFFS2
-	yaffs2_init();
+	dfs_yaffs2_init();
 #endif
 
 #ifdef RT_USING_DFS_UFFS
-	uffs_init();
+	dfs_uffs_init();
 #endif
 
 #ifdef RT_USING_DFS_JFFS2
-	jffs2_init();
+	dfs_jffs2_init();
 #endif
 
 #ifdef RT_USING_DFS_ROMFS
-	romfs_init();
+	dfs_romfs_init();
 #endif
 
 #ifdef RT_USING_DFS_DEVFS
@@ -115,6 +115,11 @@ void rt_components_init(void)
 
 #ifdef RT_USING_RTGUI
 	rtgui_system_server_init();
+#endif
+
+
+#ifdef RT_USING_USB_HOST
+	rt_usb_host_init();
 #endif
 
 	return;
