@@ -10,7 +10,7 @@ sdio.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [cwd]
+path = [cwd + '/../include']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
 

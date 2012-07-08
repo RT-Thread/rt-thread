@@ -15,8 +15,7 @@
 #ifndef __MMCSD_CARD_H__
 #define __MMCSD_CARD_H__
 
-#include "mmcsd_host.h"
-#include "sdio.h"
+#include <drivers/mmcsd_host.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,6 +92,39 @@ struct rt_sdio_cis {
 	rt_uint16_t		product;
 	rt_uint16_t		func0_blk_size;
 	rt_uint32_t		max_tran_speed;
+};
+
+/*
+ * SDIO function CIS tuple (unknown to the core)
+ */
+struct rt_sdio_function_tuple {
+	struct rt_sdio_function_tuple *next;
+	rt_uint8_t code;
+	rt_uint8_t size;
+	rt_uint8_t *data;
+};
+
+struct rt_sdio_function;
+typedef void (rt_sdio_irq_handler_t)(struct rt_sdio_function *);
+
+/*
+ * SDIO function devices
+ */
+struct rt_sdio_function {
+	struct rt_mmcsd_card		*card;		/* the card this device belongs to */
+	rt_sdio_irq_handler_t	*irq_handler;	/* IRQ callback */
+	rt_uint8_t		num;		/* function number */
+
+	rt_uint8_t		func_code;   /*  Standard SDIO Function interface code  */
+	rt_uint16_t		manufacturer;		/* manufacturer id */
+	rt_uint16_t		product;		/* product id */
+
+	rt_uint32_t		max_blk_size;	/* maximum block size */
+	rt_uint32_t		cur_blk_size;	/* current block size */
+
+	rt_uint32_t		enable_timeout_val; /* max enable timeout in msec */
+
+	struct rt_sdio_function_tuple *tuples;
 };
 
 #define SDIO_MAX_FUNCTIONS		7

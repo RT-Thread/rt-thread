@@ -12,8 +12,8 @@
  * 2011-07-25     weety		first version
  */
 
-#include "mmcsd_core.h"
-#include "mmcsd_cmd.h"
+#include <drivers/mmcsd_core.h>
+#include <drivers/sd.h>
 
 static const rt_uint32_t tran_unit[] = {
 	10000,		100000,		1000000,	10000000,

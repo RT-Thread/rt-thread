@@ -38,7 +38,7 @@
 #endif
 
 #ifdef RT_USING_SDIO
-#include <mmcsd_core.h>
+#include <drivers/mmcsd_core.h>
 #include "at91_mci.h"
 #endif
 

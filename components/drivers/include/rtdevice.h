@@ -90,4 +90,10 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 #include "drivers/pm.h"
 #endif
 
+#ifdef RT_USING_SDIO
+#include "drivers/mmcsd_core.h"
+#include "drivers/sd.h"
+#include "drivers/sdio.h"
+#endif
+
 #endif /* __RT_DEVICE_H__ */

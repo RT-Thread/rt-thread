@@ -13,10 +13,8 @@
  */
 
 #include <rtthread.h>
-#include "mmcsd_core.h"
-#include "mmcsd_card.h"
-#include "mmcsd_cmd.h"
-#include "sd.h"
+#include <drivers/mmcsd_core.h>
+#include <drivers/sd.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
 #define RT_MMCSD_STACK_SIZE 1024

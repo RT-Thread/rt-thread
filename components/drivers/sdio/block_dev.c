@@ -15,8 +15,7 @@
 #include <rtthread.h>
 #include <dfs_fs.h>
 
-#include "mmcsd_core.h"
-#include "mmcsd_cmd.h"
+#include <drivers/mmcsd_core.h>
 
 static rt_list_t blk_devices;
 

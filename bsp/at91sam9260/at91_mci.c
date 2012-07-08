@@ -14,7 +14,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <mmcsd_core.h>
+#include <drivers/mmcsd_core.h>
 #include <at91sam926x.h>
 #include "at91_mci.h"
 

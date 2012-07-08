@@ -15,7 +15,7 @@
  */
 
 #include <rtthread.h>
-#include "mmcsd_host.h"
+#include <drivers/mmcsd_host.h>
 
 #ifdef __cplusplus
 extern "C" {

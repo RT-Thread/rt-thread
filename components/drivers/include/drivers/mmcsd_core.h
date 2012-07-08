@@ -16,9 +16,9 @@
 #define __CORE_H__
 
 #include <rtthread.h>
-#include "mmcsd_host.h"
-#include "mmcsd_card.h"
-#include "mmcsd_cmd.h"
+#include <drivers/mmcsd_host.h>
+#include <drivers/mmcsd_card.h>
+#include <drivers/mmcsd_cmd.h>
 
 #ifdef __cplusplus
 extern "C" {

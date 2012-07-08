@@ -12,8 +12,8 @@
  * 2012-01-13     weety		first version
  */
 
-#include "mmcsd_core.h"
-#include "mmcsd_cmd.h"
+#include <drivers/mmcsd_core.h>
+#include <drivers/sdio.h>
 
 #ifndef RT_SDIO_STACK_SIZE
 #define RT_SDIO_STACK_SIZE 512
