@@ -74,7 +74,7 @@ const rtgui_type_t *rtgui_object_object_type_get(rtgui_object_t *object);
 
 #ifdef RTGUI_USING_CAST_CHECK
 	#define RTGUI_OBJECT_CAST(obj, obj_type, c_type) \
-		((c_type *)rtgui_object_check_cast((rtgui_object_t *)(obj), (obj_type)))
+		((c_type *)rtgui_object_check_cast((rtgui_object_t *)(obj), (obj_type), __FUNCTION__, __LINE__))
 #else
 	#define RTGUI_OBJECT_CAST(obj, obj_type, c_type)     ((c_type *)(obj))
 #endif
@@ -128,7 +128,7 @@ rt_bool_t rtgui_object_event_handler(struct rtgui_object *object, struct rtgui_e
 void       rtgui_object_name_set(rtgui_object_t *object, const char *name);
 const char *rtgui_object_name_get(rtgui_object_t *object);
 
-rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *object, rtgui_type_t *type);
+rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *object, rtgui_type_t *type, const char* func, int line);
 rtgui_type_t   *rtk_object_object_type_get(rtgui_object_t *object);
 
 #ifdef __cplusplus

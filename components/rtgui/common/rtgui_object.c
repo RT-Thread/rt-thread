@@ -155,13 +155,13 @@ void rtgui_object_destroy(rtgui_object_t *object)
  * @return Returns the object
  * @note You usually do not need to call this function, use specific macros instead (ETK_IS_WIDGET() for example)
  */
-rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *obj, rtgui_type_t *obj_type)
+rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *obj, rtgui_type_t *obj_type, const char* func, int line)
 {
 	if (!obj) return RT_NULL;
 
 	if (!rtgui_type_inherits_from(obj->type, obj_type))
 	{
-		rt_kprintf("Invalid cast from \"%s\" to \"%s\"\n", rtgui_type_name_get(obj->type), rtgui_type_name_get(obj_type));
+		rt_kprintf("%s[%d]: Invalid cast from \"%s\" to \"%s\"\n", func, line, rtgui_type_name_get(obj->type), rtgui_type_name_get(obj_type));
 	}
 
 	return obj;
