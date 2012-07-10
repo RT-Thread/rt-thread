@@ -61,12 +61,12 @@ void rt_components_init(void)
 
 #ifdef RT_USING_LWIP
 	/* initialize lwip stack */
-    /* register ethernetif device */
-    eth_system_device_init();
+	/* register ethernetif device */
+	eth_system_device_init();
 
-    /* initialize lwip system */
-    lwip_system_init();
-    rt_kprintf("TCP/IP initialized!\n");
+	/* initialize lwip system */
+	lwip_system_init();
+	rt_kprintf("TCP/IP initialized!\n");
 #endif
 
 #ifdef RT_USING_DFS
@@ -74,7 +74,7 @@ void rt_components_init(void)
 	dfs_init();
 
 #ifdef RT_USING_DFS_ELMFAT
-	/* initialize the elm chan FatFS file systam*/
+	/* initialize the elm chan FatFS file system*/
 	elm_init();
 #endif
 
@@ -116,7 +116,6 @@ void rt_components_init(void)
 #ifdef RT_USING_RTGUI
 	rtgui_system_server_init();
 #endif
-
 
 #ifdef RT_USING_USB_HOST
 	rt_usb_host_init();
