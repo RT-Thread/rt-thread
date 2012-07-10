@@ -1,7 +1,7 @@
 /*
  * File      : dfs_fs.c
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -27,7 +27,7 @@
  *
  * @param ops the file system instance to be registered.
  *
- * @return 0 on sucessful, -1 on failed.
+ * @return 0 on successful, -1 on failed.
  */
 int dfs_register(const struct dfs_filesystem_operation *ops)
 {
@@ -339,7 +339,7 @@ err1:
 }
 
 /**
- * this function will umount a file system on specified path.
+ * this function will unmount a file system on specified path.
  *
  * @param specialfile the specified path which mounted a file system.
  *
@@ -438,7 +438,7 @@ int dfs_statfs(const char *path, struct statfs *buffer)
 	fs = dfs_filesystem_lookup(path);
 	if (fs != NULL)
 	{
-		if (fs->ops->statfs!= RT_NULL)
+		if (fs->ops->statfs != RT_NULL)
 			return fs->ops->statfs(fs, buffer);
 	}
 
