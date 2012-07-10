@@ -12,10 +12,6 @@
 
 #include <string.h>
 
-/* introduce from kservice.c */
-#define rt_list_entry(node, type, member) \
-    ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
-
 static err_t netif_device_init(struct netif *netif)
 {
 	struct eth_device *ethif;
