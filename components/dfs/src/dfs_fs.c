@@ -436,7 +436,7 @@ int dfs_statfs(const char *path, struct statfs *buffer)
 	struct dfs_filesystem *fs;
 
 	fs = dfs_filesystem_lookup(path);
-	if (fs != NULL)
+	if (fs != RT_NULL)
 	{
 		if (fs->ops->statfs != RT_NULL)
 			return fs->ops->statfs(fs, buffer);

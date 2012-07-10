@@ -313,7 +313,7 @@ int dfs_file_flush(struct dfs_fd *fd)
  * this function will seek the offset for specified file descriptor.
  *
  * @param fd the file descriptor.
- * @param offset the offset to be seeked.
+ * @param offset the offset to be sought.
  *
  * @return the current position after seek.
  */
