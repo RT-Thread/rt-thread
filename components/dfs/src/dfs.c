@@ -1,7 +1,7 @@
 /*
  * File      : dfs.c
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -38,6 +38,7 @@ struct dfs_fd fd_table[DFS_FD_MAX];
 /**
  * @addtogroup DFS
  */
+
 /*@{*/
 
 /**
@@ -204,6 +205,7 @@ int fd_is_open(const char *pathname)
 		{
 			/* can't find mounted file system */
 			rt_free(fullpath);
+
 			return -1;
 		}
 
@@ -225,6 +227,7 @@ int fd_is_open(const char *pathname)
 				/* found file in file descriptor table */
 				rt_free(fullpath);
 				dfs_unlock();
+
 				return 0;
 			}
 		}
@@ -256,6 +259,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
 	{
 		dir --;
 	}
+
 	return dir;
 }
 
@@ -276,12 +280,13 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 	RT_ASSERT(filename != RT_NULL);
 
 #ifdef DFS_USING_WORKDIR
-	if (directory == NULL) /* shall use working directory */
+	if (directory == RT_NULL) /* shall use working directory */
 		directory = &working_directory[0];
 #else
-	if ((directory == NULL) && (filename[0] != '/'))
+	if ((directory == RT_NULL) && (filename[0] != '/'))
 	{
 		rt_kprintf(NO_WORKING_DIR);
+
 		return RT_NULL;
 	}
 #endif
@@ -307,61 +312,61 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 	{
 		char c = *src;
 
-		 if (c == '.')
-		 {
-			 if (!src[1]) src ++; /* '.' and ends */
-			 else if (src[1] == '/')
-			 {
-				 /* './' case */
-				 src += 2;
+		if (c == '.')
+		{
+			if (!src[1]) src ++; /* '.' and ends */
+			else if (src[1] == '/')
+			{
+				/* './' case */
+				src += 2;
 
-				 while ((*src == '/') && (*src != '\0')) 
-				 	src ++;
-				 continue;
-			 }
-			 else if (src[1] == '.')
-			 {
-				 if (!src[2])
-				 {
+				while ((*src == '/') && (*src != '\0'))
+					src ++;
+				continue;
+			}
+			else if (src[1] == '.')
+			{
+				if (!src[2])
+				{
 					/* '..' and ends case */
-					 src += 2;
-					 goto up_one;
-				 }
-				 else if (src[2] == '/')
-				 {
+					src += 2;
+					goto up_one;
+				}
+				else if (src[2] == '/')
+				{
 					/* '../' case */
-					 src += 3;
+					src += 3;
 
-					 while ((*src == '/') && (*src != '\0')) 
-					 	src ++;
-					 goto up_one;
-				 }
-			 }
-		 }
+					while ((*src == '/') && (*src != '\0'))
+						src ++;
+					goto up_one;
+				}
+			}
+		}
 
-		 /* copy up the next '/' and erase all '/' */
-		 while ((c = *src++) != '\0' && c != '/') 
-		 	*dst ++ = c;
+		/* copy up the next '/' and erase all '/' */
+		while ((c = *src++) != '\0' && c != '/')
+			*dst ++ = c;
 
-		 if (c == '/')
-		 {
-			 *dst ++ = '/';
-			 while (c == '/') 
-			 	c = *src++;
+		if (c == '/')
+		{
+			*dst ++ = '/';
+			while (c == '/')
+				c = *src++;
 
-			 src --;
-		 }
-		 else if (!c) 
-		 	break;
+			src --;
+		}
+		else if (!c)
+			break;
 
-		 continue;
+		continue;
 
 up_one:
 		dst --;
 		if (dst < dst0)
 		{
 			rt_free(fullpath); 
-			return NULL;
+			return RT_NULL;
 		}
 		while (dst0 < dst && dst[-1] != '/')
 			dst --;
