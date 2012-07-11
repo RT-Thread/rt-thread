@@ -444,7 +444,6 @@ static struct rt_module* _load_shared_object(const char *name, void *module_ptr)
 			if (unsolved)
 			{
 				rt_object_delete(&(module->parent));
-				rt_free(module);
 
 				return RT_NULL;
 			}	
