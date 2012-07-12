@@ -19,6 +19,7 @@
 
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC)
 int atoi(const char *nptr);
+long int atol(const char *nptr);
 
 int rand(void);
 int rand_r(unsigned int *seed);

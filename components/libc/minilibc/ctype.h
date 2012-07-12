@@ -17,5 +17,6 @@
 int isprint(int c) __attribute__ ((__const__));
 int isalpha (int c) __attribute__ ((__const__));
 int isdigit (int ch) __attribute__ ((__const__));
+int isspace(int ch) __attribute__ ((__const__));
 
 #endif
