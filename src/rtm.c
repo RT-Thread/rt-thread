@@ -167,26 +167,6 @@ RTM_EXPORT(rt_sprintf);
 RTM_EXPORT(rt_strstr);
 RTM_EXPORT(rt_snprintf);
 
-/* 
- * misc interface symbol
- */
-extern int __aeabi_idiv; 
-extern int __aeabi_ddiv; 
-extern int __aeabi_dmul;
-extern int __aeabi_i2d;
-extern int __aeabi_uidiv;
-extern int __aeabi_uidivmod;
-extern int __aeabi_idivmod;
-extern int __aeabi_d2iz;
-
-RTM_EXPORT(__aeabi_ddiv);
-RTM_EXPORT(__aeabi_dmul);
-RTM_EXPORT(__aeabi_i2d);
-RTM_EXPORT(__aeabi_uidiv);
-RTM_EXPORT(__aeabi_idiv);
-RTM_EXPORT(__aeabi_idivmod);
-RTM_EXPORT(__aeabi_uidivmod);
-RTM_EXPORT(__aeabi_d2iz);
 RTM_EXPORT(strcmp);
 RTM_EXPORT(strcpy);
 RTM_EXPORT(strlen);
@@ -234,7 +214,19 @@ RTM_EXPORT(stat);
 #include <rtgui/widgets/list_view.h>
 #include <rtgui/widgets/listctrl.h>
 #include <rtgui/widgets/filelist_view.h>
+#include <rtgui/rtgui_application.h>
+#include <rtgui/widgets/window.h>
 
+RTM_EXPORT(rtgui_application_destroy);
+RTM_EXPORT(rtgui_application_run);
+RTM_EXPORT(rtgui_application_create);
+RTM_EXPORT(rtgui_object_check_cast);
+RTM_EXPORT(_rtgui_container);
+RTM_EXPORT(_rtgui_widget);
+RTM_EXPORT(rtgui_win_create);
+RTM_EXPORT(rtgui_win_show);
+RTM_EXPORT(rtgui_graphic_driver_get_rect);
+RTM_EXPORT(rtgui_graphic_driver_get_default);
 RTM_EXPORT(rtgui_label_create);
 RTM_EXPORT(rtgui_dc_draw_text);
 RTM_EXPORT(rtgui_dc_begin_drawing);
