@@ -17,10 +17,10 @@ if GetDepend('RT_USB_CLASS_MASS_STORAGE'):
 	src += Glob('class/mass.c')
 	src += Glob('udev/udisk.c')
 
-if GetDepend('RT_USING_CLASS_HID'):
+if GetDepend('RT_USB_CLASS_HID'):
 	src += Glob('class/hid.c')
 
-if GetDepend('RT_USING_HID_MOUSE'):
+if GetDepend('RT_USB_HID_MOUSE'):
 	src += Glob('udev/umouse.c')
 
 if GetDepend('RT_USB_HID_KEYBOARD'):

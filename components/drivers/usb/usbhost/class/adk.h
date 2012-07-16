@@ -19,12 +19,29 @@
 
 struct uadkinst
 {
-	upipe_t pipe_in;
-	upipe_t pipe_out;
-};	
+    upipe_t pipe_in;
+    upipe_t pipe_out;
+
+    struct rt_device device;
+};    
 typedef struct uadkinst* uadkinst_t;
 
-#define USB_CLASS_ADK			0xff
+#define USB_ACCESSORY_VENDOR_ID         0x18D1
+#define USB_ACCESSORY_PRODUCT_ID        0x2D00
+#define USB_ACCESSORY_ADB_PRODUCT_ID    0x2D01
+
+#define ACCESSORY_STRING_MANUFACTURER   0
+#define ACCESSORY_STRING_MODEL          1
+#define ACCESSORY_STRING_DESCRIPTION    2
+#define ACCESSORY_STRING_VERSION        3
+#define ACCESSORY_STRING_URI            4
+#define ACCESSORY_STRING_SERIAL         5
+
+#define USB_REQ_GET_PROTOCOL            51
+#define USB_REQ_SEND_STRING             52
+#define USB_REQ_START                   53
+
+#define USB_CLASS_ADK                   0xff
 
 #endif
 

@@ -25,9 +25,9 @@ static rt_list_t _driver_list;
  */
 rt_err_t rt_usb_class_driver_init(void)
 {
-	rt_list_init(&_driver_list);
+    rt_list_init(&_driver_list);
 
-	return RT_EOK;	
+    return RT_EOK;    
 }
 
 /**
@@ -40,14 +40,14 @@ rt_err_t rt_usb_class_driver_init(void)
 
 rt_err_t rt_usb_class_driver_register(ucd_t drv)
 {
-	RT_ASSERT(drv != RT_NULL);
+    RT_ASSERT(drv != RT_NULL);
 
-	if (drv == RT_NULL) return -RT_ERROR;
+    if (drv == RT_NULL) return -RT_ERROR;
 
-	/* insert class driver into driver list */
-	rt_list_insert_after(&_driver_list, &(drv->list));
-	
-	return RT_EOK;	
+    /* insert class driver into driver list */
+    rt_list_insert_after(&_driver_list, &(drv->list));
+    
+    return RT_EOK;    
 }
 
 /**
@@ -59,12 +59,12 @@ rt_err_t rt_usb_class_driver_register(ucd_t drv)
  */
 rt_err_t rt_usb_class_driver_unregister(ucd_t drv)
 {
-	RT_ASSERT(drv != RT_NULL);
+    RT_ASSERT(drv != RT_NULL);
 
-	/* remove class driver from driver list */
-	rt_list_remove(&(drv->list));
+    /* remove class driver from driver list */
+    rt_list_remove(&(drv->list));
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /**
@@ -77,12 +77,12 @@ rt_err_t rt_usb_class_driver_unregister(ucd_t drv)
  */
 rt_err_t rt_usb_class_driver_run(ucd_t drv, void* args)
 {
-	RT_ASSERT(drv != RT_NULL);
+    RT_ASSERT(drv != RT_NULL);
 
-	if(drv->run != RT_NULL)
-		drv->run(args);
+    if(drv->run != RT_NULL)
+        drv->run(args);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /**
@@ -95,12 +95,12 @@ rt_err_t rt_usb_class_driver_run(ucd_t drv, void* args)
  */
 rt_err_t rt_usb_class_driver_stop(ucd_t drv, void* args)
 {
-	RT_ASSERT(drv != RT_NULL);
+    RT_ASSERT(drv != RT_NULL);
 
-	if(drv->stop != RT_NULL)
-		drv->stop(args);
+    if(drv->stop != RT_NULL)
+        drv->stop(args);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 
@@ -114,32 +114,32 @@ rt_err_t rt_usb_class_driver_stop(ucd_t drv, void* args)
  */
 ucd_t rt_usb_class_driver_find(int class_code, int subclass_code)
 {
-	struct rt_list_node *node;
+    struct rt_list_node *node;
 
-	/* enter critical */
-	if (rt_thread_self() != RT_NULL)
-		rt_enter_critical();
+    /* enter critical */
+    if (rt_thread_self() != RT_NULL)
+        rt_enter_critical();
 
-	/* try to find driver object */
-	for (node = _driver_list.next; node != &_driver_list; node = node->next)
-	{
-		ucd_t drv = 
-			(ucd_t)rt_list_entry(node, struct uclass_driver, list);
-		if (drv->class_code == class_code)
-		{
-			/* leave critical */
-			if (rt_thread_self() != RT_NULL)
-				rt_exit_critical();
+    /* try to find driver object */
+    for (node = _driver_list.next; node != &_driver_list; node = node->next)
+    {
+        ucd_t drv = 
+            (ucd_t)rt_list_entry(node, struct uclass_driver, list);
+        if (drv->class_code == class_code)
+        {
+            /* leave critical */
+            if (rt_thread_self() != RT_NULL)
+                rt_exit_critical();
 
-			return drv;
-		}
-	}
+            return drv;
+        }
+    }
 
-	/* leave critical */
-	if (rt_thread_self() != RT_NULL)
-		rt_exit_critical();
+    /* leave critical */
+    if (rt_thread_self() != RT_NULL)
+        rt_exit_critical();
 
-	/* not found */
-	return RT_NULL;
+    /* not found */
+    return RT_NULL;
 }
 
