@@ -15,6 +15,7 @@
  * 2010-03-17     Bernard      remove rt_strlcpy function
  *                             fix gcc compiling issue.
  * 2010-04-15     Bernard      remove weak definition on ICCM16C compiler
+ * 2012-07-18     Arda         add the alignment display for signed integer
  */
 
 #include <rtthread.h>
@@ -590,6 +591,9 @@ static char *print_number(char *buf, char *end, long num, int base, int s, int t
 
 	if (!(type&(ZEROPAD | LEFT)))
 	{
+		if ((sign)&&(size>0))
+			size--;
+
 		while (size-->0)
 		{
 			if (buf <= end)
