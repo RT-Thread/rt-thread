@@ -2,7 +2,6 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-01-24     onelife      add mono color support
- * 2012-01-24     onelife      fix a bug in _pixel_draw_raw_hline
  */
 #include <rtgui/rtgui_system.h>
 #include <rtgui/driver.h>
@@ -140,7 +139,10 @@ static void _pixel_rgb888_draw_vline(rtgui_color_t *c, int x, int y1, int y2)
 
 static void _pixel_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
 {
-	gfx_device_ops->blit_line((char*)pixels, x1, x2, y);
+	if (x2 > x1)
+		gfx_device_ops->blit_line((char*)pixels, x1, y, (x2 - x1));
+	else
+		gfx_device_ops->blit_line((char*)pixels, x2, y, (x1 - x2));	
 }
 
 /* pixel device */

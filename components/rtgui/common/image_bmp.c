@@ -706,11 +706,13 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                             blit_line = rtgui_blit_line_get(hw_bytePerPixel, bytePerPixel);
                         }
 
-                        for (loadIndex = skipLength; loadIndex < readLength; loadIndex += bytePerPixel << bmp->scale)
+                        for (loadIndex = skipLength;
+							 loadIndex < readLength;
+							 loadIndex += bytePerPixel << bmp->scale)
                         {
                             blit_line(temp, &wrkBuffer[loadIndex], bytePerPixel);
                             dc->engine->blit_line(dc,
-                                dst_rect->x1 + x, dst_rect->x1 + x,
+                                dst_rect->x1 + x, dst_rect->x1 + x + 1,
                                 dst_rect->y1 + image->h - y,
                                 temp);
                             x++;
@@ -803,7 +805,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                         blit_line(temp, ptr, bytePerPixel);
                         ptr += bytePerPixel;
                         dc->engine->blit_line(dc,
-                            dst_rect->x1 + x, dst_rect->x1 + x,
+                            dst_rect->x1 + x, dst_rect->x1 + x + 1,
                             dst_rect->y1 + y,
                             temp);
                     }

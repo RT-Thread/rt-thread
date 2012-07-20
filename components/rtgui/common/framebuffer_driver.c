@@ -1,8 +1,3 @@
-/*
- * Change Logs:
- * Date           Author       Notes
- * 2012-01-24     onelife      fix a bug in framebuffer_draw_raw_hline
- */
 #include <rtgui/rtgui_system.h>
 #include <rtgui/driver.h>
 
@@ -113,7 +108,7 @@ static void framebuffer_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y
 	rt_uint8_t *dst;
 
 	dst = GET_PIXEL(rtgui_graphic_get_device(), x1, y, rt_uint8_t);
-	rt_memcpy(dst, pixels, (x2 - x1 + 1) * (rtgui_graphic_get_device()->bits_per_pixel/8));
+	rt_memcpy(dst, pixels, (x2 - x1) * (rtgui_graphic_get_device()->bits_per_pixel/8));
 }
 
 const struct rtgui_graphic_driver_ops _framebuffer_rgb565_ops = 
