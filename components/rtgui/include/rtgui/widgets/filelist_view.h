@@ -49,7 +49,7 @@ rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,
 												  const rtgui_rect_t* rect);
 void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view);
 
-rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory);
 
 void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len);

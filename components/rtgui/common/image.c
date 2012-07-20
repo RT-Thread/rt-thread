@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2012-01-24     onelife      add TJpgDec (Tiny JPEG Decompressor) support
  */
 #include <rtthread.h>
 #include <rtgui/image.h>
@@ -27,7 +28,7 @@
 #ifdef RTGUI_IMAGE_BMP
 #include <rtgui/image_bmp.h>
 #endif
-#ifdef RTGUI_IMAGE_JPEG
+#if (defined(RTGUI_IMAGE_JPEG) || defined(RTGUI_IMAGE_TJPGD))
 #include <rtgui/image_jpeg.h>
 #endif
 #ifdef RTGUI_IMAGE_PNG
@@ -50,7 +51,7 @@ void rtgui_system_image_init(void)
 	rtgui_image_bmp_init();
 #endif
 
-#ifdef RTGUI_IMAGE_JPEG
+#if (defined(RTGUI_IMAGE_JPEG) || defined(RTGUI_IMAGE_TJPGD))
 	rtgui_image_jpeg_init();
 #endif
 

@@ -40,10 +40,12 @@ static void _rtgui_menu_destructor(rtgui_menu_t* menu)
 static rt_bool_t _rtgui_menu_onitem(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_menu* menu;
-	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
+
+	/* event will be NULL, don't check it. */
+	RT_ASSERT(object);
 
 	/* get menu */
-	menu = RTGUI_MENU(rtgui_widget_get_toplevel(widget));
+	menu = RTGUI_MENU(rtgui_widget_get_toplevel(RTGUI_WIDGET(object)));
 	if (menu->items[menu->items_list->current_item].type == RTGUI_ITEM_SUBMENU)
 	{
 		const rtgui_menu_item_t* items;
@@ -84,7 +86,7 @@ static rt_bool_t _rtgui_menu_onitem(struct rtgui_object* object, struct rtgui_ev
 	{
 		/* invoke action */
 		if (menu->items[menu->items_list->current_item].on_menuaction != RT_NULL)
-			menu->items[menu->items_list->current_item].on_menuaction(RTGUI_WIDGET(menu), RT_NULL);
+			menu->items[menu->items_list->current_item].on_menuaction(RTGUI_OBJECT(menu), RT_NULL);
 
 		/* hide sub-menu */
 		if (menu->sub_menu != RT_NULL)

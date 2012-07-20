@@ -204,14 +204,16 @@ void _rtgui_listctrl_item_draw(struct rtgui_listctrl *list,
 	}
 }
 
-static void on_items(rtgui_widget_t* widget, struct rtgui_event* event)
+static rt_bool_t on_items(struct rtgui_object* object, struct rtgui_event* event)
 {
 	rtgui_listctrl_t* ctrl;
 	/* get listctrl */
-	ctrl = RTGUI_LISTCTRL(widget);
+	ctrl = RTGUI_LISTCTRL(object);
 
 	/* 打印当前的项 */
 	rt_kprintf("current item: %d\n", ctrl->current_item);
+
+	return RT_TRUE;
 }
 
 /* 创建用于演示label控件的视图 */

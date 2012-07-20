@@ -15,7 +15,7 @@
 #include <rtgui/rtgui_object.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_theme.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 
 #include <rtgui/list.h>
 #include <rtgui/image.h>
@@ -235,14 +235,14 @@ static struct rtgui_listbox_item items[] =
 };
 static void rtgui_filelist_view_clear(rtgui_filelist_view_t* view);
 
-static void rtgui_filelist_view_on_folder_item(rtgui_widget_t* widget, struct rtgui_event* event)
+static rt_bool_t rtgui_filelist_view_on_folder_item(rtgui_object_t* object, struct rtgui_event* event)
 {
 	rtgui_win_t *menu;
 	rtgui_listbox_t *listbox;
 	rtgui_filelist_view_t *view;
 
-	listbox = RTGUI_LISTBOX(widget);
-	menu = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+	listbox = RTGUI_LISTBOX(object);
+	menu = RTGUI_WIN(rtgui_widget_get_toplevel(RTGUI_WIDGET(object)));
 	view = RTGUI_FILELIST_VIEW(menu->user_data);
 
 	/* hide window */
@@ -273,12 +273,14 @@ static void rtgui_filelist_view_on_folder_item(rtgui_widget_t* widget, struct rt
 		rtgui_win_destroy(menu);
 		break;
 	}
+
+	return RT_TRUE;
 }
 
-static rt_bool_t rtgui_filelist_view_on_menu_deactivate(rtgui_widget_t* widget, struct rtgui_event* event)
+static rt_bool_t rtgui_filelist_view_on_menu_deactivate(rtgui_object_t* object, struct rtgui_event* event)
 {
 	rtgui_win_t *menu;
-	menu = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+	menu = RTGUI_WIN(rtgui_widget_get_toplevel(RTGUI_WIDGET(object)));
 
 	/* destroy menu window */
 	rtgui_win_destroy(menu);
@@ -295,7 +297,7 @@ static void rtgui_filelist_view_menu_pop(rtgui_widget_t *parent)
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &screen);
 	rtgui_rect_moveto_align(&screen, &rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
 
-	menu = rtgui_win_create(rtgui_widget_get_toplevel(parent),
+	menu = rtgui_win_create(RTGUI_WIN(rtgui_widget_get_toplevel(parent)),
 							"Folder Menu", &rect, RTGUI_WIN_STYLE_DEFAULT);
 	if (menu != RT_NULL)
 	{
@@ -533,10 +535,12 @@ static void rtgui_filelist_view_onenturn(struct rtgui_filelist_view* view)
 	}
 }
 
-rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
+	struct rtgui_widget *widget;
 	struct rtgui_filelist_view* view = RT_NULL;
 
+	widget = RTGUI_WIDGET(object);
 	view = RTGUI_FILELIST_VIEW(widget);
 	switch (event->type)
 	{
@@ -650,7 +654,7 @@ rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_widget* widget, struct 
 	}
 
     /* use view event handler */
-    return rtgui_container_event_handler(RTGUI_OBJECT(widget), event);
+    return rtgui_container_event_handler(object, event);
 }
 
 rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,

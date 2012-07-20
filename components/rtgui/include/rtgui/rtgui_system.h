@@ -53,5 +53,16 @@ void* rtgui_realloc(void* ptr, rt_size_t size);
 #define rtgui_enter_critical	rt_enter_critical
 #define rtgui_exit_critical		rt_exit_critical
 
+rt_thread_t rtgui_get_server(void);
+
+struct rtgui_event;
+rt_err_t rtgui_send(rt_thread_t tid, struct rtgui_event* event, rt_size_t event_size);
+rt_err_t rtgui_send_urgent(rt_thread_t tid, struct rtgui_event* event, rt_size_t event_size);
+rt_err_t rtgui_send_sync(rt_thread_t tid, struct rtgui_event* event, rt_size_t event_size);
+rt_err_t rtgui_ack(struct rtgui_event* event, rt_int32_t status);
+rt_err_t rtgui_recv(struct rtgui_event* event, rt_size_t event_size);
+rt_err_t rtgui_recv_nosuspend(struct rtgui_event* event, rt_size_t event_size);
+rt_err_t rtgui_recv_filter(rt_uint32_t type, struct rtgui_event* event, rt_size_t event_size);
+
 #endif
 

@@ -33,26 +33,23 @@ DECLARE_CLASS_TYPE(box);
 
 struct rtgui_box
 {
-	struct rtgui_container parent;
+	struct rtgui_object parent;
 
 	rt_uint16_t orient;
 	rt_uint16_t border_size;
+
+	struct rtgui_container* container;
 };
 typedef struct rtgui_box rtgui_box_t;
 
-struct rtgui_box* rtgui_box_create(int orientation, rtgui_rect_t* rect);
+struct rtgui_box* rtgui_box_create(int orientation, int border_size);
 void rtgui_box_destroy(struct rtgui_box* box);
 
-rt_bool_t rtgui_box_event_handler(struct rtgui_object* object, rtgui_event_t* event);
-
-void rtgui_box_append(rtgui_box_t* box, rtgui_widget_t* widget);
 void rtgui_box_layout(rtgui_box_t* box);
-
-rt_uint32_t rtgui_box_get_width(rtgui_box_t* box);
-rt_uint32_t rtgui_box_get_height(rtgui_box_t* box);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+

@@ -16,7 +16,7 @@
 #include <rtgui/image.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/button.h>
@@ -108,10 +108,6 @@ DEFINE_CLASS_TYPE(win, "win",
 	_rtgui_win_destructor,
 	sizeof(struct rtgui_win));
 
-#ifdef RTGUI_USING_DESKTOP_WINDOW
-static struct rtgui_win *the_desktop_window;
-#endif
-
 rtgui_win_t* rtgui_win_create(struct rtgui_win* parent_window,
 		                      const char* title,
 							  rtgui_rect_t *rect,
@@ -125,23 +121,7 @@ rtgui_win_t* rtgui_win_create(struct rtgui_win* parent_window,
 		return RT_NULL;
 
 	/* set parent toplevel */
-#ifdef RTGUI_USING_DESKTOP_WINDOW
-	if (style & RTGUI_WIN_STYLE_DESKTOP)
-	{
-		RT_ASSERT(the_desktop_window == RT_NULL);
-		win->parent_window = RT_NULL;
-		the_desktop_window = win;
-	}
-	else if (parent_window == RT_NULL)
-	{
-		RT_ASSERT(the_desktop_window != RT_NULL);
-		win->parent_window = the_desktop_window;
-	}
-	else
-		win->parent_window = parent_window;
-#else
 	win->parent_window = parent_window;
-#endif
 
 	/* set title, rect and style */
 	if (title != RT_NULL)
@@ -163,25 +143,13 @@ __on_err:
 	return RT_NULL;
 }
 
-void rtgui_win_destroy(struct rtgui_win* win)
-{
-	if (win->flag & RTGUI_WIN_FLAG_MODAL)
-	{
-		/* set the RTGUI_WIN_STYLE_DESTROY_ON_CLOSE flag so the window will be
-		 * destroyed after the event_loop */
-		win->style |= RTGUI_WIN_STYLE_DESTROY_ON_CLOSE;
-		rtgui_win_end_modal(win, RTGUI_MODAL_CANCEL);
-	}
-	else
-		rtgui_widget_destroy(RTGUI_WIDGET(win));
-}
-
 static rt_bool_t _rtgui_win_deal_close(struct rtgui_win *win,
-									   struct rtgui_event *event)
+									   struct rtgui_event *event,
+									   rt_bool_t force_close)
 {
 	if (win->on_close != RT_NULL)
 	{
-		if (win->on_close(RTGUI_OBJECT(win), event) == RT_FALSE)
+		if ((win->on_close(RTGUI_OBJECT(win), event) == RT_FALSE) && !force_close)
 			return RT_FALSE;
 	}
 
@@ -201,6 +169,42 @@ static rt_bool_t _rtgui_win_deal_close(struct rtgui_win *win,
 	return RT_TRUE;
 }
 
+void rtgui_win_destroy(struct rtgui_win* win)
+{
+	/* close the window first if it's not. */
+	if (!(win->flag & RTGUI_WIN_FLAG_CLOSED))
+	{
+		struct rtgui_event_win_close eclose;
+
+		RTGUI_EVENT_WIN_CLOSE_INIT(&eclose);
+		eclose.wid = win;
+
+		if (win->style & RTGUI_WIN_STYLE_DESTROY_ON_CLOSE)
+		{
+			_rtgui_win_deal_close(win,
+					(struct rtgui_event*)&eclose,
+					RT_TRUE);
+			return;
+		}
+		else
+			_rtgui_win_deal_close(win,
+					(struct rtgui_event*)&eclose,
+					RT_TRUE);
+	}
+
+	if (win->flag & RTGUI_WIN_FLAG_MODAL)
+	{
+		/* set the RTGUI_WIN_STYLE_DESTROY_ON_CLOSE flag so the window will be
+		 * destroyed after the event_loop */
+		win->style |= RTGUI_WIN_STYLE_DESTROY_ON_CLOSE;
+		rtgui_win_end_modal(win, RTGUI_MODAL_CANCEL);
+	}
+	else
+	{
+		rtgui_widget_destroy(RTGUI_WIDGET(win));
+	}
+}
+
 /* send a close event to myself to get a consistent behavior */
 rt_bool_t rtgui_win_close(struct rtgui_win* win)
 {
@@ -209,14 +213,17 @@ rt_bool_t rtgui_win_close(struct rtgui_win* win)
 	RTGUI_EVENT_WIN_CLOSE_INIT(&eclose);
 	eclose.wid = win;
 	return _rtgui_win_deal_close(win,
-								 (struct rtgui_event*)&eclose);
+								 (struct rtgui_event*)&eclose,
+								 RT_FALSE);
 }
 
 rt_base_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 {
-	struct rtgui_event_win_show eshow;
 	rt_base_t exit_code = -1;
+	struct rtgui_app *app;
+	struct rtgui_event_win_show eshow;
 
+	app = rtgui_app_self();
 	RTGUI_EVENT_WIN_SHOW_INIT(&eshow);
 	eshow.wid = win;
 
@@ -230,29 +237,33 @@ rt_base_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 			return exit_code;
 	}
 
+	/* set window unhidden before notify the server */
+	rtgui_widget_show(RTGUI_WIDGET(win));
+
 	if (rtgui_server_post_event_sync(RTGUI_EVENT(&eshow),
-									 sizeof(struct rtgui_event_win_show)
-			) != RT_EOK)
+		sizeof(struct rtgui_event_win_show)) != RT_EOK)
 	{
-		rt_kprintf("show win failed\n");
+		/* It could not be shown if a parent window is hidden. */
+		rtgui_widget_hide(RTGUI_WIDGET(win));
 		return exit_code;
 	}
-
-	/* set window unhidden */
-	RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(win));
 
 	if (win->focused_widget == RT_NULL)
 		rtgui_widget_focus(RTGUI_WIDGET(win));
 
+	/* set main window */
+	if (app->main_object == RT_NULL)
+		rtgui_app_set_main_win(win);
+
     if (is_modal == RT_TRUE)
     {
-		struct rtgui_application *app;
+		struct rtgui_app *app;
 		struct rtgui_event_win_modal_enter emodal;
 
 		RTGUI_EVENT_WIN_MODAL_ENTER_INIT(&emodal);
 		emodal.wid = win;
 
-		app = rtgui_application_self();
+		app = rtgui_app_self();
 		RT_ASSERT(app != RT_NULL);
 
 		win->flag |= RTGUI_WIN_FLAG_MODAL;
@@ -263,7 +274,7 @@ rt_base_t rtgui_win_show(struct rtgui_win* win, rt_bool_t is_modal)
 
 		app->modal_object = RTGUI_OBJECT(win);
 
-		exit_code = rtgui_application_run(app);
+		exit_code = rtgui_app_run(app);
 
 		app->modal_object = RT_NULL;
 		win->flag &= ~RTGUI_WIN_FLAG_MODAL;
@@ -282,7 +293,7 @@ void rtgui_win_end_modal(struct rtgui_win* win, rtgui_modal_code_t modal_code)
 	if (win == RT_NULL || !(win->flag & RTGUI_WIN_FLAG_MODAL))
 		return;
 
-	rtgui_application_exit(rtgui_application_self(), modal_code);
+	rtgui_app_exit(rtgui_app_self(), modal_code);
 
 	/* remove modal mode */
 	win->flag &= ~RTGUI_WIN_FLAG_MODAL;
@@ -291,9 +302,6 @@ void rtgui_win_end_modal(struct rtgui_win* win, rtgui_modal_code_t modal_code)
 void rtgui_win_hiden(struct rtgui_win* win)
 {
 	RT_ASSERT(win != RT_NULL);
-#ifdef RTGUI_USING_DESKTOP_WINDOW
-	RT_ASSERT(win != the_desktop_window);
-#endif
 
 	if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(win)) &&
 		win->flag & RTGUI_WIN_FLAG_CONNECTED)
@@ -310,10 +318,19 @@ void rtgui_win_hiden(struct rtgui_win* win)
 			return;
 		}
 
-		/* set window hide and deactivated */
-		RTGUI_WIDGET_HIDE(RTGUI_WIDGET(win));
+		rtgui_widget_hide(RTGUI_WIDGET(win));
 		win->flag &= ~RTGUI_WIN_FLAG_ACTIVATE;
 	}
+}
+
+rt_err_t rtgui_win_activate(struct rtgui_win *win)
+{
+	struct rtgui_event_win_activate eact;
+	RTGUI_EVENT_WIN_ACTIVATE_INIT(&eact);
+	eact.wid = win;
+
+	return rtgui_server_post_event_sync(RTGUI_EVENT(&eact),
+									    sizeof(eact));
 }
 
 rt_bool_t rtgui_win_is_activated(struct rtgui_win* win)
@@ -341,7 +358,7 @@ void rtgui_win_move(struct rtgui_win* win, int x, int y)
 	if (win->flag & RTGUI_WIN_FLAG_CONNECTED)
 	{
 		/* set win hide firstly */
-		RTGUI_WIDGET_HIDE(RTGUI_WIDGET(win));
+		rtgui_widget_hide(RTGUI_WIDGET(win));
 
 		emove.wid	= win;
 		emove.x		= x;
@@ -354,7 +371,7 @@ void rtgui_win_move(struct rtgui_win* win, int x, int y)
 	}
 
 	/* set window visible */
-	RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(win));
+	rtgui_widget_show(RTGUI_WIDGET(win));
 	return;
 }
 
@@ -405,7 +422,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		break;
 
 	case RTGUI_EVENT_WIN_CLOSE:
-		_rtgui_win_deal_close(win, event);
+		_rtgui_win_deal_close(win, event, RT_FALSE);
 		/* don't broadcast WIN_CLOSE event to others */
 		return RT_TRUE;
 
@@ -522,20 +539,21 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		/* we should dispatch key event firstly */
 		if (!(win->flag & RTGUI_WIN_FLAG_HANDLE_KEY))
 		{
+			struct rtgui_widget *widget;
 			rt_bool_t res = RT_FALSE;
 			/* we should dispatch the key event just once. Once entered the
 			 * dispatch mode, we should swtich to key handling mode. */
 			win->flag |= RTGUI_WIN_FLAG_HANDLE_KEY;
 
 			/* dispatch the key event */
-			if (win->focused_widget != RT_NULL &&
-					RTGUI_OBJECT(win->focused_widget)->event_handler != RT_NULL)
-				res = RTGUI_OBJECT(win->focused_widget)->event_handler(
-						RTGUI_OBJECT(win->focused_widget), event);
-
-			/* if the focused widget doesn't handle it, I will handle it. */
-			if (res != RT_TRUE && win->on_key != RT_NULL)
-				res = win->on_key(RTGUI_OBJECT(win), event);
+			for (widget = win->focused_widget;
+				 widget && !res;
+				 widget = widget->parent)
+			{
+				if (RTGUI_OBJECT(widget)->event_handler != RT_NULL)
+					res = RTGUI_OBJECT(widget)->event_handler(
+							RTGUI_OBJECT(widget), event);
+			}
 
 			win->flag &= ~RTGUI_WIN_FLAG_HANDLE_KEY;
 			return res;

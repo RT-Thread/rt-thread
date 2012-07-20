@@ -45,11 +45,7 @@ static void listitem_action(rtgui_widget_t* widget, void* parameter)
 }
 
 /* 返回功能的动作函数 */
-#if RT_VERSION == 4
 static void return_action(rtgui_widget_t* widget, void* parameter)
-#else
-static void return_action(void* parameter)
-#endif
 {
 	/* 退出模态显示 */
 	rtgui_container_end_modal(RTGUI_CONTAINER(_view), RTGUI_MODAL_OK);

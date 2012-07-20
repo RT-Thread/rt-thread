@@ -29,7 +29,7 @@ struct rtgui_menu_item
 	rt_uint16_t submenu_count;
 
 	/* menu action */
-	rt_bool_t (*on_menuaction)(rtgui_widget_t* widget, rtgui_event_t* event);
+	rt_bool_t (*on_menuaction)(struct rtgui_object* object, struct rtgui_event* event);
 };
 typedef struct rtgui_menu_item rtgui_menu_item_t;
 

@@ -1,6 +1,6 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/notebook.h>
@@ -11,7 +11,7 @@ static rt_bool_t demo_handle_key(struct rtgui_object* object, struct rtgui_event
 {
 	struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
 
-	if (ekbd->type == RTGUI_KEYDOWN)
+	if (ekbd->type == RTGUI_KEYUP)
 	{
 		if (ekbd->key == RTGUIK_RIGHT)
 		{
@@ -30,10 +30,10 @@ static rt_bool_t demo_handle_key(struct rtgui_object* object, struct rtgui_event
 struct rtgui_win *main_win;
 static void application_entry(void* parameter)
 {
-	struct rtgui_application *app;
+	struct rtgui_app *app;
 	struct rtgui_rect rect;
 
-	app = rtgui_application_create(rt_thread_self(), "gui_demo");
+	app = rtgui_app_create(rt_thread_self(), "gui_demo");
 	if (app == RT_NULL)
 		return;
 
@@ -41,11 +41,10 @@ static void application_entry(void* parameter)
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect);
 
 	main_win = rtgui_win_create(RT_NULL, "demo_win", &rect,
-						/*RTGUI_WIN_STYLE_DESKTOP_DEFAULT);*/
-						RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
+                        RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
 	if (main_win == RT_NULL)
 	{
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
 		return;
 	}
 
@@ -56,11 +55,13 @@ static void application_entry(void* parameter)
 	if (the_notebook == RT_NULL)
 	{
 		rtgui_win_destroy(main_win);
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
 		return;
 	}
 
 	rtgui_container_add_child(RTGUI_CONTAINER(main_win), RTGUI_WIDGET(the_notebook));
+
+	demo_view_box();
 
 	/* 初始化各个例子的视图 */
 	demo_view_benchmark();
@@ -112,12 +113,12 @@ static void application_entry(void* parameter)
 	rtgui_win_show(main_win, RT_FALSE);
 
 	/* 执行工作台事件循环 */
-	rtgui_application_run(app);
+	rtgui_app_run(app);
 
-	rtgui_application_destroy(app);
+	rtgui_app_destroy(app);
 }
 
-void application_init(void)
+void application_init()
 {
 	static rt_bool_t inited = RT_FALSE;
 
@@ -138,7 +139,7 @@ void application_init(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-void application(void)
+void application()
 {
 	application_init();
 }

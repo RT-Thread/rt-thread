@@ -307,6 +307,8 @@ rt_bool_t rtgui_textview_event_handler(struct rtgui_object* object, struct rtgui
 		}
 		break;
 		}
+	default:
+		return rtgui_widget_event_handler(RTGUI_OBJECT(widget),event);
 	}
 
 	return RT_FALSE;

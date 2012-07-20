@@ -88,3 +88,7 @@ rt_uint8_t* rtgui_graphic_driver_get_framebuffer(const struct rtgui_graphic_driv
 	return (rt_uint8_t*)driver->framebuffer;
 }
 
+rt_uint8_t* rtgui_graphic_driver_get_default_framebuffer(void)
+{
+	return rtgui_graphic_driver_get_framebuffer(&_driver);
+}

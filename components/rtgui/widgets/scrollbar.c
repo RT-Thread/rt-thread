@@ -302,7 +302,7 @@ rt_bool_t rtgui_scrollbar_event_handler(struct rtgui_object *object,
 		break;
 
 	default:
-		break;
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

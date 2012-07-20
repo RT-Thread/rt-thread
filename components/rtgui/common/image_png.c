@@ -242,9 +242,16 @@ static void rtgui_image_png_unload(struct rtgui_image* image)
 
 static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
+	struct rtgui_graphic_driver* hwdev = rtgui_graphic_get_device();
 	rt_uint16_t x, y, w, h;
 	rtgui_color_t* ptr;
 	struct rtgui_image_png* png;
+	int fg_maxsample;
+	int ialpha;
+	float alpha;
+	rtgui_color_t color;
+	rtgui_color_t c, bgcolor;
+	int fc[3], bc[3];
 
 	RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
 	RT_ASSERT(image->data != RT_NULL);
@@ -255,21 +262,56 @@ static void rtgui_image_png_blit(struct rtgui_image* image, struct rtgui_dc* dc,
     else w = rtgui_rect_width(*rect);
     if (image->h < rtgui_rect_height(*rect)) h = image->h;
     else h = rtgui_rect_height(*rect);
+	
+	fg_maxsample = (1 << png->info_ptr->bit_depth) - 1;
 
     if (png->pixels != RT_NULL)
     {
         ptr = (rtgui_color_t*)png->pixels;
-        /* draw each point within dc */
+        bgcolor = rtgui_color_from_565(RTGUI_DC_BC(dc));
+		bc[0] = RTGUI_RGB_R(bgcolor);
+		bc[1] = RTGUI_RGB_G(bgcolor);
+		bc[2] = RTGUI_RGB_B(bgcolor);
+		/* draw each point within dc */
         for (y = 0; y < h; y ++)
         {
             for (x = 0; x < w; x++)
             {
-                /* not alpha */
-                if ((*ptr >> 24) != 255)
-                {
-                    rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, *ptr);
-                }
-
+                c = *ptr;
+				ialpha = RTGUI_RGB_A(c);
+				if(ialpha == 0)
+				{
+					/*
+					 * Foreground image is transparent hear.
+					 * If the background image is already in the frame
+					 * buffer, there is nothing to do.
+					 */
+				}
+				else if (ialpha == fg_maxsample)
+				{
+					/*
+					 * Copy foreground pixel to frame buffer.
+					 */
+					rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, c);
+				}
+				else
+				{	/* output = alpha * foreground + (1-alpha) * background	*/
+					/*
+					 * Compositing is necessary.
+					 * Get floating-point alpha and its complement.
+					 * Note: alpha is always linear: gamma does not
+					 * affect it.
+					 */
+					fc[0] = RTGUI_RGB_R(c);
+					fc[1] = RTGUI_RGB_G(c);
+					fc[2] = RTGUI_RGB_B(c);
+					
+					alpha = (float) ialpha / fg_maxsample;
+					color = RTGUI_RGB( (rt_uint8_t)(fc[0]*alpha + bc[0]*(1-alpha)), 
+									   (rt_uint8_t)(fc[1]*alpha + bc[1]*(1-alpha)),
+									   (rt_uint8_t)(fc[2]*alpha + bc[2]*(1-alpha)));
+					rtgui_dc_draw_color_point(dc, x + rect->x1, y + rect->y1, color);
+				}
                 /* move to next color buffer */
                 ptr ++;
             }

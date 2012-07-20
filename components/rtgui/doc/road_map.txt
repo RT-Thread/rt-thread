@@ -46,9 +46,9 @@ mq 的模式。rtgui_application 记录当前依附的 panel，和 panel 的 ext
 10, 在 widget 中添加 on_show 和 on_hide 事件回调函数。(Done)
 
 11, 添加 EVENT_WIN_MODAL_ENTER 和 EVENT_WIN_MODAL_EXIT 事件，用来通知窗口管理器
-(topwin)一个窗口进入模态。窗口管理器根据这个进行相应的设置。
+(topwin)一个窗口进入模态。窗口管理器根据这个进行相应的设置。(Done)
 
-12, rtgui_filelist_view 不必继承自 container。
+12, rtgui_filelist_view 不必继承自 container。(Deprecated)
 
 13, 添加 desktop window 支持。(Done)
     概念与名词：

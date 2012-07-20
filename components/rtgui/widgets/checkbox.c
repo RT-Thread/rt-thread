@@ -92,6 +92,8 @@ rt_bool_t rtgui_checkbox_event_handler(struct rtgui_object* object, struct rtgui
 
 			return RT_TRUE;
 		}
+	default:
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

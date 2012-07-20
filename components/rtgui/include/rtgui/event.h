@@ -21,6 +21,11 @@
  * rtgui_event_generic */
 enum _rtgui_event_type
 {
+	/* applications event */
+	RTGUI_EVENT_APP_CREATE,			   /* create an application */
+	RTGUI_EVENT_APP_DESTROY,		   /* destroy an application */
+	RTGUI_EVENT_APP_ACTIVATE, 		   /* activate an application */
+
 	/* window event */
 	RTGUI_EVENT_WIN_CREATE,            /* create a window       */
 	RTGUI_EVENT_WIN_DESTROY,           /* destroy a window      */
@@ -43,6 +48,8 @@ enum _rtgui_event_type
 	RTGUI_EVENT_UPDATE_END,            /* update a rect         */
 	RTGUI_EVENT_MONITOR_ADD,           /* add a monitor rect    */
 	RTGUI_EVENT_MONITOR_REMOVE,        /* remove a monitor rect */
+	RTGUI_EVENT_SHOW,                  /* the widget is going to be shown */
+	RTGUI_EVENT_HIDE,                  /* the widget is going to be hidden */
 	RTGUI_EVENT_PAINT,                 /* paint on screen       */
 	RTGUI_EVENT_TIMER,                 /* timer                 */
 
@@ -94,6 +101,24 @@ typedef struct rtgui_event rtgui_event_t;
 	(e)->ack = RT_NULL;					\
 } while (0)
 
+/*
+ * RTGUI Application Event
+ */
+struct rtgui_event_application
+{
+	struct rtgui_event parent;
+
+	struct rtgui_app* app;
+};
+
+/* gui application init */
+#define RTGUI_EVENT_APP_CREATE_INIT(e)      RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_APP_CREATE)
+#define RTGUI_EVENT_APP_DESTROY_INIT(e)      RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_APP_DESTROY)
+#define RTGUI_EVENT_APP_ACTIVATE_INIT(e)      RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_APP_ACTIVATE)
+
+/*
+ * RTGUI Window Event
+ */
 #define _RTGUI_EVENT_WIN_ELEMENTS \
 	struct rtgui_event parent; \
 	struct rtgui_win *wid;
@@ -150,6 +175,16 @@ struct rtgui_event_win_resize
 #define RTGUI_EVENT_WIN_MOVE_INIT(e)        RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_MOVE)
 #define RTGUI_EVENT_WIN_RESIZE_INIT(e)      RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_RESIZE)
 #define RTGUI_EVENT_WIN_MODAL_ENTER_INIT(e) RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_MODAL_ENTER)
+
+/*
+ * RTGUI set window manager
+ */
+struct rtgui_event_set_wm
+{
+	struct rtgui_event parent;
+	struct rtgui_app *app;
+};
+#define RTGUI_EVENT_SET_WM_INIT(e)			RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_SET_WM);
 
 /*
  * RTGUI Other Event
@@ -213,6 +248,12 @@ struct rtgui_event_clip_info
 #define RTGUI_EVENT_CLIP_INFO_INIT(e)		RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_CLIP_INFO)
 #define RTGUI_EVENT_PAINT_INIT(e)			RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_PAINT)
 #define RTGUI_EVENT_TIMER_INIT(e)			RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_TIMER)
+
+#define rtgui_event_show rtgui_event
+#define rtgui_event_hide rtgui_event
+
+#define RTGUI_EVENT_SHOW_INIT(e)			RTGUI_EVENT_INIT((e), RTGUI_EVENT_SHOW)
+#define RTGUI_EVENT_HIDE_INIT(e)			RTGUI_EVENT_INIT((e), RTGUI_EVENT_HIDE)
 
 /*
  * RTGUI Mouse and Keyboard Event
@@ -325,6 +366,12 @@ struct rtgui_event_resize
 union rtgui_event_generic
 {
 	struct rtgui_event base;
+
+	struct rtgui_event_application app_create;
+	struct rtgui_event_application app_destroy;
+	struct rtgui_event_application app_activate;
+
+	struct rtgui_event_set_wm set_wm;
 	struct rtgui_event_win win_base;
 	struct rtgui_event_win_create win_create;
 	struct rtgui_event_win_move win_move;

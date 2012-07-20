@@ -45,6 +45,6 @@ void rtgui_mywidget_destroy(struct rtgui_mywidget* me);
  * 对一个控件而言，如果派生自它的子控件很可能会调用父控件的事件处理函数，
  * 所以这里采用公开声明的方式�?
  */
-rt_bool_t rtgui_mywidget_event_handler(struct rtgui_widget* widget, struct rtgui_event* event);
+rt_bool_t rtgui_mywidget_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 
 #endif

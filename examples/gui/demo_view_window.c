@@ -57,14 +57,16 @@ static void create_normal_win(void)
 }
 
 /* 触发正常窗口显示 */
-static void demo_normal_window_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
+static void demo_normal_window_onbutton(struct rtgui_object* object, rtgui_event_t* event)
 {
     rt_sprintf(normal_window_label_text,
             "第 %d 次显示", normal_window_show_count);
     rtgui_label_set_text(normal_window_label,
                          normal_window_label_text);
-	/* 非模态显示窗口 */
-	rtgui_win_show(normal_window, RT_FALSE);
+    if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(normal_window)))
+        rtgui_win_show(normal_window, RT_FALSE);
+    else
+        rtgui_win_activate(normal_window);
 }
 
 /* 获取一个递增的窗口标题 */
@@ -91,10 +93,6 @@ void diag_close(struct rtgui_timer* timer, void* parameter)
 	{
 		/* 超时，关闭对话框 */
 		rtgui_win_destroy(msgbox);
-
-		/* 停止并删除定时器 */
-		rtgui_timer_stop(timer);
-		rtgui_timer_destory(timer);
 	}
 }
 
@@ -117,7 +115,7 @@ static rt_uint16_t delta_x = 20;
 static rt_uint16_t delta_y = 40;
 
 /* 触发自动窗口显示 */
-static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
+static void demo_autowin_onbutton(struct rtgui_object* object, rtgui_event_t* event)
 {
 	struct rtgui_rect rect ={50, 50, 200, 200};
 
@@ -147,7 +145,7 @@ static void demo_autowin_onbutton(struct rtgui_widget* widget, rtgui_event_t* ev
 }
 
 /* 触发模态窗口显示 */
-static void demo_modalwin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
+static void demo_modalwin_onbutton(struct rtgui_object* object, rtgui_event_t* event)
 {
 	rtgui_win_t *win;
 	rtgui_label_t *label;
@@ -177,19 +175,19 @@ static void demo_modalwin_onbutton(struct rtgui_widget* widget, rtgui_event_t* e
 	rtgui_win_destroy(win);
 }
 
-static void demo_close_ntitle_window(struct rtgui_widget* widget, rtgui_event_t* event)
+static void demo_close_ntitle_window(struct rtgui_object* object, rtgui_event_t* event)
 {
 	rtgui_win_t* win;
 
 	/* 获得最顶层控件 */
-	win = RTGUI_WIN(rtgui_widget_get_toplevel(widget));
+	win = RTGUI_WIN(rtgui_widget_get_toplevel(RTGUI_WIDGET(object)));
 
 	/* 销毁窗口 */
 	rtgui_win_destroy(win);
 }
 
 /* 触发无标题窗口显示 */
-static void demo_ntitlewin_onbutton(struct rtgui_widget* widget, rtgui_event_t* event)
+static void demo_ntitlewin_onbutton(struct rtgui_object* object, rtgui_event_t* event)
 {
 	rtgui_win_t *win;
 	rtgui_label_t *label;

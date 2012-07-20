@@ -71,10 +71,10 @@ static void rtgui_mywidget_onmouse(struct rtgui_mywidget* me, struct rtgui_event
 }
 
 /* mywidget控件的事件处理函�?*/
-rt_bool_t rtgui_mywidget_event_handler(struct rtgui_widget* widget, struct rtgui_event* event)
+rt_bool_t rtgui_mywidget_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	/* 调用事件处理函数时，widget指针指向控件本身，所以先获得相应控件对象的指�?*/
-	struct rtgui_mywidget* me = RTGUI_MYWIDGET(widget);
+	struct rtgui_mywidget* me = RTGUI_MYWIDGET(object);
 
 	switch (event->type)
 	{
@@ -90,7 +90,7 @@ rt_bool_t rtgui_mywidget_event_handler(struct rtgui_widget* widget, struct rtgui
 
 		/* 其他事件调用父类的事件处理函�?*/
 	default:
-		return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

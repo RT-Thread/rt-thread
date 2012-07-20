@@ -141,14 +141,16 @@ static struct rtgui_listbox_item items[] =
 	{"list #3", RT_NULL},
 };
 
-static void on_items(rtgui_widget_t* widget, struct rtgui_event* event)
+static rt_bool_t on_items(struct rtgui_object* object, struct rtgui_event* event)
 {
 	rtgui_listbox_t* box;
 	/* get listbox */
-	box = RTGUI_LISTBOX(widget);
+	box = RTGUI_LISTBOX(object);
 
 	/* 打印当前的项 */
 	rt_kprintf("current item: %d\n", box->current_item);
+
+	return RT_TRUE;
 }
 
 /* 创建用于演示label控件的视图 */

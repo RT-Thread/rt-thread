@@ -38,7 +38,6 @@ rt_bool_t rtgui_combobox_pdwin_onitem(struct rtgui_object* object, struct rtgui_
 	rtgui_listbox_t* list;
 
 	RT_ASSERT(object != RT_NULL);
-	RT_ASSERT(event != RT_NULL);
 
 	widget = RTGUI_WIDGET(object);
 	list = RTGUI_LISTBOX(widget);
@@ -228,6 +227,8 @@ rt_bool_t rtgui_combobox_event_handler(struct rtgui_object* object, struct rtgui
 			}
 		}
 		break;
+	default:
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

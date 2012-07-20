@@ -1,3 +1,9 @@
+/*
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-01-24     onelife      add one more blit table which exchanges the 
+ *  positions of R and B color components in output
+ */
 #include <rtgui/rtgui.h>
 #include <rtgui/blit.h>
 
@@ -305,3 +311,63 @@ rtgui_blit_line_func rtgui_blit_line_get(int dst_bpp, int src_bpp)
 
 	return _blit_table[dst_bpp][src_bpp];
 }
+
+
+static void rtgui_blit_line_3_2_inv(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
+{
+	rt_uint16_t* dst;
+
+	dst = (rt_uint16_t*)dst_ptr;
+	line = line / 3;
+	while (line)
+	{
+		*dst = (((*src_ptr << 8) & 0x0000F800) |
+			((*(src_ptr + 1) << 3) & 0x000007E0)     |
+			((*(src_ptr + 2) >> 3) & 0x0000001F));
+
+		src_ptr += 3;
+		dst ++;
+		line --;
+	}
+
+	return;
+}
+
+void rtgui_blit_line_2_2_inv(rt_uint8_t* dst_ptr, rt_uint8_t* src_ptr, int line)
+{
+    rt_uint16_t *dst, *src;
+
+    dst = (rt_uint16_t *)dst_ptr;
+    src = (rt_uint16_t *)src_ptr;
+    line = line / 2;
+	while (line)
+	{
+		*dst = ((*src << 11) & 0xF800) | (*src & 0x07E0) | ((*src >> 11) & 0x001F);
+		src ++;
+		dst ++;
+		line --;
+	}
+}
+
+static const rtgui_blit_line_func _blit_table_inv[5][5] =
+{
+	/* 0_0, 1_0, 2_0, 3_0, 4_0 */
+	{RT_NULL, RT_NULL, RT_NULL, RT_NULL, RT_NULL },
+	/* 0_1, 1_1, 2_1, 3_1, 4_1 */
+	{RT_NULL, rtgui_blit_line_direct, rtgui_blit_line_2_1, rtgui_blit_line_3_1, rtgui_blit_line_4_1 },
+	/* 0_2, 1_2, 2_2, 3_2, 4_2 */
+	{RT_NULL, rtgui_blit_line_1_2, rtgui_blit_line_2_2_inv, rtgui_blit_line_3_2_inv, rtgui_blit_line_4_2 },
+	/* 0_3, 1_3, 2_3, 3_3, 4_3 */
+	{RT_NULL, rtgui_blit_line_1_3, rtgui_blit_line_2_3, rtgui_blit_line_direct, rtgui_blit_line_4_3 },
+	/* 0_4, 1_4, 2_4, 3_4, 4_4 */
+	{RT_NULL, rtgui_blit_line_1_4, rtgui_blit_line_2_4, rtgui_blit_line_3_4, rtgui_blit_line_direct },
+};
+
+rtgui_blit_line_func rtgui_blit_line_get_inv(int dst_bpp, int src_bpp)
+{
+	RT_ASSERT(dst_bpp>0 && dst_bpp < 5);
+	RT_ASSERT(src_bpp>0 && src_bpp < 5);
+
+	return _blit_table_inv[dst_bpp][src_bpp];
+}
+

@@ -15,6 +15,7 @@
 #define __RTGUI_CONTAINER_H__
 
 #include <rtgui/widgets/widget.h>
+#include <rtgui/widgets/box.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +36,9 @@ struct rtgui_container
 {
 	struct rtgui_widget parent;
 
+	/* layout box */
+	struct rtgui_box* layout_box;
+
 	rtgui_list_t children;
 };
 typedef struct rtgui_container rtgui_container_t;
@@ -44,12 +48,9 @@ void rtgui_container_destroy(rtgui_container_t* container);
 
 rt_bool_t rtgui_container_event_handler(struct rtgui_object* widget, struct rtgui_event* event);
 
-#ifndef RTGUI_USING_SMALL_SIZE
-struct rtgui_box;
+/* set layout box */
 void rtgui_container_set_box(struct rtgui_container* container, struct rtgui_box* box);
-#endif
-
-void rtgui_container_hide(rtgui_container_t* container);
+void rtgui_container_layout(struct rtgui_container* container);
 
 void rtgui_container_add_child(rtgui_container_t *container, rtgui_widget_t* child);
 void rtgui_container_remove_child(rtgui_container_t *container, rtgui_widget_t* child);

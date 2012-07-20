@@ -1,10 +1,11 @@
 #include <rtgui/rtgui.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 
 #include <rtgui/widgets/container.h>
 #include <rtgui/widgets/notebook.h>
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/staticline.h>
+#include <rtgui/widgets/box.h>
 
 extern struct rtgui_notebook *the_notebook;
 
@@ -130,7 +131,6 @@ void demo_view_get_logic_rect(rtgui_container_t* container, rtgui_rect_t *rect)
 
 /* 当是标准版本时，这个函数用于返回自动布局引擎box控件 */
 #ifndef RTGUI_USING_SMALL_SIZE
-#include <rtgui/widgets/box.h>
 struct rtgui_box* demo_view_create_box(struct rtgui_container *container, int orient)
 {
 	rtgui_rect_t rect;
@@ -142,7 +142,7 @@ struct rtgui_box* demo_view_create_box(struct rtgui_container *container, int or
 	rect.y2 -= 25;
 
 	/* 创建一个自动布局引擎 */
-	box = rtgui_box_create(orient, &rect);
+	box = rtgui_box_create(orient, 5);
 	/* 添加box控件到视图中 */
 	rtgui_container_add_child(container, RTGUI_WIDGET(box));
 

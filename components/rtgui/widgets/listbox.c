@@ -267,17 +267,18 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_
             {
 				rt_int16_t old_item;
 
-				if (box->current_item == -1) 
+				if (box->current_item == -1)
 				{
 					/* set a initial item */
-					if ((box->items_count > 0) && 
+					if ((box->items_count > 0) &&
 						(ekbd->key == RTGUIK_UP || ekbd->key == RTGUIK_DOWN))
 					{
 						box->current_item = 0;
 						rtgui_listbox_update_current(box, -1);
-						break;
+						return RT_TRUE;
 					}
-					else return RT_FALSE;
+					else
+						return RT_FALSE;
 				}
 				old_item = box->current_item;
 
@@ -287,32 +288,30 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_
 					if (box->current_item - box->page_items >= 0)
 						box->current_item -= box->page_items;
 					rtgui_listbox_update_current(box, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
                 case RTGUIK_UP:
 					if (box->current_item > 0)
 						box->current_item --;
 					rtgui_listbox_update_current(box, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RIGHT:
 					if (box->current_item + box->page_items < box->items_count - 1)
 						box->current_item += box->page_items;
 					rtgui_listbox_update_current(box, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
                 case RTGUIK_DOWN:
 					if (box->current_item < box->items_count - 1)
 						box->current_item ++;
 					rtgui_listbox_update_current(box, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RETURN:
                     if (box->on_item != RT_NULL)
-					{
 						box->on_item(RTGUI_OBJECT(box), RT_NULL);
-					}
-					return RT_FALSE;
+					return RT_TRUE;
 
                 default:
                     break;

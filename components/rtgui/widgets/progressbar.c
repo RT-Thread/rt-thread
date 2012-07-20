@@ -38,6 +38,8 @@ rt_bool_t rtgui_progressbar_event_handler(struct rtgui_object* object,
 	case RTGUI_EVENT_PAINT:
 		rtgui_theme_draw_progressbar(bar);
 		break;
+	default:
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

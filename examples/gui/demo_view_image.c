@@ -26,7 +26,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 	filelist = rtgui_filelist_view_create("/", "*.*", &rect);
 #endif
 	/* 模态显示一个文件列表视图，以提供给用户选择图像文件 */
-	if (rtgui_container_show(RTGUI_CONTAINER(filelist), RT_TRUE) == RTGUI_MODAL_OK)
+	if (rtgui_widget_show(RTGUI_WIDGET(filelist), RT_TRUE) == RTGUI_MODAL_OK)
 	{
 		char path[32], image_type[8];
 

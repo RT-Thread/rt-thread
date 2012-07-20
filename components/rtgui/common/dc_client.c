@@ -21,7 +21,7 @@
 
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/widgets/container.h>
 #include <rtgui/widgets/window.h>
@@ -139,7 +139,7 @@ struct rtgui_dc* rtgui_dc_client_create(rtgui_widget_t* owner)
 #endif
 		}
 	}
-	else if (RTGUI_IS_APPLICATION(owner->toplevel))
+	else if (RTGUI_IS_APP(owner->toplevel))
 	{
 		RT_ASSERT(0);
 	}
@@ -207,7 +207,7 @@ static rt_bool_t rtgui_dc_client_fini(struct rtgui_dc* dc)
 #endif
 		}
 	}
-	else if (RTGUI_IS_APPLICATION(owner->toplevel) ||
+	else if (RTGUI_IS_APP(owner->toplevel) ||
 		RTGUI_IS_WIN(owner->toplevel))
 	{
 		rtgui_toplevel_t* top = RTGUI_TOPLEVEL(owner->toplevel);

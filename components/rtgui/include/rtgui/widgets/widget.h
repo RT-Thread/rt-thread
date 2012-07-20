@@ -26,16 +26,16 @@ extern "C" {
 #endif
 
 #define RTGUI_WIDGET_FLAG_DEFAULT		0x0000
-#define RTGUI_WIDGET_FLAG_HIDE			0x0001
+#define RTGUI_WIDGET_FLAG_SHOWN			0x0001
 #define RTGUI_WIDGET_FLAG_DISABLE		0x0002
 #define RTGUI_WIDGET_FLAG_FOCUS			0x0004
 #define RTGUI_WIDGET_FLAG_TRANSPARENT	0x0008
 #define RTGUI_WIDGET_FLAG_FOCUSABLE		0x0010
 #define RTGUI_WIDGET_FLAG_DC_VISIBLE	0x0100
 
-#define RTGUI_WIDGET_UNHIDE(w)			(w)->flag &= ~RTGUI_WIDGET_FLAG_HIDE
-#define RTGUI_WIDGET_HIDE(w)			(w)->flag |= RTGUI_WIDGET_FLAG_HIDE
-#define RTGUI_WIDGET_IS_HIDE(w)			((w)->flag & RTGUI_WIDGET_FLAG_HIDE)
+#define RTGUI_WIDGET_UNHIDE(w)			(w)->flag |= RTGUI_WIDGET_FLAG_SHOWN
+#define RTGUI_WIDGET_HIDE(w)			(w)->flag &= ~RTGUI_WIDGET_FLAG_SHOWN
+#define RTGUI_WIDGET_IS_HIDE(w)			(!((w)->flag & RTGUI_WIDGET_FLAG_SHOWN))
 
 #define RTGUI_WIDGET_ENABLE(w)			(w)->flag &= ~RTGUI_WIDGET_FLAG_DISABLE
 #define RTGUI_WIDGET_DISABLE(w)			(w)->flag |= RTGUI_WIDGET_FLAG_DISABLE
@@ -52,12 +52,13 @@ extern "C" {
 #define RTGUI_WIDGET_DC_SET_UNVISIBLE(w) (w)->flag &= ~RTGUI_WIDGET_FLAG_DC_VISIBLE
 #define RTGUI_WIDGET_DC(w)				((struct rtgui_dc*)&((w)->dc_type))
 
-/* get rtgui widget object */
-#define RTGUI_WIDGET_FOREGROUND(w) 		((w)->gc.foreground)
-#define RTGUI_WIDGET_BACKGROUND(w)		((w)->gc.background)
-#define RTGUI_WIDGET_TEXTALIGN(w)		((w)->gc.textalign)
-#define RTGUI_WIDGET_FONT(w)			((w)->gc.font)
-#define RTGUI_WIDGET_FLAG(w)			((w)->flag)
+/* rtgui widget attribute */
+#define RTGUI_WIDGET_FOREGROUND(w) 		(RTGUI_WIDGET(w)->gc.foreground)
+#define RTGUI_WIDGET_BACKGROUND(w)		(RTGUI_WIDGET(w)->gc.background)
+#define RTGUI_WIDGET_TEXTALIGN(w)		(RTGUI_WIDGET(w)->gc.textalign)
+#define RTGUI_WIDGET_FONT(w)			(RTGUI_WIDGET(w)->gc.font)
+#define RTGUI_WIDGET_FLAG(w)			(RTGUI_WIDGET(w)->flag)
+#define RTGUI_WIDGET_ALIGN(w)			(RTGUI_WIDGET(w)->align)
 
 DECLARE_CLASS_TYPE(widget);
 
@@ -96,14 +97,10 @@ struct rtgui_widget
 	/* the widget extent */
 	rtgui_rect_t extent;
 
-#ifndef RTGUI_USING_SMALL_SIZE
 	/* minimal width and height of widget */
 	rt_int16_t mini_width, mini_height;
-	rt_int16_t margin, margin_style;
-
 	/* widget align */
 	rt_int32_t align;
-#endif
 
 	/* the rect clip */
 	rtgui_region_t clip;
@@ -189,7 +186,9 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget);
 struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget);
 
 void rtgui_widget_show(rtgui_widget_t* widget);
+rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *event);
 void rtgui_widget_hide(rtgui_widget_t* widget);
+rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *event);
 void rtgui_widget_update(rtgui_widget_t* widget);
 
 /* get parent color */

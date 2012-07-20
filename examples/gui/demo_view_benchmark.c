@@ -74,18 +74,21 @@ rt_bool_t benchmark_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 	{
 		struct rtgui_event_kbd *kbd = (struct rtgui_event_kbd*)event;
 
+		if (kbd->key == RTGUIK_LEFT || kbd->key == RTGUIK_RIGHT)
+			return RT_FALSE;
+
 		if (RTGUI_KBD_IS_UP(kbd))
 		{
 			if (running)
 			{
 				/* stop */
-				rtgui_application_set_onidle(RT_NULL);
+				rtgui_app_set_onidle(RT_NULL);
 				_draw_default(object, event);
 			}
 			else
 			{
 				/* run */
-				rtgui_application_set_onidle(_onidle);
+				rtgui_app_set_onidle(_onidle);
 			}
 
 			running = !running;
@@ -101,11 +104,19 @@ rt_bool_t benchmark_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 	return RT_FALSE;
 }
 
+static rt_bool_t _benchmark_onshow(struct rtgui_object *obj, struct rtgui_event* ev)
+{
+	rtgui_widget_focus(RTGUI_WIDGET(obj));
+	return RT_TRUE;
+}
+
 rtgui_container_t *demo_view_benchmark(void)
 {
 	srand(100);
 	container = demo_view("»æÍ¼²âÊÔ");
+	RTGUI_WIDGET(container)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 	rtgui_object_set_event_handler(RTGUI_OBJECT(container), benchmark_event_handler);
+	rtgui_widget_set_onshow(RTGUI_WIDGET(container), _benchmark_onshow);
 
 	return container;
 }

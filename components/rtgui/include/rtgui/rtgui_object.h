@@ -31,7 +31,7 @@ extern "C" {
 /** Casts the function pointer to an rtgui_constructor */
 #define RTGUI_DESTRUCTOR(destructor)                  ((rtgui_destructor_t)(destructor))
 
-/* pre-definetion */
+/* pre-definition */
 struct rtgui_object;
 typedef struct rtgui_object rtgui_object_t;
 typedef void (*rtgui_constructor_t)(rtgui_object_t *object);
@@ -124,9 +124,6 @@ rt_bool_t rtgui_object_event_handler(struct rtgui_object *object, struct rtgui_e
 	widget = RTGUI_WIDGET(object); \
 	/* supress compiler warning */ \
 	widget = widget;
-
-void       rtgui_object_name_set(rtgui_object_t *object, const char *name);
-const char *rtgui_object_name_get(rtgui_object_t *object);
 
 rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *object, rtgui_type_t *type, const char* func, int line);
 rtgui_type_t   *rtk_object_object_type_get(rtgui_object_t *object);

@@ -36,6 +36,7 @@ demo_view_combobox.c
 demo_view_slider.c
 demo_view_notebook.c
 demo_view_mywidget.c
+demo_view_box.c
 mywidget.c
 """)
 

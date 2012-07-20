@@ -54,6 +54,7 @@ struct rtgui_graphic_driver* rtgui_graphic_driver_get_default(void);
 void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rtgui_rect_t *rect);
 void rtgui_graphic_driver_screen_update(const struct rtgui_graphic_driver* driver, rtgui_rect_t *rect);
 rt_uint8_t* rtgui_graphic_driver_get_framebuffer(const struct rtgui_graphic_driver* driver);
+rt_uint8_t* rtgui_graphic_driver_get_default_framebuffer(void);
 
 rt_err_t rtgui_graphic_set_device(rt_device_t device);
 

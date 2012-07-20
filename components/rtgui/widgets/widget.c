@@ -14,7 +14,7 @@
  */
 
 #include <rtgui/dc_client.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/container.h>
@@ -36,9 +36,7 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->gc.font = rtgui_font_default();
 	widget->gc.textstyle = RTGUI_TEXTSTYLE_NORMAL;
 	widget->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
-#ifndef RTGUI_USING_SMALL_SIZE
 	widget->align = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
-#endif
 
 	/* set parent and toplevel root */
 	widget->parent        = RT_NULL;
@@ -88,7 +86,7 @@ static void _rtgui_widget_destructor(rtgui_widget_t *widget)
 	rtgui_region_fini(&(widget->clip));
 }
 
-DEFINE_CLASS_TYPE(widget, "widget", 
+DEFINE_CLASS_TYPE(widget, "widget",
 	RTGUI_OBJECT_TYPE,
 	_rtgui_widget_constructor,
 	_rtgui_widget_destructor,
@@ -114,11 +112,9 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 
 	widget->extent = *rect;
 
-#ifndef RTGUI_USING_SMALL_SIZE
 	/* reset mini width and height */
 	widget->mini_width  = rtgui_rect_width(widget->extent);
 	widget->mini_height = rtgui_rect_height(widget->extent);
-#endif
 
 	/* it's not empty, fini it */
 	if (rtgui_region_not_empty(&(widget->clip)))
@@ -166,7 +162,6 @@ void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
 	*rect = widget->extent;
 }
 
-#ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width)
 {
 	RT_ASSERT(widget != RT_NULL);
@@ -180,7 +175,6 @@ void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height)
 
 	widget->mini_height = height;
 }
-#endif
 
 /*
  * This function moves widget and its children to a logic point
@@ -410,16 +404,16 @@ struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget)
 
 rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t* event)
 {
-#ifndef RTGUI_USING_SMALL_SIZE
-	struct rtgui_widget *widget;
-
 	RT_ASSERT(object != RT_NULL);
 	RT_ASSERT(event != RT_NULL);
 
-	widget = RTGUI_WIDGET(object);
-
 	switch (event->type)
 	{
+	case RTGUI_EVENT_SHOW:
+		return rtgui_widget_onshow(object, event);
+	case RTGUI_EVENT_HIDE:
+		return rtgui_widget_onhide(object, event);
+#ifndef RTGUI_USING_SMALL_SIZE
 	case RTGUI_EVENT_PAINT:
 		if (widget->on_draw != RT_NULL)
 			return widget->on_draw(RTGUI_OBJECT(widget), event);
@@ -444,8 +438,8 @@ rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t*
 		if (widget->on_size != RT_NULL)
 			return widget->on_size(RTGUI_OBJECT(widget), event);
 		break;
-	}
 #endif
+	}
 
 	return RT_FALSE;
 }
@@ -512,12 +506,26 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget)
 	}
 }
 
-void rtgui_widget_show(rtgui_widget_t* widget)
+void rtgui_widget_show(struct rtgui_widget *widget)
 {
-	/* there is no parent or the parent is hide, no show at all */
-	if (widget->parent == RT_NULL ||
-			RTGUI_WIDGET_IS_HIDE(widget->parent))
-		return;
+	struct rtgui_event_show eshow;
+	RT_ASSERT(widget != RT_NULL);
+
+    if (!RTGUI_WIDGET_IS_HIDE(widget))
+        return;
+
+	RTGUI_EVENT_SHOW_INIT(&eshow);
+	if (RTGUI_OBJECT(widget)->event_handler != RT_NULL)
+	{
+		RTGUI_OBJECT(widget)->event_handler(
+				RTGUI_OBJECT(widget),
+				&eshow);
+	}
+}
+
+rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *event)
+{
+	struct rtgui_widget *widget = RTGUI_WIDGET(object);
 
 	/* update the clip info of widget */
 	RTGUI_WIDGET_UNHIDE(widget);
@@ -525,10 +533,14 @@ void rtgui_widget_show(rtgui_widget_t* widget)
 
 	if (widget->on_show != RT_NULL)
 		widget->on_show(RTGUI_OBJECT(widget), RT_NULL);
+
+	return RT_FALSE;
 }
 
-void rtgui_widget_hide(rtgui_widget_t* widget)
+rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *event)
 {
+	struct rtgui_widget *widget = RTGUI_WIDGET(object);
+
 	/* hide this widget */
 	RTGUI_WIDGET_HIDE(widget);
 
@@ -549,12 +561,31 @@ void rtgui_widget_hide(rtgui_widget_t* widget)
 
 	if (widget->on_hide != RT_NULL)
 		widget->on_hide(RTGUI_OBJECT(widget), RT_NULL);
+
+	return RT_FALSE;
+}
+
+void rtgui_widget_hide(struct rtgui_widget *widget)
+{
+	struct rtgui_event_hide ehide;
+	RT_ASSERT(widget != RT_NULL);
+
+    if (RTGUI_WIDGET_IS_HIDE(widget))
+        return;
+
+	RTGUI_EVENT_HIDE_INIT(&ehide);
+	if (RTGUI_OBJECT(widget)->event_handler != RT_NULL)
+	{
+		RTGUI_OBJECT(widget)->event_handler(
+				RTGUI_OBJECT(widget),
+				&ehide);
+	}
 }
 
 rtgui_color_t rtgui_widget_get_parent_foreground(rtgui_widget_t* widget)
 {
 	rtgui_widget_t* parent;
-	
+
 	/* get parent widget */
 	parent = widget->parent;
 	while (parent->parent != RT_NULL && (RTGUI_WIDGET_FLAG(parent) & RTGUI_WIDGET_FLAG_TRANSPARENT))
@@ -590,6 +621,9 @@ void rtgui_widget_update(rtgui_widget_t* widget)
 	paint.wid = RT_NULL;
 
 	RT_ASSERT(widget != RT_NULL);
+
+    if (RTGUI_WIDGET_IS_HIDE(widget))
+        return;
 
 	if (RTGUI_OBJECT(widget)->event_handler != RT_NULL)
 	{

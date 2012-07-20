@@ -316,13 +316,13 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
 					if (ctrl->current_item - ctrl->page_items >= 0)
 						ctrl->current_item -= ctrl->page_items;
 					rtgui_listctrl_update_current(ctrl, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
                 case RTGUIK_UP:
 					if (ctrl->current_item > 0)
 						ctrl->current_item --;
 					rtgui_listctrl_update_current(ctrl, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RIGHT:
 					if (ctrl->current_item + ctrl->page_items < ctrl->items_count - 1)
@@ -333,18 +333,18 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
 							ctrl->current_item = ((ctrl->current_item / ctrl->page_items) + 1) * ctrl->page_items;
 					}
 					rtgui_listctrl_update_current(ctrl, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
                 case RTGUIK_DOWN:
 					if (ctrl->current_item < ctrl->items_count - 1)
 						ctrl->current_item ++;
 					rtgui_listctrl_update_current(ctrl, old_item);
-					return RT_FALSE;
+					return RT_TRUE;
 
 				case RTGUIK_RETURN:
                     if (ctrl->on_item != RT_NULL)
 					{
-						ctrl->on_item(RTGUI_OBJECT(ctrl), RT_NULL);
+						return ctrl->on_item(RTGUI_OBJECT(ctrl), RT_NULL);
 					}
 					return RT_FALSE;
 

@@ -168,13 +168,10 @@ rt_bool_t rtgui_slider_event_handler(struct rtgui_object *object, struct rtgui_e
 
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL)
-			widget->on_key(RTGUI_OBJECT(widget), event);
+			return widget->on_key(RTGUI_OBJECT(widget), event);
 		else
 #endif
-		{
 			return rtgui_slider_onkey(slider, (struct rtgui_event_kbd *)event);
-		}
-		break;
 
 	case RTGUI_EVENT_MOUSE_BUTTON:
 		if (!RTGUI_WIDGET_IS_ENABLE(widget) || RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
@@ -188,6 +185,9 @@ rt_bool_t rtgui_slider_event_handler(struct rtgui_object *object, struct rtgui_e
 			rtgui_slider_onmouse(slider, (struct rtgui_event_mouse*)event);
 		}
 		break;
+
+	default:
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

@@ -49,6 +49,8 @@ rt_bool_t rtgui_label_event_handler(struct rtgui_object *object, struct rtgui_ev
 	case RTGUI_EVENT_PAINT:
 		rtgui_theme_draw_label(label);
 		break;
+	default:
+		return rtgui_widget_event_handler(object, event);
 	}
 
 	return RT_FALSE;

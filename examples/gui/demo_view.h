@@ -15,7 +15,7 @@
 #define __DEMO_VIEW_H__
 
 #include <rtgui/rtgui.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/container.h>
 
 /* 如果是标准版本，可以启用box自动布局引擎 */

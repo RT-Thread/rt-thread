@@ -138,12 +138,12 @@ void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
 	color = RTGUI_DC_FC(dc);
 
 	RTGUI_DC_FC(dc) = dark_grey;
-	rtgui_dc_draw_hline(dc, x, y1, y2);
+	rtgui_dc_draw_vline(dc, x, y1, y2);
 
 	x ++;
 
 	RTGUI_DC_FC(dc) = high_light;
-	rtgui_dc_draw_hline(dc, x, y1, y2);
+	rtgui_dc_draw_vline(dc, x, y1, y2);
 
 	/* restore color */
 	RTGUI_DC_FC(dc) = color;

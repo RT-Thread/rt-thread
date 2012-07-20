@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
+ * 2012-01-24     onelife      add mono color support
  */
 #ifndef __RTGUI_COLOR_H__
 #define __RTGUI_COLOR_H__
@@ -44,6 +45,30 @@ extern const rtgui_color_t light_grey;
  * RTGUI default color format
  * BBBB BBBB GGGG GGGG RRRR RRRR
  */
+
+/* convert rtgui color to mono */
+rt_inline rt_uint8_t rtgui_color_to_mono(rtgui_color_t c)
+{
+	rt_uint8_t pixel;
+
+	pixel = (RTGUI_RGB_R(c) | RTGUI_RGB_G(c) | RTGUI_RGB_B(c)) ? 0x01 : 0x00;
+	return pixel;
+}
+
+rt_inline rtgui_color_t rtgui_color_from_mono(rt_uint8_t pixel)
+{
+	rtgui_color_t color;
+
+	if (pixel)
+	{
+    	color = white;
+	}
+    else
+    {
+        color = black;
+    }
+	return color;
+}
 
 /* convert rtgui color to BBBBBGGGGGGRRRRR */
 rt_inline rt_uint16_t rtgui_color_to_565(rtgui_color_t c)
