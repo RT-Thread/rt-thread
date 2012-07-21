@@ -2,6 +2,7 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/notebook.h>
+#include <rtgui/widgets/window.h>
 
 #define RTGUI_NOTEBOOK_TAB_WIDTH     80
 
@@ -215,6 +216,16 @@ void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, stru
 
     if (notebook->count - 1 != notebook->current)
         rtgui_widget_hide(child);
+
+	if (RTGUI_WIDGET(notebook)->toplevel != RT_NULL &&
+		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(notebook)->toplevel))
+	{
+		struct rtgui_event_update_toplvl eup;
+		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
+		eup.toplvl = RTGUI_WIDGET(notebook)->toplevel;
+		if (RTGUI_OBJECT(child)->event_handler)
+			RTGUI_OBJECT(child)->event_handler(RTGUI_OBJECT(child), (struct rtgui_event*)&eup);
+	}
 }
 
 void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
@@ -333,6 +344,19 @@ static rt_bool_t _rtgui_notebook_current_widget_handle(struct rtgui_notebook *no
 		return RT_FALSE;
 }
 
+static void _rtgui_notebook_all_widget_handle(struct rtgui_notebook *notebook,
+		                                           struct rtgui_event *event)
+{
+	struct rtgui_object *object;
+	int i;
+	for (i = 0; i < notebook->count; i++)
+	{
+		object = RTGUI_OBJECT(notebook->childs[i].widget);
+		if (object->event_handler)
+			object->event_handler(object, event);
+	}
+}
+
 rt_bool_t rtgui_notebook_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_notebook* notebook;
@@ -362,6 +386,12 @@ rt_bool_t rtgui_notebook_event_handler(struct rtgui_object* object, struct rtgui
 		return _rtgui_notebook_current_widget_handle(notebook, event);
 	case RTGUI_EVENT_KBD:
 		return _rtgui_notebook_current_widget_handle(notebook, event);
+	case RTGUI_EVENT_UPDATE_TOPLVL:
+		/* update myself */
+		rtgui_widget_onupdate_toplvl(object, event);
+		/* update all the widgets in myself */
+		_rtgui_notebook_all_widget_handle(notebook, event);
+		return RT_FALSE;
 	default:
 		/* use parent event handler */
 		return rtgui_widget_event_handler(object, event);

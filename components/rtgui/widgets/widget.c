@@ -145,13 +145,6 @@ void rtgui_widget_set_parent(rtgui_widget_t* widget, rtgui_widget_t* parent)
 {
 	/* set parent and toplevel widget */
 	widget->parent = parent;
-
-	/* update children toplevel */
-	if (parent->toplevel != RT_NULL &&
-		RTGUI_IS_TOPLEVEL(parent->toplevel))
-	{
-		widget->toplevel = rtgui_widget_get_toplevel(parent);
-	}
 }
 
 void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
@@ -402,6 +395,22 @@ struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget)
 	return RTGUI_WIN(r);
 }
 
+rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui_event *event)
+{
+	struct rtgui_widget *widget;
+	struct rtgui_event_update_toplvl *eup;
+
+	RT_ASSERT(object);
+	RT_ASSERT(event);
+
+	widget = RTGUI_WIDGET(object);
+	eup = (struct rtgui_event_update_toplvl*)event;
+
+	widget->toplevel = eup->toplvl;
+
+	return RT_FALSE;
+}
+
 rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t* event)
 {
 	RT_ASSERT(object != RT_NULL);
@@ -413,6 +422,8 @@ rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t*
 		return rtgui_widget_onshow(object, event);
 	case RTGUI_EVENT_HIDE:
 		return rtgui_widget_onhide(object, event);
+	case RTGUI_EVENT_UPDATE_TOPLVL:
+		return rtgui_widget_onupdate_toplvl(object, event);
 #ifndef RTGUI_USING_SMALL_SIZE
 	case RTGUI_EVENT_PAINT:
 		if (widget->on_draw != RT_NULL)

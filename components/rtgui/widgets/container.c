@@ -38,26 +38,6 @@ static void _rtgui_container_destructor(rtgui_container_t *container)
 		rtgui_object_destroy(RTGUI_OBJECT(container->layout_box));
 }
 
-static void _rtgui_container_update_toplevel(rtgui_container_t* container)
-{
-	struct rtgui_win *window;
-	struct rtgui_list_node* node;
-
-	window = rtgui_widget_get_toplevel(RTGUI_WIDGET(container));
-
-	rtgui_list_foreach(node, &(container->children))
-	{
-		rtgui_widget_t* child = rtgui_list_entry(node, rtgui_widget_t, sibling);
-		/* set child toplevel */
-		child->toplevel = window;
-
-		if (RTGUI_IS_CONTAINER(child))
-		{
-			_rtgui_container_update_toplevel(RTGUI_CONTAINER(child));
-		}
-	}
-}
-
 DEFINE_CLASS_TYPE(container, "container",
 	RTGUI_WIDGET_TYPE,
 	_rtgui_container_constructor,
@@ -77,6 +57,24 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
 		if (RTGUI_OBJECT(w)->event_handler &&
 			RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE)
 			return RT_TRUE;
+	}
+
+	return RT_FALSE;
+}
+
+/* broadcast means that the return value of event handlers will be ignored. The
+ * events will always reach every child.*/
+rt_bool_t rtgui_container_broadcast_event(struct rtgui_container *container, struct rtgui_event *event)
+{
+	struct rtgui_list_node* node;
+
+	rtgui_list_foreach(node, &(container->children))
+	{
+		struct rtgui_widget* w;
+		w = rtgui_list_entry(node, struct rtgui_widget, sibling);
+
+		if (RTGUI_OBJECT(w)->event_handler)
+			RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE;
 	}
 
 	return RT_FALSE;
@@ -164,6 +162,13 @@ rt_bool_t rtgui_container_event_handler(struct rtgui_object* object, struct rtgu
 		rtgui_container_dispatch_event(container, event);
 		break;
 
+	case RTGUI_EVENT_UPDATE_TOPLVL:
+		/* call parent handler */
+		rtgui_widget_onupdate_toplvl(object, event);
+		/* update the children */
+		rtgui_container_broadcast_event(container, event);
+		break;
+
 	default:
 		/* call parent widget event handler */
 		return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
@@ -205,13 +210,10 @@ void rtgui_container_add_child(rtgui_container_t *container, rtgui_widget_t* chi
 	if (RTGUI_WIDGET(container)->toplevel != RT_NULL &&
 		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(container)->toplevel))
 	{
-		child->toplevel = rtgui_widget_get_toplevel(RTGUI_WIDGET(container));
-
-		/* update all child toplevel */
-		if (RTGUI_IS_CONTAINER(child))
-		{
-			_rtgui_container_update_toplevel(RTGUI_CONTAINER(child));
-		}
+		struct rtgui_event_update_toplvl eup;
+		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
+		eup.toplvl = RTGUI_WIDGET(container)->toplevel;
+		rtgui_container_broadcast_event(container, (struct rtgui_event*)&eup);
 	}
 }
 

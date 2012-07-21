@@ -332,6 +332,7 @@ const char *event_string[] =
 	"HIDE",				    /* the widget is going to be hidden */
 	"PAINT",				/* paint on screen 		*/
 	"TIMER",				/* timer 				*/
+	"UPDATE_TOPLVL",		/* update toplevel      */
 
 	/* clip rect information */
 	"CLIP_INFO",			/* clip rect info		*/

@@ -184,6 +184,7 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget);
 
 /* get the toplevel widget of widget */
 struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget);
+rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui_event *event);
 
 void rtgui_widget_show(rtgui_widget_t* widget);
 rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *event);

@@ -52,6 +52,7 @@ enum _rtgui_event_type
 	RTGUI_EVENT_HIDE,                  /* the widget is going to be hidden */
 	RTGUI_EVENT_PAINT,                 /* paint on screen       */
 	RTGUI_EVENT_TIMER,                 /* timer                 */
+	RTGUI_EVENT_UPDATE_TOPLVL,         /* update the toplevel   */
 
 	/* clip rect information */
 	RTGUI_EVENT_CLIP_INFO,             /* clip rect info        */
@@ -255,6 +256,18 @@ struct rtgui_event_clip_info
 #define RTGUI_EVENT_SHOW_INIT(e)			RTGUI_EVENT_INIT((e), RTGUI_EVENT_SHOW)
 #define RTGUI_EVENT_HIDE_INIT(e)			RTGUI_EVENT_INIT((e), RTGUI_EVENT_HIDE)
 
+struct rtgui_event_update_toplvl
+{
+	struct rtgui_event parent;
+	struct rtgui_win   *toplvl;
+};
+
+#define RTGUI_EVENT_UPDATE_TOPLVL_INIT(e)	\
+	do { \
+		RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_UPDATE_TOPLVL); \
+		(e)->toplvl = RT_NULL; \
+	} while (0)
+
 /*
  * RTGUI Mouse and Keyboard Event
  */
@@ -388,6 +401,7 @@ union rtgui_event_generic
 	struct rtgui_event_monitor monitor;
 	struct rtgui_event_paint paint;
 	struct rtgui_event_timer timer;
+	struct rtgui_event_update_toplvl update_toplvl;
 	struct rtgui_event_clip_info clip_info;
 	struct rtgui_event_mouse mouse;
 	struct rtgui_event_kbd kbd;
