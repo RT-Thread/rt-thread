@@ -69,7 +69,7 @@ def MDK4Project(target, script):
     
     # add group
     groups = tree.find('Targets/Target/Groups')
-    if not groups:
+    if groups is None:
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
     for group in script:
         group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
