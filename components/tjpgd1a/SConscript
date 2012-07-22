@@ -1,0 +1,14 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src	= Split('''
+tjpgd.c
+''')
+
+CPPPATH = GetCurrentDir()
+
+group = DefineGroup('tjpgd', src, depend = ['RTGUI_IMAGE_TJPGD'], CPPPATH = CPPPATH)
+
+Return('group')
+
