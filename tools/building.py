@@ -58,7 +58,7 @@ def GetVersion():
 
     return '0.%d.%d' % (version, subversion)
 
-def PrepareBuilding(env, root_directory, has_libcpu=False):
+def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
     import SCons.cpp
     import rtconfig
 
@@ -122,8 +122,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False):
     # include libcpu
     if not has_libcpu:
         objs.append(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+
     # include components
-    objs.append(SConscript(Rtt_Root + '/components/SConscript', variant_dir='build/components', duplicate=0))
+    objs.append(SConscript(Rtt_Root + '/components/SConscript',
+                           variant_dir='build/components',
+                           duplicate=0,
+                           exports='remove_components'))
 
     return objs
 
