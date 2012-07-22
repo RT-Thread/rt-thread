@@ -6,7 +6,7 @@ src	= Split('''
 tjpgd.c
 ''')
 
-CPPPATH = GetCurrentDir()
+CPPPATH = [RTT_ROOT + '/components/external/tjpgd1a']
 
 group = DefineGroup('tjpgd', src, depend = ['RTGUI_IMAGE_TJPGD'], CPPPATH = CPPPATH)
 
