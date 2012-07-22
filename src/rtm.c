@@ -214,12 +214,12 @@ RTM_EXPORT(stat);
 #include <rtgui/widgets/list_view.h>
 #include <rtgui/widgets/listctrl.h>
 #include <rtgui/widgets/filelist_view.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/window.h>
 
-RTM_EXPORT(rtgui_application_destroy);
-RTM_EXPORT(rtgui_application_run);
-RTM_EXPORT(rtgui_application_create);
+RTM_EXPORT(rtgui_app_destroy);
+RTM_EXPORT(rtgui_app_run);
+RTM_EXPORT(rtgui_app_create);
 RTM_EXPORT(rtgui_object_check_cast);
 RTM_EXPORT(_rtgui_container);
 RTM_EXPORT(_rtgui_widget);
