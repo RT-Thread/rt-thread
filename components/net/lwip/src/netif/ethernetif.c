@@ -161,6 +161,11 @@ rt_err_t eth_device_init(struct eth_device * dev, char *name)
 {
 	rt_uint8_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
+#if LWIP_DHCP
+	/* DHCP support */
+	flags |= NETIF_FLAG_DHCP;
+#endif
+
 #if LWIP_IGMP
 	/* IGMP support */
 	flags |= NETIF_FLAG_IGMP;
