@@ -12,6 +12,7 @@
  * 2008-02-22     QiuYi        The first version.
  * 2011-10-08     Bernard      fixed the block size in statfs.
  * 2011-11-23     Bernard      fixed the rename issue.
+ * 2012-07-26     aozima       implement ff_memalloc and ff_memfree.
  */
  
 #include <rtthread.h>
@@ -805,3 +806,19 @@ void ff_rel_grant(_SYNC_t m)
 }
 
 #endif
+
+/* Memory functions */
+#if _USE_LFN == 3
+/* Allocate memory block */
+void* ff_memalloc (UINT size)
+{
+    return rt_malloc(size);
+}
+
+/* Free memory block */
+void ff_memfree (void* mem)
+{
+    rt_free(mem);
+}
+#endif /* _USE_LFN == 3 */
+
