@@ -231,6 +231,8 @@ void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, stru
 void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 {
 	struct rtgui_notebook_tab tab;
+    rt_bool_t need_update = RT_FALSE;
+
 	RT_ASSERT(notebook != RT_NULL);
 
 	if (index < notebook->count)
@@ -244,8 +246,11 @@ void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 		}
 		else
 		{
+            if (notebook->current == index)
+                need_update = RT_TRUE;
+
 			tab = notebook->childs[index];
-			for (;index < notebook->count - 1; index ++)
+			for (;index < notebook->count - 1; index++)
 			{
 				notebook->childs[index] = notebook->childs[index + 1];
 			}
@@ -255,16 +260,17 @@ void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 				sizeof(struct rtgui_notebook_tab) * notebook->count);
 		}
 
-		// FIXME: do we really want to destroy it?
-		rtgui_widget_destroy(tab.widget);
 		rtgui_free(tab.title);
 
-		if (notebook->current == index)
+		if (need_update)
 		{
-			/* update tab */
 			if (notebook->current > notebook->count - 1)
 				notebook->current = notebook->count - 1;
+
+            rtgui_widget_hide(tab.widget);
+            rtgui_widget_show(notebook->childs[notebook->current].widget);
 			rtgui_widget_update(RTGUI_WIDGET(notebook));
+            rtgui_widget_set_parent(tab.widget, RT_NULL);
 		}
 	}
 }

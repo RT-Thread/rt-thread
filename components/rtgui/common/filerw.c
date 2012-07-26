@@ -251,21 +251,7 @@ static int mem_read(struct rtgui_filerw *context, void *ptr, rt_size_t size, rt_
 
 static int mem_write(struct rtgui_filerw *context, const void *ptr, rt_size_t size, rt_size_t num)
 {
-#if 0
-	struct rtgui_filerw_mem* mem = (struct rtgui_filerw_mem*)context;
-
-	if ((mem->mem_position + (num * size)) > mem->mem_end)
-	{
-		num = (mem->mem_end - mem->mem_position)/size;
-	}
-
-	rt_memcpy(mem->mem_position, ptr, num*size);
-	mem->mem_position += num*size;
-
-	return num;
-#else
 	return 0; /* not support memory write */
-#endif
 }
 
 static int mem_tell(struct rtgui_filerw* context)

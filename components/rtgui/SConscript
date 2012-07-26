@@ -1,4 +1,4 @@
-Import('RTT_ROOT')
+import os
 from building import *
 
 common_src = Split("""
@@ -72,10 +72,10 @@ widgets/panel.c
 # The set of source files associated with this SConscript file.
 src = common_src + server_src + widgets_src
 
-path = [RTT_ROOT + '/components/rtgui/include',
-	RTT_ROOT + '/components/rtgui/common', 
-	RTT_ROOT + '/components/rtgui/server', 
-	RTT_ROOT + '/components/rtgui/widgets']
+cwd = GetCurrentDir()
+dirs = ['include', 'common', 'server', 'widgets']
+path = [os.path.join(cwd, i) for i in dirs]
+
 group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI'], CPPPATH = path)
 
 Return('group')

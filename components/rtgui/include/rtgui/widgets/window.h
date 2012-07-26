@@ -133,10 +133,6 @@ void rtgui_win_move(struct rtgui_win* win, int x, int y);
 /* reset extent of window */
 void rtgui_win_set_rect(rtgui_win_t* win, rtgui_rect_t* rect);
 
-#ifndef RTGUI_USING_SMALL_SIZE
-void rtgui_win_set_box(rtgui_win_t* win, rtgui_box_t* box);
-#endif
-
 void rtgui_win_set_onactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 void rtgui_win_set_ondeactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 void rtgui_win_set_onclose(rtgui_win_t* win, rtgui_event_handler_ptr handler);

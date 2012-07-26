@@ -34,6 +34,7 @@ struct rtgui_notebook* rtgui_notebook_create(const rtgui_rect_t* rect, rt_uint8_
 void rtgui_notebook_destroy(struct rtgui_notebook* notebook);
 
 void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, struct rtgui_widget* child);
+void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index);
 struct rtgui_widget* rtgui_notebook_get_current(struct rtgui_notebook* notebook);
 rt_int16_t rtgui_notebook_get_current_index(struct rtgui_notebook* notebook);
 

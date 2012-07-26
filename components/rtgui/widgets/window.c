@@ -594,16 +594,6 @@ void rtgui_win_set_rect(rtgui_win_t* win, rtgui_rect_t* rect)
 	}
 }
 
-#ifndef RTGUI_USING_SMALL_SIZE
-void rtgui_win_set_box(rtgui_win_t* win, rtgui_box_t* box)
-{
-	if (win == RT_NULL || box == RT_NULL) return;
-
-	rtgui_container_add_child(RTGUI_CONTAINER(win), RTGUI_WIDGET(box));
-	rtgui_widget_set_rect(RTGUI_WIDGET(box), &(RTGUI_WIDGET(win)->extent));
-}
-#endif
-
 void rtgui_win_set_onactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler)
 {
 	if (win != RT_NULL)

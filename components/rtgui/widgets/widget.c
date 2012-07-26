@@ -74,7 +74,7 @@ static void _rtgui_widget_destructor(rtgui_widget_t *widget)
 {
 	if (widget == RT_NULL) return;
 
-	if (widget->parent != RT_NULL)
+	if (widget->parent != RT_NULL && RTGUI_IS_CONTAINER(widget->parent))
 	{
 		/* remove widget from parent's children list */
 		rtgui_list_remove(&(RTGUI_CONTAINER(widget->parent)->children), &(widget->sibling));
@@ -413,8 +413,7 @@ rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui
 
 rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t* event)
 {
-	RT_ASSERT(object != RT_NULL);
-	RT_ASSERT(event != RT_NULL);
+	RTGUI_WIDGET_EVENT_HANDLER_PREPARE;
 
 	switch (event->type)
 	{
@@ -538,9 +537,10 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 {
 	struct rtgui_widget *widget = RTGUI_WIDGET(object);
 
-	/* update the clip info of widget */
+    if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(object)))
+        return RT_FALSE;
+
 	RTGUI_WIDGET_UNHIDE(widget);
-	rtgui_widget_update_clip(widget);
 
 	if (widget->on_show != RT_NULL)
 		widget->on_show(RTGUI_OBJECT(widget), RT_NULL);
@@ -551,6 +551,9 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *event)
 {
 	struct rtgui_widget *widget = RTGUI_WIDGET(object);
+
+    if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(object)))
+        return RT_FALSE;
 
 	/* hide this widget */
 	RTGUI_WIDGET_HIDE(widget);

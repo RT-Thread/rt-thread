@@ -1,8 +1,8 @@
 /*
  * Change Logs:
  * Date           Author       Notes
- * 2012-01-24     onelife      Reimplement to improve efficiency and add 
- *  features. The new decoder uses configurable fixed size working buffer and 
+ * 2012-01-24     onelife      Reimplement to improve efficiency and add
+ *  features. The new decoder uses configurable fixed size working buffer and
  *  provides scaledown function.
  */
 #include <rtthread.h>
@@ -19,58 +19,53 @@
 #ifdef RTGUI_IMAGE_BMP
 /* Compression encodings for BMP files */
 #ifndef BI_RGB
-#define BI_RGB			0
-#define BI_RLE8			1
-#define BI_RLE4			2
-#define BI_BITFIELDS	3
+#define BI_RGB          0
+#define BI_RLE8         1
+#define BI_RLE4         2
+#define BI_BITFIELDS    3
 #endif
 
 #define BMP_WORKING_BUFFER_SIZE (384)   /* In multiple of 12 and bigger than 48 */
 #define BMP_MAX_SCALING_FACTOR  (10)    // TODO: find the max value!
-#define hw_driver			    (rtgui_graphic_driver_get_default())
+#define hw_driver               (rtgui_graphic_driver_get_default())
 
 struct rtgui_image_bmp
 {
-	rt_bool_t is_loaded;
-	rt_uint8_t *pixels;
-	struct rtgui_filerw* filerw;
-	rt_uint32_t w, h;
-	rt_uint32_t pixel_offset;
-	rt_uint32_t pitch;    rt_uint8_t scale;
-	rt_uint8_t bit_per_pixel;
-	rt_uint8_t pad;
+    rt_bool_t is_loaded;
+    rt_uint8_t *pixels;
+    struct rtgui_filerw *filerw;
+    rt_uint32_t w, h;
+    rt_uint32_t pixel_offset;
+    rt_uint32_t pitch;
+    rt_uint8_t scale;
+    rt_uint8_t bit_per_pixel;
+    rt_uint8_t pad;
 };
 
-/* static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file,
-    rt_uint32_t *width, rt_uint32_t *height);
-static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image,
-    struct rtgui_filerw* file, rt_uint8_t scale, rt_bool_t load); */
-static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file);
-static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load);
-static void rtgui_image_bmp_unload(struct rtgui_image* image);
-static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect);
+static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw *file);
+static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_filerw *file, rt_bool_t load);
+static void rtgui_image_bmp_unload(struct rtgui_image *image);
+static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc, struct rtgui_rect *rect);
 
 
 struct rtgui_image_engine rtgui_image_bmp_engine =
 {
-	"bmp",
-	{ RT_NULL },
-	rtgui_image_bmp_check,
-	rtgui_image_bmp_load,
-	rtgui_image_bmp_unload,
-	rtgui_image_bmp_blit
+    "bmp",
+    { RT_NULL },
+    rtgui_image_bmp_check,
+    rtgui_image_bmp_load,
+    rtgui_image_bmp_unload,
+    rtgui_image_bmp_blit
 };
 
-static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file)
-//static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file,
-//    rt_uint32_t *width, rt_uint32_t *height)
+static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw *file)
 {
-	rt_uint8_t buffer[18];
-	rt_bool_t is_bmp = RT_FALSE;
+    rt_uint8_t buffer[18];
+    rt_bool_t is_bmp = RT_FALSE;
 
     do
     {
-        if (!file )
+        if (!file)
         {
             break;
         }
@@ -85,47 +80,46 @@ static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw* file)
             break;
         }
         /* Read file type */
-		if (buffer[0] != 'B' || buffer[1] != 'M')
-		{
-			break;
-		}
+        if (buffer[0] != 'B' || buffer[1] != 'M')
+        {
+            break;
+        }
 
         /* Read BMP header size */
         if (*(rt_uint32_t *)&buffer[14] == 12)
-        {   /* Bitmap Header Version 2.x */
+        {
+            /* Bitmap Header Version 2.x */
             if (rtgui_filerw_read(file, (void *)buffer, 8, 1) != 8)
             {
                 break;
             }
             /* Read image size */
-//            *width = (rt_uint32_t)*(rt_uint16_t *)&buffer[0];
-//            *height = (rt_uint32_t)*(rt_uint16_t *)&buffer[2];
             is_bmp = RT_TRUE;
         }
         else
-        {   /* Bitmap Header Version bigger than 2.x */
+        {
+            /* Bitmap Header Version bigger than 2.x */
             if (rtgui_filerw_read(file, (void *)buffer, 8, 1) != 8)
             {
                 break;
             }
             /* Read image size */
-//            *width = *(rt_uint32_t *)&buffer[0];
-//            *height = *(rt_uint32_t *)&buffer[4];
             is_bmp = RT_TRUE;
         }
-    } while(0);
+    }
+    while (0);
 
-	return is_bmp;
+    return is_bmp;
 }
 
-static struct rtgui_image_palette* rtgui_image_bmp_load_palette(
-    struct rtgui_filerw* file,
+static struct rtgui_image_palette *rtgui_image_bmp_load_palette(
+    struct rtgui_filerw *file,
     rt_uint32_t colorsUsed,
     rt_bool_t alpha)
 {
-	/* Load the palette, if any */
-	rt_uint32_t i;
-	struct rtgui_image_palette *palette;
+    /* Load the palette, if any */
+    rt_uint32_t i;
+    struct rtgui_image_palette *palette;
 
     palette = rtgui_image_palette_create(colorsUsed);
     if (palette == RT_NULL)
@@ -135,41 +129,39 @@ static struct rtgui_image_palette* rtgui_image_bmp_load_palette(
 
     if (alpha)
     {
-    	rt_uint8_t temp[4];
-    	for (i = 0; i < colorsUsed; i++)
-    	{
+        rt_uint8_t temp[4];
+        for (i = 0; i < colorsUsed; i++)
+        {
             if (rtgui_filerw_read(file, (void *)&temp, 1, 4) != 4)
             {
                 rtgui_free(palette);
                 return RT_NULL;
             }
-    		palette->colors[i] = RTGUI_ARGB(temp[3], temp[2], temp[1], temp[0]);
-    	}
+            palette->colors[i] = RTGUI_ARGB(temp[3], temp[2], temp[1], temp[0]);
+        }
     }
     else
     {
-    	rt_uint8_t temp[3];
-    	for (i = 0; i < colorsUsed; i++)
-    	{
+        rt_uint8_t temp[3];
+        for (i = 0; i < colorsUsed; i++)
+        {
             if (rtgui_filerw_read(file, (void *)&temp, 1, 3) != 3)
             {
                 rtgui_free(palette);
                 return RT_NULL;
             }
-    		palette->colors[i] = RTGUI_RGB(temp[2], temp[1], temp[0]);
-    	}
+            palette->colors[i] = RTGUI_RGB(temp[2], temp[1], temp[0]);
+        }
     }
 
-	return palette;
+    return palette;
 }
 
-static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_filerw* file, rt_bool_t load)
-//static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image,
-//    struct rtgui_filerw* file, rt_uint8_t scale, rt_bool_t load)
+static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_filerw *file, rt_bool_t load)
 {
-    rt_uint8_t scale = 2;
+    rt_uint8_t scale = 0;
     rt_uint8_t *wrkBuffer;
-	struct rtgui_image_bmp* bmp;
+    struct rtgui_image_bmp *bmp;
     rt_uint32_t bmpHeaderSize;
     rt_uint32_t colorsUsed;
 
@@ -187,7 +179,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
             break;
         }
 
-        bmp = (struct rtgui_image_bmp*)rtgui_malloc(sizeof(struct rtgui_image_bmp));
+        bmp = (struct rtgui_image_bmp *)rtgui_malloc(sizeof(struct rtgui_image_bmp));
         if (bmp == RT_NULL)
         {
             break;
@@ -203,10 +195,10 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
             break;
         }
         /* Read file type */
-		if (wrkBuffer[0] != 'B' || wrkBuffer[1] != 'M')
-		{
-			break;
-		}
+        if (wrkBuffer[0] != 'B' || wrkBuffer[1] != 'M')
+        {
+            break;
+        }
 //        rt_kprintf("BMP: format ok\n");
         /* Read pixel array offset */
         bmp->pixel_offset = *(rt_uint32_t *)&wrkBuffer[10];
@@ -216,19 +208,21 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 //        rt_kprintf("BMP: bmpHeaderSize %d\n", bmpHeaderSize);
         colorsUsed = 0;
         if (bmpHeaderSize == 12)
-        {   /* Bitmap Header Version 2.x */
+        {
+            /* Bitmap Header Version 2.x */
             if (rtgui_filerw_read(file, (void *)wrkBuffer, 8, 1) != 8)
             {
                 break;
             }
             /* Read image size */
-            bmp->w = (rt_uint32_t)*(rt_uint16_t *)&wrkBuffer[0];
-            bmp->h = (rt_uint32_t)*(rt_uint16_t *)&wrkBuffer[2];
+            bmp->w = (rt_uint32_t) * (rt_uint16_t *)&wrkBuffer[0];
+            bmp->h = (rt_uint32_t) * (rt_uint16_t *)&wrkBuffer[2];
             /* Read bits per pixel */
-            bmp->bit_per_pixel = (rt_uint8_t)*(rt_uint16_t *)&wrkBuffer[6];
+            bmp->bit_per_pixel = (rt_uint8_t) * (rt_uint16_t *)&wrkBuffer[6];
         }
         else
-        {   /* Bitmap Header Version bigger than 2.x */
+        {
+            /* Bitmap Header Version bigger than 2.x */
             rt_uint32_t compression;
 
             if (rtgui_filerw_read(file, (void *)wrkBuffer, 36, 1) != 36)
@@ -239,7 +233,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
             bmp->w = *(rt_uint32_t *)&wrkBuffer[0];
             bmp->h = *(rt_uint32_t *)&wrkBuffer[4];
             /* Read bits per pixel */
-            bmp->bit_per_pixel = (rt_uint8_t)*(rt_uint16_t *)&wrkBuffer[10];
+            bmp->bit_per_pixel = (rt_uint8_t) * (rt_uint16_t *)&wrkBuffer[10];
             if (bmp->bit_per_pixel > 32)
             {
                 rt_kprintf("BMP err: unsupported format\n");
@@ -269,7 +263,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
             }
 
             image->palette = rtgui_image_bmp_load_palette(file, colorsUsed,
-                bmpHeaderSize > 12 ? RT_TRUE : RT_FALSE);
+                             bmpHeaderSize > 12 ? RT_TRUE : RT_FALSE);
             if (image->palette == RT_NULL)
             {
                 break;
@@ -281,11 +275,11 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
         bmp->scale = scale;
         if (bmp->bit_per_pixel == 1)
         {
-        	bmp->pitch = (bmp->w + 7) >> 3;
+            bmp->pitch = (bmp->w + 7) >> 3;
         }
         else if (bmp->bit_per_pixel == 4)
         {
-        	bmp->pitch = (bmp->w + 1) >> 1;
+            bmp->pitch = (bmp->w + 1) >> 1;
         }
         else
         {
@@ -364,7 +358,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
             {
                 dst = bmp->pixels + (image->h - y - 1) * imageWidth;
                 readIndex = 0;
-                skipLength= 0;
+                skipLength = 0;
 
                 /* Process a line */
                 while (readIndex < bmp->pitch)
@@ -374,7 +368,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 
                     /* Read data to buffer */
                     readLength = (BMP_WORKING_BUFFER_SIZE > (bmp->pitch - readIndex)) ? \
-                        (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
+                                 (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
                     if (rtgui_filerw_read(file, (void *)wrkBuffer, 1, readLength) != readLength)
                     {
                         rt_kprintf("BMP err: read failed\n");
@@ -446,7 +440,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
                 /* Skip padding bytes  */
                 if (bmp->pad)
                 {
-                    if ( rtgui_filerw_seek(file, bmp->pad, RTGUI_FILE_SEEK_CUR) < 0)
+                    if (rtgui_filerw_seek(file, bmp->pad, RTGUI_FILE_SEEK_CUR) < 0)
                     {
                         error = RT_TRUE;
                         break;
@@ -457,7 +451,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
                 if (bmp->scale)
                 {
                     if (rtgui_filerw_seek(file, (bmp->pitch + bmp->pad) * ((1 << bmp->scale) - 1),
-                        RTGUI_FILE_SEEK_CUR) < 0)
+                                          RTGUI_FILE_SEEK_CUR) < 0)
                     {
                         error = RT_TRUE;
                         break;
@@ -475,48 +469,49 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image* image, struct rtgui_fi
 //            rt_kprintf("BMP: load to RAM\n");
         }
 
-		/* Release memory */
+        /* Release memory */
         rt_free(wrkBuffer);
-    	return RT_TRUE;
-    } while(0);
+        return RT_TRUE;
+    }
+    while (0);
 
     /* Release memory */
     rt_free(wrkBuffer);
-	rtgui_free(image->palette);
-	rtgui_free(bmp->pixels);
-	rtgui_free(bmp);
-	return RT_FALSE;
+    rtgui_free(image->palette);
+    rtgui_free(bmp->pixels);
+    rtgui_free(bmp);
+    return RT_FALSE;
 }
 
-static void rtgui_image_bmp_unload(struct rtgui_image* image)
+static void rtgui_image_bmp_unload(struct rtgui_image *image)
 {
-	struct rtgui_image_bmp* bmp;
+    struct rtgui_image_bmp *bmp;
 
-	if (image != RT_NULL)
-	{
-		bmp = (struct rtgui_image_bmp*)image->data;
+    if (image != RT_NULL)
+    {
+        bmp = (struct rtgui_image_bmp *)image->data;
 
-		/* Release memory */
-		rtgui_free(bmp->pixels);
-		if (bmp->filerw != RT_NULL)
-		{
+        /* Release memory */
+        rtgui_free(bmp->pixels);
+        if (bmp->filerw != RT_NULL)
+        {
             /* Close file */
-			rtgui_filerw_close(bmp->filerw);
-			bmp->filerw = RT_NULL;
-		}
-		rtgui_free(bmp);
-	}
+            rtgui_filerw_close(bmp->filerw);
+            bmp->filerw = RT_NULL;
+        }
+        rtgui_free(bmp);
+    }
 }
 
-static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* dst_rect)
+static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc, struct rtgui_rect *dst_rect)
 {
     rt_uint16_t w, h;
-	struct rtgui_image_bmp* bmp;
+    struct rtgui_image_bmp *bmp;
     rt_uint8_t bytePerPixel;
     rt_uint32_t imageWidth;
     rt_bool_t error;
 
-	bmp = (struct rtgui_image_bmp*)image->data;
+    bmp = (struct rtgui_image_bmp *)image->data;
     RT_ASSERT(image != RT_NULL || dc != RT_NULL || dst_rect != RT_NULL || bmp != RT_NULL);
 
     bytePerPixel = bmp->bit_per_pixel / 8;
@@ -560,18 +555,24 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
             rt_uint8_t skipLength;
             rt_uint16_t x, y;
             rt_int8_t scale1, scale2;
-
-            wrkBuffer = (rt_uint8_t *)rt_malloc(BMP_WORKING_BUFFER_SIZE);
-            if (wrkBuffer == RT_NULL)
-            {
-                rt_kprintf("BMP err: no mem (%d)\n", BMP_WORKING_BUFFER_SIZE);
-                break;
-            }
+            rt_uint16_t y_start = dst_rect->y1 + h - 1;
 
             /* Read the pixels.  Note that the bmp image is upside down */
             if (rtgui_filerw_seek(bmp->filerw, bmp->pixel_offset, RTGUI_FILE_SEEK_SET) < 0)
             {
                 break;
+            }
+            /* the image is upside down. So we need to start from middle if the
+             * image is higher than the dst_rect. */
+            if (image->h > rtgui_rect_height(*dst_rect))
+            {
+                int hdelta = image->h - rtgui_rect_height(*dst_rect);
+                if (rtgui_filerw_seek(bmp->filerw, hdelta * (bmp->pitch + bmp->pad) * (1 << bmp->scale),
+                            RTGUI_FILE_SEEK_CUR) < 0)
+                {
+                    error = RT_TRUE;
+                    break;
+                }
             }
 
             if (bmp->bit_per_pixel == 1)
@@ -601,23 +602,32 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                 }
             }
 
+            wrkBuffer = (rt_uint8_t *)rt_malloc(
+					(BMP_WORKING_BUFFER_SIZE > bmp->pitch) ? \
+					bmp->pitch : BMP_WORKING_BUFFER_SIZE);
+            if (wrkBuffer == RT_NULL)
+            {
+                rt_kprintf("BMP err: no mem (%d)\n", BMP_WORKING_BUFFER_SIZE);
+                break;
+            }
+
             /* Process whole image */
             y = 0;
-            while (y < image->h)
+            while (y < h)
             {
                 x = 0;
                 readIndex = 0;
-                skipLength= 0;
+                skipLength = 0;
 
                 /* Process a line */
                 while (readIndex < bmp->pitch)
                 {
                     /* Put progress indicator */
-                    rt_kprintf("\r%lu%%", y * 100UL / image->h);
+                    rt_kprintf("\r%lu%%", y * 100UL / h);
 
                     /* Read data to buffer */
                     readLength = (BMP_WORKING_BUFFER_SIZE > (bmp->pitch - readIndex)) ? \
-                        (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
+                                 (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
                     if (rtgui_filerw_read(bmp->filerw, (void *)wrkBuffer, 1, readLength) != readLength)
                     {
                         rt_kprintf("BMP err: read failed\n");
@@ -629,18 +639,19 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                     /* Process read buffer */
                     if (bmp->bit_per_pixel == 1)
                     {
-                        rt_uint8_t j;
-                        rtgui_color_t color;
-
                         for (loadIndex = skipLength; loadIndex < readLength; loadIndex += 1 << scale1)
                         {
+                            rt_uint8_t j;
                             for (j = 0; j < 8; j += 1 << scale2)
                             {
+                                rtgui_color_t color;
                                 color = image->palette->colors[(wrkBuffer[loadIndex] & (1 << (7 - j))) >> (7 - j)];
                                 rtgui_dc_draw_color_point(dc,
-                                    dst_rect->x1 + x++,
-                                    dst_rect->y1 + image->h - y,
-                                    color);
+                                                          dst_rect->x1 + x++,
+                                                          y_start - y,
+                                                          color);
+                                if (x >= w)
+                                    break;
                             }
                             if (scale1 && (readLength % (1 << scale1)))
                             {
@@ -650,18 +661,19 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                     }
                     else if (bmp->bit_per_pixel == 4)
                     {
-                        rt_uint8_t j;
-                        rtgui_color_t color;
-
                         for (loadIndex = skipLength; loadIndex < readLength; loadIndex += 1 << scale1)
                         {
+                            rt_uint8_t j;
                             for (j = 0; j < 8; j += 1 << (2 + scale2))
                             {
+                                rtgui_color_t color;
                                 color = image->palette->colors[(wrkBuffer[loadIndex] & (0x0F << (4 - j))) >> (4 - j)];
                                 rtgui_dc_draw_color_point(dc,
-                                    dst_rect->x1 + x++,
-                                    dst_rect->y1 + image->h - y,
-                                    color);
+                                                          dst_rect->x1 + x++,
+                                                          y_start - y,
+                                                          color);
+                                if (x >= w)
+                                    break;
                             }
                         }
                         if (scale1 && (readLength % (1 << scale1)))
@@ -671,15 +683,16 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                     }
                     else if (bmp->bit_per_pixel == 8)
                     {
-                        rtgui_color_t color;
-
                         for (loadIndex = skipLength; loadIndex < readLength; loadIndex += 1 << bmp->scale)
                         {
+                            rtgui_color_t color;
                             color = image->palette->colors[wrkBuffer[loadIndex]];
                             rtgui_dc_draw_color_point(dc,
-                                dst_rect->x1 + x++,
-                                dst_rect->y1 + image->h - y,
-                                color);
+                                                      dst_rect->x1 + x++,
+                                                      y_start - y,
+                                                      color);
+                            if (x >= w)
+                                break;
                         }
                         if (readLength % (1 << bmp->scale))
                         {
@@ -707,15 +720,17 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                         }
 
                         for (loadIndex = skipLength;
-							 loadIndex < readLength;
-							 loadIndex += bytePerPixel << bmp->scale)
+                                loadIndex < readLength;
+                                loadIndex += bytePerPixel << bmp->scale)
                         {
                             blit_line(temp, &wrkBuffer[loadIndex], bytePerPixel);
                             dc->engine->blit_line(dc,
-                                dst_rect->x1 + x, dst_rect->x1 + x + 1,
-                                dst_rect->y1 + image->h - y,
-                                temp);
+                                                  dst_rect->x1 + x, dst_rect->x1 + x + 1,
+                                                  y_start - y,
+                                                  temp);
                             x++;
+                            if (x >= w)
+                                break;
                         }
                         if (readLength % (1 << bmp->scale))
                         {
@@ -732,7 +747,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                 /* Skip padding bytes  */
                 if (bmp->pad)
                 {
-                    if ( rtgui_filerw_seek(bmp->filerw, bmp->pad, RTGUI_FILE_SEEK_CUR) < 0)
+                    if (rtgui_filerw_seek(bmp->filerw, bmp->pad, RTGUI_FILE_SEEK_CUR) < 0)
                     {
                         error = RT_TRUE;
                         break;
@@ -743,7 +758,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                 if (bmp->scale)
                 {
                     if (rtgui_filerw_seek(bmp->filerw, (bmp->pitch + bmp->pad) * ((1 << bmp->scale) - 1),
-                        RTGUI_FILE_SEEK_CUR) < 0)
+                                          RTGUI_FILE_SEEK_CUR) < 0)
                     {
                         error = RT_TRUE;
                         break;
@@ -761,7 +776,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
         else
         {
             rt_uint16_t x, y;
-            rt_uint8_t* ptr;
+            rt_uint8_t *ptr;
 
             for (y = 0; y < h; y ++)
             {
@@ -775,9 +790,9 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                     {
                         color = image->palette->colors[*(ptr++)];
                         rtgui_dc_draw_color_point(dc,
-                            dst_rect->x1 + x,
-                            dst_rect->y1 + y,
-                            color);
+                                                  dst_rect->x1 + x,
+                                                  dst_rect->y1 + y,
+                                                  color);
                     }
                 }
                 else
@@ -805,20 +820,21 @@ static void rtgui_image_bmp_blit(struct rtgui_image* image, struct rtgui_dc* dc,
                         blit_line(temp, ptr, bytePerPixel);
                         ptr += bytePerPixel;
                         dc->engine->blit_line(dc,
-                            dst_rect->x1 + x, dst_rect->x1 + x + 1,
-                            dst_rect->y1 + y,
-                            temp);
+                                              dst_rect->x1 + x, dst_rect->x1 + x + 1,
+                                              dst_rect->y1 + y,
+                                              temp);
                     }
                 }
             }
         }
 //        rt_kprintf("BMP: blit ok\n");
-    } while(0);
+    }
+    while (0);
 }
 
 void rtgui_image_bmp_init()
 {
-	/* register bmp on image system */
-	rtgui_image_register_engine(&rtgui_image_bmp_engine);
+    /* register bmp on image system */
+    rtgui_image_register_engine(&rtgui_image_bmp_engine);
 }
 #endif
