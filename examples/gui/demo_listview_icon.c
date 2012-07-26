@@ -10,7 +10,7 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/list_view.h>
 
-static struct rtgui_application *application = RT_NULL;
+static struct rtgui_app *application = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
 
 /* 列表项的动作函数 */
@@ -316,7 +316,7 @@ static void open_btn_onbutton(rtgui_widget_t* widget, struct rtgui_event* event)
 }
 
 /* 创建用于演示列表视图的视图 */
-rtgui_container_t* demo_listview_icon_view(struct rtgui_application *app)
+rtgui_container_t* demo_listview_icon_view(struct rtgui_app *app)
 {
 	rtgui_rect_t rect;
 	rtgui_container_t *view;

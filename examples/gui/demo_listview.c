@@ -10,7 +10,7 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/list_view.h>
 
-static struct rtgui_application *application = RT_NULL;
+static struct rtgui_app *application = RT_NULL;
 static rtgui_list_view_t* _view = RT_NULL;
 // static rtgui_image_t* return_image = RT_NULL;
 

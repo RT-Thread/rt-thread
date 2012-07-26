@@ -60,7 +60,7 @@
 
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
-#include <rtgui/rtgui_application.h>
+#include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/window.h>
@@ -172,8 +172,8 @@ static void app_main(void *parameter)
     rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
 
 	/* create application */
-	struct rtgui_application *app;
-	app = rtgui_application_create(rt_thread_self(), "gui_app");
+	struct rtgui_app *app;
+	app = rtgui_app_create(rt_thread_self(), "gui_app");
 	if (app == RT_NULL)
     {
         rt_kprintf("Create application \"gui_app\" failed!\n");
@@ -199,7 +199,7 @@ static void app_main(void *parameter)
 	if (win_info == RT_NULL)
 	{
         rt_kprintf("Create window \"info\" failed!\n");
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
         return;
 	}
 
@@ -240,7 +240,7 @@ static void app_main(void *parameter)
 	if (win_main == RT_NULL)
 	{
         rt_kprintf("Create window \"main\" failed!\n");
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
         return;
 	}
 
@@ -286,7 +286,7 @@ static void app_main(void *parameter)
 	if (win_hello == RT_NULL)
 	{
         rt_kprintf("Create window \"hello\" failed!\n");
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
         return;
 	}
 
@@ -297,7 +297,7 @@ static void app_main(void *parameter)
         rt_kprintf("Create box failed!\n");
         return;
     }
-    rtgui_win_set_box(win_hello, box);
+//    rtgui_win_set_box(win_hello, box);
 
     label = rtgui_label_create("¹þÂÞ,íïÅÖ!");
 	if(label == RT_NULL)
@@ -318,8 +318,8 @@ static void app_main(void *parameter)
     rtgui_win_show(win_main, RT_FALSE);
     rtgui_win_show(win_hello, RT_FALSE);
 
-    rtgui_application_run(app);
-    rtgui_application_destroy(app);
+    rtgui_app_run(app);
+    rtgui_app_destroy(app);
 }
 
 static rt_bool_t photo_view_event_handler(rtgui_object_t *object, rtgui_event_t *event)
@@ -402,8 +402,8 @@ static void app_photo(void *parameter)
     rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
 
 	/* create application */
-	struct rtgui_application *app;
-	app = rtgui_application_create(rt_thread_self(), "pho_app");
+	struct rtgui_app *app;
+	app = rtgui_app_create(rt_thread_self(), "pho_app");
 	if (app == RT_NULL)
     {
         rt_kprintf("Create application \"pho_app\" failed!\n");
@@ -424,7 +424,7 @@ static void app_photo(void *parameter)
 	if (window == RT_NULL)
 	{
         rt_kprintf("Create window \"photo\" failed!\n");
-		rtgui_application_destroy(app);
+		rtgui_app_destroy(app);
         return;
 	}
     event->win.wid = window;
@@ -462,8 +462,8 @@ static void app_photo(void *parameter)
 
     rtgui_win_show(window, RT_FALSE);
 
-    rtgui_application_run(app);
-    rtgui_application_destroy(app);
+    rtgui_app_run(app);
+    rtgui_app_destroy(app);
 }
 #endif
 
@@ -680,7 +680,7 @@ void rt_demo_thread_entry(void* parameter)
             continue;
         }
 
-        rtgui_application_send(photo_app, &event.win.parent, sizeof(event));
+        rtgui_send(photo_app, &event.win.parent, sizeof(event));
         rt_thread_sleep(2000);
     } while (dirent != RT_NULL);
     closedir(dir);
