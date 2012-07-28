@@ -27,22 +27,22 @@ typedef rt_uint32_t Elf32_Word;     /* Unsigned large integer */
 typedef rt_uint16_t Elf32_Half;     /* Unsigned medium integer */
 
 /* e_ident[] magic number */
-#define	ELFMAG0     0x7f        /* e_ident[EI_MAG0] */
-#define	ELFMAG1     'E'         /* e_ident[EI_MAG1] */
-#define	ELFMAG2     'L'         /* e_ident[EI_MAG2] */
-#define	ELFMAG3     'F'         /* e_ident[EI_MAG3] */
-#define	RTMMAG      "\177RTM"   /* magic */
-#define	ELFMAG      "\177ELF"   /* magic */
-#define	SELFMAG     4           /* size of magic */
+#define    ELFMAG0     0x7f        /* e_ident[EI_MAG0] */
+#define    ELFMAG1     'E'         /* e_ident[EI_MAG1] */
+#define    ELFMAG2     'L'         /* e_ident[EI_MAG2] */
+#define    ELFMAG3     'F'         /* e_ident[EI_MAG3] */
+#define    RTMMAG      "\177RTM"   /* magic */
+#define    ELFMAG      "\177ELF"   /* magic */
+#define    SELFMAG     4           /* size of magic */
 
 #define EI_CLASS    4           /* file class */
 #define EI_NIDENT   16          /* Size of e_ident[] */
 
 /* e_ident[] file class */
-#define	ELFCLASSNONE    0       /* invalid */
-#define	ELFCLASS32      1       /* 32-bit objs */
-#define	ELFCLASS64      2       /* 64-bit objs */
-#define	ELFCLASSNUM     3       /* number of classes */
+#define    ELFCLASSNONE    0       /* invalid */
+#define    ELFCLASS32      1       /* 32-bit objs */
+#define    ELFCLASS64      2       /* 64-bit objs */
+#define    ELFCLASSNUM     3       /* number of classes */
 
 /* e_ident[] data encoding */
 #define ELFDATANONE     0       /* invalid */
@@ -65,37 +65,37 @@ typedef rt_uint16_t Elf32_Half;     /* Unsigned medium integer */
 /* ELF Header */
 typedef struct elfhdr
 {
-	unsigned char e_ident[EI_NIDENT]; /* ELF Identification */
-	Elf32_Half    e_type;             /* object file type */
-	Elf32_Half    e_machine;          /* machine */
-	Elf32_Word    e_version;          /* object file version */
-	Elf32_Addr    e_entry;            /* virtual entry point */
-	Elf32_Off     e_phoff;            /* program header table offset */
-	Elf32_Off     e_shoff;            /* section header table offset */
-	Elf32_Word    e_flags;            /* processor-specific flags */
-	Elf32_Half    e_ehsize;           /* ELF header size */
-	Elf32_Half    e_phentsize;        /* program header entry size */
-	Elf32_Half    e_phnum;            /* number of program header entries */
-	Elf32_Half    e_shentsize;        /* section header entry size */
-	Elf32_Half    e_shnum;            /* number of section header entries */
-	Elf32_Half    e_shstrndx;         /* section header table's "section
+    unsigned char e_ident[EI_NIDENT]; /* ELF Identification */
+    Elf32_Half    e_type;             /* object file type */
+    Elf32_Half    e_machine;          /* machine */
+    Elf32_Word    e_version;          /* object file version */
+    Elf32_Addr    e_entry;            /* virtual entry point */
+    Elf32_Off     e_phoff;            /* program header table offset */
+    Elf32_Off     e_shoff;            /* section header table offset */
+    Elf32_Word    e_flags;            /* processor-specific flags */
+    Elf32_Half    e_ehsize;           /* ELF header size */
+    Elf32_Half    e_phentsize;        /* program header entry size */
+    Elf32_Half    e_phnum;            /* number of program header entries */
+    Elf32_Half    e_shentsize;        /* section header entry size */
+    Elf32_Half    e_shnum;            /* number of section header entries */
+    Elf32_Half    e_shstrndx;         /* section header table's "section
                                          header string table" entry offset */
 } Elf32_Ehdr;
 
 /* Section Header */
 typedef struct
 {
-	Elf32_Word sh_name;      /* name - index into section header
+    Elf32_Word sh_name;      /* name - index into section header
                                 string table section */
-	Elf32_Word sh_type;      /* type */
-	Elf32_Word sh_flags;     /* flags */
-	Elf32_Addr sh_addr;      /* address */
-	Elf32_Off  sh_offset;    /* file offset */
-	Elf32_Word sh_size;      /* section size */
-	Elf32_Word sh_link;      /* section header table index link */
-	Elf32_Word sh_info;      /* extra information */
-	Elf32_Word sh_addralign; /* address alignment */
-	Elf32_Word sh_entsize;   /* section entry size */
+    Elf32_Word sh_type;      /* type */
+    Elf32_Word sh_flags;     /* flags */
+    Elf32_Addr sh_addr;      /* address */
+    Elf32_Off  sh_offset;    /* file offset */
+    Elf32_Word sh_size;      /* section size */
+    Elf32_Word sh_link;      /* section header table index link */
+    Elf32_Word sh_info;      /* extra information */
+    Elf32_Word sh_addralign; /* address alignment */
+    Elf32_Word sh_entsize;   /* section entry size */
 } Elf32_Shdr;
 
 /* Section names */
@@ -125,54 +125,54 @@ typedef struct
 /* Symbol Table Entry */
 typedef struct elf32_sym
 {
-	Elf32_Word    st_name;  /* name - index into string table */
-	Elf32_Addr    st_value; /* symbol value */
-	Elf32_Word    st_size;  /* symbol size */
-	unsigned char st_info;  /* type and binding */
-	unsigned char st_other; /* 0 - no defined meaning */
-	Elf32_Half    st_shndx; /* section header index */
+    Elf32_Word    st_name;  /* name - index into string table */
+    Elf32_Addr    st_value; /* symbol value */
+    Elf32_Word    st_size;  /* symbol size */
+    unsigned char st_info;  /* type and binding */
+    unsigned char st_other; /* 0 - no defined meaning */
+    Elf32_Half    st_shndx; /* section header index */
 } Elf32_Sym;
 
-#define	STB_LOCAL   0       /* BIND */
-#define	STB_GLOBAL  1
-#define	STB_WEAK    2
-#define	STB_NUM     3
+#define    STB_LOCAL   0       /* BIND */
+#define    STB_GLOBAL  1
+#define    STB_WEAK    2
+#define    STB_NUM     3
  
-#define	STB_LOPROC  13      /* processor specific range */
-#define	STB_HIPROC  15
+#define    STB_LOPROC  13      /* processor specific range */
+#define    STB_HIPROC  15
 
-#define	STT_NOTYPE  0       /* symbol type is unspecified */
-#define	STT_OBJECT  1       /* data object */
-#define	STT_FUNC    2       /* code object */
-#define	STT_SECTION 3       /* symbol identifies an ELF section */
-#define	STT_FILE    4       /* symbol's name is file name */
-#define	STT_COMMON  5       /* common data object */
-#define	STT_TLS     6       /* thread-local data object */
-#define	STT_NUM     7       /* # defined types in generic range */
-#define	STT_LOOS    10      /* OS specific range */
-#define	STT_HIOS    12
-#define	STT_LOPROC  13      /* processor specific range */
-#define	STT_HIPROC  15
+#define    STT_NOTYPE  0       /* symbol type is unspecified */
+#define    STT_OBJECT  1       /* data object */
+#define    STT_FUNC    2       /* code object */
+#define    STT_SECTION 3       /* symbol identifies an ELF section */
+#define    STT_FILE    4       /* symbol's name is file name */
+#define    STT_COMMON  5       /* common data object */
+#define    STT_TLS     6       /* thread-local data object */
+#define    STT_NUM     7       /* # defined types in generic range */
+#define    STT_LOOS    10      /* OS specific range */
+#define    STT_HIOS    12
+#define    STT_LOPROC  13      /* processor specific range */
+#define    STT_HIPROC  15
     
 #define STN_UNDEF       0               /* undefined */
 
-#define	ELF_ST_BIND(info)           ((info) >> 4)
-#define	ELF_ST_TYPE(info)           ((info) & 0xf)
-#define	ELF_ST_INFO(bind, type)     (((bind)<<4)+((type)&0xf))	
+#define    ELF_ST_BIND(info)           ((info) >> 4)
+#define    ELF_ST_TYPE(info)           ((info) & 0xf)
+#define    ELF_ST_INFO(bind, type)     (((bind)<<4)+((type)&0xf))    
 
 /* Relocation entry with implicit addend */
 typedef struct
 {
-	Elf32_Addr r_offset;   /* offset of relocation */
-	Elf32_Word r_info;     /* symbol table index and type */
+    Elf32_Addr r_offset;   /* offset of relocation */
+    Elf32_Word r_info;     /* symbol table index and type */
 } Elf32_Rel;
 
 /* Relocation entry with explicit addend */
 typedef struct
 {
-	Elf32_Addr  r_offset;   /* offset of relocation */
-	Elf32_Word  r_info;     /* symbol table index and type */
-	Elf32_Sword r_addend;
+    Elf32_Addr  r_offset;   /* offset of relocation */
+    Elf32_Word  r_info;     /* symbol table index and type */
+    Elf32_Sword r_addend;
 } Elf32_Rela;
 
 /* Extract relocation info - r_info */
@@ -183,32 +183,32 @@ typedef struct
 /*
  * Relocation type for arm
  */
-#define	R_ARM_NONE			0
-#define	R_ARM_PC24			1
-#define	R_ARM_ABS32			2
-#define	R_ARM_REL32			3
-#define R_ARM_THM_CALL		10
-#define	R_ARM_GLOB_DAT		21
-#define	R_ARM_JUMP_SLOT		22
-#define	R_ARM_RELATIVE		23
-#define	R_ARM_GOT_BREL		26
-#define	R_ARM_PLT32			27
-#define	R_ARM_CALL			28
-#define	R_ARM_JUMP24		29
-#define R_ARM_THM_JUMP24	30
-#define	R_ARM_V4BX			40
+#define    R_ARM_NONE            0
+#define    R_ARM_PC24            1
+#define    R_ARM_ABS32            2
+#define    R_ARM_REL32            3
+#define R_ARM_THM_CALL        10
+#define    R_ARM_GLOB_DAT        21
+#define    R_ARM_JUMP_SLOT        22
+#define    R_ARM_RELATIVE        23
+#define    R_ARM_GOT_BREL        26
+#define    R_ARM_PLT32            27
+#define    R_ARM_CALL            28
+#define    R_ARM_JUMP24        29
+#define R_ARM_THM_JUMP24    30
+#define    R_ARM_V4BX            40
 
 /* Program Header */
 typedef struct
 {
-	Elf32_Word p_type;      /* segment type */
-	Elf32_Off  p_offset;    /* segment offset */
-	Elf32_Addr p_vaddr;     /* virtual address of segment */
-	Elf32_Addr p_paddr;     /* physical address - ignored? */
-	Elf32_Word p_filesz;    /* number of bytes in file for seg. */
-	Elf32_Word p_memsz;     /* number of bytes in mem. for seg. */
-	Elf32_Word p_flags;     /* flags */
-	Elf32_Word p_align;     /* memory alignment */
+    Elf32_Word p_type;      /* segment type */
+    Elf32_Off  p_offset;    /* segment offset */
+    Elf32_Addr p_vaddr;     /* virtual address of segment */
+    Elf32_Addr p_paddr;     /* physical address - ignored? */
+    Elf32_Word p_filesz;    /* number of bytes in file for seg. */
+    Elf32_Word p_memsz;     /* number of bytes in mem. for seg. */
+    Elf32_Word p_flags;     /* flags */
+    Elf32_Word p_align;     /* memory alignment */
 } Elf32_Phdr;
 
 /* p_type */
