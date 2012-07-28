@@ -15,6 +15,10 @@
 #ifndef __RT_USB_HOST_H__
 #define __RT_USB_HOST_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <rtthread.h>
 
 #define RT_DEBUG_USB                    0x01
@@ -312,6 +316,13 @@ struct uclass_driver
     rt_err_t (*run)(void* arg);
     rt_err_t (*stop)(void* arg);
 
+    const char* manufacturer;
+    const char* model;
+    const char* description;
+    const char* version;
+    const char* uri;
+    const char* serial;
+    
     void* user_data;
 };
 typedef struct uclass_driver* ucd_t;
@@ -453,6 +464,11 @@ ucd_t rt_usb_class_driver_adk(void);
 uprotocal_t rt_usb_hid_protocal_kbd(void);
 uprotocal_t rt_usb_hid_protocal_mouse(void);
 
+/* usb adk class driver interface */
+rt_err_t rt_usb_adk_set_string(const char* manufacturer, const char* model,
+    const char* description, const char* version, const char* uri, 
+    const char* serial);
+
 /* usb hub interface */
 rt_err_t rt_usb_hub_get_descriptor(uinst_t uinst, rt_uint8_t *buffer, 
     rt_size_t size);
@@ -547,6 +563,10 @@ rt_inline rt_err_t rt_usb_hcd_hub_control(uhcd_t hcd, rt_uint16_t port,
 
     return hcd->ops->hub_ctrl(port, cmd, args);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
