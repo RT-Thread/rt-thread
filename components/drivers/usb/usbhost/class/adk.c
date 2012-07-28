@@ -20,6 +20,26 @@
 
 static struct uclass_driver adk_driver;
 
+rt_err_t rt_usb_adk_set_string(const char* manufacturer, const char* model,
+    const char* description, const char* version, const char* uri, 
+    const char* serial)
+{
+    adk_driver.manufacturer = manufacturer;
+    adk_driver.model = model;
+    adk_driver.description = description;
+    adk_driver.version = version;
+    adk_driver.uri = uri;
+    adk_driver.serial = serial;
+
+    return RT_EOK;
+}
+
+#ifdef RT_USING_MODULE
+#include <rtm.h>
+
+RTM_EXPORT(rt_usb_adk_set_string);
+#endif
+
 /**
  * This function will do USB_REQ_GET_PROTOCOL request to set idle period to the usb adk device
  *
@@ -29,7 +49,7 @@ static struct uclass_driver adk_driver;
  * 
  * @return the error code, RT_EOK on successfully.
 */
-rt_err_t rt_usb_adk_get_protocol(uifinst_t ifinst, rt_uint16_t *protocol)
+static rt_err_t rt_usb_adk_get_protocol(uifinst_t ifinst, rt_uint16_t *protocol)
 {
     struct ureqest setup;
     uinst_t uinst;    
@@ -62,7 +82,7 @@ rt_err_t rt_usb_adk_get_protocol(uifinst_t ifinst, rt_uint16_t *protocol)
  * 
  * @return the error code, RT_EOK on successfully.
 */
-rt_err_t rt_usb_adk_send_string(uifinst_t ifinst, rt_uint16_t index, 
+static rt_err_t rt_usb_adk_send_string(uifinst_t ifinst, rt_uint16_t index, 
     const char* str)
 {
     struct ureqest setup;
@@ -96,7 +116,7 @@ rt_err_t rt_usb_adk_send_string(uifinst_t ifinst, rt_uint16_t index,
  * 
  * @return the error code, RT_EOK on successfully.
 */
-rt_err_t rt_usb_adk_start(uifinst_t ifinst)
+static rt_err_t rt_usb_adk_start(uifinst_t ifinst)
 {
     struct ureqest setup;
     uinst_t uinst;    
@@ -198,19 +218,19 @@ static rt_err_t rt_usb_adk_run(void* arg)
     }
 
     RT_DEBUG_LOG(RT_DEBUG_USB,("rt_usb_adk_run\n"));
-
-    if(ifinst->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
         
     dev_desc = &ifinst->uinst->dev_desc;
     if(dev_desc->idVendor == USB_ACCESSORY_VENDOR_ID && 
         (dev_desc->idProduct == USB_ACCESSORY_PRODUCT_ID || 
         dev_desc->idProduct == USB_ACCESSORY_ADB_PRODUCT_ID))
     {
-        rt_kprintf("found android accessory device\n");
+        if(ifinst->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
+    
+        RT_DEBUG_LOG(RT_DEBUG_USB,("found android accessory device\n"));        
     }
     else
     {
-        rt_kprintf("switch device\n");
+        RT_DEBUG_LOG(RT_DEBUG_USB,("switch device\n"));        
         
         if((ret = rt_usb_adk_get_protocol(ifinst, &protocol)) != RT_EOK)
         {
@@ -224,13 +244,26 @@ static rt_err_t rt_usb_adk_run(void* arg)
             return -RT_ERROR;
         }       
 
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_MANUFACTURER, "Real Thread, Inc");
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_MODEL, "ART");
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_DESCRIPTION, "Arduino like board");
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_VERSION, "1.0");
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_VERSION, "www.rt-thread.org");        
-        rt_usb_adk_send_string(ifinst, ACCESSORY_STRING_SERIAL, "00000012345678");            
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_MANUFACTURER, adk_driver.manufacturer);
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_MODEL, adk_driver.model);
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_DESCRIPTION, adk_driver.description);
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_VERSION, adk_driver.version);
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_URI, adk_driver.uri);        
+        rt_usb_adk_send_string(ifinst, 
+            ACCESSORY_STRING_SERIAL, adk_driver.serial);            
 
+        RT_DEBUG_LOG(RT_DEBUG_USB,("manufacturer %s\n", adk_driver.manufacturer));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("model %s\n", adk_driver.model));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("description %s\n", adk_driver.description));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("version %s\n", adk_driver.version));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("uri %s\n", adk_driver.uri));       
+        RT_DEBUG_LOG(RT_DEBUG_USB,("serial %s\n", adk_driver.serial));               
+        
         if((ret = rt_usb_adk_start(ifinst)) != RT_EOK)
         {
             rt_kprintf("rt_usb_adk_start failed\n");
