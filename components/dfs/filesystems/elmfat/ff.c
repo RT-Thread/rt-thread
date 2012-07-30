@@ -523,6 +523,13 @@ void mem_cpy (void* dst, const void* src, UINT cnt) {
 	const BYTE *s = (const BYTE*)src;
 
 #if _WORD_ACCESS == 1
+	if (((unsigned)d & 0x03)!=0 || ((unsigned)s & 0x03)!=0)
+	{
+		while (cnt--)
+			*d++ = *s++;
+		return;
+	}
+    
 	while (cnt >= sizeof(int)) {
 		*(int*)d = *(int*)s;
 		d += sizeof(int); s += sizeof(int);
