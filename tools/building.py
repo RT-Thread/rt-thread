@@ -17,13 +17,9 @@ class Win32Spawn:
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
-        # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        penv = {}
-        for key, value in env.iteritems():
-            penv[key] = str(value)
 
         proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False, env=penv)
+            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False)
         data, err = proc.communicate()
         rv = proc.wait()
         if data:
@@ -34,29 +30,6 @@ class Win32Spawn:
         if rv:
             return rv
         return 0
-
-def GetVersion():
-    import SCons.cpp
-    import string
-
-    rtdef = os.path.join(Rtt_Root, 'include', 'rtdef.h')
-
-    # parse rtdef.h to get RT-Thread version 
-    prepcessor = SCons.cpp.PreProcessor()
-    f = file(rtdef, 'r')
-    contents = f.read()
-    f.close()
-    prepcessor.process_contents(contents)
-    def_ns = prepcessor.cpp_namespace
-
-    version = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_VERSION']))
-    subversion = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_SUBVERSION']))
-
-    if def_ns.has_key('RT_REVISION'):
-        revision = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_REVISION']))
-        return '%d.%d.%d' % (version, subversion, revision)
-
-    return '0.%d.%d' % (version, subversion)
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
     import SCons.cpp
@@ -75,6 +48,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
+        os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
+    else:
+        os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -298,3 +274,9 @@ def GetVersion():
         return '%d.%d.%d' % (version, subversion, revision)
 
     return '0.%d.%d' % (version, subversion)
+
+def do_copy_file(src, dst):
+    pass
+
+def MakeCopy():
+    pass
