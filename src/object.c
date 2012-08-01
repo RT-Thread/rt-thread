@@ -409,7 +409,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 			/* leave critical */
 			rt_exit_critical();
 
-			return (rt_object_t)object;
+			return object;
 		}
 	}
 
