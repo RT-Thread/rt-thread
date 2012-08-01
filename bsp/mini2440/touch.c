@@ -1,7 +1,7 @@
 /*
  * File      : touch.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Develop Team
+ * COPYRIGHT (C) 2010 - 2012, RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -26,38 +26,38 @@
 #include "touch.h"
 
 /* ADCCON Register Bits */
-#define S3C2410_ADCCON_ECFLG		(1<<15)
-#define S3C2410_ADCCON_PRSCEN		(1<<14)
-#define S3C2410_ADCCON_PRSCVL(x)	(((x)&0xFF)<<6)
-#define S3C2410_ADCCON_PRSCVLMASK	(0xFF<<6)
-#define S3C2410_ADCCON_SELMUX(x)	(((x)&0x7)<<3)
-#define S3C2410_ADCCON_MUXMASK		(0x7<<3)
-#define S3C2410_ADCCON_STDBM		(1<<2)
-#define S3C2410_ADCCON_READ_START	(1<<1)
-#define S3C2410_ADCCON_ENABLE_START	(1<<0)
-#define S3C2410_ADCCON_STARTMASK	(0x3<<0)
+#define S3C2410_ADCCON_ECFLG			(1<<15)
+#define S3C2410_ADCCON_PRSCEN			(1<<14)
+#define S3C2410_ADCCON_PRSCVL(x)		(((x)&0xFF)<<6)
+#define S3C2410_ADCCON_PRSCVLMASK		(0xFF<<6)
+#define S3C2410_ADCCON_SELMUX(x)		(((x)&0x7)<<3)
+#define S3C2410_ADCCON_MUXMASK			(0x7<<3)
+#define S3C2410_ADCCON_STDBM			(1<<2)
+#define S3C2410_ADCCON_READ_START		(1<<1)
+#define S3C2410_ADCCON_ENABLE_START		(1<<0)
+#define S3C2410_ADCCON_STARTMASK		(0x3<<0)
 
 /* ADCTSC Register Bits */
-#define S3C2410_ADCTSC_UD_SEN		(1<<8) /* ghcstop add for s3c2440a */
-#define S3C2410_ADCTSC_YM_SEN		(1<<7)
-#define S3C2410_ADCTSC_YP_SEN		(1<<6)
-#define S3C2410_ADCTSC_XM_SEN		(1<<5)
-#define S3C2410_ADCTSC_XP_SEN		(1<<4)
+#define S3C2410_ADCTSC_UD_SEN			(1<<8) /* ghcstop add for s3c2440a */
+#define S3C2410_ADCTSC_YM_SEN			(1<<7)
+#define S3C2410_ADCTSC_YP_SEN			(1<<6)
+#define S3C2410_ADCTSC_XM_SEN			(1<<5)
+#define S3C2410_ADCTSC_XP_SEN			(1<<4)
 #define S3C2410_ADCTSC_PULL_UP_DISABLE	(1<<3)
-#define S3C2410_ADCTSC_AUTO_PST		(1<<2)
-#define S3C2410_ADCTSC_XY_PST(x)	(((x)&0x3)<<0)
+#define S3C2410_ADCTSC_AUTO_PST			(1<<2)
+#define S3C2410_ADCTSC_XY_PST(x)		(((x)&0x3)<<0)
 
 /* ADCDAT0 Bits */
-#define S3C2410_ADCDAT0_UPDOWN		(1<<15)
-#define S3C2410_ADCDAT0_AUTO_PST	(1<<14)
-#define S3C2410_ADCDAT0_XY_PST		(0x3<<12)
-#define S3C2410_ADCDAT0_XPDATA_MASK	(0x03FF)
+#define S3C2410_ADCDAT0_UPDOWN			(1<<15)
+#define S3C2410_ADCDAT0_AUTO_PST		(1<<14)
+#define S3C2410_ADCDAT0_XY_PST			(0x3<<12)
+#define S3C2410_ADCDAT0_XPDATA_MASK		(0x03FF)
 
 /* ADCDAT1 Bits */
-#define S3C2410_ADCDAT1_UPDOWN		(1<<15)
-#define S3C2410_ADCDAT1_AUTO_PST	(1<<14)
-#define S3C2410_ADCDAT1_XY_PST		(0x3<<12)
-#define S3C2410_ADCDAT1_YPDATA_MASK	(0x03FF)
+#define S3C2410_ADCDAT1_UPDOWN			(1<<15)
+#define S3C2410_ADCDAT1_AUTO_PST		(1<<14)
+#define S3C2410_ADCDAT1_XY_PST			(0x3<<12)
+#define S3C2410_ADCDAT1_YPDATA_MASK		(0x03FF)
 
 #define WAIT4INT(x)  (((x)<<8) | \
 		     S3C2410_ADCTSC_YM_SEN | S3C2410_ADCTSC_YP_SEN | S3C2410_ADCTSC_XP_SEN | \
@@ -113,6 +113,9 @@ static void report_touch_input(int updown)
 {
 	struct rtgui_event_mouse emouse;
 
+	RTGUI_EVENT_MOUSE_BUTTON_INIT(&emouse);
+	emouse.wid = RT_NULL;
+
 	/* set emouse button */
 	emouse.button = RTGUI_MOUSE_BUTTON_LEFT;
 	emouse.parent.sender = RT_NULL;
@@ -128,29 +131,29 @@ static void report_touch_input(int updown)
 			touch->y = ts.yp;
 		}
 		else
-		{	
-		    if (touch->max_x > touch->min_x)
-            {
-			touch->x = touch->width * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
-            }
-            else
-            {
-                touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
-            }
+		{
+			if (touch->max_x > touch->min_x)
+			{
+				touch->x = touch->width * (ts.xp-touch->min_x)/(touch->max_x-touch->min_x);
+			}
+			else
+			{
+				touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
+			}
 
-            if (touch->max_y > touch->min_y)
-            {
-			    touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
-            }
-            else
-            {
-			    touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
-            }
+			if (touch->max_y > touch->min_y)
+			{
+				touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
+			}
+			else
+			{
+				touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
+			}
 		}
 
 		emouse.x = touch->x;
 		emouse.y = touch->y;
-		if(touch->first_down_report == RT_TRUE)
+		if (touch->first_down_report == RT_TRUE)
 		{
 			emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
 			emouse.button |= RTGUI_MOUSE_BUTTON_DOWN;
@@ -159,7 +162,7 @@ static void report_touch_input(int updown)
 		{	
 			emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
 			emouse.button = 0;
-		}	
+		}
 	}
 	else
 	{
@@ -181,7 +184,7 @@ static void report_touch_input(int updown)
 	if (touch->calibrating != RT_TRUE)
 	{	
 		rtgui_server_post_event((&emouse.parent), sizeof(emouse));
-	}	
+	}
 }
 #else
 static void report_touch_input(int updown)
@@ -200,33 +203,33 @@ static void report_touch_input(int updown)
 		}
 		else
 		{
-		    if (touch->max_x > touch->min_x)
-            {
-			    touch->x = touch->width * ( ts.xp - touch->min_x ) / (touch->max_x-touch->min_x);
-            }
-            else
-            {
-                touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
-            }
+			if (touch->max_x > touch->min_x)
+			{
+				touch->x = touch->width * ( ts.xp - touch->min_x ) / (touch->max_x-touch->min_x);
+			}
+			else
+			{
+				touch->x = touch->width * ( touch->min_x - ts.xp ) / (touch->min_x-touch->max_x);
+			}
 
-            if (touch->max_y > touch->min_y)
-            {
-			    touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
-            }
-            else
-            {
-			    touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
-            }
+			if (touch->max_y > touch->min_y)
+			{
+				touch->y = touch->height * ( ts.yp - touch->min_y ) / (touch->max_y-touch->min_y);
+			}
+			else
+			{
+				touch->y = touch->height * ( touch->min_y - ts.yp ) / (touch->min_y-touch->max_y);
+			}
 		}
 
 		touch_event.x = touch->x;
 		touch_event.y = touch->y;
 		touch_event.pressed = 1;
 
-		if(touch->first_down_report == RT_TRUE)
+		if (touch->first_down_report == RT_TRUE)
 		{
 			if (touch->calibrating != RT_TRUE && touch->eventpost_func)
-			{	
+			{
 				touch->eventpost_func(touch->eventpost_param, &touch_event); 
 			}
 		}
@@ -251,31 +254,31 @@ static void report_touch_input(int updown)
 }
 #endif
 
-static void touch_timer_fire(void* parameter)
+static void touch_timer_fire(void *parameter)
 {
-  	rt_uint32_t data0;
-  	rt_uint32_t data1;
+	rt_uint32_t data0;
+	rt_uint32_t data1;
 	int updown;
 
-  	data0 = ADCDAT0;
-  	data1 = ADCDAT1;
+	data0 = ADCDAT0;
+	data1 = ADCDAT1;
 
- 	updown = (!(data0 & S3C2410_ADCDAT0_UPDOWN)) && (!(data1 & S3C2410_ADCDAT0_UPDOWN));
+	updown = (!(data0 & S3C2410_ADCDAT0_UPDOWN)) && (!(data1 & S3C2410_ADCDAT0_UPDOWN));
 
- 	if (updown)
+	if (updown)
 	{
- 		if (ts.count != 0)
+		if (ts.count != 0)
 		{
 			report_touch_input(updown);
- 		}
+		}
 
- 		ts.xp = 0;
- 		ts.yp = 0;
- 		ts.count = 0;
+		ts.xp = 0;
+		ts.yp = 0;
+		ts.count = 0;
 
- 		ADCTSC = S3C2410_ADCTSC_PULL_UP_DISABLE | AUTOPST;
- 		ADCCON |= S3C2410_ADCCON_ENABLE_START;
- 	}
+		ADCTSC = S3C2410_ADCTSC_PULL_UP_DISABLE | AUTOPST;
+		ADCCON |= S3C2410_ADCCON_ENABLE_START;
+	}
 }
 
 static void s3c2410_adc_stylus_action(void)
@@ -288,7 +291,7 @@ static void s3c2410_adc_stylus_action(void)
 	
 	ts.xp += data0 & S3C2410_ADCDAT0_XPDATA_MASK;
 	ts.yp += data1 & S3C2410_ADCDAT1_YPDATA_MASK;
-	ts.count++;
+	ts.count ++;
 
 	if (ts.count < (1<<ts.shift))
 	{
@@ -365,7 +368,7 @@ static void rt_touch_handler(int irqno)
 }
 
 /* RT-Thread Device Interface */
-static rt_err_t rtgui_touch_init (rt_device_t dev)
+static rt_err_t rtgui_touch_init(rt_device_t dev)
 {
 	/* init touch screen structure */
 	rt_memset(&ts, 0, sizeof(struct s3c2410ts));
@@ -386,7 +389,7 @@ static rt_err_t rtgui_touch_init (rt_device_t dev)
 
 	/* clear interrupt */
 	INTPND |= (1ul << INTADC);
-	
+
 	SUBSRCPND |= BIT_SUB_TC;
 	SUBSRCPND |= BIT_SUB_ADC;
 
@@ -399,7 +402,7 @@ static rt_err_t rtgui_touch_init (rt_device_t dev)
 	return RT_EOK;
 }
 
-static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rtgui_touch_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	switch (cmd)
 	{
@@ -414,9 +417,9 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args
 
 	case RT_TOUCH_CALIBRATION_DATA:
 	{
-		struct calibration_data* data;
+		struct calibration_data *data;
 
-		data = (struct calibration_data*) args;
+		data = (struct calibration_data *)args;
 
 		/* update */
 		touch->min_x = data->min_x;
@@ -429,7 +432,7 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, rt_uint8_t cmd, void *args
 				touch->min_x, touch->max_x, touch->min_y, touch->max_y);
 		*/		
 	}
-	break;
+		break;
 
 	case RT_TOUCH_EVENTPOST:
 		touch->eventpost_func = (rt_touch_eventpost_func_t)args;
@@ -449,8 +452,9 @@ void rtgui_touch_hw_init(void)
 	rt_device_t device = RT_NULL;
 	struct rt_device_graphic_info info;
 
-	touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
-	if (touch == RT_NULL) return; /* no memory yet */
+	touch = (struct rtgui_touch_device *)rt_malloc(sizeof(struct rtgui_touch_device));
+	if (touch == RT_NULL)
+		return; /* no memory yet */
 
 	/* clear device structure */
 	rt_memset(&(touch->parent), 0, sizeof(struct rt_device));
@@ -469,13 +473,16 @@ void rtgui_touch_hw_init(void)
 	touch->parent.user_data = RT_NULL;
 
 	device = rt_device_find("lcd");
-	if (device == RT_NULL) return; /* no this device */	
+	if (device == RT_NULL)
+		return; /* no this device */	
 
 	/* get graphic device info */
 	result = rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
 	if (result != RT_EOK)
 	{
+
 		/* get device information failed */
+
 		return;
 	}
 
@@ -489,4 +496,3 @@ void rtgui_touch_hw_init(void)
 	/* register touch device to RT-Thread */
 	rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
 }
-
