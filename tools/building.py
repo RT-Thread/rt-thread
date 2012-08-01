@@ -48,6 +48,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
+    
+    if env['PLATFORM'] == 'win32':
         os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
     else:
         os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
