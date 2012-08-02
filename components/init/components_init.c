@@ -79,7 +79,7 @@ void rt_components_init(void)
 #endif
 
 #if defined(RT_USING_DFS_NFS) && defined(RT_USING_LWIP)
-	extern void nfs_init(void);
+	extern int nfs_init(void);
 	/* initialize NFSv3 client file system */
 	nfs_init();
 #endif
