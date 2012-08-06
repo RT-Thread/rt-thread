@@ -1,7 +1,7 @@
 /*
  * File      : serial.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -18,14 +18,14 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-rt_inline void serial_ringbuffer_init(struct serial_ringbuffer* rbuffer)
+rt_inline void serial_ringbuffer_init(struct serial_ringbuffer *rbuffer)
 {
 	rt_memset(rbuffer->buffer, 0, sizeof(rbuffer->buffer));
 	rbuffer->put_index = 0;
 	rbuffer->get_index = 0;
 }
 
-rt_inline void serial_ringbuffer_putc(struct serial_ringbuffer* rbuffer, char ch)
+rt_inline void serial_ringbuffer_putc(struct serial_ringbuffer *rbuffer, char ch)
 {
 	rt_base_t level;
 
@@ -45,7 +45,7 @@ rt_inline void serial_ringbuffer_putc(struct serial_ringbuffer* rbuffer, char ch
 	rt_hw_interrupt_enable(level);
 }
 
-rt_inline int serial_ringbuffer_putchar(struct serial_ringbuffer* rbuffer, char ch)
+rt_inline int serial_ringbuffer_putchar(struct serial_ringbuffer *rbuffer, char ch)
 {
 	rt_base_t level;
 	rt_uint16_t next_index;
@@ -71,7 +71,7 @@ rt_inline int serial_ringbuffer_putchar(struct serial_ringbuffer* rbuffer, char 
 	return 1;
 }
 
-rt_inline int serial_ringbuffer_getc(struct serial_ringbuffer* rbuffer)
+rt_inline int serial_ringbuffer_getc(struct serial_ringbuffer *rbuffer)
 {
 	int ch;
 	rt_base_t level;
@@ -89,7 +89,7 @@ rt_inline int serial_ringbuffer_getc(struct serial_ringbuffer* rbuffer)
 	return ch;
 }
 
-rt_inline rt_uint32_t serial_ringbuffer_size(struct serial_ringbuffer* rbuffer)
+rt_inline rt_uint32_t serial_ringbuffer_size(struct serial_ringbuffer *rbuffer)
 {
 	rt_uint32_t size;
 	rt_base_t level;
@@ -112,7 +112,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 	struct rt_serial_device *serial;
 
 	RT_ASSERT(dev != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	serial = (struct rt_serial_device *)dev;
 
 	if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
 	{
@@ -142,7 +142,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 	rt_uint32_t int_flags = 0;
 
 	RT_ASSERT(dev != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	serial = (struct rt_serial_device *)dev;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 		int_flags = RT_SERIAL_RX_INT;
@@ -151,7 +151,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
 	if (int_flags)
 	{
-		serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void*)int_flags);
+		serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)int_flags);
 	}
 
 	return RT_EOK;
@@ -163,7 +163,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 	rt_uint32_t int_flags = 0;
 
 	RT_ASSERT(dev != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	serial = (struct rt_serial_device *)dev;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 		int_flags = RT_SERIAL_RX_INT;
@@ -172,7 +172,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 
 	if (int_flags)
 	{
-		serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)int_flags);
+		serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)int_flags);
 	}
 
 	return RT_EOK;
@@ -185,9 +185,9 @@ static rt_size_t rt_serial_read(struct rt_device *dev, rt_off_t pos, void *buffe
 	struct rt_serial_device *serial;
 
 	RT_ASSERT(dev != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	serial = (struct rt_serial_device *)dev;
 
-	ptr = (rt_uint8_t*)buffer;
+	ptr = (rt_uint8_t *)buffer;
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
@@ -197,7 +197,8 @@ static rt_size_t rt_serial_read(struct rt_device *dev, rt_off_t pos, void *buffe
 			int ch;
 
 			ch = serial_ringbuffer_getc(serial->int_rx);
-			if (ch == -1) break;
+			if (ch == -1)
+				break;
 
 			*ptr = ch & 0xff;
 			ptr ++;
@@ -210,7 +211,7 @@ static rt_size_t rt_serial_read(struct rt_device *dev, rt_off_t pos, void *buffe
 		while ((rt_uint32_t)ptr - (rt_uint32_t)buffer < size)
 		{
 			*ptr = serial->ops->getc(serial);
-            ptr ++;
+			ptr ++;
 		}
 	}
 
@@ -232,7 +233,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev, rt_off_t pos,
 	struct rt_serial_device *serial;
 
 	RT_ASSERT(dev != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	serial = (struct rt_serial_device *)dev;
 
 	ptr = (rt_uint8_t*)buffer;
 
@@ -246,7 +247,8 @@ static rt_size_t rt_serial_write(struct rt_device *dev, rt_off_t pos,
 				ptr ++;
 				size --;
 			}
-			else break;
+			else
+				break;
 		}
 	}
 	else
@@ -262,7 +264,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev, rt_off_t pos,
 			{
 				serial->ops->putc(serial, '\r');
 			}
-         
+
 			serial->ops->putc(serial, *ptr);
 
 			++ptr;
@@ -283,8 +285,8 @@ static rt_err_t rt_serial_control(struct rt_device *dev, rt_uint8_t cmd, void *a
 {
 	struct rt_serial_device *serial;
 
-	RT_ASSERT(serial != RT_NULL);
-	serial = (struct rt_serial_device*) dev;
+	RT_ASSERT(dev != RT_NULL);
+	serial = (struct rt_serial_device *)dev;
 
 	switch (cmd)
 	{
@@ -299,7 +301,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev, rt_uint8_t cmd, void *a
 		break;
 
 	case RT_DEVICE_CTRL_CONFIG:
-	    /* configure device */
+		/* configure device */
 		serial->ops->configure(serial, (struct serial_configure *)args);
 		break;
 	}
@@ -344,7 +346,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial)
 	while (1)
 	{
 		ch = serial->ops->getc(serial);
-		if (ch == -1) break;
+		if (ch == -1)
+			break;
 
 		serial_ringbuffer_putc(serial->int_rx, ch);
 	}
