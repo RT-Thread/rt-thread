@@ -2004,7 +2004,7 @@ BYTE check_fs (	/* 0:The FAT BR, 1:Valid BR but not an FAT, 2:Not a BR, 3:Disk e
 /* Check if the file system object is valid or not                       */
 /*-----------------------------------------------------------------------*/
 
-
+static
 FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 	const TCHAR **path,	/* Pointer to pointer to the path name (drive number) */
 	FATFS **rfs,		/* Pointer to pointer to the found file system object */
@@ -4019,8 +4019,3 @@ int elm_get_vol(FATFS *fat)
 	return -1;
 }
 #endif
-
-int leavefs(FATFS*	fs, int res)
-{
-	LEAVE_FF(fs, res);
-}

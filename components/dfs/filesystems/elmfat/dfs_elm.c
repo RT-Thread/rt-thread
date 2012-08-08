@@ -103,27 +103,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 	/* mount fatfs, always 0 logic driver */
 	result = f_mount(index, fat);
 	if (result == FR_OK)
-	{
-		extern FRESULT chk_mounted(const TCHAR **path, FATFS **rfs, BYTE chk_wp);
-		extern int leavefs(FATFS*	fs, int res);
-		char driver[16];
-		const char * path;
-		DIR dj;
-		path = (const char *)driver;
-		rt_snprintf(driver, sizeof(driver), "%d:/", fat->drv);
-#if !_FS_READONLY
-		result = chk_mounted(&path, &dj.fs, 1);
-#else
-		result = chk_mounted(&path, &dj.fs, 0);
-#endif
-		if (result != FR_OK)
-		{
-			rt_free(fat);
-			return -1;
-		}
-		leavefs(dj.fs, result);
 		fs->data = fat;
-	}
 	else
 	{
 		rt_free(fat);
