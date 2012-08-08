@@ -4020,7 +4020,7 @@ int elm_get_vol(FATFS *fat)
 }
 #endif
 
-void leavefs(FATFS*	fs, int res)
+int leavefs(FATFS*	fs, int res)
 {
 	LEAVE_FF(fs, res);
 }

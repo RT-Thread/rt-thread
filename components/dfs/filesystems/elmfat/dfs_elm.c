@@ -105,7 +105,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 	if (result == FR_OK)
 	{
 		extern FRESULT chk_mounted(const TCHAR **path, FATFS **rfs, BYTE chk_wp);
-		extern void leavefs(FATFS*	fs, int res);
+		extern int leavefs(FATFS*	fs, int res);
 		char driver[16];
 		const char * path;
 		DIR dj;
