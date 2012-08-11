@@ -65,6 +65,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
 
+    # add copy option 
+    AddOption('--copy',
+                      dest='copy',
+                      action='store_true',
+                      default=False,
+                      help='copy rt-thread directory to local.')
+    
     # add target option
     AddOption('--target',
                       dest='target',
@@ -218,7 +225,7 @@ def GetCurrentDir():
     path = os.path.dirname(fn.abspath)
     return path
 
-def EndBuilding(target):
+def EndBuilding(target, program = None):
     import rtconfig
     from keil import MDKProject
     from keil import MDK4Project
@@ -242,6 +249,9 @@ def EndBuilding(target):
 
     if GetOption('target') == 'iar':
         IARProject('project.ewp', Projects) 
+
+    if GetOption('copy') and program != None:
+        MakeCopy(program)
 
 def SrcRemove(src, remove):
     if type(src[0]) == type('str'):
@@ -278,7 +288,107 @@ def GetVersion():
     return '0.%d.%d' % (version, subversion)
 
 def do_copy_file(src, dst):
-    pass
+    import shutil
+    # check source file 
+    if not os.path.exists(src):
+        return 
 
-def MakeCopy():
-    pass
+    path = os.path.dirname(dst)
+    # mkdir if path not exist
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    shutil.copy2(src, dst)
+
+def do_copy_folder(src_dir, dst_dir):
+    import shutil
+    # check source directory 
+    if not os.path.exists(src_dir):
+        return
+    
+    if os.path.exists(dst_dir):
+        shutil.rmtree(dst_dir)
+    
+    shutil.copytree(src_dir, dst_dir)
+
+source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
+source_list = []
+
+def walk_children(child):
+    global source_list
+    global source_ext
+
+    # print child
+    full_path = child.rfile().abspath
+    file_type  = full_path.rsplit('.',1)[1]
+    #print file_type
+    if file_type in source_ext:
+        if full_path not in source_list:
+            source_list.append(full_path)
+
+    children = child.all_children()
+    if children != []:
+        for item in children:
+            walk_children(item)
+
+def MakeCopy(program):
+    global source_list
+    global Rtt_Root
+    global Env
+    
+    target_path = os.path.join(Dir('#').abspath, 'rt-thread')
+    
+    if Env['PLATFORM'] == 'win32':
+        RTT_ROOT = Rtt_Root.lower()
+    else:
+        RTT_ROOT = Rtt_Root
+    
+    if target_path.startswith(RTT_ROOT):
+        return
+
+    for item in program:
+        walk_children(item)
+    
+    source_list.sort()
+    
+    # filte source file in RT-Thread
+    target_list = []
+    for src in source_list:
+        if Env['PLATFORM'] == 'win32':
+            src = src.lower()
+
+        if src.startswith(RTT_ROOT):
+            target_list.append(src)
+
+    source_list = target_list
+    # get source path 
+    src_dir = []
+    for src in source_list:
+        src = src.replace(RTT_ROOT, '')
+        if src[0] == os.sep or src[0] == '/':
+            src = src[1:]
+
+        path = os.path.dirname(src)
+        sub_path = path.split(os.sep)
+        full_path = RTT_ROOT
+        for item in sub_path:
+            full_path = os.path.join(full_path, item)
+            if full_path not in src_dir: 
+                src_dir.append(full_path)
+
+    for item in src_dir: 
+        source_list.append(os.path.join(item, 'SConscript'))
+
+    for src in source_list:
+        dst = src.replace(RTT_ROOT, '')
+        if dst[0] == os.sep or dst[0] == '/':
+            dst = dst[1:]
+        print '=> ', dst
+        dst = os.path.join(target_path, dst)
+        do_copy_file(src, dst)
+
+    # copy tools directory 
+    print "=>  tools"
+    do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
