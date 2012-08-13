@@ -24,16 +24,11 @@
 #endif
 
 /* 创建一个演示视图，需要给出这个视图的演示标题 */
-rtgui_container_t* demo_view(const char* title);
+rtgui_container_t *demo_view(const char *title);
 /* 获得演示视图提供给演示控件用的区域信息 */
-void demo_view_get_rect(rtgui_container_t* view, rtgui_rect_t *rect);
-void demo_view_get_logic_rect(rtgui_container_t* view, rtgui_rect_t *rect);
+void demo_view_get_rect(rtgui_container_t *view, rtgui_rect_t *rect);
+void demo_view_get_logic_rect(rtgui_container_t *view, rtgui_rect_t *rect);
 void demo_view_show(void);
-
-/* 如果是标准版，可以调用这个函数获得一个自动布局引擎 */
-#ifndef RTGUI_USING_SMALL_SIZE
-rtgui_box_t* demo_view_create_box(rtgui_container_t* view, int orient);
-#endif
 
 #endif
 

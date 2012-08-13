@@ -13,6 +13,8 @@ demo_view_module.c
 
 src = Split("""
 demo_application.c
+demo_listview.c
+demo_listview_icon.c
 demo_view.c
 demo_view_benchmark.c
 demo_view_dc.c
@@ -37,6 +39,7 @@ demo_view_slider.c
 demo_view_notebook.c
 demo_view_mywidget.c
 demo_view_box.c
+demo_view_edit.c
 mywidget.c
 """)
 

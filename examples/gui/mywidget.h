@@ -15,8 +15,8 @@
 #include <rtgui/widgets/widget.h>
 
 /* 自定义控件的状态值定�?*/
-#define MYWIDGET_STATUS_ON	1
-#define MYWIDGET_STATUS_OFF	0
+#define MYWIDGET_STATUS_ON  1
+#define MYWIDGET_STATUS_OFF 0
 
 DECLARE_CLASS_TYPE(mywidget);
 /** 每个控件会有一个类型，通过如下的宏获得控件相应的类型信�?*/
@@ -29,22 +29,22 @@ DECLARE_CLASS_TYPE(mywidget);
 /* 个性化控件类定�?*/
 struct rtgui_mywidget
 {
-	/* 这个控件是继承自rtgui_widget控件 */
-	struct rtgui_widget parent;
+    /* 这个控件是继承自rtgui_widget控件 */
+    struct rtgui_widget parent;
 
-	/* 状态：ON、OFF */
-	rt_uint8_t status;
+    /* 状态：ON、OFF */
+    rt_uint8_t status;
 };
 typedef struct rtgui_mywidget rtgui_mywidget_t;
 
 /* 控件的创建和删除 */
-struct rtgui_mywidget* rtgui_mywidget_create(rtgui_rect_t* r);
-void rtgui_mywidget_destroy(struct rtgui_mywidget* me);
+struct rtgui_mywidget *rtgui_mywidget_create(rtgui_rect_t *r);
+void rtgui_mywidget_destroy(struct rtgui_mywidget *me);
 
 /* 控件的默认事件处理函数�?
  * 对一个控件而言，如果派生自它的子控件很可能会调用父控件的事件处理函数，
  * 所以这里采用公开声明的方式�?
  */
-rt_bool_t rtgui_mywidget_event_handler(struct rtgui_object* object, struct rtgui_event* event);
+rt_bool_t rtgui_mywidget_event_handler(struct rtgui_object *object, struct rtgui_event *event);
 
 #endif
