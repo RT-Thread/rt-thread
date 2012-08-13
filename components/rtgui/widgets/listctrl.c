@@ -25,13 +25,14 @@ static void _rtgui_listctrl_constructor(struct rtgui_listctrl *ctrl)
 	RTGUI_WIDGET(ctrl)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
 	ctrl->current_item = -1;
+	ctrl->item_height = rtgui_theme_get_selected_height();
 	ctrl->items_count = 0;
 	ctrl->page_items = 0;
 	ctrl->on_item = 0;
 	ctrl->on_item_draw = RT_NULL;
 
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(ctrl)) = white;
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(ctrl)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_BACKGROUND(ctrl) = white;
+	RTGUI_WIDGET_TEXTALIGN(ctrl) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 DEFINE_CLASS_TYPE(listctrl, "listctrl",
@@ -43,7 +44,7 @@ DEFINE_CLASS_TYPE(listctrl, "listctrl",
 static void _rtgui_listctrl_get_rect(struct rtgui_listctrl* ctrl, rtgui_rect_t* rect)
 {
 	rtgui_widget_get_rect(RTGUI_WIDGET(ctrl), rect);
-	if (ctrl->items_count > rtgui_rect_height(*rect)/rtgui_theme_get_selected_height())
+	if (ctrl->items_count > rtgui_rect_height(*rect)/ctrl->item_height)
 	{
 		rect->x2 = rect->x2 - 8;
 	}
@@ -52,7 +53,7 @@ static void _rtgui_listctrl_get_rect(struct rtgui_listctrl* ctrl, rtgui_rect_t* 
 static void _rtgui_listctrl_get_scrollbar_rect(struct rtgui_listctrl* ctrl, rtgui_rect_t* rect)
 {
 	rtgui_widget_get_rect(RTGUI_WIDGET(ctrl), rect);
-	if (ctrl->items_count > rtgui_rect_height(*rect)/rtgui_theme_get_selected_height())
+	if (ctrl->items_count > rtgui_rect_height(*rect)/ctrl->item_height)
 	{
 		rect->x1 = rect->x2 - 8;
 	}
@@ -70,10 +71,11 @@ static void _rtgui_listctrl_scrollbar_ondraw(struct rtgui_listctrl* ctrl, struct
 
 	/* get scrollbar rect */
 	_rtgui_listctrl_get_scrollbar_rect(ctrl, &rect);
+	if (rtgui_rect_is_empty(&rect) == RT_TRUE) return;
+
 	rtgui_dc_fill_rect(dc, &rect);
 
 	height = rtgui_rect_height(rect);
-
 	height = height / ((ctrl->items_count + (ctrl->page_items - 1))/ctrl->page_items);
 	y1 = (ctrl->current_item / ctrl->page_items) * height;
 
@@ -132,7 +134,7 @@ static void _rtgui_listctrl_ondraw(struct rtgui_listctrl* ctrl)
 	item_rect = rect;
 	item_rect.x1 += 1; item_rect.x2 -= 1;
 	item_rect.y1 += 2;
-	item_rect.y2 = item_rect.y1 + (2 + rtgui_theme_get_selected_height());
+	item_rect.y2 = item_rect.y1 + (2 + ctrl->item_height);
 
 	/* get current page */
 	page_index = (ctrl->current_item / ctrl->page_items) * ctrl->page_items;
@@ -151,8 +153,8 @@ static void _rtgui_listctrl_ondraw(struct rtgui_listctrl* ctrl)
 		}
 
         /* move to next item position */
-		item_rect.y1 += (rtgui_theme_get_selected_height() + 2);
-		item_rect.y2 += (rtgui_theme_get_selected_height() + 2);
+		item_rect.y1 += (ctrl->item_height + 2);
+		item_rect.y2 += (ctrl->item_height + 2);
 	}
 
 	/* draw scrollbar */
@@ -182,8 +184,8 @@ void rtgui_listctrl_update_current(struct rtgui_listctrl* ctrl, rt_uint16_t old_
 	/* get old item's rect */
 	item_rect.x1 += 1; item_rect.x2 -= 1;
 	item_rect.y1 += 2;
-	item_rect.y1 += (old_item % ctrl->page_items) * (2 + rtgui_theme_get_selected_height());
-	item_rect.y2 = item_rect.y1 + (2 + rtgui_theme_get_selected_height());
+	item_rect.y1 += (old_item % ctrl->page_items) * (2 + ctrl->item_height);
+	item_rect.y2 = item_rect.y1 + (2 + ctrl->item_height);
 
 	/* draw old item */
 	rtgui_dc_fill_rect(dc, &item_rect);
@@ -195,8 +197,8 @@ void rtgui_listctrl_update_current(struct rtgui_listctrl* ctrl, rt_uint16_t old_
 	/* get current item's rect */
 	item_rect.x1 += 1; item_rect.x2 -= 1;
 	item_rect.y1 += 2;
-	item_rect.y1 += (ctrl->current_item % ctrl->page_items) * (2 + rtgui_theme_get_selected_height());
-	item_rect.y2 = item_rect.y1 + (2 + rtgui_theme_get_selected_height());
+	item_rect.y1 += (ctrl->current_item % ctrl->page_items) * (2 + ctrl->item_height);
+	item_rect.y2 = item_rect.y1 + (2 + ctrl->item_height);
 
 	/* draw current item */
 	rtgui_theme_draw_selected(dc, &item_rect);
@@ -225,7 +227,7 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
 			resize = (struct rtgui_event_resize*)event;
 
             /* recalculate page items */
-			ctrl->page_items = resize->h  / (2 + rtgui_theme_get_selected_height());
+			ctrl->page_items = resize->h  / (2 + ctrl->item_height);
         }
         break;
 
@@ -255,7 +257,7 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
 					(ctrl->items_count > 0))
 			{
 				rt_uint16_t index;
-				index = (emouse->y - rect.y1) / (2 + rtgui_theme_get_selected_height());
+				index = (emouse->y - rect.y1) / (2 + ctrl->item_height);
 
 				/* set focus */
 				rtgui_widget_focus(widget);
@@ -372,7 +374,7 @@ rtgui_listctrl_t* rtgui_listctrl_create(rt_uint32_t items, rt_uint16_t count, rt
 	    ctrl->items_count = count;
 		ctrl->on_item_draw = ondraw;
 
-		ctrl->page_items = rtgui_rect_height(*rect) / (2 + rtgui_theme_get_selected_height());
+		ctrl->page_items = rtgui_rect_height(*rect) / (2 + ctrl->item_height);
 		rtgui_widget_set_rect(RTGUI_WIDGET(ctrl), rect);
 	}
 
@@ -401,7 +403,7 @@ void rtgui_listctrl_set_items(rtgui_listctrl_t* ctrl, rt_uint32_t items, rt_uint
 	ctrl->current_item = 0;
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(ctrl), &rect);
-	ctrl->page_items = rtgui_rect_height(rect) / (2 + rtgui_theme_get_selected_height());
+	ctrl->page_items = rtgui_rect_height(rect) / (2 + ctrl->item_height);
 
 	rtgui_widget_update(RTGUI_WIDGET(ctrl));
 }
@@ -418,10 +420,20 @@ rt_bool_t rtgui_listctrl_get_item_rect(rtgui_listctrl_t* ctrl, rt_uint16_t item,
 
 		rtgui_widget_get_extent(RTGUI_WIDGET(ctrl), item_rect);
 		item_rect->y1 -= 2;
-		item_rect->y1 += (item % ctrl->page_items) * (2 + rtgui_theme_get_selected_height());
-		item_rect->y2 = item_rect->y1 + (2 + rtgui_theme_get_selected_height());
+		item_rect->y1 += (item % ctrl->page_items) * (2 + ctrl->item_height);
+		item_rect->y2 = item_rect->y1 + (2 + ctrl->item_height);
 		return RT_TRUE;
 	}
 
 	return RT_FALSE;
 }
+
+void rtgui_listctrl_set_itemheight(struct rtgui_listctrl* ctrl, int height)
+{
+	RT_ASSERT(ctrl != RT_NULL);
+	if (height <= 0) return;
+
+	ctrl->item_height = height;
+	ctrl->page_items = rtgui_rect_height(RTGUI_WIDGET(ctrl)->extent) / (2 + ctrl->item_height);
+}
+

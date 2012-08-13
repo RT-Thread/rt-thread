@@ -89,7 +89,7 @@ rt_inline rtgui_color_t rtgui_color_from_565(rt_uint16_t pixel)
 	g = (pixel >> 5) & 0x3f;
 	b = (pixel >> 11) & 0x1f;
 
-	color = r * 8225 / 1024 + ((g * 4047 / 1024) << 8) + ((b * 8225 / 1024) << 16);
+	color = r * 255 / 31 + ((g * 255 / 63) << 8) + ((b * 255 / 31) << 16);
 
 	return color;
 }
@@ -112,7 +112,7 @@ rt_inline rtgui_color_t rtgui_color_from_565p(rt_uint16_t pixel)
 	g = (pixel >> 5)  & 0x3f;
 	b = pixel & 0x1f;
 
-	color = r * 8225 / 1024 + ((g * 4047 / 1024) << 8) + ((b * 8225 / 1024) << 16);
+	color = r * 255 / 31 + ((g * 255 / 63) << 8) + ((b * 255 / 31) << 16);
 
 	return color;
 }

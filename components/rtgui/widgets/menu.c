@@ -58,7 +58,7 @@ static rt_bool_t _rtgui_menu_onitem(struct rtgui_object* object, struct rtgui_ev
 		{
 			if (menu->sub_menu->items == items)
 			{
-				if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(menu->sub_menu)))
+				if (!RTGUI_WIDGET_IS_HIDE(menu->sub_menu))
 				{
 					/* hide this sub menu */
 					rtgui_win_hiden(RTGUI_WIN(menu->sub_menu));
@@ -114,10 +114,10 @@ static void _rtgui_menu_item_ondraw(struct rtgui_listctrl *list,
 	{
 		rtgui_color_t bc;
 
-		bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(list));
-		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(list)) = blue;
+		bc = RTGUI_WIDGET_BACKGROUND(list);
+		RTGUI_WIDGET_BACKGROUND(list) = blue;
 		rtgui_dc_fill_rect(dc, rect);
-		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(list)) = bc;
+		RTGUI_WIDGET_BACKGROUND(list) = bc;
 	}
 
 	/* get menu item */
@@ -178,7 +178,7 @@ static rt_bool_t rtgui_menu_on_deactivate(struct rtgui_object *object, rtgui_eve
 		 * before the new window got activated. But the window will be shown in
 		 * this context, so use 'is not hide'. */
 		if (menu->sub_menu != RT_NULL &&
-			!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(menu->sub_menu)))
+			!RTGUI_WIDGET_IS_HIDE(menu->sub_menu))
 			return RT_TRUE;
 	}
 
@@ -219,7 +219,7 @@ struct rtgui_menu* rtgui_menu_create(const char* title, struct rtgui_menu* paren
 		rtgui_rect_inflate(&rect, -1);
 		/* create menu item list */
 		menu->items_list = rtgui_listctrl_create((rt_uint32_t)items, count, &rect, _rtgui_menu_item_ondraw);
-		RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(menu->items_list)) = rtgui_theme_default_bc();
+		RTGUI_WIDGET_BACKGROUND(menu->items_list) = rtgui_theme_default_bc();
 		rtgui_container_add_child(RTGUI_CONTAINER(menu), RTGUI_WIDGET(menu->items_list));
 		rtgui_listctrl_set_onitem(menu->items_list, _rtgui_menu_onitem);
 	}

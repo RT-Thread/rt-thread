@@ -3,11 +3,18 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/notebook.h>
 #include <rtgui/widgets/window.h>
+#include <rtgui/image.h>
 
-#define RTGUI_NOTEBOOK_TAB_WIDTH     80
+#define RTGUI_NOTEBOOK_TAB_DEFAULT_WIDTH  80
+#define RTGUI_NOTEBOOK_TAB_DEFAULT_HEIGHT 25
 
 struct rtgui_notebook_tab
 {
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+	struct rtgui_image *pressed_image;
+	struct rtgui_image *unpressed_image;
+#endif
+
 	struct rtgui_widget *widget;
 	char *title;
 };
@@ -21,6 +28,9 @@ static void _rtgui_notebook_constructor(struct rtgui_notebook *notebook)
 	notebook->childs  = RT_NULL;
 	notebook->count   = 0;
 	notebook->current = 0;
+
+	notebook->tab_h = RTGUI_NOTEBOOK_TAB_DEFAULT_HEIGHT;
+	notebook->tab_w = RTGUI_NOTEBOOK_TAB_DEFAULT_WIDTH;
 
 	RTGUI_WIDGET(notebook)->gc.textalign = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 	rtgui_object_set_event_handler(RTGUI_OBJECT(notebook), rtgui_notebook_event_handler);
@@ -55,31 +65,137 @@ DEFINE_CLASS_TYPE(notebook, "notebook",
 static void _rtgui_notebook_draw_bar(struct rtgui_notebook *notebook,
 		struct rtgui_dc *dc)
 {
-	struct rtgui_rect rect;
 	int index;
+	struct rtgui_rect rect;
+	struct rtgui_rect text_rect;
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+	struct rtgui_image* image = RT_NULL;
+	struct rtgui_rect image_rect;
+#endif
 
 	RT_ASSERT((notebook != RT_NULL) && (dc != RT_NULL));
 
-	if (notebook->flag & RTGUI_NOTEBOOK_NOTAB)
+	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB)
 		return;
 
 	_rtgui_notebook_get_bar_rect(notebook, &rect);
 	rtgui_dc_fill_rect(dc, &rect);
 
-	rect.x2 = rect.x1 + RTGUI_NOTEBOOK_TAB_WIDTH;
-	/* draw tab bar */
-	for (index = 0; index < notebook->count; index++)
+	if (notebook->flag == RTGUI_NOTEBOOK_TOP ||
+		notebook->flag == RTGUI_NOTEBOOK_BOTTOM)
 	{
-		if (notebook->current == index)
-			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
-		else
-			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
+		rect.x2 = rect.x1 + notebook->tab_w;
+		/* draw tab bar */
+		for (index = 0; index < notebook->count; index++)
+		{
+			if (notebook->current == index)
+			{
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+				if (notebook->childs[index].pressed_image != RT_NULL)
+					image = notebook->childs[index].pressed_image;
+				else
+#endif
+				rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
+			}
+			else
+			{
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+				if (notebook->childs[index].unpressed_image != RT_NULL)
+					image = notebook->childs[index].unpressed_image;
+				else
+#endif
+					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
+			}
 
-		rtgui_dc_draw_text(dc, notebook->childs[index].title, &rect);
-		rect.x1 += RTGUI_NOTEBOOK_TAB_WIDTH;
-		rect.x2 += RTGUI_NOTEBOOK_TAB_WIDTH;
+			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(notebook), 
+				notebook->childs[index].title, &text_rect);
+			rtgui_rect_moveto_align(&rect, &text_rect, RTGUI_ALIGN_CENTER);
+
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+			if (image != RT_NULL)
+			{
+				image_rect.x1 = 0;
+				image_rect.y1 = RTGUI_WIDGET_DEFAULT_MARGIN;
+				image_rect.x2 = image_rect.x1 + image->w;
+				image_rect.y2 = image_rect.y1 + image->h;
+				rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
+				
+				rtgui_image_blit(image, dc, &image_rect);
+			}
+			if (image != RT_NULL)
+			{
+				int text_height = text_rect.y2 - text_rect.y1;
+				
+				text_rect.y1 = image_rect.y2 +  RTGUI_WIDGET_DEFAULT_MARGIN;
+				text_rect.y2 = text_rect.y1 + text_height;
+			}
+			image = RT_NULL;
+#endif
+
+			rtgui_dc_draw_text(dc, notebook->childs[index].title, &text_rect);
+
+			/* move to next tab */
+			rect.x1 = rect.x2;
+			rect.x2 = rect.x1 + notebook->tab_w;
+		}
 	}
+	else
+	{
+		rect.y2 = rect.y1 + notebook->tab_h;
+		/* draw tab bar */
+		for (index = 0; index < notebook->count; index++)
+		{
+			if (notebook->current == index)
+			{
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+				if (notebook->childs[index].pressed_image != RT_NULL)
+					image = notebook->childs[index].pressed_image;
+				else
+#endif
+					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
+			}
+			else
+			{
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+				if (notebook->childs[index].unpressed_image != RT_NULL)
+					image = notebook->childs[index].unpressed_image;
+				else
+#endif
+					rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_BOX);
+			}
 
+			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(notebook), 
+				notebook->childs[index].title, &text_rect);
+			rtgui_rect_moveto_align(&rect, &text_rect, RTGUI_ALIGN_CENTER);
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+			if (image != RT_NULL)
+			{
+				image_rect.x1 = 0;
+				image_rect.y1 = RTGUI_WIDGET_DEFAULT_MARGIN;
+				image_rect.x2 = image->w;
+				image_rect.y2 = image_rect.y1 + image->h;
+				rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
+				
+				rtgui_image_blit(image, dc, &image_rect);
+			}
+
+			if (image != RT_NULL)
+			{
+				int text_height = text_rect.y2 - text_rect.y1;
+				
+				text_rect.y1 = image_rect.y2 +  RTGUI_WIDGET_DEFAULT_MARGIN;
+				text_rect.y2 = text_rect.y1 + text_height;
+			}
+			image = RT_NULL;
+#endif
+			rtgui_dc_draw_text(dc, notebook->childs[index].title, &text_rect);
+
+			/* move to next tab */
+			rect.y1 = rect.y2;
+			rect.y2 = rect.y1 + notebook->tab_h;
+		}
+
+	}
 }
 
 static void _rtgui_notebook_ondraw(struct rtgui_notebook *notebook)
@@ -120,18 +236,36 @@ static void _rtgui_notebook_onmouse(struct rtgui_notebook *notebook, struct rtgu
 		int index;
 		struct rtgui_dc* dc;
 
-		index = (emouse->x - rect.x1) / RTGUI_NOTEBOOK_TAB_WIDTH;
-		if (index < notebook->count && index != notebook->current)
+		if (notebook->flag == RTGUI_NOTEBOOK_BOTTOM || notebook->flag == RTGUI_NOTEBOOK_TOP)
 		{
-			/* update tab bar */
-			dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
-			if (dc == RT_NULL) return;
+			index = (emouse->x - rect.x1) / notebook->tab_w;
+			if (index < notebook->count && index != notebook->current)
+			{
+				/* update tab bar */
+				dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
+				if (dc == RT_NULL) return;
 
-			rtgui_notebook_set_current_by_index(notebook, index);
+				rtgui_notebook_set_current_by_index(notebook, index);
 
-			_rtgui_notebook_draw_bar(notebook, dc);
+				_rtgui_notebook_draw_bar(notebook, dc);
 
-			rtgui_dc_end_drawing(dc);
+				rtgui_dc_end_drawing(dc);
+			}
+		}
+		else
+		{
+			index = (emouse->y - rect.y1) / notebook->tab_h;
+			if (index < notebook->count && index != notebook->current)
+			{
+				/* update tab bar */
+				dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(notebook));
+				if (dc == RT_NULL) return;
+
+				rtgui_notebook_set_current_by_index(notebook, index);
+				_rtgui_notebook_draw_bar(notebook, dc);
+				
+				rtgui_dc_end_drawing(dc);
+			}
 		}
 	}
 	else
@@ -146,17 +280,32 @@ static void _rtgui_notebook_onmouse(struct rtgui_notebook *notebook, struct rtgu
 
 static void _rtgui_notebook_get_page_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect)
 {
+	struct rtgui_rect tab_rect;
+
 	RT_ASSERT(notebook != RT_NULL);
 	RT_ASSERT(rect != RT_NULL);
 
+	_rtgui_notebook_get_bar_rect(notebook, &tab_rect);
 	rtgui_widget_get_rect(RTGUI_WIDGET(notebook), rect);
 
 	if (notebook->flag == RTGUI_NOTEBOOK_NOTAB)
 		return;
 	else if (notebook->flag == RTGUI_NOTEBOOK_TOP)
-		rect->y1 = rect->y1 + 25;
+	{
+		rect->y1 = tab_rect.y2;
+	}
 	else if (notebook->flag == RTGUI_NOTEBOOK_BOTTOM)
-		rect->y2 = rect->y2 - 25;
+	{
+		rect->y2 = tab_rect.y1;
+	}
+	else if (notebook->flag == RTGUI_NOTEBOOK_LEFT)
+	{
+		rect->x1 = tab_rect.x2;
+	}
+	else if (notebook->flag == RTGUI_NOTEBOOK_RIGHT)
+	{
+		rect->x2 = tab_rect.x1;
+	}
 }
 
 static void _rtgui_notebook_get_bar_rect(struct rtgui_notebook *notebook, struct rtgui_rect* rect)
@@ -170,9 +319,21 @@ static void _rtgui_notebook_get_bar_rect(struct rtgui_notebook *notebook, struct
 		rect->x1 = rect->y1 = rect->x2 = rect->y2 = 0;
 	}
 	else if (notebook->flag == RTGUI_NOTEBOOK_TOP)
-		rect->y2 = rect->y1 + 25;
+	{
+		rect->y2 = rect->y1 + notebook->tab_h;
+	}
 	else if (notebook->flag == RTGUI_NOTEBOOK_BOTTOM)
-		rect->y1 = rect->y2 - 25;
+	{
+		rect->y1 = rect->y2 - notebook->tab_h;
+	}
+	else if (notebook->flag == RTGUI_NOTEBOOK_LEFT)
+	{
+		rect->x2 = rect->x1 + notebook->tab_w;
+	}
+	else if (notebook->flag == RTGUI_NOTEBOOK_RIGHT)
+	{
+		rect->x1 = rect->x2 - notebook->tab_w;
+	}
 }
 
 struct rtgui_notebook* rtgui_notebook_create(const rtgui_rect_t* rect, rt_uint8_t style)
@@ -202,10 +363,14 @@ void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, stru
 	notebook->count += 1;
 	notebook->childs = (struct rtgui_notebook_tab*)
 						rtgui_realloc(notebook->childs,
-									  sizeof(struct rtgui_notebook_tab) * notebook->count);
+						sizeof(struct rtgui_notebook_tab) * notebook->count);
 
 	notebook->childs[notebook->count - 1].title = rt_strdup(label);
 	notebook->childs[notebook->count - 1].widget = child;
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+	notebook->childs[notebook->count - 1].pressed_image = RT_NULL;
+	notebook->childs[notebook->count - 1].unpressed_image = RT_NULL;
+#endif
 
 	/* set parent */
 	rtgui_widget_set_parent(child, RTGUI_WIDGET(notebook));
@@ -227,6 +392,47 @@ void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, stru
 			RTGUI_OBJECT(child)->event_handler(RTGUI_OBJECT(child), (struct rtgui_event*)&eup);
 	}
 }
+
+#ifdef RTGUI_USING_NOTEBOOK_IMAGE
+void rtgui_notebook_add_image(struct rtgui_notebook* notebook, const char* label, struct rtgui_widget* child, 
+	struct rtgui_image *pressed_image, struct rtgui_image *unpressed_image)
+{
+	rtgui_rect_t rect;
+	RT_ASSERT(notebook != RT_NULL);
+
+	notebook->count += 1;
+	notebook->childs = (struct rtgui_notebook_tab*)
+		rtgui_realloc(notebook->childs,
+		sizeof(struct rtgui_notebook_tab) * notebook->count);
+
+	notebook->childs[notebook->count - 1].title = rt_strdup(label);
+	notebook->childs[notebook->count - 1].widget = child;
+	notebook->childs[notebook->count - 1].pressed_image = pressed_image;
+	notebook->childs[notebook->count - 1].unpressed_image = unpressed_image;
+
+	/* set parent */
+	rtgui_widget_set_parent(child, RTGUI_WIDGET(notebook));
+
+	_rtgui_notebook_get_page_rect(notebook, &rect);
+	rtgui_widget_rect_to_device(RTGUI_WIDGET(notebook), &rect);
+	rtgui_widget_set_rect(child, &rect);
+
+	if (notebook->count - 1 != notebook->current)
+		rtgui_widget_hide(child);
+
+	if (RTGUI_WIDGET(notebook)->toplevel != RT_NULL &&
+		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(notebook)->toplevel))
+	{
+		struct rtgui_event_update_toplvl eup;
+		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
+		eup.toplvl = RTGUI_WIDGET(notebook)->toplevel;
+		if (RTGUI_OBJECT(child)->event_handler)
+			RTGUI_OBJECT(child)->event_handler(RTGUI_OBJECT(child), (struct rtgui_event*)&eup);
+	}
+
+	return;
+}
+#endif
 
 void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 {
@@ -260,7 +466,7 @@ void rtgui_notebook_remove(struct rtgui_notebook* notebook, rt_uint16_t index)
 				sizeof(struct rtgui_notebook_tab) * notebook->count);
 		}
 
-		rtgui_free(tab.title);
+		rt_free(tab.title);
 
 		if (need_update)
 		{
@@ -279,6 +485,12 @@ int rtgui_notebook_get_count(struct rtgui_notebook* notebook)
 {
 	RT_ASSERT(notebook != RT_NULL);
 	return notebook->count;
+}
+
+void rtgui_notebook_get_client_rect(struct rtgui_notebook* notebook, struct rtgui_rect *rect)
+{
+	_rtgui_notebook_get_page_rect(notebook, rect);
+	rtgui_rect_moveto(rect, 0, 0);
 }
 
 struct rtgui_widget* rtgui_notebook_get_current(struct rtgui_notebook* notebook)

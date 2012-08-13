@@ -42,6 +42,7 @@ struct rtgui_listctrl
     rt_uint16_t page_items;
     /* current item */
     rt_int16_t current_item;
+	rt_uint16_t item_height;
 
 	/* item event handler */
 	rtgui_event_handler_ptr on_item;
@@ -59,5 +60,6 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
 void rtgui_listctrl_set_onitem(rtgui_listctrl_t* ctrl, rtgui_event_handler_ptr func);
 void rtgui_listctrl_set_items(rtgui_listctrl_t* ctrl, rt_uint32_t items, rt_uint16_t count);
 rt_bool_t rtgui_listctrl_get_item_rect(rtgui_listctrl_t* ctrl, rt_uint16_t item, rtgui_rect_t* item_rect);
+void rtgui_listctrl_set_itemheight(struct rtgui_listctrl* ctrl, int height);
 
 #endif

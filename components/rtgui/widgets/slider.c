@@ -226,7 +226,7 @@ void rtgui_slider_set_value(struct rtgui_slider* slider, rt_size_t value)
 {
 	RT_ASSERT(slider != RT_NULL);
 
-	if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(slider)))
+	if (RTGUI_WIDGET_IS_ENABLE(slider))
 	{
 		if (value < slider->min) value = slider->min;
 		if (value > slider->max) value = slider->max;

@@ -45,7 +45,12 @@ struct rtgui_box* rtgui_box_create(int orientation, int border_size)
 	return box;
 }
 
-static void rtgui_box_layout_vertical(rtgui_box_t* box)
+void rtgui_box_destroy(struct rtgui_box* box)
+{
+	rtgui_object_destroy(RTGUI_OBJECT(box));
+}
+
+static void rtgui_box_layout_vertical(struct rtgui_box* box, struct rtgui_rect* extent)
 {
 	rtgui_list_t *node;
 	rt_int32_t box_width;
@@ -53,11 +58,9 @@ static void rtgui_box_layout_vertical(rtgui_box_t* box)
 	rt_int32_t next_x, next_y;
 	rt_int32_t total_height, space_height;
 	struct rtgui_event_resize size_event;
-	struct rtgui_widget *container_widget;
 	
 	/* prepare the resize event */
 	RTGUI_EVENT_RESIZE_INIT(&size_event);
-	container_widget = RTGUI_WIDGET(box->container);
 
 	/* find spaces */
 	space_count  = 0;
@@ -74,18 +77,18 @@ static void rtgui_box_layout_vertical(rtgui_box_t* box)
 	/* calculate the height for each spaces */
 	if (space_count != 0)
 	{
-		space_height = (rtgui_rect_height(container_widget->extent) - total_height - (box->border_size << 1)) / space_count;
+		space_height = (rtgui_rect_height(*extent) - total_height - (box->border_size << 1)) / space_count;
 	}
 
 	/* init (x, y) and box width */
-	next_x = container_widget->extent.x1 + box->border_size;
-	next_y = container_widget->extent.y1 + box->border_size;
-	box_width = rtgui_rect_width(container_widget->extent) - (box->border_size << 1);
+	next_x = extent->x1 + box->border_size;
+	next_y = extent->y1 + box->border_size;
+	box_width = rtgui_rect_width(*extent) - (box->border_size << 1);
 
 	/* layout each widget */
 	rtgui_list_foreach(node, &(box->container->children))
 	{
-		rtgui_rect_t *rect;
+		struct rtgui_rect *rect;
 		rtgui_widget_t* widget = rtgui_list_entry(node, struct rtgui_widget, sibling);
 
 		/* get extent of widget */
@@ -140,7 +143,7 @@ static void rtgui_box_layout_vertical(rtgui_box_t* box)
 	}
 }
 
-static void rtgui_box_layout_horizontal(rtgui_box_t* box)
+static void rtgui_box_layout_horizontal(struct rtgui_box* box, struct rtgui_rect* extent)
 {
 	rtgui_list_t *node;
 	rt_int32_t box_height;
@@ -148,11 +151,9 @@ static void rtgui_box_layout_horizontal(rtgui_box_t* box)
 	rt_int32_t next_x, next_y;
 	rt_int32_t total_width, space_width;
 	struct rtgui_event_resize size_event;
-	struct rtgui_widget *container_widget;
 
 	/* prepare the resize event */
 	RTGUI_EVENT_RESIZE_INIT(&size_event);
-	container_widget = RTGUI_WIDGET(box->container);
 
 	/* find spaces */
 	space_count = 0;
@@ -169,13 +170,13 @@ static void rtgui_box_layout_horizontal(rtgui_box_t* box)
 	if (space_count != 0)
 	{
 		/* calculate the height for each spaces */
-		space_width = (rtgui_rect_width(container_widget->extent) - total_width) / space_count;
+		space_width = (rtgui_rect_width(*extent) - total_width) / space_count;
 	}
 
 	/* init (x, y) and box height */
-	next_x = container_widget->extent.x1 + box->border_size;
-	next_y = container_widget->extent.y1 + box->border_size;
-	box_height = rtgui_rect_height(container_widget->extent) - (box->border_size << 1);
+	next_x = extent->x1 + box->border_size;
+	next_y = extent->y1 + box->border_size;
+	box_height = rtgui_rect_height(*extent) - (box->border_size << 1);
 
 	/* layout each widget */
 	rtgui_list_foreach(node, &(box->container->children))
@@ -237,17 +238,19 @@ static void rtgui_box_layout_horizontal(rtgui_box_t* box)
 
 void rtgui_box_layout(rtgui_box_t* box)
 {
+	struct rtgui_rect extent;
     RT_ASSERT(box != RT_NULL);
 
 	if (box->container == RT_NULL) return;
 
+	rtgui_widget_get_extent(RTGUI_WIDGET(box->container), &extent);
 	if (box->orient & RTGUI_VERTICAL)
 	{
-		rtgui_box_layout_vertical(box);
+		rtgui_box_layout_vertical(box, &extent);
 	}
 	else
 	{
-		rtgui_box_layout_horizontal(box);
+		rtgui_box_layout_horizontal(box, &extent);
 	}
 
 	/* update box and its children clip */
@@ -257,3 +260,24 @@ void rtgui_box_layout(rtgui_box_t* box)
 	}
 }
 
+void rtgui_box_layout_rect(rtgui_box_t* box, struct rtgui_rect* rect)
+{
+	RT_ASSERT(box != RT_NULL);
+
+	if (box->container == RT_NULL) return;
+
+	if (box->orient & RTGUI_VERTICAL)
+	{
+		rtgui_box_layout_vertical(box, rect);
+	}
+	else
+	{
+		rtgui_box_layout_horizontal(box, rect);
+	}
+
+	/* update box and its children clip */
+	if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(box->container)))
+	{
+		rtgui_widget_update_clip(RTGUI_WIDGET(box->container));
+	}
+}

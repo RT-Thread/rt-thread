@@ -260,7 +260,7 @@ static rt_bool_t rtgui_filelist_view_on_folder_item(rtgui_object_t* object, stru
 			dir_ptr = (char*) rtgui_malloc (256);
 			rtgui_filelist_view_get_fullpath(view, dir_ptr, 256);
 			rtgui_filelist_view_set_directory(view, dir_ptr);
-			rt_free(dir_ptr);
+			rtgui_free(dir_ptr);
 		}
 		break;
 	case 1:
@@ -332,8 +332,8 @@ static void _rtgui_filelist_view_constructor(struct rtgui_filelist_view *view)
 
 	view->current_directory = RT_NULL;
 	view->pattern = RT_NULL;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(view)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_BACKGROUND(view) = white;
+	RTGUI_WIDGET_TEXTALIGN(view) = RTGUI_ALIGN_CENTER_VERTICAL;
 
 	file_image = rtgui_image_create_from_mem("xpm",
 		(rt_uint8_t*)file_xpm, sizeof(file_xpm), RT_TRUE);
@@ -346,8 +346,16 @@ static void _rtgui_filelist_view_destructor(struct rtgui_filelist_view *view)
     /* delete all file items */
     rtgui_filelist_view_clear(view);
 	/* delete current directory and pattern */
-	rtgui_free(view->current_directory); view->current_directory = RT_NULL;
-	rtgui_free(view->pattern); view->pattern = RT_NULL;
+	if (view->current_directory != RT_NULL)
+	{
+		rt_free(view->current_directory); 
+		view->current_directory = RT_NULL;
+	}
+	if (view->pattern != RT_NULL) 
+	{
+		rt_free(view->pattern); 
+		view->pattern = RT_NULL;
+	}
 
 	/* delete image */
 	rtgui_image_destroy(file_image);

@@ -31,9 +31,9 @@ static void _rtgui_button_constructor(rtgui_button_t *button)
 	button->on_button = RT_NULL;
 
 	/* set gc */
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(button)) = default_foreground;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(button)) = RTGUI_RGB(212, 208, 200);
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(button)) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_FOREGROUND(button) = default_foreground;
+	RTGUI_WIDGET_BACKGROUND(button) = RTGUI_RGB(212, 208, 200);
+	RTGUI_WIDGET_TEXTALIGN(button) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 static void _rtgui_button_destructor(rtgui_button_t *button)

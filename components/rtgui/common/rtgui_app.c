@@ -1,5 +1,5 @@
 /*
- * File      : rtgui_application.c
+ * File      : rtgui_app.c
  * This file is part of RTGUI in RT-Thread RTOS
  * COPYRIGHT (C) 2012, RT-Thread Development Team
  *
@@ -24,6 +24,7 @@ static void _rtgui_app_constructor(struct rtgui_app *app)
 			                       rtgui_app_event_handler);
 
 	app->name           = RT_NULL;
+	app->icon 			= RT_NULL;
 	/* set EXITED so we can destroy an application that just created */
 	app->state_flag     = RTGUI_APP_FLAG_EXITED;
 	app->ref_count      = 0;
@@ -240,6 +241,10 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object* object, rtgui_event_t* ev
 		}
 		break;
 
+	case RTGUI_EVENT_APP_DESTROY:
+		rtgui_app_exit(app, 0);
+		break;
+
 	case RTGUI_EVENT_MOUSE_BUTTON:
 	case RTGUI_EVENT_MOUSE_MOTION:
 		{
@@ -282,12 +287,9 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object* object, rtgui_event_t* ev
             if (ecmd->wid != RT_NULL)
                     return _rtgui_application_dest_handle(app, event);
         }
-
-	default:
-		return rtgui_object_event_handler(object, event);
 	}
 
-	return RT_TRUE;
+	return rtgui_object_event_handler(object, event);
 }
 
 rt_inline void _rtgui_application_event_loop(struct rtgui_app *app)
@@ -342,6 +344,26 @@ void rtgui_app_exit(struct rtgui_app* app, rt_uint16_t code)
 {
 	--app->ref_count;
 	app->exit_code = code;
+}
+
+void rtgui_app_activate(struct rtgui_app *app)
+{
+	struct rtgui_event_application event;
+
+	RTGUI_EVENT_APP_ACTIVATE_INIT(&event);
+	event.app = app;
+
+	rtgui_send(app->tid, RTGUI_EVENT(&event), sizeof(struct rtgui_event_application));
+}
+
+void rtgui_app_close(struct rtgui_app *app)
+{
+	struct rtgui_event_application event;
+
+	RTGUI_EVENT_APP_DESTROY_INIT(&event);
+	event.app = app;
+
+	rtgui_send(app->tid, RTGUI_EVENT(&event), sizeof(struct rtgui_event_application));
 }
 
 /**

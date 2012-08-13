@@ -11,7 +11,7 @@ static void _rtgui_radiobox_constructor(rtgui_radiobox_t *radiobox)
 
 	/* init widget and set event handler */
 	RTGUI_WIDGET(radiobox)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(radiobox)) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(radiobox) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
 	rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 	rtgui_object_set_event_handler(RTGUI_OBJECT(radiobox), rtgui_radiobox_event_handler);
 
@@ -34,8 +34,8 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 	RT_ASSERT(event  != RT_NULL);
 
 	/* widget is hide, return */
-	if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(radiobox)) || 
-		!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(radiobox))) return;
+	if (RTGUI_WIDGET_IS_HIDE(radiobox) || 
+		!RTGUI_WIDGET_IS_ENABLE(radiobox)) return;
 
 	if (event->button & RTGUI_MOUSE_BUTTON_DOWN &&
 		event->button & RTGUI_MOUSE_BUTTON_LEFT)
@@ -57,7 +57,7 @@ static void rtgui_radiobox_onmouse(struct rtgui_radiobox* radiobox, struct rtgui
 		{
 			struct rtgui_rect bord_rect;
 			
-			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &bord_rect);
+			rtgui_font_get_metrics(RTGUI_WIDGET_FONT(radiobox), "H", &bord_rect);
 			bord_size = rtgui_rect_height(bord_rect);
 		}
 		rtgui_rect_inflate(&rect, - bord_size);
@@ -97,7 +97,7 @@ rt_bool_t rtgui_radiobox_event_handler(struct rtgui_object* object, struct rtgui
 		break;
 
 	case RTGUI_EVENT_KBD:
-		if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(radiobox))) return RT_FALSE;
+		if (RTGUI_WIDGET_IS_HIDE(radiobox)) return RT_FALSE;
 
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (widget->on_key != RT_NULL)
@@ -186,7 +186,7 @@ struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char
 
 		/* set proper of control */
 		rtgui_radiobox_set_orientation(radiobox, orient);
-		rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox)), "H", &rect);
+		rtgui_font_get_metrics(RTGUI_WIDGET_FONT(radiobox), "H", &rect);
 		board_size = rtgui_rect_height(rect);
 
 		if (orient == RTGUI_VERTICAL)
@@ -202,7 +202,7 @@ struct rtgui_radiobox* rtgui_radiobox_create(const char* label, int orient, char
 			/* set init item size */
 			radiobox->item_size = 0;
 			
-			font = RTGUI_WIDGET_FONT(RTGUI_WIDGET(radiobox));
+			font = RTGUI_WIDGET_FONT(radiobox);
 			for (index = 0; index < number; index ++)
 			{
 				rtgui_font_get_metrics(font, radio_items[index], &rect);

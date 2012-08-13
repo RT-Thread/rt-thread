@@ -74,7 +74,7 @@ rt_bool_t rtgui_container_broadcast_event(struct rtgui_container *container, str
 		w = rtgui_list_entry(node, struct rtgui_widget, sibling);
 
 		if (RTGUI_OBJECT(w)->event_handler)
-			RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE;
+			RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event);
 	}
 
 	return RT_FALSE;

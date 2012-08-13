@@ -551,23 +551,23 @@ rt_inline void _rtgui_topwin_mark_hidden(struct rtgui_topwin *topwin)
 	topwin->flag &= ~WINTITLE_SHOWN;
 	if (topwin->title != RT_NULL)
 	{
-		RTGUI_WIDGET_HIDE(RTGUI_WIDGET(topwin->title));
+		RTGUI_WIDGET_HIDE(topwin->title);
 	}
-	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(topwin->wid));
+	RTGUI_WIDGET_HIDE(topwin->wid);
 }
 
 rt_inline void _rtgui_topwin_mark_shown(struct rtgui_topwin *topwin)
 {
 	if (!(topwin->flag & WINTITLE_SHOWN)
-		&& RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(topwin->wid)))
+		&& RTGUI_WIDGET_IS_HIDE(topwin->wid))
 		return;
 
 	topwin->flag |= WINTITLE_SHOWN;
 	if (topwin->title != RT_NULL)
 	{
-		RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(topwin->title));
+		RTGUI_WIDGET_UNHIDE(topwin->title);
 	}
-	RTGUI_WIDGET_UNHIDE(RTGUI_WIDGET(topwin->wid));
+	RTGUI_WIDGET_UNHIDE(topwin->wid);
 }
 
 static void _rtgui_topwin_draw_tree(struct rtgui_topwin *topwin, struct rtgui_event_paint *epaint)

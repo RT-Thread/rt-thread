@@ -46,10 +46,10 @@ struct rtgui_box* rtgui_box_create(int orientation, int border_size);
 void rtgui_box_destroy(struct rtgui_box* box);
 
 void rtgui_box_layout(rtgui_box_t* box);
+void rtgui_box_layout_rect(rtgui_box_t* box, struct rtgui_rect* rect);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

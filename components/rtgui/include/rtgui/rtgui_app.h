@@ -1,7 +1,7 @@
 /*
- * File      : rtgui_application.h
+ * File      : rtgui_app.h
  * This file is part of RTGUI in RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -11,8 +11,9 @@
  * Date           Author       Notes
  * 2012-01-13     Grissiom     first version
  */
-#ifndef __RTGUI_APPLICATION_H__
-#define __RTGUI_APPLICATION_H__
+
+#ifndef __RTGUI_APP_H__
+#define __RTGUI_APP_H__
 
 #include <rtthread.h>
 #include <rtgui/rtgui.h>
@@ -34,7 +35,7 @@ enum rtgui_app_flag
 	RTGUI_APP_FLAG_SHOWN   = 0x08
 };
 
-typedef void (*rtgui_idle_func_t)(struct rtgui_object* obj, struct rtgui_event *event);
+typedef void (*rtgui_idle_func_t)(struct rtgui_object *obj, struct rtgui_event *event);
 
 struct rtgui_app
 {
@@ -52,7 +53,7 @@ struct rtgui_app
 	/* the thread id */
 	rt_thread_t tid;
 	/* the RTGUI server id */
-    rt_thread_t server;
+	rt_thread_t server;
 
 	/* the message queue of thread */
 	rt_mq_t mq;
@@ -71,18 +72,20 @@ struct rtgui_app
 /**
  * create an application named @myname on thread @param tid
  */
-struct rtgui_app* rtgui_app_create(rt_thread_t tid, const char *title);
+struct rtgui_app *rtgui_app_create(rt_thread_t tid, const char *title);
 void rtgui_app_destroy(struct rtgui_app *app);
-rt_bool_t rtgui_app_event_handler(struct rtgui_object* obj, rtgui_event_t* event);
+rt_bool_t rtgui_app_event_handler(struct rtgui_object *obj, rtgui_event_t *event);
 
 rt_base_t rtgui_app_run(struct rtgui_app *app);
 void rtgui_app_exit(struct rtgui_app *app, rt_uint16_t code);
+void rtgui_app_activate(struct rtgui_app *app);
+void rtgui_app_close(struct rtgui_app *app);
 
 void rtgui_app_set_onidle(rtgui_idle_func_t onidle);
 rtgui_idle_func_t rtgui_app_get_onidle(void);
-struct rtgui_app* rtgui_app_self(void);
+struct rtgui_app *rtgui_app_self(void);
 
 rt_err_t rtgui_app_set_as_wm(void);
-void rtgui_app_set_main_win(struct rtgui_win* win);
+void rtgui_app_set_main_win(struct rtgui_win *win);
 
-#endif /* end of include guard: RTGUI_APPLICATION_H */
+#endif /* end of include guard: __RTGUI_APP_H__ */

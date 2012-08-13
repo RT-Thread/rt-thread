@@ -23,7 +23,7 @@ DECLARE_CLASS_TYPE(panel);
 #define RTGUI_PANEL_TYPE       (RTGUI_TYPE(panel))
 /** Casts the object to an panel */
 #define RTGUI_PANEL(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_PANEL_TYPE, rtgui_panel_t))
-/** Checks if the object is an rtgui_button */
+/** Checks if the object is an rtgui_panel */
 #define RTGUI_IS_PANEL(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_PANEL_TYPE))
 
 /*
@@ -39,6 +39,12 @@ typedef struct rtgui_panel rtgui_panel_t;
 
 rtgui_panel_t* rtgui_panel_create(int border_style);
 void rtgui_panel_destroy(rtgui_panel_t* panel);
+
+rt_inline void rtgui_panel_set_border(struct rtgui_panel* panel, int border_style)
+{
+	RT_ASSERT(panel != RT_NULL);
+	panel->border_style = border_style;
+}
 
 rt_bool_t rtgui_panel_event_handler(struct rtgui_object* object, struct rtgui_event* event);
 

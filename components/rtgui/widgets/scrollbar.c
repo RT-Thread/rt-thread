@@ -35,7 +35,7 @@ static void _rtgui_scrollbar_constructor(rtgui_scrollbar_t *bar)
 	rtgui_widget_set_rect(RTGUI_WIDGET(bar), &rect);
 
 	/* set gc */
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(bar)) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(bar) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 rt_inline rt_uint32_t _rtgui_scrollbar_get_length(rtgui_scrollbar_t *bar)
@@ -362,7 +362,7 @@ void rtgui_scrollbar_set_range(struct rtgui_scrollbar* bar, int min, int max)
 
 	if (min >= max )
 	{
-		RTGUI_WIDGET_DISABLE(RTGUI_WIDGET(bar));
+		RTGUI_WIDGET_DISABLE(bar);
 		return;
 	}
 
@@ -380,12 +380,12 @@ void rtgui_scrollbar_set_page_step(struct rtgui_scrollbar* bar, int step)
 	if (bar->page_step > (bar->max_position - bar->min_position))
 	{
 		/* disable bar */
-		RTGUI_WIDGET_DISABLE(RTGUI_WIDGET(bar));
+		RTGUI_WIDGET_DISABLE(bar);
 	}
 	else
 	{
 		/* enable bar */
-		RTGUI_WIDGET_ENABLE(RTGUI_WIDGET(bar));
+		RTGUI_WIDGET_ENABLE(bar);
 	}
 }
 

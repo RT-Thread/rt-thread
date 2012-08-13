@@ -35,7 +35,7 @@ static void _calc_line(rtgui_textview_t *textview, const char* text)
 
 	if (textview->lines != RT_NULL)
 	{
-		rt_free(textview->lines);
+		rtgui_free(textview->lines);
 		textview->lines = RT_NULL;
 		textview->line_count = 0;
 	}
@@ -100,7 +100,7 @@ static void _calc_line(rtgui_textview_t *textview, const char* text)
 	textview->line_count = line_index + 1;
 
 	/* allocate lines */
-	textview->lines = rt_malloc(textview->line_count * textview->line_width);
+	textview->lines = rtgui_malloc(textview->line_count * textview->line_width);
 	rt_memset(textview->lines, 0, (textview->line_count * textview->line_width));
 
 	/* fill lines */
@@ -177,7 +177,7 @@ static void _calc_width(rtgui_textview_t *textview)
 	width = rtgui_rect_width(RTGUI_WIDGET(textview)->extent) - 6;
 	height = rtgui_rect_height(RTGUI_WIDGET(textview)->extent);
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(textview)), "W", &rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &rect);
 	textview->line_width = width / rtgui_rect_width(rect) + 1;
 	textview->line_page_count = height / (rtgui_rect_height(rect) + 3);
 
@@ -192,7 +192,7 @@ static void _draw_textview(rtgui_textview_t *textview)
 	char* line;
 	rt_ubase_t line_index, item_height;
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(textview)), "W", &font_rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &font_rect);
 	item_height = rtgui_rect_height(font_rect) + 3;
 
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(textview));
@@ -236,7 +236,7 @@ static void _rtgui_textview_constructor(rtgui_textview_t *textview)
 static void _rtgui_textview_destructor(rtgui_textview_t *textview)
 {
 	/* release line memory */
-	rt_free(textview->lines);
+	rtgui_free(textview->lines);
 	textview->lines = RT_NULL;
 }
 

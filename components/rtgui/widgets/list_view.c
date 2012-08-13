@@ -33,8 +33,8 @@ static void _rtgui_list_view_constructor(struct rtgui_list_view *view)
 	view->items_count = 0;
 	view->page_items = 0;
 
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(view)) = white;
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(view)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_BACKGROUND(view) = white;
+	RTGUI_WIDGET_TEXTALIGN(view) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 DEFINE_CLASS_TYPE(listview, "listview", 
@@ -84,7 +84,7 @@ static void rtgui_list_view_onicondraw(struct rtgui_list_view* view, struct rtgu
 
 				item_rect.y1 = drawing_rect.y2 + LIST_MARGIN; 
 				item_rect.x1 += 3; item_rect.x2 -=3;
-				rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), view->items[item_index].name, 
+				rtgui_font_get_metrics(RTGUI_WIDGET_FONT(view), view->items[item_index].name, 
 					&drawing_rect);
 				rtgui_rect_moveto_align(&item_rect, &drawing_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
 				rtgui_dc_draw_text(dc, view->items[item_index].name, &drawing_rect);
@@ -144,7 +144,7 @@ static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_int16_t
 	/* draw text */
 	item_rect.y1 = drawing_rect.y2 + LIST_MARGIN; 
 	item_rect.x1 += 3; item_rect.x2 -=3;
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), view->items[old_item].name, 
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(view), view->items[old_item].name, 
 		&drawing_rect);
 	rtgui_rect_moveto_align(&item_rect, &drawing_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
 	rtgui_dc_draw_text(dc, view->items[old_item].name, &drawing_rect);
@@ -170,7 +170,7 @@ static void rtgui_list_view_update_icon(struct rtgui_list_view* view, rt_int16_t
 	/* draw text */
 	item_rect.y1 = drawing_rect.y2 + LIST_MARGIN; 
 	item_rect.x1 += 3; item_rect.x2 -=3;
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), 
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(view), 
 		view->items[view->current_item].name, 
 		&drawing_rect);
 	rtgui_rect_moveto_align(&item_rect, &drawing_rect, RTGUI_ALIGN_CENTER_HORIZONTAL);
@@ -586,7 +586,7 @@ static void rtgui_list_view_calc(struct rtgui_list_view* view)
 		image_height = 0;
 	}
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(view)), "HHHHHH", &rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(view), "HHHHHH", &rect);
 
 	text_height = rtgui_rect_height(rect);
 	text_width = rtgui_rect_width(rect);

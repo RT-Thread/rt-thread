@@ -16,7 +16,7 @@ static void _rtgui_progressbar_constructor(rtgui_progressbar_t *bar)
 	bar->position = 0;
 
 	/* set gc */
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(bar)) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(bar) = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 DEFINE_CLASS_TYPE(progressbar, "progressbar", 
@@ -72,7 +72,7 @@ void rtgui_progressbar_set_value(struct rtgui_progressbar *bar, int value)
 {
     RT_ASSERT(bar != RT_NULL);
 
-	if (!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar))) return;
+	if (!RTGUI_WIDGET_IS_ENABLE(bar)) return;
 
     bar->position = value;
 

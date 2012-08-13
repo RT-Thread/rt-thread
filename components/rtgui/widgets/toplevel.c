@@ -31,7 +31,7 @@ static void _rtgui_toplevel_constructor(rtgui_toplevel_t *toplevel)
 	toplevel->drawing = 0;
 
 	/* hide toplevel default */
-	RTGUI_WIDGET_HIDE(RTGUI_WIDGET(toplevel));
+	RTGUI_WIDGET_HIDE(toplevel);
 }
 
 static void _rtgui_toplevel_destructor(rtgui_toplevel_t* toplevel)

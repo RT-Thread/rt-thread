@@ -29,10 +29,12 @@ struct rtgui_win;
 struct rtgui_font;
 
 typedef struct rtgui_win rtgui_win_t;
-typedef struct rtgui_workbench rtgui_workbench_t;
 typedef rt_bool_t (*rtgui_event_handler_ptr)(struct rtgui_object* object, struct rtgui_event* event);
 typedef void (*rtgui_onbutton_func_t)(struct rtgui_object* object, struct rtgui_event* event);
 
+/**
+ * Coordinate point
+ */
 struct rtgui_point
 {
 	rt_int16_t x, y;
@@ -40,6 +42,9 @@ struct rtgui_point
 typedef struct rtgui_point rtgui_point_t;
 extern rtgui_point_t rtgui_empty_point;
 
+/**
+ * Rectangle structure
+ */
 struct rtgui_rect
 {
 	rt_int16_t x1, y1, x2, y2;
@@ -50,6 +55,9 @@ typedef struct rtgui_rect rtgui_rect_t;
 
 typedef unsigned long rtgui_color_t;
 
+/**
+ * Graphic context
+ */
 struct rtgui_gc
 {
 	/* foreground and background color */
@@ -73,6 +81,10 @@ enum RTGUI_MARGIN_STYLE
 	RTGUI_MARGIN_BOTTOM = 0x08,
 	RTGUI_MARGIN_ALL = RTGUI_MARGIN_LEFT | RTGUI_MARGIN_RIGHT | RTGUI_MARGIN_TOP | RTGUI_MARGIN_BOTTOM
 };
+
+/**
+ * Border style 
+ */
 enum RTGUI_BORDER_STYLE
 {
 	RTGUI_BORDER_NONE = 0,
@@ -88,6 +100,9 @@ enum RTGUI_BORDER_STYLE
 #define RTGUI_BORDER_DEFAULT_WIDTH	2
 #define RTGUI_WIDGET_DEFAULT_MARGIN	3
 
+/**
+ * Orientation
+ */
 enum RTGUI_ORIENTATION
 {
     RTGUI_HORIZONTAL		= 0x01,

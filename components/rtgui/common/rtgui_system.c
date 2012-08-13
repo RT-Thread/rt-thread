@@ -26,12 +26,23 @@
 #define RTGUI_MEM_TRACE
 #endif
 
+static rtgui_rect_t _mainwin_rect;
+static struct rt_mutex _screen_lock;
+
 void rtgui_system_server_init()
 {
+	rt_mutex_init(&_screen_lock, "screen", RT_IPC_FLAG_FIFO);
+
+	/* the graphic device driver must be set before initialization */
+	RT_ASSERT(rtgui_graphic_driver_get_default() != RT_NULL);
+
 	/* init image */
 	rtgui_system_image_init();
 	/* init font */
 	rtgui_font_system_init();
+
+	/* set the rect of main window to full screen */
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &_mainwin_rect);
 
 	/* init rtgui server */
 	rtgui_topwin_init();
@@ -287,11 +298,11 @@ void rtgui_free(void* ptr)
 
 #if defined(RTGUI_MEM_TRACE) && defined(RT_USING_FINSH)
 #include <finsh.h>
-void list_mem(void)
+void list_guimem(void)
 {
 	rt_kprintf("Current Used: %d, Maximal Used: %d\n", mem_info.allocated_size, mem_info.max_allocated);
 }
-FINSH_FUNCTION_EXPORT(list_mem, display memory information);
+FINSH_FUNCTION_EXPORT(list_guimem, display memory information);
 #endif
 
 /************************************************************************/
@@ -699,3 +710,27 @@ rt_thread_t rtgui_get_server(void)
 	return rt_thread_find("rtgui");
 }
 
+void rtgui_set_mainwin_rect(struct rtgui_rect *rect)
+{
+	_mainwin_rect = *rect;
+}
+
+void rtgui_get_mainwin_rect(struct rtgui_rect *rect)
+{
+	*rect = _mainwin_rect;
+}
+
+void rtgui_get_screen_rect(struct rtgui_rect *rect)
+{
+	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), rect);
+}
+
+void rtgui_screen_lock(rt_int32_t timeout)
+{
+	rt_mutex_take(&_screen_lock, timeout);
+}
+
+void rtgui_screen_unlock(void)
+{
+	rt_mutex_release(&_screen_lock);
+}

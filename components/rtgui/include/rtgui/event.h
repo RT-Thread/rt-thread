@@ -63,12 +63,14 @@ enum _rtgui_event_type
 	RTGUI_EVENT_KBD,                   /* keyboard info         */
 
 	/* user command event */
-	RTGUI_EVENT_COMMAND,               /* user command          */
+	RTGUI_EVENT_COMMAND=0x0100,        /* user command          */
 
 	/* widget event */
 	RTGUI_EVENT_FOCUSED,               /* widget focused        */
 	RTGUI_EVENT_SCROLLED,              /* scroll bar scrolled   */
 	RTGUI_EVENT_RESIZE,                /* widget resize         */
+	RTGUI_EVENT_SELECTED,			   /* widget selected       */
+	RTGUI_EVENT_UNSELECTED,			   /* widget un-selected    */
 };
 typedef enum _rtgui_event_type rtgui_event_type;
 

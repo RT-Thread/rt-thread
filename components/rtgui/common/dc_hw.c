@@ -22,6 +22,8 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/title.h>
 
+#define _int_swap(x, y)			do {x ^= y; y ^= x; x ^= y;} while (0)
+
 static void rtgui_dc_hw_draw_point(struct rtgui_dc* dc, int x, int y);
 static void rtgui_dc_hw_draw_color_point(struct rtgui_dc* dc, int x, int y, rtgui_color_t color);
 static void rtgui_dc_hw_draw_hline(struct rtgui_dc* dc, int x1, int x2, int y);
@@ -267,6 +269,7 @@ static void rtgui_dc_hw_draw_vline(struct rtgui_dc* self, int x, int y1, int y2)
 	x = x + dc->owner->extent.x1;
 	y1 = y1 + dc->owner->extent.y1;
 	y2 = y2 + dc->owner->extent.y1;
+	if (y1 > y2) _int_swap(y1, y2);
 
 	/* draw vline */
 	dc->hw_driver->ops->draw_vline(&(dc->owner->gc.foreground), x, y1, y2);
@@ -285,6 +288,7 @@ static void rtgui_dc_hw_draw_hline(struct rtgui_dc* self, int x1, int x2, int y)
 	/* convert logic to device */
 	x1 = x1 + dc->owner->extent.x1;
 	x2 = x2 + dc->owner->extent.x1;
+	if (x1 > x2) _int_swap(x1, x2);	
 	y  = y + dc->owner->extent.y1;
 
 	/* draw hline */
@@ -323,6 +327,7 @@ static void rtgui_dc_hw_blit_line (struct rtgui_dc* self, int x1, int x2, int y,
 	/* convert logic to device */
 	x1 = x1 + dc->owner->extent.x1;
 	x2 = x2 + dc->owner->extent.x1;
+	if (x1 > x2) _int_swap(x1, x2);	
 	y  = y + dc->owner->extent.y1;
 
 	dc->hw_driver->ops->draw_raw_hline(line_data, x1, x2, y);

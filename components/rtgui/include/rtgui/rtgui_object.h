@@ -125,6 +125,19 @@ rt_bool_t rtgui_object_event_handler(struct rtgui_object *object, struct rtgui_e
 	/* supress compiler warning */ \
 	widget = widget;
 
+/** handle @param event on @param object's own event handler
+ *
+ * If the @param object does not have an event handler, which means the object
+ * does not interested in any event, it will return RT_FALSE. Otherwise, the
+ * return code of that handler is returned.
+ */
+rt_inline rt_bool_t rtgui_object_handle(struct rtgui_object *object, struct rtgui_event *event)
+{
+    if (object->event_handler)
+        return object->event_handler(object, event);
+    return RT_FALSE;
+}
+
 rtgui_object_t *rtgui_object_check_cast(rtgui_object_t *object, rtgui_type_t *type, const char* func, int line);
 rtgui_type_t   *rtk_object_object_type_get(rtgui_object_t *object);
 

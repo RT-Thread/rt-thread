@@ -108,8 +108,20 @@ void rtgui_widget_destroy(rtgui_widget_t* widget)
 
 void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 {
+	int delta_x, delta_y;
+
 	if (widget == RT_NULL || rect == RT_NULL) return;
 
+	/* move to a logic position if it's a container widget */
+	if (RTGUI_IS_CONTAINER(widget))
+	{
+		delta_x = rect->x1 - widget->extent.x1;
+		delta_y = rect->y1 - widget->extent.y1;
+
+		rtgui_widget_move_to_logic(widget, delta_x, delta_y);
+	}
+
+	/* update extent rectangle */
 	widget->extent = *rect;
 
 	/* reset mini width and height */
@@ -202,6 +214,37 @@ void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect)
 		rect->x1 = rect->y1 = 0;
 		rect->x2 = widget->extent.x2 - widget->extent.x1;
 		rect->y2 = widget->extent.y2 - widget->extent.y1;
+	}
+}
+
+/**
+ * set widget draw style
+ */
+void rtgui_widget_set_border(rtgui_widget_t* widget, rt_uint32_t style)
+{
+	RT_ASSERT(widget != RT_NULL);
+
+	widget->border_style = style;
+	switch(style)
+	{
+	case RTGUI_BORDER_NONE:
+		widget->border = 0;
+		break;
+	case RTGUI_BORDER_SIMPLE:
+	case RTGUI_BORDER_UP:
+	case RTGUI_BORDER_DOWN:
+		widget->border = 1;
+		break;
+	case RTGUI_BORDER_STATIC:
+	case RTGUI_BORDER_RAISE:
+	case RTGUI_BORDER_SUNKEN:
+	case RTGUI_BORDER_BOX:
+	case RTGUI_BORDER_EXTRA:
+		widget->border = 2;
+		break;
+	default:
+		widget->border = 2;
+		break;
 	}
 }
 
@@ -451,7 +494,7 @@ rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t*
 #endif
 	}
 
-	return RT_FALSE;
+	return rtgui_object_event_handler(object, event);
 }
 
 /*
@@ -537,7 +580,7 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 {
 	struct rtgui_widget *widget = RTGUI_WIDGET(object);
 
-    if (!RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(object)))
+    if (!RTGUI_WIDGET_IS_HIDE(object))
         return RT_FALSE;
 
 	RTGUI_WIDGET_UNHIDE(widget);
@@ -552,7 +595,7 @@ rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *e
 {
 	struct rtgui_widget *widget = RTGUI_WIDGET(object);
 
-    if (RTGUI_WIDGET_IS_HIDE(RTGUI_WIDGET(object)))
+    if (RTGUI_WIDGET_IS_HIDE(object))
         return RT_FALSE;
 
 	/* hide this widget */

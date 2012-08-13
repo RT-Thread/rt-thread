@@ -124,9 +124,11 @@ static void rtgui_winrect_show		(void);
 #endif
 
 #define WIN_MOVE_BORDER	4
-void rtgui_mouse_init()
+void rtgui_mouse_init(void)
 {
 	const struct rtgui_graphic_driver* gd = rtgui_graphic_driver_get_default();
+
+	if (_rtgui_cursor != RT_NULL) rtgui_mouse_fini();
 
 	_rtgui_cursor = (struct rtgui_cursor*) rtgui_malloc(sizeof(struct rtgui_cursor));
 	rt_memset(_rtgui_cursor, 0, sizeof(struct rtgui_cursor));
@@ -176,6 +178,27 @@ void rtgui_mouse_init()
 	_rtgui_cursor->win_top		= rtgui_malloc(_rtgui_cursor->bpp * gd->width  * WIN_MOVE_BORDER);
 	_rtgui_cursor->win_bottom	= rtgui_malloc(_rtgui_cursor->bpp * gd->width  * WIN_MOVE_BORDER);
 #endif
+}
+
+void rtgui_mouse_fini(void)
+{
+	if (_rtgui_cursor != RT_NULL)
+	{
+#ifdef RTGUI_USING_WINMOVE
+		rtgui_free(_rtgui_cursor->win_left);
+		rtgui_free(_rtgui_cursor->win_right);
+		rtgui_free(_rtgui_cursor->win_top);
+		rtgui_free(_rtgui_cursor->win_bottom);
+#endif
+#ifdef RTGUI_USING_MOUSE_CURSOR
+		rt_mutex_detach(&cursor_mutex);
+		rtgui_image_destroy(_rtgui_cursor->cursor_image);
+		rtgui_free(_rtgui_cursor->rtgui_malloc);
+#endif
+		rtgui_free(_rtgui_cursor);
+
+		_rtgui_cursor = RT_NULL;
+	}
 }
 
 void rtgui_mouse_moveto(int x, int y)

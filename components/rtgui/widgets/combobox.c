@@ -13,7 +13,7 @@ static void _rtgui_combobox_constructor(rtgui_combobox_t *box)
 	rtgui_object_set_event_handler(RTGUI_OBJECT(box), rtgui_combobox_event_handler);
 	rtgui_widget_set_rect(RTGUI_WIDGET(box), &rect);
 
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(box) = RTGUI_ALIGN_CENTER_VERTICAL;
 
 	box->pd_pressed = RT_FALSE;
 	box->current_item = 0;
@@ -96,11 +96,11 @@ static void rtgui_combobox_ondraw(struct rtgui_combobox* box)
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(box));
 	if (dc == RT_NULL) return;
 
-	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box));
+	bc = RTGUI_WIDGET_BACKGROUND(box);
 
 	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
+	RTGUI_WIDGET_BACKGROUND(box) = white;
 
 	/* fill widget rect with background color */
 	rtgui_dc_fill_rect(dc, &rect);
@@ -114,7 +114,7 @@ static void rtgui_combobox_ondraw(struct rtgui_combobox* box)
 	}
 
 	/* restore background color */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = bc;
+	RTGUI_WIDGET_BACKGROUND(box) = bc;
 
 	/* draw pull down button */
 	rect.x1 = rect.x2 - RTGUI_COMBOBOX_BUTTON_WIDTH;

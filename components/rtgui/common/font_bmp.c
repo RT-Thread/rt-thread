@@ -31,8 +31,8 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 {
 	rtgui_color_t bc;
 	const rt_uint8_t* font_ptr;
-	rt_uint16_t x, y, h, style;
-	register rt_base_t i, j, k, word_bytes;
+	rt_uint16_t x, y, w, h, style;
+	register rt_base_t i, j, /*k,*/ word_bytes;
 
 	/* check first and last char */
 	if (ch < font->first_char || ch > font->last_char) return;
@@ -54,25 +54,21 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap* font, struct rtgui_dc
 		word_bytes = ((font->char_width[ch - font->first_char] - 1)/8) + 1;
 		font_ptr = font->bmp + font->offset[ch - font->first_char];
 	}
-
+	w = (font->width  + x > rect->x2) ? rect->x2 - rect->x1 : font->width;
 	h = (font->height + y > rect->y2) ? rect->y2 - rect->y1 : font->height;
 
-	for (i = 0; i < h; i++)
+	for(i = 0; i < h; i++)
 	{
-		for (j = 0; j < word_bytes; j++)
+		rt_uint8_t chr;
+		const rt_uint8_t *ptr = font_ptr + i * word_bytes;
+		for(j = 0; j < w; j++)
 		{
-			for (k = 0; k < 8; k++)
-			{
-				if (((font_ptr[i * word_bytes + j] >> (7 - k)) & 0x01) != 0)
-				{
-					/* draw a pixel */
-					rtgui_dc_draw_point(dc, k + 8 * j + x, i + y);
-				}
-				else if (style & RTGUI_TEXTSTYLE_DRAW_BACKGROUND)
-				{
-					rtgui_dc_draw_color_point(dc, k + 8 * j + x, i + y, bc);
-				}
-			}
+			if(j % 8 == 0)chr = *ptr++;
+			if(chr & 0x80)
+				rtgui_dc_draw_point(dc, j + x, i + y);
+			else if (style & RTGUI_TEXTSTYLE_DRAW_BACKGROUND)
+				rtgui_dc_draw_color_point(dc, j + x, i + y, bc);
+			chr <<= 1;
 		}
 	}
 }
@@ -86,6 +82,8 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 	struct rtgui_font* hz_font;
 
 	RT_ASSERT(bmp_font != RT_NULL);
+
+	if (rect->y1 > rect->y2) return;
 
 	hz_font = rtgui_font_refer("hz", font->height);
 	while ((rect->x1 < rect->x2) && len)
@@ -121,6 +119,8 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font* font, struct rtgui_dc
 	if (hz_font != RT_NULL) rtgui_font_derefer(hz_font);
 
 #else
+	if (rect->y1 > rect->y2) return;
+
 	while ((rect->x1 < rect->x2) && len)
 	{
 		length = 0;

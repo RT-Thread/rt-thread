@@ -86,6 +86,8 @@ void rtgui_dc_draw_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_in
 void rtgui_dc_fill_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end);
 
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect);
+void rtgui_dc_draw_text_stroke (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect,
+	rtgui_color_t color_stroke, rtgui_color_t color_core);
 
 void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, const rt_uint8_t* data);
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data);

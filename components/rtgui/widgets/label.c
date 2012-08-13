@@ -28,7 +28,8 @@ static void _rtgui_label_constructor(rtgui_label_t *label)
 static void _rtgui_label_destructor(rtgui_label_t *label)
 {
 	/* release text memory */
-	rt_free(label->text);
+	if (label->text)
+		rt_free(label->text);
 	label->text = RT_NULL;
 }
 
@@ -100,7 +101,7 @@ void rtgui_label_set_text(rtgui_label_t* label, const char* text)
 		if (rt_strncmp(text, label->text, rt_strlen(text)) == 0) return;
 		
 		/* release old text memory */
-		rt_free(label->text);
+		rtgui_free(label->text);
 	}
 
 	if (text != RT_NULL) label->text = (char*)rt_strdup((const char*)text);

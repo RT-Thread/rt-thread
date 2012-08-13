@@ -39,10 +39,10 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 	rtgui_widget_set_onkey(RTGUI_WIDGET(box),rtgui_textbox_onkey);
 #endif
 
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = black;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
+	RTGUI_WIDGET_FOREGROUND(box) = black;
+	RTGUI_WIDGET_BACKGROUND(box) = white;
 	/* set default text align */
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(box) = RTGUI_ALIGN_CENTER_VERTICAL;
 	/* set proper of control */
 	box->caret_timer = RT_NULL;
 	box->caret = RT_NULL;
@@ -52,7 +52,7 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 	/* allocate default line buffer */
 	box->text = RT_NULL;
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(box)), "H", &rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(box), "H", &rect);
 	box->font_width = rtgui_rect_width(rect);
 	box->on_enter = RT_NULL;
 	box->dis_length = 0;
@@ -92,7 +92,7 @@ static void rtgui_textbox_get_caret_rect(rtgui_textbox_t *box, rtgui_rect_t *rec
 
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), rect);
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(RTGUI_WIDGET(box)), "H", &item_rect);
+	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(box), "H", &item_rect);
 	font_h = rtgui_rect_height(item_rect);
 	box_h = rtgui_rect_height(*rect);
 
@@ -111,7 +111,7 @@ static void rtgui_textbox_init_caret(rtgui_textbox_t *box, rt_uint16_t position)
 
 	RT_ASSERT(box != RT_NULL);
 
-	if (!RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(box)))
+	if (!RTGUI_WIDGET_IS_FOCUSED(box))
 		return;
 
 	rtgui_textbox_get_caret_rect(box, &box->caret_rect, position);
@@ -273,10 +273,11 @@ static rt_bool_t rtgui_textbox_onkey(struct rtgui_object* widget, rtgui_event_t*
 	}
 	else if(ekbd->key == RTGUIK_BACKSPACE)
 	{/* delete front character */
-
-		if(box->position == length - 1)
+		if(box->position == 0)
+			return RT_FALSE;
+		else if(box->position == length)
 		{
-			box->text[box->position] = '\0';
+			box->text[box->position-1] = '\0';
 			box->position --;
 		}
 		else if(box->position != 0)
@@ -369,7 +370,6 @@ static rt_bool_t rtgui_textbox_onkey(struct rtgui_object* widget, rtgui_event_t*
 						}
 					}
 				}
-				//rt_kprintf("%c ",ekbd->key);//debug printf
 			}
 			if(length+1 > box->line_length) return RT_FALSE;
 			if(length+1 > box->dis_length) return RT_FALSE;
@@ -417,7 +417,7 @@ static rt_bool_t rtgui_textbox_onfocus(struct rtgui_object* widget, rtgui_event_
 	/* if there is already a timer, don't create another one. */
 	if (box->caret_timer == RT_NULL)
 	{
-		box->caret_timer = rtgui_timer_create(100, RT_TIMER_FLAG_PERIODIC,rtgui_textbox_timeout, box);
+		box->caret_timer = rtgui_timer_create(50, RT_TIMER_FLAG_PERIODIC,rtgui_textbox_timeout, box);
 		/* set caret to show */
 		box->flag |= RTGUI_TEXTBOX_CARET_SHOW;
 		/* start caret timer */
@@ -485,21 +485,21 @@ void rtgui_textbox_ondraw(rtgui_textbox_t* box)
 
 	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box));
+	fc = RTGUI_WIDGET_FOREGROUND(box);
 
 	rtgui_rect_inflate(&rect, -1);
 
 	/* fill widget rect with white color */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
+	RTGUI_WIDGET_BACKGROUND(box) = white;
 	rtgui_dc_fill_rect(dc,&rect);
 
 	rtgui_rect_inflate(&rect, 1);
 	/* draw border */
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = RTGUI_RGB(123, 158, 189);
+	RTGUI_WIDGET_FOREGROUND(box) = RTGUI_RGB(123, 158, 189);
 	rtgui_dc_draw_rect(dc, &rect);
 
 	/* draw text */
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = fc;
+	RTGUI_WIDGET_FOREGROUND(box) = fc;
 	if(box->text != RT_NULL)
 	{
 		rect.x1 += RTGUI_WIDGET_DEFAULT_MARGIN;

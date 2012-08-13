@@ -2266,3 +2266,10 @@ int rtgui_rect_is_equal(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2)
 
 	return -RT_ERROR;
 }
+
+rt_bool_t rtgui_rect_is_empty(const rtgui_rect_t *rect)
+{
+	if (rtgui_rect_is_equal(rect, &rtgui_empty_rect) == RT_EOK) return RT_TRUE;
+	return RT_FALSE;
+}
+

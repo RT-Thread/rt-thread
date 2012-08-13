@@ -29,6 +29,7 @@ struct rtgui_mouse_monitor
 typedef struct rtgui_mouse_monitor rtgui_mouse_monitor_t;
 
 void rtgui_mouse_init(void);
+void rtgui_mouse_fini(void);
 void rtgui_mouse_moveto(int x, int y);
 
 void rtgui_mouse_set_cursor_enable(rt_bool_t enable);

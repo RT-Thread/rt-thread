@@ -13,7 +13,7 @@ static void _rtgui_checkbox_constructor(rtgui_checkbox_t *box)
 	box->on_button = RT_NULL;
 
 	/* set default gc */
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_TEXTALIGN(box) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 DEFINE_CLASS_TYPE(checkbox, "checkbox",

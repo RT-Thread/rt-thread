@@ -163,7 +163,7 @@ rtgui_font_t* rtgui_freetype_font_create(const char* filename, int bold, int ita
 		freetype = (struct rtgui_freetype_font*) rtgui_malloc (sizeof(struct rtgui_freetype_font));
 		if (freetype == RT_NULL)
 		{
-			rt_free(font);
+			rtgui_free(font);
 			font = RT_NULL;
 		}
 		else
@@ -173,7 +173,7 @@ rtgui_font_t* rtgui_freetype_font_create(const char* filename, int bold, int ita
 			{
 				FT_Done_FreeType(freetype->library);
 
-				rt_free(font);
+				rtgui_free(font);
 				font = RT_NULL;
 			}
 			else

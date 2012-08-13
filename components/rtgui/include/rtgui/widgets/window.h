@@ -29,16 +29,16 @@ DECLARE_CLASS_TYPE(win);
 /** Checks if the object is an rtgui_win */
 #define RTGUI_IS_WIN(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_WIN_TYPE))
 
-#define RTGUI_WIN_STYLE_NO_FOCUS	        0x001	/* non-focused window			*/
+#define RTGUI_WIN_STYLE_NO_FOCUS	        0x0001	/* non-focused window			*/
+#define RTGUI_WIN_STYLE_NO_TITLE	        0x0002	/* no title window				*/
+#define RTGUI_WIN_STYLE_NO_BORDER	        0x0004	/* no border window				*/
+#define RTGUI_WIN_STYLE_CLOSEBOX	        0x0008	/* window has the close button	*/
+#define RTGUI_WIN_STYLE_MINIBOX		        0x0010	/* window has the mini button	*/
 
-#define RTGUI_WIN_STYLE_NO_TITLE	        0x002	/* no title window				*/
-#define RTGUI_WIN_STYLE_NO_BORDER	        0x004	/* no border window				*/
-#define RTGUI_WIN_STYLE_CLOSEBOX	        0x008	/* window has the close button	*/
-#define RTGUI_WIN_STYLE_MINIBOX		        0x010	/* window has the mini button	*/
-
-#define RTGUI_WIN_STYLE_DESTROY_ON_CLOSE	0x020   /* window is destroyed when closed */
-#define RTGUI_WIN_STYLE_ONTOP               0x040   /* window is in the top layer */
-#define RTGUI_WIN_STYLE_ONBTM               0x080   /* window is in the bottom layer */
+#define RTGUI_WIN_STYLE_DESTROY_ON_CLOSE	0x0020	/* window is destroyed when closed */
+#define RTGUI_WIN_STYLE_ONTOP               0x0040	/* window is in the top layer */
+#define RTGUI_WIN_STYLE_ONBTM               0x0080	/* window is in the bottom layer */
+#define RTGUI_WIN_STYLE_MAINWIN				0x0106	/* window is a main window */
 
 #define RTGUI_WIN_STYLE_DEFAULT		(RTGUI_WIN_STYLE_CLOSEBOX | RTGUI_WIN_STYLE_MINIBOX)
 
@@ -109,6 +109,8 @@ struct rtgui_win
 
 rtgui_win_t* rtgui_win_create(struct rtgui_win *parent_window, const char* title,
 							  rtgui_rect_t *rect, rt_uint16_t style);
+rtgui_win_t* rtgui_mainwin_create(struct rtgui_win *parent_window, const char* title, rt_uint16_t style);
+
 void rtgui_win_destroy(rtgui_win_t* win);
 
 /** Close window.

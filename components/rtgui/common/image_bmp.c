@@ -172,7 +172,7 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_fi
 
     do
     {
-        wrkBuffer = (rt_uint8_t *)rt_malloc(BMP_WORKING_BUFFER_SIZE);
+        wrkBuffer = (rt_uint8_t *)rtgui_malloc(BMP_WORKING_BUFFER_SIZE);
         if (wrkBuffer == RT_NULL)
         {
             rt_kprintf("BMP err: no mem\n");
@@ -470,13 +470,13 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_fi
         }
 
         /* Release memory */
-        rt_free(wrkBuffer);
+        rtgui_free(wrkBuffer);
         return RT_TRUE;
     }
     while (0);
 
     /* Release memory */
-    rt_free(wrkBuffer);
+    rtgui_free(wrkBuffer);
     rtgui_free(image->palette);
     rtgui_free(bmp->pixels);
     rtgui_free(bmp);
@@ -602,7 +602,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
                 }
             }
 
-            wrkBuffer = (rt_uint8_t *)rt_malloc(
+            wrkBuffer = (rt_uint8_t *)rtgui_malloc(
 					(BMP_WORKING_BUFFER_SIZE > bmp->pitch) ? \
 					bmp->pitch : BMP_WORKING_BUFFER_SIZE);
             if (wrkBuffer == RT_NULL)
@@ -770,7 +770,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
                 break;
             }
             /* Release memory */
-            rt_free(wrkBuffer);
+            rtgui_free(wrkBuffer);
 //            rt_kprintf("BMP: load to display\n");
         }
         else

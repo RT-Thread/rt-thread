@@ -29,8 +29,8 @@ static void _rtgui_listbox_constructor(struct rtgui_listbox *box)
 	box->page_items = 1;
 	box->on_item = 0;
 
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(box)) = RTGUI_ALIGN_CENTER_VERTICAL;
+	RTGUI_WIDGET_BACKGROUND(box) = white;
+	RTGUI_WIDGET_TEXTALIGN(box) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
 DEFINE_CLASS_TYPE(listbox, "listbox", 
@@ -54,7 +54,7 @@ void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 
 	rect.x2 -= 1; rect.y2 -= 1;
 	/* draw focused border */
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(box)))
+	if (RTGUI_WIDGET_IS_FOCUSED(box))
 		rtgui_dc_draw_focus_rect(dc, &rect);
 
 	/* get item base rect */
@@ -227,7 +227,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_
 						/* update focus border */
 						rect.x2 -= 1; rect.y2 -= 1;
 						/* draw focused border */
-						if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(box)))
+						if (RTGUI_WIDGET_IS_FOCUSED(box))
 							rtgui_dc_draw_focus_rect(dc, &rect);
 						rtgui_dc_end_drawing(dc);
 					}

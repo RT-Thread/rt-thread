@@ -290,6 +290,31 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 	rtgui_font_draw(font, dc, text, len, &text_rect);
 }
 
+void rtgui_dc_draw_text_stroke (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect,
+	rtgui_color_t color_stroke, rtgui_color_t color_core)
+{
+	int x, y;
+	rtgui_rect_t r;
+	rtgui_color_t fc;
+	
+	RT_ASSERT(dc != RT_NULL);
+	
+	fc = RTGUI_DC_FC(dc);
+	RTGUI_DC_FC(dc) = color_stroke;
+	for(x=-1; x<2; x++)
+	{
+		for(y=-1; y<2; y++)
+		{
+			r = *rect;
+			rtgui_rect_moveto(&r, x, y);
+			rtgui_dc_draw_text(dc, text, &r);
+		}
+	}
+	RTGUI_DC_FC(dc) = color_core;
+	rtgui_dc_draw_text(dc, text, rect);
+	RTGUI_DC_FC(dc) = fc;
+}
+
 /*
  * draw a monochrome color bitmap data
  */
@@ -424,8 +449,8 @@ void rtgui_dc_draw_regular_polygon(struct rtgui_dc* dc, int x, int y, int r, int
 	* Pointer setup
 	*/
 
-	x_head = xx = (int *)rt_malloc(sizeof(int) * count);
-	y_head = yy = (int *)rt_malloc(sizeof(int) * count);
+	x_head = xx = (int *)rtgui_malloc(sizeof(int) * count);
+	y_head = yy = (int *)rtgui_malloc(sizeof(int) * count);
 
     for(i = 0; i < count; i++)
     {
@@ -445,8 +470,8 @@ void rtgui_dc_draw_regular_polygon(struct rtgui_dc* dc, int x, int y, int r, int
     
     rtgui_dc_draw_polygon(dc, (const int *)x_head, (const int *)y_head, count);  
 
-	rt_free(x_head);
-	rt_free(y_head);
+	rtgui_free(x_head);
+	rtgui_free(y_head);
 
 }
 

@@ -71,19 +71,19 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 	if (win->flag & WINTITLE_BORDER)
 	{
 		rect.x2 -= 1; rect.y2 -= 1;
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(212, 208, 200);
+		RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(212, 208, 200);
 		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y1);
 		rtgui_dc_draw_vline(dc, rect.x1, rect.y1, rect.y2);
 
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = white;
+		RTGUI_WIDGET_FOREGROUND(win->title) = white;
 		rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2 - 1, rect.y1 + 1);
 		rtgui_dc_draw_vline(dc, rect.x1 + 1, rect.y1 + 1, rect.y2 - 1);
 
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(128, 128, 128);
+		RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(128, 128, 128);
 		rtgui_dc_draw_hline(dc, rect.x1 + 1, rect.x2 - 1, rect.y2 - 1);
 		rtgui_dc_draw_vline(dc, rect.x2 - 1, rect.y1 + 1, rect.y2);
 
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(64, 64, 64);
+		RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(64, 64, 64);
 		rtgui_dc_draw_hline(dc, rect.x1, rect.x2, rect.y2);
 		rtgui_dc_draw_vline(dc, rect.x2, rect.y1, rect.y2 + 1);
 
@@ -108,7 +108,7 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 			delta = 64 / (float)(rect.x2 - rect.x1);
 		}
 
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(r, g, b);
+		RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(r, g, b);
 		for (index = rect.x1; index < rect.x2 + 1; index ++)
 		{
 			rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
@@ -117,11 +117,11 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 
 		if (win->flag & WINTITLE_ACTIVATE)
 		{
-			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = white;
+			RTGUI_WIDGET_FOREGROUND(win->title) = white;
 		}
 		else
 		{
-			RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = RTGUI_RGB(212, 208, 200);
+			RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(212, 208, 200);
 		}
 
 		rect.x1 += 4;
@@ -140,13 +140,13 @@ void rtgui_theme_draw_win(struct rtgui_topwin* win)
 			if (win->flag & WINTITLE_CB_PRESSED)
 			{
 				rtgui_dc_draw_border(dc, &box_rect, RTGUI_BORDER_SUNKEN);
-				RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = red;
+				RTGUI_WIDGET_FOREGROUND(win->title) = red;
 				rtgui_dc_draw_word(dc, box_rect.x1, box_rect.y1 + 6, 7, close_byte);
 			}
 			else
 			{
 				rtgui_dc_draw_border(dc, &box_rect, RTGUI_BORDER_RAISE);
-				RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(win->title)) = black;
+				RTGUI_WIDGET_FOREGROUND(win->title) = black;
 				rtgui_dc_draw_word(dc, box_rect.x1 - 1, box_rect.y1 + 5, 7, close_byte);
 			}
 		}
@@ -171,61 +171,63 @@ void rtgui_theme_draw_button(rtgui_button_t* btn)
 	rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 
 	/* get foreground color */
-	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn));
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn));
+	bc = RTGUI_WIDGET_BACKGROUND(btn);
+	fc = RTGUI_WIDGET_FOREGROUND(btn);
 
 	if (btn->flag & RTGUI_BUTTON_FLAG_PRESS)
 	{
+		/* fill button rect with background color */
+		rtgui_dc_fill_rect(dc, &rect);
+
 		if (btn->pressed_image != RT_NULL)
 		{
 			rtgui_rect_t image_rect;
 			image_rect.x1 = 0; image_rect.y1 = 0;
 			image_rect.x2 = btn->unpressed_image->w;
 			image_rect.y2 = btn->unpressed_image->h;
-			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER);
 
 			rtgui_image_blit(btn->pressed_image, dc, &image_rect);
 		}
 		else
 		{
-			/* fill button rect with background color */
-			rtgui_dc_fill_rect(dc, &rect);
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
 		}
 	}
 	else
 	{
+		/* fill button rect with background color */
+		rtgui_dc_fill_rect(dc, &rect);
+
 		if (btn->unpressed_image != RT_NULL)
 		{
 			rtgui_rect_t image_rect;
 			image_rect.x1 = 0; image_rect.y1 = 0;
 			image_rect.x2 = btn->unpressed_image->w;
 			image_rect.y2 = btn->unpressed_image->h;
-			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL);
+			rtgui_rect_moveto_align(&rect, &image_rect, RTGUI_ALIGN_CENTER);
 
 			rtgui_image_blit(btn->unpressed_image, dc, &image_rect);
 		}
 		else
 		{
-			/* fill button rect with background color */
-			rtgui_dc_fill_rect(dc, &rect);
 			rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_RAISE);
 		}
 	}
 
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(btn)))
+	if (RTGUI_WIDGET_IS_FOCUSED(btn))
 	{
 		/* re-set foreground and get default rect */
 		rtgui_widget_get_rect(RTGUI_WIDGET(btn), &rect);
 		rtgui_rect_inflate(&rect, -2);
 
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = black;
+		RTGUI_WIDGET_FOREGROUND(btn) = black;
 		rtgui_dc_draw_focus_rect(dc, &rect);
 	}
 
 	/* set forecolor */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(btn)) = bc;
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(btn)) = fc;
+	RTGUI_WIDGET_BACKGROUND(btn) = bc;
+	RTGUI_WIDGET_FOREGROUND(btn) = fc;
 
 	if (btn->pressed_image == RT_NULL)
 	{
@@ -277,18 +279,18 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 
 	/* get widget rect */
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box));
+	fc = RTGUI_WIDGET_FOREGROUND(box);
 
 	/* fill widget rect with white color */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = white;
+	RTGUI_WIDGET_BACKGROUND(box) = white;
 	rtgui_dc_fill_rect(dc, &rect);
 
 	/* draw border */
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = RTGUI_RGB(123, 158, 189);
+	RTGUI_WIDGET_FOREGROUND(box) = RTGUI_RGB(123, 158, 189);
 	rtgui_dc_draw_rect(dc, &rect);
 
 	/* draw text */
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(box)) = fc;
+	RTGUI_WIDGET_FOREGROUND(box) = fc;
 	if (box->text != RT_NULL)
 	{
 		rect.x1 += RTGUI_TEXTBOX_MARGIN;
@@ -303,7 +305,7 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 				rt_memset(text_mask, '*', len + 1);
 				text_mask[len] = 0;
 				rtgui_dc_draw_text(dc, text_mask, &rect);
-				rt_free(text_mask);
+				rtgui_free(text_mask);
 			}
 		}
 		else
@@ -320,7 +322,7 @@ void rtgui_theme_draw_textbox(rtgui_textbox_t* box)
 			rect.y2 -= 2;
 			rect.y1 = rect.y2 - 3;
 
-			RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(box)) = black;
+			RTGUI_WIDGET_BACKGROUND(box) = black;
 			rtgui_dc_fill_rect(dc, &rect);
 		}
 	}
@@ -333,6 +335,7 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 {
 	struct rtgui_dc* dc;
 	struct rtgui_rect rect;
+	struct rtgui_rect text_rect;
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(iconbox));
@@ -348,12 +351,16 @@ void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox)
 	if (iconbox->text_position == RTGUI_ICONBOX_TEXT_BELOW && iconbox->text != RT_NULL)
 	{
 		rect.y1 = iconbox->image->h + RTGUI_WIDGET_DEFAULT_MARGIN;
-		rtgui_dc_draw_text(dc, iconbox->text, &rect);
+		rtgui_font_get_metrics(rtgui_dc_get_gc(dc)->font, iconbox->text, &text_rect);
+		rtgui_rect_moveto_align(&rect, &text_rect, RTGUI_ALIGN_CENTER);
+		rtgui_dc_draw_text(dc, iconbox->text, &text_rect);
 	}
 	else if (iconbox->text_position == RTGUI_ICONBOX_TEXT_RIGHT && iconbox->text != RT_NULL)
 	{
 		rect.x1 = iconbox->image->w + RTGUI_WIDGET_DEFAULT_MARGIN;
-		rtgui_dc_draw_text(dc, iconbox->text, &rect);
+		rtgui_font_get_metrics(rtgui_dc_get_gc(dc)->font, iconbox->text, &text_rect);
+		rtgui_rect_moveto_align(&rect, &text_rect, RTGUI_ALIGN_CENTER);
+		rtgui_dc_draw_text(dc, iconbox->text, &text_rect);
 	}
 
 	/* end drawing */
@@ -367,8 +374,8 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
 	struct rtgui_rect rect, box_rect;
 	rtgui_color_t bc, fc;
 
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox));
-	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox));
+	fc = RTGUI_WIDGET_FOREGROUND(checkbox);
+	bc = RTGUI_WIDGET_BACKGROUND(checkbox);
 
 	/* begin drawing */
 	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(checkbox));
@@ -380,9 +387,9 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
     /* fill rect */
 	rtgui_dc_fill_rect(dc, &rect);
 
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(checkbox)))
+	if (RTGUI_WIDGET_IS_FOCUSED(checkbox))
 	{
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = black;
+		RTGUI_WIDGET_FOREGROUND(checkbox) = black;
 
 		/* draw focused border */
 		rtgui_rect_inflate(&rect, -1);
@@ -401,17 +408,17 @@ void rtgui_theme_draw_checkbox(struct rtgui_checkbox* checkbox)
 
 	rtgui_dc_draw_border(dc, &box_rect, RTGUI_BORDER_BOX);
 	rtgui_rect_inflate(&box_rect, -1);
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox)) = RTGUI_RGB(247, 247, 246);
+	RTGUI_WIDGET_BACKGROUND(checkbox) = RTGUI_RGB(247, 247, 246);
 	rtgui_dc_fill_rect(dc, &box_rect);
 	if (checkbox->status_down == RTGUI_CHECKBOX_STATUS_CHECKED)
 	{
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = RTGUI_RGB(33, 161, 33);
+		RTGUI_WIDGET_FOREGROUND(checkbox) = RTGUI_RGB(33, 161, 33);
 		rtgui_dc_draw_byte(dc, box_rect.x1 + 2, box_rect.y1 + 2, 7, checked_byte);
 	}
 
 	/* restore saved color */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(checkbox)) = bc;
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(checkbox)) = fc;
+	RTGUI_WIDGET_BACKGROUND(checkbox) = bc;
+	RTGUI_WIDGET_FOREGROUND(checkbox) = fc;
 
 	/* draw text */
 	rect.x1 += rtgui_rect_height(rect) - 4 + 5;
@@ -471,7 +478,7 @@ void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t i
 		/* draw radio */
 		if (radiobox->item_selection == item)
 		{
-			if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+			if (RTGUI_WIDGET_IS_FOCUSED(radiobox))
 				rtgui_dc_draw_focus_rect(dc, &item_rect);
 
 			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1 + (item_size - RADIO_BOX_H) / 2, 
@@ -501,7 +508,7 @@ void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t i
 		/* draw radio */
 		if (radiobox->item_selection == item)
 		{
-			if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+			if (RTGUI_WIDGET_IS_FOCUSED(radiobox))
 				rtgui_dc_draw_focus_rect(dc, &item_rect);
 			rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1, RADIO_BOX_H, radio_checked_byte);
 		}
@@ -549,17 +556,17 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 
 	/* draw box */
 	rtgui_rect_inflate(&rect, -bord_size/2);
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox));
+	fc = RTGUI_WIDGET_FOREGROUND(radiobox);
 
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = white;
+	RTGUI_WIDGET_FOREGROUND(radiobox) = white;
 	rect.x1 ++; rect.y1 ++; rect.x2 ++; rect.y2 ++;
 	rtgui_dc_draw_rect(dc, &rect);
 
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = RTGUI_RGB(128, 128, 128);
+	RTGUI_WIDGET_FOREGROUND(radiobox) = RTGUI_RGB(128, 128, 128);
 	rect.x1 --; rect.y1 --; rect.x2 --; rect.y2 --;
 	rtgui_dc_draw_rect(dc, &rect);
 
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(radiobox)) = fc;
+	RTGUI_WIDGET_FOREGROUND(radiobox) = fc;
 
 	rtgui_rect_inflate(&rect, bord_size/2);
 	if (radiobox->text != RT_NULL)
@@ -595,7 +602,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			/* draw radio */
 			if (radiobox->item_selection == index)
 			{
-				if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+				if (RTGUI_WIDGET_IS_FOCUSED(radiobox))
 					rtgui_dc_draw_focus_rect(dc, &item_rect);
 
 				rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1 + offset, RADIO_BOX_H, radio_checked_byte);
@@ -628,7 +635,7 @@ void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox)
 			/* draw radio */
 			if (radiobox->item_selection == index)
 			{
-				if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(radiobox)))
+				if (RTGUI_WIDGET_IS_FOCUSED(radiobox))
 					rtgui_dc_draw_focus_rect(dc, &item_rect);
 				rtgui_dc_draw_word(dc, item_rect.x1, item_rect.y1, RADIO_BOX_H, radio_checked_byte);
 			}
@@ -732,7 +739,7 @@ void rtgui_theme_draw_slider(struct rtgui_slider* slider)
 	}
 
 	/* draw focus */
-	if (RTGUI_WIDGET_IS_FOCUSED(RTGUI_WIDGET(slider)))
+	if (RTGUI_WIDGET_IS_FOCUSED(slider))
 	{
 		rtgui_dc_draw_focus_rect(dc, &focus_rect);
 	}
@@ -762,15 +769,15 @@ void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar)
 	rtgui_widget_get_rect(RTGUI_WIDGET(bar), &rect);
 
 	/* draw background */
-	fc = RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar));
-	if (!RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
-		RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(128, 128, 128);
+	fc = RTGUI_WIDGET_FOREGROUND(bar);
+	if (!RTGUI_WIDGET_IS_ENABLE(bar))
+		RTGUI_WIDGET_FOREGROUND(bar) = RTGUI_RGB(128, 128, 128);
 
-	bc = RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar));
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = white;
+	bc = RTGUI_WIDGET_BACKGROUND(bar);
+	RTGUI_WIDGET_BACKGROUND(bar) = white;
 	rtgui_dc_fill_rect(dc, &rect);
 
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = bc;
+	RTGUI_WIDGET_BACKGROUND(bar) = bc;
 
 	if (bar->orient == RTGUI_VERTICAL)
 	{
@@ -791,7 +798,7 @@ void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar)
 			rtgui_rect_height(arrow_rect), _up_arrow);
 
 		/* draw thumb */
-		if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
+		if (RTGUI_WIDGET_IS_ENABLE(bar))
 		{
 			rtgui_scrollbar_get_thumb_rect(bar, &thum_rect);
 			rtgui_dc_fill_rect(dc, &thum_rect);
@@ -833,7 +840,7 @@ void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar)
 			rtgui_rect_height(arrow_rect), _left_arrow);
 
 		/* draw thumb */
-		if (RTGUI_WIDGET_IS_ENABLE(RTGUI_WIDGET(bar)))
+		if (RTGUI_WIDGET_IS_ENABLE(bar))
 		{
 			rtgui_scrollbar_get_thumb_rect(bar, &thum_rect);
 			rtgui_dc_fill_rect(dc, &thum_rect);
@@ -858,7 +865,7 @@ void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar)
 
 	/* end drawing */
 	rtgui_dc_end_drawing(dc);
-	RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(bar)) = fc;
+	RTGUI_WIDGET_FOREGROUND(bar) = fc;
 
 	return;
 }
@@ -881,7 +888,7 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 	rtgui_widget_get_rect(&(bar->parent), &rect);
 
 	/* fill button rect with background color */
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(212, 208, 200);
+	RTGUI_WIDGET_BACKGROUND(bar) = RTGUI_RGB(212, 208, 200);
 
     /* draw border */
 	rtgui_dc_draw_border(dc, &rect, RTGUI_BORDER_SUNKEN);
@@ -896,7 +903,7 @@ void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar)
 	rect.x2 ++; rect.y2 ++;
     left = max - pos;
 	rtgui_rect_inflate(&rect, -2);
-    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(bar)) = RTGUI_RGB(0, 0, 255);
+    RTGUI_WIDGET_BACKGROUND(bar) = RTGUI_RGB(0, 0, 255);
 	rect.y2 --; rect.x2 --;
 
     if (bar->orient == RTGUI_VERTICAL)
