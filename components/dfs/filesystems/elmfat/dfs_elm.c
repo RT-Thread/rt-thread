@@ -107,7 +107,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 		char drive[8];
 		DIR * dir;
 
-		rt_snprintf(drive, sizeof(drive), "%d:/", fat->drv);
+		rt_snprintf(drive, sizeof(drive), "%d:/", index);
 		dir = (DIR *)rt_malloc(sizeof(DIR));
 		if (dir == RT_NULL)
 			return -DFS_STATUS_ENOMEM;
