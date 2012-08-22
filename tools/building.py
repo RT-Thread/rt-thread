@@ -71,7 +71,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action='store_true',
                       default=False,
                       help='copy rt-thread directory to local.')
-    
+    AddOption('--copy-header',
+                      dest='copy-header',
+                      action='store_true',
+                      default=False,
+                      help='copy header of rt-thread directory to local.')
+
     # add target option
     AddOption('--target',
                       dest='target',
@@ -252,6 +257,8 @@ def EndBuilding(target, program = None):
 
     if GetOption('copy') and program != None:
         MakeCopy(program)
+    if GetOption('copy-header') and program != None:
+        MakeCopyHeader(program)
 
 def SrcRemove(src, remove):
     if type(src[0]) == type('str'):
@@ -378,6 +385,54 @@ def MakeCopy(program):
 
     for item in src_dir: 
         source_list.append(os.path.join(item, 'SConscript'))
+
+    for src in source_list:
+        dst = src.replace(RTT_ROOT, '')
+        if dst[0] == os.sep or dst[0] == '/':
+            dst = dst[1:]
+        print '=> ', dst
+        dst = os.path.join(target_path, dst)
+        do_copy_file(src, dst)
+
+    # copy tools directory 
+    print "=>  tools"
+    do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
+
+def MakeCopyHeader(program):
+    global source_ext
+    source_ext = []
+    source_ext = ["h", "xpm"]
+    global source_list
+    global Rtt_Root
+    global Env
+
+    target_path = os.path.join(Dir('#').abspath, 'rt-thread')
+
+    if Env['PLATFORM'] == 'win32':
+        RTT_ROOT = Rtt_Root.lower()
+    else:
+        RTT_ROOT = Rtt_Root
+
+    if target_path.startswith(RTT_ROOT):
+        return
+
+    for item in program:
+        walk_children(item)
+
+    source_list.sort()
+
+    # filte source file in RT-Thread
+    target_list = []
+    for src in source_list:
+        if Env['PLATFORM'] == 'win32':
+            src = src.lower()
+
+        if src.startswith(RTT_ROOT):
+            target_list.append(src)
+
+    source_list = target_list
 
     for src in source_list:
         dst = src.replace(RTT_ROOT, '')
