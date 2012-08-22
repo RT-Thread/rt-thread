@@ -1,5 +1,5 @@
 ;/*
-; * File      : context_rvds.S
+; * File      : context_iar.S
 ; * This file is part of RT-Thread RTOS
 ; * COPYRIGHT (C) 2009, RT-Thread Development Team
 ; *
@@ -24,7 +24,7 @@ NVIC_SHPR3      EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
 
-    AREA |.text|, CODE, READONLY, ALIGN=2
+    SECTION    .text:CODE(2)
     THUMB
     REQUIRE8
     PRESERVE8
@@ -36,38 +36,35 @@ NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV excep
 ;/*
 ; * rt_base_t rt_hw_interrupt_disable();
 ; */
-rt_hw_interrupt_disable    PROC
-    EXPORT  rt_hw_interrupt_disable
+    EXPORT rt_hw_interrupt_disable
+rt_hw_interrupt_disable:
     MRS     r0, PRIMASK
     CPSID   I
     BX      LR
-    ENDP
 
 ;/*
 ; * void rt_hw_interrupt_enable(rt_base_t level);
 ; */
-rt_hw_interrupt_enable    PROC
     EXPORT  rt_hw_interrupt_enable
-    MSR		PRIMASK, r0
-    BX		LR
-    ENDP
+rt_hw_interrupt_enable:
+    MSR     PRIMASK, r0
+    BX      LR
 
 ;/*
 ; * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; * r0 --> from
 ; * r1 --> to
 ; */
-rt_hw_context_switch_interrupt
     EXPORT rt_hw_context_switch_interrupt
-rt_hw_context_switch    PROC
     EXPORT rt_hw_context_switch
-
+rt_hw_context_switch_interrupt:
+rt_hw_context_switch:
     ; set rt_thread_switch_interrupt_flag to 1
     LDR     r2, =rt_thread_switch_interrupt_flag
     LDR     r3, [r2]
     CMP     r3, #1
     BEQ     _reswitch
-    MOVS    r3, #0x01
+    MOVS    r3, #0x1
     STR     r3, [r2]
 
     LDR     r2, =rt_interrupt_from_thread   ; set rt_interrupt_from_thread
@@ -81,13 +78,12 @@ _reswitch
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
     BX      LR
-    ENDP
 
 ; r0 --> swith from thread stack
 ; r1 --> swith to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
-PendSV_Handler    PROC
     EXPORT PendSV_Handler
+PendSV_Handler:
 
     ; disable interrupt to protect context switch
     MRS     r2, PRIMASK
@@ -147,15 +143,14 @@ pendsv_exit
     MOVS    r0, #0x04
     RSBS    r0, r0, #0x00
     BX      r0
-    ENDP
 
 ;/*
 ; * void rt_hw_context_switch_to(rt_uint32 to);
 ; * r0 --> to
 ; * this fucntion is used to perform the first thread switch
 ; */
-rt_hw_context_switch_to    PROC
     EXPORT rt_hw_context_switch_to
+rt_hw_context_switch_to:
     ; set to thread
     LDR     r1, =rt_interrupt_to_thread
     STR     r0, [r1]
@@ -187,24 +182,20 @@ rt_hw_context_switch_to    PROC
     CPSIE   I
 
     ; never reach here!
-    ENDP
 
 ; compatible with old version
-rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
+rt_hw_interrupt_thread_switch:
     BX      lr
-    ENDP
 
     IMPORT rt_hw_hard_fault_exception
-
-HardFault_Handler    PROC
     EXPORT HardFault_Handler
+HardFault_Handler:
 
     ; get current context
     MRS     r0, psp                 ; get fault thread stack pointer
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {pc}
-    ENDP
 
     END
