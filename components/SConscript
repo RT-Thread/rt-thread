@@ -1,16 +1,17 @@
 # for module compiling
 import os
-Import('RTT_ROOT')
 Import('remove_components')
+from building import *
 
 objs = []
-list = os.listdir(os.path.join(RTT_ROOT, 'components'))
+cwd  = GetCurrentDir()
+list = os.listdir(cwd)
 
-for d in list:
-    if d in remove_components:
+for item in list:
+    if item in remove_components:
         continue
-    path = os.path.join(RTT_ROOT, 'components', d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
 
 Return('objs')
