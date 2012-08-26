@@ -20,7 +20,11 @@
 #define RT_MMCSD_STACK_SIZE 1024
 #endif
 #ifndef RT_MMCSD_THREAD_PREORITY
+#if (RT_THREAD_PRIORITY_MAX == 32)
+#define RT_MMCSD_THREAD_PREORITY  0x16
+#else
 #define RT_MMCSD_THREAD_PREORITY  0x40
+#endif
 #endif
 
 //static struct rt_semaphore mmcsd_sem;
