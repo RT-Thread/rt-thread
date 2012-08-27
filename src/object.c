@@ -180,6 +180,7 @@ struct rt_object_information *rt_object_get_information(enum rt_object_class_typ
 {
 	return &rt_object_container[type];
 }
+RTM_EXPORT(rt_object_get_information);
 
 /**
  * This function will initialize an object and add it to object system management.

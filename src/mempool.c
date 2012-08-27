@@ -119,6 +119,7 @@ rt_err_t rt_mp_init(struct rt_mempool *mp, const char *name, void *start, rt_siz
 
 	return RT_EOK;
 }
+RTM_EXPORT(rt_mp_init);
 
 /**
  * This function will detach a memory pool from system object management.
@@ -165,6 +166,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
 	return RT_EOK;
 }
+RTM_EXPORT(rt_mp_detach);
 
 #ifdef RT_USING_HEAP
 /**
@@ -225,6 +227,7 @@ rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_si
 
 	return mp;
 }
+RTM_EXPORT(rt_mp_create);
 
 /**
  * This function will delete a memory pool and release the object memory.
@@ -283,6 +286,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
 	return RT_EOK;
 }
+RTM_EXPORT(rt_mp_delete);
 #endif
 
 /**
@@ -373,6 +377,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 
 	return (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *));
 }
+RTM_EXPORT(rt_mp_alloc);
 
 /**
  * This function will release a memory block
@@ -428,6 +433,7 @@ void rt_mp_free(void *block)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 }
+RTM_EXPORT(rt_mp_free);
 
 /*@}*/
 

@@ -350,6 +350,7 @@ void *rt_malloc(rt_size_t size)
 	
 	return RT_NULL;
 }
+RTM_EXPORT(rt_malloc);
 
 /**
  * This function will change the previously allocated memory block.
@@ -441,6 +442,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
 	return nmem;
 }
+RTM_EXPORT(rt_realloc);
 
 /**
  * This function will contiguously allocate enough space for count objects
@@ -469,6 +471,7 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 
 	return p;
 }
+RTM_EXPORT(rt_calloc);
 
 /**
  * This function will release the previously allocated memory block by rt_malloc.
@@ -529,6 +532,7 @@ void rt_free(void *rmem)
 	plug_holes(mem);
 	rt_sem_release(&heap_sem);
 }
+RTM_EXPORT(rt_free);
 
 #ifdef RT_MEM_STATS
 void rt_memory_info(rt_uint32_t *total, rt_uint32_t *used, rt_uint32_t *max_used)

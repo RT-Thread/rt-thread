@@ -101,6 +101,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap, const char *name,
 
 	return RT_EOK;
 }
+RTM_EXPORT(rt_memheap_init);
 
 rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 {
@@ -109,6 +110,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 	/* Return a successful completion. */
 	return RT_EOK;
 }
+RTM_EXPORT(rt_memheap_detach);
 
 void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 {
@@ -219,6 +221,7 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
     /* Return the completion status.  */
     return RT_NULL;
 }
+RTM_EXPORT(rt_memheap_alloc);
 
 void rt_memheap_free(void *ptr)
 {
@@ -297,5 +300,6 @@ void rt_memheap_free(void *ptr)
 				header_ptr->next_free, header_ptr->prev_free));
 	}
 }
+RTM_EXPORT(rt_memheap_free);
 
 #endif

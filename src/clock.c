@@ -52,6 +52,7 @@ rt_tick_t rt_tick_get(void)
 	/* return the global tick */
 	return rt_tick;
 }
+RTM_EXPORT(rt_tick_get);
 
 /**
  * This function will set current tick
@@ -105,6 +106,7 @@ rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
 	/* return the calculated tick */
 	return (RT_TICK_PER_SECOND * ms + 999) / 1000;
 }
+RTM_EXPORT(rt_tick_from_millisecond);
 
 /*@}*/
 
