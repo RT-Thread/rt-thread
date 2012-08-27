@@ -785,7 +785,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
         /* create module thread */
         module->stack_size = 2048;
-        module->thread_priority = RT_THREAD_PRIORITY_MAX - 1;
+        module->thread_priority = RT_THREAD_PRIORITY_MAX - 2;
         module->module_thread = rt_thread_create(name,
             (void(*)(void *))module->module_entry, RT_NULL,
             module->stack_size,
@@ -814,6 +814,28 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     return module;
 }    
 
+static char* module_name(const char *path)
+{
+    char *first, *end, *name;
+    int size;
+    char *ptr = (char*)path;
+    
+    while(*ptr != '\0')
+    {
+        if(*ptr == '/') first = ptr + 1;
+        if(*ptr == '.') end = ptr - 1;
+        
+        ptr++;    
+    }
+
+    size = end - first + 1;
+    name = rt_malloc(size);
+    rt_strncpy(name, first, size);
+    name[size] = '\0';
+
+    return name;
+}
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 /**
@@ -829,6 +851,7 @@ rt_module_t rt_module_open(const char *path)
     struct rt_module *module;
     struct stat s;
     char *buffer, *offset_ptr;
+    char* name;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -879,8 +902,10 @@ rt_module_t rt_module_open(const char *path)
         return RT_NULL;
     }
 
-    module = rt_module_load(path, (void *)buffer);
+    name = module_name(path);
+    module = rt_module_load(name,(void *)buffer);
     rt_free(buffer);
+    rt_free(name);
 
     return module;
 }
