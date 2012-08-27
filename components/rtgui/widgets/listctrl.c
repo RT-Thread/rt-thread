@@ -207,6 +207,7 @@ void rtgui_listctrl_update_current(struct rtgui_listctrl* ctrl, rt_uint16_t old_
 
 	rtgui_dc_end_drawing(dc);
 }
+RTM_EXPORT(rtgui_listctrl_update_current);
 
 rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
@@ -361,6 +362,7 @@ rt_bool_t rtgui_listctrl_event_handler(struct rtgui_object* object, struct rtgui
     /* use ctrl event handler */
     return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
 }
+RTM_EXPORT(rtgui_listctrl_event_handler);
 
 rtgui_listctrl_t* rtgui_listctrl_create(rt_uint32_t items, rt_uint16_t count, rtgui_rect_t *rect,
 										rtgui_onitem_draw_t ondraw)
@@ -380,12 +382,14 @@ rtgui_listctrl_t* rtgui_listctrl_create(rt_uint32_t items, rt_uint16_t count, rt
 
 	return ctrl;
 }
+RTM_EXPORT(rtgui_listctrl_create);
 
 void rtgui_listctrl_destroy(rtgui_listctrl_t* ctrl)
 {
     /* destroy ctrl */
 	rtgui_widget_destroy(RTGUI_WIDGET(ctrl));
 }
+RTM_EXPORT(rtgui_listctrl_destroy);
 
 void rtgui_listctrl_set_onitem(rtgui_listctrl_t* ctrl, rtgui_event_handler_ptr func)
 {
@@ -393,6 +397,7 @@ void rtgui_listctrl_set_onitem(rtgui_listctrl_t* ctrl, rtgui_event_handler_ptr f
 
 	ctrl->on_item = func;
 }
+RTM_EXPORT(rtgui_listctrl_set_onitem);
 
 void rtgui_listctrl_set_items(rtgui_listctrl_t* ctrl, rt_uint32_t items, rt_uint16_t count)
 {
@@ -407,6 +412,7 @@ void rtgui_listctrl_set_items(rtgui_listctrl_t* ctrl, rt_uint32_t items, rt_uint
 
 	rtgui_widget_update(RTGUI_WIDGET(ctrl));
 }
+RTM_EXPORT(rtgui_listctrl_set_items);
 
 rt_bool_t rtgui_listctrl_get_item_rect(rtgui_listctrl_t* ctrl, rt_uint16_t item, rtgui_rect_t* item_rect)
 {
@@ -427,6 +433,7 @@ rt_bool_t rtgui_listctrl_get_item_rect(rtgui_listctrl_t* ctrl, rt_uint16_t item,
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_listctrl_get_item_rect);
 
 void rtgui_listctrl_set_itemheight(struct rtgui_listctrl* ctrl, int height)
 {
@@ -436,4 +443,5 @@ void rtgui_listctrl_set_itemheight(struct rtgui_listctrl* ctrl, int height)
 	ctrl->item_height = height;
 	ctrl->page_items = rtgui_rect_height(RTGUI_WIDGET(ctrl)->extent) / (2 + ctrl->item_height);
 }
+RTM_EXPORT(rtgui_listctrl_set_itemheight);
 

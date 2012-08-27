@@ -62,12 +62,14 @@ struct rtgui_dc* rtgui_dc_begin_drawing(rtgui_widget_t* owner)
 
 	return dc;
 }
+RTM_EXPORT(rtgui_dc_begin_drawing);
 
 void rtgui_dc_end_drawing(struct rtgui_dc* dc)
 {
 	dc->engine->fini(dc);
 	rtgui_screen_unlock();
 }
+RTM_EXPORT(rtgui_dc_end_drawing);
 
 const struct rtgui_dc_engine dc_client_engine =
 {

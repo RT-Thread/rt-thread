@@ -112,6 +112,7 @@ __mq_err:
 	tid->user_data = 0;
 	return RT_NULL;
 }
+RTM_EXPORT(rtgui_app_create);
 
 #define _rtgui_application_check(app)			\
 	do {										\
@@ -152,6 +153,7 @@ void rtgui_app_destroy(struct rtgui_app *app)
 	rt_mq_delete(app->mq);
 	rtgui_object_destroy(RTGUI_OBJECT(app));
 }
+RTM_EXPORT(rtgui_app_destroy);
 
 struct rtgui_app* rtgui_app_self(void)
 {
@@ -164,6 +166,7 @@ struct rtgui_app* rtgui_app_self(void)
 
 	return app;
 }
+RTM_EXPORT(rtgui_app_self);
 
 void rtgui_app_set_onidle(rtgui_idle_func_t onidle)
 {
@@ -173,6 +176,7 @@ void rtgui_app_set_onidle(rtgui_idle_func_t onidle)
 	if (app != RT_NULL)
 		app->on_idle = onidle;
 }
+RTM_EXPORT(rtgui_app_set_onidle);
 
 rtgui_idle_func_t rtgui_app_get_onidle(void)
 {
@@ -184,6 +188,7 @@ rtgui_idle_func_t rtgui_app_get_onidle(void)
 	else
 		return RT_NULL;
 }
+RTM_EXPORT(rtgui_app_get_onidle);
 
 rt_inline rt_bool_t _rtgui_application_dest_handle(
 		struct rtgui_app *app,
@@ -339,12 +344,14 @@ rt_base_t rtgui_app_run(struct rtgui_app *app)
 
 	return app->exit_code;
 }
+RTM_EXPORT(rtgui_app_run);
 
 void rtgui_app_exit(struct rtgui_app* app, rt_uint16_t code)
 {
 	--app->ref_count;
 	app->exit_code = code;
 }
+RTM_EXPORT(rtgui_app_exit);
 
 void rtgui_app_activate(struct rtgui_app *app)
 {
@@ -355,6 +362,7 @@ void rtgui_app_activate(struct rtgui_app *app)
 
 	rtgui_send(app->tid, RTGUI_EVENT(&event), sizeof(struct rtgui_event_application));
 }
+RTM_EXPORT(rtgui_app_activate);
 
 void rtgui_app_close(struct rtgui_app *app)
 {
@@ -365,6 +373,7 @@ void rtgui_app_close(struct rtgui_app *app)
 
 	rtgui_send(app->tid, RTGUI_EVENT(&event), sizeof(struct rtgui_event_application));
 }
+RTM_EXPORT(rtgui_app_close);
 
 /**
  * set this application as window manager
@@ -389,6 +398,7 @@ rt_err_t rtgui_app_set_as_wm(void)
 
 	return RT_ERROR;
 }
+RTM_EXPORT(rtgui_app_set_as_wm);
 
 void rtgui_app_set_main_win(struct rtgui_win* win)
 {
@@ -400,3 +410,5 @@ void rtgui_app_set_main_win(struct rtgui_win* win)
 		app->main_object = RTGUI_OBJECT(win);
 	}
 }
+RTM_EXPORT(rtgui_app_set_main_win);
+

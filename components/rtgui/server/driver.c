@@ -24,6 +24,7 @@ struct rtgui_graphic_driver* rtgui_graphic_driver_get_default()
 {
 	return &_driver;
 }
+RTM_EXPORT(rtgui_graphic_driver_get_default);
 
 void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rtgui_rect_t *rect)
 {
@@ -34,6 +35,7 @@ void rtgui_graphic_driver_get_rect(const struct rtgui_graphic_driver *driver, rt
 	rect->x2 = driver->width;
 	rect->y2 = driver->height;
 }
+RTM_EXPORT(rtgui_graphic_driver_get_rect);
 
 rt_err_t rtgui_graphic_set_device(rt_device_t device)
 {
@@ -70,6 +72,7 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
 	
 	return RT_EOK;
 }
+RTM_EXPORT(rtgui_graphic_set_device);
 
 /* screen update */
 void rtgui_graphic_driver_screen_update(const struct rtgui_graphic_driver* driver, rtgui_rect_t *rect)
@@ -81,14 +84,18 @@ void rtgui_graphic_driver_screen_update(const struct rtgui_graphic_driver* drive
 	rect_info.height = rect->y2 - rect->y1;
 	rt_device_control(driver->device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 }
+RTM_EXPORT(rtgui_graphic_driver_screen_update);
 
 /* get video frame buffer */
 rt_uint8_t* rtgui_graphic_driver_get_framebuffer(const struct rtgui_graphic_driver* driver)
 {
 	return (rt_uint8_t*)driver->framebuffer;
 }
+RTM_EXPORT(rtgui_graphic_driver_get_framebuffer);
 
 rt_uint8_t* rtgui_graphic_driver_get_default_framebuffer(void)
 {
 	return rtgui_graphic_driver_get_framebuffer(&_driver);
 }
+RTM_EXPORT(rtgui_graphic_driver_get_default_framebuffer);
+

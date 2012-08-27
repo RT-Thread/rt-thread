@@ -303,6 +303,7 @@ void rtgui_list_view_update_list(struct rtgui_list_view* view, rt_int16_t old_it
 
 	rtgui_dc_end_drawing(dc);
 }
+RTM_EXPORT(rtgui_list_view_update_list);
 
 void rtgui_list_view_ondraw(struct rtgui_list_view* view)
 {
@@ -328,6 +329,7 @@ void rtgui_list_view_ondraw(struct rtgui_list_view* view)
 
 	rtgui_dc_end_drawing(dc);
 }
+RTM_EXPORT(rtgui_list_view_ondraw);
 
 static rt_bool_t rtgui_list_view_onmouse(struct rtgui_list_view* view, struct rtgui_event_mouse* emouse)
 {
@@ -564,6 +566,7 @@ rt_bool_t rtgui_list_view_event_handler(struct rtgui_object* widget, struct rtgu
     /* use view event handler */
     return rtgui_container_event_handler(widget, event);
 }
+RTM_EXPORT(rtgui_list_view_event_handler);
 
 static void rtgui_list_view_calc(struct rtgui_list_view* view)
 {
@@ -628,9 +631,12 @@ rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, r
 
 	return view;
 }
+RTM_EXPORT(rtgui_list_view_create);
 
 void rtgui_list_view_destroy(rtgui_list_view_t* view)
 {
     /* destroy view */
 	rtgui_widget_destroy(RTGUI_WIDGET(view));
 }
+RTM_EXPORT(rtgui_list_view_destroy);
+

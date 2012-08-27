@@ -24,7 +24,7 @@
 #include <rtgui/widgets/listbox.h>
 #include <rtgui/widgets/window.h>
 
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
 #ifdef _WIN32
 #include <io.h>
 #include <dirent.h>

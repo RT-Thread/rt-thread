@@ -42,6 +42,7 @@ rt_bool_t rtgui_staticline_event_handler(struct rtgui_object* object, struct rtg
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_staticline_event_handler);
 
 rtgui_staticline_t * rtgui_staticline_create(int orientation)
 {
@@ -55,11 +56,13 @@ rtgui_staticline_t * rtgui_staticline_create(int orientation)
 
 	return staticline;
 }
+RTM_EXPORT(rtgui_staticline_create);
 
 void rtgui_staticline_destroy(rtgui_staticline_t* staticline)
 {
 	rtgui_widget_destroy(RTGUI_WIDGET(staticline));
 }
+RTM_EXPORT(rtgui_staticline_destroy);
 
 void rtgui_staticline_set_orientation(rtgui_staticline_t* staticline, int orientation)
 {
@@ -81,3 +84,5 @@ void rtgui_staticline_set_orientation(rtgui_staticline_t* staticline, int orient
 	}
 #endif
 }
+RTM_EXPORT(rtgui_staticline_set_orientation);
+

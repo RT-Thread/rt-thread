@@ -43,6 +43,7 @@ DEFINE_CLASS_TYPE(container, "container",
 	_rtgui_container_constructor,
 	_rtgui_container_destructor,
 	sizeof(struct rtgui_container));
+RTM_EXPORT(_rtgui_container);
 
 rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_event_t* event)
 {
@@ -61,6 +62,7 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_container_dispatch_event);
 
 /* broadcast means that the return value of event handlers will be ignored. The
  * events will always reach every child.*/
@@ -79,6 +81,7 @@ rt_bool_t rtgui_container_broadcast_event(struct rtgui_container *container, str
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_container_broadcast_event);
 
 rt_bool_t rtgui_container_dispatch_mouse_event(rtgui_container_t *container, struct rtgui_event_mouse* event)
 {
@@ -106,6 +109,7 @@ rt_bool_t rtgui_container_dispatch_mouse_event(rtgui_container_t *container, str
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_container_dispatch_mouse_event);
 
 rt_bool_t rtgui_container_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
@@ -176,6 +180,7 @@ rt_bool_t rtgui_container_event_handler(struct rtgui_object* object, struct rtgu
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_container_event_handler);
 
 rtgui_container_t* rtgui_container_create(void)
 {
@@ -185,11 +190,13 @@ rtgui_container_t* rtgui_container_create(void)
 	container = (struct rtgui_container*) rtgui_widget_create (RTGUI_CONTAINER_TYPE);
 	return container;
 }
+RTM_EXPORT(rtgui_container_create);
 
 void rtgui_container_destroy(rtgui_container_t* container)
 {
 	rtgui_widget_destroy(RTGUI_WIDGET(container));
 }
+RTM_EXPORT(rtgui_container_destroy);
 
 /*
  * This function will add a child to a container widget
@@ -216,6 +223,7 @@ void rtgui_container_add_child(rtgui_container_t *container, rtgui_widget_t* chi
 		rtgui_container_broadcast_event(container, (struct rtgui_event*)&eup);
 	}
 }
+RTM_EXPORT(rtgui_container_add_child);
 
 /* remove a child to widget */
 void rtgui_container_remove_child(rtgui_container_t *container, rtgui_widget_t* child)
@@ -232,6 +240,7 @@ void rtgui_container_remove_child(rtgui_container_t *container, rtgui_widget_t* 
 	child->parent = RT_NULL;
 	child->toplevel = RT_NULL;
 }
+RTM_EXPORT(rtgui_container_remove_child);
 
 /* destroy all children of container */
 void rtgui_container_destroy_children(rtgui_container_t *container)
@@ -272,6 +281,7 @@ void rtgui_container_destroy_children(rtgui_container_t *container)
 	/* update widget clip */
 	rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(RTGUI_WIDGET(container)->toplevel));
 }
+RTM_EXPORT(rtgui_container_destroy_children);
 
 rtgui_widget_t* rtgui_container_get_first_child(rtgui_container_t* container)
 {
@@ -286,6 +296,7 @@ rtgui_widget_t* rtgui_container_get_first_child(rtgui_container_t* container)
 
 	return child;
 }
+RTM_EXPORT(rtgui_container_get_first_child);
 
 void rtgui_container_set_box(rtgui_container_t* container, struct rtgui_box* box)
 {
@@ -295,6 +306,7 @@ void rtgui_container_set_box(rtgui_container_t* container, struct rtgui_box* box
 	container->layout_box = box;
 	box->container = container;
 }
+RTM_EXPORT(rtgui_container_set_box);
 
 void rtgui_container_layout(struct rtgui_container* container)
 {
@@ -303,4 +315,5 @@ void rtgui_container_layout(struct rtgui_container* container)
 
 	rtgui_box_layout(container->layout_box);
 }
+RTM_EXPORT(rtgui_container_layout);
 

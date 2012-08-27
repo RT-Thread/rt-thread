@@ -3,7 +3,7 @@
 
 #include <rtgui/widgets/container.h>
 
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
 #define RTGUI_FITEM_FILE      0x0
 #define RTGUI_FITEM_DIR       0x1
 struct rtgui_file_item

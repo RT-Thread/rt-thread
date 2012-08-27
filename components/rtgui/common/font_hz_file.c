@@ -7,7 +7,19 @@
 #include <rtgui/rtgui_system.h>
 
 #ifdef RTGUI_USING_HZ_FILE
+#ifdef _WIN32
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
+#define open	_open
+#define close	_close
+#define read	_read
+#define write	_write
+#define unlink	_unlink
+#else
 #include <dfs_posix.h>
+#endif
 
 #define HZ_CACHE_MAX    64
 

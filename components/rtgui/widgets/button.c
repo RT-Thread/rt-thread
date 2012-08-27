@@ -195,6 +195,7 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_e
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_button_event_handler);
 
 rtgui_button_t* rtgui_button_create(const char* text)
 {
@@ -215,6 +216,7 @@ rtgui_button_t* rtgui_button_create(const char* text)
 
     return btn;
 }
+RTM_EXPORT(rtgui_button_create);
 
 rtgui_button_t* rtgui_pushbutton_create(const char* text)
 {
@@ -225,11 +227,13 @@ rtgui_button_t* rtgui_pushbutton_create(const char* text)
 
 	return btn;
 }
+RTM_EXPORT(rtgui_pushbutton_create);
 
 void rtgui_button_destroy(rtgui_button_t* btn)
 {
 	rtgui_widget_destroy(RTGUI_WIDGET(btn));
 }
+RTM_EXPORT(rtgui_button_destroy);
 
 void rtgui_button_set_pressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 {
@@ -237,6 +241,7 @@ void rtgui_button_set_pressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 
 	btn->pressed_image = image;
 }
+RTM_EXPORT(rtgui_button_set_pressed_image);
 
 void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 {
@@ -244,6 +249,7 @@ void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image)
 
 	btn->unpressed_image = image;
 }
+RTM_EXPORT(rtgui_button_set_unpressed_image);
 
 void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func)
 {
@@ -251,4 +257,5 @@ void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func)
 
 	btn->on_button = func;
 }
+RTM_EXPORT(rtgui_button_set_onbutton);
 

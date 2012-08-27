@@ -35,7 +35,7 @@
 	#define RTGUI_DEFAULT_FONT_SIZE	12
 
 	#define RTGUI_USING_STDIO_FILERW
-	// #define RTGUI_USING_DFS_FILERW
+	#define RTGUI_USING_DFS_FILERW
 	#define RTGUI_IMAGE_CONTAINER
 	#define RTGUI_IMAGE_XPM
 	#define RTGUI_IMAGE_BMP
@@ -47,7 +47,7 @@
 	#define RTGUI_MEM_TRACE
 	#define RTGUI_USING_WINMOVE
 	#define RTGUI_USING_NOTEBOOK_IMAGE
-
+	// #define RTGUI_USING_HZ_FILE
 #else
 	/* native running under RT-Thread */
 	#ifndef RT_USING_DFS

@@ -16,7 +16,6 @@
 #include <rtgui/rtgui_system.h>
 
 #ifdef RTGUI_USING_DFS_FILERW
-#include <dfs_posix.h>
 
 /* standard file read/write */
 struct rtgui_filerw_stdio
@@ -95,93 +94,7 @@ static int stdio_close(struct rtgui_filerw *context)
 
 	return -1;
 }
-#elif defined(RTGUI_USING_STDIO_FILERW)
-#include <stdio.h>
 
-/* standard file read/write */
-struct rtgui_filerw_stdio
-{
-	/* inherit from rtgui_filerw */
-	struct rtgui_filerw parent;
-
-	FILE* fp;
-};
-
-static int stdio_seek(struct rtgui_filerw *context, rt_off_t offset, int whence)
-{
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-	int stdio_whence[3] = {SEEK_SET, SEEK_CUR, SEEK_END};
-
-	if (whence < RTGUI_FILE_SEEK_SET || whence > RTGUI_FILE_SEEK_END)
-	{
-		return -1;
-	}
-
-	if (fseek(stdio_filerw->fp, offset, stdio_whence[whence]) == 0)
-	{
-		return ftell(stdio_filerw->fp);
-	}
-
-	return -1;
-}
-
-static int stdio_read(struct rtgui_filerw *context, void *ptr, rt_size_t size, rt_size_t maxnum)
-{
-	size_t nread;
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-
-	nread = fread(ptr, size, maxnum, stdio_filerw->fp);
-	if (nread == 0 && ferror(stdio_filerw->fp))
-	{
-		return -1;
-	}
-
-	return nread;
-}
-
-static int stdio_write(struct rtgui_filerw *context, const void *ptr, rt_size_t size, rt_size_t num)
-{
-	size_t nwrote;
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-
-	nwrote = fwrite(ptr, size, num, stdio_filerw->fp);
-
-	if ( nwrote == 0 && ferror(stdio_filerw->fp) )
-	{
-		return -1;
-	}
-
-	return nwrote;
-}
-
-static int stdio_tell(struct rtgui_filerw* context)
-{
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-
-	return ftell(stdio_filerw->fp);
-}
-
-static int stdio_eof(struct rtgui_filerw* context)
-{
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-
-	return feof(stdio_filerw->fp);
-}
-
-static int stdio_close(struct rtgui_filerw *context)
-{
-	struct rtgui_filerw_stdio* stdio_filerw = (struct rtgui_filerw_stdio *)context;
-
-	if (stdio_filerw)
-	{
-		fclose(stdio_filerw->fp);
-		rtgui_free(stdio_filerw);
-
-		return 0;
-	}
-
-	return -1;
-}
 #endif
 
 /* memory file read/write */
@@ -302,7 +215,11 @@ static int parse_mode(const char *mode)
     switch (*mode)
 	{
     case 0: return f;
-    case 'b': break;
+#ifdef _WIN32
+    case 'b': f|=O_BINARY;break;
+#else
+	case 'b': break;
+#endif
     case 'r': f=O_RDONLY; break;
     case 'w': f=O_WRONLY|O_CREAT|O_TRUNC; break;
     case 'a': f=O_WRONLY|O_CREAT|O_APPEND; break;
@@ -321,7 +238,11 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 	RT_ASSERT(filename != RT_NULL);
 
 	rw = RT_NULL;
+#ifdef _WIN32
+	fd = _open(filename, parse_mode(mode), 0);
+#else
 	fd = open(filename, parse_mode(mode), 0);
+#endif
 
 	if ( fd >= 0 )
 	{
@@ -342,35 +263,7 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 
 	return &(rw->parent);
 }
-#elif defined(RTGUI_USING_STDIO_FILERW)
-struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* mode)
-{
-	FILE *fp;
-	struct rtgui_filerw_stdio *rw;
 
-	RT_ASSERT(filename != RT_NULL);
-
-	rw = RT_NULL;
-	fp = fopen(filename, mode);
-
-	if ( fp != NULL )
-	{
-		rw = (struct rtgui_filerw_stdio*) rtgui_malloc(sizeof(struct rtgui_filerw_stdio));
-		if (rw != RT_NULL)
-		{
-			rw->parent.seek  = stdio_seek;
-			rw->parent.read  = stdio_read;
-			rw->parent.write = stdio_write;
-			rw->parent.tell  = stdio_tell;
-			rw->parent.close = stdio_close;
-			rw->parent.eof	 = stdio_eof;
-
-			rw->fp = fp;
-		}
-	}
-
-	return &(rw->parent);
-}
 #endif
 
 struct rtgui_filerw* rtgui_filerw_create_mem(const rt_uint8_t* mem, rt_size_t size)
@@ -446,4 +339,13 @@ int rtgui_filerw_close(struct rtgui_filerw* context)
 	}
 
 	return 0;
+}
+
+int rtgui_filerw_unlink(const char *filename)
+{
+#ifdef _WIN32
+	return _unlink(filename);
+#else
+	return unlink(filename);
+#endif
 }

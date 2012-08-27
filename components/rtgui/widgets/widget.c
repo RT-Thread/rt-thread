@@ -91,6 +91,7 @@ DEFINE_CLASS_TYPE(widget, "widget",
 	_rtgui_widget_constructor,
 	_rtgui_widget_destructor,
 	sizeof(struct rtgui_widget));
+RTM_EXPORT(_rtgui_widget);
 
 rtgui_widget_t *rtgui_widget_create(rtgui_type_t *widget_type)
 {
@@ -100,11 +101,13 @@ rtgui_widget_t *rtgui_widget_create(rtgui_type_t *widget_type)
 
 	return widget;
 }
+RTM_EXPORT(rtgui_widget_create);
 
 void rtgui_widget_destroy(rtgui_widget_t* widget)
 {
 	rtgui_object_destroy(RTGUI_OBJECT(widget));
 }
+RTM_EXPORT(rtgui_widget_destroy);
 
 void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 {
@@ -142,6 +145,7 @@ void rtgui_widget_set_rect(rtgui_widget_t* widget, const rtgui_rect_t* rect)
 		rtgui_widget_update_clip(widget->parent);
 	}
 }
+RTM_EXPORT(rtgui_widget_set_rect);
 
 void rtgui_widget_set_rectangle(rtgui_widget_t* widget, int x, int y, int width, int height)
 {
@@ -152,12 +156,14 @@ void rtgui_widget_set_rectangle(rtgui_widget_t* widget, int x, int y, int width,
 
 	rtgui_widget_set_rect(widget, &rect);
 }
+RTM_EXPORT(rtgui_widget_set_rectangle);
 
 void rtgui_widget_set_parent(rtgui_widget_t* widget, rtgui_widget_t* parent)
 {
 	/* set parent and toplevel widget */
 	widget->parent = parent;
 }
+RTM_EXPORT(rtgui_widget_set_parent);
 
 void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
 {
@@ -166,6 +172,7 @@ void rtgui_widget_get_extent(rtgui_widget_t* widget, rtgui_rect_t *rect)
 
 	*rect = widget->extent;
 }
+RTM_EXPORT(rtgui_widget_get_extent);
 
 void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width)
 {
@@ -173,6 +180,7 @@ void rtgui_widget_set_miniwidth(rtgui_widget_t* widget, int width)
 
 	widget->mini_width = width;
 }
+RTM_EXPORT(rtgui_widget_set_miniwidth);
 
 void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height)
 {
@@ -180,6 +188,7 @@ void rtgui_widget_set_miniheight(rtgui_widget_t* widget, int height)
 
 	widget->mini_height = height;
 }
+RTM_EXPORT(rtgui_widget_set_miniheight);
 
 /*
  * This function moves widget and its children to a logic point
@@ -204,6 +213,7 @@ void rtgui_widget_move_to_logic(rtgui_widget_t* widget, int dx, int dy)
 		}
 	}
 }
+RTM_EXPORT(rtgui_widget_move_to_logic);
 
 void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect)
 {
@@ -216,6 +226,7 @@ void rtgui_widget_get_rect(rtgui_widget_t* widget, rtgui_rect_t *rect)
 		rect->y2 = widget->extent.y2 - widget->extent.y1;
 	}
 }
+RTM_EXPORT(rtgui_widget_get_rect);
 
 /**
  * set widget draw style
@@ -247,6 +258,7 @@ void rtgui_widget_set_border(rtgui_widget_t* widget, rt_uint32_t style)
 		break;
 	}
 }
+RTM_EXPORT(rtgui_widget_set_border);
 
 void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -254,6 +266,7 @@ void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr ha
 
 	widget->on_focus_in = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onfocus);
 
 void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -261,6 +274,7 @@ void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 
 	widget->on_focus_out = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onunfocus);
 
 void rtgui_widget_set_onshow(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -268,6 +282,7 @@ void rtgui_widget_set_onshow(rtgui_widget_t* widget, rtgui_event_handler_ptr han
 
 	widget->on_show = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onshow);
 
 void rtgui_widget_set_onhide(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -275,6 +290,7 @@ void rtgui_widget_set_onhide(rtgui_widget_t* widget, rtgui_event_handler_ptr han
 
 	widget->on_hide = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onhide);
 
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
@@ -283,6 +299,7 @@ void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr han
 
 	widget->on_draw = handler;
 }
+RTM_EXPORT(rtgui_widget_set_ondraw);
 
 void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -290,6 +307,7 @@ void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_p
 
 	widget->on_mouseclick = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onmouseclick);
 
 void rtgui_widget_set_onkey(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -297,6 +315,7 @@ void rtgui_widget_set_onkey(rtgui_widget_t* widget, rtgui_event_handler_ptr hand
 
 	widget->on_key = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onkey);
 
 void rtgui_widget_set_onsize(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -304,6 +323,7 @@ void rtgui_widget_set_onsize(rtgui_widget_t* widget, rtgui_event_handler_ptr han
 
 	widget->on_size = handler;
 }
+RTM_EXPORT(rtgui_widget_set_onsize);
 
 void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -311,6 +331,7 @@ void rtgui_widget_set_oncommand(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 
 	widget->on_command = handler;
 }
+RTM_EXPORT(rtgui_widget_set_oncommand);
 #endif
 
 /**
@@ -343,6 +364,7 @@ void rtgui_widget_focus(rtgui_widget_t *widget)
 	if (widget->on_focus_in != RT_NULL)
 		widget->on_focus_in(RTGUI_OBJECT(widget), RT_NULL);
 }
+RTM_EXPORT(rtgui_widget_focus);
 
 /**
  * @brief Unfocused the widget
@@ -366,6 +388,7 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget)
 	/* refresh widget */
 	rtgui_widget_update(widget);
 }
+RTM_EXPORT(rtgui_widget_unfocus);
 
 void rtgui_widget_point_to_device(rtgui_widget_t* widget, rtgui_point_t* point)
 {
@@ -377,6 +400,7 @@ void rtgui_widget_point_to_device(rtgui_widget_t* widget, rtgui_point_t* point)
 		point->y += widget->extent.y1;
 	}
 }
+RTM_EXPORT(rtgui_widget_point_to_device);
 
 void rtgui_widget_rect_to_device(rtgui_widget_t* widget, rtgui_rect_t* rect)
 {
@@ -391,6 +415,7 @@ void rtgui_widget_rect_to_device(rtgui_widget_t* widget, rtgui_rect_t* rect)
 		rect->y2 += widget->extent.y1;
 	}
 }
+RTM_EXPORT(rtgui_widget_rect_to_device);
 
 void rtgui_widget_point_to_logic(rtgui_widget_t* widget, rtgui_point_t* point)
 {
@@ -402,6 +427,7 @@ void rtgui_widget_point_to_logic(rtgui_widget_t* widget, rtgui_point_t* point)
 		point->y -= widget->extent.y1;
 	}
 }
+RTM_EXPORT(rtgui_widget_point_to_logic);
 
 void rtgui_widget_rect_to_logic(rtgui_widget_t* widget, rtgui_rect_t* rect)
 {
@@ -416,6 +442,7 @@ void rtgui_widget_rect_to_logic(rtgui_widget_t* widget, rtgui_rect_t* rect)
 		rect->y2 -= widget->extent.y1;
 	}
 }
+RTM_EXPORT(rtgui_widget_rect_to_logic);
 
 struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget)
 {
@@ -437,6 +464,7 @@ struct rtgui_win* rtgui_widget_get_toplevel(rtgui_widget_t* widget)
 
 	return RTGUI_WIN(r);
 }
+RTM_EXPORT(rtgui_widget_get_toplevel);
 
 rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui_event *event)
 {
@@ -453,6 +481,7 @@ rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_widget_onupdate_toplvl);
 
 rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t* event)
 {
@@ -496,6 +525,7 @@ rt_bool_t rtgui_widget_event_handler(struct rtgui_object* object, rtgui_event_t*
 
 	return rtgui_object_event_handler(object, event);
 }
+RTM_EXPORT(rtgui_widget_event_handler);
 
 /*
  * This function updates the clip info of widget
@@ -558,6 +588,7 @@ void rtgui_widget_update_clip(rtgui_widget_t* widget)
 		rtgui_widget_update_clip(rtgui_notebook_get_current(RTGUI_NOTEBOOK(widget)));
 	}
 }
+RTM_EXPORT(rtgui_widget_update_clip);
 
 void rtgui_widget_show(struct rtgui_widget *widget)
 {
@@ -575,6 +606,7 @@ void rtgui_widget_show(struct rtgui_widget *widget)
 				&eshow);
 	}
 }
+RTM_EXPORT(rtgui_widget_show);
 
 rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *event)
 {
@@ -590,6 +622,7 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_widget_onshow);
 
 rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *event)
 {
@@ -621,6 +654,7 @@ rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *e
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_widget_onhide);
 
 void rtgui_widget_hide(struct rtgui_widget *widget)
 {
@@ -638,6 +672,7 @@ void rtgui_widget_hide(struct rtgui_widget *widget)
 				&ehide);
 	}
 }
+RTM_EXPORT(rtgui_widget_hide);
 
 rtgui_color_t rtgui_widget_get_parent_foreground(rtgui_widget_t* widget)
 {
@@ -654,6 +689,7 @@ rtgui_color_t rtgui_widget_get_parent_foreground(rtgui_widget_t* widget)
 
 	return RTGUI_WIDGET_FOREGROUND(widget);
 }
+RTM_EXPORT(rtgui_widget_get_parent_foreground);
 
 rtgui_color_t rtgui_widget_get_parent_background(rtgui_widget_t* widget)
 {
@@ -670,6 +706,7 @@ rtgui_color_t rtgui_widget_get_parent_background(rtgui_widget_t* widget)
 
 	return RTGUI_WIDGET_BACKGROUND(widget);
 }
+RTM_EXPORT(rtgui_widget_get_parent_background);
 
 void rtgui_widget_update(rtgui_widget_t* widget)
 {
@@ -689,6 +726,7 @@ void rtgui_widget_update(rtgui_widget_t* widget)
 				&paint.parent);
 	}
 }
+RTM_EXPORT(rtgui_widget_update);
 
 rtgui_widget_t* rtgui_widget_get_next_sibling(rtgui_widget_t* widget)
 {
@@ -701,6 +739,7 @@ rtgui_widget_t* rtgui_widget_get_next_sibling(rtgui_widget_t* widget)
 
 	return sibling;
 }
+RTM_EXPORT(rtgui_widget_get_next_sibling);
 
 rtgui_widget_t* rtgui_widget_get_prev_sibling(rtgui_widget_t* widget)
 {
@@ -723,6 +762,7 @@ rtgui_widget_t* rtgui_widget_get_prev_sibling(rtgui_widget_t* widget)
 
 	return sibling;
 }
+RTM_EXPORT(rtgui_widget_get_prev_sibling);
 
 #ifdef RTGUI_WIDGET_DEBUG
 #include <rtgui/widgets/label.h>

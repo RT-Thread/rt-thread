@@ -50,8 +50,13 @@ void* rtgui_malloc(rt_size_t size);
 void rtgui_free(void* ptr);
 void* rtgui_realloc(void* ptr, rt_size_t size);
 
+#ifdef _WIN32
+#define rtgui_enter_critical()	
+#define rtgui_exit_critical()		
+#else
 #define rtgui_enter_critical	rt_enter_critical
 #define rtgui_exit_critical		rt_exit_critical
+#endif
 
 rt_thread_t rtgui_get_server(void);
 void rtgui_set_mainwin_rect(struct rtgui_rect *rect);

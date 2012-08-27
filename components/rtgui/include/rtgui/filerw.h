@@ -14,6 +14,16 @@
 #ifndef __RTGUI_FILERW_H__
 #define __RTGUI_FILERW_H__
 
+#ifdef _WIN32
+#pragma warning(disable: 4996)
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
+#else
+#include <dfs_posix.h>
+#endif
+
 #include <rtgui/rtgui.h>
 
 #define RTGUI_FILE_SEEK_SET	0
@@ -40,6 +50,7 @@ int rtgui_filerw_write(struct rtgui_filerw* context, const void* buffer, rt_size
 int rtgui_filerw_tell (struct rtgui_filerw* context);
 int rtgui_filerw_eof  (struct rtgui_filerw* context);
 int rtgui_filerw_close(struct rtgui_filerw* context);
+int rtgui_filerw_unlink(const char *filename);
 
 /* get memory data from filerw memory object */
 const rt_uint8_t* rtgui_filerw_mem_getdata(struct rtgui_filerw* context);

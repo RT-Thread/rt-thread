@@ -59,7 +59,7 @@ typedef struct rtgui_image rtgui_image_t;
 /* init rtgui image system */
 void rtgui_system_image_init(void);
 
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
 struct rtgui_image_engine* rtgui_image_get_engine_by_filename(const char* fn);
 struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* filename, rt_bool_t load);
 struct rtgui_image* rtgui_image_create(const char* filename, rt_bool_t load);

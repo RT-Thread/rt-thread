@@ -44,11 +44,13 @@ struct rtgui_box* rtgui_box_create(int orientation, int border_size)
 
 	return box;
 }
+RTM_EXPORT(rtgui_box_create);
 
 void rtgui_box_destroy(struct rtgui_box* box)
 {
 	rtgui_object_destroy(RTGUI_OBJECT(box));
 }
+RTM_EXPORT(rtgui_box_destroy);
 
 static void rtgui_box_layout_vertical(struct rtgui_box* box, struct rtgui_rect* extent)
 {
@@ -259,6 +261,7 @@ void rtgui_box_layout(rtgui_box_t* box)
 		rtgui_widget_update_clip(RTGUI_WIDGET(box->container));
 	}
 }
+RTM_EXPORT(rtgui_box_layout);
 
 void rtgui_box_layout_rect(rtgui_box_t* box, struct rtgui_rect* rect)
 {
@@ -281,3 +284,5 @@ void rtgui_box_layout_rect(rtgui_box_t* box, struct rtgui_rect* rect)
 		rtgui_widget_update_clip(RTGUI_WIDGET(box->container));
 	}
 }
+RTM_EXPORT(rtgui_box_layout_rect);
+

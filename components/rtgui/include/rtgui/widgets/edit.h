@@ -17,25 +17,8 @@
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/container.h>
 
-#ifdef _WIN32
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
-#else
-#include <dfs_posix.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef _WIN32
-#define open	_open
-#define close	_close
-#define read	_read
-#define write	_write
-#define unlink	_unlink
 #endif
 
 DECLARE_CLASS_TYPE(edit);
@@ -65,11 +48,11 @@ struct edit_update
 
 struct edit_line
 {
-	rt_size_t   zsize; /* zone size */
-	rt_uint32_t len;
+	rt_int16_t  zsize; /* zone size */
+	rt_int16_t  len;
 	struct edit_line *prev;
 	struct edit_line *next;
-	char *text;
+	char        *text;
 };
 
 struct rtgui_edit
@@ -79,21 +62,22 @@ struct rtgui_edit
 
 	/* edit flag */
 	rt_uint32_t   flag;
-	rt_uint32_t   max_rows, max_cols;
-	rt_uint16_t   row_per_page, col_per_page;
+	rt_int16_t    max_rows, max_cols;
+	rt_int16_t    row_per_page, col_per_page;
 	rtgui_point_t upleft;
 	rtgui_point_t visual;
 	rt_uint8_t    tabsize;
 	rt_uint8_t    item_height;
 	rt_uint8_t    font_width,font_height;
 	rt_uint8_t    margin;
-	rt_size_t     bzsize; /* base zone size */
+	rt_int16_t    bzsize; /* base zone size */
 	
 	struct rtgui_timer *caret_timer;
 	rtgui_color_t *caret;
 	rtgui_rect_t  caret_rect;
 	struct edit_update update;
 	char          *update_buf; /* speed up renewal process */
+	struct rtgui_dc *dbl_buf;
 	
 	struct edit_line  *head;
 	struct edit_line  *tail;
@@ -118,7 +102,8 @@ void rtgui_edit_update(struct rtgui_edit *edit);
 void rtgui_edit_ondraw(struct rtgui_edit *edit);
 rt_bool_t rtgui_edit_event_handler(struct rtgui_object* object, rtgui_event_t* event);
 void rtgui_edit_set_text(struct rtgui_edit *edit, const char* text);
-
+rtgui_point_t rtgui_edit_get_current_point(struct rtgui_edit *edit);
+rt_uint32_t rtgui_edit_get_mem_consume(struct rtgui_edit *edit);
 rt_bool_t rtgui_edit_readin_file(struct rtgui_edit *edit, const char *filename);
 rt_bool_t rtgui_edit_saveas_file(struct rtgui_edit *edit, const char *filename);
 

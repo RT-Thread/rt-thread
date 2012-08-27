@@ -192,6 +192,7 @@ rt_bool_t rtgui_slider_event_handler(struct rtgui_object *object, struct rtgui_e
 
 	return RT_FALSE;
 }
+RTM_EXPORT(rtgui_slider_event_handler);
 
 struct rtgui_slider* rtgui_slider_create(rt_size_t min, rt_size_t max, int orient)
 {
@@ -213,6 +214,7 @@ struct rtgui_slider* rtgui_slider_create(rt_size_t min, rt_size_t max, int orien
 
 	return slider;
 }
+RTM_EXPORT(rtgui_slider_create);
 
 void rtgui_slider_set_range(struct rtgui_slider* slider, rt_size_t min, rt_size_t max)
 {
@@ -221,6 +223,7 @@ void rtgui_slider_set_range(struct rtgui_slider* slider, rt_size_t min, rt_size_
 	slider->max = max;
 	slider->min = min;
 }
+RTM_EXPORT(rtgui_slider_set_range);
 
 void rtgui_slider_set_value(struct rtgui_slider* slider, rt_size_t value)
 {
@@ -238,6 +241,7 @@ void rtgui_slider_set_value(struct rtgui_slider* slider, rt_size_t value)
 		}
 	}
 }
+RTM_EXPORT(rtgui_slider_set_value);
 
 void rtgui_slider_set_orientation(struct rtgui_slider* slider, int orientation)
 {
@@ -260,6 +264,7 @@ void rtgui_slider_set_orientation(struct rtgui_slider* slider, int orientation)
 	}
 #endif
 }
+RTM_EXPORT(rtgui_slider_set_orientation);
 
 rt_size_t rtgui_slider_get_value(struct rtgui_slider* slider)
 {
@@ -267,3 +272,5 @@ rt_size_t rtgui_slider_get_value(struct rtgui_slider* slider)
 
 	return slider->value;
 }
+RTM_EXPORT(rtgui_slider_get_value);
+

@@ -102,6 +102,7 @@ void rtgui_listbox_ondraw(struct rtgui_listbox* box)
 	}
 	rtgui_dc_end_drawing(dc);
 }
+RTM_EXPORT(rtgui_listbox_ondraw);
 
 static void rtgui_listbox_update_current(struct rtgui_listbox* box, rt_int16_t old_item)
 {
@@ -324,6 +325,7 @@ rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_
     /* use box event handler */
     return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
 }
+RTM_EXPORT(rtgui_listbox_event_handler);
 
 rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt_uint16_t count, rtgui_rect_t *rect)
 {
@@ -342,12 +344,14 @@ rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt
 
 	return box;
 }
+RTM_EXPORT(rtgui_listbox_create);
 
 void rtgui_listbox_destroy(rtgui_listbox_t* box)
 {
     /* destroy box */
 	rtgui_widget_destroy(RTGUI_WIDGET(box));
 }
+RTM_EXPORT(rtgui_listbox_destroy);
 
 void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_event_handler_ptr func)
 {
@@ -355,6 +359,7 @@ void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_event_handler_ptr func
 
 	box->on_item = func;
 }
+RTM_EXPORT(rtgui_listbox_set_onitem);
 
 void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* items, rt_uint16_t count)
 {
@@ -369,6 +374,7 @@ void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* it
 
 	rtgui_widget_update(RTGUI_WIDGET(box));
 }
+RTM_EXPORT(rtgui_listbox_set_items);
 
 void rtgui_listbox_set_current_item(rtgui_listbox_t* box, int index)
 {
@@ -384,4 +390,5 @@ void rtgui_listbox_set_current_item(rtgui_listbox_t* box, int index)
 		rtgui_listbox_update_current(box, old_item);
 	}
 }
+RTM_EXPORT(rtgui_listbox_set_current_item);
 

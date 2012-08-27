@@ -38,6 +38,7 @@ void rtgui_dc_destory(struct rtgui_dc* dc)
 	dc->engine->fini(dc);
 	rtgui_free(dc);
 }
+RTM_EXPORT(rtgui_dc_destory);
 
 void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 {
@@ -106,6 +107,7 @@ void rtgui_dc_draw_line (struct rtgui_dc* dc, int x1, int y1, int x2, int y2)
 		}
 	}
 }
+RTM_EXPORT(rtgui_dc_draw_line);
 
 void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
 {
@@ -127,6 +129,7 @@ void rtgui_dc_draw_horizontal_line(struct rtgui_dc* dc, int x1, int x2, int y)
 	/* restore color */
 	RTGUI_DC_FC(dc) = color;
 }
+RTM_EXPORT(rtgui_dc_draw_horizontal_line);
 
 void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
 {
@@ -148,6 +151,7 @@ void rtgui_dc_draw_vertical_line(struct rtgui_dc* dc, int x, int y1, int y2)
 	/* restore color */
 	RTGUI_DC_FC(dc) = color;
 }
+RTM_EXPORT(rtgui_dc_draw_vertical_line);
 
 void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
@@ -157,6 +161,7 @@ void rtgui_dc_draw_rect (struct rtgui_dc* dc, struct rtgui_rect* rect)
 	rtgui_dc_draw_vline(dc, rect->x1, rect->y1, rect->y2);
 	rtgui_dc_draw_vline(dc, rect->x2 - 1, rect->y1, rect->y2);
 }
+RTM_EXPORT(rtgui_dc_draw_rect);
 
 void rtgui_dc_fill_rect_forecolor(struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
@@ -169,6 +174,7 @@ void rtgui_dc_fill_rect_forecolor(struct rtgui_dc* dc, struct rtgui_rect* rect)
 		i++;
     }while(!(rect->y1+i == rect->y2));
 }
+RTM_EXPORT(rtgui_dc_fill_rect_forecolor);
 
 void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int r)
 {
@@ -198,6 +204,7 @@ void rtgui_dc_draw_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int 
     	rtgui_dc_draw_vline(dc, rect->x2, rect->y1 + r, rect->y2 - r);
     }
 }
+RTM_EXPORT(rtgui_dc_draw_round_rect);
 
 void rtgui_dc_fill_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int r)
 {
@@ -231,6 +238,7 @@ void rtgui_dc_fill_round_rect(struct rtgui_dc* dc, struct rtgui_rect* rect, int 
 		rtgui_dc_fill_circle(dc, rect->x1 + r, rect->y2 - r, r); 
 	}
 }
+RTM_EXPORT(rtgui_dc_fill_round_rect);
 
 void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
 							   rtgui_color_t c1, rtgui_color_t c2)
@@ -245,6 +253,7 @@ void rtgui_dc_draw_shaded_rect(struct rtgui_dc* dc, rtgui_rect_t* rect,
     rtgui_dc_draw_vline(dc, rect->x2 - 1, rect->y1, rect->y2);
     rtgui_dc_draw_hline(dc, rect->x1, rect->x2, rect->y2 - 1);
 }
+RTM_EXPORT(rtgui_dc_draw_shaded_rect);
 
 void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 {
@@ -266,6 +275,7 @@ void rtgui_dc_draw_focus_rect(struct rtgui_dc* dc, rtgui_rect_t* rect)
 			rtgui_dc_draw_point(dc, rect->x2-1, y);
 	}
 }
+RTM_EXPORT(rtgui_dc_draw_focus_rect);
 
 void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect)
 {
@@ -289,6 +299,7 @@ void rtgui_dc_draw_text (struct rtgui_dc* dc, const char* text, struct rtgui_rec
 	len = strlen((const char*)text);
 	rtgui_font_draw(font, dc, text, len, &text_rect);
 }
+RTM_EXPORT(rtgui_dc_draw_text);
 
 void rtgui_dc_draw_text_stroke (struct rtgui_dc* dc, const char* text, struct rtgui_rect* rect,
 	rtgui_color_t color_stroke, rtgui_color_t color_core)
@@ -314,6 +325,7 @@ void rtgui_dc_draw_text_stroke (struct rtgui_dc* dc, const char* text, struct rt
 	rtgui_dc_draw_text(dc, text, rect);
 	RTGUI_DC_FC(dc) = fc;
 }
+RTM_EXPORT(rtgui_dc_draw_text_stroke);
 
 /*
  * draw a monochrome color bitmap data
@@ -332,16 +344,19 @@ void rtgui_dc_draw_mono_bmp(struct rtgui_dc* dc, int x, int y, int w, int h, con
 				if ( ((data[i*w + j] >> (7-k)) & 0x01) != 0)
 					rtgui_dc_draw_point(dc, x + 8*j + k, y + i);
 }
+RTM_EXPORT(rtgui_dc_draw_mono_bmp);
 
 void rtgui_dc_draw_byte(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
 	rtgui_dc_draw_mono_bmp(dc, x, y, 8, h, data);
 }
+RTM_EXPORT(rtgui_dc_draw_byte);
 
 void rtgui_dc_draw_word(struct rtgui_dc*dc, int x, int y, int h, const rt_uint8_t* data)
 {
 	rtgui_dc_draw_mono_bmp(dc, x, y, 16, h, data);
 }
+RTM_EXPORT(rtgui_dc_draw_word);
 
 void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 {
@@ -395,6 +410,7 @@ void rtgui_dc_draw_border(struct rtgui_dc* dc, rtgui_rect_t* rect, int flag)
 	/* restore color */
 	RTGUI_DC_FC(dc) = color;
 }
+RTM_EXPORT(rtgui_dc_draw_border);
 
 void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, int count)
 {
@@ -427,6 +443,7 @@ void rtgui_dc_draw_polygon(struct rtgui_dc* dc, const int *vx, const int *vy, in
 	}
 	rtgui_dc_draw_line(dc, *x1, *y1, *vx, *vy);
 }
+RTM_EXPORT(rtgui_dc_draw_polygon);
 
 void rtgui_dc_draw_regular_polygon(struct rtgui_dc* dc, int x, int y, int r, int count, rt_uint16_t angle)
 {
@@ -474,6 +491,7 @@ void rtgui_dc_draw_regular_polygon(struct rtgui_dc* dc, int x, int y, int r, int
 	rtgui_free(y_head);
 
 }
+RTM_EXPORT(rtgui_dc_draw_regular_polygon);
 
 void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, int count)
 {
@@ -556,6 +574,7 @@ void rtgui_dc_fill_polygon(struct rtgui_dc* dc, const int* vx, const int* vy, in
 	/* release memory */
 	rtgui_free(poly_ints);
 }
+RTM_EXPORT(rtgui_dc_fill_polygon);
 
 void rtgui_dc_draw_circle(struct rtgui_dc* dc, int x, int y, int r)
 {
@@ -632,6 +651,7 @@ void rtgui_dc_draw_circle(struct rtgui_dc* dc, int x, int y, int r)
 	    cx++;
 	}while (cx <= cy);
 }
+RTM_EXPORT(rtgui_dc_draw_circle);
 
 void rtgui_dc_fill_circle(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t r)
 {
@@ -707,6 +727,7 @@ void rtgui_dc_fill_circle(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_in
 	cx++;
     } while (cx <= cy);
 }
+RTM_EXPORT(rtgui_dc_fill_circle);
 
 void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
 {
@@ -926,6 +947,7 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 		cx++;
 	} while (cx <= cy);
 }
+RTM_EXPORT(rtgui_dc_draw_arc);
 
 void rtgui_dc_draw_annulus(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r1, rt_int16_t r2, rt_int16_t start, rt_int16_t end)
 {
@@ -977,6 +999,7 @@ void rtgui_dc_draw_annulus(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_i
 
     rtgui_dc_draw_line(dc, start_x, start_y, end_x, end_y);    
 }
+RTM_EXPORT(rtgui_dc_draw_annulus);
 
 void rtgui_dc_draw_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
 {
@@ -1010,6 +1033,7 @@ void rtgui_dc_draw_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_in
     rtgui_dc_draw_line(dc, x, y, start_x, start_y);
     rtgui_dc_draw_line(dc, x, y, end_x, end_y); 
 }
+RTM_EXPORT(rtgui_dc_draw_sector);
 
 void rtgui_dc_fill_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t r, rt_int16_t start, rt_int16_t end)
 {
@@ -1044,6 +1068,7 @@ void rtgui_dc_fill_sector(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_in
 	    rtgui_dc_draw_line(dc, x, y, start_x, start_y); 
 	}while(!((start_x == end_x) && (start_y == end_y)));
 }
+RTM_EXPORT(rtgui_dc_fill_sector);
 
 void rtgui_dc_draw_ellipse(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry)
 {
@@ -1192,6 +1217,7 @@ void rtgui_dc_draw_ellipse(struct rtgui_dc* dc, rt_int16_t x, rt_int16_t y, rt_i
 	    } while (i > h);
 	}
 }
+RTM_EXPORT(rtgui_dc_draw_ellipse);
 
 void rtgui_dc_fill_ellipse(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16_t rx, rt_int16_t ry)
 {
@@ -1300,5 +1326,5 @@ void rtgui_dc_fill_ellipse(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_i
 	} while (i > h);
     }
 }
-
+RTM_EXPORT(rtgui_dc_fill_ellipse);
 

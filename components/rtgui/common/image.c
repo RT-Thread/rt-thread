@@ -81,7 +81,7 @@ static struct rtgui_image_engine* rtgui_image_get_engine(const char* type)
 	return RT_NULL;
 }
 
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
 struct rtgui_image_engine* rtgui_image_get_engine_by_filename(const char* fn)
 {
 	struct rtgui_list_node *node;
@@ -105,6 +105,7 @@ struct rtgui_image_engine* rtgui_image_get_engine_by_filename(const char* fn)
 
 	return RT_NULL;
 }
+RTM_EXPORT(rtgui_image_get_engine_by_filename);
 
 struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* filename, rt_bool_t load)
 {
@@ -153,6 +154,7 @@ struct rtgui_image* rtgui_image_create_from_file(const char* type, const char* f
 
 	return image;
 }
+RTM_EXPORT(rtgui_image_create_from_file);
 
 struct rtgui_image* rtgui_image_create(const char* filename, rt_bool_t load)
 {
@@ -201,6 +203,7 @@ struct rtgui_image* rtgui_image_create(const char* filename, rt_bool_t load)
 
 	return image;
 }
+RTM_EXPORT(rtgui_image_create);
 #endif
 
 struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8_t* data, rt_size_t length, rt_bool_t load)
@@ -250,6 +253,7 @@ struct rtgui_image* rtgui_image_create_from_mem(const char* type, const rt_uint8
 
 	return image;
 }
+RTM_EXPORT(rtgui_image_create_from_mem);
 
 void rtgui_image_destroy(struct rtgui_image* image)
 {
@@ -260,6 +264,7 @@ void rtgui_image_destroy(struct rtgui_image* image)
 		rtgui_free(image->palette);
 	rtgui_free(image);
 }
+RTM_EXPORT(rtgui_image_destroy);
 
 /* register an image engine */
 void rtgui_image_register_engine(struct rtgui_image_engine* engine)
@@ -268,6 +273,7 @@ void rtgui_image_register_engine(struct rtgui_image_engine* engine)
 
 	rtgui_list_append(&_rtgui_system_image_list, &(engine->list));
 }
+RTM_EXPORT(rtgui_image_register_engine);
 
 void rtgui_image_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtgui_rect* rect)
 {
@@ -282,6 +288,7 @@ void rtgui_image_blit(struct rtgui_image* image, struct rtgui_dc* dc, struct rtg
 		image->engine->image_blit(image, dc, rect);
 	}
 }
+RTM_EXPORT(rtgui_image_blit);
 
 struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors)
 {
@@ -296,6 +303,7 @@ struct rtgui_image_palette* rtgui_image_palette_create(rt_uint32_t ncolors)
 
 	return palette;
 }
+RTM_EXPORT(rtgui_image_palette_create);
 
 void rtgui_image_get_rect(struct rtgui_image* image, struct rtgui_rect* rect)
 {
@@ -305,4 +313,5 @@ void rtgui_image_get_rect(struct rtgui_image* image, struct rtgui_rect* rect)
 	rect->x1 = 0; rect->y1 = 0;
 	rect->x2 = image->w; rect->y2 = image->h;
 }
+RTM_EXPORT(rtgui_image_get_rect);
 
