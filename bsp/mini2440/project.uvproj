@@ -499,11 +499,6 @@
               <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>rtm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\rtm.c</FilePath>
-            </File>
-            <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
@@ -1304,6 +1299,11 @@
               <FilePath>..\..\components\rtgui\common\rtgui_xml.c</FilePath>
             </File>
             <File>
+              <FileName>rtgui_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_app.c</FilePath>
+            </File>
+            <File>
               <FileName>dc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\common\dc.c</FilePath>
@@ -1412,11 +1412,6 @@
               <FileName>pixel_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\common\pixel_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>rtgui_application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\server\rtgui_application.c</FilePath>
             </File>
             <File>
               <FileName>driver.c</FileName>
@@ -1544,11 +1539,6 @@
               <FilePath>..\..\components\rtgui\widgets\list_view.c</FilePath>
             </File>
             <File>
-              <FileName>about_view.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\about_view.c</FilePath>
-            </File>
-            <File>
               <FileName>filelist_view.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\filelist_view.c</FilePath>
@@ -1562,6 +1552,21 @@
               <FileName>window.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\window.c</FilePath>
+            </File>
+            <File>
+              <FileName>panel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\panel.c</FilePath>
+            </File>
+            <File>
+              <FileName>groupbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\groupbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>edit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\edit.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1687,6 +1692,16 @@
               <FileName>demo_view_mywidget.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view_mywidget.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_box.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_edit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_edit.c</FilePath>
             </File>
             <File>
               <FileName>mywidget.c</FileName>
