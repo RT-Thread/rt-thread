@@ -39,10 +39,14 @@ extern "C" {
  * kernel object interface
  */
 void rt_system_object_init(void);
-struct rt_object_information *rt_object_get_information(enum rt_object_class_type type);
-void rt_object_init(struct rt_object *object, enum rt_object_class_type type, const char *name);
+struct rt_object_information *
+rt_object_get_information(enum rt_object_class_type type);
+void rt_object_init(struct rt_object          *object,
+                    enum rt_object_class_type  type,
+                    const char                *name);
 void rt_object_detach(rt_object_t object);
-rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name);
+rt_object_t rt_object_allocate(enum rt_object_class_type  type,
+                               const char                *name);
 void rt_object_delete(rt_object_t object);
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
@@ -75,14 +79,18 @@ rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms);
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);
 
-void rt_timer_init(rt_timer_t timer,
-	const char *name,
-	void (*timeout)(void *parameter), void *parameter,
-	rt_tick_t time, rt_uint8_t flag);
+void rt_timer_init(rt_timer_t  timer,
+                   const char *name,
+                   void (*timeout)(void *parameter),
+                   void       *parameter,
+                   rt_tick_t   time,
+                   rt_uint8_t  flag);
 rt_err_t rt_timer_detach(rt_timer_t timer);
 rt_timer_t rt_timer_create(const char *name,
-	void (*timeout)(void *parameter), void *parameter,
-	rt_tick_t time, rt_uint8_t flag);
+                           void (*timeout)(void *parameter),
+                           void       *parameter,
+                           rt_tick_t   time,
+                           rt_uint8_t  flag);
 rt_err_t rt_timer_delete(rt_timer_t timer);
 rt_err_t rt_timer_start(rt_timer_t timer);
 rt_err_t rt_timer_stop(rt_timer_t timer);
@@ -107,15 +115,20 @@ void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer));
  * thread interface
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
-	const char *name,
-	void (*entry)(void *parameter), void *parameter,
-	void *stack_start, rt_uint32_t stack_size,
-	rt_uint8_t priority, rt_uint32_t tick);
+                        const char       *name,
+                        void (*entry)(void *parameter),
+                        void             *parameter,
+                        void             *stack_start,
+                        rt_uint32_t       stack_size,
+                        rt_uint8_t        priority,
+                        rt_uint32_t       tick);
 rt_err_t rt_thread_detach(rt_thread_t thread);
-rt_thread_t rt_thread_create(const char *name,
-	void (*entry)(void *parameter), void *parameter,
-	rt_uint32_t stack_size,
-	rt_uint8_t priority, rt_uint32_t tick);
+rt_thread_t rt_thread_create(const char  *name,
+                             void (*entry)(void *parameter),
+                             void        *parameter,
+                             rt_uint32_t  stack_size,
+                             rt_uint8_t   priority,
+                             rt_uint32_t  tick);
 rt_thread_t rt_thread_self(void);
 rt_thread_t rt_thread_find(char *name);
 rt_err_t rt_thread_startup(rt_thread_t thread);
@@ -169,9 +182,15 @@ void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 /*
  * memory pool interface
  */
-rt_err_t rt_mp_init(struct rt_mempool *mp, const char *name, void *start, rt_size_t size, rt_size_t block_size);
+rt_err_t rt_mp_init(struct rt_mempool *mp,
+                    const char        *name,
+                    void              *start,
+                    rt_size_t          size,
+                    rt_size_t          block_size);
 rt_err_t rt_mp_detach(struct rt_mempool *mp);
-rt_mp_t rt_mp_create(const char *name, rt_size_t block_count, rt_size_t block_size);
+rt_mp_t rt_mp_create(const char *name,
+                     rt_size_t   block_count,
+                     rt_size_t   block_size);
 rt_err_t rt_mp_delete(rt_mp_t mp);
 
 void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time);
@@ -197,7 +216,9 @@ void *rt_calloc(rt_size_t count, rt_size_t size);
 void *rt_malloc_align(rt_size_t size, rt_size_t align);
 void rt_free_align(void *ptr);
 
-void rt_memory_info(rt_uint32_t *total, rt_uint32_t *used, rt_uint32_t *max_used);
+void rt_memory_info(rt_uint32_t *total,
+                    rt_uint32_t *used,
+                    rt_uint32_t *max_used);
 
 #ifdef RT_USING_SLAB
 void *rt_page_alloc(rt_size_t npages);
@@ -215,12 +236,13 @@ void rt_free_sethook(void (*hook)(void *ptr));
 /**
  * memory heap object interface
  */
-rt_err_t rt_memheap_init(struct rt_memheap* memheap, const char* name,
-	void *start_addr, rt_uint32_t size);
-rt_err_t rt_memheap_detach(struct rt_memheap* heap);
-void* rt_memheap_alloc(struct rt_memheap *heap, 	rt_uint32_t size);
-void rt_memheap_free(void* ptr);
-
+rt_err_t rt_memheap_init(struct rt_memheap *memheap,
+                         const char        *name,
+                         void              *start_addr,
+                         rt_uint32_t        size);
+rt_err_t rt_memheap_detach(struct rt_memheap *heap);
+void* rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size);
+void rt_memheap_free(void *ptr);
 #endif
 
 /*@}*/
@@ -235,7 +257,10 @@ void rt_memheap_free(void* ptr);
 /*
  * semaphore interface
  */
-rt_err_t rt_sem_init(rt_sem_t sem, const char *name, rt_uint32_t value, rt_uint8_t flag);
+rt_err_t rt_sem_init(rt_sem_t     sem,
+                     const char  *name,
+                     rt_uint32_t  value,
+                     rt_uint8_t   flag);
 rt_err_t rt_sem_detach(rt_sem_t sem);
 rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag);
 rt_err_t rt_sem_delete(rt_sem_t sem);
@@ -270,7 +295,11 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag);
 rt_err_t rt_event_delete(rt_event_t event);
 
 rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set);
-rt_err_t rt_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t opt, rt_int32_t timeout, rt_uint32_t *recved);
+rt_err_t rt_event_recv(rt_event_t   event,
+                       rt_uint32_t  set,
+                       rt_uint8_t   opt,
+                       rt_int32_t   timeout,
+                       rt_uint32_t *recved);
 rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg);
 #endif
 
@@ -278,13 +307,19 @@ rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg);
 /*
  * mailbox interface
  */
-rt_err_t rt_mb_init(rt_mailbox_t mb, const char *name, void *msgpool, rt_size_t size, rt_uint8_t flag);
+rt_err_t rt_mb_init(rt_mailbox_t  mb,
+                    const char   *name,
+                    void         *msgpool,
+                    rt_size_t     size,
+                    rt_uint8_t    flag);
 rt_err_t rt_mb_detach(rt_mailbox_t mb);
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete(rt_mailbox_t mb);
 
 rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value);
-rt_err_t rt_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout);
+rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
+                         rt_uint32_t  value,
+                         rt_int32_t   timeout);
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg);
 #endif
@@ -293,14 +328,25 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg);
 /*
  * message queue interface
  */
-rt_err_t rt_mq_init(rt_mq_t mq, const char *name, void *msgpool, rt_size_t msg_size, rt_size_t pool_size, rt_uint8_t flag);
+rt_err_t rt_mq_init(rt_mq_t     mq,
+                    const char *name,
+                    void       *msgpool,
+                    rt_size_t   msg_size,
+                    rt_size_t   pool_size,
+                    rt_uint8_t  flag);
 rt_err_t rt_mq_detach(rt_mq_t mq);
-rt_mq_t rt_mq_create(const char *name, rt_size_t msg_size, rt_size_t max_msgs, rt_uint8_t flag);
+rt_mq_t rt_mq_create(const char *name,
+                     rt_size_t   msg_size,
+                     rt_size_t   max_msgs,
+                     rt_uint8_t  flag);
 rt_err_t rt_mq_delete(rt_mq_t mq);
 
 rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size);
 rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size);
-rt_err_t rt_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout);
+rt_err_t rt_mq_recv(rt_mq_t     mq,
+                    void       *buffer,
+                    rt_size_t   size,
+                    rt_int32_t  timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
 #endif
 
@@ -318,18 +364,30 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
  */
 rt_device_t rt_device_find(const char *name);
 
-rt_err_t rt_device_register(rt_device_t dev, const char *name, rt_uint16_t flags);
+rt_err_t rt_device_register(rt_device_t  dev,
+                            const char  *name,
+                            rt_uint16_t  flags);
 rt_err_t rt_device_unregister(rt_device_t dev);
 rt_err_t rt_device_init_all(void);
 
-rt_err_t rt_device_set_rx_indicate(rt_device_t dev, rt_err_t (*rx_ind )(rt_device_t dev, rt_size_t size));
-rt_err_t rt_device_set_tx_complete(rt_device_t dev, rt_err_t (*tx_done)(rt_device_t dev, void *buffer));
+rt_err_t
+rt_device_set_rx_indicate(rt_device_t dev,
+                          rt_err_t (*rx_ind)(rt_device_t dev, rt_size_t size));
+rt_err_t
+rt_device_set_tx_complete(rt_device_t dev,
+                          rt_err_t (*tx_done)(rt_device_t dev, void *buffer));
 
 rt_err_t  rt_device_init (rt_device_t dev);
 rt_err_t  rt_device_open (rt_device_t dev, rt_uint16_t oflag);
 rt_err_t  rt_device_close(rt_device_t dev);
-rt_size_t rt_device_read (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-rt_size_t rt_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+rt_size_t rt_device_read (rt_device_t  dev,
+                          rt_off_t     pos,
+                          void        *buffer,
+                          rt_size_t    size);
+rt_size_t rt_device_write(rt_device_t  dev,
+                          rt_off_t     pos,
+                          const void  *buffer,
+                          rt_size_t    size);
 rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
 
 /*@}*/
@@ -407,7 +465,7 @@ void rt_set_errno(rt_err_t no);
 int *_rt_errno(void);
 #ifndef RT_USING_NEWLIB
 #ifndef errno
-#define errno	*_rt_errno()
+#define errno    *_rt_errno()
 #endif
 #endif
 
