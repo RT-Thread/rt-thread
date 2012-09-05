@@ -32,12 +32,17 @@ rt_base_t rt_hw_cpu_dcache_status(void);
 void rt_hw_cpu_reset(void);
 void rt_hw_cpu_shutdown(void);
 
-rt_uint8_t *rt_hw_stack_init(void *entry, void *parameter, rt_uint8_t *stack_addr, void *exit);
+rt_uint8_t *rt_hw_stack_init(void       *entry,
+                             void       *parameter,
+                             rt_uint8_t *stack_addr,
+                             void       *exit);
 
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler);
+void rt_hw_interrupt_install(int               vector,
+                             rt_isr_handler_t  new_handler,
+                             rt_isr_handler_t *old_handler);
 void rt_hw_interrupt_handle(int vector);
 
 rt_base_t rt_hw_interrupt_disable(void);
