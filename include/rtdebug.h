@@ -73,7 +73,10 @@
             rt_kprintf("Function[%s] shall not used in ISR\n", __FUNCTION__);\
             RT_ASSERT(0)}\
         rt_hw_interrupt_enable(level);} while (0)
+#else
+#define RT_DEBUG_NOT_IN_INTERRUPT
 #endif
+
 #else /* RT_DEBUG */
 
 #define RT_ASSERT(EX)
