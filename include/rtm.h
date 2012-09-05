@@ -15,21 +15,21 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_MODULE
-#define RTM_EXPORT(symbol)					 							\
-const char __rtmsym_##symbol##_name[] = #symbol;					 	\
-const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= 	\
-{								\
-	(void *)&symbol,		\
-	__rtmsym_##symbol##_name	\
-};
-#else
-#define RTM_EXPORT(symbol)	
-#endif
-
 struct rt_module_symtab
 {
-	void *addr;
-	const char *name;
+    void       *addr;
+    const char *name;
 };
+
+#define RTM_EXPORT(symbol)                                            \
+const char __rtmsym_##symbol##_name[] = #symbol;                      \
+const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= \
+{                                                                     \
+    (void *)&symbol,                                                  \
+    __rtmsym_##symbol##_name                                          \
+};
+#else
+#define RTM_EXPORT(symbol)
+#endif
 
 #endif
