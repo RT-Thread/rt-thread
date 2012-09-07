@@ -41,12 +41,12 @@ extern "C" {
 void rt_system_object_init(void);
 struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type);
-void rt_object_init(struct rt_object          *object,
-                    enum rt_object_class_type  type,
-                    const char                *name);
+void rt_object_init(struct rt_object         *object,
+                    enum rt_object_class_type type,
+                    const char               *name);
 void rt_object_detach(rt_object_t object);
-rt_object_t rt_object_allocate(enum rt_object_class_type  type,
-                               const char                *name);
+rt_object_t rt_object_allocate(enum rt_object_class_type type,
+                               const char               *name);
 void rt_object_delete(rt_object_t object);
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
@@ -123,12 +123,12 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
                         rt_uint8_t        priority,
                         rt_uint32_t       tick);
 rt_err_t rt_thread_detach(rt_thread_t thread);
-rt_thread_t rt_thread_create(const char  *name,
+rt_thread_t rt_thread_create(const char *name,
                              void (*entry)(void *parameter),
-                             void        *parameter,
-                             rt_uint32_t  stack_size,
-                             rt_uint8_t   priority,
-                             rt_uint32_t  tick);
+                             void       *parameter,
+                             rt_uint32_t stack_size,
+                             rt_uint8_t  priority,
+                             rt_uint32_t tick);
 rt_thread_t rt_thread_self(void);
 rt_thread_t rt_thread_find(char *name);
 rt_err_t rt_thread_startup(rt_thread_t thread);
@@ -257,10 +257,10 @@ void rt_memheap_free(void *ptr);
 /*
  * semaphore interface
  */
-rt_err_t rt_sem_init(rt_sem_t     sem,
-                     const char  *name,
-                     rt_uint32_t  value,
-                     rt_uint8_t   flag);
+rt_err_t rt_sem_init(rt_sem_t    sem,
+                     const char *name,
+                     rt_uint32_t value,
+                     rt_uint8_t  flag);
 rt_err_t rt_sem_detach(rt_sem_t sem);
 rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag);
 rt_err_t rt_sem_delete(rt_sem_t sem);
@@ -307,11 +307,11 @@ rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg);
 /*
  * mailbox interface
  */
-rt_err_t rt_mb_init(rt_mailbox_t  mb,
-                    const char   *name,
-                    void         *msgpool,
-                    rt_size_t     size,
-                    rt_uint8_t    flag);
+rt_err_t rt_mb_init(rt_mailbox_t mb,
+                    const char  *name,
+                    void        *msgpool,
+                    rt_size_t    size,
+                    rt_uint8_t   flag);
 rt_err_t rt_mb_detach(rt_mailbox_t mb);
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete(rt_mailbox_t mb);
@@ -343,10 +343,10 @@ rt_err_t rt_mq_delete(rt_mq_t mq);
 
 rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size);
 rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size);
-rt_err_t rt_mq_recv(rt_mq_t     mq,
-                    void       *buffer,
-                    rt_size_t   size,
-                    rt_int32_t  timeout);
+rt_err_t rt_mq_recv(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_int32_t timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
 #endif
 
@@ -364,9 +364,9 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
  */
 rt_device_t rt_device_find(const char *name);
 
-rt_err_t rt_device_register(rt_device_t  dev,
-                            const char  *name,
-                            rt_uint16_t  flags);
+rt_err_t rt_device_register(rt_device_t dev,
+                            const char *name,
+                            rt_uint16_t flags);
 rt_err_t rt_device_unregister(rt_device_t dev);
 rt_err_t rt_device_init_all(void);
 
@@ -380,14 +380,14 @@ rt_device_set_tx_complete(rt_device_t dev,
 rt_err_t  rt_device_init (rt_device_t dev);
 rt_err_t  rt_device_open (rt_device_t dev, rt_uint16_t oflag);
 rt_err_t  rt_device_close(rt_device_t dev);
-rt_size_t rt_device_read (rt_device_t  dev,
-                          rt_off_t     pos,
-                          void        *buffer,
-                          rt_size_t    size);
-rt_size_t rt_device_write(rt_device_t  dev,
-                          rt_off_t     pos,
-                          const void  *buffer,
-                          rt_size_t    size);
+rt_size_t rt_device_read (rt_device_t dev,
+                          rt_off_t    pos,
+                          void       *buffer,
+                          rt_size_t   size);
+rt_size_t rt_device_write(rt_device_t dev,
+                          rt_off_t    pos,
+                          const void *buffer,
+                          rt_size_t   size);
 rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
 
 /*@}*/
