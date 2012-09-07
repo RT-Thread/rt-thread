@@ -50,7 +50,7 @@
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
-          <ListingPath>.\obj</ListingPath>
+          <ListingPath>.\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -1519,11 +1519,6 @@
               <FilePath>..\..\components\rtgui\widgets\title.c</FilePath>
             </File>
             <File>
-              <FileName>toplevel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\toplevel.c</FilePath>
-            </File>
-            <File>
               <FileName>notebook.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\notebook.c</FilePath>
@@ -1568,6 +1563,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\edit.c</FilePath>
             </File>
+            <File>
+              <FileName>plot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\plot.c</FilePath>
+            </File>
+            <File>
+              <FileName>plot_curve.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\plot_curve.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1582,6 +1587,11 @@
               <FileName>demo_view.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_xml.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_xml.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_benchmark.c</FileName>
@@ -1702,6 +1712,16 @@
               <FileName>demo_view_edit.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view_edit.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_plot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_plot.c</FilePath>
             </File>
             <File>
               <FileName>mywidget.c</FileName>
