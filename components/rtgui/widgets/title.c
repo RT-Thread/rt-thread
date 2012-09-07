@@ -29,13 +29,13 @@ static void _rtgui_wintitle_deconstructor(rtgui_wintitle_t* wintitle)
 	wintitle->title = RT_NULL;
 }
 
-DEFINE_CLASS_TYPE(wintitle, "wintitle", 
-	RTGUI_TOPLEVEL_TYPE,
+DEFINE_CLASS_TYPE(wintitle, "wintitle",
+	RTGUI_WIDGET_TYPE,
 	_rtgui_wintitle_constructor,
 	_rtgui_wintitle_deconstructor,
 	sizeof(struct rtgui_wintitle));
 
-rtgui_wintitle_t* rtgui_wintitle_create(const char* title)
+rtgui_wintitle_t* rtgui_wintitle_create(struct rtgui_win *window, const char* title)
 {
 	rtgui_wintitle_t* wintitle;
 
@@ -43,6 +43,7 @@ rtgui_wintitle_t* rtgui_wintitle_create(const char* title)
 	if (wintitle != RT_NULL)
 	{
 		rtgui_wintitle_set_title(wintitle, title);
+        RTGUI_WIDGET(wintitle)->toplevel = window;
 	}
 
 	return wintitle;

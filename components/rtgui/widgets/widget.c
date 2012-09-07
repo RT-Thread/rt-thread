@@ -38,6 +38,11 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	widget->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
 	widget->align = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
 
+    /* clear the garbage value of extent and clip */
+    widget->extent.x1 = widget->extent.y1 = 0;
+    widget->extent.x2 = widget->extent.y2 = 0;
+    rtgui_region_init_with_extents(&widget->clip, &widget->extent);
+
 	/* set parent and toplevel root */
 	widget->parent        = RT_NULL;
 	widget->toplevel      = RT_NULL;
@@ -45,8 +50,6 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 	/* some common event handler */
 	widget->on_focus_in   = RT_NULL;
 	widget->on_focus_out  = RT_NULL;
-	widget->on_show       = RT_NULL;
-	widget->on_hide       = RT_NULL;
 
 #ifndef RTGUI_USING_SMALL_SIZE
 	widget->on_draw       = RT_NULL;
@@ -276,22 +279,6 @@ void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr 
 }
 RTM_EXPORT(rtgui_widget_set_onunfocus);
 
-void rtgui_widget_set_onshow(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
-{
-	RT_ASSERT(widget != RT_NULL);
-
-	widget->on_show = handler;
-}
-RTM_EXPORT(rtgui_widget_set_onshow);
-
-void rtgui_widget_set_onhide(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
-{
-	RT_ASSERT(widget != RT_NULL);
-
-	widget->on_hide = handler;
-}
-RTM_EXPORT(rtgui_widget_set_onhide);
-
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler)
 {
@@ -385,8 +372,17 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget)
 
 	RTGUI_WIN(widget->toplevel)->focused_widget = RT_NULL;
 
-	/* refresh widget */
-	rtgui_widget_update(widget);
+	/* Ergodic constituent widget, make child loss of focus */
+	if(RTGUI_IS_CONTAINER(widget))
+	{
+		rtgui_list_t *node;
+		rtgui_list_foreach(node, &(RTGUI_CONTAINER(widget)->children))
+		{
+			rtgui_widget_t *child = rtgui_list_entry(node, rtgui_widget_t, sibling);
+			if(RTGUI_WIDGET_IS_HIDE(child)) continue;
+			rtgui_widget_unfocus(child);
+		}
+	}
 }
 RTM_EXPORT(rtgui_widget_unfocus);
 
@@ -617,9 +613,6 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 
 	RTGUI_WIDGET_UNHIDE(widget);
 
-	if (widget->on_show != RT_NULL)
-		widget->on_show(RTGUI_OBJECT(widget), RT_NULL);
-
 	return RT_FALSE;
 }
 RTM_EXPORT(rtgui_widget_onshow);
@@ -648,9 +641,6 @@ rt_bool_t rtgui_widget_onhide(struct rtgui_object *object, struct rtgui_event *e
 		/* union widget rect */
 		rtgui_region_union_rect(&(parent->clip), &(parent->clip), &(widget->extent));
 	}
-
-	if (widget->on_hide != RT_NULL)
-		widget->on_hide(RTGUI_OBJECT(widget), RT_NULL);
 
 	return RT_FALSE;
 }

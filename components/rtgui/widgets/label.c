@@ -18,6 +18,7 @@
 
 static void _rtgui_label_constructor(rtgui_label_t *label)
 {
+	RTGUI_WIDGET_TEXTALIGN(label) = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_CENTER_VERTICAL;
 	/* init widget and set event handler */
 	rtgui_object_set_event_handler(RTGUI_OBJECT(label), rtgui_label_event_handler);
 

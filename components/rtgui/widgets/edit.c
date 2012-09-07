@@ -608,7 +608,7 @@ static rt_bool_t identify_double_byte(struct rtgui_edit *edit, struct edit_line 
 		effe_nums = 0;
 		while(index--)
 		{
-			if(*(line->text + index) >= 0x80)
+			if((rt_uint8_t)(*(line->text + index)) >= 0x80)
 				effe_nums ++;
 			else
 				break;
@@ -627,7 +627,7 @@ static rt_bool_t identify_double_byte(struct rtgui_edit *edit, struct edit_line 
 		effe_nums = 0;
 		while(index < line->len)
 		{
-			if(*(line->text + index) >= 0x80)
+			if((rt_uint8_t)(*(line->text + index)) >= 0x80)
 				effe_nums ++;
 			else
 				break;
@@ -1274,20 +1274,8 @@ static rt_bool_t rtgui_edit_onkey(struct rtgui_object* object, rtgui_event_t* ev
 		rtgui_edit_insert_line(edit, line, line->text + edit->upleft.x + edit->visual.x);
 		line->text[edit->upleft.x + edit->visual.x] = '\0';
 		line->len = rtgui_edit_line_strlen(line->text);
-		
-		/* adjust update line end position */
-		if((edit->max_rows-edit->upleft.y) > edit->row_per_page)
-		{	
-			update_type = EDIT_UPDATE;
-			edit->update.start = edit->visual;
-			update_end_line = rtgui_edit_get_line_by_index(edit, edit->upleft.y+edit->row_per_page-1);
-			if(update_end_line != RT_NULL)
-			{
-				edit->update.end.x = update_end_line->len;
-				edit->update.end.y = edit->upleft.y + edit->row_per_page;
-			}
-		}
-		else if((edit->max_rows-edit->upleft.y) < edit->row_per_page)
+
+		if((edit->max_rows-edit->upleft.y) < edit->row_per_page)
 		{
 			int update_end_index = rtgui_edit_get_index_by_line(edit, edit->tail);
 			update_type = EDIT_UPDATE;
@@ -1306,6 +1294,20 @@ static rt_bool_t rtgui_edit_onkey(struct rtgui_object* object, rtgui_event_t* ev
 		rtgui_edit_onkey(object, (rtgui_event_t*)&event_kbd);
 		kbd_event_set_key(&event_kbd, RTGUIK_HOME);
 		rtgui_edit_onkey(object, (rtgui_event_t*)&event_kbd);
+		/* adjust update line end position */
+		if((edit->max_rows-edit->upleft.y) >= edit->row_per_page)
+		{	
+			update_type = EDIT_UPDATE;
+			edit->update.start = edit->visual;
+			edit->update.start.y -= 1;
+			update_end_line = rtgui_edit_get_line_by_index(edit, edit->upleft.y+edit->row_per_page-1);
+			
+			if(update_end_line != RT_NULL)
+			{
+				edit->update.end.x = update_end_line->len;
+				edit->update.end.y = edit->upleft.y + edit->row_per_page;
+			}
+		}
 	}
 	else
 	{
@@ -1630,6 +1632,7 @@ void rtgui_edit_ondraw(struct rtgui_edit *edit)
 			}
 
 			line = line->next;
+			
 			rect.y1 += edit->item_height;
 			if((rect.y1 + edit->item_height) < r.y2)
 				rect.y2 = rect.y1 + edit->item_height;
@@ -1825,10 +1828,10 @@ rt_uint32_t rtgui_edit_get_mem_consume(struct rtgui_edit *edit)
 	return mem_size;
 }
 
+#ifdef RTGUI_USING_DFS_FILERW
 /** 
  * File access component, General File Access Interface
  */
-
 rt_bool_t rtgui_edit_readin_file(struct rtgui_edit *edit, const char *filename)
 {
 	struct rtgui_filerw *filerw;
@@ -1906,3 +1909,4 @@ rt_bool_t rtgui_edit_saveas_file(struct rtgui_edit *edit, const char *filename)
 
 	return RT_TRUE;
 }
+#endif

@@ -1,7 +1,7 @@
 /*
- * 3ìDò??μ￥￡oDCé???ê?í????Yê?
+ * 程序清单：DC上显示图像演示
  *
- * ?a??ày×ó?á?ú′′?¨3?μ?viewé???ê?í???
+ * 这个例子会在创建出的view上显示图像
  */
 
 #include "demo_view.h"
@@ -10,63 +10,63 @@
 #include <string.h>
 
 #ifdef RT_USING_MODULE
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
 static rtgui_container_t *_view = RT_NULL;
 
-/* ′ò?a°′?￥μ???μ÷oˉêy */
+/* 打开按钮的回调函数 */
 static void open_btn_onbutton(rtgui_widget_t *widget, struct rtgui_event *event)
 {
     rtgui_filelist_view_t *view;
     rtgui_workbench_t *workbench;
     rtgui_rect_t rect;
 
-    /* ??μ??￥2?μ?workbench */
+    /* 获得顶层的workbench */
     workbench = RTGUI_WORKBENCH(rtgui_widget_get_toplevel(widget));
     rtgui_widget_get_rect(RTGUI_WIDGET(workbench), &rect);
 
-    /* WIN32??ì¨é?oí??êμéè±?é?μ?3?ê??·??′|àí */
+    /* WIN32平台上和真实设备上的初始路径处理 */
 #ifdef _WIN32
     view = rtgui_filelist_view_create(workbench, "d:\\", "*.*", &rect);
 #else
     view = rtgui_filelist_view_create(workbench, "/", "*.*", &rect);
 #endif
-    /* ?￡ì???ê?ò??????táD±íêóí?￡?ò?ìá1???ó??§????í??????t */
+    /* 模态显示一个文件列表视图，以提供给用户选择图像文件 */
     if (rtgui_container_show(RTGUI_CONTAINER(view), RT_TRUE) == RTGUI_MODAL_OK)
     {
         char path[32], name[8];
 
-        /* éè?????t?·??μ?±ê?? */
+        /* 设置文件路径的标签 */
         rtgui_filelist_view_get_fullpath(view, path, sizeof(path));
 
         rt_memset(name, 0, sizeof(name));
 
-        /* ??μ?ó|ó??￡?éμ?ààDí */
+        /* 获得应用模块的类型 */
         if (rt_strstr(path, ".mo") != RT_NULL || rt_strstr(path, ".so") != RT_NULL)
         {
             rt_module_open(path);
         }
     }
 
-    /* é?3y ???táD±í êóí? */
+    /* 删除 文件列表 视图 */
     rtgui_container_destroy(RTGUI_CONTAINER(view));
     rtgui_container_show(_view, RT_FALSE);
 }
 
-/* ′′?¨ó?óú??ê?ó|ó??￡?éμ??Yê?êóí? */
+/* 创建用于显示应用模块的演示视图 */
 rtgui_container_t *demo_view_module(rtgui_workbench_t *workbench)
 {
     rtgui_rect_t rect;
     rtgui_button_t *open_btn;
 
-    /* ?è′′?¨ò????Yê?êóí? */
-    _view = demo_view(workbench, "ó|ó??￡?é?Yê?");
+    /* 先创建一个演示视图 */
+    _view = demo_view(workbench, "应用模块演示");
 
-    /* ìí?óò???°′?￥ */
+    /* 添加一个按钮 */
     demo_view_get_rect(_view, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 120;
     rect.y2 = rect.y1 + 20;
-    open_btn = rtgui_button_create("′ò?aó|ó??￡?é");
+    open_btn = rtgui_button_create("打开应用模块");
     rtgui_container_add_child(RTGUI_CONTAINER(_view), RTGUI_WIDGET(open_btn));
     rtgui_widget_set_rect(RTGUI_WIDGET(open_btn), &rect);
     rtgui_button_set_onbutton(open_btn, open_btn_onbutton);

@@ -11,9 +11,8 @@
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
  */
-
-#include <rtgui/filerw.h>
 #include <rtgui/rtgui_system.h>
+#include <rtgui/filerw.h>
 
 #ifdef RTGUI_USING_DFS_FILERW
 
@@ -264,6 +263,15 @@ struct rtgui_filerw* rtgui_filerw_create_file(const char* filename, const char* 
 	return &(rw->parent);
 }
 
+int rtgui_filerw_unlink(const char *filename)
+{
+#ifdef _WIN32
+	return _unlink(filename);
+#else
+	return unlink(filename);
+#endif
+}
+
 #endif
 
 struct rtgui_filerw* rtgui_filerw_create_mem(const rt_uint8_t* mem, rt_size_t size)
@@ -341,11 +349,3 @@ int rtgui_filerw_close(struct rtgui_filerw* context)
 	return 0;
 }
 
-int rtgui_filerw_unlink(const char *filename)
-{
-#ifdef _WIN32
-	return _unlink(filename);
-#else
-	return unlink(filename);
-#endif
-}

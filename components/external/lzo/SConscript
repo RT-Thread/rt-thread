@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src	= Split('''
+minilzo.c
+lzo.c
+''')
+CPPPATH = [RTT_ROOT + '/components/external/lzo']
+
+group = DefineGroup('lzo', src, depend = ['RT_USING_LZO'], CPPPATH = CPPPATH)
+
+Return('group')

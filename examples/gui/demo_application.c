@@ -94,19 +94,25 @@ static void application_entry(void *parameter)
     demo_view_slider();
     demo_view_notebook();
     demo_view_mywidget();
-    demo_view_edit();
+    demo_plot();
+
+#if defined(RTGUI_USING_DFS_FILERW)
+	demo_view_edit();
+	demo_view_bmp();
+#endif
+
 #if 0
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
     demo_view_image();
 #endif
 #ifdef RT_USING_MODULE
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
     demo_view_module();
 #endif
 #endif
     demo_listview_view();
     demo_listview_icon_view();
-#if defined(RTGUI_USING_DFS_FILERW) || defined(RTGUI_USING_STDIO_FILERW)
+#if defined(RTGUI_USING_DFS_FILERW)
     demo_fn_view();
 #endif
 #endif

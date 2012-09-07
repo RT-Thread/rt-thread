@@ -146,9 +146,9 @@ rt_err_t rtgui_topwin_add(struct rtgui_event_win_create* event)
 		if (!(topwin->flag & WINTITLE_NO)) rect.y1 -= WINTITLE_HEIGHT;
 
 #ifdef RTGUI_USING_SMALL_SIZE
-		topwin->title = rtgui_wintitle_create(event->wid->title);
+		topwin->title = rtgui_wintitle_create(topwin->wid, event->wid->title);
 #else
-		topwin->title = rtgui_wintitle_create((const char*)event->title);
+		topwin->title = rtgui_wintitle_create(topwin->wid, (const char*)event->title);
 #endif
 		rtgui_widget_set_rect(RTGUI_WIDGET(topwin->title), &rect);
 

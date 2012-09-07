@@ -34,7 +34,9 @@ struct rtgui_image_engine rtgui_image_hdc_engine =
 	rtgui_image_hdc_check,
 	rtgui_image_hdc_load,
 	rtgui_image_hdc_unload,
-	rtgui_image_hdc_blit
+	rtgui_image_hdc_blit,
+	RT_NULL,
+	RT_NULL
 };
 
 const struct rtgui_image_engine rtgui_image_hdcmm_engine =
@@ -44,7 +46,9 @@ const struct rtgui_image_engine rtgui_image_hdcmm_engine =
 	RT_NULL,
 	RT_NULL,
 	RT_NULL,
-	rtgui_image_hdcmm_blit
+	rtgui_image_hdcmm_blit,
+	RT_NULL,
+	RT_NULL
 };
 
 static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw* file)

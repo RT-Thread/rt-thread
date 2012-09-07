@@ -16,12 +16,14 @@
 #include <rtgui/widgets/button.h>
 #include <rtgui/widgets/window.h>
 
+static rt_bool_t rtgui_button_onunfocus(struct rtgui_object* object, rtgui_event_t* event);
+
 static void _rtgui_button_constructor(rtgui_button_t *button)
 {
 	/* init widget and set event handler */
 	RTGUI_WIDGET(button)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 	rtgui_object_set_event_handler(RTGUI_OBJECT(button), rtgui_button_event_handler);
-
+	rtgui_widget_set_onunfocus(RTGUI_WIDGET(button), rtgui_button_onunfocus);
 	/* un-press button */
 	button->flag = 0;
 
@@ -259,3 +261,31 @@ void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func)
 }
 RTM_EXPORT(rtgui_button_set_onbutton);
 
+static rt_bool_t rtgui_button_onunfocus(struct rtgui_object* object, rtgui_event_t* event)
+{
+	rtgui_rect_t rect;
+	rtgui_widget_t *widget;
+	struct rtgui_dc *dc;
+
+	RT_ASSERT(object);
+	widget = RTGUI_WIDGET(object);
+
+	dc = rtgui_dc_begin_drawing(widget);
+	if(dc == RT_NULL) return RT_FALSE;
+	
+	rtgui_widget_get_rect(widget, &rect);
+
+	if(!RTGUI_WIDGET_IS_FOCUSED(widget))
+	{
+		/* only clear focus rect */
+		rtgui_color_t color;
+		rtgui_rect_inflate(&rect, -2);
+		color = RTGUI_DC_FC(dc);
+		RTGUI_DC_FC(dc) = RTGUI_DC_BC(dc);
+		rtgui_dc_draw_focus_rect(dc, &rect);
+		RTGUI_DC_FC(dc) = color;
+	}
+
+	rtgui_dc_end_drawing(dc);
+	return RT_TRUE;
+}

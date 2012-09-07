@@ -111,16 +111,6 @@ struct rtgui_widget
 	/* call back */
 	rt_bool_t (*on_focus_in)	(struct rtgui_object* widget, struct rtgui_event* event);
 	rt_bool_t (*on_focus_out)	(struct rtgui_object* widget, struct rtgui_event* event);
-	/* will be called just before the widget is shown. You can setup your
-	 * widget in this call back. It's return value is ignored. The @param event
-	 * will always be RT_NULL
-	 */
-	rt_bool_t (*on_show)        (struct rtgui_object* widget, struct rtgui_event* event);
-	/* will be called just before the widget is hiden. You can setup your
-	 * widget in this call back. It's return value is ignored. The @param event
-	 * will always be RT_NULL
-	 */
-	rt_bool_t (*on_hide)        (struct rtgui_object* widget, struct rtgui_event* event);
 #ifndef RTGUI_USING_SMALL_SIZE
 	rt_bool_t (*on_draw)		(struct rtgui_object* widget, struct rtgui_event* event);
 	rt_bool_t (*on_mouseclick)	(struct rtgui_object* widget, struct rtgui_event* event);
@@ -146,8 +136,6 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget);
 /* event handler for each command */
 void rtgui_widget_set_onfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onunfocus(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
-void rtgui_widget_set_onshow(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
-void rtgui_widget_set_onhide(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 #ifndef RTGUI_USING_SMALL_SIZE
 void rtgui_widget_set_ondraw(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onmouseclick(rtgui_widget_t* widget, rtgui_event_handler_ptr handler);

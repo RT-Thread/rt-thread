@@ -383,7 +383,7 @@ void rtgui_notebook_add(struct rtgui_notebook* notebook, const char* label, stru
         rtgui_widget_hide(child);
 
 	if (RTGUI_WIDGET(notebook)->toplevel != RT_NULL &&
-		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(notebook)->toplevel))
+		RTGUI_IS_WIN(RTGUI_WIDGET(notebook)->toplevel))
 	{
 		struct rtgui_event_update_toplvl eup;
 		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
@@ -421,7 +421,7 @@ void rtgui_notebook_add_image(struct rtgui_notebook* notebook, const char* label
 		rtgui_widget_hide(child);
 
 	if (RTGUI_WIDGET(notebook)->toplevel != RT_NULL &&
-		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(notebook)->toplevel))
+		RTGUI_IS_WIN(RTGUI_WIDGET(notebook)->toplevel))
 	{
 		struct rtgui_event_update_toplvl eup;
 		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
@@ -538,6 +538,7 @@ void rtgui_notebook_set_current_by_index(struct rtgui_notebook* notebook, rt_uin
 		notebook->current = index;
 		widget = notebook->childs[notebook->current].widget;
 		rtgui_widget_show(widget);
+        rtgui_widget_update_clip(widget);
 		rtgui_widget_update(widget);
 		rtgui_widget_focus(widget);
 	}

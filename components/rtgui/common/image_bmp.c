@@ -46,7 +46,9 @@ static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw *file);
 static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_filerw *file, rt_bool_t load);
 static void rtgui_image_bmp_unload(struct rtgui_image *image);
 static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc, struct rtgui_rect *rect);
-
+static struct rtgui_image* rtgui_image_bmp_zoom(struct rtgui_image* image, 
+												float scalew, float scaleh, rt_uint32_t mode);
+static struct rtgui_image* rtgui_image_bmp_rotate(struct rtgui_image* image, float angle);
 
 struct rtgui_image_engine rtgui_image_bmp_engine =
 {
@@ -55,7 +57,9 @@ struct rtgui_image_engine rtgui_image_bmp_engine =
     rtgui_image_bmp_check,
     rtgui_image_bmp_load,
     rtgui_image_bmp_unload,
-    rtgui_image_bmp_blit
+    rtgui_image_bmp_blit,
+	rtgui_image_bmp_zoom,
+	rtgui_image_bmp_rotate
 };
 
 static rt_bool_t rtgui_image_bmp_check(struct rtgui_filerw *file)
@@ -289,8 +293,8 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_fi
         bmp->pixels = RT_NULL;
         bmp->filerw = file;
 
-        image->w = bmp->w >> bmp->scale;
-        image->h = bmp->h >> bmp->scale;
+        image->w = (rt_uint16_t)bmp->w >> bmp->scale;
+        image->h = (rt_uint16_t)bmp->h >> bmp->scale;
         image->engine = &rtgui_image_bmp_engine;
         image->data = bmp;
 
@@ -367,8 +371,8 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_fi
                     rt_kprintf("\r%lu%%", y * 100UL / image->h);
 
                     /* Read data to buffer */
-                    readLength = (BMP_WORKING_BUFFER_SIZE > (bmp->pitch - readIndex)) ? \
-                                 (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
+                    readLength = (BMP_WORKING_BUFFER_SIZE > ((rt_uint16_t)bmp->pitch - readIndex)) ? \
+                                 ((rt_uint16_t)bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
                     if (rtgui_filerw_read(file, (void *)wrkBuffer, 1, readLength) != readLength)
                     {
                         rt_kprintf("BMP err: read failed\n");
@@ -626,8 +630,8 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
                     rt_kprintf("\r%lu%%", y * 100UL / h);
 
                     /* Read data to buffer */
-                    readLength = (BMP_WORKING_BUFFER_SIZE > (bmp->pitch - readIndex)) ? \
-                                 (bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
+                    readLength = (BMP_WORKING_BUFFER_SIZE > ((rt_uint16_t)bmp->pitch - readIndex)) ? \
+                                 ((rt_uint16_t)bmp->pitch - readIndex) : BMP_WORKING_BUFFER_SIZE;
                     if (rtgui_filerw_read(bmp->filerw, (void *)wrkBuffer, 1, readLength) != readLength)
                     {
                         rt_kprintf("BMP err: read failed\n");
@@ -863,7 +867,7 @@ void rtgui_image_bmp_header_cfg(struct rtgui_image_bmp_header *bhr, rt_int32_t w
 		bhr->bfOffBits += 12;
 	}
 }
-
+#ifdef RTGUI_USING_DFS_FILERW
 #define WRITE_CLUSTER_SIZE	2048
 void bmp_align_write(struct rtgui_filerw *file, char *dest, char *src, rt_int32_t len, rt_int32_t *count)
 {
@@ -1003,6 +1007,292 @@ void screenshot(const char *filename)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(screenshot, usage: screenshot(filename));
 #endif
+#endif
+/*
+* image zoom in, zoom out interface
+* Support 16/24 bits format image
+*/
+static struct rtgui_image* rtgui_image_bmp_zoom(struct rtgui_image* image, 
+												float scalew, float scaleh, rt_uint32_t mode)  
+{ 
+	struct rtgui_image *d_img;
+	struct rtgui_image_bmp *bmp, *d_bmp;
+	int bitcount, nbytes, i, j;
+	int sw, sh, dw, dh;
+	int dest_buff_size;
+	int src_line_size, dest_line_size;
+	char *src_buf;
+	char *des_buf;  
+
+	bmp = (struct rtgui_image_bmp*)image->data;
+	src_buf = bmp->pixels;
+	sw = bmp->w;
+	sh = bmp->h;
+	bitcount = bmp->bit_per_pixel;
+	if(bitcount != 16 && bitcount != 24)
+	{
+		rt_kprintf("Does not support %d bits format\n", bitcount);
+		return RT_NULL;
+	}
+	nbytes = bitcount / 8;
+	src_line_size = sw * nbytes;
+
+	dw = (int)(sw / scalew);
+	dh = (int)(sh / scaleh);
+
+	d_img = rt_malloc(sizeof(struct rtgui_image));
+	if(d_img == RT_NULL) 
+	{
+		rt_kprintf("Not enough memory allocation IMG!\n");	
+		return RT_NULL;
+	}
+	d_img->w = dw;
+	d_img->h = dh;
+	d_img->engine = &rtgui_image_bmp_engine;
+	d_img->palette = RT_NULL;
+
+	/* config dest bmp data */
+	dest_line_size = ((dw * bitcount + (bitcount-1)) / bitcount) * nbytes;
+	dest_buff_size = dest_line_size * dh;
+	d_bmp = rt_malloc(sizeof(struct rtgui_image_bmp));
+	if(d_bmp == RT_NULL)
+	{
+		rt_free(d_img);	
+		rt_kprintf("Not enough memory allocation BMP!\n");
+		return RT_NULL;
+	}
+
+	d_bmp->w = dw;
+	d_bmp->h = dh;
+	d_bmp->bit_per_pixel = bitcount;
+	d_bmp->pixel_offset = 54; /* insignificant parameter */
+	d_bmp->filerw = RT_NULL;
+	d_bmp->is_loaded = RT_TRUE; /* Don't want to loading */
+	d_bmp->pitch = d_bmp->w * nbytes;
+	d_bmp->pad = ((d_bmp->pitch % 4) ? (4 - (d_bmp->pitch%4)) : 0);
+	d_bmp->scale = 0;
+	d_bmp->pixels = rt_malloc(dest_buff_size);
+	if(d_bmp->pixels == RT_NULL) 
+	{
+		rt_free(d_img);
+		rt_free(d_bmp);
+		rt_kprintf("Not enough memory allocation BMP data!\n");
+		return RT_NULL;
+	}
+	des_buf = d_bmp->pixels;
+
+	if (mode == RTGUI_IMG_ZOOM_NEAREST) 
+	{ 
+		for (i = 0; i < dh; i++) 
+		{  
+			int src_th = (int)(scaleh * i + 0.5); 
+			for (j = 0; j < dw; j++) 
+			{ 
+				int src_tw = (int)(scalew * j + 0.5);                             
+				rt_memcpy (&des_buf[i * dest_line_size] + j * nbytes,
+					&src_buf[src_th * src_line_size] + src_tw * nbytes,
+					nbytes);             
+			} 
+		}     
+	} 
+	else if (mode == RTGUI_IMG_ZOOM_BILINEAR)
+	{ 
+		/* 
+		** known: (i,j), (i+1,j), (i,j+1), (i+1,j+1), u, v
+		** float coord: (i+u, j+v)
+		** f(i+u,j+v) = (1-u)(1-v)f(i,j) + (1-u)vf(i,j+1) + u(1-v)f(i+1,j) + uvf(i+1,j+1)
+		*/
+		for (i = 0; i < dh; i++) 
+		{ 
+			int y = (int)(scaleh * i);  
+			float u = (float)(scaleh * i - y);
+			unsigned char c1, c2, c3, c4;
+			for (j = 0; j < dw; j++) 
+			{ 
+				int x = (int)(scalew * j);
+				float v = (float)(scalew * j - x);
+				if(bitcount == 16)
+				{	/* Each color component is calculated separately */
+					rt_uint32_t cc1,cc2,cc3,cc4;
+					unsigned char r, g, b;
+					cc1 = rtgui_color_from_565p(*(rt_uint16_t*)(src_buf + 
+						src_line_size * y     + nbytes * x    ));
+					cc2 = rtgui_color_from_565p(*(rt_uint16_t*)(src_buf + 
+						src_line_size * y     + nbytes * (x+1)));
+					cc3 = rtgui_color_from_565p(*(rt_uint16_t*)(src_buf + 
+						src_line_size * (y+1) + nbytes * x    ));
+					cc4 = rtgui_color_from_565p(*(rt_uint16_t*)(src_buf + 
+						src_line_size * (y+1) + nbytes * (x+1)));
+
+					r = (unsigned char)((1-u)*(1-v)*(float)RTGUI_RGB_R(cc1) + 
+						(1-u)*v*(float)RTGUI_RGB_R(cc2) + u*(1-v)*(float)RTGUI_RGB_R(cc3) + 
+						u*v*(float)RTGUI_RGB_R(cc4));
+					g = (unsigned char)((1-u)*(1-v)*(float)RTGUI_RGB_G(cc1) + 
+						(1-u)*v*(float)RTGUI_RGB_G(cc2) + u*(1-v)*(float)RTGUI_RGB_G(cc3) + 
+						u*v*(float)RTGUI_RGB_G(cc4));
+					b = (unsigned char)((1-u)*(1-v)*(float)RTGUI_RGB_B(cc1) + 
+						(1-u)*v*(float)RTGUI_RGB_B(cc2) + u*(1-v)*(float)RTGUI_RGB_B(cc3) + 
+						u*v*(float)RTGUI_RGB_B(cc4));
+					
+					*(rt_uint16_t*)(des_buf + i * dest_line_size + j * nbytes) = 
+						rtgui_color_to_565p(RTGUI_RGB(r, g, b));
+				}
+				else if(bitcount == 24)
+				{
+					int k;
+					for (k = 0; k < 3; k++) 
+					{	/* 24 bits color is 3 bytes R:G:B */ 
+						c1 = (src_buf[src_line_size * y     + nbytes * x     + k]);
+						c2 = (src_buf[src_line_size * y     + nbytes * (x+1) + k]);
+						c3 = (src_buf[src_line_size * (y+1) + nbytes * x     + k]);
+						c4 = (src_buf[src_line_size * (y+1) + nbytes * (x+1) + k]);
+
+						des_buf[i * dest_line_size + j * nbytes + k] = (unsigned char)
+							((1-u)*(1-v)*(float)c1 + (1-u)*v*(float)c2 + u*(1-v)*(float)c3 + u*v*(float)c4);
+					} 
+				}
+			} 
+		} 
+	}
+	d_img->data = d_bmp;
+
+	return d_img;
+} 
+
+#include <math.h>
+#ifndef M_PI
+#define M_PI    3.14159265358979323846
+#endif
+
+/*
+* around a pos o, rotating pos p
+*/
+rt_inline rtgui_point_t _rotate_pos(rtgui_point_t o, rtgui_point_t p, float sina, float cosa)
+{
+	rtgui_point_t rp;
+	float dx, dy;
+	dx = p.x - o.x;
+	dy = p.y - o.y;
+
+	rp.x = (float)o.x + dx * cosa + dy * sina;
+	rp.y = (float)o.y + dy * cosa - dx * sina;
+
+	return rp;
+}
+
+/*
+* image rotate interface, rotate direction: clockwise
+* Support 16/24 bits format image
+*/
+static struct rtgui_image* rtgui_image_bmp_rotate(struct rtgui_image* image, float angle)
+{
+	float age, sina, cosa;
+	rtgui_point_t o, p, cp;
+	rtgui_rect_t rect;
+	struct rtgui_image *d_img;
+	struct rtgui_image_bmp *bmp, *d_bmp;
+	int bitcount, nbytes, i, j;
+	int sw, sh, dw, dh;
+	int dest_buff_size;
+	int src_line_size, dest_line_size;
+	char *src_buf;
+	char *des_buf;  
+	/* rt_tick_t tick = rt_tick_get(); */
+
+	bmp = (struct rtgui_image_bmp*)image->data;
+	src_buf = bmp->pixels;
+	sw = bmp->w;
+	sh = bmp->h;
+	bitcount = bmp->bit_per_pixel;
+	if(bitcount != 16 && bitcount != 24)
+	{
+		rt_kprintf("Does not support %d bits format\n", bitcount);
+		return RT_NULL;
+	}
+	nbytes = bitcount / 8;
+	src_line_size = sw * nbytes;
+	
+	/* convert angle to radians */
+	age = angle * M_PI / 180.0;
+	sina = sin(age);
+	cosa = cos(age);
+
+	/* 
+	** known: a, b, angle;
+	** solve: aa = a*abs(cos(angle)) + b*abs(sin(angle));
+	** solve: bb = b*abs(cos(angle)) + a*abs(sin(angle));
+	*/   
+	dw = (int)(sw * fabs(cosa) + sh * fabs(sina));
+	dh = (int)(sh * fabs(cosa) + sw * fabs(sina));
+	rect.x1 = rect.y1 = 0;
+	rect.x2 = sw; rect.y2 = sh;
+
+	d_img = rt_malloc(sizeof(struct rtgui_image));
+	if(d_img == RT_NULL) 
+	{
+		rt_kprintf("Not enough memory allocation IMG!\n");	
+		return RT_NULL;
+	}
+	d_img->w = dw;
+	d_img->h = dh;
+	d_img->engine = &rtgui_image_bmp_engine;
+	d_img->palette = RT_NULL;
+
+	/* config dest bmp data */
+	dest_line_size = ((dw * bitcount + (bitcount-1)) / bitcount) * nbytes;
+	dest_buff_size = dest_line_size * dh;
+	d_bmp = rt_malloc(sizeof(struct rtgui_image_bmp));
+	if(d_bmp == RT_NULL)
+	{
+		rt_free(d_img);	
+		rt_kprintf("Not enough memory allocation BMP!\n");
+		return RT_NULL;
+	}
+
+	d_bmp->w = dw;
+	d_bmp->h = dh;
+	d_bmp->bit_per_pixel = bitcount;
+	d_bmp->pixel_offset = 54; /* insignificant parameter */
+	d_bmp->filerw = RT_NULL;
+	d_bmp->is_loaded = RT_TRUE; /* Don't want to loading */
+	d_bmp->pitch = d_bmp->w * nbytes;
+	d_bmp->pad = ((d_bmp->pitch % 4) ? (4 - (d_bmp->pitch%4)) : 0);
+	d_bmp->scale = 0;
+	d_bmp->pixels = rt_malloc(dest_buff_size);
+	if(d_bmp->pixels == RT_NULL) 
+	{
+		rt_free(d_img);
+		rt_free(d_bmp);
+		rt_kprintf("Not enough memory allocation BMP data!\n");
+		return RT_NULL;
+	}
+	des_buf = d_bmp->pixels;
+	/* use white fill empty pixel */
+	rt_memset(des_buf, 0xFF, dest_buff_size);
+	
+	o.x = dw>>1;
+	o.y = dh>>1;
+	if(bitcount == 16 || bitcount == 24)
+	{
+		for (i = 0; i < dh; i++) 
+		{
+			for (j = 0; j < dw; j++) 
+			{
+				p.x = j; p.y = i;
+				cp = _rotate_pos(o, p, sina, cosa);
+				cp.x -= (dw-sw)>>1;
+				cp.y -= (dh-sh)>>1;
+				if(rtgui_rect_contains_point(&rect, cp.x, cp.y) != RT_EOK)
+					continue;
+				rt_memcpy (&des_buf[dest_line_size * i] + nbytes * j,
+					&src_buf[src_line_size * cp.y] + nbytes * cp.x, nbytes); 
+			} 
+		}
+	}
+	d_img->data = d_bmp;
+	/* rt_kprintf("rotate use %d ticks\n", rt_tick_get()-tick); */
+	return d_img;
+}
 
 void rtgui_image_bmp_init()
 {

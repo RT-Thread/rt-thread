@@ -158,16 +158,16 @@ static void rtgui_bitmap_font_get_metrics(struct rtgui_font* font, const char* t
 	while (*text)
 	{
 		length = 0;
-		while (*(text + length) >= 0x80) length ++; /* it's not a ascii character */
+		while ((rt_uint8_t)*(text + length) >= 0x80) length ++; /* it's not a ascii character */
 		rect->x2 += (font->height/2) * length;
 		text += length;
 
 		length = 0;
-		while ((*(text + length) < 0x80) && *(text + length)) length ++;
+		while (((rt_uint8_t)*(text + length) < 0x80) && *(text + length)) length ++;
 		if (bmp_font->char_width != NULL)
 		{
 			/* get width for each character */
-			while (*text && (*text < 0x80))
+			while (*text && ((rt_uint8_t)*text < 0x80))
 			{
 				rect->x2 += bmp_font->char_width[*text - bmp_font->first_char];
 				text ++;

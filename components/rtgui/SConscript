@@ -59,7 +59,6 @@ widgets/staticline.c
 widgets/textbox.c
 widgets/listbox.c
 widgets/title.c
-widgets/toplevel.c
 widgets/notebook.c
 widgets/container.c
 widgets/list_view.c
@@ -69,6 +68,8 @@ widgets/window.c
 widgets/panel.c
 widgets/groupbox.c
 widgets/edit.c
+widgets/plot.c
+widgets/plot_curve.c
 """)
 
 # The set of source files associated with this SConscript file.

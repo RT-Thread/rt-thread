@@ -365,6 +365,7 @@ void rtgui_system_image_container_init(rt_bool_t load)
 	load_image = load;
 }
 
+#ifdef RTGUI_USING_DFS_FILERW
 rtgui_image_item_t* rtgui_image_container_get(const char* filename)
 {
 	struct rtgui_image_item* item;
@@ -394,6 +395,7 @@ rtgui_image_item_t* rtgui_image_container_get(const char* filename)
 
 	return item;
 }
+#endif
 
 rtgui_image_item_t* rtgui_image_container_get_memref(const char* type, const rt_uint8_t* memory, rt_uint32_t length)
 {

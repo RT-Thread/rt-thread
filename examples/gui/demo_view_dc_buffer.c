@@ -10,8 +10,6 @@
 #include <rtgui/widgets/slider.h>
 #include <rtgui/image.h>
 
-static rtgui_image_t *background;
-static struct rtgui_dc *dc_buffer;
 
 /*
  * view的事件处理函数
@@ -19,6 +17,7 @@ static struct rtgui_dc *dc_buffer;
 static rt_bool_t dc_buffer_event_handler(struct rtgui_object *object, rtgui_event_t *event)
 {
     struct rtgui_widget *widget = RTGUI_WIDGET(object);
+	struct rtgui_dc *dc_buffer;
 
     /* 仅对PAINT事件进行处理 */
     if (event->type == RTGUI_EVENT_PAINT)
@@ -31,7 +30,7 @@ static rt_bool_t dc_buffer_event_handler(struct rtgui_object *object, rtgui_even
          * 先绘图
          */
         rtgui_container_event_handler(object, event);
-
+		dc_buffer = (struct rtgui_dc*)widget->user_data;
         /* 获得控件所属的DC */
         dc = rtgui_dc_begin_drawing(widget);
         /* 如果不能正常获得DC，返回（如果控件或父控件是隐藏状态，DC是获取不成功的） */
@@ -61,6 +60,7 @@ static rt_bool_t dc_buffer_event_handler(struct rtgui_object *object, rtgui_even
 rtgui_container_t *demo_view_dc_buffer()
 {
     rtgui_container_t *view;
+	struct rtgui_dc *dc_buffer=RT_NULL;
 
     if (dc_buffer == RT_NULL)
     {
@@ -68,7 +68,7 @@ rtgui_container_t *demo_view_dc_buffer()
 
         /* 创建 DC Buffer，长 50，宽 50 */
         dc_buffer = rtgui_dc_buffer_create(50, 50);
-        RTGUI_DC_FC(dc_buffer) = blue;
+        RTGUI_DC_BC(dc_buffer) = blue;
         rtgui_dc_fill_rect(dc_buffer, &rect);
 
         RTGUI_DC_FC(dc_buffer) = red;
@@ -79,6 +79,7 @@ rtgui_container_t *demo_view_dc_buffer()
     if (view != RT_NULL)
         /* 设置成自己的事件处理函数 */
         rtgui_object_set_event_handler(RTGUI_OBJECT(view), dc_buffer_event_handler);
+	RTGUI_WIDGET(view)->user_data = (rt_uint32_t)dc_buffer;
 
     return view;
 }

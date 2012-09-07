@@ -48,7 +48,7 @@ rtgui_container_t *demo_view(const char *title)
     rtgui_widget_rect_to_device(RTGUI_WIDGET(container), &rect);
     rect.x1 += 5;
     rect.y1 += 5;
-    rect.x2 -= 5;
+    rect.x2 = rect.x1 + rt_strlen(title)*8;
     rect.y2 = rect.y1 + 20;
 
     /* 创建标题用的标签 */
@@ -57,9 +57,11 @@ rtgui_container_t *demo_view(const char *title)
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
     /* 添加标签到视图中 */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
-
-    rect.y1 += 20;
-    rect.y2 += 20;
+	
+	rtgui_widget_get_rect(RTGUI_WIDGET(container), &rect);
+	rtgui_widget_rect_to_device(RTGUI_WIDGET(container), &rect);
+    rect.y1 += 20 + 5;
+    rect.y2 = rect.y1 + 2;
     /* 创建一个水平的 staticline 线 */
     line = rtgui_staticline_create(RTGUI_HORIZONTAL);
     /* 设置静态线的位置信息 */

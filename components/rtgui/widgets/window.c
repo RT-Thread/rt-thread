@@ -23,6 +23,15 @@
 
 static void _rtgui_win_constructor(rtgui_win_t *win)
 {
+	/* set toplevel to self */
+    RTGUI_WIDGET(win)->toplevel = win;
+
+	/* init win property */
+	win->drawing = 0;
+
+	/* hide win default */
+	RTGUI_WIDGET_HIDE(win);
+
 	RTGUI_WIDGET(win)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 	win->parent_window = RT_NULL;
 	/* init window attribute */
@@ -71,6 +80,8 @@ static void _rtgui_win_destructor(rtgui_win_t* win)
 	/* release field */
 	if (win->title != RT_NULL)
 		rt_free(win->title);
+	/* release external clip info */
+	win->drawing = 0;
 }
 
 static rt_bool_t _rtgui_win_create_in_server(struct rtgui_win *win)
@@ -104,7 +115,7 @@ static rt_bool_t _rtgui_win_create_in_server(struct rtgui_win *win)
 }
 
 DEFINE_CLASS_TYPE(win, "win",
-	RTGUI_TOPLEVEL_TYPE,
+	RTGUI_CONTAINER_TYPE,
 	_rtgui_win_constructor,
 	_rtgui_win_destructor,
 	sizeof(struct rtgui_win));
@@ -121,7 +132,7 @@ rtgui_win_t* rtgui_win_create(struct rtgui_win* parent_window,
 	if (win == RT_NULL)
 		return RT_NULL;
 
-	/* set parent toplevel */
+	/* set parent window */
 	win->parent_window = parent_window;
 
 	/* set title, rect and style */
@@ -423,6 +434,24 @@ static rt_bool_t rtgui_win_ondraw(struct rtgui_win* win)
 	return RT_FALSE;
 }
 
+void rtgui_win_update_clip(struct rtgui_win* win)
+{
+	struct rtgui_container* cnt;
+	struct rtgui_list_node* node;
+
+	if (win == RT_NULL)
+		return;
+
+	/* update the clip info of each child */
+	cnt = RTGUI_CONTAINER(win);
+	rtgui_list_foreach(node, &(cnt->children))
+	{
+		rtgui_widget_t* child = rtgui_list_entry(node, rtgui_widget_t, sibling);
+
+		rtgui_widget_update_clip(child);
+	}
+}
+
 rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_event* event)
 {
 	struct rtgui_win* win;
@@ -507,6 +536,11 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		}
 		break;
 
+	case RTGUI_EVENT_CLIP_INFO:
+		/* update win clip */
+		rtgui_win_update_clip(win);
+		break;
+
 	case RTGUI_EVENT_PAINT:
 #ifndef RTGUI_USING_SMALL_SIZE
 		if (RTGUI_WIDGET(object)->on_draw != RT_NULL)
@@ -588,9 +622,22 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		}
 		break;
 
-	default:
-		/* call parent event handler */
-		return rtgui_toplevel_event_handler(object, event);
+	case RTGUI_EVENT_COMMAND:
+		if (rtgui_container_dispatch_event(RTGUI_CONTAINER(object), event) != RT_TRUE)
+		{
+#ifndef RTGUI_USING_SMALL_SIZE
+			if (RTGUI_WIDGET(object)->on_command != RT_NULL)
+			{
+				RTGUI_WIDGET(object)->on_command(object, event);
+			}
+#endif
+		}
+		else
+            return RT_TRUE;
+		break;
+
+	default :
+		return rtgui_container_event_handler(object, event);
 	}
 
 	return RT_FALSE;

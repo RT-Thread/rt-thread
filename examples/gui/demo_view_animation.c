@@ -61,6 +61,22 @@ void timeout(struct rtgui_timer *timer, void *parameter)
     rtgui_dc_end_drawing(dc);
 }
 
+static rt_bool_t animation_on_show(struct rtgui_object *object, struct rtgui_event *event)
+{
+    rt_kprintf("animation on show\n");
+    if (timer != RT_NULL)
+        rtgui_timer_start(timer);
+    return RT_TRUE;
+}
+
+static rt_bool_t animation_on_hide(struct rtgui_object *object, struct rtgui_event *event)
+{
+    rt_kprintf("animation on hide\n");
+    if (timer != RT_NULL)
+        rtgui_timer_stop(timer);
+    return RT_TRUE;
+}
+
 rt_bool_t animation_event_handler(struct rtgui_object *object, rtgui_event_t *event)
 {
     struct rtgui_widget *widget = RTGUI_WIDGET(object);
@@ -90,6 +106,16 @@ rt_bool_t animation_event_handler(struct rtgui_object *object, rtgui_event_t *ev
         /* 绘图完成 */
         rtgui_dc_end_drawing(dc);
     }
+    else if (event->type == RTGUI_EVENT_SHOW)
+    {
+        rtgui_container_event_handler(object, event);
+        animation_on_show(object, event);
+    }
+    else if (event->type == RTGUI_EVENT_HIDE)
+    {
+        rtgui_container_event_handler(object, event);
+        animation_on_hide(object, event);
+    }
     else
     {
         /* 调用默认的事件处理函数 */
@@ -97,22 +123,6 @@ rt_bool_t animation_event_handler(struct rtgui_object *object, rtgui_event_t *ev
     }
 
     return RT_FALSE;
-}
-
-static rt_bool_t animation_on_show(struct rtgui_object *object, struct rtgui_event *event)
-{
-    rt_kprintf("animation on show\n");
-    if (timer != RT_NULL)
-        rtgui_timer_start(timer);
-    return RT_TRUE;
-}
-
-static rt_bool_t animation_on_hide(struct rtgui_object *object, struct rtgui_event *event)
-{
-    rt_kprintf("animation on hide\n");
-    if (timer != RT_NULL)
-        rtgui_timer_stop(timer);
-    return RT_TRUE;
 }
 
 rtgui_container_t *demo_view_animation()
@@ -126,9 +136,6 @@ rtgui_container_t *demo_view_animation()
     rtgui_font_get_metrics(RTGUI_WIDGET_FONT(container), "飞线乱飞", &text_rect);
     rtgui_rect_moveto(&text_rect, 0, 45);
     timer = rtgui_timer_create(2, RT_TIMER_FLAG_PERIODIC, timeout, (void *)container);
-
-    rtgui_widget_set_onshow(RTGUI_WIDGET(container), animation_on_show);
-    rtgui_widget_set_onhide(RTGUI_WIDGET(container), animation_on_hide);
 
     return container;
 }

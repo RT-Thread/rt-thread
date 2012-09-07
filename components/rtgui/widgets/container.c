@@ -215,7 +215,7 @@ void rtgui_container_add_child(rtgui_container_t *container, rtgui_widget_t* chi
 
 	/* update children toplevel */
 	if (RTGUI_WIDGET(container)->toplevel != RT_NULL &&
-		RTGUI_IS_TOPLEVEL(RTGUI_WIDGET(container)->toplevel))
+		RTGUI_IS_WIN(RTGUI_WIDGET(container)->toplevel))
 	{
 		struct rtgui_event_update_toplvl eup;
 		RTGUI_EVENT_UPDATE_TOPLVL_INIT(&eup);
@@ -279,7 +279,7 @@ void rtgui_container_destroy_children(rtgui_container_t *container)
 	container->children.next = RT_NULL;
 
 	/* update widget clip */
-	rtgui_toplevel_update_clip(RTGUI_TOPLEVEL(RTGUI_WIDGET(container)->toplevel));
+	rtgui_win_update_clip(RTGUI_WIN(RTGUI_WIDGET(container)->toplevel));
 }
 RTM_EXPORT(rtgui_container_destroy_children);
 

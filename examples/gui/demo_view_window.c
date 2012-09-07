@@ -14,7 +14,7 @@
 
 static struct rtgui_timer *timer;
 static struct rtgui_label *label;
-static struct rtgui_win *msgbox = RT_NULL;
+static struct rtgui_win *autowin = RT_NULL;
 static char label_text[80];
 static rt_uint8_t cnt = 5;
 
@@ -92,7 +92,7 @@ void diag_close(struct rtgui_timer *timer, void *parameter)
     if (cnt == 0)
     {
         /* 超时，关闭对话框 */
-        rtgui_win_destroy(msgbox);
+        rtgui_win_destroy(autowin);
     }
 }
 
@@ -107,6 +107,7 @@ rt_bool_t auto_window_close(struct rtgui_object *object, struct rtgui_event *eve
 
         timer = RT_NULL;
     }
+    autowin = RT_NULL;
 
     return RT_TRUE;
 }
@@ -120,12 +121,12 @@ static void demo_autowin_onbutton(struct rtgui_object *object, rtgui_event_t *ev
     struct rtgui_rect rect = {50, 50, 200, 200};
 
     /* don't create the window twice */
-    if (msgbox)
+    if (autowin)
         return;
 
-    msgbox = rtgui_win_create(main_win, "Information",
+    autowin = rtgui_win_create(main_win, "Information",
                               &rect, RTGUI_WIN_STYLE_DEFAULT | RTGUI_WIN_STYLE_DESTROY_ON_CLOSE);
-    if (msgbox == RT_NULL)
+    if (autowin == RT_NULL)
         return;
 
     cnt = 5;
@@ -136,13 +137,13 @@ static void demo_autowin_onbutton(struct rtgui_object *object, rtgui_event_t *ev
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    rtgui_container_add_child(RTGUI_CONTAINER(msgbox),
+    rtgui_container_add_child(RTGUI_CONTAINER(autowin),
                               RTGUI_WIDGET(label));
 
     /* 设置关闭窗口时的动作 */
-    rtgui_win_set_onclose(msgbox, auto_window_close);
+    rtgui_win_set_onclose(autowin, auto_window_close);
 
-    rtgui_win_show(msgbox, RT_FALSE);
+    rtgui_win_show(autowin, RT_FALSE);
     /* 创建一个定时器 */
     timer = rtgui_timer_create(100, RT_TIMER_FLAG_PERIODIC, diag_close, RT_NULL);
     rtgui_timer_start(timer);

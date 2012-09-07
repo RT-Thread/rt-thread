@@ -21,6 +21,8 @@
 #define RTGUI_SLIDER_DEFAULT_MIN	0
 #define RTGUI_SLIDER_DEFAULT_MAX	100
 
+static rt_bool_t rtgui_slider_onunfocus(struct rtgui_object* object, rtgui_event_t* event);
+
 static void _rtgui_slider_constructor(rtgui_slider_t *slider)
 {
 	rtgui_rect_t rect = {0, 0, RTGUI_SLIDER_DEFAULT_WIDTH, RTGUI_SLIDER_DEFAULT_HEIGHT};
@@ -29,7 +31,7 @@ static void _rtgui_slider_constructor(rtgui_slider_t *slider)
 	RTGUI_WIDGET(slider)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 	rtgui_widget_set_rect(RTGUI_WIDGET(slider), &rect);
 	rtgui_object_set_event_handler(RTGUI_OBJECT(slider), rtgui_slider_event_handler);
-
+	rtgui_widget_set_onunfocus(RTGUI_WIDGET(slider), rtgui_slider_onunfocus);
 	/* set proper of control */
 	slider->min = RTGUI_SLIDER_DEFAULT_MIN;
 	slider->max = RTGUI_SLIDER_DEFAULT_MAX;
@@ -274,3 +276,29 @@ rt_size_t rtgui_slider_get_value(struct rtgui_slider* slider)
 }
 RTM_EXPORT(rtgui_slider_get_value);
 
+static rt_bool_t rtgui_slider_onunfocus(struct rtgui_object* object, rtgui_event_t* event)
+{
+	rtgui_rect_t rect;
+	rtgui_widget_t *widget;
+	struct rtgui_dc *dc;
+
+	RT_ASSERT(object);
+	widget = RTGUI_WIDGET(object);
+
+	dc = rtgui_dc_begin_drawing(widget);
+	if(dc == RT_NULL) return RT_FALSE;
+
+	rtgui_widget_get_rect(widget, &rect);
+
+	if(!RTGUI_WIDGET_IS_FOCUSED(widget))
+	{
+		/* only clear focus rect */
+		rtgui_color_t color = RTGUI_DC_FC(dc);
+		RTGUI_DC_FC(dc) = RTGUI_DC_BC(dc);
+		rtgui_dc_draw_focus_rect(dc, &rect);
+		RTGUI_DC_FC(dc) = color;
+	}
+
+	rtgui_dc_end_drawing(dc);
+	return RT_TRUE;
+}

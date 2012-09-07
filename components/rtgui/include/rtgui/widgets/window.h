@@ -18,7 +18,6 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/list.h>
 #include <rtgui/widgets/widget.h>
-#include <rtgui/widgets/toplevel.h>
 #include <rtgui/widgets/box.h>
 
 DECLARE_CLASS_TYPE(win);
@@ -67,8 +66,11 @@ struct rtgui_win_area;
 
 struct rtgui_win
 {
-	/* inherit from toplevel */
-	struct rtgui_toplevel parent;
+	/* inherit from container */
+	rtgui_container_t parent;
+
+	/* drawing count */
+	rt_base_t drawing;
 
     /* parent window. RT_NULL if the window is a top level window */
 	struct rtgui_win *parent_window;
@@ -134,6 +136,7 @@ void rtgui_win_move(struct rtgui_win* win, int x, int y);
 
 /* reset extent of window */
 void rtgui_win_set_rect(rtgui_win_t* win, rtgui_rect_t* rect);
+void rtgui_win_update_clip(struct rtgui_win* win);
 
 void rtgui_win_set_onactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);
 void rtgui_win_set_ondeactivate(rtgui_win_t* win, rtgui_event_handler_ptr handler);

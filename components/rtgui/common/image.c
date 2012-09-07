@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
  * 2012-01-24     onelife      add TJpgDec (Tiny JPEG Decompressor) support
+ * 2012-08-29     amsl         add Image zoom interface.
  */
 #include <rtthread.h>
 #include <rtgui/image.h>
@@ -315,3 +316,22 @@ void rtgui_image_get_rect(struct rtgui_image* image, struct rtgui_rect* rect)
 }
 RTM_EXPORT(rtgui_image_get_rect);
 
+rtgui_image_t* rtgui_image_zoom(rtgui_image_t* image, float scalew, float scaleh, rt_uint32_t mode)  
+{ 
+	if (image != RT_NULL && image->engine != RT_NULL)
+	{
+		return image->engine->image_zoom(image, scalew, scaleh, mode);
+	}		
+	return RT_NULL;
+} 
+RTM_EXPORT(rtgui_image_zoom);
+
+rtgui_image_t* rtgui_image_rotate(rtgui_image_t* image, float angle)
+{
+	if (image != RT_NULL && image->engine != RT_NULL)
+	{
+		return image->engine->image_rotate(image, angle);
+	}
+	return RT_NULL;
+}
+RTM_EXPORT(rtgui_image_rotate);
