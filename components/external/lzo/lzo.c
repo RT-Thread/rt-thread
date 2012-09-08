@@ -10,13 +10,22 @@
  */
 #include <rtthread.h>
 #include "minilzo.h"
-#include <rtgui/rtgui_config.h>
-#include <rtgui/filerw.h>
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #endif
 #define RT_USING_LZO
-#if defined(RT_USING_LZO) && defined(RTGUI_USING_DFS_FILERW)
+#if defined(RT_USING_LZO) && defined(RT_USING_DFS)
+
+#ifdef _WIN32
+#pragma warning(disable: 4996)
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
+#else
+#include <dfs_posix.h>
+#endif
 
 /* the worst of allocation */
 #define LZO1X_WORST(x) ( (x) + ((x)/16) + 64 + 3 ) 
@@ -47,7 +56,7 @@ char* parse_lzo_error_code(int error_code)
 int lzo(char *srcfile, char *destfile)
 {
 	int result;
-	struct rtgui_filerw *file;
+	int fd;
 	struct stat s;
 	lzo_bytep in;
 	lzo_bytep out;
@@ -62,14 +71,14 @@ int lzo(char *srcfile, char *destfile)
 	out = rt_malloc(LZO1X_WORST(in_len));
 	if (out == RT_NULL)	return -1;
 
-	file = rtgui_filerw_create_file(srcfile, "rb");
-	if(file == RT_NULL) 
+	fd = open(srcfile, O_RDONLY, 0);
+	if(fd < 0) 
 	{
 		result = -1;
 		goto _exit;
 	}
-	rtgui_filerw_read(file, in, in_len, 1); 
-	rtgui_filerw_close(file);
+	read(fd, in, in_len); 
+	close(fd);
 
 	result = lzo1x_1_compress(in, in_len, out, &out_len, wrkmem);
 	if(result != LZO_E_OK)
@@ -79,16 +88,16 @@ int lzo(char *srcfile, char *destfile)
 		goto _exit;
 	}
 
-	file = rtgui_filerw_create_file(destfile, "wb");
-	if(file == RT_NULL)
+	fd = open(destfile, O_WRONLY | O_BINARY | O_CREAT, 0);
+	if(fd < 0)
 	{
 		result = -1;
 		goto _exit;
 	}
 	
-	rtgui_filerw_write(file, &in_len, sizeof(lzo_uint), 1);	/* source file len */
-	rtgui_filerw_write(file, out, out_len, 1); 
-	rtgui_filerw_close(file);
+	write(fd, &in_len, sizeof(lzo_uint));	/* source file len */
+	write(fd, out, out_len); 
+	close(fd);
 	rt_kprintf("compress lzo ok!\n");
 	result = 0;
 
@@ -104,7 +113,7 @@ FINSH_FUNCTION_EXPORT(lzo, compress a file. usage:lzo(src, dest));
 int lzode(char *srcfile, char *destfile)
 {
 	int result;
-	struct rtgui_filerw *file;
+	int fd;
 	struct stat s;
 	lzo_bytep in=RT_NULL;
 	lzo_bytep out=RT_NULL;
@@ -114,18 +123,18 @@ int lzode(char *srcfile, char *destfile)
 	stat(srcfile, &s);
 	in_len = s.st_size; 
 	
-	file = rtgui_filerw_create_file(srcfile, "rb");
-	if(file == RT_NULL) return 0;
+	fd = open(srcfile, O_RDONLY, 0);
+	if(fd < 0) return 0;
 
-	rtgui_filerw_read(file, &out_len, sizeof(lzo_uint), 1); /* source file len */
+	read(fd, &out_len, sizeof(lzo_uint)); /* source file len */
 	in_len -= sizeof(lzo_uint);
 	in = rt_malloc(in_len); 
 	if (in == RT_NULL) return -1;
 	out = rt_malloc(out_len); 
 	if (out == RT_NULL)	return -1;
 
-	rtgui_filerw_read(file, in, in_len, 1); 
-	rtgui_filerw_close(file);
+	read(fd, in, in_len); 
+	close(fd);
 
 	result = lzo1x_decompress(in, in_len, out, &out_len, RT_NULL);
 	if(result != LZO_E_OK)
@@ -135,14 +144,14 @@ int lzode(char *srcfile, char *destfile)
 		goto _exit;
 	}
 
-	file = rtgui_filerw_create_file(destfile, "wb");
-	if(file == RT_NULL)
+	fd = open(destfile, O_WRONLY | O_BINARY | O_CREAT, 0);
+	if(fd < 0)
 	{
 		result = -1;
 		goto _exit;
 	}
-	rtgui_filerw_write(file, out, out_len, 1);
-	rtgui_filerw_close(file);
+	write(fd, out, out_len);
+	close(fd);
 
 	rt_kprintf("decompress lzo ok!\n");
 	result = 0;

@@ -183,6 +183,7 @@
 #define DFS_O_EXCL			0x0000200
 #define DFS_O_TRUNC			0x0001000
 #define DFS_O_APPEND		0x0002000
+#define DFS_O_BINARY		0x0008000
 #define DFS_O_DIRECTORY		0x0200000
 
 /* File flags */
