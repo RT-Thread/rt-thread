@@ -136,6 +136,13 @@ def PrepareModuleBuilding(env, root_directory):
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
+def GetConfigValue(name):
+    assert type(name) == str, 'GetConfigValue: only string parameter is valid'
+    try:
+        return BuildOptions[name]
+    except:
+        return ''
+
 def GetDepend(depend):
     building = True
     if type(depend) == type('str'):
