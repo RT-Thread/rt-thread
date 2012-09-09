@@ -57,7 +57,11 @@
 / Locale and Namespace Configurations
 /----------------------------------------------------------------------------*/
 
-#define _CODE_PAGE	936
+#ifdef RT_DFS_ELM_CODE_PAGE
+#    define _CODE_PAGE	RT_DFS_ELM_CODE_PAGE
+#else
+#    define _CODE_PAGE	936
+#endif
 /* The _CODE_PAGE specifies the OEM code page to be used on the target system.
 /  Incorrect setting of the code page can cause a file open failure.
 /

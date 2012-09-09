@@ -152,7 +152,19 @@ if GetDepend('RT_USING_DFS_YAFFS2'):
 
 if GetDepend('RT_USING_DFS_ELMFAT'):
     if GetDepend('RT_DFS_ELM_USE_LFN'):
-        elmfat += ['filesystems/elmfat/option/cc936.c']
+        if GetDepend('RT_DFS_ELM_CODE_PAGE_FILE'):
+            elmfat += ['filesystems/elmfat/option/ccfile.c']
+        else:
+            if GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 932:
+                elmfat += ['filesystems/elmfat/option/cc932.c']
+            elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 936:
+                elmfat += ['filesystems/elmfat/option/cc936.c']
+            elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 949:
+                elmfat += ['filesystems/elmfat/option/cc949.c']
+            elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 950:
+                elmfat += ['filesystems/elmfat/option/cc950.c']
+            else:
+                elmfat += ['filesystems/elmfat/option/ccsbcs.c']
     src_local = src_local + elmfat
 
 if GetDepend(['RT_USING_DFS_NFS', 'RT_USING_LWIP']):
