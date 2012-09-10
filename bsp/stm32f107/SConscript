@@ -1,19 +1,14 @@
-import rtconfig
+# for module compiling
+import os
 Import('RTT_ROOT')
-from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'stm32f10x_it.c']
-src_drv = ['usart.c', 'serial.c']
+cwd = str(Dir('#'))
+objs = []
+list = os.listdir(cwd)
 
-if GetDepend('RT_USING_DFS'):
-	src_drv += ['msd.c']
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-if GetDepend('RT_USING_LWIP'):
-	src_drv += ['stm32_eth.c']
-
-src = src_bsp + src_drv
-CPPPATH = [GetCurrentDir()]
-CPPDEFINES = []
-group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
-
-Return('group')
+Return('objs')

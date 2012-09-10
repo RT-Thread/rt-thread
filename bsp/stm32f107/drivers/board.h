@@ -16,6 +16,8 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include "stm32f10x.h"
+
 /* board configuration */
 // <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
 // 	<i>Default: 1
