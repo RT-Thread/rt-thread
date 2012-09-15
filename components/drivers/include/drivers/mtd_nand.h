@@ -25,15 +25,22 @@
 struct rt_mtd_nand_driver_ops;
 #define RT_MTD_NAND_DEVICE(device)	((struct rt_mtd_nand_device*)(device))
 
+#define RT_MTD_EOK		0
+#define RT_MTD_EECC		1
+#define RT_MTD_EBUSY	2
+#define RT_MTD_EIO		3
+#define RT_MTD_ENOMEM	4
+
 struct rt_mtd_nand_device
 {
 	struct rt_device parent;
 
 	rt_uint32_t page_size;			/* The Page size in the flash */
-	rt_uint32_t block_size;			/* The Block size in the flash */
-
-	rt_uint16_t oob_size;			/* Out of bank size */
-	rt_uint16_t reserve;
+	rt_uint16_t oob_size;			/* Out of bank size */	
+	rt_uint16_t oob_free;           /* the free area in oob that flash driver not use */
+	
+	rt_uint32_t pages_per_block;    /* The number of page a block */
+    rt_uint16_t block_total;
 
 	rt_uint32_t block_start;		/* The start of available block*/
 	rt_uint32_t block_end;			/* The end of available block */
@@ -55,6 +62,7 @@ struct rt_mtd_nand_driver_ops
                            rt_off_t page,
                            const rt_uint8_t * data, rt_uint32_t data_len,
                            const rt_uint8_t * spare, rt_uint32_t spare_len);
+	rt_err_t (*move_page) (struct rt_mtd_nand_device *device, rt_off_t src_page, rt_off_t dst_page);						   
 
 	rt_err_t (*erase_block)(struct rt_mtd_nand_device* device, rt_uint32_t block);
 	rt_err_t (*check_block)(struct rt_mtd_nand_device* device, rt_uint32_t block);
@@ -84,6 +92,12 @@ rt_inline rt_err_t rt_mtd_nand_write(
 	const rt_uint8_t * spare, rt_uint32_t spare_len)
 {
 	return device->ops->write_page(device, page, data, data_len, spare, spare_len);
+}
+
+rt_inline rt_err_t rt_mtd_nand_move_page(struct rt_mtd_nand_device* device,
+										 rt_off_t src_page, rt_off_t dst_page)
+{
+	return device->ops->move_page(device, src_page, dst_page);
 }
 
 rt_inline rt_err_t rt_mtd_nand_erase_block(struct rt_mtd_nand_device* device, rt_uint32_t block)
