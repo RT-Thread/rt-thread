@@ -309,6 +309,9 @@ int dfs_elm_open(struct dfs_fd *file)
 		fd = (FIL *)rt_malloc(sizeof(FIL));
 		if (fd == RT_NULL)
 		{
+#if _VOLUMES > 1
+			rt_free(drivers_fn);
+#endif
 			return -DFS_STATUS_ENOMEM;
 		}
 
