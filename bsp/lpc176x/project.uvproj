@@ -61,6 +61,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -346,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\finsh;..\..\components\init;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;applications;drivers</IncludePath>
+              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\finsh;..\..\components\init;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;CMSIS\CM3\DeviceSupport\NXP\LPC17xx;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -376,7 +378,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
+            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -406,11 +408,6 @@
         <Group>
           <GroupName>CMSIS</GroupName>
           <Files>
-            <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
-            </File>
             <File>
               <FileName>system_LPC17xx.c</FileName>
               <FileType>1</FileType>
@@ -627,9 +624,9 @@
           <GroupName>Components</GroupName>
           <Files>
             <File>
-              <FileName>components_init.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\init\components_init.c</FilePath>
+              <FilePath>..\..\components\init\components.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
@@ -10,7 +12,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>20</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -27,7 +29,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>18</version>
+          <version>19</version>
           <state>37</state>
         </option>
         <option>
@@ -36,8 +38,8 @@
         </option>
         <option>
           <name>Input variant</name>
-          <version>1</version>
-          <state>0</state>
+          <version>3</version>
+          <state>1</state>
         </option>
         <option>
           <name>Input description</name>
@@ -45,8 +47,8 @@
         </option>
         <option>
           <name>Output variant</name>
-          <version>0</version>
-          <state>0</state>
+          <version>2</version>
+          <state>1</state>
         </option>
         <option>
           <name>Output description</name>
@@ -85,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.10.3.52260</state>
+          <state>6.30.6.53380</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -135,13 +137,21 @@
         </option>
         <option>
           <name>GFPUCoreSlave</name>
-          <version>18</version>
+          <version>19</version>
           <state>37</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>18</version>
+          <version>19</version>
           <state>37</state>
+        </option>
+        <option>
+          <name>OGUseCmsis</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGUseCmsisDspLib</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -149,12 +159,12 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>26</version>
+        <version>28</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -198,15 +208,15 @@
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagWarning</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagError</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCObjPrefix</name>
@@ -235,7 +245,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -275,7 +285,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraOverride</name>
@@ -283,12 +293,12 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state />
-          <state>$PROJ_DIR$\..\..\components\init</state>
+          <state></state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\ipv4</state>
           <state>$PROJ_DIR$\applications</state>
@@ -296,7 +306,7 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\CMSIS\CM3\CoreSupport</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\netif</state>
         </option>
@@ -380,11 +390,15 @@
           <state>1</state>
         </option>
         <option>
-          <name>IccRelaxedFpPrecision</name>
+          <name>IccCppInlineSemantics</name>
           <state>0</state>
         </option>
         <option>
-          <name>IccCppInlineSemantics</name>
+          <name>IccCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccFloatSemantics</name>
           <state>0</state>
         </option>
       </data>
@@ -423,15 +437,15 @@
         </option>
         <option>
           <name>AWarnOne</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange1</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>ADebug</name>
@@ -443,7 +457,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -539,7 +553,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -547,7 +561,7 @@
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state />
+          <state></state>
         </option>
       </data>
     </settings>
@@ -585,28 +599,28 @@
       <name>CUSTOM</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <extensions />
-        <cmdline />
+        <extensions></extensions>
+        <cmdline></cmdline>
       </data>
     </settings>
     <settings>
       <name>BICOMP</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
     <settings>
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild />
-        <postbuild />
+        <prebuild></prebuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>11</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -631,31 +645,31 @@
         </option>
         <option>
           <name>IlinkKeepSymbols</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySegment</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryAlign</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -691,7 +705,7 @@
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkEnableRemarks</name>
@@ -699,19 +713,19 @@
         </option>
         <option>
           <name>IlinkSuppressDiags</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsRem</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsWarn</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsErr</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkWarningsAreErrors</name>
@@ -723,7 +737,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -735,7 +749,7 @@
         </option>
         <option>
           <name>IlinkAdditionalLibs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -852,6 +866,34 @@
           <name>IlinkOptExceptionsForce</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptMergeDuplSections</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptUseVfe</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptForceVfe</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackAnalysisEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackControlFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkStackCallGraphFile</name>
+          <state></state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -863,7 +905,7 @@
         <debug>1</debug>
         <option>
           <name>IarchiveInputs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IarchiveOverride</name>
@@ -878,7 +920,7 @@
     <settings>
       <name>BILINK</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
   </configuration>
   <configuration>
@@ -891,7 +933,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>20</version>
+        <version>21</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -908,7 +950,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>18</version>
+          <version>19</version>
           <state>0</state>
         </option>
         <option>
@@ -917,21 +959,21 @@
         </option>
         <option>
           <name>Input variant</name>
-          <version>1</version>
-          <state>0</state>
+          <version>3</version>
+          <state>1</state>
         </option>
         <option>
           <name>Input description</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>Output variant</name>
-          <version>0</version>
-          <state>0</state>
+          <version>2</version>
+          <state>1</state>
         </option>
         <option>
           <name>Output description</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -958,7 +1000,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -966,7 +1008,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -978,7 +1020,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1012,17 +1054,25 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GFPUCoreSlave</name>
-          <version>18</version>
+          <version>19</version>
           <state>1</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>18</version>
+          <version>19</version>
           <state>1</state>
+        </option>
+        <option>
+          <name>OGUseCmsis</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGUseCmsisDspLib</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1030,7 +1080,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>26</version>
+        <version>28</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1075,19 +1125,19 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagWarning</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagError</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCObjPrefix</name>
@@ -1116,7 +1166,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -1148,7 +1198,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1156,7 +1206,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraOverride</name>
@@ -1164,12 +1214,12 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state />
-          <state>$PROJ_DIR$\..\..\components\init</state>
+          <state></state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\ipv4</state>
           <state>$PROJ_DIR$\applications</state>
@@ -1177,7 +1227,7 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\CMSIS\CM3\CoreSupport</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\src\include\netif</state>
         </option>
@@ -1261,11 +1311,15 @@
           <state>1</state>
         </option>
         <option>
-          <name>IccRelaxedFpPrecision</name>
+          <name>IccCppInlineSemantics</name>
           <state>0</state>
         </option>
         <option>
-          <name>IccCppInlineSemantics</name>
+          <name>IccCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccFloatSemantics</name>
           <state>0</state>
         </option>
       </data>
@@ -1304,15 +1358,15 @@
         </option>
         <option>
           <name>AWarnOne</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange1</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>ADebug</name>
@@ -1324,7 +1378,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -1400,7 +1454,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1420,7 +1474,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1428,7 +1482,7 @@
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state />
+          <state></state>
         </option>
       </data>
     </settings>
@@ -1450,7 +1504,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1466,28 +1520,28 @@
       <name>CUSTOM</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <extensions />
-        <cmdline />
+        <extensions></extensions>
+        <cmdline></cmdline>
       </data>
     </settings>
     <settings>
       <name>BICOMP</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
     <settings>
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild />
-        <postbuild />
+        <prebuild></prebuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>11</version>
+        <version>14</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1512,31 +1566,31 @@
         </option>
         <option>
           <name>IlinkKeepSymbols</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySegment</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryAlign</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -1572,7 +1626,7 @@
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkEnableRemarks</name>
@@ -1580,19 +1634,19 @@
         </option>
         <option>
           <name>IlinkSuppressDiags</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsRem</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsWarn</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsErr</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkWarningsAreErrors</name>
@@ -1604,7 +1658,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -1616,7 +1670,7 @@
         </option>
         <option>
           <name>IlinkAdditionalLibs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1628,7 +1682,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>DoFill</name>
@@ -1733,6 +1787,34 @@
           <name>IlinkOptExceptionsForce</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptMergeDuplSections</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptUseVfe</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptForceVfe</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackAnalysisEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackControlFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkStackCallGraphFile</name>
+          <state></state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1744,7 +1826,7 @@
         <debug>0</debug>
         <option>
           <name>IarchiveInputs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IarchiveOverride</name>
@@ -1759,7 +1841,7 @@
     <settings>
       <name>BILINK</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
   </configuration>
   <group>
@@ -1777,13 +1859,34 @@
   <group>
     <name>CMSIS</name>
     <file>
-      <name>$PROJ_DIR$\CMSIS\CM3\CoreSupport\core_cm3.c</name>
+      <name>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx\startup\iar\startup_LPC17xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx\system_LPC17xx.c</name>
     </file>
+  </group>
+  <group>
+    <name>Components</name>
     <file>
-      <name>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx\startup\iar\startup_LPC17xx.s</name>
+      <name>$PROJ_DIR$\..\..\components\init\components.c</name>
+    </file>
+  </group>
+  <group>
+    <name>CORTEX-M3</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
   </group>
   <group>
@@ -1802,66 +1905,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\uart.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CORTEX-M3</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
   </group>
   <group>
@@ -1907,9 +1950,45 @@
     </file>
   </group>
   <group>
-    <name>Components</name>
+    <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\init\components_init.c</name>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
     </file>
   </group>
   <group>
@@ -1921,25 +2000,7 @@
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\api_msg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\err.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netdb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netifapi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\sockets.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\tcpip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\arch\sys_arch.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\autoip.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\def.c</name>
@@ -1951,43 +2012,13 @@
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\dns.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\init.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\err.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\memp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\netif\etharp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\netif.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\pbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\raw.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\stats.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\sys.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp_in.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp_out.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\timers.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\udp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\autoip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\netif\ethernetif.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\icmp.c</name>
@@ -2002,6 +2033,9 @@
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\inet_chksum.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\init.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\ip.c</name>
     </file>
     <file>
@@ -2011,13 +2045,60 @@
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\ipv4\ip_frag.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\netif\etharp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\memp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip\src\netif\ethernetif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netbuf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netdb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\netif.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\netifapi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\pbuf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\raw.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\src\netif\slipif.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\sockets.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\stats.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\sys.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\arch\sys_arch.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp_in.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\tcp_out.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\api\tcpip.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\timers.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip\src\core\udp.c</name>
+    </file>
   </group>
 </project>
+
+
