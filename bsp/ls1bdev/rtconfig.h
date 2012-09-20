@@ -189,7 +189,7 @@
 // </section>
 
 // <section name="RT_USING_RTGUI" description="RTGUI, a graphic user interface" default="true" >
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
 // <integer name="RTGUI_NAME_MAX" description="Maximal size of RTGUI object name length" default="16" />
 #define RTGUI_NAME_MAX	16
 // <bool name="RTGUI_USING_FONT16" description="Support 16 weight font" default="true" />

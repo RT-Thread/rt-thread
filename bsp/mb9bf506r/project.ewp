@@ -1857,7 +1857,7 @@
   <group>
     <name>Components</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\init\components_init.c</name>
+      <name>$PROJ_DIR$\..\..\components\init\components.c</name>
     </file>
   </group>
   <group>

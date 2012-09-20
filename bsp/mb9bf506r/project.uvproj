@@ -624,9 +624,9 @@
           <GroupName>Components</GroupName>
           <Files>
             <File>
-              <FileName>components_init.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\init\components_init.c</FilePath>
+              <FilePath>..\..\components\init\components.c</FilePath>
             </File>
           </Files>
         </Group>

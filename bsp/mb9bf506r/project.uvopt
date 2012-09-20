@@ -797,8 +797,8 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\components\init\components_init.c</PathWithFileName>
-      <FilenameWithoutPath>components_init.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\components\init\components.c</PathWithFileName>
+      <FilenameWithoutPath>components.c</FilenameWithoutPath>
     </File>
   </Group>
 
