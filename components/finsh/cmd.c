@@ -376,7 +376,7 @@ static long _list_device(struct rt_list_node *list)
 {
     struct rt_device *device;
     struct rt_list_node *node;
-    const char *device_type_str[] =
+    char * const device_type_str[] =
     {
         "Character Device",
         "Block Device",

@@ -15,7 +15,7 @@
 
 u_char global_errno;
 
-static const char* finsh_error_string_table[] =
+static const char * finsh_error_string_table[] =
 {
     "No error",
 	"Invalid token",
