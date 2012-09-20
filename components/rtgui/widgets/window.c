@@ -493,13 +493,6 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		}
 
 		win->flag |= RTGUI_WIN_FLAG_ACTIVATE;
-#ifndef RTGUI_USING_SMALL_SIZE
-		if (RTGUI_WIDGET(object)->on_draw != RT_NULL)
-			RTGUI_WIDGET(object)->on_draw(object, event);
-		else
-#endif
-		rtgui_widget_update(RTGUI_WIDGET(win));
-
 		if (win->on_activate != RT_NULL)
 		{
 			win->on_activate(RTGUI_OBJECT(object), event);
@@ -522,13 +515,6 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object* object, struct rtgui_even
 		else
 		{
 			win->flag &= ~RTGUI_WIN_FLAG_ACTIVATE;
-#ifndef RTGUI_USING_SMALL_SIZE
-			if (RTGUI_WIDGET(object)->on_draw != RT_NULL)
-				RTGUI_WIDGET(object)->on_draw(object, event);
-			else
-#endif
-				rtgui_widget_update(RTGUI_WIDGET(win));
-
 			if (win->on_deactivate != RT_NULL)
 			{
 				win->on_deactivate(RTGUI_OBJECT(object), event);

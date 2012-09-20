@@ -485,22 +485,44 @@ rt_err_t rtgui_topwin_activate(struct rtgui_event_win_activate* event)
 	return rtgui_topwin_activate_topwin(topwin);
 }
 
+static void _rtgui_topwin_draw_tree(struct rtgui_topwin *topwin, struct rtgui_event_paint *epaint)
+{
+	struct rtgui_dlist_node *node;
+
+	if (topwin->title != RT_NULL)
+	{
+		rtgui_theme_draw_win(topwin);
+	}
+
+	epaint->wid = topwin->wid;
+	rtgui_send(topwin->tid, &(epaint->parent), sizeof(struct rtgui_event_paint));
+
+	rtgui_dlist_foreach(node, &topwin->child_list, prev)
+	{
+		if (!(get_topwin_from_list(node)->flag & WINTITLE_SHOWN))
+			return;
+		_rtgui_topwin_draw_tree(get_topwin_from_list(node), epaint);
+	}
+}
+
 rt_err_t rtgui_topwin_activate_topwin(struct rtgui_topwin* topwin)
 {
 	struct rtgui_topwin *old_focus_topwin;
+    struct rtgui_event_paint epaint;
 
 	RT_ASSERT(topwin != RT_NULL);
+
+    RTGUI_EVENT_PAINT_INIT(&epaint);
 
 	if (!(topwin->flag & WINTITLE_SHOWN))
 		return -RT_ERROR;
 
 	if (topwin->flag & WINTITLE_NOFOCUS)
 	{
-		/* just raise it, not affect others. */
-		_rtgui_topwin_raise_tree_from_root(topwin);
-
-		/* update clip info */
-		rtgui_topwin_update_clip();
+		/* just raise and show, not affect others. */
+        _rtgui_topwin_raise_tree_from_root(topwin);
+        rtgui_topwin_update_clip();
+        _rtgui_topwin_draw_tree(topwin, &epaint);
 		return RT_EOK;
 	}
 
@@ -513,7 +535,7 @@ rt_err_t rtgui_topwin_activate_topwin(struct rtgui_topwin* topwin)
 	RT_ASSERT(old_focus_topwin != topwin);
 
 	_rtgui_topwin_raise_tree_from_root(topwin);
-	/* update clip info */
+    /* clip before active the window, so we could get right boarder region. */
 	rtgui_topwin_update_clip();
 
 	if (old_focus_topwin != RT_NULL)
@@ -524,6 +546,8 @@ rt_err_t rtgui_topwin_activate_topwin(struct rtgui_topwin* topwin)
 	}
 
 	_rtgui_topwin_only_activate(topwin);
+
+    _rtgui_topwin_draw_tree(topwin, &epaint);
 
 	return RT_EOK;
 }
@@ -570,53 +594,10 @@ rt_inline void _rtgui_topwin_mark_shown(struct rtgui_topwin *topwin)
 	RTGUI_WIDGET_UNHIDE(topwin->wid);
 }
 
-static void _rtgui_topwin_draw_tree(struct rtgui_topwin *topwin, struct rtgui_event_paint *epaint)
-{
-	struct rtgui_dlist_node *node;
-
-	if (topwin->title != RT_NULL)
-	{
-		rtgui_theme_draw_win(topwin);
-	}
-
-	epaint->wid = topwin->wid;
-	rtgui_send(topwin->tid, &(epaint->parent), sizeof(struct rtgui_event_paint));
-
-	rtgui_dlist_foreach(node, &topwin->child_list, prev)
-	{
-		if (!(get_topwin_from_list(node)->flag & WINTITLE_SHOWN))
-			return;
-		_rtgui_topwin_draw_tree(get_topwin_from_list(node), epaint);
-	}
-}
-
-/* show the window tree. @param epaint can be initialized outside and reduce stack
- * usage. */
-static void _rtgui_topwin_show_tree(struct rtgui_topwin *topwin, struct rtgui_event_paint *epaint)
-{
-	RT_ASSERT(topwin != RT_NULL);
-	RT_ASSERT(epaint != RT_NULL);
-
-	_rtgui_topwin_raise_tree_from_root(topwin);
-	/* we have to mark the _all_ tree before update_clip because update_clip
-	 * will stop as hidden windows */
-	_rtgui_topwin_preorder_map(topwin, _rtgui_topwin_mark_shown);
-
-	// TODO: if all the window is shown already, there is no need to
-	// update_clip. But since we use peorder_map, it seems it's a bit difficult
-	// to tell whether @param topwin and it's children are all shown.
-	rtgui_topwin_update_clip();
-
-	_rtgui_topwin_draw_tree(topwin, epaint);
-}
-
 rt_err_t rtgui_topwin_show(struct rtgui_event_win* event)
 {
-	struct rtgui_topwin *topwin, *old_focus;
+	struct rtgui_topwin *topwin;
 	struct rtgui_win* wid = event->wid;
-	struct rtgui_event_paint epaint;
-
-	RTGUI_EVENT_PAINT_INIT(&epaint);
 
 	topwin = rtgui_topwin_search_in_list(wid, &_rtgui_topwin_list);
 	/* no such a window recorded */
@@ -633,15 +614,8 @@ rt_err_t rtgui_topwin_show(struct rtgui_event_win* event)
 		return -RT_ERROR;
 	}
 
-	old_focus = rtgui_topwin_get_focus();
-
-	_rtgui_topwin_show_tree(topwin, &epaint);
-
-	/* we don't want double clipping(bare rtgui_topwin_activate_win will clip),
-	 * so we have to do deactivate/activate manually. */
-	if (old_focus && old_focus != topwin)
-		_rtgui_topwin_deactivate(old_focus);
-	_rtgui_topwin_only_activate(topwin);
+    _rtgui_topwin_preorder_map(topwin, _rtgui_topwin_mark_shown);
+    rtgui_topwin_activate_topwin(topwin);
 
 	return RT_EOK;
 }
@@ -710,6 +684,8 @@ rt_err_t rtgui_topwin_hide(struct rtgui_event_win* event)
 	{
 		_rtgui_topwin_activate_next(topwin->flag);
 	}
+
+    topwin->flag &= ~WINTITLE_ACTIVATE;
 
 	return RT_EOK;
 }

@@ -214,11 +214,7 @@ static int parse_mode(const char *mode)
     switch (*mode)
 	{
     case 0: return f;
-#ifdef _WIN32
     case 'b': f|=O_BINARY;break;
-#else
-	case 'b': break;
-#endif
     case 'r': f=O_RDONLY; break;
     case 'w': f=O_WRONLY|O_CREAT|O_TRUNC; break;
     case 'a': f=O_WRONLY|O_CREAT|O_APPEND; break;
