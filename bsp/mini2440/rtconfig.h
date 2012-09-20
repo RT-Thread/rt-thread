@@ -106,6 +106,10 @@
 // <item description="LFN1">2</item>
 // </integer>
 #define RT_DFS_ELM_USE_LFN	1
+// <integer name="RT_DFS_ELM_CODE_PAGE" description="OEM code page" default="936">
+#define RT_DFS_ELM_CODE_PAGE	936
+// <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
+// #define RT_DFS_ELM_CODE_PAGE_FILE
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
 #define RT_DFS_ELM_MAX_LFN	256
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
