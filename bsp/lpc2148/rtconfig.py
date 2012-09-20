@@ -13,7 +13,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= 'D:/SourceryGCC/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'G:\Keil_MDK_380'
+	EXEC_PATH 	= 'C:\Keil'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'

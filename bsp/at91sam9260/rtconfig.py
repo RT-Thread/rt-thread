@@ -15,7 +15,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= '/opt/arm-2010q1/bin/'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'E:/Keil'
+	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support yet!'
