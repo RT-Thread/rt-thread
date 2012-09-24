@@ -61,6 +61,7 @@ int open(const char *file, int flags, int mode)
 
 	return fd;
 }
+RTM_EXPORT(open);
 
 /**
  * this function is a POSIX compliant version, which will close the open
@@ -96,6 +97,7 @@ int close(int fd)
 
 	return 0;
 }
+RTM_EXPORT(close);
 
 /**
  * this function is a POSIX compliant version, which will read specified data buffer 
@@ -134,6 +136,7 @@ int read(int fd, void *buf, size_t len)
 
 	return result;
 }
+RTM_EXPORT(read);
 
 /**
  * this function is a POSIX compliant version, which will write specified data buffer
@@ -173,6 +176,7 @@ int write(int fd, const void *buf, size_t len)
 
 	return result;
 }
+RTM_EXPORT(write);
 
 /**
  * this function is a POSIX compliant version, which will seek the offset for an
@@ -234,6 +238,7 @@ off_t lseek(int fd, off_t offset, int whence)
 
 	return offset;
 }
+RTM_EXPORT(lseek);
 
 /**
  * this function is a POSIX compliant version, which will rename old file name to
@@ -260,6 +265,7 @@ int rename(const char *old, const char *new)
 
 	return 0;
 }
+RTM_EXPORT(rename);
 
 /**
  * this function is a POSIX compliant version, which will unlink (remove) a 
@@ -283,6 +289,7 @@ int unlink(const char *pathname)
 
 	return 0;
 }
+RTM_EXPORT(unlink);
 
 /**
  * this function is a POSIX compliant version, which will get file information.
@@ -306,6 +313,7 @@ int stat(const char *file, struct stat *buf)
 
 	return result;
 }
+RTM_EXPORT(stat);
 
 /**
  * this function is a POSIX compliant version, which will get file status.
@@ -345,6 +353,7 @@ int fstat(int fildes, struct stat *buf)
 
 	return DFS_STATUS_OK;
 }
+RTM_EXPORT(fstat);
 
 /**
  * this function is a POSIX compliant version, which will return the 
@@ -369,6 +378,7 @@ int statfs(const char *path, struct statfs *buf)
 
 	return result;
 }
+RTM_EXPORT(statfs);
 
 /**
  * this function is a POSIX compliant version, which will make a directory
@@ -409,6 +419,8 @@ int mkdir(const char *path, mode_t mode)
 
 	return 0;
 }
+RTM_EXPORT(mkdir);
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(mkdir, create a directory);
@@ -435,6 +447,7 @@ int rmdir(const char *pathname)
 
 	return 0;
 }
+RTM_EXPORT(rmdir);
 
 /**
  * this function is a POSIX compliant version, which will open a directory.
@@ -488,6 +501,7 @@ DIR *opendir(const char *name)
 
 	return RT_NULL;
 }
+RTM_EXPORT(opendir);
 
 /**
  * this function is a POSIX compliant version, which will return a pointer 
@@ -531,6 +545,7 @@ struct dirent *readdir(DIR *d)
 
 	return (struct dirent *)(d->buf+d->cur);
 }
+RTM_EXPORT(readdir);
 
 /**
  * this function is a POSIX compliant version, which will return current 
@@ -558,6 +573,7 @@ long telldir(DIR *d)
 
 	return result;
 }
+RTM_EXPORT(telldir);
 
 /**
  * this function is a POSIX compliant version, which will set position of 
@@ -583,6 +599,7 @@ void seekdir(DIR *d, off_t offset)
 		d->num = d->cur = 0;
 	fd_put(fd);
 }
+RTM_EXPORT(seekdir);
 
 /**
  * this function is a POSIX compliant version, which will reset directory stream.
@@ -606,6 +623,7 @@ void rewinddir(DIR *d)
 		d->num = d->cur = 0;
 	fd_put(fd);
 }
+RTM_EXPORT(rewinddir);
 
 /**
  * this function is a POSIX compliant version, which will close a directory 
@@ -643,6 +661,7 @@ int closedir(DIR *d)
 	else
 		return 0;
 }
+RTM_EXPORT(closedir);
 
 #ifdef DFS_USING_WORKDIR
 /**
@@ -703,6 +722,8 @@ int chdir(const char *path)
 
 	return 0;
 }
+RTM_EXPORT(chdir);
+
 #ifdef RT_USING_FINSH
 FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
 #endif
@@ -729,5 +750,6 @@ char *getcwd(char *buf, size_t size)
 
 	return buf;
 }
+RTM_EXPORT(getcwd);
 
 /* @} */
