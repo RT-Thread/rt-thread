@@ -261,7 +261,7 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 	rt_ipc_object_init(&(sem->parent));
 
 	/* set init value */
-	sem->value	= value;
+	sem->value = value;
 
 	/* set parent */
 	sem->parent.parent.flag = flag;
@@ -332,7 +332,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 	else
 	{
 		/* no waiting, return with timeout */
-		if (time == 0 )
+		if (time == 0)
 		{
 			rt_hw_interrupt_enable(temp);
 
@@ -1285,7 +1285,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 
 		return RT_NULL;
 	}
-	mb->entry = 0;
+	mb->entry      = 0;
 	mb->in_offset  = 0;
 	mb->out_offset = 0;
 
