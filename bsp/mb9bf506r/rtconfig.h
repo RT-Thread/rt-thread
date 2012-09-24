@@ -8,7 +8,7 @@
 #define RT_NAME_MAX	8
 // <integer name="RT_ALIGN_SIZE" description="Alignment size for CPU architecture data access" default="4" />
 #define RT_ALIGN_SIZE	8
-// <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="2">
+// <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="32">
 // <item description="8">8</item>
 // <item description="32">32</item>
 // <item description="256">256</item>
