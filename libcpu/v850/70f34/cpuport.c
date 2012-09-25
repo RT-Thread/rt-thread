@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-02-23     Bernard      the first version
- * 2012-09-23     lgnq         initialize register r31(LP) with texit
+ * 2012-09-23     lgnq         set the texit to R31
  */
 
 #include <rtthread.h>

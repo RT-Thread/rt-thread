@@ -150,7 +150,7 @@
 
 // Set up near RT_HEAP 
 //fify 20100505 HEAP for RTT
--Z(DATA)RT_HEAP+400=FFFFC000-FFFFEFFF
+-Z(DATA)RT_HEAP+800=FFFFC000-FFFFEFFF
 
 //-------------------------------------------------------------------------
 //      End of File

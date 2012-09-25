@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -28,19 +28,15 @@
 
 static struct rt_thread led;
 
-#if defined(__ICCM16C__) || defined(__ICCV850__)
-#pragma data_alignment=4
-#endif
+ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t led_stack[256];
 
-static void rt_thread_entry_led(void* parameter)
+static void rt_thread_entry_led(void *parameter)
 {
     while (1)
     {
-        /* led off */
         led_off();
-        rt_thread_delay(20); /* sleep 1 second and switch to other thread */
-        /* led on */
+        rt_thread_delay(20);
         led_on();
         rt_thread_delay(40);
     }
@@ -48,15 +44,19 @@ static void rt_thread_entry_led(void* parameter)
 
 int rt_application_init(void)
 {
-    /* create led thread */
-	rt_thread_init(&led,
-		"led",
-		rt_thread_entry_led, RT_NULL,
-		&led_stack[0], sizeof(led_stack),
-		5, 32);
-    
-    if (&led != RT_NULL)
+    rt_err_t result;
+
+    result = rt_thread_init(&led,
+                            "led",
+                            rt_thread_entry_led,
+                            RT_NULL,
+                            &led_stack[0],
+                            sizeof(led_stack),
+                            RT_THREAD_PRIORITY_MAX / 2,
+                            32);
+
+    if (result == RT_EOK)
         rt_thread_startup(&led);
-        
+
     return 0;
 }
