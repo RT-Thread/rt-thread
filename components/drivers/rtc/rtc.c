@@ -44,7 +44,11 @@ time_t time(time_t* t)
     /* read timestamp from RTC device. */
     if (device != RT_NULL)
     {
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+	    if (rt_device_open(device, 0) == RT_EOK)
+		{
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+			rt_device_close(device);
+		}	
     }
 
     /* if t is not NULL, write timestamp to *t */
@@ -70,6 +74,7 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     struct tm * p_tm;
     struct tm tm_new;
     rt_device_t device;
+	rt_err_t ret = RT_ERROR;
 
     /* get current time */
     now = time(RT_NULL);
@@ -94,11 +99,13 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     device = rt_device_find("rtc");
     if (device == RT_NULL)
     {
-        return -RT_ERROR;
+        return RT_ERROR;
     }
+	
+	ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
 
     /* update to RTC device. */
-    return rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+    return ret;
 }
 
 /** \brief set system time(date not modify).
@@ -115,6 +122,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     struct tm * p_tm;
     struct tm tm_new;
     rt_device_t device;
+	rt_err_t ret = RT_ERROR;
 
     /* get current time */
     now = time(RT_NULL);
@@ -142,13 +150,15 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
         return RT_ERROR;
     }
 
+	ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+
     /* update to RTC device. */
-    return rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+    return ret;
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-
+#include <rtdevice.h>
 void list_date(void)
 {
     time_t now;
