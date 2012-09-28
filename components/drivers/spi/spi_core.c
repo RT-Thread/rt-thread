@@ -9,6 +9,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2012-01-08     bernard      first version.
+ * 2012-02-03     bernard      add const attribute to the ops.
+ * 2012-05-15     dzzxzz       fixed the return value in attach_device.
+ * 2012-05-18     bernard      Changed SPI message to message list.
+ *                             Added take/release SPI device/bus interface.
+ * 2012-09-28     aozima       fixed rt_spi_release_bus assert error.
  */
 
 #include <drivers/spi.h>
@@ -416,7 +422,7 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
-    RT_ASSERT(device->bus->owner != device);
+    RT_ASSERT(device->bus->owner == device);
 
     /* release lock */
     rt_mutex_release(&(device->bus->lock));
