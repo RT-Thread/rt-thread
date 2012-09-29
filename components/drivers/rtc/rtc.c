@@ -29,7 +29,7 @@
 #pragma module_name = "?time"
 time_t (__time32)(time_t *t) /* Only supports 32-bit timestamp */
 #else
-time_t time(time_t* t)
+time_t time(time_t *t)
 #endif
 {
     static rt_device_t device = RT_NULL;
@@ -44,11 +44,11 @@ time_t time(time_t* t)
     /* read timestamp from RTC device. */
     if (device != RT_NULL)
     {
-	    if (rt_device_open(device, 0) == RT_EOK)
-		{
+        if (rt_device_open(device, 0) == RT_EOK)
+        {
             rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
-			rt_device_close(device);
-		}	
+            rt_device_close(device);
+        }
     }
 
     /* if t is not NULL, write timestamp to *t */
@@ -71,10 +71,10 @@ time_t time(time_t* t)
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
     time_t now;
-    struct tm * p_tm;
+    struct tm *p_tm;
     struct tm tm_new;
     rt_device_t device;
-	rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     /* get current time */
     now = time(RT_NULL);
@@ -99,12 +99,12 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     device = rt_device_find("rtc");
     if (device == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
-	
-	ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
 
     /* update to RTC device. */
+    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+
     return ret;
 }
 
@@ -119,10 +119,10 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
     time_t now;
-    struct tm * p_tm;
+    struct tm *p_tm;
     struct tm tm_new;
     rt_device_t device;
-	rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     /* get current time */
     now = time(RT_NULL);
@@ -147,18 +147,19 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     device = rt_device_find("rtc");
     if (device == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
-	ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
-
     /* update to RTC device. */
+    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+
     return ret;
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include <rtdevice.h>
+
 void list_date(void)
 {
     time_t now;
