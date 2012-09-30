@@ -14,12 +14,55 @@ struct rt_completion
     rt_list_t suspended_list;
 };
 
+#define RT_RINGBUFFER_SIZE(rb)		((rb)->write_index - (rb)->read_index)
+#define RT_RINGBUFFER_EMPTY(rb) 	((rb)->buffer_size - RT_RINGBUFFER_SIZE(rb))
 /* ring buffer */
 struct rt_ringbuffer
 {
     rt_uint16_t read_index, write_index;
     rt_uint8_t *buffer_ptr;
     rt_uint16_t buffer_size;
+};
+
+/* pipe device */
+#define PIPE_DEVICE(device)	((struct rt_pipe_device*)(device))
+struct rt_pipe_device
+{
+	struct rt_device parent;
+
+	/* ring buffer in pipe device */
+	struct rt_ringbuffer ringbuffer;
+
+	/* suspended list */
+	rt_list_t suspended_read_list;
+	rt_list_t suspended_write_list;
+};
+
+#define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
+#define RT_DATAQUEUE_EVENT_POP       0x01
+#define RT_DATAQUEUE_EVENT_PUSH      0x02
+#define RT_DATAQUEUE_EVENT_LWM       0x03
+
+struct rt_data_item;
+#define RT_DATAQUEUE_SIZE(dq)		((dq)->put_index - (dq)->get_index)
+#define RT_DATAQUEUE_EMPTY(dq)		((dq)->size - RT_DATAQUEUE_SIZE(dq))
+/* data queue implementation */
+struct rt_data_queue
+{
+    rt_uint16_t size;
+    rt_uint16_t lwm;
+	rt_bool_t   waiting_lwm;
+
+    rt_uint16_t get_index;
+    rt_uint16_t put_index;
+
+    struct rt_data_item *queue;
+
+    rt_list_t suspended_push_list;
+    rt_list_t suspended_pop_list;
+
+    /* event notify */
+	void (*evt_notify)(struct rt_data_queue *queue, rt_uint32_t event);
 };
 
 /**
@@ -31,11 +74,10 @@ rt_err_t rt_completion_wait(struct rt_completion* completion,
 void rt_completion_done(struct rt_completion* completion);
 
 /**
- * DataLink for DeviceDriver
- */
-
-/**
  * RingBuffer for DeviceDriver
+ *
+ * Please note that the ring buffer implementation of RT-Thread 
+ * has no thread wait or resume feature.
  */
 void rt_ringbuffer_init(struct rt_ringbuffer* rb,
                         rt_uint8_t *pool,
@@ -49,8 +91,29 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer* rb,
                             rt_uint8_t *ptr,
                             rt_uint16_t length);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer* rb, rt_uint8_t *ch);
-rt_size_t rt_ringbuffer_available_size(struct rt_ringbuffer* rb);
-rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
+rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer* rb)
+{
+	RT_ASSERT(rb != RT_NULL);
+	return rb->buffer_size;
+}
+
+/**
+ * Pipe Device
+ */
+rt_err_t rt_pipe_create(const char* name, rt_size_t size);
+void rt_pipe_destroy(struct rt_pipe_device* pipe);
+
+/**
+ * DataQueue for DeviceDriver
+ */
+rt_err_t rt_data_queue_init(struct rt_data_queue* queue, rt_uint16_t size, rt_uint16_t lwm,
+	void (*evt_notify)(struct rt_data_queue* queue, rt_uint32_t event));
+rt_err_t rt_data_queue_push(struct rt_data_queue* queue, void* data_ptr, rt_size_t data_size, 
+	rt_int32_t timeout);
+rt_err_t rt_data_queue_pop(struct rt_data_queue* queue, void** data_ptr, rt_size_t *size, 
+	rt_int32_t timeout);
+rt_err_t rt_data_queue_peak(struct rt_data_queue* queue, void** data_ptr, rt_size_t *size);
+void rt_data_queue_reset(struct rt_data_queue* queue);
 
 #ifdef RT_USING_SPI
 #include "drivers/spi.h"
@@ -93,3 +156,4 @@ rt_size_t rt_ringbuffer_emptry_size(struct rt_ringbuffer* rb);
 #endif
 
 #endif /* __RT_DEVICE_H__ */
+
