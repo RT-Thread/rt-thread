@@ -146,15 +146,3 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer* rb, rt_uint8_t *ch)
 }
 RTM_EXPORT(rt_ringbuffer_getchar);
 
-/**
- * get available data size
- */
-rt_size_t rt_ringbuffer_get_datasize(struct rt_ringbuffer* rb)
-{
-	RT_ASSERT(rb != RT_NULL);
-
-	/* return the available size */
-	return rb->write_index - rb->read_index;
-}
-RTM_EXPORT(rt_data_queue_reset);
-
