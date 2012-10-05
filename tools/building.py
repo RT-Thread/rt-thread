@@ -77,6 +77,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       default=False,
                       help='copy header of rt-thread directory to local.')
 
+    # add build library option
+    AddOption('--buildlib', 
+                      dest='buildlib', 
+                      type='string',
+                      help='building library of a component')
+
     # add target option
     AddOption('--target',
                       dest='target',
@@ -212,6 +218,10 @@ def DefineGroup(name, src, depend, **parameters):
         Env.Append(CPPDEFINES = group['CPPDEFINES'])
     if group.has_key('LINKFLAGS'):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
+    if group.has_key('LIBS'):
+        Env.Append(LIBS = group['LIBS'])
+    if group.has_key('LIBPATH'):
+        Env.Append(LIBPATH = group['LIBPATH'])
 
     objs = Env.Object(group['src'])
 
@@ -236,6 +246,23 @@ def GetCurrentDir():
     name = fn.name
     path = os.path.dirname(fn.abspath)
     return path
+
+def DoBuilding(target, objects):
+    program = None
+    # check whether special buildlib option
+    lib_name = GetOption('buildlib')
+    if lib_name:
+        print lib_name
+        # build library with special component
+        for Group in Projects:
+            if Group['name'] == lib_name:
+                objects = Env.Object(Group['src'])
+                program = Env.Library(lib_name, objects)
+                break
+    else:
+        program = Env.Program(target, objects)
+
+    EndBuilding(target, program)
 
 def EndBuilding(target, program = None):
     import rtconfig
