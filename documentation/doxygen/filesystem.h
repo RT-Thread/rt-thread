@@ -12,7 +12,7 @@
  * more concrete file system. The purpose of a VFS is to allow client applications
  * to access different types of concrete file systems in a uniform way.
  *
- * @image html dfs.png "Figure 2: Device Virtual File System Architecture"
+ * @image html dfs.png "Figure 4: Device Virtual File System Architecture"
  *
  * The DFS specifies an interface between the kernel and a concrete file system.
  * Therefore, it is easy to add support for new file system types to the kernel
