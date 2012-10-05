@@ -133,6 +133,13 @@ typedef rt_base_t                       rt_off_t;       /* Type for offset */
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static inline
     #define RTT_API 
+#elif defined (_MSC_VER)
+    #include <stdarg.h>
+    #define SECTION(x)
+    #define UNUSED
+    #define ALIGN(n)                    __declspec(align(n))
+    #define rt_inline                   static __inline
+    #define RTT_API
 #endif
 
 /* event length */
@@ -680,7 +687,8 @@ enum rt_device_class_type
  * special device commands
  */
 #define RT_DEVICE_CTRL_CHAR_STREAM      0x10            /* stream mode on char device */
-#define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /* get geometry information */
+#define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /* get geometry information   */
+#define RT_DEVICE_CTRL_BLK_SYNC         0x11            /* flush data to block device */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /* get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /* format a MTD device */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /* get time */
@@ -738,6 +746,8 @@ struct rt_device_blk_geometry
 #define RTGRAPHIC_CTRL_POWEROFF         2
 #define RTGRAPHIC_CTRL_GET_INFO         3
 #define RTGRAPHIC_CTRL_SET_MODE         4
+#define RTGRAPHIC_CTRL_FILL_RECT        5
+#define RTGRAPHIC_CTRL_DRAW_RECT        6
 
 /* graphic deice */
 enum
