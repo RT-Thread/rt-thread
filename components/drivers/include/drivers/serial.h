@@ -68,7 +68,7 @@
 	BIT_ORDER_LSB,    /* LSB first sent */ \
 	NRZ_NORMAL,       /* Normal mode */    \
 	0                                      \
-}                                          \
+}                                                                                 
 
 struct serial_ringbuffer
 {
