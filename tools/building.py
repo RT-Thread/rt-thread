@@ -328,6 +328,19 @@ def GetVersion():
 
     return '0.%d.%d' % (version, subversion)
 
+def GlobSubDir(sub_dir, ext_name):
+    import os
+    import glob
+
+    list = os.listdir(sub_dir)
+    src = glob.glob(os.path.join(sub_dir, ext_name))
+
+    for item in list:
+        full_subdir = os.path.join(sub_dir, item)
+        if os.path.isdir(full_subdir):
+            src += GlobSubDir(full_subdir, ext_name)
+    return src
+
 def do_copy_file(src, dst):
     import shutil
     # check source file 

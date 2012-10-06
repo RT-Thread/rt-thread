@@ -27,6 +27,7 @@ Return('group')
 SConscript_bridge = '''# RT-Thread building script for bridge
 
 import os
+from building import *
 
 cwd = GetCurrentDir()
 objs = []
