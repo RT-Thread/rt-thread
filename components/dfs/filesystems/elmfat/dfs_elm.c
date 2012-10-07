@@ -781,6 +781,10 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
 		*(DWORD *)buff = geometry.block_size/geometry.bytes_per_sector;
 	}
+	else if (ctrl == CTRL_SYNC)
+	{
+		rt_device_control(device, RT_DEVICE_CTRL_BLK_SYNC, RT_NULL);
+	}
 
 	return RES_OK;
 }
