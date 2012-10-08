@@ -193,7 +193,7 @@ void rtgui_mouse_fini(void)
 #ifdef RTGUI_USING_MOUSE_CURSOR
 		rt_mutex_detach(&cursor_mutex);
 		rtgui_image_destroy(_rtgui_cursor->cursor_image);
-		rtgui_free(_rtgui_cursor->rtgui_malloc);
+		rtgui_free(_rtgui_cursor->cursor_saved);
 #endif
 		rtgui_free(_rtgui_cursor);
 
@@ -346,7 +346,7 @@ static void rtgui_cursor_save()
 	rt_base_t idx, height, cursor_pitch;
 	rt_uint8_t *cursor_ptr, *fb_ptr;
 
-	fb_ptr = _driver_get_default_framebuffer() + _rtgui_cursor->cy * _rtgui_cursor->screen_pitch +
+	fb_ptr = rtgui_graphic_driver_get_default_framebuffer() + _rtgui_cursor->cy * _rtgui_cursor->screen_pitch +
 		_rtgui_cursor->cx * _rtgui_cursor->bpp;
 	cursor_ptr = _rtgui_cursor->cursor_saved;
 
