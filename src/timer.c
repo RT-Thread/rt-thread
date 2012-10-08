@@ -352,11 +352,11 @@ rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg)
 		break;
 
 	case RT_TIMER_CTRL_SET_ONESHOT:
-		timer->parent.flag &= ~(1 << RT_TIMER_FLAG_PERIODIC);
+		timer->parent.flag &= ~RT_TIMER_FLAG_PERIODIC;
 		break;
 
 	case RT_TIMER_CTRL_SET_PERIODIC:
-		timer->parent.flag |= (1 << RT_TIMER_FLAG_PERIODIC);
+		timer->parent.flag |= RT_TIMER_FLAG_PERIODIC;
 		break;
 	}
 
