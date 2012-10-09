@@ -12,7 +12,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     print '================ERROR============================'
-    print 'Not support iar yet!'
+    print 'Not support gcc yet!'
     print '================================================='
     exit(0)
 elif CROSS_TOOL == 'keil':
