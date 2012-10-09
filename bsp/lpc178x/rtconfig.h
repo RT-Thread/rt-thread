@@ -192,7 +192,7 @@
 // <integer name="RTGUI_DEFAULT_FONT_SIZE" description="default font size in RT-Thread/GUI" default="16" />
 #define RTGUI_DEFAULT_FONT_SIZE	16
 // <bool name="RTGUI_USING_DFS_FILERW" description="use RT-Thread/DFS as file interface" default="true" />
-#define RTGUI_USING_DFS_FILERW
+// #define RTGUI_USING_DFS_FILERW
 // <bool name="RTGUI_USING_HZ_BMP" description="use Chinese font bitmap engine" default="true" />
 #define RTGUI_USING_HZ_BMP
 // <bool name="RTGUI_USING_HZ_FILE" description="use font file as Chinese font" default="false" />

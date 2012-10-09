@@ -679,6 +679,11 @@
               <FilePath>..\..\components\rtgui\common\rtgui_xml.c</FilePath>
             </File>
             <File>
+              <FileName>rtgui_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_app.c</FilePath>
+            </File>
+            <File>
               <FileName>dc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\common\dc.c</FilePath>
@@ -789,11 +794,6 @@
               <FilePath>..\..\components\rtgui\common\pixel_driver.c</FilePath>
             </File>
             <File>
-              <FileName>rtgui_application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\server\rtgui_application.c</FilePath>
-            </File>
-            <File>
               <FileName>driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\server\driver.c</FilePath>
@@ -899,11 +899,6 @@
               <FilePath>..\..\components\rtgui\widgets\title.c</FilePath>
             </File>
             <File>
-              <FileName>toplevel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\toplevel.c</FilePath>
-            </File>
-            <File>
               <FileName>notebook.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\notebook.c</FilePath>
@@ -917,11 +912,6 @@
               <FileName>list_view.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\list_view.c</FilePath>
-            </File>
-            <File>
-              <FileName>about_view.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\rtgui\widgets\about_view.c</FilePath>
             </File>
             <File>
               <FileName>filelist_view.c</FileName>
@@ -938,6 +928,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\window.c</FilePath>
             </File>
+            <File>
+              <FileName>panel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\panel.c</FilePath>
+            </File>
+            <File>
+              <FileName>groupbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\groupbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>edit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\edit.c</FilePath>
+            </File>
+            <File>
+              <FileName>plot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\plot.c</FilePath>
+            </File>
+            <File>
+              <FileName>plot_curve.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\plot_curve.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -952,6 +967,11 @@
               <FileName>demo_view.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_xml.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_xml.c</FilePath>
             </File>
             <File>
               <FileName>demo_view_benchmark.c</FileName>
@@ -1062,6 +1082,26 @@
               <FileName>demo_view_mywidget.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\examples\gui\demo_view_mywidget.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_box.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_edit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_edit.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_view_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_view_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_plot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\examples\gui\demo_plot.c</FilePath>
             </File>
             <File>
               <FileName>mywidget.c</FileName>
