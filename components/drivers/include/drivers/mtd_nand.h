@@ -35,10 +35,11 @@ struct rt_mtd_nand_device
 {
 	struct rt_device parent;
 
-	rt_uint32_t page_size;			/* The Page size in the flash */
+	rt_uint16_t page_size;			/* The Page size in the flash */
 	rt_uint16_t oob_size;			/* Out of bank size */	
 	rt_uint16_t oob_free;           /* the free area in oob that flash driver not use */
-	
+	rt_uint16_t plane_num; 			/* the number of plane in the NAND Flash */
+
 	rt_uint32_t pages_per_block;    /* The number of page a block */
     rt_uint16_t block_total;
 
