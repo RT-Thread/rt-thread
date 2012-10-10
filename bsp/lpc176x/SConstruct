@@ -28,8 +28,5 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-# build program 
-env.Program(TARGET, objs)
-
-# end building 
-EndBuilding(TARGET)
+# make a building
+DoBuilding(TARGET, objs)
