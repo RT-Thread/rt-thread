@@ -16,6 +16,7 @@
 #define __SHELL_H__
 
 #include <rtthread.h>
+#include "finsh.h"
 
 #define FINSH_USING_HISTORY
 #ifndef FINSH_THREAD_PRIORITY
