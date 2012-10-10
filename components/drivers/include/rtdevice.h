@@ -76,7 +76,7 @@ void rt_completion_done(struct rt_completion* completion);
 /**
  * RingBuffer for DeviceDriver
  *
- * Please note that the ring buffer implementation of RT-Thread 
+ * Please note that the ring buffer implementation of RT-Thread
  * has no thread wait or resume feature.
  */
 void rt_ringbuffer_init(struct rt_ringbuffer* rb,
@@ -108,12 +108,16 @@ void rt_pipe_destroy(struct rt_pipe_device* pipe);
  */
 rt_err_t rt_data_queue_init(struct rt_data_queue* queue, rt_uint16_t size, rt_uint16_t lwm,
 	void (*evt_notify)(struct rt_data_queue* queue, rt_uint32_t event));
-rt_err_t rt_data_queue_push(struct rt_data_queue* queue, void* data_ptr, rt_size_t data_size, 
+rt_err_t rt_data_queue_push(struct rt_data_queue* queue, void* data_ptr, rt_size_t data_size,
 	rt_int32_t timeout);
-rt_err_t rt_data_queue_pop(struct rt_data_queue* queue, void** data_ptr, rt_size_t *size, 
+rt_err_t rt_data_queue_pop(struct rt_data_queue* queue, void** data_ptr, rt_size_t *size,
 	rt_int32_t timeout);
 rt_err_t rt_data_queue_peak(struct rt_data_queue* queue, void** data_ptr, rt_size_t *size);
 void rt_data_queue_reset(struct rt_data_queue* queue);
+
+#ifdef RT_USING_RTC
+#include "drivers/rtc.h"
+#endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
 #include "drivers/spi.h"
