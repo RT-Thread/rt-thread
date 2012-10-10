@@ -28,7 +28,7 @@
 	jmp _hdinterrupts;\
 	.data;\
 	.long name;\
-	.text 
+	.text
 
 .globl hdinterrupt_func
 	.data
@@ -73,14 +73,20 @@ _hdinterrupts:
 	movw %ax, %ds
 	movw %ax, %es
 	pushl %esp
+
 	call rt_interrupt_enter
-	movl %esp, %eax		/* get irqno */
-	addl $0x2c, %eax
-	movl (%eax), %eax	/* each item takes up 4bytes in isr_table,equl to isr_table[irqno] */
-	shll $0x2, %eax
-	movl $isr_table, %ebx
-	addl %eax,%ebx
+
+	movl %esp, %eax	      /* copy esp to eax */
+	addl $0x2c, %eax      /* move to vector address */
+	movl (%eax), %eax     /* vector(eax) = *eax */
+
+	pushl %eax            /* push argument : int vector */
+	shll $0x2, %eax       /* each item takes up 4bytes in isr_table. */
+	movl $isr_table, %ebx /* ebx = &isr_table[0] */
+	addl %eax, %ebx       /* eax = &isr_table[vector] */
 	call *(%ebx)
+	add $4, %esp          /* restore argument */
+
 	call rt_interrupt_leave
 
 	/* if rt_thread_switch_interrupt_flag set, jump to _interrupt_thread_switch and don't return */
@@ -88,7 +94,7 @@ _hdinterrupts:
 	movl (%eax), %ebx
 	cmp $0x1, %ebx
 	jz _interrupt_thread_switch
-	
+
 	popl %esp
 	popal
 	pop %es
@@ -98,7 +104,7 @@ _hdinterrupts:
 
 _interrupt_thread_switch:
 	popl %esp
-	
+
 	movl $0x0, %ebx
 	movl %ebx, (%eax)
 
@@ -109,7 +115,7 @@ _interrupt_thread_switch:
 	movl $rt_interrupt_to_thread, %ecx
 	movl (%ecx), %edx
 	movl (%edx), %esp
-	
+
 	popal
 	pop %es
 	pop %ds
