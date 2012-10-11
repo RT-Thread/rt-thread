@@ -96,6 +96,8 @@ void rt_completion_done(struct rt_completion* completion)
 	rt_base_t level;
 	RT_ASSERT(completion != RT_NULL);
 
+	if(completion->flag == RT_COMPLETED) return;
+
 	level = rt_hw_interrupt_disable();
 	completion->flag = RT_COMPLETED;
 

@@ -101,7 +101,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     if(index > USB_STRING_INTERFACE_INDEX) 
     {
         rt_kprintf("unknown string index\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }    
     if(index == 0)
@@ -158,14 +158,14 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
             break;
         default:
             rt_kprintf("unknown descriptor\n");
-            dcd_ep0_stall(device->dcd);
+            dcd_ep_stall(device->dcd, 0);
             break;
         }
     }
     else
     {
         rt_kprintf("request direction error\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
     }
 
     return RT_EOK;
@@ -388,7 +388,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             _get_descriptor(device, setup);
             break;
         case USB_REQ_SET_DESCRIPTOR:
-            dcd_ep0_stall(dcd);
+            dcd_ep_stall(dcd, 0);
             break;
         case USB_REQ_GET_CONFIGURATION:
             _get_config(device, setup);
@@ -398,7 +398,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             break;
         default:
             rt_kprintf("unknown device request\n");
-            dcd_ep0_stall(device->dcd);
+            dcd_ep_stall(device->dcd, 0);
             break;
         }
         break;
@@ -413,7 +413,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             break;
         default:
             rt_kprintf("unknown interface request\n");
-            dcd_ep0_stall(device->dcd);
+            dcd_ep_stall(device->dcd, 0);
             break;
         }
         break;
@@ -434,17 +434,17 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             break;
         default:
             rt_kprintf("unknown endpoint request\n");
-            dcd_ep0_stall(device->dcd);
+            dcd_ep_stall(device->dcd, 0);
             break;
         }
         break;
     case USB_REQ_TYPE_OTHER:
         rt_kprintf("unknown other type request\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         break;
     default:
         rt_kprintf("unknown type request\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         break;
     }
 
@@ -470,7 +470,7 @@ static rt_err_t _class_request(udevice_t device, ureq_t setup)
     /* verify request value */
     if(setup->index > device->curr_cfg->cfg_desc.bNumInterfaces)
     {
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }
 
@@ -484,7 +484,7 @@ static rt_err_t _class_request(udevice_t device, ureq_t setup)
         break;
     default:
         rt_kprintf("unknown class request type\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         break;
     }   
     
@@ -526,11 +526,37 @@ static rt_err_t _setup_request(udevice_t device, ureq_t setup)
         break;
     default:
         rt_kprintf("unknown setup request type\n");
-        dcd_ep0_stall(device->dcd);
+        dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }
 
     return RT_EOK;
+}
+
+/**
+ * This function will notity sof event to all of class.
+ *
+ * @param device the usb device object.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t _sof_notify(udevice_t device)
+{
+    struct rt_list_node *i;
+    uclass_t cls;
+    
+    RT_ASSERT(device != RT_NULL);
+
+    /* to notity every class that sof event comes */
+    for (i=device->curr_cfg->cls_list.next;
+        i!=&device->curr_cfg->cls_list; i=i->next)
+    {
+        cls = (uclass_t)rt_list_entry(i, struct uclass, list);  
+        if(cls->ops->sof_handler != RT_NULL)
+            cls->ops->sof_handler(device);
+    }
+
+    return RT_EOK;        
 }
 
 /**
@@ -797,8 +823,6 @@ udevice_t rt_usbd_find_device(udcd_t dcd)
 {
     struct rt_list_node* node;
     udevice_t device;
-
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_find_device\n"));
     
     /* parameter check */
     RT_ASSERT(dcd != RT_NULL);
@@ -1180,15 +1204,13 @@ static void rt_usbd_thread_entry(void* parameter)
         /* receive message */
         if(rt_mq_recv(usb_mq, &msg, sizeof(struct udev_msg), RT_WAITING_FOREVER) 
             != RT_EOK ) continue;
-
-        //RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
         
         switch (msg.type)
         {        
         case USB_MSG_SETUP_NOTIFY:
-            device = rt_usbd_find_device(msg.content.setup_msg.dcd);      
+            device = rt_usbd_find_device(msg.dcd);   
             if(device != RT_NULL)
-                _setup_request(device, (ureq_t)msg.content.setup_msg.packet);                       
+                _setup_request(device, (ureq_t)msg.content.setup_msg.packet); 
             else
                 rt_kprintf("invalid usb device\n");
             break;
@@ -1198,6 +1220,13 @@ static void rt_usbd_thread_entry(void* parameter)
                 ep->handler(device, msg.content.ep_msg.size);
             else 
                 rt_kprintf("invalid endpoint\n");
+            break;
+        case USB_MSG_SOF:
+            device = rt_usbd_find_device(msg.dcd);      
+            if(device != RT_NULL)
+                _sof_notify(device);
+            else 
+                rt_kprintf("invalid usb device\n");
             break;
         default:
             break;

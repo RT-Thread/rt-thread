@@ -19,17 +19,23 @@
 #ifdef RT_USB_CLASS_ADK
 
 static struct uclass_driver adk_driver;
+static const char* _adk_manufacturer = RT_NULL;
+static const char* _adk_model = RT_NULL;
+static const char* _adk_description = RT_NULL;
+static const char* _adk_version = RT_NULL;
+static const char* _adk_uri = RT_NULL;
+static const char* _adk_serial = RT_NULL;
 
 rt_err_t rt_usb_adk_set_string(const char* manufacturer, const char* model,
-    const char* description, const char* version, const char* uri, 
+    const char* description, const char* _version, const char* uri, 
     const char* serial)
 {
-    adk_driver.manufacturer = manufacturer;
-    adk_driver.model = model;
-    adk_driver.description = description;
-    adk_driver.version = version;
-    adk_driver.uri = uri;
-    adk_driver.serial = serial;
+    _adk_manufacturer = manufacturer;
+    _adk_model = model;
+    _adk_description = description;
+    _adk_version = _version;
+    _adk_uri = uri;
+    _adk_serial = serial;
 
     return RT_EOK;
 }
@@ -245,24 +251,24 @@ static rt_err_t rt_usb_adk_run(void* arg)
         }       
 
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_MANUFACTURER, adk_driver.manufacturer);
+            ACCESSORY_STRING_MANUFACTURER, _adk_manufacturer);
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_MODEL, adk_driver.model);
+            ACCESSORY_STRING_MODEL, _adk_model);
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_DESCRIPTION, adk_driver.description);
+            ACCESSORY_STRING_DESCRIPTION, _adk_description);
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_VERSION, adk_driver.version);
+            ACCESSORY_STRING_VERSION, _adk_version);
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_URI, adk_driver.uri);        
+            ACCESSORY_STRING_URI, _adk_uri);        
         rt_usb_adk_send_string(ifinst, 
-            ACCESSORY_STRING_SERIAL, adk_driver.serial);            
+            ACCESSORY_STRING_SERIAL, _adk_serial);            
 
-        RT_DEBUG_LOG(RT_DEBUG_USB,("manufacturer %s\n", adk_driver.manufacturer));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("model %s\n", adk_driver.model));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("description %s\n", adk_driver.description));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("version %s\n", adk_driver.version));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("uri %s\n", adk_driver.uri));       
-        RT_DEBUG_LOG(RT_DEBUG_USB,("serial %s\n", adk_driver.serial));               
+        RT_DEBUG_LOG(RT_DEBUG_USB,("manufacturer %s\n", _adk_manufacturer));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("model %s\n", _adk_model));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("description %s\n", _adk_description));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("version %s\n", _adk_version));
+        RT_DEBUG_LOG(RT_DEBUG_USB,("uri %s\n", _adk_uri));       
+        RT_DEBUG_LOG(RT_DEBUG_USB,("serial %s\n", _adk_serial));               
         
         if((ret = rt_usb_adk_start(ifinst)) != RT_EOK)
         {

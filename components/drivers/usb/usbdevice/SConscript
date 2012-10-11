@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+core/core.c
+core/usbdevice.c
+class/cdc_vcom.c
+""")
+
+CPPPATH = [cwd]
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_USB_DEVICE'], CPPPATH = CPPPATH)
+
+Return('group')

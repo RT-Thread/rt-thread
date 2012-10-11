@@ -40,8 +40,6 @@ rt_err_t rt_usb_class_driver_init(void)
 
 rt_err_t rt_usb_class_driver_register(ucd_t drv)
 {
-    RT_ASSERT(drv != RT_NULL);
-
     if (drv == RT_NULL) return -RT_ERROR;
 
     /* insert class driver into driver list */

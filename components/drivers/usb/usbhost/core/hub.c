@@ -545,10 +545,10 @@ static void rt_usb_hub_thread_entry(void* parameter)
 {    
     while(1)
     {    
-        struct umsg msg;
+        struct uhost_msg msg;
         
         /* receive message */
-        if(rt_mq_recv(usb_mq, &msg, sizeof(struct umsg), RT_WAITING_FOREVER) 
+        if(rt_mq_recv(usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) 
             != RT_EOK ) continue;
 
         RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
@@ -576,7 +576,7 @@ static void rt_usb_hub_thread_entry(void* parameter)
  * 
  * @return the error code, RT_EOK on successfully. 
  */
-rt_err_t rt_usb_post_event(struct umsg* msg, rt_size_t size)
+rt_err_t rt_usb_post_event(struct uhost_msg* msg, rt_size_t size)
 {
     RT_ASSERT(msg != RT_NULL);
 
