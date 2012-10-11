@@ -336,13 +336,13 @@ static rt_err_t _class_stop(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-rt_err_t _class_sof_handler(udevice_t device)
+static rt_err_t _class_sof_handler(udevice_t device)
 {
     rt_uint32_t level;
     rt_size_t size;
     static rt_uint32_t frame_count = 0;
 
-    if(vcom_connected != RT_TRUE) return;
+    if(vcom_connected != RT_TRUE) return -RT_ERROR;
 
     if (frame_count ++ == 5)
     {
@@ -352,7 +352,7 @@ rt_err_t _class_sof_handler(udevice_t device)
         frame_count = 0;
 
         size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
-        if(size == 0) return;
+        if(size == 0) return -RT_EFULL;
 
         size = size > mps ? mps : size;
         
@@ -363,6 +363,8 @@ rt_err_t _class_sof_handler(udevice_t device)
         /* send data to host */
         dcd_ep_write(device->dcd, ep_in, ep_in->buffer, size);
     }
+
+    return RT_EOK;
 }
 
 static struct uclass_ops ops =
@@ -375,7 +377,7 @@ static struct uclass_ops ops =
 /**
  * This function will configure cdc descriptor.
  *
- * @param comm the communcation interface number.
+ * @param comm the communication interface number.
  * @param data the data interface number.
  *
  * @return RT_EOK on successful.
