@@ -1,5 +1,5 @@
 /*
- * File      : serial.h
+ * File      : rtdevice.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
