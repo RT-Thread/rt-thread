@@ -221,9 +221,6 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_interface\n"));
 
-    setup->index & 0xFF;
-    setup->value & 0xFF;
-
     /* find the specified interface */
     intf = rt_usbd_find_interface(device, setup->index & 0xFF);
 

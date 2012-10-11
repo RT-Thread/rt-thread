@@ -69,7 +69,7 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     /* set device descriptor to the device */
     rt_usbd_device_set_descriptor(udevice, cls->dev_desc);
 
-    /* add the mass storage class to the configuration */
+    /* add the class to the configuration */
     rt_usbd_config_add_class(cfg, cls);
     
     /* add the configuration to the device */
