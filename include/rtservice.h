@@ -15,6 +15,9 @@
  * 2012-03-22     Bernard      rename kservice.h to rtservice.h
  */
 
+#ifndef __RT_SERVICE_H__
+#define __RT_SERVICE_H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -104,4 +107,6 @@ rt_inline int rt_list_isempty(const rt_list_t *l)
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
