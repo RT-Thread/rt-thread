@@ -14,6 +14,8 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rthw.h>
+ 
 #include "cdc.h"
 
 static uclass_t cdc;
