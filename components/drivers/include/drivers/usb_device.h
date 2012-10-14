@@ -47,7 +47,6 @@ struct udcd
 };
 typedef struct udcd* udcd_t;
 
-ALIGN(4)
 struct uendpoint
 {
     rt_list_t list;
