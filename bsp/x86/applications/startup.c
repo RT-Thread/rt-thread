@@ -1,7 +1,7 @@
 /*
  * File      : startup.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -28,7 +28,7 @@ extern int  rt_application_init(void);
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
+extern void finsh_set_device(const char *device);
 #endif
 
 extern unsigned char __bss_start[];
@@ -37,71 +37,73 @@ extern unsigned char __bss_end[];
 /**
  * @addtogroup QEMU
  */
+
  /*@{*/
 
 /* clear .bss */
-void rt_hw_clear_bss()
+void rt_hw_clear_bss(void)
 {
-	unsigned char *dst;
-	dst = __bss_start;
-	while(dst < __bss_end) *dst++ = 0;
+    unsigned char *dst;
+    dst = __bss_start;
+    while (dst < __bss_end)
+        *dst++ = 0;
 }
 
 /**
  * This function will startup RT-Thread RTOS
  */
-void rtthread_startup()
+void rtthread_startup(void)
 {
-	/* clear .bss */
-	rt_hw_clear_bss();
+    /* clear .bss */
+    rt_hw_clear_bss();
 
-	/* init hardware interrupt */
-	rt_hw_interrupt_init();
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* init the console */
-	rt_hw_console_init();
-	rt_console_set_device("console");
+    /* init the console */
+    rt_hw_console_init();
+    rt_console_set_device("console");
 
-	/* init board */
-	rt_hw_board_init();
+    /* init board */
+    rt_hw_board_init();
 
-	rt_show_version();
+    rt_show_version();
 
-	/* init tick */
-	rt_system_tick_init();
+    /* init tick */
+    rt_system_tick_init();
 
-	/* init kernel object */
-	rt_system_object_init();
+    /* init kernel object */
+    rt_system_object_init();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init timer system */
+    rt_system_timer_init();
 
-	/* init memory system */
+    /* init memory system */
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)&__bss_end, (void*)(1024UL*1024*8)); /* RAM 16M */
+    /* RAM 16M */
+    rt_system_heap_init((void *)&__bss_end, (void *)(1024UL*1024*8));
 #endif
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
-	/* init application */
-	rt_application_init();
+    /* init application */
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("console");
+    /* init finsh */
+    finsh_system_init();
+    finsh_set_device("console");
 #endif
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
-
+    /* never reach here */
+    return ;
 }
 
 /*@}*/
