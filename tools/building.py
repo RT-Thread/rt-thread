@@ -247,6 +247,17 @@ def GetCurrentDir():
     path = os.path.dirname(fn.abspath)
     return path
 
+PREBUILDING = []
+def RegisterPreBuildingAction(act):
+    global PREBUILDING
+    assert callable(act), 'Could only register callable objects. %s received' % repr(act)
+    PREBUILDING.append(act)
+
+def PreBuilding():
+    global PREBUILDING
+    for a in PREBUILDING:
+        a()
+
 def DoBuilding(target, objects):
     program = None
     # check whether special buildlib option
