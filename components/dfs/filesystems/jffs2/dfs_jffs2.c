@@ -334,7 +334,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 	file->data = jffs2_file;
 	file->pos = jffs2_file->f_offset; 
 	file->size = 0;
-	jffs2_file_lseek(jffs2_file, (off_t *)(&(file->size)), SEEK_END);
+	jffs2_file_lseek(jffs2_file, (off_t *)(&(file->size)), DFS_SEEK_END);
 	jffs2_file->f_offset = (off_t)file->pos;
 	rt_mutex_release(&jffs2_lock);
 	
@@ -462,7 +462,7 @@ static int dfs_jffs2_lseek(struct dfs_fd* file,
 	
 	/* set offset as current offset */
 	rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
-	result = jffs2_file_lseek(jffs2_file, &offset, SEEK_SET);
+	result = jffs2_file_lseek(jffs2_file, &offset, DFS_SEEK_SET);
 	rt_mutex_release(&jffs2_lock);
 	if (result)
 		return jffs2_result_to_dfs(result);

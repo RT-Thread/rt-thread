@@ -322,6 +322,7 @@ typedef void *cyg_io_handle_t;
 typedef unsigned long mode_t;
 typedef unsigned int ino_t;
 typedef unsigned int dev_t;
+typedef int time_t;
 #elif defined(__CC_ARM)  
 #define mode_t unsigned long
 typedef unsigned int ino_t;
