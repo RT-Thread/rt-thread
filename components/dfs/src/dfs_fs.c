@@ -361,7 +361,7 @@ int dfs_unmount(const char *specialfile)
 	dfs_lock();
 
 	fs = dfs_filesystem_lookup(fullpath);
-	if (fs != RT_NULL && fs->ops->unmount != RT_NULL && fs->ops->unmount(fs) < 0)
+	if (fs == RT_NULL || fs->ops->unmount == RT_NULL || fs->ops->unmount(fs) < 0)
 	{
 		goto err1;
 	}
