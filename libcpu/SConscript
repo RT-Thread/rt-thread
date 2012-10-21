@@ -15,6 +15,9 @@ if rtconfig.PLATFORM == 'gcc':
 if rtconfig.PLATFORM == 'iar':
 	src = Glob(path + '/*.c') + Glob(path + '/*_iar.S') + Glob(comm + '/*.c')
 
+if rtconfig.PLATFORM == 'cl':
+	src = Glob(path + '/*.c')
+
 CPPPATH = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
 group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH)
 
