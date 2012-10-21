@@ -1,0 +1,55 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
+
+env = Environment()
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+
+libs = Split('''
+kernel32
+msvcrt
+winmm
+user32
+gdi32
+winspool
+comdlg32
+advapi32
+shell32
+ole32
+oleaut32
+uuid
+odbc32
+odbccp32
+''')
+
+env.Append(CCFLAGS=rtconfig.CFLAGS)
+env.Append(LINKFLAGS=rtconfig.LFLAGS)
+env['LIBS']=libs
+
+objs = PrepareBuilding(env, RTT_ROOT)
+
+# firemare library building script
+# objs = objs + SConscript( GetCurrentDir() + '/Libraries/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
+
+if GetDepend('RT_USING_RTGUI'):
+    objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
+
+# build program 
+env.Program(TARGET, objs)
+
+# end building 
+EndBuilding(TARGET)

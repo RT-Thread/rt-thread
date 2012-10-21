@@ -1,0 +1,33 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c', 'platform.c']
+src_drv = ['serial.c', 'usart_sim.c']
+
+if GetDepend('RT_USING_DFS'):
+		src_drv += ['sd_sim.c']
+
+if GetDepend('RT_USING_MTD_NAND'):
+		src_drv += ['nand_sim.c']
+
+if GetDepend('RT_USING_MTD_NOR'):
+		src_drv += ['sst25vfxx_mtd_sim.c']
+
+if GetDepend('RT_USING_RTGUI'):
+    src_drv += ['touch.c', 'calibration.c']
+
+if GetDepend('RT_USING_RTGUI'):
+	if rtconfig.RT_USING_LCD_TYPE == 'FMT0371':
+		src_drv += ['lcd_a70.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'ILI932X':
+		src_drv += ['ili_lcd_general.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'SSD1289':
+		src_drv += ['ssd1289.c']
+
+src = src_bsp + src_drv
+CPPPATH = [ GetCurrentDir() ]
+CPPDEFINES = []
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
