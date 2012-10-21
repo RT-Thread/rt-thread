@@ -1,7 +1,6 @@
 # toolchains options
-ARCH='x86'
-#CPU='posix'
-CPU='win32'
+ARCH='sim'
+CPU='win32' #CPU='posix'
 CROSS_TOOL='msvc' #win32
 
 # lcd panel options
@@ -11,11 +10,6 @@ CROSS_TOOL='msvc' #win32
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= '/usr/bin/gcc'
-
-
-if  CROSS_TOOL == '':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= '/usr/bin/gcc'
 

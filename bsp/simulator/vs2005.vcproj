@@ -292,11 +292,11 @@
 				Name="libcpu"
 				>
 				<File
-					RelativePath="..\..\libcpu\x86\win32\cpu_port.c"
+					RelativePath="..\..\libcpu\sim\win32\cpu_port.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\libcpu\x86\win32\cpu_port.h"
+					RelativePath="..\..\libcpu\sim\win32\cpu_port.h"
 					>
 				</File>
 			</Filter>
