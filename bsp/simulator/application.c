@@ -107,12 +107,4 @@ int rt_application_init()
 
     return 0;
 }
-
-extern int rt_application_init(void);
-#if 1
-FINSH_FUNCTION_EXPORT(rt_application_init,  app init)
-void testfun()
-{}
-FINSH_FUNCTION_EXPORT(testfun,  test fun)
-#endif
 /*@}*/

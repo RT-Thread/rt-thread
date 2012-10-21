@@ -7,7 +7,6 @@
 */
 
 #include "rtthread.h"
-//#ifdef RT_USING_SERIAL
 
 #define _DEBUG_SERIAL 0
 #include "serial.h"
@@ -57,7 +56,6 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 	rt_uint8_t* ptr;
 	rt_err_t err_code;
 
-#if 1
 	ptr = buffer;
 	err_code = RT_EOK;
 
@@ -101,9 +99,8 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 	/* set error code */
 	rt_set_errno(err_code);
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-#endif
-
 }
+
 static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 #if _DEBUG_SERIAL==1
@@ -161,4 +158,4 @@ rt_err_t rt_hw_serial_init(void)
   	return rt_hw_serial_register(&serial_device,"sci0",
   		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM);
 }
-//#endif
+

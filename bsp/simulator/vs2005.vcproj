@@ -280,10 +280,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\testfs.c"
-					>
-				</File>
-				<File
 					RelativePath=".\usart_sim.c"
 					>
 				</File>
