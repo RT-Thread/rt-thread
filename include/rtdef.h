@@ -595,6 +595,8 @@ struct rt_memheap
 
     struct rt_memheap_item *free_list;                  /**< free block list */
     struct rt_memheap_item  free_header;                /**< free block list header */
+
+	struct rt_mutex         lock;                       /**< mutex lock */
 };
 
 /**
