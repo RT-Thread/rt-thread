@@ -27,10 +27,26 @@
  * 2010-04-21     yi.qiu       add list_module
  * 2012-04-29     goprife      improve the command line auto-complete feature.
  * 2012-06-02     lgnq         add list_memheap
+ * 2012-10-22     Bernard      add MS VC++ patch.
  */
 
 #include <rtthread.h>
 #include "finsh.h"
+#if defined(_MSC_VER)
+static struct finsh_syscall* _next_syscall(struct finsh_syscall* call)
+{
+	unsigned int *ptr;
+	ptr = (unsigned int*) (call + 1);
+	while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _syscall_table_end))
+		ptr ++;
+
+	return (struct finsh_syscall*)ptr;
+}
+#define _NEXT_SYSCALl(index)  index=_next_syscall(index)
+#else
+#define _NEXT_SYSCALl(index)  index++
+#endif
+
 
 rt_inline unsigned int rt_list_len(const rt_list_t *l)
 {
@@ -548,7 +564,7 @@ long list(void)
     rt_kprintf("--Function List:\n");
     {
         struct finsh_syscall *index;
-        for (index = _syscall_table_begin; index < _syscall_table_end; index ++)
+        for (index = _syscall_table_begin; index < _syscall_table_end;  _NEXT_SYSCALl(index))
         {
 #ifdef FINSH_USING_DESCRIPTION
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
@@ -632,7 +648,7 @@ void list_prefix(char *prefix)
     /* checks in system function call */
     {
         struct finsh_syscall* index;
-        for (index = _syscall_table_begin; index < _syscall_table_end; index ++)
+        for (index = _syscall_table_begin; index < _syscall_table_end;  _NEXT_SYSCALl(index))
         {
             if (str_is_prefix(prefix, index->name) == 0)
             {

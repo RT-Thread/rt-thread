@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-04-10     Bernard      first implementation
+ * 2012-10-16     Bernard      add the mutex lock for heap object.
  */
 
 #include <rtthread.h>
@@ -96,6 +97,9 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap, const char *name,
 	/* not in free list */
 	item->next_free = item->prev_free = RT_NULL;
 
+	/* initialize mutex lock */
+	rt_mutex_init(&(memheap->lock), name, RT_IPC_FLAG_FIFO);
+
 	RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("memory heap: start addr 0x%08x, size %d, free list header 0x%08x",
     		start_addr, size, &(memheap->free_header)));
 
@@ -105,6 +109,9 @@ RTM_EXPORT(rt_memheap_init);
 
 rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 {
+	RT_ASSERT(heap);
+
+	rt_object_detach(&(heap->lock.parent.parent));
 	rt_object_detach(&(heap->parent));
 
 	/* Return a successful completion. */
@@ -112,12 +119,13 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 }
 RTM_EXPORT(rt_memheap_detach);
 
-void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
 {
+	rt_err_t result;
 	rt_uint32_t free_size;
 	struct rt_memheap_item *header_ptr;
 
-	RT_ASSERT(pool_ptr != RT_NULL);
+	RT_ASSERT(heap != RT_NULL);
 
 	/* align allocated size */
 	size = RT_ALIGN(size, RT_ALIGN_SIZE);
@@ -126,13 +134,22 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 
 	RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate %d", size));
 
-	if (size < pool_ptr->available_size)
+	if (size < heap->available_size)
 	{
 		/* search on free list */
 		free_size = 0;
+
+		/* lock memheap */
+		result = rt_mutex_take(&(heap->lock), RT_WAITING_FOREVER);
+		if (result != RT_EOK)
+		{
+			rt_set_errno(result);
+			return RT_NULL;
+		}
+
 		/* get the first free memory block */
-		header_ptr = pool_ptr->free_list->next_free;
-		while (header_ptr != pool_ptr->free_list && free_size < size)
+		header_ptr = heap->free_list->next_free;
+		while (header_ptr != heap->free_list && free_size < size)
 		{
 			/* get current freed memory block size */
 			free_size = (rt_uint32_t)(header_ptr->next) - (rt_uint32_t)header_ptr - RT_MEMHEAP_SIZE;
@@ -165,7 +182,7 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 				new_ptr->magic = RT_MEMHEAP_MAGIC;
 
 				/* put the pool pointer into the new block. */
-				new_ptr->pool_ptr = pool_ptr;
+				new_ptr->pool_ptr = heap;
 
 				/* break down the block list */
 				new_ptr->prev = header_ptr;
@@ -180,20 +197,20 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 				header_ptr->prev_free = RT_NULL;
 
 				/* insert new_ptr to free list */
-				new_ptr->next_free = pool_ptr->free_list->next_free;
-				new_ptr->prev_free = pool_ptr->free_list;
-				pool_ptr->free_list->next_free->prev_free = new_ptr;
-				pool_ptr->free_list->next_free = new_ptr;
+				new_ptr->next_free = heap->free_list->next_free;
+				new_ptr->prev_free = heap->free_list;
+				heap->free_list->next_free->prev_free = new_ptr;
+				heap->free_list->next_free = new_ptr;
 				RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: nf 0x%08x, pf 0x%08x",
 						new_ptr->next_free, new_ptr->prev_free));
 
 				/* decrement the available byte count.  */
-				pool_ptr->available_size = pool_ptr->available_size - size - RT_MEMHEAP_SIZE;
+				heap->available_size = heap->available_size - size - RT_MEMHEAP_SIZE;
 			}
 			else
 			{
 				/* decrement the entire free size from the available bytes count.  */
-				pool_ptr->available_size = pool_ptr->available_size - free_size;
+				heap->available_size = heap->available_size - free_size;
 
 				/* remove header_ptr from free list */
 				RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("one block: h[0x%08x], nf 0x%08x, pf 0x%08x", header_ptr,
@@ -205,6 +222,9 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 				header_ptr->prev_free = RT_NULL;
 			}
 
+			/* release lock */
+			rt_mutex_release(&(heap->lock));
+			
 			/* Mark the allocated block as not available.  */
 			header_ptr->magic |= RT_MEMHEAP_USED;
 
@@ -214,6 +234,9 @@ void *rt_memheap_alloc(struct rt_memheap *pool_ptr, rt_uint32_t size)
 
 			return (void *)((rt_uint8_t *)header_ptr + RT_MEMHEAP_SIZE));
 		}
+
+		/* release lock */
+		rt_mutex_release(&(heap->lock));
 	}
 
 	RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate memory: failed\n"));
@@ -225,7 +248,8 @@ RTM_EXPORT(rt_memheap_alloc);
 
 void rt_memheap_free(void *ptr)
 {
-	struct rt_memheap *pool_ptr;
+	rt_err_t result;
+	struct rt_memheap *heap;
 	struct rt_memheap_item *header_ptr, *new_ptr;
 	rt_uint32_t insert_header;
 
@@ -240,13 +264,21 @@ void rt_memheap_free(void *ptr)
 	RT_ASSERT((header_ptr->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
 
 	/* get pool ptr */
-	pool_ptr = header_ptr->pool_ptr;
+	heap = header_ptr->pool_ptr;
+
+	/* lock memheap */
+	result = rt_mutex_take(&(heap->lock), RT_WAITING_FOREVER);
+	if (result != RT_EOK)
+	{
+		rt_set_errno(result);
+		return ;
+	}
 
 	/* Mark the memory as available. */
 	header_ptr->magic &= ~RT_MEMHEAP_USED;
 
 	/* Adjust the available number of bytes. */
-	pool_ptr->available_size =  pool_ptr->available_size +
+	heap->available_size =  heap->available_size +
 			((rt_uint32_t)(header_ptr->next) -
 			(rt_uint32_t)header_ptr) - RT_MEMHEAP_SIZE;
 
@@ -256,7 +288,7 @@ void rt_memheap_free(void *ptr)
 		RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("merge: left node 0x%08x", header_ptr->prev));
 
 		/* adjust the available number of bytes. */
-		pool_ptr->available_size = pool_ptr->available_size + RT_MEMHEAP_SIZE;
+		heap->available_size = heap->available_size + RT_MEMHEAP_SIZE;
 
 		/* yes, merge block with previous neighbor. */
 		(header_ptr->prev)->next = header_ptr->next;
@@ -272,7 +304,7 @@ void rt_memheap_free(void *ptr)
 	if (!RT_MEMHEAP_IS_USED(header_ptr->next))
 	{
 		/* adjust the available number of bytes. */
-		pool_ptr->available_size =  pool_ptr->available_size + RT_MEMHEAP_SIZE;
+		heap->available_size =  heap->available_size + RT_MEMHEAP_SIZE;
 
 		/* merge block with next neighbor. */
 		new_ptr =  header_ptr->next;
@@ -291,14 +323,17 @@ void rt_memheap_free(void *ptr)
 	if (insert_header)
 	{
 		/* no left merge, insert to free list */
-		header_ptr->next_free = pool_ptr->free_list->next_free;
-		header_ptr->prev_free = pool_ptr->free_list;
-		pool_ptr->free_list->next_free->prev_free = header_ptr;
-		pool_ptr->free_list->next_free = header_ptr;
+		header_ptr->next_free = heap->free_list->next_free;
+		header_ptr->prev_free = heap->free_list;
+		heap->free_list->next_free->prev_free = header_ptr;
+		heap->free_list->next_free = header_ptr;
 
 		RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("insert to free list: nf 0x%08x, pf 0x%08x",
 				header_ptr->next_free, header_ptr->prev_free));
 	}
+
+	/* release lock */
+	rt_mutex_release(&(heap->lock));
 }
 RTM_EXPORT(rt_memheap_free);
 

@@ -304,7 +304,17 @@ rt_bool_t finsh_handle_history(struct finsh_shell* shell, char ch)
 
 		if (shell->use_history)
 		{
+#if defined(_WIN32)
+			int i;
+			rt_kprintf("\r");
+
+			for(i=0; i<= 60; i++)
+				putchar(' ');
+			rt_kprintf("\r");
+
+#else
 			rt_kprintf("\033[2K\r");
+#endif
 			rt_kprintf("%s%s", FINSH_PROMPT, shell->line);
 			return RT_TRUE;;
 		}
@@ -459,6 +469,26 @@ void finsh_system_var_init(const void* begin, const void* end)
     extern "asm" int __vsymtab_start;
     extern "asm" int __vsymtab_end;
   #endif
+#elif defined(_MSC_VER)
+#pragma section("FSymTab$a", read)
+const char __fsym_begin_name[] = "__start";
+const char __fsym_begin_desc[] = "begin of finsh";
+__declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin = 
+{
+	__fsym_begin_name,
+	__fsym_begin_desc,
+	NULL
+};
+
+#pragma section("FSymTab$z", read)
+const char __fsym_end_name[] = "__end";
+const char __fsym_end_desc[] = "end of finsh";
+__declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = 
+{
+	__fsym_end_name,
+	__fsym_end_desc,
+	NULL
+};
 #endif
 
 /*
@@ -493,6 +523,16 @@ void finsh_system_init(void)
 #elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
     finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
+#elif defined(_MSC_VER)
+	unsigned int *ptr_begin, *ptr_end;
+
+	ptr_begin = (unsigned int*)&__fsym_begin; ptr_begin += (sizeof(struct finsh_syscall)/sizeof(unsigned int));
+	while (*ptr_begin == 0) ptr_begin ++;
+
+	ptr_end = (unsigned int*) &__fsym_end; ptr_end --;
+	while (*ptr_end == 0) ptr_end --;
+
+	finsh_system_function_init(ptr_begin, ptr_end);
 #endif
 #endif
 
