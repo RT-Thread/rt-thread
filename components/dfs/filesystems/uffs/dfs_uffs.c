@@ -270,7 +270,7 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
 		return -DFS_STATUS_ENOENT;
 	
 	buf->f_bsize = mtd->page_size;
-	buf->f_blocks = (mtd->block_size)/(mtd->page_size)*
+	buf->f_blocks = mtd->pages_per_block*
 	                (mtd->block_end - mtd->block_start + 1);
 	buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev) / mtd->page_size;
 	

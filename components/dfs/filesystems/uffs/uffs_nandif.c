@@ -144,7 +144,7 @@ void uffs_setup_storage(
 
 //	attr->total_blocks = nand->end_block - nand->start_block + 1;/* no use */
 	attr->page_data_size = nand->page_size;		                 /* page data size */
-	attr->pages_per_block = nand->block_size / nand->page_size ; /* pages per block */
+	attr->pages_per_block = nand->pages_per_block;               /* pages per block */
 	attr->spare_size = nand->oob_size;		  	                 /* page spare size */
 	attr->block_status_offs = UFFS_BLOCK_MARK_SPARE_OFFSET;      /* block status offset is 5th byte in spare */
 	attr->ecc_opt = RT_CONFIG_UFFS_ECC_MODE;                     /* ecc option */
