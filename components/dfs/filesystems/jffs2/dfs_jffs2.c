@@ -684,7 +684,7 @@ static int dfs_jffs2_stat(struct dfs_filesystem* fs, const char *path, struct st
 	st->st_dev  = 0;
 	st->st_size = s.st_size;
 	st->st_mtime = s.st_mtime;
-	/*st->st_blksize = ;*/ //fixme: what's this field?
+	st->st_blksize = 1;//fixme: what's this field?
 
 	return 0;
 }
