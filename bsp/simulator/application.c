@@ -16,21 +16,12 @@
 #include <stdio.h>
 #include <board.h>
 
-#ifdef RT_USING_DFS
-/* dfs init */
-#include <dfs_init.h>
-/* dfs filesystem:ELM filesystem init */
-#include <dfs_elm.h>
-/* dfs Filesystem APIs */
-#include <dfs_fs.h>
-#endif
+#include <components.h>
 
 void rt_init_thread_entry(void* parameter)
 {
-#ifdef RT_USING_COMPONENTS_INIT
     /* initialization RT-Thread Components */
     rt_components_init();
-#endif
 
     rt_platform_init();
 
@@ -66,7 +57,6 @@ void rt_init_thread_entry(void* parameter)
         else
             rt_kprintf("jffs2 initialzation failed!\n");
 #endif
-
     }
 #endif
 }
@@ -81,30 +71,32 @@ void rt_test_thread_entry(void* parameter)
 	}
 }
 
-#include <finsh.h>
 int rt_application_init()
 {
-    rt_thread_t thread;
+    rt_thread_t tid;
 
-#if (RT_THREAD_PRIORITY_MAX == 32)
-    thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
+    tid = rt_thread_create("init",
+        rt_init_thread_entry, RT_NULL,
+        2048, RT_THREAD_PRIORITY_MAX/3, 20);
 
-    if (thread != RT_NULL)
-        rt_thread_startup(thread);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
-    thread = rt_thread_create("test",
-                                   rt_test_thread_entry, RT_NULL,
-                                   2048, 9, 20);
-    if (thread != RT_NULL)
-        rt_thread_startup(thread);
+    tid = rt_thread_create("test",
+        rt_test_thread_entry, RT_NULL,
+        2048, RT_THREAD_PRIORITY_MAX * 3 /4, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
     return 0;
 }
+
+#include <stdlib.h>
+void rt_hw_exit(void)
+{
+    rt_kprintf("RT-Thread, bye\n");
+    exit(0);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt-thread);
+
 /*@}*/

@@ -1,6 +1,7 @@
 /* RT-Thread config file */
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
+
 #ifdef _MSC_VER
 #undef RT_USING_NEWLIB
 #undef RT_USING_MINILIBC
