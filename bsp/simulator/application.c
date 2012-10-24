@@ -91,7 +91,12 @@ int rt_application_init()
     return 0;
 }
 
-#include <stdlib.h>
+#ifndef _CRT_TERMINATE_DEFINED
+#define _CRT_TERMINATE_DEFINED
+_CRTIMP __declspec(noreturn) void __cdecl exit(__in int _Code);
+_CRTIMP __declspec(noreturn) void __cdecl _exit(__in int _Code);
+_CRTIMP void __cdecl abort(void);
+#endif
 void rt_hw_exit(void)
 {
     rt_kprintf("RT-Thread, bye\n");

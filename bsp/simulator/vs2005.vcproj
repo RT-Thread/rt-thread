@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress"
+				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;MSVC;_TIME_T_DEFINED"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
