@@ -11,8 +11,8 @@ static void thread_entry(void* parameter)
 	rt_tick_t tick;
 	rt_kprintf("thread inited ok\n");
 
-	tick = rt_tick_get();
 	rt_kprintf("thread delay 10 tick\n");
+	tick = rt_tick_get();
 	rt_thread_delay(10);
 	if (rt_tick_get() - tick > 10)
 	{
@@ -20,8 +20,8 @@ static void thread_entry(void* parameter)
 		return;
 	}
 
-	tick = rt_tick_get();
 	rt_kprintf("thread delay 15 tick\n");
+	tick = rt_tick_get();
 	rt_thread_delay(15);
 	if (rt_tick_get() - tick > 15)
 	{
