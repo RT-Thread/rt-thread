@@ -6,8 +6,8 @@ static struct rt_thread thread2;
 static char thread1_stack[THREAD_STACK_SIZE];
 static char thread2_stack[THREAD_STACK_SIZE];
 
-static rt_uint32_t t1_count = 0;
-static rt_uint32_t t2_count = 0;
+volatile static rt_uint32_t t1_count = 0;
+volatile static rt_uint32_t t2_count = 0;
 static void thread1_entry(void* parameter)
 {
 	while (1)
@@ -65,8 +65,12 @@ static void _tc_cleanup()
 	/* unlock scheduler */
 	rt_exit_critical();
 
+	rt_kprintf("t1_count=%d t2_count=%d\n",t1_count,t2_count);
+
 	if (t1_count / t2_count != 2)
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
+	else
+		tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_same_priority()

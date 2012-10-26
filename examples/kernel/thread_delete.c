@@ -131,7 +131,7 @@ int _tc_thread_delete()
 	tc_cleanup(_tc_cleanup);
 	thread_delete_init();
 
-	return 25;
+	return 27;
 }
 FINSH_FUNCTION_EXPORT(_tc_thread_delete, a thread delete example);
 #else
