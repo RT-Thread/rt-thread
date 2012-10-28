@@ -139,6 +139,9 @@ void rt_data_queue_reset(struct rt_data_queue *queue);
 
 #ifdef RT_USING_RTC
 #include "drivers/rtc.h"
+#ifdef RT_USING_ALARM
+#include "drivers/alarm.h"
+#endif
 #endif /* RT_USING_RTC */
 
 #ifdef RT_USING_SPI
