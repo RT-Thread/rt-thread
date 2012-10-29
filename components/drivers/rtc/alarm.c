@@ -463,6 +463,11 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
             {
                 ret = alarm_set(alarm);
             }
+            else
+            {
+                ret = RT_EOK;
+                goto _exit;
+            }
         }
 
         if (ret == RT_EOK)
