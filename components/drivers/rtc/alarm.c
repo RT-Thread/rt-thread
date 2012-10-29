@@ -380,7 +380,7 @@ void rt_alarm_update(rt_device_t dev, rt_uint32_t event)
     rt_event_send(&_container.event, 1);
 }
 
-/** \breif modify the alarm setup
+/** \brief modify the alarm setup
  *
  * \param alarm pointer to alarm
  * \param cmd control command
