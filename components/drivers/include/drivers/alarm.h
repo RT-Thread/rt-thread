@@ -17,7 +17,7 @@
 
 #include <time.h>
 
-#define RT_ALARM_TM_NOW        -1    /* set the alarm tm_day,tm_mon,tm_sec,ect to now.we also call it "don't care" value */
+#define RT_ALARM_TM_NOW        -1    /* set the alarm tm_day,tm_mon,tm_sec,etc. to now.we also call it "don't care" value */
 
 /* alarm flags */
 #define RT_ALARM_ONESHOT       0x000 /* only alarm onece */
