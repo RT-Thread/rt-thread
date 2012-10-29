@@ -695,6 +695,8 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
 #define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set time */
+#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x12            /**< get alarm */
+#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
 /**
