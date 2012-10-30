@@ -101,9 +101,9 @@ static void _tc_cleanup()
 	rt_thread_delete(worker);
 
 	if (t1_count > t2_count)
-		tc_stat(TC_STAT_FAILED);
+		tc_done(TC_STAT_FAILED);
 	else
-		tc_stat(TC_STAT_PASSED);
+		tc_done(TC_STAT_PASSED);
 
 	/* unlock scheduler */
 	rt_exit_critical();
