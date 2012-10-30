@@ -49,6 +49,8 @@ void tc_thread_entry(void* parameter)
 						_tc_cleanup = RT_NULL;
 					}
 
+					rt_sem_trytake(&_tc_sem);/* by nl1031 */
+
 					if (_tc_stat & TC_STAT_FAILED)
 						rt_kprintf("TestCase[%s] failed\n", _tc_current);
 					else
