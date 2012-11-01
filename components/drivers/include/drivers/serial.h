@@ -58,17 +58,20 @@
 #define RT_SERIAL_ERR_FRAMING           0x02
 #define RT_SERIAL_ERR_PARITY            0x03
 
+#define RT_SERIAL_TX_DATAQUEUE_SIZE     40
+#define RT_SERIAL_TX_DATAQUEUE_LWM      30
+
 /* Default config for serial_configure structure */
 #define RT_SERIAL_CONFIG_DEFAULT           \
 {                                          \
     BAUD_RATE_115200, /* 115200 bits/s */  \
     DATA_BITS_8,      /* 8 databits */     \
-	STOP_BITS_1,      /* 1 stopbit */      \
-	PARITY_NONE,      /* No parity  */     \
-	BIT_ORDER_LSB,    /* LSB first sent */ \
-	NRZ_NORMAL,       /* Normal mode */    \
-	0                                      \
-}                                                                                 
+    STOP_BITS_1,      /* 1 stopbit */      \
+    PARITY_NONE,      /* No parity  */     \
+    BIT_ORDER_LSB,    /* LSB first sent */ \
+    NRZ_NORMAL,       /* Normal mode */    \
+    0                                      \
+}
 
 struct serial_ringbuffer
 {
@@ -98,6 +101,10 @@ struct rt_serial_device
     struct serial_ringbuffer *int_rx;
     /* tx structure */
     struct serial_ringbuffer *int_tx;
+
+    struct rt_data_queue      tx_dq;              /* tx dataqueue */
+    
+    volatile rt_bool_t        dma_flag;           /* dma transfer flag */
 };
 typedef struct rt_serial_device rt_serial_t;
 
@@ -111,9 +118,12 @@ struct rt_uart_ops
 
     int (*putc)(struct rt_serial_device *serial, char c);
     int (*getc)(struct rt_serial_device *serial);
+
+    rt_size_t (*dma_transmit)(struct rt_serial_device *serial, const char *buf, rt_size_t size);
 };
 
 void rt_hw_serial_isr(struct rt_serial_device *serial);
+void rt_hw_serial_dma_tx_isr(struct rt_serial_device *serial);
 rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                const char              *name,
                                rt_uint32_t              flag,

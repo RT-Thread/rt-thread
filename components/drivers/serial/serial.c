@@ -132,7 +132,16 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
             serial_ringbuffer_init(serial->int_rx);
 
         if (dev->flag & RT_DEVICE_FLAG_INT_TX)
-            serial_ringbuffer_init(serial->int_tx);      
+            serial_ringbuffer_init(serial->int_tx);
+
+        if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
+        {
+            serial->dma_flag = RT_FALSE;
+            
+            /* init data queue */
+            rt_data_queue_init(&(serial->tx_dq), RT_SERIAL_TX_DATAQUEUE_SIZE,
+                               RT_SERIAL_TX_DATAQUEUE_LWM, RT_NULL);
+        }
 
         /* set activated */
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
@@ -261,6 +270,41 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
                 break;
         }
     }
+    else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
+    {
+        const void *data_ptr = RT_NULL;
+        rt_size_t data_size = 0;
+        rt_base_t level;
+        rt_err_t result;
+        
+        RT_ASSERT(0 == (dev->flag & RT_DEVICE_FLAG_STREAM));
+
+        result = rt_data_queue_push(&(serial->tx_dq), buffer, size, 20); 
+        if (result == RT_EOK)
+        {
+            level = rt_hw_interrupt_disable();
+            if (serial->dma_flag == RT_FALSE)
+            {
+                serial->dma_flag = RT_TRUE;
+                rt_hw_interrupt_enable(level);
+            
+                if (RT_EOK == rt_data_queue_pop(&(serial->tx_dq), &data_ptr, &data_size, 0))
+                {
+                    serial->ops->dma_transmit(serial, data_ptr, data_size);
+                }
+            }
+            else
+                rt_hw_interrupt_enable(level);
+
+            return size;
+        }
+        else
+        {
+            rt_set_errno(result);
+
+            return 0;
+        }
+    }
     else
     {
         /* polling mode */
@@ -375,5 +419,24 @@ void rt_hw_serial_isr(struct rt_serial_device *serial)
         /* get rx length */
         rx_length = serial_ringbuffer_size(serial->int_rx);
         serial->parent.rx_indicate(&serial->parent, rx_length);
+    }
+}
+
+/*
+ * ISR for DMA mode Tx
+ */
+void rt_hw_serial_dma_tx_isr(struct rt_serial_device *serial)
+{
+    void *data_ptr;
+    rt_size_t data_size;
+
+    if (RT_EOK == rt_data_queue_pop(&(serial->tx_dq), &data_ptr, &data_size, 0))
+    {
+        /* transmit next data node */
+        serial->ops->dma_transmit(serial, data_ptr, data_size);
+    }
+    else
+    {
+        serial->dma_flag = RT_FALSE;
     }
 }

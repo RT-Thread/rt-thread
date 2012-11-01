@@ -125,15 +125,15 @@ rt_err_t rt_data_queue_init(struct rt_data_queue *queue,
                             rt_uint16_t           lwm,
                             void (*evt_notify)(struct rt_data_queue *queue, rt_uint32_t event));
 rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
-                            void                 *data_ptr,
+                            const void           *data_ptr,
                             rt_size_t             data_size,
                             rt_int32_t            timeout);
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
-                           void                **data_ptr,
+                           const void          **data_ptr,
                            rt_size_t            *size,
                            rt_int32_t            timeout);
 rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
-                            void                **data_ptr,
+                            const void          **data_ptr,
                             rt_size_t            *size);
 void rt_data_queue_reset(struct rt_data_queue *queue);
 
