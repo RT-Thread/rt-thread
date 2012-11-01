@@ -86,6 +86,11 @@ typedef rt_uint32_t	mem_ptr_t;
 #define PACK_STRUCT_STRUCT __attribute__((packed))
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
+#elif defined(_MSC_VER)
+#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_STRUCT
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
 #endif
 
 void sys_arch_assert(const char* file, int line);
