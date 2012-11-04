@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd + '/Include']
+LIBPATH = [cwd + '/Lib']
+CPPDEFINES = ['WIN32']
+LIBS    = ['wpcap']
+
+group = DefineGroup('Pcap', src, depend = ['RT_USING_LWIP'], CPPPATH = CPPPATH, LIBPATH=LIBPATH, CPPDEFINES=CPPDEFINES, LIBS=LIBS)
+
+Return('group')
