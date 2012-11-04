@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init"
+				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init;.\drivers"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;MSVC;_TIME_T_DEFINED"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -245,42 +245,18 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="board"
+				Name="app"
 				>
 				<File
-					RelativePath=".\application.c"
+					RelativePath=".\applications\application.c"
 					>
 				</File>
 				<File
-					RelativePath=".\board.c"
+					RelativePath=".\applications\platform.c"
 					>
 				</File>
 				<File
-					RelativePath=".\nand_sim.c"
-					>
-				</File>
-				<File
-					RelativePath=".\platform.c"
-					>
-				</File>
-				<File
-					RelativePath=".\sd_sim.c"
-					>
-				</File>
-				<File
-					RelativePath=".\serial.c"
-					>
-				</File>
-				<File
-					RelativePath=".\sst25vfxx_mtd_sim.c"
-					>
-				</File>
-				<File
-					RelativePath=".\startup.c"
-					>
-				</File>
-				<File
-					RelativePath=".\usart_sim.c"
+					RelativePath=".\applications\startup.c"
 					>
 				</File>
 			</Filter>
@@ -715,6 +691,46 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="driver"
+				>
+				<File
+					RelativePath=".\drivers\board.c"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\board.h"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\nand_sim.c"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\sd_sim.c"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\serial.c"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\serial.h"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\sst25vfxx_mtd.h"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\sst25vfxx_mtd_sim.c"
+					>
+				</File>
+				<File
+					RelativePath=".\drivers\usart_sim.c"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
