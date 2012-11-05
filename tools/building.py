@@ -192,11 +192,16 @@ def MergeGroup(src_group, group):
             src_group['LINKFLAGS'] = src_group['LINKFLAGS'] + group['LINKFLAGS']
         else:
             src_group['LINKFLAGS'] = group['LINKFLAGS']
-    if group.has_key('LIBRARY'):
-        if src_group['LIBRARY'].has_key('LIBRARY'):
-            src_group['LIBRARY'] = src_group['LIBRARY'] + group['LIBRARY']
+    if group.has_key('LIBS'):
+        if src_group.has_key('LIBS'):
+            src_group['LIBS'] = src_group['LIBS'] + group['LIBS']
         else:
-            src_group['LIBRARY'] = group['LIBRARY']
+            src_group['LIBS'] = group['LIBS']
+    if group.has_key('LIBPATH'):
+        if src_group.has_key('LIBPATH'):
+            src_group['LIBPATH'] = src_group['LIBPATH'] + group['LIBPATH']
+        else:
+            src_group['LIBPATH'] = group['LIBPATH']
 
 def DefineGroup(name, src, depend, **parameters):
     global Env
