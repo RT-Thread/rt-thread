@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init;.\drivers"
+				AdditionalIncludeDirectories=".\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init;.\drivers;..\..\components\net\lwip\src\include\;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include\ipv4;.\pcap\Include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;MSVC;_TIME_T_DEFINED"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib"
+				AdditionalDependencies="winmm.lib Packet.lib wpcap.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories=".\pcap\Lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -729,6 +730,178 @@
 				</File>
 				<File
 					RelativePath=".\drivers\usart_sim.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="lwip"
+				>
+				<Filter
+					Name="api"
+					>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\api_lib.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\api_msg.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\err.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\netbuf.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\netdb.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\netifapi.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\sockets.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\api\tcpip.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="arch"
+					>
+					<File
+						RelativePath="..\..\components\net\lwip\src\arch\sys_arch.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="core"
+					>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\def.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\dhcp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\dns.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\init.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\memp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\netif.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\pbuf.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\raw.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\stats.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\sys.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\tcp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\tcp_in.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\tcp_out.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\timers.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\core\udp.c"
+						>
+					</File>
+					<Filter
+						Name="ipv4"
+						>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\autoip.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\icmp.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\igmp.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\inet.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\inet_chksum.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\ip.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\ip_addr.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\components\net\lwip\src\core\ipv4\ip_frag.c"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="netif"
+					>
+					<File
+						RelativePath="..\..\components\net\lwip\src\netif\etharp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\netif\ethernetif.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\components\net\lwip\src\netif\slipif.c"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="pcap"
+				>
+				<File
+					RelativePath=".\pcap\pcap_netif.c"
 					>
 				</File>
 			</Filter>
