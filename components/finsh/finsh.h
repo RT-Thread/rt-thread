@@ -64,7 +64,7 @@ typedef unsigned char  u_char;
 typedef unsigned short u_short;
 typedef unsigned long  u_long;
 
-#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__) && !defined(__ADSPBLACKFIN__)
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__) && !defined(__ADSPBLACKFIN__) && !defined(_MSC_VER)
 typedef unsigned int size_t;
 
 #ifndef NULL
@@ -140,7 +140,6 @@ extern struct finsh_syscall_item *global_syscall_list;
 struct finsh_syscall* finsh_syscall_lookup(const char* name);
 
 /* system variable table */
-
 struct finsh_sysvar
 {
 	const char*		name;		/* the name of variable */
