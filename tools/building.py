@@ -92,7 +92,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
                 'mdk4':('keil', 'armcc'),
-                'iar':('iar', 'iar')}
+                'iar':('iar', 'iar'),
+                'vs':('msvc', 'cl')}
     tgt_name = GetOption('target')
     if tgt_name:
         SetOption('no_exec', 1)
@@ -285,6 +286,7 @@ def EndBuilding(target, program = None):
     from keil import MDKProject
     from keil import MDK4Project
     from iar import IARProject
+    from vs import VSProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
@@ -304,6 +306,9 @@ def EndBuilding(target, program = None):
 
     if GetOption('target') == 'iar':
         IARProject('project.ewp', Projects) 
+
+    if GetOption('target') == 'vs':
+        VSProject('project.vcproj', Projects)
 
     if GetOption('copy') and program != None:
         MakeCopy(program)
