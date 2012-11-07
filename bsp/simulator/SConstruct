@@ -35,10 +35,18 @@ uuid
 odbc32
 odbccp32
 ''')
+definitions = Split('''
+WIN32
+_DEBUG
+_CONSOLE
+MSVC
+_TIME_T_DEFINED
+''')
 
 env.Append(CCFLAGS=rtconfig.CFLAGS)
 env.Append(LINKFLAGS=rtconfig.LFLAGS)
 env['LIBS']=libs
+env['CPPDEFINES']=definitions
 
 objs = PrepareBuilding(env, RTT_ROOT)
 
