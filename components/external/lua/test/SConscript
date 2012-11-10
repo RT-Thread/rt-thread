@@ -1,0 +1,11 @@
+
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('lua', src, depend = ['RT_USING_LUA'], CPPPATH = CPPPATH)
+
+Return('group')
