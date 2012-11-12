@@ -74,7 +74,7 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
     return (ret);
 }
 
-static alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
+static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
 {
     rt_uint32_t sec_alarm, sec_now;
     rt_bool_t wakeup = RT_FALSE;
