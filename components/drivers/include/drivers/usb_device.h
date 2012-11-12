@@ -156,7 +156,9 @@ uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc,
     rt_err_t (*handler)(udevice_t device, rt_size_t size));
 ualtsetting_t rt_usbd_altsetting_create(uintf_desc_t intf_desc, rt_size_t desc_size);
 
+rt_err_t rt_usbd_core_init(void);
 rt_err_t rt_usbd_free_device(udevice_t device);
+rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
 rt_err_t rt_usbd_config_add_class(uconfig_t cfg, uclass_t cls);
