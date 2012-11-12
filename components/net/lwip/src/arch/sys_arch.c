@@ -111,6 +111,9 @@ void lwip_system_init(void)
 	rt_err_t rc;
 	struct rt_semaphore done_sem;
 
+	/* set default netif to NULL */
+	netif_default = RT_NULL;
+
 	rc = rt_sem_init(&done_sem, "done", 0, RT_IPC_FLAG_FIFO);
 
 	if(rc != RT_EOK)
@@ -131,6 +134,7 @@ void lwip_system_init(void)
 
 	/* set default ip address */
 #if !LWIP_DHCP
+	if (netif_default != RT_NULL)
 	{
 		struct ip_addr ipaddr, netmask, gw;
 

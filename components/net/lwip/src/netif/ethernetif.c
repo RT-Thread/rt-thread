@@ -12,6 +12,8 @@
  * 2010-07-07     Bernard      fix send mail to mailbox issue.
  * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
  * 2012-04-10     Bernard      add more compatible with RT-Thread.
+ * 2012-11-12     Bernard      The network interface can be initialized 
+ *                             after lwIP initialization.
  */
 
 /*
@@ -114,6 +116,52 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 	return ERR_OK;
 }
 
+static err_t eth_netif_device_init(struct netif *netif)
+{
+	struct eth_device *ethif;
+
+	ethif = (struct eth_device*)netif->state;
+	if (ethif != RT_NULL)
+	{
+		rt_device_t device;
+
+		/* get device object */
+		device = (rt_device_t) ethif;
+		if (rt_device_init(device) != RT_EOK)
+		{
+			return ERR_IF;
+		}
+
+		/* copy device flags to netif flags */
+		netif->flags = ethif->flags;
+
+		/* set default netif */
+		if (netif_default == RT_NULL)
+			netif_set_default(ethif->netif);
+
+#if LWIP_DHCP
+		if (ethif->flags & NETIF_FLAG_DHCP)
+		{
+			/* if this interface uses DHCP, start the DHCP client */
+			dhcp_start(ethif->netif);
+		}
+		else
+#endif
+		{
+			/* set interface up */
+			netif_set_up(ethif->netif);
+		}
+
+#ifdef LWIP_NETIF_LINK_CALLBACK
+		netif_set_link_up(ethif->netif);
+#endif
+
+		return ERR_OK;
+	}
+
+	return ERR_IF;
+}
+
 /* Keep old drivers compatible in RT-Thread */
 rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_t flags)
 {
@@ -153,6 +201,18 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_
 	/* set output */
 	netif->output		= etharp_output;
 	netif->linkoutput	= ethernetif_linkoutput;
+
+	/* if tcp thread has been started up, we add this netif to the system */
+	if (rt_thread_find("tcpip") != RT_NULL)
+	{
+		struct ip_addr ipaddr, netmask, gw;
+
+		IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
+		IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
+		IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+	
+		netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
+	}
 
 	return RT_EOK;
 }

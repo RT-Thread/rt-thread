@@ -61,6 +61,8 @@ typedef rt_uint32_t	mem_ptr_t;
 			180 here because the number "108" which is used
 			in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
+#elif RT_USING_MINILIBC
+#include <errno.h>
 #else
 #define LWIP_PROVIDE_ERRNO
 #endif
