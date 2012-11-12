@@ -32,4 +32,15 @@ typedef unsigned long long uint64_t;
 #define	UINT16_MAX		0xffff
 #define	UINT32_MAX		0xffffffffU
 
+#ifndef __INT_MAX__
+#define __INT_MAX__     2147483647
+#endif
+#define INT_MIN         (-1 - INT_MAX)
+#define INT_MAX         (__INT_MAX__)
+#define UINT_MAX        (INT_MAX * 2U + 1U)
+
+#define LONG_MAX	((long)(~0UL>>1))
+#define LONG_MIN	(-LONG_MAX - 1)
+#define ULONG_MAX	(~0UL)
+
 #endif

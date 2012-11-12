@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-static unsigned int seed=1;
+static unsigned int _seed=1;
 
 /* Knuth's TAOCP section 3.6 */
 #define	M	((1U<<31) -1)
@@ -10,7 +10,6 @@ static unsigned int seed=1;
 #define	Q	44488		// M/A
 #define	R	3399		// M%A; R < Q !!!
 
-// FIXME: ISO C/SuS want a longer period
 int rand_r(unsigned int* seed)
 {   int32_t X;
 
@@ -24,12 +23,12 @@ int rand_r(unsigned int* seed)
 }
 
 int rand(void) {
-  return rand_r(&seed);
+  return rand_r(&_seed);
 }
 
 void srand(unsigned int i)
 { 
-	seed=i;
+	_seed=i;
 }
 
 int random(void) __attribute__((alias("rand")));

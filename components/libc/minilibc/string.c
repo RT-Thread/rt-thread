@@ -17,6 +17,7 @@
  */
 
 #include <rtthread.h>
+#include <stdint.h>
 
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC)
 #include "string.h"

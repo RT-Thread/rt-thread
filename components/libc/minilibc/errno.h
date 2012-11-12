@@ -47,13 +47,31 @@
 
 #endif
 
-#define	EPERM		1		/* Not super-user */
-#define	ESRCH		3		/* No such process */
-#define	EINTR		4		/* Interrupted system call */
-#define	ENFILE		23		/* Too many open files in system */
-#define	EDEADLK		45		/* Deadlock condition */
-#define EBADMSG		77		/* Trying to read unreadable message */
-#define ETIMEDOUT	116		/* Connection timed out */
-#define ENOTSUP		134		/* Not supported */
+#define	EPERM			1		/* Not super-user */
+#define	ESRCH			3		/* No such process */
+#define	EINTR			4		/* Interrupted system call */
+#define EFAULT       	14  	/* Bad address */
+#define	ENFILE			23		/* Too many open files in system */
+#define ERANGE			34		/* Math result not representable */
+#define	EDEADLK			45		/* Deadlock condition */
+#define EBADMSG			77		/* Trying to read unreadable message */
+#define EMSGSIZE     	90  	/* Message too long */
+#define ENOPROTOOPT  	92  	/* Protocol not available */
+#define EOPNOTSUPP      95  	/* Operation not supported on transport endpoint */
+#define EAFNOSUPPORT    97  	/* Address family not supported by protocol */
+#define EADDRINUSE      98  	/* Address already in use */
+#define ENETDOWN       	100  	/* Network is down */
+#define ENETUNREACH    	101  	/* Network is unreachable */
+#define ECONNABORTED   	103  	/* Software caused connection abort */
+#define ECONNRESET     	104  	/* Connection reset by peer */
+#define ENOBUFS     	105  	/* No buffer space available */
+#define ENOTCONN       	107  	/* Transport endpoint is not connected */
+#define EINPROGRESS    	115  	/* Operation now in progress */
+#define ETIMEDOUT		116		/* Connection timed out */
+#define EHOSTUNREACH 	113  	/* No route to host */
+#define EALREADY        114  	/* Operation already in progress */
+#define ENOTSUP			134		/* Not supported */
+#define ENSRNOTFOUND 	163  	/* Domain name not found */
+#define EWOULDBLOCK 	EAGAIN  /* Operation would block */
 
 #endif
