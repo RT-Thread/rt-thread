@@ -1,3 +1,19 @@
+/*
+ * File      : pcap_netif.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-11-05     Bernard      the first version
+ * 2012-11-13     Bernard      merge prife's patch for exclusive
+ *                             access pcap driver.
+ */
+
 #ifdef _TIME_T_DEFINED
 #undef _TIME_T_DEFINED
 #endif
@@ -56,12 +72,15 @@ static void pcap_thread_entry(void* parameter)
 
     NETIF_PCAP(&pcap_netif_device) = tap;
 
-    // pcap_loop(tap, 0, packet_handler, NULL);
     /* Read the packets */
-    while((res = pcap_next_ex(tap, &header, &pkt_data)) >= 0)
+    while (1)
     {
         struct eth_device* eth;
         struct pbuf *p;
+
+        rt_enter_critical();
+        res = pcap_next_ex(tap, &header, &pkt_data);
+        rt_exit_critical();
 
         if (res == 0) continue;
 
@@ -113,6 +132,7 @@ static rt_err_t pcap_netif_init(rt_device_t dev)
     for(d = alldevs, i = 0; i < inum-1 ;d = d->next, i++);
 
     {
+        rt_kprintf("Select (%s) as network interface\n", d->description);
         packet_mb = rt_mb_create("pcap", 64, RT_IPC_FLAG_FIFO);
         tid = rt_thread_create("pcap", pcap_thread_entry, d, 
             2048, RT_THREAD_PRIORITY_MAX - 1, 10);
@@ -180,6 +200,7 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
     rt_uint8_t buf[2048];
     rt_err_t result = RT_EOK;
     pcap_t *tap;
+    int res;
 
     tap = NETIF_PCAP(dev);
 
@@ -196,7 +217,11 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
 		q = q->next;
 	}
 
-    if (pcap_sendpacket(tap, buf, p->tot_len) != 0)
+    rt_enter_critical();
+    res = pcap_sendpacket(tap, buf, p->tot_len);
+    rt_exit_critical();
+
+    if (res != 0)
     {
         rt_kprintf("Error sending the packet: \n", pcap_geterr(tap));
         result = -RT_ERROR;
