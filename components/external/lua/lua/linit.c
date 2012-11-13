@@ -36,6 +36,7 @@ static const luaL_Reg lualibs[] = {
   {LUA_DBLIBNAME, luaopen_debug},  
 #endif
 #if defined(LUA_EXLIBS_ROM)
+#undef _ROM
 #define _ROM( name, openf, table ) { name, openf },
   LUA_EXLIBS_ROM
 #endif
