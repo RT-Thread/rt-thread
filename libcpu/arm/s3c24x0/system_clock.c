@@ -72,14 +72,12 @@ void rt_hw_get_clock(void)
 		else
 			HCLK = FCLK/3;
 		break;
-	}
+}
 
 	if(p)
 		PCLK = HCLK>>1;
 	else
 		PCLK = HCLK;
-
-	rt_kprintf("FCLK: %dM, HCLK: %dM, PCLK: %dM\n", FCLK/1000000, HCLK/1000000, PCLK/1000000);
 }
 
 void rt_hw_set_mpll_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv)
