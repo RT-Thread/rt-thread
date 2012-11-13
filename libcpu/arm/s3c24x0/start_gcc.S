@@ -189,6 +189,7 @@ reset:
 
 	/* set interrupt vector 		*/
 	ldr 	r0, _load_address
+	ldr     r0, [r0]
 	mov		r1, #0x0				/* target address    				*/
 	add		r2, r0, #0x20			/* size, 32bytes         			*/
 
