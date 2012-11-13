@@ -199,19 +199,27 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 	if (fd < 3)
 	{
+#ifdef RT_USING_CONSOLE
 		rt_device_t console_device;
 		extern rt_device_t rt_console_get_device(void);
 
 		console_device = rt_console_get_device();
 		if (console_device != 0) rt_device_write(console_device, 0, buf, nbytes);
 		return nbytes;
+#else
+        return 0;
+#endif
 	}
 	else
 	{
+#ifdef RT_USING_DFS
 	    _ssize_t rc;
 
 	    rc = write(fd, buf, nbytes);
 	    return rc;
+#else
+        return 0;
+#endif
 	}
 }
 #endif
