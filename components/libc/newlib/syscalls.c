@@ -197,7 +197,6 @@ _wait_r(struct _reent *ptr, int *status)
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-#ifndef RT_USING_DFS
 	if (fd < 3)
 	{
 		rt_device_t console_device;
@@ -207,13 +206,13 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 		if (console_device != 0) rt_device_write(console_device, 0, buf, nbytes);
 		return nbytes;
 	}
-	return 0;
-#else
-	_ssize_t rc;
+	else
+	{
+	    _ssize_t rc;
 
-	rc = write(fd, buf, nbytes);
-	return rc;
-#endif
+	    rc = write(fd, buf, nbytes);
+	    return rc;
+	}
 }
 #endif
 

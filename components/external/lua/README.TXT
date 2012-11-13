@@ -2,7 +2,7 @@
 
 ## 简介
 RT-Thread中的Lua修改自[eLua](http://www.eluaproject.net/)的Lua-5.1.4版本。
-Lua依赖于Neblib库。
+采用gcc工具链时，Lua依赖于newlib库，其它工具链暂时还不支持。
 启动lua的RAM占用情况
     - 标准的lua        17.1904296875 KB
     - 优化的lua        5.01953125 KB
@@ -24,13 +24,14 @@ Lua依赖于Neblib库。
     3.更多的配置项可以在luaconf.h中找到
 
 ## 开发相关
+    - 采用gcc工具链时，依赖于newlib，需在rtconfig.h中定义RT_USING_NEWLIB
     - 开启编译器对C99的支持，如MDK中，在C/C++选项的Misc Controls输入框中添加--c99
-    - 开启内存优化时：需要在链接脚本中定义_stext和_etext，.ordata*放在两者之间。
+    - 需要在链接脚本中定义_stext和_etext，.ordata*放在两者之间。
       用于判断数据是read-only和writable。MDK中如何实现？？
-    - 添加新的模块，参见larduinolib.c
+    - 添加新的模块，参见lexample.c
     
 ## 目录说明
     - lua：从eLua获得Lua-5.1.4版本代码
-    - exlibs：external libraries，外部库代码，如Arduino库
+    - exlibs：external libraries，外部库代码，如example库
     - applications：Lua应用代码，如finsh中lua()
     - test：测试代码
