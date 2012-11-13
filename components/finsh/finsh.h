@@ -124,9 +124,7 @@ struct finsh_syscall
 #endif
 	syscall_func func;		/* the function address of system call */
 };
-#if defined(_MSC_VER)
-#pragma pack(pop)
-#endif
+
 /* system call item */
 struct finsh_syscall_item
 {
