@@ -427,19 +427,44 @@ static int dfs_uffs_flush(struct dfs_fd* file)
 	return 0;
 }
 
+int uffs_seekdir(uffs_DIR *dir, long offset)
+{
+	int i = 0;
+
+	while(i < offset)
+	{	
+		if (uffs_readdir(dir) == RT_NULL)
+			return -1;
+		i++;
+	} 
+	return 0;
+}
+
+
 static int dfs_uffs_seek(struct dfs_fd* file,
                   rt_off_t offset)
 {
-	int fd;
 	int result;
 
-	fd = (int)(file->data);
-
 	/* set offset as current offset */
-	result = uffs_seek(fd, offset, USEEK_SET);
-	if (result < 0)
-		return uffs_result_to_dfs(uffs_get_error());
-	return result;
+	if (file->type == FT_DIRECTORY)
+	{
+		uffs_rewinddir((uffs_DIR *)(file->data));
+		result = uffs_seekdir((uffs_DIR *)(file->data), offset/sizeof(struct dirent));
+		if (result >= 0)
+		{
+			file->pos = offset; 
+			return offset;
+		}
+	}
+	else if (file->type == FT_REGULAR)
+	{
+		result = uffs_seek((int)(file->data), offset, USEEK_SET);
+		if (result >= 0)	
+			return offset;
+	}
+
+	return uffs_result_to_dfs(uffs_get_error());
 }
 
 /* return the size of struct dirent*/
@@ -518,6 +543,8 @@ static int dfs_uffs_getdents(
 	
 	if (index == 0)
 		return uffs_result_to_dfs(uffs_get_error());
+
+	file->pos += index * sizeof(struct dirent);
 
 	return index * sizeof(struct dirent);
 }
