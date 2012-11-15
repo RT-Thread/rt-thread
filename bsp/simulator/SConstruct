@@ -7,6 +7,11 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
+# if you want use the rtgui in the svn (in google code), you should
+# comment the following line
+RTT_RTGUI = os.path.normpath('F:/Project/git/rt-gui')
+#RTT_RTGUI =''
+
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
@@ -16,8 +21,6 @@ env = Environment()
 
 Export('RTT_ROOT')
 Export('rtconfig')
-
-# prepare building environment
 
 libs = Split('''
 kernel32
@@ -48,13 +51,29 @@ env.Append(LINKFLAGS=rtconfig.LFLAGS)
 env['LIBS']=libs
 env['CPPDEFINES']=definitions
 
-objs = PrepareBuilding(env, RTT_ROOT)
-
-# firemare library building script
-# objs = objs + SConscript( GetCurrentDir() + '/Libraries/SConscript', variant_dir='build/bsp/Libraries', duplicate=0)
+# prepare building environment
+if RTT_RTGUI:
+    objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False, remove_components=['rtgui'])
+    objs += SConscript(os.path.join(RTT_RTGUI + '/components/rtgui', 'SConscript'),
+					   variant_dir='build/components/rtgui',
+					   duplicate=0)
+else:
+    objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 if GetDepend('RT_USING_RTGUI'):
-    objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
+    sdl_lib = ['SDL', 'SDLmain']
+    sdl_lib_path = os.path.normpath('SDL/lib/x86')
+    sdl_include_path = os.path.normpath('SDL/include')
+    env.Append(LIBS=sdl_lib)
+    env.Append(LIBPATH=sdl_lib_path)
+    env.Append(CPPPATH=sdl_include_path)
+
+    if RTT_RTGUI:
+        objs = objs + SConscript(RTT_RTGUI+'/demo/examples/SConscript', 
+				variant_dir='build/examples/gui', duplicate=0)
+    else:
+        objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', 
+				variant_dir='build/examples/gui', duplicate=0)
 
 # build program 
 env.Program(TARGET, objs)

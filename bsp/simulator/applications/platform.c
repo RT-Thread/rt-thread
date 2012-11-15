@@ -20,14 +20,10 @@ void rt_platform_init(void)
 #endif /* RT_USING_DFS */
 
 #ifdef RT_USING_RTGUI
-    /* initilize touch panel */
-    rtgui_touch_hw_init("spi21");
 
-    /* initilize ra8875 lcd controller */
-    ra8875_init();
+    /* initilize sdl */
+	 sdl_start();
 
-    /* initilize key module */
-    rt_hw_key_init();
 #endif /* RT_USING_RTGUI */
 
     rt_thread_delay(50);
