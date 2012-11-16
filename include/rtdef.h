@@ -14,6 +14,7 @@
  * 2010-10-26     yi.qiu       add module support
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  * 2011-05-09     Bernard      use builtin va_arg in GCC 4.x
+ * 2012-11-16     Bernard      change RT_NULL from ((void*)0) to 0. 
  */
  
 #ifndef __RT_DEF_H__
@@ -193,7 +194,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
  * @def RT_NULL
  * Similar as the \c NULL in C library.
  */
-#define RT_NULL                         ((void *)0)
+#define RT_NULL                         (0)
 
 struct rt_list_node
 {
