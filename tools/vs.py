@@ -33,10 +33,6 @@ def VSProject(target, script):
     out = file(target, 'wb')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\r\n')
     
-    CPPPATH = []
-    CPPDEFINES = []
-    LINKFLAGS = ''
-    CCFLAGS = ''
     ProjectFiles = []
     
     # add group
@@ -47,59 +43,43 @@ def VSProject(target, script):
 
     for group in script:
         group_xml = VS_AddGroup(ProjectFiles, elem, group['name'], group['src'], project_path)
-        
-        # get each include path
-        if group.has_key('CPPPATH') and group['CPPPATH']:
-            if CPPPATH:
-                CPPPATH += group['CPPPATH']
-            else:
-                CPPPATH += group['CPPPATH']
-        
-        # get each group's definitions
-        if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
-            if CPPDEFINES:
-                CPPDEFINES += group['CPPDEFINES']
-            else:
-                CPPDEFINES += group['CPPDEFINES']
-        
-        # get each group's link flags
-        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
-            if LINKFLAGS:
-                LINKFLAGS += ' ' + group['LINKFLAGS']
-            else:
-                LINKFLAGS += group['LINKFLAGS']
     
-    # remove repeat path
-    paths = set()
-    for path in CPPPATH:
-        inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
+    # write head include path
+    if building.Env.has_key('CPPPATH'):
+        cpp_path = building.Env['CPPPATH']
+        paths  = set()
+        for path in cpp_path:
+            inc = _make_path_relative(project_path, os.path.normpath(path))
+            paths.add(inc) #.replace('\\', '/')
     
-    paths = [i for i in paths]
-    paths.sort()
-    CPPPATH = string.join(paths, ';')
-    
-    # write include path, definitions
-    for elem in tree.iter(tag='Tool'):
-        if elem.attrib['Name'] == 'VCCLCompilerTool':
-            #print elem.tag, elem.attrib
-            break
-    elem.set('AdditionalIncludeDirectories', CPPPATH)
+        paths = [i for i in paths]
+        paths.sort()
+        cpp_path = ';'.join(paths)
 
-    definitions = ';'.join(building.Env['CPPDEFINES'])
-    elem.set('PreprocessorDefinitions', definitions)
+        # write include path, definitions
+        for elem in tree.iter(tag='Tool'):
+            if elem.attrib['Name'] == 'VCCLCompilerTool':
+                #print elem.tag, elem.attrib
+                break
+        elem.set('AdditionalIncludeDirectories', cpp_path)
+
+    # write cppdefinitons flags
+    if building.Env.has_key('CPPDEFINES'):
+        definitions = ';'.join(building.Env['CPPDEFINES'])
+        elem.set('PreprocessorDefinitions', definitions)
     # write link flags
 
     # write lib dependence 
-    for elem in tree.iter(tag='Tool'):
-        if elem.attrib['Name'] == 'VCLinkerTool':
-            break
-    libs_with_extention = [i+'.lib' for i in building.Env['LIBS']]
-    libs = ' '.join(libs_with_extention)
-    elem.set('AdditionalDependencies', libs)
+    if building.Env.has_key('LIBS'):
+        for elem in tree.iter(tag='Tool'):
+            if elem.attrib['Name'] == 'VCLinkerTool':
+                break
+        libs_with_extention = [i+'.lib' for i in building.Env['LIBS']]
+        libs = ' '.join(libs_with_extention)
+        elem.set('AdditionalDependencies', libs)
 
+    # write lib include path
     if building.Env.has_key('LIBPATH'):
-    #if building.Env['LIBPATH']:
         lib_path = building.Env['LIBPATH']
         paths  = set()
         for path in lib_path:
