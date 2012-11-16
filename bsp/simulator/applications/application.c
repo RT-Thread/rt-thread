@@ -43,7 +43,7 @@ void rt_init_thread_entry(void* parameter)
             rt_kprintf("fatfs initialzation failed!\n");
 #endif
 
-#ifdef RT_USING_DFS_ELMFAT
+#ifdef RT_USING_DFS_UFFS
         /* mount sd card fat partition 1 as root directory */
         if (dfs_mount("nand0", "/nand", "uffs", 0, 0) == 0)
         {

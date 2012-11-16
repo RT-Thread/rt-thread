@@ -9,11 +9,11 @@ void rt_platform_init(void)
     rt_hw_sdcard_init();
 #endif 
 
-#ifdef RT_USING_MTD_NAND
+#if defined(RT_USING_MTD_NAND) && defined(RT_USING_DFS_UFFS)
     rt_hw_mtd_nand_init();
 #endif 
 
-#ifdef RT_USING_MTD_NOR
+#if defined(RT_USING_MTD_NOR) && defined(RT_USING_DFS_JFFS2)
     sst25vfxx_mtd_init("nor", 0, RT_UINT32_MAX);
 #endif 
 
