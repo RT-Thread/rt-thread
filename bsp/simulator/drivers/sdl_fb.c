@@ -151,8 +151,8 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 	/* handle SDL event */
 	while(!quit)
 	{
-		while ( SDL_PollEvent(&event) )
-		{
+		SDL_WaitEvent(&event);
+
 			switch (event.type)
 			{
 			case SDL_MOUSEMOTION:
@@ -267,8 +267,6 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 				break;
 			}
 
-			SDL_Delay(20);
-		}
 		if (quit)
 			break;
 	}
