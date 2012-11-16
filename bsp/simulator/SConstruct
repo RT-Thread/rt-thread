@@ -61,8 +61,8 @@ env['CPPDEFINES']=definitions
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False, remove_components=['rtgui'])
 if GetDepend('RT_USING_RTGUI'):
     sdl_lib = ['SDL', 'SDLmain']
-    sdl_lib_path = os.path.normpath('SDL/lib/x86')
-    sdl_include_path = os.path.normpath('SDL/include')
+    sdl_lib_path = [os.path.abspath('SDL/lib/x86')]
+    sdl_include_path = [os.path.abspath('SDL/include')]
     env.Append(LIBS=sdl_lib)
     env.Append(LIBPATH=sdl_lib_path)
     env.Append(CPPPATH=sdl_include_path)
