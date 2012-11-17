@@ -58,17 +58,20 @@ elif PLATFORM == 'cl':
     AR = PREFIX + 'cl'
     LINK = PREFIX + 'cl'
     AFLAGS = ''
+    CFLAGS = ''
+    LFLAGS = ''
 
-    CFLAGS = '/MT /ZI /Od /W 3 /WL '
-    #LFLAGS = '/SUBSYSTEM:WINDOWS /NODEFAULTLIB /MACHINE:X86 /DEBUG'
-    LFLAGS = '/SUBSYSTEM:CONSOLE /NODEFAULTLIB /MACHINE:X86 '
+    if BUILD == 'debug':
+        CFLAGS += ' /MTd'
+        LFLAGS += ' /DEBUG'
+    else:
+        CFLAGS += ' /MT'
+        LFLAGS += ''
+
+    CFLAGS += ' /ZI /Od /W 3 /WL '
+    LFLAGS += ' /SUBSYSTEM:CONSOLE /MACHINE:X86 '
 
     CPATH = ''
     LPATH = ''
-
-    if BUILD == 'debug':
-        CFLAGS += ' /DEBUG'
-    else:
-        CFLAGS += ''
 
     POST_ACTION = ''
