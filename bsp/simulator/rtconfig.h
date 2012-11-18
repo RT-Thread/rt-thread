@@ -161,7 +161,7 @@
 #define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
-/* #define RT_USING_RTGUI */
+#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12
@@ -172,7 +172,7 @@
 /* use DFS as file interface */
 #define RTGUI_USING_DFS_FILERW
 /* use font file as Chinese font */
-#define RTGUI_USING_HZ_FILE
+//#define RTGUI_USING_HZ_FILE
 /* use Chinese bitmap font */
 #define RTGUI_USING_HZ_BMP
 /* use small size in RTGUI */
