@@ -64,6 +64,20 @@ void rt_init_thread_entry(void* parameter)
 #endif
     }
 #endif
+#ifdef WIN32
+	{
+		extern void low_cpu(void);
+		rt_thread_idle_sethook(low_cpu);
+	}
+#endif
+
+#ifdef RT_USING_RTGUI
+	{
+		extern void application_init(void);
+		rt_thread_delay(RT_TICK_PER_SECOND);
+		application_init();
+	}
+#endif
 }
 
 void rt_test_thread_entry(void* parameter)
@@ -95,6 +109,12 @@ int rt_application_init()
 
     return 0;
 }
+#ifdef WIN32
+#include <windows.h>
+void low_cpu(void)
+{
+	Sleep(1000);
+}
 
 #ifndef _CRT_TERMINATE_DEFINED
 #define _CRT_TERMINATE_DEFINED
@@ -108,6 +128,8 @@ void rt_hw_exit(void)
     exit(0);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt-thread);
+
+#endif
 
 #include <dfs_posix.h>
 void test_fs(void)
