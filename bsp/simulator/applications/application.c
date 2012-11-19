@@ -16,7 +16,11 @@
 #include <stdio.h>
 #include <board.h>
 
+/* fix the compile errors for redefiniton of lwip_htonl in win socket */
+#ifdef _WIN32
+#undef RT_USING_LWIP
 #include <components.h>
+#endif
 
 void rt_init_thread_entry(void* parameter)
 {
