@@ -5,7 +5,6 @@
 */
 
 #include <stddef.h>
-#include <sys/types.h>
 #include <string.h>
 
 #define ldump_c
