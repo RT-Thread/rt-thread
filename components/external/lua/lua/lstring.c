@@ -100,14 +100,14 @@ static TString *luaS_newlstr_helper (lua_State *L, const char *str, size_t l, in
   return newlstr(L, str, l, h, readonly);  /* not found */
 }
 
-extern char _stext;
-extern char _etext;
-
 static int lua_is_ptr_in_ro_area(const char *p) {
 #ifdef LUA_CROSS_COMPILER
   return 0;
 #else
-  return p >= &_stext && p <= &_etext;
+
+#include "compiler.h"
+
+  return p >= RODATA_START_ADDRESS && p <= RODATA_END_ADDRESS;
 #endif
 }
 

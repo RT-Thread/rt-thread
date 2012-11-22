@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+if GetDepend('RT_USING_ARM_LIBC') and rtconfig.CROSS_TOOL != 'keil':
+    print '================ERROR=============================='
+    print 'Please use ARM CC compiler if using ARM C library'
+    print '==================================================='
+    exit(0)
+
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('libc', src, depend = ['RT_USING_ARM_LIBC'], CPPPATH = CPPPATH)
+
+Return('group')
