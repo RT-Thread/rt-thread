@@ -1,30 +1,29 @@
 /*
  * File      : i2c-bit-ops.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author		Notes
- * 2012-04-25     weety		first version
+ * Date           Author        Notes
+ * 2012-04-25     weety         first version
  */
 
 #include <rtdevice.h>
 
 #ifdef RT_I2C_BIT_DEBUG
-#define bit_dbg(fmt, ...)	rt_kprintf(fmt, ##__VA_ARGS__)
+#define bit_dbg(fmt, ...)   rt_kprintf(fmt, ##__VA_ARGS__)
 #else
 #define bit_dbg(fmt, ...)
 #endif
 
-
-#define SET_SDA(ops, val)	ops->set_sda(ops->data, val)
-#define SET_SCL(ops, val)	ops->set_scl(ops->data, val)
-#define GET_SDA(ops)		ops->get_sda(ops->data)
-#define GET_SCL(ops)		ops->get_scl(ops->data)
+#define SET_SDA(ops, val)   ops->set_sda(ops->data, val)
+#define SET_SCL(ops, val)   ops->set_scl(ops->data, val)
+#define GET_SDA(ops)        ops->get_sda(ops->data)
+#define GET_SCL(ops)        ops->get_scl(ops->data)
 
 rt_inline void i2c_delay(struct rt_i2c_bit_ops *ops)
 {
@@ -36,11 +35,11 @@ rt_inline void i2c_delay2(struct rt_i2c_bit_ops *ops)
     ops->udelay(ops->delay_us);
 }
 
-#define SDA_L(ops)	SET_SDA(ops, 0)
-#define SDA_H(ops)	SET_SDA(ops, 1)
-#define SCL_L(ops)	SET_SCL(ops, 0)
+#define SDA_L(ops)          SET_SDA(ops, 0)
+#define SDA_H(ops)          SET_SDA(ops, 1)
+#define SCL_L(ops)          SET_SCL(ops, 0)
 
-/*
+/**
  * release scl line, and wait scl line to high.
  */
 static rt_err_t SCL_H(struct rt_i2c_bit_ops *ops)
@@ -73,7 +72,6 @@ done:
     return RT_EOK;
 }
 
-
 static void i2c_start(struct rt_i2c_bit_ops *ops)
 {
 #ifdef RT_I2C_BIT_DEBUG
@@ -101,7 +99,6 @@ static void i2c_restart(struct rt_i2c_bit_ops *ops)
     SCL_L(ops);
 }
 
-
 static void i2c_stop(struct rt_i2c_bit_ops *ops)
 {
     SDA_L(ops);
@@ -122,6 +119,7 @@ rt_inline rt_bool_t i2c_waitack(struct rt_i2c_bit_ops *ops)
     if (SCL_H(ops) < 0)
     {
         bit_dbg("wait ack timeout\n");
+
         return -RT_ETIMEOUT;
     }
 
@@ -132,7 +130,6 @@ rt_inline rt_bool_t i2c_waitack(struct rt_i2c_bit_ops *ops)
 
     return ack;
 }
-
 
 static rt_int32_t i2c_writeb(struct rt_i2c_bus_device *bus, rt_uint8_t data)
 {
@@ -152,16 +149,15 @@ static rt_int32_t i2c_writeb(struct rt_i2c_bus_device *bus, rt_uint8_t data)
             bit_dbg("i2c_writeb: 0x%02x, "
                     "wait scl pin high timeout at bit %d\n",
                     data, i);
+
             return -RT_ETIMEOUT;
         }
-
     }
     SCL_L(ops);
     i2c_delay(ops);
 
     return i2c_waitack(ops);
 }
-
 
 static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
 {
@@ -179,6 +175,7 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
         {
             bit_dbg("i2c_readb: wait scl pin high "
                     "timeout at bit %d\n", 7 - i);
+
             return -RT_ETIMEOUT;
         }
 
@@ -191,8 +188,8 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
     return data;
 }
 
-
-static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
+static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
+                                struct rt_i2c_msg        *msg)
 {
     rt_int32_t ret;
     rt_size_t bytes = 0;
@@ -206,21 +203,24 @@ static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg
 
         if ((ret > 0) || (ignore_nack && (ret == 0)))
         {
-            count--;
-            ptr++;
-            bytes++;
+            count --;
+            ptr ++;
+            bytes ++;
         }
         else if (ret == 0)
         {
             i2c_dbg("send bytes: NACK.\n");
+
             return 0;
         }
         else
         {
             i2c_dbg("send bytes: error %d\n", ret);
+
             return ret;
         }
     }
+
     return bytes;
 }
 
@@ -234,16 +234,19 @@ static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus_device *bus, int ack)
     if (SCL_H(ops) < 0)
     {
         bit_dbg("ACK or NACK timeout\n");
+
         return -RT_ETIMEOUT;
     }
     SCL_L(ops);
+
     return RT_EOK;
 }
 
-static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
+static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus,
+                                struct rt_i2c_msg        *msg)
 {
     rt_int32_t val;
-    rt_int32_t bytes = 0;	/* actual bytes */
+    rt_int32_t bytes = 0;   /* actual bytes */
     rt_uint8_t *ptr = msg->buf;
     rt_int32_t count = msg->len;
     const rt_uint32_t flags = msg->flags;
@@ -254,15 +257,15 @@ static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg
         if (val >= 0)
         {
             *ptr = val;
-            bytes++;
+            bytes ++;
         }
         else
         {
             break;
         }
 
-        ptr++;
-        count--;
+        ptr ++;
+        count --;
 
         bit_dbg("recieve bytes: 0x%02x, %s\n",
                 val, (flags & RT_I2C_NO_READ_ACK) ?
@@ -275,11 +278,13 @@ static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus, struct rt_i2c_msg
                 return val;
         }
     }
+
     return bytes;
 }
 
 static rt_int32_t i2c_send_address(struct rt_i2c_bus_device *bus,
-                                   rt_uint8_t addr, rt_int32_t retries)
+                                   rt_uint8_t                addr,
+                                   rt_int32_t                retries)
 {
     struct rt_i2c_bit_ops *ops = bus->priv;
     rt_int32_t i;
@@ -300,7 +305,8 @@ static rt_int32_t i2c_send_address(struct rt_i2c_bus_device *bus,
     return ret;
 }
 
-static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msg)
+static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus,
+                                     struct rt_i2c_msg        *msg)
 {
     rt_uint16_t flags = msg->flags;
     rt_uint16_t ignore_nack = msg->flags & RT_I2C_IGNORE_NACK;
@@ -308,7 +314,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2
 
     rt_uint8_t addr1, addr2;
     rt_int32_t retries;
-    rt_err_t  ret;
+    rt_err_t ret;
 
     retries = ignore_nack ? 0 : bus->retries;
 
@@ -323,6 +329,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2
         if ((ret != 1) && !ignore_nack)
         {
             bit_dbg("NACK: sending first addr\n");
+
             return -RT_EIO;
         }
 
@@ -330,6 +337,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2
         if ((ret != 1) && !ignore_nack)
         {
             bit_dbg("NACK: sending second addr\n");
+
             return -RT_EIO;
         }
         if (flags & RT_I2C_RD)
@@ -341,6 +349,7 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2
             if ((ret != 1) && !ignore_nack)
             {
                 bit_dbg("NACK: sending repeated addr\n");
+
                 return -RT_EIO;
             }
         }
@@ -359,9 +368,9 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus, struct rt_i2
     return RT_EOK;
 }
 
-
 static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
-                              struct rt_i2c_msg msgs[], rt_uint32_t num)
+                              struct rt_i2c_msg         msgs[],
+                              rt_uint32_t               num)
 {
     struct rt_i2c_msg *msg;
     struct rt_i2c_bit_ops *ops = bus->priv;
@@ -392,8 +401,7 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_recv_bytes(bus, msg);
             if (ret >= 1)
-                bit_dbg("read %d byte%s\n",
-                        ret, ret == 1 ? "" : "s");
+                bit_dbg("read %d byte%s\n", ret, ret == 1 ? "" : "s");
             if (ret < msg->len)
             {
                 if (ret >= 0)
@@ -405,8 +413,7 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_send_bytes(bus, msg);
             if (ret >= 1)
-                bit_dbg("write %d byte%s\n",
-                        ret, ret == 1 ? "" : "s");
+                bit_dbg("write %d byte%s\n", ret, ret == 1 ? "" : "s");
             if (ret < msg->len)
             {
                 if (ret >= 0)
@@ -424,7 +431,6 @@ out:
     return ret;
 }
 
-
 static const struct rt_i2c_bus_device_ops i2c_bit_bus_ops =
 {
     i2c_bit_xfer,
@@ -432,8 +438,8 @@ static const struct rt_i2c_bus_device_ops i2c_bit_bus_ops =
     RT_NULL
 };
 
-
-rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus_device *bus, const char *bus_name)
+rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus_device *bus,
+                            const char               *bus_name)
 {
     struct rt_i2c_bit_ops *bit_ops = bus->priv;
     RT_ASSERT(bit_ops != RT_NULL);

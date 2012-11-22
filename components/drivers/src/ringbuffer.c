@@ -46,9 +46,11 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     size = rb->buffer_size - (rb->write_index - rb->read_index);
 
     /* no space */
-    if (size == 0) return 0;
+    if (size == 0)
+        return 0;
     /* drop some data */
-    if (size < length) length = size;
+    if (size < length)
+        length = size;
 
     write_position = (rb->write_index & mask);
     if (rb->buffer_size - write_position> length)
@@ -72,16 +74,17 @@ RTM_EXPORT(rt_ringbuffer_put);
 /**
  * put a character into ring buffer
  */
-rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer* rb, const rt_uint8_t ch)
+rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
 {
     rt_uint16_t mask;
 
     RT_ASSERT(rb != RT_NULL);
     /* whether has enough space */
     mask = rb->buffer_size - 1;
-    
+
     /* whether has enough space */
-    if (rb->write_index - rb->read_index == rb->buffer_size) return 0;
+    if (rb->write_index - rb->read_index == rb->buffer_size)
+        return 0;
 
     /* put character */
     rb->buffer_ptr[rb->write_index & mask] = ch;
@@ -108,9 +111,11 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     size = rb->write_index - rb->read_index;
 
     /* no data */
-    if (size == 0) return 0;
+    if (size == 0)
+        return 0;
     /* less data */
-    if (size < length) length = size;
+    if (size < length)
+        length = size;
 
     read_position = rb->read_index & mask;
     if (rb->buffer_size - read_position >= length)
@@ -142,7 +147,8 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
     RT_ASSERT(rb != RT_NULL);
     
     /* ringbuffer is empty */
-    if (rb->read_index == rb->write_index) return 0;
+    if (rb->read_index == rb->write_index)
+        return 0;
 
     mask = rb->buffer_size - 1;
 

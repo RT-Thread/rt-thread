@@ -1,3 +1,17 @@
+/*
+ * File      : i2c_dev.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author        Notes
+ * 2012-04-25     weety         first version
+ */
+
 #ifndef __I2C_DEV_H__
 #define __I2C_DEV_H__
 
@@ -18,9 +32,8 @@ struct rt_i2c_priv_data
     rt_size_t  number;
 };
 
-rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device* bus,
-                                       const char* name);
-
+rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
+                                       const char               *name);
 
 #ifdef __cplusplus
 }

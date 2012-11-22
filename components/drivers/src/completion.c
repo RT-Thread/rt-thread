@@ -89,6 +89,7 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
 
 __exit:
     rt_hw_interrupt_enable(level);
+
     return result;
 }
 

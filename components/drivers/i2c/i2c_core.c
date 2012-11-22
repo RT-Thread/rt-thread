@@ -1,15 +1,15 @@
 /*
  * File      : i2c_core.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author		Notes
- * 2012-04-25     weety		first version
+ * Date           Author        Notes
+ * 2012-04-25     weety         first version
  */
 
 #include <rtdevice.h>
@@ -17,7 +17,7 @@
 static struct rt_mutex i2c_core_lock;
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
-                                    const char *bus_name)
+                                    const char               *bus_name)
 {
     rt_err_t res = RT_EOK;
 
@@ -33,17 +33,18 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
     i2c_dbg("I2C bus [%s] registered\n", bus_name);
 
     rt_mutex_release(&i2c_core_lock);
+
     return res;
 }
 
-
-struct rt_i2c_bus_device* rt_i2c_bus_device_find(const char *bus_name)
+struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name)
 {
     struct rt_i2c_bus_device *bus;
     rt_device_t dev = rt_device_find(bus_name);
     if (dev == RT_NULL || dev->type != RT_Device_Class_I2CBUS)
     {
         i2c_dbg("I2C bus %s not exist\n", bus_name);
+
         return RT_NULL;
     }
 
@@ -52,10 +53,9 @@ struct rt_i2c_bus_device* rt_i2c_bus_device_find(const char *bus_name)
     return bus;
 }
 
-
 rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
-                          struct rt_i2c_msg msgs[],
-                          rt_uint32_t num)
+                          struct rt_i2c_msg         msgs[],
+                          rt_uint32_t               num)
 {
     rt_size_t ret;
 
@@ -79,57 +79,53 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
     else
     {
         i2c_dbg("I2C bus operation not supported\n");
+
         return 0;
     }
 }
 
-
 rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
-                             rt_uint16_t addr,
-                             rt_uint16_t flags,
-                             const rt_uint8_t *buf,
-                             rt_uint32_t count)
+                             rt_uint16_t               addr,
+                             rt_uint16_t               flags,
+                             const rt_uint8_t         *buf,
+                             rt_uint32_t               count)
 {
     rt_size_t ret;
     struct rt_i2c_msg msg;
 
-    msg.addr = addr;
+    msg.addr  = addr;
     msg.flags = flags & RT_I2C_ADDR_10BIT;
-    msg.len = count;
-    msg.buf = (rt_uint8_t *)buf;
+    msg.len   = count;
+    msg.buf   = (rt_uint8_t *)buf;
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
     return (ret > 0) ? count : ret;
 }
 
-
-
 rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
-                             rt_uint16_t addr,
-                             rt_uint16_t flags,
-                             rt_uint8_t *buf,
-                             rt_uint32_t count)
+                             rt_uint16_t               addr,
+                             rt_uint16_t               flags,
+                             rt_uint8_t               *buf,
+                             rt_uint32_t               count)
 {
     rt_size_t ret;
     struct rt_i2c_msg msg;
     RT_ASSERT(bus != RT_NULL);
 
-    msg.addr = addr;
-    msg.flags = flags & RT_I2C_ADDR_10BIT;
+    msg.addr   = addr;
+    msg.flags  = flags & RT_I2C_ADDR_10BIT;
     msg.flags |= RT_I2C_RD;
-    msg.len = count;
-    msg.buf = buf;
+    msg.len    = count;
+    msg.buf    = buf;
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
     return (ret > 0) ? count : ret;
 }
 
-
 rt_err_t rt_i2c_core_init(void)
 {
-
-    return rt_mutex_init (&i2c_core_lock, "i2c_core_lock", RT_IPC_FLAG_FIFO);
+    return rt_mutex_init(&i2c_core_lock, "i2c_core_lock", RT_IPC_FLAG_FIFO);
 }
 

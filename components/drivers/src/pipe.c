@@ -93,7 +93,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
     /* current context checking */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    do 
+    do
     {
         level = rt_hw_interrupt_disable();
         write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), buffer, size);

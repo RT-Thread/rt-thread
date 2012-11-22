@@ -1,15 +1,15 @@
 /*
  * File      : i2c.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author		Notes
- * 2012-04-25     weety		first version
+ * Date           Author        Notes
+ * 2012-04-25     weety         first version
  */
 
 #ifndef __I2C_H__
@@ -40,15 +40,15 @@ struct rt_i2c_bus_device;
 
 struct rt_i2c_bus_device_ops
 {
-    rt_size_t (*master_xfer) (struct rt_i2c_bus_device *bus,
-                              struct rt_i2c_msg msgs[],
-                              rt_uint32_t num);
-    rt_size_t (*slave_xfer) (struct rt_i2c_bus_device *bus,
+    rt_size_t (*master_xfer)(struct rt_i2c_bus_device *bus,
                              struct rt_i2c_msg msgs[],
                              rt_uint32_t num);
-    rt_err_t (*i2c_bus_control) (struct rt_i2c_bus_device *bus,
-                                 rt_uint32_t,
-                                 rt_uint32_t);
+    rt_size_t (*slave_xfer)(struct rt_i2c_bus_device *bus,
+                            struct rt_i2c_msg msgs[],
+                            rt_uint32_t num);
+    rt_err_t (*i2c_bus_control)(struct rt_i2c_bus_device *bus,
+                                rt_uint32_t,
+                                rt_uint32_t);
 };
 
 /*for i2c bus driver*/
@@ -65,27 +65,27 @@ struct rt_i2c_bus_device
 };
 
 #ifdef RT_I2C_DEBUG
-#define i2c_dbg(fmt, ...)	rt_kprintf(fmt, ##__VA_ARGS__)
+#define i2c_dbg(fmt, ...)   rt_kprintf(fmt, ##__VA_ARGS__)
 #else
 #define i2c_dbg(fmt, ...)
 #endif
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
-                                    const char *bus_name);
-struct rt_i2c_bus_device* rt_i2c_bus_device_find(const char *bus_name);
+                                    const char               *bus_name);
+struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name);
 rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
-                          struct rt_i2c_msg msgs[],
-                          rt_uint32_t num);
+                          struct rt_i2c_msg         msgs[],
+                          rt_uint32_t               num);
 rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
-                             rt_uint16_t addr,
-                             rt_uint16_t flags,
-                             const rt_uint8_t *buf,
-                             rt_uint32_t count);
+                             rt_uint16_t               addr,
+                             rt_uint16_t               flags,
+                             const rt_uint8_t         *buf,
+                             rt_uint32_t               count);
 rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
-                             rt_uint16_t addr,
-                             rt_uint16_t flags,
-                             rt_uint8_t *buf,
-                             rt_uint32_t count);
+                             rt_uint16_t               addr,
+                             rt_uint16_t               flags,
+                             rt_uint8_t               *buf,
+                             rt_uint32_t               count);
 rt_err_t rt_i2c_core_init(void);
 
 #ifdef __cplusplus
