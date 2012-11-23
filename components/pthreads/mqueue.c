@@ -85,7 +85,7 @@ int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat)
 
 	return 0;
 }
-RTM_EXPORTO(mq_getattr);
+RTM_EXPORT(mq_getattr);
 
 mqd_t mq_open(const char *name, int oflag, ...)
 {
