@@ -1,0 +1,20 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+# remove no need file.
+if GetDepend('RT_USING_RTGUI') == False:
+    SrcRemove(src, 'sdl_fb.c')
+if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
+    SrcRemove(src, 'sd_sim.c')
+if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_UFFS') == False:
+    SrcRemove(src, 'nand_sim.c')
+if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_JFFS2') == False:
+    SrcRemove(src, 'sst25vfxx_mtd_sim.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
