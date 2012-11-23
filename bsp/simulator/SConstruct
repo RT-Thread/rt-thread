@@ -12,7 +12,7 @@ if os.getenv('RTT_RTGUI'):
 else:
     # set the rtgui root directory by hand
     # empty string means use the RTGUI in svn
-    # RTT_RTGUI = os.path.normpath('F:/Project/git/rt-gui')
+    # RTT_RTGUI = os.path.normpath(r'F:\Project\git\rt-gui\components\rtgui')
     RTT_RTGUI =''
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]

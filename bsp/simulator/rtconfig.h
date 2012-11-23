@@ -183,7 +183,10 @@
 #define RTGUI_DEFAULT_FONT_SIZE	16
 
 /* image support */
-/* #define RTGUI_IMAGE_XPM */
-/* #define RTGUI_IMAGE_BMP */
+#define RTGUI_IMAGE_XPM
+#define RTGUI_IMAGE_BMP
+//#define RTGUI_IMAGE_JPEG
+//#define RTGUI_IMAGE_PNG
+#define RTGUI_USING_NOTEBOOK_IMAGE
 
 #endif
