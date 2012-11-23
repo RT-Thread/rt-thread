@@ -14,6 +14,7 @@
  * 2010-10-23     yi.qiu       implement module memory allocator
  * 2011-05-25     yi.qiu       implement module hook function
  * 2011-06-23     yi.qiu       rewrite module memory allocator
+ * 2012-11-23     Bernard      using RT_DEBUG_LOG instead of rt_kprintf.
  */
 
 #include <rthw.h>
@@ -205,7 +206,7 @@ static int rt_module_arm_relocate(struct rt_module *module, Elf32_Rel *rel,
         if (!(offset & 1) || offset <= (rt_int32_t)0xff000000 ||
                  offset >= (rt_int32_t)0x01000000)
         {
-            rt_kprintf("only Thumb addresses allowed\n");
+            rt_kprintf("Module: Only Thumb addresses allowed\n");
             
             return -1;
         }
@@ -358,7 +359,7 @@ static struct rt_module* _load_shared_object(const char *name, void *module_ptr)
     
     if (module_size == 0)
     {
-        rt_kprintf(" module size error\n");
+        rt_kprintf("Module: size error\n");
         return RT_NULL;
     }    
 
@@ -440,7 +441,7 @@ static struct rt_module* _load_shared_object(const char *name, void *module_ptr)
                 addr = rt_module_symbol_find((const char *)(strtab + sym->st_name));
                 if (addr == 0)
                 {
-                    rt_kprintf("can't find %s in kernel symbol table\n", 
+                    rt_kprintf("Module: can't find %s in kernel symbol table\n", 
                         strtab + sym->st_name);
                     unsolved = RT_TRUE;
                 }    
@@ -698,7 +699,7 @@ static struct rt_module* _load_relocated_object(const char *name, void *module_p
                         RT_DEBUG_LOG(RT_DEBUG_MODULE,("symbol addr 0x%x\n", addr));
                     }
                     else
-                        rt_kprintf("can't find %s in kernel symbol table\n", 
+                        rt_kprintf("Module: can't find %s in kernel symbol table\n", 
                             strtab + sym->st_name);
                 }
                 else
@@ -728,13 +729,13 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    rt_kprintf("rt_module_load: %s ,", name);
+    RT_DEBUG_LOG(RT_DEBUG_MODULE,("rt_module_load: %s ,", name));
 
     /* check ELF header */
     if(rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0
         && rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
     {
-        rt_kprintf(" module magic error\n");
+        rt_kprintf("Module: magic error\n");
 
         return RT_NULL;
     }
@@ -742,7 +743,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     /* check ELF class */
     if(elf_module->e_ident[EI_CLASS] != ELFCLASS32)
     {
-        rt_kprintf(" module class error\n");
+        rt_kprintf("Module: ELF class error\n");
 
         return RT_NULL;
     }
@@ -757,7 +758,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     }
     else
     {
-        rt_kprintf("unsupported elf type\n");
+        rt_kprintf("Module: unsupported elf type\n");
 
         return RT_NULL;
     }
@@ -791,7 +792,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
             module->stack_size,
             module->thread_priority, 10);
 
-        rt_kprintf("thread entry 0x%x\n", module->module_entry);
+        RT_DEBUG_LOG(RT_DEBUG_MODULE,("thread entry 0x%x\n", module->module_entry));
         module->module_thread->module_id = (void*)module;
         module->parent.flag = RT_MODULE_FLAG_WITHENTRY;
 
@@ -860,14 +861,14 @@ rt_module_t rt_module_open(const char *path)
 
     if (stat(path, &s) !=0)
     {
-        rt_kprintf("access %s failed\n", path);
+        rt_kprintf("Module: access %s failed\n", path);
 
         return RT_NULL;
     }
     buffer = (char *)rt_malloc(s.st_size);
     if (buffer == RT_NULL)
     {
-        rt_kprintf("out of memory\n");
+        rt_kprintf("Module: out of memory\n");
 
         return RT_NULL;
     }
@@ -876,7 +877,7 @@ rt_module_t rt_module_open(const char *path)
     fd = open(path, O_RDONLY, 0);
     if (fd < 0)
     {
-        rt_kprintf("open %s failed\n", path);
+        rt_kprintf("Module: open %s failed\n", path);
         rt_free(buffer);
 
         return RT_NULL;
@@ -896,7 +897,7 @@ rt_module_t rt_module_open(const char *path)
 
     if ((rt_uint32_t)offset_ptr - (rt_uint32_t)buffer != s.st_size)
     {
-        rt_kprintf("check: read file failed\n");
+        rt_kprintf("Module: read file failed\n");
         rt_free(buffer);
 
         return RT_NULL;
@@ -934,7 +935,7 @@ rt_err_t rt_module_unload(rt_module_t module)
     /* check parameter */
     RT_ASSERT(module != RT_NULL);
 
-    rt_kprintf("rt_module_unload: %s\n", module->parent.name);
+    RT_DEBUG_LOG(RT_DEBUG_MODULE,("rt_module_unload: %s\n", module->parent.name));
 
     /* module has entry point */
     if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
@@ -1110,7 +1111,7 @@ rt_err_t rt_module_unload(rt_module_t module)
     {
         struct rt_page_info *page = (struct rt_page_info *)module->page_array;
 
-        rt_kprintf("warning: module memory still hasn't been free finished\n");
+        rt_kprintf("Module: warning - memory still hasn't been free finished\n");
 
         while(module->page_cnt != 0)
         {
@@ -1211,7 +1212,7 @@ static void *rt_module_malloc_page(rt_size_t npages)
     rt_current_module->page_cnt ++;
 
     RT_ASSERT(rt_current_module->page_cnt <= PAGE_COUNT_MAX);
-    rt_kprintf("rt_module_malloc_page 0x%x %d\n", chunk, npages);
+    RT_DEBUG_LOG(RT_DEBUG_MODULE,"rt_module_malloc_page 0x%x %d\n", chunk, npages);
 
     return chunk;
 }
@@ -1230,7 +1231,7 @@ static void rt_module_free_page(rt_module_t module, void *page_ptr, rt_size_t np
     int i, index;
     struct rt_page_info *page;
 
-    rt_kprintf("rt_module_free_page 0x%x %d\n", page_ptr, npages);
+    RT_DEBUG_LOG(RT_DEBUG_MODULE,"rt_module_free_page 0x%x %d\n", page_ptr, npages);
     rt_page_free(page_ptr, npages);
 
     page = (struct rt_page_info*)module->page_array;
@@ -1299,7 +1300,7 @@ void *rt_module_malloc(rt_size_t size)
             b->size = nunits;
             *prev = n;
 
-            rt_kprintf("rt_module_malloc 0x%x, %d\n",b + 1, size);
+            RT_DEBUG_LOG(RT_DEBUG_MODULE,"rt_module_malloc 0x%x, %d\n",b + 1, size);
             rt_sem_release(&mod_sem);
 
             return (void *)(b + 1);
@@ -1310,7 +1311,7 @@ void *rt_module_malloc(rt_size_t size)
             /* this node fit, remove this node */
             *prev = b->next;
 
-            rt_kprintf("rt_module_malloc 0x%x, %d\n",b + 1, size);
+            RT_DEBUG_LOG(RT_DEBUG_MODULE,"rt_module_malloc 0x%x, %d\n",b + 1, size);
 
             rt_sem_release(&mod_sem);
 
@@ -1353,7 +1354,7 @@ void rt_module_free(rt_module_t module, void *addr)
     RT_ASSERT(addr);
     RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) -1)) == 0);
 
-    rt_kprintf("rt_module_free 0x%x\n", addr);
+    RT_DEBUG_LOG(RT_DEBUG_MODULE,"rt_module_free 0x%x\n", addr);
 
     rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
 
