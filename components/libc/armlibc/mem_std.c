@@ -1,6 +1,12 @@
+/*
+ * File:    mem_std.c
+ * Brief:   Replace memory management functions of arm standard c library
+ *
+ */
 
 #include "rtthread.h"
 
+/* avoid the heap and heap-using library functions supplied by arm */
 #pragma import(__use_no_heap)
 
 void * malloc(int n)
