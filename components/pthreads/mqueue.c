@@ -68,6 +68,7 @@ int mq_setattr(mqd_t mqdes, const struct mq_attr *mqstat,
 	rt_set_errno(-RT_ERROR);
 	return -1;
 }
+RTM_EXPORT(mq_setattr);
 
 int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat)
 {
@@ -84,6 +85,7 @@ int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat)
 
 	return 0;
 }
+RTM_EXPORTO(mq_getattr);
 
 mqd_t mq_open(const char *name, int oflag, ...)
 {
@@ -165,6 +167,7 @@ __return:
 	}
 	return RT_NULL;
 }
+RTM_EXPORT(mq_open);
 
 ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
@@ -183,6 +186,7 @@ ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_pri
 	rt_set_errno(EBADF);
 	return -1;
 }
+RTM_EXPORT(mq_receive);
 
 int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
@@ -201,6 +205,7 @@ int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 	rt_set_errno(EBADF);
 	return -1;
 }
+RTM_EXPORT(mq_send);
 
 ssize_t mq_timedreceive(mqd_t mqdes, char *msg_ptr, size_t msg_len,
 	unsigned *msg_prio, const struct timespec *abs_timeout)
@@ -227,6 +232,7 @@ ssize_t mq_timedreceive(mqd_t mqdes, char *msg_ptr, size_t msg_len,
 
 	return -1;
 }
+RTM_EXPORT(mq_timedreceive);
 
 int mq_timedsend(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio,
 		const struct timespec *abs_timeout)
@@ -234,12 +240,14 @@ int mq_timedsend(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_
 	/* RT-Thread does not support timed send */
 	return mq_send(mqdes, msg_ptr, msg_len, msg_prio);
 }
+RTM_EXPORT(mq_timedsend);
 
 int mq_notify(mqd_t mqdes, const struct sigevent *notification)
 {
 	rt_set_errno(-RT_ERROR);
 	return -1;
 }
+RTM_EXPORT(mq_notify);
 
 int mq_close(mqd_t mqdes)
 {
@@ -262,6 +270,7 @@ int mq_close(mqd_t mqdes)
 
     return 0;
 }
+RTM_EXPORT(mq_close);
 
 int mq_unlink(const char *name)
 {
@@ -287,3 +296,4 @@ int mq_unlink(const char *name)
     rt_set_errno(ENOENT);
     return -1;
 }
+RTM_EXPORT(mq_unlink);

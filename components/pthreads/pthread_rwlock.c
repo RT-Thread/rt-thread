@@ -7,6 +7,7 @@ int pthread_rwlockattr_init (pthread_rwlockattr_t * attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_rwlockattr_init);
 
 int pthread_rwlockattr_destroy (pthread_rwlockattr_t * attr)
 {
@@ -14,6 +15,7 @@ int pthread_rwlockattr_destroy (pthread_rwlockattr_t * attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_rwlockattr_destroy);
 
 int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t * attr, int *pshared)
 {
@@ -22,6 +24,7 @@ int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t * attr, int *pshar
 	*pshared = PTHREAD_PROCESS_PRIVATE;
 	return 0;
 }
+RTM_EXPORT(pthread_rwlockattr_getpshared);
 
 int pthread_rwlockattr_setpshared (pthread_rwlockattr_t * attr, int pshared)
 {
@@ -29,6 +32,7 @@ int pthread_rwlockattr_setpshared (pthread_rwlockattr_t * attr, int pshared)
 
 	return 0;
 }
+RTM_EXPORT(pthread_rwlockattr_setpshared);
 
 int pthread_rwlock_init (pthread_rwlock_t *rwlock, const pthread_rwlockattr_t * attr)
 {
@@ -45,6 +49,7 @@ int pthread_rwlock_init (pthread_rwlock_t *rwlock, const pthread_rwlockattr_t * 
 
 	return 0;
 }
+RTM_EXPORT(pthread_rwlock_init);
 
 int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
 {
@@ -91,6 +96,7 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
 	
 	return result;
 }
+RTM_EXPORT(pthread_rwlock_destroy);
 
 int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
 {
@@ -118,6 +124,7 @@ int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return (result);
 }
+RTM_EXPORT(pthread_rwlock_rdlock);
 
 int pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock)
 {
@@ -137,6 +144,7 @@ int pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock)
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return(result);
 }
+RTM_EXPORT(pthread_rwlock_tryrdlock);
 
 int pthread_rwlock_timedrdlock (pthread_rwlock_t * rwlock, const struct timespec *abstime)
 {
@@ -164,6 +172,7 @@ int pthread_rwlock_timedrdlock (pthread_rwlock_t * rwlock, const struct timespec
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return (result);
 }
+RTM_EXPORT(pthread_rwlock_timedrdlock);
 
 int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock, const struct timespec *abstime)
 {
@@ -189,6 +198,7 @@ int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock, const struct timespec 
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return(result);
 }
+RTM_EXPORT(pthread_rwlock_timedwrlock);
 
 int pthread_rwlock_trywrlock (pthread_rwlock_t *rwlock)
 {
@@ -208,6 +218,7 @@ int pthread_rwlock_trywrlock (pthread_rwlock_t *rwlock)
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return(result);
 }
+RTM_EXPORT(pthread_rwlock_trywrlock);
 
 int pthread_rwlock_unlock (pthread_rwlock_t *rwlock)
 {
@@ -238,6 +249,7 @@ int pthread_rwlock_unlock (pthread_rwlock_t *rwlock)
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return(result);
 }
+RTM_EXPORT(pthread_rwlock_unlock);
 
 int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock)
 {
@@ -263,4 +275,5 @@ int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock)
 	pthread_mutex_unlock(&rwlock->rw_mutex);
 	return(result);
 }
+RTM_EXPORT(pthread_rwlock_wrlock);
 

@@ -5,6 +5,7 @@ int pthread_barrierattr_destroy(pthread_barrierattr_t *attr)
 	if (!attr) return EINVAL;
 	return 0;
 }
+RTM_EXPORT(pthread_barrierattr_destroy);
 
 int pthread_barrierattr_init(pthread_barrierattr_t *attr)
 {
@@ -13,6 +14,7 @@ int pthread_barrierattr_init(pthread_barrierattr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_barrierattr_init);
 
 int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr, int *pshared)
 {
@@ -21,6 +23,7 @@ int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr, int *pshar
 
 	return 0;
 }
+RTM_EXPORT(pthread_barrierattr_getpshared);
 
 int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)
 {
@@ -29,6 +32,7 @@ int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_barrierattr_setpshared);
 
 int pthread_barrier_destroy(pthread_barrier_t *barrier)
 {
@@ -40,6 +44,7 @@ int pthread_barrier_destroy(pthread_barrier_t *barrier)
 
 	return result;
 }
+RTM_EXPORT(pthread_barrier_destroy);
 
 int pthread_barrier_init(pthread_barrier_t *barrier,
        const pthread_barrierattr_t *attr, unsigned count)
@@ -53,6 +58,7 @@ int pthread_barrier_init(pthread_barrier_t *barrier,
 
 	return 0;
 }
+RTM_EXPORT(pthread_barrier_init);
 
 int pthread_barrier_wait(pthread_barrier_t *barrier)
 {
@@ -75,4 +81,5 @@ int pthread_barrier_wait(pthread_barrier_t *barrier)
 	pthread_mutex_unlock(&(barrier->mutex));
 	return result;
 }
+RTM_EXPORT(pthread_barrier_wait);
 

@@ -12,6 +12,7 @@
  * 2006-03-13     bernard      first version
  * 2012-05-15     lgnq         modified according bernard's implementation.
  * 2012-05-28     bernard      code cleanup
+ * 2012-11-23     bernard      fix compiler warning.
  */
 
 #include <rthw.h>
@@ -427,7 +428,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial)
  */
 void rt_hw_serial_dma_tx_isr(struct rt_serial_device *serial)
 {
-    void *data_ptr;
+    const void *data_ptr;
     rt_size_t data_size;
 
     if (RT_EOK == rt_data_queue_pop(&(serial->tx_dq), &data_ptr, &data_size, 0))

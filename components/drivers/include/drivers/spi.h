@@ -9,12 +9,18 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2012-11-23     Bernard      Add extern "C"
  */
 
 #ifndef __SPI_H__
 #define __SPI_H__
 
+#include <stdlib.h>
 #include <rtthread.h>
+
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 #define RT_SPI_CPHA     (1<<0)                             /* bit[0]:CPHA, clock phase */
 #define RT_SPI_CPOL     (1<<1)                             /* bit[1]:CPOL, clock polarity */
@@ -246,5 +252,9 @@ rt_inline void rt_spi_message_append(struct rt_spi_message *list,
     list->next = message;
     message->next = RT_NULL;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

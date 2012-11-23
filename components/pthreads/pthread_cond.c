@@ -7,6 +7,7 @@ int pthread_condattr_destroy(pthread_condattr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_destroy);
 
 int pthread_condattr_init(pthread_condattr_t *attr)
 {
@@ -15,18 +16,21 @@ int pthread_condattr_init(pthread_condattr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_init);
 
 int pthread_condattr_getclock(const pthread_condattr_t *attr,
        clockid_t *clock_id)
 {
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_getclock);
 
 int pthread_condattr_setclock(pthread_condattr_t *attr,
        clockid_t clock_id)
 {
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_setclock);
 
 int pthread_condattr_getpshared(const pthread_condattr_t *attr, int *pshared)
 {
@@ -35,6 +39,7 @@ int pthread_condattr_getpshared(const pthread_condattr_t *attr, int *pshared)
 	*pshared = PTHREAD_PROCESS_PRIVATE;
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_getpshared);
 
 int pthread_condattr_setpshared(pthread_condattr_t*attr, int pshared)
 {
@@ -46,6 +51,7 @@ int pthread_condattr_setpshared(pthread_condattr_t*attr, int pshared)
 
 	return 0;
 }
+RTM_EXPORT(pthread_condattr_setpshared);
 
 int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 {
@@ -69,6 +75,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_cond_init);
 
 int pthread_cond_destroy(pthread_cond_t *cond)
 {
@@ -85,6 +92,7 @@ int pthread_cond_destroy(pthread_cond_t *cond)
 
 	return 0;
 }
+RTM_EXPORT(pthread_cond_destroy);
 
 int pthread_cond_broadcast(pthread_cond_t *cond)
 {
@@ -118,6 +126,7 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
 
 	return 0;
 }
+RTM_EXPORT(pthread_cond_broadcast);
 
 int pthread_cond_signal(pthread_cond_t *cond)
 {
@@ -131,6 +140,7 @@ int pthread_cond_signal(pthread_cond_t *cond)
 
 	return 0;
 }
+RTM_EXPORT(pthread_cond_signal);
 
 rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
 		rt_int32_t timeout)
@@ -152,6 +162,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
 	pthread_mutex_lock(mutex);
 	return result;
 }
+RTM_EXPORT(_pthread_cond_timedwait);
 
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
@@ -162,6 +173,7 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_cond_wait);
 
 int pthread_cond_timedwait(pthread_cond_t *cond,
 	pthread_mutex_t * mutex,
@@ -177,3 +189,5 @@ int pthread_cond_timedwait(pthread_cond_t *cond,
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_cond_timedwait);
+

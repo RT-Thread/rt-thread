@@ -54,6 +54,7 @@ int clock_time_to_tick(const struct timespec *time)
 
 	return tick;
 }
+RTM_EXPORT(clock_time_to_tick);
 
 int clock_getres  (clockid_t clockid, struct timespec *res)
 {
@@ -68,6 +69,7 @@ int clock_getres  (clockid_t clockid, struct timespec *res)
 
 	return 0;
 }
+RTM_EXPORT(clock_getres);
 
 int clock_gettime (clockid_t clockid, struct timespec *tp)
 {
@@ -87,6 +89,7 @@ int clock_gettime (clockid_t clockid, struct timespec *tp)
 	
 	return 0;
 }
+RTM_EXPORT(clock_gettime);
 
 int clock_settime (clockid_t clockid, const struct timespec *tp)
 {
@@ -120,3 +123,4 @@ int clock_settime (clockid_t clockid, const struct timespec *tp)
 
 	return 0;
 }
+RTM_EXPORT(clock_settime);

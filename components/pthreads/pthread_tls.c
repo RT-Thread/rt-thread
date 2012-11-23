@@ -22,6 +22,7 @@ void *pthread_getspecific(pthread_key_t key)
 
 	return NULL;
 }
+RTM_EXPORT(pthread_getspecific);
 
 int pthread_setspecific(pthread_key_t key, const void *value)
 {
@@ -44,6 +45,7 @@ int pthread_setspecific(pthread_key_t key, const void *value)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_setspecific);
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void*))
 {
@@ -67,6 +69,7 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void*))
 	rt_exit_critical();
 	return EAGAIN;
 }
+RTM_EXPORT(pthread_key_create);
 
 int pthread_key_delete(pthread_key_t key)
 {
@@ -79,4 +82,5 @@ int pthread_key_delete(pthread_key_t key)
 
 	return 0;
 }
+RTM_EXPORT(pthread_key_delete);
 

@@ -24,6 +24,7 @@ int pthread_attr_init(pthread_attr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_attr_init);
 
 int pthread_attr_destroy(pthread_attr_t *attr)
 {
@@ -32,6 +33,7 @@ int pthread_attr_destroy(pthread_attr_t *attr)
 	memset(attr, 0, sizeof(pthread_attr_t));
 	return 0;
 }
+RTM_EXPORT(pthread_attr_destroy);
 
 int pthread_attr_setdetachstate(pthread_attr_t * attr, int state)
 {
@@ -43,6 +45,7 @@ int pthread_attr_setdetachstate(pthread_attr_t * attr, int state)
 	attr->detachstate = state;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_setdetachstate);
 
 int pthread_attr_getdetachstate(pthread_attr_t const * attr, int *state)
 {
@@ -52,6 +55,7 @@ int pthread_attr_getdetachstate(pthread_attr_t const * attr, int *state)
 
 	return 0;
 }
+RTM_EXPORT(pthread_attr_getdetachstate);
 
 int pthread_attr_setschedpolicy(pthread_attr_t * attr, int policy)
 {
@@ -60,6 +64,7 @@ int pthread_attr_setschedpolicy(pthread_attr_t * attr, int policy)
 	attr->policy = policy;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_setschedpolicy);
 
 int pthread_attr_getschedpolicy(pthread_attr_t const *attr, int *policy)
 {
@@ -68,6 +73,7 @@ int pthread_attr_getschedpolicy(pthread_attr_t const *attr, int *policy)
 	*policy = (int)attr->policy;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_getschedpolicy);
 
 int pthread_attr_setschedparam(pthread_attr_t *attr, struct sched_param const *param)
 {
@@ -77,6 +83,7 @@ int pthread_attr_setschedparam(pthread_attr_t *attr, struct sched_param const *p
 	attr->priority = param->sched_priority;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_setschedparam);
 
 int pthread_attr_getschedparam(pthread_attr_t const *attr, struct sched_param *param)
 {
@@ -86,6 +93,7 @@ int pthread_attr_getschedparam(pthread_attr_t const *attr, struct sched_param *p
 	param->sched_priority = attr->priority;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_getschedparam);
 
 int pthread_attr_setstacksize(pthread_attr_t * attr, size_t stack_size)
 {
@@ -94,6 +102,7 @@ int pthread_attr_setstacksize(pthread_attr_t * attr, size_t stack_size)
 	attr->stack_size = stack_size;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_setstacksize);
 
 int pthread_attr_getstacksize(pthread_attr_t const * attr, size_t *stack_size)
 {
@@ -102,18 +111,21 @@ int pthread_attr_getstacksize(pthread_attr_t const * attr, size_t *stack_size)
 	*stack_size = attr->stack_size;
 	return 0;
 }
+RTM_EXPORT(pthread_attr_getstacksize);
 
 int pthread_attr_setstackaddr(pthread_attr_t * attr, void * stack_addr)
 {
 	RT_ASSERT(attr != RT_NULL);
 	return ENOTSUP;
 }
+RTM_EXPORT(pthread_attr_setstackaddr);
 
 int pthread_attr_getstackaddr(pthread_attr_t const * attr, void ** stack_addr)
 {
 	RT_ASSERT(attr != RT_NULL);
 	return ENOTSUP;
 }
+RTM_EXPORT(pthread_attr_getstackaddr);
 
 int pthread_attr_setstack(pthread_attr_t * attr, void *stack_base, size_t stack_size)
 {
@@ -124,6 +136,7 @@ int pthread_attr_setstack(pthread_attr_t * attr, void *stack_base, size_t stack_
 
 	return 0;
 }
+RTM_EXPORT(pthread_attr_setstack);
 
 int pthread_attr_getstack(pthread_attr_t const * attr, void **stack_base, size_t *stack_size)
 {
@@ -134,6 +147,7 @@ int pthread_attr_getstack(pthread_attr_t const * attr, void **stack_base, size_t
 
 	return 0;
 }
+RTM_EXPORT(pthread_attr_getstack);
 
 int pthread_attr_setguardsize(pthread_attr_t * attr, size_t guard_size)
 {
@@ -144,6 +158,7 @@ int pthread_attr_getguardsize(pthread_attr_t const * attr, size_t *guard_size)
 {
 	return ENOTSUP;
 }
+RTM_EXPORT(pthread_attr_getguardsize);
 
 int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 {
@@ -154,9 +169,10 @@ int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 
     return EINVAL;
 }
+RTM_EXPORT(pthread_attr_setscope);
 
 int pthread_attr_getscope(pthread_attr_t const *attr)
 {
     return PTHREAD_SCOPE_SYSTEM;
 }
-
+RTM_EXPORT(pthread_attr_getscope);

@@ -16,6 +16,7 @@ int pthread_mutexattr_init(pthread_mutexattr_t *attr)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_mutexattr_init);
 
 int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 {
@@ -27,6 +28,7 @@ int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_mutexattr_destroy);
 
 int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type)
 {
@@ -43,6 +45,7 @@ int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_mutexattr_gettype);
 
 int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 {
@@ -55,6 +58,7 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)
 
     return EINVAL;
 }
+RTM_EXPORT(pthread_mutexattr_settype);
 
 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared)
 {
@@ -73,6 +77,7 @@ int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared)
 
     return EINVAL;
 }
+RTM_EXPORT(pthread_mutexattr_setpshared);
 
 int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared)
 {
@@ -82,6 +87,7 @@ int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared)
                                                : PTHREAD_PROCESS_PRIVATE;
     return 0;
 }
+RTM_EXPORT(pthread_mutexattr_getpshared);
 
 int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 {
@@ -105,6 +111,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 
 	return 0;
 }
+RTM_EXPORT(pthread_mutex_init);
 
 int pthread_mutex_destroy(pthread_mutex_t *mutex)
 {
@@ -118,6 +125,7 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex)
 
 	return 0;
 }
+RTM_EXPORT(pthread_mutex_destroy);
 
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
@@ -146,6 +154,7 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 
 	return EINVAL;
 }
+RTM_EXPORT(pthread_mutex_lock);
 
 int pthread_mutex_unlock(pthread_mutex_t *mutex)
 {
@@ -175,6 +184,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
 	
 	return EINVAL;
 }
+RTM_EXPORT(pthread_mutex_unlock);
 
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
@@ -192,4 +202,5 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
 
 	return EBUSY;
 }
+RTM_EXPORT(pthread_mutex_trylock);
 
