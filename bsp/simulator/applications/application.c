@@ -75,12 +75,15 @@ void rt_init_thread_entry(void* parameter)
 	}
 #endif
 
-#ifdef RT_USING_RTGUI
+#if 0
 	{
 		extern void application_init(void);
 		rt_thread_delay(RT_TICK_PER_SECOND);
 		application_init();
 	}
+#endif
+#ifdef RT_USING_RTGUI
+    realtouch_ui_init();
 #endif
 }
 

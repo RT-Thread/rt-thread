@@ -4,8 +4,8 @@
 #include <rtdevice.h>
 #include <rtgui/driver.h>
 
-#define SDL_SCREEN_WIDTH	240
-#define SDL_SCREEN_HEIGHT	320
+#define SDL_SCREEN_WIDTH	800
+#define SDL_SCREEN_HEIGHT	480
 
 struct sdlfb_device
 {
@@ -31,10 +31,13 @@ static rt_err_t  sdlfb_close(rt_device_t dev)
 	SDL_Quit();
 	return RT_EOK;
 }
+
+static rt_mutex_t sdllock;
 static rt_err_t  sdlfb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	struct sdlfb_device *device;
 
+	rt_mutex_take(sdllock, RT_WAITING_FOREVER);
 	device = (struct sdlfb_device*)dev;
 	RT_ASSERT(device != RT_NULL);
 	RT_ASSERT(device->screen != RT_NULL);
@@ -91,7 +94,7 @@ static rt_err_t  sdlfb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 		}
 		break;
 	}
-
+	rt_mutex_release(sdllock);
 	return RT_EOK;
 }
 
@@ -125,6 +128,8 @@ static void sdlfb_hw_init(void)
 
 	SDL_WM_SetCaption ("RT-Thread/GUI Simulator", NULL);
 	rt_device_register(RT_DEVICE(&_device), "sdl", RT_DEVICE_FLAG_RDWR);
+
+	sdllock = rt_mutex_create("fb",RT_IPC_FLAG_FIFO);
 }
 
 #include  <windows.h>
@@ -156,6 +161,7 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 			switch (event.type)
 			{
 			case SDL_MOUSEMOTION:
+#if  0
 				{
 					struct rtgui_event_mouse emouse;
 					emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
@@ -171,6 +177,7 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 					/* send event to server */
 					rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
 				}
+#endif
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
