@@ -16,6 +16,7 @@
  *                             fix gcc compiling issue.
  * 2010-04-15     Bernard      remove weak definition on ICCM16C compiler
  * 2012-07-18     Arda         add the alignment display for signed integer
+ * 2012-11-23     Bernard      fix IAR compiler error. 
  */
 
 #include <rtthread.h>
@@ -1055,6 +1056,7 @@ __weak void rt_hw_console_output(const char *str)
     #if __VER__ > 540
     __weak
     #endif
+void rt_hw_console_output(const char *str)
 #else
 void rt_hw_console_output(const char *str)
 #endif
