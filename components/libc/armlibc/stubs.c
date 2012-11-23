@@ -19,6 +19,10 @@
 
 #include "rtthread.h"
 
+#ifdef RT_USING_DFS
+#include "dfs_posix.h"
+#endif
+
 #pragma import(__use_no_semihosting_swi)
 
 /* TODO: Standard IO device handles. */
@@ -145,8 +149,9 @@ int _sys_seek(FILEHANDLE fh, long pos)
 /**
  * used by tmpnam() or tmpfile()
  */
-void_sys_tmpnam(char *name, int fileno, unsigned maxlength)
+int _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 {
+    return -1;
 }
 
 char *_sys_command_string(char *cmd, int len)
@@ -185,10 +190,20 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
+#ifndef RT_USING_DFS
+    return -1;
+#else
     return unlink(filename);
+#endif
 }
 
-/* rename() */
+/* rename() is defined in dfs_posix.c instead */
+#if 0
+int rename(const char *old, const char *new)
+{
+    return -1;
+}
+#endif
 
 int system(const char *string)
 {
