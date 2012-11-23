@@ -1,0 +1,8 @@
+Import('RTT_ROOT')
+from building import *
+
+src = Glob('*.c')
+
+group = DefineGroup('ui', src, depend = [''])
+
+Return('group')
