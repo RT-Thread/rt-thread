@@ -3,6 +3,12 @@
 #include <rtthread.h>
 #include "snake.h"
 
+#define ASSERT_RET(x, ret)  \
+    do{                     \
+        if (x)              \
+            return ret;     \
+    }while(0)
+
 rt_list_t snake_head;
 SNAKE_DIR prevdir;
 
@@ -106,6 +112,8 @@ rt_bool_t snake_init(const point_t *start, const int length, const SNAKE_DIR dir
     rt_int32_t inc_x, inc_y;
     point_t old = *start;
 
+    ASSERT_RET(!map || !start, RT_FALSE);
+
     rt_list_init(&snake_head);
 
     if (dir == SNAKE_DIR_UP || dir == SNAKE_DIR_DOWN)
@@ -160,6 +168,8 @@ rt_bool_t food_init(map_t *map, rt_uint32_t max_num)
 #endif
 
     rt_uint32_t timeout, num;
+
+    ASSERT_RET(!map, RT_FALSE);
 
     num = 0;
     timeout = rt_tick_get();
@@ -219,6 +229,8 @@ SYS_STE snake_step(SNAKE_DIR dir, map_t *map)
     snake_t *tail, *head;
     point_t node;
 
+    ASSERT_RET(!map, RT_FALSE);
+
     dir = dir_adjust(dir);
 
     // 取出头尾两个节点，其他节点不需要改变
@@ -246,6 +258,8 @@ SYS_STE snake_step(SNAKE_DIR dir, map_t *map)
 
 rt_bool_t snake_restart(const point_t *start, const int length, const SNAKE_DIR dir, map_t *map)
 {
+    ASSERT_RET(!map || !start, RT_FALSE);
+
     snake_deinit();
     memset(map->range, NORMAL, map->width * map->height);
 
