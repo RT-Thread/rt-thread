@@ -13,7 +13,8 @@
  */
 
 #include <rtthread.h>
-#include <drivers/usb_host.h>
+#include <rtservice.h>
+#include <rtdevice.h>
 
 static rt_list_t _driver_list;
 
