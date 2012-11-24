@@ -324,11 +324,16 @@ static rt_bool_t event_handler(struct rtgui_object *object, rtgui_event_t *event
 static void timeout(struct rtgui_timer *timer, void *parameter)
 {
     struct rtgui_widget *widget;
-
+    SYS_STE ret;
+    
     if (!map)
         return;
 
-    if (snake_step(run_state, map) == FOOD)
+    ret = snake_step(run_state, map);
+    if (OVER == ret)
+        return;
+
+    if (FOOD == ret)
     {
         snake_len++;
         if (snake_len >= (map->width * map->height) / 3)
@@ -350,7 +355,7 @@ static void timeout(struct rtgui_timer *timer, void *parameter)
 
         food_init(map, 1);
     }
-
+    
     widget = RTGUI_WIDGET(parameter);
     snake_update(widget);
 }

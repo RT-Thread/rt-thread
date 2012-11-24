@@ -10,7 +10,7 @@
     }while(0)
 
 rt_list_t snake_head;
-SNAKE_DIR prevdir;
+SNAKE_DIR prevdir, newdir;
 
 static SNAKE_DIR dir_adjust(SNAKE_DIR dir)
 {
@@ -20,14 +20,14 @@ static SNAKE_DIR dir_adjust(SNAKE_DIR dir)
             ||  (SNAKE_DIR_RIGHT == prevdir && SNAKE_DIR_LEFT != dir)
        )
     {
-        prevdir = dir;
+        newdir = dir;
     }
     else
     {
         rt_kprintf("dirction change error\n\r");
     }
 
-    return prevdir;
+    return newdir;
 }
 
 static void across_XY(point_t *node, const map_t *map)
@@ -77,6 +77,10 @@ static SYS_STE node_update(snake_t *tail, const point_t *node, map_t *map)
     }
 
     map->range[node->y * map->width + node->x] = OVER;
+    
+    if (ret != OVER)
+        prevdir = newdir;
+
     return ret;
 }
 
