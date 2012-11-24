@@ -82,7 +82,7 @@ _link_r(struct _reent *ptr, const char *old, const char *new)
 _off_t
 _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
-#ifndef RT_USING_DfS
+#ifndef RT_USING_DFS
 	return 0;
 #else
 	_off_t rc;
