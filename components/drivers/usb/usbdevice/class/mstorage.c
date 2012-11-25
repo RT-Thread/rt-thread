@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-10-01     Yi Qiu      first version
+ * 2012-11-25     Heyuanjie87 reduce the memory consumption
  */
 
 #include <rtthread.h>
@@ -22,14 +23,17 @@
 #define STATUS_CBW              0x00
 #define STATUS_CSW              0x01
 #define STATUS_RECEIVE          0x02
+#define STATUS_SEND             0x03 
 
 static uclass_t mstorage;
-static uep_t ep_in, ep_out;   
+static uep_t ep_in, ep_out;
 static rt_uint8_t *buffer;
 static rt_uint8_t *write_ptr;
 static int status = STATUS_CBW;
 static struct ustorage_csw csw;
 static rt_device_t disk;
+static rt_uint32_t _block;
+static rt_uint32_t _count, _size;
 static struct rt_device_blk_geometry geometry;
 
 static struct udevice_descriptor dev_desc =
@@ -67,14 +71,14 @@ static struct umass_descriptor mass_desc =
     USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
     USB_EP_ATTR_BULK,           //bmAttributes;
     0x40,                       //wMaxPacketSize;
-    0x00,                       //bInterval;   
+    0x00,                       //bInterval;
 
     USB_DESC_LENGTH_ENDPOINT,   //bLength;
     USB_DESC_TYPE_ENDPOINT,     //type;
     USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
     USB_EP_ATTR_BULK,           //bmAttributes;
     0x40,                       //wMaxPacketSize;
-    0x00,                       //bInterval;        
+    0x00,                       //bInterval;
 };
 
 /**
@@ -96,7 +100,7 @@ static rt_err_t _inquiry_cmd(udevice_t device)
     rt_memcpy(&data[8], "RTT", 3);
     rt_memcpy(&data[16], "USB Disk", 8);
 
-    dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, 36);    
+    dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, 36);
 
     return RT_EOK;
 }
@@ -123,7 +127,7 @@ static rt_err_t _request_sense(udevice_t device)
     data.AdditionalSenseCode   = 0x20;
     data.AdditionalSenseCodeQualifier =0;
 
-    dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, sizeof(struct request_sense_data));    
+    dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, sizeof(struct request_sense_data));
 
     return RT_EOK;
 }
@@ -146,7 +150,7 @@ static rt_err_t _mode_sense_6(udevice_t device)
 
     dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, 4);
 
-    return RT_EOK;    
+    return RT_EOK;
 }
 
 /**
@@ -160,21 +164,21 @@ static rt_err_t _read_capacities(udevice_t device)
 {
     rt_uint8_t data[12];
     rt_uint32_t sector_count, sector_size;
-    
+
     RT_ASSERT(device != RT_NULL);
 
     sector_count = geometry.sector_count;
     sector_size = geometry.bytes_per_sector;
-    
+
     *(rt_uint32_t*)&data[0] = 0x08000000;
     data[4] = sector_count >> 24;
     data[5] = 0xff & (sector_count >> 16);
     data[6] = 0xff & (sector_count >> 8);
     data[7] = 0xff & (sector_count);
-    data[8] = 0x02;  
+    data[8] = 0x02;
     data[9] = 0xff & (sector_size >> 16);
     data[10] = 0xff & (sector_size >> 8);
-    data[11] = 0xff & sector_size;    
+    data[11] = 0xff & sector_size;
 
     dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, 12);
 
@@ -192,82 +196,86 @@ static rt_err_t _read_capacity(udevice_t device)
 {
     rt_uint8_t data[8];
     rt_uint32_t sector_count, sector_size;
-    
+
     RT_ASSERT(device != RT_NULL);
 
     sector_count = geometry.sector_count;
     sector_size = geometry.bytes_per_sector;
-    
+
     data[0] = sector_count >> 24;
     data[1] = 0xff & (sector_count >> 16);
     data[2] = 0xff & (sector_count >> 8);
     data[3] = 0xff & (sector_count);
-    data[4] = 0x0;  
+    data[4] = 0x0;
     data[5] = 0xff & (sector_size >> 16);
     data[6] = 0xff & (sector_size >> 8);
-    data[7] = 0xff & sector_size;    
+    data[7] = 0xff & sector_size;
 
     dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&data, 8);
 
-    return RT_EOK;  
+    return RT_EOK;
 }
 
 /**
  * This function will handle read_10 request.
  *
- * @param device the usb device object. 
+ * @param device the usb device object.
  * @param cbw the command block wrapper.
  *
  * @return RT_EOK on successful.
  */
 static rt_err_t _read_10(udevice_t device, ustorage_cbw_t cbw)
 {
-    rt_uint32_t block;
-    rt_uint32_t count;
-
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cbw != RT_NULL);
-    
-    block = cbw->cb[2]<<24 | cbw->cb[3]<<16 | cbw->cb[4]<<8  | 
-            cbw->cb[5]<<0  ;
 
-    count = cbw->cb[7]<<8 | cbw->cb[8]<<0 ;
+    _block = cbw->cb[2]<<24 | cbw->cb[3]<<16 | cbw->cb[4]<<8  |
+             cbw->cb[5]<<0  ;
 
-    RT_ASSERT(count < geometry.sector_count);
-    
-    rt_device_read(disk, block, buffer, count);
-    dcd_ep_write(device->dcd, ep_in, buffer, count * geometry.bytes_per_sector);
+    _count = cbw->cb[7]<<8 | cbw->cb[8]<<0 ;
+
+    RT_ASSERT(_count < geometry.sector_count);
+
+    rt_device_read(disk, _block, buffer, 1);
+    dcd_ep_write(device->dcd, ep_in, buffer, geometry.bytes_per_sector);
+    _count --;
+    if (_count)
+    {
+        _block ++;
+        status = STATUS_SEND;
+    }
+    else
+    {
+        status = STATUS_CSW;
+    }
 
     return RT_EOK;
 }
 
-static rt_uint32_t _block;
-static rt_uint32_t _count, _size;
-
 /**
  * This function will handle write_10 request.
  *
- * @param device the usb device object. 
+ * @param device the usb device object.
  * @param cbw the command block wrapper.
  *
  * @return RT_EOK on successful.
  */
 static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw)
-{    
+{
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cbw != RT_NULL);
-    
-    _block = cbw->cb[2]<<24 | cbw->cb[3]<<16 | cbw->cb[4]<<8  | 
-            cbw->cb[5]<<0  ;
+
+    _block = cbw->cb[2]<<24 | cbw->cb[3]<<16 | cbw->cb[4]<<8  |
+             cbw->cb[5]<<0  ;
     _count = cbw->cb[7]<<8 | cbw->cb[8]<<0;
     csw.data_reside = cbw->xfer_len;
     _size = _count * geometry.bytes_per_sector;
     write_ptr = buffer;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_write_10 count 0x%x 0x%x\n", 
-        _count, geometry.sector_count));
-    
-    dcd_ep_read(device->dcd, ep_out, buffer, MIN(_size, 4096));          
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("_write_10 count 0x%x 0x%x\n",
+                                _count, geometry.sector_count));
+
+    dcd_ep_read(device->dcd, ep_out, buffer, MIN(_size, 4096));
 
     return RT_EOK;
 }
@@ -275,13 +283,13 @@ static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw)
 /**
  * This function will handle verify_10 request.
  *
- * @param device the usb device object. 
+ * @param device the usb device object.
  *
  * @return RT_EOK on successful.
  */
 static rt_err_t _verify_10(udevice_t device)
 {
-    return RT_EOK;    
+    return RT_EOK;
 }
 
 /**
@@ -295,12 +303,27 @@ static rt_err_t _verify_10(udevice_t device)
 static rt_err_t _ep_in_handler(udevice_t device, rt_size_t size)
 {
     RT_ASSERT(device != RT_NULL);
-    
+
     if(status == STATUS_CSW)
-    {        
+    {
         dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
         status = STATUS_CBW;
-        dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);        
+        dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+    }
+    if(status == STATUS_SEND)
+    {
+        rt_device_read(disk, _block, buffer, 1);
+        dcd_ep_write(device->dcd, ep_in, buffer, geometry.bytes_per_sector);
+        _count --;
+        if (_count)
+        {
+            _block ++;
+            status = STATUS_SEND;
+        }
+        else
+        {
+            status = STATUS_CSW;
+        }
     }
 
     return RT_EOK;
@@ -316,7 +339,7 @@ static void cbw_dump(struct ustorage_cbw* cbw)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("dflags 0x%x\n", cbw->dflags));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("lun 0x%x\n", cbw->lun));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cb_len 0x%x\n", cbw->cb_len));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("cb[0] 0x%x\n", cbw->cb[0]));    
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("cb[0] 0x%x\n", cbw->cb[0]));
 }
 
 /**
@@ -328,15 +351,15 @@ static void cbw_dump(struct ustorage_cbw* cbw)
  * @return RT_EOK.
  */
 static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
-{        
+{
     RT_ASSERT(device != RT_NULL);
-    
+
     if(status == STATUS_CBW)
     {
         struct ustorage_cbw* cbw;
 
         /* dump cbw information */
-        cbw = (struct ustorage_cbw*)ep_out->buffer;               
+        cbw = (struct ustorage_cbw*)ep_out->buffer;
 
         if(cbw->signature == CBW_SIGNATURE)
         {
@@ -345,12 +368,12 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
             csw.data_reside = 0;
             csw.status = 0;
         }
-        
+
         switch(cbw->cb[0])
         {
         case SCSI_TEST_UNIT_READY:
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW); 
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);                  
+            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
             break;
         case SCSI_REQUEST_SENSE:
             _request_sense(device);
@@ -362,11 +385,11 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
             break;
         case SCSI_MODE_SENSE_6:
             _mode_sense_6(device);
-            status = STATUS_CSW;            
+            status = STATUS_CSW;
             break;
         case SCSI_ALLOW_MEDIUM_REMOVAL:
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW); 
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);              
+            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
             break;
         case SCSI_READ_CAPACITIES:
             _read_capacities(device);
@@ -374,25 +397,24 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
             break;
         case SCSI_READ_CAPACITY:
             _read_capacity(device);
-            status = STATUS_CSW;            
+            status = STATUS_CSW;
             break;
         case SCSI_READ_10:
             _read_10(device, cbw);
-            status = STATUS_CSW;                      
             break;
         case SCSI_WRITE_10:
             _write_10(device, cbw);
-            status = STATUS_RECEIVE;            
+            status = STATUS_RECEIVE;
             break;
         case SCSI_VERIFY_10:
             _verify_10(device);
             break;
-        }                
+        }
     }
     else if(status == STATUS_RECEIVE)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("write size 0x%x block 0x%x oount 0x%x\n", 
-            size, _block, _size));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("write size 0x%x block 0x%x oount 0x%x\n",
+                                    size, _block, _size));
 
         _size -= size;
         write_ptr += size;
@@ -400,14 +422,14 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
         if(_size == 0)
         {
             rt_device_write(disk, _block, buffer, _count);
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW); 
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);                  
+            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
             status = STATUS_CBW;
         }
         else
-        {            
-            dcd_ep_read(device->dcd, ep_out, write_ptr, MIN(_size, 4096)); 
-        }       
+        {
+            dcd_ep_read(device->dcd, ep_out, write_ptr, MIN(_size, 4096));
+        }
     }
     else
     {
@@ -429,7 +451,7 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
 static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
 {
     rt_uint8_t lun = 0;
-    
+
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
@@ -446,7 +468,7 @@ static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
         rt_kprintf("unknown interface request\n");
         break;
     }
-    
+
     return RT_EOK;
 }
 
@@ -462,15 +484,18 @@ static rt_err_t _class_run(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("mass storage run\n"));
-    
+
     disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
-    RT_ASSERT(disk != RT_NULL);
+    if(disk == RT_NULL)
+        return RT_ERROR;
+    if(rt_device_control(disk, RT_DEVICE_CTRL_BLK_GETGEOME, (void*)&geometry) != RT_EOK)
+        return RT_ERROR;
 
-    buffer = (rt_uint8_t*)rt_malloc(RT_USB_MSTORAGE_BUFFER_SIZE);
-
-    rt_device_control(disk, RT_DEVICE_CTRL_BLK_GETGEOME, (void*)&geometry);
+    buffer = (rt_uint8_t*)rt_malloc(geometry.bytes_per_sector);
+    if(buffer == RT_NULL)
+        return RT_ERROR;
     dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
-    
+
     return RT_EOK;
 }
 
@@ -512,7 +537,7 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
-    
+
     /* create a mass storage class */
     mstorage = rt_usbd_class_create(device, &dev_desc, &ops);
 
@@ -521,23 +546,23 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
 
     /* create a bulk out and a bulk in endpoint */
     ep_in = rt_usbd_endpoint_create(&mass_desc.ep_in_desc, _ep_in_handler);
-    ep_out = rt_usbd_endpoint_create(&mass_desc.ep_out_desc, _ep_out_handler);     
-   
+    ep_out = rt_usbd_endpoint_create(&mass_desc.ep_out_desc, _ep_out_handler);
+
     /* create an alternate setting */
-    setting = rt_usbd_altsetting_create(&mass_desc.intf_desc, 
-        sizeof(struct umass_descriptor));
-    
+    setting = rt_usbd_altsetting_create(&mass_desc.intf_desc,
+                                        sizeof(struct umass_descriptor));
+
     /* add the bulk out and bulk in endpoint to the alternate setting */
     rt_usbd_altsetting_add_endpoint(setting, ep_out);
     rt_usbd_altsetting_add_endpoint(setting, ep_in);
-    
+
     /* add the alternate setting to the interface, then set default setting */
     rt_usbd_interface_add_altsetting(intf, setting);
     rt_usbd_set_altsetting(intf, 0);
 
     /* add the interface to the mass storage class */
     rt_usbd_class_add_interface(mstorage, intf);
-    
+
     return mstorage;
 }
 
