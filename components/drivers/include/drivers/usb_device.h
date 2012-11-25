@@ -92,7 +92,9 @@ struct uclass
 
     struct udevice* device;
     udev_desc_t dev_desc;
-    struct uassco_descriptor* assco;
+#ifdef RT_USB_DEVICE_COMPOSITE    
+    uiad_desc_t iad_desc;
+#endif
     rt_list_t intf_list;
 };
 typedef struct uclass* uclass_t;
@@ -157,6 +159,7 @@ uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc,
 ualtsetting_t rt_usbd_altsetting_create(uintf_desc_t intf_desc, rt_size_t desc_size);
 
 rt_err_t rt_usbd_core_init(void);
+rt_err_t rt_usbd_post_event(struct udev_msg* msg, rt_size_t size);
 rt_err_t rt_usbd_free_device(udevice_t device);
 rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
@@ -173,8 +176,12 @@ uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value);
 uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value);
 uep_t rt_usbd_find_endpoint(udevice_t device, rt_uint8_t ep_addr);
 
-uclass_t rt_usbd_class_mass_create(udevice_t device);
+uclass_t rt_usbd_class_mstorage_create(udevice_t device);
 uclass_t rt_usbd_class_cdc_create(udevice_t device);
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc);
+#endif
 
 rt_inline rt_err_t dcd_set_address(udcd_t dcd, rt_uint8_t value)
 {

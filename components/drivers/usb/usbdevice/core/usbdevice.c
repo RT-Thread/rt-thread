@@ -16,17 +16,35 @@
 #include <rtdevice.h>
 #include <rtservice.h>
 
-#define RT_USB_DEVICE_CDC
-
 const static char* ustring[] = 
 {
     "Language",
     "RT-Thread Team.",
-    "UDISK",
-    "12345678",
-    "Config",
+    "RT-Thread Device",
+    "1.1.0",
+    "Configuration",
     "Interface",
 };
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+static struct udevice_descriptor compsit_desc =
+{
+    USB_DESC_LENGTH_DEVICE,     //bLength;
+    USB_DESC_TYPE_DEVICE,       //type;
+    USB_BCD_VERSION,            //bcdUSB;
+    USB_CLASS_MISC,             //bDeviceClass;
+    0x02,                       //bDeviceSubClass;
+    0x01,                       //bDeviceProtocol;
+    0x40,                       //bMaxPacketSize0;
+    USB_VENDOR_ID,              //idVendor;
+    0xbacf,                     //idProduct;
+    USB_BCD_DEVICE,             //bcdDevice;
+    USB_STRING_MANU_INDEX,      //iManufacturer;
+    USB_STRING_PRODUCT_INDEX,   //iProduct;
+    USB_STRING_SERIAL_INDEX,    //iSerialNumber;
+    USB_DYNAMIC,                //bNumConfigurations;    
+};
+#endif
 
 rt_err_t rt_usb_device_init(const char* udc_name)
 {
@@ -56,22 +74,28 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     /* create a configuration object */
     cfg = rt_usbd_config_create();
 
-#if defined RT_USB_DEVICE_MASS_STORAGE
+#ifdef RT_USB_DEVICE_MSTORAGE
     /* create a mass storage class object */
-    cls = rt_usbd_class_mass_storage_create(udevice);    
-#elif defined RT_USB_DEVICE_CDC
-    /* create a cdc class object */
-    cls = rt_usbd_class_cdc_create(udevice);    
-#else
-    #error
-#endif
-
-    /* set device descriptor to the device */
-    rt_usbd_device_set_descriptor(udevice, cls->dev_desc);
+    cls = rt_usbd_class_mstorage_create(udevice);    
 
     /* add the class to the configuration */
     rt_usbd_config_add_class(cfg, cls);
-    
+#endif
+#ifdef RT_USB_DEVICE_CDC
+    /* create a cdc class object */
+    cls = rt_usbd_class_cdc_create(udevice);
+
+    /* add the class to the configuration */
+    rt_usbd_config_add_class(cfg, cls);
+#endif
+
+    /* set device descriptor to the device */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_descriptor(udevice, &compsit_desc);
+#else
+    rt_usbd_device_set_descriptor(udevice, cls->dev_desc);
+#endif
+
     /* add the configuration to the device */
     rt_usbd_device_add_config(udevice, cfg);
     

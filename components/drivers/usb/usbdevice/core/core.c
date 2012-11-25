@@ -122,9 +122,13 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
         }
     }
 
+    if(setup->length == 0xFF)
+        len = str_desc.bLength;
+    else
+        len = setup->length;
+
     /* send string descriptor to endpoint 0 */
-    dcd_ep_write(device->dcd, 0, (rt_uint8_t*)&str_desc, 
-        str_desc.bLength);         
+    dcd_ep_write(device->dcd, 0, (rt_uint8_t*)&str_desc, len);         
 
     return RT_EOK;
 }
@@ -156,8 +160,11 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
         case USB_DESC_TYPE_STRING:
             _get_string_descriptor(device, setup);
             break;
+        case USB_DESC_TYPE_DEVICEQUALIFIER:
+            dcd_ep_stall(device->dcd, 0);
+            break;
         default:
-            rt_kprintf("unknown descriptor\n");
+            rt_kprintf("unsupported descriptor request\n");
             dcd_ep_stall(device->dcd, 0);
             break;
         }
@@ -768,6 +775,9 @@ uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
     cls->dev_desc = dev_desc;
     cls->ops = ops;
     cls->device = device;
+#ifdef RT_USB_DEVICE_COMPOSITE    
+    cls->iad_desc = RT_NULL;
+#endif
 
     /* to initialize interface list */
     rt_list_init(&cls->intf_list);
@@ -874,8 +884,7 @@ uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value)
  * @return an usb configuration object on found or RT_NULL on not found.
  */
 uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value)
-{
-    uep_t ep;
+{   
     struct rt_list_node *i, *j;
     uclass_t cls;
     uintf_t intf;
@@ -1008,6 +1017,16 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
     for (i=cfg->cls_list.next; i!=&cfg->cls_list; i=i->next)
     {
         cls = (uclass_t)rt_list_entry(i, struct uclass, list);
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+        if(cls->iad_desc != RT_NULL)
+        {
+            rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - 
+                USB_DESC_LENGTH_CONFIG], (void*)cls->iad_desc, USB_DESC_LENGTH_IAD);
+            cfg->cfg_desc.wTotalLength += USB_DESC_LENGTH_IAD;
+        }
+#endif
+
         for(j=cls->intf_list.next; j!=&cls->intf_list; j=j->next)
         {
             intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
@@ -1020,7 +1039,7 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
                 ep = (uep_t)rt_list_entry(k, struct uendpoint, list);
                 dcd_ep_alloc(device->dcd, ep);             
             }
-            
+
             /* construct complete configuration descriptor */
             rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - 
                 USB_DESC_LENGTH_CONFIG], (void*)intf->curr_setting->intf_desc,
@@ -1079,6 +1098,19 @@ rt_err_t rt_usbd_class_add_interface(uclass_t cls, uintf_t intf)
 
     return RT_EOK;
 }
+
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc)
+{
+    RT_ASSERT(cls != RT_NULL);
+    RT_ASSERT(iad_desc != RT_NULL);
+
+    cls->iad_desc = iad_desc;
+
+    return RT_TRUE;
+}
+#endif
 
 /**
  * This function will add an alternate setting to an interface.

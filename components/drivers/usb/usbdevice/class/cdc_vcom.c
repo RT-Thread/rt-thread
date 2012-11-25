@@ -15,8 +15,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
- 
 #include "cdc.h"
+
+#ifdef RT_USB_DEVICE_CDC
 
 static uclass_t cdc;
 static uep_t ep_in, ep_out, ep_cmd;
@@ -48,6 +49,20 @@ static struct udevice_descriptor dev_desc =
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
     USB_DYNAMIC,                //bNumConfigurations;    
 };
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+static struct uiad_descriptor iad_desc =
+{
+    USB_DESC_LENGTH_IAD,
+    USB_DESC_TYPE_IAD,
+    USB_DYNAMIC,
+    0x02,
+    USB_CDC_CLASS_COMM,
+    USB_CDC_SUBCLASS_ACM,
+    USB_CDC_PROTOCOL_V25TER,
+    0x00,
+};
+#endif
 
 /* communcation interface descriptor */
 static struct ucdc_comm_descriptor comm_desc =
@@ -389,7 +404,10 @@ static rt_err_t _cdc_descriptor_config(rt_uint8_t comm, rt_uint8_t data)
     comm_desc.call_mgmt_desc.data_interface = data;
     comm_desc.union_desc.master_interface = comm;
     comm_desc.union_desc.slave_interface0 = data;
-    
+#ifdef RT_USB_DEVICE_COMPOSITE    
+    iad_desc.bFirstInterface = comm;
+#endif
+
     return RT_EOK;
 }
 
@@ -453,7 +471,11 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
 
     /* add the communication interface to the cdc class */
     rt_usbd_class_add_interface(cdc, intf_comm);    
-    
+
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_class_set_iad(cdc, &iad_desc);
+#endif
+
     return cdc;
 }
 
@@ -549,4 +571,6 @@ void rt_usb_vcom_init(void)
     RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
         RT_NULL);
 }
+
+#endif
 

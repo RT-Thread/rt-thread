@@ -51,6 +51,7 @@ extern "C" {
 #define USB_DESC_TYPE_ENDPOINT          0x05
 #define USB_DESC_TYPE_DEVICEQUALIFIER   0x06
 #define USB_DESC_TYPE_OTHERSPEED        0x07
+#define USB_DESC_TYPE_IAD               0x0b
 #define USB_DESC_TYPE_HID               0x21
 #define USB_DESC_TYPE_REPORT            0x22
 #define USB_DESC_TYPE_PHYSICAL          0x23
@@ -58,6 +59,7 @@ extern "C" {
 
 #define USB_DESC_LENGTH_DEVICE          0x12
 #define USB_DESC_LENGTH_CONFIG          0x9
+#define USB_DESC_LENGTH_IAD             0x8
 #define USB_DESC_LENGTH_STRING          0x4
 #define USB_DESC_LENGTH_INTERFACE       0x9
 #define USB_DESC_LENGTH_ENDPOINT        0x7
@@ -244,7 +246,7 @@ struct uconfig_descriptor
     rt_uint8_t iConfiguration;
     rt_uint8_t bmAttributes;
     rt_uint8_t MaxPower;
-    rt_uint8_t data[128];
+    rt_uint8_t data[256];
 };
 typedef struct uconfig_descriptor* ucfg_desc_t;
 
@@ -263,7 +265,7 @@ struct uinterface_descriptor
 typedef struct uinterface_descriptor* uintf_desc_t;
 
 /* Interface Association Descriptor (IAD) */
-struct uassco_descriptor 
+struct uiad_descriptor 
 {
     rt_uint8_t bLength;
     rt_uint8_t bDescriptorType;
@@ -274,7 +276,7 @@ struct uassco_descriptor
     rt_uint8_t bFunctionProtocol;
     rt_uint8_t iFunction;
 };
-typedef struct uassco_descriptor* uassco_desc_t;
+typedef struct uiad_descriptor* uiad_desc_t;
 
 struct uendpoint_descriptor 
 {
@@ -363,6 +365,9 @@ typedef struct ustorage_csw* ustorage_csw_t;
 
 #define USBREQ_GET_MAX_LUN              0xfe
 #define USBREQ_MASS_STORAGE_RESET       0xff
+
+#define MIN(a, b) (a < b ? a : b)
+#define MAX(a, b) (a > b ? a : b)
 
 #pragma pack()
 
