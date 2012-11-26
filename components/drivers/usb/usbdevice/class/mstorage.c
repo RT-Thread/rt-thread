@@ -487,13 +487,16 @@ static rt_err_t _class_run(udevice_t device)
 
     disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(disk == RT_NULL)
-        return RT_ERROR;
+    {
+        rt_kprintf("no disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
+        return -RT_ERROR;
+    }    
     if(rt_device_control(disk, RT_DEVICE_CTRL_BLK_GETGEOME, (void*)&geometry) != RT_EOK)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     buffer = (rt_uint8_t*)rt_malloc(geometry.bytes_per_sector);
     if(buffer == RT_NULL)
-        return RT_ERROR;
+        return -RT_ENOMEM;
     dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
 
     return RT_EOK;
