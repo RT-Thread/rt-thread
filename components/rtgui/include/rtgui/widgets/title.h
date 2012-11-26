@@ -26,19 +26,19 @@ DECLARE_CLASS_TYPE(wintitle);
 
 struct rtgui_wintitle
 {
-	struct rtgui_widget parent;
+    struct rtgui_widget parent;
 
-	/* title */
-	char* title;
+    /* title */
+    char *title;
 };
 typedef struct rtgui_wintitle rtgui_wintitle_t;
 
-rtgui_wintitle_t* rtgui_wintitle_create(struct rtgui_win *window, const char* title);
-void rtgui_wintitle_destroy(rtgui_wintitle_t* wintitle);
+rtgui_wintitle_t *rtgui_wintitle_create(struct rtgui_win *window, const char *title);
+void rtgui_wintitle_destroy(rtgui_wintitle_t *wintitle);
 
-rt_bool_t rtgui_wintile_event_handler(rtgui_widget_t* widget, rtgui_event_t* event);
+rt_bool_t rtgui_wintile_event_handler(rtgui_widget_t *widget, rtgui_event_t *event);
 
-void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const char* title);
-char *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle);
+void rtgui_wintitle_set_title(rtgui_wintitle_t *wintitle, const char *title);
+char *rtgui_wintitle_get_title(rtgui_wintitle_t *wintitle);
 
 #endif

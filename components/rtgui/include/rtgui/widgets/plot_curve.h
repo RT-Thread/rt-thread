@@ -15,6 +15,7 @@
 #define __RTGUI_PLOT_CURVE_H__
 
 #include <rtgui/rtgui.h>
+#include <rtgui/rtgui_mv_model.h>
 
 DECLARE_CLASS_TYPE(plot_curve);
 
@@ -31,15 +32,20 @@ DECLARE_CLASS_TYPE(plot_curve);
 
 struct rtgui_plot_curve
 {
-    struct rtgui_object parent;
+    struct rtgui_mv_model parent;
 
     rtgui_color_t color;
 
-    rt_size_t length;
-    rtgui_plot_curve_dtype *x_data;
-    rtgui_plot_curve_dtype *y_data;
+    rtgui_plot_curve_dtype min_x, max_x;
+    rtgui_plot_curve_dtype min_y, max_y;
 };
 
 struct rtgui_plot_curve *rtgui_plot_curve_create(void);
 void rtgui_plot_curve_destroy(struct rtgui_plot_curve *curve);
+
+void rtgui_plot_curve_set_x(struct rtgui_plot_curve *curve, void *p);
+void *rtgui_plot_curve_get_x(struct rtgui_plot_curve *curve);
+void rtgui_plot_curve_set_y(struct rtgui_plot_curve *curve, void *p);
+void *rtgui_plot_curve_get_y(struct rtgui_plot_curve *curve);
+
 #endif

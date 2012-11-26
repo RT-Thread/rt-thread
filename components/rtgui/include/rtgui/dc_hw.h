@@ -18,7 +18,7 @@
 #include <rtgui/dc.h>
 
 /* create a hardware dc */
-struct rtgui_dc* rtgui_dc_hw_create(rtgui_widget_t* owner);
+struct rtgui_dc *rtgui_dc_hw_create(rtgui_widget_t *owner);
 
 #endif
 

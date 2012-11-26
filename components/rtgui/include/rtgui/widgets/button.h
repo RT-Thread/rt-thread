@@ -22,57 +22,57 @@
 extern "C" {
 #endif
 
-/**
- * @defgroup rtgui_button
- * @{
- */
+    /**
+     * @defgroup rtgui_button
+     * @{
+     */
 
-DECLARE_CLASS_TYPE(button);
+    DECLARE_CLASS_TYPE(button);
 
-/** Gets the type of a button */
+    /** Gets the type of a button */
 #define RTGUI_BUTTON_TYPE       (RTGUI_TYPE(button))
-/** Casts the object to an rtgui_button */
+    /** Casts the object to an rtgui_button */
 #define RTGUI_BUTTON(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_BUTTON_TYPE, rtgui_button_t))
-/** Checks if the object is an rtgui_button */
+    /** Checks if the object is an rtgui_button */
 #define RTGUI_IS_BUTTON(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_BUTTON_TYPE))
 
-#define RTGUI_BUTTON_FLAG_PRESS		0x01
-#define RTGUI_BUTTON_FLAG_DEFAULT	0x02
+#define RTGUI_BUTTON_FLAG_PRESS     0x01
+#define RTGUI_BUTTON_FLAG_DEFAULT   0x02
 
-#define RTGUI_BUTTON_TYPE_NORMAL	0x00
-#define RTGUI_BUTTON_TYPE_PUSH		0x10
+#define RTGUI_BUTTON_TYPE_NORMAL    0x00
+#define RTGUI_BUTTON_TYPE_PUSH      0x10
 
-/*
- * the button widget
- */
-struct rtgui_button
-{
-	/* inherit from label */
-	struct rtgui_label parent;
+    /*
+     * the button widget
+     */
+    struct rtgui_button
+    {
+        /* inherit from label */
+        struct rtgui_label parent;
 
-	/* button flag */
-	rt_base_t flag;
+        /* button flag */
+        rt_base_t flag;
 
-	/* pressed and unpressed image */
-	rtgui_image_t *pressed_image, *unpressed_image;
+        /* pressed and unpressed image */
+        rtgui_image_t *pressed_image, *unpressed_image;
 
-	/* click button event handler */
-	rtgui_onbutton_func_t on_button;
-};
-typedef struct rtgui_button rtgui_button_t;
+        /* click button event handler */
+        rtgui_onbutton_func_t on_button;
+    };
+    typedef struct rtgui_button rtgui_button_t;
 
-rtgui_button_t* rtgui_button_create(const char* text);
-rtgui_button_t* rtgui_pushbutton_create(const char* text);
-void rtgui_button_destroy(rtgui_button_t* btn);
+    rtgui_button_t *rtgui_button_create(const char *text);
+    rtgui_button_t *rtgui_pushbutton_create(const char *text);
+    void rtgui_button_destroy(rtgui_button_t *btn);
 
-void rtgui_button_set_pressed_image(rtgui_button_t* btn, rtgui_image_t* image);
-void rtgui_button_set_unpressed_image(rtgui_button_t* btn, rtgui_image_t* image);
+    void rtgui_button_set_pressed_image(rtgui_button_t *btn, rtgui_image_t *image);
+    void rtgui_button_set_unpressed_image(rtgui_button_t *btn, rtgui_image_t *image);
 
-void rtgui_button_set_onbutton(rtgui_button_t* btn, rtgui_onbutton_func_t func);
+    void rtgui_button_set_onbutton(rtgui_button_t *btn, rtgui_onbutton_func_t func);
 
-rt_bool_t rtgui_button_event_handler(struct rtgui_object* object, struct rtgui_event* event);
+    rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_event *event);
 
-/** @} */
+    /** @} */
 
 #ifdef __cplusplus
 }

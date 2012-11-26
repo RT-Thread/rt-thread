@@ -17,20 +17,20 @@ DECLARE_CLASS_TYPE(progressbar);
 
 struct rtgui_progressbar
 {
-	struct rtgui_widget parent;
+    struct rtgui_widget parent;
 
-	int orient;
+    int orient;
 
     int range;
     int position;
 };
 typedef struct rtgui_progressbar rtgui_progressbar_t;
 
-struct rtgui_progressbar* rtgui_progressbar_create(int orientation, int range, rtgui_rect_t* r);
-void rtgui_progressbar_destroy(struct rtgui_progressbar* p_bar);
+struct rtgui_progressbar *rtgui_progressbar_create(int orientation, int range, rtgui_rect_t *r);
+void rtgui_progressbar_destroy(struct rtgui_progressbar *p_bar);
 
-rt_bool_t rtgui_progressbar_event_handler(struct rtgui_object* object,
-                                            struct rtgui_event* event);
+rt_bool_t rtgui_progressbar_event_handler(struct rtgui_object *object,
+        struct rtgui_event *event);
 
 void rtgui_progressbar_set_value(struct rtgui_progressbar *p_bar, int value);
 int rtgui_progressbar_get_value(struct rtgui_progressbar *p_bar);

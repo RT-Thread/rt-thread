@@ -16,35 +16,33 @@ rtgui_container_t *demo_view_scrollbar(void)
 
     /* get demo container rect */
     demo_view_get_rect(container, &rect);
+	rect.x1 += 5;
+	rect.x2 -= 5;
+	rect.y1 += 5;
+	rect.y2 = rect.y1 + 20;
     label = rtgui_label_create("horizontal bar:");
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
-    rect.x1 += 5;
-    rect.x2 -= 5;
-    rect.y1 += 5;
-    rect.y2 = rect.y1 + 18;
-    rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    rect.y1 += 20;
-    rect.y2 = rect.y1 + 18;
-    hbar = rtgui_scrollbar_create(RTGUI_HORIZONTAL, &rect);
-    rtgui_container_add_child(container, RTGUI_WIDGET(hbar));
+
+    hbar = rtgui_scrollbar_create(container, 5, 70, 20, 200, RTGUI_HORIZONTAL);
+	rtgui_scrollbar_set_line_step(hbar, 1);
+	rtgui_scrollbar_set_page_step(hbar, 3);
+	rtgui_scrollbar_set_range(hbar, 20);
 
     /* get demo container rect */
     demo_view_get_rect(container, &rect);
+	rect.x1 += 5;
+	rect.x2 -= 5;
+	rect.y1 += 5+40;
+	rect.y2 = rect.y1 + 20;
     label = rtgui_label_create("vertical bar:");
+	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
-    rect.x1 += 5;
-    rect.x2 -= 5;
-    rect.y1 += 45;
-    rect.y2 = rect.y1 + 18;
-    rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    rect.x1 += 110;
-    rect.x2 = rect.x1 + 20;
-    rect.y1 += 18 + 5;
-    rect.y2 = rect.y1 + 150;
-    vbar = rtgui_scrollbar_create(RTGUI_VERTICAL, &rect);
-    rtgui_container_add_child(container, RTGUI_WIDGET(vbar));
-    rtgui_scrollbar_set_line_step(vbar, 1);
-    // RTGUI_WIDGET_DISABLE(vbar);
+    
+    vbar = rtgui_scrollbar_create(container, 10, 110, 20, 200, RTGUI_VERTICAL);
+	rtgui_scrollbar_set_line_step(vbar, 1);
+	rtgui_scrollbar_set_page_step(vbar, 5);
+	rtgui_scrollbar_set_range(vbar, 20);
 
     return container;
 }

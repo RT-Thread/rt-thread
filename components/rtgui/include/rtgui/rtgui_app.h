@@ -31,42 +31,42 @@ DECLARE_CLASS_TYPE(application);
 
 enum rtgui_app_flag
 {
-	RTGUI_APP_FLAG_EXITED  = 0x04,
-	RTGUI_APP_FLAG_SHOWN   = 0x08
+    RTGUI_APP_FLAG_EXITED  = 0x04,
+    RTGUI_APP_FLAG_SHOWN   = 0x08
 };
 
 typedef void (*rtgui_idle_func_t)(struct rtgui_object *obj, struct rtgui_event *event);
 
 struct rtgui_app
 {
-	struct rtgui_object parent;
+    struct rtgui_object parent;
 
-	/* application name */
-	unsigned char *name;
-	struct rtgui_image* icon;
+    /* application name */
+    unsigned char *name;
+    struct rtgui_image *icon;
 
-	enum rtgui_app_flag state_flag;
+    enum rtgui_app_flag state_flag;
 
-	rt_uint16_t ref_count;
-	rt_uint16_t exit_code;
+    rt_uint16_t ref_count;
+    rt_uint16_t exit_code;
 
-	/* the thread id */
-	rt_thread_t tid;
-	/* the RTGUI server id */
-	rt_thread_t server;
+    /* the thread id */
+    rt_thread_t tid;
+    /* the RTGUI server id */
+    rt_thread_t server;
 
-	/* the message queue of thread */
-	rt_mq_t mq;
-	/* event buffer */
-	rt_uint8_t event_buffer[sizeof(union rtgui_event_generic)];
+    /* the message queue of thread */
+    rt_mq_t mq;
+    /* event buffer */
+    rt_uint8_t event_buffer[sizeof(union rtgui_event_generic)];
 
-	/* if not RT_NULL, the application is in modal state by modal_object. If is
-	 * RT_NULL, nothing modal windows. */
-	struct rtgui_object *modal_object;
-	struct rtgui_object *main_object;
+    /* if not RT_NULL, the application is in modal state by modal_object. If is
+     * RT_NULL, nothing modal windows. */
+    struct rtgui_object *modal_object;
+    struct rtgui_object *main_object;
 
-	/* on idle event handler */
-	rtgui_idle_func_t on_idle;
+    /* on idle event handler */
+    rtgui_idle_func_t on_idle;
 };
 
 /**

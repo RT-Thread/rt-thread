@@ -21,11 +21,11 @@
 
 #include <rtgui/widgets/container.h>
 
-typedef void (*item_action)(struct rtgui_widget* widget, void* parameter);
+typedef void (*item_action)(struct rtgui_widget *widget, void *parameter);
 struct rtgui_list_item
 {
-    char* name;
-	rtgui_image_t *image;
+    char *name;
+    rtgui_image_t *image;
 
     item_action action;
     void *parameter;
@@ -39,38 +39,38 @@ DECLARE_CLASS_TYPE(listview);
 /** Checks if the object is a filelist view */
 #define RTGUI_IS_LIST_VIEW(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_LIST_VIEW_TYPE))
 
-#define RTGUI_LIST_VIEW_LIST		0x00
-#define RTGUI_LIST_VIEW_ICON		0x01
-#define RTGUI_LIST_VIEW_REPORT		0x02
+#define RTGUI_LIST_VIEW_LIST        0x00
+#define RTGUI_LIST_VIEW_ICON        0x01
+#define RTGUI_LIST_VIEW_REPORT      0x02
 
 struct rtgui_list_view
 {
-	struct rtgui_container parent;
+    struct rtgui_container parent;
 
-	/* widget private data */
-	/* list item */
-    const struct rtgui_list_item* items;
+    /* widget private data */
+    /* list item */
+    const struct rtgui_list_item *items;
 
-	/* layout flag */
-	rt_uint16_t flag;
+    /* layout flag */
+    rt_uint16_t flag;
 
-	/* total number of items */
-	rt_uint16_t items_count;
+    /* total number of items */
+    rt_uint16_t items_count;
     /* the number of item in a page */
     rt_uint16_t page_items;
-	/* current item */
+    /* current item */
     rt_int16_t current_item;
 
-	/* icon layout */
-	rt_uint8_t row_items, col_items;
+    /* icon layout */
+    rt_uint8_t row_items, col_items;
 };
 typedef struct rtgui_list_view rtgui_list_view_t;
 
-rtgui_list_view_t* rtgui_list_view_create(const struct rtgui_list_item* items, rt_uint16_t count,
-    rtgui_rect_t *rect, rt_uint16_t flag);
-void rtgui_list_view_destroy(rtgui_list_view_t* view);
+rtgui_list_view_t *rtgui_list_view_create(const struct rtgui_list_item *items, rt_uint16_t count,
+        rtgui_rect_t *rect, rt_uint16_t flag);
+void rtgui_list_view_destroy(rtgui_list_view_t *view);
 
-rt_bool_t rtgui_list_view_event_handler(struct rtgui_object* widget, struct rtgui_event* event);
+rt_bool_t rtgui_list_view_event_handler(struct rtgui_object *widget, struct rtgui_event *event);
 
 #endif
 

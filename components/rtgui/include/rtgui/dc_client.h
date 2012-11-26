@@ -20,8 +20,8 @@
 #include <rtgui/dc.h>
 
 /* create a hardware dc */
-struct rtgui_dc* rtgui_dc_client_create(rtgui_widget_t* owner);
-void rtgui_dc_client_init(rtgui_widget_t* owner);
+struct rtgui_dc *rtgui_dc_client_create(rtgui_widget_t *owner);
+void rtgui_dc_client_init(rtgui_widget_t *owner);
 
 #endif
 

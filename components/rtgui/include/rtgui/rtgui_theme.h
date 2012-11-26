@@ -17,11 +17,11 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_server.h>
 
-#define CHECK_BOX_W		13
-#define CHECK_BOX_H		13
+#define CHECK_BOX_W     13
+#define CHECK_BOX_H     13
 
-#define RADIO_BOX_W		12
-#define RADIO_BOX_H		12
+#define RADIO_BOX_W     12
+#define RADIO_BOX_H     12
 
 #include <rtgui/widgets/label.h>
 #include <rtgui/widgets/button.h>
@@ -38,27 +38,26 @@
 extern "C" {
 #endif
 
-void rtgui_system_theme_init(void);
+    void rtgui_system_theme_init(void);
 
-void rtgui_theme_draw_win(struct rtgui_topwin* win);
-void rtgui_theme_draw_button(rtgui_button_t* btn);
-void rtgui_theme_draw_label(rtgui_label_t* label);
-void rtgui_theme_draw_textbox(rtgui_textbox_t* box);
-void rtgui_theme_draw_iconbox(rtgui_iconbox_t* iconbox);
-void rtgui_theme_draw_checkbox(rtgui_checkbox_t* checkbox);
-void rtgui_theme_draw_radiobutton(struct rtgui_radiobox* radiobox, rt_uint16_t item);
+    void rtgui_theme_draw_win(struct rtgui_topwin *win);
+    void rtgui_theme_draw_button(rtgui_button_t *btn);
+    void rtgui_theme_draw_label(rtgui_label_t *label);
+    void rtgui_theme_draw_textbox(rtgui_textbox_t *box);
+    void rtgui_theme_draw_iconbox(rtgui_iconbox_t *iconbox);
+    void rtgui_theme_draw_checkbox(rtgui_checkbox_t *checkbox);
+    void rtgui_theme_draw_radiobutton(struct rtgui_radiobox *radiobox, rt_uint16_t item);
 
-void rtgui_theme_draw_radiobox(struct rtgui_radiobox* radiobox);
-void rtgui_theme_draw_slider(struct rtgui_slider* slider);
-void rtgui_theme_draw_scrollbar(struct rtgui_scrollbar* bar);
-void rtgui_theme_draw_progressbar(struct rtgui_progressbar* bar);
-void rtgui_theme_draw_staticline(struct rtgui_staticline* staticline);
+    void rtgui_theme_draw_radiobox(struct rtgui_radiobox *radiobox);
+    void rtgui_theme_draw_slider(struct rtgui_slider *slider);
+    void rtgui_theme_draw_progressbar(struct rtgui_progressbar *bar);
+    void rtgui_theme_draw_staticline(struct rtgui_staticline *staticline);
 
-rt_uint16_t rtgui_theme_get_selected_height(void);
-void rtgui_theme_draw_selected(struct rtgui_dc* dc, rtgui_rect_t *rect);
+    rt_uint16_t rtgui_theme_get_selected_height(void);
+    void rtgui_theme_draw_selected(struct rtgui_dc *dc, rtgui_rect_t *rect);
 
-rtgui_color_t rtgui_theme_default_bc(void);
-rtgui_color_t rtgui_theme_default_fc(void);
+    rtgui_color_t rtgui_theme_default_bc(void);
+    rtgui_color_t rtgui_theme_default_fc(void);
 
 #ifdef __cplusplus
 }

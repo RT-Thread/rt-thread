@@ -15,61 +15,61 @@
 #include <rtgui/rtgui_system.h>
 
 /* there is no event handler in wintitle but handle the event on topwin of server */
-static void _rtgui_wintitle_constructor(rtgui_wintitle_t* wintitle)
+static void _rtgui_wintitle_constructor(rtgui_wintitle_t *wintitle)
 {
-	wintitle->title = RT_NULL;
-	RTGUI_WIDGET(wintitle)->flag = RTGUI_WIDGET_FLAG_DEFAULT;
-	RTGUI_WIDGET_TEXTALIGN(wintitle) = RTGUI_ALIGN_CENTER_VERTICAL;
+    wintitle->title = RT_NULL;
+    RTGUI_WIDGET(wintitle)->flag = RTGUI_WIDGET_FLAG_DEFAULT;
+    RTGUI_WIDGET_TEXTALIGN(wintitle) = RTGUI_ALIGN_CENTER_VERTICAL;
 }
 
-static void _rtgui_wintitle_deconstructor(rtgui_wintitle_t* wintitle)
+static void _rtgui_wintitle_deconstructor(rtgui_wintitle_t *wintitle)
 {
-	if (wintitle->title != RT_NULL)
-		rt_free(wintitle->title);
-	wintitle->title = RT_NULL;
+    if (wintitle->title != RT_NULL)
+        rt_free(wintitle->title);
+    wintitle->title = RT_NULL;
 }
 
 DEFINE_CLASS_TYPE(wintitle, "wintitle",
-	RTGUI_WIDGET_TYPE,
-	_rtgui_wintitle_constructor,
-	_rtgui_wintitle_deconstructor,
-	sizeof(struct rtgui_wintitle));
+                  RTGUI_WIDGET_TYPE,
+                  _rtgui_wintitle_constructor,
+                  _rtgui_wintitle_deconstructor,
+                  sizeof(struct rtgui_wintitle));
 
-rtgui_wintitle_t* rtgui_wintitle_create(struct rtgui_win *window, const char* title)
+rtgui_wintitle_t *rtgui_wintitle_create(struct rtgui_win *window, const char *title)
 {
-	rtgui_wintitle_t* wintitle;
+    rtgui_wintitle_t *wintitle;
 
-	wintitle = (rtgui_wintitle_t*)rtgui_widget_create(RTGUI_WINTITLE_TYPE);
-	if (wintitle != RT_NULL)
-	{
-		rtgui_wintitle_set_title(wintitle, title);
+    wintitle = (rtgui_wintitle_t *)rtgui_widget_create(RTGUI_WINTITLE_TYPE);
+    if (wintitle != RT_NULL)
+    {
+        rtgui_wintitle_set_title(wintitle, title);
         RTGUI_WIDGET(wintitle)->toplevel = window;
-	}
+    }
 
-	return wintitle;
+    return wintitle;
 }
 
-void rtgui_wintitle_destroy(rtgui_wintitle_t* wintitle)
+void rtgui_wintitle_destroy(rtgui_wintitle_t *wintitle)
 {
-	rtgui_widget_destroy(RTGUI_WIDGET(wintitle));
+    rtgui_widget_destroy(RTGUI_WIDGET(wintitle));
 }
 
-void rtgui_wintitle_set_title(rtgui_wintitle_t* wintitle, const char* title)
+void rtgui_wintitle_set_title(rtgui_wintitle_t *wintitle, const char *title)
 {
-	RT_ASSERT(wintitle != RT_NULL);
+    RT_ASSERT(wintitle != RT_NULL);
 
-	if (wintitle->title != RT_NULL)
-	{
-		rt_free(wintitle->title);
-	}
+    if (wintitle->title != RT_NULL)
+    {
+        rt_free(wintitle->title);
+    }
 
-	if (title != RT_NULL) wintitle->title = (char*)rt_strdup((const char*)title);
-	else wintitle->title = RT_NULL;
+    if (title != RT_NULL) wintitle->title = (char *)rt_strdup((const char *)title);
+    else wintitle->title = RT_NULL;
 }
 
-char *rtgui_wintitle_get_title(rtgui_wintitle_t* wintitle)
+char *rtgui_wintitle_get_title(rtgui_wintitle_t *wintitle)
 {
-	RT_ASSERT(wintitle != RT_NULL);
+    RT_ASSERT(wintitle != RT_NULL);
 
-	return wintitle->title;
+    return wintitle->title;
 }

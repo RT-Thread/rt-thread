@@ -1,5 +1,5 @@
-
 #include <rtgui/widgets/plot.h>
+#include <rtgui/widgets/plot_curve.h>
 
 #include "demo_view.h"
 
@@ -34,30 +34,39 @@ struct rtgui_container* demo_plot(void)
 
     cnt = demo_view("ÇúÏß»æÍ¼");
 
-    curve1 = rtgui_plot_curve_create();
-    curve1->y_data = sin_ydata;
-    curve1->length = sizeof(sin_ydata)/sizeof(sin_ydata[0]);
-    curve1->color = red;
+    plot = rtgui_plot_create();
 
-    plot = rtgui_plot_create(curve1);
+    curve1 = rtgui_plot_curve_create();
+    rtgui_plot_curve_set_y(curve1, sin_ydata);
+    RTGUI_MV_MODEL(curve1)->length = sizeof(sin_ydata)/sizeof(sin_ydata[0]);
+    curve1->min_x = 0;
+    curve1->max_x = sizeof(sin_ydata)/sizeof(sin_ydata[0]);
+    curve1->min_y = -100;
+    curve1->min_y = 100;
+    curve1->color = red;
+    rtgui_mv_model_add_view(RTGUI_MV_MODEL(curve1), RTGUI_MV_VIEW(plot));
 
     curve2 = rtgui_plot_curve_create();
-    curve2->y_data = cos_ydata;
-    curve2->length = sizeof(cos_ydata)/sizeof(cos_ydata[0]);
+    rtgui_plot_curve_set_y(curve2, cos_ydata);
+    RTGUI_MV_MODEL(curve2)->length = sizeof(cos_ydata)/sizeof(cos_ydata[0]);
+    curve2->min_x = 0;
+    curve2->max_x = sizeof(cos_ydata)/sizeof(cos_ydata[0]);
+    curve1->min_y = -50;
+    curve1->min_y = 50;
     curve2->color = blue;
-    rtgui_plot_append_curve(plot, curve2);
+    rtgui_mv_model_add_view(RTGUI_MV_MODEL(curve2), RTGUI_MV_VIEW(plot));
 
     curve3 = rtgui_plot_curve_create();
-    curve3->x_data = cos_ydata;
-    curve3->y_data = sin_ydata;
-    curve3->length = sizeof(sin_ydata)/sizeof(sin_ydata[0]);
+    rtgui_plot_curve_set_x(curve3, cos_ydata);
+    rtgui_plot_curve_set_y(curve3, sin_ydata);
+    RTGUI_MV_MODEL(curve3)->length = sizeof(sin_ydata)/sizeof(sin_ydata[0]);
     curve3->color = black;
-    rtgui_plot_append_curve(plot, curve3);
+    rtgui_mv_model_add_view(RTGUI_MV_MODEL(curve3), RTGUI_MV_VIEW(plot));
 
     rtgui_widget_get_rect(RTGUI_WIDGET(cnt), &rect);
     rtgui_widget_set_rect(RTGUI_WIDGET(plot), &rect);
-    rtgui_plot_set_base_point(plot,
-            rtgui_rect_width(rect)/3, rtgui_rect_height(rect)/2);
+    rtgui_plot_set_base(plot,
+            -rtgui_rect_width(rect)/3, rtgui_rect_height(rect)/2);
 
     rtgui_container_add_child(cnt, RTGUI_WIDGET(plot));
 

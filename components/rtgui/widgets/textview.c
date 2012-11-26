@@ -15,339 +15,341 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/textview.h>
 
-rt_inline char* _get_line_text(rtgui_textview_t *textview, rt_uint16_t index)
+rt_inline char *_get_line_text(rtgui_textview_t *textview, rt_uint16_t index)
 {
-	char* line;
-	if (index < textview->line_count)
-	{
-		line = textview->lines + (index * textview->line_width);
-		return line;
-	}
+    char *line;
+    if (index < textview->line_count)
+    {
+        line = textview->lines + (index * textview->line_width);
+        return line;
+    }
 
-	return RT_NULL;
+    return RT_NULL;
 }
 
-static void _calc_line(rtgui_textview_t *textview, const char* text)
+static void _calc_line(rtgui_textview_t *textview, const char *text)
 {
-	char* line;
-	const unsigned char* ptr;
-	rt_ubase_t line_index, line_position;
+    char *line;
+    const unsigned char *ptr;
+    rt_ubase_t line_index, line_position;
 
-	if (textview->lines != RT_NULL)
-	{
-		rtgui_free(textview->lines);
-		textview->lines = RT_NULL;
-		textview->line_count = 0;
-	}
+    if (textview->lines != RT_NULL)
+    {
+        rtgui_free(textview->lines);
+        textview->lines = RT_NULL;
+        textview->line_count = 0;
+    }
 
-	/* get line count */
-	line_index = 0; line_position = 0;
-	ptr = (const unsigned char*)text;
-	if (*ptr == 0) return;
+    /* get line count */
+    line_index = 0;
+    line_position = 0;
+    ptr = (const unsigned char *)text;
+    if (*ptr == 0) return;
 
-	while (*ptr != '\0')
-	{
-		if (*ptr == '\n') 
-		{
-			line_index ++;
-			line_position = 0;
-		}
-		else if (*ptr == '\r')
-		{
-			ptr ++;
-			continue;
-		}
-		else if (*ptr == '\t')
-		{
-			line_position += 4;
-			if (line_position >= textview->line_width - 1)
-			{
-				line_index ++;
-				line_position = 0;
-			}
-		}
-		else 
-		{
-			if ((*ptr) >= 0x80)
-			{
-				/* fill cjk character */
-				if (line_position + 1 >= (textview->line_width - 1))
-				{
-					/* split to next line */
-					line_index ++;
-					line_position = 0;
-				}
+    while (*ptr != '\0')
+    {
+        if (*ptr == '\n')
+        {
+            line_index ++;
+            line_position = 0;
+        }
+        else if (*ptr == '\r')
+        {
+            ptr ++;
+            continue;
+        }
+        else if (*ptr == '\t')
+        {
+            line_position += 4;
+            if (line_position >= textview->line_width - 1)
+            {
+                line_index ++;
+                line_position = 0;
+            }
+        }
+        else
+        {
+            if ((*ptr) >= 0x80)
+            {
+                /* fill cjk character */
+                if (line_position + 1 >= (textview->line_width - 1))
+                {
+                    /* split to next line */
+                    line_index ++;
+                    line_position = 0;
+                }
 
-				line_position ++;
-				line_position ++;
-			}
-			else 
-			{
-				line_position ++;
-			}
+                line_position ++;
+                line_position ++;
+            }
+            else
+            {
+                line_position ++;
+            }
 
-			if (line_position >= textview->line_width - 1)
-			{
-				line_index ++;
-				line_position = 0;
-			}
-		}
+            if (line_position >= textview->line_width - 1)
+            {
+                line_index ++;
+                line_position = 0;
+            }
+        }
 
-		ptr ++;
-	}
+        ptr ++;
+    }
 
-	/* set line count */
-	textview->line_count = line_index + 1;
+    /* set line count */
+    textview->line_count = line_index + 1;
 
-	/* allocate lines */
-	textview->lines = rtgui_malloc(textview->line_count * textview->line_width);
-	rt_memset(textview->lines, 0, (textview->line_count * textview->line_width));
+    /* allocate lines */
+    textview->lines = rtgui_malloc(textview->line_count * textview->line_width);
+    rt_memset(textview->lines, 0, (textview->line_count * textview->line_width));
 
-	/* fill lines */
-	line_index = 0; line_position = 0;
-	ptr = (const unsigned char*)text;
-	line = _get_line_text(textview, line_index);
-	while (*ptr)
-	{
-		if (*ptr == '\n') 
-		{
-			line_index ++;
-			line_position = 0;
-			line = _get_line_text(textview, line_index);
-		}
-		else if (*ptr == '\r')
-		{
-			/* ignore '\r' */
-			ptr ++;
-			continue;
-		}
-		else if (*ptr == '\t')
-		{
-			line[line_position++] = ' ';
-			line[line_position++] = ' ';
-			line[line_position++] = ' ';
-			line[line_position++] = ' ';
-			if (line_position >= textview->line_width - 1)
-			{
-				line_index ++;
-				line_position = 0;
-				line = _get_line_text(textview, line_index);
-			}
-		}
-		else 
-		{
-			if ((*ptr) >= 0x80)
-			{
-				/* fill cjk character */
-				if (line_position + 1 >= (textview->line_width - 1))
-				{
-					/* split to next line */
-					line_index ++;
-					line_position = 0;
-					line = _get_line_text(textview, line_index);
-				}
+    /* fill lines */
+    line_index = 0;
+    line_position = 0;
+    ptr = (const unsigned char *)text;
+    line = _get_line_text(textview, line_index);
+    while (*ptr)
+    {
+        if (*ptr == '\n')
+        {
+            line_index ++;
+            line_position = 0;
+            line = _get_line_text(textview, line_index);
+        }
+        else if (*ptr == '\r')
+        {
+            /* ignore '\r' */
+            ptr ++;
+            continue;
+        }
+        else if (*ptr == '\t')
+        {
+            line[line_position++] = ' ';
+            line[line_position++] = ' ';
+            line[line_position++] = ' ';
+            line[line_position++] = ' ';
+            if (line_position >= textview->line_width - 1)
+            {
+                line_index ++;
+                line_position = 0;
+                line = _get_line_text(textview, line_index);
+            }
+        }
+        else
+        {
+            if ((*ptr) >= 0x80)
+            {
+                /* fill cjk character */
+                if (line_position + 1 >= (textview->line_width - 1))
+                {
+                    /* split to next line */
+                    line_index ++;
+                    line_position = 0;
+                    line = _get_line_text(textview, line_index);
+                }
 
-				line[line_position ++] = *ptr ++;
-				line[line_position ++] = *ptr;
-			}
-			else 
-			{
-				line[line_position ++] = *ptr;
-			}
+                line[line_position ++] = *ptr ++;
+                line[line_position ++] = *ptr;
+            }
+            else
+            {
+                line[line_position ++] = *ptr;
+            }
 
-			if (line_position >= textview->line_width - 1)
-			{
-				line_index ++;
-				line_position = 0;
-				line = _get_line_text(textview, line_index);
-			}
-		}
+            if (line_position >= textview->line_width - 1)
+            {
+                line_index ++;
+                line_position = 0;
+                line = _get_line_text(textview, line_index);
+            }
+        }
 
-		ptr ++;
-	}
+        ptr ++;
+    }
 
-	textview->line_current = 0;
+    textview->line_current = 0;
 }
 
 static void _calc_width(rtgui_textview_t *textview)
 {
-	rtgui_rect_t rect;
-	rt_uint16_t width, height;
+    rtgui_rect_t rect;
+    rt_uint16_t width, height;
 
-	width = rtgui_rect_width(RTGUI_WIDGET(textview)->extent) - 6;
-	height = rtgui_rect_height(RTGUI_WIDGET(textview)->extent);
+    width = rtgui_rect_width(RTGUI_WIDGET(textview)->extent) - 6;
+    height = rtgui_rect_height(RTGUI_WIDGET(textview)->extent);
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &rect);
-	textview->line_width = width / rtgui_rect_width(rect) + 1;
-	textview->line_page_count = height / (rtgui_rect_height(rect) + 3);
+    rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &rect);
+    textview->line_width = width / rtgui_rect_width(rect) + 1;
+    textview->line_page_count = height / (rtgui_rect_height(rect) + 3);
 
-	/* set minimal value */
-	if (textview->line_page_count == 0) textview->line_page_count = 1;
+    /* set minimal value */
+    if (textview->line_page_count == 0) textview->line_page_count = 1;
 }
 
 static void _draw_textview(rtgui_textview_t *textview)
 {
-	struct rtgui_dc* dc;
-	struct rtgui_rect rect, font_rect;
-	char* line;
-	rt_ubase_t line_index, item_height;
+    struct rtgui_dc *dc;
+    struct rtgui_rect rect, font_rect;
+    char *line;
+    rt_ubase_t line_index, item_height;
 
-	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &font_rect);
-	item_height = rtgui_rect_height(font_rect) + 3;
+    rtgui_font_get_metrics(RTGUI_WIDGET_FONT(textview), "W", &font_rect);
+    item_height = rtgui_rect_height(font_rect) + 3;
 
-	dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(textview));
-	if (dc == RT_NULL) return ;
+    dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(textview));
+    if (dc == RT_NULL) return ;
 
-	/* fill rect */
-	rtgui_widget_get_rect(RTGUI_WIDGET(textview), &rect);
-	rtgui_dc_fill_rect(dc, &rect);
+    /* fill rect */
+    rtgui_widget_get_rect(RTGUI_WIDGET(textview), &rect);
+    rtgui_dc_fill_rect(dc, &rect);
 
-	rect.x1 += 3;
-	rect.x2 -= 3;
+    rect.x1 += 3;
+    rect.x2 -= 3;
 
-	for (line_index = textview->line_current; 
-		(line_index < textview->line_current + textview->line_page_count) &&
-		(line_index < textview->line_count); 
-		line_index ++)
-	{
-		line = (char* )_get_line_text(textview, line_index);
-		rtgui_dc_draw_text(dc, line, &rect);
+    for (line_index = textview->line_current;
+            (line_index < textview->line_current + textview->line_page_count) &&
+            (line_index < textview->line_count);
+            line_index ++)
+    {
+        line = (char *)_get_line_text(textview, line_index);
+        rtgui_dc_draw_text(dc, line, &rect);
 
-		rect.y1 += item_height;
-	}
+        rect.y1 += item_height;
+    }
 
-	rtgui_dc_end_drawing(dc);
+    rtgui_dc_end_drawing(dc);
 }
 
 static void _rtgui_textview_constructor(rtgui_textview_t *textview)
 {
-	/* init widget and set event handler */
-	rtgui_object_set_event_handler(RTGUI_OBJECT(textview), rtgui_textview_event_handler);
-	RTGUI_WIDGET(textview)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
+    /* init widget and set event handler */
+    rtgui_object_set_event_handler(RTGUI_OBJECT(textview), rtgui_textview_event_handler);
+    RTGUI_WIDGET(textview)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
 
-	/* set field */
-	textview->line_count = 0;
-	textview->lines = RT_NULL;
+    /* set field */
+    textview->line_count = 0;
+    textview->lines = RT_NULL;
 
-	textview->line_current = -1;
-	textview->line_page_count = 1;
+    textview->line_current = -1;
+    textview->line_page_count = 1;
 }
 
 static void _rtgui_textview_destructor(rtgui_textview_t *textview)
 {
-	/* release line memory */
-	rtgui_free(textview->lines);
-	textview->lines = RT_NULL;
+    /* release line memory */
+    rtgui_free(textview->lines);
+    textview->lines = RT_NULL;
 }
 
 DEFINE_CLASS_TYPE(textview, "textview",
-	RTGUI_WIDGET_TYPE,
-	_rtgui_textview_constructor,
-	_rtgui_textview_destructor,
-	sizeof(struct rtgui_textview));
+                  RTGUI_WIDGET_TYPE,
+                  _rtgui_textview_constructor,
+                  _rtgui_textview_destructor,
+                  sizeof(struct rtgui_textview));
 
-rt_bool_t rtgui_textview_event_handler(struct rtgui_object* object, struct rtgui_event* event)
+rt_bool_t rtgui_textview_event_handler(struct rtgui_object *object, struct rtgui_event *event)
 {
-	struct rtgui_textview* textview;
-	RTGUI_WIDGET_EVENT_HANDLER_PREPARE
+    struct rtgui_textview *textview;
+    RTGUI_WIDGET_EVENT_HANDLER_PREPARE
 
-	textview = RTGUI_TEXTVIEW(object);
-	switch (event->type)
-	{
-	case RTGUI_EVENT_PAINT:
-		_draw_textview(textview);
-		break;
+    textview = RTGUI_TEXTVIEW(object);
+    switch (event->type)
+    {
+    case RTGUI_EVENT_PAINT:
+        _draw_textview(textview);
+        break;
 
-	case RTGUI_EVENT_KBD:
-		{
-		struct rtgui_event_kbd* ekbd = (struct rtgui_event_kbd*)event;
-		if (ekbd->type == RTGUI_KEYDOWN)
-		{
-			rt_int16_t line_current_update;
-			line_current_update = textview->line_current;
-			if (ekbd->key == RTGUIK_LEFT)
-			{
-				if (textview->line_current > textview->line_page_count)
-				{
-					line_current_update -= textview->line_page_count;
-				}
-				else if (textview->line_current > 0)
-				{
-					line_current_update = 0;
-				}
-			}
-			else if (ekbd->key == RTGUIK_RIGHT)
-			{
-				if (textview->line_current + textview->line_page_count < textview->line_count - 1)
-				{
-					line_current_update += textview->line_page_count;
-				}
-			}
-			else if (ekbd->key == RTGUIK_UP)
-			{
-				if (textview->line_current > 0)
-				{
-					line_current_update --;
-				}
-			}
-			else if (ekbd->key == RTGUIK_DOWN)
-			{
-				if (textview->line_current + textview->line_page_count < textview->line_count - 1)
-				{
-					line_current_update ++;
-				}
-			}
+    case RTGUI_EVENT_KBD:
+    {
+        struct rtgui_event_kbd *ekbd = (struct rtgui_event_kbd *)event;
+        if (ekbd->type == RTGUI_KEYDOWN)
+        {
+            rt_int16_t line_current_update;
+            line_current_update = textview->line_current;
+            if (ekbd->key == RTGUIK_LEFT)
+            {
+                if (textview->line_current > textview->line_page_count)
+                {
+                    line_current_update -= textview->line_page_count;
+                }
+                else if (textview->line_current > 0)
+                {
+                    line_current_update = 0;
+                }
+            }
+            else if (ekbd->key == RTGUIK_RIGHT)
+            {
+                if (textview->line_current + textview->line_page_count < textview->line_count - 1)
+                {
+                    line_current_update += textview->line_page_count;
+                }
+            }
+            else if (ekbd->key == RTGUIK_UP)
+            {
+                if (textview->line_current > 0)
+                {
+                    line_current_update --;
+                }
+            }
+            else if (ekbd->key == RTGUIK_DOWN)
+            {
+                if (textview->line_current + textview->line_page_count < textview->line_count - 1)
+                {
+                    line_current_update ++;
+                }
+            }
 
-			if (textview->line_current != line_current_update)
-			{
-				textview->line_current = line_current_update;
-				rtgui_widget_update(widget);
-				return RT_TRUE;
-			}
-		}
-		break;
-		}
-	default:
-		return rtgui_widget_event_handler(RTGUI_OBJECT(widget),event);
-	}
+            if (textview->line_current != line_current_update)
+            {
+                textview->line_current = line_current_update;
+                rtgui_widget_update(widget);
+                return RT_TRUE;
+            }
+        }
+        break;
+    }
+    default:
+        return rtgui_widget_event_handler(RTGUI_OBJECT(widget), event);
+    }
 
-	return RT_FALSE;
+    return RT_FALSE;
 }
 
-rtgui_textview_t* rtgui_textview_create(const char* text, const rtgui_rect_t *rect)
+rtgui_textview_t *rtgui_textview_create(const char *text, const rtgui_rect_t *rect)
 {
-    struct rtgui_textview* textview;
+    struct rtgui_textview *textview;
 
-    textview = (struct rtgui_textview*) rtgui_widget_create(RTGUI_TEXTVIEW_TYPE);
+    textview = (struct rtgui_textview *) rtgui_widget_create(RTGUI_TEXTVIEW_TYPE);
     if (textview != RT_NULL)
     {
-		rtgui_widget_set_rect(RTGUI_WIDGET(textview), rect);
+        rtgui_widget_set_rect(RTGUI_WIDGET(textview), rect);
 
-		/* calculate line width and line page count */
-		_calc_width(textview);
+        /* calculate line width and line page count */
+        _calc_width(textview);
 
-		/* set text */
-		_calc_line(textview, text);
+        /* set text */
+        _calc_line(textview, text);
     }
 
     return textview;
 }
 
-void rtgui_textview_destroy(rtgui_textview_t* textview)
+void rtgui_textview_destroy(rtgui_textview_t *textview)
 {
-	rtgui_widget_destroy(RTGUI_WIDGET(textview));
+    rtgui_widget_destroy(RTGUI_WIDGET(textview));
 }
 
-void rtgui_textview_set_text(rtgui_textview_t* textview, const char* text)
+void rtgui_textview_set_text(rtgui_textview_t *textview, const char *text)
 {
-	RT_ASSERT(textview != RT_NULL);
+    RT_ASSERT(textview != RT_NULL);
 
-	/* calculate line width and line page count */
-	_calc_width(textview);
+    /* calculate line width and line page count */
+    _calc_width(textview);
 
-	/* set text */
-	_calc_line(textview, text);
+    /* set text */
+    _calc_line(textview, text);
 
-	/* update widget */
-	rtgui_widget_update(RTGUI_WIDGET(textview));
+    /* update widget */
+    rtgui_widget_update(RTGUI_WIDGET(textview));
 }

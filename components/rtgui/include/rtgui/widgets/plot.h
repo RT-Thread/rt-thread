@@ -16,6 +16,7 @@
 
 #include <rtgui/rtgui.h>
 #include <rtgui/widgets/widget.h>
+#include <rtgui/widgets/mv_view.h>
 #include <rtgui/widgets/plot_curve.h>
 
 DECLARE_CLASS_TYPE(plot);
@@ -27,17 +28,10 @@ DECLARE_CLASS_TYPE(plot);
 /** Checks if the object is an rtgui_plot */
 #define RTGUI_IS_PLOT(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_PLOT_TYPE))
 
-struct rtgui_plot_curve_container
+enum rtgui_plot_type
 {
-    struct rtgui_plot_curve *curve;
-    struct rtgui_plot_curve_container *next;
-};
-
-enum rtgui_plot_flag
-{
-    RTGUI_PLOT_INCREMENTAL,
-    RTGUI_PLOT_MOVING_WINDOW,
-    RTGUI_PLOT_SCAN,
+    RTGUI_PLOT_TYPE_SCAN,
+    RTGUI_PLOT_TYPE_INCREMENTAL,
 };
 
 /*
@@ -45,20 +39,21 @@ enum rtgui_plot_flag
  */
 struct rtgui_plot
 {
-    struct rtgui_widget parent;
+    struct rtgui_mv_view parent;
 
-    enum rtgui_plot_flag pflag;
+    enum rtgui_plot_type ptype;
+    rt_uint16_t          scale_x;
+    rt_uint16_t          scale_y;
 
-    struct rtgui_point base_point;
-    struct rtgui_plot_curve_container curve_container;
+    rtgui_plot_curve_dtype base_x;
+    rtgui_plot_curve_dtype base_y;
 };
 
-struct rtgui_plot *rtgui_plot_create(struct rtgui_plot_curve*);
+struct rtgui_plot *rtgui_plot_create(void);
 void rtgui_plot_destroy(struct rtgui_plot *plot);
 
-void rtgui_plot_set_base_point(struct rtgui_plot *plot, rt_uint16_t x, rt_uint16_t y);
-void rtgui_plot_append_curve(struct rtgui_plot *plot, struct rtgui_plot_curve *curve);
-void rtgui_plot_remove_curve(struct rtgui_plot *plot, struct rtgui_plot_curve *curve);
+void rtgui_plot_set_base(struct rtgui_plot *plot,
+                         rtgui_plot_curve_dtype x, rtgui_plot_curve_dtype y);
 
 rt_bool_t rtgui_plot_event_handler(struct rtgui_object *object, struct rtgui_event *event);
 

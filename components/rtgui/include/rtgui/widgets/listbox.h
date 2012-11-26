@@ -22,31 +22,31 @@
 
 struct rtgui_listbox_item
 {
-    char* name;
-	rtgui_image_t *image;
+    char *name;
+    rtgui_image_t *image;
 };
 
 DECLARE_CLASS_TYPE(listbox);
 /** Gets the type of a list box */
-#define RTGUI_LISTBOX_TYPE		(RTGUI_TYPE(listbox))
+#define RTGUI_LISTBOX_TYPE      (RTGUI_TYPE(listbox))
 /** Casts the object to a filelist */
-#define RTGUI_LISTBOX(obj)		(RTGUI_OBJECT_CAST((obj), RTGUI_LISTBOX_TYPE, rtgui_listbox_t))
+#define RTGUI_LISTBOX(obj)      (RTGUI_OBJECT_CAST((obj), RTGUI_LISTBOX_TYPE, rtgui_listbox_t))
 /** Checks if the object is a filelist box */
-#define RTGUI_IS_LISTBOX(obj)	(RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_LISTBOX_TYPE))
+#define RTGUI_IS_LISTBOX(obj)   (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_LISTBOX_TYPE))
 
 struct rtgui_listbox
 {
-	struct rtgui_widget parent;
+    struct rtgui_widget parent;
 
-	/* widget private data */
-	/* listbox item */
-    const struct rtgui_listbox_item* items;
+    /* widget private data */
+    /* listbox item */
+    const struct rtgui_listbox_item *items;
 
-	/* item event handler */
-	rtgui_event_handler_ptr on_item;
+    /* item event handler */
+    rtgui_event_handler_ptr on_item;
 
-	/* total number of items */
-	rt_uint16_t items_count;
+    /* total number of items */
+    rt_uint16_t items_count;
     /* the number of item in a page */
     rt_uint16_t page_items;
     /* current item */
@@ -54,14 +54,14 @@ struct rtgui_listbox
 };
 typedef struct rtgui_listbox rtgui_listbox_t;
 
-rtgui_listbox_t* rtgui_listbox_create(const struct rtgui_listbox_item* items, rt_uint16_t count,
-    rtgui_rect_t *rect);
-void rtgui_listbox_destroy(rtgui_listbox_t* box);
+rtgui_listbox_t *rtgui_listbox_create(const struct rtgui_listbox_item *items, rt_uint16_t count,
+                                      rtgui_rect_t *rect);
+void rtgui_listbox_destroy(rtgui_listbox_t *box);
 
-rt_bool_t rtgui_listbox_event_handler(struct rtgui_object* object, struct rtgui_event* event);
-void rtgui_listbox_set_onitem(rtgui_listbox_t* box, rtgui_event_handler_ptr func);
-void rtgui_listbox_set_items(rtgui_listbox_t* box, struct rtgui_listbox_item* items, rt_uint16_t count);
-void rtgui_listbox_set_current_item(rtgui_listbox_t* box, int index);
+rt_bool_t rtgui_listbox_event_handler(struct rtgui_object *object, struct rtgui_event *event);
+void rtgui_listbox_set_onitem(rtgui_listbox_t *box, rtgui_event_handler_ptr func);
+void rtgui_listbox_set_items(rtgui_listbox_t *box, struct rtgui_listbox_item *items, rt_uint16_t count);
+void rtgui_listbox_set_current_item(rtgui_listbox_t *box, int index);
 
 #endif
 

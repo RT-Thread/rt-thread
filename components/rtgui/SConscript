@@ -32,6 +32,7 @@ common/hz12font.c
 common/hz16font.c
 common/framebuffer_driver.c
 common/pixel_driver.c
+common/rtgui_mv_model.c
 """)
 
 server_src = Split("""
@@ -68,9 +69,16 @@ widgets/window.c
 widgets/panel.c
 widgets/groupbox.c
 widgets/edit.c
+widgets/mv_view.c
 widgets/plot.c
 widgets/plot_curve.c
 """)
+
+if GetDepend('RTGUI_USING_FONT_COMPACT'):
+    import stract_cjk
+    common_src.append('common/font_cmp_hz16.c')
+    common_src.append('common/font_cmp_hz12.c')
+    RegisterPreBuildingAction(stract_cjk.gen_cmp_font_file)
 
 # The set of source files associated with this SConscript file.
 src = common_src + server_src + widgets_src

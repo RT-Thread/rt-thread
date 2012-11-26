@@ -31,21 +31,21 @@ DECLARE_CLASS_TYPE(panel);
  */
 struct rtgui_panel
 {
-	struct rtgui_container parent;
+    struct rtgui_container parent;
 
-	int border_style;
+    int border_style;
 };
 typedef struct rtgui_panel rtgui_panel_t;
 
-rtgui_panel_t* rtgui_panel_create(int border_style);
-void rtgui_panel_destroy(rtgui_panel_t* panel);
+rtgui_panel_t *rtgui_panel_create(int border_style);
+void rtgui_panel_destroy(rtgui_panel_t *panel);
 
-rt_inline void rtgui_panel_set_border(struct rtgui_panel* panel, int border_style)
+rt_inline void rtgui_panel_set_border(struct rtgui_panel *panel, int border_style)
 {
-	RT_ASSERT(panel != RT_NULL);
-	panel->border_style = border_style;
+    RT_ASSERT(panel != RT_NULL);
+    panel->border_style = border_style;
 }
 
-rt_bool_t rtgui_panel_event_handler(struct rtgui_object* object, struct rtgui_event* event);
+rt_bool_t rtgui_panel_event_handler(struct rtgui_object *object, struct rtgui_event *event);
 
 #endif

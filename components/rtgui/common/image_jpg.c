@@ -634,11 +634,13 @@ static UINT tjpgd_out_func(JDEC *jdec, void *bitmap, JRECT *rect)
     rt_uint16_t rectWidth;               /* Width of source rectangular (bytes) */
     rt_uint8_t *src, *dst;
 
+#ifdef RTGUI_DEBUG_TJPGD
     /* Put progress indicator */
     if (rect->left == 0)
     {
         rt_kprintf("\r%lu%%", (rect->top << jpeg->scale) * 100UL / jdec->height);
     }
+#endif
 
     /* Copy the decompressed RGB rectanglar to the frame buffer */
     rectWidth = (rect->right - rect->left + 1) * jpeg->byte_per_pixel;
@@ -747,7 +749,9 @@ static rt_bool_t rtgui_image_jpeg_check(struct rtgui_filerw *file)
             is_JPG = RT_TRUE;
         }
 
+#ifdef RTGUI_DEBUG_TJPGD
         rt_kprintf("TJPGD: check OK\n");
+#endif
     }
     while (0);
 
@@ -809,7 +813,9 @@ static rt_bool_t rtgui_image_jpeg_load(struct rtgui_image *image, struct rtgui_f
             }
             break;
         }
+#ifdef RTGUI_DEBUG_TJPGD
         rt_kprintf("TJPGD: prepare OK\n");
+#endif
 
         image->w = (rt_uint16_t)jpeg->tjpgd.width >> jpeg->scale;
         image->h = (rt_uint16_t)jpeg->tjpgd.height >> jpeg->scale;
@@ -838,7 +844,9 @@ static rt_bool_t rtgui_image_jpeg_load(struct rtgui_image *image, struct rtgui_f
             rtgui_filerw_close(jpeg->filerw);
             jpeg->is_loaded = RT_TRUE;
 
+#ifdef RTGUI_DEBUG_TJPGD
             rt_kprintf("TJPGD: load to RAM\n");
+#endif
         }
         res = RT_TRUE;
     }
@@ -886,7 +894,9 @@ static void rtgui_image_jpeg_unload(struct rtgui_image *image)
         }
         rt_free(jpeg);
     }
+#ifdef RTGUI_DEBUG_TJPGD
     rt_kprintf("TJPGD: unload\n");
+#endif
 }
 
 static void rtgui_image_jpeg_blit(struct rtgui_image *image,
@@ -938,7 +948,9 @@ static void rtgui_image_jpeg_blit(struct rtgui_image *image,
             {
                 break;
             }
+#ifdef RTGUI_DEBUG_TJPGD
             rt_kprintf("TJPGD: load to display\n");
+#endif
         }
         else
         {

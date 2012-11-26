@@ -18,20 +18,20 @@
 
 struct rtgui_image_hdcmm
 {
-	struct rtgui_image parent;
+    struct rtgui_image parent;
 
-	/* hdc image information */
-	rt_uint16_t byte_per_pixel;
+    /* hdc image information */
+    rt_uint16_t byte_per_pixel;
     rt_uint16_t pitch;
 
-	rt_uint8_t *pixels;
+    rt_uint8_t *pixels;
 };
 
 void rtgui_image_hdc_init(void);
 extern const struct rtgui_image_engine rtgui_image_hdcmm_engine;
 
-#define HDC_HEADER_SIZE		(5 * 4)
-#define RTGUI_IMAGE_HDC_DEF(bpp, w, h, pixels)	\
-	{{w, h, &rtgui_image_hdcmm_engine, RT_NULL}, bpp, (bpp * w), ((rt_uint8_t*)pixels + HDC_HEADER_SIZE)}
+#define HDC_HEADER_SIZE     (5 * 4)
+#define RTGUI_IMAGE_HDC_DEF(bpp, w, h, pixels)  \
+    {{w, h, &rtgui_image_hdcmm_engine, RT_NULL}, bpp, (bpp * w), ((rt_uint8_t*)pixels + HDC_HEADER_SIZE)}
 
 #endif

@@ -8,10 +8,10 @@
 #define RTGUI_FITEM_DIR       0x1
 struct rtgui_file_item
 {
-	char* name;
+    char *name;
 
-	rt_uint32_t type;
-	rt_uint32_t size;
+    rt_uint32_t type;
+    rt_uint32_t size;
 };
 
 DECLARE_CLASS_TYPE(filelist);
@@ -24,35 +24,35 @@ DECLARE_CLASS_TYPE(filelist);
 
 struct rtgui_filelist_view
 {
-	struct rtgui_container parent;
+    struct rtgui_container parent;
 
-	/* widget private data */
+    /* widget private data */
 
     /* current directory */
-    char* current_directory;
-    char* pattern;
+    char *current_directory;
+    char *pattern;
 
     /* the number of item in a page */
     rt_uint16_t page_items;
-	rt_uint16_t items_count;
+    rt_uint16_t items_count;
 
-	/* the selected item */
-	rt_uint16_t current_item;
+    /* the selected item */
+    rt_uint16_t current_item;
 
-	/* items array */
-	struct rtgui_file_item *items;
+    /* items array */
+    struct rtgui_file_item *items;
 };
 typedef struct rtgui_filelist_view rtgui_filelist_view_t;
 
-rtgui_filelist_view_t* rtgui_filelist_view_create(const char* directory,
-												  const char* pattern,
-												  const rtgui_rect_t* rect);
-void rtgui_filelist_view_destroy(rtgui_filelist_view_t* view);
+rtgui_filelist_view_t *rtgui_filelist_view_create(const char *directory,
+        const char *pattern,
+        const rtgui_rect_t *rect);
+void rtgui_filelist_view_destroy(rtgui_filelist_view_t *view);
 
-rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_object* object, struct rtgui_event* event);
-void rtgui_filelist_view_set_directory(rtgui_filelist_view_t* view, const char* directory);
+rt_bool_t rtgui_filelist_view_event_handler(struct rtgui_object *object, struct rtgui_event *event);
+void rtgui_filelist_view_set_directory(rtgui_filelist_view_t *view, const char *directory);
 
-void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t* view, char* path, rt_size_t len);
+void rtgui_filelist_view_get_fullpath(rtgui_filelist_view_t *view, char *path, rt_size_t len);
 #endif
 
 #endif

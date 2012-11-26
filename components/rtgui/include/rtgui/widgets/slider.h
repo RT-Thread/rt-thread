@@ -27,27 +27,27 @@ DECLARE_CLASS_TYPE(slider);
 
 struct rtgui_slider
 {
-	struct rtgui_widget parent;
+    struct rtgui_widget parent;
 
-	/* widget private data */
-	rt_size_t min, max, value, ticks;
-	rt_size_t thumb_width;
+    /* widget private data */
+    rt_size_t min, max, value, ticks;
+    rt_size_t thumb_width;
 
-	int orient;
+    int orient;
 
-	void (*on_changed)(struct rtgui_widget* widget, struct rtgui_event *event);
+    void (*on_changed)(struct rtgui_widget *widget, struct rtgui_event *event);
 };
 typedef struct rtgui_slider rtgui_slider_t;
 
-struct rtgui_slider* rtgui_slider_create(rt_size_t min, rt_size_t max, int orient);
-void rtgui_slider_destroy(struct rtgui_slider* slider);
+struct rtgui_slider *rtgui_slider_create(rt_size_t min, rt_size_t max, int orient);
+void rtgui_slider_destroy(struct rtgui_slider *slider);
 
-rt_bool_t rtgui_slider_event_handler(struct rtgui_object* object, struct rtgui_event* event);
+rt_bool_t rtgui_slider_event_handler(struct rtgui_object *object, struct rtgui_event *event);
 
-void rtgui_slider_set_range(struct rtgui_slider* slider, rt_size_t min, rt_size_t max);
-void rtgui_slider_set_value(struct rtgui_slider* slider, rt_size_t value);
-void rtgui_slider_set_orientation(struct rtgui_slider* slider, int orientation);
+void rtgui_slider_set_range(struct rtgui_slider *slider, rt_size_t min, rt_size_t max);
+void rtgui_slider_set_value(struct rtgui_slider *slider, rt_size_t value);
+void rtgui_slider_set_orientation(struct rtgui_slider *slider, int orientation);
 
-rt_size_t rtgui_slider_get_value(struct rtgui_slider* slider);
+rt_size_t rtgui_slider_get_value(struct rtgui_slider *slider);
 
 #endif
