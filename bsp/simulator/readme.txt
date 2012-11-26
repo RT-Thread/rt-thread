@@ -5,15 +5,21 @@
 1). LWIP（可以打开LWIP选项，不过尚存在bug，不建议使用）
 2). 文件系统支持，支持ELM FatFS，UFFS，JFFS2
 3). RTGUI支持
-   说明：需要使用github中的RTGUI源码 
-   github网页：https://github.com/RT-Thread/RTGUI
-   并修改当前目录下的SConstruct文件，共有两种方法。
-方法1
+   目前SVN中的RTGUI源码可以直接用于simulator。
+   如果读者想快速在simulator上体验RTGUI，那么不需要修改任何文件，首先在命令行中使用
+   scons --target=vs -s
+   生成工程后，打开project.vsproj编译，即可看到realtouch的ui出现，然后执行
+   在finsh中执行snake_main()，即可运行贪吃蛇demo
+   
+   再补充说明一点，RTGUI的最新源码目前是托管在git上。
+	   github网页：https://github.com/RT-Thread/RTGUI
+   如果要使用rtgui中的最新源码，共有两种方法。
+方法1 添加环境变量
    向系统环境变量中加入RTT_RTGUI，其值为刚才github上下载的rtgui源码包的路径。
    例如笔者的rtgui源码包解压至 F:\Project\git\rt-gui\下
    则将此环境变量配置为 F:\Project\git\rt-gui\components\rtgui
-方法2
-   不添加环境变量，打开SConstruct文件，
+方法2 不添加环境变量
+   打开SConstruct文件，
  ....
  10 if os.getenv('RTT_RTGUI'):
  11     RTT_RTGUI = os.getenv('RTT_RTGUI')
@@ -133,4 +139,4 @@ Ok，到现在，一个完整的文件系统测试环境就搭建完毕了，enj
 
 3 测试RTGUI
    启动后就会看到GUI窗口，分辨率800×480串口，并出现图形界面。
-   此时在finsh中输入 snake_main，即可运行贪吃蛇程序。
+   此时在finsh中输入 snake_main()并回车，即可运行贪吃蛇程序。
