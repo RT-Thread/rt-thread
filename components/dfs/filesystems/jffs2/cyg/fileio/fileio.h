@@ -68,8 +68,13 @@
 
 #include <stddef.h>             // NULL, size_t
 #include <limits.h>
+#if defined(__GNUC__) && !defined(__CC_ARM)
 #include <sys/types.h>
 #include <fcntl.h>
+#else
+#include <port/sys/types.h>
+#include <port/fcntl.h>
+#endif
 //#include "os_sys_stat.h"//#include <sys/stat.h>
 
 //=============================================================================

@@ -16,7 +16,8 @@
 
 #include "cyg/infra/cyg_type.h"
 #include "cyg/fileio/fileio.h"
-#include "codes.h"
+#include "port/codes.h"
+#include "port/fcntl.h"
 #undef mode_t
 
 #include <dfs_fs.h>
