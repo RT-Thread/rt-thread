@@ -15,6 +15,7 @@
 #define RT_USING_MTD_NOR
 #define RT_USING_DFS_UFFS
 #define RT_USING_DFS_JFFS2
+#define RT_USING_DFS_WINSHAREDIR
 
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
