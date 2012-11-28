@@ -26,7 +26,8 @@
 #define RT_ALARM_MONTHLY       0x400 /* alarm monthly at someday */
 #define RT_ALARM_YAERLY        0x800 /* alarm yearly at a certain date */
 
-#define RT_ALARM_MODIFY        1     /* modify alarm time or alarm flag */
+/* alarm control cmd */
+#define RT_ALARM_CTRL_MODIFY       1 /* modify alarm time or alarm flag */
 
 typedef struct rt_alarm *rt_alarm_t;
 typedef void (*rt_alarm_callback_t)(rt_alarm_t alarm, time_t timestamp);
