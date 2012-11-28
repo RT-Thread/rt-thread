@@ -395,7 +395,7 @@ rt_err_t rt_alarm_control(rt_alarm_t alarm, rt_uint8_t cmd, void *arg)
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     switch (cmd)
     {
-    case RT_ALARM_MODIFY:
+    case RT_ALARM_CTRL_MODIFY:
     {
         struct rt_alarm_setup *setup;
         
