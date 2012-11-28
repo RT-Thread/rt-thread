@@ -405,12 +405,13 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
  */
 rt_module_t rt_module_load(const char *name, void *module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
+#ifdef RT_USING_DFS
 rt_module_t rt_module_open(const char *filename);
+#endif
 void *rt_module_malloc(rt_size_t size);
 void *rt_module_realloc(void *ptr, rt_size_t size);
 void rt_module_free(rt_module_t module, void *addr);
 rt_module_t rt_module_self(void);
-rt_err_t rt_module_set(rt_module_t module);
 rt_module_t rt_module_find(const char *name);
 
 #ifdef RT_USING_HOOK
@@ -456,8 +457,9 @@ rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
-#ifdef RT_USING_DEVICE
+#if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
+rt_device_t rt_console_get_device(void);
 #endif
 
 rt_err_t rt_get_errno(void);
