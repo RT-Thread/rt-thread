@@ -266,11 +266,6 @@ void rt_schedule(void)
 			from_thread = rt_current_thread;
 			rt_current_thread = to_thread;
 
-#ifdef RT_USING_MODULE
-			rt_module_set((rt_current_thread->module_id != RT_NULL) ? 
-				(rt_module_t)rt_current_thread->module_id : RT_NULL);		
-#endif
-
 			RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));
 
 			/* switch to new thread */
