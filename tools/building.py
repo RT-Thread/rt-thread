@@ -308,7 +308,7 @@ def EndBuilding(target, program = None):
         IARProject('project.ewp', Projects) 
 
     if GetOption('target') == 'vs':
-        VSProject('project.vcproj', Projects)
+        VSProject('project.vcproj', Projects, program)
 
     if GetOption('copy') and program != None:
         MakeCopy(program)

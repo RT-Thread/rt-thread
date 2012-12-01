@@ -24,7 +24,20 @@ def VS_AddGroup(ProjectFiles, parent, name, files, project_path):
         File = SubElement(Filter, 'File')
         File.set('RelativePath', path.decode(fs_encoding))
 
-def VSProject(target, script):
+def VS_AddHeadFilesGroup(program, elem, project_path):
+    building.source_ext = []
+    building.source_ext = ["h"]
+    for item in program:
+        building.walk_children(item)    
+    building.source_list.sort()
+    # print building.source_list
+    
+    for f in building.source_list:
+        path = _make_path_relative(project_path, f)
+        File = SubElement(elem, 'File')
+        File.set('RelativePath', path.decode(fs_encoding))
+
+def VSProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
     
     tree = etree.parse('template.vcproj')
@@ -35,7 +48,7 @@ def VSProject(target, script):
     
     ProjectFiles = []
     
-    # add group
+    # add "*.c" files group
     for elem in tree.iter(tag='Filter'):
         if elem.attrib['Name'] == 'Source Files':
             #print elem.tag, elem.attrib
@@ -43,6 +56,12 @@ def VSProject(target, script):
 
     for group in script:
         group_xml = VS_AddGroup(ProjectFiles, elem, group['name'], group['src'], project_path)
+
+    # add "*.h" files group
+    for elem in tree.iter(tag='Filter'):
+        if elem.attrib['Name'] == 'Header Files':
+            break
+    VS_AddHeadFilesGroup(program, elem, project_path)
     
     # write head include path
     if building.Env.has_key('CPPPATH'):
