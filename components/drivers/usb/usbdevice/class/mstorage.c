@@ -275,7 +275,7 @@ static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_write_10 count 0x%x 0x%x\n",
                                 _count, geometry.sector_count));
 
-    dcd_ep_read(device->dcd, ep_out, buffer, MIN(_size, 4096));
+    dcd_ep_read(device->dcd, ep_out, write_ptr, geometry.bytes_per_sector);
 
     return RT_EOK;
 }
@@ -417,18 +417,19 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
                                     size, _block, _size));
 
         _size -= size;
-        write_ptr += size;
         csw.data_reside -= size;
+        
+        rt_device_write(disk, _block, write_ptr, 1);
+        _block ++;
         if(_size == 0)
-        {
-            rt_device_write(disk, _block, buffer, _count);
+        {      
             dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
             dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
             status = STATUS_CBW;
         }
         else
         {
-            dcd_ep_read(device->dcd, ep_out, write_ptr, MIN(_size, 4096));
+            dcd_ep_read(device->dcd, ep_out, write_ptr, geometry.bytes_per_sector);
         }
     }
     else
