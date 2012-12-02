@@ -13,7 +13,15 @@
 
 #define RT_USING_MTD_NAND
 #define RT_USING_MTD_NOR
+
+//#define RT_USING_DFS_UFFS
+/* configration for uffs, more to see dfs_uffs.h and uffs_config.h */
 #define RT_USING_DFS_UFFS
+/* use ecc soft, the uffs will do all the things about ecc */
+#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
+/* enable this ,you need provide a mark_badblock/check_block funciton */
+#define RT_UFFS_USE_CHECK_MARK_FUNCITON
+
 #define RT_USING_DFS_JFFS2
 #define RT_USING_DFS_WINSHAREDIR
 
