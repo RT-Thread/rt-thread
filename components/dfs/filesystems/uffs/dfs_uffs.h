@@ -13,10 +13,11 @@
 
 #define UFFS_BLOCK_MARK_SPARE_OFFSET  4    /* indicate block bad or good, offset in spare */
 
-#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
+//#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
+//#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_NONE
 
 /* enable this ,you need provide a mark_badblock/check_block funciton */
-#define RT_UFFS_USE_CHECK_MARK_FUNCITON
+//#define RT_UFFS_USE_CHECK_MARK_FUNCITON
 
 #if RT_CONFIG_UFFS_ECC_MODE == UFFS_ECC_SOFT      /* let uffs do soft ecc */
 
