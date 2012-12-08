@@ -30,6 +30,7 @@ static uep_t ep_in, ep_out;
 static rt_uint8_t *buffer;
 static rt_uint8_t *write_ptr;
 static int status = STATUS_CBW;
+ALIGN(RT_ALIGN_SIZE)
 static struct ustorage_csw csw;
 static rt_device_t disk;
 static rt_uint32_t _block;
