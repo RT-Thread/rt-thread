@@ -1,3 +1,18 @@
+/*
+ * File      : sys_arch.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-12-8      Bernard      add file header
+ *                             export bsd socket symbol for RT-Thread Application Module 
+ */
+
 #include <rtthread.h>
 
 #include "lwip/sys.h"
@@ -532,6 +547,7 @@ u32_t sys_jiffies(void)
     return rt_tick_get();
 }
 
+#ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 {
     u32_t len;
@@ -568,3 +584,52 @@ void ppp_trace(int level, const char *format, ...)
     rt_device_write((rt_device_t)rt_console_get_device(), 0, rt_log_buf, length);
     va_end(args);
 }
+#endif
+
+/*
+ * export bsd socket symbol for RT-Thread Application Module
+ */
+#if LWIP_SOCKET
+#include <lwip/sockets.h>
+RTM_EXPORT(lwip_accept);
+RTM_EXPORT(lwip_bind);
+RTM_EXPORT(lwip_shutdown);
+RTM_EXPORT(lwip_getpeername);
+RTM_EXPORT(lwip_getsockname);
+RTM_EXPORT(lwip_getsockopt);
+RTM_EXPORT(lwip_setsockopt);
+RTM_EXPORT(lwip_close);
+RTM_EXPORT(lwip_connect);
+RTM_EXPORT(lwip_listen);
+RTM_EXPORT(lwip_recv);
+RTM_EXPORT(lwip_read);
+RTM_EXPORT(lwip_recvfrom);
+RTM_EXPORT(lwip_send);
+RTM_EXPORT(lwip_sendto);
+RTM_EXPORT(lwip_socket);
+RTM_EXPORT(lwip_write);
+RTM_EXPORT(lwip_select);
+RTM_EXPORT(lwip_ioctl);
+RTM_EXPORT(lwip_fcntl);
+
+#if LWIP_DNS
+#include <lwip/netdb.h>
+RTM_EXPORT(lwip_gethostbyname);
+RTM_EXPORT(lwip_gethostbyname_r);
+RTM_EXPORT(lwip_freeaddrinfo);
+RTM_EXPORT(lwip_getaddrinfo);
+#endif
+
+#endif
+
+#if LWIP_DHCP
+#include <lwip/dhcp.h>
+RTM_EXPORT(dhcp_start);
+RTM_EXPORT(dhcp_renew);
+RTM_EXPORT(dhcp_stop);
+#endif
+
+#if LWIP_NETIF_API
+#include <lwip/netifapi.h>
+RTM_EXPORT(netifapi_netif_set_addr);
+#endif

@@ -82,7 +82,11 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
-#define MEM_ALIGNMENT               RT_ALIGN_SIZE
+#ifdef RT_LWIP_ALIGN_SIZE
+#define MEM_ALIGNMENT               RT_LWIP_ALIGN_SIZE
+#else
+#define MEM_ALIGNMENT               4
+#endif
 
 #define MEM_LIBC_MALLOC             1
 #define mem_malloc                  rt_malloc
