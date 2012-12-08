@@ -534,7 +534,7 @@ u32_t sys_jiffies(void)
 
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 {
-    u32_t len, i;
+    u32_t len;
 
     RT_ASSERT(fd != RT_NULL);
 
@@ -547,7 +547,6 @@ u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 
 u32_t sio_write(sio_fd_t fd, u8_t *buf, u32_t size)
 {
-    u32_t i;
     RT_ASSERT(fd != RT_NULL);
 
     return rt_device_write((rt_device_t)fd, 0, buf, size);
