@@ -1,3 +1,17 @@
+/*
+ * File      : clock_time.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-12-08     Bernard      fix the issue of _timevalue.tv_usec initialization, 
+ *                             which found by Rob <rdent@iinet.net.au>
+ */
 #include <rtthread.h>
 #include <pthread.h>
 
@@ -19,7 +33,7 @@ void clock_time_system_init()
 	/* get tick */
     tick = rt_tick_get();
 
-    _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+    _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
 }
 
