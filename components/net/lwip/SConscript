@@ -47,8 +47,6 @@ src/core/snmp/mib_structs.c
 src/core/snmp/msg_in.c
 src/core/snmp/msg_out.c
 """)
-if GetDepend(['RT_LWIP_PPP']):
-    src += ppp_src
 
 ppp_src = Split("""
 src/netif/ppp/auth.c
@@ -67,18 +65,18 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [RTT_ROOT + '/components/net/lwip/src',
-    RTT_ROOT + '/components/net/lwip/src/include',
-    RTT_ROOT + '/components/net/lwip/src/include/ipv4',
-    RTT_ROOT + '/components/net/lwip/src/arch/include',
-    RTT_ROOT + '/components/net/lwip/src/include/netif']
+path = [GetCurrentDir() + '/src',
+    GetCurrentDir() + '/src/include',
+    GetCurrentDir() + '/src/include/ipv4',
+    GetCurrentDir() + '/src/arch/include',
+    GetCurrentDir() + '/src/include/netif']
 
 if GetDepend(['RT_LWIP_SNMP']):
     src += snmp_src
 
 if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
-    path += [RTT_ROOT + '/components/net/lwip/src/netif/ppp']
+    path += [GetCurrentDir() + '/src/netif/ppp']
 
 # For testing apps
 if GetDepend(['RT_USING_NETUTILS']):
