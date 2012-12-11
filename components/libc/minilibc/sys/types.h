@@ -22,4 +22,6 @@ typedef int pid_t;
 #define NULL RT_NULL
 #endif
 
+#define __u_char_defined
+
 #endif
