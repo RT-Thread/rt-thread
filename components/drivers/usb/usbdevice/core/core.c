@@ -9,7 +9,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-01     Yi Qiu      first version
+ * 2012-10-01     Yi Qiu       first version
+ * 2012-12-12     heyuanjie87  change endpoint and class handler
  */
 
 #include <rtthread.h>
@@ -318,7 +319,8 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
             }
         }
         /* after running all endpoints, then run class */
-        if(cls->ops->run != RT_NULL) cls->ops->run(device);
+        if(cls->ops->run != RT_NULL) 
+            cls->ops->run(device, cls);
     }
         
     /* issue status stage */
@@ -557,7 +559,7 @@ rt_err_t _sof_notify(udevice_t device)
     {
         cls = (uclass_t)rt_list_entry(i, struct uclass, list);  
         if(cls->ops->sof_handler != RT_NULL)
-            cls->ops->sof_handler(device);
+            cls->ops->sof_handler(device, cls);
     }
 
     return RT_EOK;        
@@ -793,8 +795,7 @@ uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
  *
  * @return an usb endpoint object on success, RT_NULL on fail.
  */
-uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, 
-    rt_err_t (*handler)(struct udevice*, rt_size_t size))
+uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler)
 {
     uep_t ep;
 
@@ -957,7 +958,7 @@ ualtsetting_t rt_usbd_find_altsetting(uintf_t intf, rt_uint8_t value)
  *
  * @return an usb endpoint object on found or RT_NULL on not found.
  */
-uep_t rt_usbd_find_endpoint(udevice_t device, rt_uint8_t ep_addr)
+uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr)
 {
     uep_t ep;
     struct rt_list_node *i, *j, *k;
@@ -980,7 +981,11 @@ uep_t rt_usbd_find_endpoint(udevice_t device, rt_uint8_t ep_addr)
             {
                 ep = (uep_t)rt_list_entry(k, struct uendpoint, list);
                 if(ep->ep_desc->bEndpointAddress == ep_addr)
+                {
+                    if (pcls != RT_NULL)
+                        *pcls = cls;
                     return ep;
+                }
             }
         }
     }
@@ -1226,8 +1231,9 @@ static void rt_usbd_thread_entry(void* parameter)
 {    
     while(1)
     {    
-        struct udev_msg msg;        
+        struct udev_msg msg;            
         udevice_t device;
+        uclass_t cls;
         uep_t ep;
         
         /* receive message */
@@ -1244,9 +1250,9 @@ static void rt_usbd_thread_entry(void* parameter)
                 rt_kprintf("invalid usb device\n");
             break;
         case USB_MSG_DATA_NOTIFY:
-            ep = rt_usbd_find_endpoint(device, msg.content.ep_msg.ep_addr);
-            if(ep != RT_NULL) 
-                ep->handler(device, msg.content.ep_msg.size);
+            ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
+            if(ep != RT_NULL)
+                ep->handler(device, cls, msg.content.ep_msg.size);
             else 
                 rt_kprintf("invalid endpoint\n");
             break;
