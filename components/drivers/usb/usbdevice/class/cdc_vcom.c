@@ -9,7 +9,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-02     Yi Qiu      first version
+ * 2012-10-02     Yi Qiu       first version
+ * 2012-12-12     heyuanjie87  change endpoints and class handler
  */
 
 #include <rtthread.h>
@@ -18,9 +19,6 @@
 #include "cdc.h"
 
 #ifdef RT_USB_DEVICE_CDC
-
-static uclass_t cdc;
-static uep_t ep_in, ep_out, ep_cmd;
 
 #define CDC_RX_BUFSIZE          64
 #define CDC_TX_BUFSIZE          2048
@@ -145,23 +143,26 @@ static struct ucdc_data_descriptor data_desc =
  *
  * @return RT_EOK.
  */
-static rt_err_t _ep_in_handler(udevice_t device, rt_size_t size)
+static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     rt_uint32_t level;
     rt_size_t length;
-    
-    rt_size_t mps = ep_in->ep_desc->wMaxPacketSize;
+    cdc_eps_t eps;
+    rt_size_t mps;
+
+    eps = (cdc_eps_t)cls->eps;
+    mps = eps->ep_in->ep_desc->wMaxPacketSize;
     size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
     if(size == 0) return RT_EOK;
     
     length = size > mps ? mps : size;
 
     level = rt_hw_interrupt_disable();
-    rt_ringbuffer_get(&tx_ringbuffer, ep_in->buffer, length);
+    rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, length);
     rt_hw_interrupt_enable(level);
 
     /* send data to host */
-    dcd_ep_write(device->dcd, ep_in, ep_in->buffer, length);
+    dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, length);
 
     return RT_EOK;
 }
@@ -174,22 +175,24 @@ static rt_err_t _ep_in_handler(udevice_t device, rt_size_t size)
  *
  * @return RT_EOK.
  */
-static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
+static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     rt_uint32_t level;
+    cdc_eps_t eps;
 
     RT_ASSERT(device != RT_NULL);
     
+    eps = (cdc_eps_t)cls->eps;
     /* receive data from USB VCOM */
     level = rt_hw_interrupt_disable();
-    rt_ringbuffer_put(&rx_ringbuffer, ep_out->buffer, size);
+    rt_ringbuffer_put(&rx_ringbuffer, eps->ep_out->buffer, size);
     rt_hw_interrupt_enable(level);
 
     /* notify receive data */
     rt_hw_serial_isr(&vcom_serial);
 
-    dcd_ep_read(device->dcd, ep_out, ep_out->buffer, 
-        ep_out->ep_desc->wMaxPacketSize);    
+    dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, 
+        eps->ep_out->ep_desc->wMaxPacketSize);    
 
     return RT_EOK;
 }
@@ -202,7 +205,7 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
  *
  * @return RT_EOK.
  */
-static rt_err_t _ep_cmd_handler(udevice_t device, rt_size_t size)
+static rt_err_t _ep_cmd_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     RT_ASSERT(device != RT_NULL);
 
@@ -223,7 +226,8 @@ static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
 {
     struct ucdc_line_coding data;
     rt_uint16_t size;
-
+    rt_err_t ret;
+    
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
     
@@ -232,8 +236,9 @@ static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
     data.bDataBits = 8;
     data.bParityType = 0;
     size = setup->length > 7 ? 7 : setup->length;
+    
     dcd_ep_write(device->dcd, 0, (void*)&data, size);
-
+    
     return RT_EOK;
 }
 
@@ -318,14 +323,15 @@ static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _class_run(udevice_t device)
+static rt_err_t _class_run(udevice_t device, uclass_t cls)
 {
+    cdc_eps_t eps;
     RT_ASSERT(device != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc class run\n"));
-
-    dcd_ep_read(device->dcd, ep_out, ep_out->buffer, 
-        ep_out->ep_desc->wMaxPacketSize);
+    eps = (cdc_eps_t)cls->eps;
+    dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, 
+        eps->ep_out->ep_desc->wMaxPacketSize);
     
     return RT_EOK;
 }
@@ -337,7 +343,7 @@ static rt_err_t _class_run(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _class_stop(udevice_t device)
+static rt_err_t _class_stop(udevice_t device, uclass_t cls)
 {
     RT_ASSERT(device != RT_NULL);
 
@@ -353,17 +359,19 @@ static rt_err_t _class_stop(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _class_sof_handler(udevice_t device)
+static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
 {
     rt_uint32_t level;
     rt_size_t size;
     static rt_uint32_t frame_count = 0;
+    cdc_eps_t eps;
 
     if(vcom_connected != RT_TRUE) return -RT_ERROR;
-
+    
+    eps = (cdc_eps_t)cls->eps;
     if (frame_count ++ == 5)
     {
-        rt_size_t mps = ep_in->ep_desc->wMaxPacketSize;
+        rt_size_t mps = eps->ep_in->ep_desc->wMaxPacketSize;
 
         /* reset the frame counter */
         frame_count = 0;
@@ -374,11 +382,11 @@ static rt_err_t _class_sof_handler(udevice_t device)
         size = size > mps ? mps : size;
         
         level = rt_hw_interrupt_disable();
-        rt_ringbuffer_get(&tx_ringbuffer, ep_in->buffer, size);
+        rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, size);
         rt_hw_interrupt_enable(level);                     
         
         /* send data to host */
-        dcd_ep_write(device->dcd, ep_in, ep_in->buffer, size);
+        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, size);
     }
 
     return RT_EOK;
@@ -420,6 +428,8 @@ static rt_err_t _cdc_descriptor_config(rt_uint8_t comm, rt_uint8_t data)
  */
 uclass_t rt_usbd_class_cdc_create(udevice_t device)
 {
+    uclass_t cdc;
+    cdc_eps_t eps;
     uintf_t intf_comm, intf_data;
     ualtsetting_t comm_setting, data_setting;
 
@@ -428,6 +438,9 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     
     /* create a cdc class */
     cdc = rt_usbd_class_create(device, &dev_desc, &ops);
+    /* create a cdc class endpoints collection */
+    eps = rt_malloc(sizeof(struct cdc_eps));
+    cdc->eps = (void*)eps;
 
     /* create a cdc communication interface and a cdc data interface */
     intf_comm = rt_usbd_interface_create(device, _interface_handler);
@@ -443,12 +456,12 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     _cdc_descriptor_config(intf_comm->intf_num, intf_data->intf_num);
 
     /* create a bulk in and a bulk endpoint */
-    ep_out = rt_usbd_endpoint_create(&data_desc.ep_out_desc, _ep_out_handler);
-    ep_in = rt_usbd_endpoint_create(&data_desc.ep_in_desc, _ep_in_handler);
+    eps->ep_out = rt_usbd_endpoint_create(&data_desc.ep_out_desc, _ep_out_handler);
+    eps->ep_in = rt_usbd_endpoint_create(&data_desc.ep_in_desc, _ep_in_handler);
 
     /* add the bulk out and bulk in endpoints to the data alternate setting */
-    rt_usbd_altsetting_add_endpoint(data_setting, ep_in);
-    rt_usbd_altsetting_add_endpoint(data_setting, ep_out);
+    rt_usbd_altsetting_add_endpoint(data_setting, eps->ep_in);
+    rt_usbd_altsetting_add_endpoint(data_setting, eps->ep_out);
     
     /* add the data alternate setting to the data interface
             then set default setting of the interface */
@@ -459,10 +472,10 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     rt_usbd_class_add_interface(cdc, intf_data);  
 
     /* create a command endpoint */
-    ep_cmd = rt_usbd_endpoint_create(&comm_desc.ep_desc, _ep_cmd_handler);
+    eps->ep_cmd = rt_usbd_endpoint_create(&comm_desc.ep_desc, _ep_cmd_handler);
 
     /* add the command endpoint to the cdc communication interface */
-    rt_usbd_altsetting_add_endpoint(comm_setting, ep_cmd);
+    rt_usbd_altsetting_add_endpoint(comm_setting, eps->ep_cmd);
     
     /* add the communication alternate setting to the communication interface,
        then set default setting of the interface */

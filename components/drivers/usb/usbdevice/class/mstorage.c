@@ -9,8 +9,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-01     Yi Qiu      first version
- * 2012-11-25     Heyuanjie87 reduce the memory consumption
+ * 2012-10-01     Yi Qiu       first version
+ * 2012-11-25     Heyuanjie87  reduce the memory consumption
+ * 2012-12-09     Heyuanjie87  change class and endpoint handler
  */
 
 #include <rtthread.h>
@@ -25,10 +26,6 @@
 #define STATUS_RECEIVE          0x02
 #define STATUS_SEND             0x03 
 
-static uclass_t mstorage;
-static uep_t ep_in, ep_out;
-static rt_uint8_t *buffer;
-static rt_uint8_t *write_ptr;
 static int status = STATUS_CBW;
 ALIGN(RT_ALIGN_SIZE)
 static struct ustorage_csw csw;
@@ -90,7 +87,7 @@ static struct umass_descriptor mass_desc =
  *
  * @return the allocate instance on successful, or RT_NULL on failure.
  */
-static rt_err_t _inquiry_cmd(udevice_t device)
+static rt_err_t _inquiry_cmd(udevice_t device, uep_t ep_in)
 {
     rt_uint8_t data[36];
 
@@ -113,7 +110,7 @@ static rt_err_t _inquiry_cmd(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _request_sense(udevice_t device)
+static rt_err_t _request_sense(udevice_t device, uep_t ep_in)
 {
     struct request_sense_data data;
 
@@ -140,7 +137,7 @@ static rt_err_t _request_sense(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _mode_sense_6(udevice_t device)
+static rt_err_t _mode_sense_6(udevice_t device, uep_t ep_in)
 {
     rt_uint8_t data[4];
 
@@ -161,7 +158,7 @@ static rt_err_t _mode_sense_6(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _read_capacities(udevice_t device)
+static rt_err_t _read_capacities(udevice_t device, uep_t ep_in)
 {
     rt_uint8_t data[12];
     rt_uint32_t sector_count, sector_size;
@@ -193,7 +190,7 @@ static rt_err_t _read_capacities(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _read_capacity(udevice_t device)
+static rt_err_t _read_capacity(udevice_t device, uep_t ep_in)
 {
     rt_uint8_t data[8];
     rt_uint32_t sector_count, sector_size;
@@ -225,7 +222,7 @@ static rt_err_t _read_capacity(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _read_10(udevice_t device, ustorage_cbw_t cbw)
+static rt_err_t _read_10(udevice_t device, ustorage_cbw_t cbw, uep_t ep_in)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cbw != RT_NULL);
@@ -237,8 +234,8 @@ static rt_err_t _read_10(udevice_t device, ustorage_cbw_t cbw)
 
     RT_ASSERT(_count < geometry.sector_count);
 
-    rt_device_read(disk, _block, buffer, 1);
-    dcd_ep_write(device->dcd, ep_in, buffer, geometry.bytes_per_sector);
+    rt_device_read(disk, _block, ep_in->buffer, 1);
+    dcd_ep_write(device->dcd, ep_in, ep_in->buffer, geometry.bytes_per_sector);
     _count --;
     if (_count)
     {
@@ -261,7 +258,7 @@ static rt_err_t _read_10(udevice_t device, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw)
+static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw, uep_t ep_out)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cbw != RT_NULL);
@@ -271,12 +268,11 @@ static rt_err_t _write_10(udevice_t device, ustorage_cbw_t cbw)
     _count = cbw->cb[7]<<8 | cbw->cb[8]<<0;
     csw.data_reside = cbw->xfer_len;
     _size = _count * geometry.bytes_per_sector;
-    write_ptr = buffer;
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_write_10 count 0x%x 0x%x\n",
                                 _count, geometry.sector_count));
 
-    dcd_ep_read(device->dcd, ep_out, write_ptr, geometry.bytes_per_sector);
+    dcd_ep_read(device->dcd, ep_out, ep_out->buffer, geometry.bytes_per_sector);
 
     return RT_EOK;
 }
@@ -301,20 +297,23 @@ static rt_err_t _verify_10(udevice_t device)
  *
  * @return RT_EOK.
  */
-static rt_err_t _ep_in_handler(udevice_t device, rt_size_t size)
+static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
+    mass_eps_t eps;
     RT_ASSERT(device != RT_NULL);
-
+    
+    eps = cls->eps;
     if(status == STATUS_CSW)
     {
-        dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+        dcd_ep_write(device->dcd, eps->ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
         status = STATUS_CBW;
-        dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+        dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
     }
     if(status == STATUS_SEND)
     {
-        rt_device_read(disk, _block, buffer, 1);
-        dcd_ep_write(device->dcd, ep_in, buffer, geometry.bytes_per_sector);
+        rt_device_read(disk, _block, eps->ep_in->buffer, 1);
+        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, 
+                     geometry.bytes_per_sector);
         _count --;
         if (_count)
         {
@@ -330,6 +329,7 @@ static rt_err_t _ep_in_handler(udevice_t device, rt_size_t size)
     return RT_EOK;
 }
 
+#ifdef  MASS_CBW_DUMP
 static void cbw_dump(struct ustorage_cbw* cbw)
 {
     RT_ASSERT(cbw != RT_NULL);
@@ -342,6 +342,7 @@ static void cbw_dump(struct ustorage_cbw* cbw)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cb_len 0x%x\n", cbw->cb_len));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cb[0] 0x%x\n", cbw->cb[0]));
 }
+#endif
 
 /**
  * This function will handle mass storage bulk out endpoint request.
@@ -351,16 +352,18 @@ static void cbw_dump(struct ustorage_cbw* cbw)
  *
  * @return RT_EOK.
  */
-static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
+static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
+    mass_eps_t eps;
     RT_ASSERT(device != RT_NULL);
-
+    
+    eps = (mass_eps_t)cls->eps;
     if(status == STATUS_CBW)
     {
         struct ustorage_cbw* cbw;
 
         /* dump cbw information */
-        cbw = (struct ustorage_cbw*)ep_out->buffer;
+        cbw = (struct ustorage_cbw*)eps->ep_out->buffer;
 
         if(cbw->signature == CBW_SIGNATURE)
         {
@@ -369,42 +372,44 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
             csw.data_reside = 0;
             csw.status = 0;
         }
+        else 
+            return -RT_ERROR;
 
         switch(cbw->cb[0])
         {
         case SCSI_TEST_UNIT_READY:
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+            dcd_ep_write(device->dcd, eps->ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
             break;
         case SCSI_REQUEST_SENSE:
-            _request_sense(device);
+            _request_sense(device, eps->ep_in);
             status = STATUS_CSW;
             break;
         case SCSI_INQUIRY_CMD:
-            _inquiry_cmd(device);
+            _inquiry_cmd(device, eps->ep_in);
             status = STATUS_CSW;
             break;
         case SCSI_MODE_SENSE_6:
-            _mode_sense_6(device);
+            _mode_sense_6(device, eps->ep_in);
             status = STATUS_CSW;
             break;
         case SCSI_ALLOW_MEDIUM_REMOVAL:
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+            dcd_ep_write(device->dcd, eps->ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
             break;
         case SCSI_READ_CAPACITIES:
-            _read_capacities(device);
+            _read_capacities(device, eps->ep_in);
             status = STATUS_CSW;
             break;
         case SCSI_READ_CAPACITY:
-            _read_capacity(device);
+            _read_capacity(device, eps->ep_in);
             status = STATUS_CSW;
             break;
         case SCSI_READ_10:
-            _read_10(device, cbw);
+            _read_10(device, cbw, eps->ep_in);
             break;
         case SCSI_WRITE_10:
-            _write_10(device, cbw);
+            _write_10(device, cbw, eps->ep_out);
             status = STATUS_RECEIVE;
             break;
         case SCSI_VERIFY_10:
@@ -420,17 +425,18 @@ static rt_err_t _ep_out_handler(udevice_t device, rt_size_t size)
         _size -= size;
         csw.data_reside -= size;
         
-        rt_device_write(disk, _block, write_ptr, 1);
+        rt_device_write(disk, _block, eps->ep_in->buffer, 1);
         _block ++;
         if(_size == 0)
         {      
-            dcd_ep_write(device->dcd, ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
-            dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+            dcd_ep_write(device->dcd, eps->ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
+            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
             status = STATUS_CBW;
         }
         else
         {
-            dcd_ep_read(device->dcd, ep_out, write_ptr, geometry.bytes_per_sector);
+            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, 
+                        geometry.bytes_per_sector);
         }
     }
     else
@@ -481,11 +487,14 @@ static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _class_run(udevice_t device)
+static rt_err_t _class_run(udevice_t device, uclass_t cls)
 {
+    mass_eps_t eps;
+    rt_uint8_t *buffer;
     RT_ASSERT(device != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("mass storage run\n"));
+    eps = (mass_eps_t)cls->eps;
 
     disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(disk == RT_NULL)
@@ -499,7 +508,10 @@ static rt_err_t _class_run(udevice_t device)
     buffer = (rt_uint8_t*)rt_malloc(geometry.bytes_per_sector);
     if(buffer == RT_NULL)
         return -RT_ENOMEM;
-    dcd_ep_read(device->dcd, ep_out, ep_out->buffer, SIZEOF_CBW);
+    eps->ep_out->buffer = buffer;
+    eps->ep_in->buffer = buffer;
+
+    dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
 
     return RT_EOK;
 }
@@ -511,13 +523,17 @@ static rt_err_t _class_run(udevice_t device)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _class_stop(udevice_t device)
+static rt_err_t _class_stop(udevice_t device, uclass_t cls)
 {
+    mass_eps_t eps;
     RT_ASSERT(device != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("mass storage stop\n"));
+    eps = (mass_eps_t)cls->eps;
+    rt_free(eps->ep_in->buffer);
+    eps->ep_out->buffer = RT_NULL;
+    eps->ep_in->buffer = RT_NULL;
 
-    rt_free(buffer);
     return RT_EOK;
 }
 
@@ -538,6 +554,8 @@ static struct uclass_ops ops =
 uclass_t rt_usbd_class_mstorage_create(udevice_t device)
 {
     uintf_t intf;
+    mass_eps_t eps;
+    uclass_t mstorage;
     ualtsetting_t setting;
 
     /* parameter check */
@@ -545,21 +563,24 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
 
     /* create a mass storage class */
     mstorage = rt_usbd_class_create(device, &dev_desc, &ops);
-
+    /* create a mass storage endpoints collection */
+    eps = (mass_eps_t)rt_malloc(sizeof(struct mass_eps));
+    mstorage->eps = (void*)eps;
+    
     /* create an interface */
     intf = rt_usbd_interface_create(device, _interface_handler);
 
     /* create a bulk out and a bulk in endpoint */
-    ep_in = rt_usbd_endpoint_create(&mass_desc.ep_in_desc, _ep_in_handler);
-    ep_out = rt_usbd_endpoint_create(&mass_desc.ep_out_desc, _ep_out_handler);
+    eps->ep_in = rt_usbd_endpoint_create(&mass_desc.ep_in_desc, _ep_in_handler);
+    eps->ep_out = rt_usbd_endpoint_create(&mass_desc.ep_out_desc, _ep_out_handler);
 
     /* create an alternate setting */
     setting = rt_usbd_altsetting_create(&mass_desc.intf_desc,
                                         sizeof(struct umass_descriptor));
 
     /* add the bulk out and bulk in endpoint to the alternate setting */
-    rt_usbd_altsetting_add_endpoint(setting, ep_out);
-    rt_usbd_altsetting_add_endpoint(setting, ep_in);
+    rt_usbd_altsetting_add_endpoint(setting, eps->ep_out);
+    rt_usbd_altsetting_add_endpoint(setting, eps->ep_in);
 
     /* add the alternate setting to the interface, then set default setting */
     rt_usbd_interface_add_altsetting(intf, setting);

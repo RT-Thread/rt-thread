@@ -9,8 +9,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-01     Yi Qiu      first version
+ * 2012-10-01     Yi Qiu       first version
+ * 2012-12-12     heyuanjie87  add MASS endpoints collection
  */
+ 
+#ifndef  __MSTORAGE_H__
+#define  __MSTORAGE_H__
+
 #include <rtthread.h>
 
 #define USBREQ_GET_MAX_LUN                  0xfe
@@ -49,5 +54,13 @@ struct request_sense_data
     rt_uint8_t Reserved4[4];
 }request_sense_data_t;
 
+struct mass_eps
+{
+    uep_t ep_in;
+    uep_t ep_out;
+};
+typedef struct mass_eps* mass_eps_t;
+
 #pragma pack()
 
+#endif
