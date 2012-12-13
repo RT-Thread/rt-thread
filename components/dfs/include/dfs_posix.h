@@ -69,6 +69,8 @@
 
 #if defined(__CC_ARM)
 #include <stdio.h>
+#elif defined(_MSC_VER)
+#include <stdio.h>
 #else
 #define SEEK_SET	DFS_SEEK_SET
 #define SEEK_CUR	DFS_SEEK_CUR

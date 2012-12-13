@@ -198,6 +198,11 @@
 #define DFS_SEEK_SET		SEEK_SET
 #define DFS_SEEK_CUR		SEEK_CUR
 #define DFS_SEEK_END		SEEK_END
+#elif defined(_MSC_VER)
+#include <stdio.h>
+#define DFS_SEEK_SET		SEEK_SET
+#define DFS_SEEK_CUR		SEEK_CUR
+#define DFS_SEEK_END		SEEK_END
 #else
 #define DFS_SEEK_SET         0
 #define DFS_SEEK_CUR         1

@@ -400,7 +400,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
 {
 	int index;
 
-	/* lock filesystem */
+	/* lock file system */
 	dfs_lock();
 	/* find the file system operations */
 	for (index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index++)
@@ -420,6 +420,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
 	}
 	dfs_unlock();
 
+	rt_kprintf("Can not find the file system which named as %s.\n", fs_name);
 	return -1;
 }
 
@@ -455,9 +456,15 @@ FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 
 void df(const char *path)
 {
+	int result;
 	struct statfs buffer;
 
-	if (dfs_statfs(path, &buffer) == 0)
+	if (path == RT_NULL)
+		result = dfs_statfs("/", &buffer);
+	else
+		result = dfs_statfs(path, &buffer);
+
+	if (result == 0)
 	{
 		rt_kprintf("disk free: %d block[%d bytes per block]\n", buffer.f_bfree, buffer.f_bsize);
 	}

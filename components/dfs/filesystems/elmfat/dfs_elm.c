@@ -172,7 +172,7 @@ int dfs_elm_mkfs(const char *device_name)
 	for (drv = 0; drv < _VOLUMES; drv ++)
 	{
 		dev = disk[drv];
-		if (rt_strncmp(dev->parent.name, device_name, RT_NAME_MAX) == 0)
+		if (dev != RT_NULL && rt_strncmp(dev->parent.name, device_name, RT_NAME_MAX) == 0)
 		{
 			/* 1: no partition table */
 			/* 0: auto selection of cluster size */
@@ -782,8 +782,14 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 		*(DWORD *)buff = geometry.block_size/geometry.bytes_per_sector;
 	}
 	else if (ctrl == CTRL_SYNC)
+	{
 		rt_device_control(device, RT_DEVICE_CTRL_BLK_SYNC, RT_NULL);
-
+	}
+	else if (ctrl == CTRL_ERASE_SECTOR)
+	{
+		rt_device_control(device, RT_DEVICE_CTRL_BLK_ERASE, buff);
+	}
+	
 	return RES_OK;
 }
 

@@ -163,8 +163,11 @@
 / it can mount only first primaly partition. When it is set to 1, each volume
 / is tied to the partitions listed in VolToPart[]. */
 
-
+#ifdef RT_DFS_ELM_USE_ERASE
+#define _USE_ERASE	1
+#else
 #define	_USE_ERASE	0	/* 0:Disable or 1:Enable */
+#endif
 /* To enable sector erase feature, set _USE_ERASE to 1. CTRL_ERASE_SECTOR command
 /  should be added to the disk_ioctl functio. */
 
