@@ -43,6 +43,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     Env = env
     Rtt_Root = root_directory
 
+    # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
+    if rtconfig.PLATFORM == 'armcc':
+        if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
+            if rtconfig.EXEC_PATH.find('bin40') > 0:
+                rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
         win32_spawn = Win32Spawn()
