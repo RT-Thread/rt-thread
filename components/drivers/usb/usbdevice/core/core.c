@@ -813,9 +813,7 @@ uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler)
     }
     ep->ep_desc = ep_desc;
     ep->handler = handler;
-
-    /* allocate buffer for endpoint */
-    ep->buffer = (rt_uint8_t*)rt_malloc(ep_desc->wMaxPacketSize);
+    ep->buffer  = RT_NULL;
 
     return ep;
 }
