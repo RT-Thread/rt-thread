@@ -70,11 +70,13 @@ void rtgui_font_system_add_font(struct rtgui_font *font)
     if (font->engine->font_load != RT_NULL)
         font->engine->font_load(font);
 }
+RTM_EXPORT(rtgui_font_system_add_font);
 
 void rtgui_font_system_remove_font(struct rtgui_font *font)
 {
     rtgui_list_remove(&_rtgui_font_list, &(font->list));
 }
+RTM_EXPORT(rtgui_font_system_remove_font);
 
 struct rtgui_font *rtgui_font_default()
 {
@@ -105,6 +107,7 @@ struct rtgui_font *rtgui_font_refer(const char *family, rt_uint16_t height)
 
     return RT_NULL;
 }
+RTM_EXPORT(rtgui_font_refer);
 
 void rtgui_font_derefer(struct rtgui_font *font)
 {

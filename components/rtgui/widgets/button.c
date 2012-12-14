@@ -156,9 +156,23 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_e
                 {
                     /* set the last mouse event handled widget */
                     struct rtgui_win *win;
+                    /* need callback */
+                    rt_bool_t need_cb = RT_FALSE;
 
                     win = RTGUI_WIN(RTGUI_WIDGET(btn)->toplevel);
                     win->last_mevent_widget = RTGUI_WIDGET(btn);
+
+                    /* we need to decide whether the callback will be invoked
+                     * before the flag has changed. Moreover, we cannot invoke
+                     * it directly here, because the button might be destroyed
+                     * in the callback. If that happens, program will crash on
+                     * the following code. We need to make sure that the
+                     * callbacks are invoke at the very last step. */
+                    if ((btn->flag & RTGUI_BUTTON_FLAG_PRESS)
+                        && (emouse->button & RTGUI_MOUSE_BUTTON_UP))
+                    {
+                        need_cb = RT_TRUE;
+                    }
 
                     /* it's a normal button */
                     if (emouse->button & RTGUI_MOUSE_BUTTON_DOWN)
@@ -173,20 +187,16 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_e
                     /* draw button */
                     rtgui_theme_draw_button(btn);
 
-#ifndef RTGUI_USING_SMALL_SIZE
-                    /* invokes call back */
-                    if (widget->on_mouseclick != RT_NULL &&
-                            emouse->button & RTGUI_MOUSE_BUTTON_UP)
-                        return widget->on_mouseclick(RTGUI_OBJECT(widget), event);
-#endif
-
-                    if (!(btn->flag & RTGUI_BUTTON_FLAG_PRESS) && (btn->on_button != RT_NULL))
+                    if (need_cb)
                     {
-                        /* call on button handler */
-                        btn->on_button(RTGUI_OBJECT(widget), event);
+                        if (btn->on_button)
+                            btn->on_button(RTGUI_OBJECT(widget), event);
+#ifndef RTGUI_USING_SMALL_SIZE
+                        if (widget->on_mouseclick)
+                            return widget->on_mouseclick(RTGUI_OBJECT(widget), event);
+#endif
                     }
                 }
-
             }
 
             return RT_TRUE;

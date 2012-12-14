@@ -605,7 +605,7 @@ void rtgui_textbox_set_mask_char(rtgui_textbox_t *box, const char ch)
 	box->mask_char = ch;
 }
 
-const char rtgui_textbox_get_mask_char(rtgui_textbox_t *box)
+char rtgui_textbox_get_mask_char(rtgui_textbox_t *box)
 {
 	return box->mask_char;
 }

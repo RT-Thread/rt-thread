@@ -76,7 +76,7 @@ rt_bool_t rtgui_textbox_event_handler(struct rtgui_object *object, struct rtgui_
 void rtgui_textbox_set_value(struct rtgui_textbox *box, const char *text);
 const char *rtgui_textbox_get_value(struct rtgui_textbox *box);
 void rtgui_textbox_set_mask_char(rtgui_textbox_t *box, const char ch);
-const char rtgui_textbox_get_mask_char(rtgui_textbox_t *box);
+char rtgui_textbox_get_mask_char(rtgui_textbox_t *box);
 void rtgui_textbox_set_line_length(struct rtgui_textbox *box, rt_size_t length);
 
 void rtgui_textbox_get_edit_rect(struct rtgui_textbox *box, rtgui_rect_t *rect);

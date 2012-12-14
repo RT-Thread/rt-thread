@@ -68,6 +68,17 @@ extern "C" {
     void rtgui_button_set_pressed_image(rtgui_button_t *btn, rtgui_image_t *image);
     void rtgui_button_set_unpressed_image(rtgui_button_t *btn, rtgui_image_t *image);
 
+    /** Set the callback function on button btn
+     *
+     * If the btn is a push button, the callback will be invoked every
+     * time the btn got "pushed", i.e., both pressed down @em and pressed
+     * up.  If the button is a normal button, the callback will be invoked when
+     * the btn got "clicked", i.e., when pressed up @em after pressed
+     * down.
+     *
+     * @param btn the btn that the callback will be setted on.
+     * @param func the callback function.
+     */
     void rtgui_button_set_onbutton(rtgui_button_t *btn, rtgui_onbutton_func_t func);
 
     rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_event *event);
