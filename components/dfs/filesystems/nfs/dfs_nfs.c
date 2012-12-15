@@ -22,6 +22,11 @@
 #include "nfs.h"
 
 #define NAME_MAX	64
+#define DFS_NFS_MAX_MTU  1024
+
+#ifdef _WIN32
+#define strtok_r strtok_s
+#endif
 
 struct nfs_file
 {
@@ -532,7 +537,7 @@ int nfs_read(struct dfs_fd *file, void *buf, rt_size_t count)
 {
 	READ3args args;
 	READ3res res;
-	ssize_t bytes;
+	ssize_t bytes, total=0;
 	nfs_file *fd;
 	struct nfs_filesystem *nfs;
 
@@ -553,43 +558,52 @@ int nfs_read(struct dfs_fd *file, void *buf, rt_size_t count)
 		return 0;
 
 	args.file = fd->handle;
-	args.offset = fd->offset;
-	args.count = count;
+	do {
+		args.offset = fd->offset;
+		args.count = count > DFS_NFS_MAX_MTU ? DFS_NFS_MAX_MTU : count;
+		count -= args.count;
 
-	memset(&res, 0, sizeof(res));
-	if (nfsproc3_read_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
-	{
-		rt_kprintf("Read failed\n");
-		bytes = 0;
-	}
-	else if (res.status != NFS3_OK)
-	{
-		rt_kprintf("Read failed: %d\n", res.status);
-		bytes = 0;
-	}
-	else
-	{
-		if (res.READ3res_u.resok.eof)
+		memset(&res, 0, sizeof(res));
+		if (nfsproc3_read_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
 		{
-			/* something should probably be here */
-			fd->eof = TRUE;
+			rt_kprintf("Read failed\n");
+			total = 0;
+			break;
 		}
-		bytes = res.READ3res_u.resok.count;
-		fd->offset += bytes;
-		/* update current position */
-		file->pos = fd->offset;
-		memcpy(buf, res.READ3res_u.resok.data.data_val, bytes);
-	}
-	xdr_free((xdrproc_t)xdr_READ3res, (char *)&res);
+		else if (res.status != NFS3_OK)
+		{
+			rt_kprintf("Read failed: %d\n", res.status);
+			total = 0;
+			break;
+		}
+		else
+		{
+			bytes = res.READ3res_u.resok.count;
+			total += bytes;
+			fd->offset += bytes;
+			/* update current position */
+			file->pos = fd->offset;
+			memcpy(buf, res.READ3res_u.resok.data.data_val, bytes);
+			buf = (void *)((char *)buf + args.count);
+			if (res.READ3res_u.resok.eof)
+			{
+				/* something should probably be here */
+				fd->eof = TRUE;
+				break;
+			}
+		}
+		xdr_free((xdrproc_t)xdr_READ3res, (char *)&res);
+	} while(count > 0);
 
-	return bytes;
+	xdr_free((xdrproc_t)xdr_READ3res, (char *)&res);
+	return total;
 }
 
 int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
 {
 	WRITE3args args;
 	WRITE3res res;
-	ssize_t bytes;
+	ssize_t bytes, total=0;
 	nfs_file *fd;
 	struct nfs_filesystem *nfs;
 
@@ -607,33 +621,43 @@ int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
 
 	args.file = fd->handle;
 	args.stable = FILE_SYNC;
-	args.offset = fd->offset;
 
-	memset(&res, 0, sizeof(res));
-	args.data.data_val=(void *)buf;
-	args.count=args.data.data_len = count;
+	do {
+		args.offset = fd->offset;
 
-	if (nfsproc3_write_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
-	{
-		rt_kprintf("Write failed\n");
-		bytes = 0;
-	}
-	else if (res.status != NFS3_OK)
-	{
-		rt_kprintf("Write failed: %d\n", res.status);
-		bytes = 0;
-	}
-	else
-	{
-		bytes = res.WRITE3res_u.resok.count;
-		fd->offset += bytes;
-		/* update current position */
-		file->pos = fd->offset;
-		/* todo: update file size */
-	}
+		memset(&res, 0, sizeof(res));
+		args.data.data_val=(void *)buf;
+		args.count = count > DFS_NFS_MAX_MTU ? DFS_NFS_MAX_MTU : count;
+		args.data.data_len = args.count;
+		count -= args.count;
+		buf = (const void *)((char *)buf + args.count);
+
+		if (nfsproc3_write_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
+		{
+			rt_kprintf("Write failed\n");
+			total = 0;
+			break;
+		}
+		else if (res.status != NFS3_OK)
+		{
+			rt_kprintf("Write failed: %d\n", res.status);
+			total = 0;
+			break;
+		}
+		else
+		{
+			bytes = res.WRITE3res_u.resok.count;
+			fd->offset += bytes;
+			total += bytes;
+			/* update current position */
+			file->pos = fd->offset;
+			/* todo: update file size */
+		}
+		xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
+	} while (count > 0);
+
 	xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
-
-	return bytes;
+	return total;
 }
 
 int nfs_lseek(struct dfs_fd *file, rt_off_t offset)
@@ -646,7 +670,7 @@ int nfs_lseek(struct dfs_fd *file, rt_off_t offset)
 	fd = (nfs_file *)(file->data);
 	RT_ASSERT(fd != RT_NULL);
 
-	if (offset < fd->size)
+	if (offset <= fd->size)
 	{
 		fd->offset = offset;
 		return offset;
