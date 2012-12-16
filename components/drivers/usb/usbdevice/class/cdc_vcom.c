@@ -226,7 +226,6 @@ static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
 {
     struct ucdc_line_coding data;
     rt_uint16_t size;
-    rt_err_t ret;
     
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
