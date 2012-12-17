@@ -69,6 +69,7 @@ struct ualtsetting
 {
     rt_list_t list;
     uintf_desc_t intf_desc;
+    void* desc; 
     rt_size_t desc_size;
     rt_list_t ep_list;
 };
@@ -99,9 +100,7 @@ struct uclass
     void* eps;
     struct udevice* device;
     udev_desc_t dev_desc;
-#ifdef RT_USB_DEVICE_COMPOSITE
-    uiad_desc_t iad_desc;
-#endif
+
     rt_list_t intf_list;
 };
 typedef struct uclass* uclass_t;
@@ -162,7 +161,7 @@ uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
 uintf_t rt_usbd_interface_create(udevice_t device,
                                  rt_err_t (*handler)(struct udevice*, ureq_t setup));
 uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler);
-ualtsetting_t rt_usbd_altsetting_create(uintf_desc_t intf_desc, rt_size_t desc_size);
+ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size);
 
 rt_err_t rt_usbd_core_init(void);
 rt_err_t rt_usb_device_init(const char* udc_name);
@@ -175,6 +174,7 @@ rt_err_t rt_usbd_config_add_class(uconfig_t cfg, uclass_t cls);
 rt_err_t rt_usbd_class_add_interface(uclass_t cls, uintf_t intf);
 rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting);
 rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep);
+rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting, const void* desc, rt_off_t intf_pos);
 rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value);
 rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value);
 
