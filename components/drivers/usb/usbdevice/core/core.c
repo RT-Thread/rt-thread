@@ -721,14 +721,13 @@ uintf_t rt_usbd_interface_create(udevice_t device,
  *
  * @return an usb alternate setting object on success, RT_NULL on fail.
  */
-ualtsetting_t rt_usbd_altsetting_create(uintf_desc_t intf_desc, rt_size_t desc_size)
+ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size)
 {
     ualtsetting_t setting;
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_altsetting_create\n"));
 
     /* parameter check */
-    RT_ASSERT(intf_desc != RT_NULL);
     RT_ASSERT(desc_size > 0);
 
     /* allocate memory for the object */
@@ -738,13 +737,42 @@ ualtsetting_t rt_usbd_altsetting_create(uintf_desc_t intf_desc, rt_size_t desc_s
         rt_kprintf("alloc memery failed\n");
         return RT_NULL;
     }
+    /* allocate memory for the desc */
+    setting->desc = rt_malloc(desc_size);
+    if (setting->desc == RT_NULL)
+    {
+        rt_kprintf("alloc desc memery failed\n");
+        rt_free(setting);
+        return RT_NULL;    
+    }
+
     setting->desc_size = desc_size;
-    setting->intf_desc = intf_desc;
+    setting->intf_desc = RT_NULL;
 
     /* to initialize endpoint list */
     rt_list_init(&setting->ep_list);
 
     return setting;
+}
+
+/**
+ * This function will config an desc in alternate setting object.
+ *
+ * @param setting the altsetting to be config.
+ * @param desc use it to init desc in setting.
+ * @param intf_pos the offset of interface descriptor in desc.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting, const void* desc, rt_off_t intf_pos)
+{
+    RT_ASSERT(setting != RT_NULL);
+    RT_ASSERT(setting->desc !=RT_NULL);
+    
+    rt_memcpy(setting->desc, desc, setting->desc_size);
+    setting->intf_desc = (uintf_desc_t)((char*)setting->desc + intf_pos); 
+    
+    return RT_EOK;    
 }
 
 /**
@@ -777,9 +805,6 @@ uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
     cls->dev_desc = dev_desc;
     cls->ops = ops;
     cls->device = device;
-#ifdef RT_USB_DEVICE_COMPOSITE    
-    cls->iad_desc = RT_NULL;
-#endif
 
     /* to initialize interface list */
     rt_list_init(&cls->intf_list);
@@ -1021,15 +1046,6 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
     {
         cls = (uclass_t)rt_list_entry(i, struct uclass, list);
 
-#ifdef RT_USB_DEVICE_COMPOSITE
-        if(cls->iad_desc != RT_NULL)
-        {
-            rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - 
-                USB_DESC_LENGTH_CONFIG], (void*)cls->iad_desc, USB_DESC_LENGTH_IAD);
-            cfg->cfg_desc.wTotalLength += USB_DESC_LENGTH_IAD;
-        }
-#endif
-
         for(j=cls->intf_list.next; j!=&cls->intf_list; j=j->next)
         {
             intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
@@ -1045,7 +1061,7 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
 
             /* construct complete configuration descriptor */
             rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - 
-                USB_DESC_LENGTH_CONFIG], (void*)intf->curr_setting->intf_desc,
+                USB_DESC_LENGTH_CONFIG], (void*)intf->curr_setting->desc,
                 intf->curr_setting->desc_size);
             cfg->cfg_desc.wTotalLength += intf->curr_setting->desc_size;
         }
@@ -1101,19 +1117,6 @@ rt_err_t rt_usbd_class_add_interface(uclass_t cls, uintf_t intf)
 
     return RT_EOK;
 }
-
-
-#ifdef RT_USB_DEVICE_COMPOSITE
-rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc)
-{
-    RT_ASSERT(cls != RT_NULL);
-    RT_ASSERT(iad_desc != RT_NULL);
-
-    cls->iad_desc = iad_desc;
-
-    return RT_TRUE;
-}
-#endif
 
 /**
  * This function will add an alternate setting to an interface.
