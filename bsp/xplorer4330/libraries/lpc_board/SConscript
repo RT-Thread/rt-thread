@@ -1,0 +1,44 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+#src = Glob('board_common/*.c')
+src  = []
+path = [cwd + '/board_common']
+
+if rtconfig.LPC43xx_BOARD == 'NGX_XPLORER_4330':
+    src  += ['boards_18xx_43xx/ngx_xplorer_18304330/board_ngx_xplorer_18304330.c',
+             'boards_18xx_43xx/ngx_xplorer_18304330/sysinit_ngx_xplorer_18304330.c']
+    path += [cwd + '/boards_18xx_43xx/ngx_xplorer_18304330',
+             cwd + '/boards_18xx_43xx/ngx_xplorer_18304330/ngx_xplorer_4330']
+elif rtconfig.LPC43xx_BOARD == 'NGX_XPLORER_1830':
+    src  += ['boards_18xx_43xx/ngx_xplorer_18304330/board_ngx_xplorer_18304330.c',
+             'boards_18xx_43xx/ngx_xplorer_18304330/sysinit_ngx_xplorer_18304330.c']
+    path += [cwd + '/boards_18xx_43xx/ngx_xplorer_18304330',
+             cwd + '/boards_18xx_43xx/ngx_xplorer_18304330/ngx_xplorer_1830']
+elif rtconfig.LPC43xx_BOARD == 'KEIL_MCB_4357':
+    src  += ['boards_18xx_43xx/keil_mcb_18574357/board_keil_mcb_18574357.c',
+             'boards_18xx_43xx/keil_mcb_18574357/sysinit_keil_mcb_18574357.c']
+    path += [cwd + '/boards_18xx_43xx/keil_mcb_18574357',
+             cwd + '/boards_18xx_43xx/keil_mcb_18574357/keil_mcb_4357']
+elif rtconfig.LPC43xx_BOARD == 'KEIL_MCB_1857':
+    src  += ['boards_18xx_43xx/keil_mcb_18574357/board_keil_mcb_18574357.c',
+             'boards_18xx_43xx/keil_mcb_18574357/sysinit_keil_mcb_18574357.c']
+    path += [cwd + '/boards_18xx_43xx/keil_mcb_18574357',
+             cwd + '/boards_18xx_43xx/keil_mcb_18574357/keil_mcb_1857']
+elif rtconfig.LPC43xx_BOARD == 'HITEX_EVA_4350':
+    src  += ['boards_18xx_43xx/hitex_eva_18504350/board_hitex_eva_18504350.c',
+             'boards_18xx_43xx/hitex_eva_18504350/sysinit_hitex_eva_18504350.c']
+    path += [cwd + '/boards_18xx_43xx/hitex_eva_18504350',
+             cwd + '/boards_18xx_43xx/hitex_eva_18504350/hitex_eva_4350']
+elif rtconfig.LPC43xx_BOARD == 'HITEX_EVA_1850':
+    src  += ['boards_18xx_43xx/hitex_eva_18504350/board_hitex_eva_18504350.c',
+             'boards_18xx_43xx/hitex_eva_18504350/sysinit_hitex_eva_18504350.c']
+    path += [cwd + '/boards_18xx_43xx/hitex_eva_18504350',
+             cwd + '/boards_18xx_43xx/hitex_eva_18504350/hitex_eva_1850']
+
+group = DefineGroup('lpc_board', src, depend = [''], CPPPATH = path)
+
+Return('group')

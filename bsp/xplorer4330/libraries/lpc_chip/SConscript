@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Glob('chip_18xx_43xx/*.c')
+src += Glob('chip_common/*.c')
+
+path = [cwd + '/chip_18xx_43xx',
+        cwd + '/chip_common']
+
+group = DefineGroup('lpc_chip', src, depend = [], CPPPATH = path)
+
+Return('group')

@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+# remove no need file.
+if GetDepend('RT_USING_SERIAL') == False:
+    SrcRemove(src, 'usart.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

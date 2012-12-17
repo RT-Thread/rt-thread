@@ -1,7 +1,7 @@
 /*
  * File      : cpuport.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -13,7 +13,9 @@
  * 2011-10-27     aozima       update for cortex-M4 FPU.
  * 2011-12-31     aozima       fixed stack align issues.
  * 2012-01-01     aozima       support context switch load/store FPU register.
-*/
+ * 2012-12-11     lgnq         fixed the coding style.
+ */
+
 #include <rtthread.h>
 
 #define USE_FPU   /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP )) \
@@ -21,7 +23,8 @@
                   /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
 
 /* exception and interrupt handler table */
-rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_uint32_t rt_interrupt_from_thread;
+rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
 struct exception_stack_frame
@@ -93,32 +96,34 @@ struct stack_frame
     struct exception_stack_frame exception_stack_frame;
 };
 
-rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-                             rt_uint8_t *stack_addr, void *texit)
+rt_uint8_t *rt_hw_stack_init(void       *tentry,
+                             void       *parameter,
+                             rt_uint8_t *stack_addr,
+                             void       *texit)
 {
-    struct stack_frame * stack_frame;
-    rt_uint8_t * stk;
-    unsigned long i;
+    struct stack_frame *stack_frame;
+    rt_uint8_t         *stk;
+    unsigned long       i;
 
-    stk = stack_addr + sizeof(rt_uint32_t);
+    stk         = stack_addr + sizeof(rt_uint32_t);
+    stk        -= sizeof(struct stack_frame);
 
-    stk -= sizeof(struct stack_frame);
     stack_frame = (struct stack_frame *)stk;
 
     /* init all register */
-    for(i=0; i<sizeof(struct stack_frame)/sizeof(rt_uint32_t); i++)
+    for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_uint32_t); i ++)
     {
-        ((rt_uint32_t*)stack_frame)[i] = 0xdeadbeef;
+        ((rt_uint32_t *)stack_frame)[i] = 0xdeadbeef;
     }
 
-    stack_frame->exception_stack_frame.r0 = (unsigned long)parameter; /* r0 : argument */
-    stack_frame->exception_stack_frame.r1 = 0;                        /* r1 */
-    stack_frame->exception_stack_frame.r2 = 0;                        /* r2 */
-    stack_frame->exception_stack_frame.r3 = 0;                        /* r3 */
-    stack_frame->exception_stack_frame.r12 = 0;                       /* r12 */
-    stack_frame->exception_stack_frame.lr = (unsigned long)texit;     /* lr */
-    stack_frame->exception_stack_frame.pc = (unsigned long)tentry;    /* entry point, pc */
-    stack_frame->exception_stack_frame.psr = 0x01000000L;             /* PSR */
+    stack_frame->exception_stack_frame.r0  = (unsigned long)parameter; /* r0 : argument */
+    stack_frame->exception_stack_frame.r1  = 0;                        /* r1 */
+    stack_frame->exception_stack_frame.r2  = 0;                        /* r2 */
+    stack_frame->exception_stack_frame.r3  = 0;                        /* r3 */
+    stack_frame->exception_stack_frame.r12 = 0;                        /* r12 */
+    stack_frame->exception_stack_frame.lr  = (unsigned long)texit;     /* lr */
+    stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* entry point, pc */
+    stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR */
 
     /* return task's current stack address */
     return stk;
@@ -127,7 +132,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 extern void rt_hw_interrupt_thread_switch(void);
 extern long list_thread(void);
 extern rt_thread_t rt_current_thread;
-void rt_hw_hard_fault_exception(struct exception_stack_frame * exception_stack)
+void rt_hw_hard_fault_exception(struct exception_stack_frame *exception_stack)
 {
     rt_kprintf("psr: 0x%08x\n", exception_stack->psr);
     rt_kprintf(" pc: 0x%08x\n", exception_stack->pc);
@@ -139,13 +144,15 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame * exception_stack)
     rt_kprintf("r00: 0x%08x\n", exception_stack->r0);
 
     rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+
     while (1);
 }
 
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 

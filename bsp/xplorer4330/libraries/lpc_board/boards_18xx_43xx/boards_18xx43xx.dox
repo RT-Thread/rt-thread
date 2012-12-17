@@ -1,0 +1,62 @@
+/*
+ * @brief LPCOpen 18xx/43xx board support page
+ *
+ * @note
+ * Copyright(C) NXP Semiconductors, 2012
+ * All rights reserved.
+ *
+ * @par
+ * Software that is described herein is for illustrative purposes only
+ * which provides customers with programming information regarding the
+ * LPC products.  This software is supplied "AS IS" without any warranties of
+ * any kind, and NXP Semiconductors and its licensor disclaim any and
+ * all warranties, express or implied, including all implied warranties of
+ * merchantability, fitness for a particular purpose and non-infringement of
+ * intellectual property rights.  NXP Semiconductors assumes no responsibility
+ * or liability for the use of the software, conveys no license or rights under any
+ * patent, copyright, mask work right, or any other intellectual property rights in
+ * or to any products. NXP Semiconductors reserves the right to make changes
+ * in the software without notification. NXP Semiconductors also makes no
+ * representation or warranty that such application will be suitable for the
+ * specified use without further testing or modification.
+ *
+ * @par
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation is hereby granted, under NXP Semiconductors' and its
+ * licensor's relevant copyrights in the software, without fee, provided that it
+ * is used in conjunction with NXP Semiconductors microcontrollers.  This
+ * copyright, permission, and disclaimer notice must appear in all copies of
+ * this code.
+ */
+
+/** @defgroup BOARDS_18XX_43XX BOARD: LPC18XX and LPC43XX boards
+ * @ingroup Board_Layer
+ * @{
+ */
+
+/**
+ * @}
+ */
+
+/*!
+ * @page LPCOPEN_BSP_18XX43XX Supported 18xx/43xx platforms
+ *
+ * <b>Device Support</b><br/>
+ * All LPC18xx and LPC43xx device variants are supported.<br/><br/>
+ * <a href="http://www.lpcware.com/gfiles/docs?tid_1[]=103">LPC18xx documentation links</a><br/>
+ * <a href="http://www.lpcware.com/gfiles/docs?tid_1[]=104">LPC43xx documentation links</a><br/><br/>
+ * <b>Board Support</b><br/>
+ * Hitex, Keil, and NGX boards for both 18xx and 43xx variants are supported.
+ * Click <a href="http://www.lpcware.com/content/project/lpcopen-platform-nxp-lpc-microcontrollers/lpcopen-build-procedures/lpc18xx/43xx-lpco">here</a> for LPCOpen build procedures and default jumper configuration for supported boards.<br/><br/>
+ * <a href="http://www.hitex.com/index.php?id=3455/">Hitex LPC1857 and LPC4357 evaluation boards </a><br/>
+ * <a href="http://www.keil.com/mcb1800/">Keil MCB1800</a> and <a href="http://www.keil.com/mcb4300/">Keil MCB4300 boards</a><br/>
+ * <a href="http://ngxtech.com/knowledgebase/index.php?title=LPC1830-Xplorer_Quick_Start_Guide">NGX LPC1830 Xplorer</a> and 
+ * <a href="http://ngxtech.com/knowledgebase/index.php?title=LPC4330-Xplorer_Quick_Start_Guide">NGX LPC4330 Xplorer boards</a><br/>
+ *
+ * <b>Toolchain Support</b><br/>
+ * Code Red Xpresso, IAR EWARM, and Keil MDK are all supported. See the <a href="http://www.lpcware.com/content/project/lpcopen-platform-nxp-lpc-microcontrollers/lpcopen-build-procedures/lpc18xx/43xx-lpco#Supported_toolchains">build support pages</a>
+ * for information on specific versions of the toolchains tested with the LPCOpen platform.<br/><br/>
+ * <a href="http://www.iar.com/en/Products/IAR-Embedded-Workbench/ARM/">IAR EWARM</a><br/>
+ * <a href="http://www.keil.com/arm/mdk.asp">ARM MDK-ARM</a><br/>
+ * <a href="http://code-red-tech.com/lpcxpresso">LPCXpresso</a>
+ */

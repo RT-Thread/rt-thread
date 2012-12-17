@@ -1,0 +1,22 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+# add for startup code
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = ['gcc_startup_lpc18xx43xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = ['keil_startup_lpc18xx43xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = ['iar_startup_lpc18xx43xx.s']
+
+if GetDepend(['RT_USING_BSP_CMSIS']):
+    path = [cwd + '/CM3/CoreSupport']
+    src += ['CM3/CoreSupport/core_cm3.c']
+elif GetDepend(['RT_USING_RTT_CMSIS']):
+    path = [RTT_ROOT + '/components/CMSIS/Include']
+
+CPPDEFINES = ['CORE_M4']
+group = DefineGroup('startup', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
