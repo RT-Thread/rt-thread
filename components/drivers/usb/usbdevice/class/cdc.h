@@ -131,6 +131,9 @@ typedef struct ucdc_union_descriptor* ucdc_union_desc_t;
 
 struct ucdc_comm_descriptor
 {
+#ifdef RT_USB_DEVICE_COMPOSITE
+    struct uiad_descriptor iad_desc;
+#endif
     struct uinterface_descriptor intf_desc;
     struct ucdc_header_descriptor hdr_desc;
     struct ucdc_call_mgmt_descriptor call_mgmt_desc;    

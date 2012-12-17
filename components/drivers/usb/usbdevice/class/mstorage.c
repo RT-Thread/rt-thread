@@ -52,7 +52,7 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
-static struct umass_descriptor mass_desc =
+const static struct umass_descriptor _mass_desc =
 {
     USB_DESC_LENGTH_INTERFACE,  //bLength;
     USB_DESC_TYPE_INTERFACE,    //type;
@@ -557,6 +557,7 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
     mass_eps_t eps;
     uclass_t mstorage;
     ualtsetting_t setting;
+    umass_desc_t mass_desc;
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -570,13 +571,15 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
     /* create an interface */
     intf = rt_usbd_interface_create(device, _interface_handler);
 
-    /* create a bulk out and a bulk in endpoint */
-    eps->ep_in = rt_usbd_endpoint_create(&mass_desc.ep_in_desc, _ep_in_handler);
-    eps->ep_out = rt_usbd_endpoint_create(&mass_desc.ep_out_desc, _ep_out_handler);
-
     /* create an alternate setting */
-    setting = rt_usbd_altsetting_create(&mass_desc.intf_desc,
-                                        sizeof(struct umass_descriptor));
+    setting = rt_usbd_altsetting_create(sizeof(struct umass_descriptor));
+    /* config desc in alternate setting */    
+    rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, 0);
+    
+    /* create a bulk out and a bulk in endpoint */
+    mass_desc = (umass_desc_t)setting->desc;
+    eps->ep_in = rt_usbd_endpoint_create(&mass_desc->ep_in_desc, _ep_in_handler);
+    eps->ep_out = rt_usbd_endpoint_create(&mass_desc->ep_out_desc, _ep_out_handler);    
 
     /* add the bulk out and bulk in endpoint to the alternate setting */
     rt_usbd_altsetting_add_endpoint(setting, eps->ep_out);

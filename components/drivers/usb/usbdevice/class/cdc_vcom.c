@@ -48,9 +48,11 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;    
 };
 
-#ifdef RT_USB_DEVICE_COMPOSITE
-static struct uiad_descriptor iad_desc =
+/* communcation interface descriptor */
+const static struct ucdc_comm_descriptor _comm_desc =
 {
+#ifdef RT_USB_DEVICE_COMPOSITE
+    /* Interface Association Descriptor */
     USB_DESC_LENGTH_IAD,
     USB_DESC_TYPE_IAD,
     USB_DYNAMIC,
@@ -59,12 +61,7 @@ static struct uiad_descriptor iad_desc =
     USB_CDC_SUBCLASS_ACM,
     USB_CDC_PROTOCOL_V25TER,
     0x00,
-};
 #endif
-
-/* communcation interface descriptor */
-static struct ucdc_comm_descriptor comm_desc =
-{
     /* Interface Descriptor */
     USB_DESC_LENGTH_INTERFACE,
     USB_DESC_TYPE_INTERFACE,
@@ -107,7 +104,7 @@ static struct ucdc_comm_descriptor comm_desc =
 };
 
 /* data interface descriptor */
-static struct ucdc_data_descriptor data_desc =
+const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
     USB_DESC_LENGTH_INTERFACE,
@@ -329,6 +326,10 @@ static rt_err_t _class_run(udevice_t device, uclass_t cls)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc class run\n"));
     eps = (cdc_eps_t)cls->eps;
+
+    eps->ep_in->buffer=tx_pool;
+    eps->ep_out->buffer=rx_pool;
+
     dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, 
         eps->ep_out->ep_desc->wMaxPacketSize);
     
@@ -406,13 +407,13 @@ static struct uclass_ops ops =
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _cdc_descriptor_config(rt_uint8_t comm, rt_uint8_t data)
+static rt_err_t _cdc_descriptor_config(ucdc_comm_desc_t comm, rt_uint8_t cintf_nr, ucdc_data_desc_t data, rt_uint8_t dintf_nr)
 {
-    comm_desc.call_mgmt_desc.data_interface = data;
-    comm_desc.union_desc.master_interface = comm;
-    comm_desc.union_desc.slave_interface0 = data;
+    comm->call_mgmt_desc.data_interface = dintf_nr;
+    comm->union_desc.master_interface = cintf_nr;
+    comm->union_desc.slave_interface0 = dintf_nr;
 #ifdef RT_USB_DEVICE_COMPOSITE    
-    iad_desc.bFirstInterface = comm;
+    comm->iad_desc.bFirstInterface = cintf_nr;
 #endif
 
     return RT_EOK;
@@ -431,6 +432,8 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     cdc_eps_t eps;
     uintf_t intf_comm, intf_data;
     ualtsetting_t comm_setting, data_setting;
+    ucdc_data_desc_t data_desc;
+    ucdc_comm_desc_t comm_desc;
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -446,17 +449,20 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     intf_data = rt_usbd_interface_create(device, _interface_handler);
 
     /* create a communication alternate setting and a data alternate setting */
-    comm_setting = rt_usbd_altsetting_create(&comm_desc.intf_desc,
-        sizeof(struct ucdc_comm_descriptor));
-    data_setting = rt_usbd_altsetting_create(&data_desc.intf_desc,
-        sizeof(struct ucdc_data_descriptor));
-
+    comm_setting = rt_usbd_altsetting_create(sizeof(struct ucdc_comm_descriptor));     
+    data_setting = rt_usbd_altsetting_create(sizeof(struct ucdc_data_descriptor)); 
+    
+    /* config desc in alternate setting */    
+    rt_usbd_altsetting_config_descriptor(comm_setting, &_comm_desc,
+        (rt_off_t)&((ucdc_comm_desc_t)0)->intf_desc);
+    rt_usbd_altsetting_config_descriptor(data_setting, &_data_desc, 0);
     /* configure the cdc interface descriptor */
-    _cdc_descriptor_config(intf_comm->intf_num, intf_data->intf_num);
+    _cdc_descriptor_config(comm_setting->desc, intf_comm->intf_num, data_setting->desc, intf_data->intf_num);
 
     /* create a bulk in and a bulk endpoint */
-    eps->ep_out = rt_usbd_endpoint_create(&data_desc.ep_out_desc, _ep_out_handler);
-    eps->ep_in = rt_usbd_endpoint_create(&data_desc.ep_in_desc, _ep_in_handler);
+    data_desc = (ucdc_data_desc_t)data_setting->desc;
+    eps->ep_out = rt_usbd_endpoint_create(&data_desc->ep_out_desc, _ep_out_handler);
+    eps->ep_in = rt_usbd_endpoint_create(&data_desc->ep_in_desc, _ep_in_handler);
 
     /* add the bulk out and bulk in endpoints to the data alternate setting */
     rt_usbd_altsetting_add_endpoint(data_setting, eps->ep_in);
@@ -471,7 +477,8 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
     rt_usbd_class_add_interface(cdc, intf_data);  
 
     /* create a command endpoint */
-    eps->ep_cmd = rt_usbd_endpoint_create(&comm_desc.ep_desc, _ep_cmd_handler);
+    comm_desc = (ucdc_comm_desc_t)comm_setting->desc;
+    eps->ep_cmd = rt_usbd_endpoint_create(&comm_desc->ep_desc, _ep_cmd_handler);
 
     /* add the command endpoint to the cdc communication interface */
     rt_usbd_altsetting_add_endpoint(comm_setting, eps->ep_cmd);
@@ -483,10 +490,6 @@ uclass_t rt_usbd_class_cdc_create(udevice_t device)
 
     /* add the communication interface to the cdc class */
     rt_usbd_class_add_interface(cdc, intf_comm);    
-
-#ifdef RT_USB_DEVICE_COMPOSITE
-    rt_usbd_class_set_iad(cdc, &iad_desc);
-#endif
 
     return cdc;
 }
