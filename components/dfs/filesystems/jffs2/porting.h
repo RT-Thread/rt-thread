@@ -26,9 +26,6 @@ struct jffs2_stat {
     long  st_mtime;    /* Last data modification time */
     long  st_ctime;    /* Last file status change time */
 };
-#ifndef NAME_MAX
-#define	NAME_MAX		14
-#endif
 
 struct jffs2_dirent
 {
@@ -39,7 +36,7 @@ struct jffs2_dirent
 	// d_type is not part of POSIX so
 	// should be used with caution.
 #endif
-	char        d_name[NAME_MAX+1];
+	char        d_name[JFFS2_NAME_MAX+1];
 };
 
 extern cyg_fileops jffs2_fileops;

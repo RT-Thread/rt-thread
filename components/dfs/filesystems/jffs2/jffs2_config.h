@@ -3,7 +3,10 @@
 
 #define __ECOS  /* must be defined */
 
-#define FILE_PATH_MAX    128 /* the longest file path */
+#define FILE_PATH_MAX                128  /* the longest file path */
+#define CONFIG_JFFS2_ENTRY_NAME_MAX  8
+#define	JFFS2_NAME_MAX   CONFIG_JFFS2_ENTRY_NAME_MAX  
+#define	JFFS2_PATH_MAX   FILE_PATH_MAX
 
 #define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 

@@ -53,7 +53,7 @@ struct dirent
 	// d_type is not part of POSIX so
 	// should be used with caution.
 #endif
-	char        d_name[NAME_MAX+1];
+	char        d_name[JFFS2_NAME_MAX+1];
 };
 
 

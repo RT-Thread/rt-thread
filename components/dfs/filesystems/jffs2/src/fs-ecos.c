@@ -392,11 +392,11 @@ static int jffs2_pathconf(struct _inode *node, struct cyg_pathconf_info *info)
 		break;
 
 	case _PC_NAME_MAX:
-		info->value = NAME_MAX;
+		info->value = JFFS2_NAME_MAX;
 		break;
 
 	case _PC_PATH_MAX:
-		info->value = PATH_MAX;
+		info->value = JFFS2_PATH_MAX;
 		break;
 
 	case _PC_PIPE_BUF:
