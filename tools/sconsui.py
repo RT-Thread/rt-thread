@@ -43,7 +43,7 @@ class CmdExecutor(threading.Thread):
         self.child = None
 
     def run(self):
-        global executor
+        global executor, builder, lock
         
         if platform.system() == 'Windows':
             from win32spawn import Win32Spawn
@@ -182,6 +182,16 @@ class SconsUI():
         if os.environ.has_key('RTT_ROOT'):
             self.RTTRoot.set_path(os.environ['RTT_ROOT'])
         
+        if self.RTTRoot.get_path() == '':
+            rtt_root = ''
+            # detect RT-Thread directory 
+            if os.path.exists(os.path.join('..', 'include', 'rtthread.h')):
+                rtt_root = os.path.join('..')
+            elif os.path.exists(os.path.join('..', '..', 'include', 'rtthread.h')):
+                rtt_root = os.path.join('..', '..')
+            if rtt_root:
+                self.RTTRoot.set_path(os.path.abspath(rtt_root))
+
         # detect compiler path
         if platform.system() == 'Windows':
             # Keil MDK
@@ -388,22 +398,15 @@ class SconsUI():
         exit(0)
 
 def StartSConsUI(path=None):
-    global val, root
+    global val, root, builder, lock
     root = Tk()
     root.title('RT-Thread SCons UI')
-    root.geometrygeometry('590x510+50+50')
+    #root.geometrygeometry('590x510+50+50')
     lock = threading.RLock()
     builder = SconsUI(root)
     if path:
         builder.BSPRoot.set_path(path)
-    root.mainloop
+    root.mainloop()
 
 if __name__ == '__main__':
-    global val, root
-    root = Tk()
-    root.title('scons_builder')
-    root.geometry('590x510+50+50')
-    lock = threading.RLock()
-    scons_ui = SconsUI(root)
-    builder = scons_ui
-    root.mainloop()
+    StartSConsUI()

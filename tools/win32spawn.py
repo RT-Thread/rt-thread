@@ -139,7 +139,8 @@ class Win32Spawn(object):
             try:
                 finished = 0
                 hr, data = win32file.ReadFile(handle, bytesToRead, None)
-                self.queue.put_nowait(data)
+                if data:
+                    self.queue.put_nowait(data)
             except win32api.error:
                 finished = 1
 
