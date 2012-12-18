@@ -28,11 +28,11 @@ static rt_list_t rt_timer_list = RT_LIST_OBJECT_INIT(rt_timer_list);
 
 #ifdef RT_USING_TIMER_SOFT
 #ifndef RT_TIMER_THREAD_STACK_SIZE
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_TIMER_THREAD_STACK_SIZE     512
 #endif
 
 #ifndef RT_TIMER_THREAD_PRIO
-#define RT_TIMER_THREAD_PRIO        0
+#define RT_TIMER_THREAD_PRIO           0
 #endif
 
 /* soft timer list */
@@ -68,8 +68,10 @@ void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer))
 #endif
 
 static void _rt_timer_init(rt_timer_t timer,
-                           void (*timeout)(void *parameter), void *parameter,
-                           rt_tick_t time, rt_uint8_t flag)
+                           void (*timeout)(void *parameter),
+                           void      *parameter,
+                           rt_tick_t  time,
+                           rt_uint8_t flag)
 {
     /* set flag */
     timer->parent.flag  = flag;
@@ -116,10 +118,12 @@ static rt_tick_t rt_timer_list_next_timeout(rt_list_t *timer_list)
  * @param time the tick of timer
  * @param flag the flag of timer
  */
-void rt_timer_init(rt_timer_t timer,
+void rt_timer_init(rt_timer_t  timer,
                    const char *name,
-                   void (*timeout)(void *parameter), void *parameter,
-                   rt_tick_t time, rt_uint8_t flag)
+                   void (*timeout)(void *parameter),
+                   void       *parameter,
+                   rt_tick_t   time,
+                   rt_uint8_t  flag)
 {
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
@@ -172,8 +176,11 @@ RTM_EXPORT(rt_timer_detach);
  *
  * @return the created timer object
  */
-rt_timer_t rt_timer_create(const char *name, void (*timeout)(void *parameter),
-        void *parameter, rt_tick_t time, rt_uint8_t flag)
+rt_timer_t rt_timer_create(const char *name,
+                           void (*timeout)(void *parameter),
+                           void       *parameter,
+                           rt_tick_t   time,
+                           rt_uint8_t  flag)
 {
     struct rt_timer *timer;
 
@@ -240,8 +247,11 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
-    /* get timeout tick, the max timeout tick shall not great than RT_TICK_MAX/2 */
-    RT_ASSERT(timer->init_tick < RT_TICK_MAX/2);
+    /*
+     * get timeout tick,
+     * the max timeout tick shall not great than RT_TICK_MAX/2
+     */
+    RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
     timer->timeout_tick = rt_tick_get() + timer->init_tick;
 
     /* disable interrupt */
@@ -268,7 +278,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
          * It supposes that the new tick shall less than the half duration of
          * tick max.
          */
-        if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX/2)
+        if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX / 2)
         {
             rt_list_insert_before(n, &(timer->list));
             break;
@@ -416,7 +426,7 @@ void rt_timer_check(void)
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
-                    (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+                (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
@@ -471,7 +481,7 @@ void rt_soft_timer_check(void)
          * It supposes that the new tick shall less than the half duration of
          * tick max.
          */
-        if ((current_tick - t->timeout_tick) < RT_TICK_MAX/2)
+        if ((current_tick - t->timeout_tick) < RT_TICK_MAX / 2)
         {
             RT_OBJECT_HOOK_CALL(rt_timer_timeout_hook, (t));
 
@@ -490,7 +500,7 @@ void rt_soft_timer_check(void)
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
-                    (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+                (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
@@ -573,9 +583,12 @@ void rt_system_timer_thread_init(void)
     /* start software timer thread */
     rt_thread_init(&timer_thread,
                    "timer",
-                   rt_thread_timer_entry, RT_NULL,
-                   &timer_thread_stack[0], sizeof(timer_thread_stack),
-                   RT_TIMER_THREAD_PRIO, 10);
+                   rt_thread_timer_entry,
+                   RT_NULL,
+                   &timer_thread_stack[0],
+                   sizeof(timer_thread_stack),
+                   RT_TIMER_THREAD_PRIO,
+                   10);
 
     /* startup */
     rt_thread_startup(&timer_thread);
