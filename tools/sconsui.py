@@ -46,32 +46,37 @@ class CmdExecutor(threading.Thread):
         global executor, builder, lock
         
         if platform.system() == 'Windows':
-            from win32spawn import Win32Spawn
-            
-            subprocess = Win32Spawn(self.cmd)
-            subprocess.start_pipe()
-            
-            builder.progressbar.start()
-            while not subprocess.is_terminated or subprocess.qsize() > 0:
-                try:
-                    line = subprocess.get(timeout=1)
-                    line = line.replace('\r', '')
-                    if line:
-                        lock.acquire()
-                        builder.output.see(END)
-                        builder.output.insert(END, line)
-                        lock.release()
-                except:
-                    pass
-
-            builder.progressbar.stop()
+            try:
+                from win32spawn import Win32Spawn
+                subprocess = Win32Spawn(self.cmd)
+                subprocess.start_pipe()
+                
+                builder.progressbar.start()
+                while not subprocess.is_terminated or subprocess.qsize() > 0:
+                    try:
+                        line = subprocess.get(timeout=1)
+                        line = line.replace('\r', '')
+                        if line:
+                            lock.acquire()
+                            builder.output.see(END)
+                            builder.output.insert(END, line)
+                            lock.release()
+                    except:
+                        pass
+                
+                builder.progressbar.stop()
+            except:
+                pass
 
         executor = None
+        if builder.is_makeing_project:
+            builder.output.insert(END, 'Done')
+            builder.is_makeing_project = False
 
 def ExecCmd(cmd):
     global executor
     if executor:
-        print 'cmd not exit, return'
+        print 'last task does not exit'
         return
 
     executor = CmdExecutor(cmd, builder)
@@ -127,26 +132,33 @@ class SconsUI():
         notebook.add(page_building, padding=3)
         notebook.tab(0, text='Build', underline="-1")
         self.setup_building_ui(page_building)
+        self.building_page = page_building
         
         # make project page
         page_project = ttk.Frame(notebook)
         notebook.add(page_project, padding = 3)
         notebook.tab(1, text = 'Project', underline = '-1')
         self.setup_project_ui(page_project)
+        self.project_page = page_project
         
         # setting page 
         page_setting = ttk.Frame(notebook)
         notebook.add(page_setting, padding = 3)
         notebook.tab(2, text = 'Setting', underline = '-1')
         self.setup_setting_ui(page_setting)
+        self.setting_page = page_setting
         
         padding = ttk.Frame(master)
         padding.pack(fill=X)
         quit = ttk.Button(padding, text='Quit', command = self.quit)
         quit.pack(side=RIGHT)
 
+        # set notebook to self
+        self.notebook = notebook
+        
         # read setting 
         self.read_setting()
+        self.is_makeing_project = False
         
     def read_setting(self):
         import platform
@@ -359,10 +371,28 @@ class SconsUI():
         os.environ['RTT_EXEC_PATH'] = exec_path
         
         return command 
+    
+    def check_path(self):
+        result = True
         
+        if self.BSPRoot.get_path() == '':
+            result = False
+        
+        if self.RTTRoot.get_path() == '':
+            result = False
+        
+        if not result:
+            tkMessageBox.showinfo("RT-Thread SCons UI",
+                                    "Folder is empty, please choose correct directory.")
+
+        return result
+
     def do_build(self):
         self.prepare_build()
         command = 'scons'
+
+        if not self.check_path():
+            return
 
         bsp = self.BSPRoot.get_path()
         os.chdir(bsp)
@@ -374,6 +404,9 @@ class SconsUI():
     def do_clean(self):
         self.prepare_build()
         command = 'scons -c'
+
+        if not self.check_path():
+            return
 
         bsp = self.BSPRoot.get_path()
         os.chdir(bsp)
@@ -387,11 +420,18 @@ class SconsUI():
         self.prepare_build()
         command = 'scons --target=%s -s' % ide
         
+        if not self.check_path():
+            return
+        
+        # select build page 
+        self.notebook.select(self.building_page)
+        
         bsp = self.BSPRoot.get_path()
         os.chdir(bsp)
 
         self.output.delete(1.0, END)
-        self.output.insert(END, 'make project ...\n')
+        self.output.insert(END, 'Generate project ...\n')
+        self.is_makeing_project = True
         ExecCmd(command)
 
     def quit(self):
