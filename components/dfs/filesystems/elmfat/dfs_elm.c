@@ -13,6 +13,7 @@
  * 2011-10-08     Bernard      fixed the block size in statfs.
  * 2011-11-23     Bernard      fixed the rename issue.
  * 2012-07-26     aozima       implement ff_memalloc and ff_memfree.
+ * 2012-12-19     Bernard      fixed the O_APPEND and lseek issue.
  */
  
 #include <rtthread.h>
@@ -327,7 +328,9 @@ int dfs_elm_open(struct dfs_fd *file)
 
 			if (file->flags & DFS_O_APPEND)
 			{
-				file->pos = f_lseek(fd, fd->fsize);
+				/* seek to the end of file */
+				f_lseek(fd, fd->fsize);
+				file->pos = fd->fptr;
 			}
 		}
 		else
@@ -452,6 +455,7 @@ int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
 		if (result == FR_OK)
 		{
 			/* return current position */
+			file->pos = fd->fptr;
 			return fd->fptr;
 		}
 	}
