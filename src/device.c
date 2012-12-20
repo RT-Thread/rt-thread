@@ -79,10 +79,14 @@ rt_err_t rt_device_init_all(void)
     information = &rt_object_container[RT_Object_Class_Device];
 
     /* for each device */
-    for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+    for (node  = information->object_list.next;
+         node != &(information->object_list);
+         node  = node->next)
     {
         rt_err_t (*init)(rt_device_t dev);
-        device = (struct rt_device *)rt_list_entry(node, struct rt_object, list);
+        device = (struct rt_device *)rt_list_entry(node,
+                                                   struct rt_object,
+                                                   list);
 
         /* get device init handler */
         init = device->init;
@@ -125,7 +129,9 @@ rt_device_t rt_device_find(const char *name)
 
     /* try to find device object */
     information = &rt_object_container[RT_Object_Class_Device];
-    for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+    for (node  = information->object_list.next;
+         node != &(information->object_list);
+         node  = node->next)
     {
         object = rt_list_entry(node, struct rt_object, list);
         if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
@@ -158,7 +164,7 @@ rt_err_t rt_device_init(rt_device_t dev)
 {
     rt_err_t result = RT_EOK;
     rt_err_t (*init)(rt_device_t dev);
-    
+
     RT_ASSERT(dev != RT_NULL);
 
     /* get device init handler */
@@ -221,8 +227,11 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
     }
 
     /* device is a stand alone device and opened */
-    if ((dev->flag & RT_DEVICE_FLAG_STANDALONE) && (dev->open_flag & RT_DEVICE_OFLAG_OPEN))
+    if ((dev->flag & RT_DEVICE_FLAG_STANDALONE) &&
+        (dev->open_flag & RT_DEVICE_OFLAG_OPEN))
+    {
         return -RT_EBUSY;
+    }
 
     /* call device open interface */
     open = dev->open;
