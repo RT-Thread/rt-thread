@@ -18,9 +18,9 @@
 
 #ifndef IDLE_THREAD_STACK_SIZE
 #if defined (RT_USING_HOOK) || defined(RT_USING_HEAP)
-#define IDLE_THREAD_STACK_SIZE	256
+#define IDLE_THREAD_STACK_SIZE  256
 #else
-#define IDLE_THREAD_STACK_SIZE	128
+#define IDLE_THREAD_STACK_SIZE  128
 #endif
 #endif
 
@@ -48,7 +48,7 @@ static void (*rt_thread_idle_hook)();
  */
 void rt_thread_idle_sethook(void (*hook)())
 {
-	rt_thread_idle_hook = hook;
+    rt_thread_idle_hook = hook;
 }
 
 /*@}*/
@@ -61,105 +61,108 @@ void rt_thread_idle_sethook(void (*hook)())
  */
 void rt_thread_idle_excute(void)
 {
-	/* check the defunct thread list */
-	if (!rt_list_isempty(&rt_thread_defunct))
-	{
-		rt_base_t lock;
-		rt_thread_t thread;
+    /* check the defunct thread list */
+    if (!rt_list_isempty(&rt_thread_defunct))
+    {
+        rt_base_t lock;
+        rt_thread_t thread;
 #ifdef RT_USING_MODULE
-		rt_module_t module = RT_NULL;
+        rt_module_t module = RT_NULL;
 #endif
-		RT_DEBUG_NOT_IN_INTERRUPT;
+        RT_DEBUG_NOT_IN_INTERRUPT;
 
-		/* disable interrupt */
-		lock = rt_hw_interrupt_disable();
+        /* disable interrupt */
+        lock = rt_hw_interrupt_disable();
 
-		/* re-check whether list is empty */
-		if (!rt_list_isempty(&rt_thread_defunct))
-		{
-			/* get defunct thread */
-			thread = rt_list_entry(rt_thread_defunct.next, struct rt_thread, tlist);
+        /* re-check whether list is empty */
+        if (!rt_list_isempty(&rt_thread_defunct))
+        {
+            /* get defunct thread */
+            thread = rt_list_entry(rt_thread_defunct.next,
+                                   struct rt_thread,
+                                   tlist);
 #ifdef RT_USING_MODULE
-			/* get thread's parent module */
-			module = (rt_module_t)thread->module_id;
+            /* get thread's parent module */
+            module = (rt_module_t)thread->module_id;
 
-			/* if the thread is module's main thread */
-			if (module != RT_NULL && module->module_thread == thread)
-			{
-				/* detach module's main thread */
-				module->module_thread = RT_NULL;
-			}
+            /* if the thread is module's main thread */
+            if (module != RT_NULL && module->module_thread == thread)
+            {
+                /* detach module's main thread */
+                module->module_thread = RT_NULL;
+            }
 #endif
-			/* remove defunct thread */
-			rt_list_remove(&(thread->tlist));
-			/* invoke thread cleanup */
-			if (thread->cleanup != RT_NULL)
-				thread->cleanup(thread);
+            /* remove defunct thread */
+            rt_list_remove(&(thread->tlist));
+            /* invoke thread cleanup */
+            if (thread->cleanup != RT_NULL)
+                thread->cleanup(thread);
 
-			/* if it's a system object, not delete it */
-			if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-			{
-				/* enable interrupt */
-				rt_hw_interrupt_enable(lock);
-				return;
-			}
-		}
-		else
-		{
-			/* enable interrupt */
-			rt_hw_interrupt_enable(lock);
+            /* if it's a system object, not delete it */
+            if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+            {
+                /* enable interrupt */
+                rt_hw_interrupt_enable(lock);
 
-			/* may the defunct thread list is removed by others, just return */
-			return;
-		}
+                return;
+            }
+        }
+        else
+        {
+            /* enable interrupt */
+            rt_hw_interrupt_enable(lock);
 
-		/* enable interrupt */
-		rt_hw_interrupt_enable(lock);
+            /* may the defunct thread list is removed by others, just return */
+            return;
+        }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(lock);
 
 #ifdef RT_USING_HEAP
 #if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-		/* the thread belongs to an application module */
-		if (thread->flags & RT_OBJECT_FLAG_MODULE)
-			rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
-		else
+        /* the thread belongs to an application module */
+        if (thread->flags & RT_OBJECT_FLAG_MODULE)
+            rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
+        else
 #endif
-		/* release thread's stack */
-		rt_free(thread->stack_addr);
-		/* delete thread object */
-		rt_object_delete((rt_object_t)thread);
+        /* release thread's stack */
+        rt_free(thread->stack_addr);
+        /* delete thread object */
+        rt_object_delete((rt_object_t)thread);
 #endif
 
 #ifdef RT_USING_MODULE
-		if (module != RT_NULL)
-		{
-			extern rt_err_t rt_module_destroy(rt_module_t module);
+        if (module != RT_NULL)
+        {
+            extern rt_err_t rt_module_destroy(rt_module_t module);
 
-			/* if sub thread list and main thread are all empty */
-			if ((module->module_thread == RT_NULL) &&
-				rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list) )
-			{
-				module->nref --;
-			}
+            /* if sub thread list and main thread are all empty */
+            if ((module->module_thread == RT_NULL) &&
+                rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list))
+            {
+                module->nref --;
+            }
 
-			/* destroy module */
-			if (module->nref == 0)
-				rt_module_destroy(module);
-		}
+            /* destroy module */
+            if (module->nref == 0)
+                rt_module_destroy(module);
+        }
 #endif
-	}
+    }
 }
 
 static void rt_thread_idle_entry(void *parameter)
 {
-	while (1)
-	{
-		#ifdef RT_USING_HOOK
-		if (rt_thread_idle_hook != RT_NULL)
-			rt_thread_idle_hook();
-		#endif
+    while (1)
+    {
+        #ifdef RT_USING_HOOK
+        if (rt_thread_idle_hook != RT_NULL)
+            rt_thread_idle_hook();
+        #endif
 
-		rt_thread_idle_excute();
-	}
+        rt_thread_idle_excute();
+    }
 }
 
 /**
@@ -171,13 +174,16 @@ static void rt_thread_idle_entry(void *parameter)
  */
 void rt_thread_idle_init(void)
 {
-	/* initialize thread */
-	rt_thread_init(&idle,
-		"tidle",
-		rt_thread_idle_entry, RT_NULL,
-		&rt_thread_stack[0], sizeof(rt_thread_stack),
-		RT_THREAD_PRIORITY_MAX - 1, 32);
+    /* initialize thread */
+    rt_thread_init(&idle,
+                   "tidle",
+                   rt_thread_idle_entry,
+                   RT_NULL,
+                   &rt_thread_stack[0],
+                   sizeof(rt_thread_stack),
+                   RT_THREAD_PRIORITY_MAX - 1,
+                   32);
 
-	/* startup */
-	rt_thread_startup(&idle);
+    /* startup */
+    rt_thread_startup(&idle);
 }
