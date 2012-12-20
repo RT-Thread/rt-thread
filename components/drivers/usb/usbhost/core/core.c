@@ -100,8 +100,8 @@ rt_err_t rt_usb_attatch_instance(uinst_t uinst)
     /* set device max packet size */
     uinst->max_packet_size = uinst->dev_desc.bMaxPacketSize0;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("get device descriptor length %d\n", 
-        dev_desc->bLength));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("get device descriptor length %d\n",
+                                dev_desc->bLength));
     
     /* get full device descriptor again */
     ret = rt_usb_get_descriptor
@@ -152,7 +152,8 @@ rt_err_t rt_usb_attatch_instance(uinst_t uinst)
         }
 
         RT_DEBUG_LOG(RT_DEBUG_USB, ("interface class 0x%x, subclass 0x%x\n", 
-            intf_desc->bInterfaceClass, intf_desc->bInterfaceSubClass));
+                                    intf_desc->bInterfaceClass,
+                                    intf_desc->bInterfaceSubClass));
 
         /* find driver by class code found in interface descriptor */
         drv = rt_usb_class_driver_find(intf_desc->bInterfaceClass, 
@@ -406,8 +407,8 @@ rt_err_t rt_usb_get_interface_descriptor(ucfg_desc_t cfg_desc, int num,
             {
                 *intf_desc = (uintf_desc_t)desc;
 
-                RT_DEBUG_LOG(RT_DEBUG_USB, 
-                    ("rt_usb_get_interface_descriptor: %d\n", num));                
+                RT_DEBUG_LOG(RT_DEBUG_USB,
+                             ("rt_usb_get_interface_descriptor: %d\n", num));                
                 return RT_EOK;
             }
         }    
@@ -453,8 +454,8 @@ rt_err_t rt_usb_get_endpoint_descriptor(uintf_desc_t intf_desc, int num,
             {
                 *ep_desc = (uep_desc_t)desc;
 
-                RT_DEBUG_LOG(RT_DEBUG_USB, 
-                    ("rt_usb_get_endpoint_descriptor: %d\n", num));
+                RT_DEBUG_LOG(RT_DEBUG_USB,
+                             ("rt_usb_get_endpoint_descriptor: %d\n", num));
                 return RT_EOK;
             }
             else count++;

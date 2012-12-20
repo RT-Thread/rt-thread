@@ -223,7 +223,7 @@ static rt_err_t rt_usb_adk_run(void* arg)
         return -RT_EIO;
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_USB,("rt_usb_adk_run\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usb_adk_run\n"));
         
     dev_desc = &ifinst->uinst->dev_desc;
     if(dev_desc->idVendor == USB_ACCESSORY_VENDOR_ID && 
@@ -232,11 +232,11 @@ static rt_err_t rt_usb_adk_run(void* arg)
     {
         if(ifinst->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
     
-        RT_DEBUG_LOG(RT_DEBUG_USB,("found android accessory device\n"));        
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("found android accessory device\n"));        
     }
     else
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB,("switch device\n"));        
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("switch device\n"));        
         
         if((ret = rt_usb_adk_get_protocol(ifinst, &protocol)) != RT_EOK)
         {
@@ -263,12 +263,12 @@ static rt_err_t rt_usb_adk_run(void* arg)
         rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_SERIAL, _adk_serial);            
 
-        RT_DEBUG_LOG(RT_DEBUG_USB,("manufacturer %s\n", _adk_manufacturer));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("model %s\n", _adk_model));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("description %s\n", _adk_description));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("version %s\n", _adk_version));
-        RT_DEBUG_LOG(RT_DEBUG_USB,("uri %s\n", _adk_uri));       
-        RT_DEBUG_LOG(RT_DEBUG_USB,("serial %s\n", _adk_serial));               
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("manufacturer %s\n", _adk_manufacturer));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("model %s\n", _adk_model));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("description %s\n", _adk_description));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("version %s\n", _adk_version));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("uri %s\n", _adk_uri));       
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("serial %s\n", _adk_serial));               
         
         if((ret = rt_usb_adk_start(ifinst)) != RT_EOK)
         {

@@ -512,7 +512,8 @@ static rt_err_t _setup_request(udevice_t device, ureq_t setup)
     RT_ASSERT(setup != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("[\n"));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("setup_request_handler 0x%x\n", setup->request_type));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("setup_request_handler 0x%x\n",
+                                setup->request_type));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("value 0x%x\n", setup->value));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("length 0x%x\n", setup->length));
     RT_DEBUG_LOG(RT_DEBUG_USB, ("index 0x%x\n", setup->index));

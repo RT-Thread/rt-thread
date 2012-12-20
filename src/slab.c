@@ -364,8 +364,8 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 	/* initialize heap semaphore */
 	rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
-	RT_DEBUG_LOG(RT_DEBUG_SLAB,
-		("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n", heap_start, heap_end, limsize, npages));
+	RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
+                                 heap_start, heap_end, limsize, npages));
 
 	/* init pages */
 	rt_page_init((void *)heap_start, npages);
@@ -381,16 +381,16 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 
 	zone_page_cnt = zone_size / RT_MM_PAGE_SIZE;
 
-	RT_DEBUG_LOG(RT_DEBUG_SLAB,
-		("zone size 0x%x, zone page count 0x%x\n", zone_size, zone_page_cnt));
+	RT_DEBUG_LOG(RT_DEBUG_SLAB, ("zone size 0x%x, zone page count 0x%x\n",
+                                 zone_size, zone_page_cnt));
 
 	/* allocate memusage array */
 	limsize = npages * sizeof(struct memusage);
 	limsize = RT_ALIGN(limsize, RT_MM_PAGE_SIZE);
 	memusage = rt_page_alloc(limsize/RT_MM_PAGE_SIZE);
 
-	RT_DEBUG_LOG(RT_DEBUG_SLAB,
-		("memusage 0x%x, size 0x%x\n", (rt_uint32_t)memusage, limsize));
+	RT_DEBUG_LOG(RT_DEBUG_SLAB, ("memusage 0x%x, size 0x%x\n",
+                                 (rt_uint32_t)memusage, limsize));
 }
 
 /*
@@ -505,10 +505,11 @@ void *rt_malloc(rt_size_t size)
 		kup->type = PAGE_TYPE_LARGE;
 		kup->size = size >> RT_MM_PAGE_BITS;
 
-		RT_DEBUG_LOG(RT_DEBUG_SLAB, ("malloc a large memory 0x%x, page cnt %d, kup %d\n",
-			size,
-			size >> RT_MM_PAGE_BITS,
-			((rt_uint32_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
+		RT_DEBUG_LOG(RT_DEBUG_SLAB,
+                     ("malloc a large memory 0x%x, page cnt %d, kup %d\n",
+                      size,
+                      size >> RT_MM_PAGE_BITS,
+                      ((rt_uint32_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
 
 		/* lock heap */
 		rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
@@ -607,7 +608,8 @@ void *rt_malloc(rt_size_t size)
 			/* lock heap */
 			rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
-			RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n", (rt_uint32_t)z));
+			RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n",
+                                         (rt_uint32_t)z));
 
 			/* set message usage */
 			for (off = 0, kup = btokup(z); off < zone_page_cnt; off ++)
@@ -800,10 +802,10 @@ void rt_free(void *ptr)
 	{
 		rt_uint32_t addr = ((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
 		RT_DEBUG_LOG(RT_DEBUG_SLAB,
-			("free a memory 0x%x and align to 0x%x, kup index %d\n",
-			(rt_uint32_t)ptr,
-			(rt_uint32_t)addr,
-			((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
+                     ("free a memory 0x%x and align to 0x%x, kup index %d\n",
+                      (rt_uint32_t)ptr,
+                      (rt_uint32_t)addr,
+                      ((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
 	}
 #endif
 
@@ -825,7 +827,8 @@ void rt_free(void *ptr)
 		rt_sem_release(&heap_sem);
 
 		RT_DEBUG_LOG(RT_DEBUG_SLAB,
-			("free large memory block 0x%x, page count %d\n", (rt_uint32_t)ptr, size));
+                     ("free large memory block 0x%x, page count %d\n",
+                      (rt_uint32_t)ptr, size));
 
 		/* free this page */
 		rt_page_free(ptr, size);
@@ -868,7 +871,8 @@ void rt_free(void *ptr)
 	{
 		slab_zone **pz;
 
-		RT_DEBUG_LOG(RT_DEBUG_SLAB, ("free zone 0x%x\n", (rt_uint32_t)z, z->z_zoneindex));
+		RT_DEBUG_LOG(RT_DEBUG_SLAB, ("free zone 0x%x\n",
+                                     (rt_uint32_t)z, z->z_zoneindex));
 
 		/* remove zone from zone array list */
 		for (pz = &zone_array[z->z_zoneindex]; z != *pz; pz = &(*pz)->z_next)

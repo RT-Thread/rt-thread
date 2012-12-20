@@ -190,8 +190,8 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 	/* point to begin address of heap */
 	heap_ptr = (rt_uint8_t *)begin_align;
 
-	RT_DEBUG_LOG(RT_DEBUG_MEM,
-		("mem init, heap begin address 0x%x, size %d\n", (rt_uint32_t)heap_ptr, mem_size_aligned));
+	RT_DEBUG_LOG(RT_DEBUG_MEM, ("mem init, heap begin address 0x%x, size %d\n",
+                                (rt_uint32_t)heap_ptr, mem_size_aligned));
 
 	/* initialize the start of the heap */
 	mem = (struct heap_mem *)heap_ptr;
@@ -237,7 +237,8 @@ void *rt_malloc(rt_size_t size)
 		return RT_NULL;
 
 	if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
-		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n", size, RT_ALIGN(size, RT_ALIGN_SIZE)));
+		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
+                                    size, RT_ALIGN(size, RT_ALIGN_SIZE)));
 	else
 		RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d\n", size));
 
@@ -335,9 +336,10 @@ void *rt_malloc(rt_size_t size)
  			RT_ASSERT((rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
 			RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE-1)) == 0);
 
-			RT_DEBUG_LOG(RT_DEBUG_MEM, ("allocate memory at 0x%x, size: %d\n", 
-				(rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM),
-				(rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
+			RT_DEBUG_LOG(RT_DEBUG_MEM,
+                         ("allocate memory at 0x%x, size: %d\n", 
+                          (rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM),
+                          (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
 			RT_OBJECT_HOOK_CALL(rt_malloc_hook, (((void*)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM)), size));
 			
@@ -503,9 +505,10 @@ void rt_free(void *rmem)
 	/* Get the corresponding struct heap_mem ... */
 	mem = (struct heap_mem *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
 
-	RT_DEBUG_LOG(RT_DEBUG_MEM, ("release memory 0x%x, size: %d\n", 
-		(rt_uint32_t)rmem, 
-		(rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
+	RT_DEBUG_LOG(RT_DEBUG_MEM,
+                 ("release memory 0x%x, size: %d\n", 
+                  (rt_uint32_t)rmem, 
+                  (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
 
 	/* protect the heap from concurrent access */

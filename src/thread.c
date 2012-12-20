@@ -196,8 +196,8 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 	thread->number_mask = 1L << thread->current_priority;
 #endif
 
-	RT_DEBUG_LOG(RT_DEBUG_THREAD,\
-		("startup a thread:%s with priority:%d\n", thread->name, thread->init_priority));
+	RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
+                                   thread->name, thread->init_priority));
 	/* change thread stat */
 	thread->stat = RT_THREAD_SUSPEND;
 	/* then resume it */
@@ -532,8 +532,8 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
 	if (thread->stat != RT_THREAD_READY)
 	{
-		RT_DEBUG_LOG(RT_DEBUG_THREAD,\
-			("thread suspend: thread disorder, %d\n", thread->stat));
+		RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, %d\n",
+                                       thread->stat));
 		
 		return -RT_ERROR;
 	}
@@ -570,8 +570,8 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
 	if (thread->stat != RT_THREAD_SUSPEND)
 	{
-		RT_DEBUG_LOG(RT_DEBUG_THREAD, \
-			("thread resume: thread disorder, %d\n", thread->stat));
+		RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
+                                       thread->stat));
 
 		return -RT_ERROR;
 	}

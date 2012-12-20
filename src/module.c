@@ -140,8 +140,8 @@ static int rt_module_arm_relocate(struct rt_module *module,
         break;
     case R_ARM_ABS32:
         *where += (Elf32_Addr)sym_val;
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("R_ARM_ABS32: %x -> %x\n", where, *where));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_ABS32: %x -> %x\n",
+                                       where, *where));
         break;
     case R_ARM_PC24:
     case R_ARM_PLT32:
@@ -153,8 +153,8 @@ static int rt_module_arm_relocate(struct rt_module *module,
         tmp = sym_val - (Elf32_Addr)where + (addend << 2);
         tmp >>= 2;
         *where = (*where & 0xff000000) | (tmp & 0x00ffffff);
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("R_ARM_PC24: %x -> %x\n", where, *where));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_PC24: %x -> %x\n",
+                                       where, *where));
         break;
     case R_ARM_REL32:
         *where += sym_val - (Elf32_Addr)where;
@@ -169,24 +169,21 @@ static int rt_module_arm_relocate(struct rt_module *module,
     case R_ARM_GLOB_DAT:
     case R_ARM_JUMP_SLOT:
         *where = (Elf32_Addr)sym_val;
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n",
-                      where, *where, sym_val));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x\n",
+                                       where, *where, sym_val));
         break;
 #if 0        /* To do */
     case R_ARM_GOT_BREL:
         temp   = (Elf32_Addr)sym_val;
         *where = (Elf32_Addr)&temp;
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("R_ARM_GOT_BREL: 0x%x -> 0x%x 0x%x\n",
-                      where, *where, sym_val));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_GOT_BREL: 0x%x -> 0x%x 0x%x\n",
+                                       where, *where, sym_val));
         break;
 #endif
     case R_ARM_RELATIVE:
         *where = (Elf32_Addr)sym_val + *where;
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("R_ARM_RELATIVE: 0x%x -> 0x%x 0x%x\n",
-                      where, *where, sym_val));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_RELATIVE: 0x%x -> 0x%x 0x%x\n",
+                                       where, *where, sym_val));
         break;
     case R_ARM_THM_CALL:
     case R_ARM_THM_JUMP24:
@@ -431,9 +428,9 @@ static struct rt_module *_load_shared_object(const char *name,
         {
             Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
 
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("relocate symbol %s shndx %d\n",
-                          strtab + sym->st_name, sym->st_shndx));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol %s shndx %d\n",
+                                           strtab + sym->st_name,
+                                           sym->st_shndx));
 
             if ((sym->st_shndx != SHT_NULL) ||
                 (ELF_ST_BIND(sym->st_info) == STB_LOCAL))
@@ -445,8 +442,8 @@ static struct rt_module *_load_shared_object(const char *name,
             {
                 Elf32_Addr addr;
 
-                RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                             ("relocate symbol: %s\n", strtab + sym->st_name));
+                RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol: %s\n",
+                                               strtab + sym->st_name));
 
                 /* need to resolve symbol in kernel symbol table */
                 addr = rt_module_symbol_find((const char *)(strtab + sym->st_name));
@@ -592,9 +589,8 @@ static struct rt_module* _load_relocated_object(const char *name,
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("load text 0x%x, size %d\n",
-                          ptr, shdr[index].sh_size));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("load text 0x%x, size %d\n",
+                                           ptr, shdr[index].sh_size));
             ptr += shdr[index].sh_size;
         }
 
@@ -629,9 +625,8 @@ static struct rt_module* _load_relocated_object(const char *name,
         {
             rt_memset(ptr, 0, shdr[index].sh_size);
             bss_addr = (rt_uint32_t)ptr;
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("load bss 0x%x, size %d,\n",
-                          ptr, shdr[index].sh_size));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("load bss 0x%x, size %d,\n",
+                                           ptr, shdr[index].sh_size));
         }
     }
 
@@ -666,8 +661,8 @@ static struct rt_module* _load_relocated_object(const char *name,
         {
             Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
 
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("relocate symbol: %s\n", strtab + sym->st_name));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol: %s\n",
+                                           strtab + sym->st_name));
 
             if (sym->st_shndx != STN_UNDEF)
             {
@@ -712,17 +707,16 @@ static struct rt_module* _load_relocated_object(const char *name,
 
                 if (ELF32_R_TYPE(rel->r_info) != R_ARM_V4BX)
                 {
-                    RT_DEBUG_LOG(RT_DEBUG_MODULE, 
-                                 ("relocate symbol: %s\n",
-                                  strtab + sym->st_name));
+                    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol: %s\n",
+                                                   strtab + sym->st_name));
 
                     /* need to resolve symbol in kernel symbol table */
                     addr = rt_module_symbol_find((const char *)(strtab + sym->st_name));
                     if (addr != (Elf32_Addr)RT_NULL)
                     {
                         rt_module_arm_relocate(module, rel, addr);
-                        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                                     ("symbol addr 0x%x\n", addr));
+                        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("symbol addr 0x%x\n",
+                                                       addr));
                     }
                     else
                         rt_kprintf("Module: can't find %s in kernel symbol table\n",
@@ -826,8 +820,8 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
                              module->thread_priority,
                              10);
 
-        RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                     ("thread entry 0x%x\n", module->module_entry));
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("thread entry 0x%x\n",
+                                       module->module_entry));
 
         /* set module id */
         module->module_thread->module_id = (void *)module;
@@ -982,9 +976,8 @@ rt_err_t rt_module_destroy(rt_module_t module)
     RT_ASSERT(module != RT_NULL);
     RT_ASSERT(module->nref == 0);
 
-    RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                 ("rt_module_destroy: %8.*s\n",
-                  RT_NAME_MAX, module->parent.name));
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_destroy: %8.*s\n",
+                                   RT_NAME_MAX, module->parent.name));
 
     /* module has entry point */
     if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
@@ -1295,8 +1288,8 @@ static void *rt_module_malloc_page(rt_size_t npages)
     self_module->page_cnt ++;
 
     RT_ASSERT(self_module->page_cnt <= PAGE_COUNT_MAX);
-    RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                 ("rt_module_malloc_page 0x%x %d\n", chunk, npages));
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc_page 0x%x %d\n",
+                                   chunk, npages));
 
     return chunk;
 }
@@ -1321,8 +1314,8 @@ static void rt_module_free_page(rt_module_t module,
     self_module = rt_module_self();
     RT_ASSERT(self_module != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                 ("rt_module_free_page 0x%x %d\n", page_ptr, npages));
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_free_page 0x%x %d\n",
+                                   page_ptr, npages));
     rt_page_free(page_ptr, npages);
 
     page = (struct rt_page_info *)module->page_array;
@@ -1399,8 +1392,8 @@ void *rt_module_malloc(rt_size_t size)
             b->size = nunits;
             *prev   = n;
 
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("rt_module_malloc 0x%x, %d\n", b + 1, size));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc 0x%x, %d\n",
+                                           b + 1, size));
             rt_sem_release(&mod_sem);
 
             return (void *)(b + 1);
@@ -1411,8 +1404,8 @@ void *rt_module_malloc(rt_size_t size)
             /* this node fit, remove this node */
             *prev = b->next;
 
-            RT_DEBUG_LOG(RT_DEBUG_MODULE,
-                         ("rt_module_malloc 0x%x, %d\n", b + 1, size));
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc 0x%x, %d\n",
+                                           b + 1, size));
 
             rt_sem_release(&mod_sem);
 
