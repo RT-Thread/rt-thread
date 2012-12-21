@@ -283,10 +283,11 @@ RTM_EXPORT(rt_thread_detach);
  * @return the created thread object
  */
 rt_thread_t rt_thread_create(const char *name,
-    void (*entry)(void *parameter), void *parameter,
-    rt_uint32_t stack_size,
-    rt_uint8_t priority,
-    rt_uint32_t tick)
+                             void (*entry)(void *parameter),
+                             void       *parameter,
+                             rt_uint32_t stack_size,
+                             rt_uint8_t  priority,
+                             rt_uint32_t tick)
 {
     struct rt_thread *thread;
     void *stack_start;
