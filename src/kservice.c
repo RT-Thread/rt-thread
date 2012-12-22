@@ -17,6 +17,7 @@
  * 2010-04-15     Bernard      remove weak definition on ICCM16C compiler
  * 2012-07-18     Arda         add the alignment display for signed integer
  * 2012-11-23     Bernard      fix IAR compiler error. 
+ * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
  */
 
 #include <rtthread.h>
@@ -1077,7 +1078,14 @@ void rt_kprintf(const char *fmt, ...)
 	static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
 	va_start(args, fmt);
-	length = vsnprintf(rt_log_buf, sizeof(rt_log_buf), fmt, args);
+	/* the return value of vsnprintf is the number of bytes that would be
+	 * written to buffer had if the size of the buffer been sufficiently
+	 * large excluding the terminating null byte. If the output string
+	 * would be larger than the rt_log_buf, we have to adjust the output
+	 * length. */
+	length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
+	if (length > RT_CONSOLEBUF_SIZE - 1)
+		length = RT_CONSOLEBUF_SIZE - 1;
 #ifdef RT_USING_DEVICE
 	if (_console_device == RT_NULL)
 	{
