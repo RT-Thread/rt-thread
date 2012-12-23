@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2012-09-20     Bernard      Change the name to components.c
  *                             And all components related header files.
+ * 2012-12-23     Bernard      fix the pthread initialization issue.
  */
 #include "components.h"
 
@@ -76,10 +77,12 @@ void rt_components_init(void)
 
 #ifdef RT_USING_NEWLIB
 	libc_system_init(RT_CONSOLE_DEVICE_NAME);
-#endif
+#else
 
+	/* the pthread system initialization will be initiallized in libc */
 #ifdef RT_USING_PTHREADS 
 	pthread_system_init();
+#endif
 #endif
 
 #ifdef RT_USING_RTGUI
