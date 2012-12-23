@@ -1,7 +1,7 @@
 /*
- * File      : cpu.c
+ * File      : cpuport.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -12,6 +12,7 @@
  * 2010-01-25     Bernard      first version
  * 2012-05-31     aozima       Merge all of the C source code into cpuport.c
  * 2012-08-17     aozima       fixed bug: store r8 - r11.
+ * 2012-12-23     aozima       stack addr align to 8byte.
  */
 
 #include <rtthread.h>
@@ -41,7 +42,7 @@ struct stack_frame
     rt_uint32_t r9;
     rt_uint32_t r10;
     rt_uint32_t r11;
-	
+
     struct exception_stack_frame exception_stack_frame;
 };
 
@@ -59,18 +60,21 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  *
  * @return stack address
  */
-rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-                             rt_uint8_t *stack_addr, void *texit)
+rt_uint8_t *rt_hw_stack_init(void *tentry,
+                             void *parameter,
+                             rt_uint8_t *stack_addr,
+                             void *texit)
 {
     struct stack_frame * stack_frame;
     rt_uint8_t * stk;
     unsigned long i;
 
     stk = stack_addr + sizeof(rt_uint32_t);
-
+    stk = (rt_uint8_t*)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
     stk -= sizeof(struct stack_frame);
+
     stack_frame = (struct stack_frame *)stk;
-	
+
     /* init all register */
     for(i=0; i<sizeof(struct stack_frame)/sizeof(rt_uint32_t); i++)
     {
@@ -92,6 +96,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 
 extern long list_thread(void);
 extern rt_thread_t rt_current_thread;
+/**
+ * fault exception handling
+ */
 void rt_hw_hard_fault_exception(struct exception_stack_frame* contex)
 {
     rt_kprintf("psr: 0x%08x\n", contex->psr);

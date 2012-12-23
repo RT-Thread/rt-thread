@@ -14,6 +14,7 @@
  * 2011-12-31     aozima       fixed stack align issues.
  * 2012-01-01     aozima       support context switch load/store FPU register.
  * 2012-12-11     lgnq         fixed the coding style.
+ * 2012-12-23     aozima       stack addr align to 8byte.
  */
 
 #include <rtthread.h>
@@ -106,6 +107,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     unsigned long       i;
 
     stk         = stack_addr + sizeof(rt_uint32_t);
+    stk = (rt_uint8_t*)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
     stk        -= sizeof(struct stack_frame);
 
     stack_frame = (struct stack_frame *)stk;
