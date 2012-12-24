@@ -64,6 +64,8 @@
 
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
+// <bool name=RT_USING_DEVICE_IPC description="Using IPC in Device Driver Framework" default="true" />
+#define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
 // <bool name="RT_USING_UART0_0" description="Using UART0_0" default="true" />

@@ -136,6 +136,7 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>7</TargetSelection>
@@ -344,6 +345,7 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -359,6 +361,7 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -547,6 +550,26 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
         </Group>

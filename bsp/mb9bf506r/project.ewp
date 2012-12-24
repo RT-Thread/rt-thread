@@ -1881,6 +1881,18 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
     </file>
   </group>
