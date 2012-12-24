@@ -63,6 +63,7 @@ typedef rt_uint32_t	mem_ptr_t;
 #define ESHUTDOWN 180
 #elif RT_USING_MINILIBC
 #include <errno.h>
+#define  EADDRNOTAVAIL  99  /* Cannot assign requested address */
 #else
 #define LWIP_PROVIDE_ERRNO
 #endif
