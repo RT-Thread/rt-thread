@@ -8,10 +8,10 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date			Author		Notes
- * 2009-01-05 	Bernard 	first version
- * 2011-02-14	onelife		Modify for EFM32
- * 2011-06-17	onelife		Merge all of the C source code into cpuport.c
+ * Date         Author      Notes
+ * 2009-01-05   Bernard     first version
+ * 2011-02-14   onelife     Modify for EFM32
+ * 2011-06-17   onelife     Merge all of the C source code into cpuport.c
  * 2012-12-23   aozima      stack addr align to 8byte.
  */
 
@@ -58,18 +58,18 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  *
  * @return stack address
  */
-rt_uint8_t *rt_hw_stack_init(void *tentry,
-                             void *parameter,
+rt_uint8_t *rt_hw_stack_init(void       *tentry,
+                             void       *parameter,
                              rt_uint8_t *stack_addr,
-                             void *texit)
+                             void       *texit)
 {
     struct stack_frame *stack_frame;
     rt_uint8_t         *stk;
     unsigned long       i;
 
-    stk         = stack_addr + sizeof(rt_uint32_t);
-    stk = (rt_uint8_t*)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
-    stk        -= sizeof(struct stack_frame);
+    stk  = stack_addr + sizeof(rt_uint32_t);
+    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
+    stk -= sizeof(struct stack_frame);
 
     stack_frame = (struct stack_frame *)stk;
 
@@ -109,16 +109,18 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame* contex)
     rt_kprintf("r00: 0x%08x\n", contex->r0);
 
     rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+
     while (1);
 }
 
 /**
  * shutdown CPU
  */
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 
