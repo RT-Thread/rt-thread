@@ -136,6 +136,7 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>6</TargetSelection>
@@ -344,6 +345,7 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls>--diag_suppress=870</MiscControls>
               <Define></Define>
@@ -359,6 +361,7 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -1414,6 +1417,11 @@
               <FilePath>..\..\components\rtgui\common\pixel_driver.c</FilePath>
             </File>
             <File>
+              <FileName>rtgui_mv_model.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\common\rtgui_mv_model.c</FilePath>
+            </File>
+            <File>
               <FileName>driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\server\driver.c</FilePath>
@@ -1562,6 +1570,11 @@
               <FileName>edit.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\rtgui\widgets\edit.c</FilePath>
+            </File>
+            <File>
+              <FileName>mv_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\rtgui\widgets\mv_view.c</FilePath>
             </File>
             <File>
               <FileName>plot.c</FileName>
