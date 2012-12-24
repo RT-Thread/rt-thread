@@ -5,6 +5,7 @@
 #include "sam7x_emac.h"
 #include "AT91SAM7X256.h"
 #include "lwipopts.h"
+#include "lwip/mem.h"
 
 #define MAX_ADDR_LEN 6
 
