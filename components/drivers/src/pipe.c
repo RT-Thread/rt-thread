@@ -42,7 +42,8 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
         {
             rt_thread_suspend(thread);
             /* waiting on suspended read list */
-            rt_list_insert_before(&(pipe->suspended_read_list), &(thread->tlist));
+            rt_list_insert_before(&(pipe->suspended_read_list),
+                                  &(thread->tlist));
             rt_hw_interrupt_enable(level);
 
             rt_schedule();
@@ -52,8 +53,9 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
             if (!rt_list_isempty(&pipe->suspended_write_list))
             {
                 /* get suspended thread */
-                thread = rt_list_entry(pipe->suspended_write_list.next, 
-                    struct rt_thread, tlist);
+                thread = rt_list_entry(pipe->suspended_write_list.next,
+                                       struct rt_thread,
+                                       tlist);
 
                 /* resume the write thread */
                 rt_thread_resume(thread);
@@ -102,7 +104,8 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
             /* pipe full, waiting on suspended write list */
             rt_thread_suspend(thread);
             /* waiting on suspended read list */
-            rt_list_insert_before(&(pipe->suspended_write_list), &(thread->tlist));
+            rt_list_insert_before(&(pipe->suspended_write_list),
+                                  &(thread->tlist));
             rt_hw_interrupt_enable(level);
 
             rt_schedule();
@@ -113,7 +116,8 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
             {
                 /* get suspended thread */
                 thread = rt_list_entry(pipe->suspended_read_list.next,
-                                       struct rt_thread, tlist);
+                                       struct rt_thread,
+                                       tlist);
 
                 /* resume the read thread */
                 rt_thread_resume(thread);
@@ -158,7 +162,7 @@ rt_err_t rt_pipe_create(const char *name, rt_size_t size)
         /* initialize suspended list */
         rt_list_init(&pipe->suspended_read_list);
         rt_list_init(&pipe->suspended_write_list);
-        
+
         /* initialize ring buffer */
         rt_ringbuffer_init(&pipe->ringbuffer, rb_memptr, size);
 

@@ -38,7 +38,7 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     rt_uint16_t size;
     rt_uint16_t mask;
     rt_uint16_t write_position;
-    
+
     RT_ASSERT(rb != RT_NULL);
 
     mask = rb->buffer_size - 1;
@@ -60,9 +60,11 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     }
     else
     {
-        memcpy(&rb->buffer_ptr[write_position], ptr,
+        memcpy(&rb->buffer_ptr[write_position],
+               ptr,
                rb->buffer_size - write_position);
-        memcpy(&rb->buffer_ptr[0], &ptr[rb->buffer_size - write_position],
+        memcpy(&rb->buffer_ptr[0],
+               &ptr[rb->buffer_size - write_position],
                length - (rb->buffer_size - write_position));
     }
     rb->write_index += length;
@@ -126,9 +128,11 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     else
     {
         /* copy first and second */
-        memcpy(ptr, &rb->buffer_ptr[read_position],
+        memcpy(ptr,
+               &rb->buffer_ptr[read_position],
                rb->buffer_size - read_position);
-        memcpy(&ptr[rb->buffer_size - read_position], &rb->buffer_ptr[0],
+        memcpy(&ptr[rb->buffer_size - read_position],
+               &rb->buffer_ptr[0],
                length - rb->buffer_size + read_position);
     }
     rb->read_index += length;

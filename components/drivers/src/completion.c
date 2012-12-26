@@ -60,7 +60,8 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             /* suspend thread */
             rt_thread_suspend(thread);
             /* add to suspended list */
-            rt_list_insert_before(&(completion->suspended_list), &(thread->tlist));
+            rt_list_insert_before(&(completion->suspended_list),
+                                  &(thread->tlist));
 
             /* current context checking */
             RT_DEBUG_NOT_IN_INTERRUPT;
@@ -69,7 +70,9 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             if (timeout > 0)
             {
                 /* reset the timeout of thread timer and start it */
-                rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &timeout);
+                rt_timer_control(&(thread->thread_timer),
+                                 RT_TIMER_CTRL_SET_TIME,
+                                 &timeout);
                 rt_timer_start(&(thread->thread_timer));
             }
             /* enable interrupt */
@@ -110,8 +113,10 @@ void rt_completion_done(struct rt_completion *completion)
         struct rt_thread *thread;
 
         /* get thread entry */
-        thread = rt_list_entry(completion->suspended_list.next, struct rt_thread, tlist);
-        
+        thread = rt_list_entry(completion->suspended_list.next,
+                               struct rt_thread,
+                               tlist);
+
         /* resume it */
         rt_thread_resume(thread);
         rt_hw_interrupt_enable(level);

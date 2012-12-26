@@ -94,7 +94,9 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         if (timeout > 0)
         {
             /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &timeout);
+            rt_timer_control(&(thread->thread_timer),
+                             RT_TIMER_CTRL_SET_TIME,
+                             &timeout);
             rt_timer_start(&(thread->thread_timer));
         }
 
@@ -119,7 +121,9 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         /* there is at least one thread in suspended list */
 
         /* get thread entry */
-        thread = rt_list_entry(queue->suspended_pop_list.next, struct rt_thread, tlist);
+        thread = rt_list_entry(queue->suspended_pop_list.next,
+                               struct rt_thread,
+                               tlist);
 
         /* resume it */
         rt_thread_resume(thread);
@@ -158,7 +162,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
     result = RT_EOK;
     thread = rt_thread_self();
-    mask = queue->size - 1;
+    mask   = queue->size - 1;
 
     level = rt_hw_interrupt_disable();
     while (queue->get_index == queue->put_index)
@@ -183,7 +187,9 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         if (timeout > 0)
         {
             /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &timeout);
+            rt_timer_control(&(thread->thread_timer),
+                             RT_TIMER_CTRL_SET_TIME,
+                             &timeout);
             rt_timer_start(&(thread->thread_timer));
         }
 
@@ -195,8 +201,9 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
         /* thread is waked up */
         result = thread->error;
-        level = rt_hw_interrupt_disable();
-        if (result != RT_EOK) goto __exit;
+        level  = rt_hw_interrupt_disable();
+        if (result != RT_EOK)
+            goto __exit;
     }
 
     *data_ptr = queue->queue[queue->get_index & mask].data_ptr;
@@ -209,11 +216,16 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     {
         queue->waiting_lwm = RT_FALSE;
 
-        /* there is at least one thread in suspended list and less than low water mark */
+        /*
+         * there is at least one thread in suspended list
+         * and less than low water mark
+         */
         if (!rt_list_isempty(&(queue->suspended_push_list)))
         {
             /* get thread entry */
-            thread = rt_list_entry(queue->suspended_push_list.next, struct rt_thread, tlist);
+            thread = rt_list_entry(queue->suspended_push_list.next,
+                                   struct rt_thread,
+                                   tlist);
 
             /* resume it */
             rt_thread_resume(thread);
@@ -284,7 +296,9 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         temp = rt_hw_interrupt_disable();
 
         /* get next suspend thread */
-        thread = rt_list_entry(queue->suspended_pop_list.next, struct rt_thread, tlist);
+        thread = rt_list_entry(queue->suspended_pop_list.next,
+                               struct rt_thread,
+                               tlist);
         /* set error code to RT_ERROR */
         thread->error = -RT_ERROR;
 
@@ -306,7 +320,9 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         temp = rt_hw_interrupt_disable();
 
         /* get next suspend thread */
-        thread = rt_list_entry(queue->suspended_push_list.next, struct rt_thread, tlist);
+        thread = rt_list_entry(queue->suspended_push_list.next,
+                               struct rt_thread,
+                               tlist);
         /* set error code to RT_ERROR */
         thread->error = -RT_ERROR;
 
