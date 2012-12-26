@@ -1,7 +1,7 @@
 /*
- * File      : dfs_def.h
+ * File      : dfs_posix.h
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -21,68 +21,68 @@
 #include <dfs_def.h>
 
 #ifndef RT_USING_NEWLIB
-#define O_RDONLY	DFS_O_RDONLY
-#define O_WRONLY 	DFS_O_WRONLY
-#define O_RDWR		DFS_O_RDWR
-#define O_ACCMODE	DFS_O_ACCMODE
-#define O_CREAT		DFS_O_CREAT
-#define O_EXCL		DFS_O_EXCL
-#define O_TRUNC		DFS_O_TRUNC
-#define O_APPEND	DFS_O_APPEND
-#define O_BINARY	DFS_O_BINARY
+#define O_RDONLY    DFS_O_RDONLY
+#define O_WRONLY    DFS_O_WRONLY
+#define O_RDWR      DFS_O_RDWR
+#define O_ACCMODE   DFS_O_ACCMODE
+#define O_CREAT     DFS_O_CREAT
+#define O_EXCL      DFS_O_EXCL
+#define O_TRUNC     DFS_O_TRUNC
+#define O_APPEND    DFS_O_APPEND
+#define O_BINARY    DFS_O_BINARY
 #define O_DIRECTORY DFS_O_DIRECTORY
 
-#define S_IFMT 		DFS_S_IFMT
-#define S_IFSOCK	DFS_S_IFSOCK
-#define S_IFLNK		DFS_S_IFLNK	
-#define S_IFREG		DFS_S_IFREG	
-#define S_IFBLK		DFS_S_IFBLK	
-#define S_IFDIR		DFS_S_IFDIR 
-#define S_IFCHR		DFS_S_IFCHR 
-#define S_IFIFO		DFS_S_IFIFO 
-#define S_ISUID		DFS_S_ISUID 
-#define S_ISGID		DFS_S_ISGID 
-#define S_ISVTX		DFS_S_ISVTX 
+#define S_IFMT      DFS_S_IFMT
+#define S_IFSOCK    DFS_S_IFSOCK
+#define S_IFLNK     DFS_S_IFLNK 
+#define S_IFREG     DFS_S_IFREG 
+#define S_IFBLK     DFS_S_IFBLK 
+#define S_IFDIR     DFS_S_IFDIR 
+#define S_IFCHR     DFS_S_IFCHR 
+#define S_IFIFO     DFS_S_IFIFO 
+#define S_ISUID     DFS_S_ISUID 
+#define S_ISGID     DFS_S_ISGID 
+#define S_ISVTX     DFS_S_ISVTX 
 
-#define S_ISLNK(m)	(((m) & DFS_S_IFMT) == DFS_S_IFLNK)
-#define S_ISREG(m)	(((m) & DFS_S_IFMT) == DFS_S_IFREG)
-#define S_ISDIR(m)	(((m) & DFS_S_IFMT) == DFS_S_IFDIR)
-#define S_ISCHR(m)	(((m) & DFS_S_IFMT) == DFS_S_IFCHR)
-#define S_ISBLK(m)	(((m) & DFS_S_IFMT) == DFS_S_IFBLK)
-#define S_ISFIFO(m)	(((m) & DFS_S_IFMT) == DFS_S_IFIFO)
-#define S_ISSOCK(m)	(((m) & DFS_S_IFMT) == DFS_S_IFSOCK)
+#define S_ISLNK(m)  (((m) & DFS_S_IFMT) == DFS_S_IFLNK)
+#define S_ISREG(m)  (((m) & DFS_S_IFMT) == DFS_S_IFREG)
+#define S_ISDIR(m)  (((m) & DFS_S_IFMT) == DFS_S_IFDIR)
+#define S_ISCHR(m)  (((m) & DFS_S_IFMT) == DFS_S_IFCHR)
+#define S_ISBLK(m)  (((m) & DFS_S_IFMT) == DFS_S_IFBLK)
+#define S_ISFIFO(m) (((m) & DFS_S_IFMT) == DFS_S_IFIFO)
+#define S_ISSOCK(m) (((m) & DFS_S_IFMT) == DFS_S_IFSOCK)
 
-#define S_IRWXU		DFS_S_IRWXU
-#define S_IRUSR		DFS_S_IRUSR
-#define S_IWUSR		DFS_S_IWUSR
-#define S_IXUSR		DFS_S_IXUSR
+#define S_IRWXU     DFS_S_IRWXU
+#define S_IRUSR     DFS_S_IRUSR
+#define S_IWUSR     DFS_S_IWUSR
+#define S_IXUSR     DFS_S_IXUSR
 
-#define S_IRWXG		DFS_S_IRWXG
-#define S_IRGRP		DFS_S_IRGRP
-#define S_IWGRP		DFS_S_IWGRP
-#define S_IXGRP		DFS_S_IXGRP
+#define S_IRWXG     DFS_S_IRWXG
+#define S_IRGRP     DFS_S_IRGRP
+#define S_IWGRP     DFS_S_IWGRP
+#define S_IXGRP     DFS_S_IXGRP
 
-#define S_IRWXO		DFS_S_IRWXO
-#define S_IROTH		DFS_S_IROTH
-#define S_IWOTH		DFS_S_IWOTH
-#define S_IXOTH		DFS_S_IXOTH
+#define S_IRWXO     DFS_S_IRWXO
+#define S_IROTH     DFS_S_IROTH
+#define S_IWOTH     DFS_S_IWOTH
+#define S_IXOTH     DFS_S_IXOTH
 
 #if defined(__CC_ARM)
 #include <stdio.h>
 #elif defined(_MSC_VER)
 #include <stdio.h>
 #else
-#define SEEK_SET	DFS_SEEK_SET
-#define SEEK_CUR	DFS_SEEK_CUR
-#define SEEK_END	DFS_SEEK_END
+#define SEEK_SET    DFS_SEEK_SET
+#define SEEK_CUR    DFS_SEEK_CUR
+#define SEEK_END    DFS_SEEK_END
 #endif
 
 typedef struct 
 {
-	int fd;		/* directory file */
-	char buf[512];
-	int num;
-	int cur;
+    int fd;     /* directory file */
+    char buf[512];
+    int num;
+    int cur;
 } DIR;
 
 /* directory api*/

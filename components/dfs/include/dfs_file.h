@@ -1,7 +1,7 @@
 /*
- * File      : dfs_file.c
+ * File      : dfs_file.h
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -12,8 +12,8 @@
  * 2005-01-26     Bernard      The first version.
  */
 
-#ifndef __DFS_RAW_H__
-#define __DFS_RAW_H__
+#ifndef __DFS_FILE_H__
+#define __DFS_FILE_H__
 
 #include <dfs_def.h>
 #include <dfs.h>
