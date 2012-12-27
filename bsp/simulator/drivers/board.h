@@ -29,4 +29,6 @@ int rt_hw_mtd_nand_init(void);
 int sst25vfxx_mtd_init(const char * nor_name, unsigned int block_start, unsigned int block_end);
 
 void rt_platform_init(void);
+
+void rt_hw_win32_low_cpu(void);
 #endif

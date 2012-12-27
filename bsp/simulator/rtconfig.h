@@ -2,6 +2,7 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+/* SECTION: port for visual stuido */
 #ifdef _MSC_VER
 #undef RT_USING_NEWLIB
 #undef RT_USING_MINILIBC
@@ -9,22 +10,7 @@
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
 #endif
 
-#define RT_USING_COMPONENTS_INIT
-
-#define RT_USING_MTD_NAND
-#define RT_USING_MTD_NOR
-
-//#define RT_USING_DFS_UFFS
-/* configration for uffs, more to see dfs_uffs.h and uffs_config.h */
-#define RT_USING_DFS_UFFS
-/* use ecc soft, the uffs will do all the things about ecc */
-#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
-/* enable this ,you need provide a mark_badblock/check_block funciton */
-#define RT_UFFS_USE_CHECK_MARK_FUNCITON
-
-#define RT_USING_DFS_JFFS2
-#define RT_USING_DFS_WINSHAREDIR
-
+/* SECTION: basic kernel options */
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
 
@@ -71,26 +57,35 @@
 
 /* SECTION: Memory Management */
 /* Using Memory Pool Management*/
-//#define RT_USING_MEMPOOL
+/* #define RT_USING_MEMPOOL */
 
 /* Using Dynamic Heap Management */
 #define RT_USING_HEAP
 
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
-//#define RT_TINY_SIZE
+/* #define RT_TINY_SIZE */
 
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
-//#define RT_USING_SERIAL
-//#define RT_USING_UART1
+/* #define RT_USING_SERIAL */
+/* #define RT_USING_UART1 */
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
 #define RT_CONSOLE_DEVICE_NAME	"sci0"
+
+/* SECTION: commponent opitions */
+#define RT_USING_COMPONENTS_INIT
+
+/* SECTION: MTD interface opitons */
+/* using mtd nand flash */
+#define RT_USING_MTD_NAND
+/* using mtd nor flash */
+#define RT_USING_MTD_NOR
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -101,6 +96,7 @@
 /* SECTION: device filesystem */
 #define RT_USING_DFS
 
+/* DFS: ELM FATFS options */
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
 /* Reentrancy (thread safe) of the FatFs module.  */
@@ -112,13 +108,31 @@
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
+/* DFS: network filesystem options */
+#define RT_USING_DFS_NFS
+
+/* DFS: uffs nand filesystem options */
+/* #define RT_USING_DFS_UFFS */
+/* configration for uffs, more to see dfs_uffs.h and uffs_config.h */
+/* use ecc soft, the uffs will do all the things about ecc */
+#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
+/* enable this ,you need provide a mark_badblock/check_block funciton */
+#define RT_UFFS_USE_CHECK_MARK_FUNCITON
+
+/* DFS: uffs nor flash filesystem options */
+#define RT_USING_DFS_JFFS2
+
+/* DFS: windows share dictory mounted to rt-thread/dfs  */
+/* only used in bsp/simulator */
+#define RT_USING_DFS_WINSHAREDIR
+
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			4
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -139,13 +153,13 @@
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
+#define RT_LWIP_IPADDR2	126
 #define RT_LWIP_IPADDR3	30
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192
 #define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
+#define RT_LWIP_GWADDR2	126
 #define RT_LWIP_GWADDR3	1
 
 /* mask address of target*/

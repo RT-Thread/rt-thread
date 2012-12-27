@@ -22,6 +22,10 @@ void rt_platform_init(void)
     sdl_start();
 #endif /* RT_USING_RTGUI */
 
+#ifdef WIN32
+
+	rt_thread_idle_sethook(rt_hw_win32_low_cpu);
+#endif
     rt_thread_delay(50);
     rt_device_init_all();
 }
