@@ -24,7 +24,7 @@ static rt_size_t room_size_x, room_size_y;
 static rt_size_t lattice_size_x, lattice_size_y;
 static struct rtgui_rect room_rect, lattice_rect;
 
-map_t*      map;
+map_t      *map;
 SNAKE_DIR   run_state;
 rt_int32_t  snake_len;
 rt_int32_t  food_num;
@@ -67,7 +67,7 @@ static void snake_draw(struct rtgui_widget *widget)
     }
 
     /* get room size, run once frist. */
-    if((room_size_x == 0) || (room_size_y == 0))
+    if ((room_size_x == 0) || (room_size_y == 0))
     {
         rt_size_t tmp;
 
@@ -133,7 +133,7 @@ static void snake_draw(struct rtgui_widget *widget)
     RTGUI_DC_FC(dc) = WALL_COLOR;
     rtgui_dc_draw_rect(dc, &rect);
 
-    for(i=1; i<lattice_size_y; i++)
+    for (i = 1; i < lattice_size_y; i++)
     {
         memcpy(&rect, &lattice_rect, sizeof(struct rtgui_rect));
         rect.x1 += 1;
@@ -142,7 +142,7 @@ static void snake_draw(struct rtgui_widget *widget)
                                       rect.y1 + (LATTICE_SIZE * i));
     }
 
-    for(i=1; i<lattice_size_x; i++)
+    for (i = 1; i < lattice_size_x; i++)
     {
         memcpy(&rect, &lattice_rect, sizeof(struct rtgui_rect));
         rect.y1 += 1;
@@ -156,9 +156,9 @@ static void snake_draw(struct rtgui_widget *widget)
         rt_uint32_t x, y;
         rt_bool_t first_node = RT_TRUE;
 
-        for (y=0; y<map->height; y++)
+        for (y = 0; y < map->height; y++)
         {
-            for (x=0; x<map->width; x++)
+            for (x = 0; x < map->width; x++)
             {
                 switch (map->range[y * map->width + x])
                 {
@@ -207,9 +207,9 @@ static void snake_update(struct rtgui_widget *widget)
     snake_fill_lattice(dc, second_node.x, second_node.y, SNAKE_COLOR);
     second_node = map->snake_flush[0];
 
-    for(i=0; i<3; i++)
+    for (i = 0; i < 3; i++)
     {
-        if(i < 2)
+        if (i < 2)
         {
             x = map->snake_flush[i].x;
             y = map->snake_flush[i].y;
@@ -220,7 +220,7 @@ static void snake_update(struct rtgui_widget *widget)
             y = map->food_flush[0].y;
         }
 
-        if((x >= 0) && (y >= 0))
+        if ((x >= 0) && (y >= 0))
         {
             switch (map->range[(map->width * y) + x])
             {
@@ -246,9 +246,9 @@ static void snake_update(struct rtgui_widget *widget)
 
 static void snake_handler(struct rtgui_widget *widget, rtgui_event_t *event)
 {
-    struct rtgui_event_kbd* ekbd;
+    struct rtgui_event_kbd *ekbd;
 
-    ekbd = (struct rtgui_event_kbd*) event;
+    ekbd = (struct rtgui_event_kbd *) event;
     if (ekbd->type == RTGUI_KEYDOWN)
     {
         switch (ekbd->key)
@@ -284,38 +284,38 @@ static rt_bool_t event_handler(struct rtgui_object *object, rtgui_event_t *event
     if (event->type == RTGUI_EVENT_PAINT)
     {
         rt_kprintf("RTGUI_EVENT_PAINT\r\n");
-        rtgui_win_event_handler((struct rtgui_object*)object, event);
+        rtgui_win_event_handler((struct rtgui_object *)object, event);
         snake_draw(widget);
         rtgui_timer_start(timer);
     }
     else if (event->type == RTGUI_EVENT_SHOW)
     {
         rt_kprintf("RTGUI_EVENT_SHOW\r\n");
-        rtgui_win_event_handler((struct rtgui_object*)object, event);
+        rtgui_win_event_handler((struct rtgui_object *)object, event);
         snake_draw(widget);
         rtgui_timer_start(timer);
     }
     else if (event->type == RTGUI_EVENT_HIDE)
     {
         rt_kprintf("RTGUI_EVENT_HIDE\r\n");
-        rtgui_win_event_handler((struct rtgui_object*)object, event);
+        rtgui_win_event_handler((struct rtgui_object *)object, event);
         rtgui_timer_stop(timer);
     }
     else if (event->type == RTGUI_EVENT_WIN_DEACTIVATE)
     {
         rt_kprintf("RTGUI_EVENT_WIN_DEACTIVATE\r\n");
-        rtgui_win_event_handler((struct rtgui_object*)object, event);
+        rtgui_win_event_handler((struct rtgui_object *)object, event);
         rtgui_timer_stop(timer);
     }
     else if (event->type == RTGUI_EVENT_KBD)
     {
-        rtgui_win_event_handler((struct rtgui_object*)object, event);
+        rtgui_win_event_handler((struct rtgui_object *)object, event);
         snake_handler(widget, event);
     }
     else
     {
         rt_kprintf("event->type:%d\r\n", event->type);
-        return rtgui_win_event_handler((struct rtgui_object*)object, event);
+        return rtgui_win_event_handler((struct rtgui_object *)object, event);
     }
 
     return RT_FALSE;
@@ -325,7 +325,7 @@ static void timeout(struct rtgui_timer *timer, void *parameter)
 {
     struct rtgui_widget *widget;
     SYS_STE ret;
-    
+
     if (!map)
         return;
 
@@ -355,26 +355,26 @@ static void timeout(struct rtgui_timer *timer, void *parameter)
 
         food_init(map, 1);
     }
-    
+
     widget = RTGUI_WIDGET(parameter);
     snake_update(widget);
 }
 
 void snake_main(void)
 {
-    struct rtgui_app* application;
-    struct rtgui_win* win;
-	rtgui_rect_t rect;
+    struct rtgui_app *application;
+    struct rtgui_win *win;
+    rtgui_rect_t rect;
 
     application = rtgui_app_create(rt_thread_self(), "sanke_app");
     if (application != RT_NULL)
     {
-		rtgui_get_screen_rect(&rect);
-		rtgui_set_mainwin_rect(&rect);
+        rtgui_get_screen_rect(&rect);
+        rtgui_set_mainwin_rect(&rect);
         win = rtgui_mainwin_create(RT_NULL,
                                    "sanke_win",
                                    RTGUI_WIN_STYLE_MAINWIN | RTGUI_WIN_STYLE_DESTROY_ON_CLOSE);
-        if(win == RT_NULL)
+        if (win == RT_NULL)
         {
             rt_kprintf("sanke_win create fail!\r\n");
             return;

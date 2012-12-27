@@ -14,7 +14,7 @@
 typedef struct
 {
     rt_int32_t x, y;
-}point_t;
+} point_t;
 
 typedef struct
 {
@@ -23,7 +23,7 @@ typedef struct
     rt_uint8_t *range;      // map, map->range[y * map->width + x]
     point_t snake_flush[2];
     point_t food_flush[1];
-}map_t;
+} map_t;
 
 typedef enum
 {
@@ -31,23 +31,23 @@ typedef enum
     SNAKE_DIR_DOWN,
     SNAKE_DIR_LEFT,
     SNAKE_DIR_RIGHT
-}SNAKE_DIR;
+} SNAKE_DIR;
 
 typedef enum
 {
     FOOD,       // 吃到水果
     OVER,       // 咬到自身
     NORMAL      // 正常行动
-}SYS_STE;
+} SYS_STE;
 
 typedef struct
 {
     point_t body;
     rt_list_t list;
-}snake_t;
+} snake_t;
 
 // 构造一个地图
-map_t* map_init(rt_uint32_t width, rt_uint32_t heigth);
+map_t *map_init(rt_uint32_t width, rt_uint32_t heigth);
 
 // 构造一条指定长度的蛇在指定点
 rt_bool_t snake_init(const point_t *start, const int length, const SNAKE_DIR dir, map_t *map);

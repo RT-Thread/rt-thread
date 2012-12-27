@@ -14,10 +14,10 @@ SNAKE_DIR prevdir, newdir;
 
 static SNAKE_DIR dir_adjust(SNAKE_DIR dir)
 {
-    if (    (SNAKE_DIR_UP == prevdir && SNAKE_DIR_DOWN != dir)
-            ||  (SNAKE_DIR_DOWN == prevdir && SNAKE_DIR_UP != dir)
-            ||  (SNAKE_DIR_LEFT == prevdir && SNAKE_DIR_RIGHT != dir)
-            ||  (SNAKE_DIR_RIGHT == prevdir && SNAKE_DIR_LEFT != dir)
+    if ((SNAKE_DIR_UP == prevdir && SNAKE_DIR_DOWN != dir)
+            || (SNAKE_DIR_DOWN == prevdir && SNAKE_DIR_UP != dir)
+            || (SNAKE_DIR_LEFT == prevdir && SNAKE_DIR_RIGHT != dir)
+            || (SNAKE_DIR_RIGHT == prevdir && SNAKE_DIR_LEFT != dir)
        )
     {
         newdir = dir;
@@ -55,7 +55,7 @@ static SYS_STE node_update(snake_t *tail, const point_t *node, map_t *map)
     if (FOOD == map->range[node->y * map->width + node->x])
     {
         // 吃一个食物增加一个节点
-        snake_t *new = (snake_t*)rt_malloc(sizeof(snake_t));
+        snake_t *new = (snake_t *)rt_malloc(sizeof(snake_t));
         if (!new)
             return NORMAL;
 
@@ -77,7 +77,7 @@ static SYS_STE node_update(snake_t *tail, const point_t *node, map_t *map)
     }
 
     map->range[node->y * map->width + node->x] = OVER;
-    
+
     if (ret != OVER)
         prevdir = newdir;
 
@@ -85,7 +85,7 @@ static SYS_STE node_update(snake_t *tail, const point_t *node, map_t *map)
 }
 
 
-map_t* map_init(rt_uint32_t width, rt_uint32_t heigth)
+map_t *map_init(rt_uint32_t width, rt_uint32_t heigth)
 {
     map_t *map = rt_malloc(sizeof(map_t));
 
@@ -139,9 +139,9 @@ rt_bool_t snake_init(const point_t *start, const int length, const SNAKE_DIR dir
         old.x -= inc_x;
     }
 
-    for (i=0; i<length; i++)
+    for (i = 0; i < length; i++)
     {
-        snake_t *new = (snake_t*)rt_malloc(sizeof(snake_t));
+        snake_t *new = (snake_t *)rt_malloc(sizeof(snake_t));
         if (!new)
             return RT_FALSE;
 

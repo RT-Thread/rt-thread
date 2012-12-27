@@ -4,7 +4,7 @@
 #include <string.h>
 #include <dfs_def.h>
 
-// #define SD_TRACE		rt_kprintf
+// #define SD_TRACE     rt_kprintf
 #define SD_TRACE(...)
 
 //#define SDCARD_SIM  "F:\\Project\\tools\\SDCARD"
@@ -13,12 +13,12 @@
 
 struct sdcard_device
 {
-	struct rt_device parent;
-	FILE* file;
+    struct rt_device parent;
+    FILE *file;
 };
 static struct sdcard_device _sdcard;
 
-#define SDCARD_DEVICE(device) 		(( struct sdcard_device*)(device))
+#define SDCARD_DEVICE(device)       (( struct sdcard_device*)(device))
 
 static rt_mutex_t lock;
 
@@ -26,79 +26,79 @@ static rt_mutex_t lock;
 
 static rt_err_t rt_sdcard_init(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* position: block page address, not bytes address
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void* buffer, rt_size_t size)
+static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
 {
-    struct sdcard_device * sd;
-	int result = 0;
+    struct sdcard_device *sd;
+    int result = 0;
 
-	SD_TRACE("sd read: pos %d, size %d\n", position, size);
+    SD_TRACE("sd read: pos %d, size %d\n", position, size);
 
-	rt_mutex_take(lock, RT_WAITING_FOREVER);
+    rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
-	fseek(sd->file, position * SECTOR_SIZE, SEEK_SET);
+    fseek(sd->file, position * SECTOR_SIZE, SEEK_SET);
 
-	result = fread(buffer, size * SECTOR_SIZE, 1, sd->file);
-	if (result < 0)
-		goto _err;
+    result = fread(buffer, size * SECTOR_SIZE, 1, sd->file);
+    if (result < 0)
+        goto _err;
 
-	rt_mutex_release(lock);
+    rt_mutex_release(lock);
     return size;
 
 _err:
-	SD_TRACE("sd read errors!\n");	
-	rt_mutex_release(lock);
-	return 0;
+    SD_TRACE("sd read errors!\n");
+    rt_mutex_release(lock);
+    return 0;
 }
 
 /* position: block page address, not bytes address
  * buffer:
  * size  : how many blocks
  */
-static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const void* buffer, rt_size_t size)
+static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
 {
-    struct sdcard_device * sd;
-	int result = 0;
+    struct sdcard_device *sd;
+    int result = 0;
 
-	SD_TRACE("sst write: pos %d, size %d\n", position, size);
+    SD_TRACE("sst write: pos %d, size %d\n", position, size);
 
-	rt_mutex_take(lock, RT_WAITING_FOREVER);
+    rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
-	fseek(sd->file, position * SECTOR_SIZE, SEEK_SET);
+    fseek(sd->file, position * SECTOR_SIZE, SEEK_SET);
 
-	result = fwrite(buffer, size * SECTOR_SIZE, 1, sd->file);
-	if (result < 0)
-		goto _err;
+    result = fwrite(buffer, size * SECTOR_SIZE, 1, sd->file);
+    if (result < 0)
+        goto _err;
 
-	rt_mutex_release(lock);
+    rt_mutex_release(lock);
     return size;
 
 _err:
-	SD_TRACE("sd write errors!\n");	
-	rt_mutex_release(lock);
-	return 0;
+    SD_TRACE("sd write errors!\n");
+    rt_mutex_release(lock);
+    return 0;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-    struct sdcard_device * sd;
-	unsigned int size;
+    struct sdcard_device *sd;
+    unsigned int size;
 
     RT_ASSERT(dev != RT_NULL);
 
@@ -114,72 +114,72 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
         geometry->bytes_per_sector = SECTOR_SIZE;
         geometry->block_size = SECTOR_SIZE;
 
-		fseek(sd->file, 0, SEEK_END);
-		size = ftell(sd->file);
+        fseek(sd->file, 0, SEEK_END);
+        size = ftell(sd->file);
 
-		geometry->sector_count = size/SECTOR_SIZE;
+        geometry->sector_count = size / SECTOR_SIZE;
     }
-	return RT_EOK;
+    return RT_EOK;
 }
 
 
-rt_err_t rt_hw_sdcard_init(const char * spi_device_name)
+rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 {
-	int size;
+    int size;
     rt_uint32_t id, total_block;
-    struct sdcard_device * sd;
-    struct rt_device * device;
+    struct sdcard_device *sd;
+    struct rt_device *device;
 
     sd = &_sdcard;
-	device = &(sd->parent);
+    device = &(sd->parent);
 
-	lock = rt_mutex_create("lock", RT_IPC_FLAG_FIFO);
+    lock = rt_mutex_create("lock", RT_IPC_FLAG_FIFO);
 
-	/* open sd card file, if not exist, then create it  */
-	sd->file = fopen(SDCARD_SIM, "rb+");
-	if (sd->file == NULL)
-	{
-		/* create a file to simulate sd card */
-		sd->file = fopen(SDCARD_SIM, "wb+");
+    /* open sd card file, if not exist, then create it  */
+    sd->file = fopen(SDCARD_SIM, "rb+");
+    if (sd->file == NULL)
+    {
+        /* create a file to simulate sd card */
+        sd->file = fopen(SDCARD_SIM, "wb+");
 
-		fseek(sd->file, 0, SEEK_END);
-		size = ftell(sd->file);
+        fseek(sd->file, 0, SEEK_END);
+        size = ftell(sd->file);
 
-		fseek(sd->file, 0, SEEK_SET );
-		if (size < SDCARD_SIZE)
-		{
-			int i;
-			unsigned char* ptr;
+        fseek(sd->file, 0, SEEK_SET);
+        if (size < SDCARD_SIZE)
+        {
+            int i;
+            unsigned char *ptr;
 
-			ptr = (unsigned char*) malloc (1024 * 1024);
-			if (ptr == NULL)
-			{
-				SD_TRACE("malloc error, no memory!\n");
-				return RT_ERROR;
-			}
-			memset(ptr, 0x0, 1024 * 1024);
+            ptr = (unsigned char *) malloc(1024 * 1024);
+            if (ptr == NULL)
+            {
+                SD_TRACE("malloc error, no memory!\n");
+                return RT_ERROR;
+            }
+            memset(ptr, 0x0, 1024 * 1024);
 
-			fseek(sd->file, 0, SEEK_SET);
+            fseek(sd->file, 0, SEEK_SET);
 
-			for(i=0; i<(SDCARD_SIZE / (1024*1024)); i++)
-				fwrite(ptr, 1024 * 1024, 1, sd->file);
+            for (i = 0; i < (SDCARD_SIZE / (1024 * 1024)); i++)
+                fwrite(ptr, 1024 * 1024, 1, sd->file);
 
-			free(ptr);
-		}
-	}
-	fseek(sd->file, 0, SEEK_SET);
+            free(ptr);
+        }
+    }
+    fseek(sd->file, 0, SEEK_SET);
 
-	device->type  = RT_Device_Class_Block;								
-	device->init = rt_sdcard_init;
-	device->open = rt_sdcard_open;
-	device->close = rt_sdcard_close;
-	device->read = rt_sdcard_read;
-	device->write = rt_sdcard_write;
-	device->control = rt_sdcard_control;
-	device->user_data = NULL;
+    device->type  = RT_Device_Class_Block;
+    device->init = rt_sdcard_init;
+    device->open = rt_sdcard_open;
+    device->close = rt_sdcard_close;
+    device->read = rt_sdcard_read;
+    device->write = rt_sdcard_write;
+    device->control = rt_sdcard_control;
+    device->user_data = NULL;
 
-	rt_device_register(device, "sd0",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
+    rt_device_register(device, "sd0",
+                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
 
     return RT_EOK;
 }
@@ -188,7 +188,7 @@ rt_err_t rt_hw_sdcard_init(const char * spi_device_name)
 #include <finsh.h>
 void eraseall(void)
 {
-	printf("had not implemented yet!\n");
+    printf("had not implemented yet!\n");
 }
 FINSH_FUNCTION_EXPORT(eraseall, erase all block in SPI flash);
 #endif
