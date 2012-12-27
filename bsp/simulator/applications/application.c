@@ -85,7 +85,7 @@ void rt_init_thread_entry(void *parameter)
 
 #if defined(RT_USING_RTGUI)
     rt_thread_delay(3000);
-    realtouch_ui_init();
+    snake_main();
 #endif
 }
 

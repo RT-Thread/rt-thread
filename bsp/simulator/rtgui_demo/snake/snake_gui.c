@@ -364,10 +364,13 @@ void snake_main(void)
 {
     struct rtgui_app* application;
     struct rtgui_win* win;
+	rtgui_rect_t rect;
 
     application = rtgui_app_create(rt_thread_self(), "sanke_app");
     if (application != RT_NULL)
     {
+		rtgui_get_screen_rect(&rect);
+		rtgui_set_mainwin_rect(&rect);
         win = rtgui_mainwin_create(RT_NULL,
                                    "sanke_win",
                                    RTGUI_WIN_STYLE_MAINWIN | RTGUI_WIN_STYLE_DESTROY_ON_CLOSE);

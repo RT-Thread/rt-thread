@@ -37,9 +37,9 @@
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
-//#define RT_TIMER_THREAD_PRIO		4
-//#define RT_TIMER_THREAD_STACK_SIZE	512
-//#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TIMER_THREAD_PRIO		4
+#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_TICK_PER_SECOND	10
 
 /* SECTION: IPC */
 /* Using Semaphore*/
@@ -196,7 +196,7 @@
 /* use DFS as file interface */
 #define RTGUI_USING_DFS_FILERW
 /* use font file as Chinese font */
-//#define RTGUI_USING_HZ_FILE
+/* #define RTGUI_USING_HZ_FILE */
 /* use Chinese bitmap font */
 #define RTGUI_USING_HZ_BMP
 /* use small size in RTGUI */
@@ -209,8 +209,8 @@
 /* image support */
 #define RTGUI_IMAGE_XPM
 #define RTGUI_IMAGE_BMP
-//#define RTGUI_IMAGE_JPEG
-//#define RTGUI_IMAGE_PNG
+/* #define RTGUI_IMAGE_JPEG */
+/* #define RTGUI_IMAGE_PNG */
 #define RTGUI_USING_NOTEBOOK_IMAGE
 
 #endif
