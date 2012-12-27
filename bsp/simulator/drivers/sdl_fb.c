@@ -281,7 +281,8 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 	return 0;
 }
 
-void sdl_start(void)
+/* start sdl thread */
+void rt_hw_sdl_start(void)
 {
 	HANDLE thread;
 	DWORD  thread_id; 

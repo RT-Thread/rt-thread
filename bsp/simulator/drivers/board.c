@@ -14,28 +14,27 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include "board.h"
+#include <stdlib.h>
+#include <windows.h>
 
 /**
  * @addtogroup simulator on win32
  */
+rt_uint8_t * heap;
 
-/**
- * This function will initial win32 
- */
-void rt_hw_board_init()
+rt_uint8_t * rt_hw_sram_init(void)
 {
-#if defined(RT_USING_CONSOLE)
-	rt_hw_usart_init();
-	rt_hw_serial_init();
-	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
+	rt_uint8_t * heap;
+	heap = malloc(HEAP_SIZE);
+	if (heap == RT_NULL)
+	{
+		rt_kprintf("there is no memory in pc.");
+		_exit(1);
+	}
+	return heap;
 }
 
-/* fix the compile errors for redefiniton of lwip_htonl in win socket */
-#ifdef WIN32
-#include <windows.h>
 void rt_hw_win32_low_cpu(void)
 {
 	Sleep(1000);
@@ -57,8 +56,20 @@ void rt_hw_exit(void)
 	exit(0);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt-thread);
-
 #endif /* RT_USING_FINSH */
 
-#endif /* WIN32 */
+/**
+ * This function will initial win32 
+ */
+void rt_hw_board_init()
+{
+	/* init system memory */
+	heap = rt_hw_sram_init();
+
+#if defined(RT_USING_CONSOLE)
+	rt_hw_usart_init();
+	rt_hw_serial_init();
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+}
 /*@}*/

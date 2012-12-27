@@ -155,7 +155,6 @@ static rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_u
 
 rt_err_t rt_hw_serial_init(void)
 {
-  	return rt_hw_serial_register(&serial_device,"sci0",
+  	return rt_hw_serial_register(&serial_device,RT_CONSOLE_DEVICE_NAME,
   		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM);
 }
-

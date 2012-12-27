@@ -20,15 +20,7 @@
 /**
  * @addtogroup win32
  */
-#define HEAP_SIZE   (1024*1024*10)
-static rt_uint8_t * heap;
 
-void vs_heap_init(void)
-{
-	heap = malloc(HEAP_SIZE);
-	if (heap == RT_NULL)
-		rt_kprintf("there is no memory in pc.");
-}
 /*@{*/
 
 extern int  rt_application_init(void);
@@ -37,6 +29,7 @@ extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
+extern rt_uint8_t * heap;
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -59,9 +52,6 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
 	/* init memory system */
-#if (MSVC)
-	vs_heap_init();
-#endif
 	rt_system_heap_init((void*)heap, (void*)&heap[HEAP_SIZE-1]);
 #endif
 

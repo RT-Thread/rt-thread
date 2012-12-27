@@ -8,6 +8,8 @@
 #undef RT_USING_MINILIBC
 #define NORESOURCE  //RT_VESRION in winuser.h
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
+
+#define HEAP_SIZE   (1024*1024*2)
 #endif
 
 /* SECTION: basic kernel options */
@@ -69,7 +71,6 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
-/* #define RT_USING_SERIAL */
 /* #define RT_USING_UART1 */
 
 /* SECTION: Console options */
@@ -132,7 +133,7 @@
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-#define RT_USING_LWIP
+/* #define RT_USING_LWIP */
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/

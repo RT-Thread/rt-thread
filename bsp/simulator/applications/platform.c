@@ -18,8 +18,8 @@ void rt_platform_init(void)
 #endif /* RT_USING_DFS */
 
 #ifdef RT_USING_RTGUI
-    /* initilize sdl */
-    sdl_start();
+    /* start sdl thread to simulate an LCD */
+    rt_hw_sdl_start();
 #endif /* RT_USING_RTGUI */
 
 #ifdef WIN32
