@@ -49,31 +49,25 @@ void rt_init_thread_entry(void *parameter)
 #endif
 
 #ifdef RT_USING_DFS_ELMFAT
-        /* mount sd card fat partition 1 as root directory */
+        /* mount sd card fatfs as root directory */
         if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
-        {
             rt_kprintf("fatfs initialized!\n");
-        }
         else
             rt_kprintf("fatfs initialzation failed!\n");
 #endif
 
 #ifdef RT_USING_DFS_UFFS
-        /* mount sd card fat partition 1 as root directory */
+        /* mount uffs as the nand flash file system */
         if (dfs_mount("nand0", "/disk/nand", "uffs", 0, 0) == 0)
-        {
             rt_kprintf("uffs initialized!\n");
-        }
         else
             rt_kprintf("uffs initialzation failed!\n");
 #endif
 
 #ifdef RT_USING_DFS_JFFS2
-        /* mount sd card fat partition 1 as root directory */
+        /* mount jffs2 as the nor flash file system */
         if (dfs_mount("nor", "/disk/nor", "jffs2", 0, 0) == 0)
-        {
             rt_kprintf("jffs2 initialized!\n");
-        }
         else
             rt_kprintf("jffs2 initialzation failed!\n");
 #endif

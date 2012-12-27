@@ -9,7 +9,7 @@ if GetDepend('RT_USING_RTGUI') == False:
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MTD_NAND') == False:
-    SrcRemove(src, 'nand_sim.c')
+    SrcRemove(src, 'nanddrv_file.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MTD_NOR') == False:
     SrcRemove(src, 'sst25vfxx_mtd_sim.c')
 
