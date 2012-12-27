@@ -96,16 +96,6 @@ rt_uint32_t YieldInterruptHandle(void);
 rt_uint32_t SysTickInterruptHandle(void);
 static DWORD WINAPI ThreadforSysTickTimer(LPVOID lpParam);
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
-/*
-*********************************************************************************************************
-*                                             CPU Port Function for RT-Thread
-*********************************************************************************************************
-*/
-
-//void rt_hw_console_output(const char *str)
-//{
-//    printf("%s",str);
-//}
 
 /*
 *********************************************************************************************************
