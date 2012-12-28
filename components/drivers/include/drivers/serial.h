@@ -18,6 +18,7 @@
 
 #include <rtthread.h>
 
+#define BAUD_RATE_4800                  4800
 #define BAUD_RATE_9600                  9600
 #define BAUD_RATE_115200                115200
 
