@@ -86,6 +86,13 @@ int close(int fd)
         return -1;
     }
 
+    /* check dfs_fd valid or not */
+    if (d->path == RT_NULL || d->ref_count == 0)
+    {
+        rt_set_errno(-DFS_STATUS_EBADF);
+        return -1;
+    }
+
     result = dfs_file_close(d);
     fd_put(d);
 
