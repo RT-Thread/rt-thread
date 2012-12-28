@@ -643,6 +643,7 @@ void list_prefix(char *prefix)
 
     func_cnt = 0;
     var_cnt  = 0;
+	min_length = 0;
     name_ptr = RT_NULL;
 
     /* checks in system function call */
