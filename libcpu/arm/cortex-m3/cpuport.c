@@ -13,6 +13,7 @@
  * 2011-02-14   onelife     Modify for EFM32
  * 2011-06-17   onelife     Merge all of the C source code into cpuport.c
  * 2012-12-23   aozima      stack addr align to 8byte.
+ * 2012-12-29   Bernard     Add exception hook.
  */
 
 #include <rtthread.h>
@@ -47,6 +48,8 @@ struct stack_frame
 /* flag in interrupt handling */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
+/* exception hook */
+static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
 /**
  * This function will initialize thread stack
@@ -92,23 +95,41 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     return stk;
 }
 
-extern long list_thread(void);
-extern rt_thread_t rt_current_thread;
 /**
- * fault exception handling
+ * This function set the hook, which is invoked on fault exception handling.
+ *
+ * @param exception_handle the exception handling hook function.
  */
-void rt_hw_hard_fault_exception(struct exception_stack_frame* contex)
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
 {
-    rt_kprintf("psr: 0x%08x\n", contex->psr);
-    rt_kprintf(" pc: 0x%08x\n", contex->pc);
-    rt_kprintf(" lr: 0x%08x\n", contex->lr);
-    rt_kprintf("r12: 0x%08x\n", contex->r12);
-    rt_kprintf("r03: 0x%08x\n", contex->r3);
-    rt_kprintf("r02: 0x%08x\n", contex->r2);
-    rt_kprintf("r01: 0x%08x\n", contex->r1);
-    rt_kprintf("r00: 0x%08x\n", contex->r0);
+	rt_exception_hook = exception_handle;
+}
 
-    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+/*
+ * fault exception handler
+ */
+void rt_hw_hard_fault_exception(struct exception_stack_frame* context)
+{
+	extern long list_thread(void);
+
+	if (rt_exception_hook != RT_NULL)
+	{
+		rt_err_t result;
+
+		result = rt_exception_hook(context);
+		if (result == RT_EOK) return;
+	}
+
+    rt_kprintf("psr: 0x%08x\n", context->psr);
+    rt_kprintf(" pc: 0x%08x\n", context->pc);
+    rt_kprintf(" lr: 0x%08x\n", context->lr);
+    rt_kprintf("r12: 0x%08x\n", context->r12);
+    rt_kprintf("r03: 0x%08x\n", context->r3);
+    rt_kprintf("r02: 0x%08x\n", context->r2);
+    rt_kprintf("r01: 0x%08x\n", context->r1);
+    rt_kprintf("r00: 0x%08x\n", context->r0);
+
+    rt_kprintf("hard fault on thread: %s\n", rt_thread_self()->name);
 
 #ifdef RT_USING_FINSH
     list_thread();
@@ -126,3 +147,4 @@ void rt_hw_cpu_shutdown(void)
 
     RT_ASSERT(0);
 }
+

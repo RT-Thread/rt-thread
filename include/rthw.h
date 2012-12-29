@@ -12,6 +12,7 @@
  * 2006-03-18     Bernard      the first version
  * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
  * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
+ * 2012-12-29     Bernard      add rt_hw_exception_install declaration
  */
 
 #ifndef __RT_HW_H__
@@ -55,6 +56,11 @@ void rt_hw_console_output(const char *str);
 
 void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry);
 void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
+
+/*
+ * exception interfaces
+ */
+void rt_hw_exception_install(void (*exception_handle)(void* context));
 
 #ifdef __cplusplus
 }

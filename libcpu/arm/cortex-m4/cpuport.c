@@ -15,6 +15,7 @@
  * 2012-01-01     aozima       support context switch load/store FPU register.
  * 2012-12-11     lgnq         fixed the coding style.
  * 2012-12-23     aozima       stack addr align to 8byte.
+ * 2012-12-29     Bernard      Add exception hook.
  */
 
 #include <rtthread.h>
@@ -27,6 +28,8 @@
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
+/* exception hook */
+static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
 struct exception_stack_frame
 {
@@ -131,11 +134,28 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     return stk;
 }
 
-extern void rt_hw_interrupt_thread_switch(void);
-extern long list_thread(void);
-extern rt_thread_t rt_current_thread;
+/**
+ * This function set the hook, which is invoked on fault exception handling.
+ *
+ * @param exception_handle the exception handling hook function.
+ */
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
+{
+	rt_exception_hook = exception_handle;
+}
+
 void rt_hw_hard_fault_exception(struct exception_stack_frame *exception_stack)
 {
+	extern long list_thread(void);
+
+	if (rt_exception_hook != RT_NULL)
+	{
+		rt_err_t result;
+
+		result = rt_exception_hook(exception_stack);
+		if (result == RT_EOK) return;
+	}
+
     rt_kprintf("psr: 0x%08x\n", exception_stack->psr);
     rt_kprintf(" pc: 0x%08x\n", exception_stack->pc);
     rt_kprintf(" lr: 0x%08x\n", exception_stack->lr);
@@ -145,7 +165,7 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame *exception_stack)
     rt_kprintf("r01: 0x%08x\n", exception_stack->r1);
     rt_kprintf("r00: 0x%08x\n", exception_stack->r0);
 
-    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+    rt_kprintf("hard fault on thread: %s\n", rt_thread_self()->name);
 
 #ifdef RT_USING_FINSH
     list_thread();
@@ -160,3 +180,4 @@ void rt_hw_cpu_shutdown(void)
 
     RT_ASSERT(0);
 }
+
