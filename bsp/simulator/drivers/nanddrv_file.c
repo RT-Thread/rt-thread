@@ -323,13 +323,20 @@ static rt_err_t nanddrv_file_erase_block(struct rt_mtd_nand_device *device, rt_u
     return RT_EOK;
 }
 
+static rt_err_t nanddrv_file_no_op(struct rt_mtd_nand_device *device, rt_uint32_t block)
+{
+    return RT_EOK;
+}
+
 const static struct rt_mtd_nand_driver_ops _ops =
 {
     nanddrv_file_read_id,
     nanddrv_file_read_page,
     nanddrv_file_write_page,
     nanddrv_file_move_page,
-    nanddrv_file_erase_block
+    nanddrv_file_erase_block,
+    nanddrv_file_no_op, /* check block */
+    nanddrv_file_no_op  /* mark bad block */
 };
 
 void nand_eraseall(void);
