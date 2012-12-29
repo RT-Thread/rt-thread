@@ -153,13 +153,6 @@ struct dfs_fd *fd_get(int fd)
     dfs_lock();
     d = &fd_table[fd];
 
-    /* check dfs_fd valid or not */
-    if (d->path == RT_NULL || d->fs == RT_NULL)
-	{
-        dfs_unlock();
-        return RT_NULL;
-	}
-
     /* increase the reference count */
     d->ref_count ++;
     dfs_unlock();
