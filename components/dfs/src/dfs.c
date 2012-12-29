@@ -47,7 +47,7 @@ struct dfs_fd fd_table[DFS_FD_MAX];
 void dfs_init(void)
 {
     /* clear filesystem operations table */
-    rt_memset(filesystem_operation_table, 0, sizeof(filesystem_operation_table));
+    rt_memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
     /* clear filesystem table */
     rt_memset(filesystem_table, 0, sizeof(filesystem_table));
     /* clean fd table */
@@ -123,6 +123,7 @@ int fd_new(void)
 
     d = &(fd_table[idx]);
     d->ref_count = 1;
+    d->magic = DFS_FD_MAGIC;
 
 __result:
     dfs_unlock();
@@ -152,6 +153,13 @@ struct dfs_fd *fd_get(int fd)
 
     dfs_lock();
     d = &fd_table[fd];
+
+    /* check dfs_fd valid or not */
+    if (d->magic != DFS_FD_MAGIC)
+    {
+        dfs_unlock();
+        return RT_NULL;
+    }
 
     /* increase the reference count */
     d->ref_count ++;

@@ -282,10 +282,12 @@ struct dirent
 #endif
 
 /* file descriptor */
+#define DFS_FD_MAGIC	 0xfdfd
 struct dfs_fd
 {
+    rt_uint16_t magic;           /* file descriptor magic number */
+    rt_uint16_t type;            /* Type (regular or socket) */
     char *path;                  /* Name (below mount point) */
-    int type;                    /* Type (regular or socket) */
     int ref_count;               /* Descriptor reference count */
 
     struct dfs_filesystem *fs;   /* Resident file system */
