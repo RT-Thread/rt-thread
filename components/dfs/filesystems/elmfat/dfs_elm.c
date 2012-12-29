@@ -79,7 +79,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 {
 	FATFS *fat;
 	FRESULT result;
-	rt_uint32_t index;
+	BYTE  index;
 
 	/* handle RT-Thread device routine */
 	for (index = 0; index < _VOLUMES; index ++)
@@ -137,7 +137,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
 {
 	FATFS *fat;
 	FRESULT result;
-	rt_uint32_t index;
+	BYTE index;
 
 	fat = (FATFS *)fs->data;
 
@@ -524,7 +524,7 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
 		else
 			d->d_type = DFS_DT_REG;
 
-		d->d_namlen = rt_strlen(fn);
+		d->d_namlen = (rt_uint8_t)rt_strlen(fn);
 		d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
 		rt_strncpy(d->d_name, fn, rt_strlen(fn) + 1);
 
@@ -774,7 +774,7 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 		rt_memset(&geometry, 0, sizeof(geometry));
 		rt_device_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
 
-		*(WORD *)buff = geometry.bytes_per_sector;
+		*(WORD *)buff = (WORD)(geometry.bytes_per_sector);
 	}
 	else if (ctrl == GET_BLOCK_SIZE) /* Get erase block size in unit of sectors (DWORD) */
 	{
