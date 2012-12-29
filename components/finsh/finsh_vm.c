@@ -83,8 +83,8 @@ void finsh_syscall_append(const char* name, syscall_func func)
 }
 #endif
 
-#if defined(_MSC_VER)
-static struct finsh_syscall* _next_syscall(struct finsh_syscall* call)
+#ifdef _MSC_VER
+struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call)
 {
 	unsigned int *ptr;
 	ptr = (unsigned int*) (call + 1);
@@ -93,9 +93,6 @@ static struct finsh_syscall* _next_syscall(struct finsh_syscall* call)
 
 	return (struct finsh_syscall*)ptr;
 }
-#define _NEXT_SYSCALL(index)  index=_next_syscall(index)
-#else
-#define _NEXT_SYSCALL(index)  index++
 #endif
 
 struct finsh_syscall* finsh_syscall_lookup(const char* name)
@@ -103,7 +100,7 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name)
 	struct finsh_syscall* index;
 	struct finsh_syscall_item* item;
 
-	for (index = _syscall_table_begin; index < _syscall_table_end; _NEXT_SYSCALL(index))
+	for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
 	{
 		if (strcmp(index->name, name) == 0)
 			return index;

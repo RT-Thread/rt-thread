@@ -148,6 +148,13 @@ struct finsh_sysvar
 	void*		 var ;		/* the address of variable */
 };
 
+#if defined(_MSC_VER)
+struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call);
+#define FINSH_NEXT_SYSCALL(index)  index=finsh_syscall_next(index)
+#else
+#define FINSH_NEXT_SYSCALL(index)  index++
+#endif
+
 /* system variable item */
 struct finsh_sysvar_item
 {

@@ -27,7 +27,7 @@ void tc_thread_entry(void* parameter)
 
 	while (_tc_stat & TC_STAT_RUNNING)
 	{
-		for (index = _syscall_table_begin; index < _syscall_table_end; index ++)
+		for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
 		{
 			/* search testcase */
 			if (rt_strstr(index->name, _tc_prefix) == index->name)
@@ -158,7 +158,7 @@ void list_tc()
 	struct finsh_syscall* index;
 
 	rt_kprintf("TestCases List:\n");
-	for (index = _syscall_table_begin; index < _syscall_table_end; index ++)
+	for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
 	{
 		/* search testcase */
 		if (rt_strstr(index->name, "_tc_") == index->name)

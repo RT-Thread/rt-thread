@@ -75,6 +75,9 @@ if GetDepend('RT_USING_RTGUI'):
         objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', 
 				variant_dir='build/examples/gui', duplicate=0)
 
+if GetDepend('RT_USING_TC'):
+    objs = objs + SConscript(RTT_ROOT + '/examples/kernel/SConscript', variant_dir = 'build/tc/kernel', duplicate=0)
+
 # build program 
 program = env.Program(TARGET, objs)
 
