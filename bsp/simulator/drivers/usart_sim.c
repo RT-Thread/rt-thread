@@ -18,7 +18,7 @@ void rt_hw_usart_init(void)
 {
 
     /*
-     * create serial thread that revice key input from keyboard
+     * create serial thread that receive key input from keyboard
      */
 
     OSKey_Thread = CreateThread(NULL,

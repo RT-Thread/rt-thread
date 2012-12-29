@@ -129,7 +129,7 @@ static int dfs_win32_open(struct dfs_fd *file)
         }
 
         strcat(file_path, "*.*");
-        /* _findfirst »áµÃµ½ . */
+        /* _findfirst will get '.' */
         if ((handle = _findfirst(file_path, &dir)) == -1)
         {
             rt_free(file_path);
@@ -160,7 +160,7 @@ static int dfs_win32_open(struct dfs_fd *file)
     if (fd < 0)
         goto __err;
 
-    /* save this pointer, it will be used when calling read()£¬write(),
+    /* save this pointer, it will be used when calling read(), write(),
      * flush(), seek(), and will be free when calling close()*/
     file->data = (void *)fd;
     file->pos  = 0;
@@ -298,7 +298,7 @@ static int dfs_win32_getdents(
         else
             d->d_type = DFS_DT_REG;
 
-        /* write the rest args of struct dirent* dirp  */
+        /* write the rest arguments of struct dirent* dirp  */
         d->d_namlen = strlen(fileinfo.name);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
         strcpy(d->d_name, fileinfo.name);

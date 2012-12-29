@@ -30,7 +30,7 @@ void rt_init_thread_entry(void *parameter)
 
     rt_platform_init();
 
-    /* Filesystem Initialization */
+    /* File system Initialization */
 #ifdef RT_USING_DFS
     {
 #ifdef RT_USING_DFS_WINSHAREDIR
@@ -53,7 +53,7 @@ void rt_init_thread_entry(void *parameter)
         if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
             rt_kprintf("fatfs initialized!\n");
         else
-            rt_kprintf("fatfs initialzation failed!\n");
+            rt_kprintf("fatfs initialization failed!\n");
 #endif
 
 #ifdef RT_USING_DFS_UFFS
@@ -61,7 +61,7 @@ void rt_init_thread_entry(void *parameter)
         if (dfs_mount("nand0", "/disk/nand", "uffs", 0, 0) == 0)
             rt_kprintf("uffs initialized!\n");
         else
-            rt_kprintf("uffs initialzation failed!\n");
+            rt_kprintf("uffs initialization failed!\n");
 #endif
 
 #ifdef RT_USING_DFS_JFFS2
@@ -69,7 +69,7 @@ void rt_init_thread_entry(void *parameter)
         if (dfs_mount("nor", "/disk/nor", "jffs2", 0, 0) == 0)
             rt_kprintf("jffs2 initialized!\n");
         else
-            rt_kprintf("jffs2 initialzation failed!\n");
+            rt_kprintf("jffs2 initialization failed!\n");
 #endif
 
     }

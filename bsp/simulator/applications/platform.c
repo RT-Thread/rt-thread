@@ -4,7 +4,7 @@
 void rt_platform_init(void)
 {
 #ifdef RT_USING_DFS
-    /* initilize sd card */
+    /* initialize sd card */
     rt_hw_sdcard_init();
 
 #if defined(RT_USING_MTD_NAND)
@@ -22,8 +22,7 @@ void rt_platform_init(void)
     rt_hw_sdl_start();
 #endif /* RT_USING_RTGUI */
 
-#ifdef WIN32
-
+#ifdef _WIN32
     rt_thread_idle_sethook(rt_hw_win32_low_cpu);
 #endif
     rt_thread_delay(50);

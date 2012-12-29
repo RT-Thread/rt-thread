@@ -2,7 +2,7 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-/* SECTION: port for visual stuido */
+/* SECTION: port for visual studio */
 #ifdef _MSC_VER
 #undef RT_USING_NEWLIB
 #undef RT_USING_MINILIBC
@@ -79,10 +79,10 @@
 #define RT_CONSOLEBUF_SIZE	128
 #define RT_CONSOLE_DEVICE_NAME	"sci0"
 
-/* SECTION: commponent opitions */
+/* SECTION: component options */
 #define RT_USING_COMPONENTS_INIT
 
-/* SECTION: MTD interface opitons */
+/* SECTION: MTD interface options */
 /* using mtd nand flash */
 #define RT_USING_MTD_NAND
 /* using mtd nor flash */
@@ -94,7 +94,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-/* SECTION: device filesystem */
+/* SECTION: device file system */
 #define RT_USING_DFS
 
 /* DFS: ELM FATFS options */
@@ -109,30 +109,30 @@
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
-/* DFS: network filesystem options */
+/* DFS: network file system options */
 #define RT_USING_DFS_NFS
 
-/* DFS: uffs nand filesystem options */
+/* DFS: uffs nand file system options */
 /* #define RT_USING_DFS_UFFS */
-/* configration for uffs, more to see dfs_uffs.h and uffs_config.h */
+/* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 /* use ecc soft, the uffs will do all the things about ecc */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
-/* enable this ,you need provide a mark_badblock/check_block funciton */
+/* enable this ,you need provide a mark_badblock/check_block function */
 #define RT_UFFS_USE_CHECK_MARK_FUNCITON
 
-/* DFS: uffs nor flash filesystem options */
+/* DFS: uffs nor flash file system options */
 #define RT_USING_DFS_JFFS2
 
-/* DFS: windows share dictory mounted to rt-thread/dfs  */
+/* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
 #define RT_USING_DFS_WINSHAREDIR
 
-/* the max number of mounted filesystem */
+/* the max number of mounted file system */
 #define DFS_FILESYSTEMS_MAX			4
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					4
 
-/* SECTION: lwip, a lighwight TCP/IP protocol stack */
+/* SECTION: lwip, a lightweight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
@@ -145,7 +145,7 @@
 /* Enable DNS */
 #define RT_LWIP_DNS
 
-/* the number of simulatenously active TCP connections*/
+/* the number of simultaneously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
 
 /* Using DHCP */
@@ -174,7 +174,7 @@
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE		10
 #define RT_LWIP_TCPTHREAD_STACKSIZE		1024
 
-/* ethernet if thread options */
+/* Ethernet if thread options */
 #define RT_LWIP_ETHTHREAD_PRIORITY		15
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
