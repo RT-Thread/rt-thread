@@ -60,7 +60,7 @@ void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
 /*
  * exception interfaces
  */
-void rt_hw_exception_install(void (*exception_handle)(void* context));
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context));
 
 #ifdef __cplusplus
 }
