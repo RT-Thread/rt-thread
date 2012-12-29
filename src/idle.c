@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2006-03-23     Bernard      the first version
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
+ * 2012-12-29     Bernard      fix compiling warning.
  */
 
 #include <rthw.h>
@@ -46,7 +47,7 @@ static void (*rt_thread_idle_hook)();
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
-void rt_thread_idle_sethook(void (*hook)())
+void rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_thread_idle_hook = hook;
 }

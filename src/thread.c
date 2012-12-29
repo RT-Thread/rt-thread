@@ -24,6 +24,7 @@
  * 2011-09-01     Bernard      fixed rt_thread_exit issue when the current
  *                             thread preempted, which reported by Jiaxing Lee.
  * 2011-09-08     Bernard      fixed the scheduling issue in rt_thread_startup.
+ * 2012-12-29     Bernard      fixed compiling warning.
  */
 
 #include <rtthread.h>
@@ -88,7 +89,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 
     /* stack init */
     thread->stack_addr = stack_start;
-    thread->stack_size = stack_size;
+    thread->stack_size = (rt_uint16_t)stack_size;
 
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);

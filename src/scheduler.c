@@ -268,7 +268,7 @@ void rt_schedule(void)
         /* if the destination thread is not the same as current thread */
         if (to_thread != rt_current_thread)
         {
-            rt_current_priority = highest_ready_priority;
+            rt_current_priority = (rt_uint8_t)highest_ready_priority;
             from_thread         = rt_current_thread;
             rt_current_thread   = to_thread;
 

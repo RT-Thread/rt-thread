@@ -52,6 +52,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifndef RT_USING_MEMHEAP_AS_HEAP
+
 /* #define RT_MEM_DEBUG */
 #define RT_MEM_STATS
 
@@ -574,4 +576,6 @@ FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 
 /*@}*/
 
-#endif
+#endif /* end of RT_USING_HEAP */
+#endif /* end of RT_USING_MEMHEAP_AS_HEAP */
+

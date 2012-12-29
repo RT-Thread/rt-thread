@@ -15,6 +15,8 @@
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  * 2011-05-09     Bernard      use builtin va_arg in GCC 4.x
  * 2012-11-16     Bernard      change RT_NULL from ((void*)0) to 0. 
+ * 2012-12-29     Bernard      change the RT_USING_MEMPOOL location and add
+ *                             RT_USING_MEMHEAP condition.
  */
  
 #ifndef __RT_DEF_H__
@@ -554,7 +556,6 @@ typedef struct rt_messagequeue *rt_mq_t;
 
 /*@}*/
 
-#ifdef RT_USING_MEMPOOL
 /**
  * @addtogroup MM
  */
@@ -566,6 +567,7 @@ typedef struct rt_messagequeue *rt_mq_t;
  * heap & partition
  */
 
+#ifdef RT_USING_MEMHEAP
 /**
  * memory item on the heap
  */
@@ -574,10 +576,11 @@ struct rt_memheap_item
     rt_uint32_t             magic;                      /**< magic number for memheap */
     struct rt_memheap_item *next;                       /**< next memheap item */
     struct rt_memheap_item *prev;                       /**< prev memheap item */
+
+	struct rt_memheap      *pool_ptr;                   /**< point of pool */
+
     struct rt_memheap_item *next_free;                  /**< next free memheap item */
     struct rt_memheap_item *prev_free;                  /**< prev free memheap item */
-
-    struct rt_memheap      *pool_ptr;                   /**< point of pool */
 };
 
 /**
@@ -591,15 +594,18 @@ struct rt_memheap
 
     rt_uint32_t             pool_size;                  /**< pool size */
     rt_uint32_t             available_size;             /**< available size */
+	rt_uint32_t             max_used_size;				/**< maximum allocated size */
 
     struct rt_memheap_item *block_list;                 /**< used block list */
 
     struct rt_memheap_item *free_list;                  /**< free block list */
     struct rt_memheap_item  free_header;                /**< free block list header */
 
-    struct rt_mutex         lock;                       /**< mutex lock */
+    struct rt_semaphore     lock;                       /**< semaphore lock */
 };
+#endif
 
+#ifdef RT_USING_MEMPOOL
 /**
  * Base structure of Memory pool object
  */
@@ -620,9 +626,9 @@ struct rt_mempool
     rt_size_t        suspend_thread_count;              /**< numbers of thread pended on this resource */
 };
 typedef struct rt_mempool *rt_mp_t;
+#endif
 
 /*@}*/
-#endif
 
 #ifdef RT_USING_DEVICE
 /**
@@ -692,7 +698,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_CHAR_STREAM      0x10            /**< stream mode on char device */
 #define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /**< get geometry information   */
 #define RT_DEVICE_CTRL_BLK_SYNC         0x11            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE        0x12            /**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_ERASE		0x12 			/**< erase block on block device */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
@@ -749,8 +755,8 @@ struct rt_device_blk_geometry
  */
 struct rt_device_blk_sectors
 {
-    rt_uint32_t sector_begin;                           /**< begin sector */
-    rt_uint32_t sector_end;                             /**< end sector */
+	rt_uint32_t sector_begin;							/**< begin sector */
+	rt_uint32_t sector_end;								/**< end sector   */
 };
 
 /**
