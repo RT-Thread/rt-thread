@@ -214,7 +214,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
 		copy_handle(handle, &nfs->current_handle);
 	}
 
-	while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL && path[0] != '\0')
+	while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL && path != RT_NULL)
 	{
 		LOOKUP3args args;
 		LOOKUP3res res;
@@ -718,7 +718,7 @@ int nfs_open(struct dfs_fd *file)
 	
 		if (file->flags & DFS_O_CREAT)
 		{
-			if (nfs_mkdir(nfs, file->path, 555) < 0)
+			if (nfs_mkdir(nfs, file->path, 0755) < 0)
 				return -1;
 		}
 
@@ -734,7 +734,7 @@ int nfs_open(struct dfs_fd *file)
 		/* create file */
 		if (file->flags & DFS_O_CREAT)
 		{
-			if (nfs_create(nfs, file->path, 555) < 0) return -1;
+			if (nfs_create(nfs, file->path, 0664) < 0) return -1;
 		}
 
 		/* open file (get file handle ) */
