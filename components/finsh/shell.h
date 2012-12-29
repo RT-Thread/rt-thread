@@ -57,7 +57,7 @@ struct finsh_shell
 	rt_uint8_t use_history:1;
 
 #ifdef FINSH_USING_HISTORY
-	rt_uint8_t current_history;
+	rt_uint16_t current_history;
 	rt_uint16_t history_count;
 
 	char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];

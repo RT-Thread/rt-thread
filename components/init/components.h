@@ -31,10 +31,11 @@ extern void lwip_system_init(void);
 
 #ifdef RT_USING_DFS
 #include <dfs_init.h>
+#include <dfs_fs.h>
 #ifdef RT_USING_DFS_ELMFAT
 #include <dfs_elm.h>
 #endif
-#ifdef RT_USING_DFS_NFS
+#if defined(RT_USING_LWIP) && defined(RT_USING_DFS_NFS)
 #include <dfs_nfs.h>
 #endif
 #ifdef RT_USING_DFS_ROMFS

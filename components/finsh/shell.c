@@ -166,7 +166,7 @@ const char* finsh_get_device()
 void finsh_set_echo(rt_uint32_t echo)
 {
 	RT_ASSERT(shell != RT_NULL);
-	shell->echo_mode = echo;
+	shell->echo_mode = (rt_uint8_t)echo;
 }
 
 /**
