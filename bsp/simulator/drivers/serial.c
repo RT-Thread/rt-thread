@@ -2,17 +2,19 @@
 ******************************************************************************
 * By   : parai
 * email:parai@foxmail.com
-* 这并不是一个真的串口设备，只是为了能够让内核打印信息而创建
+* virtual serial driver
 ******************************************************************************
 */
 
-#include "rtthread.h"
+#include <rthw.h>
+#include <rtthread.h>
 
 #define _DEBUG_SERIAL 0
 #include "serial.h"
 #include <stdio.h>
 struct rt_device serial_device;
 extern struct serial_int_rx serial_rx;
+static FILE *fp = RT_NULL;
 
 /*@{*/
 
@@ -107,8 +109,14 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
 #if _DEBUG_SERIAL==1
     printf("in rt_serial_write()\n");
 #endif
-    printf("%s", (char *)buffer);
-    return size;
+	if (fp == NULL)
+		fp = fopen("log.txt", "wb+");
+
+	if (fp != NULL)
+		fwrite(buffer, size, 1, fp);
+
+	printf("%s",(char*)buffer);
+	return size;
 }
 
 static rt_err_t rt_serial_control(rt_device_t dev, rt_uint8_t cmd, void *args)
@@ -152,7 +160,7 @@ static rt_err_t rt_hw_serial_register(rt_device_t device, const char *name, rt_u
     device->user_data       = RT_NULL;
 
     /* register a character device */
-    return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
+    return rt_device_register(device, name, (rt_uint16_t)(RT_DEVICE_FLAG_RDWR | flag));
 }
 
 rt_err_t rt_hw_serial_init(void)

@@ -10,6 +10,14 @@
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
 
 #define HEAP_SIZE   (1024*1024*2)
+
+/* disable some warning in MSC */
+#pragma warning(disable:4273)	/* to ignore: warning C4273: inconsistent dll linkage */
+#pragma warning(disable:4312)   /* to ignore: warning C4312: 'type cast' : conversion from 'rt_uint32_t' to 'rt_uint32_t *' */
+#pragma warning(disable:4311)   /* to ignore: warning C4311: 'type cast' : pointer truncation from 'short *__w64 ' to 'long' */
+#pragma warning(disable:4996)   /* to ignore: warning C4996: The POSIX name for this item is deprecated. */
+#pragma warning(disable:4267)   /* to ignore: warning C4267: conversion from 'size_t' to 'rt_size_t', possible loss of data */
+#pragma warning(disable:4244)   /* to ignore: warning C4244: '=' : conversion from '__w64 int' to 'rt_size_t', possible loss of data */
 #endif
 
 /* SECTION: basic kernel options */
@@ -113,7 +121,7 @@
 #define RT_USING_DFS_NFS
 
 /* DFS: uffs nand file system options */
-/* #define RT_USING_DFS_UFFS */
+#define RT_USING_DFS_UFFS
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 /* use ecc soft, the uffs will do all the things about ecc */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT

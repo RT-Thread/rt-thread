@@ -126,7 +126,6 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 {
     int size;
-    rt_uint32_t id, total_block;
     struct sdcard_device *sd;
     struct rt_device *device;
 

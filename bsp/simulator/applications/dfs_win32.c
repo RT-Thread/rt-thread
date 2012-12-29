@@ -187,7 +187,7 @@ static int dfs_win32_close(struct dfs_fd *file)
     if (oflag & DFS_O_DIRECTORY)
     {
         /* operations about dir */
-        if (_findclose(file->data) < 0)
+        if (_findclose((intptr_t)file->data) < 0)
             goto __err;
 
         return 0;

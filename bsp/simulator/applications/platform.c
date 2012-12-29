@@ -25,7 +25,5 @@ void rt_platform_init(void)
 #ifdef _WIN32
     rt_thread_idle_sethook(rt_hw_win32_low_cpu);
 #endif
-    rt_thread_delay(50);
-    rt_device_init_all();
 }
 
