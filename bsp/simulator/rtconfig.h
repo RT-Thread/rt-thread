@@ -121,7 +121,7 @@
 #define RT_USING_DFS_NFS
 
 /* DFS: uffs nand file system options */
-#define RT_USING_DFS_UFFS
+/* #define RT_USING_DFS_UFFS */
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 /* use ecc soft, the uffs will do all the things about ecc */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
