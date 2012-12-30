@@ -52,7 +52,7 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
     /* init memory system */
-    rt_system_heap_init((void *)heap, (void *)&heap[HEAP_SIZE - 1]);
+    rt_system_heap_init((void *)heap, (void *)&heap[RT_HEAP_SIZE - 1]);
 #endif
 
     /* init scheduler system */

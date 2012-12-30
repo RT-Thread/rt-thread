@@ -9,7 +9,7 @@
 #define NORESOURCE  //RT_VESRION in winuser.h
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
 
-#define HEAP_SIZE   (1024*1024*2)
+#define RT_HEAP_SIZE   (1024*1024*2)
 
 /* disable some warning in MSC */
 #pragma warning(disable:4273)	/* to ignore: warning C4273: inconsistent dll linkage */

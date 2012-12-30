@@ -80,7 +80,6 @@ static int win32_result_to_dfs(DWORD res)
     /* unknown error */
     rt_kprintf("dfs win32 error not supported yet: %d\n", res);
     return -1;
-
 }
 
 static int dfs_win32_mount(

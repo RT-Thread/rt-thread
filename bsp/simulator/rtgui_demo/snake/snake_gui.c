@@ -17,7 +17,6 @@
 #define SNAKE_HEAD_COLOR    RTGUI_RGB(180, 70, 130)
 #define BACKGROUND_COLOR    RTGUI_RGB(153, 153, 0)
 #define FOOD_COLOR          RTGUI_RGB(128, 0, 0)
-#define min(a, b)           ((a) < (b) ? (a) : (b))
 
 static rtgui_timer_t *timer;
 static rt_size_t room_size_x, room_size_y;
@@ -153,7 +152,7 @@ static void snake_draw(struct rtgui_widget *widget)
 
     /* draw snake. */
     {
-        rt_uint32_t x, y;
+        rt_int32_t x, y;
         rt_bool_t first_node = RT_TRUE;
 
         for (y = 0; y < map->height; y++)

@@ -90,8 +90,7 @@ static int sst25vfxx_write(struct rt_mtd_nor_device *device, rt_off_t position,
 }
 
 static char block_buffer[BLOCK_SIZE];
-
-static rt_err_t sst25vfxx_erase_block(struct rt_mtd_nor_device *device, rt_uint32_t block)
+static rt_err_t sst25vfxx_erase_block(struct rt_mtd_nor_device *device, rt_off_t offset, rt_uint32_t length)
 {
     struct sst25_mtd *sst25;
     int result;
@@ -103,7 +102,7 @@ static rt_err_t sst25vfxx_erase_block(struct rt_mtd_nor_device *device, rt_uint3
     rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
 
     memset(block_buffer, 0xFF, BLOCK_SIZE);
-    fseek(sst25->file, block, SEEK_SET);
+    fseek(sst25->file, offset, SEEK_SET);
 
     result = fwrite(block_buffer, BLOCK_SIZE, 1, sst25->file);
     if (result < 0)
@@ -186,7 +185,7 @@ rt_err_t sst25vfxx_mtd_init(const char *nor_name,
     sst25->file = fopen(NOR_SIM, "rb+");
     if (sst25->file == NULL)
     {
-        int i;
+        rt_uint32_t i;
         /* create a file to simulate nor */
         sst25->file = fopen(NOR_SIM, "wb+");
 
@@ -216,10 +215,10 @@ void nor_erase(void)
     rt_uint32_t index;
     struct rt_mtd_nor_device *mtd;
 
-    mtd = SST25_MTD(&_sst25_mtd);
+    mtd = RT_MTD_NOR_DEVICE(&_sst25_mtd);
     for (index = mtd->block_start; index < mtd->block_end; index ++)
     {
-        sst25vfxx_erase_block(mtd, index * mtd->block_size);
+        sst25vfxx_erase_block(mtd, index * mtd->block_size, BLOCK_SIZE);
     }
 }
 FINSH_FUNCTION_EXPORT(nor_erase, erase all block in SPI flash);

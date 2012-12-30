@@ -26,7 +26,7 @@ rt_uint8_t *heap;
 rt_uint8_t *rt_hw_sram_init(void)
 {
     rt_uint8_t *heap;
-    heap = malloc(HEAP_SIZE);
+    heap = malloc(RT_HEAP_SIZE);
     if (heap == RT_NULL)
     {
         rt_kprintf("there is no memory in pc.");
