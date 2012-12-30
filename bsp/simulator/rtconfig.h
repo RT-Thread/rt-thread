@@ -121,12 +121,12 @@
 #define RT_USING_DFS_NFS
 
 /* DFS: uffs nand file system options */
-/* #define RT_USING_DFS_UFFS */
+#define RT_USING_DFS_UFFS
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 /* use ecc soft, the uffs will do all the things about ecc */
-#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
+#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO
 /* enable this ,you need provide a mark_badblock/check_block function */
-#define RT_UFFS_USE_CHECK_MARK_FUNCITON
+//#define RT_UFFS_USE_CHECK_MARK_FUNCITON
 
 /* DFS: uffs nor flash file system options */
 #define RT_USING_DFS_JFFS2
