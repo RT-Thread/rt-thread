@@ -61,7 +61,6 @@ struct uendpoint
     uep_desc_t ep_desc;
     udep_handler_t handler;
     rt_bool_t is_stall;
-    void* user_data;
 };
 typedef struct uendpoint* uep_t;
 
@@ -75,13 +74,15 @@ struct ualtsetting
 };
 typedef struct ualtsetting* ualtsetting_t;
 
+typedef rt_err_t (*uintf_handler_t)(struct udevice* device, struct uclass* cls, ureq_t setup);
+
 struct uinterface
 {
     rt_list_t list;
     rt_uint8_t intf_num;
     ualtsetting_t curr_setting;
     rt_list_t setting_list;
-    rt_err_t (*handler)(struct udevice* device, ureq_t setup);
+    uintf_handler_t handler;
 };
 typedef struct uinterface* uintf_t;
 
@@ -100,7 +101,8 @@ struct uclass
     void* eps;
     struct udevice* device;
     udev_desc_t dev_desc;
-
+    void* user_data;
+    
     rt_list_t intf_list;
 };
 typedef struct uclass* uclass_t;
@@ -158,8 +160,7 @@ udevice_t rt_usbd_device_create(const char** str);
 uconfig_t rt_usbd_config_create(void);
 uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
                               uclass_ops_t ops);
-uintf_t rt_usbd_interface_create(udevice_t device,
-                                 rt_err_t (*handler)(struct udevice*, ureq_t setup));
+uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);                                
 uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler);
 ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size);
 
@@ -180,7 +181,7 @@ rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value);
 
 udevice_t rt_usbd_find_device(udcd_t dcd);
 uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value);
-uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value);
+uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value, uclass_t *pcls);
 uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr);
 
 uclass_t rt_usbd_class_mstorage_create(udevice_t device);
