@@ -578,7 +578,7 @@ struct rt_memheap_item
     struct rt_memheap_item *next;                       /**< next memheap item */
     struct rt_memheap_item *prev;                       /**< prev memheap item */
 
-	struct rt_memheap      *pool_ptr;                   /**< point of pool */
+    struct rt_memheap      *pool_ptr;                   /**< point of pool */
 
     struct rt_memheap_item *next_free;                  /**< next free memheap item */
     struct rt_memheap_item *prev_free;                  /**< prev free memheap item */
@@ -595,7 +595,7 @@ struct rt_memheap
 
     rt_uint32_t             pool_size;                  /**< pool size */
     rt_uint32_t             available_size;             /**< available size */
-	rt_uint32_t             max_used_size;				/**< maximum allocated size */
+    rt_uint32_t             max_used_size;              /**< maximum allocated size */
 
     struct rt_memheap_item *block_list;                 /**< used block list */
 
@@ -699,7 +699,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_CHAR_STREAM      0x10            /**< stream mode on char device */
 #define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /**< get geometry information   */
 #define RT_DEVICE_CTRL_BLK_SYNC         0x11            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE		0x12 			/**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_ERASE        0x12            /**< erase block on block device */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
@@ -756,15 +756,15 @@ struct rt_device_blk_geometry
  */
 struct rt_device_blk_sectors
 {
-	rt_uint32_t sector_begin;							/**< begin sector */
-	rt_uint32_t sector_end;								/**< end sector   */
+    rt_uint32_t sector_begin;                           /**< begin sector */
+    rt_uint32_t sector_end;                             /**< end sector   */
 };
 
 /**
  * cursor control command
  */
-#define RT_DEVICE_CTRL_CURSOR_SET_POSITION	0x10
-#define RT_DEVICE_CTRL_CURSOR_SET_TYPE 		0x11
+#define RT_DEVICE_CTRL_CURSOR_SET_POSITION  0x10
+#define RT_DEVICE_CTRL_CURSOR_SET_TYPE      0x11
 
 /**
  * graphic device control command
@@ -774,7 +774,7 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_POWEROFF         2
 #define RTGRAPHIC_CTRL_GET_INFO         3
 #define RTGRAPHIC_CTRL_SET_MODE         4
-#define RTGRAPHIC_CTRL_GET_EXT			5
+#define RTGRAPHIC_CTRL_GET_EXT          5
 
 /* graphic deice */
 enum
