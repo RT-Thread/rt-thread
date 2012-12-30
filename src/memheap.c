@@ -29,8 +29,8 @@
 #define RT_MEMHEAP_IS_USED(i)   ((i)->magic & RT_MEMHEAP_USED)
 #define RT_MEMHEAP_MINIALLOC    12
 
-#define RT_MEMHEAP_SIZE     	RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
-#define MEMITEM_SIZE(item)		((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+#define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
+#define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
 
 /*
  * The initialized memory pool will be:
@@ -58,7 +58,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     memheap->start_addr     = start_addr;
     memheap->pool_size      = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
     memheap->available_size = memheap->pool_size - (2 * RT_MEMHEAP_SIZE);
-	memheap->max_used_size  = memheap->pool_size - memheap->available_size;
+    memheap->max_used_size  = memheap->pool_size - memheap->available_size;
 
     /* initialize the free list header */
     item            = &(memheap->free_header);
@@ -142,7 +142,8 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
     if (size < RT_MEMHEAP_MINIALLOC)
         size = RT_MEMHEAP_MINIALLOC;
 
-    RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate %d on heap:%8.*s", size, RT_NAME_MAX, heap->parent.name));
+    RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate %d on heap:%8.*s",
+                                    size, RT_NAME_MAX, heap->parent.name));
 
     if (size < heap->available_size)
     {
@@ -226,15 +227,15 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
                 heap->available_size = heap->available_size -
                                        size -
                                        RT_MEMHEAP_SIZE;
-				if (heap->pool_size - heap->available_size > heap->max_used_size)
-					heap->max_used_size = heap->pool_size - heap->available_size;
+                if (heap->pool_size - heap->available_size > heap->max_used_size)
+                    heap->max_used_size = heap->pool_size - heap->available_size;
             }
             else
             {
                 /* decrement the entire free size from the available bytes count. */
                 heap->available_size = heap->available_size - free_size;
-				if (heap->pool_size - heap->available_size > heap->max_used_size)
-					heap->max_used_size = heap->pool_size - heap->available_size;
+                if (heap->pool_size - heap->available_size > heap->max_used_size)
+                    heap->max_used_size = heap->pool_size - heap->available_size;
 
                 /* remove header_ptr from free list */
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
@@ -376,53 +377,60 @@ static struct rt_memheap _heap;
 
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
-	/* initialize a default heap in the system */
-	rt_memheap_init(&_heap, "heap", begin_addr, (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
+    /* initialize a default heap in the system */
+    rt_memheap_init(&_heap,
+                    "heap",
+                    begin_addr,
+                    (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
 }
 
 void *rt_malloc(rt_size_t size)
 {
-	void* ptr;
-	
-	/* try to allocate in system heap */
-	ptr = rt_memheap_alloc(&_heap, size);
-	if (ptr == RT_NULL)
-	{
-		struct rt_object *object;
-		struct rt_list_node *node;
-		struct rt_memheap *heap;
-		struct rt_object_information *information;
-		extern struct rt_object_information rt_object_container[];
+    void* ptr;
+    
+    /* try to allocate in system heap */
+    ptr = rt_memheap_alloc(&_heap, size);
+    if (ptr == RT_NULL)
+    {
+        struct rt_object *object;
+        struct rt_list_node *node;
+        struct rt_memheap *heap;
+        struct rt_object_information *information;
+        extern struct rt_object_information rt_object_container[];
 
-		/* try to allocate on other memory heap */
-		information = &rt_object_container[RT_Object_Class_MemHeap];
-		for (node = information->object_list.next; node != &(information->object_list); node = node->next)
-		{
-			object = rt_list_entry(node, struct rt_object, list);
-			heap = (struct rt_memheap*) object;
+        /* try to allocate on other memory heap */
+        information = &rt_object_container[RT_Object_Class_MemHeap];
+        for (node  = information->object_list.next;
+             node != &(information->object_list);
+             node  = node->next)
+        {
+            object = rt_list_entry(node, struct rt_object, list);
+            heap   = (struct rt_memheap *)object;
 
-			/* not allocate in the default system heap */
-			if (heap == &_heap) continue;
+            /* not allocate in the default system heap */
+            if (heap == &_heap)
+                continue;
 
-			ptr = rt_memheap_alloc(heap, size);
-			if (ptr != RT_NULL) break;
-		}
-	}
+            ptr = rt_memheap_alloc(heap, size);
+            if (ptr != RT_NULL)
+                break;
+        }
+    }
 
-	return ptr;
+    return ptr;
 }
 RTM_EXPORT(rt_malloc);
 
 void rt_free(void *rmem)
 {
-	rt_memheap_free(rmem);
+    rt_memheap_free(rmem);
 }
 RTM_EXPORT(rt_free);
 
 void *rt_realloc(void *rmem, rt_size_t newsize)
 {
     rt_size_t size;
-	void *nmem = RT_NULL;
+    void *nmem = RT_NULL;
     struct rt_memheap_item *header_ptr;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -430,54 +438,56 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     /* alignment size */
     newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
 
-	/* allocate a memory */
-	if (rmem == RT_NULL)
-	{
-		return rt_malloc(newsize);
-	}
-	
-	/* release memory */
-	if (newsize == 0)
-	{
-		rt_free(rmem);
-		return RT_NULL;
-	}
-	
-	/* get old memory item */
+    /* allocate a memory */
+    if (rmem == RT_NULL)
+    {
+        return rt_malloc(newsize);
+    }
+    
+    /* release memory */
+    if (newsize == 0)
+    {
+        rt_free(rmem);
+
+        return RT_NULL;
+    }
+    
+    /* get old memory item */
     header_ptr = (struct rt_memheap_item *)((rt_uint8_t *)rmem - RT_MEMHEAP_SIZE);
-	size = MEMITEM_SIZE(header_ptr);
-	if (newsize > size || newsize < size - RT_MEMHEAP_SIZE) /* re-allocate memory */
-	{
-		/* re-allocate a memory block */
-		nmem = (void*)rt_malloc(newsize);
-		if (nmem != RT_NULL)
-		{
-			rt_memcpy(nmem, rmem, size < newsize ? size : newsize); 
-			rt_free(rmem);
-		}
+    size = MEMITEM_SIZE(header_ptr);
+     /* re-allocate memory */
+    if (newsize > size || newsize < size - RT_MEMHEAP_SIZE)
+    {
+        /* re-allocate a memory block */
+        nmem = (void*)rt_malloc(newsize);
+        if (nmem != RT_NULL)
+        {
+            rt_memcpy(nmem, rmem, size < newsize ? size : newsize);
+            rt_free(rmem);
+        }
 
-		return nmem;
-	}
+        return nmem;
+    }
 
-	/* use the old memory block */
-	return rmem;
+    /* use the old memory block */
+    return rmem;
 }
 RTM_EXPORT(rt_realloc);
 
 void *rt_calloc(rt_size_t count, rt_size_t size)
 {
-	void *ptr;
-	rt_size_t total_size;
+    void *ptr;
+    rt_size_t total_size;
 
-	total_size = count * size;
-	ptr = rt_malloc(total_size);
-	if (ptr != RT_NULL)
-	{
-		/* clean memory */
-		rt_memset(ptr, 0, total_size);
-	}
+    total_size = count * size;
+    ptr = rt_malloc(total_size);
+    if (ptr != RT_NULL)
+    {
+        /* clean memory */
+        rt_memset(ptr, 0, total_size);
+    }
 
-	return ptr;
+    return ptr;
 }
 RTM_EXPORT(rt_calloc);
 
