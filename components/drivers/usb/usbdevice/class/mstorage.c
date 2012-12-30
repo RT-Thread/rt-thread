@@ -456,7 +456,7 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
+static rt_err_t _interface_handler(udevice_t device, uclass_t cls, ureq_t setup)
 {
     rt_uint8_t lun = 0;
 

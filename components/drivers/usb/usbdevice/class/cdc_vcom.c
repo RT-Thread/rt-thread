@@ -275,7 +275,7 @@ static rt_err_t _cdc_set_line_coding(udevice_t device, ureq_t setup)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _interface_handler(udevice_t device, ureq_t setup)
+static rt_err_t _interface_handler(udevice_t device, uclass_t cls, ureq_t setup)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);

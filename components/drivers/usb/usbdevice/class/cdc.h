@@ -44,6 +44,7 @@
 #define USB_CDC_PROTOCOL_CAPI20         0x93
 #define USB_CDC_PROTOCOL_HOST           0xFD
 #define USB_CDC_PROTOCOL_PUFD           0xFE
+#define USB_CDC_PROTOCOL_VENDOR         0xFF
 
 #define USB_CDC_CS_INTERFACE            0x24
 #define USB_CDC_CS_ENDPOINT             0x25
