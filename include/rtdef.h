@@ -17,6 +17,7 @@
  * 2012-11-16     Bernard      change RT_NULL from ((void*)0) to 0. 
  * 2012-12-29     Bernard      change the RT_USING_MEMPOOL location and add
  *                             RT_USING_MEMHEAP condition.
+ * 2012-12-30     Bernard      add more control command for graphic.
  */
  
 #ifndef __RT_DEF_H__
@@ -760,6 +761,12 @@ struct rt_device_blk_sectors
 };
 
 /**
+ * cursor control command
+ */
+#define RT_DEVICE_CTRL_CURSOR_SET_POSITION	0x10
+#define RT_DEVICE_CTRL_CURSOR_SET_TYPE 		0x11
+
+/**
  * graphic device control command
  */
 #define RTGRAPHIC_CTRL_RECT_UPDATE      0
@@ -767,8 +774,7 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_POWEROFF         2
 #define RTGRAPHIC_CTRL_GET_INFO         3
 #define RTGRAPHIC_CTRL_SET_MODE         4
-#define RTGRAPHIC_CTRL_FILL_RECT        5
-#define RTGRAPHIC_CTRL_DRAW_RECT        6
+#define RTGRAPHIC_CTRL_GET_EXT			5
 
 /* graphic deice */
 enum
