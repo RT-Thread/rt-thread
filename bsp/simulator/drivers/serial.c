@@ -109,14 +109,14 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
 #if _DEBUG_SERIAL==1
     printf("in rt_serial_write()\n");
 #endif
-	if (fp == NULL)
-		fp = fopen("log.txt", "wb+");
+    if (fp == NULL)
+        fp = fopen("log.txt", "wb+");
 
-	if (fp != NULL)
-		fwrite(buffer, size, 1, fp);
+    if (fp != NULL)
+        fwrite(buffer, size, 1, fp);
 
-	printf("%s",(char*)buffer);
-	return size;
+    printf("%s", (char *)buffer);
+    return size;
 }
 
 static rt_err_t rt_serial_control(rt_device_t dev, rt_uint8_t cmd, void *args)

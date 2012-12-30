@@ -3,6 +3,7 @@
 #include  <windows.h>
 #include  <mmsystem.h>
 #include  <stdio.h>
+#include  <conio.h>
 
 #include "serial.h"
 
@@ -107,10 +108,10 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 
     for (;;)
     {
-        key = _getch();//getchar();
+        key = getch();
         if (key == 0xE0)
         {
-            key = _getch();
+            key = getch();
 
             if (key == 0x48) //up key , 0x1b 0x5b 0x41
             {

@@ -32,12 +32,55 @@
  */
 #define FILE_PATH_MAX           256  /* the longest file path */
 
-#define WIN32_DIRDISK_ROOT  "." //"F:\\Project\\svn\\rtt\\trunk\\bsp\\simulator_test"
+#define WIN32_DIRDISK_ROOT  "." /* "F:\\Project\\svn\\rtt\\trunk\\bsp\\simulator_test" */
 
-static int win32_result_to_dfs(int res)
+/* There are so many error codes in windows, you'd better google for details.
+ * google  "System Error Codes (Windows)"
+ * http://msdn.microsoft.com/ZH-CN/library/windows/desktop/ms681381(v=vs.85).aspx
+ */
+
+struct _errcode_map
 {
-    rt_kprintf("win error: %x", res);
+    rt_uint16_t dfserr;
+    rt_uint16_t win32err;
+};
+
+static const struct _errcode_map errcode_table[] =
+{
+    {DFS_STATUS_ENOENT, ERROR_FILE_NOT_FOUND },
+    {DFS_STATUS_ENOENT, ERROR_PATH_NOT_FOUND },
+    {DFS_STATUS_EEXIST, ERROR_FILE_EXISTS },
+    {DFS_STATUS_EEXIST, ERROR_ALREADY_EXISTS },
+    {DFS_STATUS_ENOTEMPTY, ERROR_DIR_NOT_EMPTY },
+    {DFS_STATUS_EBUSY, ERROR_PATH_BUSY },
+    {DFS_STATUS_EINVAL, ERROR_ACCESS_DENIED },
+
+#if 0 /* TODO: MORE NEED BE ADDED */
+    {DFS_STATUS_EISDIR, ERROR_FILE_EXISTS },
+    {DFS_STATUS_ENOTDIR, ERROR_FILE_EXISTS },
+    {DFS_STATUS_EBADF, ERROR_FILE_EXISTS },
+    {DFS_STATUS_EBUSY, ERROR_FILE_EXISTS },
+    {DFS_STATUS_ENOMEM, ERROR_FILE_EXISTS },
+    {DFS_STATUS_ENOSPC, ERROR_FILE_EXISTS },
+#endif
+};
+static int win32_result_to_dfs(DWORD res)
+{
+    int i;
+    int err = 0;
+    for (i = 0; i < sizeof(errcode_table) / sizeof(struct _errcode_map); i++)
+    {
+        if (errcode_table[i].win32err == (res & 0xFFFF))
+        {
+            err = -errcode_table[i].dfserr;
+            return err;
+        }
+    }
+
+    /* unknown error */
+    rt_kprintf("dfs win32 error not supported yet: %d\n", res);
     return -1;
+
 }
 
 static int dfs_win32_mount(
@@ -109,15 +152,10 @@ static int dfs_win32_open(struct dfs_fd *file)
         if (oflag & DFS_O_CREAT)   /* create a dir*/
         {
             res = CreateDirectory(file_path, NULL);
-            if (res == ERROR_ALREADY_EXISTS)
+            if (res == 0)
             {
-                rt_kprintf("already exists!\n");
-                return -DFS_STATUS_EEXIST;
-            }
-            else if (res == ERROR_PATH_NOT_FOUND)
-            {
-                rt_kprintf("One or more intermediate directories do not exist!\n");
-                return -DFS_STATUS_ENOENT;
+                rt_free(file_path);
+                return win32_result_to_dfs(GetLastError());
             }
         }
 
@@ -137,7 +175,7 @@ static int dfs_win32_open(struct dfs_fd *file)
         }
 
         /* save this pointer,will used by  dfs_win32_getdents*/
-        file->data = handle;
+        file->data = (void *)handle;
         rt_free(file_path);
         return DFS_STATUS_OK;
     }
@@ -154,7 +192,7 @@ static int dfs_win32_open(struct dfs_fd *file)
     if (oflag & DFS_O_EXCL) mode |= O_EXCL;
 
     file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
-    fd = _open(file_path, mode);
+    fd = _open(file_path, mode, 0x0100 | 0x0080); /* _S_IREAD | _S_IWRITE */
     rt_free(file_path);
 
     if (fd < 0)
@@ -176,7 +214,8 @@ static int dfs_win32_open(struct dfs_fd *file)
     return 0;
 
 __err:
-    return win32_result_to_dfs(GetLastError());
+    res = GetLastError();
+    return win32_result_to_dfs(res);
 }
 
 static int dfs_win32_close(struct dfs_fd *file)
