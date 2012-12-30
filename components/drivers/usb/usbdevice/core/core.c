@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2012-10-01     Yi Qiu       first version
  * 2012-12-12     heyuanjie87  change endpoint and class handler
+ * 2012-12-30     heyuanjie87  change inferface handler
  */
 
 #include <rtthread.h>
@@ -199,7 +200,7 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_interface\n"));
 
     /* find the specified interface and its alternate setting */
-    intf = rt_usbd_find_interface(device, setup->index & 0xFF);
+    intf = rt_usbd_find_interface(device, setup->index & 0xFF, RT_NULL);
     value = intf->curr_setting->intf_desc->bAlternateSetting;
 
     /* send the interface alternate setting to endpoint 0*/
@@ -230,7 +231,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_interface\n"));
 
     /* find the specified interface */
-    intf = rt_usbd_find_interface(device, setup->index & 0xFF);
+    intf = rt_usbd_find_interface(device, setup->index & 0xFF, RT_NULL);
 
     /* set alternate setting to the interface */
     rt_usbd_set_altsetting(intf, setup->value & 0xFF);
@@ -468,7 +469,8 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
 static rt_err_t _class_request(udevice_t device, ureq_t setup)
 {
     uintf_t intf;
-
+    uclass_t cls;
+    
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
@@ -483,8 +485,8 @@ static rt_err_t _class_request(udevice_t device, ureq_t setup)
     switch(setup->request_type & USB_REQ_TYPE_RECIPIENT_MASK)
     {
     case USB_REQ_TYPE_INTERFACE:
-        intf = rt_usbd_find_interface(device, setup->index & 0xFF);
-        intf->handler(device, setup);        
+        intf = rt_usbd_find_interface(device, setup->index & 0xFF, &cls);
+        intf->handler(device, cls, setup);        
         break;
     case USB_REQ_TYPE_ENDPOINT:
         break;
@@ -686,8 +688,7 @@ uconfig_t rt_usbd_config_create(void)
  *
  * @return an usb interface object on success, RT_NULL on fail.
  */
-uintf_t rt_usbd_interface_create(udevice_t device, 
-    rt_err_t (*handler)(struct udevice*, ureq_t setup))
+uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler)  
 {
     uintf_t intf;
 
@@ -908,7 +909,7 @@ uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value)
  *
  * @return an usb configuration object on found or RT_NULL on not found.
  */
-uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value)
+uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value, uclass_t *pcls)
 {   
     struct rt_list_node *i, *j;
     uclass_t cls;
@@ -929,7 +930,11 @@ uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value)
         {
             intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
             if(intf->intf_num == value)
+            {
+                if (pcls != RT_NULL)
+                    *pcls = cls;
                 return intf;
+            }
         }
     }    
 
