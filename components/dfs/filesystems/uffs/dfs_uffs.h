@@ -11,7 +11,7 @@
 #include "uffs_config.h"
 #include "uffs/uffs_public.h"
 
-#define UFFS_BLOCK_MARK_SPARE_OFFSET  4    /* indicate block bad or good, offset in spare */
+//#define UFFS_BLOCK_MARK_SPARE_OFFSET  4    /* indicate block bad or good, offset in spare */
 
 //#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT
 //#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_NONE
