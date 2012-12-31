@@ -6,6 +6,7 @@
 #define NAND_SIM  "nand.bin"
 #if 1
 #define OOB_SIZE        64
+#define PAGE_DATA_SIZE  2048
 #define PAGE_SIZE       (2048 + 64)
 #define PAGE_PER_BLOCK  64
 #define BLOCK_SIZE      (PAGE_SIZE * PAGE_PER_BLOCK)
@@ -18,6 +19,8 @@
 #define BLOCK_SIZE      (PAGE_SIZE * PAGE_PER_BLOCK)
 #define BLOCK_NUM       512
 #endif
+
+#define ECC_SIZE       ((PAGE_DATA_SIZE) * 3 / 256)
 
 static unsigned char block_data[BLOCK_SIZE];
 static struct rt_mtd_nand_device _nanddrv_file_device;
@@ -189,8 +192,8 @@ static rt_err_t nanddrv_file_read_page(struct rt_mtd_nand_device *device,
                                        rt_uint8_t *spare, rt_uint32_t spare_len)
 {
     rt_uint32_t offset;
-    rt_uint8_t oob_buffer[OOB_SIZE];
-    rt_uint8_t oob_ecc   [OOB_SIZE];
+    rt_uint8_t oob_ecc [ECC_SIZE];
+    rt_uint8_t ecc [ECC_SIZE];
 
     page = page + device->block_start * device->pages_per_block;
 
@@ -201,25 +204,27 @@ static rt_err_t nanddrv_file_read_page(struct rt_mtd_nand_device *device,
 
     /* write page */
     offset = page * PAGE_SIZE;
-    if (data != NULL)
+    if (data != NULL && data_len != 0)
     {
         fseek(file, offset, SEEK_SET);
         fread(data, data_len, 1, file);
+        if (data_len == PAGE_DATA_SIZE)
+        {
+            /* read ecc size */
+            fread(oob_ecc, ECC_SIZE, 1, file);
+
+            /* verify ECC */
+            ecc_hamming_compute256x(data, PAGE_DATA_SIZE, &ecc[0]);
+            if (memcmp(&oob_ecc[0], &ecc[0], ECC_SIZE) != 0)
+                return -RT_MTD_EECC;
+        }
     }
 
-    offset = page * PAGE_SIZE + (PAGE_SIZE - OOB_SIZE);
-    fseek(file, offset, SEEK_SET);
-    fread(oob_buffer, OOB_SIZE, 1, file);
-    if (spare != NULL)
+    if (spare != NULL && spare_len)
     {
-        memcpy(spare, oob_buffer, spare_len);
-    }
-
-    /* verify ECC */
-    if (data != RT_NULL)
-    {
-        ecc_hamming_compute256x(data, PAGE_SIZE - OOB_SIZE, &oob_ecc[0]);
-        if (memcmp(&oob_ecc[0], &oob_buffer[0], OOB_SIZE - device->oob_free) != 0) return -RT_MTD_EECC;
+        offset = page * PAGE_SIZE + PAGE_DATA_SIZE;
+        fseek(file, offset, SEEK_SET);
+        fread(spare, spare_len, 1, file);
     }
 
     return RT_EOK;
@@ -231,7 +236,7 @@ static rt_err_t nanddrv_file_write_page(struct rt_mtd_nand_device *device,
                                         const rt_uint8_t *oob, rt_uint32_t spare_len)
 {
     rt_uint32_t offset;
-    rt_uint8_t oob_buffer[OOB_SIZE];
+    rt_uint8_t ecc[ECC_SIZE];
 
     page = page + device->block_start * device->pages_per_block;
     if (page / device->pages_per_block > device->block_end)
@@ -241,24 +246,26 @@ static rt_err_t nanddrv_file_write_page(struct rt_mtd_nand_device *device,
 
     /* write page */
     offset = page * PAGE_SIZE;
-    if (data != NULL)
+    if (data != RT_NULL && data_len != 0)
     {
         fseek(file, offset, SEEK_SET);
-        fwrite(data, PAGE_SIZE - OOB_SIZE, 1, file);
+        fwrite(data, data_len, 1, file);
+
+        if (data_len == PAGE_DATA_SIZE)
+        {
+            /*write the ecc information */
+            ecc_hamming_compute256x(data, PAGE_DATA_SIZE, ecc);
+
+            fwrite(ecc, ECC_SIZE, 1, file);
+        }
     }
 
-    offset = page * PAGE_SIZE + (PAGE_SIZE - OOB_SIZE);
-    fseek(file, offset, SEEK_SET);
-
-    memset(oob_buffer, 0xff, sizeof(oob_buffer));
-    ecc_hamming_compute256x(data, PAGE_SIZE - OOB_SIZE, &oob_buffer[0]);
-    if (oob != RT_NULL)
+    if (oob != RT_NULL && spare_len != 0)
     {
-        memcpy(&oob_buffer[OOB_SIZE - device->oob_free],
-               &oob[OOB_SIZE - device->oob_free],
-               device->oob_free);
+        offset = page * PAGE_SIZE + PAGE_DATA_SIZE + ECC_SIZE;
+        fseek(file, offset, SEEK_SET);
+        fwrite(&oob[ECC_SIZE], spare_len-ECC_SIZE, 1, file);
     }
-    fwrite(oob_buffer, OOB_SIZE, 1, file);
 
     return RT_EOK;
 }
@@ -266,7 +273,7 @@ static rt_err_t nanddrv_file_write_page(struct rt_mtd_nand_device *device,
 static rt_err_t nanddrv_file_move_page(struct rt_mtd_nand_device *device, rt_off_t from, rt_off_t to)
 {
     rt_uint32_t offset;
-    rt_uint8_t  page_buffer[PAGE_SIZE - OOB_SIZE];
+    rt_uint8_t  page_buffer[PAGE_DATA_SIZE];
     rt_uint8_t  oob_buffer[OOB_SIZE];
 
     from = from + device->block_start * device->pages_per_block;
@@ -315,16 +322,11 @@ static rt_err_t nanddrv_file_erase_block(struct rt_mtd_nand_device *device, rt_u
     if (block > BLOCK_NUM) return -RT_EIO;
 
     /* add the start blocks */
-    block = block + device->block_start * device->pages_per_block;
+    block = block + device->block_start;
 
     fseek(file, block * BLOCK_SIZE, SEEK_SET);
     fwrite(block_data, sizeof(block_data), 1, file);
 
-    return RT_EOK;
-}
-
-static rt_err_t nanddrv_file_no_op(struct rt_mtd_nand_device *device, rt_uint32_t block)
-{
     return RT_EOK;
 }
 
@@ -335,8 +337,8 @@ const static struct rt_mtd_nand_driver_ops _ops =
     nanddrv_file_write_page,
     nanddrv_file_move_page,
     nanddrv_file_erase_block,
-    nanddrv_file_no_op, /* check block */
-    nanddrv_file_no_op  /* mark bad block */
+    RT_NULL,
+    RT_NULL,
 };
 
 void nand_eraseall(void);
@@ -368,11 +370,11 @@ void rt_hw_mtd_nand_init(void)
     }
     fseek(file, 0, SEEK_SET);
 
-    ecc_size = (PAGE_SIZE - OOB_SIZE) * 3 / 256;
+    ecc_size = (PAGE_DATA_SIZE) * 3 / 256;
     _nanddrv_file_device.plane_num = 2;
     _nanddrv_file_device.oob_size = OOB_SIZE;
     _nanddrv_file_device.oob_free = OOB_SIZE - ecc_size;
-    _nanddrv_file_device.page_size = PAGE_SIZE - OOB_SIZE;
+    _nanddrv_file_device.page_size = PAGE_DATA_SIZE;
     _nanddrv_file_device.pages_per_block = PAGE_PER_BLOCK;
     _nanddrv_file_device.block_start = 0;
     _nanddrv_file_device.block_end = BLOCK_NUM / 2;
@@ -393,13 +395,5 @@ void nand_eraseall()
     }
 }
 FINSH_FUNCTION_EXPORT(nand_eraseall, erase all of block in the nand flash);
-
-#if 0
-void nand_log(int level)
-{
-    nftl_set_trace_level(level);
-}
-FINSH_FUNCTION_EXPORT(nand_log, set NFTL trace level);
-#endif
 
 #endif //RT_USING_FINSH
