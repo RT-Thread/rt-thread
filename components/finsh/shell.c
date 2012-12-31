@@ -26,6 +26,10 @@
 #include "finsh.h"
 #include "shell.h"
 
+#ifdef _WIN32
+#include <stdio.h> /* for putchar */
+#endif
+
 /* finsh thread */
 static struct rt_thread finsh_thread;
 ALIGN(RT_ALIGN_SIZE)

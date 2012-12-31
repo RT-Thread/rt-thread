@@ -287,14 +287,14 @@ static long _list_memheap(struct rt_list_node *list)
     struct rt_memheap *mh;
     struct rt_list_node *node;
 
-    rt_kprintf("memheap  pool size available size\n");
-    rt_kprintf("-------- --------- --------------\n");
+    rt_kprintf("memheap  pool size  max used size available size\n");
+    rt_kprintf("-------- ---------- ------------- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
 
-        rt_kprintf("%-8.*s %04d  %04d\n", RT_NAME_MAX, mh->parent.name,
-                mh->pool_size, mh->available_size);
+        rt_kprintf("%-8.*s %-010d %-013d %-05d\n", RT_NAME_MAX, mh->parent.name,
+                mh->pool_size, mh->max_used_size, mh->available_size);
     }
 
     return 0;
