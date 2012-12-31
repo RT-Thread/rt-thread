@@ -63,7 +63,7 @@ struct uendpoint
     rt_bool_t is_stall;
 };
 typedef struct uendpoint* uep_t;
-
+ 
 struct ualtsetting
 {
     rt_list_t list;
@@ -186,6 +186,7 @@ uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr
 
 uclass_t rt_usbd_class_mstorage_create(udevice_t device);
 uclass_t rt_usbd_class_cdc_create(udevice_t device);
+uclass_t rt_usbd_class_rndis_create(udevice_t device);
 
 #ifdef RT_USB_DEVICE_COMPOSITE
 rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc);
