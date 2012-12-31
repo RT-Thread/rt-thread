@@ -88,6 +88,13 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     /* add the class to the configuration */
     rt_usbd_config_add_class(cfg, cls);
 #endif
+#ifdef RT_USB_DEVICE_RNDIS
+    /* create a rndis class object */
+    cls = rt_usbd_class_rndis_create(udevice);
+
+    /* add the class to the configuration */
+    rt_usbd_config_add_class(cfg, cls);
+#endif
 
     /* set device descriptor to the device */
 #ifdef RT_USB_DEVICE_COMPOSITE
