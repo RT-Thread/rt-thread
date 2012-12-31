@@ -21,7 +21,6 @@
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_LWIP
-
     pcap_netif_hw_init();
 #endif
 

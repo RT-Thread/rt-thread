@@ -104,6 +104,7 @@
 
 /* SECTION: device file system */
 #define RT_USING_DFS
+#define DFS_FILESYSTEM_TYPES_MAX  8
 
 /* DFS: ELM FATFS options */
 #define RT_USING_DFS_ELMFAT
@@ -118,16 +119,16 @@
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 /* DFS: network file system options */
-#define RT_USING_DFS_NFS
+/* #define RT_USING_DFS_NFS */
 
-/* DFS: uffs nand file system options */
+/* DFS: UFFS nand file system options */
 #define RT_USING_DFS_UFFS
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO
 /* enable this ,you need provide a mark_badblock/check_block function */
-//#define RT_UFFS_USE_CHECK_MARK_FUNCITON
+/* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
 
-/* DFS: uffs nor flash file system options */
+/* DFS: JFFS2 nor flash file system options */
 #define RT_USING_DFS_JFFS2
 
 /* DFS: windows share directory mounted to rt-thread/dfs  */
