@@ -143,13 +143,13 @@ void uffs_setup_storage(
 	rt_memset(attr, 0, sizeof(struct uffs_StorageAttrSt));
 
 //	attr->total_blocks = nand->end_block - nand->start_block + 1;/* no use */
-	attr->page_data_size = nand->page_size;		                 /* page data size */
-	attr->pages_per_block = nand->pages_per_block;               /* pages per block */
-	attr->spare_size = nand->oob_size;		  	                 /* page spare size */
-	attr->block_status_offs = UFFS_BLOCK_MARK_SPARE_OFFSET;      /* block status offset is 5th byte in spare */
-	attr->ecc_opt = RT_CONFIG_UFFS_ECC_MODE;                     /* ecc option */
-	attr->ecc_size = RT_CONFIG_UFFS_ECC_SIZE;		  	         /* ecc size */
-	attr->layout_opt = RT_CONFIG_UFFS_LAYOUT;                    /* let UFFS do the spare layout */
+	attr->page_data_size = nand->page_size;                /* page data size */
+	attr->pages_per_block = nand->pages_per_block;         /* pages per block */
+	attr->spare_size = nand->oob_size;                     /* page spare size */
+	attr->ecc_opt = RT_CONFIG_UFFS_ECC_MODE;               /* ecc option */
+	attr->ecc_size = 0;                                    /* ecc size is 0 , the uffs will calculate the ecc size*/
+	attr->block_status_offs = attr->ecc_size;              /* indicate block bad or good, offset in spare */
+	attr->layout_opt = RT_CONFIG_UFFS_LAYOUT;              /* let UFFS do the spare layout */
 }
 
 #elif  RT_CONFIG_UFFS_ECC_MODE == UFFS_ECC_HW_AUTO
@@ -316,13 +316,13 @@ void uffs_setup_storage(
 	rt_memset(attr, 0, sizeof(struct uffs_StorageAttrSt));
 
 //	attr->total_blocks = nand->end_block - nand->start_block + 1;/* no use */
-	attr->page_data_size = nand->page_size;		                 /* page data size */
-	attr->pages_per_block = nand->pages_per_block; /* pages per block */
-	attr->spare_size = nand->oob_size;		  	                 /* page spare size */
-	attr->ecc_opt = RT_CONFIG_UFFS_ECC_MODE;                     /* ecc option */
-	attr->ecc_size = nand->oob_size-nand->oob_free;//RT_CONFIG_UFFS_ECC_SIZE;		  	         /* ecc size */
-	attr->block_status_offs = attr->ecc_size;//UFFS_BLOCK_MARK_SPARE_OFFSET;      /* block status offset is 5th byte in spare */
-	attr->layout_opt = RT_CONFIG_UFFS_LAYOUT;                    /* let UFFS do the spare layout */
+	attr->page_data_size = nand->page_size;                /* page data size */
+	attr->pages_per_block = nand->pages_per_block;         /* pages per block */
+	attr->spare_size = nand->oob_size;                     /* page spare size */
+	attr->ecc_opt = RT_CONFIG_UFFS_ECC_MODE;               /* ecc option */
+	attr->ecc_size = nand->oob_size-nand->oob_free;        /* ecc size */
+	attr->block_status_offs = attr->ecc_size;              /* indicate block bad or good, offset in spare */
+	attr->layout_opt = RT_CONFIG_UFFS_LAYOUT;              /* let UFFS do the spare layout */
 
 	/* calculate the ecc layout array */
 	hw_flash_data_layout[0] = attr->ecc_size + 1; /* ecc size + 1byte block status */
