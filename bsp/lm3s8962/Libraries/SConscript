@@ -12,7 +12,7 @@ if rtconfig.PART_TYPE.startswith('PART_LM4F') != True:
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-	src += ['startup/gcc/start_gcc.s']
+	src += ['startup/gcc/start_gcc.S']
 elif rtconfig.CROSS_TOOL == 'keil':
 	src += ['startup/arm/start_rvds.S']
 elif rtconfig.CROSS_TOOL == 'iar':
