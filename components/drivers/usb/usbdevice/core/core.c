@@ -325,7 +325,7 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
     }
         
     /* issue status stage */
-    rt_device_control((rt_device_t)device->dcd, CONTROL_SEND_STATUS, RT_NULL);
+    dcd_send_status(device->dcd);
     
     return RT_EOK;
 }
@@ -350,7 +350,7 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
     dcd_set_address(device->dcd, setup->value);
 
     /* issue status stage */
-    rt_device_control((rt_device_t)device->dcd, CONTROL_SEND_STATUS, RT_NULL);
+    dcd_send_status(device->dcd);
 
     return RT_EOK;
 }
