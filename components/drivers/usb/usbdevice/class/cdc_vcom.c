@@ -300,7 +300,7 @@ static rt_err_t _interface_handler(udevice_t device, uclass_t cls, ureq_t setup)
         _cdc_get_line_coding(device, setup);  
         break;
     case CDC_SET_CONTROL_LINE_STATE:
-        rt_device_control((rt_device_t)device->dcd, CONTROL_SEND_STATUS, RT_NULL);        
+        dcd_send_status(device->dcd);        
         break;
     case CDC_SEND_BREAK:
         break;
