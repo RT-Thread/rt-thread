@@ -207,7 +207,7 @@ static int dfs_uffs_unmount(struct dfs_filesystem* fs)
 	return -DFS_STATUS_ENOENT;
 }
 
-static int dfs_uffs_mkfs(const char* device_name)
+static int dfs_uffs_mkfs(rt_device_t dev_id)
 {
 	rt_base_t index;
 	rt_uint32_t block;
@@ -216,15 +216,13 @@ static int dfs_uffs_mkfs(const char* device_name)
 	/*1. find the device index */
 	for (index = 0; index < UFFS_DEVICE_MAX; index++)
 	{
-		if (rt_strncmp(nand_part[index].dev->parent.parent.name,
-				       device_name, RT_NAME_MAX) == 0)
+		if (nand_part[index].dev == (struct rt_mtd_nand_device *)dev_id)
 			break;
 	}
 
 	if (index == UFFS_DEVICE_MAX)
 	{
 		/* can't find device driver */
-		rt_kprintf("can not find device driver: %s\n", device_name);
 		return -DFS_STATUS_ENOENT;
 	}
 

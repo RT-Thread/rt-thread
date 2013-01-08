@@ -424,6 +424,19 @@ err1:
 int dfs_mkfs(const char *fs_name, const char *device_name)
 {
     int index;
+    rt_device_t dev_id;
+
+    /* check device name, and it should not be NULL */
+    if (device_name == RT_NULL)
+        dev_id = RT_NULL;
+    else
+        dev_id = rt_device_find(device_name);
+
+    if (dev_id == RT_NULL)
+    {
+        rt_set_errno(-DFS_STATUS_ENODEV);
+        return -1;
+    }
 
     /* lock file system */
     dfs_lock();
@@ -438,7 +451,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
             dfs_unlock();
 
             if (ops->mkfs != RT_NULL)
-                return ops->mkfs(device_name);
+                return ops->mkfs(dev_id);
 
             break;
         }

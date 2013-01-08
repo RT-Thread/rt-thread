@@ -222,7 +222,7 @@ static int dfs_jffs2_unmount(struct dfs_filesystem* fs)
 	return -DFS_STATUS_ENOENT;
 }
 
-static int dfs_jffs2_mkfs(const char* device_name)
+static int dfs_jffs2_mkfs(rt_device_t dev_id)
 {
 	/* just erase all blocks on this nand partition */
 	return -DFS_STATUS_ENOSYS; 

@@ -35,7 +35,7 @@ struct dfs_filesystem_operation
     int (*unmount)  (struct dfs_filesystem *fs);
 
     /* make a file system */
-    int (*mkfs)     (const char *device_name);
+    int (*mkfs)     (rt_device_t devid);
     int (*statfs)   (struct dfs_filesystem *fs, struct statfs *buf);
 
     int (*open)     (struct dfs_fd *fd);
