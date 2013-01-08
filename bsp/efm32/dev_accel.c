@@ -676,7 +676,7 @@ rt_err_t efm_accel_auto_zero(rt_uint8_t mode, rt_tick_t period)
 			}
 			sum.x /= ACCEL_CAL_SAMPLES;
 			sum.y /= ACCEL_CAL_SAMPLES;
-			sum.z /= ACCEL_CAL_SAMPLES;
+			sum.z /= ACCEL_CAL_SAMPLES;
 			if (sum.x < min.x)
 			{
 				min.x = sum.x;
