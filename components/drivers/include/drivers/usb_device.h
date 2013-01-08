@@ -19,10 +19,19 @@
 #include <rtthread.h>
 #include "usb_common.h"
 
-#define CONTROL_SEND_STATUS             0x00
-#define CONTROL_RECEIVE_STATUS          0x01
-
-#define USB_VENDOR_ID                   0x0483   /* Vendor ID */
+/* Vendor ID */
+#ifdef USB_VENDOR_ID
+#define USB_VENDOR_ID _VENDOR_ID
+#else
+#define _VENDOR_ID 0x0EFF
+#endif
+/*Product ID */
+#ifdef USB_PRODUCT_ID
+#define USB_PRODUCT_ID _PRODUCT_ID
+#else 
+#define _PRODUCT_ID 0x0001
+#endif
+ 
 #define USB_BCD_DEVICE                  0x0200   /* USB Specification Release Number in Binary-Coded Decimal */
 #define USB_BCD_VERSION                 0x0200   /* USB 2.0 */
 
@@ -42,6 +51,7 @@ struct udcd_ops
     rt_err_t (*ep_stop)(struct uendpoint* ep);
     rt_err_t (*ep_read)(struct uendpoint* ep, void *buffer, rt_size_t size);
     rt_size_t (*ep_write)(struct uendpoint* ep, void *buffer, rt_size_t size);
+    rt_err_t (*send_status)(void);
 };
 
 struct udcd
@@ -262,6 +272,13 @@ rt_inline rt_size_t dcd_ep_write(udcd_t dcd, uep_t ep, void *buffer,
     RT_ASSERT(dcd != RT_NULL);
 
     return dcd->ops->ep_write(ep, buffer, size);
+}
+
+rt_inline rt_err_t dcd_send_status(udcd_t dcd)
+{
+    RT_ASSERT(dcd != RT_NULL);
+
+    return dcd->ops->send_status();
 }
 
 #endif
