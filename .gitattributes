@@ -1,1 +1,34 @@
 * text=auto
+
+*.S text
+*.asm text
+*.c text
+*.cc text
+*.cpp text
+*.cxx text
+*.h text
+*.htm text
+*.html text
+*.in text
+*.ld text
+*.m4 text
+*.mak text
+*.mk text
+*.py text
+*.rb text
+*.s text
+*.sct text
+*.sh text
+*.txt text
+*.xml text
+SConscript text
+
+*.Opt -text
+*.Uv2 -text
+*.bat -text
+*.dos -text
+*.icf -text
+*.inf -text
+*.ini -text
+*.sct -text
+Jamfile -text
