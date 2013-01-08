@@ -39,8 +39,8 @@ static struct udevice_descriptor dev_desc =
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
-    USB_VENDOR_ID,              //idVendor;
-    USB_CDC_PRODUCT_ID,         //idProduct;
+    _VENDOR_ID,                 //idVendor;
+    _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
     USB_STRING_MANU_INDEX,      //iManufacturer;
     USB_STRING_PRODUCT_INDEX,   //iProduct;
