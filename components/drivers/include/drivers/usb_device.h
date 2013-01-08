@@ -19,7 +19,19 @@
 #include <rtthread.h>
 #include "usb_common.h"
 
-#define USB_VENDOR_ID                   0x0483   /* Vendor ID */
+/* Vendor ID */
+#ifdef USB_VENDOR_ID
+#define USB_VENDOR_ID _VENDOR_ID
+#else
+#define _VENDOR_ID 0x0EFF
+#endif
+/*Product ID */
+#ifdef USB_PRODUCT_ID
+#define USB_PRODUCT_ID _PRODUCT_ID
+#else 
+#define _PRODUCT_ID 0x0001
+#endif
+ 
 #define USB_BCD_DEVICE                  0x0200   /* USB Specification Release Number in Binary-Coded Decimal */
 #define USB_BCD_VERSION                 0x0200   /* USB 2.0 */
 

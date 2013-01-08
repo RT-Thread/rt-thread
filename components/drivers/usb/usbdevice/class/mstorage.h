@@ -21,7 +21,6 @@
 #define USBREQ_GET_MAX_LUN              0xfe
 #define USBREQ_MASS_STORAGE_RESET       0xff
 
-#define USB_MASS_STORAGE_PRODUCT_ID     0x1000   /* Product ID */
 #define SIZEOF_CSW                      0x0d
 #define SIZEOF_CBW                      0x1f
 

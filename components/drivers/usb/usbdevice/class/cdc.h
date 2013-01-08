@@ -16,7 +16,6 @@
 #ifndef  __CDC_H__
 #define  __CDC_H__
 
-#define USB_CDC_PRODUCT_ID              0x5740   /* Product ID */
 #define USB_CDC_BUFSIZE                 0x40
 
 #define USB_CDC_CLASS_COMM              0x02
