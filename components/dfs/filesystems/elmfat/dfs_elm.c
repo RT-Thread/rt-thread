@@ -75,34 +75,46 @@ static int elm_result_to_dfs(FRESULT result)
 	return status;
 }
 
+/* results:
+ *  -1, no space to install fatfs driver 
+ *  >= 0, there is an space to install fatfs driver 
+ */
+static int get_disk(rt_device_t id)
+{
+    int index;
+
+	for (index = 0; index < _VOLUMES; index ++)
+	{
+		if (disk[index] == id)
+            return index;
+	}
+    
+    return -1;
+}
+
 int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
 {
 	FATFS *fat;
 	FRESULT result;
-	BYTE  index;
+	int index;
 
-	/* handle RT-Thread device routine */
-	for (index = 0; index < _VOLUMES; index ++)
-	{
-		if (disk[index] == RT_NULL)
-		{
-			break;
-		}
-	}
-	if (index == _VOLUMES)
+	/* get an empty position */
+    index = get_disk(RT_NULL); 
+	if (index == -1)
 		return -DFS_STATUS_ENOSPC;
 
-	/* get device */
+	/* save device */
 	disk[index] = fs->dev_id;
 
 	fat = (FATFS *)rt_malloc(sizeof(FATFS));
 	if (fat == RT_NULL)
 	{
+        disk[index] = RT_NULL;
 		return -1;
 	}
 
 	/* mount fatfs, always 0 logic driver */
-	result = f_mount(index, fat);
+	result = f_mount((BYTE)index, fat);
 	if (result == FR_OK)
 	{
 		char drive[8];
@@ -116,81 +128,113 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 		/* open the root directory to test whether the fatfs is valid */
 		result = f_opendir(dir, drive);
 		if (result != FR_OK)
-		{
-			rt_free(dir);
-			return elm_result_to_dfs(result);
-		}
-		rt_free(dir);
+            goto __err;
 
+        /* mount succeed! */
 		fs->data = fat;
-	}
-	else
-	{
-		rt_free(fat);
-		return elm_result_to_dfs(result);
+		rt_free(dir);
+	    return 0;
 	}
 
-	return 0;
+__err:
+    disk[index] = RT_NULL;
+	rt_free(fat);
+	return elm_result_to_dfs(result);
 }
 
 int dfs_elm_unmount(struct dfs_filesystem *fs)
 {
 	FATFS *fat;
 	FRESULT result;
-	BYTE index;
+	int  index;
 
 	fat = (FATFS *)fs->data;
 
 	RT_ASSERT(fat != RT_NULL);
 
 	/* find the device index and then umount it */
-	for (index = 0; index < _VOLUMES; index ++)
-	{
-		if (disk[index] == fs->dev_id)
-		{
-			result = f_mount(index, RT_NULL);
+    index = get_disk(fs->dev_id);
+    if (index == -1) /* not found */
+	    return -DFS_STATUS_ENOENT;
 
-			if (result == FR_OK)
-			{
-				fs->data = RT_NULL;
-				disk[index] = RT_NULL;
-				rt_free(fat);
-				return DFS_STATUS_OK;
-			}
-		}
-	}
+	result = f_mount((BYTE)index, RT_NULL);
+	if (result != FR_OK)
+    	return elm_result_to_dfs(result);
 
-	return -DFS_STATUS_ENOENT;
+	fs->data = RT_NULL;
+	disk[index] = RT_NULL;
+	rt_free(fat);
+
+	return DFS_STATUS_OK;
 }
 
-int dfs_elm_mkfs(const char *device_name)
+int dfs_elm_mkfs(rt_device_t dev_id)
 {
-	BYTE drv;
-	rt_device_t dev;
+#define FSM_STATUS_INIT            0
+#define FSM_STATUS_USE_TEMP_DRIVER 1
+    FATFS *fat;
+    int flag;
 	FRESULT result;
+    int index;
 
-	/* find device name */
-	for (drv = 0; drv < _VOLUMES; drv ++)
+    if (dev_id == RT_NULL)
+        return -DFS_STATUS_EINVAL;
+
+	/* if the device is already mounted, then just do mkfs to the drv,
+     * while if it is not mounted yet, then find an empty drive to do mkfs
+     */
+
+    flag = FSM_STATUS_INIT;
+    index = get_disk(dev_id);
+    if (index == -1)
+    {
+        /* not found the device id */
+        index = get_disk(RT_NULL);
+    	if (index == -1) 
+        {	
+            /* no space to store an temp driver */
+        	rt_kprintf("sorry, there is no space to do mkfs! \n");
+    		return -DFS_STATUS_ENOSPC;
+        }
+        else
+        {
+            fat = rt_malloc(sizeof(FATFS));
+            if (fat == RT_NULL)
+                return -DFS_STATUS_ENOMEM;
+
+            flag = FSM_STATUS_USE_TEMP_DRIVER;
+
+            disk[index] = dev_id;
+
+            /* just fill the FatFs[vol] in ff.c, or mkfs will failded! 
+             * consider this condition: you just umount the elm fat, 
+             * then the space in FatFs[index] is released, and now do mkfs 
+             * on the disk, you will get a failure. so we need f_mount here, 
+             * just fill the FatFS[index] in elm fatfs to make mkfs work.
+             */
+            f_mount((BYTE)index, fat);
+        }
+    }
+
+	/* 1: no partition table */
+	/* 0: auto selection of cluster size */
+	result = f_mkfs((BYTE)index, 1, 0);
+
+    /* check flag status, we need clear the temp driver stored in disk[] */
+    if (flag == FSM_STATUS_USE_TEMP_DRIVER)
+    {
+        rt_free(fat);
+        f_mount((BYTE)index, RT_NULL);
+        disk[index] = RT_NULL;
+    }
+
+	if (result != FR_OK)
 	{
-		dev = disk[drv];
-		if (dev != RT_NULL && rt_strncmp(dev->parent.name, device_name, RT_NAME_MAX) == 0)
-		{
-			/* 1: no partition table */
-			/* 0: auto selection of cluster size */
-			result = f_mkfs(drv, 1, 0);
-			if (result != FR_OK)
-			{
-				rt_kprintf("format error\n");
-				return elm_result_to_dfs(result);
-			}
-
-			return DFS_STATUS_OK;
-		}
+		rt_kprintf("format error\n");
+		return elm_result_to_dfs(result);
 	}
 
-	/* can't find device driver */
-	rt_kprintf("can not find device driver: %s\n", device_name);
-	return -DFS_STATUS_EIO;
+	return DFS_STATUS_OK;
 }
 
 int dfs_elm_statfs(struct dfs_filesystem *fs, struct statfs *buf)
@@ -821,7 +865,8 @@ int ff_cre_syncobj(BYTE drv, _SYNC_t *m)
 
 int ff_del_syncobj(_SYNC_t m)
 {
-    rt_mutex_delete(m);
+    if (m != RT_NULL)
+        rt_mutex_delete(m);
 
     return RT_TRUE;
 }
