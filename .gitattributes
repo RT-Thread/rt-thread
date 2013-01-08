@@ -22,7 +22,9 @@
 *.txt text
 *.xml text
 SConscript text
+Makefile text
 
+*.LZO -text
 *.Opt -text
 *.Uv2 -text
 *.bat -text
