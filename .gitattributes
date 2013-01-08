@@ -23,14 +23,20 @@
 *.xml text
 SConscript text
 Makefile text
+AUTHORS text
+COPYING text
 
 *.LZO -text
 *.Opt -text
 *.Uv2 -text
+*.ewp -text
+*.eww -text
+*.vcproj -text
 *.bat -text
 *.dos -text
 *.icf -text
 *.inf -text
 *.ini -text
 *.sct -text
+*.xsd -text
 Jamfile -text
