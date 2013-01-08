@@ -36,8 +36,8 @@ static struct udevice_descriptor compsit_desc =
     0x02,                       //bDeviceSubClass;
     0x01,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
-    USB_VENDOR_ID,              //idVendor;
-    0xbacf,                     //idProduct;
+    _VENDOR_ID,                 //idVendor;
+    _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
     USB_STRING_MANU_INDEX,      //iManufacturer;
     USB_STRING_PRODUCT_INDEX,   //iProduct;
@@ -114,4 +114,3 @@ rt_err_t rt_usb_device_init(const char* udc_name)
 
     return RT_EOK;
 }
-
