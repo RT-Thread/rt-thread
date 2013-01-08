@@ -588,4 +588,3 @@ void rt_usb_vcom_init(void)
 }
 
 #endif
-

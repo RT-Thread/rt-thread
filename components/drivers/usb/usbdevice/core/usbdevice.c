@@ -114,4 +114,3 @@ rt_err_t rt_usb_device_init(const char* udc_name)
 
     return RT_EOK;
 }
-

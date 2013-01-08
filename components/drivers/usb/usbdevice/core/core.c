@@ -1318,4 +1318,3 @@ rt_err_t rt_usbd_core_init(void)
     
     return RT_EOK;
 }
-
