@@ -323,6 +323,34 @@ typedef struct ureqest* ureq_t;
 #define MIN(a, b) (a < b ? a : b)
 #define MAX(a, b) (a > b ? a : b)
 
+/* 
+ * the define related to mass storage
+ */
+#define USBREQ_GET_MAX_LUN              0xfe
+#define USBREQ_MASS_STORAGE_RESET       0xff
+
+#define SIZEOF_CSW                      0x0d
+#define SIZEOF_CBW                      0x1f
+
+#define CBWFLAGS_DIR_M                  0x80
+#define CBWFLAGS_DIR_IN                 0x80
+#define CBWFLAGS_DIR_OUT                0x00
+
+#define SCSI_TEST_UNIT_READY            0x00
+#define SCSI_REQUEST_SENSE              0x03
+#define SCSI_INQUIRY_CMD                0x12
+#define SCSI_ALLOW_MEDIUM_REMOVAL       0x1e
+#define SCSI_MODE_SENSE_6               0x1a
+#define SCSI_READ_CAPACITIES            0x23
+#define SCSI_READ_CAPACITY              0x25
+#define SCSI_READ_10                    0x28
+#define SCSI_WRITE_10                   0x2a
+#define SCSI_VERIFY_10                  0x2f
+
+#define CBW_SIGNATURE                   0x43425355
+#define CSW_SIGNATURE                   0x53425355
+#define CBW_TAG_VALUE                   0x12345678
+
 #pragma pack()
 
 #ifdef __cplusplus
