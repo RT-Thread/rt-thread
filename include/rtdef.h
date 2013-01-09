@@ -18,6 +18,7 @@
  * 2012-12-29     Bernard      change the RT_USING_MEMPOOL location and add
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
+ * 2013-01-09     Bernard      change version number.
  */
  
 #ifndef __RT_DEF_H__
@@ -37,7 +38,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      1L              /**< major version number */
-#define RT_SUBVERSION                   1L              /**< minor version number */
+#define RT_SUBVERSION                   2L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
