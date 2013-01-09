@@ -9,7 +9,6 @@
  */
 
 #define PRECISION 9
-#define M_PI 3.141592653589793238462643
 
 static double cos_off_tbl[] = {0.0, -M_PI/2., 0, -M_PI/2.};
 static double cos_sign_tbl[] = {1,-1,-1,1};
