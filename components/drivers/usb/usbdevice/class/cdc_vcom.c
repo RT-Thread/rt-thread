@@ -39,8 +39,8 @@ static struct udevice_descriptor dev_desc =
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
-    USB_VENDOR_ID,              //idVendor;
-    USB_CDC_PRODUCT_ID,         //idProduct;
+    _VENDOR_ID,                 //idVendor;
+    _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
     USB_STRING_MANU_INDEX,      //iManufacturer;
     USB_STRING_PRODUCT_INDEX,   //iProduct;
@@ -300,7 +300,7 @@ static rt_err_t _interface_handler(udevice_t device, uclass_t cls, ureq_t setup)
         _cdc_get_line_coding(device, setup);  
         break;
     case CDC_SET_CONTROL_LINE_STATE:
-        rt_device_control((rt_device_t)device->dcd, CONTROL_SEND_STATUS, RT_NULL);        
+        dcd_send_status(device->dcd);        
         break;
     case CDC_SEND_BREAK:
         break;
@@ -588,4 +588,3 @@ void rt_usb_vcom_init(void)
 }
 
 #endif
-

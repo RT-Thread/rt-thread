@@ -9,12 +9,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-02     Yi Qiu      first version
+ * 2012-10-02     Yi Qiu       first version
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rtservice.h>
+
+#ifdef RT_USING_USB_DEVICE
 
 const static char* ustring[] = 
 {
@@ -36,8 +38,8 @@ static struct udevice_descriptor compsit_desc =
     0x02,                       //bDeviceSubClass;
     0x01,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
-    USB_VENDOR_ID,              //idVendor;
-    0xbacf,                     //idProduct;
+    _VENDOR_ID,                 //idVendor;
+    _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
     USB_STRING_MANU_INDEX,      //iManufacturer;
     USB_STRING_PRODUCT_INDEX,   //iProduct;
@@ -115,3 +117,4 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     return RT_EOK;
 }
 
+#endif

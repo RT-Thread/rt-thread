@@ -9,11 +9,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-10-01     Yi Qiu      first version
+ * 2012-10-01     Yi Qiu       first version
  */
 
-#ifndef __RT_USB_COMMON_H__
-#define __RT_USB_COMMON_H__
+#ifndef __USB_COMMON_H__
+#define __USB_COMMON_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -320,26 +320,14 @@ struct ureqest
 };
 typedef struct ureqest* ureq_t;
 
-struct ustorage_cbw 
-{
-    rt_uint32_t signature;
-    rt_uint32_t tag;
-    rt_uint32_t xfer_len;
-    rt_uint8_t dflags;
-    rt_uint8_t lun;
-    rt_uint8_t cb_len;
-    rt_uint8_t cb[16];
-};
-typedef struct ustorage_cbw* ustorage_cbw_t;
+#define MIN(a, b) (a < b ? a : b)
+#define MAX(a, b) (a > b ? a : b)
 
-struct ustorage_csw 
-{
-    rt_uint32_t signature;
-    rt_uint32_t tag;
-    rt_uint32_t data_reside;
-    rt_uint8_t  status;
-};
-typedef struct ustorage_csw* ustorage_csw_t;
+/* 
+ * the define related to mass storage
+ */
+#define USBREQ_GET_MAX_LUN              0xfe
+#define USBREQ_MASS_STORAGE_RESET       0xff
 
 #define SIZEOF_CSW                      0x0d
 #define SIZEOF_CBW                      0x1f
@@ -362,12 +350,6 @@ typedef struct ustorage_csw* ustorage_csw_t;
 #define CBW_SIGNATURE                   0x43425355
 #define CSW_SIGNATURE                   0x53425355
 #define CBW_TAG_VALUE                   0x12345678
-
-#define USBREQ_GET_MAX_LUN              0xfe
-#define USBREQ_MASS_STORAGE_RESET       0xff
-
-#define MIN(a, b) (a < b ? a : b)
-#define MAX(a, b) (a > b ? a : b)
 
 #pragma pack()
 
