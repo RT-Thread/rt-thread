@@ -21,13 +21,13 @@
 
 /* Vendor ID */
 #ifdef USB_VENDOR_ID
-#define USB_VENDOR_ID _VENDOR_ID
+#define _VENDOR_ID USB_VENDOR_ID
 #else
 #define _VENDOR_ID 0x0EFF
 #endif
 /* Product ID */
 #ifdef USB_PRODUCT_ID
-#define USB_PRODUCT_ID _PRODUCT_ID
+#define _PRODUCT_ID USB_PRODUCT_ID
 #else 
 #define _PRODUCT_ID 0x0001
 #endif
