@@ -18,12 +18,28 @@
 
 #include <rtthread.h>
 
-#define USBREQ_GET_MAX_LUN                  0xfe
-#define USBREQ_MASS_STORAGE_RESET           0xff
-
-#define USB_MASS_STORAGE_PRODUCT_ID         0x1000   /* Product ID */
-
 #pragma pack(1)
+
+struct ustorage_cbw 
+{
+    rt_uint32_t signature;
+    rt_uint32_t tag;
+    rt_uint32_t xfer_len;
+    rt_uint8_t dflags;
+    rt_uint8_t lun;
+    rt_uint8_t cb_len;
+    rt_uint8_t cb[16];
+};
+typedef struct ustorage_cbw* ustorage_cbw_t;
+
+struct ustorage_csw 
+{
+    rt_uint32_t signature;
+    rt_uint32_t tag;
+    rt_uint32_t data_reside;
+    rt_uint8_t  status;
+};
+typedef struct ustorage_csw* ustorage_csw_t;
 
 struct umass_descriptor
 {
