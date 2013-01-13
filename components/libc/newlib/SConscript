@@ -15,8 +15,9 @@ CPPPATH = [cwd]
 # libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
 # recent GCC tool chains. The linker would just link in the functions that have
 # been referenced. So setting this won't result in bigger text size.
-Env.Append(LIBS = ['m'])
+LIBS = ['m']
 
-group = DefineGroup('newlib', src, depend = ['RT_USING_NEWLIB'], CPPPATH = CPPPATH)
+group = DefineGroup('newlib', src, depend = ['RT_USING_NEWLIB'],
+                    CPPPATH = CPPPATH, LIBS = LIBS)
 
 Return('group')
