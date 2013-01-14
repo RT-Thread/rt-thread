@@ -101,7 +101,7 @@
 /* #define RT_USING_MTD_NOR */
 
 /* SECTION: finsh, a C-Express shell */
-/* #define RT_USING_FINSH */
+#define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION

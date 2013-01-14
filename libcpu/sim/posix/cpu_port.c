@@ -1,7 +1,7 @@
 /*
  * author : prife (goprife@gmail.com)
  * date   : 2013/01/14 01:18:50
- * version: v 0.1.0
+ * version: v 0.2.0
  */
 #include <rtthread.h>
 #include <stdio.h>

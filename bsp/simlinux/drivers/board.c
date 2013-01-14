@@ -53,15 +53,16 @@ void rt_hw_win32_low_cpu(void)
 #endif
 }
 
-#if defined(RT_USING_FINSH)
-
+#ifdef _WIN32
 #ifndef _CRT_TERMINATE_DEFINED
 #define _CRT_TERMINATE_DEFINED
 _CRTIMP __declspec(noreturn) void __cdecl exit(__in int _Code);
 _CRTIMP __declspec(noreturn) void __cdecl _exit(__in int _Code);
 _CRTIMP void __cdecl abort(void);
 #endif
+#endif
 
+#if defined(RT_USING_FINSH)
 #include <finsh.h>
 void rt_hw_exit(void)
 {
@@ -79,9 +80,9 @@ void rt_hw_board_init()
     /* init system memory */
     heap = rt_hw_sram_init();
 
-#if defined(RT_USING_USART)
+//#if defined(RT_USING_USART)
     rt_hw_usart_init();
-#endif
+//#endif
 
 #if defined(RT_USING_CONSOLE)
     rt_hw_serial_init();
