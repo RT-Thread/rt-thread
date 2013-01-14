@@ -35,11 +35,13 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -ffunction-sections -fdata-sections'
+    DEVICE = '  '
     CFLAGS = DEVICE + ' -I/usr/include -w -D_REENTRANT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
     #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -pthread'
+    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -pthread'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
 
     CPATH = ''
     LPATH = ''

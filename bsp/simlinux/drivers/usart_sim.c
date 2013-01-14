@@ -59,28 +59,6 @@ void rt_hw_usart_init(void)
 #include <termios.h> /* for tcxxxattr, ECHO, etc */
 #include <unistd.h> /* for STDIN_FILENO */
 
-/*simulate windows' getch(), it works!!*/
-int getch(void) 
-{
-    int ch;
-    struct termios oldt, newt;
-
-	// get terminal input's attribute
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-
-	//set termios' local mode
-    newt.c_lflag &= ~(ECHO|ICANON);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
-	//read character from terminal input
-    ch = getchar();
-
-	//recover terminal's attribute
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-
-    return ch;
-}
 
 static void * ThreadforKeyGet(void * lpParam);
 static pthread_t OSKey_Thread;
@@ -149,16 +127,36 @@ static int savekey(unsigned char key)
 #ifdef _WIN32
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 #else
+
+/*simulate windows' getch(), it works!!*/
+static void setgetchar(void) 
+{
+    struct termios oldt, newt;
+
+	// get terminal input's attribute
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+
+	//set termios' local mode
+    newt.c_lflag &= ~(ECHO|ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+}
+#define getch  getchar
+
 static void * ThreadforKeyGet(void * lpParam)
-#endif
+#endif /* not _WIN32*/
 {
     unsigned char key;
 
     (void)lpParam;              //prevent compiler warnings
-
+#ifndef _WIN32
+	/* set the getchar without buffer */
+ 	setgetchar();
+#endif
     for (;;)
     {
         key = getch();
+#ifdef _WIN32
         if (key == 0xE0)
         {
             key = getch();
@@ -178,7 +176,7 @@ static void * ThreadforKeyGet(void * lpParam)
 
             continue;
         }
-
+#endif
         savekey(key);
     }
 } /*** ThreadforKeyGet ***/

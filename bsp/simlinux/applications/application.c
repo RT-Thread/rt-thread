@@ -18,6 +18,7 @@
 
 #include <components.h>
 
+
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_LWIP
@@ -74,16 +75,8 @@ void rt_init_thread_entry(void *parameter)
     }
 #endif
 
-#if 0
-    {
-        extern void application_init(void);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-        application_init();
-    }
-#endif
-
 #if defined(RT_USING_RTGUI)
-    rt_thread_delay(3000);
+    rt_thread_delay(RT_TICK_PER_SECOND);
     snake_main();
 #endif
 }
@@ -91,56 +84,32 @@ void rt_init_thread_entry(void *parameter)
 static void rt_test_thread_entry(void *parameter)
 {
     int i;
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 5; i++)
     {
         rt_kprintf("hello, world\n");
         rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }
 
-static void rt_high_thread_entry(void *parameter)
-{
-    int i;
-    for (i = 0; i < 3; i++)
-    {
-        rt_kprintf("high thread <%d> \n", i);
-        rt_thread_delay(2*RT_TICK_PER_SECOND);
-    }
-}
 
 int rt_application_init()
 {
     rt_thread_t tid;
 
-#if 0
     tid = rt_thread_create("init",
                            rt_init_thread_entry, RT_NULL,
                            2048, RT_THREAD_PRIORITY_MAX / 3, 20);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);
+
     tid = rt_thread_create("test",
                            rt_test_thread_entry, RT_NULL,
                            2048, RT_THREAD_PRIORITY_MAX * 3 / 4, 20);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 
-#endif
-
-    tid = rt_thread_create("test1",
-                           rt_high_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX / 2, 20);
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
-
-    tid = rt_thread_create("test2",
-                           rt_test_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX / 2, 20);
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
-
     return 0;
 }
-
 
 /*@}*/

@@ -122,6 +122,7 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
 #endif
 
     printf("%s", (char *)buffer);
+	fflush(stdout);
     return size;
 }
 

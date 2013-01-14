@@ -94,9 +94,9 @@ static void thread_switch_handler(int sig)
     thread_from = (thread_t *) rt_interrupt_from_thread;
     thread_to = (thread_t *) rt_interrupt_to_thread;
 
-    /* FIXME 注意！此时 rt_thread_self的值是to线程的值！ */
+    /* 注意！此时 rt_thread_self的值是to线程的值！ */
     tid = rt_thread_self();
-    RT_ASSERT(thread_from->pthread == pid);
+    /* FIXME RT_ASSERT(thread_from->pthread == pid); */
     RT_ASSERT((thread_t *)(tid->sp) == thread_to);
 
     TRACE("signal: SIGSUSPEND suspend <%s>\n", thread_from->rtthread->name);
@@ -124,7 +124,6 @@ static void *thread_run(void *parameter)
     thread->task(thread->para);
     TRACE("pid <%08x> tid <%s> exit...\n", (unsigned int)(thread->pthread),
           tid->name);
-    //FIXME
     thread->exit();
     //sem_destroy(&thread->sem); //<--------------
 
@@ -235,7 +234,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
     tid = rt_thread_self();
     pid = pthread_self();
 
-    if (pid != mainthread_pid)
+    if (pid != mainthread_pid && thread_from->pthread == pid)
     {
         /* 注意这段代码是在RTT普通线程函数总函数中执行的，
          * from线程就是当前rtt线程 */
@@ -244,9 +243,6 @@ void rt_hw_interrupt_enable(rt_base_t level)
               (unsigned int)pid,
               thread_from->rtthread->name,
               thread_to->rtthread->name);
-
-        /* 确定一下，这两个值一定是相等的！ */
-        RT_ASSERT(thread_from->pthread == pid);
 
         /* 唤醒被挂起的线程 */
         sem_post(& thread_to ->sem);
@@ -259,8 +255,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
     }
     else
     {
-        /* 注意这段代码是在system tick 函数中执行的，
-         * 即此时位于主线程的SIGALRM信号处理函数中
+        /* 注意这段代码可能在多种情况下运行：
+		 * 1. 在system tick中执行， 即主线程的SIGALRM信号处理函数中执行
+		 * 2. 其他线程中调用，比如用于获取按键输入的线程中调用
          */
         TRACE("conswitch: S in pid<%x>  ,suspend <%s>, resume <%s>!\n",
               (unsigned int)pid,
