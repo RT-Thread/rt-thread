@@ -1,6 +1,6 @@
 /*
  * author : prife (goprife@gmail.com)
- * date   : 2013/01/14 01:18:50 
+ * date   : 2013/01/14 01:18:50
  * version: v 0.1.0
  */
 #include <rtthread.h>
@@ -186,28 +186,96 @@ rt_uint8_t *rt_hw_stack_init(
     return (rt_uint8_t *) thread;
 }
 
-static int dis_count;
-static int en_count;
-
-/* TODO: 此函数还没有真正实现 */
 rt_base_t rt_hw_interrupt_disable(void)
 {
     long back;
 
+    if (ptr_int_mutex == NULL)
+    {
+        return 0;
+    }
+
+    pthread_mutex_lock(ptr_int_mutex);
     back = interrupt_disable_flag;
     interrupt_disable_flag = INTERRUPT_DISABLE;
 
     /*TODO: It may need to unmask the signal */
-    dis_count++;
     return back;
 }
 
-/* TODO: 此函数还没有真正实现 */
 void rt_hw_interrupt_enable(rt_base_t level)
 {
+    struct rt_thread * tid;
+    pthread_t pid;
+    thread_t *thread_from;
+    thread_t *thread_to;
+
+    if (ptr_int_mutex == NULL)
+        return;
+
     interrupt_disable_flag = level;
 
-    en_count++;
+    pthread_mutex_unlock(ptr_int_mutex);
+    /* 如果已经中断仍然关闭 */
+    if (interrupt_disable_flag)
+    {
+        return;
+    }
+
+    /* 表示当前中断打开, 检查是否有挂起的中断 */
+    pthread_mutex_lock(ptr_int_mutex);
+    if (!cpu_pending_interrupts)
+    {
+        pthread_mutex_unlock(ptr_int_mutex);
+        return;
+    }
+
+    thread_from = (thread_t *) rt_interrupt_from_thread;
+    thread_to = (thread_t *) rt_interrupt_to_thread;
+    tid = rt_thread_self();
+    pid = pthread_self();
+
+    if (pid != mainthread_pid)
+    {
+        /* 注意这段代码是在RTT普通线程函数总函数中执行的，
+         * from线程就是当前rtt线程 */
+        /* 需要检查是否有挂起的中断需要处理 */
+        TRACE("conswitch: P in pid<%x> ,suspend <%s>, resume <%s>!\n",
+              (unsigned int)pid,
+              thread_from->rtthread->name,
+              thread_to->rtthread->name);
+
+        /* 确定一下，这两个值一定是相等的！ */
+        RT_ASSERT(thread_from->pthread == pid);
+
+        /* 唤醒被挂起的线程 */
+        sem_post(& thread_to ->sem);
+        cpu_pending_interrupts --;
+
+        pthread_mutex_unlock(ptr_int_mutex);
+
+        /* 挂起当前的线程 */
+        sem_wait(& thread_from->sem);
+    }
+    else
+    {
+        /* 注意这段代码是在system tick 函数中执行的，
+         * 即此时位于主线程的SIGALRM信号处理函数中
+         */
+        TRACE("conswitch: S in pid<%x>  ,suspend <%s>, resume <%s>!\n",
+              (unsigned int)pid,
+              thread_from->rtthread->name,
+              thread_to->rtthread->name);
+        /* 挂起from线程 */
+        pthread_kill(thread_from->pthread, MSG_SUSPEND);
+        cpu_pending_interrupts --;
+
+        pthread_mutex_unlock(ptr_int_mutex);
+
+        /* 唤醒to线程 */
+        sem_post(& thread_to->sem);
+
+    }
     /*TODO: It may need to unmask the signal */
 }
 
@@ -240,66 +308,12 @@ void rt_hw_context_switch(rt_uint32_t from,
     rt_interrupt_from_thread = *((rt_uint32_t *)from);
     rt_interrupt_to_thread = *((rt_uint32_t *)to);
 
-    thread_from = (thread_t *) rt_interrupt_from_thread;
-    thread_to = (thread_t *) rt_interrupt_to_thread;
-
-    /* FIXME note: now, rt_current_thread is the thread_to! scheduler.c:272 */
-    tid = rt_thread_self();
-    pid = pthread_self();
-
-    /*
-     * FIXME: 这段代码应该删除，因为rt_schedule函数中是先关闭中断，然后再开启的
-     * 开启就会出发PendSV（以stm32为例）中断，cpu_port.c的win32版本可以模拟这种
-     * 情形，因为它的中断是在主线程代码实现的，而本设计中，切换分为两种情况，
-     * 1) 普通rtt线程调用rt_thread_delay/rt_sem_take等主动挂起时，即刻实现切换
-     * 2) 当rt_thread_delay定时到期时，主线程的SIGALRM信号处理函数中实现线程切换
-     *
-     * 在第一种情况下，如果添加打开如下代码，由于if中语句为真，会导致失败退出。
-     *
-        if (interrupt_disable_flag != 0)
-        {
-            printf("dis_count=%d, en_count=%d\n", dis_count, en_count);
-            printf("interrupt_disable_flag = %d\n", interrupt_disable_flag);
-            printf("bug! interrupt is disabled! You may forget enable interrupt\n");
-            exit(EXIT_FAILURE);
-        }
-    */
-
-    if (pid != mainthread_pid)
-    {
-        /* FIXME: 注意这段代码是在RTT普通线程函数总函数中执行的，
-         * from线程就是当前rtt线程 */
-        TRACE("conswitch: P in pid<%x> ,suspend <%s>, resume <%s>!\n",
-              (unsigned int)pid,
-              thread_from->rtthread->name,
-              thread_to->rtthread->name);
-
-        /* 确定一下，这两个值一定是相等的！ */
-        RT_ASSERT(thread_from->pthread == pid);
-
-        /* 唤醒to线程 */
-        sem_post(& thread_to->sem);
-
-        /* 挂起from线程, 既然from线程就是当前线程，所以应该直接
-         * 挂起在这里 */
-        sem_wait(& thread_from->sem);
-    }
-    else
-    {
-        /* FIXME: 注意这段代码是在system tick 函数中执行的，
-         * 即此时位于主线程的SIGALRM信号处理函数中
-         */
-        TRACE("conswitch: S in pid<%x>  ,suspend <%s>, resume <%s>!\n",
-              (unsigned int)pid,
-              thread_from->rtthread->name,
-              thread_to->rtthread->name);
-
-        /* 挂起from线程 */
-        pthread_kill(thread_from->pthread, MSG_SUSPEND);
-
-        /* 唤醒to线程 */
-        sem_post(& thread_to->sem);
-    }
+    /* 这个函数只是并不会真正执行中断处理函数，而只是简单的
+     * 设置一下中断挂起标志位
+     */
+    pthread_mutex_lock(ptr_int_mutex);
+    cpu_pending_interrupts ++;
+    pthread_mutex_unlock(ptr_int_mutex);
 }
 
 void rt_hw_context_switch_to(rt_uint32_t to)
@@ -331,7 +345,6 @@ static int mainthread_scheduler(void)
     thread_t *thread_to;
     pthread_mutex_t mutex;
     pthread_mutexattr_t mutexattr;
-    unsigned int contex_switch_mask;
 
     /* save the main thread id */
     mainthread_pid = pthread_self();
@@ -342,14 +355,11 @@ static int mainthread_scheduler(void)
     /* install signal handler used to suspend itself */
     signal_install(MSG_SUSPEND, thread_switch_handler);
 
-#if 0
     /* create a mutex and condition val, used to indicate interrupts occrue */
     ptr_int_mutex = &mutex;
     pthread_mutexattr_init(&mutexattr);
     pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(ptr_int_mutex, &mutexattr);
-    pthread_cond_init(&cond_int_hit, NULL);
-#endif
 
     /* start timer */
     start_sys_timer();
@@ -405,17 +415,20 @@ static void start_sys_timer(void)
 
 static void mthread_signal_tick(int sig)
 {
+    int res;
     pthread_t pid = pthread_self();
 
     if (sig == SIGALRM)
     {
         TRACE("pid <%x> signal: SIGALRM enter!\n", (unsigned int)pid);
 
-        /* FIXME: 下面这条语句不能打开，打开就会导致失败tick_interrupt_isry
-         * 永远无法执行
-         */
-        /* if (! interrupt_disable_flag) */
+        if (pthread_mutex_trylock(ptr_int_mutex) != 0)
+        {
+            TRACE("try lock failed.\n");
+            return;
+        }
         tick_interrupt_isr();
+        pthread_mutex_unlock(ptr_int_mutex);
 
         TRACE("pid <%x> signal: SIGALRM leave!\n", (unsigned int)pid);
     }
