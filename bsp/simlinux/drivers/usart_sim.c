@@ -56,6 +56,7 @@ void rt_hw_usart_init(void)
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <termios.h> /* for tcxxxattr, ECHO, etc */
 #include <unistd.h> /* for STDIN_FILENO */
 
@@ -122,7 +123,7 @@ static int savekey(unsigned char key)
 
         serial_device.rx_indicate(&serial_device, rx_length);
     }
-    return 0;
+    return 0; 
 }
 #ifdef _WIN32
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
@@ -148,11 +149,14 @@ static void * ThreadforKeyGet(void * lpParam)
 {
     unsigned char key;
 
-    (void)lpParam;              //prevent compiler warnings
 #ifndef _WIN32
+    sigset_t  sigmask, oldmask;
 	/* set the getchar without buffer */
+	sigfillset(&sigmask);
+	pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
  	setgetchar();
 #endif
+    (void)lpParam;              //prevent compiler warnings
     for (;;)
     {
         key = getch();
