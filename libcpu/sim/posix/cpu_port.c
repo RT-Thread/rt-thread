@@ -157,7 +157,7 @@ static void *thread_run(void *parameter)
     /* FIXME set signal mask, mask the timer! */
     signal_mask();
 
-    thread->status = SUSPEND_SIGWAIT;
+    thread->status = SUSPEND_LOCK;
     TRACE("pid <%08x> stop on sem...\n", (unsigned int)(thread->pthread));
     sem_wait(&thread->sem);
 
@@ -289,6 +289,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
               thread_from->rtthread->name,
               thread_to->rtthread->name);
 
+        cpu_pending_interrupts --;
+        thread_from->status = SUSPEND_LOCK;
+        pthread_mutex_unlock(ptr_int_mutex);
         /* 唤醒被挂起的线程 */
         if (thread_to->status == SUSPEND_SIGWAIT)
         {
@@ -303,9 +306,6 @@ void rt_hw_interrupt_enable(rt_base_t level)
             printf("conswitch: should not be here! %d\n", __LINE__);
             exit(EXIT_FAILURE);
         }
-        cpu_pending_interrupts --;
-        thread_from->status = SUSPEND_LOCK;
-        pthread_mutex_unlock(ptr_int_mutex);
 
         /* 挂起当前的线程 */
         sem_wait(& thread_from->sem);
@@ -325,9 +325,20 @@ void rt_hw_interrupt_enable(rt_base_t level)
               (unsigned int)pid,
               thread_from->rtthread->name,
               thread_to->rtthread->name);
+
+        cpu_pending_interrupts --;
+
+        /* 需要把解锁函数放在前面,以防止死锁？？ */
+        pthread_mutex_unlock(ptr_int_mutex);
+
         /* 挂起from线程 */
         pthread_kill(thread_from->pthread, MSG_SUSPEND);
-        cpu_pending_interrupts --;
+        /* TODO 这里需要确保线程被挂起了, 否则304行就很可能就会报错退出
+         * 因为这里挂起线程是通过信号实现的，所以一定要确保线程挂起才行 */
+        while (thread_from->status != SUSPEND_SIGWAIT)
+        {
+            sched_yield();
+        }
 
         /* 唤醒to线程 */
         if (thread_to->status == SUSPEND_SIGWAIT)
@@ -344,7 +355,6 @@ void rt_hw_interrupt_enable(rt_base_t level)
             exit(EXIT_FAILURE);
         }
 
-        pthread_mutex_unlock(ptr_int_mutex);
     }
     /*TODO: It may need to unmask the signal */
 }
