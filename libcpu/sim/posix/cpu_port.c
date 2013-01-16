@@ -46,7 +46,7 @@ typedef struct _thread
 
 /* interrupt flag, if 1, disable, if 0, enable */
 static long interrupt_disable_flag;
-static int systick_signal_flag;
+//static int systick_signal_flag;
 
 /* flag in interrupt handling */
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
@@ -154,7 +154,7 @@ static void *thread_run(void *parameter)
     thread = THREAD_T(parameter);
     int res;
 
-    /* FIXME set signal mask, mask the timer! */
+    /* set signal mask, mask the timer! */
     signal_mask();
 
     thread->status = SUSPEND_LOCK;
@@ -169,7 +169,13 @@ static void *thread_run(void *parameter)
     TRACE("pid <%08x> tid <%s> exit...\n", (unsigned int)(thread->pthread),
           tid->name);
     thread->exit();
-    //sem_destroy(&thread->sem); //<--------------
+
+    /*TODO:
+     * 最后一行的pthread_exit永远没有机会执行，这是因为在threead->exit函数中
+     * 会发生线程切换，并永久将此pthread线程挂起，所以更完美的解决方案是在这
+	 * 里发送信号给主线程，主线程中再次唤醒此线程令其自动退出。
+	 */
+    //sem_destroy(&thread->sem);
 
     pthread_exit(NULL);
 }
@@ -309,11 +315,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
 
         /* 挂起当前的线程 */
         sem_wait(& thread_from->sem);
-        //TRACE("rttask:%s suspend!\n", thread_from->rtthread->name);
         pthread_mutex_lock(ptr_int_mutex);
         thread_from->status = THREAD_RUNNING;
         pthread_mutex_unlock(ptr_int_mutex);
-        //TRACE("rttask:%s resume!\n", thread_to->rtthread->name);
     }
     else
     {
@@ -333,7 +337,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
 
         /* 挂起from线程 */
         pthread_kill(thread_from->pthread, MSG_SUSPEND);
-        /* TODO 这里需要确保线程被挂起了, 否则304行就很可能就会报错退出
+        /* 注意：这里需要确保线程被挂起了, 否则312行就很可能就会报错退出
          * 因为这里挂起线程是通过信号实现的，所以一定要确保线程挂起才行 */
         while (thread_from->status != SUSPEND_SIGWAIT)
         {
@@ -376,7 +380,7 @@ void rt_hw_context_switch(rt_uint32_t from,
     RT_ASSERT(from != to);
 
 #if 0
-    //TODO: 还需要考虑嵌套切换的情况
+    //TODO: 可能还需要考虑嵌套切换的情况
     if (rt_thread_switch_interrupt_flag != 1)
     {
         rt_thread_switch_interrupt_flag = 1;
@@ -449,14 +453,12 @@ static int mainthread_scheduler(void)
     /* create a mutex and condition val, used to indicate interrupts occrue */
     ptr_int_mutex = &mutex;
     pthread_mutexattr_init(&mutexattr);
-    pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE_NP);
     pthread_mutex_init(ptr_int_mutex, &mutexattr);
 
     /* start timer */
     start_sys_timer();
 
-    /* FIXME: note that, cond var could not released earlier than pthread_con_wait */
-    /* trigger_interrupt(CPU_INTERRUPT_YIELD); */
     thread_to = (thread_t *) rt_interrupt_to_thread;
     thread_resume(thread_to);
     for (;;)
@@ -473,11 +475,11 @@ static int mainthread_scheduler(void)
         /* signal mask sigalrm  屏蔽SIGALRM信号 */
         pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
 
-//		if (systick_signal_flag != 0)
+        // if (systick_signal_flag != 0)
         if (pthread_mutex_trylock(ptr_int_mutex) == 0)
         {
             tick_interrupt_isr();
-            systick_signal_flag = 0;
+            // systick_signal_flag = 0;
             pthread_mutex_unlock(ptr_int_mutex);
         }
         else
