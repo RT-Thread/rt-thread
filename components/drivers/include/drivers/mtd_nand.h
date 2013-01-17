@@ -25,11 +25,12 @@
 struct rt_mtd_nand_driver_ops;
 #define RT_MTD_NAND_DEVICE(device)	((struct rt_mtd_nand_device*)(device))
 
-#define RT_MTD_EOK		0
-#define RT_MTD_EECC		1
-#define RT_MTD_EBUSY	2
-#define RT_MTD_EIO		3
-#define RT_MTD_ENOMEM	4
+#define RT_MTD_EOK		0	/* NO error */
+#define RT_MTD_EECC		1	/* ECC error */
+#define RT_MTD_EBUSY		2	/* hardware busy */
+#define RT_MTD_EIO		3	/* generic IO issue */
+#define RT_MTD_ENOMEM		4	/* out of memory */
+#define RT_MTD_ESRC		5	/* source issue */
 
 struct rt_mtd_nand_device
 {
