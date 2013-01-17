@@ -273,12 +273,18 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     for (n = timer_list->next; n != timer_list; n = n->next)
     {
         t = rt_list_entry(n, struct rt_timer, list);
-        
+
         /*
          * It supposes that the new tick shall less than the half duration of
-         * tick max.
+         * tick max. And if we have two timers that timeout at the same time,
+         * it's prefered that the timer inserted early get called early.
          */
-        if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX / 2)
+        if ((t->timeout_tick - timer->timeout_tick) == 0)
+        {
+            rt_list_insert_after(n, &(timer->list));
+            break;
+        }
+        else if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX / 2)
         {
             rt_list_insert_before(n, &(timer->list));
             break;
