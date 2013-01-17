@@ -124,7 +124,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
         }
     }
 
-    if(setup->length == 0xFF)
+    if(setup->length > len)
         len = str_desc.bLength;
     else
         len = setup->length;
