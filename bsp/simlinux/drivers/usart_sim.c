@@ -129,19 +129,25 @@ static int savekey(unsigned char key)
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 #else
 
+static struct termios oldt, newt;
 /*simulate windows' getch(), it works!!*/
-static void setgetchar(void) 
+void set_stty(void) 
 {
-    struct termios oldt, newt;
-
-	// get terminal input's attribute
+	/* get terminal input's attribute */
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
 
-	//set termios' local mode
+	/* set termios' local mode */
     newt.c_lflag &= ~(ECHO|ICANON);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 }
+
+void restore_stty(void)
+{
+   /* recover terminal's attribute */
+   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+}
+
 #define getch  getchar
 
 static void * ThreadforKeyGet(void * lpParam)
@@ -154,7 +160,7 @@ static void * ThreadforKeyGet(void * lpParam)
 	/* set the getchar without buffer */
 	sigfillset(&sigmask);
 	pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
- 	setgetchar();
+	set_stty();
 #endif
     (void)lpParam;              //prevent compiler warnings
     for (;;)

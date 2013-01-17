@@ -32,7 +32,7 @@ rt_uint8_t *rt_hw_sram_init(void)
 #ifdef _WIN32
         _exit(1);
 #else
-		exit(1);
+        exit(1);
 #endif
     }
     return heap;
@@ -45,11 +45,11 @@ rt_uint8_t *rt_hw_sram_init(void)
 void rt_hw_win32_low_cpu(void)
 {
 #ifdef _WIN32
-	/* in windows */
+    /* in windows */
     Sleep(1000);
 #else
-	/* in linux */
-	sleep(1);
+    /* in linux */
+    sleep(1);
 #endif
 }
 
@@ -67,6 +67,18 @@ _CRTIMP void __cdecl abort(void);
 void rt_hw_exit(void)
 {
     rt_kprintf("RT-Thread, bye\n");
+#if !defined(_WIN32) && defined(__GNUC__)
+    /* *
+     * getchar reads key from buffer, while finsh need an non-buffer getchar
+     * in windows, getch is such an function, in linux, we had to change 
+     * the behaviour of terminal to get an non-buffer getchar. 
+     * in usart_sim.c, set_stty is called to do this work 
+     * */
+    {
+        extern void restore_stty(void);
+        restore_stty();
+    }
+#endif
     exit(0);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
