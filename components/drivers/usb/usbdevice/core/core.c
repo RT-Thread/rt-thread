@@ -356,6 +356,38 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
 }
 
 /**
+ * This function will handle standard request to 
+ * interface that defined in class-specifics
+ *
+ * @param device the usb device object.
+ * @param setup the setup request.
+ *
+ * @return RT_EOK on successful. 
+ */
+static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
+{
+    uintf_t intf;
+    uclass_t cls;
+    rt_err_t ret;
+
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(setup != RT_NULL);
+
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("_request_interface\n"));
+    
+    intf = rt_usbd_find_interface(device, setup->index & 0xFF, &cls);
+    if (intf != RT_NULL)
+    {
+        ret = intf->handler(device, cls, setup);
+    }
+    else
+        ret = -RT_ERROR;
+
+    return ret;
+}
+
+/**
  * This function will handle standard request.
  *
  * @param device the usb device object.
@@ -419,9 +451,14 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             _set_interface(device, setup);
             break;
         default:
-            rt_kprintf("unknown interface request\n");
-            dcd_ep_stall(device->dcd, 0);
-            break;
+            if (_request_interface(device, setup) != RT_EOK)
+            {
+                rt_kprintf("unknown interface request\n");
+                dcd_ep_stall(device->dcd, 0);
+                return - RT_ERROR;
+            }
+            else
+                break;
         }
         break;
     case USB_REQ_TYPE_ENDPOINT:
