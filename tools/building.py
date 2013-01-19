@@ -113,9 +113,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
-    #env['CCCOMSTR'] = "CC $TARGET"
-    #env['ASCOMSTR'] = "AS $TARGET"
-    #env['LINKCOMSTR'] = "Link $TARGET"
+    # add comstr option
+    AddOption('--default-comstr',
+                dest='default_comstr',
+                action='store_true',
+                default=False,
+                help='use default command string')
+
+    if not GetOption('default_comstr'):
+        env.Replace(
+            ASCOMSTR = 'AS $TARGET',
+            CCCOMSTR = 'CC $TARGET',
+            CXXCOMSTR = 'CXX $TARGET',
+            LINKCOMSTR = 'LINK $TARGET'
+        )
 
     # board build script
     objs = SConscript('SConscript', variant_dir='build', duplicate=0)
