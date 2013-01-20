@@ -2,11 +2,12 @@ language: c
 
 install:
   - mkdir ~/toolchain
-  - curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C ~/toolchain
+  - "[ $RTT_CPU = 'arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C ~/toolchain"
 
 before_script:
   - export RTT_EXEC_PATH=~/toolchain/arm-2011.03/bin
   - export RTT_ROOT=`pwd`
+  - export RTT_CC='gcc'
   - cd tools
 
 script:
@@ -16,4 +17,4 @@ notifications:
   email: false
 
 env:
-  - RTT_CC='gcc'
+  - RTT_CPU='arm'
