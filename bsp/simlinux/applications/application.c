@@ -50,7 +50,8 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_DFS_ELMFAT
         /* mount sd card fatfs as root directory */
-        if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
+        //if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
             rt_kprintf("fatfs initialized!\n");
         else
             rt_kprintf("fatfs initialization failed!\n");
