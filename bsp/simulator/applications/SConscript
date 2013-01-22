@@ -1,7 +1,11 @@
 from building import *
 
-cwd     = GetCurrentDir()
+cwd = GetCurrentDir()
 src	= Glob('*.c')
+
+# remove no need file.
+if GetDepend('RT_USING_DFS_WINSHAREDIR') == False:
+    SrcRemove(src, 'dfs_win32.c')
 CPPPATH = [cwd, str(Dir('#'))]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)

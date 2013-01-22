@@ -1,7 +1,9 @@
 # toolchains options
 ARCH='sim'
-CPU='win32' #CPU='posix'
-CROSS_TOOL='msvc' #win32
+#CPU='win32'
+#CPU='posix'
+CPU='posix'
+CROSS_TOOL='gcc' #msvc # gcc
 
 # lcd panel options
 # 'FMT0371','ILI932X', 'SSD1289'
@@ -33,16 +35,19 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE
+    DEVICE = '  '
+    CFLAGS = DEVICE + ' -I/usr/include -w -D_REENTRANT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
+    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
+    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -pthread'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -g -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'

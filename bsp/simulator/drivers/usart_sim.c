@@ -1,15 +1,19 @@
 #include  <rthw.h>
 #include  <rtthread.h>
+
+#ifdef _WIN32
 #include  <windows.h>
 #include  <mmsystem.h>
-#include  <stdio.h>
 #include  <conio.h>
+#endif
 
+#include  <stdio.h>
 #include "serial.h"
 
 struct serial_int_rx serial_rx;
 extern struct rt_device serial_device;
 
+#ifdef _WIN32
 /*
  * Handler for OSKey Thread
  */
@@ -19,7 +23,6 @@ static DWORD        OSKey_ThreadID;
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
 void rt_hw_usart_init(void)
 {
-
     /*
      * create serial thread that receive key input from keyboard
      */
@@ -46,9 +49,31 @@ void rt_hw_usart_init(void)
      * Start OS get key Thread
      */
     ResumeThread(OSKey_Thread);
-
 }
 
+#else /* POSIX version */
+
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <termios.h> /* for tcxxxattr, ECHO, etc */
+#include <unistd.h> /* for STDIN_FILENO */
+
+
+static void * ThreadforKeyGet(void * lpParam);
+static pthread_t OSKey_Thread;
+void rt_hw_usart_init(void)
+{
+    int res;
+    res = pthread_create(&OSKey_Thread, NULL, &ThreadforKeyGet, NULL);
+    if (res)
+    {
+        printf("pthread create faild, <%d>\n", res);
+        exit(EXIT_FAILURE);
+    }
+}
+#endif
 /*
  * 方向键(←)： 0xe04b
  * 方向键(↑)： 0xe048
@@ -100,15 +125,48 @@ static int savekey(unsigned char key)
     }
     return 0;
 }
+#ifdef _WIN32
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
+#else
+
+static struct termios oldt, newt;
+/*simulate windows' getch(), it works!!*/
+void set_stty(void)
+{
+	/* get terminal input's attribute */
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+
+	/* set termios' local mode */
+    newt.c_lflag &= ~(ECHO|ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+}
+
+void restore_stty(void)
+{
+   /* recover terminal's attribute */
+   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+}
+
+#define getch  getchar
+
+static void * ThreadforKeyGet(void * lpParam)
+#endif /* not _WIN32*/
 {
     unsigned char key;
 
+#ifndef _WIN32
+    sigset_t  sigmask, oldmask;
+	/* set the getchar without buffer */
+	sigfillset(&sigmask);
+	pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+	set_stty();
+#endif
     (void)lpParam;              //prevent compiler warnings
-
     for (;;)
     {
         key = getch();
+#ifdef _WIN32
         if (key == 0xE0)
         {
             key = getch();
@@ -128,7 +186,7 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 
             continue;
         }
-
+#endif
         savekey(key);
     }
 } /*** ThreadforKeyGet ***/

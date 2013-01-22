@@ -2,14 +2,14 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+#define RT_HEAP_SIZE   (1024*1024*2)
+
+#if  defined(_MSC_VER)
 /* SECTION: port for visual studio */
-#ifdef _MSC_VER
 #undef RT_USING_NEWLIB
 #undef RT_USING_MINILIBC
 #define NORESOURCE  //RT_VESRION in winuser.h
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
-
-#define RT_HEAP_SIZE   (1024*1024*2)
 
 /* disable some warning in MSC */
 #pragma warning(disable:4273)	/* to ignore: warning C4273: inconsistent dll linkage */
@@ -18,6 +18,9 @@
 #pragma warning(disable:4996)   /* to ignore: warning C4996: The POSIX name for this item is deprecated. */
 #pragma warning(disable:4267)   /* to ignore: warning C4267: conversion from 'size_t' to 'rt_size_t', possible loss of data */
 #pragma warning(disable:4244)   /* to ignore: warning C4244: '=' : conversion from '__w64 int' to 'rt_size_t', possible loss of data */
+
+#elif defined(__GNUC__)
+#define RT_USING_NOLIBC
 #endif
 
 /* SECTION: basic kernel options */
@@ -31,11 +34,12 @@
 #define RT_THREAD_PRIORITY_MAX  32	
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	1000
+#define RT_TICK_PER_SECOND	100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+//#define RT_DEBUG_SCHEDULER   1
 #define RT_THREAD_DEBUG
 
 #define RT_USING_OVERFLOW_CHECK
@@ -129,11 +133,11 @@
 /* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
 
 /* DFS: JFFS2 nor flash file system options */
-#define RT_USING_DFS_JFFS2
+//#define RT_USING_DFS_JFFS2
 
 /* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
-#define RT_USING_DFS_WINSHAREDIR
+//#define RT_USING_DFS_WINSHAREDIR
 
 /* the max number of mounted file system */
 #define DFS_FILESYSTEMS_MAX			4

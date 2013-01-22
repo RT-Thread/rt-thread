@@ -18,6 +18,7 @@
 
 #include <components.h>
 
+
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_LWIP
@@ -49,7 +50,11 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_DFS_ELMFAT
         /* mount sd card fatfs as root directory */
+#ifdef _WIN32
         if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
+#else
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+#endif
             rt_kprintf("fatfs initialized!\n");
         else
             rt_kprintf("fatfs initialization failed!\n");
@@ -73,30 +78,18 @@ void rt_init_thread_entry(void *parameter)
 
     }
 #endif
-
-#if 0
-    {
-        extern void application_init(void);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-        application_init();
-    }
-#endif
-
-#if defined(RT_USING_RTGUI)
-    rt_thread_delay(3000);
-    snake_main();
-#endif
 }
 
 static void rt_test_thread_entry(void *parameter)
 {
     int i;
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 5; i++)
     {
         rt_kprintf("hello, world\n");
-        rt_thread_delay(100);
+        rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }
+
 
 int rt_application_init()
 {
@@ -117,6 +110,5 @@ int rt_application_init()
 
     return 0;
 }
-
 
 /*@}*/

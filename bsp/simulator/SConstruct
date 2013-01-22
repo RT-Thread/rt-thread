@@ -18,38 +18,44 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
 
 env = Environment()
 
 Export('RTT_ROOT')
 Export('rtconfig')
 
-libs = Split('''
-winmm
-gdi32
-winspool
-comdlg32
-advapi32
-shell32
-ole32
-oleaut32
-uuid
-odbc32
-odbccp32
-''')
-definitions = Split('''
-WIN32
-_DEBUG
-_CONSOLE
-MSVC
-_TIME_T_DEFINED
-''')
+if rtconfig.PLATFORM == 'cl':
+    TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
 
-env.Append(CCFLAGS=rtconfig.CFLAGS)
-env.Append(LINKFLAGS=rtconfig.LFLAGS)
-env['LIBS']=libs
-env['CPPDEFINES']=definitions
+    libs = Split('''
+    winmm
+    gdi32
+    winspool
+    comdlg32
+    advapi32
+    shell32
+    ole32
+    oleaut32
+    uuid
+    odbc32
+    odbccp32
+    ''')
+    definitions = Split('''
+    WIN32
+    _DEBUG
+    _CONSOLE
+    MSVC
+    _TIME_T_DEFINED
+    ''')
+    env.Append(CCFLAGS=rtconfig.CFLAGS)
+    env.Append(LINKFLAGS=rtconfig.LFLAGS)
+    env['LIBS']=libs
+    env['CPPDEFINES']=definitions
+else:
+    TARGET = 'rtthread'
+    env.Append(CCFLAGS=rtconfig.CFLAGS)
+    env.Append(LINKFLAGS=rtconfig.LFLAGS)
+
 
 # prepare building environment
 
