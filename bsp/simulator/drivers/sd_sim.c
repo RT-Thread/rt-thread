@@ -185,9 +185,25 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-void eraseall(void)
+int sd_erase(void)
 {
-    printf("had not implemented yet!\n");
+    rt_uint32_t index;
+    char * buffer;
+    struct rt_device *device;
+    device = &_sdcard.parent;
+    if ((buffer = rt_malloc(SECTOR_SIZE)) == RT_NULL)
+    {
+        rt_kprintf("out of memory\n");
+        return -1;
+    }
+
+    memset(buffer, 0, SECTOR_SIZE);
+    /* just erase the MBR! */
+    for (index = 0; index < 2; index ++)
+    {
+        rt_sdcard_write(device, index, buffer, SECTOR_SIZE);
+    }
+    return 0;
 }
-FINSH_FUNCTION_EXPORT(eraseall, erase all block in SPI flash);
+FINSH_FUNCTION_EXPORT(sd_erase, erase all block in SPI flash);
 #endif
