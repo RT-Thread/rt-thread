@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 #include <dfs_def.h>
 
 // #define SD_TRACE     rt_kprintf
