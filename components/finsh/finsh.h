@@ -64,8 +64,16 @@ typedef unsigned char  u_char;
 typedef unsigned short u_short;
 typedef unsigned long  u_long;
 
-#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__) && !defined(__ADSPBLACKFIN__) && !defined(_MSC_VER)
+#if !defined(__CC_ARM)             && \
+    !defined(__IAR_SYSTEMS_ICC__)  && \
+    !defined(__ADSPBLACKFIN__)     && \
+    !defined(_MSC_VER)
+
+#if !(defined(__GNUC__) && defined(__x86_64__))
 typedef unsigned int size_t;
+#else
+#include <stdio.h>
+#endif
 
 #ifndef NULL
 #define NULL RT_NULL
@@ -148,11 +156,14 @@ struct finsh_sysvar
 	void*		 var ;		/* the address of variable */
 };
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
 struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call);
+struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call);
 #define FINSH_NEXT_SYSCALL(index)  index=finsh_syscall_next(index)
+#define FINSH_NEXT_SYSVAR(index)   index=finsh_sysvar_next(index)
 #else
 #define FINSH_NEXT_SYSCALL(index)  index++
+#define FINSH_NEXT_SYSVAR(index)   index++
 #endif
 
 /* system variable item */
