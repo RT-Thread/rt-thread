@@ -77,8 +77,8 @@ void rt_init_thread_entry(void *parameter)
 #endif
 
 #if defined(RT_USING_RTGUI)
-    rt_thread_delay(RT_TICK_PER_SECOND);
-    snake_main();
+    //rt_thread_delay(RT_TICK_PER_SECOND);
+    //snake_main();
 #endif
 }
 

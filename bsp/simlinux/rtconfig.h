@@ -197,7 +197,7 @@
 #define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
-/* #define RT_USING_RTGUI */
+#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12
