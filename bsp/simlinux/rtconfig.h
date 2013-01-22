@@ -34,7 +34,7 @@
 #define RT_THREAD_PRIORITY_MAX  32	
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	2
+#define RT_TICK_PER_SECOND	100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -96,9 +96,9 @@
 
 /* SECTION: MTD interface options */
 /* using mtd nand flash */
-/* #define RT_USING_MTD_NAND */
+#define RT_USING_MTD_NAND
 /* using mtd nor flash */
-/* #define RT_USING_MTD_NOR */
+#define RT_USING_MTD_NOR
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -107,7 +107,7 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device file system */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define DFS_FILESYSTEM_TYPES_MAX  8
 
 /* DFS: ELM FATFS options */
@@ -133,11 +133,11 @@
 /* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
 
 /* DFS: JFFS2 nor flash file system options */
-#define RT_USING_DFS_JFFS2
+//#define RT_USING_DFS_JFFS2
 
 /* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
-#define RT_USING_DFS_WINSHAREDIR
+//#define RT_USING_DFS_WINSHAREDIR
 
 /* the max number of mounted file system */
 #define DFS_FILESYSTEMS_MAX			4
