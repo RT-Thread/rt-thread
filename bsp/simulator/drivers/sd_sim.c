@@ -203,6 +203,7 @@ int sd_erase(void)
     {
         rt_sdcard_write(device, index, buffer, SECTOR_SIZE);
     }
+    rt_free(buffer);
     return 0;
 }
 FINSH_FUNCTION_EXPORT(sd_erase, erase all block in SPI flash);
