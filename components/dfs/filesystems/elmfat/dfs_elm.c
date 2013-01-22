@@ -123,7 +123,12 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         rt_snprintf(drive, sizeof(drive), "%d:/", index);
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
+        {
+            f_mount((BYTE)index, RT_NULL);
+            disk[index] = RT_NULL;
+            rt_free(fat);
             return -DFS_STATUS_ENOMEM;
+        }
 
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
@@ -137,6 +142,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
 __err:
+    f_mount((BYTE)index, RT_NULL);
     disk[index] = RT_NULL;
     rt_free(fat);
     return elm_result_to_dfs(result);
