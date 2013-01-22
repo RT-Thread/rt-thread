@@ -121,7 +121,9 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name)
 	struct finsh_sysvar* index;
 	struct finsh_sysvar_item* item;
 
-	for (index = _sysvar_table_begin; index < _sysvar_table_end; index ++)
+	for (index = _sysvar_table_begin;
+	     index < _sysvar_table_end;
+	     FINSH_NEXT_SYSVAR(index))
 	{
 		if (strcmp(index->name, name) == 0)
 			return index;
