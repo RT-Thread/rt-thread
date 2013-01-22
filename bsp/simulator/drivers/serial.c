@@ -13,8 +13,12 @@
 #include "serial.h"
 #include <stdio.h>
 struct rt_device serial_device;
-extern struct serial_int_rx serial_rx;
+//extern struct serial_int_rx serial_rx;
+struct serial_int_rx serial_rx;
+
+#if 0
 static FILE *fp = RT_NULL;
+#endif
 
 /*@{*/
 
@@ -109,13 +113,16 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
 #if _DEBUG_SERIAL==1
     printf("in rt_serial_write()\n");
 #endif
+#if 0
     if (fp == NULL)
         fp = fopen("log.txt", "wb+");
 
     if (fp != NULL)
         fwrite(buffer, size, 1, fp);
+#endif
 
     printf("%s", (char *)buffer);
+	fflush(stdout);
     return size;
 }
 

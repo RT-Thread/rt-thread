@@ -71,8 +71,8 @@ void rt_hw_exit(void)
     /* *
      * getchar reads key from buffer, while finsh need an non-buffer getchar
      * in windows, getch is such an function, in linux, we had to change 
-     * the behaviour of terminal to get an non-buffer getchar. 
-     * in usart_sim.c, set_stty is called to do this work 
+     * the behaviour of terminal to get an non-buffer getchar.
+     * in usart_sim.c, set_stty is called to do this work
      * */
     {
         extern void restore_stty(void);

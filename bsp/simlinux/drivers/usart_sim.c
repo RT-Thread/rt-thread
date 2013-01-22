@@ -123,7 +123,7 @@ static int savekey(unsigned char key)
 
         serial_device.rx_indicate(&serial_device, rx_length);
     }
-    return 0; 
+    return 0;
 }
 #ifdef _WIN32
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
@@ -131,7 +131,7 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 
 static struct termios oldt, newt;
 /*simulate windows' getch(), it works!!*/
-void set_stty(void) 
+void set_stty(void)
 {
 	/* get terminal input's attribute */
     tcgetattr(STDIN_FILENO, &oldt);
