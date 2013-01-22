@@ -50,8 +50,11 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_DFS_ELMFAT
         /* mount sd card fatfs as root directory */
-        //if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
+#ifdef _WIN32
+        if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
+#else
         if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+#endif
             rt_kprintf("fatfs initialized!\n");
         else
             rt_kprintf("fatfs initialization failed!\n");
@@ -74,11 +77,6 @@ void rt_init_thread_entry(void *parameter)
 #endif
 
     }
-#endif
-
-#if defined(RT_USING_RTGUI)
-    //rt_thread_delay(RT_TICK_PER_SECOND);
-    //snake_main();
 #endif
 }
 
