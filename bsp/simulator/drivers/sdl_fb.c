@@ -141,6 +141,7 @@ static void sdlfb_hw_init(void)
 #include  <mmsystem.h>
 #else
 #include <pthread.h>
+#include <signal.h>
 #endif
 
 #include  <stdio.h>
@@ -158,8 +159,15 @@ static void *sdl_loop(void *lpParam)
     int quit = 0;
     SDL_Event event;
     int button_state = 0;
-
     rt_device_t device;
+
+#ifndef _WIN32
+    sigset_t  sigmask, oldmask;
+    /* set the getchar without buffer */
+    sigfillset(&sigmask);
+    pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+#endif
+
     sdlfb_hw_init();
 
     device = rt_device_find("sdl");
@@ -315,14 +323,14 @@ void rt_hw_sdl_start(void)
     }
     ResumeThread(thread);
 #else
-	/* Linux */
-	pthread_t pid;
+    /* Linux */
+    pthread_t pid;
     int res;
     res = pthread_create(&pid, NULL, &sdl_loop, NULL);
     if (res)
     {
         printf("pthread create sdl thread faild, <%d>\n", res);
         exit(EXIT_FAILURE);
-	}
+    }
 #endif
 }
