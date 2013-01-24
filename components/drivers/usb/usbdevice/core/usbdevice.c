@@ -18,15 +18,17 @@
 
 #ifdef RT_USING_USB_DEVICE
 
-const static char* ustring[] = 
+#ifdef RT_USB_DEVICE_COMPOSITE
+const static char* ustring[] =
 {
     "Language",
     "RT-Thread Team.",
-    "RT-Thread Device",
+    "RTT Composite Device",
     "1.1.0",
     "Configuration",
     "Interface",
 };
+#endif
 
 #ifdef RT_USB_DEVICE_COMPOSITE
 static struct udevice_descriptor compsit_desc =
@@ -44,7 +46,7 @@ static struct udevice_descriptor compsit_desc =
     USB_STRING_MANU_INDEX,      //iManufacturer;
     USB_STRING_PRODUCT_INDEX,   //iProduct;
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
-    USB_DYNAMIC,                //bNumConfigurations;    
+    USB_DYNAMIC,                //bNumConfigurations;
 };
 #endif
 
@@ -53,7 +55,7 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     rt_device_t udc;
     udevice_t udevice;
     uconfig_t cfg;
-    uclass_t cls;    
+    uclass_t cls;
 
     RT_ASSERT(udc_name != RT_NULL);
 
@@ -68,8 +70,8 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     rt_usbd_core_init();
 
     /* create a device object */
-    udevice = rt_usbd_device_create(ustring);
-    
+    udevice = rt_usbd_device_create();
+
     /* set usb controller driver to the device */
     rt_usbd_device_set_controller(udevice, (udcd_t)udc);
 
@@ -78,7 +80,7 @@ rt_err_t rt_usb_device_init(const char* udc_name)
 
 #ifdef RT_USB_DEVICE_MSTORAGE
     /* create a mass storage class object */
-    cls = rt_usbd_class_mstorage_create(udevice);    
+    cls = rt_usbd_class_mstorage_create(udevice);
 
     /* add the class to the configuration */
     rt_usbd_config_add_class(cfg, cls);
@@ -101,13 +103,14 @@ rt_err_t rt_usb_device_init(const char* udc_name)
     /* set device descriptor to the device */
 #ifdef RT_USB_DEVICE_COMPOSITE
     rt_usbd_device_set_descriptor(udevice, &compsit_desc);
+    rt_usbd_device_set_string(udevice, ustring);
 #else
     rt_usbd_device_set_descriptor(udevice, cls->dev_desc);
 #endif
 
     /* add the configuration to the device */
     rt_usbd_device_add_config(udevice, cfg);
-    
+
     /* set default configuration to 1 */
     rt_usbd_set_config(udevice, 1);
 
