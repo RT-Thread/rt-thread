@@ -24,7 +24,7 @@
 #define STATUS_CBW              0x00
 #define STATUS_CSW              0x01
 #define STATUS_RECEIVE          0x02
-#define STATUS_SEND             0x03 
+#define STATUS_SEND             0x03
 
 static int status = STATUS_CBW;
 ALIGN(RT_ALIGN_SIZE)
@@ -77,6 +77,16 @@ const static struct umass_descriptor _mass_desc =
     USB_EP_ATTR_BULK,           //bmAttributes;
     0x40,                       //wMaxPacketSize;
     0x00,                       //bInterval;
+};
+
+const static char* _ustring[] =
+{
+    "Language",
+    "RT-Thread Team.",
+    "RTT Mass Storage",
+    "1.1.0",
+    "Configuration",
+    "Interface",
 };
 
 /**
@@ -301,7 +311,7 @@ static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     mass_eps_t eps;
     RT_ASSERT(device != RT_NULL);
-    
+
     eps = cls->eps;
     if(status == STATUS_CSW)
     {
@@ -312,7 +322,7 @@ static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
     if(status == STATUS_SEND)
     {
         rt_device_read(disk, _block, eps->ep_in->buffer, 1);
-        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, 
+        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer,
                      geometry.bytes_per_sector);
         _count --;
         if (_count)
@@ -356,7 +366,7 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     mass_eps_t eps;
     RT_ASSERT(device != RT_NULL);
-    
+
     eps = (mass_eps_t)cls->eps;
     if(status == STATUS_CBW)
     {
@@ -372,7 +382,7 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
             csw.data_reside = 0;
             csw.status = 0;
         }
-        else 
+        else
             return -RT_ERROR;
 
         switch(cbw->cb[0])
@@ -424,18 +434,18 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
 
         _size -= size;
         csw.data_reside -= size;
-        
+
         rt_device_write(disk, _block, eps->ep_in->buffer, 1);
         _block ++;
         if(_size == 0)
-        {      
+        {
             dcd_ep_write(device->dcd, eps->ep_in, (rt_uint8_t*)&csw, SIZEOF_CSW);
             dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, SIZEOF_CBW);
             status = STATUS_CBW;
         }
         else
         {
-            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer, 
+            dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer,
                         geometry.bytes_per_sector);
         }
     }
@@ -501,7 +511,7 @@ static rt_err_t _class_run(udevice_t device, uclass_t cls)
     {
         rt_kprintf("no disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
         return -RT_ERROR;
-    }    
+    }
     if(rt_device_control(disk, RT_DEVICE_CTRL_BLK_GETGEOME, (void*)&geometry) != RT_EOK)
         return -RT_ERROR;
 
@@ -562,24 +572,26 @@ uclass_t rt_usbd_class_mstorage_create(udevice_t device)
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
+    /* set usb device string description */
+    rt_usbd_device_set_string(device, _ustring);
     /* create a mass storage class */
     mstorage = rt_usbd_class_create(device, &dev_desc, &ops);
     /* create a mass storage endpoints collection */
     eps = (mass_eps_t)rt_malloc(sizeof(struct mass_eps));
     mstorage->eps = (void*)eps;
-    
+
     /* create an interface */
     intf = rt_usbd_interface_create(device, _interface_handler);
 
     /* create an alternate setting */
     setting = rt_usbd_altsetting_create(sizeof(struct umass_descriptor));
-    /* config desc in alternate setting */    
+    /* config desc in alternate setting */
     rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, 0);
-    
+
     /* create a bulk out and a bulk in endpoint */
     mass_desc = (umass_desc_t)setting->desc;
     eps->ep_in = rt_usbd_endpoint_create(&mass_desc->ep_in_desc, _ep_in_handler);
-    eps->ep_out = rt_usbd_endpoint_create(&mass_desc->ep_out_desc, _ep_out_handler);    
+    eps->ep_out = rt_usbd_endpoint_create(&mass_desc->ep_out_desc, _ep_out_handler);
 
     /* add the bulk out and bulk in endpoint to the alternate setting */
     rt_usbd_altsetting_add_endpoint(setting, eps->ep_out);
