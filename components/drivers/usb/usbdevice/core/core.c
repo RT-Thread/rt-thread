@@ -612,12 +612,9 @@ rt_err_t _sof_notify(udevice_t device)
  *
  * @return an usb device object on success, RT_NULL on fail.
  */
-udevice_t rt_usbd_device_create(const char** ustring)
+udevice_t rt_usbd_device_create(void)
 {
     udevice_t udevice;
-
-    /* parameter check */
-    RT_ASSERT(ustring != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_create\n"));
 
@@ -630,9 +627,6 @@ udevice_t rt_usbd_device_create(const char** ustring)
     }
     rt_memset(udevice, 0, sizeof(struct udevice));
 
-    /* set string descriptor array to the device object */
-    udevice->str = ustring;
-
     /* to initialize configuration list */
     rt_list_init(&udevice->cfg_list);
 
@@ -640,6 +634,26 @@ udevice_t rt_usbd_device_create(const char** ustring)
     rt_list_insert_after(&device_list, &udevice->list);
 
     return udevice;
+}
+
+/**
+ * This function will set usb device string description.
+ *
+ * @param device the usb device object. 
+ * @param ustring pointer to string pointer array.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring)
+{
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(ustring != RT_NULL);
+
+    /* set string descriptor array to the device object */
+    device->str = ustring;
+
+    return RT_EOK;
 }
 
 /**
