@@ -114,13 +114,14 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         AddDepend('RT_USING_MINILIBC')
 
     # add comstr option
-    AddOption('--default-comstr',
-                dest='default_comstr',
+    AddOption('--verbose',
+                dest='verbose',
                 action='store_true',
                 default=False,
-                help='use default command string')
+                help='print verbose information during build')
 
-    if not GetOption('default_comstr'):
+    if not GetOption('verbose'):
+        # override the default verbose command string
         env.Replace(
             ASCOMSTR = 'AS $TARGET',
             CCCOMSTR = 'CC $TARGET',
