@@ -1,41 +1,41 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šè‡ªå®šä¹‰æ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£º×Ô¶¨Òå¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ ä¸¤ä¸ªè‡ªå®šä¹‰æ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼ÓÁ½¸ö×Ô¶¨Òå¿Ø¼ş
  */
 #include "demo_view.h"
 #include "mywidget.h"
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºè‡ªå®šä¹‰æ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾×Ô¶¨Òå¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_mywidget(void)
 {
     rtgui_container_t *container;
     rtgui_rect_t rect;
     rtgui_mywidget_t *mywidget;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("MyWidget View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.y1 + 80;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 80;
-    /* åˆ›å»ºä¸€ä¸ªè‡ªå®šä¹‰æ§ä»¶ */
+    /* ´´½¨Ò»¸ö×Ô¶¨Òå¿Ø¼ş */
     mywidget = rtgui_mywidget_create(&rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªè‡ªæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ö×Ô¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(mywidget));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 25;
     rect.x2 = rect.y1 + 40;
     rect.y1 += 5 + 100;
     rect.y2 = rect.y1 + 40;
-    /* åˆ›å»ºä¸€ä¸ªè‡ªå®šä¹‰æ§ä»¶ */
+    /* ´´½¨Ò»¸ö×Ô¶¨Òå¿Ø¼ş */
     mywidget = rtgui_mywidget_create(&rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªè‡ªæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ö×Ô¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(mywidget));
 
     return container;

@@ -1,7 +1,7 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šeditæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºedit¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨conatinerä¸Šè¿›è¡Œeditæ§ä»¶çš„æ¼”ç¤º
+ * Õâ¸öÀı×Ó»áÔÚconatinerÉÏ½øĞĞedit¿Ø¼şµÄÑİÊ¾
  */
 
 #include "demo_view.h"
@@ -22,14 +22,14 @@ void demo_edit_readin_file(struct rtgui_object *object, struct rtgui_event *even
 
     RT_ASSERT(object != RT_NULL);
     button = RTGUI_BUTTON(object);
-    /* å–å¾—editæŒ‡é’ˆ */
+    /* È¡µÃeditÖ¸Õë */
     edit = RTGUI_EDIT(RTGUI_WIDGET(button)->user_data);
 
-    /* åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨ */
+    /* ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ */
     file = rtgui_filerw_create_file(filename, "rb");
     if (file == RT_NULL)
     {
-        /* ä¸å­˜åœ¨å­˜åœ¨,åˆ™åˆ›å»ºå®ƒ */
+        /* ²»´æÔÚ´æÔÚ,Ôò´´½¨Ëü */
         rt_kprintf("file:\"%s\" does not exist!\n", filename);
 
         return;
@@ -49,15 +49,15 @@ void demo_edit_saveas_file(struct rtgui_object *object, struct rtgui_event *even
 
     RT_ASSERT(object != RT_NULL);
     button = RTGUI_BUTTON(object);
-    /* å–å¾—editæŒ‡é’ˆ */
+    /* È¡µÃeditÖ¸Õë */
     edit = RTGUI_EDIT(RTGUI_WIDGET(button)->user_data);
 
-    /* åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨, å¦‚æœå­˜åœ¨åˆ™åˆ é™¤ä¹‹ */
+    /* ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ, Èç¹û´æÔÚÔòÉ¾³ıÖ® */
     file = rtgui_filerw_create_file(filename, "rb");
     if (file != RT_NULL)
     {
         rtgui_filerw_close(file);
-        /* å¦‚æœæ˜¯åœ¨win32ä¸­è°ƒè¯•, è¯·æ‰‹å·¥åˆ é™¤è¯¥æ–‡ä»¶å§, NTä¸­æ–‡ä»¶æ˜¯åªè¯»çš„,unlinkåˆ é™¤ä¸æ‰ */
+        /* Èç¹ûÊÇÔÚwin32ÖĞµ÷ÊÔ, ÇëÊÖ¹¤É¾³ı¸ÃÎÄ¼ş°É, NTÖĞÎÄ¼şÊÇÖ»¶ÁµÄ,unlinkÉ¾³ı²»µô */
         if (rtgui_filerw_unlink(filename) == -1)
             rt_kprintf("Could not delete %s\n", filename);
     }
@@ -95,7 +95,7 @@ rt_bool_t demo_edit_event_handler(struct rtgui_object* object, struct rtgui_even
 	return result;
 }
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºeditæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾edit¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_edit(void)
 {
     rtgui_rect_t rect;
@@ -104,7 +104,7 @@ rtgui_container_t *demo_view_edit(void)
 	struct rtgui_label *label;
     struct rtgui_button *button;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("Edit View");
 
     edit = rtgui_edit_create(container, 10, 35, 220, 200);
@@ -117,14 +117,14 @@ rtgui_container_t *demo_view_edit(void)
                         "rtgui_edit_insert_line\n"
                         "rtgui_edit_delete_line\n"
                         "rtgui_edit_connect_line\n"
-						"åŒå­—èŠ‚æµ‹è¯•\n"
+						"Ë«×Ö½Ú²âÊÔ\n"
                         "a\n"
                         "b\n"
                         "c\n"
                         "d\n"
                         "1234567890\n");
 
-    /* åˆ›å»ºä¸€ä¸ªæŒ‰é’®, è¯»å–æŸä¸ªæ–‡ä»¶ */
+    /* ´´½¨Ò»¸ö°´Å¥, ¶ÁÈ¡Ä³¸öÎÄ¼ş */
     demo_view_get_rect(container, &rect);
     rect.x1 += 10;
     rect.x2 = rect.x1 + 100;
@@ -134,10 +134,10 @@ rtgui_container_t *demo_view_edit(void)
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
     rtgui_button_set_onbutton(button, demo_edit_readin_file);
-    /* ä½¿ç”¨user_dataä¼ é€’editæŒ‡é’ˆ */
+    /* Ê¹ÓÃuser_data´«µİeditÖ¸Õë */
     RTGUI_WIDGET(button)->user_data = (rt_uint32_t)edit;
 
-    /* åˆ›å»ºä¸€ä¸ªæŒ‰é’®, ä¿å­˜ä¸ºæŸä¸ªæ–‡ä»¶ */
+    /* ´´½¨Ò»¸ö°´Å¥, ±£´æÎªÄ³¸öÎÄ¼ş */
     demo_view_get_rect(container, &rect);
     rect.x1 += 130;
     rect.x2 = rect.x1 + 100;
@@ -147,10 +147,10 @@ rtgui_container_t *demo_view_edit(void)
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
     rtgui_button_set_onbutton(button, demo_edit_saveas_file);
-    /* ä½¿ç”¨user_dataä¼ é€’editæŒ‡é’ˆ */
+    /* Ê¹ÓÃuser_data´«µİeditÖ¸Õë */
     RTGUI_WIDGET(button)->user_data = (rt_uint32_t)edit;
 
-	/* åˆ›å»ºä¸€ä¸ªæ ‡ç­¾, æ˜¾ç¤ºEDITçš„ä¸»è¦å‚æ•° */
+	/* ´´½¨Ò»¸ö±êÇ©, ÏÔÊ¾EDITµÄÖ÷Òª²ÎÊı */
 	demo_view_get_rect(container, &rect);
 	rect.x1 += 10;
 	rect.x2 = rect.x1 + 220;
@@ -165,7 +165,7 @@ rtgui_container_t *demo_view_edit(void)
 	RTGUI_WIDGET(edit)->user_data = (rt_uint32_t)label;
 	rtgui_object_set_event_handler(RTGUI_OBJECT(edit), demo_edit_event_handler);
 	
-	/* åˆ›å»ºä¸€ä¸ªæŒ‰é’®, è¯»å–EDITçš„å†…å­˜æ¶ˆè€— */
+	/* ´´½¨Ò»¸ö°´Å¥, ¶ÁÈ¡EDITµÄÄÚ´æÏûºÄ */
 	demo_view_get_rect(container, &rect);
 	rect.x1 += 150;
 	rect.x2 = rect.x1 + 80;

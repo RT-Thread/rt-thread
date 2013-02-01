@@ -61,7 +61,7 @@ static rt_bool_t _rtgui_menu_onitem(struct rtgui_object *object, struct rtgui_ev
                 if (!RTGUI_WIDGET_IS_HIDE(menu->sub_menu))
                 {
                     /* hide this sub menu */
-                    rtgui_win_hiden(RTGUI_WIN(menu->sub_menu));
+                    rtgui_win_hide(RTGUI_WIN(menu->sub_menu));
                     return RT_FALSE;
                 }
 
@@ -91,9 +91,9 @@ static rt_bool_t _rtgui_menu_onitem(struct rtgui_object *object, struct rtgui_ev
         /* hide sub-menu */
         if (menu->sub_menu != RT_NULL)
         {
-            rtgui_menu_hiden(menu->sub_menu);
+            rtgui_menu_hide(menu->sub_menu);
         }
-        rtgui_menu_hiden(menu);
+        rtgui_menu_hide(menu);
     }
     return RT_FALSE;
 }
@@ -183,7 +183,7 @@ static rt_bool_t rtgui_menu_on_deactivate(struct rtgui_object *object, rtgui_eve
             return RT_TRUE;
     }
 
-    rtgui_win_hiden(RTGUI_WIN(menu));
+    rtgui_win_hide(RTGUI_WIN(menu));
     if (menu->on_menuhide != RT_NULL)
     {
         menu->on_menuhide(RTGUI_OBJECT(menu), RT_NULL);
@@ -282,13 +282,13 @@ void rtgui_menu_pop(struct rtgui_menu *menu, int x, int y)
     rtgui_win_show(RTGUI_WIN(menu), RT_FALSE);
 }
 
-void rtgui_menu_hiden(struct rtgui_menu *menu)
+void rtgui_menu_hide(struct rtgui_menu *menu)
 {
-    rtgui_win_hiden(RTGUI_WIN(menu));
+    rtgui_win_hide(RTGUI_WIN(menu));
     /* un-select item */
     menu->items_list->current_item = -1;
 
     if (menu->parent_menu != RT_NULL)
-        rtgui_menu_hiden(menu->parent_menu);
+        rtgui_menu_hide(menu->parent_menu);
 }
 

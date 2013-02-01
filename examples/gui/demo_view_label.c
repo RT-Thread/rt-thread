@@ -1,12 +1,12 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šlabelæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºlabel¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªä¸åŒç±»å‹çš„labelæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸ö²»Í¬ÀàĞÍµÄlabel¿Ø¼ş
  */
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºlabelæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾label¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_label(void)
 {
     rtgui_rect_t rect;
@@ -14,89 +14,89 @@ rtgui_container_t *demo_view_label(void)
     rtgui_label_t *label;
     rtgui_font_t *font;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("Label View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("Red Left");
-    /* è®¾ç½®labelæ§ä»¶ä¸Šçš„æ–‡æœ¬å¯¹é½æ–¹å¼ä¸ºï¼šå·¦å¯¹é½ */
+    /* ÉèÖÃlabel¿Ø¼şÉÏµÄÎÄ±¾¶ÔÆë·½Ê½Îª£º×ó¶ÔÆë */
     RTGUI_WIDGET_TEXTALIGN(label) = RTGUI_ALIGN_LEFT;
-    /* è®¾ç½®labelæ§ä»¶çš„å‰æ™¯è‰²ä¸ºçº¢è‰² */
+    /* ÉèÖÃlabel¿Ø¼şµÄÇ°¾°É«ÎªºìÉ« */
     RTGUI_WIDGET_FOREGROUND(label) = red;
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("Blue Right");
-    /* è®¾ç½®labelæ§ä»¶ä¸Šçš„æ–‡æœ¬å¯¹é½æ–¹å¼ä¸ºï¼šå³å¯¹é½ */
+    /* ÉèÖÃlabel¿Ø¼şÉÏµÄÎÄ±¾¶ÔÆë·½Ê½Îª£ºÓÒ¶ÔÆë */
     RTGUI_WIDGET_TEXTALIGN(label) = RTGUI_ALIGN_RIGHT;
-    /* è®¾ç½®labelæ§ä»¶çš„å‰æ™¯è‰²ä¸ºè“è‰² */
+    /* ÉèÖÃlabel¿Ø¼şµÄÇ°¾°É«ÎªÀ¶É« */
     RTGUI_WIDGET_FOREGROUND(label) = blue;
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("Green Center");
-    /* è®¾ç½®labelæ§ä»¶çš„å‰æ™¯è‰²ä¸ºç»¿è‰² */
+    /* ÉèÖÃlabel¿Ø¼şµÄÇ°¾°É«ÎªÂÌÉ« */
     RTGUI_WIDGET_FOREGROUND(label) = green;
-    /* è®¾ç½®labelæ§ä»¶ä¸Šçš„æ–‡æœ¬å¯¹é½æ–¹å¼ä¸ºï¼šå³å¯¹é½ */
+    /* ÉèÖÃlabel¿Ø¼şÉÏµÄÎÄ±¾¶ÔÆë·½Ê½Îª£ºÓÒ¶ÔÆë */
     RTGUI_WIDGET_TEXTALIGN(label) = RTGUI_ALIGN_CENTER_HORIZONTAL;
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5 + 25 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("12 font");
-    /* è®¾ç½®å­—ä½“ä¸º12ç‚¹é˜µçš„ascå­—ä½“ */
+    /* ÉèÖÃ×ÖÌåÎª12µãÕóµÄasc×ÖÌå */
     font = rtgui_font_refer("asc", 12);
     RTGUI_WIDGET_FONT(label) = font;
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.y1 += 5 + 25 + 25 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("16 font");
-    /* è®¾ç½®å­—ä½“ä¸º16ç‚¹é˜µçš„ascå­—ä½“ */
+    /* ÉèÖÃ×ÖÌåÎª16µãÕóµÄasc×ÖÌå */
     font = rtgui_font_refer("asc", 16);
     RTGUI_WIDGET_FONT(label) = font;
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
     return container;

@@ -70,7 +70,7 @@ static void rtgui_time_out(void *parameter)
 
     event.timer = timer;
 
-    rtgui_send(timer->tid, &(event.parent), sizeof(rtgui_event_timer_t));
+    rtgui_send(timer->app, &(event.parent), sizeof(rtgui_event_timer_t));
 }
 
 rtgui_timer_t *rtgui_timer_create(rt_int32_t time, rt_int32_t flag, rtgui_timeout_func timeout, void *parameter)
@@ -78,7 +78,7 @@ rtgui_timer_t *rtgui_timer_create(rt_int32_t time, rt_int32_t flag, rtgui_timeou
     rtgui_timer_t *timer;
 
     timer = (rtgui_timer_t *) rtgui_malloc(sizeof(rtgui_timer_t));
-    timer->tid = rt_thread_self();
+    timer->app = rtgui_app_self();
     timer->timeout = timeout;
     timer->user_data = parameter;
 
@@ -371,7 +371,7 @@ const char *event_string[] =
 
 #define DBG_MSG(x)  rt_kprintf x
 
-static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t *event)
+static void rtgui_event_dump(struct rtgui_app* app, rtgui_event_t *event)
 {
     char *sender = "(unknown)";
 
@@ -389,12 +389,12 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t *event)
 
     if (event->type >= RTGUI_EVENT_COMMAND)
     {
-        rt_kprintf("%s -- USER EVENT --> %s \n", sender, tid->name);
+        rt_kprintf("%s -- USER EVENT --> %s \n", sender, app->name);
         return ;
     }
     else
     {
-        rt_kprintf("%s -- %s --> %s ", sender, event_string[event->type], tid->name);
+        rt_kprintf("%s -- %s --> %s ", sender, event_string[event->type], app->name);
     }
 
     switch (event->type)
@@ -545,87 +545,67 @@ static void rtgui_event_dump(rt_thread_t tid, rtgui_event_t *event)
 }
 #else
 #define DBG_MSG(x)
-#define rtgui_event_dump(tid, event)
+#define rtgui_event_dump(app, event)
 #endif
 
 /************************************************************************/
 /* RTGUI IPC APIs                                                       */
 /************************************************************************/
-rt_err_t rtgui_send(rt_thread_t tid, rtgui_event_t *event, rt_size_t event_size)
+rt_err_t rtgui_send(struct rtgui_app* app, rtgui_event_t *event, rt_size_t event_size)
 {
     rt_err_t result;
-    struct rtgui_app *app;
 
-    RT_ASSERT(tid != RT_NULL);
+    RT_ASSERT(app != RT_NULL);
     RT_ASSERT(event != RT_NULL);
     RT_ASSERT(event_size != 0);
 
-    rtgui_event_dump(tid, event);
-
-    /* find struct rtgui_application */
-    app = (struct rtgui_app *)(tid->user_data);
-    if (app == RT_NULL)
-        return -RT_ERROR;
+    rtgui_event_dump(app, event);
 
     result = rt_mq_send(app->mq, event, event_size);
     if (result != RT_EOK)
     {
         if (event->type != RTGUI_EVENT_TIMER)
-            rt_kprintf("send event to %s failed\n", app->tid->name);
+            rt_kprintf("send event to %s failed\n", app->name);
     }
 
     return result;
 }
 RTM_EXPORT(rtgui_send);
 
-rt_err_t rtgui_send_urgent(rt_thread_t tid, rtgui_event_t *event, rt_size_t event_size)
+rt_err_t rtgui_send_urgent(struct rtgui_app* app, rtgui_event_t *event, rt_size_t event_size)
 {
     rt_err_t result;
-    struct rtgui_app *app;
 
-    RT_ASSERT(tid != RT_NULL);
+    RT_ASSERT(app != RT_NULL);
     RT_ASSERT(event != RT_NULL);
     RT_ASSERT(event_size != 0);
 
-    rtgui_event_dump(tid, event);
-
-    /* find rtgui_application */
-    app = (struct rtgui_app *)(tid->user_data);
-    if (app == RT_NULL)
-        return -RT_ERROR;
+    rtgui_event_dump(app, event);
 
     result = rt_mq_urgent(app->mq, event, event_size);
     if (result != RT_EOK)
-        rt_kprintf("send ergent event failed\n");
+        rt_kprintf("send ergent event to %s failed\n", app->name);
 
     return result;
 }
 RTM_EXPORT(rtgui_send_urgent);
 
-rt_err_t rtgui_send_sync(rt_thread_t tid, rtgui_event_t *event, rt_size_t event_size)
+rt_err_t rtgui_send_sync(struct rtgui_app* app, rtgui_event_t *event, rt_size_t event_size)
 {
     rt_err_t r;
-    struct rtgui_app *app;
     rt_int32_t ack_buffer, ack_status;
     struct rt_mailbox ack_mb;
 
-    RT_ASSERT(tid != RT_NULL);
+    RT_ASSERT(app != RT_NULL);
     RT_ASSERT(event != RT_NULL);
     RT_ASSERT(event_size != 0);
 
-    rtgui_event_dump(tid, event);
+    rtgui_event_dump(app, event);
 
     /* init ack mailbox */
     r = rt_mb_init(&ack_mb, "ack", &ack_buffer, 1, 0);
     if (r != RT_EOK)
         goto __return;
-
-    app = (struct rtgui_app *)(tid->user_data);
-    if (app == RT_NULL)
-    {
-        r = -RT_ERROR;
-        goto __return;
-    }
 
     event->ack = &ack_mb;
     r = rt_mq_send(app->mq, event, event_size);
@@ -727,12 +707,6 @@ rt_err_t rtgui_recv_filter(rt_uint32_t type, rtgui_event_t *event, rt_size_t eve
     return -RT_ERROR;
 }
 RTM_EXPORT(rtgui_recv_filter);
-
-rt_thread_t rtgui_get_server(void)
-{
-    return rt_thread_find("rtgui");
-}
-RTM_EXPORT(rtgui_get_server);
 
 void rtgui_set_mainwin_rect(struct rtgui_rect *rect)
 {

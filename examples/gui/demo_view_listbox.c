@@ -1,7 +1,7 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šlabelæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºlabel¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªä¸åŒç±»å‹çš„labelæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸ö²»Í¬ÀàĞÍµÄlabel¿Ø¼ş
  */
 #include "demo_view.h"
 #include <rtgui/widgets/label.h>
@@ -149,13 +149,13 @@ static rt_bool_t on_items(struct rtgui_object *object, struct rtgui_event *event
     /* get listbox */
     box = RTGUI_LISTBOX(object);
 
-    /* æ‰“å°å½“å‰çš„é¡¹ */
+    /* ´òÓ¡µ±Ç°µÄÏî */
     rt_kprintf("current item: %d\n", box->current_item);
 
     return RT_TRUE;
 }
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºlabelæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾label¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_listbox(void)
 {
     rtgui_rect_t rect;
@@ -163,7 +163,7 @@ rtgui_container_t *demo_view_listbox(void)
     rtgui_label_t *label;
     rtgui_listbox_t *box;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("ListBox Demo");
 
     if (item_icon == RT_NULL)
@@ -171,24 +171,24 @@ rtgui_container_t *demo_view_listbox(void)
                                                 (const rt_uint8_t *)image_xpm, sizeof(image_xpm), RT_TRUE);
     items[1].image = item_icon;
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     label = rtgui_label_create("listbox: ");
-    /* è®¾ç½®labelçš„ä½ç½® */
+    /* ÉèÖÃlabelµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlabelæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölabel¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
     rect.y1 = rect.y2 + 3;
     rect.y2 = 250;
     box = rtgui_listbox_create(items, sizeof(items) / sizeof(struct rtgui_listbox_item), &rect);
     rtgui_listbox_set_onitem(box, on_items);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªlistboxæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸ölistbox¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(box));
 
     return container;

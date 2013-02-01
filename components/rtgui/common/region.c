@@ -2274,3 +2274,13 @@ rt_bool_t rtgui_rect_is_empty(const rtgui_rect_t *rect)
     return RT_FALSE;
 }
 
+rtgui_rect_t *rtgui_rect_set(rtgui_rect_t *rect, int x, int y, int w, int h)
+{
+	RT_ASSERT(rect != RT_NULL);
+
+	rect->x1 = x; rect->y1 = y;
+	rect->x2 = x + w; rect->y2 = y + h;
+
+	return rect;
+}
+

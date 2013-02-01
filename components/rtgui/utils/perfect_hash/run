@@ -1,0 +1,32 @@
+#!/bin/bash
+
+function showpwd ()
+{
+    echo '=============' `pwd`
+}
+
+# perform programs self test
+showpwd
+./perfect_hash.py --test || exit 1
+
+# update documentation
+for folder in doc
+do
+  cd $folder
+  showpwd
+  make
+  cd ..
+done
+
+# run examples
+for folder in example* graph
+do
+  cd $folder
+  showpwd
+  make       || exit 1
+  make test  || exit 1
+  make clean
+  cd ..
+done
+
+rm perfect_hash.pyc

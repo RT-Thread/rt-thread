@@ -351,6 +351,7 @@ static rt_bool_t rtgui_image_jpeg_load(struct rtgui_image *image, struct rtgui_f
     {
         /* no memory */
         jpeg_finish_decompress(&jpeg->cinfo);
+        jpeg_destroy_decompress(&jpeg->cinfo);
         rt_free(jpeg);
 
         return RT_FALSE;
@@ -381,6 +382,7 @@ static void rtgui_image_jpeg_unload(struct rtgui_image *image)
             rtgui_filerw_close(jpeg->filerw);
             jpeg_finish_decompress(&jpeg->cinfo);
         }
+        jpeg_destroy_decompress(&jpeg->cinfo);
         rt_free(jpeg);
     }
 }

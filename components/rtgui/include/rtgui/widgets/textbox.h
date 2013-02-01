@@ -34,6 +34,8 @@ DECLARE_CLASS_TYPE(textbox);
 #define RTGUI_TEXTBOX_DEFAULT_WIDTH     80
 #define RTGUI_TEXTBOX_DEFAULT_HEIGHT        20
 
+#define RTGUI_TEXTBOX_BORDER_WIDTH     1
+
 #define RTGUI_TEXTBOX_SINGLE        0x00
 #define RTGUI_TEXTBOX_MULTI         0x01 /* multiline */
 #define RTGUI_TEXTBOX_MASK          0x02 /* ciphertext */
@@ -52,10 +54,13 @@ struct rtgui_textbox
 	rt_uint32_t flag;
 
 	/* current line and position */
-	rt_uint16_t line, line_begin, position, line_length;
+	rt_uint16_t line, line_begin, position;
+    /** maximum chars a line could hold excluding the NULL byte */
+    rt_uint16_t line_length;
 	rt_uint16_t dis_length; /*may be display length.*/
 	rt_uint16_t first_pos;
 	char mask_char;
+    /** a NULL terminated string that the textbox is holding */
 	char *text;
 	rt_size_t font_width;
 
@@ -77,7 +82,20 @@ void rtgui_textbox_set_value(struct rtgui_textbox *box, const char *text);
 const char *rtgui_textbox_get_value(struct rtgui_textbox *box);
 void rtgui_textbox_set_mask_char(rtgui_textbox_t *box, const char ch);
 char rtgui_textbox_get_mask_char(rtgui_textbox_t *box);
-void rtgui_textbox_set_line_length(struct rtgui_textbox *box, rt_size_t length);
+/** set the maximum chars a line could hold excluding the NULL byte
+ *
+ * It will truncate the current line if the length is smaller than the chars
+ * the box is currently holding. But the box->text is guaranteed to be NULL
+ * terminated anyway.
+ *
+ * @param box the text box it operate on
+ * @param length the new line length. It should be greater than 0.
+ *
+ * @return -RT_ERROR on invalid length; -RT_ENOMEM if there is no enough memory
+ * to allocate the new buffer. On returning -RT_ENOMEM, the original text would
+ * remain unchanged.
+ */
+rt_err_t rtgui_textbox_set_line_length(struct rtgui_textbox *box, rt_size_t length);
 
 void rtgui_textbox_get_edit_rect(struct rtgui_textbox *box, rtgui_rect_t *rect);
 

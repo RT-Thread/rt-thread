@@ -1,13 +1,13 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šbuttonæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºbutton¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªä¸åŒç±»å‹çš„buttonæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸ö²»Í¬ÀàĞÍµÄbutton¿Ø¼ş
  */
 
 #include "demo_view.h"
 #include <rtgui/widgets/button.h>
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºbuttonæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾button¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_button(void)
 {
     rtgui_rect_t rect;
@@ -15,64 +15,64 @@ rtgui_container_t *demo_view_button(void)
     rtgui_button_t *button;
     rtgui_font_t *font;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("Button View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªbuttonæ§ä»¶ */
+    /* ´´½¨Ò»¸öbutton¿Ø¼ş */
     button = rtgui_button_create("Red");
-    /* è®¾ç½®labelæ§ä»¶çš„å‰æ™¯è‰²ä¸ºçº¢è‰² */
+    /* ÉèÖÃlabel¿Ø¼şµÄÇ°¾°É«ÎªºìÉ« */
     RTGUI_WIDGET_FOREGROUND(button) = red;
-    /* è®¾ç½®buttonçš„ä½ç½® */
+    /* ÉèÖÃbuttonµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªbuttonæ§ä»¶ */
+    /* ´´½¨Ò»¸öbutton¿Ø¼ş */
     button = rtgui_button_create("Blue");
-    /* è®¾ç½®labelæ§ä»¶çš„å‰æ™¯è‰²ä¸ºè“è‰² */
+    /* ÉèÖÃlabel¿Ø¼şµÄÇ°¾°É«ÎªÀ¶É« */
     RTGUI_WIDGET_FOREGROUND(button) = blue;
-    /* è®¾ç½®buttonçš„ä½ç½® */
+    /* ÉèÖÃbuttonµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªbuttonæ§ä»¶ */
+    /* ´´½¨Ò»¸öbutton¿Ø¼ş */
     button = rtgui_button_create("12 font");
-    /* è®¾ç½®å­—ä½“ä¸º12ç‚¹é˜µçš„ascå­—ä½“ */
+    /* ÉèÖÃ×ÖÌåÎª12µãÕóµÄasc×ÖÌå */
     font = rtgui_font_refer("asc", 12);
     RTGUI_WIDGET_FONT(button) = font;
-    /* è®¾ç½®buttonçš„ä½ç½® */
+    /* ÉèÖÃbuttonµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªbuttonæ§ä»¶ */
+    /* ´´½¨Ò»¸öbutton¿Ø¼ş */
     button = rtgui_button_create("16 font");
-    /* è®¾ç½®å­—ä½“ä¸º16ç‚¹é˜µçš„ascå­—ä½“ */
+    /* ÉèÖÃ×ÖÌåÎª16µãÕóµÄasc×ÖÌå */
     font = rtgui_font_refer("asc", 16);
     RTGUI_WIDGET_FONT(button) = font;
-    /* è®¾ç½®buttonçš„ä½ç½® */
+    /* ÉèÖÃbuttonµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
 

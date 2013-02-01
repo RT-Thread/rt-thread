@@ -34,7 +34,7 @@ rtgui_container_t *demo_view_box(void)
 
     button = rtgui_button_create("button 2");
     rtgui_container_add_child(RTGUI_CONTAINER(panel), RTGUI_WIDGET(button));
-    rtgui_widget_set_miniheight(RTGUI_WIDGET(button), 25);
+    rtgui_widget_set_minheight(RTGUI_WIDGET(button), 25);
     RTGUI_WIDGET_ALIGN(button) = RTGUI_ALIGN_EXPAND;
 
     rtgui_container_layout(RTGUI_CONTAINER(panel));
