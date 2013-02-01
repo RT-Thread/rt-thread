@@ -72,6 +72,8 @@ widgets/edit.c
 widgets/mv_view.c
 widgets/plot.c
 widgets/plot_curve.c
+widgets/digtube.c
+widgets/digfont.c
 """)
 
 if GetDepend('RTGUI_USING_FONT_COMPACT'):

@@ -1,13 +1,13 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šradioboxæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºradiobox¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ ä¸¤ä¸ªä¸åŒæ–¹å‘çš„radioboxæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼ÓÁ½¸ö²»Í¬·½ÏòµÄradiobox¿Ø¼ş
  */
 
 #include "demo_view.h"
 #include <rtgui/widgets/radiobox.h>
 
-/* ç”¨äºæ˜¾ç¤ºå‚ç›´æ–¹å‘çš„radioæ–‡æœ¬é¡¹æ•°ç»„ */
+/* ÓÃÓÚÏÔÊ¾´¹Ö±·½ÏòµÄradioÎÄ±¾ÏîÊı×é */
 static char *radio_item_v[5] =
 {
     "one",
@@ -17,52 +17,52 @@ static char *radio_item_v[5] =
     "item 2"
 };
 
-/* ç”¨äºæ˜¾ç¤ºæ°´å¹³æ–¹å‘çš„radioæ–‡æœ¬é¡¹æ•°ç»„ */
+/* ÓÃÓÚÏÔÊ¾Ë®Æ½·½ÏòµÄradioÎÄ±¾ÏîÊı×é */
 static char *radio_item_h[3] =
 {
     "one", "two", "three"
 };
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºradioboxæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾radiobox¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_radiobox(void)
 {
     rtgui_rect_t rect;
     rtgui_container_t *container;
     rtgui_radiobox_t *radiobox;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("RadioBox View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 5 * 25;
 
-    /* åˆ›å»ºä¸€ä¸ªå‚ç›´æ–¹å‘æ˜¾ç¤ºçš„radioboxæ§ä»¶ï¼Œæ–‡æœ¬é¡¹æ˜¯radio_item_væ•°ç»„ï¼Œå…±5ä¸ªé¡¹ */
+    /* ´´½¨Ò»¸ö´¹Ö±·½ÏòÏÔÊ¾µÄradiobox¿Ø¼ş£¬ÎÄ±¾ÏîÊÇradio_item_vÊı×é£¬¹²5¸öÏî */
     radiobox = rtgui_radiobox_create("Radio Box", RTGUI_VERTICAL, radio_item_v, 5);
-    /* è®¾ç½®å½“å‰é€‰æ‹©çš„æ•°ç»„æ˜¯ç¬¬0é¡¹ */
+    /* ÉèÖÃµ±Ç°Ñ¡ÔñµÄÊı×éÊÇµÚ0Ïî */
     rtgui_radiobox_set_selection(radiobox, 0);
-    /* æ·»åŠ radioboxæ§ä»¶åˆ°è§†å›¾ä¸­ */
+    /* Ìí¼Óradiobox¿Ø¼şµ½ÊÓÍ¼ÖĞ */
     rtgui_container_add_child(container, RTGUI_WIDGET(radiobox));
-    /* è®¾ç½®radioboxæ§ä»¶çš„ä½ç½®ä¿¡æ¯ */
+    /* ÉèÖÃradiobox¿Ø¼şµÄÎ»ÖÃĞÅÏ¢ */
     rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5 + 5 * 25;
     rect.y2 = rect.y1 + 60;
 
-    /* åˆ›å»ºä¸€ä¸ªæ°´å¹³æ–¹å‘æ˜¾ç¤ºçš„radioboxæ§ä»¶ï¼Œæ–‡æœ¬é¡¹æ˜¯radio_item_hæ•°ç»„ï¼Œå…±3ä¸ªé¡¹ */
+    /* ´´½¨Ò»¸öË®Æ½·½ÏòÏÔÊ¾µÄradiobox¿Ø¼ş£¬ÎÄ±¾ÏîÊÇradio_item_hÊı×é£¬¹²3¸öÏî */
     radiobox = rtgui_radiobox_create("Radio Box", RTGUI_HORIZONTAL, radio_item_h, 3);
-    /* è®¾ç½®å½“å‰é€‰æ‹©çš„æ•°ç»„æ˜¯ç¬¬0é¡¹ */
+    /* ÉèÖÃµ±Ç°Ñ¡ÔñµÄÊı×éÊÇµÚ0Ïî */
     rtgui_radiobox_set_selection(radiobox, 0);
-    /* æ·»åŠ radioboxæ§ä»¶åˆ°è§†å›¾ä¸­ */
+    /* Ìí¼Óradiobox¿Ø¼şµ½ÊÓÍ¼ÖĞ */
     rtgui_container_add_child(container, RTGUI_WIDGET(radiobox));
-    /* è®¾ç½®radioboxæ§ä»¶çš„ä½ç½®ä¿¡æ¯ */
+    /* ÉèÖÃradiobox¿Ø¼şµÄÎ»ÖÃĞÅÏ¢ */
     rtgui_widget_set_rect(RTGUI_WIDGET(radiobox), &rect);
 
     return container;

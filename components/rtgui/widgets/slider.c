@@ -255,14 +255,14 @@ void rtgui_slider_set_orientation(struct rtgui_slider *slider, int orientation)
     if (slider->orient == RTGUI_HORIZONTAL)
     {
         /* HORIZONTAL */
-        rtgui_widget_set_miniheight(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_HEIGHT);
-        rtgui_widget_set_miniwidth(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_WIDTH);
+        rtgui_widget_set_minheight(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_HEIGHT);
+        rtgui_widget_set_minwidth(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_WIDTH);
     }
     else
     {
         /* VERTICAL */
-        rtgui_widget_set_miniwidth(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_HEIGHT);
-        rtgui_widget_set_miniheight(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_WIDTH);
+        rtgui_widget_set_minwidth(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_HEIGHT);
+        rtgui_widget_set_minheight(RTGUI_WIDGET(slider), RTGUI_SLIDER_DEFAULT_WIDTH);
     }
 #endif
 }

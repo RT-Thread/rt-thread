@@ -60,6 +60,14 @@ struct rtgui_dc
     const struct rtgui_dc_engine *engine;
 };
 
+/* hardware device context */
+struct rtgui_dc_hw
+{
+	struct rtgui_dc parent;
+	rtgui_widget_t *owner;
+	const struct rtgui_graphic_driver *hw_driver;
+};
+
 #define RTGUI_DC_FC(dc)         (rtgui_dc_get_gc(dc)->foreground)
 #define RTGUI_DC_BC(dc)         (rtgui_dc_get_gc(dc)->background)
 #define RTGUI_DC_FONT(dc)       (rtgui_dc_get_gc(dc)->font)

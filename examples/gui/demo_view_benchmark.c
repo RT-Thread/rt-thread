@@ -110,7 +110,7 @@ rt_bool_t benchmark_event_handler(struct rtgui_object *object, rtgui_event_t *ev
             if (running)
             {
                 /* stop */
-                rtgui_app_set_onidle(RT_NULL);
+                rtgui_app_set_onidle(rtgui_app_self(), RT_NULL);
                 _draw_default(object, event);
             }
             else
@@ -118,7 +118,7 @@ rt_bool_t benchmark_event_handler(struct rtgui_object *object, rtgui_event_t *ev
                 /* run */
                 ticks = rt_tick_get();
                 area = 0;
-                rtgui_app_set_onidle(_onidle);
+                rtgui_app_set_onidle(rtgui_app_self(), _onidle);
             }
 
             running = !running;

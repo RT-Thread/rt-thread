@@ -422,7 +422,7 @@ static rt_bool_t _rtgui_mv_model_notify_view(struct rtgui_mv_model *model,
         struct rtgui_mv_view  *view,
         struct rtgui_event_mv_model *emodel)
 {
-    rt_thread_t target = RTGUI_WIDGET(view)->toplevel->app->tid;
+    struct rtgui_app *target = RTGUI_WIDGET(view)->toplevel->app;
     emodel->model = model;
     emodel->view = view;
     return rtgui_send(target, (struct rtgui_event *)emodel, sizeof(*emodel));

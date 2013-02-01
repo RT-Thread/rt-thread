@@ -73,7 +73,7 @@ static void rtgui_box_layout_vertical(struct rtgui_box *box, struct rtgui_rect *
     {
         rtgui_widget_t *widget = rtgui_list_entry(node, struct rtgui_widget, sibling);
         if (widget->align & RTGUI_ALIGN_STRETCH) space_count ++;
-        else total_height += widget->mini_height;
+        else total_height += widget->min_height;
     }
 
     /* calculate the height for each spaces */
@@ -98,8 +98,8 @@ static void rtgui_box_layout_vertical(struct rtgui_box *box, struct rtgui_rect *
 
         /* reset rect */
         rtgui_rect_moveto(rect, -rect->x1, -rect->y1);
-        rect->x2 = widget->mini_width;
-        rect->y2 = widget->mini_height;
+        rect->x2 = widget->min_width;
+        rect->y2 = widget->min_height;
 
         /* left in default */
         rtgui_rect_moveto(rect, next_x, next_y);
@@ -166,7 +166,7 @@ static void rtgui_box_layout_horizontal(struct rtgui_box *box, struct rtgui_rect
     {
         rtgui_widget_t *widget = rtgui_list_entry(node, struct rtgui_widget, sibling);
         if (widget->align & RTGUI_ALIGN_STRETCH) space_count ++;
-        else total_width += widget->mini_width;
+        else total_width += widget->min_width;
     }
 
     if (space_count != 0)
@@ -191,8 +191,8 @@ static void rtgui_box_layout_horizontal(struct rtgui_box *box, struct rtgui_rect
 
         /* reset rect */
         rtgui_rect_moveto(rect, -rect->x1, -rect->y1);
-        rect->x2 = widget->mini_width;
-        rect->y2 = widget->mini_height;
+        rect->x2 = widget->min_width;
+        rect->y2 = widget->min_height;
 
         /* top in default */
         rtgui_rect_moveto(rect, next_x, next_y);

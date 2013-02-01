@@ -43,6 +43,7 @@ demo_view_edit.c
 demo_view_bmp.c
 demo_plot.c
 mywidget.c
+demo_view_digtube.c
 """)
 
 if GetDepend('RTGUI_USING_FONT_COMPACT'):

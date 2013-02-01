@@ -1,13 +1,13 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šcheckboxæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºcheckbox¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªcheckboxæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸öcheckbox¿Ø¼ş
  */
 
 #include "demo_view.h"
 #include <rtgui/widgets/checkbox.h>
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºcheckboxæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾checkbox¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_checkbox(void)
 {
     rtgui_rect_t rect;
@@ -15,64 +15,64 @@ rtgui_container_t *demo_view_checkbox(void)
     rtgui_checkbox_t *checkbox;
     rtgui_font_t *font;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("CheckBox View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªcheckboxæ§ä»¶ */
+    /* ´´½¨Ò»¸öcheckbox¿Ø¼ş */
     checkbox = rtgui_checkbox_create("Red", RT_TRUE);
-    /* è®¾ç½®å‰æ™¯è‰²ä¸ºçº¢è‰² */
+    /* ÉèÖÃÇ°¾°É«ÎªºìÉ« */
     RTGUI_WIDGET_FOREGROUND(checkbox) = red;
-    /* è®¾ç½®checkboxçš„ä½ç½® */
+    /* ÉèÖÃcheckboxµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(checkbox), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(checkbox));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªcheckboxæ§ä»¶ */
+    /* ´´½¨Ò»¸öcheckbox¿Ø¼ş */
     checkbox = rtgui_checkbox_create("Blue", RT_TRUE);
-    /* è®¾ç½®å‰æ™¯è‰²ä¸ºè“è‰² */
+    /* ÉèÖÃÇ°¾°É«ÎªÀ¶É« */
     RTGUI_WIDGET_FOREGROUND(checkbox) = blue;
-    /* è®¾ç½®checkboxçš„ä½ç½® */
+    /* ÉèÖÃcheckboxµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(checkbox), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(checkbox));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªcheckboxæ§ä»¶ */
+    /* ´´½¨Ò»¸öcheckbox¿Ø¼ş */
     checkbox = rtgui_checkbox_create("12 font", RT_TRUE);
-    /* è®¾ç½®å­—ä½“ä¸º12ç‚¹é˜µ */
+    /* ÉèÖÃ×ÖÌåÎª12µãÕó */
     font = rtgui_font_refer("asc", 12);
     RTGUI_WIDGET_FONT(checkbox) = font;
-    /* è®¾ç½®checkboxçš„ä½ç½® */
+    /* ÉèÖÃcheckboxµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(checkbox), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(checkbox));
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5 + 25 + 25 + 25;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªcheckboxæ§ä»¶ */
+    /* ´´½¨Ò»¸öcheckbox¿Ø¼ş */
     checkbox = rtgui_checkbox_create("16 font", RT_TRUE);
-    /* è®¾ç½®å­—ä½“ä¸º16ç‚¹é˜µ */
+    /* ÉèÖÃ×ÖÌåÎª16µãÕó */
     font = rtgui_font_refer("asc", 16);
     RTGUI_WIDGET_FONT(checkbox) = font;
-    /* è®¾ç½®checkboxçš„ä½ç½® */
+    /* ÉèÖÃcheckboxµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(checkbox), &rect);
     rtgui_container_add_child(container, RTGUI_WIDGET(checkbox));
 

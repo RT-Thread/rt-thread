@@ -1,7 +1,7 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šmenuæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºmenu¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªä¸åŒç±»å‹çš„labelæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸ö²»Í¬ÀàĞÍµÄlabel¿Ø¼ş
  */
 #include "demo_view.h"
 #include <rtgui/widgets/menu.h>
@@ -46,27 +46,27 @@ static rt_bool_t _onmenu(struct rtgui_object *object, struct rtgui_event *event)
     return RT_TRUE;
 }
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºmenuæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾menu¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_menu(void)
 {
     rtgui_rect_t rect;
     rtgui_container_t *container;
     rtgui_button_t *button;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("MENU View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 = rect.x1 + 100;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªbuttonæ§ä»¶ */
+    /* ´´½¨Ò»¸öbutton¿Ø¼ş */
     button = rtgui_button_create("Pop Menu");
-    /* è®¾ç½®buttonçš„ä½ç½® */
+    /* ÉèÖÃbuttonµÄÎ»ÖÃ */
     rtgui_widget_set_rect(RTGUI_WIDGET(button), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªbuttonæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸öbutton¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(button));
     rtgui_button_set_onbutton(button, _onmenu);
 

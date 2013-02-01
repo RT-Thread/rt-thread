@@ -1,0 +1,11 @@
+    string  |  expands to
+    --------+--------------------------------
+      $NS   |  the length of S1 and S2
+      $S1   |  array of integers S1
+      $S2   |  array of integers S2
+      $NG   |  length of array G
+      $G    |  array of integers G
+      $NK   |  the number of keys, i.e. length of array K and H
+      $K    |  array with the quoted keys
+      $H    |  array of integer hash values
+      $$    |  $ (a literal dollar sign)

@@ -1,0 +1,49 @@
+
+perfect_hash.py
+
+Ilan Schnell <ilanschnell@gmail.com>, 2008
+
+
+Generate a minimal perfect hash function for the keys in a file,
+desired hash values may be specified within this file as well.
+A given code template is filled with parameters, such that the
+output is code which implements the hash function.
+Templates can easily be constructed for any programming language.
+
+The code is based on an a program A.M. Kuchling wrote:
+http://www.amk.ca/python/code/perfect-hash
+
+The algorithm the program uses is described in the paper
+'Optimal algorithms for minimal perfect hashing',
+Z. J. Czech, G. Havas and B.S. Majewski.
+http://citeseer.ist.psu.edu/122364.html
+
+
+Content:
+
+perfect_hash.py     The actual program, try $ ./perfect_hash.py animals.txt
+
+doc                 HTML and plain text documentation
+
+example1-C          An example which shows how to generate a C program
+                    which implements a perfect hash table.
+
+example2-C          Another example in C.
+
+example-C++         In this C++ example, a class is used to define the
+                    interface to a static lookup table.
+
+example-PyModule    A lookup table in implemented as a C extension module
+                    for Python.
+
+example-Python      Some small Python programs which show how to access
+                    some functions and classes in perfect_hash.py directly,
+                    i.e. using perfect_hash has a Python module, rather
+                    than a standalone program.
+
+graph               A small program `py2dot' which converts the default python
+                    output code from perfect_hash.py into a .dot-file which
+                    can be used by Graphviz (see http://www.graphviz.org/) to
+                    create a picture of the graph.
+
+run                 Runs some tests.

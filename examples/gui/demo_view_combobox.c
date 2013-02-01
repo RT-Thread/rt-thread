@@ -1,7 +1,7 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šlabelæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºlabel¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ·»åŠ å‡ ä¸ªä¸åŒç±»å‹çš„labelæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÌí¼Ó¼¸¸ö²»Í¬ÀàĞÍµÄlabel¿Ø¼ş
  */
 #include "demo_view.h"
 #include <rtgui/widgets/combobox.h>
@@ -15,25 +15,25 @@ struct rtgui_listbox_item items[] =
     {"item 5", RT_NULL},
 };
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºcomboboxæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾combobox¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_combobox(void)
 {
     rtgui_rect_t rect;
     rtgui_container_t *container;
     rtgui_combobox_t *box;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("ComboBox View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
     rect.x1 += 5;
     rect.x2 -= 5;
     rect.y1 += 5;
     rect.y2 = rect.y1 + 20;
-    /* åˆ›å»ºä¸€ä¸ªlabelæ§ä»¶ */
+    /* ´´½¨Ò»¸ölabel¿Ø¼ş */
     box = rtgui_combobox_create(items, sizeof(items) / sizeof(items[0]), &rect);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªboxæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸öbox¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(box));
 
     return container;
