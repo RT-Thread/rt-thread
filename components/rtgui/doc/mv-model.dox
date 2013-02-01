@@ -1,0 +1,81 @@
+/** @~english
+  @page pg-mv-model Model-View framework
+
+  @brief A overview of the Model-View framework
+
+  @section Glossary
+
+  @li view: widget dedicated to show the data. It could be a graph, list etc.
+  @li model: abstraction and combination of data.
+  @li data: things that needed to be delivered or shown. It could be a array of
+  votage values which is sampled from a AD in an interval. Or it could be the
+  attributes of all the files in a folder.
+
+  @section Design considerations and implementations
+
+  @li one model can respond to more than one views. one view can connect to
+  more than one models.
+  @li It is guaranteed that the change events of a model will be sent to all
+  the registered views.
+  @li Because there are so many formats of data, Model-View neither specify the
+  format data is stored nor try to abstract them. The only thing stored in
+  model is a pointer to the underlaying data. It is the responsibility of
+  inherited classed to implement the boxing/un-boxing operations.
+  @li Data can be multi-dimensional. The "dimension" does not only means
+  dimension geometry. It can also means attributes. For example, a folder could
+  have two attributes which are name and icon. So it's two-dimensional. If take
+  the size into consideration, it will be three-dimensional. The size of
+  dimension is saved in model. Each dimension is correspond to a pointer to some
+  sort of data. Model can save many of them. As above, model does not make
+  assumptions on the underlaying data structure. It only provide mechanism, not
+  policy and leave that to the inherited classes.
+
+  @section Events
+
+  @li model has a record of registered views. When data changes, model notify
+  views the change by sending events. The event contains the id of the model,
+  the id of target view, the scope of changed data.
+  @li views can handle the event by retrieve data from model, and update
+  themselves according to the scope that data has changed. The connected model
+  views should have the same presentation of data structure. Views should also
+  restore all the models it interested. In the case of repainting, it should
+  re-retrieve data from those models.
+  @li model send events by rtgui_send. So it's suitable for the synchronization
+  between threads and even could be used in ISR.
+*/
+
+/** @~chinese
+  @page pg-mv-model Model-View 框架
+
+  @brief 对于 Model-View 框架的简介
+
+  @section 名词解释
+
+  @li view：用于显示数据的控件。可以是诸如图表控件、列表控件的控件。
+  @li model：对于数据的组合和抽象。
+  @li 数据：需要显示或传递的数据。它可以是每隔一段时间就从AD读取的电压值，也可
+  以是一个目录下所有文件的属性列表。
+
+  @section 设计原则和实现
+
+  @li 一个 model 可以对应多个view。一个view可以对应多个 model。
+  @li 保证 model 的更新事件会同时发送到所有注册的 view 上。
+  @li 因为数据的形式与内容千差万别，所以 Model-View 不规定数据的存储形式，也不对其进
+  行抽象。只在 model 中保留指向第一个数据的指针。打包/解包由从m odel/view 派生出
+  的子类实现。
+  @li 数据源可以是多维的。这里的维度指的不只是几何的维度，而且可以是属性。比如
+  一个目录，它可以有名称、图标两个属性，那么它就是两维的。如果加入大小这个属性
+  ，就是三维的。 model 内部存储数据的维度大小。一个维度对应一个数据首地址的指针
+  。model 中可以存储多个数据首地址。model 对底层数据结构不作假设。只提供机制，不
+  提供策略。只保证能够多维，但把具体的实现方式留给子类实现。
+
+  @subsection 事件
+
+  @li model 内部记录对自己感兴趣的 view。在数据变化时，用事件通知所有相关 view。事
+  件内容包含：自己的 id；目标 view 的 id；所变化数据的 index 范围。
+  @li view 收到事件之后通过 model id 拿到数据并根据事件中的变化范围更新自己。对于
+  指针的数据类型转换需要自己实现并保证和 model 一致。view 内部保存与自己相关的
+  model id，在需要重绘的时候要从所有相关 model 提取数据。
+  @li model 通过 rtgui_send 给 view 发送事件。使得这个模型适用于线程间同步，也
+  可以在中断上下文里通知事件的发生。
+*/

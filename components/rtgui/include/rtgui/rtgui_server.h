@@ -56,8 +56,8 @@ struct rtgui_topwin
     /* the window id */
     struct rtgui_win *wid;
 
-    /* the thread id */
-    rt_thread_t tid;
+    /* which app I belong */
+    struct rtgui_app *app;
 
     /* the extent information */
     rtgui_rect_t extent;

@@ -96,31 +96,34 @@ void rtgui_theme_draw_win(struct rtgui_topwin *win)
     if (!(win->flag & WINTITLE_NO))
     {
         rt_uint32_t index;
-        float r, g, b, delta;
+        rt_uint16_t r, g, b, delta;
 
+#define RGB_FACTOR  4
         if (win->flag & WINTITLE_ACTIVATE)
         {
-            r = 10;
-            g = 36;
-            b = 106;
-            delta = 150 / (float)(rect.x2 - rect.x1);
+            r = 10 << RGB_FACTOR;
+            g = 36 << RGB_FACTOR;
+            b = 106 << RGB_FACTOR;
+            delta = (150 << RGB_FACTOR) / (rect.x2 - rect.x1);
         }
         else
         {
-            r = 128;
-            g = 128;
-            b = 128;
-            delta = 64 / (float)(rect.x2 - rect.x1);
+            r = 128 << RGB_FACTOR;
+            g = 128 << RGB_FACTOR;
+            b = 128 << RGB_FACTOR;
+            delta = (64 << RGB_FACTOR) / (rect.x2 - rect.x1);
         }
 
-        RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB(r, g, b);
         for (index = rect.x1; index < rect.x2 + 1; index ++)
         {
+            RTGUI_WIDGET_FOREGROUND(win->title) = RTGUI_RGB((r>>RGB_FACTOR), \
+                     (g>>RGB_FACTOR), (b>>RGB_FACTOR));
             rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
             r += delta;
             g += delta;
             b += delta;
         }
+#undef RGB_FACTOR
 
         if (win->flag & WINTITLE_ACTIVATE)
         {

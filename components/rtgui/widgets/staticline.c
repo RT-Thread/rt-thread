@@ -73,14 +73,14 @@ void rtgui_staticline_set_orientation(rtgui_staticline_t *staticline, int orient
     if (orientation == RTGUI_HORIZONTAL)
     {
         /* HORIZONTAL */
-        rtgui_widget_set_miniheight(RTGUI_WIDGET(staticline), 2);
-        rtgui_widget_set_miniwidth(RTGUI_WIDGET(staticline), 100);
+        rtgui_widget_set_minheight(RTGUI_WIDGET(staticline), 2);
+        rtgui_widget_set_minwidth(RTGUI_WIDGET(staticline), 100);
     }
     else
     {
         /* VERTICAL */
-        rtgui_widget_set_miniwidth(RTGUI_WIDGET(staticline), 2);
-        rtgui_widget_set_miniheight(RTGUI_WIDGET(staticline), 100);
+        rtgui_widget_set_minwidth(RTGUI_WIDGET(staticline), 2);
+        rtgui_widget_set_minheight(RTGUI_WIDGET(staticline), 100);
     }
 #endif
 }

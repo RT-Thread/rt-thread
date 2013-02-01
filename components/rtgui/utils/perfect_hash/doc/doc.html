@@ -1,0 +1,136 @@
+
+
+<h2>Generic Perfect Hash Generator</h2>
+<p><em>Ilan Schnell, 2008</em>
+</p>
+<p>perfect_hash.py provides a perfect hash generator which is not language
+   specific.  That is, the generator can output a perfect hash function for
+   a given set of keys in any programming language, this is achieved by
+   filling a given code template.
+</p>
+
+<h3>Acknowledgments:</h3>
+<p>This code is derived from A. M. Kuchling's 
+   <a href="http://www.amk.ca/python/code/perfect-hash">Perfect Minimal Hash Generator</a>.
+</p>
+
+<h3>Introduction:</h3>
+<p>A perfect hash function of a certain set S of keys is a hash function
+   which maps all keys in S to different numbers.
+   That means that for the set S,
+   the hash function is collision-free, or perfect.
+   Further, a perfect hash function is called minimal when it maps n keys
+   to n <em>consecutive</em> integers, usually in the range from 0 to n-1.
+</p>
+<p>After coming across A. M. Kuchling's Perfect Minimal Hash Generator,
+   I decided to write a general tool for generating perfect hashes.
+   It is general in the sense that it can produce perfect hash functions
+   for almost any programming language.
+   A given code template is filled with parameters,
+   such that the output is code which implements the hash function.
+</p>
+<p>The algorithm the program uses is described in the paper
+   <a href="http://citeseer.ist.psu.edu/122364.html">&quot;Optimal algorithms for minimal perfect hashing&quot;</a>,
+   Z. J. Czech, G. Havas and B.S. Majewski.
+</p>
+<p>I tried to illustrate the algorithm and explain how it works on
+   <a href="http://ilan.schnell-web.net/prog/perfect-hash/algo.html">this page</a>.
+</p>
+
+<h3>Usage:</h3>
+<p>Given a set of keys which are ordinary character string,
+   the program returns a minimal perfect hash function.
+   This hash function is returned in the form of Python code by default.
+   Suppose we have a file with keys:
+</p>
+<pre><code># 'animals.txt'
+Elephant
+Horse
+Camel
+Python
+Dog
+Cat
+</code></pre><p>The exact way this file is parsed can be specified using command line
+   options, for example it is possible to only read one column from a file
+   which contains different items in each row.
+   The program is invoked like this:
+</p>
+<pre><code># =======================================================================
+# ================= Python code for perfect hash function ===============
+# =======================================================================
+
+G = [0, 0, 4, 1, 0, 3, 8, 1, 6]
+
+S1 = [5, 0, 0, 6, 1, 0, 4, 7]
+S2 = [7, 3, 6, 7, 8, 5, 7, 6]
+
+def hash_f(key, T):
+    return sum(T[i % 8] * ord(c) for i, c in enumerate(str(key))) % 9
+
+def perfect_hash(key):
+    return (G[hash_f(key, S1)] + G[hash_f(key, S2)]) % 9
+
+# ============================ Sanity check =============================
+
+K = [&quot;Elephant&quot;, &quot;Horse&quot;, &quot;Camel&quot;, &quot;Python&quot;, &quot;Dog&quot;, &quot;Cat&quot;]
+H = [0, 1, 2, 3, 4, 5]
+
+assert len(K) == len(H) == 6
+
+for k, h in zip(K, H):
+    assert perfect_hash(k) == h
+</code></pre><p>The way the program works is by filling a code template with the calculated
+   parameters.  The program can take such a template in form of a file and
+   fill in the calculated parameters, this allows the generation of perfect
+   hash function in any programming language.  The hash function is kept quite
+   simple and does not require machine or language specific byte level operations
+   which might be hard to implement in the target language.
+   The following parameters are available in the template, and will expand to:
+</p>
+<table>
+  <tr><th>string</th><th>expands to</th></tr>
+  <tr><td><code>$NS</code></td><td>the length of S1 and S2</td></tr>
+  <tr><td><code>$S1</code></td><td>array of integers S1</td></tr>
+  <tr><td><code>$S2</code></td><td>array of integers S2</td></tr>
+  <tr><td><code>$NG</code></td><td>length of array G</td></tr>
+  <tr><td><code>$G</code></td><td>array of integers G</td></tr>
+  <tr><td><code>$NK</code></td><td>the number of keys, i.e. length of array K and H</td></tr>
+  <tr><td><code>$K</code></td><td>array with the quoted keys</td></tr>
+  <tr><td><code>$H</code></td><td>array of integer hash values</td></tr>
+  <tr><td><code>$$</code></td><td><code>$</code> (a literal dollar sign)</td></tr>
+</table>
+<p>A literal <code>$</code> is escaped as <code>$$</code>.  Since the syntax for arrays is not the
+   same in all programming languages, some specifics can be adjusted using
+   command line options.
+   The section of the built-in template which creates the actual hash function
+   is:
+</p>
+<pre><code>G = [$G]
+
+S1 = [$S1]
+S2 = [$S2]
+
+def hash_f(key, T):
+    return sum(T[i % $NS] * ord(c) for i, c in enumerate(str(key))) % $NG
+
+def perfect_hash(key):
+    return (G[hash_f(key, S1)] + G[hash_f(key, S2)]) % $NG
+</code></pre><p>Using code templates, makes this program very flexible.  The package comes
+   with several complete examples for C and C++.  There are many choices one
+   faces when implementing a static hash table: do the parameter lists go into
+   a separate header file, should the API for the table only contain the hash
+   values, but not the objects being mapped, and so on.
+   All these various choices are possible because of the template is simply
+   filled with the parameters, no matter what else is inside the template.
+</p>
+<p>Another possible use the program is as a python module.  The functions and
+   classes in <code>perfect_hash.py</code> are documented and have clean interfaces.
+   The folder <code>example-Python</code> has examples which shows how the module
+   can be used directly in this way.
+</p>
+
+<h3>Requirement:</h3>
+<p>Python 2.5
+</p>
+
+

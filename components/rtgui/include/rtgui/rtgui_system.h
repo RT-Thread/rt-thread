@@ -26,8 +26,8 @@ typedef void (*rtgui_timeout_func)(struct rtgui_timer *timer, void *parameter);
 
 struct rtgui_timer
 {
-    /* context thread id */
-    rt_thread_t tid;
+    /* the rtgui application it runs on */
+    struct rtgui_app* app;
     /* rt timer */
     struct rt_timer timer;
 
@@ -58,7 +58,7 @@ void *rtgui_realloc(void *ptr, rt_size_t size);
 #define rtgui_exit_critical     rt_exit_critical
 #endif
 
-rt_thread_t rtgui_get_server(void);
+struct rtgui_app* rtgui_get_server(void);
 void rtgui_set_mainwin_rect(struct rtgui_rect *rect);
 void rtgui_get_mainwin_rect(struct rtgui_rect *rect);
 void rtgui_get_screen_rect(struct rtgui_rect *rect);
@@ -67,9 +67,9 @@ void rtgui_screen_lock(rt_int32_t timeout);
 void rtgui_screen_unlock(void);
 
 struct rtgui_event;
-rt_err_t rtgui_send(rt_thread_t tid, struct rtgui_event *event, rt_size_t event_size);
-rt_err_t rtgui_send_urgent(rt_thread_t tid, struct rtgui_event *event, rt_size_t event_size);
-rt_err_t rtgui_send_sync(rt_thread_t tid, struct rtgui_event *event, rt_size_t event_size);
+rt_err_t rtgui_send(struct rtgui_app* app, struct rtgui_event *event, rt_size_t event_size);
+rt_err_t rtgui_send_urgent(struct rtgui_app* app, struct rtgui_event *event, rt_size_t event_size);
+rt_err_t rtgui_send_sync(struct rtgui_app* app, struct rtgui_event *event, rt_size_t event_size);
 rt_err_t rtgui_ack(struct rtgui_event *event, rt_int32_t status);
 rt_err_t rtgui_recv(struct rtgui_event *event, rt_size_t event_size);
 rt_err_t rtgui_recv_nosuspend(struct rtgui_event *event, rt_size_t event_size);

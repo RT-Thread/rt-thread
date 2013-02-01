@@ -1,7 +1,7 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šnotebookæ§ä»¶æ¼”ç¤º
+ * ³ÌĞòÇåµ¥£ºnotebook¿Ø¼şÑİÊ¾
  *
- * è¿™ä¸ªä¾‹å­ä¼šåœ¨åˆ›å»ºå‡ºçš„containerä¸Šæ¼”ç¤ºnotebookæ§ä»¶
+ * Õâ¸öÀı×Ó»áÔÚ´´½¨³öµÄcontainerÉÏÑİÊ¾notebook¿Ø¼ş
  */
 
 #include "demo_view.h"
@@ -25,7 +25,7 @@ const static struct rtgui_listbox_item items2[] =
     {"new list #2", RT_NULL},
 };
 
-/* åˆ›å»ºç”¨äºæ¼”ç¤ºnotebookæ§ä»¶çš„è§†å›¾ */
+/* ´´½¨ÓÃÓÚÑİÊ¾notebook¿Ø¼şµÄÊÓÍ¼ */
 rtgui_container_t *demo_view_notebook(void)
 {
     rtgui_rect_t rect;
@@ -33,14 +33,14 @@ rtgui_container_t *demo_view_notebook(void)
     struct rtgui_notebook *notebook;
     rtgui_listbox_t *box;
 
-    /* å…ˆåˆ›å»ºä¸€ä¸ªæ¼”ç¤ºç”¨çš„è§†å›¾ */
+    /* ÏÈ´´½¨Ò»¸öÑİÊ¾ÓÃµÄÊÓÍ¼ */
     container = demo_view("Notebook View");
 
-    /* è·å¾—è§†å›¾çš„ä½ç½®ä¿¡æ¯ */
+    /* »ñµÃÊÓÍ¼µÄÎ»ÖÃĞÅÏ¢ */
     demo_view_get_rect(container, &rect);
 
     notebook = rtgui_notebook_create(&rect, RTGUI_NOTEBOOK_BOTTOM);
-    /* containeræ˜¯ä¸€ä¸ªcontaineræ§ä»¶ï¼Œè°ƒç”¨add_childæ–¹æ³•æ·»åŠ è¿™ä¸ªnotebookæ§ä»¶ */
+    /* containerÊÇÒ»¸öcontainer¿Ø¼ş£¬µ÷ÓÃadd_child·½·¨Ìí¼ÓÕâ¸önotebook¿Ø¼ş */
     rtgui_container_add_child(container, RTGUI_WIDGET(notebook));
 
     box = rtgui_listbox_create(items, sizeof(items) / sizeof(struct rtgui_listbox_item), &rect);

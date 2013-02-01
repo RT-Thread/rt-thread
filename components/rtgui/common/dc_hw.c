@@ -37,13 +37,6 @@ static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc *dc);
 static rt_bool_t rtgui_dc_hw_get_visible(struct rtgui_dc *dc);
 static void rtgui_dc_hw_get_rect(struct rtgui_dc *dc, rtgui_rect_t *rect);
 
-struct rtgui_dc_hw
-{
-    struct rtgui_dc parent;
-    rtgui_widget_t *owner;
-    const struct rtgui_graphic_driver *hw_driver;
-};
-
 const struct rtgui_dc_engine dc_hw_engine =
 {
     rtgui_dc_hw_draw_point,

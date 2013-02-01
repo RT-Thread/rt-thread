@@ -52,9 +52,6 @@ struct rtgui_app
 
     /* the thread id */
     rt_thread_t tid;
-    /* the RTGUI server id */
-    rt_thread_t server;
-
     /* the message queue of thread */
     rt_mq_t mq;
     /* event buffer */
@@ -70,9 +67,13 @@ struct rtgui_app
 };
 
 /**
- * create an application named @myname on thread @param tid
+ * create an application named @myname on current thread.
+ *
+ * @param name the name of the application
+ *
+ * @return a pointer to struct rtgui_app on success. RT_NULL on failure.
  */
-struct rtgui_app *rtgui_app_create(rt_thread_t tid, const char *title);
+struct rtgui_app *rtgui_app_create(const char *name);
 void rtgui_app_destroy(struct rtgui_app *app);
 rt_bool_t rtgui_app_event_handler(struct rtgui_object *obj, rtgui_event_t *event);
 
@@ -81,11 +82,15 @@ void rtgui_app_exit(struct rtgui_app *app, rt_uint16_t code);
 void rtgui_app_activate(struct rtgui_app *app);
 void rtgui_app_close(struct rtgui_app *app);
 
-void rtgui_app_set_onidle(rtgui_idle_func_t onidle);
-rtgui_idle_func_t rtgui_app_get_onidle(void);
+void rtgui_app_set_onidle(struct rtgui_app *app, rtgui_idle_func_t onidle);
+rtgui_idle_func_t rtgui_app_get_onidle(struct rtgui_app *app);
+
+/**
+ * return the rtgui_app struct on current thread
+ */
 struct rtgui_app *rtgui_app_self(void);
 
-rt_err_t rtgui_app_set_as_wm(void);
-void rtgui_app_set_main_win(struct rtgui_win *win);
+rt_err_t rtgui_app_set_as_wm(struct rtgui_app *app);
+void rtgui_app_set_main_win(struct rtgui_app *app, struct rtgui_win *win);
 
 #endif /* end of include guard: __RTGUI_APP_H__ */

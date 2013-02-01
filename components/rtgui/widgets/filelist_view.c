@@ -250,7 +250,7 @@ static rt_bool_t rtgui_filelist_view_on_folder_item(rtgui_object_t *object, stru
     view = RTGUI_FILELIST_VIEW(menu->user_data);
 
     /* hide window */
-    rtgui_win_hiden(menu);
+    rtgui_win_hide(menu);
 
     switch (listbox->current_item)
     {

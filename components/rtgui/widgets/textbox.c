@@ -54,6 +54,14 @@ static void _rtgui_textbox_constructor(rtgui_textbox_t *box)
 	rtgui_textbox_set_mask_char(box, '*');
 
 	rtgui_font_get_metrics(RTGUI_WIDGET_FONT(box), "H", &rect);
+    rtgui_widget_set_minheight(RTGUI_WIDGET(box),
+            rtgui_rect_height(rect) + RTGUI_TEXTBOX_BORDER_WIDTH * 2);
+    /* at least, we want to display one char. */
+    rtgui_widget_set_minwidth(RTGUI_WIDGET(box),
+            rtgui_rect_width(rect) + RTGUI_TEXTBOX_BORDER_WIDTH * 2 \
+            + RTGUI_WIDGET_DEFAULT_MARGIN /* there is a margin in the beginning
+                                             of the text. */
+            );
 	box->font_width = rtgui_rect_width(rect);
 	box->on_enter = RT_NULL;
 	box->dis_length = 0;
@@ -531,13 +539,13 @@ void rtgui_textbox_ondraw(rtgui_textbox_t *box)
 	rtgui_widget_get_rect(RTGUI_WIDGET(box), &rect);
 	fc = RTGUI_WIDGET_FOREGROUND(box);
 
-	rtgui_rect_inflate(&rect, -1);
+	rtgui_rect_inflate(&rect, -RTGUI_TEXTBOX_BORDER_WIDTH);
 
 	/* fill widget rect with white color */
 	RTGUI_WIDGET_BACKGROUND(box) = white;
 	rtgui_dc_fill_rect(dc, &rect);
 
-	rtgui_rect_inflate(&rect, 1);
+	rtgui_rect_inflate(&rect, RTGUI_TEXTBOX_BORDER_WIDTH);
 	/* draw border */
 	RTGUI_WIDGET_FOREGROUND(box) = RTGUI_RGB(123, 158, 189);
 	rtgui_dc_draw_rect(dc, &rect);
@@ -610,29 +618,27 @@ char rtgui_textbox_get_mask_char(rtgui_textbox_t *box)
 	return box->mask_char;
 }
 
-void rtgui_textbox_set_line_length(rtgui_textbox_t *box, rt_size_t length)
+rt_err_t rtgui_textbox_set_line_length(rtgui_textbox_t *box, rt_size_t length)
 {
-	rt_uint8_t *new_line;
+    char *new_line;
 
-	RT_ASSERT(box != RT_NULL);
+    RT_ASSERT(box != RT_NULL);
 
-	/* invalid length */
-	if (length <= 0)
-		return;
+    /* invalid length */
+    if (length <= 0)
+        return -RT_ERROR;
 
-	new_line = rtgui_malloc(length);
-	if (length < box->line_length)
-	{
-		rt_memcpy(new_line, box->text, length - 1);
-		new_line[length] = '\0';
-	}
-	else
-	{
-		rt_memcpy(new_line, (const char *)box->text, rt_strlen((const char *)box->text));
-	}
+    new_line = rtgui_realloc(box->text, length+1);
+    if (new_line == RT_NULL)
+        return -RT_ENOMEM;
 
-	/* set line length */
-	box->line_length = length;
+    if (length < box->line_length)
+        new_line[length] = '\0';
+
+    box->line_length = length;
+    box->text = new_line;
+
+    return RT_EOK;
 }
 
 /* get textbox text area */

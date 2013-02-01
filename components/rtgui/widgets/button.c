@@ -104,7 +104,8 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_e
     break;
 
     case RTGUI_EVENT_MOUSE_BUTTON:
-        if (RTGUI_WIDGET_IS_HIDE(widget)) return RT_FALSE;
+        if (RTGUI_WIDGET_IS_HIDE(widget))
+            return RT_FALSE;
         {
             struct rtgui_event_mouse *emouse = (struct rtgui_event_mouse *)event;
 
@@ -159,9 +160,6 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_e
                     /* need callback */
                     rt_bool_t need_cb = RT_FALSE;
 
-                    win = RTGUI_WIN(RTGUI_WIDGET(btn)->toplevel);
-                    win->last_mevent_widget = RTGUI_WIDGET(btn);
-
                     /* we need to decide whether the callback will be invoked
                      * before the flag has changed. Moreover, we cannot invoke
                      * it directly here, because the button might be destroyed
@@ -174,14 +172,20 @@ rt_bool_t rtgui_button_event_handler(struct rtgui_object *object, struct rtgui_e
                         need_cb = RT_TRUE;
                     }
 
-                    /* it's a normal button */
+                    /* if the button will handle the mouse up event here, it
+                     * should not be the last_mevent_widget. Take care that
+                     * don't overwrite other widgets. */
+                    win = RTGUI_WIN(RTGUI_WIDGET(btn)->toplevel);
                     if (emouse->button & RTGUI_MOUSE_BUTTON_DOWN)
                     {
                         btn->flag |= RTGUI_BUTTON_FLAG_PRESS;
+                        win->last_mevent_widget = RTGUI_WIDGET(btn);
                     }
                     else
                     {
                         btn->flag &= ~RTGUI_BUTTON_FLAG_PRESS;
+                        if (win->last_mevent_widget == RTGUI_WIDGET(btn))
+                            win->last_mevent_widget = RT_NULL;
                     }
 
                     /* draw button */

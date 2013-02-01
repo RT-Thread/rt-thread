@@ -48,7 +48,7 @@ rt_bool_t rtgui_combobox_pdwin_onitem(struct rtgui_object *object, struct rtgui_
     if (combo->on_selected != RT_NULL)
         combo->on_selected(RTGUI_OBJECT(combo), RT_NULL);
 
-    rtgui_win_hiden(pd_win);
+    rtgui_win_hide(pd_win);
     rtgui_widget_update(RTGUI_WIDGET(combo));
 
     return RT_FALSE;
@@ -56,7 +56,7 @@ rt_bool_t rtgui_combobox_pdwin_onitem(struct rtgui_object *object, struct rtgui_
 
 rt_bool_t rtgui_combobox_pdwin_ondeactive(struct rtgui_object *object, struct rtgui_event *event)
 {
-    rtgui_win_hiden(RTGUI_WIN(object));
+    rtgui_win_hide(RTGUI_WIN(object));
     return RT_TRUE;
 }
 
@@ -226,7 +226,7 @@ rt_bool_t rtgui_combobox_event_handler(struct rtgui_object *object, struct rtgui
         if (focused->widget != RT_NULL)
         {
             /* hide pull down window */
-            rtgui_win_hiden(RTGUI_WIN(box->pd_win));
+            rtgui_win_hide(RTGUI_WIN(box->pd_win));
             rtgui_combobox_ondraw(box);
         }
     }
@@ -255,7 +255,7 @@ static rt_bool_t rtgui_combobox_pulldown_hide(struct rtgui_object *object, struc
     if (box == RT_NULL) return RT_TRUE;
 
     /* hide pull down window */
-    rtgui_win_hiden(RTGUI_WIN(box->pd_win));
+    rtgui_win_hide(RTGUI_WIN(box->pd_win));
 
     /* clear pull down button state */
     box->pd_pressed = RT_FALSE;

@@ -41,6 +41,7 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
 {
     rt_err_t result;
     struct rt_device_graphic_info info;
+	struct rtgui_graphic_ext_ops *ext_ops;
 
     /* get framebuffer address */
     result = rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
@@ -59,6 +60,13 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
     _driver.pitch = _driver.width * _driver.bits_per_pixel / 8;
     _driver.framebuffer = info.framebuffer;
 
+	/* get graphic extension operations */
+	result = rt_device_control(device, RTGRAPHIC_CTRL_GET_EXT, &ext_ops);
+	if (result == RT_EOK)
+	{
+		_driver.ext_ops = ext_ops;
+	}
+
     if (info.framebuffer != RT_NULL)
     {
         /* is a frame buffer device */
@@ -69,6 +77,11 @@ rt_err_t rtgui_graphic_set_device(rt_device_t device)
         /* is a pixel device */
         _driver.ops = rtgui_pixel_device_get_ops(_driver.pixel_format);
     }
+
+#ifdef RTGUI_USING_HW_CURSOR
+	/* set default cursor image */
+	rtgui_cursor_set_image(RTGUI_CURSOR_ARROW);
+#endif
 
     return RT_EOK;
 }
@@ -99,4 +112,28 @@ rt_uint8_t *rtgui_graphic_driver_get_default_framebuffer(void)
     return rtgui_graphic_driver_get_framebuffer(&_driver);
 }
 RTM_EXPORT(rtgui_graphic_driver_get_default_framebuffer);
+
+#ifdef RTGUI_USING_HW_CURSOR
+void rtgui_cursor_set_position(rt_uint16_t x, rt_uint16_t y)
+{
+	rt_uint32_t value;
+
+	if (_driver.device != RT_NULL)
+	{
+		value = (x << 16 | y);
+		rt_device_control(_driver.device, RT_DEVICE_CTRL_CURSOR_SET_POSITION, &value);
+	}
+}
+
+void rtgui_cursor_set_image(enum rtgui_cursor_type type)
+{
+	rt_uint32_t value;
+
+	if (_driver.device != RT_NULL)
+	{
+		value = type;
+		rt_device_control(_driver.device, RT_DEVICE_CTRL_CURSOR_SET_TYPE, &value);
+	}
+};
+#endif
 

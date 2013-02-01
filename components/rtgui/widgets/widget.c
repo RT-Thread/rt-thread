@@ -135,9 +135,9 @@ void rtgui_widget_set_rect(rtgui_widget_t *widget, const rtgui_rect_t *rect)
         rtgui_container_layout(RTGUI_CONTAINER(widget));
     }
 
-    /* reset mini width and height */
-    widget->mini_width  = rtgui_rect_width(widget->extent);
-    widget->mini_height = rtgui_rect_height(widget->extent);
+    /* reset min width and height */
+    widget->min_width  = rtgui_rect_width(widget->extent);
+    widget->min_height = rtgui_rect_height(widget->extent);
 
     /* it's not empty, fini it */
     if (rtgui_region_not_empty(&(widget->clip)))
@@ -184,21 +184,29 @@ void rtgui_widget_get_extent(rtgui_widget_t *widget, rtgui_rect_t *rect)
 }
 RTM_EXPORT(rtgui_widget_get_extent);
 
-void rtgui_widget_set_miniwidth(rtgui_widget_t *widget, int width)
+void rtgui_widget_set_minsize(rtgui_widget_t *widget, int width, int height)
+{
+	RT_ASSERT(widget != RT_NULL);
+	widget->min_width = width;
+	widget->min_height = height;
+}
+RTM_EXPORT(rtgui_widget_set_minsize);
+
+void rtgui_widget_set_minwidth(rtgui_widget_t *widget, int width)
 {
     RT_ASSERT(widget != RT_NULL);
 
-    widget->mini_width = width;
+    widget->min_width = width;
 }
-RTM_EXPORT(rtgui_widget_set_miniwidth);
+RTM_EXPORT(rtgui_widget_set_minwidth);
 
-void rtgui_widget_set_miniheight(rtgui_widget_t *widget, int height)
+void rtgui_widget_set_minheight(rtgui_widget_t *widget, int height)
 {
     RT_ASSERT(widget != RT_NULL);
 
-    widget->mini_height = height;
+    widget->min_height = height;
 }
-RTM_EXPORT(rtgui_widget_set_miniheight);
+RTM_EXPORT(rtgui_widget_set_minheight);
 
 /*
  * This function moves widget and its children to a logic point
