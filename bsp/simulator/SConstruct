@@ -55,6 +55,7 @@ else:
     TARGET = 'rtthread'
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
+    env.Append(LIBS=['m'])
 
 
 # prepare building environment

@@ -365,7 +365,7 @@ void snake_main(void)
     struct rtgui_win *win;
     rtgui_rect_t rect;
 
-    application = rtgui_app_create(rt_thread_self(), "sanke_app");
+    application = rtgui_app_create("sanke_app");
     if (application != RT_NULL)
     {
         rtgui_get_screen_rect(&rect);
