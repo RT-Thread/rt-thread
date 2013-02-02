@@ -173,7 +173,7 @@ static void app_main(void *parameter)
 
 	/* create application */
 	struct rtgui_app *app;
-	app = rtgui_app_create(rt_thread_self(), "gui_app");
+	app = rtgui_app_create("gui_app");
 	if (app == RT_NULL)
     {
         rt_kprintf("Create application \"gui_app\" failed!\n");
@@ -403,7 +403,7 @@ static void app_photo(void *parameter)
 
 	/* create application */
 	struct rtgui_app *app;
-	app = rtgui_app_create(rt_thread_self(), "pho_app");
+	app = rtgui_app_create("pho_app");
 	if (app == RT_NULL)
     {
         rt_kprintf("Create application \"pho_app\" failed!\n");
