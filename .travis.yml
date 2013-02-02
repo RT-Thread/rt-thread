@@ -2,19 +2,19 @@ language: c
 
 install:
   - mkdir ~/toolchain
-  - "[ $RTT_CPU = 'arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C ~/toolchain"
+  - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C ~/toolchain && export RTT_EXEC_PATH=~/toolchain/arm-2011.03/bin || true"
 
 before_script:
-  - export RTT_EXEC_PATH=~/toolchain/arm-2011.03/bin
   - export RTT_ROOT=`pwd`
   - export RTT_CC='gcc'
-  - cd tools
+  - cd bsp/$RTT_BSP
 
 script:
-  - python auto-ci.py
+  - scons
 
 notifications:
   email: false
 
 env:
-  - RTT_CPU='arm'
+  - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='efm32' RTT_TOOL_CHAIN='sourcery-arm' 
