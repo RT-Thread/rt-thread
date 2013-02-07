@@ -62,8 +62,6 @@ _CRTIMP void __cdecl abort(void);
 #endif
 #endif
 
-#if defined(RT_USING_FINSH)
-#include <finsh.h>
 void rt_hw_exit(void)
 {
     rt_kprintf("RT-Thread, bye\n");
@@ -81,6 +79,9 @@ void rt_hw_exit(void)
 #endif
     exit(0);
 }
+
+#if defined(RT_USING_FINSH)
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
 #endif /* RT_USING_FINSH */
 
@@ -97,7 +98,6 @@ void rt_hw_board_init()
 //#endif
 
 #if defined(RT_USING_CONSOLE)
-    rt_hw_serial_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }

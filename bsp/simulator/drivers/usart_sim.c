@@ -10,9 +10,9 @@
 #include  <stdio.h>
 #include "serial.h"
 
-struct serial_int_rx serial_rx;
-extern struct rt_device serial_device;
+struct serial_device serial1;
 
+#define SAVEKEY(key)  seial_save_byte(key, &serial1)
 #ifdef _WIN32
 /*
  * Handler for OSKey Thread
@@ -23,6 +23,7 @@ static DWORD        OSKey_ThreadID;
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
 void rt_hw_usart_init(void)
 {
+    rt_hw_serial_init(&serial1, RT_CONSOLE_DEVICE_NAME);
     /*
      * create serial thread that receive key input from keyboard
      */
@@ -60,7 +61,6 @@ void rt_hw_usart_init(void)
 #include <termios.h> /* for tcxxxattr, ECHO, etc */
 #include <unistd.h> /* for STDIN_FILENO */
 
-
 static void * ThreadforKeyGet(void * lpParam);
 static pthread_t OSKey_Thread;
 void rt_hw_usart_init(void)
@@ -74,57 +74,7 @@ void rt_hw_usart_init(void)
     }
 }
 #endif
-/*
- * 方向键(←)： 0xe04b
- * 方向键(↑)： 0xe048
- * 方向键(→)： 0xe04d
- * 方向键(↓)： 0xe050
- */
-static int savekey(unsigned char key)
-{
-    /* save on rx buffer */
-    {
-        rt_base_t level;
 
-        /* disable interrupt */
-        //暂时关闭中断，因为要操作uart数据结构
-        level = rt_hw_interrupt_disable();
-
-        /* save character */
-        serial_rx.rx_buffer[serial_rx.save_index] = key;
-        serial_rx.save_index ++;
-        //下面的代码检查save_index是否已经到到缓冲区尾部，如果是则回转到头部，称为一个环形缓冲区
-        if (serial_rx.save_index >= SERIAL_RX_BUFFER_SIZE)
-            serial_rx.save_index = 0;
-
-        //这种情况表示反转后的save_index追上了read_index，则增大read_index，丢弃一个旧的数据
-        /* if the next position is read index, discard this 'read char' */
-        if (serial_rx.save_index == serial_rx.read_index)
-        {
-            serial_rx.read_index ++;
-            if (serial_rx.read_index >= SERIAL_RX_BUFFER_SIZE)
-                serial_rx.read_index = 0;
-        }
-
-        /* enable interrupt */
-        //uart数据结构已经操作完成，重新使能中断
-        rt_hw_interrupt_enable(level);
-    }
-
-    /* invoke callback */
-    if (serial_device.rx_indicate != RT_NULL)
-    {
-        rt_size_t rx_length;
-
-        /* get rx length */
-        rx_length = serial_rx.read_index > serial_rx.save_index ?
-                    SERIAL_RX_BUFFER_SIZE - serial_rx.read_index + serial_rx.save_index :
-                    serial_rx.save_index - serial_rx.read_index;
-
-        serial_device.rx_indicate(&serial_device, rx_length);
-    }
-    return 0;
-}
 #ifdef _WIN32
 static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam)
 #else
@@ -153,6 +103,12 @@ void restore_stty(void)
 static void * ThreadforKeyGet(void * lpParam)
 #endif /* not _WIN32*/
 {
+ /*
+ * 方向键(←)： 0xe04b
+ * 方向键(↑)： 0xe048
+ * 方向键(→)： 0xe04d
+ * 方向键(↓)： 0xe050
+ */
     unsigned char key;
 
 #ifndef _WIN32
@@ -173,20 +129,20 @@ static void * ThreadforKeyGet(void * lpParam)
 
             if (key == 0x48) //up key , 0x1b 0x5b 0x41
             {
-                savekey(0x1b);
-                savekey(0x5b);
-                savekey(0x41);
+                SAVEKEY(0x1b);
+                SAVEKEY(0x5b);
+                SAVEKEY(0x41);
             }
             else if (key == 0x50)//0x1b 0x5b 0x42
             {
-                savekey(0x1b);
-                savekey(0x5b);
-                savekey(0x42);
+                SAVEKEY(0x1b);
+                SAVEKEY(0x5b);
+                SAVEKEY(0x42);
             }
 
             continue;
         }
 #endif
-        savekey(key);
+        SAVEKEY(key);
     }
 } /*** ThreadforKeyGet ***/
