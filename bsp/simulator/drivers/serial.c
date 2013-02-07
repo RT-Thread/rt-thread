@@ -1,14 +1,23 @@
 /*
-******************************************************************************
-* By   : parai
-* email:parai@foxmail.com
-* virtual serial driver
-******************************************************************************
-*/
+ * File      : serial.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2013 RT-Thread Develop Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-02-05     Bernard      first version
+ * 2009-10-25     Bernard      fix rt_serial_read bug when there is no data
+ *                             in the buffer.
+ * 2010-03-29     Bernard      cleanup code.
+ * 2013-02-7      prife        rewrite for simulator
+ */
 
 #include <rthw.h>
 
-#define _DEBUG_SERIAL 0
 #include "serial.h"
 #include <stdio.h>
 
@@ -85,17 +94,11 @@ static rt_err_t rt_serial_init(rt_device_t dev)
 
 static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 {
-#if _DEBUG_SERIAL==1
-    printf("in rt_serial_open()\n");
-#endif
     return RT_EOK;
 }
 
 static rt_err_t rt_serial_close(rt_device_t dev)
 {
-#if _DEBUG_SERIAL==1
-    printf("in rt_serial_close()\n");
-#endif
     return RT_EOK;
 }
 static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -152,9 +155,6 @@ static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_
 static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     int level;
-#if _DEBUG_SERIAL==1
-    printf("in rt_serial_write()\n");
-#endif
 #if 0
     if (fp == NULL)
         fp = fopen("log.txt", "wb+");
@@ -196,9 +196,6 @@ static rt_err_t rt_serial_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 rt_err_t rt_hw_serial_register(rt_device_t device, const char *name, rt_uint32_t flag)
 {
     RT_ASSERT(device != RT_NULL);
-#if _DEBUG_SERIAL==1
-    printf("in rt_serial_register()\n");
-#endif
     device->type        = RT_Device_Class_Char;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
