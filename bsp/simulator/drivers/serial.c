@@ -151,6 +151,7 @@ static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_
 
 static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
+    int level;
 #if _DEBUG_SERIAL==1
     printf("in rt_serial_write()\n");
 #endif
@@ -162,8 +163,10 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
         fwrite(buffer, size, 1, fp);
 #endif
 
+    level = rt_hw_interrupt_disable();
     printf("%s", (char *)buffer);
 	fflush(stdout);
+    rt_hw_interrupt_enable(level);
     return size;
 }
 
