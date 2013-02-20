@@ -89,7 +89,8 @@ LoopCopyDataInit:
 /* Zero fill the bss segment. */  
 FillZerobss:
   movs r3, #0
-  str r3, [r2], #4
+  str r3, [r2, #4]
+  adds r2, r2, #4
     
 LoopFillZerobss:
   ldr r3, = _ebss
