@@ -137,9 +137,6 @@ int main(void)
 	/* disable interrupt first */
 	rt_hw_interrupt_disable();
 
-	/* init system setting */
-	SystemInit();
-
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 
