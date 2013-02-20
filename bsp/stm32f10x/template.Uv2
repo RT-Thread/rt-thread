@@ -31,14 +31,14 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  EnvReg (ÿST\STM32F10x\)
  OrgReg (ÿST\STM32F10x\)
  TgStat=16
- OutDir (.\obj\)
+ OutDir (.\build\)
  OutName (rtthread-stm32)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0
