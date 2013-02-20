@@ -42,7 +42,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  HexSel=1
  MG32K=0
  TGMORE=0
- RunUsr 0 0 <>
+ RunUsr 0 1 <fromelf --bin !L --output rtthread.bin>
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>
