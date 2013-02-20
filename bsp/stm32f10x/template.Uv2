@@ -31,18 +31,18 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  EnvReg (ÿST\STM32F10x\)
  OrgReg (ÿST\STM32F10x\)
  TgStat=16
- OutDir (.\build\)
+ OutDir (.\obj\)
  OutName (rtthread-stm32)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\build\)
+ LstDir (.\)
  HexSel=1
  MG32K=0
  TGMORE=0
- RunUsr 0 1 <fromelf --bin !L --output rtthread.bin>
+ RunUsr 0 0 <>
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>

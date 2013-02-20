@@ -40,14 +40,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\build\</OutputDirectory>
+          <OutputDirectory>.\obj\</OutputDirectory>
           <OutputName>rtthread-stm32</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
-          <ListingPath>.\build\</ListingPath>
+          <ListingPath>.\obj\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -68,9 +68,9 @@
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
+            <UserProg1Name />
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Drivers;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx;Libraries\STM32F2xx_StdPeriph_Driver\inc;applications</IncludePath>
+              <IncludePath>.;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\CoreSupport;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx;Libraries\STM32F2xx_StdPeriph_Driver\inc;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -458,6 +458,13 @@
         </Group>
         <Group>
           <GroupName>STM32_StdPeriph</GroupName>
+          <Files>
+            <File>
+              <FileName>core_cm3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>system_stm32f2xx.c</FileName>
@@ -739,6 +746,13 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
             </File>
           </Files>
           <Files>
