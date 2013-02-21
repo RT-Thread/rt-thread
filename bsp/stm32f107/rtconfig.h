@@ -28,7 +28,6 @@
 /* #define RT_USING_TIMER_SOFT */
 #define RT_TIMER_THREAD_PRIO		4
 #define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
 
 /* SECTION: IPC */
 /* Using Semaphore*/
@@ -65,6 +64,14 @@
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
 #define RT_CONSOLEBUF_SIZE	128
+
+// <string name="RT_CONSOLE_DEVICE_NAME" description="console device name" default="uart3" />
+#define RT_CONSOLE_DEVICE_NAME	"uart1"
+// </section>
+
+// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="true" >
+#define RT_USING_COMPONENTS_INIT
+// </section>
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH

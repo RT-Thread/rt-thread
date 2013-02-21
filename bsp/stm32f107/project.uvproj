@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>STM32F10X_CL, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
+              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\components\init;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -411,6 +411,13 @@
               <FileName>msd.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\msd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>platform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\platform.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -881,6 +888,16 @@
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\symbol.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components</GroupName>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\init\components.c</FilePath>
             </File>
           </Files>
         </Group>
