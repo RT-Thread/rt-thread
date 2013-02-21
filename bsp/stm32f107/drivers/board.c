@@ -14,7 +14,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include "board.h"
 
 /**
@@ -45,15 +44,15 @@ void NVIC_Configuration(void)
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
-    /* enter interrupt */
-    rt_interrupt_enter();
+	/* enter interrupt */
+	rt_interrupt_enter();
 
-    rt_tick_increase();
+	rt_tick_increase();
 
-    /* leave interrupt */
-    rt_interrupt_leave();
+	/* leave interrupt */
+	rt_interrupt_leave();
 }
 
 /**

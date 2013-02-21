@@ -5,7 +5,7 @@
   * @version V3.5.0
   * @date    08-April-2011
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
@@ -19,7 +19,7 @@
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
@@ -107,12 +107,6 @@ void DebugMon_Handler(void)
 {
 }
 
-void SysTick_Handler(void)
-{
-    extern void rt_hw_timer_handler(void);
-    rt_hw_timer_handler();
-}
-
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
@@ -132,7 +126,7 @@ void USART1_IRQHandler(void)
 #ifdef RT_USING_UART1
     extern struct rt_device uart1_device;
 	extern void rt_hw_serial_isr(struct rt_device *device);
-	
+
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -191,7 +185,7 @@ void USART3_IRQHandler(void)
 
 /**
   * @}
-  */ 
+  */
 
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

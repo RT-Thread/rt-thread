@@ -13,6 +13,7 @@
  * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
  */
 
+#include <board.h>
 #include "usart.h"
 #include <serial.h>
 #include <stm32f10x_dma.h>
