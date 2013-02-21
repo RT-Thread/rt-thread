@@ -178,7 +178,7 @@
 // </section>
 
 // <section name="RT_USING_RTGUI" description="RT-Thread/GUI" default="true" >
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
 // <integer name="RTGUI_NAME_MAX" description="the name size of RT-Thread/GUI widget/objects" default="12" />
 #define RTGUI_NAME_MAX	12
 // <bool name="RTGUI_USING_SMALL_SIZE" description="use small size in RT-Thread/GUI" default="true" />
