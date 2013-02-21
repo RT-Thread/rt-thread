@@ -1,4 +1,0 @@
-#!/bin/bash
-
-../perfect_hash.py ../animals.txt | ./py2dot | neato -Tps -Gstart=100 -o out.ps
-
