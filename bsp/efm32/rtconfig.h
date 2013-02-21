@@ -337,7 +337,7 @@
 #define LCD_USING_DEVICE_NAME 	    RT_USART1_NAME
 #define LCD_DEVICE_NAME             "lcd"
 /* using RTGUI support */
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX              (16)
