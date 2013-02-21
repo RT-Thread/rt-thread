@@ -99,7 +99,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     tgt_dict = {'mdk':('keil', 'armcc'),
                 'mdk4':('keil', 'armcc'),
                 'iar':('iar', 'iar'),
-                'vs':('msvc', 'cl')}
+                'vs':('msvc', 'cl'),
+                'cb':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
         SetOption('no_exec', 1)
@@ -305,6 +306,7 @@ def EndBuilding(target, program = None):
     from keil import MDK4Project
     from iar import IARProject
     from vs import VSProject
+    from codeblocks import CBProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
@@ -327,6 +329,9 @@ def EndBuilding(target, program = None):
 
     if GetOption('target') == 'vs':
         VSProject('project.vcproj', Projects, program)
+
+    if GetOption('target') == 'cb':
+        CBProject('project.cbp', Projects, program)
 
     if GetOption('copy') and program != None:
         MakeCopy(program)
