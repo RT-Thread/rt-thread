@@ -29,6 +29,7 @@ struct calibration_session
 
 	rt_device_t device;
 	rt_thread_t tid;
+	struct rtgui_app *app;
 	struct rtgui_win *wid;
 };
 static struct calibration_session *calibration_ptr = RT_NULL;
@@ -111,7 +112,7 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 					calibration_ptr->data.max_x,
 					calibration_ptr->data.min_y,
 					calibration_ptr->data.max_y);
-				rtgui_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
+				rtgui_send(calibration_ptr->app, &ecmd.parent, sizeof(struct rtgui_event_command));
 			}
 			return;
 		}
@@ -125,7 +126,7 @@ static void calibration_data_post(rt_uint16_t x, rt_uint16_t y)
 			ecmd.command_id = TOUCH_WIN_UPDATE;
 			ecmd.wid = calibration_ptr->wid;
 
-			rtgui_send(calibration_ptr->tid, &ecmd.parent, sizeof(struct rtgui_event_command));
+			rtgui_send(calibration_ptr->app, &ecmd.parent, sizeof(struct rtgui_event_command));
 		}
 	}
 }
@@ -230,9 +231,11 @@ void calibration_entry(void *parameter)
 	struct rtgui_win *win;
 	struct rtgui_rect rect;
 
-	app = rtgui_app_create(rt_thread_self(), "cali");
+	app = rtgui_app_create("cali");
 	if (app == RT_NULL)
 		return;
+	else
+		calibration_ptr->app = app;
 
 	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect);
 
@@ -254,6 +257,9 @@ void calibration_entry(void *parameter)
 	rtgui_object_set_event_handler(RTGUI_OBJECT(win), calibration_event_handler);
 
 	rtgui_win_show(win, RT_TRUE);
+
+	rtgui_app_run(app);
+
 	rtgui_win_destroy(win);
 
 	rtgui_app_destroy(app);
