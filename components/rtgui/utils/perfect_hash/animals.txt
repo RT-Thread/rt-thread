@@ -1,7 +1,0 @@
-# 'animals.txt'
-Elephant
-Horse
-Camel
-Python
-Dog
-Cat
