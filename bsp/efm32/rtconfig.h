@@ -228,8 +228,8 @@
 //#define EFM32_USING_SFLASH 							/* SPI Flash */
 #define EFM32_USING_SPISD                       /* MicroSD card */
 //#define EFM32_USING_ETHERNET                    /* Ethernet controller */
-#define EFM32_USING_LCD                         /* TFT LCD */
-#define EFM32_USING_KEYS                        /* Keys and joystick */
+//#define EFM32_USING_LCD                         /* TFT LCD */
+//#define EFM32_USING_KEYS                        /* Keys and joystick */
 #endif
 
 #if defined(EFM32_USING_ACCEL)
