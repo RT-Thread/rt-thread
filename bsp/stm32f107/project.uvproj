@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+
   <SchemaVersion>1.1</SchemaVersion>
+
   <Header>### uVision Project, (C) Keil Software</Header>
+
   <Targets>
     <Target>
       <TargetName>RT-Thread STM32</TargetName>
@@ -12,25 +15,25 @@
           <Device>STM32F107VC</Device>
           <Vendor>STMicroelectronics</Vendor>
           <Cpu>IRAM(0x20000000-0x2000FFFF) IROM(0x8000000-0x803FFFF) CLOCK(25000000) CPUTYPE("Cortex-M3")</Cpu>
-          <FlashUtilSpec />
+          <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"STARTUP\ST\STM32F10x.s" ("STM32 Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_CL -FS08000000 -FL040000)</FlashDriverDll>
           <DeviceId>4889</DeviceId>
           <RegisterFile>stm32f10x_lib.h</RegisterFile>
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>SFD\ST\STM32F107x\STM32F107.sfr</SFDFile>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
           <RegisterFilePath>ST\STM32F10x\</RegisterFilePath>
           <DBRegisterFilePath>ST\STM32F10x\</DBRegisterFilePath>
           <TargetStatus>
@@ -40,43 +43,45 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\obj\</OutputDirectory>
+          <OutputDirectory>.\build\</OutputDirectory>
           <OutputName>rtthread-stm32</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
-          <ListingPath>.\</ListingPath>
+          <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -90,16 +95,16 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments />
+          <SimDllArguments></SimDllArguments>
           <SimDlgDll>DARMSTM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pSTM32F107VC</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments />
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMSTM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pSTM32F107VC</TargetDlgDllArguments>
         </DllOption>
@@ -131,22 +136,23 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>7</TargetSelection>
           <SimDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
           </SimDlls>
           <TargetDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
             <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -160,8 +166,8 @@
             <DriverSelection>4099</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
-          <Flash3 />
-          <Flash4 />
+          <Flash3>"" ()</Flash3>
+          <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -193,7 +199,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M3"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -324,7 +330,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -339,11 +345,12 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls />
+              <MiscControls></MiscControls>
               <Define>STM32F10X_CL, USE_STDPERIPH_DRIVER</Define>
-              <Undefine />
-              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\dfs;..\..\components\dfs\include;..\..\components\finsh;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
+              <Undefine></Undefine>
+              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\dfs;..\..\components\dfs\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\init;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include;..\..\components\net\lwip\src\include\ipv4;..\..\components\net\lwip\src\include\netif;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -354,11 +361,12 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -370,12 +378,12 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <ScatterFile />
-            <IncludeLibs />
-            <IncludeLibsPath />
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
             <Misc> --keep __fsym_* --keep __vsym_* </Misc>
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -388,8 +396,6 @@
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
@@ -405,36 +411,36 @@
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>msd.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\msd.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>platform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\platform.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_stm32f10x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\rt_stm32f10x_spi.c</FilePath>
+            </File>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\serial.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32_eth.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\stm32_eth.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\stm32f10x_it.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
@@ -450,169 +456,121 @@
               <FileType>1</FileType>
               <FilePath>Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_i2c.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_dac.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dac.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_fsmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_fsmc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_iwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_sdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_sdio.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f10x_cec.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_cec.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup_stm32f10x_cl.s</FileName>
               <FileType>2</FileType>
@@ -628,78 +586,56 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -715,29 +651,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
@@ -753,40 +681,45 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -798,89 +731,75 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\symbol.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components</GroupName>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\init\components.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -892,239 +811,171 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\api_lib.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>api_msg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\api_msg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>err.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\err.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>netbuf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\netbuf.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>netdb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\netdb.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>netifapi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\netifapi.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>sockets.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\sockets.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\api\tcpip.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\arch\sys_arch.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>def.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\def.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dhcp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\dhcp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dns.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\dns.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\init.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>memp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\memp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>netif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\netif.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>pbuf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\pbuf.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>raw.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\raw.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stats.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\stats.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\sys.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>tcp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\tcp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>tcp_in.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\tcp_in.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>tcp_out.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\tcp_out.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>timers.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\timers.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>udp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\udp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>autoip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\autoip.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>icmp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\icmp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>igmp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\igmp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>inet.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\inet.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>inet_chksum.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\inet_chksum.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\ip.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ip_addr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\ip_addr.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ip_frag.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\core\ipv4\ip_frag.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>etharp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\netif\etharp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ethernetif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\src\netif\ethernetif.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>slipif.c</FileName>
               <FileType>1</FileType>
@@ -1135,4 +986,5 @@
       </Groups>
     </Target>
   </Targets>
+
 </Project>

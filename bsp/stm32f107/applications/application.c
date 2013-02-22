@@ -1,7 +1,7 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -21,67 +21,42 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
-/* dfs init */
-#include <dfs_init.h>
-/* dfs filesystem:ELM filesystem init */
-#include <dfs_elm.h>
-/* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #endif
 
-#ifdef RT_USING_LWIP
-#include <lwip/sys.h>
-#include <lwip/api.h>
-#include <netif/ethernetif.h>
-#include "stm32_eth.h"
-#endif
+#ifdef RT_USING_COMPONENTS_INIT
+#include <components.h>
+#endif /* RT_USING_COMPONENTS_INIT */
 
 void rt_init_thread_entry(void* parameter)
 {
-/* Filesystem Initialization */
-#ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
+    {
+        extern void rt_platform_init(void);
+        rt_platform_init();
+    }
 
-#ifdef RT_USING_DFS_ELMFAT
-		/* init the elm chan FatFs filesystam*/
-		elm_init();
+#ifdef RT_USING_COMPONENTS_INIT
+    /* initialization RT-Thread Components */
+    rt_components_init();
+#endif
 
-        /* init sdcard driver */
-        rt_hw_msd_init();
-
+    /* Filesystem Initialization */
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+    {
         /* mount sd card fat partition 1 as root directory */
         if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
         {
             rt_kprintf("File System initialized!\n");
         }
         else
+        {
             rt_kprintf("File System initialzation failed!\n");
-#endif
-	}
-#endif
-
-    /* LwIP Initialization */
-#ifdef RT_USING_LWIP
-    {
-        extern void lwip_sys_init(void);
-
-        /* register ethernetif device */
-        eth_system_device_init();
-
-        rt_hw_stm32_eth_init();
-        /* re-init device driver */
-        rt_device_init_all();
-
-        /* init lwip system */
-        lwip_sys_init();
-        rt_kprintf("TCP/IP initialized!\n");
+        }
     }
-#endif
+#endif /* RT_USING_DFS && RT_USING_DFS_ELMFAT */
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
     rt_thread_t init_thread;
 
@@ -96,7 +71,9 @@ int rt_application_init()
 #endif
 
     if (init_thread != RT_NULL)
+    {
         rt_thread_startup(init_thread);
+    }
 
     return 0;
 }
