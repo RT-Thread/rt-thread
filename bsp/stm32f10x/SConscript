@@ -15,7 +15,7 @@ if GetDepend('RT_USING_LWIP'):
 	src_drv += ['enc28j60.c'] + ['dm9000a.c']
 
 if GetDepend('RT_USING_RTGUI'):
-    src_drv += ['touch.c', 'calibration.c']
+    src_drv += ['touch.c']
 
 if GetDepend('RT_USING_RTGUI'):
 	if rtconfig.RT_USING_LCD_TYPE == 'FMT0371':
