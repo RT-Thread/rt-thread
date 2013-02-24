@@ -41,6 +41,7 @@
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/driver.h>
+#include <rtgui/calibration.h>
 #endif
 
 #include "led.h"
@@ -72,6 +73,23 @@ static void led_thread_entry(void* parameter)
         rt_thread_delay( RT_TICK_PER_SECOND/2 );
     }
 }
+
+#ifdef RT_USING_RTGUI
+rt_bool_t cali_setup(void)
+{
+    rt_kprintf("cali setup entered\n");
+    return RT_FALSE;
+}
+
+void cali_store(struct calibration_data *data)
+{
+    rt_kprintf("cali finished (%d, %d), (%d, %d)\n",
+            data->min_x,
+            data->max_x,
+            data->min_y,
+            data->max_y);
+}
+#endif
 
 void rt_init_thread_entry(void* parameter)
 {
@@ -149,6 +167,10 @@ void rt_init_thread_entry(void* parameter)
 
 		/* init rtgui system server */
 		rtgui_system_server_init();
+
+        calibration_set_restore(cali_setup);
+        calibration_set_after(cali_store);
+        calibration_init();
 	}
 #endif /* #ifdef RT_USING_RTGUI */
 }
