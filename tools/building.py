@@ -134,13 +134,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     objs = SConscript('SConscript', variant_dir='build', duplicate=0)
     Repository(Rtt_Root)
     # include kernel
-    objs.append(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
-        objs.append(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
 
     # include components
-    objs.append(SConscript(Rtt_Root + '/components/SConscript',
+    objs.extend(SConscript(Rtt_Root + '/components/SConscript',
                            variant_dir='build/components',
                            duplicate=0,
                            exports='remove_components'))
