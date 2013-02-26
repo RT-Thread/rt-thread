@@ -148,6 +148,14 @@ static char *winpath_dirdup(char *des, const char *src)
     return path;
 }
 
+/* This function can convert the path in rt-thread/dfs to the path in windows */
+char * dfs_win32_dirdup(char * path)
+{
+    char * file_path;
+    file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
+    return file_path;
+}
+
 static int dfs_win32_open(struct dfs_fd *file)
 {
     int fd;

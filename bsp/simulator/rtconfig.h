@@ -99,6 +99,9 @@
 /* SECTION: component options */
 #define RT_USING_COMPONENTS_INIT
 
+/* SECTION: APP MODULE  */
+#define RT_USING_MODULE
+
 /* SECTION: MTD interface options */
 /* using mtd nand flash */
 #define RT_USING_MTD_NAND

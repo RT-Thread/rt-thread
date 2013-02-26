@@ -106,8 +106,45 @@ if GetDepend('RT_USING_RTGUI'):
 if GetDepend('RT_USING_TC'):
     objs = objs + SConscript(RTT_ROOT + '/examples/kernel/SConscript', variant_dir = 'build/tc/kernel', duplicate=0)
 
-# build program 
-program = env.Program(TARGET, objs)
+def ObjRemove(objs, remove):
+    for item in objs:
+        # print type(item), os.path.basename(str(item))
+        if os.path.basename(str(item)) in remove:
+             objs.remove(item)
+    return
+
+# build program  -shared
+if GetDepend('RT_USING_MODULE'):
+    # Remove module.c in $RTT_ROOT/src
+    ObjRemove(objs, ['module.obj', 'module.o'])
+
+    AddOption('--def',
+      dest='def',
+      nargs=1, type='string',
+      action='store',
+      metavar='DIR',
+      help='installation prefix')
+    res = GetOption('def')
+    if res is None:
+        program = env.Program(TARGET, objs)
+    elif res == 'update':
+        env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
+        env.SharedLibrary("rtthread.dll", objs)
+        program = ''
+    elif res == 'yes':
+        if rtconfig.PLATFORM == 'cl':
+            objs += ['rtthread.def']
+        env.SharedLibrary("rtthread.dll", objs)
+        program = env.Program(TARGET, 'dummy.c', LIBS='rtthread', LIBPATH='.')
+    else:
+        print "bad arguments, you can use the following command:"
+        print "\t --def=update to create .def"
+        print "\t --def=yes to create final exe"
+        exit()
+
+else:
+    # env.SharedLibrary("rtthread.dll", objs)
+    program = env.Program(TARGET, objs)
 
 # end building
 EndBuilding(TARGET, program)

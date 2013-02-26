@@ -71,10 +71,10 @@ elif PLATFORM == 'mingw':
 
     DEVICE = ' -ffunction-sections -fdata-sections'
     DEVICE = '  '
-    CFLAGS = ' -Wl,--output-def '
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    #LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map -T mingw.ld'
-    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map --gc-sections,--whole-archive -T mingw.ld '
+    DEFFILE_LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map,--output-def,rtthread.def -T mingw.ld '
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map -T mingw.ld '
     CPATH = ''
     LPATH = ''
 
