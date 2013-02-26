@@ -1,7 +1,7 @@
 # toolchains options
 ARCH='sim'
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw' (mingw is not supported yet!)
-CROSS_TOOL='msvc'
+CROSS_TOOL='mingw'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path 
@@ -10,10 +10,19 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM  = 'gcc'
     EXEC_PATH = '/usr/bin/gcc'
 
-if  CROSS_TOOL == 'msvc':
+elif  CROSS_TOOL == 'mingw':
+    CPU       = 'win32'
+    PLATFORM  = 'mingw'
+    EXEC_PATH = r'D:\Program Files\CodeBlocks\MinGW\bin'
+
+elif  CROSS_TOOL == 'msvc':
     CPU       = 'win32'
     PLATFORM  = 'cl'
     EXEC_PATH = ''
+
+else :
+    print "bad CROSS TOOL!"
+    exit(1)
 
 BUILD = 'debug'
 #BUILD = ''
@@ -37,6 +46,35 @@ if PLATFORM == 'gcc':
     #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
     LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
 
+    CPATH = ''
+    LPATH = ''
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O0 -gdwarf-2'
+        AFLAGS += ' -gdwarf-2'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = ''
+
+elif PLATFORM == 'mingw':
+    # toolchains
+    PREFIX = ''
+    CC = PREFIX + 'gcc'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    TARGET_EXT = 'exe'
+    SIZE = PREFIX + 'size'
+    OBJDUMP = PREFIX + 'objdump'
+    OBJCPY = PREFIX + 'objcopy'
+
+    DEVICE = ' -ffunction-sections -fdata-sections'
+    DEVICE = '  '
+    CFLAGS = ' -Wl,--output-def '
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    #LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map -T mingw.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map --gc-sections,--whole-archive -T mingw.ld '
     CPATH = ''
     LPATH = ''
 

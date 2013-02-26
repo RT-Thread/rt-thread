@@ -83,6 +83,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 /* #define RT_USING_UART1 */
 
 /* SECTION: Console options */
@@ -96,9 +97,9 @@
 
 /* SECTION: MTD interface options */
 /* using mtd nand flash */
-#define RT_USING_MTD_NAND
+/* #define RT_USING_MTD_NAND */
 /* using mtd nor flash */
-#define RT_USING_MTD_NOR
+/* #define RT_USING_MTD_NOR */
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -107,7 +108,7 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device file system */
-#define RT_USING_DFS
+/* #define RT_USING_DFS */
 #define DFS_FILESYSTEM_TYPES_MAX  8
 
 /* DFS: ELM FATFS options */
@@ -126,7 +127,7 @@
 /* #define RT_USING_DFS_NFS */
 
 /* DFS: UFFS nand file system options */
-#define RT_USING_DFS_UFFS
+/* #define RT_USING_DFS_UFFS */
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO
 /* enable this ,you need provide a mark_badblock/check_block function */
@@ -138,7 +139,7 @@
 /* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
 #ifdef _WIN32
-#define RT_USING_DFS_WINSHAREDIR
+//#define RT_USING_DFS_WINSHAREDIR
 #endif
 
 /* the max number of mounted file system */
@@ -199,7 +200,7 @@
 #define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
-#define RT_USING_RTGUI
+/* #define RT_USING_RTGUI */
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12

@@ -51,12 +51,33 @@ if rtconfig.PLATFORM == 'cl':
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
     env['LIBS']=libs
     env['CPPDEFINES']=definitions
+elif rtconfig.PLATFORM == 'mingw':
+    libs = Split('''
+        winmm
+        gdi32
+        winspool
+        comdlg32
+        advapi32
+        shell32
+        ole32
+        oleaut32
+        uuid
+        odbc32
+        odbccp32
+        ''')
+    TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
+    env = Environment(tools = ['mingw'],
+        AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        AR = rtconfig.AR, ARFLAGS = '-rc',
+        LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    env['LIBS']=libs
+    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 else:
     TARGET = 'rtthread'
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
     env.Append(LIBS=['m'])
-
 
 # prepare building environment
 
