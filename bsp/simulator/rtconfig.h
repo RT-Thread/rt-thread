@@ -21,6 +21,10 @@
 
 #elif defined(__GNUC__)
 #define RT_USING_NOLIBC
+
+#if defined(__MINGW32__)
+#define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
+#endif
 #endif
 
 /* SECTION: basic kernel options */
@@ -108,7 +112,7 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device file system */
-/* #define RT_USING_DFS */
+#define RT_USING_DFS
 #define DFS_FILESYSTEM_TYPES_MAX  8
 
 /* DFS: ELM FATFS options */
