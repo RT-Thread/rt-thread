@@ -134,6 +134,9 @@ if GetDepend('RT_USING_MODULE'):
     elif res == 'yes':
         if rtconfig.PLATFORM == 'cl':
             objs += ['rtthread.def']
+        elif rtconfig.PLATFORM == 'mingw':
+            rtconfig.POST_ACTION = 'del /Q rtthread.lib \n rename librtthread.a rtthread.lib\n'
+            # rtconfig.POST_ACTION = 'lib /machine:i386 /def:rtthread.def /out:rtthread.lib'
         env.SharedLibrary("rtthread.dll", objs)
         program = env.Program(TARGET, 'dummy.c', LIBS='rtthread', LIBPATH='.')
     else:
