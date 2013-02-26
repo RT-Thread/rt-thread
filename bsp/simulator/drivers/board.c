@@ -53,7 +53,7 @@ void rt_hw_win32_low_cpu(void)
 #endif
 }
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #ifndef _CRT_TERMINATE_DEFINED
 #define _CRT_TERMINATE_DEFINED
 _CRTIMP __declspec(noreturn) void __cdecl exit(__in int _Code);

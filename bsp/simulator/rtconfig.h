@@ -21,6 +21,10 @@
 
 #elif defined(__GNUC__)
 #define RT_USING_NOLIBC
+
+#if defined(__MINGW32__)
+#define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
+#endif
 #endif
 
 /* SECTION: basic kernel options */
@@ -83,6 +87,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 /* #define RT_USING_UART1 */
 
 /* SECTION: Console options */
@@ -94,11 +99,14 @@
 /* SECTION: component options */
 #define RT_USING_COMPONENTS_INIT
 
+/* SECTION: APP MODULE  */
+#define RT_USING_MODULE
+
 /* SECTION: MTD interface options */
 /* using mtd nand flash */
 #define RT_USING_MTD_NAND
 /* using mtd nor flash */
-#define RT_USING_MTD_NOR
+/* #define RT_USING_MTD_NOR */
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
