@@ -143,7 +143,7 @@
 /* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
 #ifdef _WIN32
-//#define RT_USING_DFS_WINSHAREDIR
+#define RT_USING_DFS_WINSHAREDIR
 #endif
 
 /* the max number of mounted file system */
