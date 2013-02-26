@@ -120,18 +120,18 @@ if GetDepend('RT_USING_MODULE'):
 
     AddOption('--def',
       dest='def',
-      nargs=1, type='string',
-      action='store',
-      metavar='DIR',
-      help='installation prefix')
-    res = GetOption('def')
-    if res is None:
-        program = env.Program(TARGET, objs)
-    elif res == 'update':
+      action='store_true',
+      default=False,
+      help='create rthread.def of rtthread.dll on windows')
+    if GetOption('def'):
+        if rtconfig.PLATFORM != 'mingw':
+            print "scons error: `--def' can only work with mingw"
+            exit(1)
+
         env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
         env.SharedLibrary("rtthread.dll", objs)
         program = ''
-    elif res == 'yes':
+    else:
         if rtconfig.PLATFORM == 'cl':
             objs += ['rtthread.def']
         elif rtconfig.PLATFORM == 'mingw':
@@ -139,14 +139,8 @@ if GetDepend('RT_USING_MODULE'):
             # rtconfig.POST_ACTION = 'lib /machine:i386 /def:rtthread.def /out:rtthread.lib'
         env.SharedLibrary("rtthread.dll", objs)
         program = env.Program(TARGET, 'dummy.c', LIBS='rtthread', LIBPATH='.')
-    else:
-        print "bad arguments, you can use the following command:"
-        print "\t --def=update to create .def"
-        print "\t --def=yes to create final exe"
-        exit()
 
 else:
-    # env.SharedLibrary("rtthread.dll", objs)
     program = env.Program(TARGET, objs)
 
 # end building
