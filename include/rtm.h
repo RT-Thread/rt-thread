@@ -21,6 +21,9 @@ struct rt_module_symtab
     const char *name;
 };
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#define RTM_EXPORT(symbol)
+#else
 #define RTM_EXPORT(symbol)                                            \
 const char __rtmsym_##symbol##_name[] = #symbol;                      \
 const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= \
@@ -28,6 +31,8 @@ const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= \
     (void *)&symbol,                                                  \
     __rtmsym_##symbol##_name                                          \
 };
+#endif
+
 #else
 #define RTM_EXPORT(symbol)
 #endif
