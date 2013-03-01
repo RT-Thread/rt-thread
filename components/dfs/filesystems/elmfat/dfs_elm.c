@@ -182,7 +182,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
 {
 #define FSM_STATUS_INIT            0
 #define FSM_STATUS_USE_TEMP_DRIVER 1
-    FATFS *fat;
+    FATFS *fat = RT_NULL;
     int flag;
     FRESULT result;
     int index;
