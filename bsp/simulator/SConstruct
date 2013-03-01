@@ -19,7 +19,7 @@ sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
 
-env = Environment()
+env = Environment(TARGET_ARCH='x86')
 
 Export('RTT_ROOT')
 Export('rtconfig')
