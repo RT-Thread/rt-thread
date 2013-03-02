@@ -17,12 +17,11 @@
  * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
  */
 
-#include <string.h>
-#include <time.h>
-
 #include <rtthread.h>
 #include "ffconf.h"
 #include "ff.h"
+#include <string.h>
+#include <time.h>
 
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
