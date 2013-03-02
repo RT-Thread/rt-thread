@@ -151,6 +151,7 @@ static void sdlfb_hw_init(void)
 #include <rtgui/rtgui_system.h>
 
 #ifdef _WIN32
+static HANDLE  sdl_ok_event = NULL;
 static DWORD WINAPI sdl_loop(LPVOID lpParam)
 #else
 static void *sdl_loop(void *lpParam)
@@ -172,7 +173,9 @@ static void *sdl_loop(void *lpParam)
 
     device = rt_device_find("sdl");
     rtgui_graphic_set_device(device);
-
+#ifdef _WIN32
+    SetEvent(sdl_ok_event);
+#endif
     /* handle SDL event */
     while (!quit)
     {
@@ -307,7 +310,15 @@ void rt_hw_sdl_start(void)
 #ifdef _WIN32
     HANDLE thread;
     DWORD  thread_id;
-
+    sdl_ok_event = CreateEvent(NULL,
+        FALSE,
+        FALSE,
+        NULL);
+    if (sdl_ok_event == NULL)
+    {
+        printf("error, create SDL event failed\n");
+        exit(-1);
+    }
     /* create thread that loop sdl event */
     thread = CreateThread(NULL,
                           0,
@@ -322,6 +333,9 @@ void rt_hw_sdl_start(void)
         return;
     }
     ResumeThread(thread);
+
+    /* wait until SDL LCD device is registered and seted */
+    WaitForSingleObject(sdl_ok_event, INFINITE);
 #else
     /* Linux */
     pthread_t pid;
