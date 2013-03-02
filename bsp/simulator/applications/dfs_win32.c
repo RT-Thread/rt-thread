@@ -111,7 +111,7 @@ static int dfs_win32_unmount(struct dfs_filesystem *fs)
     return 0;
 }
 
-static int dfs_win32_mkfs(const char *device_name)
+static int dfs_win32_mkfs(rt_device_t devid)
 {
     return -DFS_STATUS_ENOSYS;
 }
