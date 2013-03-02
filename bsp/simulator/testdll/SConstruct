@@ -38,7 +38,7 @@ AddOption('--type',
   help='installation prefix')
 
 app = GetOption('app')
-env = Environment()
+env = Environment(TARGET_ARCH='x86')
 CPPPATH = [
 	RTT_ROOT + '/include',
 	RTT_ROOT + '/bsp/' + rtconfig.BSP,
@@ -70,6 +70,7 @@ env.Append(CCFLAGS=rtconfig.CFLAGS)
 env.Append(LINKFLAGS=rtconfig.LFLAGS)
 env.Append(CPPPATH=CPPPATH)
 env.Append(LIBS='rtthread', LIBPATH='../')
+env.Append(CPPDEFINES=['RTT_IN_MODULE'])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 PrepareModuleBuilding(env, RTT_ROOT)

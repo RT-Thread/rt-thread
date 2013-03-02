@@ -1,7 +1,9 @@
 # toolchains options
 ARCH='sim'
-#CROSS_TOOL='msvc' or 'gcc' or 'mingw' (mingw is not supported yet!)
-CROSS_TOOL='mingw'
+#CROSS_TOOL='msvc' or 'gcc' or 'mingw'
+#'msvc' and 'mingw' are both for windows
+# 'gcc' is for linux
+CROSS_TOOL='msvc'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path 
