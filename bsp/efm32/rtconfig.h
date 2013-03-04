@@ -228,8 +228,8 @@
 //#define EFM32_USING_SFLASH 							/* SPI Flash */
 #define EFM32_USING_SPISD                       /* MicroSD card */
 //#define EFM32_USING_ETHERNET                    /* Ethernet controller */
-#define EFM32_USING_LCD                         /* TFT LCD */
-#define EFM32_USING_KEYS                        /* Keys and joystick */
+//#define EFM32_USING_LCD                         /* TFT LCD */
+//#define EFM32_USING_KEYS                        /* Keys and joystick */
 #endif
 
 #if defined(EFM32_USING_ACCEL)
@@ -337,7 +337,7 @@
 #define LCD_USING_DEVICE_NAME 	    RT_USART1_NAME
 #define LCD_DEVICE_NAME             "lcd"
 /* using RTGUI support */
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX              (16)

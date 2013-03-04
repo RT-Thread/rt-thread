@@ -124,7 +124,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
         }
     }
 
-    if(setup->length == 0xFF)
+    if(setup->length > len)
         len = str_desc.bLength;
     else
         len = setup->length;
@@ -356,6 +356,38 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
 }
 
 /**
+ * This function will handle standard request to 
+ * interface that defined in class-specifics
+ *
+ * @param device the usb device object.
+ * @param setup the setup request.
+ *
+ * @return RT_EOK on successful. 
+ */
+static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
+{
+    uintf_t intf;
+    uclass_t cls;
+    rt_err_t ret;
+
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(setup != RT_NULL);
+
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("_request_interface\n"));
+    
+    intf = rt_usbd_find_interface(device, setup->index & 0xFF, &cls);
+    if (intf != RT_NULL)
+    {
+        ret = intf->handler(device, cls, setup);
+    }
+    else
+        ret = -RT_ERROR;
+
+    return ret;
+}
+
+/**
  * This function will handle standard request.
  *
  * @param device the usb device object.
@@ -419,9 +451,14 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             _set_interface(device, setup);
             break;
         default:
-            rt_kprintf("unknown interface request\n");
-            dcd_ep_stall(device->dcd, 0);
-            break;
+            if (_request_interface(device, setup) != RT_EOK)
+            {
+                rt_kprintf("unknown interface request\n");
+                dcd_ep_stall(device->dcd, 0);
+                return - RT_ERROR;
+            }
+            else
+                break;
         }
         break;
     case USB_REQ_TYPE_ENDPOINT:
@@ -575,12 +612,9 @@ rt_err_t _sof_notify(udevice_t device)
  *
  * @return an usb device object on success, RT_NULL on fail.
  */
-udevice_t rt_usbd_device_create(const char** ustring)
+udevice_t rt_usbd_device_create(void)
 {
     udevice_t udevice;
-
-    /* parameter check */
-    RT_ASSERT(ustring != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_create\n"));
 
@@ -593,9 +627,6 @@ udevice_t rt_usbd_device_create(const char** ustring)
     }
     rt_memset(udevice, 0, sizeof(struct udevice));
 
-    /* set string descriptor array to the device object */
-    udevice->str = ustring;
-
     /* to initialize configuration list */
     rt_list_init(&udevice->cfg_list);
 
@@ -603,6 +634,26 @@ udevice_t rt_usbd_device_create(const char** ustring)
     rt_list_insert_after(&device_list, &udevice->list);
 
     return udevice;
+}
+
+/**
+ * This function will set usb device string description.
+ *
+ * @param device the usb device object. 
+ * @param ustring pointer to string pointer array.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring)
+{
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(ustring != RT_NULL);
+
+    /* set string descriptor array to the device object */
+    device->str = ustring;
+
+    return RT_EOK;
 }
 
 /**

@@ -1,6 +1,10 @@
 #include <rtthread.h>
 
+#ifdef _WIN32
 #include <sdl.h>
+#else
+#include <SDL/SDL.h>
+#endif
 #include <rtdevice.h>
 #include <rtgui/driver.h>
 
@@ -104,7 +108,7 @@ static void sdlfb_hw_init(void)
     //_putenv("SDL_VIDEODRIVER=windib");
 
     //if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
         exit(1);
@@ -132,27 +136,46 @@ static void sdlfb_hw_init(void)
     sdllock = rt_mutex_create("fb", RT_IPC_FLAG_FIFO);
 }
 
+#ifdef _WIN32
 #include  <windows.h>
 #include  <mmsystem.h>
+#else
+#include <pthread.h>
+#include <signal.h>
+#endif
+
 #include  <stdio.h>
-#include <sdl.h>
 #include <rtgui/event.h>
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 
+#ifdef _WIN32
+static HANDLE  sdl_ok_event = NULL;
 static DWORD WINAPI sdl_loop(LPVOID lpParam)
+#else
+static void *sdl_loop(void *lpParam)
+#endif
 {
     int quit = 0;
     SDL_Event event;
     int button_state = 0;
-
     rt_device_t device;
+
+#ifndef _WIN32
+    sigset_t  sigmask, oldmask;
+    /* set the getchar without buffer */
+    sigfillset(&sigmask);
+    pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+#endif
+
     sdlfb_hw_init();
 
     device = rt_device_find("sdl");
     rtgui_graphic_set_device(device);
-
+#ifdef _WIN32
+    SetEvent(sdl_ok_event);
+#endif
     /* handle SDL event */
     while (!quit)
     {
@@ -284,9 +307,18 @@ static DWORD WINAPI sdl_loop(LPVOID lpParam)
 /* start sdl thread */
 void rt_hw_sdl_start(void)
 {
+#ifdef _WIN32
     HANDLE thread;
     DWORD  thread_id;
-
+    sdl_ok_event = CreateEvent(NULL,
+        FALSE,
+        FALSE,
+        NULL);
+    if (sdl_ok_event == NULL)
+    {
+        printf("error, create SDL event failed\n");
+        exit(-1);
+    }
     /* create thread that loop sdl event */
     thread = CreateThread(NULL,
                           0,
@@ -301,4 +333,18 @@ void rt_hw_sdl_start(void)
         return;
     }
     ResumeThread(thread);
+
+    /* wait until SDL LCD device is registered and seted */
+    WaitForSingleObject(sdl_ok_event, INFINITE);
+#else
+    /* Linux */
+    pthread_t pid;
+    int res;
+    res = pthread_create(&pid, NULL, &sdl_loop, NULL);
+    if (res)
+    {
+        printf("pthread create sdl thread faild, <%d>\n", res);
+        exit(EXIT_FAILURE);
+    }
+#endif
 }

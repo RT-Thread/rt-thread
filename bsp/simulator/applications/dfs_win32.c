@@ -1,4 +1,3 @@
-
 /*
  * File      : rtthread.h
  * This file is part of RT-Thread RTOS
@@ -11,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-11-27     prife        the first version
+ * 2013-03-03     aozima       add dfs_win32_stat st_mtime support.
  */
 #include <rtthread.h>
 
@@ -27,6 +27,22 @@
 #include <WinError.h>
 #include  <windows.h>
 
+#if defined(__MINGW32__) && defined(_NO_OLDNAMES)
+#define O_RDONLY    _O_RDONLY
+#define O_WRONLY    _O_WRONLY
+#define O_RDWR      _O_RDWR
+#define O_ACCMODE   _O_ACCMODE
+#define O_APPEND    _O_APPEND
+#define O_CREAT     _O_CREAT
+#define O_TRUNC     _O_TRUNC
+#define O_EXCL      _O_EXCL
+#define O_TEXT      _O_TEXT
+#define O_BINARY    _O_BINARY
+#define O_TEMPORARY _O_TEMPORARY
+#define O_NOINHERIT _O_NOINHERIT
+#define O_SEQUENTIAL   _O_SEQUENTIAL
+#define O_RANDOM    _O_RANDOM
+#endif
 /*
  * RT-Thread DFS Interface for win-directory as an disk device
  */
@@ -95,7 +111,7 @@ static int dfs_win32_unmount(struct dfs_filesystem *fs)
     return 0;
 }
 
-static int dfs_win32_mkfs(const char *device_name)
+static int dfs_win32_mkfs(rt_device_t devid)
 {
     return -DFS_STATUS_ENOSYS;
 }
@@ -130,6 +146,14 @@ static char *winpath_dirdup(char *des, const char *src)
     }
 
     return path;
+}
+
+/* This function can convert the path in rt-thread/dfs to the path in windows */
+char * dfs_win32_dirdup(char * path)
+{
+    char * file_path;
+    file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
+    return file_path;
 }
 
 static int dfs_win32_open(struct dfs_fd *file)
@@ -449,7 +473,21 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
 
     st->st_dev  = 0;
     st->st_size = fileInfo.nFileSizeLow;
-    st->st_mtime = 0;
+
+    /* get st_mtime. */
+    {
+        LARGE_INTEGER time_tmp;
+        time_tmp.LowPart = fileInfo.ftLastWriteTime.dwLowDateTime;
+        time_tmp.HighPart = fileInfo.ftLastWriteTime.dwHighDateTime;
+
+        /* removes the diff between 1970 and 1601. */
+        time_tmp.QuadPart -= 11644473600000 * 10000;
+        /* converts back from 100-nanoseconds to seconds. */
+        time_tmp.QuadPart /= 10UL * 1000 * 1000;
+
+        st->st_mtime = time_tmp.QuadPart;
+    }
+
     st->st_blksize = 0;
 
     FindClose(hFind);

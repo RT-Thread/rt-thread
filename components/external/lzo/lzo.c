@@ -19,13 +19,8 @@
 
 #ifdef _WIN32
 #pragma warning(disable: 4996)
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <io.h>
-#else
-#include <dfs_posix.h>
 #endif
+#include <dfs_posix.h>
 
 /* the worst of allocation */
 #define LZO1X_WORST(x) ( (x) + ((x)/16) + 64 + 3 ) 

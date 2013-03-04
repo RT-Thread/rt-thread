@@ -623,7 +623,9 @@ long list(void)
     rt_kprintf("--Variable List:\n");
     {
         struct finsh_sysvar *index;
-        for (index = _sysvar_table_begin; index < _sysvar_table_end; index ++)
+        for (index = _sysvar_table_begin;
+             index < _sysvar_table_end;
+             FINSH_NEXT_SYSVAR(index))
         {
 #ifdef FINSH_USING_DESCRIPTION
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
@@ -761,7 +763,9 @@ void list_prefix(char *prefix)
     /* checks in system variable */
     {
         struct finsh_sysvar* index;
-        for (index = _sysvar_table_begin; index < _sysvar_table_end; index ++)
+        for (index = _sysvar_table_begin;
+             index < _sysvar_table_end;
+             FINSH_NEXT_SYSVAR(index))
         {
             if (str_is_prefix(prefix, index->name) == 0)
             {

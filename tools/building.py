@@ -48,6 +48,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
+                Env['LINKFLAGS']=Env['LINKFLAGS'].replace('RV31', 'armcc')
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
@@ -99,7 +100,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     tgt_dict = {'mdk':('keil', 'armcc'),
                 'mdk4':('keil', 'armcc'),
                 'iar':('iar', 'iar'),
-                'vs':('msvc', 'cl')}
+                'vs':('msvc', 'cl'),
+                'cb':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
         SetOption('no_exec', 1)
@@ -113,21 +115,33 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
-    #env['CCCOMSTR'] = "CC $TARGET"
-    #env['ASCOMSTR'] = "AS $TARGET"
-    #env['LINKCOMSTR'] = "Link $TARGET"
+    # add comstr option
+    AddOption('--verbose',
+                dest='verbose',
+                action='store_true',
+                default=False,
+                help='print verbose information during build')
+
+    if not GetOption('verbose'):
+        # override the default verbose command string
+        env.Replace(
+            ASCOMSTR = 'AS $TARGET',
+            CCCOMSTR = 'CC $TARGET',
+            CXXCOMSTR = 'CXX $TARGET',
+            LINKCOMSTR = 'LINK $TARGET'
+        )
 
     # board build script
     objs = SConscript('SConscript', variant_dir='build', duplicate=0)
     Repository(Rtt_Root)
     # include kernel
-    objs.append(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
-        objs.append(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
 
     # include components
-    objs.append(SConscript(Rtt_Root + '/components/SConscript',
+    objs.extend(SConscript(Rtt_Root + '/components/SConscript',
                            variant_dir='build/components',
                            duplicate=0,
                            exports='remove_components'))
@@ -293,6 +307,7 @@ def EndBuilding(target, program = None):
     from keil import MDK4Project
     from iar import IARProject
     from vs import VSProject
+    from codeblocks import CBProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
@@ -315,6 +330,9 @@ def EndBuilding(target, program = None):
 
     if GetOption('target') == 'vs':
         VSProject('project.vcproj', Projects, program)
+
+    if GetOption('target') == 'cb':
+        CBProject('project.cbp', Projects, program)
 
     if GetOption('copy') and program != None:
         MakeCopy(program)

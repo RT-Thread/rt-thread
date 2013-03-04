@@ -14,11 +14,14 @@
  * 2011-11-23     Bernard      fixed the rename issue.
  * 2012-07-26     aozima       implement ff_memalloc and ff_memfree.
  * 2012-12-19     Bernard      fixed the O_APPEND and lseek issue.
+ * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
  */
 
 #include <rtthread.h>
 #include "ffconf.h"
 #include "ff.h"
+#include <string.h>
+#include <time.h>
 
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
@@ -123,7 +126,12 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         rt_snprintf(drive, sizeof(drive), "%d:/", index);
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
+        {
+            f_mount((BYTE)index, RT_NULL);
+            disk[index] = RT_NULL;
+            rt_free(fat);
             return -DFS_STATUS_ENOMEM;
+        }
 
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
@@ -137,6 +145,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
 __err:
+    f_mount((BYTE)index, RT_NULL);
     disk[index] = RT_NULL;
     rt_free(fat);
     return elm_result_to_dfs(result);
@@ -172,7 +181,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
 {
 #define FSM_STATUS_INIT            0
 #define FSM_STATUS_USE_TEMP_DRIVER 1
-    FATFS *fat;
+    FATFS *fat = RT_NULL;
     int flag;
     FRESULT result;
     int index;
@@ -704,8 +713,38 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
 
         st->st_size  = file_info.fsize;
-        st->st_mtime = file_info.ftime;
         st->st_blksize = 512;
+
+        /* get st_mtime. */
+        {
+            struct tm tm_file;
+            int year, mon, day, hour, min, sec;
+            WORD tmp;
+
+            tmp = file_info.fdate;
+            day = tmp & 0x1F;           /* bit[4:0] Day(1..31) */
+            tmp >>= 5;
+            mon = tmp & 0x0F;           /* bit[8:5] Month(1..12) */
+            tmp >>= 4;
+            year = (tmp & 0x7F) + 1980; /* bit[15:9] Year origin from 1980(0..127) */
+
+            tmp = file_info.ftime;
+            sec = (tmp & 0x1F) * 2;     /* bit[4:0] Second/2(0..29) */
+            tmp >>= 5;
+            min = tmp & 0x3F;           /* bit[10:5] Minute(0..59) */
+            tmp >>= 6;
+            hour = tmp & 0x1F;          /* bit[15:11] Hour(0..23) */
+
+            memset(&tm_file, 0, sizeof(tm_file));
+            tm_file.tm_year = year - 1900; /* Years since 1900 */
+            tm_file.tm_mon  = mon - 1;     /* Months *since* january: 0-11 */
+            tm_file.tm_mday = day;         /* Day of the month: 1-31 */
+            tm_file.tm_hour = hour;        /* Hours since midnight: 0-23 */
+            tm_file.tm_min  = min;         /* Minutes: 0-59 */
+            tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
+
+            st->st_mtime = mktime(&tm_file);
+        } /* get st_mtime. */
     }
 
 #if _USE_LFN

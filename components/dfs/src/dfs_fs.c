@@ -492,9 +492,10 @@ void mkfs(const char *fs_name, const char *device_name)
 }
 FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 
-void df(const char *path)
+int df(const char *path)
 {
     int result;
+    long long cap;
     struct statfs buffer;
 
     if (path == RT_NULL)
@@ -502,11 +503,16 @@ void df(const char *path)
     else
         result = dfs_statfs(path, &buffer);
 
-    if (result == 0)
+    if (result != 0)
     {
-        rt_kprintf("disk free: %d block[%d bytes per block]\n",
-                   buffer.f_bfree, buffer.f_bsize);
+        rt_kprintf("dfs_statfs failed.\n");
+        return -1;
     }
+
+    cap = buffer.f_bsize * buffer.f_bfree / 1024;
+    rt_kprintf("disk free: %d KB [ %d block, %d bytes per block ]\n",
+    (unsigned long)cap, buffer.f_bfree, buffer.f_bsize);
+    return 0;
 }
 FINSH_FUNCTION_EXPORT(df, get disk free);
 #endif

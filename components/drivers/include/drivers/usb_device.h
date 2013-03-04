@@ -166,7 +166,7 @@ struct udev_msg
 };
 typedef struct udev_msg* udev_msg_t;
 
-udevice_t rt_usbd_device_create(const char** str);
+udevice_t rt_usbd_device_create(void);
 uconfig_t rt_usbd_config_create(void);
 uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
                               uclass_ops_t ops);
@@ -180,6 +180,7 @@ rt_err_t rt_usbd_post_event(struct udev_msg* msg, rt_size_t size);
 rt_err_t rt_usbd_free_device(udevice_t device);
 rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
+rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
 rt_err_t rt_usbd_config_add_class(uconfig_t cfg, uclass_t cls);
 rt_err_t rt_usbd_class_add_interface(uclass_t cls, uintf_t intf);

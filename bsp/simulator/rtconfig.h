@@ -2,14 +2,16 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+#define RT_HEAP_SIZE   (1024*1024*2)
+
+#if  defined(_MSC_VER)
 /* SECTION: port for visual studio */
-#ifdef _MSC_VER
 #undef RT_USING_NEWLIB
 #undef RT_USING_MINILIBC
 #define NORESOURCE  //RT_VESRION in winuser.h
 #define _CRT_ERRNO_DEFINED  //errno macro redefinition
-
-#define RT_HEAP_SIZE   (1024*1024*2)
+#define _INC_WTIME_INL//dfs_elm.c time.h conflicts with wtime.inl
+#define _INC_TIME_INL //dfs_elm.c time.h conflicts with wtime.inl
 
 /* disable some warning in MSC */
 #pragma warning(disable:4273)	/* to ignore: warning C4273: inconsistent dll linkage */
@@ -18,6 +20,13 @@
 #pragma warning(disable:4996)   /* to ignore: warning C4996: The POSIX name for this item is deprecated. */
 #pragma warning(disable:4267)   /* to ignore: warning C4267: conversion from 'size_t' to 'rt_size_t', possible loss of data */
 #pragma warning(disable:4244)   /* to ignore: warning C4244: '=' : conversion from '__w64 int' to 'rt_size_t', possible loss of data */
+
+#elif defined(__GNUC__)
+#define RT_USING_NOLIBC
+
+#if defined(__MINGW32__)
+#define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
+#endif
 #endif
 
 /* SECTION: basic kernel options */
@@ -31,11 +40,12 @@
 #define RT_THREAD_PRIORITY_MAX  32	
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	1000
+#define RT_TICK_PER_SECOND	100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+//#define RT_DEBUG_SCHEDULER   1
 #define RT_THREAD_DEBUG
 
 #define RT_USING_OVERFLOW_CHECK
@@ -79,6 +89,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 /* #define RT_USING_UART1 */
 
 /* SECTION: Console options */
@@ -90,11 +101,14 @@
 /* SECTION: component options */
 #define RT_USING_COMPONENTS_INIT
 
+/* SECTION: APP MODULE  */
+#define RT_USING_MODULE
+
 /* SECTION: MTD interface options */
 /* using mtd nand flash */
 #define RT_USING_MTD_NAND
 /* using mtd nor flash */
-#define RT_USING_MTD_NOR
+/* #define RT_USING_MTD_NOR */
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -129,11 +143,13 @@
 /* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
 
 /* DFS: JFFS2 nor flash file system options */
-#define RT_USING_DFS_JFFS2
+//#define RT_USING_DFS_JFFS2
 
 /* DFS: windows share directory mounted to rt-thread/dfs  */
 /* only used in bsp/simulator */
+#ifdef _WIN32
 #define RT_USING_DFS_WINSHAREDIR
+#endif
 
 /* the max number of mounted file system */
 #define DFS_FILESYSTEMS_MAX			4

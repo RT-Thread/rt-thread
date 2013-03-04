@@ -24,7 +24,6 @@ File 2,1,<..\..\src\ipc.c><ipc.c>
 File 2,1,<..\..\src\irq.c><irq.c>
 File 2,1,<..\..\src\kservice.c><kservice.c>
 File 2,1,<..\..\src\mem.c><mem.c>
-File 2,1,<..\..\src\memheap.c><memheap.c>
 File 2,1,<..\..\src\mempool.c><mempool.c>
 File 2,1,<..\..\src\object.c><object.c>
 File 2,1,<..\..\src\scheduler.c><scheduler.c>
@@ -48,7 +47,6 @@ File 4,1,<..\..\components\finsh\finsh_var.c><finsh_var.c>
 File 4,1,<..\..\components\finsh\finsh_vm.c><finsh_vm.c>
 File 4,1,<..\..\components\finsh\shell.c><shell.c>
 File 4,1,<..\..\components\finsh\symbol.c><symbol.c>
-File 5,1,<Libraries\CMSIS\CM3\CoreSupport\core_cm3.c><core_cm3.c>
 File 5,1,<Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c><system_stm32f10x.c>
 File 5,1,<Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c><stm32f10x_crc.c>
 File 5,1,<Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c><stm32f10x_rcc.c>
@@ -76,8 +74,6 @@ File 5,1,<Libraries\STM32F10x_StdPeriph_Driver\src\misc.c><misc.c>
 File 5,2,<Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_hd.s><startup_stm32f10x_hd.s>
 
 
-
-
 Options 1,0,0  // Target 'RT-Thread STM32'
  Device (STM32F103ZE)
  Vendor (STMicroelectronics)
@@ -103,18 +99,18 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  EnvReg (ÿST\STM32F10x\)
  OrgReg (ÿST\STM32F10x\)
  TgStat=16
- OutDir (.\obj\)
+ OutDir (.\build\)
  OutName (rtthread-stm32)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0
- RunUsr 0 0 <>
+ RunUsr 0 1 <fromelf --bin !L --output rtthread.bin>
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>
@@ -136,7 +132,7 @@ Options 1,0,0  // Target 'RT-Thread STM32'
  ADSCMISC ()
  ADSCDEFN (STM32F10X_HD, USE_STDPERIPH_DRIVER)
  ADSCUDEF ()
- ADSCINCD (Libraries\STM32F10x_StdPeriph_Driver\inc;.;..\..\include;Libraries\CMSIS\CM3\CoreSupport;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;..\..\components\finsh;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x)
+ ADSCINCD (Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\components\CMSIS\Include;.;..\..\include;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;..\..\components\finsh;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSAMISC ()
  ADSADEFN ()

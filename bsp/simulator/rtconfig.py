@@ -1,21 +1,30 @@
 # toolchains options
 ARCH='sim'
-CPU='win32' #CPU='posix'
-CROSS_TOOL='msvc' #win32
-
-# lcd panel options
-# 'FMT0371','ILI932X', 'SSD1289'
-# RT_USING_LCD_TYPE = 'SSD1289'
+#CROSS_TOOL='msvc' or 'gcc' or 'mingw'
+#'msvc' and 'mingw' are both for windows
+# 'gcc' is for linux
+CROSS_TOOL='msvc'
 
 # cross_tool provides the cross compiler
-# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
+# EXEC_PATH is the compiler execute path 
 if  CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= '/usr/bin/gcc'
+    CPU       = 'posix'
+    PLATFORM  = 'gcc'
+    EXEC_PATH = '/usr/bin/gcc'
 
-if  CROSS_TOOL == 'msvc':
-	PLATFORM 	= 'cl'
-	EXEC_PATH = ''
+elif  CROSS_TOOL == 'mingw':
+    CPU       = 'win32'
+    PLATFORM  = 'mingw'
+    EXEC_PATH = r'D:\Program Files\CodeBlocks\MinGW\bin'
+
+elif  CROSS_TOOL == 'msvc':
+    CPU       = 'win32'
+    PLATFORM  = 'cl'
+    EXEC_PATH = ''
+
+else :
+    print "bad CROSS TOOL!"
+    exit(1)
 
 BUILD = 'debug'
 #BUILD = ''
@@ -33,21 +42,51 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE
+    DEVICE = '  '
+    CFLAGS = DEVICE + ' -I/usr/include -w -D_REENTRANT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
+    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -g -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = ''
+
+elif PLATFORM == 'mingw':
+    # toolchains
+    PREFIX = ''
+    CC = PREFIX + 'gcc'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    TARGET_EXT = 'exe'
+    SIZE = PREFIX + 'size'
+    OBJDUMP = PREFIX + 'objdump'
+    OBJCPY = PREFIX + 'objcopy'
+
+    DEVICE = ' -ffunction-sections -fdata-sections'
+    DEVICE = '  '
+    CFLAGS = DEVICE
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    DEFFILE_LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map,--output-def,rtthread.def -T mingw.ld '
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map -T mingw.ld '
+    CPATH = ''
+    LPATH = ''
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O0 -gdwarf-2'
+        AFLAGS += ' -gdwarf-2'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = ''
 
 elif PLATFORM == 'cl':
     # toolchains
