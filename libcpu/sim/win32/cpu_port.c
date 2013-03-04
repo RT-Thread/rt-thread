@@ -111,6 +111,7 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
 
 static void SetThreadName(DWORD dwThreadID, char* threadName)
 {
+#if defined(_MSC_VER)
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
 	info.szName = threadName;
@@ -124,6 +125,7 @@ static void SetThreadName(DWORD dwThreadID, char* threadName)
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{
 	}
+#endif
 }
 
 /*

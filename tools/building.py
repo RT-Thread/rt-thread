@@ -48,6 +48,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
+                Env['LINKFLAGS']=Env['LINKFLAGS'].replace('RV31', 'armcc')
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
@@ -134,13 +135,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     objs = SConscript('SConscript', variant_dir='build', duplicate=0)
     Repository(Rtt_Root)
     # include kernel
-    objs.append(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
-        objs.append(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
 
     # include components
-    objs.append(SConscript(Rtt_Root + '/components/SConscript',
+    objs.extend(SConscript(Rtt_Root + '/components/SConscript',
                            variant_dir='build/components',
                            duplicate=0,
                            exports='remove_components'))

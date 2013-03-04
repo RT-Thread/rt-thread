@@ -25,10 +25,10 @@ void rt_init_thread_entry(void *parameter)
     pcap_netif_hw_init();
 #endif
 
+    rt_platform_init();
+
     /* initialization RT-Thread Components */
     rt_components_init();
-
-    rt_platform_init();
 
     /* File system Initialization */
 #ifdef RT_USING_DFS

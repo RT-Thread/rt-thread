@@ -27,6 +27,22 @@
 #include <WinError.h>
 #include  <windows.h>
 
+#if defined(__MINGW32__) && defined(_NO_OLDNAMES)
+#define O_RDONLY    _O_RDONLY
+#define O_WRONLY    _O_WRONLY
+#define O_RDWR      _O_RDWR
+#define O_ACCMODE   _O_ACCMODE
+#define O_APPEND    _O_APPEND
+#define O_CREAT     _O_CREAT
+#define O_TRUNC     _O_TRUNC
+#define O_EXCL      _O_EXCL
+#define O_TEXT      _O_TEXT
+#define O_BINARY    _O_BINARY
+#define O_TEMPORARY _O_TEMPORARY
+#define O_NOINHERIT _O_NOINHERIT
+#define O_SEQUENTIAL   _O_SEQUENTIAL
+#define O_RANDOM    _O_RANDOM
+#endif
 /*
  * RT-Thread DFS Interface for win-directory as an disk device
  */
@@ -95,7 +111,7 @@ static int dfs_win32_unmount(struct dfs_filesystem *fs)
     return 0;
 }
 
-static int dfs_win32_mkfs(const char *device_name)
+static int dfs_win32_mkfs(rt_device_t devid)
 {
     return -DFS_STATUS_ENOSYS;
 }
@@ -130,6 +146,14 @@ static char *winpath_dirdup(char *des, const char *src)
     }
 
     return path;
+}
+
+/* This function can convert the path in rt-thread/dfs to the path in windows */
+char * dfs_win32_dirdup(char * path)
+{
+    char * file_path;
+    file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
+    return file_path;
 }
 
 static int dfs_win32_open(struct dfs_fd *file)
