@@ -11,7 +11,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+	EXEC_PATH 	= '/home/bernard/workspace/jz/mips-2011.09/bin'
 elif CROSS_TOOL == 'keil':
     print '================ERROR============================'
     print 'Not support keil yet!'
@@ -56,4 +56,4 @@ else:
 RT_USING_MINILIBC = True
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 COPY_ACTION = 'copy rtthread.bin usbboot\n'
-POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' + COPY_ACTION
+POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
