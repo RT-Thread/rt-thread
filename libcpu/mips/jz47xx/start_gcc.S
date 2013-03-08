@@ -19,24 +19,24 @@ _start:
     .set    noreorder
     la      ra, _start
 
+    li	    t1, 0x00800000
+    mtc0    t1, CP0_CAUSE
+
     /* init cp0 registers. */
     li	    t0, 0x0000FC00 /* BEV = 0 and mask all interrupt */
     mtc0    t0, CP0_STATUS
-
-    li	    t1, 0x00800000
-    mtc0    t1, CP0_CAUSE
 
     /* setup stack pointer */
     li      sp, SYSTEM_STACK
     la      gp, _gp
 
     /* init caches, assumes a 4way * 128set * 32byte I/D cache */
+    mtc0    zero, CP0_TAGLO  /* TAGLO reg */
+    mtc0    zero, CP0_TAGHI  /* TAGHI reg */
     li      t0, 3            /* enable cache for kseg0 accesses */
     mtc0    t0, CP0_CONFIG    /* CONFIG reg */
     la      t0, 0x80000000   /* an idx op should use an unmappable address */
     ori     t1, t0, 0x4000   /* 16kB cache */
-    mtc0    zero, CP0_TAGLO  /* TAGLO reg */
-    mtc0    zero, CP0_TAGHI  /* TAGHI reg */
 
 _cache_loop:
     cache   0x8, 0(t0)       /* index store icache tag */
