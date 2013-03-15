@@ -1,4 +1,3 @@
-
 /*
  * File      : rtthread.h
  * This file is part of RT-Thread RTOS
@@ -11,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-11-27     prife        the first version
+ * 2013-03-03     aozima       add dfs_win32_stat st_mtime support.
  */
 #include <rtthread.h>
 
@@ -473,7 +473,21 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
 
     st->st_dev  = 0;
     st->st_size = fileInfo.nFileSizeLow;
-    st->st_mtime = 0;
+
+    /* get st_mtime. */
+    {
+        LARGE_INTEGER time_tmp;
+        time_tmp.LowPart = fileInfo.ftLastWriteTime.dwLowDateTime;
+        time_tmp.HighPart = fileInfo.ftLastWriteTime.dwHighDateTime;
+
+        /* removes the diff between 1970 and 1601. */
+        time_tmp.QuadPart -= 11644473600000 * 10000;
+        /* converts back from 100-nanoseconds to seconds. */
+        time_tmp.QuadPart /= 10UL * 1000 * 1000;
+
+        st->st_mtime = time_tmp.QuadPart;
+    }
+
     st->st_blksize = 0;
 
     FindClose(hFind);
