@@ -150,7 +150,7 @@ static void rt_macb_isr(int irq)
 
 }
 
-static void macb_mdio_write(struct rt_macb_eth *macb, rt_uint8_t reg, rt_uint16_t value)
+static int macb_mdio_write(struct rt_macb_eth *macb, rt_uint8_t reg, rt_uint16_t value)
 {
 	unsigned long netctl;
 	unsigned long netstat;
@@ -179,7 +179,7 @@ static void macb_mdio_write(struct rt_macb_eth *macb, rt_uint8_t reg, rt_uint16_
 	rt_sem_release(&macb->mdio_bus_lock);
 }
 
-static rt_uint16_t macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
+static int macb_mdio_read(struct rt_macb_eth *macb, rt_uint8_t reg)
 {
 	unsigned long netctl;
 	unsigned long netstat;
@@ -298,12 +298,21 @@ void macb_update_link(void *param)
 {
 	struct rt_macb_eth *macb = (struct rt_macb_eth *)param;
 	rt_device_t dev = &macb->parent.parent;
-	rt_uint32_t status, status_change = 0;
+	int status, status_change = 0;
 	rt_uint32_t link;
 	rt_uint32_t media;
 	rt_uint16_t adv, lpa;
 
+	/* Do a fake read */
 	status = macb_mdio_read(macb, MII_BMSR);
+	if (status < 0)
+		return;
+
+	/* Read link and autonegotiation status */
+	status = macb_mdio_read(macb, MII_BMSR);
+	if (status < 0)
+		return;
+	
 	if ((status & BMSR_LSTATUS) == 0)
 		link = 0;
 	else
