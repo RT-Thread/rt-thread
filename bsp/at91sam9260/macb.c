@@ -103,9 +103,9 @@ static void udelay(rt_uint32_t us)
         for (len = 0; len < 10; len++ );
 }
 
-static void rt_macb_isr(int irq)
+static void rt_macb_isr(int irq, void *param)
 {
-	struct rt_macb_eth *macb = &macb_device;
+	struct rt_macb_eth *macb = (struct rt_macb_eth *)param;
 	rt_device_t dev = &(macb->parent.parent);
 	rt_uint32_t status, rsr, tsr;
 
@@ -412,7 +412,8 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 			      | MACB_BIT(HRESP)));
 	
 	/* instal interrupt */
-	rt_hw_interrupt_install(AT91SAM9260_ID_EMAC, rt_macb_isr, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_EMAC, rt_macb_isr, 
+							(void *)macb, "emac");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_EMAC);
 
 	rt_timer_init(&macb->timer, "link_timer", 
