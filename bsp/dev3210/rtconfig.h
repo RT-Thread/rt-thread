@@ -140,7 +140,9 @@
 #define RT_LWIP_ETHTHREAD_STACKSIZE		512
 
 /* SECTION: RT-Thread/GUI */
-#define RT_USING_RTGUI
+// #define RT_USING_RTGUI
+
+#ifdef RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12
@@ -160,5 +162,7 @@
 /* #define RTGUI_USING_MOUSE_CURSOR */
 /* default font size in RTGUI */
 #define RTGUI_DEFAULT_FONT_SIZE	16
+
+#endif // RT_USING_RTGUI
 
 #endif
