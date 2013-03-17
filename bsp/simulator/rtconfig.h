@@ -102,7 +102,7 @@
 #define RT_USING_COMPONENTS_INIT
 
 /* SECTION: APP MODULE  */
-#define RT_USING_MODULE
+/* #define RT_USING_MODULE */
 
 /* SECTION: MTD interface options */
 /* using mtd nand flash */

@@ -1,4 +1,6 @@
 ﻿说明: 本BSP可以如下演示
+依赖软件包
+    python2.7 (python2.6使用scons --target=vs -s生成工程会出现错误） 
 
 一 平台及组件支持
 目前rtconfig.py中支持的编译器有
@@ -59,7 +61,7 @@ RTGUI的最新源码目前是托管在github上：https://github.com/RT-Thread/R
 修改rtconfig.py, 配置合适的编译器(msvc/mingw/gcc)，及其路径
 在当前目录中打开cmd，输入命令
 `scons -j4`
-编译完成后会在当前目录下生成 rtthrad-win32.exe，双击即可运行。
+编译完成后会在当前目录下生成 rtthread-win32.exe，双击即可运行。
 
 四 程序测试
 1) 测试文件系统
@@ -104,50 +106,9 @@ c. 生成app module
   就会在 basicapp/building目录下生成 basicapp.dll。 
 
   然后运行simulator目录下的 rtthread-win32.exe, 在finsh中运行   
-    `exec("/testdll/basicapp/building/basicapp.dll")` 
+    `exec("/testdll/basicapp/build/basicapp.dll")` 
   如果觉得这个路径太长，就把 basicapp.dll复制到 simualtor目录下，执行
     `exec("/basicapp.dll")`
 
-如果想编译RTGUI应用，如testdll目录下的snake，则需要对RTGUI打一点补丁，共有两个方法
-1. 注释掉 //#define RTGUI_USING_CAST_CHECK`
-找到rtgui_config.h源码，注释掉如下语句 
-//#define RTGUI_USING_CAST_CHECK`
-
-然后在testdll目录下打开CMD窗口，执行`scons --app=snake`，才可以正确编译，如果不注释掉上面的宏，则会出现链接错误。
-
-2. 不注释掉#define RTGUI_USING_CAST_CHECK`
-那么需要如下两个补丁
-1) 修改testdll/SConstruct文件
-diff --git a/bsp/simulator/testdll/SConstruct b/bsp/simulator/testdll/SConstruct
-index 3324f88..005289c 100644
---- a/bsp/simulator/testdll/SConstruct
-+++ b/bsp/simulator/testdll/SConstruct
-@@ -70,6 +70,7 @@ env.Append(CCFLAGS=rtconfig.CFLAGS)
- env.Append(LINKFLAGS=rtconfig.LFLAGS)
- env.Append(CPPPATH=CPPPATH)
- env.Append(LIBS='rtthread', LIBPATH='../')
-+env.Append(CPPDEFINES=['RTT_IN_MODULE'])
- env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
- 
- PrepareModuleBuilding(env, RTT_ROOT)
-
-2) 修改RTGUI源码
-diff --git a/components/rtgui/include/rtgui/rtgui_object.h b/components/rtgui/include/rtgui/rtgui_object.h
-index 57fd47f..b32ee17 100644
---- a/components/rtgui/include/rtgui/rtgui_object.h
-+++ b/components/rtgui/include/rtgui/rtgui_object.h
-@@ -56,7 +56,12 @@ extern "C" {
-     typedef struct rtgui_type rtgui_type_t;
- #define RTGUI_TYPE(type)            (struct rtgui_type*)&(_rtgui_##type)
- 
-+#ifdef RTT_IN_MODULE
-+#define DECLARE_CLASS_TYPE(type)    _declspec(dllimport) const struct rtgui_type _rtgui_##type
-+#else
- #define DECLARE_CLASS_TYPE(type)    extern const struct rtgui_type _rtgui_##type
-+#endif
-+
- #define DEFINE_CLASS_TYPE(type, name, parent, constructor, destructor, size) \
-     const struct rtgui_type _rtgui_##type = { \
-     name, \
-
-然后再编译snake，可以正确生成。测试方法同basicapp
+  编译贪吃蛇程序
+  执行`scons --app=snake`，就会在snake/build/下生成snake.dll，按照同样的方式加载即可
