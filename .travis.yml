@@ -1,18 +1,17 @@
 language: c
 
-install:
-  - mkdir ~/toolchain
-  - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C ~/toolchain && export RTT_EXEC_PATH=~/toolchain/arm-2011.03/bin || true"
+notifications:
+  email: false
 
 before_script:
+# travis has changed to 64-bit and we require 32-bit compatibility libraries
+  - "sudo apt-get -qq install libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 || true"
+  - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C /tmp && export RTT_EXEC_PATH=/tmp/arm-2011.03/bin && /tmp/arm-2011.03/bin/arm-none-eabi-gcc --version || true"
   - export RTT_ROOT=`pwd`
   - export RTT_CC='gcc'
 
 script:
   - scons -C bsp/$RTT_BSP
-
-notifications:
-  email: false
 
 env:
   - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm' 
