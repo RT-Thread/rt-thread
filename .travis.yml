@@ -6,7 +6,7 @@ notifications:
 before_script:
 # travis has changed to 64-bit and we require 32-bit compatibility libraries
   - "sudo apt-get -qq install libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 || true"
-  - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2011.03-42-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | tar xjf - -C /tmp && export RTT_EXEC_PATH=/tmp/arm-2011.03/bin && /tmp/arm-2011.03/bin/arm-none-eabi-gcc --version || true"
+  - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2012.09-63-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/arm-2012.09/bin && /opt/arm-2012.09/bin/arm-none-eabi-gcc --version || true"
   - export RTT_ROOT=`pwd`
   - export RTT_CC='gcc'
 
