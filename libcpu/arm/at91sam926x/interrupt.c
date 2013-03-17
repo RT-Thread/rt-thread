@@ -14,13 +14,15 @@
 
 #include <rtthread.h>
 #include "at91sam926x.h"
+#include "interrupt.h"
 
 #define MAX_HANDLERS	(AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
-rt_isr_handler_t isr_table[MAX_HANDLERS];
+struct rt_irq_desc irq_desc[MAX_HANDLERS]; 
+
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
@@ -79,15 +81,16 @@ static rt_uint32_t at91sam9260_default_irq_priority[MAX_HANDLERS] = {
 void rt_hw_interrupt_mask(int irq);
 void rt_hw_interrupt_umask(int irq);
 
-rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
+rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 	return RT_NULL;
 }
 
-rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector)
+rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector, void *param)
 {
 	rt_uint32_t isr, pio, irq_n;
+	void *parameter;
 
 	if (vector == AT91SAM9260_ID_PIOA) 
 	{
@@ -111,7 +114,8 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector)
 	{
 		if (isr & 1) 
 		{
-			isr_table[irq_n](irq_n);
+			parameter = irq_desc[irq_n].param;
+			irq_desc[irq_n].isr_handle(irq_n, parameter);
 		}
 		isr >>= 1;
 		irq_n++;
@@ -160,13 +164,22 @@ void at91_aic_init(rt_uint32_t *priority)
 
 static void at91_gpio_irq_init()
 {
+	int i, idx;
+	char *name[] = {"PIOA", "PIOB", "PIOC"};
+	
 	at91_sys_write(AT91_PIOA+PIO_IDR, 0xffffffff);
 	at91_sys_write(AT91_PIOB+PIO_IDR, 0xffffffff);
 	at91_sys_write(AT91_PIOC+PIO_IDR, 0xffffffff);
 
-	isr_table[AT91SAM9260_ID_PIOA] = (rt_isr_handler_t)at91_gpio_irq_handle;
-	isr_table[AT91SAM9260_ID_PIOB] = (rt_isr_handler_t)at91_gpio_irq_handle;
-	isr_table[AT91SAM9260_ID_PIOC] = (rt_isr_handler_t)at91_gpio_irq_handle;
+	idx = AT91SAM9260_ID_PIOA;
+	for (i = 0; i < 3; i++)
+	{
+		rt_snprintf(irq_desc[idx].irq_name, RT_NAME_MAX - 1, name[i]);
+		irq_desc[idx].isr_handle = (rt_isr_handler_t)at91_gpio_irq_handle;
+		irq_desc[idx].param = RT_NULL;
+		irq_desc[idx].interrupt_cnt = 0;
+		idx++;
+	}
 
 	rt_hw_interrupt_umask(AT91SAM9260_ID_PIOA);
 	rt_hw_interrupt_umask(AT91SAM9260_ID_PIOB);
@@ -192,7 +205,10 @@ void rt_hw_interrupt_init(void)
 	/* init exceptions table */
 	for(idx=0; idx < MAX_HANDLERS; idx++)
 	{
-		isr_table[idx] = (rt_isr_handler_t)rt_hw_interrupt_handle;
+		rt_snprintf(irq_desc[idx].irq_name, RT_NAME_MAX - 1, "default");
+		irq_desc[idx].isr_handle = (rt_isr_handler_t)rt_hw_interrupt_handle;
+		irq_desc[idx].param = RT_NULL;
+		irq_desc[idx].interrupt_cnt = 0;
 	}
 
 	at91_gpio_irq_init();
@@ -292,12 +308,14 @@ void rt_hw_interrupt_umask(int irq)
  * @param new_handler the interrupt service routine to be installed
  * @param old_handler the old interrupt service routine
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+void rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, char *name)
 {
 	if(vector < MAX_HANDLERS)
 	{
-		if (old_handler != RT_NULL) *old_handler = isr_table[vector];
-		if (new_handler != RT_NULL) isr_table[vector] = new_handler;
+		rt_snprintf(irq_desc[vector].irq_name, RT_NAME_MAX - 1, "%s", name);
+		irq_desc[vector].isr_handle = (rt_isr_handler_t)handler;
+		irq_desc[vector].param = param;
+		irq_desc[vector].interrupt_cnt = 0;
 	}
 }
 
@@ -335,3 +353,25 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
 	at91_sys_write(AT91_AIC_SMR(irq), smr | srctype);
 	return 0;
 }
+
+#ifdef RT_USING_FINSH
+void list_irq(void)
+{
+	int irq;
+	
+	rt_kprintf("number\tcount\tname\n");
+	for (irq = 0; irq < MAX_HANDLERS; irq++)
+	{
+		if (rt_strncmp(irq_desc[irq].irq_name, "default", sizeof("default")))
+		{
+			rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].interrupt_cnt, irq_desc[irq].irq_name);
+		}
+	}
+}
+
+#include <finsh.h>
+FINSH_FUNCTION_EXPORT(list_irq, list system irq);
+
+#endif
+
+
