@@ -305,10 +305,12 @@ void rt_hw_interrupt_umask(int irq)
 /**
  * This function will install a interrupt service routine to a interrupt.
  * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
+ * @param handler the interrupt service routine to be installed
+ * @param param the interrupt service function parameter
+ * @param name the interrupt name
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, char *name)
+void rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
+									void *param, char *name)
 {
 	if(vector < MAX_HANDLERS)
 	{
