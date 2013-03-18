@@ -16,7 +16,6 @@
 #include <rthw.h>
 
 #include "at91sam926x.h"
-#include "interrupt.h"
 
 /**
  * @addtogroup AT91SAM926X

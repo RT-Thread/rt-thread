@@ -14,7 +14,6 @@
 
 #include <rtthread.h>
 #include "at91sam926x.h"
-#include "interrupt.h"
 
 #define MAX_HANDLERS	(AIC_IRQS + PIN_IRQS)
 
@@ -308,17 +307,26 @@ void rt_hw_interrupt_umask(int irq)
  * @param handler the interrupt service routine to be installed
  * @param param the interrupt service function parameter
  * @param name the interrupt name
+ * @return old handler
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
 									void *param, char *name)
 {
+	rt_isr_handler_t old_handler = RT_NULL;
+
 	if(vector < MAX_HANDLERS)
 	{
-		rt_snprintf(irq_desc[vector].irq_name, RT_NAME_MAX - 1, "%s", name);
-		irq_desc[vector].isr_handle = (rt_isr_handler_t)handler;
-		irq_desc[vector].param = param;
-		irq_desc[vector].interrupt_cnt = 0;
+		old_handler = irq_desc[vector].isr_handle;
+		if (handler != RT_NULL)
+		{
+			rt_snprintf(irq_desc[vector].irq_name, RT_NAME_MAX - 1, "%s", name);
+			irq_desc[vector].isr_handle = (rt_isr_handler_t)handler;
+			irq_desc[vector].param = param;
+			irq_desc[vector].interrupt_cnt = 0;
+		}
 	}
+
+	return old_handler;
 }
 
 /*@}*/
