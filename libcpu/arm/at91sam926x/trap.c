@@ -138,12 +138,13 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 	rt_hw_cpu_shutdown();
 }
 
-extern rt_isr_handler_t isr_table[];
+extern struct rt_irq_desc irq_desc[];
 
 void rt_hw_trap_irq()
 {
 	rt_isr_handler_t isr_func;
 	rt_uint32_t irqstat, irq, mask;
+	void *param;
 	//rt_kprintf("irq interrupt request\n");
 	/* get irq number */
 	irq = at91_sys_read(AT91_AIC_IVR);
@@ -158,11 +159,13 @@ void rt_hw_trap_irq()
 	//at91_sys_write(AT91_AIC_EOICR, 0x55555555);
 	
 	/* get interrupt service routine */
-	isr_func = isr_table[irq];
+	isr_func = irq_desc[irq].isr_handle;
+	param = irq_desc[irq].param;
 
 	/* turn to interrupt service routine */
-	isr_func(irq);
+	isr_func(irq, param);
 	at91_sys_write(AT91_AIC_EOICR, 0x55555555); //EIOCR must be write any value after interrupt, or else can't response next interrupt
+	irq_desc[irq].interrupt_cnt++;
 }
 
 void rt_hw_trap_fiq()
