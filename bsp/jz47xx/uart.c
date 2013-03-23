@@ -10,7 +10,7 @@
 /*@{*/
 #if defined(RT_USING_UART) && defined(RT_USING_DEVICE)
 
-#define UART_BAUDRATE   115200
+#define UART_BAUDRATE   57600
 #define DEV_CLK         12000000
 
 /*

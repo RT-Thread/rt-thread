@@ -90,7 +90,9 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector,
 	{
         old_handler = irq_handle_table[vector].handler;
 
+#ifdef RT_USING_INTERRUPT_INFO
         rt_strncpy(irq_handle_table[vector].name, name, RT_NAME_MAX);
+#endif /* RT_USING_INTERRUPT_INFO */
         irq_handle_table[vector].handler = handler;
         irq_handle_table[vector].param = param;
 	}
@@ -117,6 +119,10 @@ void rt_interrupt_dispatch(void *ptreg)
 
 			/* do interrupt */
 			(*irq_func)(i, irq_handle_table[i].param);
+
+#ifdef RT_USING_INTERRUPT_INFO
+			irq_handle_table[i].counter++;
+#endif /* RT_USING_INTERRUPT_INFO */
 
 			/* ack interrupt */
 			INTC_IPR = (1 << i);
