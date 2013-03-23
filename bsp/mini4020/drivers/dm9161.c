@@ -81,7 +81,7 @@ struct rt_dm9161_eth
 static struct rt_dm9161_eth dm9161_device;
 static struct rt_semaphore sem_ack, sem_lock;
 
-void rt_dm9161_isr(int irqno);
+void rt_dm9161_isr(int irqno, void *param);
 
 static void udelay(unsigned long ns)
 {
@@ -201,7 +201,7 @@ static void read_phy(unsigned char phy_addr, unsigned char address, unsigned int
 }
 
 /* interrupt service routine */
-void rt_dm9161_isr(int irqno)
+void rt_dm9161_isr(int irqno, void *param)
 {
 	unsigned long intstatus;
 	rt_uint32_t address;
@@ -469,7 +469,7 @@ static rt_err_t rt_dm9161_open(rt_device_t dev, rt_uint16_t oflag)
 	*(volatile unsigned long*)GPIO_PORTA_INTRCLR |= 0x0080;    //清除中断
 	*(volatile unsigned long*)GPIO_PORTA_INTRCLR = 0x0000;          //清除中断
 
-	rt_hw_interrupt_install(INTSRC_MAC, rt_dm9161_isr, RT_NULL);
+	rt_hw_interrupt_install(INTSRC_MAC, rt_dm9161_isr, RT_NULL, "EMAC");
 	enable_irq(INTSRC_EXINT7);
 
 
