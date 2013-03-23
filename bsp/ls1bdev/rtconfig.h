@@ -21,6 +21,8 @@
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
 #define RT_USING_OVERFLOW_CHECK
+// <bool name="RT_USING_INTERRUPT_INFO" description="Show more interrupt description" default="true" />
+#define RT_USING_INTERRUPT_INFO
 // </section>
 
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
