@@ -184,7 +184,6 @@ static void *sdl_loop(void *lpParam)
         switch (event.type)
         {
         case SDL_MOUSEMOTION:
-#if  0
         {
             struct rtgui_event_mouse emouse;
             emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
@@ -200,7 +199,6 @@ static void *sdl_loop(void *lpParam)
             /* send event to server */
             rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
         }
-#endif
         break;
 
         case SDL_MOUSEBUTTONDOWN:
