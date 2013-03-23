@@ -31,6 +31,7 @@
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
+extern int __rt_ffs(int value);
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread *rt_current_thread;
@@ -47,26 +48,6 @@ rt_uint32_t rt_thread_ready_priority_group;
 #endif
 
 rt_list_t rt_thread_defunct;
-
-const rt_uint8_t rt_lowest_bitmap[] =
-{
-    /* 00 */ 0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 10 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 20 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 30 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 40 */ 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 50 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 60 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 70 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 80 */ 7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* 90 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* A0 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* B0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* C0 */ 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* D0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* E0 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* F0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
-};
 
 #ifdef RT_USING_HOOK
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
@@ -164,34 +145,13 @@ void rt_system_scheduler_start(void)
     register struct rt_thread *to_thread;
     register rt_ubase_t highest_ready_priority;
 
-#if RT_THREAD_PRIORITY_MAX == 8
-    highest_ready_priority = rt_lowest_bitmap[rt_thread_ready_priority_group];
-#else
-    register rt_ubase_t number;
-    /* find out the highest priority task */
-    if (rt_thread_ready_priority_group & 0xff)
-    {
-        number = rt_lowest_bitmap[rt_thread_ready_priority_group & 0xff];
-    }
-    else if (rt_thread_ready_priority_group & 0xff00)
-    {
-        number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 8) & 0xff] + 8;
-    }
-    else if (rt_thread_ready_priority_group & 0xff0000)
-    {
-        number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 16) & 0xff] + 16;
-    }
-    else
-    {
-        number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 24) & 0xff] + 24;
-    }
-
 #if RT_THREAD_PRIORITY_MAX > 32
-    highest_ready_priority = (number << 3) +
-                             rt_lowest_bitmap[rt_thread_ready_table[number]];
+    register rt_ubase_t number;
+
+    number = __rt_ffs(rt_thread_ready_priority_group) - 1;
+    highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
 #else
-    highest_ready_priority = number;
-#endif
+    highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
 #endif
 
     /* get switch to thread */
@@ -231,35 +191,15 @@ void rt_schedule(void)
     {
         register rt_ubase_t highest_ready_priority;
 
-#if RT_THREAD_PRIORITY_MAX == 8
-        highest_ready_priority = rt_lowest_bitmap[rt_thread_ready_priority_group];
+#if RT_THREAD_PRIORITY_MAX <= 32
+        highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
 #else
         register rt_ubase_t number;
-        /* find out the highest priority task */
-        if (rt_thread_ready_priority_group & 0xff)
-        {
-            number = rt_lowest_bitmap[rt_thread_ready_priority_group & 0xff];
-        }
-        else if (rt_thread_ready_priority_group & 0xff00)
-        {
-            number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 8) & 0xff] + 8;
-        }
-        else if (rt_thread_ready_priority_group & 0xff0000)
-        {
-            number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 16) & 0xff] + 16;
-        }
-        else
-        {
-            number = rt_lowest_bitmap[(rt_thread_ready_priority_group >> 24) & 0xff] + 24;
-        }
 
-#if RT_THREAD_PRIORITY_MAX > 32
-        highest_ready_priority = (number << 3) +
-                                 rt_lowest_bitmap[rt_thread_ready_table[number]];
-#else
-        highest_ready_priority = number;
+        number = __rt_ffs(rt_thread_ready_priority_group) - 1;
+        highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
 #endif
-#endif
+
         /* get switch to thread */
         to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
                                   struct rt_thread,

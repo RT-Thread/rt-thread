@@ -148,3 +148,43 @@ void rt_hw_cpu_shutdown(void)
     RT_ASSERT(0);
 }
 
+#ifdef RT_USING_CPU_FFS
+/**
+ * This function finds the first bit set (beginning with the least significant bit) 
+ * in value and return the index of that bit.
+ *
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of 
+ * zero from any of these functions means that the argument was zero.
+ * 
+ * @return return the index of the first bit set. If value is 0, then this function 
+ * shall return 0.
+ */
+#if defined(__CC_ARM)
+__asm int __rt_ffs(int value)
+{
+		CMP     r0, #0x00
+		BEQ     exit
+		RBIT    r0, r0
+		CLZ     r0, r0
+		ADDS    r0, r0, #0x01
+
+exit
+		BX		lr
+}
+#elif defined(__IAR_SYSTEMS_ICC__)
+int __rt_ffs(int value)
+{
+		if (value == 0) return value;
+	
+		__ASM("RBIT r0, r0");
+		__ASM("CLZ	r0, r0");
+		__ASM("ADDS	r0, r0, #0x01");
+}
+#elif defined(__GNUC__)
+int __rt_ffs(int value)
+{
+		return __builtin_ffs(value);
+}
+#endif
+
+#endif
