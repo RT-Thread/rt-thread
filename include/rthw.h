@@ -41,9 +41,10 @@ rt_uint8_t *rt_hw_stack_init(void       *entry,
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
-void rt_hw_interrupt_install(int               vector,
-                             rt_isr_handler_t  new_handler,
-                             rt_isr_handler_t *old_handler);
+rt_isr_handler_t rt_hw_interrupt_install(int vector,
+                             rt_isr_handler_t  handler,
+                             void *param,
+                             char *name);
 void rt_hw_interrupt_handle(int vector);
 
 rt_base_t rt_hw_interrupt_disable(void);

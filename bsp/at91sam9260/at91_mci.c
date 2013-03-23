@@ -49,8 +49,6 @@ struct at91_mci {
 	rt_uint32_t current_status;
 };
 
-static struct at91_mci *at_mci;
-
 /*
  * Reset the controller and restore most of the state
  */
@@ -592,8 +590,9 @@ static void at91_mci_completed_command(struct at91_mci *mci, rt_uint32_t status)
 /*
  * Handle an interrupt
  */
-static void at91_mci_irq(int irq)
+static void at91_mci_irq(int irq, void *param)
 {
+	struct at91_mci *mci = (struct at91_mci *)param;
 	rt_int32_t completed = 0;
 	rt_uint32_t int_status, int_mask;
 
@@ -635,13 +634,13 @@ static void at91_mci_irq(int irq)
 		if (int_status & AT91_MCI_TXBUFE) 
 		{
 			mci_dbg("TX buffer empty\n");
-			at91_mci_handle_transmitted(at_mci);
+			at91_mci_handle_transmitted(mci);
 		}
 
 		if (int_status & AT91_MCI_ENDRX) 
 		{
 			mci_dbg("ENDRX\n");
-			at91_mci_post_dma_read(at_mci);
+			at91_mci_post_dma_read(mci);
 		}
 
 		if (int_status & AT91_MCI_RXBUFF) 
@@ -668,7 +667,7 @@ static void at91_mci_irq(int irq)
 		if (int_status & AT91_MCI_BLKE) 
 		{
 			mci_dbg("Block transfer has ended\n");
-			if (at_mci->req->data && at_mci->req->data->blks > 1) 
+			if (mci->req->data && mci->req->data->blks > 1) 
 			{
 				/* multi block write : complete multi write
 				 * command and send stop */
@@ -684,7 +683,7 @@ static void at91_mci_irq(int irq)
 			rt_mmcsd_signal_sdio_irq(host->mmc);*/
 
 		if (int_status & AT91_MCI_SDIOIRQB)
-			sdio_irq_wakeup(at_mci->host);
+			sdio_irq_wakeup(mci->host);
 
 		if (int_status & AT91_MCI_TXRDY)
 			mci_dbg("Ready to transmit\n");
@@ -695,7 +694,7 @@ static void at91_mci_irq(int irq)
 		if (int_status & AT91_MCI_CMDRDY) 
 		{
 			mci_dbg("Command ready\n");
-			completed = at91_mci_handle_cmdrdy(at_mci);
+			completed = at91_mci_handle_cmdrdy(mci);
 		}
 	}
 
@@ -703,7 +702,7 @@ static void at91_mci_irq(int irq)
 	{
 		mci_dbg("Completed command\n");
 		at91_mci_write(AT91_MCI_IDR, 0xffffffff & ~(AT91_MCI_SDIOIRQA | AT91_MCI_SDIOIRQB));
-		at91_mci_completed_command(at_mci, int_status);
+		at91_mci_completed_command(mci, int_status);
 	} 
 	else
 		at91_mci_write(AT91_MCI_IDR, int_status & ~(AT91_MCI_SDIOIRQA | AT91_MCI_SDIOIRQB));
@@ -791,7 +790,7 @@ static const struct rt_mmcsd_host_ops ops = {
 	at91_mci_enable_sdio_irq,
 };
 
-void at91_mci_detect(int irq)
+void at91_mci_detect(int irq, void *param)
 {
 	rt_kprintf("mmcsd gpio detected\n");
 }
@@ -819,7 +818,7 @@ static void mci_gpio_init()
 rt_int32_t at91_mci_init(void)
 {
 	struct rt_mmcsd_host *host;
-	//struct at91_mci *mci;
+	struct at91_mci *mci;
 
 	host = mmcsd_alloc_host();
 	if (!host) 
@@ -827,14 +826,14 @@ rt_int32_t at91_mci_init(void)
 		return -RT_ERROR;
 	}
 
-	at_mci = rt_malloc(sizeof(struct at91_mci));
-	if (!at_mci) 
+	mci = rt_malloc(sizeof(struct at91_mci));
+	if (!mci) 
 	{
 		rt_kprintf("alloc mci failed\n");
 		goto err;
 	}
 
-	rt_memset(at_mci, 0, sizeof(struct at91_mci));
+	rt_memset(mci, 0, sizeof(struct at91_mci));
 
 	host->ops = &ops;
 	host->freq_min = 375000;
@@ -846,7 +845,7 @@ rt_int32_t at91_mci_init(void)
 	host->max_blk_size = 512;
 	host->max_blk_count = 4096;
 
-	at_mci->host = host;
+	mci->host = host;
 
 	mci_gpio_init();
 	at91_sys_write(AT91_PMC_PCER, 1 << AT91SAM9260_ID_MCI); //enable MCI clock
@@ -855,14 +854,16 @@ rt_int32_t at91_mci_init(void)
 	at91_mci_enable();
 
 	/* instal interrupt */
-	rt_hw_interrupt_install(AT91SAM9260_ID_MCI, at91_mci_irq, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_MCI, at91_mci_irq, 
+							(void *)mci, "MMC");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_MCI);
-	rt_hw_interrupt_install(gpio_to_irq(AT91_PIN_PA7), at91_mci_detect, RT_NULL);
+	rt_hw_interrupt_install(gpio_to_irq(AT91_PIN_PA7), 
+							at91_mci_detect, RT_NULL, "MMC_DETECT");
 	rt_hw_interrupt_umask(gpio_to_irq(AT91_PIN_PA7));
 
-	rt_timer_init(&at_mci->timer, "mci_timer", 
+	rt_timer_init(&mci->timer, "mci_timer", 
 		at91_timeout_timer, 
-		at_mci, 
+		mci, 
 		RT_TICK_PER_SECOND, 
 		RT_TIMER_FLAG_PERIODIC);
 
@@ -870,7 +871,7 @@ rt_int32_t at91_mci_init(void)
 
 	//rt_sem_init(&mci->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
 
-	host->private_data = at_mci;
+	host->private_data = mci;
 
 	mmcsd_change(host);
 
