@@ -10,8 +10,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2008-12-11     XuXinming    first version
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
+#include <rtthread.h>
 #include <rthw.h>
 #include "LPC24xx.h"
 
@@ -35,7 +37,7 @@ void rt_hw_interrupt_handler(int vector, void *param)
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
 
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	register int i;
 
@@ -47,10 +49,10 @@ void rt_hw_interrupt_init()
 	VICIntSelect = 0;
 
     /* init exceptions table */
+    rt_memset(irq_desc, 0x00, sizeof(irq_desc));
     for(i=0; i < MAX_HANDLERS; i++)
     {
-        irq_desc[i].handler = (rt_isr_handler_t)rt_hw_interrupt_handler;
-        irq_desc[i].param = RT_NULL;
+        irq_desc[i].handler = rt_hw_interrupt_handler;
 
 		vect_addr  = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + i*4);
 		vect_cntl  = (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + i*4);
@@ -94,7 +96,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 		old_handler = irq_desc[vector].handler;
 		if (handler != RT_NULL)
 		{
-			irq_desc[vector].handler = (rt_isr_handler_t)handler;
+			irq_desc[vector].handler = handler;
 			irq_desc[vector].param = param;
 		}
 	}

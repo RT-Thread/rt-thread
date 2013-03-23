@@ -37,7 +37,7 @@ void rt_timer_handler(int vector, void* param)
 /**
  * This function will init LPC2478 board
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 #if defined(RT_USING_DEVICE) && defined(RT_USING_UART1)
 	rt_hw_serial_init();

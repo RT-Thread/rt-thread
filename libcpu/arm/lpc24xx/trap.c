@@ -126,7 +126,7 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 }
 
 extern rt_isr_handler_t isr_table[];
-void rt_hw_trap_irq()
+void rt_hw_trap_irq(void)
 {
 	int irqno;
 	struct rt_irq_desc* irq;
@@ -139,7 +139,7 @@ void rt_hw_trap_irq()
 	irq->handler(irqno, irq->param);
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {	
     rt_kprintf("fast interrupt request\n");
 }
