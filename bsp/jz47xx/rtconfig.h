@@ -18,6 +18,7 @@
 /* Thread Debug */
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
+#define RT_USING_INTERRUPT_INFO
 
 /* Using Hook */
 #define RT_USING_HOOK

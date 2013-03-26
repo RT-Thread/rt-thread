@@ -129,10 +129,10 @@ struct rt_uart_jz
 	rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 }uart_device;
 
-static void rt_uart_irqhandler(int irqno)
+static void rt_uart_irqhandler(int vector, void* param)
 {
 	rt_ubase_t level, isr;
-    struct rt_uart_jz* uart = &uart_device;
+    struct rt_uart_jz* uart = param;
 
     /* read interrupt status and clear it */
 	isr = UART_ISR(uart->hw_base);
@@ -212,7 +212,7 @@ static rt_err_t rt_uart_open(rt_device_t dev, rt_uint16_t oflag)
 		UART_IER(uart->hw_base) |= (UARTIER_RIE | UARTIER_RTIE);
 
 		/* install interrupt */
-		rt_hw_interrupt_install(uart->irq, rt_uart_irqhandler, RT_NULL);
+		rt_hw_interrupt_install(uart->irq, rt_uart_irqhandler, uart, "uart");
 		rt_hw_interrupt_umask(uart->irq);
 	}
 	return RT_EOK;
