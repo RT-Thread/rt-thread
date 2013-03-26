@@ -425,15 +425,6 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 /*
  * interrupt service
  */
-typedef void (*rt_isr_handler_t)(int vector, void *param);
-
-struct rt_irq_desc {
-	char irq_name[RT_NAME_MAX];
-	rt_isr_handler_t isr_handle;
-	void *param;
-	rt_uint32_t interrupt_cnt;
-};
-
 
 /*
  * rt_interrupt_enter and rt_interrupt_leave only can be called by BSP

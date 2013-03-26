@@ -159,13 +159,13 @@ void rt_hw_trap_irq()
 	//at91_sys_write(AT91_AIC_EOICR, 0x55555555);
 	
 	/* get interrupt service routine */
-	isr_func = irq_desc[irq].isr_handle;
+	isr_func = irq_desc[irq].handler;
 	param = irq_desc[irq].param;
 
 	/* turn to interrupt service routine */
 	isr_func(irq, param);
 	at91_sys_write(AT91_AIC_EOICR, 0x55555555); //EIOCR must be write any value after interrupt, or else can't response next interrupt
-	irq_desc[irq].interrupt_cnt++;
+    irq_desc[irq].counter ++;
 }
 
 void rt_hw_trap_fiq()
