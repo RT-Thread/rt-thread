@@ -27,7 +27,7 @@
 /**
  * This is the timer interrupt service routine.
  */
-void rt_hw_timer_handler()
+void rt_hw_timer_handler(int vector, void* param)
 {
 	/* increase a OS tick */
 	rt_tick_increase();
@@ -52,33 +52,6 @@ void rt_hw_timer_init()
 	/* clear counter */
 	OST_CNT = 0;
 
-#if 0
-	switch (RTC_DIV)
-	{
-	case 1: 
-		val = OST_TCSR_PRESCALE1; 
-		break;
-	case 4: 
-		val = OST_TCSR_PRESCALE4; 
-		break;
-	case 16: 
-		val = OST_TCSR_PRESCALE16; 
-		break;
-	case 64: 
-		val = OST_TCSR_PRESCALE64; 
-		break;
-	case 256: 
-		val = OST_TCSR_PRESCALE256; 
-		break;
-	case 1024: 
-		val = OST_TCSR_PRESCALE1024; 
-		break;
-	default: 
-		val = OST_TCSR_PRESCALE4; 
-		break;
-	}
-#endif
-
 #ifdef RTC_SRC_EXTAL
 	OST_CSR = (val | OST_TCSR_EXT_EN);
 #else
@@ -89,7 +62,7 @@ void rt_hw_timer_init()
 	TCU_TMCR = TCU_TMCR_OSTMCL;
 	TCU_TESR = TCU_TESR_OSTST;
 
-	rt_hw_interrupt_install(IRQ_TCU0, rt_hw_timer_handler, RT_NULL);
+	rt_hw_interrupt_install(IRQ_TCU0, rt_hw_timer_handler, RT_NULL, "tick");
 	rt_hw_interrupt_umask  (IRQ_TCU0);
 }
 
