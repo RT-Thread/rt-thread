@@ -9,6 +9,16 @@
 //*** <<< Use Configuration Wizard in Context Menu >>> ***
 */
 
+    .syntax unified
+    .cpu cortex-m3
+    .fpu softvfp
+    .thumb
+
+    .word  _sidata
+    .word  _sdata
+    .word  _edata
+    .word  _sbss
+    .word  _ebss
 
 /*
 // <h> Stack Configuration
@@ -16,7 +26,7 @@
 // </h>
 */
 
-    .equ    Stack_Size, 0x00000100
+    .equ    Stack_Size, 0x00000200
     .section ".stack", "w"
     .align  3
     .globl  __cs3_stack_mem
@@ -28,26 +38,6 @@ __cs3_stack_mem:
     .size   __cs3_stack_mem,  . - __cs3_stack_mem
     .set    __cs3_stack_size, . - __cs3_stack_mem
 
-
-/*
-// <h> Heap Configuration
-//   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
-// </h>
-*/
-
-    .equ    Heap_Size,  0x00001000
-
-    .section ".heap", "w"
-    .align  3
-    .globl  __cs3_heap_start
-    .globl  __cs3_heap_end
-__cs3_heap_start:
-    .if     Heap_Size
-    .space  Heap_Size
-    .endif
-__cs3_heap_end:
-
-
 /* Vector Table */
 
     .section ".cs3.interrupt_vector"
@@ -56,7 +46,7 @@ __cs3_heap_end:
 
 __cs3_interrupt_vector_cortex_m:
     .long   __cs3_stack                 /* Top of Stack                 */
-    .long   __cs3_reset                 /* Reset Handler                */
+    .long   Reset_Handler               /* Reset Handler                */
     .long   NMI_Handler                 /* NMI Handler                  */
     .long   HardFault_Handler           /* Hard Fault Handler           */
     .long   MemManage_Handler           /* MPU Fault Handler            */
@@ -86,7 +76,7 @@ __cs3_interrupt_vector_cortex_m:
     .long   I2C0_IRQHandler             /* 26: I2C0                         */
     .long   I2C1_IRQHandler             /* 27: I2C1                         */
     .long   I2C2_IRQHandler             /* 28: I2C2                         */
-    .long   SPIFI_IRQHandler            /* 29: SPIFI	                    */
+    .long   SPIFI_IRQHandler            /* 29: SPIFI                        */
     .long   SSP0_IRQHandler             /* 30: SSP0                         */
     .long   SSP1_IRQHandler             /* 31: SSP1                         */
     .long   PLL0_IRQHandler             /* 32: PLL0 Lock (Main PLL)         */
@@ -102,61 +92,65 @@ __cs3_interrupt_vector_cortex_m:
     .long   DMA_IRQHandler              /* 42: General Purpose DMA          */
     .long   I2S_IRQHandler              /* 43: I2S                          */
     .long   ENET_IRQHandler             /* 44: Ethernet                     */
-    .long   MCI_IRQHandler              /* 45: SD/MMC Card					*/
+    .long   MCI_IRQHandler              /* 45: SD/MMC Card                  */
     .long   MCPWM_IRQHandler            /* 46: Motor Control PWM            */
     .long   QEI_IRQHandler              /* 47: Quadrature Encoder Interface */
     .long   PLL1_IRQHandler             /* 48: PLL1 Lock (USB PLL)          */
-    .long	USBActivity_IRQHandler		/* 49: USB Activity 				*/
-    .long 	CANActivity_IRQHandler		/* 50: CAN Activity					*/
-    .long	UART4_IRQHandler            /* 51: UART4						*/
-    .long	SSP2_IRQHandler				/* 52: SSP2							*/
-    .long 	LCD_IRQHandler				/* 53: LCD							*/
-    .long	GPIO_IRQHandler				/* 54: GPIO							*/
-    .long 	PWM0_IRQHandler				/* 55: PWM0							*/
-    .long 	EEPROM_IRQHandler			/* 56: EEPROM						*/
+    .long   USBActivity_IRQHandler      /* 49: USB Activity                 */
+    .long   CANActivity_IRQHandler      /* 50: CAN Activity                 */
+    .long   UART4_IRQHandler            /* 51: UART4                        */
+    .long   SSP2_IRQHandler             /* 52: SSP2                         */
+    .long   LCD_IRQHandler              /* 53: LCD                          */
+    .long   GPIO_IRQHandler             /* 54: GPIO                         */
+    .long   PWM0_IRQHandler             /* 55: PWM0                         */
+    .long   EEPROM_IRQHandler           /* 56: EEPROM                       */
 
     .size   __cs3_interrupt_vector_cortex_m, . - __cs3_interrupt_vector_cortex_m
 
 
-    .thumb
-
-
 /* Reset Handler */
-
-    .section .cs3.reset,"x",%progbits
-    .thumb_func
-    .globl  __cs3_reset_cortex_m
-    .type   __cs3_reset_cortex_m, %function
-__cs3_reset_cortex_m:
+    .section  .text.Reset_Handler
+    .weak  Reset_Handler
+    .type  Reset_Handler, %function
+Reset_Handler:
     .fnstart
-#if (RAM_MODE)
-/* Clear .bss section (Zero init) */
-	MOV     R0, #0
-	LDR     R1, =__bss_start__
-	LDR     R2, =__bss_end__
-	CMP     R1,R2
-	BEQ     BSSIsEmpty
-LoopZI:
-	CMP     R1, R2
-	BHS		BSSIsEmpty
-	STR   	R0, [R1]
-	ADD		R1, #4
-	BLO     LoopZI
-BSSIsEmpty:
-    LDR     R0, =SystemInit
-    BLX     R0
-    LDR     R0,=main
-    BX      R0
-#else
-    LDR     R0, =SystemInit
-    BLX     R0
-	LDR     R0,=_start
-    BX      R0
-#endif
+/* Copy the data segment initializers from flash to SRAM */
+    movs    r1, #0
+    b   LoopCopyDataInit
+
+CopyDataInit:
+    ldr r3, =_sidata
+    ldr r3, [r3, r1]
+    str r3, [r0, r1]
+    add r1, r1, #4
+
+LoopCopyDataInit:
+    ldr r0, =_sdata
+    ldr r3, =_edata
+    add r2, r0, r1
+    cmp r2, r3
+    bcc CopyDataInit
+    ldr r2, =_sbss
+    b   LoopFillZerobss
+/* Zero fill the bss segment. */
+FillZerobss:
+    movs    r3, #0
+    str r3, [r2], #4
+
+LoopFillZerobss:
+    ldr r3, = _ebss
+    cmp r2, r3
+    bcc FillZerobss
+/* Call the clock system intitialization function.*/
+    bl  SystemInit
+/* Call the application's entry point.*/
+    bl  main
+    bx  lr
+
     .pool
     .cantunwind
     .fnend
-    .size   __cs3_reset_cortex_m,.-__cs3_reset_cortex_m
+    .size   Reset_Handler,.-Reset_Handler
 
     .section ".text"
 
@@ -243,7 +237,7 @@ Default_Handler:
     IRQ     I2C0_IRQHandler
     IRQ     I2C1_IRQHandler
     IRQ     I2C2_IRQHandler
-    IRQ		SPIFI_IRQHandler
+    IRQ     SPIFI_IRQHandler
     IRQ     SSP0_IRQHandler
     IRQ     SSP1_IRQHandler
     IRQ     PLL0_IRQHandler
@@ -263,13 +257,13 @@ Default_Handler:
     IRQ     MCPWM_IRQHandler
     IRQ     QEI_IRQHandler
     IRQ     PLL1_IRQHandler
-    IRQ		USBActivity_IRQHandler
-    IRQ		CANActivity_IRQHandler
-	IRQ		UART4_IRQHandler
-	IRQ		SSP2_IRQHandler
-	IRQ		LCD_IRQHandler
-	IRQ		GPIO_IRQHandler
-	IRQ		PWM0_IRQHandler
-	IRQ		EEPROM_IRQHandler
+    IRQ     USBActivity_IRQHandler
+    IRQ     CANActivity_IRQHandler
+    IRQ     UART4_IRQHandler
+    IRQ     SSP2_IRQHandler
+    IRQ     LCD_IRQHandler
+    IRQ     GPIO_IRQHandler
+    IRQ     PWM0_IRQHandler
+    IRQ     EEPROM_IRQHandler
 
     .end
