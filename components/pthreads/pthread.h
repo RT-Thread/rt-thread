@@ -104,9 +104,9 @@ struct pthread_rwlock
 	pthread_cond_t       rw_condreaders; 	/* for reader threads waiting */
 	pthread_cond_t       rw_condwriters; 	/* for writer threads waiting */
 
-	int rw_nwaitreaders;	/* the number waiting */
-	int rw_nwaitwriters;	/* the number waiting */
-	int rw_refcount;
+	int rw_nwaitreaders;	/* the number of reader threads waiting */
+	int rw_nwaitwriters;	/* the number of writer threads waiting */
+	int rw_refcount;	/* 0: unlocked, -1: locked by writer, > 0 locked by n readers */
 };
 typedef struct pthread_rwlock pthread_rwlock_t;
 
