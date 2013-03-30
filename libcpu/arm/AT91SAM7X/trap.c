@@ -24,9 +24,14 @@
 
 void rt_hw_trap_irq()
 {
-	rt_isr_handler_t hander = (rt_isr_handler_t)AT91C_BASE_AIC->AIC_IVR;
+	int irqno;
+	extern struct rt_irq_desc irq_desc[]; 
 
-	hander(AT91C_BASE_AIC->AIC_ISR);
+	/* get interrupt number */
+	irqno = AT91C_BASE_AIC->AIC_ISR;
+
+	/* invoke isr with parameters */
+	irq_desc[irqno].handler(irqno, irq_desc[irqno].param);
 
 	/* end of interrupt */
 	AT91C_BASE_AIC->AIC_EOICR = 0;

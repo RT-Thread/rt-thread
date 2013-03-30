@@ -113,7 +113,7 @@ void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 }
 
 #ifdef RT_USING_UART1
-void rt_hw_uart_isr_1(int irqno)
+void rt_hw_uart_isr_1(int irqno, void* param)
 {
 	/* get lpc serial device */
 	rt_hw_uart_isr(&serial1);
@@ -121,7 +121,7 @@ void rt_hw_uart_isr_1(int irqno)
 #endif
 
 #ifdef RT_USING_UART2
-void rt_hw_uart_isr_2(int irqno)
+void rt_hw_uart_isr_2(int irqno, void* param)
 {
 	/* get lpc serial device */
 	rt_hw_uart_isr(&serial2);
@@ -153,13 +153,13 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 		if (lpc_serial->irqno == UART0_INT)
 		{
 #ifdef RT_USING_UART1
-		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_1, RT_NULL);
+		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_1, RT_NULL, "uart1");
 #endif
 		}
 		else
 		{
 #ifdef RT_USING_UART2
-		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_2, RT_NULL);
+		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_2, RT_NULL, "uart2");
 #endif
 		}
 

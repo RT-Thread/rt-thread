@@ -33,7 +33,7 @@ static void rt_hw_board_led_init(void);
  * This is the timer interrupt service routine.
  * @param vector the irq number for timer
  */
-void rt_hw_timer_handler(int vector)
+void rt_hw_timer_handler(int vector, void* param)
 {
 	if (AT91C_BASE_PITC->PITC_PISR & 0x01)
 	{
@@ -168,7 +168,7 @@ void rt_hw_board_init()
 	AT91C_BASE_PITC->PITC_PIMR = (1 << 25) | (1 << 24) | PIV;
 
 	/* install timer handler */
-	rt_hw_interrupt_install(AT91C_ID_SYS, rt_hw_timer_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91C_ID_SYS, rt_hw_timer_handler, RT_NULL, "tick");
 	AT91C_BASE_AIC->AIC_SMR[AT91C_ID_SYS] = 0;
 	rt_hw_interrupt_umask(AT91C_ID_SYS);	
 }
