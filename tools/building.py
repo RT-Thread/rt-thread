@@ -125,7 +125,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if not GetOption('verbose'):
         # override the default verbose command string
         env.Replace(
+            ARCOMSTR = 'AR $TARGET',
             ASCOMSTR = 'AS $TARGET',
+            ASPPCOMSTR = 'AS $TARGET',
             CCCOMSTR = 'CC $TARGET',
             CXXCOMSTR = 'CXX $TARGET',
             LINKCOMSTR = 'LINK $TARGET'
