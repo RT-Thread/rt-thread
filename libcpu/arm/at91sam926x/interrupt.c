@@ -207,6 +207,7 @@ void rt_hw_interrupt_init(void)
         rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, "default");
         irq_desc[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
         irq_desc[idx].param = RT_NULL;
+		irq_desc[idx].counter = 0;
     }
 
     at91_gpio_irq_init();
@@ -321,6 +322,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
             rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
             irq_desc[vector].handler = (rt_isr_handler_t)handler;
             irq_desc[vector].param = param;
+			irq_desc[vector].counter = 0;
         }
     }
 
@@ -372,7 +374,7 @@ void list_irq(void)
     {
         if (rt_strncmp(irq_desc[irq].name, "default", sizeof("default")))
         {
-            rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].name);
+            rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].counter, irq_desc[irq].name);
         }
     }
 }
