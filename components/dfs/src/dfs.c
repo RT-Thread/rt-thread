@@ -188,11 +188,11 @@ void fd_put(struct dfs_fd *fd)
     dfs_unlock();
 };
 
-/** 
+/**
  * @ingroup Fd
  *
  * This function will return whether this file has been opend.
- * 
+ *
  * @param pathname the file path name.
  *
  * @return 0 on file has been open successfully, -1 on open failed.
@@ -220,7 +220,7 @@ int fd_is_open(const char *pathname)
         /* get file path name under mounted file system */
         if (fs->path[0] == '/' && fs->path[1] == '\0')
             mountpath = fullpath;
-        else 
+        else
             mountpath = fullpath + strlen(fs->path);
 
         dfs_lock();
@@ -271,7 +271,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
     return dir;
 }
 
-/** 
+/**
  * this function will normalize a path according to specified parent directory
  * and file name.
  *
@@ -308,20 +308,20 @@ char *dfs_normalize_path(const char *directory, const char *filename)
             return RT_NULL;
 
         /* join path and file name */
-        rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2, 
+        rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,
             "%s/%s", directory, filename);
     }
     else
     {
         fullpath = rt_strdup(filename); /* copy string */
-        
+
         if (fullpath == RT_NULL)
             return RT_NULL;
     }
 
     src = fullpath;
     dst = fullpath;
-    
+
     dst0 = dst;
     while (1)
     {
@@ -380,7 +380,7 @@ up_one:
         dst --;
         if (dst < dst0)
         {
-            rt_free(fullpath); 
+            rt_free(fullpath);
             return RT_NULL;
         }
         while (dst0 < dst && dst[-1] != '/')
