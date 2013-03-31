@@ -39,7 +39,7 @@ void rt_hw_timer_handler(int vector, void* param)
 /**
  * This function will initial OS timer
  */
-void rt_hw_timer_init()
+void rt_hw_timer_init(void)
 {
 	rt_uint32_t val;
 

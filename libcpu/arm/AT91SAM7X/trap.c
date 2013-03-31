@@ -22,7 +22,7 @@
  */
 /*@{*/
 
-void rt_hw_trap_irq()
+void rt_hw_trap_irq(void)
 {
 	int irqno;
 	extern struct rt_irq_desc irq_desc[]; 
@@ -37,13 +37,13 @@ void rt_hw_trap_irq()
 	AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {
     rt_kprintf("fast interrupt request\n");
 }
 
 extern struct rt_thread* rt_current_thread;
-void rt_hw_trap_abort()
+void rt_hw_trap_abort(void)
 {
 	rt_kprintf("Abort occured!!! Thread [%s] suspended.\n",rt_current_thread->name);
 	rt_thread_suspend(rt_current_thread);

@@ -25,7 +25,7 @@
 
 /* UART interrupt enable register value */
 #define UARTIER_IME		(1 << 3)
-#define UARTIER_ILE		(1 << 2) 
+#define UARTIER_ILE		(1 << 2)
 #define UARTIER_ITXE	(1 << 1)
 #define UARTIER_IRXE	(1 << 0)
 
@@ -59,7 +59,7 @@ struct rt_uart_soc3210
 	rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 }uart_device;
 
-static void rt_uart_irqhandler(int irqno)
+static void rt_uart_irqhandler(int irqno, void *param)
 {
 	rt_ubase_t level;
 	rt_uint8_t isr;
@@ -142,7 +142,7 @@ static rt_err_t rt_uart_open(rt_device_t dev, rt_uint16_t oflag)
 		UART_IER(uart->hw_base) |= UARTIER_IRXE;
 
 		/* install interrupt */
-		rt_hw_interrupt_install(uart->irq, rt_uart_irqhandler, RT_NULL);
+		rt_hw_interrupt_install(uart->irq, rt_uart_irqhandler, RT_NULL, "UART");
 		rt_hw_interrupt_umask(uart->irq);
 	}
 	return RT_EOK;
