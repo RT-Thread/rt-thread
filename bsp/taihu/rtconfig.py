@@ -1,4 +1,7 @@
+import os
+
 # toolchains options
+
 ARCH='ppc'
 CPU='ppc405'
 CROSS_TOOL='gcc'
@@ -7,6 +10,9 @@ TextBase = '0x00000000'
 PLATFORM = 'gcc'
 EXEC_PATH = 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
 BUILD = 'debug'
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 if PLATFORM == 'gcc':
     # toolchains
