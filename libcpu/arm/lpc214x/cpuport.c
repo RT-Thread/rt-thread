@@ -10,15 +10,20 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-06-15     aozima       the first version for lpc214x
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 #include "lpc214x.h"
 
 #define MAX_HANDLERS	32
 #define SVCMODE		    0x13
 
 extern rt_uint32_t rt_interrupt_nest;
+
+/* exception and interrupt handler table */
+struct rt_irq_desc irq_desc[MAX_HANDLERS]; 
 
 /**
  * @addtogroup LPC214x
@@ -71,7 +76,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
-void rt_hw_interrupt_handler(int vector)
+void rt_hw_interrupt_handler(int vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
@@ -79,7 +84,7 @@ void rt_hw_interrupt_handler(int vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	rt_base_t index;
 	rt_uint32_t *vect_addr, *vect_ctl;
@@ -90,12 +95,15 @@ void rt_hw_interrupt_init()
 	/* set all to IRQ */
 	VICIntSelect = 0;
 
+    rt_memset(irq_desc, 0x00, sizeof(irq_desc));
 	for (index = 0; index < MAX_HANDLERS; index ++)
 	{
+        irq_desc[index].handler = rt_hw_interrupt_handler;
+
 		vect_addr 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + (index << 2));
 		vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (index << 2));
 
-		*vect_addr 	= (rt_uint32_t)rt_hw_interrupt_handler;
+		*vect_addr 	= (rt_uint32_t)&irq_desc[index];
 		*vect_ctl 	= 0xF;
 	}
 
@@ -127,30 +135,39 @@ void rt_hw_interrupt_umask(int vector)
 /**
  * This function will install a interrupt service routine to a interrupt.
  * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
+ * @param handler the interrupt service routine to be installed
+ * @param param the interrupt service function parameter
+ * @param name the interrupt name
+ * @return old handler
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+                                         void *param, char *name)
 {
-	if(vector >= 0 && vector < MAX_HANDLERS)
-	{
-		/* get VIC address */
-		rt_uint32_t* vect_addr 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + (vector << 2));
-		rt_uint32_t* vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (vector << 2));
+    rt_isr_handler_t old_handler = RT_NULL;
 
-		/* assign IRQ slot and enable this slot */
-		*vect_ctl = 0x20 | (vector & 0x1F);
+    if(vector >= 0 && vector < MAX_HANDLERS)
+    {
+        rt_uint32_t* vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (vector << 2));
 
-		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t) *vect_addr;
-		if (new_handler != RT_NULL) *vect_addr = (rt_uint32_t) new_handler;
-	}
+        /* assign IRQ slot and enable this slot */
+        *vect_ctl = 0x20 | (vector & 0x1F);
+
+        old_handler = irq_desc[vector].handler;
+		if (handler != RT_NULL)
+		{
+			irq_desc[vector].handler = handler;
+			irq_desc[vector].param = param;
+		}
+    }
+
+    return old_handler;
 }
 
 /**
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+void rt_hw_cpu_reset(void)
 {
 }
 
@@ -165,18 +182,23 @@ void rt_hw_cpu_shutdown()
 	while (1);
 }
 
-void rt_hw_trap_irq()
+void rt_hw_trap_irq(void)
 {
-	rt_isr_handler_t isr_func;
+    int irqno;
+	struct rt_irq_desc* irq;
+    extern struct rt_irq_desc irq_desc[];
 
-	isr_func = (rt_isr_handler_t) VICVectAddr;
-	isr_func(0);
+	irq = (struct rt_irq_desc*) VICVectAddr;
+	irqno = ((rt_uint32_t) irq - (rt_uint32_t) &irq_desc[0])/sizeof(struct rt_irq_desc);
 
-	/* acknowledge Interrupt */
-	// VICVectAddr = 0;
+	/* invoke isr */
+	irq->handler(irqno, irq->param);
+
+    /* acknowledge Interrupt */
+    // VICVectAddr = 0;
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {
     rt_kprintf("fast interrupt request\n");
 }

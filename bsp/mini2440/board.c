@@ -58,7 +58,7 @@ struct rt_device uart2_device;
 /**
  * This function will handle rtos timer
  */
-static void rt_timer_handler(int vector)
+static void rt_timer_handler(int vector, void *param)
 {
 	rt_tick_increase();
 }
@@ -66,7 +66,7 @@ static void rt_timer_handler(int vector)
 /**
  * This function will handle serial
  */
-static void rt_serial0_handler(int vector)
+static void rt_serial0_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD0);
 
@@ -81,7 +81,7 @@ static void rt_serial0_handler(int vector)
 /**
  * This function will handle serial
  */
-static void rt_serial2_handler(int vector)
+static void rt_serial2_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD2);
 
@@ -133,7 +133,7 @@ static void rt_hw_uart_init(void)
 	uart2.uart_device->ucon = 0x245;
 	/* Set uart0 bps */
 	uart2.uart_device->ubrd = (rt_int32_t)(PCLK / (BPS * 16)) - 1;
-	
+
 	for (i = 0; i < 100; i++);
 
 	/* install uart0 isr */
@@ -141,18 +141,18 @@ static void rt_hw_uart_init(void)
 
 	/* install uart2 isr */
 	INTSUBMSK &= ~(BIT_SUB_RXD2);
-	
-	rt_hw_interrupt_install(INTUART0, rt_serial0_handler, RT_NULL);
+
+	rt_hw_interrupt_install(INTUART0, rt_serial0_handler, RT_NULL, "UART0");
 	rt_hw_interrupt_umask(INTUART0);
 
-	rt_hw_interrupt_install(INTUART2, rt_serial2_handler, RT_NULL);
-	rt_hw_interrupt_umask(INTUART2);	
+	rt_hw_interrupt_install(INTUART2, rt_serial2_handler, RT_NULL, "UART2");
+	rt_hw_interrupt_umask(INTUART2);
 }
 
 /**
  * This function will init timer4 for system ticks
  */
-static  void rt_hw_timer_init()
+static  void rt_hw_timer_init(void)
  {
 	/* timer4, pre = 15+1 */
 	TCFG0 &= 0xffff00ff;
@@ -165,7 +165,7 @@ static  void rt_hw_timer_init()
 	/* manual update */
 	TCON = TCON & (~(0x0f<<20)) | (0x02<<20);
 	/* install interrupt handler */
-	rt_hw_interrupt_install(INTTIMER4, rt_timer_handler, RT_NULL);
+	rt_hw_interrupt_install(INTTIMER4, rt_timer_handler, RT_NULL, "tick");
 	rt_hw_interrupt_umask(INTTIMER4);
 
     /* start timer4, reload */
@@ -175,7 +175,7 @@ static  void rt_hw_timer_init()
 /**
  * This function will init s3ceb2410 board
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 	/* initialize the system clock */
 	rt_hw_clock_init();

@@ -31,14 +31,14 @@ Options 1,0,0  // Target 'RT-Thread_Mini4020'
  EnvReg ()
  OrgReg ()
  TgStat=16
- OutDir (.\)
+ OutDir (.\build\)
  OutName (rtthread-mini4020)
  GenApp=1
  GenLib=0
  GenHex=0
  Debug=1
  Browse=0
- LstDir (.\)
+ LstDir (.\build\)
  HexSel=1
  MG32K=0
  TGMORE=0

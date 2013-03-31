@@ -154,7 +154,7 @@ static void rt_hw_console_init()
 /**
  * This function will initial sam7x board.
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 	extern void rt_serial_init(void);
 	

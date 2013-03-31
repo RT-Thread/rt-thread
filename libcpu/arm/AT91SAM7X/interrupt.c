@@ -10,8 +10,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-08-23     Bernard      first version
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
+#include <rtthread.h>
 #include <rthw.h>
 #include "AT91SAM7X256.h"
 
@@ -30,7 +32,7 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  */
 /*@{*/
 
-void rt_hw_interrupt_handler(int vector)
+static void rt_hw_interrupt_handler(int vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
@@ -38,7 +40,7 @@ void rt_hw_interrupt_handler(int vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	rt_base_t index;
 
@@ -96,7 +98,6 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 									void *param, char *name)
 {
 	rt_isr_handler_t old_handler = RT_NULL;
-
 	if(vector >= 0 && vector < MAX_HANDLERS)
 	{
 		old_handler = irq_desc[vector].handler;
