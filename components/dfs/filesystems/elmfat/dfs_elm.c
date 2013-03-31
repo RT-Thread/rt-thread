@@ -113,7 +113,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     if (fat == RT_NULL)
     {
         disk[index] = RT_NULL;
-        return -1;
+        return -DFS_STATUS_ENOMEM;
     }
 
     /* mount fatfs, always 0 logic driver */
@@ -141,7 +141,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         /* mount succeed! */
         fs->data = fat;
         rt_free(dir);
-        return 0;
+        return DFS_STATUS_OK;
     }
 
 __err:
