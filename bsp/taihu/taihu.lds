@@ -36,7 +36,7 @@ SECTIONS
 
   .text      :
   {
-    KEEP(build\libcpu\ppc\ppc405\start_gcc.o (.text))
+    KEEP(build/libcpu/ppc/ppc405/start_gcc.o (.text))
 
     *(.text)
     *(.fixup)
