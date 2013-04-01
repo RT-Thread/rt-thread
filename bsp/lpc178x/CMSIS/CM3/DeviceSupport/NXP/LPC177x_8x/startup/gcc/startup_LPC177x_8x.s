@@ -27,7 +27,7 @@
 */
 
     .equ    Stack_Size, 0x00000200
-    .section ".stack", "w"
+    .section .stack, "w"
     .align  3
     .globl  __cs3_stack_mem
     .globl  __cs3_stack_size
@@ -40,12 +40,12 @@ __cs3_stack_mem:
 
 /* Vector Table */
 
-    .section ".cs3.interrupt_vector"
+    .section .interrupt_vector
     .globl  __cs3_interrupt_vector_cortex_m
     .type   __cs3_interrupt_vector_cortex_m, %object
 
 __cs3_interrupt_vector_cortex_m:
-    .long   __cs3_stack                 /* Top of Stack                 */
+    .long   _estack                 /* Top of Stack                 */
     .long   Reset_Handler               /* Reset Handler                */
     .long   NMI_Handler                 /* NMI Handler                  */
     .long   HardFault_Handler           /* Hard Fault Handler           */
