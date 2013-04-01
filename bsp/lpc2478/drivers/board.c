@@ -27,7 +27,7 @@ extern void rt_hw_serial_init(void);
  */
 /*@{*/
 
-void rt_timer_handler(int vector)
+void rt_timer_handler(int vector, void* param)
 {
 	T0IR |= 0x01;			/* clear interrupt flag */
 	rt_tick_increase();
@@ -37,7 +37,7 @@ void rt_timer_handler(int vector)
 /**
  * This function will init LPC2478 board
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 #if defined(RT_USING_DEVICE) && defined(RT_USING_UART1)
 	rt_hw_serial_init();
@@ -49,7 +49,7 @@ void rt_hw_board_init()
 	T0MCR 	= 0x03; 
 	T0MR0 	= (DATA_COUNT);
 
-	rt_hw_interrupt_install(TIMER0_INT, rt_timer_handler, RT_NULL);	
+	rt_hw_interrupt_install(TIMER0_INT, rt_timer_handler, RT_NULL, "tick");	
 	rt_hw_interrupt_umask(TIMER0_INT);
 
 	T0TCR = 0x01; //enable timer0 counter

@@ -1,15 +1,30 @@
 /*
- * File      : shell.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ *  shell implementation for finsh shell.
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ *
+ *  This file is part of RT-Thread (http://www.rt-thread.org)
+ *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
+ *
+ *  All rights reserved.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-04-30     Bernard      the first verion for FinSH
+ * 2006-04-30     Bernard      the first version for FinSH
  * 2006-05-08     Bernard      change finsh thread stack to 2048
  * 2006-06-03     Bernard      add support for skyeye
  * 2006-09-24     Bernard      remove the code related with hardware
@@ -25,6 +40,10 @@
 
 #include "finsh.h"
 #include "shell.h"
+
+#ifdef FINSH_USING_MSH
+#include "msh.h"
+#endif
 
 #ifdef _WIN32
 #include <stdio.h> /* for putchar */
@@ -192,7 +211,17 @@ void finsh_auto_complete(char* prefix)
 	extern void list_prefix(char* prefix);
 
 	rt_kprintf("\n");
-	list_prefix(prefix);
+#ifdef FINSH_USING_MSH
+	if (msh_is_used() == RT_TRUE)
+	{
+		msh_auto_complete(prefix);
+	}
+	else 
+#endif
+	{
+		list_prefix(prefix);
+	}
+
 	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 }
 
@@ -420,15 +449,28 @@ void finsh_thread_entry(void* parameter)
 			/* handle end of line, break */
 			if (ch == '\r' || ch == '\n')
 			{
-				/* change to ';' and break */
-				shell->line[shell->line_position] = ';';
+#ifdef FINSH_USING_MSH
+				if (msh_is_used() == RT_TRUE && shell->line_position != 0)
+				{
+					rt_kprintf("\n");
+					msh_exec(shell->line, shell->line_position);
+					#ifdef FINSH_USING_HISTORY
+					finsh_push_history(shell);
+					#endif
+				}
+				else
+#endif
+				{
+					/* add ';' and run the command line */
+					shell->line[shell->line_position] = ';';
 
-				#ifdef FINSH_USING_HISTORY
-				finsh_push_history(shell);
-				#endif
+					#ifdef FINSH_USING_HISTORY
+					finsh_push_history(shell);
+					#endif
 
-				if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
-				else rt_kprintf("\n");
+					if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
+					else rt_kprintf("\n");
+				}
 
 				rt_kprintf(FINSH_PROMPT);
 				memset(shell->line, 0, sizeof(shell->line));

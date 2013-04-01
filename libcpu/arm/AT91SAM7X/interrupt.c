@@ -10,12 +10,17 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-08-23     Bernard      first version
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 #include "AT91SAM7X256.h"
 
 #define MAX_HANDLERS	32
+
+/* exception and interrupt handler table */
+struct rt_irq_desc irq_desc[MAX_HANDLERS]; 
 
 extern rt_uint32_t rt_interrupt_nest;
 
@@ -27,7 +32,7 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  */
 /*@{*/
 
-void rt_hw_interrupt_handler(int vector)
+static void rt_hw_interrupt_handler(int vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
@@ -35,9 +40,16 @@ void rt_hw_interrupt_handler(int vector)
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	rt_base_t index;
+
+    /* init exceptions table */
+    for(index=0; index < MAX_HANDLERS; index++)
+    {
+        irq_desc[index].handler = (rt_isr_handler_t)rt_hw_interrupt_handler;
+        irq_desc[index].param = RT_NULL;
+    }
 
 	for (index = 0; index < MAX_HANDLERS; index ++)
 	{
@@ -76,16 +88,27 @@ void rt_hw_interrupt_umask(int vector)
 /**
  * This function will install a interrupt service routine to a interrupt.
  * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
+ * @param handler the interrupt service routine to be installed
+ * @param param the parameter for interrupt service routine
+ * @name unused.
+ *
+ * @return the old handler
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
+									void *param, char *name)
 {
+	rt_isr_handler_t old_handler = RT_NULL;
 	if(vector >= 0 && vector < MAX_HANDLERS)
 	{
-		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t)AT91C_BASE_AIC->AIC_SVR[vector];
-		if (new_handler != RT_NULL) AT91C_BASE_AIC->AIC_SVR[vector] = (rt_uint32_t)new_handler;
+		old_handler = irq_desc[vector].handler;
+		if (handler != RT_NULL)
+		{
+			irq_desc[vector].handler = (rt_isr_handler_t)handler;
+			irq_desc[vector].param = param;
+		}
 	}
+
+	return old_handler;
 }
 
 /*@}*/

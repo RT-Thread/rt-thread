@@ -92,9 +92,10 @@ struct rt_device uart4_device;
 /**
  * This function will handle serial
  */
-void rt_serial_handler(int vector)
+void rt_serial_handler(int vector, void *param)
 {
 	int status;
+	struct rt_device *dev = (rt_device_t)param;
 
 	switch (vector) 
 	{
@@ -105,7 +106,7 @@ void rt_serial_handler(int vector)
 		{
 			return;
 		}
-		rt_hw_serial_isr(&uart1_device);
+		rt_hw_serial_isr(dev);
 		break;
 	#endif
 	#ifdef RT_USING_UART1
@@ -115,7 +116,7 @@ void rt_serial_handler(int vector)
 		{
 			return;
 		}
-		rt_hw_serial_isr(&uart2_device);
+		rt_hw_serial_isr(dev);
 		break;
 	#endif
 	#ifdef RT_USING_UART2
@@ -125,7 +126,7 @@ void rt_serial_handler(int vector)
 		{
 			return;
 		}
-		rt_hw_serial_isr(&uart3_device);
+		rt_hw_serial_isr(dev);
 		break;
 	#endif
 	#ifdef RT_USING_UART3
@@ -135,7 +136,7 @@ void rt_serial_handler(int vector)
 		{
 			return;
 		}
-		rt_hw_serial_isr(&uart4_device);
+		rt_hw_serial_isr(dev);
 		break;
 	#endif
 	default: break;
@@ -176,7 +177,8 @@ void rt_hw_uart_init(void)
 	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<4)|(1<<5));
 	uart_port_init(AT91SAM9260_BASE_US0);
 	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US0, rt_serial_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_US0, rt_serial_handler, 
+							(void *)&uart1_device, "UART0");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_US0);
 #endif
 #ifdef RT_USING_UART1
@@ -188,7 +190,8 @@ void rt_hw_uart_init(void)
 	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<6)|(1<<7));
 	uart_port_init(AT91SAM9260_BASE_US1);
 	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US1, rt_serial_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_US1, rt_serial_handler, 
+							(void *)&uart2_device, "UART1");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_US1);
 #endif
 #ifdef RT_USING_UART2
@@ -200,7 +203,8 @@ void rt_hw_uart_init(void)
 	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<8)|(1<<9));
 	uart_port_init(AT91SAM9260_BASE_US2);
 	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US2, rt_serial_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_US2, rt_serial_handler, 
+							(void *)&uart3_device, "UART2");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_US2);
 #endif
 #ifdef RT_USING_UART3
@@ -212,7 +216,8 @@ void rt_hw_uart_init(void)
 	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<10)|(1<<11));
 	uart_port_init(AT91SAM9260_BASE_US3);
 	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US3, rt_serial_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91SAM9260_ID_US3, rt_serial_handler, 
+							(void *)&uart4_device, "UART3");
 	rt_hw_interrupt_umask(AT91SAM9260_ID_US3);
 	
 #endif
@@ -246,7 +251,7 @@ static rt_uint32_t pit_cnt;		/* access only w/system irq blocked */
 /**
  * This function will handle rtos timer
  */
-void rt_timer_handler(int vector)
+void rt_timer_handler(int vector, void *param)
 {
 	#ifdef RT_USING_DBGU
 	if (at91_sys_read(AT91_DBGU + AT91_US_CSR) & 0x1) {
@@ -309,7 +314,8 @@ static void at91sam926x_pit_init(void)
  	at91sam926x_pit_init();
 
 	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91_ID_SYS, rt_timer_handler, RT_NULL);
+	rt_hw_interrupt_install(AT91_ID_SYS, rt_timer_handler, 
+							RT_NULL, "system");
 	rt_hw_interrupt_umask(AT91_ID_SYS);
 
  }

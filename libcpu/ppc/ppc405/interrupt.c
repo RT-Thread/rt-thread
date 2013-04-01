@@ -12,7 +12,7 @@
  * 2009-01-05     Bernard      first version
  */
 
-#include <rtthread.h>
+#include <rthw.h>
 #include <asm/ppc4xx.h>
 #include <asm/processor.h>
 
@@ -21,12 +21,12 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
 #define MAX_HANDLERS 32
-rt_isr_handler_t isr_table[MAX_HANDLERS];
+struct rt_irq_desc isr_table[MAX_HANDLERS];
 
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrput_flag;
 
-rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
+rt_isr_handler_t rt_hw_interrupt_handler(rt_uint32_t vector, void* param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 	return RT_NULL;
@@ -42,9 +42,9 @@ void  uic_int_handler (unsigned int vec)
 	rt_interrupt_enter();
 
     /* Allow external interrupts to the CPU. */
-    if (isr_table [vec] != 0)
+    if (isr_table [vec].handler != 0)
     {
-       (*isr_table[vec])(vec);
+       (*isr_table[vec].handler)(vec, isr_table[vec].param);
     }
     uic_irq_ack(vec);
 	
@@ -78,21 +78,24 @@ void uic_interrupt(rt_uint32_t uic_base, int vec_base)
 	}
 }
 
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, 
+    void* param, char* name)
 {
     int	intVal;
+    rt_isr_handler_t old_handler;
 
     if (((int)vector < 0)  || ((int) vector >= MAX_HANDLERS)) 
 	{
-        return;   /*  out of range  */
+        return RT_NULL;   /*  out of range  */
 	}
    
     /* install the handler in the system interrupt table  */
     intVal = rt_hw_interrupt_disable (); /* lock interrupts to prevent races */
 
-	if (*old_handler != RT_NULL) *old_handler = isr_table[vector];
-	if (new_handler != RT_NULL) isr_table[vector] = new_handler;
-
+    old_handler = isr_table[vector].handler;
+    isr_table[vector].handler = new_handler;
+    isr_table[vector].param = param;
+    
     rt_hw_interrupt_enable (intVal);
 }
 
@@ -120,7 +123,8 @@ void rt_hw_interrupt_init()
 	/* set default interrupt handler */
     for (vector = 0; vector < MAX_HANDLERS; vector++)
     {
-	    isr_table [vector] = (rt_isr_handler_t)rt_hw_interrupt_handle;
+	    isr_table [vector].handler = (rt_isr_handler_t)rt_hw_interrupt_handler;
+        isr_table [vector].param = RT_NULL;
     }
 
 	/* initialize interrupt nest, and context in thread sp */

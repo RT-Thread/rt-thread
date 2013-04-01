@@ -69,7 +69,7 @@ void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 	UNUSED rt_uint32_t iir;
 
 	RT_ASSERT(lpc_serial != RT_NULL)
-		
+
 	if (UART_LSR(lpc_serial->hw_base) & 0x01)
 	{
 		rt_base_t level;
@@ -80,12 +80,12 @@ void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 			level = rt_hw_interrupt_disable();
 
 			/* read character */
-			lpc_serial->rx_buffer[lpc_serial->save_index] = 
+			lpc_serial->rx_buffer[lpc_serial->save_index] =
 				UART_RBR(lpc_serial->hw_base);
 			lpc_serial->save_index ++;
 			if (lpc_serial->save_index >= RT_UART_RX_BUFFER_SIZE)
 				lpc_serial->save_index = 0;
-			
+
 			/* if the next position is read index, discard this 'read char' */
 			if (lpc_serial->save_index == lpc_serial->read_index)
 			{
@@ -113,7 +113,7 @@ void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 }
 
 #ifdef RT_USING_UART1
-void rt_hw_uart_isr_1(int irqno)
+void rt_hw_uart_isr_1(int irqno, void *param)
 {
 	/* get lpc serial device */
 	rt_hw_uart_isr(&serial1);
@@ -121,7 +121,7 @@ void rt_hw_uart_isr_1(int irqno)
 #endif
 
 #ifdef RT_USING_UART2
-void rt_hw_uart_isr_2(int irqno)
+void rt_hw_uart_isr_2(int irqno, void *param)
 {
 	/* get lpc serial device */
 	rt_hw_uart_isr(&serial2);
@@ -153,13 +153,15 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 		if (lpc_serial->irqno == UART0_INT)
 		{
 #ifdef RT_USING_UART1
-		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_1, RT_NULL);
+		    rt_hw_interrupt_install(lpc_serial->irqno,
+                              rt_hw_uart_isr_1, &serial1, "UART1");
 #endif
 		}
 		else
 		{
 #ifdef RT_USING_UART2
-		    rt_hw_interrupt_install(lpc_serial->irqno, rt_hw_uart_isr_2, RT_NULL);
+		    rt_hw_interrupt_install(lpc_serial->irqno,
+                              rt_hw_uart_isr_2, &serial2, "UART2");
 #endif
 		}
 
@@ -173,7 +175,7 @@ static rt_err_t rt_serial_close(rt_device_t dev)
 {
 	struct rt_lpcserial* lpc_serial;
 	lpc_serial = (struct rt_lpcserial*) dev;
-	
+
 	RT_ASSERT(lpc_serial != RT_NULL);
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
@@ -244,7 +246,7 @@ static rt_size_t rt_serial_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
 	{
 		/* Read Character */
 		*ptr = UART_RBR(lpc_serial->hw_base);
-		
+
 		ptr  ++;
 		size --;
 	}
@@ -271,7 +273,7 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void* buff
 
 	/* polling write */
 	ptr = (char *)buffer;
-	
+
 	if (dev->flag & RT_DEVICE_FLAG_STREAM)
 	{
 		/* stream mode */
@@ -285,7 +287,7 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void* buff
 
 			while (!(UART_LSR(lpc_serial->hw_base) & 0x20));
 			UART_THR(lpc_serial->hw_base) = *ptr;
-			
+
 			ptr ++;
 			size --;
 		}
@@ -296,37 +298,37 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void* buff
 		{
 			while (!(UART_LSR(lpc_serial->hw_base) & 0x20));
 			UART_THR(lpc_serial->hw_base) = *ptr;
-			
+
 			ptr ++;
 			size --;
 		}
 	}
-	
+
 	return (rt_size_t) ptr - (rt_size_t) buffer;
 }
 
 void rt_hw_serial_init(void)
 {
 	struct rt_lpcserial* lpc_serial;
-	
+
 #ifdef RT_USING_UART1
 	lpc_serial = &serial1;
-	
+
 	lpc_serial->parent.type = RT_Device_Class_Char;
-	
+
 	lpc_serial->hw_base = 0xE000C000;
 	lpc_serial->baudrate = 115200;
 	lpc_serial->irqno = UART0_INT;
-	
+
 	rt_memset(lpc_serial->rx_buffer, 0, sizeof(lpc_serial->rx_buffer));
 	lpc_serial->read_index = lpc_serial->save_index = 0;
 
 	/* Enable UART0 RxD and TxD pins */
-  	PINSEL0 |= 0x05;
+    PINSEL0 |= 0x05;
 
 	/* 8 bits, no Parity, 1 Stop bit */
 	UART_LCR(lpc_serial->hw_base) = 0x83;
-	
+
 	/* Setup Baudrate */
 	UART_DLL(lpc_serial->hw_base) = (PCLK/16/lpc_serial->baudrate) & 0xFF;
 	UART_DLM(lpc_serial->hw_base) = ((PCLK/16/lpc_serial->baudrate) >> 8) & 0xFF;
@@ -334,6 +336,7 @@ void rt_hw_serial_init(void)
 	/* DLAB = 0 */
 	UART_LCR(lpc_serial->hw_base) = 0x03;
 
+	lpc_serial->parent.type     = RT_Device_Class_Char;
 	lpc_serial->parent.init 	= rt_serial_init;
 	lpc_serial->parent.open 	= rt_serial_open;
 	lpc_serial->parent.close    = rt_serial_close;
@@ -342,13 +345,13 @@ void rt_hw_serial_init(void)
 	lpc_serial->parent.control  = rt_serial_control;
 	lpc_serial->parent.user_data  = RT_NULL;
 
-	rt_device_register(&lpc_serial->parent, 
+	rt_device_register(&lpc_serial->parent,
 		"uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
 #endif
 
 #ifdef RT_USING_UART2
 	lpc_serial = &serial2;
-	
+
 	lpc_serial->parent.type = RT_Device_Class_Char;
 
 	lpc_serial->hw_base = 0xE0010000;
@@ -363,7 +366,7 @@ void rt_hw_serial_init(void)
 
 	/* 8 bits, no Parity, 1 Stop bit */
 	UART_LCR(lpc_serial->hw_base) = 0x83;
-	
+
 	/* Setup Baudrate */
 	UART_DLL(lpc_serial->hw_base) = (PCLK/16/lpc_serial->baudrate) & 0xFF;
 	UART_DLM(lpc_serial->hw_base) = ((PCLK/16/lpc_serial->baudrate) >> 8) & 0xFF;
@@ -371,6 +374,7 @@ void rt_hw_serial_init(void)
 	/* DLAB = 0 */
 	UART_LCR(lpc_serial->hw_base) = 0x03;
 
+	lpc_serial->parent.type     = RT_Device_Class_Char;
 	lpc_serial->parent.init 	= rt_serial_init;
 	lpc_serial->parent.open 	= rt_serial_open;
 	lpc_serial->parent.close    = rt_serial_close;
@@ -379,7 +383,7 @@ void rt_hw_serial_init(void)
 	lpc_serial->parent.control  = rt_serial_control;
 	lpc_serial->parent.user_data  = RT_NULL;
 
-	rt_device_register(&lpc_serial->parent, 
+	rt_device_register(&lpc_serial->parent,
 		"uart2", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
 #endif
 }

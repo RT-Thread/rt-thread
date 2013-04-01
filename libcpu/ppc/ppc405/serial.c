@@ -220,12 +220,12 @@ void rt_serial_set_baudrate(struct rt_ppc405_serial* device)
 	out_8((rt_uint8_t *)device->hw_base + UART_DLM, bdiv >> 8); /* set baudrate divisor */
 }
 
-void rt_serial_isr(int irqno)
+void rt_serial_isr(int irqno, void* param)
 {
 	unsigned char status;
 	struct rt_ppc405_serial *device;
 
-	device = (struct rt_ppc405_serial*) &ppc405_serial;
+	device = (struct rt_ppc405_serial*) param;
 	status = in_8((rt_uint8_t *)device->hw_base + UART_LSR);
 
 	if (status & 0x01)
@@ -289,7 +289,7 @@ void rt_hw_serial_init(void)
 	device->hw_base = UART0_BASE;
 	device->baudrate = 115200;
 	device->irqno = VECNUM_U0;
-	rt_hw_interrupt_install(device->irqno, rt_serial_isr, RT_NULL); /* install isr */
+	rt_hw_interrupt_install(device->irqno, rt_serial_isr, device, "serial"); /* install isr */
 
 	rt_memset(device->rx_buffer, 0, sizeof(device->rx_buffer));
 	device->read_index = device->save_index = 0;

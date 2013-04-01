@@ -572,7 +572,7 @@ __error_retry:
 #define B4_Tacp				 0x0
 #define B4_PMC				  0x0
 
-void INTEINT4_7_handler(int irqno)
+void INTEINT4_7_handler(int irqno, void *param)
 {
     rt_uint32_t eint_pend;
 
@@ -637,7 +637,7 @@ void rt_hw_dm9000_init()
 	eth_device_init(&(dm9000_device.parent), "e0");
 
 	/* instal interrupt */
-	rt_hw_interrupt_install(INTEINT4_7, INTEINT4_7_handler, RT_NULL);
+	rt_hw_interrupt_install(INTEINT4_7, INTEINT4_7_handler, RT_NULL, "EINT4_7");
 	rt_hw_interrupt_umask(INTEINT4_7);
 }
 

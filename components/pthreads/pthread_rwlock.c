@@ -112,9 +112,11 @@ int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock)
 	while (rwlock->rw_refcount < 0 || rwlock->rw_nwaitwriters > 0)
 	{
 		rwlock->rw_nwaitreaders++;
+		/* rw_mutex will be released when waiting for rw_condreaders */
 		result = pthread_cond_wait(&rwlock->rw_condreaders, &rwlock->rw_mutex);
+		/* rw_mutex should have been taken again when returned from waiting */
 		rwlock->rw_nwaitreaders--;
-		if (result != 0)
+		if (result != 0) /* wait error */
 			break;
 	}
 
@@ -160,7 +162,9 @@ int pthread_rwlock_timedrdlock (pthread_rwlock_t * rwlock, const struct timespec
 	while (rwlock->rw_refcount < 0 || rwlock->rw_nwaitwriters > 0)
 	{
 		rwlock->rw_nwaitreaders++;
+		/* rw_mutex will be released when waiting for rw_condreaders */
 		result = pthread_cond_timedwait(&rwlock->rw_condreaders, &rwlock->rw_mutex, abstime);
+		/* rw_mutex should have been taken again when returned from waiting */
 		rwlock->rw_nwaitreaders--;
 		if (result != 0)
 			break;
@@ -187,7 +191,9 @@ int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock, const struct timespec 
 	while (rwlock->rw_refcount != 0)
 	{
 		rwlock->rw_nwaitwriters++;
+		/* rw_mutex will be released when waiting for rw_condwriters */
 		result = pthread_cond_timedwait(&rwlock->rw_condwriters, &rwlock->rw_mutex, abstime);
+		/* rw_mutex should have been taken again when returned from waiting */
 		rwlock->rw_nwaitwriters--;
 		
 		if (result != 0) break;
@@ -233,7 +239,7 @@ int pthread_rwlock_unlock (pthread_rwlock_t *rwlock)
 	if (rwlock->rw_refcount > 0)
 		rwlock->rw_refcount--;              /* releasing a reader */
 	else if (rwlock->rw_refcount == -1)
-		rwlock->rw_refcount = 0;            /* releasing a reader */
+		rwlock->rw_refcount = 0;            /* releasing a writer */
 
 	/* give preference to waiting writers over waiting readers */
 	if (rwlock->rw_nwaitwriters > 0)
@@ -264,7 +270,9 @@ int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock)
 	while (rwlock->rw_refcount != 0)
 	{
 		rwlock->rw_nwaitwriters++;
+		/* rw_mutex will be released when waiting for rw_condwriters */
 		result = pthread_cond_wait(&rwlock->rw_condwriters, &rwlock->rw_mutex);
+		/* rw_mutex should have been taken again when returned from waiting */
 		rwlock->rw_nwaitwriters--;
 		
 		if (result != 0) break;

@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2010-07-09     Bernard      first version
  */
-#include <rtthread.h>
+#include <rthw.h>
 #include "jz47xx.h"
 
 #define JZ47XX_MAX_INTR 32
@@ -20,7 +20,7 @@ extern rt_uint32_t rt_interrupt_nest;
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
-static rt_isr_handler_t irq_handle_table[JZ47XX_MAX_INTR];
+static struct rt_irq_desc irq_handle_table[JZ47XX_MAX_INTR];
 
 /**
  * @addtogroup Jz47xx
@@ -39,9 +39,10 @@ void rt_hw_interrupt_init()
 {
 	rt_int32_t index;
 
+    rt_memset(irq_handle_table, 0x00, sizeof(irq_handle_table));
 	for (index = 0; index < JZ47XX_MAX_INTR; index ++)
 	{
-		irq_handle_table[index] = (rt_isr_handler_t)rt_hw_interrupt_handler;
+		irq_handle_table[index].handler = (rt_isr_handler_t)rt_hw_interrupt_handler;
 	}
 
 	/* init interrupt nest, and context in thread sp */
@@ -73,18 +74,30 @@ void rt_hw_interrupt_umask(int vector)
 /**
  * This function will install a interrupt service routine to a interrupt.
  * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
+ * @param handler the interrupt service routine to be installed
+ * @param param the interrupt service function parameter
+ * @param name the interrupt name
+ * @return old handler
  */
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+rt_isr_handler_t rt_hw_interrupt_install(int vector,
+                             rt_isr_handler_t  handler,
+                             void *param,
+                             char *name)
 {
+    rt_isr_handler_t old_handler = RT_NULL;
+
 	if (vector >= 0 && vector < JZ47XX_MAX_INTR)
 	{
-		if (old_handler != RT_NULL)
-			*old_handler = irq_handle_table[vector];
-		if (new_handler != RT_NULL)
-			irq_handle_table[vector] = (rt_isr_handler_t)new_handler;
+        old_handler = irq_handle_table[vector].handler;
+
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_strncpy(irq_handle_table[vector].name, name, RT_NAME_MAX);
+#endif /* RT_USING_INTERRUPT_INFO */
+        irq_handle_table[vector].handler = handler;
+        irq_handle_table[vector].param = param;
 	}
+
+    return old_handler;
 }
 
 void rt_interrupt_dispatch(void *ptreg)
@@ -102,10 +115,14 @@ void rt_interrupt_dispatch(void *ptreg)
 		if ((pending & (1<<i)))
         {
 			pending &= ~(1<<i);
-			irq_func = irq_handle_table[i];
+			irq_func = irq_handle_table[i].handler;
 
 			/* do interrupt */
-			(*irq_func)(i);
+			(*irq_func)(i, irq_handle_table[i].param);
+
+#ifdef RT_USING_INTERRUPT_INFO
+			irq_handle_table[i].counter++;
+#endif /* RT_USING_INTERRUPT_INFO */
 
 			/* ack interrupt */
 			INTC_IPR = (1 << i);

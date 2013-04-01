@@ -34,7 +34,7 @@ struct serial_device uart0 =
 /**
  * This function will handle rtos timer
  */
-void rt_timer_handler(int vector)
+void rt_timer_handler(int vector, void *param)
 {
 	rt_uint32_t clear_int;
 	rt_tick_increase();
@@ -47,7 +47,7 @@ void rt_timer_handler(int vector)
 /**
  * This function will handle serial
  */
-void rt_serial_handler(int vector)
+void rt_serial_handler(int vector, void *param)
 {
 	//rt_kprintf("in rt_serial_handler\n");
 	rt_int32_t stat = *(RP)UART0_IIR ;
@@ -78,16 +78,17 @@ static void rt_hw_board_led_init(void)
 
   *(RP)GPIO_PORTE_DATA &= ~0x38;  /* low */
 }
+
 /**
  * This function will init timer4 for system ticks
  */
- void rt_hw_timer_init(void)
+void rt_hw_timer_init(void)
 {
 	/*Set timer1*/
 	*(RP)TIMER_T1LCR = 880000;
 	*(RP)TIMER_T1CR = 0x06;
 
-	rt_hw_interrupt_install(INTSRC_TIMER1, rt_timer_handler, RT_NULL);
+	rt_hw_interrupt_install(INTSRC_TIMER1, rt_timer_handler, RT_NULL, "tick");
 	rt_hw_interrupt_umask(INTSRC_TIMER1);
 
 	/*Enable timer1*/
@@ -119,7 +120,7 @@ void rt_hw_uart_init(void)
 	/*Disable tx interrupt*/
 	*(RP)(UART0_IER) &= ~(0x1<<1);
 	
-	rt_hw_interrupt_install(INTSRC_UART0, rt_serial_handler, RT_NULL);
+	rt_hw_interrupt_install(INTSRC_UART0, rt_serial_handler, RT_NULL, "UART0");
 	rt_hw_interrupt_umask(INTSRC_UART0);
 	/* register uart0 */
 	rt_hw_serial_register(&uart0_device, "uart0",
