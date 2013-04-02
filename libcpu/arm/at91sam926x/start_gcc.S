@@ -51,8 +51,8 @@
 #define		AT91_RSTC_PROCRST	(1 << 0)		/* Processor Reset */
 #define		AT91_RSTC_PERRST	(1 << 2)
 #define		AT91_RSTC_KEY		(0xa5 << 24)
-#define AT91_MATRIX_BASE	0xffffee00
-#define AT91_MATRIX_MRCR	(AT91_MATRIX_BASE + 0x100)	/* Master Remap Control Register */
+#define 	AT91_MATRIX_BASE	0xffffee00
+#define 	AT91_MATRIX_MRCR	(AT91_MATRIX_BASE + 0x100)	/* Master Remap Control Register */
 #define		AT91_MATRIX_RCB0		(1 << 0)	/* Remap Command for AHB Master 0 (ARM926EJ-S Instruction Master) */
 #define		AT91_MATRIX_RCB1		(1 << 1)	/* Remap Command for AHB Master 1 (ARM926EJ-S Data Master) */
 #define		AT91_AIC_BASE	0xfffff000
@@ -172,9 +172,7 @@ reset:
 	str	r1, [r0]
 
 	/* set interrupt vector 		*/
-#if 1
-	ldr 	r0, _TEXT_BASE//_load_address
-	//ldr		r1, =0x200000				/* target address    				*/
+	ldr 	r0, _TEXT_BASE
 	mov	r1, #0x00
 	add	r2, r0, #0x40			/* size, 32bytes         			*/
 
@@ -183,7 +181,6 @@ copy_loop:
 	stmia	r1!, {r3-r10}			/* copy to   target address [r1]    */
 	cmp		r0, r2					/* until source end addreee [r2]    */
 	ble		copy_loop
-#endif
 	
 	/* setup stack */
 	bl		stack_setup

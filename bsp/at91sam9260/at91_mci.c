@@ -27,6 +27,12 @@
 #define mci_dbg(fmt, ...)
 #endif
 
+#define MMU_NOCACHE_ADDR(a)      	((rt_uint32_t)a | (1UL<<31))
+
+extern void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size);
+extern void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
+
+
 #define AT91_MCI_ERRORS	(AT91_MCI_RINDE | AT91_MCI_RDIRE | AT91_MCI_RCRCE	\
 		| AT91_MCI_RENDE | AT91_MCI_RTOE | AT91_MCI_DCRCE		\
 		| AT91_MCI_DTOE | AT91_MCI_OVRE | AT91_MCI_UNRE)
@@ -334,6 +340,7 @@ static void at91_mci_send_command(struct at91_mci *mci, struct rt_mmcsd_cmd *cmd
 				 * Handle a read
 				 */
 
+				mmu_invalidate_dcache((rt_uint32_t)data->buf, data->blksize*data->blks);
 				at91_mci_init_dma_read(mci);
 				ier = AT91_MCI_ENDRX /* | AT91_MCI_RXBUFF */;
 			}
@@ -359,13 +366,15 @@ static void at91_mci_send_command(struct at91_mci *mci, struct rt_mmcsd_cmd *cmd
 						return;
 					}
 					rt_memset(mci->buf, 0, 12);
-					rt_memcpy(mci->buf, data->buf, block_length * blocks);
+					rt_memcpy(mci->buf, data->buf, length);
+					mmu_clean_dcache((rt_uint32_t)mci->buf, length);
 					at91_mci_write(AT91_PDC_TPR, (rt_uint32_t)(mci->buf));
 					at91_mci_write(AT91_PDC_TCR, (data->blksize & 0x3) ?
 							length : length / 4);
 				}
 				else
 				{
+					mmu_clean_dcache((rt_uint32_t)data->buf, data->blksize*data->blks);
 					at91_mci_write(AT91_PDC_TPR, (rt_uint32_t)(data->buf));
 					at91_mci_write(AT91_PDC_TCR, (data->blksize & 0x3) ?
 							length : length / 4);
@@ -839,7 +848,8 @@ rt_int32_t at91_mci_init(void)
 	host->freq_min = 375000;
 	host->freq_max = 25000000;
 	host->valid_ocr = VDD_32_33 | VDD_33_34;
-	host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE;
+	host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | \
+				MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ;
 	host->max_seg_size = 65535;
 	host->max_dma_segs = 2;
 	host->max_blk_size = 512;
