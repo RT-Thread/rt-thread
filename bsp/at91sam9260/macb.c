@@ -18,6 +18,26 @@
 #include <at91sam926x.h>
 #include "macb.h"
 
+#define MMU_NOCACHE_ADDR(a)      	((rt_uint32_t)a | (1UL<<31))
+
+extern void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size);
+extern void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
+
+/* Cache macros - Packet buffers would be from pbuf pool which is cached */
+#define EMAC_VIRT_NOCACHE(addr) (addr)
+#define EMAC_CACHE_INVALIDATE(addr, size) \
+	mmu_invalidate_dcache((rt_uint32_t)addr, size)
+#define EMAC_CACHE_WRITEBACK(addr, size) \
+	mmu_clean_dcache((rt_uint32_t)addr, size)
+#define EMAC_CACHE_WRITEBACK_INVALIDATE(addr, size) \
+	mmu_clean_invalidated_dcache((rt_uint32_t)addr, size)
+
+/* EMAC has BD's in cached memory - so need cache functions */
+#define BD_CACHE_INVALIDATE(addr, size)
+#define BD_CACHE_WRITEBACK(addr, size)
+#define BD_CACHE_WRITEBACK_INVALIDATE(addr, size)
+
+
 #define CONFIG_RMII
 
 #define MACB_RX_BUFFER_SIZE		4096*4
@@ -378,6 +398,8 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 	}
 	macb->rx_tail = macb->tx_head = macb->tx_tail = 0;
 
+	BD_CACHE_WRITEBACK_INVALIDATE(macb->rx_ring, MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+	BD_CACHE_WRITEBACK_INVALIDATE(macb->tx_ring, MACB_TX_RING_SIZE * sizeof(struct macb_dma_desc));
 	macb_writel(macb, RBQP, macb->rx_ring_dma);
 	macb_writel(macb, TBQP, macb->tx_ring_dma);
 	
@@ -470,28 +492,12 @@ static rt_err_t rt_macb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 /* transmit packet. */
 rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 {
-	struct pbuf* q;
-	rt_uint8_t* bufptr, *buf = RT_NULL;
 	unsigned long ctrl;
 	struct rt_macb_eth *macb = dev->user_data;
 	unsigned int tx_head = macb->tx_head;
-	
-	/* lock macb device */
+
 	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	buf = rt_malloc(p->tot_len);
-	if (!buf) {
-		rt_kprintf("%s:alloc buf failed\n", __func__);
-		return -RT_ENOMEM;
-	}
-	bufptr = buf;
-
-
-	for (q = p; q != NULL; q = q->next)
-	{
-		memcpy(bufptr, q->payload, q->len);
-		bufptr += q->len;
-	}
-
+	EMAC_CACHE_WRITEBACK(p->payload, p->tot_len);
 	ctrl = p->tot_len & TXBUF_FRMLEN_MASK;
 	ctrl |= TXBUF_FRAME_END;
 	if (tx_head == (MACB_TX_RING_SIZE - 1)) {
@@ -499,17 +505,14 @@ rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 		macb->tx_head = 0;
 	} else
 		macb->tx_head++;
-
 	macb->tx_ring[tx_head].ctrl = ctrl;
-	macb->tx_ring[tx_head].addr = (rt_uint32_t)buf;
+	macb->tx_ring[tx_head].addr = (rt_uint32_t)p->payload;
+	BD_CACHE_WRITEBACK_INVALIDATE(macb->tx_ring[tx_head], sizeof(struct macb_dma_desc));
 	macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));
-	
-	/* unlock macb device */
-	rt_sem_release(&sem_lock);
 
+	rt_sem_release(&sem_lock);
 	/* wait ack */
 	rt_sem_take(&sem_ack, RT_WAITING_FOREVER);
-	rt_free(buf);
 
 	return RT_EOK;
 }
@@ -546,12 +549,7 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 	int wrapped = 0;
 	rt_uint32_t status;
 
-	struct pbuf* q;
-	rt_uint8_t *buf = RT_NULL;
-	
-	/* lock macb device */
 	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	
 	for (;;) {
 		if (!(macb->rx_ring[rx_tail].addr & RXADDR_USED))
 			break;
@@ -574,39 +572,18 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 			}
 			if (wrapped) {
 				unsigned int headlen, taillen;
-				buf = rt_malloc(len);
-				if (!buf)
-				{
-					rt_kprintf("%s:alloc memory failed\n", __func__);
-					pbuf_free(p);
-					p = RT_NULL;
-					break;
-				}
 
 				headlen = 128 * (MACB_RX_RING_SIZE
 						 - macb->rx_tail);
 				taillen = len - headlen;
-				memcpy((void *)buf,
-				       buffer, headlen);
-				memcpy((void *)((unsigned int)buf + headlen),
+				EMAC_CACHE_INVALIDATE(buffer, headlen);
+				EMAC_CACHE_INVALIDATE(macb->rx_buffer, taillen);
+				memcpy((void *)p->payload, buffer, headlen);
+				memcpy((void *)((unsigned int)p->payload + headlen),
 				       macb->rx_buffer, taillen);
-				buffer = (void *)buf;
-				for (q = p; q != RT_NULL; q= q->next)
-				{
-					/* read data from device */
-					memcpy((void *)q->payload, buffer, q->len);
-					buffer = (void *)((unsigned int)buffer + q->len);
-				}
-				rt_free(buf);
-				buf = RT_NULL;
 			} else {
-				for (q = p; q != RT_NULL; q= q->next)
-				{
-					/* read data from device */
-					memcpy((void *)q->payload, buffer, q->len);
-					buffer = (void *)((unsigned int)buffer + q->len);
-				}
-			
+				EMAC_CACHE_INVALIDATE(buffer, len);
+				memcpy((void *)p->payload, buffer, p->len);
 			}
 			
 			if (++rx_tail >= MACB_RX_RING_SIZE)
@@ -620,7 +597,7 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 			}
 		}
 	}
-	/* unlock macb device */
+
 	rt_sem_release(&sem_lock);
 
 	return p;
@@ -647,10 +624,16 @@ void macb_initialize()
 	macb->rx_buffer = rt_malloc(MACB_RX_BUFFER_SIZE);
 	macb->rx_ring = rt_malloc(MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
 	macb->tx_ring = rt_malloc(MACB_TX_RING_SIZE * sizeof(struct macb_dma_desc));
-	
+
+	EMAC_CACHE_INVALIDATE(macb->rx_ring, MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+	EMAC_CACHE_INVALIDATE(macb->tx_ring, MACB_TX_RING_SIZE * sizeof(struct macb_dma_desc));
+
 	macb->rx_buffer_dma = (unsigned long)macb->rx_buffer;
 	macb->rx_ring_dma = (unsigned long)macb->rx_ring;
 	macb->tx_ring_dma = (unsigned long)macb->tx_ring;
+
+	macb->rx_ring = MMU_NOCACHE_ADDR(macb->rx_ring);
+	macb->tx_ring = MMU_NOCACHE_ADDR(macb->tx_ring);
 
 	macb->regs = AT91SAM9260_BASE_EMAC;
 	macb->phy_addr = 0x00;

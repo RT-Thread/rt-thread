@@ -9,19 +9,17 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-01-13     weety       modified from mini2440
  */
 
 #include <rtthread.h>
-#include "at91sam926x.h"
 
-#define _MMUTT_STARTADDRESS	 0x33FF0000
+#define CACHE_LINE_SIZE	32
 
 #define DESC_SEC		(0x2|(1<<4))
 #define CB				(3<<2)  //cache_on, write_back
 #define CNB				(2<<2)  //cache_on, write_through
 #define NCB				(1<<2)  //cache_off,WR_BUF on
-#define NCNB				(0<<2)  //cache_off,WR_BUF off
+#define NCNB			(0<<2)  //cache_off,WR_BUF off
 #define AP_RW			(3<<10) //supervisor=RW, user=RW
 #define AP_RO			(2<<10) //supervisor=RW, user=RO
 
@@ -34,147 +32,31 @@
 #define DOMAIN0_ATTR	(DOMAIN_CHK<<0)
 #define DOMAIN1_ATTR	(DOMAIN_FAULT<<2)
 
-#define RW_CB		(AP_RW|DOMAIN0|CB|DESC_SEC)
-#define RW_CNB		(AP_RW|DOMAIN0|CNB|DESC_SEC)
-#define RW_NCNB		(AP_RW|DOMAIN0|NCNB|DESC_SEC)
-#define RW_FAULT	(AP_RW|DOMAIN1|NCNB|DESC_SEC)
-
-#ifdef __GNUC__
-void mmu_setttbase(register rt_uint32_t i)
-{
-	asm ("mcr p15, 0, %0, c2, c0, 0": :"r" (i));
-}
-
-void mmu_set_domain(register rt_uint32_t i)
-{
-	asm ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
-}
-
-void mmu_enable()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i |= 0x1;
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_disable()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i &= ~0x1;
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_enable_icache()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i |= (1 << 12);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_enable_dcache()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i |= (1 << 2);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_disable_icache()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i &= ~(1 << 12);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_disable_dcache()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i &= ~(1 << 2);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_enable_alignfault()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i |= (1 << 1);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_disable_alignfault()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i &= ~(1 << 1);
-
-	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_clean_invalidated_cache_index(int index)
-{
-	asm ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
-}
-
-void mmu_invalidate_tlb()
-{
-	asm ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
-}
-
-void mmu_invalidate_icache()
-{
-	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
-}
-#endif
+#define RW_CB		(AP_RW|DOMAIN0|CB|DESC_SEC)		/* Read/Write, cache, write back */
+#define RW_CNB		(AP_RW|DOMAIN0|CNB|DESC_SEC)	/* Read/Write, cache, write through */
+#define RW_NCNB		(AP_RW|DOMAIN0|NCNB|DESC_SEC)	/* Read/Write without cache and write buffer */
+#define RW_FAULT	(AP_RW|DOMAIN1|NCNB|DESC_SEC)	/* Read/Write without cache and write buffer */
 
 #ifdef __CC_ARM
 void mmu_setttbase(rt_uint32_t i)
 {
+	register rt_uint32_t value;
+
+   /* Invalidates all TLBs.Domain access is selected as
+    * client by configuring domain access register,
+    * in that case access controlled by permission value
+    * set by page table entry
+    */
+	value = 0;
     __asm
     {
+        mcr p15, 0, value, c8, c7, 0
+	}
+
+	value = 0x55555555;
+	__asm
+	{
+        mcr p15, 0, value, c3, c0, 0
         mcr p15, 0, i, c2, c0, 0
     }
 }
@@ -291,6 +173,54 @@ void mmu_clean_invalidated_cache_index(int index)
     }
 }
 
+void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+    unsigned int ptr;
+
+    ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+    while(ptr < buffer + size)
+    {
+    	__asm
+    	{
+    		MCR p15, 0, ptr, c7, c14, 1
+    	}
+        ptr += CACHE_LINE_SIZE;
+    }
+}
+
+void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+	unsigned int ptr;
+
+	ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+	while (ptr < buffer + size)
+	{
+		__asm
+		{
+			MCR p15, 0, ptr, c7, c10, 1
+		}
+		ptr += CACHE_LINE_SIZE;
+	}
+}
+
+void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+	unsigned int ptr;
+
+	ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+	while (ptr < buffer + size)
+	{
+		__asm
+		{
+			MCR p15, 0, ptr, c7, c6, 1
+		}
+		ptr += CACHE_LINE_SIZE;
+	}
+}
+
 void mmu_invalidate_tlb()
 {
     register rt_uint32_t value;
@@ -313,13 +243,214 @@ void mmu_invalidate_icache()
         mcr p15, 0, value, c7, c5, 0
     }
 }
+
+
+void mmu_invalidate_dcache_all()
+{
+    register rt_uint32_t value;
+
+    value = 0;
+
+    __asm
+    {
+        mcr p15, 0, value, c7, c6, 0
+    }
+}
+#elif defined(__GNUC__)
+void mmu_setttbase(register rt_uint32_t i)
+{
+	register rt_uint32_t value;
+
+   /* Invalidates all TLBs.Domain access is selected as
+    * client by configuring domain access register,
+    * in that case access controlled by permission value
+    * set by page table entry
+    */
+	value = 0;
+	asm ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
+
+	value = 0x55555555;
+	asm ("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
+	asm ("mcr p15, 0, %0, c2, c0, 0"::"r"(i));
+}
+
+void mmu_set_domain(register rt_uint32_t i)
+{
+	asm ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
+}
+
+void mmu_enable()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i |= 0x1;
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_disable()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i &= ~0x1;
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_enable_icache()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i |= (1 << 12);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_enable_dcache()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i |= (1 << 2);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_disable_icache()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i &= ~(1 << 12);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_disable_dcache()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i &= ~(1 << 2);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_enable_alignfault()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i |= (1 << 1);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_disable_alignfault()
+{
+	register rt_uint32_t i;
+
+	/* read control register */
+	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+
+	i &= ~(1 << 1);
+
+	/* write back to control register */
+	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+}
+
+void mmu_clean_invalidated_cache_index(int index)
+{
+	asm ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
+}
+
+void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+    unsigned int ptr;
+
+    ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+    while(ptr < buffer + size)
+    {
+    	asm ("mcr p15, 0, %0, c7, c14, 1": :"r" (ptr));
+        ptr += CACHE_LINE_SIZE;
+    }
+}
+
+
+void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+	unsigned int ptr;
+
+	ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+	while (ptr < buffer + size)
+	{
+		asm ("mcr p15, 0, %0, c7, c10, 1": :"r" (ptr));
+		ptr += CACHE_LINE_SIZE;
+	}
+}
+
+void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+	unsigned int ptr;
+
+	ptr = buffer & ~(CACHE_LINE_SIZE - 1);
+
+	while (ptr < buffer + size)
+	{
+		asm ("mcr p15, 0, %0, c7, c6, 1": :"r" (ptr));
+		ptr += CACHE_LINE_SIZE;
+	}
+}
+
+void mmu_invalidate_tlb()
+{
+	asm ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
+}
+
+void mmu_invalidate_icache()
+{
+	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
+}
+
+void mmu_invalidate_dcache_all()
+{
+    asm ("mcr p15, 0, %0, c7, c6, 0": :"r" (0));
+}
 #endif
 
-void mmu_setmtt(int vaddrStart,int vaddrEnd,int paddrStart,int attr)
+/* level1 page table */
+static volatile unsigned int _page_table[4*1024] __attribute__((aligned(16*1024)));
+void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrStart, rt_uint32_t attr)
 {
     volatile rt_uint32_t *pTT;
     volatile int i,nSec;
-    pTT=(rt_uint32_t *)_MMUTT_STARTADDRESS+(vaddrStart>>20);
+    pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
     nSec=(vaddrEnd>>20)-(vaddrStart>>20);
     for(i=0;i<=nSec;i++)
     {
@@ -330,66 +461,32 @@ void mmu_setmtt(int vaddrStart,int vaddrEnd,int paddrStart,int attr)
 
 void rt_hw_mmu_init(void)
 {
-#if 0
-	int i,j;
-	//========================== IMPORTANT NOTE =========================
-	//The current stack and code area can't be re-mapped in this routine.
-	//If you want memory map mapped freely, your own sophiscated mmu
-	//initialization code is needed.
-	//===================================================================
-
+	/* disable I/D cache */
 	mmu_disable_dcache();
 	mmu_disable_icache();
-
-	//If write-back is used,the DCache should be cleared.
-	for(i=0;i<64;i++)
-		for(j=0;j<8;j++)
-			mmu_clean_invalidated_cache_index((i<<26)|(j<<5));
-
-	mmu_invalidate_icache();
-
-	//To complete mmu_Init() fast, Icache may be turned on here.
-	mmu_enable_icache();
-
 	mmu_disable();
 	mmu_invalidate_tlb();
 
-	//mmu_setmtt(int vaddrStart,int vaddrEnd,int paddrStart,int attr);
-	mmu_setmtt(0x00000000,0x07f00000,0x00000000,RW_CNB);  //bank0
-	mmu_setmtt(0x00000000,0x03f00000,(int)0x30000000,RW_CB);  //bank0
-	mmu_setmtt(0x04000000,0x07f00000,0,RW_NCNB);  			//bank0
-	mmu_setmtt(0x08000000,0x0ff00000,0x08000000,RW_CNB);  //bank1
-	mmu_setmtt(0x10000000,0x17f00000,0x10000000,RW_NCNB); //bank2
-	mmu_setmtt(0x18000000,0x1ff00000,0x18000000,RW_NCNB); //bank3
-	//mmu_setmtt(0x20000000,0x27f00000,0x20000000,RW_CB); //bank4
-	mmu_setmtt(0x20000000,0x27f00000,0x20000000,RW_NCNB); //bank4 for  DM9000
-	mmu_setmtt(0x28000000,0x2ff00000,0x28000000,RW_NCNB); //bank5
-	//30f00000->30100000, 31000000->30200000
-	mmu_setmtt(0x30000000,0x30100000,0x30000000,RW_CB);	  //bank6-1
-	mmu_setmtt(0x30200000,0x33e00000,0x30200000,RW_CB); //bank6-2
+	/* set page table */
+	mmu_setmtt(0x00000000, 0xFFFFFFFF, 0x00000000, RW_NCNB); /* None cached for 4G memory */
+  	mmu_setmtt(0x20000000, 0x24000000-1, 0x20000000, RW_CB); /* 64M cached SDRAM memory */
+	mmu_setmtt(0x00000000, 0x100000, 0x20000000, RW_CB); /* isr vector table */
+	mmu_setmtt(0x90000000, 0x100000, 0x00000000, RW_CB); /* 4K cached internal memory */
+	mmu_setmtt(0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB); /* 64M none-cached SDRAM memory */
 
-	mmu_setmtt(0x33f00000,0x34000000,0x33f00000,RW_NCNB);   //bank6-3
-	mmu_setmtt(0x38000000,0x3ff00000,0x38000000,RW_NCNB); //bank7
+	/* set MMU table address */
+	mmu_setttbase((rt_uint32_t)_page_table);
 
-	mmu_setmtt(0x40000000,0x47f00000,0x40000000,RW_NCNB); //SFR
-	mmu_setmtt(0x48000000,0x5af00000,0x48000000,RW_NCNB); //SFR
-	mmu_setmtt(0x5b000000,0x5b000000,0x5b000000,RW_NCNB); //SFR
-	mmu_setmtt(0x5b100000,0xfff00000,0x5b100000,RW_FAULT);//not used
-	mmu_setmtt(0x60000000,0x67f00000,0x60000000,RW_NCNB); //SFR
+    /* enables MMU */
+    mmu_enable();
 
-	mmu_setttbase(_MMUTT_STARTADDRESS);
+    /* enable Instruction Cache */
+    mmu_enable_icache();
 
-	/* DOMAIN1: no_access, DOMAIN0,2~15=client(AP is checked) */
-	mmu_set_domain(0x55555550|DOMAIN1_ATTR|DOMAIN0_ATTR);
+    /* enable Data Cache */
+    mmu_enable_dcache();
 
-	mmu_enable_alignfault();
-
-	mmu_enable();
-
-	/* ICache enable */
-	mmu_enable_icache();
-	/* DCache should be turned on after mmu is turned on. */
-	mmu_enable_dcache();
-#endif
+    mmu_invalidate_icache();
+    mmu_invalidate_dcache_all();
 }
 

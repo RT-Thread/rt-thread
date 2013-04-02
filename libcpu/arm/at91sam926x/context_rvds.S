@@ -60,9 +60,9 @@ rt_hw_context_switch	PROC
 	LDMFD	sp!, {r4}			; pop new task spsr
 	MSR	spsr_cxsf, r4
 	LDMFD	sp!, {r4}			; pop new task cpsr
-	MSR	cpsr_cxsf, r4
+	MSR	spsr_cxsf, r4
 
-	LDMFD	sp!, {r0-r12, lr, pc}	; pop new task r0-r12, lr & pc
+	LDMFD	sp!, {r0-r12, lr, pc}^	; pop new task r0-r12, lr & pc
 	ENDP
 
 ;/*
