@@ -63,7 +63,7 @@ static void thread_entry(void* parameter)
 	rt_sem_detach(&sem);
 }
 
-int semaphore_static_init()
+int semaphore_static_init(void)
 {
 	rt_err_t result;
 
@@ -89,7 +89,7 @@ int semaphore_static_init()
 }
 
 #ifdef RT_USING_TC
-static void _tc_cleanup()
+static void _tc_cleanup(void)
 {
 	/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
 	rt_enter_critical();
@@ -110,11 +110,11 @@ static void _tc_cleanup()
 	tc_done(TC_STAT_PASSED);
 }
 
-int _tc_semaphore_static()
+int _tc_semaphore_static(void)
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
-	semaphore_static_init();
+	semaphore_static_init(void);
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
@@ -123,9 +123,9 @@ int _tc_semaphore_static()
 FINSH_FUNCTION_EXPORT(_tc_semaphore_static, a static semaphore example);
 #else
 /* 用户应用入口 */
-int rt_application_init()
+int rt_application_init(void)
 {
-	thread_static_init();
+	semaphore_static_init(void);
 
 	return 0;
 }
