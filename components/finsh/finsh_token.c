@@ -25,6 +25,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
+ * 2013-04-03     Bernard      strip more characters.
  */
 #include <finsh.h>
 
@@ -328,7 +329,10 @@ static int token_match_name(struct finsh_token* self, const char* str)
 static void token_trim_space(struct finsh_token* self)
 {
 	char ch;
-	while ( (ch = token_next_char(self)) ==' ' || ch == '\t');
+	while ( (ch = token_next_char(self)) ==' ' || 
+        ch == '\t' || 
+        ch == '\r' ||
+        ch == '\n');
 
 	token_prev_char(self);
 }
