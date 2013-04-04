@@ -76,37 +76,6 @@ char *strdup(const char *s)
 }
 #endif
 
-#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__) && !defined(__ADSPBLACKFIN__) && !defined(_MSC_VER)
-int isalpha( int ch )
-{
-	return (unsigned int)((ch | 0x20) - 'a') < 26u;
-}
-
-int atoi(const char* s)
-{
-	long int v=0;
-	int sign=1;
-	while ( *s == ' '  ||  (unsigned int)(*s - 9) < 5u) s++;
-
-	switch (*s)
-	{
-	case '-': sign=-1;
-	case '+': ++s;
-	}
-
-	while ((unsigned int) (*s - '0') < 10u)
-	{
-		v=v*10+*s-'0'; ++s;
-	}
-
-	return sign==-1?-v:v;
-}
-
-int isprint(unsigned char ch)
-{
-    return (unsigned int)(ch - ' ') < 127u - ' ';
-}
-#endif
 #endif
 
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)

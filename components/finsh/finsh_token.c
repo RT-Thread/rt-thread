@@ -28,10 +28,12 @@
  * 2013-04-03     Bernard      strip more characters.
  */
 #include <finsh.h>
+#include <stdlib.h>
 
 #include "finsh_token.h"
 #include "finsh_error.h"
 
+#define is_alpha(ch)	((ch | 0x20) - 'a') < 26u
 #define is_digit(ch)	((ch) >= '0' && (ch) <= '9')
 #define is_separator(ch) !(((ch) >= 'a' && (ch) <= 'z') \
      || ((ch) >= 'A' && (ch) <= 'Z') || ((ch) >= '0' && (ch) <= '9') || ((ch) == '_'))
@@ -329,10 +331,15 @@ static int token_match_name(struct finsh_token* self, const char* str)
 static void token_trim_space(struct finsh_token* self)
 {
 	char ch;
+#if 0	
 	while ( (ch = token_next_char(self)) ==' ' || 
         ch == '\t' || 
         ch == '\r' ||
         ch == '\n');
+#else
+	while ( (ch = token_next_char(self)) ==' ' || 
+        ch == '\t');
+#endif
 
 	token_prev_char(self);
 }
@@ -489,7 +496,7 @@ static void token_proc_number(struct finsh_token* self)
 		{
 			b = 16;
 			ch = token_next_char(self);
-			while ( is_digit(ch) || isalpha(ch) )
+			while ( is_digit(ch) || is_alpha(ch) )
 			{
 				*p++ = ch;
 				ch = token_next_char(self);
