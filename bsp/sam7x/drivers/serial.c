@@ -76,27 +76,12 @@ struct rt_at91serial serial1;
 struct rt_at91serial serial2;
 #endif
 
-static void rt_hw_serial_isr(int irqno)
+static void rt_hw_serial_isr(int irqno, void* param)
 {
 	rt_base_t level;
 	struct rt_device* device;
-	struct rt_at91serial* serial = RT_NULL;
+	struct rt_at91serial* serial = (struct rt_at91serial*)param;
 
-#ifdef RT_USING_UART1
-	if (irqno == AT91C_ID_US0)
-	{
-		/* serial 1 */
-		serial = &serial1;
-	}
-#endif
-
-#ifdef RT_USING_UART2
-	if (irqno == AT91C_ID_US1)
-	{
-		/* serial 2 */
-		serial = &serial2;
-	}
-#endif
 	RT_ASSERT(serial != RT_NULL);
 
 	/* get generic device object */
@@ -202,7 +187,7 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 		//serial->hw_base->US_IMR |= 1 << 0; 		/* umask RxReady interrupt */
 
 		/* install UART handler */
-		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_isr, RT_NULL);
+		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_isr, serial, "uart");
 		// SAM7X Datasheet 30.5.3:
 		// It is notrecommended to use the USART interrupt line in edge sensitive mode
 		//AT91C_AIC_SMR(serial->peripheral_id) = 5 | (0x01 << 5);

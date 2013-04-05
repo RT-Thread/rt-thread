@@ -86,9 +86,6 @@ typedef unsigned int size_t;
 
 int strcmp (const char *s1, const char *s2);
 char *strdup(const char *s);
-
-int isalpha( int ch );
-int atoi(const char* s);
 #else
 /* use libc of armcc */
 #include <ctype.h>

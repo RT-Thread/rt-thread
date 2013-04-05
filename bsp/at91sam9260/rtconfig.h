@@ -141,8 +141,6 @@
 #define RT_USING_LWIP
 #define RT_LWIP_DNS
 
-#define LWIP_NETIF_LINK_CALLBACK 1
-
 /* Trace LwIP protocol */
 // #define RT_LWIP_DEBUG 
 

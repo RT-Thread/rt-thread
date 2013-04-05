@@ -1,11 +1,26 @@
 /*
- * File      : cmd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ *  RT-Thread finsh shell commands
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ *
+ *  This file is part of RT-Thread (http://www.rt-thread.org)
+ *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
+ *
+ *  All rights reserved.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -604,6 +619,9 @@ long list(void)
              index < _syscall_table_end;
              FINSH_NEXT_SYSCALL(index))
         {
+			/* skip the internal command */
+			if (strncmp((char*)index->name, "__", 2) == 0) continue;
+
 #ifdef FINSH_USING_DESCRIPTION
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
@@ -693,6 +711,9 @@ void list_prefix(char *prefix)
              index < _syscall_table_end;
              FINSH_NEXT_SYSCALL(index))
         {
+			/* skip internal command */
+			if (str_is_prefix("__", index->name) == 0) continue;
+			
             if (str_is_prefix(prefix, index->name) == 0)
             {
                 if (func_cnt == 0)

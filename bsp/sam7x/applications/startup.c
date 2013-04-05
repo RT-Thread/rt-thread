@@ -97,7 +97,7 @@ void rtthread_startup(void)
 #elif __ICCARM__
     rt_system_heap_init(__segment_end("HEAP"), (void*)0x00210000);
 #else
-	rt_system_heap_init(&__bss_end, 0x00210000);
+	rt_system_heap_init(&__bss_end, (void*)0x00210000);
 #endif
 #endif
 

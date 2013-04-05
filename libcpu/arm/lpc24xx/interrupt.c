@@ -10,12 +10,17 @@
  * Change Logs:
  * Date           Author       Notes
  * 2008-12-11     XuXinming    first version
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 #include "LPC24xx.h"
 
 #define MAX_HANDLERS	32
+
+/* exception and interrupt handler table */
+struct rt_irq_desc irq_desc[MAX_HANDLERS]; 
 
 extern rt_uint32_t rt_interrupt_nest;
 
@@ -23,18 +28,16 @@ extern rt_uint32_t rt_interrupt_nest;
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
-
 /**
  * @addtogroup LPC2478
  */
 /*@{*/
-
-void rt_hw_interrupt_handle(int vector)
+void rt_hw_interrupt_handler(int vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
 
-void rt_hw_interrupt_init()
+void rt_hw_interrupt_init(void)
 {
 	register int i;
 
@@ -45,11 +48,15 @@ void rt_hw_interrupt_init()
 	VICVectAddr = 0;
 	VICIntSelect = 0;
 
-    for ( i = 0; i < 32; i++ )
+    /* init exceptions table */
+    rt_memset(irq_desc, 0x00, sizeof(irq_desc));
+    for(i=0; i < MAX_HANDLERS; i++)
     {
-		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + i*4);
-		vect_cntl = (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + i*4);
-		*vect_addr = 0x0;	
+        irq_desc[i].handler = rt_hw_interrupt_handler;
+
+		vect_addr  = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + i*4);
+		vect_cntl  = (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + i*4);
+		*vect_addr = (rt_uint32_t)&irq_desc[i];	
 		*vect_cntl = 0xF;
     }
 	
@@ -70,20 +77,31 @@ void rt_hw_interrupt_umask(int vector)
 	VICIntEnable = (1 << vector);
 }
 
-void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
+/**
+ * This function will install a interrupt service routine to a interrupt.
+ * @param vector the interrupt number
+ * @param handler the interrupt service routine to be installed
+ * @param param the parameter for interrupt service routine
+ * @name unused.
+ *
+ * @return the old handler
+ */
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
+									void *param, char *name)
 {
-	rt_uint32_t *vect_addr;
-	
-	if(vector < MAX_HANDLERS)
+	rt_isr_handler_t old_handler = RT_NULL;
+
+	if(vector >= 0 && vector < MAX_HANDLERS)
 	{
-		/* find first un-assigned VIC address for the handler */
-		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + vector*4);
-
-		/* get old handler */
-		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t)*vect_addr; 
-
-		*vect_addr = (rt_uint32_t)new_handler;	/* set interrupt vector */
+		old_handler = irq_desc[vector].handler;
+		if (handler != RT_NULL)
+		{
+			irq_desc[vector].handler = handler;
+			irq_desc[vector].param = param;
+		}
 	}
+
+	return old_handler;
 }
 
 /*@}*/

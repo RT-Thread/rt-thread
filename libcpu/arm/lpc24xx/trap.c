@@ -126,17 +126,20 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 }
 
 extern rt_isr_handler_t isr_table[];
-void rt_hw_trap_irq()
+void rt_hw_trap_irq(void)
 {
-	rt_isr_handler_t isr_func;
-	
-	isr_func = (rt_isr_handler_t) VICVectAddr;
+	int irqno;
+	struct rt_irq_desc* irq;
+	extern struct rt_irq_desc irq_desc[];
 
-	/* fixme, how to get interrupt number */
-	isr_func(0);
+	irq = (struct rt_irq_desc*) VICVectAddr;
+	irqno = ((rt_uint32_t) irq - (rt_uint32_t) &irq_desc[0])/sizeof(struct rt_irq_desc);
+
+	/* invoke isr */
+	irq->handler(irqno, irq->param);
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {	
     rt_kprintf("fast interrupt request\n");
 }
