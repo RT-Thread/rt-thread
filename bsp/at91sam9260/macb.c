@@ -37,16 +37,54 @@ extern void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
 #define BD_CACHE_WRITEBACK(addr, size)
 #define BD_CACHE_WRITEBACK_INVALIDATE(addr, size)
 
+/* EMAC internal utility function */
+rt_inline unsigned long emac_virt_to_phys(unsigned long addr)
+{
+	return addr;
+}
 
-#define CONFIG_RMII
 
-#define MACB_RX_BUFFER_SIZE		4096*4
-#define MACB_RX_RING_SIZE		(MACB_RX_BUFFER_SIZE / 128)
+#define AT91SAM9260_SRAM0_VIRT_BASE (0x90000000)
+
+#define MACB_TX_SRAM
+
+#if defined(MACB_TX_SRAM)
+#define MACB_TX_RING_SIZE		2
+#define MACB_TX_BUFFER_SIZE		(1536 * MACB_TX_RING_SIZE)
+#define TX_RING_BYTES			(sizeof(struct macb_dma_desc) * MACB_TX_RING_SIZE)
+#else
 #define MACB_TX_RING_SIZE		16
+#define MACB_TX_BUFFER_SIZE		(1536 * MACB_TX_RING_SIZE)
+#endif
+
+#define MACB_RX_BUFFER_SIZE		(4096*4)
+#define MACB_RX_RING_SIZE		(MACB_RX_BUFFER_SIZE / 128)
+
+#define DEF_TX_RING_PENDING	(MACB_TX_RING_SIZE)
+
+#define TX_RING_GAP(macb)						\
+	(MACB_TX_RING_SIZE - (macb)->tx_pending)
+
+#define TX_BUFFS_AVAIL(macb)					\
+	(((macb)->tx_tail <= (macb)->tx_head) ?			\
+	 (macb)->tx_tail + (macb)->tx_pending - (macb)->tx_head :	\
+	 (macb)->tx_tail - (macb)->tx_head - TX_RING_GAP(macb))
+
+#define NEXT_TX(n)		(((n) + 1) & (MACB_TX_RING_SIZE - 1))
+
+#define NEXT_RX(n)		(((n) + 1) & (MACB_RX_RING_SIZE - 1))
+
+/* minimum number of free TX descriptors before waking up TX process */
+#define MACB_TX_WAKEUP_THRESH	(MACB_TX_RING_SIZE / 4)
+
+#define MACB_RX_INT_FLAGS	(MACB_BIT(RCOMP) | MACB_BIT(RXUBR)	\
+				 | MACB_BIT(ISR_ROVR))
+
 #define MACB_TX_TIMEOUT		1000
 #define MACB_AUTONEG_TIMEOUT	5000000	
-#define MACB_LINK_TIMEOUT	        500000  
+#define MACB_LINK_TIMEOUT		500000  
 
+#define CONFIG_RMII
 
 struct macb_dma_desc {
 	rt_uint32_t	addr;
@@ -75,9 +113,6 @@ struct macb_dma_desc {
 #define TXBUF_WRAP		0x40000000
 #define TXBUF_USED		0x80000000
 
-#define MACB_RX_INT_FLAGS	(MACB_BIT(RCOMP) | MACB_BIT(RXUBR)	\
-				 | MACB_BIT(ISR_ROVR))
-
 /* Duplex, half or full. */
 #define DUPLEX_HALF		0x00
 #define DUPLEX_FULL		0x01
@@ -93,6 +128,8 @@ struct rt_macb_eth
 	unsigned int		rx_tail;
 	unsigned int		tx_head;
 	unsigned int		tx_tail;
+	unsigned int		rx_pending;
+	unsigned int		tx_pending;
 
 	void			*rx_buffer;
 	void			*tx_buffer;
@@ -100,21 +137,28 @@ struct rt_macb_eth
 	struct macb_dma_desc	*tx_ring;
 
 	unsigned long		rx_buffer_dma;
+	unsigned long		tx_buffer_dma;
 	unsigned long		rx_ring_dma;
 	unsigned long		tx_ring_dma;
+
+	unsigned int		tx_stop;
 
 	/* interface address info. */
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];		/* hw address	*/
 	unsigned short		phy_addr;
 
 	struct rt_semaphore mdio_bus_lock;
+	struct rt_semaphore tx_lock;
+	struct rt_semaphore rx_lock;
+	struct rt_semaphore tx_ack;
 	rt_uint32_t  speed;
 	rt_uint32_t  duplex;
 	rt_uint32_t link;
 	struct rt_timer  timer;
 };
 static struct rt_macb_eth macb_device;
-static struct rt_semaphore sem_ack, sem_lock;
+
+static void macb_tx(struct rt_macb_eth *macb);
 
 static void udelay(rt_uint32_t us)
 {
@@ -133,7 +177,8 @@ static void rt_macb_isr(int irq, void *param)
 
 	while (status) {
 
-		if (status & MACB_RX_INT_FLAGS) {
+		if (status & MACB_RX_INT_FLAGS)
+		{
 			rsr = macb_readl(macb, RSR);
 			macb_writel(macb, RSR, rsr);
 			/* a frame has been received */
@@ -144,10 +189,7 @@ static void rt_macb_isr(int irq, void *param)
 		if (status & (MACB_BIT(TCOMP) | MACB_BIT(ISR_TUND) |
 			    MACB_BIT(ISR_RLE)))
 		{
-			tsr = macb_readl(macb, TSR);
-			macb_writel(macb, TSR, tsr);
-			/* One packet sent complete */
-			rt_sem_release(&sem_ack);
+			macb_tx(macb);
 		}
 
 		/*
@@ -155,7 +197,8 @@ static void rt_macb_isr(int irq, void *param)
 		 * add that if/when we get our hands on a full-blown MII PHY.
 		 */
 
-		if (status & MACB_BIT(HRESP)) {
+		if (status & MACB_BIT(HRESP))
+		{
 			/*
 			 * TODO: Reset the hardware, and maybe move the printk
 			 * to a lower-priority context as well (work queue?)
@@ -243,7 +286,8 @@ static void macb_phy_reset(rt_device_t dev)
 	macb_mdio_write(macb, MII_BMCR, (BMCR_ANENABLE
 					 | BMCR_ANRESTART));
 
-	for (i = 0; i < MACB_AUTONEG_TIMEOUT / 100; i++) {
+	for (i = 0; i < MACB_AUTONEG_TIMEOUT / 100; i++)
+	{
 		status = macb_mdio_read(macb, MII_BMSR);
 		if (status & BMSR_ANEGCOMPLETE)
 			break;
@@ -268,17 +312,20 @@ static int macb_phy_init(rt_device_t dev)
 
 	/* Check if the PHY is up to snuff... */
 	phy_id = macb_mdio_read(macb, MII_PHYSID1);
-	if (phy_id == 0xffff) {
+	if (phy_id == 0xffff)
+	{
 		rt_kprintf("%s: No PHY present\n", dev->parent.name);
 		return 0;
 	}
 
 	status = macb_mdio_read(macb, MII_BMSR);
-	if (!(status & BMSR_LSTATUS)) {
+	if (!(status & BMSR_LSTATUS))
+	{
 		/* Try to re-negotiate if we don't have link already. */
 		macb_phy_reset(dev);
 
-		for (i = 0; i < MACB_LINK_TIMEOUT / 100; i++) {
+		for (i = 0; i < MACB_LINK_TIMEOUT / 100; i++)
+		{
 			status = macb_mdio_read(macb, MII_BMSR);
 			if (status & BMSR_LSTATUS)
 				break;
@@ -286,11 +333,14 @@ static int macb_phy_init(rt_device_t dev)
 		}
 	}
 
-	if (!(status & BMSR_LSTATUS)) {
+	if (!(status & BMSR_LSTATUS))
+	{
 		rt_kprintf("%s: link down (status: 0x%04x)\n",
 		       dev->parent.name, status);
 		return 0;
-	} else {
+	}
+	else
+	{
 		adv = macb_mdio_read(macb, MII_ADVERTISE);
 		lpa = macb_mdio_read(macb, MII_LPA);
 		media = mii_nway_result(lpa & adv);
@@ -338,13 +388,16 @@ void macb_update_link(void *param)
 	else
 		link = 1;
 
-	if (link != macb->link) {
+	if (link != macb->link)
+	{
 		macb->link = link;
 		status_change = 1;
 	}
 
-	if (status_change) {
-		if (macb->link) {
+	if (status_change)
+	{
+		if (macb->link)
+		{
 			adv = macb_mdio_read(macb, MII_ADVERTISE);
 			lpa = macb_mdio_read(macb, MII_LPA);
 			media = mii_nway_result(lpa & adv);
@@ -355,7 +408,9 @@ void macb_update_link(void *param)
 					dev->parent.name, macb->speed,
 					DUPLEX_FULL == macb->duplex ? "Full":"Half");
 			eth_device_linkchange(&macb->parent, RT_TRUE);
-		} else {
+		}
+		else
+		{
 			rt_kprintf("%s: link down\n", dev->parent.name);
 			eth_device_linkchange(&macb->parent, RT_FALSE);
 		}
@@ -382,19 +437,23 @@ static rt_err_t rt_macb_init(rt_device_t dev)
 
 	/* initialize DMA descriptors */
 	paddr = macb->rx_buffer_dma;
-	for (i = 0; i < MACB_RX_RING_SIZE; i++) {
+	for (i = 0; i < MACB_RX_RING_SIZE; i++)
+	{
 		if (i == (MACB_RX_RING_SIZE - 1))
 			paddr |= RXADDR_WRAP;
 		macb->rx_ring[i].addr = paddr;
 		macb->rx_ring[i].ctrl = 0;
 		paddr += 128;
 	}
-	for (i = 0; i < MACB_TX_RING_SIZE; i++) {
-		macb->tx_ring[i].addr = 0;
+	paddr = macb->tx_buffer_dma;
+	for (i = 0; i < MACB_TX_RING_SIZE; i++)
+	{
+		macb->tx_ring[i].addr = paddr;
 		if (i == (MACB_TX_RING_SIZE - 1))
 			macb->tx_ring[i].ctrl = TXBUF_USED | TXBUF_WRAP;
 		else
 			macb->tx_ring[i].ctrl = TXBUF_USED;
+		paddr += 1536;
 	}
 	macb->rx_tail = macb->tx_head = macb->tx_tail = 0;
 
@@ -488,31 +547,127 @@ static rt_err_t rt_macb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
+static void macb_tx(struct rt_macb_eth *macb)
+{
+	unsigned int tail;
+	unsigned int head;
+	rt_uint32_t status;
+
+	status = macb_readl(macb, TSR);
+	macb_writel(macb, TSR, status);
+
+	/*rt_kprintf("macb_tx status = %02lx\n",
+		(unsigned long)status);*/
+
+	if (status & (MACB_BIT(UND) | MACB_BIT(TSR_RLE)))
+	{
+		int i;
+		rt_kprintf("%s: TX %s, resetting buffers\n",
+			macb->parent.parent.parent.name, status & MACB_BIT(UND) ?
+			"underrun" : "retry limit exceeded");
+
+		/* Transfer ongoing, disable transmitter, to avoid confusion */
+		if (status & MACB_BIT(TGO))
+			macb_writel(macb, NCR, macb_readl(macb, NCR) & ~MACB_BIT(TE));
+
+		head = macb->tx_head;
+
+		/*Mark all the buffer as used to avoid sending a lost buffer*/
+		for (i = 0; i < MACB_TX_RING_SIZE; i++)
+			macb->tx_ring[i].ctrl = MACB_BIT(TX_USED);
+
+		/* free transmit buffer in upper layer*/
+
+		macb->tx_head = macb->tx_tail = 0;
+
+		/* Enable the transmitter again */
+		if (status & MACB_BIT(TGO))
+			macb_writel(macb, NCR, macb_readl(macb, NCR) | MACB_BIT(TE));
+	}
+
+	if (!(status & MACB_BIT(COMP)))
+		/*
+		 * This may happen when a buffer becomes complete
+		 * between reading the ISR and scanning the
+		 * descriptors.  Nothing to worry about.
+		 */
+		return;
+
+	head = macb->tx_head;
+	for (tail = macb->tx_tail; tail != head; tail = NEXT_TX(tail))
+	{
+		rt_uint32_t bufstat;
+
+		bufstat = macb->tx_ring[tail].ctrl;
+
+		if (!(bufstat & MACB_BIT(TX_USED)))
+			break;
+	}
+
+	macb->tx_tail = tail;
+	if ((macb->tx_stop == 1) &&
+	    TX_BUFFS_AVAIL(macb) > MACB_TX_WAKEUP_THRESH)
+		rt_sem_release(&macb->tx_ack);
+}
+
+
 /* ethernet device interface */
 /* transmit packet. */
 rt_err_t rt_macb_tx( rt_device_t dev, struct pbuf* p)
 {
 	unsigned long ctrl;
+	struct pbuf* q;
+	rt_uint8_t* bufptr;
+	rt_uint32_t mapping;
 	struct rt_macb_eth *macb = dev->user_data;
 	unsigned int tx_head = macb->tx_head;
 
-	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	EMAC_CACHE_WRITEBACK(p->payload, p->tot_len);
+	rt_sem_take(&macb->tx_lock, RT_WAITING_FOREVER);
+	if (TX_BUFFS_AVAIL(macb) < 1)
+	{
+		rt_sem_release(&macb->tx_lock);
+		rt_kprintf("Tx Ring full!\n");
+		rt_kprintf("tx_head = %u, tx_tail = %u\n",
+			macb->tx_head, macb->tx_tail);
+		return -RT_ERROR;
+	}
+
+	macb->tx_stop = 0;
+
 	ctrl = p->tot_len & TXBUF_FRMLEN_MASK;
 	ctrl |= TXBUF_FRAME_END;
-	if (tx_head == (MACB_TX_RING_SIZE - 1)) {
+	if (tx_head == (MACB_TX_RING_SIZE - 1))
+	{
 		ctrl |= TXBUF_WRAP;
-		macb->tx_head = 0;
-	} else
-		macb->tx_head++;
-	macb->tx_ring[tx_head].ctrl = ctrl;
-	macb->tx_ring[tx_head].addr = (rt_uint32_t)p->payload;
-	BD_CACHE_WRITEBACK_INVALIDATE(macb->tx_ring[tx_head], sizeof(struct macb_dma_desc));
-	macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));
+	}
+#if defined(MACB_TX_SRAM)
+	bufptr = macb->tx_buffer + tx_head * 1536;
+#else
+	mapping = (unsigned long)macb->tx_buffer + tx_head * 1536;
+	bufptr = (rt_uint8_t *)mapping;
+#endif
 
-	rt_sem_release(&sem_lock);
-	/* wait ack */
-	rt_sem_take(&sem_ack, RT_WAITING_FOREVER);
+	for (q = p; q != NULL; q = q->next)
+	{
+		memcpy(bufptr, q->payload, q->len);
+		bufptr += q->len;
+	}
+#if !defined(MACB_TX_SRAM)
+	EMAC_CACHE_WRITEBACK(mapping, p->tot_len);
+#endif
+	macb->tx_ring[tx_head].ctrl = ctrl;
+	BD_CACHE_WRITEBACK_INVALIDATE(&macb->tx_ring[tx_head], sizeof(struct macb_dma_desc));
+	tx_head = NEXT_TX(tx_head);
+	macb->tx_head = tx_head;
+	macb_writel(macb, NCR, macb_readl(macb, NCR) | MACB_BIT(TSTART));
+	macb_writel(macb, NCR, macb_readl(macb, NCR) | MACB_BIT(TSTART));
+
+	if (TX_BUFFS_AVAIL(macb) < 1)
+	{
+		macb->tx_stop = 1;
+		rt_sem_take(&macb->tx_ack, RT_WAITING_FOREVER);
+	}
+	rt_sem_release(&macb->tx_lock);
 
 	return RT_EOK;
 }
@@ -523,14 +678,16 @@ static void reclaim_rx_buffers(struct rt_macb_eth *macb,
 	unsigned int i;
 
 	i = macb->rx_tail;
-	while (i > new_tail) {
+	while (i > new_tail)
+	{
 		macb->rx_ring[i].addr &= ~RXADDR_USED;
 		i++;
 		if (i > MACB_RX_RING_SIZE)
 			i = 0;
 	}
 
-	while (i < new_tail) {
+	while (i < new_tail)
+	{
 		macb->rx_ring[i].addr &= ~RXADDR_USED;
 		i++;
 	}
@@ -549,19 +706,22 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 	int wrapped = 0;
 	rt_uint32_t status;
 
-	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-	for (;;) {
+	rt_sem_take(&macb->rx_lock, RT_WAITING_FOREVER);
+	for (;;)
+	{
 		if (!(macb->rx_ring[rx_tail].addr & RXADDR_USED))
 			break;
 
 		status = macb->rx_ring[rx_tail].ctrl;
-		if (status & RXBUF_FRAME_START) {
+		if (status & RXBUF_FRAME_START)
+		{
 			if (rx_tail != macb->rx_tail)
 				reclaim_rx_buffers(macb, rx_tail);
 			wrapped = 0;
 		}
 
-		if (status & RXBUF_FRAME_END) {
+		if (status & RXBUF_FRAME_END)
+		{
 			buffer = (void *)((unsigned int)macb->rx_buffer + 128 * macb->rx_tail);
 			len = status & RXBUF_FRMLEN_MASK;
 			p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
@@ -570,7 +730,8 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				rt_kprintf("alloc pbuf failed\n");
 				break;
 			}
-			if (wrapped) {
+			if (wrapped)
+			{
 				unsigned int headlen, taillen;
 
 				headlen = 128 * (MACB_RX_RING_SIZE
@@ -581,7 +742,9 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				memcpy((void *)p->payload, buffer, headlen);
 				memcpy((void *)((unsigned int)p->payload + headlen),
 				       macb->rx_buffer, taillen);
-			} else {
+			}
+			else
+			{
 				EMAC_CACHE_INVALIDATE(buffer, len);
 				memcpy((void *)p->payload, buffer, p->len);
 			}
@@ -590,15 +753,18 @@ struct pbuf *rt_macb_rx(rt_device_t dev)
 				rx_tail = 0;
 			reclaim_rx_buffers(macb, rx_tail);
 			break;
-		} else {
-			if (++rx_tail >= MACB_RX_RING_SIZE) {
+		}
+		else
+		{
+			if (++rx_tail >= MACB_RX_RING_SIZE)
+			{
 				wrapped = 1;
 				rx_tail = 0;
 			}
 		}
 	}
 
-	rt_sem_release(&sem_lock);
+	rt_sem_release(&macb->rx_lock);
 
 	return p;
 }
@@ -615,25 +781,42 @@ void macb_gpio_init()
 #endif
 }
 
-void macb_initialize()
+rt_err_t macb_initialize()
 {
 	struct rt_macb_eth *macb = &macb_device;
 	unsigned long macb_hz;
 	rt_uint32_t ncfgr;
 	
-	macb->rx_buffer = rt_malloc(MACB_RX_BUFFER_SIZE);
-	macb->rx_ring = rt_malloc(MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
-	macb->tx_ring = rt_malloc(MACB_TX_RING_SIZE * sizeof(struct macb_dma_desc));
-
-	EMAC_CACHE_INVALIDATE(macb->rx_ring, MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+#if defined(MACB_TX_SRAM)
+	macb->tx_ring_dma = AT91SAM9260_SRAM0_BASE;
+	macb->tx_ring = (struct macb_dma_desc *)AT91SAM9260_SRAM0_VIRT_BASE;
+	macb->tx_buffer = (char *) macb->tx_ring + TX_RING_BYTES;
+	macb->tx_buffer_dma = macb->tx_ring_dma + TX_RING_BYTES;
+#else
+	macb->tx_ring = rt_malloc(MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+	if (macb->tx_ring == RT_NULL)
+		goto err1;
 	EMAC_CACHE_INVALIDATE(macb->tx_ring, MACB_TX_RING_SIZE * sizeof(struct macb_dma_desc));
+	macb->tx_ring_dma = emac_virt_to_phys((unsigned long)macb->tx_ring);
+	macb->tx_ring = (struct macb_dma_desc *)MMU_NOCACHE_ADDR((unsigned long)macb->tx_ring);
+	macb->tx_buffer = rt_malloc(MACB_TX_BUFFER_SIZE);
+	if (macb->tx_buffer == RT_NULL)
+		goto err2;
+	macb->tx_buffer_dma = emac_virt_to_phys((unsigned long)macb->tx_buffer);
+#endif
 
-	macb->rx_buffer_dma = (unsigned long)macb->rx_buffer;
-	macb->rx_ring_dma = (unsigned long)macb->rx_ring;
-	macb->tx_ring_dma = (unsigned long)macb->tx_ring;
+	macb->rx_ring = rt_malloc(MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+	if (macb->rx_ring == RT_NULL)
+		goto err3;
+	EMAC_CACHE_INVALIDATE(macb->rx_ring, MACB_RX_RING_SIZE * sizeof(struct macb_dma_desc));
+	macb->rx_ring_dma = emac_virt_to_phys((unsigned long)macb->rx_ring);
+	macb->rx_ring = (struct macb_dma_desc *)MMU_NOCACHE_ADDR((unsigned long)macb->rx_ring);
+	macb->rx_buffer = rt_malloc(MACB_RX_BUFFER_SIZE);
+	if (macb->rx_buffer == RT_NULL)
+		goto err4;
+	macb->rx_buffer_dma = emac_virt_to_phys((unsigned long)macb->rx_buffer);
 
-	macb->rx_ring = MMU_NOCACHE_ADDR(macb->rx_ring);
-	macb->tx_ring = MMU_NOCACHE_ADDR(macb->tx_ring);
+	macb->tx_pending = DEF_TX_RING_PENDING;
 
 	macb->regs = AT91SAM9260_BASE_EMAC;
 	macb->phy_addr = 0x00;
@@ -653,16 +836,41 @@ void macb_initialize()
 		ncfgr = MACB_BF(CLK, MACB_CLK_DIV64);
 
 	macb_writel(macb, NCFGR, ncfgr);
+
+	macb->link = 0;
+
+	return RT_EOK;
+
+err4:
+	rt_free(macb->rx_ring);
+	macb->rx_ring = RT_NULL;
+err3:
+#if !defined(MACB_TX_SRAM)
+	rt_free(macb->tx_buffer);
+	macb->tx_buffer = RT_NULL;
+err2:
+	rt_free(macb->tx_ring);
+	macb->tx_ring = RT_NULL;
+err1:
+#endif
+	return -RT_ENOMEM;
 }
 
 void rt_hw_macb_init()
 {
+	rt_err_t ret;
 	at91_sys_write(AT91_PMC + AT91_PMC_PCER, 1 << AT91SAM9260_ID_EMAC); //enable macb clock
 	macb_gpio_init();
 	rt_memset(&macb_device, 0, sizeof(macb_device));
-	macb_initialize();
-	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
-	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+	ret = macb_initialize();
+	if (ret != RT_EOK)
+	{
+		rt_kprintf("AT91 EMAC initialized failed\n");
+		return;
+	}
+	rt_sem_init(&macb_device.tx_ack, "tx_ack", 0, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&macb_device.tx_lock, "tx_lock", 1, RT_IPC_FLAG_FIFO);
+	rt_sem_init(&macb_device.rx_lock, "rx_lock", 1, RT_IPC_FLAG_FIFO);
 
 	macb_device.dev_addr[0] = 0x00;
 	macb_device.dev_addr[1] = 0x60;
