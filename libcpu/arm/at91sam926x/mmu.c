@@ -471,7 +471,7 @@ void rt_hw_mmu_init(void)
 	mmu_setmtt(0x00000000, 0xFFFFFFFF, 0x00000000, RW_NCNB); /* None cached for 4G memory */
   	mmu_setmtt(0x20000000, 0x24000000-1, 0x20000000, RW_CB); /* 64M cached SDRAM memory */
 	mmu_setmtt(0x00000000, 0x100000, 0x20000000, RW_CB); /* isr vector table */
-	mmu_setmtt(0x90000000, 0x100000, 0x00000000, RW_CB); /* 4K cached internal memory */
+	mmu_setmtt(0x90000000, 0x90400000 - 1, 0x00200000, RW_NCNB); /* 4K SRAM0 + 4k SRAM1 */
 	mmu_setmtt(0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB); /* 64M none-cached SDRAM memory */
 
 	/* set MMU table address */
