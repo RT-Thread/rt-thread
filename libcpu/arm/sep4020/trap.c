@@ -152,7 +152,7 @@ void rt_hw_trap_irq(void)
     }
 
     /* get interrupt service routine */
-    isr_func = isr_table[irq].isr_handle;
+    isr_func = isr_table[irq].handler;
     param = isr_table[irq].param;
 
     /* turn to interrupt service routine */
