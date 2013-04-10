@@ -31,10 +31,9 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  */
 /*@{*/
 
-rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
+static void rt_hw_interrupt_handle(int vector, void *param)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
-	return RT_NULL;
 }
 
 /**
@@ -85,7 +84,7 @@ void rt_hw_interrupt_init(void)
  * This function will mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_mask(rt_uint32_t vector)
+void rt_hw_interrupt_mask(int vector)
 {
 	*(RP)(INTC_IMR) |= 1 << vector;
 }
@@ -94,7 +93,7 @@ void rt_hw_interrupt_mask(rt_uint32_t vector)
  * This function will un-mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_umask(rt_uint32_t vector)
+void rt_hw_interrupt_umask(int vector)
 {
 	if(vector == 16)
 	{

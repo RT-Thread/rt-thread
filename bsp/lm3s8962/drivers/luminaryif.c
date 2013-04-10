@@ -424,6 +424,10 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
         lwip_stats.link.memerr++;
         lwip_stats.link.drop++;
 #endif
+        // 
+        // Enable Ethernet RX Interrupt. 
+        // 
+        EthernetIntEnable(ETH_BASE, ETH_INT_RX); 
     }
 	
     return(p);

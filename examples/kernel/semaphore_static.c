@@ -114,7 +114,7 @@ int _tc_semaphore_static(void)
 {
 	/* 设置TestCase清理回调函数 */
 	tc_cleanup(_tc_cleanup);
-	semaphore_static_init(void);
+	semaphore_static_init();
 
 	/* 返回TestCase运行的最长时间 */
 	return 100;
@@ -125,7 +125,7 @@ FINSH_FUNCTION_EXPORT(_tc_semaphore_static, a static semaphore example);
 /* 用户应用入口 */
 int rt_application_init(void)
 {
-	semaphore_static_init(void);
+	semaphore_static_init();
 
 	return 0;
 }
