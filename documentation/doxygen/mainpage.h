@@ -5,7 +5,7 @@
 /**
  * @mainpage Introduction
  * @author RT-Thread Development Team
- * @version 1.1.0
+ * @version 1.2.0
  *
  * RT-Thread RTOS is an open source embedded real-time operating system and is
  * designed specifically for small memory footprint platforms. The real-time and
