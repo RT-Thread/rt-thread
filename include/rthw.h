@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+/*
+ * CPU interfaces
+ */
 void rt_hw_cpu_icache_enable(void);
 void rt_hw_cpu_icache_disable(void);
 rt_base_t rt_hw_cpu_icache_status(void);
@@ -38,6 +41,24 @@ rt_uint8_t *rt_hw_stack_init(void       *entry,
                              rt_uint8_t *stack_addr,
                              void       *exit);
 
+/*
+ * Interrupt handler definition
+ */
+typedef void (*rt_isr_handler_t)(int vector, void *param);
+
+struct rt_irq_desc {
+	rt_isr_handler_t handler;
+	void *param;
+
+#ifdef RT_USING_INTERRUPT_INFO
+    char name[RT_NAME_MAX];
+    rt_uint32_t counter;
+#endif
+};
+
+/*
+ * Interrupt interfaces
+ */
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
@@ -45,10 +66,13 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector,
                              rt_isr_handler_t  handler,
                              void *param,
                              char *name);
-void rt_hw_interrupt_handle(int vector);
 
 rt_base_t rt_hw_interrupt_disable(void);
 void rt_hw_interrupt_enable(rt_base_t level);
+
+/*
+ * Context interfaces
+ */
 void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to);
 void rt_hw_context_switch_to(rt_uint32_t to);
 void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to);
@@ -59,7 +83,7 @@ void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry);
 void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
 
 /*
- * exception interfaces
+ * Exception interfaces
  */
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context));
 

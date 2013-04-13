@@ -12,6 +12,7 @@
  * 2006-03-13     Bernard      first version
  * 2006-05-27     Bernard      add skyeye support
  * 2007-11-19     Yi.Qiu       fix rt_hw_trap_irq function
+ * 2013-03-29     aozima       Modify the interrupt interface implementations.
  */
 
 #include <rtthread.h>
@@ -131,31 +132,38 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 	rt_hw_cpu_shutdown();
 }
 
-extern rt_isr_handler_t isr_table[];
+extern struct rt_irq_desc isr_table[];
 
-void rt_hw_trap_irq()
+void rt_hw_trap_irq(void)
 {
-	unsigned long intstat;
-	rt_uint32_t i = 0;
-	rt_isr_handler_t isr_func;
+    unsigned long intstat;
+    rt_uint32_t irq = 0;
+    rt_isr_handler_t isr_func;
+    void *param;
 
-	/*Get the final intrrupt source*/
-	intstat = *(RP)(INTC_IFSR);;
+    /*Get the final intrrupt source*/
+    intstat = *(RP)(INTC_IFSR);;
 
-	/*Shift to get the intrrupt number*/
- 	while(intstat != 1)
-	{
-		intstat = intstat >> 1;
-		i++;
-	} 
-	/* get interrupt service routine */
-	isr_func = isr_table[i];
+    /*Shift to get the intrrupt number*/
+    while(intstat != 1)
+    {
+        intstat = intstat >> 1;
+        irq++;
+    }
 
-	/* turn to interrupt service routine */
-	isr_func(i);
+    /* get interrupt service routine */
+    isr_func = isr_table[irq].handler;
+    param = isr_table[irq].param;
+
+    /* turn to interrupt service routine */
+    isr_func(irq, param);
+
+#ifdef RT_USING_INTERRUPT_INFO
+	isr_table[irq].counter++;
+#endif /* RT_USING_INTERRUPT_INFO */
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {
 	rt_kprintf("fast interrupt request\n");
 }

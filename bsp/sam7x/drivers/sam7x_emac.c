@@ -120,7 +120,7 @@ rt_inline void sam7xether_reset_tx_desc(void)
 
 
 /* interrupt service routing */
-static void sam7xether_isr(int irq)
+static void sam7xether_isr(int irq, void* param)
 {
 	/* Variable definitions can be made now. */
 	volatile rt_uint32_t isr, rsr;
@@ -377,7 +377,7 @@ rt_err_t sam7xether_init(rt_device_t dev)
 	AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP | AT91C_EMAC_TCOMP;
 
 	/* setup interrupt */
-	rt_hw_interrupt_install(AT91C_ID_EMAC, sam7xether_isr, RT_NULL);
+	rt_hw_interrupt_install(AT91C_ID_EMAC, sam7xether_isr, RT_NULL, "emac");
 	*(volatile unsigned int*)(0xFFFFF000 + AT91C_ID_EMAC * 4) = AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL | 5;
 	// AT91C_AIC_SMR(AT91C_ID_EMAC) = AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL | 5;
 	rt_hw_interrupt_umask(AT91C_ID_EMAC);

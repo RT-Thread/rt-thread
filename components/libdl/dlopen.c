@@ -35,7 +35,12 @@ void* dlopen(const char *filename, int flags)
 		rt_snprintf(fullpath, strlen(def_path) + strlen(filename) + 2, 
 			"%s/%s", def_path, filename);
 	}
-	
+	else
+	{
+		rt_kprintf("use absolute path\n");
+		return RT_NULL;
+	}	
+
 	/* find in module list */
 	module = rt_module_find(fullpath);
 	

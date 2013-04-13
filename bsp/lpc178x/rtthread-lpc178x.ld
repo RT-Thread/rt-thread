@@ -70,12 +70,12 @@ SECTIONS
         _edata = . ;
     } >DATA
 
-	.stack : 
-	{
-		. = . + _system_stack_size;
-		. = ALIGN(4);
-		_estack = .;
-	} >DATA
+    .stack : 
+    {
+        . = . + _system_stack_size;
+        . = ALIGN(4);
+        _estack = .;
+    } >DATA
 
     __bss_start = .;
     .bss :
