@@ -1237,7 +1237,6 @@ rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value)
 
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
-    RT_ASSERT(setting != RT_NULL);
 
     /* find an alternate setting */
     setting = rt_usbd_find_altsetting(intf, value);
@@ -1308,6 +1307,12 @@ static void rt_usbd_thread_entry(void* parameter)
                 rt_kprintf("invalid usb device\n");
             break;
         case USB_MSG_DATA_NOTIFY:
+            device = rt_usbd_find_device(msg.dcd);
+            if(device == RT_NULL)
+            {
+                rt_kprintf("invalid usb device\n");
+                break;
+            }
             ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
             if(ep != RT_NULL)
                 ep->handler(device, cls, msg.content.ep_msg.size);
