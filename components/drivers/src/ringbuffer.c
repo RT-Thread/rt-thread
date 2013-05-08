@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
+ * 2013-05-08     Grissiom     reimplement
  */
 
 #include <rtthread.h>
@@ -78,33 +79,6 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
 RTM_EXPORT(rt_ringbuffer_put);
 
 /**
- * put a character into ring buffer
- */
-rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
-{
-    RT_ASSERT(rb != RT_NULL);
-
-    /* whether has enough space */
-    if (!RT_RINGBUFFER_EMPTY(rb))
-        return 0;
-
-    rb->buffer_ptr[rb->write_index] = ch;
-
-    /* flip mirror */
-    if (rb->write_index == rb->buffer_size-1)
-    {
-        rb->write_mirror = ~rb->write_mirror;
-        rb->write_index = 0;
-    }
-    else
-    {
-        rb->write_index++;
-    }
-    return 1;
-}
-RTM_EXPORT(rt_ringbuffer_putchar);
-
-/**
  *  get data from ring buffer
  */
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
@@ -136,7 +110,6 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
         return length;
     }
 
-    /* copy first and second */
     memcpy(&ptr[0],
            &rb->buffer_ptr[rb->read_index],
            rb->buffer_size - rb->read_index);
@@ -151,6 +124,34 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     return length;
 }
 RTM_EXPORT(rt_ringbuffer_get);
+
+/**
+ * put a character into ring buffer
+ */
+rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
+{
+    RT_ASSERT(rb != RT_NULL);
+
+    /* whether has enough space */
+    if (!RT_RINGBUFFER_EMPTY(rb))
+        return 0;
+
+    rb->buffer_ptr[rb->write_index] = ch;
+
+    /* flip mirror */
+    if (rb->write_index == rb->buffer_size-1)
+    {
+        rb->write_mirror = ~rb->write_mirror;
+        rb->write_index = 0;
+    }
+    else
+    {
+        rb->write_index++;
+    }
+
+    return 1;
+}
+RTM_EXPORT(rt_ringbuffer_putchar);
 
 /**
  * get a character from a ringbuffer
@@ -179,3 +180,4 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
     return 1;
 }
 RTM_EXPORT(rt_ringbuffer_getchar);
+
