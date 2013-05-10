@@ -31,7 +31,9 @@ static struct serial_ringbuffer vcom_int_rx;
 static struct rt_serial_device vcom_serial;
 
 #define CDC_MaxPacketSize 64
+ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rx_buf[CDC_MaxPacketSize];
+ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t tx_buf[CDC_MaxPacketSize];
 
 static rt_bool_t vcom_connected = RT_FALSE;
@@ -148,6 +150,7 @@ const static char* _ustring[] =
     "Interface",
 };
 
+static rt_bool_t _in_sending;
 /**
  * This function will handle cdc bulk in endpoint request.
  *
@@ -167,7 +170,14 @@ static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
     mps = eps->ep_in->ep_desc->wMaxPacketSize;
     size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
     if(size == 0)
+    {
+        if (_in_sending)
+        {
+            _in_sending = RT_FALSE;
+            dcd_ep_write(device->dcd, eps->ep_in, RT_NULL, 0);
+        }
         return RT_EOK;
+    }
 
     length = size > mps ? mps : size;
 
@@ -398,6 +408,7 @@ static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
         if(size == 0)
             return -RT_EFULL;
 
+        _in_sending = RT_TRUE;
         size = size > mps ? mps : size;
 
         level = rt_hw_interrupt_disable();
@@ -415,7 +426,6 @@ static struct uclass_ops ops =
 {
     _class_run,
     _class_stop,
-    /*RT_NULL,*/
     _class_sof_handler,
 };
 
