@@ -37,6 +37,7 @@ ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t tx_buf[CDC_TX_BUFSIZE];
 
 static rt_bool_t vcom_connected = RT_FALSE;
+static rt_bool_t vcom_in_sending = RT_FALSE;
 
 static struct udevice_descriptor dev_desc =
 {
@@ -150,8 +151,6 @@ const static char* _ustring[] =
     "Interface",
 };
 
-static rt_bool_t _in_sending;
-
 /**
  * This function will handle cdc bulk in endpoint request.
  *
@@ -163,35 +162,44 @@ static rt_bool_t _in_sending;
 static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     rt_uint32_t level;
+    rt_uint32_t remain;
     cdc_eps_t eps;
 
     eps = (cdc_eps_t)cls->eps;
     level = rt_hw_interrupt_disable();
-    size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
-    if(size == 0)
+    remain = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
+    if (remain != 0)
     {
-        if (_in_sending)
-        {
-            _in_sending = RT_FALSE;
-            /* don't have data right now. Send a zero-length-packet to
-             * terminate the transaction.
-             *
-             * FIXME: actually, this might not be the right place to send zlp.
-             * Only the rt_device_write could know how much data is sending. */
-            dcd_ep_write(device->dcd, eps->ep_in, RT_NULL, 0);
-        }
+
+        vcom_in_sending = RT_TRUE;
+        rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, remain);
+        rt_hw_interrupt_enable(level);
+
+        /* send data to host */
+        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, remain);
+
+        return RT_EOK;
+    }
+
+    if (size != 0 &&
+        (size % CDC_MaxPacketSize) == 0)
+    {
+        /* don't have data right now. Send a zero-length-packet to
+         * terminate the transaction.
+         *
+         * FIXME: actually, this might not be the right place to send zlp.
+         * Only the rt_device_write could know how much data is sending. */
+        vcom_in_sending = RT_TRUE;
+        rt_hw_interrupt_enable(level);
+        dcd_ep_write(device->dcd, eps->ep_in, RT_NULL, 0);
+        return RT_EOK;
+    }
+    else
+    {
+        vcom_in_sending = RT_FALSE;
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-    _in_sending = RT_TRUE;
-
-    rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, size);
-    rt_hw_interrupt_enable(level);
-
-    /* send data to host */
-    dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, size);
-
-    return RT_EOK;
 }
 
 /**
@@ -399,19 +407,21 @@ static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
     if (vcom_connected != RT_TRUE)
         return -RT_ERROR;
 
+    if (vcom_in_sending)
+        return RT_EOK;
+
     eps = (cdc_eps_t)cls->eps;
 
     size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
-    if(size == 0)
+    if (size == 0)
         return -RT_EFULL;
-
-    _in_sending = RT_TRUE;
 
     level = rt_hw_interrupt_disable();
     rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, size);
     rt_hw_interrupt_enable(level);
 
     /* send data to host */
+    vcom_in_sending = RT_TRUE;
     dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, size);
 
     return RT_EOK;
