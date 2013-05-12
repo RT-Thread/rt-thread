@@ -1294,39 +1294,35 @@ static void rt_usbd_thread_entry(void* parameter)
         uep_t ep;
 
         /* receive message */
-        if(rt_mq_recv(usb_mq, &msg, sizeof(struct udev_msg), RT_WAITING_FOREVER)
-                != RT_EOK ) continue;
+        if(rt_mq_recv(usb_mq,
+                    &msg, sizeof(struct udev_msg),
+                    RT_WAITING_FOREVER) != RT_EOK )
+            continue;
+
+        device = rt_usbd_find_device(msg.dcd);
+        if(device == RT_NULL)
+        {
+            rt_kprintf("invalid usb device\n");
+            continue;
+        }
 
         switch (msg.type)
         {
-        case USB_MSG_SETUP_NOTIFY:
-            device = rt_usbd_find_device(msg.dcd);
-            if(device != RT_NULL)
-                _setup_request(device, (ureq_t)msg.content.setup_msg.packet);
-            else
-                rt_kprintf("invalid usb device\n");
+        case USB_MSG_SOF:
+            _sof_notify(device);
             break;
         case USB_MSG_DATA_NOTIFY:
-            device = rt_usbd_find_device(msg.dcd);
-            if(device == RT_NULL)
-            {
-                rt_kprintf("invalid usb device\n");
-                break;
-            }
             ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
             if(ep != RT_NULL)
                 ep->handler(device, cls, msg.content.ep_msg.size);
             else
                 rt_kprintf("invalid endpoint\n");
             break;
-        case USB_MSG_SOF:
-            device = rt_usbd_find_device(msg.dcd);
-            if(device != RT_NULL)
-                _sof_notify(device);
-            else
-                rt_kprintf("invalid usb device\n");
+        case USB_MSG_SETUP_NOTIFY:
+            _setup_request(device, (ureq_t)msg.content.setup_msg.packet);
             break;
         default:
+            rt_kprintf("unknown msg type\n");
             break;
         }
     }
