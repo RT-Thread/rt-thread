@@ -1344,6 +1344,11 @@ rt_err_t rt_usbd_post_event(struct udev_msg* msg, rt_size_t size)
     return rt_mq_send(usb_mq, (void*)msg, size);
 }
 
+
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t usb_thread_stack[RT_USBD_THREAD_STACK_SZ];
+static struct rt_thread usb_thread;
+
 /**
  * This function will initialize usb device thread.
  *
@@ -1352,21 +1357,15 @@ rt_err_t rt_usbd_post_event(struct udev_msg* msg, rt_size_t size)
  */
 rt_err_t rt_usbd_core_init(void)
 {
-    rt_thread_t thread;
-
     rt_list_init(&device_list);
 
     /* create an usb message queue */
     usb_mq = rt_mq_create("usbd", 32, 16, RT_IPC_FLAG_FIFO);
 
-    /* create usb device thread */
-    thread = rt_thread_create("usbd", rt_usbd_thread_entry, RT_NULL,
-                              2048, 8, 20);
-    if(thread != RT_NULL)
-    {
-        /* startup usb device thread */
-        rt_thread_startup(thread);
-    }
-
-    return RT_EOK;
+    /* init usb device thread */
+    rt_thread_init(&usb_thread, "usbd", rt_usbd_thread_entry, RT_NULL,
+            usb_thread_stack, RT_USBD_THREAD_STACK_SZ, RT_USBD_THREAD_PRIO, 20);
+    /* rt_thread_init should always be OK, so start the thread without further
+     * checking. */
+    return rt_thread_startup(&usb_thread);
 }

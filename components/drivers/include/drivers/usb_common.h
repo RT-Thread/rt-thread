@@ -374,6 +374,20 @@ typedef struct ustorage_csw* ustorage_csw_t;
 
 #pragma pack()
 
+/*
+ * USB device event loop thread configurations
+ */
+/* the stack size of USB thread */
+#ifndef RT_USBD_THREAD_STACK_SZ
+#define RT_USBD_THREAD_STACK_SZ 2048
+#endif
+
+/* the priority of USB thread */
+#ifndef RT_USBD_THREAD_PRIO
+#define RT_USBD_THREAD_PRIO 8
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif
