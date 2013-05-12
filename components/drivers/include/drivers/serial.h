@@ -10,7 +10,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-05-15     lgnq         first version.
- * 2012-05-28     bernard      chage interfaces
+ * 2012-05-28     bernard      change interfaces
+ * 2013-02-20     bernard      use RT_SERIAL_RB_BUFSZ to define
+ *                             the size of ring buffer.
  */
 
 #ifndef __SERIAL_H__
@@ -43,9 +45,9 @@
 #define NRZ_NORMAL                      0       /* Non Return to Zero : normal mode */
 #define NRZ_INVERTED                    1       /* Non Return to Zero : inverted mode */
 
-#define UART_RX_BUFFER_SIZE             64
-#define UART_TX_BUFFER_SIZE             64
-#define SERIAL_RBUFFER_SIZE             64
+#ifndef RT_SERIAL_RB_BUFSZ
+#define RT_SERIAL_RB_BUFSZ				64
+#endif
 
 #define RT_DEVICE_CTRL_CONFIG           0x03    /* configure device */
 #define RT_DEVICE_CTRL_SET_INT          0x10    /* enable receive irq */
@@ -59,7 +61,7 @@
 #define RT_SERIAL_ERR_FRAMING           0x02
 #define RT_SERIAL_ERR_PARITY            0x03
 
-#define RT_SERIAL_TX_DATAQUEUE_SIZE     40
+#define RT_SERIAL_TX_DATAQUEUE_SIZE     2048
 #define RT_SERIAL_TX_DATAQUEUE_LWM      30
 
 /* Default config for serial_configure structure */
@@ -76,7 +78,7 @@
 
 struct serial_ringbuffer
 {
-    rt_uint8_t  buffer[SERIAL_RBUFFER_SIZE];
+    rt_uint8_t  buffer[RT_SERIAL_RB_BUFSZ];
     rt_uint16_t put_index, get_index;
 };
 
