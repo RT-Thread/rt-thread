@@ -155,6 +155,15 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MM_PAGE_MASK                 (RT_MM_PAGE_SIZE - 1)
 #define RT_MM_PAGE_BITS                 12
 
+/* kernel malloc definitions */
+#ifndef RT_KERNEL_MALLOC
+#define RT_KERNEL_MALLOC(sz)			rt_malloc(sz)
+#endif
+
+#ifndef RT_KERNEL_FREE
+#define RT_KERNEL_FREE(ptr)				rt_free(ptr)
+#endif
+
 /**
  * @addtogroup Error
  */

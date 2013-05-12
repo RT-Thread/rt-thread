@@ -54,7 +54,11 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
 
 def MDK4Project(target, script):
     project_path = os.path.dirname(os.path.abspath(target))
-    
+
+    project_uvopt = os.path.abspath(target).replace('uvproj', 'uvopt')
+    if os.path.isfile(project_uvopt):
+        os.unlink(project_uvopt)
+
     tree = etree.parse('template.uvproj')
     root = tree.getroot()
     

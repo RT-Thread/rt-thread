@@ -281,7 +281,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     information = &rt_object_container[type];
 #endif
 
-    object = (struct rt_object *)rt_malloc(information->object_size);
+    object = (struct rt_object *)RT_KERNEL_MALLOC(information->object_size);
     if (object == RT_NULL)
     {
         /* no memory can be allocated */
@@ -353,7 +353,7 @@ void rt_object_delete(rt_object_t object)
 #endif
 
     /* free the memory of object */
-    rt_free(object);
+    RT_KERNEL_FREE(object);
 }
 #endif
 

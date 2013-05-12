@@ -13,6 +13,7 @@
  * 2012-10-16     Bernard      add the mutex lock for heap object.
  * 2012-12-29     Bernard      memheap can be used as system heap.
  *                             change mutex lock to semaphore lock.
+ * 2013-04-10     Bernard      add rt_memheap_realloc function.
  */
 
 #include <rthw.h>
@@ -276,6 +277,27 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
     return RT_NULL;
 }
 RTM_EXPORT(rt_memheap_alloc);
+
+void *rt_memheap_realloc(struct rt_memheap* heap, void* ptr, rt_size_t newsize)
+{
+	void* new_ptr;
+	if (newsize == 0)
+	{
+		rt_memheap_free(ptr);
+	}
+
+	if (ptr == RT_NULL)
+	{
+		return rt_memheap_alloc(heap, newsize);
+	}
+
+	new_ptr = rt_memheap_alloc(heap, newsize);
+	if (new_ptr == RT_NULL) return RT_NULL;
+
+	rt_memcpy(new_ptr, ptr, newsize);
+	return new_ptr;
+}
+RTM_EXPORT(rt_memheap_realloc);
 
 void rt_memheap_free(void *ptr)
 {
