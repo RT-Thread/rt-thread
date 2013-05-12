@@ -1308,8 +1308,8 @@ static void rt_usbd_thread_entry(void* parameter)
 
         switch (msg.type)
         {
-        case USB_MSG_SETUP_NOTIFY:
-            _setup_request(device, (ureq_t)msg.content.setup_msg.packet);
+        case USB_MSG_SOF:
+            _sof_notify(device);
             break;
         case USB_MSG_DATA_NOTIFY:
             ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
@@ -1318,8 +1318,8 @@ static void rt_usbd_thread_entry(void* parameter)
             else
                 rt_kprintf("invalid endpoint\n");
             break;
-        case USB_MSG_SOF:
-            _sof_notify(device);
+        case USB_MSG_SETUP_NOTIFY:
+            _setup_request(device, (ureq_t)msg.content.setup_msg.packet);
             break;
         default:
             rt_kprintf("unknown msg type\n");
