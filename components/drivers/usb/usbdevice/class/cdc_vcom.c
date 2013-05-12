@@ -20,15 +20,24 @@
 
 #ifdef RT_USB_DEVICE_CDC
 
-#define CDC_RX_BUFSIZE          64
+#define CDC_RX_BUFSIZE          2048
 #define CDC_TX_BUFSIZE          2048
-static rt_uint8_t rx_pool[CDC_RX_BUFSIZE];
-static rt_uint8_t tx_pool[CDC_TX_BUFSIZE];
+static rt_uint8_t rx_rbp[CDC_RX_BUFSIZE];
+static rt_uint8_t tx_rbp[CDC_TX_BUFSIZE];
 static struct rt_ringbuffer rx_ringbuffer;
 static struct rt_ringbuffer tx_ringbuffer;
-static struct rt_serial_device vcom_serial;
 static struct serial_ringbuffer vcom_int_rx;
+
+static struct rt_serial_device vcom_serial;
+
+#define CDC_MaxPacketSize 64
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t rx_buf[CDC_RX_BUFSIZE];
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t tx_buf[CDC_TX_BUFSIZE];
+
 static rt_bool_t vcom_connected = RT_FALSE;
+static rt_bool_t vcom_in_sending = RT_FALSE;
 
 static struct udevice_descriptor dev_desc =
 {
@@ -38,7 +47,7 @@ static struct udevice_descriptor dev_desc =
     USB_CLASS_CDC,              //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
-    0x40,                       //bMaxPacketSize0;
+    CDC_MaxPacketSize,          //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
     USB_BCD_DEVICE,             //bcdDevice;
@@ -153,25 +162,44 @@ const static char* _ustring[] =
 static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 {
     rt_uint32_t level;
-    rt_size_t length;
+    rt_uint32_t remain;
     cdc_eps_t eps;
-    rt_size_t mps;
 
     eps = (cdc_eps_t)cls->eps;
-    mps = eps->ep_in->ep_desc->wMaxPacketSize;
-    size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
-    if(size == 0) return RT_EOK;
-
-    length = size > mps ? mps : size;
-
     level = rt_hw_interrupt_disable();
-    rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, length);
-    rt_hw_interrupt_enable(level);
+    remain = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
+    if (remain != 0)
+    {
 
-    /* send data to host */
-    dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, length);
+        vcom_in_sending = RT_TRUE;
+        rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, remain);
+        rt_hw_interrupt_enable(level);
 
-    return RT_EOK;
+        /* send data to host */
+        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, remain);
+
+        return RT_EOK;
+    }
+
+    if (size != 0 &&
+        (size % CDC_MaxPacketSize) == 0)
+    {
+        /* don't have data right now. Send a zero-length-packet to
+         * terminate the transaction.
+         *
+         * FIXME: actually, this might not be the right place to send zlp.
+         * Only the rt_device_write could know how much data is sending. */
+        vcom_in_sending = RT_TRUE;
+        rt_hw_interrupt_enable(level);
+        dcd_ep_write(device->dcd, eps->ep_in, RT_NULL, 0);
+        return RT_EOK;
+    }
+    else
+    {
+        vcom_in_sending = RT_FALSE;
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
 }
 
 /**
@@ -192,6 +220,7 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
     eps = (cdc_eps_t)cls->eps;
     /* receive data from USB VCOM */
     level = rt_hw_interrupt_disable();
+
     rt_ringbuffer_put(&rx_ringbuffer, eps->ep_out->buffer, size);
     rt_hw_interrupt_enable(level);
 
@@ -337,8 +366,8 @@ static rt_err_t _class_run(udevice_t device, uclass_t cls)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc class run\n"));
     eps = (cdc_eps_t)cls->eps;
 
-    eps->ep_in->buffer=tx_pool;
-    eps->ep_out->buffer=rx_pool;
+    eps->ep_in->buffer = tx_buf;
+    eps->ep_out->buffer = rx_buf;
 
     dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer,
                 eps->ep_out->ep_desc->wMaxPacketSize);
@@ -373,31 +402,27 @@ static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
 {
     rt_uint32_t level;
     rt_size_t size;
-    static rt_uint32_t frame_count = 0;
     cdc_eps_t eps;
 
-    if(vcom_connected != RT_TRUE) return -RT_ERROR;
+    if (vcom_connected != RT_TRUE)
+        return -RT_ERROR;
+
+    if (vcom_in_sending)
+        return RT_EOK;
 
     eps = (cdc_eps_t)cls->eps;
-    if (frame_count ++ == 5)
-    {
-        rt_size_t mps = eps->ep_in->ep_desc->wMaxPacketSize;
 
-        /* reset the frame counter */
-        frame_count = 0;
+    size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
+    if (size == 0)
+        return -RT_EFULL;
 
-        size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
-        if(size == 0) return -RT_EFULL;
+    level = rt_hw_interrupt_disable();
+    rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, size);
+    rt_hw_interrupt_enable(level);
 
-        size = size > mps ? mps : size;
-
-        level = rt_hw_interrupt_disable();
-        rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, size);
-        rt_hw_interrupt_enable(level);
-
-        /* send data to host */
-        dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, size);
-    }
+    /* send data to host */
+    vcom_in_sending = RT_TRUE;
+    dcd_ep_write(device->dcd, eps->ep_in, eps->ep_in->buffer, size);
 
     return RT_EOK;
 }
@@ -534,8 +559,24 @@ static rt_err_t _vcom_control(struct rt_serial_device *serial,
 static int _vcom_putc(struct rt_serial_device *serial, char c)
 {
     rt_uint32_t level;
+    int cnt = 500;
 
-    if (vcom_connected != RT_TRUE) return 0;
+    if (vcom_connected != RT_TRUE)
+        return 0;
+
+    /* if the buffer is full, there is a chance that the host would pull some
+     * data out soon. But we cannot rely on that and if we wait to long, just
+     * return. */
+    for (cnt = 500;
+         RT_RINGBUFFER_EMPTY(&tx_ringbuffer) == 0 && cnt;
+         cnt--)
+    {
+        rt_kprintf("wait for %d\n", cnt);
+        if (vcom_connected != RT_TRUE)
+            return 0;
+    }
+    if (cnt == 0)
+        return 0;
 
     level = rt_hw_interrupt_disable();
     if (RT_RINGBUFFER_EMPTY(&tx_ringbuffer))
@@ -579,8 +620,8 @@ void rt_usb_vcom_init(void)
     struct serial_configure config;
 
     /* initialize ring buffer */
-    rt_ringbuffer_init(&rx_ringbuffer, rx_pool, CDC_RX_BUFSIZE);
-    rt_ringbuffer_init(&tx_ringbuffer, tx_pool, CDC_TX_BUFSIZE);
+    rt_ringbuffer_init(&rx_ringbuffer, rx_rbp, CDC_RX_BUFSIZE);
+    rt_ringbuffer_init(&tx_ringbuffer, tx_rbp, CDC_TX_BUFSIZE);
 
     config.baud_rate = BAUD_RATE_115200;
     config.bit_order = BIT_ORDER_LSB;
@@ -595,7 +636,7 @@ void rt_usb_vcom_init(void)
 
     /* register vcom device */
     rt_hw_serial_register(&vcom_serial, "vcom",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           RT_NULL);
 }
 
