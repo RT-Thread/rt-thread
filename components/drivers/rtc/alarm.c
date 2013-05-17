@@ -415,7 +415,7 @@ rt_err_t rt_alarm_control(rt_alarm_t alarm, rt_uint8_t cmd, void *arg)
     return (ret);
 }
 
-/** \brief start a alarm
+/** \brief start an alarm
  *
  * \param alarm pointer to alarm
  * \return RT_EOK
@@ -483,7 +483,7 @@ _exit:
     return (ret);
 }
 
-/** \brief stop a alarm
+/** \brief stop an alarm
  *
  * \param alarm pointer to alarm
  * \return RT_EOK
@@ -515,7 +515,7 @@ _exit:
     return (ret);
 }
 
-/** \brief delete a alarm
+/** \brief delete an alarm
  *
  * \param alarm pointer to alarm
  * \return RT_EOK
@@ -544,7 +544,7 @@ rt_err_t rt_alarm_delete(rt_alarm_t alarm)
     return (ret);
 }
 
-/** \brief create a alarm
+/** \brief create an alarm
  *
  * \param flag set alarm mode e.g: RT_ALARM_DAILY
  * \param setup pointer to setup infomation
