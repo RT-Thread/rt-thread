@@ -28,7 +28,7 @@
 /* Product ID */
 #ifdef USB_PRODUCT_ID
 #define _PRODUCT_ID USB_PRODUCT_ID
-#else 
+#else
 #define _PRODUCT_ID 0x0001
 #endif
 
@@ -73,12 +73,12 @@ struct uendpoint
     rt_bool_t is_stall;
 };
 typedef struct uendpoint* uep_t;
- 
+
 struct ualtsetting
 {
     rt_list_t list;
     uintf_desc_t intf_desc;
-    void* desc; 
+    void* desc;
     rt_size_t desc_size;
     rt_list_t ep_list;
 };
@@ -112,7 +112,7 @@ struct uclass
     struct udevice* device;
     udev_desc_t dev_desc;
     void* user_data;
-    
+
     rt_list_t intf_list;
 };
 typedef struct uclass* uclass_t;
@@ -131,6 +131,7 @@ struct udevice
     struct udevice_descriptor dev_desc;
     const char** str;
 
+    udevice_state_t state;
     rt_list_t cfg_list;
     uconfig_t curr_cfg;
     rt_uint8_t nr_intf;
@@ -170,7 +171,7 @@ udevice_t rt_usbd_device_create(void);
 uconfig_t rt_usbd_config_create(void);
 uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
                               uclass_ops_t ops);
-uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);                                
+uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);
 uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler);
 ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size);
 
@@ -198,6 +199,7 @@ uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr
 uclass_t rt_usbd_class_mstorage_create(udevice_t device);
 uclass_t rt_usbd_class_cdc_create(udevice_t device);
 uclass_t rt_usbd_class_rndis_create(udevice_t device);
+uclass_t rt_usbd_class_dap_create(udevice_t device);
 
 #ifdef RT_USB_DEVICE_COMPOSITE
 rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc);

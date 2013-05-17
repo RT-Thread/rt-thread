@@ -199,6 +199,12 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_interface\n"));
 
+    if (device->state != USB_STATE_CONFIGURED)
+    {
+        dcd_ep_stall(device->dcd, 0);
+        return -RT_ERROR;
+    }
+
     /* find the specified interface and its alternate setting */
     intf = rt_usbd_find_interface(device, setup->index & 0xFF, RT_NULL);
     value = intf->curr_setting->intf_desc->bAlternateSetting;
@@ -230,6 +236,12 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_interface\n"));
 
+    if (device->state != USB_STATE_CONFIGURED)
+    {
+        dcd_ep_stall(device->dcd, 0);
+        return -RT_ERROR;
+    }
+        
     /* find the specified interface */
     intf = rt_usbd_find_interface(device, setup->index & 0xFF, RT_NULL);
 
@@ -266,10 +278,16 @@ static rt_err_t _get_config(struct udevice* device, ureq_t setup)
     RT_ASSERT(device->curr_cfg != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_config\n"));
-
-    /* get current configuration */
-    value = device->curr_cfg->cfg_desc.bConfigurationValue;
-
+    
+    if (device->state == USB_STATE_CONFIGURED)
+    {
+        /* get current configuration */
+        value = device->curr_cfg->cfg_desc.bConfigurationValue;
+    }
+    else
+    {
+        value = 0;
+    }
     /* write the current configuration to endpoint 0 */
     dcd_ep_write(device->dcd, 0, &value, 1);
 
@@ -298,6 +316,20 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_config\n"));
 
+    if (setup->value > device->dev_desc.bNumConfigurations)
+    {
+        dcd_ep_stall(device->dcd, 0);        
+        return -RT_ERROR;
+    }
+
+    if (setup->value == 0)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("address state\n"));
+        device->state = USB_STATE_ADDRESS;
+
+        goto _exit;
+    }
+
     /* set current configuration */
     rt_usbd_set_config(device, setup->value);
     cfg = device->curr_cfg;
@@ -324,6 +356,9 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
             cls->ops->run(device, cls);
     }
 
+    device->state = USB_STATE_CONFIGURED;
+
+_exit:
     /* issue status stage */
     dcd_send_status(device->dcd);
 
@@ -348,7 +383,9 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
 
     /* set address in device control driver */
     dcd_set_address(device->dcd, setup->value);
-
+    
+    device->state = USB_STATE_ADDRESS;
+    
     /* issue status stage */
     dcd_send_status(device->dcd);
 
@@ -382,8 +419,10 @@ static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
         ret = intf->handler(device, cls, setup);
     }
     else
+    {
         ret = -RT_ERROR;
-
+    }
+    
     return ret;
 }
 
