@@ -61,7 +61,7 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
         ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_ALARM, &wkalarm);
         if (ret == RT_EOK)
         {
-            /* 
+            /*
               some RTC device like RX8025,it's alarms precision is 1 minute.
               in this case,low level RTC driver should set wkalarm->tm_sec to 0.
             */
@@ -79,7 +79,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
     rt_uint32_t sec_alarm, sec_now;
     rt_bool_t wakeup = RT_FALSE;
     time_t timestamp;
-    
+
     sec_alarm = alarm_mkdaysec(&alarm->wktime);
     sec_now = alarm_mkdaysec(now);
 
@@ -97,7 +97,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
                 alarm->flag &= ~RT_ALARM_STATE_START;
                 alarm_set(alarm);
                 wakeup = RT_TRUE;
-            }  
+            }
         }
         break;
         case RT_ALARM_DAILY:
@@ -129,10 +129,10 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         case RT_ALARM_YAERLY:
         {
             if ((alarm->wktime.tm_mday == now->tm_mday) && \
-                (alarm->wktime.tm_mon == now->tm_mon))
+                    (alarm->wktime.tm_mon == now->tm_mon))
             {
-                  if ((sec_now - sec_alarm) <= RT_ALARM_DELAY)
-                    wakeup = RT_TRUE;           
+                if ((sec_now - sec_alarm) <= RT_ALARM_DELAY)
+                    wakeup = RT_TRUE;
             }
         }
         break;
@@ -142,7 +142,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         {
             timestamp = time(RT_NULL);
             alarm->callback(alarm, timestamp);
-        }   
+        }
     }
 }
 
@@ -253,7 +253,7 @@ static rt_bool_t is_valid_date(struct tm *date)
     }
 
     if ((date->tm_mday < 1) || \
-        (date->tm_mday > days_of_year_month(date->tm_year, date->tm_mon)))
+            (date->tm_mday > days_of_year_month(date->tm_year, date->tm_mon)))
     {
         return (RT_FALSE);
     }
@@ -351,7 +351,7 @@ static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
         goto _exit;
     }
     }
-    
+
     if ((setup->tm_hour == 23) && (setup->tm_min == 59) && (setup->tm_sec == 59))
     {
         /*
@@ -363,7 +363,7 @@ static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
     /* set initialized state */
     alarm->flag |= RT_ALARM_STATE_INITED;
     ret = RT_EOK;
-   
+
 _exit:
 
     return (ret);
@@ -372,7 +372,7 @@ _exit:
 /** \brief send a rtc alarm event
  *
  * \param dev pointer to RTC device(currently unused,you can ignore it)
- * \param event RTC event(currently unused) 
+ * \param event RTC event(currently unused)
  * \return none
  */
 void rt_alarm_update(rt_device_t dev, rt_uint32_t event)
@@ -391,25 +391,25 @@ rt_err_t rt_alarm_control(rt_alarm_t alarm, rt_uint8_t cmd, void *arg)
     rt_err_t ret = RT_ERROR;
 
     RT_ASSERT(alarm != RT_NULL);
-    
+
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     switch (cmd)
     {
     case RT_ALARM_CTRL_MODIFY:
     {
         struct rt_alarm_setup *setup;
-        
-        RT_ASSERT(arg != RT_NULL); 
+
+        RT_ASSERT(arg != RT_NULL);
         setup = arg;
         rt_alarm_stop(alarm);
         alarm->flag = setup->flag & 0xFF00;
         alarm->wktime = setup->wktime;
-        ret = alarm_setup(alarm, &alarm->wktime);  
+        ret = alarm_setup(alarm, &alarm->wktime);
     }
-    break;  
+    break;
     }
 
-    rt_mutex_release(&_container.mutex); 
+    rt_mutex_release(&_container.mutex);
 
     return (ret);
 }
@@ -425,7 +425,7 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
     rt_err_t ret = RT_ERROR;
     time_t timestamp;
     struct tm now;
-    
+
     if (alarm == RT_NULL)
         return (ret);
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
@@ -433,12 +433,12 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
     {
         if (alarm_setup(alarm, &alarm->wktime) != RT_EOK)
             goto _exit;
-    }   
+    }
     if ((alarm->flag & 0x01) == RT_ALARM_STATE_STOP)
     {
         timestamp = time(RT_NULL);
         localtime_r(&timestamp, &now);
-            
+
         alarm->flag |= RT_ALARM_STATE_START;
         /* set alarm */
         if (_container.current == RT_NULL)
@@ -490,7 +490,7 @@ _exit:
 rt_err_t rt_alarm_stop(rt_alarm_t alarm)
 {
     rt_err_t ret = RT_ERROR;
-    
+
     if (alarm == RT_NULL)
         return (ret);
     rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
@@ -498,12 +498,12 @@ rt_err_t rt_alarm_stop(rt_alarm_t alarm)
         goto _exit;
     /* stop alarm */
     alarm->flag &= ~RT_ALARM_STATE_START;
-    
+
     if (_container.current == alarm)
     {
         ret = alarm_set(alarm);
         _container.current = RT_NULL;
-    }    
+    }
 
     if (ret == RT_EOK)
         alarm_update(0);
@@ -522,10 +522,10 @@ _exit:
 rt_err_t rt_alarm_delete(rt_alarm_t alarm)
 {
     rt_err_t ret = RT_ERROR;
-    
+
     if (alarm == RT_NULL)
-        return (ret);    
-    rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);    
+        return (ret);
+    rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     /* stop the alarm */
     alarm->flag &= ~RT_ALARM_STATE_START;
     if (_container.current == alarm)
@@ -533,13 +533,13 @@ rt_err_t rt_alarm_delete(rt_alarm_t alarm)
         ret = alarm_set(alarm);
         _container.current = RT_NULL;
         /* set new alarm if necessary */
-        alarm_update(0);        
+        alarm_update(0);
     }
     rt_list_remove(&alarm->list);
     rt_free(alarm);
 
     rt_mutex_release(&_container.mutex);
-    
+
     return (ret);
 }
 
@@ -551,18 +551,18 @@ rt_err_t rt_alarm_delete(rt_alarm_t alarm)
 rt_alarm_t rt_alarm_create(rt_alarm_callback_t callback, struct rt_alarm_setup *setup)
 {
     struct rt_alarm *alarm;
-    
+
     if (setup == RT_NULL)
         return (RT_NULL);
     alarm = rt_malloc(sizeof(struct rt_alarm));
     if (alarm == RT_NULL)
         return (RT_NULL);
     rt_list_init(&alarm->list);
-    
+
     alarm->wktime = setup->wktime;
     alarm->flag = setup->flag & 0xFF00;
     alarm->callback = callback;
-    rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);    
+    rt_mutex_take(&_container.mutex, RT_WAITING_FOREVER);
     rt_list_insert_after(&_container.head, &alarm->list);
     rt_mutex_release(&_container.mutex);
 
@@ -587,7 +587,7 @@ static void rt_alarmsvc_thread_init(void *param)
                           RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                           RT_WAITING_FOREVER, &recv) == RT_EOK)
         {
-            alarm_update(recv);           
+            alarm_update(recv);
         }
     }
 }
