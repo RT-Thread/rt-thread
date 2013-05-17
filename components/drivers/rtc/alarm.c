@@ -1,7 +1,7 @@
 /*
  * File      : alarm.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2012-10-27     heyuanjie87       first version.
+ * 2013-05-17     aozima            initial alarm event & mutex in system init.
  */
 
 #include <rtthread.h>
@@ -21,7 +22,7 @@
 #define RT_ALARM_STATE_START    0x01
 #define RT_ALARM_STATE_STOP     0x00
 
-#if(defined(RT_USING_RTC) && defined(RT_USING_ALARM))
+#if (defined(RT_USING_RTC) && defined(RT_USING_ALARM))
 static struct rt_alarm_container _container;
 
 rt_inline rt_uint32_t alarm_mkdaysec(struct tm *time)
@@ -576,9 +577,6 @@ static void rt_alarmsvc_thread_init(void *param)
 {
     rt_uint32_t recv;
 
-    rt_list_init(&_container.head);
-    rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_FIFO);
     _container.current = RT_NULL;
 
     while (1)
@@ -601,6 +599,10 @@ static void rt_alarmsvc_thread_init(void *param)
 void rt_alarm_system_init(void)
 {
     rt_thread_t tid;
+
+    rt_list_init(&_container.head);
+    rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_FIFO);
 
     tid = rt_thread_create("alarmsvc",
                            rt_alarmsvc_thread_init, RT_NULL,
