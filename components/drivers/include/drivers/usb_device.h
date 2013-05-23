@@ -42,8 +42,8 @@ struct uendpoint;
 struct udcd_ops
 {
     rt_err_t (*set_address)(rt_uint8_t value);
-    rt_err_t (*clear_feature)(rt_uint8_t value);
-    rt_err_t (*set_feature)(rt_uint8_t value);
+    rt_err_t (*clear_feature)(rt_uint16_t value, rt_uint16_t index);
+    rt_err_t (*set_feature)(rt_uint16_t value, rt_uint16_t index);
     rt_err_t (*ep_alloc)(struct uendpoint* ep);
     rt_err_t (*ep_free)(struct uendpoint* ep);
     rt_err_t (*ep_stall)(struct uendpoint* ep);
@@ -212,18 +212,18 @@ rt_inline rt_err_t dcd_set_address(udcd_t dcd, rt_uint8_t value)
     return dcd->ops->set_address(value);
 }
 
-rt_inline rt_err_t dcd_clear_feature(udcd_t dcd, rt_uint8_t value)
+rt_inline rt_err_t dcd_clear_feature(udcd_t dcd, rt_uint16_t value, rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
-    return dcd->ops->clear_feature(value);
+    return dcd->ops->clear_feature(value, index);
 }
 
-rt_inline rt_err_t dcd_set_feature(udcd_t dcd, rt_uint8_t value)
+rt_inline rt_err_t dcd_set_feature(udcd_t dcd, rt_uint8_t value, rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
-    return dcd->ops->set_feature(value);
+    return dcd->ops->set_feature(value, index);
 }
 
 rt_inline rt_err_t dcd_ep_stall(udcd_t dcd, uep_t ep)
