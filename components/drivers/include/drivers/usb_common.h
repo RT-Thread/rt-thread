@@ -207,6 +207,18 @@ extern "C" {
     (((rt_uint16_t)(*(((rt_uint8_t *)(x)) + 1))) << 8))
 
 typedef void (*func_callback)(void *context);
+typedef enum
+{
+    USB_STATE_NOTATTACHED = 0,
+    USB_STATE_ATTACHED,
+    USB_STATE_POWERED,
+    USB_STATE_RECONNECTING,
+    USB_STATE_UNAUTHENTICATED,
+    USB_STATE_DEFAULT,
+    USB_STATE_ADDRESS,
+    USB_STATE_CONFIGURED,
+    USB_STATE_SUSPENDED
+}udevice_state_t;
 
 #pragma pack(1)
 
@@ -309,6 +321,21 @@ struct uhub_descriptor
     rt_uint8_t pwr_ctl[8];
 };
 typedef struct uhub_descriptor* uhub_desc_t;
+
+struct uhid_descriptor
+{
+    rt_uint8_t bLength;
+    rt_uint8_t type;
+    rt_uint16_t bcdHID;
+    rt_uint8_t bCountryCode;
+    rt_uint8_t bNumDescriptors;
+    struct hid_descriptor_list
+    {
+        rt_uint8_t type;
+        rt_uint16_t wLength;
+    }Descriptor[1];
+};
+typedef struct uhid_descriptor* uhid_desc_t;
 
 struct ureqest
 {

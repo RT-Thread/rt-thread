@@ -21,10 +21,42 @@ def _get_filetype(fn):
     if fn.rfind('.h') != -1:
         return 5
 
+    if fn.rfind('.lib') != -1:
+        return 4
+
     # other filetype
     return 5
 
+def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
+    group = SubElement(parent, 'Group')
+    group_name = SubElement(group, 'GroupName')
+    group_name.text = name
+
+    name = os.path.basename(filename)
+    path = os.path.dirname (filename)
+
+    basename = os.path.basename(path)
+    path = _make_path_relative(project_path, path)
+    path = os.path.join(path, name)
+    files = SubElement(group, 'Files')
+    file = SubElement(files, 'File')
+    file_name = SubElement(file, 'FileName')
+    name = os.path.basename(path)
+    if ProjectFiles.count(name):
+        name = basename + '_' + name
+    ProjectFiles.append(name)
+    file_name.text = name.decode(fs_encoding)
+    file_type = SubElement(file, 'FileType')
+    file_type.text = '%d' % _get_filetype(name)
+    file_path = SubElement(file, 'FilePath')
+    
+    file_path.text = path.decode(fs_encoding)
+
 def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
+    # don't add an empty group 
+    if len(files) == 0:
+        return
+
     group = SubElement(parent, 'Group')
     group_name = SubElement(group, 'GroupName')
     group_name.text = name
@@ -99,6 +131,17 @@ def MDK4Project(target, script):
             else:
                 LINKFLAGS += group['LINKFLAGS']
     
+        if group.has_key('LIBS') and group['LIBS']:
+            for item in group['LIBS']:
+                lib_path = ''
+                for path_item in group['LIBPATH']:
+                    full_path = os.path.join(path_item, item + '.lib')
+                    if os.path.isfile(full_path): # has this library
+                        lib_path = full_path
+
+                if lib_path != '':
+                    MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+
     # remove repeat path
     paths = set()
     for path in CPPPATH:

@@ -164,7 +164,7 @@ static rt_size_t rt_serial_write(rt_device_t dev, rt_off_t pos, const void *buff
 #endif
 
     level = rt_hw_interrupt_disable();
-    printf("%s", (char *)buffer);
+    fwrite(buffer, size, 1, stdout);
 	fflush(stdout);
     rt_hw_interrupt_enable(level);
     return size;
