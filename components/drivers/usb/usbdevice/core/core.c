@@ -256,7 +256,8 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
         dcd_ep_stop(device->dcd, ep);
         dcd_ep_run(device->dcd, ep);
     }
-
+    dcd_send_status(device->dcd);
+    
     return RT_EOK;
 }
 
@@ -454,10 +455,11 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             dcd_ep_write(device->dcd, 0, &value, 2);
             break;
         case USB_REQ_CLEAR_FEATURE:
-            dcd_clear_feature(dcd, setup->value);
+            dcd_clear_feature(dcd, setup->value, setup->index);
+            dcd_send_status(dcd);
             break;
         case USB_REQ_SET_FEATURE:
-            dcd_set_feature(dcd, setup->value);
+            dcd_set_feature(dcd, setup->value, setup->index);
             break;
         case USB_REQ_SET_ADDRESS:
             _set_address(device, setup);
@@ -504,15 +506,35 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
         switch(setup->request)
         {
         case USB_REQ_GET_STATUS:
+        {
             /* TODO */
+            uep_t ep;
+        
+            ep = rt_usbd_find_endpoint(device, RT_NULL, setup->index);
+            value = ep->is_stall;        
             dcd_ep_write(dcd, 0, &value, 2);
-            break;
+        }
+        break;
         case USB_REQ_CLEAR_FEATURE:
-            dcd_clear_feature(dcd, setup->value);
-            break;
+        {
+            uep_t ep;
+        
+            ep = rt_usbd_find_endpoint(device, RT_NULL, setup->index);
+            ep->is_stall = 0;
+            dcd_clear_feature(dcd, setup->value, setup->index);
+            dcd_send_status(dcd);
+        }
+        break;
         case USB_REQ_SET_FEATURE:
-            dcd_set_feature(dcd, setup->value);
-            break;
+        {
+            uep_t ep;
+        
+            ep = rt_usbd_find_endpoint(device, RT_NULL, setup->index);
+            ep->is_stall = 1;            
+            dcd_set_feature(dcd, setup->value, setup->index);
+            dcd_send_status(dcd);
+        }
+        break;
         case USB_REQ_SYNCH_FRAME:
             break;
         default:
