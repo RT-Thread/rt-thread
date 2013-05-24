@@ -145,6 +145,14 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define ALIGN(n)                    __declspec(align(n))
     #define rt_inline                   static __inline
     #define RTT_API
+#elif defined (__TI_EABI_SUPPORT__)
+    #define SECTION(x)
+    #define UNUSED
+    #define ALIGN(n)                    
+    #define rt_inline                   static inline
+    #define RTT_API
+#else
+    #error not supported tool chain
 #endif
 
 /* event length */
