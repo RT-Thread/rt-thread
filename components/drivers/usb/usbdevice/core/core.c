@@ -241,7 +241,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
         dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }
-        
+
     /* find the specified interface */
     intf = rt_usbd_find_interface(device, setup->index & 0xFF, RT_NULL);
 
@@ -278,7 +278,7 @@ static rt_err_t _get_config(struct udevice* device, ureq_t setup)
     RT_ASSERT(device->curr_cfg != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_config\n"));
-    
+
     if (device->state == USB_STATE_CONFIGURED)
     {
         /* get current configuration */
@@ -318,7 +318,7 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
 
     if (setup->value > device->dev_desc.bNumConfigurations)
     {
-        dcd_ep_stall(device->dcd, 0);        
+        dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }
 
@@ -383,9 +383,9 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
 
     /* set address in device control driver */
     dcd_set_address(device->dcd, setup->value);
-    
+
     device->state = USB_STATE_ADDRESS;
-    
+
     /* issue status stage */
     dcd_send_status(device->dcd);
 
@@ -412,7 +412,7 @@ static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
     RT_ASSERT(setup != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_request_interface\n"));
-    
+
     intf = rt_usbd_find_interface(device, setup->index & 0xFF, &cls);
     if (intf != RT_NULL)
     {
@@ -422,7 +422,7 @@ static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
     {
         ret = -RT_ERROR;
     }
-    
+
     return ret;
 }
 
@@ -639,6 +639,35 @@ rt_err_t _sof_notify(udevice_t device)
         cls = (uclass_t)rt_list_entry(i, struct uclass, list);
         if(cls->ops->sof_handler != RT_NULL)
             cls->ops->sof_handler(device, cls);
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * This function will reset all class.
+ *
+ * @param device the usb device object.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t _reset_notify(udevice_t device)
+{
+    struct rt_list_node *i;
+    uclass_t cls;
+
+    RT_ASSERT(device != RT_NULL);
+
+    /* to notity every class that sof event comes */
+    for (i=device->curr_cfg->cls_list.next;
+            i!=&device->curr_cfg->cls_list; i=i->next)
+    {
+        cls = (uclass_t)rt_list_entry(i, struct uclass, list);
+        if(cls->ops->stop != RT_NULL)
+            cls->ops->stop(device, cls);
+
+        if(cls->ops->run != RT_NULL)
+            cls->ops->run(device, cls);
     }
 
     return RT_EOK;
@@ -1359,6 +1388,10 @@ static void rt_usbd_thread_entry(void* parameter)
             break;
         case USB_MSG_SETUP_NOTIFY:
             _setup_request(device, (ureq_t)msg.content.setup_msg.packet);
+            break;
+        case USB_MSG_RESET:
+            if (device->state == USB_STATE_ADDRESS)
+                _reset_notify(device);
             break;
         default:
             rt_kprintf("unknown msg type\n");

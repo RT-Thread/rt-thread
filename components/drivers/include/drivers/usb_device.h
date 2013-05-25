@@ -145,6 +145,7 @@ enum udev_msg_type
     USB_MSG_SETUP_NOTIFY,
     USB_MSG_DATA_NOTIFY,
     USB_MSG_SOF,
+    USB_MSG_RESET,
 };
 typedef enum udev_msg_type udev_msg_type;
 
