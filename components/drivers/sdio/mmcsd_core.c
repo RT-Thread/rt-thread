@@ -493,7 +493,7 @@ rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
 	ocr &= host->valid_ocr;
 
-	bit = ffs(ocr);
+	bit = __rt_ffs(ocr);
 	if (bit) 
 	{
 		bit -= 1;
