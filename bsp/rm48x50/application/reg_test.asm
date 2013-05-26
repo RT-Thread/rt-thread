@@ -122,13 +122,15 @@ vRegTestTask1:
 	
 vRegTestLoop1:
 
+        STMFD  sp!, {r0-r3, r12}
 		; Force yeild
 		BL rt_thread_yield
+        LDMFD  sp!, {r0-r3, r12}
 
 	.if (__TI_VFP_SUPPORT__)
 		; Check all the VFP registers still contain the values set above.
 		; First save registers that are clobbered by the test.
-		push { r0-r1 }
+		STMFD sp!, { r0-r1 }
 
 		vmov 	r0, r1, d0
 		cmp 	r0, #0xFF
@@ -212,7 +214,7 @@ vRegTestLoop1:
 		bne 	reg1_error_loopf
 
 		; Restore the registers that were clobbered by the test.
-		pop 	{r0-r1}
+		LDMFD sp!, 	{r0-r1}
 
 		; VFP register test passed.  Jump to the core register test.
 		b 		reg1_loopf_pass
@@ -254,8 +256,6 @@ reg1_loopf_pass:
 		cmp		r11, #0xBB
 		bne		vRegTestError1		
 		cmp		r12, #0xCC
-		bne		vRegTestError1		
-		cmp		r14, #0xEE
 		bne		vRegTestError1		
 	
 		; This task is still running without jumping to vRegTestError1, so increment
@@ -331,7 +331,7 @@ vRegTestLoop2:
 	.if (__TI_VFP_SUPPORT__)
 		; Check all the VFP registers still contain the values set above.
 		; First save registers that are clobbered by the test.
-		push { r0-r1 }
+		STMFD sp!, { r0-r1 }
 
 		vmov r0, r1, d0
 		cmp r0, #0xFF000000
@@ -415,7 +415,7 @@ vRegTestLoop2:
 		bne reg2_error_loopf
 
 		; Restore the registers that were clobbered by the test.
-		pop {r0-r1}
+		LDMFD sp!, {r0-r1}
 
 		; VFP register test passed.  Jump to the core register test.
 		b reg2_loopf_pass
