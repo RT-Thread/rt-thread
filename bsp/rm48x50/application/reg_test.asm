@@ -69,8 +69,8 @@
 ;
 		.def	vRegTestTask1
 		.ref	ulRegTest1Counter
-        .ref    rt_thread_yield
-		.if (__TI_VFP_SUPPORT__)
+        .ref    rt_thread_delay
+		.if (0)
 			.ref vPortTaskUsesFPU
 		.endif ;__TI_VFP_SUPPORT__
 
@@ -78,7 +78,7 @@
 		.arm
 
 vRegTestTask1:
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 		; Let the port layer know that this task needs its FPU context saving.
 		BL		vPortTaskUsesFPU
 	.endif
@@ -99,7 +99,7 @@ vRegTestTask1:
 		mov     r12, #0xCC
 		mov		r14, #0xEE
 
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 		; Fill each FPU register with a known value.
 		vmov 	d0, r0, r1
 		vmov 	d1, r2, r3
@@ -124,10 +124,11 @@ vRegTestLoop1:
 
         STMFD  sp!, {r0-r3, r12}
 		; Force yeild
-		BL rt_thread_yield
+        MOV r0, #5
+		BL rt_thread_delay
         LDMFD  sp!, {r0-r3, r12}
 
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 		; Check all the VFP registers still contain the values set above.
 		; First save registers that are clobbered by the test.
 		STMFD sp!, { r0-r1 }
@@ -284,7 +285,7 @@ vRegTestError1:
 		.arm
 ;
 vRegTestTask2:
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 		; Let the port layer know that this task needs its FPU context saving.
 		BL		vPortTaskUsesFPU
 	.endif
@@ -305,7 +306,7 @@ vRegTestTask2:
 		mov     r12, #0xCC000000
 		mov     r14, #0xEE000000
 	
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 
 		; Fill each FPU register with a known value.
 		vmov 	d0, r0, r1
@@ -328,7 +329,7 @@ vRegTestTask2:
 
 vRegTestLoop2:
 
-	.if (__TI_VFP_SUPPORT__)
+	.if (0)
 		; Check all the VFP registers still contain the values set above.
 		; First save registers that are clobbered by the test.
 		STMFD sp!, { r0-r1 }
