@@ -139,12 +139,11 @@ rt_hw_context_switch_interrupt_do
 
     STMFD   sp!, {r2}         ; push old task's pc
     STMFD   sp!, {r4-r12,lr}  ; push old task's lr,r12-r4
-    MOV     r4,  r1           ; move original irq sp to r4
-    MOV     r5,  r3           ; move spsr to r5 FIXME: use `MRS r5 spsr` here?
-    LDMFD   r4!, {r0-r3}      ; restore r0-r3 of the interrupted thread
-    STMFD   sp!, {r0-r3}      ; push old task's r3-r0
-    ; FIXME: or move the `MRS r5 spsr` here
-    STMFD   sp!, {r5}         ; push old task's cpsr
+    LDMFD   r1!, {r4-r7}      ; restore r0-r3 of the interrupted thread
+    STMFD   sp!, {r4-r7}      ; push old task's r3-r0. We don't need to push/pop them to
+                              ; r0-r3 because we just want to transfer the data and don't
+                              ; use them here.
+    STMFD   sp!, {r3}         ; push old task's cpsr
 
     LDR     r4,  pfromthread
     LDR     r5,  [r4]
