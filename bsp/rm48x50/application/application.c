@@ -43,6 +43,10 @@ static rt_uint8_t test_thread_stack[512];
 static struct rt_thread test_thread;
 void vRegTestTask1(void*);
 
+static rt_uint8_t test_thread_stack2[512];
+static struct rt_thread test_thread2;
+void vRegTestTask2(void*);
+
 int rt_application_init()
 {
     rt_thread_init(&user_thread, "user1", user_thread_entry, RT_NULL,
@@ -52,6 +56,10 @@ int rt_application_init()
     rt_thread_init(&test_thread, "test1", vRegTestTask1, RT_NULL,
             test_thread_stack, sizeof(test_thread_stack), 8, 20);
     rt_thread_startup(&test_thread);
+
+    rt_thread_init(&test_thread2, "test2", vRegTestTask2, RT_NULL,
+            test_thread_stack2, sizeof(test_thread_stack2), 9, 20);
+    rt_thread_startup(&test_thread2);
 
     return 0;
 }
