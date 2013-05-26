@@ -17,6 +17,13 @@
 #include "system.h"
 #include "het.h"
 
+int ulRegTest1Counter;
+int ulRegTest2Counter;
+
+void vPortTaskUsesFPU()
+{
+}
+
 static rt_uint8_t user_thread_stack[512];
 static struct rt_thread user_thread;
 static void user_thread_entry(void *p)
@@ -32,11 +39,20 @@ static void user_thread_entry(void *p)
     }
 }
 
+static rt_uint8_t test_thread_stack[512];
+static struct rt_thread test_thread;
+void vRegTestTask1(void*);
+
 int rt_application_init()
 {
     rt_thread_init(&user_thread, "user1", user_thread_entry, RT_NULL,
             user_thread_stack, sizeof(user_thread_stack), 8, 20);
     rt_thread_startup(&user_thread);
+
+    rt_thread_init(&test_thread, "test1", vRegTestTask1, RT_NULL,
+            test_thread_stack, sizeof(test_thread_stack), 8, 20);
+    rt_thread_startup(&test_thread);
+
     return 0;
 }
 
