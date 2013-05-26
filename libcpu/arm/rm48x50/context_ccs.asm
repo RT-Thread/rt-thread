@@ -53,10 +53,8 @@ rt_hw_context_switch
 
     MRS     r4, cpsr
     TST     lr, #0x01
-    BEQ     _ARM_MODE
-    ORR     r4, r4, #0x20       ; it's thumb code
+    ORRNE   r4, r4, #0x20       ; it's thumb code
 
-_ARM_MODE
     STMFD   sp!, {r4}           ; push cpsr
 
     STR     sp, [r0]            ; store sp in preempted tasks TCB
