@@ -127,9 +127,9 @@ rt_hw_context_switch_interrupt_do
     STR     r1,  [r0]
 
     LDMFD   sp!, {r0-r12,lr}  ; reload saved registers
-    STMFD   sp!, {r0-r3}      ; save r0-r3
-    MOV     r1,  sp
-    ADD     sp,  sp, #16      ; restore sp
+    STMFD   sp, {r0-r3}       ; save r0-r3. We will restore r0-r3 in the SVC
+                              ; mode so there is no need to update SP.
+    SUB     r1,  sp, #16      ; save the right SP value in r1, so we could restore r0-r3.
     SUB     r2,  lr, #4       ; save old task's pc to r2
 
     MRS     r3,  spsr         ; get cpsr of interrupt thread
