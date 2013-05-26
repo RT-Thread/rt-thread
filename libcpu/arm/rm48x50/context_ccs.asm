@@ -1,5 +1,5 @@
 ;/*
-; * File      : context_rvds.S
+; * File      : context_ccs.asm
 ; * This file is part of RT-Thread RTOS
 ; * COPYRIGHT (C) 2006, RT-Thread Development Team
 ; *
@@ -12,6 +12,7 @@
 ; * 2009-01-20     Bernard      first version
 ; * 2011-07-22     Bernard      added thumb mode porting
 ; * 2013-05-24     Grissiom     port to CCS
+; * 2013-05-26     Grissiom     optimize for ARMv7
 ; */
 
    .text
@@ -29,8 +30,7 @@
     .def rt_hw_interrupt_disable
 rt_hw_interrupt_disable
     MRS r0, cpsr
-    ORR r1, r0, #0xc0 ; disable irq and fiq in psr
-    MSR cpsr_c, r1
+    CPSID IF
     BX  lr
 
 ;/*
@@ -48,7 +48,6 @@ rt_hw_interrupt_enable
 ; */
     .def rt_hw_context_switch
 rt_hw_context_switch
-    DSB
     STMFD   sp!, {lr}           ; push pc (lr should be pushed in place of PC)
     STMFD   sp!, {r0-r12, lr}   ; push lr & register file
 
@@ -68,7 +67,6 @@ _ARM_MODE
     BIC     r4, r4, #0x20       ; must be ARM mode
     MSR     cpsr_cxsf, r4
 
-    DSB
     LDMFD   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
 
 ;/*
@@ -80,8 +78,6 @@ rt_hw_context_switch_to
     LDR     sp, [r0]            ; get new task stack pointer
 
     LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
-    MSR     spsr_cxsf, r4
-    BIC     r4, r4, #0x20       ; must be ARM mode
     MSR     spsr_cxsf, r4
 
     LDMFD   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
@@ -139,14 +135,15 @@ rt_hw_context_switch_interrupt_do
     MRS     r3,  spsr         ; get cpsr of interrupt thread
 
     ; switch to SVC mode and no interrupt
-    MSR     cpsr_c, #0xD3
+    CPSID   IF, #0x13
 
     STMFD   sp!, {r2}         ; push old task's pc
     STMFD   sp!, {r4-r12,lr}  ; push old task's lr,r12-r4
-    MOV     r4,  r1           ; Special optimised code below
-    MOV     r5,  r3
-    LDMFD   r4!, {r0-r3}
+    MOV     r4,  r1           ; move original irq sp to r4
+    MOV     r5,  r3           ; move spsr to r5 FIXME: use `MRS r5 spsr` here?
+    LDMFD   r4!, {r0-r3}      ; restore r0-r3 of the interrupted thread
     STMFD   sp!, {r0-r3}      ; push old task's r3-r0
+    ; FIXME: or move the `MRS r5 spsr` here
     STMFD   sp!, {r5}         ; push old task's cpsr
 
     LDR     r4,  pfromthread
@@ -159,8 +156,6 @@ rt_hw_context_switch_interrupt_do
 
     LDMFD   sp!, {r4}         ; pop new task's cpsr to spsr
     MSR     spsr_cxsf, r4
-    BIC     r4, r4, #0x20     ; must be ARM mode
-    MSR     cpsr_cxsf, r4
 
     LDMFD   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr
 
