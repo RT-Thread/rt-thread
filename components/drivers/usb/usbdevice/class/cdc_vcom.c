@@ -36,8 +36,8 @@ static rt_uint8_t rx_buf[CDC_RX_BUFSIZE];
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t tx_buf[CDC_TX_BUFSIZE];
 
-static rt_bool_t vcom_connected = RT_FALSE;
-static rt_bool_t vcom_in_sending = RT_FALSE;
+volatile static rt_bool_t vcom_connected = RT_FALSE;
+volatile static rt_bool_t vcom_in_sending = RT_FALSE;
 
 static struct udevice_descriptor dev_desc =
 {
@@ -151,6 +151,17 @@ const static char* _ustring[] =
     "Interface",
 };
 
+static void _vcom_reset_state(void)
+{
+    int lvl = rt_hw_interrupt_disable();
+    tx_ringbuffer.read_mirror  = tx_ringbuffer.read_index = 0;
+    tx_ringbuffer.write_mirror = tx_ringbuffer.write_index = 0;
+    vcom_connected = RT_FALSE;
+    vcom_in_sending = RT_FALSE;
+    /*rt_kprintf("reset USB serial\n", cnt);*/
+    rt_hw_interrupt_enable(lvl);
+}
+
 /**
  * This function will handle cdc bulk in endpoint request.
  *
@@ -170,7 +181,21 @@ static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
     remain = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
     if (remain != 0)
     {
-
+        /* although vcom_in_sending is set in SOF handler in the very
+         * beginning, we have to guarantee the state is right when start
+         * sending. There is at least one extreme case where we have finished the
+         * last IN transaction but the vcom_in_sending is RT_FALSE.
+         *
+         * Ok, what the extreme case is: pour data into vcom in loop. Open
+         * terminal on the PC, you will see the data. Then close it. So the
+         * data will be sent to the PC in the back. When the buffer of the PC
+         * driver is full. It will not send IN packet to the board and you will
+         * have no chance to clear vcom_in_sending in this function. The data
+         * will fill into the ringbuffer until it is full, and we will reset
+         * the state machine and clear vcom_in_sending. When you open the
+         * terminal on the PC again. The IN packet will appear on the line and
+         * we will, eventually, reach here with vcom_in_sending is clear.
+         */
         vcom_in_sending = RT_TRUE;
         rt_ringbuffer_get(&tx_ringbuffer, eps->ep_in->buffer, remain);
         rt_hw_interrupt_enable(level);
@@ -369,6 +394,8 @@ static rt_err_t _class_run(udevice_t device, uclass_t cls)
     eps->ep_in->buffer = tx_buf;
     eps->ep_out->buffer = rx_buf;
 
+    _vcom_reset_state();
+
     dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer,
                 eps->ep_out->ep_desc->wMaxPacketSize);
 
@@ -387,6 +414,8 @@ static rt_err_t _class_stop(udevice_t device, uclass_t cls)
     RT_ASSERT(device != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc class stop\n"));
+
+    _vcom_reset_state();
 
     return RT_EOK;
 }
@@ -408,7 +437,9 @@ static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
         return -RT_ERROR;
 
     if (vcom_in_sending)
+    {
         return RT_EOK;
+    }
 
     eps = (cdc_eps_t)cls->eps;
 
@@ -559,10 +590,12 @@ static rt_err_t _vcom_control(struct rt_serial_device *serial,
 static int _vcom_putc(struct rt_serial_device *serial, char c)
 {
     rt_uint32_t level;
-    int cnt = 500;
+    int cnt;
 
     if (vcom_connected != RT_TRUE)
+    {
         return 0;
+    }
 
     /* if the buffer is full, there is a chance that the host would pull some
      * data out soon. But we cannot rely on that and if we wait to long, just
@@ -571,12 +604,18 @@ static int _vcom_putc(struct rt_serial_device *serial, char c)
          RT_RINGBUFFER_EMPTY(&tx_ringbuffer) == 0 && cnt;
          cnt--)
     {
-        rt_kprintf("wait for %d\n", cnt);
+        /*rt_kprintf("wait for %d\n", cnt);*/
         if (vcom_connected != RT_TRUE)
             return 0;
     }
     if (cnt == 0)
+    {
+        /* OK, we believe that the connection is lost. So don't send any more
+         * data and act as the USB cable is not plugged in. Reset the VCOM
+         * state machine */
+        _vcom_reset_state();
         return 0;
+    }
 
     level = rt_hw_interrupt_disable();
     if (RT_RINGBUFFER_EMPTY(&tx_ringbuffer))
