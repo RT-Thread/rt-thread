@@ -34,11 +34,8 @@ static void user_thread_entry(void *p)
 
     for(i = 0; ;i++)
     {
-        rt_kprintf("loop %d\n", i);
         gioSetBit(hetPORT1, 17, gioGetBit(hetPORT1, 17) ^ 1);
-        /*sciSendByte(scilinREG, 'b');*/
         rt_thread_delay(100);
-        /*sciSendByte(scilinREG, 'a');*/
     }
 }
 
@@ -53,15 +50,15 @@ void vRegTestTask2(void*);
 int rt_application_init()
 {
     rt_thread_init(&user_thread, "user1", user_thread_entry, RT_NULL,
-            user_thread_stack, sizeof(user_thread_stack), 8, 20);
+            user_thread_stack, sizeof(user_thread_stack), 21, 20);
     rt_thread_startup(&user_thread);
 
     rt_thread_init(&test_thread, "test1", vRegTestTask1, RT_NULL,
-            test_thread_stack, sizeof(test_thread_stack), 8, 20);
+            test_thread_stack, sizeof(test_thread_stack), 21, 20);
     rt_thread_startup(&test_thread);
 
     rt_thread_init(&test_thread2, "test2", vRegTestTask2, RT_NULL,
-            test_thread_stack2, sizeof(test_thread_stack2), 9, 20);
+            test_thread_stack2, sizeof(test_thread_stack2), 22, 20);
     rt_thread_startup(&test_thread2);
 
     return 0;

@@ -12,6 +12,8 @@
 /* Linker Settings                                                            */
 
 --retain="*(.intvecs)"
+--retain="*(FSymTab)"
+--retain="*(VSymTab)"
 
 /* USER CODE BEGIN (8) */
 /* USER CODE END */
@@ -45,12 +47,28 @@ SECTIONS
     .const   : {} > FLASH0 | FLASH1
     .cinit   : {} > FLASH0 | FLASH1
     .pinit   : {} > FLASH0 | FLASH1
-    .bss     : {} > RAM
-    .data    : {} > RAM
-	.sysmem  : {} > RAM
-	
+    GROUP
+    {
+        .bss     : {}
+        .data    : {}
+        .sysmem  : {}
+        ._dummy  : {system_data_end = .;}
+    } > RAM
+
 
 /* USER CODE BEGIN (11) */
+    /* place this section in the last section in RAM. The brain damaged linker
+     * could only create symbols in sections. */
+    ._FSymTab  : {
+        __fsymtab_start = .;
+        *(FSymTab)
+        __fsymtab_end = .;
+    } > FLASH0 | FLASH1
+    ._VSymTab  : {
+        __vsymtab_start = .;
+        *(VSymTab)
+        __vsymtab_end = .;
+    } > FLASH0 | FLASH1
 /* USER CODE END */
 }
 

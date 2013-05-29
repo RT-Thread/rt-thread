@@ -57,7 +57,7 @@
 // <bool name="RT_USING_MEMHEAP" description="Using Memory Heap Object in the system" default="true" />
 #define RT_USING_MEMHEAP
 // <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
-//#define RT_USING_HEAP
+#define RT_USING_HEAP
 // <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
 #define RT_USING_SMALL_MEM
 // <bool name="RT_USING_SLAB" description="Using SLAB memory management for large memory" default="false" />
@@ -85,7 +85,7 @@
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
 #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
-//#define RT_USING_FINSH
+#define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
 #define FINSH_USING_SYMTAB
 // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />

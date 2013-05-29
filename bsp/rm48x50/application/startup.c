@@ -38,8 +38,8 @@ extern rt_err_t rt_hw_serial_init(void);
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif defined(__GNUC__)
 extern int __bss_end;
-#else
-extern  unsigned char *__TI_DATA_Limit;
+#elif defined(__TI_COMPILER_VERSION__)
+extern unsigned char * const system_data_end;
 #endif
 #define MEMEND 0x08040000
 
@@ -70,9 +70,11 @@ void rtthread_startup(void)
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)MEMEND);
 #elif defined(__GNUC__)
-	rt_system_heap_init((void*)&__bss_end, (void*)MEMEND);
+    rt_system_heap_init((void*)&__bss_end, (void*)MEMEND);
+#elif defined(__TI_COMPILER_VERSION__)
+    rt_system_heap_init((void*)&system_data_end, (void*)MEMEND);
 #else
-	rt_system_heap_init((void*)&__TI_DATA_Limit, (void*)MEMEND);
+#error Unkown compiler
 #endif
 #endif
 
@@ -85,7 +87,7 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
 	/* init finsh */
 	finsh_system_init();
-	finsh_set_device("uart1");
+	finsh_set_device("sci2");
 #endif
 
 	/* init soft timer thread */
