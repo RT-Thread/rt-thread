@@ -1,7 +1,7 @@
 /** @file dcc.h
 *   @brief DCC Driver Definition File
-*   @date 23.May.2013
-*   @version 03.05.01
+*   @date 29.May.2013
+*   @version 03.05.02
 *   
 */
 

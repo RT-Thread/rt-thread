@@ -1,7 +1,7 @@
 /** @file sys_pmm.c
 *   @brief PCR Driver Implementation File
-*   @date 23.May.2013
-*   @version 03.05.01
+*   @date 29.May.2013
+*   @version 03.05.02
 *
 */
 /* (c) Texas Instruments 2009-2013, All rights reserved. */

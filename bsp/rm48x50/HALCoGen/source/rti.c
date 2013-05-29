@@ -1,7 +1,7 @@
 /** @file rti.c 
 *   @brief RTI Driver Source File
-*   @date 23.May.2013
-*   @version 03.05.01
+*   @date 29.May.2013
+*   @version 03.05.02
 *
 *   This file contains:
 *   - API Functions
@@ -249,7 +249,6 @@ void rtiSetPeriod(uint32 compare, uint32 period)
 /* USER CODE END */
 
     rtiREG1->CMP[compare].UDCPx = period;
-	rtiREG1->CMP[compare].COMPx = period;
 
     /**   @note The function rtiInit has to be called before this function can be used.\n
     *           This function has to be executed in privileged mode.\n
@@ -446,6 +445,12 @@ void dwdCounterEnable(void)
 /* USER CODE BEGIN (41) */
 /* USER CODE END */
 
+/* USER CODE BEGIN (42) */
+/* USER CODE END */
+/* USER CODE BEGIN (43) */
+/* USER CODE END */
+/* USER CODE BEGIN (44) */
+/* USER CODE END */
 /** @fn void dwdSetPreload(uint16 dwdPreload)
 *   @brief Initialize DWD Expiration Period 
 *   @param[in] dwdPreload DWD Preload value for the watchdog expiration time.
@@ -457,14 +462,14 @@ void dwdCounterEnable(void)
 */
 void dwdSetPreload(uint16 dwdPreload)
 {
-/* USER CODE BEGIN (42) */
+/* USER CODE BEGIN (45) */
 /* USER CODE END */
 	rtiREG1->DWDPRLD = dwdPreload;
-/* USER CODE BEGIN (43) */
+/* USER CODE BEGIN (46) */
 /* USER CODE END */
 }
 
-/* USER CODE BEGIN (44) */
+/* USER CODE BEGIN (47) */
 /* USER CODE END */
 
 /** @fn void dwdReset(void)
@@ -475,11 +480,11 @@ void dwdSetPreload(uint16 dwdPreload)
 */
 void dwdReset(void)
 {
-/* USER CODE BEGIN (45) */
+/* USER CODE BEGIN (48) */
 /* USER CODE END */
 	rtiREG1->WDKEY = 0x0000E51AU;
 	rtiREG1->WDKEY = 0x0000A35CU;
-/* USER CODE BEGIN (46) */
+/* USER CODE BEGIN (49) */
 /* USER CODE END */
 }
 
@@ -491,15 +496,15 @@ void dwdReset(void)
 */
 void dwdGenerateSysReset(void)
 {
-/* USER CODE BEGIN (47) */
+/* USER CODE BEGIN (50) */
 /* USER CODE END */
 	rtiREG1->WDKEY = 0x0000E51AU;
 	rtiREG1->WDKEY = 0x00002345U;
-/* USER CODE BEGIN (48) */
+/* USER CODE BEGIN (51) */
 /* USER CODE END */
 }
 
-/* USER CODE BEGIN (49) */
+/* USER CODE BEGIN (52) */
 /* USER CODE END */
 
 /** @fn boolean IsdwdKeySequenceCorrect(void)
@@ -515,7 +520,7 @@ boolean IsdwdKeySequenceCorrect(void)
 {
 	boolean Status;
 
-/* USER CODE BEGIN (50) */
+/* USER CODE BEGIN (53) */
 /* USER CODE END */
 
 	if((rtiREG1->WDSTATUS & 0x4U) == 0x4U)
@@ -527,13 +532,13 @@ boolean IsdwdKeySequenceCorrect(void)
 		Status = TRUE;
 	}
 
-/* USER CODE BEGIN (51) */
+/* USER CODE BEGIN (54) */
 /* USER CODE END */
 
 	return Status;
 }
 
-/* USER CODE BEGIN (52) */
+/* USER CODE BEGIN (55) */
 /* USER CODE END */
 
 /** @fn dwdResetStatus_t dwdGetStatus(void)
@@ -547,7 +552,7 @@ boolean IsdwdKeySequenceCorrect(void)
 */
 dwdResetStatus_t dwdGetStatus(void)
 {
-/* USER CODE BEGIN (53) */
+/* USER CODE BEGIN (56) */
 /* USER CODE END */
 	dwdResetStatus_t Reset_Status;
 	if((rtiREG1->WDSTATUS & 0x2U) == 0x2U)
@@ -559,12 +564,12 @@ dwdResetStatus_t dwdGetStatus(void)
 		Reset_Status = No_Reset_Generated;
 	}
 
-/* USER CODE BEGIN (54) */
+/* USER CODE BEGIN (57) */
 /* USER CODE END */
 	return Reset_Status;
 }
 
-/* USER CODE BEGIN (55) */
+/* USER CODE BEGIN (58) */
 /* USER CODE END */
 
 /** @fn void dwdClearFlag(void)
@@ -575,16 +580,16 @@ dwdResetStatus_t dwdGetStatus(void)
 */
 void dwdClearFlag(void)
 {
-/* USER CODE BEGIN (56) */
+/* USER CODE BEGIN (59) */
 /* USER CODE END */
 
 	rtiREG1->WDSTATUS = 0xFFU;
 
-/* USER CODE BEGIN (57) */
+/* USER CODE BEGIN (60) */
 /* USER CODE END */
 }
 
-/* USER CODE BEGIN (58) */
+/* USER CODE BEGIN (61) */
 /* USER CODE END */
 
 /** @fn dwdViolation_t dwdGetViolationStatus(void)
@@ -601,7 +606,7 @@ void dwdClearFlag(void)
 */
 dwdViolation_t dwdGetViolationStatus(void)
 {
-/* USER CODE BEGIN (59) */
+/* USER CODE BEGIN (62) */
 /* USER CODE END */
 	dwdViolation_t Violation_Status;
 
@@ -626,13 +631,13 @@ dwdViolation_t dwdGetViolationStatus(void)
 		Violation_Status = NoTime_Violation;
 	}
 	
-/* USER CODE BEGIN (60) */
+/* USER CODE BEGIN (63) */
 /* USER CODE END */
 
 	return Violation_Status;
 }
 
-/* USER CODE BEGIN (61) */
+/* USER CODE BEGIN (64) */
 /* USER CODE END */
 
 /** @fn void rtiEnableNotification(uint32 notification)
@@ -650,12 +655,12 @@ dwdViolation_t dwdGetViolationStatus(void)
 *   It is possible to enable multiple notifications masked.
 */
 
-/* USER CODE BEGIN (62) */
+/* USER CODE BEGIN (65) */
 /* USER CODE END */
 
 void rtiEnableNotification(uint32 notification)
 {
-/* USER CODE BEGIN (63) */
+/* USER CODE BEGIN (66) */
 /* USER CODE END */
 
     rtiREG1->INTFLAG = notification;
@@ -665,11 +670,11 @@ void rtiEnableNotification(uint32 notification)
     *           This function has to be executed in privileged mode.
     */
 
-/* USER CODE BEGIN (64) */
+/* USER CODE BEGIN (67) */
 /* USER CODE END */
 }
 
-/* USER CODE BEGIN (65) */
+/* USER CODE BEGIN (68) */
 /* USER CODE END */
 
 /** @fn void rtiDisableNotification(uint32 notification)
@@ -687,12 +692,12 @@ void rtiEnableNotification(uint32 notification)
 *   It is possible to disable multiple notifications masked.
 */
 
-/* USER CODE BEGIN (66) */
+/* USER CODE BEGIN (69) */
 /* USER CODE END */
 
 void rtiDisableNotification(uint32 notification)
 {
-/* USER CODE BEGIN (67) */
+/* USER CODE BEGIN (70) */
 /* USER CODE END */
 
     rtiREG1->CLEARINT = notification;
@@ -701,11 +706,11 @@ void rtiDisableNotification(uint32 notification)
     *           This function has to be executed in privileged mode.
     */
 
-/* USER CODE BEGIN (68) */
+/* USER CODE BEGIN (71) */
 /* USER CODE END */
 }
 
-/* USER CODE BEGIN (69) */
+/* USER CODE BEGIN (72) */
 /* USER CODE END */
 
 /** @fn void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
@@ -762,7 +767,7 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 
 
 
-/* USER CODE BEGIN (79) */
+/* USER CODE BEGIN (82) */
 /* USER CODE END */
 
 /** @fn void rtiCompare3Interrupt(void)
@@ -774,13 +779,13 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 
 void rtiCompare3Interrupt(void)
 {
-/* USER CODE BEGIN (80) */
+/* USER CODE BEGIN (83) */
 /* USER CODE END */
 
     rtiREG1->INTFLAG = 8U;
     rtiNotification(rtiNOTIFICATION_COMPARE3);
 
-/* USER CODE BEGIN (81) */
+/* USER CODE BEGIN (84) */
 /* USER CODE END */
 }
 

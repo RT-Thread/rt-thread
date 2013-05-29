@@ -1,7 +1,7 @@
 /** @file sys_vim.h
 *   @brief Vectored Interrupt Module Header File
-*   @date 23.May.2013
-*   @version 03.05.01
+*   @date 29.May.2013
+*   @version 03.05.02
 *   
 *   This file contains:
 *   - VIM Type Definitions

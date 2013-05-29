@@ -1,7 +1,7 @@
 /** @file system.c 
 *   @brief System Driver Source File
-*   @date 23.May.2013
-*   @version 03.05.01
+*   @date 29.May.2013
+*   @version 03.05.02
 *
 *   This file contains:
 *   - API Functions
@@ -137,7 +137,7 @@ void setupFlash(void)
     /** - Setup flash access wait states for bank 7 */
     FSM_WR_ENA_HL    = 0x5U;
     EEPROM_CONFIG_HL = 0x00000002U
-	                 | (3U << 8U) ;
+	                 | (3U << 16U) ;
 
 /* USER CODE BEGIN (7) */
 /* USER CODE END */
