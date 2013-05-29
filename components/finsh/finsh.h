@@ -176,6 +176,13 @@ extern struct finsh_sysvar_item* global_sysvar_list;
 struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 
 #ifdef FINSH_USING_SYMTAB
+
+#ifdef __TI_COMPILER_VERSION__
+#define _EMIT_PRAGMA(x)                _Pragma(#x)
+#define __TI_FINSH_EXPORT_FUNCTION(f)  _EMIT_PRAGMA(DATA_SECTION(f,"FSymTab"))
+#define __TI_FINSH_EXPORT_VAR(v)       _EMIT_PRAGMA(DATA_SECTION(v,"VSymTab"))
+#endif
+
 	#ifdef FINSH_USING_DESCRIPTION
 		/**
 		 * @ingroup finsh
@@ -185,28 +192,39 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 		 * @param name the name of function.
 		 * @param desc the description of function, which will show in help.
 		 */
-#ifdef _MSC_VER
-		#define FINSH_FUNCTION_EXPORT(name, desc)					 \
-		const char __fsym_##name##_name[] = #name;					 \
-		const char __fsym_##name##_desc[] = #desc;					 \
-		__declspec(allocate("FSymTab$f")) const struct finsh_syscall __fsym_##name = \
-		{							\
-			__fsym_##name##_name,	\
-			__fsym_##name##_desc,	\
-			(syscall_func)&name		\
-		};
-		#pragma comment(linker, "/merge:FSymTab=mytext")
-#else
-		#define FINSH_FUNCTION_EXPORT(name, desc)					 \
-		const char __fsym_##name##_name[] = #name;					 \
-		const char __fsym_##name##_desc[] = #desc;					 \
-		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
-		{							\
-			__fsym_##name##_name,	\
-			__fsym_##name##_desc,	\
-			(syscall_func)&name		\
-		};
-#endif
+        #ifdef _MSC_VER
+            #define FINSH_FUNCTION_EXPORT(name, desc)					 \
+            const char __fsym_##name##_name[] = #name;					 \
+            const char __fsym_##name##_desc[] = #desc;					 \
+            __declspec(allocate("FSymTab$f")) const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+            #pragma comment(linker, "/merge:FSymTab=mytext")
+        #elif defined(__TI_COMPILER_VERSION__)
+            #define FINSH_FUNCTION_EXPORT(name, desc)     \
+            __TI_FINSH_EXPORT_FUNCTION(__fsym_##name);             \
+            const char __fsym_##name##_name[] = #name;				   \
+            const char __fsym_##name##_desc[] = #desc;				   \
+            const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+        #else
+            #define FINSH_FUNCTION_EXPORT(name, desc)					 \
+            const char __fsym_##name##_name[] = #name;					 \
+            const char __fsym_##name##_desc[] = #desc;					 \
+            const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+        #endif /* FINSH_FUNCTION_EXPORT defines */
 
 		/**
 		 * @ingroup finsh
@@ -217,27 +235,38 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 		 * @param alias the alias name of function.
 		 * @param desc the description of function, which will show in help.
 		 */
-#ifdef _MSC_VER
-		#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
-		const char __fsym_##name##_name[] = #alias;					 \
-		const char __fsym_##name##_desc[] = #desc;					 \
-		__declspec(allocate("FSymTab$f")) const struct finsh_syscall __fsym_##name = \
-		{							\
-			__fsym_##name##_name,	\
-			__fsym_##name##_desc,	\
-			(syscall_func)&name		\
-		};
-#else
-		#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
-		const char __fsym_##name##_name[] = #alias;					 \
-		const char __fsym_##name##_desc[] = #desc;					 \
-		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
-		{							\
-			__fsym_##name##_name,	\
-			__fsym_##name##_desc,	\
-			(syscall_func)&name		\
-		};
-#endif
+        #ifdef _MSC_VER
+            #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+            const char __fsym_##name##_name[] = #alias;					 \
+            const char __fsym_##name##_desc[] = #desc;					 \
+            __declspec(allocate("FSymTab$f")) const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+        #elif defined(__TI_COMPILER_VERSION__)
+            #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)     \
+            __TI_FINSH_EXPORT_FUNCTION(__fsym_##name);             \
+            const char __fsym_##name##_name[] = #alias;				   \
+            const char __fsym_##name##_desc[] = #desc;				   \
+            const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+        #else
+            #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+            const char __fsym_##name##_name[] = #alias;					 \
+            const char __fsym_##name##_desc[] = #desc;					 \
+            const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+        #endif /* FINSH_FUNCTION_EXPORT_ALIAS defines */
 		/**
 		 * @ingroup finsh
 		 *
@@ -247,55 +276,98 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 		 * @param type the type of variable.
 		 * @param desc the description of function, which will show in help.
 		 */
-#ifdef _MSC_VER
-		#define FINSH_VAR_EXPORT(name, type, desc)					\
-		const char __vsym_##name##_name[] = #name;					\
-		const char __vsym_##name##_desc[] = #desc;					\
-		__declspec(allocate("VSymTab")) const struct finsh_sysvar __vsym_##name = \
-		{							\
-			__vsym_##name##_name,	\
-			__vsym_##name##_desc,	\
-			type, 					\
-			(void*)&name			\
-		};
-#else
-		#define FINSH_VAR_EXPORT(name, type, desc)					\
-		const char __vsym_##name##_name[] = #name;					\
-		const char __vsym_##name##_desc[] = #desc;					\
-		const struct finsh_sysvar __vsym_##name SECTION("VSymTab")=	\
-		{							\
-			__vsym_##name##_name,	\
-			__vsym_##name##_desc,	\
-			type, 					\
-			(void*)&name			\
-		};
-#endif
-	#else
-		#define FINSH_FUNCTION_EXPORT(name, desc)					 \
-		const char __fsym_##name##_name[] = #name;					 \
-		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
-		{							\
-			__fsym_##name##_name,	\
-			(syscall_func)&name		\
-		};
+        #ifdef _MSC_VER
+            #define FINSH_VAR_EXPORT(name, type, desc)					\
+            const char __vsym_##name##_name[] = #name;					\
+            const char __vsym_##name##_desc[] = #desc;					\
+            __declspec(allocate("VSymTab")) const struct finsh_sysvar __vsym_##name = \
+            {							\
+                __vsym_##name##_name,	\
+                __vsym_##name##_desc,	\
+                type, 					\
+                (void*)&name			\
+            };
+        #elif defined(__TI_COMPILER_VERSION__)
+            #define FINSH_VAR_EXPORT(name, type, desc)					\
+            __TI_FINSH_EXPORT_VAR(__vsym_##name);              \
+            const char __vsym_##name##_name[] = #name;					\
+            const char __vsym_##name##_desc[] = #desc;					\
+            const struct finsh_sysvar __vsym_##name = \
+            {							\
+                __vsym_##name##_name,	\
+                __vsym_##name##_desc,	\
+                type,					\
+                (void*)&name			\
+            };
+        #else
+            #define FINSH_VAR_EXPORT(name, type, desc)					\
+            const char __vsym_##name##_name[] = #name;					\
+            const char __vsym_##name##_desc[] = #desc;					\
+            const struct finsh_sysvar __vsym_##name SECTION("VSymTab")=	\
+            {							\
+                __vsym_##name##_name,	\
+                __vsym_##name##_desc,	\
+                type, 					\
+                (void*)&name			\
+            };
+        #endif /* FINSH_VAR_EXPORT defines */
+	#else /* FINSH_USING_DESCRIPTION */
+        #if defined(__TI_COMPILER_VERSION__)
+            #define FINSH_FUNCTION_EXPORT(name, desc)     \
+            __TI_FINSH_EXPORT_FUNCTION(__fsym_##name);             \
+            const char __fsym_##name##_name[] = #name;				   \
+            const char __fsym_##name##_desc[] = #desc;				   \
+            const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                __fsym_##name##_desc,	\
+                (syscall_func)&name		\
+            };
+            #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+            const char __fsym_##name##_name[] = #alias;					 \
+            __TI_FINSH_EXPORT_FUNCTION(__fsym_##name);             \
+            const struct finsh_syscall __fsym_##name = \
+            {							\
+                __fsym_##name##_name,	\
+                (syscall_func)&name		\
+            };
 
-		#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
-		const char __fsym_##name##_name[] = #alias;					 \
-		const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
-		{							\
-			__fsym_##name##_name,	\
-			(syscall_func)&name		\
-		};
+            #define FINSH_VAR_EXPORT(name, type, desc)					\
+            __TI_FINSH_EXPORT_VAR(__vsym_##name);             \
+            const char __vsym_##name##_name[] = #name;					\
+            const struct finsh_sysvar __vsym_##name =	\
+            {							\
+                __vsym_##name##_name,	\
+                type,					\
+                (void*)&name			\
+            };
+        #else
+            #define FINSH_FUNCTION_EXPORT(name, desc)					 \
+            const char __fsym_##name##_name[] = #name;					 \
+            const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+            {							\
+                __fsym_##name##_name,	\
+                (syscall_func)&name		\
+            };
 
-		#define FINSH_VAR_EXPORT(name, type, desc)					\
-		const char __vsym_##name##_name[] = #name;					\
-		const struct finsh_sysvar __vsym_##name SECTION("VSymTab")=	\
-		{							\
-			__vsym_##name##_name,	\
-			type, 					\
-			(void*)&name			\
-		};
-	#endif
+            #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)		\
+            const char __fsym_##name##_name[] = #alias;					 \
+            const struct finsh_syscall __fsym_##name SECTION("FSymTab")= \
+            {							\
+                __fsym_##name##_name,	\
+                (syscall_func)&name		\
+            };
+
+            #define FINSH_VAR_EXPORT(name, type, desc)					\
+            const char __vsym_##name##_name[] = #name;					\
+            const struct finsh_sysvar __vsym_##name SECTION("VSymTab")=	\
+            {							\
+                __vsym_##name##_name,	\
+                type,					\
+                (void*)&name			\
+            };
+        #endif /* __TI_COMPILER_VERSION__ */
+    #endif /* FINSH_USING_DESCRIPTION */
 #else
 	#define FINSH_FUNCTION_EXPORT(name, desc)
 	#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
