@@ -38,7 +38,7 @@ enum sciIntFlags
 
 /* LIN1 High level interrupt. Change this if you set a different channel in
  * HALCoGen. */
-#define SCI_INT_VEC 13
+#define SCI_INT_VEC 14
 
 #define VCLK_HZ 100000000L
 
@@ -176,6 +176,11 @@ static const struct rt_uart_ops _sci_ops =
     _getc,
 };
 
+static void _irq_wrapper(int vector, void *param)
+{
+    rt_hw_serial_isr((struct rt_serial_device*)param);
+}
+
 static struct rt_serial_device _sci2_serial;
 static struct serial_ringbuffer _sci2_int_rx;
 
@@ -199,6 +204,7 @@ void rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           (void*)scilinREG);
 
-    rt_hw_interrupt_install(SCI_INT_VEC, rt_hw_serial_isr, &_sci2_serial, "sci2");
+    rt_device_control(&_sci2_serial.parent, RT_DEVICE_CTRL_SET_INT, 0);
+    rt_hw_interrupt_install(SCI_INT_VEC, _irq_wrapper, &_sci2_serial, "sci2");
     rt_hw_interrupt_umask(SCI_INT_VEC);
 }
