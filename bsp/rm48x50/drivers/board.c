@@ -1,7 +1,7 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * COPYRIGHT (C) 2013, RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2008-12-11     xuxinming    first version
+ * 2013-05-27     Grissiom     port to RM48x50
  */
 
 #include <rtthread.h>
@@ -17,10 +17,11 @@
 
 #include "sys_common.h"
 #include "system.h"
-#include "sci.h"
 #include "rti.h"
 
 #include "board.h"
+
+#include "drv_uart.h"
 
 #define RTI_INT_VEC 6
 
@@ -30,17 +31,17 @@ void rt_timer_handler(int vector, void* param)
 	rt_tick_increase();
 }
 
-/**
- * This function will init LPC2478 board
- */
 void rt_hw_board_init(void)
 {
-    sciInit();
     rtiInit();
-    rtiStartCounter(rtiCOUNTER_BLOCK1);
-    rtiEnableNotification(rtiNOTIFICATION_COMPARE3);
 
 	rt_hw_interrupt_install(RTI_INT_VEC, rt_timer_handler, RT_NULL, "tick");
     rt_hw_interrupt_umask(RTI_INT_VEC);
+
+    rtiStartCounter(rtiCOUNTER_BLOCK1);
+    rtiEnableNotification(rtiNOTIFICATION_COMPARE3);
+
+    rt_hw_uart_init();
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
 

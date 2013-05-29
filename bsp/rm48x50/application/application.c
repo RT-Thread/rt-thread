@@ -28,11 +28,14 @@ static rt_uint8_t user_thread_stack[512];
 static struct rt_thread user_thread;
 static void user_thread_entry(void *p)
 {
+    int i;
+
     gioSetDirection(hetPORT1, 0xFFFFFFFF);
-    for(;;)
+
+    for(i = 0; ;i++)
     {
+        rt_kprintf("loop %d\n", i);
         gioSetBit(hetPORT1, 17, gioGetBit(hetPORT1, 17) ^ 1);
-        /* Taggle HET[1] with timer tick */
         /*sciSendByte(scilinREG, 'b');*/
         rt_thread_delay(100);
         /*sciSendByte(scilinREG, 'a');*/
