@@ -68,12 +68,12 @@ void rt_hw_interrupt_init(void)
 
 void rt_hw_interrupt_mask(int vector)
 {
-    vimEnableInterrupt(vector, SYS_IRQ);
+    vimDisableInterrupt(vector);
 }
 
 void rt_hw_interrupt_umask(int vector)
 {
-    vimDisableInterrupt(vector);
+    vimEnableInterrupt(vector, SYS_IRQ);
 }
 
 /**
