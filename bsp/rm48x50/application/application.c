@@ -20,10 +20,6 @@
 int ulRegTest1Counter;
 int ulRegTest2Counter;
 
-void vPortTaskUsesFPU()
-{
-}
-
 static rt_uint8_t user_thread_stack[512];
 static struct rt_thread user_thread;
 static void user_thread_entry(void *p)
