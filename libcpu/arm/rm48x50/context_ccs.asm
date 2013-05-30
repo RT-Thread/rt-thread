@@ -62,8 +62,6 @@ rt_hw_context_switch
 
     LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
-    BIC     r4, r4, #0x20       ; must be ARM mode
-    MSR     cpsr_cxsf, r4
 
     LDMFD   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
 
