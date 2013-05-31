@@ -67,11 +67,14 @@ _coreInitRegisters_
         ; Switch back to Supervisor Mode (M = 10011)
         cps #19
 
-
+        ; Turn on FPV coprocessor
         mrc   p15,     #0x00,      r2,       c1, c0, #0x02
         orr   r2,      r2,         #0xF00000
         mcr   p15,     #0x00,      r2,       c1, c0, #0x02
-        mov   r2,      #0x40000000
+
+        ; Enable FPV
+        fmrx  R2,      fpexc
+        orr   r2,      r2,   #0x40000000
         fmxr  fpexc,   r2
 
         fmdrr d0,         r1,     r1

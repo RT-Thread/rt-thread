@@ -57,8 +57,32 @@ rt_hw_context_switch
 
     STMFD   sp!, {r4}           ; push cpsr
 
+    .if (__TI_VFP_SUPPORT__)
+		VMRS    r4,  fpexc
+        TST     r4,  #0x40000000
+        BEQ     __no_vfp_frame1
+		VSTMDB  sp!, {d0-d15}
+        VMRS    r5, fpscr
+        ; TODO: add support for Common VFPv3.
+        ;       Save registers like FPINST, FPINST2
+        STMFD   sp!, {r5}
+__no_vfp_frame1
+        STMFD   sp!, {r4}
+	.endif
+
     STR     sp, [r0]            ; store sp in preempted tasks TCB
     LDR     sp, [r1]            ; get new task stack pointer
+
+    .if (__TI_VFP_SUPPORT__)
+        LDMFD   sp!, {r0}       ; get fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame2
+        LDMFD   sp!, {r1}       ; get fpscr
+        VMSR    fpscr, r1
+		VLDMIA  sp!, {d0-d15}
+__no_vfp_frame2
+        VMSR    fpexc, r0
+    .endif
 
     LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
@@ -72,6 +96,17 @@ rt_hw_context_switch
     .def rt_hw_context_switch_to
 rt_hw_context_switch_to
     LDR     sp, [r0]            ; get new task stack pointer
+
+    .if (__TI_VFP_SUPPORT__)
+        LDMFD   sp!, {r0}       ; get fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_to
+        LDMFD   sp!, {r1}       ; get fpscr
+        VMSR    fpscr, r1
+		VLDMIA  sp!, {d0-d15}
+__no_vfp_frame_to
+        VMSR    fpexc, r0
+    .endif
 
     LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
@@ -100,6 +135,20 @@ _reswitch
     .def IRQ_Handler
 IRQ_Handler
     STMFD   sp!, {r0-r12,lr}
+
+    .if (__TI_VFP_SUPPORT__)
+		VMRS    r0,  fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_str_irq
+		VSTMDB  sp!, {d0-d15}
+        VMRS    r1, fpscr
+        ; TODO: add support for Common VFPv3.
+        ;       Save registers like FPINST, FPINST2
+        STMFD   sp!, {r1}
+__no_vfp_frame_str_irq
+        STMFD   sp!, {r0}
+	.endif
+
     BL  rt_interrupt_enter
     BL  rt_hw_trap_irq
     BL  rt_interrupt_leave
@@ -111,6 +160,17 @@ IRQ_Handler
     CMP r1, #1
     BEQ rt_hw_context_switch_interrupt_do
 
+    .if (__TI_VFP_SUPPORT__)
+        LDMFD   sp!, {r0}       ; get fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_ldr_irq
+        LDMFD   sp!, {r1}       ; get fpscr
+        VMSR    fpscr, r1
+		VLDMIA  sp!, {d0-d15}
+__no_vfp_frame_ldr_irq
+        VMSR    fpexc, r0
+    .endif
+
     LDMFD   sp!, {r0-r12,lr}
     SUBS    pc, lr, #4
 
@@ -121,6 +181,17 @@ IRQ_Handler
 rt_hw_context_switch_interrupt_do
     MOV     r1,  #0           ; clear flag
     STR     r1,  [r0]
+
+    .if (__TI_VFP_SUPPORT__)
+        LDMFD   sp!, {r0}       ; get fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_do1
+        LDMFD   sp!, {r1}       ; get fpscr
+        VMSR    fpscr, r1
+		VLDMIA  sp!, {d0-d15}
+__no_vfp_frame_do1
+        VMSR    fpexc, r0
+    .endif
 
     LDMFD   sp!, {r0-r12,lr}  ; reload saved registers
     STMFD   sp, {r0-r3}       ; save r0-r3. We will restore r0-r3 in the SVC
@@ -141,6 +212,19 @@ rt_hw_context_switch_interrupt_do
                               ; use them here.
     STMFD   sp!, {r3}         ; push old task's cpsr
 
+    .if (__TI_VFP_SUPPORT__)
+		VMRS    r0,  fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_do2
+		VSTMDB  sp!, {d0-d15}
+        VMRS    r1, fpscr
+        ; TODO: add support for Common VFPv3.
+        ;       Save registers like FPINST, FPINST2
+        STMFD   sp!, {r1}
+__no_vfp_frame_do2
+        STMFD   sp!, {r0}
+	.endif
+
     LDR     r4,  pfromthread
     LDR     r5,  [r4]
     STR     sp,  [r5]         ; store sp in preempted tasks's TCB
@@ -148,6 +232,17 @@ rt_hw_context_switch_interrupt_do
     LDR     r6,  ptothread
     LDR     r6,  [r6]
     LDR     sp,  [r6]         ; get new task's stack pointer
+
+    .if (__TI_VFP_SUPPORT__)
+        LDMFD   sp!, {r0}       ; get fpexc
+        TST     r0,  #0x40000000
+        BEQ     __no_vfp_frame_do3
+        LDMFD   sp!, {r1}       ; get fpscr
+        VMSR    fpscr, r1
+		VLDMIA  sp!, {d0-d15}
+__no_vfp_frame_do3
+        VMSR    fpexc, r0
+    .endif
 
     LDMFD   sp!, {r4}         ; pop new task's cpsr to spsr
     MSR     spsr_cxsf, r4

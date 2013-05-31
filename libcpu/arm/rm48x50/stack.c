@@ -57,6 +57,22 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	else
 		*(--stk) = SVCMODE;					/* arm mode   */
 
+#ifdef __TI_VFP_SUPPORT__
+    #define VFP_DATA_NR 32
+    {
+        int i;
+
+        for (i = 0; i < VFP_DATA_NR; i++)
+        {
+            *(--stk) = 0;
+        }
+        /* FPSCR TODO: do we need to set the values other than 0? */
+        *(--stk) = 0;
+        /* FPEXC. Enable the FVP by default. */
+        *(--stk) = 0x40000000;
+    }
+#endif
+
 	/* return task's current stack address */
 	return (rt_uint8_t *)stk;
 }
