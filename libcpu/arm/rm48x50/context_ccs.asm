@@ -48,14 +48,14 @@ rt_hw_interrupt_enable
 ; */
     .def rt_hw_context_switch
 rt_hw_context_switch
-    STMFD   sp!, {lr}           ; push pc (lr should be pushed in place of PC)
-    STMFD   sp!, {r0-r12, lr}   ; push lr & register file
+    STMDB   sp!, {lr}           ; push pc (lr should be pushed in place of PC)
+    STMDB   sp!, {r0-r12, lr}   ; push lr & register file
 
     MRS     r4, cpsr
     TST     lr, #0x01
     ORRNE   r4, r4, #0x20       ; it's thumb code
 
-    STMFD   sp!, {r4}           ; push cpsr
+    STMDB   sp!, {r4}           ; push cpsr
 
     .if (__TI_VFP_SUPPORT__)
 		VMRS    r4,  fpexc
@@ -65,29 +65,29 @@ rt_hw_context_switch
         VMRS    r5, fpscr
         ; TODO: add support for Common VFPv3.
         ;       Save registers like FPINST, FPINST2
-        STMFD   sp!, {r5}
+        STMDB   sp!, {r5}
 __no_vfp_frame1
-        STMFD   sp!, {r4}
+        STMDB   sp!, {r4}
 	.endif
 
     STR     sp, [r0]            ; store sp in preempted tasks TCB
     LDR     sp, [r1]            ; get new task stack pointer
 
     .if (__TI_VFP_SUPPORT__)
-        LDMFD   sp!, {r0}       ; get fpexc
+        LDMIA   sp!, {r0}       ; get fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame2
-        LDMFD   sp!, {r1}       ; get fpscr
+        LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame2
         VMSR    fpexc, r0
     .endif
 
-    LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
+    LDMIA   sp!, {r4}           ; pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
 
-    LDMFD   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
+    LDMIA   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
 
 ;/*
 ; * void rt_hw_context_switch_to(rt_uint32 to);
@@ -98,20 +98,20 @@ rt_hw_context_switch_to
     LDR     sp, [r0]            ; get new task stack pointer
 
     .if (__TI_VFP_SUPPORT__)
-        LDMFD   sp!, {r0}       ; get fpexc
+        LDMIA   sp!, {r0}       ; get fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_to
-        LDMFD   sp!, {r1}       ; get fpscr
+        LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_to
         VMSR    fpexc, r0
     .endif
 
-    LDMFD   sp!, {r4}           ; pop new task cpsr to spsr
+    LDMIA   sp!, {r4}           ; pop new task cpsr to spsr
     MSR     spsr_cxsf, r4
 
-    LDMFD   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
+    LDMIA   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
 
 ;/*
 ; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
@@ -134,7 +134,7 @@ _reswitch
 
     .def IRQ_Handler
 IRQ_Handler
-    STMFD   sp!, {r0-r12,lr}
+    STMDB   sp!, {r0-r12,lr}
 
     .if (__TI_VFP_SUPPORT__)
 		VMRS    r0,  fpexc
@@ -144,9 +144,9 @@ IRQ_Handler
         VMRS    r1, fpscr
         ; TODO: add support for Common VFPv3.
         ;       Save registers like FPINST, FPINST2
-        STMFD   sp!, {r1}
+        STMDB   sp!, {r1}
 __no_vfp_frame_str_irq
-        STMFD   sp!, {r0}
+        STMDB   sp!, {r0}
 	.endif
 
     BL  rt_interrupt_enter
@@ -161,17 +161,17 @@ __no_vfp_frame_str_irq
     BEQ rt_hw_context_switch_interrupt_do
 
     .if (__TI_VFP_SUPPORT__)
-        LDMFD   sp!, {r0}       ; get fpexc
+        LDMIA   sp!, {r0}       ; get fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_ldr_irq
-        LDMFD   sp!, {r1}       ; get fpscr
+        LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_ldr_irq
         VMSR    fpexc, r0
     .endif
 
-    LDMFD   sp!, {r0-r12,lr}
+    LDMIA   sp!, {r0-r12,lr}
     SUBS    pc, lr, #4
 
 ; /*
@@ -183,18 +183,18 @@ rt_hw_context_switch_interrupt_do
     STR     r1,  [r0]
 
     .if (__TI_VFP_SUPPORT__)
-        LDMFD   sp!, {r0}       ; get fpexc
+        LDMIA   sp!, {r0}       ; get fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do1
-        LDMFD   sp!, {r1}       ; get fpscr
+        LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do1
         VMSR    fpexc, r0
     .endif
 
-    LDMFD   sp!, {r0-r12,lr}  ; reload saved registers
-    STMFD   sp, {r0-r3}       ; save r0-r3. We will restore r0-r3 in the SVC
+    LDMIA   sp!, {r0-r12,lr}  ; reload saved registers
+    STMDB   sp, {r0-r3}       ; save r0-r3. We will restore r0-r3 in the SVC
                               ; mode so there is no need to update SP.
     SUB     r1,  sp, #16      ; save the right SP value in r1, so we could restore r0-r3.
     SUB     r2,  lr, #4       ; save old task's pc to r2
@@ -204,13 +204,13 @@ __no_vfp_frame_do1
     ; switch to SVC mode and no interrupt
     CPSID   IF, #0x13
 
-    STMFD   sp!, {r2}         ; push old task's pc
-    STMFD   sp!, {r4-r12,lr}  ; push old task's lr,r12-r4
-    LDMFD   r1!, {r4-r7}      ; restore r0-r3 of the interrupted thread
-    STMFD   sp!, {r4-r7}      ; push old task's r3-r0. We don't need to push/pop them to
+    STMDB   sp!, {r2}         ; push old task's pc
+    STMDB   sp!, {r4-r12,lr}  ; push old task's lr,r12-r4
+    LDMIA   r1!, {r4-r7}      ; restore r0-r3 of the interrupted thread
+    STMDB   sp!, {r4-r7}      ; push old task's r3-r0. We don't need to push/pop them to
                               ; r0-r3 because we just want to transfer the data and don't
                               ; use them here.
-    STMFD   sp!, {r3}         ; push old task's cpsr
+    STMDB   sp!, {r3}         ; push old task's cpsr
 
     .if (__TI_VFP_SUPPORT__)
 		VMRS    r0,  fpexc
@@ -220,9 +220,9 @@ __no_vfp_frame_do1
         VMRS    r1, fpscr
         ; TODO: add support for Common VFPv3.
         ;       Save registers like FPINST, FPINST2
-        STMFD   sp!, {r1}
+        STMDB   sp!, {r1}
 __no_vfp_frame_do2
-        STMFD   sp!, {r0}
+        STMDB   sp!, {r0}
 	.endif
 
     LDR     r4,  pfromthread
@@ -234,20 +234,20 @@ __no_vfp_frame_do2
     LDR     sp,  [r6]         ; get new task's stack pointer
 
     .if (__TI_VFP_SUPPORT__)
-        LDMFD   sp!, {r0}       ; get fpexc
+        LDMIA   sp!, {r0}       ; get fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do3
-        LDMFD   sp!, {r1}       ; get fpscr
+        LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do3
         VMSR    fpexc, r0
     .endif
 
-    LDMFD   sp!, {r4}         ; pop new task's cpsr to spsr
+    LDMIA   sp!, {r4}         ; pop new task's cpsr to spsr
     MSR     spsr_cxsf, r4
 
-    LDMFD   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr
+    LDMIA   sp!, {r0-r12,lr,pc}^ ; pop new task's r0-r12,lr & pc, copy spsr to cpsr
 
 pintflag     .word   rt_thread_switch_interrupt_flag
 pfromthread  .word   rt_interrupt_from_thread
