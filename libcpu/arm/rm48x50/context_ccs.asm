@@ -75,13 +75,13 @@ __no_vfp_frame1
 
     .if (__TI_VFP_SUPPORT__)
         LDMIA   sp!, {r0}       ; get fpexc
+        VMSR    fpexc,  r0      ; restore fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame2
         LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame2
-        VMSR    fpexc, r0
     .endif
 
     LDMIA   sp!, {r4}           ; pop new task cpsr to spsr
@@ -99,13 +99,13 @@ rt_hw_context_switch_to
 
     .if (__TI_VFP_SUPPORT__)
         LDMIA   sp!, {r0}       ; get fpexc
+        VMSR    fpexc, r0
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_to
         LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_to
-        VMSR    fpexc, r0
     .endif
 
     LDMIA   sp!, {r4}           ; pop new task cpsr to spsr
@@ -162,13 +162,13 @@ __no_vfp_frame_str_irq
 
     .if (__TI_VFP_SUPPORT__)
         LDMIA   sp!, {r0}       ; get fpexc
+        VMSR    fpexc, r0
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_ldr_irq
         LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_ldr_irq
-        VMSR    fpexc, r0
     .endif
 
     LDMIA   sp!, {r0-r12,lr}
@@ -184,13 +184,13 @@ rt_hw_context_switch_interrupt_do
 
     .if (__TI_VFP_SUPPORT__)
         LDMIA   sp!, {r0}       ; get fpexc
+        VMSR    fpexc, r0
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do1
         LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do1
-        VMSR    fpexc, r0
     .endif
 
     LDMIA   sp!, {r0-r12,lr}  ; reload saved registers
@@ -216,7 +216,7 @@ __no_vfp_frame_do1
 		VMRS    r0,  fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do2
-		VSTMDB  sp!, {d0-d15}
+        VSTMDB  sp!, {d0-d15}
         VMRS    r1, fpscr
         ; TODO: add support for Common VFPv3.
         ;       Save registers like FPINST, FPINST2
@@ -235,13 +235,13 @@ __no_vfp_frame_do2
 
     .if (__TI_VFP_SUPPORT__)
         LDMIA   sp!, {r0}       ; get fpexc
+        VMSR    fpexc, r0
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do3
         LDMIA   sp!, {r1}       ; get fpscr
         VMSR    fpscr, r1
 		VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do3
-        VMSR    fpexc, r0
     .endif
 
     LDMIA   sp!, {r4}         ; pop new task's cpsr to spsr

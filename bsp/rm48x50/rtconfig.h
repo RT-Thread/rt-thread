@@ -211,6 +211,7 @@
 // #define RTGUI_USING_MOUSE_CURSOR
 // </section>
 
+#define RT_VFP_LAZY_STACKING
 // </RDTConfigurator>
 
 #endif

@@ -72,8 +72,8 @@ _coreInitRegisters_
         orr   r2,      r2,         #0xF00000
         mcr   p15,     #0x00,      r2,       c1, c0, #0x02
 
-        ; Enable FPV
-        fmrx  R2,      fpexc
+        .if (RT_VFP_LAZY_STACKING) = 0
+        fmrx  r2,      fpexc
         orr   r2,      r2,   #0x40000000
         fmxr  fpexc,   r2
 
@@ -93,6 +93,7 @@ _coreInitRegisters_
         fmdrr d13,        r1,     r1
         fmdrr d14,        r1,     r1
         fmdrr d15,        r1,     r1
+        .endif
         bl    next1
 next1
         bl    next2

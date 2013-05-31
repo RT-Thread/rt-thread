@@ -58,8 +58,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 		*(--stk) = SVCMODE;					/* arm mode   */
 
 #ifdef __TI_VFP_SUPPORT__
-    #define VFP_DATA_NR 32
+#ifndef RT_VFP_LAZY_STACKING
     {
+        #define VFP_DATA_NR 32
         int i;
 
         for (i = 0; i < VFP_DATA_NR; i++)
@@ -68,9 +69,13 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
         }
         /* FPSCR TODO: do we need to set the values other than 0? */
         *(--stk) = 0;
-        /* FPEXC. Enable the FVP by default. */
+        /* FPEXC. Enable the FVP if no lazy stacking. */
         *(--stk) = 0x40000000;
     }
+#else
+        /* FPEXC. Disable the FVP by default. */
+        *(--stk) = 0x00000000;
+#endif
 #endif
 
 	/* return task's current stack address */
