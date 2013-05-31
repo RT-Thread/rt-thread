@@ -39,4 +39,17 @@ void rt_hw_cpu_shutdown()
 	while (1);
 }
 
+#ifdef RT_USING_CPU_FFS
+int __rt_ffs(int value)
+{
+	if (value == 0)
+		return value;
+
+	__asm("    rsb r1, r0, #0");
+	__asm("    and r1, r1, r0");
+	__asm("    clz r1, r1");
+	__asm("    rsb r0, r1, #32");
+}
+#endif
+
 /*@}*/
