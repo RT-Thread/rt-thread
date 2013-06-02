@@ -9,6 +9,7 @@
  * Date           Author       Notes
  * 2013-04-15     Bernard      the first version
  * 2013-05-05     Bernard      remove CRC for ramfs persistence
+ * 2013-05-22     Bernard      fix the no entry issue.
  */
 
 #include <rtthread.h>
@@ -217,6 +218,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 /* add to the root directory */
                 rt_list_insert_after(&(ramfs->root.list), &(dirent->list));
             }
+            else return -DFS_STATUS_ENOENT;
         }
 
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
