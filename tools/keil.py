@@ -169,6 +169,11 @@ def MDK4Project(target, script):
     out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
     
+    # copy uvopt file
+    if os.path.exists('template.uvopt'):
+        import shutil
+        shutil.copy2('template.uvopt', 'project.uvopt')
+        
 def MDKProject(target, script):
     template = file('template.Uv2', "rb")
     lines = template.readlines()
