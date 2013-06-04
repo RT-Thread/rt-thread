@@ -100,13 +100,13 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     str_desc.type = USB_DESC_TYPE_STRING;
     index = setup->value & 0xFF;
 
-    if(index > USB_STRING_INTERFACE_INDEX)
+    if (index > USB_STRING_INTERFACE_INDEX)
     {
         rt_kprintf("unknown string index\n");
         dcd_ep_stall(device->dcd, 0);
         return -RT_ERROR;
     }
-    if(index == 0)
+    if (index == 0)
     {
         str_desc.bLength = 4;
         str_desc.String[0] = 0x09;
@@ -117,14 +117,14 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
         len = rt_strlen(device->str[index]);
         str_desc.bLength = len*2 + 2;
 
-        for(i=0; i<len; i++)
+        for (i=0; i<len; i++)
         {
             str_desc.String[i*2] = device->str[index][i];
             str_desc.String[i*2 + 1] = 0;
         }
     }
 
-    if(setup->length > len)
+    if (setup->length > str_desc.bLength)
         len = str_desc.bLength;
     else
         len = setup->length;
@@ -149,7 +149,7 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    if(setup->request_type == USB_REQ_TYPE_DIR_IN)
+    if (setup->request_type == USB_REQ_TYPE_DIR_IN)
     {
         switch(setup->value >> 8)
         {
@@ -250,7 +250,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
     setting = intf->curr_setting;
 
     /* start all endpoints of the interface alternate setting */
-    for(i=setting->ep_list.next; i != &setting->ep_list; i=i->next)
+    for (i=setting->ep_list.next; i != &setting->ep_list; i=i->next)
     {
         ep = (uep_t)rt_list_entry(i, struct uendpoint, list);
         dcd_ep_stop(device->dcd, ep);
