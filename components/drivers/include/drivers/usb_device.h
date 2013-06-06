@@ -146,6 +146,11 @@ enum udev_msg_type
     USB_MSG_DATA_NOTIFY,
     USB_MSG_SOF,
     USB_MSG_RESET,
+    /* we don't need to add a "PLUG_IN" event because after the cable is
+     * plugged in(before any SETUP) the classed have nothing to do. If the host
+     * is ready, it will send RESET and we will have USB_MSG_RESET. So, a RESET
+     * should reset and run the class while plug_in is not. */
+    USB_MSG_PLUG_OUT,
 };
 typedef enum udev_msg_type udev_msg_type;
 
