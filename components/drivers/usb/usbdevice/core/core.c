@@ -1447,6 +1447,10 @@ static void rt_usbd_thread_entry(void* parameter)
             _sof_notify(device);
             break;
         case USB_MSG_DATA_NOTIFY:
+            /* some buggy drivers will have USB_MSG_DATA_NOTIFY before the core
+             * got configured. */
+            if (device->state != USB_STATE_CONFIGURED)
+                break;
             ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
             if(ep != RT_NULL)
                 ep->handler(device, cls, msg.content.ep_msg.size);
