@@ -667,6 +667,60 @@ rt_err_t _sof_notify(udevice_t device)
 }
 
 /**
+ * This function will stop all class.
+ *
+ * @param device the usb device object.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t _stop_notify(udevice_t device)
+{
+    struct rt_list_node *i;
+    uclass_t cls;
+
+    RT_ASSERT(device != RT_NULL);
+
+    /* to notity every class that sof event comes */
+    for (i  = device->curr_cfg->cls_list.next;
+         i != &device->curr_cfg->cls_list;
+         i  = i->next)
+    {
+        cls = (uclass_t)rt_list_entry(i, struct uclass, list);
+        if(cls->ops->stop != RT_NULL)
+            cls->ops->stop(device, cls);
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * This function will run all class.
+ *
+ * @param device the usb device object.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t _run_notify(udevice_t device)
+{
+    struct rt_list_node *i;
+    uclass_t cls;
+
+    RT_ASSERT(device != RT_NULL);
+
+    /* to notity every class that sof event comes */
+    for (i  = device->curr_cfg->cls_list.next;
+         i != &device->curr_cfg->cls_list;
+         i  = i->next)
+    {
+        cls = (uclass_t)rt_list_entry(i, struct uclass, list);
+        if(cls->ops->run != RT_NULL)
+            cls->ops->run(device, cls);
+    }
+
+    return RT_EOK;
+}
+
+/**
  * This function will reset all class.
  *
  * @param device the usb device object.
@@ -680,17 +734,8 @@ rt_err_t _reset_notify(udevice_t device)
 
     RT_ASSERT(device != RT_NULL);
 
-    /* to notity every class that sof event comes */
-    for (i=device->curr_cfg->cls_list.next;
-            i!=&device->curr_cfg->cls_list; i=i->next)
-    {
-        cls = (uclass_t)rt_list_entry(i, struct uclass, list);
-        if(cls->ops->stop != RT_NULL)
-            cls->ops->stop(device, cls);
-
-        if(cls->ops->run != RT_NULL)
-            cls->ops->run(device, cls);
-    }
+    _stop_notify();
+    _run_notify();
 
     return RT_EOK;
 }
@@ -1402,6 +1447,10 @@ static void rt_usbd_thread_entry(void* parameter)
             _sof_notify(device);
             break;
         case USB_MSG_DATA_NOTIFY:
+            /* some buggy drivers will have USB_MSG_DATA_NOTIFY before the core
+             * got configured. */
+            if (device->state != USB_STATE_CONFIGURED)
+                break;
             ep = rt_usbd_find_endpoint(device, &cls, msg.content.ep_msg.ep_addr);
             if(ep != RT_NULL)
                 ep->handler(device, cls, msg.content.ep_msg.size);
@@ -1414,6 +1463,9 @@ static void rt_usbd_thread_entry(void* parameter)
         case USB_MSG_RESET:
             if (device->state == USB_STATE_ADDRESS)
                 _reset_notify(device);
+            break;
+        case USB_MSG_PLUG_OUT:
+            _stop_notify(device);
             break;
         default:
             rt_kprintf("unknown msg type\n");
