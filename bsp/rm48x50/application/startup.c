@@ -48,6 +48,11 @@ extern unsigned char * const system_data_end;
  */
 void rtthread_startup(void)
 {
+    /*// RM48 does not have cache implemented
+     *rt_hw_cpu_icache_enable();
+     *rt_hw_cpu_dcache_enable();
+     */
+
 	/* init hardware interrupt */
 	rt_hw_interrupt_init();
 
