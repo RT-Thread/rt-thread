@@ -207,6 +207,18 @@ extern "C" {
     (((rt_uint16_t)(*(((rt_uint8_t *)(x)) + 1))) << 8))
 
 typedef void (*func_callback)(void *context);
+typedef enum
+{
+    USB_STATE_NOTATTACHED = 0,
+    USB_STATE_ATTACHED,
+    USB_STATE_POWERED,
+    USB_STATE_RECONNECTING,
+    USB_STATE_UNAUTHENTICATED,
+    USB_STATE_DEFAULT,
+    USB_STATE_ADDRESS,
+    USB_STATE_CONFIGURED,
+    USB_STATE_SUSPENDED
+}udevice_state_t;
 
 #pragma pack(1)
 
@@ -310,6 +322,21 @@ struct uhub_descriptor
 };
 typedef struct uhub_descriptor* uhub_desc_t;
 
+struct uhid_descriptor
+{
+    rt_uint8_t bLength;
+    rt_uint8_t type;
+    rt_uint16_t bcdHID;
+    rt_uint8_t bCountryCode;
+    rt_uint8_t bNumDescriptors;
+    struct hid_descriptor_list
+    {
+        rt_uint8_t type;
+        rt_uint16_t wLength;
+    }Descriptor[1];
+};
+typedef struct uhid_descriptor* uhid_desc_t;
+
 struct ureqest
 {
     rt_uint8_t request_type;
@@ -373,6 +400,20 @@ struct ustorage_csw
 typedef struct ustorage_csw* ustorage_csw_t;
 
 #pragma pack()
+
+/*
+ * USB device event loop thread configurations
+ */
+/* the stack size of USB thread */
+#ifndef RT_USBD_THREAD_STACK_SZ
+#define RT_USBD_THREAD_STACK_SZ 2048
+#endif
+
+/* the priority of USB thread */
+#ifndef RT_USBD_THREAD_PRIO
+#define RT_USBD_THREAD_PRIO 8
+#endif
+
 
 #ifdef __cplusplus
 }

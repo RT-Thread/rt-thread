@@ -93,6 +93,7 @@ extern char working_directory[];
 
 void dfs_lock(void);
 void dfs_unlock(void);
+int dfs_mkfs(const char *fs_name, const char *device_name);
 int dfs_statfs(const char *path, struct statfs *buffer);
 
 #endif

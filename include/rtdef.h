@@ -145,6 +145,17 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define ALIGN(n)                    __declspec(align(n))
     #define rt_inline                   static __inline
     #define RTT_API
+#elif defined (__TI_COMPILER_VERSION__)
+    /* The way that TI compiler set section is different from other(at least
+     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
+     * details. */
+    #define SECTION(x)
+    #define UNUSED
+    #define ALIGN(n)
+    #define rt_inline                   static inline
+    #define RTT_API
+#else
+    #error not supported tool chain
 #endif
 
 /* event length */
@@ -154,6 +165,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MM_PAGE_SIZE                 4096
 #define RT_MM_PAGE_MASK                 (RT_MM_PAGE_SIZE - 1)
 #define RT_MM_PAGE_BITS                 12
+
+/* kernel malloc definitions */
+#ifndef RT_KERNEL_MALLOC
+#define RT_KERNEL_MALLOC(sz)			rt_malloc(sz)
+#endif
+
+#ifndef RT_KERNEL_FREE
+#define RT_KERNEL_FREE(ptr)				rt_free(ptr)
+#endif
+
+#ifndef RT_KERNEL_REALLOC
+#define RT_KERNEL_REALLOC(ptr, size)	rt_realloc(ptr, size)
+#endif
 
 /**
  * @addtogroup Error
@@ -576,10 +600,10 @@ typedef struct rt_messagequeue *rt_mq_t;
 struct rt_memheap_item
 {
     rt_uint32_t             magic;                      /**< magic number for memheap */
+    struct rt_memheap      *pool_ptr;                   /**< point of pool */
+
     struct rt_memheap_item *next;                       /**< next memheap item */
     struct rt_memheap_item *prev;                       /**< prev memheap item */
-
-    struct rt_memheap      *pool_ptr;                   /**< point of pool */
 
     struct rt_memheap_item *next_free;                  /**< next free memheap item */
     struct rt_memheap_item *prev_free;                  /**< prev free memheap item */
@@ -659,6 +683,7 @@ enum rt_device_class_type
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
     RT_Device_Class_PM,                                 /**< PM pseudo device */
+    RT_Device_Class_Miscellaneous,						/**< Miscellaneous device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
@@ -733,11 +758,6 @@ struct rt_device
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, rt_uint8_t cmd, void *args);
-
-#ifdef RT_USING_DEVICE_SUSPEND
-    rt_err_t (*suspend) (rt_device_t dev);
-    rt_err_t (*resumed) (rt_device_t dev);
-#endif
 
     void                     *user_data;                /**< device private data */
 };

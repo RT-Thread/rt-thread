@@ -28,7 +28,7 @@
 /* Product ID */
 #ifdef USB_PRODUCT_ID
 #define _PRODUCT_ID USB_PRODUCT_ID
-#else 
+#else
 #define _PRODUCT_ID 0x0001
 #endif
 
@@ -42,8 +42,8 @@ struct uendpoint;
 struct udcd_ops
 {
     rt_err_t (*set_address)(rt_uint8_t value);
-    rt_err_t (*clear_feature)(rt_uint8_t value);
-    rt_err_t (*set_feature)(rt_uint8_t value);
+    rt_err_t (*clear_feature)(rt_uint16_t value, rt_uint16_t index);
+    rt_err_t (*set_feature)(rt_uint16_t value, rt_uint16_t index);
     rt_err_t (*ep_alloc)(struct uendpoint* ep);
     rt_err_t (*ep_free)(struct uendpoint* ep);
     rt_err_t (*ep_stall)(struct uendpoint* ep);
@@ -73,12 +73,12 @@ struct uendpoint
     rt_bool_t is_stall;
 };
 typedef struct uendpoint* uep_t;
- 
+
 struct ualtsetting
 {
     rt_list_t list;
     uintf_desc_t intf_desc;
-    void* desc; 
+    void* desc;
     rt_size_t desc_size;
     rt_list_t ep_list;
 };
@@ -112,7 +112,7 @@ struct uclass
     struct udevice* device;
     udev_desc_t dev_desc;
     void* user_data;
-    
+
     rt_list_t intf_list;
 };
 typedef struct uclass* uclass_t;
@@ -131,6 +131,7 @@ struct udevice
     struct udevice_descriptor dev_desc;
     const char** str;
 
+    udevice_state_t state;
     rt_list_t cfg_list;
     uconfig_t curr_cfg;
     rt_uint8_t nr_intf;
@@ -144,6 +145,12 @@ enum udev_msg_type
     USB_MSG_SETUP_NOTIFY,
     USB_MSG_DATA_NOTIFY,
     USB_MSG_SOF,
+    USB_MSG_RESET,
+    /* we don't need to add a "PLUG_IN" event because after the cable is
+     * plugged in(before any SETUP) the classed have nothing to do. If the host
+     * is ready, it will send RESET and we will have USB_MSG_RESET. So, a RESET
+     * should reset and run the class while plug_in is not. */
+    USB_MSG_PLUG_OUT,
 };
 typedef enum udev_msg_type udev_msg_type;
 
@@ -170,7 +177,7 @@ udevice_t rt_usbd_device_create(void);
 uconfig_t rt_usbd_config_create(void);
 uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
                               uclass_ops_t ops);
-uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);                                
+uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);
 uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler);
 ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size);
 
@@ -198,6 +205,7 @@ uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr
 uclass_t rt_usbd_class_mstorage_create(udevice_t device);
 uclass_t rt_usbd_class_cdc_create(udevice_t device);
 uclass_t rt_usbd_class_rndis_create(udevice_t device);
+uclass_t rt_usbd_class_dap_create(udevice_t device);
 
 #ifdef RT_USB_DEVICE_COMPOSITE
 rt_err_t rt_usbd_class_set_iad(uclass_t cls, uiad_desc_t iad_desc);
@@ -210,18 +218,18 @@ rt_inline rt_err_t dcd_set_address(udcd_t dcd, rt_uint8_t value)
     return dcd->ops->set_address(value);
 }
 
-rt_inline rt_err_t dcd_clear_feature(udcd_t dcd, rt_uint8_t value)
+rt_inline rt_err_t dcd_clear_feature(udcd_t dcd, rt_uint16_t value, rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
-    return dcd->ops->clear_feature(value);
+    return dcd->ops->clear_feature(value, index);
 }
 
-rt_inline rt_err_t dcd_set_feature(udcd_t dcd, rt_uint8_t value)
+rt_inline rt_err_t dcd_set_feature(udcd_t dcd, rt_uint8_t value, rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
-    return dcd->ops->set_feature(value);
+    return dcd->ops->set_feature(value, index);
 }
 
 rt_inline rt_err_t dcd_ep_stall(udcd_t dcd, uep_t ep)
