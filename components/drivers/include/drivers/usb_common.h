@@ -368,6 +368,7 @@ typedef struct ureqest* ureq_t;
 #define SCSI_INQUIRY_CMD                0x12
 #define SCSI_ALLOW_MEDIUM_REMOVAL       0x1e
 #define SCSI_MODE_SENSE_6               0x1a
+#define SCSI_START_STOP                 0x1b
 #define SCSI_READ_CAPACITIES            0x23
 #define SCSI_READ_CAPACITY              0x25
 #define SCSI_READ_10                    0x28

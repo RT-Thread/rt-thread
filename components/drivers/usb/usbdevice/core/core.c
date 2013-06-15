@@ -734,8 +734,8 @@ rt_err_t _reset_notify(udevice_t device)
 
     RT_ASSERT(device != RT_NULL);
 
-    _stop_notify();
-    _run_notify();
+    _stop_notify(device);
+    _run_notify(device);
 
     return RT_EOK;
 }
