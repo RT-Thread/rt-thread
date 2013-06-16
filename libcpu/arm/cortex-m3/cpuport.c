@@ -102,7 +102,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  */
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
 {
-	rt_exception_hook = exception_handle;
+    rt_exception_hook = exception_handle;
 }
 
 /*
@@ -110,15 +110,16 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
  */
 void rt_hw_hard_fault_exception(struct exception_stack_frame* context)
 {
-	extern long list_thread(void);
+    extern long list_thread(void);
 
-	if (rt_exception_hook != RT_NULL)
-	{
-		rt_err_t result;
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
 
-		result = rt_exception_hook(context);
-		if (result == RT_EOK) return;
-	}
+        result = rt_exception_hook(context);
+        if (result == RT_EOK)
+            return;
+    }
 
     rt_kprintf("psr: 0x%08x\n", context->psr);
     rt_kprintf(" pc: 0x%08x\n", context->pc);
@@ -135,7 +136,8 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame* context)
     list_thread();
 #endif
 
-    while (1);
+    while (1)
+        ;
 }
 
 /**
