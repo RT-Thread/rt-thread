@@ -75,7 +75,7 @@ def CBProject(target, script, program):
             Add = SubElement(elem, 'Add')
             Add.set('directory', path)
 
-        for macro in building.Env['CPPDEFINES']:
+        for macro in building.Env.get('CPPDEFINES', []):
             Add = SubElement(elem, 'Add')
             Add.set('option', "-D"+macro)
         
