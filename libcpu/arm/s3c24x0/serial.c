@@ -102,6 +102,12 @@ static rt_size_t rt_serial_read (rt_device_t dev, rt_off_t pos, void* buffer, rt
 	err_code = RT_EOK;
 	uart = (struct serial_device*)dev->user_data;
 
+        if (ptr == NULL)  {
+            err_code = -RT_ENOMEM;
+            rt_set_errno(err_code);
+            return -RT_ENOMEM;
+        }
+   
 	if (dev->flag & RT_DEVICE_FLAG_INT_RX)
 	{
 		rt_base_t level;
@@ -159,6 +165,12 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 	err_code = RT_EOK;
 	ptr = (rt_uint8_t*)buffer;
 	uart = (struct serial_device*)dev->user_data;
+
+        if (ptr == NULL)  {
+            err_code = -RT_ENOMEM;
+            rt_set_errno(err_code);
+            return -RT_ENOMEM;
+        }
 
 	if (dev->flag & RT_DEVICE_FLAG_INT_TX)
 	{
