@@ -10,8 +10,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2006-10-05     Alsor.Z       for s3c2440 initialize
- * 2008-01-29     Yi.Qiu         for QEMU emulator
+ * 2006-10-05     Alsor.Z      for s3c2440 initialize
+ * 2008-01-29     Yi.Qiu       for QEMU emulator
  */
 
 #define CONFIG_STACKSIZE 	512
@@ -23,7 +23,7 @@
 #define S_LR  				56
 #define S_SP  				52
 
-#define S_IP  					48
+#define S_IP  				48
 #define S_FP  				44
 #define S_R10  				40
 #define S_R9  				36
