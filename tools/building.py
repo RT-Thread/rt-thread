@@ -83,6 +83,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action='store_true',
                       default=False,
                       help='copy header of rt-thread directory to local.')
+    AddOption('--cscope',
+                      dest='cscope',
+                      action='store_true',
+                      default=False,
+                      help='Build Cscope cross reference database. Requires cscope installed.')
 
     # add build library option
     AddOption('--buildlib', 
@@ -340,6 +345,10 @@ def EndBuilding(target, program = None):
         MakeCopy(program)
     if GetOption('copy-header') and program != None:
         MakeCopyHeader(program)
+
+    if GetOption('cscope'):
+        from cscope import CscopeDatabase
+        CscopeDatabase(Projects)
 
 def SrcRemove(src, remove):
     if type(src[0]) == type('str'):
