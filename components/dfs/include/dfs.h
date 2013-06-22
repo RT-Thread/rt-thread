@@ -21,6 +21,8 @@
 extern "C" {
 #endif
 
+#define NO_WORKING_DIR  "system does not support working directory\n"
+
 char *dfs_normalize_path(const char *directory, const char *filename);
 const char *dfs_subdir(const char *directory, const char *filename);
 
