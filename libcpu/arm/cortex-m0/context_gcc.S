@@ -13,6 +13,7 @@
  * 2012-06-01   aozima       set pendsv priority to 0xFF.
  * 2012-08-17   aozima       fixed bug: store r8 - r11.
  * 2013-02-20   aozima       port to gcc.
+ * 2013-06-18   aozima       add restore MSP feature.
  */
  
 	.cpu 	cortex-m3
@@ -21,6 +22,7 @@
 	.thumb
 	.text
 
+    .equ    SCB_VTOR, 0xE000ED04            /* Vector Table Offset Register */
 	.equ	ICSR, 0xE000ED04 				/* interrupt control state register */
 	.equ	PENDSVSET_BIT, 0x10000000 		/* value to trigger PendSV exception */
 	
@@ -151,6 +153,13 @@ rt_hw_context_switch_to:
 	LDR		R0, =ICSR				/* trigger the PendSV exception (causes context switch) */
 	LDR		R1, =PENDSVSET_BIT
 	STR		R1, [R0]
+
+    /* restore MSP */
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
 
 	CPSIE	I						/* enable interrupts at processor level */
 

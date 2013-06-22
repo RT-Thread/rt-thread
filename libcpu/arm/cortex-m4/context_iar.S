@@ -12,6 +12,7 @@
 ; * 2009-01-17     Bernard      first version
 ; * 2009-09-27     Bernard      add protect when contex switch occurs
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
+; * 2013-06-18     aozima       add restore MSP feature.
 ; */
 
 ;/**
@@ -19,6 +20,7 @@
 ; */
 ;/*@{*/
 
+SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
@@ -161,6 +163,13 @@ rt_hw_context_switch_to:
     LDR     r0, =NVIC_INT_CTRL      ; trigger the PendSV exception (causes context switch)
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
+
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
 
     CPSIE   I                       ; enable interrupts at processor level
 
