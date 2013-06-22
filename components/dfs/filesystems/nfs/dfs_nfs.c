@@ -1106,3 +1106,4 @@ int nfs_init(void)
 
 	return RT_EOK;
 }
+INIT_FS_EXPORT(nfs_init);

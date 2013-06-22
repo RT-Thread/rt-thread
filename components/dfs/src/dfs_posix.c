@@ -757,7 +757,7 @@ char *getcwd(char *buf, size_t size)
     rt_strncpy(buf, working_directory, size);
     rt_exit_critical();
 #else
-    rt_kprintf("WARNING: not support working directory\n");
+    rt_kprintf(NO_WORKING_DIR);
 #endif
 
     return buf;

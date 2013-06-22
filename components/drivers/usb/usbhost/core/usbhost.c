@@ -71,4 +71,4 @@ void rt_usb_host_init(void)
     drv = rt_usb_class_driver_hub();
     rt_usb_class_driver_register(drv);
 }
-
+INIT_COMPONENT_EXPORT(rt_usb_host_init);

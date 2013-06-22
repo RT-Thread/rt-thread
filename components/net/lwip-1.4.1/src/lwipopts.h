@@ -82,11 +82,7 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
-#ifdef RT_LWIP_ALIGN_SIZE
-#define MEM_ALIGNMENT               RT_LWIP_ALIGN_SIZE
-#else
 #define MEM_ALIGNMENT               4
-#endif
 
 #define MEM_LIBC_MALLOC             1
 #define mem_malloc                  rt_malloc
@@ -179,7 +175,11 @@
 #define TCP_MSS                     1460
 
 /* TCP sender buffer space (bytes). */
+#ifdef RT_LWIP_TCP_SND_BUF
+#define TCP_SND_BUF					RT_LWIP_TCP_SND_BUF
+#else
 #define TCP_SND_BUF                 (TCP_MSS * 2)
+#endif
 
 /* TCP sender buffer space (pbufs). This must be at least = 2 *
    TCP_SND_BUF/TCP_MSS for things to work. */

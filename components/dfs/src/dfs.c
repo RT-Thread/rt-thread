@@ -16,7 +16,7 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#define NO_WORKING_DIR  "system does not support working dir\n"
+#define NO_WORKING_DIR  "system does not support working directory\n"
 
 /* Global variables */
 const struct dfs_filesystem_operation *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
@@ -62,6 +62,7 @@ void dfs_init(void)
     working_directory[0] = '/';
 #endif
 }
+INIT_COMPONENT_EXPORT(dfs_init);
 
 /**
  * this function will lock device file system.

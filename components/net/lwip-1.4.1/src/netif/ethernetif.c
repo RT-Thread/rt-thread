@@ -383,6 +383,7 @@ void eth_system_device_init()
     result = rt_thread_startup(&eth_tx_thread);
     RT_ASSERT(result == RT_EOK);
 }
+INIT_DEVICE_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

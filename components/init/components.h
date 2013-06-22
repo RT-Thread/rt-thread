@@ -78,8 +78,13 @@ extern "C" {
 #endif
 
 /**
+ * Initializes board routine in RT-Thread.
+ */
+void rt_components_board_init(void);
+
+/**
  * Initializes components in RT-Thread
- * notes: this function must be invoked in thread
+ * notes: this function must be invoked in Init Thread
  */
 void rt_components_init(void);
 

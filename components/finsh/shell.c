@@ -511,7 +511,7 @@ __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end =
  *
  * This function will initialize finsh shell
  */
-void finsh_system_init(void)
+int finsh_system_init(void)
 {
 	rt_err_t result;
 
@@ -561,7 +561,7 @@ void finsh_system_init(void)
 	if (shell == RT_NULL)
 	{
 		rt_kprintf("no memory for shell\n");
-		return;
+		return -1;
 	}
 	
 	memset(shell, 0, sizeof(struct finsh_shell));
@@ -575,4 +575,7 @@ void finsh_system_init(void)
 
 	if (result == RT_EOK)
 		rt_thread_startup(&finsh_thread);
+	return 0;
 }
+INIT_COMPONENT_EXPORT(finsh_system_init);
+

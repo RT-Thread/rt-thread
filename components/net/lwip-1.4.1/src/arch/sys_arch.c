@@ -25,6 +25,7 @@
 #include "lwip/tcpip.h"
 #include "netif/ethernetif.h"
 #include "lwip/sio.h"
+#include <lwip/init.h>
 
 #include <string.h>
 
@@ -124,7 +125,7 @@ static void tcpip_init_done_callback(void *arg)
 /**
  * LwIP system initialization
  */
-void lwip_system_init(void)
+int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
@@ -165,7 +166,11 @@ void lwip_system_init(void)
         netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
     }
 #endif
+	rt_kprintf("lwIP-%d.%d.%d initialized!\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
+
+	return 0;
 }
+INIT_COMPONENT_EXPORT(lwip_system_init);
 
 void sys_init(void)
 {

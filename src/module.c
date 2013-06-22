@@ -91,6 +91,7 @@ void rt_system_module_init(void)
     rt_sem_init(&mod_sem, "module", 1, RT_IPC_FLAG_FIFO);
 #endif
 }
+INIT_COMPONENT_EXPORT(rt_system_module_init);
 
 static rt_uint32_t rt_module_symbol_find(const char *sym_str)
 {

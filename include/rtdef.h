@@ -97,6 +97,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  @ x
     #define UNUSED
+	#define USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define rt_inline                   static inline
@@ -137,6 +138,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define UNUSED                      __attribute__((unused))
+	#define USED						__attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static inline
     #define RTT_API 
@@ -144,6 +146,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)
     #define UNUSED
+	#define USED
     #define ALIGN(n)                    __declspec(align(n))
     #define rt_inline                   static __inline
     #define RTT_API
@@ -153,6 +156,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
      * details. */
     #define SECTION(x)
     #define UNUSED
+	#define USED
     #define ALIGN(n)
     #define rt_inline                   static inline
     #define RTT_API

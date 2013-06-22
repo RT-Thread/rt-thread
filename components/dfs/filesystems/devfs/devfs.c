@@ -277,4 +277,5 @@ int devfs_init(void)
 
 	return 0;
 }
+INIT_FS_EXPORT(devfs_init);
 
