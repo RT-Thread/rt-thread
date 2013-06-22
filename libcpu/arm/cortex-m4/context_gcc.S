@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-10-11     Bernard      first version
  * 2012-01-01     aozima       support context switch load/store FPU register.
+ * 2013-06-18     aozima       add restore MSP feature.
  */
 
 /**
@@ -23,10 +24,11 @@
 .thumb
 .text
 
-.equ    NVIC_INT_CTRL,       0xE000ED04               /* interrupt control state register */
-.equ    NVIC_SYSPRI2,        0xE000ED20               /* system priority register (2) */
-.equ    NVIC_PENDSV_PRI,     0x00FF0000               /* PendSV priority value (lowest) */
-.equ    NVIC_PENDSVSET,      0x10000000               /* value to trigger PendSV exception */
+.equ    SCB_VTOR,           0xE000ED04              /* Vector Table Offset Register */
+.equ    NVIC_INT_CTRL,      0xE000ED04              /* interrupt control state register */
+.equ    NVIC_SYSPRI2,       0xE000ED20              /* system priority register (2) */
+.equ    NVIC_PENDSV_PRI,    0x00FF0000              /* PendSV priority value (lowest) */
+.equ    NVIC_PENDSVSET,     0x10000000              /* value to trigger PendSV exception */
 
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -106,9 +108,9 @@ PendSV_Handler:
     MRS r1, psp                 /* get from thread stack pointer */
     
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-	VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
+    VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
 #endif
-	
+    
     STMFD   r1!, {r4 - r11}     /* push r4 - r11 register */
     LDR r0, [r0]
     STR r1, [r0]                /* update from thread stack pointer */
@@ -163,6 +165,13 @@ rt_hw_context_switch_to:
     LDR r0, =NVIC_INT_CTRL      /* trigger the PendSV exception (causes context switch) */
     LDR r1, =NVIC_PENDSVSET
     STR r1, [r0]
+
+    /* restore MSP */
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
 
     CPSIE   I                       /* enable interrupts at processor level */
 
