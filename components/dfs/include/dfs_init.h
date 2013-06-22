@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /* Initialization of dfs */
-void dfs_init(void);
+int dfs_init(void);
 
 #ifdef __cplusplus
 }

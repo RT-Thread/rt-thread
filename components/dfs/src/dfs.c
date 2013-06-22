@@ -42,7 +42,7 @@ struct dfs_fd fd_table[DFS_FD_MAX];
 /**
  * this function will initialize device file system.
  */
-void dfs_init(void)
+int dfs_init(void)
 {
     /* clear filesystem operations table */
     rt_memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
@@ -59,6 +59,7 @@ void dfs_init(void)
     rt_memset(working_directory, 0, sizeof(working_directory));
     working_directory[0] = '/';
 #endif
+	return 0;
 }
 INIT_COMPONENT_EXPORT(dfs_init);
 
