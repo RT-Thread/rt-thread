@@ -11,6 +11,7 @@
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version.
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
+; * 2013-06-18     aozima       add restore MSP feature.
 ; */
 
 ;/**
@@ -18,6 +19,7 @@
 ; */
 ;/*@{*/
 
+SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
@@ -108,10 +110,10 @@ PendSV_Handler   PROC
     MRS     r1, psp                 ; get from thread stack pointer
 
     IF      {FPU} != "SoftVFP"
-	VSTMFD  r1!, {d8 - d15}         ; push FPU register s16~s31
+    VSTMFD  r1!, {d8 - d15}         ; push FPU register s16~s31
     ENDIF
 
-	STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
+    STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
     LDR     r0, [r0]
     STR     r1, [r0]                ; update from thread stack pointer
 
@@ -168,6 +170,13 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =NVIC_INT_CTRL
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
+
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
 
     ; enable interrupts at processor level
     CPSIE   I

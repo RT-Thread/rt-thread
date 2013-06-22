@@ -52,8 +52,8 @@ rt_hw_context_switch:
 	mrs	r4, spsr
 	stmfd	sp!, {r4}		@ push spsr
 
-	str	sp, [r0]			@ store sp in preempted tasks TCB
-	ldr	sp, [r1]			@ get new task stack pointer
+	str	sp, [r0]		@ store sp in preempted tasks TCB
+	ldr	sp, [r1]		@ get new task stack pointer
 
 	ldmfd	sp!, {r4}		@ pop new task spsr
 	msr	spsr_cxsf, r4

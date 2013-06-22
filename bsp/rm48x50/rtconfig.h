@@ -212,6 +212,7 @@
 // </section>
 
 #define RT_VFP_LAZY_STACKING
+#define RT_USING_CPU_FFS
 // </RDTConfigurator>
 
 #endif
