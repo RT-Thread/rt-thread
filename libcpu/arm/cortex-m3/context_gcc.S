@@ -22,7 +22,7 @@
     .thumb
     .text
 
-    .equ    SCB_VTOR, 0xE000ED04            /* Vector Table Offset Register */
+    .equ    SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
     .equ    ICSR, 0xE000ED04                /* interrupt control state register */
     .equ    PENDSVSET_BIT, 0x10000000       /* value to trigger PendSV exception */
     

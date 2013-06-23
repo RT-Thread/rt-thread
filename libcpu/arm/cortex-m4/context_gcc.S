@@ -24,7 +24,7 @@
 .thumb
 .text
 
-.equ    SCB_VTOR,           0xE000ED04              /* Vector Table Offset Register */
+.equ    SCB_VTOR,           0xE000ED08              /* Vector Table Offset Register */
 .equ    NVIC_INT_CTRL,      0xE000ED04              /* interrupt control state register */
 .equ    NVIC_SYSPRI2,       0xE000ED20              /* system priority register (2) */
 .equ    NVIC_PENDSV_PRI,    0x00FF0000              /* PendSV priority value (lowest) */
