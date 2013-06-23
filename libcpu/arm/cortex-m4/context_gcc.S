@@ -12,10 +12,11 @@
  * 2009-10-11     Bernard      first version
  * 2012-01-01     aozima       support context switch load/store FPU register.
  * 2013-06-18     aozima       add restore MSP feature.
+ * 2013-06-23     aozima       support lazy stack optimized.
  */
 
 /**
- * @addtogroup STM32
+ * @addtogroup cortex-m4
  */
 /*@{*/
 
@@ -108,10 +109,21 @@ PendSV_Handler:
     MRS r1, psp                 /* get from thread stack pointer */
     
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
     VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
 #endif
-    
+	
     STMFD   r1!, {r4 - r11}     /* push r4 - r11 register */
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    MOV     r4, #0x00           /* flag = 0 */
+
+    TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
+    MOVEQ   r4, #0x01           /* flag = 1 */
+
+    STMFD   r1!, {r4}           /* push flag */
+#endif
+
     LDR r0, [r0]
     STR r1, [r0]                /* update from thread stack pointer */
 
@@ -120,10 +132,15 @@ swtich_to_thread:
     LDR r1, [r1]
     LDR r1, [r1]                /* load thread stack pointer */
 
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    LDMFD   r1!, {r3}           /* pop flag */
+#endif
+
     LDMFD   r1!, {r4 - r11}     /* pop r4 - r11 register */
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    VLDMIA  r1!, {d8 - d15}     /* pop FPU register s16~s31 */
+    CMP     r3,  #0             /* if(flag_r3 != 0) */
+    VLDMIANE  r1!, {d8 - d15}   /* pop FPU register s16~s31 */
 #endif
 
     MSR psp, r1                 /* update stack pointer */
@@ -131,6 +148,12 @@ swtich_to_thread:
 pendsv_exit:
     /* restore interrupt */
     MSR PRIMASK, r2
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    ORR     lr, lr, #0x10       /* lr |=  (1 << 4), clean FPCA. */
+    CMP     r3,  #0             /* if(flag_r3 != 0) */
+    BICNE   lr, lr, #0x10       /* lr &= ~(1 << 4), set FPCA. */
+#endif
 
     ORR lr, lr, #0x04
     BX  lr
@@ -144,6 +167,13 @@ pendsv_exit:
 rt_hw_context_switch_to:
     LDR r1, =rt_interrupt_to_thread
     STR r0, [r1]
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    /* CLEAR CONTROL.FPCA */
+    MRS     r2, CONTROL         /* read */
+    BIC     r2, #0x04           /* modify */
+    MSR     CONTROL, r2         /* write-back */
+#endif
 
     /* set from thread to 0 */
     LDR r1, =rt_interrupt_from_thread
