@@ -15,6 +15,7 @@
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
  * 2010-04-11     yi.qiu       add module feature
+ * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
  */
 
 #ifndef __RT_THREAD_H__
@@ -452,7 +453,11 @@ void rt_system_module_init(void);
 /*
  * general kernel service
  */
+#ifndef RT_USING_CONSOLE
+#define rt_kprintf(...)
+#else
 void rt_kprintf(const char *fmt, ...);
+#endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
