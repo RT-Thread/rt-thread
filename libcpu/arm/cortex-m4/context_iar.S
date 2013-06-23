@@ -13,10 +13,11 @@
 ; * 2009-09-27     Bernard      add protect when contex switch occurs
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
 ; * 2013-06-18     aozima       add restore MSP feature.
+; * 2013-06-23     aozima       support lazy stack optimized.
 ; */
 
 ;/**
-; * @addtogroup STM32
+; * @addtogroup cortex-m4
 ; */
 ;/*@{*/
 
@@ -107,10 +108,25 @@ PendSV_Handler:
     MRS     r1, psp                 ; get from thread stack pointer
 
 #if defined ( __ARMVFP__ )
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    BNE     skip_push_fpu
     VSTMDB  r1!, {d8 - d15}         ; push FPU register s16~s31
+skip_push_fpu
 #endif
 
     STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
+
+#if defined ( __ARMVFP__ )
+    MOV     r4, #0x00               ; flag = 0
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    BNE     push_flag
+    MOV     r4, #0x01               ; flag = 1
+push_flag
+    ;STMFD   r1!, {r4}              ; push flag
+    SUB     r1, r1, #0x04
+    STR     r4, [r1]
+#endif
+
     LDR     r0, [r0]
     STR     r1, [r0]                ; update from thread stack pointer
 
@@ -119,10 +135,16 @@ swtich_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
 
+#if defined ( __ARMVFP__ )
+    LDMFD   r1!, {r3}               ; pop flag
+#endif
+
     LDMFD   r1!, {r4 - r11}         ; pop r4 - r11 register
 
 #if defined ( __ARMVFP__ )
+    CBZ     r3, skip_pop_fpu
     VLDMIA  r1!, {d8 - d15}         ; pop FPU register s16~s31
+skip_pop_fpu
 #endif
 
     MSR     psp, r1                 ; update stack pointer
@@ -130,6 +152,13 @@ swtich_to_thread
 pendsv_exit
     ; restore interrupt
     MSR     PRIMASK, r2
+
+#if defined ( __ARMVFP__ )
+    ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
+    CBZ     r3, return_without_fpu  ; if(flag_r3 != 0)
+    BIC     lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
+return_without_fpu
+#endif
 
     ORR     lr, lr, #0x04
     BX      lr
@@ -142,6 +171,13 @@ pendsv_exit
 rt_hw_context_switch_to:
     LDR     r1, =rt_interrupt_to_thread
     STR     r0, [r1]
+
+#if defined ( __ARMVFP__ )
+    ; CLEAR CONTROL.FPCA
+    MRS     r2, CONTROL             ; read
+    BIC     r2, r2, #0x04           ; modify
+    MSR     CONTROL, r2             ; write-back
+#endif
 
     ; set from thread to 0
     LDR     r1, =rt_interrupt_from_thread

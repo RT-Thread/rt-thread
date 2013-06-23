@@ -16,6 +16,7 @@
  * 2012-12-11     lgnq         fixed the coding style.
  * 2012-12-23     aozima       stack addr align to 8byte.
  * 2012-12-29     Bernard      Add exception hook.
+ * 2013-06-23     aozima       support lazy stack optimized.
  */
 
 #include <rtthread.h>
@@ -32,6 +33,37 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
 struct exception_stack_frame
+{
+    rt_uint32_t r0;
+    rt_uint32_t r1;
+    rt_uint32_t r2;
+    rt_uint32_t r3;
+    rt_uint32_t r12;
+    rt_uint32_t lr;
+    rt_uint32_t pc;
+    rt_uint32_t psr;
+};
+
+struct stack_frame
+{
+#if USE_FPU
+    rt_uint32_t flag;
+#endif /* USE_FPU */
+
+    /* r4 ~ r11 register */
+    rt_uint32_t r4;
+    rt_uint32_t r5;
+    rt_uint32_t r6;
+    rt_uint32_t r7;
+    rt_uint32_t r8;
+    rt_uint32_t r9;
+    rt_uint32_t r10;
+    rt_uint32_t r11;
+
+    struct exception_stack_frame exception_stack_frame;
+};
+
+struct exception_stack_frame_fpu
 {
     rt_uint32_t r0;
     rt_uint32_t r1;
@@ -65,8 +97,10 @@ struct exception_stack_frame
 #endif
 };
 
-struct stack_frame
+struct stack_frame_fpu
 {
+    rt_uint32_t flag;
+
     /* r4 ~ r11 register */
     rt_uint32_t r4;
     rt_uint32_t r5;
@@ -97,7 +131,7 @@ struct stack_frame
     rt_uint32_t s31;
 #endif
 
-    struct exception_stack_frame exception_stack_frame;
+    struct exception_stack_frame_fpu exception_stack_frame;
 };
 
 rt_uint8_t *rt_hw_stack_init(void       *tentry,
@@ -130,6 +164,10 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* entry point, pc */
     stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR */
 
+#if USE_FPU
+    stack_frame->flag = 0;
+#endif /* USE_FPU */
+
     /* return task's current stack address */
     return stk;
 }
@@ -141,20 +179,20 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
  */
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
 {
-	rt_exception_hook = exception_handle;
+    rt_exception_hook = exception_handle;
 }
 
 void rt_hw_hard_fault_exception(struct exception_stack_frame *exception_stack)
 {
-	extern long list_thread(void);
+    extern long list_thread(void);
 
-	if (rt_exception_hook != RT_NULL)
-	{
-		rt_err_t result;
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
 
-		result = rt_exception_hook(exception_stack);
-		if (result == RT_EOK) return;
-	}
+        result = rt_exception_hook(exception_stack);
+        if (result == RT_EOK) return;
+    }
 
     rt_kprintf("psr: 0x%08x\n", exception_stack->psr);
     rt_kprintf(" pc: 0x%08x\n", exception_stack->pc);
