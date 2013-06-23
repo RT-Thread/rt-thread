@@ -18,6 +18,7 @@
  * 2012-07-18     Arda         add the alignment display for signed integer
  * 2012-11-23     Bernard      fix IAR compiler error. 
  * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
+ * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  */
 
 #include <rtthread.h>
@@ -1121,12 +1122,6 @@ void rt_kprintf(const char *fmt, ...)
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
-#else
-void rt_kprintf(const char *fmt, ...)
-{
-}
-RTM_EXPORT(rt_kprintf);
-
 #endif
 
 #ifdef RT_USING_HEAP
