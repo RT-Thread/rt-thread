@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -1214,7 +1224,7 @@ rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg)
 
     return -RT_ERROR;
 }
-RTM_EXPORT(rt_event_control); 
+RTM_EXPORT(rt_event_control);
 #endif /* end of RT_USING_EVENT */
 
 #ifdef RT_USING_MAILBOX
@@ -1568,7 +1578,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout)
             rt_hw_interrupt_enable(temp);
 
             thread->error = -RT_ETIMEOUT;
-            
+
             return -RT_ETIMEOUT;
         }
 
@@ -1693,7 +1703,7 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
 
     return -RT_ERROR;
 }
-RTM_EXPORT(rt_mb_control); 
+RTM_EXPORT(rt_mb_control);
 #endif /* end of RT_USING_MAILBOX */
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -2199,7 +2209,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 
     return RT_EOK;
 }
-RTM_EXPORT(rt_mq_recv);  
+RTM_EXPORT(rt_mq_recv);
 
 /**
  * This function can get or set some extra attributions of a message queue

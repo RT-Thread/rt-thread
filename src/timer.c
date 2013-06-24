@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -95,7 +105,7 @@ static rt_tick_t rt_timer_list_next_timeout(rt_list_t *timer_list)
 
     if (rt_list_isempty(timer_list))
         return RT_TICK_MAX;
-    
+
     timer = rt_list_entry(timer_list->next, struct rt_timer, list);
 
     return timer->timeout_tick;
@@ -528,7 +538,7 @@ void rt_soft_timer_check(void)
 static void rt_thread_timer_entry(void *parameter)
 {
     rt_tick_t next_timeout;
-    
+
     while (1)
     {
         /* get the next timeout tick */

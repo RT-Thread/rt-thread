@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -346,7 +356,7 @@ void *rt_malloc(rt_size_t size)
             RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE-1)) == 0);
 
             RT_DEBUG_LOG(RT_DEBUG_MEM,
-                         ("allocate memory at 0x%x, size: %d\n", 
+                         ("allocate memory at 0x%x, size: %d\n",
                           (rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM),
                           (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
@@ -448,7 +458,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     nmem = rt_malloc(newsize);
     if (nmem != RT_NULL) /* check memory */
     {
-        rt_memcpy(nmem, rmem, size < newsize ? size : newsize); 
+        rt_memcpy(nmem, rmem, size < newsize ? size : newsize);
         rt_free(rmem);
     }
 
@@ -517,8 +527,8 @@ void rt_free(void *rmem)
     mem = (struct heap_mem *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
 
     RT_DEBUG_LOG(RT_DEBUG_MEM,
-                 ("release memory 0x%x, size: %d\n", 
-                  (rt_uint32_t)rmem, 
+                 ("release memory 0x%x, size: %d\n",
+                  (rt_uint32_t)rmem,
                   (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
 

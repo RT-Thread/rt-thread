@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -14,13 +24,13 @@
  * 2010-10-26     yi.qiu       add module support
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  * 2011-05-09     Bernard      use builtin va_arg in GCC 4.x
- * 2012-11-16     Bernard      change RT_NULL from ((void*)0) to 0. 
+ * 2012-11-16     Bernard      change RT_NULL from ((void*)0) to 0.
  * 2012-12-29     Bernard      change the RT_USING_MEMPOOL location and add
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
  */
- 
+
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
@@ -141,7 +151,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 	#define USED						__attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static inline
-    #define RTT_API 
+    #define RTT_API
 #elif defined (_MSC_VER)
     #include <stdarg.h>
     #define SECTION(x)
@@ -170,7 +180,7 @@ typedef int (*init_fn_t)(void);
 #define INIT_EXPORT(fn, level)	\
 	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
 #else
-#define INIT_EXPORT(fn, level)      
+#define INIT_EXPORT(fn, level)
 #endif
 
 /* board init routines will be called in board_init() function */
@@ -235,7 +245,7 @@ typedef int (*init_fn_t)(void);
  *
  * @def RT_ALIGN_DOWN(size, align)
  * Return the down number of aligned at specified width. RT_ALIGN_DOWN(13, 4)
- * would return 12. 
+ * would return 12.
  */
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
 
@@ -350,7 +360,7 @@ struct rt_object_information
 #define RT_OBJECT_HOOK_CALL(func, argv) \
     do { if ((func) != RT_NULL) func argv; } while (0)
 #else
-#define RT_OBJECT_HOOK_CALL(func, argv) 
+#define RT_OBJECT_HOOK_CALL(func, argv)
 #endif
 
 /*@}*/
@@ -433,7 +443,7 @@ struct rt_thread
     char        name[RT_NAME_MAX];                      /**< the name of thread */
     rt_uint8_t  type;                                   /**< type of object */
     rt_uint8_t  flags;                                  /**< thread's flags */
-    
+
 #ifdef RT_USING_MODULE
     void       *module_id;                              /**< id of application module */
 #endif
@@ -923,7 +933,7 @@ struct rt_module
     struct rt_module_symtab     *symtab;                /**< module symbol table */
 
     rt_uint32_t                  nref;                  /**< reference count */
-    
+
     /* object in this module, module object is the last basic object type */
     struct rt_object_information module_object[RT_Object_Class_Unknown];
 };

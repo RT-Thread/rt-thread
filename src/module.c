@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,7 +25,7 @@
  * 2011-05-25     yi.qiu       implement module hook function
  * 2011-06-23     yi.qiu       rewrite module memory allocator
  * 2012-11-23     Bernard      using RT_DEBUG_LOG instead of rt_kprintf.
- * 2012-11-28     Bernard      remove rt_current_module and user 
+ * 2012-11-28     Bernard      remove rt_current_module and user
  *                             can use rt_module_unload to remove a module.
  */
 
@@ -803,7 +813,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
         module->mem_list = RT_NULL;
 
         /* create page array */
-        module->page_array = 
+        module->page_array =
             (void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
         module->page_cnt = 0;
 #endif

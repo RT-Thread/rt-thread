@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -172,7 +182,7 @@ void rt_system_object_init(void)
 
 /**
  * This function will return the specified type of object information.
- * 
+ *
  * @param type the type of object
  * @return the object type information or RT_NULL
  */
@@ -200,7 +210,7 @@ void rt_object_init(struct rt_object         *object,
 
 #ifdef RT_USING_MODULE
     /* get module object information */
-    information = (rt_module_self() != RT_NULL) ? 
+    information = (rt_module_self() != RT_NULL) ?
         &rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
     /* get object information */
@@ -287,7 +297,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         /* no memory can be allocated */
         return RT_NULL;
     }
-    
+
     /* initialize object's parameters */
 
     /* set object type */
@@ -347,7 +357,7 @@ void rt_object_delete(rt_object_t object)
     rt_hw_interrupt_enable(temp);
 
 #if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    if (object->flag & RT_OBJECT_FLAG_MODULE) 
+    if (object->flag & RT_OBJECT_FLAG_MODULE)
         rt_module_free((rt_module_t)object->module_id, object);
     else
 #endif

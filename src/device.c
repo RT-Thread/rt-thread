@@ -3,15 +3,25 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2007-01-21     Bernard      the first version
  * 2010-05-04     Bernard      add rt_device_init implementation
- * 2012-10-20     Bernard      add device check in register function, 
+ * 2012-10-20     Bernard      add device check in register function,
  *                             provided by Rob <rdent@iinet.net.au>
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
  */
@@ -158,7 +168,7 @@ RTM_EXPORT(rt_device_find);
  * This function will initialize the specified device
  *
  * @param dev the pointer of device driver structure
- * 
+ *
  * @return the result
  */
 rt_err_t rt_device_init(rt_device_t dev)
@@ -377,7 +387,7 @@ rt_device_set_rx_indicate(rt_device_t dev,
 RTM_EXPORT(rt_device_set_rx_indicate);
 
 /**
- * This function will set the indication callback function when device has 
+ * This function will set the indication callback function when device has
  * written data to physical hardware.
  *
  * @param dev the pointer of device driver structure
