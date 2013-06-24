@@ -110,9 +110,9 @@ PendSV_Handler:
     
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
-    VSTMDB  r1!, {d8 - d15}     /* push FPU register s16~s31 */
+    VSTMDBEQ r1!, {d8 - d15}    /* push FPU register s16~s31 */
 #endif
-	
+    
     STMFD   r1!, {r4 - r11}     /* push r4 - r11 register */
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
