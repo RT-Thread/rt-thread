@@ -1,9 +1,21 @@
 /*
  * File      : dfs_ramfs.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, Shanghai Real-Thread Technology Co., Ltd
+ * This file is part of Device File System in RT-Thread RTOS
+ * COPYRIGHT (C) 2004-2013, RT-Thread Development Team
  *
- * All rights reserved.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -17,11 +29,14 @@
 #include <dfs_fs.h>
 #include "dfs_ramfs.h"
 
-int dfs_ramfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
+int dfs_ramfs_mount(struct dfs_filesystem *fs,
+                    unsigned long          rwflag,
+                    const void            *data)
 {
     struct dfs_ramfs* ramfs;
 
-    if (data == RT_NULL) return -DFS_STATUS_EIO;
+    if (data == RT_NULL)
+        return -DFS_STATUS_EIO;
 
     ramfs = (struct dfs_ramfs*) data;
     fs->data = ramfs;
@@ -55,7 +70,9 @@ int dfs_ramfs_ioctl(struct dfs_fd *file, int cmd, void *args)
     return -DFS_STATUS_EIO;
 }
 
-struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs* ramfs, const char *path, rt_size_t *size)
+struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
+                                      const char       *path,
+                                      rt_size_t        *size)
 {
     const char *subpath;
     struct ramfs_dirent *dirent;
@@ -65,16 +82,18 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs* ramfs, const char *path,
     if (! *subpath) /* is root directory */
     {
         *size = 0;
+
         return &(ramfs->root);
     }
 
     for (dirent = rt_list_entry(ramfs->root.list.next, struct ramfs_dirent, list);
-            dirent != &(ramfs->root);
-            dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list))
+         dirent != &(ramfs->root);
+         dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list))
     {
         if (rt_strcmp(dirent->name, subpath) == 0)
         {
             *size = dirent->size;
+
             return dirent;
         }
     }
@@ -122,6 +141,7 @@ int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, rt_size_t count)
         if (ptr == RT_NULL)
         {
             rt_set_errno(-RT_ENOMEM);
+
             return 0;
         }
 
@@ -145,6 +165,7 @@ int dfs_ramfs_lseek(struct dfs_fd *file, rt_off_t offset)
     if (offset <= (rt_off_t)file->size)
     {
         file->pos = offset;
+
         return file->pos;
     }
 
@@ -154,6 +175,7 @@ int dfs_ramfs_lseek(struct dfs_fd *file, rt_off_t offset)
 int dfs_ramfs_close(struct dfs_fd *file)
 {
     file->data = RT_NULL;
+
     return DFS_STATUS_OK;
 }
 
@@ -195,8 +217,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
         if (dirent == RT_NULL)
         {
-            if (file->flags & DFS_O_CREAT ||
-                file->flags & DFS_O_WRONLY)
+            if (file->flags & DFS_O_CREAT || file->flags & DFS_O_WRONLY)
             {
                 char *name_ptr;
 
@@ -209,7 +230,8 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
                 /* remove '/' separator */
                 name_ptr = file->path;
-                while (*name_ptr == '/' && *name_ptr) name_ptr ++;
+                while (*name_ptr == '/' && *name_ptr)
+                    name_ptr ++;
                 strncpy(dirent->name, name_ptr, RAMFS_NAME_MAX);
 
                 rt_list_init(&(dirent->list));
@@ -218,7 +240,8 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 /* add to the root directory */
                 rt_list_insert_after(&(ramfs->root.list), &(dirent->list));
             }
-            else return -DFS_STATUS_ENOENT;
+            else
+                return -DFS_STATUS_ENOENT;
         }
 
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
@@ -282,8 +305,8 @@ int dfs_ramfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t cou
     index = 0;
     count = 0;
     for (dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list);
-            dirent != &(ramfs->root) && index < end;
-            dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list))
+         dirent != &(ramfs->root) && index < end;
+         dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list))
     {
         if (index >= (rt_size_t)file->pos)
         {
@@ -312,7 +335,8 @@ int dfs_ramfs_unlink(struct dfs_filesystem *fs, const char *path)
     RT_ASSERT(ramfs != RT_NULL);
 
     dirent = dfs_ramfs_lookup(ramfs, path, &size);
-    if (dirent == RT_NULL) return -DFS_STATUS_ENOENT;
+    if (dirent == RT_NULL)
+        return -DFS_STATUS_ENOENT;
 
     rt_list_remove(&(dirent->list));
     if (dirent->data != RT_NULL)
@@ -322,7 +346,9 @@ int dfs_ramfs_unlink(struct dfs_filesystem *fs, const char *path)
     return DFS_STATUS_OK;
 }
 
-int dfs_ramfs_rename(struct dfs_filesystem *fs, const char *oldpath, const char *newpath)
+int dfs_ramfs_rename(struct dfs_filesystem *fs,
+                     const char            *oldpath,
+                     const char            *newpath)
 {
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
@@ -332,10 +358,12 @@ int dfs_ramfs_rename(struct dfs_filesystem *fs, const char *oldpath, const char 
     RT_ASSERT(ramfs != RT_NULL);
 
     dirent = dfs_ramfs_lookup(ramfs, newpath, &size);
-    if (dirent != RT_NULL) return -DFS_STATUS_EEXIST;
+    if (dirent != RT_NULL)
+        return -DFS_STATUS_EEXIST;
 
     dirent = dfs_ramfs_lookup(ramfs, oldpath, &size);
-    if (dirent == RT_NULL) return -DFS_STATUS_ENOENT;
+    if (dirent == RT_NULL)
+        return -DFS_STATUS_ENOENT;
 
     strncpy(dirent->name, newpath, RAMFS_NAME_MAX);
 
@@ -368,10 +396,11 @@ int dfs_ramfs_init(void)
 {
     /* register ram file system */
     dfs_register(&_ramfs);
+
     return 0;
 }
 
-struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t* pool, rt_size_t size)
+struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 {
     struct dfs_ramfs *ramfs;
     rt_uint8_t *data_ptr;
@@ -385,9 +414,10 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t* pool, rt_size_t size)
     size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
     result = rt_memheap_init(&ramfs->memheap, "ramfs", data_ptr, size);
-    if (result != RT_EOK) return RT_NULL;
-	/* detach this memheap object from the system */
-	rt_object_detach((rt_object_t)&(ramfs->memheap));
+    if (result != RT_EOK)
+        return RT_NULL;
+    /* detach this memheap object from the system */
+    rt_object_detach((rt_object_t)&(ramfs->memheap));
 
     /* initialize ramfs object */
     ramfs->magic = RAMFS_MAGIC;
