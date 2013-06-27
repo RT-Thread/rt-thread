@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2011, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -167,23 +177,27 @@ void rt_usb_hub_thread(void);
 uinst_t rt_usb_alloc_instance(void);
 rt_err_t rt_usb_attatch_instance(uinst_t uinst);
 rt_err_t rt_usb_detach_instance(uinst_t uinst);
-rt_err_t rt_usb_get_descriptor(uinst_t uinst, rt_uint8_t type, void* buffer, 
-    int nbytes);
+rt_err_t rt_usb_get_descriptor(uinst_t    uinst,
+                               rt_uint8_t type,
+                               void      *buffer, 
+                               int        nbytes);
 rt_err_t rt_usb_set_configure(uinst_t uinst, int config);
 rt_err_t rt_usb_set_address(uinst_t uinst);
 rt_err_t rt_usb_set_interface(uinst_t uinst, int intf);
 rt_err_t rt_usb_clear_feature(uinst_t uinst, int endpoint, int feature);
-rt_err_t rt_usb_get_interface_descriptor(ucfg_desc_t cfg_desc, int num, 
-    uintf_desc_t* intf_desc);
-rt_err_t rt_usb_get_endpoint_descriptor(uintf_desc_t intf_desc, int num, 
-    uep_desc_t* ep_desc);
+rt_err_t rt_usb_get_interface_descriptor(ucfg_desc_t   cfg_desc,
+                                         int           num,
+                                         uintf_desc_t *intf_desc);
+rt_err_t rt_usb_get_endpoint_descriptor(uintf_desc_t intf_desc,
+                                        int          num, 
+                                        uep_desc_t  *ep_desc);
 
 /* usb class driver interface */
 rt_err_t rt_usb_class_driver_init(void);
 rt_err_t rt_usb_class_driver_register(ucd_t drv);
 rt_err_t rt_usb_class_driver_unregister(ucd_t drv);
-rt_err_t rt_usb_class_driver_run(ucd_t drv, void* args);
-rt_err_t rt_usb_class_driver_stop(ucd_t drv, void* args);
+rt_err_t rt_usb_class_driver_run(ucd_t drv, void *args);
+rt_err_t rt_usb_class_driver_stop(ucd_t drv, void *args);
 ucd_t rt_usb_class_driver_find(int class_code, int subclass_code);
 
 /* usb class driver implement */
@@ -197,28 +211,39 @@ uprotocal_t rt_usb_hid_protocal_kbd(void);
 uprotocal_t rt_usb_hid_protocal_mouse(void);
 
 /* usb adk class driver interface */
-rt_err_t rt_usb_adk_set_string(const char* manufacturer, const char* model,
-    const char* description, const char* version, const char* uri, 
-    const char* serial);
+rt_err_t rt_usb_adk_set_string(const char *manufacturer,
+                               const char *model,
+                               const char *description,
+                               const char *version,
+                               const char *uri, 
+                               const char *serial);
 
 /* usb hub interface */
-rt_err_t rt_usb_hub_get_descriptor(uinst_t uinst, rt_uint8_t *buffer, 
-    rt_size_t size);
-rt_err_t rt_usb_hub_get_status(uinst_t uinst, rt_uint8_t* buffer);
-rt_err_t rt_usb_hub_get_port_status(uhubinst_t uhub, rt_uint16_t port, 
-    rt_uint8_t* buffer);
-rt_err_t rt_usb_hub_clear_port_feature(uhubinst_t uhub, rt_uint16_t port, 
-    rt_uint16_t feature);
-rt_err_t rt_usb_hub_set_port_feature(uhubinst_t uhub, rt_uint16_t port, 
-    rt_uint16_t feature);
+rt_err_t rt_usb_hub_get_descriptor(uinst_t     uinst,
+                                   rt_uint8_t *buffer, 
+                                   rt_size_t   size);
+rt_err_t rt_usb_hub_get_status(uinst_t uinst, rt_uint8_t *buffer);
+rt_err_t rt_usb_hub_get_port_status(uhubinst_t  uhub,
+                                    rt_uint16_t port, 
+                                    rt_uint8_t *buffer);
+rt_err_t rt_usb_hub_clear_port_feature(uhubinst_t  uhub,
+                                       rt_uint16_t port, 
+                                       rt_uint16_t feature);
+rt_err_t rt_usb_hub_set_port_feature(uhubinst_t  uhub,
+                                     rt_uint16_t port, 
+                                     rt_uint16_t feature);
 rt_err_t rt_usb_hub_reset_port(uhubinst_t uhub, rt_uint16_t port);
 rt_err_t rt_usb_post_event(struct uhost_msg* msg, rt_size_t size);
 
 /* usb host controller driver interface */
-rt_inline rt_err_t rt_usb_hcd_alloc_pipe(uhcd_t hcd, upipe_t* pipe, 
-    uifinst_t ifinst, uep_desc_t ep, func_callback callback)
+rt_inline rt_err_t rt_usb_hcd_alloc_pipe(uhcd_t        hcd,
+                                         upipe_t      *pipe, 
+                                         uifinst_t     ifinst,
+                                         uep_desc_t    ep,
+                                         func_callback callback)
 {
-    if(ifinst == RT_NULL) return -RT_EIO;
+    if (ifinst == RT_NULL)
+        return -RT_EIO;
 
     return hcd->ops->alloc_pipe(pipe, ifinst, ep, callback);
 }
@@ -230,40 +255,59 @@ rt_inline rt_err_t rt_usb_hcd_free_pipe(uhcd_t hcd, upipe_t pipe)
     return hcd->ops->free_pipe(pipe);
 }
 
-rt_inline int rt_usb_hcd_bulk_xfer(uhcd_t hcd, upipe_t pipe, void* buffer, 
-    int nbytes, int timeout)
+rt_inline int rt_usb_hcd_bulk_xfer(uhcd_t  hcd,
+                                   upipe_t pipe,
+                                   void   *buffer, 
+                                   int     nbytes,
+                                   int     timeout)
 {
-    if(pipe == RT_NULL) return -1;
-    if(pipe->ifinst == RT_NULL) return -1;
-    if(pipe->ifinst->uinst == RT_NULL) return -1;    
-    if(pipe->ifinst->uinst->status == UINST_STATUS_IDLE) 
+    if (pipe == RT_NULL)
+        return -1;
+    if (pipe->ifinst == RT_NULL)
+        return -1;
+    if (pipe->ifinst->uinst == RT_NULL)
+        return -1;    
+    if (pipe->ifinst->uinst->status == UINST_STATUS_IDLE) 
         return -1;
 
     return hcd->ops->bulk_xfer(pipe, buffer, nbytes, timeout);
 }
 
-rt_inline int rt_usb_hcd_control_xfer(uhcd_t hcd, uinst_t uinst, ureq_t setup, 
-    void* buffer, int nbytes, int timeout)
+rt_inline int rt_usb_hcd_control_xfer(uhcd_t  hcd,
+                                      uinst_t uinst,
+                                      ureq_t  setup, 
+                                      void   *buffer,
+                                      int     nbytes,
+                                      int     timeout)
 {
-    if(uinst->status == UINST_STATUS_IDLE) return -1;
+    if (uinst->status == UINST_STATUS_IDLE)
+        return -1;
 
     return hcd->ops->ctl_xfer(uinst, setup, buffer, nbytes, timeout);
 }
 
-rt_inline int rt_usb_hcd_int_xfer(uhcd_t hcd, upipe_t pipe, void* buffer, 
-    int nbytes, int timeout)
+rt_inline int rt_usb_hcd_int_xfer(uhcd_t  hcd,
+                                  upipe_t pipe,
+                                  void   *buffer, 
+                                  int     nbytes,
+                                  int     timeout)
 {    
-    if(pipe == RT_NULL) return -1;
-    if(pipe->ifinst == RT_NULL) return -1;
-    if(pipe->ifinst->uinst == RT_NULL) return -1;    
-    if(pipe->ifinst->uinst->status == UINST_STATUS_IDLE) 
+    if (pipe == RT_NULL)
+        return -1;
+    if (pipe->ifinst == RT_NULL)
+        return -1;
+    if (pipe->ifinst->uinst == RT_NULL)
+        return -1;    
+    if (pipe->ifinst->uinst->status == UINST_STATUS_IDLE) 
         return -1;
 
     return hcd->ops->int_xfer(pipe, buffer, nbytes, timeout);
 }
 
-rt_inline rt_err_t rt_usb_hcd_hub_control(uhcd_t hcd, rt_uint16_t port, 
-    rt_uint8_t cmd, void *args)
+rt_inline rt_err_t rt_usb_hcd_hub_control(uhcd_t      hcd,
+                                          rt_uint16_t port, 
+                                          rt_uint8_t  cmd,
+                                          void       *args)
 {    
     return hcd->ops->hub_ctrl(port, cmd, args);
 }
