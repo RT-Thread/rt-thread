@@ -56,7 +56,7 @@
 #define NRZ_INVERTED                    1       /* Non Return to Zero : inverted mode */
 
 #ifndef RT_SERIAL_RB_BUFSZ
-#define RT_SERIAL_RB_BUFSZ				64
+#define RT_SERIAL_RB_BUFSZ              64
 #endif
 
 #define RT_DEVICE_CTRL_CONFIG           0x03    /* configure device */
