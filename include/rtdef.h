@@ -93,7 +93,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define UNUSED                      __attribute__((unused))
-	#define USED						__attribute__((used))
+    #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static __inline
     /* module compiling */
@@ -107,7 +107,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  @ x
     #define UNUSED
-	#define USED
+    #define USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define rt_inline                   static inline
@@ -140,7 +140,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
     #define SECTION(x)                  __attribute__((section(x)))
     #define UNUSED                      __attribute__((unused))
-	#define USED						__attribute__((used))
+    #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static __inline
     #define RTT_API
@@ -148,7 +148,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define UNUSED                      __attribute__((unused))
-	#define USED						__attribute__((used))
+    #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static inline
     #define RTT_API
@@ -156,7 +156,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)
     #define UNUSED
-	#define USED
+    #define USED
     #define ALIGN(n)                    __declspec(align(n))
     #define rt_inline                   static __inline
     #define RTT_API
@@ -166,7 +166,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
      * details. */
     #define SECTION(x)
     #define UNUSED
-	#define USED
+    #define USED
     #define ALIGN(n)
     #define rt_inline                   static inline
     #define RTT_API
@@ -177,19 +177,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
-#define INIT_EXPORT(fn, level)	\
-	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+#define INIT_EXPORT(fn, level)  \
+    const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
 #else
 #define INIT_EXPORT(fn, level)
 #endif
 
 /* board init routines will be called in board_init() function */
-#define INIT_BOARD_EXPORT(fn)		INIT_EXPORT(fn, "1")
+#define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
 /* device/component/fs/app init routines will be called in init_thread */
-#define INIT_DEVICE_EXPORT(fn)		INIT_EXPORT(fn, "2")
-#define INIT_COMPONENT_EXPORT(fn)	INIT_EXPORT(fn, "3")
-#define INIT_FS_EXPORT(fn)			INIT_EXPORT(fn, "4")
-#define INIT_APP_EXPORT(fn)			INIT_EXPORT(fn, "5")
+#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
+#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
+#define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
+#define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "5")
 
 /* event length */
 #define RT_EVENT_LENGTH                 32
@@ -201,15 +201,15 @@ typedef int (*init_fn_t)(void);
 
 /* kernel malloc definitions */
 #ifndef RT_KERNEL_MALLOC
-#define RT_KERNEL_MALLOC(sz)			rt_malloc(sz)
+#define RT_KERNEL_MALLOC(sz)            rt_malloc(sz)
 #endif
 
 #ifndef RT_KERNEL_FREE
-#define RT_KERNEL_FREE(ptr)				rt_free(ptr)
+#define RT_KERNEL_FREE(ptr)             rt_free(ptr)
 #endif
 
 #ifndef RT_KERNEL_REALLOC
-#define RT_KERNEL_REALLOC(ptr, size)	rt_realloc(ptr, size)
+#define RT_KERNEL_REALLOC(ptr, size)    rt_realloc(ptr, size)
 #endif
 
 /**
@@ -716,7 +716,7 @@ enum rt_device_class_type
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
     RT_Device_Class_PM,                                 /**< PM pseudo device */
-    RT_Device_Class_Miscellaneous,						/**< Miscellaneous device */
+    RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
