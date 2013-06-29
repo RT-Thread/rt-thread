@@ -38,7 +38,7 @@ int dfs_ramfs_mount(struct dfs_filesystem *fs,
     if (data == RT_NULL)
         return -DFS_STATUS_EIO;
 
-    ramfs = (struct dfs_ramfs*) data;
+    ramfs = (struct dfs_ramfs *)data;
     fs->data = ramfs;
 
     return DFS_STATUS_OK;
@@ -47,6 +47,7 @@ int dfs_ramfs_mount(struct dfs_filesystem *fs,
 int dfs_ramfs_unmount(struct dfs_filesystem *fs)
 {
     fs->data = RT_NULL;
+
     return DFS_STATUS_OK;
 }
 
@@ -58,9 +59,9 @@ int dfs_ramfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     RT_ASSERT(ramfs != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
-    buf->f_bsize = 512;
+    buf->f_bsize  = 512;
     buf->f_blocks = ramfs->memheap.pool_size/512;
-    buf->f_bfree = ramfs->memheap.available_size/512;
+    buf->f_bfree  = ramfs->memheap.available_size/512;
 
     return DFS_STATUS_OK;
 }
@@ -78,7 +79,8 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
     struct ramfs_dirent *dirent;
 
     subpath = path;
-    while (*subpath == '/' && *subpath) subpath ++;
+    while (*subpath == '/' && *subpath)
+        subpath ++;
     if (! *subpath) /* is root directory */
     {
         *size = 0;
@@ -222,7 +224,9 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 char *name_ptr;
 
                 /* create a file entry */
-                dirent = (struct ramfs_dirent*)rt_memheap_alloc(&(ramfs->memheap), sizeof(struct ramfs_dirent));
+                dirent = (struct ramfs_dirent *)
+                         rt_memheap_alloc(&(ramfs->memheap),
+                                          sizeof(struct ramfs_dirent));
                 if (dirent == RT_NULL)
                 {
                     return -DFS_STATUS_ENOMEM;
@@ -244,7 +248,9 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 return -DFS_STATUS_ENOENT;
         }
 
-        /* Creates a new file. If the file is existing, it is truncated and overwritten. */
+        /* Creates a new file.
+         * If the file is existing, it is truncated and overwritten.
+         */
         if (file->flags & DFS_O_TRUNC)
         {
             dirent->size = 0;
@@ -263,7 +269,9 @@ int dfs_ramfs_open(struct dfs_fd *file)
     return DFS_STATUS_OK;
 }
 
-int dfs_ramfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_ramfs_stat(struct dfs_filesystem *fs,
+                   const char            *path,
+                   struct stat           *st)
 {
     rt_size_t size;
     struct ramfs_dirent *dirent;
@@ -286,20 +294,24 @@ int dfs_ramfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     return DFS_STATUS_OK;
 }
 
-int dfs_ramfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
+int dfs_ramfs_getdents(struct dfs_fd *file,
+                       struct dirent *dirp,
+                       rt_uint32_t    count)
 {
     rt_size_t index, end;
     struct dirent *d;
     struct ramfs_dirent *dirent;
-    struct dfs_ramfs* ramfs;
+    struct dfs_ramfs *ramfs;
 
-    ramfs = (struct dfs_ramfs*)file->fs->data;
+    ramfs  = (struct dfs_ramfs *)file->fs->data;
     dirent = (struct ramfs_dirent *)file->data;
-    if (dirent != &(ramfs->root)) return -DFS_STATUS_EINVAL;
+    if (dirent != &(ramfs->root))
+        return -DFS_STATUS_EINVAL;
 
     /* make integer count */
     count = (count / sizeof(struct dirent));
-    if (count == 0) return -DFS_STATUS_EINVAL;
+    if (count == 0)
+        return -DFS_STATUS_EINVAL;
 
     end = file->pos + count;
     index = 0;
@@ -406,8 +418,8 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
     rt_uint8_t *data_ptr;
     rt_err_t result;
 
-    size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
-    ramfs = (struct dfs_ramfs*) pool;
+    size  = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
+    ramfs = (struct dfs_ramfs *)pool;
 
     data_ptr = (rt_uint8_t *)(ramfs + 1);
     size = size - sizeof(struct dfs_ramfs);
