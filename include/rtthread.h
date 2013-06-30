@@ -30,7 +30,7 @@
 
 #ifndef __RT_THREAD_H__
 #define __RT_THREAD_H__
-    #include <stdarg.h>
+
 #include <rtdef.h>
 #include <rtdebug.h>
 #include <rtservice.h>
