@@ -139,7 +139,7 @@ int lwip_system_init(void)
     {
         LWIP_ASSERT("Failed to create semaphore", 0);
 
-        return;
+        return -1;
     }
 
     tcpip_init(tcpip_init_done_callback, (void *)&done_sem);
@@ -149,7 +149,7 @@ int lwip_system_init(void)
     {
         rt_sem_detach(&done_sem);
 
-        return;
+        return -1;
     }
     rt_sem_detach(&done_sem);
 
