@@ -552,6 +552,11 @@ u32_t sys_jiffies(void)
     return rt_tick_get();
 }
 
+u32_t sys_now(void)
+{
+	return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
+}
+
 #ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 {
