@@ -31,25 +31,35 @@ static int rti_start(void)
 {
     return 0;
 }
-INIT_EXPORT(rti_start, "0");
 
 static int rti_board_end(void)
 {
     return 0;
 }
-INIT_EXPORT(rti_board_end, "1.post");
 
 static int rti_end(void)
 {
     return 0;
 }
+
+#ifdef _MSC_VER
+    #pragma section(".rti_fn$0", read,execute)
+    #pragma section(".rti_fn$1z", read,execute)
+    #pragma section(".rti_fn$7", read,execute)
+__declspec(allocate(".rti_fn$0")) const init_fn_t __rt_init_rti_start = rti_start;
+__declspec(allocate(".rti_fn$1z")) const init_fn_t __rt_init_rti_board_end = rti_start;
+__declspec(allocate(".rti_fn$7")) const init_fn_t __rt_init_rti_end = rti_start;
+#else
+INIT_EXPORT(rti_start, "0");
+INIT_EXPORT(rti_board_end, "1.post");
 INIT_EXPORT(rti_end,"7");
+#endif
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
 /* fixed for MSC_VC and x86_64 in GNU GCC */
 #define NEXT_COMPONENT_FN(fn_ptr, end)  fn_ptr = _next_component_fn(fn_ptr, end)
 
-const init_fn_t *_next_component_fn(const init_fn_t *fn, const init_fn_t *end)
+static const init_fn_t *_next_component_fn(const init_fn_t *fn, const init_fn_t *end)
 {
     unsigned int *ptr;
     ptr = (unsigned int*) (fn + 1);
@@ -69,10 +79,11 @@ void rt_components_board_init(void)
 {
     const init_fn_t *fn_ptr;
 
-    for (fn_ptr = &__rt_init_rti_start; fn_ptr < &__rt_init_rti_board_end; )
+    for (fn_ptr = &__rt_init_rti_start;
+         fn_ptr < &__rt_init_rti_board_end;)
     {
         (*fn_ptr)();
-        NEXT_COMPONENT_FN(fn_ptr, __rt_init_rti_board_end);
+        NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_board_end);
     }
 }
 
@@ -83,10 +94,11 @@ void rt_components_init(void)
 {
     const init_fn_t *fn_ptr;
 
-    for (fn_ptr = &__rt_init_rti_board_end; fn_ptr < &__rt_init_rti_end; )
+    for (fn_ptr = &__rt_init_rti_board_end;
+         fn_ptr < &__rt_init_rti_end; )
     {
         (*fn_ptr)();
-        NEXT_COMPONENT_FN(fn_ptr, __rt_init_rti_end);
+        NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_end);
     }
 }
 

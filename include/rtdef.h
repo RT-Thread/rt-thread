@@ -178,19 +178,54 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
-#define INIT_EXPORT(fn, level)  \
-    const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
-#else
-#define INIT_EXPORT(fn, level)
+    /* different compiler standards are always headache. GCC and MDK have
+     * similar interface to handle sections specs while MSVC and CCS both have
+     * there own way of setting section settings. */
+#ifdef _MSC_VER
+    /* The one in MSVC is complicated and lame. */
+    /* we need to define the section before "allocate" it. */
+    #pragma section(".rti_fn$1", read,execute)
+    #pragma section(".rti_fn$2", read,execute)
+    #pragma section(".rti_fn$3", read,execute)
+    #pragma section(".rti_fn$4", read,execute)
+    #pragma section(".rti_fn$5", read,execute)
+    #pragma section(".rti_fn$6", read,execute)
+    #pragma section(".rti_fn$7", read,execute)
+    /* __declspec(allocate()) take effect before string concatenation, so
+       __declspec(allocate("A""B")) will result in compiling error:
+         : error C2341: 'A' : segment must be defined using #pragma
+             data_seg, code_seg or section prior to use
+         : error C2059: syntax error : 'string'
+         : error C2059: syntax error : ')'
+       so we could not use __declspec(allocate) as convenience as others. */
+    /* board init routines will be called in board_init() function */
+    #define INIT_BOARD_EXPORT(fn)           __declspec(allocate(".rti_fn$1")) const init_fn_t __rt_init_##fn = fn
+    /* device/component/fs/app init routines will be called in init_thread */
+    #define INIT_DEVICE_EXPORT(fn)          __declspec(allocate(".rti_fn$2")) const init_fn_t __rt_init_##fn = fn
+    #define INIT_COMPONENT_EXPORT(fn)       __declspec(allocate(".rti_fn$3")) const init_fn_t __rt_init_##fn = fn
+    #define INIT_FS_EXPORT(fn)              __declspec(allocate(".rti_fn$4")) const init_fn_t __rt_init_##fn = fn
+    #define INIT_APP_EXPORT(fn)             __declspec(allocate(".rti_fn$5")) const init_fn_t __rt_init_##fn = fn
+#else // for MDK and GCC which support SECTION
+    #define INIT_EXPORT(fn, level)  \
+            SECTION(".rti_fn."level) const init_fn_t __rt_init_##fn = fn
+    /* board init routines will be called in board_init() function */
+    #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
+    /* device/component/fs/app init routines will be called in init_thread */
+    #define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
+    #define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
+    #define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
+    #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "5")
 #endif
-
-/* board init routines will be called in board_init() function */
-#define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
-/* device/component/fs/app init routines will be called in init_thread */
-#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
-#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
-#define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
-#define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "5")
+#else // RT_USING_COMPONENTS_INIT
+    #define INIT_EXPORT(fn, level)
+    /* board init routines will be called in board_init() function */
+    #define INIT_BOARD_EXPORT(fn)
+    /* device/component/fs/app init routines will be called in init_thread */
+    #define INIT_DEVICE_EXPORT(fn)
+    #define INIT_COMPONENT_EXPORT(fn)
+    #define INIT_FS_EXPORT(fn)
+    #define INIT_APP_EXPORT(fn)
+#endif // RT_USING_COMPONENTS_INIT
 
 /* event length */
 #define RT_EVENT_LENGTH                 32
