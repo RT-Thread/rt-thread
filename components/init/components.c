@@ -43,9 +43,9 @@ static int rti_end(void)
 }
 
 #ifdef _MSC_VER
-    #pragma section(".rti_fn$0", read,execute)
-    #pragma section(".rti_fn$1z", read,execute)
-    #pragma section(".rti_fn$7", read,execute)
+    #pragma section(".rti_fn$0", read)
+    #pragma section(".rti_fn$1z", read)
+    #pragma section(".rti_fn$7", read)
 __declspec(allocate(".rti_fn$0")) const init_fn_t __rt_init_rti_start = rti_start;
 __declspec(allocate(".rti_fn$1z")) const init_fn_t __rt_init_rti_board_end = rti_start;
 __declspec(allocate(".rti_fn$7")) const init_fn_t __rt_init_rti_end = rti_start;

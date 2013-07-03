@@ -184,13 +184,13 @@ typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER
     /* The one in MSVC is complicated and lame. */
     /* we need to define the section before "allocate" it. */
-    #pragma section(".rti_fn$1", read,execute)
-    #pragma section(".rti_fn$2", read,execute)
-    #pragma section(".rti_fn$3", read,execute)
-    #pragma section(".rti_fn$4", read,execute)
-    #pragma section(".rti_fn$5", read,execute)
-    #pragma section(".rti_fn$6", read,execute)
-    #pragma section(".rti_fn$7", read,execute)
+    #pragma section(".rti_fn$1", read)
+    #pragma section(".rti_fn$2", read)
+    #pragma section(".rti_fn$3", read)
+    #pragma section(".rti_fn$4", read)
+    #pragma section(".rti_fn$5", read)
+    #pragma section(".rti_fn$6", read)
+    #pragma section(".rti_fn$7", read)
     /* __declspec(allocate()) take effect before string concatenation, so
        __declspec(allocate("A""B")) will result in compiling error:
          : error C2341: 'A' : segment must be defined using #pragma
