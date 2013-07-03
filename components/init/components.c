@@ -80,10 +80,10 @@ void rt_components_board_init(void)
     const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_start;
-         fn_ptr < &__rt_init_rti_board_end;)
+         fn_ptr < &__rt_init_rti_board_end;
+         NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_board_end))
     {
         (*fn_ptr)();
-        NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_board_end);
     }
 }
 
@@ -95,10 +95,10 @@ void rt_components_init(void)
     const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_board_end;
-         fn_ptr < &__rt_init_rti_end; )
+         fn_ptr < &__rt_init_rti_end;
+         NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_end))
     {
         (*fn_ptr)();
-        NEXT_COMPONENT_FN(fn_ptr, &__rt_init_rti_end);
     }
 }
 
