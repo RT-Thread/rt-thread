@@ -116,7 +116,16 @@ void finsh_set_device(const char* device_name)
 
 	RT_ASSERT(shell != RT_NULL);
 	dev = rt_device_find(device_name);
-	if (dev != RT_NULL && rt_device_open(dev, RT_DEVICE_OFLAG_RDWR) == RT_EOK)
+	if (dev == RT_NULL)
+	{
+		rt_kprintf("finsh: can not find device: %s\n", device_name);
+		return;
+	}
+
+	/* check whether it's a same device */
+	if (dev == shell->device) return;
+	/* open this device and set the new device in finsh shell */
+	if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR) == RT_EOK)
 	{
 		if (shell->device != RT_NULL)
 		{
@@ -126,10 +135,6 @@ void finsh_set_device(const char* device_name)
 
 		shell->device = dev;
 		rt_device_set_rx_indicate(dev, finsh_rx_ind);
-	}
-	else
-	{
-		rt_kprintf("finsh: can not find device:%s\n", device_name);
 	}
 }
 
