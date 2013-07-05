@@ -178,7 +178,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
-#ifdef _MSC_VER_ /* we do not support MS VC++ compiler */
+#ifdef _MSC_VER /* we do not support MS VC++ compiler */
     #define INIT_EXPORT(fn, level)
 #else
     #define INIT_EXPORT(fn, level)  \
