@@ -599,7 +599,7 @@ void copy(const char *src, const char *dst)
 {
     struct dfs_fd src_fd;
     rt_uint8_t *block_ptr;
-    rt_uint32_t read_bytes;
+    rt_int32_t read_bytes;
 
     block_ptr = rt_malloc(BUF_SZ);
     if (block_ptr == RT_NULL)
