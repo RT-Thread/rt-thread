@@ -1,7 +1,7 @@
 /*
  * File      : context_gcc.S
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -14,6 +14,7 @@
  * 2011-06-17   onelife   Merge all of the assembly source code into context_gcc.S
  * 2011-07-12   onelife   Add interrupt context check function
  * 2013-06-18   aozima    add restore MSP feature.
+ * 2013-07-09   aozima    enhancement hard fault exception handler.
  */
  
     .cpu    cortex-m3
@@ -176,7 +177,23 @@ rt_hw_interrupt_thread_switch:
     .type HardFault_Handler, %function
 HardFault_Handler:
     /* get current context */
-    MRS     R0, PSP                 /* get fault thread stack pointer */
+    MRS     r0, msp                 /* get fault context from handler. */
+    TST     lr, #0x04               /* if(!EXC_RETURN[2]) */
+    BEQ     _get_sp_done
+    MRS     r0, psp                 /* get fault context from thread. */
+_get_sp_done:
+
+    STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
+    STMFD   r0!, {lr}               /* push exec_return register */
+
+    TST     lr, #0x04               /* if(!EXC_RETURN[2])
+    BEQ     _update_msp
+    MSR     psp, r0                 /* update stack pointer to PSP. */
+    B       _update_done
+_update_msp:
+    MSR     msp, r0                 /* update stack pointer to MSP. */
+_update_done:
+
     PUSH    {LR}
     BL      rt_hw_hard_fault_exception
     POP     {LR}
