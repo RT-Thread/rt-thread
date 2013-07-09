@@ -88,6 +88,31 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action='store_true',
                       default=False,
                       help='Build Cscope cross reference database. Requires cscope installed.')
+    AddOption('--clang-analyzer',
+                      dest='clang-analyzer',
+                      action='store_true',
+                      default=False,
+                      help='Perform static analyze with Clang-analyzer. '+\
+                           'Requires Clang installed.\n'+\
+                           'It is recommended to use with scan-build like this:\n'+\
+                           '`scan-build scons --clang-analyzer`\n'+\
+                           'If things goes well, scan-build will instruct you to invoke scan-view.')
+
+    if GetOption('clang-analyzer'):
+        # perform what scan-build does
+        env.Replace(
+                CC   = 'ccc-analyzer',
+                CXX  = 'c++-analyzer',
+                # skip as and link
+                LINK = 'true',
+                AS   = 'true',)
+        env["ENV"].update(x for x in os.environ.items() if x[0].startswith("CCC_"))
+        # only check, don't compile. ccc-analyzer use CCC_CC as the CC.
+        env['ENV']['CCC_CC']  = 'true'
+        env['ENV']['CCC_CXX'] = 'true'
+        # remove the POST_ACTION as it will cause meaningless errors(file not
+        # found or something like that).
+        rtconfig.POST_ACTION = ''
 
     # add build library option
     AddOption('--buildlib', 
@@ -109,6 +134,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cb':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
+        # --target will change the toolchain settings which clang-analyzer is
+        # depend on
+        if GetOption('clang-analyzer'):
+            print '--clang-analyzer cannot be used with --target'
+            sys.exit(1)
+
         SetOption('no_exec', 1)
         try:
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
