@@ -1,7 +1,7 @@
 /*
  * File      : device.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * 2012-10-20     Bernard      add device check in register function,
  *                             provided by Rob <rdent@iinet.net.au>
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
+ * 2013-07-09     Grissiom     add ref_count support
  */
 
 #include <rtthread.h>
@@ -51,6 +52,7 @@ rt_err_t rt_device_register(rt_device_t dev,
 
     rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
     dev->flag = flags;
+    dev->ref_count = 0;
 
     return RT_EOK;
 }
@@ -237,6 +239,11 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
         return -RT_EBUSY;
     }
 
+    dev->ref_count++;
+    /* don't let bad things happen silently. If you are bitten by this assert,
+     * please set the ref_count to a bigger type. */
+    RT_ASSERT(dev->ref_count != 0);
+
     /* call device open interface */
     if (dev->open != RT_NULL)
     {
@@ -263,6 +270,14 @@ rt_err_t rt_device_close(rt_device_t dev)
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(dev != RT_NULL);
+
+    if (dev->ref_count == 0)
+        return -RT_ERROR;
+
+    dev->ref_count--;
+
+    if (dev->ref_count != 0)
+        return RT_EOK;
 
     /* call device close interface */
     if (dev->close != RT_NULL)
@@ -297,6 +312,12 @@ rt_size_t rt_device_read(rt_device_t dev,
 {
     RT_ASSERT(dev != RT_NULL);
 
+    if (dev->ref_count == 0)
+    {
+        rt_set_errno(-RT_ERROR);
+        return 0;
+    }
+
     /* call device read interface */
     if (dev->read != RT_NULL)
     {
@@ -328,6 +349,12 @@ rt_size_t rt_device_write(rt_device_t dev,
                           rt_size_t   size)
 {
     RT_ASSERT(dev != RT_NULL);
+
+    if (dev->ref_count == 0)
+    {
+        rt_set_errno(-RT_ERROR);
+        return 0;
+    }
 
     /* call device write interface */
     if (dev->write != RT_NULL)
