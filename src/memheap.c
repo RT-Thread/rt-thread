@@ -26,6 +26,7 @@
  * 2013-04-10     Bernard      add rt_memheap_realloc function.
  * 2013-05-24     Bernard      fix the rt_memheap_realloc issue.
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
+ * 2013-07-11     Grissiom     add rt_memheap_check and rt_dump_heap
  */
 
 #include <rthw.h>
@@ -35,6 +36,7 @@
 
 /* dynamic pool magic and mask */
 #define RT_MEMHEAP_MAGIC        0x1ea01ea0
+#define RT_MEMHEAP_VISIT        0x00010000
 #define RT_MEMHEAP_MASK         0xfffffffe
 #define RT_MEMHEAP_USED         0x01
 #define RT_MEMHEAP_FREED        0x00
@@ -44,6 +46,122 @@
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
 #define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+
+#define RT_MEMHEAP_CHECK
+/*#define RT_MEMHEAP_CHECK_CIRCLE*/
+
+#ifdef RT_DEBUG_MEMHEAP_DUMP
+static void rt_dump_heap(struct rt_memheap *heap)
+{
+    int lvl;
+    struct rt_memheap_item *header_ptr;
+
+    lvl = rt_hw_interrupt_disable();
+
+#ifdef RT_MEMHEAP_DEBUG_DUMP_FREE
+    rt_kprintf("free block\r\n");
+    header_ptr = heap->free_list->next_free;
+    while (header_ptr != heap->free_list)
+    {
+        rt_kprintf("[0x%p]->", header_ptr);
+
+        RT_ASSERT((header_ptr->magic & RT_MEMHEAP_VISIT) == 0);
+        header_ptr->magic |= RT_MEMHEAP_VISIT;
+
+        /* move to next free memory block */
+        header_ptr = header_ptr->next_free;
+    }
+    rt_kprintf("\r\n");
+    /* cleanup the visit mark */
+    header_ptr = heap->free_list->next_free;
+    while (header_ptr != heap->free_list)
+    {
+        header_ptr->magic &= ~RT_MEMHEAP_VISIT;
+        header_ptr = header_ptr->next_free;
+    }
+#endif
+
+    rt_kprintf("all block: ");
+    header_ptr = heap->start_addr;
+    do {
+        rt_kprintf("[0x%p, %s]->", header_ptr,
+                header_ptr->magic & RT_MEMHEAP_USED ? "used":"free");
+
+        RT_ASSERT((header_ptr->magic & RT_MEMHEAP_VISIT) == 0);
+        header_ptr->magic |= RT_MEMHEAP_VISIT;
+
+        /* move to next free memory block */
+        header_ptr = header_ptr->next;
+    } while (header_ptr != heap->start_addr);
+    rt_kprintf("\r\n");
+
+    do {
+        RT_ASSERT(header_ptr->magic & RT_MEMHEAP_VISIT);
+        header_ptr->magic &= ~RT_MEMHEAP_VISIT;
+        header_ptr = header_ptr->prev;
+    } while (header_ptr != heap->start_addr);
+
+    rt_hw_interrupt_enable(lvl);
+}
+#else
+#define rt_dump_heap(...)
+#endif
+
+#define RT_MEMHEAP_ASSERT(heap, EX) \
+if (!(EX))                          \
+{                                   \
+    rt_dump_heap(heap);             \
+    RT_ASSERT(EX);                  \
+}
+
+#ifdef RT_MEMHEAP_CHECK
+rt_inline void rt_memheap_check(struct rt_memheap *heap)
+{
+    struct rt_memheap_item *header_ptr;
+
+    RT_ASSERT(heap);
+
+    header_ptr = heap->start_addr;
+    RT_MEMHEAP_ASSERT(heap,
+            header_ptr->prev == (struct rt_memheap_item*)(
+                (char*)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE));
+
+    header_ptr = (struct rt_memheap_item*)(
+                (char*)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
+    RT_MEMHEAP_ASSERT(heap, RT_MEMHEAP_IS_USED(header_ptr));
+
+#ifdef RT_MEMHEAP_CHECK_CIRCLE
+    {
+        rt_err_t result;
+        /* lock memheap */
+        result = rt_hw_interrupt_disable(); //rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+            return;
+
+        /* check circle */
+        header_ptr = heap->start_addr;
+        do {
+            RT_MEMHEAP_ASSERT(heap,
+                    (header_ptr->magic & RT_MEMHEAP_VISIT) == 0);
+            header_ptr->magic |= RT_MEMHEAP_VISIT;
+            header_ptr = header_ptr->next;
+        } while (header_ptr != heap->start_addr);
+
+        /* clean the marks */
+        do {
+            RT_ASSERT(header_ptr->magic & RT_MEMHEAP_VISIT);
+            header_ptr->magic &= ~RT_MEMHEAP_VISIT;
+            header_ptr = header_ptr->prev;
+        } while (header_ptr != heap->start_addr);
+
+        rt_hw_interrupt_enable(result);
+        /*rt_sem_release(&heap->lock);*/
+    }
+#endif
+}
+#else
+#define rt_memheap_check(...)
+#endif
 
 /*
  * The initialized memory pool will be:
@@ -145,7 +263,7 @@ RTM_EXPORT(rt_memheap_detach);
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
 {
     rt_err_t result;
-    rt_uint32_t free_size;
+    rt_int32_t free_size;
     struct rt_memheap_item *header_ptr;
 
     RT_ASSERT(heap != RT_NULL);
@@ -178,6 +296,8 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
         {
             /* get current freed memory block size */
             free_size = MEMITEM_SIZE(header_ptr);
+            RT_MEMHEAP_ASSERT(heap, free_size > 0);
+
             if (free_size < size)
             {
                 /* move to next free memory block */
@@ -198,6 +318,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
                 /* split the block. */
                 new_ptr = (struct rt_memheap_item *)
                           (((rt_uint8_t *)header_ptr) + size + RT_MEMHEAP_SIZE);
+                RT_MEMHEAP_ASSERT(heap, (char*)new_ptr < (char*)heap->start_addr + heap->pool_size);
 
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                              ("split: block[0x%08x] nextm[0x%08x] prevm[0x%08x] to new[0x%08x]\n",
@@ -290,7 +411,7 @@ RTM_EXPORT(rt_memheap_alloc);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 {
     rt_err_t result;
-    rt_size_t oldsize;
+    rt_int32_t oldsize;
     struct rt_memheap_item *header_ptr;
     struct rt_memheap_item *new_ptr;
 
@@ -314,7 +435,9 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     header_ptr = (struct rt_memheap_item *)
                  ((rt_uint8_t *)ptr - RT_MEMHEAP_SIZE);
     oldsize = MEMITEM_SIZE(header_ptr);
-     /* re-allocate memory */
+    RT_MEMHEAP_ASSERT(heap, oldsize > 0);
+
+    /* re-allocate memory */
     if (newsize > oldsize)
     {
         void* new_ptr;
@@ -400,6 +523,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     /* release lock */
     rt_sem_release(&(heap->lock));
 
+    rt_memheap_check(heap);
     /* return the old memory block */
     return ptr;
 }
@@ -499,6 +623,8 @@ void rt_memheap_free(void *ptr)
 
     /* release lock */
     rt_sem_release(&(heap->lock));
+
+    rt_memheap_check(heap);
 }
 RTM_EXPORT(rt_memheap_free);
 
