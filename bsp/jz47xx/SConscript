@@ -6,7 +6,7 @@ src_bsp   = ['application.c', 'startup.c', 'board.c']
 src_drv   = ['uart.c']
 
 src	= File(src_bsp + src_drv)
-CPPPATH = Dir('#')
+CPPPATH = str(Dir('#'))
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
