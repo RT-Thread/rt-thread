@@ -32,8 +32,5 @@ objs = PrepareBuilding(env, RTT_ROOT)
 
 objs = objs + SConscript('CMSIS/SConscript', variant_dir='build/bsp/CMSIS', duplicate=0)
 
-# build program 
-env.Program(TARGET, objs)
-
-# end building 
-EndBuilding(TARGET)
+# make a building
+DoBuilding(TARGET, objs)
