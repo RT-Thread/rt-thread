@@ -15,8 +15,8 @@ SECTIONS
 {
     .text :
     {
-		*(.init)
-		*(.text)
+        *(.init)
+        *(.text)
         *(.text.*)                      /* remaining code */
         *(.rodata)                      /* read-only data (constants) */
         *(.rodata*)
@@ -36,25 +36,31 @@ SECTIONS
         . = ALIGN(4);
 
         . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
+        . = ALIGN(4);
         _etext = .;
     } > CODE = 0
 
-	. = ALIGN(4);
-	.ctors :
-	{
-		PROVIDE(__ctors_start__ = .);
-		KEEP(*(SORT(.ctors.*)))
-		KEEP(*(.ctors))
-		PROVIDE(__ctors_end__ = .);
-	} > CODE
+    . = ALIGN(4);
+    .ctors :
+    {
+        PROVIDE(__ctors_start__ = .);
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        PROVIDE(__ctors_end__ = .);
+    } > CODE
 
-	.dtors :
-	{
-		PROVIDE(__dtors_start__ = .);
-		KEEP(*(SORT(.dtors.*)))
-		KEEP(*(.dtors))
-		PROVIDE(__dtors_end__ = .);
-	} > CODE
+    .dtors :
+    {
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+    } > CODE
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
@@ -82,12 +88,12 @@ SECTIONS
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
     } >DATA
-	__data_end = .;
+    __data_end = .;
 
-	.noinit :
-	{
-	    *(.bss.noinit)
-	} > DATA
+    .noinit :
+    {
+        *(.bss.noinit)
+    } > DATA
 
     __bss_start = .;
     .bss :

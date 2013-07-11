@@ -50,7 +50,13 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
-	} > FLASH
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
+    } > FLASH
 
     .data : AT(ADDR(.text) + SIZEOF(.text))
     {

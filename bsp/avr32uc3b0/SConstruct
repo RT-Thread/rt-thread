@@ -28,8 +28,5 @@ objs = PrepareBuilding(env, RTT_ROOT)
 # AVR32 software framework building script
 objs = objs + SConscript(RTT_ROOT + '/bsp/avr32uc3b0/SOFTWARE_FRAMEWORK/SConscript', variant_dir='bsp/SOFTWARE_FRAMEWORK', duplicate=0)
  
-# build program
-env.Program(TARGET, objs)
- 
-# end building
-EndBuilding(TARGET)
+# make a building
+DoBuilding(TARGET, objs)

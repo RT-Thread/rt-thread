@@ -30,8 +30,5 @@ objs = PrepareBuilding(env, RTT_ROOT)
 # kernel testsuite
 #objs = objs + SConscript(RTT_ROOT + '/examples/kernel/SConscript', variant_dir='build/examples/kernel', duplicate=0)
 
-# build program 
-env.Program(TARGET, objs)
-
-# end building 
-EndBuilding(TARGET)
+# make a building
+DoBuilding(TARGET, objs)

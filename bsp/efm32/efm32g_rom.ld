@@ -1,8 +1,8 @@
 /***************************************************************************//**
- * @file 		efm32_rom_g.ld
- * @brief 	Linker script for EFM32 gecko
- * 	COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	Bernard, onelife
+ * @file        efm32_rom_g.ld
+ * @brief   Linker script for EFM32 gecko
+ *  COPYRIGHT (C) 2012, RT-Thread Development Team
+ * @author  Bernard, onelife
  * @version 1.0
  *******************************************************************************
  * @section License
@@ -10,11 +10,11 @@
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2009-10-14 	Bernard 	first version
- * 2010-12-22	onelife		Modify for EFM32
- * 2011-07-06 	onelife 	Modify to make use the start code in libraries
- * 2012-05-15	onelife		Modified to compatible with CMSIS v3
+ * Date         Author      Notes
+ * 2009-10-14   Bernard     first version
+ * 2010-12-22   onelife     Modify for EFM32
+ * 2011-07-06   onelife     Modify to make use the start code in libraries
+ * 2012-05-15   onelife     Modified to compatible with CMSIS v3
  ******************************************************************************/
 MEMORY
 {
@@ -53,122 +53,129 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-	.text :
-	{
-		KEEP(*(.isr_vector))
-		*(.text*)
+    .text :
+    {
+        KEEP(*(.isr_vector))
+        *(.text*)
 
-		KEEP(*(.init))
-		KEEP(*(.fini))
+        KEEP(*(.init))
+        KEEP(*(.fini))
 
-		/* .ctors */
-		*crtbegin.o(.ctors)
-		*crtbegin?.o(.ctors)
-		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
-		*(SORT(.ctors.*))
-		*(.ctors)
+        /* .ctors */
+        *crtbegin.o(.ctors)
+        *crtbegin?.o(.ctors)
+        *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+        *(SORT(.ctors.*))
+        *(.ctors)
 
-		/* .dtors */
- 		*crtbegin.o(.dtors)
- 		*crtbegin?.o(.dtors)
- 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
- 		*(SORT(.dtors.*))
- 		*(.dtors)
+        /* .dtors */
+        *crtbegin.o(.dtors)
+        *crtbegin?.o(.dtors)
+        *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+        *(SORT(.dtors.*))
+        *(.dtors)
 
-		*(.rodata*)
+        *(.rodata*)
 
-		KEEP(*(.eh_frame*))
+        KEEP(*(.eh_frame*))
 
-		/* section information for finsh shell */
-		. = ALIGN(4);
-		__fsymtab_start = .;
-		KEEP(*(FSymTab))
-		__fsymtab_end = .;
-		. = ALIGN(4);
-		__vsymtab_start = .;
-		KEEP(*(VSymTab))
-		__vsymtab_end = .;
-	} > FLASH = 0
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
 
-	.ARM.extab :
-	{
-		*(.ARM.extab* .gnu.linkonce.armextab.*)
-	} > FLASH
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
 
-	__exidx_start = .;
-	.ARM.exidx :
-	{
-		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > FLASH
-	__exidx_end = .;
+    } > FLASH = 0
 
-	__etext = .;
+    .ARM.extab :
+    {
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+    } > FLASH
 
-	.data : AT (__etext)
-	{
-		__data_start__ = .;
-		*(vtable)
-		*(.data*)
-		*(.ram)
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > FLASH
+    __exidx_end = .;
 
-		. = ALIGN(4);
-		/* preinit data */
-		PROVIDE_HIDDEN (__preinit_array_start = .);
-		KEEP(*(.preinit_array))
-		PROVIDE_HIDDEN (__preinit_array_end = .);
+    __etext = .;
 
-		. = ALIGN(4);
-		/* init data */
-		PROVIDE_HIDDEN (__init_array_start = .);
-		KEEP(*(SORT(.init_array.*)))
-		KEEP(*(.init_array))
-		PROVIDE_HIDDEN (__init_array_end = .);
+    .data : AT (__etext)
+    {
+        __data_start__ = .;
+        *(vtable)
+        *(.data*)
+        *(.ram)
+
+        . = ALIGN(4);
+        /* preinit data */
+        PROVIDE_HIDDEN (__preinit_array_start = .);
+        KEEP(*(.preinit_array))
+        PROVIDE_HIDDEN (__preinit_array_end = .);
+
+        . = ALIGN(4);
+        /* init data */
+        PROVIDE_HIDDEN (__init_array_start = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE_HIDDEN (__init_array_end = .);
 
 
-		. = ALIGN(4);
-		/* finit data */
-		PROVIDE_HIDDEN (__fini_array_start = .);
-		KEEP(*(SORT(.fini_array.*)))
-		KEEP(*(.fini_array))
-		PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4);
+        /* finit data */
+        PROVIDE_HIDDEN (__fini_array_start = .);
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE_HIDDEN (__fini_array_end = .);
 
-		. = ALIGN(4);
-		/* All data end */
-		__data_end__ = .;
+        . = ALIGN(4);
+        /* All data end */
+        __data_end__ = .;
 
-	} > RAM
+    } > RAM
 
-	.bss :
-	{
-		__bss_start__ = .;
-		*(.bss*)
-		*(COMMON)
-		__bss_end__ = .;
-	} > RAM
+    .bss :
+    {
+        __bss_start__ = .;
+        *(.bss*)
+        *(COMMON)
+        __bss_end__ = .;
+    } > RAM
 
-	.heap :
-	{
-		__end__ = .;
-		end = __end__;
-		_end = __end__;
-		*(.heap*)
-		__HeapLimit = .;
-	} > RAM
+    .heap :
+    {
+        __end__ = .;
+        end = __end__;
+        _end = __end__;
+        *(.heap*)
+        __HeapLimit = .;
+    } > RAM
 
-	/* .stack_dummy section doesn't contains any symbols. It is only
-	 * used for linker to calculate size of stack sections, and assign
-	 * values to stack symbols later */
-	.stack_dummy :
-	{
-		*(.stack)
-	} > RAM
+    /* .stack_dummy section doesn't contains any symbols. It is only
+     * used for linker to calculate size of stack sections, and assign
+     * values to stack symbols later */
+    .stack_dummy :
+    {
+        *(.stack)
+    } > RAM
 
-	/* Set stack top to end of RAM, and stack limit move down by
-	 * size of stack_dummy section */
-	__StackTop = ORIGIN(RAM) + LENGTH(RAM);
-	__StackLimit = __StackTop - SIZEOF(.stack_dummy);
-	PROVIDE(__stack = __StackTop);
+    /* Set stack top to end of RAM, and stack limit move down by
+     * size of stack_dummy section */
+    __StackTop = ORIGIN(RAM) + LENGTH(RAM);
+    __StackLimit = __StackTop - SIZEOF(.stack_dummy);
+    PROVIDE(__stack = __StackTop);
 
-	/* Check if data + heap + stack exceeds RAM limit */
-	ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    /* Check if data + heap + stack exceeds RAM limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
 }
