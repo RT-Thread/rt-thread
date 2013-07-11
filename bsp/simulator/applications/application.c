@@ -30,6 +30,10 @@ void rt_init_thread_entry(void *parameter)
     /* initialization RT-Thread Components */
     rt_components_init();
 
+#if defined(RT_USING_COMPONENTS_INIT) && defined(__GNUC__) && defined(RT_USING_FINSH)
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
     /* File system Initialization */
 #ifdef RT_USING_DFS
     {
