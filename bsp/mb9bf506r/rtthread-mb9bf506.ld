@@ -41,76 +41,76 @@ PROVIDE(__cs3_heap_end = __cs3_region_start_ram + __cs3_region_size_ram);
 
 SECTIONS
 {
-  .text :
-  {
-    CREATE_OBJECT_SYMBOLS
-    __cs3_region_start_rom = .;
-    *(.cs3.region-head.rom)
-    __cs3_interrupt_vector = __cs3_interrupt_vector_cortex_m;
-    *(.cs3.interrupt_vector)
-    /* Make sure we pulled in an interrupt vector.  */
-    ASSERT (. != __cs3_interrupt_vector_cortex_m, "No interrupt vector");
-    *(.rom)
-    *(.rom.b)
+    .text :
+    {
+        CREATE_OBJECT_SYMBOLS
+        __cs3_region_start_rom = .;
+        *(.cs3.region-head.rom)
+        __cs3_interrupt_vector = __cs3_interrupt_vector_cortex_m;
+        *(.cs3.interrupt_vector)
+        /* Make sure we pulled in an interrupt vector.  */
+        ASSERT (. != __cs3_interrupt_vector_cortex_m, "No interrupt vector");
+        *(.rom)
+        *(.rom.b)
 
-    __cs3_reset = __cs3_reset_cortex_m;
-    *(.cs3.reset)
-    /* Make sure we pulled in some reset code.  */
-    ASSERT (. != __cs3_reset, "No reset code");
+        __cs3_reset = __cs3_reset_cortex_m;
+        *(.cs3.reset)
+        /* Make sure we pulled in some reset code.  */
+        ASSERT (. != __cs3_reset, "No reset code");
 
-    *(.text .text.* .gnu.linkonce.t.*)
-    *(.plt)
-    *(.gnu.warning)
-    *(.glue_7t) *(.glue_7) *(.vfp11_veneer)
+        *(.text .text.* .gnu.linkonce.t.*)
+        *(.plt)
+        *(.gnu.warning)
+        *(.glue_7t) *(.glue_7) *(.vfp11_veneer)
 
-    *(.rodata .rodata.* .gnu.linkonce.r.*)
+        *(.rodata .rodata.* .gnu.linkonce.r.*)
 
-    *(.ARM.extab* .gnu.linkonce.armextab.*)
-    *(.gcc_except_table)
-    *(.eh_frame_hdr)
-    *(.eh_frame)
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+        *(.gcc_except_table)
+        *(.eh_frame_hdr)
+        *(.eh_frame)
 
-    . = ALIGN(4);
-    KEEP(*(.init))
+        . = ALIGN(4);
+        KEEP(*(.init))
 
-    . = ALIGN(4);
-    __preinit_array_start = .;
-    KEEP (*(.preinit_array))
-    __preinit_array_end = .;
+        . = ALIGN(4);
+        __preinit_array_start = .;
+        KEEP (*(.preinit_array))
+        __preinit_array_end = .;
 
-    . = ALIGN(4);
-    __init_array_start = .;
-    KEEP (*(SORT(.init_array.*)))
-    KEEP (*(.init_array))
-    __init_array_end = .;
+        . = ALIGN(4);
+        __init_array_start = .;
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        __init_array_end = .;
 
-    . = ALIGN(0x4);
-    KEEP (*crtbegin.o(.ctors))
-    KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
-    KEEP (*(SORT(.ctors.*)))
-    KEEP (*crtend.o(.ctors))
+        . = ALIGN(0x4);
+        KEEP (*crtbegin.o(.ctors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+        KEEP (*(SORT(.ctors.*)))
+        KEEP (*crtend.o(.ctors))
 
-    . = ALIGN(4);
-    KEEP(*(.fini))
+        . = ALIGN(4);
+        KEEP(*(.fini))
 
-    . = ALIGN(4);
-    __fini_array_start = .;
-    KEEP (*(.fini_array))
-    KEEP (*(SORT(.fini_array.*)))
-    __fini_array_end = .;
+        . = ALIGN(4);
+        __fini_array_start = .;
+        KEEP (*(.fini_array))
+        KEEP (*(SORT(.fini_array.*)))
+        __fini_array_end = .;
 
-    KEEP (*crtbegin.o(.dtors))
-    KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
-    KEEP (*(SORT(.dtors.*)))
-    KEEP (*crtend.o(.dtors))
+        KEEP (*crtbegin.o(.dtors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
+        KEEP (*(SORT(.dtors.*)))
+        KEEP (*crtend.o(.dtors))
 
-    . = ALIGN(4);
-    __cs3_regions = .;
-    LONG (0)
-    LONG (__cs3_region_init_ram)
-    LONG (__cs3_region_start_ram)
-    LONG (__cs3_region_init_size_ram)
-    LONG (__cs3_region_zero_size_ram)
+        . = ALIGN(4);
+        __cs3_regions = .;
+        LONG (0)
+        LONG (__cs3_region_init_ram)
+        LONG (__cs3_region_start_ram)
+        LONG (__cs3_region_init_size_ram)
+        LONG (__cs3_region_zero_size_ram)
 
         /* section information for finsh shell */
         . = ALIGN(4);
@@ -122,35 +122,43 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
         . = ALIGN(4);
-  }
 
-  /* .ARM.exidx is sorted, so has to go in its own output section.  */
-  __exidx_start = .;
-  .ARM.exidx :
-  {
-    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-  } >rom
-  __exidx_end = .;
-  .text.align :
-  {
-    . = ALIGN(8);
-    _etext = .;
-  } >rom
-  __cs3_region_size_rom = LENGTH(rom);
-  __cs3_region_num = 1;
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
 
-  .data :
-  {
-    __cs3_region_start_ram = .;
-    *(.cs3.region-head.ram)
-    KEEP(*(.jcr))
-    *(.got.plt) *(.got)
-    *(.shdata)
-    *(.data .data.* .gnu.linkonce.d.*)
-    *(.ram)
-    . = ALIGN (8);
-    _edata = .;
-  } >ram AT>rom
+    }
+
+    /* .ARM.exidx is sorted, so has to go in its own output section.  */
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+      *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } >rom
+    __exidx_end = .;
+    .text.align :
+    {
+      . = ALIGN(8);
+      _etext = .;
+    } >rom
+    __cs3_region_size_rom = LENGTH(rom);
+    __cs3_region_num = 1;
+
+    .data :
+    {
+        __cs3_region_start_ram = .;
+        *(.cs3.region-head.ram)
+        KEEP(*(.jcr))
+        *(.got.plt) *(.got)
+        *(.shdata)
+        *(.data .data.* .gnu.linkonce.d.*)
+        *(.ram)
+        . = ALIGN (8);
+        _edata = .;
+    } >ram AT>rom
+
   .bss :
   {
     *(.shbss)
@@ -161,6 +169,7 @@ SECTIONS
     _end = .;
     __end = .;
   } >ram AT>rom
+
   .heap :
   {
     *(.heap)
