@@ -40,6 +40,14 @@ SECTIONS
       KEEP(*(VSymTab))
       ___vsymtab_end = .; __vsymtab_end = .;
   }
+  . = ALIGN(__section_alignment__);
+  rti_fn () :
+  {
+      __rt_init_start = .;
+      KEEP(*(SORT(.rti_fn*)))
+	  __rt_init_end = .;
+  }
+  . = ALIGN(__section_alignment__);
   /* setction information for finsh shell end */
   
   /* The Cygwin32 library uses a section to avoid copying certain data
