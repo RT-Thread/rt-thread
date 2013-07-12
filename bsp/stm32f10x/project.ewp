@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
@@ -27,8 +29,8 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>19</version>
-          <state>37</state>
+          <version>20</version>
+          <state>38</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -85,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.30.6.53380</state>
+          <state>6.50.2.4581</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -135,13 +137,13 @@
         </option>
         <option>
           <name>GFPUCoreSlave</name>
-          <version>19</version>
-          <state>37</state>
+          <version>20</version>
+          <state>38</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>19</version>
-          <state>37</state>
+          <version>20</version>
+          <state>38</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -161,8 +163,12 @@
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
+          <name>CCOptimizationNoSizeConstraints</name>
+          <state>0</state>
+        </option>
+        <option>
           <name>CCDefines</name>
-          <state />
+          <state></state>
           <state>USE_STDPERIPH_DRIVER</state>
           <state>STM32F10X_HD</state>
         </option>
@@ -208,15 +214,15 @@
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagWarning</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagError</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCObjPrefix</name>
@@ -245,7 +251,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -285,7 +291,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraOverride</name>
@@ -293,7 +299,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state />
+          <state></state>
           <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
@@ -302,6 +308,7 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</state>
         </option>
@@ -432,15 +439,15 @@
         </option>
         <option>
           <name>AWarnOne</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange1</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>ADebug</name>
@@ -452,7 +459,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -528,7 +535,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state />
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -548,7 +555,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -556,7 +563,7 @@
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state />
+          <state></state>
         </option>
       </data>
     </settings>
@@ -578,7 +585,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -594,28 +601,28 @@
       <name>CUSTOM</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <extensions />
-        <cmdline />
+        <extensions></extensions>
+        <cmdline></cmdline>
       </data>
     </settings>
     <settings>
       <name>BICOMP</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
     <settings>
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild />
-        <postbuild />
+        <prebuild></prebuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>14</version>
+        <version>15</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -640,31 +647,31 @@
         </option>
         <option>
           <name>IlinkKeepSymbols</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySegment</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryAlign</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -700,7 +707,7 @@
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkEnableRemarks</name>
@@ -708,19 +715,19 @@
         </option>
         <option>
           <name>IlinkSuppressDiags</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsRem</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsWarn</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsErr</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkWarningsAreErrors</name>
@@ -732,7 +739,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -744,7 +751,7 @@
         </option>
         <option>
           <name>IlinkAdditionalLibs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -781,10 +788,6 @@
         </option>
         <option>
           <name>CrcAlign</name>
-          <state>1</state>
-        </option>
-        <option>
-          <name>CrcAlgo</name>
           <state>1</state>
         </option>
         <option>
@@ -883,11 +886,21 @@
         </option>
         <option>
           <name>IlinkStackControlFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkStackCallGraphFile</name>
-          <state />
+          <state></state>
+        </option>
+        <option>
+          <name>CrcAlgorithm</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcUnitSize</name>
+          <version>0</version>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -900,7 +913,7 @@
         <debug>1</debug>
         <option>
           <name>IarchiveInputs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IarchiveOverride</name>
@@ -915,7 +928,7 @@
     <settings>
       <name>BILINK</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
   </configuration>
   <configuration>
@@ -945,7 +958,7 @@
         </option>
         <option>
           <name>Variant</name>
-          <version>19</version>
+          <version>20</version>
           <state>0</state>
         </option>
         <option>
@@ -959,7 +972,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>Output variant</name>
@@ -968,7 +981,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -995,7 +1008,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -1003,7 +1016,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1015,7 +1028,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1049,16 +1062,16 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>GFPUCoreSlave</name>
-          <version>19</version>
+          <version>20</version>
           <state>1</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>19</version>
+          <version>20</version>
           <state>1</state>
         </option>
         <option>
@@ -1078,6 +1091,10 @@
         <version>28</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
+        <option>
+          <name>CCOptimizationNoSizeConstraints</name>
+          <state>0</state>
+        </option>
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
@@ -1122,19 +1139,19 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagWarning</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagError</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCObjPrefix</name>
@@ -1163,7 +1180,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -1195,7 +1212,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1203,7 +1220,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraOverride</name>
@@ -1211,7 +1228,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state />
+          <state></state>
           <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
@@ -1220,6 +1237,7 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</state>
         </option>
@@ -1350,15 +1368,15 @@
         </option>
         <option>
           <name>AWarnOne</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange1</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>ADebug</name>
@@ -1370,7 +1388,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -1446,7 +1464,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1466,7 +1484,7 @@
         </option>
         <option>
           <name>AUserIncludes</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1474,7 +1492,7 @@
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state />
+          <state></state>
         </option>
       </data>
     </settings>
@@ -1496,7 +1514,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1512,28 +1530,28 @@
       <name>CUSTOM</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <extensions />
-        <cmdline />
+        <extensions></extensions>
+        <cmdline></cmdline>
       </data>
     </settings>
     <settings>
       <name>BICOMP</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
     <settings>
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild />
-        <postbuild />
+        <prebuild></prebuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>14</version>
+        <version>15</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1558,31 +1576,31 @@
         </option>
         <option>
           <name>IlinkKeepSymbols</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySegment</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryAlign</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -1618,7 +1636,7 @@
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkEnableRemarks</name>
@@ -1626,19 +1644,19 @@
         </option>
         <option>
           <name>IlinkSuppressDiags</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsRem</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsWarn</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsErr</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkWarningsAreErrors</name>
@@ -1650,7 +1668,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -1662,7 +1680,7 @@
         </option>
         <option>
           <name>IlinkAdditionalLibs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1674,7 +1692,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>DoFill</name>
@@ -1699,10 +1717,6 @@
         </option>
         <option>
           <name>CrcAlign</name>
-          <state>1</state>
-        </option>
-        <option>
-          <name>CrcAlgo</name>
           <state>1</state>
         </option>
         <option>
@@ -1801,11 +1815,21 @@
         </option>
         <option>
           <name>IlinkStackControlFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkStackCallGraphFile</name>
-          <state />
+          <state></state>
+        </option>
+        <option>
+          <name>CrcAlgorithm</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcUnitSize</name>
+          <version>0</version>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1818,7 +1842,7 @@
         <debug>0</debug>
         <option>
           <name>IarchiveInputs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IarchiveOverride</name>
@@ -1833,7 +1857,7 @@
     <settings>
       <name>BILINK</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
   </configuration>
   <group>
@@ -1846,12 +1870,33 @@
     </file>
   </group>
   <group>
+    <name>Components</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\init\components.c</name>
+    </file>
+  </group>
+  <group>
+    <name>CORTEX-M3</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+  </group>
+  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\stm32f10x_it.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\led.c</name>
@@ -1860,142 +1905,10 @@
       <name>$PROJ_DIR$\drivers\serial.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\stm32f10x_it.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\usart.c</name>
-    </file>
-  </group>
-  <group>
-    <name>STM32_StdPeriph</name>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_fsmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_cec.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_hd.s</name>
-    </file>
-  </group>
-  <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CORTEX-M3</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
   </group>
   <group>
@@ -2046,4 +1959,123 @@
       <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
     </file>
   </group>
+  <group>
+    <name>Kernel</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>STM32_StdPeriph</name>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_hd.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_cec.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_fsmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_sdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</name>
+    </file>
+  </group>
 </project>
+
+

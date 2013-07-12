@@ -351,7 +351,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
+              <IncludePath>.;..\..\components\CMSIS\Include;..\..\components\finsh;..\..\components\init;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;Libraries\STM32F10x_StdPeriph_Driver\inc;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -382,7 +382,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
+            <Misc> --keep __fsym_* --keep __vsym_*   --keep __rt_init* </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -736,6 +736,16 @@
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\symbol.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components</GroupName>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\init\components.c</FilePath>
             </File>
           </Files>
         </Group>
