@@ -62,12 +62,6 @@ void rtthread_startup(void)
     /* show version */
     rt_show_version();
 
-    /* init kernel object */
-    rt_system_object_init();
-
-    /* init timer system */
-    rt_system_timer_init();
-
 #ifdef RT_USING_HEAP
 #if STM32_EXT_SRAM
     rt_system_heap_init((void*)STM32_EXT_SRAM_BEGIN, (void*)STM32_EXT_SRAM_END);
