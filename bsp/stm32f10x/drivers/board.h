@@ -16,10 +16,9 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include "stm32f10x.h"
+
 /* board configuration */
-// <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
-// 	<i>Default: 1
-#define STM32_USE_SDIO			1
 
 /* whether use board external SRAM memory */
 // <e>Use external SRAM memory on the board
@@ -38,38 +37,11 @@
 #define STM32_SRAM_SIZE         64
 #define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
 
-// <o> Console on USART: <0=> no console <1=>USART 1 <2=>USART 2 <3=> USART 3
-// 	<i>Default: 1
-#define STM32_CONSOLE_USART		1
+/* USART driver select. */
+#define RT_USING_UART1
+#define RT_USING_UART2
+#define RT_USING_UART3
 
-// <o> Ethernet Interface: <0=> Microchip ENC28J60 <1=> Davicom DM9000A
-// 	<i>Default: 0
-#define STM32_ETH_IF			1
-
-void rt_hw_board_led_on(int n);
-void rt_hw_board_led_off(int n);
-void rt_hw_board_init(void);
-
-#if STM32_CONSOLE_USART == 0
-#define CONSOLE_DEVICE "no"
-#elif STM32_CONSOLE_USART == 1
-#define CONSOLE_DEVICE "uart1"
-#elif STM32_CONSOLE_USART == 2
-#define CONSOLE_DEVICE "uart2"
-#elif STM32_CONSOLE_USART == 3
-#define CONSOLE_DEVICE "uart3"
-#endif
-
-void rt_hw_usart_init(void);
-
-/* SD Card init function */
-void rt_hw_sdcard_init(void);
-void rt_hw_msd_init(void);
-
-/* ETH interface init function */
-void rt_hw_enc28j60_init(void);
-void rt_hw_dm9000_init(void);
-
-#endif
+#endif /* __BOARD_H__ */
 
 // <<< Use Configuration Wizard in Context Menu >>>
