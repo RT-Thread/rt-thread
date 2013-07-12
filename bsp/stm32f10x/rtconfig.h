@@ -56,15 +56,23 @@
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
 
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
+#define RT_USING_COMPONENTS_INIT
+
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
-#define RT_USING_UART1
+// <bool name="RT_USING_DEVICE_IPC" description="Using device communication" default="true" />
+#define RT_USING_DEVICE_IPC
+// <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
+#define RT_USING_SERIAL
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE	        128
+// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
+#define RT_CONSOLE_DEVICE_NAME	    "uart1"
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -76,12 +84,12 @@
 /* #define RT_USING_DFS */
 
 #define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_WORD_ACCESS
 /* Reentrancy (thread safe) of the FatFs module.  */
 #define RT_DFS_ELM_REENTRANT
 /* Number of volumes (logical drives) to be used. */
 #define RT_DFS_ELM_DRIVES			2
 /* #define RT_DFS_ELM_USE_LFN			1 */
+/* #define RT_DFS_ELM_CODE_PAGE			936 */
 #define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512

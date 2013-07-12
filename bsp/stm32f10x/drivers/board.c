@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
+ * 2013-07-12     aozima       update for auto initial.
  */
 
 #include <rthw.h>
@@ -18,6 +19,10 @@
 #include "stm32f10x.h"
 #include "stm32f10x_fsmc.h"
 #include "board.h"
+
+#ifdef  RT_USING_COMPONENTS_INIT
+#include <components.h>
+#endif  /* RT_USING_COMPONENTS_INIT */
 
 /**
  * @addtogroup STM32
@@ -35,19 +40,19 @@
 void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
-	/* Set the Vector Table base location at 0x20000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+    /* Set the Vector Table base location at 0x20000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
 #else  /* VECT_TAB_FLASH  */
-	/* Set the Vector Table base location at 0x08000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+    /* Set the Vector Table base location at 0x08000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 }
 
 #if STM32_EXT_SRAM
 void EXT_SRAM_Configuration(void)
 {
-	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
-	FSMC_NORSRAMTimingInitTypeDef  p;
+    FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
+    FSMC_NORSRAMTimingInitTypeDef  p;
 
     /* FSMC GPIO configure */
     {
@@ -117,35 +122,35 @@ void EXT_SRAM_Configuration(void)
     }
     /* FSMC GPIO configure */
 
-	/*-- FSMC Configuration ------------------------------------------------------*/
-	p.FSMC_AddressSetupTime = 0;
-	p.FSMC_AddressHoldTime = 0;
-	p.FSMC_DataSetupTime = 2;
-	p.FSMC_BusTurnAroundDuration = 0;
-	p.FSMC_CLKDivision = 0;
-	p.FSMC_DataLatency = 0;
-	p.FSMC_AccessMode = FSMC_AccessMode_A;
+    /*-- FSMC Configuration ------------------------------------------------------*/
+    p.FSMC_AddressSetupTime = 0;
+    p.FSMC_AddressHoldTime = 0;
+    p.FSMC_DataSetupTime = 2;
+    p.FSMC_BusTurnAroundDuration = 0;
+    p.FSMC_CLKDivision = 0;
+    p.FSMC_DataLatency = 0;
+    p.FSMC_AccessMode = FSMC_AccessMode_A;
 
-	FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM3;
-	FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
-	FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
-	FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
-	FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
-	FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
-	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
-	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
+    FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM3;
+    FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
+    FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
+    FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
+    FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
+    FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &p;
+    FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &p;
 
-	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
+    FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
 
-	/* Enable FSMC Bank1_SRAM Bank */
-	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM3, ENABLE);
+    /* Enable FSMC Bank1_SRAM Bank */
+    FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM3, ENABLE);
 }
 #endif
 
@@ -153,34 +158,38 @@ void EXT_SRAM_Configuration(void)
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**
  * This function will initial STM32 board.
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
-	/* NVIC Configuration */
-	NVIC_Configuration();
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
     /* Configure the SysTick */
     SysTick_Config( SystemCoreClock / RT_TICK_PER_SECOND );
 
 #if STM32_EXT_SRAM
-	EXT_SRAM_Configuration();
+    EXT_SRAM_Configuration();
 #endif
 
-	rt_hw_usart_init();
-	rt_console_set_device(CONSOLE_DEVICE);
+    rt_hw_usart_init();
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
 }
 
 /*@}*/

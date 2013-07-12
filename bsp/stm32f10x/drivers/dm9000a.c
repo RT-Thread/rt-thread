@@ -731,7 +731,7 @@ static void FSMC_Configuration()
 	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM4, ENABLE);
 }
 
-void rt_hw_dm9000_init()
+int rt_hw_dm9000_init(void)
 {
     RCC_Configuration();
     NVIC_Configuration();
@@ -771,7 +771,10 @@ void rt_hw_dm9000_init()
     dm9000_device.parent.eth_tx     = rt_dm9000_tx;
 
     eth_device_init(&(dm9000_device.parent), "e0");
+
+    return 0;
 }
+INIT_DEVICE_EXPORT(rt_hw_dm9000_init);
 
 void dm9000(void)
 {
