@@ -307,6 +307,7 @@
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1236,6 +1237,7 @@
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\init</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1894,15 +1896,30 @@
     </file>
   </group>
   <group>
+    <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+    </file>
+  </group>
+  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\led.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\serial.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\stm32f10x_it.c</name>
