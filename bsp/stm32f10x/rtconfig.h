@@ -56,6 +56,9 @@
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
 
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
+#define RT_USING_COMPONENTS_INIT
+
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
@@ -78,12 +81,12 @@
 /* #define RT_USING_DFS */
 
 #define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_WORD_ACCESS
 /* Reentrancy (thread safe) of the FatFs module.  */
 #define RT_DFS_ELM_REENTRANT
 /* Number of volumes (logical drives) to be used. */
 #define RT_DFS_ELM_DRIVES			2
 /* #define RT_DFS_ELM_USE_LFN			1 */
+/* #define RT_DFS_ELM_CODE_PAGE			936 */
 #define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512

@@ -1,4 +1,3 @@
-
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
@@ -11,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
+ * 2013-07-12     aozima       update for auto initial.
  */
 
 /**
@@ -21,19 +21,15 @@
 #include <board.h>
 #include <rtthread.h>
 
+#ifdef  RT_USING_COMPONENTS_INIT
+#include <components.h>
+#endif  /* RT_USING_COMPONENTS_INIT */
+
 #ifdef RT_USING_DFS
-/* dfs init */
-#include <dfs_init.h>
 /* dfs filesystem:ELM filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
-#endif
-
-#ifdef RT_USING_LWIP
-#include <lwip/sys.h>
-#include <lwip/api.h>
-#include <netif/ethernetif.h>
 #endif
 
 #ifdef RT_USING_RTGUI
@@ -84,127 +80,102 @@ rt_bool_t cali_setup(void)
 void cali_store(struct calibration_data *data)
 {
     rt_kprintf("cali finished (%d, %d), (%d, %d)\n",
-            data->min_x,
-            data->max_x,
-            data->min_y,
-            data->max_y);
+               data->min_x,
+               data->max_x,
+               data->min_y,
+               data->max_y);
 }
-#endif
+#endif /* RT_USING_RTGUI */
 
 void rt_init_thread_entry(void* parameter)
 {
-/* Filesystem Initialization */
-#ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
-
-#ifdef RT_USING_DFS_ELMFAT
-		/* init the elm chan FatFs filesystam*/
-		elm_init();
-
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-		{
-			rt_kprintf("File System initialized!\n");
-		}
-		else
-			rt_kprintf("File System initialzation failed!\n");
-#endif
-	}
+#ifdef RT_USING_COMPONENTS_INIT
+    /* initialization RT-Thread Components */
+    rt_components_init();
 #endif
 
-/* LwIP Initialization */
-#ifdef RT_USING_LWIP
-	{
-		extern void lwip_sys_init(void);
+#ifdef  RT_USING_FINSH
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif  /* RT_USING_FINSH */
 
-		/* register ethernetif device */
-		eth_system_device_init();
-
-#ifdef STM32F10X_CL
-		rt_hw_stm32_eth_init();
-#else
-	/* STM32F103 */
-	#if STM32_ETH_IF == 0
-			rt_hw_enc28j60_init();
-	#elif STM32_ETH_IF == 1
-			rt_hw_dm9000_init();
-	#endif
-#endif
-
-		/* re-init device driver */
-		rt_device_init_all();
-
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
-	}
-#endif
+    /* Filesystem Initialization */
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+    /* mount sd card fat partition 1 as root directory */
+    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("File System initialized!\n");
+    }
+    else
+        rt_kprintf("File System initialzation failed!\n");
+#endif  /* RT_USING_DFS */
 
 #ifdef RT_USING_RTGUI
-	{
-	    extern void rtgui_system_server_init(void);
-	    extern void rt_hw_lcd_init();
-	    extern void rtgui_touch_hw_init(void);
+    {
+        extern void rtgui_system_server_init(void);
+        extern void rt_hw_lcd_init();
+        extern void rtgui_touch_hw_init(void);
 
-		rt_device_t lcd;
+        rt_device_t lcd;
 
-		/* init lcd */
-		rt_hw_lcd_init();
+        /* init lcd */
+        rt_hw_lcd_init();
 
-		/* init touch panel */
-		rtgui_touch_hw_init();
+        /* init touch panel */
+        rtgui_touch_hw_init();
 
-		/* re-init device driver */
-		rt_device_init_all();
+        /* re-init device driver */
+        rt_device_init_all();
 
-		/* find lcd device */
-		lcd = rt_device_find("lcd");
+        /* find lcd device */
+        lcd = rt_device_find("lcd");
 
-		/* set lcd device as rtgui graphic driver */
-		rtgui_graphic_set_device(lcd);
+        /* set lcd device as rtgui graphic driver */
+        rtgui_graphic_set_device(lcd);
 
-		/* init rtgui system server */
-		rtgui_system_server_init();
+        /* init rtgui system server */
+        rtgui_system_server_init();
 
         calibration_set_restore(cali_setup);
         calibration_set_after(cali_store);
         calibration_init();
-	}
+    }
 #endif /* #ifdef RT_USING_RTGUI */
 }
 
-int rt_application_init()
+int rt_application_init(void)
 {
-	rt_thread_t init_thread;
+    rt_thread_t init_thread;
 
-	rt_err_t result;
+    rt_err_t result;
 
     /* init led thread */
-	result = rt_thread_init(&led_thread,
-		"led",
-		led_thread_entry, RT_NULL,
-		(rt_uint8_t*)&led_stack[0], sizeof(led_stack), 20, 5);
-	if (result == RT_EOK)
-	{
+    result = rt_thread_init(&led_thread,
+                            "led",
+                            led_thread_entry,
+                            RT_NULL,
+                            (rt_uint8_t*)&led_stack[0],
+                            sizeof(led_stack),
+                            20,
+                            5);
+    if (result == RT_EOK)
+    {
         rt_thread_startup(&led_thread);
-	}
+    }
 
 #if (RT_THREAD_PRIORITY_MAX == 32)
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								2048, 8, 20);
+    init_thread = rt_thread_create("init",
+                                   rt_init_thread_entry, RT_NULL,
+                                   2048, 8, 20);
 #else
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								2048, 80, 20);
+    init_thread = rt_thread_create("init",
+                                   rt_init_thread_entry, RT_NULL,
+                                   2048, 80, 20);
 #endif
 
-	if (init_thread != RT_NULL)
-		rt_thread_startup(init_thread);
+    if (init_thread != RT_NULL)
+        rt_thread_startup(init_thread);
 
-	return 0;
+    return 0;
 }
 
 /*@}*/
