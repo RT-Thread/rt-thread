@@ -7,6 +7,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 # add the general drvers.
 src = Split("""
 board.c
+stm32f10x_it.c
 led.c
 serial.c
 usart.c
