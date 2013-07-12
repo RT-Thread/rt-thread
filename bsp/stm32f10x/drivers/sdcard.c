@@ -3236,3 +3236,17 @@ __return:
 	rt_kprintf("sdcard init failed\n");
     GPIO_SetBits(GPIOC,GPIO_Pin_6); /* SD card power down */
 }
+
+void SDIO_IRQHandler(void)
+{
+    extern int SD_ProcessIRQSrc(void);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* Process All SDIO Interrupt Sources */
+    SD_ProcessIRQSrc();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}

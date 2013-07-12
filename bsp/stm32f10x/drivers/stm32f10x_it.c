@@ -57,10 +57,10 @@ void NMI_Handler(void)
   */
 void MemManage_Handler(void)
 {
-  /* Go to infinite loop when Memory Manage exception occurs */
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Memory Manage exception occurs */
+    while (1)
+    {
+    }
 }
 
 /**
@@ -70,10 +70,10 @@ void MemManage_Handler(void)
   */
 void BusFault_Handler(void)
 {
-  /* Go to infinite loop when Bus Fault exception occurs */
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Bus Fault exception occurs */
+    while (1)
+    {
+    }
 }
 
 /**
@@ -83,10 +83,10 @@ void BusFault_Handler(void)
   */
 void UsageFault_Handler(void)
 {
-  /* Go to infinite loop when Usage Fault exception occurs */
-  while (1)
-  {
-  }
+    /* Go to infinite loop when Usage Fault exception occurs */
+    while (1)
+    {
+    }
 }
 
 /**
@@ -107,11 +107,10 @@ void DebugMon_Handler(void)
 {
 }
 
-void SysTick_Handler(void)
-{
-    extern void rt_hw_timer_handler(void);
-    rt_hw_timer_handler();
-}
+//void SysTick_Handler(void)
+//{
+//    // definition in boarc.c
+//}
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
@@ -131,7 +130,7 @@ void DMA1_Channel2_IRQHandler(void)
 {
 #ifdef RT_USING_UART3
     extern struct rt_device uart3_device;
-	extern void rt_hw_serial_dma_tx_isr(struct rt_device *device);
+    extern void rt_hw_serial_dma_tx_isr(struct rt_device *device);
 
     /* enter interrupt */
     rt_interrupt_enter();
@@ -161,7 +160,7 @@ void USART1_IRQHandler(void)
 {
 #ifdef RT_USING_UART1
     extern struct rt_device uart1_device;
-	extern void rt_hw_serial_isr(struct rt_device *device);
+    extern void rt_hw_serial_isr(struct rt_device *device);
 
     /* enter interrupt */
     rt_interrupt_enter();
@@ -184,7 +183,7 @@ void USART2_IRQHandler(void)
 {
 #ifdef RT_USING_UART2
     extern struct rt_device uart2_device;
-	extern void rt_hw_serial_isr(struct rt_device *device);
+    extern void rt_hw_serial_isr(struct rt_device *device);
 
     /* enter interrupt */
     rt_interrupt_enter();
@@ -207,7 +206,7 @@ void USART3_IRQHandler(void)
 {
 #ifdef RT_USING_UART3
     extern struct rt_device uart3_device;
-	extern void rt_hw_serial_isr(struct rt_device *device);
+    extern void rt_hw_serial_isr(struct rt_device *device);
 
     /* enter interrupt */
     rt_interrupt_enter();
@@ -219,77 +218,7 @@ void USART3_IRQHandler(void)
 #endif
 }
 
-#if defined(RT_USING_DFS) && STM32_USE_SDIO
-/*******************************************************************************
-* Function Name  : SDIO_IRQHandler
-* Description    : This function handles SDIO global interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void SDIO_IRQHandler(void)
-{
-    extern int SD_ProcessIRQSrc(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    /* Process All SDIO Interrupt Sources */
-    SD_ProcessIRQSrc();
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif
-
-#ifdef RT_USING_LWIP
-#ifdef STM32F10X_CL
-/*******************************************************************************
-* Function Name  : ETH_IRQHandler
-* Description    : This function handles ETH interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void ETH_IRQHandler(void)
-{
-	extern void rt_hw_stm32_eth_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-	rt_hw_stm32_eth_isr();
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#else
-#if (STM32_ETH_IF == 0)
-/*******************************************************************************
-* Function Name  : EXTI0_IRQHandler
-* Description    : This function handles External interrupt Line 0 request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void EXTI2_IRQHandler(void)
-{
-    extern void enc28j60_isr(void);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    enc28j60_isr();
-
-    /* Clear the Key Button EXTI line pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line2);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif
-
-#if (STM32_ETH_IF == 1)
+#ifdef  RT_USING_LWIP
 /*******************************************************************************
 * Function Name  : EXTI4_IRQHandler
 * Description    : This function handles External lines 9 to 5 interrupt request.
@@ -299,22 +228,20 @@ void EXTI2_IRQHandler(void)
 *******************************************************************************/
 void EXTI4_IRQHandler(void)
 {
-	extern void rt_dm9000_isr(void);
+    extern void rt_dm9000_isr(void);
 
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	/* Clear the DM9000A EXTI line pending bit */
-	EXTI_ClearITPendingBit(EXTI_Line4);
+    /* Clear the DM9000A EXTI line pending bit */
+    EXTI_ClearITPendingBit(EXTI_Line4);
 
-	rt_dm9000_isr();
+    rt_dm9000_isr();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
-#endif
-#endif
-#endif /* end of RT_USING_LWIP */
+#endif /* RT_USING_LWIP */
 
 /**
   * @}

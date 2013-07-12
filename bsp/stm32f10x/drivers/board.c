@@ -153,7 +153,7 @@ void EXT_SRAM_Configuration(void)
  * This is the timer interrupt service routine.
  *
  */
-void rt_hw_timer_handler(void)
+void SysTick_Handler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
@@ -167,7 +167,7 @@ void rt_hw_timer_handler(void)
 /**
  * This function will initial STM32 board.
  */
-void rt_hw_board_init()
+void rt_hw_board_init(void)
 {
 	/* NVIC Configuration */
 	NVIC_Configuration();
@@ -180,7 +180,7 @@ void rt_hw_board_init()
 #endif
 
 	rt_hw_usart_init();
-	rt_console_set_device(CONSOLE_DEVICE);
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
 
 /*@}*/

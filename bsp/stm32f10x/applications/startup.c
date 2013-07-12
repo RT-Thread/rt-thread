@@ -15,9 +15,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "stm32f10x.h"
 #include "board.h"
-#include "rtc.h"
 
 /**
  * @addtogroup STM32
@@ -68,9 +66,6 @@ void rtthread_startup(void)
 	/* show version */
 	rt_show_version();
 
-	/* init tick */
-	rt_system_tick_init();
-
 	/* init kernel object */
 	rt_system_object_init();
 
@@ -89,25 +84,14 @@ void rtthread_startup(void)
 		/* init memory system */
 		rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
 	#endif
-#endif
-#endif
+#endif  /* STM32_EXT_SRAM */
+#endif /* RT_USING_HEAP */
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DFS
-	/* init sdcard driver */
-#if STM32_USE_SDIO
-	rt_hw_sdcard_init();
-#else
-	rt_hw_msd_init();
-#endif
-#endif
-
-    rt_hw_rtc_init();
-
-	/* init all device */
-	rt_device_init_all();
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
 	/* init application */
 	rt_application_init();
@@ -115,11 +99,8 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
 	/* init finsh */
 	finsh_system_init();
-	finsh_set_device("uart1");
+	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
-    /* init timer thread */
-    rt_system_timer_thread_init();
 
 	/* init idle thread */
 	rt_thread_idle_init();
