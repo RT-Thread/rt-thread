@@ -40,36 +40,6 @@
 extern char working_directory[];
 #endif
 
-int cmd_ps(int argc, char** argv)
-{
-    extern long list_thread(void);
-
-    list_thread();
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, "list threads in the system");
-
-int cmd_i(int argc, char** argv)
-{
-    return cmd_ps(argc, argv);
-}
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_i, __cmd_i, "list threads in the system");
-
-int cmd_time(int argc, char** argv)
-{
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, "exec command with time");
-
-int cmd_free(int argc, char** argv)
-{
-    extern void list_mem(void);
-
-    list_mem();
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, "show the memory usage in the system");
-
 int cmd_ls(int argc, char** argv)
 {
     extern void ls(const char *pathname);
@@ -205,4 +175,35 @@ int cmd_mkdir(int argc, char** argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
 
 #endif
+
+int cmd_ps(int argc, char** argv)
+{
+    extern long list_thread(void);
+
+    list_thread();
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, "list threads in the system");
+
+int cmd_i(int argc, char** argv)
+{
+    return cmd_ps(argc, argv);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_i, __cmd_i, "list threads in the system");
+
+int cmd_time(int argc, char** argv)
+{
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, "exec command with time");
+
+int cmd_free(int argc, char** argv)
+{
+    extern void list_mem(void);
+
+    list_mem();
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, "show the memory usage in the system");
+
 #endif
