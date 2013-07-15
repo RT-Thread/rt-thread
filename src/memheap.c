@@ -26,6 +26,7 @@
  * 2013-04-10     Bernard      add rt_memheap_realloc function.
  * 2013-05-24     Bernard      fix the rt_memheap_realloc issue.
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
+ * 2013-07-15     Grissiom     optimize rt_memheap_realloc
  */
 
 #include <rthw.h>
@@ -318,6 +319,96 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void* new_ptr;
+        struct rt_memheap_item *next_ptr;
+
+        /* lock memheap */
+        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            rt_set_errno(result);
+            return RT_NULL;
+        }
+
+        next_ptr = header_ptr->next;
+
+        /* header_ptr should not be the tail */
+        RT_ASSERT(next_ptr > header_ptr);
+
+        /* check whether the following free space is enough to expand */
+        if (!RT_MEMHEAP_IS_USED(next_ptr))
+        {
+            rt_int32_t nextsize;
+
+            nextsize = MEMITEM_SIZE(next_ptr);
+            RT_ASSERT(next_ptr > 0);
+
+            /* Here is the ASCII art of the situation that we can make use of
+             * the next free node without alloc/memcpy, |*| is the control
+             * block:
+             *
+             *      oldsize           free node
+             * |*|-----------|*|----------------------|*|
+             *         newsize          >= minialloc
+             * |*|----------------|*|-----------------|*|
+             */
+            if (nextsize + oldsize > newsize + RT_MEMHEAP_MINIALLOC)
+            {
+                /* decrement the entire free size from the available bytes count. */
+                heap->available_size = heap->available_size - (newsize - oldsize);
+                if (heap->pool_size - heap->available_size > heap->max_used_size)
+                    heap->max_used_size = heap->pool_size - heap->available_size;
+
+                /* remove next_ptr from free list */
+                RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
+                             ("remove block: block[0x%08x], next_free 0x%08x, prev_free 0x%08x",
+                              next_ptr,
+                              next_ptr->next_free,
+                              next_ptr->prev_free));
+
+                next_ptr->next_free->prev_free = next_ptr->prev_free;
+                next_ptr->prev_free->next_free = next_ptr->next_free;
+                next_ptr->next->prev = next_ptr->prev;
+                next_ptr->prev->next = next_ptr->next;
+
+                /* build a new one on the right place */
+                next_ptr = (struct rt_memheap_item*)((char*)ptr + newsize);
+
+                RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
+                             ("new free block: block[0x%08x] nextm[0x%08x] prevm[0x%08x]",
+                              next_ptr,
+                              next_ptr->next,
+                              next_ptr->prev));
+
+                /* mark the new block as a memory block and freed. */
+                next_ptr->magic = RT_MEMHEAP_MAGIC;
+
+                /* put the pool pointer into the new block. */
+                next_ptr->pool_ptr = heap;
+
+                next_ptr->prev          = header_ptr;
+                next_ptr->next          = header_ptr->next;
+                header_ptr->next->prev = next_ptr;
+                header_ptr->next       = next_ptr;
+
+                /* insert next_ptr to free list */
+                next_ptr->next_free = heap->free_list->next_free;
+                next_ptr->prev_free = heap->free_list;
+                heap->free_list->next_free->prev_free = next_ptr;
+                heap->free_list->next_free            = next_ptr;
+                RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: next_free 0x%08x, prev_free 0x%08x",
+                                                next_ptr->next_free,
+                                                next_ptr->prev_free));
+
+                /* release lock */
+                rt_sem_release(&(heap->lock));
+
+                return ptr;
+            }
+        }
+
+        /* release lock */
+        rt_sem_release(&(heap->lock));
+
         /* re-allocate a memory block */
         new_ptr = (void*)rt_memheap_alloc(heap, newsize);
         if (new_ptr != RT_NULL)
