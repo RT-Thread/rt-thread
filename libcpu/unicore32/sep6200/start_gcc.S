@@ -1,11 +1,21 @@
 /*
  * File      : start.S
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http:/*openlab.rt-thread.com/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -60,10 +70,6 @@
 .equ 	EXTNMODE,			0x1b
 .equ 	MODEMASK,			0x1f
 .equ 	NOINT,				0xc0
-
-.equ 	RAM_BASE,			0x00000000	/*Start address of RAM		*/
-
-
 
 /*
  *************************************************************************
@@ -127,13 +133,12 @@ _bss_end:
 
 .globl IRQ_STACK_START
 IRQ_STACK_START:
-    .word   _irq_stack_start + 10240 - 4
+    .word   _irq_stack_start + 1024
 
 .globl FIQ_STACK_START
 FIQ_STACK_START:
      .word   _fiq_stack_start +1024
 
-/*peng not sure*/
 .globl UNDEFINED_STACK_START
 UNDEFINED_STACK_START:
 	.word _undefined_stack_start + CONFIG_STACKSIZE
@@ -144,7 +149,7 @@ ABORT_STACK_START:
 
 .globl _STACK_START
 _STACK_START:
-	.word _priv_stack_start + 40960 - 4
+	.word _priv_stack_start + 4096
 
 .equ  SEP6200_VIC_BASE,		 0xb0000000
 .equ  SEP6200_SYSCTL_BASE,	 0xb0008000
@@ -176,6 +181,7 @@ reset:
 	/* setup stack */
 	b.l		stack_setup
 
+  /* copy the vector code to address 0 */
 	ldw	r12, =0x100
 	ldw	r0, = 0x40000000
 	ldw	r1, = 0x00000000
@@ -220,7 +226,7 @@ ctor_end:
 	andn 	r1, r0, #NOINT
 	mov.a 	asr, r1
 
-	/* start RT-Thread Kernel 		*/
+	/* start RT-Thread Kernel */
 	ldw		pc, _rtthread_startup
 
 _rtthread_startup:
@@ -235,18 +241,18 @@ _rtthread_startup:
  */
 
 /* exception handlers */
-/*Just simple implementation here peng*/
+/*Just simple implementation here */
 	.align  5
 extend_handle:
-    b extend_handle
+    b rt_hw_trap_extn
 swi_handle:
-    b swi_handle
+    b rt_hw_trap_swi
 iabort_handle:
-    b iabort_handle
+    b rt_hw_trap_pabt
 dabort_handle:
-    b dabort_handle
+    b rt_hw_trap_dabt
 reserve_handle:
-    b reserve_handle
+    b rt_hw_trap_resv
 
 .globl 		rt_interrupt_enter
 .globl 		rt_interrupt_leave
@@ -276,9 +282,7 @@ IRQ_handle:
 
 	.align	5
 FIQ_handle:
-    mov r0, #0x44
-    b.l printhex
-	mov pc, lr
+  b rt_hw_trap_fiq
 
 _interrupt_thread_switch:
 
@@ -290,21 +294,12 @@ _interrupt_thread_switch:
   ldm.w (r16 - r28), [sp]+
   ldm.w (lr), [sp]+
 
-	stm.w	(r0-r3), [sp-] /*save r0-r3*/
+	stm.w	(r0 - r3), [sp-] /*save r0-r3*/
 
 	mov		r1,  sp
 	add		sp,  sp, #16 /* restore sp */
 	mov		r2,  lr	/* save old task's pc to r2 */
 
-#if 0
-	mov		r3,  bsr /* disable interrupt */
-	/*or		r0,  r3, #NOINT*/
-	mov.a		bsr, r3
-
-	ldw	r0,  =.+8 /* switch to interrupted task's stack */
-	mov.a	pc,  r0 /*switch bsr to asr, irq to priv mode*/
-
-#endif
   mov r3, bsr
   mov r0, #0xd3 /*I:F:0:PRIV*/
   mov.a asr, r0
@@ -312,23 +307,24 @@ _interrupt_thread_switch:
 	stm.w	(r2), [sp-] /* push old task's pc */
 
 	/* push old task's registers */
-	stm.w	(r16, r17, r18, r19, r20, r21, r22, r23, r24, r25, r26, r27, r28, lr), [sp-]
-	stm.w	(r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15), [sp-]
+  stm.w (lr), [sp-]
+  stm.w (r16 - r28), [sp-]
+  stm.w (r4 - r15), [sp-]
 	mov		r4,  r1	/* Special optimised code below		*/
-  mov		r5,  r3 /*pengpengpengpeng*/
-	ldm.w	(r0,r1, r2, r3), [r4]+
-	stm.w	(r0, r1, r2, r3), [sp-] /*push old task's r3-r0*/
+  mov		r5,  r3
+  ldm.w (r0 - r3), [r4]+
+  stm.w (r0 - r3), [sp-] /*push old task's r3-r0*/
 	stm.w	(r5),	 [sp-] /* push old task's asr */
-	mov	r4,  bsr
-	stm.w   (r4), [sp-]	/* push old task's bsr I am not sure peng*/
+	mov	r4, bsr
+	stm.w (r4), [sp-]	/* push old task's bsr*/
 
 	ldw		r4,  =rt_interrupt_from_thread
 	ldw		r5,  [r4+]
-	stw		sp,  [r5+]				/* store sp in preempted tasks's TCB*/
+	stw		sp,  [r5+] /* store sp in preempted tasks's TCB*/
 
 	ldw	r6,  =rt_interrupt_to_thread
 	ldw	r6,  [r6+]
-	ldw	sp,  [r6+]	/* get new task's stack pointer	*/
+	ldw	sp,  [r6+] /* get new task's stack pointer	*/
 
 	ldm.w	(r4), [sp]+	/* pop new task's spsr				*/
 	mov.a	bsr, r4
@@ -340,14 +336,7 @@ _interrupt_thread_switch:
   ldm.w (r0 - r15), [sp]+
   ldm.w (r16 - r28), [sp]+
   ldm.w (lr), [sp]+
-  /*peng*/
   ldm.w (pc), [sp]+
-#if 0
-  mov r0, lr
-  b.l printhex
-  ldm.w (r0), [sp]+
-  b.l printhex
-#endif
 
 stack_setup:
 	/*irq*/

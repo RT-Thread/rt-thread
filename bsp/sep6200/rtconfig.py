@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH     = 'unicore32'
 CPU      = 'sep6200'
-TextBase = '0x00000000'
+TextBase = '0x40000000'
 
 CROSS_TOOL 	= 'gcc'
 
@@ -13,10 +13,7 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= '/usr/unicore/gnu-toolchain-unicore/uc4-1.0-beta-hard-RHELAS5/bin/'
-elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
-elif CROSS_TOOL == 'iar':
+else :
     print '================ERROR============================'
     print 'Not support yet!'
     print '================================================='
@@ -43,7 +40,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' '
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
-    LFLAGS = DEVICE + ' -Bstatic --gc-sections -Map=rtthread_sep6200.map -cref -u _start -Ttext 0x40000000 -T sep6200.ld -L/usr/unicore/gnu-toolchain-unicore/uc4-1.0-beta-hard-RHELAS5/lib/gcc/unicore32-linux/4.4.2 -lgcc' + ' -Ttext ' + TextBase
+    LFLAGS = DEVICE + ' -Bstatic --gc-sections -Map=rtthread_sep6200.map -cref -u _start -T sep6200.ld -L/usr/unicore/gnu-toolchain-unicore/uc4-1.0-beta-hard-RHELAS5/lib/gcc/unicore32-linux/4.4.2 -lgcc' + ' -Ttext ' + TextBase
 
     CPATH = ''
     LPATH = ''

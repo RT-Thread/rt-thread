@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 #define RT_DEBUG
-//#define RT_DEBUG_IRQ 1
-//#define RT_DEBUG_TIMER 1
+/* #define RT_DEBUG_IRQ 1 */
+/* #define RT_DEBUG_TIMER 1 */
 
-//#define RT_DEBUG_MEM                   1
-//#define RT_DEBUG_MEMHEAP               1
-//#define RT_DEBUG_MODULE                1
-//#define RT_DEBUG_SCHEDULER             1
-//#define RT_DEBUG_SLAB                  1
-//#define RT_DEBUG_THREAD                1
-//#define RT_DEBUG_IPC                   1
+/* #define RT_DEBUG_MEM 1 */
+/* #define RT_DEBUG_MEMHEAP 1 */
+/* #define RT_DEBUG_MODULE 1 */
+/* #define RT_DEBUG_SCHEDULER 1 */
+/* #define RT_DEBUG_SLAB 1 */
+/* #define RT_DEBUG_THREAD 1 */
+/* #define RT_DEBUG_IPC 1 */
 
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
@@ -37,7 +37,7 @@
 #define RT_USING_HOOK
 
 /* Using Software Timer */
-//#define RT_USING_TIMER_SOFT
+#define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO		8
 #define RT_TIMER_THREAD_STACK_SIZE	512
 #define RT_TIMER_TICK_PER_SECOND	10
@@ -98,8 +98,8 @@
 
 /* SECTION: Device filesystem support */
 /* using DFS support */
-//#define RT_USING_DFS //fanpeng
-//#define RT_USING_DFS_ELMFAT //fanpeng
+/* #define RT_USING_DFS */
+/* #define RT_USING_DFS_ELMFAT */
 /* #define RT_USING_DFS_YAFFS2 */
 
 /* #define DFS_USING_WORKDIR */
@@ -113,8 +113,8 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack */
-//#define RT_USING_LWIP
-//#define RT_LWIP_DNS
+/* #define RT_USING_LWIP */
+/* #define RT_LWIP_DNS */
 
 /* Trace LwIP protocol */
 /* #define RT_LWIP_DEBUG */

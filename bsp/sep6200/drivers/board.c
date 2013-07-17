@@ -1,17 +1,32 @@
 /*
  * File		: board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012 RT-Thread Develop Team
+ * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-7-14      Peng Fan     sep6200 implementation
  */
 
+/**
+ * @addtogroup sep6200
+ */
+
+/*@{*/
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -49,7 +64,6 @@ void rt_timer_handler(int vector, void *param)
 /*
  * This function will handle serial interrupt
  */
-#if 1
 void rt_serial_handler(int vector, void *param)
 {
 	rt_uint32_t num;
@@ -76,12 +90,10 @@ void rt_serial_handler(int vector, void *param)
 			break;
 	}
 }
-#endif
 
 /*
  * This function will init timer2 for system ticks
  */
-
 #define BUS4_FREQ	320000000UL
 #define TIMER_CLK	BUS4_FREQ
 #define HZ 100
@@ -147,19 +159,6 @@ void rt_hw_serial_putc(const char c)
 	*(RP)(SEP6200_UART0_TXFIFO) = c;
 }
 
-void printhex(unsigned int data)
-{
-	int i = 0,a = 0;
-	for (i = 0; i < 8; i++) {
-		a = (data>>(32-(i+1)*4))&0xf;
-		if (((a<=9)&&(a>=0)))
-			rt_hw_serial_putc(a + 0x30);
-		else if ((a <= 0xf) && (a >= 0xa))
-			rt_hw_serial_putc(a-0xa+0x61);
-	}
-	rt_hw_serial_putc('\n');
-}
-
 /**
 * This function is used by rt_kprintf to display a string on console.
 *
@@ -171,3 +170,5 @@ void rt_hw_console_output(const char *str)
     rt_hw_serial_putc(*str++);
   }
 }
+
+/*@}*/
