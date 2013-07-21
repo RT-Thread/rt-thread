@@ -14,15 +14,12 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "at91sam926x.h"
-
-/**
- * @addtogroup AT91SAM926X
- */
-/*@{*/
 
 #define ICACHE_MASK	(rt_uint32_t)(1 << 12)
 #define DCACHE_MASK	(rt_uint32_t)(1 << 2)
+
+extern void machine_reset(void);
+extern void machine_shutdown(void);
 
 #ifdef __GNUC__
 rt_inline rt_uint32_t cp15_rd(void)
@@ -148,16 +145,6 @@ rt_base_t rt_hw_cpu_dcache_status()
 	return (cp15_rd() & DCACHE_MASK);
 }
 
-static void at91sam9260_reset(void)
-{
-	at91_sys_write(AT91_RSTC_CR, AT91_RSTC_KEY | AT91_RSTC_PROCRST | AT91_RSTC_PERRST);
-}
-
-static void at91sam9260_poweroff(void)
-{
-	at91_sys_write(AT91_SHDW_CR, AT91_SHDW_KEY | AT91_SHDW_SHDW);
-}
-
 /**
  * reset cpu by dog's time-out
  *
@@ -166,7 +153,7 @@ void rt_hw_cpu_reset()
 {
 	
 	rt_kprintf("Restarting system...\n");
-	at91sam9260_reset();
+	machine_reset();
 
 	while(1);	/* loop forever and wait for reset to happen */
 
@@ -183,7 +170,7 @@ void rt_hw_cpu_shutdown()
 	rt_kprintf("shutdown...\n");
 
 	level = rt_hw_interrupt_disable();
-	at91sam9260_poweroff();
+	machine_shutdown();
 	while (level)
 	{
 		RT_ASSERT(0);

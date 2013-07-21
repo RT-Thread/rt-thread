@@ -156,7 +156,6 @@ void rt_hw_trap_irq()
 		at91_sys_write(AT91_AIC_EOICR, 0);
 		return;
 	}
-	//at91_sys_write(AT91_AIC_EOICR, 0x55555555);
 	
 	/* get interrupt service routine */
 	isr_func = irq_desc[irq].handler;

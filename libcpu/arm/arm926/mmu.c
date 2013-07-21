@@ -11,31 +11,7 @@
  * Date           Author       Notes
  */
 
-#include <rtthread.h>
-
-#define CACHE_LINE_SIZE	32
-
-#define DESC_SEC		(0x2|(1<<4))
-#define CB				(3<<2)  //cache_on, write_back
-#define CNB				(2<<2)  //cache_on, write_through
-#define NCB				(1<<2)  //cache_off,WR_BUF on
-#define NCNB			(0<<2)  //cache_off,WR_BUF off
-#define AP_RW			(3<<10) //supervisor=RW, user=RW
-#define AP_RO			(2<<10) //supervisor=RW, user=RO
-
-#define DOMAIN_FAULT	(0x0)
-#define DOMAIN_CHK		(0x1)
-#define DOMAIN_NOTCHK	(0x3)
-#define DOMAIN0			(0x0<<5)
-#define DOMAIN1			(0x1<<5)
-
-#define DOMAIN0_ATTR	(DOMAIN_CHK<<0)
-#define DOMAIN1_ATTR	(DOMAIN_FAULT<<2)
-
-#define RW_CB		(AP_RW|DOMAIN0|CB|DESC_SEC)		/* Read/Write, cache, write back */
-#define RW_CNB		(AP_RW|DOMAIN0|CNB|DESC_SEC)	/* Read/Write, cache, write through */
-#define RW_NCNB		(AP_RW|DOMAIN0|NCNB|DESC_SEC)	/* Read/Write without cache and write buffer */
-#define RW_FAULT	(AP_RW|DOMAIN1|NCNB|DESC_SEC)	/* Read/Write without cache and write buffer */
+#include "mmu.h"
 
 #ifdef __CC_ARM
 void mmu_setttbase(rt_uint32_t i)
@@ -459,7 +435,7 @@ void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrS
     }
 }
 
-void rt_hw_mmu_init(void)
+void rt_hw_mmu_init(struct mem_desc *mdesc, rt_uint32_t size)
 {
 	/* disable I/D cache */
 	mmu_disable_dcache();
@@ -468,11 +444,12 @@ void rt_hw_mmu_init(void)
 	mmu_invalidate_tlb();
 
 	/* set page table */
-	mmu_setmtt(0x00000000, 0xFFFFFFFF, 0x00000000, RW_NCNB); /* None cached for 4G memory */
-  	mmu_setmtt(0x20000000, 0x24000000-1, 0x20000000, RW_CB); /* 64M cached SDRAM memory */
-	mmu_setmtt(0x00000000, 0x100000, 0x20000000, RW_CB); /* isr vector table */
-	mmu_setmtt(0x90000000, 0x90400000 - 1, 0x00200000, RW_NCNB); /* 4K SRAM0 + 4k SRAM1 */
-	mmu_setmtt(0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB); /* 64M none-cached SDRAM memory */
+	for (; size > 0; size--)
+	{
+		mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end, 
+			mdesc->paddr_start, mdesc->attr);
+		mdesc++;
+	}
 
 	/* set MMU table address */
 	mmu_setttbase((rt_uint32_t)_page_table);
