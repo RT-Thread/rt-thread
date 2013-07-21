@@ -497,6 +497,33 @@ int dfs_statfs(const char *path, struct statfs *buffer)
     return -1;
 }
 
+#ifdef RT_USING_DFS_MNTTABLE
+int dfs_mount_table(void)
+{
+	int index;
+
+	while (1)
+	{
+		if (mount_table[index].path == RT_NULL) break;
+		
+		if (dfs_mount(mount_table[index].device_name,
+				mount_table[index].path,
+				mount_table[index].filesystemtype,
+				mount_table[index].rwflag,
+				mount_table[index].data) != 0)
+		{
+			rt_kprintf("mount fs[%s] on %s failed.\n", mount_table[index].filesystemtype, 
+				mount_table[index].path);
+			return -RT_ERROR;
+		}
+
+		index ++;
+	}
+	return 0;
+}
+INIT_ENV_EXPORT(dfs_mount_table);
+#endif
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void mkfs(const char *fs_name, const char *device_name)

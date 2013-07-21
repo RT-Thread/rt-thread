@@ -80,7 +80,7 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
  *
  * This function will initialize system module
  */
-void rt_system_module_init(void)
+int rt_system_module_init(void)
 {
 #ifdef __GNUC__
     extern int __rtmsymtab_start;
@@ -100,6 +100,7 @@ void rt_system_module_init(void)
     /* initialize heap semaphore */
     rt_sem_init(&mod_sem, "module", 1, RT_IPC_FLAG_FIFO);
 #endif
+	return 0;
 }
 INIT_COMPONENT_EXPORT(rt_system_module_init);
 
@@ -805,9 +806,6 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
     if (elf_module->e_entry != 0)
     {
-        rt_uint32_t *stack_size;
-        rt_uint8_t  *priority;
-
 #ifdef RT_USING_SLAB
         /* init module memory allocator */
         module->mem_list = RT_NULL;
@@ -1180,8 +1178,6 @@ rt_err_t rt_module_destroy(rt_module_t module)
  */
 rt_err_t rt_module_unload(rt_module_t module)
 {
-    int i;
-    rt_err_t result;
     struct rt_object *object;
     struct rt_list_node *list;
 

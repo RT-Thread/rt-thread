@@ -452,7 +452,7 @@ rt_uint8_t rt_interrupt_get_nest(void);
 /**
  * application module
  */
-void rt_system_module_init(void);
+int rt_system_module_init(void);
 
 /**
  * @addtogroup KernelService

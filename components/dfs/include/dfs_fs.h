@@ -82,6 +82,16 @@ struct dfs_partition
     rt_sem_t lock;  
 };
 
+/* mount table */
+struct dfs_mount_tbl
+{
+	const char	 *device_name;
+	const char   *path;
+	const char   *filesystemtype;
+	unsigned long rwflag;
+	const void   *data;
+};
+
 int dfs_register(const struct dfs_filesystem_operation *ops);
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path);
 rt_err_t dfs_filesystem_get_partition(struct dfs_partition *part,
@@ -98,6 +108,7 @@ int dfs_unmount(const char *specialfile);
 /* extern variable */
 extern const struct dfs_filesystem_operation *filesystem_operation_table[];
 extern struct dfs_filesystem filesystem_table[];
+extern const struct dfs_mount_tbl mount_table[];
 
 extern char working_directory[];
 
