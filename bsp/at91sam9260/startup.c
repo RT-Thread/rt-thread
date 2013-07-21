@@ -19,14 +19,8 @@
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #endif
-
-#ifdef RT_USING_DEVICE
-#include <serial.h>
-#endif
-
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_board_init(void);
-extern void rt_serial_init(void);
 extern void rt_system_timer_init(void);
 extern void rt_system_scheduler_init(void);
 extern void rt_thread_idle_init(void);
@@ -36,9 +30,6 @@ extern void rt_show_version(void);
 extern void rt_system_heap_init(void*, void*);
 extern void rt_hw_finsh_init(void);
 extern void rt_application_init(void);
-
-extern struct serial_device uart0;
-extern struct rt_device uart0_device;
 
 /**
  * @addtogroup at91sam9260
@@ -109,50 +100,6 @@ void rtthread_startup(void)
 	/* initialize scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-#ifdef RT_USING_DBGU
-	/* register dbgu */
-	rt_hw_serial_register(&uart0_device, "uart0",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
-		&uart0); 
-#endif
-
-#ifdef RT_USING_UART0
-	/* register uart0 */
-	rt_hw_serial_register(&uart1_device, "uart1",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
-		&uart1); 
-#endif
-
-#ifdef RT_USING_UART1
-	/* register uart1 */
-	rt_hw_serial_register(&uart2_device, "uart2",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
-		&uart2); 
-#endif
-
-#ifdef RT_USING_UART2
-	/* register uart2 */
-	rt_hw_serial_register(&uart3_device, "uart3",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
-		&uart3); 
-#endif
-
-#ifdef RT_USING_UART3
-	/* register uart3 */
-	rt_hw_serial_register(&uart4_device, "uart4",
-		RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX,
-		&uart4); 
-#endif
-
-#ifdef RT_USING_DFS
-	//rt_hw_sdcard_init();
-#endif
-
-	/*init all registed devices */
-	rt_device_init_all();
-#endif
-
 	/* initialize application */
 	rt_application_init();
 
@@ -160,9 +107,7 @@ void rtthread_startup(void)
 	/* initialize finsh */
 	finsh_system_init();
 #ifdef RT_USING_DEVICE
-#ifdef RT_USING_DBGU
-	finsh_set_device("uart0");
-#endif
+	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 #endif
 

@@ -16,9 +16,7 @@
 #define __BOARD_H__
 
 #include <at91sam926x.h>
-#include <serial.h>
 
 void rt_hw_board_init(void);
-//void rt_hw_sdcard_init(void);
 
 #endif

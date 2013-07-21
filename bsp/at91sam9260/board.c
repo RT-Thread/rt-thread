@@ -29,218 +29,7 @@ extern void rt_hw_mmu_init(void);
 extern void rt_hw_get_clock(void);
 extern void rt_hw_set_dividor(rt_uint8_t hdivn, rt_uint8_t pdivn);
 extern void rt_hw_set_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv);
-
-/*set debug serial port*/
-//#define USE_UART1
-//#define USE_UART3
-//#define USE_DBGU
-
-#define DBGU	((struct uartport *)0xfffff200)
-#define UART0   ((struct uartport *)AT91SAM9260_BASE_US0)
-#define UART1   ((struct uartport *)AT91SAM9260_BASE_US1)
-#define UART2   ((struct uartport *)AT91SAM9260_BASE_US2)
-#define UART3	((struct uartport *)AT91SAM9260_BASE_US3)
-#define UART4   ((struct uartport *)AT91SAM9260_BASE_US4)
-#define UART5   ((struct uartport *)AT91SAM9260_BASE_US5)
-
-struct serial_int_rx uart0_int_rx;
-struct serial_device uart0 =
-{
-	DBGU,
-	&uart0_int_rx,
-	RT_NULL
-};
-struct rt_device uart0_device;
-
-struct serial_int_rx uart1_int_rx;
-struct serial_device uart1 =
-{
-	UART0,
-	&uart1_int_rx,
-	RT_NULL
-};
-struct rt_device uart1_device;
-
-struct serial_int_rx uart2_int_rx;
-struct serial_device uart2 =
-{
-	UART1,
-	&uart2_int_rx,
-	RT_NULL
-};
-struct rt_device uart2_device;
-
-struct serial_int_rx uart3_int_rx;
-struct serial_device uart3 =
-{
-	UART2,
-	&uart3_int_rx,
-	RT_NULL
-};
-struct rt_device uart3_device;
-
-struct serial_int_rx uart4_int_rx;
-struct serial_device uart4 =
-{
-	UART3,
-	&uart4_int_rx,
-	RT_NULL
-};
-struct rt_device uart4_device;
-
-
-/**
- * This function will handle serial
- */
-void rt_serial_handler(int vector, void *param)
-{
-	int status;
-	struct rt_device *dev = (rt_device_t)param;
-
-	switch (vector) 
-	{
-	#ifdef RT_USING_UART0
-	case AT91SAM9260_ID_US0:
-		status = readl(AT91SAM9260_BASE_US0+AT91_US_CSR);
-		if (!(status & readl(AT91SAM9260_BASE_US0+AT91_US_IMR)))
-		{
-			return;
-		}
-		rt_hw_serial_isr(dev);
-		break;
-	#endif
-	#ifdef RT_USING_UART1
-	case AT91SAM9260_ID_US1:
-		status = readl(AT91SAM9260_BASE_US1+AT91_US_CSR);
-		if (!(status & readl(AT91SAM9260_BASE_US1+AT91_US_IMR)))
-		{
-			return;
-		}
-		rt_hw_serial_isr(dev);
-		break;
-	#endif
-	#ifdef RT_USING_UART2
-	case AT91SAM9260_ID_US2:
-		status = readl(AT91SAM9260_BASE_US2+AT91_US_CSR);
-		if (!(status & readl(AT91SAM9260_BASE_US2+AT91_US_IMR)))
-		{
-			return;
-		}
-		rt_hw_serial_isr(dev);
-		break;
-	#endif
-	#ifdef RT_USING_UART3
-	case AT91SAM9260_ID_US3:
-		status = readl(AT91SAM9260_BASE_US3+AT91_US_CSR);
-		if (!(status & readl(AT91SAM9260_BASE_US3+AT91_US_IMR)))
-		{
-			return;
-		}
-		rt_hw_serial_isr(dev);
-		break;
-	#endif
-	default: break;
-	}
-
-}
-
-void uart_port_init(rt_uint32_t base)
-{
-	#define BAUDRATE  115200
-	rt_uint32_t  cd;
-
-	writel(AT91_US_RSTTX | AT91_US_RSTRX | 
-	       AT91_US_RXDIS | AT91_US_TXDIS, 
-	       base + AT91_US_CR);
-	writel( AT91_US_USMODE_NORMAL | AT91_US_USCLKS_MCK | 
-		AT91_US_CHRL_8 | AT91_US_PAR_NONE | 
-		AT91_US_NBSTOP_1 | AT91_US_CHMODE_NORMAL, 
-		base + AT91_US_MR);
-	cd = (clk_get_rate(clk_get("mck")) / 16 + BAUDRATE/2) / BAUDRATE;
-	writel(cd, base + AT91_US_BRGR);
-	writel(AT91_US_RXEN | AT91_US_TXEN, base + AT91_US_CR);
-	
-	writel(0x1, base + AT91_US_IER);
-}
-
-/**
- * This function will handle init uart
- */
-void rt_hw_uart_init(void)
-{
-#ifdef RT_USING_UART0
-	at91_sys_write(AT91_PMC_PCER, 1 << AT91SAM9260_ID_US0);
-	at91_sys_write(AT91_PIOB + PIO_IDR, (1<<4)|(1<<5));
-	at91_sys_write(AT91_PIOB + PIO_PUER, (1<<4));
-	at91_sys_write(AT91_PIOB + PIO_PUDR, (1<<5));
-	at91_sys_write(AT91_PIOB + PIO_ASR, (1<<4)|(1<<5));
-	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<4)|(1<<5));
-	uart_port_init(AT91SAM9260_BASE_US0);
-	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US0, rt_serial_handler, 
-							(void *)&uart1_device, "UART0");
-	rt_hw_interrupt_umask(AT91SAM9260_ID_US0);
-#endif
-#ifdef RT_USING_UART1
-	at91_sys_write(AT91_PMC_PCER, 1 << AT91SAM9260_ID_US1);
-	at91_sys_write(AT91_PIOB + PIO_IDR, (1<<6)|(1<<7));
-	at91_sys_write(AT91_PIOB + PIO_PUER, (1<<6));
-	at91_sys_write(AT91_PIOB + PIO_PUDR, (1<<7));
-	at91_sys_write(AT91_PIOB + PIO_ASR, (1<<6)|(1<<7));
-	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<6)|(1<<7));
-	uart_port_init(AT91SAM9260_BASE_US1);
-	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US1, rt_serial_handler, 
-							(void *)&uart2_device, "UART1");
-	rt_hw_interrupt_umask(AT91SAM9260_ID_US1);
-#endif
-#ifdef RT_USING_UART2
-	at91_sys_write(AT91_PMC_PCER, 1 << AT91SAM9260_ID_US2);
-	at91_sys_write(AT91_PIOB + PIO_IDR, (1<<8)|(1<<9));
-	at91_sys_write(AT91_PIOB + PIO_PUER, (1<<8));
-	at91_sys_write(AT91_PIOB + PIO_PUDR, (1<<9));
-	at91_sys_write(AT91_PIOB + PIO_ASR, (1<<8)|(1<<9));
-	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<8)|(1<<9));
-	uart_port_init(AT91SAM9260_BASE_US2);
-	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US2, rt_serial_handler, 
-							(void *)&uart3_device, "UART2");
-	rt_hw_interrupt_umask(AT91SAM9260_ID_US2);
-#endif
-#ifdef RT_USING_UART3
-	at91_sys_write(AT91_PMC_PCER, 1<<AT91SAM9260_ID_US3);
-	at91_sys_write(AT91_PIOB + PIO_IDR, (1<<10)|(1<<11));
-	at91_sys_write(AT91_PIOB + PIO_PUER, (1<<10));
-	at91_sys_write(AT91_PIOB + PIO_PUDR, (1<<11));
-	at91_sys_write(AT91_PIOB + PIO_ASR, (1<<10)|(1<<11));
-	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<10)|(1<<11));
-	uart_port_init(AT91SAM9260_BASE_US3);
-	/* install interrupt handler */
-	rt_hw_interrupt_install(AT91SAM9260_ID_US3, rt_serial_handler, 
-							(void *)&uart4_device, "UART3");
-	rt_hw_interrupt_umask(AT91SAM9260_ID_US3);
-	
-#endif
-#ifdef RT_USING_DBGU
-	#define BAUDRATE  115200
-	rt_uint32_t  cd;
-	at91_sys_write(AT91_PIOB + PIO_IDR, (1<<14)|(1<<15));
-	//at91_sys_write(AT91_PIOB + PIO_PUER, (1<<6));
-	at91_sys_write(AT91_PIOB + PIO_PUDR, (1<<14)|(1<<15));
-	at91_sys_write(AT91_PIOB + PIO_ASR, (1<<14)|(1<<15));
-	at91_sys_write(AT91_PIOB + PIO_PDR, (1<<14)|(1<<15));
-	at91_sys_write(AT91_PMC_PCER, 1 << AT91_ID_SYS);
-	at91_sys_write(AT91_DBGU + AT91_US_CR, AT91_US_RSTTX | AT91_US_RSTRX | AT91_US_RXDIS | AT91_US_TXDIS);
-	at91_sys_write(AT91_DBGU + AT91_US_IDR, 0xffffffff);
-	at91_sys_write(AT91_DBGU + AT91_US_MR, AT91_US_USMODE_NORMAL | AT91_US_PAR_NONE);
-	cd = (clk_get_rate(clk_get("mck")) / 16 + BAUDRATE/2) / BAUDRATE;
-	at91_sys_write(AT91_DBGU + AT91_US_BRGR, cd);
-	at91_sys_write(AT91_DBGU + AT91_US_CR, AT91_US_RXEN | AT91_US_TXEN);
-	
-	at91_sys_read(AT91_DBGU + AT91_US_CSR); //read for clearing interrupt
-	at91_sys_write(AT91_DBGU + AT91_US_IER, 0x1);
-#endif
-}
+extern void rt_dbgu_isr(void);
 
 #define PIT_CPIV(x)	((x) & AT91_PIT_CPIV)
 #define PIT_PICNT(x)	(((x) & AT91_PIT_PICNT) >> 20)
@@ -254,12 +43,13 @@ static rt_uint32_t pit_cnt;		/* access only w/system irq blocked */
 void rt_timer_handler(int vector, void *param)
 {
 	#ifdef RT_USING_DBGU
-	if (at91_sys_read(AT91_DBGU + AT91_US_CSR) & 0x1) {
-		//rt_kprintf("DBGU interrupt occur\n");
-		rt_hw_serial_isr(&uart0_device);
+	if (at91_sys_read(AT91_DBGU + AT91_US_CSR) & 0x1)
+	{
+		rt_dbgu_isr();
 	}
 	#endif
-	if (at91_sys_read(AT91_PIT_SR) & AT91_PIT_PITS) {
+	if (at91_sys_read(AT91_PIT_SR) & AT91_PIT_PITS)
+	{
 		unsigned nr_ticks;
 
 		/* Get number of ticks performed before irq, and ack it */
@@ -339,6 +129,7 @@ void rt_hw_board_init()
 
 	/* initialize uart */
 	rt_hw_uart_init();
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
 	/* initialize mmu */
 	rt_hw_mmu_init();

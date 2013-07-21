@@ -3,7 +3,7 @@ Import('RTT_ROOT')
 from building import *
 
 src_bsp = ['application.c', 'startup.c', 'board.c']
-src_drv = ['console.c']
+src_drv = ['usart.c']
 
 if GetDepend('RT_USING_LED'):
 	src_drv += ['led.c']
