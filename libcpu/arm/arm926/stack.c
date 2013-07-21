@@ -13,6 +13,18 @@
  */
 #include <rtthread.h>
 
+/*****************************/
+/* CPU Mode                  */
+/*****************************/
+#define USERMODE		0x10
+#define FIQMODE			0x11
+#define IRQMODE			0x12
+#define SVCMODE			0x13
+#define ABORTMODE		0x17
+#define UNDEFMODE		0x1b
+#define MODEMASK		0x1f
+#define NOINT			0xc0
+
 /**
  * This function will initialize thread stack
  *
