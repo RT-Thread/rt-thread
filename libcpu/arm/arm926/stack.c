@@ -12,12 +12,6 @@
  * 2011-01-13     weety      copy from mini2440
  */
 #include <rtthread.h>
-#include "at91sam926x.h"
-
-/**
- * @addtogroup AT91SAM926X
- */
-/*@{*/
 
 /**
  * This function will initialize thread stack
@@ -57,4 +51,3 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	return (rt_uint8_t *)stk;
 }
 
-/*@}*/
