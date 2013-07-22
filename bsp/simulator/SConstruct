@@ -75,6 +75,7 @@ elif rtconfig.PLATFORM == 'mingw':
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 else:
     TARGET = 'rtthread'
+    env['CC']=rtconfig.CC
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
     env.Append(LIBS=['m'])
