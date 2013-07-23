@@ -13,7 +13,7 @@
 #ifdef RT_DFS_ELM_USE_LFN
 static int gbk2uni_fd = -1;
 static int uni2gbk_fd = -1;
-void ff_convert_init()
+int ff_convert_init()
 {
     gbk2uni_fd = open(GBK2UNI_FILE, O_RDONLY, 0);
     if (gbk2uni_fd < 0)
@@ -22,6 +22,7 @@ void ff_convert_init()
     uni2gbk_fd = open(UNI2GBK_FILE, O_RDONLY, 0);
     if (uni2gbk_fd < 0)
         rt_kprintf("Unable to open Unicode to GBK look up table.\r\n");
+	return 0;
 }
 INIT_APP_EXPORT(ff_convert_init);
 

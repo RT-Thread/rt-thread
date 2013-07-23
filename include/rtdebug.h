@@ -63,6 +63,10 @@
 #define RT_DEBUG_IPC                   0
 #endif
 
+#ifndef RT_DEBUG_INIT
+#define RT_DEBUG_INIT					0
+#endif
+
 /* Turn on this to enable context check */
 #ifndef RT_DEBUG_CONTEXT_CHECK
 #define RT_DEBUG_CONTEXT_CHECK         1

@@ -34,7 +34,7 @@
  * 
  * @return none.
  */
-void rt_usb_host_init(void)
+int rt_usb_host_init(void)
 {
     ucd_t drv;
 #ifdef RT_USB_CLASS_HID
@@ -80,5 +80,8 @@ void rt_usb_host_init(void)
     /* register hub class driver */
     drv = rt_usb_class_driver_hub();
     rt_usb_class_driver_register(drv);
+
+	return 0;
 }
 INIT_COMPONENT_EXPORT(rt_usb_host_init);
+

@@ -500,12 +500,12 @@ int dfs_statfs(const char *path, struct statfs *buffer)
 #ifdef RT_USING_DFS_MNTTABLE
 int dfs_mount_table(void)
 {
-	int index;
+	int index = 0;
 
 	while (1)
 	{
 		if (mount_table[index].path == RT_NULL) break;
-		
+
 		if (dfs_mount(mount_table[index].device_name,
 				mount_table[index].path,
 				mount_table[index].filesystemtype,

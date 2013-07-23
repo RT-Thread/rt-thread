@@ -134,8 +134,8 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
     return (ret > 0) ? count : ret;
 }
 
-rt_err_t rt_i2c_core_init(void)
+int rt_i2c_core_init(void)
 {
     return rt_mutex_init(&i2c_core_lock, "i2c_core_lock", RT_IPC_FLAG_FIFO);
 }
-
+INIT_COMPONENT_EXPORT(rt_i2c_core_init);

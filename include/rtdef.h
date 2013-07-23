@@ -181,8 +181,20 @@ typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
     #define INIT_EXPORT(fn, level)
 #else
-    #define INIT_EXPORT(fn, level)  \
-        const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+	#if RT_DEBUG_INIT
+		struct rt_init_desc
+		{
+			const char* fn_name;
+			const init_fn_t fn;
+		};
+		#define INIT_EXPORT(fn, level)  		\
+			const char __rti_##fn##_name[] = #fn; \
+			const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+			{ __rti_##fn##_name, fn};
+	#else
+    	#define INIT_EXPORT(fn, level)  \
+        	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+	#endif
 #endif
 #else
 #define INIT_EXPORT(fn, level)

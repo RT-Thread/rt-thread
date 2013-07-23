@@ -96,7 +96,7 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint16_t               flags,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count);
-rt_err_t rt_i2c_core_init(void);
+int rt_i2c_core_init(void);
 
 #ifdef __cplusplus
 }
