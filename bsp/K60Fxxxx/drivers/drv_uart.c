@@ -39,18 +39,24 @@ static struct k60_serial_device _k60_node =
 
 static rt_err_t _configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    unsigned int reg_C1 = 0,reg_BDH = 0,reg_BDL = 0,reg_S2;
+    unsigned int reg_C1 = 0,reg_C4 = 0,reg_BDH = 0,reg_BDL = 0,reg_S2,reg_BRFA=0;
     unsigned int cal_SBR = 0;
     UART_Type *uart_reg;
 
+    /* ref : drivers\system_MK60F12.c Line 64 ,BusClock = 60MHz */
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    //calc SBR
     cal_SBR = 60000000 / (16 * cfg->baud_rate);
-    reg_BDH = (cal_SBR & 0x1FFF) >> 8 & 0x00FF;
-    reg_BDL = cal_SBR & 0x00FF;
 
     //calc baud_rate
     reg_BDH = (cal_SBR & 0x1FFF) >> 8 & 0x00FF;
     reg_BDL = cal_SBR & 0x00FF;
+
+    //fractional divider
+    reg_BRFA = ((60000*32000)/(cfg->baud_rate * 16)) - (cal_SBR * 32);
+
+    reg_C4 = (unsigned char)(reg_BRFA & 0x001F);
 
     //calc bit_order
     if (cfg->bit_order == BIT_ORDER_LSB)
@@ -96,6 +102,7 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     uart_reg->BDH = reg_BDH;
     uart_reg->BDL = reg_BDL;
     uart_reg->C1 = reg_C1;
+    uart_reg->C4 = reg_C4;
     uart_reg->S2 = reg_S2;
 
     uart_reg->S2  =  0;
