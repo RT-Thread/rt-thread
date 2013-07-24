@@ -241,8 +241,6 @@ void rt_hw_uart_init(void)
     rt_hw_serial_register(&_k60_serial, "uart5",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           (void*)&_k60_node);
-
-    rt_device_control(&_k60_serial.parent, RT_DEVICE_CTRL_SET_INT, 0);
 }
 
 void rt_hw_console_output(const char *str)

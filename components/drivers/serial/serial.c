@@ -145,7 +145,11 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
             serial_ringbuffer_init(serial->int_rx);
 
         if (dev->flag & RT_DEVICE_FLAG_INT_TX)
+        {
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_NULL);
             serial_ringbuffer_init(serial->int_tx);
+            serial->int_sending_flag = RT_FALSE;
+        }
 
         if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
         {
