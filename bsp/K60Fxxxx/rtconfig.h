@@ -64,6 +64,7 @@
 /* Using Serial Device Driver Framework" default="true" */
 #define RT_USING_SERIAL
 
+#define RT_SERIAL_RB_BUFSZ              1024
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE

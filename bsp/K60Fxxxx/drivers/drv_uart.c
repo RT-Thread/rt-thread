@@ -15,8 +15,15 @@
 
 #include "drv_uart.h"
 
+extern void rt_hw_serial_tx_isr(struct rt_serial_device *serial);
+extern void rt_hw_serial_rx_isr(struct rt_serial_device *serial);
+
+void rt_hw_FIFO_init(struct rt_serial_device *serial);
+void rt_hw_FIFO_deinit(struct rt_serial_device *serial);
+
 static struct rt_serial_device _k60_serial;  //abstracted serial for RTT
 static struct serial_ringbuffer _k60_int_rx; //UART send buffer area
+static struct serial_ringbuffer _k60_int_tx; //UART send buffer area
 
 struct k60_serial_device
 {
@@ -45,6 +52,10 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
 
     /* ref : drivers\system_MK60F12.c Line 64 ,BusClock = 60MHz
      * calculate baud_rate
+     * NOTE :
+     * UART0 and UART1 are clocked from the core clock, the remaining UARTs are
+     * clocked on the bus clock. The maximum baud rate is 1/16 of related source clock
+     * frequency.
      */
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
@@ -104,7 +115,7 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      * set NZR mode
      * not tested
      */
-    if(cfg->invert != NRZ_NORMAL)
+    if (cfg->invert != NRZ_NORMAL)
     {
         /* not in normal mode ,set inverted polarity */
         reg_C3 |= UART_C3_TXINV_MASK;
@@ -129,6 +140,23 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     default:
         break;
     }
+    
+    if (serial->parent.flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX ))
+    {
+        
+        /* if set TX or RX INT , set NVIC */ 
+        /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1 */
+        NVICICPR1 |= 1 << (((struct k60_serial_device *)serial->parent.user_data)->irq_num % 32);
+        NVICISER1 |= 1 << (((struct k60_serial_device *)serial->parent.user_data)->irq_num % 32);
+        
+        if (serial->parent.flag & RT_DEVICE_FLAG_INT_TX )
+        {
+            /* if we use INT_TX,set FIFO */
+            #ifdef USE_UART_TX_FIFO
+            rt_hw_FIFO_init(serial);
+            #endif
+        }
+    }
 
     uart_reg->BDH = reg_BDH;
     uart_reg->BDL = reg_BDL;
@@ -142,8 +170,6 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     uart_reg->RWFIFO = UART_RWFIFO_RXWATER(1);
     uart_reg->TWFIFO = UART_TWFIFO_TXWATER(0);
 
-    uart_reg->C2  =  UART_C2_RE_MASK |    //Receiver enable
-                     UART_C2_TE_MASK;     //Transmitter enable
 
     return RT_EOK;
 }
@@ -158,27 +184,75 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
 
     switch (cmd)
     {
+    //===============================================
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
-        uart_reg->C2 &= ~UART_C2_RIE_MASK;
-        //disable NVIC
-        NVICICER1 |= 1 << (uart_irq_num % 32);
+        if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
+        {
+            /* disable rx irq */
+            uart_reg->C2 &= ~UART_C2_TIE_MASK;
+        }
+        
+        if ( (int)arg & RT_DEVICE_FLAG_INT_RX )
+        {
+            /* disable rx irq */
+            uart_reg->C2 &= ~UART_C2_RIE_MASK;
+        }
         break;
+    //================================================
     case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
-        uart_reg->C2 |= UART_C2_RIE_MASK;
-        //enable NVIC,we are sure uart's NVIC vector is in NVICICPR1
-        NVICICPR1 |= 1 << (uart_irq_num % 32);
-        NVICISER1 |= 1 << (uart_irq_num % 32);
+        if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
+        {
+            /* enable tx irq */
+            uart_reg->C2 |= UART_C2_TIE_MASK;
+        }
+
+        if ( (int)arg & RT_DEVICE_FLAG_INT_RX )
+        {
+            /* enable rx irq */
+            uart_reg->C2 |= UART_C2_RIE_MASK;
+        }
         break;
+    //============================================================
     case RT_DEVICE_CTRL_SUSPEND:
+        if ( (int)arg & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX) )
+        {
+            /* disable NVIC */
+            NVICICER1 |= 1 << (uart_irq_num % 32);
+            
+            if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
+            {
+                #ifdef USE_UART_TX_FIFO
+                rt_hw_FIFO_deinit(serial);
+                #endif
+            }
+        }
+    
+        
         /* suspend device */
         uart_reg->C2  &=  ~(UART_C2_RE_MASK |    //Receiver enable
                             UART_C2_TE_MASK);     //Transmitter enable
+    
         break;
+    //===========================================================
     case RT_DEVICE_CTRL_RESUME:
         /* resume device */
-        uart_reg->C2  =  UART_C2_RE_MASK |    //Receiver enable
+        
+        if ( (int)arg & (RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX) )
+        {
+            /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1 */
+            NVICICPR1 |= 1 << (uart_irq_num % 32);
+            NVICISER1 |= 1 << (uart_irq_num % 32);
+            
+            if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
+            {
+                #ifdef USE_UART_TX_FIFO
+                rt_hw_FIFO_init(serial);
+                #endif
+            }
+        }
+        
+        /* configure done now start device */
+        uart_reg->C2  |=  UART_C2_RE_MASK |    //Receiver enable
                          UART_C2_TE_MASK;     //Transmitter enable
         break;
     }
@@ -191,8 +265,14 @@ static int _putc(struct rt_serial_device *serial, char c)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-    while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+
     uart_reg->D = (c & 0xFF);
+    if ( !serial->parent.flag & RT_DEVICE_FLAG_INT_TX)
+    {
+        /* if it's not INT_TX mode,wait till ch sended over */
+        while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+    }
+    
     return 1;
 }
 
@@ -218,7 +298,21 @@ static const struct rt_uart_ops _k60_ops =
 
 void UART5_RX_TX_IRQHandler(void)
 {
-    rt_hw_serial_isr((struct rt_serial_device*)&_k60_serial);
+    UART_Type *uart_reg = (UART_Type*)UART5_BASE;
+
+    if (uart_reg->S1 & UART_S1_TDRE_MASK)
+    {
+        //for INT_TX
+        rt_hw_serial_tx_isr((struct rt_serial_device*)&_k60_serial);
+    }
+
+    if (uart_reg->S1 & UART_S1_RDRF_MASK)
+    {
+        //for INT_RX
+        rt_hw_serial_rx_isr((struct rt_serial_device*)&_k60_serial);
+    }
+
+
 }
 
 
@@ -236,11 +330,54 @@ void rt_hw_uart_init(void)
 
     _k60_serial.ops    = &_k60_ops;
     _k60_serial.int_rx = &_k60_int_rx;
+    _k60_serial.int_tx = &_k60_int_tx;
     _k60_serial.config = config;
 
     rt_hw_serial_register(&_k60_serial, "uart5",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_STREAM,
                           (void*)&_k60_node);
+}
+
+void rt_hw_FIFO_init(struct rt_serial_device *serial)
+{
+    UART_Type *uart_reg;
+    uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    /* clear TE and RE to set PFIFO 
+     * TE and RE is ensured by other method
+     * to make sure TE & RE not set
+     */
+    uart_reg->C2  &=  ~(UART_C2_RE_MASK | UART_C2_TE_MASK);
+
+    /* flush TX FIFO */
+    uart_reg->CFIFO = UART_CFIFO_TXFLUSH_MASK;
+
+    /* set PFIFO to enable TX FIFO*/
+    uart_reg->PFIFO |= UART_PFIFO_TXFE_MASK ;
+
+    /* set TX FIFO watermark
+     * at most ,less than FIFO entry
+     */
+    uart_reg->TWFIFO = UART_FIFO_TX_WATERMARK;
+}
+
+void rt_hw_FIFO_deinit(struct rt_serial_device *serial)
+{
+    UART_Type *uart_reg;
+    uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    /* clear TE and RE to set PFIFO 
+     * TE and RE is ensured by other method
+     * to make sure TE & RE not set
+     */
+    uart_reg->C2  &=  ~(UART_C2_RE_MASK | UART_C2_TE_MASK);
+    
+    /* flush TX FIFO */
+    uart_reg->CFIFO = UART_CFIFO_TXFLUSH_MASK;
+    
+    /* set PFIFO to enable TX FIFO*/
+    uart_reg->PFIFO &= ~(UART_PFIFO_TXFE_MASK);
+    
 }
 
 void rt_hw_console_output(const char *str)

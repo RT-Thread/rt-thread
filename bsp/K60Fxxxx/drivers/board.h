@@ -50,6 +50,12 @@ void rt_hw_board_init(void);
 #define CONSOLE_DEVICE "uart5"
 #endif
 
+#define USE_UART_TX_FIFO
+#define UART_FIFO_TX_ENTRY        (1)
+#define UART_FIFO_TX_WATERMARK    (0)
+#define k60_uasrt_irq_num   (55)
+
+
 #define FINSH_DEVICE_NAME   CONSOLE_DEVICE
 
 

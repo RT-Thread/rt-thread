@@ -22,9 +22,7 @@
 #include <MK60F12.H>
 
 #include <drivers/serial.h>
-
-
-#define k60_uasrt_irq_num   (55)
+#include "board.h"
 
 void rt_hw_uart_init(void);
 

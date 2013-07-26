@@ -142,16 +142,13 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
             return result;
 
         if (dev->flag & RT_DEVICE_FLAG_INT_RX)
+        {
             serial_ringbuffer_init(serial->int_rx);
+        }
 
         if (dev->flag & RT_DEVICE_FLAG_INT_TX)
         {
-			/* not supported yet */
-			/*
-            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_NULL);
             serial_ringbuffer_init(serial->int_tx);
-            serial->int_sending_flag = RT_FALSE;
-			*/
         }
 
         if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
@@ -166,6 +163,9 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
         /* set activated */
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
     }
+    
+    //we dont need to open serial,open ops should do this
+    //serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
 
     return result;
 }
@@ -179,13 +179,17 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     serial = (struct rt_serial_device *)dev;
 
     if (dev->flag & RT_DEVICE_FLAG_INT_RX)
-        int_flags = RT_SERIAL_RX_INT;
+        int_flags |= RT_SERIAL_RX_INT;
     if (dev->flag & RT_DEVICE_FLAG_INT_TX)
         int_flags |= RT_SERIAL_TX_INT;
 
     if (int_flags)
     {
-        serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)int_flags);
+        /* first config feature like TX_INT or RX_INT */
+        serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
+        
+        /* after config we open it */
+        serial->ops->control(serial, RT_DEVICE_CTRL_RESUME, (void *)(rt_uint32_t)dev->flag);
     }
 
     return RT_EOK;
@@ -206,7 +210,9 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 
     if (int_flags)
     {
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)int_flags);
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)(rt_uint32_t)dev->flag);
+        
+        serial->ops->control(serial, RT_DEVICE_CTRL_SUSPEND, (void *)(rt_uint32_t)dev->flag);
     }
 
     return RT_EOK;
@@ -281,6 +287,10 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
         /* warning: data will be discarded if buffer is full */
         while (size)
         {
+            if (*ptr == '\n' && (dev->flag & RT_DEVICE_FLAG_STREAM))
+            {
+                serial_ringbuffer_putchar(serial->int_tx, '\r') ;
+            }
             if (serial_ringbuffer_putchar(serial->int_tx, *ptr) != -1)
             {
                 ptr ++;
@@ -288,6 +298,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
             }
             else
                 break;
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_TX);
         }
     }
     else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
@@ -415,7 +426,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
 }
 
 /* ISR for serial interrupt */
-void rt_hw_serial_isr(struct rt_serial_device *serial)
+void rt_hw_serial_rx_isr(struct rt_serial_device *serial)
 {
     int ch = -1;
 
@@ -440,6 +451,35 @@ void rt_hw_serial_isr(struct rt_serial_device *serial)
         rx_length = serial_ringbuffer_size(serial->int_rx);
         serial->parent.rx_indicate(&serial->parent, rx_length);
     }
+}
+void rt_hw_serial_tx_isr(struct rt_serial_device *serial)
+{
+    int ch = -1;
+    RT_ASSERT(serial->parent.flag & RT_DEVICE_FLAG_INT_TX);
+
+#ifdef USE_UART_TX_FIFO
+
+    rt_uint32_t size= UART_FIFO_ENTRY;
+    while (size)
+    {
+        ch = serial_ringbuffer_getc(serial->int_tx);
+        if(ch != -1)
+            serial->ops->putc(serial, ch);
+        else
+        {
+            serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
+            //serial->int_sending_flag = RT_FALSE;
+        }
+
+#else
+    ch = serial_ringbuffer_getc(serial->int_tx);
+    if(ch != -1)
+        serial->ops->putc(serial, ch);
+    else
+    {
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
+    }
+#endif
 }
 
 /*
