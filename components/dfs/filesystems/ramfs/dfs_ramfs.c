@@ -264,7 +264,10 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
     file->data = dirent;
     file->size = dirent->size;
-    file->pos = 0;
+	if (file->flags & DFS_O_APPEND)
+		file->pos = file->size;
+	else 
+		file->pos = 0;
 
     return DFS_STATUS_OK;
 }
