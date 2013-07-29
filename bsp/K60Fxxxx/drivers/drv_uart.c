@@ -45,6 +45,10 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
 
     /* ref : drivers\system_MK60F12.c Line 64 ,BusClock = 60MHz
      * calculate baud_rate
+     * NOTE :
+     * UART0 and UART1 are clocked from the core clock, the remaining UARTs are
+     * clocked on the bus clock. The maximum baud rate is 1/16 of related source clock
+     * frequency.
      */
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
@@ -104,7 +108,7 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      * set NZR mode
      * not tested
      */
-    if(cfg->invert != NRZ_NORMAL)
+    if (cfg->invert != NRZ_NORMAL)
     {
         /* not in normal mode ,set inverted polarity */
         reg_C3 |= UART_C3_TXINV_MASK;
@@ -142,8 +146,6 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     uart_reg->RWFIFO = UART_RWFIFO_RXWATER(1);
     uart_reg->TWFIFO = UART_TWFIFO_TXWATER(0);
 
-    uart_reg->C2  =  UART_C2_RE_MASK |    //Receiver enable
-                     UART_C2_TE_MASK;     //Transmitter enable
 
     return RT_EOK;
 }
@@ -178,7 +180,7 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
         break;
     case RT_DEVICE_CTRL_RESUME:
         /* resume device */
-        uart_reg->C2  =  UART_C2_RE_MASK |    //Receiver enable
+        uart_reg->C2  |=  UART_C2_RE_MASK |    //Receiver enable
                          UART_C2_TE_MASK;     //Transmitter enable
         break;
     }

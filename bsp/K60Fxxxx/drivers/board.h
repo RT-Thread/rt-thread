@@ -50,6 +50,9 @@ void rt_hw_board_init(void);
 #define CONSOLE_DEVICE "uart5"
 #endif
 
+#define k60_uasrt_irq_num   (55)
+
+
 #define FINSH_DEVICE_NAME   CONSOLE_DEVICE
 
 
