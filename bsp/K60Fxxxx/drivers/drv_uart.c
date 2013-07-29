@@ -39,46 +39,83 @@ static struct k60_serial_device _k60_node =
 
 static rt_err_t _configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    unsigned int reg_C1 = 0,reg_BDH = 0,reg_BDL = 0,reg_S2;
+    unsigned int reg_C1 = 0,reg_C3 = 0,reg_C4 = 0,reg_BDH = 0,reg_BDL = 0,reg_S2,reg_BRFA=0;
     unsigned int cal_SBR = 0;
     UART_Type *uart_reg;
 
+    /* ref : drivers\system_MK60F12.c Line 64 ,BusClock = 60MHz
+     * calculate baud_rate
+     */
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    /* calc SBR */
     cal_SBR = 60000000 / (16 * cfg->baud_rate);
+
+    /* calc baud_rate */
     reg_BDH = (cal_SBR & 0x1FFF) >> 8 & 0x00FF;
     reg_BDL = cal_SBR & 0x00FF;
 
-    //calc baud_rate
-    reg_BDH = (cal_SBR & 0x1FFF) >> 8 & 0x00FF;
-    reg_BDL = cal_SBR & 0x00FF;
+    /* fractional divider */
+    reg_BRFA = ((60000*32000)/(cfg->baud_rate * 16)) - (cal_SBR * 32);
 
-    //calc bit_order
+    reg_C4 = (unsigned char)(reg_BRFA & 0x001F);
+
+    /*
+     * set bit order
+     */
     if (cfg->bit_order == BIT_ORDER_LSB)
         reg_S2 &= ~(UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT);
     else if (cfg->bit_order == BIT_ORDER_MSB)
         reg_S2 |= UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT;
 
-    //calc data_bits
+    /*
+     * set data_bits
+     */
     if (cfg->data_bits == DATA_BITS_8)
         reg_C1 &= ~(UART_C1_M_MASK<<UART_C1_M_SHIFT);
     else if (cfg->data_bits == DATA_BITS_9)
         reg_C1 |= UART_C1_M_MASK<<UART_C1_M_SHIFT;
 
-    //clac parity
+    /*
+     * set parity
+     */
     if (cfg->parity == PARITY_NONE)
-        reg_C1 &= ~(UART_C1_PE_MASK<<UART_C1_PE_SHIFT);
+    {
+        reg_C1 &= ~(UART_C1_PE_MASK);
+    }
     else
     {
-        reg_C1 &= ~(UART_C1_PE_MASK<<UART_C1_PE_SHIFT);
+        /* first ,set parity enable bit */
+        reg_C1 |= (UART_C1_PE_MASK);
         
+        /* second ,determine parity odd or even*/
         if (cfg->parity == PARITY_ODD)
-            reg_C1 |= UART_C1_PT_MASK<<UART_C1_PT_SHIFT;
+            reg_C1 |= UART_C1_PT_MASK;
         if (cfg->parity == PARITY_EVEN)
-            reg_C1 &= ~(UART_C1_PT_MASK<<UART_C1_PT_SHIFT);
+            reg_C1 &= ~(UART_C1_PT_MASK);
+    }
+
+    /*
+     * set stop bit
+     * not supported on Tower? need ur help!
+     */
+
+    /*
+     * set NZR mode
+     * not tested
+     */
+    if(cfg->invert != NRZ_NORMAL)
+    {
+        /* not in normal mode ,set inverted polarity */
+        reg_C3 |= UART_C3_TXINV_MASK;
     }
 
     switch( (int)uart_reg)
     {
+    /* Tower board use UART5 for communication
+     * if you're using other board
+     * set clock and pin map for UARTx
+     */
     case UART5_BASE:
 
         //set UART5 clock
@@ -96,6 +133,7 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     uart_reg->BDH = reg_BDH;
     uart_reg->BDL = reg_BDL;
     uart_reg->C1 = reg_C1;
+    uart_reg->C4 = reg_C4;
     uart_reg->S2 = reg_S2;
 
     uart_reg->S2  =  0;
@@ -203,8 +241,6 @@ void rt_hw_uart_init(void)
     rt_hw_serial_register(&_k60_serial, "uart5",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           (void*)&_k60_node);
-
-    rt_device_control(&_k60_serial.parent, RT_DEVICE_CTRL_SET_INT, 0);
 }
 
 void rt_hw_console_output(const char *str)
