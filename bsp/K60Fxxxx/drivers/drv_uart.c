@@ -266,12 +266,13 @@ static int _putc(struct rt_serial_device *serial, char c)
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
 
-    uart_reg->D = (c & 0xFF);
-    if ( !serial->parent.flag & RT_DEVICE_FLAG_INT_TX)
+	if ( !serial->parent.flag & RT_DEVICE_FLAG_INT_TX)
     {
         /* if it's not INT_TX mode,wait till ch sended over */
         while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
     }
+    uart_reg->D = (c & 0xFF);
+    
     
     return 1;
 }
