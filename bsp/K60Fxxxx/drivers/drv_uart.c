@@ -18,6 +18,9 @@
 static struct rt_serial_device _k60_serial;  //abstracted serial for RTT
 static struct serial_ringbuffer _k60_int_rx; //UART send buffer area
 
+void rt_hw_FIFO_init(struct rt_serial_device *serial);
+void rt_hw_FIFO_deinit(struct rt_serial_device *serial);
+
 struct k60_serial_device
 {
     /* UART base address */
@@ -134,6 +137,10 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
         break;
     }
 
+    #ifdef USE_UART_TX_FIFO
+    rt_hw_FIFO_init(serial);
+    #endif
+
     uart_reg->BDH = reg_BDH;
     uart_reg->BDL = reg_BDL;
     uart_reg->C1 = reg_C1;
@@ -193,8 +200,16 @@ static int _putc(struct rt_serial_device *serial, char c)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-    while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+	//while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
     uart_reg->D = (c & 0xFF);
+
+	while (uart_reg->SFIFO & UART_SFIFO_TXOF_MASK)
+	{
+		while (!(uart_reg->SFIFO & UART_SFIFO_TXEMPT_MASK));
+		uart_reg->SFIFO |= UART_SFIFO_TXOF_MASK;
+		uart_reg->D = (c & 0xFF);
+	}
+	
     return 1;
 }
 
@@ -254,4 +269,46 @@ void rt_hw_console_output(const char *str)
         _putc(&_k60_serial,*str);
         str++;
     }
+}
+
+void rt_hw_FIFO_init(struct rt_serial_device *serial)
+{
+    UART_Type *uart_reg;
+    uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    /* clear TE and RE to set PFIFO
+     * TE and RE is ensured by other method
+     * to make sure TE & RE not set
+     */
+    uart_reg->C2  &=  ~(UART_C2_RE_MASK | UART_C2_TE_MASK);
+
+    /* flush TX FIFO */
+    uart_reg->CFIFO = UART_CFIFO_TXFLUSH_MASK;
+
+    /* set PFIFO to enable TX FIFO*/
+    uart_reg->PFIFO |= UART_PFIFO_TXFE_MASK ;
+
+    /* set TX FIFO watermark
+     * at most ,less than FIFO entry
+     */
+    uart_reg->TWFIFO = UART_FIFO_TX_WATERMARK;
+}
+
+void rt_hw_FIFO_deinit(struct rt_serial_device *serial)
+{
+    UART_Type *uart_reg;
+    uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+    /* clear TE and RE to set PFIFO
+     * TE and RE is ensured by other method
+     * to make sure TE & RE not set
+     */
+    uart_reg->C2  &=  ~(UART_C2_RE_MASK | UART_C2_TE_MASK);
+
+    /* flush TX FIFO */
+    uart_reg->CFIFO = UART_CFIFO_TXFLUSH_MASK;
+
+    /* set PFIFO to enable TX FIFO*/
+    uart_reg->PFIFO &= ~(UART_PFIFO_TXFE_MASK);
+
 }
