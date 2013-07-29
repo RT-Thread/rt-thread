@@ -23,6 +23,11 @@ filesystems/romfs/dfs_romfs.c
 if not GetDepend('DFS_ROMFS_ROOT'):
     romfs = romfs + Split('filesystems/romfs/romfs.c')
 
+# DFS-RAMFS options
+ramfs = Split("""
+filesystems/ramfs/dfs_ramfs.c
+""")
+
 # DFS-DeviceFS options
 devfs = Split("""
 filesystems/devfs/devfs.c
@@ -174,6 +179,10 @@ if GetDepend(['RT_USING_DFS_NFS', 'RT_USING_LWIP']):
 if GetDepend('RT_USING_DFS_ROMFS'):
     src_local = src_local + romfs
     path = path + [RTT_ROOT + '/components/dfs/filesystems/romfs']
+
+if GetDepend('RT_USING_DFS_RAMFS'):
+    src_local = src_local + ramfs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/ramfs']
 
 if GetDepend('RT_USING_DFS_DEVFS'):
     src_local = src_local + devfs
