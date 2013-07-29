@@ -224,6 +224,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
             flag = FSM_STATUS_USE_TEMP_DRIVER;
 
             disk[index] = dev_id;
+            /* try to open device */
+            rt_device_open(dev_id, RT_DEVICE_OFLAG_RDWR);
 
             /* just fill the FatFs[vol] in ff.c, or mkfs will failded!
              * consider this condition: you just umount the elm fat,
@@ -245,6 +247,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         rt_free(fat);
         f_mount((BYTE)index, RT_NULL);
         disk[index] = RT_NULL;
+        /* close device */
+        rt_device_close(dev_id);
     }
 
     if (result != FR_OK)
