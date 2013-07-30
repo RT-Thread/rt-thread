@@ -455,31 +455,23 @@ void rt_hw_serial_rx_isr(struct rt_serial_device *serial)
 void rt_hw_serial_tx_isr(struct rt_serial_device *serial)
 {
     int ch = -1;
+    int buf_remain;
     RT_ASSERT(serial->parent.flag & RT_DEVICE_FLAG_INT_TX);
 
-#ifdef USE_UART_TX_FIFO
-
-    rt_uint32_t size= UART_FIFO_ENTRY;
-    while (size)
-    {
+    do{
         ch = serial_ringbuffer_getc(serial->int_tx);
         if(ch != -1)
-            serial->ops->putc(serial, ch);
+        {
+            buf_remain = serial->ops->putc(serial, ch);
+        }
         else
         {
             serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
-            //serial->int_sending_flag = RT_FALSE;
+            break;
         }
+    } while(buf_remain != 0);
 
-#else
-    ch = serial_ringbuffer_getc(serial->int_tx);
-    if(ch != -1)
-        serial->ops->putc(serial, ch);
-    else
-    {
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
-    }
-#endif
+
 }
 
 /*

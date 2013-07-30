@@ -18,12 +18,13 @@
 extern void rt_hw_serial_tx_isr(struct rt_serial_device *serial);
 extern void rt_hw_serial_rx_isr(struct rt_serial_device *serial);
 
+static struct rt_serial_device _k60_serial;  /* abstracted serial for RTT */
+static struct serial_ringbuffer _k60_int_rx; /* UART send buffer area     */
+static struct serial_ringbuffer _k60_int_tx; /* UART send buffer area     */
+
 void rt_hw_FIFO_init(struct rt_serial_device *serial);
 void rt_hw_FIFO_deinit(struct rt_serial_device *serial);
 
-static struct rt_serial_device _k60_serial;  //abstracted serial for RTT
-static struct serial_ringbuffer _k60_int_rx; //UART send buffer area
-static struct serial_ringbuffer _k60_int_tx; //UART send buffer area
 
 struct k60_serial_device
 {
@@ -37,7 +38,7 @@ struct k60_serial_device
     struct serial_configure config;
 };
 
-//hardware abstract device
+/* hardware abstract device */
 static struct k60_serial_device _k60_node =
 {
     (UART_Type *)UART5,
@@ -75,17 +76,17 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      * set bit order
      */
     if (cfg->bit_order == BIT_ORDER_LSB)
-        reg_S2 &= ~(UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT);
+        reg_S2 &= ~(UART_S2_MSBF_MASK << UART_S2_MSBF_SHIFT);
     else if (cfg->bit_order == BIT_ORDER_MSB)
-        reg_S2 |= UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT;
+        reg_S2 |= UART_S2_MSBF_MASK << UART_S2_MSBF_SHIFT;
 
     /*
      * set data_bits
      */
     if (cfg->data_bits == DATA_BITS_8)
-        reg_C1 &= ~(UART_C1_M_MASK<<UART_C1_M_SHIFT);
+        reg_C1 &= ~(UART_C1_M_MASK << UART_C1_M_SHIFT);
     else if (cfg->data_bits == DATA_BITS_9)
-        reg_C1 |= UART_C1_M_MASK<<UART_C1_M_SHIFT;
+        reg_C1 |= UART_C1_M_MASK << UART_C1_M_SHIFT;
 
     /*
      * set parity
@@ -129,13 +130,13 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      */
     case UART5_BASE:
 
-        //set UART5 clock
-        SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;//Enable UART gate clocking 
-        SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;//Enable PORTE gate clocking
+        /* set UART5 clock    */
+        SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;/* Enable UART gate clocking     */
+        SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;/* Enable PORTE gate clocking    */
 
-        //set UART5 pin
-        PORTE->PCR[ 8] = (3UL <<  8);      //Pin mux configured as ALT3
-        PORTE->PCR[ 9] = (3UL <<  8);      //Pin mux configured as ALT3
+        /* set UART5 pin    */
+        PORTE->PCR[ 8] = (3UL <<  8);      /* Pin mux configured as ALT3    */
+        PORTE->PCR[ 9] = (3UL <<  8);      /* Pin mux configured as ALT3    */
         break;
     default:
         break;
@@ -252,8 +253,8 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
         }
         
         /* configure done now start device */
-        uart_reg->C2  |=  UART_C2_RE_MASK |    //Receiver enable
-                         UART_C2_TE_MASK;     //Transmitter enable
+        uart_reg->C2  |=  UART_C2_RE_MASK |
+                          UART_C2_TE_MASK;
         break;
     }
 
@@ -265,17 +266,37 @@ static int _putc(struct rt_serial_device *serial, char c)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-
-	if ( !serial->parent.flag & RT_DEVICE_FLAG_INT_TX)
-    {
-        /* if it's not INT_TX mode,wait till ch sended over */
-        while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
-    }
+#ifdef USE_UART_TX_FIFO
+    /* if we use fifo ,we'll wait fifo has enough space to put one DataWord(char c) */
+    while ( !(UART_FIFO_TX_ENTRY - uart_reg->TCFIFO > 0));
+#else
+    /* without fifo ,we'll check whether D reg is empty for new transmit */
+    while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+#endif
     uart_reg->D = (c & 0xFF);
     
     
     return 1;
 }
+
+static int _putc_INT_TX(struct rt_serial_device *serial, char c)
+{
+    UART_Type *uart_reg;
+    uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
+
+#ifdef USE_UART_TX_FIFO
+    /* if we use fifo ,we'll wait fifo has enough space to put one DataWord(char c) */
+    while ( !(UART_FIFO_TX_ENTRY - uart_reg->TCFIFO > 0));
+#else
+    /* without fifo ,we'll check whether D reg is empty for new transmit */
+    while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+#endif
+    uart_reg->D = (c & 0xFF);
+
+
+    return (UART_FIFO_TX_ENTRY - uart_reg->TCFIFO);
+}
+
 
 static int _getc(struct rt_serial_device *serial)
 {
@@ -292,7 +313,11 @@ static const struct rt_uart_ops _k60_ops =
 {
     _configure,
     _control,
+#ifdef USE_UART_TX_FIFO
+    _putc_INT_TX,
+#else
     _putc,
+#endif
     _getc,
 };
 
@@ -335,8 +360,19 @@ void rt_hw_uart_init(void)
     _k60_serial.config = config;
 
     rt_hw_serial_register(&_k60_serial, "uart5",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_TX |RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           (void*)&_k60_node);
+}
+
+void rt_hw_console_output(const char *str)
+{
+    while(*str != '\0')
+    {
+        if (*str == '\n')
+            _putc(&_k60_serial,'\r');
+        _putc(&_k60_serial,*str);
+        str++;
+    }
 }
 
 void rt_hw_FIFO_init(struct rt_serial_device *serial)
@@ -344,7 +380,8 @@ void rt_hw_FIFO_init(struct rt_serial_device *serial)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-    /* clear TE and RE to set PFIFO 
+#ifdef USE_UART_TX_FIFO
+    /* clear TE and RE to set PFIFO
      * TE and RE is ensured by other method
      * to make sure TE & RE not set
      */
@@ -360,6 +397,11 @@ void rt_hw_FIFO_init(struct rt_serial_device *serial)
      * at most ,less than FIFO entry
      */
     uart_reg->TWFIFO = UART_FIFO_TX_WATERMARK;
+#endif
+
+#ifdef USE_UART_RX_FIFO
+    /* RX fifo init */
+#endif
 }
 
 void rt_hw_FIFO_deinit(struct rt_serial_device *serial)
@@ -367,27 +409,21 @@ void rt_hw_FIFO_deinit(struct rt_serial_device *serial)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-    /* clear TE and RE to set PFIFO 
+#ifdef USE_UART_TX_FIFO
+    /* clear TE and RE to set PFIFO
      * TE and RE is ensured by other method
      * to make sure TE & RE not set
      */
     uart_reg->C2  &=  ~(UART_C2_RE_MASK | UART_C2_TE_MASK);
-    
+
     /* flush TX FIFO */
     uart_reg->CFIFO = UART_CFIFO_TXFLUSH_MASK;
-    
+
     /* set PFIFO to enable TX FIFO*/
     uart_reg->PFIFO &= ~(UART_PFIFO_TXFE_MASK);
-    
-}
+#endif
 
-void rt_hw_console_output(const char *str)
-{
-    while(*str != '\0')
-    {
-        if (*str == '\n')
-            _putc(&_k60_serial,'\r');
-        _putc(&_k60_serial,*str);
-        str++;
-    }
+#ifdef USE_UART_RX_FIFO
+    /* RX fifo deinit */
+#endif
 }
