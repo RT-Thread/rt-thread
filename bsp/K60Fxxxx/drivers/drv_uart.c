@@ -200,15 +200,16 @@ static int _putc(struct rt_serial_device *serial, char c)
     UART_Type *uart_reg;
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
-	//while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+#ifdef USE_UART_TX_FIFO
+	/* if we use fifo ,we'll wait fifo has enough space to put one DataWord(char c) */
+	while ( !(UART_FIFO_TX_ENTRY - uart_reg->TCFIFO > 0));
+#else
+	/* without fifo ,we'll check whether D reg is empty for new transmit */
+	while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+#endif
+	//
     uart_reg->D = (c & 0xFF);
-
-	while (uart_reg->SFIFO & UART_SFIFO_TXOF_MASK)
-	{
-		while (!(uart_reg->SFIFO & UART_SFIFO_TXEMPT_MASK));
-		uart_reg->SFIFO |= UART_SFIFO_TXOF_MASK;
-		uart_reg->D = (c & 0xFF);
-	}
+	
 	
     return 1;
 }
