@@ -71,17 +71,17 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      * set bit order
      */
     if (cfg->bit_order == BIT_ORDER_LSB)
-        reg_S2 &= ~(UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT);
+        reg_S2 &= ~(UART_S2_MSBF_MASK << UART_S2_MSBF_SHIFT);
     else if (cfg->bit_order == BIT_ORDER_MSB)
-        reg_S2 |= UART_S2_MSBF_MASK<<UART_S2_MSBF_SHIFT;
+        reg_S2 |= UART_S2_MSBF_MASK << UART_S2_MSBF_SHIFT;
 
     /*
      * set data_bits
      */
     if (cfg->data_bits == DATA_BITS_8)
-        reg_C1 &= ~(UART_C1_M_MASK<<UART_C1_M_SHIFT);
+        reg_C1 &= ~(UART_C1_M_MASK << UART_C1_M_SHIFT);
     else if (cfg->data_bits == DATA_BITS_9)
-        reg_C1 |= UART_C1_M_MASK<<UART_C1_M_SHIFT;
+        reg_C1 |= UART_C1_M_MASK << UART_C1_M_SHIFT;
 
     /*
      * set parity
@@ -125,13 +125,13 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
      */
     case UART5_BASE:
 
-        /* set UART5 clock	*/
-        SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;/* Enable UART gate clocking		*/
-        SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;/* Enable PORTE gate clocking	*/
+        /* set UART5 clock    */
+        SIM->SCGC1 |= SIM_SCGC1_UART5_MASK;/* Enable UART gate clocking     */
+        SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;/* Enable PORTE gate clocking    */
 
-        /* set UART5 pin	*/
-        PORTE->PCR[ 8] = (3UL <<  8);      /* Pin mux configured as ALT3	*/
-        PORTE->PCR[ 9] = (3UL <<  8);      /* Pin mux configured as ALT3	*/
+        /* set UART5 pin    */
+        PORTE->PCR[ 8] = (3UL <<  8);      /* Pin mux configured as ALT3    */
+        PORTE->PCR[ 9] = (3UL <<  8);      /* Pin mux configured as ALT3    */
         break;
     default:
         break;
@@ -166,15 +166,15 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq	*/
+        /* disable rx irq   */
         uart_reg->C2 &= ~UART_C2_RIE_MASK;
-        /* disable NVIC		*/
+        /* disable NVIC     */
         NVICICER1 |= 1 << (uart_irq_num % 32);
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         uart_reg->C2 |= UART_C2_RIE_MASK;
-        /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1	*/
+        /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1   */
         NVICICPR1 |= 1 << (uart_irq_num % 32);
         NVICISER1 |= 1 << (uart_irq_num % 32);
         break;
@@ -186,7 +186,7 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
     case RT_DEVICE_CTRL_RESUME:
         /* resume device */
         uart_reg->C2  |=  UART_C2_RE_MASK |
-                         UART_C2_TE_MASK;
+                          UART_C2_TE_MASK;
         break;
     }
 
@@ -199,15 +199,15 @@ static int _putc(struct rt_serial_device *serial, char c)
     uart_reg = ((struct k60_serial_device *)serial->parent.user_data)->baseAddress;
 
 #ifdef USE_UART_TX_FIFO
-	/* if we use fifo ,we'll wait fifo has enough space to put one DataWord(char c) */
-	while ( !(UART_FIFO_TX_ENTRY - uart_reg->TCFIFO > 0));
+    /* if we use fifo ,we'll wait fifo has enough space to put one DataWord(char c) */
+    while ( !(UART_FIFO_TX_ENTRY - uart_reg->TCFIFO > 0));
 #else
-	/* without fifo ,we'll check whether D reg is empty for new transmit */
-	while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
+    /* without fifo ,we'll check whether D reg is empty for new transmit */
+    while (!(uart_reg->S1 & UART_S1_TDRE_MASK));
 #endif
     uart_reg->D = (c & 0xFF);
-	
-	
+    
+    
     return 1;
 }
 
@@ -294,7 +294,7 @@ void rt_hw_FIFO_init(struct rt_serial_device *serial)
 #endif
 
 #ifdef USE_UART_RX_FIFO
-	/* RX fifo init */
+    /* RX fifo init */
 #endif
 }
 
@@ -318,6 +318,6 @@ void rt_hw_FIFO_deinit(struct rt_serial_device *serial)
 #endif
 
 #ifdef USE_UART_RX_FIFO
-	/* RX fifo init */
+    /* RX fifo deinit */
 #endif
 }
