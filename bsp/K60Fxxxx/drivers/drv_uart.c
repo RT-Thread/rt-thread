@@ -203,7 +203,8 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
             /* disable NVIC */
             NVICICER1 |= 1 << (uart_irq_num % 32);
         }
-    
+
+        rt_hw_FIFO_deinit(serial);
         
         /* suspend device */
         uart_reg->C2  &=  ~(UART_C2_RE_MASK |
