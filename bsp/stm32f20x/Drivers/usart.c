@@ -260,7 +260,7 @@ void USART1_IRQHandler()
     /* enter interrupt */
     rt_interrupt_enter();
 
-    rt_hw_serial_isr(&uart1_device);
+    rt_hw_serial_rx_isr(&uart1_device);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -273,7 +273,7 @@ void USART6_IRQHandler()
     /* enter interrupt */
     rt_interrupt_enter();
 
-    rt_hw_serial_isr(&uart6_device);
+    rt_hw_serial_rx_isr(&uart6_device);
 
     /* leave interrupt */
     rt_interrupt_leave();

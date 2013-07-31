@@ -155,7 +155,7 @@ void USART1_IRQHandler(void)
     rt_interrupt_enter();
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(&serial1);
+        rt_hw_serial_rx_isr(&serial1);
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
@@ -190,7 +190,7 @@ void USART2_IRQHandler(void)
     rt_interrupt_enter();
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(&serial2);
+        rt_hw_serial_rx_isr(&serial2);
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
@@ -225,7 +225,7 @@ void USART3_IRQHandler(void)
     rt_interrupt_enter();
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(&serial3);
+        rt_hw_serial_rx_isr(&serial3);
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }

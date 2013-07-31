@@ -265,7 +265,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name, rt_uint32_t
 }
 
 /* ISR for serial interrupt */
-void rt_hw_serial_isr(rt_device_t device)
+void rt_hw_serial_rx_isr(rt_device_t device)
 {
     struct serial_device* uart = (struct serial_device*) device->user_data;
 

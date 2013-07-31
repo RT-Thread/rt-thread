@@ -260,7 +260,7 @@ static rt_err_t _ep_out_handler(udevice_t device, uclass_t cls, rt_size_t size)
     rt_hw_interrupt_enable(level);
 
     /* notify receive data */
-    rt_hw_serial_isr(&vcom_serial);
+    rt_hw_serial_rx_isr(&vcom_serial);
 
     dcd_ep_read(device->dcd, eps->ep_out, eps->ep_out->buffer,
                 eps->ep_out->ep_desc->wMaxPacketSize);

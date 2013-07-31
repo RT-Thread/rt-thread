@@ -44,7 +44,7 @@ struct rt_mb_uart_lite
 struct rt_mb_uart_lite serial1;
 #endif
 
-static void rt_hw_serial_isr(void)
+static void rt_hw_serial_rx_isr(void)
 {
 	unsigned int status;
 	rt_base_t level;
@@ -123,7 +123,7 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 		serial->hw_base->CTRL_REG = XUL_CR_ENABLE_INTR; 		/* enable interrupt */
 
 		/* install UART handler */
-		rt_hw_interrupt_install(serial->peripheral_id, (rt_isr_handler_t)rt_hw_serial_isr, RT_NULL);
+		rt_hw_interrupt_install(serial->peripheral_id, (rt_isr_handler_t)rt_hw_serial_rx_isr, RT_NULL);
 		rt_hw_interrupt_umask(serial->peripheral_id);
 	}
 

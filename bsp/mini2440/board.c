@@ -70,7 +70,7 @@ static void rt_serial0_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD0);
 
-	rt_hw_serial_isr(&uart0_device);
+	rt_hw_serial_rx_isr(&uart0_device);
 
 	SUBSRCPND |= BIT_SUB_RXD0;
 
@@ -85,7 +85,7 @@ static void rt_serial2_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD2);
 
-	rt_hw_serial_isr(&uart2_device);
+	rt_hw_serial_rx_isr(&uart2_device);
 
 	SUBSRCPND |= BIT_SUB_RXD2;
 

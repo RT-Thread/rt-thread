@@ -47,7 +47,7 @@ void UART0_IRQHandler(void)
     /* ready for Read Data */
     if (status & READY_TO_RECEIVE)
     {
-        rt_hw_serial_isr(&serial0);
+        rt_hw_serial_rx_isr(&serial0);
     }
 
     /* leave interrupt */
@@ -83,7 +83,7 @@ void UART1_IRQHandler(void)
     /* ready for Read Data */
     if (status & READY_TO_RECEIVE)
     {
-        rt_hw_serial_isr(&serial1);
+        rt_hw_serial_rx_isr(&serial1);
     }
 
     /* leave interrupt */
@@ -119,7 +119,7 @@ void UART2_IRQHandler(void)
     /* ready for Read Data */
     if (status & READY_TO_RECEIVE)
     {
-        rt_hw_serial_isr(&serial2);
+        rt_hw_serial_rx_isr(&serial2);
     }
 
     /* leave interrupt */
@@ -155,7 +155,7 @@ void UART3_IRQHandler(void)
     /* ready for Read Data */
     if (status & READY_TO_RECEIVE)
     {
-        rt_hw_serial_isr(&serial3);
+        rt_hw_serial_rx_isr(&serial3);
     }
 
     /* leave interrupt */

@@ -33,7 +33,7 @@ void MFS0RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial0);
+	rt_hw_serial_rx_isr(&serial0);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -54,7 +54,7 @@ void MFS1RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial1);
+	rt_hw_serial_rx_isr(&serial1);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -75,7 +75,7 @@ void MFS2RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial2);
+	rt_hw_serial_rx_isr(&serial2);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -96,7 +96,7 @@ void MFS3RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial3);
+	rt_hw_serial_rx_isr(&serial3);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -118,7 +118,7 @@ void MFS4RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial4);
+	rt_hw_serial_rx_isr(&serial4);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -140,7 +140,7 @@ void MFS5RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial5);
+	rt_hw_serial_rx_isr(&serial5);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -162,7 +162,7 @@ void MFS6RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial6);
+	rt_hw_serial_rx_isr(&serial6);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -184,7 +184,7 @@ void MFS7RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial7);
+	rt_hw_serial_rx_isr(&serial7);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }

@@ -95,7 +95,7 @@ void rt_at91_usart_handler(int vector, void *param)
 		return;
 	}
 	rt_interrupt_enter();
-	rt_hw_serial_isr(dev);
+	rt_hw_serial_rx_isr(dev);
 	rt_interrupt_leave();
 }
 

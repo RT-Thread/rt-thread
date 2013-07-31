@@ -26,7 +26,7 @@
 #define FPBA	FCPU
 #define FPBB	FCPU
 
-extern void rt_hw_serial_isr(void);
+extern void rt_hw_serial_rx_isr(void);
 extern void rt_hw_usart_init(void);
 
 /**
@@ -72,7 +72,7 @@ static void peripherals_init(void)
 	usart_init_rs232(&AVR32_USART1, &usartOptions, FCPU);
 
 	INTC_init_interrupts();
-	INTC_register_interrupt(&rt_hw_serial_isr, AVR32_USART1_IRQ, AVR32_INTC_INT0);
+	INTC_register_interrupt(&rt_hw_serial_rx_isr, AVR32_USART1_IRQ, AVR32_INTC_INT0);
 	AVR32_USART1.ier = AVR32_USART_IER_RXRDY_MASK;
 }
 
