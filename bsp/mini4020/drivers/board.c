@@ -56,7 +56,7 @@ void rt_serial_handler(int vector, void *param)
 	/*Received data*/
 	if (((stat & 0x0E) >> 1) == 0x02)
 	{
-		rt_hw_serial_isr(&uart0_device);
+		rt_hw_serial_rx_isr(&uart0_device);
 	}
 	else
 	{

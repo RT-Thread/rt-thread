@@ -229,7 +229,7 @@ EX_INTERRUPT_HANDLER(uart_rx_isr)
 {
     rt_interrupt_enter();
 
-    rt_hw_serial_isr(&uart0_device);
+    rt_hw_serial_rx_isr(&uart0_device);
 
     rt_interrupt_leave();
 }

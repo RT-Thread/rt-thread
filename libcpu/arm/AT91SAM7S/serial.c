@@ -74,7 +74,7 @@ struct rt_at91serial serial1;
 struct rt_at91serial serial2;
 #endif
 
-static void rt_hw_serial_isr(int irqno)
+static void rt_hw_serial_rx_isr(int irqno)
 {
 	rt_base_t level;
 	struct rt_device* device;
@@ -196,7 +196,7 @@ static rt_err_t rt_serial_open(rt_device_t dev, rt_uint16_t oflag)
 		serial->hw_base->US_IMR |= 1 << 0; 		/* umask RxReady interrupt */
 
 		/* install UART handler */
-		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_isr, RT_NULL);
+		rt_hw_interrupt_install(serial->peripheral_id, rt_hw_serial_rx_isr, RT_NULL);
 		AT91C_AIC_SMR(serial->peripheral_id) = 5 | (0x01 << 5);
 		rt_hw_interrupt_umask(serial->peripheral_id);
 	}

@@ -178,7 +178,7 @@ static const struct rt_uart_ops _sci_ops =
 
 static void _irq_wrapper(int vector, void *param)
 {
-    rt_hw_serial_isr((struct rt_serial_device*)param);
+    rt_hw_serial_rx_isr((struct rt_serial_device*)param);
 }
 
 static struct rt_serial_device _sci2_serial;
