@@ -25,7 +25,6 @@ static struct serial_ringbuffer _k60_int_tx; /* UART send buffer area     */
 void rt_hw_FIFO_init(struct rt_serial_device *serial);
 void rt_hw_FIFO_deinit(struct rt_serial_device *serial);
 
-
 struct k60_serial_device
 {
     /* UART base address */
@@ -141,23 +140,8 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     default:
         break;
     }
-    
-    if (serial->parent.flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX ))
-    {
-        
-        /* if set TX or RX INT , set NVIC */ 
-        /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1 */
-        NVICICPR1 |= 1 << (((struct k60_serial_device *)serial->parent.user_data)->irq_num % 32);
-        NVICISER1 |= 1 << (((struct k60_serial_device *)serial->parent.user_data)->irq_num % 32);
-        
-        if (serial->parent.flag & RT_DEVICE_FLAG_INT_TX )
-        {
-            /* if we use INT_TX,set FIFO */
-            #ifdef USE_UART_TX_FIFO
-            rt_hw_FIFO_init(serial);
-            #endif
-        }
-    }
+
+    rt_hw_FIFO_init(serial);
 
     uart_reg->BDH = reg_BDH;
     uart_reg->BDL = reg_BDL;
@@ -185,8 +169,8 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
 
     switch (cmd)
     {
-    //===============================================
     case RT_DEVICE_CTRL_CLR_INT:
+        /* only disable INT_EN ,NVIC should be set by RT_DEVICE_CTRL_SUSPEND */
         if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
         {
             /* disable rx irq */
@@ -199,8 +183,8 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
             uart_reg->C2 &= ~UART_C2_RIE_MASK;
         }
         break;
-    //================================================
     case RT_DEVICE_CTRL_SET_INT:
+        /* only enable INT_EN ,NVIC should be set by resume */
         if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
         {
             /* enable tx irq */
@@ -213,43 +197,30 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
             uart_reg->C2 |= UART_C2_RIE_MASK;
         }
         break;
-    //============================================================
     case RT_DEVICE_CTRL_SUSPEND:
         if ( (int)arg & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX) )
         {
             /* disable NVIC */
             NVICICER1 |= 1 << (uart_irq_num % 32);
-            
-            if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
-            {
-                #ifdef USE_UART_TX_FIFO
-                rt_hw_FIFO_deinit(serial);
-                #endif
-            }
         }
     
         
         /* suspend device */
-        uart_reg->C2  &=  ~(UART_C2_RE_MASK |    //Receiver enable
-                            UART_C2_TE_MASK);     //Transmitter enable
-    
+        uart_reg->C2  &=  ~(UART_C2_RE_MASK |
+                            UART_C2_TE_MASK);
+
+        rt_hw_FIFO_deinit(serial);
         break;
-    //===========================================================
     case RT_DEVICE_CTRL_RESUME:
         /* resume device */
-        
+        rt_hw_FIFO_init(serial);
+
         if ( (int)arg & (RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX) )
         {
             /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1 */
             NVICICPR1 |= 1 << (uart_irq_num % 32);
             NVICISER1 |= 1 << (uart_irq_num % 32);
-            
-            if ( (int)arg & RT_DEVICE_FLAG_INT_TX )
-            {
-                #ifdef USE_UART_TX_FIFO
-                rt_hw_FIFO_init(serial);
-                #endif
-            }
+
         }
         
         /* configure done now start device */

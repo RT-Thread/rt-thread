@@ -25,6 +25,8 @@
  * 2012-11-23     bernard      fix compiler warning.
  * 2013-02-20     bernard      use RT_SERIAL_RB_BUFSZ to define
  *                             the size of ring buffer.
+ * 2013-07-31     reynoldxu    add interrupt transmit and receive feature.
+ *                             add FIFO feature when uart supported.
  */
 
 #include <rthw.h>
@@ -164,8 +166,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
     }
     
-    //we dont need to open serial,open ops should do this
-    //serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
+    //Do NOT need to open serial,rt_serial_open should do this
 
     return result;
 }
