@@ -148,9 +148,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
         {
 			/* not supported yet */
 			/*
-            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_NULL);
             serial_ringbuffer_init(serial->int_tx);
-            serial->int_sending_flag = RT_FALSE;
 			*/
         }
 
@@ -166,6 +164,8 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
         /* set activated */
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
     }
+    
+    //Do NOT need to open serial,rt_serial_open should do this
 
     return result;
 }
@@ -179,13 +179,17 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     serial = (struct rt_serial_device *)dev;
 
     if (dev->flag & RT_DEVICE_FLAG_INT_RX)
-        int_flags = RT_SERIAL_RX_INT;
+        int_flags |= RT_SERIAL_RX_INT;
     if (dev->flag & RT_DEVICE_FLAG_INT_TX)
         int_flags |= RT_SERIAL_TX_INT;
 
     if (int_flags)
     {
-        serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)int_flags);
+        /* first config feature like TX_INT or RX_INT */
+        serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
+        
+        /* after config we open it */
+        serial->ops->control(serial, RT_DEVICE_CTRL_RESUME, (void *)(rt_uint32_t)dev->flag);
     }
 
     return RT_EOK;
@@ -206,7 +210,9 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 
     if (int_flags)
     {
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)int_flags);
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)(rt_uint32_t)dev->flag);
+        
+        serial->ops->control(serial, RT_DEVICE_CTRL_SUSPEND, (void *)(rt_uint32_t)dev->flag);
     }
 
     return RT_EOK;
