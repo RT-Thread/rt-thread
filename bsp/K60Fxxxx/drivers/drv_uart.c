@@ -166,25 +166,48 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq   */
-        uart_reg->C2 &= ~UART_C2_RIE_MASK;
-        /* disable NVIC     */
-        NVICICER1 |= 1 << (uart_irq_num % 32);
+        /* only disable INT_EN ,NVIC should be set by RT_DEVICE_CTRL_SUSPEND */        
+        if ( (int)arg & RT_DEVICE_FLAG_INT_RX )
+        {
+            /* disable rx irq */
+            uart_reg->C2 &= ~UART_C2_RIE_MASK;
+        }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
-        uart_reg->C2 |= UART_C2_RIE_MASK;
-        /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1   */
-        NVICICPR1 |= 1 << (uart_irq_num % 32);
-        NVICISER1 |= 1 << (uart_irq_num % 32);
+        /* only enable INT_EN ,NVIC should be set by resume */
+        if ( (int)arg & RT_DEVICE_FLAG_INT_RX )
+        {
+            /* enable rx irq */
+            uart_reg->C2 |= UART_C2_RIE_MASK;
+        }
         break;
     case RT_DEVICE_CTRL_SUSPEND:
+        if ( (int)arg & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX) )
+        {
+            /* disable NVIC */
+            NVICICER1 |= 1 << (uart_irq_num % 32);
+        }
+    
+        
         /* suspend device */
         uart_reg->C2  &=  ~(UART_C2_RE_MASK |
                             UART_C2_TE_MASK);
+
+        rt_hw_FIFO_deinit(serial);
         break;
     case RT_DEVICE_CTRL_RESUME:
         /* resume device */
+        rt_hw_FIFO_init(serial);
+
+        if ( (int)arg & (RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX) )
+        {
+            /* enable NVIC,we are sure uart's NVIC vector is in NVICICPR1 */
+            NVICICPR1 |= 1 << (uart_irq_num % 32);
+            NVICISER1 |= 1 << (uart_irq_num % 32);
+
+        }
+        
+        /* configure done now start device */
         uart_reg->C2  |=  UART_C2_RE_MASK |
                           UART_C2_TE_MASK;
         break;

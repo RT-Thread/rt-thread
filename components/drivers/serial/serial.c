@@ -165,8 +165,7 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
         dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
     }
     
-    //we dont need to open serial,open ops should do this
-    //serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
+    //Do NOT need to open serial,rt_serial_open should do this
 
     return result;
 }
