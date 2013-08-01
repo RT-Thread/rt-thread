@@ -178,6 +178,9 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     /* pass dev->flag as arg*/
     serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)(rt_uint32_t)dev->flag);
+    
+    /* after all config done ,we open it */
+    serial->ops->control(serial, RT_DEVICE_CTRL_RESUME, (void *)(rt_uint32_t)dev->flag);
 
     return RT_EOK;
 }
@@ -191,6 +194,8 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     serial = (struct rt_serial_device *)dev;
 
     serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)(rt_uint32_t)dev->flag);
+
+    serial->ops->control(serial, RT_DEVICE_CTRL_SUSPEND, (void *)(rt_uint32_t)dev->flag);
 
     return RT_EOK;
 }
