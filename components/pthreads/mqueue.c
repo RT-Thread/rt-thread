@@ -21,6 +21,7 @@
  * Date           Author       Notes
  */
 
+#include <string.h>
 #include "mqueue.h"
 #include "pthread_internal.h"
 
