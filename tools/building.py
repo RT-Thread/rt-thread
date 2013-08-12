@@ -50,6 +50,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
                 Env['LINKFLAGS']=Env['LINKFLAGS'].replace('RV31', 'armcc')
 
+        # reset AR command flags 
+        env['ARCOM'] = '$AR --create $TARGET $SOURCES'
+        env['LIBPREFIX']   = ''
+        env['LIBSUFFIX']   = '_rvds.lib'
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
         win32_spawn = Win32Spawn()
@@ -269,6 +274,7 @@ def DefineGroup(name, src, depend, **parameters):
 
     group = parameters
     group['name'] = name
+    group['path'] = GetCurrentDir()
     if type(src) == type(['src1', 'str2']):
         group['src'] = File(src)
     else:
@@ -327,7 +333,6 @@ def DoBuilding(target, objects):
     # check whether special buildlib option
     lib_name = GetOption('buildlib')
     if lib_name:
-        print lib_name
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
