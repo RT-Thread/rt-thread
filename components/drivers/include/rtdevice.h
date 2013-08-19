@@ -172,8 +172,15 @@ rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 /**
  * Pipe Device
  */
+rt_err_t rt_pipe_init(struct rt_pipe_device *pipe,
+                      const char *name,
+                      rt_uint8_t *buf,
+                      rt_size_t size);
+rt_err_t rt_pipe_detach(struct rt_pipe_device *pipe);
+#ifdef RT_USING_HEAP
 rt_err_t rt_pipe_create(const char *name, rt_size_t size);
 void rt_pipe_destroy(struct rt_pipe_device *pipe);
+#endif
 
 /**
  * DataQueue for DeviceDriver

@@ -151,54 +151,79 @@ static rt_err_t rt_pipe_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
+/**
+ * This function will initialize a pipe device and put it under control of
+ * resource management.
+ *
+ * @param pipe the pipe device
+ * @param name the name of pipe device
+ * @param buf  the buffer of pipe device
+ * @param size the size of pipe device buffer
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_pipe_init(struct rt_pipe_device *pipe,
+                      const char *name,
+                      rt_uint8_t *buf,
+                      rt_size_t size)
+{
+    RT_ASSERT(pipe);
+    RT_ASSERT(buf);
+
+    /* initialize suspended list */
+    rt_list_init(&pipe->suspended_read_list);
+    rt_list_init(&pipe->suspended_write_list);
+
+    /* initialize ring buffer */
+    rt_ringbuffer_init(&pipe->ringbuffer, buf, size);
+
+    /* create pipe */
+    pipe->parent.type    = RT_Device_Class_Char;
+    pipe->parent.init    = RT_NULL;
+    pipe->parent.open    = RT_NULL;
+    pipe->parent.close   = RT_NULL;
+    pipe->parent.read    = rt_pipe_read;
+    pipe->parent.write   = rt_pipe_write;
+    pipe->parent.control = rt_pipe_control;
+
+    return rt_device_register(&(pipe->parent), name, RT_DEVICE_FLAG_RDWR);
+}
+RTM_EXPORT(rt_pipe_init);
+
+/**
+ * This function will detach a pipe device from resource management
+ *
+ * @param pipe the pipe device
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_pipe_detach(struct rt_pipe_device *pipe)
+{
+    return rt_device_unregister(&pipe->parent);
+}
+RTM_EXPORT(rt_pipe_detach);
+
+#ifdef RT_USING_HEAP
 rt_err_t rt_pipe_create(const char *name, rt_size_t size)
 {
-    rt_err_t result = RT_EOK;
     rt_uint8_t *rb_memptr = RT_NULL;
     struct rt_pipe_device *pipe = RT_NULL;
 
     /* get aligned size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
     pipe = (struct rt_pipe_device *)rt_calloc(1, sizeof(struct rt_pipe_device));
-    if (pipe != RT_NULL)
+    if (pipe == RT_NULL)
+        return -RT_ENOMEM;
+
+    /* create ring buffer of pipe */
+    rb_memptr = rt_malloc(size);
+    if (rb_memptr == RT_NULL)
     {
-        /* create ring buffer of pipe */
-        rb_memptr = rt_malloc(size);
-        if (rb_memptr == RT_NULL)
-        {
-            result = -RT_ENOMEM;
-            goto __exit;
-        }
-        /* initialize suspended list */
-        rt_list_init(&pipe->suspended_read_list);
-        rt_list_init(&pipe->suspended_write_list);
-
-        /* initialize ring buffer */
-        rt_ringbuffer_init(&pipe->ringbuffer, rb_memptr, size);
-
-        /* create device */
-        pipe->parent.type    = RT_Device_Class_Char;
-        pipe->parent.init    = RT_NULL;
-        pipe->parent.open    = RT_NULL;
-        pipe->parent.close   = RT_NULL;
-        pipe->parent.read    = rt_pipe_read;
-        pipe->parent.write   = rt_pipe_write;
-        pipe->parent.control = rt_pipe_control;
-
-        return rt_device_register(&(pipe->parent), name, RT_DEVICE_FLAG_RDWR);
-    }
-    else
-    {
-        result = -RT_ENOMEM;
-    }
-
-__exit:
-    if (pipe != RT_NULL)
         rt_free(pipe);
-    if (rb_memptr != RT_NULL)
-        rt_free(rb_memptr);
+        return -RT_ENOMEM;
+    }
 
-    return result;
+    return rt_pipe_init(pipe, name, rb_memptr, size);
 }
 RTM_EXPORT(rt_pipe_create);
 
@@ -208,7 +233,7 @@ void rt_pipe_destroy(struct rt_pipe_device *pipe)
         return;
 
     /* un-register pipe device */
-    rt_device_unregister(&(pipe->parent));
+    rt_pipe_detach(pipe);
 
     /* release memory */
     rt_free(pipe->ringbuffer.buffer_ptr);
@@ -217,3 +242,4 @@ void rt_pipe_destroy(struct rt_pipe_device *pipe)
     return;
 }
 RTM_EXPORT(rt_pipe_destroy);
+#endif /* RT_USING_HEAP */
