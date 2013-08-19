@@ -126,7 +126,6 @@ static void _rt_pipe_resume_reader(struct rt_pipe_device *pipe)
     }
 }
 
-struct rt_pipe_device *_pipe = RT_NULL;
 static rt_size_t rt_pipe_write(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
@@ -139,8 +138,6 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 
     pipe = PIPE_DEVICE(dev);
     RT_ASSERT(pipe != RT_NULL);
-    if (_pipe == RT_NULL)
-        _pipe = pipe;
 
     if ((pipe->flag & RT_PIPE_FLAG_FORCE_WR) ||
        !(pipe->flag & RT_PIPE_FLAG_BLOCK_WR))
