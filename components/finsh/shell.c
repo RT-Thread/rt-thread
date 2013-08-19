@@ -376,6 +376,14 @@ void finsh_thread_entry(void* parameter)
     finsh_init(&shell->parser);
 	rt_kprintf(FINSH_PROMPT);
 
+	/* set console device as shell device */
+	shell->device = rt_console_get_device();
+	if (shell->device != RT_NULL)
+	{
+		rt_device_open(shell->device, RT_DEVICE_OFLAG_RDWR);
+		rt_device_set_rx_indicate(shell->device, finsh_rx_ind);
+	}
+
 	while (1)
 	{
 		/* wait receive */
