@@ -104,6 +104,10 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
 
 static void _rt_pipe_resume_reader(struct rt_pipe_device *pipe)
 {
+    if (pipe->parent.rx_indicate)
+        pipe->parent.rx_indicate(&pipe->parent,
+                                 rt_ringbuffer_data_len(&pipe->ringbuffer));
+
     if (!rt_list_isempty(&pipe->suspended_read_list))
     {
         rt_thread_t thread;
