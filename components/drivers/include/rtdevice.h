@@ -45,9 +45,9 @@ struct rt_ringbuffer
     /* use the msb of the {read,write}_index as mirror bit. You can see this as
      * if the buffer adds a virtual mirror and the pointers point either to the
      * normal or to the mirrored buffer. If the write_index has the same value
-     * with the read_index, but in differenct mirro, the buffer is full. While
-     * if the write_index and the read_index are the same and within the same
-     * mirror, the buffer is empty. The ASCII art of the ringbuffer is:
+     * with the read_index, but in a different mirror, the buffer is full.
+     * While if the write_index and the read_index are the same and within the
+     * same mirror, the buffer is empty. The ASCII art of the ringbuffer is:
      *
      *          mirror = 0                    mirror = 1
      * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
@@ -72,29 +72,6 @@ struct rt_ringbuffer
      * could only be positive. */
     rt_int16_t buffer_size;
 };
-
-/** return the size of data in rb */
-rt_inline rt_uint16_t RT_RINGBUFFER_SIZE(struct rt_ringbuffer *rb)
-{
-    if (rb->read_index == rb->write_index)
-    {
-        if (rb->read_mirror == rb->write_mirror)
-            /* we are in the same side, the ringbuffer is empty. */
-            return 0;
-        else
-            return rb->buffer_size;
-    }
-    else
-    {
-        if (rb->write_index > rb->read_index)
-            return rb->write_index - rb->read_index;
-        else
-            return rb->buffer_size - (rb->read_index - rb->write_index);
-    }
-}
-
-/** return the size of empty space in rb */
-#define RT_RINGBUFFER_EMPTY(rb) ((rb)->buffer_size - RT_RINGBUFFER_SIZE(rb))
 
 /* pipe device */
 #define PIPE_DEVICE(device)          ((struct rt_pipe_device*)(device))
@@ -163,11 +140,35 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
                             rt_uint8_t           *ptr,
                             rt_uint16_t           length);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
+
 rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 {
     RT_ASSERT(rb != RT_NULL);
     return rb->buffer_size;
 }
+
+/** return the size of data in rb */
+rt_inline rt_uint16_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+{
+    if (rb->read_index == rb->write_index)
+    {
+        if (rb->read_mirror == rb->write_mirror)
+            /* we are in the same side, the ringbuffer is empty. */
+            return 0;
+        else
+            return rb->buffer_size;
+    }
+    else
+    {
+        if (rb->write_index > rb->read_index)
+            return rb->write_index - rb->read_index;
+        else
+            return rb->buffer_size - (rb->read_index - rb->write_index);
+    }
+}
+
+/** return the size of empty space in rb */
+#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - rt_ringbuffer_data_len(rb))
 
 /**
  * Pipe Device

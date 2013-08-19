@@ -53,7 +53,7 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough space */
-    size = RT_RINGBUFFER_EMPTY(rb);
+    size = rt_ringbuffer_space_len(rb);
 
     /* no space */
     if (size == 0)
@@ -100,7 +100,7 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough data  */
-    size = RT_RINGBUFFER_SIZE(rb);
+    size = rt_ringbuffer_data_len(rb);
 
     /* no data */
     if (size == 0)
@@ -143,7 +143,7 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough space */
-    if (!RT_RINGBUFFER_EMPTY(rb))
+    if (!rt_ringbuffer_space_len(rb))
         return 0;
 
     rb->buffer_ptr[rb->write_index] = ch;
@@ -171,7 +171,7 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
     RT_ASSERT(rb != RT_NULL);
 
     /* ringbuffer is empty */
-    if (!RT_RINGBUFFER_SIZE(rb))
+    if (!rt_ringbuffer_data_len(rb))
         return 0;
 
     /* put character */
