@@ -23,6 +23,7 @@
  */
 
 #include <rtthread.h>
+#include <string.h>
 #include "semaphore.h"
 #include "pthread_internal.h"
 
