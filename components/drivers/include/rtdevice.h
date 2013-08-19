@@ -134,12 +134,25 @@ void rt_ringbuffer_init(struct rt_ringbuffer *rb,
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
                             const rt_uint8_t     *ptr,
                             rt_uint16_t           length);
+rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
+                                  const rt_uint8_t     *ptr,
+                                  rt_uint16_t           length);
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb,
                                 const rt_uint8_t      ch);
+rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb,
+                                      const rt_uint8_t      ch);
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
                             rt_uint8_t           *ptr,
                             rt_uint16_t           length);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
+
+enum rt_ringbuffer_state
+{
+    RT_RINGBUFFER_EMPTY,
+    RT_RINGBUFFER_FULL,
+    /* half full is neither full nor empty */
+    RT_RINGBUFFER_HALFFULL,
+};
 
 rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 {
@@ -147,24 +160,35 @@ rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
     return rb->buffer_size;
 }
 
-/** return the size of data in rb */
-rt_inline rt_uint16_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+rt_inline enum rt_ringbuffer_state
+rt_ringbuffer_status(struct rt_ringbuffer *rb)
 {
     if (rb->read_index == rb->write_index)
     {
         if (rb->read_mirror == rb->write_mirror)
-            /* we are in the same side, the ringbuffer is empty. */
-            return 0;
+            return RT_RINGBUFFER_EMPTY;
         else
-            return rb->buffer_size;
+            return RT_RINGBUFFER_FULL;
     }
-    else
+    return RT_RINGBUFFER_HALFFULL;
+}
+
+/** return the size of data in rb */
+rt_inline rt_uint16_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+{
+    switch (rt_ringbuffer_status(rb))
     {
+    case RT_RINGBUFFER_EMPTY:
+        return 0;
+    case RT_RINGBUFFER_FULL:
+        return rb->buffer_size;
+    case RT_RINGBUFFER_HALFFULL:
+    default:
         if (rb->write_index > rb->read_index)
             return rb->write_index - rb->read_index;
         else
             return rb->buffer_size - (rb->read_index - rb->write_index);
-    }
+    };
 }
 
 /** return the size of empty space in rb */
