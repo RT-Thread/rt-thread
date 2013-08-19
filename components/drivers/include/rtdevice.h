@@ -75,12 +75,28 @@ struct rt_ringbuffer
 
 /* pipe device */
 #define PIPE_DEVICE(device)          ((struct rt_pipe_device*)(device))
+enum rt_pipe_flag
+{
+    /* both read and write won't block */
+    RT_PIPE_FLAG_NONBLOCK_RDWR = 0x00,
+    /* read would block */
+    RT_PIPE_FLAG_BLOCK_RD = 0x01,
+    /* write would block */
+    RT_PIPE_FLAG_BLOCK_WR = 0x02,
+    /* write to this pipe will discard some data when the pipe is full.
+     * When this flag is set, RT_PIPE_FLAG_BLOCK_WR will be ignored since write
+     * operation will always be success. */
+    RT_PIPE_FLAG_FORCE_WR = 0x04,
+};
+
 struct rt_pipe_device
 {
     struct rt_device parent;
 
     /* ring buffer in pipe device */
     struct rt_ringbuffer ringbuffer;
+
+    enum rt_pipe_flag flag;
 
     /* suspended list */
     rt_list_t suspended_read_list;
@@ -199,11 +215,12 @@ rt_inline rt_uint16_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
  */
 rt_err_t rt_pipe_init(struct rt_pipe_device *pipe,
                       const char *name,
+                      enum rt_pipe_flag flag,
                       rt_uint8_t *buf,
                       rt_size_t size);
 rt_err_t rt_pipe_detach(struct rt_pipe_device *pipe);
 #ifdef RT_USING_HEAP
-rt_err_t rt_pipe_create(const char *name, rt_size_t size);
+rt_err_t rt_pipe_create(const char *name, enum rt_pipe_flag flag, rt_size_t size);
 void rt_pipe_destroy(struct rt_pipe_device *pipe);
 #endif
 
