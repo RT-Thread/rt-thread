@@ -44,6 +44,9 @@ void rt_ringbuffer_init(struct rt_ringbuffer *rb,
 }
 RTM_EXPORT(rt_ringbuffer_init);
 
+/**
+ * put a block of data into ring buffer
+ */
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
                             const rt_uint8_t     *ptr,
                             rt_uint16_t           length)
@@ -53,7 +56,7 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough space */
-    size = RT_RINGBUFFER_EMPTY(rb);
+    size = rt_ringbuffer_space_len(rb);
 
     /* no space */
     if (size == 0)
@@ -89,6 +92,59 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
 RTM_EXPORT(rt_ringbuffer_put);
 
 /**
+ * put a block of data into ring buffer
+ *
+ * When the buffer is full, it will discard the old data.
+ */
+rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
+                            const rt_uint8_t     *ptr,
+                            rt_uint16_t           length)
+{
+    enum rt_ringbuffer_state old_state;
+
+    RT_ASSERT(rb != RT_NULL);
+
+    old_state = rt_ringbuffer_status(rb);
+
+    if (length > rb->buffer_size)
+        length = rb->buffer_size;
+
+    if (rb->buffer_size - rb->write_index > length)
+    {
+        /* read_index - write_index = empty space */
+        memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
+        /* this should not cause overflow because there is enough space for
+         * length of data in current mirror */
+        rb->write_index += length;
+
+        if (old_state == RT_RINGBUFFER_FULL)
+            rb->read_index = rb->write_index;
+
+        return length;
+    }
+
+    memcpy(&rb->buffer_ptr[rb->write_index],
+           &ptr[0],
+           rb->buffer_size - rb->write_index);
+    memcpy(&rb->buffer_ptr[0],
+           &ptr[rb->buffer_size - rb->write_index],
+           length - (rb->buffer_size - rb->write_index));
+
+    /* we are going into the other side of the mirror */
+    rb->write_mirror = ~rb->write_mirror;
+    rb->write_index = length - (rb->buffer_size - rb->write_index);
+
+    if (old_state == RT_RINGBUFFER_FULL)
+    {
+        rb->read_mirror = ~rb->read_mirror;
+        rb->read_index = rb->write_index;
+    }
+
+    return length;
+}
+RTM_EXPORT(rt_ringbuffer_put_force);
+
+/**
  *  get data from ring buffer
  */
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
@@ -100,7 +156,7 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough data  */
-    size = RT_RINGBUFFER_SIZE(rb);
+    size = rt_ringbuffer_data_len(rb);
 
     /* no data */
     if (size == 0)
@@ -143,7 +199,7 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
     RT_ASSERT(rb != RT_NULL);
 
     /* whether has enough space */
-    if (!RT_RINGBUFFER_EMPTY(rb))
+    if (!rt_ringbuffer_space_len(rb))
         return 0;
 
     rb->buffer_ptr[rb->write_index] = ch;
@@ -164,6 +220,43 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
 RTM_EXPORT(rt_ringbuffer_putchar);
 
 /**
+ * put a character into ring buffer
+ *
+ * When the buffer is full, it will discard one old data.
+ */
+rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb, const rt_uint8_t ch)
+{
+    enum rt_ringbuffer_state old_state;
+
+    RT_ASSERT(rb != RT_NULL);
+
+    old_state = rt_ringbuffer_status(rb);
+
+    rb->buffer_ptr[rb->write_index] = ch;
+
+    /* flip mirror */
+    if (rb->write_index == rb->buffer_size-1)
+    {
+        rb->write_mirror = ~rb->write_mirror;
+        rb->write_index = 0;
+        if (old_state == RT_RINGBUFFER_FULL)
+        {
+            rb->read_mirror = ~rb->read_mirror;
+            rb->read_index = rb->write_index;
+        }
+    }
+    else
+    {
+        rb->write_index++;
+        if (old_state == RT_RINGBUFFER_FULL)
+            rb->read_index = rb->write_index;
+    }
+
+    return 1;
+}
+RTM_EXPORT(rt_ringbuffer_putchar_force);
+
+/**
  * get a character from a ringbuffer
  */
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
@@ -171,7 +264,7 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
     RT_ASSERT(rb != RT_NULL);
 
     /* ringbuffer is empty */
-    if (!RT_RINGBUFFER_SIZE(rb))
+    if (!rt_ringbuffer_data_len(rb))
         return 0;
 
     /* put character */
