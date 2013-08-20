@@ -455,6 +455,8 @@ static long _list_device(struct rt_list_node *list)
         "SPI Device",
         "SDIO Bus",
 		"PM Pseudo Device",
+        "Pipe",
+        "Portal Device",
 		"Miscellaneous Device",
         "Unknown"
     };
