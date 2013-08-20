@@ -73,6 +73,14 @@ struct rt_ringbuffer
     rt_int16_t buffer_size;
 };
 
+/* portal device */
+struct rt_portal_device
+{
+    struct rt_device parent;
+    struct rt_device *write_dev;
+    struct rt_device *read_dev;
+};
+
 /* pipe device */
 #define PIPE_DEVICE(device)          ((struct rt_pipe_device*)(device))
 enum rt_pipe_flag
@@ -101,6 +109,9 @@ struct rt_pipe_device
     /* suspended list */
     rt_list_t suspended_read_list;
     rt_list_t suspended_write_list;
+
+    struct rt_portal_device *write_portal;
+    struct rt_portal_device *read_portal;
 };
 
 #define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
@@ -222,6 +233,23 @@ rt_err_t rt_pipe_detach(struct rt_pipe_device *pipe);
 #ifdef RT_USING_HEAP
 rt_err_t rt_pipe_create(const char *name, enum rt_pipe_flag flag, rt_size_t size);
 void rt_pipe_destroy(struct rt_pipe_device *pipe);
+#endif
+
+/**
+ * Portal for DeviceDriver
+ */
+
+rt_err_t rt_portal_init(struct rt_portal_device *portal,
+                        const char *portal_name,
+                        const char *write_dev,
+                        const char *read_dev);
+rt_err_t rt_portal_detach(struct rt_portal_device *portal);
+
+#ifdef RT_USING_HEAP
+rt_err_t rt_portal_create(const char *name,
+                          const char *write_dev,
+                          const char *read_dev);
+void rt_portal_destroy(struct rt_portal_device *portal);
 #endif
 
 /**
