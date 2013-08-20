@@ -224,7 +224,7 @@ rt_err_t rt_pipe_init(struct rt_pipe_device *pipe,
     pipe->flag = flag;
 
     /* create pipe */
-    pipe->parent.type    = RT_Device_Class_Char;
+    pipe->parent.type    = RT_Device_Class_Pipe;
     pipe->parent.init    = RT_NULL;
     pipe->parent.open    = RT_NULL;
     pipe->parent.close   = RT_NULL;
