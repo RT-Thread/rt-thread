@@ -740,6 +740,7 @@ enum rt_device_class_type
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
     RT_Device_Class_PM,                                 /**< PM pseudo device */
     RT_Device_Class_Pipe,                               /**< Pipe device */
+    RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
