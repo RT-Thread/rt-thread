@@ -53,6 +53,9 @@ static rt_err_t _portal_open(rt_device_t dev, rt_uint16_t oflag)
 
     RT_ASSERT(dev);
 
+    if (!oflag)
+        return -RT_ERROR;
+
     portal = (struct rt_portal_device*)dev;
 
     if (oflag & RT_DEVICE_OFLAG_RDONLY)
