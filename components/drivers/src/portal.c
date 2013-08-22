@@ -116,7 +116,8 @@ static rt_err_t _portal_rx_indicate(rt_device_t dev, rt_size_t size)
     pipe = (struct rt_pipe_device*)dev;
 
     if (pipe->read_portal->parent.rx_indicate)
-        return pipe->read_portal->parent.rx_indicate(dev, size);
+        return pipe->read_portal->parent.rx_indicate(
+                (rt_device_t)pipe->read_portal, size);
 
     return -RT_ENOSYS;
 }
@@ -130,7 +131,8 @@ static rt_err_t _portal_tx_complete(rt_device_t dev, void *buf)
     pipe = (struct rt_pipe_device*)dev;
 
     if (pipe->write_portal->parent.tx_complete)
-        return pipe->write_portal->parent.tx_complete(dev, buf);
+        return pipe->write_portal->parent.tx_complete(
+                (rt_device_t)pipe->write_portal, buf);
 
     return -RT_ENOSYS;
 }
