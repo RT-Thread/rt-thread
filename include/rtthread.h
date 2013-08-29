@@ -503,6 +503,15 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 
 void rt_show_version(void);
 
+#ifdef RT_USING_CPU_FFS
+#ifdef __GNUC__
+/* GCC will inline __builtin_ffs automatically */
+#define __rt_ffs __builtin_ffs
+#else
+int __rt_ffs(int);
+#endif
+#endif
+
 /*@}*/
 
 #ifdef __cplusplus
