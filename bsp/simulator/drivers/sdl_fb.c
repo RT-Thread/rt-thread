@@ -152,8 +152,12 @@ static void sdlfb_hw_init(void)
 
 #ifdef _WIN32
 static HANDLE  sdl_ok_event = NULL;
+
 static DWORD WINAPI sdl_loop(LPVOID lpParam)
 #else
+static pthread_mutex_t sdl_ok_mutex;
+static pthread_cond_t sdl_ok_event;
+
 static void *sdl_loop(void *lpParam)
 #endif
 {
@@ -167,14 +171,19 @@ static void *sdl_loop(void *lpParam)
     /* set the getchar without buffer */
     sigfillset(&sigmask);
     pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+    pthread_mutex_lock(&sdl_ok_mutex);
 #endif
 
     sdlfb_hw_init();
 
     device = rt_device_find("sdl");
+    RT_ASSERT(device);
     rtgui_graphic_set_device(device);
 #ifdef _WIN32
     SetEvent(sdl_ok_event);
+#else
+    pthread_cond_signal(&sdl_ok_event);
+    pthread_mutex_unlock(&sdl_ok_mutex);
 #endif
     /* handle SDL event */
     while (!quit)
@@ -338,11 +347,20 @@ void rt_hw_sdl_start(void)
     /* Linux */
     pthread_t pid;
     int res;
+
+    pthread_mutex_init(&sdl_ok_mutex, NULL);
+    pthread_cond_init(&sdl_ok_event, NULL);
+
     res = pthread_create(&pid, NULL, &sdl_loop, NULL);
     if (res)
     {
         printf("pthread create sdl thread faild, <%d>\n", res);
         exit(EXIT_FAILURE);
     }
+    pthread_mutex_lock(&sdl_ok_mutex);
+    pthread_cond_wait(&sdl_ok_event, &sdl_ok_mutex);
+
+    pthread_mutex_destroy(&sdl_ok_mutex);
+    pthread_cond_destroy(&sdl_ok_event);
 #endif
 }
