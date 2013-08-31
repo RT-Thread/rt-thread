@@ -17,11 +17,6 @@ void rt_platform_init(void)
 
 #endif /* RT_USING_DFS */
 
-#ifdef RT_USING_RTGUI
-    /* start sdl thread to simulate an LCD */
-    rt_hw_sdl_start();
-#endif /* RT_USING_RTGUI */
-
 #ifdef _WIN32
     rt_thread_idle_sethook(rt_hw_win32_low_cpu);
 #endif
