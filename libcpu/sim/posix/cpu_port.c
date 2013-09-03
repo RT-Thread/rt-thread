@@ -363,12 +363,6 @@ void rt_hw_interrupt_enable(rt_base_t level)
     /*TODO: It may need to unmask the signal */
 }
 
-void rt_hw_context_switch_interrupt(rt_uint32_t from,
-                                    rt_uint32_t to)
-{
-    rt_hw_context_switch(from, to);
-}
-
 void rt_hw_context_switch(rt_uint32_t from,
                           rt_uint32_t to)
 {
@@ -398,6 +392,12 @@ void rt_hw_context_switch(rt_uint32_t from,
      */
     cpu_pending_interrupts ++;
     pthread_mutex_unlock(ptr_int_mutex);
+}
+
+void rt_hw_context_switch_interrupt(rt_uint32_t from,
+                                    rt_uint32_t to)
+{
+    rt_hw_context_switch(from, to);
 }
 
 void rt_hw_context_switch_to(rt_uint32_t to)
