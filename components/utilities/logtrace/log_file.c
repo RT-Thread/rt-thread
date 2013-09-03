@@ -41,52 +41,56 @@ struct file_device
 static struct file_device _file_device;
 
 /* common device interface */
-rt_err_t fdevice_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t fdevice_open(rt_device_t dev, rt_uint16_t oflag)
 {
     int fd;
-    struct file_device *file = (struct file_device *)dev;
-    if (file->fd >= 0) return -RT_EBUSY;
+    struct file_device *fdev = (struct file_device *)dev;
 
-    fd = open(file->filename, O_RDONLY, 0);
+    if (fdev->fd >= 0)
+        return -RT_EBUSY;
+
+    /* test and open */
+    fd = open(fdev->filename, O_RDONLY, 0);
     if (fd >= 0)
     {
         close(fd);
-
-        /* file exists */
-        fd = open(file->filename, O_WRONLY | O_APPEND, 0);
+        fd = open(fdev->filename, O_WRONLY | O_APPEND, 0);
     }
     else
     {
         /* file not exists */
-        fd = open(file->filename, O_WRONLY | O_CREAT, 0);
+        fd = open(fdev->filename, O_WRONLY | O_CREAT, 0);
     }
+    fdev->fd = fd;
 
-    file->fd = fd;
     return RT_EOK;
 }
 
-rt_err_t fdevice_close(rt_device_t dev)
+static rt_err_t fdevice_close(rt_device_t dev)
 {
     rt_err_t result;
+    struct file_device *fdev = (struct file_device *)dev;
 
-    struct file_device *file = (struct file_device *)dev;
-    if (file->fd < 0) return -RT_EBUSY;
+    if (fdev->fd < 0)
+        return -RT_EBUSY;
 
-    result = close(file->fd);
+    result = close(fdev->fd);
     if (result == 0)
     {
-        file->fd = -1;
+        fdev->fd = -1;
     }
 
     return result;
 }
 
-rt_size_t fdevice_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_size_t fdevice_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    struct file_device *file = (struct file_device *)dev;
-    if (file->fd < 0) return 0;
+    struct file_device *fdev = (struct file_device *)dev;
 
-    return write(file->fd, buffer, size);
+    if (fdev->fd < 0)
+        return 0;
+
+    return write(fdev->fd, buffer, size);
 }
 
 void log_trace_file_init(const char *filename)
@@ -112,4 +116,11 @@ void log_trace_file_init(const char *filename)
     _file_device.fd = -1;
 }
 
-#endif // RT_USING_DFS
+void log_trace_set_file(const char *filename)
+{
+    log_trace_file_init(filename);
+    log_trace_set_device("logfile");
+}
+FINSH_FUNCTION_EXPORT_ALIAS(log_trace_set_file, log_file, set output filename of log trace);
+
+#endif /* RT_USING_DFS */
