@@ -111,7 +111,6 @@ void rt_init_thread_entry(void* parameter)
 
 #ifdef RT_USING_RTGUI
     {
-        extern void rtgui_system_server_init(void);
         extern void rt_hw_lcd_init();
         extern void rtgui_touch_hw_init(void);
 
@@ -132,8 +131,10 @@ void rt_init_thread_entry(void* parameter)
         /* set lcd device as rtgui graphic driver */
         rtgui_graphic_set_device(lcd);
 
+#ifndef RT_USING_COMPONENTS_INIT
         /* init rtgui system server */
         rtgui_system_server_init();
+#endif
 
         calibration_set_restore(cali_setup);
         calibration_set_after(cali_store);
