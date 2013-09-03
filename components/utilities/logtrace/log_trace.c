@@ -416,12 +416,3 @@ rt_err_t log_trace_set_device(const char *device_name)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(log_trace_set_device, log_device, set device of log trace);
 
-#ifdef RT_USING_DFS
-void log_trace_set_file(const char *filename)
-{
-    log_trace_file_init(filename);
-    log_trace_set_device("logfile");
-}
-FINSH_FUNCTION_EXPORT_ALIAS(log_trace_set_file, log_file, set output filename of log trace);
-#endif // RT_USING_DFS
-
