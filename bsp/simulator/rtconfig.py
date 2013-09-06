@@ -1,9 +1,14 @@
+import os
+
 # toolchains options
 ARCH='sim'
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw'
 #'msvc' and 'mingw' are both for windows
 # 'gcc' is for linux
 CROSS_TOOL='msvc'
+
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path 
@@ -25,6 +30,9 @@ elif  CROSS_TOOL == 'msvc':
 else :
     print "bad CROSS TOOL!"
     exit(1)
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 #BUILD = ''
