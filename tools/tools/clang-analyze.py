@@ -60,7 +60,7 @@ def generate(env):
         env.AppendENVPath('PATH', rtconfig.EXEC_PATH)
 
 def exists(env):
-    return env.Detect(['clang', 'clang++'])
+    return env.Detect(['ccc-analyzer', 'c++-analyzer'])
 
 # Local Variables:
 # tab-width:4

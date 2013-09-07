@@ -17,10 +17,10 @@ before_script:
   - export RTT_RTGUI=$HOME/RTGUI/components/rtgui
 
 script:
-  - scons -C bsp/$RTT_BSP --verbose
+  - scons -C bsp/$RTT_BSP
 
 env:
-  - RTT_BSP='simulator' RTT_CC='clang-analyze'
+  - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/share/clang/scan-build
   - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='avr32uc3b0' RTT_TOOL_CHAIN='atmel-avr32'
 #  - RTT_BSP='bf533' # no scons
