@@ -73,6 +73,10 @@ elif rtconfig.PLATFORM == 'mingw':
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
     env['LIBS']=libs
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+elif rtconfig.CROSS_TOOL == 'clang-analyze':
+    TARGET = 'rtthread'
+    env = Environment(toolpath=[os.path.join(RTT_ROOT, 'tools', 'tools')],
+                      tools = [rtconfig.CROSS_TOOL])
 else:
     TARGET = 'rtthread'
     env['CC']=rtconfig.CC
