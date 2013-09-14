@@ -3,10 +3,19 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Glob('*.c')
+LIBS = []
+LIBPATH = []
+CPPPATH = [cwd]
 
 # remove no need file.
 if GetDepend('RT_USING_RTGUI') == False:
     SrcRemove(src, 'sdl_fb.c')
+else:
+    LIBS.append('SDL')
+    if sys.platform == 'win32':
+        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/lib/x86')))
+        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/include')))
+
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MTD_NAND') == False:
@@ -20,8 +29,7 @@ if GetDepend('RT_USING_MODULE') == False:
 if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 
-CPPPATH = [cwd]
-
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''],
+                    CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)
 
 Return('group')

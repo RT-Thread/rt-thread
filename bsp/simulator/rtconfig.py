@@ -1,3 +1,5 @@
+import os
+
 # toolchains options
 ARCH='sim'
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw'
@@ -5,12 +7,15 @@ ARCH='sim'
 # 'gcc' is for linux
 CROSS_TOOL='msvc'
 
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
+
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path 
-if  CROSS_TOOL == 'gcc':
+if  CROSS_TOOL == 'gcc' or CROSS_TOOL == 'clang-analyze':
     CPU       = 'posix'
     PLATFORM  = 'gcc'
-    EXEC_PATH = '/usr/bin/gcc'
+    EXEC_PATH = ''
 
 elif  CROSS_TOOL == 'mingw':
     CPU       = 'win32'
@@ -21,10 +26,12 @@ elif  CROSS_TOOL == 'msvc':
     CPU       = 'win32'
     PLATFORM  = 'cl'
     EXEC_PATH = ''
-
-else :
+else:
     print "bad CROSS TOOL!"
     exit(1)
+
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 #BUILD = ''
