@@ -45,6 +45,7 @@
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete and rt_mq_delete
  * 2010-11-10     Bernard      add IPC reset command implementation.
  * 2011-12-18     Bernard      add more parameter checking in message queue
+ * 2013-09-14     Grissiom     add an option check in rt_event_recv
  */
 
 #include <rtthread.h>
@@ -1079,7 +1080,8 @@ RTM_EXPORT(rt_event_send);
  *
  * @param event the fast event object
  * @param set the interested event set
- * @param option the receive option
+ * @param option the receive option, either RT_EVENT_FLAG_AND or
+ *        RT_EVENT_FLAG_OR should be set.
  * @param timeout the waiting time
  * @param recved the received event
  *
@@ -1124,6 +1126,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
     {
         if (event->set & set)
             status = RT_EOK;
+    }
+    else
+    {
+        /* either RT_EVENT_FLAG_AND or RT_EVENT_FLAG_OR should be set */
+        RT_ASSERT(0);
     }
 
     if (status == RT_EOK)
