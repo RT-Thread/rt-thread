@@ -45,9 +45,9 @@ struct rt_ringbuffer
     /* use the msb of the {read,write}_index as mirror bit. You can see this as
      * if the buffer adds a virtual mirror and the pointers point either to the
      * normal or to the mirrored buffer. If the write_index has the same value
-     * with the read_index, but in differenct mirro, the buffer is full. While
-     * if the write_index and the read_index are the same and within the same
-     * mirror, the buffer is empty. The ASCII art of the ringbuffer is:
+     * with the read_index, but in a different mirror, the buffer is full.
+     * While if the write_index and the read_index are the same and within the
+     * same mirror, the buffer is empty. The ASCII art of the ringbuffer is:
      *
      *          mirror = 0                    mirror = 1
      * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
@@ -73,31 +73,30 @@ struct rt_ringbuffer
     rt_int16_t buffer_size;
 };
 
-/** return the size of data in rb */
-rt_inline rt_uint16_t RT_RINGBUFFER_SIZE(struct rt_ringbuffer *rb)
+/* portal device */
+struct rt_portal_device
 {
-    if (rb->read_index == rb->write_index)
-    {
-        if (rb->read_mirror == rb->write_mirror)
-            /* we are in the same side, the ringbuffer is empty. */
-            return 0;
-        else
-            return rb->buffer_size;
-    }
-    else
-    {
-        if (rb->write_index > rb->read_index)
-            return rb->write_index - rb->read_index;
-        else
-            return rb->buffer_size - (rb->read_index - rb->write_index);
-    }
-}
-
-/** return the size of empty space in rb */
-#define RT_RINGBUFFER_EMPTY(rb) ((rb)->buffer_size - RT_RINGBUFFER_SIZE(rb))
+    struct rt_device parent;
+    struct rt_device *write_dev;
+    struct rt_device *read_dev;
+};
 
 /* pipe device */
 #define PIPE_DEVICE(device)          ((struct rt_pipe_device*)(device))
+enum rt_pipe_flag
+{
+    /* both read and write won't block */
+    RT_PIPE_FLAG_NONBLOCK_RDWR = 0x00,
+    /* read would block */
+    RT_PIPE_FLAG_BLOCK_RD = 0x01,
+    /* write would block */
+    RT_PIPE_FLAG_BLOCK_WR = 0x02,
+    /* write to this pipe will discard some data when the pipe is full.
+     * When this flag is set, RT_PIPE_FLAG_BLOCK_WR will be ignored since write
+     * operation will always be success. */
+    RT_PIPE_FLAG_FORCE_WR = 0x04,
+};
+
 struct rt_pipe_device
 {
     struct rt_device parent;
@@ -105,9 +104,14 @@ struct rt_pipe_device
     /* ring buffer in pipe device */
     struct rt_ringbuffer ringbuffer;
 
+    enum rt_pipe_flag flag;
+
     /* suspended list */
     rt_list_t suspended_read_list;
     rt_list_t suspended_write_list;
+
+    struct rt_portal_device *write_portal;
+    struct rt_portal_device *read_portal;
 };
 
 #define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
@@ -157,29 +161,95 @@ void rt_ringbuffer_init(struct rt_ringbuffer *rb,
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
                             const rt_uint8_t     *ptr,
                             rt_uint16_t           length);
+rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
+                                  const rt_uint8_t     *ptr,
+                                  rt_uint16_t           length);
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb,
                                 const rt_uint8_t      ch);
+rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb,
+                                      const rt_uint8_t      ch);
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
                             rt_uint8_t           *ptr,
                             rt_uint16_t           length);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
+
+enum rt_ringbuffer_state
+{
+    RT_RINGBUFFER_EMPTY,
+    RT_RINGBUFFER_FULL,
+    /* half full is neither full nor empty */
+    RT_RINGBUFFER_HALFFULL,
+};
+
 rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
 {
     RT_ASSERT(rb != RT_NULL);
     return rb->buffer_size;
 }
 
+rt_inline enum rt_ringbuffer_state
+rt_ringbuffer_status(struct rt_ringbuffer *rb)
+{
+    if (rb->read_index == rb->write_index)
+    {
+        if (rb->read_mirror == rb->write_mirror)
+            return RT_RINGBUFFER_EMPTY;
+        else
+            return RT_RINGBUFFER_FULL;
+    }
+    return RT_RINGBUFFER_HALFFULL;
+}
+
+/** return the size of data in rb */
+rt_inline rt_uint16_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+{
+    switch (rt_ringbuffer_status(rb))
+    {
+    case RT_RINGBUFFER_EMPTY:
+        return 0;
+    case RT_RINGBUFFER_FULL:
+        return rb->buffer_size;
+    case RT_RINGBUFFER_HALFFULL:
+    default:
+        if (rb->write_index > rb->read_index)
+            return rb->write_index - rb->read_index;
+        else
+            return rb->buffer_size - (rb->read_index - rb->write_index);
+    };
+}
+
+/** return the size of empty space in rb */
+#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - rt_ringbuffer_data_len(rb))
+
 /**
  * Pipe Device
  */
 rt_err_t rt_pipe_init(struct rt_pipe_device *pipe,
                       const char *name,
+                      enum rt_pipe_flag flag,
                       rt_uint8_t *buf,
                       rt_size_t size);
 rt_err_t rt_pipe_detach(struct rt_pipe_device *pipe);
 #ifdef RT_USING_HEAP
-rt_err_t rt_pipe_create(const char *name, rt_size_t size);
+rt_err_t rt_pipe_create(const char *name, enum rt_pipe_flag flag, rt_size_t size);
 void rt_pipe_destroy(struct rt_pipe_device *pipe);
+#endif
+
+/**
+ * Portal for DeviceDriver
+ */
+
+rt_err_t rt_portal_init(struct rt_portal_device *portal,
+                        const char *portal_name,
+                        const char *write_dev,
+                        const char *read_dev);
+rt_err_t rt_portal_detach(struct rt_portal_device *portal);
+
+#ifdef RT_USING_HEAP
+rt_err_t rt_portal_create(const char *name,
+                          const char *write_dev,
+                          const char *read_dev);
+void rt_portal_destroy(struct rt_portal_device *portal);
 #endif
 
 /**

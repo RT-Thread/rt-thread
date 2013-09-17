@@ -73,6 +73,10 @@ elif rtconfig.PLATFORM == 'mingw':
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
     env['LIBS']=libs
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+elif rtconfig.CROSS_TOOL == 'clang-analyze':
+    TARGET = 'rtthread'
+    env = Environment(toolpath=[os.path.join(RTT_ROOT, 'tools', 'tools')],
+                      tools = [rtconfig.CROSS_TOOL])
 else:
     TARGET = 'rtthread'
     env['CC']=rtconfig.CC
@@ -84,13 +88,6 @@ else:
 
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False, remove_components=['rtgui'])
 if GetDepend('RT_USING_RTGUI'):
-    sdl_lib = ['SDL', 'SDLmain']
-    sdl_lib_path = [os.path.abspath('SDL/lib/x86')]
-    sdl_include_path = [os.path.abspath('SDL/include')]
-    env.Append(LIBS=sdl_lib)
-    env.Append(LIBPATH=sdl_lib_path)
-    env.Append(CPPPATH=sdl_include_path)
-
     if RTT_RTGUI:
         objs += SConscript(os.path.join(RTT_RTGUI, 'SConscript'),
 						   variant_dir='build/components/rtgui',
