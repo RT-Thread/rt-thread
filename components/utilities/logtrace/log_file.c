@@ -22,11 +22,11 @@
  *                Bernard      the first version
  * 2013-06-26     Grissiom     refactor
  */
+#include <rtthread.h>
+#include <log_trace.h>
 
 #ifdef RT_USING_DFS
 
-#include <rtthread.h>
-#include <log_trace.h>
 #include <dfs_posix.h>
 
 struct file_device
