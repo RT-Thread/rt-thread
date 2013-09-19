@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -178,7 +188,7 @@ static rt_err_t _ep_in_handler(udevice_t device, uclass_t cls, rt_size_t size)
 
     eps = (cdc_eps_t)cls->eps;
     level = rt_hw_interrupt_disable();
-    remain = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
+    remain = rt_ringbuffer_data_len(&tx_ringbuffer);
     if (remain != 0)
     {
         /* although vcom_in_sending is set in SOF handler in the very
@@ -443,7 +453,7 @@ static rt_err_t _class_sof_handler(udevice_t device, uclass_t cls)
 
     eps = (cdc_eps_t)cls->eps;
 
-    size = RT_RINGBUFFER_SIZE(&tx_ringbuffer);
+    size = rt_ringbuffer_data_len(&tx_ringbuffer);
     if (size == 0)
         return -RT_EFULL;
 
@@ -601,7 +611,7 @@ static int _vcom_putc(struct rt_serial_device *serial, char c)
      * data out soon. But we cannot rely on that and if we wait to long, just
      * return. */
     for (cnt = 500;
-         RT_RINGBUFFER_EMPTY(&tx_ringbuffer) == 0 && cnt;
+         rt_ringbuffer_space_len(&tx_ringbuffer) == 0 && cnt;
          cnt--)
     {
         /*rt_kprintf("wait for %d\n", cnt);*/
@@ -618,7 +628,7 @@ static int _vcom_putc(struct rt_serial_device *serial, char c)
     }
 
     level = rt_hw_interrupt_disable();
-    if (RT_RINGBUFFER_EMPTY(&tx_ringbuffer))
+    if (rt_ringbuffer_space_len(&tx_ringbuffer))
     {
         rt_ringbuffer_putchar(&tx_ringbuffer, c);
     }
@@ -636,7 +646,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
     result = -1;
 
     level = rt_hw_interrupt_disable();
-    if (RT_RINGBUFFER_SIZE(&rx_ringbuffer))
+    if (rt_ringbuffer_data_len(&rx_ringbuffer))
     {
         rt_ringbuffer_getchar(&rx_ringbuffer, &ch);
         result = ch;

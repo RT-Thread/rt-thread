@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2011, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,7 +34,7 @@
  * 
  * @return none.
  */
-void rt_usb_host_init(void)
+int rt_usb_host_init(void)
 {
     ucd_t drv;
 #ifdef RT_USB_CLASS_HID
@@ -70,5 +80,8 @@ void rt_usb_host_init(void)
     /* register hub class driver */
     drv = rt_usb_class_driver_hub();
     rt_usb_class_driver_register(drv);
+
+	return 0;
 }
+INIT_COMPONENT_EXPORT(rt_usb_host_init);
 

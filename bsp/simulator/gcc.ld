@@ -79,6 +79,12 @@ SECTIONS
       __vsymtab_end = .;
   }
   . = ALIGN(4);
+  rti_fn : {
+      __rt_init_start = .;
+      KEEP(*(SORT(.rti_fn*)))
+      __rt_init_end = .;
+  }
+  . = ALIGN(4);
   /* setction information for finsh shell end */
 
   .eh_frame_hdr : { *(.eh_frame_hdr) }

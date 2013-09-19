@@ -142,7 +142,7 @@
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
 #define RT_LWIP_TCP_PCB_NUM	3
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF	2048
+#define RT_LWIP_TCP_SND_BUF	(2 * TCP_MSS)
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
 #define RT_LWIP_TCP_WND	2048
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />

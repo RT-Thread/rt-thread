@@ -62,18 +62,27 @@
 /* Using SLAB Allocator */
 #define RT_USING_SLAB
 
-/* SECTION: Device System */
-/* Using Device System */
-#define RT_USING_DEVICE
+/* SECTION: the runtime libc library */
+/* the runtime libc library */
+#define RT_USING_NEWLIB
+#define RT_USING_PTHREADS
 
 /* Using Module System */
 #define RT_USING_MODULE
 #define RT_USING_LIBDL
 
+/* SECTION: Device System */
+/* Using Device System */
+#define RT_USING_DEVICE
+
+#define RT_USING_DEVICE_IPC
+#define RT_USING_SERIAL
+
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console */
 #define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLE_DEVICE_NAME "dbgu"
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
@@ -82,11 +91,6 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 4096
-
-/* SECTION: the runtime libc library */
-/* the runtime libc library */
-#define RT_USING_NEWLIB
-#define RT_USING_PTHREADS
 
 /* SECTION: C++ support */
 /* Using C++ support */

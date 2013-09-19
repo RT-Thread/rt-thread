@@ -89,7 +89,7 @@ struct finsh_shell
 void finsh_set_echo(rt_uint32_t echo);
 rt_uint32_t finsh_get_echo(void);
 
-void finsh_system_init(void);
+int finsh_system_init(void);
 void finsh_set_device(const char* device_name);
 const char* finsh_get_device(void);
 

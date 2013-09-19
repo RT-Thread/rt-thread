@@ -81,6 +81,8 @@ static pthread_t OSKey_Thread;
 void rt_hw_usart_init(void)
 {
     int res;
+
+    rt_hw_serial_init(&serial1, RT_CONSOLE_DEVICE_NAME);
     res = pthread_create(&OSKey_Thread, NULL, &ThreadforKeyGet, NULL);
     if (res)
     {

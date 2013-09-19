@@ -1,0 +1,40 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drvers.
+src = Split("""
+board.c
+stm32f10x_it.c
+led.c
+usart.c
+""")
+
+# add Ethernet drvers.
+if GetDepend('RT_USING_LWIP'):
+    src += ['dm9000a.c']
+
+# add Ethernet drvers.
+if GetDepend('RT_USING_DFS'):
+    src += ['sdcard.c']
+
+# add Ethernet drvers.
+if GetDepend('RT_USING_RTC'):
+    src += ['rtc.c']
+
+# add Ethernet drvers.
+if GetDepend('RT_USING_RTGUI'):
+    src += ['touch.c']
+    if rtconfig.RT_USING_LCD_TYPE == 'ILI932X':
+        src += ['ili_lcd_general.c']
+    elif rtconfig.RT_USING_LCD_TYPE == 'SSD1289':
+        src += ['ssd1289.c']
+
+    
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

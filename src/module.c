@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,7 +25,7 @@
  * 2011-05-25     yi.qiu       implement module hook function
  * 2011-06-23     yi.qiu       rewrite module memory allocator
  * 2012-11-23     Bernard      using RT_DEBUG_LOG instead of rt_kprintf.
- * 2012-11-28     Bernard      remove rt_current_module and user 
+ * 2012-11-28     Bernard      remove rt_current_module and user
  *                             can use rt_module_unload to remove a module.
  */
 
@@ -70,7 +80,7 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
  *
  * This function will initialize system module
  */
-void rt_system_module_init(void)
+int rt_system_module_init(void)
 {
 #ifdef __GNUC__
     extern int __rtmsymtab_start;
@@ -90,7 +100,9 @@ void rt_system_module_init(void)
     /* initialize heap semaphore */
     rt_sem_init(&mod_sem, "module", 1, RT_IPC_FLAG_FIFO);
 #endif
+	return 0;
 }
+INIT_COMPONENT_EXPORT(rt_system_module_init);
 
 static rt_uint32_t rt_module_symbol_find(const char *sym_str)
 {
@@ -794,15 +806,12 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
     if (elf_module->e_entry != 0)
     {
-        rt_uint32_t *stack_size;
-        rt_uint8_t  *priority;
-
 #ifdef RT_USING_SLAB
         /* init module memory allocator */
         module->mem_list = RT_NULL;
 
         /* create page array */
-        module->page_array = 
+        module->page_array =
             (void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
         module->page_cnt = 0;
 #endif
@@ -1169,8 +1178,6 @@ rt_err_t rt_module_destroy(rt_module_t module)
  */
 rt_err_t rt_module_unload(rt_module_t module)
 {
-    int i;
-    rt_err_t result;
     struct rt_object *object;
     struct rt_list_node *list;
 

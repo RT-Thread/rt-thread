@@ -39,8 +39,5 @@ if GetDepend('RT_USING_RTGUI'):
 # libc testsuite 
 # objs = objs + SConscript(RTT_ROOT + '/examples/libc/SConscript', variant_dir='build/examples/libc', duplicate=0)
 
-# build program 
-env.Program(TARGET, objs)
-
-# end building 
-EndBuilding(TARGET)
+# make a building
+DoBuilding(TARGET, objs)

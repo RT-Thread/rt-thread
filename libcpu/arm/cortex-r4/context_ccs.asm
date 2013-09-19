@@ -28,18 +28,22 @@
 ; * rt_base_t rt_hw_interrupt_disable();
 ; */
     .def rt_hw_interrupt_disable
+    .asmfunc
 rt_hw_interrupt_disable
     MRS r0, cpsr
     CPSID IF
     BX  lr
+    .endasmfunc
 
 ;/*
 ; * void rt_hw_interrupt_enable(rt_base_t level);
 ; */
     .def rt_hw_interrupt_enable
+    .asmfunc
 rt_hw_interrupt_enable
     MSR cpsr_c, r0
     BX  lr
+    .endasmfunc
 
 ;/*
 ; * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
@@ -47,6 +51,7 @@ rt_hw_interrupt_enable
 ; * r1 --> to
 ; */
     .def rt_hw_context_switch
+    .asmfunc
 rt_hw_context_switch
     STMDB   sp!, {lr}           ; push pc (lr should be pushed in place of PC)
     STMDB   sp!, {r0-r12, lr}   ; push lr & register file
@@ -88,12 +93,14 @@ __no_vfp_frame2
     MSR     spsr_cxsf, r4
 
     LDMIA   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
+    .endasmfunc
 
 ;/*
 ; * void rt_hw_context_switch_to(rt_uint32 to);
 ; * r0 --> to
 ; */
     .def rt_hw_context_switch_to
+    .asmfunc
 rt_hw_context_switch_to
     LDR     sp, [r0]            ; get new task stack pointer
 
@@ -112,12 +119,14 @@ __no_vfp_frame_to
     MSR     spsr_cxsf, r4
 
     LDMIA   sp!, {r0-r12, lr, pc}^ ; pop new task r0-r12, lr & pc, copy spsr to cpsr
+    .endasmfunc
 
 ;/*
 ; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
 ; */
 
     .def rt_hw_context_switch_interrupt
+    .asmfunc
 rt_hw_context_switch_interrupt
     LDR r2, pintflag
     LDR r3, [r2]
@@ -131,6 +140,7 @@ _reswitch
     LDR r2, ptothread       ; set rt_interrupt_to_thread
     STR r1, [r2]
     BX  lr
+    .endasmfunc
 
     .def IRQ_Handler
 IRQ_Handler

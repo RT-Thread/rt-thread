@@ -1,7 +1,7 @@
 ;/*
 ; * File      : context_rvds.S
 ; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
+; * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
 ; *
 ; * The license and distribution terms for this file may be
 ; * found in the file LICENSE in this distribution or at
@@ -10,6 +10,8 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version
+; * 2013-06-18     aozima       add restore MSP feature.
+; * 2013-07-09     aozima       enhancement hard fault exception handler.
 ; */
 
 ;/**
@@ -17,6 +19,7 @@
 ; */
 ;/*@{*/
 
+SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
@@ -158,6 +161,12 @@ rt_hw_context_switch_to    PROC
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
 
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    MSR     msp, r0
+
     ; enable interrupts at processor level
     CPSIE   I
 
@@ -176,7 +185,16 @@ rt_hw_interrupt_thread_switch PROC
 HardFault_Handler    PROC
 
     ; get current context
-    MRS     r0, psp                 ; get fault thread stack pointer
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    MRSNE   r0, msp                 ; get fault context from handler.
+    MRSEQ   r0, psp                 ; get fault context from thread.
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+    STMFD   r0!, {lr}               ; push exec_return register
+
+    MSRNE   msp, r0                 ; update stack pointer to MSP.
+    MSREQ   psp, r0                 ; update stack pointer to PSP.
+
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {lr}

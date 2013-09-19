@@ -3,9 +3,19 @@
  * This file is part of Device File System in RT-Thread RTOS
  * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -486,6 +496,33 @@ int dfs_statfs(const char *path, struct statfs *buffer)
 
     return -1;
 }
+
+#ifdef RT_USING_DFS_MNTTABLE
+int dfs_mount_table(void)
+{
+	int index = 0;
+
+	while (1)
+	{
+		if (mount_table[index].path == RT_NULL) break;
+
+		if (dfs_mount(mount_table[index].device_name,
+				mount_table[index].path,
+				mount_table[index].filesystemtype,
+				mount_table[index].rwflag,
+				mount_table[index].data) != 0)
+		{
+			rt_kprintf("mount fs[%s] on %s failed.\n", mount_table[index].filesystemtype, 
+				mount_table[index].path);
+			return -RT_ERROR;
+		}
+
+		index ++;
+	}
+	return 0;
+}
+INIT_ENV_EXPORT(dfs_mount_table);
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

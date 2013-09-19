@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,8 +26,9 @@
  *                             fix gcc compiling issue.
  * 2010-04-15     Bernard      remove weak definition on ICCM16C compiler
  * 2012-07-18     Arda         add the alignment display for signed integer
- * 2012-11-23     Bernard      fix IAR compiler error. 
+ * 2012-11-23     Bernard      fix IAR compiler error.
  * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
+ * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  */
 
 #include <rtthread.h>
@@ -83,7 +94,7 @@ void rt_set_errno(rt_err_t error)
     if (tid == RT_NULL)
     {
         _errno = error;
-        
+
         return;
     }
 
@@ -99,7 +110,7 @@ RTM_EXPORT(rt_set_errno);
 int *_rt_errno(void)
 {
     rt_thread_t tid;
-    
+
     if (rt_interrupt_get_nest() != 0)
         return (int *)&_errno;
 
@@ -1121,12 +1132,6 @@ void rt_kprintf(const char *fmt, ...)
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
-#else
-void rt_kprintf(const char *fmt, ...)
-{
-}
-RTM_EXPORT(rt_kprintf);
-
 #endif
 
 #ifdef RT_USING_HEAP
@@ -1212,13 +1217,13 @@ const rt_uint8_t __lowest_bit_bitmap[] =
 };
 
 /**
- * This function finds the first bit set (beginning with the least significant bit) 
+ * This function finds the first bit set (beginning with the least significant bit)
  * in value and return the index of that bit.
  *
- * Bits are numbered starting at 1 (the least significant bit).  A return value of 
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of
  * zero from any of these functions means that the argument was zero.
- * 
- * @return return the index of the first bit set. If value is 0, then this function 
+ *
+ * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
 int __rt_ffs(int value)
@@ -1230,10 +1235,10 @@ int __rt_ffs(int value)
 
     if (value & 0xff00)
         return __lowest_bit_bitmap[(value & 0xff00) >> 8] + 9;
-    
+
     if (value & 0xff0000)
         return __lowest_bit_bitmap[(value & 0xff0000) >> 16] + 17;
-    
+
     return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
 }
 #endif

@@ -3,9 +3,19 @@
  * This file is part of Device File System in RT-Thread RTOS
  * COPYRIGHT (C) 2008-2011, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -214,6 +224,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
             flag = FSM_STATUS_USE_TEMP_DRIVER;
 
             disk[index] = dev_id;
+            /* try to open device */
+            rt_device_open(dev_id, RT_DEVICE_OFLAG_RDWR);
 
             /* just fill the FatFs[vol] in ff.c, or mkfs will failded!
              * consider this condition: you just umount the elm fat,
@@ -235,6 +247,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         rt_free(fat);
         f_mount((BYTE)index, RT_NULL);
         disk[index] = RT_NULL;
+        /* close device */
+        rt_device_close(dev_id);
     }
 
     if (result != FR_OK)
@@ -783,6 +797,7 @@ int elm_init(void)
 
     return 0;
 }
+INIT_FS_EXPORT(elm_init);
 
 /*
  * RT-Thread Device Interface for ELM FatFs

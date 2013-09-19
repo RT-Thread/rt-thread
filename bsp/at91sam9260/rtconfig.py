@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH     = 'arm'
-CPU      = 'at91sam926x'
+CPU      = 'arm926'
 TextBase = '0x20000000'
 
 CROSS_TOOL 	= 'gcc'

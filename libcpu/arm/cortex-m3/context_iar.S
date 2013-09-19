@@ -1,7 +1,7 @@
 ;/*
 ; * File      : context_iar.S
 ; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
+; * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
 ; *
 ; * The license and distribution terms for this file may be
 ; * found in the file LICENSE in this distribution or at
@@ -11,6 +11,8 @@
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version
 ; * 2009-09-27     Bernard      add protect when contex switch occurs
+; * 2013-06-18     aozima       add restore MSP feature.
+; * 2013-07-09     aozima       enhancement hard fault exception handler.
 ; */
 
 ;/**
@@ -18,6 +20,7 @@
 ; */
 ;/*@{*/
 
+SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
@@ -151,6 +154,13 @@ rt_hw_context_switch_to:
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
 
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
+
     CPSIE   I                       ; enable interrupts at processor level
 
     ; never reach here!
@@ -165,7 +175,25 @@ rt_hw_interrupt_thread_switch:
 HardFault_Handler:
 
     ; get current context
-    MRS     r0, psp                 ; get fault thread stack pointer
+    MRS     r0, msp                 ; get fault context from handler.
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    BEQ     _get_sp_done
+    MRS     r0, psp                 ; get fault context from thread.
+_get_sp_done
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+    ;STMFD   r0!, {lr}               ; push exec_return register
+    SUB     r0, r0, #0x04
+    STR     lr, [r0]
+
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    BEQ     _update_msp
+    MSR     psp, r0                 ; update stack pointer to PSP.
+    B       _update_done
+_update_msp
+    MSR     msp, r0                 ; update stack pointer to MSP.
+_update_done
+
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {lr}

@@ -38,8 +38,12 @@ def CB_AddCFiles(ProjectFiles, parent, gname, files, project_path):
 
 def CBProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
+
+    if os.path.isfile('template.cbp'):
+        tree = etree.parse('template.cbp')
+    else:
+        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'template.cbp'))
     
-    tree = etree.parse('template.cbp')
     root = tree.getroot()
     
     out = file(target, 'wb')
@@ -75,7 +79,7 @@ def CBProject(target, script, program):
             Add = SubElement(elem, 'Add')
             Add.set('directory', path)
 
-        for macro in building.Env['CPPDEFINES']:
+        for macro in building.Env.get('CPPDEFINES', []):
             Add = SubElement(elem, 'Add')
             Add.set('option', "-D"+macro)
         

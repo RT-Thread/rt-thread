@@ -50,6 +50,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
                 Env['LINKFLAGS']=Env['LINKFLAGS'].replace('RV31', 'armcc')
 
+        # reset AR command flags 
+        env['ARCOM'] = '$AR --create $TARGET $SOURCES'
+        env['LIBPREFIX']   = ''
+        env['LIBSUFFIX']   = '_rvds.lib'
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
         win32_spawn = Win32Spawn()
@@ -83,6 +88,39 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action='store_true',
                       default=False,
                       help='copy header of rt-thread directory to local.')
+    AddOption('--cscope',
+                      dest='cscope',
+                      action='store_true',
+                      default=False,
+                      help='Build Cscope cross reference database. Requires cscope installed.')
+    AddOption('--clang-analyzer',
+                      dest='clang-analyzer',
+                      action='store_true',
+                      default=False,
+                      help='Perform static analyze with Clang-analyzer. '+\
+                           'Requires Clang installed.\n'+\
+                           'It is recommended to use with scan-build like this:\n'+\
+                           '`scan-build scons --clang-analyzer`\n'+\
+                           'If things goes well, scan-build will instruct you to invoke scan-view.')
+
+    if GetOption('clang-analyzer'):
+        # perform what scan-build does
+        env.Replace(
+                CC   = 'ccc-analyzer',
+                CXX  = 'c++-analyzer',
+                # skip as and link
+                LINK = 'true',
+                AS   = 'true',)
+        env["ENV"].update(x for x in os.environ.items() if x[0].startswith("CCC_"))
+        # only check, don't compile. ccc-analyzer use CCC_CC as the CC.
+        # fsyntax-only will give us some additional warning messages
+        env['ENV']['CCC_CC']  = 'clang'
+        env.Append(CFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        env['ENV']['CCC_CXX'] = 'clang++'
+        env.Append(CXXFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        # remove the POST_ACTION as it will cause meaningless errors(file not
+        # found or something like that).
+        rtconfig.POST_ACTION = ''
 
     # add build library option
     AddOption('--buildlib', 
@@ -104,6 +142,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cb':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
+        # --target will change the toolchain settings which clang-analyzer is
+        # depend on
+        if GetOption('clang-analyzer'):
+            print '--clang-analyzer cannot be used with --target'
+            sys.exit(1)
+
         SetOption('no_exec', 1)
         try:
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
@@ -233,6 +277,7 @@ def DefineGroup(name, src, depend, **parameters):
 
     group = parameters
     group['name'] = name
+    group['path'] = GetCurrentDir()
     if type(src) == type(['src1', 'str2']):
         group['src'] = File(src)
     else:
@@ -291,7 +336,6 @@ def DoBuilding(target, objects):
     # check whether special buildlib option
     lib_name = GetOption('buildlib')
     if lib_name:
-        print lib_name
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
@@ -340,6 +384,10 @@ def EndBuilding(target, program = None):
         MakeCopy(program)
     if GetOption('copy-header') and program != None:
         MakeCopyHeader(program)
+
+    if GetOption('cscope'):
+        from cscope import CscopeDatabase
+        CscopeDatabase(Projects)
 
 def SrcRemove(src, remove):
     if type(src[0]) == type('str'):

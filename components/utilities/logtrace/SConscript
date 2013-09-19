@@ -1,0 +1,9 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('Utilities', src, depend = ['RT_USING_LOGTRACE'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -175,15 +185,16 @@ typedef struct udev_msg* udev_msg_t;
 
 udevice_t rt_usbd_device_create(void);
 uconfig_t rt_usbd_config_create(void);
-uclass_t rt_usbd_class_create(udevice_t device, udev_desc_t dev_desc,
+uclass_t rt_usbd_class_create(udevice_t    device,
+                              udev_desc_t  dev_desc,
                               uclass_ops_t ops);
 uintf_t rt_usbd_interface_create(udevice_t device, uintf_handler_t handler);
 uep_t rt_usbd_endpoint_create(uep_desc_t ep_desc, udep_handler_t handler);
 ualtsetting_t rt_usbd_altsetting_create(rt_size_t desc_size);
 
 rt_err_t rt_usbd_core_init(void);
-rt_err_t rt_usb_device_init(const char* udc_name);
-rt_err_t rt_usbd_post_event(struct udev_msg* msg, rt_size_t size);
+rt_err_t rt_usb_device_init(const char *udc_name);
+rt_err_t rt_usbd_post_event(struct udev_msg *msg, rt_size_t size);
 rt_err_t rt_usbd_free_device(udevice_t device);
 rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
@@ -193,14 +204,20 @@ rt_err_t rt_usbd_config_add_class(uconfig_t cfg, uclass_t cls);
 rt_err_t rt_usbd_class_add_interface(uclass_t cls, uintf_t intf);
 rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting);
 rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep);
-rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting, const void* desc, rt_off_t intf_pos);
+rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting,
+                                              const void   *desc,
+                                              rt_off_t      intf_pos);
 rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value);
 rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value);
 
 udevice_t rt_usbd_find_device(udcd_t dcd);
 uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value);
-uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value, uclass_t *pcls);
-uep_t rt_usbd_find_endpoint(udevice_t device, uclass_t* pcls, rt_uint8_t ep_addr);
+uintf_t rt_usbd_find_interface(udevice_t  device,
+                               rt_uint8_t value,
+                               uclass_t  *pcls);
+uep_t rt_usbd_find_endpoint(udevice_t  device,
+                            uclass_t  *pcls,
+                            rt_uint8_t ep_addr);
 
 uclass_t rt_usbd_class_mstorage_create(udevice_t device);
 uclass_t rt_usbd_class_cdc_create(udevice_t device);
@@ -218,14 +235,18 @@ rt_inline rt_err_t dcd_set_address(udcd_t dcd, rt_uint8_t value)
     return dcd->ops->set_address(value);
 }
 
-rt_inline rt_err_t dcd_clear_feature(udcd_t dcd, rt_uint16_t value, rt_uint16_t index)
+rt_inline rt_err_t dcd_clear_feature(udcd_t      dcd,
+                                     rt_uint16_t value,
+                                     rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
     return dcd->ops->clear_feature(value, index);
 }
 
-rt_inline rt_err_t dcd_set_feature(udcd_t dcd, rt_uint8_t value, rt_uint16_t index)
+rt_inline rt_err_t dcd_set_feature(udcd_t      dcd,
+                                   rt_uint8_t  value,
+                                   rt_uint16_t index)
 {
     RT_ASSERT(dcd != RT_NULL);
 
@@ -275,7 +296,9 @@ rt_inline rt_err_t dcd_ep_read(udcd_t dcd, uep_t ep, void *buffer,
     return dcd->ops->ep_read(ep, buffer, size);
 }
 
-rt_inline rt_size_t dcd_ep_write(udcd_t dcd, uep_t ep, void *buffer,
+rt_inline rt_size_t dcd_ep_write(udcd_t    dcd,
+                                 uep_t     ep,
+                                 void     *buffer,
                                  rt_size_t size)
 {
     RT_ASSERT(dcd != RT_NULL);

@@ -30,6 +30,16 @@ void rt_init_thread_entry(void *parameter)
     /* initialization RT-Thread Components */
     rt_components_init();
 
+#ifdef RT_USING_RTGUI
+    /* start sdl thread to simulate an LCD. SDL may depend on DFS and should be
+     * called after rt_components_init. */
+    rt_hw_sdl_start();
+#endif /* RT_USING_RTGUI */
+
+#if defined(RT_USING_COMPONENTS_INIT) && defined(__GNUC__) && defined(RT_USING_FINSH)
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
     /* File system Initialization */
 #ifdef RT_USING_DFS
     {

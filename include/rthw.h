@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -46,13 +56,14 @@ rt_uint8_t *rt_hw_stack_init(void       *entry,
  */
 typedef void (*rt_isr_handler_t)(int vector, void *param);
 
-struct rt_irq_desc {
-	rt_isr_handler_t handler;
-	void *param;
+struct rt_irq_desc
+{
+    rt_isr_handler_t handler;
+    void            *param;
 
 #ifdef RT_USING_INTERRUPT_INFO
-    char name[RT_NAME_MAX];
-    rt_uint32_t counter;
+    char             name[RT_NAME_MAX];
+    rt_uint32_t      counter;
 #endif
 };
 
@@ -62,10 +73,10 @@ struct rt_irq_desc {
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
-rt_isr_handler_t rt_hw_interrupt_install(int vector,
-                             rt_isr_handler_t  handler,
-                             void *param,
-                             char *name);
+rt_isr_handler_t rt_hw_interrupt_install(int              vector,
+                                         rt_isr_handler_t handler,
+                                         void            *param,
+                                         char            *name);
 
 rt_base_t rt_hw_interrupt_disable(void);
 void rt_hw_interrupt_enable(rt_base_t level);
@@ -85,7 +96,7 @@ void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
 /*
  * Exception interfaces
  */
-void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context));
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
 
 #ifdef __cplusplus
 }

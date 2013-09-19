@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -210,7 +220,7 @@ static int zone_page_cnt;
 #define PAGE_TYPE_FREE      0x00
 #define PAGE_TYPE_SMALL     0x01
 #define PAGE_TYPE_LARGE     0x02
-struct memusage 
+struct memusage
 {
     rt_uint32_t type:2 ;        /* page type */
     rt_uint32_t size:30;        /* pages allocated or offset from zone */
@@ -358,7 +368,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 
         return;
     }
-    
+
     limsize = heap_end - heap_start;
     npages  = limsize / RT_MM_PAGE_SIZE;
 
@@ -795,7 +805,7 @@ void rt_free(void *ptr)
 #ifdef RT_USING_MODULE
     if(rt_module_self() != RT_NULL)
     {
-        rt_module_free(rt_module_self(), ptr); 
+        rt_module_free(rt_module_self(), ptr);
 
         return;
     }

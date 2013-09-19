@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -135,7 +145,14 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
             serial_ringbuffer_init(serial->int_rx);
 
         if (dev->flag & RT_DEVICE_FLAG_INT_TX)
+        {
+			/* not supported yet */
+			/*
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_NULL);
             serial_ringbuffer_init(serial->int_tx);
+            serial->int_sending_flag = RT_FALSE;
+			*/
+        }
 
         if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
         {

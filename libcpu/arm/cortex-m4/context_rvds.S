@@ -11,13 +11,16 @@
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version.
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
+; * 2013-06-18     aozima       add restore MSP feature.
+; * 2013-06-23     aozima       support lazy stack optimized.
 ; */
 
 ;/**
-; * @addtogroup STM32
+; * @addtogroup cortex-m4
 ; */
 ;/*@{*/
 
+SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
@@ -108,10 +111,21 @@ PendSV_Handler   PROC
     MRS     r1, psp                 ; get from thread stack pointer
 
     IF      {FPU} != "SoftVFP"
-	VSTMFD  r1!, {d8 - d15}         ; push FPU register s16~s31
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    VSTMFDEQ  r1!, {d8 - d15}       ; push FPU register s16~s31
     ENDIF
 
-	STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
+    STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
+
+    IF      {FPU} != "SoftVFP"
+    MOV     r4, #0x00               ; flag = 0
+
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    MOVEQ   r4, #0x01               ; flag = 1
+
+    STMFD   r1!, {r4}               ; push flag
+    ENDIF
+
     LDR     r0, [r0]
     STR     r1, [r0]                ; update from thread stack pointer
 
@@ -120,10 +134,15 @@ swtich_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
 
+    IF      {FPU} != "SoftVFP"
+    LDMFD   r1!, {r3}               ; pop flag
+    ENDIF
+
     LDMFD   r1!, {r4 - r11}         ; pop r4 - r11 register
 
     IF      {FPU} != "SoftVFP"
-    VLDMFD  r1!, {d8 - d15}         ; pop FPU register s16~s31
+    CMP     r3,  #0                 ; if(flag_r3 != 0)
+    VLDMFDNE  r1!, {d8 - d15}       ; pop FPU register s16~s31
     ENDIF
 
     MSR     psp, r1                 ; update stack pointer
@@ -131,6 +150,12 @@ swtich_to_thread
 pendsv_exit
     ; restore interrupt
     MSR     PRIMASK, r2
+
+    IF      {FPU} != "SoftVFP"
+    ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
+    CMP     r3,  #0                 ; if(flag_r3 != 0)
+    BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
+    ENDIF
 
     ORR     lr, lr, #0x04
     BX      lr
@@ -146,6 +171,13 @@ rt_hw_context_switch_to    PROC
     ; set to thread
     LDR     r1, =rt_interrupt_to_thread
     STR     r0, [r1]
+
+    IF      {FPU} != "SoftVFP"
+    ; CLEAR CONTROL.FPCA
+    MRS     r2, CONTROL             ; read
+    BIC     r2, #0x04               ; modify
+    MSR     CONTROL, r2             ; write-back
+    ENDIF
 
     ; set from thread to 0
     LDR     r1, =rt_interrupt_from_thread
@@ -168,6 +200,13 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =NVIC_INT_CTRL
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
+
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    NOP
+    MSR     msp, r0
 
     ; enable interrupts at processor level
     CPSIE   I

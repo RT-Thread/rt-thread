@@ -3,9 +3,19 @@
  * This file is part of Device File System in RT-Thread RTOS
  * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -72,6 +82,16 @@ struct dfs_partition
     rt_sem_t lock;  
 };
 
+/* mount table */
+struct dfs_mount_tbl
+{
+	const char	 *device_name;
+	const char   *path;
+	const char   *filesystemtype;
+	unsigned long rwflag;
+	const void   *data;
+};
+
 int dfs_register(const struct dfs_filesystem_operation *ops);
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path);
 rt_err_t dfs_filesystem_get_partition(struct dfs_partition *part,
@@ -88,6 +108,7 @@ int dfs_unmount(const char *specialfile);
 /* extern variable */
 extern const struct dfs_filesystem_operation *filesystem_operation_table[];
 extern struct dfs_filesystem filesystem_table[];
+extern const struct dfs_mount_tbl mount_table[];
 
 extern char working_directory[];
 

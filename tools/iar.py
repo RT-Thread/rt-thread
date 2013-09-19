@@ -37,7 +37,10 @@ def IARAddGroup(parent, name, files, project_path):
         
         file = SubElement(group, 'file')
         file_name = SubElement(file, 'name')
-        file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+        if os.path.isabs(path):
+            file_name.text = path.decode(fs_encoding)
+        else:
+            file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
 def IARWorkspace(target):
     # make an workspace 
@@ -91,7 +94,11 @@ def IARProject(target, script):
         if name.text == 'CCIncludePath2' or name.text == 'newCCIncludePaths':
             for path in paths:
                 state = SubElement(option, 'state')
-                state.text = '$PROJ_DIR$\\' + path
+                if os.path.isabs(path):
+                    state.text = path
+                else:
+                    state.text = '$PROJ_DIR$\\' + path
+
         if name.text == 'CCDefines':
             for define in CPPDEFINES:
                 state = SubElement(option, 'state')

@@ -113,9 +113,6 @@
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
 
-/* TCP sender buffer space*/
-#define RT_LWIP_TCP_SND_BUF	1500
-
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
 

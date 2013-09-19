@@ -350,7 +350,7 @@ static void eth_rx_thread_entry(void* parameter)
     }
 }
 
-void eth_system_device_init()
+int eth_system_device_init(void)
 {
     rt_err_t result = RT_EOK;
 
@@ -382,7 +382,10 @@ void eth_system_device_init()
 
     result = rt_thread_startup(&eth_tx_thread);
     RT_ASSERT(result == RT_EOK);
+	
+	return 0;
 }
+INIT_DEVICE_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
