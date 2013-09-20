@@ -1,0 +1,3 @@
+mmcinfo
+fatload mmc 0 0x80200000 rtthread.bin
+go 0x80200000
