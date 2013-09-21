@@ -166,8 +166,8 @@ static const struct rt_uart_ops am33xx_uart_ops =
 struct serial_ringbuffer uart1_int_rx;
 struct am33xx_uart uart1 =
 {
-    UART1_BASE,
-    UART1_INT,
+    UART0_BASE,
+    UART0_INT,
 };
 struct rt_serial_device serial1;
 
