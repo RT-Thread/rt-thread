@@ -41,7 +41,7 @@ static struct rt_device _log_device;
 static rt_device_t _traceout_device = RT_NULL;
 
 /* define a default lg session. The name is empty. */
-static struct log_trace_session _def_session = {{0}, LOG_TRACE_LEVEL_INFO};
+static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_INFO};
 static struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
 /* there is a default session at least */
 static rt_uint16_t _the_sess_nr = 1;
@@ -272,7 +272,7 @@ static void _lg_fmtout(
 
     _trace_buf[0] = ']';
     ptr = &_trace_buf[1];
-    length = vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
+    length = rt_vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
 
     if (length >= LOG_TRACE_BUFSZ)
         length = LOG_TRACE_BUFSZ - 1;
