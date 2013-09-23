@@ -140,12 +140,12 @@ rt_err_t log_trace_set_device(const char *device_name);
 
 void log_trace_flush(void);
 
+#ifdef RT_USING_DFS
 /** set the backend to file */
 void log_trace_set_file(const char *filename);
 
-/* log trace for NAND Flash */
-void log_trace_nand_init(const char *nand_device);
 void log_trace_file_init(const char *filename);
+#endif /* RT_USING_DFS */
 
 #endif
 
