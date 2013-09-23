@@ -469,6 +469,7 @@ int rt_system_module_init(void);
 void rt_kprintf(const char *fmt, ...);
 #endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
+rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
