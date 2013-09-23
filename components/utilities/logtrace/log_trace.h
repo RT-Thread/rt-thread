@@ -33,7 +33,8 @@
 #define LOG_TRACE_LEVEL_ERROR       0x01
 #define LOG_TRACE_LEVEL_WARNING     0x02
 #define LOG_TRACE_LEVEL_INFO        0x03
-#define LOG_TRACE_LEVEL_DEBUG       0x04
+#define LOG_TRACE_LEVEL_VERBOSE     0x04
+#define LOG_TRACE_LEVEL_DEBUG       0x05
 #define LOG_TRACE_LEVEL_ALL         0x0f
 
 #ifndef LOG_TRACE_LEVEL_DEFAULT
@@ -43,7 +44,8 @@
 #define LOG_TRACE_ERROR             "<1>"
 #define LOG_TRACE_WARNING           "<2>"
 #define LOG_TRACE_INFO              "<3>"
-#define LOG_TRACE_DEBUG             "<4>"
+#define LOG_TRACE_VERBOSE           "<4>"
+#define LOG_TRACE_DEBUG             "<5>"
 
 #define LOG_TRACE_OPT_NOTS          0x10    /* no timestamp */
 #define LOG_TRACE_OPT_LN            0x20    /* terminate the current line */
