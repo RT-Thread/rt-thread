@@ -292,8 +292,6 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     }
     else if (dev->flag & RT_DEVICE_FLAG_DMA_TX)
     {
-        const void *data_ptr = RT_NULL;
-        rt_size_t data_size = 0;
         rt_base_t level;
         rt_err_t result;
         
@@ -307,11 +305,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
             {
                 serial->dma_flag = RT_TRUE;
                 rt_hw_interrupt_enable(level);
-            
-                if (RT_EOK == rt_data_queue_pop(&(serial->tx_dq), &data_ptr, &data_size, 0))
-                {
-                    serial->ops->dma_transmit(serial, data_ptr, data_size);
-                }
+                serial->ops->dma_transmit(serial, buffer, size);
             }
             else
                 rt_hw_interrupt_enable(level);
@@ -449,11 +443,13 @@ void rt_hw_serial_dma_tx_isr(struct rt_serial_device *serial)
 {
     const void *data_ptr;
     rt_size_t data_size;
+    const void *last_data_ptr;
 
-    if (RT_EOK == rt_data_queue_pop(&(serial->tx_dq), &data_ptr, &data_size, 0))
+    rt_data_queue_pop(&(serial->tx_dq), &last_data_ptr, &data_size, 0);
+    if (RT_EOK == rt_data_queue_peak(&(serial->tx_dq), &data_ptr, &data_size))
     {
         /* transmit next data node */
-        serial->ops->dma_transmit(serial, data_ptr, data_size);
+         serial->ops->dma_transmit(serial, data_ptr, data_size);
     }
     else
     {
@@ -463,6 +459,6 @@ void rt_hw_serial_dma_tx_isr(struct rt_serial_device *serial)
     /* invoke callback */
     if (serial->parent.tx_complete != RT_NULL)
     {
-        serial->parent.tx_complete(&serial->parent, RT_NULL);
+        serial->parent.tx_complete(&serial->parent, (void*)last_data_ptr);
     }
 }
