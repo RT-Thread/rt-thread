@@ -121,6 +121,9 @@ void log_trace_set_file(const char *filename)
     log_trace_file_init(filename);
     log_trace_set_device("logfile");
 }
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(log_trace_set_file, log_file, set output filename of log trace);
+#endif
 
 #endif /* RT_USING_DFS */
