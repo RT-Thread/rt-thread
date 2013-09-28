@@ -747,7 +747,7 @@ int jffs2_open(cyg_mtab_entry * mte, cyg_dir dir, const char *name,
         }
 
 	// Initialise the file object
-	file->f_flag |= mode & CYG_FILE_MODE_MASK;
+	file->f_flag = mode & CYG_FILE_MODE_MASK;
 	file->f_type = CYG_FILE_TYPE_FILE;
 	file->f_ops = &jffs2_fileops;
 	file->f_offset = (mode & O_APPEND) ? node->i_size : 0;
@@ -1065,6 +1065,7 @@ static int jffs2_opendir(cyg_mtab_entry * mte, cyg_dir dir, const char *name,
 	// Initialize the file object, setting the f_ops field to a
 	// special set of file ops.
 
+	file->f_flag = 0;
 	file->f_type = CYG_FILE_TYPE_FILE;
 	file->f_ops = &jffs2_dirops;
 	file->f_offset = 0;
