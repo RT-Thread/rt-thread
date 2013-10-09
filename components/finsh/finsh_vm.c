@@ -1,5 +1,5 @@
 /*
- *  Virtual machine finsh shell.
+ *  Virtual machine of finsh shell.
  *
  * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
  *
@@ -43,13 +43,13 @@ u_char*				finsh_pc;		/* PC */
 /* syscall list, for dynamic system call register */
 struct finsh_syscall_item* global_syscall_list = NULL;
 
-// #define VM_DISASSEMBLE
+// #define FINSH_VM_DISASSEMBLE
 void finsh_vm_run()
 {
 	u_char op;
 
-	/* if want to disassemble the bytecode, please define VM_DISASSEMBLE */
-#ifdef VM_DISASSEMBLE
+	/* if you want to disassemble the byte code, please define FINSH_VM_DISASSEMBLE */
+#ifdef FINSH_VM_DISASSEMBLE
 	void finsh_disassemble();
 	finsh_disassemble();
 #endif
@@ -146,7 +146,7 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name)
 	return NULL;
 }
 
-#ifdef VM_DISASSEMBLE
+#ifdef FINSH_VM_DISASSEMBLE
 void finsh_disassemble()
 {
 	u_char *pc, op;
