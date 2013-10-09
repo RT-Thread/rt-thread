@@ -40,7 +40,7 @@ def VS_AddHeadFilesGroup(program, elem, project_path):
 def VSProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
     
-    tree = etree.parse('template.vcproj')
+    tree = etree.parse('template_vs2005.vcproj')
     root = tree.getroot()
     
     out = file(target, 'wb')

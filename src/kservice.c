@@ -718,10 +718,10 @@ static char *print_number(char *buf,
     return buf;
 }
 
-static rt_int32_t vsnprintf(char       *buf,
-                            rt_size_t   size,
-                            const char *fmt,
-                            va_list     args)
+rt_int32_t rt_vsnprintf(char       *buf,
+                        rt_size_t   size,
+                        const char *fmt,
+                        va_list     args)
 {
 #ifdef RT_PRINTF_LONGLONG
     unsigned long long num;
@@ -976,6 +976,7 @@ static rt_int32_t vsnprintf(char       *buf,
     */
     return str - buf;
 }
+RTM_EXPORT(rt_vsnprintf);
 
 /**
  * This function will fill a formatted string to buffer
@@ -990,7 +991,7 @@ rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    n = vsnprintf(buf, size, fmt, args);
+    n = rt_vsnprintf(buf, size, fmt, args);
     va_end(args);
 
     return n;
@@ -1006,7 +1007,7 @@ RTM_EXPORT(rt_snprintf);
  */
 rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
-    return vsnprintf(buf, (rt_size_t) -1, format, arg_ptr);
+    return rt_vsnprintf(buf, (rt_size_t) -1, format, arg_ptr);
 }
 RTM_EXPORT(rt_vsprintf);
 
@@ -1114,7 +1115,7 @@ void rt_kprintf(const char *fmt, ...)
      * large excluding the terminating null byte. If the output string
      * would be larger than the rt_log_buf, we have to adjust the output
      * length. */
-    length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
+    length = rt_vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
     if (length > RT_CONSOLEBUF_SIZE - 1)
         length = RT_CONSOLEBUF_SIZE - 1;
 #ifdef RT_USING_DEVICE
