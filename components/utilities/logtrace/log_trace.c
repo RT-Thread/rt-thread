@@ -93,6 +93,9 @@ static struct log_trace_session* _lg_lookup_session(log_trace_idnum_t num)
     last  = _the_sess_nr;
     do {
         unsigned int i = (first + last)/2;
+
+        RT_ASSERT(_the_sessions[i]);
+
         if (_the_sessions[i]->id.num == num)
         {
             /* there is no need to protect the _cache because write a pointer
@@ -135,7 +138,8 @@ rt_err_t log_trace_register_session(struct log_trace_session *session)
     {
         if (_the_sessions[i]->id.num > session->id.num)
         {
-            rt_memmove(_the_sessions+i, _the_sessions+i+1, _the_sess_nr-i);
+            rt_memmove(_the_sessions+i+1, _the_sessions+i,
+                       (_the_sess_nr-i)*sizeof(&_the_sessions[0]));
             _the_sessions[i] = session;
             break;
         }
