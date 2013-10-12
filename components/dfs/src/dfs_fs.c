@@ -326,9 +326,22 @@ int dfs_mount(const char   *device_name,
     /* release filesystem_table lock */
     dfs_unlock();
 
-    /* open device, but do not check the status of device */
     if (dev_id != RT_NULL)
-        rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR);
+    {
+        if (rt_device_open(fs->dev_id,
+                           RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+        {
+            dfs_lock();
+            /* clear filesystem table entry */
+            rt_memset(fs, 0, sizeof(struct dfs_filesystem));
+            dfs_unlock();
+
+            rt_free(fullpath);
+            rt_set_errno(-DFS_STATUS_EIO);
+
+            return -1;
+        }
+    }
 
     /* there is no mount implementation */
     if (ops->mount == RT_NULL)
