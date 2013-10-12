@@ -133,6 +133,7 @@ while (0)
 #define RT_ASSERT(EX)
 #define RT_DEBUG_LOG(type, message)
 #define RT_DEBUG_NOT_IN_INTERRUPT
+#define RT_DEBUG_IN_THREAD_CONTEXT
 
 #endif /* RT_DEBUG */
 
