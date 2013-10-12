@@ -307,7 +307,7 @@ int dfs_mount(const char   *device_name,
         else if (strcmp(filesystem_table[index].path, path) == 0)
         {
             rt_set_errno(-DFS_STATUS_EINVAL);
-            goto err1;
+            goto out_unlock;
         }
     }
 
@@ -315,7 +315,7 @@ int dfs_mount(const char   *device_name,
     if (free_index == DFS_FILESYSTEMS_MAX)
     {
         rt_set_errno(-DFS_STATUS_ENOSPC);
-        goto err1;
+        goto out_unlock;
     }
 
     /* register file system */
@@ -365,7 +365,7 @@ int dfs_mount(const char   *device_name,
 
     return 0;
 
-err1:
+out_unlock:
     dfs_unlock();
     if (fullpath != RT_NULL)
         rt_free(fullpath);
@@ -401,7 +401,7 @@ int dfs_unmount(const char *specialfile)
         fs->ops->unmount == RT_NULL ||
         fs->ops->unmount(fs) < 0)
     {
-        goto err1;
+        goto out_unlock;
     }
 
     /* close device, but do not check the status of device */
@@ -419,7 +419,7 @@ int dfs_unmount(const char *specialfile)
 
     return 0;
 
-err1:
+out_unlock:
     dfs_unlock();
     rt_free(fullpath);
 
