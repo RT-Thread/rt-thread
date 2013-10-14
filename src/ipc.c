@@ -777,6 +777,9 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     need_schedule = RT_FALSE;
 
+    /* only thread could release mutex because we need test the ownership */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
     /* get current thread */
     thread = rt_thread_self();
 
