@@ -128,7 +128,7 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module))
  *
  * This function will initialize system module
  */
-void rt_system_module_init(void)
+int rt_system_module_init(void)
 {
 }
 
