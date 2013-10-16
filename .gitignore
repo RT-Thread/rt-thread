@@ -9,5 +9,11 @@
 *.pdb
 *.idb
 *.ilk
+*.vcproj
+*.vcxproj
+*.filters
+*.user
+*.sln
+Debug
 build
 *~
