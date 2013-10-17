@@ -29,6 +29,7 @@
  * 2012-11-23     Bernard      fix IAR compiler error.
  * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
+ * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  */
 
 #include <rtthread.h>
@@ -1125,7 +1126,11 @@ void rt_kprintf(const char *fmt, ...)
     }
     else
     {
+        rt_uint16_t old_flag = _console_device->flag;
+
+        _console_device->flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
+        _console_device->flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
