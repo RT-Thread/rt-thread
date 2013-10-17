@@ -80,19 +80,6 @@ char *strdup(const char *s)
 
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 #include <dfs_posix.h>
-#ifndef MSH_USING_LINUX
-const char* finsh_get_prompt()
-{
-	#define _PROMPT "finsh "
-	static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};
-	
-	/* get current working directory */
-	getcwd(&finsh_prompt[6], RT_CONSOLEBUF_SIZE - 8);
-	strcat(finsh_prompt, ">");
-
-	return finsh_prompt;
-}
-#else
 const char* finsh_get_prompt()
 {
 	#define _PROMPT "[RTT @ FINSH "
@@ -103,7 +90,6 @@ const char* finsh_get_prompt()
 	strcat(finsh_prompt, "] $ ");
 	return finsh_prompt;
 }
-#endif
 #endif
 
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
@@ -194,26 +180,6 @@ rt_uint32_t finsh_get_echo()
 	return shell->echo_mode;
 }
 
-#ifndef MSH_USING_LINUX
-void finsh_auto_complete(char* prefix)
-{
-	extern void list_prefix(char* prefix);
-
-	rt_kprintf("\n");
-#ifdef FINSH_USING_MSH
-	if (msh_is_used() == RT_TRUE)
-	{
-		msh_auto_complete(prefix);
-	}
-	else 
-#endif
-	{
-		list_prefix(prefix);
-	}
-
-	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
-}
-#else
 void finsh_auto_complete(char* prefix)
 {
 	extern void list_prefix(char* prefix);
@@ -231,7 +197,6 @@ void finsh_auto_complete(char* prefix)
 	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 
 }
-#endif
 
 void finsh_run_line(struct finsh_parser* parser, const char *line)
 {

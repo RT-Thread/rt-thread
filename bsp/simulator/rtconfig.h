@@ -117,7 +117,6 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
-#define MSH_USING_LINUX
 
 /* SECTION: device file system */
 #define RT_USING_DFS

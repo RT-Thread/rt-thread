@@ -209,7 +209,6 @@ int cmd_free(int argc, char** argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, "show the memory usage in the system");
 
 // --------------------------------------------------------------------------
-#ifdef MSH_USING_LINUX
 int cli_list(int argc, char **argv)
 {
 	return msh_help(argc, argv);
@@ -225,4 +224,3 @@ FINSH_FUNCTION_EXPORT_ALIAS(cli_clear, __cmd_cls, "none");
 #endif
 
 
-#endif
