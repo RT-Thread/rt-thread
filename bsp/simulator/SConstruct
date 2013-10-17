@@ -45,7 +45,6 @@ if rtconfig.PLATFORM == 'cl':
     _DEBUG
     _CONSOLE
     MSVC
-    _TIME_T_DEFINED
     ''')
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
