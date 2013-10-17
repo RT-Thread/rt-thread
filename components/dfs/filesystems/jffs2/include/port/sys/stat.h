@@ -317,10 +317,11 @@ typedef void *cyg_io_handle_t;
 #define S_ISGID  (1<<26)
 
 #if defined(MSVC)
+/* for time_t */
+#include <time.h>
 typedef unsigned long mode_t;
 typedef unsigned int ino_t;
 typedef unsigned int dev_t;
-typedef int time_t;
 typedef long ssize_t;
 #elif defined(__CC_ARM)  
 #define mode_t unsigned long
