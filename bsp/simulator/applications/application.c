@@ -22,7 +22,11 @@
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_LWIP
+#ifdef RT_USING_TAPNETIF
+    tap_netif_hw_init();
+#else
     pcap_netif_hw_init();
+#endif
 #endif
 
     rt_platform_init();

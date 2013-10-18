@@ -26,8 +26,10 @@ if GetDepend('RT_USING_DFS_WINSHAREDIR') == False:
     SrcRemove(src, 'dfs_win32.c')
 if GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['module_win32.c'])
+if GetDepend('RT_USING_TAPNETIF') == False:
+    SrcRemove(src, ['tap_netif.c'])
 if sys.platform[0:5]=="linux": #check whether under linux
-    SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
+    SrcRemove(src, ['module_win32.c', 'dfs_win32.c', 'tap_netif.c'])
 
 group = DefineGroup('Drivers', src, depend = [''],
                     CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)

@@ -136,6 +136,7 @@ int cmd_rm(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, "Remove (unlink) the FILE(s).");
 
+#ifdef DFS_USING_WORKDIR
 int cmd_cd(int argc, char** argv)
 {
     if (argc == 1)
@@ -157,6 +158,7 @@ int cmd_pwd(int argc, char** argv)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_pwd, __cmd_pwd, Print the name of the current working directory.);
+#endif
 
 int cmd_mkdir(int argc, char** argv)
 {

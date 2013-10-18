@@ -164,7 +164,6 @@ static void token_run(struct finsh_token* self)
 		{
 			self->current_token = finsh_token_type_identifier;
 		}
-		return;
 	}
 	else/*It is a operator character.*/
 	{
@@ -331,15 +330,9 @@ static int token_match_name(struct finsh_token* self, const char* str)
 static void token_trim_space(struct finsh_token* self)
 {
 	char ch;
-#if 0	
 	while ( (ch = token_next_char(self)) ==' ' || 
         ch == '\t' || 
-        ch == '\r' ||
-        ch == '\n');
-#else
-	while ( (ch = token_next_char(self)) ==' ' || 
-        ch == '\t');
-#endif
+        ch == '\r');
 
 	token_prev_char(self);
 }

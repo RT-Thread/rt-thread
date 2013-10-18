@@ -410,6 +410,15 @@ struct rt_object_information
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
 
+#ifndef RT_TIMER_SKIP_LIST_LEVEL
+#define RT_TIMER_SKIP_LIST_LEVEL          1
+#endif
+
+/* 1 or 3 */
+#ifndef RT_TIMER_SKIP_LIST_MASK
+#define RT_TIMER_SKIP_LIST_MASK         0x3
+#endif
+
 /**
  * timer structure
  */
@@ -417,7 +426,7 @@ struct rt_timer
 {
     struct rt_object parent;                            /**< inherit from rt_object */
 
-    rt_list_t        list;                              /**< the node of timer list */
+    rt_list_t        row[RT_TIMER_SKIP_LIST_LEVEL];
 
     void (*timeout_func)(void *parameter);              /**< timeout function */
     void            *parameter;                         /**< timeout function's parameter */
@@ -866,6 +875,7 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_RGB444,
     RTGRAPHIC_PIXEL_FORMAT_RGB565,
     RTGRAPHIC_PIXEL_FORMAT_RGB565P,
+    RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
     RTGRAPHIC_PIXEL_FORMAT_RGB666,
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB888

@@ -139,6 +139,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'mdk4':('keil', 'armcc'),
                 'iar':('iar', 'iar'),
                 'vs':('msvc', 'cl'),
+                'vs2012':('msvc', 'cl'),
                 'cb':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
@@ -347,12 +348,14 @@ def DoBuilding(target, objects):
 
     EndBuilding(target, program)
 
+
 def EndBuilding(target, program = None):
     import rtconfig
     from keil import MDKProject
     from keil import MDK4Project
     from iar import IARProject
     from vs import VSProject
+    from vs2012 import VS2012Project
     from codeblocks import CBProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
@@ -376,6 +379,9 @@ def EndBuilding(target, program = None):
 
     if GetOption('target') == 'vs':
         VSProject('project.vcproj', Projects, program)
+
+    if GetOption('target') == 'vs2012':
+        VS2012Project('project.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
         CBProject('project.cbp', Projects, program)

@@ -45,7 +45,6 @@ if rtconfig.PLATFORM == 'cl':
     _DEBUG
     _CONSOLE
     MSVC
-    _TIME_T_DEFINED
     ''')
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
@@ -122,13 +121,12 @@ if GetDepend('RT_USING_MODULE'):
       default=False,
       help='create rthread.def of rtthread.dll on windows')
     if GetOption('def'):
-        if rtconfig.PLATFORM != 'mingw':
-            print "scons error: `--def' can only work with mingw"
-            exit(1)
+        if rtconfig.PLATFORM == 'mingw':
+            env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
+        else:
+            rtconfig.POST_ACTION = 'createdef.py $TARGET rtthread.def'
 
-        env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
-        env.SharedLibrary("rtthread.dll", objs)
-        program = ''
+        program = env.Program(TARGET, objs)
     else:
         if rtconfig.PLATFORM == 'cl':
             objs += ['rtthread.def']

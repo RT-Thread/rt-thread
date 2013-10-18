@@ -31,9 +31,10 @@
 #define LOG_TRACE_LEVEL_MASK        0x0f
 #define LOG_TRACE_LEVEL_NOTRACE     0x00
 #define LOG_TRACE_LEVEL_ERROR       0x01
-#define LOG_TRACE_LEVEL_WARNING     0x02
-#define LOG_TRACE_LEVEL_INFO        0x03
-#define LOG_TRACE_LEVEL_DEBUG       0x04
+#define LOG_TRACE_LEVEL_WARNING     0x03
+#define LOG_TRACE_LEVEL_INFO        0x05
+#define LOG_TRACE_LEVEL_VERBOSE     0x07
+#define LOG_TRACE_LEVEL_DEBUG       0x09
 #define LOG_TRACE_LEVEL_ALL         0x0f
 
 #ifndef LOG_TRACE_LEVEL_DEFAULT
@@ -41,9 +42,10 @@
 #endif
 
 #define LOG_TRACE_ERROR             "<1>"
-#define LOG_TRACE_WARNING           "<2>"
-#define LOG_TRACE_INFO              "<3>"
-#define LOG_TRACE_DEBUG             "<4>"
+#define LOG_TRACE_WARNING           "<3>"
+#define LOG_TRACE_INFO              "<5>"
+#define LOG_TRACE_VERBOSE           "<7>"
+#define LOG_TRACE_DEBUG             "<9>"
 
 #define LOG_TRACE_OPT_NOTS          0x10    /* no timestamp */
 #define LOG_TRACE_OPT_LN            0x20    /* terminate the current line */
@@ -140,12 +142,12 @@ rt_err_t log_trace_set_device(const char *device_name);
 
 void log_trace_flush(void);
 
+#ifdef RT_USING_DFS
 /** set the backend to file */
 void log_trace_set_file(const char *filename);
 
-/* log trace for NAND Flash */
-void log_trace_nand_init(const char *nand_device);
 void log_trace_file_init(const char *filename);
+#endif /* RT_USING_DFS */
 
 #endif
 
