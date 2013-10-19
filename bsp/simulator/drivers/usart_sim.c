@@ -156,6 +156,18 @@ static void * ThreadforKeyGet(void * lpParam)
                 SAVEKEY(0x5b);
                 SAVEKEY(0x42);
             }
+            else if (key == 0x4b)//<- 0x1b 0x5b 0x44
+            {
+                SAVEKEY(0x1b);
+                SAVEKEY(0x5b);
+                SAVEKEY(0x44);
+            }
+            else if (key == 0x4d)//<- 0x1b 0x5b 0x43
+            {
+                SAVEKEY(0x1b);
+                SAVEKEY(0x5b);
+                SAVEKEY(0x43);
+            }
 
             continue;
         }
