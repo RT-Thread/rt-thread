@@ -577,7 +577,7 @@ void rt_soft_timer_check(void)
             n = n->next;
 
             /* remove timer from timer list firstly */
-            _rt_timer_remove(timer);
+            _rt_timer_remove(t);
 
             /* call timeout function */
             t->timeout_func(t->parameter);
