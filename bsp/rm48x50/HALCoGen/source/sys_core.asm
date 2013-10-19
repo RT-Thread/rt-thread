@@ -7,17 +7,14 @@
     .text
     .arm
 
+    .ref _c_int00
+
+    .def     _reset
+    .asmfunc
+_reset
 ;-------------------------------------------------------------------------------
 ; Initialize CPU Registers
-
-    .def     _coreInitRegisters_
-    .asmfunc
-    
-
-_coreInitRegisters_
-
-
-    ; After reset, the CPU is in the Supervisor mode (M = 10011)
+; After reset, the CPU is in the Supervisor mode (M = 10011)
         mov r0, lr
         mov r1, #0x0000
         mov r2, #0x0000
@@ -33,7 +30,7 @@ _coreInitRegisters_
         mov r12, #0x0000
         mov r13, #0x0000
         mrs r1, cpsr
-        msr spsr_cxsf, r1 
+        msr spsr_cxsf, r1
         ; Switch to FIQ mode (M = 10001)
         cps #17
         mov lr, r0
@@ -43,27 +40,27 @@ _coreInitRegisters_
         mov r11, #0x0000
         mov r12, #0x0000
         mrs r1, cpsr
-        msr spsr_cxsf, r1 
+        msr spsr_cxsf, r1
         ; Switch to IRQ mode (M = 10010)
         cps #18
         mov lr, r0
         mrs r1,cpsr
-        msr spsr_cxsf, r1         
+        msr spsr_cxsf, r1
         ; Switch to Abort mode (M = 10111)
         cps #23
         mov lr, r0
         mrs r1,cpsr
-        msr spsr_cxsf, r1         
+        msr spsr_cxsf, r1
         ; Switch to Undefined Instruction Mode (M = 11011)
         cps #27
         mov lr, r0
         mrs r1,cpsr
-        msr spsr_cxsf, r1         
+        msr spsr_cxsf, r1
         ; Switch to System Mode ( Shares User Mode registers ) (M = 11111)
         cps #31
         mov lr, r0
         mrs r1,cpsr
-        msr spsr_cxsf, r1         
+        msr spsr_cxsf, r1
         ; Switch back to Supervisor Mode (M = 10011)
         cps #19
 
@@ -94,27 +91,9 @@ _coreInitRegisters_
         fmdrr d14,        r1,     r1
         fmdrr d15,        r1,     r1
         .endif
-        bl    next1
-next1
-        bl    next2
-next2
-        bl    next3
-next3
-        bl    next4
-next4
-        bx    r0
-
-    .endasmfunc
-
 
 ;-------------------------------------------------------------------------------
 ; Initialize Stack Pointers
-
-    .def     _coreInitStackPointer_
-    .asmfunc
-
-_coreInitStackPointer_
-
         cps   #17
         ldr   sp,       fiqSp
         cps   #18
@@ -127,8 +106,19 @@ _coreInitStackPointer_
         ldr   sp,       userSp
         cps   #19
         ldr   sp,       svcSp
-        bx    lr
 
+        bl    next1
+next1
+        bl    next2
+next2
+        bl    next3
+next3
+        bl    next4
+next4
+        ldr  lr, int00ad
+        bx   lr
+
+int00ad .word _c_int00
 userSp  .word 0x08000000+0x00001000
 svcSp   .word 0x08000000+0x00001000+0x00000100
 fiqSp   .word 0x08000000+0x00001000+0x00000100+0x00000100
@@ -137,90 +127,6 @@ abortSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100
 undefSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100+0x00000100
 
     .endasmfunc
-
-;-------------------------------------------------------------------------------
-; Get CPSR Value
-
-    .def     _getCPSRValue_
-    .asmfunc
-
-_getCPSRValue_
-
-        mrs   r0, CPSR
-        bx    lr
-
-    .endasmfunc
-    
-;-------------------------------------------------------------------------------
-; Take CPU to IDLE state
-
-    .def     _gotoCPUIdle_
-    .asmfunc
-
-_gotoCPUIdle_
-
-        WFI
-        nop
-        nop
-        nop
-        nop
-        bx    lr
-        
-    .endasmfunc
-    
-
-;-------------------------------------------------------------------------------
-; Enable VFP Unit
-
-    .def     _coreEnableVfp_
-    .asmfunc
-
-_coreEnableVfp_
-
-        mrc   p15,     #0x00,      r0,       c1, c0, #0x02
-        orr   r0,      r0,         #0xF00000
-        mcr   p15,     #0x00,      r0,       c1, c0, #0x02
-        mov   r0,      #0x40000000
-        fmxr  fpexc,   r0
-        bx    lr
-
-    .endasmfunc
-
-;-------------------------------------------------------------------------------
-; Enable Event Bus Export
-
-    .def     _coreEnableEventBusExport_
-    .asmfunc
-
-_coreEnableEventBusExport_
-
-        stmfd sp!, {r0}
-        mrc   p15, #0x00, r0,         c9, c12, #0x00
-        orr   r0,  r0,    #0x10
-        mcr   p15, #0x00, r0,         c9, c12, #0x00
-        ldmfd sp!, {r0}
-        bx    lr
-
-    .endasmfunc
-
-
-;-------------------------------------------------------------------------------
-; Disable Event Bus Export
-
-    .def     _coreDisableEventBusExport_
-    .asmfunc
-
-_coreDisableEventBusExport_
-
-        stmfd sp!, {r0}
-        mrc   p15, #0x00, r0,         c9, c12, #0x00
-        bic   r0,  r0,    #0x10
-        mcr   p15, #0x00, r0,         c9, c12, #0x00
-        ldmfd sp!, {r0}        
-        bx    lr
-
-    .endasmfunc
-
 
 ;-------------------------------------------------------------------------------
 ; Enable RAM ECC Support
@@ -234,7 +140,7 @@ _coreEnableRamEcc_
         mrc   p15, #0x00, r0,         c1, c0,  #0x01
         orr   r0,  r0,    #0x0C000000
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -252,7 +158,7 @@ _coreDisableRamEcc_
         mrc   p15, #0x00, r0,         c1, c0,  #0x01
         bic   r0,  r0,    #0x0C000000
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -271,7 +177,7 @@ _coreEnableFlashEcc_
         orr   r0,  r0,    #0x02000000
         dmb
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -289,29 +195,10 @@ _coreDisableFlashEcc_
         mrc   p15, #0x00, r0,         c1, c0,  #0x01
         bic   r0,  r0,    #0x02000000
         mcr   p15, #0x00, r0,         c1, c0,  #0x01
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
-
-
-;-------------------------------------------------------------------------------
-; Enable Offset via Vic controller
-
-    .def     _coreEnableIrqVicOffset_
-    .asmfunc
-
-_coreEnableIrqVicOffset_
-
-        stmfd sp!, {r0}
-        mrc   p15, #0, r0,         c1, c0,  #0
-        orr   r0,  r0,    #0x01000000
-        mcr   p15, #0, r0,         c1, c0,  #0
-        ldmfd sp!, {r0}        
-        bx    lr
-
-    .endasmfunc
-
 
 ;-------------------------------------------------------------------------------
 ; Get data fault status register
@@ -338,7 +225,7 @@ _coreClearDataFault_
         stmfd sp!, {r0}
         mov   r0,  #0
         mcr   p15, #0, r0, c5, c0,  #0
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -369,7 +256,7 @@ _coreClearInstructionFault_
         stmfd sp!, {r0}
         mov   r0,  #0
         mcr   p15, #0, r0, c5, c0, #1
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -400,7 +287,7 @@ _coreClearDataFaultAddress_
         stmfd sp!, {r0}
         mov   r0,  #0
         mcr   p15, #0, r0, c6, c0,  #0
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -431,7 +318,7 @@ _coreClearInstructionFaultAddress_
         stmfd sp!, {r0}
         mov   r0,  #0
         mcr   p15, #0, r0, c6, c0, #2
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -462,7 +349,7 @@ _coreClearAuxiliaryDataFault_
         stmfd sp!, {r0}
         mov   r0,  #0
         mcr   p15, #0, r0, c5, c1, #0
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
@@ -492,64 +379,11 @@ _coreClearAuxiliaryInstructionFault_
         stmfd sp!, {r0}
         mov   r0,  #0
         mrc   p15, #0, r0, c5, c1, #1
-        ldmfd sp!, {r0}        
+        ldmfd sp!, {r0}
         bx    lr
 
     .endasmfunc
 
-;-------------------------------------------------------------------------------
-; Disable interrupts - R4 IRQ & FIQ
-
-        .def _disable_interrupt_
-        .asmfunc
-        
-_disable_interrupt_
-
-        cpsid if
-        bx    lr
-        
-        .endasmfunc
-
-;-------------------------------------------------------------------------------
-; Disable FIQ interrupt
-
-        .def _disable_FIQ_interrupt_
-        .asmfunc
-        
-_disable_FIQ_interrupt_
-
-        cpsid f
-        bx    lr
-        
-        .endasmfunc
-
-;-------------------------------------------------------------------------------
-; Disable FIQ interrupt
-
-        .def _disable_IRQ_interrupt_    
-        .asmfunc
-        
-_disable_IRQ_interrupt_
-
-        cpsid i
-        bx    lr
-        
-        .endasmfunc
-        
-;-------------------------------------------------------------------------------
-; Enable interrupts - R4 IRQ & FIQ
-
-       .def _enable_interrupt_
-       .asmfunc
-
-_enable_interrupt_
-
-        cpsie if
-        bx    lr
-        
-        .endasmfunc
-
-        
 ;-------------------------------------------------------------------------------
 ; Clear ESM CCM errorss
 
@@ -558,7 +392,7 @@ _enable_interrupt_
 
 _esmCcmErrorsClear_
 
-        stmfd sp!, {r0-r2}        
+        stmfd sp!, {r0-r2}
         ldr   r0, ESMSR1_REG    ; load the ESMSR1 status register address
         ldr   r2, ESMSR1_ERR_CLR
         str   r2, [r0]         ; clear the ESMSR1 register
@@ -581,7 +415,7 @@ _esmCcmErrorsClear_
         ldr   r0, CCMR4_STAT_REG    ; load the CCMR4 status register address
         ldr   r2, CCMR4_ERR_CLR
         str   r2, [r0]         ; clear the CCMR4 status register
-        ldmfd sp!, {r0-r2}        
+        ldmfd sp!, {r0-r2}
         bx    lr
 
 ESMSR1_REG        .word 0xFFFFF518
@@ -598,16 +432,16 @@ ESMSSR2_ERR_CLR   .word 0x00000004
 VIM_INT_CLR       .word 0x00000001
 VIM_INTREQ        .word 0xFFFFFE20
 
-        .endasmfunc    
+        .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Work Around for Errata CORTEX-R4#57:
-; 
-; Errata Description: 
+;
+; Errata Description:
 ;            Conditional VMRS APSR_Nzcv, FPSCR May Evaluate With Incorrect Flags
 ; Workaround:
-;            Disable out-of-order single-precision floating point 
-;            multiply-accumulate instruction completion 
+;            Disable out-of-order single-precision floating point
+;            multiply-accumulate instruction completion
 
         .def     _errata_CORTEXR4_57_
         .asmfunc
@@ -615,22 +449,22 @@ VIM_INTREQ        .word 0xFFFFFE20
 _errata_CORTEXR4_57_
 
         push {r0}
-        mrc p15, #0, r0, c15, c0, #0 ; Read Secondary Auxiliary Control Register 
-        orr r0, r0, #0x10000         ; Set BIT 16 (Set DOOFMACS) 
-        mcr p15, #0, r0, c15, c0, #0 ; Write Secondary Auxiliary Control Register 
+        mrc p15, #0, r0, c15, c0, #0 ; Read Secondary Auxiliary Control Register
+        orr r0, r0, #0x10000         ; Set BIT 16 (Set DOOFMACS)
+        mcr p15, #0, r0, c15, c0, #0 ; Write Secondary Auxiliary Control Register
         pop {r0}
         bx lr
     .endasmfunc
 
 ;-------------------------------------------------------------------------------
 ; Work Around for Errata CORTEX-R4#66:
-; 
-; Errata Description:            
-;            Register Corruption During A Load-Multiple Instruction At 
+;
+; Errata Description:
+;            Register Corruption During A Load-Multiple Instruction At
 ;            an Exception Vector
 ; Workaround:
-;            Disable out-of-order completion for divide instructions in 
-;            Auxiliary Control register 
+;            Disable out-of-order completion for divide instructions in
+;            Auxiliary Control register
 
         .def     _errata_CORTEXR4_66_
         .asmfunc
@@ -639,11 +473,32 @@ _errata_CORTEXR4_66_
 
         push {r0}
         mrc p15, #0, r0, c1, c0, #1 ; Read Auxiliary Control register
-          orr r0, r0, #0x80           ; Set BIT 7 (Disable out-of-order completion 
+          orr r0, r0, #0x80           ; Set BIT 7 (Disable out-of-order completion
                                     ; for divide instructions.)
            mcr p15, #0, r0, c1, c0, #1 ; Write Auxiliary Control register
-        pop {r0}    
+        pop {r0}
         bx lr
+    .endasmfunc
+
+    .def     turnon_VFP
+    .asmfunc
+turnon_VFP
+        ; Enable FPV
+        STMDB sp!,     {r0}
+        fmrx  r0,      fpexc
+        orr   r0,      r0,   #0x40000000
+        fmxr  fpexc,   r0
+        LDMIA sp!,     {r0}
+        subs  pc,      lr,   #4
+    .endasmfunc
+
+    .def	_dabort
+    .asmfunc
+
+_dabort
+		stmfd	r13!, {r0 - r12, lr}
+		ldmfd	r13!, {r0 - r12, lr}
+		subs	pc, lr, #8			
     .endasmfunc
 ;-------------------------------------------------------------------------------
 ; C++ construct table pointers
@@ -655,6 +510,6 @@ __TI_PINIT_Base  .long SHT$$INIT_ARRAY$$Base
 __TI_PINIT_Limit .long SHT$$INIT_ARRAY$$Limit
 
 
-    
+
 ;-------------------------------------------------------------------------------
 

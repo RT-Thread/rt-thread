@@ -282,7 +282,7 @@ void systemInit(void)
 	/* Run eFuse controller start-up checks and start eFuse controller ECC self-test.
 	 * This includes a check for the eFuse controller error outputs to be stuck-at-zero.
 	 */
-	efcCheck();
+	//efcCheck();
 	
 /* USER CODE BEGIN (17) */
 /* USER CODE END */
@@ -294,17 +294,18 @@ void systemInit(void)
 /* USER CODE END */
 
 	/* Configure device-level multiplexing and I/O multiplexing */
-	muxInit();
+	//muxInit();
 	
 /* USER CODE BEGIN (19) */
 /* USER CODE END */
 
+#if 0
 	/* Wait for eFuse controller self-test to complete and check results */
 	if ((!checkefcSelfTest()) !=0U)							/* eFuse controller ECC logic self-test failed */
 	{
 		efcClass2Error();								/* device operation is not reliable */
 	}
-	
+#endif
 /* USER CODE BEGIN (20) */
 /* USER CODE END */
 
