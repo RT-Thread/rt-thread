@@ -42,6 +42,7 @@ typedef void (*handler_fptr)(const uint8 * in, uint8 * out);
 
 /*SAFETYMCUSW 218 S MR:20.2 <REVIEWED> "Functions from library" */
 
+#ifdef __TI_COMPILER_VERSION__
 #pragma WEAK(__TI_Handler_Table_Base)
 #pragma WEAK(__TI_Handler_Table_Limit)
 #pragma WEAK(__TI_CINIT_Base)
@@ -54,6 +55,7 @@ extern uint32   __TI_CINIT_Limit;
 extern uint32   __TI_PINIT_Base;
 extern uint32   __TI_PINIT_Limit;
 extern uint32 * __binit__;
+#endif
 
 extern void main(void);
 
@@ -349,6 +351,9 @@ void _c_int00(void)
 /* USER CODE BEGIN (75) */
 /* USER CODE END */
 
+#ifdef __GNUC__
+    data_init();
+#elif defined(__TI_COMPILER_VERSION__)
     /* initialize copy table */
     if ((uint32 *)&__binit__ != (uint32 *)0xFFFFFFFFU)
     {
@@ -384,7 +389,7 @@ void _c_int00(void)
             p();
         }
     }
-
+#endif
 /* USER CODE BEGIN (76) */
 /* USER CODE END */
     /* call the application */
