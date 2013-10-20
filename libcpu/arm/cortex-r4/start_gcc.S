@@ -445,8 +445,38 @@ turnon_VFP:
         LDMIA sp!,     {r0}
         subs  pc,      lr,   #4
 
-    .globl	_dabort
-_dabort:
-		stmfd	r13!, {r0 - r12, lr}
-		ldmfd	r13!, {r0 - r12, lr}
-		subs	pc, lr, #8			
+    .macro push_svc_reg
+        sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
+        stmia   sp, {r0 - r12}          @/* Calling r0-r12                  */
+        mov     r0, sp
+        mrs     r6, spsr                @/* Save CPSR                       */
+        str     lr, [r0, #15*4]         @/* Push PC                         */
+        str     r6, [r0, #16*4]         @/* Push CPSR                       */
+        cps     #Mode_SVC
+        str     sp, [r0, #13*4]         @/* Save calling SP                 */
+        str     lr, [r0, #14*4]         @/* Save calling PC                 */
+    .endm
+
+    .globl	vector_svc
+vector_svc:
+        push_svc_reg
+        bl      rt_hw_trap_svc
+		b       .
+
+    .globl	vector_pabort
+vector_pabort:
+        push_svc_reg
+        bl      rt_hw_trap_pabt
+		b       .
+
+    .globl	vector_dabort
+vector_dabort:
+        push_svc_reg
+        bl      rt_hw_trap_dabt
+		b       .
+
+    .globl	vector_resv
+vector_resv:
+        push_svc_reg
+        bl      rt_hw_trap_resv
+		b       .

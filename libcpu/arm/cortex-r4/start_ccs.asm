@@ -492,14 +492,54 @@ turnon_VFP
         subs  pc,      lr,   #4
     .endasmfunc
 
-    .def	_dabort
-    .asmfunc
+_push_svc_reg    .macro
+        sub     sp, sp, #17 * 4         ;/* Sizeof(struct rt_hw_exp_stack)  */
+        stmia   sp, {r0 - r12}          ;/* Calling r0-r12                  */
+        mov     r0, sp
+        mrs     r6, spsr                ;/* Save CPSR                       */
+        str     lr, [r0, #15*4]         ;/* Push PC                         */
+        str     r6, [r0, #16*4]         ;/* Push CPSR                       */
+        cps     #0x13
+        str     sp, [r0, #13*4]         ;/* Save calling SP                 */
+        str     lr, [r0, #14*4]         ;/* Save calling PC                 */
+	.endm
 
-_dabort
-		stmfd	r13!, {r0 - r12, lr}
-		ldmfd	r13!, {r0 - r12, lr}
-		subs	pc, lr, #8			
+	.ref    rt_hw_trap_svc
+    .def	vector_svc
+    .asmfunc
+vector_svc:
+        _push_svc_reg
+        bl      rt_hw_trap_svc
+		sub     pc, pc, #-4
     .endasmfunc
+
+	.ref    rt_hw_trap_pabt
+    .def	vector_pabort
+    .asmfunc
+vector_pabort:
+        _push_svc_reg
+        bl      rt_hw_trap_pabt
+		sub     pc, pc, #-4
+    .endasmfunc
+
+	.ref    rt_hw_trap_dabt
+    .def	vector_dabort
+    .asmfunc
+vector_dabort:
+        _push_svc_reg
+        bl      rt_hw_trap_dabt
+		sub     pc, pc, #-4
+    .endasmfunc
+
+	.ref    rt_hw_trap_resv
+    .def	vector_resv
+    .asmfunc
+vector_resv:
+        _push_svc_reg
+        bl      rt_hw_trap_resv
+		sub     pc, pc, #-4
+    .endasmfunc
+
 ;-------------------------------------------------------------------------------
 ; C++ construct table pointers
 
@@ -509,7 +549,4 @@ _dabort
 __TI_PINIT_Base  .long SHT$$INIT_ARRAY$$Base
 __TI_PINIT_Limit .long SHT$$INIT_ARRAY$$Limit
 
-
-
 ;-------------------------------------------------------------------------------
-

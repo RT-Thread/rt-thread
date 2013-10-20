@@ -5,10 +5,9 @@
 #define VFP_DATA_NR 32
 #endif
 
-/* the stack without VFP registers */
-struct rt_hw_base_stack
+/* the exception stack without VFP registers */
+struct rt_hw_exp_stack
 {
-	unsigned long cpsr;
 	unsigned long r0;
 	unsigned long r1;
 	unsigned long r2;
@@ -22,8 +21,10 @@ struct rt_hw_base_stack
 	unsigned long r10;
 	unsigned long fp;
 	unsigned long ip;
+	unsigned long sp;
 	unsigned long lr;
 	unsigned long pc;
+	unsigned long cpsr;
 };
 
 #define USERMODE    0x10

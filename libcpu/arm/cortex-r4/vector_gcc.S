@@ -11,8 +11,11 @@
 @ import reference for interrupt routines
 
     .globl _reset
-    .globl _dabort
     .globl turnon_VFP
+    .globl vector_svc
+    .globl vector_pabort
+    .globl vector_dabort
+    .globl vector_resv
     .globl IRQ_Handler
 
 
@@ -20,12 +23,9 @@
 system_vectors:
         b   _reset
         b   turnon_VFP
-svcEntry:
-        b   svcEntry
-prefetchEntry:
-        b   prefetchEntry
-        b   _dabort
-reservedEntry:
-        b   reservedEntry
+        b   vector_svc
+        b   vector_pabort
+        b   vector_dabort
+        b   vector_resv
         b   IRQ_Handler
         ldr pc,[pc,#-0x1b0]
