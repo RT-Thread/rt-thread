@@ -87,6 +87,9 @@ void rtthread_startup(void)
 	finsh_set_device( FINSH_DEVICE_NAME );
 #endif
 
+    /* initialize timer */
+    rt_system_timer_init();
+
     /* initialize timer thread */
     rt_system_timer_thread_init();
 
