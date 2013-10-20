@@ -15,7 +15,11 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include "RM48x50.h"
+
+#include <sys_vim.h>
+#include <system.h>
+
+#include "armv7.h"
 
 #define MAX_HANDLERS	96
 

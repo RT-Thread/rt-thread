@@ -13,7 +13,8 @@
  * 2013-05-24     Grissiom     port to RM48x50
  */
 #include <rtthread.h>
-#include "RM48x50.h"
+
+#include "armv7.h"
 /**
  * @addtogroup RM48x50
  */
@@ -60,7 +61,6 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 #if defined(__TI_VFP_SUPPORT__) || (defined (__VFP_FP__) && !defined(__SOFTFP__))
 #ifndef RT_VFP_LAZY_STACKING
     {
-        #define VFP_DATA_NR 32
         int i;
 
         for (i = 0; i < VFP_DATA_NR; i++)
