@@ -10,35 +10,25 @@
 ;-------------------------------------------------------------------------------
 ; import reference for interrupt routines
 
-    .ref _c_int00
-    .ref _dabort
+    .ref _reset
+    .ref turnon_VFP
+    .ref vector_svc
+    .ref vector_pabort
+    .ref vector_dabort
+    .ref vector_resv
     .ref IRQ_Handler
-    
-    .def resetEntry
 
 ;-------------------------------------------------------------------------------
 ; interrupt vectors
-
+    .def resetEntry
 resetEntry
-        b   _c_int00
+        b   _reset
         b   turnon_VFP
-svcEntry
-        b   svcEntry
-prefetchEntry
-        b   prefetchEntry
-        b   _dabort
-reservedEntry
-        b   reservedEntry
+        b   vector_svc
+        b   vector_pabort
+        b   vector_dabort
+        b   vector_resv
         b   IRQ_Handler
         ldr pc,[pc,#-0x1b0]
 
-    .sect ".text"
-turnon_VFP
-        ; Enable FPV
-        STMDB sp!,     {r0}
-        fmrx  r0,      fpexc
-        orr   r0,      r0,   #0x40000000
-        fmxr  fpexc,   r0
-        LDMIA sp!,     {r0}
-        subs  pc,      lr,   #4
 ;-------------------------------------------------------------------------------

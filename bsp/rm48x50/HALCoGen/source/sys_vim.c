@@ -30,140 +30,6 @@ typedef volatile struct vimRam
 
 #define vimRAM ((vimRAM_t *)0xFFF82000U)
 
-static const t_isrFuncPTR s_vim_init[129] =
-{
-    &phantomInterrupt,
-    &esmHighInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &rtiCompare3Interrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &linHighLevelInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-};
-void vimParityErrorHandler(void);
-
 /** @fn void vimInit(void)
 *   @brief Initializes VIM module
 *
@@ -172,18 +38,8 @@ void vimParityErrorHandler(void);
 
 void vimInit(void)
 {
-/* Initialize VIM table */
-    {
-        uint32 i;
-
-        for (i = 0U; i < (VIM_CHANNELS + 1U); i++)
-        {
-            vimRAM->ISR[i] = s_vim_init[i];
-        }
-    }
-	
 	/* Set Fall-Back Address Parity Error Register */
-    VIM_FBPARERR = (uint32)&vimParityErrorHandler;
+    /*VIM_FBPARERR = (uint32)&vimParityErrorHandler;*/
 
     /* set IRQ/FIQ priorities */
     vimREG->FIRQPR0 =  SYS_FIQ
@@ -627,6 +483,7 @@ void vimGetConfigValue(vim_config_reg_t *config_reg, config_value_type_t type)
 }
 
 
+#if 0
 #pragma CODE_STATE(vimParityErrorHandler, 32)
 #pragma INTERRUPT(vimParityErrorHandler, IRQ)
 
@@ -674,3 +531,4 @@ void vimParityErrorHandler(void)
 		}
 	}
 }
+#endif

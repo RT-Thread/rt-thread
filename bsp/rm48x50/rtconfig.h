@@ -19,7 +19,7 @@
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE	512
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
-#define RT_DEBUG
+//#define RT_DEBUG
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -27,7 +27,7 @@
 // </section>
 
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
-#define RT_USING_HOOK
+//#define RT_USING_HOOK
 // <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
 // #define RT_USING_TIMER_SOFT
 // <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
@@ -131,7 +131,7 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-#define RT_USING_LWIP
+//#define RT_USING_LWIP
 // <bool name="RT_USING_LWIP141" description="Using lwIP 1.4.1 version" default="true" />
 #define RT_USING_LWIP141
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
