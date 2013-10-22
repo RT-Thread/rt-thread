@@ -114,6 +114,8 @@ struct rt_pipe_device
     struct rt_portal_device *read_portal;
 };
 
+#define PIPE_CTRL_GET_SPACE          0x14            /**< get the remaining size of a pipe device */
+
 #define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
 #define RT_DATAQUEUE_EVENT_POP       0x01
 #define RT_DATAQUEUE_EVENT_PUSH      0x02

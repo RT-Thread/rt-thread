@@ -190,6 +190,8 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 
 static rt_err_t rt_pipe_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
+    if (cmd == PIPE_CTRL_GET_SPACE && args)
+        *(rt_size_t*)args = rt_ringbuffer_space_len(&PIPE_DEVICE(dev)->ringbuffer);
     return RT_EOK;
 }
 
