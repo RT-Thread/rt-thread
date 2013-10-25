@@ -218,7 +218,9 @@ static const struct rt_uart_ops _k60_ops =
 
 void UART5_RX_TX_IRQHandler(void)
 {
+    rt_interrupt_enter();
     rt_hw_serial_isr((struct rt_serial_device*)&_k60_serial);
+    rt_interrupt_leave();
 }
 
 
