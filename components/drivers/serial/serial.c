@@ -222,6 +222,10 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
     struct rt_serial_device *serial;
 
     RT_ASSERT(dev != RT_NULL);
+
+    if (size == 0)
+        return 0;
+
     serial = (struct rt_serial_device *)dev;
 
     ptr = (rt_uint8_t *)buffer;
@@ -272,6 +276,10 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     struct rt_serial_device *serial;
 
     RT_ASSERT(dev != RT_NULL);
+
+    if (size == 0)
+        return 0;
+
     serial = (struct rt_serial_device *)dev;
 
     ptr = (rt_uint8_t*)buffer;
