@@ -257,8 +257,8 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
     }
 
     read_nbytes = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-    /* set error code if and only if in thread context */
-    if (read_nbytes == 0 && !rt_interrupt_get_nest())
+    /* set error code */
+    if (read_nbytes == 0)
     {
         rt_set_errno(-RT_EEMPTY);
     }
@@ -349,8 +349,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     }
 
     write_nbytes = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-    /* set error code if and only if in thread context */
-    if (write_nbytes == 0 && !rt_interrupt_get_nest())
+    if (write_nbytes == 0)
     {
         rt_set_errno(-RT_EFULL);
     }
