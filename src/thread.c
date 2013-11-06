@@ -424,7 +424,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
 
     /* set to current thread */
     thread = rt_current_thread;
-    RT_ASSERT(thread != RT_NULL);
+    RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
