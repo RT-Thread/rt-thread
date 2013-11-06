@@ -420,25 +420,18 @@ RTM_EXPORT(rt_thread_yield);
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
-    register rt_base_t temp;
     struct rt_thread *thread;
 
-    /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
     /* set to current thread */
     thread = rt_current_thread;
     RT_ASSERT(thread != RT_NULL);
-
-    /* suspend thread */
-    rt_thread_suspend(thread);
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
     rt_timer_start(&(thread->thread_timer));
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
-
+    /* suspend thread */
+    rt_thread_suspend(thread);
     rt_schedule();
 
     /* clear error number of this thread to RT_EOK */
