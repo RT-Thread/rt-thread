@@ -1,0 +1,4 @@
+# SQLite on RT-Thread
+
+## 简介
+初始版本基于SQLite 3.8.1版本，使用混合单文件结构源代码
