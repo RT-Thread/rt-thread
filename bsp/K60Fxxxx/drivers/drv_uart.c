@@ -162,14 +162,14 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
         /* disable rx irq */
         uart_reg->C2 &= ~UART_C2_RIE_MASK;
         //disable NVIC
-        NVICICER1 |= 1 << (uart_irq_num % 32);
+        NVIC->ICER[uart_irq_num / 32] = 1 << (uart_irq_num % 32);
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         uart_reg->C2 |= UART_C2_RIE_MASK;
         //enable NVIC,we are sure uart's NVIC vector is in NVICICPR1
-        NVICICPR1 |= 1 << (uart_irq_num % 32);
-        NVICISER1 |= 1 << (uart_irq_num % 32);
+        NVIC->ICPR[uart_irq_num / 32] = 1 << (uart_irq_num % 32);
+        NVIC->ISER[uart_irq_num / 32] = 1 << (uart_irq_num % 32);
         break;
     case RT_DEVICE_CTRL_SUSPEND:
         /* suspend device */
@@ -218,7 +218,9 @@ static const struct rt_uart_ops _k60_ops =
 
 void UART5_RX_TX_IRQHandler(void)
 {
+    rt_interrupt_enter();
     rt_hw_serial_isr((struct rt_serial_device*)&_k60_serial);
+    rt_interrupt_leave();
 }
 
 

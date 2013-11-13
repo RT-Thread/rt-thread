@@ -19,7 +19,7 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 
 #include <board.h>
@@ -42,6 +42,28 @@ extern int __bss_end;
 extern unsigned char * const system_data_end;
 #endif
 #define MEMEND 0x08040000
+
+void rt_hw_pmu_enable_cnt(void)
+{
+    unsigned long tmp;
+
+    __asm ("    MRC p15, #0, r0, c9, c12, #0");
+    __asm ("    ORR r0, r0, #0x09\n");
+    __asm ("    MCR p15, #0, r0, c9, c12, #0\n");
+    __asm ("    MOV r0, #1\n");
+    __asm ("    RBIT r0, r0\n");
+    __asm ("    MCR p15, #0, r0, c9, c12, #1\n");
+}
+
+void rt_hw_pmu_setcnt(unsigned long val)
+{
+    __asm ("    MCR   p15, #0, r0, c9, c13, #0");
+}
+
+unsigned long rt_hw_pmu_getcnt(void)
+{
+    __asm ("    MRC   p15, #0, r0, c9, c13, #0");
+}
 
 /**
  * This function will startup RT-Thread RTOS.

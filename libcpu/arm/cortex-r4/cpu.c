@@ -39,6 +39,7 @@ void rt_hw_cpu_shutdown()
 	while (1);
 }
 
+#ifdef __TI_COMPILER_VERSION__
 #ifdef RT_USING_CPU_FFS
 int __rt_ffs(int value)
 {
@@ -52,7 +53,6 @@ int __rt_ffs(int value)
 }
 #endif
 
-#ifdef __TI_COMPILER_VERSION__
 void rt_hw_cpu_icache_enable()
 {
     __asm("   MRC p15, #0, r1, c1, c0, #0 ; Read SCTLR configuration data");
@@ -90,5 +90,10 @@ void rt_hw_cpu_dcache_disable()
     __asm("    MCR p15, #0, r1, c1, c0, #0 ; disabled data cache");
 }
 
+#elif __GNUC__
+int __rt_ffs(int value)
+{
+    return __builtin_ffs(value);
+}
 #endif
 /*@}*/

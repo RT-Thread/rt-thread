@@ -764,31 +764,3 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 	}
 }
 
-
-
-
-/* USER CODE BEGIN (82) */
-/* USER CODE END */
-
-/** @fn void rtiCompare3Interrupt(void)
-*   @brief RTI1 Compare 3 Interrupt Handler
-*
-*   RTI1 Compare 3 interrupt handler 
-*
-*/
-
-void rtiCompare3Interrupt(void)
-{
-/* USER CODE BEGIN (83) */
-/* USER CODE END */
-
-    rtiREG1->INTFLAG = 8U;
-    rtiNotification(rtiNOTIFICATION_COMPARE3);
-
-/* USER CODE BEGIN (84) */
-/* USER CODE END */
-}
-
-
-
-
