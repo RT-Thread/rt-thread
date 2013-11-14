@@ -213,14 +213,152 @@ int cli_list(int argc, char **argv)
 {
 	return msh_help(argc, argv);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cli_list, __cmd_list, "list rtt support commands");
+FINSH_FUNCTION_EXPORT_ALIAS(cli_list, __cmd_list, "list rtt support commands.");
 
 int cli_clear(int argc, char **argv)
 {
 	rt_kprintf("\33[2J\33[1H");
 	return RT_EOK;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cli_clear, __cmd_cls, "none");
+FINSH_FUNCTION_EXPORT_ALIAS(cli_clear, __cmd_cls, "clear display.");
+
+int cli_show_version(void)
+{
+	extern void rt_show_version(void);
+	rt_show_version();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_version, __cmd_version, "show RT - Thread version information.");
+
+int cli_show_timer(void)
+{
+	extern long list_timer(void);
+	list_timer();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_timer, __cmd_timer, "show timers in RT-Thread OS.");
+
+int cli_show_thread(void)
+{
+	extern long list_thread(void);
+	list_thread();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_thread, __cmd_thread, "show RT-Thread OS Threads.");
+
+#ifdef RT_USING_SEMAPHORE
+int cli_show_mem(void)
+{
+	extern long list_sem(void);
+	list_mem();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_mem, __cmd_mem, "show RT-Thread OS memory using.");
 #endif
 
+#ifdef RT_USING_EVENT
+int cli_show_event(void)
+{
+	extern long list_event(void);
+	list_event();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_event, __cmd_event, "show events in RT-Thread OS.");
+#endif
 
+#ifdef RT_USING_MUTEX
+int cli_show_metux(void)
+{
+	extern long list_mutex(void);
+	list_mutex();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_metux, __cmd_mutex, "show mutex in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_MAILBOX
+int cli_show_mailbox(void)
+{
+	extern long list_mailbox(void);
+	list_mailbox();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_mailbox, __cmd_mailbox, "show mailbox in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_MESSAGEQUEUE
+int cli_show_msgqueue(void)
+{
+	extern long list_msgqueue(void);
+	list_msgqueue();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_msgqueue, __cmd_msgqueue, "show message queue in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_MEMHEAP
+int cli_show_memheap(void)
+{
+	extern long list_memheap(void);
+	list_memheap();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_memheap, __cmd_memheap, "show memory heap in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_MEMPOOL
+int cli_show_mempool(void)
+{
+	extern long list_mempool(void);
+	list_mempool();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_mempool, __cmd_mempool, "show memory pool in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_DEVICE
+int cli_show_device(void)
+{
+	extern long list_device(void);
+	list_device();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_device, __cmd_dev, "show devices in RT-Thread OS.");
+#endif
+
+#ifdef RT_USING_MODULE
+int cli_show_module(int argc, char **argv)
+{
+	int i;
+	extern int list_module(void);
+	extern int list_mod_detail(const char *name);
+
+	if (argc == 1)
+	{
+		list_module();
+	}
+	else
+	{
+		for (i = 1; i < argc, ++i)
+		{
+			list_mod_detail(argv[i]);
+		}
+	}
+	
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_show_module, __cmd_module, "show modules in RT-Thread OS.");
+#endif
+
+int cli_debug(int argc, char **argv)
+{
+	int i;
+
+	for (i = 0; i < argc; ++i)
+	{
+		rt_kprintf("argv[%d]: %s\n", i, argv[i]);
+	}
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cli_debug, __cmd_debug, "cli function debug.");
+
+#endif
