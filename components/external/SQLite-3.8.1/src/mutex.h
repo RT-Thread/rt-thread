@@ -33,6 +33,8 @@
 **                             implementation can be overridden at
 **                             start-time.
 **
+**   SQLITE_MUTEX_RTT          For multi_threaded  applications on rt-thread.
+**
 **   SQLITE_MUTEX_PTHREADS     For multi-threaded applications on Unix.
 **
 **   SQLITE_MUTEX_W32          For multi-threaded applications on Win32.
@@ -45,6 +47,8 @@
 #    define SQLITE_MUTEX_PTHREADS
 #  elif SQLITE_OS_WIN
 #    define SQLITE_MUTEX_W32
+#  elif SQLITE_OS_RTT
+#    define SQLITE_MUTEX_RTT
 #  else
 #    define SQLITE_MUTEX_NOOP
 #  endif
@@ -56,9 +60,9 @@
 */
 #define sqlite3_mutex_alloc(X)    ((sqlite3_mutex*)8)
 #define sqlite3_mutex_free(X)
-#define sqlite3_mutex_enter(X)    
+#define sqlite3_mutex_enter(X)
 #define sqlite3_mutex_try(X)      SQLITE_OK
-#define sqlite3_mutex_leave(X)    
+#define sqlite3_mutex_leave(X)
 #define sqlite3_mutex_held(X)     ((void)(X),1)
 #define sqlite3_mutex_notheld(X)  ((void)(X),1)
 #define sqlite3MutexAlloc(X)      ((sqlite3_mutex*)8)
