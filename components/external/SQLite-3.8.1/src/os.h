@@ -23,8 +23,8 @@
 /*
 ** Figure out if we are dealing with Unix, Windows, or some other
 ** operating system.  After the following block of preprocess macros,
-** all of SQLITE_OS_UNIX, SQLITE_OS_WIN, and SQLITE_OS_OTHER 
-** will defined to either 1 or 0.  One of the four will be 1.  The other 
+** all of SQLITE_OS_UNIX, SQLITE_OS_WIN, and SQLITE_OS_OTHER
+** will defined to either 1 or 0.  One of the four will be 1.  The other
 ** three will be 0.
 */
 #if defined(SQLITE_OS_OTHER)
@@ -33,6 +33,8 @@
 #   define SQLITE_OS_UNIX 0
 #   undef SQLITE_OS_WIN
 #   define SQLITE_OS_WIN 0
+#   undef SQLITE_OS_RTT
+#   define SQLITE_OS_RTT 1
 # else
 #   undef SQLITE_OS_OTHER
 # endif
@@ -125,10 +127,10 @@
 ** 2006-10-31:  The default prefix used to be "sqlite_".  But then
 ** Mcafee started using SQLite in their anti-virus product and it
 ** started putting files with the "sqlite" name in the c:/temp folder.
-** This annoyed many windows users.  Those users would then do a 
+** This annoyed many windows users.  Those users would then do a
 ** Google search for "sqlite", find the telephone numbers of the
 ** developers and call to wake them up at night and complain.
-** For this reason, the default name prefix is changed to be "sqlite" 
+** For this reason, the default name prefix is changed to be "sqlite"
 ** spelled backwards.  So the temp files are still identified, but
 ** anybody smart enough to figure out the code is also likely smart
 ** enough to know that calling the developer will not help get rid
@@ -169,9 +171,9 @@
 ** UnlockFile().
 **
 ** LockFile() prevents not just writing but also reading by other processes.
-** A SHARED_LOCK is obtained by locking a single randomly-chosen 
-** byte out of a specific range of bytes. The lock byte is obtained at 
-** random so two separate readers can probably access the file at the 
+** A SHARED_LOCK is obtained by locking a single randomly-chosen
+** byte out of a specific range of bytes. The lock byte is obtained at
+** random so two separate readers can probably access the file at the
 ** same time, unless they are unlucky and choose the same lock byte.
 ** An EXCLUSIVE_LOCK is obtained by locking all bytes in the range.
 ** There can only be one writer.  A RESERVED_LOCK is obtained by locking
@@ -190,7 +192,7 @@
 ** The following #defines specify the range of bytes used for locking.
 ** SHARED_SIZE is the number of bytes available in the pool from which
 ** a random byte is selected for a shared lock.  The pool of bytes for
-** shared locks begins at SHARED_FIRST. 
+** shared locks begins at SHARED_FIRST.
 **
 ** The same locking strategy and
 ** byte ranges are used for Unix.  This leaves open the possiblity of having
@@ -206,7 +208,7 @@
 ** that all locks will fit on a single page even at the minimum page size.
 ** PENDING_BYTE defines the beginning of the locks.  By default PENDING_BYTE
 ** is set high so that we don't have to allocate an unused page except
-** for very large databases.  But one should test the page skipping logic 
+** for very large databases.  But one should test the page skipping logic
 ** by setting PENDING_BYTE low and running the entire regression suite.
 **
 ** Changing the value of PENDING_BYTE results in a subtly incompatible
@@ -230,8 +232,8 @@
 */
 int sqlite3OsInit(void);
 
-/* 
-** Functions for accessing sqlite3_file methods 
+/*
+** Functions for accessing sqlite3_file methods
 */
 int sqlite3OsClose(sqlite3_file*);
 int sqlite3OsRead(sqlite3_file*, void*, int amt, i64 offset);
@@ -255,8 +257,8 @@ int sqlite3OsFetch(sqlite3_file *id, i64, int, void **);
 int sqlite3OsUnfetch(sqlite3_file *, i64, void *);
 
 
-/* 
-** Functions for accessing sqlite3_vfs methods 
+/*
+** Functions for accessing sqlite3_vfs methods
 */
 int sqlite3OsOpen(sqlite3_vfs *, const char *, sqlite3_file*, int, int *);
 int sqlite3OsDelete(sqlite3_vfs *, const char *, int);
@@ -273,7 +275,7 @@ int sqlite3OsSleep(sqlite3_vfs *, int);
 int sqlite3OsCurrentTimeInt64(sqlite3_vfs *, sqlite3_int64*);
 
 /*
-** Convenience functions for opening and closing files using 
+** Convenience functions for opening and closing files using
 ** sqlite3_malloc() to obtain space for the file-handle structure.
 */
 int sqlite3OsOpenMalloc(sqlite3_vfs *, const char *, sqlite3_file **, int,int*);
