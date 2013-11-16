@@ -247,6 +247,7 @@ foreach file {
    mutex_noop.c
    mutex_unix.c
    mutex_w32.c
+   mutex_rtt.c
    malloc.c
    printf.c
    random.c
@@ -257,6 +258,7 @@ foreach file {
 
    os_unix.c
    os_win.c
+   os_rtt.c
 
    bitvec.c
    pcache.c

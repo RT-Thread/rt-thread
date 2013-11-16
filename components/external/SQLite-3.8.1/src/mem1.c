@@ -76,13 +76,14 @@ static malloc_zone_t* _sqliteZone_;
         (_sqliteZone_ ? _sqliteZone_->size(_sqliteZone_,x) : malloc_size(x))
 
 #elif defined(SQLITE_OS_RTT)
+#include <rtthread.h>
 /*
 ** Use standard C library malloc and free on non-Apple systems.
 ** Also used by rt-thread systems if SQLITE_WITHOUT_ZONEMALLOC is defined.
 */
-#define SQLITE_MALLOC(x)    rt_malloc(x)
+#define SQLITE_MALLOC(x)    rt_malloc((rt_size_t)x)
 #define SQLITE_FREE(x)      rt_free(x)
-#define SQLITE_REALLOC(x,y) rt_realloc((x),(y))
+#define SQLITE_REALLOC(x,y) rt_realloc((x),(rt_size_t)(y))
 
 #if (!defined(SQLITE_WITHOUT_MSIZE)) \
       && (defined(HAVE_MALLOC_H) && defined(HAVE_MALLOC_USABLE_SIZE))
