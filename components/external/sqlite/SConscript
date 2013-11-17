@@ -5,6 +5,7 @@ from building import *
 cwd = GetCurrentDir()
 src = Split("""
 sqlite3.c
+test/test10.c
 """)
 CPPPATH = [cwd, str(Dir('#'))]
 
