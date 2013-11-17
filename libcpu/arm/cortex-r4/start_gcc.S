@@ -30,7 +30,7 @@
 
 stack_start:
 .rept (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
-.long 0
+.byte 0
 .endr
 stack_top:
 
