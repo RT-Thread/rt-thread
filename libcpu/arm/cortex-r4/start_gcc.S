@@ -18,11 +18,10 @@
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
 .equ UND_Stack_Size,  0x00000000
-.equ SVC_Stack_Size,  0x00000100
+.equ SVC_Stack_Size,  0x00000000
 .equ ABT_Stack_Size,  0x00000000
-.equ FIQ_Stack_Size,  0x00000000
-.equ IRQ_Stack_Size,  0x00000100
-.equ USR_Stack_Size,  0x00000100
+.equ FIQ_Stack_Size,  0x00001000
+.equ IRQ_Stack_Size,  0x00001000
 
 .section .bss.noinit
 /* stack */
@@ -31,7 +30,7 @@
 
 stack_start:
 .rept (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
-.long 0
+.byte 0
 .endr
 stack_top:
 
@@ -63,6 +62,9 @@ _reset:
 @ Initialize Stack Pointers
     ldr     r0, =stack_top
 
+    @  Set the startup stack for svc
+    mov     sp, r0
+
     @  Enter Undefined Instruction Mode and set its Stack Pointer
     msr     cpsr_c, #Mode_UND|I_Bit|F_Bit
     mov     sp, r0
@@ -83,14 +85,8 @@ _reset:
     mov     sp, r0
     sub     r0, r0, #IRQ_Stack_Size
 
-    @  Enter Supervisor Mode and set its Stack Pointer
+    @  Switch back to SVC
     msr     cpsr_c, #Mode_SVC|I_Bit|F_Bit
-    mov     sp, r0
-    sub     r0, r0, #SVC_Stack_Size
-
-    @  Enter User Mode and set its Stack Pointer
-    mov     sp, r0
-    sub     sl, sp, #USR_Stack_Size
 
         bl    next1
 next1:
