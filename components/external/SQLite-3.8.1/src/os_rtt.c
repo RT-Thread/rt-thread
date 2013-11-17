@@ -291,6 +291,76 @@ static struct rtt_syscall {
 }; /* End of the overrideable system calls */
 
 /*
+**
+** This function - unixLogError_x(), is only ever called via the macro
+** unixLogError().
+**
+** It is invoked after an error occurs in an OS function and errno has been
+** set. It logs a message using sqlite3_log() containing the current value of
+** errno and, if possible, the human-readable equivalent from strerror() or
+** strerror_r().
+**
+** The first argument passed to the macro should be the error code that
+** will be returned to SQLite (e.g. SQLITE_IOERR_DELETE, SQLITE_CANTOPEN).
+** The two subsequent arguments should be the name of the OS function that
+** failed (e.g. "unlink", "open") and the associated file-system path,
+** if any.
+*/
+#define rttLogError(a,b,c)     rttLogErrorAtLine(a,b,c,__LINE__)
+static int rttLogErrorAtLine(
+  int errcode,                    /* SQLite error code */
+  const char *zFunc,              /* Name of OS function that failed */
+  const char *zPath,              /* File path associated with error */
+  int iLine                       /* Source line number where error occurred */
+){
+  char *zErr;                     /* Message from strerror() or equivalent */
+  int iErrno = errno;             /* Saved syscall error number */
+
+  /* If this is not a threadsafe build (SQLITE_THREADSAFE==0), then use
+  ** the strerror() function to obtain the human-readable error message
+  ** equivalent to errno. Otherwise, use strerror_r().
+  */
+#if SQLITE_THREADSAFE && defined(HAVE_STRERROR_R)
+  char aErr[80];
+  memset(aErr, 0, sizeof(aErr));
+  zErr = aErr;
+
+  /* If STRERROR_R_CHAR_P (set by autoconf scripts) or __USE_GNU is defined,
+  ** assume that the system provides the GNU version of strerror_r() that
+  ** returns a pointer to a buffer containing the error message. That pointer
+  ** may point to aErr[], or it may point to some static storage somewhere.
+  ** Otherwise, assume that the system provides the POSIX version of
+  ** strerror_r(), which always writes an error message into aErr[].
+  **
+  ** If the code incorrectly assumes that it is the POSIX version that is
+  ** available, the error message will often be an empty string. Not a
+  ** huge problem. Incorrectly concluding that the GNU version is available
+  ** could lead to a segfault though.
+  */
+#if defined(STRERROR_R_CHAR_P) || defined(__USE_GNU)
+  zErr =
+# endif
+  strerror_r(iErrno, aErr, sizeof(aErr)-1);
+
+#elif SQLITE_THREADSAFE
+  /* This is a threadsafe build, but strerror_r() is not available. */
+  zErr = "";
+#else
+  /* Non-threadsafe build, use strerror(). */
+  zErr = strerror(iErrno);
+#endif
+
+  if( zPath==0 ) zPath = "";
+  sqlite3_log(errcode,
+      "os_rtt.c:%d: (%d) %s(%s) - %s",
+      iLine, iErrno, zFunc, zPath, zErr
+  );
+
+  return errcode;
+}
+
+
+/*
 ** Do not accept any file descriptor less than this value, in order to avoid
 ** opening database file using file descriptors that are commonly used for
 ** standard input, output, and error.
@@ -613,75 +683,6 @@ static int sqliteErrorFromPosixError(int posixError, int sqliteIOErr) {
   }
 }
 
-/*
-**
-** This function - unixLogError_x(), is only ever called via the macro
-** unixLogError().
-**
-** It is invoked after an error occurs in an OS function and errno has been
-** set. It logs a message using sqlite3_log() containing the current value of
-** errno and, if possible, the human-readable equivalent from strerror() or
-** strerror_r().
-**
-** The first argument passed to the macro should be the error code that
-** will be returned to SQLite (e.g. SQLITE_IOERR_DELETE, SQLITE_CANTOPEN).
-** The two subsequent arguments should be the name of the OS function that
-** failed (e.g. "unlink", "open") and the associated file-system path,
-** if any.
-*/
-#define rttLogError(a,b,c)     rttLogErrorAtLine(a,b,c,__LINE__)
-static int rttLogErrorAtLine(
-  int errcode,                    /* SQLite error code */
-  const char *zFunc,              /* Name of OS function that failed */
-  const char *zPath,              /* File path associated with error */
-  int iLine                       /* Source line number where error occurred */
-){
-  char *zErr;                     /* Message from strerror() or equivalent */
-  int iErrno = errno;             /* Saved syscall error number */
-
-  /* If this is not a threadsafe build (SQLITE_THREADSAFE==0), then use
-  ** the strerror() function to obtain the human-readable error message
-  ** equivalent to errno. Otherwise, use strerror_r().
-  */
-#if SQLITE_THREADSAFE && defined(HAVE_STRERROR_R)
-  char aErr[80];
-  memset(aErr, 0, sizeof(aErr));
-  zErr = aErr;
-
-  /* If STRERROR_R_CHAR_P (set by autoconf scripts) or __USE_GNU is defined,
-  ** assume that the system provides the GNU version of strerror_r() that
-  ** returns a pointer to a buffer containing the error message. That pointer
-  ** may point to aErr[], or it may point to some static storage somewhere.
-  ** Otherwise, assume that the system provides the POSIX version of
-  ** strerror_r(), which always writes an error message into aErr[].
-  **
-  ** If the code incorrectly assumes that it is the POSIX version that is
-  ** available, the error message will often be an empty string. Not a
-  ** huge problem. Incorrectly concluding that the GNU version is available
-  ** could lead to a segfault though.
-  */
-#if defined(STRERROR_R_CHAR_P) || defined(__USE_GNU)
-  zErr =
-# endif
-  strerror_r(iErrno, aErr, sizeof(aErr)-1);
-
-#elif SQLITE_THREADSAFE
-  /* This is a threadsafe build, but strerror_r() is not available. */
-  zErr = "";
-#else
-  /* Non-threadsafe build, use strerror(). */
-  zErr = strerror(iErrno);
-#endif
-
-  if( zPath==0 ) zPath = "";
-  sqlite3_log(errcode,
-      "os_rtt.c:%d: (%d) %s(%s) - %s",
-      iLine, iErrno, zFunc, zPath, zErr
-  );
-
-  return errcode;
-}
-
 static int robust_ftruncate(int h, sqlite3_int64 sz){
   int rc;
   rc = -1;
@@ -831,6 +832,12 @@ static int nolockClose(sqlite3_file *id) {
 ** lock directory.
 */
 #define DOTLOCK_SUFFIX ".lock"
+
+/*
+** Only set the lastErrno if the error code is a real error and not
+** a normal expected return code of SQLITE_BUSY or SQLITE_OK
+*/
+#define IS_LOCK_ERROR(x)  (((x) != SQLITE_OK) && ((x) != SQLITE_BUSY))
 
 /*
 ** This routine checks if there is a RESERVED lock held on the specified
