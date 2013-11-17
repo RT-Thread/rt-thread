@@ -5,7 +5,7 @@
 
 测试方法：
 1.   
-    在rtconfig.h中定义一下宏
+    在rtconfig.h中定义一下宏,并打开newlib组件
     /*
     * SQLite compile macro
     */
@@ -18,13 +18,14 @@
     #define SQLITE_TEMP_STORE 1
     #define SQLITE_THREADSAFE 1
     #define HAVE_READLINE 0 
-    #define NDEBUG 
+    #define NDEBUG
+    #define SQLITE_TEST
     #define _HAVE_SQLITE_CONFIG_H 
     #define BUILD_sqlite
     #define SQLITE_OS_OTHER 1 
     #define SQLITE_OS_RTT 1
 2.
-    在test目录下找一个测试样例来加入工程进行测试.
+    用test目录下的test10.c来进行测试.
     推荐用mini2440bsp，因为板子的ram较大。
 
 注意shell.c还没有移植的。请不要使用。
