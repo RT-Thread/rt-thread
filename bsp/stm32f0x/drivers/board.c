@@ -50,6 +50,41 @@ void SysTick_Handler(void)
 	rt_interrupt_leave();
 }
 
+/*******************************************************************************
+* Function Name  : SysTick_Configuration
+* Description    : The RCC feeds the Cortex System Timer (SysTick) external
+*                  clock with the AHB clock (HCLK) divided by 8. The SysTick
+*                  can work either with this clock or directly with the Cortex
+*                  clock(HCLK), configurable in the SysTick Control and Status
+*                  Register.
+*
+*                  if SysTick Clock Source is SysTick_CLKSource_HCLK:
+*                      SysTick clock = HCLK
+*                  if SysTick Clock Source is SysTick_CLKSource_HCLK_Div8:
+*                      SysTick clock = HCLK / 8
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+static void SysTick_Configuration(void)
+{
+    RCC_ClocksTypeDef RCC_Clocks;
+
+    RCC_GetClocksFreq(&RCC_Clocks);// get RCC clock
+    /* set SysTick tick value */
+    if (SysTick->CTRL & SysTick_CTRL_CLKSOURCE_Msk == SysTick_CLKSource_HCLK)
+    {
+        /* SysTick Timer Clock is RCC_Clocks.HCLK_Frequency */
+        SysTick_Config(RCC_Clocks.HCLK_Frequency / RT_TICK_PER_SECOND);
+
+    }
+    else
+    {
+        /* SysTick Timer Clock is RCC_Clocks.HCLK_Frequency / 8 */
+        SysTick_Config((RCC_Clocks.HCLK_Frequency >> 3) / RT_TICK_PER_SECOND);
+    }
+}
+
 /**
  * This function will initial STM32 board.
  */
@@ -59,7 +94,7 @@ void rt_hw_board_init()
 	NVIC_Configuration();
 
 	/* Configure the SysTick */
-	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+	SysTick_Configuration();
 
 	//rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
