@@ -185,7 +185,7 @@ void finsh_auto_complete(char* prefix)
 	extern void list_prefix(char* prefix);
 
 #ifdef FINSH_USING_MSH
-	if (RT_TRUE == msh_is_used())
+	if (msh_is_used() == RT_TRUE)
 	{
 		msh_auto_complete(prefix);
 		rt_kprintf("%s", prefix);
