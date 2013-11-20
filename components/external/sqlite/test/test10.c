@@ -20,12 +20,18 @@ int test10_main(int argc, char **argv){
     rt_kprintf("Usage: %s DATABASE SQL-STATEMENT\n", argv[0]);
     return(1);
   }
+  rt_kprintf("ready open %s\n", argv[1]);
   rc = sqlite3_open(argv[1], &db);
+  
   if( rc ){
     rt_kprintf("Can't open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
     return(1);
   }
+  else{
+    rt_kprintf("open %s success\n", argv[1]);
+  }
+  rt_kprintf("SQL exec: %s\n", argv[2]);
   rc = sqlite3_exec(db, argv[2], callback, 0, &zErrMsg);
   if( rc!=SQLITE_OK ){
     rt_kprintf("SQL error: %s\n", zErrMsg);

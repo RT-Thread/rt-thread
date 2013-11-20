@@ -166,6 +166,7 @@ static sqlite3_mutex *rttMutexAlloc(int iType){
 #if SQLITE_MUTEX_NREF
       p->id = iType;
 #endif
+      rt_mutex_init(&p->mutex, "sqlmtx", RT_IPC_FLAG_PRIO);
       break;
     }
   }
