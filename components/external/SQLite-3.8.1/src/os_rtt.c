@@ -404,7 +404,7 @@ static int robust_open(const char *z, int f, mode_t m){
     sqlite3_log(SQLITE_WARNING,
                 "attempt to open \"%s\" as file descriptor %d", z, fd);
     fd = -1;
-    if( osOpen("/dev/null", f, m)<0 ) break;
+    if( osOpen("/000111sql.test111000", f, m)<0 ) break;
   }
 
   return fd;
