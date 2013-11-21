@@ -34,7 +34,6 @@
 #define RT_FINSH_ARG_MAX	10
 typedef int (*cmd_function_t)(int argc, char** argv);
 
-#ifdef MSH_USING_LINUX
 #define __finsh_line_fill(num) \
 		do { \
 			if (num > 0) while(num--) rt_kprintf(" "); \
@@ -44,7 +43,6 @@ typedef int (*cmd_function_t)(int argc, char** argv);
 				while(num--) { rt_kprintf("\b"); } \
 			} \
 		} while(0)
-#endif
 
 #ifdef FINSH_USING_MSH
 #ifdef FINSH_USING_MSH_DEFAULT
@@ -74,27 +72,6 @@ static int msh_enter(void)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
 
-#ifndef MSH_USING_LINUX
-int msh_help(int argc, char** argv)
-{
-	rt_kprintf("RT-Thread shell commands:\n");
-	{
-		struct finsh_syscall *index;
-
-		for (index = _syscall_table_begin;
-			index < _syscall_table_end;
-			FINSH_NEXT_SYSCALL(index))
-		{
-			if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-			rt_kprintf("%s ", &index->name[6]);
-		}
-	}
-	rt_kprintf("\n");
-
-	return 0;
-}
-#else
 int msh_help(int argc, char** argv)
 {
 	int len, cnt;
@@ -117,7 +94,6 @@ int msh_help(int argc, char** argv)
 	return 0;
 }
 
-#endif
 FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, "RT-Thread shell help.");
 
 static int msh_split(char* cmd, rt_size_t length, char* argv[RT_FINSH_ARG_MAX])
@@ -234,63 +210,6 @@ static int str_common(const char *str1, const char *str2)
 	return (str - str1);
 }
 
-#ifndef MSH_USING_LINUX
-void msh_auto_complete(char *prefix)
-{
-	rt_uint16_t func_cnt;
-	int length, min_length;
-	const char *name_ptr, *cmd_name;
-	struct finsh_syscall *index;
-
-	func_cnt = 0;
-	min_length = 0;
-	name_ptr = RT_NULL;
-
-	if (*prefix == '\0') 
-	{
-		msh_help(0, RT_NULL);
-		return;
-	}
-	
-	/* checks in internal command */
-	{
-		for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
-		{
-			/* skip finsh shell function */
-			if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-			cmd_name = (const char*) &index->name[6];
-			if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
-			{
-				if (func_cnt == 0)
-				{
-					/* set name_ptr */
-					name_ptr = cmd_name;
-
-					/* set initial length */
-					min_length = strlen(name_ptr);
-				}
-
-				func_cnt ++;
-
-				length = str_common(name_ptr, cmd_name);
-				if (length < min_length)
-					min_length = length;
-
-				rt_kprintf("%s\n", cmd_name);
-			}
-		}
-	}
-
-	/* auto complete string */
-	if (name_ptr != NULL)
-	{
-		rt_strncpy(prefix, name_ptr, min_length);
-	}
-
-	return ;
-}
-#else
 void msh_auto_complete(char *prefix)
 {
 	rt_uint16_t func_cnt;
@@ -391,7 +310,6 @@ void msh_auto_complete(char *prefix)
 
 	return ;
 }
-#endif
 
 #endif
 
