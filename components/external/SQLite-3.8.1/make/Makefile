@@ -26,7 +26,14 @@ BCC = gcc  -g
 # will run on the target platform.  (BCC and TCC are usually the
 # same unless your are cross-compiling.)
 #
-TCC = arm-none-eabi-gcc   -g -O2 -DSQLITE_OS_UNIX=1 -I. -I${TOP}/src -I${TOP}/ext/rtree
+TCC = arm-none-eabi-gcc   -g -O2 \
+    -DSQLITE_OS_OTHER=1 -DSQLITE_OS_RTT=1 \
+    -I. -I${TOP}/src -I${TOP}/ext/rtree     \
+    -I../../../../include                   \
+    -I../../../../components/dfs/include    \
+    -I../../../../components/libc/newlib    \
+    -I../../../../components/libc/newlib/sys    \
+    -I../../../../bsp/mini2440
 
 # Define this for the autoconf-based build, so that the code knows it can
 # include the generated config.h
@@ -75,7 +82,9 @@ TEMP_STORE = -DSQLITE_TEMP_STORE=1
 # based on configuration. (-DSQLITE_OMIT*, -DSQLITE_ENABLE*).  
 # The same set of OMIT and ENABLE flags should be passed to the 
 # LEMON parser generator and the mkkeywordhash tool as well.
-OPT_FEATURE_FLAGS = -DSQLITE_OMIT_LOAD_EXTENSION=1
+OPT_FEATURE_FLAGS = -DSQLITE_OMIT_LOAD_EXTENSION=1 -DSQLITE_RTT_NO_WIDE=1   \
+    -DSQLITE_OMIT_WAL -DSQLITE_ENABLE_LOCKING_STYLE=0 \
+    -DSQLITE_DISABLE_LOCKING_STYLE=1
 
 TCC += $(OPT_FEATURE_FLAGS)
 
@@ -173,8 +182,8 @@ LIBOBJS0 = alter.lo analyze.lo attach.lo auth.lo \
          icu.lo insert.lo journal.lo legacy.lo loadext.lo \
          main.lo malloc.lo mem0.lo mem1.lo mem2.lo mem3.lo mem5.lo \
          memjournal.lo \
-         mutex.lo mutex_noop.lo mutex_unix.lo mutex_w32.lo \
-         notify.lo opcodes.lo os.lo os_unix.lo os_win.lo \
+         mutex.lo mutex_noop.lo mutex_rtt.lo \
+         notify.lo opcodes.lo os.lo os_rtt.lo \
          pager.lo parse.lo pcache.lo pcache1.lo pragma.lo prepare.lo printf.lo \
          random.lo resolve.lo rowset.lo rtree.lo select.lo status.lo \
          table.lo tokenize.lo trigger.lo \
@@ -233,14 +242,12 @@ SRC = \
   $(TOP)/src/mutex.c \
   $(TOP)/src/mutex.h \
   $(TOP)/src/mutex_noop.c \
-  $(TOP)/src/mutex_unix.c \
-  $(TOP)/src/mutex_w32.c \
+  $(TOP)/src/mutex_rtt.c \
   $(TOP)/src/notify.c \
   $(TOP)/src/os.c \
   $(TOP)/src/os.h \
   $(TOP)/src/os_common.h \
-  $(TOP)/src/os_unix.c \
-  $(TOP)/src/os_win.c \
+  $(TOP)/src/os_rtt.c \
   $(TOP)/src/pager.c \
   $(TOP)/src/pager.h \
   $(TOP)/src/parse.y \
@@ -676,11 +683,8 @@ mutex.lo:	$(TOP)/src/mutex.c $(HDR)
 mutex_noop.lo:	$(TOP)/src/mutex_noop.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_noop.c
 
-mutex_unix.lo:	$(TOP)/src/mutex_unix.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_unix.c
-
-mutex_w32.lo:	$(TOP)/src/mutex_w32.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_w32.c
+mutex_rtt.lo:	$(TOP)/src/mutex_rtt.c $(HDR)
+	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_rtt.c
 
 notify.lo:	$(TOP)/src/notify.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/notify.c
@@ -697,11 +701,8 @@ pcache1.lo:	$(TOP)/src/pcache1.c $(HDR) $(TOP)/src/pcache.h
 os.lo:	$(TOP)/src/os.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os.c
 
-os_unix.lo:	$(TOP)/src/os_unix.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os_unix.c
-
-os_win.lo:	$(TOP)/src/os_win.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os_win.c
+os_rtt.lo:$(TOP)/src/os_rtt.c $(HDR)
+	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os_rtt.c
 
 pragma.lo:	$(TOP)/src/pragma.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/pragma.c
@@ -976,21 +977,3 @@ clean:
 
 distclean:	clean
 	rm -f config.log config.status libtool Makefile sqlite3.pc
-
-#
-# Windows section
-#
-dll: sqlite3.dll
-
-REAL_LIBOBJ = $(LIBOBJ:%.lo=.libs/%.o)
-
-$(REAL_LIBOBJ): $(LIBOBJ)
-
-sqlite3.def: $(REAL_LIBOBJ)
-	echo 'EXPORTS' >sqlite3.def
-	nm $(REAL_LIBOBJ) | grep ' T ' | grep ' _sqlite3_' \
-		| sed 's/^.* _//' >>sqlite3.def
-
-sqlite3.dll: $(REAL_LIBOBJ) sqlite3.def
-	$(TCC) -shared -o $@ sqlite3.def \
-		-Wl,"--strip-all" $(REAL_LIBOBJ)
