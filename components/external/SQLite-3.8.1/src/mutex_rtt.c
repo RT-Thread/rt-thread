@@ -182,7 +182,7 @@ static sqlite3_mutex *rttMutexAlloc(int iType){
 static void rttMutexFree(sqlite3_mutex *p){
   assert( p->nRef==0 );
   assert( p->id==SQLITE_MUTEX_FAST || p->id==SQLITE_MUTEX_RECURSIVE );
-  rt_mutex_delete(&p->mutex);
+  rt_mutex_detach(&p->mutex);
   sqlite3_free(p);
 }
 
