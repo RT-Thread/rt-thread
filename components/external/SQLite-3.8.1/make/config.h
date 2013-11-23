@@ -35,10 +35,10 @@
 /* #undef HAVE_LOCALTIME_S */
 
 /* Define to 1 if you have the <malloc.h> header file. */
-#define HAVE_MALLOC_H 1
+/* #define HAVE_MALLOC_H 0 */
 
 /* Define to 1 if you have the `malloc_usable_size' function. */
-#define HAVE_MALLOC_USABLE_SIZE 1
+/* #define HAVE_MALLOC_USABLE_SIZE 0 */
 
 /* Define to 1 if you have the <memory.h> header file. */
 /* #undef HAVE_MEMORY_H */

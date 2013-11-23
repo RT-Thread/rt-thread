@@ -245,8 +245,6 @@ foreach file {
    mem5.c
    mutex.c
    mutex_noop.c
-   mutex_unix.c
-   mutex_w32.c
    mutex_rtt.c
    malloc.c
    printf.c
@@ -256,8 +254,6 @@ foreach file {
    hash.c
    opcodes.c
 
-   os_unix.c
-   os_win.c
    os_rtt.c
 
    bitvec.c

@@ -10,16 +10,16 @@
     * SQLite compile macro
     */
     #define RT_USING_SQLITE
+    #define SQLITE_MINIMUM_FILE_DESCRIPTOR  0
     #define SQLITE_OMIT_LOAD_EXTENSION 1 
-    #define SQLITE_RTT_NO_WIDE 1   
     #define SQLITE_OMIT_WAL 
+    #define SQLITE_RTT_NO_WIDE 1
     #define SQLITE_ENABLE_LOCKING_STYLE 0 
     #define SQLITE_DISABLE_LOCKING_STYLE 1
     #define SQLITE_TEMP_STORE 1
     #define SQLITE_THREADSAFE 1
     #define HAVE_READLINE 0 
     #define NDEBUG
-    #define SQLITE_TEST
     #define _HAVE_SQLITE_CONFIG_H 
     #define BUILD_sqlite
     #define SQLITE_OS_OTHER 1 
