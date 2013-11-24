@@ -33,8 +33,8 @@
 #   define SQLITE_OS_UNIX 0
 #   undef SQLITE_OS_WIN
 #   define SQLITE_OS_WIN 0
-#   undef SQLITE_OS_RTT
-#   define SQLITE_OS_RTT 1
+#   undef SQLITE_OS_RTTHREAD
+#   define SQLITE_OS_RTTHREAD 1
 # else
 #   undef SQLITE_OS_OTHER
 # endif
