@@ -27,7 +27,7 @@ BCC = gcc  -g
 # same unless your are cross-compiling.)
 #
 TCC = arm-none-eabi-gcc   -g -O2 \
-    -DSQLITE_OS_OTHER=1 -DSQLITE_OS_RTT=1 \
+    -DSQLITE_OS_OTHER=1 -DSQLITE_OS_RTTHREAD=1 \
     -I. -I${TOP}/src -I${TOP}/ext/rtree     \
     -I../../../../include                   \
     -I../../../../components/dfs/include    \
@@ -82,7 +82,7 @@ TEMP_STORE = -DSQLITE_TEMP_STORE=1
 # based on configuration. (-DSQLITE_OMIT*, -DSQLITE_ENABLE*).  
 # The same set of OMIT and ENABLE flags should be passed to the 
 # LEMON parser generator and the mkkeywordhash tool as well.
-OPT_FEATURE_FLAGS = -DSQLITE_OMIT_LOAD_EXTENSION=1 -DSQLITE_RTT_NO_WIDE=1   \
+OPT_FEATURE_FLAGS = -DSQLITE_OMIT_LOAD_EXTENSION=1 -DSQLITE_RTTHREAD_NO_WIDE=1   \
     -DSQLITE_OMIT_WAL -DSQLITE_ENABLE_LOCKING_STYLE=0 \
     -DSQLITE_DISABLE_LOCKING_STYLE=1
 
@@ -182,8 +182,8 @@ LIBOBJS0 = alter.lo analyze.lo attach.lo auth.lo \
          icu.lo insert.lo journal.lo legacy.lo loadext.lo \
          main.lo malloc.lo mem0.lo mem1.lo mem2.lo mem3.lo mem5.lo \
          memjournal.lo \
-         mutex.lo mutex_noop.lo mutex_rtt.lo \
-         notify.lo opcodes.lo os.lo os_rtt.lo \
+         mutex.lo mutex_noop.lo mutex_rtthread.lo \
+         notify.lo opcodes.lo os.lo os_rtthread.lo \
          pager.lo parse.lo pcache.lo pcache1.lo pragma.lo prepare.lo printf.lo \
          random.lo resolve.lo rowset.lo rtree.lo select.lo status.lo \
          table.lo tokenize.lo trigger.lo \
@@ -242,12 +242,12 @@ SRC = \
   $(TOP)/src/mutex.c \
   $(TOP)/src/mutex.h \
   $(TOP)/src/mutex_noop.c \
-  $(TOP)/src/mutex_rtt.c \
+  $(TOP)/src/mutex_rtthread.c \
   $(TOP)/src/notify.c \
   $(TOP)/src/os.c \
   $(TOP)/src/os.h \
   $(TOP)/src/os_common.h \
-  $(TOP)/src/os_rtt.c \
+  $(TOP)/src/os_rtthread.c \
   $(TOP)/src/pager.c \
   $(TOP)/src/pager.h \
   $(TOP)/src/parse.y \
@@ -683,8 +683,8 @@ mutex.lo:	$(TOP)/src/mutex.c $(HDR)
 mutex_noop.lo:	$(TOP)/src/mutex_noop.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_noop.c
 
-mutex_rtt.lo:	$(TOP)/src/mutex_rtt.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_rtt.c
+mutex_rtthread.lo:	$(TOP)/src/mutex_rtthread.c $(HDR)
+	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/mutex_rtthread.c
 
 notify.lo:	$(TOP)/src/notify.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/notify.c
@@ -701,8 +701,8 @@ pcache1.lo:	$(TOP)/src/pcache1.c $(HDR) $(TOP)/src/pcache.h
 os.lo:	$(TOP)/src/os.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os.c
 
-os_rtt.lo:$(TOP)/src/os_rtt.c $(HDR)
-	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os_rtt.c
+os_rtthread.lo:$(TOP)/src/os_rtthread.c $(HDR)
+	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/os_rtthread.c
 
 pragma.lo:	$(TOP)/src/pragma.c $(HDR)
 	$(LTCOMPILE) $(TEMP_STORE) -c $(TOP)/src/pragma.c

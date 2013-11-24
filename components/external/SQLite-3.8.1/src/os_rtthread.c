@@ -13,7 +13,7 @@
 ** This file contains code that is specific to Windows.
 */
 #include "sqliteInt.h"
-#if SQLITE_OS_RTT               /* This file is used for rt-thread only */
+#if SQLITE_OS_RTTHREAD               /* This file is used for rt-thread only */
 
 #include <rtthread.h>
 
@@ -32,40 +32,40 @@
 #endif
 
 /*
-** Are most of the rtt ANSI APIs available (i.e. with certain exceptions
+** Are most of the rtthread ANSI APIs available (i.e. with certain exceptions
 ** based on the sub-platform)?
 */
-#if !defined(SQLITE_RTT_NO_ANSI)
-#  warning "please ensure rtt ANSI APIs is available, otherwise compile with\
- SQLITE_RTT_NO_ANSI"
-#  define SQLITE_RTT_HAS_ANSI
+#if !defined(SQLITE_RTTHREAD_NO_ANSI)
+#  warning "please ensure rtthread ANSI APIs is available, otherwise compile with\
+ SQLITE_RTTHREAD_NO_ANSI"
+#  define SQLITE_RTTHREAD_HAS_ANSI
 #endif
 
 /*
-** Are most of the rtt Unicode APIs available (i.e. with certain exceptions
+** Are most of the rtthread Unicode APIs available (i.e. with certain exceptions
 ** based on the sub-platform)?
 */
-#if !defined(SQLITE_RTT_NO_WIDE)
-#  error "rtt not support Unicode APIs"
-#  define SQLITE_RTT_HAS_WIDE
+#if !defined(SQLITE_RTTHREAD_NO_WIDE)
+#  error "rtthread not support Unicode APIs"
+#  define SQLITE_RTTHREAD_HAS_WIDE
 #endif
 
 /*
-** Make sure at least one set of rtt APIs is available.
+** Make sure at least one set of rtthread APIs is available.
 */
-#if !defined(SQLITE_RTT_HAS_ANSI) && !defined(SQLITE_RTT_HAS_WIDE)
-#  error "At least one of SQLITE_RTT_HAS_ANSI and SQLITE_RTT_HAS_WIDE\
+#if !defined(SQLITE_RTTHREAD_HAS_ANSI) && !defined(SQLITE_RTTHREAD_HAS_WIDE)
+#  error "At least one of SQLITE_RTTHREAD_HAS_ANSI and SQLITE_RTTHREAD_HAS_WIDE\
  must be defined."
 #endif
 
 /*
-** Maximum pathname length (in chars) for rtt.  This should normally be
+** Maximum pathname length (in chars) for rtthread.  This should normally be
 ** MAX_PATH.
 */
-#ifndef SQLITE_RTT_MAX_PATH_CHARS
+#ifndef SQLITE_RTTHREAD_MAX_PATH_CHARS
 #  warning "default Maximum pathname length be 255, otherwise compile with\
- SQLITE_RTT_MAX_PATH_CHARS=?"
-#  define SQLITE_RTT_MAX_PATH_CHARS   (255)
+ SQLITE_RTTHREAD_MAX_PATH_CHARS=?"
+#  define SQLITE_RTTHREAD_MAX_PATH_CHARS   (255)
 #endif
 
 /*
@@ -77,8 +77,8 @@
 ** Returns non-zero if the character should be treated as a directory
 ** separator.
 */
-#ifndef rttIsDirSep
-#  define rttIsDirSep(a)                ((a) == '/')
+#ifndef rtthreadIsDirSep
+#  define rtthreadIsDirSep(a)                ((a) == '/')
 #endif
 
 /*
@@ -92,18 +92,18 @@
 /*
 ** Returns the string that should be used as the directory separator.
 */
-#ifndef rttGetDirDep
-#    define rttGetDirDep()              "/"
+#ifndef rtthreadGetDirDep
+#    define rtthreadGetDirDep()              "/"
 #endif
 
 /*
 ** The winFile structure is a subclass of sqlite3_file* specific to the win32
 ** portability layer.
 */
-typedef struct rttFile rttFile;
-struct rttFile {
+typedef struct rtthreadFile rtthreadFile;
+struct rtthreadFile {
   sqlite3_io_methods const *pMethod;  /* Always the first entry */
-  sqlite3_vfs *pVfs;                  /* The VFS that created this rttFile */
+  sqlite3_vfs *pVfs;                  /* The VFS that created this rtthreadFile */
   int h;                              /* The file descriptor */
   unsigned short int ctrlFlags;       /* Behavioral bits.  UNIXFILE_* flags */
   unsigned char eFileLock;            /* The type of lock held on this fd */
@@ -140,7 +140,7 @@ struct rttFile {
 };
 
 /*
-** Allowed values for the rttFile.ctrlFlags bitmask:
+** Allowed values for the rtthreadFile.ctrlFlags bitmask:
 */
 #define UNIXFILE_EXCL        0x01     /* Connections from one process only */
 #define UNIXFILE_RDONLY      0x02     /* Connection is read only */
@@ -162,15 +162,15 @@ struct rttFile {
 ** or WinNT.
 **
 ** 0:   Operating system unknown.
-** 1:   Operating system is rtt.
+** 1:   Operating system is rtthread.
 **
-** In order to facilitate testing on a rtt system, the test fixture
+** In order to facilitate testing on a rtthread system, the test fixture
 ** can manually set this value to 1 to emulate Win98 behavior.
 */
 #ifdef SQLITE_TEST
 int sqlite3_os_type = 0;
-#elif !SQLITE_OS_RTT && \
-      defined(SQLITE_RTT_HAS_ANSI) && defined(SQLITE_RTT_HAS_WIDE)
+#elif !SQLITE_OS_RTTHREAD && \
+      defined(SQLITE_RTTHREAD_HAS_ANSI) && defined(SQLITE_RTTHREAD_HAS_WIDE)
 static int sqlite3_os_type = 0;
 #endif
 
@@ -245,7 +245,7 @@ static int openDirectory(const char *zFilename, int *pFd);
 ** testing and sandboxing.  The following array holds the names and pointers
 ** to all overrideable system calls.
 */
-static struct rtt_syscall {
+static struct rtthread_syscall {
   const char *zName;            /* Name of the system call */
   sqlite3_syscall_ptr pCurrent; /* Current value of the system call */
   sqlite3_syscall_ptr pDefault; /* Default value */
@@ -306,8 +306,8 @@ static struct rtt_syscall {
 ** failed (e.g. "unlink", "open") and the associated file-system path,
 ** if any.
 */
-#define rttLogError(a,b,c)     rttLogErrorAtLine(a,b,c,__LINE__)
-static int rttLogErrorAtLine(
+#define rtthreadLogError(a,b,c)     rtthreadLogErrorAtLine(a,b,c,__LINE__)
+static int rtthreadLogErrorAtLine(
   int errcode,                    /* SQLite error code */
   const char *zFunc,              /* Name of OS function that failed */
   const char *zPath,              /* File path associated with error */
@@ -352,7 +352,7 @@ static int rttLogErrorAtLine(
 
   if( zPath==0 ) zPath = "";
   sqlite3_log(errcode,
-      "os_rtt.c:%d: (%d) %s(%s) - %s",
+      "os_rtthread.c:%d: (%d) %s(%s) - %s",
       iLine, iErrno, zFunc, zPath, zErr
   );
 
@@ -448,7 +448,7 @@ static int openDirectory(const char *zFilename, int *pFd){
     }
   }
   *pFd = fd;
-  return (fd>=0?SQLITE_OK:rttLogError(SQLITE_CANTOPEN_BKPT, "open", zDirname));
+  return (fd>=0?SQLITE_OK:rtthreadLogError(SQLITE_CANTOPEN_BKPT, "open", zDirname));
 }
 
 
@@ -459,7 +459,7 @@ static int openDirectory(const char *zFilename, int *pFd){
 ** system call pointer, or SQLITE_NOTFOUND if there is no configurable
 ** system call named zName.
 */
-static int rttSetSystemCall(
+static int rtthreadSetSystemCall(
   sqlite3_vfs *pNotUsed,        /* The VFS pointer.  Not used */
   const char *zName,            /* Name of system call to override */
   sqlite3_syscall_ptr pNewFunc  /* Pointer to new system call value */
@@ -502,7 +502,7 @@ static int rttSetSystemCall(
 ** recognized system call name.  NULL is also returned if the system call
 ** is currently undefined.
 */
-static sqlite3_syscall_ptr rttGetSystemCall(
+static sqlite3_syscall_ptr rtthreadGetSystemCall(
   sqlite3_vfs *pNotUsed,
   const char *zName
 ){
@@ -521,7 +521,7 @@ static sqlite3_syscall_ptr rttGetSystemCall(
 ** is the last system call or if zName is not the name of a valid
 ** system call.
 */
-static const char *rttNextSystemCall(sqlite3_vfs *p, const char *zName){
+static const char* rtthreadNextSystemCall(sqlite3_vfs *p, const char *zName){
   int i = -1;
 
   UNUSED_PARAMETER(p);
@@ -540,7 +540,7 @@ static const char *rttNextSystemCall(sqlite3_vfs *p, const char *zName){
 ** The following routine suspends the current thread for at least ms
 ** milliseconds.  This is equivalent to the Win32 Sleep() interface.
 */
-void sqlite3_rtt_sleep(int milliseconds){
+void sqlite3_rtthread_sleep(int milliseconds){
     rt_tick_t sleep_tick;
 
     if (milliseconds <= 0)
@@ -565,14 +565,14 @@ void sqlite3_rtt_sleep(int milliseconds){
 **     assert( unixMutexHeld() );
 **   unixEnterLeave()
 */
-static void rttEnterMutex(void){
+static void rtthreadEnterMutex(void){
   sqlite3_mutex_enter(sqlite3MutexAlloc(SQLITE_MUTEX_STATIC_MASTER));
 }
-static void rttLeaveMutex(void){
+static void rtthreadLeaveMutex(void){
   sqlite3_mutex_leave(sqlite3MutexAlloc(SQLITE_MUTEX_STATIC_MASTER));
 }
 #ifdef SQLITE_DEBUG
-static int rttMutexHeld(void) {
+static int rtthreadMutexHeld(void) {
   return sqlite3_mutex_held(sqlite3MutexAlloc(SQLITE_MUTEX_STATIC_MASTER));
 }
 #endif
@@ -702,15 +702,15 @@ static int robust_ftruncate(int h, sqlite3_int64 sz){
 ** So we don't even try to recover from an EINTR.  Just log the error
 ** and move on.
 */
-static void robust_close(rttFile *pFile, int h, int lineno){
+static void robust_close(rtthreadFile *pFile, int h, int lineno){
   if( osClose(h) ){
-    rttLogErrorAtLine(SQLITE_IOERR_CLOSE, "close",
+    rtthreadLogErrorAtLine(SQLITE_IOERR_CLOSE, "close",
                        pFile ? pFile->zPath : 0, lineno);
   }
 }
 
 /*
-** Check a rttFile that is a database.  Verify the following:
+** Check a rtthreadFile that is a database.  Verify the following:
 **
 ** (1) There is exactly one hard link on the file
 ** (2) The file is not a symbolic link
@@ -718,7 +718,7 @@ static void robust_close(rttFile *pFile, int h, int lineno){
 **
 ** Issue sqlite3_log(SQLITE_WARNING,...) messages if anything is not right.
 */
-static void verifyDbFile(rttFile *pFile){
+static void verifyDbFile(rtthreadFile *pFile){
   struct stat buf;
   int rc;
   if( pFile->ctrlFlags & UNIXFILE_WARNED ){
@@ -742,22 +742,22 @@ static void verifyDbFile(rttFile *pFile){
 /*
 ** This function performs the parts of the "close file" operation
 ** common to all locking schemes. It closes the directory and file
-** handles, if they are valid, and sets all fields of the rttFile
+** handles, if they are valid, and sets all fields of the rtthreadFile
 ** structure to 0.
 **
 ** It is *not* necessary to hold the mutex when this routine is called,
 ** even on VxWorks.  A mutex will be acquired on VxWorks by the
 ** vxworksReleaseFileId() routine.
 */
-static int closeRttFile(sqlite3_file *id){
-  rttFile *pFile = (rttFile*)id;
+static int closeRtthreadFile(sqlite3_file *id){
+  rtthreadFile *pFile = (rtthreadFile*)id;
   if( pFile->h>=0 ){
     robust_close(pFile, pFile->h, __LINE__);
     pFile->h = -1;
   }
   OSTRACE(("CLOSE   %-3d\n", pFile->h));
   OpenCounter(-1);
-  memset(pFile, 0, sizeof(rttFile));
+  memset(pFile, 0, sizeof(rtthreadFile));
   return SQLITE_OK;
 }
 
@@ -799,7 +799,7 @@ static int nolockUnlock(sqlite3_file *NotUsed, int NotUsed2){
 ** Close the file.
 */
 static int nolockClose(sqlite3_file *id) {
-  return closeRttFile(id);
+  return closeRtthreadFile(id);
 }
 
 /******************* End of the no-op lock implementation *********************
@@ -852,7 +852,7 @@ static int nolockClose(sqlite3_file *id) {
 static int dotlockCheckReservedLock(sqlite3_file *id, int *pResOut) {
   int rc = SQLITE_OK;
   int reserved = 0;
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
 
   SimulateIOError( return SQLITE_IOERR_CHECKRESERVEDLOCK; );
 
@@ -901,7 +901,7 @@ static int dotlockCheckReservedLock(sqlite3_file *id, int *pResOut) {
 ** But we track the other locking levels internally.
 */
 static int dotlockLock(sqlite3_file *id, int eFileLock) {
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
   char *zLockFile = (char *)pFile->lockingContext;
   int rc = SQLITE_OK;
 
@@ -945,7 +945,7 @@ static int dotlockLock(sqlite3_file *id, int eFileLock) {
 ** When the locking level reaches NO_LOCK, delete the lock file.
 */
 static int dotlockUnlock(sqlite3_file *id, int eFileLock) {
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
   char *zLockFile = (char *)pFile->lockingContext;
   int rc;
 
@@ -992,10 +992,10 @@ static int dotlockUnlock(sqlite3_file *id, int eFileLock) {
 static int dotlockClose(sqlite3_file *id) {
   int rc = SQLITE_OK;
   if( id ){
-    rttFile *pFile = (rttFile*)id;
+    rtthreadFile *pFile = (rtthreadFile*)id;
     dotlockUnlock(id, NO_LOCK);
     sqlite3_free(pFile->lockingContext);
-    rc = closeRttFile(id);
+    rc = closeRtthreadFile(id);
   }
   return rc;
 }
@@ -1018,7 +1018,7 @@ static int dotlockClose(sqlite3_file *id) {
 ** compiling for VXWORKS.
 */
 #if SQLITE_ENABLE_LOCKING_STYLE
-#warning "rtt file lock not available"
+#warning "rtthread file lock not available"
 /*
 ** Retry flock() calls that fail with EINTR
 */
@@ -1037,7 +1037,7 @@ static int robust_flock(int fd, int op){
 static int flockCheckReservedLock(sqlite3_file *id, int *pResOut){
   int rc = SQLITE_OK;
   int reserved = 0;
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
 
   SimulateIOError( return SQLITE_IOERR_CHECKRESERVEDLOCK; );
 
@@ -1118,7 +1118,7 @@ static int flockCheckReservedLock(sqlite3_file *id, int *pResOut){
 */
 static int flockLock(sqlite3_file *id, int eFileLock) {
   int rc = SQLITE_OK;
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
 
   assert( pFile );
 
@@ -1161,7 +1161,7 @@ static int flockLock(sqlite3_file *id, int eFileLock) {
 ** the requested locking level, this routine is a no-op.
 */
 static int flockUnlock(sqlite3_file *id, int eFileLock) {
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
 
   assert( pFile );
   OSTRACE(("UNLOCK  %d %d was %d tnm=%s (flock)\n", pFile->h, eFileLock,
@@ -1198,7 +1198,7 @@ static int flockClose(sqlite3_file *id) {
   int rc = SQLITE_OK;
   if( id ){
     flockUnlock(id, NO_LOCK);
-    rc = closeRttFile(id);
+    rc = closeRtthreadFile(id);
   }
   return rc;
 }
@@ -1231,7 +1231,7 @@ static int flockClose(sqlite3_file *id) {
 ** To avoid stomping the errno value on a failed read the lastErrno value
 ** is set before returning.
 */
-static int seekAndRead(rttFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
+static int seekAndRead(rtthreadFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
   int got;
   int prior = 0;
 #if (!defined(USE_PREAD) && !defined(USE_PREAD64))
@@ -1243,11 +1243,11 @@ static int seekAndRead(rttFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
   cnt &= 0x1ffff;
   do{
 #if defined(USE_PREAD)
-    #error "rtt pread not support"
+    #error "rtthread pread not support"
     got = osPread(id->h, pBuf, cnt, offset);
     SimulateIOError( got = -1 );
 #elif defined(USE_PREAD64)
-    #error "rtt pread64 not support"
+    #error "rtthread pread64 not support"
     got = osPread64(id->h, pBuf, cnt, offset);
     SimulateIOError( got = -1 );
 #else
@@ -1255,9 +1255,9 @@ static int seekAndRead(rttFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
     SimulateIOError( newOffset-- );
     if( newOffset!=offset ){
       if( newOffset == -1 ){
-        ((rttFile*)id)->lastErrno = errno;
+        ((rtthreadFile*)id)->lastErrno = errno;
       }else{
-        ((rttFile*)id)->lastErrno = 0;
+        ((rtthreadFile*)id)->lastErrno = 0;
       }
       return -1;
     }
@@ -1267,7 +1267,7 @@ static int seekAndRead(rttFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
     if( got<0 ){
       if( errno==EINTR ){ got = 1; continue; }
       prior = 0;
-      ((rttFile*)id)->lastErrno = errno;
+      ((rtthreadFile*)id)->lastErrno = errno;
       break;
     }else if( got>0 ){
       cnt -= got;
@@ -1287,13 +1287,13 @@ static int seekAndRead(rttFile *id, sqlite3_int64 offset, void *pBuf, int cnt){
 ** bytes were read successfully and SQLITE_IOERR if anything goes
 ** wrong.
 */
-static int rttRead(
+static int rtthreadRead(
   sqlite3_file *id,
   void *pBuf,
   int amt,
   sqlite3_int64 offset
 ){
-  rttFile *pFile = (rttFile *)id;
+  rtthreadFile *pFile = (rtthreadFile *)id;
   int got;
   assert( id );
   assert( offset>=0 );
@@ -1366,7 +1366,7 @@ static int seekAndWriteFd(
 ** To avoid stomping the errno value on a failed write the lastErrno value
 ** is set before returning.
 */
-static int seekAndWrite(rttFile *id, i64 offset, const void *pBuf, int cnt){
+static int seekAndWrite(rtthreadFile *id, i64 offset, const void *pBuf, int cnt){
   return seekAndWriteFd(id->h, offset, pBuf, cnt, &id->lastErrno);
 }
 
@@ -1375,13 +1375,13 @@ static int seekAndWrite(rttFile *id, i64 offset, const void *pBuf, int cnt){
 ** Write data from a buffer into a file.  Return SQLITE_OK on success
 ** or some other error code on failure.
 */
-static int rttWrite(
+static int rtthreadWrite(
   sqlite3_file *id,
   const void *pBuf,
   int amt,
   sqlite3_int64 offset
 ){
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
   int wrote = 0;
   assert( id );
   assert( amt>0 );
@@ -1522,7 +1522,7 @@ static int full_fsync(int fd, int fullSync, int dataOnly){
 #ifdef SQLITE_NO_SYNC
   rc = SQLITE_OK;
 #elif HAVE_FULLFSYNC
-  #error "rtt not support FULLFSYNC"
+  #error "rtthread not support FULLFSYNC"
 #else
   rc = fdatasync(fd);
 #endif /* ifdef SQLITE_NO_SYNC elif HAVE_FULLFSYNC */
@@ -1537,7 +1537,7 @@ static int full_fsync(int fd, int fullSync, int dataOnly){
 ** size, access time, etc) are synced.  If dataOnly!=0 then only the
 ** file data is synced.
 **
-** Under Rtt, also make sure that the directory entry for the file
+** Under Rtthread, also make sure that the directory entry for the file
 ** has been created by fsync-ing the directory that contains the file.
 ** If we do not do this and we encounter a power failure, the directory
 ** entry for the journal might not exist after we reboot.  The next
@@ -1545,9 +1545,9 @@ static int full_fsync(int fd, int fullSync, int dataOnly){
 ** the directory entry for the journal was never created) and the transaction
 ** will not roll back - possibly leading to database corruption.
 */
-static int rttSync(sqlite3_file *id, int flags){
+static int rtthreadSync(sqlite3_file *id, int flags){
   int rc;
-  rttFile *pFile = (rttFile*)id;
+  rtthreadFile *pFile = (rtthreadFile*)id;
 
   int isDataOnly = (flags&SQLITE_SYNC_DATAONLY);
   int isFullsync = (flags&0x0F)==SQLITE_SYNC_FULL;
@@ -1557,7 +1557,7 @@ static int rttSync(sqlite3_file *id, int flags){
       || (flags&0x0F)==SQLITE_SYNC_FULL
   );
 
-  /* Rtt cannot, but some systems may return SQLITE_FULL from here. This
+  /* Rtthread cannot, but some systems may return SQLITE_FULL from here. This
   ** line is to test that doing so does not cause any problems.
   */
   SimulateDiskfullError( return SQLITE_FULL );
@@ -1568,7 +1568,7 @@ static int rttSync(sqlite3_file *id, int flags){
   SimulateIOError( rc=1 );
   if( rc ){
     pFile->lastErrno = errno;
-    return rttLogError(SQLITE_IOERR_FSYNC, "full_fsync", pFile->zPath);
+    return rtthreadLogError(SQLITE_IOERR_FSYNC, "full_fsync", pFile->zPath);
   }
 
   /* Also fsync the directory containing the file if the DIRSYNC flag
@@ -1594,8 +1594,8 @@ static int rttSync(sqlite3_file *id, int flags){
 /*
 ** Truncate an open file to a specified size
 */
-static int rttTruncate(sqlite3_file *id, i64 nByte){
-  rttFile *pFile = (rttFile *)id;
+static int rtthreadTruncate(sqlite3_file *id, i64 nByte){
+  rtthreadFile *pFile = (rtthreadFile *)id;
   int rc;
   assert( pFile );
   SimulateIOError( return SQLITE_IOERR_TRUNCATE );
@@ -1612,7 +1612,7 @@ static int rttTruncate(sqlite3_file *id, i64 nByte){
   rc = robust_ftruncate(pFile->h, (off_t)nByte);
   if( rc ){
     pFile->lastErrno = errno;
-    return rttLogError(SQLITE_IOERR_TRUNCATE, "ftruncate", pFile->zPath);
+    return rtthreadLogError(SQLITE_IOERR_TRUNCATE, "ftruncate", pFile->zPath);
   }else{
 #ifdef SQLITE_DEBUG
     /* If we are doing a normal write to a database file (as opposed to
@@ -1634,14 +1634,14 @@ static int rttTruncate(sqlite3_file *id, i64 nByte){
 /*
 ** Determine the current size of a file in bytes
 */
-static int rttFileSize(sqlite3_file *id, i64 *pSize){
+static int rtthreadFileSize(sqlite3_file *id, i64 *pSize){
   int rc;
   struct stat buf;
   assert( id );
-  rc = osFstat(((rttFile*)id)->h, &buf);
+  rc = osFstat(((rtthreadFile*)id)->h, &buf);
   SimulateIOError( rc=1 );
   if( rc!=0 ){
-    ((rttFile*)id)->lastErrno = errno;
+    ((rtthreadFile*)id)->lastErrno = errno;
     return SQLITE_IOERR_FSTAT;
   }
   *pSize = buf.st_size;
@@ -1664,7 +1664,7 @@ static int rttFileSize(sqlite3_file *id, i64 *pSize){
 ** (rounded up to the next chunk-size).  If the database is already
 ** nBytes or larger, this routine is a no-op.
 */
-static int fcntlSizeHint(rttFile *pFile, i64 nByte){
+static int fcntlSizeHint(rtthreadFile *pFile, i64 nByte){
   if( pFile->szChunk>0 ){
     i64 nSize;                    /* Required file size */
     struct stat buf;              /* Used to hold return values of fstat() */
@@ -1684,7 +1684,7 @@ static int fcntlSizeHint(rttFile *pFile, i64 nByte){
 
       if( robust_ftruncate(pFile->h, nSize) ){
         pFile->lastErrno = errno;
-        return rttLogError(SQLITE_IOERR_TRUNCATE, "ftruncate", pFile->zPath);
+        return rtthreadLogError(SQLITE_IOERR_TRUNCATE, "ftruncate", pFile->zPath);
       }
       iWrite = ((buf.st_size + 2*nBlk - 1)/nBlk)*nBlk-1;
       while( iWrite<nSize ){
@@ -1704,7 +1704,7 @@ static int fcntlSizeHint(rttFile *pFile, i64 nByte){
 **
 ** If *pArg is 0 or 1, then clear or set the mask bit of pFile->ctrlFlags.
 */
-static void rttModeBit(rttFile *pFile, unsigned char mask, int *pArg){
+static void rtthreadModeBit(rtthreadFile *pFile, unsigned char mask, int *pArg){
   if( *pArg<0 ){
     *pArg = (pFile->ctrlFlags & mask)!=0;
   }else if( (*pArg)==0 ){
@@ -1715,13 +1715,13 @@ static void rttModeBit(rttFile *pFile, unsigned char mask, int *pArg){
 }
 
 /* Forward declaration */
-static int rttGetTempname(int nBuf, char *zBuf);
+static int rtthreadGetTempname(int nBuf, char *zBuf);
 
 /*
 ** Information and control of an open file handle.
 */
-static int rttFileControl(sqlite3_file *id, int op, void *pArg){
-  rttFile *pFile = (rttFile*)id;
+static int rtthreadFileControl(sqlite3_file *id, int op, void *pArg){
+  rtthreadFile *pFile = (rtthreadFile*)id;
   switch( op ){
     case SQLITE_FCNTL_LOCKSTATE: {
       *(int*)pArg = pFile->eFileLock;
@@ -1743,11 +1743,11 @@ static int rttFileControl(sqlite3_file *id, int op, void *pArg){
       return rc;
     }
     case SQLITE_FCNTL_PERSIST_WAL: {
-      rttModeBit(pFile, UNIXFILE_PERSIST_WAL, (int*)pArg);
+      rtthreadModeBit(pFile, UNIXFILE_PERSIST_WAL, (int*)pArg);
       return SQLITE_OK;
     }
     case SQLITE_FCNTL_POWERSAFE_OVERWRITE: {
-      rttModeBit(pFile, UNIXFILE_PSOW, (int*)pArg);
+      rtthreadModeBit(pFile, UNIXFILE_PSOW, (int*)pArg);
       return SQLITE_OK;
     }
     case SQLITE_FCNTL_VFSNAME: {
@@ -1757,7 +1757,7 @@ static int rttFileControl(sqlite3_file *id, int op, void *pArg){
     case SQLITE_FCNTL_TEMPFILENAME: {
       char *zTFile = sqlite3_malloc( pFile->pVfs->mxPathname );
       if( zTFile ){
-        rttGetTempname(pFile->pVfs->mxPathname, zTFile);
+        rtthreadGetTempname(pFile->pVfs->mxPathname, zTFile);
         *(char**)pArg = zTFile;
       }
       return SQLITE_OK;
@@ -1769,7 +1769,7 @@ static int rttFileControl(sqlite3_file *id, int op, void *pArg){
     ** unchanged.
     */
     case SQLITE_FCNTL_DB_UNCHANGED: {
-      ((rttFile*)id)->dbUpdate = 0;
+      ((rtthreadFile*)id)->dbUpdate = 0;
       return SQLITE_OK;
     }
 #endif
@@ -1787,7 +1787,7 @@ static int rttFileControl(sqlite3_file *id, int op, void *pArg){
 ** a database and its journal file) that the sector size will be the
 ** same for both.
 */
-static int rttSectorSize(sqlite3_file *NotUsed){
+static int rtthreadSectorSize(sqlite3_file *NotUsed){
   UNUSED_PARAMETER(NotUsed);
   return SQLITE_DEFAULT_SECTOR_SIZE;
 }
@@ -1806,8 +1806,8 @@ static int rttSectorSize(sqlite3_file *NotUsed){
 **  Hence, while POWERSAFE_OVERWRITE is on by default, there is a file-control
 ** available to turn it off and URI query parameter available to turn it off.
 */
-static int rttDeviceCharacteristics(sqlite3_file *id){
-  rttFile *p = (rttFile*)id;
+static int rtthreadDeviceCharacteristics(sqlite3_file *id){
+  rtthreadFile *p = (rtthreadFile*)id;
   int rc = 0;
 
   if( p->ctrlFlags & UNIXFILE_PSOW ){
@@ -1820,14 +1820,14 @@ static int rttDeviceCharacteristics(sqlite3_file *id){
 #  error "WAL mode requires not support from the rt-thread, compile\
  with SQLITE_OMIT_WAL."
 #else
-# define rttShmMap     0
-# define rttShmLock    0
-# define rttShmBarrier 0
-# define rttShmUnmap   0
+# define rtthreadShmMap     0
+# define rtthreadShmLock    0
+# define rtthreadShmBarrier 0
+# define rtthreadShmUnmap   0
 #endif /* #ifndef SQLITE_OMIT_WAL */
 
 #if SQLITE_MAX_MMAP_SIZE>0
-#error "rtt not spportt mmap"
+#error "rtthread not spportt mmap"
 #endif /* SQLITE_MAX_MMAP_SIZE>0 */
 
 /*
@@ -1842,7 +1842,7 @@ static int rttDeviceCharacteristics(sqlite3_file *id){
 ** If this function does return a pointer, the caller must eventually
 ** release the reference by calling unixUnfetch().
 */
-static int rttFetch(sqlite3_file *fd, i64 iOff, int nAmt, void **pp){
+static int rtthreadFetch(sqlite3_file *fd, i64 iOff, int nAmt, void **pp){
 
   *pp = 0;
 
@@ -1859,8 +1859,8 @@ static int rttFetch(sqlite3_file *fd, i64 iOff, int nAmt, void **pp){
 ** to inform the VFS layer that, according to POSIX, any existing mapping
 ** may now be invalid and should be unmapped.
 */
-static int rttUnfetch(sqlite3_file *fd, i64 iOff, void *p){
-  rttFile *pFd = (rttFile *)fd;   /* The underlying database file */
+static int rtthreadUnfetch(sqlite3_file *fd, i64 iOff, void *p){
+  rtthreadFile *pFd = (rtthreadFile *)fd;   /* The underlying database file */
   UNUSED_PARAMETER(iOff);
 
   return SQLITE_OK;
@@ -1910,29 +1910,29 @@ static int rttUnfetch(sqlite3_file *fd, i64 iOff, void *p){
 static const sqlite3_io_methods METHOD = {                                   \
    VERSION,                    /* iVersion */                                \
    CLOSE,                      /* xClose */                                  \
-   rttRead,                   /* xRead */                                   \
-   rttWrite,                  /* xWrite */                                  \
-   rttTruncate,               /* xTruncate */                               \
-   rttSync,                   /* xSync */                                   \
-   rttFileSize,               /* xFileSize */                               \
+   rtthreadRead,                   /* xRead */                                   \
+   rtthreadWrite,                  /* xWrite */                                  \
+   rtthreadTruncate,               /* xTruncate */                               \
+   rtthreadSync,                   /* xSync */                                   \
+   rtthreadFileSize,               /* xFileSize */                               \
    LOCK,                       /* xLock */                                   \
    UNLOCK,                     /* xUnlock */                                 \
    CKLOCK,                     /* xCheckReservedLock */                      \
-   rttFileControl,            /* xFileControl */                            \
-   rttSectorSize,             /* xSectorSize */                             \
-   rttDeviceCharacteristics,  /* xDeviceCapabilities */                     \
-   rttShmMap,                 /* xShmMap */                                 \
-   rttShmLock,                /* xShmLock */                                \
-   rttShmBarrier,             /* xShmBarrier */                             \
-   rttShmUnmap,               /* xShmUnmap */                               \
-   rttFetch,                  /* xFetch */                                  \
-   rttUnfetch,                /* xUnfetch */                                \
+   rtthreadFileControl,            /* xFileControl */                            \
+   rtthreadSectorSize,             /* xSectorSize */                             \
+   rtthreadDeviceCharacteristics,  /* xDeviceCapabilities */                     \
+   rtthreadShmMap,                 /* xShmMap */                                 \
+   rtthreadShmLock,                /* xShmLock */                                \
+   rtthreadShmBarrier,             /* xShmBarrier */                             \
+   rtthreadShmUnmap,               /* xShmUnmap */                               \
+   rtthreadFetch,                  /* xFetch */                                  \
+   rtthreadUnfetch,                /* xUnfetch */                                \
 };                                                                           \
-static const sqlite3_io_methods *FINDER##Impl(const char *z, rttFile *p){   \
+static const sqlite3_io_methods *FINDER##Impl(const char *z, rtthreadFile *p){   \
   UNUSED_PARAMETER(z); UNUSED_PARAMETER(p);                                  \
   return &METHOD;                                                            \
 }                                                                            \
-static const sqlite3_io_methods *(*const FINDER)(const char*,rttFile *p)    \
+static const sqlite3_io_methods *(*const FINDER)(const char*,rtthreadFile *p)    \
     = FINDER##Impl;
 
 /*
@@ -1974,7 +1974,7 @@ IOMETHODS(
 /*
 ** An abstract type for a pointer to a IO method finder function:
 */
-typedef const sqlite3_io_methods *(*finder_type)(const char*,rttFile*);
+typedef const sqlite3_io_methods *(*finder_type)(const char*,rtthreadFile*);
 
 
 /****************************************************************************
@@ -1985,17 +1985,17 @@ typedef const sqlite3_io_methods *(*finder_type)(const char*,rttFile*);
 */
 
 /*
-** Initialize the contents of the rttFile structure pointed to by pId.
+** Initialize the contents of the rtthreadFile structure pointed to by pId.
 */
-static int fillInRttFile(
+static int fillInRtthreadFile(
   sqlite3_vfs *pVfs,      /* Pointer to vfs object */
   int h,                  /* Open file descriptor of file being opened */
-  sqlite3_file *pId,      /* Write to the rttFile structure here */
+  sqlite3_file *pId,      /* Write to the rtthreadFile structure here */
   const char *zFilename,  /* Name of the file being opened */
   int ctrlFlags           /* Zero or more UNIXFILE_* values */
 ){
   const sqlite3_io_methods *pLockingStyle;
-  rttFile *pNew = (rttFile *)pId;
+  rtthreadFile *pNew = (rtthreadFile *)pId;
   int rc = SQLITE_OK;
 
   assert( pNew->pInode==NULL );
@@ -2066,7 +2066,7 @@ static int fillInRttFile(
 ** Return the name of a directory in which to put temporary files.
 ** If no suitable temporary file directory can be found, return NULL.
 */
-static const char *rttTempFileDir(void){
+static const char* rtthreadTempFileDir(void){
   static const char *azDirs[] = {
      0,
      "/sql",
@@ -2094,7 +2094,7 @@ static const char *rttTempFileDir(void){
 ** by the calling process and must be big enough to hold at least
 ** pVfs->mxPathname bytes.
 */
-static int rttGetTempname(int nBuf, char *zBuf){
+static int rtthreadGetTempname(int nBuf, char *zBuf){
   static const unsigned char zChars[] =
     "abcdefghijklmnopqrstuvwxyz"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -2108,7 +2108,7 @@ static int rttGetTempname(int nBuf, char *zBuf){
   */
   SimulateIOError( return SQLITE_IOERR );
 
-  zDir = rttTempFileDir();
+  zDir = rtthreadTempFileDir();
   if( zDir==0 ) zDir = ".";
 
   /* Check that the output buffer is large enough for the temporary file
@@ -2153,14 +2153,14 @@ static int rttGetTempname(int nBuf, char *zBuf){
 ** interface, add the DELETEONCLOSE flag to those specified above for
 ** OpenExclusive().
 */
-static int rttOpen(
+static int rtthreadOpen(
   sqlite3_vfs *pVfs,           /* The VFS for which this is the xOpen method */
   const char *zPath,           /* Pathname of file to be opened */
   sqlite3_file *pFile,         /* The file descriptor to be filled in */
   int flags,                   /* Input flags to control the opening */
   int *pOutFlags               /* Output flags returned to SQLite core */
 ){
-  rttFile *p = (rttFile *)pFile;
+  rtthreadFile *p = (rtthreadFile *)pFile;
   int fd = -1;                   /* File descriptor returned by open() */
   int openFlags = 0;             /* Flags to pass to open() */
   int eType = flags&0xFFFFFF00;  /* Type of file to open */
@@ -2219,11 +2219,11 @@ static int rttOpen(
        || eType==SQLITE_OPEN_TRANSIENT_DB || eType==SQLITE_OPEN_WAL
   );
 
-  memset(p, 0, sizeof(rttFile));
+  memset(p, 0, sizeof(rtthreadFile));
   if( !zName ){
     /* If zName is NULL, the upper layer is requesting a temp file. */
     assert(isDelete && !syncDir);
-    rc = rttGetTempname(MAX_PATHNAME+2, zTmpname);
+    rc = rtthreadGetTempname(MAX_PATHNAME+2, zTmpname);
     if( rc!=SQLITE_OK ){
       return rc;
     }
@@ -2259,7 +2259,7 @@ static int rttOpen(
       fd = robust_open(zName, openFlags, openMode);
     }
     if( fd<0 ){
-      rc = rttLogError(SQLITE_CANTOPEN_BKPT, "open", zName);
+      rc = rtthreadLogError(SQLITE_CANTOPEN_BKPT, "open", zName);
       goto open_finished;
     }
   }
@@ -2286,7 +2286,7 @@ static int rttOpen(
   if( syncDir )                 ctrlFlags |= UNIXFILE_DIRSYNC;
   if( flags & SQLITE_OPEN_URI ) ctrlFlags |= UNIXFILE_URI;
 
-  rc = fillInRttFile(pVfs, fd, pFile, zPath, ctrlFlags);
+  rc = fillInRtthreadFile(pVfs, fd, pFile, zPath, ctrlFlags);
 
 open_finished:
 
@@ -2298,7 +2298,7 @@ open_finished:
 ** Delete the file at zPath. If the dirSync argument is true, fsync()
 ** the directory after deleting the file.
 */
-static int rttDelete(
+static int rtthreadDelete(
   sqlite3_vfs *NotUsed,     /* VFS containing this as the xDelete method */
   const char *zPath,        /* Name of file to be deleted */
   int dirSync               /* If true, fsync() directory after deleting file */
@@ -2310,7 +2310,7 @@ static int rttDelete(
     if( errno==ENOENT ){
       rc = SQLITE_IOERR_DELETE_NOENT;
     }else{
-      rc = rttLogError(SQLITE_IOERR_DELETE, "unlink", zPath);
+      rc = rtthreadLogError(SQLITE_IOERR_DELETE, "unlink", zPath);
     }
     return rc;
   }
@@ -2338,7 +2338,7 @@ static int rttDelete(
 **
 ** Otherwise return 0.
 */
-static int rttAccess(
+static int rtthreadAccess(
   sqlite3_vfs *NotUsed,   /* The VFS containing this xAccess method */
   const char *zPath,      /* Path of the file to examine */
   int flags,              /* What do we want to learn about the zPath file? */
@@ -2381,7 +2381,7 @@ static int rttAccess(
 ** (in this case, MAX_PATHNAME bytes). The full-path is written to
 ** this buffer before returning.
 */
-static int rttFullPathname(
+static int rtthreadFullPathname(
   sqlite3_vfs *pVfs,            /* Pointer to vfs object */
   const char *zPath,            /* Possibly relative input path */
   int nOut,                     /* Size of output buffer in bytes */
@@ -2404,7 +2404,7 @@ static int rttFullPathname(
   }else{
     int nCwd;
     if( osGetcwd(zOut, nOut-1)==0 ){
-      return rttLogError(SQLITE_CANTOPEN_BKPT, "getcwd", zPath);
+      return rtthreadLogError(SQLITE_CANTOPEN_BKPT, "getcwd", zPath);
     }
     nCwd = (int)strlen(zOut);
     sqlite3_snprintf(nOut-nCwd, &zOut[nCwd], "/%s", zPath);
@@ -2414,18 +2414,18 @@ static int rttFullPathname(
 
 
 #ifndef SQLITE_OMIT_LOAD_EXTENSION
-# error "rtt not support load extension, compile with SQLITE_OMIT_WAL."
+# error "rtthread not support load extension, compile with SQLITE_OMIT_WAL."
 #else /* if SQLITE_OMIT_LOAD_EXTENSION is defined: */
-  #define rttDlOpen  0
-  #define rttDlError 0
-  #define rttDlSym   0
-  #define rttDlClose 0
+  #define rtthreadDlOpen  0
+  #define rtthreadDlError 0
+  #define rtthreadDlSym   0
+  #define rtthreadDlClose 0
 #endif
 
 /*
 ** Write nBuf bytes of random data to the supplied buffer zBuf.
 */
-static int rttRandomness(sqlite3_vfs *NotUsed, int nBuf, char *zBuf){
+static int rtthreadRandomness(sqlite3_vfs *NotUsed, int nBuf, char *zBuf){
   UNUSED_PARAMETER(NotUsed);
   assert((size_t)nBuf>=(sizeof(time_t)+sizeof(int)));
 
@@ -2467,7 +2467,7 @@ static int rttRandomness(sqlite3_vfs *NotUsed, int nBuf, char *zBuf){
 ** might be greater than or equal to the argument, but not less
 ** than the argument.
 */
-static int rttSleep(sqlite3_vfs *NotUsed, int microseconds){
+static int rtthreadSleep(sqlite3_vfs *NotUsed, int microseconds){
 
   int seconds = (microseconds+999999)/1000000;
   osSleep(seconds * 1000);
@@ -2498,17 +2498,17 @@ int sqlite3_current_time = 0;  /* Fake system time in seconds since 1970. */
 ** On success, return SQLITE_OK.  Return SQLITE_ERROR if the time and date
 ** cannot be found.
 */
-static int rttCurrentTimeInt64(sqlite3_vfs *NotUsed, sqlite3_int64 *piNow){
-  static const sqlite3_int64 rttEpoch = 24405875*(sqlite3_int64)8640000;
+static int rtthreadCurrentTimeInt64(sqlite3_vfs *NotUsed, sqlite3_int64 *piNow){
+  static const sqlite3_int64 rtthreadEpoch = 24405875*(sqlite3_int64)8640000;
   int rc = SQLITE_OK;
 #if defined(NO_GETTOD)
   time_t t;
   time(&t);
-  *piNow = ((sqlite3_int64)t)*1000 + rttEpoch;
+  *piNow = ((sqlite3_int64)t)*1000 + rtthreadEpoch;
 #else
   struct timeval sNow;
   if( gettimeofday(&sNow, 0)==0 ){
-    *piNow = rttEpoch + 1000*(sqlite3_int64)sNow.tv_sec + sNow.tv_usec/1000;
+    *piNow = rtthreadEpoch + 1000*(sqlite3_int64)sNow.tv_sec + sNow.tv_usec/1000;
   }else{
     rc = SQLITE_ERROR;
   }
@@ -2516,7 +2516,7 @@ static int rttCurrentTimeInt64(sqlite3_vfs *NotUsed, sqlite3_int64 *piNow){
 
 #ifdef SQLITE_TEST
   if( sqlite3_current_time ){
-    *piNow = 1000*(sqlite3_int64)sqlite3_current_time + rttEpoch;
+    *piNow = 1000*(sqlite3_int64)sqlite3_current_time + rtthreadEpoch;
   }
 #endif
   UNUSED_PARAMETER(NotUsed);
@@ -2528,11 +2528,11 @@ static int rttCurrentTimeInt64(sqlite3_vfs *NotUsed, sqlite3_int64 *piNow){
 ** current time and date as a Julian Day number into *prNow and
 ** return 0.  Return 1 if the time and date cannot be found.
 */
-static int rttCurrentTime(sqlite3_vfs *NotUsed, double *prNow){
+static int rtthreadCurrentTime(sqlite3_vfs *NotUsed, double *prNow){
   sqlite3_int64 i = 0;
   int rc;
   UNUSED_PARAMETER(NotUsed);
-  rc = rttCurrentTimeInt64(0, &i);
+  rc = rtthreadCurrentTimeInt64(0, &i);
   *prNow = i/86400000.0;
   return rc;
 }
@@ -2544,7 +2544,7 @@ static int rttCurrentTime(sqlite3_vfs *NotUsed, double *prNow){
 ** in the core.  So this routine is never called.  For now, it is merely
 ** a place-holder.
 */
-static int rttGetLastError(sqlite3_vfs *NotUsed, int NotUsed2, char *NotUsed3){
+static int rtthreadGetLastError(sqlite3_vfs *NotUsed, int NotUsed2, char *NotUsed3){
   UNUSED_PARAMETER(NotUsed);
   UNUSED_PARAMETER(NotUsed2);
   UNUSED_PARAMETER(NotUsed3);
@@ -2589,29 +2589,29 @@ static int rttGetLastError(sqlite3_vfs *NotUsed, int NotUsed2, char *NotUsed3){
   ** database file and tries to choose an locking method appropriate for
   ** that filesystem time.
   */
-#define UNIXVFS(VFSNAME, FINDER) {                        \
+#define UNIXVFS(VFSNAME, FINDER) {                          \
     3,                    /* iVersion */                    \
-    sizeof(rttFile),     /* szOsFile */                    \
+    sizeof(rtthreadFile),     /* szOsFile */                \
     MAX_PATHNAME,         /* mxPathname */                  \
     0,                    /* pNext */                       \
     VFSNAME,              /* zName */                       \
     (void*)&FINDER,       /* pAppData */                    \
-    rttOpen,             /* xOpen */                       \
-    rttDelete,           /* xDelete */                     \
-    rttAccess,           /* xAccess */                     \
-    rttFullPathname,     /* xFullPathname */               \
-    rttDlOpen,           /* xDlOpen */                     \
-    rttDlError,          /* xDlError */                    \
-    rttDlSym,            /* xDlSym */                      \
-    rttDlClose,          /* xDlClose */                    \
-    rttRandomness,       /* xRandomness */                 \
-    rttSleep,            /* xSleep */                      \
-    rttCurrentTime,      /* xCurrentTime */                \
-    rttGetLastError,     /* xGetLastError */               \
-    rttCurrentTimeInt64, /* xCurrentTimeInt64 */           \
-    rttSetSystemCall,    /* xSetSystemCall */              \
-    rttGetSystemCall,    /* xGetSystemCall */              \
-    rttNextSystemCall,   /* xNextSystemCall */             \
+    rtthreadOpen,             /* xOpen */                       \
+    rtthreadDelete,           /* xDelete */                     \
+    rtthreadAccess,           /* xAccess */                     \
+    rtthreadFullPathname,     /* xFullPathname */               \
+    rtthreadDlOpen,           /* xDlOpen */                     \
+    rtthreadDlError,          /* xDlError */                    \
+    rtthreadDlSym,            /* xDlSym */                      \
+    rtthreadDlClose,          /* xDlClose */                    \
+    rtthreadRandomness,       /* xRandomness */                 \
+    rtthreadSleep,            /* xSleep */                      \
+    rtthreadCurrentTime,      /* xCurrentTime */                \
+    rtthreadGetLastError,     /* xGetLastError */               \
+    rtthreadCurrentTimeInt64, /* xCurrentTimeInt64 */           \
+    rtthreadSetSystemCall,    /* xSetSystemCall */              \
+    rtthreadGetSystemCall,    /* xGetSystemCall */              \
+    rtthreadNextSystemCall,   /* xNextSystemCall */             \
   }
 
 int sqlite3_os_init(void){
@@ -2654,5 +2654,5 @@ int sqlite3_os_end(void){
 }
 
 
-#endif /* SQLITE_OS_RTT */
+#endif /* SQLITE_OS_RTTHREAD */
 

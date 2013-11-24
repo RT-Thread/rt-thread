@@ -20,7 +20,7 @@
 ** Note that this implementation requires a version of rt-thread that
 ** supports recursive mutexes.
 */
-#ifdef SQLITE_MUTEX_RTT
+#ifdef SQLITE_MUTEX_RTTHREAD
 
 #include <rtthread.h>
 
@@ -58,23 +58,23 @@ struct sqlite3_mutex {
 ** The sqlite3_mutex_held() and sqlite3_mutex_notheld() routine are
 ** intended for use only inside assert() statements.  On some platforms,
 ** there might be race conditions that can cause these routines to
-** deliver incorrect results.  In particular, if rtt_equal() is
+** deliver incorrect results.  In particular, if rtthread_equal() is
 ** not an atomic operation, then these routines might delivery
-** incorrect results.  On most platforms, rtt_equal() is a
+** incorrect results.  On most platforms, rtthread_equal() is a
 ** comparison of two integers and is therefore atomic.  But we are
 ** told that HPUX is not such a platform.  If so, then these routines
 ** will not always work correctly on HPUX.
 **
-** On those platforms where rtt_equal() is not atomic, SQLite
+** On those platforms where rtthread_equal() is not atomic, SQLite
 ** should be compiled without -DSQLITE_DEBUG and with -DNDEBUG to
 ** make sure no assert() statements are evaluated and hence these
 ** routines are never called.
 */
 #if !defined(NDEBUG) || defined(SQLITE_DEBUG)
-static int rttMutexHeld(sqlite3_mutex *p){
+static int rtthreadMutexHeld(sqlite3_mutex *p){
   return (p->nRef != 0 && p->owner == rt_thread_self());
 }
-static int rttMutexNotheld(sqlite3_mutex *p){
+static int rtthreadMutexNotheld(sqlite3_mutex *p){
   return (p->nRef == 0 || p->owner != rt_thread_self());
 }
 #endif
@@ -82,8 +82,8 @@ static int rttMutexNotheld(sqlite3_mutex *p){
 /*
 ** Initialize and deinitialize the mutex subsystem.
 */
-static int rttMutexInit(void){ return SQLITE_OK; }
-static int rttMutexEnd(void){ return SQLITE_OK; }
+static int rtthreadMutexInit(void){ return SQLITE_OK; }
+static int rtthreadMutexEnd(void){ return SQLITE_OK; }
 
 /*
 ** The sqlite3_mutex_alloc() routine allocates a new
@@ -127,7 +127,7 @@ static int rttMutexEnd(void){ return SQLITE_OK; }
 ** mutex types, the same mutex is returned on every call that has
 ** the same type number.
 */
-static sqlite3_mutex *rttMutexAlloc(int iType){
+static sqlite3_mutex* rtthreadMutexAlloc(int iType){
   static sqlite3_mutex staticMutexes[] = {
     SQLITE3_MUTEX_INITIALIZER,
     SQLITE3_MUTEX_INITIALIZER,
@@ -179,7 +179,7 @@ static sqlite3_mutex *rttMutexAlloc(int iType){
 ** allocated mutex.  SQLite is careful to deallocate every
 ** mutex that it allocates.
 */
-static void rttMutexFree(sqlite3_mutex *p){
+static void rtthreadMutexFree(sqlite3_mutex *p){
   assert( p->nRef==0 );
   assert( p->id==SQLITE_MUTEX_FAST || p->id==SQLITE_MUTEX_RECURSIVE );
   rt_mutex_detach(&p->mutex);
@@ -197,12 +197,12 @@ static void rttMutexFree(sqlite3_mutex *p){
 ** can enter.  If the same thread tries to enter any other kind of mutex
 ** more than once, the behavior is undefined.
 */
-static void rttMutexEnter(sqlite3_mutex *p){
-  assert( p->id==SQLITE_MUTEX_RECURSIVE || rttMutexNotheld(p) );
+static void rtthreadMutexEnter(sqlite3_mutex *p){
+  assert( p->id==SQLITE_MUTEX_RECURSIVE || rtthreadMutexNotheld(p) );
 
 #ifdef SQLITE_HOMEGROWN_RECURSIVE_MUTEX
   /* If recursive mutexes are not available, then we have to grow
-  ** our own.  This implementation assumes that rtt_equal()
+  ** our own.  This implementation assumes that rtthread_equal()
   ** is atomic - that it cannot be deceived into thinking self
   ** and p->owner are equal if p->owner changes between two values
   ** that are not equal to self while the comparison is taking place.
@@ -239,13 +239,13 @@ static void rttMutexEnter(sqlite3_mutex *p){
   }
 #endif
 }
-static int rttMutexTry(sqlite3_mutex *p){
+static int rtthreadMutexTry(sqlite3_mutex *p){
   int rc;
-  assert( p->id==SQLITE_MUTEX_RECURSIVE || rttMutexNotheld(p) );
+  assert( p->id==SQLITE_MUTEX_RECURSIVE || rtthreadMutexNotheld(p) );
 
 #ifdef SQLITE_HOMEGROWN_RECURSIVE_MUTEX
   /* If recursive mutexes are not available, then we have to grow
-  ** our own.  This implementation assumes that rtt_equal()
+  ** our own.  This implementation assumes that rtthread_equal()
   ** is atomic - that it cannot be deceived into thinking self
   ** and p->owner are equal if p->owner changes between two values
   ** that are not equal to self while the comparison is taking place.
@@ -296,8 +296,8 @@ static int rttMutexTry(sqlite3_mutex *p){
 ** is undefined if the mutex is not currently entered or
 ** is not currently allocated.  SQLite will never do either.
 */
-static void rttMutexLeave(sqlite3_mutex *p){
-  assert( rttMutexHeld(p) );
+static void rtthreadMutexLeave(sqlite3_mutex *p){
+  assert( rtthreadMutexHeld(p) );
 #if SQLITE_MUTEX_NREF
   p->nRef--;
   if( p->nRef==0 ) p->owner = 0;
@@ -321,16 +321,16 @@ static void rttMutexLeave(sqlite3_mutex *p){
 
 sqlite3_mutex_methods const *sqlite3DefaultMutex(void){
   static const sqlite3_mutex_methods sMutex = {
-    rttMutexInit,
-    rttMutexEnd,
-    rttMutexAlloc,
-    rttMutexFree,
-    rttMutexEnter,
-    rttMutexTry,
-    rttMutexLeave,
+    rtthreadMutexInit,
+    rtthreadMutexEnd,
+    rtthreadMutexAlloc,
+    rtthreadMutexFree,
+    rtthreadMutexEnter,
+    rtthreadMutexTry,
+    rtthreadMutexLeave,
 #ifdef SQLITE_DEBUG
-    rttMutexHeld,
-    rttMutexNotheld
+    rtthreadMutexHeld,
+    rtthreadMutexNotheld
 #else
     0,
     0
@@ -340,5 +340,5 @@ sqlite3_mutex_methods const *sqlite3DefaultMutex(void){
   return &sMutex;
 }
 
-#endif /* SQLITE_MUTEX_RTT */
+#endif /* SQLITE_MUTEX_RTTHREAD */
 

@@ -33,7 +33,7 @@
 **                             implementation can be overridden at
 **                             start-time.
 **
-**   SQLITE_MUTEX_RTT          For multi_threaded  applications on rt-thread.
+**   SQLITE_MUTEX_RTTHREAD     For multi-threaded  applications on rt-thread.
 **
 **   SQLITE_MUTEX_PTHREADS     For multi-threaded applications on Unix.
 **
@@ -47,8 +47,8 @@
 #    define SQLITE_MUTEX_PTHREADS
 #  elif SQLITE_OS_WIN
 #    define SQLITE_MUTEX_W32
-#  elif SQLITE_OS_RTT
-#    define SQLITE_MUTEX_RTT
+#  elif SQLITE_OS_RTTHREAD
+#    define SQLITE_MUTEX_RTTHREAD
 #  else
 #    define SQLITE_MUTEX_NOOP
 #  endif

@@ -568,7 +568,7 @@ extern const int sqlite3one;
 # endif
 #endif
 #ifndef SQLITE_MAX_MMAP_SIZE
-# if defined(SQLITE_OS_RTT)
+# if defined(SQLITE_OS_RTTHREAD)
 #   define SQLITE_MAX_MMAP_SIZE 0
 # elif defined(__linux__) \
   || defined(_WIN32) \

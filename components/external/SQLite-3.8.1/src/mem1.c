@@ -75,7 +75,7 @@ static malloc_zone_t* _sqliteZone_;
 #define SQLITE_MALLOCSIZE(x) \
         (_sqliteZone_ ? _sqliteZone_->size(_sqliteZone_,x) : malloc_size(x))
 
-#elif defined(SQLITE_OS_RTT)
+#elif defined(SQLITE_OS_RTTHREAD)
 #include <rtthread.h>
 /*
 ** Use standard C library malloc and free on non-Apple systems.
