@@ -82,13 +82,12 @@ char *strdup(const char *s)
 #include <dfs_posix.h>
 const char* finsh_get_prompt()
 {
-	#define _PROMPT "finsh "
+	#define _PROMPT "[RTT @ FINSH "
 	static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};
 	
 	/* get current working directory */
-	getcwd(&finsh_prompt[6], RT_CONSOLEBUF_SIZE - 8);
-	strcat(finsh_prompt, ">");
-
+	getcwd(&finsh_prompt[13], RT_CONSOLEBUF_SIZE - 8);
+	strcat(finsh_prompt, "] $ ");
 	return finsh_prompt;
 }
 #endif
@@ -185,19 +184,18 @@ void finsh_auto_complete(char* prefix)
 {
 	extern void list_prefix(char* prefix);
 
-	rt_kprintf("\n");
 #ifdef FINSH_USING_MSH
 	if (msh_is_used() == RT_TRUE)
 	{
 		msh_auto_complete(prefix);
+		rt_kprintf("%s", prefix);
+		return ;
 	}
-	else 
 #endif
-	{
-		list_prefix(prefix);
-	}
-
+	rt_kprintf("\n");
+	list_prefix(prefix);
 	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
+
 }
 
 void finsh_run_line(struct finsh_parser* parser, const char *line)

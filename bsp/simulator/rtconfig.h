@@ -115,10 +115,13 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
 
 /* SECTION: device file system */
 #define RT_USING_DFS
 #define DFS_FILESYSTEM_TYPES_MAX  8
+#define DFS_USING_WORKDIR
 
 /* DFS: ELM FATFS options */
 #define RT_USING_DFS_ELMFAT
@@ -209,7 +212,7 @@
 #define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
-#define RT_USING_RTGUI
+//#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12

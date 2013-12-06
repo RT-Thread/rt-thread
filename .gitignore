@@ -11,3 +11,15 @@
 *.ilk
 build
 *~
+
+# vc2010
+*.vcproj
+*.vcxproj
+*.filters
+*.user
+*.sdf
+*.sln
+*.suo
+UpgradeLog.XML
+_UpgradeReport_Files
+Debug

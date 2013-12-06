@@ -47,7 +47,7 @@
 #define FINSH_PROMPT		finsh_get_prompt()
 const char* finsh_get_prompt(void);
 #else
-#define FINSH_PROMPT		"finsh>>"
+#define FINSH_PROMPT		"[RTT @ FINSH] $ "
 #endif
 
 #ifdef FINSH_USING_HISTORY
