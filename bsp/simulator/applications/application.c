@@ -40,10 +40,6 @@ void rt_init_thread_entry(void *parameter)
     rt_hw_sdl_start();
 #endif /* RT_USING_RTGUI */
 
-#if defined(RT_USING_COMPONENTS_INIT) && defined(__GNUC__) && defined(RT_USING_FINSH)
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-
     /* File system Initialization */
 #ifdef RT_USING_DFS
     {
@@ -94,17 +90,6 @@ void rt_init_thread_entry(void *parameter)
 #endif
 }
 
-static void rt_test_thread_entry(void *parameter)
-{
-    int i;
-    for (i = 0; i < 5; i++)
-    {
-        rt_kprintf("hello, world\n");
-        rt_thread_delay(RT_TICK_PER_SECOND);
-    }
-}
-
-
 int rt_application_init()
 {
     rt_thread_t tid;
@@ -113,12 +98,6 @@ int rt_application_init()
                            rt_init_thread_entry, RT_NULL,
                            2048, RT_THREAD_PRIORITY_MAX / 3, 20);
 
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
-
-    tid = rt_thread_create("test",
-                           rt_test_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX * 3 / 4, 20);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
 

@@ -1,9 +1,10 @@
 ﻿说明: 本BSP可以如下演示
 依赖软件包
-    python2.7 (python2.6使用scons --target=vs -s生成工程会出现错误） 
+    python2.7 (python2.6无法生成vs工程）
 
 一 平台及组件支持
 目前rtconfig.py中支持的编译器有
+
 1). msvc 用于windows平台
   此平台支持的组件
     kernel
@@ -24,38 +25,21 @@
     DFS, ELM FatFS, UFFS
     RTGUI
 
+请根据自己的实际情况，修改rtconfig.py中CROSS_TOOL为上述某一值。
+
 二 组件配置
 1) RTGUI
-当前代码中已经不含RTGUI源码，因此读者需要配置一下才能在simulator中使用RTGUI
-RTGUI的最新源码目前是托管在github上：https://github.com/RT-Thread/RTGUI
-共有两种方法。
-方法1 添加环境变量
-   向系统加入RTT_RTGUI环境变量，其值为刚才github上下载的rtgui源码包的路径。
-   例如笔者的rtgui源码包解压至 F:\Project\git\rt-gui\下， 则将此环境变量配置为 F:\Project\git\rt-gui\components\rtgui
-方法2 不添加环境变量
-   打开SConstruct文件，
- ....
- 10 if os.getenv('RTT_RTGUI'):
- 11     RTT_RTGUI = os.getenv('RTT_RTGUI')
- 12 else:
- 13     # set the rtgui root directory by hand
- 14     # empty string means use the RTGUI in svn
- 15     # RTT_RTGUI = os.path.normpath(r'F:\Project\git\rt-gui\components\rtgui')
- 16     RTT_RTGUI =''         
- ....
-将15，16行修改为
- 14     # empty string means use the RTGUI in svn
- 15     RTT_RTGUI = os.path.normpath(r'F:\Project\git\rt-gui\components\rtgui')
- 16     # RTT_RTGUI =''         
-简单说明一下：
-   1)#号表示注释，类似于c语言中的//，
-   2)其中15行的路径为你的RTGUI路径源码，注意不是压缩包路径，而是压缩包路径下的 components\rtgui目录的绝对路径。
+RTGUI的最新源码目前托管在github上：https://github.com/RT-Thread/RTGUI
+下载最新的RTGUI源码，将RTGUI源码包中components下的rtgui目录复制到Rt-thread的components目录下。
 
 三 编译
 1) 使用Visual Studio(2005以上版本)
 在当前目录中打开cmd，输入命令
 `scons --target=vs -s`
-可以生成project.vsproj，双击运行
+生成vs2005的project.vsproj，使用vs2005及以上版本可以打开(VS2005需要转换工程）。
+
+或直接生成vs2012工程
+`scons --target=vs2012 -s`
 
 2) 命令行编译
 修改rtconfig.py, 配置合适的编译器(msvc/mingw/gcc)，及其路径
@@ -73,31 +57,23 @@ RTGUI的最新源码目前是托管在github上：https://github.com/RT-Thread/R
 按下回车，出现finsh，然后输入`mkfs("elm", "sd0")`格式化SD卡，如下所示
 	finsh>>mkfs("elm", "sd0")
 			0, 0x00000000
-然后重启程序，就可以看到fatfs挂载成功了
+重启程序，可以正确挂载fat文件系统。
 
 2) 测试RTGUI
-启动后就会看到GUI窗口，分辨率800x480，此时在finsh中输入snake_main()并回车，即可运行贪吃蛇程序
+打开RTGUI组件后编译，启动在finsh中输入snake_main()并回车，可运行贪吃蛇程序
 
 3) 测试APP module
-rtconfig.h中需要打开RT_USING_MODULE
+在rtconfig.h中打开RT_USING_MODULE
+
+测试app module需要执行3步，如下a, b, c所示。
 
 a. 生成rtthread.def文件
-使用msv编译主程序时需要此文件，使用MingW编译主程序时不需要
-msvc需要此文件才能生成正确导出符号的rtthread.dll和rtthread-win32.exe。
-此目录下默认自带了一个rtthread.def文件，当修改了rtconfig.h，禁用了某些组件时，则需要重新生成rtthread.def文件.
-生成方法：
-需要借助MingW工具，修改rtconfig.py中CROSS_TOOL为'mingw'，然后打开CMD执行`scons --def`就会自动更新rtthread.def。
+执行`scons --def`可以自动生成rtthread.def。
+当修改了rtconfig.h，打开或禁用了某些组件时，需要重新生成rtthread.def文件.
 
 b. 生成主程序
-  主程序可以使用msvc和mingw生成
-  如果rtconfig.h中的使能了RTGUI，则需要参考第二节第1小节配置RTGUI
-  a.1 使用msvc
-	  修改rtconfig.py中CROSS_TOOL为'msvc'
-	  首先要保证当前目录下有合适的rtthread.def文件，如果没有对默认的rtconfig.h作修改，则使用默认的rtthread.def即可
-	  CMD命令行执行`scons -j4`，即可生成rtthread.dll和 rtthread-win32.exe
-  a.2 使用mingw
-	  修改rtconfig.py中CROSS_TOOL为'mingw'
-	  CMD命令行执行`scons -j4`，这就会生成 rtthread.dll和 rtthread-win32.exe
+
+  `scons -j4`
 
 c. 生成app module
   进入testdll目录，再次修改 testdll/SConstruct， 同样需要配置RTT_RTGUI路径，同 1中3)
@@ -107,8 +83,8 @@ c. 生成app module
 
   然后运行simulator目录下的 rtthread-win32.exe, 在finsh中运行   
     `exec("/testdll/basicapp/build/basicapp.dll")` 
-  如果觉得这个路径太长，就把 basicapp.dll复制到 simualtor目录下，执行
+  如果觉得这个路径太长，可以将basicapp.dll复制到 simualtor目录下，执行
     `exec("/basicapp.dll")`
 
   编译贪吃蛇程序
-  执行`scons --app=snake`，就会在snake/build/下生成snake.dll，按照同样的方式加载即可
+  执行`scons --app=snake`，会在snake/build/下生成snake.dll，按照同样的方式加载即可
