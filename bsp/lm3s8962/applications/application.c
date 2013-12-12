@@ -32,6 +32,7 @@
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <lwip/api.h>
+#include "web/httpd.h"
 #endif
 
 /* thread phase init */
@@ -66,7 +67,9 @@ void rt_init_thread_entry(void *parameter)
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
 	}
+	 init_httpd();
 #endif
+
 }
 
 int rt_application_init()
