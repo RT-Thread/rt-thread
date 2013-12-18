@@ -50,11 +50,6 @@ void tc_thread_entry(void* parameter)
 						_tc_cleanup();
 						_tc_cleanup = RT_NULL;
 					}
-
-					if (_tc_stat & TC_STAT_FAILED)
-						rt_kprintf("TestCase[%s] failed\n", _tc_current);
-					else
-						rt_kprintf("TestCase[%s] passed\n", _tc_current);
 				}
 				else
 				{
@@ -65,6 +60,11 @@ void tc_thread_entry(void* parameter)
 						_tc_cleanup = RT_NULL;
 					}
 				}
+
+                if (_tc_stat & TC_STAT_FAILED)
+                    rt_kprintf("TestCase[%s] failed\n", _tc_current);
+                else
+                    rt_kprintf("TestCase[%s] passed\n", _tc_current);
 			}
 		}
 	}
