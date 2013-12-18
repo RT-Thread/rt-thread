@@ -40,6 +40,8 @@ void tc_thread_entry(void* parameter)
 				tick = index->func();
 				if (tick > 0)
 				{
+					/* Make sure we are going to be blocked. */
+					rt_sem_control(&_tc_sem, RT_IPC_CMD_RESET, 0);
 					rt_sem_take(&_tc_sem, tick * _tc_scale);
 
 					if (_tc_cleanup != RT_NULL)
@@ -48,8 +50,6 @@ void tc_thread_entry(void* parameter)
 						_tc_cleanup();
 						_tc_cleanup = RT_NULL;
 					}
-
-					rt_sem_trytake(&_tc_sem);/* by nl1031 */
 
 					if (_tc_stat & TC_STAT_FAILED)
 						rt_kprintf("TestCase[%s] failed\n", _tc_current);
