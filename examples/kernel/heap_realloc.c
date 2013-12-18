@@ -20,6 +20,7 @@ static rt_bool_t mem_check(rt_uint8_t *ptr, rt_uint8_t value, rt_uint32_t len)
 
 static void heap_realloc_init()
 {
+	rt_uint8_t res = TC_STAT_PASSED;
 	rt_uint8_t *ptr1, *ptr2, *ptr3, *ptr4, *ptr5;
 
 	ptr1 = rt_malloc(1);
@@ -43,6 +44,11 @@ static void heap_realloc_init()
 	ptr3 = rt_realloc(ptr3, 127);
 	ptr4 = rt_realloc(ptr4, 1);
 	ptr5 = rt_realloc(ptr5, 0);
+	if (ptr5)
+	{
+		rt_kprintf("realloc(ptr, 0) should return NULL\n");
+		res = TC_STAT_FAILED;
+	}
 
 	if (mem_check(ptr1, 1, 1)   != RT_FALSE) goto _failed;
 	if (mem_check(ptr2, 2, 13)  != RT_FALSE) goto _failed;
@@ -54,15 +60,7 @@ static void heap_realloc_init()
 	rt_free(ptr3);
 	rt_free(ptr1);
 
-	if (ptr5 != RT_NULL)
-	{
-		rt_free(ptr5);
-	}
-
-	tc_done(TC_STAT_PASSED);
-
-_failed:
-	tc_done(TC_STAT_FAILED);
+	tc_done(res);
 }
 
 #ifdef RT_USING_TC
