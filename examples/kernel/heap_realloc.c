@@ -34,10 +34,26 @@ static void heap_realloc_init()
 	memset(ptr3, 3, 31);
 	memset(ptr4, 4, 127);
 
-	if (mem_check(ptr1, 1, 1)   != RT_FALSE) goto _failed;
-	if (mem_check(ptr2, 2, 13)  != RT_FALSE) goto _failed;
-	if (mem_check(ptr3, 3, 31)  != RT_FALSE) goto _failed;
-	if (mem_check(ptr4, 4, 127) != RT_FALSE) goto _failed;
+	if (mem_check(ptr1, 1, 1)   == RT_FALSE)
+    {
+        res = TC_STAT_FAILED;
+        goto _free;
+    }
+	if (mem_check(ptr2, 2, 13)  == RT_FALSE)
+    {
+        res = TC_STAT_FAILED;
+        goto _free;
+    }
+	if (mem_check(ptr3, 3, 31)  == RT_FALSE)
+    {
+        res = TC_STAT_FAILED;
+        goto _free;
+    }
+	if (mem_check(ptr4, 4, 127) == RT_FALSE)
+    {
+        res = TC_STAT_FAILED;
+        goto _free;
+    }
 
 	ptr1 = rt_realloc(ptr1, 13);
 	ptr2 = rt_realloc(ptr2, 31);
@@ -50,14 +66,19 @@ static void heap_realloc_init()
 		res = TC_STAT_FAILED;
 	}
 
-	if (mem_check(ptr1, 1, 1)   != RT_FALSE) goto _failed;
-	if (mem_check(ptr2, 2, 13)  != RT_FALSE) goto _failed;
-	if (mem_check(ptr3, 3, 31)  != RT_FALSE) goto _failed;
-	if (mem_check(ptr4, 4, 1)	!= RT_FALSE) goto _failed;
+	if (mem_check(ptr1, 1, 1)   == RT_FALSE)
+        res = TC_STAT_FAILED;
+	if (mem_check(ptr2, 2, 13)  == RT_FALSE)
+        res = TC_STAT_FAILED;
+	if (mem_check(ptr3, 3, 31)  == RT_FALSE)
+        res = TC_STAT_FAILED;
+	if (mem_check(ptr4, 4, 1)	== RT_FALSE)
+        res = TC_STAT_FAILED;
 
+_free:
 	rt_free(ptr4);
 	rt_free(ptr3);
-	rt_free(ptr3);
+	rt_free(ptr2);
 	rt_free(ptr1);
 
 	tc_done(res);
