@@ -37,29 +37,20 @@ void tc_thread_entry(void* parameter)
 				_tc_current = index->name + 4;
 				rt_kprintf("Run TestCase: %s\n", _tc_current);
 				_tc_stat = TC_STAT_PASSED | TC_STAT_RUNNING;
-				tick = index->func();
-				if (tick > 0)
-				{
-					/* Make sure we are going to be blocked. */
-					rt_sem_control(&_tc_sem, RT_IPC_CMD_RESET, 0);
-					rt_sem_take(&_tc_sem, tick * _tc_scale);
+                tick = index->func();
+                if (tick > 0)
+                {
+                    /* Make sure we are going to be blocked. */
+                    rt_sem_control(&_tc_sem, RT_IPC_CMD_RESET, 0);
+                    rt_sem_take(&_tc_sem, tick * _tc_scale);
+                }
 
-					if (_tc_cleanup != RT_NULL)
-					{
-						/* perform testcase cleanup */
-						_tc_cleanup();
-						_tc_cleanup = RT_NULL;
-					}
-				}
-				else
-				{
-					if (_tc_cleanup != RT_NULL)
-					{
-						/* perform testcase cleanup */
-						_tc_cleanup();
-						_tc_cleanup = RT_NULL;
-					}
-				}
+                if (_tc_cleanup != RT_NULL)
+                {
+                    /* perform testcase cleanup */
+                    _tc_cleanup();
+                    _tc_cleanup = RT_NULL;
+                }
 
                 if (_tc_stat & TC_STAT_FAILED)
                     rt_kprintf("TestCase[%s] failed\n", _tc_current);
