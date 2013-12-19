@@ -119,6 +119,10 @@ static void _tc_cleanup()
 	/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
 	rt_enter_critical();
 
+	rt_sem_detach(&sem_lock);
+	rt_sem_detach(&sem_empty);
+	rt_sem_detach(&sem_full);
+
 	/* 删除线程 */
 	if (producer_tid != RT_NULL && producer_tid->stat != RT_THREAD_CLOSE)
 		rt_thread_delete(producer_tid);
