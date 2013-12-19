@@ -52,6 +52,15 @@ void tc_thread_entry(void* parameter)
                     _tc_cleanup = RT_NULL;
                 }
 
+                if (_tc_stat & TC_STAT_RUNNING)
+                {
+                    rt_kprintf("TestCase[%s] exit with stat TC_STAT_RUNNING."
+                               " Please fix the TC.\n",
+                               _tc_current);
+                    /* If the TC forgot to clear the flag, we do it. */
+                    _tc_stat &= ~TC_STAT_RUNNING;
+                }
+
                 if (_tc_stat & TC_STAT_FAILED)
                     rt_kprintf("TestCase[%s] failed\n", _tc_current);
                 else
