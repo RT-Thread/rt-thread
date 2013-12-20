@@ -41,7 +41,7 @@ static void thread2_entry(void* parameter)
 	/* 线程2拥有较高的优先级，以抢占线程1而获得执行 */
 
 	/* 线程2启动后先睡眠10个OS Tick */
-	rt_thread_delay(10);
+	rt_thread_delay(RT_TICK_PER_SECOND);
 
 	/*
 	 * 线程2唤醒后直接删除线程1，删除线程1后，线程1自动脱离就绪线程
@@ -53,7 +53,7 @@ static void thread2_entry(void* parameter)
 	 * 线程2继续休眠10个OS Tick然后退出，线程2休眠后应切换到idle线程
 	 * idle线程将执行真正的线程1控制块和线程栈的删除
 	 */
-	rt_thread_delay(10);
+	rt_thread_delay(RT_TICK_PER_SECOND);
 }
 
 static void thread2_cleanup(struct rt_thread *tid)
@@ -100,7 +100,7 @@ int thread_delete_init()
 	else
 		tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-	return 0;
+	return 10 * RT_TICK_PER_SECOND;
 }
 
 #ifdef RT_USING_TC
@@ -112,12 +112,12 @@ static void _tc_cleanup()
 	/* delete thread */
 	if (tid1 != RT_NULL)
 	{
-		rt_kprintf("tid1 is bad\n");
+		rt_kprintf("tid1 is %p, should be NULL\n", tid1);
 		tc_stat(TC_STAT_FAILED);
 	}
 	if (tid2 != RT_NULL)
 	{
-		rt_kprintf("tid2 is bad\n");
+		rt_kprintf("tid2 is %p, should be NULL\n", tid2);
 		tc_stat(TC_STAT_FAILED);
 	}
 
@@ -129,9 +129,7 @@ int _tc_thread_delete()
 {
 	/* set tc cleanup */
 	tc_cleanup(_tc_cleanup);
-	thread_delete_init();
-
-	return 27;
+	return thread_delete_init();
 }
 FINSH_FUNCTION_EXPORT(_tc_thread_delete, a thread delete example);
 #else

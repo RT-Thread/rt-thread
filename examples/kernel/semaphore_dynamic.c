@@ -90,13 +90,16 @@ static void _tc_cleanup()
 	/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
 	rt_enter_critical();
 
+	if (sem)
+	{
+		rt_sem_delete(sem);
+		sem = RT_NULL;
+	}
+
 	/* 删除线程 */
 	if (tid != RT_NULL && tid->stat != RT_THREAD_CLOSE)
 	{
 		rt_thread_delete(tid);
-
-		/* 删除信号量 */
-		rt_sem_delete(sem);
 	}
 
 	/* 调度器解锁 */

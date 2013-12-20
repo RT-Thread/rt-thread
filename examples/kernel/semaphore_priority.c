@@ -100,6 +100,12 @@ static void _tc_cleanup()
 	rt_thread_delete(t2);
 	rt_thread_delete(worker);
 
+	if (sem)
+	{
+		rt_sem_delete(sem);
+		sem = RT_NULL;
+	}
+
 	if (t1_count > t2_count)
 		tc_done(TC_STAT_FAILED);
 	else
