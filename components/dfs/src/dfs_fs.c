@@ -80,7 +80,7 @@ int dfs_register(const struct dfs_filesystem_operation *ops)
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
 {
     struct dfs_filesystem *iter;
-    struct dfs_filesystem *empty = RT_NULL;
+    struct dfs_filesystem *fs = RT_NULL;
     rt_uint32_t fspath, prefixlen;
 
     prefixlen = 0;
@@ -104,13 +104,13 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
         if (fspath > 1 && (strlen(path) > fspath) && (path[fspath] != '/'))
             continue;
 
-        empty = iter;
+        fs = iter;
         prefixlen = fspath;
     }
 
     dfs_unlock();
 
-    return empty;
+    return fs;
 }
 
 /**
@@ -329,6 +329,7 @@ err1:
 int dfs_unmount(const char *specialfile)
 {
     char *fullpath;
+    struct dfs_filesystem *iter;
     struct dfs_filesystem *fs = RT_NULL;
 
     fullpath = dfs_normalize_path(RT_NULL, specialfile);
@@ -342,7 +343,17 @@ int dfs_unmount(const char *specialfile)
     /* lock filesystem */
     dfs_lock();
 
-    fs = dfs_filesystem_lookup(fullpath);
+    for (iter = &filesystem_table[0];
+            iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+    {
+        /* check if the PATH is mounted */
+        if ((iter->path != NULL) && (strcmp(iter->path, fullpath) == 0))
+        {
+            fs = iter;
+            break;
+        }
+    }
+
     if (fs == RT_NULL ||
         fs->ops->unmount == RT_NULL ||
         fs->ops->unmount(fs) < 0)
