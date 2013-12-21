@@ -285,7 +285,16 @@ int dfs_mount(const char   *device_name,
 
     /* open device, but do not check the status of device */
     if (dev_id != RT_NULL)
-        rt_device_open(fs->dev_id, RT_DEVICE_OFLAG_RDWR);
+    {
+        if (rt_device_open(fs->dev_id,
+                           RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+        {
+            /* The underlaying device has error, clear the entry. */
+            dfs_lock();
+            rt_memset(fs, 0, sizeof(struct dfs_filesystem));
+            goto err1;
+        }
+    }
 
     /* call mount of this filesystem */
     if ((*ops)->mount(fs, rwflag, data) < 0)
