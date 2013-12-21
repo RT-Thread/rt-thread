@@ -80,7 +80,7 @@ int dfs_register(const struct dfs_filesystem_operation *ops)
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
 {
     struct dfs_filesystem *iter;
-    struct dfs_filesystem *empty = RT_NULL;
+    struct dfs_filesystem *fs = RT_NULL;
     rt_uint32_t fspath, prefixlen;
 
     prefixlen = 0;
@@ -104,13 +104,13 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
         if (fspath > 1 && (strlen(path) > fspath) && (path[fspath] != '/'))
             continue;
 
-        empty = iter;
+        fs = iter;
         prefixlen = fspath;
     }
 
     dfs_unlock();
 
-    return empty;
+    return fs;
 }
 
 /**
