@@ -1,8 +1,8 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#define CPU_USAGE_CALC_TICK	10
-#define CPU_USAGE_LOOP		100
+#define CPU_USAGE_CALC_TICK    10
+#define CPU_USAGE_LOOP        100
 
 static rt_uint8_t  cpu_usage_major = 0, cpu_usage_minor= 0;
 static rt_uint32_t total_count = 0;
