@@ -320,6 +320,7 @@ err1:
 int dfs_unmount(const char *specialfile)
 {
     char *fullpath;
+    struct dfs_filesystem *iter;
     struct dfs_filesystem *fs = RT_NULL;
 
     fullpath = dfs_normalize_path(RT_NULL, specialfile);
@@ -333,7 +334,17 @@ int dfs_unmount(const char *specialfile)
     /* lock filesystem */
     dfs_lock();
 
-    fs = dfs_filesystem_lookup(fullpath);
+    for (iter = &filesystem_table[0];
+            iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+    {
+        /* check if the PATH is mounted */
+        if ((iter->path != NULL) && (strcmp(iter->path, fullpath) == 0))
+        {
+            fs = iter;
+            break;
+        }
+    }
+
     if (fs == RT_NULL ||
         fs->ops->unmount == RT_NULL ||
         fs->ops->unmount(fs) < 0)
