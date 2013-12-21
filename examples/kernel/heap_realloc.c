@@ -72,7 +72,7 @@ static void heap_realloc_init()
         res = TC_STAT_FAILED;
     if (mem_check(ptr3, 3, 31)  == RT_FALSE)
         res = TC_STAT_FAILED;
-    if (mem_check(ptr4, 4, 1)	== RT_FALSE)
+    if (mem_check(ptr4, 4, 1)    == RT_FALSE)
         res = TC_STAT_FAILED;
 
 _free:
