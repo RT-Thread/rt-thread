@@ -25,9 +25,13 @@ static void thread_entry(void* parameter)
 	result = rt_sem_take(sem, 10);
 	if (result == -RT_ETIMEOUT)
 	{
-		/* 判断是否刚好过去10个OS Tick */
-		if (rt_tick_get() - tick != 10)
+        rt_tick_t new_tick = rt_tick_get();
+		/* 可以有两个 tick 的误差 */
+		if (new_tick - tick >= 12)
 		{
+            rt_kprintf("tick error to large: expect: 10, get %d\n",
+                       new_tick - tick);
+
 			/* 如果失败，则测试失败 */
 			tc_done(TC_STAT_FAILED);
 			rt_sem_delete(sem);
