@@ -34,6 +34,7 @@
  *                             issue found by kuronca
  * 2010-12-13     Bernard      add defunct list initialization even if not use heap.
  * 2011-05-10     Bernard      clean scheduler debug log.
+ * 2013-12-21     Grissiom     add rt_critical_level
  */
 
 #include <rtthread.h>
@@ -398,5 +399,14 @@ void rt_exit_critical(void)
     }
 }
 
+/**
+ * Get the scheduler lock level
+ *
+ * @return the level of the scheduler lock. 0 means unlocked.
+ */
+rt_uint16_t rt_critical_level(void)
+{
+    return rt_scheduler_lock_nest;
+}
 /*@}*/
 
