@@ -20,6 +20,7 @@ FINSH_VAR_EXPORT(_tc_scale, finsh_type_int, the testcase timer timeout scale)
 
 void tc_thread_entry(void* parameter)
 {
+	unsigned int fail_count = 0;
 	struct finsh_syscall* index;
 
 	/* create tc semaphore */
@@ -59,17 +60,30 @@ void tc_thread_entry(void* parameter)
                                _tc_current);
                     /* If the TC forgot to clear the flag, we do it. */
                     _tc_stat &= ~TC_STAT_RUNNING;
-                }
+				}
 
-                if (_tc_stat & TC_STAT_FAILED)
-                    rt_kprintf("TestCase[%s] failed\n", _tc_current);
-                else
-                    rt_kprintf("TestCase[%s] passed\n", _tc_current);
+				if (_tc_stat & TC_STAT_FAILED)
+				{
+					rt_kprintf("TestCase[%s] failed\n", _tc_current);
+					fail_count++;
+				}
+				else
+				{
+					rt_kprintf("TestCase[%s] passed\n", _tc_current);
+				}
 			}
 		}
 	}
 
 	rt_kprintf("RT-Thread TestCase Running Done!\n");
+	if (fail_count)
+	{
+		rt_kprintf("%d tests failed\n", fail_count);
+	}
+	else
+	{
+		rt_kprintf("All tests passed\n");
+	}
 	/* detach tc semaphore */
 	rt_sem_detach(&_tc_sem);
 }
