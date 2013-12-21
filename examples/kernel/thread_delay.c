@@ -14,7 +14,7 @@ static void thread_entry(void* parameter)
     rt_kprintf("thread delay 10 tick\n");
     tick = rt_tick_get();
     rt_thread_delay(10);
-    if (rt_tick_get() - tick > 10)
+    if (rt_tick_get() - tick > 11)
     {
         tc_done(TC_STAT_FAILED);
         return;
@@ -23,7 +23,7 @@ static void thread_entry(void* parameter)
     rt_kprintf("thread delay 15 tick\n");
     tick = rt_tick_get();
     rt_thread_delay(15);
-    if (rt_tick_get() - tick > 15)
+    if (rt_tick_get() - tick > 16)
     {
         tc_done(TC_STAT_FAILED);
         return;

@@ -45,21 +45,21 @@ int thread_priority_init()
     rt_err_t result;
 
     result = rt_thread_init(&thread1,
-        "t1",
-        thread1_entry, RT_NULL,
-        &thread1_stack[0], sizeof(thread1_stack),
-        THREAD_PRIORITY - 1, THREAD_TIMESLICE);
-    
+                            "t1",
+                            thread1_entry, RT_NULL,
+                            &thread1_stack[0], sizeof(thread1_stack),
+                            THREAD_PRIORITY - 1, THREAD_TIMESLICE);
+
     if (result == RT_EOK)
         rt_thread_startup(&thread1);
     else
         tc_stat(TC_STAT_FAILED);
 
     rt_thread_init(&thread2,
-        "t2",
-        thread2_entry, RT_NULL,
-        &thread2_stack[0], sizeof(thread2_stack),
-        THREAD_PRIORITY + 1, THREAD_TIMESLICE);
+                   "t2",
+                   thread2_entry, RT_NULL,
+                   &thread2_stack[0], sizeof(thread2_stack),
+                   THREAD_PRIORITY + 1, THREAD_TIMESLICE);
 
     if (result == RT_EOK)
         rt_thread_startup(&thread2);
