@@ -228,6 +228,7 @@ proc copy_file {filename} {
 # inlining opportunities.
 #
 foreach file {
+   sqlite_config_rtthread.h 
    sqlite3.h
    sqliteInt.h
 

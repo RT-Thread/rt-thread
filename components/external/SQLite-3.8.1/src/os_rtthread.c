@@ -16,11 +16,57 @@
 #if SQLITE_OS_RTTHREAD               /* This file is used for rt-thread only */
 
 #include <rtthread.h>
+#include <dfs_posix.h>
 
 /*
 ** Include code that is common to all os_*.c files
 */
 #include "os_common.h"
+
+#ifndef RT_USING_NEWLIB
+
+#ifndef EINTR
+#define EINTR        4  /* Interrupted system call */
+#endif
+
+#ifndef ENOLCK
+#define ENOLCK      46  /* No record locks available */
+#endif
+
+#ifndef EACCES
+#define EACCES      13  /* Permission denied */
+#endif
+
+#ifndef EPERM
+#define EPERM        1  /* Operation not permitted */
+#endif
+
+#ifndef ETIMEDOUT
+#define ETIMEDOUT   145 /* Connection timed out */
+#endif
+
+#ifndef ENOTCONN
+#define ENOTCONN    134 /* Transport endpoint is not connected */
+#endif
+
+#if defined(__GNUC__) || defined(__ADSPBLACKFIN__)
+int _gettimeofday(struct timeval *tp, void *ignore) __attribute__((weak));
+int _gettimeofday(struct timeval *tp, void *ignore)
+#elif defined(__CC_ARM)
+__weak int _gettimeofday(struct timeval *tp, void *ignore)
+#elif defined(__IAR_SYSTEMS_ICC__)
+    #if __VER__ > 540
+    __weak
+    #endif
+int _gettimeofday(struct timeval *tp, void *ignore)
+#else
+int _gettimeofday(struct timeval *tp, void *ignore)
+#endif
+{
+    return 0;
+}
+
+#endif /* RT_USING_NEWLIB */
 
 /*
 ** Compiling and using WAL mode requires several APIs that are not
@@ -269,10 +315,10 @@ static struct rtthread_syscall {
 #define osFstat     ((int(*)(int,struct stat*))aSyscall[5].pCurrent)
 
   { "read",         (sqlite3_syscall_ptr)read,       0  },
-#define osRead      ((ssize_t(*)(int,void*,size_t))aSyscall[6].pCurrent)
+#define osRead      ((int(*)(int,void*,size_t))aSyscall[6].pCurrent)
 
   { "write",        (sqlite3_syscall_ptr)write,      0  },
-#define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[7].pCurrent)
+#define osWrite     ((int(*)(int,const void*,size_t))aSyscall[7].pCurrent)
 
   { "unlink",       (sqlite3_syscall_ptr)unlink,           0 },
 #define osUnlink    ((int(*)(const char*))aSyscall[8].pCurrent)
@@ -624,9 +670,9 @@ static int sqliteErrorFromPosixError(int posixError, int sqliteIOErr) {
     return SQLITE_OK;
 #endif
 
-  case EAGAIN:
+  case DFS_STATUS_EAGAIN:
   case ETIMEDOUT:
-  case EBUSY:
+  case DFS_STATUS_EBUSY:
   case EINTR:
   case ENOLCK:
     /* random NFS retry error, unless during file system support
@@ -665,17 +711,17 @@ static int sqliteErrorFromPosixError(int posixError, int sqliteIOErr) {
     /* invalid fd, unless during file system support introspection, in which
      * it actually means what it says */
 #endif
-  case EIO:
-  case EBADF:
-  case EINVAL:
+  case DFS_STATUS_EIO:
+  case DFS_STATUS_EBADF:
+  case DFS_STATUS_EINVAL:
   case ENOTCONN:
-  case ENODEV:
-  case ENXIO:
-  case ENOENT:
+  case DFS_STATUS_ENODEV:
+  case DFS_STATUS_ENXIO:
+  case DFS_STATUS_ENOENT:
 #ifdef ESTALE                     /* ESTALE is not defined on Interix systems */
   case ESTALE:
 #endif
-  case ENOSYS:
+  case DFS_STATUS_ENOSYS:
     /* these should force the client to close the file and reconnect */
 
   default:
@@ -732,11 +778,14 @@ static void verifyDbFile(rtthreadFile *pFile){
     pFile->ctrlFlags |= UNIXFILE_WARNED;
     return;
   }
+#warning " struct \"stat\" has no field \"st_nlink\""
+#ifndef RT_USING_SQLITE
   if( buf.st_nlink==0 && (pFile->ctrlFlags & UNIXFILE_DELETE)==0 ){
     sqlite3_log(SQLITE_WARNING, "file unlinked while open: %s", pFile->zPath);
     pFile->ctrlFlags |= UNIXFILE_WARNED;
     return;
   }
+#endif
 }
 
 /*
@@ -919,7 +968,7 @@ static int dotlockLock(sqlite3_file *id, int eFileLock) {
   if( rc<0 ){
     /* failed to open/create the lock directory */
     int tErrno = errno;
-    if( EEXIST == tErrno ){
+    if( DFS_STATUS_EEXIST == tErrno ){
       rc = SQLITE_BUSY;
     } else {
       rc = sqliteErrorFromPosixError(tErrno, SQLITE_IOERR_LOCK);
@@ -970,11 +1019,11 @@ static int dotlockUnlock(sqlite3_file *id, int eFileLock) {
   /* To fully unlock the database, delete the lock file */
   assert( eFileLock==NO_LOCK );
   rc = osRmdir(zLockFile);
-  if( rc<0 && errno==ENOTDIR ) rc = osUnlink(zLockFile);
+  if( rc<0 && errno==DFS_STATUS_ENOTDIR ) rc = osUnlink(zLockFile);
   if( rc<0 ){
     int tErrno = errno;
     rc = 0;
-    if( ENOENT != tErrno ){
+    if( DFS_STATUS_ENOENT != tErrno ){
       rc = SQLITE_IOERR_UNLOCK;
     }
     if( IS_LOCK_ERROR(rc) ){
@@ -1417,7 +1466,7 @@ static int rtthreadWrite(
   SimulateDiskfullError(( wrote=0, amt=1 ));
 
   if( amt>0 ){
-    if( wrote<0 && pFile->lastErrno!=ENOSPC ){
+    if( wrote<0 && pFile->lastErrno!=DFS_STATUS_ENOSPC ){
       /* lastErrno set by seekAndWrite */
       return SQLITE_IOERR_WRITE;
     }else{
@@ -2249,7 +2298,7 @@ static int rtthreadOpen(
 
     fd = robust_open(zName, openFlags, openMode);
     OSTRACE(("OPENX   %-3d %s 0%o\n", fd, zName, openFlags));
-    if( fd<0 && errno!=EISDIR && isReadWrite && !isExclusive ){
+    if( fd<0 && errno!=DFS_STATUS_EISDIR && isReadWrite && !isExclusive ){
       /* Failed to open the file for read/write access. Try read-only. */
       flags &= ~(SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
       openFlags &= ~(O_RDWR|O_CREAT);
@@ -2307,7 +2356,7 @@ static int rtthreadDelete(
   UNUSED_PARAMETER(NotUsed);
   SimulateIOError(return SQLITE_IOERR_DELETE);
   if( osUnlink(zPath)==(-1) ){
-    if( errno==ENOENT ){
+    if( errno==DFS_STATUS_ENOENT ){
       rc = SQLITE_IOERR_DELETE_NOENT;
     }else{
       rc = rtthreadLogError(SQLITE_IOERR_DELETE, "unlink", zPath);
@@ -2338,6 +2387,17 @@ static int rtthreadDelete(
 **
 ** Otherwise return 0.
 */
+
+#ifndef F_OK
+# define F_OK 0
+#endif
+#ifndef R_OK
+# define R_OK 4
+#endif
+#ifndef W_OK
+# define W_OK 2
+#endif
+
 static int rtthreadAccess(
   sqlite3_vfs *NotUsed,   /* The VFS containing this xAccess method */
   const char *zPath,      /* Path of the file to examine */

@@ -10,6 +10,8 @@
     * SQLite compile macro
     */
     #define RT_USING_SQLITE
+2.
+    关注SQLite目录下的src/sqlite_config_rtthread.h
     #define SQLITE_MINIMUM_FILE_DESCRIPTOR  0
     #define SQLITE_OMIT_LOAD_EXTENSION 1 
     #define SQLITE_OMIT_WAL 
@@ -20,11 +22,11 @@
     #define SQLITE_THREADSAFE 1
     #define HAVE_READLINE 0 
     #define NDEBUG
-    #define _HAVE_SQLITE_CONFIG_H 
+    #define _HAVE_SQLITE_CONFIG_H
     #define BUILD_sqlite
-    #define SQLITE_OS_OTHER 1 
-    #define SQLITE_OS_RTT 1
-2.
+    #define SQLITE_OS_OTHER 1
+    #define SQLITE_OS_RTTHREAD 1
+3.
     用test目录下的test10.c来进行测试.
     推荐用mini2440bsp，因为板子的ram较大。
 
