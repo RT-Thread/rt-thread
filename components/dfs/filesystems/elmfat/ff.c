@@ -108,12 +108,8 @@
 #if _MAX_SS != 512 && _MAX_SS != 1024 && _MAX_SS != 2048 && _MAX_SS != 4096
 #error Wrong sector size.
 #endif
-#if _MAX_SS != 512
-#define	SS(fs)	((fs)->ssize)	/* Multiple sector size */
-#else
-#define	SS(fs)	512U			/* Fixed sector size */
-#endif
 
+#define	SS(fs)	((fs)->ssize)	/* sector size */
 
 /* Reentrancy related */
 #if _FS_REENTRANT
@@ -2058,10 +2054,11 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 	stat = disk_initialize(fs->drv);	/* Initialize low level disk I/O layer */
 	if (stat & STA_NOINIT)				/* Check if the initialization succeeded */
 		return FR_NOT_READY;			/* Failed to initialize due to no media or hard error */
-#if _MAX_SS != 512						/* Get disk sector size (variable sector size cfg only) */
+
+	/* Get disk sector size (variable sector size cfg only) */
 	if (disk_ioctl(fs->drv, GET_SECTOR_SIZE, &fs->ssize) != RES_OK)
 		return FR_DISK_ERR;
-#endif
+
 #if !_FS_READONLY
 	if (chk_wp && (stat & STA_PROTECT))	/* Check disk write protection if needed */
 		return FR_WRITE_PROTECTED;
@@ -3601,10 +3598,10 @@ FRESULT f_mkfs (
 	stat = disk_initialize(drv);
 	if (stat & STA_NOINIT) return FR_NOT_READY;
 	if (stat & STA_PROTECT) return FR_WRITE_PROTECTED;
-#if _MAX_SS != 512					/* Get disk sector size */
+	/* Get disk sector size */
 	if (disk_ioctl(drv, GET_SECTOR_SIZE, &SS(fs)) != RES_OK)
 		return FR_DISK_ERR;
-#endif
+
 	if (disk_ioctl(drv, GET_SECTOR_COUNT, &n_vol) != RES_OK || n_vol < 128)
 		return FR_DISK_ERR;
 	b_vol = (sfd) ? 0 : 63;	/* Volume start sector */
