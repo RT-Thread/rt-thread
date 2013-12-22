@@ -84,9 +84,7 @@ typedef struct {
 	BYTE	fsi_flag;		/* fsinfo dirty flag (1:must be written back) */
 	WORD	id;				/* File system mount ID */
 	WORD	n_rootdir;		/* Number of root directory entries (FAT12/16) */
-#if _MAX_SS != 512
 	WORD	ssize;			/* Bytes per sector (512,1024,2048,4096) */
-#endif
 #if _FS_REENTRANT
 	_SYNC_t	sobj;			/* Identifier of sync object */
 #endif

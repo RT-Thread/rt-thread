@@ -173,6 +173,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread);
 
 void rt_enter_critical(void);
 void rt_exit_critical(void);
+rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));

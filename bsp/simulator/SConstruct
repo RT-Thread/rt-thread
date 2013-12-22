@@ -7,16 +7,8 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
-if os.getenv('RTT_RTGUI'):
-    RTT_RTGUI = os.getenv('RTT_RTGUI')
-else:
-    # set the rtgui root directory by hand
-    # empty string means use the RTGUI in svn
-    RTT_RTGUI = os.path.normpath(r'F:\Project\git\rt-gui\components\rtgui')
-
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
-
 
 env = Environment(TARGET_ARCH='x86')
 
@@ -84,32 +76,7 @@ else:
 
 # prepare building environment
 
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False, remove_components=['rtgui'])
-if GetDepend('RT_USING_RTGUI'):
-    try:
-        if RTT_RTGUI:
-            objs += SConscript(os.path.join(RTT_RTGUI, 'SConscript'),
-                                   variant_dir='build/components/rtgui',
-                                   duplicate=0)
-            objs = objs + SConscript(RTT_RTGUI+'/../../demo/examples/SConscript',
-                        variant_dir='build/examples/gui', duplicate=0)
-        else:
-            objs += SConscript(os.path.join(RTT_ROOT + '/components/rtgui', 'SConscript'),
-                                   variant_dir='build/components/rtgui',
-                                   duplicate=0)
-            objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript',
-                    variant_dir='build/examples/gui', duplicate=0)
-    except:
-        print
-        print 'RTGUI configuration is invalid!'
-        print 'RT_USING_RTGUI is enabled in rtconfig.h, but scons cannot find '+\
-              'RTGUI source code. In order to eliminate this error, you can '+\
-              'add RTT_RTGUI in environment to point RTGUI source code, or '+\
-              'disable RT_USING_RTGUI in rtconfig.h'
-        exit(-1);
-
-if GetDepend('RT_USING_TC'):
-    objs = objs + SConscript(RTT_ROOT + '/examples/kernel/SConscript', variant_dir = 'build/tc/kernel', duplicate=0)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 def ObjRemove(objs, remove):
     for item in objs:
