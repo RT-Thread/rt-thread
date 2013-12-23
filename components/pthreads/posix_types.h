@@ -19,6 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2013-12-23     Bernard      Add the checking for ESHUTDOWN 
  */
 
 #ifndef __POSIX_TYPES_H__
@@ -37,7 +38,9 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#ifndef ESHUTDOWN
 #define ESHUTDOWN 180
+#endif
 
 #else
 
