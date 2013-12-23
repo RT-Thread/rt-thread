@@ -18,6 +18,8 @@ static void (*_tc_cleanup)(void) = RT_NULL;
 static rt_uint32_t _tc_scale = 1;
 FINSH_VAR_EXPORT(_tc_scale, finsh_type_int, the testcase timer timeout scale)
 
+static rt_uint32_t _tc_loop;
+
 void tc_thread_entry(void* parameter)
 {
     unsigned int fail_count = 0;
@@ -26,8 +28,7 @@ void tc_thread_entry(void* parameter)
     /* create tc semaphore */
     rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_FIFO);
 
-    while (_tc_stat & TC_STAT_RUNNING)
-    {
+    do {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
         {
             /* search testcase */
@@ -73,7 +74,7 @@ void tc_thread_entry(void* parameter)
                 }
             }
         }
-    }
+    } while (_tc_loop);
 
     rt_kprintf("RT-Thread TestCase Running Done!\n");
     if (fail_count)
@@ -90,7 +91,7 @@ void tc_thread_entry(void* parameter)
 
 void tc_stop()
 {
-    _tc_stat &= ~TC_STAT_RUNNING;
+    _tc_loop = 0;
 
     rt_thread_delay(RT_TICK_PER_SECOND/2);
     if (_tc_thread.stat != RT_THREAD_INIT)
@@ -155,9 +156,9 @@ void tc_start(const char* tc_prefix)
     rt_snprintf(_tc_prefix, sizeof(_tc_prefix), "_tc_%s", tc_prefix);
 
     result = rt_thread_init(&_tc_thread, "tc",
-        tc_thread_entry, RT_NULL,
-        &_tc_stack[0], sizeof(_tc_stack),
-        TC_PRIORITY - 3, 5);
+                            tc_thread_entry, RT_NULL,
+                            &_tc_stack[0], sizeof(_tc_stack),
+                            TC_PRIORITY - 3, 5);
 
     /* set tc stat */
     _tc_stat = TC_STAT_RUNNING | TC_STAT_FAILED;
@@ -166,6 +167,13 @@ void tc_start(const char* tc_prefix)
         rt_thread_startup(&_tc_thread);
 }
 FINSH_FUNCTION_EXPORT(tc_start, start testcase with testcase prefix or name);
+
+void tc_loop(const char *tc_prefix)
+{
+    _tc_loop = 1;
+    tc_start(tc_prefix);
+}
+FINSH_FUNCTION_EXPORT(tc_loop, start testcase with testcase prefix or name in loop mode);
 
 void list_tc()
 {
