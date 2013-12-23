@@ -93,7 +93,7 @@ void tc_stop()
 {
     _tc_loop = 0;
 
-    rt_thread_delay(RT_TICK_PER_SECOND/2);
+    rt_thread_delay(10 * RT_TICK_PER_SECOND);
     if (_tc_thread.stat != RT_THREAD_INIT)
     {
         /* lock scheduler */
