@@ -144,6 +144,11 @@ filesystems/jffs2/src/scan.c
 filesystems/jffs2/src/write.c
 ''')
 
+# DFS-WFFS options
+wffs = Split("""
+filesystems/wffs/dfs_wffs.c
+""")
+
 src_local = dfs
 CPPDEFINES = []
 
@@ -201,6 +206,10 @@ if GetDepend('RT_USING_DFS_JFFS2'):
         RTT_ROOT + '/components/dfs/filesystems/jffs2/include', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2', \
         RTT_ROOT + '/components/dfs/filesystems/jffs2/cyg/compress']
+
+if GetDepend('RT_USING_DFS_WFFS'):
+    src_local = src_local + wffs
+    path = path + [RTT_ROOT + '/components/dfs/filesystems/wffs']
 
 group = DefineGroup('Filesystem', src_local, depend = ['RT_USING_DFS'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
