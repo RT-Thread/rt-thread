@@ -58,26 +58,26 @@
 /* Using Device System*/
 #define RT_USING_DEVICE
 
-#define RT_USING_UART1
+//#define RT_USING_UART1
 // #define RT_USING_UART2
 // #define RT_USING_UART3
 
 /* SECTION: Console options */
-#define RT_USING_CONSOLE
+//#define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+//#define RT_CONSOLEBUF_SIZE	128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
-#define RT_USING_FINSH
+//#define RT_USING_FINSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+//#define FINSH_USING_SYMTAB
+//#define FINSH_USING_DESCRIPTION
 
-//#define RT_USING_DFS
+#define RT_USING_DFS
 /* SECTION: DFS options */
-#define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_WORD_ACCESS
+//#define RT_USING_DFS_ELMFAT
+//#define RT_DFS_ELM_WORD_ACCESS
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX		1
@@ -124,13 +124,13 @@
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
+#define RT_LWIP_IPADDR2	2
 #define RT_LWIP_IPADDR3	30
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192
 #define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
+#define RT_LWIP_GWADDR2	2
 #define RT_LWIP_GWADDR3	1
 
 /* mask address of target*/

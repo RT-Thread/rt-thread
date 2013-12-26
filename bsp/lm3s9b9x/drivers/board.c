@@ -77,7 +77,7 @@ void rt_hw_eth_handler(void)
 void rt_hw_board_init()
 {
 	// set sysclock to 80M
-    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
 
 	/* init systick */
 	SysTickDisable();

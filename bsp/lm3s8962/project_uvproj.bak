@@ -13,7 +13,7 @@
       <TargetOption>
         <TargetCommonOption>
           <Device>LM3S8962</Device>
-          <Vendor>Luminary Micro</Vendor>
+          <Vendor>Texas Instruments</Vendor>
           <Cpu>IRAM(0x20000000-0x2000FFFF) IROM(0-0x3FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"STARTUP\Luminary\Startup.s" ("Luminary Startup Code")</StartupFile>
@@ -29,7 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile></SFDFile>
+          <SFDFile>SFD\Luminary\LM3S8962.SFR</SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -136,7 +136,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>4</TargetSelection>
+          <TargetSelection>1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -150,7 +150,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\lmidk-agdi.dll</Driver>
+            <Driver>BIN\UL2CM3.DLL</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -160,9 +160,9 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
-          <Flash2>BIN\lmidk-agdi.dll</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
         </Utilities>
@@ -207,7 +207,7 @@
             <RvdsVP>0</RvdsVP>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
-            <StupSel>0</StupSel>
+            <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>PART_LM3S8962</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\components\net\lwip\src\include;drivers;..\..\components\dfs;.;Libraries;applications;..\..\components\net\lwip\src\arch\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\net\lwip\src\include\netif;..\..\components\dfs\include</IncludePath>
+              <IncludePath>..\..\components\net\lwip\src\include\ipv4;..\..\include;..\..\components\net\lwip\src\include;drivers;..\..\components\dfs;.;Libraries;applications;..\..\components\net\lwip\src\arch\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\src;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\net\lwip\src\include\netif;..\..\components\dfs\include;..\..\components\dfs\filesystems\ffs</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -373,10 +373,10 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x00000000</DataAddressRange>
-            <ScatterFile></ScatterFile>
+            <ScatterFile>.\build\rtthread-lm3s.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
+            <Misc>--keep __fsym_* --keep __vsym_*</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -395,6 +395,11 @@
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
+            </File>
+            <File>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\lm3s9b9x\Libraries\startup\arm\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -566,11 +571,6 @@
               <FileType>1</FileType>
               <FilePath>Libraries\driverlib\watchdog.c</FilePath>
             </File>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\startup\arm\start_rvds.S</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -697,14 +697,9 @@
               <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
             <File>
-              <FileName>dfs_elm.c</FileName>
+              <FileName>dfs_ffs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\ffs\dfs_ffs.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -999,12 +994,17 @@
             <File>
               <FileName>cgi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\web\cgi.c</FilePath>
+              <FilePath>.\web\interface\cgi.c</FilePath>
             </File>
             <File>
               <FileName>post.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\web\post.c</FilePath>
+              <FilePath>.\web\interface\post.c</FilePath>
+            </File>
+            <File>
+              <FileName>upload.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\web\interface\upload.c</FilePath>
             </File>
           </Files>
         </Group>

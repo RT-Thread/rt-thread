@@ -28,12 +28,11 @@
 //typedef struct sockaddr SOCKADDR;
 
 #define RT_LWIP_HTTP_PRIORITY		20
-#define RT_LWIP_HTTP_STACK_SIZE		4096
 
 #define RT_HTTP_USE_CGI
 #define RT_HTTP_USE_POST					
 #define RT_HTTP_USE_UPLOAD
-//#define RT_HTTP_USE_AUTH
+#define RT_HTTP_USE_AUTH
 
 
 
@@ -42,9 +41,6 @@
 #define  USER_AUTH_NAME		"admin"
 #define	 USER_AUTH_PWD		"admin"
 #endif
-
-#define	 WEB_BUFF_SIZE	2048
-
 
 void init_httpd(void);
 void rt_httpd_entry(void *parameter);

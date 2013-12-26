@@ -41,7 +41,7 @@ const char *g_exe_file[] = {
 
 rt_thread_t httpd_thread;
 void init_httpd(void){
-	httpd_thread = rt_thread_create("httpd",rt_httpd_entry, RT_NULL,RT_LWIP_HTTP_STACK_SIZE, RT_LWIP_HTTP_PRIORITY, 20);
+	httpd_thread = rt_thread_create("httpd",rt_httpd_entry, RT_NULL,4096, RT_LWIP_HTTP_PRIORITY, 20);
 	rt_thread_startup(httpd_thread);
 	#ifdef RT_HTTP_USE_AUTH
 	http_user_auth=0;
@@ -54,19 +54,19 @@ void rt_httpd_entry(void *parameter)
 	int sock=0,sockClt=0,RecvLen=0;
 	socklen_t cltLen=0;
 	struct sockaddr_in srvAddr,clientAddr;
-	char dbuf[WEB_BUFF_SIZE];//*ptr;
+	char dbuf[2048];//*ptr;
 
 	sock=socket(AF_INET,SOCK_STREAM,0);
 	srvAddr.sin_family      = PF_INET;
 	srvAddr.sin_port        = htons(80);
 	srvAddr.sin_addr.s_addr	= INADDR_ANY;
-	rt_thread_delay(300);
+	rt_thread_delay(500);
 	bind(sock,(struct sockaddr*)&srvAddr,sizeof(srvAddr));
 	listen(sock,30);
-	rt_memset(dbuf,0,WEB_BUFF_SIZE);
+	rt_memset(dbuf,0,2048);
 	while(1){
 		sockClt=accept(sock,(struct sockaddr*)&clientAddr,&cltLen);
-		RecvLen=recv(sockClt,dbuf,WEB_BUFF_SIZE,0);	//
+		RecvLen=recv(sockClt,dbuf,2048,0);	//
 		dbuf[RecvLen]=0;
 		if(RecvLen>0){
 			/*if(RecvLen==512){
@@ -80,7 +80,7 @@ void rt_httpd_entry(void *parameter)
 		closesocket(sockClt);
 		rt_memset(&clientAddr,0,sizeof(clientAddr));
 		cltLen=0;
-		rt_thread_delay(1);  
+		rt_thread_delay(2);  
 	}
 
 }
@@ -174,12 +174,12 @@ void err_404(int sock){
 
 #ifdef RT_HTTP_USE_CGI
 
-#define CGI_BUFF_SIZE 256
+
 void parse_file_cgi(int sock,int fd)	
 {
 
  	int tfd;
-	char cgi_data[CGI_BUFF_SIZE];
+	char data[1024];
 	int size=0,len=0,tmp=0,cur_offset=0,offset=0;
 	char *ptr=RT_NULL,*ptrTmp=RT_NULL,*pName=RT_NULL;
 	char cmd=0,param=0;
@@ -189,19 +189,16 @@ void parse_file_cgi(int sock,int fd)
 		err_404(sock);
 		return ;
 	}
-	
+	send(sock,"HTTP/1.0 200 OK\r\nServer: lwIP\r\nContent-type: text/html\r\n\r\n",58,0);
 	offset=lseek(fd,0,SEEK_END);
 	cur_offset=lseek(fd,0,SEEK_SET);
 	//EF BB BF 23
 	while(cur_offset<offset){
-		rt_memset(cgi_data,0,CGI_BUFF_SIZE);
-		size=read(fd,cgi_data,CGI_BUFF_SIZE);
-		ptr=cgi_data;
+		size=read(fd,data,1024);
+		ptr=data;
 		len=0;
 		while(len<size)
-		{	
-			rt_thread_delay(1);
-			ptrTmp=strchr(ptr,'\n');
+		{	ptrTmp=strchr(ptr,'\n');
 			if(ptrTmp==RT_NULL)
 			{
 			   break;
@@ -229,7 +226,7 @@ void parse_file_cgi(int sock,int fd)
 				 	break;
 				 case 'i':
 				 {
-				 	char i_buff[CGI_BUFF_SIZE];
+				 	char i_buff[1024];
 					int  i_len,i_offset,i_cur_offset;
 				 	ptr+=2;//file name
 					tmp=ptrTmp-ptr;
@@ -258,7 +255,7 @@ void parse_file_cgi(int sock,int fd)
 					i_cur_offset=lseek(tfd,0,SEEK_SET);
 					while(i_cur_offset<i_offset)
 					{
-					  i_len=read(tfd,i_buff,CGI_BUFF_SIZE);
+					  i_len=read(tfd,i_buff,1024);
 					  send(sock,i_buff,i_len,0);
 					  i_cur_offset=lseek(tfd,0,SEEK_CUR);
 					}
@@ -279,27 +276,19 @@ void parse_file_cgi(int sock,int fd)
 				 	  ptr++;
 					  len++;
 					  break;
-				}//end switch
+				}
 			}
-			
-		}//end while
-		
-		if(cur_offset<offset)
-		{
-			cur_offset=lseek(fd,cur_offset+len,SEEK_SET);
+			cur_offset=lseek(fd,len,SEEK_CUR);
 		}
-		else
-		{
-		 	cur_offset=lseek(fd,0,SEEK_CUR);
-		}
+
 	}
 	//fs->data,fs->len
 }
 #endif
-char open_url(int sock,char *url,char *param){
+char open_url(int sock,char *url){
 
 	int fd,len,offset,cur_offset;
-	//char param[1024];
+	char param[1024];
 
 	int i=0; 
 	#ifdef RT_HTTP_USE_AUTH
@@ -339,7 +328,6 @@ char open_url(int sock,char *url,char *param){
 		if(i<exe_file_cnt){
 			if(strstr(url,".cgi")!=RT_NULL){ //cgi处理
 			#ifdef RT_HTTP_USE_CGI
-					send(sock,"HTTP/1.1 200 OK\r\nServer: lwIP\r\nContent-type: text/html\r\n\r\n",58,0);
 					parse_file_cgi( sock,fd);	
 			#endif
 			}
@@ -353,7 +341,7 @@ char open_url(int sock,char *url,char *param){
 			//
 			offset=lseek(fd,0,SEEK_END);
 			cur_offset=lseek(fd,0,SEEK_SET);
-			send(sock,"HTTP/1.1 200 OK\r\nServer: lwIP\r\nContent-type: ",45,0);//
+			send(sock,"HTTP/1.0 200 OK\r\nServer: lwIP\r\nContent-type: ",45,0);//
 			if(strstr(url,".ht")!=RT_NULL)
 			{
 			 	send(sock,"text/html",9,0);
@@ -415,7 +403,7 @@ char open_url(int sock,char *url,char *param){
 			send(sock,"\r\n\r\n",4,0);
 			while(cur_offset<offset)
 			{
-				len=read(fd,param,WEB_BUFF_SIZE);
+				len=read(fd,param,1024);
 				send(sock,param,len,0);
 				cur_offset=lseek(fd,0,SEEK_CUR);
 			}
@@ -474,7 +462,7 @@ void resolv_http(int sock,char *data,int len){
 		}
 
 		#endif
-		open_url(sock,url,data);
+		open_url(sock,url);
 	}
 	else if(strncmp(data,"POST ",5)==0){
 	
@@ -510,7 +498,7 @@ void resolv_http(int sock,char *data,int len){
 			param=strstr(data,"HTTP");
 			param--;
 			*param=0;
-			open_url( sock, url,data);
+			open_url( sock, url);
 			#endif
 
 		}
@@ -522,7 +510,7 @@ void resolv_http(int sock,char *data,int len){
 			param--;
 			*param=0;			
 			param=param+1;
-			open_url( sock, url,data);
+			open_url( sock, url);
 			//Content-Length: 197
 			
 			param=strstr(param,"boundary");//边界长度=
@@ -567,7 +555,7 @@ void resolv_http(int sock,char *data,int len){
 			if(streamSize){ 
 				while(streamSize>=1)
 				{	
-					len=recv(sock,data,WEB_BUFF_SIZE,0);	//
+					len=recv(sock,data,2048,0);	//
 					data[len]=0;
 					if(len>=streamSize)
 					{

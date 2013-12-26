@@ -24,7 +24,7 @@
 /* dfs init */
 #include <dfs_init.h>
 /* dfs filesystem:ELM FatFs filesystem init */
-#include <dfs_elm.h>
+#include <dfs_ffs.h>
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #endif
@@ -43,18 +43,19 @@ void rt_init_thread_entry(void *parameter)
 	{
 		/* init the device filesystem */
 		dfs_init();
-#ifdef RT_USING_DFS_ELMFAT
+//#ifdef RT_USING_DFS_ELMFAT
 		/* init the elm chan FatFs filesystam*/
-		elm_init();
+		//elm_init();
+		dfs_ffs_init();
 
 		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+		if (dfs_mount(RT_NULL, "/", "ffs", 0, 0) == 0)
 		{
 			rt_kprintf("File System initialized!\n");
 		}
 		else
 			rt_kprintf("File System initialzation failed!\n");
-#endif
+//#endif
 	}
 #endif
 

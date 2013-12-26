@@ -113,10 +113,10 @@ void rtthread_startup(void)
 #endif
 
 	/* init hardware serial device */
-	rt_hw_serial_init();
+	//rt_hw_serial_init();
 #ifdef RT_USING_DFS
 	/* init sd card device */
-	rt_hw_sdcard_init();
+	//rt_hw_sdcard_init();
 #endif
 	/* init all device */
 	rt_device_init_all();
