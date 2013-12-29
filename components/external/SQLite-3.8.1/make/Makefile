@@ -346,6 +346,8 @@ SRC += \
   parse.h \
   config.h \
   sqlite3.h
+  
+SRC += $(TOP)/src/sqlite_config_rtthread.h
 
 # Source code to the test files.
 #
