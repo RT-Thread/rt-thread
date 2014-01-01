@@ -59,7 +59,7 @@ int cmd_ls(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, "List information about the FILEs.");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, List information about the FILEs.);
 
 int cmd_cp(int argc, char** argv)
 {
@@ -77,7 +77,7 @@ int cmd_cp(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_cp, __cmd_cp, "Copy SOURCE to DEST.");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_cp, __cmd_cp, Copy SOURCE to DEST.);
 
 int cmd_mv(int argc, char** argv)
 {
@@ -89,11 +89,12 @@ int cmd_mv(int argc, char** argv)
     else
     {
         rt_kprintf("%s => %s\n", argv[1], argv[2]);
+		rename(argv[1], argv[2]);
     }
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, "Rename SOURCE to DEST.");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, Rename SOURCE to DEST.);
 
 int cmd_cat(int argc, char** argv)
 {
@@ -114,7 +115,7 @@ int cmd_cat(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, "Concatenate FILE(s)");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, Concatenate FILE(s));
 
 int cmd_rm(int argc, char** argv)
 {
@@ -134,7 +135,7 @@ int cmd_rm(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, "Remove (unlink) the FILE(s).");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove (unlink) the FILE(s).);
 
 #ifdef DFS_USING_WORKDIR
 int cmd_cd(int argc, char** argv)
@@ -185,19 +186,14 @@ int cmd_ps(int argc, char** argv)
     list_thread();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, "list threads in the system");
-
-int cmd_i(int argc, char** argv)
-{
-    return cmd_ps(argc, argv);
-}
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_i, __cmd_i, "list threads in the system");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_i,  List threads in the system.);
 
 int cmd_time(int argc, char** argv)
 {
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, "exec command with time");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, Execute command with time.);
 
 int cmd_free(int argc, char** argv)
 {
@@ -206,6 +202,7 @@ int cmd_free(int argc, char** argv)
     list_mem();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, "show the memory usage in the system");
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
 
 #endif
+

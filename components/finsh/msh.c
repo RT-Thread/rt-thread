@@ -73,15 +73,18 @@ int msh_help(int argc, char** argv)
 			FINSH_NEXT_SYSCALL(index))
 		{
 			if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
+#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
+			rt_kprintf("%-16s - %s\n", &index->name[6], index->desc);
+#else
 			rt_kprintf("%s ", &index->name[6]);
+#endif
 		}
 	}
 	rt_kprintf("\n");
 
 	return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, "RT-Thread shell help.");
+FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
 
 static int msh_split(char* cmd, rt_size_t length, char* argv[RT_FINSH_ARG_MAX])
 {
@@ -197,14 +200,130 @@ static int str_common(const char *str1, const char *str2)
 	return (str - str1);
 }
 
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+void msh_auto_complete_path(char *path)
+{
+	DIR* dir;
+	struct dirent *dirent;
+	char *full_path, *ptr, *index;
+
+	full_path = (char*)rt_malloc(256);
+	if (full_path == RT_NULL) return; /* out of memory */
+
+	ptr = full_path;
+	if (*path != '/') 
+	{
+		getcwd(full_path, 256);
+		if (full_path[rt_strlen(full_path) - 1]  != '/')
+			strcat(full_path, "/");
+	}
+	else *full_path = '\0';
+
+	index = RT_NULL; ptr = path;
+	for (;;)
+	{
+		if (*ptr == '/') index = ptr + 1; if (!*ptr) break; ptr ++;
+	}
+	if (index == RT_NULL) index = path;
+
+	if (index != RT_NULL)
+	{
+		char *dest = index;
+
+		/* fill the parent path */
+		ptr = full_path; 
+		while (*ptr) ptr ++;
+
+		for (index = path; index != dest;)
+			*ptr++ = *index++;
+		*ptr = '\0';
+
+		dir = opendir(full_path);
+		if (dir == RT_NULL) /* open directory failed! */
+		{
+			rt_free(full_path);
+			return;
+		}
+
+		/* restore the index position */
+		index = dest;
+	}
+
+	/* auto complete the file or directory name */
+	if (*index == '\0') /* display all of files and directories */
+	{
+		for (;;)
+		{
+			dirent = readdir(dir);
+			if (dirent == RT_NULL) break;
+			
+			rt_kprintf("%s\n", dirent->d_name);
+		}
+	}
+	else
+	{
+		int length, min_length;
+
+		min_length = 0;
+		for (;;)
+		{
+			dirent = readdir(dir);
+			if (dirent == RT_NULL) break;
+
+			/* matched the prefix string */
+			if (strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
+			{
+				if (min_length == 0)
+				{
+					min_length = rt_strlen(dirent->d_name);
+					/* save dirent name */
+					strcpy(full_path, dirent->d_name);
+				}
+				
+				length = str_common(dirent->d_name, full_path);
+				
+				if (length < min_length)
+				{
+					min_length = length;
+				}
+			}
+		}
+
+		if (min_length)
+		{
+			if (min_length < rt_strlen(full_path))
+			{
+				/* list the candidate */
+				rewinddir(dir);
+
+				for (;;)
+				{
+					dirent = readdir(dir);
+					if (dirent == RT_NULL) break;
+
+					if (strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
+						rt_kprintf("%s\n", dirent->d_name);
+				}
+			}
+			
+			length = index - path;
+			memcpy(index, full_path, min_length);
+			path[length + min_length] = '\0';
+		}
+	}
+
+	closedir(dir);
+	rt_free(full_path);
+}
+#endif
+
 void msh_auto_complete(char *prefix)
 {
-	rt_uint16_t func_cnt;
 	int length, min_length;
 	const char *name_ptr, *cmd_name;
 	struct finsh_syscall *index;
 
-	func_cnt = 0;
 	min_length = 0;
 	name_ptr = RT_NULL;
 
@@ -214,6 +333,25 @@ void msh_auto_complete(char *prefix)
 		return;
 	}
 
+#ifdef RT_USING_DFS
+	/* check whether a spare in the command */
+	{
+		char *ptr;
+
+		ptr = prefix + rt_strlen(prefix);
+		while (ptr != prefix)
+		{
+			if (*ptr == ' ')
+			{
+				msh_auto_complete_path(ptr + 1);
+				break;
+			}
+			
+			ptr --;
+		}
+	}
+#endif
+	
 	/* checks in internal command */
 	{
 		for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
@@ -224,16 +362,13 @@ void msh_auto_complete(char *prefix)
 			cmd_name = (const char*) &index->name[6];
 			if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
 			{
-				if (func_cnt == 0)
+				if (min_length == 0)
 				{
 					/* set name_ptr */
 					name_ptr = cmd_name;
-
 					/* set initial length */
 					min_length = strlen(name_ptr);
 				}
-
-				func_cnt ++;
 
 				length = str_common(name_ptr, cmd_name);
 				if (length < min_length)
@@ -253,3 +388,4 @@ void msh_auto_complete(char *prefix)
 	return ;
 }
 #endif
+

@@ -181,7 +181,7 @@ rt_uint32_t finsh_get_echo()
 	return shell->echo_mode;
 }
 
-void finsh_auto_complete(char* prefix)
+static void shell_auto_complete(char* prefix)
 {
 	extern void list_prefix(char* prefix);
 
@@ -244,7 +244,7 @@ void finsh_run_line(struct finsh_parser* parser, const char *line)
 }
 
 #ifdef FINSH_USING_HISTORY
-rt_bool_t finsh_handle_history(struct finsh_shell* shell)
+static rt_bool_t shell_handle_history(struct finsh_shell* shell)
 {
 #if defined(_WIN32)
 	int i;
@@ -261,7 +261,7 @@ rt_bool_t finsh_handle_history(struct finsh_shell* shell)
 	return RT_FALSE;
 }
 
-void finsh_push_history(struct finsh_shell* shell)
+static void shell_push_history(struct finsh_shell* shell)
 {
 	if (shell->line_position != 0)
 	{
@@ -370,7 +370,7 @@ void finsh_thread_entry(void* parameter)
 					memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
 						   FINSH_CMD_SIZE);
 					shell->line_curpos = shell->line_position = strlen(shell->line);
-					finsh_handle_history(shell);
+					shell_handle_history(shell);
 #endif
 					continue;
 				}
@@ -392,7 +392,7 @@ void finsh_thread_entry(void* parameter)
 					memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
 						   FINSH_CMD_SIZE);
 					shell->line_curpos = shell->line_position = strlen(shell->line);
-					finsh_handle_history(shell);
+					shell_handle_history(shell);
 #endif
 					continue;
 				}
@@ -437,7 +437,7 @@ void finsh_thread_entry(void* parameter)
 					rt_kprintf("\b");
 
 				/* auto complete */
-				finsh_auto_complete(&shell->line[0]);
+				shell_auto_complete(&shell->line[0]);
 				/* re-calculate position */
 				shell->line_curpos = shell->line_position = strlen(shell->line);
 
@@ -484,10 +484,10 @@ void finsh_thread_entry(void* parameter)
 				if (msh_is_used() == RT_TRUE && shell->line_position != 0)
 				{
 					rt_kprintf("\n");
-					msh_exec(shell->line, shell->line_position);
 					#ifdef FINSH_USING_HISTORY
-					finsh_push_history(shell);
+					shell_push_history(shell);
 					#endif
+					msh_exec(shell->line, shell->line_position);
 				}
 				else
 #endif
@@ -496,7 +496,7 @@ void finsh_thread_entry(void* parameter)
 					shell->line[shell->line_position] = ';';
 
 					#ifdef FINSH_USING_HISTORY
-					finsh_push_history(shell);
+					shell_push_history(shell);
 					#endif
 
 					if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);

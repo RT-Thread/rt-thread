@@ -117,25 +117,12 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-        #if __GNUC__ < 4
-            typedef void *__sys_va_list;
-            typedef __sys_va_list       va_list;
-            #define __va_rounded_size(type) \
-                (((sizeof(type) + sizeof(int) - 1) / sizeof(int)) * sizeof(int))
-            #define va_start(ap, lastarg)   \
-                (ap = ((char *) &(lastarg) + __va_rounded_size(lastarg)))
-            #define va_end(ap)          ((void)0)
-            /*  little endian */
-            #define va_arg(ap, type)    \
-                (ap = (__sys_va_list) ((char *)(ap) + __va_rounded_size(type)),  \
-                *((type *) (void *) ((char *)(ap) - __va_rounded_size(type))))
-        #else
-            typedef __builtin_va_list   __gnuc_va_list;
-            typedef __gnuc_va_list      va_list;
-            #define va_start(v,l)       __builtin_va_start(v,l)
-            #define va_end(v)           __builtin_va_end(v)
-            #define va_arg(v,l)         __builtin_va_arg(v,l)
-        #endif
+		/* the version of GNU GCC must be greater than 4.x */
+        typedef __builtin_va_list   __gnuc_va_list;
+        typedef __gnuc_va_list      va_list;
+        #define va_start(v,l)       __builtin_va_start(v,l)
+        #define va_end(v)           __builtin_va_end(v)
+        #define va_arg(v,l)         __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
@@ -168,6 +155,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define SECTION(x)
     #define UNUSED
     #define USED
+	#define PRAGMA(x)					_Pragma(#x)
     #define ALIGN(n)
     #define rt_inline                   static inline
     #define RTT_API
@@ -213,6 +201,12 @@ typedef int (*init_fn_t)(void);
 #define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
+
+#if !defined(RT_USING_FINSH)
+/* define these to empty, even if not include finsh.h file */
+#define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
+#define FINSH_VAR_EXPORT(name, type, desc)
+#endif
 
 /* event length */
 #define RT_EVENT_LENGTH                 32
