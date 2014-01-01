@@ -77,7 +77,9 @@ struct finsh_shell
 	char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
 #endif
 
+#ifndef FINSH_USING_MSH_ONLY
 	struct finsh_parser parser;
+#endif
 
 	char line[FINSH_CMD_SIZE];
 	rt_uint8_t line_position;

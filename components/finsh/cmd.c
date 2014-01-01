@@ -612,9 +612,11 @@ FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
 
 long list(void)
 {
+#ifndef FINSH_USING_MSH_ONLY
     struct finsh_syscall_item *syscall_item;
     struct finsh_sysvar_item *sysvar_item;
-
+#endif
+	
     rt_kprintf("--Function List:\n");
     {
         struct finsh_syscall *index;
@@ -633,6 +635,7 @@ long list(void)
         }
     }
 
+#ifndef FINSH_USING_MSH_ONLY
     /* list syscall list */
     syscall_item = global_syscall_list;
     while (syscall_item != NULL)
@@ -662,11 +665,13 @@ long list(void)
         rt_kprintf("[l] %s\n", sysvar_item->sysvar.name);
         sysvar_item = sysvar_item->next;
     }
-
+#endif
+	
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
 
+#ifndef FINSH_USING_MSH_ONLY
 static int str_is_prefix(const char *prefix, const char *str)
 {
     while ((*prefix) && (*prefix == *str))
@@ -865,8 +870,9 @@ void list_prefix(char *prefix)
         rt_strncpy(prefix, name_ptr, min_length);
     }
 }
+#endif
 
-#ifdef FINSH_USING_SYMTAB
+#if defined(FINSH_USING_SYMTAB) && !defined(FINSH_USING_MSH_ONLY)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif

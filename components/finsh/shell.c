@@ -183,7 +183,6 @@ rt_uint32_t finsh_get_echo()
 
 static void shell_auto_complete(char* prefix)
 {
-	extern void list_prefix(char* prefix);
 
 	rt_kprintf("\n");
 #ifdef FINSH_USING_MSH
@@ -194,12 +193,16 @@ static void shell_auto_complete(char* prefix)
 	else 
 #endif
 	{
+#ifndef FINSH_USING_MSH_ONLY		
+		extern void list_prefix(char* prefix);
 		list_prefix(prefix);
+#endif
 	}
 
 	rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 }
 
+#ifndef FINSH_USING_MSH_ONLY
 void finsh_run_line(struct finsh_parser* parser, const char *line)
 {
 	const char* err_str;
@@ -242,6 +245,7 @@ void finsh_run_line(struct finsh_parser* parser, const char *line)
 
     finsh_flush(parser);
 }
+#endif
 
 #ifdef FINSH_USING_HISTORY
 static rt_bool_t shell_handle_history(struct finsh_shell* shell)
@@ -304,7 +308,9 @@ void finsh_thread_entry(void* parameter)
 	/* normal is echo mode */
 	shell->echo_mode = 1;
 
+#ifndef FINSH_USING_MSH_ONLY
     finsh_init(&shell->parser);
+#endif
 	rt_kprintf(FINSH_PROMPT);
 
 	/* set console device as shell device */
@@ -480,33 +486,31 @@ void finsh_thread_entry(void* parameter)
 			/* handle end of line, break */
 			if (ch == '\r' || ch == '\n')
 			{
-#ifdef FINSH_USING_MSH
-				if (msh_is_used() == RT_TRUE && shell->line_position != 0)
+				#ifdef FINSH_USING_HISTORY
+				shell_push_history(shell);
+				#endif
+
+				#ifdef FINSH_USING_MSH
+				if (msh_is_used() == RT_TRUE)
 				{
 					rt_kprintf("\n");
-					#ifdef FINSH_USING_HISTORY
-					shell_push_history(shell);
-					#endif
 					msh_exec(shell->line, shell->line_position);
 				}
 				else
-#endif
+				#endif
 				{
+				#ifndef FINSH_USING_MSH_ONLY				
 					/* add ';' and run the command line */
 					shell->line[shell->line_position] = ';';
 
-					#ifdef FINSH_USING_HISTORY
-					shell_push_history(shell);
-					#endif
-
 					if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
 					else rt_kprintf("\n");
+				#endif					
 				}
 
 				rt_kprintf(FINSH_PROMPT);
 				memset(shell->line, 0, sizeof(shell->line));
 				shell->line_curpos = shell->line_position = 0;
-
 				break;
 			}
 
@@ -605,7 +609,9 @@ int finsh_system_init(void)
     extern const int VSymTab$$Base;
     extern const int VSymTab$$Limit;
 	finsh_system_function_init(&FSymTab$$Base, &FSymTab$$Limit);
+	#ifndef FINSH_USING_MSH_ONLY
 	finsh_system_var_init(&VSymTab$$Base, &VSymTab$$Limit);
+	#endif
 #elif defined (__ICCARM__)      /* for IAR Compiler */
     finsh_system_function_init(__section_begin("FSymTab"),
                                __section_end("FSymTab"));
@@ -638,15 +644,17 @@ int finsh_system_init(void)
 	/* create or set shell structure */
 #ifdef RT_USING_HEAP
 	shell = (struct finsh_shell*)rt_malloc(sizeof(struct finsh_shell));
-#else
-	shell = &_shell;
-#endif
 	if (shell == RT_NULL)
 	{
 		rt_kprintf("no memory for shell\n");
 		return -1;
 	}
-	
+#else
+	shell = &_shell;
+#endif
+
+	rt_kprintf("shell tcb size: %d\n", sizeof(struct finsh_shell));
+
 	memset(shell, 0, sizeof(struct finsh_shell));
 
 	rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);

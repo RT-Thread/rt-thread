@@ -35,6 +35,12 @@
 typedef int (*cmd_function_t)(int argc, char** argv);
 
 #ifdef FINSH_USING_MSH
+#ifdef FINSH_USING_MSH_ONLY
+rt_bool_t msh_is_used(void)
+{
+	return RT_TRUE;
+}
+#else
 #ifdef FINSH_USING_MSH_DEFAULT
 static rt_bool_t __msh_state = RT_TRUE;
 #else
@@ -61,6 +67,7 @@ static int msh_enter(void)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
+#endif
 
 int msh_help(int argc, char** argv)
 {
