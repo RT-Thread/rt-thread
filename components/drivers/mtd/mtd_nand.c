@@ -155,7 +155,8 @@ int mtd_nand_read(const char* name, int block, int page)
 	oob_ptr = page_ptr + nand->page_size;
 	rt_memset(page_ptr, 0xff, nand->page_size + nand->oob_size);
 
-	page = (block + nand->block_start) * nand->pages_per_block + page;
+	/* calculate the page number */
+	page = block * nand->pages_per_block + page;
 	result = rt_mtd_nand_read(nand, page, page_ptr, nand->page_size,
 		oob_ptr, nand->oob_size);
 
@@ -187,7 +188,8 @@ int mtd_nand_readoob(const char* name, int block, int page)
 		return -RT_ENOMEM;
 	}
 
-	page = (block + nand->block_start) * nand->pages_per_block + page;
+	/* calculate the page number */
+	page = block * nand->pages_per_block + page;
 	rt_mtd_nand_read(nand, page, RT_NULL, nand->page_size,
 		oob_ptr, nand->oob_size);
 	mtd_dump_hex(oob_ptr, nand->oob_size);
@@ -231,7 +233,8 @@ int mtd_nand_write(const char* name, int block, int page)
 		oob_ptr[index] = index & 0xff;
 	}
 
-	page = (block + nand->block_start) * nand->pages_per_block + page;
+	/* calculate the page number */
+	page = block * nand->pages_per_block + page;
 	result = rt_mtd_nand_write(nand, page, page_ptr, nand->page_size,
 		oob_ptr, nand->oob_size);
 	if (result != RT_MTD_EOK)
@@ -254,8 +257,6 @@ int mtd_nand_erase(const char* name, int block)
 		return -RT_ERROR;
 	}
 
-	block += nand->block_start;
-
 	return rt_mtd_nand_erase_block(nand, block);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
@@ -272,7 +273,7 @@ int mtd_nand_erase_all(const char* name)
 		return -RT_ERROR;
 	}
 
-	for (index = nand->block_start; index < nand->block_end; index ++)
+	for (index = 0; index < (nand->block_end - nand->block_start); index ++)
 	{
 		rt_mtd_nand_erase_block(nand, index);
 	}
@@ -280,8 +281,6 @@ int mtd_nand_erase_all(const char* name)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
-
 #endif
 
 #endif
-
