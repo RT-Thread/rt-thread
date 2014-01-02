@@ -1,0 +1,39 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+source/lpc_adc.c
+source/lpc_bod.c
+source/lpc_can.c
+source/lpc_clkpwr.c
+source/lpc_crc.c
+source/lpc_dac.c
+source/lpc_eeprom.c
+source/lpc_emc.c
+source/lpc_exti.c
+source/lpc_gpdma.c
+source/lpc_gpio.c
+source/lpc_i2c.c
+source/lpc_i2s.c
+source/lpc_iap.c
+source/lpc_lcd.c
+source/lpc_mcpwm.c
+source/lpc_nvic.c
+source/lpc_pinsel.c
+source/lpc_pwm.c
+source/lpc_qei.c
+source/lpc_rtc.c
+source/lpc_ssp.c
+source/lpc_systick.c
+source/lpc_timer.c
+source/lpc_uart.c
+source/lpc_wwdt.c
+''')
+CPPPATH = [cwd + '/include']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
