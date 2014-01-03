@@ -58,6 +58,6 @@ env:
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='wh44b0' # no scons
 #  - RTT_BSP='x86' # x86
-  - RTT_BSP='xplorer4330/m4' # no scons
-  - RTT_BSP='lpc408x'
-  - RTT_BSP='beaglebone'
+  - RTT_BSP='xplorer4330/m4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='lpc408x' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='beaglebone' RTT_TOOL_CHAIN='sourcery-arm'
