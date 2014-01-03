@@ -236,8 +236,6 @@ int dfs_file_unlink(const char *path)
     char *fullpath;
     struct dfs_filesystem *fs;
 
-    result = DFS_STATUS_OK;
-
     /* Make sure we have an absolute path */
     fullpath = dfs_normalize_path(RT_NULL, path);
     if (fullpath == RT_NULL)
