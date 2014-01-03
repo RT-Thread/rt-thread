@@ -69,6 +69,8 @@ typedef unsigned long  u_long;
     !defined(__ADSPBLACKFIN__)     && \
     !defined(_MSC_VER)
 
+/* only for GNU GCC */
+
 #if !(defined(__GNUC__) && defined(__x86_64__))
 typedef unsigned int size_t;
 #else
@@ -79,13 +81,6 @@ typedef unsigned int size_t;
 #define NULL RT_NULL
 #endif
 
-#define memset	rt_memset
-#define strlen	rt_strlen
-#define strncpy	rt_strncpy
-#define strncmp	rt_strncmp
-
-int strcmp (const char *s1, const char *s2);
-char *strdup(const char *s);
 #else
 /* use libc of armcc */
 #include <ctype.h>
@@ -94,8 +89,8 @@ char *strdup(const char *s);
 #endif
 #endif
 
-#define FINSH_VERSION_MAJOR			0
-#define FINSH_VERSION_MINOR			5
+#define FINSH_VERSION_MAJOR			1
+#define FINSH_VERSION_MINOR			0
 
 /**
  * @addtogroup finsh

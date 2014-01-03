@@ -104,7 +104,6 @@ struct finsh_var* finsh_var_lookup(const char* name)
 }
 
 #ifdef RT_USING_HEAP
-extern char *strdup(const char *s);
 void finsh_sysvar_append(const char* name, u_char type, void* var_addr)
 {
 	/* create a sysvar */
@@ -114,7 +113,7 @@ void finsh_sysvar_append(const char* name, u_char type, void* var_addr)
 	if (item != NULL)
 	{
 		item->next = NULL;
-		item->sysvar.name = strdup(name);
+		item->sysvar.name = rt_strdup(name);
 		item->sysvar.type = type;
 		item->sysvar.var = var_addr;
 

@@ -54,29 +54,6 @@ ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct finsh_shell* shell;
 
-#if !defined (RT_USING_NEWLIB) && !defined (RT_USING_MINILIBC)
-int strcmp (const char *s1, const char *s2)
-{
-    while (*s1 && *s1 == *s2) s1++, s2++;
-
-    return (*s1 - *s2);
-}
-
-#ifdef RT_USING_HEAP
-char *strdup(const char *s)
-{
-    size_t len = strlen(s) + 1;
-    char *tmp = (char *)rt_malloc(len);
-
-    if(!tmp) return NULL;
-
-    rt_memcpy(tmp, s, len);
-    return tmp;
-}
-#endif
-
-#endif
-
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 #include <dfs_posix.h>
 const char* finsh_get_prompt()
