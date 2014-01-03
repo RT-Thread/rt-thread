@@ -48,7 +48,6 @@ env:
 #  - RTT_BSP='pic32ethernet' # no scons
 #  - RTT_BSP='sam7s' # no scons
   - RTT_BSP='sam7x' RTT_TOOL_CHAIN='sourcery-arm'
-#  - RTT_BSP='simlinux' # linux
 #  - RTT_BSP='simulator' # x86
   - RTT_BSP='stm32f0x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f107' RTT_TOOL_CHAIN='sourcery-arm' 
@@ -59,4 +58,6 @@ env:
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='wh44b0' # no scons
 #  - RTT_BSP='x86' # x86
-#  - RTT_BSP='xplorer4330' # no scons
+  - RTT_BSP='xplorer4330/m4' # no scons
+  - RTT_BSP='lpc408x'
+  - RTT_BSP='beaglebone'
