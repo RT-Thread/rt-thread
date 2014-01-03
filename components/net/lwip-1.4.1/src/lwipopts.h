@@ -306,8 +306,17 @@
  * we're limited by the command line length so you need to modify the settings
  * in this file.
  */
+#ifdef RT_LWIP_PPPOE
+#define PPPOE_SUPPORT				1
+#else
 #define PPPOE_SUPPORT               0
+#endif
+
+#ifdef RT_LWIP_PPPOS
 #define PPPOS_SUPPORT               1
+#else
+#define PPPOS_SUPPORT				0
+#endif
 
 #define PAP_SUPPORT                 1      /* Set > 0 for PAP. */
 #define CHAP_SUPPORT                1      /* Set > 0 for CHAP. */
