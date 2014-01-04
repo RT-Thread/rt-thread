@@ -16,7 +16,7 @@
 // </h>
 */
 
-    .equ    Stack_Size, 0x00000100
+    .equ    Stack_Size, 0x00000200
     .equ    Sign_Value, 0x5A5A5A5A
     .section ".stack", "w"
     .align  3
@@ -56,8 +56,8 @@ __cs3_heap_end:
     .type   __cs3_interrupt_vector_cortex_m, %object
 
 __cs3_interrupt_vector_cortex_m:
-    .long   __cs3_stack                 /* Top of Stack                 */
-    .long   __cs3_reset                 /* Reset Handler                */
+    .long   _estack                     /* Top of Stack                 */
+    .long   Reset_Handler               /* Reset Handler                */
     .long   NMI_Handler                 /* NMI Handler                  */
     .long   HardFault_Handler           /* Hard Fault Handler           */
     .long   MemManage_Handler           /* MPU Fault Handler            */
@@ -75,10 +75,10 @@ __cs3_interrupt_vector_cortex_m:
 
     /* External Interrupts */
     .long	DAC_IRQHandler	 			/* 16 D/A Converter */
-	.long	0				/* 17 Event Router */
+	.long	MX_CORE_IRQHandler			/* 17 M0/M4 IRQ handler (LPC43XX ONLY) */
 	.long	DMA_IRQHandler				/* 18 General Purpose DMA */
-	.long	0					/* 19 Reserved */
-	.long	0					/* 20 Reserved */
+	.long	UnHandled_Vector			/* 19 Reserved */
+	.long	FLASHEEPROM_IRQHandler		/* 20 ORed flash bank A, flash bank B, EEPROM interrupts */
 	.long	ETH_IRQHandler				/* 21 Ethernet */
 	.long	SDIO_IRQHandler				/* 22 SD/MMC */
 	.long	LCD_IRQHandler				/* 23 LCD */
@@ -94,7 +94,7 @@ __cs3_interrupt_vector_cortex_m:
 	.long	ADC0_IRQHandler				/* 33 A/D Converter 0*/
 	.long	I2C0_IRQHandler				/* 34 I2C0*/
 	.long	I2C1_IRQHandler				/* 35 I2C1*/
-	.long	0					/* 36 Reserved*/
+	.long	SPI_IRQHandler				/* 36 SPI (LPC43XX ONLY)*/
 	.long	ADC1_IRQHandler				/* 37 A/D Converter 1*/
 	.long	SSP0_IRQHandler				/* 38 SSP0*/
 	.long	SSP1_IRQHandler				/* 39 SSP1*/
@@ -118,13 +118,13 @@ __cs3_interrupt_vector_cortex_m:
 	.long	GINT1_IRQHandler			/* 57 GINT1*/
 	.long	EVRT_IRQHandler				/* 58 Event Router*/
 	.long	CAN1_IRQHandler				/* 59 C_CAN1*/
-	.long	0							/* 60 Reserved*/
+	.long	UnHandled_Vector			/* 60 Reserved*/
 	.long	VADC_IRQHandler				/* 61 VADC*/
 	.long	ATIMER_IRQHandler			/* 62 ATIMER*/
 	.long	RTC_IRQHandler				/* 63 RTC*/
-	.long	0							/* 64 Reserved*/
+	.long	UnHandled_Vector			/* 64 Reserved*/
 	.long	WDT_IRQHandler				/* 65 WDT*/
-	.long	0							/* 66 M0s*/
+	.long	UnHandled_Vector			/* 66 M0s*/
 	.long	CAN0_IRQHandler				/* 67 C_CAN0*/
 	.long 	QEI_IRQHandler				/* 68 QEI*/
 
@@ -136,11 +136,11 @@ __cs3_interrupt_vector_cortex_m:
 
 /* Reset Handler */
 
-    .section .cs3.reset,"x",%progbits
+    .section  .text.Reset_Handler
     .thumb_func
-    .globl  __cs3_reset_cortex_m
-    .type   __cs3_reset_cortex_m, %function
-__cs3_reset_cortex_m:
+    .globl  Reset_Handler
+    .type  Reset_Handler, %function
+Reset_Handler:
     .fnstart
 /* .if (RAM_MODE) */
  .if 0
@@ -168,7 +168,7 @@ BSSIsEmpty:
     .pool
     .cantunwind
     .fnend
-    .size   __cs3_reset_cortex_m,.-__cs3_reset_cortex_m
+    .size   Reset_Handler,.-Reset_Handler
 
     .section ".text"
 
@@ -237,13 +237,21 @@ Default_Handler:
     B       .
     .size   Default_Handler, . - Default_Handler
 
+    .globl  UnHandled_Vector
+    .type   UnHandled_Vector, %function
+UnHandled_Vector:
+    B       .
+    .size   UnHandled_Vector, . - UnHandled_Vector
+    
     .macro  IRQ handler
     .weak   \handler
     .set    \handler, Default_Handler
     .endm
 
     IRQ DAC_IRQHandler
+    IRQ MX_CORE_IRQHandler
 	IRQ DMA_IRQHandler
+	IRQ FLASHEEPROM_IRQHandler
 	IRQ ETH_IRQHandler
 	IRQ SDIO_IRQHandler
 	IRQ LCD_IRQHandler
@@ -259,6 +267,7 @@ Default_Handler:
 	IRQ ADC0_IRQHandler
 	IRQ I2C0_IRQHandler
 	IRQ I2C1_IRQHandler
+	IRQ SPI_IRQHandler
 	IRQ ADC1_IRQHandler
 	IRQ SSP0_IRQHandler
 	IRQ SSP1_IRQHandler
