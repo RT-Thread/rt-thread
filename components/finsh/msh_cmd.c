@@ -187,7 +187,6 @@ int cmd_ps(int argc, char** argv)
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_i,  List threads in the system.);
 
 int cmd_time(int argc, char** argv)
 {

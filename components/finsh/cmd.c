@@ -77,6 +77,7 @@ long version(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
+MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 extern struct rt_object_information rt_object_container[];
 
@@ -117,6 +118,7 @@ long list_thread(void)
     return _list_thread(&rt_object_container[RT_Object_Class_Thread].object_list);
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
+MSH_CMD_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node *list)
 {
@@ -171,7 +173,8 @@ long list_sem(void)
 {
     return _list_sem(&rt_object_container[RT_Object_Class_Semaphore].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system)
+FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system);
+MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
 #ifdef RT_USING_EVENT
@@ -209,7 +212,8 @@ long list_event(void)
 {
     return _list_event(&rt_object_container[RT_Object_Class_Event].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_event, list event in system)
+FINSH_FUNCTION_EXPORT(list_event, list event in system);
+MSH_CMD_EXPORT(list_event, list event in system);
 #endif
 
 #ifdef RT_USING_MUTEX
@@ -239,7 +243,8 @@ long list_mutex(void)
 {
     return _list_mutex(&rt_object_container[RT_Object_Class_Mutex].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system)
+FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
+MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -282,7 +287,8 @@ long list_mailbox(void)
 {
     return _list_mailbox(&rt_object_container[RT_Object_Class_MailBox].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system)
+FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
+MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -323,7 +329,8 @@ long list_msgqueue(void)
 {
     return _list_msgqueue(&rt_object_container[RT_Object_Class_MessageQueue].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
+FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
+MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -353,7 +360,8 @@ long list_memheap(void)
 {
     return _list_memheap(&rt_object_container[RT_Object_Class_MemHeap].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system)
+FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
+MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
 #ifdef RT_USING_MEMPOOL
@@ -399,6 +407,7 @@ long list_mempool(void)
     return _list_mempool(&rt_object_container[RT_Object_Class_MemPool].object_list);
 }
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
+MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
 static long _list_timer(struct rt_list_node *list)
@@ -431,7 +440,8 @@ long list_timer(void)
 {
     return _list_timer(&rt_object_container[RT_Object_Class_Timer].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_timer, list timer in system)
+FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
+MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
 static long _list_device(struct rt_list_node *list)
@@ -481,7 +491,8 @@ long list_device(void)
 {
     return _list_device(&rt_object_container[RT_Object_Class_Device].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_device, list device in system)
+FINSH_FUNCTION_EXPORT(list_device, list device in system);
+MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
 #ifdef RT_USING_MODULE

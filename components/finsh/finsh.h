@@ -344,8 +344,12 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
  * @param command the name of command.
  * @param desc the description of command, which will show in help.
  */
+#ifdef FINSH_USING_MSH
 #define MSH_CMD_EXPORT(command, desc)   \
     FINSH_FUNCTION_EXPORT_CMD(command, __cmd_##command, desc)
+#else
+#define MSH_CMD_EXPORT(command, desc)
+#endif
 
 struct finsh_token
 {

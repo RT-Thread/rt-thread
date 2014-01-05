@@ -35,7 +35,8 @@ if rtconfig.CROSS_TOOL == 'keil':
 else:
     LINKFLAGS = '' 
 
-src = src + msh_src
+if GetDepend('FINSH_USING_MSH'):
+	src = src + msh_src
 if not GetDepend('FINSH_USING_MSH_ONLY'):
     src = src + fsh_src
 
