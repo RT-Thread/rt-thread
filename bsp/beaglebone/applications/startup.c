@@ -43,8 +43,7 @@ void rtthread_startup(void)
     /* initialize timer */
     rt_system_timer_init();
 
-	/* initialize timer */
-	rt_system_timer_init();
+	/* initialize soft timer thread */
 	rt_system_timer_thread_init();
 
 	/* initialize application */
