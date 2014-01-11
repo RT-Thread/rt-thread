@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-06     Bernard    the first version
+ * 2014-01-11     RTsien     add definitions of UART0 to UART5
  */
 
 #include <rthw.h>
@@ -162,14 +163,18 @@ static const struct rt_uart_ops am33xx_uart_ops =
     am33xx_getc,
 };
 
-/* UART1 device driver structure */
-struct serial_ringbuffer uart1_int_rx;
-struct am33xx_uart uart1 =
+/* UART device driver structure */
+struct serial_ringbuffer uart_int_rx[6];
+struct am33xx_uart uart[6] =
 {
-    UART0_BASE,
-    UART0_INT,
+    {UART0_BASE,UART0_INT},
+    {UART1_BASE,UART1_INT},
+    {UART2_BASE,UART2_INT},
+    {UART3_BASE,UART3_INT},
+    {UART4_BASE,UART4_INT},
+    {UART5_BASE,UART5_INT}
 };
-struct rt_serial_device serial1;
+struct rt_serial_device serial[6];
 
 #define write_reg(base, value) *(int*)(base) = value
 #define read_reg(base)         *(int*)(base)
@@ -219,11 +224,46 @@ static void start_uart_clk(void)
         ;
 
     /* enable uart1 */
+#ifdef RT_USING_UART1
     CM_PER_UART1_CLKCTRL_REG(prcm_base) |= 0x2;
 
     /* wait for uart1 clk */
     while ((CM_PER_UART1_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
         ;
+#endif
+
+#ifdef RT_USING_UART2
+    CM_PER_UART2_CLKCTRL_REG(prcm_base) |= 0x2;
+
+    /* wait for uart2 clk */
+    while ((CM_PER_UART2_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
+        ;
+#endif
+
+#ifdef RT_USING_UART3
+    CM_PER_UART3_CLKCTRL_REG(prcm_base) |= 0x2;
+
+    /* wait for uart3 clk */
+    while ((CM_PER_UART3_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
+        ;
+#endif
+
+#ifdef RT_USING_UART4
+    CM_PER_UART4_CLKCTRL_REG(prcm_base) |= 0x2;
+
+    /* wait for uart4 clk */
+    while ((CM_PER_UART4_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
+        ;
+#endif
+
+#ifdef RT_USING_UART5
+    CM_PER_UART5_CLKCTRL_REG(prcm_base) |= 0x2;
+
+    /* wait for uart5 clk */
+    while ((CM_PER_UART5_CLKCTRL_REG(prcm_base) & (0x3<<16)) != 0)
+        ;
+#endif
+
     /* Waiting for the L4LS UART clock */
     while (!(CM_PER_L4LS_CLKSTCTRL_REG(prcm_base) & (1<<10)))
         ;
@@ -236,44 +276,177 @@ static void config_pinmux(void)
     ctlm_base = AM33XX_CTLM_REGS;
 
     /* make sure the pin mux is OK for uart */
+#ifdef RT_USING_UART1
     REG32(ctlm_base + 0x800 + 0x180) = 0x20;
     REG32(ctlm_base + 0x800 + 0x184) = 0x00;
+#endif
+
+#ifdef RT_USING_UART2
+    REG32(ctlm_base + 0x800 + 0x150) = 0x20;
+    REG32(ctlm_base + 0x800 + 0x154) = 0x00;
+#endif
+
+#ifdef RT_USING_UART3
+    REG32(ctlm_base + 0x800 + 0x164) = 0x01;
+#endif
+
+#ifdef RT_USING_UART4
+    REG32(ctlm_base + 0x800 + 0x070) = 0x26;
+    REG32(ctlm_base + 0x800 + 0x074) = 0x06;
+#endif
+
+#ifdef RT_USING_UART5
+    REG32(ctlm_base + 0x800 + 0x0C4) = 0x24;
+    REG32(ctlm_base + 0x800 + 0x0C0) = 0x04;
+#endif
+
+
 }
 
 int rt_hw_serial_init(void)
 {
-    struct am33xx_uart* uart;
-    struct serial_configure config;
-
-    uart = &uart1;
-    uart->base = UART1_BASE;
+    struct serial_configure config[6];
 
     poweron_per_domain();
     start_uart_clk();
     config_pinmux();
 
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
+#ifdef RT_USING_UART0
+    config[0].baud_rate = BAUD_RATE_115200;
+    config[0].bit_order = BIT_ORDER_LSB;
+    config[0].data_bits = DATA_BITS_8;
+    config[0].parity    = PARITY_NONE;
+    config[0].stop_bits = STOP_BITS_1;
+    config[0].invert    = NRZ_NORMAL;
 
-    serial1.ops    = &am33xx_uart_ops;
-    serial1.int_rx = &uart1_int_rx;
-    serial1.config = config;
-
+    serial[0].ops    = &am33xx_uart_ops;
+    serial[0].int_rx = &uart_int_rx[0];
+    serial[0].config = config[0];
     /* enable RX interrupt */
-    UART_IER_REG(uart->base) = 0x01;
+    UART_IER_REG(uart[0].base) = 0x01;
     /* install ISR */
-    rt_hw_interrupt_install(uart->irq, am33xx_uart_isr, &serial1, "uart1");
-    rt_hw_interrupt_control(uart->irq, 0, 0);
-    rt_hw_interrupt_mask(uart->irq);
-
-    /* register UART1 device */
-    rt_hw_serial_register(&serial1, "uart1",
+    rt_hw_interrupt_install(uart[0].irq, am33xx_uart_isr, &serial[0], "uart0");
+    rt_hw_interrupt_control(uart[0].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[0].irq);
+    /* register UART0 device */
+    rt_hw_serial_register(&serial[0], "uart0",
             RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-            uart);
+            &uart[0]);
+#endif
+
+#ifdef RT_USING_UART1
+    config[1].baud_rate = BAUD_RATE_115200;
+    config[1].bit_order = BIT_ORDER_LSB;
+    config[1].data_bits = DATA_BITS_8;
+    config[1].parity    = PARITY_NONE;
+    config[1].stop_bits = STOP_BITS_1;
+    config[1].invert    = NRZ_NORMAL;
+   
+    serial[1].ops    = &am33xx_uart_ops;
+    serial[1].int_rx = &uart_int_rx[1];
+    serial[1].config = config[1];
+    /* enable RX interrupt */
+    UART_IER_REG(uart[1].base) = 0x01;
+    /* install ISR */
+    rt_hw_interrupt_install(uart[1].irq, am33xx_uart_isr, &serial[1], "uart1");
+    rt_hw_interrupt_control(uart[1].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[1].irq);
+    /* register UART0 device */
+    rt_hw_serial_register(&serial[1], "uart1",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            &uart[1]);
+#endif
+
+#ifdef RT_USING_UART2
+    config[2].baud_rate = BAUD_RATE_115200;
+    config[2].bit_order = BIT_ORDER_LSB;
+    config[2].data_bits = DATA_BITS_8;
+    config[2].parity    = PARITY_NONE;
+    config[2].stop_bits = STOP_BITS_1;
+    config[2].invert    = NRZ_NORMAL;
+   
+    serial[2].ops    = &am33xx_uart_ops;
+    serial[2].int_rx = &uart_int_rx[2];
+    serial[2].config = config[2];
+    /* enable RX interrupt */
+    UART_IER_REG(uart[2].base) = 0x01;
+    /* install ISR */
+    rt_hw_interrupt_install(uart[2].irq, am33xx_uart_isr, &serial[2], "uart2");
+    rt_hw_interrupt_control(uart[2].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[2].irq);
+    /* register UART2 device */
+    rt_hw_serial_register(&serial[2], "uart2",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            &uart[2]);
+#endif
+
+#ifdef RT_USING_UART3
+    config[3].baud_rate = BAUD_RATE_115200;
+    config[3].bit_order = BIT_ORDER_LSB;
+    config[3].data_bits = DATA_BITS_8;
+    config[3].parity    = PARITY_NONE;
+    config[3].stop_bits = STOP_BITS_1;
+    config[3].invert    = NRZ_NORMAL;
+    serial[3].ops    = &am33xx_uart_ops;
+    serial[3].int_rx = &uart_int_rx[3];
+    serial[3].config = config[3];
+    /* enable RX interrupt */
+    UART_IER_REG(uart[3].base) = 0x01;
+    /* install ISR */
+    rt_hw_interrupt_install(uart[3].irq, am33xx_uart_isr, &serial[3], "uart3");
+    rt_hw_interrupt_control(uart[3].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[3].irq);
+    /* register UART3 device */
+    rt_hw_serial_register(&serial[3], "uart3",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            &uart[3]);
+#endif
+
+#ifdef RT_USING_UART4
+    config[4].baud_rate = BAUD_RATE_115200;
+    config[4].bit_order = BIT_ORDER_LSB;
+    config[4].data_bits = DATA_BITS_8;
+    config[4].parity    = PARITY_NONE;
+    config[4].stop_bits = STOP_BITS_1;
+    config[4].invert    = NRZ_NORMAL;
+   
+    serial[4].ops    = &am33xx_uart_ops;
+    serial[4].int_rx = &uart_int_rx[4];
+    serial[4].config = config[4];
+    /* enable RX interrupt */
+    UART_IER_REG(uart[4].base) = 0x01;
+    /* install ISR */
+    rt_hw_interrupt_install(uart[4].irq, am33xx_uart_isr, &serial[4], "uart4");
+    rt_hw_interrupt_control(uart[4].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[4].irq);
+    /* register UART4 device */
+    rt_hw_serial_register(&serial[4], "uart4",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            &uart[4]);
+#endif
+
+#ifdef RT_USING_UART5
+    config[5].baud_rate = BAUD_RATE_115200;
+    config[5].bit_order = BIT_ORDER_LSB;
+    config[5].data_bits = DATA_BITS_8;
+    config[5].parity    = PARITY_NONE;
+    config[5].stop_bits = STOP_BITS_1;
+    config[5].invert    = NRZ_NORMAL;
+  
+    serial[5].ops    = &am33xx_uart_ops;
+    serial[5].int_rx = &uart_int_rx[5];
+    serial[5].config = config[5];
+    /* enable RX interrupt */
+    UART_IER_REG(uart[5].base) = 0x01;
+    /* install ISR */
+    rt_hw_interrupt_install(uart[5].irq, am33xx_uart_isr, &serial[5], "uart5");
+    rt_hw_interrupt_control(uart[5].irq, 0, 0);
+    rt_hw_interrupt_mask(uart[5].irq);
+    /* register UART4 device */
+    rt_hw_serial_register(&serial[5], "uart5",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            &uart[5]);
+#endif
 
     return 0;
 }
