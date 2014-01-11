@@ -1092,8 +1092,6 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
     index = 0;
     while (1)
     {
-        char *fn;
-
         d = dirp + index;
 
         name = nfs_readdir(nfs, dir);
