@@ -155,7 +155,7 @@ static int msh_split(char* cmd, rt_size_t length, char* argv[RT_FINSH_ARG_MAX])
     return argc;
 }
 
-static cmd_function_t msh_get_cmd(char *cmd)
+static cmd_function_t msh_get_cmd(char *cmd, int size)
 {
     struct finsh_syscall *index;
     cmd_function_t cmd_func = RT_NULL;
@@ -166,7 +166,7 @@ static cmd_function_t msh_get_cmd(char *cmd)
     {
         if (strncmp(index->name, "__cmd_", 6) != 0) continue;
         
-        if (strcmp(&index->name[6], cmd) == 0)
+        if (strncmp(&index->name[6], cmd, size) == 0)
         {
             cmd_func = (cmd_function_t)index->func;
             break;
@@ -177,33 +177,40 @@ static cmd_function_t msh_get_cmd(char *cmd)
 }
 
 #if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-int msh_exec_module(int argc, char** argv)
+int msh_exec_module(char* cmd_line, int size)
 {
     int fd = -1;
     char *pg_name;
-    int length, cmd_length;
+    int length, cmd_length = 0;
 
-    if (argc == 0) return -RT_ERROR; /* no command */
+    if (size == 0) return -RT_ERROR; /* no command */
+	/* get the length of command0 */
+	while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
+		cmd_length ++;
 
     /* get name length */
-    cmd_length = rt_strlen(argv[0]); length = cmd_length + 32;
+    length = cmd_length + 32;
 
+	/* allocate program name memory */
     pg_name = (char*) rt_malloc(length);
     if (pg_name == RT_NULL) return -RT_ENOMEM; /* no memory */
 
-    if (strstr(argv[0], ".mo") != RT_NULL || strstr(argv[0], ".MO") != RT_NULL)
+	/* copy command0 */
+	memcpy(pg_name, cmd_line, cmd_length);
+	pg_name[cmd_length] = '\0';
+
+    if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
     {
         /* try to open program */
         if (fd < 0)
         {
-            rt_snprintf(pg_name, length - 1, "%s", argv[0]);
             fd = open(pg_name, O_RDONLY, 0);
         }
 
         /* search in /bin path */
         if (fd < 0)
         {
-            rt_snprintf(pg_name, length - 1, "/bin/%s", argv[0]);
+            rt_snprintf(pg_name, length - 1, "/bin/%.*s", cmd_length, cmd_line);
             fd = open(pg_name, O_RDONLY, 0);
         }
     }
@@ -214,27 +221,27 @@ int msh_exec_module(int argc, char** argv)
         /* try to open program */
         if (fd < 0)
         {
-            rt_snprintf(pg_name, length - 1, "%s.mo", argv[0]);
+			strcat(pg_name, ".mo");
             fd = open(pg_name, O_RDONLY, 0);
         }
 
         /* search in /bin path */
         if (fd < 0)
         {
-            rt_snprintf(pg_name, length - 1, "/bin/%s.mo", argv[0]);
+			rt_snprintf(pg_name, length - 1, "/bin/%.*s.mo", cmd_length, cmd_line);
             fd = open(pg_name, O_RDONLY, 0);
         }
     }
-    
+
     if (fd >= 0)
     {
         /* found program */
         close(fd);
-        rt_module_open(pg_name);
+        rt_module_exec_cmd(pg_name, cmd_line, size);
     }
     else
     {
-        rt_kprintf("%s: program not found.\n", argv[0]);
+        rt_kprintf("%s: program not found.\n", pg_name);
     }
 
     rt_free(pg_name);
@@ -247,23 +254,28 @@ int msh_exec(char* cmd, rt_size_t length)
     int argc;
     char *argv[RT_FINSH_ARG_MAX];
 
+	int cmd0_size = 0;
     cmd_function_t cmd_func;
 
+	while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+		cmd0_size ++;
+
+	/* try to get built-in command */
+	cmd_func = msh_get_cmd(cmd, cmd0_size);
+	if (cmd_func == RT_NULL)
+	{
+#ifdef RT_USING_MODULE
+		msh_exec_module(cmd, length);
+#else
+		rt_kprintf("%s: command not found.\n", argv[0]);
+#endif
+		return -1;
+	}
+
+	/* split arguments */
     memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
     if (argc == 0) return -1;
-
-    /* get command in internal commands */
-    cmd_func = msh_get_cmd(argv[0]);
-    if (cmd_func == RT_NULL) 
-    {
-#ifdef RT_USING_MODULE
-        msh_exec_module(argc, argv);
-#else
-        rt_kprintf("%s: command not found.\n", argv[0]);
-#endif
-        return -1;
-    }
 
     /* exec this command */
     return cmd_func(argc, argv);

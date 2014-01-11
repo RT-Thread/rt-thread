@@ -420,6 +420,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
 #ifdef RT_USING_DFS
 rt_module_t rt_module_open(const char *filename);
+rt_module_t rt_module_exec_cmd(const char *path, char* cmd_line, int size);
 #endif
 void *rt_module_malloc(rt_size_t size);
 void *rt_module_realloc(void *ptr, rt_size_t size);
