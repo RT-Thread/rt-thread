@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-06     Bernard    the first version
- * 2014-01-11     RTsien     add definitions of UART0 to UART5
+ * 2014-01-11     RTsien     support UART0 to UART5 straightly
  */
 
 #include <rthw.h>
