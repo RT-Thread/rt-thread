@@ -276,7 +276,7 @@ int msh_exec(char* cmd, rt_size_t length)
         while(*cmd != ' ')
         {
             if (*cmd == 0) break;
-                cmd++;
+            cmd++;
         }
         if (*cmd == ' ') *cmd = 0;
         rt_kprintf("%s: command not found.\n", argv[0]);
