@@ -253,26 +253,38 @@ int msh_exec(char* cmd, rt_size_t length)
 {
     int argc;
     char *argv[RT_FINSH_ARG_MAX];
-
-	int cmd0_size = 0;
+    int cmd0_size = 0;
     cmd_function_t cmd_func;
 
-	while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
-		cmd0_size ++;
-
-	/* try to get built-in command */
-	cmd_func = msh_get_cmd(cmd, cmd0_size);
-	if (cmd_func == RT_NULL)
-	{
+    while(*cmd  == ' ') 
+    {
+        cmd++;
+        length--;
+    }
+    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+        cmd0_size ++;
+	
+    /* try to get built-in command */
+    if (cmd0_size == 0) return -1;
+    cmd_func = msh_get_cmd(cmd, cmd0_size);
+    if (cmd_func == RT_NULL)
+    {
 #ifdef RT_USING_MODULE
-		msh_exec_module(cmd, length);
+        msh_exec_module(cmd, length);
 #else
-		rt_kprintf("%s: command not found.\n", argv[0]);
+        argv[0] = cmd;
+        while(*cmd != ' ')
+        {
+            if (*cmd == 0) break;
+            cmd++;
+        }
+        if (*cmd == ' ') *cmd = 0;
+        rt_kprintf("%s: command not found.\n", argv[0]);
 #endif
-		return -1;
-	}
+        return -1;
+    }
 
-	/* split arguments */
+    /* split arguments */
     memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
     if (argc == 0) return -1;
