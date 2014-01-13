@@ -253,15 +253,15 @@ int msh_exec(char* cmd, rt_size_t length)
 {
     int argc;
     char *argv[RT_FINSH_ARG_MAX];
-
-	int cmd0_size = 0;
     cmd_function_t cmd_func;
 
-	while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
-		cmd0_size ++;
+	/* split arguments */
+    memset(argv, 0x00, sizeof(argv));
+    argc = msh_split(cmd, length, argv);
+    if (argc == 0) return -1;
 
 	/* try to get built-in command */
-	cmd_func = msh_get_cmd(cmd, cmd0_size);
+	cmd_func = msh_get_cmd(argv[0], strlen(argv[0]));
 	if (cmd_func == RT_NULL)
 	{
 #ifdef RT_USING_MODULE
@@ -271,11 +271,6 @@ int msh_exec(char* cmd, rt_size_t length)
 #endif
 		return -1;
 	}
-
-	/* split arguments */
-    memset(argv, 0x00, sizeof(argv));
-    argc = msh_split(cmd, length, argv);
-    if (argc == 0) return -1;
 
     /* exec this command */
     return cmd_func(argc, argv);
