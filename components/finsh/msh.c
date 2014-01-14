@@ -159,6 +159,17 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
 {
     struct finsh_syscall *index;
     cmd_function_t cmd_func = RT_NULL;
+    char* slip_pos = cmd;
+
+    while (*slip_pos != '\0')
+    {
+        if (' ' == *slip_pos || '\t' == *slip_pos) break;
+
+        slip_pos++;
+    }
+
+    if (*slip_pos != '\0') size = slip_pos - cmd;
+    else size += 1;
 
     for (index = _syscall_table_begin;
         index < _syscall_table_end;
