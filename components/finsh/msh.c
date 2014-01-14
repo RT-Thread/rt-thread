@@ -166,7 +166,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     {
         if (strncmp(index->name, "__cmd_", 6) != 0) continue;
         
-        if (strncmp(&index->name[6], cmd, size) == 0)
+        if (strcmp(&index->name[6], cmd) == 0)
         {
             cmd_func = (cmd_function_t)index->func;
             break;
