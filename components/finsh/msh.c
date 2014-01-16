@@ -166,7 +166,8 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     {
         if (strncmp(index->name, "__cmd_", 6) != 0) continue;
         
-        if (strncmp(&index->name[6], cmd, size) == 0)
+        if (strncmp(&index->name[6], cmd, size) == 0 &&
+			index->name[6 + size] == '\0')
         {
             cmd_func = (cmd_function_t)index->func;
             break;
@@ -256,16 +257,14 @@ int msh_exec(char* cmd, rt_size_t length)
     int cmd0_size = 0;
     cmd_function_t cmd_func;
 
-    while(*cmd  == ' ') 
-    {
-        cmd++;
-        length--;
-    }
+	/* strim the beginning of command */
+    while(*cmd  == ' ' || *cmd == '\t'){cmd++; length--;}
+	/* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
         cmd0_size ++;
-	
+    if (cmd0_size == 0) return -1; /* no command found */
+
     /* try to get built-in command */
-    if (cmd0_size == 0) return -1;
     cmd_func = msh_get_cmd(cmd, cmd0_size);
     if (cmd_func == RT_NULL)
     {
