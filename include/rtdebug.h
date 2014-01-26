@@ -21,6 +21,8 @@
 #ifndef __RTDEBUG_H__
 #define __RTDEBUG_H__
 
+#include <rtconfig.h>
+
 /* Using this macro to control all kernel debug features. */
 #ifdef RT_DEBUG
 
