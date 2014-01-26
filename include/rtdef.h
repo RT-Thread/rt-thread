@@ -34,6 +34,9 @@
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
+/* include rtconfig header to import configuration */
+#include <rtconfig.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

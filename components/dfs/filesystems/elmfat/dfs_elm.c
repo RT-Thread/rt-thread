@@ -110,20 +110,30 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FATFS *fat;
     FRESULT result;
     int index;
+	struct rt_device_blk_geometry geometry;
 
     /* get an empty position */
     index = get_disk(RT_NULL);
     if (index == -1)
-        return -DFS_STATUS_ENOSPC;
+        return -DFS_STATUS_ENOENT;
 
     /* save device */
     disk[index] = fs->dev_id;
-
+	/* check sector size */
+	if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+	{
+		if (geometry.block_size > _MAX_SS) 
+		{
+			rt_kprintf("Block size of device is great than sector size of FAT.\n");
+			return -DFS_STATUS_EINVAL;
+		}
+	}
+	
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
     {
         disk[index] = RT_NULL;
-        return -1;
+        return -DFS_STATUS_ENOMEM;
     }
 
     /* mount fatfs, always 0 logic driver */
