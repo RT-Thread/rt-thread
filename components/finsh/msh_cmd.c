@@ -179,6 +179,18 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
 
 #endif
 
+#ifdef RT_USING_LWIP
+int cmd_ifconfig(int argc, char** argv)
+{
+ 	extern void list_if(void);
+
+	list_if();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
+
+#endif
+
 int cmd_ps(int argc, char** argv)
 {
     extern long list_thread(void);
