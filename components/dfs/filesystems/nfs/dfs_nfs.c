@@ -678,7 +678,9 @@ int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
             total += bytes;
             /* update current position */
             file->pos = fd->offset;
-            /* todo: update file size */
+            /* update file size */
+			if (fd->size < fd->offset) fd->size = fd->offset;
+			file->size = fd->size;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
     } while (count > 0);
@@ -796,6 +798,7 @@ int nfs_open(struct dfs_fd *file)
 
         /* set private file */
         file->data = fp;
+		file->size = fp->size;
     }
 
     return 0;
