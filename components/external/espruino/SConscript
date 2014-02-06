@@ -1,0 +1,19 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+# source files 
+src = Split('''
+''')
+
+ESPRUINO_SRC_PATH = cwd + '/src'
+if GetDepend('RT_USING_JS') and not os.path.exists(ESPRUINO_SRC_PATH):
+    print '================ERROR============================'
+    print 'Please get espruino source files and put them under espruino folder'
+    print '================================================='
+    exit(0)
+
+CPPPATH = [cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
+group = DefineGroup('Espruino', src, depend = ['RT_USING_JS'], CPPPATH = CPPPATH)
+
+Return('group')
