@@ -54,6 +54,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['ARCOM'] = '$AR --create $TARGET $SOURCES'
         env['LIBPREFIX']   = ''
         env['LIBSUFFIX']   = '_rvds.lib'
+        env['LIBLINKPREFIX'] = ''
+        env['LIBLINKSUFFIX']   = '_rvds.lib'
+        env['LIBDIRPREFIX'] = '--userlibpath '
+    elif rtconfig.PLATFORM == 'gcc':
+        env['LIBSUFFIX']   = '_gcc.a'
+        env['LIBLINKSUFFIX']   = '_gcc'
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
@@ -68,6 +74,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+    # add library build action
+    act = SCons.Action.Action(BuildLibInstallAction, 'Install compiled library... $TARGET')
+    bld = Builder(action = act)
+    Env.Append(BUILDERS = {'BuildLib': bld})
 
     # parse rtconfig.h to get used component
     PreProcessor = SCons.cpp.PreProcessor()
@@ -127,12 +138,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       dest='buildlib', 
                       type='string',
                       help='building library of a component')
+    AddOption('--cleanlib', 
+                      dest='cleanlib', 
+                      action='store_true',
+                      default=False,
+                      help='clean up the library by --buildlib')
 
     # add target option
     AddOption('--target',
                       dest='target',
                       type='string',
-                      help='set target project: mdk')
+                      help='set target project: mdk/iar/vs')
 
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -279,7 +295,7 @@ def DefineGroup(name, src, depend, **parameters):
     group = parameters
     group['name'] = name
     group['path'] = GetCurrentDir()
-    if type(src) == type(['src1', 'str2']):
+    if type(src) == type(['src1']):
         group['src'] = File(src)
     else:
         group['src'] = src
@@ -292,13 +308,25 @@ def DefineGroup(name, src, depend, **parameters):
         Env.Append(CPPDEFINES = group['CPPDEFINES'])
     if group.has_key('LINKFLAGS'):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+    # check whether to clean up library 
+    if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibName(name, Env))):
+        if group['src'] != []:
+            print 'Remove library:', GroupLibName(name, Env)
+            do_rm_file(os.path.join(group['path'], GroupLibName(name, Env)))
+
+    # check whether exist group library
+    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibName(name, Env))):
+        Env.Append(LIBS = [name])
+        group['src'] = []
+        Env.Append(LIBPATH = [GetCurrentDir()])
+
     if group.has_key('LIBS'):
         Env.Append(LIBS = group['LIBS'])
     if group.has_key('LIBPATH'):
         Env.Append(LIBPATH = group['LIBPATH'])
 
     objs = Env.Object(group['src'])
-
     if group.has_key('LIBRARY'):
         objs = Env.Library(name, objs)
 
@@ -332,6 +360,20 @@ def PreBuilding():
     for a in PREBUILDING:
         a()
 
+def GroupLibName(name, env):
+    return env['LIBPREFIX'] + name + env['LIBSUFFIX']
+
+def BuildLibInstallAction(target, source, env):
+    lib_name = GetOption('buildlib')
+    for Group in Projects:
+        if Group['name'] == lib_name:
+            lib_name = str(target[0])
+            lib_name = GroupLibName(lib_name, env)
+            dst_name = os.path.join(Group['path'], lib_name)
+            print 'Copy %s => %s' % (lib_name, dst_name)
+            do_copy_file(lib_name, dst_name)
+            break
+
 def DoBuilding(target, objects):
     program = None
     # check whether special buildlib option
@@ -342,12 +384,15 @@ def DoBuilding(target, objects):
             if Group['name'] == lib_name:
                 objects = Env.Object(Group['src'])
                 program = Env.Library(lib_name, objects)
+
+                # add library copy action
+                Env.BuildLib(lib_name, program)
+
                 break
     else:
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
-
 
 def EndBuilding(target, program = None):
     import rtconfig
@@ -448,6 +493,10 @@ def GlobSubDir(sub_dir, ext_name):
     for item in src:
         dst.append(os.path.relpath(item, sub_dir))
     return dst
+
+def do_rm_file(src):
+    if os.path.exists(src):
+       os.unlink(src)
 
 def do_copy_file(src, dst):
     import shutil
