@@ -53,13 +53,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # reset AR command flags 
         env['ARCOM'] = '$AR --create $TARGET $SOURCES'
         env['LIBPREFIX']   = ''
-        env['LIBSUFFIX']   = '_rvds.lib'
+        env['LIBSUFFIX']   = '.lib'
         env['LIBLINKPREFIX'] = ''
-        env['LIBLINKSUFFIX']   = '_rvds.lib'
+        env['LIBLINKSUFFIX']   = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
-    elif rtconfig.PLATFORM == 'gcc':
-        env['LIBSUFFIX']   = '_gcc.a'
-        env['LIBLINKSUFFIX']   = '_gcc'
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
@@ -310,14 +307,14 @@ def DefineGroup(name, src, depend, **parameters):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
 
     # check whether to clean up library 
-    if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibName(name, Env))):
+    if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
         if group['src'] != []:
-            print 'Remove library:', GroupLibName(name, Env)
-            do_rm_file(os.path.join(group['path'], GroupLibName(name, Env)))
+            print 'Remove library:', GroupLibFullName(name, Env)
+            do_rm_file(os.path.join(group['path'], GroupLibFullName(name, Env)))
 
     # check whether exist group library
-    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibName(name, Env))):
-        Env.Append(LIBS = [name])
+    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
+        Env.Append(LIBS = [GroupLibName(name, Env)])
         group['src'] = []
         Env.Append(LIBPATH = [GetCurrentDir()])
 
@@ -361,14 +358,22 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-    return env['LIBPREFIX'] + name + env['LIBSUFFIX']
+    import rtconfig
+    if rtconfig.PLATFORM == 'armcc':
+        return name + '_rvds'
+    elif rtconfig.PLATFORM == 'gcc':
+        return name + '_gcc'
+
+    return name
+
+def GroupLibFullName(name, env):
+    return env['LIBPREFIX'] + GroupLibName(name, env) + env['LIBSUFFIX']
 
 def BuildLibInstallAction(target, source, env):
     lib_name = GetOption('buildlib')
     for Group in Projects:
         if Group['name'] == lib_name:
-            lib_name = str(target[0])
-            lib_name = GroupLibName(lib_name, env)
+            lib_name = GroupLibFullName(Group['name'], env)
             dst_name = os.path.join(Group['path'], lib_name)
             print 'Copy %s => %s' % (lib_name, dst_name)
             do_copy_file(lib_name, dst_name)
@@ -382,6 +387,7 @@ def DoBuilding(target, objects):
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
+                lib_name = GroupLibName(Group['name'], Env)
                 objects = Env.Object(Group['src'])
                 program = Env.Library(lib_name, objects)
 
