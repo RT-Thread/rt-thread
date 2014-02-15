@@ -242,7 +242,7 @@ int msh_exec_module(char* cmd_line, int size)
     }
     else
     {
-        rt_kprintf("%s: program not found.\n", pg_name);
+        rt_kprintf("%s: program not found.\n", cmd_line);
     }
 
     rt_free(pg_name);
