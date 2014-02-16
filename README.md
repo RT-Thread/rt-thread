@@ -24,7 +24,6 @@ RT-Thread RTOS can support many architectures:
 * ARM Cortex-R4
 * ARM Cortex-A8/A9
 * ARM920T/ARM926 etc
-
 * MIPS 
 * x86
 * PowerPC
