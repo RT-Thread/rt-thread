@@ -284,14 +284,27 @@ def MergeGroup(src_group, group):
         else:
             src_group['LIBPATH'] = group['LIBPATH']
 
+    if src_group.has_key('LIBS'):
+        print src_group['LIBS']
+    if src_group.has_key('LIBS'):
+        print src_group['LIBPATH']
+
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
         return []
 
+    # find exist group and get path of group
+    group_path = ''
+    for g in Projects:
+        if g['name'] == name:
+            group_path = g['path']
+    if group_path == '':
+        group_path = GetCurrentDir()
+
     group = parameters
     group['name'] = name
-    group['path'] = GetCurrentDir()
+    group['path'] = group_path
     if type(src) == type(['src1']):
         group['src'] = File(src)
     else:
@@ -396,6 +409,12 @@ def DoBuilding(target, objects):
 
                 break
     else:
+        # merge the repeated items in the Env
+        if Env.has_key('CPPPATH')   : Env['CPPPATH'] = list(set(Env['CPPPATH']))
+        if Env.has_key('CPPDEFINES'): Env['CPPDEFINES'] = list(set(Env['CPPDEFINES']))
+        if Env.has_key('LIBPATH')   : Env['LIBPATH'] = list(set(Env['LIBPATH']))
+        if Env.has_key('LIBS')      : Env['LIBS'] = list(set(Env['LIBS']))
+
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
@@ -499,6 +518,9 @@ def GlobSubDir(sub_dir, ext_name):
     for item in src:
         dst.append(os.path.relpath(item, sub_dir))
     return dst
+
+def file_path_exist(path, *args):
+    return os.path.exists(os.path.join(path, *args))
 
 def do_rm_file(src):
     if os.path.exists(src):
