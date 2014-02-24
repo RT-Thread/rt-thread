@@ -1,0 +1,17 @@
+fti
+y
+acosh airy asin asinh atan &
+atanh bdtr beta btdtr cbrt chbevl &
+chdtr clog cmplx const &
+cosh dawsn drand ellie ellik ellpe ellpk &
+ellpj exp exp2 exp10 expn fac &
+fdtr fresnl gamma gdtr &
+hyperg hyp2f1 incbet incbi igam igami isnan &
+iv i0 i1 jn jv j0 j1 k0 k1 kn log log2 log10 &
+mtherr nbdtr ndtr ndtri pdtr &
+polmisc polyn pow powi psi &
+rgamma round shichi sici sin sindg &
+sinh spence sqrt stdtr struve tan tandg &
+tanh unity yn zeta zetac floor fabs polevl
+fti.lst
+fti

@@ -1,19 +1,58 @@
+import rtconfig
+Import('RTT_ROOT')
 from building import *
-import os
 
-cwd = GetCurrentDir()
-# source files 
-src = Split('''
-''')
+path = [RTT_ROOT + r'/components/external/Espruino']
+path = path + [RTT_ROOT + r'/components/external/Espruino/src/']
+path = path + [RTT_ROOT + r'/components/external/Espruino/gen/']
+path = path + [RTT_ROOT + r'/components/external/Espruino/libs/']
+path = path + [RTT_ROOT + r'/components/external/Espruino/targets/rtthread/']
 
-ESPRUINO_SRC_PATH = cwd + '/src'
-if GetDepend('RT_USING_JS') and not os.path.exists(ESPRUINO_SRC_PATH):
-    print '================ERROR============================'
-    print 'Please get espruino source files and put them under espruino folder'
-    print '================================================='
-    exit(0)
+src	= Split("""
+src/jsdevices.c
+src/jslex.c
+src/jswrap_array.c
+src/jswrap_json.c
+src/jswrap_process.c
+src/jsutils.c
+src/jswrap_interactive.c
+src/jswrap_onewire.c
+src/jswrap_string.c
+src/jsparse.c
+src/jswrap_arraybuffer.c
+src/jswrap_modules.c
+src/jswrap_serial.c
+src/jsinteractive.c
+src/jsvar.c
+src/jswrap_io.c
+src/jswrap_pin.c
+src/jspin.c
+src/jswrap_functions.c
+src/jswrap_object.c
+src/jswrap_spi_i2c.c
+"""
+)
 
-CPPPATH = [cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
-group = DefineGroup('Espruino', src, depend = ['RT_USING_JS'], CPPPATH = CPPPATH)
+gen = Split("""
+gen/jspininfo.c
+gen/jswrapper.c
+"""
+)
+
+target = Split("""
+targets/rtthread/espruino.c  
+targets/rtthread/jshardware.c
+"""
+)
+
+libs = Split(
+"""
+libs/jswrap_math.c
+"""
+)
+
+src	+= gen + target + libs
+
+group = DefineGroup('Espruino', src, depend = ['RT_USING_JS', 'RT_USING_NEWLIB'], CPPPATH = path)
 
 Return('group')
