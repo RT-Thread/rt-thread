@@ -1,12 +1,7 @@
-import rtconfig
-Import('RTT_ROOT')
 from building import *
 
-path = [RTT_ROOT + r'/components/external/Espruino']
-path = path + [RTT_ROOT + r'/components/external/Espruino/src/']
-path = path + [RTT_ROOT + r'/components/external/Espruino/gen/']
-path = path + [RTT_ROOT + r'/components/external/Espruino/libs/']
-path = path + [RTT_ROOT + r'/components/external/Espruino/targets/rtthread/']
+cwd = GetCurrentDir()
+path = [cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
 
 src	= Split("""
 src/jsdevices.c
@@ -51,7 +46,7 @@ libs/jswrap_math.c
 """
 )
 
-src	+= gen + target + libs
+src	= src + gen + target + libs
 
 group = DefineGroup('Espruino', src, depend = ['RT_USING_JS', 'RT_USING_NEWLIB'], CPPPATH = path)
 
