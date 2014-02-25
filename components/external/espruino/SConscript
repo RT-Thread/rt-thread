@@ -1,7 +1,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
+path = [cwd, cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
 
 src	= Split("""
 src/jsdevices.c

@@ -284,11 +284,6 @@ def MergeGroup(src_group, group):
         else:
             src_group['LIBPATH'] = group['LIBPATH']
 
-    if src_group.has_key('LIBS'):
-        print src_group['LIBS']
-    if src_group.has_key('LIBS'):
-        print src_group['LIBPATH']
-
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
