@@ -25,6 +25,9 @@
  * 2012-11-23     bernard      fix compiler warning.
  * 2013-02-20     bernard      use RT_SERIAL_RB_BUFSZ to define
  *                             the size of ring buffer.
+ * 2014-02-26     bright       use DeviceDriver ringbuffer.
+ *                             add hardware flow support.
+ *                             use new struct serial_ringbuffer.
  */
 
 #include <rthw.h>
@@ -33,9 +36,7 @@
 
 rt_inline void serial_ringbuffer_init(struct serial_ringbuffer *rbuffer)
 {
-    rt_memset(rbuffer->buffer, 0, sizeof(rbuffer->buffer));
-    rbuffer->put_index = 0;
-    rbuffer->get_index = 0;
+    rt_ringbuffer_init(&rbuffer->rb, rbuffer->pool, rbuffer->size);
 }
 
 rt_inline void serial_ringbuffer_putc(struct serial_ringbuffer *rbuffer,
@@ -45,17 +46,8 @@ rt_inline void serial_ringbuffer_putc(struct serial_ringbuffer *rbuffer,
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
-
-    rbuffer->buffer[rbuffer->put_index] = ch;
-    rbuffer->put_index = (rbuffer->put_index + 1) & (RT_SERIAL_RB_BUFSZ - 1);
-
-    /* if the next position is read index, discard this 'read char' */
-    if (rbuffer->put_index == rbuffer->get_index)
-    {
-        rbuffer->get_index = (rbuffer->get_index + 1) & (RT_SERIAL_RB_BUFSZ - 1);
-    }
-
-    /* enable interrupt */
+    rt_ringbuffer_putchar(&rbuffer->rb, ch);
+    // enable interrupt
     rt_hw_interrupt_enable(level);
 }
 
@@ -63,25 +55,11 @@ rt_inline int serial_ringbuffer_putchar(struct serial_ringbuffer *rbuffer,
                                         char                      ch)
 {
     rt_base_t level;
-    rt_uint16_t next_index;
+    //rt_uint16_t next_index;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
-
-    next_index = (rbuffer->put_index + 1) & (RT_SERIAL_RB_BUFSZ - 1);
-    if (next_index != rbuffer->get_index)
-    {
-        rbuffer->buffer[rbuffer->put_index] = ch;
-        rbuffer->put_index = next_index;
-    }
-    else
-    {
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        return -1;
-    }
-
+    rt_ringbuffer_putchar(&rbuffer->rb, ch);
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
@@ -90,17 +68,14 @@ rt_inline int serial_ringbuffer_putchar(struct serial_ringbuffer *rbuffer,
 
 rt_inline int serial_ringbuffer_getc(struct serial_ringbuffer *rbuffer)
 {
-    int ch;
+    int ch = 0;
     rt_base_t level;
 
-    ch = -1;
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
-    if (rbuffer->get_index != rbuffer->put_index)
-    {
-        ch = rbuffer->buffer[rbuffer->get_index];
-        rbuffer->get_index = (rbuffer->get_index + 1) & (RT_SERIAL_RB_BUFSZ - 1);
-    }
+    /* get char */
+    if (!rt_ringbuffer_getchar(&rbuffer->rb, (rt_uint8_t *)&ch))
+        ch = -1;
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
@@ -113,7 +88,10 @@ rt_inline rt_uint32_t serial_ringbuffer_size(struct serial_ringbuffer *rbuffer)
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
+    size = rt_ringbuffer_space_len(&rbuffer->rb);
+    /*
     size = (rbuffer->put_index - rbuffer->get_index) & (RT_SERIAL_RB_BUFSZ - 1);
+    */
     rt_hw_interrupt_enable(level);
 
     return size;
