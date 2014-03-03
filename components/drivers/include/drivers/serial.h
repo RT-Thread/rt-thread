@@ -23,12 +23,15 @@
  * 2012-05-28     bernard      change interfaces
  * 2013-02-20     bernard      use RT_SERIAL_RB_BUFSZ to define
  *                             the size of ring buffer.
+ * 2014-03-03     bright       add hardware flow support.
+ *                             use new struct serial_ringbuffer(use RT_USING_SERIAL_NEW).
  */
 
 #ifndef __SERIAL_H__
 #define __SERIAL_H__
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #define BAUD_RATE_4800                  4800
 #define BAUD_RATE_9600                  9600
@@ -55,6 +58,11 @@
 #define NRZ_NORMAL                      0       /* Non Return to Zero : normal mode */
 #define NRZ_INVERTED                    1       /* Non Return to Zero : inverted mode */
 
+#define HW_CONTROL_NONE                 0
+#define HW_CONTROL_RTS                  1
+#define HW_CONTROL_CTS                  2
+#define HW_CONTROL_RTS_CTS              3
+
 #ifndef RT_SERIAL_RB_BUFSZ
 #define RT_SERIAL_RB_BUFSZ              64
 #endif
@@ -75,21 +83,28 @@
 #define RT_SERIAL_TX_DATAQUEUE_LWM      30
 
 /* Default config for serial_configure structure */
-#define RT_SERIAL_CONFIG_DEFAULT           \
-{                                          \
-    BAUD_RATE_115200, /* 115200 bits/s */  \
-    DATA_BITS_8,      /* 8 databits */     \
-    STOP_BITS_1,      /* 1 stopbit */      \
-    PARITY_NONE,      /* No parity  */     \
-    BIT_ORDER_LSB,    /* LSB first sent */ \
-    NRZ_NORMAL,       /* Normal mode */    \
-    0                                      \
+#define RT_SERIAL_CONFIG_DEFAULT           			\
+{                                          			\
+    BAUD_RATE_115200, /* 115200 bits/s */           \
+    DATA_BITS_8,      /* 8 databits */              \
+    STOP_BITS_1,      /* 1 stopbit */               \
+    PARITY_NONE,      /* No parity  */              \
+    BIT_ORDER_LSB,    /* LSB first sent */          \
+    NRZ_NORMAL,       /* Normal mode */             \
+    HW_CONTROL_NONE,  /* Hardware flow control */   \
+    0                                               \
 }
 
 struct serial_ringbuffer
 {
+#ifdef RT_USING_SERIAL_NEW
+    struct rt_ringbuffer    rb;
+    rt_uint8_t              *pool;
+    rt_uint16_t             size;
+#else
     rt_uint8_t  buffer[RT_SERIAL_RB_BUFSZ];
     rt_uint16_t put_index, get_index;
+#endif
 };
 
 struct serial_configure
@@ -100,6 +115,7 @@ struct serial_configure
     rt_uint32_t parity                  :2;
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
+    rt_uint32_t hw_control              :2;
     rt_uint32_t reserved                :20;
 };
 
@@ -143,3 +159,4 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                void                    *data);
 
 #endif
+
