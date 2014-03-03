@@ -66,6 +66,8 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
 #define RT_USING_SERIAL
+// use new serial driver framework
+#define RT_USING_SERIAL_NEW
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
