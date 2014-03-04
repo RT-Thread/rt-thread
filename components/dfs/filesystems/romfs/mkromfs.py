@@ -4,6 +4,7 @@ import string
 
 basename = ''
 output = ''
+sep = os.sep
 
 def mkromfs_output(out):
     # print '%s' % out,
@@ -54,12 +55,12 @@ def mkromfs_dir(dirname, is_root = False):
         fullpath = os.path.join(path, item)
         if os.path.isfile(fullpath):
             subpath = fullpath[len(basename):]
-            array = subpath.split('\\')
+            array = subpath.split(sep)
             arrayname = string.join(array, '_')
             mkromfs_file(fullpath, arrayname)
 
     subpath = path[len(basename):]
-    dir = subpath.split('\\')
+    dir = subpath.split(sep)
     direntname = string.join(dir, '_')
     if is_root:
         mkromfs_output('const struct romfs_dirent _root_dirent[] = {\n')
@@ -69,12 +70,12 @@ def mkromfs_dir(dirname, is_root = False):
     for item in list:
         fullpath = os.path.join(path, item)
         fn = fullpath[len(dirname):]
-        if fn[0] == '\\':
+        if fn[0] == sep:
             fn = fn[1:]
         fn = fn.replace('\\', '/')
 
         subpath = fullpath[len(basename):]
-        items = subpath.split('\\')
+        items = subpath.split(sep)
         item_name = string.join(items, '_')
         item_name = item_name.replace('.', '_')
         item_name = item_name.replace('-', '_')
@@ -92,12 +93,12 @@ def mkromfs_dir(dirname, is_root = False):
     for item in list:
         fullpath = os.path.join(path, item)
         fn = fullpath[len(dirname):]
-        if fn[0] == '\\':
+        if fn[0] == sep:
             fn = fn[1:]
         fn = fn.replace('\\', '/')
     
         subpath = fullpath[len(basename):]
-        items = subpath.split('\\')
+        items = subpath.split(sep)
         item_name = string.join(items, '_')
         item_name = item_name.replace('.', '_')
         item_name = item_name.replace('-', '_')

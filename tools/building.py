@@ -284,11 +284,6 @@ def MergeGroup(src_group, group):
         else:
             src_group['LIBPATH'] = group['LIBPATH']
 
-    if src_group.has_key('LIBS'):
-        print src_group['LIBS']
-    if src_group.has_key('LIBS'):
-        print src_group['LIBPATH']
-
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
@@ -327,9 +322,11 @@ def DefineGroup(name, src, depend, **parameters):
 
     # check whether exist group library
     if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
-        Env.Append(LIBS = [GroupLibName(name, Env)])
         group['src'] = []
-        Env.Append(LIBPATH = [GetCurrentDir()])
+        if group.has_key('LIBS'): group['LIBS'] = group['LIBS'] + [GroupLibName(name, Env)]
+        else : group['LIBS'] = [GroupLibName(name, Env)]
+        if group.has_key('LIBPATH'): group['LIBPATH'] = group['LIBPATH'] + [GetCurrentDir()]
+        else : group['LIBPATH'] = [GetCurrentDir()]
 
     if group.has_key('LIBS'):
         Env.Append(LIBS = group['LIBS'])
