@@ -135,6 +135,10 @@ CLIENT *clntudp_bufcreate(struct sockaddr_in *raddr,
 
 	if (raddr->sin_port == 0) {
 		unsigned short port;
+		extern unsigned short pmap_getport(struct sockaddr_in *address, 
+			unsigned long program, 
+			unsigned long version, 
+			unsigned int protocol);
 
 		if ((port =
 			 pmap_getport(raddr, program, version, IPPROTO_UDP)) == 0) {
@@ -165,8 +169,6 @@ CLIENT *clntudp_bufcreate(struct sockaddr_in *raddr,
 	cu->cu_xdrpos = XDR_GETPOS(&(cu->cu_outxdrs));
 	if (*sockp < 0)
 	{
-		int dontblock = 1;
-
 		*sockp = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 		if (*sockp < 0)
 		{
@@ -229,7 +231,10 @@ call_again:
 
 	if ((!XDR_PUTLONG(xdrs, (long *) &proc)) ||
 			(!AUTH_MARSHALL(cl->cl_auth, xdrs)) || (!(*xargs) (xdrs, argsp)))
-		return (cu->cu_error.re_status = RPC_CANTENCODEARGS);
+    {
+        cu->cu_error.re_status = RPC_CANTENCODEARGS;
+		return RPC_CANTENCODEARGS;
+    }
 	outlen = (int) XDR_GETPOS(xdrs);
 
 send_again:
@@ -238,7 +243,9 @@ send_again:
 			!= outlen)
 	{
 		cu->cu_error.re_errno = errno;
-		return (cu->cu_error.re_status = RPC_CANTSEND);
+        cu->cu_error.re_status = RPC_CANTSEND;
+        
+		return RPC_CANTSEND;
 	}
 
 	/*
@@ -264,7 +271,9 @@ send_again:
 	{
 		rt_kprintf("recv error, len %d\n", inlen);
 		cu->cu_error.re_errno = errno;
-		return (cu->cu_error.re_status = RPC_CANTRECV);
+		cu->cu_error.re_status = RPC_CANTRECV;
+		
+		return RPC_CANTRECV;
 	}
 
 	/* see if reply transaction id matches sent id */
@@ -292,6 +301,8 @@ send_again:
 			}
 			if (reply_msg.acpted_rply.ar_verf.oa_base != NULL)
 			{
+				extern bool_t xdr_opaque_auth(XDR *xdrs, struct opaque_auth *ap);
+				
 				xdrs->x_op = XDR_FREE;
 				(void) xdr_opaque_auth(xdrs, &(reply_msg.acpted_rply.ar_verf));
 			}
@@ -311,7 +322,7 @@ send_again:
 		cu->cu_error.re_status = RPC_CANTDECODERES;
 	}
 
-	return (cu->cu_error.re_status);
+	return (enum clnt_stat)(cu->cu_error.re_status);
 }
 
 static void clntudp_geterr(CLIENT *cl, struct rpc_err *errp)

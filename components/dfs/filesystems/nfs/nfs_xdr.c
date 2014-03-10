@@ -151,7 +151,7 @@ xdr_nfsstat3(register XDR *xdrs, nfsstat3 *objp)
 	enum_objp = *objp;
 	if (!xdr_enum(xdrs, (enum_t *)objp))
 	{
-		*objp = enum_objp;
+		*objp = (nfsstat3)enum_objp;
 		return (FALSE);
 	}
 
@@ -165,7 +165,7 @@ xdr_ftype3(register XDR *xdrs, ftype3 *objp)
 	enum_objp = *objp;
 	if (!xdr_enum(xdrs, (enum_t *)objp))
 	{
-		*objp = enum_objp;
+		*objp = (ftype3)enum_objp;
 		return (FALSE);
 	}
 	
@@ -179,7 +179,7 @@ xdr_stable_how(register XDR *xdrs, stable_how *objp)
 	enum_objp = *objp;
 	if (!xdr_enum(xdrs, (enum_t *)objp))
 	{
-		*objp = enum_objp;
+		*objp = (stable_how)enum_objp;
 		return (FALSE);
 	}
 	
@@ -193,7 +193,7 @@ xdr_createmode3(register XDR *xdrs, createmode3 *objp)
 	enum_objp = *objp;
 	if (!xdr_enum(xdrs, (enum_t *)objp))
 	{
-		*objp = enum_objp;
+		*objp = (createmode3)enum_objp;
 		return (FALSE);
 	}
 	
@@ -343,7 +343,7 @@ xdr_time_how(register XDR *xdrs, time_how *objp)
 	enum_objp = *objp;
 	if (!xdr_enum(xdrs, (enum_t *)objp))
 	{
-		*objp = enum_objp;
+		*objp = (time_how)enum_objp;
 		return (FALSE);
 	}
 	
