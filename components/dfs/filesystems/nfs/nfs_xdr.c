@@ -213,7 +213,7 @@ xdr_specdata3(register XDR *xdrs, specdata3 *objp)
 bool_t
 xdr_nfs_fh3(register XDR *xdrs, nfs_fh3 *objp)
 {
-	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (u_int *) &objp->data.data_len, NFS3_FHSIZE))
+	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (unsigned int *) &objp->data.data_len, NFS3_FHSIZE))
 		return (FALSE);
 	return (TRUE);
 }
@@ -713,7 +713,7 @@ xdr_READ3resok(register XDR *xdrs, READ3resok *objp)
 		return (FALSE);
 	if (!xdr_bool(xdrs, &objp->eof))
 		return (FALSE);
-	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (u_int *) &objp->data.data_len, ~0))
+	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (unsigned int *) &objp->data.data_len, ~0))
 		return (FALSE);
 	return (TRUE);
 }
@@ -755,7 +755,7 @@ xdr_WRITE3args(register XDR *xdrs, WRITE3args *objp)
 		return (FALSE);
 	if (!xdr_stable_how(xdrs, &objp->stable))
 		return (FALSE);
-	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (u_int *) &objp->data.data_len, ~0))
+	if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (unsigned int *) &objp->data.data_len, ~0))
 		return (FALSE);
 	return (TRUE);
 }
