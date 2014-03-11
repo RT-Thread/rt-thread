@@ -58,11 +58,16 @@ struct finsh_shell* shell;
 #include <dfs_posix.h>
 const char* finsh_get_prompt()
 {
-    #define _PROMPT "finsh "
+    #define _MSH_PROMPT "msh "
+    #define _PROMPT 	"finsh "
     static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};
-    
+
+#ifdef FINSH_USING_MSH
+    if (msh_is_used()) strcpy(finsh_prompt, _MSH_PROMPT);
+#endif
+
     /* get current working directory */
-    getcwd(&finsh_prompt[6], RT_CONSOLEBUF_SIZE - 8);
+    getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - 8);
     strcat(finsh_prompt, ">");
 
     return finsh_prompt;
