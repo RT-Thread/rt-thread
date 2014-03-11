@@ -434,6 +434,9 @@ void rt_module_load_sethook(void (*hook)(rt_module_t module));
 void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 #endif
 
+void rt_module_init_object_container(struct rt_module *module);
+rt_err_t rt_module_destroy(rt_module_t module);
+
 /*@}*/
 #endif
 

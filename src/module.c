@@ -242,7 +242,7 @@ static int rt_module_arm_relocate(struct rt_module *module,
     return 0;
 }
 
-static void rt_module_init_object_container(struct rt_module *module)
+void rt_module_init_object_container(struct rt_module *module)
 {
     RT_ASSERT(module != RT_NULL);
 
