@@ -151,7 +151,7 @@ int pthread_attr_setstackaddr(pthread_attr_t *attr, void *stack_addr)
 {
     RT_ASSERT(attr != RT_NULL);
 
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(pthread_attr_setstackaddr);
 
@@ -159,7 +159,7 @@ int pthread_attr_getstackaddr(pthread_attr_t const *attr, void **stack_addr)
 {
     RT_ASSERT(attr != RT_NULL);
 
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(pthread_attr_getstackaddr);
 
@@ -191,12 +191,12 @@ RTM_EXPORT(pthread_attr_getstack);
 
 int pthread_attr_setguardsize(pthread_attr_t *attr, size_t guard_size)
 {
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 
 int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size)
 {
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(pthread_attr_getguardsize);
 
@@ -205,7 +205,7 @@ int pthread_attr_setscope(pthread_attr_t *attr, int scope)
     if (scope == PTHREAD_SCOPE_SYSTEM)
         return 0;
     if (scope == PTHREAD_SCOPE_PROCESS)
-        return ENOTSUP;
+        return EOPNOTSUPP;
 
     return EINVAL;
 }
