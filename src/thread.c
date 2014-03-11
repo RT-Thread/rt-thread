@@ -575,6 +575,9 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     thread->stat = RT_THREAD_SUSPEND;
     rt_schedule_remove_thread(thread);
 
+    /* stop thread timer anyway */
+    rt_timer_stop(&(thread->thread_timer));
+
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
