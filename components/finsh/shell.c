@@ -60,14 +60,16 @@ const char* finsh_get_prompt()
 {
     #define _MSH_PROMPT "msh "
     #define _PROMPT 	"finsh "
-    static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};
+    static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
 
 #ifdef FINSH_USING_MSH
     if (msh_is_used()) strcpy(finsh_prompt, _MSH_PROMPT);
+    else
 #endif
+    strcpy(finsh_prompt, _PROMPT);
 
     /* get current working directory */
-    getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - 8);
+    getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
     strcat(finsh_prompt, ">");
 
     return finsh_prompt;
