@@ -25,6 +25,7 @@
  * 2012-07-26     aozima       implement ff_memalloc and ff_memfree.
  * 2012-12-19     Bernard      fixed the O_APPEND and lseek issue.
  * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
+ * 2014-01-26     Bernard      Check the sector size before mount.
  */
 
 #include <rtthread.h>
@@ -110,20 +111,30 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FATFS *fat;
     FRESULT result;
     int index;
+	struct rt_device_blk_geometry geometry;
 
     /* get an empty position */
     index = get_disk(RT_NULL);
     if (index == -1)
-        return -DFS_STATUS_ENOSPC;
+        return -DFS_STATUS_ENOENT;
 
     /* save device */
     disk[index] = fs->dev_id;
-
+	/* check sector size */
+	if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+	{
+		if (geometry.bytes_per_sector > _MAX_SS) 
+		{
+			rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
+			return -DFS_STATUS_EINVAL;
+		}
+	}
+	
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
     {
         disk[index] = RT_NULL;
-        return -1;
+        return -DFS_STATUS_ENOMEM;
     }
 
     /* mount fatfs, always 0 logic driver */

@@ -34,6 +34,7 @@
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
+/* include rtconfig header to import configuration */
 #include <rtconfig.h>
 
 #ifdef __cplusplus
@@ -117,25 +118,12 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-        #if __GNUC__ < 4
-            typedef void *__sys_va_list;
-            typedef __sys_va_list       va_list;
-            #define __va_rounded_size(type) \
-                (((sizeof(type) + sizeof(int) - 1) / sizeof(int)) * sizeof(int))
-            #define va_start(ap, lastarg)   \
-                (ap = ((char *) &(lastarg) + __va_rounded_size(lastarg)))
-            #define va_end(ap)          ((void)0)
-            /*  little endian */
-            #define va_arg(ap, type)    \
-                (ap = (__sys_va_list) ((char *)(ap) + __va_rounded_size(type)),  \
-                *((type *) (void *) ((char *)(ap) - __va_rounded_size(type))))
-        #else
-            typedef __builtin_va_list   __gnuc_va_list;
-            typedef __gnuc_va_list      va_list;
-            #define va_start(v,l)       __builtin_va_start(v,l)
-            #define va_end(v)           __builtin_va_end(v)
-            #define va_arg(v,l)         __builtin_va_arg(v,l)
-        #endif
+		/* the version of GNU GCC must be greater than 4.x */
+        typedef __builtin_va_list   __gnuc_va_list;
+        typedef __gnuc_va_list      va_list;
+        #define va_start(v,l)       __builtin_va_start(v,l)
+        #define va_end(v)           __builtin_va_end(v)
+        #define va_arg(v,l)         __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
@@ -168,6 +156,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define SECTION(x)
     #define UNUSED
     #define USED
+	#define PRAGMA(x)					_Pragma(#x)
     #define ALIGN(n)
     #define rt_inline                   static inline
     #define RTT_API
@@ -213,6 +202,17 @@ typedef int (*init_fn_t)(void);
 #define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
+
+#if !defined(RT_USING_FINSH)
+/* define these to empty, even if not include finsh.h file */
+#define FINSH_FUNCTION_EXPORT(name, desc)
+#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
+#define FINSH_VAR_EXPORT(name, type, desc)
+
+#define MSH_CMD_EXPORT(command, desc)
+#elif !defined(FINSH_USING_SYMTAB)
+#define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
+#endif
 
 /* event length */
 #define RT_EVENT_LENGTH                 32
@@ -953,10 +953,11 @@ struct rt_module
 
     rt_uint8_t                  *module_space;          /**< module memory space */
 
-    void                        *module_entry;          /**< entry address of module's thread */
-    rt_thread_t                  module_thread;         /**< stack size of module's thread */
-    rt_uint32_t                  stack_size;            /**< priority of module's thread */
-    rt_uint32_t                  thread_priority;
+    void                        *module_entry;          /**< the entry address of module */
+    rt_thread_t                  module_thread;         /**< the main thread of module */
+
+	rt_uint8_t*                  module_cmd_line;		/**< module command line */
+	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
 
 #ifdef RT_USING_SLAB
     /* module memory allocator */
@@ -965,10 +966,10 @@ struct rt_module
     rt_uint32_t                  page_cnt;              /**< module's using pages count */
 #endif
 
-    rt_uint32_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
+    rt_uint16_t                  nref;                  /**< reference count */
 
-    rt_uint32_t                  nref;                  /**< reference count */
+    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
+    struct rt_module_symtab     *symtab;                /**< module symbol table */
 
     /* object in this module, module object is the last basic object type */
     struct rt_object_information module_object[RT_Object_Class_Unknown];

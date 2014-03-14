@@ -347,13 +347,13 @@ RTM_EXPORT(pthread_once);
 
 int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void))
 {
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(pthread_atfork);
 
 int pthread_kill(pthread_t thread, int sig)
 {
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(pthread_kill);
 

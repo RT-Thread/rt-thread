@@ -22,6 +22,8 @@
  * 2006-03-23     Bernard      the first version
  * 2010-11-10     Bernard      add cleanup callback function in thread exit.
  * 2012-12-29     Bernard      fix compiling warning.
+ * 2013-12-21     Grissiom     let rt_thread_idle_excute loop until there is no
+ *                             dead thread.
  */
 
 #include <rthw.h>
@@ -72,8 +74,9 @@ void rt_thread_idle_sethook(void (*hook)(void))
  */
 void rt_thread_idle_excute(void)
 {
-    /* check the defunct thread list */
-    if (!rt_list_isempty(&rt_thread_defunct))
+    /* Loop until there is no dead thread. So one call to rt_thread_idle_excute
+     * will do all the cleanups. */
+    while (!rt_list_isempty(&rt_thread_defunct))
     {
         rt_base_t lock;
         rt_thread_t thread;

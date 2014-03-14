@@ -77,6 +77,7 @@ long version(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
+MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 extern struct rt_object_information rt_object_container[];
 
@@ -117,6 +118,7 @@ long list_thread(void)
     return _list_thread(&rt_object_container[RT_Object_Class_Thread].object_list);
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
+MSH_CMD_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node *list)
 {
@@ -171,7 +173,8 @@ long list_sem(void)
 {
     return _list_sem(&rt_object_container[RT_Object_Class_Semaphore].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system)
+FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system);
+MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
 #ifdef RT_USING_EVENT
@@ -209,7 +212,8 @@ long list_event(void)
 {
     return _list_event(&rt_object_container[RT_Object_Class_Event].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_event, list event in system)
+FINSH_FUNCTION_EXPORT(list_event, list event in system);
+MSH_CMD_EXPORT(list_event, list event in system);
 #endif
 
 #ifdef RT_USING_MUTEX
@@ -239,7 +243,8 @@ long list_mutex(void)
 {
     return _list_mutex(&rt_object_container[RT_Object_Class_Mutex].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system)
+FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
+MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -282,7 +287,8 @@ long list_mailbox(void)
 {
     return _list_mailbox(&rt_object_container[RT_Object_Class_MailBox].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system)
+FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
+MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -323,7 +329,8 @@ long list_msgqueue(void)
 {
     return _list_msgqueue(&rt_object_container[RT_Object_Class_MessageQueue].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system)
+FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
+MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -353,7 +360,8 @@ long list_memheap(void)
 {
     return _list_memheap(&rt_object_container[RT_Object_Class_MemHeap].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system)
+FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
+MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
 #ifdef RT_USING_MEMPOOL
@@ -399,6 +407,7 @@ long list_mempool(void)
     return _list_mempool(&rt_object_container[RT_Object_Class_MemPool].object_list);
 }
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
+MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
 static long _list_timer(struct rt_list_node *list)
@@ -431,7 +440,8 @@ long list_timer(void)
 {
     return _list_timer(&rt_object_container[RT_Object_Class_Timer].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_timer, list timer in system)
+FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
+MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
 static long _list_device(struct rt_list_node *list)
@@ -481,7 +491,8 @@ long list_device(void)
 {
     return _list_device(&rt_object_container[RT_Object_Class_Device].object_list);
 }
-FINSH_FUNCTION_EXPORT(list_device, list device in system)
+FINSH_FUNCTION_EXPORT(list_device, list device in system);
+MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
 #ifdef RT_USING_MODULE
@@ -505,8 +516,8 @@ int list_module(void)
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT(list_module, list module in system)
+FINSH_FUNCTION_EXPORT(list_module, list module in system);
+MSH_CMD_EXPORT(list_module, list module in system);
 
 int list_mod_detail(const char *name)
 {
@@ -525,7 +536,7 @@ int list_mod_detail(const char *name)
 
             /* list main thread in module */
             if (module->module_thread != RT_NULL)
-            {   
+            {
                 rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
                 rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
                 thread = module->module_thread;
@@ -544,7 +555,7 @@ int list_mod_detail(const char *name)
                     thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
                     thread->remaining_tick,
                     thread->error);
-            }   
+            }
 
             /* list sub thread in module */
             tlist = &module->module_object[RT_Object_Class_Thread].object_list;
@@ -594,27 +605,33 @@ int list_mod_detail(const char *name)
             if (!rt_list_isempty(tlist)) _list_timer(tlist);
         }
 
-        rt_kprintf("symbol    address   \n");
-        rt_kprintf("-------- ----------\n");
-    
-        /* list module export symbols */
-        for (i=0; i<module->nsym; i++)
-        {
-            rt_kprintf("%s 0x%x\n",
-                       module->symtab[i].name, module->symtab[i].addr);
-        }
+		if (module->nsym > 0)
+		{
+	        rt_kprintf("symbol    address   \n");
+	        rt_kprintf("-------- ----------\n");
+	    
+	        /* list module export symbols */
+	        for (i=0; i<module->nsym; i++)
+	        {
+	            rt_kprintf("%s 0x%x\n",
+	                       module->symtab[i].name, module->symtab[i].addr);
+	        }
+		}
     }
 
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
+MSH_CMD_EXPORT(list_mod_detail, list module objects in system)
 #endif
 
 long list(void)
 {
+#ifndef FINSH_USING_MSH_ONLY
     struct finsh_syscall_item *syscall_item;
     struct finsh_sysvar_item *sysvar_item;
-
+#endif
+	
     rt_kprintf("--Function List:\n");
     {
         struct finsh_syscall *index;
@@ -633,6 +650,7 @@ long list(void)
         }
     }
 
+#ifndef FINSH_USING_MSH_ONLY
     /* list syscall list */
     syscall_item = global_syscall_list;
     while (syscall_item != NULL)
@@ -662,11 +680,13 @@ long list(void)
         rt_kprintf("[l] %s\n", sysvar_item->sysvar.name);
         sysvar_item = sysvar_item->next;
     }
-
+#endif
+	
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
 
+#ifndef FINSH_USING_MSH_ONLY
 static int str_is_prefix(const char *prefix, const char *str)
 {
     while ((*prefix) && (*prefix == *str))
@@ -865,8 +885,9 @@ void list_prefix(char *prefix)
         rt_strncpy(prefix, name_ptr, min_length);
     }
 }
+#endif
 
-#ifdef FINSH_USING_SYMTAB
+#if defined(FINSH_USING_SYMTAB) && !defined(FINSH_USING_MSH_ONLY)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif

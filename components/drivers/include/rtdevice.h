@@ -320,5 +320,9 @@ void rt_data_queue_reset(struct rt_data_queue *queue);
 #include "drivers/sdio.h"
 #endif
 
+#ifdef RT_USING_WDT
+#include "drivers/watchdog.h"
+#endif
+
 #endif /* __RT_DEVICE_H__ */
 

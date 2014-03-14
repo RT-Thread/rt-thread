@@ -52,9 +52,7 @@ static char sccsid[] = "@(#)rpc_prot.c 1.36 87/08/11 Copyr 1984 Sun Micro";
  * XDR an opaque authentication struct
  * (see auth.h)
  */
-bool_t xdr_opaque_auth(xdrs, ap)
-register XDR *xdrs;
-register struct opaque_auth *ap;
+bool_t xdr_opaque_auth(XDR *xdrs, struct opaque_auth *ap)
 {
 
 	if (xdr_enum(xdrs, &(ap->oa_flavor)))
@@ -66,9 +64,7 @@ register struct opaque_auth *ap;
 /*
  * XDR a DES block
  */
-bool_t xdr_des_block(xdrs, blkp)
-register XDR *xdrs;
-register des_block *blkp;
+bool_t xdr_des_block(XDR *xdrs, des_block *blkp)
 {
 	return (xdr_opaque(xdrs, (char*) blkp, sizeof(des_block)));
 }
@@ -78,9 +74,7 @@ register des_block *blkp;
 /*
  * XDR the MSG_ACCEPTED part of a reply message union
  */
-static bool_t xdr_accepted_reply(xdrs, ar)
-register XDR *xdrs;
-register struct accepted_reply *ar;
+static bool_t xdr_accepted_reply(XDR *xdrs, struct accepted_reply *ar)
 {
 
 	/* personalized union, rather than calling xdr_union */
@@ -104,9 +98,7 @@ register struct accepted_reply *ar;
 /*
  * XDR the MSG_DENIED part of a reply message union
  */
-static bool_t xdr_rejected_reply(xdrs, rr)
-register XDR *xdrs;
-register struct rejected_reply *rr;
+static bool_t xdr_rejected_reply(XDR *xdrs, struct rejected_reply *rr)
 {
 
 	/* personalized union, rather than calling xdr_union */
@@ -134,9 +126,7 @@ static struct xdr_discrim reply_dscrm[3] = {
 /*
  * XDR a reply message
  */
-bool_t xdr_replymsg(xdrs, rmsg)
-register XDR *xdrs;
-register struct rpc_msg *rmsg;
+bool_t xdr_replymsg(XDR *xdrs, struct rpc_msg *rmsg)
 {
 	if (xdr_u_long(xdrs, &(rmsg->rm_xid)) &&
 		xdr_enum(xdrs, (enum_t *) & (rmsg->rm_direction)) &&
@@ -153,9 +143,7 @@ register struct rpc_msg *rmsg;
  * The fields include: rm_xid, rm_direction, rpcvers, prog, and vers.
  * The rm_xid is not really static, but the user can easily munge on the fly.
  */
-bool_t xdr_callhdr(xdrs, cmsg)
-register XDR *xdrs;
-register struct rpc_msg *cmsg;
+bool_t xdr_callhdr(XDR *xdrs, struct rpc_msg *cmsg)
 {
 
 	cmsg->rm_direction = CALL;
@@ -172,9 +160,7 @@ register struct rpc_msg *cmsg;
 
 /* ************************** Client utility routine ************* */
 
-static void accepted(acpt_stat, error)
-register enum accept_stat acpt_stat;
-register struct rpc_err *error;
+static void accepted(enum accept_stat acpt_stat, struct rpc_err *error)
 {
 
 	switch (acpt_stat) {
@@ -209,9 +195,7 @@ register struct rpc_err *error;
 	error->re_lb.s2 = (long) acpt_stat;
 }
 
-static void rejected(rjct_stat, error)
-register enum reject_stat rjct_stat;
-register struct rpc_err *error;
+static void rejected(enum reject_stat rjct_stat, struct rpc_err *error)
 {
 
 	switch (rjct_stat) {
@@ -233,9 +217,7 @@ register struct rpc_err *error;
 /*
  * given a reply message, fills in the error
  */
-void _seterr_reply(msg, error)
-register struct rpc_msg *msg;
-register struct rpc_err *error;
+void _seterr_reply(struct rpc_msg *msg, struct rpc_err *error)
 {
 
 	/* optimized for normal, SUCCESSful case */
@@ -246,11 +228,11 @@ register struct rpc_err *error;
 			error->re_status = RPC_SUCCESS;
 			return;
 		};
-		accepted(msg->acpted_rply.ar_stat, error);
+		accepted((enum accept_stat)msg->acpted_rply.ar_stat, error);
 		break;
 
 	case MSG_DENIED:
-		rejected(msg->rjcted_rply.rj_stat, error);
+		rejected((enum reject_stat)msg->rjcted_rply.rj_stat, error);
 		break;
 
 	default:

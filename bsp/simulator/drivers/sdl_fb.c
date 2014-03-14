@@ -11,6 +11,8 @@
 #define SDL_SCREEN_WIDTH    800
 #define SDL_SCREEN_HEIGHT   480
 
+extern void rt_hw_exit(void);
+
 struct sdlfb_device
 {
     struct rt_device parent;
@@ -307,7 +309,7 @@ static void *sdl_loop(void *lpParam)
         if (quit)
             break;
     }
-    //exit(0);
+    rt_hw_exit();
     return 0;
 }
 

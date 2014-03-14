@@ -72,7 +72,6 @@ void finsh_vm_run()
 }
 
 #ifdef RT_USING_HEAP
-extern char *strdup(const char *s);
 void finsh_syscall_append(const char* name, syscall_func func)
 {
 	/* create the syscall */
@@ -82,7 +81,7 @@ void finsh_syscall_append(const char* name, syscall_func func)
 	if (item != RT_NULL)
 	{
 		item->next = NULL;
-		item->syscall.name = strdup(name);
+		item->syscall.name = rt_strdup(name);
 		item->syscall.func = func;
 
 		if (global_syscall_list == NULL)

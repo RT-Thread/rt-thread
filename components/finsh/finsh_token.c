@@ -473,17 +473,16 @@ static int token_proc_escape(struct finsh_token* self)
 static void token_proc_number(struct finsh_token* self)
 {
 	char ch;
-	int b;
 	char *p, buf[128];
 	long value;
 
 	value = 0;
 	p = buf;
-	b = 10;
 
 	ch  = token_next_char(self);
 	if ( ch == '0' )
 	{
+		int b;
 		ch = token_next_char(self);
 		if ( ch == 'x' || ch == 'X' )/*it's a hex number*/
 		{

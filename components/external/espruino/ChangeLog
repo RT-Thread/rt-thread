@@ -1,0 +1,515 @@
+     1v46 : ...
+
+     1v45 : Fix parseFloat("foo") not returning NaN (and assert) - fix #149
+            Remove Integer.parseInt
+            Fix parseInt("bar") - fix #150
+            Ensure that maths ops with null do treat it as 0 rather than a string - fix #156
+            Fix digitalPulse length (properly!) - fix #154
+            Making sure that undefined gets cast to NaN
+            Fix Array.indexOf() returns undefined instead of -1 - fix #155
+            Moved memory() to process.memory() - added more info too    
+            Try and improve handling of PWM timer speeds
+            Fixed varying SPI baud rates depending on device
+            Makefile changes for OSX compile        
+
+     1v44 : Modified build system to store binary names in the python definition
+            Fix nasty regression involving losing code at the end of Strings
+            Fix segfault when pinMode is called on an invalid pin
+            Now disable interrupts during 4 bit SPI send - it's just too much otherwise
+            Detect unfinished block comments in console (fix #138)
+            Fix flash write on most 10XxB boards
+            Fix PWM output on all STM32 boards
+            General hardware tidy in prep for more intelligent device management
+            Run initialisation code before setWatch, to make sure pullup/down is set beforehand
+            Change 'Pin' datatype to be an unsigned char - makes tests easier
+            Now use the hardware RTC for keeping system time. Allows proper deep sleep on Espruino board
+            FINALLY - fix the USB VCP lost characters issue (#94)
+
+     1v43 : Added 'Modules' object with support for adding/removing cached modules
+            Allow product ID to be changed via Makefile
+            Fix documentation (and old-fashined Parsing style) for JSON
+            build_jswrapper now outputs errors to stderr (more compatible with default (silent) build process)
+            Fix issue when parsing quotes in strings
+            Added void operator for closure minification compatibility
+            Ensure that return takes the comma operator
+            Fix issue where printing Infinity would crash Espruino (fix #129)
+            Finally some working (extremely beta) cc3000 code
+            Added jsvObjectGet/SetChild to simplify some wrappers
+            'http' now uses JsVars for storage (so is suitable for non-linux devices)
+            Turned 'http' into a library
+            Added process.version and process.env (fix #131)
+            Changed handling of 2nd arg of << so that precedence is correct
+            Fixed handling of 'for (;;)'
+            Fix lock leak in Module handling
+            Update ST's library for the STM32F1
+            Update ST's VCP implementation
+            Added prefix operator (fix #130)
+            Allow espruino for linux to be run with '#!' in scripts
+            Fix indexOf on final element of strings (fix #133)
+            Remove JSV_PARENTINFO, as it turns out JS doesn't keep track of function scopes anyway (fix #109)
+            Make 'this' a keyword (now faster, more memory efficient)
+            Make 'Hardware' (root) the default value of 'this'
+            Add jsvArrayPushAndUnLock and modified code to use it (fix #135)
+            Now remember I2C state (partial fix for #13)
+            Replace 'pow' function with a smaller version - save ~2kb
+            Shaved another 1200 bytes off jslTokenAsString
+            Now store Pin state (fix for #13 on F1 parts, F4 still looks broken)
+            Added Graphics.stringWidth
+            Added internal Printf function
+	           Misc speed and code size improvements
+            This version has gone to Seeed for use on the KickStarter boards
+
+     1v42 : [ebirger] allowing 'new' with no brackets
+            Allow built-in functions with variable numbers of arguments (fix #83)  
+            Implement 'String' constructor in the normal way (fix #110)
+            Fix regression with parsing constructors while not executing
+            Allow multiple arguments to print and console.log (fix #92)
+            Make 'arguments' array available in functions (fix #100)
+            Fix an assert fail, and handle some potential memory leaks
+            Don't show __proto__ and constructor with for..in, keys(), or JSON.stringify
+            Make 'trace()' output more readable debug data for complex structures 
+            Fix memory leak whe parsing functions iwht variable numbers of arguments - fix #115
+            Defined NaN
+            Stop 'new undefined()' crashing Espruino - fix #120
+            Get A13/A14 working on Espruino board (these were JTAG)
+            Get bootloader size direct from Python (remove hard-coding)
+	           Fix '~' operator when acting on variables
+            Made bootloader a bit more error tolerate (CRC on write)
+            Added %=, /=, and *= operators (fix #121)
+            Allowed Object.toString() to take a radix argument for integers (fix #125)
+            Fix error message issue - broken strncat (fix #124) 
+            Add comma operator (fix #122) 
+            Added some basic code for STM32F429IDISCOVERY - not currently working though
+            This version is the one sent off on the Test Harness (so will probably appear on boards)
+
+     1v41 : Fix Olimexino compile (https://github.com/espruino/Espruino/issues/6)
+            [ebirger] Member constructors (eg. new a.b() )
+            [ebirger] Ensuring integers with radix specifiers can still be parsed if a radix is specified
+            Fix for tests/test_json_arraybuffer_001.js - iteration of arraybuffers of length==1
+            Add Object.keys(...)
+            More arraybuffer iteration fixes
+            On linux, use built-in stringToFloat to aid debugging. Handle exponentials, fix #31
+            'make serialflash' is now works correctly for Espruino Boards with bootloader
+            setWatch(..A0);setWatch(..A0);clearWatch(1) does not now kill the other watch, fix #25
+            One-based setTimeout/setWatch, fix #3
+            Added Function.call and Function.apply, fix #54
+            'http' and 'fs' are now libraries that need to be 'require'd, fix #8
+            Updated pin info for STM32F103xC/D/E chips, fix #84
+            Fixed linker script for STM32F4 (discovery board now works)
+            Object prototypes are now Objects, fix #101
+            Board docs now specify '3.3v' only pins fix #104
+            Add Array.forEach
+            Fix searching down >1 prototype to find functions (one more issue posted in #99) 
+            Fix "12345"/5 type issues (fix #90)
+            'Consting' some string functions
+            Fixing arrays with string indices that are actually numbers \o/ (fix #19)
+            Released onto website
+
+     1v40 : Ensure that LCD.prototype.setPixel = function actually works
+            Refactor LCD driver code to allow lcdInit (and start of making it non-platform-specific)
+            Built 'LCD' support into linux/raspi/carambola
+            Add initial SPI.send(ArrayBuffer) support - even if NO VALUES RETURNED
+            Start of built-in Nokia 5110 LCD support
+            Remove GPIO clock removal on sleep for now (it kills setWatch)
+            Fix (sub)ArrayBuffer problems (test100.js)
+            Added setDeepSleep - still beta put power consumption drops to 1mA
+            Fix broken name for httpCRq.write
+            Changed LCD to Graphics - added ability to render to ArrayBuffer
+            Fix 8 char built-in class names
+            Adding preliminary Sony SmartWatch support
+            Adding preliminary support for completely bare 36 pin chip
+            Fixing pin defs for Espruino board rev 1v1
+            Added proper SDL/ArrayBuffer and JS Callback graphics support
+            Added "ifdef" ability in build_jswrapper
+            Take JSVAR_CACHE_SIZE out of jsutils and put it in the board config file
+            Added JSV_PARENTINFO which will allow us to do things like setTimeout(foo.bar,10)		
+            Fixed arrays in non-executes streams - 'if (0) print([1,2,3]);'
+            Added 'require' function loading modules from node_modules on SD card
+            Added module cache to stop modules being re-loaded
+            Renamed internal vars to start with '>' - much easier to distinguish for 'dump'/etc
+            Only use parentInfo on functions
+            Load all tests in test dir - don't do them by number
+            Added 'zigzag' ordering for ArrayBuffer Graphics
+            Added 'vertical_byte' ordering for ArrayBuffer Graphics
+            toJSON now ignores 'hidden' object elements
+            Special-case jsvArrayBufferIteratorSetIntegerValue
+            Make SPI output an ArrayBuffer
+            Use best out of 3 for DelayMicroseconds calibration - something seems flaky right after bootup
+	           Lines now drawn from p1 to p2 inclusive
+	           Events now use jshPushIOWatchEvent (should cut down on code) also fixed bug with watching pin #11
+	           Now remember if pinMode was set or not
+       	    Transform ```code``` in JSON into a code tag in the documentation
+            Graphics now supports FSMC for HY boards again
+            Drawing vector fonts is now roughly the right size and position (still not 100%)
+            Remove registration code
+            Adding MPL licence
+            Remove Arduino bit manipulation functions - nobody seems to use them anyway
+            # of flash pages/etc now comes from board info            
+            [ebirger] Supply the correct arguments to Array.map
+            [ebirger] Method calls and membership evaluation should be done on all factors (ee. [1,2,3].foo())
+            [ebirger] When running multiple tests, only set up terminal once or it breaks the terminal window on exit
+            Added STM32-style USB CDC bootloader for Espruino Boards
+            Added scripts/create_espruino_image.sh to package up bootloader and espruino into one binary
+            SHIPPED on Impatient developer boards
+
+     1v39 : Added Bitwise NOT operator
+            Added Raspberry Pi version to ZIP (with HTTP support)
+            Fixed load/save on Linux Devices
+            Added pinMode function (to allow pull-ups/pull-downs to be turned on)
+            SPI.send4bit/send8bit will now not mess up the final element
+            changeInterval now clears up stored up callbacks (eg, setInterval(.., 0.01)...wait...changeInterval(...,20)
+            Ctrl-C no longer prints anything, which avoids lockups
+            No longer print "Execution Interrupted" if nothing was interrupted!
+            Added >>>= >>= and <<=
+            When entering text interactively, ensure that there are no trailing spaces
+
+     1v38 : Tweaks for Arduino IDE compile
+            Removed '(char #)' from stack trace, as a bit pointless now
+            Added better reporting of execution location when Ctrl-C pressed
+            Urgent fix for non-working Olimexino since 1v33
+            Fix string comparison when strings contain "\0"
+            Added LED1/2/OSC/SD/etc to Olimexino Board docs
+
+     1v37 : Urgent fix - power saving code made it difficult to re-flash Espruino (now only apply this to Espruino Board)
+
+     1v36 : Fix documentation for Array.pop()
+            Added some much better board documentation
+            Fixed DAC output on F3
+            Fixed DAC output on devices where PWM is also available and the alternate function is less than the DAC's
+
+     1v35 : Attempt to reduce power consumption when sleeping by turning off GPIO, and setting GPIOs to AIN on reset
+            Fix F3 issue where ADC/DAC weren't picked up properly
+            Tidy up register text and add KickStarter mention
+            var a = {}; a[LED1]=0; - not converted to String
+            JSON (and hence dump()) now dumps ArrayBuffer correctly
+
+     1v34 : Faster jshFromDeviceString
+            Preliminary support for flow control on Serial receive
+            Speed improvements by removing jsvGetRef from jsvUnLock
+            fast 4 byte pre-check in jsvFindChildFromString
+            Skip lock/unlock in FindChildFromString to help increase speed
+            When we unplug USB, only go to the default console device IF that is the device we're currently on
+            Support for custom Espruino board
+            Added ArrayBufferView.interpolate
+            16 bit SPI send for send4bit/sevrnd8bit (better reliability on low-end chips)
+            Fix JSON dump of typed array
+            Added Math.clip(x, min, max)
+            When saving on flash, don't do jslTokenAsString properly
+            B3/B4 move from alternate fn
+            Fix incorrect reporting of analog pins
+            Fix I2C.readFrom on STM32F1/4
+            Make 1/2 == 0.5 (was being sensible before, but now follow JS spec)
+            Ctrl-C while in timer fn clears timers (but not outside it)
+            Fixed broken clearInterval from within setInterval
+            Hopefully fixed issue on SSD1289 LCD controller
+            Trigger wheel handler to use interrupts
+            2D arraybuffer interpolation
+            Added Math.wrap, fixed a lot of trigger issues
+            Fixed SysTick priority/preempt problems
+            Slowed the SysTick timer back down for everything       
+            Fix Int8Array signedness on F4 boards 
+            Refactored source code tree
+
+     1v33 : fix character encoding issue of "\16"+"1" != "\161"
+            Refactoring of ArrayBuffer into iterator, and addition of a general purpose iterator
+            Fancier assert for debugging
+            jsvArrayJoin to use new iterator
+            for (i in ...) to use new iterator
+            I2C and SPI use new iterator
+            Serial.write() - to allow single ints to easily be written
+            changeInterval assert fail when given a function by accident
+            added peek8/poke8/peek16/poke16
+            memory() now takes account of command history size
+            memory() on ARM reports the end address of the stack - so it can be used as a scratchpad with peek and poke
+            Try and reduce code size by not inlining several functions
+            No refs for StringExts - so we get one more byte per JsVar (~5%) more storage efficiency
+            Move from jsvIsBuiltInFunction to computer-generated jswIsBuiltInFunction
+            When creating Objects, check for built-in function BEFORE creating an Object class for it
+            Built process now checks that flash usage is under the allowed value
+            Added short compare to jswHandleFunctionCall to reduce code size
+            Added 3 byte compare (4 byte read and AND off top byte) - faster, less code
+            Auto-generate jsvGetBasicObjectName from docs
+            No longer using refs for storing whether free or not - use flags with JSV_UNUSED and get one extra var with 8 bit refs
+            Switch to using STRING_0...STRING_MAX in flags, rather than specific bits in JsVarFlags - allows more that 15 chars to be used per JsVar
+            Make ArrayBuffers actually be ArrayBufferViews - saves on extra string-handling code at expense of one var
+            Make sure Uint8Array,etc inherits from ArrayBufferView
+            Fix issue where a '\0' coming in from serial was not put in e.data properly
+            Don't inline some functions when we're trying to save on flash
+            Re-use sin for cos, pow for sqrt to reduce code size
+
+     1v32 : Fixed embarassing issue with 0.999=="0.A"
+            Added and checked Pin.writeAtTime on STM32
+            Now don't allocate events array - just allocate directly, which saves memory and is faster (although slighty out of order)
+            Docs: now Alphabetically sorted, and class instances not listed by accident
+            Fix issue where Ctrl-C on ANY Serial port caused execution to be interrupted
+            Updated busy indicator to cope with recent change to not allocate events in an array
+            Fixed I2C on HY 2.4 board - I2C needed hard reset
+            Added basic ArrayBuffers/TypedArray support
+            Fix memory leak when error created with [] on a non-array/object
+            Improved hyperlinking in documentation
+            Fix I2C receive bug on F4
+            Increased VL board's input buffer size
+
+     1v31 : Fix PWM output on TIMER1/8 pins of the STM32F4
+            Fix PWM output for negated timers
+            memory() now runs a GC pass
+            Fixed multiple occurrence of functions in reference
+
+     1v30 : STM32F1: fixed AF issue meant peripherals would never return from AF mode
+            STM32F1: When given an invalid pin, now reports if pins are 'af' or not
+            Updated SPI.setup docs to mention that you can't mix AF and non-AF
+            If one SPI pin is specified but others aren't, only that pin will be set up
+            Added Olimexino hack so SPI1.setup works as expected
+            Allow using [] on a function
+            Fix precedence issue, so var a = function() { return 1; }(); works
+            Update SPI documentation
+            for (i in f) can now iterate over functions     
+            Optional argument to trace() for object to start tracing from        
+            Small steps towards ArrayBuffers
+            Added smart edit that checks for internal functions, and uses Function.replaceWith
+            Added Function.replaceWith to replace the internals of a function while keeping the scope
+
+     1v29 : Some hacky sysfs-based IO for running on Linux
+            HTTP Callbacks are now stored as names so they can be changed on the fly (Linux only)
+            Successful compile for Carambola 
+            Filesystem support on Linux
+            Switch to variable size ref counter (marginally more efficient on very small devices, safe on Linux)
+            Linux now has unlimited memory available
+            Added linux/sysfs 'setWatch' (non-irq driven, so very noddy)
+            Checked jswrapper check from using multi-char constants to a #define
+            Improve pin suggestions for SPI/I2C/USART
+            Auto-initialise USART with default values when setConsole is used
+            Support for new Graphics LCD types
+            3.2" VCT6 board support
+ 
+     1v28 : Faster LCD fillrect for HY 2.8
+            Fix for multi-byte SPI writes on HY board at 1Mhz (touchscreen control bug)
+            Fix issue with delayMicrosecond calibration on HY (and hence OneWire)
+            Fixed digitalPulse on STM32VLDISCOVERY
+
+     1v27 : Fixed problem with OneWire constructor execution
+            Added |=, &= and ^=
+            Added Array.splice()
+            Faster, more ROM-efficient built-in symbol table
+            Fix for potential issue when using field accessor on an undefined var
+
+     1v26 : I2C Support on STM32F1 and STM32F4 boards too
+            Emergency cut in variables for Olimexino with bootloader (as flash usage has got too high for save to flash!)
+
+     1v25 : http.writeHead to accept an empty header
+            Fixed issue finding methods on built in classes (0 termination)
+            make sure http server with no data still sends headers...
+            Start of MINI-HY-2.8" support (all ok, but no SD card yet)
+            Reduce RAM usage by consting some arrays that are not modified
+            Vector fonts now use polys - 8kb less ROM, and faster rendering
+            Start of LCD 'driver' code
+            Standard way of handling events, Object.on/emit/removeAllListeners - like Node.js's EventEmitter
+            Self-calibrating Microsecond delay (for intermal OneWire/etc)
+            OneWire class
+            Correct handling of built-in class constructors
+            Fix error when parsing a zero-argument function that has been given arguments
+            I2C support - currently ONLY tested on STM32F3 board
+
+     1v24 : SDIO-based fat driver on the HY STM32 board
+            Added DAC to the HY boards (103xE-based)
+            Re-named the fileSystem functions to make them more compatible with node.js (readFile/writeFile/etc)
+            Added fs.appendFile
+            Removed HTTP from the reference until it is included in some boards
+
+     1v23 : Fix 'ERROR: INTERNAL: stmADCChannel' on STM32VLDISCOVERY/F1 boards when accessing PA0
+            Reference now mentions which Espruino version it is for
+
+     1v22 : Important fix - Events got executed in the wrong order if they got queued up
+
+     1v21 : Ensure SPI clock does not stop between bytes
+            Added SPI.send4bit and SPI.send8bit
+            Made sure the VL board's code fits into available flash
+            Smart += that can append to a string rather than cloning it
+            dump() prints functions properly, rather than 'var f = function() {}'
+            Pageup/down move the cursor to the beginning/end of input
+            LCD draw/fill with negative x and y
+
+     1v20 : Add console.log
+            Fix automatic usleep for Linux
+            Added node.js-style HTTP server for Linux version
+            Fixed null-pointer issue when accessing something that doesn't exist on an object
+            Added node.js-style HTTP client for Linux version
+            Start of bit bashing functionality
+            for (i in "ABCD") console.log(i) -> 0,1,2,3
+            String array access (but not for writing - doesn't work in JS anyway)
+            String String.fromCharCode / charCodeAt
+            Added SPI baud rate setting
+            Vector font chars 'a' and '4' now work ok
+            Fix numeric exception when rendering a poly that has some identical points
+            Better digitalPulse (uses timer + interrupts)
+            analogWrite can now take an object with a 'frequency' argument for PWM
+
+     1v19 : Fixed issue where var M=Math;M.random() failed
+            Fixed issue with var U=USB;U.print("Hello");
+            Remove loop iteration limit
+            Fix memory leak when a syntax error is in for '(i in arr)'
+            Save state of pin on setWatch interrupt (e.state)
+            Change setWatch to allow only on rise or fall as an option
+            clearWatch() clears all watches
+
+     1v18 : DAC support on F3/F4
+            Serial.setup() can also take a second parameter of an object {tx,rx}
+            Better support for dump() with echo/setBusyIndicator/etc
+            Better dumping of prototypes on built-in vars
+            Don't add chars<32 (Except tab) to the input line
+            SPI1/2/3/4.setup() to take an object {baud,sck,miso,mosi}
+            Better hardware initialisation code (not UARTS auto-init if they are used)
+            Fix issues with prototypes
+            Peek/poke instructions
+            Start of I2C support (not usable yet)
+            Added Math. ceil/floor/exp/log
+
+     1v17 : Support for running alongside the Maple bootloader
+            Fix parsing of numbers beginning with 0 when forceRadix!=8
+            Fixed USART1 on Maple/Olimexino devices
+
+     1v16 : Inlining of jsvLock/UnLock in jsvar.h to improve speed
+            Move non-hardware-dependent stuff into jsdevices
+            Move jshardware.c into targets/stm32/jshardware.c, create 'targets/linux' and use a single makefile
+            For + While loops work without reallocating lex 
+            Fix AddNativeFunction when function already exists (and tests + saved state)
+            Change jsvFindChildFromX to use JsVar* from JsVarRef - saves a lot of lock/unlock
+            Handle new Foo() as per spec (return value + init of this+prototype) - still does not cope with non-object prototype
+            Beginning of SD card support (works on Olimexino, but not very flexible)
+            Fix for parse/eval when given non-strings
+            Strings can now contain '\0'
+            Jumptable-friendly reserved word check
+            Jumptable-friendly builtin functions (massive refactor)
+            SPI support
+            HY board support, and graphics LCD
+            Added fillPoly, and Vector fonts
+            Added Registration code
+            Fixed some undefined function/array warnings
+            Much better HTML function documentation
+            Fixed edit() function
+            STM32F3 support, and now peripheral stuff is done with a script
+            explain what pins are available if a pin is not capable of requested fn
+            power on ADCs only when needed
+            LCD fillPoly speed improvements, + drawLine
+            Add datatype for Pin, so pins written to console by pin name rather than integer value.
+            Added Pin.set/Pin.reset
+            Change warning about 'undefined.' into an error (foo.reset() had unexpected consequences!)
+            Fix parsing of '1.0/-3'!
+            Add typeof and instanceof operators
+            Ensure that Serial1/SPI1/etc are objects of type 'Serial'/'SPI' - so prototypes can be added
+
+     1v15 : Escaping JSON strings
+            Fix parsing of octal numbers in strings (so don't have to be 3 chars long)
+            Drastically improved stack usage using small stub functions (at expense of a bit of speed)
+            dump() also dumps out prototypes for functions
+
+     1v14 : Fix complaint about pins during setBusyIndicator()
+            Increase available memory on OLIMEXINO
+            Added function memory() to return memory usage
+            setWatch now links to function names (rather than just functions)
+            dump() also handles Serial.onData(...)
+            Fix issue with JSON printing functions with arguments to console
+            prefix builtin variables with '_'
+            fix ArrayIndexOf when array contains undefineds
+            move all devices into one git repository
+            USB on F4
+            call onInit function/string if it exists when Espruino powers on
+            Compile F4 with -O2 - as we have the program memory for it
+            Serial3/4/5/6 on F4
+            Serial3 on Olimexino
+            Make Serial.onData() clear onData handler
+
+     1v13 : Operations like + on Object/Array convert them to strings rather than error
+            var now doesn't error if there is no semi-colon
+            Allow new line or line delete in multi-line editing
+            add edit(functionName) - which copies function definition into inputline so it can be updated
+            When printing lines, delete current inputline and then put it back in idle loop (only if echo=1)
+            Support *,/ etc on numpad
+
+     1v12 : Issue when printing lots of data and then disconnect USB
+            Hide USB/Serial in Dump()
+            add Array.map(fn(x), thisArg)
+            For newline, count [] and () (as well as {}) - also knows about comments/strings/etc
+            Fix assert fail is setTimeout with non-function
+            If space at end of input line, enter still executes
+            Removed some hard-coded arrays in favour of JsVar strings
+            Fix confusion with jsvIsName/jsvIsString
+            Handle numpad end key
+            Add code to check stack and stop stack overflow if too much recursion
+            Ensure that setTimeout/setWatch store the link to a function, not the function
+            Fix nasty ref loop in ref loop GC issue
+            Add dotty output
+            Fix memory leak when error in jspParseSingleFunction
+            Now run Garbage collection if we're idle, and we know we have a few ms spare
+            Added setSleepIndicator
+            Fix line/col indicator in errors/warnings
+            Fix JSON parsing and printing when 'undefined' encountered
+            Rewritten object handling code to be way more standard JavaScript compliant
+            Array initialisation with 'new Array()', also for Strings
+            Added a few more built in functions
+            Nice error reporting with line + pointer
+            fixed Math.random
+            Binary style ops on doubles now work - they are just converted to ints
+            Added boolean datatype
+
+     1v11 : Add Math functions
+            Add command history (and dynamic history free if low memory)
+            Fix broken jsvArrayPop
+            Add tests for and fix Array.indexOf
+            In-line editing for commands
+            Fix bug in basicVarEquals for big strings
+            More fixes for low memory conditions
+            Multi-line edit for commands (but no newline or line delete yet)
+            Handle Home, End + reverse delete keys
+            Fix nested for loops not handling interrupts correctly
+            Fix AppendString issue when given start value greater than string
+            Add 'changeInterval' to allow things created with setInterval to have the frequency changed (eg. stepper motor control)
+            Now puts itself to sleep to save power, when it knows nothing is required and it'll be woken up by SysTick before
+            Change Math library to avoid putting constants in RAM
+
+     1v10 : Increase FIFO size for VL
+            Marginally decrease amount of F4 vars to ensure they all fit in one flash sector
+            Allow strings to be longer than the max token size
+            '"key" in obj' syntax
+            Detect if in FOR or WHILE loop, and if not, disallow break and continue
+            Change min setInterval time to 0.1ms - F4 can get close to this
+            Better analog pin error message
+            USB support on Olimexino/Maple
+            Start of multiple COM port support (ioEvent queue)
+            Ctrl-C now clears the input line
+            Save state of 'echo' into flash with save()
+            Add 'setBusyIndicator(pin)' to set pin high when Espruino is busy
+            Inbuilt function handling speed improvements
+            Allow Serial comms via other UARTS. Serial1/2.onData and print/println
+            now inserts elements into arrays in the correct order (GetLength can be (is) now much faster)
+            Faster code to work out pins from strings
+            Automatically convert IDs in form A#,A##,B#,B## etc into numbers.
+            Built-in constants for LED1/BTN/etc.
+
+     1v09 : Enabled 'abs' by default
+            Added flash programming to STM32F4
+            analogWrite now working!
+
+     1v08 : Add preliminary STM32F4 support
+            Allowed test cases to test timers - eg. code in jsinteractive.c
+            Fix memory leak for timer
+            Fix memory leak for digitalWrite
+
+     1v07 : Fix string charAt
+            Fix watch on different pin
+            Pass arguments to event handlers - eg. time
+            digitalWrite/Read to take arrays of pins, and int for value
+
+     1v06 : Add break + continue
+            Add switch statement
+            Handle /r, /r/n or just /n for newlines - phone compatible                            
+            Handle different type of delete
+
+     1v05 : Allow setWatch/setTimeout/setInterval with a string
+            Handle adding Open bracket then deleting it
+            When calling a NAMED function, zero the scopes - this stops scope table overflow
+
+     1v04 : Renamed to Espruino
+            Fixed issue with event add when out of memory
+            If out of memory happens during a timer, kill all timers
+

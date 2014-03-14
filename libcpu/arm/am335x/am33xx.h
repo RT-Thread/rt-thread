@@ -84,7 +84,11 @@
 
 #define CM_PER(base)                      ((base) + 0)
 #define CM_PER_L4LS_CLKSTCTRL(base)       (CM_PER(base) + 0)
-#define CM_PER_UART1_CLKCTRL(base)        (CM_PER(base) + 0x06C)
+#define CM_PER_UART1_CLKCTRL(base)        (CM_PER(base) + 0x6C)
+#define CM_PER_UART2_CLKCTRL(base)        (CM_PER(base) + 0x70)
+#define CM_PER_UART3_CLKCTRL(base)        (CM_PER(base) + 0x74)
+#define CM_PER_UART4_CLKCTRL(base)        (CM_PER(base) + 0x78)
+#define CM_PER_UART5_CLKCTRL(base)        (CM_PER(base) + 0x38)
 #define CM_WKUP(base)                     ((base) + 0x400)
 #define CM_DPLL(base)                     ((base) + 0x500)
 #define CM_MPU(base)                      ((base) + 0x600)
@@ -171,6 +175,10 @@
 /* PRCM registers */
 #define CM_PER_L4LS_CLKSTCTRL_REG(base)    REG32((base) + 0x0)
 #define CM_PER_UART1_CLKCTRL_REG(base)     REG32(CM_PER_UART1_CLKCTRL(base))
+#define CM_PER_UART2_CLKCTRL_REG(base)     REG32(CM_PER_UART2_CLKCTRL(base))
+#define CM_PER_UART3_CLKCTRL_REG(base)     REG32(CM_PER_UART3_CLKCTRL(base))
+#define CM_PER_UART4_CLKCTRL_REG(base)     REG32(CM_PER_UART4_CLKCTRL(base))
+#define CM_PER_UART5_CLKCTRL_REG(base)     REG32(CM_PER_UART5_CLKCTRL(base))
 
 #define CM_PER_TIMER7_CLKCTRL(base)        REG32((base) + 0x7C)
 #define CM_PER_TIMER2_CLKCTRL(base)        REG32((base) + 0x80)

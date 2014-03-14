@@ -135,9 +135,7 @@ static unsigned int xdrmem_getpos (const XDR *xdrs)
 	return ((unsigned long) xdrs->x_private - (unsigned long) xdrs->x_base);
 }
 
-static bool_t xdrmem_setpos(xdrs, pos)
-register XDR *xdrs;
-unsigned int pos;
+static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos)
 {
   register char* newaddr = xdrs->x_base + pos;
   register char* lastaddr = xdrs->x_private + xdrs->x_handy;
