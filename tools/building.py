@@ -145,7 +145,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest='target',
                       type='string',
-                      help='set target project: mdk/iar/vs')
+                      help='set target project: mdk/iar/vs/ua')
 
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -153,7 +153,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'iar':('iar', 'iar'),
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
-                'cb':('keil', 'armcc')}
+                'cb':('keil', 'armcc'),
+                'ua':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
         # --target will change the toolchain settings which clang-analyzer is
@@ -209,16 +210,24 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     return objs
 
 def PrepareModuleBuilding(env, root_directory):
-    import SCons.cpp
     import rtconfig
 
-    global BuildOptions
-    global Projects
     global Env
     global Rtt_Root
 
     Env = env
     Rtt_Root = root_directory
+
+    # add build/clean library option for library checking 
+    AddOption('--buildlib', 
+              dest='buildlib', 
+              type='string',
+              help='building library of a component')
+    AddOption('--cleanlib', 
+              dest='cleanlib', 
+              action='store_true',
+              default=False,
+              help='clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -418,16 +427,13 @@ def DoBuilding(target, objects):
 
 def EndBuilding(target, program = None):
     import rtconfig
-    from keil import MDKProject
-    from keil import MDK4Project
-    from iar import IARProject
-    from vs import VSProject
-    from vs2012 import VS2012Project
-    from codeblocks import CBProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
     if GetOption('target') == 'mdk':
+        from keil import MDKProject
+        from keil import MDK4Project
+
         template = os.path.isfile('template.Uv2')
         if template:
             MDKProject('project.Uv2', Projects)
@@ -439,20 +445,30 @@ def EndBuilding(target, program = None):
                 print 'No template project file found.'
 
     if GetOption('target') == 'mdk4':
+        from keil import MDKProject
+        from keil import MDK4Project
         MDK4Project('project.uvproj', Projects)
 
     if GetOption('target') == 'iar':
+        from iar import IARProject
         IARProject('project.ewp', Projects) 
 
     if GetOption('target') == 'vs':
+        from vs import VSProject
         VSProject('project.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
+        from vs2012 import VS2012Project
         VS2012Project('project.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
+        from codeblocks import CBProject
         CBProject('project.cbp', Projects, program)
 
+    if GetOption('target') == 'ua':
+        from ua import PrepareUA
+        PrepareUA(Projects, Rtt_Root, str(Dir('#')))
+    
     if GetOption('copy') and program != None:
         MakeCopy(program)
     if GetOption('copy-header') and program != None:
