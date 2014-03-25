@@ -36,6 +36,10 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
                 CPPDEFINES += group['CPPDEFINES']
 
         if len(CPPPATH):
+            # use absolute path 
+            for i in range(len(CPPPATH)):
+                CPPPATH[i] = os.path.abspath(CPPPATH[i])
+
             # remove repeat path
             paths = [i for i in set(CPPPATH)]
             CPPPATH = []
@@ -44,7 +48,7 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
                     CPPPATH += ['RTT_ROOT + "/%s",' % _make_path_relative(RTT_ROOT, path).replace('\\', '/')]
                 
                 elif PrefixPath(BSP_ROOT, path):
-                    CPPPATH += ['BSP_ROOT + "/%s",' % _make_path_relative(RTT_ROOT, path).replace('\\', '/')]
+                    CPPPATH += ['BSP_ROOT + "/%s",' % _make_path_relative(BSP_ROOT, path).replace('\\', '/')]
                 else:
                     CPPPATH += ['"%s",' % path.replace('\\', '/')]
 
