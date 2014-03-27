@@ -316,7 +316,7 @@ void msh_auto_complete_path(char *path)
     if (full_path == RT_NULL) return; /* out of memory */
 
     ptr = full_path;
-    if (*path != '/') 
+    if (*path != '/')
     {
         getcwd(full_path, 256);
         if (full_path[rt_strlen(full_path) - 1]  != '/')
@@ -336,7 +336,7 @@ void msh_auto_complete_path(char *path)
         char *dest = index;
 
         /* fill the parent path */
-        ptr = full_path; 
+        ptr = full_path;
         while (*ptr) ptr ++;
 
         for (index = path; index != dest;)
@@ -361,7 +361,7 @@ void msh_auto_complete_path(char *path)
         {
             dirent = readdir(dir);
             if (dirent == RT_NULL) break;
-            
+
             rt_kprintf("%s\n", dirent->d_name);
         }
     }
@@ -450,12 +450,21 @@ void msh_auto_complete(char *prefix)
                 msh_auto_complete_path(ptr + 1);
                 break;
             }
-            
+
             ptr --;
         }
+#ifdef RT_USING_MODULE
+        /* There is a chance that the user want to run the module directly. So
+         * try to complete the file names. If the completed path is not a
+         * module, the system won't crash anyway. */
+        if (ptr == prefix)
+        {
+            msh_auto_complete_path(ptr);
+        }
+#endif
     }
 #endif
-    
+
     /* checks in internal command */
     {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
