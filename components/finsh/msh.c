@@ -178,35 +178,37 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
 }
 
 #if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+/* Return 0 on module executed. Other value indicate error.
+ */
 int msh_exec_module(char* cmd_line, int size)
 {
+    int ret;
     int fd = -1;
     char *pg_name;
     int length, cmd_length = 0;
 
-    if (size == 0) return -RT_ERROR; /* no command */
-	/* get the length of command0 */
-	while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
-		cmd_length ++;
+    if (size == 0)
+        return -RT_ERROR;
+    /* get the length of command0 */
+    while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
+        cmd_length ++;
 
     /* get name length */
     length = cmd_length + 32;
 
-	/* allocate program name memory */
+    /* allocate program name memory */
     pg_name = (char*) rt_malloc(length);
-    if (pg_name == RT_NULL) return -RT_ENOMEM; /* no memory */
+    if (pg_name == RT_NULL)
+        return -RT_ENOMEM;
 
-	/* copy command0 */
-	memcpy(pg_name, cmd_line, cmd_length);
-	pg_name[cmd_length] = '\0';
+    /* copy command0 */
+    memcpy(pg_name, cmd_line, cmd_length);
+    pg_name[cmd_length] = '\0';
 
     if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
     {
         /* try to open program */
-        if (fd < 0)
-        {
-            fd = open(pg_name, O_RDONLY, 0);
-        }
+        fd = open(pg_name, O_RDONLY, 0);
 
         /* search in /bin path */
         if (fd < 0)
@@ -220,16 +222,13 @@ int msh_exec_module(char* cmd_line, int size)
         /* add .mo and open program */
 
         /* try to open program */
-        if (fd < 0)
-        {
-			strcat(pg_name, ".mo");
-            fd = open(pg_name, O_RDONLY, 0);
-        }
+        strcat(pg_name, ".mo");
+        fd = open(pg_name, O_RDONLY, 0);
 
         /* search in /bin path */
         if (fd < 0)
         {
-			rt_snprintf(pg_name, length - 1, "/bin/%.*s.mo", cmd_length, cmd_line);
+            rt_snprintf(pg_name, length - 1, "/bin/%.*s.mo", cmd_length, cmd_line);
             fd = open(pg_name, O_RDONLY, 0);
         }
     }
@@ -239,57 +238,93 @@ int msh_exec_module(char* cmd_line, int size)
         /* found program */
         close(fd);
         rt_module_exec_cmd(pg_name, cmd_line, size);
+        ret = 0;
     }
     else
     {
-        rt_kprintf("%s: program not found.\n", cmd_line);
+        ret = -1;
     }
 
     rt_free(pg_name);
-    return 0;
+    return ret;
 }
 #endif
 
-int msh_exec(char* cmd, rt_size_t length)
+static int _msh_exec_cmd(char* cmd, rt_size_t length, int *retp)
 {
     int argc;
-    char *argv[RT_FINSH_ARG_MAX];
     int cmd0_size = 0;
     cmd_function_t cmd_func;
+    char *argv[RT_FINSH_ARG_MAX];
 
-	/* strim the beginning of command */
-    while(*cmd  == ' ' || *cmd == '\t'){cmd++; length--;}
-	/* find the size of first command */
+    RT_ASSERT(cmd);
+    RT_ASSERT(retp);
+
+    /* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
         cmd0_size ++;
-    if (cmd0_size == 0) return -1; /* no command found */
+    if (cmd0_size == 0)
+        return -RT_ERROR;
 
-    /* try to get built-in command */
     cmd_func = msh_get_cmd(cmd, cmd0_size);
     if (cmd_func == RT_NULL)
-    {
-#ifdef RT_USING_MODULE
-        msh_exec_module(cmd, length);
-#else
-        argv[0] = cmd;
-        while(*cmd != ' ')
-        {
-            if (*cmd == 0) break;
-            cmd++;
-        }
-        if (*cmd == ' ') *cmd = 0;
-        rt_kprintf("%s: command not found.\n", argv[0]);
-#endif
-        return -1;
-    }
+        return -RT_ERROR;
 
     /* split arguments */
     memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
-    if (argc == 0) return -1;
+    if (argc == 0)
+        return -RT_ERROR;
 
     /* exec this command */
-    return cmd_func(argc, argv);
+    *retp = cmd_func(argc, argv);
+    return 0;
+}
+
+int msh_exec(char* cmd, rt_size_t length)
+{
+    int cmd_ret;
+
+	/* strim the beginning of command */
+    while(*cmd  == ' ' || *cmd == '\t')
+    {
+        cmd++;
+        length--;
+    }
+
+    /* Exec sequence:
+     * 1. built-in command
+     * 2. module(if enabled)
+     * 3. chdir to the directry(if possible)
+     */
+    if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
+    {
+        return cmd_ret;
+    }
+#ifdef RT_USING_MODULE
+    if (msh_exec_module(cmd, length) == 0)
+    {
+        return 0;
+    }
+#endif
+#ifdef DFS_USING_WORKDIR
+    if (chdir(cmd) == 0)
+    {
+        return 0;
+    }
+#endif
+    /* truncate the cmd at the first space. */
+    {
+        char *tcmd;
+        tcmd = cmd;
+        while(*tcmd != ' ' && *tcmd != '\0')
+        {
+            tcmd++;
+        }
+        *tcmd = '\0';
+    }
+    rt_kprintf("%s: command not found.\n", cmd);
+    return -1;
 }
 
 static int str_common(const char *str1, const char *str2)
@@ -316,7 +351,7 @@ void msh_auto_complete_path(char *path)
     if (full_path == RT_NULL) return; /* out of memory */
 
     ptr = full_path;
-    if (*path != '/') 
+    if (*path != '/')
     {
         getcwd(full_path, 256);
         if (full_path[rt_strlen(full_path) - 1]  != '/')
@@ -336,7 +371,7 @@ void msh_auto_complete_path(char *path)
         char *dest = index;
 
         /* fill the parent path */
-        ptr = full_path; 
+        ptr = full_path;
         while (*ptr) ptr ++;
 
         for (index = path; index != dest;)
@@ -361,7 +396,7 @@ void msh_auto_complete_path(char *path)
         {
             dirent = readdir(dir);
             if (dirent == RT_NULL) break;
-            
+
             rt_kprintf("%s\n", dirent->d_name);
         }
     }
@@ -450,12 +485,21 @@ void msh_auto_complete(char *prefix)
                 msh_auto_complete_path(ptr + 1);
                 break;
             }
-            
+
             ptr --;
         }
+#ifdef RT_USING_MODULE
+        /* There is a chance that the user want to run the module directly. So
+         * try to complete the file names. If the completed path is not a
+         * module, the system won't crash anyway. */
+        if (ptr == prefix)
+        {
+            msh_auto_complete_path(ptr);
+        }
+#endif
     }
 #endif
-    
+
     /* checks in internal command */
     {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
