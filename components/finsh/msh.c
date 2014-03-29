@@ -292,6 +292,9 @@ int msh_exec(char* cmd, rt_size_t length)
         length--;
     }
 
+    if (length == 0)
+        return 0;
+
     /* Exec sequence:
      * 1. built-in command
      * 2. module(if enabled)
