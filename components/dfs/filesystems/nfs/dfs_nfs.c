@@ -233,7 +233,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
         copy_handle(handle, &nfs->current_handle);
     }
 
-    while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL && path != RT_NULL)
+    while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL && path[0] != 0)
     {
         LOOKUP3args args;
         LOOKUP3res res;
@@ -678,7 +678,9 @@ int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
             total += bytes;
             /* update current position */
             file->pos = fd->offset;
-            /* todo: update file size */
+            /* update file size */
+			if (fd->size < fd->offset) fd->size = fd->offset;
+			file->size = fd->size;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
     } while (count > 0);
@@ -796,6 +798,7 @@ int nfs_open(struct dfs_fd *file)
 
         /* set private file */
         file->data = fp;
+		file->size = fp->size;
     }
 
     return 0;
@@ -1092,8 +1095,6 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
     index = 0;
     while (1)
     {
-        char *fn;
-
         d = dirp + index;
 
         name = nfs_readdir(nfs, dir);

@@ -53,7 +53,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # reset AR command flags 
         env['ARCOM'] = '$AR --create $TARGET $SOURCES'
         env['LIBPREFIX']   = ''
-        env['LIBSUFFIX']   = '_rvds.lib'
+        env['LIBSUFFIX']   = '.lib'
+        env['LIBLINKPREFIX'] = ''
+        env['LIBLINKSUFFIX']   = '.lib'
+        env['LIBDIRPREFIX'] = '--userlibpath '
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
@@ -68,6 +71,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+    # add library build action
+    act = SCons.Action.Action(BuildLibInstallAction, 'Install compiled library... $TARGET')
+    bld = Builder(action = act)
+    Env.Append(BUILDERS = {'BuildLib': bld})
 
     # parse rtconfig.h to get used component
     PreProcessor = SCons.cpp.PreProcessor()
@@ -127,12 +135,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       dest='buildlib', 
                       type='string',
                       help='building library of a component')
+    AddOption('--cleanlib', 
+                      dest='cleanlib', 
+                      action='store_true',
+                      default=False,
+                      help='clean up the library by --buildlib')
 
     # add target option
     AddOption('--target',
                       dest='target',
                       type='string',
-                      help='set target project: mdk')
+                      help='set target project: mdk/iar/vs/ua')
 
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -140,7 +153,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'iar':('iar', 'iar'),
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
-                'cb':('keil', 'armcc')}
+                'cb':('keil', 'armcc'),
+                'ua':('keil', 'armcc')}
     tgt_name = GetOption('target')
     if tgt_name:
         # --target will change the toolchain settings which clang-analyzer is
@@ -196,16 +210,24 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     return objs
 
 def PrepareModuleBuilding(env, root_directory):
-    import SCons.cpp
     import rtconfig
 
-    global BuildOptions
-    global Projects
     global Env
     global Rtt_Root
 
     Env = env
     Rtt_Root = root_directory
+
+    # add build/clean library option for library checking 
+    AddOption('--buildlib', 
+              dest='buildlib', 
+              type='string',
+              help='building library of a component')
+    AddOption('--cleanlib', 
+              dest='cleanlib', 
+              action='store_true',
+              default=False,
+              help='clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -276,10 +298,18 @@ def DefineGroup(name, src, depend, **parameters):
     if not GetDepend(depend):
         return []
 
+    # find exist group and get path of group
+    group_path = ''
+    for g in Projects:
+        if g['name'] == name:
+            group_path = g['path']
+    if group_path == '':
+        group_path = GetCurrentDir()
+
     group = parameters
     group['name'] = name
-    group['path'] = GetCurrentDir()
-    if type(src) == type(['src1', 'str2']):
+    group['path'] = group_path
+    if type(src) == type(['src1']):
         group['src'] = File(src)
     else:
         group['src'] = src
@@ -292,13 +322,27 @@ def DefineGroup(name, src, depend, **parameters):
         Env.Append(CPPDEFINES = group['CPPDEFINES'])
     if group.has_key('LINKFLAGS'):
         Env.Append(LINKFLAGS = group['LINKFLAGS'])
+
+    # check whether to clean up library 
+    if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
+        if group['src'] != []:
+            print 'Remove library:', GroupLibFullName(name, Env)
+            do_rm_file(os.path.join(group['path'], GroupLibFullName(name, Env)))
+
+    # check whether exist group library
+    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
+        group['src'] = []
+        if group.has_key('LIBS'): group['LIBS'] = group['LIBS'] + [GroupLibName(name, Env)]
+        else : group['LIBS'] = [GroupLibName(name, Env)]
+        if group.has_key('LIBPATH'): group['LIBPATH'] = group['LIBPATH'] + [GetCurrentDir()]
+        else : group['LIBPATH'] = [GetCurrentDir()]
+
     if group.has_key('LIBS'):
         Env.Append(LIBS = group['LIBS'])
     if group.has_key('LIBPATH'):
         Env.Append(LIBPATH = group['LIBPATH'])
 
     objs = Env.Object(group['src'])
-
     if group.has_key('LIBRARY'):
         objs = Env.Library(name, objs)
 
@@ -332,6 +376,28 @@ def PreBuilding():
     for a in PREBUILDING:
         a()
 
+def GroupLibName(name, env):
+    import rtconfig
+    if rtconfig.PLATFORM == 'armcc':
+        return name + '_rvds'
+    elif rtconfig.PLATFORM == 'gcc':
+        return name + '_gcc'
+
+    return name
+
+def GroupLibFullName(name, env):
+    return env['LIBPREFIX'] + GroupLibName(name, env) + env['LIBSUFFIX']
+
+def BuildLibInstallAction(target, source, env):
+    lib_name = GetOption('buildlib')
+    for Group in Projects:
+        if Group['name'] == lib_name:
+            lib_name = GroupLibFullName(Group['name'], env)
+            dst_name = os.path.join(Group['path'], lib_name)
+            print 'Copy %s => %s' % (lib_name, dst_name)
+            do_copy_file(lib_name, dst_name)
+            break
+
 def DoBuilding(target, objects):
     program = None
     # check whether special buildlib option
@@ -340,27 +406,34 @@ def DoBuilding(target, objects):
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
+                lib_name = GroupLibName(Group['name'], Env)
                 objects = Env.Object(Group['src'])
                 program = Env.Library(lib_name, objects)
+
+                # add library copy action
+                Env.BuildLib(lib_name, program)
+
                 break
     else:
+        # merge the repeated items in the Env
+        if Env.has_key('CPPPATH')   : Env['CPPPATH'] = list(set(Env['CPPPATH']))
+        if Env.has_key('CPPDEFINES'): Env['CPPDEFINES'] = list(set(Env['CPPDEFINES']))
+        if Env.has_key('LIBPATH')   : Env['LIBPATH'] = list(set(Env['LIBPATH']))
+        if Env.has_key('LIBS')      : Env['LIBS'] = list(set(Env['LIBS']))
+
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
 
-
 def EndBuilding(target, program = None):
     import rtconfig
-    from keil import MDKProject
-    from keil import MDK4Project
-    from iar import IARProject
-    from vs import VSProject
-    from vs2012 import VS2012Project
-    from codeblocks import CBProject
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
 
     if GetOption('target') == 'mdk':
+        from keil import MDKProject
+        from keil import MDK4Project
+
         template = os.path.isfile('template.Uv2')
         if template:
             MDKProject('project.Uv2', Projects)
@@ -372,20 +445,30 @@ def EndBuilding(target, program = None):
                 print 'No template project file found.'
 
     if GetOption('target') == 'mdk4':
+        from keil import MDKProject
+        from keil import MDK4Project
         MDK4Project('project.uvproj', Projects)
 
     if GetOption('target') == 'iar':
+        from iar import IARProject
         IARProject('project.ewp', Projects) 
 
     if GetOption('target') == 'vs':
+        from vs import VSProject
         VSProject('project.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
+        from vs2012 import VS2012Project
         VS2012Project('project.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
+        from codeblocks import CBProject
         CBProject('project.cbp', Projects, program)
 
+    if GetOption('target') == 'ua':
+        from ua import PrepareUA
+        PrepareUA(Projects, Rtt_Root, str(Dir('#')))
+    
     if GetOption('copy') and program != None:
         MakeCopy(program)
     if GetOption('copy-header') and program != None:
@@ -448,6 +531,13 @@ def GlobSubDir(sub_dir, ext_name):
     for item in src:
         dst.append(os.path.relpath(item, sub_dir))
     return dst
+
+def file_path_exist(path, *args):
+    return os.path.exists(os.path.join(path, *args))
+
+def do_rm_file(src):
+    if os.path.exists(src):
+       os.unlink(src)
 
 def do_copy_file(src, dst):
     import shutil

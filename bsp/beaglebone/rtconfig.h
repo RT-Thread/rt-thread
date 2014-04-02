@@ -73,6 +73,18 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+// <bool name="RT_USING_UART0" description="Using uart0" default="true" >
+#define RT_USING_UART0
+// <bool name="RT_USING_UART1" description="Using uart1" default="true" >
+#define RT_USING_UART1
+// <bool name="RT_USING_UART2" description="Using uart2" default="true" >
+#define RT_USING_UART2
+// <bool name="RT_USING_UART3" description="Using uart3" default="true" >
+//#define RT_USING_UART3
+// <bool name="RT_USING_UART4" description="Using uart4" default="true" >
+#define RT_USING_UART4
+// <bool name="RT_USING_UART5" description="Using uart5" default="true" >
+#define RT_USING_UART5
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE    64
 // <bool name=RT_USING_INTERRUPT_INFO description="Using interrupt information description" default="true" />
@@ -84,7 +96,7 @@
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME	"uart1"
+#define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />

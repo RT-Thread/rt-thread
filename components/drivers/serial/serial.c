@@ -368,20 +368,25 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_SUSPEND:
-        /* suspend device */
-        dev->flag |= RT_DEVICE_FLAG_SUSPENDED;
-        break;
+        case RT_DEVICE_CTRL_SUSPEND:
+            /* suspend device */
+            dev->flag |= RT_DEVICE_FLAG_SUSPENDED;
+            break;
 
-    case RT_DEVICE_CTRL_RESUME:
-        /* resume device */
-        dev->flag &= ~RT_DEVICE_FLAG_SUSPENDED;
-        break;
+        case RT_DEVICE_CTRL_RESUME:
+            /* resume device */
+            dev->flag &= ~RT_DEVICE_FLAG_SUSPENDED;
+            break;
 
-    case RT_DEVICE_CTRL_CONFIG:
-        /* configure device */
-        serial->ops->configure(serial, (struct serial_configure *)args);
-        break;
+        case RT_DEVICE_CTRL_CONFIG:
+            /* configure device */
+            serial->ops->configure(serial, (struct serial_configure *)args);
+            break;
+
+        default :
+            /* control device */
+            serial->ops->control(serial, cmd, args);
+            break;
     }
 
     return RT_EOK;

@@ -516,8 +516,8 @@ int list_module(void)
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT(list_module, list module in system)
+FINSH_FUNCTION_EXPORT(list_module, list module in system);
+MSH_CMD_EXPORT(list_module, list module in system);
 
 int list_mod_detail(const char *name)
 {
@@ -536,7 +536,7 @@ int list_mod_detail(const char *name)
 
             /* list main thread in module */
             if (module->module_thread != RT_NULL)
-            {   
+            {
                 rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
                 rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
                 thread = module->module_thread;
@@ -555,7 +555,7 @@ int list_mod_detail(const char *name)
                     thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
                     thread->remaining_tick,
                     thread->error);
-            }   
+            }
 
             /* list sub thread in module */
             tlist = &module->module_object[RT_Object_Class_Thread].object_list;
@@ -605,20 +605,24 @@ int list_mod_detail(const char *name)
             if (!rt_list_isempty(tlist)) _list_timer(tlist);
         }
 
-        rt_kprintf("symbol    address   \n");
-        rt_kprintf("-------- ----------\n");
-    
-        /* list module export symbols */
-        for (i=0; i<module->nsym; i++)
-        {
-            rt_kprintf("%s 0x%x\n",
-                       module->symtab[i].name, module->symtab[i].addr);
-        }
+		if (module->nsym > 0)
+		{
+	        rt_kprintf("symbol    address   \n");
+	        rt_kprintf("-------- ----------\n");
+	    
+	        /* list module export symbols */
+	        for (i=0; i<module->nsym; i++)
+	        {
+	            rt_kprintf("%s 0x%x\n",
+	                       module->symtab[i].name, module->symtab[i].addr);
+	        }
+		}
     }
 
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
+MSH_CMD_EXPORT(list_mod_detail, list module objects in system)
 #endif
 
 long list(void)

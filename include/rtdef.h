@@ -34,6 +34,7 @@
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
+/* include rtconfig header to import configuration */
 #include <rtconfig.h>
 
 #ifdef __cplusplus
@@ -952,10 +953,11 @@ struct rt_module
 
     rt_uint8_t                  *module_space;          /**< module memory space */
 
-    void                        *module_entry;          /**< entry address of module's thread */
-    rt_thread_t                  module_thread;         /**< stack size of module's thread */
-    rt_uint32_t                  stack_size;            /**< priority of module's thread */
-    rt_uint32_t                  thread_priority;
+    void                        *module_entry;          /**< the entry address of module */
+    rt_thread_t                  module_thread;         /**< the main thread of module */
+
+	rt_uint8_t*                  module_cmd_line;		/**< module command line */
+	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
 
 #ifdef RT_USING_SLAB
     /* module memory allocator */
@@ -964,10 +966,10 @@ struct rt_module
     rt_uint32_t                  page_cnt;              /**< module's using pages count */
 #endif
 
-    rt_uint32_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
+    rt_uint16_t                  nref;                  /**< reference count */
 
-    rt_uint32_t                  nref;                  /**< reference count */
+    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
+    struct rt_module_symtab     *symtab;                /**< module symbol table */
 
     /* object in this module, module object is the last basic object type */
     struct rt_object_information module_object[RT_Object_Class_Unknown];

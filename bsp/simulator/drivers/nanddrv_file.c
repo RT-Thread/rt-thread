@@ -4,23 +4,23 @@
 #include <string.h>
 
 #define NAND_SIM  "nand.bin"
+
 #if 1
 #define OOB_SIZE        64
 #define PAGE_DATA_SIZE  2048
-#define PAGE_SIZE       (2048 + 64)
 #define PAGE_PER_BLOCK  64
-#define BLOCK_SIZE      (PAGE_SIZE * PAGE_PER_BLOCK)
+#define ECC_SIZE       ((PAGE_DATA_SIZE) * 3 / 256)
 #define BLOCK_NUM       512
-// #define BLOCK_NUM        2048
 #else
 #define OOB_SIZE        16
-#define PAGE_SIZE       (512 + OOB_SIZE)
+#define PAGE_DATA_SIZE  512
 #define PAGE_PER_BLOCK  32
-#define BLOCK_SIZE      (PAGE_SIZE * PAGE_PER_BLOCK)
+#define ECC_SIZE       ((PAGE_DATA_SIZE) * 3 / 256)
 #define BLOCK_NUM       512
 #endif
 
-#define ECC_SIZE       ((PAGE_DATA_SIZE) * 3 / 256)
+#define BLOCK_SIZE      (PAGE_SIZE * PAGE_PER_BLOCK)
+#define PAGE_SIZE       (PAGE_DATA_SIZE + OOB_SIZE)
 
 static unsigned char block_data[BLOCK_SIZE];
 static struct rt_mtd_nand_device _nanddrv_file_device;

@@ -242,7 +242,7 @@ static int rt_module_arm_relocate(struct rt_module *module,
     return 0;
 }
 
-static void rt_module_init_object_container(struct rt_module *module)
+void rt_module_init_object_container(struct rt_module *module)
 {
     RT_ASSERT(module != RT_NULL);
 
@@ -801,6 +801,10 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     /* init module object container */
     rt_module_init_object_container(module);
 
+	/* initialize an empty command */
+	module->module_cmd_line = RT_NULL;
+	module->module_cmd_size = 0;
+	
     /* increase module reference count */
     module->nref ++;
 
@@ -816,18 +820,10 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
         module->page_cnt = 0;
 #endif
 
-        /* get the main thread stack size */
-        module->stack_size = 2048;
-        module->thread_priority = RT_THREAD_PRIORITY_MAX - 2;
-
         /* create module thread */
-        module->module_thread =
-            rt_thread_create(name,
-                             (void(*)(void *))module->module_entry,
-                             RT_NULL,
-                             module->stack_size,
-                             module->thread_priority,
-                             10);
+        module->module_thread = rt_thread_create(name,
+                             (void(*)(void *))module->module_entry, RT_NULL,
+                             2048, RT_THREAD_PRIORITY_MAX - 2, 10);
 
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("thread entry 0x%x\n",
                                        module->module_entry));
@@ -853,6 +849,168 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 #endif
 
     return module;
+}
+
+#define RT_MODULE_ARG_MAX    8
+static int _rt_module_split_arg(char* cmd, rt_size_t length, char* argv[])
+{
+	int argc = 0;
+	char *ptr = cmd;
+
+	while ((ptr - cmd) < length)
+	{
+		/* strip bank and tab */
+		while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
+			*ptr++ = '\0';
+		/* check whether it's the end of line */
+		if ((ptr - cmd)>= length) break;
+
+		/* handle string with quote */
+		if (*ptr == '"')
+		{
+			argv[argc++] = ++ptr;
+
+			/* skip this string */
+			while (*ptr != '"' && (ptr-cmd) < length)
+				if (*ptr ++ == '\\')  ptr ++;
+			if ((ptr - cmd) >= length) break;
+
+			/* skip '"' */
+			*ptr ++ = '\0';
+		}
+		else
+		{
+			argv[argc++] = ptr;
+			while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
+				ptr ++;
+		}
+
+		if (argc >= RT_MODULE_ARG_MAX) break;
+	}
+
+	return argc;
+}
+/* module main thread entry */
+static void module_main_entry(void* parameter)
+{
+    int argc;
+    char *argv[RT_MODULE_ARG_MAX];
+	typedef int (*main_func_t)(int argc, char** argv);
+
+	rt_module_t module = (rt_module_t) parameter;
+	if (module == RT_NULL || module->module_cmd_line == RT_NULL) return;
+
+    rt_memset(argv, 0x00, sizeof(argv));
+    argc = _rt_module_split_arg((char*)module->module_cmd_line, module->module_cmd_size, argv);
+    if (argc == 0) return ;
+
+	/* do the main function */
+	((main_func_t)module->module_entry)(argc, argv);
+	return;
+}
+
+/**
+ * This function will load a module with a main function from memory and create a 
+ * main thread for it
+ *
+ * @param name the name of module, which shall be unique
+ * @param module_ptr the memory address of module image
+ * @argc the count of argument
+ * @argd the argument data, which should be a 
+ *
+ * @return the module object
+ */
+rt_module_t rt_module_do_main(const char *name, void *module_ptr, char* cmd_line, int line_size)
+{
+	rt_module_t module;
+
+	RT_DEBUG_NOT_IN_INTERRUPT;
+
+	RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_load: %s ,", name));
+
+	/* check ELF header */
+	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
+		rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
+	{
+		rt_kprintf("Module: magic error\n");
+
+		return RT_NULL;
+	}
+
+	/* check ELF class */
+	if (elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+	{
+		rt_kprintf("Module: ELF class error\n");
+		return RT_NULL;
+	}
+
+	if (elf_module->e_type == ET_REL)
+	{
+		module = _load_relocated_object(name, module_ptr);
+	}
+	else if (elf_module->e_type == ET_DYN)
+	{
+		module = _load_shared_object(name, module_ptr);
+	}
+	else
+	{
+		rt_kprintf("Module: unsupported excutable program\n");
+		return RT_NULL;
+	}
+
+	if (module == RT_NULL)
+		return RT_NULL;
+
+	/* init module object container */
+	rt_module_init_object_container(module);
+
+	/* increase module reference count */
+	module->nref ++;
+
+	if (elf_module->e_entry != 0)
+	{
+#ifdef RT_USING_SLAB
+		/* init module memory allocator */
+		module->mem_list = RT_NULL;
+
+		/* create page array */
+		module->page_array =
+			(void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
+		module->page_cnt = 0;
+#endif
+
+		/* set module argument */
+		module->module_cmd_line = (rt_uint8_t*)rt_malloc(line_size + 1);
+		rt_memcpy(module->module_cmd_line, cmd_line, line_size);
+		module->module_cmd_line[line_size] = '\0';
+		module->module_cmd_size = line_size;
+
+		/* create module thread */
+		module->module_thread =	rt_thread_create(name,
+							 module_main_entry, module,
+							 2048, RT_THREAD_PRIORITY_MAX - 2, 10);
+
+		/* set module id */
+		module->module_thread->module_id = (void *)module;
+		module->parent.flag = RT_MODULE_FLAG_WITHENTRY;
+
+		/* startup main thread */
+		rt_thread_startup(module->module_thread);
+	}
+	else
+	{
+		/* without entry point */
+		module->parent.flag |= RT_MODULE_FLAG_WITHOUTENTRY;
+	}
+
+#ifdef RT_USING_HOOK
+	if (rt_module_load_hook != RT_NULL)
+	{
+		rt_module_load_hook(module);
+	}
+#endif
+
+	return module;
 }
 
 #ifdef RT_USING_DFS
@@ -958,9 +1116,82 @@ rt_module_t rt_module_open(const char *path)
     return module;
 }
 
+/**
+ * This function will do a excutable program with main function and parameters.
+ *
+ * @param path the full path of application module
+ * @cmd_line the command line of program
+ * @size the size of command line of program
+ *
+ * @return the module object
+ */
+rt_module_t rt_module_exec_cmd(const char *path, char* cmd_line, int size)
+{
+    struct stat s;
+    int fd, length;
+    char *name, *buffer, *offset_ptr;
+    struct rt_module *module = RT_NULL;
+
+	name = buffer = RT_NULL;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    /* check parameters */
+    RT_ASSERT(path != RT_NULL);
+
+	/* get file size */
+    if (stat(path, &s) !=0)
+    {
+        rt_kprintf("Module: access %s failed\n", path);
+        goto __exit;
+    }
+
+	/* allocate buffer to save program */
+    offset_ptr = buffer = (char *)rt_malloc(s.st_size);
+    if (buffer == RT_NULL)
+    {
+        rt_kprintf("Module: out of memory\n");
+		goto __exit;
+    }
+
+    fd = open(path, O_RDONLY, 0);
+    if (fd < 0)
+    {
+        rt_kprintf("Module: open %s failed\n", path);
+		goto __exit;
+    }
+
+    do
+    {
+        length = read(fd, offset_ptr, 4096);
+        if (length > 0)
+        {
+            offset_ptr += length;
+        }
+    }while (length > 0);
+    /* close fd */
+    close(fd);
+
+    if ((rt_uint32_t)offset_ptr - (rt_uint32_t)buffer != s.st_size)
+    {
+        rt_kprintf("Module: read file failed\n");
+		goto __exit;
+    }
+
+	/* get module */
+    name   = _module_name(path);
+	/* execute module */
+    module = rt_module_do_main(name, (void *)buffer, cmd_line, size);
+
+__exit:
+    rt_free(buffer);
+    rt_free(name);
+
+    return module;
+}
+
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
-
 FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from a file);
 #endif
 
@@ -1131,6 +1362,12 @@ rt_err_t rt_module_destroy(rt_module_t module)
                 rt_timer_delete((rt_timer_t)object);
             }
         }
+		
+		/* delete command line */
+		if (module->module_cmd_line != RT_NULL)
+		{
+			rt_free(module->module_cmd_line);
+		}
     }
 
 #ifdef RT_USING_SLAB

@@ -11,3 +11,9 @@
 *.ilk
 build
 *~
+*.o
+*.bak
+*.dep
+*.lib
+*.a
+

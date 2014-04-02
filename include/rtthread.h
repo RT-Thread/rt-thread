@@ -31,8 +31,9 @@
 #ifndef __RT_THREAD_H__
 #define __RT_THREAD_H__
 
-#include <rtdef.h>
+#include <rtconfig.h>
 #include <rtdebug.h>
+#include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>
 
@@ -420,6 +421,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
 #ifdef RT_USING_DFS
 rt_module_t rt_module_open(const char *filename);
+rt_module_t rt_module_exec_cmd(const char *path, char* cmd_line, int size);
 #endif
 void *rt_module_malloc(rt_size_t size);
 void *rt_module_realloc(void *ptr, rt_size_t size);
@@ -431,6 +433,9 @@ rt_module_t rt_module_find(const char *name);
 void rt_module_load_sethook(void (*hook)(rt_module_t module));
 void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 #endif
+
+void rt_module_init_object_container(struct rt_module *module);
+rt_err_t rt_module_destroy(rt_module_t module);
 
 /*@}*/
 #endif
