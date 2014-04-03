@@ -1,7 +1,8 @@
 #include <rtthread.h>
 #include "board.h"
+#include "drv_led.h"
 
-#define RT_DEVICE_CTRL_RTC_GET_COUNT     0x81        /**< get count                                   */
+#define LED_DEVICE_CTRL     0x01        /*LED control command*/
 
 #define LED_NUM    4
 struct led_ctrl
@@ -92,11 +93,11 @@ static rt_size_t rt_led_write(rt_device_t dev, rt_off_t pos,
     {
         if (*value++)
         {
-            led.ctrl[pos + index].port->CLR |= (1 << led.ctrl[pos + index].num);
+            led.ctrl[pos + index].port->CLR = (1 << led.ctrl[pos + index].num);
         }
         else
         {
-            led.ctrl[pos + index].port->SET |= (1 << led.ctrl[pos + index].num);
+            led.ctrl[pos + index].port->SET = (1 << led.ctrl[pos + index].num);
         }
     }
     return index;
@@ -106,7 +107,7 @@ static rt_err_t rt_led_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
     RT_ASSERT(dev == &led.parent);
 
-    if (cmd == RT_DEVICE_CTRL_RTC_GET_COUNT)
+    if (cmd == LED_DEVICE_CTRL)
     {
         rt_uint32_t *led_num = args;
         *led_num = LED_NUM;
