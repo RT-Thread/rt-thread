@@ -26,7 +26,7 @@
 #include <drivers/usb_host.h>
 #include "adk.h"
 
-#ifdef RT_USBH_ADK
+#ifdef RT_USB_CLASS_ADK
 
 static struct uclass_driver adk_driver;
 static const char* _adk_manufacturer = RT_NULL;
@@ -36,7 +36,7 @@ static const char* _adk_version = RT_NULL;
 static const char* _adk_uri = RT_NULL;
 static const char* _adk_serial = RT_NULL;
 
-rt_err_t rt_usbh_adk_set_string(const char* manufacturer, const char* model,
+rt_err_t rt_usb_adk_set_string(const char* manufacturer, const char* model,
     const char* description, const char* _version, const char* uri, 
     const char* serial)
 {
@@ -53,29 +53,29 @@ rt_err_t rt_usbh_adk_set_string(const char* manufacturer, const char* model,
 #ifdef RT_USING_MODULE
 #include <rtm.h>
 
-RTM_EXPORT(rt_usbh_adk_set_string);
+RTM_EXPORT(rt_usb_adk_set_string);
 #endif
 
 /**
  * This function will do USB_REQ_GET_PROTOCOL request to set idle period to the usb adk device
  *
- * @param intf the interface instance.
+ * @param ifinst the interface instance.
  * @duration the idle period of requesting data.
  * @report_id the report id
  * 
  * @return the error code, RT_EOK on successfully.
 */
-static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protocol)
+static rt_err_t rt_usb_adk_get_protocol(uifinst_t ifinst, rt_uint16_t *protocol)
 {
     struct ureqest setup;
-    uinst_t device;    
+    uinst_t uinst;    
     int timeout = 100;
             
         /* parameter check */
-    RT_ASSERT(intf != RT_NULL);
-    RT_ASSERT(intf->device != RT_NULL);
+    RT_ASSERT(ifinst != RT_NULL);
+    RT_ASSERT(ifinst->uinst != RT_NULL);
 
-    device = intf->device;
+    uinst = ifinst->uinst;
 
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_VENDOR | 
         USB_REQ_TYPE_DEVICE;
@@ -84,7 +84,7 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
     setup.length = 2;
     setup.value = 0;
 
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, (void*)protocol, 2, 
+    if(rt_usb_hcd_control_xfer(uinst->hcd, uinst, &setup, (void*)protocol, 2, 
         timeout) == 0) return RT_EOK;
     else return -RT_FALSE;    
 }
@@ -92,24 +92,24 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
 /**
  * This function will do USB_REQ_SEND_STRING request to set idle period to the usb adk device
  *
- * @param intf the interface instance.
+ * @param ifinst the interface instance.
  * @duration the idle period of requesting data.
  * @report_id the report id
  * 
  * @return the error code, RT_EOK on successfully.
 */
-static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index, 
+static rt_err_t rt_usb_adk_send_string(uifinst_t ifinst, rt_uint16_t index, 
     const char* str)
 {
     struct ureqest setup;
-    uinst_t device;    
+    uinst_t uinst;    
     int timeout = 100;
             
         /* parameter check */
-    RT_ASSERT(intf != RT_NULL);
-    RT_ASSERT(intf->device != RT_NULL);
+    RT_ASSERT(ifinst != RT_NULL);
+    RT_ASSERT(ifinst->uinst != RT_NULL);
 
-    device = intf->device;
+    uinst = ifinst->uinst;
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_VENDOR | 
         USB_REQ_TYPE_DEVICE;
@@ -118,7 +118,7 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
     setup.length = rt_strlen(str) + 1;
     setup.value = 0;
 
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, (void*)str, 
+    if(rt_usb_hcd_control_xfer(uinst->hcd, uinst, &setup, (void*)str, 
         rt_strlen(str) + 1, timeout) == 0) return RT_EOK;
     else return -RT_FALSE;   
 }
@@ -126,23 +126,23 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
 /**
  * This function will do USB_REQ_START request to set idle period to the usb adk device
  *
- * @param intf the interface instance.
+ * @param ifinst the interface instance.
  * @duration the idle period of requesting data.
  * @report_id the report id
  * 
  * @return the error code, RT_EOK on successfully.
 */
-static rt_err_t rt_usbh_adk_start(struct uintf* intf)
+static rt_err_t rt_usb_adk_start(uifinst_t ifinst)
 {
     struct ureqest setup;
-    uinst_t device;    
+    uinst_t uinst;    
     int timeout = 100;
             
         /* parameter check */
-    RT_ASSERT(intf != RT_NULL);
-    RT_ASSERT(intf->device != RT_NULL);
+    RT_ASSERT(ifinst != RT_NULL);
+    RT_ASSERT(ifinst->uinst != RT_NULL);
 
-    device = intf->device;
+    uinst = ifinst->uinst;
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_VENDOR | 
         USB_REQ_TYPE_DEVICE;
@@ -151,7 +151,7 @@ static rt_err_t rt_usbh_adk_start(struct uintf* intf)
     setup.length = 0;
     setup.value = 0;
 
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
+    if(rt_usb_hcd_control_xfer(uinst->hcd, uinst, &setup, RT_NULL, 0, 
         timeout) == 0) return RT_EOK;
     else return -RT_FALSE;   
 }
@@ -159,25 +159,25 @@ static rt_err_t rt_usbh_adk_start(struct uintf* intf)
 /**
  * This function will read data from usb adk device
  *
- * @param intf the interface instance.
+ * @param ifinst the interface instance.
  * 
  * @return the error code, RT_EOK on successfully.
 */
-static rt_size_t rt_usbh_adk_read(rt_device_t device, rt_off_t pos, void* buffer, 
+static rt_size_t rt_usb_adk_read(rt_device_t device, rt_off_t pos, void* buffer, 
     rt_size_t size)
 {
-    uadk_t adk;
+    uadkinst_t adkinst;
     rt_size_t length;
-    struct uintf* intf;
+    uifinst_t ifinst;
 
     /* check parameter */
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    intf = (struct uintf*)device->user_data;
-    adk = (uadk_t)intf->user_data;
+    ifinst = (uifinst_t)device->user_data;
+    adkinst = (uadkinst_t)ifinst->user_data;
 
-    length = rt_usb_hcd_bulk_xfer(intf->device->hcd, adk->pipe_in, 
+    length = rt_usb_hcd_bulk_xfer(ifinst->uinst->hcd, adkinst->pipe_in, 
         buffer, size, 300);
     
     return length;
@@ -187,23 +187,23 @@ static rt_size_t rt_usbh_adk_read(rt_device_t device, rt_off_t pos, void* buffer
 /**
  * This function will write data to usb adk device
  *
- * @param intf the interface instance.
+ * @param ifinst the interface instance.
  * 
  * @return the error code, RT_EOK on successfully.
 */
-static rt_size_t rt_usbh_adk_write (rt_device_t device, rt_off_t pos, const void* buffer, 
+static rt_size_t rt_usb_adk_write (rt_device_t device, rt_off_t pos, const void* buffer, 
     rt_size_t size)
 {
-    uadk_t adk;
+    uadkinst_t adkinst;
     rt_size_t length;
-    struct uintf* intf;
+    uifinst_t ifinst;
 
     RT_ASSERT(buffer != RT_NULL);    
 
-    intf = (struct uintf*)device->user_data;
-    adk = (uadk_t)intf->user_data;
+    ifinst = (uifinst_t)device->user_data;
+    adkinst = (uadkinst_t)ifinst->user_data;
 
-    length = rt_usb_hcd_bulk_xfer(intf->device->hcd, adk->pipe_out, 
+    length = rt_usb_hcd_bulk_xfer(ifinst->uinst->hcd, adkinst->pipe_out, 
         (void*)buffer, size, 300);
     
     return length;
@@ -217,30 +217,30 @@ static rt_size_t rt_usbh_adk_write (rt_device_t device, rt_off_t pos, const void
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usbh_adk_enable(void* arg)
+static rt_err_t rt_usb_adk_run(void* arg)
 {
     int i = 0;
-    uadk_t adk;
-    struct uintf* intf = (struct uintf*)arg;
+    uadkinst_t adkinst;
+    uifinst_t ifinst = (uifinst_t)arg;
     udev_desc_t dev_desc;
     rt_uint16_t protocol;
     rt_err_t ret;    
     
     /* parameter check */
-    if(intf == RT_NULL)
+    if(ifinst == RT_NULL)
     {
         rt_kprintf("the interface is not available\n");
         return -RT_EIO;
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_adk_run\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usb_adk_run\n"));
         
-    dev_desc = &intf->device->dev_desc;
+    dev_desc = &ifinst->uinst->dev_desc;
     if(dev_desc->idVendor == USB_ACCESSORY_VENDOR_ID && 
         (dev_desc->idProduct == USB_ACCESSORY_PRODUCT_ID || 
         dev_desc->idProduct == USB_ACCESSORY_ADB_PRODUCT_ID))
     {
-        if(intf->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
+        if(ifinst->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
     
         RT_DEBUG_LOG(RT_DEBUG_USB, ("found android accessory device\n"));        
     }
@@ -248,9 +248,9 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
     {
         RT_DEBUG_LOG(RT_DEBUG_USB, ("switch device\n"));        
         
-        if((ret = rt_usbh_adk_get_protocol(intf, &protocol)) != RT_EOK)
+        if((ret = rt_usb_adk_get_protocol(ifinst, &protocol)) != RT_EOK)
         {
-            rt_kprintf("rt_usbh_adk_get_protocol failed\n");
+            rt_kprintf("rt_usb_adk_get_protocol failed\n");
             return ret;
         }
 
@@ -260,17 +260,17 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
             return -RT_ERROR;
         }       
 
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_MANUFACTURER, _adk_manufacturer);
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_MODEL, _adk_model);
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_DESCRIPTION, _adk_description);
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_VERSION, _adk_version);
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_URI, _adk_uri);        
-        rt_usbh_adk_send_string(intf, 
+        rt_usb_adk_send_string(ifinst, 
             ACCESSORY_STRING_SERIAL, _adk_serial);            
 
         RT_DEBUG_LOG(RT_DEBUG_USB, ("manufacturer %s\n", _adk_manufacturer));
@@ -280,28 +280,28 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
         RT_DEBUG_LOG(RT_DEBUG_USB, ("uri %s\n", _adk_uri));       
         RT_DEBUG_LOG(RT_DEBUG_USB, ("serial %s\n", _adk_serial));               
         
-        if((ret = rt_usbh_adk_start(intf)) != RT_EOK)
+        if((ret = rt_usb_adk_start(ifinst)) != RT_EOK)
         {
-            rt_kprintf("rt_usbh_adk_start failed\n");
+            rt_kprintf("rt_usb_adk_start failed\n");
             return ret;
         }        
 
         return RT_EOK;
     }
     
-    adk = rt_malloc(sizeof(struct uadkinst));
-    RT_ASSERT(adk != RT_NULL);
+    adkinst = rt_malloc(sizeof(struct uadkinst));
+    RT_ASSERT(adkinst != RT_NULL);
 
     /* initilize the data structure */
-    rt_memset(adk, 0, sizeof(struct uadkinst));    
-    intf->user_data = (void*)adk;
+    rt_memset(adkinst, 0, sizeof(struct uadkinst));    
+    ifinst->user_data = (void*)adkinst;
 
-    for(i=0; i<intf->intf_desc->bNumEndpoints; i++)
+    for(i=0; i<ifinst->intf_desc->bNumEndpoints; i++)
     {        
         uep_desc_t ep_desc;
         
         /* get endpoint descriptor from interface descriptor */
-        rt_usbh_get_endpoint_descriptor(intf->intf_desc, i, &ep_desc);
+        rt_usb_get_endpoint_descriptor(ifinst->intf_desc, i, &ep_desc);
         if(ep_desc == RT_NULL)
         {
             rt_kprintf("rt_usb_get_endpoint_descriptor error\n");
@@ -316,41 +316,41 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
         if(ep_desc->bEndpointAddress & USB_DIR_IN)
         {
             /* allocate an in pipe for the adk instance */
-            ret = rt_usb_hcd_alloc_pipe(intf->device->hcd, &adk->pipe_in, 
-                intf, ep_desc, RT_NULL);
+            ret = rt_usb_hcd_alloc_pipe(ifinst->uinst->hcd, &adkinst->pipe_in, 
+                ifinst, ep_desc, RT_NULL);
             if(ret != RT_EOK) return ret;
         }
         else
         {        
             /* allocate an output pipe for the adk instance */
-            ret = rt_usb_hcd_alloc_pipe(intf->device->hcd, &adk->pipe_out, 
-                intf, ep_desc, RT_NULL);            
+            ret = rt_usb_hcd_alloc_pipe(ifinst->uinst->hcd, &adkinst->pipe_out, 
+                ifinst, ep_desc, RT_NULL);            
             if(ret != RT_EOK) return ret;
         }
     }
 
     /* check pipes infomation */
-    if(adk->pipe_in == RT_NULL || adk->pipe_out == RT_NULL)
+    if(adkinst->pipe_in == RT_NULL || adkinst->pipe_out == RT_NULL)
     {
         rt_kprintf("pipe error, unsupported device\n");
         return -RT_ERROR;
     }    
 
     /* set configuration */
-    ret = rt_usbh_set_configure(intf->device, 1);
+    ret = rt_usb_set_configure(ifinst->uinst, 1);
     if(ret != RT_EOK) return ret;
 
     /* register adk device */
-    adk->device.type  = RT_Device_Class_Char;                         
-    adk->device.init = RT_NULL;         
-    adk->device.open = RT_NULL;         
-    adk->device.close = RT_NULL;                 
-    adk->device.read = rt_usbh_adk_read;
-    adk->device.write = rt_usbh_adk_write;
-    adk->device.control = RT_NULL;
-    adk->device.user_data = (void*)intf;
+    adkinst->device.type  = RT_Device_Class_Char;                         
+    adkinst->device.init = RT_NULL;         
+    adkinst->device.open = RT_NULL;         
+    adkinst->device.close = RT_NULL;                 
+    adkinst->device.read = rt_usb_adk_read;
+    adkinst->device.write = rt_usb_adk_write;
+    adkinst->device.control = RT_NULL;
+    adkinst->device.user_data = (void*)ifinst;
 
-    rt_device_register(&adk->device, "adkdev", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&adkinst->device, "adkdev", RT_DEVICE_FLAG_RDWR);
     
     return RT_EOK;
 }
@@ -363,39 +363,36 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usbh_adk_disable(void* arg)
+static rt_err_t rt_usb_adk_stop(void* arg)
 {
-    uadk_t adk;
-    struct uintf* intf = (struct uintf*)arg;
+    uadkinst_t adkinst;
+    uifinst_t ifinst = (uifinst_t)arg;
 
-    RT_ASSERT(intf != RT_NULL);
+    RT_ASSERT(ifinst != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_adk_stop\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usb_adk_stop\n"));
 
-    adk = (uadk_t)intf->user_data;
-    if(adk == RT_NULL) 
+    adkinst = (uadkinst_t)ifinst->user_data;
+    if(adkinst == RT_NULL) 
     {
-        rt_free(intf);    
+        rt_free(ifinst);    
         return RT_EOK;
     }
     
-    if(adk->pipe_in != RT_NULL)
-        rt_usb_hcd_free_pipe(intf->device->hcd, adk->pipe_in);
+    if(adkinst->pipe_in != RT_NULL)
+        rt_usb_hcd_free_pipe(ifinst->uinst->hcd, adkinst->pipe_in);
 
-    if(adk->pipe_out != RT_NULL)
-        rt_usb_hcd_free_pipe(intf->device->hcd, adk->pipe_out);
+    if(adkinst->pipe_out != RT_NULL)
+        rt_usb_hcd_free_pipe(ifinst->uinst->hcd, adkinst->pipe_out);
 
     /* unregister adk device */
-    rt_device_unregister(&adk->device);
+    rt_device_unregister(&adkinst->device);
 
     /* free adk instance */
-    if(adk != RT_NULL) 
-    {
-        rt_free(adk);
-    }
+    if(adkinst != RT_NULL) rt_free(adkinst);
     
     /* free interface instance */
-    rt_free(intf);
+    rt_free(ifinst);
 
     return RT_EOK;
 }
@@ -406,12 +403,12 @@ static rt_err_t rt_usbh_adk_disable(void* arg)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-ucd_t rt_usbh_class_driver_adk(void)
+ucd_t rt_usb_class_driver_adk(void)
 {
     adk_driver.class_code = USB_CLASS_ADK;
     
-    adk_driver.enable = rt_usbh_adk_enable;
-    adk_driver.disable = rt_usbh_adk_disable;
+    adk_driver.run = rt_usb_adk_run;
+    adk_driver.stop = rt_usb_adk_stop;
 
     return &adk_driver;
 }

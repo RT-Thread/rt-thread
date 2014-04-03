@@ -4,8 +4,10 @@
 
 /* System Configurations */
 
-#define	JD_SZBUF		(16 * 1024)	/* Size of stream input buffer (should be multiple of 512) */
-#define	JD_USE_SCALE	0	/* Use descaling feature for output */
+#define	JD_SZBUF		512	/* Size of stream input buffer (should be multiple of 512) */
+#define JD_FORMAT		1	/* Output RGB format 0:RGB888 (3 BYTE/pix), 1:RGB565 (1 WORD/pix) */
+#define	JD_USE_SCALE	1	/* Use descaling feature for output */
+
 
 /*---------------------------------------------------------------------------*/
 
@@ -55,8 +57,6 @@ struct JDEC {
 	UINT (*infunc)(JDEC*, BYTE*, UINT);/* Pointer to jpeg stream input function */
 	UINT (*outfunc)(JDEC*, void*, JRECT*);	/* Pointer to RGB output function */
 	void* device;			/* Pointer to I/O device identifiler for the session */
-
-	BYTE format;			/* the output format, 0:RGB888 (3 BYTE/pix), 1:RGB565 (1 WORD/pix) */
 };
 
 

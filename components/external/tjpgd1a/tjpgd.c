@@ -525,7 +525,7 @@ JRESULT mcu_load (
 		} while (++i < 64);		/* Next AC element */
 
 		if (JD_USE_SCALE && jd->scale == 3)
-			*bp = (BYTE)((*tmp / 256) + 128);	/* If scale ratio is 1/8, IDCT can be ommited and only DC element is used */
+			*bp = (*tmp / 256) + 128;	/* If scale ratio is 1/8, IDCT can be ommited and only DC element is used */
 		else
 			block_idct(tmp, bp);		/* Apply IDCT and store the block to the MCU buffer */
 
@@ -669,7 +669,7 @@ JRESULT mcu_output (
 	}
 
 	/* Convert RGB888 to RGB565 if needed */
-	if (jd->format == 1) {
+	if (JD_FORMAT == 1) {
 		BYTE *s = (BYTE*)jd->workbuf;
 		WORD w, *d = (WORD*)s;
 		UINT n = rx * ry;
@@ -762,7 +762,6 @@ JRESULT jd_prepare (
 	jd->infunc = infunc;	/* Stream input function */
 	jd->device = dev;		/* I/O device identifier */
 	jd->nrst = 0;			/* No restart interval (default) */
-	jd->format = 0;			/* use RGB888 (3 BYTE/pix) default */
 
 	for (i = 0; i < 2; i++) {	/* Nulls pointers */
 		for (j = 0; j < 2; j++) {

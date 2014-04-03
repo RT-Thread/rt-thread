@@ -24,9 +24,7 @@
 #include <rtthread.h>
 #include <drivers/usb_host.h>
 
-#define USB_HOST_CONTROLLER_NAME      "usbh"
-
-#if defined(RT_USBH_HID_KEYBOARD) || defined(RT_USBH_HID_MOUSE)
+#if defined(RT_USB_HID_KEYBOARD) || defined(RT_USB_HID_MOUSE)
 #include <hid.h>
 #endif
 
@@ -36,64 +34,54 @@
  * 
  * @return none.
  */
-rt_err_t rt_usb_host_init(void)
+int rt_usb_host_init(void)
 {
     ucd_t drv;
-    rt_device_t uhc;    
-#ifdef RT_USBH_HID
+#ifdef RT_USB_CLASS_HID
     uprotocal_t protocal;
 #endif
 
-    uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
-    if(uhc == RT_NULL)
-    {
-        rt_kprintf("can't find usb host controller %s\n", USB_HOST_CONTROLLER_NAME);
-        return -RT_ERROR;
-    }
-
-    /* initialize usb hub */
-    rt_usbh_hub_init();
+    /* initialize usb hub thread */
+    rt_usb_hub_thread();
 
     /* initialize class driver */
-    rt_usbh_class_driver_init();
+    rt_usb_class_driver_init();
 
-#ifdef RT_USBH_MSTORAGE
+#ifdef RT_USB_CLASS_MASS_STORAGE
     /* register mass storage class driver */
-    drv = rt_usbh_class_driver_storage();
-    rt_usbh_class_driver_register(drv);
+    drv = rt_usb_class_driver_storage();
+    rt_usb_class_driver_register(drv);
 #endif
 
-#ifdef RT_USBH_HID
+#ifdef RT_USB_CLASS_HID
     /* register hid class driver */
-    drv = rt_usbh_class_driver_hid();
-    rt_usbh_class_driver_register(drv);
+    drv = rt_usb_class_driver_hid();
+    rt_usb_class_driver_register(drv);
 
-#ifdef RT_USBH_HID_KEYBOARD    
+#ifdef RT_USB_HID_KEYBOARD    
     /* register hid keyboard protocal */
-    protocal = rt_usbh_hid_protocal_kbd();    
-    rt_usbh_hid_protocal_register(protocal);
+    protocal = rt_usb_hid_protocal_kbd();    
+    rt_usb_hid_protocal_register(protocal);
 #endif
 
-#ifdef RT_USBH_HID_MOUSE    
+#ifdef RT_USB_HID_MOUSE    
     /* register hid mouse protocal */
-    protocal = rt_usbh_hid_protocal_mouse();    
-    rt_usbh_hid_protocal_register(protocal);
+    protocal = rt_usb_hid_protocal_mouse();    
+    rt_usb_hid_protocal_register(protocal);
 #endif    
 #endif
 
-#ifdef RT_USBH_ADK
+#ifdef RT_USB_CLASS_ADK
     /* register adk class driver */
-    drv = rt_usbh_class_driver_adk();
-    rt_usbh_class_driver_register(drv);
+    drv = rt_usb_class_driver_adk();
+    rt_usb_class_driver_register(drv);
 #endif
 
     /* register hub class driver */
-    drv = rt_usbh_class_driver_hub();
-    rt_usbh_class_driver_register(drv);
+    drv = rt_usb_class_driver_hub();
+    rt_usb_class_driver_register(drv);
 
-    /* initialize usb host controller */
-    rt_device_init(uhc);
-
-    return RT_EOK;
+	return 0;
 }
+INIT_COMPONENT_EXPORT(rt_usb_host_init);
 

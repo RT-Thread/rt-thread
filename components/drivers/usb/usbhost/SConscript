@@ -9,22 +9,22 @@ core/usbhost.c
 core/hub.c
 """)
 
-if GetDepend('RT_USBH_ADK'):
+if GetDepend('RT_USB_CLASS_ADK'):
 	src += Glob('class/adk.c')
-	src += Glob('class/adkapp.c')
+	src += Glob('udev/adkapp.c')
 
-if GetDepend('RT_USBH_MSTORAGE'):
+if GetDepend('RT_USB_CLASS_MASS_STORAGE'):
 	src += Glob('class/mass.c')
-	src += Glob('class/udisk.c')
+	src += Glob('udev/udisk.c')
 
-if GetDepend('RT_USBH_HID'):
+if GetDepend('RT_USB_CLASS_HID'):
 	src += Glob('class/hid.c')
 
-if GetDepend('RT_USBH_HID_MOUSE'):
-	src += Glob('class/umouse.c')
+if GetDepend('RT_USB_HID_MOUSE'):
+	src += Glob('udev/umouse.c')
 
-if GetDepend('RT_USBH_HID_KEYBOARD'):
-	src += Glob('class/ukbd.c')
+if GetDepend('RT_USB_HID_KEYBOARD'):
+	src += Glob('udev/ukbd.c')
 
 CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
 	cwd + '/include', cwd + '../../../include']
