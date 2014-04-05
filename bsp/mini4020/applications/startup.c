@@ -48,7 +48,7 @@ void rtthread_startup()
 
 	/* show version */
 	rt_show_version();
-		
+
 	/* init tick */
 	rt_system_tick_init();
 
@@ -65,12 +65,10 @@ void rtthread_startup()
 	rt_system_heap_init(&__bss_end, (void*)0x34000000);
 #endif
 
-
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
-
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif
@@ -79,9 +77,6 @@ void rtthread_startup()
 	eth_system_device_init();
 	rt_hw_dm9161_init();
 #endif
-	
-	/*init all registed devices */
-	rt_device_init_all();
 #endif
 
 	/* init application */
@@ -103,21 +98,15 @@ void rtthread_startup()
 
 	/* never reach here */
 	return ;
-	
 }
 
 int main()
 {
-	rt_uint32_t UNUSED level;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+	rt_hw_interrupt_disable();
 
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 
 	return 0;
 }
-
-
-

@@ -97,7 +97,7 @@ void rtthread_startup(void)
 #endif
 #endif
 
-#ifdef RT_USING_MODULE	
+#ifdef RT_USING_MODULE
 	/* init module system */
 	rt_system_module_init();
 #endif
@@ -118,8 +118,6 @@ void rtthread_startup(void)
 	/* init sd card device */
 	rt_hw_sdcard_init();
 #endif
-	/* init all device */
-	rt_device_init_all();
 
 	/* init application */
 	rt_application_init();
@@ -149,7 +147,7 @@ int main(void)
 	/* disable interrupt first */
 	level = rt_hw_interrupt_disable();
 	rtthread_startup();
-	
+
 	return 0;
 }
 
