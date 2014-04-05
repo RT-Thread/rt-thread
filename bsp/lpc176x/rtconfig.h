@@ -77,8 +77,8 @@
 #define RT_CONSOLE_DEVICE_NAME	"uart0"
 // </section>
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-#define RT_USING_COMPONENTS_INIT
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="false" />
+// #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
@@ -99,7 +99,7 @@
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
 // #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-// #define DFS_USING_WORKDIR
+#define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
@@ -107,12 +107,14 @@
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
+// <item description="Disable">0</item>
 // <item description="LFN1">1</item>
 // <item description="LFN1">2</item>
+// <item description="LFN3">3</item>
 // </integer>
-#define RT_DFS_ELM_USE_LFN	1
+#define RT_DFS_ELM_USE_LFN	0
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN	64
+#define RT_DFS_ELM_MAX_LFN	256
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />

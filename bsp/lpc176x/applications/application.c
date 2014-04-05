@@ -19,14 +19,12 @@
 #include <rtthread.h>
 #include "platform.h"
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
 #ifdef RT_USING_LWIP
 #include <emac.h>
 #endif
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
+#include <sd.h>
 #endif
 
 /* thread phase init */
@@ -40,13 +38,10 @@ void rt_init_thread_entry(void *parameter)
     lpc17xx_emac_hw_init();
 #endif
 
-#ifdef RT_USING_COMPONENTS_INIT
-    /* initialization RT-Thread Components */
-    rt_components_init();
-#endif
-
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
+    rt_hw_sdcard_init();
+   
     /* mount sd card fat partition 1 as root directory */
     if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
     	rt_kprintf("File System initialized!\n");
