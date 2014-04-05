@@ -52,7 +52,7 @@ void rtthread_startup(void)
 
 	/* init board */
 	rt_hw_board_init();
-	
+
 	rt_show_version();
 
 	/* init tick */
@@ -86,8 +86,6 @@ void rtthread_startup(void)
 #ifdef RT_USING_DEVICE
 	/* init hardware serial device */
 	rt_hw_serial_init();
-	/* init all device */
-	rt_device_init_all();
 #endif
 
 	/* init application */
@@ -113,7 +111,7 @@ int main (void)
 {
 	/* invoke rtthread_startup */
 	rtthread_startup();
-	
+
 	return 0;
 }
 

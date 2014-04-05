@@ -42,7 +42,7 @@ void rtthread_startup(void)
 {
 	/* init hardware interrupt */
 	rt_hw_interrupt_init();
-        
+
 	/* init board */
 	rt_hw_board_init();
 
@@ -51,13 +51,13 @@ void rtthread_startup(void)
 
 	/* init tick */
 	rt_system_tick_init();
-    
+
 	/* init kernel object */
 	rt_system_object_init();
-    
+
 	/* init timer system */
 	rt_system_timer_init();
-    
+
 #ifdef RT_USING_HEAP
 #ifdef __ICCM16C__
 	rt_system_heap_init(__segment_begin("DATA16_HEAP"), __segment_end("DATA16_HEAP"));
@@ -68,11 +68,6 @@ void rtthread_startup(void)
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
-    
-#ifdef RT_USING_DEVICE
-	/* init all device */
-	rt_device_init_all();
-#endif
 
 	/* init application */
 	rt_application_init();
@@ -88,10 +83,10 @@ void rtthread_startup(void)
 
 	/* init idle thread */
 	rt_thread_idle_init();
-    
+
 	/* start scheduler */
 	rt_system_scheduler_start();
-    
+
 	/* never reach here */
 	return ;
 }
@@ -103,7 +98,7 @@ int main(void)
 
 	/* init system setting */
 	system_init();
-    
+
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 

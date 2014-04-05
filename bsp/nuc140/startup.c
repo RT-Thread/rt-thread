@@ -71,11 +71,6 @@ void rtthread_startup(void)
 	rt_thread_idle_sethook(rt_hw_led_flash);
 #endif
 
-#ifdef RT_USING_DEVICE
-	/* init all device */
-	rt_device_init_all();
-#endif
-
 	/* init application */
 	rt_application_init();
 

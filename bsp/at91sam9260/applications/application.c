@@ -138,8 +138,6 @@ void rt_init_thread_entry(void* parameter)
 		/* register ethernetif device */
 		eth_system_device_init();
 		rt_hw_macb_init();
-		/* re-init device driver */
-		rt_device_init_all();
 		/* init lwip system */
 		lwip_sys_init();
 	}
@@ -176,7 +174,7 @@ void rt_led_thread_entry(void* parameter)
 			led_on(3);
 		else
 			led_off(3);
-			
+
 	}
 }
 #endif
@@ -197,7 +195,7 @@ int rt_application_init()
 								rt_led_thread_entry, RT_NULL,
 								512, 20, 20);
 #endif
-								
+
 #else
 	init_thread = rt_thread_create("init",
 								rt_init_thread_entry, RT_NULL,
@@ -207,7 +205,7 @@ int rt_application_init()
 								rt_led_thread_entry, RT_NULL,
 								512, 200, 20);
 #endif
-								
+
 #endif
 
 	if (init_thread != RT_NULL)

@@ -35,27 +35,7 @@
 
 void rt_init_thread_entry(void* parameter)
 {
-    /* LwIP Initialization */
-#ifdef RT_USING_LWIP
-    {
-        extern void lwip_sys_init(void);
-
-        /* register ethernetif device */
-        eth_system_device_init();
-
-        rt_hw_stm32_eth_init();
-        /* re-init device driver */
-        rt_device_init_all();
-
-        /* init lwip system */
-        lwip_sys_init();
-        rt_kprintf("TCP/IP initialized!\n");
-    }
-#endif
-
-//FS
-
-//GUI
+    /* nothing */
 }
 
 float f_var1;
@@ -70,7 +50,7 @@ static void rt_thread_entry_led1(void* parameter)
 {
     int n = 0;
     rt_hw_led_init();
-	
+
     while (1)
     {
         //rt_kprintf("LED\t%d\tis shining\r\n",n);
@@ -92,16 +72,9 @@ int rt_application_init()
 {
     rt_thread_t init_thread;
 
-#if (RT_THREAD_PRIORITY_MAX == 32)
     init_thread = rt_thread_create("init",
                                    rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
-
+                                   2048, RT_THREAD_PRIORITY_MAX/3, 20);
     if (init_thread != RT_NULL)
         rt_thread_startup(init_thread);
 
