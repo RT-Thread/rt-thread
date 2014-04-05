@@ -67,11 +67,6 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-	/* init all device */
-	rt_device_init_all();
-#endif
-
 	/* init application */
 	rt_application_init();
 
@@ -97,7 +92,7 @@ int main(void)
 
 	/* init system setting */
 	SystemInit();
-    
+
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 

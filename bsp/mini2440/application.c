@@ -16,7 +16,7 @@
 /**
  * @addtogroup mini2440
  */
- 
+
 /*@{*/
 
 #include <rtthread.h>
@@ -142,23 +142,20 @@ void rt_init_thread_entry(void *parameter)
 		extern void rtgui_system_server_init(void);
 
 		rt_device_t lcd;
-		
+
 		/* init lcd */
 		rt_hw_lcd_init();
-			
+
 		/* init touch panel */
-		rtgui_touch_hw_init();	
+		rtgui_touch_hw_init();
 
 		/* init keypad */
 		rt_hw_key_init();
-		
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* find lcd device */
 		lcd = rt_device_find("lcd");
 
-		/* set lcd device as rtgui graphic driver */		
+		/* set lcd device as rtgui graphic driver */
 		rtgui_graphic_set_device(lcd);
 
 		/* initalize rtgui system server */
@@ -175,9 +172,6 @@ void rt_init_thread_entry(void *parameter)
 		/* register ethernetif device */
 		rt_hw_dm9000_init();
 
-		/* re-init device driver */
-		rt_device_init_all();
-
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
@@ -192,22 +186,19 @@ void rt_init_thread_entry(void *parameter)
 		rt_hw_lcd_init();
 
 		/* init touch panel */
-		rtgui_touch_hw_init();	
+		rtgui_touch_hw_init();
 
 		/* init keypad */
 		rt_hw_key_init();
 
-		/* re-init device driver */
-		rt_device_init_all();
-
 		/* create ftk thread */
 		ftk_thread = rt_thread_create("ftk",
 									rt_ftk_thread_entry, RT_NULL,
-									10 * 1024, 8, 20);	
+									10 * 1024, 8, 20);
 
 		/* startup ftk thread */
 		if (ftk_thread != RT_NULL)
-			rt_thread_startup(ftk_thread);		
+			rt_thread_startup(ftk_thread);
 	}
 #endif
 }
