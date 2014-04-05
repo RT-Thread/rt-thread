@@ -65,8 +65,6 @@ void rt_init_thread_entry(void *parameter)
 
         /* register ethernetif device */
         lpc17xx_emac_hw_init();
-        /* init all device */
-        rt_device_init_all();
 
         /* init lwip system */
         lwip_sys_init();
