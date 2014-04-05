@@ -16,20 +16,13 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "LPC17xx.h"
-#include "board.h"
-
-#ifdef RT_USING_DFS
-#include "sd.h"
-#endif
-
 /**
- * @addtogroup LPC17
+ * @addtogroup LPC176x
  */
 
 /*@{*/
-
-extern int  rt_application_init(void);
+#include <board.h>
+extern int rt_application_init(void);
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -83,14 +76,6 @@ void rtthread_startup(void)
 
 	/* initialize scheduler system */
 	rt_system_scheduler_init();
-
-#ifdef RT_USING_DEVICE
-#ifdef RT_USING_DFS
-	rt_hw_sdcard_init();
-#endif
-	/* initialize all device */
-	rt_device_init_all();
-#endif
 
 	/* initialize application */
 	rt_application_init();
