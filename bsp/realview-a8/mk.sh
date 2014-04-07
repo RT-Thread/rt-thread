@@ -6,6 +6,7 @@ KDIR=~/linux-git
 BUILD_ROOT_DIR=/temp-build/buildroot-2014.02/
 
 scons -j20
+mkdir -p $BUILD_ROOT_DIR/output/target/vmm
 cp rtthread.bin $BUILD_ROOT_DIR/output/target/vmm
 
 (
