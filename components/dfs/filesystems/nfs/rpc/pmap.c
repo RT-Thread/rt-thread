@@ -24,7 +24,7 @@ unsigned short pmap_getport(struct sockaddr_in *address, unsigned long program, 
 {
 	unsigned short port = 0;
 	int socket = -1;
-	register CLIENT *client;
+	register CLIENT *client = RT_NULL;
 	struct pmap parms;
 
 	address->sin_port = htons((unsigned short)PMAPPORT);

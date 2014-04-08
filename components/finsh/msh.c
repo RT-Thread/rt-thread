@@ -180,7 +180,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
 #if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
 /* Return 0 on module executed. Other value indicate error.
  */
-int msh_exec_module(char* cmd_line, int size)
+int msh_exec_module(const char* cmd_line, int size)
 {
     int ret;
     int fd = -1;
@@ -247,6 +247,11 @@ int msh_exec_module(char* cmd_line, int size)
 
     rt_free(pg_name);
     return ret;
+}
+
+int system(const char *command)
+{
+    return msh_exec_module(command, rt_strlen(command));
 }
 #endif
 
@@ -346,8 +351,8 @@ static int str_common(const char *str1, const char *str2)
 #ifdef RT_USING_DFS
 void msh_auto_complete_path(char *path)
 {
-    DIR* dir;
-    struct dirent *dirent;
+    DIR* dir = RT_NULL;
+    struct dirent *dirent = RT_NULL;
     char *full_path, *ptr, *index;
 
     full_path = (char*)rt_malloc(256);
