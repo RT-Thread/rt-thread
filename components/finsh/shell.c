@@ -54,8 +54,10 @@ ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct finsh_shell* shell;
 
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+#if defined(RT_USING_DFS)
 #include <dfs_posix.h>
+#endif
 const char* finsh_get_prompt()
 {
     #define _MSH_PROMPT "msh "
@@ -68,8 +70,10 @@ const char* finsh_get_prompt()
 #endif
     strcpy(finsh_prompt, _PROMPT);
 
+#ifdef DFS_USING_WORKDIR
     /* get current working directory */
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
+#endif
     strcat(finsh_prompt, ">");
 
     return finsh_prompt;
