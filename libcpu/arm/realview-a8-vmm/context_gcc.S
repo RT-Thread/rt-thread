@@ -57,9 +57,6 @@ rt_hw_context_switch_to:
     ldmfd sp!, {r4}         @ pop new task spsr
     msr spsr_cxsf, r4
 
-    bic r4, r4, #0x20       @ must be ARM mode
-    msr cpsr_cxsf, r4
-
     ldmfd sp!, {r0-r12, lr, pc}^   @ pop new task r0-r12, lr & pc
 
 .section .bss.share.isr
