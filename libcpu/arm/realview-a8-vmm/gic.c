@@ -249,6 +249,9 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
     for (i = 0; i < _gic_max_irq; i += 32)
         GIC_DIST_IGROUP(dist_base, i) = 0xffffffff;
 
+    /* Enable group0 and group1 interrupt forwarding. */
+    GIC_DIST_CTRL(dist_base) = 0x03;
+
     return 0;
 }
 
