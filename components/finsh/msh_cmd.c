@@ -207,6 +207,15 @@ int cmd_ifconfig(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
 
+int cmd_netstat(int argc, char** argv)
+{
+ 	extern void list_tcps(void);
+
+	list_tcps();
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP/IP);
+
 #endif /* RT_USING_LWIP */
 
 int cmd_ps(int argc, char** argv)
