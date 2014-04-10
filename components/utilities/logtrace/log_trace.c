@@ -255,8 +255,9 @@ static rt_size_t _lg_parse_session(
     return 0;
 }
 
-void _lg_fmtout(
-        const struct log_trace_session *session, const char *fmt, va_list argptr)
+void __logtrace_vfmtout(const struct log_trace_session *session,
+                        const char *fmt,
+                        va_list argptr)
 {
     /* 1 for ']' */
     static char _trace_buf[1+LOG_TRACE_BUFSZ];
@@ -303,7 +304,7 @@ void log_trace(const char *fmt, ...)
         return;
 
     va_start(args, fmt);
-    _lg_fmtout(session, fmt, args);
+    __logtrace_vfmtout(session, fmt, args);
     va_end(args);
 }
 FINSH_FUNCTION_EXPORT(log_trace, log trace);
@@ -321,7 +322,7 @@ void log_session(const struct log_trace_session *session, const char *fmt, ...)
         return;
 
     va_start(args, fmt);
-    _lg_fmtout(session, fmt, args);
+    __logtrace_vfmtout(session, fmt, args);
     va_end(args);
 }
 
