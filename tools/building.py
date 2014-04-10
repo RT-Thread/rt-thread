@@ -192,18 +192,25 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             LINKCOMSTR = 'LINK $TARGET'
         )
 
-    # board build script
-    objs = SConscript('SConscript', variant_dir='build', duplicate=0)
     Repository(Rtt_Root)
+
+    # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
+    # have their own components etc. If they point to the same folder, SCons
+    # would find the wrong source code to compile.
+    bsp_vdir = 'build/bsp'
+    kernel_vdir = 'build/kernel'
+    # board build script
+    objs = SConscript('SConscript', variant_dir=bsp_vdir, duplicate=0)
     # include kernel
-    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir=kernel_vdir + '/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
-        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript',
+                    variant_dir=kernel_vdir + '/libcpu', duplicate=0))
 
     # include components
     objs.extend(SConscript(Rtt_Root + '/components/SConscript',
-                           variant_dir='build/components',
+                           variant_dir=kernel_vdir + '/components',
                            duplicate=0,
                            exports='remove_components'))
 
