@@ -192,8 +192,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             LINKCOMSTR = 'LINK $TARGET'
         )
 
-    Repository(Rtt_Root)
-
     # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
