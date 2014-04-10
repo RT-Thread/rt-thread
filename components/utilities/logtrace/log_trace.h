@@ -1,7 +1,7 @@
 /*
  * File      : log_trace.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * COPYRIGHT (C) 2013-2014, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ void log_trace_init(void);
  *
  * @return RT_EOK on success. -RT_EFULL if there is no space for registration.
  */
-rt_err_t log_trace_register_session(struct log_trace_session *session);
+rt_err_t log_trace_register_session(const struct log_trace_session *session);
 
 /** find a session with name
  *
@@ -130,7 +130,7 @@ void log_trace(const char *fmt, ...);
  * "[systick][name]log messages". The name is the name of the session. It is
  * faster than bare log_trace.
  */
-void log_session(struct log_trace_session *session, const char *fmt, ...);
+void log_session(const struct log_trace_session *session, const char *fmt, ...);
 
 /* here comes the global part. All sessions share the some output backend. */
 
