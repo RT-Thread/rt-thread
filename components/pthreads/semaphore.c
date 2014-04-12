@@ -224,7 +224,6 @@ sem_t *sem_open(const char *name, int oflag, ...)
 {
     sem_t* sem;
     va_list arg;
-    mode_t mode;
     unsigned int value;
 
     sem = RT_NULL;
@@ -234,7 +233,6 @@ sem_t *sem_open(const char *name, int oflag, ...)
     if (oflag & O_CREAT)
     {
         va_start(arg, oflag);
-        mode = (mode_t) va_arg( arg, unsigned int); mode = mode;
         value = va_arg( arg, unsigned int);
         va_end(arg);
 

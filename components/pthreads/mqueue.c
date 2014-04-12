@@ -119,7 +119,6 @@ mqd_t mq_open(const char *name, int oflag, ...)
 {
     mqd_t mqdes;
     va_list arg;
-    mode_t mode;
     struct mq_attr *attr = RT_NULL;
 
     /* lock posix mqueue list */
@@ -129,8 +128,6 @@ mqd_t mq_open(const char *name, int oflag, ...)
     if (oflag & O_CREAT)
     {
         va_start(arg, oflag);
-        mode = (mode_t)va_arg(arg, unsigned int);
-        mode = mode;
         attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
         va_end(arg);
 
