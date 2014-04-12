@@ -358,7 +358,6 @@ void msh_auto_complete_path(char *path)
     full_path = (char*)rt_malloc(256);
     if (full_path == RT_NULL) return; /* out of memory */
 
-    ptr = full_path;
     if (*path != '/')
     {
         getcwd(full_path, 256);
@@ -367,7 +366,8 @@ void msh_auto_complete_path(char *path)
     }
     else *full_path = '\0';
 
-    index = RT_NULL; ptr = path;
+    index = RT_NULL;
+    ptr = path;
     for (;;)
     {
         if (*ptr == '/') index = ptr + 1; if (!*ptr) break; ptr ++;
