@@ -85,6 +85,8 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
 
     prefixlen = 0;
 
+    RT_ASSERT(path);
+
     /* lock filesystem */
     dfs_lock();
 
