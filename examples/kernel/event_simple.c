@@ -7,6 +7,7 @@
  * 一个线程定时发送事件 (事件5)
  */
 #include <rtthread.h>
+#include <time.h>
 #include "tc_comm.h"
 
 /* 指向线程控制块的指针 */

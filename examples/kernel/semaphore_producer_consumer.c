@@ -59,6 +59,7 @@ void consumer_thread_entry(void* parameter)
     /* 第n个线程，由入口参数传进来 */
     no = (rt_uint32_t)parameter;
 
+    sum = 0;
     while(1)
     {
         /* 获取一个满位 */
