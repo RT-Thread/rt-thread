@@ -60,6 +60,10 @@ static void thread3_entry(void* parameter)
     while (1)
     {
         result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            tc_stat(TC_STAT_END | TC_STAT_FAILED);
+        }
         result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
         if (result != RT_EOK)
         {

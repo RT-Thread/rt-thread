@@ -178,8 +178,14 @@ static void worker_entry(void* parameter)
 
         /* 持有信号量 */
         rt_sem_take(sem, RT_WAITING_FOREVER);
+
         /* 把数据放到环形buffer中 */
         result = rb_put(&working_rb, &data_buffer[0], BUFFER_ITEM);
+        if (result == RT_FALSE)
+        {
+            rt_kprintf("put error\n");
+        }
+
         /* 释放信号量 */
         rt_sem_release(sem);
 

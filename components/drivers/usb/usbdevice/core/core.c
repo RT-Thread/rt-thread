@@ -372,6 +372,7 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
 
     /* set current configuration */
     rt_usbd_set_config(device, setup->value);
+    dcd_set_config(device->dcd, setup->value);
     cfg = device->curr_cfg;
 
     for (i=cfg->func_list.next; i!=&cfg->func_list; i=i->next)
@@ -1598,8 +1599,6 @@ rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value)
 
     /* set as current configuration */
     device->curr_cfg = cfg;
-
-    dcd_set_config(device->dcd, value);
     
     return RT_TRUE;
 }

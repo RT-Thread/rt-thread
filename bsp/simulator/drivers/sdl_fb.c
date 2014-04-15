@@ -56,7 +56,7 @@ static rt_err_t  sdlfb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 
         info = (struct rt_device_graphic_info *) args;
         info->bits_per_pixel = 16;
-        info->pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
+        info->pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
         info->framebuffer = device->screen->pixels;
         info->width = device->screen->w;
         info->height = device->screen->h;
@@ -306,8 +306,12 @@ static void *sdl_loop(void *lpParam)
             break;
         }
 
-        if (quit)
-            break;
+		if (quit)
+		{
+		 exit(1);
+		 break;
+		}
+            
     }
     rt_hw_exit();
     return 0;
