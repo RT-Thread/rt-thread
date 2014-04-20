@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+lodepng.c
+''')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('lodepng', src, depend = ['RTGUI_IMAGE_LODEPNG'], CPPPATH = CPPPATH)
+
+Return('group')
