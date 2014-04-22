@@ -123,9 +123,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # only check, don't compile. ccc-analyzer use CCC_CC as the CC.
         # fsyntax-only will give us some additional warning messages
         env['ENV']['CCC_CC']  = 'clang'
-        env.Append(CFLAGS=['-DCLANG_ANALYZER', '-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        env.Append(CFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
         env['ENV']['CCC_CXX'] = 'clang++'
-        env.Append(CXXFLAGS=['-DCLANG_ANALYZER', '-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        env.Append(CXXFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
         # remove the POST_ACTION as it will cause meaningless errors(file not
         # found or something like that).
         rtconfig.POST_ACTION = ''

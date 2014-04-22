@@ -222,12 +222,41 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block));
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr);
 
-void *rt_malloc(rt_size_t nbytes);
-void rt_free(void *ptr);
-void *rt_realloc(void *ptr, rt_size_t nbytes);
-void *rt_calloc(rt_size_t count, rt_size_t size);
-void *rt_malloc_align(rt_size_t size, rt_size_t align);
-void rt_free_align(void *ptr);
+void * rt_malloc(rt_size_t nbytes)
+#ifdef __clang_analyzer__
+__attribute((ownership_returns(malloc)))
+#endif
+;
+
+void rt_free(void *ptr)
+#ifdef __clang_analyzer__
+__attribute((ownership_takes(malloc, 1)))
+#endif
+;
+
+void * rt_realloc(void *ptr, rt_size_t nbytes)
+#ifdef __clang_analyzer__
+__attribute((ownership_holds(malloc, 1)))
+#endif
+;
+
+void * rt_calloc(rt_size_t count, rt_size_t size)
+#ifdef __clang_analyzer__
+__attribute((ownership_returns(malloc)))
+#endif
+;
+
+void * rt_malloc_align(rt_size_t size, rt_size_t align)
+#ifdef __clang_analyzer__
+__attribute((ownership_returns(malloc)))
+#endif
+;
+
+void rt_free_align(void *ptr)
+#ifdef __clang_analyzer__
+__attribute((ownership_takes(malloc, 1)))
+#endif
+;
 
 void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
