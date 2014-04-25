@@ -61,9 +61,9 @@ float f_var3;
 float f_var4;
 
 ALIGN(RT_ALIGN_SIZE)
-static char thread_led1_stack[1024];
-struct rt_thread thread_led1;
-static void rt_thread_entry_led1(void* parameter)
+static char thread_led_stack[1024];
+struct rt_thread thread_led;
+static void rt_thread_entry_led(void* parameter)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 
@@ -128,9 +128,9 @@ static void rt_thread_entry_led1(void* parameter)
 
 
 ALIGN(RT_ALIGN_SIZE)
-static char thread_led2_stack[1024];
-struct rt_thread thread_led2;
-static void rt_thread_entry_led2(void* parameter)
+static char thread_usart_stack[1024];
+struct rt_thread thread_usart;
+static void rt_thread_entry_usart(void* parameter)
 {
     float f_var_me;
 
@@ -162,22 +162,22 @@ int rt_application_init()
         rt_thread_startup(init_thread);
 
     //------- init led1 thread
-    rt_thread_init(&thread_led1,
-                   "led1",
-                   rt_thread_entry_led1,
+    rt_thread_init(&thread_led,
+                   "led",
+                   rt_thread_entry_led,
                    RT_NULL,
-                   &thread_led1_stack[0],
-                   sizeof(thread_led1_stack),11,5);
-    rt_thread_startup(&thread_led1);
+                   &thread_led_stack[0],
+                   sizeof(thread_led_stack),11,5);
+    rt_thread_startup(&thread_led);
 
     //------- init led2 thread
-    rt_thread_init(&thread_led2,
-                   "led2",
-                   rt_thread_entry_led2,
+    rt_thread_init(&thread_usart,
+                   "usart",
+                   rt_thread_entry_usart,
                    RT_NULL,
-                   &thread_led2_stack[0],
-                   sizeof(thread_led2_stack),11,5);
-    rt_thread_startup(&thread_led2);
+                   &thread_usart_stack[0],
+                   sizeof(thread_usart_stack),11,5);
+    rt_thread_startup(&thread_usart);
 
     return 0;
 }
