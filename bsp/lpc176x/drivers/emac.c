@@ -195,7 +195,7 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 	for (tout = 1000; tout; tout--);
 
 	/* Wait for hardware reset to end. */
-	for (tout = 0; tout < 0x100000; tout++)
+	for (tout = 0; tout < 10000; tout++)
 	{
 		regv = read_PHY (PHY_REG_BMCR);
 		if (!(regv & 0x8000))
@@ -204,46 +204,59 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 			break;
 		}
 	}
-	if (tout >= 0x100000) return -RT_ERROR; /* reset failed */
+	if (tout >= 10000) 
+	{
+		//return -RT_ERROR; /* reset failed */
+		rt_kprintf("\tPHY Read PHY_REG_BMSR,Reset timeout,tout: %d.\n",tout);
+	}
 
 	/* Check if this is a DP83848C PHY. */
 	id1 = read_PHY (PHY_REG_IDR1);
 	id2 = read_PHY (PHY_REG_IDR2);
 
 	if (((id1 << 16) | (id2 & 0xFFF0)) != DP83848C_ID)
-		return -RT_ERROR;
-
-	/* Configure the PHY device */
-	/* Configure the PHY device */
-	switch (lpc17xx_emac_device.phy_mode)
 	{
-	case EMAC_PHY_AUTO:
-		/* Use auto negotiation about the link speed. */
-		write_PHY (PHY_REG_BMCR, PHY_AUTO_NEG);
-		/* Wait to complete Auto_Negotiation. */
-		for (tout = 0; tout < 0x100000; tout++)
-		{
-			regv = read_PHY (PHY_REG_BMSR);
-			if (regv & 0x0020)
-			{
-				/* Auto negotiation Complete. */
-				break;
-			}
-		}
-		break;
-	case EMAC_PHY_10MBIT:
-		/* Connect at 10MBit */
-		write_PHY (PHY_REG_BMCR, PHY_FULLD_10M);
-		break;
-	case EMAC_PHY_100MBIT:
-		/* Connect at 100MBit */
-		write_PHY (PHY_REG_BMCR, PHY_FULLD_100M);
-		break;
+	//	return -RT_ERROR;
+		rt_kprintf("\tPHY Read PHY_REG_IDRx,PHY chip isn't DP83848C,Chip ID is %d.\n",((id1 << 16) | (id2 & 0xFFF0)));
 	}
-	if (tout >= 0x100000) return -RT_ERROR; // auto_neg failed
+	else
+	{
+		/* Configure the PHY device */
+		/* Configure the PHY device */
+		switch (lpc17xx_emac_device.phy_mode)
+		{
+			case EMAC_PHY_AUTO:
+				/* Use auto negotiation about the link speed. */
+				write_PHY (PHY_REG_BMCR, PHY_AUTO_NEG);
+				/* Wait to complete Auto_Negotiation. */
+				for (tout = 0; tout < 200000; tout++)
+				{
+					regv = read_PHY (PHY_REG_BMSR);
+					if (regv & 0x0020)
+					{
+						/* Auto negotiation Complete. */
+						break;
+					}
+				}
+				if(tout >= 200000)
+		                {
+		                    rt_kprintf("\tPHY Read PHY_REG_BMSR,Auto nego timeout,tout: %d.\n",tout);
+		                }
+				break;
+			case EMAC_PHY_10MBIT:
+				/* Connect at 10MBit */
+				write_PHY (PHY_REG_BMCR, PHY_FULLD_10M);
+				break;
+			case EMAC_PHY_100MBIT:
+				/* Connect at 100MBit */
+				write_PHY (PHY_REG_BMCR, PHY_FULLD_100M);
+				break;
+		}
+	}
+	//if (tout >= 0x100000) return -RT_ERROR; // auto_neg failed
 
 	/* Check the link status. */
-	for (tout = 0; tout < 0x10000; tout++)
+	for (tout = 0; tout < 100; tout++)
 	{
 		regv = read_PHY (PHY_REG_STS);
 		if (regv & 0x0001)
@@ -252,8 +265,11 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 			break;
 		}
 	}
-	if (tout >= 0x10000) return -RT_ERROR;
-
+	if (tout >= 100) 
+	{
+		//return -RT_ERROR;
+		rt_kprintf("\tPHY Read PHY_REG_BMSR,Link on timeout,tout: %d.\n",tout);
+	}
 	/* Configure Full/Half Duplex mode. */
 	if (regv & 0x0004)
 	{
