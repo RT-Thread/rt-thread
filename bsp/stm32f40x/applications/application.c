@@ -55,15 +55,10 @@ void rt_init_thread_entry(void* parameter)
 //GUI
 }
 
-float f_var1;
-float f_var2;
-float f_var3;
-float f_var4;
-
 ALIGN(RT_ALIGN_SIZE)
-static char thread_led1_stack[1024];
-struct rt_thread thread_led1;
-static void rt_thread_entry_led1(void* parameter)
+static char thread_led_stack[1024];
+struct rt_thread thread_led;
+static void rt_thread_entry_led(void* parameter)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 
@@ -77,60 +72,52 @@ static void rt_thread_entry_led1(void* parameter)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-    f_var1 = 3.141592653;
-    f_var2 = 123.456;
-    f_var3 = 0.123456789;
-    f_var4 = 1.00001;
-
+    
+    
+    
+    /* Blink LED forever */
     while (1)
     {
+        rt_kprintf("thread_led is running\n");
         /* PD12 to be toggled */
         GPIO_SetBits(GPIOD, GPIO_Pin_12);
 
         /* Insert delay */
         rt_thread_delay(RT_TICK_PER_SECOND/2);
-        f_var3 += f_var4;
-        f_var4 = f_var4 * f_var4;
 
         /* PD13 to be toggled */
         GPIO_SetBits(GPIOD, GPIO_Pin_13);
 
         /* Insert delay */
         rt_thread_delay(RT_TICK_PER_SECOND/2);
-        f_var3 += f_var4;
-        f_var4 = f_var4 * f_var4;
 
         /* PD14 to be toggled */
         GPIO_SetBits(GPIOD, GPIO_Pin_14);
 
         /* Insert delay */
         rt_thread_delay(RT_TICK_PER_SECOND/2);
-        f_var3 += f_var4;
-        f_var4 = f_var4 * f_var4;
 
         /* PD15 to be toggled */
         GPIO_SetBits(GPIOD, GPIO_Pin_15);
 
         /* Insert delay */
         rt_thread_delay(RT_TICK_PER_SECOND*2);
-        f_var3 += f_var4;
-        f_var4 = f_var4 * f_var4;
 
         GPIO_ResetBits(GPIOD, GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
 
         /* Insert delay */
         rt_thread_delay(RT_TICK_PER_SECOND);
-        f_var3 += f_var4;
-        f_var4 = f_var4 * f_var4;
+
     }
 }
 
 
+<<<<<<< HEAD
+=======
 ALIGN(RT_ALIGN_SIZE)
-static char thread_led2_stack[1024];
-struct rt_thread thread_led2;
-static void rt_thread_entry_led2(void* parameter)
+static char thread_usart_stack[1024];
+struct rt_thread thread_usart;
+static void rt_thread_entry_usart(void* parameter)
 {
     float f_var_me;
 
@@ -143,6 +130,7 @@ static void rt_thread_entry_led2(void* parameter)
         rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }
+>>>>>>> 3910d6d5a9aba3572abaa2934a9f424fbeaf1c3c
 
 int rt_application_init()
 {
@@ -161,23 +149,35 @@ int rt_application_init()
     if (init_thread != RT_NULL)
         rt_thread_startup(init_thread);
 
-    //------- init led1 thread
-    rt_thread_init(&thread_led1,
-                   "led1",
-                   rt_thread_entry_led1,
+<<<<<<< HEAD
+    //------- init led thread
+    rt_thread_init(&thread_led,
+                   "led",
+                   rt_thread_entry_led,
                    RT_NULL,
-                   &thread_led1_stack[0],
-                   sizeof(thread_led1_stack),11,5);
-    rt_thread_startup(&thread_led1);
+                   &thread_led_stack[0],
+                   sizeof(thread_led_stack),11,5);
+    rt_thread_startup(&thread_led);
+
+=======
+    //------- init led1 thread
+    rt_thread_init(&thread_led,
+                   "led",
+                   rt_thread_entry_led,
+                   RT_NULL,
+                   &thread_led_stack[0],
+                   sizeof(thread_led_stack),11,5);
+    rt_thread_startup(&thread_led);
 
     //------- init led2 thread
-    rt_thread_init(&thread_led2,
-                   "led2",
-                   rt_thread_entry_led2,
+    rt_thread_init(&thread_usart,
+                   "usart",
+                   rt_thread_entry_usart,
                    RT_NULL,
-                   &thread_led2_stack[0],
-                   sizeof(thread_led2_stack),11,5);
-    rt_thread_startup(&thread_led2);
+                   &thread_usart_stack[0],
+                   sizeof(thread_usart_stack),11,5);
+    rt_thread_startup(&thread_usart);
+>>>>>>> 3910d6d5a9aba3572abaa2934a9f424fbeaf1c3c
 
     return 0;
 }
