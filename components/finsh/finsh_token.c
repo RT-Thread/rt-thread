@@ -521,8 +521,11 @@ static void token_proc_number(struct finsh_token* self)
 		}
 		else
 		{
-			/* Not a valid number */
 			token_prev_char(self);
+
+			/* made as 0 value */
+			self->value.int_value = 0;
+			self->current_token = finsh_token_type_value_int;
 			return;
 		}
 
