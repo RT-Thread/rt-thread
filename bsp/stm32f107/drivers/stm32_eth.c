@@ -24,8 +24,7 @@
 
 /* STM32F107 ETH dirver options */
 #define CHECKSUM_BY_HARDWARE
-#define MII_MODE          /* MII mode for STM3210C-EVAL Board (MB784) (check jumpers setting) */
-//#define RMII_MODE       /* RMII mode for STM3210C-EVAL Board (MB784) (check jumpers setting) */
+#define RMII_MODE               0       /* 0: MII MODE, 1: RMII MODE. */
 
 
 /** @addtogroup STM32_ETH_Driver
@@ -3387,13 +3386,13 @@ static void GPIO_Configuration(void)
     GPIO_PinRemapConfig(GPIO_Remap_ETH, ENABLE);
 
     /* MII/RMII Media interface selection */
-#ifdef MII_MODE /* Mode MII with STM3210C-EVAL  */
+#if (RMII_MODE == 0) /* Mode MII. */
     GPIO_ETH_MediaInterfaceConfig(GPIO_ETH_MediaInterface_MII);
 
     /* Get HSE clock = 25MHz on PA8 pin(MCO) */
     RCC_MCOConfig(RCC_MCO_HSE);
 
-#elif defined RMII_MODE  /* Mode RMII with STM3210C-EVAL */
+#elif (RMII_MODE == 1)  /* Mode RMII. */
     GPIO_ETH_MediaInterfaceConfig(GPIO_ETH_MediaInterface_RMII);
 
     /* Get HSE clock = 25MHz on PA8 pin(MCO) */
@@ -3407,7 +3406,7 @@ static void GPIO_Configuration(void)
 
     /* Get clock PLL3 clock on PA8 pin */
     RCC_MCOConfig(RCC_MCO_PLL3CLK);
-#endif
+#endif /* RMII_MODE */
 
     /* ETHERNET pins configuration */
     /* AF Output Push Pull:
