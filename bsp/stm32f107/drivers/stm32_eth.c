@@ -25,6 +25,8 @@
 /* STM32F107 ETH dirver options */
 #define CHECKSUM_BY_HARDWARE    1       /* 0: disable.  1: use hardware checksum. */
 #define RMII_MODE               0       /* 0: MII MODE, 1: RMII MODE. */
+#define STM32_ETH_IO_REMAP      1       /* 0: default,  1: remap RXD to PDx. */
+#define USE_MCO                 1       /* 0: disable,  1: PA8(MCO) out 25Mhz(MII) or 50Mhz(RMII). */
 
 /** @addtogroup STM32_ETH_Driver
   * @brief ETH driver modules
@@ -3378,24 +3380,175 @@ static void NVIC_Configuration(void)
 
 /*
  * GPIO Configuration for ETH
+    AF Output Push Pull:
+    - ETH_MDC   : PC1
+    - ETH_MDIO  : PA2
+    - ETH_TX_EN : PB11
+    - ETH_TXD0  : PB12
+    - ETH_TXD1  : PB13
+    - ETH_TXD2  : PC2
+    - ETH_TXD3  : PB8
+    - ETH_PPS_OUT / ETH_RMII_PPS_OUT: PB5
+
+    Input (Reset Value):
+    - ETH_MII_TX_CLK: PC3
+    - ETH_MII_RX_CLK / ETH_RMII_REF_CLK: PA1
+    - ETH_MII_CRS: PA0
+    - ETH_MII_COL: PA3
+    - ETH_MII_RX_DV / ETH_RMII_CRS_DV: PA7
+    - ETH_MII_RXD0: PC4
+    - ETH_MII_RXD1: PC5
+    - ETH_MII_RXD2: PB0
+    - ETH_MII_RXD3: PB1
+    - ETH_MII_RX_ER: PB10
+
+    ***************************************
+             For Remapped Ethernet pins
+    *******************************************
+    Input (Reset Value):
+    - ETH_MII_RX_DV / ETH_RMII_CRS_DV: PD8
+    - ETH_MII_RXD0 / ETH_RMII_RXD0: PD9
+    - ETH_MII_RXD1 / ETH_RMII_RXD1: PD10
+    - ETH_MII_RXD2: PD11
+    - ETH_MII_RXD3: PD12
  */
 static void GPIO_Configuration(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
+#if STM32_ETH_IO_REMAP
     /* ETHERNET pins remapp in STM3210C-EVAL board: RX_DV and RxD[3:0] */
     GPIO_PinRemapConfig(GPIO_Remap_ETH, ENABLE);
+#endif /* STM32_ETH_IO_REMAP */
 
     /* MII/RMII Media interface selection */
 #if (RMII_MODE == 0) /* Mode MII. */
     GPIO_ETH_MediaInterfaceConfig(GPIO_ETH_MediaInterface_MII);
-
-    /* Get HSE clock = 25MHz on PA8 pin(MCO) */
-    RCC_MCOConfig(RCC_MCO_HSE);
-
 #elif (RMII_MODE == 1)  /* Mode RMII. */
     GPIO_ETH_MediaInterfaceConfig(GPIO_ETH_MediaInterface_RMII);
+#endif /* RMII_MODE */
 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    /* MDIO */
+    {
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+
+        /* MDC */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+        /* MDIO */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+    } /* MDIO */
+
+    /* TXD */
+    {
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+
+        /* TX_EN */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+        /* TXD0 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+        /* TXD1 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+#if (RMII_MODE == 0)
+        /* TXD2 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+        /* TXD3 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+        /* TX_CLK */
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+#endif /* RMII_MODE */
+    } /* TXD */
+
+    /* RXD */
+    {
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+
+#if (STM32_ETH_IO_REMAP == 0)
+        /* RX_DV/CRS_DV */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        /* RXD0 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+        /* RXD1 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+        GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+#if (RMII_MODE == 0)
+        /* RXD2 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+        /* RXD3 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+#endif /* RMII_MODE */
+#else
+        /* RX_DV/CRS_DV */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+        /* RXD0 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+        /* RXD1 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+#if (RMII_MODE == 0)
+        /* RXD2 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+        /* RXD3 */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
+#endif /* RMII_MODE */
+#endif /* STM32_ETH_IO_REMAP */
+
+#if (RMII_MODE == 0)
+        /* CRS */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        /* COL */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        /* RX_CLK */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        /* RX_ER */
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+#endif /* RMII_MODE */
+    } /* RXD */
+
+#if (USE_MCO == 1)
+#if (RMII_MODE == 0) /* Mode MII. */
+    /* Get HSE clock = 25MHz on PA8 pin(MCO) */
+    RCC_MCOConfig(RCC_MCO_HSE);
+#elif (RMII_MODE == 1)  /* Mode RMII. */
     /* Get HSE clock = 25MHz on PA8 pin(MCO) */
     /* set PLL3 clock output to 50MHz (25MHz /5 *10 =50MHz) */
     RCC_PLL3Config(RCC_PLL3Mul_10);
@@ -3409,81 +3562,13 @@ static void GPIO_Configuration(void)
     RCC_MCOConfig(RCC_MCO_PLL3CLK);
 #endif /* RMII_MODE */
 
-    /* ETHERNET pins configuration */
-    /* AF Output Push Pull:
-    - ETH_MII_MDIO / ETH_RMII_MDIO: PA2
-    - ETH_MII_MDC / ETH_RMII_MDC: PC1
-    - ETH_MII_TXD2: PC2
-    - ETH_MII_TX_EN / ETH_RMII_TX_EN: PB11
-    - ETH_MII_TXD0 / ETH_RMII_TXD0: PB12
-    - ETH_MII_TXD1 / ETH_RMII_TXD1: PB13
-    - ETH_MII_PPS_OUT / ETH_RMII_PPS_OUT: PB5
-    - ETH_MII_TXD3: PB8 */
-
-    /* Configure PA2 as alternate function push-pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    /* Configure PC1, PC2 and PC3 as alternate function push-pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-    /* Configure PB5, PB8, PB11, PB12 and PB13 as alternate function push-pull */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_8 | GPIO_Pin_11 |
-                                  GPIO_Pin_12 | GPIO_Pin_13;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    /**************************************************************/
-    /*               For Remapped Ethernet pins                   */
-    /*************************************************************/
-    /* Input (Reset Value):
-    - ETH_MII_CRS CRS: PA0
-    - ETH_MII_RX_CLK / ETH_RMII_REF_CLK: PA1
-    - ETH_MII_COL: PA3
-    - ETH_MII_RX_DV / ETH_RMII_CRS_DV: PD8
-    - ETH_MII_TX_CLK: PC3
-    - ETH_MII_RXD0 / ETH_RMII_RXD0: PD9
-    - ETH_MII_RXD1 / ETH_RMII_RXD1: PD10
-    - ETH_MII_RXD2: PD11
-    - ETH_MII_RXD3: PD12
-    - ETH_MII_RX_ER: PB10 */
-
-    /* Configure PA0, PA1 and PA3 as input */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    /* Configure PB10 as input */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    /* Configure PC3 as input */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-    /* Configure PD8, PD9, PD10, PD11 and PD12 as input */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOD, &GPIO_InitStructure); /**/
-
     /* MCO pin configuration------------------------------------------------- */
     /* Configure MCO (PA8) as alternate function push-pull */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+#endif /* USE_MCO */
 }
 
 void rt_hw_stm32_eth_init()
