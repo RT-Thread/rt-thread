@@ -23,9 +23,8 @@
 #include "stm32f10x_rcc.h"
 
 /* STM32F107 ETH dirver options */
-#define CHECKSUM_BY_HARDWARE
+#define CHECKSUM_BY_HARDWARE    1       /* 0: disable.  1: use hardware checksum. */
 #define RMII_MODE               0       /* 0: MII MODE, 1: RMII MODE. */
-
 
 /** @addtogroup STM32_ETH_Driver
   * @brief ETH driver modules
@@ -3088,9 +3087,9 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     ETH_InitStructure.ETH_PromiscuousMode = ETH_PromiscuousMode_Disable;
     ETH_InitStructure.ETH_MulticastFramesFilter = ETH_MulticastFramesFilter_Perfect;
     ETH_InitStructure.ETH_UnicastFramesFilter = ETH_UnicastFramesFilter_Perfect;
-#ifdef CHECKSUM_BY_HARDWARE
+#if CHECKSUM_BY_HARDWARE
     ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Enable;
-#endif
+#endif /* CHECKSUM_BY_HARDWARE */
 
     /*------------------------   DMA   -----------------------------------*/
 
@@ -3232,7 +3231,8 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
     DMATxDescToSet->Status |= ETH_DMATxDesc_LS | ETH_DMATxDesc_FS;
     /* Enable TX Completion Interrupt */
     DMATxDescToSet->Status |= ETH_DMATxDesc_IC;
-#ifdef CHECKSUM_BY_HARDWARE
+
+#if CHECKSUM_BY_HARDWARE
     DMATxDescToSet->Status |= ETH_DMATxDesc_ChecksumTCPUDPICMPFull;
     /* clean ICMP checksum STM32F need */
     {
@@ -3249,7 +3249,8 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
             }
         }
     }
-#endif
+#endif /* CHECKSUM_BY_HARDWARE */
+
     /* Set Own bit of the Tx descriptor Status: gives the buffer back to ETHERNET DMA */
     DMATxDescToSet->Status |= ETH_DMATxDesc_OWN;
     /* When Tx Buffer unavailable flag is set: clear it and resume transmission */
