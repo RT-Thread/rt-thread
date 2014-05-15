@@ -2986,7 +2986,32 @@ uint32_t ETH_HandlePTPRxPkt(uint8_t *ppkt, uint32_t *PTPRxTab)
 #define STM32_ETH_TRACE	        rt_kprintf
 #else
 #define STM32_ETH_TRACE(...)
-#endif
+#endif /* ETH_DEBUG */
+
+#if defined(ETH_RX_DUMP) ||  defined(ETH_TX_DUMP)
+static void packet_dump(const char * msg, const struct pbuf* p)
+{
+    rt_uint32_t i;
+    rt_uint8_t *ptr = p->payload;
+
+    STM32_ETH_TRACE("%s %d byte\n", msg, p->tot_len);
+
+    for(i=0; i<p->tot_len; i++)
+    {
+        if( (i%8) == 0 )
+        {
+            STM32_ETH_TRACE("  ");
+        }
+        if( (i%16) == 0 )
+        {
+            STM32_ETH_TRACE("\r\n");
+        }
+        STM32_ETH_TRACE("%02x ",*ptr);
+        ptr++;
+    }
+    STM32_ETH_TRACE("\n\n");
+}
+#endif /* dump */
 
 #define ETH_RXBUFNB        	4
 #define ETH_TXBUFNB        	2
@@ -3205,26 +3230,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
     }
 
 #ifdef ETH_TX_DUMP
-    {
-        rt_uint32_t i;
-        rt_uint8_t *ptr = (rt_uint8_t*)(DMATxDescToSet->Buffer1Addr);
-
-        STM32_ETH_TRACE("tx_dump:");
-        for(i=0; i<p->tot_len; i++)
-        {
-            if( (i%8) == 0 )
-            {
-                STM32_ETH_TRACE("  ");
-            }
-            if( (i%16) == 0 )
-            {
-                STM32_ETH_TRACE("\r\n");
-            }
-            STM32_ETH_TRACE("%02x ",*ptr);
-            ptr++;
-        }
-        STM32_ETH_TRACE("\r\ndump done!\r\n");
-    }
+    packet_dump("TX dump", p);
 #endif
 
     /* Setting the Frame Length: bits[12:0] */
@@ -3316,6 +3322,10 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                     len --;
                 }
             }
+
+#ifdef ETH_RX_DUMP
+            packet_dump("RX dump", p);
+#endif /* ETH_RX_DUMP */
         }
     }
 
