@@ -3283,7 +3283,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
 struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
 {
     struct pbuf* p;
-    rt_uint32_t offset = 0, framelength = 0;
+    rt_uint32_t framelength = 0;
 
     /* init p pointer */
     p = RT_NULL;
@@ -3303,24 +3303,16 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
         p = pbuf_alloc(PBUF_LINK, framelength, PBUF_RAM);
         if (p != RT_NULL)
         {
-            rt_uint8_t* ptr;
+            const char * from;
             struct pbuf* q;
-            rt_size_t len;
+
+            from = (const char *)(DMARxDescToGet->Buffer1Addr);
 
             for (q = p; q != RT_NULL; q= q->next)
             {
-                ptr = q->payload;
-                len = q->len;
-
                 /* Copy the received frame into buffer from memory pointed by the current ETHERNET DMA Rx descriptor */
-                while (len)
-                {
-                    *ptr = (*(__IO uint8_t *)((DMARxDescToGet->Buffer1Addr) + offset));
-
-                    offset ++;
-                    ptr ++;
-                    len --;
-                }
+                memcpy(q->payload, from, q->len);
+                from += q->len;
             }
 
 #ifdef ETH_RX_DUMP
