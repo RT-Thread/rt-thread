@@ -3606,3 +3606,56 @@ void rt_hw_stm32_eth_init()
     eth_device_init(&(stm32_eth_device.parent), "e0");
 }
 
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+static void phy_search(void)
+{
+    int i;
+    int value;
+
+    for(i=0; i<32; i++)
+    {
+        value = ETH_ReadPHYRegister(i, 2);
+        rt_kprintf("addr %02d: %04X\n", i, value);
+    }
+}
+FINSH_FUNCTION_EXPORT(phy_search, search phy use MDIO);
+
+static void phy_dump(int addr)
+{
+    int i;
+    int value;
+
+    rt_kprintf("dump phy addr %d\n", addr);
+
+    for(i=0; i<32; i++)
+    {
+        value = ETH_ReadPHYRegister(addr, i);
+        rt_kprintf("reg %02d: %04X\n", i, value);
+    }
+}
+FINSH_FUNCTION_EXPORT(phy_dump, dump PHY register);
+
+static void phy_write(int addr, int reg, int value)
+{
+    ETH_WritePHYRegister(addr, reg ,value);
+}
+FINSH_FUNCTION_EXPORT(phy_write, write PHY register);
+
+static void emac_dump(int addr)
+{
+    int i;
+    int value;
+    int *p = (int *)ETH;
+
+    rt_kprintf("dump EAMC reg %d\n", addr);
+
+    for(i=0; i<sizeof(ETH_TypeDef)/4; i++)
+    {
+        value = *p++;
+        rt_kprintf("reg %04X: %08X\n", i*4, value);
+    }
+}
+FINSH_FUNCTION_EXPORT(emac_dump, dump EMAC register);
+
+#endif // RT_USING_FINSH
