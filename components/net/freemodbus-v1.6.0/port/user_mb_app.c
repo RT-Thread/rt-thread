@@ -43,14 +43,14 @@ USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 USHORT   usMRegHoldStart                            = M_REG_HOLDING_START;
 USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
 #endif
-//******************************ÊäÈë¼Ä´æÆ÷»Øµ÷º¯Êý**********************************
-//º¯Êý¶¨Òå: eMBErrorCode eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
-//Ãè    Êö£ºÊäÈë¼Ä´æÆ÷Ïà¹ØµÄ¹¦ÄÜ£¨¶Á¡¢Á¬Ðø¶Á£©
-//Èë¿Ú²ÎÊý£ºpucRegBuffer : »Øµ÷º¯Êý½«Modbus¼Ä´æÆ÷µÄµ±Ç°ÖµÐ´ÈëµÄ»º³åÇø
-//			usAddress    : ¼Ä´æÆ÷µÄÆðÊ¼µØÖ·£¬ÊäÈë¼Ä´æÆ÷µÄµØÖ··¶Î§ÊÇ1-65535¡£
-//			usNRegs      : ¼Ä´æÆ÷ÊýÁ¿
-//³ö¿Ú²ÎÊý£ºeMBErrorCode : Õâ¸öº¯Êý½«·µ»ØµÄ´íÎóÂë
-//±¸    ×¢£ºEditor£ºArmink 2010-10-31    Company: BXXJS
+//******************************ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½**********************************
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: eMBErrorCode eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+//ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½pucRegBuffer : ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Modbusï¿½Ä´ï¿½ï¿½ï¿½ï¿½Äµï¿½Ç°ÖµÐ´ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½
+//			usAddress    : ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Äµï¿½Ö·ï¿½ï¿½Î§ï¿½ï¿½1-65535ï¿½ï¿½
+//			usNRegs      : ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½eMBErrorCode : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½    ×¢ï¿½ï¿½Editorï¿½ï¿½Armink 2010-10-31    Company: BXXJS
 //**********************************************************************************
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -60,7 +60,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     USHORT *        pusRegInputBuf;
     UCHAR           REG_INPUT_START;
     UCHAR           REG_INPUT_NREGS;
-    UCHAR           usRegInStart;
+    USHORT           usRegInStart;
 
     //Determine the master or slave
     if (xMBMasterGetCBRunInMasterMode())
@@ -106,17 +106,17 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 
     return eStatus;
 }
-//******************************±£³Ö¼Ä´æÆ÷»Øµ÷º¯Êý**********************************
-//º¯Êý¶¨Òå: eMBErrorCode eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
-//Ãè    Êö£º±£³Ö¼Ä´æÆ÷Ïà¹ØµÄ¹¦ÄÜ£¨¶Á¡¢Á¬Ðø¶Á¡¢Ð´¡¢Á¬ÐøÐ´£©
-//Èë¿Ú²ÎÊý£ºpucRegBuffer : Èç¹ûÐèÒª¸üÐÂÓÃ»§¼Ä´æÆ÷ÊýÖµ£¬Õâ¸ö»º³åÇø±ØÐëÖ¸ÏòÐÂµÄ¼Ä´æÆ÷ÊýÖµ¡£
-//                         Èç¹ûÐ­ÒéÕ»ÏëÖªµÀµ±Ç°µÄÊýÖµ£¬»Øµ÷º¯Êý±ØÐë½«µ±Ç°ÖµÐ´ÈëÕâ¸ö»º³åÇø
-//			usAddress    : ¼Ä´æÆ÷µÄÆðÊ¼µØÖ·¡£
-//			usNRegs      : ¼Ä´æÆ÷ÊýÁ¿
-//          eMode        : Èç¹û¸Ã²ÎÊýÎªeMBRegisterMode::MB_REG_WRITE£¬ÓÃ»§µÄÓ¦ÓÃÊýÖµ½«´ÓpucRegBufferÖÐµÃµ½¸üÐÂ¡£
-//                         Èç¹û¸Ã²ÎÊýÎªeMBRegisterMode::MB_REG_READ£¬ÓÃ»§ÐèÒª½«µ±Ç°µÄÓ¦ÓÃÊý¾Ý´æ´¢ÔÚpucRegBufferÖÐ
-//³ö¿Ú²ÎÊý£ºeMBErrorCode : Õâ¸öº¯Êý½«·µ»ØµÄ´íÎóÂë
-//±¸    ×¢£ºEditor£ºArmink 2010-10-31    Company: BXXJS
+//******************************ï¿½ï¿½ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½**********************************
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: eMBErrorCode eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+//ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½
+//ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½pucRegBuffer : ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ÂµÄ¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
+//                         ï¿½ï¿½ï¿½Ð­ï¿½ï¿½Õ»ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë½«ï¿½ï¿½Ç°ÖµÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//			usAddress    : ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ö·ï¿½ï¿½
+//			usNRegs      : ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//          eMode        : ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ÎªeMBRegisterMode::MB_REG_WRITEï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½pucRegBufferï¿½ÐµÃµï¿½ï¿½ï¿½ï¿½Â¡ï¿½
+//                         ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ÎªeMBRegisterMode::MB_REG_READï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½pucRegBufferï¿½ï¿½
+//ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½eMBErrorCode : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½    ×¢ï¿½ï¿½Editorï¿½ï¿½Armink 2010-10-31    Company: BXXJS
 //**********************************************************************************
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
@@ -126,7 +126,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
     USHORT *        pusRegHoldingBuf;
     UCHAR           REG_HOLDING_START;
     UCHAR           REG_HOLDING_NREGS;
-    UCHAR           usRegHoldStart;
+    USHORT           usRegHoldStart;
 
     //Determine the master or slave
     if (xMBMasterGetCBRunInMasterMode())
@@ -182,17 +182,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
     }
     return eStatus;
 }
-//****************************ÏßÈ¦×´Ì¬¼Ä´æÆ÷»Øµ÷º¯Êý********************************
-//º¯Êý¶¨Òå: eMBErrorCode eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
-//Ãè    Êö£ºÏßÈ¦×´Ì¬¼Ä´æÆ÷Ïà¹ØµÄ¹¦ÄÜ£¨¶Á¡¢Á¬Ðø¶Á¡¢Ð´¡¢Á¬ÐøÐ´£©
-//Èë¿Ú²ÎÊý£ºpucRegBuffer : Î»×é³ÉÒ»¸ö×Ö½Ú£¬ÆðÊ¼¼Ä´æÆ÷¶ÔÓ¦µÄÎ»´¦ÓÚ¸Ã×Ö½ÚpucRegBufferµÄ×îµÍÎ»LSB¡£
-//                         Èç¹û»Øµ÷º¯ÊýÒªÐ´Õâ¸ö»º³åÇø£¬Ã»ÓÐÓÃµ½µÄÏßÈ¦£¨ÀýÈç²»ÊÇ8¸öÒ»×éµÄÏßÈ¦×´Ì¬£©¶ÔÓ¦µÄÎ»µÄÊýÖµ±ØÐëÉèÖÃÎ»0¡£
-//			usAddress    : µÚÒ»¸öÏßÈ¦µØÖ·¡£
-//			usNCoils     : ÇëÇóµÄÏßÈ¦¸öÊý
-//          eMode        £»Èç¹û¸Ã²ÎÊýÎªeMBRegisterMode::MB_REG_WRITE£¬ÓÃ»§µÄÓ¦ÓÃÊýÖµ½«´ÓpucRegBufferÖÐµÃµ½¸üÐÂ¡£
-//                         Èç¹û¸Ã²ÎÊýÎªeMBRegisterMode::MB_REG_READ£¬ÓÃ»§ÐèÒª½«µ±Ç°µÄÓ¦ÓÃÊý¾Ý´æ´¢ÔÚpucRegBufferÖÐ
-//³ö¿Ú²ÎÊý£ºeMBErrorCode : Õâ¸öº¯Êý½«·µ»ØµÄ´íÎóÂë
-//±¸    ×¢£ºEditor£ºArmink 2010-10-31    Company: BXXJS
+//****************************ï¿½ï¿½È¦×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½********************************
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: eMBErrorCode eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+//ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¦×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½
+//ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½pucRegBuffer : Î»ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½Ú£ï¿½ï¿½ï¿½Ê¼ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Ö½ï¿½pucRegBufferï¿½ï¿½ï¿½ï¿½ï¿½Î»LSBï¿½ï¿½
+//                         ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ÒªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½ï¿½ï¿½ï¿½ç²»ï¿½ï¿½8ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½È¦×´Ì¬ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»0ï¿½ï¿½
+//			usAddress    : ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½Ö·ï¿½ï¿½
+//			usNCoils     : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½ï¿½ï¿½
+//          eMode        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ÎªeMBRegisterMode::MB_REG_WRITEï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½pucRegBufferï¿½ÐµÃµï¿½ï¿½ï¿½ï¿½Â¡ï¿½
+//                         ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ÎªeMBRegisterMode::MB_REG_READï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½pucRegBufferï¿½ï¿½
+//ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½eMBErrorCode : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½    ×¢ï¿½ï¿½Editorï¿½ï¿½Armink 2010-10-31    Company: BXXJS
 //**********************************************************************************
 eMBErrorCode
 eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
@@ -200,10 +200,10 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegis
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex , iRegBitIndex , iNReg;
 	UCHAR *         pucCoilBuf;
-    UCHAR           COIL_START;
+    USHORT           COIL_START;
     UCHAR           COIL_NCOILS;
-    UCHAR           usCoilStart;
-    iNReg =  usNCoils / 8 + 1;        //Õ¼ÓÃ¼Ä´æÆ÷ÊýÁ¿
+    USHORT           usCoilStart;
+    iNReg =  usNCoils / 8 + 1;        //Õ¼ï¿½Ã¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
     //Determine the master or slave
@@ -227,8 +227,8 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegis
     if( ( usAddress >= COIL_START ) &&
         ( usAddress + usNCoils <= COIL_START + COIL_NCOILS ) )
     {
-        iRegIndex    = ( int )( usAddress - usCoilStart ) / 8 ;    //Ã¿¸ö¼Ä´æÆ÷´æ8¸ö
-		iRegBitIndex = ( int )( usAddress - usCoilStart ) % 8 ;	   //Ïà¶ÔÓÚ¼Ä´æÆ÷ÄÚ²¿µÄÎ»µØÖ·
+        iRegIndex    = ( int )( usAddress - usCoilStart ) / 8 ;    //Ã¿ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½
+		iRegBitIndex = ( int )( usAddress - usCoilStart ) % 8 ;	   //ï¿½ï¿½ï¿½ï¿½Ú¼Ä´ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ö·
         switch ( eMode )
         {
             /* Pass current coil values to the protocol stack. */
@@ -239,21 +239,21 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegis
                 iNReg --;
             }
 			pucRegBuffer --;
-			usNCoils = usNCoils % 8;                        //ÓàÏÂµÄÏßÈ¦Êý	
-			*pucRegBuffer = *pucRegBuffer <<(8 - usNCoils); //¸ßÎ»²¹Áã
+			usNCoils = usNCoils % 8;                        //ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½È¦ï¿½ï¿½	
+			*pucRegBuffer = *pucRegBuffer <<(8 - usNCoils); //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 			*pucRegBuffer = *pucRegBuffer >>(8 - usNCoils);
             break;
 
             /* Update current coil values with new values from the
              * protocol stack. */
         case MB_REG_WRITE:
-            while(iNReg > 1)									 //×îºóÃæÓàÏÂÀ´µÄÊýµ¥¶ÀËã
+            while(iNReg > 1)									 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             {
 				xMBUtilSetBits(&pucCoilBuf[iRegIndex++] , iRegBitIndex  , 8 , *pucRegBuffer++);
                 iNReg--;
             }
-			usNCoils = usNCoils % 8;                            //ÓàÏÂµÄÏßÈ¦Êý
-			if (usNCoils != 0)                                  //xMBUtilSetBits·½·¨ ÔÚ²Ù×÷Î»ÊýÁ¿Îª0Ê±´æÔÚbug
+			usNCoils = usNCoils % 8;                            //ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½È¦ï¿½ï¿½
+			if (usNCoils != 0)                                  //xMBUtilSetBitsï¿½ï¿½ï¿½ï¿½ ï¿½Ú²ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Îª0Ê±ï¿½ï¿½ï¿½ï¿½bug
 			{
 				xMBUtilSetBits(&pucCoilBuf[iRegIndex++], iRegBitIndex, usNCoils,
 						*pucRegBuffer++);
@@ -267,15 +267,15 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegis
     }
     return eStatus;
 }
-//****************************ÀëÉ¢ÊäÈë¼Ä´æÆ÷»Øµ÷º¯Êý********************************
-//º¯Êý¶¨Òå: eMBErrorCode eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
-//Ãè    Êö£ºÀëÉ¢ÊäÈë¼Ä´æÆ÷Ïà¹ØµÄ¹¦ÄÜ£¨¶Á¡¢Á¬Ðø¶Á£©
-//Èë¿Ú²ÎÊý£ºpucRegBuffer : ÓÃµ±Ç°µÄÏßÈ¦Êý¾Ý¸üÐÂÕâ¸ö¼Ä´æÆ÷£¬ÆðÊ¼¼Ä´æÆ÷¶ÔÓ¦µÄÎ»´¦ÓÚ¸Ã×Ö½ÚpucRegBufferµÄ×îµÍÎ»LSB¡£
-//                         Èç¹û»Øµ÷º¯ÊýÒªÐ´Õâ¸ö»º³åÇø£¬Ã»ÓÐÓÃµ½µÄÏßÈ¦£¨ÀýÈç²»ÊÇ8¸öÒ»×éµÄÏßÈ¦×´Ì¬£©¶ÔÓ¦µÄÎ»µÄÊýÖµ±ØÐëÉèÖÃÎª0¡£
-//			usAddress    : ÀëÉ¢ÊäÈëµÄÆðÊ¼µØÖ·
-//			usNDiscrete  : ÀëÉ¢ÊäÈëµãÊýÁ¿
-//³ö¿Ú²ÎÊý£ºeMBErrorCode : Õâ¸öº¯Êý½«·µ»ØµÄ´íÎóÂë
-//±¸    ×¢£ºEditor£ºArmink 2010-10-31    Company: BXXJS
+//****************************ï¿½ï¿½É¢ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½********************************
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: eMBErrorCode eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+//ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¢ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½pucRegBuffer : ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Ö½ï¿½pucRegBufferï¿½ï¿½ï¿½ï¿½ï¿½Î»LSBï¿½ï¿½
+//                         ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ÒªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½ï¿½ï¿½ï¿½ç²»ï¿½ï¿½8ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½È¦×´Ì¬ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½
+//			usAddress    : ï¿½ï¿½É¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ö·
+//			usNDiscrete  : ï¿½ï¿½É¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½eMBErrorCode : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½    ×¢ï¿½ï¿½Editorï¿½ï¿½Armink 2010-10-31    Company: BXXJS
 //**********************************************************************************
 eMBErrorCode
 eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
@@ -283,10 +283,10 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     eMBErrorCode    eStatus = MB_ENOERR;
 	int             iRegIndex , iRegBitIndex , iNReg;
 	UCHAR *         pucDiscreteInputBuf;
-    UCHAR           DISCRETE_INPUT_START;
+    USHORT           DISCRETE_INPUT_START;
     UCHAR           DISCRETE_INPUT_NDISCRETES;
-    UCHAR           usDiscreteInputStart;
-	iNReg =  usNDiscrete / 8 + 1;        //Õ¼ÓÃ¼Ä´æÆ÷ÊýÁ¿
+    USHORT           usDiscreteInputStart;
+	iNReg =  usNDiscrete / 8 + 1;        //Õ¼ï¿½Ã¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     //Determine the master or slave
     if (xMBMasterGetCBRunInMasterMode())
@@ -307,21 +307,21 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     if( ( usAddress >= DISCRETE_INPUT_START )
         && ( usAddress + usNDiscrete <= DISCRETE_INPUT_START + DISCRETE_INPUT_NDISCRETES ) )
     {
-        iRegIndex    = ( int )( usAddress - usDiscreteInputStart ) / 8 ;    //Ã¿¸ö¼Ä´æÆ÷´æ8¸ö
-		iRegBitIndex = ( int )( usAddress - usDiscreteInputStart ) % 8 ;	   //Ïà¶ÔÓÚ¼Ä´æÆ÷ÄÚ²¿µÄÎ»µØÖ·
+        iRegIndex    = ( int )( usAddress - usDiscreteInputStart ) / 8 ;    //Ã¿ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½
+		iRegBitIndex = ( int )( usAddress - usDiscreteInputStart ) % 8 ;	   //ï¿½ï¿½ï¿½ï¿½Ú¼Ä´ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ö·
 
 	    //Determine the master or slave
 	    if (xMBMasterGetCBRunInMasterMode())
 	    {
 			/* Update current coil values with new values from the
 			 * protocol stack. */
-			while(iNReg > 1)									 //×îºóÃæÓàÏÂÀ´µÄÊýµ¥¶ÀËã
+			while(iNReg > 1)									 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				xMBUtilSetBits(&pucDiscreteInputBuf[iRegIndex++] , iRegBitIndex  , 8 , *pucRegBuffer++);
 				iNReg--;
 			}
-			usNDiscrete = usNDiscrete % 8;                        //ÓàÏÂµÄÏßÈ¦Êý
-			if (usNDiscrete != 0)                                 //xMBUtilSetBits·½·¨ ÔÚ²Ù×÷Î»ÊýÁ¿Îª0Ê±´æÔÚbug
+			usNDiscrete = usNDiscrete % 8;                        //ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½È¦ï¿½ï¿½
+			if (usNDiscrete != 0)                                 //xMBUtilSetBitsï¿½ï¿½ï¿½ï¿½ ï¿½Ú²ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Îª0Ê±ï¿½ï¿½ï¿½ï¿½bug
 			{
 				xMBUtilSetBits(&pucDiscreteInputBuf[iRegIndex++], iRegBitIndex,
 						usNDiscrete, *pucRegBuffer++);
@@ -335,8 +335,8 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 				iNReg --;
 			}
 			pucRegBuffer --;
-			usNDiscrete = usNDiscrete % 8;                     //ÓàÏÂµÄÏßÈ¦Êý
-			*pucRegBuffer = *pucRegBuffer <<(8 - usNDiscrete); //¸ßÎ»²¹Áã
+			usNDiscrete = usNDiscrete % 8;                     //ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½È¦ï¿½ï¿½
+			*pucRegBuffer = *pucRegBuffer <<(8 - usNDiscrete); //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 			*pucRegBuffer = *pucRegBuffer >>(8 - usNDiscrete);
 	    }
     }
