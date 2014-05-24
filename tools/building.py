@@ -12,24 +12,43 @@ Env = None
 
 class Win32Spawn:
     def spawn(self, sh, escape, cmd, args, env):
+        # deal with the cmd build-in commands which cannot be used in
+        # subprocess.Popen
+        if cmd == 'del':
+            for f in args[1:]:
+                try:
+                    os.remove(f)
+                except Exception as e:
+                    print 'Error removing file: %s' % e
+                    return -1
+            return 0
+
         import subprocess
 
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
         startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-        proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False)
-        data, err = proc.communicate()
-        rv = proc.wait()
-        if data:
-            print data
-        if err:
-            print err
+        # Make sure the env is constructed by strings
+        _e = {k: str(v) for k, v in env.items()}
 
-        if rv:
-            return rv
-        return 0
+        # Windows(tm) CreateProcess does not use the env passed to it to find
+        # the executables. So we have to modify our own PATH to make Popen
+        # work.
+        old_path = os.environ['PATH']
+        os.environ['PATH'] = _e['PATH']
+
+        try:
+            proc = subprocess.Popen(cmdline, env=_e,
+                    startupinfo=startupinfo, shell=False)
+        except Exception as e:
+            print 'Error in Popen: %s' % e
+            return -1
+        finally:
+            os.environ['PATH'] = old_path
+
+        return proc.wait()
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
     import SCons.cpp
@@ -59,11 +78,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBDIRPREFIX'] = '--userlibpath '
 
     # patch for win32 spawn
-    if env['PLATFORM'] == 'win32' and rtconfig.PLATFORM == 'gcc':
+    if env['PLATFORM'] == 'win32':
         win32_spawn = Win32Spawn()
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
-    
+
     if env['PLATFORM'] == 'win32':
         os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
     else:
