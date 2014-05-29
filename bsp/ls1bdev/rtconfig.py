@@ -13,14 +13,9 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
 	EXEC_PATH   = 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_MIPS_ELF/bin'
-elif CROSS_TOOL == 'keil':
+else:
     print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
-    exit(0)
-elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
+    print 'Not support %s yet!' % CROSS_TOOL
     print '================================================='
     exit(0)
 
