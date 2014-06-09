@@ -43,8 +43,9 @@ class Win32Spawn:
             proc = subprocess.Popen(cmdline, env=_e,
                     startupinfo=startupinfo, shell=False)
         except Exception as e:
-            print 'Error in Popen: %s' % e
-            return -1
+            print 'Error in calling:\n%s' % cmdline
+            print 'Exception: %s: %s' % (e, os.strerror(e.errno))
+            return e.errno
         finally:
             os.environ['PATH'] = old_path
 
