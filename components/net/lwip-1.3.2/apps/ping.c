@@ -166,6 +166,8 @@ rt_err_t ping(char* target, rt_uint32_t time, rt_size_t size)
 
 		rt_thread_delay(PING_DELAY); /* take a delay */
 	}
+	
+	lwip_close(s);
 
 	return RT_EOK;
 }
