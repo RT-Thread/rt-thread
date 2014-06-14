@@ -64,12 +64,12 @@ static void ping_prepare_echo( struct icmp_echo_hdr *iecho, u16_t len)
 }
 
 /* Ping using the socket ip */
-static err_t ping_send(int s, struct ip_addr *addr)
+static err_t ping_send(int s, struct ip_addr *addr, int size)
 {
 	int err;
 	struct icmp_echo_hdr *iecho;
 	struct sockaddr_in to;
-	size_t ping_size = sizeof(struct icmp_echo_hdr) + PING_DATA_SIZE;
+	size_t ping_size = sizeof(struct icmp_echo_hdr) + size;
 	LWIP_ASSERT("ping_size is too big", ping_size <= 0xffff);
 
 	iecho = rt_malloc(ping_size);
@@ -137,6 +137,9 @@ rt_err_t ping(char* target, rt_uint32_t time, rt_size_t size)
 	} *addr;
 
     send_time = 0;
+	
+	if(size == 0)
+		size = PING_DATA_SIZE;
 
 	if (inet_aton(target, (struct in_addr*)&ping_target) == 0) return -RT_ERROR;
 	addr = (struct _ip_addr*)&ping_target;
@@ -151,7 +154,7 @@ rt_err_t ping(char* target, rt_uint32_t time, rt_size_t size)
 
 	while (1)
 	{
-		if (ping_send(s, &ping_target) == ERR_OK)
+		if (ping_send(s, &ping_target, size) == ERR_OK)
 		{
 			rt_kprintf("ping: send %d.%d.%d.%d\n", addr->addr0, addr->addr1, addr->addr2, addr->addr3);
 			ping_recv(s);
