@@ -239,11 +239,6 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
         return -RT_EBUSY;
     }
 
-    dev->ref_count++;
-    /* don't let bad things happen silently. If you are bitten by this assert,
-     * please set the ref_count to a bigger type. */
-    RT_ASSERT(dev->ref_count != 0);
-
     /* call device open interface */
     if (dev->open != RT_NULL)
     {
@@ -252,7 +247,14 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 
     /* set open flag */
     if (result == RT_EOK || result == -RT_ENOSYS)
+    {
         dev->open_flag = oflag | RT_DEVICE_OFLAG_OPEN;
+
+        dev->ref_count++;
+        /* don't let bad things happen silently. If you are bitten by this assert,
+         * please set the ref_count to a bigger type. */
+        RT_ASSERT(dev->ref_count != 0);
+    }
 
     return result;
 }
