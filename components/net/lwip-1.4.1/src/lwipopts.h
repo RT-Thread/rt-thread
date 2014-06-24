@@ -117,6 +117,8 @@
 
 /* the number of simultaneously queued TCP */
 #ifdef RT_LWIP_TCP_SEG_NUM
+#define MEMP_NUM_TCP_SEG            RT_LWIP_TCP_SEG_NUM
+#else
 #define MEMP_NUM_TCP_SEG            TCP_SND_QUEUELEN
 #endif
 
@@ -176,7 +178,7 @@
 
 /* TCP sender buffer space (bytes). */
 #ifdef RT_LWIP_TCP_SND_BUF
-#define TCP_SND_BUF					RT_LWIP_TCP_SND_BUF
+#define TCP_SND_BUF					   RT_LWIP_TCP_SND_BUF
 #else
 #define TCP_SND_BUF                 (TCP_MSS * 2)
 #endif
