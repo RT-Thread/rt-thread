@@ -88,8 +88,50 @@ int cmd_mv(int argc, char** argv)
     }
     else
     {
+		int fd;
+		char *dest = RT_NULL;
+
         rt_kprintf("%s => %s\n", argv[1], argv[2]);
-		rename(argv[1], argv[2]);
+
+		fd = open(argv[2], O_DIRECTORY, 0);
+		if (fd >= 0)
+		{
+			char *src;
+			
+			close(fd);
+
+			/* it's a directory */			
+			dest = (char*)rt_malloc(DFS_PATH_MAX);
+			if (dest == RT_NULL)
+			{
+				rt_kprintf("out of memory\n");
+				return -RT_ENOMEM;
+			}
+
+			src = argv[1] + rt_strlen(argv[1]);
+			while (src != argv[1]) 
+			{
+				if (*src == '/') break;
+				src --;
+			}
+
+			rt_snprintf(dest, DFS_PATH_MAX - 1, "%s/%s", argv[2], src);
+		}
+		else
+		{
+			fd = open(argv[2], O_RDONLY, 0);
+			if (fd >= 0)
+			{
+				close(fd);
+				
+				unlink(argv[2]);
+			}
+
+			dest = argv[2];
+		}
+
+		rename(argv[1], dest);
+		if (dest != RT_NULL && dest != argv[2]) rt_free(dest);
     }
 
     return 0;
