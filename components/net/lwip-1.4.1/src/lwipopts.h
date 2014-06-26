@@ -38,8 +38,9 @@
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
-/* Enable SO_RCVTIMEO processing.   */
+/* Enable SO_RCVTIMEO/LWIP_SO_SNDTIMEO processing.   */
 #define LWIP_SO_RCVTIMEO            1
+#define LWIP_SO_SNDTIMEO            1
 
 /* #define RT_LWIP_DEBUG */
 
@@ -232,10 +233,15 @@
 
 /* IP reassembly and segmentation.These are orthogonal even
  * if they both deal with IP fragments */
-#define IP_REASSEMBLY               0
+#ifdef RT_LWIP_REASSEMBLY_FRAG
+#define IP_REASSEMBLY               1
+#define IP_FRAG                     1
 #define IP_REASS_MAX_PBUFS          10
 #define MEMP_NUM_REASSDATA          10
+#else
+#define IP_REASSEMBLY               0
 #define IP_FRAG                     0
+#endif
 
 /* ---------- ICMP options ---------- */
 #define ICMP_TTL                    255
