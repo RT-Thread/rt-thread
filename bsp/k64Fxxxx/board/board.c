@@ -22,7 +22,7 @@
 
 
 /**
- * @addtogroup K60
+ * @addtogroup K64
  */
 
 /*@{*/
