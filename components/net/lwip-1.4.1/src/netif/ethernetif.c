@@ -67,6 +67,7 @@
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
+#ifndef LWIP_NO_TX_THREAD
 /**
  * Tx message structure for Ethernet interface
  */
@@ -85,7 +86,9 @@ static char eth_tx_thread_stack[512];
 static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
+#endif
 
+#ifndef LWIP_NO_RX_THREAD
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
@@ -97,12 +100,15 @@ static char eth_rx_thread_stack[1024];
 static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
+#endif
 
 static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
+#ifndef LWIP_NO_TX_THREAD
     struct eth_tx_msg msg;
     struct eth_device* enetif;
 
+	RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
     /* send a message to eth tx thread */
@@ -113,7 +119,17 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
         /* waiting for ack */
         rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
     }
+#else
+    struct eth_device* enetif;
 
+	RT_ASSERT(netif != RT_NULL);
+    enetif = (struct eth_device*)netif->state;
+
+	if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
+	{
+		return ERR_IF;
+	}
+#endif
     return ERR_OK;
 }
 
@@ -241,6 +257,7 @@ rt_err_t eth_device_init(struct eth_device * dev, char *name)
     return eth_device_init_with_flag(dev, name, flags);
 }
 
+#ifndef LWIP_NO_RX_THREAD
 rt_err_t eth_device_ready(struct eth_device* dev)
 {
     if (dev->netif)
@@ -267,7 +284,20 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
     /* post message to ethernet thread */
     return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
 }
+#else
+/* NOTE: please not use it in interrupt when no RxThread exist */
+rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
+{
+	if (up == RT_TRUE)
+		netifapi_netif_set_link_up(dev->netif);
+	else
+		netifapi_netif_set_link_down(dev->netif);
 
+	return RT_EOK;
+}
+#endif
+
+#ifndef LWIP_NO_TX_THREAD
 /* Ethernet Tx Thread */
 static void eth_tx_thread_entry(void* parameter)
 {
@@ -297,7 +327,9 @@ static void eth_tx_thread_entry(void* parameter)
         }
     }
 }
+#endif
 
+#ifndef LWIP_NO_RX_THREAD
 /* Ethernet Rx Thread */
 static void eth_rx_thread_entry(void* parameter)
 {
@@ -349,13 +381,15 @@ static void eth_rx_thread_entry(void* parameter)
         }
     }
 }
+#endif
 
 int eth_system_device_init(void)
 {
     rt_err_t result = RT_EOK;
 
-    /* initialize Rx thread.
-     * initialize mailbox and create Ethernet Rx thread */
+    /* initialize Rx thread. */
+#ifndef LWIP_NO_RX_THREAD
+    /* initialize mailbox and create Ethernet Rx thread */
     result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
                         &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
                         RT_IPC_FLAG_FIFO);
@@ -367,8 +401,10 @@ int eth_system_device_init(void)
     RT_ASSERT(result == RT_EOK);
     result = rt_thread_startup(&eth_rx_thread);
     RT_ASSERT(result == RT_EOK);
+#endif
 
     /* initialize Tx thread */
+#ifndef LWIP_NO_TX_THREAD
     /* initialize mailbox and create Ethernet Tx thread */
     result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
                         &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
@@ -382,8 +418,9 @@ int eth_system_device_init(void)
 
     result = rt_thread_startup(&eth_tx_thread);
     RT_ASSERT(result == RT_EOK);
-	
-	return 0;
+#endif
+
+	return (int)result;
 }
 INIT_DEVICE_EXPORT(eth_system_device_init);
 

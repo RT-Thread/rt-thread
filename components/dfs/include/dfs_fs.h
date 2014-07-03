@@ -94,6 +94,8 @@ struct dfs_mount_tbl
 
 int dfs_register(const struct dfs_filesystem_operation *ops);
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path);
+const char* dfs_filesystem_get_mounted_path(struct rt_device* device);
+
 rt_err_t dfs_filesystem_get_partition(struct dfs_partition *part,
                                       rt_uint8_t           *buf,
                                       rt_uint32_t           pindex);

@@ -1081,19 +1081,7 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif
 
-#if defined(__GNUC__) || defined(__ADSPBLACKFIN__)
-void rt_hw_console_output(const char *str) __attribute__((weak));
-void rt_hw_console_output(const char *str)
-#elif defined(__CC_ARM)
-__weak void rt_hw_console_output(const char *str)
-#elif defined(__IAR_SYSTEMS_ICC__)
-    #if __VER__ > 540
-    __weak
-    #endif
-void rt_hw_console_output(const char *str)
-#else
-void rt_hw_console_output(const char *str)
-#endif
+WEAK void rt_hw_console_output(const char *str)
 {
     /* empty console output */
 }
