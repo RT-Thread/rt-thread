@@ -77,6 +77,19 @@ SECTIONS
         *(.dtors)
 
         *(.rodata*)
+/* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+        _etext = .;
 
         KEEP(*(.eh_frame*))
     } > FLASH
@@ -127,7 +140,7 @@ SECTIONS
         __data_end__ = .;
 
     } > RAM
-
+    __bss_start = .;
     .bss :
     {
         __bss_start__ = .;
@@ -135,7 +148,7 @@ SECTIONS
         *(COMMON)
         __bss_end__ = .;
     } > RAM
-
+    __bss_end = .;
     .heap :
     {
         __end__ = .;

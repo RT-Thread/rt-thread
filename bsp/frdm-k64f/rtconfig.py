@@ -12,10 +12,10 @@ if os.getenv('RTT_CC'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
+	EXEC_PATH 	= r'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
+	EXEC_PATH 	= r'C:/Keil'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'
@@ -40,9 +40,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall '
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -Wl,--gc-sections,-Map=rtthread-k64f.map,-cref,-u,Reset_Handler -T K64FN1M0xxx12.ld'
+    CFLAGS = DEVICE + ' -g -Wall -D__ASSEMBLY__ -D__FPU_USED'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + '  -nostartfiles -Wl,--gc-sections,-Map=rtthread-k64f.map,-cref,-u,Reset_Handler -T K64FN1M0xxx12.ld'
 
     CPATH = ''
     LPATH = ''
