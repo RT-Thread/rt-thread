@@ -19,6 +19,8 @@
 #define RT_DEBUG
 #define RT_THREAD_DEBUG
 
+#define RT_USING_MODULE
+
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
@@ -81,7 +83,8 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem */
-/* #define RT_USING_DFS */
+
+#define RT_USING_DFS 
 
 #define RT_USING_DFS_ELMFAT
 /* Reentrancy (thread safe) of the FatFs module.  */
@@ -92,7 +95,7 @@
 /* #define RT_DFS_ELM_CODE_PAGE			936 */
 #define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+#define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 
 /* the max number of mounted filesystem */
 #define DFS_FILESYSTEMS_MAX			2
