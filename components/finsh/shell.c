@@ -530,6 +530,12 @@ void finsh_thread_entry(void* parameter)
             ch = 0;
             shell->line_position ++;
             shell->line_curpos++;
+			if (shell->line_position >= 80) 
+			{
+				/* clear command line */
+				shell->line_position = 0;
+				shell->line_curpos = 0;
+			}
         } /* end of device read */
     }
 }
