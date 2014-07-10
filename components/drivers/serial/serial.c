@@ -162,9 +162,6 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
             rt_data_queue_init(&(serial->tx_dq), RT_SERIAL_TX_DATAQUEUE_SIZE,
                                RT_SERIAL_TX_DATAQUEUE_LWM, RT_NULL);
         }
-
-        /* set activated */
-        dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
     }
 
     return result;

@@ -229,7 +229,9 @@ disable_watchdog:
 
     ldr   r0, =SystemInit
     blx   r0
-    ldr   r0, =_start
+    ldr   r0, =init_data_bss
+    blx   r0    
+    ldr   r0, =main
     bx    r0
     .pool
     .size Reset_Handler, . - Reset_Handler
