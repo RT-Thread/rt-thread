@@ -29,6 +29,11 @@
 
 #include <string.h>
 
+/*
+ * Initialize the network interface device
+ *
+ * @return the operation status, ERR_OK on OK, ERR_IF on error
+ */
 static err_t netif_device_init(struct netif *netif)
 {
     struct eth_device *ethif;
@@ -53,7 +58,9 @@ static err_t netif_device_init(struct netif *netif)
 
     return ERR_IF;
 }
-
+/*
+ * Initialize the ethernetif layer and set network interface device up
+ */
 static void tcpip_init_done_callback(void *arg)
 {
     rt_device_t device;
@@ -182,6 +189,11 @@ void lwip_sys_init(void)
     lwip_system_init();
 }
 
+/*
+ * Create a new semaphore
+ *
+ * @return the operation status, ERR_OK on OK; others on error
+ */
 err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 {
     static unsigned short counter = 0;
@@ -204,17 +216,31 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
     }
 }
 
+/*
+ * Deallocate a semaphore
+ */
 void sys_sem_free(sys_sem_t *sem)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
     rt_sem_delete(*sem);
 }
 
+/*
+ * Signal a semaphore
+ */
 void sys_sem_signal(sys_sem_t *sem)
 {
     rt_sem_release(*sem);
 }
 
+/*
+ * Block the thread while waiting for the semaphore to be signaled
+ *
+ * @return If the timeout argument is non-zero, it will return the number of milliseconds
+ *         spent waiting for the semaphore to be signaled; If the semaphore isn't signaled
+ *         within the specified time, it will return SYS_ARCH_TIMEOUT; If the thread doesn't 
+ *         wait for the semaphore, it will return zero
+ */
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 {
     rt_err_t ret;
@@ -354,6 +380,11 @@ void sys_mutex_set_invalid(sys_mutex_t *mutex)
 
 /* ====================== Mailbox ====================== */
 
+/*
+ * Create an empty mailbox for maximum "size" elements
+ *
+ * @return the operation status, ERR_OK on OK; others on error
+ */
 err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 {
     static unsigned short counter = 0;
@@ -376,6 +407,9 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
     return ERR_MEM;
 }
 
+/*
+ * Deallocate a mailbox
+ */
 void sys_mbox_free(sys_mbox_t *mbox)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -399,6 +433,11 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
     return;
 }
 
+/*
+ * Try to post the "msg" to the mailbox
+ *
+ * @return return ERR_OK if the "msg" is posted, ERR_MEM if the mailbox is full
+ */
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
     if (rt_mb_send(*mbox, (rt_uint32_t)msg) == RT_EOK)
@@ -502,6 +541,11 @@ void sys_mbox_set_invalid(sys_mbox_t *mbox)
 
 /* ====================== System ====================== */
 
+/*
+ * Start a new thread named "name" with priority "prio" that will begin
+ * its execution in the function "thread()". The "arg" argument will be
+ * passed as an argument to the thread() function
+ */
 sys_thread_t sys_thread_new(const char    *name,
                             lwip_thread_fn thread,
                             void          *arg,
