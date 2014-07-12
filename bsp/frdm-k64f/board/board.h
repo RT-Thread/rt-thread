@@ -16,7 +16,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <MK64F12.H>
+#include <MK64F12.h>
 
 
 /* board configuration */

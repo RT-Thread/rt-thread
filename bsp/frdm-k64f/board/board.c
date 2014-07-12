@@ -15,7 +15,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <MK64F12.H>
 #include "board.h"
 
 #include "drv_uart.h"
