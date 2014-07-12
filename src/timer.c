@@ -28,6 +28,8 @@
  * 2010-05-12     Bernard      fix the timer check bug.
  * 2010-11-02     Charlie      re-implement tick overflow issue
  * 2012-12-15     Bernard      fix the next timeout issue in soft timer
+ * 2014-07-12     Bernard      does not lock scheduler when invoking soft-timer 
+ *                             timeout function.
  */
 
 #include <rtthread.h>
@@ -140,6 +142,7 @@ static int rt_timer_count_height(struct rt_timer *timer)
     return cnt;
 }
 
+#if RT_DEBUG_TIMER
 void rt_timer_dump(rt_list_t timer_heads[])
 {
     rt_list_t *list;
@@ -155,6 +158,7 @@ void rt_timer_dump(rt_list_t timer_heads[])
     }
     rt_kprintf("\n");
 }
+#endif
 
 /**
  * @addtogroup Clock
@@ -298,8 +302,14 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
-    if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-        return -RT_ERROR;
+
+	/* stop timer firstly */
+	level = rt_hw_interrupt_disable();
+	/* remove timer from list */
+    _rt_timer_remove(timer);
+    /* change status of timer */
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
@@ -560,6 +570,9 @@ void rt_soft_timer_check(void)
 
     current_tick = rt_tick_get();
 
+	/* lock scheduler */
+	rt_enter_critical();
+
     for (n = rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL-1].next;
          n != &(rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL-1]);)
     {
@@ -579,6 +592,8 @@ void rt_soft_timer_check(void)
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
 
+			/* not lock scheduler when performing timeout function */
+			rt_exit_critical();
             /* call timeout function */
             t->timeout_func(t->parameter);
 
@@ -586,6 +601,9 @@ void rt_soft_timer_check(void)
             current_tick = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
+
+			/* lock scheduler */
+			rt_enter_critical();
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
@@ -602,6 +620,9 @@ void rt_soft_timer_check(void)
         }
         else break; /* not check anymore */
     }
+
+	/* unlock scheduler */
+	rt_exit_critical();
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
 }
@@ -636,12 +657,8 @@ static void rt_thread_timer_entry(void *parameter)
             }
         }
 
-        /* lock scheduler */
-        rt_enter_critical();
         /* check software timer */
         rt_soft_timer_check();
-        /* unlock scheduler */
-        rt_exit_critical();
     }
 }
 #endif
