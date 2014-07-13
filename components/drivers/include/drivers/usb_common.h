@@ -373,7 +373,7 @@ struct uhid_descriptor
 };
 typedef struct uhid_descriptor* uhid_desc_t;
 
-struct ureqest
+struct urequest
 {
     rt_uint8_t request_type;
     rt_uint8_t request;
@@ -381,7 +381,7 @@ struct ureqest
     rt_uint16_t index;
     rt_uint16_t length;
 };
-typedef struct ureqest* ureq_t;
+typedef struct urequest* ureq_t;
 
 #ifndef MIN
 #define MIN(a, b) (a < b ? a : b)

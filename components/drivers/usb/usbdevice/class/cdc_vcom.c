@@ -280,7 +280,7 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
-    data->ep_out->request.req_type = UIO_REQUEST_READ_BEST;    
+    data->ep_out->request.req_type = UIO_REQUEST_READ_MOST;    
     rt_usbd_io_request(func->device, data->ep_out, &data->ep_out->request);
 
     return RT_EOK;
@@ -435,7 +435,7 @@ static rt_err_t _function_enable(ufunction_t func)
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
     
-    data->ep_out->request.req_type = UIO_REQUEST_READ_BEST;    
+    data->ep_out->request.req_type = UIO_REQUEST_READ_MOST;    
     rt_usbd_io_request(func->device, data->ep_out, &data->ep_out->request);
     
     return RT_EOK;
