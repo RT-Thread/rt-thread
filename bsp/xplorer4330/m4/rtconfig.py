@@ -1,38 +1,41 @@
 import os
 
+# core to be use
+#USE_CORE = 'CORE_M0'
+USE_CORE = 'CORE_M4'
+
 # toolchains options
 ARCH='arm'
-CPU='cortex-m4'
+
+if USE_CORE == 'CORE_M4':
+    CPU = 'cortex-m4'
+else:
+    CPU = 'cortex-m0'
+
 CROSS_TOOL='keil'
 
+
+# get setting from environment.
 if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
+        CROSS_TOOL = os.getenv('RTT_CC')
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= r'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+    PLATFORM = 'gcc'
+    EXEC_PATH = r'C:/Program Files/CodeSourcery/arm-none-eabi/bin'
 elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= r'C:/Keil'
+    PLATFORM = 'armcc'
+    EXEC_PATH = r'D:/Keil'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
-    exit(0)
+    PLATFORM = 'iar'
+    IAR_PATH = r'C:/Program Files/IAR Systems/Embedded Workbench 6.0'
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
-
-LPC43xx_BOARD = 'NGX_XPLORER_4330'
-#LPC43xx_BOARD = 'NGX_XPLORER_1830'
-#LPC43xx_BOARD = 'KEIL_MCB_4357'
-#LPC43xx_BOARD = 'KEIL_MCB_1857'
-#LPC43xx_BOARD = 'HITEX_EVA_4350'
-#LPC43xx_BOARD = 'HITEX_EVA_1850'
+#
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -41,15 +44,16 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
+    if USE_CORE == 'CORE_M4':
+        DEVICE += ' -mfpu=fpv4-sp-d16 -mfloat-abi=softfp'
     CFLAGS = DEVICE 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc4330.map,-cref,-u,Reset_Handler -T lpc4330_xplorer_spifi32mb.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T lpc43xx_spifi.ld'
 
     CPATH = ''
     LPATH = ''
@@ -70,15 +74,15 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M4'
+    DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE + ' --apcs=interwork'
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter lpc4330_xplorer_sram.sct'
+    AFLAGS = DEVICE
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc43xx.map --scatter rtthread-lpc43xx_spifi.sct'
 
-#    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-#    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
-    EXEC_PATH += '/ARM/ARMCC/bin'
+    EXEC_PATH += '/arm/bin40/'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
@@ -96,10 +100,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
-
-    CFLAGS = DEVICE
-    CFLAGS += ' --diag_suppress Pa050'
+    CFLAGS = ' --diag_suppress Pa050'
     CFLAGS += ' --no_cse' 
     CFLAGS += ' --no_unroll' 
     CFLAGS += ' --no_inline' 
@@ -109,9 +110,12 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_scheduling' 
     CFLAGS += ' --debug' 
     CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M4' 
+    if USE_CORE == 'CORE_M4':
+        CFLAGS += ' --cpu=Cortex-M4' 
+        CFLAGS += ' --fpu=None'
+    else:
+        CFLAGS += ' --cpu=Cortex-M0'
     CFLAGS += ' -e' 
-    CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
     CFLAGS += ' --use_c++_inline'
@@ -120,10 +124,13 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M4' 
-    AFLAGS += ' --fpu None' 
+    if USE_CORE == 'CORE_M4':
+        AFLAGS += ' --cpu Cortex-M4' 
+        AFLAGS += ' --fpu None' 
+    else:
+        AFLAGS += ' --cpu Cortex-M0' 
 
-    LFLAGS = ' --config stm32f10x_flash.icf'
+    LFLAGS = ' --config lpc43xx_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    

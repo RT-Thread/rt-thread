@@ -1,7 +1,7 @@
 /*
  * File      : startup.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -10,67 +10,49 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
- * 2012-12-11     lgnq         modified for LPC4330
+ * 2014-07-13     xiaonong      for LPC43xx
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "platform.h"
+#include "board.h"
 
-/**
- * @addtogroup LPC4330
- */
-
-/*@{*/
-
-extern int  rt_application_init(void);
-
-#ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define LPC4300_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
-#elif __ICCARM__
-#pragma section="HEAP"
-#define LPC4300_SRAM_BEGIN    (__segment_end("HEAP"))
-#else
-extern int __bss_end;
-#define LPC4300_SRAM_BEGIN    (&__bss_end)
-#endif
+extern int rt_application_init(void);
 
 /**
  * This function will startup RT-Thread RTOS.
  */
 void rtthread_startup(void)
 {
-    /* init board */
+    /* initialize board */
     rt_hw_board_init();
 
     /* show version */
     rt_show_version();
 
 #ifdef RT_USING_HEAP
-    /* initialize memory system */
-    rt_system_heap_init((void *)LPC4300_SRAM_BEGIN, (void *)(0x10000000 + 1024*128));
+#if LPC_EXT_SDRAM
+    rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
+    sram_init();
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
 #endif
 
-    /* init scheduler system */
+    /* initialize scheduler system */
     rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-    /* init all device */
-    rt_device_init_all();
-#endif
-
-    /* init application */
-    rt_application_init();
-
-    /* initialize timer */
+    /* initialize system timer*/
     rt_system_timer_init();
 
-    /* init timer thread */
+    /* initialize application */
+    rt_application_init();
+
+    /* initialize timer thread */
     rt_system_timer_thread_init();
 
-    /* init idle thread */
+    /* initialize idle thread */
     rt_thread_idle_init();
 
     /* start scheduler */
@@ -90,5 +72,3 @@ int main(void)
 
     return 0;
 }
-
-/*@}*/

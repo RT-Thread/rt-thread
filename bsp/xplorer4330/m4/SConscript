@@ -5,7 +5,7 @@ objs = []
 list = os.listdir(os.path.join(cwd, '..'))
 
 for d in list:
-    if d!='m4':
+    if (d != 'M4' and d != 'M0'):
         path = os.path.join(cwd, '..', d)
         if os.path.isfile(os.path.join(path, 'SConscript')):
             objs = objs + SConscript(os.path.join(path, 'SConscript'))
