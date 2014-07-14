@@ -73,7 +73,8 @@ WEAK void SysTick_Handler(void);
 WEAK void IntDefaultHandler(void);
 #else
 WEAK void M0S_NMI_Handler(void);
-WEAK void M0S_HardFault_Handler (void);
+WEAK void M0S_HardFault_Handler(void);
+WEAK void M0S_DebugMon_Handler(void);
 WEAK void M0S_SVC_Handler(void);
 WEAK void M0S_PendSV_Handler(void);
 WEAK void M0S_SysTick_Handler(void);

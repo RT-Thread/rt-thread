@@ -13,14 +13,14 @@ CPPDEFINES = [rtconfig.USE_CORE + ' USE_SPIFI']
 # add for startup script 
 if rtconfig.USE_CORE =='CORE_M4':
 	if rtconfig.CROSS_TOOL == 'gcc':
-		src += ['NXP/LPC43xx/Source/Templates/GCC/startup_LPC43xx.s']
+		src += ['NXP/LPC43xx/Source/Templates/GCC/cr_startup_lpc43xx.c']
 	elif rtconfig.CROSS_TOOL == 'keil':
 		src += ['NXP/LPC43xx/Source/Templates/ARM/startup_LPC43xx.s']
 	elif rtconfig.CROSS_TOOL == 'iar':
 		src += ['NXP/LPC43xx/Source/Templates/IAR/startup_LPC43xx.s']
 else:
 	if rtconfig.CROSS_TOOL == 'gcc':
-		src += ['NXP/LPC43xx/Source/Templates/GCC/startup_LPC43xx_M0.s']
+		src += ['NXP/LPC43xx/Source/Templates/GCC/cr_startup_lpc43xx_m0sub.c']
 	elif rtconfig.CROSS_TOOL == 'keil':
 		src += ['NXP/LPC43xx/Source/Templates/ARM/startup_LPC43xx_M0.s']
 	elif rtconfig.CROSS_TOOL == 'iar':
