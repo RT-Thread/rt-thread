@@ -53,7 +53,7 @@ if PLATFORM == 'gcc':
         DEVICE += ' -mfpu=fpv4-sp-d16 -mfloat-abi=softfp'
     CFLAGS = DEVICE 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T lpc43xx_spifi.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T rtthread-lpc43xx_spifi.ld'
 
     CPATH = ''
     LPATH = ''
@@ -75,8 +75,8 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --device DARMSTM'
-    CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE
+    CFLAGS = DEVICE + ' --apcs=interwork '
+    AFLAGS = DEVICE 
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc43xx.map --scatter rtthread-lpc43xx_spifi.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
