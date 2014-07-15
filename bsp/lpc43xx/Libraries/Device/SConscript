@@ -8,8 +8,8 @@ src = Split('''
 NXP/LPC43xx/Source/Templates/system_LPC43xx.c
 ''')
 CPPPATH = [cwd + '/NXP/LPC43xx/Include', cwd + '/../CMSIS/Include']
-CPPDEFINES = [rtconfig.USE_CORE + ' USE_SPIFI']
-
+CPPDEFINES = [rtconfig.USE_CORE]
+CPPDEFINES += ['USE_SPIFI']
 # add for startup script 
 if rtconfig.USE_CORE =='CORE_M4':
 	if rtconfig.CROSS_TOOL == 'gcc':

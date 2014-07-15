@@ -128,10 +128,6 @@ __Vectors       DCD     __initial_sp              ; 0 Top of Stack
                 DCD     QEI_IRQHandler            ; 68 QEI
 
 
-                IF      :LNOT::DEF:NO_CRP
-                AREA    |.ARM.__at_0x02FC|, CODE, READONLY
-CRP_Key         DCD     0xFFFFFFFF
-                ENDIF
 
                 AREA    |.text|, CODE, READONLY
 
@@ -327,13 +323,5 @@ __user_initial_stackheap
 
                 ENDIF
 
-                AREA    |.text|,CODE, READONLY
-getPC           PROC
-                EXPORT  getPC
-
-                MOV     R0,LR
-                BX      LR
-
-                ENDP
 
                 END

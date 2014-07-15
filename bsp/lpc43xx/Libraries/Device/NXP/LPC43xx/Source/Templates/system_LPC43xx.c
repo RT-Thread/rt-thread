@@ -863,7 +863,6 @@ void SystemCoreClockUpdate (void) {
 }
 
 
-extern uint32_t getPC (void);
 
 /*----------------------------------------------------------------------------
   Initialize the system
@@ -877,10 +876,7 @@ void SystemInit (void) {
 
   /* Disable SysTick timer                                                    */
   SysTick->CTRL &= ~(SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk);
-#ifdef CORE_M4
-  /* Set vector table pointer */
-  SCB->VTOR = getPC() & 0xFFF00000;
-#endif
+
   /* Configure PLL0 and PLL1, connect CPU clock to selected clock source */
   SetClock();
 
