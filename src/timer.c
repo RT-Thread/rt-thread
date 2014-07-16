@@ -130,6 +130,7 @@ rt_inline void _rt_timer_remove(rt_timer_t timer)
     }
 }
 
+#if RT_DEBUG_TIMER
 static int rt_timer_count_height(struct rt_timer *timer)
 {
     int i, cnt = 0;
@@ -142,7 +143,6 @@ static int rt_timer_count_height(struct rt_timer *timer)
     return cnt;
 }
 
-#if RT_DEBUG_TIMER
 void rt_timer_dump(rt_list_t timer_heads[])
 {
     rt_list_t *list;
