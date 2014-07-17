@@ -134,7 +134,6 @@ static const struct rt_uart_ops stm32_uart_ops =
 
 #if defined(RT_USING_UART1)
 /* UART1 device driver structure */
-struct serial_ringbuffer uart1_int_rx;
 struct stm32_uart uart1 =
 {
     USART1,
@@ -152,7 +151,7 @@ void USART1_IRQHandler(void)
     rt_interrupt_enter();
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(&serial1);
+        rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
@@ -169,7 +168,6 @@ void USART1_IRQHandler(void)
 
 #if defined(RT_USING_UART2)
 /* UART2 device driver structure */
-struct serial_ringbuffer uart2_int_rx;
 struct stm32_uart uart2 =
 {
     USART2,
@@ -187,7 +185,7 @@ void USART2_IRQHandler(void)
     rt_interrupt_enter();
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(&serial2);
+        rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
@@ -281,14 +279,13 @@ void rt_hw_usart_init(void)
     config.baud_rate = BAUD_RATE_115200;
 
     serial1.ops    = &stm32_uart_ops;
-    serial1.int_rx = &uart1_int_rx;
     serial1.config = config;
 
     NVIC_Configuration(&uart1);
 
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
 
@@ -297,7 +294,6 @@ void rt_hw_usart_init(void)
 
     config.baud_rate = BAUD_RATE_115200;
     serial2.ops    = &stm32_uart_ops;
-    serial2.int_rx = &uart2_int_rx;
     serial2.config = config;
 
     NVIC_Configuration(&uart2);

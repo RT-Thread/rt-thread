@@ -20,7 +20,6 @@
 
 #if (defined(RT_USING_UART0_0) || defined(RT_USING_UART0_1))
 /* UART0 device driver structure */
-struct serial_ringbuffer uart0_int_rx;
 struct uart03_device uart0 =
 {
 	FM3_MFS0_UART,
@@ -33,7 +32,7 @@ void MFS0RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial0);
+	rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -41,7 +40,6 @@ void MFS0RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART1_0) || defined(RT_USING_UART1_1))
 /* UART1 device driver structure */
-struct serial_ringbuffer uart1_int_rx;
 struct uart03_device uart1 =
 {
 	FM3_MFS1_UART,
@@ -54,7 +52,7 @@ void MFS1RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial1);
+	rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -62,7 +60,6 @@ void MFS1RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART2_0) || defined(RT_USING_UART2_1) || defined(RT_USING_UART2_2))
 /* UART2 device driver structure */
-struct serial_ringbuffer uart2_int_rx;
 struct uart03_device uart2 =
 {
 	FM3_MFS2_UART,
@@ -75,7 +72,7 @@ void MFS2RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial2);
+	rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -83,7 +80,6 @@ void MFS2RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART3_0) || defined(RT_USING_UART3_1) || defined(RT_USING_UART3_2))
 /* UART3 device driver structure */
-struct serial_ringbuffer uart3_int_rx;
 struct uart03_device uart3 =
 {
 	FM3_MFS3_UART,
@@ -96,7 +92,7 @@ void MFS3RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial3);
+	rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -104,7 +100,6 @@ void MFS3RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART4_0) || defined(RT_USING_UART4_1) || defined(RT_USING_UART4_2))
 /* UART4 device driver structure */
-struct serial_ringbuffer uart4_int_rx;
 struct uart47_device uart4 =
 {
 	FM3_MFS4_UART,
@@ -118,7 +113,7 @@ void MFS4RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial4);
+	rt_hw_serial_isr(&serial4, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -126,7 +121,6 @@ void MFS4RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART5_0) || defined(RT_USING_UART5_1) || defined(RT_USING_UART5_2))
 /* UART5 device driver structure */
-struct serial_ringbuffer uart5_int_rx;
 struct uart47_device uart5 =
 {
 	FM3_MFS5_UART,
@@ -140,7 +134,7 @@ void MFS5RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial5);
+	rt_hw_serial_isr(&serial5, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -148,7 +142,6 @@ void MFS5RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART6_0) || defined(RT_USING_UART6_1))
 /* UART6 device driver structure */
-struct serial_ringbuffer uart6_int_rx;
 struct uart47_device uart6 =
 {
 	FM3_MFS6_UART,
@@ -162,7 +155,7 @@ void MFS6RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial6);
+	rt_hw_serial_isr(&serial6, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -170,7 +163,6 @@ void MFS6RX_IRQHandler(void)
 
 #if (defined(RT_USING_UART7_0) || defined(RT_USING_UART7_1))
 /* UART7 device driver structure */
-struct serial_ringbuffer uart7_int_rx;
 struct uart47_device uart7 =
 {
 	FM3_MFS7_UART,
@@ -184,7 +176,7 @@ void MFS7RX_IRQHandler(void)
 {
 	/* enter interrupt */
 	rt_interrupt_enter();
-	rt_hw_serial_isr(&serial7);
+	rt_hw_serial_isr(&serial7, RT_SERIAL_EVENT_RX_IND);
 	/* leave interrupt */
 	rt_interrupt_leave();
 }
@@ -796,9 +788,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial0.ops    = &uart03_ops;
-	serial0.int_rx = &uart0_int_rx;
 	serial0.config = config;
 
 	/* register UART0 device */
@@ -814,9 +806,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial1.ops    = &uart03_ops;
-	serial1.int_rx = &uart1_int_rx;
 	serial1.config = config;
 
 	/* register UART1 device */
@@ -833,9 +825,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial2.ops    = &uart03_ops;
-	serial2.int_rx = &uart2_int_rx;
 	serial2.config = config;
 
 	/* register UART2 device */
@@ -852,9 +844,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial3.ops    = &uart03_ops;
-	serial3.int_rx = &uart3_int_rx;
 	serial3.config = config;
 
 	/* register UART3 device */
@@ -871,9 +863,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial4.ops    = &uart47_ops;
-	serial4.int_rx = &uart4_int_rx;
 	serial4.config = config;
 
 	/* register UART4 device */
@@ -890,9 +882,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial5.ops    = &uart47_ops;
-	serial5.int_rx = &uart5_int_rx;
 	serial5.config = config;
 
 	/* register UART5 device */
@@ -909,9 +901,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial6.ops    = &uart47_ops;
-	serial6.int_rx = &uart6_int_rx;
 	serial6.config = config;
 
 	/* register UART6 device */
@@ -928,9 +920,9 @@ void rt_hw_serial_init(void)
 	config.parity    = PARITY_NONE;
 	config.stop_bits = STOP_BITS_1;
 	config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
 	serial7.ops    = &uart47_ops;
-	serial7.int_rx = &uart7_int_rx;
 	serial7.config = config;
 
 	/* register UART7 device */
