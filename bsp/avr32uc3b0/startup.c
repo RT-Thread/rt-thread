@@ -39,7 +39,6 @@ int main(void)
 #endif
 
 	rt_system_scheduler_init();
-	rt_device_init_all();
 	rt_application_init();
 
 #ifdef RT_USING_FINSH

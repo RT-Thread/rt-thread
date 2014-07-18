@@ -66,12 +66,9 @@ void rt_init_thread_entry(void* parameter)
 
 		/* register ethernetif device */
 		eth_system_device_init();
-	
+
 		/* initialize eth interface */
 		rt_hw_stm32_eth_init();
-	
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* init lwip system */
 		lwip_sys_init();
