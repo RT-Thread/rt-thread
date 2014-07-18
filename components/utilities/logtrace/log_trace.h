@@ -1,7 +1,7 @@
 /*
  * File      : log_trace.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * COPYRIGHT (C) 2013-2014, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ void log_trace_init(void);
  *
  * @return RT_EOK on success. -RT_EFULL if there is no space for registration.
  */
-rt_err_t log_trace_register_session(struct log_trace_session *session);
+rt_err_t log_trace_register_session(const struct log_trace_session *session);
 
 /** find a session with name
  *
@@ -130,7 +130,43 @@ void log_trace(const char *fmt, ...);
  * "[systick][name]log messages". The name is the name of the session. It is
  * faster than bare log_trace.
  */
-void log_session(struct log_trace_session *session, const char *fmt, ...);
+void log_session(const struct log_trace_session *session, const char *fmt, ...);
+
+extern void __logtrace_vfmtout(const struct log_trace_session *session,
+                               const char *fmt,
+                               va_list argptr);
+
+rt_inline void __logtrace_fmtout(const struct log_trace_session *session,
+                                     const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    __logtrace_vfmtout(session, fmt, args);
+    va_end(args);
+}
+
+/**
+ * log with numeric level
+ *
+ * The prototype of this function is:
+ *
+ * void log_session_lvl(struct log_trace_session *session,
+ *                      int lvl,
+ *                      const char *fmt, ...);
+ *
+ * If the @session is const and @level is greater than @session->lvl, the whole
+ * function will be optimized out. This is suitable for performance critical
+ * places where in most cases, the log is turned off by level.
+ */
+#define log_session_lvl(session, level, fmt, ...)       \
+    do {                                                \
+        if ((level) > (session)->lvl)                   \
+        {                                               \
+            break;                                      \
+        }                                               \
+        __logtrace_fmtout(session, fmt, ##__VA_ARGS__); \
+    } while (0)
 
 /* here comes the global part. All sessions share the some output backend. */
 

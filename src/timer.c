@@ -128,6 +128,7 @@ rt_inline void _rt_timer_remove(rt_timer_t timer)
     }
 }
 
+#if RT_DEBUG_TIMER
 static int rt_timer_count_height(struct rt_timer *timer)
 {
     int i, cnt = 0;
@@ -155,6 +156,7 @@ void rt_timer_dump(rt_list_t timer_heads[])
     }
     rt_kprintf("\n");
 }
+#endif
 
 /**
  * @addtogroup Clock
@@ -298,8 +300,14 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
-    if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-        return -RT_ERROR;
+
+	/* stop timer firstly */
+	level = rt_hw_interrupt_disable();
+	/* remove timer from list */
+    _rt_timer_remove(timer);
+    /* change status of timer */
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 

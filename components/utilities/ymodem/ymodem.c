@@ -70,18 +70,23 @@ static enum rym_code _rym_read_code(
         struct rym_ctx *ctx,
         rt_tick_t timeout)
 {
-    /* consume the available sem and read the data in buffer if possible */
-    while (rt_sem_trytake(&ctx->sem) == RT_EOK)
-        ;
+    /* Fast path */
     if (rt_device_read(ctx->dev, 0, ctx->buf, 1) == 1)
         return *ctx->buf;
-    /* no data yet, wait for one */
-    if (rt_sem_take(&ctx->sem, timeout) != RT_EOK)
-        return RYM_CODE_NONE;
-    /* read one */
-    if (rt_device_read(ctx->dev, 0, ctx->buf, 1) == 1)
-        return *ctx->buf;
-    return RYM_CODE_NONE;
+
+    /* Slow path */
+    do {
+        rt_size_t rsz;
+
+        /* No data yet, wait for one */
+        if (rt_sem_take(&ctx->sem, timeout) != RT_EOK)
+            return RYM_CODE_NONE;
+
+        /* Try to read one */
+        rsz = rt_device_read(ctx->dev, 0, ctx->buf, 1);
+        if (rsz == 1)
+            return *ctx->buf;
+    } while (1);
 }
 
 /* the caller should at least alloc _RYM_STX_PKG_SZ buffer */

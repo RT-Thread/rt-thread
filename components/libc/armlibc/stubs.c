@@ -46,8 +46,10 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
+#ifdef RT_USING_DFS    
     int fd;
-
+#endif
+    
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
         return (STDIN);
@@ -91,12 +93,13 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
+#ifdef RT_USING_DFS    
     int size;
-
+#endif
+    
     if (fh == STDIN)
     {
         /* TODO */
-
         return 0;
     }
 
@@ -125,8 +128,10 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
+#ifdef RT_USING_DFS
     int size;
-
+#endif
+    
     if ((fh == STDOUT) || (fh == STDERR))
     {
 #ifndef RT_USING_CONSOLE
