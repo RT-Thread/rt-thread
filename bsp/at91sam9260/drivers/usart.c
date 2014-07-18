@@ -95,7 +95,7 @@ void rt_at91_usart_handler(int vector, void *param)
 		return;
 	}
 	rt_interrupt_enter();
-	rt_hw_serial_isr(dev);
+	rt_hw_serial_isr((struct rt_serial_device *)dev, RT_SERIAL_EVENT_RX_IND);
 	rt_interrupt_leave();
 }
 
@@ -231,7 +231,6 @@ static const struct rt_uart_ops at91_usart_ops =
 
 #if defined(RT_USING_DBGU)
 static struct rt_serial_device serial_dbgu;
-static struct serial_ringbuffer dbgu_int_rx;
 struct at91_uart dbgu = {
 	DBGU,
 	AT91_ID_SYS
@@ -241,7 +240,6 @@ struct at91_uart dbgu = {
 
 #if defined(RT_USING_UART0)
 static struct rt_serial_device serial0;
-static struct serial_ringbuffer uart0_int_rx;
 struct at91_uart uart0 = {
 	UART0,
 	AT91SAM9260_ID_US0
@@ -250,7 +248,6 @@ struct at91_uart uart0 = {
 
 #if defined(RT_USING_UART1)
 static struct rt_serial_device serial1;
-static struct serial_ringbuffer uart1_int_rx;
 struct at91_uart uart1 = {
 	UART1,
 	AT91SAM9260_ID_US1
@@ -259,7 +256,6 @@ struct at91_uart uart1 = {
 
 #if defined(RT_USING_UART2)
 static struct rt_serial_device serial2;
-static struct serial_ringbuffer uart2_int_rx;
 struct at91_uart uart2 = {
 	UART2,
 	AT91SAM9260_ID_US2
@@ -268,7 +264,6 @@ struct at91_uart uart2 = {
 
 #if defined(RT_USING_UART3)
 static struct rt_serial_device serial3;
-static struct serial_ringbuffer uart3_int_rx;
 struct at91_uart uart3 = {
 	UART3,
 	AT91SAM9260_ID_US3
@@ -337,29 +332,29 @@ void rt_hw_uart_init(void)
 
 #if defined(RT_USING_DBGU)
 	serial_dbgu.ops = &at91_usart_ops;
-    serial_dbgu.int_rx = &dbgu_int_rx;
 	serial_dbgu.config.baud_rate = BAUD_RATE_115200;
     serial_dbgu.config.bit_order = BIT_ORDER_LSB;
     serial_dbgu.config.data_bits = DATA_BITS_8;
     serial_dbgu.config.parity = PARITY_NONE;
     serial_dbgu.config.stop_bits = STOP_BITS_1;
     serial_dbgu.config.invert = NRZ_NORMAL;
+	serial_dbgu.config.bufsz = RT_SERIAL_RB_BUFSZ;
 
     /* register vcom device */
     rt_hw_serial_register(&serial_dbgu, "dbgu",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &dbgu);
 #endif
 
 #if defined(RT_USING_UART0)
 	serial0.ops = &at91_usart_ops;
-    serial0.int_rx = &uart0_int_rx;
 	serial0.config.baud_rate = BAUD_RATE_115200;
     serial0.config.bit_order = BIT_ORDER_LSB;
     serial0.config.data_bits = DATA_BITS_8;
     serial0.config.parity = PARITY_NONE;
     serial0.config.stop_bits = STOP_BITS_1;
     serial0.config.invert = NRZ_NORMAL;
+	serial0.config.bufsz = RT_SERIAL_RB_BUFSZ;
 
     /* register vcom device */
     rt_hw_serial_register(&serial0, "uart0",
@@ -379,10 +374,11 @@ void rt_hw_uart_init(void)
     serial1.config.parity = PARITY_NONE;
     serial1.config.stop_bits = STOP_BITS_1;
     serial1.config.invert = NRZ_NORMAL;
+	serial1.config.bufsz = RT_SERIAL_RB_BUFSZ;
 
     /* register vcom device */
     rt_hw_serial_register(&serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &uart1);
 	rt_hw_interrupt_install(uart1.irq, rt_at91_usart_handler, 
 							(void *)&(serial1.parent), "UART1");
@@ -391,17 +387,17 @@ void rt_hw_uart_init(void)
 
 #if defined(RT_USING_UART2)
 	serial2.ops = &at91_usart_ops;
-    serial2.int_rx = &uart2_int_rx;
 	serial2.config.baud_rate = BAUD_RATE_115200;
     serial2.config.bit_order = BIT_ORDER_LSB;
     serial2.config.data_bits = DATA_BITS_8;
     serial2.config.parity = PARITY_NONE;
     serial2.config.stop_bits = STOP_BITS_1;
     serial2.config.invert = NRZ_NORMAL;
+	serial2.config.bufsz = RT_SERIAL_RB_BUFSZ;
 
     /* register vcom device */
     rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &uart2);
 	rt_hw_interrupt_install(uart2.irq, rt_at91_usart_handler, 
 							(void *)&(serial2.parent), "UART2");
@@ -410,17 +406,17 @@ void rt_hw_uart_init(void)
 
 #if defined(RT_USING_UART3)
 	serial3.ops = &at91_usart_ops;
-    serial3.int_rx = &uart3_int_rx;
 	serial3.config.baud_rate = BAUD_RATE_115200;
     serial3.config.bit_order = BIT_ORDER_LSB;
     serial3.config.data_bits = DATA_BITS_8;
     serial3.config.parity = PARITY_NONE;
     serial3.config.stop_bits = STOP_BITS_1;
     serial3.config.invert = NRZ_NORMAL;
+	serial3.config.bufsz = RT_SERIAL_RB_BUFSZ;
 
     /* register vcom device */
     rt_hw_serial_register(&serial3, "uart3",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &uart3);
 	rt_hw_interrupt_install(uart3.irq, rt_at91_usart_handler, 
 							(void *)&(serial3.parent), "UART3");

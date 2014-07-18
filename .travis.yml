@@ -51,7 +51,8 @@ env:
   - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86
-  - RTT_BSP='xplorer4330/m4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='lpc43xx/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc408x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='beaglebone' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'

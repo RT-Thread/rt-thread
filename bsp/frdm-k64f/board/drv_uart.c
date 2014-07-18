@@ -16,7 +16,6 @@
 #include "drv_uart.h"
 
 static struct rt_serial_device _k64_serial;  //abstracted serial for RTT
-static struct serial_ringbuffer _k64_int_rx; //UART send buffer area
 
 struct k64_serial_device
 {
@@ -231,7 +230,7 @@ static const struct rt_uart_ops _k64_ops =
 void UART0_RX_TX_IRQHandler(void)
 {
     rt_interrupt_enter();
-    rt_hw_serial_isr((struct rt_serial_device*)&_k64_serial);
+    rt_hw_serial_isr((struct rt_serial_device*)&_k64_serial, RT_SERIAL_EVENT_RX_IND);
     rt_interrupt_leave();
 }
 
@@ -247,9 +246,9 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz	 = RT_SERIAL_RB_BUFSZ;
 
     _k64_serial.ops    = &_k64_ops;
-    _k64_serial.int_rx = &_k64_int_rx;
     _k64_serial.config = config;
 
     rt_hw_serial_register(&_k64_serial, "uart0",

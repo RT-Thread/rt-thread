@@ -118,7 +118,6 @@ static const struct rt_uart_ops lpc_uart_ops =
 
 #if defined(RT_USING_UART0)
 /* UART0 device driver structure */
-struct serial_ringbuffer uart0_int_rx;
 struct lpc_uart uart0 =
 {
     UART_0,
@@ -158,7 +157,7 @@ void UART0_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
-        rt_hw_serial_isr(&serial0);
+        rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
     }
 
     /* leave interrupt */
@@ -167,7 +166,6 @@ void UART0_IRQHandler(void)
 #endif
 #if defined(RT_USING_UART2)
 /* UART2 device driver structure */
-struct serial_ringbuffer uart2_int_rx;
 struct lpc_uart uart2 =
 {
     UART_2,
@@ -207,7 +205,7 @@ void UART2_IRQHandler(void)
     // Receive Data Available or Character time-out
     if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
     {
-        rt_hw_serial_isr(&serial2);
+        rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
     }
 
     /* leave interrupt */
@@ -227,9 +225,9 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial0.ops    = &lpc_uart_ops;
-    serial0.int_rx = &uart0_int_rx;
     serial0.config = config;
 
     /*
@@ -259,9 +257,9 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial2.ops    = &lpc_uart_ops;
-    serial2.int_rx = &uart2_int_rx;
     serial2.config = config;
 
     /*
