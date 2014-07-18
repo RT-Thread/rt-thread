@@ -772,10 +772,18 @@ static rt_err_t _data_notify(udevice_t device, struct ep_msg* ep_msg)
             size = dcd_ep_read(device->dcd, EP_ADDRESS(ep),
                 ep->request.buffer);
         }
-        ep->request.remain_size -= size;
-        ep->request.buffer += size;
 
-        if(ep->request.req_type == UIO_REQUEST_READ_BEST)
+        if(size > ep->request.remain_size)
+        {
+            ep->request.remain_size = 0;
+        }
+        else
+        {
+            ep->request.remain_size -= size;
+            ep->request.buffer += size;
+        }
+
+        if(ep->request.req_type == UIO_REQUEST_READ_MOST)
         {
             EP_HANDLER(ep, func, size);
         }
@@ -881,6 +889,7 @@ static rt_err_t _stop_notify(udevice_t device)
 static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
 {
     rt_uint16_t maxpacket;
+    rt_size_t sent_size;
         
     RT_ASSERT(device != RT_NULL);    
     RT_ASSERT(device->dcd != RT_NULL);
@@ -889,18 +898,18 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
     maxpacket = EP_MAXPACKET(ep);
     if(ep->request.remain_size >= maxpacket)
     {
-        dcd_ep_write(device->dcd, EP_ADDRESS(ep), ep->request.buffer, maxpacket);
-        ep->request.remain_size -= maxpacket;
+        sent_size = dcd_ep_write(device->dcd, EP_ADDRESS(ep), ep->request.buffer, maxpacket);
+        ep->request.remain_size -= sent_size;
         ep->request.buffer += maxpacket;    
     }
     else
     {
-        dcd_ep_write(device->dcd, EP_ADDRESS(ep), ep->request.buffer, 
+        sent_size = dcd_ep_write(device->dcd, EP_ADDRESS(ep), ep->request.buffer, 
             ep->request.remain_size);
-        ep->request.remain_size = 0;
+        ep->request.remain_size -= sent_size;
     }
 
-    return size;
+    return sent_size;
 }
 
 static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
@@ -1623,7 +1632,7 @@ rt_size_t rt_usbd_io_request(udevice_t device, uep_t ep, uio_request_t req)
     {
         switch(req->req_type)
         {
-        case UIO_REQUEST_READ_BEST:
+        case UIO_REQUEST_READ_MOST:
         case UIO_REQUEST_READ_FULL:
             ep->request.remain_size = ep->request.size;
             size = rt_usbd_ep_read_prepare(device, ep, req->buffer, req->size);
@@ -1757,7 +1766,8 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
     while(device->dcd->ep_pool[i].addr != 0xFF)
     {
         if(device->dcd->ep_pool[i].status == ID_UNASSIGNED && 
-            ep->ep_desc->bmAttributes == device->dcd->ep_pool[i].type)
+            ep->ep_desc->bmAttributes == device->dcd->ep_pool[i].type &&
+            ep->ep_desc->bEndpointAddress == device->dcd->ep_pool[i].dir)
         {
             EP_ADDRESS(ep) |= device->dcd->ep_pool[i].addr;
             ep->id = &device->dcd->ep_pool[i];
@@ -1786,7 +1796,7 @@ static rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
     return RT_EOK;
 }
 
-rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct ureqest* setup)
+rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup)
 {
     struct udev_msg msg;
     rt_size_t size;
@@ -1796,7 +1806,7 @@ rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct ureqest* setup)
     if(setup == RT_NULL)
     {
         size = dcd_ep_read(dcd, EP0_OUT_ADDR, (void*)&msg.content.setup);
-        if(size != sizeof(struct ureqest))
+        if(size != sizeof(struct urequest))
         {
             rt_kprintf("read setup packet error\n");
             return -RT_ERROR;
@@ -1804,7 +1814,7 @@ rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct ureqest* setup)
     }
     else
     {
-        rt_memcpy((void*)&msg.content.setup, (void*)setup, sizeof(struct ureqest));
+        rt_memcpy((void*)&msg.content.setup, (void*)setup, sizeof(struct urequest));
     }    
     
     msg.type = USB_MSG_SETUP_NOTIFY;
@@ -1935,6 +1945,7 @@ rt_err_t rt_usbd_sof_handler(udcd_t dcd)
 rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
 {
     uep_t ep0;
+    rt_size_t sent_size = 0;
 
     RT_ASSERT(device != RT_NULL);    
     RT_ASSERT(device->dcd != RT_NULL);
@@ -1947,17 +1958,17 @@ rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
     ep0->request.remain_size = size;
     if(ep0->request.remain_size >= ep0->id->maxpacket)
     {
-        dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->id->maxpacket);
-        ep0->request.remain_size -= ep0->id->maxpacket;
+        sent_size = dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->id->maxpacket);
+        ep0->request.remain_size -= sent_size;
         ep0->request.buffer += ep0->id->maxpacket;
     }
     else
     {
-        dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->request.remain_size);
-        ep0->request.remain_size = 0;
+        sent_size = dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->request.remain_size);
+        ep0->request.remain_size -= sent_size;        
     }
 
-    return size;
+    return sent_size;
 }
 
 rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size, 

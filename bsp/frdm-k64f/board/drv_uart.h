@@ -19,7 +19,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include <MK64F12.H>
+#include <MK64F12.h>
 
 #include <drivers/serial.h>
 

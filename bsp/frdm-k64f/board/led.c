@@ -12,7 +12,7 @@
  *
  */
 
-#include <MK64F12.H>
+#include <MK64F12.h>
 #include "led.h"
 
 const rt_uint32_t led_mask[] = {1 << 21, 1 << 22, 1 << 26};
