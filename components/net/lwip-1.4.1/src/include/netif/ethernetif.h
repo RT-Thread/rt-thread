@@ -5,7 +5,11 @@
 #include <rtthread.h>
 
 #define NIOCTL_GADDR		0x01
+#ifndef RT_LWIP_ETH_MTU
 #define ETHERNET_MTU		1500
+#else
+#define ETHERNET_MTU		RT_LWIP_ETH_MTU
+#endif
 
 struct eth_device
 {

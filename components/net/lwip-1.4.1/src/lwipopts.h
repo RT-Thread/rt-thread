@@ -38,8 +38,9 @@
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
-/* Enable SO_RCVTIMEO processing.   */
+/* Enable SO_RCVTIMEO/LWIP_SO_SNDTIMEO processing.   */
 #define LWIP_SO_RCVTIMEO            1
+#define LWIP_SO_SNDTIMEO            1
 
 /* #define RT_LWIP_DEBUG */
 
@@ -117,6 +118,8 @@
 
 /* the number of simultaneously queued TCP */
 #ifdef RT_LWIP_TCP_SEG_NUM
+#define MEMP_NUM_TCP_SEG            RT_LWIP_TCP_SEG_NUM
+#else
 #define MEMP_NUM_TCP_SEG            TCP_SND_QUEUELEN
 #endif
 
@@ -135,12 +138,12 @@
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
 #ifdef RT_LWIP_PBUF_NUM
-#define PBUF_POOL_SIZE              RT_LWIP_PBUF_NUM
+#define PBUF_POOL_SIZE               RT_LWIP_PBUF_NUM
 #endif
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
 #ifdef RT_LWIP_PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE			 RT_LWIP_PBUF_POOL_BUFSIZE
+#define PBUF_POOL_BUFSIZE            RT_LWIP_PBUF_POOL_BUFSIZE
 #endif
 
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
@@ -176,7 +179,7 @@
 
 /* TCP sender buffer space (bytes). */
 #ifdef RT_LWIP_TCP_SND_BUF
-#define TCP_SND_BUF					RT_LWIP_TCP_SND_BUF
+#define TCP_SND_BUF                 RT_LWIP_TCP_SND_BUF
 #else
 #define TCP_SND_BUF                 (TCP_MSS * 2)
 #endif
@@ -230,10 +233,15 @@
 
 /* IP reassembly and segmentation.These are orthogonal even
  * if they both deal with IP fragments */
-#define IP_REASSEMBLY               0
+#ifdef RT_LWIP_REASSEMBLY_FRAG
+#define IP_REASSEMBLY               1
+#define IP_FRAG                     1
 #define IP_REASS_MAX_PBUFS          10
 #define MEMP_NUM_REASSDATA          10
+#else
+#define IP_REASSEMBLY               0
 #define IP_FRAG                     0
+#endif
 
 /* ---------- ICMP options ---------- */
 #define ICMP_TTL                    255
@@ -307,7 +315,7 @@
  * in this file.
  */
 #ifdef RT_LWIP_PPPOE
-#define PPPOE_SUPPORT				1
+#define PPPOE_SUPPORT               1
 #else
 #define PPPOE_SUPPORT               0
 #endif
@@ -315,7 +323,7 @@
 #ifdef RT_LWIP_PPPOS
 #define PPPOS_SUPPORT               1
 #else
-#define PPPOS_SUPPORT				0
+#define PPPOS_SUPPORT               0
 #endif
 
 #define PAP_SUPPORT                 1      /* Set > 0 for PAP. */

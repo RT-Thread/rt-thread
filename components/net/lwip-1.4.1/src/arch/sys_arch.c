@@ -108,7 +108,7 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_up(ethif->netif);
             }
 
-#ifdef LWIP_NETIF_LINK_CALLBACK
+#if LWIP_NETIF_LINK_CALLBACK
             netif_set_link_up(ethif->netif);
 #endif
 
