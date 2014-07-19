@@ -41,7 +41,7 @@ static void am33xx_uart_isr(int irqno, void* param)
 
     if ((iir & (0x02 << 1)) || (iir & (0x6 << 1)))
     {
-        rt_hw_serial_isr(serial);
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 }
 
@@ -165,7 +165,6 @@ static const struct rt_uart_ops am33xx_uart_ops =
 
 /* UART device driver structure */
 #ifdef RT_USING_UART0
-struct serial_ringbuffer uart0_int_rx;
 struct am33xx_uart uart0 =
 {
     UART0_BASE,
@@ -175,7 +174,6 @@ struct rt_serial_device serial0;
 #endif
 
 #ifdef RT_USING_UART1
-struct serial_ringbuffer uart1_int_rx;
 struct am33xx_uart uart1 =
 {
     UART1_BASE,
@@ -185,7 +183,6 @@ struct rt_serial_device serial1;
 #endif
 
 #ifdef RT_USING_UART2
-struct serial_ringbuffer uart2_int_rx;
 struct am33xx_uart uart2 =
 {
     UART2_BASE,
@@ -195,7 +192,6 @@ struct rt_serial_device serial2;
 #endif
 
 #ifdef RT_USING_UART3
-struct serial_ringbuffer uart3_int_rx;
 struct am33xx_uart uart3 =
 {
     UART3_BASE,
@@ -205,7 +201,6 @@ struct rt_serial_device serial3;
 #endif
 
 #ifdef RT_USING_UART4
-struct serial_ringbuffer uart4_int_rx;
 struct am33xx_uart uart4 =
 {
     UART4_BASE,
@@ -215,7 +210,6 @@ struct rt_serial_device serial4;
 #endif
 
 #ifdef RT_USING_UART5
-struct serial_ringbuffer uart5_int_rx;
 struct am33xx_uart uart5 =
 {
     UART5_BASE,
@@ -359,8 +353,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+	
     serial0.ops    = &am33xx_uart_ops;
-    serial0.int_rx = &uart0_int_rx;
     serial0.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart0.base) = 0x01;
@@ -370,7 +365,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart0.irq);
     /* register UART0 device */
     rt_hw_serial_register(&serial0, "uart0",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart0);
 #endif
 
@@ -381,8 +376,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+	
     serial1.ops    = &am33xx_uart_ops;
-    serial1.int_rx = &uart1_int_rx;
     serial1.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart1.base) = 0x01;
@@ -392,7 +388,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart1.irq);
     /* register UART0 device */
     rt_hw_serial_register(&serial1, "uart1",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart1);
 #endif
 
@@ -403,8 +399,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+	
     serial2.ops    = &am33xx_uart_ops;
-    serial2.int_rx = &uart2_int_rx;
     serial2.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart2.base) = 0x01;
@@ -414,7 +411,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart2.irq);
     /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart2);
 #endif
 
@@ -425,8 +422,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+	
     serial3.ops    = &am33xx_uart_ops;
-    serial3.int_rx = &uart_3_int_rx;
     serial3.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart3.base) = 0x01;
@@ -436,7 +434,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart3.irq);
     /* register UART3 device */
     rt_hw_serial_register(&serial3, "uart3",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart3);
 #endif
 
@@ -447,9 +445,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial4.ops    = &am33xx_uart_ops;
-    serial4.int_rx = &uart4_int_rx;
     serial4.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart4.base) = 0x01;
@@ -459,7 +457,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart4.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart4);
 #endif
 
@@ -470,9 +468,9 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
   
     serial5.ops    = &am33xx_uart_ops;
-    serial5.int_rx = &uart5_int_rx;
     serial5.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart5.base) = 0x01;
@@ -482,7 +480,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart5.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial5, "uart5",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart5);
 #endif
 

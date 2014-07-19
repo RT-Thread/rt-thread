@@ -50,7 +50,7 @@ SECTIONS
          . = ALIGN(4);
          __rt_init_start = .;
          KEEP(*(SORT(.rti_fn*)))
-             __rt_init_end = .;
+          __rt_init_end = .;
          . = ALIGN(4);
     }
 
