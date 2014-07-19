@@ -20,8 +20,9 @@
 void rt_init_thread_entry(void *parameter)
 {
     /* Initialization RT-Thread Components */
-#ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
+#ifdef RT_USING_FINSH
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 

@@ -15,14 +15,14 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <components.h>
 
 #include "board.h"
 #include "drv_uart.h"
-#include "interrupt.h"
-#include "sysctl.h"
-#include "systick.h"
-#include "fpu.h"
+
+#include "driverlib/interrupt.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/systick.h"
+#include "driverlib/fpu.h"
 #include "driverlib/rom_map.h"
 
 #define SYS_CLOCK_DEFAULT 120000000
@@ -56,16 +56,15 @@ void SysTick_Handler(void)
 extern void PendSV_Handler(void);
 extern void HardFault_Handler(void);
 
-
 /**
  * This function will initial LPC40xx board.
  */
 void rt_hw_board_init()
 {
     IntRegister(FAULT_HARD, HardFault_Handler);	
-		IntRegister(FAULT_PENDSV, PendSV_Handler);
-		IntRegister(FAULT_SYSTICK, SysTick_Handler);
-	
+    IntRegister(FAULT_PENDSV, PendSV_Handler);
+    IntRegister(FAULT_SYSTICK, SysTick_Handler);
+    
 	  //
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
@@ -78,23 +77,24 @@ void rt_hw_board_init()
     // TODO: The SYSCTL_XTAL_ value must be changed to match the value of the
     // crystal on your board.
     //
-    SysClock = MAP_SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
-                                            SYS_CLOCK_DEFAULT);
+    SysClock = MAP_SysCtlClockFreqSet(
+                (SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+                SYS_CLOCK_DEFAULT);
 
-	MAP_SysTickDisable();
+    MAP_SysTickDisable();
     MAP_SysTickPeriodSet(SysClock/ RT_TICK_PER_SECOND - 1);
     MAP_SysTickIntEnable();
     MAP_SysTickEnable();	
 
-
     /* set pend exception priority */
-    //IntPrioritySet(FAULT_PENDSV, (1 << __NVIC_PRIO_BITS) - 1);
-    /*init uart device*/
-		
+    IntPrioritySet(FAULT_PENDSV, (1 << 5) - 1);
+    
+    /*init uart device*/		
     rt_hw_uart_init();
+		//redirect RTT stdio to CONSOLE device
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
     //
     // Enable interrupts to the processor.
     //
-	MAP_IntMasterEnable();
+	  MAP_IntMasterEnable();
 }
