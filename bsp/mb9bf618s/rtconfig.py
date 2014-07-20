@@ -1,7 +1,12 @@
+import os
+
 # toolchains options
 ARCH='arm'
 CPU='cortex-m3'
 CROSS_TOOL='keil'
+
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
 
 #device options
 # FM3_TYPE = 
@@ -110,7 +115,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
 
-    LFLAGS = ' --config mb9bf506.icf'
+    LFLAGS = ' --config rtthread-fm3.icf'
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 
