@@ -98,7 +98,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)param;
 
-    rt_hw_serial_isr(serial);
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -267,9 +267,7 @@ static struct hw_uart_device _uart_device1 =
     .txmio = (rt_uint32_t*)(Zynq7000_SLCR_BASE+0x07C0), /* MIO48 */
 };
 
-static struct serial_ringbuffer _uart_int_rx0;
 static struct rt_serial_device _serial0;
-static struct serial_ringbuffer _uart_int_rx1;
 static struct rt_serial_device _serial1;
 
 int rt_hw_uart_init(void)
@@ -282,21 +280,20 @@ int rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     _serial0.ops    = &_uart_ops;
-    _serial0.int_rx = &_uart_int_rx0;
     _serial0.config = config;
 
     _serial1.ops    = &_uart_ops;
-    _serial1.int_rx = &_uart_int_rx1;
     _serial1.config = config;
 
     /* register uart device */
     rt_hw_serial_register(&_serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &_uart_device0);
     rt_hw_serial_register(&_serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &_uart_device1);
     return 0;
 }

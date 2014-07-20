@@ -65,8 +65,6 @@ void rt_init_thread_entry(void *parameter)
 
         /* register ethernetif device */
         lpc17xx_emac_hw_init();
-        /* init all device */
-        rt_device_init_all();
 
         /* init lwip system */
         lwip_sys_init();
@@ -78,13 +76,11 @@ void rt_init_thread_entry(void *parameter)
     {
     	extern void rtgui_system_server_init(void);
 		extern void application_init(void);
-		
+
 		rt_device_t lcd;
 
 		/* init lcd */
 		rt_hw_lcd_init();
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* find lcd device */
 		lcd = rt_device_find("lcd");

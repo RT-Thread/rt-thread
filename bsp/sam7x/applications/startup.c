@@ -116,9 +116,6 @@ void rtthread_startup(void)
 #ifdef RT_USING_DFS
 	rt_hw_sdcard_init();
 #endif
-
-	/*init all registed devices*/
-	rt_device_init_all();
 #endif
 
 	/* init application */

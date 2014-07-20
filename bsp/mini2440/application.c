@@ -151,9 +151,6 @@ void rt_init_thread_entry(void *parameter)
 
 		/* init keypad */
 		rt_hw_key_init();
-		
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* find lcd device */
 		lcd = rt_device_find("lcd");
@@ -175,9 +172,6 @@ void rt_init_thread_entry(void *parameter)
 		/* register ethernetif device */
 		rt_hw_dm9000_init();
 
-		/* re-init device driver */
-		rt_device_init_all();
-
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
@@ -196,9 +190,6 @@ void rt_init_thread_entry(void *parameter)
 
 		/* init keypad */
 		rt_hw_key_init();
-
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* create ftk thread */
 		ftk_thread = rt_thread_create("ftk",
