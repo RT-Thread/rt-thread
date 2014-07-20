@@ -165,8 +165,8 @@ static void GPIO_Configuration(void)
 	GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
 
     /* Connect alternate function */
-    GPIO_PinAFConfig(UART2_GPIO, UART3_TX_PIN_SOURCE, GPIO_AF_USART3);
-    GPIO_PinAFConfig(UART2_GPIO, UART3_RX_PIN_SOURCE, GPIO_AF_USART3);
+    GPIO_PinAFConfig(UART3_GPIO, UART3_TX_PIN_SOURCE, GPIO_AF_USART3);
+    GPIO_PinAFConfig(UART3_GPIO, UART3_RX_PIN_SOURCE, GPIO_AF_USART3);
 #endif
 }
 
