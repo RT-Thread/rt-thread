@@ -36,6 +36,7 @@ env:
 #  - RTT_BSP='m16c62p' # m32c
   - RTT_BSP='mb9bf500r' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='mb9bf506r' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='mb9bf618s' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='microblaze' # no scons
   - RTT_BSP='mini2440' RTT_TOOL_CHAIN='sourcery-arm' 
 #  - RTT_BSP='mini4020' # no scons
@@ -57,4 +58,3 @@ env:
   - RTT_BSP='beaglebone' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
-
