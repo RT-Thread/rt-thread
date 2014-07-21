@@ -61,6 +61,7 @@ extern void HardFault_Handler(void);
  */
 void rt_hw_board_init()
 {
+  MAP_IntMasterDisable();
     IntRegister(FAULT_HARD, HardFault_Handler);	
     IntRegister(FAULT_PENDSV, PendSV_Handler);
     IntRegister(FAULT_SYSTICK, SysTick_Handler);
@@ -87,7 +88,7 @@ void rt_hw_board_init()
     MAP_SysTickEnable();	
 
     /* set pend exception priority */
-    IntPrioritySet(FAULT_PENDSV, (1 << 5) - 1);
+    //IntPrioritySet(FAULT_PENDSV, (1 << 5) - 1);
     
     /*init uart device*/		
     rt_hw_uart_init();

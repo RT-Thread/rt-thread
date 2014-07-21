@@ -76,3 +76,5 @@ place at start of SRAM { section VTABLE };
 // Place all read/write items into SRAM.
 //
 place in SRAM { readwrite, block HEAP };
+keep { section FSymTab };
+keep { section VSymTab };

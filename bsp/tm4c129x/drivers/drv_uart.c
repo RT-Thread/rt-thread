@@ -36,7 +36,7 @@ typedef struct hw_uart_device
 
 static rt_err_t hw_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {	
-	uint32_t config;
+	uint32_t config = 0;
 	hw_uart_t* uart;
     RT_ASSERT(serial != RT_NULL);
     uart = mUartGetHwPtr(serial);
@@ -206,7 +206,7 @@ int rt_hw_uart_init(void)
     MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
 
     /* preemption = 1, sub-priority = 1 */
-    IntPrioritySet(INT_UART0, ((0x01 << 5) | 0x01));
+    //IntPrioritySet(INT_UART0, ((0x01 << 5) | 0x01));
 
     /* Enable Interrupt for UART channel */
 	  UARTIntRegister(uart->hw_base, UART0_IRQHandler);

@@ -50,7 +50,10 @@ static void IntDefaultHandler(void);
 //
 //*****************************************************************************
 extern void __iar_program_start(void);
-
+extern void PendSV_Handler(void);
+extern void SysTick_Handler(void);
+extern void UART0_IRQHandler(void);
+extern void HardFault_Handler(void);
 //*****************************************************************************
 //
 // Reserve space for the system stack.
@@ -84,7 +87,7 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
                                             // The initial stack pointer
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
-    FaultISR,                               // The hard fault handler
+    HardFault_Handler,                               // The hard fault handler
     IntDefaultHandler,                      // The MPU fault handler
     IntDefaultHandler,                      // The bus fault handler
     IntDefaultHandler,                      // The usage fault handler
@@ -95,14 +98,14 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
     IntDefaultHandler,                      // SVCall handler
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
-    IntDefaultHandler,                      // The PendSV handler
-    IntDefaultHandler,                      // The SysTick handler
+    PendSV_Handler, //IntDefaultHandler,                      // The PendSV handler
+    SysTick_Handler,//IntDefaultHandler,                      // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    IntDefaultHandler,                      // UART0 Rx and Tx
+    UART0_IRQHandler, //IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
