@@ -26,6 +26,9 @@ elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= r'C:\Program Files\IAR Systems\Embedded Workbench 6.0 Evaluation'
 
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
