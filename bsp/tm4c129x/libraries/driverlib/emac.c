@@ -2917,7 +2917,6 @@ EMACPHYRead(uint32_t ui32Base, uint8_t ui8PhyAddr, uint8_t ui8RegAddr)
     //
     HWREG(ui32Base + EMAC_O_MIIADDR) =
         ((HWREG(ui32Base + EMAC_O_MIIADDR) & EMAC_MIIADDR_CR_M) |
-					EMAC_MIIADDR_CR_100_150 |
          (ui8RegAddr << EMAC_MIIADDR_MII_S) |
          (ui8PhyAddr << EMAC_MIIADDR_PLA_S) | EMAC_MIIADDR_MIIB);
 
