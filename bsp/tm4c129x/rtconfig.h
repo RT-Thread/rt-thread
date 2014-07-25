@@ -166,7 +166,7 @@
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 // <bool name="RT_USING_LWIP141" description="Using lwIP 1.4.1 version" default="true" />
 #define RT_USING_LWIP141
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
@@ -192,7 +192,7 @@
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 // #define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM 8
+#define RT_LWIP_TCP_SEG_NUM 12
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY  12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
