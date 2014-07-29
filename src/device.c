@@ -80,7 +80,7 @@ RTM_EXPORT(rt_device_unregister);
  *
  * @return the error code, RT_EOK on successfully.
  *
- * @deprecated This function is not needed because the initialization 
+ * @deprecated since 1.2.x, this function is not needed because the initialization 
  *             of a device is performed when applicaiton opens it.
  */
 rt_err_t rt_device_init_all(void)
