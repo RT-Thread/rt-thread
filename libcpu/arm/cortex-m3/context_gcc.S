@@ -80,8 +80,8 @@ _reswitch:
     STR     R1, [R0]
     BX      LR
 
-/* R0 --> swith from thread stack
- * R1 --> swith to thread stack
+/* R0 --> switch from thread stack
+ * R1 --> switch to thread stack
  * psr, pc, LR, R12, R3, R2, R1, R0 are pushed into [from] stack
  */
     .global PendSV_Handler
@@ -102,14 +102,14 @@ PendSV_Handler:
 
     LDR     R0, =rt_interrupt_from_thread
     LDR     R1, [R0]
-    CBZ     R1, swtich_to_thread    /* skip register save at the first time */
+    CBZ     R1, switch_to_thread    /* skip register save at the first time */
 
     MRS     R1, PSP                 /* get from thread stack pointer */
     STMFD   R1!, {R4 - R11}         /* push R4 - R11 register */
     LDR     R0, [R0]
     STR     R1, [R0]                /* update from thread stack pointer */
 
-swtich_to_thread:
+switch_to_thread:
     LDR     R1, =rt_interrupt_to_thread
     LDR     R1, [R1]
     LDR     R1, [R1]                /* load thread stack pointer */
