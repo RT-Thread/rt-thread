@@ -24,10 +24,10 @@
 #define PNG_MAX_MALLOC_64K
 #define PNG_NO_STDIO
 #define PNG_NO_ERROR_NUMBERS
+#define PNG_NO_WRITE_SUPPORTED
 #define PNG_ABORT() do { rt_kprintf("libpng abort.\n"); } while (0)
 
 #ifndef RT_USING_NEWLIB
-#define PNG_NO_WRITE_SUPPORTED
 #define PNG_NO_SETJMP_SUPPORTED
 #define malloc	rtgui_malloc
 #define free	rtgui_free
