@@ -78,3 +78,4 @@ place at start of SRAM { section VTABLE };
 place in SRAM { readwrite, block HEAP };
 keep { section FSymTab };
 keep { section VSymTab };
+keep { section .rti_fn* };

@@ -146,6 +146,8 @@ extern void lwIPHostGetTime(u32_t *time_s, u32_t *time_ns);
 #include "lwipopts.h"
 #include "drv_eth.h"
 
+#include <components.h>
+
 /**
  * A structure used to keep track of driver state and error counts.
  */
@@ -1378,7 +1380,7 @@ static struct pbuf* eth_dev_rx(rt_device_t dev)
 	return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
 }
 
-rt_err_t rt_hw_tiva_eth_init(void)
+int rt_hw_tiva_eth_init(void)
 {
 	rt_err_t result;
 
@@ -1406,6 +1408,11 @@ rt_err_t rt_hw_tiva_eth_init(void)
 	result = eth_device_init(&(eth_dev->parent), "e0");
 	return result;
 }
+// eth_device_init using malloc
+// We use INIT_COMPONENT_EXPORT insted of INIT_BOARD_EXPORT
+INIT_COMPONENT_EXPORT(rt_hw_tiva_eth_init);
+
+
 #if 0
 #ifdef RT_USING_FINSH
 #include "finsh.h"
