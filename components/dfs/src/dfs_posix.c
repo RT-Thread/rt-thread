@@ -537,12 +537,17 @@ struct dirent *readdir(DIR *d)
     if (fd == RT_NULL)
     {
         rt_set_errno(-DFS_STATUS_EBADF);
-
         return RT_NULL;
     }
 
-    if (!d->num ||
-        (d->cur += ((struct dirent *)(d->buf + d->cur))->d_reclen) >= d->num)
+    if (d->num)
+    {
+        struct dirent* dirent_ptr;
+        dirent_ptr = (struct dirent*)&d->buf[d->cur];
+        d->cur += dirent_ptr->d_reclen;
+    }
+
+    if (!d->num || d->cur >= d->num)
     {
         /* get a new entry */
         result = dfs_file_getdents(fd,
