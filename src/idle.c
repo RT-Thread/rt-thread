@@ -180,7 +180,7 @@ static void rt_thread_idle_entry(void *parameter)
 }
 
 /**
- * @ingroup SymstemInit
+ * @ingroup SystemInit
  *
  * This function will initialize idle thread, then start it.
  *
