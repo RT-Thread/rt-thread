@@ -426,7 +426,7 @@ int rt_hw_serial_init(void)
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
     serial3.ops    = &am33xx_uart_ops;
-    serial3.int_rx = &uart_3_int_rx;
+    serial3.int_rx = &uart3_int_rx;
     serial3.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart3.base) = 0x01;
@@ -470,7 +470,7 @@ int rt_hw_serial_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-  
+
     serial5.ops    = &am33xx_uart_ops;
     serial5.int_rx = &uart5_int_rx;
     serial5.config = config;
