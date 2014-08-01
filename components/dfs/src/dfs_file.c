@@ -629,7 +629,15 @@ static void copyfile(const char *src, const char *dst)
         read_bytes = dfs_file_read(&src_fd, block_ptr, BUF_SZ);
         if (read_bytes > 0)
         {
-            dfs_file_write(&fd, block_ptr, read_bytes);
+			int length;
+			
+            length = dfs_file_write(&fd, block_ptr, read_bytes);
+			if (length != read_bytes)
+			{
+				/* write failed. */
+				rt_kprintf("Write file data failed, errno=%d\n", length);
+				break;
+			}
         }
     } while (read_bytes > 0);
 
