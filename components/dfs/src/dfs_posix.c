@@ -33,11 +33,11 @@
 
 /**
  * this function is a POSIX compliant version, which will open a file and
- * return a file descriptor.
+ * return a file descriptor according specified flags.
  *
  * @param file the path name of file.
  * @param flags the file open flags.
- * @param mode
+ * @param mode ignored parameter
  *
  * @return the non-negative integer on successful open, others for failed.
  */
@@ -120,7 +120,8 @@ RTM_EXPORT(close);
  * @param buf the buffer to save the read data.
  * @param len the maximal length of data buffer
  *
- * @return the actual read data buffer length
+ * @return the actual read data buffer length. If the returned value is 0, it
+ * may be reach the end of file, please check errno.
  */
 int read(int fd, void *buf, size_t len)
 {
@@ -200,7 +201,7 @@ RTM_EXPORT(write);
  * @param offset the offset to be seeked.
  * @param whence the directory of seek.
  *
- * @return the current file position, or -1 on failed.
+ * @return the current read/write position in the file, or -1 on failed.
  */
 off_t lseek(int fd, off_t offset, int whence)
 {
@@ -336,6 +337,8 @@ RTM_EXPORT(stat);
  *
  * @param fildes the file description
  * @param buf the data buffer to save stat description.
+ *
+ * @return 0 on successful, -1 on failed.
  */
 int fstat(int fildes, struct stat *buf)
 {
@@ -470,7 +473,7 @@ RTM_EXPORT(rmdir);
  *
  * @param name the path name to be open.
  *
- * @return the DIR pointer of directory, NULL on open failed.
+ * @return the DIR pointer of directory, NULL on open directory failed.
  */
 DIR *opendir(const char *name)
 {
@@ -537,12 +540,17 @@ struct dirent *readdir(DIR *d)
     if (fd == RT_NULL)
     {
         rt_set_errno(-DFS_STATUS_EBADF);
-
         return RT_NULL;
     }
 
-    if (!d->num ||
-        (d->cur += ((struct dirent *)(d->buf + d->cur))->d_reclen) >= d->num)
+    if (d->num)
+    {
+        struct dirent* dirent_ptr;
+        dirent_ptr = (struct dirent*)&d->buf[d->cur];
+        d->cur += dirent_ptr->d_reclen;
+    }
+
+    if (!d->num || d->cur >= d->num)
     {
         /* get a new entry */
         result = dfs_file_getdents(fd,
