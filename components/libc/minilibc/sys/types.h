@@ -4,7 +4,7 @@
 #include <rtthread.h>
 
 typedef long    	off_t;
-typedef rt_size_t 	size_t;
+typedef __SIZE_TYPE__ 	size_t;
 typedef signed long ssize_t;		/* Used for a count of bytes or an error indication. */
 
 typedef rt_uint8_t 	u_char;
