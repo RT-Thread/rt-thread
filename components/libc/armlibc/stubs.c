@@ -13,6 +13,8 @@
  * Date           Author       Notes
  * 2012-11-23     Yihui        The first version
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
+ * 2014-08-03     bernard      If using msh, use system() implementation 
+ *                             in msh.
  */
 
 #include <string.h>
@@ -194,9 +196,13 @@ char *_sys_command_string(char *cmd, int len)
     return cmd;
 }
 
+/* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
-   /* TODO */
+    char c;
+
+    c = (char)ch;
+    rt_kprintf(&c);
 }
 
 void _sys_exit(int return_code)
@@ -231,18 +237,12 @@ int remove(const char *filename)
 #endif
 }
 
-/* rename() is defined in dfs_posix.c instead */
-#if 0
-int rename(const char *old, const char *new)
-{
-    return -1;
-}
-#endif
-
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+/* use system implementation in the msh */
+#else
 int system(const char *string)
 {
     RT_ASSERT(0);
     for(;;);
 }
-
-
+#endif
