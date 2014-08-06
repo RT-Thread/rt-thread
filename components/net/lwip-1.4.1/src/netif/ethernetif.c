@@ -428,10 +428,6 @@ INIT_DEVICE_EXPORT(eth_system_device_init);
 #include <finsh.h>
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
-#if	LWIP_DHCP
-	return ;
-#endif
-
     struct ip_addr *ip;
     struct ip_addr addr;
     struct netif * netif = netif_list;
