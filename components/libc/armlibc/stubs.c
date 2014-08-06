@@ -13,6 +13,8 @@
  * Date           Author       Notes
  * 2012-11-23     Yihui        The first version
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
+ * 2014-08-03     bernard      If using msh, use system() implementation 
+ *                             in msh.
  */
 
 #include <string.h>
@@ -46,8 +48,10 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
+#ifdef RT_USING_DFS    
     int fd;
-
+#endif
+    
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
         return (STDIN);
@@ -91,12 +95,13 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
+#ifdef RT_USING_DFS    
     int size;
-
+#endif
+    
     if (fh == STDIN)
     {
         /* TODO */
-
         return 0;
     }
 
@@ -125,8 +130,10 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
+#ifdef RT_USING_DFS
     int size;
-
+#endif
+    
     if ((fh == STDOUT) || (fh == STDERR))
     {
 #ifndef RT_USING_CONSOLE
@@ -189,9 +196,13 @@ char *_sys_command_string(char *cmd, int len)
     return cmd;
 }
 
+/* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
-   /* TODO */
+    char c;
+
+    c = (char)ch;
+    rt_kprintf(&c);
 }
 
 void _sys_exit(int return_code)
@@ -226,18 +237,12 @@ int remove(const char *filename)
 #endif
 }
 
-/* rename() is defined in dfs_posix.c instead */
-#if 0
-int rename(const char *old, const char *new)
-{
-    return -1;
-}
-#endif
-
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+/* use system implementation in the msh */
+#else
 int system(const char *string)
 {
     RT_ASSERT(0);
     for(;;);
 }
-
-
+#endif

@@ -471,17 +471,18 @@ static long _list_device(struct rt_list_node *list)
         "Unknown"
     };
 
-    rt_kprintf("device    type      \n");
-    rt_kprintf("-------- ---------- \n");
+    rt_kprintf("device   type                 ref count\n");
+    rt_kprintf("-------- -------------------- ----------\n");
     for (node = list->next; node != list; node = node->next)
     {
         device = (struct rt_device *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-8.*s %-8s \n",
+        rt_kprintf("%-8.*s %-20s %-8d\n",
                    RT_NAME_MAX,
                    device->parent.name,
                    (device->type <= RT_Device_Class_Unknown) ?
                    device_type_str[device->type] :
-                   device_type_str[RT_Device_Class_Unknown]);
+                   device_type_str[RT_Device_Class_Unknown],
+                   device->ref_count);
     }
 
     return 0;

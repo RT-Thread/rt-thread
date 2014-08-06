@@ -98,7 +98,11 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 
     rt_snprintf(cond_name, sizeof(cond_name), "cond%02d", cond_num++);
 
-    cond->attr = *attr;
+	if (attr == RT_NULL) /* use default value */
+		cond->attr = PTHREAD_PROCESS_PRIVATE;
+	else 
+	    cond->attr = *attr;
+
     result = rt_sem_init(&cond->sem, cond_name, 0, RT_IPC_FLAG_FIFO);
     if (result != RT_EOK)
         return EINVAL;

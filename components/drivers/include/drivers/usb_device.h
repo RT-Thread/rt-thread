@@ -76,7 +76,7 @@ typedef enum
     /* request to read full count */
     UIO_REQUEST_READ_FULL,
     /* request to read any count */
-    UIO_REQUEST_READ_BEST,  
+    UIO_REQUEST_READ_MOST,  
     /* request to write full count */
     UIO_REQUEST_WRITE,
 }UIO_REQUEST_TYPE;
@@ -239,7 +239,7 @@ struct udev_msg
     union
     {
         struct ep_msg ep_msg;
-        struct ureqest setup;
+        struct urequest setup;
     } content;
 };
 typedef struct udev_msg* udev_msg_t;
@@ -292,7 +292,7 @@ rt_err_t rt_usbd_ep_set_stall(udevice_t device, uep_t ep);
 rt_err_t rt_usbd_ep_clear_stall(udevice_t device, uep_t ep);
 rt_err_t rt_usbd_ep0_set_stall(udevice_t device);
 rt_err_t rt_usbd_ep0_clear_stall(udevice_t device);
-rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct ureqest* setup);
+rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup);
 rt_err_t rt_usbd_ep0_in_handler(udcd_t dcd);
 rt_err_t rt_usbd_ep0_out_handler(udcd_t dcd, rt_size_t size);
 rt_err_t rt_usbd_ep_in_handler(udcd_t dcd, rt_uint8_t address);

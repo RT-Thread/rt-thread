@@ -112,7 +112,7 @@ void finsh_set_device(const char* device_name)
     /* check whether it's a same device */
     if (dev == shell->device) return;
     /* open this device and set the new device in finsh shell */
-    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR) == RT_EOK)
+    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX) == RT_EOK)
     {
         if (shell->device != RT_NULL)
         {
@@ -306,8 +306,8 @@ void finsh_thread_entry(void* parameter)
 #ifdef RT_USING_CONSOLE
         shell->device = rt_console_get_device();
         RT_ASSERT(shell->device);
-        rt_device_open(shell->device, RT_DEVICE_OFLAG_RDWR);
         rt_device_set_rx_indicate(shell->device, finsh_rx_ind);
+        rt_device_open(shell->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
 #else
         RT_ASSERT(shell->device);
 #endif
@@ -530,6 +530,12 @@ void finsh_thread_entry(void* parameter)
             ch = 0;
             shell->line_position ++;
             shell->line_curpos++;
+			if (shell->line_position >= 80) 
+			{
+				/* clear command line */
+				shell->line_position = 0;
+				shell->line_curpos = 0;
+			}
         } /* end of device read */
     }
 }

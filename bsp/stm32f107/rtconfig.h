@@ -69,8 +69,8 @@
 #define RT_CONSOLE_DEVICE_NAME	"uart1"
 // </section>
 
-// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="true" >
-#define RT_USING_COMPONENTS_INIT
+// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="false" >
+// #define RT_USING_COMPONENTS_INIT
 // </section>
 
 /* SECTION: finsh, a C-Express shell */

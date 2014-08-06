@@ -138,8 +138,6 @@ void rt_init_thread_entry(void* parameter)
 		/* register ethernetif device */
 		eth_system_device_init();
 		rt_hw_macb_init();
-		/* re-init device driver */
-		rt_device_init_all();
 		/* init lwip system */
 		lwip_sys_init();
 	}

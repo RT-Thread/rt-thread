@@ -1120,8 +1120,8 @@ rt_module_t rt_module_open(const char *path)
  * This function will do a excutable program with main function and parameters.
  *
  * @param path the full path of application module
- * @cmd_line the command line of program
- * @size the size of command line of program
+ * @param cmd_line the command line of program
+ * @param size the size of command line of program
  *
  * @return the module object
  */

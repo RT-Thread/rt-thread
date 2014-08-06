@@ -19,6 +19,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_fsmc.h"
 #include "board.h"
+#include "usart.h"
 
 #ifdef  RT_USING_COMPONENTS_INIT
 #include <components.h>

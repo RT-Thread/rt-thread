@@ -52,7 +52,7 @@ enum rym_code {
 #endif
 /* how many ticks between two handshake code. */
 #ifndef RYM_CHD_INTV_TICK
-#define RYM_CHD_INTV_TICK (RT_TICK_PER_SECOND / 4)
+#define RYM_CHD_INTV_TICK (RT_TICK_PER_SECOND * 3)
 #endif
 
 enum rym_stage {

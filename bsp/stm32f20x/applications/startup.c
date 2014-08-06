@@ -107,9 +107,6 @@ void rtthread_startup(void)
 
 	rt_hw_rtc_init();
 
-	/* init all device */
-	rt_device_init_all();
-
 	/* init application */
 	rt_application_init();
 

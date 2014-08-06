@@ -178,11 +178,10 @@ static const struct rt_uart_ops _sci_ops =
 
 static void _irq_wrapper(int vector, void *param)
 {
-    rt_hw_serial_isr((struct rt_serial_device*)param);
+    rt_hw_serial_isr((struct rt_serial_device*)param, RT_SERIAL_EVENT_RX_IND);
 }
 
 static struct rt_serial_device _sci2_serial;
-static struct serial_ringbuffer _sci2_int_rx;
 
 void rt_hw_uart_init(void)
 {
@@ -195,9 +194,9 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
+	config.bufsz	 = RT_SERIAL_RB_BUFSZ;
 
     _sci2_serial.ops    = &_sci_ops;
-    _sci2_serial.int_rx = &_sci2_int_rx;
     _sci2_serial.config = config;
 
     rt_hw_serial_register(&_sci2_serial, "sci2",
@@ -208,3 +207,4 @@ void rt_hw_uart_init(void)
     rt_hw_interrupt_install(SCI_INT_VEC, _irq_wrapper, &_sci2_serial, "sci2");
     rt_hw_interrupt_umask(SCI_INT_VEC);
 }
+

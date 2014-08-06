@@ -411,7 +411,6 @@ struct finsh_parser
  *
  * The basic data type in finsh shell
  */
-
 enum finsh_type {
 	finsh_type_unknown = 0, /**< unknown data type */
 	finsh_type_void,		/**< void  			*/
