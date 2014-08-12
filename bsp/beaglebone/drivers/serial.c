@@ -338,42 +338,6 @@ static void config_pinmux(void)
 #endif
 }
 
-static int am33xx_putc_poll(struct rt_serial_device *serial, char c)
-{
-    struct am33xx_uart* uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct am33xx_uart *)serial->parent.user_data;
-
-    while (!(UART_LSR_REG(uart->base) & 0x20));
-    UART_THR_REG(uart->base) = c;
-
-    return 1;
-}
-
-static int am33xx_getc_poll(struct rt_serial_device *serial)
-{   
-    int ch;
-    struct am33xx_uart* uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct am33xx_uart *)serial->parent.user_data;
-
-    ch = -1;
-    while(!(UART_LSR_REG(uart->base) & 0x01));
-    ch = UART_RHR_REG(uart->base) & 0xff;
-
-    return ch;
-}
-
-static const struct rt_uart_ops am33xx_gdb_ops =
-{
-    am33xx_configure,
-    am33xx_control,
-    am33xx_putc_poll,
-    am33xx_getc_poll,
-};
-
 int rt_hw_serial_init(void)
 {
     struct serial_configure config;
@@ -483,17 +447,17 @@ int rt_hw_serial_init(void)
     config.invert    = NRZ_NORMAL;
 	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
-    serial4.ops    = &am33xx_gdb_ops;
+    serial4.ops    = &am33xx_uart_ops;
     serial4.config = config;
     /* enable RX interrupt */
-    UART_IER_REG(uart4.base) = 0x00;
+    UART_IER_REG(uart4.base) = 0x01;
     /* install ISR */
     rt_hw_interrupt_install(uart4.irq, am33xx_uart_isr, &serial4, "uart4");
     rt_hw_interrupt_control(uart4.irq, 0, 0);
     rt_hw_interrupt_mask(uart4.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart4);
 #endif
 
