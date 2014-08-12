@@ -117,9 +117,10 @@ void SVC_Handler(void)
   * @param  None
   * @retval None
   */
-void DebugMon_Handler(void)
-{
-}
+//void DebugMon_Handler(void)
+//{
+    //definitio in gdb/libcpu/cortexm
+//}
 
 /**
   * @brief  This function handles PendSVC exception.
