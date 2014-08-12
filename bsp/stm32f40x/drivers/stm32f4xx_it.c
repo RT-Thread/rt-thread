@@ -119,7 +119,7 @@ void SVC_Handler(void)
   */
 //void DebugMon_Handler(void)
 //{
-    //definitio in gdb/libcpu/cortexm
+    // defined in gdb/libcpu/cortexm/gdb_gcc.S
 //}
 
 /**
@@ -129,7 +129,7 @@ void SVC_Handler(void)
   */
 //void PendSV_Handler(void)
 //{
-//    // definition in libcpu/arm/cortex-m4/context_*.S
+//    // defined in libcpu/arm/cortex-m4/context_*.S
 //}
 
 /**
@@ -139,7 +139,7 @@ void SVC_Handler(void)
   */
 //void SysTick_Handler(void)
 //{
-//    // definition in boarc.c
+//    // defined in boarc.c
 //}
 
 /******************************************************************************/
