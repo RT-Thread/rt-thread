@@ -33,7 +33,7 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
-.equ UND_Stack_Size,  0x00000000
+.equ UND_Stack_Size,  0x00000200
 .equ SVC_Stack_Size,  0x00000100
 .equ ABT_Stack_Size,  0x00000000
 .equ FIQ_Stack_Size,  0x00000000
@@ -135,7 +135,15 @@ vector_undef:
     sub     sp, sp, #72
     stmia   sp, {r0 - r12}          @/* Calling r0-r12                  */
     add     r8, sp, #60
-    stmdb   r8, {sp, lr}            @/* Calling SP, LR                  */
+
+    mrs     r1, cpsr
+    mrs     r2, spsr
+    orr     r2,r2, #I_Bit|F_Bit
+    msr     cpsr_c, r2
+    mov     r0, r0
+    stmdb   r8, {sp, lr}           @/* Calling SP, LR                  */
+    msr     cpsr_c, r1             @/* return to Undefined Instruction mode  */
+
     str     lr, [r8, #0]            @/* Save calling PC                 */
     mrs     r6, spsr
     str     r6, [r8, #4]            @/* Save CPSR                       */
@@ -143,6 +151,12 @@ vector_undef:
     mov     r0, sp
 
     bl      rt_hw_trap_udef
+
+    ldmia    sp, {r0 - r12}         @/* Calling r0 - r2  */
+    mov      r0, r0
+    ldr      lr, [sp, #60]          @/* Get PC   */
+    add      sp, sp, #72
+    movs     pc, lr                 @/* return & move spsr_svc into cpsr */
 
     .align  5
 .globl vector_swi
@@ -168,6 +182,12 @@ vector_dabt:
     mov     r0, sp
 
     bl      rt_hw_trap_dabt
+
+    ldmia    sp, {r0 - r12}         @/* Calling r0 - r2  */
+    mov      r0, r0
+    ldr      lr, [sp, #60]          @/* Get PC   */
+    add      sp, sp, #72
+    movs     pc, lr                 @/* return & move spsr_svc into cpsr */
 
     .align 5
 .globl vector_resv
