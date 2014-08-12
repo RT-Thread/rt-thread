@@ -16,12 +16,20 @@
 #include <rtthread.h>
 #include <components.h>
 
+#ifdef RT_USING_GDB
+#include <gdb_stub.h>
+#endif
+
 int rt_application_init()
 {
     /* do component initialization */
     rt_components_init();
 #ifdef RT_USING_NEWLIB
 	libc_system_init(RT_CONSOLE_DEVICE_NAME);
+#endif
+#ifdef RT_USING_GDB
+    gdb_set_device("uart4");
+    gdb_start();
 #endif
 
     return 0;
