@@ -59,6 +59,7 @@ void rtthread_startup(void)
     rt_system_scheduler_init();
 
     /* init timer thread */
+	  rt_system_timer_init();
     rt_system_timer_thread_init();
 
     /* init application */
