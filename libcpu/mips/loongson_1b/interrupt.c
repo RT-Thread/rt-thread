@@ -96,7 +96,7 @@ void rt_hw_interrupt_umask(int vector)
  * @param old_handler the old interrupt service routine
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, char *name)
+                                         void *param, char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -104,14 +104,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 	{
         old_handler = irq_handle_table[vector].handler;
 
-        if (handler != RT_NULL)
-        {
 #ifdef RT_USING_INTERRUPT_INFO
-		    rt_strncpy(irq_handle_table[vector].name, name, RT_NAME_MAX);
+        rt_strncpy(irq_handle_table[vector].name, name, RT_NAME_MAX);
 #endif /* RT_USING_INTERRUPT_INFO */
-		    irq_handle_table[vector].handler = handler;
-            irq_handle_table[vector].param = param;
-        }
+        irq_handle_table[vector].handler = handler;
+        irq_handle_table[vector].param = param;
     }
 
     return old_handler;
