@@ -23,7 +23,7 @@ void udpecho_entry(void *parameter)
 	while(1)
 	{
         /* received data to buffer */
-		buf = netconn_recv(conn);
+		netconn_recv(conn, &buf);
 
 		addr = netbuf_fromaddr(buf);
 		port = netbuf_fromport(buf);
@@ -32,7 +32,7 @@ void udpecho_entry(void *parameter)
 		netconn_connect(conn, addr, port);
 
 		/* reset address, and send to client */
-		buf->addr = RT_NULL;
+		buf->addr = *IP_ADDR_ANY;
 		netconn_send(conn, buf);
 
         /* release buffer */
@@ -122,15 +122,15 @@ void tcpecho_entry(void *parameter)
 	while(1)
 	{
 		/* Grab new connection. */
-		newconn = netconn_accept(conn);
+		err = netconn_accept(conn, &newconn);
 		/* Process the new connection. */
-		if(newconn != NULL)
+		if(err == ERR_OK)
 		{
 			struct netbuf *buf;
 			void *data;
 			u16_t len;
 
-			while((buf = netconn_recv(newconn)) != NULL)
+			while((err = netconn_recv(newconn, buf)) == ERR_OK)
 			{
 				do
 				{
