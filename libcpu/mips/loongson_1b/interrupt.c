@@ -159,7 +159,7 @@ void rt_interrupt_dispatch(void *ptreg)
                 param = irq_handle_table[irq].param;
 
 				/* do interrupt */
-                (*irq_func)(irq, param);
+                irq_func(irq, param);
 
 #ifdef RT_USING_INTERRUPT_INFO
                 irq_handle_table[irq].counter++;
