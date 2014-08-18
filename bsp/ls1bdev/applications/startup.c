@@ -64,9 +64,6 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-	/* init application */
-	rt_application_init();
-
     /* initialize timer */
     rt_system_timer_init();
 
@@ -76,11 +73,14 @@ void rtthread_startup(void)
 	/* init idle thread */
 	rt_thread_idle_init();
 
+	/* init application */
+	rt_application_init();
+
 	/* start scheduler */
 	rt_system_scheduler_start();
 
 	/* never reach here */
-	return ;
+	return;
 }
 
 /*@}*/
