@@ -43,6 +43,9 @@ void rtthread_startup(void)
 
     /* show version */
     rt_show_version();
+	
+    /* init timer system */
+    rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
