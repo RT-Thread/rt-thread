@@ -81,7 +81,7 @@ void tcpclient(const char* url, int port)
         else
         {
             /* 在控制终端显示收到的数据 */
-            rt_kprintf("\nRecieved data = %s " , recv_data);
+            rt_kprintf("\nReceived data = %s " , recv_data);
         }
 
         /* 发送数据到sock连接 */

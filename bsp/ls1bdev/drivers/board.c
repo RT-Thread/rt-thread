@@ -71,6 +71,23 @@ void rt_hw_board_init(void)
 	rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }
 
+#define __raw_out_put(unr) \
+	while (*ptr) \
+	{ \
+		if (*ptr == '\n') \
+		{ \
+			/* FIFO status, contain valid data */ \
+			while (!(UART_LSR(UART##unr##_BASE) & (UARTLSR_TE | UARTLSR_TFE))); \
+			/* write data */ \
+			UART_DAT(UART##unr##_BASE) = '\r'; \
+		} \
+		/* FIFO status, contain valid data */ \
+		while (!(UART_LSR(UART##unr##_BASE) & (UARTLSR_TE | UARTLSR_TFE))); \
+		/* write data */ \
+		UART_DAT(UART##unr##_BASE) = *ptr; \
+		ptr ++; \
+	}
+
 /* UART line status register value */
 #define UARTLSR_ERROR	(1 << 7)
 #define UARTLSR_TE		(1 << 6)
@@ -82,24 +99,13 @@ void rt_hw_board_init(void)
 #define UARTLSR_DR		(1 << 0)
 void rt_hw_console_output(const char *ptr)
 {
-	/* stream mode */
-	while (*ptr)
-	{
-		if (*ptr == '\n')
-		{
-			/* FIFO status, contain valid data */
-			while (!(UART_LSR(UART0_BASE) & (UARTLSR_TE | UARTLSR_TFE)));
-			/* write data */
-			UART_DAT(UART0_BASE) = '\r';
-		}
-
-		/* FIFO status, contain valid data */
-		while (!(UART_LSR(UART0_BASE) & (UARTLSR_TE | UARTLSR_TFE)));
-		/* write data */
-		UART_DAT(UART0_BASE) = *ptr;
-
-		ptr ++;
-	}
+#if defined(RT_USING_UART0)
+    __raw_out_put(0);
+#elif defined(RT_USING_UART1)
+    __raw_out_put(1);
+#elif defined(RT_USING_UART3)
+    __raw_out_put(3);
+#endif
 }
 
 /*@}*/
