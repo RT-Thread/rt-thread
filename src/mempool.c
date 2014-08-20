@@ -323,23 +323,15 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     rt_uint8_t *block_ptr;
     register rt_base_t level;
     struct rt_thread *thread;
+    rt_uint32_t before_sleep = 0;
+
+    /* get current thread */
+    thread = rt_thread_self();
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    if (mp->block_free_count)
-    {
-        /* memory block is available. decrease the free block counter */
-        mp->block_free_count --;
-
-        /* get block from block list */
-        block_ptr      = mp->block_list;
-        mp->block_list = *(rt_uint8_t **)block_ptr;
-
-        /* point to memory pool */
-        *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
-    }
-    else
+    while (mp->block_free_count == 0)
     {
         /* memory block is unavailable. */
         if (time == 0)
@@ -347,54 +339,63 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
             /* enable interrupt */
             rt_hw_interrupt_enable(level);
 
+            rt_set_errno(-RT_ETIMEOUT);
+
             return RT_NULL;
         }
-        else
+
+        RT_DEBUG_NOT_IN_INTERRUPT;
+
+        thread->error = RT_EOK;
+
+        /* need suspend thread */
+        rt_thread_suspend(thread);
+        rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
+        mp->suspend_thread_count++;
+
+        if (time > 0)
         {
-            RT_DEBUG_NOT_IN_INTERRUPT;
+            /* get the start tick of timer */
+            before_sleep = rt_tick_get();
 
-            /* get current thread */
-            thread = rt_thread_self();
-
-            thread->error = RT_EOK;
-
-            /* need suspend thread */
-            rt_thread_suspend(thread);
-            rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
-            mp->suspend_thread_count ++;
-
-            if (time > 0)
-            {
-                /* init thread timer and start it */
-                rt_timer_control(&(thread->thread_timer),
-                                 RT_TIMER_CTRL_SET_TIME,
-                                 &time);
-                rt_timer_start(&(thread->thread_timer));
-            }
-
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-
-            /* do a schedule */
-            rt_schedule();
-
-            if (thread->error != RT_EOK)
-                return RT_NULL;
-
-            /* disable interrupt */
-            level = rt_hw_interrupt_disable();
-
-            /* decrease free block */
-            mp->block_free_count --;
-
-            /* get block from block list */
-            block_ptr      = mp->block_list;
-            mp->block_list = *(rt_uint8_t **)block_ptr;
-
-            /* point to memory pool */
-            *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
+            /* init thread timer and start it */
+            rt_timer_control(&(thread->thread_timer),
+                             RT_TIMER_CTRL_SET_TIME,
+                             &time);
+            rt_timer_start(&(thread->thread_timer));
         }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        /* do a schedule */
+        rt_schedule();
+
+        if (thread->error != RT_EOK)
+            return RT_NULL;
+
+        if (time > 0)
+        {
+            time -= rt_tick_get() - before_sleep;
+            if (time < 0)
+                time = 0;
+        }
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
     }
+
+    /* memory block is available. decrease the free block counter */
+    mp->block_free_count--;
+
+    /* get block from block list */
+    block_ptr = mp->block_list;
+    RT_ASSERT(block_ptr != RT_NULL);
+
+    /* Setup the next free node. */
+    mp->block_list = *(rt_uint8_t **)block_ptr;
+
+    /* point to memory pool */
+    *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
