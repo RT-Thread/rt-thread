@@ -621,4 +621,14 @@ char *strchr(const char *s1, int i)
 	return (char *) s;
 }
 
+long strtol(const char *str, char **endptr, int base)
+{
+    return simple_strtol(str, endptr, base);
+}
+
+long long strtoll(const char *str, char **endptr, int base)
+{
+    return simple_strtoll(str, endptr, base);
+}
+
 #endif
