@@ -34,7 +34,7 @@ void udpecho_entry(void *parameter)
 		addr = netbuf_fromaddr(buf);
 		port = netbuf_fromport(buf);
 
-    /* send the data to buffer */
+   		 /* send the data to buffer */
 		netconn_connect(conn, addr, port);
 
 		/* reset address, and send to client */
@@ -46,7 +46,7 @@ void udpecho_entry(void *parameter)
 		
 		netconn_send(conn, buf);
 		
-    /* release buffer */
+    	/* release buffer */
 		netbuf_delete(buf);
 	}
 }
