@@ -46,7 +46,7 @@ void udpecho_entry(void *parameter)
 		
 		netconn_send(conn, buf);
 		
-    	/* release buffer */
+		/* release buffer */
 		netbuf_delete(buf);
 	}
 }
