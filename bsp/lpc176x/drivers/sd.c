@@ -397,6 +397,25 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
+	struct rt_device_blk_geometry *AK47;
+	SDCFG *SDCfg;
+	
+	switch(cmd)
+	{
+		case RT_DEVICE_CTRL_BLK_GETGEOME: 
+		{
+			SDCfg = dev->user_data;
+			AK47 = args;
+			AK47->bytes_per_sector = SDCfg->sectorsize;	/**< number of bytes per sector */
+			AK47->block_size = SDCfg->blocksize ;		/**< size to erase one block */
+			AK47->sector_count = SDCfg->sectorcnt;		/**< count of sectors */
+//			rt_kprintf("File:sd.c, rt_sdcard_control()\n");
+			break;
+		}
+		default:
+			rt_kprintf("\t sd.c rt_sdcard_control() %s cmd is: %d" ,__LINE__,cmd);
+			break;
+	}
 	return RT_EOK;
 }
 
