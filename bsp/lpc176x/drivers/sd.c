@@ -397,6 +397,38 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
+	struct rt_device_blk_geometry *Geometry;
+	SDCFG *SDCfg;
+	
+	switch(cmd)
+	{
+		case RT_DEVICE_CTRL_BLK_GETGEOME: /**< stream mode on char device */
+		{
+			SDCfg = dev->user_data;
+			Geometry = args;
+			Geometry->bytes_per_sector = SDCfg->sectorsize;	/**< number of bytes per sector */
+			Geometry->block_size = SDCfg->blocksize ;		/**< size to erase one block */
+			Geometry->sector_count = SDCfg->sectorcnt;		/**< count of sectors */
+//			rt_kprintf("\tFile:sd.c, rt_sdcard_control(),RT_DEVICE_CTRL_BLK_GETGEOME\n");
+			break;
+		}
+    
+		case RT_DEVICE_CTRL_BLK_SYNC:/**< flush data to block device */
+		{
+//			rt_kprintf("\tFile:sd.c, rt_sdcard_control(),RT_DEVICE_CTRL_BLK_SYNC\n");
+			break;
+		}
+		
+		case RT_DEVICE_CTRL_BLK_ERASE:/**< erase block on block device */
+		{
+//			rt_kprintf("\tFile:sd.c, rt_sdcard_control(),RT_DEVICE_CTRL_BLK_ERASE\n");
+			break;
+		}      
+		
+		default:
+			rt_kprintf("\tsd.c rt_sdcard_control() %s cmd is: %d" ,__LINE__,cmd);
+			break;
+	}
 	return RT_EOK;
 }
 
