@@ -5,6 +5,8 @@
 #include <finsh.h>
 #include <lwip/api.h>
 #include <lwip/sockets.h>
+#include <lwip/init.h>
+
 /* 
  * UDP echo server
  */
@@ -23,19 +25,28 @@ void udpecho_entry(void *parameter)
 	while(1)
 	{
         /* received data to buffer */
+#if LWIP_VERSION_MINOR==3U 
 		buf = netconn_recv(conn);
-
+#else
+		netconn_recv(conn, &buf);
+#endif
+		
 		addr = netbuf_fromaddr(buf);
 		port = netbuf_fromport(buf);
 
-        /* send the data to buffer */
+   		 /* send the data to buffer */
 		netconn_connect(conn, addr, port);
 
 		/* reset address, and send to client */
+#if LWIP_VERSION_MINOR==3U 		
 		buf->addr = RT_NULL;
+#else
+		buf->addr = *IP_ADDR_ANY;
+#endif
+		
 		netconn_send(conn, buf);
-
-        /* release buffer */
+		
+		/* release buffer */
 		netbuf_delete(buf);
 	}
 }
@@ -122,15 +133,23 @@ void tcpecho_entry(void *parameter)
 	while(1)
 	{
 		/* Grab new connection. */
+#if LWIP_VERSION_MINOR==3U 
 		newconn = netconn_accept(conn);
-		/* Process the new connection. */
 		if(newconn != NULL)
+#else
+		err = netconn_accept(conn, &newconn);
+		if(err == ERR_OK)
+#endif
+		/* Process the new connection. */
 		{
 			struct netbuf *buf;
 			void *data;
 			u16_t len;
-
+#if LWIP_VERSION_MINOR==3U
 			while((buf = netconn_recv(newconn)) != NULL)
+#else
+			while((err = netconn_recv(newconn, &buf)) == ERR_OK)
+#endif
 			{
 				do
 				{
@@ -214,9 +233,8 @@ void tcpecho_socket_entry(void *parameter)
 				bytes_received = recv(connected,recv_data, TCP_SOCKET_BUFFER_SIZE, 0);
 				if (bytes_received <= 0)
 				{
-					rt_kprintf("close client connection, errno: %d, socket error: %d\n", 
-						rt_get_errno(),
-						lwip_get_error());
+					rt_kprintf("close client connection, errno: %d\n", 
+						rt_get_errno());
 					/* connection closed. */
 					lwip_close(connected);
 					break;
