@@ -27,8 +27,13 @@ class Win32Spawn:
 
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        try:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        except:
+            print 'Warning: No STARTF_USESHOWWINDOW or STARTUPINFO() in subprocess module'
+            print 'Warning: Please consider upgrade your Python'
+            startupinfo = None
 
         # Make sure the env is constructed by strings
         _e = {k: str(v) for k, v in env.items()}
