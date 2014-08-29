@@ -2,7 +2,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = ['spi_core.c', 'spi_dev.c']
-CPPPATH = [cwd + '/../include']
+CPPPATH = [cwd, cwd + '/../include']
 
 src_device = []
 
