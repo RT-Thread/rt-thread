@@ -590,13 +590,13 @@ void list_tcps(void)
     num = 0;
     for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next)
     {
-			#if !LWIP_IPV6
-				strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
+#if !LWIP_IPV6
+        strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
         strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
-			#else
-				strcpy(local_ip_str, ip6addr_ntoa((ip6_addr_t *)&(pcb->local_ip)));
+#else
+        strcpy(local_ip_str, ip6addr_ntoa((ip6_addr_t *)&(pcb->local_ip)));
         strcpy(remote_ip_str, ip6addr_ntoa((ip6_addr_t *)&(pcb->remote_ip)));
-			#endif
+#endif
 
         rt_kprintf("#%d %s:%d <==> %s:%d snd_nxt 0x%08X rcv_nxt 0x%08X ",
                    num++,
