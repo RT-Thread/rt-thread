@@ -502,7 +502,7 @@
  *  Old packets are dropped, new packets are queued.
  */ 
 #ifndef ARP_QUEUE_LEN
-#define ARP_QUEUE_LEN 3
+#define ARP_QUEUE_LEN                   3
 #endif
 
 /**

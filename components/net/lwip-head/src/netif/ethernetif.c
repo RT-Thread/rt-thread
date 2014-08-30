@@ -208,18 +208,18 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_
     /* if tcp thread has been started up, we add this netif to the system */
     if (rt_thread_find("tcpip") != RT_NULL)
     {
-		struct ip_addr ipaddr, netmask, gw;
+				struct ip_addr ipaddr, netmask, gw;
 #if !LWIP_DHCP
       	IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
         IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
         IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
 
 #else
-		IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-		IP4_ADDR(&gw, 0, 0, 0, 0);
-		IP4_ADDR(&netmask, 0, 0, 0, 0);
+        IP4_ADDR(&ipaddr, 0, 0, 0, 0);
+        IP4_ADDR(&gw, 0, 0, 0, 0);
+        IP4_ADDR(&netmask, 0, 0, 0, 0);
 #endif
-		netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
+        netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
     }
 
     return RT_EOK;
@@ -437,6 +437,7 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 }
 FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 
+#if LWIP_IPV6
 void set_if6(char* netif_name, char* ip6_addr)
 {
 	struct netif* netif = netif_list;
@@ -467,6 +468,7 @@ void set_if6(char* netif_name, char* ip6_addr)
 	}	
 }
 FINSH_FUNCTION_EXPORT(set_if6, set ipv6 local address)
+#endif
 
 #if LWIP_DNS
 #include <lwip/dns.h>
@@ -514,12 +516,12 @@ void list_if(void)
         rt_kprintf("ip address: %s\n", ipaddr_ntoa(&(netif->ip_addr)));
         rt_kprintf("gw address: %s\n", ipaddr_ntoa(&(netif->gw)));
         rt_kprintf("net mask  : %s\n", ipaddr_ntoa(&(netif->netmask)));
-		
-		rt_kprintf("link-local address: %s\n", ip6addr_ntoa(&(netif->ip6_addr[0])));
-		rt_kprintf("ipv6[1] address: %s\n", ip6addr_ntoa(&(netif->ip6_addr[1])));
-		rt_kprintf("\r\n");
-
-		netif = netif->next;
+#if LWIP_IPV6	
+        rt_kprintf("link-local address: %s\n", ip6addr_ntoa(&(netif->ip6_addr[0])));
+        rt_kprintf("ipv6[1] address: %s\n", ip6addr_ntoa(&(netif->ip6_addr[1])));
+        rt_kprintf("\r\n");
+#endif
+        netif = netif->next;
     }
 
 #if LWIP_DNS
@@ -558,7 +560,7 @@ void list_tcps(void)
     rt_kprintf("Active PCB states:\n");
     for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next)
     {
-			#ifndef LWIP_IPV6
+			#if !LWIP_IPV6
         strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
         strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
 			#else
@@ -588,7 +590,7 @@ void list_tcps(void)
     num = 0;
     for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next)
     {
-			#ifndef LWIP_IPV6
+			#if !LWIP_IPV6
 				strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
         strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
 			#else
