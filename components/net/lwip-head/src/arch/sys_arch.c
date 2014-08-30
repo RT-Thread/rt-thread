@@ -95,15 +95,16 @@ static void tcpip_init_done_callback(void *arg)
             if (netif_default == RT_NULL)
                 netif_set_default(ethif->netif);
 #ifdef LWIP_IPV6
-			ethif->netif->output_ip6 = ethip6_output;
-			netif_create_ip6_linklocal_address(ethif->netif, 1);
-	#ifdef LWIP_IPV6_AUTOCONFIG
-			ethif->netif->ip6_autoconfig_enabled = 1;
-	#endif
-	#ifdef LWIP_IPV6_MLD
-			ethif->netif->mld_mac_filter = NULL;
-	#endif
+            ethif->netif->output_ip6 = ethip6_output;
+            netif_create_ip6_linklocal_address(ethif->netif, 1);
+#ifdef LWIP_IPV6_AUTOCONFIG
+            ethif->netif->ip6_autoconfig_enabled = 1;
 #endif
+#ifdef LWIP_IPV6_MLD
+            ethif->netif->mld_mac_filter = NULL;
+#endif
+#endif
+
 #if LWIP_DHCP
             if (ethif->flags & NETIF_FLAG_DHCP)
             {
@@ -175,14 +176,6 @@ int lwip_system_init(void)
         netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
     }
 #endif
-/*#if LWIP_IPV6 && LWIP_IPV6_MLD
-	ip6_addr_t ip6addr_group;
-	IP6_ADDR(&ip6addr_group, 0, 0xfe, 0x80, 0x00, 0x00);
-	IP6_ADDR(&ip6addr_group, 0, 0x00, 0x00, 0x00, 0x00);
-	IP6_ADDR(&ip6addr_group, 0, 0x00, 0x00, 0x00, 0x00);
-	IP6_ADDR(&ip6addr_group, 0, 0x00, 0x00, 0x00, 0x01);
-	netif_mld_mac_filter_fn(netif_default, &ip6addr_group, 0);
-#endif*/
 	rt_kprintf("lwIP-%d.%d.%d initialized!\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
 
 	return 0;

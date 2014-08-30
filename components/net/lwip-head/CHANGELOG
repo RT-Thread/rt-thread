@@ -6,6 +6,10 @@ HISTORY
 
  ++ New features:
 
+  2013-08-19: Simon Goldschmidt
+  * netif.h: bug #42998: made NETIF_MAX_HWADDR_LEN overridable for some special
+    networks
+
   2013-03-17: Simon Goldschmidt (patch by Ghobad Emadi)
   * opt.h, etharp.c: Added LWIP_HOOK_ETHARP_GET_GW to implement IPv4 routing with
     multiple gateways
