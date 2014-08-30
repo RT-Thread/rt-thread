@@ -560,7 +560,7 @@ void list_tcps(void)
     rt_kprintf("Active PCB states:\n");
     for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next)
     {
-#if !LWIP_IPV6
+#ifndef LWIP_IPV6
         strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
         strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
 #else
@@ -590,7 +590,7 @@ void list_tcps(void)
     num = 0;
     for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next)
     {
-#if !LWIP_IPV6
+#ifndef LWIP_IPV6
         strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
         strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
 #else
