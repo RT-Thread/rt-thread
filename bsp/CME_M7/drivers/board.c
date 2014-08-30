@@ -49,7 +49,10 @@ static void idle_hook(void)
  */
 void rt_hw_board_init()
 {
-    rt_thread_idle_sethook(idle_hook);
+    //rt_thread_idle_sethook(idle_hook);
+
+    /* Configure the NVIC Preemption Priority Bits */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
     SysTick_Config(SYSTEM_CLOCK_FREQ / RT_TICK_PER_SECOND);
 

@@ -20,6 +20,14 @@
 void rt_init_thread_entry(void* parameter)
 {
     rt_components_init();
+	
+	rt_kprintf("new");
+
+#ifdef RT_USING_LWIP
+    cme_m7_eth_init();
+
+    //set_if("e0", "192.168.3.99", "192.168.1.1", "255.255.255.0");
+#endif /* RT_USING_LWIP */
 }
 
 int rt_application_init()
@@ -37,12 +45,6 @@ int rt_application_init()
         rt_thread_startup(tid);
 
     return 0;
-}
-
-
-void NMI_Handler(void)
-{
-    rt_kprintf("NMI_Handler\n");
 }
 
 /*@}*/

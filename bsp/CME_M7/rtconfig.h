@@ -63,13 +63,15 @@
 #define RT_CONSOLE_DEVICE_NAME	        "uart2"
 
 /* SECTION: finsh, a C-Express shell */
-#define RT_USING_FINSH
+//#define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_ONLY
 
 //#define RT_USING_NEWLIB
-//#define RT_USING_ARM_LIBC
+#define RT_USING_ARM_LIBC
 
 /* SECTION: device filesystem */
 /* #define RT_USING_DFS */
@@ -87,7 +89,7 @@
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 // #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
