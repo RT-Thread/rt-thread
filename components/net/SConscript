@@ -7,7 +7,7 @@ objs = []
 list = os.listdir(os.path.join(RTT_ROOT, 'components', 'net'))
 
 # the default version of LWIP is 1.4.1
-if not GetDepend('RT_USING_LWIP132') and not GetDepend('RT_USING_LWIP140'):
+if not GetDepend('RT_USING_LWIP132') and not GetDepend('RT_USING_LWIP140') and not GetDepend('RT_USING_LWIP_HEAD'):
     AddDepend('RT_USING_LWIP141')
 
 for d in list:
