@@ -60,9 +60,12 @@ extern "C" {
 /* Throughout this file, IP addresses are expected to be in
  * the same byte order as in IP_PCB. */
 
-/** must be the maximum of all used hardware address lengths
-    across all types of interfaces in use */
+/** Must be the maximum of all used hardware address lengths
+    across all types of interfaces in use.
+    This does not have to be changed, normally. */
+#ifndef NETIF_MAX_HWADDR_LEN
 #define NETIF_MAX_HWADDR_LEN 6U
+#endif
 
 /** Whether the network interface is 'up'. This is
  * a software flag used to control whether this network
