@@ -10,14 +10,15 @@
 #define LWIP_NETCONN                1
 
 #ifdef RT_LWIP_IPV6
-#define LWIP_IPV6		   			1
+#define LWIP_IPV6                   1
 //#define LWIP_IPV6_DHCP6	       	    1
-#define LWIP_ICMP6		    		1
-#define LWIP_IPV6_NUM_ADDRESSES	    3
-#endif
+#define LWIP_ICMP6                  1
+#define LWIP_IPV6_NUM_ADDRESSES     3
 
 #ifdef RT_LWIP_IPV6_AUTOCONFIG
-#define LWIP_IPV6_AUTOCONFIG	    1
+#define LWIP_IPV6_AUTOCONFIG        1
+#endif
+
 #endif
 
 #ifdef RT_LWIP_IPV6_MLD
