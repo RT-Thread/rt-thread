@@ -66,6 +66,8 @@ char*strtok_r(char*s, const char*delim, char**ptrptr);
 size_t strcspn(const char *s, const char *reject);
 size_t strspn (const char *s, const char *accept);
 
+long strtol(const char *str, char **endptr, int base);
+long long strtoll(const char *str, char **endptr, int base);
 #endif
 
 #endif
