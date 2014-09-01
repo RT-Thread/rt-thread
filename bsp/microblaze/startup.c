@@ -86,8 +86,6 @@ void rtthread_startup(void)
 #ifdef RT_USING_DEVICE
 	/* init hardware serial device */
 	rt_hw_serial_init();
-	/* init all device */
-	rt_device_init_all();
 #endif
 
 	/* init application */

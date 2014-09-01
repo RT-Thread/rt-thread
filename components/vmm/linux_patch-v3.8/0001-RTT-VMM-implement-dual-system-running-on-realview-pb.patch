@@ -1,0 +1,1211 @@
+From d001bd8483c805c45a42d9bd0468a96722e72875 Mon Sep 17 00:00:00 2001
+From: Grissiom <chaos.proton@gmail.com>
+Date: Thu, 1 Aug 2013 14:59:56 +0800
+Subject: [PATCH 1/2] RTT-VMM: implement dual system running on realview-pb-a8
+
+Signed-off-by: Grissiom <chaos.proton@gmail.com>
+Signed-off-by: Bernard.Xiong <bernard.xiong@gmail.com>
+---
+ arch/arm/Kconfig                   |   1 +
+ arch/arm/Makefile                  |   1 +
+ arch/arm/common/gic.c              |  67 +++++++++++++-
+ arch/arm/include/asm/assembler.h   |   8 +-
+ arch/arm/include/asm/domain.h      |   7 ++
+ arch/arm/include/asm/irqflags.h    |  84 ++++++++++++-----
+ arch/arm/include/asm/mach/map.h    |   5 +
+ arch/arm/include/vmm/vmm.h         |  35 +++++++
+ arch/arm/include/vmm/vmm_config.h  |   7 ++
+ arch/arm/kernel/entry-armv.S       |  30 +++++-
+ arch/arm/kernel/entry-common.S     |   3 +
+ arch/arm/kernel/entry-header.S     |  15 ++-
+ arch/arm/mach-omap2/irq.c          |  12 +++
+ arch/arm/mm/fault.c                |   9 ++
+ arch/arm/mm/init.c                 |   8 ++
+ arch/arm/mm/mmu.c                  |  44 +++++++++
+ arch/arm/vmm/Kconfig               |  49 ++++++++++
+ arch/arm/vmm/Makefile              |  10 ++
+ arch/arm/vmm/README                |   1 +
+ arch/arm/vmm/am33xx/intc.h         |  13 +++
+ arch/arm/vmm/am33xx/softirq.c      |  14 +++
+ arch/arm/vmm/am33xx/virq.c         |  48 ++++++++++
+ arch/arm/vmm/realview_a8/softirq.c |  12 +++
+ arch/arm/vmm/vmm.c                 |  32 +++++++
+ arch/arm/vmm/vmm_traps.c           |  37 ++++++++
+ arch/arm/vmm/vmm_virhw.h           |  59 ++++++++++++
+ arch/arm/vmm/vmm_virq.c            | 183 +++++++++++++++++++++++++++++++++++++
+ 27 files changed, 767 insertions(+), 27 deletions(-)
+ create mode 100644 arch/arm/include/vmm/vmm.h
+ create mode 100644 arch/arm/include/vmm/vmm_config.h
+ create mode 100644 arch/arm/vmm/Kconfig
+ create mode 100644 arch/arm/vmm/Makefile
+ create mode 100644 arch/arm/vmm/README
+ create mode 100644 arch/arm/vmm/am33xx/intc.h
+ create mode 100644 arch/arm/vmm/am33xx/softirq.c
+ create mode 100644 arch/arm/vmm/am33xx/virq.c
+ create mode 100644 arch/arm/vmm/realview_a8/softirq.c
+ create mode 100644 arch/arm/vmm/vmm.c
+ create mode 100644 arch/arm/vmm/vmm_traps.c
+ create mode 100644 arch/arm/vmm/vmm_virhw.h
+ create mode 100644 arch/arm/vmm/vmm_virq.c
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 67874b8..eb82cd6 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1164,6 +1164,7 @@ config ARM_TIMER_SP804
+ 	select HAVE_SCHED_CLOCK
+ 
+ source arch/arm/mm/Kconfig
++source arch/arm/vmm/Kconfig
+ 
+ config ARM_NR_BANKS
+ 	int
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 30c443c..262c8e2 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -252,6 +252,7 @@ core-$(CONFIG_FPE_NWFPE)	+= arch/arm/nwfpe/
+ core-$(CONFIG_FPE_FASTFPE)	+= $(FASTFPE_OBJ)
+ core-$(CONFIG_VFP)		+= arch/arm/vfp/
+ core-$(CONFIG_XEN)		+= arch/arm/xen/
++core-$(CONFIG_ARM_VMM)		+= arch/arm/vmm/
+ 
+ # If we have a machine-specific directory, then include it in the build.
+ core-y				+= arch/arm/kernel/ arch/arm/mm/ arch/arm/common/
+diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+index 87dfa90..a9d7357 100644
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@ -45,6 +45,11 @@
+ #include <asm/mach/irq.h>
+ #include <asm/hardware/gic.h>
+ 
++#ifdef CONFIG_ARM_VMM
++#include <vmm/vmm.h>
++#include "../vmm/vmm_virhw.h"
++#endif
++
+ union gic_base {
+ 	void __iomem *common_base;
+ 	void __percpu __iomem **percpu_base;
+@@ -276,12 +281,72 @@ static int gic_set_wake(struct irq_data *d, unsigned int on)
+ #define gic_set_wake	NULL
+ #endif
+ 
++#ifdef CONFIG_ARM_VMM
++void vmm_irq_handle(struct gic_chip_data *gic, struct pt_regs *regs)
++{
++	unsigned long flags;
++	struct vmm_context* _vmm_context;
++
++	_vmm_context = vmm_context_get();
++
++	while (_vmm_context->virq_pended) {
++		int index;
++
++		flags = vmm_irq_save();
++		_vmm_context->virq_pended = 0;
++		vmm_irq_restore(flags);
++
++		/* get the pending interrupt */
++		for (index = 0; index < IRQS_NR_32; index++) {
++			int pdbit;
++
++			for (pdbit = __builtin_ffs(_vmm_context->virq_pending[index]);
++			     pdbit != 0;
++			     pdbit = __builtin_ffs(_vmm_context->virq_pending[index])) {
++				unsigned long inner_flag;
++				int irqnr, oirqnr;
++
++				pdbit--;
++
++				inner_flag = vmm_irq_save();
++				_vmm_context->virq_pending[index] &= ~(1 << pdbit);
++				vmm_irq_restore(inner_flag);
++
++				oirqnr = pdbit + index * 32;
++				if (likely(oirqnr > 15 && oirqnr < 1021)) {
++					irqnr = irq_find_mapping(gic->domain, oirqnr);
++					handle_IRQ(irqnr, regs);
++				} else if (oirqnr < 16) {
++					/* soft IRQs are EOIed by the host. */
++#ifdef CONFIG_SMP
++					handle_IPI(oirqnr, regs);
++#endif
++				}
++				/* umask interrupt */
++				/* FIXME: maybe we don't need this */
++				writel_relaxed(1 << (oirqnr % 32),
++					       gic_data_dist_base(gic)
++					       + GIC_DIST_ENABLE_SET
++					       + (oirqnr / 32) * 4);
++
++			}
++		}
++	}
++}
++#endif
++
+ asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+ {
+ 	u32 irqstat, irqnr;
+ 	struct gic_chip_data *gic = &gic_data[0];
+ 	void __iomem *cpu_base = gic_data_cpu_base(gic);
+ 
++#ifdef CONFIG_ARM_VMM
++	if (vmm_get_status()) {
++		vmm_irq_handle(gic, regs);
++		return;
++	}
++#endif
+ 	do {
+ 		irqstat = readl_relaxed(cpu_base + GIC_CPU_INTACK);
+ 		irqnr = irqstat & ~0x1c00;
+@@ -777,7 +842,7 @@ void __cpuinit gic_secondary_init(unsigned int gic_nr)
+ 	gic_cpu_init(&gic_data[gic_nr]);
+ }
+ 
+-#ifdef CONFIG_SMP
++#if defined(CONFIG_SMP) || defined(CONFIG_ARM_VMM)
+ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ {
+ 	int cpu;
+diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
+index eb87200..b646fa7 100644
+--- a/arch/arm/include/asm/assembler.h
++++ b/arch/arm/include/asm/assembler.h
+@@ -82,11 +82,15 @@
+  */
+ #if __LINUX_ARM_ARCH__ >= 6
+ 	.macro	disable_irq_notrace
+-	cpsid	i
++	stmdb   sp!, {r0-r3, ip, lr}
++	bl	irq_disable_asm
++	ldmia	sp!, {r0-r3, ip, lr}
+ 	.endm
+ 
+ 	.macro	enable_irq_notrace
+-	cpsie	i
++	stmdb   sp!, {r0-r3, ip, lr}
++	bl	irq_enable_asm
++	ldmia	sp!, {r0-r3, ip, lr}
+ 	.endm
+ #else
+ 	.macro	disable_irq_notrace
+diff --git a/arch/arm/include/asm/domain.h b/arch/arm/include/asm/domain.h
+index 6ddbe44..bbc4470 100644
+--- a/arch/arm/include/asm/domain.h
++++ b/arch/arm/include/asm/domain.h
+@@ -44,6 +44,13 @@
+ #define DOMAIN_IO	0
+ #endif
+ 
++#ifdef CONFIG_ARM_VMM
++/* RT-Thread VMM memory space */
++#define DOMAIN_RTVMM      3
++/* shared memory with VMM and Linux */
++#define DOMAIN_RTVMM_SHR  4
++#endif
++
+ /*
+  * Domain types
+  */
+diff --git a/arch/arm/include/asm/irqflags.h b/arch/arm/include/asm/irqflags.h
+index 1e6cca5..bfaedff 100644
+--- a/arch/arm/include/asm/irqflags.h
++++ b/arch/arm/include/asm/irqflags.h
+@@ -9,34 +9,56 @@
+  * CPU interrupt mask handling.
+  */
+ #if __LINUX_ARM_ARCH__ >= 6
++#include <vmm/vmm.h> /* VMM only support ARMv7 right now */
+ 
+ static inline unsigned long arch_local_irq_save(void)
+ {
+ 	unsigned long flags;
+ 
+-	asm volatile(
+-		"	mrs	%0, cpsr	@ arch_local_irq_save\n"
+-		"	cpsid	i"
+-		: "=r" (flags) : : "memory", "cc");
++	if (vmm_status)
++	{
++		flags = vmm_save_virq();
++	}
++	else
++	{
++		asm volatile(
++			"	mrs	%0, cpsr	@ arch_local_irq_save\n"
++			"	cpsid	i"
++			: "=r" (flags) : : "memory", "cc");
++	}
+ 	return flags;
+ }
+ 
+ static inline void arch_local_irq_enable(void)
+ {
+-	asm volatile(
+-		"	cpsie i			@ arch_local_irq_enable"
+-		:
+-		:
+-		: "memory", "cc");
++	if (vmm_status)
++	{
++		vmm_enable_virq();
++	}
++	else
++	{
++		asm volatile(
++			"	cpsie i			@ arch_local_irq_enable"
++			:
++			:
++			: "memory", "cc");
++	}
+ }
+ 
+ static inline void arch_local_irq_disable(void)
+ {
+-	asm volatile(
+-		"	cpsid i			@ arch_local_irq_disable"
+-		:
+-		:
+-		: "memory", "cc");
++	if (vmm_status)
++	{
++		vmm_disable_virq();
++	}
++	else
++	{
++		asm volatile(
++			"	cpsid i			@ arch_local_irq_disable"
++			:
++			:
++			: "memory", "cc");
++	}
+ }
+ 
+ #define local_fiq_enable()  __asm__("cpsie f	@ __stf" : : : "memory", "cc")
+@@ -128,9 +150,17 @@ static inline void arch_local_irq_disable(void)
+ static inline unsigned long arch_local_save_flags(void)
+ {
+ 	unsigned long flags;
+-	asm volatile(
+-		"	mrs	%0, cpsr	@ local_save_flags"
+-		: "=r" (flags) : : "memory", "cc");
++
++	if (vmm_status)
++	{
++		flags = vmm_return_virq();
++	}
++	else
++	{
++		asm volatile(
++			"	mrs	%0, cpsr	@ local_save_flags"
++			: "=r" (flags) : : "memory", "cc");
++	}
+ 	return flags;
+ }
+ 
+@@ -139,15 +169,25 @@ static inline unsigned long arch_local_save_flags(void)
+  */
+ static inline void arch_local_irq_restore(unsigned long flags)
+ {
+-	asm volatile(
+-		"	msr	cpsr_c, %0	@ local_irq_restore"
+-		:
+-		: "r" (flags)
+-		: "memory", "cc");
++	if (vmm_status)
++	{
++		vmm_restore_virq(flags);
++	}
++	else
++	{
++		asm volatile(
++			"	msr	cpsr_c, %0	@ local_irq_restore"
++			:
++			: "r" (flags)
++			: "memory", "cc");
++	}
+ }
+ 
+ static inline int arch_irqs_disabled_flags(unsigned long flags)
+ {
++	if (vmm_status)
++		return (flags == 0x01);
++
+ 	return flags & PSR_I_BIT;
+ }
+ 
+diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
+index 2fe141f..502b341 100644
+--- a/arch/arm/include/asm/mach/map.h
++++ b/arch/arm/include/asm/mach/map.h
+@@ -35,6 +35,11 @@ struct map_desc {
+ #define MT_MEMORY_SO		14
+ #define MT_MEMORY_DMA_READY	15
+ 
++#ifdef CONFIG_ARM_VMM
++#define MT_RTVMM                16
++#define MT_RTVMM_SHARE          17
++#endif
++
+ #ifdef CONFIG_MMU
+ extern void iotable_init(struct map_desc *, int);
+ extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
+diff --git a/arch/arm/include/vmm/vmm.h b/arch/arm/include/vmm/vmm.h
+new file mode 100644
+index 0000000..3ff3f31
+--- /dev/null
++++ b/arch/arm/include/vmm/vmm.h
+@@ -0,0 +1,35 @@
++#ifndef __LINUX_VMM_H__
++#define __LINUX_VMM_H__
++
++#include <linux/compiler.h>
++
++#include "vmm_config.h"
++
++struct irq_domain;
++struct pt_regs;
++
++extern int vmm_status;
++extern struct vmm_context *_vmm_context;
++
++/* VMM context routines */
++void vmm_context_init(void* context);
++struct vmm_context* vmm_context_get(void);
++
++void vmm_set_status(int status);
++int vmm_get_status(void);
++
++void vmm_mem_init(void);
++void vmm_raise_softirq(int irq);
++
++/* VMM vIRQ routines */
++unsigned long vmm_save_virq(void);
++unsigned long vmm_return_virq(void);
++
++void vmm_restore_virq(unsigned long flags);
++void vmm_enable_virq(void);
++void vmm_disable_virq(void);
++void vmm_enter_hw_noirq(void);
++
++void vmm_raise_softirq(int irq);
++
++#endif
+diff --git a/arch/arm/include/vmm/vmm_config.h b/arch/arm/include/vmm/vmm_config.h
+new file mode 100644
+index 0000000..cce5e8a
+--- /dev/null
++++ b/arch/arm/include/vmm/vmm_config.h
+@@ -0,0 +1,7 @@
++#ifndef __LINUX_VMM_CONFIG_H__
++#define __LINUX_VMM_CONFIG_H__
++
++#define HOST_VMM_ADDR_END 		CONFIG_HOST_VMM_ADDR_END
++#define HOST_VMM_ADDR_BEGIN 	(CONFIG_HOST_VMM_ADDR_END - CONFIG_HOST_VMM_SIZE)
++
++#endif
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index 0f82098..80f1681 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -182,6 +182,15 @@ ENDPROC(__und_invalid)
+ 	@
+ 	stmia	r7, {r2 - r6}
+ 
++	stmdb   sp!, {r0-r3, ip, lr}
++	mov     r0, r5
++	add     r1, sp, #4*6
++	bl      vmm_save_virq_spsr_asm
++	mov     r5, r0
++	bl      vmm_switch_nohwirq_to_novirq
++	ldmia   sp!, {r0-r3, ip, lr}
++	str     r5, [sp, #S_PSR]              @ fix the pushed SPSR
++
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	bl	trace_hardirqs_off
+ #endif
+@@ -208,6 +217,23 @@ __dabt_svc:
+  UNWIND(.fnend		)
+ ENDPROC(__dabt_svc)
+ 
++	.macro	svc_exit_irq, rpsr
++	cpsid   i
++	msr	spsr_cxsf, \rpsr
++	mov     r0, \rpsr
++	bl      vmm_on_svc_exit_irq
++#if defined(CONFIG_CPU_V6)
++	ldr	r0, [sp]
++	strex	r1, r2, [sp]			@ clear the exclusive monitor
++	ldmib	sp, {r1 - pc}^			@ load r1 - pc, cpsr
++#elif defined(CONFIG_CPU_32v6K)
++	clrex					@ clear the exclusive monitor
++	ldmia	sp, {r0 - pc}^			@ load r0 - pc, cpsr
++#else
++	ldmia	sp, {r0 - pc}^			@ load r0 - pc, cpsr
++#endif
++	.endm
++
+ 	.align	5
+ __irq_svc:
+ 	svc_entry
+@@ -228,7 +254,7 @@ __irq_svc:
+ 	@ the first place, so there's no point checking the PSR I bit.
+ 	bl	trace_hardirqs_on
+ #endif
+-	svc_exit r5				@ return from exception
++	svc_exit_irq r5				@ return from exception
+  UNWIND(.fnend		)
+ ENDPROC(__irq_svc)
+ 
+@@ -393,6 +419,8 @@ ENDPROC(__pabt_svc)
+ 	@
+ 	zero_fp
+ 
++	bl      vmm_switch_nohwirq_to_novirq
++
+ #ifdef CONFIG_IRQSOFF_TRACER
+ 	bl	trace_hardirqs_off
+ #endif
+diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+index a6c301e..325a26e 100644
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -349,6 +349,9 @@ ENTRY(vector_swi)
+ 	str	lr, [sp, #S_PC]			@ Save calling PC
+ 	str	r8, [sp, #S_PSR]		@ Save CPSR
+ 	str	r0, [sp, #S_OLD_R0]		@ Save OLD_R0
++	stmdb   sp!, {r0-r3, ip, lr}
++	bl	vmm_switch_nohwirq_to_novirq
++	ldmia	sp!, {r0-r3, ip, lr}
+ 	zero_fp
+ 
+ 	/*
+diff --git a/arch/arm/kernel/entry-header.S b/arch/arm/kernel/entry-header.S
+index 9a8531e..9e438dc 100644
+--- a/arch/arm/kernel/entry-header.S
++++ b/arch/arm/kernel/entry-header.S
+@@ -75,7 +75,11 @@
+ 
+ #ifndef CONFIG_THUMB2_KERNEL
+ 	.macro	svc_exit, rpsr
+-	msr	spsr_cxsf, \rpsr
++	cpsid   i
++	mov     r0, \rpsr
++	bl      vmm_restore_virq_asm            @ restore the IRQ to emulate
++	                                        @ the behavior of ldmia {}^
++	msr	spsr_cxsf, r0
+ #if defined(CONFIG_CPU_V6)
+ 	ldr	r0, [sp]
+ 	strex	r1, r2, [sp]			@ clear the exclusive monitor
+@@ -90,6 +94,10 @@
+ 
+ 	.macro	restore_user_regs, fast = 0, offset = 0
+ 	ldr	r1, [sp, #\offset + S_PSR]	@ get calling cpsr
++	@ protect the spsr *and* stack we push the registers into this stack
++	@ and if the sp is not point to the bottom of the stack, IRQ should be
++	@ disabled.
++	cpsid   i
+ 	ldr	lr, [sp, #\offset + S_PC]!	@ get pc
+ 	msr	spsr_cxsf, r1			@ save in spsr_svc
+ #if defined(CONFIG_CPU_V6)
+@@ -105,6 +113,11 @@
+ 	mov	r0, r0				@ ARMv5T and earlier require a nop
+ 						@ after ldm {}^
+ 	add	sp, sp, #S_FRAME_SIZE - S_PC
++	@ TODO: in some conditions the call to vmm_on_ret_to_usr is useless.
++	stmdb   sp!, {r0-r3, ip, lr}
++	mrs     r0, spsr                        @ debug code
++	bl      vmm_on_ret_to_usr
++	ldmia	sp!, {r0-r3, ip, lr}
+ 	movs	pc, lr				@ return & move spsr_svc into cpsr
+ 	.endm
+ 
+diff --git a/arch/arm/mach-omap2/irq.c b/arch/arm/mach-omap2/irq.c
+index 3926f37..252577f 100644
+--- a/arch/arm/mach-omap2/irq.c
++++ b/arch/arm/mach-omap2/irq.c
+@@ -23,6 +23,10 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ 
++#ifdef CONFIG_ARM_VMM
++#include <vmm/vmm.h>
++#endif
++
+ #include "soc.h"
+ #include "iomap.h"
+ #include "common.h"
+@@ -223,6 +227,14 @@ static inline void omap_intc_handle_irq(void __iomem *base_addr, struct pt_regs
+ {
+ 	u32 irqnr;
+ 
++#ifdef CONFIG_ARM_VMM
++	if (vmm_get_status())
++	{
++		vmm_irq_handle(base_addr, domain, regs);
++		return;
++	}
++#endif
++
+ 	do {
+ 		irqnr = readl_relaxed(base_addr + 0x98);
+ 		if (irqnr)
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 5dbf13f..e76ba74 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -255,6 +255,10 @@ out:
+ 	return fault;
+ }
+ 
++#ifdef CONFIG_ARM_VMM
++#include <vmm/vmm.h>
++#endif
++
+ static int __kprobes
+ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -268,6 +272,11 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	if (notify_page_fault(regs, fsr))
+ 		return 0;
+ 
++#ifdef CONFIG_ARM_VMMX
++	WARN(HOST_VMM_ADDR_BEGIN < regs->ARM_pc &&
++	       regs->ARM_pc < HOST_VMM_ADDR_END);
++#endif
++
+ 	tsk = current;
+ 	mm  = tsk->mm;
+ 
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index ad722f1..ebb4e7f 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -34,6 +34,10 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
++#ifdef CONFIG_ARM_VMM
++#include <vmm/vmm.h>
++#endif
++
+ #include "mm.h"
+ 
+ static unsigned long phys_initrd_start __initdata = 0;
+@@ -338,6 +342,10 @@ void __init arm_memblock_init(struct meminfo *mi, struct machine_desc *mdesc)
+ 	for (i = 0; i < mi->nr_banks; i++)
+ 		memblock_add(mi->bank[i].start, mi->bank[i].size);
+ 
++#ifdef CONFIG_ARM_VMM
++	memblock_reserve(__pa(HOST_VMM_ADDR_BEGIN), HOST_VMM_ADDR_END - HOST_VMM_ADDR_BEGIN);
++#endif
++
+ 	/* Register the kernel text, kernel data and initrd with memblock. */
+ #ifdef CONFIG_XIP_KERNEL
+ 	memblock_reserve(__pa(_sdata), _end - _sdata);
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index ce328c7..7e7d0ca 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -294,6 +294,20 @@ static struct mem_type mem_types[] = {
+ 		.prot_l1   = PMD_TYPE_TABLE,
+ 		.domain    = DOMAIN_KERNEL,
+ 	},
++#ifdef CONFIG_ARM_VMM
++	[MT_RTVMM] = {
++		.prot_pte  = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY,
++		.prot_l1   = PMD_TYPE_TABLE,
++		.prot_sect = PMD_TYPE_SECT | PMD_SECT_AP_WRITE,
++		.domain    = DOMAIN_RTVMM,
++	},
++	[MT_RTVMM_SHARE] = {
++		.prot_pte  = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY,
++		.prot_l1   = PMD_TYPE_TABLE,
++		.prot_sect = PMD_TYPE_SECT | PMD_SECT_AP_WRITE,
++		.domain    = DOMAIN_RTVMM_SHR,
++	},
++#endif
+ };
+ 
+ const struct mem_type *get_mem_type(unsigned int type)
+@@ -450,6 +464,9 @@ static void __init build_mem_type_table(void)
+ 			mem_types[MT_DEVICE_CACHED].prot_pte |= L_PTE_SHARED;
+ 			mem_types[MT_MEMORY].prot_sect |= PMD_SECT_S;
+ 			mem_types[MT_MEMORY].prot_pte |= L_PTE_SHARED;
++#ifdef CONFIG_ARM_VMM
++			/* FIXME */
++#endif
+ 			mem_types[MT_MEMORY_DMA_READY].prot_pte |= L_PTE_SHARED;
+ 			mem_types[MT_MEMORY_NONCACHED].prot_sect |= PMD_SECT_S;
+ 			mem_types[MT_MEMORY_NONCACHED].prot_pte |= L_PTE_SHARED;
+@@ -503,6 +520,12 @@ static void __init build_mem_type_table(void)
+ 	mem_types[MT_HIGH_VECTORS].prot_l1 |= ecc_mask;
+ 	mem_types[MT_MEMORY].prot_sect |= ecc_mask | cp->pmd;
+ 	mem_types[MT_MEMORY].prot_pte |= kern_pgprot;
++#ifdef CONFIG_ARM_VMM
++	mem_types[MT_RTVMM].prot_sect |= ecc_mask | cp->pmd;
++	mem_types[MT_RTVMM].prot_pte |= kern_pgprot;
++	mem_types[MT_RTVMM_SHARE].prot_sect |= ecc_mask | cp->pmd;
++	mem_types[MT_RTVMM_SHARE].prot_pte |= kern_pgprot;
++#endif
+ 	mem_types[MT_MEMORY_DMA_READY].prot_pte |= kern_pgprot;
+ 	mem_types[MT_MEMORY_NONCACHED].prot_sect |= ecc_mask;
+ 	mem_types[MT_ROM].prot_sect |= cp->pmd;
+@@ -1152,6 +1175,27 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
+ #endif
+ 
+ 	/*
++	 * Create mappings for RT-Thread VMM and it's shared memory with Linux
++	 */
++#ifdef CONFIG_ARM_VMM
++	/* the TEXCB attribute is not right yet */
++	/* shared memory region comes first */
++	map.pfn = __phys_to_pfn(virt_to_phys((void*)HOST_VMM_ADDR_BEGIN));
++	map.virtual = HOST_VMM_ADDR_BEGIN;
++	map.length = CONFIG_RTVMM_SHARED_SIZE;
++	map.type = MT_RTVMM_SHARE;
++	create_mapping(&map);
++
++	/* vmm private region comes next */
++	map.pfn = __phys_to_pfn(virt_to_phys((void*)HOST_VMM_ADDR_BEGIN
++					     + CONFIG_RTVMM_SHARED_SIZE));
++	map.virtual = HOST_VMM_ADDR_BEGIN + CONFIG_RTVMM_SHARED_SIZE;
++	map.length = CONFIG_HOST_VMM_SIZE - CONFIG_RTVMM_SHARED_SIZE;
++	map.type = MT_RTVMM;
++	create_mapping(&map);
++#endif
++
++	/*
+ 	 * Create a mapping for the machine vectors at the high-vectors
+ 	 * location (0xffff0000).  If we aren't using high-vectors, also
+ 	 * create a mapping at the low-vectors virtual address.
+diff --git a/arch/arm/vmm/Kconfig b/arch/arm/vmm/Kconfig
+new file mode 100644
+index 0000000..d852056
+--- /dev/null
++++ b/arch/arm/vmm/Kconfig
+@@ -0,0 +1,49 @@
++menu "RT-Thread VMM Features"
++
++# ARM-VMM
++config ARM_VMM
++	bool "Support RT-Thread VMM on ARM Cortex-A8"
++	depends on MACH_REALVIEW_PBA8
++	help
++	  RT-Thread VMM implementation on ARM Cortex-A8
++
++	  Say Y if you want support for the RT-Thread VMM.
++	  Otherwise, say N.
++
++if SOC_AM33XX
++config HOST_VMM_ADDR_END
++	hex "End address of VMM"
++	depends on ARM_VMM
++	default 0xE0000000
++	help
++	  The end address of VMM space. Normally, it's the
++	  end address of DDR memory.
++endif
++
++if MACH_REALVIEW_PBA8
++config HOST_VMM_ADDR_END
++	hex "End address of VMM"
++	depends on ARM_VMM
++	default 0xE0000000
++	help
++	  The end address of VMM space. Normally, it's the
++	  end address of DDR memory.
++endif
++
++config HOST_VMM_SIZE
++	hex "Size of VMM space"
++	depends on ARM_VMM
++	default 0x400000
++	help
++	  The size of VMM space.
++
++config RTVMM_SHARED_SIZE
++	hex "Size of shared memory space between rt-vmm and Linux"
++	depends on ARM_VMM
++	default 0x100000
++	help
++	  The size of shared memory space between rt-vmm and Linux. This shared
++	  space is within the total size of the HOST_VMM_SIZE. So it is should
++	  be smaller than HOST_VMM_SIZE.
++
++endmenu
+diff --git a/arch/arm/vmm/Makefile b/arch/arm/vmm/Makefile
+new file mode 100644
+index 0000000..127e43a
+--- /dev/null
++++ b/arch/arm/vmm/Makefile
+@@ -0,0 +1,10 @@
++#
++# Makefile for the linux arm-vmm
++#
++
++obj-$(CONFIG_ARM_VMM) += vmm.o vmm_traps.o vmm_virq.o
++
++ifeq ($(CONFIG_ARM_VMM),y)
++obj-$(CONFIG_SOC_AM33XX)		 += am33xx/softirq.o am33xx/virq.o
++obj-$(CONFIG_MACH_REALVIEW_PBA8) += realview_a8/softirq.o
++endif
+diff --git a/arch/arm/vmm/README b/arch/arm/vmm/README
+new file mode 100644
+index 0000000..24f1b42
+--- /dev/null
++++ b/arch/arm/vmm/README
+@@ -0,0 +1 @@
++Linux VMM kernel routines
+diff --git a/arch/arm/vmm/am33xx/intc.h b/arch/arm/vmm/am33xx/intc.h
+new file mode 100644
+index 0000000..6c24f8d
+--- /dev/null
++++ b/arch/arm/vmm/am33xx/intc.h
+@@ -0,0 +1,13 @@
++#ifndef __INTC_H__
++#define __INTC_H__
++
++#define OMAP34XX_IC_BASE	0x48200000
++
++#define INTC_SIR_SET0		0x0090
++#define INTC_MIR_CLEAR0		0x0088
++
++#define OMAP2_L4_IO_OFFSET	0xb2000000
++#define OMAP2_L4_IO_ADDRESS(pa)	IOMEM((pa) + OMAP2_L4_IO_OFFSET) /* L4 */
++#define OMAP3_IRQ_BASE		OMAP2_L4_IO_ADDRESS(OMAP34XX_IC_BASE)
++
++#endif
+diff --git a/arch/arm/vmm/am33xx/softirq.c b/arch/arm/vmm/am33xx/softirq.c
+new file mode 100644
+index 0000000..5648496
+--- /dev/null
++++ b/arch/arm/vmm/am33xx/softirq.c
+@@ -0,0 +1,14 @@
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <asm/io.h>
++
++#include <vmm/vmm.h>
++#include "../vmm_virhw.h"
++#include "intc.h"
++
++void vmm_raise_softirq(int irq)
++{
++	writel_relaxed(1 << (irq % 32),
++		OMAP3_IRQ_BASE + INTC_SIR_SET0 + (irq / 32) * 4);
++}
++EXPORT_SYMBOL(vmm_raise_softirq);
+diff --git a/arch/arm/vmm/am33xx/virq.c b/arch/arm/vmm/am33xx/virq.c
+new file mode 100644
+index 0000000..4ef7671
+--- /dev/null
++++ b/arch/arm/vmm/am33xx/virq.c
+@@ -0,0 +1,48 @@
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/irqdomain.h>
++
++#include <asm/io.h>
++#include <asm/irq.h>
++
++#include <vmm/vmm.h>
++#include "../vmm_virhw.h"
++#include "intc.h"
++
++void vmm_irq_handle(void __iomem *base_addr, struct irq_domain *domain,
++				 struct pt_regs *regs)
++{
++	unsigned long flags;
++	struct vmm_context* _vmm_context;
++
++	_vmm_context = vmm_context_get();
++
++	while (_vmm_context->virq_pended) {
++		int index;
++
++		flags = vmm_irq_save();
++		_vmm_context->virq_pended = 0;
++		vmm_irq_restore(flags);
++
++		/* get the pending interrupt */
++		for (index = 0; index < IRQS_NR_32; index++) {
++			int pdbit;
++
++			for (pdbit = __builtin_ffs(_vmm_context->virq_pending[index]);
++			     pdbit != 0;
++			     pdbit = __builtin_ffs(_vmm_context->virq_pending[index])) {
++				unsigned long inner_flag;
++				int irqnr;
++
++				pdbit--;
++
++				inner_flag = vmm_irq_save();
++				_vmm_context->virq_pending[index] &= ~(1 << pdbit);
++				vmm_irq_restore(inner_flag);
++
++				irqnr = irq_find_mapping(domain, pdbit + index * 32);
++				handle_IRQ(irqnr, regs);
++			}
++		}
++	}
++}
+diff --git a/arch/arm/vmm/realview_a8/softirq.c b/arch/arm/vmm/realview_a8/softirq.c
+new file mode 100644
+index 0000000..a52b79c7
+--- /dev/null
++++ b/arch/arm/vmm/realview_a8/softirq.c
+@@ -0,0 +1,12 @@
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <asm/io.h>
++#include <asm/hardware/gic.h>
++
++#include <vmm/vmm.h>
++
++void vmm_raise_softirq(int irq)
++{
++	gic_raise_softirq(cpumask_of(0),  irq);
++}
++EXPORT_SYMBOL(vmm_raise_softirq);
+diff --git a/arch/arm/vmm/vmm.c b/arch/arm/vmm/vmm.c
+new file mode 100644
+index 0000000..3b1d202
+--- /dev/null
++++ b/arch/arm/vmm/vmm.c
+@@ -0,0 +1,32 @@
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++#include <vmm/vmm.h>
++
++struct vmm_context* _vmm_context = NULL;
++int vmm_status = 0;
++EXPORT_SYMBOL(vmm_status);
++
++void vmm_set_status(int status)
++{
++	vmm_status = status;
++}
++EXPORT_SYMBOL(vmm_set_status);
++
++int vmm_get_status(void)
++{
++	return vmm_status;
++}
++EXPORT_SYMBOL(vmm_get_status);
++
++void vmm_context_init(void* context_addr)
++{
++	_vmm_context = (struct vmm_context*)context_addr;
++}
++EXPORT_SYMBOL(vmm_context_init);
++
++struct vmm_context* vmm_context_get(void)
++{
++	return _vmm_context;
++}
++EXPORT_SYMBOL(vmm_context_get);
+diff --git a/arch/arm/vmm/vmm_traps.c b/arch/arm/vmm/vmm_traps.c
+new file mode 100644
+index 0000000..def0d90
+--- /dev/null
++++ b/arch/arm/vmm/vmm_traps.c
+@@ -0,0 +1,37 @@
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <asm/traps.h>
++#include <asm/cp15.h>
++#include <asm/cacheflush.h>
++
++void trap_set_vector(void *start, unsigned int length)
++{
++	unsigned char *ptr;
++	unsigned char *vector;
++
++	ptr = start;
++	vector = (unsigned char*)vectors_page;
++
++	/* only set IRQ and FIQ */
++#if defined(CONFIG_CPU_USE_DOMAINS)
++	/* IRQ */
++	memcpy((void *)0xffff0018, (void*)(ptr + 0x18), 4);
++	memcpy((void *)(0xffff0018 + 0x20), (void*)(ptr + 0x18 + 0x20), 4);
++
++	/* FIQ */
++	memcpy((void *)0xffff001C, (void*)(ptr + 0x1C), 4);
++	memcpy((void *)(0xffff001C + 0x20), (void*)(ptr + 0x1C + 0x20), 4);
++#else
++	/* IRQ */
++	memcpy(vector + 0x18, (void*)(ptr + 0x18), 4);
++	memcpy(vector + 0x18 + 0x20, (void*)(ptr + 0x18 + 0x20), 4);
++
++	/* FIQ */
++	memcpy(vector + 0x1C, (void*)(ptr + 0x1C), 4);
++	memcpy(vector + 0x1C + 0x20, (void*)(ptr + 0x1C + 0x20), 4);
++#endif
++	flush_icache_range(0xffff0000, 0xffff0000 + length);
++	if (!vectors_high())
++		flush_icache_range(0x00, 0x00 + length);
++}
++EXPORT_SYMBOL(trap_set_vector);
+diff --git a/arch/arm/vmm/vmm_virhw.h b/arch/arm/vmm/vmm_virhw.h
+new file mode 100644
+index 0000000..363cc6e
+--- /dev/null
++++ b/arch/arm/vmm/vmm_virhw.h
+@@ -0,0 +1,59 @@
++#ifndef __VMM_VIRTHWH__
++#define __VMM_VIRTHWH__
++
++#define REALVIEW_NR_IRQS        96
++#define IRQS_NR_32              ((REALVIEW_NR_IRQS + 31)/32)
++#define RTT_VMM_IRQ_TRIGGER     10
++
++struct vmm_context
++{
++	/* the status of vGuest irq */
++	volatile unsigned long virq_status;
++
++	/* has interrupt pended on vGuest OS IRQ */
++	volatile unsigned long virq_pended;
++
++	/* pending interrupt for vGuest OS */
++	volatile unsigned long virq_pending[IRQS_NR_32];
++};
++
++/* IRQ operation under VMM */
++static inline unsigned long vmm_irq_save(void)
++{
++	unsigned long flags;
++
++	asm volatile(
++		"	mrs	%0, cpsr	@ arch_local_irq_save\n"
++		"	cpsid	i"
++		: "=r" (flags) : : "memory", "cc");
++	return flags;
++}
++
++static inline void vmm_irq_restore(unsigned long flags)
++{
++	asm volatile(
++		"	msr	cpsr_c, %0	@ local_irq_restore"
++		:
++		: "r" (flags)
++		: "memory", "cc");
++}
++
++static inline void vmm_irq_enable(void)
++{
++	asm volatile(
++		"	cpsie i			@ arch_local_irq_enable"
++		:
++		:
++		: "memory", "cc");
++}
++
++static inline void vmm_irq_disable(void)
++{
++	asm volatile(
++		"	cpsid i			@ arch_local_irq_disable"
++		:
++		:
++		: "memory", "cc");
++}
++
++#endif
+diff --git a/arch/arm/vmm/vmm_virq.c b/arch/arm/vmm/vmm_virq.c
+new file mode 100644
+index 0000000..85886a2
+--- /dev/null
++++ b/arch/arm/vmm/vmm_virq.c
+@@ -0,0 +1,183 @@
++#include <linux/bug.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <asm/unwind.h>
++
++#include <vmm/vmm.h>
++
++#include "vmm_virhw.h"
++
++/* VMM use the I bit in SPSR to save the virq status in the isr entry. So warn
++ * on the I bit set would gave some false negative result. */
++//#define VMM_WARN_ON_I_BIT
++
++extern struct vmm_context* _vmm_context;
++
++void vmm_disable_virq(void)
++{
++	unsigned long flags = vmm_irq_save();
++	_vmm_context->virq_status = 0x01;
++	vmm_irq_restore(flags);
++}
++EXPORT_SYMBOL(vmm_disable_virq);
++
++static void _vmm_raise_on_pended(void)
++{
++	/* check any interrupt pended in vIRQ */
++	if (_vmm_context->virq_pended) {
++		/* trigger an soft interrupt */
++		vmm_raise_softirq(RTT_VMM_IRQ_TRIGGER);
++		return;
++	}
++
++#if 0
++	int i;
++	for (i = 0; i < ARRAY_SIZE(_vmm_context->virq_pending); i++) {
++		if (_vmm_context->virq_pending[i]) {
++			_vmm_context->virq_pended = 1;
++			pr_info("\n");
++			vmm_raise_softirq(RTT_VMM_IRQ_TRIGGER);
++			return;
++		}
++	}
++#endif
++}
++
++void vmm_enable_virq(void)
++{
++	unsigned long flags = vmm_irq_save();
++	_vmm_context->virq_status = 0x00;
++	_vmm_raise_on_pended();
++	vmm_irq_restore(flags);
++}
++EXPORT_SYMBOL(vmm_enable_virq);
++
++unsigned long vmm_return_virq(void)
++{
++	unsigned long flags;
++	unsigned long level;
++
++	level =  vmm_irq_save();
++	flags = _vmm_context->virq_status;
++	vmm_irq_restore(level);
++
++	return flags;
++}
++EXPORT_SYMBOL(vmm_return_virq);
++
++unsigned long vmm_save_virq(void)
++{
++	int status;
++	unsigned long flags = vmm_irq_save();
++
++	status = _vmm_context->virq_status;
++	_vmm_context->virq_status = 0x01;
++	vmm_irq_restore(flags);
++
++	return status;
++}
++EXPORT_SYMBOL(vmm_save_virq);
++
++void vmm_restore_virq(unsigned long flags)
++{
++	unsigned long level;
++
++	level =  vmm_irq_save();
++	_vmm_context->virq_status = flags;
++	if (_vmm_context->virq_status == 0)
++	{
++		_vmm_raise_on_pended();
++	}
++	vmm_irq_restore(level);
++}
++EXPORT_SYMBOL(vmm_restore_virq);
++
++unsigned long vmm_save_virq_spsr_asm(unsigned long spsr, struct pt_regs *regs)
++{
++	if (vmm_status) {
++		if (_vmm_context->virq_status)
++			return spsr | PSR_I_BIT;
++	}
++	return spsr;
++}
++
++void irq_enable_asm(void)
++{
++	if (vmm_status) {
++		vmm_enable_virq();
++	} else {
++		asm volatile("cpsie i" : : : "memory", "cc");
++	}
++}
++
++void irq_disable_asm(void)
++{
++	if (vmm_status) {
++		vmm_disable_virq();
++	} else {
++		asm volatile("cpsid i" : : : "memory", "cc");
++	}
++}
++
++/* should be called when the guest entering the state that the IRQ is disabled
++ * by hardware, for example, entering SVC, PABT, DABT mode.
++ *
++ * It will the open the hardware IRQ, virtual IRQ remain unchanged.
++ */
++void vmm_switch_nohwirq_to_novirq(void)
++{
++	if (vmm_status) {
++		vmm_disable_virq();
++		asm volatile("cpsie i" : : : "memory", "cc");
++	}
++}
++
++unsigned long vmm_restore_virq_asm(unsigned long spsr)
++{
++	if (vmm_status) {
++#ifdef VMM_WARN_ON_I_BIT
++		WARN(spsr & PSR_I_BIT, "return to svc mode with I in SPSR set\n");
++#endif
++		vmm_restore_virq(!!(spsr & PSR_I_BIT));
++		return spsr & ~PSR_I_BIT;
++	} else {
++		return spsr;
++	}
++}
++
++void vmm_on_ret_to_usr(unsigned long spsr)
++{
++	if (vmm_status) {
++#ifdef VMM_WARN_ON_I_BIT
++		WARN(spsr & PSR_I_BIT, "return to user mode with I in SPSR set\n");
++#endif
++		vmm_enable_virq();
++	}
++}
++
++void vmm_on_svc_exit_irq(unsigned long spsr)
++{
++	if (vmm_status) {
++#ifdef VMM_WARN_ON_I_BIT
++		WARN(spsr & PSR_I_BIT, "exit IRQ with I in SPSR set\n");
++#endif
++		vmm_enable_virq();
++	}
++}
++
++void vmm_dump_irq(void)
++{
++	int i;
++	unsigned long cpsr;
++
++	asm volatile ("mrs %0, cpsr": "=r"(cpsr));
++
++	printk("status: %08lx, pended: %08lx, cpsr: %08lx\n",
++	       _vmm_context->virq_status, _vmm_context->virq_pended, cpsr);
++	printk("pending: ");
++	for (i = 0; i < ARRAY_SIZE(_vmm_context->virq_pending); i++) {
++		printk("%08lx, ", _vmm_context->virq_pending[i]);
++	}
++	printk("\n");
++}
++
+-- 
+1.8.4
+

@@ -25,6 +25,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
+ * 2013-10-09     Bernard      fix the command line too long issue.
  */
 #include <finsh.h>
 
@@ -987,6 +988,10 @@ void finsh_parser_run(struct finsh_parser* self, const u_char* string)
 
 			break;
 		}
+
+		/* no root found, break out */
+		if (self->root == NULL) break;
+
         /* get next token */
 		next_token(token, &(self->token));
 	}

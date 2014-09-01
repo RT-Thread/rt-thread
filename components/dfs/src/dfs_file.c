@@ -236,8 +236,6 @@ int dfs_file_unlink(const char *path)
     char *fullpath;
     struct dfs_filesystem *fs;
 
-    result = DFS_STATUS_OK;
-
     /* Make sure we have an absolute path */
     fullpath = dfs_normalize_path(RT_NULL, path);
     if (fullpath == RT_NULL)
@@ -557,7 +555,7 @@ void ls(const char *pathname)
     if (pathname == RT_NULL) 
         rt_free(path);
 }
-FINSH_FUNCTION_EXPORT(ls, list directory contents)
+FINSH_FUNCTION_EXPORT(ls, list directory contents);
 
 void rm(const char *filename)
 {
@@ -566,7 +564,7 @@ void rm(const char *filename)
         rt_kprintf("Delete %s failed\n", filename);
     }
 }
-FINSH_FUNCTION_EXPORT(rm, remove files or directories)
+FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
 void cat(const char* filename)
 {
@@ -592,10 +590,10 @@ void cat(const char* filename)
 
     dfs_file_close(&fd);
 }
-FINSH_FUNCTION_EXPORT(cat, print file)
+FINSH_FUNCTION_EXPORT(cat, print file);
 
 #define BUF_SZ  4096
-void copy(const char *src, const char *dst)
+static void copyfile(const char *src, const char *dst)
 {
     struct dfs_fd src_fd;
     rt_uint8_t *block_ptr;
@@ -631,7 +629,15 @@ void copy(const char *src, const char *dst)
         read_bytes = dfs_file_read(&src_fd, block_ptr, BUF_SZ);
         if (read_bytes > 0)
         {
-            dfs_file_write(&fd, block_ptr, read_bytes);
+			int length;
+			
+            length = dfs_file_write(&fd, block_ptr, read_bytes);
+			if (length != read_bytes)
+			{
+				/* write failed. */
+				rt_kprintf("Write file data failed, errno=%d\n", length);
+				break;
+			}
         }
     } while (read_bytes > 0);
 
@@ -639,7 +645,171 @@ void copy(const char *src, const char *dst)
     dfs_file_close(&fd);
     rt_free(block_ptr);
 }
-FINSH_FUNCTION_EXPORT(copy, copy source file to destination file)
+
+extern int mkdir(const char *path, mode_t mode);
+static void copydir(const char * src, const char * dst)
+{
+    struct dfs_fd fd;
+    struct dirent dirent;
+    struct stat stat;
+    int length;
+
+    if (dfs_file_open(&fd, src, DFS_O_DIRECTORY) < 0)
+    {
+        rt_kprintf("open %s failed\n", src);
+        return ;
+    }
+
+    do
+    {
+        rt_memset(&dirent, 0, sizeof(struct dirent));
+        length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
+        if (length > 0)
+        {
+            char * src_entry_full = RT_NULL;
+            char * dst_entry_full = RT_NULL;
+
+            if (strcmp(dirent.d_name, "..") == 0 || strcmp(dirent.d_name, ".") == 0)
+                continue;
+
+            /* build full path for each file */
+            if ((src_entry_full = dfs_normalize_path(src, dirent.d_name)) == RT_NULL)
+            {
+                rt_kprintf("out of memory!\n");
+                break;
+            }
+            if ((dst_entry_full = dfs_normalize_path(dst, dirent.d_name)) == RT_NULL)
+            {
+                rt_kprintf("out of memory!\n");
+                rt_free(src_entry_full);
+                break;
+            }
+
+            rt_memset(&stat, 0, sizeof(struct stat));
+            if (dfs_file_stat(src_entry_full, &stat) != 0)
+            {
+                rt_kprintf("open file: %s failed\n", dirent.d_name);
+                continue;
+            }
+
+            if (DFS_S_ISDIR(stat.st_mode))
+            {
+                mkdir(dst_entry_full, 0);
+                copydir(src_entry_full, dst_entry_full);
+            }
+            else
+            {
+                copyfile(src_entry_full, dst_entry_full);
+            }
+            rt_free(src_entry_full);
+            rt_free(dst_entry_full);
+        }
+    }while(length > 0);
+
+    dfs_file_close(&fd);
+}
+
+static const char *_get_path_lastname(const char *path)
+{
+    char * ptr;
+    if ((ptr = strrchr(path, '/')) == RT_NULL)
+        return path;
+
+    /* skip the '/' then return */
+    return ++ptr;
+}
+void copy(const char *src, const char *dst)
+{
+#define FLAG_SRC_TYPE      0x03
+#define FLAG_SRC_IS_DIR    0x01
+#define FLAG_SRC_IS_FILE   0x02
+#define FLAG_SRC_NON_EXSIT 0x00
+
+#define FLAG_DST_TYPE      0x0C
+#define FLAG_DST_IS_DIR    0x04
+#define FLAG_DST_IS_FILE   0x08
+#define FLAG_DST_NON_EXSIT 0x00
+
+    struct stat stat;
+    rt_uint32_t flag = 0;
+
+    /* check the staus of src and dst */
+    if (dfs_file_stat(src, &stat) < 0)
+    {
+        rt_kprintf("copy failed, bad %s\n", src);
+        return;
+    }
+    if (DFS_S_ISDIR(stat.st_mode))
+        flag |= FLAG_SRC_IS_DIR;
+    else
+        flag |= FLAG_SRC_IS_FILE;
+
+    if (dfs_file_stat(dst, &stat) < 0)
+    {
+        flag |= FLAG_DST_NON_EXSIT;
+    }
+    else
+    {
+        if (DFS_S_ISDIR(stat.st_mode))
+            flag |= FLAG_DST_IS_DIR;
+        else
+            flag |= FLAG_DST_IS_FILE;
+    }
+
+    //2. check status
+    if ((flag & FLAG_SRC_IS_DIR) && (flag & FLAG_DST_IS_FILE))
+    {
+        rt_kprintf("cp faild, cp dir to file is not permitted!\n");
+        return ;
+    }
+
+    //3. do copy
+    if (flag & FLAG_SRC_IS_FILE)
+    {
+        if (flag & FLAG_DST_IS_DIR)
+        {
+            char * fdst;
+            fdst = dfs_normalize_path(dst, _get_path_lastname(src));
+            if (fdst == NULL)
+            {
+                rt_kprintf("out of memory\n");
+                return;
+            }
+            copyfile(src, fdst);
+            rt_free(fdst);
+        }
+        else
+        {
+            copyfile(src, dst);
+        }
+    }
+    else //flag & FLAG_SRC_IS_DIR
+    {
+        if (flag & FLAG_DST_IS_DIR)
+        {
+            char * fdst;
+            fdst = dfs_normalize_path(dst, _get_path_lastname(src));
+            if (fdst == NULL)
+            {
+                rt_kprintf("out of memory\n");
+                return;
+            }
+            mkdir(fdst, 0);
+            copydir(src, fdst);
+            rt_free(fdst);
+        }
+        else if ((flag & FLAG_DST_TYPE) == FLAG_DST_NON_EXSIT)
+        {
+            mkdir(dst, 0);
+            copydir(src, dst);
+        }
+        else
+        {
+            copydir(src, dst);
+        }
+    }
+}
+FINSH_FUNCTION_EXPORT(copy, copy file or dir)
 
 #endif
 /* @} */

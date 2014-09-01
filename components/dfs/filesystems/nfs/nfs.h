@@ -130,7 +130,7 @@ typedef struct specdata3 specdata3;
 
 struct nfs_fh3 {
 	struct {
-		u_int data_len;
+		unsigned int data_len;
 		char *data_val;
 	} data;
 };
@@ -408,7 +408,7 @@ struct READ3resok {
 	count3 count;
 	bool_t eof;
 	struct {
-		u_int data_len;
+		unsigned int data_len;
 		char *data_val;
 	} data;
 };
@@ -434,7 +434,7 @@ struct WRITE3args {
 	count3 count;
 	stable_how stable;
 	struct {
-		u_int data_len;
+		unsigned int data_len;
 		char *data_val;
 	} data;
 };

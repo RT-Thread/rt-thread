@@ -146,10 +146,10 @@ int  strncasecmp ( const char* s1, const char* s2, size_t len )
 		x1 = *s1 - 'A'; if ((x1 < 26u)) x1 += 32;
 		s1++; s2++;
 
-		if ((x2 != x1))
+		if (x2 != x1)
 			break;
 
-		if ((x1 == (unsigned int)-'A'))
+		if (x1 == (unsigned int)-'A')
 			break;
 	}
 
@@ -619,6 +619,16 @@ char *strchr(const char *s1, int i)
 	}
 
 	return (char *) s;
+}
+
+long strtol(const char *str, char **endptr, int base)
+{
+    return simple_strtol(str, endptr, base);
+}
+
+long long strtoll(const char *str, char **endptr, int base)
+{
+    return simple_strtoll(str, endptr, base);
 }
 
 #endif

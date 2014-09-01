@@ -20,17 +20,10 @@
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2014-08-03     bernard       fix some compiling warning
  */
 
 #include <rtdevice.h>
-
-static rt_err_t i2c_bus_device_init(rt_device_t dev)
-{
-    struct rt_i2c_bus_device *bus = (struct rt_i2c_bus_device *)dev->user_data;
-    RT_ASSERT(bus != RT_NULL);
-
-    return RT_EOK;
-}
 
 static rt_size_t i2c_bus_device_read(rt_device_t dev,
                                      rt_off_t    pos,
@@ -122,7 +115,7 @@ rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
     /* set device type */
     device->type    = RT_Device_Class_I2CBUS;
     /* initialize device interface */
-    device->init    = i2c_bus_device_init;
+    device->init    = RT_NULL;
     device->open    = RT_NULL;
     device->close   = RT_NULL;
     device->read    = i2c_bus_device_read;

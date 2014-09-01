@@ -41,8 +41,8 @@ static struct rt_device _log_device;
 static rt_device_t _traceout_device = RT_NULL;
 
 /* define a default lg session. The name is empty. */
-static struct log_trace_session _def_session = {{0}, LOG_TRACE_LEVEL_INFO};
-static struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
+static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_INFO};
+static const struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
 /* there is a default session at least */
 static rt_uint16_t _the_sess_nr = 1;
 
@@ -83,16 +83,19 @@ rt_inline int _idname_len(log_trace_idnum_t id)
  */
 static struct log_trace_session* _lg_lookup_session(log_trace_idnum_t num)
 {
-    static struct log_trace_session *_cache = &_def_session;
+    static const struct log_trace_session *_cache = &_def_session;
     rt_uint16_t first, last;
 
     if (_cache->id.num == num)
-        return _cache;
+        return (struct log_trace_session *)_cache;
 
     first = 0;
     last  = _the_sess_nr;
     do {
         unsigned int i = (first + last)/2;
+
+        RT_ASSERT(_the_sessions[i]);
+
         if (_the_sessions[i]->id.num == num)
         {
             /* there is no need to protect the _cache because write a pointer
@@ -101,7 +104,7 @@ static struct log_trace_session* _lg_lookup_session(log_trace_idnum_t num)
              * process and we wrote the old one to _cache. But it doesn't harm
              * a lot because it will be flushed in the next time. */
             _cache = _the_sessions[i];
-            return _the_sessions[i];
+            return (struct log_trace_session *)_the_sessions[i];
         }
         else if (_the_sessions[i]->id.num > num)
         {
@@ -116,7 +119,7 @@ static struct log_trace_session* _lg_lookup_session(log_trace_idnum_t num)
     return RT_NULL;
 }
 
-rt_err_t log_trace_register_session(struct log_trace_session *session)
+rt_err_t log_trace_register_session(const struct log_trace_session *session)
 {
     unsigned int lvl, i;
 
@@ -135,7 +138,8 @@ rt_err_t log_trace_register_session(struct log_trace_session *session)
     {
         if (_the_sessions[i]->id.num > session->id.num)
         {
-            rt_memmove(_the_sessions+i, _the_sessions+i+1, _the_sess_nr-i);
+            rt_memmove(_the_sessions+i+1, _the_sessions+i,
+                       (_the_sess_nr-i)*sizeof(&_the_sessions[0]));
             _the_sessions[i] = session;
             break;
         }
@@ -251,8 +255,9 @@ static rt_size_t _lg_parse_session(
     return 0;
 }
 
-static void _lg_fmtout(
-        struct log_trace_session *session, const char *fmt, va_list argptr)
+void __logtrace_vfmtout(const struct log_trace_session *session,
+                        const char *fmt,
+                        va_list argptr)
 {
     /* 1 for ']' */
     static char _trace_buf[1+LOG_TRACE_BUFSZ];
@@ -272,7 +277,7 @@ static void _lg_fmtout(
 
     _trace_buf[0] = ']';
     ptr = &_trace_buf[1];
-    length = vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
+    length = rt_vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
 
     if (length >= LOG_TRACE_BUFSZ)
         length = LOG_TRACE_BUFSZ - 1;
@@ -299,12 +304,12 @@ void log_trace(const char *fmt, ...)
         return;
 
     va_start(args, fmt);
-    _lg_fmtout(session, fmt, args);
+    __logtrace_vfmtout(session, fmt, args);
     va_end(args);
 }
 FINSH_FUNCTION_EXPORT(log_trace, log trace);
 
-void log_session(struct log_trace_session *session, const char *fmt, ...)
+void log_session(const struct log_trace_session *session, const char *fmt, ...)
 {
     va_list args;
     int level;
@@ -317,7 +322,7 @@ void log_session(struct log_trace_session *session, const char *fmt, ...)
         return;
 
     va_start(args, fmt);
-    _lg_fmtout(session, fmt, args);
+    __logtrace_vfmtout(session, fmt, args);
     va_end(args);
 }
 

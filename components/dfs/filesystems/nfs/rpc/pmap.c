@@ -6,9 +6,7 @@ static struct timeval timeout = { 5, 0 };
 static struct timeval tottimeout = { 60, 0 };
 
 
-bool_t xdr_pmap(xdrs, regs)
-XDR *xdrs;
-struct pmap *regs;
+bool_t xdr_pmap(XDR *xdrs, struct pmap *regs)
 {
 	if (xdr_u_long(xdrs, &regs->pm_prog) &&
 		xdr_u_long(xdrs, &regs->pm_vers) &&
@@ -22,15 +20,11 @@ struct pmap *regs;
  * Calls the pmap service remotely to do the lookup.
  * Returns 0 if no map exists.
  */
-unsigned short pmap_getport(address, program, version, protocol)
-struct sockaddr_in *address;
-unsigned long program;
-unsigned long version;
-unsigned int protocol;
+unsigned short pmap_getport(struct sockaddr_in *address, unsigned long program, unsigned long version, unsigned int protocol)
 {
 	unsigned short port = 0;
 	int socket = -1;
-	register CLIENT *client;
+	register CLIENT *client = RT_NULL;
 	struct pmap parms;
 
 	address->sin_port = htons((unsigned short)PMAPPORT);

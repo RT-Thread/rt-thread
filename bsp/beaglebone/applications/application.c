@@ -1,0 +1,28 @@
+/*
+ * File      : application.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2012, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2012-11-20     Bernard    the first version
+ */
+
+#include <stdlib.h>
+#include <rtthread.h>
+#include <components.h>
+
+int rt_application_init()
+{
+    /* do component initialization */
+    rt_components_init();
+#ifdef RT_USING_NEWLIB
+	libc_system_init(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    return 0;
+}

@@ -51,6 +51,6 @@ RTM_EXPORT(sched_get_priority_max);
 
 int sched_setscheduler(pid_t pid, int policy)
 {
-    return ENOTSUP;
+    return EOPNOTSUPP;
 }
 RTM_EXPORT(sched_setscheduler);

@@ -1,0 +1,37 @@
+From 848bdea67f5fc201cd05687f207e5f8f42b0990d Mon Sep 17 00:00:00 2001
+From: Grissiom <chaos.proton@gmail.com>
+Date: Thu, 3 Apr 2014 16:51:58 +0800
+Subject: [PATCH 2/2] arm: gic: correct the cpu map on gic_raise_softirq for UP
+ system
+
+The CPU mask on UP system is empty, so if we want to raise softirq on UP
+system, designate CPU0 to the map.
+
+Maybe the more correct way is to fix the gic_get_cpumask.
+
+Signed-off-by: Grissiom <chaos.proton@gmail.com>
+---
+ arch/arm/common/gic.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+index a9d7357..5da382b 100644
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@ -858,6 +858,13 @@ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ 	 */
+ 	dsb();
+ 
++	/*
++	 * On UP system, realview-pb-a8 for example, the CPU mask is empty. The
++	 * softirq are always handled on CPU0.
++	 */
++	if (map == 0) {
++		map = 1;
++	}
+ 	/* this always happens on GIC0 */
+ 	writel_relaxed(map << 16 | irq, gic_data_dist_base(&gic_data[0]) + GIC_DIST_SOFTINT);
+ }
+-- 
+1.8.4
+

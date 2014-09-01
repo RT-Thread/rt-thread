@@ -101,7 +101,7 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
     {
         result = EBUSY;
 
-        return(EBUSY);
+        return result;
     }
     else
     {

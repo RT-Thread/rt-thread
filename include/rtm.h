@@ -31,8 +31,15 @@ struct rt_module_symtab
     const char *name;
 };
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(_MSC_VER)
+#pragma section("RTMSymTab$f",read)
+#define RTM_EXPORT(symbol)                                            \
+__declspec(allocate("RTMSymTab$f"))const char __rtmsym_##symbol##_name[] = "__vs_rtm_"#symbol;
+#pragma comment(linker, "/merge:RTMSymTab=mytext")
+
+#elif defined(__MINGW32__)
 #define RTM_EXPORT(symbol)
+
 #else
 #define RTM_EXPORT(symbol)                                            \
 const char __rtmsym_##symbol##_name[] = #symbol;                      \

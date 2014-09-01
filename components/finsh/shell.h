@@ -43,7 +43,7 @@
 #define FINSH_CMD_SIZE		80
 
 #define FINSH_OPTION_ECHO	0x01
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
 #define FINSH_PROMPT		finsh_get_prompt()
 const char* finsh_get_prompt(void);
 #else
@@ -51,17 +51,17 @@ const char* finsh_get_prompt(void);
 #endif
 
 #ifdef FINSH_USING_HISTORY
+	#ifndef FINSH_HISTORY_LINES
+		#define FINSH_HISTORY_LINES 5
+	#endif
+#endif
+
 enum input_stat
 {
 	WAIT_NORMAL,
 	WAIT_SPEC_KEY,
 	WAIT_FUNC_KEY,
 };
-	#ifndef FINSH_HISTORY_LINES
-		#define FINSH_HISTORY_LINES 5
-	#endif
-#endif
-
 struct finsh_shell
 {
 	struct rt_semaphore rx_sem;
@@ -69,7 +69,6 @@ struct finsh_shell
 	enum input_stat stat;
 
 	rt_uint8_t echo_mode:1;
-	rt_uint8_t use_history:1;
 
 #ifdef FINSH_USING_HISTORY
 	rt_uint16_t current_history;
@@ -78,10 +77,13 @@ struct finsh_shell
 	char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
 #endif
 
+#ifndef FINSH_USING_MSH_ONLY
 	struct finsh_parser parser;
+#endif
 
 	char line[FINSH_CMD_SIZE];
 	rt_uint8_t line_position;
+	rt_uint8_t line_curpos;
 
 	rt_device_t device;
 };

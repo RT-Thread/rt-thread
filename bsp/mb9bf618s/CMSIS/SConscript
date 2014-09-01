@@ -1,0 +1,21 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('DeviceSupport/fujitsu/mb9bf61x/*.c')
+
+CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport/fujitsu/mb9bf61x/']
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/gcc/startup_mb9bf61x.c']
+elif rtconfig.CROSS_TOOL == 'keil':
+	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/arm/startup_mb9bf61x.S']
+elif rtconfig.CROSS_TOOL == 'iar':
+	src += ['DeviceSupport/fujitsu/mb9bf61x/startup/iar/startup_mb9bf61x.S']
+
+CPPDEFINES = [rtconfig.FM3_TYPE]
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

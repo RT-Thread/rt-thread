@@ -59,17 +59,16 @@ void rtthread_startup(void)
 	rt_system_scheduler_init();
 
 #ifdef RT_USING_DEVICE
-#ifdef RT_USING_DFS
-#ifdef RT_USING_DFS_UFFS
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_UFFS)
 	rt_hw_nand_init();
 #endif
-#endif
-	/* initialize all device */
-	rt_device_init_all();
 #endif
 
 	/* initialize application */
 	rt_application_init();
+
+    /* initialize timer */
+    rt_system_timer_init();
 
 	/* initialize timer thread */
 	rt_system_timer_thread_init();
@@ -88,7 +87,7 @@ int main(void)
 {
 	/* disable interrupt first */
 	rt_hw_interrupt_disable();
-    
+
 	/* startup RT-Thread RTOS */
 	rtthread_startup();
 

@@ -61,8 +61,7 @@ static void rt_thread_exit(void)
     thread->stat = RT_THREAD_CLOSE;
 
     /* remove it from timer list */
-    rt_list_remove(&(thread->thread_timer.list));
-    rt_object_detach((rt_object_t)&(thread->thread_timer));
+    rt_timer_detach(&thread->thread_timer);
 
     if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
         thread->cleanup == RT_NULL)
@@ -576,6 +575,9 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     thread->stat = RT_THREAD_SUSPEND;
     rt_schedule_remove_thread(thread);
 
+    /* stop thread timer anyway */
+    rt_timer_stop(&(thread->thread_timer));
+
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
@@ -613,11 +615,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
 
-    /* remove thread timer */
-    rt_list_remove(&(thread->thread_timer.list));
-
-    /* change timer state */
-    thread->thread_timer.parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    rt_timer_stop(&thread->thread_timer);
 
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);

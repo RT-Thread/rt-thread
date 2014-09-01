@@ -1,0 +1,208 @@
+;
+; Microsoft MASM subroutines for setting coprocessor precision
+;
+.286
+.287
+_TEXT	SEGMENT  BYTE PUBLIC 'CODE'
+_TEXT	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+DGROUP	GROUP	CONST,	_BSS,	_DATA
+	ASSUME  CS: _TEXT, DS: DGROUP, SS: DGROUP, ES: DGROUP
+EXTRN	__fac:QWORD
+
+_BSS      SEGMENT
+EXTRN	__fltused:NEAR
+_BSS      ENDS
+
+
+; exception masks (1 = masked)
+;   1  invalid operation
+;   2  denormalized operand
+;   4  zero divide
+;   8  overflow
+;  10  underflow
+;  20  precision
+
+_DATA SEGMENT
+
+; double precision setting
+;;ctlwrd dw 01230h ; note this traps on denormal operands!
+;;ctld dw 0133fh   ; this doesn't trap
+ctld dw 01230h
+
+; single precision
+ctls dw 01030h
+
+; long double precision
+ctlld dw 01320h
+
+_DATA ENDS
+
+	ASSUME  CS: _TEXT
+
+_TEXT SEGMENT
+; Set coprocessor to single precision float
+	PUBLIC	_sprec
+_sprec	PROC NEAR
+	fclex
+	fwait
+	finit
+	fwait
+	fldcw word ptr ctls
+	fwait
+	ret
+_sprec ENDP
+
+; set coprocessor to long double precision
+	PUBLIC	_ldprec
+_ldprec PROC NEAR
+	fclex
+	fwait
+	finit
+	fwait
+	fldcw word ptr ctlld
+	fwait
+	ret
+_ldprec ENDP
+
+; set coprocessor to double precision
+	PUBLIC	_dprec
+_dprec PROC NEAR
+	fclex
+	fwait
+	finit
+	fwait
+	fldcw word ptr ctld
+	fwait
+	ret
+_dprec ENDP
+
+
+; get a double promoted to long double size
+; getld( &doub, &ldoub );
+	PUBLIC	_getld
+_getld	PROC NEAR
+	push bp
+	mov bp,sp
+	push bx
+	mov bx, word ptr [bp+4]
+;	fld st(0)
+	fld qword ptr [bx]
+	mov bx, word ptr [bp+6]
+	fstp tbyte ptr [bx]
+	mov bx, word ptr [bp+4]
+	fld qword ptr [bx]
+	mov bx, word ptr [bp+8]
+	fstp qword ptr [bx]
+	pop bx
+	pop bp
+	ret
+_getld	ENDP
+
+	PUBLIC	_getprec
+_getprec	PROC NEAR
+	push bp
+	mov bp,sp
+	sub sp,4
+	fstcw [bp-4]
+	fwait
+	mov ax,[bp-4]
+	add sp,4
+	pop bp
+	ret
+_getprec	ENDP
+
+
+	PUBLIC	_fpclear
+_fpclear	PROC NEAR
+	push bp
+	mov bp,sp
+	fnclex
+	fwait
+	pop bp
+	ret
+_fpclear	ENDP
+
+
+	PUBLIC	_noexcept
+_noexcept	PROC NEAR
+	push bp
+	mov bp,sp
+	push ax
+	sub sp,4
+	fnclex
+	fwait
+	fstcw [bp-4]
+	fwait
+	mov ax,[bp-4]
+	and ax,0FFC0h
+	or ax,003fh
+	mov [bp-4],ax
+	fldcw [bp-4]
+	add sp,4
+	pop ax
+	pop bp
+	ret
+_noexcept	ENDP
+
+;; single precision square root
+;; assumes coprocessor precision already set up
+;; return value in static __fac
+;	PUBLIC	_sqrtf
+;_sqrtf	PROC NEAR
+;	push bp
+;	mov bp,sp
+;	fld	DWORD PTR [bp+4]
+;	fsqrt
+;	fwait	
+;	fstp	DWORD PTR __fac
+;	mov	ax,OFFSET __fac
+;	mov	sp,bp
+;	pop bp
+;	ret
+;_sqrtf	ENDP
+;
+;
+;; double precision square root
+;; assumes coprocessor precision already set up
+;; return value in static __fac
+;	PUBLIC	_sqrt
+;_sqrt	PROC NEAR
+;	push bp
+;	mov bp,sp
+;	fld	QWORD PTR [bp+4]
+;	fsqrt
+;	fwait	
+;	fstp	QWORD PTR __fac
+;	mov	ax,OFFSET __fac
+;	mov	sp,bp
+;	pop bp
+;	ret
+;_sqrt	ENDP
+;
+;
+;; long double precision square root
+;; assumes coprocessor precision already set up
+;; return value in fp register
+;	PUBLIC	_sqrtl
+;_sqrtl	PROC NEAR
+;	push bp
+;	mov bp,sp
+;	fld tbyte ptr [bp+4]
+;	fsqrt
+;	fwait	
+;	mov	sp,bp
+;	pop bp
+;	ret
+;_sqrtl	ENDP
+;
+
+_TEXT ENDS
+END
+
+

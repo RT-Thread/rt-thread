@@ -34,6 +34,7 @@
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
+/* include rtconfig header to import configuration */
 #include <rtconfig.h>
 
 #ifdef __cplusplus
@@ -47,8 +48,8 @@ extern "C" {
 /*@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      1L              /**< major version number */
-#define RT_SUBVERSION                   2L              /**< minor version number */
+#define RT_VERSION                      2L              /**< major version number */
+#define RT_SUBVERSION                   0L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
@@ -95,6 +96,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define UNUSED                      __attribute__((unused))
     #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
+    #define WEAK						__weak
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE
@@ -110,6 +112,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
+    #define WEAK                        __weak
     #define rt_inline                   static inline
     #define RTT_API
 
@@ -117,31 +120,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-        #if __GNUC__ < 4
-            typedef void *__sys_va_list;
-            typedef __sys_va_list       va_list;
-            #define __va_rounded_size(type) \
-                (((sizeof(type) + sizeof(int) - 1) / sizeof(int)) * sizeof(int))
-            #define va_start(ap, lastarg)   \
-                (ap = ((char *) &(lastarg) + __va_rounded_size(lastarg)))
-            #define va_end(ap)          ((void)0)
-            /*  little endian */
-            #define va_arg(ap, type)    \
-                (ap = (__sys_va_list) ((char *)(ap) + __va_rounded_size(type)),  \
-                *((type *) (void *) ((char *)(ap) - __va_rounded_size(type))))
-        #else
-            typedef __builtin_va_list   __gnuc_va_list;
-            typedef __gnuc_va_list      va_list;
-            #define va_start(v,l)       __builtin_va_start(v,l)
-            #define va_end(v)           __builtin_va_end(v)
-            #define va_arg(v,l)         __builtin_va_arg(v,l)
-        #endif
+		/* the version of GNU GCC must be greater than 4.x */
+        typedef __builtin_va_list   __gnuc_va_list;
+        typedef __gnuc_va_list      va_list;
+        #define va_start(v,l)       __builtin_va_start(v,l)
+        #define va_end(v)           __builtin_va_end(v)
+        #define va_arg(v,l)         __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
     #define UNUSED                      __attribute__((unused))
     #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
+    #define WEAK						__attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
@@ -150,6 +141,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define UNUSED                      __attribute__((unused))
     #define USED                        __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
+	#define WEAK                        __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (_MSC_VER)
@@ -158,6 +150,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define UNUSED
     #define USED
     #define ALIGN(n)                    __declspec(align(n))
+	#define WEAK
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
@@ -168,7 +161,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define SECTION(x)
     #define UNUSED
     #define USED
+	#define PRAGMA(x)					_Pragma(#x)
     #define ALIGN(n)
+	#define WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else
@@ -213,6 +208,17 @@ typedef int (*init_fn_t)(void);
 #define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
+
+#if !defined(RT_USING_FINSH)
+/* define these to empty, even if not include finsh.h file */
+#define FINSH_FUNCTION_EXPORT(name, desc)
+#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
+#define FINSH_VAR_EXPORT(name, type, desc)
+
+#define MSH_CMD_EXPORT(command, desc)
+#elif !defined(FINSH_USING_SYMTAB)
+#define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
+#endif
 
 /* event length */
 #define RT_EVENT_LENGTH                 32
@@ -410,6 +416,15 @@ struct rt_object_information
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
 
+#ifndef RT_TIMER_SKIP_LIST_LEVEL
+#define RT_TIMER_SKIP_LIST_LEVEL          1
+#endif
+
+/* 1 or 3 */
+#ifndef RT_TIMER_SKIP_LIST_MASK
+#define RT_TIMER_SKIP_LIST_MASK         0x3
+#endif
+
 /**
  * timer structure
  */
@@ -417,7 +432,7 @@ struct rt_timer
 {
     struct rt_object parent;                            /**< inherit from rt_object */
 
-    rt_list_t        list;                              /**< the node of timer list */
+    rt_list_t        row[RT_TIMER_SKIP_LIST_LEVEL];
 
     void (*timeout_func)(void *parameter);              /**< timeout function */
     void            *parameter;                         /**< timeout function's parameter */
@@ -784,6 +799,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /**< get geometry information   */
 #define RT_DEVICE_CTRL_BLK_SYNC         0x11            /**< flush data to block device */
 #define RT_DEVICE_CTRL_BLK_ERASE        0x12            /**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
@@ -866,6 +882,7 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_RGB444,
     RTGRAPHIC_PIXEL_FORMAT_RGB565,
     RTGRAPHIC_PIXEL_FORMAT_RGB565P,
+    RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
     RTGRAPHIC_PIXEL_FORMAT_RGB666,
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB888
@@ -943,10 +960,11 @@ struct rt_module
 
     rt_uint8_t                  *module_space;          /**< module memory space */
 
-    void                        *module_entry;          /**< entry address of module's thread */
-    rt_thread_t                  module_thread;         /**< stack size of module's thread */
-    rt_uint32_t                  stack_size;            /**< priority of module's thread */
-    rt_uint32_t                  thread_priority;
+    void                        *module_entry;          /**< the entry address of module */
+    rt_thread_t                  module_thread;         /**< the main thread of module */
+
+	rt_uint8_t*                  module_cmd_line;		/**< module command line */
+	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
 
 #ifdef RT_USING_SLAB
     /* module memory allocator */
@@ -955,10 +973,10 @@ struct rt_module
     rt_uint32_t                  page_cnt;              /**< module's using pages count */
 #endif
 
-    rt_uint32_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
+    rt_uint16_t                  nref;                  /**< reference count */
 
-    rt_uint32_t                  nref;                  /**< reference count */
+    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
+    struct rt_module_symtab     *symtab;                /**< module symbol table */
 
     /* object in this module, module object is the last basic object type */
     struct rt_object_information module_object[RT_Object_Class_Unknown];

@@ -78,7 +78,11 @@ typedef unsigned short gid_t;
 typedef unsigned short uid_t;
 typedef int pid_t;
 
+#if defined(MSVC)
+#include <time.h>
+#else
 typedef int time_t;
+#endif
 //#include "os_sys_stat.h"
 #endif /* CYGONCE_ISO_SYS_TYPES_H multiple inclusion protection */
 

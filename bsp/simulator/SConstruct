@@ -7,17 +7,8 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
-if os.getenv('RTT_RTGUI'):
-    RTT_RTGUI = os.getenv('RTT_RTGUI')
-else:
-    # set the rtgui root directory by hand
-    # empty string means use the RTGUI in svn
-    RTT_RTGUI = os.path.normpath(r'F:\Project\git\rt-gui\components\rtgui')
-    # RTT_RTGUI =''
-
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
-
 
 env = Environment(TARGET_ARCH='x86')
 
@@ -45,7 +36,6 @@ if rtconfig.PLATFORM == 'cl':
     _DEBUG
     _CONSOLE
     MSVC
-    _TIME_T_DEFINED
     ''')
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
@@ -86,23 +76,7 @@ else:
 
 # prepare building environment
 
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False, remove_components=['rtgui'])
-if GetDepend('RT_USING_RTGUI'):
-    if RTT_RTGUI:
-        objs += SConscript(os.path.join(RTT_RTGUI, 'SConscript'),
-						   variant_dir='build/components/rtgui',
-						   duplicate=0)
-        objs = objs + SConscript(RTT_RTGUI+'/../../demo/examples/SConscript', 
-				variant_dir='build/examples/gui', duplicate=0)
-    else:
-        objs += SConscript(os.path.join(RTT_ROOT + '/components/rtgui', 'SConscript'),
-						   variant_dir='build/components/rtgui',
-						   duplicate=0)
-        objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', 
-				variant_dir='build/examples/gui', duplicate=0)
-
-if GetDepend('RT_USING_TC'):
-    objs = objs + SConscript(RTT_ROOT + '/examples/kernel/SConscript', variant_dir = 'build/tc/kernel', duplicate=0)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 def ObjRemove(objs, remove):
     for item in objs:
@@ -122,13 +96,12 @@ if GetDepend('RT_USING_MODULE'):
       default=False,
       help='create rthread.def of rtthread.dll on windows')
     if GetOption('def'):
-        if rtconfig.PLATFORM != 'mingw':
-            print "scons error: `--def' can only work with mingw"
-            exit(1)
+        if rtconfig.PLATFORM == 'mingw':
+            env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
+        else:
+            rtconfig.POST_ACTION = 'createdef.py $TARGET rtthread.def'
 
-        env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
-        env.SharedLibrary("rtthread.dll", objs)
-        program = ''
+        program = env.Program(TARGET, objs)
     else:
         if rtconfig.PLATFORM == 'cl':
             objs += ['rtthread.def']

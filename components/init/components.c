@@ -148,6 +148,10 @@ void rt_components_init(void)
 	dfs_romfs_init();
 #endif
 
+#ifdef RT_USING_DFS_RAMFS
+	dfs_ramfs_init();
+#endif
+
 #ifdef RT_USING_DFS_DEVFS
 	devfs_init();
 #endif

@@ -73,6 +73,7 @@ AUTH *authnone_create()
 	register struct authnone_private *ap = authnone_private;
 	XDR xdr_stream;
 	register XDR *xdrs;
+    extern bool_t xdr_opaque_auth(XDR *xdrs, struct opaque_auth *ap);
 
 	if (ap == 0) {
 		ap = (struct authnone_private *) rt_malloc (sizeof(*ap));
@@ -95,9 +96,7 @@ AUTH *authnone_create()
 }
 
 /*ARGSUSED*/ 
-static bool_t authnone_marshal(client, xdrs)
-AUTH *client;
-XDR *xdrs;
+static bool_t authnone_marshal(AUTH *client, XDR *xdrs)
 {
 	register struct authnone_private *ap = authnone_private;
 

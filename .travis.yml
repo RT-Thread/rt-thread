@@ -24,14 +24,11 @@ env:
   - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='avr32uc3b0' RTT_TOOL_CHAIN='atmel-avr32'
 #  - RTT_BSP='bf533' # no scons
-  - RTT_BSP='dev3210' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='efm32' RTT_TOOL_CHAIN='sourcery-arm' 
-  - RTT_BSP='jz47xx' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='lm3s9b9x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='lm4f232' RTT_TOOL_CHAIN='sourcery-arm' 
-#  - RTT_BSP='lpc1114' # no scons
-#  - RTT_BSP='lpc122x' # no scons
+  - RTT_BSP='tm4c129x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc176x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='lpc178x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='lpc2148' RTT_TOOL_CHAIN='sourcery-arm' 
@@ -40,15 +37,13 @@ env:
 #  - RTT_BSP='m16c62p' # m32c
   - RTT_BSP='mb9bf500r' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='mb9bf506r' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='mb9bf618s' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='microblaze' # no scons
   - RTT_BSP='mini2440' RTT_TOOL_CHAIN='sourcery-arm' 
 #  - RTT_BSP='mini4020' # no scons
 #  - RTT_BSP='nios_ii' # no scons
-#  - RTT_BSP='nuc140' # no scons
 #  - RTT_BSP='pic32ethernet' # no scons
-#  - RTT_BSP='sam7s' # no scons
   - RTT_BSP='sam7x' RTT_TOOL_CHAIN='sourcery-arm'
-#  - RTT_BSP='simlinux' # linux
 #  - RTT_BSP='simulator' # x86
   - RTT_BSP='stm32f0x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f107' RTT_TOOL_CHAIN='sourcery-arm' 
@@ -57,6 +52,10 @@ env:
   - RTT_BSP='stm32f40x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
-#  - RTT_BSP='wh44b0' # no scons
 #  - RTT_BSP='x86' # x86
-#  - RTT_BSP='xplorer4330' # no scons
+  - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='lpc43xx/M4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='lpc408x' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='beaglebone' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'

@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-01-08     bernard      first version.
+ * 2014-07-12     bernard      Add workqueue implementation.
  */
 
 #ifndef __RT_DEVICE_H__
@@ -114,6 +115,8 @@ struct rt_pipe_device
     struct rt_portal_device *read_portal;
 };
 
+#define PIPE_CTRL_GET_SPACE          0x14            /**< get the remaining size of a pipe device */
+
 #define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
 #define RT_DATAQUEUE_EVENT_POP       0x01
 #define RT_DATAQUEUE_EVENT_PUSH      0x02
@@ -139,6 +142,21 @@ struct rt_data_queue
 
     /* event notify */
     void (*evt_notify)(struct rt_data_queue *queue, rt_uint32_t event);
+};
+
+/* workqueue implementation */
+struct rt_workqueue
+{
+	rt_list_t   work_list;
+	rt_thread_t work_thread;
+};
+
+struct rt_work
+{
+	rt_list_t list;
+
+	void (*work_func)(struct rt_work* work, void* work_data);
+	void *work_data;
 };
 
 /**
@@ -272,6 +290,24 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             rt_size_t            *size);
 void rt_data_queue_reset(struct rt_data_queue *queue);
 
+#ifdef RT_USING_HEAP
+/**
+ * WorkQueue for DeviceDriver
+ */
+struct rt_workqueue *rt_workqueue_create(const char* name, rt_uint16_t stack_size, rt_uint8_t priority);
+rt_err_t rt_workqueue_destroy(struct rt_workqueue* queue);
+rt_err_t rt_workqueue_dowork(struct rt_workqueue* queue, struct rt_work* work);
+rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* work);
+
+rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work, void* work_data), 
+    void* work_data)
+{
+    rt_list_init(&(work->list));
+    work->work_func = work_func;
+    work->work_data = work_data;
+}
+#endif
+
 #ifdef RT_USING_RTC
 #include "drivers/rtc.h"
 #ifdef RT_USING_ALARM
@@ -316,6 +352,10 @@ void rt_data_queue_reset(struct rt_data_queue *queue);
 #include "drivers/mmcsd_core.h"
 #include "drivers/sd.h"
 #include "drivers/sdio.h"
+#endif
+
+#ifdef RT_USING_WDT
+#include "drivers/watchdog.h"
 #endif
 
 #endif /* __RT_DEVICE_H__ */

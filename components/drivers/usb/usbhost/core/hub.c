@@ -34,20 +34,20 @@ static struct uclass_driver hub_driver;
  * This function will do USB_REQ_GET_DESCRIPTOR request for the device instance 
  * to get usb hub descriptor.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @buffer the data buffer to save usb hub descriptor.
  * @param nbytes the size of buffer
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_get_descriptor(uinst_t uinst, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, 
     rt_size_t nbytes)
 {
     struct ureqest setup;
     int timeout = 100;
         
     /* parameter check */
-    RT_ASSERT(uinst != RT_NULL);
+    RT_ASSERT(device != RT_NULL);
     
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_DEVICE;
@@ -56,7 +56,7 @@ rt_err_t rt_usb_hub_get_descriptor(uinst_t uinst, rt_uint8_t *buffer,
     setup.length = nbytes;
     setup.value = USB_DESC_TYPE_HUB << 8;
 
-    if(rt_usb_hcd_control_xfer(uinst->hcd, uinst, &setup, buffer, nbytes, 
+    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, nbytes, 
         timeout) == nbytes) return RT_EOK;
     else return -RT_FALSE;    
 }
@@ -65,19 +65,19 @@ rt_err_t rt_usb_hub_get_descriptor(uinst_t uinst, rt_uint8_t *buffer,
  * This function will do USB_REQ_GET_STATUS request for the device instance 
  * to get usb hub status.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @buffer the data buffer to save usb hub status.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_get_status(uinst_t uinst, rt_uint8_t* buffer)
+rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
 {
     struct ureqest setup;
     int timeout = 100;
     int length = 4;
     
     /* parameter check */
-    RT_ASSERT(uinst != RT_NULL);
+    RT_ASSERT(device != RT_NULL);
 
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_DEVICE;
@@ -86,7 +86,7 @@ rt_err_t rt_usb_hub_get_status(uinst_t uinst, rt_uint8_t* buffer)
     setup.length = length;
     setup.value = 0;
 
-    if(rt_usb_hcd_control_xfer(uinst->hcd, uinst, &setup, buffer, length, 
+    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, length, 
         timeout) == length) return RT_EOK;
     else return -RT_FALSE;    
 }
@@ -95,13 +95,13 @@ rt_err_t rt_usb_hub_get_status(uinst_t uinst, rt_uint8_t* buffer)
  * This function will do USB_REQ_GET_STATUS request for the device instance 
  * to get hub port status.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @port the hub port to get status.
  * @buffer the data buffer to save usb hub status.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_get_port_status(uhubinst_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, 
     rt_uint8_t* buffer)
 {
     struct ureqest setup;
@@ -109,12 +109,12 @@ rt_err_t rt_usb_hub_get_port_status(uhubinst_t uhub, rt_uint16_t port,
     int length = 4;
     
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
 
     /* get roothub port status */
-    if(uhub->is_roothub)
+    if(hub->is_roothub)
     {
-        rt_usb_hcd_hub_control(uhub->hcd, port, RH_GET_PORT_STATUS, 
+        rt_usb_hcd_hub_control(hub->hcd, port, RH_GET_PORT_STATUS, 
             (void*)buffer);
         return RT_EOK;
     }
@@ -126,7 +126,7 @@ rt_err_t rt_usb_hub_get_port_status(uhubinst_t uhub, rt_uint16_t port,
     setup.length = 4;
     setup.value = 0;
 
-    if(rt_usb_hcd_control_xfer(uhub->hcd, uhub->self, &setup, buffer, 
+    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, buffer, 
         length, timeout) == timeout) return RT_EOK;
     else return -RT_FALSE;        
 }
@@ -135,25 +135,25 @@ rt_err_t rt_usb_hub_get_port_status(uhubinst_t uhub, rt_uint16_t port,
  * This function will do USB_REQ_CLEAR_FEATURE request for the device instance 
  * to clear feature of the hub port.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @port the hub port.
  * @feature feature to be cleared.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_clear_port_feature(uhubinst_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, 
     rt_uint16_t feature)
 {
     struct ureqest setup;
     int timeout = 100;
         
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
 
     /* clear roothub feature */
-    if(uhub->is_roothub)
+    if(hub->is_roothub)
     {
-        rt_usb_hcd_hub_control(uhub->hcd, port, RH_CLEAR_PORT_FEATURE, 
+        rt_usb_hcd_hub_control(hub->hcd, port, RH_CLEAR_PORT_FEATURE, 
             (void*)feature);
         return RT_EOK;
     }
@@ -165,7 +165,7 @@ rt_err_t rt_usb_hub_clear_port_feature(uhubinst_t uhub, rt_uint16_t port,
     setup.length = 0;
     setup.value = feature;
 
-    if(rt_usb_hcd_control_xfer(uhub->hcd, uhub->self, &setup, RT_NULL, 0, 
+    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
         timeout) == 0) return RT_EOK;
     else return -RT_FALSE;    
 }
@@ -174,25 +174,25 @@ rt_err_t rt_usb_hub_clear_port_feature(uhubinst_t uhub, rt_uint16_t port,
  * This function will do USB_REQ_SET_FEATURE request for the device instance 
  * to set feature of the hub port.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @port the hub port.
  * @feature feature to be set.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_set_port_feature(uhubinst_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port, 
     rt_uint16_t feature)
 {
     struct ureqest setup;
     int timeout = 100;
         
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
 
     /* clear roothub feature */
-    if(uhub->is_roothub)
+    if(hub->is_roothub)
     {
-        rt_usb_hcd_hub_control(uhub->hcd, port, RH_SET_PORT_FEATURE, 
+        rt_usb_hcd_hub_control(hub->hcd, port, RH_SET_PORT_FEATURE, 
             (void*)feature);
         return RT_EOK;
     }
@@ -204,7 +204,7 @@ rt_err_t rt_usb_hub_set_port_feature(uhubinst_t uhub, rt_uint16_t port,
     setup.length = 0;
     setup.value = feature;
 
-    if(rt_usb_hcd_control_xfer(uhub->hcd, uhub->self, &setup, RT_NULL, 0, 
+    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
         timeout) == 0) return RT_EOK;
     else return -RT_FALSE;        
 }
@@ -212,33 +212,33 @@ rt_err_t rt_usb_hub_set_port_feature(uhubinst_t uhub, rt_uint16_t port,
 /**
  * This function will rest hub port, it is invoked when sub device attached to the hub port.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * @param port the hub port.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_reset_port(uhubinst_t uhub, rt_uint16_t port)
+rt_err_t rt_usbh_hub_reset_port(uhub_t hub, rt_uint16_t port)
 {
     rt_err_t ret;
     rt_uint32_t pstatus;
     
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
     
     rt_thread_delay(50);
 
     /* reset hub port */
-    ret = rt_usb_hub_set_port_feature(uhub, port, PORT_FEAT_RESET);
+    ret = rt_usbh_hub_set_port_feature(hub, port, PORT_FEAT_RESET);
     if(ret != RT_EOK) return ret;
 
     while(1)
     {
-        ret = rt_usb_hub_get_port_status(uhub, port, (rt_uint8_t*)&pstatus);
+        ret = rt_usbh_hub_get_port_status(hub, port, (rt_uint8_t*)&pstatus);
         if(!(pstatus & PORT_PRS)) break;
     }
     
     /* clear port reset feature */
-    ret = rt_usb_hub_clear_port_feature(uhub, port, PORT_FEAT_C_RESET);    
+    ret = rt_usbh_hub_clear_port_feature(hub, port, PORT_FEAT_C_RESET);    
     if(ret != RT_EOK) return ret;
 
     rt_thread_delay(50);    
@@ -249,12 +249,12 @@ rt_err_t rt_usb_hub_reset_port(uhubinst_t uhub, rt_uint16_t port)
 /**
  * This function will do debouce, it is invoked when sub device attached to the hub port.
  *
- * @param uinst the usb instance.
+ * @param device the usb instance.
  * @param port the hub port.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usb_hub_port_debounce(uhubinst_t uhub, rt_uint16_t port)
+rt_err_t rt_usbh_hub_port_debounce(uhub_t hub, rt_uint16_t port)
 {
     rt_err_t ret;
     int i = 0, times = 20;
@@ -262,11 +262,11 @@ rt_err_t rt_usb_hub_port_debounce(uhubinst_t uhub, rt_uint16_t port)
     rt_bool_t connect = RT_TRUE;
 
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
 
     for(i=0; i<times; i++)
     {
-        ret = rt_usb_hub_get_port_status(uhub, port, (rt_uint8_t*)&pstatus);
+        ret = rt_usbh_hub_get_port_status(hub, port, (rt_uint8_t*)&pstatus);
         if(ret != RT_EOK) return ret;
             
         if(!(pstatus & PORT_CCS)) 
@@ -286,70 +286,70 @@ rt_err_t rt_usb_hub_port_debounce(uhubinst_t uhub, rt_uint16_t port)
  * This function will poll all the hub ports to detect port status, especially connect and
  * disconnect events.
  *
- * @param ifinst the interface instance.
+ * @param intf the interface instance.
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usb_hub_port_change(uhubinst_t uhub)
+static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
 {
     int i;
     rt_bool_t reconnect;
 
     /* parameter check */
-    RT_ASSERT(uhub != RT_NULL);
+    RT_ASSERT(hub != RT_NULL);
 
     /* get usb device instance */    
-    for (i = 0; i < uhub->num_ports; i++)
+    for (i = 0; i < hub->num_ports; i++)
     {
         rt_err_t ret;
-        uinst_t uinst;
+        struct uinstance* device;
         rt_uint32_t pstatus = 0;
 
         reconnect = RT_FALSE;
         
         /* get hub port status */
-        ret = rt_usb_hub_get_port_status(uhub, i + 1, (rt_uint8_t*)&pstatus);
+        ret = rt_usbh_hub_get_port_status(hub, i + 1, (rt_uint8_t*)&pstatus);
         if(ret != RT_EOK) continue;
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("port_status 0x%x\n", pstatus));
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("port %d status 0x%x\n", i, pstatus));
 
         /* check port status change */
         if ((pstatus & PORT_CCSC)) 
         {        
             /* clear port status change feature */
-            rt_usb_hub_clear_port_feature(uhub, i + 1, PORT_FEAT_C_CONNECTION);
+            rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_CONNECTION);
             reconnect = RT_TRUE;
         }
 
         if(pstatus & PORT_PESC)
         {
-            rt_usb_hub_clear_port_feature(uhub, i + 1, PORT_FEAT_C_ENABLE);            
+            rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_ENABLE);            
             reconnect = RT_TRUE;
         }
         
         if(reconnect)
         {            
-            if(uhub->child[i]->status != UINST_STATUS_IDLE) 
-                rt_usb_detach_instance(uhub->child[i]);
+            if(hub->child[i]->status != DEV_STATUS_IDLE) 
+                rt_usbh_detach_instance(hub->child[i]);
             
-            ret = rt_usb_hub_port_debounce(uhub, i + 1);
+            ret = rt_usbh_hub_port_debounce(hub, i + 1);
             if(ret != RT_EOK) continue;
             
             /* allocate an usb instance for new connected device */
-            uinst = rt_usb_alloc_instance();
-            if(uinst == RT_NULL) break;
+            device = rt_usbh_alloc_instance();
+            if(device == RT_NULL) break;
             
             /* set usb device speed */
-            uinst->speed = (pstatus & PORT_LSDA) ? 1 : 0;
-            uinst->parent = uhub;    
-            uinst->hcd = uhub->hcd;
-            uhub->child[i] = uinst;
+            device->speed = (pstatus & PORT_LSDA) ? 1 : 0;
+            device->parent = hub;    
+            device->hcd = hub->hcd;
+            hub->child[i] = device;
 
             /* reset usb roothub port */
-            rt_usb_hub_reset_port(uhub, i + 1);
+            rt_usbh_hub_reset_port(hub, i + 1);
             
             /* attatch the usb instance to the hcd */
-            rt_usb_attatch_instance(uinst); 
+            rt_usbh_attatch_instance(device); 
         }
     }
 
@@ -363,18 +363,18 @@ static rt_err_t rt_usb_hub_port_change(uhubinst_t uhub)
  * 
  * @return none.
  */
-static void rt_usb_hub_irq(void* context)
+static void rt_usbh_hub_irq(void* context)
 {
     upipe_t pipe; 
-    uifinst_t ifinst;
-    uhubinst_t uhub;
+    struct uintf* intf;
+    uhub_t hub;
     int timeout = 100;
     
     RT_ASSERT(context != RT_NULL);
     
     pipe = (upipe_t)context;
-    ifinst = pipe->ifinst;
-    uhub = (uhubinst_t)ifinst->user_data;
+    intf = pipe->intf;
+    hub = (uhub_t)intf->user_data;
 
     if(pipe->status != UPIPE_STATUS_OK)
     {
@@ -382,14 +382,14 @@ static void rt_usb_hub_irq(void* context)
         return;
     }
     
-    rt_usb_hub_port_change(uhub);
+    rt_usbh_hub_port_change(hub);
 
     rt_kprintf("hub int xfer...\n");
 
     /* parameter check */
-     RT_ASSERT(pipe->ifinst->uinst->hcd != RT_NULL);
+     RT_ASSERT(pipe->intf->device->hcd != RT_NULL);
     
-    rt_usb_hcd_int_xfer(ifinst->uinst->hcd, pipe, uhub->buffer, 
+    rt_usb_hcd_int_xfer(intf->device->hcd, pipe, hub->buffer, 
         pipe->ep.wMaxPacketSize, timeout);
 }
 
@@ -401,33 +401,33 @@ static void rt_usb_hub_irq(void* context)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usb_hub_run(void *arg)
+static rt_err_t rt_usbh_hub_enable(void *arg)
 {
     int i = 0;
     rt_err_t ret = RT_EOK;
     uep_desc_t ep_desc;
-    uhubinst_t uhub;
-    uinst_t uinst;
-    uifinst_t ifinst = (uifinst_t)arg;
+    uhub_t hub;
+    struct uinstance* device;
+    struct uintf* intf = (struct uintf*)arg;
     int timeout = 300;
 
     /* paremeter check */
-    RT_ASSERT(ifinst != RT_NULL);
+    RT_ASSERT(intf != RT_NULL);
     
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usb_hub_run\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_hub_run\n"));
 
     /* get usb device instance */
-    uinst = ifinst->uinst;
+    device = intf->device;
 
     /* create a hub instance */
-    uhub = rt_malloc(sizeof(struct uhubinst));
-    rt_memset(uhub, 0, sizeof(struct uhubinst));
+    hub = rt_malloc(sizeof(struct uhub));
+    rt_memset(hub, 0, sizeof(struct uhub));
     
     /* make interface instance's user data point to hub instance */
-    ifinst->user_data = (void*)uhub;
+    intf->user_data = (void*)hub;
 
     /* get hub descriptor head */
-    ret = rt_usb_hub_get_descriptor(uinst, (rt_uint8_t*)&uhub->hub_desc, 8);
+    ret = rt_usbh_hub_get_descriptor(device, (rt_uint8_t*)&hub->hub_desc, 8);
     if(ret != RT_EOK)
     {
         rt_kprintf("get hub descriptor failed\n");
@@ -435,8 +435,8 @@ static rt_err_t rt_usb_hub_run(void *arg)
     }
 
     /* get full hub descriptor */
-    ret = rt_usb_hub_get_descriptor(uinst, (rt_uint8_t*)&uhub->hub_desc, 
-        uhub->hub_desc.length);
+    ret = rt_usbh_hub_get_descriptor(device, (rt_uint8_t*)&hub->hub_desc, 
+        hub->hub_desc.length);
     if(ret != RT_EOK)
     {
         rt_kprintf("get hub descriptor again failed\n");
@@ -444,23 +444,23 @@ static rt_err_t rt_usb_hub_run(void *arg)
     }    
 
     /* get hub ports number */
-    uhub->num_ports = uhub->hub_desc.num_ports;
-    uhub->hcd = uinst->hcd;
-    uhub->self = uinst;
+    hub->num_ports = hub->hub_desc.num_ports;
+    hub->hcd = device->hcd;
+    hub->self = device;
 
     /* reset all hub ports */
-    for (i = 0; i < uhub->num_ports; i++)
+    for (i = 0; i < hub->num_ports; i++)
     {
-        rt_usb_hub_set_port_feature(uhub, i + 1, PORT_FEAT_POWER);
-        rt_thread_delay(uhub->hub_desc.pwron_to_good
+        rt_usbh_hub_set_port_feature(hub, i + 1, PORT_FEAT_POWER);
+        rt_thread_delay(hub->hub_desc.pwron_to_good
             * 2 * RT_TICK_PER_SECOND / 1000 );
     }
 
-    if(ifinst->intf_desc->bNumEndpoints != 1) 
+    if(intf->intf_desc->bNumEndpoints != 1) 
         return -RT_ERROR;
 
     /* get endpoint descriptor from interface descriptor */
-    rt_usb_get_endpoint_descriptor(ifinst->intf_desc, 0, &ep_desc);
+    rt_usbh_get_endpoint_descriptor(intf->intf_desc, 0, &ep_desc);
     if(ep_desc == RT_NULL)
     {
         rt_kprintf("rt_usb_get_endpoint_descriptor error\n");
@@ -474,17 +474,17 @@ static rt_err_t rt_usb_hub_run(void *arg)
         if(ep_desc->bEndpointAddress & USB_DIR_IN)
         {    
             /* allocate a pipe according to the endpoint type */
-            rt_usb_hcd_alloc_pipe(uinst->hcd, &uhub->pipe_in, ifinst, 
-                ep_desc, rt_usb_hub_irq);
+            rt_usb_hcd_alloc_pipe(device->hcd, &hub->pipe_in, intf, 
+                ep_desc, rt_usbh_hub_irq);
         }
         else return -RT_ERROR;
     }
 
     /* parameter check */
-     RT_ASSERT(uinst->hcd != RT_NULL);
+     RT_ASSERT(device->hcd != RT_NULL);
     
-    rt_usb_hcd_int_xfer(uinst->hcd, uhub->pipe_in, uhub->buffer, 
-        uhub->pipe_in->ep.wMaxPacketSize, timeout);
+    rt_usb_hcd_int_xfer(device->hcd, hub->pipe_in, hub->buffer, 
+        hub->pipe_in->ep.wMaxPacketSize, timeout);
     
     return RT_EOK;
 }
@@ -497,32 +497,32 @@ static rt_err_t rt_usb_hub_run(void *arg)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usb_hub_stop(void* arg)
+static rt_err_t rt_usbh_hub_disable(void* arg)
 {
     int i;
-    uhubinst_t uhub;
-    uinst_t uinst;
-    uifinst_t ifinst = (uifinst_t)arg;
+    uhub_t hub;
+    struct uinstance* device;
+    struct uintf* intf = (struct uintf*)arg;
 
     /* paremeter check */
-    RT_ASSERT(ifinst != RT_NULL);
+    RT_ASSERT(intf != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usb_hub_stop\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_hub_stop\n"));
 
-    uinst = ifinst->uinst;
-    uhub = (uhubinst_t)ifinst->user_data;
+    device = intf->device;
+    hub = (uhub_t)intf->user_data;
 
-    if(uhub->pipe_in != RT_NULL)
-        rt_usb_hcd_free_pipe(uinst->hcd, uhub->pipe_in);
+    if(hub->pipe_in != RT_NULL)
+        rt_usb_hcd_free_pipe(device->hcd, hub->pipe_in);
 
-    for(i=0; i<uhub->num_ports; i++)
+    for(i=0; i<hub->num_ports; i++)
     {
-        if(uhub->child[i] != RT_NULL)
-            rt_usb_detach_instance(uhub->child[i]);
+        if(hub->child[i] != RT_NULL)
+            rt_usbh_detach_instance(hub->child[i]);
     }
     
-    if(uhub != RT_NULL) rt_free(uhub);
-    if(ifinst != RT_NULL) rt_free(ifinst);
+    if(hub != RT_NULL) rt_free(hub);
+    if(intf != RT_NULL) rt_free(intf);
 
     return RT_EOK;
 }
@@ -533,12 +533,12 @@ static rt_err_t rt_usb_hub_stop(void* arg)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-ucd_t rt_usb_class_driver_hub(void)
+ucd_t rt_usbh_class_driver_hub(void)
 {    
     hub_driver.class_code = USB_CLASS_HUB;
     
-    hub_driver.run = rt_usb_hub_run;
-    hub_driver.stop = rt_usb_hub_stop;
+    hub_driver.enable = rt_usbh_hub_enable;
+    hub_driver.disable = rt_usbh_hub_disable;
 
     return &hub_driver;
 }
@@ -551,7 +551,7 @@ ucd_t rt_usb_class_driver_hub(void)
  * 
  * @return none.
  */
-static void rt_usb_hub_thread_entry(void* parameter)
+static void rt_usbh_hub_thread_entry(void* parameter)
 {    
     while(1)
     {    
@@ -566,7 +566,7 @@ static void rt_usb_hub_thread_entry(void* parameter)
         switch (msg.type)
         {        
         case USB_MSG_CONNECT_CHANGE:
-            rt_usb_hub_port_change(msg.content.uhub);
+            rt_usbh_hub_port_change(msg.content.hub);
             break;
         case USB_MSG_CALLBACK:
             /* invoke callback */
@@ -582,16 +582,15 @@ static void rt_usb_hub_thread_entry(void* parameter)
  * This function will post an message to the usb message queue,
  *
  * @param msg the message to be posted
- * @param size the size of the message .
  * 
  * @return the error code, RT_EOK on successfully. 
  */
-rt_err_t rt_usb_post_event(struct uhost_msg* msg, rt_size_t size)
+rt_err_t rt_usbh_event_signal(struct uhost_msg* msg)
 {
     RT_ASSERT(msg != RT_NULL);
 
     /* send message to usb message queue */
-    rt_mq_send(usb_mq, (void*)msg, size);
+    rt_mq_send(usb_mq, (void*)msg, sizeof(struct uhost_msg));
 
     return RT_EOK;
 }
@@ -602,7 +601,7 @@ rt_err_t rt_usb_post_event(struct uhost_msg* msg, rt_size_t size)
  * @return none.
  * 
  */
-void rt_usb_hub_thread(void)
+void rt_usbh_hub_init(void)
 {
     rt_thread_t thread;
     
@@ -610,7 +609,7 @@ void rt_usb_hub_thread(void)
     usb_mq = rt_mq_create("usbh", 32, 16, RT_IPC_FLAG_FIFO);
     
     /* create usb hub thread */
-    thread = rt_thread_create("usbh", rt_usb_hub_thread_entry, RT_NULL, 
+    thread = rt_thread_create("usbh", rt_usbh_hub_thread_entry, RT_NULL, 
         USB_THREAD_STACK_SIZE, 8, 20);
     if(thread != RT_NULL)
     {

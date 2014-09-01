@@ -34,7 +34,7 @@ struct uadkinst
 
     struct rt_device device;
 };    
-typedef struct uadkinst* uadkinst_t;
+typedef struct uadkinst* uadk_t;
 
 #define USB_ACCESSORY_VENDOR_ID         0x18D1
 #define USB_ACCESSORY_PRODUCT_ID        0x2D00

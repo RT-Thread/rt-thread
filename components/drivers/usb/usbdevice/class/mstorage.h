@@ -59,13 +59,6 @@ struct request_sense_data
     rt_uint8_t Reserved4[4];
 }request_sense_data_t;
 
-struct mass_eps
-{
-    uep_t ep_in;
-    uep_t ep_out;
-};
-typedef struct mass_eps* mass_eps_t;
-
 #pragma pack()
 
 #endif

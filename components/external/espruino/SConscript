@@ -1,0 +1,53 @@
+from building import *
+
+cwd = GetCurrentDir()
+path = [cwd, cwd + '/src', cwd + '/gen', cwd + '/libs', cwd + '/targets/rtthread']
+
+src	= Split("""
+src/jsdevices.c
+src/jslex.c
+src/jswrap_array.c
+src/jswrap_json.c
+src/jswrap_process.c
+src/jsutils.c
+src/jswrap_interactive.c
+src/jswrap_onewire.c
+src/jswrap_string.c
+src/jsparse.c
+src/jswrap_arraybuffer.c
+src/jswrap_modules.c
+src/jswrap_serial.c
+src/jsinteractive.c
+src/jsvar.c
+src/jswrap_io.c
+src/jswrap_pin.c
+src/jspin.c
+src/jswrap_functions.c
+src/jswrap_object.c
+src/jswrap_spi_i2c.c
+"""
+)
+
+gen = Split("""
+gen/jspininfo.c
+gen/jswrapper.c
+"""
+)
+
+target = Split("""
+targets/rtthread/espruino.c  
+targets/rtthread/jshardware.c
+"""
+)
+
+libs = Split(
+"""
+libs/jswrap_math.c
+"""
+)
+
+src	= src + gen + target + libs
+
+group = DefineGroup('Espruino', src, depend = ['RT_USING_JS', 'RT_USING_NEWLIB'], CPPPATH = path)
+
+Return('group')

@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-08-31     Bernard      first implementation
- * 2011-06-05     Bernard      modify for STM32F107 version
+ * 2013-11-15     bright       modify for stm32f0xx version and components initial
  */
 
 #include <rthw.h>
@@ -86,19 +86,8 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-	/* init all device */
-	rt_device_init_all();
-#endif
-
 	/* init application */
 	rt_application_init();
-
-#ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device( FINSH_DEVICE_NAME );
-#endif
 
     /* init timer thread */
     rt_system_timer_thread_init();

@@ -50,8 +50,8 @@ static char sccsid[] = "@(#)xdr.c 1.35 87/08/12";
 /*
  * constants specific to the xdr "protocol"
  */
-#define XDR_FALSE	((long) 0)
-#define XDR_TRUE	((long) 1)
+#define XDR_FALSE		((long) 0)
+#define XDR_TRUE		((long) 1)
 #define LASTUNSIGNED	((unsigned int) 0-1)
 
 /*
@@ -327,9 +327,7 @@ bool_t xdr_u_char(XDR* xdrs, unsigned char* cp)
 /*
  * XDR booleans
  */
-bool_t xdr_bool(xdrs, bp)
-register XDR *xdrs;
-bool_t *bp;
+bool_t xdr_bool(XDR *xdrs, bool_t *bp)
 {
 	long lb;
 
@@ -355,9 +353,7 @@ bool_t *bp;
 /*
  * XDR enumerations
  */
-bool_t xdr_enum(xdrs, ep)
-XDR *xdrs;
-enum_t *ep;
+bool_t xdr_enum(XDR *xdrs, enum_t *ep)
 {
 	/*
 	 * enums are treated as ints
@@ -370,10 +366,7 @@ enum_t *ep;
  * Allows the specification of a fixed size sequence of opaque bytes.
  * cp points to the opaque object and cnt gives the byte length.
  */
-bool_t xdr_opaque(xdrs, cp, cnt)
-register XDR *xdrs;
-char* cp;
-register unsigned int cnt;
+bool_t xdr_opaque(XDR *xdrs, char* cp, unsigned int cnt)
 {
 	register unsigned int rndup;
 	static char crud[BYTES_PER_XDR_UNIT];
@@ -421,11 +414,7 @@ register unsigned int cnt;
  * *cpp is a pointer to the bytes, *sizep is the count.
  * If *cpp is NULL maxsize bytes are allocated
  */
-bool_t xdr_bytes(xdrs, cpp, sizep, maxsize)
-register XDR *xdrs;
-char **cpp;
-register unsigned int *sizep;
-unsigned int maxsize;
+bool_t xdr_bytes(XDR *xdrs, char** cpp, unsigned int *sizep, unsigned int maxsize)
 {
 	register char *sp = *cpp;	/* sp is the actual string pointer */
 	register unsigned int nodesize;
@@ -475,11 +464,8 @@ unsigned int maxsize;
 /*
  * Implemented here due to commonality of the object.
  */
-bool_t xdr_netobj(xdrs, np)
-XDR *xdrs;
-struct netobj *np;
+bool_t xdr_netobj(XDR *xdrs, struct netobj *np)
 {
-
 	return (xdr_bytes(xdrs, &np->n_bytes, &np->n_len, MAX_NETOBJ_SZ));
 }
 
@@ -537,10 +523,7 @@ bool_t xdr_union(XDR* xdrs, enum_t* dscmp, char* unp, const struct xdr_discrim* 
  * storage is allocated.  The last parameter is the max allowed length
  * of the string as specified by a protocol.
  */
-bool_t xdr_string(xdrs, cpp, maxsize)
-register XDR *xdrs;
-char **cpp;
-unsigned int maxsize;
+bool_t xdr_string(XDR *xdrs, char **cpp, unsigned int maxsize)
 {
 	register char *sp = *cpp;	/* sp is the actual string pointer */
 	unsigned int size;
@@ -600,9 +583,7 @@ unsigned int maxsize;
  * Wrapper for xdr_string that can be called directly from 
  * routines like clnt_call
  */
-bool_t xdr_wrapstring(xdrs, cpp)
-XDR *xdrs;
-char **cpp;
+bool_t xdr_wrapstring(XDR *xdrs, char **cpp)
 {
 	if (xdr_string(xdrs, cpp, LASTUNSIGNED)) {
 		return (TRUE);
@@ -617,13 +598,7 @@ char **cpp;
  * elsize is the size (in bytes) of each element, and elproc is the
  * xdr procedure to call to handle each element of the array.
  */
-bool_t xdr_array(xdrs, addrp, sizep, maxsize, elsize, elproc)
-register XDR *xdrs;
-char* *addrp;					/* array pointer */
-unsigned int *sizep;					/* number of elements */
-unsigned int maxsize;					/* max numberof elements */
-unsigned int elsize;					/* size in bytes of each element */
-xdrproc_t elproc;				/* xdr routine to handle each element */
+bool_t xdr_array(XDR *xdrs, char **addrp, unsigned int *sizep, unsigned int maxsize, unsigned int elsize, xdrproc_t elproc)
 {
 	register unsigned int i;
 	register char* target = *addrp;
@@ -700,12 +675,7 @@ xdrproc_t elproc;				/* xdr routine to handle each element */
  * > elemsize: size of each element
  * > xdr_elem: routine to XDR each element
  */
-bool_t xdr_vector(xdrs, basep, nelem, elemsize, xdr_elem)
-register XDR *xdrs;
-register char *basep;
-register unsigned int nelem;
-register unsigned int elemsize;
-register xdrproc_t xdr_elem;
+bool_t xdr_vector(XDR *xdrs, char *basep, unsigned int nelem, unsigned int elemsize, xdrproc_t xdr_elem)
 {
 	register unsigned int i;
 	register char *elptr;
@@ -730,11 +700,7 @@ register xdrproc_t xdr_elem;
  * size is the sizeof the referneced structure.
  * proc is the routine to handle the referenced structure.
  */
-bool_t xdr_reference(xdrs, pp, size, proc)
-register XDR *xdrs;
-char* *pp;					/* the pointer to work on */
-unsigned int size;						/* size of the object pointed to */
-xdrproc_t proc;					/* xdr routine to handle the object */
+bool_t xdr_reference(XDR *xdrs, char **pp, unsigned int size, xdrproc_t proc)
 {
 	register char* loc = *pp;
 	register bool_t stat;
@@ -783,11 +749,7 @@ xdrproc_t proc;					/* xdr routine to handle the object */
  * > xdr_obj: routine to XDR an object.
  *
  */
-bool_t xdr_pointer(xdrs, objpp, obj_size, xdr_obj)
-register XDR *xdrs;
-char **objpp;
-unsigned int obj_size;
-xdrproc_t xdr_obj;
+bool_t xdr_pointer(XDR *xdrs, char **objpp, unsigned int obj_size, xdrproc_t xdr_obj)
 {
 
 	bool_t more_data;

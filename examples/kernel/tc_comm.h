@@ -11,19 +11,19 @@
 #endif
 
 #if RT_THREAD_PRIORITY_MAX == 8
-#define THREAD_PRIORITY		6
+#define THREAD_PRIORITY        6
 #elif RT_THREAD_PRIORITY_MAX == 32
-#define THREAD_PRIORITY		25
+#define THREAD_PRIORITY        25
 #elif RT_THREAD_PRIORITY_MAX == 256
-#define THREAD_PRIORITY		200
+#define THREAD_PRIORITY        200
 #endif
-#define THREAD_STACK_SIZE	512
-#define THREAD_TIMESLICE	5
+#define THREAD_STACK_SIZE    512
+#define THREAD_TIMESLICE    5
 
-#define TC_STAT_END		0x00
-#define TC_STAT_RUNNING	0x01
-#define TC_STAT_FAILED	0x10
-#define TC_STAT_PASSED	0x00
+#define TC_STAT_END        0x00
+#define TC_STAT_RUNNING    0x01
+#define TC_STAT_FAILED    0x10
+#define TC_STAT_PASSED    0x00
 
 #ifdef RT_USING_TC
 void tc_start(const char* tc_prefix);
