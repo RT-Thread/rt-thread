@@ -19,8 +19,6 @@
 #include "board.h"
 
 #include "app_phy.h"
-//#include "app_bufferpool.h"
-//#include "app_bufferqueue.h"
 
 /* debug option */
 #define ETH_DEBUG
@@ -180,26 +178,15 @@ static rt_err_t rt_cme_eth_init(rt_device_t dev)
     init.ETH_JumboFrame = FALSE;
 
     memcpy(init.ETH_MacAddr, cme_eth->dev_addr, sizeof(init.ETH_MacAddr));
-//    init.ETH_MacAddr[0] = 0x00;
-//    init.ETH_MacAddr[1] = 0x1E;
-//    init.ETH_MacAddr[2] = 0xC9;
-//    init.ETH_MacAddr[3] = 0x3B;
-//    init.ETH_MacAddr[4] = 0x11;
-//    init.ETH_MacAddr[5] = 0xF8;
 
     // Disable broadcast;
+    // TODO: why?
+    memset(&flt, 0, sizeof(ETH_FrameFilter));
     flt.ETH_BroadcastFilterEnable = FALSE;
     flt.ETH_OwnFilterEnable = FALSE;
     flt.ETH_SelfDrop = FALSE;
     flt.ETH_SourceFilterEnable = FALSE;
     flt.ETH_SourceDrop = FALSE;
-
-    flt.ETH_SourceMacAddr[0] = 0x00;
-    flt.ETH_SourceMacAddr[1] = 0x1E;
-    flt.ETH_SourceMacAddr[2] = 0xC9;
-    flt.ETH_SourceMacAddr[3] = 0x3B;
-    flt.ETH_SourceMacAddr[4] = 0x11;
-    flt.ETH_SourceMacAddr[5] = 0xF9;
 
     init.ETH_Filter = &flt;
 
