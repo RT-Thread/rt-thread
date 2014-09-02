@@ -31,7 +31,7 @@ void phy_Reset() {
 		uint32_t ret = ETH_PhyRead(PHY_BASE_ADDR, PHY_REG_CONTROL);
 	  if ((ret & PHY_BIT_CONTROL_RESET) == 0) {
 			break;
-		} 
+		}
 	}
 }
 
@@ -45,19 +45,23 @@ void phy_AutoMediaSelect() {
 	ETH_PhyWrite(PHY_BASE_ADDR, PHY_REG_EXTEND_STATUS, data);
 }
 
-void phy_AutoNeg() {
-	uint32_t data;
+void phy_AutoNeg()
+{
+    uint32_t data;
 
-	data = ETH_PhyRead(PHY_BASE_ADDR, PHY_REG_CONTROL);
-	data |= (PHY_BIT_CONTROL_ANEN | PHY_BIT_CONTROL_RSAN);
-	ETH_PhyWrite(PHY_BASE_ADDR, PHY_REG_CONTROL, data);
+    data = ETH_PhyRead(PHY_BASE_ADDR, PHY_REG_CONTROL);
+    data |= (PHY_BIT_CONTROL_ANEN | PHY_BIT_CONTROL_RSAN);
+    ETH_PhyWrite(PHY_BASE_ADDR, PHY_REG_CONTROL, data);
 
-	while (1) {
-		uint32_t ret = ETH_PhyRead(PHY_BASE_ADDR, PHY_REG_STATUS);
-	  if ((ret & PHY_BIT_STATUS_ANC) == PHY_BIT_STATUS_ANC) {
-			break;
-		} 
-	}
+    while (1)
+    {
+        uint32_t ret = ETH_PhyRead(PHY_BASE_ADDR, PHY_REG_STATUS);
+        if ((ret & PHY_BIT_STATUS_ANC) == PHY_BIT_STATUS_ANC)
+        {
+            break;
+        }
+        rt_thread_delay(1);
+    }
 }
 
 BOOL phy_IsLink() {
@@ -106,12 +110,12 @@ BOOL phy_Init() {
 		printf("PHY runs in %dM speed %s duplex\n",
 			speed, (phy_GetDuplex() == PHY_DUPLEX_HALF) ? "half" : "full");
 	}
-		
+
 	// After auto-negcioation, Mawell PHY need some
 	// time to initial itself.
-	// So we have to delay some time since different 		
+	// So we have to delay some time since different
 	// connection way, such as direct wire, hub, switch.
-	// If not to delay, the first several sent frame 
+	// If not to delay, the first several sent frame
 	// may be lost.
 	// Please according to actual environment to tune
 	// this delay.
