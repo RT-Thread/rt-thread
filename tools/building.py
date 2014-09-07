@@ -29,7 +29,7 @@ class Win32Spawn:
         cmdline = cmd + " " + newargs
 
         # Make sure the env is constructed by strings
-        _e = {k: str(v) for k, v in env.items()}
+        _e = dict([(k, str(v)) for k, v in env.items()])
 
         # Windows(tm) CreateProcess does not use the env passed to it to find
         # the executables. So we have to modify our own PATH to make Popen
