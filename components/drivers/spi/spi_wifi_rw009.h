@@ -57,6 +57,7 @@ struct response
 /* spi slave configure. */
 #define MAX_DATA_LEN        1520
 #define SPI_TX_POOL_SIZE    2
+#define SPI_RX_POOL_SIZE    2
 
 // align check
 #if (MAX_DATA_LEN & 0x03) != 0
@@ -77,6 +78,16 @@ struct spi_data_packet
     uint32_t data_type;
     char buffer[MAX_DATA_LEN];
 };
+
+/* tools */
+#define node_entry(node, type, member) \
+    ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
+#define member_offset(type, member) \
+    ((unsigned long)(&((type *)0)->member))
+
+#define MAX_SPI_PACKET_SIZE    (member_offset(struct spi_data_packet, buffer) + MAX_DATA_LEN)
+
+/********************************* RW009 **************************************/
 
 struct spi_wifi_cmd
 {
@@ -99,12 +110,6 @@ extern void spi_wifi_hw_init(void);
 extern void spi_wifi_int_cmd(rt_bool_t cmd);
 extern rt_bool_t spi_wifi_is_busy(void);
 
-/* tools */
-#define node_entry(node, type, member) \
-    ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
-#define member_offset(type, member) \
-    ((unsigned long)(&((type *)0)->member))
-
 #define SSID_NAME_LENGTH_MAX        (32)
 #define PASSWORD_LENGTH_MAX         (32)
 
@@ -118,6 +123,5 @@ struct cmd_join
     uint32_t channel;
     uint32_t security;
 };
-
 
 #endif // SPI_WIFI_H_INCLUDED
