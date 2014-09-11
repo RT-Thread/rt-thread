@@ -43,4 +43,6 @@ typedef unsigned long long uint64_t;
 #define LONG_MIN	(-LONG_MAX - 1)
 #define ULONG_MAX	(~0UL)
 
+#define SIZE_MAX	ULONG_MAX
+
 #endif

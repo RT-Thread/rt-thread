@@ -119,7 +119,7 @@ void finsh_set_device(const char* device_name)
         {
             /* close old finsh device */
             rt_device_close(shell->device);
-            rt_device_set_rx_indicate(dev, RT_NULL);
+            rt_device_set_rx_indicate(shell->device, RT_NULL);
         }
 
         shell->device = dev;

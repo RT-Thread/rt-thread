@@ -61,6 +61,20 @@ void rt_thread_idle_sethook(void (*hook)(void))
 }
 #endif
 
+/* Return whether there is defunctional thread to be deleted. */
+rt_inline int _has_defunct_thread(void)
+{
+    /* The rt_list_isempty has prototype of "int rt_list_isempty(const rt_list_t *l)".
+     * So the compiler has a good reason that the rt_thread_defunct list does
+     * not change within rt_thread_idle_excute thus optimize the "while" loop
+     * into a "if".
+     *
+     * So add the volatile qualifier here. */
+    const volatile rt_list_t *l = (const volatile rt_list_t*)&rt_thread_defunct;
+
+    return l->next != l;
+}
+
 /**
  * @ingroup Thread
  *
@@ -70,7 +84,7 @@ void rt_thread_idle_excute(void)
 {
     /* Loop until there is no dead thread. So one call to rt_thread_idle_excute
      * will do all the cleanups. */
-    while (!rt_list_isempty(&rt_thread_defunct))
+    while (_has_defunct_thread())
     {
         rt_base_t lock;
         rt_thread_t thread;
@@ -83,7 +97,7 @@ void rt_thread_idle_excute(void)
         lock = rt_hw_interrupt_disable();
 
         /* re-check whether list is empty */
-        if (!rt_list_isempty(&rt_thread_defunct))
+        if (_has_defunct_thread())
         {
             /* get defunct thread */
             thread = rt_list_entry(rt_thread_defunct.next,
