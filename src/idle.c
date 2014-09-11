@@ -44,16 +44,12 @@ static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 extern rt_list_t rt_thread_defunct;
 
 #ifdef RT_USING_HOOK
-/**
- * @addtogroup Hook
- */
-
-/*@{*/
-
 static void (*rt_thread_idle_hook)();
 
 /**
- * This function will set a hook function to idle thread loop.
+ * @ingroup Hook
+ * This function sets a hook function to idle thread loop. When the system performs 
+ * idle loop, this hook function should be invoked.
  *
  * @param hook the specified hook function
  *
@@ -63,8 +59,6 @@ void rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_thread_idle_hook = hook;
 }
-
-/*@}*/
 #endif
 
 /**
@@ -180,7 +174,7 @@ static void rt_thread_idle_entry(void *parameter)
 }
 
 /**
- * @ingroup SymstemInit
+ * @ingroup SystemInit
  *
  * This function will initialize idle thread, then start it.
  *
