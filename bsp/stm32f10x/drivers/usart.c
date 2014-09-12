@@ -25,6 +25,11 @@
 #define UART1_GPIO_RX		GPIO_Pin_10
 #define UART1_GPIO			GPIOA
 
+/* USART1_REMAP */
+#define UART1_GPIO_REMAP_TX		GPIO_Pin_6
+#define UART1_GPIO_REMAP_RX		GPIO_Pin_7
+#define UART1_GPIO_REMAP		GPIOB
+
 /* USART2 */
 #define UART2_GPIO_TX	    GPIO_Pin_2
 #define UART2_GPIO_RX	    GPIO_Pin_3
@@ -135,7 +140,7 @@ static const struct rt_uart_ops stm32_uart_ops =
     stm32_getc,
 };
 
-#if defined(RT_USING_UART1)
+#if defined(RT_USING_UART1) || defined(RT_USING_REMAP_UART1)
 /* UART1 device driver structure */
 struct stm32_uart uart1 =
 {
@@ -163,7 +168,10 @@ void USART1_IRQHandler(void)
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
-
+	if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+	{
+		stm32_getc(&serial1);
+	}
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -197,6 +205,10 @@ void USART2_IRQHandler(void)
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
+	if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+	{
+		stm32_getc(&serial2);
+	}
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -204,7 +216,7 @@ void USART2_IRQHandler(void)
 #endif /* RT_USING_UART2 */
 
 #if defined(RT_USING_UART3)
-/* UART1 device driver structure */
+/* UART3 device driver structure */
 struct stm32_uart uart3 =
 {
     USART3,
@@ -231,6 +243,10 @@ void USART3_IRQHandler(void)
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
+	if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+	{
+		stm32_getc(&serial3);
+	}
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -239,12 +255,17 @@ void USART3_IRQHandler(void)
 
 static void RCC_Configuration(void)
 {
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1)
     /* Enable UART GPIO clocks */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     /* Enable UART clock */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-#endif /* RT_USING_UART1 */
+#elif defined(RT_USING_REMAP_UART1)
+    /* Enable UART GPIO clocks */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    /* Enable UART clock */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+#endif
 
 #ifdef RT_USING_UART2
     /* Enable UART GPIO clocks */
@@ -267,7 +288,7 @@ static void GPIO_Configuration(void)
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1)
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX;
@@ -276,13 +297,23 @@ static void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_TX;
     GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
+#elif defined(RT_USING_REMAP_UART1)
+    /* Configure USART Remap Rx/tx PIN */
+    GPIO_PinRemapConfig(GPIO_Remap_USART1,ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Pin = UART1_GPIO_REMAP_RX;
+	GPIO_Init(UART1_GPIO_REMAP, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Pin = UART1_GPIO_REMAP_TX;
+	GPIO_Init(UART1_GPIO_REMAP, &GPIO_InitStructure);
 #endif /* RT_USING_UART1 */
 
 #ifdef RT_USING_UART2
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_RX;
-    GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
+    GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_TX;
@@ -321,7 +352,7 @@ void rt_hw_usart_init(void)
     RCC_Configuration();
     GPIO_Configuration();
 
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1) || defined(RT_USING_REMAP_UART1)
     uart = &uart1;
     config.baud_rate = BAUD_RATE_115200;
 

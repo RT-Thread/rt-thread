@@ -340,11 +340,20 @@ rt_err_t rym_recv_on_device(
     dev->flag &= ~RT_DEVICE_FLAG_STREAM;
     rt_hw_interrupt_enable(int_lvl);
 
-    res = rt_device_open(dev, 0);
+    res = rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
     if (res != RT_EOK)
         goto __exit;
 
     res = _rym_do_recv(ctx, handshake_timeout);
+
+    if (res != RT_EOK){
+        /* end session when case error */
+        _rym_putchar(ctx, RYM_CODE_CAN);
+        _rym_putchar(ctx, RYM_CODE_CAN);
+        _rym_putchar(ctx, RYM_CODE_CAN);
+        _rym_putchar(ctx, RYM_CODE_CAN);
+        _rym_putchar(ctx, RYM_CODE_CAN);
+    }
 
     rt_device_close(dev);
 
@@ -363,4 +372,3 @@ __exit:
 
     return res;
 }
-
