@@ -21,19 +21,19 @@
 #include <rtdevice.h>
 
 /* USART1 */
-#define UART1_GPIO_TX		GPIO_Pin_9
-#define UART1_GPIO_RX		GPIO_Pin_10
-#define UART1_GPIO			GPIOA
+#define UART1_GPIO_TX       GPIO_Pin_9
+#define UART1_GPIO_RX       GPIO_Pin_10
+#define UART1_GPIO          GPIOA
 
 /* USART2 */
-#define UART2_GPIO_TX	    GPIO_Pin_2
-#define UART2_GPIO_RX	    GPIO_Pin_3
-#define UART2_GPIO	    	GPIOA
+#define UART2_GPIO_TX       GPIO_Pin_2
+#define UART2_GPIO_RX       GPIO_Pin_3
+#define UART2_GPIO          GPIOA
 
 /* USART3_REMAP[1:0] = 00 */
-#define UART3_GPIO_TX		GPIO_Pin_10
-#define UART3_GPIO_RX		GPIO_Pin_11
-#define UART3_GPIO			GPIOB
+#define UART3_GPIO_TX       GPIO_Pin_10
+#define UART3_GPIO_RX       GPIO_Pin_11
+#define UART3_GPIO          GPIOB
 
 /* STM32 uart driver */
 struct stm32_uart
@@ -163,7 +163,10 @@ void USART1_IRQHandler(void)
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
-
+    if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+    {
+        stm32_getc(&serial1);
+    }
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -196,6 +199,10 @@ void USART2_IRQHandler(void)
     {
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
+    }
+    if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+    {
+        stm32_getc(&serial2);
     }
 
     /* leave interrupt */
@@ -230,6 +237,10 @@ void USART3_IRQHandler(void)
     {
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
+    }
+    if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+    {
+        stm32_getc(&serial3);
     }
 
     /* leave interrupt */
