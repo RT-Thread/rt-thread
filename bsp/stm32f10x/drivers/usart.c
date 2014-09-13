@@ -204,7 +204,7 @@ void USART2_IRQHandler(void)
 #endif /* RT_USING_UART2 */
 
 #if defined(RT_USING_UART3)
-/* UART1 device driver structure */
+/* UART3 device driver structure */
 struct stm32_uart uart3 =
 {
     USART3,
@@ -282,7 +282,7 @@ static void GPIO_Configuration(void)
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_RX;
-    GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
+    GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_TX;
