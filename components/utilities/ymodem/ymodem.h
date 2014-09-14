@@ -134,7 +134,7 @@ struct rym_ctx
  * second.
  */
 rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t oflag,
-		rym_callback on_begin, rym_callback on_data, rym_callback on_end,
-		int handshake_timeout);
+        rym_callback on_begin, rym_callback on_data, rym_callback on_end,
+        int handshake_timeout);
 
 #endif
