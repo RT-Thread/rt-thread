@@ -78,20 +78,6 @@ void rtthread_startup()
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-
-#ifdef RT_USING_DFS
-  /* Not implemented */
-#endif
-
-#ifdef RT_USING_LWIP
-  /* Not implemented */
-#endif
-
-	/*init all registed devices */
-	rt_device_init_all();
-#endif
-
 	/* init application */
 	rt_application_init();
 

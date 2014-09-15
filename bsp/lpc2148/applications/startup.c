@@ -100,9 +100,6 @@ void rtthread_startup(void)
 
     /* init hardware serial device */
     rt_hw_serial_init();
-
-    /*init all registed devices*/
-    rt_device_init_all();
 #endif
 
     /* init application */

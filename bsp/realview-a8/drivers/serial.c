@@ -58,7 +58,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)param;
 
-    rt_hw_serial_isr(serial);
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -131,7 +131,6 @@ static const struct rt_uart_ops _uart_ops =
 
 #ifdef RT_USING_UART0
 /* UART device driver structure */
-static struct serial_ringbuffer _uart0_int_rx;
 static struct hw_uart_device _uart0_device =
 {
     REALVIEW_UART0_BASE,
@@ -142,7 +141,6 @@ static struct rt_serial_device _serial0;
 
 #ifdef RT_USING_UART1
 /* UART1 device driver structure */
-static struct serial_ringbuffer _uart1_int_rx;
 static struct hw_uart_device _uart1_device =
 {
     REALVIEW_UART1_BASE,
@@ -167,7 +165,8 @@ int rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-
+	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+	
 #ifdef RT_USING_UART0
     uart = &_uart0_device;
 #ifdef RT_USING_VMM
@@ -175,12 +174,11 @@ int rt_hw_uart_init(void)
 #endif
 
     _serial0.ops    = &_uart_ops;
-    _serial0.int_rx = &_uart0_int_rx;
     _serial0.config = config;
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
     /* enable Rx and Tx of UART */
     UART_CR(uart->hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
@@ -192,12 +190,11 @@ int rt_hw_uart_init(void)
     uart->hw_base = vmm_find_iomap("UART1");
 #endif
     _serial1.ops = &_uart_ops;
-    _serial1.int_rx = &_uart1_int_rx;
     _serial1.config = config;
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial1, "uart1",
-        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM, uart);
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart);
     /* enable Rx and Tx of UART */
     UART_CR(uart->hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
 #endif

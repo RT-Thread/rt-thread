@@ -122,9 +122,6 @@ void rt_init_thread_entry(void* parameter)
         /* init touch panel */
         rtgui_touch_hw_init();
 
-        /* re-init device driver */
-        rt_device_init_all();
-
         /* find lcd device */
         lcd = rt_device_find("lcd");
 

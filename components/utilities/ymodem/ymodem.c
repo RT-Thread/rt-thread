@@ -70,18 +70,23 @@ static enum rym_code _rym_read_code(
         struct rym_ctx *ctx,
         rt_tick_t timeout)
 {
-    /* consume the available sem and read the data in buffer if possible */
-    while (rt_sem_trytake(&ctx->sem) == RT_EOK)
-        ;
+    /* Fast path */
     if (rt_device_read(ctx->dev, 0, ctx->buf, 1) == 1)
         return *ctx->buf;
-    /* no data yet, wait for one */
-    if (rt_sem_take(&ctx->sem, timeout) != RT_EOK)
-        return RYM_CODE_NONE;
-    /* read one */
-    if (rt_device_read(ctx->dev, 0, ctx->buf, 1) == 1)
-        return *ctx->buf;
-    return RYM_CODE_NONE;
+
+    /* Slow path */
+    do {
+        rt_size_t rsz;
+
+        /* No data yet, wait for one */
+        if (rt_sem_take(&ctx->sem, timeout) != RT_EOK)
+            return RYM_CODE_NONE;
+
+        /* Try to read one */
+        rsz = rt_device_read(ctx->dev, 0, ctx->buf, 1);
+        if (rsz == 1)
+            return *ctx->buf;
+    } while (1);
 }
 
 /* the caller should at least alloc _RYM_STX_PKG_SZ buffer */
@@ -192,7 +197,7 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
     {
         rt_err_t err;
         enum rym_code code;
-        rt_size_t data_sz;
+        rt_size_t data_sz, i;
 
         code = _rym_read_code(ctx,
                 RYM_WAIT_PKG_TICK);
@@ -218,8 +223,9 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
         {
         case RYM_CODE_CAN:
             /* the spec require multiple CAN */
-            _rym_putchar(ctx, RYM_CODE_CAN);
-            _rym_putchar(ctx, RYM_CODE_CAN);
+            for (i = 0; i < RYM_END_SESSION_SEND_CAN_NUM; i++) {
+                _rym_putchar(ctx, RYM_CODE_CAN);
+            }
             return -RYM_ERR_CAN;
         case RYM_CODE_ACK:
             _rym_putchar(ctx, RYM_CODE_ACK);
@@ -305,6 +311,7 @@ static rt_err_t _rym_do_recv(
 rt_err_t rym_recv_on_device(
         struct rym_ctx *ctx,
         rt_device_t dev,
+        rt_uint16_t oflag,
         rym_callback on_begin,
         rym_callback on_data,
         rym_callback on_end,
@@ -335,7 +342,7 @@ rt_err_t rym_recv_on_device(
     dev->flag &= ~RT_DEVICE_FLAG_STREAM;
     rt_hw_interrupt_enable(int_lvl);
 
-    res = rt_device_open(dev, 0);
+    res = rt_device_open(dev, oflag);
     if (res != RT_EOK)
         goto __exit;
 
@@ -358,4 +365,3 @@ __exit:
 
     return res;
 }
-

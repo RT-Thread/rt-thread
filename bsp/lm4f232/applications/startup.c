@@ -118,8 +118,6 @@ void rtthread_startup(void)
 	/* init sd card device */
 	rt_hw_sdcard_init();
 #endif
-	/* init all device */
-	rt_device_init_all();
 
 	/* init application */
 	rt_application_init();
