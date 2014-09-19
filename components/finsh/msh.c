@@ -315,12 +315,15 @@ int msh_exec(char* cmd, rt_size_t length)
         return 0;
     }
 #endif
-#ifdef DFS_USING_WORKDIR
+
+#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+	/* change to this directory */
     if (chdir(cmd) == 0)
     {
         return 0;
     }
 #endif
+
     /* truncate the cmd at the first space. */
     {
         char *tcmd;

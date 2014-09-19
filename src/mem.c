@@ -176,10 +176,10 @@ static void plug_holes(struct heap_mem *mem)
 /**
  * @ingroup SystemInit
  *
- * This function will init system heap
+ * This function will initialize system heap memory.
  *
- * @param begin_addr the beginning address of system page
- * @param end_addr the end address of system page
+ * @param begin_addr the beginning address of system heap memory.
+ * @param end_addr the end address of system heap memory.
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {

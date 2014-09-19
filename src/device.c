@@ -362,8 +362,8 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
 RTM_EXPORT(rt_device_control);
 
 /**
- * This function will set the indication callback function when device receives
- * data.
+ * This function will set the reception indication callback function. This callback function
+ * is invoked when this device receives data.
  *
  * @param dev the pointer of device driver structure
  * @param rx_ind the indication callback function

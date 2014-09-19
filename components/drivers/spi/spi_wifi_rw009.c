@@ -35,7 +35,7 @@
 #define SSID_NAME      "AP_SSID"
 #define SSID_PASSWORD  "AP_passwd"
 
-//#define WIFI_DEBUG_ON
+// #define WIFI_DEBUG_ON
 // #define ETH_RX_DUMP
 // #define ETH_TX_DUMP
 
@@ -64,8 +64,8 @@ struct spi_wifi_eth
     struct rt_mailbox spi_tx_mb;
     struct rt_mailbox eth_rx_mb;
 
-    int spi_tx_mb_pool[SPI_TX_POOL_SIZE];
-    int eth_rx_mb_pool[SPI_TX_POOL_SIZE];
+    int spi_tx_mb_pool[SPI_TX_POOL_SIZE + 1];
+    int eth_rx_mb_pool[SPI_RX_POOL_SIZE + 1];
 
     int spi_wifi_cmd_mb_pool[3];
     struct rt_mailbox spi_wifi_cmd_mb;
@@ -73,7 +73,7 @@ struct spi_wifi_eth
     ALIGN(4)
     rt_uint8_t spi_tx_mempool[(sizeof(struct spi_data_packet) + 4) * SPI_TX_POOL_SIZE];
     ALIGN(4)
-    rt_uint8_t spi_rx_mempool[(sizeof(struct spi_data_packet) + 4) * SPI_TX_POOL_SIZE];
+    rt_uint8_t spi_rx_mempool[(sizeof(struct spi_data_packet) + 4) * SPI_RX_POOL_SIZE];
 
     ALIGN(4)
     uint8_t spi_hw_rx_buffer[MAX_BUFFER_SIZE];
@@ -176,9 +176,9 @@ static rt_err_t spi_wifi_transfer(struct spi_wifi_eth *dev)
         if (resp.S2M_len)
         {
             WIFI_DEBUG("resp.S2M_len: %d\n", resp.S2M_len);
-            if (resp.S2M_len > sizeof(struct spi_data_packet))
+            if (resp.S2M_len > MAX_SPI_PACKET_SIZE)
             {
-                WIFI_DEBUG("resp.S2M_len > sizeof(struct spi_data_packet), drop!\n");
+                WIFI_DEBUG("resp.S2M_len %d > %d(MAX_SPI_PACKET_SIZE), drop!\n", resp.S2M_len, MAX_SPI_PACKET_SIZE);
                 resp.S2M_len = 0;//drop
             }
 
@@ -211,7 +211,7 @@ _bad_resp_magic:
             rt_mp_free((void *)data_packet);
         }
 
-        if ((resp.S2M_len) && (resp.S2M_len <= MAX_DATA_LEN))
+        if ((resp.S2M_len) && (resp.S2M_len <= MAX_SPI_PACKET_SIZE))
         {
             data_packet = (struct spi_data_packet *)wifi_device->spi_hw_rx_buffer;
             if (data_packet->data_type == data_type_eth_data)
@@ -258,23 +258,32 @@ _bad_resp_magic:
 #if defined(ETH_RX_DUMP) ||  defined(ETH_TX_DUMP)
 static void packet_dump(const char *msg, const struct pbuf *p)
 {
-    rt_uint32_t i;
+    const struct pbuf* q;
+    rt_uint32_t i,j;
     rt_uint8_t *ptr = p->payload;
 
     rt_kprintf("%s %d byte\n", msg, p->tot_len);
 
-    for (i = 0; i < p->tot_len; i++)
+    i=0;
+    for(q=p; q != RT_NULL; q= q->next)
     {
-        if ((i % 8) == 0)
+        ptr = q->payload;
+
+        for(j=0; j<q->len; j++)
         {
-            rt_kprintf("  ");
+            if( (i%8) == 0 )
+            {
+                rt_kprintf("  ");
+            }
+            if( (i%16) == 0 )
+            {
+                rt_kprintf("\r\n");
+            }
+            rt_kprintf("%02x ",*ptr);
+
+            i++;
+            ptr++;
         }
-        if ((i % 16) == 0)
-        {
-            rt_kprintf("\r\n");
-        }
-        rt_kprintf("%02x ", *ptr);
-        ptr++;
     }
     rt_kprintf("\n\n");
 }
@@ -377,7 +386,7 @@ static rt_err_t spi_wifi_eth_control(rt_device_t dev, rt_uint8_t cmd, void *args
 
             strncpy(cmd_join->ssid, SSID_NAME, SSID_NAME_LENGTH_MAX);
             strncpy(cmd_join->passwd, SSID_PASSWORD, PASSWORD_LENGTH_MAX);
-            cmd_join->security = WPA2_SECURITY | TKIP_ENABLED | AES_ENABLED;
+            cmd_join->security = WPA_SECURITY | TKIP_ENABLED | AES_ENABLED;
             // cmd_join->security = WPA_SECURITY | TKIP_ENABLED;
             data_packet->data_type = data_type_cmd;
             data_packet->data_len = sizeof(struct cmd_join) + member_offset(struct spi_wifi_cmd, buffer);
@@ -418,7 +427,7 @@ rt_err_t spi_wifi_eth_tx(rt_device_t dev, struct pbuf *p)
         pbuf_copy_partial(p, data_packet->buffer, data_packet->data_len, 0);
 
         rt_mb_send(&wifi_device->spi_tx_mb, (rt_uint32_t)data_packet);
-        eth_device_ready((struct eth_device *)dev);
+        rt_event_send(&spi_wifi_data_event, 1);
     }
     else
         return -RT_ERROR;
@@ -442,7 +451,10 @@ struct pbuf *spi_wifi_eth_rx(rt_device_t dev)
         return RT_NULL;
     }
 
-
+#ifdef ETH_RX_DUMP
+	if(p)
+		packet_dump("RX dump", p);
+#endif /* ETH_RX_DUMP */
 
     return p;
 }
@@ -489,8 +501,8 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name)
     {
         struct rt_spi_configuration cfg;
         cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0 and Mode 3 */
-        cfg.max_hz = 1000000; /* 50M */
+        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible: Mode 0. */
+        cfg.max_hz = 15 * 1000000; /* 30M */
         rt_spi_configure(spi_wifi_device.rt_spi_device, &cfg);
     }
 
@@ -579,12 +591,12 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name)
 
 void spi_wifi_isr(int vector)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
     WIFI_DEBUG("spi_wifi_isr\n");
     rt_event_send(&spi_wifi_data_event, 1);
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }

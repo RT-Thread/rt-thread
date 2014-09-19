@@ -404,7 +404,7 @@ rt_err_t log_trace_set_device(const char *device_name)
         rt_err_t result;
 
         /* open device */
-        result = rt_device_open(output_device, RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR);
+        result = rt_device_open(output_device, RT_DEVICE_FLAG_STREAM | RT_DEVICE_OFLAG_RDWR);
         if (result != RT_EOK)
         {
             rt_kprintf("Open trace device failed.\n");
