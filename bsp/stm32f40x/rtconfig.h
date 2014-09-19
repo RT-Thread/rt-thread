@@ -2,6 +2,9 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+/* RT_GDB_STUB */
+//#define RT_USING_GDB
+
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	   8
 
