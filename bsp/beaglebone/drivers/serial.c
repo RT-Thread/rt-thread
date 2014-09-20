@@ -462,7 +462,7 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart4.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM,
+            RT_DEVICE_FLAG_RDWR,
             &uart4);
 #endif
 
