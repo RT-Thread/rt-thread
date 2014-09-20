@@ -67,7 +67,7 @@ void gdb_set_device(const char* device_name)
     }
 
     /* open this device and set the new device  */
-    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR) == RT_EOK)
+    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM) == RT_EOK)
     {
         gdb_dev = dev;   
         gdb_serial = (struct rt_serial_device *)gdb_dev;
