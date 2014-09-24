@@ -344,7 +344,7 @@ void rt_hw_usart_init()
 
     /* register uart1 */
     rt_hw_serial_register(&uart1_device, "uart1",
-        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
         &uart1);
 
     /* enable interrupt */
@@ -362,7 +362,7 @@ void rt_hw_usart_init()
 
     /* register uart2 */
     rt_hw_serial_register(&uart2_device, "uart2",
-        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
         &uart2);
 
     /* Enable USART2 DMA Rx request */
@@ -403,7 +403,7 @@ void rt_hw_usart_init()
 
     /* register uart6 */
     rt_hw_serial_register(&uart6_device, "uart6",
-        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM,
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
         &uart6);
 #endif
 }
