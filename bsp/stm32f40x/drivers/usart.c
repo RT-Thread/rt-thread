@@ -69,6 +69,17 @@ struct stm32_serial_device uart3 =
 struct rt_device uart3_device;
 #endif
 
+#ifdef RT_USING_UART6
+struct stm32_serial_int_rx uart6_int_rx;
+struct stm32_serial_device uart6 =
+{
+    USART6,
+    &uart6_int_rx,
+    RT_NULL
+};
+struct rt_device uart6_device;
+#endif
+
 //#define USART1_DR_Base  0x40013804
 //#define USART2_DR_Base  0x40004404
 //#define USART3_DR_Base  0x40004804
@@ -103,6 +114,14 @@ struct rt_device uart3_device;
 #define UART3_TX_DMA        DMA1_Stream1
 #define UART3_RX_DMA        DMA1_Stream3
 
+#define UART6_GPIO_TX       GPIO_Pin_6
+#define UART6_TX_PIN_SOURCE GPIO_PinSource6
+#define UART6_GPIO_RX       GPIO_Pin_7
+#define UART6_RX_PIN_SOURCE GPIO_PinSource7
+#define UART6_GPIO          GPIOC
+#define UART6_GPIO_RCC      RCC_AHB1Periph_GPIOC
+#define RCC_APBPeriph_UART6 RCC_APB2Periph_USART6
+
 static void RCC_Configuration(void)
 {
 #ifdef RT_USING_UART1
@@ -127,6 +146,13 @@ static void RCC_Configuration(void)
 
     /* DMA clock enable */
     RCC_APB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+#endif
+
+#ifdef RT_USING_UART6
+    /* Enable USART6 GPIO clocks */
+    RCC_AHB1PeriphClockCmd(UART6_GPIO_RCC, ENABLE);
+    /* Enable USART6 clock */
+    RCC_APB2PeriphClockCmd(RCC_APBPeriph_UART6, ENABLE);
 #endif
 }
 
@@ -168,6 +194,16 @@ static void GPIO_Configuration(void)
     GPIO_PinAFConfig(UART3_GPIO, UART3_TX_PIN_SOURCE, GPIO_AF_USART3);
     GPIO_PinAFConfig(UART3_GPIO, UART3_RX_PIN_SOURCE, GPIO_AF_USART3);
 #endif
+
+#ifdef RT_USING_UART6
+    /* Configure USART6 Rx/tx PIN */
+    GPIO_InitStructure.GPIO_Pin = UART6_GPIO_TX | UART6_GPIO_RX;
+    GPIO_Init(UART6_GPIO, &GPIO_InitStructure);
+
+    /* Connect alternate function */
+    GPIO_PinAFConfig(UART6_GPIO, UART6_TX_PIN_SOURCE, GPIO_AF_USART6);
+    GPIO_PinAFConfig(UART6_GPIO, UART6_RX_PIN_SOURCE, GPIO_AF_USART6);
+#endif
 }
 
 static void NVIC_Configuration(void)
@@ -200,6 +236,15 @@ static void NVIC_Configuration(void)
 
     /* Enable the DMA1 Channel2 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = DMA1_Stream1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+#endif
+
+#ifdef RT_USING_UART6
+    /* Enable the USART6 Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = USART6_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
@@ -345,5 +390,20 @@ void rt_hw_usart_init()
 
     /* enable interrupt */
     USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+#endif
+
+#ifdef RT_USING_UART6
+    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    USART_Init(USART6, &USART_InitStructure);
+
+    /* register uart6 */
+    rt_hw_serial_register(&uart6_device, "uart6",
+        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM,
+        &uart6);
 #endif
 }

@@ -23,7 +23,7 @@ elif CROSS_TOOL == 'iar':
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'release'
+BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains

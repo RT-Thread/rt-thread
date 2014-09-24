@@ -117,9 +117,10 @@ void SVC_Handler(void)
   * @param  None
   * @retval None
   */
-void DebugMon_Handler(void)
-{
-}
+//void DebugMon_Handler(void)
+//{
+    // defined in gdb/libcpu/cortexm/gdb_gcc.S
+//}
 
 /**
   * @brief  This function handles PendSVC exception.
@@ -128,7 +129,7 @@ void DebugMon_Handler(void)
   */
 //void PendSV_Handler(void)
 //{
-//    // definition in libcpu/arm/cortex-m4/context_*.S
+//    // defined in libcpu/arm/cortex-m4/context_*.S
 //}
 
 /**
@@ -138,7 +139,7 @@ void DebugMon_Handler(void)
   */
 //void SysTick_Handler(void)
 //{
-//    // definition in boarc.c
+//    // defined in boarc.c
 //}
 
 /******************************************************************************/

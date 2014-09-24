@@ -80,6 +80,11 @@ static rt_err_t am33xx_configure(struct rt_serial_device *serial, struct serial_
         UART_DLL_REG(base) = 26;
         UART_DLH_REG(base) = 0;
     }
+    else if (cfg->baud_rate == BAUD_RATE_9600)
+    {
+        UART_DLL_REG(base) = 0x38;
+        UART_DLH_REG(base) = 1;
+    }
     else
     {
         NOT_IMPLEMENTED();
@@ -439,7 +444,7 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART4
-    config.baud_rate = BAUD_RATE_115200;
+    config.baud_rate = BAUD_RATE_9600;
     config.bit_order = BIT_ORDER_LSB;
     config.data_bits = DATA_BITS_8;
     config.parity    = PARITY_NONE;
@@ -450,14 +455,14 @@ int rt_hw_serial_init(void)
     serial4.ops    = &am33xx_uart_ops;
     serial4.config = config;
     /* enable RX interrupt */
-    UART_IER_REG(uart4.base) = 0x01;
+    UART_IER_REG(uart4.base) = 0x00;
     /* install ISR */
     rt_hw_interrupt_install(uart4.irq, am33xx_uart_isr, &serial4, "uart4");
     rt_hw_interrupt_control(uart4.irq, 0, 0);
     rt_hw_interrupt_mask(uart4.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+            RT_DEVICE_FLAG_RDWR,
             &uart4);
 #endif
 
