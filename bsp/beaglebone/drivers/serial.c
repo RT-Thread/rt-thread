@@ -431,7 +431,7 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART5
-    config = RT_SERIAL_CONFIG_DEFAULT;
+    config.baud_rate = BAUD_RATE_115200;
 
     serial5.ops    = &am33xx_uart_ops;
     serial5.config = config;
