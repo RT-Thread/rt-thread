@@ -495,6 +495,9 @@ def EndBuilding(target, program = None):
         CscopeDatabase(Projects)
 
 def SrcRemove(src, remove):
+    if not src:
+        return
+
     if type(src[0]) == type('str'):
         for item in src:
             if os.path.basename(item) in remove:
