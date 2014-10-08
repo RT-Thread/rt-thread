@@ -437,12 +437,6 @@ def DoBuilding(target, objects):
 
                 break
     else:
-        # merge the repeated items in the Env
-        if Env.has_key('CPPPATH')   : Env['CPPPATH'] = list(set(Env['CPPPATH']))
-        if Env.has_key('CPPDEFINES'): Env['CPPDEFINES'] = list(set(Env['CPPDEFINES']))
-        if Env.has_key('LIBPATH')   : Env['LIBPATH'] = list(set(Env['LIBPATH']))
-        if Env.has_key('LIBS')      : Env['LIBS'] = list(set(Env['LIBS']))
-
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
