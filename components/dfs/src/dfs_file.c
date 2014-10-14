@@ -335,6 +335,9 @@ int dfs_file_lseek(struct dfs_fd *fd, rt_off_t offset)
 
     if (fd == RT_NULL)
         return -DFS_STATUS_EINVAL;
+    fs = fd->fs;
+    if (fs == RT_NULL)
+        return -DFS_STATUS_EINVAL;
     if (fs->ops->lseek == RT_NULL)
         return -DFS_STATUS_ENOSYS;
 
