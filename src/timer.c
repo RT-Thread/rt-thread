@@ -293,7 +293,7 @@ RTM_EXPORT(rt_timer_delete);
  */
 rt_err_t rt_timer_start(rt_timer_t timer)
 {
-    int row_lvl;
+    unsigned int row_lvl;
     rt_list_t *timer_list;
     register rt_base_t level;
     rt_list_t *row_head[RT_TIMER_SKIP_LIST_LEVEL];
