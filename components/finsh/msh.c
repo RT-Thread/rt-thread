@@ -358,6 +358,9 @@ void msh_auto_complete_path(char *path)
     struct dirent *dirent = RT_NULL;
     char *full_path, *ptr, *index;
 
+    if (!path)
+        return;
+
     full_path = (char*)rt_malloc(256);
     if (full_path == RT_NULL) return; /* out of memory */
 
