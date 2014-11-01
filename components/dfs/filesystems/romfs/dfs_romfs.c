@@ -56,7 +56,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
 	struct romfs_dirent *dirent;
 	rt_size_t dirent_size;
 
-	if (path[0] == '/' && path[1] == '\0') 
+	if (path[0] == '/' && path[1] == '\0')
 	{
 		*size = root_dirent->size;
 		return root_dirent;
@@ -78,7 +78,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
 	while (dirent != RT_NULL)
 	{
 		found = 0;
-		
+
 		/* search in folder */
 		for (index = 0; index < dirent_size; index ++)
 		{
@@ -106,12 +106,12 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
 					found = 1;
 					break;
 				}
-				else 
+				else
 				{
 					/* return file dirent */
 					if (subpath != RT_NULL)
 						break; /* not the end of path */
-					
+
 					return &dirent[index];
 				}
 			}
