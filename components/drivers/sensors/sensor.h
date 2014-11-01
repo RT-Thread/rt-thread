@@ -55,7 +55,8 @@
  * Availability: SENSORS_DEVICE_API_VERSION_1_0
  * see (*batch)() documentation for details
  */
-enum {
+enum
+{
     SENSORS_BATCH_DRY_RUN               = 0x00000001,
     SENSORS_BATCH_WAKE_UPON_FIFO_FULL   = 0x00000002
 };
@@ -63,7 +64,8 @@ enum {
 /*
  * what field for meta_data_event_t
  */
-enum {
+enum
+{
     /* a previous flush operation has completed */
     META_DATA_FLUSH_COMPLETE = 1,
     META_DATA_VERSION   /* always last, leave auto-assigned */
@@ -749,14 +751,17 @@ enum {
  */
 typedef struct
 {
-    union {
+    union
+    {
         float v[3];
-        struct {
+        struct
+        {
             float x;
             float y;
             float z;
         };
-        struct {
+        struct
+        {
             float azimuth;
             float pitch;
             float roll;
@@ -771,22 +776,26 @@ typedef struct
  */
 typedef struct
 {
-  union {
-    float uncalib[3];
-    struct {
-      float x_uncalib;
-      float y_uncalib;
-      float z_uncalib;
+    union
+    {
+        float uncalib[3];
+        struct
+        {
+            float x_uncalib;
+            float y_uncalib;
+            float z_uncalib;
+        };
     };
-  };
-  union {
-    float bias[3];
-    struct {
-      float x_bias;
-      float y_bias;
-      float z_bias;
+    union
+    {
+        float bias[3];
+        struct
+        {
+            float x_bias;
+            float y_bias;
+            float z_bias;
+        };
     };
-  };
 } uncalibrated_event_t;
 
 typedef struct meta_data_event
@@ -799,7 +808,8 @@ typedef struct meta_data_event
  * Union of the various types of sensor data
  * that can be returned.
  */
-typedef struct sensors_event_t {
+typedef struct sensors_event_t
+{
     /* must be sizeof(struct sensors_event_t) */
     int32_t version;
 
@@ -815,8 +825,10 @@ typedef struct sensors_event_t {
     /* time is in nanosecond */
     int64_t timestamp;
 
-    union {
-        union {
+    union
+    {
+        union
+        {
             float           data[16];
 
             /* acceleration values are in meter per second per second (m/s^2) */
@@ -859,7 +871,8 @@ typedef struct sensors_event_t {
             meta_data_event_t meta_data;
         };
 
-        union {
+        union
+        {
             uint64_t        data[8];
 
             /* step-counter */
@@ -872,15 +885,16 @@ typedef struct sensors_event_t {
 /* see SENSOR_TYPE_META_DATA */
 typedef sensors_event_t sensors_meta_data_event_t;
 
-typedef struct sensor_t {
+typedef struct sensor_t
+{
 
     /* Name of this sensor.
      * All sensors of the same "type" must have a different "name".
      */
-    const char*     name;
+    const char     *name;
 
     /* vendor of the hardware part */
-    const char*     vendor;
+    const char     *vendor;
 
     /* version of the hardware part + driver. The value of this field
      * must increase when the driver is updated in a way that changes the
@@ -929,7 +943,7 @@ typedef struct sensor_t {
     uint32_t        fifoMaxEventCount;
 
     /* reserved fields, must be zero */
-    void*           reserved[6];
+    void           *reserved[6];
 } sensor_t;
 
 class SensorConfigure
@@ -939,7 +953,7 @@ class SensorConfigure
 
 class Sensor;
 class SensorManager;
-typedef void (*SensorEventHandler_t)(Sensor* sensor, sensors_event_t* event, void* user_data);
+typedef void (*SensorEventHandler_t)(Sensor *sensor, sensors_event_t *event, void *user_data);
 
 /**
  * Sensor Base Class
@@ -961,17 +975,17 @@ public:
 
     int GetType(void);
 
-    int Subscribe(SensorEventHandler_t *handler, void* user_data);
-    int Publish(sensors_event_t* event);
+    int Subscribe(SensorEventHandler_t *handler, void *user_data);
+    int Publish(sensors_event_t *event);
 
-protected: 
+protected:
     Sensor *next;
-	Sensor *prev;
+    Sensor *prev;
 
     SensorEventHandler_t *evtHandler;
     void *userData;
 
-	friend class SensorManager;
+    friend class SensorManager;
 };
 
 /**
@@ -982,15 +996,15 @@ class SensorManager
 public:
     SensorManager();
     ~SensorManager();
-    
-    static int RegisterSensor(Sensor* sensor);
-    static int DeregisterSensor(Sensor* sensor);
+
+    static int RegisterSensor(Sensor *sensor);
+    static int DeregisterSensor(Sensor *sensor);
 
     static Sensor *GetDefaultSensor(int type);
-    static int Subscribe(int type, SensorEventHandler_t *handler, void* user_data);
+    static int Subscribe(int type, SensorEventHandler_t *handler, void *user_data);
 
 private:
-	Sensor* sensorList;
+    Sensor *sensorList;
 };
 
 #endif
