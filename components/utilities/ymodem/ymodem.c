@@ -197,7 +197,7 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
     {
         rt_err_t err;
         enum rym_code code;
-        rt_size_t data_sz;
+        rt_size_t data_sz, i;
 
         code = _rym_read_code(ctx,
                 RYM_WAIT_PKG_TICK);
@@ -223,8 +223,9 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
         {
         case RYM_CODE_CAN:
             /* the spec require multiple CAN */
-            _rym_putchar(ctx, RYM_CODE_CAN);
-            _rym_putchar(ctx, RYM_CODE_CAN);
+            for (i = 0; i < RYM_END_SESSION_SEND_CAN_NUM; i++) {
+                _rym_putchar(ctx, RYM_CODE_CAN);
+            }
             return -RYM_ERR_CAN;
         case RYM_CODE_ACK:
             _rym_putchar(ctx, RYM_CODE_ACK);

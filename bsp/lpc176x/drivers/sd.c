@@ -397,7 +397,19 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
-	return RT_EOK;
+    if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
+    {
+        struct rt_device_blk_geometry *geometry;
+        
+        geometry = (struct rt_device_blk_geometry *)args;
+        if (geometry == RT_NULL) return -RT_ERROR;
+
+        geometry->bytes_per_sector = SDCfg.sectorsize;
+        geometry->block_size = SDCfg.blocksize;
+        geometry->sector_count = SDCfg.sectorcnt;
+    }
+
+    return RT_EOK;
 }
 
 void rt_hw_sdcard_init()

@@ -33,7 +33,17 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-#define FINSH_USING_HISTORY
+/* For historical reasons, users don't define FINSH_USING_HISTORY in rtconfig.h
+ * but expect the history feature. So you sould define FINSH_USING_HISTORY to 0
+ * to disable it from the rtconfig.h. */
+#ifdef FINSH_USING_HISTORY
+#    if FINSH_USING_HISTORY == 0
+#        undef FINSH_USING_HISTORY
+#    endif
+#else
+#    define FINSH_USING_HISTORY
+#endif
+
 #ifndef FINSH_THREAD_PRIORITY
 #define FINSH_THREAD_PRIORITY 20
 #endif

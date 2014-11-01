@@ -750,11 +750,12 @@ int nfs_open(struct dfs_fd *file)
         if (file->flags & DFS_O_CREAT)
         {
             if (nfs_mkdir(nfs, file->path, 0755) < 0)
-                return -1;
+                return -DFS_STATUS_EAGAIN;
         }
 
         /* open directory */
         dir = nfs_opendir(nfs, file->path);
+        if (dir == RT_NULL) return -DFS_STATUS_ENOENT;
         file->data = dir;
     }
     else
@@ -766,20 +767,20 @@ int nfs_open(struct dfs_fd *file)
         if (file->flags & DFS_O_CREAT)
         {
             if (nfs_create(nfs, file->path, 0664) < 0)
-                return -1;
+                return -DFS_STATUS_EAGAIN;
         }
 
         /* open file (get file handle ) */
         fp = rt_malloc(sizeof(nfs_file));
         if (fp == RT_NULL)
-            return -1;
+            return -DFS_STATUS_ENOMEM;
 
         handle = get_handle(nfs, file->path);
         if (handle == RT_NULL)
         {
             rt_free(fp);
 
-            return -1;
+            return -DFS_STATUS_ENOENT;
         }
 
         /* get size of file */
@@ -798,7 +799,7 @@ int nfs_open(struct dfs_fd *file)
 
         /* set private file */
         file->data = fp;
-		file->size = fp->size;
+        file->size = fp->size;
     }
 
     return 0;

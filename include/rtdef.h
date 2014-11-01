@@ -50,7 +50,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      1L              /**< major version number */
 #define RT_SUBVERSION                   2L              /**< minor version number */
-#define RT_REVISION                     2L              /**< revise version number */
+#define RT_REVISION                     3L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \

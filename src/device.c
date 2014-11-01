@@ -79,45 +79,12 @@ RTM_EXPORT(rt_device_unregister);
  * This function initializes all registered device driver
  *
  * @return the error code, RT_EOK on successfully.
+ *
+ * @deprecated since 1.2.3, this function is not needed because the initialization 
+ *             of a device is performed when applicaiton opens it.
  */
 rt_err_t rt_device_init_all(void)
 {
-    struct rt_device *device;
-    struct rt_list_node *node;
-    struct rt_object_information *information;
-    register rt_err_t result;
-
-    extern struct rt_object_information rt_object_container[];
-
-    information = &rt_object_container[RT_Object_Class_Device];
-
-    /* for each device */
-    for (node  = information->object_list.next;
-         node != &(information->object_list);
-         node  = node->next)
-    {
-        rt_err_t (*init)(rt_device_t dev);
-        device = (struct rt_device *)rt_list_entry(node,
-                                                   struct rt_object,
-                                                   list);
-
-        /* get device init handler */
-        init = device->init;
-        if (init != RT_NULL && !(device->flag & RT_DEVICE_FLAG_ACTIVATED))
-        {
-            result = init(device);
-            if (result != RT_EOK)
-            {
-                rt_kprintf("To initialize device:%s failed. The error code is %d\n",
-                           device->parent.name, result);
-            }
-            else
-            {
-                device->flag |= RT_DEVICE_FLAG_ACTIVATED;
-            }
-        }
-    }
-
     return RT_EOK;
 }
 
@@ -395,8 +362,8 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
 RTM_EXPORT(rt_device_control);
 
 /**
- * This function will set the indication callback function when device receives
- * data.
+ * This function will set the reception indication callback function. This callback function
+ * is invoked when this device receives data.
  *
  * @param dev the pointer of device driver structure
  * @param rx_ind the indication callback function

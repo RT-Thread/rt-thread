@@ -107,6 +107,7 @@ def MDK4Project(target, script):
     groups = tree.find('Targets/Target/Groups')
     if groups is None:
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
+    groups.clear() # clean old groups
     for group in script:
         group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
         
@@ -142,33 +143,20 @@ def MDK4Project(target, script):
                 if lib_path != '':
                     MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
 
-    # remove repeat path
-    paths = set()
-    for path in CPPPATH:
-        inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
-    
-    paths = [i for i in paths]
-    paths.sort()
-    CPPPATH = string.join(paths, ';')
-    
-    definitions = [i for i in set(CPPDEFINES)]
-    CPPDEFINES = string.join(definitions, ', ')
-    
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = CPPPATH
-    
+    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
-    Define.text = CPPDEFINES
+    Define.text = ', '.join(set(CPPDEFINES))
 
     Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
     Misc.text = LINKFLAGS
-    
+
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
-    
+
     # copy uvopt file
     if os.path.exists('template.uvopt'):
         import shutil

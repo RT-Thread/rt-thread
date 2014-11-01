@@ -27,11 +27,9 @@ class Win32Spawn:
 
         newargs = string.join(args[1:], ' ')
         cmdline = cmd + " " + newargs
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
         # Make sure the env is constructed by strings
-        _e = {k: str(v) for k, v in env.items()}
+        _e = dict([(k, str(v)) for k, v in env.items()])
 
         # Windows(tm) CreateProcess does not use the env passed to it to find
         # the executables. So we have to modify our own PATH to make Popen
@@ -40,8 +38,7 @@ class Win32Spawn:
         os.environ['PATH'] = _e['PATH']
 
         try:
-            proc = subprocess.Popen(cmdline, env=_e,
-                    startupinfo=startupinfo, shell=False)
+            proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
             print 'Error in calling:\n%s' % cmdline
             print 'Exception: %s: %s' % (e, os.strerror(e.errno))
@@ -212,18 +209,23 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             LINKCOMSTR = 'LINK $TARGET'
         )
 
+    # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
+    # have their own components etc. If they point to the same folder, SCons
+    # would find the wrong source code to compile.
+    bsp_vdir = 'build/bsp'
+    kernel_vdir = 'build/kernel'
     # board build script
-    objs = SConscript('SConscript', variant_dir='build', duplicate=0)
-    Repository(Rtt_Root)
+    objs = SConscript('SConscript', variant_dir=bsp_vdir, duplicate=0)
     # include kernel
-    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir='build/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir=kernel_vdir + '/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
-        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript', variant_dir='build/libcpu', duplicate=0))
+        objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript',
+                    variant_dir=kernel_vdir + '/libcpu', duplicate=0))
 
     # include components
     objs.extend(SConscript(Rtt_Root + '/components/SConscript',
-                           variant_dir='build/components',
+                           variant_dir=kernel_vdir + '/components',
                            duplicate=0,
                            exports='remove_components'))
 
