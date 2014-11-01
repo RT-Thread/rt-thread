@@ -38,6 +38,12 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
         PROVIDE(__ctors_start__ = .);
         /* old GCC version uses .ctors */
         KEEP(*(SORT(.ctors.*)))
