@@ -26,7 +26,8 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
-    CC = PREFIX + 'gcc'
+    CC  = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -37,6 +38,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE
+    CXXFLAGS = CFLAGS
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc17xx.map,-cref,-u,Reset_Handler -T rtthread-lpc17xx.ld'
 
@@ -54,6 +56,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -65,6 +68,7 @@ elif PLATFORM == 'armcc':
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc17xx.map --scatter rtthread-lpc17xx.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    CXXFLAGS = CFLAGS
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
     EXEC_PATH += '/arm/bin40/'
