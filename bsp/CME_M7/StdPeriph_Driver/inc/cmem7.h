@@ -105,7 +105,7 @@ typedef enum {
 /** @} */ /* End of group Configuration_of_CMSIS */
 
 #include <core_cm3.h>                               /*!< Cortex-M3 processor and core peripherals                              */
-#include "system_CMEM7.h"                           /*!< CMEM7 System                                                          */
+#include "system_cmem7.h"                           /*!< CMEM7 System                                                          */
 
 
 /* ================================================================================ */
