@@ -21,7 +21,8 @@ script:
 
 env:
   - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/share/clang/scan-build
-  - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='CME_M7' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='avr32uc3b0' RTT_TOOL_CHAIN='atmel-avr32'
 #  - RTT_BSP='bf533' # no scons
   - RTT_BSP='efm32' RTT_TOOL_CHAIN='sourcery-arm' 
@@ -38,6 +39,7 @@ env:
   - RTT_BSP='mb9bf500r' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='mb9bf506r' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='mb9bf618s' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='mb9bf568r' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='microblaze' # no scons
   - RTT_BSP='mini2440' RTT_TOOL_CHAIN='sourcery-arm' 
 #  - RTT_BSP='mini4020' # no scons
