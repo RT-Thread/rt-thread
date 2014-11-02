@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp  -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall  -D__FPU_USED'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T nuc472_flash.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T CME_M7.ld'
 
     CPATH = ''
     LPATH = ''
