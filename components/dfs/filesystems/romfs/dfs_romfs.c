@@ -51,8 +51,8 @@ int dfs_romfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 
 rt_inline int check_dirent(struct romfs_dirent *dirent)
 {
-    if (!(dirent->type == ROMFS_DIRENT_FILE || dirent->type == ROMFS_DIRENT_DIR) ||
-         (dirent->size == 0 || dirent->size == ~0))
+    if ((dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR)
+        || dirent->size == ~0)
         return -1;
     return 0;
 }
@@ -191,7 +191,7 @@ int dfs_romfs_open(struct dfs_fd *file)
 
 	root_dirent = (struct romfs_dirent *)file->fs->data;
 
-    if (check_dirent(dirent) != 0)
+    if (check_dirent(root_dirent) != 0)
         return -DFS_STATUS_EIO;
 
 	if (file->flags & (DFS_O_CREAT | DFS_O_WRONLY | DFS_O_APPEND | DFS_O_TRUNC | DFS_O_RDWR))
