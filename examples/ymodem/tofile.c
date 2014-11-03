@@ -21,7 +21,7 @@ static enum rym_code _rym_bg(
     struct custom_ctx *cctx = (struct custom_ctx*)ctx;
     cctx->fpath[0] = '/';
     /* the buf should be the file name */
-    strcpy(&(cctx->fpath[1]), buf);
+    strcpy(&(cctx->fpath[1]), (const char*)buf);
     cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC, 0);
     if (cctx->fd < 0)
     {
@@ -31,7 +31,7 @@ static enum rym_code _rym_bg(
         return RYM_CODE_CAN;
     }
 
-    cctx->flen = atoi(buf+strlen(buf)+1);
+    cctx->flen = atoi((const char*)buf+strlen((const char*)buf)+1);
     if (cctx->flen == 0)
         cctx->flen = -1;
     return RYM_CODE_ACK;
@@ -80,8 +80,8 @@ rt_err_t rym_write_to_file(rt_device_t idev)
 
     rt_kprintf("entering RYM mode\n");
 
-    res = rym_recv_on_device(&ctx->parent, idev,
-            _rym_bg, _rym_tof, _rym_end, 1000);
+    res = rym_recv_on_device(&ctx->parent, idev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                             _rym_bg, _rym_tof, _rym_end, 1000);
 
     /* there is no Ymodem traffic on the line so print out info. */
     rt_kprintf("leaving RYM mode with code %d\n", res);
