@@ -48,6 +48,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 {
 #ifdef RT_USING_DFS    
     int fd;
+    int mode = O_RDONLY;
 #endif
     
     /* Register standard Input Output devices. */
@@ -61,8 +62,33 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 #ifndef RT_USING_DFS
     return -1;
 #else
-    /* TODO: adjust open file mode */
-    fd = open(name, openmode, 0);
+	/* Correct openmode from fopen to open */
+	if (openmode & OPEN_PLUS) 
+	{
+		if (openmode & OPEN_W) 
+		{
+			mode |= (O_RDWR | O_TRUNC | O_CREAT);
+		}
+		else if (openmode & OPEN_A) 
+		{
+			mode |= (O_RDWR | O_APPEND | O_CREAT);
+		}
+		else 
+			mode |= O_RDWR;				
+	}
+	else
+	{
+		if (openmode & OPEN_W) 
+		{
+			mode |= (O_WRONLY | O_TRUNC | O_CREAT);
+		}
+		else if (openmode & OPEN_A)
+		{					
+            mode |= (O_WRONLY | O_APPEND | O_CREAT);
+		}					
+	}
+
+    fd = open(name, mode, 0);
     if(fd < 0)
         return -1;
     else
@@ -196,7 +222,10 @@ char *_sys_command_string(char *cmd, int len)
 
 void _ttywrch(int ch)
 {
-   /* TODO */
+    char c;
+
+    c = (char)ch;
+    rt_kprintf(&c);
 }
 
 void _sys_exit(int return_code)
