@@ -4,17 +4,17 @@ import os
 ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='keil'
-BOARD_NAME = 'lpc408x'
+BOARD_NAME = 'mb9bf568r'
 
 if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
+    CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= r'D:/Program Files (x86)/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
+    PLATFORM 	= 'gcc'
+    EXEC_PATH 	= r'D:/Program Files (x86)/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'D:/Keil'
+    PLATFORM 	= 'armcc'
+    EXEC_PATH 	= 'D:/Keil'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'
@@ -22,7 +22,7 @@ elif CROSS_TOOL == 'iar':
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
@@ -30,9 +30,10 @@ if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
-    LINK = PREFIX + 'gcc'
+    LINK = PREFIX + 'g++'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
@@ -51,6 +52,7 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
