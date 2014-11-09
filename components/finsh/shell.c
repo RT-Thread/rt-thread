@@ -70,11 +70,10 @@ const char* finsh_get_prompt()
 #endif
     strcpy(finsh_prompt, _PROMPT);
 
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#ifdef DFS_USING_WORKDIR
     /* get current working directory */
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
-
     strcat(finsh_prompt, ">");
 
     return finsh_prompt;
@@ -119,7 +118,7 @@ void finsh_set_device(const char* device_name)
         {
             /* close old finsh device */
             rt_device_close(shell->device);
-            rt_device_set_rx_indicate(shell->device, RT_NULL);
+            rt_device_set_rx_indicate(dev, RT_NULL);
         }
 
         shell->device = dev;
@@ -308,7 +307,7 @@ void finsh_thread_entry(void* parameter)
         shell->device = rt_console_get_device();
         RT_ASSERT(shell->device);
         rt_device_set_rx_indicate(shell->device, finsh_rx_ind);
-        rt_device_open(shell->device, (RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX));
+        rt_device_open(shell->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
 #else
         RT_ASSERT(shell->device);
 #endif
@@ -553,7 +552,7 @@ void finsh_system_var_init(const void* begin, const void* end)
     _sysvar_table_end = (struct finsh_sysvar*) end;
 }
 
-#if defined(__ICCARM__)               /* for IAR compiler */
+#if defined(__ICCARM__) || defined(__ICCRX__)               /* for IAR compiler */
   #ifdef FINSH_USING_SYMTAB
     #pragma section="FSymTab"
     #pragma section="VSymTab"
@@ -606,7 +605,7 @@ int finsh_system_init(void)
     #ifndef FINSH_USING_MSH_ONLY
     finsh_system_var_init(&VSymTab$$Base, &VSymTab$$Limit);
     #endif
-#elif defined (__ICCARM__)      /* for IAR Compiler */
+#elif defined (__ICCARM__) || defined(__ICCRX__)      /* for IAR Compiler */
     finsh_system_function_init(__section_begin("FSymTab"),
                                __section_end("FSymTab"));
     finsh_system_var_init(__section_begin("VSymTab"),
