@@ -1,4 +1,0 @@
-example:
-1.edit rtconfig.py to config toolchain and bsp
-2.scons --app=basicapp
-3.copy basicapp/build/$bsp/basicapp.so to filesystem
