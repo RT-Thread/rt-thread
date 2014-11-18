@@ -364,9 +364,10 @@ def DefineGroup(name, src, depend, **parameters):
     if group.has_key('LIBPATH'):
         Env.Append(LIBPATH = group['LIBPATH'])
 
-    objs = Env.Object(group['src'])
     if group.has_key('LIBRARY'):
-        objs = Env.Library(name, objs)
+        objs = Env.Library(name, group['src'])
+    else:
+        objs = group['src']
 
     # merge group 
     for g in Projects:
