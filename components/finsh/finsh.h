@@ -203,6 +203,18 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                     (void*)&name            \
                 };
 
+            #define FINSH_VAR_EXPORT_ALIAS(name, alias, type, desc)  \
+                const char __vsym_##alias##_name[] = #alias;         \
+                const char __vsym_##alias##_desc[] = #desc;          \
+                __declspec(allocate("VSymTab"))                      \
+                const struct finsh_sysvar __vsym_##alias =           \
+                {                           \
+                    __vsym_##alias##_name,  \
+                    __vsym_##alias##_desc,  \
+                    type,                   \
+                    (void*)&name            \
+                };
+
         #elif defined(__TI_COMPILER_VERSION__)
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
                 __TI_FINSH_EXPORT_FUNCTION(__fsym_##cmd);           \
@@ -226,7 +238,19 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                     type,                   \
                     (void*)&name            \
                 };
-            
+
+            #define FINSH_VAR_EXPORT_ALIAS(name, alias, type, desc)  \
+                __TI_FINSH_EXPORT_VAR(__vsym_##alias);               \
+                const char __vsym_##alias##_name[] = #alias;         \
+                const char __vsym_##alias##_desc[] = #desc;          \
+                const struct finsh_sysvar __vsym_##alias =           \
+                {                           \
+                    __vsym_##alias##_name,  \
+                    __vsym_##alias##_desc,  \
+                    type,                   \
+                    (void*)&name            \
+                };
+
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
                 const char __fsym_##cmd##_name[] = #cmd;            \
@@ -245,6 +269,17 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                 {                           \
                     __vsym_##name##_name,   \
                     __vsym_##name##_desc,   \
+                    type,                   \
+                    (void*)&name            \
+                };
+
+            #define FINSH_VAR_EXPORT_ALIAS(name,alias, type, desc)          \
+                const char __vsym_##alias##_name[] = #alias;                \
+                const char __vsym_##alias##_desc[] = #desc;                 \
+                const struct finsh_sysvar __vsym_##alias SECTION("VSymTab")=\
+                {                           \
+                    __vsym_##alias##_name,  \
+                    __vsym_##alias##_desc,   \
                     type,                   \
                     (void*)&name            \
                 };
@@ -264,9 +299,21 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 
             #define FINSH_VAR_EXPORT(name, type, desc)              \
                 const char __vsym_##name##_name[] = #name;          \
-                __declspec(allocate("VSymTab")) const struct finsh_sysvar __vsym_##name = \
+                __declspec(allocate("VSymTab"))                     \
+                const struct finsh_sysvar __vsym_##name =           \
                 {                           \
                     __vsym_##name##_name,   \
+                    type,                   \
+                    (void*)&name            \
+                };
+
+            #define FINSH_VAR_EXPORT_ALIAS(name, alias, type, desc)  \
+                const char __vsym_##alias##_name[] = #alias;         \
+                const char __vsym_##alias##_desc[] = #desc;          \
+                __declspec(allocate("VSymTab"))                      \
+                const struct finsh_sysvar __vsym_##alias =           \
+                {                           \
+                    __vsym_##alias##_name,  \
                     type,                   \
                     (void*)&name            \
                 };
@@ -290,7 +337,18 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                     type,                   \
                     (void*)&name            \
                 };
-            
+
+            #define FINSH_VAR_EXPORT_ALIAS(name, alias, type, desc)  \
+                __TI_FINSH_EXPORT_VAR(__vsym_##alias);               \
+                const char __vsym_##alias##_name[] = #alias;         \
+                const char __vsym_##alias##_desc[] = #desc;          \
+                const struct finsh_sysvar __vsym_##alias =           \
+                {                           \
+                    __vsym_##alias##_name,  \
+                    type,                   \
+                    (void*)&name            \
+                };
+
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
                 const char __fsym_##cmd##_name[] = #cmd;            \
@@ -305,6 +363,16 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                 const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \
+                    type,                   \
+                    (void*)&name            \
+                };
+
+            #define FINSH_VAR_EXPORT_ALIAS(name,alias, type, desc)          \
+                const char __vsym_##alias##_name[] = #alias;                \
+                const char __vsym_##alias##_desc[] = #desc;                 \
+                const struct finsh_sysvar __vsym_##alias SECTION("VSymTab")=\
+                {                           \
+                    __vsym_##alias##_name,  \
                     type,                   \
                     (void*)&name            \
                 };
