@@ -49,11 +49,11 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
     file_path = SubElement(file, 'FilePath')
-    
+
     file_path.text = path.decode(fs_encoding)
 
 def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
-    # don't add an empty group 
+    # don't add an empty group
     if len(files) == 0:
         return
 
@@ -69,7 +69,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         basename = os.path.basename(path)
         path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
-        
+
         files = SubElement(group, 'Files')
         file = SubElement(files, 'File')
         file_name = SubElement(file, 'FileName')
@@ -81,7 +81,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
-        
+
         file_path.text = path.decode(fs_encoding)
 
 def MDK4Project(target, script):
@@ -93,16 +93,16 @@ def MDK4Project(target, script):
 
     tree = etree.parse('template.uvproj')
     root = tree.getroot()
-    
+
     out = file(target, 'wb')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
-    
+
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
     CCFLAGS = ''
     ProjectFiles = []
-    
+
     # add group
     groups = tree.find('Targets/Target/Groups')
     if groups is None:
@@ -110,28 +110,28 @@ def MDK4Project(target, script):
     groups.clear() # clean old groups
     for group in script:
         group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
-        
+
         # get each include path
         if group.has_key('CPPPATH') and group['CPPPATH']:
             if CPPPATH:
                 CPPPATH += group['CPPPATH']
             else:
                 CPPPATH += group['CPPPATH']
-        
+
         # get each group's definitions
         if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
             if CPPDEFINES:
                 CPPDEFINES += group['CPPDEFINES']
             else:
                 CPPDEFINES += group['CPPDEFINES']
-        
+
         # get each group's link flags
         if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
             if LINKFLAGS:
                 LINKFLAGS += ' ' + group['LINKFLAGS']
             else:
                 LINKFLAGS += group['LINKFLAGS']
-    
+
         if group.has_key('LIBS') and group['LIBS']:
             for item in group['LIBS']:
                 lib_path = ''
@@ -161,7 +161,154 @@ def MDK4Project(target, script):
     if os.path.exists('template.uvopt'):
         import shutil
         shutil.copy2('template.uvopt', 'project.uvopt')
-        
+
+def MDK5AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
+    group = SubElement(parent, 'Group')
+    group_name = SubElement(group, 'GroupName')
+    group_name.text = name
+
+    name = os.path.basename(filename)
+    path = os.path.dirname (filename)
+
+    basename = os.path.basename(path)
+    path = _make_path_relative(project_path, path)
+    path = os.path.join(path, name)
+    files = SubElement(group, 'Files')
+    file = SubElement(files, 'File')
+    file_name = SubElement(file, 'FileName')
+    name = os.path.basename(path)
+    if ProjectFiles.count(name):
+        name = basename + '_' + name
+    ProjectFiles.append(name)
+    file_name.text = name.decode(fs_encoding)
+    file_type = SubElement(file, 'FileType')
+    file_type.text = '%d' % _get_filetype(name)
+    file_path = SubElement(file, 'FilePath')
+
+    file_path.text = path.decode(fs_encoding)
+
+def MDK5AddGroup(ProjectFiles, parent, name, files, project_path):
+    # don't add an empty group
+    if len(files) == 0:
+        return
+
+    group = SubElement(parent, 'Group')
+    group_name = SubElement(group, 'GroupName')
+    group_name.text = name
+
+    for f in files:
+        fn = f.rfile()
+        name = fn.name
+        path = os.path.dirname(fn.abspath)
+
+        basename = os.path.basename(path)
+        path = _make_path_relative(project_path, path)
+        path = os.path.join(path, name)
+
+        files = SubElement(group, 'Files')
+        file = SubElement(files, 'File')
+        file_name = SubElement(file, 'FileName')
+        name = os.path.basename(path)
+        if ProjectFiles.count(name):
+            name = basename + '_' + name
+        ProjectFiles.append(name)
+        file_name.text = name.decode(fs_encoding)
+        file_type = SubElement(file, 'FileType')
+        file_type.text = '%d' % _get_filetype(name)
+        file_path = SubElement(file, 'FilePath')
+
+        file_path.text = path.decode(fs_encoding)
+
+def MDK5Project(target, script):
+    project_path = os.path.dirname(os.path.abspath(target))
+
+    project_uvopt = os.path.abspath(target).replace('uvprojx', 'uvoptx')
+    if os.path.isfile(project_uvopt):
+        os.unlink(project_uvopt)
+
+    tree = etree.parse('template.uvprojx')
+    root = tree.getroot()
+
+    out = file(target, 'wb')
+    out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+
+    CPPPATH = []
+    CPPDEFINES = []
+    LINKFLAGS = ''
+    CCFLAGS = ''
+    ProjectFiles = []
+
+    # add group
+    groups = tree.find('Targets/Target/Groups')
+    if groups is None:
+        groups = SubElement(tree.find('Targets/Target'), 'Groups')
+    for group in script:
+        group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
+
+        # get each include path
+        if group.has_key('CPPPATH') and group['CPPPATH']:
+            if CPPPATH:
+                CPPPATH += group['CPPPATH']
+            else:
+                CPPPATH += group['CPPPATH']
+
+        # get each group's definitions
+        if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
+            if CPPDEFINES:
+                CPPDEFINES += group['CPPDEFINES']
+            else:
+                CPPDEFINES += group['CPPDEFINES']
+
+        # get each group's link flags
+        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+            if LINKFLAGS:
+                LINKFLAGS += ' ' + group['LINKFLAGS']
+            else:
+                LINKFLAGS += group['LINKFLAGS']
+
+        if group.has_key('LIBS') and group['LIBS']:
+            for item in group['LIBS']:
+                lib_path = ''
+                for path_item in group['LIBPATH']:
+                    full_path = os.path.join(path_item, item + '.lib')
+                    if os.path.isfile(full_path): # has this library
+                        lib_path = full_path
+
+                if lib_path != '':
+                    MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+
+    # remove repeat path
+    paths = set()
+    for path in CPPPATH:
+        inc = _make_path_relative(project_path, os.path.normpath(path))
+        paths.add(inc) #.replace('\\', '/')
+
+    paths = [i for i in paths]
+    paths.sort()
+    CPPPATH = string.join(paths, ';')
+
+    definitions = [i for i in set(CPPDEFINES)]
+    CPPDEFINES = string.join(definitions, ', ')
+
+    # write include path, definitions and link flags
+    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+    IncludePath.text = CPPPATH
+
+    Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
+    Define.text = CPPDEFINES
+
+    Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
+    Misc.text = LINKFLAGS
+
+    xml_indent(root)
+    out.write(etree.tostring(root, encoding='utf-8'))
+    out.close()
+
+    # copy uvopt file
+    if os.path.exists('template.uvoptx'):
+        import shutil
+        shutil.copy2('template.uvoptx', 'project.uvoptx')
+
 def MDKProject(target, script):
     template = file('template.Uv2', "rb")
     lines = template.readlines()
