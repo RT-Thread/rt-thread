@@ -167,6 +167,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
                 'mdk4':('keil', 'armcc'),
+                'mdk5':('keil', 'armcc'),
                 'iar':('iar', 'iar'),
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
@@ -450,6 +451,7 @@ def EndBuilding(target, program = None):
     if GetOption('target') == 'mdk':
         from keil import MDKProject
         from keil import MDK4Project
+        from keil import MDK5Project
 
         template = os.path.isfile('template.Uv2')
         if template:
@@ -459,12 +461,20 @@ def EndBuilding(target, program = None):
             if template:
                 MDK4Project('project.uvproj', Projects)
             else:
-                print 'No template project file found.'
+                template = os.path.isfile('template.uvprojx')
+                if template:
+                    MDK5Project('project.uvprojx', Projects)
+                else:
+                    print 'No template project file found.'
+
 
     if GetOption('target') == 'mdk4':
-        from keil import MDKProject
         from keil import MDK4Project
         MDK4Project('project.uvproj', Projects)
+
+    if GetOption('target') == 'mdk5':
+        from keil import MDK5Project
+        MDK5Project('project.uvprojx', Projects)
 
     if GetOption('target') == 'iar':
         from iar import IARProject
