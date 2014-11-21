@@ -66,9 +66,10 @@
 #endif
 
 #define RT_DEVICE_CTRL_CONFIG           0x03    /* configure device */
-#define RT_DEVICE_CTRL_SET_INT          0x10    /* enable receive irq */
-#define RT_DEVICE_CTRL_CLR_INT          0x11    /* disable receive irq */
+#define RT_DEVICE_CTRL_SET_INT          0x10    /* enable serial irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11    /* disable serial irq */
 #define RT_DEVICE_CTRL_GET_INT          0x12
+#define RT_DEVICE_CTRL_GET_FLAG         0x13
 
 #define RT_SERIAL_EVENT_RX_IND          0x01    /* Rx indication */
 #define RT_SERIAL_EVENT_TX_DONE         0x02    /* Tx complete   */
@@ -116,7 +117,7 @@ struct serial_configure
 };
 
 /*
- * Serial FIFO mode 
+ * Serial FIFO mode
  */
 struct rt_serial_rx_fifo
 {
@@ -131,7 +132,7 @@ struct rt_serial_tx_fifo
 	struct rt_completion completion;
 };
 
-/* 
+/*
  * Serial DMA mode
  */
 struct rt_serial_rx_dma
@@ -179,4 +180,3 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                void                    *data);
 
 #endif
-

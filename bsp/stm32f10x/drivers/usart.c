@@ -146,6 +146,27 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             return USART_GetITStatus(uart->uart_device, uart->tx_irq_type);
         }
     break;
+         /* get USART flag */
+    case RT_DEVICE_CTRL_GET_FLAG:
+        if (irq_type == RT_DEVICE_FLAG_INT_RX)
+        {
+            /* return rx irq flag */
+            return USART_GetFlagStatus(uart->uart_device, USART_FLAG_RXNE);
+        }
+        else if (irq_type == RT_DEVICE_FLAG_INT_TX)
+        {
+            /* return tx flag */
+            if (uart->tx_irq_type == USART_IT_TC)
+            {
+                return USART_GetFlagStatus(uart->uart_device, USART_FLAG_TC);
+            }
+            else if (uart->tx_irq_type == USART_IT_TXE)
+            {
+                return USART_GetFlagStatus(uart->uart_device, USART_FLAG_TXE);
+            }
+        }
+        break;
+    }
     return RT_EOK;
 }
 
