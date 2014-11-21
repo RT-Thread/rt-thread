@@ -69,8 +69,6 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
     /* Enable USART */
     USART_Cmd(uart->uart_device, ENABLE);
-    /* enable interrupt */
-    USART_ITConfig(uart->uart_device, USART_IT_RXNE, ENABLE);
 
     return RT_EOK;
 }
