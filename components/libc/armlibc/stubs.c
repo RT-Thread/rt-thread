@@ -224,10 +224,12 @@ char *_sys_command_string(char *cmd, int len)
 /* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
+#ifdef RT_USING_CONSOLE
     char c;
 
     c = (char)ch;
     rt_kprintf(&c);
+#endif
 }
 
 void _sys_exit(int return_code)
