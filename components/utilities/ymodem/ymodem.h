@@ -55,6 +55,11 @@ enum rym_code {
 #define RYM_CHD_INTV_TICK (RT_TICK_PER_SECOND * 3)
 #endif
 
+/* how many CAN be sent when user active end the session. */
+#ifndef RYM_END_SESSION_SEND_CAN_NUM
+#define RYM_END_SESSION_SEND_CAN_NUM  0x07
+#endif
+
 enum rym_stage {
     RYM_STAGE_NONE,
     /* set when C is send */
@@ -128,7 +133,7 @@ struct rym_ctx
  * @param handshake_timeout the timeout when hand shaking. The unit is in
  * second.
  */
-rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev,
+rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t oflag,
         rym_callback on_begin, rym_callback on_data, rym_callback on_end,
         int handshake_timeout);
 

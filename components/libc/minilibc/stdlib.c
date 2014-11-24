@@ -54,6 +54,7 @@ long int atol(const char* s)
 	return sign?-v:v;
 }
 
+#ifdef RT_USING_HEAP
 void *malloc(size_t size)
 {
 	return rt_malloc(size);
@@ -73,5 +74,6 @@ void *calloc(size_t nelem, size_t elsize)
 {
 	return rt_calloc(nelem, elsize);
 }
+#endif
 
 #endif

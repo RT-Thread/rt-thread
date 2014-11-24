@@ -101,7 +101,7 @@ void tcpserv(void* parameter)
            else
            {
                /* 在控制终端显示收到的数据 */
-               rt_kprintf("RECIEVED DATA = %s \n" , recv_data);
+               rt_kprintf("RECEIVED DATA = %s \n" , recv_data);
            }
        }
    }

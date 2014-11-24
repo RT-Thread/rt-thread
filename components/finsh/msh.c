@@ -315,12 +315,15 @@ int msh_exec(char* cmd, rt_size_t length)
         return 0;
     }
 #endif
-#ifdef DFS_USING_WORKDIR
+
+#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+	/* change to this directory */
     if (chdir(cmd) == 0)
     {
         return 0;
     }
 #endif
+
     /* truncate the cmd at the first space. */
     {
         char *tcmd;
@@ -354,6 +357,9 @@ void msh_auto_complete_path(char *path)
     DIR* dir = RT_NULL;
     struct dirent *dirent = RT_NULL;
     char *full_path, *ptr, *index;
+
+    if (!path)
+        return;
 
     full_path = (char*)rt_malloc(256);
     if (full_path == RT_NULL) return; /* out of memory */

@@ -20,8 +20,8 @@ rt_err_t rym_null(char *devname)
         return -1;
     }
 
-    return rym_recv_on_device(&rctx, dev,
-            RT_NULL, _rym_dummy_write, RT_NULL, 1000);
+    return rym_recv_on_device(&rctx, dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                              RT_NULL, _rym_dummy_write, RT_NULL, 1000);
 }
 FINSH_FUNCTION_EXPORT(rym_null, dump data to null);
 #endif

@@ -13,6 +13,8 @@
  * Date           Author       Notes
  * 2012-11-23     Yihui        The first version
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
+ * 2014-08-03     bernard      If using msh, use system() implementation 
+ *                             in msh.
  */
 
 #include <string.h>
@@ -48,6 +50,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 {
 #ifdef RT_USING_DFS    
     int fd;
+    int mode = O_RDONLY;
 #endif
     
     /* Register standard Input Output devices. */
@@ -61,8 +64,33 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 #ifndef RT_USING_DFS
     return -1;
 #else
-    /* TODO: adjust open file mode */
-    fd = open(name, openmode, 0);
+	/* Correct openmode from fopen to open */
+	if (openmode & OPEN_PLUS) 
+	{
+		if (openmode & OPEN_W) 
+		{
+			mode |= (O_RDWR | O_TRUNC | O_CREAT);
+		}
+		else if (openmode & OPEN_A) 
+		{
+			mode |= (O_RDWR | O_APPEND | O_CREAT);
+		}
+		else 
+			mode |= O_RDWR;				
+	}
+	else
+	{
+		if (openmode & OPEN_W) 
+		{
+			mode |= (O_WRONLY | O_TRUNC | O_CREAT);
+		}
+		else if (openmode & OPEN_A)
+		{					
+            mode |= (O_WRONLY | O_APPEND | O_CREAT);
+		}					
+	}
+
+    fd = open(name, mode, 0);
     if(fd < 0)
         return -1;
     else
@@ -138,7 +166,6 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0;
 #else
         rt_device_t console_device;
-        extern rt_device_t rt_console_get_device(void);
 
         console_device = rt_console_get_device();
         if (console_device != 0) rt_device_write(console_device, 0, buf, len);
@@ -194,9 +221,13 @@ char *_sys_command_string(char *cmd, int len)
     return cmd;
 }
 
+/* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
-   /* TODO */
+    char c;
+
+    c = (char)ch;
+    rt_kprintf(&c);
 }
 
 void _sys_exit(int return_code)
@@ -221,7 +252,6 @@ int _sys_istty(FILEHANDLE fh)
     return 0;
 }
 
-
 int remove(const char *filename)
 {
 #ifndef RT_USING_DFS
@@ -231,18 +261,12 @@ int remove(const char *filename)
 #endif
 }
 
-/* rename() is defined in dfs_posix.c instead */
-#if 0
-int rename(const char *old, const char *new)
-{
-    return -1;
-}
-#endif
-
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+/* use system(const char *string) implementation in the msh */
+#else
 int system(const char *string)
 {
     RT_ASSERT(0);
     for(;;);
 }
-
-
+#endif

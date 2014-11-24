@@ -451,9 +451,6 @@ static const struct rt_i2c_bus_device_ops i2c_bit_bus_ops =
 rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus_device *bus,
                             const char               *bus_name)
 {
-    struct rt_i2c_bit_ops *bit_ops = bus->priv;
-    RT_ASSERT(bit_ops != RT_NULL);
-
     bus->ops = &i2c_bit_bus_ops;
 
     return rt_i2c_bus_device_register(bus, bus_name);

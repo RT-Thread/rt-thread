@@ -1,0 +1,23 @@
+Import('rtconfig')
+from building import *
+
+src = Glob('*.c')
+comm = 'libcpu/' + rtconfig.ARCH
+if (rtconfig.CPU == 'cortex-m4') or (rtconfig.CPU == 'cortex-m3'):
+    comm = 'libcpu/cortexm'
+
+cwd = GetCurrentDir()
+if rtconfig.PLATFORM == 'armcc':
+    src = src + Glob(comm + '/*.c') + Glob(comm + '/*_rvds.S')
+
+if rtconfig.PLATFORM == 'gcc':
+    src = src + Glob(comm + '/*.c') + Glob(comm + '/*_gcc.S')
+
+if rtconfig.PLATFORM == 'iar':
+    src = src + Glob(comm + '/*.c') + Glob(comm + '/*_iar.S')
+
+CPPPATH = [cwd, cwd + '/' + comm]
+
+group = DefineGroup('gdb', src, depend = ['RT_USING_GDB'], CPPPATH = CPPPATH)
+
+Return('group')

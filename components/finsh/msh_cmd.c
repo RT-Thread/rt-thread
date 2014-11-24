@@ -249,6 +249,7 @@ int cmd_ifconfig(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
 
+#ifdef RT_LWIP_TCP
 int cmd_netstat(int argc, char** argv)
 {
  	extern void list_tcps(void);
@@ -257,7 +258,7 @@ int cmd_netstat(int argc, char** argv)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP/IP);
-
+#endif
 #endif /* RT_USING_LWIP */
 
 int cmd_ps(int argc, char** argv)
@@ -275,6 +276,7 @@ int cmd_time(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, Execute command with time.);
 
+#ifdef RT_USING_HEAP
 int cmd_free(int argc, char** argv)
 {
     extern void list_mem(void);
@@ -283,6 +285,7 @@ int cmd_free(int argc, char** argv)
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
 
 #endif
 

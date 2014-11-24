@@ -335,6 +335,9 @@ int dfs_file_lseek(struct dfs_fd *fd, rt_off_t offset)
 
     if (fd == RT_NULL)
         return -DFS_STATUS_EINVAL;
+    fs = fd->fs;
+    if (fs == RT_NULL)
+        return -DFS_STATUS_EINVAL;
     if (fs->ops->lseek == RT_NULL)
         return -DFS_STATUS_ENOSYS;
 
@@ -555,7 +558,7 @@ void ls(const char *pathname)
     if (pathname == RT_NULL) 
         rt_free(path);
 }
-FINSH_FUNCTION_EXPORT(ls, list directory contents)
+FINSH_FUNCTION_EXPORT(ls, list directory contents);
 
 void rm(const char *filename)
 {
@@ -564,7 +567,7 @@ void rm(const char *filename)
         rt_kprintf("Delete %s failed\n", filename);
     }
 }
-FINSH_FUNCTION_EXPORT(rm, remove files or directories)
+FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
 void cat(const char* filename)
 {
@@ -590,7 +593,7 @@ void cat(const char* filename)
 
     dfs_file_close(&fd);
 }
-FINSH_FUNCTION_EXPORT(cat, print file)
+FINSH_FUNCTION_EXPORT(cat, print file);
 
 #define BUF_SZ  4096
 static void copyfile(const char *src, const char *dst)
@@ -629,7 +632,15 @@ static void copyfile(const char *src, const char *dst)
         read_bytes = dfs_file_read(&src_fd, block_ptr, BUF_SZ);
         if (read_bytes > 0)
         {
-            dfs_file_write(&fd, block_ptr, read_bytes);
+			int length;
+			
+            length = dfs_file_write(&fd, block_ptr, read_bytes);
+			if (length != read_bytes)
+			{
+				/* write failed. */
+				rt_kprintf("Write file data failed, errno=%d\n", length);
+				break;
+			}
         }
     } while (read_bytes > 0);
 

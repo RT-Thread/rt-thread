@@ -1,0 +1,12 @@
+# SConscript for sensor framework 
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp') 
+CPPPATH = [cwd, cwd + '/../include']
+
+group = DefineGroup('Sensors', src, depend = ['RT_USING_SENSOR', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
+
+Return('group')
+
