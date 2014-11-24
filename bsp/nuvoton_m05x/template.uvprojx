@@ -361,7 +361,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>INIT_SYSCLK_AT_BOOTING</Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
             </VariousControls>

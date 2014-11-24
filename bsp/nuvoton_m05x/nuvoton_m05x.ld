@@ -1,13 +1,13 @@
 /*
- * linker script for STM32F0x with GNU ld
- * bernard.xiong 2009-10-14
+ * linker script for M051X with GNU ld
+ * Bright 2014-11-24
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 64k /* 64KB flash */
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  8k /* 8K sram */
+    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 64k /* 64KB flash */
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  4k /* 4K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x100;

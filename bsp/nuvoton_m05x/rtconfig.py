@@ -17,16 +17,13 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'gcc':
-    print '================ERROR============================'
-    print 'Not support gcc yet!'
-    print '================================================='
-    exit(0)
+	PLATFORM 	= 'gcc'
+	EXEC_PATH 	= 'C:/GCC'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-STM32_TYPE = 'STM32F0XX'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -35,13 +32,13 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE 
+    CFLAGS = DEVICE + ' -std=gnu9x'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nuvoton_m05x.map,-cref,-u,Reset_Handler -T nuvoton_m05x.ld'
 
@@ -54,7 +51,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-nuvoton_m05x.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-nuvoton_m05x.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread-nuvoton_m05x.hex\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains

@@ -17,15 +17,15 @@ if rtconfig.CROSS_TOOL == 'iar':
      src = src + ['CMSIS/Nuvoton/M051Series/Source/IAR/startup_M051Series.s']
 elif rtconfig.CROSS_TOOL == 'keil':
      src = src + ['CMSIS/Nuvoton/M051Series/Source/ARM/startup_M051Series.s']
-#elif rtconfig.CROSS_TOOL == 'gcc': // not support gcc
-#     src = src + ['CMSIS/ST/STM32F0xx/Source/Templates/gcc_ride7/startup_stm32f0xx.s']
+elif rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['CMSIS/Nuvoton/M051Series/Source/GCC/startup_M051Series.s']
 
 path = [cwd + '/StdDriver/inc', 
     cwd + '/CMSIS/Nuvoton/M051Series/Include',
     cwd + '/CMSIS/Include']
 
 #CPPDEFINES = ['USE_STDPERIPH_DRIVER', rtconfig.STM32_TYPE]
-CPPDEFINES = ['']
+CPPDEFINES = ['INIT_SYSCLK_AT_BOOTING']
 group = DefineGroup('M05X_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
