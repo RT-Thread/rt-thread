@@ -14,8 +14,6 @@ elif rtconfig.CROSS_TOOL == 'keil':
 	src += ['startup/startup_rvmdk.S']
 elif rtconfig.CROSS_TOOL == 'iar':
 	src += ['startup/startup_ewarm.c']
-elif rtconfig.CROSS_TOOL == 'ccs':
-	src += ['startup/startup_ccs.c']
 
 CPPPATH = [cwd, cwd + '/inc', cwd + '/driverlib']
 
