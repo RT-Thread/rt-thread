@@ -56,7 +56,7 @@ static void rt_init_thread_entry(void* parameter)
     /* Create led thread */
     led_thread = rt_thread_create("led",
     		led_thread_entry, RT_NULL,
-    		256, 20, 20);
+    		128, 20, 20);
     if(led_thread != RT_NULL)
     	rt_thread_startup(led_thread);
 }

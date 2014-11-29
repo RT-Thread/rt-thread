@@ -18,6 +18,8 @@
 
 #include "M051Series.h"
 
+#define BOARD_PLL_CLOCK           50000000
+
 /* board configuration */
 // <o> Internal SRAM memory size[Kbytes]
 //	<i>Default: 64

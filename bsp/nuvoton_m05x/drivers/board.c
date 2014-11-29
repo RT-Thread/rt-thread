@@ -14,9 +14,8 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include "board.h"
-
+#include "usart.h"
 /* RT_USING_COMPONENTS_INIT */
 #ifdef  RT_USING_COMPONENTS_INIT
 #include <components.h>
@@ -44,13 +43,37 @@ void NVIC_Configuration(void)
 * @param  nCount: specifies the delay time length.
 * @retval None
 */
-static void Delay(__IO uint32_t nCount)
+static void delay(__IO uint32_t nCount)
 {
 	/* Decrement nCount value */
 	while (nCount != 0)
 	{
 		nCount--;
 	}
+}
+
+static void rt_hw_system_init(void)
+{
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
+    SYS_UnlockReg();
+    /* Enable Internal RC 22.1184MHz clock */
+    CLK_EnableXtalRC(CLK_PWRCON_OSC22M_EN_Msk);
+
+    /* Waiting for Internal RC clock ready */
+    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
+
+    /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
+    CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_HIRC, CLK_CLKDIV_HCLK(1));
+
+    /* Set core clock as PLL_CLOCK from PLL */
+    CLK_SetCoreClock(BOARD_PLL_CLOCK);
+
+    /* Set SysTick clock source to HCLK source divide 2 */
+    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
+    
+    SYS_LockReg();
 }
 
 /**
@@ -75,10 +98,13 @@ void rt_hw_board_init()
 	/* NVIC Configuration */
 	NVIC_Configuration();
 
+    /* Configure the system clock */
+    rt_hw_system_init();
 	/* Configure the SysTick */
 	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
 	/* Initial usart deriver, and set console device */
+	rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
