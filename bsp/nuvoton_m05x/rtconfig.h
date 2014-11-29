@@ -10,7 +10,7 @@
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
-
+#define IDLE_THREAD_STACK_SIZE 128
 /* Tick per Second */
 #define RT_TICK_PER_SECOND	100
 
@@ -54,7 +54,6 @@
 
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
-#define RT_USING_TINY_SIZE
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
 #define RT_USING_COMPONENTS_INIT
@@ -68,19 +67,20 @@
 #define RT_USING_SERIAL
 
 /* SECTION: Console options */
-//#define RT_USING_CONSOLE
+#define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE	64
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
-#define RT_CONSOLE_DEVICE_NAME	    "uart1"
+#define RT_CONSOLE_DEVICE_NAME	    "uart0"
 
 
 
 /* SECTION: finsh, a C-Express shell */
-//#define RT_USING_FINSH
+#define RT_USING_FINSH
 /* configure finsh parameters */
 #define FINSH_THREAD_PRIORITY 25
-#define FINSH_THREAD_STACK_SIZE	1024
+#define FINSH_THREAD_STACK_SIZE	512
+#define FINSH_USING_HISTORY 0
 #define FINSH_HISTORY_LINES	1
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
