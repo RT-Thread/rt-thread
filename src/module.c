@@ -82,7 +82,7 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
  */
 int rt_system_module_init(void)
 {
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__CC_ARM)
     extern int __rtmsymtab_start;
     extern int __rtmsymtab_end;
 
