@@ -30,9 +30,32 @@ void ENET_IRQHandler(void)
 {
 	rt_uint32_t status;
 
-    /* enter interrupt */
-    rt_interrupt_enter();
+	/* enter interrupt */
+	rt_interrupt_enter();
+	status = read_PHY(PHY_REG_MISR);
 
+	if(status & (1<<13))//Change of Link Status interrupt
+	{
+		rt_kprintf("\r\n\t\tLinkStatus:bit13:Change of Link Status interrupt.\n");
+		//Link Status
+		status = read_PHY(PHY_REG_BMSR);
+		
+		if(status & (1<<5))
+		{
+			rt_kprintf("\t\tAuto-Negotiation Complete.\n");
+			status = read_PHY(PHY_REG_BMSR);
+			if(status&(1<<2))
+			{
+				rt_kprintf("\t\tValid link established.\n");
+			}
+			else
+			{
+				rt_kprintf("\t\tLink not established.\n");
+			}
+		}
+		
+	}
+	
 	status = LPC_EMAC->IntStatus;
 
 	if (status & INT_RX_DONE)
@@ -259,7 +282,7 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 	for (tout = 0; tout < 100; tout++)
 	{
 		regv = read_PHY (PHY_REG_STS);
-		if (regv & 0x0001)
+		if ((regv & (1<<0)) && (regv & (1<<4)))
 		{
 			/* Link is on. */
 			break;
@@ -268,7 +291,11 @@ static rt_err_t lpc17xx_emac_init(rt_device_t dev)
 	if (tout >= 100) 
 	{
 		//return -RT_ERROR;
-		rt_kprintf("\tPHY Read PHY_REG_BMSR,Link on timeout,tout: %d.\n",tout);
+		rt_kprintf("\tPHY Read PHY_REG_STS,Link on timeout,tout: %d.\n",tout);
+	}
+	else
+	{
+		rt_kprintf("\t\tPHY Read PHY_REG_STS,Link on.\n");
 	}
 	/* Configure Full/Half Duplex mode. */
 	if (regv & 0x0004)
@@ -352,10 +379,20 @@ static rt_err_t lpc17xx_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args
 	{
 	case NIOCTL_GADDR:
 		/* get mac address */
-		if (args) rt_memcpy(args, lpc17xx_emac_device.dev_addr, 6);
-		else return -RT_ERROR;
+		if (args) 
+		{
+			rt_memcpy(args, lpc17xx_emac_device.dev_addr, 6);
+		}
+		else 
+		{
+			return -RT_ERROR;
+		}
 		break;
-
+	case NIOCTL_GLINKSTATUS:
+		{
+			rt_memset(args, (read_PHY(PHY_REG_BMSR)&(1<<2))?1:0, 1);			 
+		}
+		break;
 	default :
 		break;
 	}
