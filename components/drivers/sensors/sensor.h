@@ -34,10 +34,7 @@
 #define SENSORS_H__
 
 #include <rtdevice.h>
-
 #include <stdint.h>
-#include <sys/cdefs.h>
-#include <sys/types.h>
 
 /**
  * Handles must be higher than SENSORS_HANDLE_BASE and must be unique.

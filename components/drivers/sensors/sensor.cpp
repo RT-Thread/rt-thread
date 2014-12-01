@@ -1,3 +1,17 @@
+/*
+ * File      : sensors.cpp
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2014, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-08-03     Bernard      the first version
+ */
+
 #include <stddef.h>
 #include "sensor.h"
 
@@ -60,7 +74,7 @@ int SensorManager::RegisterSensor(Sensor *sensor)
     RT_ASSERT(sensor != RT_NULL);
 
     /* add sensor into the list */
-    if (self->sensorList = NULL)
+    if (self->sensorList == NULL)
     {
         sensor->prev = sensor->next = sensor;
     }
@@ -113,8 +127,7 @@ Sensor *SensorManager::GetDefaultSensor(int type)
         if (sensor->GetType() == type) return sensor;
 
         sensor = sensor->next;
-    }
-    while (sensor != self->sensorList);
+    }while (sensor != self->sensorList);
 
     return NULL;
 }
