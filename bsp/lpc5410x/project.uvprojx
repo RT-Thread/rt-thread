@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>CORE_M4</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\CMSIS\Include;Libraries\lpc_chip\chip_common;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>.;..\..\components\drivers\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;Libraries\CMSIS\Include;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;Libraries\lpc_chip\chip_common;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
